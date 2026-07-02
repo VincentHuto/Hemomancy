@@ -12,7 +12,7 @@ This is the middle doc in a chain. The [Rogue Hemomancer Wills](2026-07-02-rogue
 
 ## 1. Goal
 
-Trim fungal scars from **9 to 7**, cutting the ones that are generic potion-charms or that bleed into another system's lane, and adding new abilities that are **wholly unique to the fungal-scar identity**. Keep fungal scars Latin-only on purpose (see §6).
+Consolidate fungal scars from **9 to 8**, cutting the ones that are generic potion-charms, that bleed into another system's lane, or that are redundant death-saves, and adding new abilities that are **wholly unique to the fungal-scar identity**. Keep fungal scars Latin-only on purpose (see §6).
 
 ## 2. Current roster (verified against code)
 
@@ -27,7 +27,7 @@ With four systems that grant power, a fungal scar earns its single equipped slot
 - Manipulation = the **willed cast** (targeted burst / CC / placed constructs).
 - **Fungal scar = a permanent rewrite of how the body connects to the mycelial network** — the single-slot, Qliphoth-tier bodily alteration.
 
-Because only one fungal scar equips at a time, they **do not need tendency-completeness** the way cerebral scars do. Aim for a few unforgettable choices, not broad coverage.
+Because only one fungal scar equips at a time, they **do not need tendency-completeness** the way cerebral scars do. Aim for a few unforgettable choices, not broad coverage. (The result below doubles Animus and omits Lux — acceptable for a single-slot system.)
 
 ## 4. Verdict on all 9
 
@@ -35,17 +35,17 @@ Because only one fungal scar equips at a time, they **do not need tendency-compl
 |---|---|---|---|
 | *Antiphonomyces resonans* | Ductilis | Echo-cast: 20% free re-cast | **KEEP — flagship.** Modifies manipulations; the model scar. |
 | *Saprovitta vestigium* | Flammeus | Feeding Wake damaging trail while moving | **KEEP.** Movement-triggered, no overlap. |
-| *Thanomyces resurgens* | Congeatio | Split Husk — cheat death, reform at 25% | **KEEP — as the fungal Last Rite** (consolidates all death-saves onto the audit's shared armed slot). |
 | *Talaromyces Minus* | Ferric | Haste + ore vein-mining | **REWORK.** Strip Haste (redundant with `ferric_resonance` + Irontooth morphling); keep vein-mining as "hyphal-sense mining." |
+| *Noctifly Agaric* | Animus | Fungal elytra (glide) | **KEEP — restored.** A desirable, distinctive utility scar; the glide/Edacious overlap is acceptable for a single-slot pick, and it is the one aspirational-mobility fungal scar. |
+| *Thanomyces resurgens* | Congeatio | Split Husk — cheat death, reform at 25% | **CUT — redundant death-save.** Foxfire (Ink Mantle), Winter Shroud (Cryptobiosis), Silent Archon refusal, and vanilla totems already over-cover death-prevention. The Congeatio slot is better spent on a non-death-save scar (§5.4). |
 | *Sanguiflora cadens* | Mortem | Vein Orchard — on-kill resource bloom | **CUT — relocate to morphlings.** On-kill resource-gen is the morphling lane; folds into Gravecap's Cordyceps line (see [Morphling reframe](2026-07-02-morphling-fungal-strain-reframe-design.md) §10). |
-| *Noctifly Agaric* | Animus | Fungal elytra (glide) | **CUT.** Overlaps Edacious Bloodlust flight + morphling mobility. |
 | *Lumina Devorans* | Tenebris | Night Vision + Strength + Resistance | **CUT.** Generic three-buff stat-stick; no network-rewrite identity. |
 | *Respergillus* | Animus | Water Breathing | **CUT.** Pure single-potion charm; weakest fit. |
 | *Anastocordyceps nexus* | Lux | Latching Vein — on-strike tether | **CUT.** On-strike CC leans into the manipulation lane. |
 
-## 5. Three new scars (wholly unique to the system)
+## 5. New scars (wholly unique to the system)
 
-Each new scar uses a fungal property no other system touches, and each is a different verb from the survivors (echo / trail / regrowth / mine). The three new tendencies backfill exactly the slots the cuts vacate (Animus ← Respergillus/Noctifly; Mortem ← Sanguiflora; Tenebris ← Lumina Devorans).
+Each new scar uses a fungal property no other system touches, and each is a different verb from the survivors (echo / trail / mine / glide). Rhizovitta, Putrivora, and Oculiflora backfill the Animus, Mortem, and Tenebris slots the cuts vacate; Cryostroma (§5.4) replaces the cut Thanomyces death-save so Congeatio keeps a fungal scar without another cheat-death.
 
 ### 5.1 *Rhizovitta communis* — "the shared rootband" (Animus)
 
@@ -72,27 +72,34 @@ Each new scar uses a fungal property no other system touches, and each is a diff
 
 *Impl:* client outline/glow pass over fungal-tagged entities/blocks/bloom positions and Will pre-spawn anchors within radius, gated on the equipped scar; reuses the outline tech from Prismatic / Crimson Sight / the Mole-primal nectar highlight.
 
+### 5.4 *Cryostroma perdurans* — "the enduring cold-mass" (Congeatio)
+
+**Verb: conserve.** While the wearer holds still — stationary, sneaking, or otherwise at rest — the scar sinks the body into a fungal cryo-dormancy: blood-volume regeneration and vein-section healing accelerate sharply, ramping the longer you stay still and canceling the moment you move or cast.
+
+**Unique because** it is a *rest-state bodily-repair* rewrite. It never triggers on lethal damage, so it is **not** a death-save (unlike the cut Thanomyces, Foxfire's Ink Mantle, or Silent Archon refusal — which, with vanilla totems, already over-cover death-prevention). It is not terrain-gated like Rhizovitta, and it is not the Winter Shroud morphling's active molt-escape. It fills the recovery / downtime niche — safe-spot regeneration and post-fight vein-section repair — that nothing else occupies as a scar, and it keeps Congeatio's preservation/stasis identity after the death-save is removed. *Impl:* tick a "conserving" state while wearer movement is below a threshold and no manipulation was cast recently; scale blood regen and `IVascularSystem` section healing by a ramping multiplier; clear on movement/cast.
+
 ## 6. Naming: Latin-only, on purpose
 
-Fungal scars stay pseudo-Latin binomials as their **primary** name — the in-world justification being that they are so rare and one-off the Order has not given them common names yet. This is the deliberate counterweight to the morphlings' folk-name register (see [Morphling reframe](2026-07-02-morphling-fungal-strain-reframe-design.md) §5): morphlings go maximally folk *so that* scars can stay maximally scholarly, and the contrast becomes the wayfinding signal. Trimming to 7 makes the "too rare to have earned a name" conceit read as intentional rather than as clutter.
+Fungal scars stay pseudo-Latin binomials as their **primary** name — the in-world justification being that they are so rare and one-off the Order has not given them common names yet. This is the deliberate counterweight to the morphlings' folk-name register (see [Morphling reframe](2026-07-02-morphling-fungal-strain-reframe-design.md) §5): morphlings go maximally folk *so that* scars can stay maximally scholarly, and the contrast becomes the wayfinding signal. Holding to 8 keeps the "too rare to have earned a name" conceit reading as intentional rather than as clutter.
 
-## 7. Resulting roster (9 → 7)
+## 7. Resulting roster (9 → 8)
 
 | Fungal scar | Tendency | Verb | Status |
 |---|---|---|---|
 | *Antiphonomyces resonans* | Ductilis | casts **echo** | keep |
 | *Saprovitta vestigium* | Flammeus | movement **trails** spores | keep |
-| *Thanomyces resurgens* | Congeatio | **regrow** from a husk (fungal Last Rite) | keep |
 | *Talaromyces* (reworked) | Ferric | **mine** by hyphal sense (Haste removed) | rework |
+| *Noctifly Agaric* | Animus | **glide** on fungal elytra | keep (restored) |
 | *Rhizovitta communis* | Animus | **draw** from fungal ground | new |
 | *Putrivora resolvens* | Mortem | **digest** affliction into blood | new |
 | *Oculiflora reticularis* | Tenebris | **see** the network + Will ambushers | new |
+| *Cryostroma perdurans* | Congeatio | **conserve** — rest-state regen / vein-heal | new |
 
-**Cut for good:** Respergillus, Lumina Devorans, Anastocordyceps nexus, Noctifly Agaric. **Relocated:** Sanguiflora cadens → morphling (Gravecap).
+**Cut for good:** Respergillus, Lumina Devorans, Anastocordyceps nexus, Thanomyces resurgens (redundant death-save). **Relocated:** Sanguiflora cadens → morphling (Gravecap). **Restored:** Noctifly Agaric.
 
 ## 8. Open questions & scope
 
 - **Oculiflora "sight → tap":** in or out? Lean in, to guarantee an active payoff beyond perception.
-- **Cut-scar migration:** the four removed scars and Sanguiflora need save-data handling — convert existing equipped/known instances to the nearest survivor or refund crucible materials.
-- **Recipe data:** remove 5 files under `data/hemomancy/recipe/fungal_scar/`, retarget Talaromyces (drop Haste), add 3 new cultivation recipes (tendency + blood/tick/threshold + result), per the `fungal_scar_cultivation` schema in [HEMOMANCY_REFERENCE.md](../../HEMOMANCY_REFERENCE.md) §13.4.
-- **Testing:** focused resource/source tests for the 7 registrations, the removed-item migration, and the Oculiflora render gate; update [HEMOMANCY_REFERENCE.md](../../HEMOMANCY_REFERENCE.md) §13 and [fungalscar.md](../../fungalscar.md).
+- **Migration:** the four cut scars (Respergillus, Lumina Devorans, Anastocordyceps, Thanomyces) and the relocated Sanguiflora need save-data handling — convert existing equipped/known instances to the nearest survivor or refund crucible materials. Noctifly is restored, so existing Noctifly instances stay valid.
+- **Recipe data:** remove 5 files under `data/hemomancy/recipe/fungal_scar/` (Respergillus, Lumina Devorans, Anastocordyceps, Thanomyces, Sanguiflora), keep/retarget Talaromyces (drop Haste) and Noctifly, add 4 new cultivation recipes (Rhizovitta, Putrivora, Oculiflora, Cryostroma), per the `fungal_scar_cultivation` schema in [HEMOMANCY_REFERENCE.md](../../HEMOMANCY_REFERENCE.md) §13.4.
+- **Testing:** focused resource/source tests for the 8 registrations, the removed-item migration (incl. Thanomyces), and the Oculiflora render gate; update [HEMOMANCY_REFERENCE.md](../../HEMOMANCY_REFERENCE.md) §13 and [fungalscar.md](../../fungalscar.md).
