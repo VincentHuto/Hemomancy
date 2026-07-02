@@ -260,10 +260,34 @@ small {
   font-weight: 700;
 }
 
+.snap-controls {
+  display: flex;
+  align-items: center;
+  flex: 0 0 auto;
+  gap: 10px;
+}
+
 .snap-toggle input {
   width: 15px;
   height: 15px;
   accent-color: #b21616;
+}
+
+.snap-distance {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  width: auto;
+  color: #c9b9ab;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.snap-distance input {
+  width: 44px;
+  min-height: 26px;
+  padding: 2px 5px;
+  text-align: center;
 }
 
 .status {
@@ -540,31 +564,56 @@ small {
   opacity: 0.48;
 }
 
-.bucket-root,
+.atlas-hub {
+  cursor: grab;
+}
+
+.atlas-hub-box {
+  fill: rgba(16, 5, 6, 0.72);
+  stroke-width: 2px;
+}
+
+.atlas-hub text {
+  font: 10px/1 "Cascadia Code", Consolas, monospace;
+  font-weight: 900;
+  pointer-events: none;
+  paint-order: stroke;
+  stroke: rgba(0, 0, 0, 0.5);
+  stroke-width: 1.5px;
+}
+
+.atlas-hub.selected .atlas-hub-box {
+  filter: drop-shadow(0 0 7px rgba(255, 214, 150, 0.55));
+}
+
+.atlas-hub,
+.category-anchor,
 .label-plaque,
 .material-node {
   cursor: grab;
 }
 
-.bucket-root:active,
+.atlas-hub:active,
+.category-anchor:active,
 .label-plaque:active,
 .material-node:active {
   cursor: grabbing;
 }
 
-.bucket-root-core,
+.category-anchor-core,
 .label-plaque-box {
   fill: rgba(12, 3, 3, 0.78);
   stroke-width: 2.4px;
 }
 
-.bucket-root line {
+.category-anchor line {
   stroke-width: 1.3px;
   opacity: 0.68;
   pointer-events: none;
 }
 
-.bucket-root.selected .bucket-root-core,
+.category-anchor.selected .category-anchor-core,
+.atlas-hub.selected .atlas-hub-box,
 .label-plaque.selected .label-plaque-box,
 .material-node.selected .node-frame {
   stroke: #f0b24a !important;
@@ -579,19 +628,25 @@ small {
   stroke-width: 3px;
 }
 
+.material-node .node-hit {
+  fill: transparent;
+  stroke: transparent;
+}
+
 .material-node .node-glow {
   fill: rgba(44, 0, 0, 0.62);
+  stroke-width: 1.2px;
 }
 
 .material-node .node-frame {
   fill: #120203;
-  stroke-width: 4px;
+  stroke-width: 1.4px;
 }
 
 .material-node .node-core {
   fill: #252121;
   stroke: #3a2d2d;
-  stroke-width: 1.5;
+  stroke-width: 0.8;
 }
 
 .material-node image {

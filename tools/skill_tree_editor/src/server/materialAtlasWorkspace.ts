@@ -51,6 +51,10 @@ export async function previewMaterialAtlasWorkspaceChanges(repoRoot: string, req
   const iconOptions = loadIconRegistryOptions(repoRoot);
   const paths = (request.paths ?? []).map(path => ({
     ...path,
+    hubX: path.hubX,
+    hubY: path.hubY,
+    hubLabelX: path.hubLabelX,
+    hubLabelY: path.hubLabelY,
     buckets: path.buckets.map(bucket => ({ ...bucket })),
     entries: path.entries.map(entry => ({ ...entry, parentIds: [...entry.parentIds], catalog: entry.catalog ? { ...entry.catalog } : undefined }))
   }));
@@ -82,6 +86,10 @@ function attachCatalogue(paths: MaterialAtlasPathModel[], catalogueEntries: Mate
   const byKey = new Map(catalogueEntries.map(entry => [entryKey(entry.path, entry.id), entry] as const));
   return paths.map(path => ({
     ...path,
+    hubX: path.hubX,
+    hubY: path.hubY,
+    hubLabelX: path.hubLabelX,
+    hubLabelY: path.hubLabelY,
     buckets: path.buckets.map(bucket => ({ ...bucket })),
     entries: path.entries.map(entry => ({
       ...entry,
@@ -151,6 +159,10 @@ function validateMaterialAtlas(paths: MaterialAtlasPathModel[], catalogueEntries
         }
       }
     }
+
+    for (const cycle of parentCycles(entryIds)) {
+      diagnostics.push(issue('error', 'material_parent_cycle', `Material parent cycle detected: ${cycle.join(' -> ')}.`, atlasPath, cycle[0]));
+    }
   }
 
   for (const entry of catalogueEntries) {
@@ -205,6 +217,44 @@ function entryKey(path: MaterialAtlasPathKey, id: string): string {
 
 function issue(severity: Diagnostic['severity'], code: string, message: string, file: string, skill?: string): Diagnostic {
   return { severity, code, message, file, skill };
+}
+
+function parentCycles(entries: Map<string, MaterialAtlasEntryModel>): string[][] {
+  const cycles: string[][] = [];
+  const visiting = new Set<string>();
+  const visited = new Set<string>();
+  const reported = new Set<string>();
+
+  const visit = (id: string, stack: string[]): void => {
+    if (visiting.has(id)) {
+      const cycle = stack.slice(stack.indexOf(id));
+      const key = canonicalCycleKey(cycle);
+      if (!reported.has(key)) {
+        reported.add(key);
+        cycles.push(cycle);
+      }
+      return;
+    }
+    if (visited.has(id)) return;
+    const entry = entries.get(id);
+    if (!entry) return;
+    visiting.add(id);
+    for (const parent of entry.parentIds) {
+      if (entries.has(parent)) visit(parent, [...stack, parent]);
+    }
+    visiting.delete(id);
+    visited.add(id);
+  };
+
+  for (const id of entries.keys()) visit(id, [id]);
+  return cycles;
+}
+
+function canonicalCycleKey(cycle: string[]): string {
+  const unique = cycle.slice(0, -1);
+  if (!unique.length) return cycle.join('>');
+  const rotations = unique.map((_, index) => [...unique.slice(index), ...unique.slice(0, index)].join('>'));
+  return rotations.sort()[0];
 }
 
 function isDefined<T>(value: T | undefined): value is T {

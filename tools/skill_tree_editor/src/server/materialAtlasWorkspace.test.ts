@@ -6,6 +6,15 @@ import { loadMaterialAtlasWorkspace, previewMaterialAtlasWorkspaceChanges } from
 const atlasSource = `package example;
 
 public final class MaterialAtlasSpec {
+  private static final int HARBINGER_HUB_X = 686;
+  private static final int HARBINGER_HUB_Y = 617;
+  private static final int HARBINGER_HUB_LABEL_X = 686;
+  private static final int HARBINGER_HUB_LABEL_Y = 617;
+  private static final int UNSTAINED_HUB_X = 495;
+  private static final int UNSTAINED_HUB_Y = 522;
+  private static final int UNSTAINED_HUB_LABEL_X = 495;
+  private static final int UNSTAINED_HUB_LABEL_Y = 522;
+
   private static void registerBuckets() {
     bucket(MaterialAtlasPath.HARBINGER, "bloodcraft_core", "Bloodcraft Core", "sanguine_formation", 0xFFD04436, 520, 230, 520, 170);
     bucket(MaterialAtlasPath.UNSTAINED, "still_waters_core", "Still Waters Core", "hemolytic_solution", 0xFF80B0A0, 520, 230, 520, 170);
@@ -53,6 +62,7 @@ test('loads both material atlas paths with catalogue and registry icon options',
   const workspace = await loadMaterialAtlasWorkspace(root);
 
   expect(workspace.paths.map(path => path.path)).toEqual(['HARBINGER', 'UNSTAINED']);
+  expect(workspace.paths[0]).toEqual(expect.objectContaining({ hubX: 686, hubY: 617, hubLabelX: 686, hubLabelY: 617 }));
   expect(workspace.paths[0].entries[0]).toEqual(expect.objectContaining({
     id: 'sanguine_formation',
     catalog: expect.objectContaining({ displayName: 'Sanguine Formation', iconField: 'sanguine_formation' })
@@ -70,6 +80,10 @@ test('preview renders atlas and catalogue diffs without applying them', async ()
   writeRegistries(root);
   const workspace = await loadMaterialAtlasWorkspace(root);
   const harbinger = workspace.paths.find(path => path.path === 'HARBINGER')!;
+  harbinger.hubX = 704;
+  harbinger.hubY = 640;
+  harbinger.hubLabelX = 760;
+  harbinger.hubLabelY = 690;
   harbinger.buckets[0].centerX = 555;
   harbinger.buckets[0].plaqueY = 188;
   harbinger.entries[0].nodeX = 610;
@@ -86,7 +100,11 @@ test('preview renders atlas and catalogue diffs without applying them', async ()
     'src/main/java/com/vincenthuto/hemomancy/client/screen/skilltree/shared/MaterialAtlasSpec.java',
     'src/main/java/com/vincenthuto/hemomancy/client/screen/skilltree/shared/MaterialsData.java'
   ]);
-  expect(preview.diffs[0].after).toContain('bucket(MaterialAtlasPath.HARBINGER, "bloodcraft_core", "Bloodcraft Core", "sanguine_formation", 0xFFD04436, 555, 230, 520, 188);');
+  expect(preview.diffs[0].after).toContain('private static final int HARBINGER_HUB_X = 704;');
+  expect(preview.diffs[0].after).toContain('private static final int HARBINGER_HUB_Y = 640;');
+  expect(preview.diffs[0].after).toContain('private static final int HARBINGER_HUB_LABEL_X = 760;');
+  expect(preview.diffs[0].after).toContain('private static final int HARBINGER_HUB_LABEL_Y = 690;');
+  expect(preview.diffs[0].after).toContain('bucket(MaterialAtlasPath.HARBINGER, "bloodcraft_core", "Bloodcraft Core", 0xFFD04436, 555, 230, 520, 188);');
   expect(preview.diffs[0].after).toContain('entryAt("sanguine_formation", h, "bloodcraft_core", a(), 610, 300);');
   expect(preview.diffs[1].after).toContain('"An edited atlas note."');
   expect(readFileSync(join(root, 'src/main/java/com/vincenthuto/hemomancy/client/screen/skilltree/shared/MaterialAtlasSpec.java'), 'utf8')).toContain('520, 230');
@@ -134,6 +152,35 @@ test('preview blocks duplicate ids unknown buckets unknown parents invalid gates
     'material_invalid_gate',
     'material_missing_icon_field'
   ]));
+});
+
+test('preview blocks explicit material parent cycles', async () => {
+  const root = makeRepo();
+  writeAtlas(root, `package example;
+
+public final class MaterialAtlasSpec {
+  private static void registerBuckets() {
+    bucket(MaterialAtlasPath.HARBINGER, "bloodcraft_core", "Bloodcraft Core", 0xFFD04436, 520, 230, 520, 170);
+  }
+
+  private static void registerHarbingerEntries() {
+    MaterialAtlasPath h = MaterialAtlasPath.HARBINGER;
+    entry("sanguine_formation", h, "bloodcraft_core", a(), "blood_crystal_shard");
+    entry("blood_crystal_shard", h, "bloodcraft_core", d(2), "sanguine_formation");
+  }
+}
+`);
+  writeMaterials(root, materialsSource);
+  writeRegistries(root);
+  const workspace = await loadMaterialAtlasWorkspace(root);
+
+  const preview = await previewMaterialAtlasWorkspaceChanges(root, {
+    paths: workspace.paths,
+    catalogueEntries: workspace.paths.flatMap(path => path.entries.map(entry => entry.catalog!).filter(Boolean))
+  });
+
+  expect(preview.canApply).toBe(false);
+  expect(preview.diagnostics.map(diagnostic => diagnostic.code)).toContain('material_parent_cycle');
 });
 
 function makeRepo(): string {

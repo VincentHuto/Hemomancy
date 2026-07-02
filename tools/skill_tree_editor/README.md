@@ -30,4 +30,4 @@ Only declarations between `// <skill-editor branch="...">` and `// </skill-edito
 
 Skill node positions are stored in Java with `.setTreePosition(x, y)`. The in-game skill tab reads those same content-space coordinates, so moving a node in the browser changes the authored game layout after preview/apply.
 
-The material atlas editor reads `MaterialAtlasSpec.java` and `MaterialsData.java`. Bucket roots, category label plaques, gates, parent veins, catalogue text, and icon registry fields are previewed back into those Java files. Material nodes keep the existing auto-layout until moved; moved nodes are written as `entryAt(...)` calls with explicit atlas coordinates.
+The material atlas editor reads `MaterialAtlasSpec.java` and `MaterialsData.java`. Buckets are cosmetic category metadata only: they provide the atlas color, category anchor, and label plaque, while explicit `parentIds` provide node lineage/vein links. Gates, parent veins, catalogue text, and icon registry fields are previewed back into those Java files. Material nodes keep the existing auto-layout until moved; moved nodes are written as `entryAt(...)` calls with explicit atlas coordinates.

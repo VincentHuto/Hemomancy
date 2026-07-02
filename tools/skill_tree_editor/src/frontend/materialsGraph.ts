@@ -30,11 +30,24 @@ export interface MaterialGraphTrace {
   path: string;
 }
 
+export interface MaterialGraphHub {
+  id: string;
+  label: string;
+  x: number;
+  y: number;
+  color: string;
+}
+
 export interface MaterialGraphLayout {
   width: number;
   height: number;
+  viewBoxX: number;
+  viewBoxY: number;
+  offsetX: number;
+  offsetY: number;
+  hub: MaterialGraphHub;
   nodes: MaterialGraphNode[];
-  bucketRoots: MaterialGraphPoint[];
+  categoryAnchors: MaterialGraphPoint[];
   labelPlaques: MaterialGraphPoint[];
   traces: MaterialGraphTrace[];
 }
@@ -49,14 +62,15 @@ export interface MaterialDragRequest {
   snap: number;
 }
 
-const hub = { x: 520, y: 520 };
 const nodeGapX = 56;
 const nodeGapY = 54;
-const contentPad = 100;
+const contentPad = 80;
+const nodeSize = 26;
 
 export function layoutMaterialAtlasPath(path: MaterialAtlasPathModel): MaterialGraphLayout {
   const nodes: MaterialGraphNode[] = [];
-  const bucketById = new Map(path.buckets.map(bucket => [bucket.id, bucket] as const));
+  const atlasHub = hubForPath(path);
+  const layoutHub = { x: path.hubX, y: path.hubY };
   const byBucket = new Map<string, MaterialAtlasEntryModel[]>();
   for (const entry of path.entries) {
     if (!byBucket.has(entry.bucketId)) byBucket.set(entry.bucketId, []);
@@ -65,11 +79,10 @@ export function layoutMaterialAtlasPath(path: MaterialAtlasPathModel): MaterialG
 
   for (const bucket of path.buckets) {
     const entries = (byBucket.get(bucket.id) ?? []).slice().sort((a, b) => a.order - b.order);
-    const autoPositions = autoLayoutBucket(entries, bucket);
+    const autoPositions = autoLayoutBucket(entries, bucket, layoutHub);
     for (let i = 0; i < entries.length; i += 1) {
       const entry = entries[i];
-      const isRoot = entry.id === bucket.rootMaterialId;
-      const explicit = !isRoot && entry.nodeX !== null && entry.nodeY !== null;
+      const explicit = entry.nodeX !== null && entry.nodeY !== null;
       const auto = autoPositions.get(entry.id) ?? { x: bucket.centerX, y: bucket.centerY };
       nodes.push({
         id: entry.id,
@@ -84,8 +97,7 @@ export function layoutMaterialAtlasPath(path: MaterialAtlasPathModel): MaterialG
     }
   }
 
-  const nodeById = new Map(nodes.map(node => [node.id, node] as const));
-  const bucketRoots = path.buckets.map(bucket => ({
+  const categoryAnchors = path.buckets.map(bucket => ({
     id: bucket.id,
     label: bucket.label,
     x: bucket.centerX,
@@ -100,40 +112,107 @@ export function layoutMaterialAtlasPath(path: MaterialAtlasPathModel): MaterialG
     color: bucket.color
   }));
   const traces: MaterialGraphTrace[] = [];
+  let minX = atlasHub.x - contentPad;
+  let minY = atlasHub.y - contentPad;
+  let maxX = atlasHub.x + contentPad;
+  let maxY = atlasHub.y + contentPad;
+  minX = Math.min(minX, layoutHub.x - contentPad);
+  minY = Math.min(minY, layoutHub.y - contentPad);
+  maxX = Math.max(maxX, layoutHub.x + contentPad);
+  maxY = Math.max(maxY, layoutHub.y + contentPad);
+
+  for (const node of nodes) {
+    minX = Math.min(minX, node.x - nodeSize - contentPad / 2);
+    minY = Math.min(minY, node.y - nodeSize - contentPad / 2);
+    maxX = Math.max(maxX, node.x + nodeSize + contentPad / 2);
+    maxY = Math.max(maxY, node.y + nodeSize + contentPad / 2);
+  }
 
   for (const bucket of path.buckets) {
-    traces.push(trace(`hub:${path.path}`, `bucket:${bucket.id}`, hub.x, hub.y, bucket.centerX, bucket.centerY, bucket.color));
+    minX = Math.min(minX, Math.min(bucket.centerX, bucket.plaqueX) - contentPad);
+    minY = Math.min(minY, Math.min(bucket.centerY, bucket.plaqueY) - contentPad);
+    maxX = Math.max(maxX, Math.max(bucket.centerX, bucket.plaqueX) + contentPad);
+    maxY = Math.max(maxY, Math.max(bucket.centerY, bucket.plaqueY) + contentPad);
   }
-  for (const node of nodes) {
-    const bucket = bucketById.get(node.bucketId);
-    if (bucket) {
-      traces.push(trace(`bucket:${bucket.id}`, node.id, bucket.centerX, bucket.centerY, node.x, node.y, node.color));
+
+  const offsetX = minX < 0 ? -minX : 0;
+  const offsetY = minY < 0 ? -minY : 0;
+  if (offsetX || offsetY) {
+    for (const node of nodes) {
+      node.x += offsetX;
+      node.y += offsetY;
     }
+    maxX += offsetX;
+    maxY += offsetY;
+  }
+
+  const nodeById = new Map(nodes.map(node => [node.id, node] as const));
+  for (const node of nodes) {
     for (const parent of node.entry.parentIds) {
       const parentNode = nodeById.get(parent);
       if (parentNode) traces.push(trace(parent, node.id, parentNode.x, parentNode.y, node.x, node.y, node.color));
     }
   }
 
-  const points = [
-    hub,
-    ...nodes.map(node => ({ x: node.x, y: node.y })),
-    ...bucketRoots.map(root => ({ x: root.x, y: root.y })),
-    ...labelPlaques.map(plaque => ({ x: plaque.x, y: plaque.y }))
-  ];
-  const minX = Math.min(...points.map(point => point.x));
-  const minY = Math.min(...points.map(point => point.y));
-  const maxX = Math.max(...points.map(point => point.x));
-  const maxY = Math.max(...points.map(point => point.y));
-
   return {
-    width: Math.max(1, maxX - Math.min(0, minX) + contentPad * 2),
-    height: Math.max(1, maxY - Math.min(0, minY) + contentPad * 2),
+    width: Math.max(1, maxX + contentPad),
+    height: Math.max(1, maxY + contentPad),
+    viewBoxX: 0,
+    viewBoxY: 0,
+    offsetX,
+    offsetY,
+    hub: atlasHub,
     nodes,
-    bucketRoots,
+    categoryAnchors,
     labelPlaques,
     traces
   };
+}
+
+function hubForPath(path: MaterialAtlasPathModel): MaterialGraphHub {
+  return path.path === 'UNSTAINED'
+    ? { id: 'atlas-hub', label: 'Still Atlas', x: path.hubLabelX, y: path.hubLabelY, color: '0xFF80B0A0' }
+    : { id: 'atlas-hub', label: 'Blood Atlas', x: path.hubLabelX, y: path.hubLabelY, color: '0xFFCC6644' };
+}
+
+export function materialModelPositionFromRendered(
+  layout: Pick<MaterialGraphLayout, 'offsetX' | 'offsetY'>,
+  rendered: { x: number; y: number }
+): { x: number; y: number } {
+  return {
+    x: rendered.x - layout.offsetX,
+    y: rendered.y - layout.offsetY
+  };
+}
+
+export function alignMaterialPositionToNodes(
+  position: { x: number; y: number },
+  nodes: Array<Pick<MaterialGraphNode, 'id' | 'x' | 'y'>>,
+  selfId: string,
+  tolerance: number | { x: number; y: number } = 10
+): { x: number; y: number } {
+  const toleranceX = typeof tolerance === 'number' ? tolerance : Math.max(0, tolerance.x);
+  const toleranceY = typeof tolerance === 'number' ? tolerance : Math.max(0, tolerance.y);
+  let alignedX = position.x;
+  let alignedY = position.y;
+  let bestXDistance = toleranceX + 1;
+  let bestYDistance = toleranceY + 1;
+
+  for (const node of nodes) {
+    if (node.id === selfId) continue;
+    const dx = Math.abs(node.x - position.x);
+    const dy = Math.abs(node.y - position.y);
+    if (dx <= toleranceX && dx < bestXDistance) {
+      alignedX = node.x;
+      bestXDistance = dx;
+    }
+    if (dy <= toleranceY && dy < bestYDistance) {
+      alignedY = node.y;
+      bestYDistance = dy;
+    }
+  }
+
+  return { x: alignedX, y: alignedY };
 }
 
 export function materialPositionFromDrag(request: MaterialDragRequest): { x: number; y: number } {
@@ -155,14 +234,13 @@ export function sanitizeMaterialParents(selfId: string, parentIds: string[], kno
   return sanitized;
 }
 
-function autoLayoutBucket(entries: MaterialAtlasEntryModel[], bucket: MaterialAtlasPathModel['buckets'][number]): Map<string, { x: number; y: number }> {
+function autoLayoutBucket(
+  entries: MaterialAtlasEntryModel[],
+  bucket: MaterialAtlasPathModel['buckets'][number],
+  hub: { x: number; y: number }
+): Map<string, { x: number; y: number }> {
   const positions = new Map<string, { x: number; y: number }>();
-  const root = entries.find(entry => entry.id === bucket.rootMaterialId);
-  if (root) {
-    positions.set(root.id, { x: bucket.centerX, y: bucket.centerY });
-  }
-
-  const branchEntries = root ? entries.filter(entry => entry.id !== root.id) : entries;
+  const branchEntries = entries;
   const angle = Math.atan2(bucket.centerY - hub.y, bucket.centerX - hub.x);
   const ux = Math.cos(angle);
   const uy = Math.sin(angle);

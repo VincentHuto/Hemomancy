@@ -41,6 +41,7 @@ export function parseMaterialAtlasSpecJava(file: string, source: string): ParseR
   const diagnostics: Diagnostic[] = [];
   const bucketsByPath = new Map<MaterialAtlasPathKey, MaterialAtlasBucketModel[]>(pathOrder.map(path => [path, []]));
   const entriesByPath = new Map<MaterialAtlasPathKey, MaterialAtlasEntryModel[]>(pathOrder.map(path => [path, []]));
+  const hubsByPath = parseHubCoordinates(source);
 
   const bucketBody = methodBodySpan(source, 'registerBuckets');
   if (!bucketBody) {
@@ -72,6 +73,10 @@ export function parseMaterialAtlasSpecJava(file: string, source: string): ParseR
   return {
     paths: pathOrder.map(path => ({
       path,
+      hubX: hubsByPath.get(path)!.x,
+      hubY: hubsByPath.get(path)!.y,
+      hubLabelX: hubsByPath.get(path)!.labelX,
+      hubLabelY: hubsByPath.get(path)!.labelY,
       buckets: bucketsByPath.get(path)!,
       entries: entriesByPath.get(path)!
     })),
@@ -87,8 +92,18 @@ export function renderMaterialAtlasSpecJava(source: string, paths: MaterialAtlas
   const bucketsSpan = methodBodySpan(source, 'registerBuckets');
   if (bucketsSpan) {
     const bucketLines = pathOrder.flatMap(path => (byPath.get(path)?.buckets ?? [])
-      .map(bucket => `\t\tbucket(MaterialAtlasPath.${path}, "${escapeJavaString(bucket.id)}", "${escapeJavaString(bucket.label)}", "${escapeJavaString(bucket.rootMaterialId)}", ${normalizeColorLiteral(bucket.color)}, ${Math.round(bucket.centerX)}, ${Math.round(bucket.centerY)}, ${Math.round(bucket.plaqueX)}, ${Math.round(bucket.plaqueY)});`));
+      .map(bucket => `\t\tbucket(MaterialAtlasPath.${path}, "${escapeJavaString(bucket.id)}", "${escapeJavaString(bucket.label)}", ${normalizeColorLiteral(bucket.color)}, ${Math.round(bucket.centerX)}, ${Math.round(bucket.centerY)}, ${Math.round(bucket.plaqueX)}, ${Math.round(bucket.plaqueY)});`));
     replacements.push({ span: bucketsSpan, value: `\n${bucketLines.join('\n')}\n\t` });
+  }
+
+  for (const path of pathOrder) {
+    const model = byPath.get(path);
+    if (!model) continue;
+    const prefix = path === 'HARBINGER' ? 'HARBINGER' : 'UNSTAINED';
+    pushConstantReplacement(source, replacements, `${prefix}_HUB_X`, Math.round(model.hubX));
+    pushConstantReplacement(source, replacements, `${prefix}_HUB_Y`, Math.round(model.hubY));
+    pushConstantReplacement(source, replacements, `${prefix}_HUB_LABEL_X`, Math.round(model.hubLabelX));
+    pushConstantReplacement(source, replacements, `${prefix}_HUB_LABEL_Y`, Math.round(model.hubLabelY));
   }
 
   for (const path of pathOrder) {
@@ -110,6 +125,42 @@ export function renderMaterialAtlasSpecJava(source: string, paths: MaterialAtlas
     next = next.slice(0, replacement.span.start) + replacement.value + next.slice(replacement.span.end);
   }
   return next;
+}
+
+function parseHubCoordinates(source: string): Map<MaterialAtlasPathKey, { x: number; y: number; labelX: number; labelY: number }> {
+  const legacyX = parseIntConstant(source, 'HUB_X') ?? 520;
+  const legacyY = parseIntConstant(source, 'HUB_Y') ?? 520;
+  const harbingerX = parseIntConstant(source, 'HARBINGER_HUB_X') ?? legacyX;
+  const harbingerY = parseIntConstant(source, 'HARBINGER_HUB_Y') ?? legacyY;
+  const unstainedX = parseIntConstant(source, 'UNSTAINED_HUB_X') ?? legacyX;
+  const unstainedY = parseIntConstant(source, 'UNSTAINED_HUB_Y') ?? legacyY;
+  return new Map<MaterialAtlasPathKey, { x: number; y: number; labelX: number; labelY: number }>([
+    ['HARBINGER', {
+      x: harbingerX,
+      y: harbingerY,
+      labelX: parseIntConstant(source, 'HARBINGER_HUB_LABEL_X') ?? harbingerX,
+      labelY: parseIntConstant(source, 'HARBINGER_HUB_LABEL_Y') ?? harbingerY
+    }],
+    ['UNSTAINED', {
+      x: unstainedX,
+      y: unstainedY,
+      labelX: parseIntConstant(source, 'UNSTAINED_HUB_LABEL_X') ?? unstainedX,
+      labelY: parseIntConstant(source, 'UNSTAINED_HUB_LABEL_Y') ?? unstainedY
+    }]
+  ]);
+}
+
+function parseIntConstant(source: string, name: string): number | null {
+  const match = new RegExp(`\\b${name}\\s*=\\s*(-?\\d+)\\s*;`).exec(source);
+  return match ? Number(match[1]) : null;
+}
+
+function pushConstantReplacement(source: string, replacements: Array<{ span: Span; value: string }>, name: string, value: number): void {
+  const pattern = new RegExp(`(\\b${name}\\s*=\\s*)(-?\\d+)(\\s*;)`);
+  const match = pattern.exec(source);
+  if (!match || match.index == null) return;
+  const start = match.index + match[1].length;
+  replacements.push({ span: { start, end: start + match[2].length }, value: String(value) });
 }
 
 export function parseMaterialsDataJava(file: string, source: string): MaterialsDataParseResult {
@@ -263,15 +314,12 @@ function parseBucketCall(text: string): MaterialAtlasBucketModel | null {
   const id = parseStringLiteral(args[1]);
   const label = parseStringLiteral(args[2]);
   if (!pathMatch || !id || label === null) return null;
-  const hasRoot = args.length === 9;
-  const rootMaterialId = hasRoot ? parseStringLiteral(args[3]) : id;
-  if (!rootMaterialId) return null;
-  const offset = hasRoot ? 1 : 0;
+  const hasLegacyRoot = args.length === 9;
+  const offset = hasLegacyRoot ? 1 : 0;
   return {
     path: pathMatch[1] as MaterialAtlasPathKey,
     id,
     label,
-    rootMaterialId,
     color: normalizeColorLiteral(args[3 + offset]),
     centerX: Number(args[4 + offset]),
     centerY: Number(args[5 + offset]),

@@ -38,13 +38,22 @@ public final class MaterialsAtlasMetadataSourceTest {
 		assertContains("atlas entries expose explicit position check", atlasEntry, "hasExplicitPosition()");
 		assertContains("atlas spec keeps auto-layout entry helper", spec, "private static void entry(String materialId");
 		assertContains("atlas spec exposes authored coordinate entry helper", spec, "private static void entryAt(String materialId");
+		assertEquals("atlas spec keeps one entryAt helper to avoid varargs overload ambiguity", 1,
+				countOccurrences(spec,
+						"private static void entryAt(String materialId, MaterialAtlasPath path, String bucketId, MaterialGate gate,"));
+		assertNotContains("atlas spec does not keep primitive entryAt coordinate overload",
+				spec, "int nodeX, int nodeY, String... parentIds");
+		assertContains("atlas spec uses boxed authored coordinates for optional positions",
+				spec, "Integer nodeX, Integer nodeY, String... parentIds");
+		assertNotContains("material buckets are cosmetic and do not carry root material ids",
+				spec, "rootMaterialId");
+		assertNotContains("material bucket record has no root material id",
+				read("src/main/java/com/vincenthuto/hemomancy/client/screen/skilltree/shared/MaterialAtlasBucket.java"),
+				"rootMaterialId");
 
 		Set<String> atlasIds = extractAtlasIds(spec);
 		assertAllCovered("Harbinger material atlas metadata", materialIds(data, "buildBloodEntries"), atlasIds);
 		assertAllCovered("Unstained material atlas metadata", materialIds(data, "buildUnstainedEntries"), atlasIds);
-		assertContains("material buckets declare representative root materials",
-				spec, "rootMaterialId");
-
 		assertContains("materials controller filters through atlas visibility",
 				controller, "MaterialVisibility.NEXT_PREVIEW");
 		assertContains("materials controller keeps selected details unlocked-only",
@@ -53,9 +62,9 @@ public final class MaterialsAtlasMetadataSourceTest {
 				view, "drawAtlasHub");
 		assertContains("materials view renders square category plaques",
 				view, "drawBucketPlaques");
-		assertContains("materials view positions representative root material at bucket origin",
-				view, "isBucketRoot(node)");
-		assertContains("materials view fans non-root nodes away from the representative root",
+		assertNotContains("materials view does not assign representative root nodes",
+				view, "rootNode(");
+		assertContains("materials view fans category nodes around the category anchor",
 				view, "NODE_GAP_Y + row * NODE_GAP_Y");
 		assertContains("materials view prefers authored atlas node coordinates",
 				view, "hasExplicitPosition()");
@@ -76,7 +85,9 @@ public final class MaterialsAtlasMetadataSourceTest {
 		assertContains("atlas trace cache bakes pixels through NativeImage", trace, "NativeImage");
 		assertContains("atlas trace cache uses organic cubic traces", trace, "sampleCubic");
 		assertContains("atlas trace cache colors traces by bucket", trace, "bucket.color()");
-		assertContains("atlas trace cache connects branches to representative root materials",
+		assertContains("atlas trace cache renders explicit material parents",
+				trace, "parentIds()");
+		assertNotContains("atlas trace cache does not connect branches to representative root materials",
 				trace, "rootPositionFor");
 
 		assertContains("reference docs mention veiled next-tier materials",
@@ -133,4 +144,21 @@ public final class MaterialsAtlasMetadataSourceTest {
 			throw new AssertionError(label + " (unexpected '" + unexpected + "')");
 		}
 	}
+
+	private static int countOccurrences(String text, String needle) {
+		int count = 0;
+		int index = 0;
+		while ((index = text.indexOf(needle, index)) >= 0) {
+			count++;
+			index += needle.length();
+		}
+		return count;
+	}
+
+	private static void assertEquals(String label, int expected, int actual) {
+		if (expected != actual) {
+			throw new AssertionError(label + " (expected " + expected + ", got " + actual + ")");
+		}
+	}
+
 }

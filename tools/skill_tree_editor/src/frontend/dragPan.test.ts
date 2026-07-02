@@ -20,7 +20,8 @@ test('does not start panning from graph nodes or form controls', () => {
   expect(shouldStartDragPan(element(null))).toBe(true);
   expect(shouldStartDragPan(element('skill-node'))).toBe(false);
   expect(shouldStartDragPan(element('material-node'))).toBe(false);
-  expect(shouldStartDragPan(element('bucket-root'))).toBe(false);
+  expect(shouldStartDragPan(element('atlas-hub'))).toBe(false);
+  expect(shouldStartDragPan(element('category-anchor'))).toBe(false);
   expect(shouldStartDragPan(element('label-plaque'))).toBe(false);
   expect(shouldStartDragPan(element('button'))).toBe(false);
 });

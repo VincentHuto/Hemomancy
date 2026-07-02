@@ -34,7 +34,6 @@ final class MaterialAtlasTraceLayerCache {
 
 	void rebuildIfNeeded(List<MaterialAtlasNode> nodes,
 			Map<MaterialAtlasNode, int[]> nodePositions,
-			Iterable<MaterialAtlasBucket> buckets,
 			int contentW,
 			int contentH,
 			int hubX,
@@ -50,18 +49,6 @@ final class MaterialAtlasTraceLayerCache {
 		NativeImage image = new NativeImage(textureW, textureH, false);
 		clearImage(image);
 
-		for (MaterialAtlasBucket bucket : buckets) {
-			if (!hasBucketNode(nodes, bucket)) {
-				continue;
-			}
-			int[] root = rootPositionFor(bucket.rootMaterialId(), nodes, nodePositions);
-			if (root == null) {
-				root = new int[] {bucket.centerX(), bucket.centerY()};
-			}
-			bakeConnection(image, hubX, hubY, root[0], root[1],
-					withAlpha(bucket.color(), 72), hubX, hubY);
-		}
-
 		for (MaterialAtlasNode node : sortedNodes(nodes)) {
 			int[] target = nodePositions.get(node);
 			if (target == null) {
@@ -69,25 +56,10 @@ final class MaterialAtlasTraceLayerCache {
 			}
 			MaterialAtlasBucket bucket = node.atlasEntry().bucket();
 			int alpha = node.visibility() == MaterialVisibility.NEXT_PREVIEW ? 76 : 136;
-			if (isBucketRoot(node)) {
-				continue;
-			}
-			if (node.atlasEntry().parentIds().isEmpty()) {
-				int[] root = rootPositionFor(bucket.rootMaterialId(), nodes, nodePositions);
-				if (root == null) {
-					root = new int[] {bucket.centerX(), bucket.centerY()};
-				}
-				bakeConnection(image, root[0], root[1], target[0], target[1],
-						withAlpha(bucket.color(), alpha), hubX, hubY);
-				continue;
-			}
 			for (String parentId : node.atlasEntry().parentIds()) {
 				int[] parent = positionFor(parentId, nodes, nodePositions);
 				if (parent == null) {
-					parent = rootPositionFor(bucket.rootMaterialId(), nodes, nodePositions);
-				}
-				if (parent == null) {
-					parent = new int[] {bucket.centerX(), bucket.centerY()};
+					continue;
 				}
 				bakeConnection(image, parent[0], parent[1], target[0], target[1],
 						withAlpha(bucket.color(), alpha), hubX, hubY);
@@ -149,18 +121,10 @@ final class MaterialAtlasTraceLayerCache {
 			out.append('|').append(node.entry().name())
 					.append('@').append(pos[0]).append(',').append(pos[1])
 					.append(':').append(node.visibility().name())
-					.append(':').append(node.atlasEntry().bucket().id());
+					.append(':').append(node.atlasEntry().bucket().id())
+					.append(':').append(String.join(",", node.atlasEntry().parentIds()));
 		}
 		return out.toString();
-	}
-
-	private static boolean hasBucketNode(List<MaterialAtlasNode> nodes, MaterialAtlasBucket bucket) {
-		for (MaterialAtlasNode node : nodes) {
-			if (node.atlasEntry().bucket().id().equals(bucket.id())) {
-				return true;
-			}
-		}
-		return false;
 	}
 
 	private static int[] positionFor(String materialId, List<MaterialAtlasNode> nodes,
@@ -171,15 +135,6 @@ final class MaterialAtlasTraceLayerCache {
 			}
 		}
 		return null;
-	}
-
-	private static int[] rootPositionFor(String rootMaterialId, List<MaterialAtlasNode> nodes,
-			Map<MaterialAtlasNode, int[]> nodePositions) {
-		return positionFor(rootMaterialId, nodes, nodePositions);
-	}
-
-	private static boolean isBucketRoot(MaterialAtlasNode node) {
-		return node.entry().name().equals(node.atlasEntry().bucket().rootMaterialId());
 	}
 
 	private static List<MaterialAtlasNode> sortedNodes(List<MaterialAtlasNode> nodes) {

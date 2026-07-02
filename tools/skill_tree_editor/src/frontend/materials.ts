@@ -12,16 +12,20 @@ import type {
 } from '../shared/types';
 import {
   layoutMaterialAtlasPath,
+  alignMaterialPositionToNodes,
+  materialModelPositionFromRendered,
   materialPositionFromDrag,
   sanitizeMaterialParents,
   type MaterialGraphLayout
 } from './materialsGraph';
+import { beginConnectionDrag, finishConnectionDrag, type ConnectionDragState } from './connectionEditing';
 import { beginDragPan, type DragPanState, shouldStartDragPan, updateDragPan } from './dragPan';
+import { captureGraphViewport, restoreGraphViewport, type GraphViewport } from './viewportPreservation';
 import { clampZoom, zoomScrollAnchor } from './viewportZoom';
 import './styles.css';
 
 type ViewTab = 'graph' | 'validation' | 'diff';
-type SelectionKind = 'material' | 'bucket-root' | 'label-plaque' | 'create-entry';
+type SelectionKind = 'material' | 'category-anchor' | 'label-plaque' | 'atlas-hub' | 'create-entry';
 
 interface Selection {
   kind: SelectionKind;
@@ -34,6 +38,31 @@ interface PositionChange {
   before: { x: number; y: number };
   after: { x: number; y: number };
 }
+
+interface BucketChange {
+  kind: 'bucket-change';
+  id: string;
+  beforeBucketId: string;
+  afterBucketId: string;
+}
+
+interface ParentChange {
+  kind: 'parent-change';
+  id: string;
+  beforeParentIds: string[];
+  afterParentIds: string[];
+}
+
+interface AutoPositionChange {
+  kind: 'auto-position-change';
+  id: string;
+  beforeNodeX: number | null;
+  beforeNodeY: number | null;
+  afterNodeX: number | null;
+  afterNodeY: number | null;
+}
+
+type HistoryChange = PositionChange | BucketChange | ParentChange | AutoPositionChange;
 
 interface DragState {
   kind: Exclude<SelectionKind, 'create-entry'>;
@@ -57,11 +86,17 @@ let preview: PreviewResult | null = null;
 let statusText = 'Loading material atlas...';
 let isBusy = false;
 let snapToGrid = true;
+let alignToNodes = true;
+let alignToleranceX = 10;
+let alignToleranceY = 10;
 let graphZoom = 1;
 let dragState: DragState | null = null;
 let dragPan: DragPanState | null = null;
-let undoStack: PositionChange[] = [];
-let redoStack: PositionChange[] = [];
+let connectionState: ConnectionDragState | null = null;
+let connectionSource: { x: number; y: number } | null = null;
+let connectionPointerId: number | null = null;
+let undoStack: HistoryChange[] = [];
+let redoStack: HistoryChange[] = [];
 let lastLayout: MaterialGraphLayout | null = null;
 
 const appRoot = document.querySelector<HTMLDivElement>('#app');
@@ -145,7 +180,12 @@ function render(): void {
             <button data-action="undo-move" title="Undo move (Ctrl+Z)" ${!undoStack.length || isBusy ? 'disabled' : ''}>Undo</button>
             <button data-action="redo-move" title="Redo move (Ctrl+Y or Ctrl+Shift+Z)" ${!redoStack.length || isBusy ? 'disabled' : ''}>Redo</button>
           </div>
-          <label class="snap-toggle"><input type="checkbox" data-action="snap-grid" ${snapToGrid ? 'checked' : ''}/> Snap</label>
+          <div class="snap-controls">
+            <label class="snap-toggle"><input type="checkbox" data-action="snap-grid" ${snapToGrid ? 'checked' : ''}/> Snap</label>
+            <label class="snap-toggle"><input type="checkbox" data-action="align-nodes" ${alignToNodes ? 'checked' : ''}/> Align</label>
+            <label class="snap-distance">X <input type="number" min="0" max="64" step="1" data-action="align-tolerance-x" value="${alignToleranceX}" title="Horizontal alignment tolerance" /></label>
+            <label class="snap-distance">Y <input type="number" min="0" max="64" step="1" data-action="align-tolerance-y" value="${alignToleranceY}" title="Vertical alignment tolerance" /></label>
+          </div>
           <div class="status">${escapeHtml(statusText)}</div>
         </header>
         <section class="content">
@@ -157,6 +197,23 @@ function render(): void {
   `;
 
   wireEvents();
+}
+
+function renderPreservingGraphViewport(viewport: GraphViewport | null = captureCurrentGraphViewport()): void {
+  render();
+  if (!viewport) return;
+  restoreCurrentGraphViewport(viewport);
+  requestAnimationFrame(() => restoreCurrentGraphViewport(viewport));
+}
+
+function captureCurrentGraphViewport(): GraphViewport | null {
+  const scroller = app.querySelector<HTMLElement>('.graph-scroll');
+  return scroller ? captureGraphViewport(scroller) : null;
+}
+
+function restoreCurrentGraphViewport(viewport: GraphViewport): void {
+  const scroller = app.querySelector<HTMLElement>('.graph-scroll');
+  if (scroller) restoreGraphViewport(scroller, viewport);
 }
 
 function renderTab(): string {
@@ -191,10 +248,10 @@ function renderGraph(): string {
             <path d="M 172 -18 C 142 44, 222 76, 184 154" class="vein-line vein-line-faint"></path>
           </pattern>
         </defs>
-        <rect width="${layout.width}" height="${layout.height}" fill="url(#bloodGlow)"></rect>
-        <rect width="${layout.width}" height="${layout.height}" fill="url(#veinPattern)" opacity="0.5"></rect>
+        <rect x="0" y="0" width="${layout.width}" height="${layout.height}" fill="url(#bloodGlow)"></rect>
+        <rect x="0" y="0" width="${layout.width}" height="${layout.height}" fill="url(#veinPattern)" opacity="0.5"></rect>
         <g class="edges">${layout.traces.map(renderTrace).join('')}</g>
-        <g class="bucket-roots">${layout.bucketRoots.map(renderBucketRoot).join('')}</g>
+        <g class="atlas-hub-layer">${renderAtlasHub(layout.hub)}</g>
         <g class="label-plaques">${layout.labelPlaques.map(renderLabelPlaque).join('')}</g>
         <g class="nodes">${layout.nodes.map(renderMaterialNode).join('')}</g>
       </svg>
@@ -206,12 +263,11 @@ function renderTrace(trace: MaterialGraphLayout['traces'][number]): string {
   return `<path class="edge wire-edge atlas-trace" data-trace-from="${escapeAttr(trace.fromId)}" data-trace-to="${escapeAttr(trace.toId)}" style="stroke:${escapeAttr(colorToCss(trace.color))}" d="${escapeAttr(trace.path)}"></path>`;
 }
 
-function renderBucketRoot(root: MaterialGraphLayout['bucketRoots'][number]): string {
-  const selected = selection.kind === 'bucket-root' && selection.id === root.id ? 'selected' : '';
-  return `<g class="bucket-root ${selected}" data-select-kind="bucket-root" data-select-id="${escapeAttr(root.id)}" transform="translate(${root.x} ${root.y})">
-    <rect x="-15" y="-15" width="30" height="30" class="bucket-root-core" style="stroke:${escapeAttr(colorToCss(root.color))}"></rect>
-    <line x1="-22" y1="0" x2="22" y2="0" style="stroke:${escapeAttr(colorToCss(root.color))}"></line>
-    <line x1="0" y1="-22" x2="0" y2="22" style="stroke:${escapeAttr(colorToCss(root.color))}"></line>
+function renderAtlasHub(hub: MaterialGraphLayout['hub']): string {
+  const selected = selection.kind === 'atlas-hub' ? 'selected' : '';
+  return `<g class="atlas-hub ${selected}" data-select-kind="atlas-hub" data-select-id="${escapeAttr(activePath)}" transform="translate(${hub.x} ${hub.y})">
+    <rect x="-22" y="-22" width="44" height="44" class="atlas-hub-box" style="stroke:${escapeAttr(colorToCss(hub.color))}"></rect>
+    <text x="0" y="3" text-anchor="middle" style="fill:${escapeAttr(colorToCss(hub.color))}">${escapeHtml(hub.label)}</text>
   </g>`;
 }
 
@@ -228,17 +284,19 @@ function renderMaterialNode(node: MaterialGraphLayout['nodes'][number]): string 
   const selected = selection.kind === 'material' && selection.id === node.id ? 'selected' : '';
   const label = node.entry.catalog?.displayName ?? 'Unknown material';
   return `<g class="material-node ${selected}" data-select-kind="material" data-select-id="${escapeAttr(node.id)}" transform="translate(${node.x} ${node.y})">
-    <rect class="node-glow" x="-23" y="-23" width="46" height="46" style="stroke:${escapeAttr(colorToCss(node.color))}"></rect>
-    <rect class="node-frame" x="-18" y="-18" width="36" height="36" style="stroke:${escapeAttr(colorToCss(node.color))}"></rect>
-    <rect class="node-core" x="-12" y="-12" width="24" height="24"></rect>
-    <image href="${escapeAttr(node.iconUrl)}" x="-10" y="-10" width="20" height="20" preserveAspectRatio="xMidYMid meet"></image>
+    <rect class="node-hit" x="-20" y="-20" width="40" height="40"></rect>
+    <rect class="node-glow" x="-15" y="-15" width="30" height="30" style="stroke:${escapeAttr(colorToCss(node.color))}"></rect>
+    <rect class="node-frame" x="-13" y="-13" width="26" height="26" style="stroke:${escapeAttr(colorToCss(node.color))}"></rect>
+    <rect class="node-core" x="-9" y="-9" width="18" height="18"></rect>
+    <image href="${escapeAttr(node.iconUrl)}" x="-8" y="-8" width="16" height="16" preserveAspectRatio="xMidYMid meet"></image>
     <title>${escapeHtml(label)}</title>
   </g>`;
 }
 
 function renderInspector(): string {
   if (selection.kind === 'create-entry') return renderCreateEntryForm();
-  if (selection.kind === 'bucket-root' || selection.kind === 'label-plaque') {
+  if (selection.kind === 'atlas-hub') return renderHubInspector();
+  if (selection.kind === 'category-anchor' || selection.kind === 'label-plaque') {
     const bucket = selectedBucket();
     return bucket ? renderBucketInspector(bucket) : '<div class="empty">No bucket selected.</div>';
   }
@@ -246,12 +304,30 @@ function renderInspector(): string {
   return entry ? renderMaterialInspector(entry) : '<div class="empty">No material selected.</div>';
 }
 
+function renderHubInspector(): string {
+  const path = currentPath();
+  const label = path.path === 'UNSTAINED' ? 'Still Atlas' : 'Blood Atlas';
+  return `<form class="editor-form">
+    <div class="form-heading">
+      <div>
+        <h2>${escapeHtml(label)}</h2>
+        <p>${escapeHtml(path.path)} atlas hub</p>
+      </div>
+      <div class="icon-chip">hub</div>
+    </div>
+    <div class="grid2">
+      <label>Label X<input type="number" data-path-edit="hubLabelX" value="${path.hubLabelX}" /></label>
+      <label>Label Y<input type="number" data-path-edit="hubLabelY" value="${path.hubLabelY}" /></label>
+    </div>
+  </form>`;
+}
+
 function renderBucketInspector(bucket: MaterialAtlasBucketModel): string {
   return `<form class="editor-form">
     <div class="form-heading">
       <div>
         <h2>${escapeHtml(bucket.label)}</h2>
-        <p>${selection.kind === 'label-plaque' ? 'Category label plaque' : 'Bucket root'} - ${escapeHtml(bucket.id)}</p>
+        <p>${selection.kind === 'label-plaque' ? 'Category label plaque' : 'Category anchor'} - ${escapeHtml(bucket.id)}</p>
       </div>
       <div class="icon-chip">${escapeHtml(colorToCss(bucket.color))}</div>
     </div>
@@ -268,11 +344,16 @@ function renderBucketInspector(bucket: MaterialAtlasBucketModel): string {
 
 function renderMaterialInspector(entry: MaterialAtlasEntryModel): string {
   const catalog = ensureCatalog(entry);
-  const knownIds = currentPath().entries.map(candidate => candidate.id);
-  const parentOptions = knownIds
-    .filter(id => id !== entry.id)
-    .map(id => `<option value="${escapeAttr(id)}">${escapeHtml(id)}</option>`)
-    .join('');
+  const parentOptions = parentOptionsFor(entry);
+  const parentLabels = new Map(currentPath().entries.map(candidate => [
+    candidate.id,
+    candidate.catalog?.displayName ?? labelize(candidate.id)
+  ] as const));
+  const parentList = entry.parentIds.length
+    ? entry.parentIds.map(parentId => `<button type="button" class="parent-pill" data-action="remove-parent" data-parent-id="${escapeAttr(parentId)}">
+        <span>${escapeHtml(parentLabels.get(parentId) ?? parentId)}</span><b>x</b>
+      </button>`).join('')
+    : '<span class="parent-empty">None</span>';
   return `<form class="editor-form">
     <div class="form-heading">
       <div>
@@ -301,7 +382,7 @@ function renderMaterialInspector(entry: MaterialAtlasEntryModel): string {
     </div>
     <div class="parent-editor">
       <span class="field-label">Parents</span>
-      <textarea data-entry-edit="parentIds" rows="3">${escapeHtml(entry.parentIds.join(', '))}</textarea>
+      <div class="parent-list">${parentList}</div>
       <label>Add parent<select data-action="add-parent">${'<option value="">Add parent...</option>' + parentOptions}</select></label>
     </div>
     <div class="form-actions">
@@ -389,14 +470,28 @@ function wireEvents(): void {
         kind: element.dataset.selectKind as SelectionKind,
         id: element.dataset.selectId ?? ''
       };
-      render();
+      renderPreservingGraphViewport(captureCurrentGraphViewport());
     });
   }
   app.querySelector<HTMLInputElement>('input[data-action="snap-grid"]')?.addEventListener('change', event => {
     snapToGrid = (event.currentTarget as HTMLInputElement).checked;
   });
+  app.querySelector<HTMLInputElement>('input[data-action="align-nodes"]')?.addEventListener('change', event => {
+    alignToNodes = (event.currentTarget as HTMLInputElement).checked;
+  });
+  app.querySelector<HTMLInputElement>('input[data-action="align-tolerance-x"]')?.addEventListener('change', event => {
+    alignToleranceX = clampAlignmentTolerance((event.currentTarget as HTMLInputElement).value);
+    renderPreservingGraphViewport(captureCurrentGraphViewport());
+  });
+  app.querySelector<HTMLInputElement>('input[data-action="align-tolerance-y"]')?.addEventListener('change', event => {
+    alignToleranceY = clampAlignmentTolerance((event.currentTarget as HTMLInputElement).value);
+    renderPreservingGraphViewport(captureCurrentGraphViewport());
+  });
   for (const input of app.querySelectorAll<HTMLInputElement | HTMLSelectElement>('[data-bucket-edit]')) {
     input.addEventListener('change', () => updateBucket(input));
+  }
+  for (const input of app.querySelectorAll<HTMLInputElement>('[data-path-edit]')) {
+    input.addEventListener('change', () => updatePath(input));
   }
   for (const input of app.querySelectorAll<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>('[data-entry-edit]')) {
     input.addEventListener('change', () => updateEntry(input));
@@ -408,6 +503,12 @@ function wireEvents(): void {
     const value = (event.currentTarget as HTMLSelectElement).value;
     if (value) addParent(value);
   });
+  for (const button of app.querySelectorAll<HTMLButtonElement>('button[data-action="remove-parent"]')) {
+    button.addEventListener('click', () => {
+      const parentId = button.dataset.parentId;
+      if (parentId) removeParent(parentId);
+    });
+  }
 
   wireGraphEvents();
 }
@@ -424,7 +525,7 @@ function wireGraphEvents(): void {
   scroller.addEventListener('pointerdown', event => {
     if (event.button !== 0) return;
     const target = event.target as Element | null;
-    const draggable = target?.closest<SVGGElement>('.material-node, .bucket-root, .label-plaque');
+    const draggable = target?.closest<SVGGElement>('.material-node, .label-plaque, .atlas-hub');
     if (!draggable) {
       if (shouldStartDragPan(event.target)) {
         dragPan = beginDragPan(event.clientX, event.clientY, scroller.scrollLeft, scroller.scrollTop);
@@ -439,6 +540,16 @@ function wireGraphEvents(): void {
     const origin = positionFor(kind, id);
     if (!origin) return;
     selection = { kind, id };
+    if (kind === 'material' && (event.ctrlKey || event.metaKey)) {
+      connectionState = beginConnectionDrag(id);
+      connectionSource = origin;
+      connectionPointerId = event.pointerId;
+      updateConnectionPreview(scroller, connectionSource, graphPointFromPointer(scroller, event));
+      scroller.classList.add('connecting-parent');
+      scroller.setPointerCapture(event.pointerId);
+      event.preventDefault();
+      return;
+    }
     dragState = {
       kind,
       id,
@@ -447,7 +558,7 @@ function wireGraphEvents(): void {
       scrollStart: { x: scroller.scrollLeft, y: scroller.scrollTop },
       origin
     };
-    draggable.setPointerCapture(event.pointerId);
+    scroller.setPointerCapture(event.pointerId);
     event.preventDefault();
   });
   scroller.addEventListener('pointermove', event => {
@@ -457,8 +568,13 @@ function wireGraphEvents(): void {
       scroller.scrollTop = update.scrollTop;
       return;
     }
+    if (connectionState && connectionPointerId === event.pointerId && connectionSource) {
+      updateConnectionPreview(scroller, connectionSource, graphPointFromPointer(scroller, event));
+      event.preventDefault();
+      return;
+    }
     if (!dragState || event.pointerId !== dragState.pointerId) return;
-    const next = materialPositionFromDrag({
+    const dragged = materialPositionFromDrag({
       origin: dragState.origin,
       pointerStart: dragState.pointerStart,
       pointerCurrent: { x: event.clientX, y: event.clientY },
@@ -467,15 +583,40 @@ function wireGraphEvents(): void {
       zoom: graphZoom,
       snap: snapToGrid ? 8 : 1
     });
+    const layout = lastLayout ?? layoutMaterialAtlasPath(currentPath());
+    const next = alignToNodes && dragState.kind === 'material'
+      ? alignMaterialPositionToNodes(dragged, layout.nodes, dragState.id, { x: alignToleranceX, y: alignToleranceY })
+      : dragged;
     setPosition(dragState.kind, dragState.id, next);
-    const element = app.querySelector<SVGGElement>(`[data-select-kind="${dragState.kind}"][data-select-id="${cssEscape(dragState.id)}"]`);
+    const element = app.querySelector<SVGGElement>(draggedGraphElementSelector(dragState.kind, dragState.id));
     element?.setAttribute('transform', `translate(${next.x} ${next.y})`);
+    updateMaterialGraphDomTraces();
+    updatePositionInputs(dragState.kind, dragState.id);
     preview = null;
   });
   const finish = (event: PointerEvent): void => {
+    const viewport = captureGraphViewport(scroller);
     if (dragPan) {
       dragPan = null;
       scroller.classList.remove('panning');
+      return;
+    }
+    if (connectionState && connectionPointerId === event.pointerId) {
+      const rewire = finishConnectionDrag(connectionState, connectionTargetIdAt(event));
+      if (rewire) {
+        const target = currentPath().entries.find(entry => entry.id === rewire.field);
+        if (target) {
+          selection = { kind: 'material', id: target.id };
+          addParentToEntry(target, rewire.parentField, false);
+        }
+      }
+      connectionState = null;
+      connectionSource = null;
+      connectionPointerId = null;
+      removeConnectionPreview(scroller);
+      scroller.classList.remove('connecting-parent');
+      event.preventDefault();
+      renderPreservingGraphViewport(viewport);
       return;
     }
     if (!dragState || event.pointerId !== dragState.pointerId) return;
@@ -486,7 +627,7 @@ function wireGraphEvents(): void {
       statusText = `Moved ${dragState.id}.`;
     }
     dragState = null;
-    render();
+    renderPreservingGraphViewport(viewport);
   };
   scroller.addEventListener('pointerup', finish);
   scroller.addEventListener('pointercancel', finish);
@@ -538,11 +679,29 @@ function updateBucket(input: HTMLInputElement | HTMLSelectElement): void {
   render();
 }
 
-function updateEntry(input: HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement): void {
+function updatePath(input: HTMLInputElement): void {
+  const path = currentPath();
+  const key = input.dataset.pathEdit as 'hubLabelX' | 'hubLabelY';
+  if (key !== 'hubLabelX' && key !== 'hubLabelY') return;
+  path[key] = Number(input.value);
+  preview = null;
+  render();
+}
+
+function updateEntry(input: HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement, shouldRender = true): void {
   const entry = selectedEntry();
   if (!entry) return;
   const key = input.dataset.entryEdit;
-  if (key === 'bucketId') entry.bucketId = input.value;
+  if (key === 'bucketId') {
+    const beforeBucketId = entry.bucketId;
+    const afterBucketId = input.value;
+    if (beforeBucketId !== afterBucketId) {
+      entry.bucketId = afterBucketId;
+      undoStack.push({ kind: 'bucket-change', id: entry.id, beforeBucketId, afterBucketId });
+      redoStack = [];
+      statusText = `Moved ${entry.id} to ${bucketLabel(afterBucketId)}.`;
+    }
+  }
   else if (key === 'gateType') {
     entry.gate = defaultGate(input.value as MaterialGateType);
     ensureCatalog(entry).gate = { ...entry.gate };
@@ -551,11 +710,9 @@ function updateEntry(input: HTMLInputElement | HTMLSelectElement | HTMLTextAreaE
     ensureCatalog(entry).gate = { ...entry.gate };
   } else if (key === 'nodeX' || key === 'nodeY') {
     entry[key] = input.value.trim() ? Number(input.value) : null;
-  } else if (key === 'parentIds') {
-    entry.parentIds = sanitizeMaterialParents(entry.id, input.value.split(','), new Set(currentPath().entries.map(candidate => candidate.id)));
   }
   preview = null;
-  render();
+  if (shouldRender) render();
 }
 
 function updateCatalog(input: HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement): void {
@@ -577,9 +734,59 @@ function updateCatalog(input: HTMLInputElement | HTMLSelectElement | HTMLTextAre
 function addParent(parentId: string): void {
   const entry = selectedEntry();
   if (!entry) return;
-  entry.parentIds = sanitizeMaterialParents(entry.id, [...entry.parentIds, parentId], new Set(currentPath().entries.map(candidate => candidate.id)));
+  addParentToEntry(entry, parentId);
+}
+
+function addParentToEntry(entry: MaterialAtlasEntryModel, parentId: string, shouldRender = true): void {
+  const beforeParentIds = [...entry.parentIds];
+  const afterParentIds = sanitizeMaterialParents(entry.id, [...entry.parentIds, parentId], new Set(currentPath().entries.map(candidate => candidate.id)));
+  if (sameList(beforeParentIds, afterParentIds)) return;
+  entry.parentIds = afterParentIds;
+  undoStack.push({ kind: 'parent-change', id: entry.id, beforeParentIds, afterParentIds: [...afterParentIds] });
+  redoStack = [];
+  statusText = `Added ${parentId} as a parent of ${entry.id}.`;
   preview = null;
-  render();
+  if (shouldRender) renderPreservingGraphViewport(captureCurrentGraphViewport());
+}
+
+function removeParent(parentId: string): void {
+  const entry = selectedEntry();
+  if (!entry) return;
+  const beforeParentIds = [...entry.parentIds];
+  const afterParentIds = beforeParentIds.filter(candidate => candidate !== parentId);
+  if (sameList(beforeParentIds, afterParentIds)) return;
+  entry.parentIds = afterParentIds;
+  undoStack.push({ kind: 'parent-change', id: entry.id, beforeParentIds, afterParentIds: [...afterParentIds] });
+  redoStack = [];
+  statusText = `Removed ${parentId} from ${entry.id}.`;
+  preview = null;
+  renderPreservingGraphViewport(captureCurrentGraphViewport());
+}
+
+function parentOptionsFor(entry: MaterialAtlasEntryModel): string {
+  const path = currentPath();
+  const existingParents = new Set(entry.parentIds);
+  const currentBucketIds = new Set(path.entries
+    .filter(candidate => candidate.bucketId === entry.bucketId)
+    .map(candidate => candidate.id));
+  const ordered = path.entries
+    .filter(candidate => candidate.id !== entry.id && !existingParents.has(candidate.id))
+    .slice()
+    .sort((a, b) => parentSortRank(a, currentBucketIds) - parentSortRank(b, currentBucketIds)
+      || a.order - b.order
+      || a.id.localeCompare(b.id));
+  return ordered.map(candidate => {
+    const suffix = candidate.bucketId === entry.bucketId
+        ? ' - same bucket'
+        : '';
+    const label = `${candidate.catalog?.displayName ?? labelize(candidate.id)} (${candidate.id})${suffix}`;
+    return `<option value="${escapeAttr(candidate.id)}">${escapeHtml(label)}</option>`;
+  }).join('');
+}
+
+function parentSortRank(entry: MaterialAtlasEntryModel, currentBucketIds: Set<string>): number {
+  if (currentBucketIds.has(entry.id)) return 0;
+  return 1;
 }
 
 function createMaterial(): void {
@@ -682,73 +889,163 @@ async function applyPreviewChanges(): Promise<void> {
 function undoMovement(): void {
   const change = undoStack.pop();
   if (!change) return;
-  setPosition(change.kind, change.id, change.before);
+  if (change.kind === 'bucket-change') {
+    setEntryBucket(change.id, change.beforeBucketId);
+    statusText = `Undid bucket change for ${change.id}.`;
+  } else if (change.kind === 'parent-change') {
+    setEntryParents(change.id, change.beforeParentIds);
+    statusText = `Undid parent change for ${change.id}.`;
+  } else if (change.kind === 'auto-position-change') {
+    setEntryNodePosition(change.id, change.beforeNodeX, change.beforeNodeY);
+    statusText = `Undid auto position for ${change.id}.`;
+  } else {
+    setPosition(change.kind, change.id, change.before);
+    statusText = `Undid move for ${change.id}.`;
+  }
   redoStack.push(change);
   preview = null;
-  statusText = `Undid move for ${change.id}.`;
   render();
 }
 
 function redoMovement(): void {
   const change = redoStack.pop();
   if (!change) return;
-  setPosition(change.kind, change.id, change.after);
+  if (change.kind === 'bucket-change') {
+    setEntryBucket(change.id, change.afterBucketId);
+    statusText = `Redid bucket change for ${change.id}.`;
+  } else if (change.kind === 'parent-change') {
+    setEntryParents(change.id, change.afterParentIds);
+    statusText = `Redid parent change for ${change.id}.`;
+  } else if (change.kind === 'auto-position-change') {
+    setEntryNodePosition(change.id, change.afterNodeX, change.afterNodeY);
+    statusText = `Redid auto position for ${change.id}.`;
+  } else {
+    setPosition(change.kind, change.id, change.after);
+    statusText = `Redid move for ${change.id}.`;
+  }
   undoStack.push(change);
   preview = null;
-  statusText = `Redid move for ${change.id}.`;
   render();
 }
 
 function clearNodePosition(): void {
   const entry = selectedEntry();
   if (!entry) return;
+  if (entry.nodeX === null && entry.nodeY === null) return;
+  const beforeNodeX = entry.nodeX;
+  const beforeNodeY = entry.nodeY;
   entry.nodeX = null;
   entry.nodeY = null;
+  undoStack.push({
+    kind: 'auto-position-change',
+    id: entry.id,
+    beforeNodeX,
+    beforeNodeY,
+    afterNodeX: null,
+    afterNodeY: null
+  });
+  redoStack = [];
+  statusText = `Using auto position for ${entry.id}.`;
   preview = null;
   render();
 }
 
 function positionFor(kind: Exclude<SelectionKind, 'create-entry'>, id: string): { x: number; y: number } | null {
+  if (kind === 'atlas-hub') {
+    const path = currentPath();
+    return { x: path.hubLabelX, y: path.hubLabelY };
+  }
   if (kind === 'material') {
-    const entry = currentPath().entries.find(candidate => candidate.id === id);
-    if (!entry) return null;
-    const rootBucket = currentPath().buckets.find(bucket => bucket.id === entry.bucketId && bucket.rootMaterialId === entry.id);
-    if (rootBucket) return { x: rootBucket.centerX, y: rootBucket.centerY };
     const node = (lastLayout ?? layoutMaterialAtlasPath(currentPath())).nodes.find(candidate => candidate.id === id);
-    return { x: entry.nodeX ?? node?.x ?? 0, y: entry.nodeY ?? node?.y ?? 0 };
+    return node ? { x: node.x, y: node.y } : null;
   }
   const bucket = currentPath().buckets.find(candidate => candidate.id === id);
   if (!bucket) return null;
-  return kind === 'bucket-root'
+  return kind === 'category-anchor'
     ? { x: bucket.centerX, y: bucket.centerY }
     : { x: bucket.plaqueX, y: bucket.plaqueY };
 }
 
 function setPosition(kind: Exclude<SelectionKind, 'create-entry'>, id: string, position: { x: number; y: number }): void {
+  if (kind === 'atlas-hub') {
+    const path = currentPath();
+    path.hubLabelX = position.x;
+    path.hubLabelY = position.y;
+    return;
+  }
   if (kind === 'material') {
     const entry = currentPath().entries.find(candidate => candidate.id === id);
-    const rootBucket = entry ? currentPath().buckets.find(bucket => bucket.id === entry.bucketId && bucket.rootMaterialId === entry.id) : undefined;
-    if (entry && rootBucket) {
-      rootBucket.centerX = position.x;
-      rootBucket.centerY = position.y;
-      entry.nodeX = null;
-      entry.nodeY = null;
-      return;
-    }
     if (entry) {
-      entry.nodeX = position.x;
-      entry.nodeY = position.y;
+      const layout = lastLayout ?? layoutMaterialAtlasPath(currentPath());
+      const modelPosition = materialModelPositionFromRendered(layout, position);
+      entry.nodeX = modelPosition.x;
+      entry.nodeY = modelPosition.y;
     }
     return;
   }
   const bucket = currentPath().buckets.find(candidate => candidate.id === id);
   if (!bucket) return;
-  if (kind === 'bucket-root') {
+  if (kind === 'category-anchor') {
     bucket.centerX = position.x;
     bucket.centerY = position.y;
   } else {
     bucket.plaqueX = position.x;
     bucket.plaqueY = position.y;
+  }
+}
+
+function setEntryBucket(id: string, bucketId: string): void {
+  const entry = currentPath().entries.find(candidate => candidate.id === id);
+  if (entry) entry.bucketId = bucketId;
+}
+
+function setEntryNodePosition(id: string, nodeX: number | null, nodeY: number | null): void {
+  const entry = currentPath().entries.find(candidate => candidate.id === id);
+  if (entry) {
+    entry.nodeX = nodeX;
+    entry.nodeY = nodeY;
+  }
+}
+
+function setEntryParents(id: string, parentIds: string[]): void {
+  const entry = currentPath().entries.find(candidate => candidate.id === id);
+  if (entry) entry.parentIds = [...parentIds];
+}
+
+function updateMaterialGraphDomTraces(): void {
+  const edgeGroup = app.querySelector<SVGGElement>('.edges');
+  if (!edgeGroup) return;
+  const layout = layoutMaterialAtlasPath(currentPath());
+  lastLayout = layout;
+  edgeGroup.innerHTML = layout.traces.map(renderTrace).join('');
+}
+
+function updatePositionInputs(kind: Exclude<SelectionKind, 'create-entry'>, id: string): void {
+  if (kind === 'atlas-hub') {
+    const path = currentPath();
+    const hubX = app.querySelector<HTMLInputElement>('[data-path-edit="hubLabelX"]');
+    const hubY = app.querySelector<HTMLInputElement>('[data-path-edit="hubLabelY"]');
+    if (hubX) hubX.value = String(path.hubLabelX);
+    if (hubY) hubY.value = String(path.hubLabelY);
+    return;
+  }
+  if (kind === 'material') {
+    const entry = currentPath().entries.find(candidate => candidate.id === id);
+    if (!entry) return;
+    const nodeX = app.querySelector<HTMLInputElement>('[data-entry-edit="nodeX"]');
+    const nodeY = app.querySelector<HTMLInputElement>('[data-entry-edit="nodeY"]');
+    if (nodeX) nodeX.value = entry.nodeX === null ? '' : String(entry.nodeX);
+    if (nodeY) nodeY.value = entry.nodeY === null ? '' : String(entry.nodeY);
+    return;
+  }
+  const bucket = currentPath().buckets.find(candidate => candidate.id === id);
+  if (!bucket) return;
+  const keys = kind === 'category-anchor'
+    ? ['centerX', 'centerY'] as const
+    : ['plaqueX', 'plaqueY'] as const;
+  for (const key of keys) {
+    const input = app.querySelector<HTMLInputElement>(`[data-bucket-edit="${key}"]`);
+    if (input) input.value = String(bucket[key]);
   }
 }
 
@@ -793,9 +1090,9 @@ function pathButton(path: MaterialAtlasPathModel): string {
 }
 
 function bucketButton(bucket: MaterialAtlasBucketModel): string {
-  const selected = (selection.kind === 'bucket-root' || selection.kind === 'label-plaque') && selection.id === bucket.id ? 'selected' : '';
-  return `<button class="skill-button ${selected}" data-select-kind="bucket-root" data-select-id="${escapeAttr(bucket.id)}">
-    <span><b style="color:${escapeAttr(colorToCss(bucket.color))}">${escapeHtml(bucket.label)}</b><br/><small>bucket root / label plaque</small></span>
+  const selected = (selection.kind === 'category-anchor' || selection.kind === 'label-plaque') && selection.id === bucket.id ? 'selected' : '';
+  return `<button class="skill-button ${selected}" data-select-kind="category-anchor" data-select-id="${escapeAttr(bucket.id)}">
+    <span><b style="color:${escapeAttr(colorToCss(bucket.color))}">${escapeHtml(bucket.label)}</b><br/><small>category anchor / label plaque</small></span>
     <small>${escapeHtml(bucket.id)}</small>
   </button>`;
 }
@@ -818,6 +1115,10 @@ function countBadge(count: number): string {
 
 function bucketOptions(selected: string): string {
   return currentPath().buckets.map(bucket => `<option value="${escapeAttr(bucket.id)}" ${bucket.id === selected ? 'selected' : ''}>${escapeHtml(bucket.label)}</option>`).join('');
+}
+
+function bucketLabel(bucketId: string): string {
+  return currentPath().buckets.find(bucket => bucket.id === bucketId)?.label ?? bucketId;
 }
 
 function gateOptions(selected: MaterialGateType): string {
@@ -898,6 +1199,58 @@ function labelize(value: string): string {
 
 function cssEscape(value: string): string {
   return value.replace(/["\\]/g, '\\$&');
+}
+
+function clampAlignmentTolerance(value: string): number {
+  const parsed = Number(value);
+  if (!Number.isFinite(parsed)) return 0;
+  return Math.max(0, Math.min(64, Math.round(parsed)));
+}
+
+function draggedGraphElementSelector(kind: Exclude<SelectionKind, 'create-entry'>, id: string): string {
+  const selector = `[data-select-kind="${kind}"][data-select-id="${cssEscape(id)}"]`;
+  if (kind === 'material') return `.material-graph .material-node${selector}`;
+  if (kind === 'category-anchor') return `.material-graph .category-anchor${selector}`;
+  if (kind === 'atlas-hub') return `.material-graph .atlas-hub${selector}`;
+  return `.material-graph .label-plaque${selector}`;
+}
+
+function graphPointFromPointer(scroller: HTMLElement, event: PointerEvent): { x: number; y: number } {
+  const rect = scroller.getBoundingClientRect();
+  return {
+    x: (event.clientX - rect.left + scroller.scrollLeft) / graphZoom,
+    y: (event.clientY - rect.top + scroller.scrollTop) / graphZoom
+  };
+}
+
+function updateConnectionPreview(scroller: HTMLElement, from: { x: number; y: number }, to: { x: number; y: number }): void {
+  const svg = scroller.querySelector<SVGSVGElement>('svg.graph');
+  if (!svg) return;
+  let path = svg.querySelector<SVGPathElement>('.connection-preview');
+  if (!path) {
+    path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+    path.setAttribute('class', 'connection-preview');
+    svg.appendChild(path);
+  }
+  path.setAttribute('d', connectionPreviewPath(from, to));
+}
+
+function removeConnectionPreview(scroller: HTMLElement): void {
+  scroller.querySelector('.connection-preview')?.remove();
+}
+
+function connectionPreviewPath(from: { x: number; y: number }, to: { x: number; y: number }): string {
+  const midX = (from.x + to.x) / 2;
+  return `M ${from.x} ${from.y} C ${midX} ${from.y}, ${midX} ${to.y}, ${to.x} ${to.y}`;
+}
+
+function connectionTargetIdAt(event: PointerEvent): string | null {
+  const target = document.elementFromPoint(event.clientX, event.clientY) as Element | null;
+  return target?.closest<SVGGElement>('.material-node[data-select-id]')?.dataset.selectId ?? null;
+}
+
+function sameList(left: string[], right: string[]): boolean {
+  return left.length === right.length && left.every((value, index) => value === right[index]);
 }
 
 function escapeHtml(value: string): string {

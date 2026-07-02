@@ -120,7 +120,6 @@ export interface MaterialAtlasBucketModel {
   path: MaterialAtlasPathKey;
   id: string;
   label: string;
-  rootMaterialId: string;
   color: string;
   centerX: number;
   centerY: number;
@@ -154,6 +153,10 @@ export interface MaterialAtlasEntryModel {
 
 export interface MaterialAtlasPathModel {
   path: MaterialAtlasPathKey;
+  hubX: number;
+  hubY: number;
+  hubLabelX: number;
+  hubLabelY: number;
   buckets: MaterialAtlasBucketModel[];
   entries: MaterialAtlasEntryModel[];
 }

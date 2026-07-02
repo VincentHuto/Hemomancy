@@ -20,6 +20,7 @@ public final class MaterialsTabView {
 	private static final int NODE_GAP_Y = 54;
 	private static final int CONTENT_PAD = 80;
 	private static final int HUB_HALF = 22;
+	private static final float BUCKET_PLAQUE_MIN_ZOOM = 0.28F;
 	private static final int COL_NODE_BG = 0xCC0C0808;
 	private static final int COL_PREVIEW_BG = 0xDD050303;
 	private static final int INFO_PANEL_SHADOW = 0xAA000000;
@@ -44,11 +45,17 @@ public final class MaterialsTabView {
 		LinkedHashMap<String, List<MaterialAtlasNode>> byBucket = groupByBucket(path, nodes);
 		int hubX = MaterialAtlasSpec.hubX(path);
 		int hubY = MaterialAtlasSpec.hubY(path);
+		int hubLabelX = MaterialAtlasSpec.hubLabelX(path);
+		int hubLabelY = MaterialAtlasSpec.hubLabelY(path);
 
 		int minX = hubX - CONTENT_PAD;
 		int minY = hubY - CONTENT_PAD;
 		int maxX = hubX + CONTENT_PAD;
 		int maxY = hubY + CONTENT_PAD;
+		minX = Math.min(minX, hubLabelX - CONTENT_PAD);
+		minY = Math.min(minY, hubLabelY - CONTENT_PAD);
+		maxX = Math.max(maxX, hubLabelX + CONTENT_PAD);
+		maxY = Math.max(maxY, hubLabelY + CONTENT_PAD);
 
 		for (MaterialAtlasBucket bucket : MaterialAtlasSpec.buckets(path)) {
 			List<MaterialAtlasNode> bucketNodes = byBucket.get(bucket.id());
@@ -56,16 +63,7 @@ public final class MaterialsTabView {
 				continue;
 			}
 			bucketNodes.sort(Comparator.comparingInt(n -> n.atlasEntry().order()));
-			MaterialAtlasNode rootNode = rootNode(bucket, bucketNodes);
 			List<MaterialAtlasNode> branchNodes = new ArrayList<>(bucketNodes);
-			if (rootNode != null) {
-				branchNodes.remove(rootNode);
-				positionsOut.put(rootNode, new int[] {bucket.centerX(), bucket.centerY()});
-				minX = Math.min(minX, bucket.centerX() - nodeSize - CONTENT_PAD / 2);
-				minY = Math.min(minY, bucket.centerY() - nodeSize - CONTENT_PAD / 2);
-				maxX = Math.max(maxX, bucket.centerX() + nodeSize + CONTENT_PAD / 2);
-				maxY = Math.max(maxY, bucket.centerY() + nodeSize + CONTENT_PAD / 2);
-			}
 
 			double angle = Math.atan2(bucket.centerY() - hubY, bucket.centerX() - hubX);
 			double ux = Math.cos(angle);
@@ -176,8 +174,8 @@ public final class MaterialsTabView {
 
 	private static void drawAtlasHub(GuiGraphics gfx, Font font, MaterialAtlasPath path,
 			PanZoomState state, int guiLeft, int guiTop) {
-		int cx = state.sx(guiLeft, MaterialAtlasSpec.hubX(path));
-		int cy = state.sy(guiTop, MaterialAtlasSpec.hubY(path));
+		int cx = state.sx(guiLeft, MaterialAtlasSpec.hubLabelX(path));
+		int cy = state.sy(guiTop, MaterialAtlasSpec.hubLabelY(path));
 		int half = Math.max(8, Math.round(HUB_HALF * state.zoom));
 		int bg = (0xCC << 24) | (path.accentColor() & 0x001A1A1A);
 		gfx.fill(cx - half, cy - half, cx + half, cy + half, bg);
@@ -191,7 +189,7 @@ public final class MaterialsTabView {
 
 	private static void drawBucketPlaques(GuiGraphics gfx, Font font, MaterialAtlasPath path,
 			List<MaterialAtlasNode> nodes, PanZoomState state, int guiLeft, int guiTop) {
-		if (state.zoom < 0.42F) {
+		if (state.zoom < BUCKET_PLAQUE_MIN_ZOOM) {
 			return;
 		}
 		Set<String> visibleBuckets = new HashSet<>();
@@ -205,15 +203,13 @@ public final class MaterialsTabView {
 			int x = state.sx(guiLeft, bucket.plaqueX());
 			int y = state.sy(guiTop, bucket.plaqueY());
 			int color = bucket.color();
-			if (state.zoom >= 0.56F) {
-				int textW = font.width(bucket.label());
-				int textX = x - textW / 2;
-				int textY = y - 4;
-				int lineColor = (0xAA << 24) | (color & 0x00FFFFFF);
-				gfx.drawString(font, bucket.label(), textX + 1, textY + 1, 0x99000000, false);
-				gfx.drawString(font, bucket.label(), textX, textY, color, false);
-				gfx.fill(textX, textY + 10, textX + textW, textY + 11, lineColor);
-			}
+			int textW = font.width(bucket.label());
+			int textX = x - textW / 2;
+			int textY = y - 4;
+			int lineColor = (0xAA << 24) | (color & 0x00FFFFFF);
+			gfx.drawString(font, bucket.label(), textX + 1, textY + 1, 0x99000000, false);
+			gfx.drawString(font, bucket.label(), textX, textY, color, false);
+			gfx.fill(textX, textY + 10, textX + textW, textY + 11, lineColor);
 		}
 	}
 
@@ -351,19 +347,6 @@ public final class MaterialsTabView {
 			}
 		}
 		return null;
-	}
-
-	private static MaterialAtlasNode rootNode(MaterialAtlasBucket bucket, List<MaterialAtlasNode> nodes) {
-		for (MaterialAtlasNode node : nodes) {
-			if (isBucketRoot(node)) {
-				return node;
-			}
-		}
-		return null;
-	}
-
-	private static boolean isBucketRoot(MaterialAtlasNode node) {
-		return node.entry().name().equals(node.atlasEntry().bucket().rootMaterialId());
 	}
 
 	private static LinkedHashMap<String, List<MaterialAtlasNode>> groupByBucket(MaterialAtlasPath path,

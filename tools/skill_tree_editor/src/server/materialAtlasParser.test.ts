@@ -3,6 +3,15 @@ import { parseMaterialAtlasSpecJava, parseMaterialsDataJava, renderMaterialAtlas
 const atlasSource = `package example;
 
 public final class MaterialAtlasSpec {
+  private static final int HARBINGER_HUB_X = 686;
+  private static final int HARBINGER_HUB_Y = 617;
+  private static final int HARBINGER_HUB_LABEL_X = 686;
+  private static final int HARBINGER_HUB_LABEL_Y = 617;
+  private static final int UNSTAINED_HUB_X = 495;
+  private static final int UNSTAINED_HUB_Y = 522;
+  private static final int UNSTAINED_HUB_LABEL_X = 495;
+  private static final int UNSTAINED_HUB_LABEL_Y = 522;
+
   static {
     registerBuckets();
     registerHarbingerEntries();
@@ -69,13 +78,24 @@ test('parses atlas bucket coordinates colors entryAt coordinates gates and paren
     path: 'HARBINGER',
     id: 'bloodcraft_core',
     label: 'Bloodcraft Core',
-    rootMaterialId: 'sanguine_formation',
     color: '0xFFD04436',
     centerX: 520,
     centerY: 230,
     plaqueX: 520,
     plaqueY: 170
   });
+  expect(harbinger).toEqual(expect.objectContaining({
+    hubX: 686,
+    hubY: 617,
+    hubLabelX: 686,
+    hubLabelY: 617
+  }));
+  expect(unstained).toEqual(expect.objectContaining({
+    hubX: 495,
+    hubY: 522,
+    hubLabelX: 495,
+    hubLabelY: 522
+  }));
   expect(unstained?.entries.find(entry => entry.id === 'silver_chalice')).toEqual(expect.objectContaining({
     bucketId: 'still_waters_core',
     gate: { type: 'CLARITY', value: 10 },
@@ -94,6 +114,10 @@ test('parses atlas bucket coordinates colors entryAt coordinates gates and paren
 test('renders bucket movement entry coordinates gate edits and parent edits', () => {
   const parsed = parseMaterialAtlasSpecJava('MaterialAtlasSpec.java', atlasSource);
   const harbinger = parsed.paths.find(path => path.path === 'HARBINGER')!;
+  harbinger.hubX = 704;
+  harbinger.hubY = 640;
+  harbinger.hubLabelX = 760;
+  harbinger.hubLabelY = 690;
   harbinger.buckets[0] = { ...harbinger.buckets[0], color: '0xFFDD3344', centerX: 560, centerY: 260, plaqueX: 575, plaqueY: 190 };
   harbinger.entries[1] = {
     ...harbinger.entries[1],
@@ -105,7 +129,12 @@ test('renders bucket movement entry coordinates gate edits and parent edits', ()
 
   const rendered = renderMaterialAtlasSpecJava(atlasSource, parsed.paths);
 
-  expect(rendered).toContain('bucket(MaterialAtlasPath.HARBINGER, "bloodcraft_core", "Bloodcraft Core", "sanguine_formation", 0xFFDD3344, 560, 260, 575, 190);');
+  expect(rendered).toContain('private static final int HARBINGER_HUB_X = 704;');
+  expect(rendered).toContain('private static final int HARBINGER_HUB_Y = 640;');
+  expect(rendered).toContain('private static final int HARBINGER_HUB_LABEL_X = 760;');
+  expect(rendered).toContain('private static final int HARBINGER_HUB_LABEL_Y = 690;');
+  expect(rendered).toContain('bucket(MaterialAtlasPath.HARBINGER, "bloodcraft_core", "Bloodcraft Core", 0xFFDD3344, 560, 260, 575, 190);');
+  expect(rendered).not.toContain('"Bloodcraft Core", "sanguine_formation", 0xFFDD3344');
   expect(rendered).toContain('entryAt("blood_crystal_shard", h, "bloodcraft_core", d(3), 640, 288, "sanguine_formation");');
   expect(rendered).not.toContain('entry("blood_crystal_shard", h, "bloodcraft_core", d(2)');
 });

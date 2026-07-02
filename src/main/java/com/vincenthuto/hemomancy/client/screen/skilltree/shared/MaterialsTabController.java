@@ -107,7 +107,7 @@ public class MaterialsTabController implements IProgressTab {
 
 	@Override
 	public void render(GuiGraphics gfx, ProgressScreenContext ctx, int mx, int my, float partial) {
-		traceCache.rebuildIfNeeded(entries, positions, MaterialAtlasSpec.buckets(path),
+		traceCache.rebuildIfNeeded(entries, positions,
 				contentW, contentH, MaterialAtlasSpec.hubX(path), MaterialAtlasSpec.hubY(path));
 		MaterialsTabView.drawAtlasTrace(traceCache, gfx, ctx, panZoom);
 		MaterialsTabView.drawNodes(gfx, ctx.font(), path,
