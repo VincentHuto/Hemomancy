@@ -154,22 +154,20 @@ public class ScarInit {
 					.withEffect(net.minecraft.world.effect.MobEffects.NIGHT_VISION, 0)
 					.withBloodUpkeep(0.3));
 
-	public static final DeferredHolder<ScarDefinition, ScarDefinition> respergillus =
-			reg("respergillus", () -> fungal(EnumBloodTendency.ANIMUS));
+	public static final DeferredHolder<ScarDefinition, ScarDefinition> rhizovitta_communis =
+			reg("rhizovitta_communis", () -> fungal(EnumBloodTendency.ANIMUS));
 	public static final DeferredHolder<ScarDefinition, ScarDefinition> talaromyces_minus =
 			reg("talaromyces_minus", () -> fungal(EnumBloodTendency.FERRIC));
-	public static final DeferredHolder<ScarDefinition, ScarDefinition> lumina_devorans =
-			reg("lumina_devorans", () -> fungal(EnumBloodTendency.TENEBRIS));
 	public static final DeferredHolder<ScarDefinition, ScarDefinition> noctifly_agaric =
 			reg("noctifly_agaric", () -> fungal(EnumBloodTendency.ANIMUS));
 	public static final DeferredHolder<ScarDefinition, ScarDefinition> antiphonomyces_resonans =
 			reg("antiphonomyces_resonans", () -> fungal(EnumBloodTendency.DUCTILIS));
-	public static final DeferredHolder<ScarDefinition, ScarDefinition> sanguiflora_cadens =
-			reg("sanguiflora_cadens", () -> fungal(EnumBloodTendency.MORTEM));
-	public static final DeferredHolder<ScarDefinition, ScarDefinition> thanomyces_resurgens =
-			reg("thanomyces_resurgens", () -> fungal(EnumBloodTendency.CONGEATIO));
-	public static final DeferredHolder<ScarDefinition, ScarDefinition> anastocordyceps_nexus =
-			reg("anastocordyceps_nexus", () -> fungal(EnumBloodTendency.LUX));
+	public static final DeferredHolder<ScarDefinition, ScarDefinition> putrivora_resolvens =
+			reg("putrivora_resolvens", () -> fungal(EnumBloodTendency.MORTEM));
+	public static final DeferredHolder<ScarDefinition, ScarDefinition> oculiflora_reticularis =
+			reg("oculiflora_reticularis", () -> fungal(EnumBloodTendency.TENEBRIS));
+	public static final DeferredHolder<ScarDefinition, ScarDefinition> cryostroma_perdurans =
+			reg("cryostroma_perdurans", () -> fungal(EnumBloodTendency.CONGEATIO));
 	public static final DeferredHolder<ScarDefinition, ScarDefinition> saprovitta_vestigium =
 			reg("saprovitta_vestigium", () -> fungal(EnumBloodTendency.FLAMMEUS));
 

@@ -15,6 +15,7 @@ public class HemoClientConfig {
 	public static ModConfigSpec.BooleanValue RENDER_MORPHLING_MUTATION_LAYER;
 	public static ModConfigSpec.BooleanValue RENDER_BLOOD_ORB_RENDERER;
 	public static ModConfigSpec.BooleanValue RENDER_FANE_BOUNDARY;
+	public static ModConfigSpec.BooleanValue RENDER_OCULIFLORA_REVEAL;
 	public static ModConfigSpec.EnumValue<LowtideRuinStructureQuality> LOWTIDE_RUIN_STRUCTURE_QUALITY;
 
 	public enum LowtideRuinStructureQuality {
@@ -77,6 +78,10 @@ public class HemoClientConfig {
 		RENDER_FANE_BOUNDARY = CLIENT_BUILDER
 				.comment("Render Founding Fane boundary domes and screen distortion.")
 				.define("renderFaneBoundary", true);
+
+		RENDER_OCULIFLORA_REVEAL = CLIENT_BUILDER
+				.comment("Render Oculiflora Reticularis local network-sight markers.")
+				.define("renderOculifloraReveal", true);
 
 		LOWTIDE_RUIN_STRUCTURE_QUALITY = CLIENT_BUILDER
 				.comment("Controls Mnemonic Lowtide Chamber ruin structure density. HIGH uses the full distant OBJ ruin field, LOW uses fewer OBJ ruin clusters, and OFF disables the ruin structures while keeping the Lowtide sky, lake, and fog.")

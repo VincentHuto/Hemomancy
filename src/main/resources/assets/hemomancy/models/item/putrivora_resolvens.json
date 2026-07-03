@@ -1,6 +1,6 @@
 {
   "parent": "minecraft:item/generated",
   "textures": {
-    "layer0": "hemomancy:item/sanguiflora_cadens"
+    "layer0": "hemomancy:item/putrivora_resolvens"
   }
 }

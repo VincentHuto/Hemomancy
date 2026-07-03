@@ -55,6 +55,7 @@ import com.vincenthuto.hemomancy.client.render.item.MorphicNectarItemDecorator;
 import com.vincenthuto.hemomancy.client.render.item.MorphlingPolypItemRenderer;
 import com.vincenthuto.hemomancy.client.render.item.QliphothSeedItemEntityRenderer;
 import com.vincenthuto.hemomancy.client.render.CrimsonFireRenderer;
+import com.vincenthuto.hemomancy.client.render.scar.OculifloraRevealRenderer;
 import com.vincenthuto.hemomancy.client.render.item.ScarPatternBakedModel;
 import com.vincenthuto.hemomancy.client.render.item.ScarPatternItemColor;
 import com.vincenthuto.hemomancy.client.morphling.MorphlingPlayerPartVisibility;
@@ -511,6 +512,7 @@ public class ClientEvents {
             BlackVeilRenderer.render(event.getPoseStack(), partialTick);
             BloodCraftRingRenderer.render(event.getPoseStack(), partialTick);
             QliphothBloomRenderer.render(event.getPoseStack(), partialTick);
+            OculifloraRevealRenderer.render(event.getPoseStack(), partialTick);
             BloodBallRenderer.render(event.getPoseStack(), partialTick);
             SanguineMonolithShatterRenderer.render(event.getPoseStack(), partialTick);
             PuppeteerThreadRenderer.render(event.getPoseStack(), partialTick);

@@ -8,6 +8,7 @@ public final class BorrowedBloodRulesTest {
 		depositsRespectTheCap();
 		drainsNeverExceedTheReserve();
 		overkillIsOnlyTheWastedSlice();
+		castCoverOnlyRequestsAfterNonBloodGatesPass();
 	}
 
 	private static void depositsRespectTheCap() {
@@ -38,6 +39,15 @@ public final class BorrowedBloodRulesTest {
 		assertDouble("full-health target banks the whole heal", 5.0D,
 				BorrowedBloodRules.overkillHealing(20.0F, 20.0F, 5.0F));
 		assertDouble("conversion constant stays stable", 25.0D, BorrowedBloodRules.BLOOD_PER_OVERKILL_HEALTH);
+	}
+
+	private static void castCoverOnlyRequestsAfterNonBloodGatesPass() {
+		assertDouble("alignment failure never requests borrowed cover", 0.0D,
+				BorrowedBloodRules.castDeficitToCover(false, 10.0D, 50.0D));
+		assertDouble("enough blood needs no borrowed cover", 0.0D,
+				BorrowedBloodRules.castDeficitToCover(true, 55.0D, 50.0D));
+		assertDouble("valid cast requests the exact legacy strict-greater deficit", 41.0D,
+				BorrowedBloodRules.castDeficitToCover(true, 10.0D, 50.0D));
 	}
 
 	private static void assertDouble(String label, double expected, double actual) {

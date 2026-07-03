@@ -29,7 +29,15 @@ public final class PhaseOneUtilityResourceTest {
 	}
 
 	private static void assertDuplicateIncubatorFungalScarsRemoved() {
-		for (String id : new String[] { "respergillus", "talaromyces_minus", "noctifly_agaric", "lumina_devorans" }) {
+		for (String id : new String[] {
+				"rhizovitta_communis",
+				"talaromyces_minus",
+				"noctifly_agaric",
+				"antiphonomyces_resonans",
+				"putrivora_resolvens",
+				"oculiflora_reticularis",
+				"cryostroma_perdurans",
+				"saprovitta_vestigium" }) {
 			Path incubator = DATA.resolve("recipe/incubator/" + id + ".json");
 			if (Files.exists(incubator)) {
 				throw new AssertionError("duplicate incubator fungal scar recipe still exists: " + incubator);

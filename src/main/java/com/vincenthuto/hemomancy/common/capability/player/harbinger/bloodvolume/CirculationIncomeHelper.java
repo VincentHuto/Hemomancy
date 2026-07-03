@@ -5,7 +5,6 @@ import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillPoin
 import com.vincenthuto.hemomancy.common.event.CirculationIncomeRules;
 import com.vincenthuto.hemomancy.config.HemoServerConfig;
 
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.player.Player;
 
 /**
@@ -16,9 +15,8 @@ import net.minecraft.world.entity.player.Player;
  *
  * <p>Callers keep their own capability lookups and sync calls — this helper
  * only decides how much of the requested income fits through the pipe this
- * window, fills that much, and records the usage on the player's persistent
- * data (matching the persistent-data-tag pattern used by ArmorSetBonusHandler
- * cooldowns).</p>
+ * window, fills that much, and records the usage on the player's guardrail
+ * attachment.</p>
  */
 public final class CirculationIncomeHelper {
 
@@ -26,9 +24,6 @@ public final class CirculationIncomeHelper {
 	public enum IncomeChannel {
 		ARMOR, MORPHLING, CRADLE, SCAR, OTHER
 	}
-
-	private static final String WINDOW_START_TAG = "hemomancy:circulation_window_start";
-	private static final String WINDOW_USED_TAG = "hemomancy:circulation_window_used";
 
 	private CirculationIncomeHelper() {
 	}
@@ -56,7 +51,7 @@ public final class CirculationIncomeHelper {
 		}
 
 		long now = player.level().getGameTime();
-		CompoundTag data = player.getPersistentData();
+		PowerGuardrailState state = HemoCapabilityAccess.getPowerGuardrails(player);
 		double bandwidth = CirculationIncomeRules.bandwidthPerWindow(
 				HemoServerConfig.CIRCULATION_BASE_BANDWIDTH.get(),
 				HemoServerConfig.CIRCULATION_BANDWIDTH_PER_DEGREE.get(),
@@ -64,8 +59,8 @@ public final class CirculationIncomeHelper {
 				HemoServerConfig.CIRCULATION_BANDWIDTH_PER_CAPACITY_POINT.get(),
 				SkillPointHelper.getCapacityBonus(player));
 		CirculationIncomeRules.Grant grant = CirculationIncomeRules.grant(requested, now,
-				HemoServerConfig.CIRCULATION_WINDOW_TICKS.get(), data.getLong(WINDOW_START_TAG),
-				data.getDouble(WINDOW_USED_TAG), bandwidth);
+				HemoServerConfig.CIRCULATION_WINDOW_TICKS.get(), state.getCirculationWindowStart(),
+				state.getCirculationWindowUsed(), bandwidth);
 
 		double actual = 0.0D;
 		if (grant.granted() > 0.0D) {
@@ -76,8 +71,8 @@ public final class CirculationIncomeHelper {
 		// Record what actually moved — fill may clamp at max volume, and the
 		// window must never charge for blood that was not delivered (callers
 		// like the cradle decrement their buffers by the returned amount).
-		data.putLong(WINDOW_START_TAG, grant.windowStart());
-		data.putDouble(WINDOW_USED_TAG, grant.usedInWindow() - (grant.granted() - actual));
+		state.setCirculationWindowStart(grant.windowStart());
+		state.setCirculationWindowUsed(grant.usedInWindow() - (grant.granted() - actual));
 		return actual;
 	}
 }

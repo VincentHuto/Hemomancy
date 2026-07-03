@@ -31,6 +31,7 @@ import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodlineDisbandHelper;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodlineSavedData;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
+import com.vincenthuto.hemomancy.common.event.LastRiteHelper;
 import com.vincenthuto.hemomancy.common.event.worldevent.BloodMoonSavedData;
 import com.vincenthuto.hemomancy.common.event.worldevent.FoundingFaneEvents;
 import com.vincenthuto.hemomancy.common.event.worldevent.FaneBoundaryRelation;
@@ -615,6 +616,7 @@ public class HemoCommand {
 		applyMorphlingStage(updated, stage);
 		boolean sourceUpdated = writeBackEquippedMorphlingSource(player, original, updated);
 		cap.setEquippedMorphling(updated);
+		LastRiteHelper.armForMorphling(player, updated);
 		EquippedMorphlingEvents.syncToClient(player);
 		int actualStage = MorphlingItem.getMaturityLevel(updated);
 		source.sendSuccess(() -> Component.literal("Set ")

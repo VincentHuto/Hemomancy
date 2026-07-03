@@ -8,7 +8,6 @@ import com.vincenthuto.hemomancy.common.init.AttributeInit;
 import com.vincenthuto.hemomancy.common.init.EffectInit;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.item.harbinger.bloodline.VasculariumCharmRules;
-import com.vincenthuto.hemomancy.common.item.harbinger.scar.fungal.ThanomycesResurgensItem;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.BloodGourdItem;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.PacketCurvedHornAnimation;

@@ -111,6 +111,8 @@ public class ArmorSetBonusHandler {
 
 		// Marrow Crown artifact: damage bonus attribute modifier
 		updateMarrowCrownDamage(player);
+
+		syncSilentArchonLastRite(player);
 	}
 
 	// â”€â”€â”€â”€â”€ Tick-Based Bonuses (rate-limited) â”€â”€â”€â”€â”€
@@ -129,6 +131,10 @@ public class ArmorSetBonusHandler {
 					syncVolume((ServerPlayer) player, volume);
 				}
 			});
+		}
+
+		if (player.tickCount % HEMATIC_IRON_REGEN_INTERVAL == 0 && !LastRiteHelper.hasArmedSource(player)) {
+			armLegacyLastRiteSource(player);
 		}
 
 		// Marrow Crown: re-check blood threshold periodically (blood level can change without equipment change)
@@ -241,6 +247,25 @@ public class ArmorSetBonusHandler {
 		player.level().getEntitiesOfClass(LivingEntity.class, player.getBoundingBox().inflate(PRISMATIC_FLASH_RANGE),
 				target -> target.isAlive() && target != player && (target == attacker || target instanceof Monster))
 				.forEach(ArmorSetBonusHandler::applyPrismaticFlashEffects);
+	}
+
+	private static void syncSilentArchonLastRite(Player player) {
+		if (hasFullSet(player, EnumModArmorTiers.SILENT_ARCHON)) {
+			LastRiteHelper.arm(player, LastRiteHelper.SILENT_REFUSAL_ID);
+		} else {
+			LastRiteHelper.clearIfArmed(player, LastRiteHelper.SILENT_REFUSAL_ID);
+		}
+	}
+
+	private static void armLegacyLastRiteSource(Player player) {
+		HemoCapabilityAccess.getEquippedMorphling(player).ifPresent(morphCap -> {
+			if (morphCap.hasMorphling()) {
+				LastRiteHelper.armForMorphling(player, morphCap.getEquippedMorphling());
+			}
+		});
+		if (!LastRiteHelper.hasArmedSource(player) && hasFullSet(player, EnumModArmorTiers.SILENT_ARCHON)) {
+			LastRiteHelper.arm(player, LastRiteHelper.SILENT_REFUSAL_ID);
+		}
 	}
 
 	private static void applyPrismaticFlashEffects(LivingEntity target) {

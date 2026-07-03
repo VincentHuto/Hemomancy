@@ -6,11 +6,9 @@ package com.vincenthuto.hemomancy.common.event;
  * (Ink Mantle Reprieve, Last-Light Mantle, Silent Archon refusal, future
  * Cryptobiosis) does the refusing.
  *
- * <p>The armed-source id is recorded on consumption (arm-on-use) so tooling
- * and tooltips can report which rite last fired; within the shared cooldown
- * every source is blocked regardless, which is the doctrine's whole point.
- * A future most-recently-equipped arming pass can tighten canFire further
- * without changing call sites.</p>
+ * <p>The armed-source id is updated when eligible sources are equipped or
+ * changed. Only that most-recently armed source may request the save once the
+ * shared cooldown has elapsed.</p>
  *
  * <p>No Minecraft imports on purpose — adapter is LastRiteHelper.</p>
  */
@@ -29,6 +27,12 @@ public final class LastRiteRules {
 	 */
 	public static boolean canFire(String armedSourceId, String requestSourceId, long now, long sharedCooldownUntil) {
 		if (requestSourceId == null || requestSourceId.isEmpty()) {
+			return false;
+		}
+		if (armedSourceId == null || armedSourceId.isEmpty()) {
+			return false;
+		}
+		if (!armedSourceId.equals(requestSourceId)) {
 			return false;
 		}
 		if (sharedCooldownUntil > now) {

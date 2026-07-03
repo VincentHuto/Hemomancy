@@ -3,6 +3,7 @@ package com.vincenthuto.hemomancy.common.capability.player.harbinger.morphling;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodVolumeEvents;
+import com.vincenthuto.hemomancy.common.event.LastRiteHelper;
 import com.vincenthuto.hemomancy.common.item.harbinger.morphlings.IMorphling;
 import com.vincenthuto.hemomancy.common.network.morphling.SyncEquippedMorphlingPacket;
 import com.vincenthuto.hemomancy.config.HemoServerConfig;
@@ -46,6 +47,11 @@ public class EquippedMorphlingEvents {
 	public static void playerTick(PlayerTickEvent.Post event) {
 		Player player = event.getEntity();
 		if (player.level().isClientSide) return;
+		HemoCapabilityAccess.getEquippedMorphling(player).ifPresent(morphCap -> {
+			if (morphCap.hasMorphling()) {
+				LastRiteHelper.armForMorphlingIfUnarmed(player, morphCap.getEquippedMorphling());
+			}
+		});
 		if (!HemoServerConfig.MORPHLING_PASSIVE_DRAIN_ENABLED.get()) return;
 
 		HemoCapabilityAccess.getEquippedMorphling(player).ifPresent(morphCap -> {
@@ -73,6 +79,7 @@ public class EquippedMorphlingEvents {
 				} else {
 					// Not enough blood â€” unequip the morphling
 					morphCap.clearMorphling();
+					LastRiteHelper.clearMorphlingRites(player);
 					syncToClient((ServerPlayer) player);
 					player.displayClientMessage(
 							Component.literal("Your morphling withers from blood starvation...")

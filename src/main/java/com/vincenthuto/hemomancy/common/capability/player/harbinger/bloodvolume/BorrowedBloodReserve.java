@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume;
 
+import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.event.BorrowedBloodRules;
 import com.vincenthuto.hemomancy.config.HemoServerConfig;
 
@@ -13,18 +14,15 @@ import net.minecraft.world.entity.player.Player;
  * emergency cover when a manipulation cast would otherwise fail for lack of
  * blood (BloodManipulation).
  *
- * <p>Stored on the player's persistent data, matching the tag pattern of the
- * other guardrail helpers.</p>
+ * <p>Stored on the player's guardrail attachment.</p>
  */
 public final class BorrowedBloodReserve {
-
-	private static final String BORROWED_TAG = "hemomancy:borrowed_blood";
 
 	private BorrowedBloodReserve() {
 	}
 
 	public static double get(Player player) {
-		return player == null ? 0.0D : player.getPersistentData().getDouble(BORROWED_TAG);
+		return player == null ? 0.0D : HemoCapabilityAccess.getPowerGuardrails(player).getBorrowedBlood();
 	}
 
 	/** Deposit into the reserve; returns the amount actually accepted. */
@@ -39,7 +37,7 @@ public final class BorrowedBloodReserve {
 		double accepted = BorrowedBloodRules.acceptedDeposit(current, amount,
 				HemoServerConfig.BORROWED_BLOOD_CAP.get());
 		if (accepted > 0.0D) {
-			player.getPersistentData().putDouble(BORROWED_TAG, current + accepted);
+			HemoCapabilityAccess.getPowerGuardrails(player).setBorrowedBlood(current + accepted);
 		}
 		return accepted;
 	}
@@ -52,7 +50,7 @@ public final class BorrowedBloodReserve {
 		double current = get(player);
 		double drained = BorrowedBloodRules.drained(current, requested);
 		if (drained > 0.0D) {
-			player.getPersistentData().putDouble(BORROWED_TAG, current - drained);
+			HemoCapabilityAccess.getPowerGuardrails(player).setBorrowedBlood(current - drained);
 		}
 		return drained;
 	}

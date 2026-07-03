@@ -35,6 +35,13 @@ public final class BorrowedBloodRules {
 		return Math.min(Math.max(0.0D, current), requested);
 	}
 
+	public static double castDeficitToCover(boolean nonBloodGatesPassed, double currentBlood, double effectiveCost) {
+		if (!nonBloodGatesPassed || currentBlood > effectiveCost) {
+			return 0.0D;
+		}
+		return Math.max(0.0D, effectiveCost - currentBlood + 1.0D);
+	}
+
 	/**
 	 * Healing beyond what the target could absorb — the overkill slice of a
 	 * lifesteal heal that would otherwise vanish.

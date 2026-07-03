@@ -800,24 +800,21 @@ public class ItemInit {
 			() -> new ItemScarPattern(new Item.Properties()));
 //    public static final DeferredHolder<Item, Item> scar_binder_upgraded = BASEITEMS.register("scar_binder_upgraded",
 //            () -> new ItemScarBinder("scar_binder_upgraded", 27, Rarity.RARE));
-    public static final DeferredHolder<Item, Item> respergillus = BASEITEMS.register("respergillus",
-            () -> new RespergillusItem(new Item.Properties().stacksTo(1), ScarInit.respergillus));
-
     // Functional Spores
+    public static final DeferredHolder<Item, Item> rhizovitta_communis = BASEITEMS.register("rhizovitta_communis",
+            () -> new RhizovittaCommunisItem(new Item.Properties().stacksTo(1), ScarInit.rhizovitta_communis));
     public static final DeferredHolder<Item, Item> talaromyces_minus = BASEITEMS.register("talaromyces_minus",
             () -> new TalaromycesMinusItem(new Item.Properties().stacksTo(1), ScarInit.talaromyces_minus));
-    public static final DeferredHolder<Item, Item> lumina_devorans = BASEITEMS.register("lumina_devorans",
-            () -> new NoctiluminaDevoransItem(new Item.Properties().stacksTo(1), ScarInit.lumina_devorans));
     public static final DeferredHolder<Item, Item> noctifly_agaric = BASEITEMS.register("noctifly_agaric",
             () -> new NoctiflyAgaricItem(new Item.Properties().stacksTo(1), ScarInit.noctifly_agaric));
     public static final DeferredHolder<Item, Item> antiphonomyces_resonans = BASEITEMS.register("antiphonomyces_resonans",
             () -> new AntiphonomycesResonansItem(new Item.Properties().stacksTo(1), ScarInit.antiphonomyces_resonans));
-    public static final DeferredHolder<Item, Item> sanguiflora_cadens = BASEITEMS.register("sanguiflora_cadens",
-            () -> new SanguifloraeCadensItem(new Item.Properties().stacksTo(1), ScarInit.sanguiflora_cadens));
-    public static final DeferredHolder<Item, Item> thanomyces_resurgens = BASEITEMS.register("thanomyces_resurgens",
-            () -> new ThanomycesResurgensItem(new Item.Properties().stacksTo(1), ScarInit.thanomyces_resurgens));
-    public static final DeferredHolder<Item, Item> anastocordyceps_nexus = BASEITEMS.register("anastocordyceps_nexus",
-            () -> new AnastocordycepsNexusItem(new Item.Properties().stacksTo(1), ScarInit.anastocordyceps_nexus));
+    public static final DeferredHolder<Item, Item> putrivora_resolvens = BASEITEMS.register("putrivora_resolvens",
+            () -> new PutrivoraResolvensItem(new Item.Properties().stacksTo(1), ScarInit.putrivora_resolvens));
+    public static final DeferredHolder<Item, Item> oculiflora_reticularis = BASEITEMS.register("oculiflora_reticularis",
+            () -> new OculifloraReticularisItem(new Item.Properties().stacksTo(1), ScarInit.oculiflora_reticularis));
+    public static final DeferredHolder<Item, Item> cryostroma_perdurans = BASEITEMS.register("cryostroma_perdurans",
+            () -> new CryostromaPerduransItem(new Item.Properties().stacksTo(1), ScarInit.cryostroma_perdurans));
     public static final DeferredHolder<Item, Item> saprovitta_vestigium = BASEITEMS.register("saprovitta_vestigium",
             () -> new SaprovittaVestigiumItem(new Item.Properties().stacksTo(1), ScarInit.saprovitta_vestigium));
 

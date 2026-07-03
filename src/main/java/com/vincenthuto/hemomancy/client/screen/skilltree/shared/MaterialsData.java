@@ -1475,9 +1475,9 @@ public final class MaterialsData {
                 "Qliphoth Reagents", () -> new ItemStack(ItemInit.vicars_consecration_kit.get()),
                 true, UnlockPredicate.minDegree(5)));
 
-                                                                                                list.add(new MaterialEntry("anastocordyceps_nexus", "Anastocordyceps Nexus",
+                                                                                                list.add(new MaterialEntry("rhizovitta_communis", "Rhizovitta Communis",
                 "A fungal culture or spore sample used in mycological bloodcraft.",
-                "Spores & Cultures", () -> new ItemStack(ItemInit.anastocordyceps_nexus.get()),
+                "Spores & Cultures", () -> new ItemStack(ItemInit.rhizovitta_communis.get()),
                 true, UnlockPredicate.minDegree(4)));
 
                                                                                                 list.add(new MaterialEntry("antiphonomyces_resonans", "Antiphonomyces Resonans",
@@ -1505,9 +1505,9 @@ public final class MaterialsData {
                 "Spores & Cultures", () -> new ItemStack(ItemInit.incandescent_spores.get()),
                 true, UnlockPredicate.minDegree(3)));
 
-                                                                                                list.add(new MaterialEntry("lumina_devorans", "Lumina Devorans",
+                                                                                                list.add(new MaterialEntry("oculiflora_reticularis", "Oculiflora Reticularis",
                 "A fungal culture or spore sample used in mycological bloodcraft.",
-                "Spores & Cultures", () -> new ItemStack(ItemInit.lumina_devorans.get()),
+                "Spores & Cultures", () -> new ItemStack(ItemInit.oculiflora_reticularis.get()),
                 true, UnlockPredicate.minDegree(4)));
 
                                                                                                 list.add(new MaterialEntry("neurotic_spores", "Neurotic Spores",
@@ -1525,9 +1525,9 @@ public final class MaterialsData {
                 "Spores & Cultures", () -> new ItemStack(ItemInit.ruinous_spores.get()),
                 true, UnlockPredicate.minDegree(3)));
 
-                                                                                                list.add(new MaterialEntry("sanguiflora_cadens", "Sanguiflora Cadens",
+                                                                                                list.add(new MaterialEntry("putrivora_resolvens", "Putrivora Resolvens",
                 "A fungal culture or spore sample used in mycological bloodcraft.",
-                "Spores & Cultures", () -> new ItemStack(ItemInit.sanguiflora_cadens.get()),
+                "Spores & Cultures", () -> new ItemStack(ItemInit.putrivora_resolvens.get()),
                 true, UnlockPredicate.minDegree(4)));
 
                                                                                                 list.add(new MaterialEntry("saprovitta_vestigium", "Saprovitta Vestigium",
@@ -1540,9 +1540,9 @@ public final class MaterialsData {
                 "Spores & Cultures", () -> new ItemStack(ItemInit.talaromyces_minus.get()),
                 true, UnlockPredicate.minDegree(4)));
 
-                                                                                                list.add(new MaterialEntry("thanomyces_resurgens", "Thanomyces Resurgens",
+                                                                                                list.add(new MaterialEntry("cryostroma_perdurans", "Cryostroma Perdurans",
                 "A fungal culture or spore sample used in mycological bloodcraft.",
-                "Spores & Cultures", () -> new ItemStack(ItemInit.thanomyces_resurgens.get()),
+                "Spores & Cultures", () -> new ItemStack(ItemInit.cryostroma_perdurans.get()),
                 true, UnlockPredicate.minDegree(4)));
 
                                                                                                 list.add(new MaterialEntry("umbral_spores", "Umbral Spores",

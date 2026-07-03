@@ -10,17 +10,16 @@ import net.neoforged.neoforge.registries.DeferredHolder;
 
 import java.util.List;
 
-public class TalaromycesMinusItem extends ItemFungalScar {
+public class RhizovittaCommunisItem extends ItemFungalScar {
 
-	public TalaromycesMinusItem(Properties properties, DeferredHolder<ScarDefinition, ScarDefinition> scarDefinition) {
+	public RhizovittaCommunisItem(Properties properties, DeferredHolder<ScarDefinition, ScarDefinition> scarDefinition) {
 		super(properties, scarDefinition);
 	}
 
 	@Override
-	public void appendHoverText(ItemStack stack, Item.TooltipContext context, List<Component> tooltip,
-			TooltipFlag flagIn) {
+	public void appendHoverText(ItemStack stack, Item.TooltipContext context, List<Component> tooltip, TooltipFlag flagIn) {
 		super.appendHoverText(stack, context, tooltip, flagIn);
-		tooltip.add(Component.literal("A quiet decomposer. Shift-mining ore lets its hyphae follow the vein.")
+		tooltip.add(Component.literal("Roots into fungal ground and returns a little spent blood to the circle.")
 				.withStyle(ChatFormatting.ITALIC));
 	}
 }

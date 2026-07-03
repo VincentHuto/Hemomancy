@@ -1,6 +1,6 @@
 {
   "parent": "minecraft:item/generated",
   "textures": {
-    "layer0": "hemomancy:item/respergillus"
+    "layer0": "hemomancy:item/rhizovitta_communis"
   }
 }

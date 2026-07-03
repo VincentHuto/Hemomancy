@@ -11,6 +11,9 @@ import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.Enu
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.IVascularSystem;
 import com.vincenthuto.hemomancy.common.menu.ScryingDiagnosticsMenu;
 import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
+import com.vincenthuto.hemomancy.common.event.CirculationIncomeRules;
+import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillPointHelper;
+import com.vincenthuto.hemomancy.config.HemoServerConfig;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
@@ -123,6 +126,7 @@ public class ScryingDiagnosticsScreen extends AbstractContainerScreen<ScryingDia
 		drawKnownMemories(graphics, player, leftX, y + 150);
 		drawVascularHealth(graphics, player, rightX, y + 42);
 		drawRiteReadiness(graphics, player, rightX, y + 112);
+		drawBloodRegenRate(graphics, player, rightX, y + 162);
 	}
 
 	private void drawBloodVolume(GuiGraphics graphics, LocalPlayer player, int x, int y) {
@@ -188,6 +192,29 @@ public class ScryingDiagnosticsScreen extends AbstractContainerScreen<ScryingDia
 			drawLine(graphics, "Stable: ordinary rites are supported.", x, y + 13, GOOD);
 		}
 		drawValue(graphics, "Degree", String.valueOf(degree), x, y + 29, TEXT);
+	}
+
+	private void drawBloodRegenRate(GuiGraphics graphics, LocalPlayer player, int x, int y) {
+		drawSection(graphics, "Blood Regeneration", x, y);
+		int degree = HemoCapabilityAccess.getPlayerDegreeNumber(player);
+		IBloodVolume volume = HemoCapabilityAccess.getBloodVolume(player).orElse(null);
+		if (volume == null) {
+			drawLine(graphics, "Unreadable: no blood record.", x, y + 13, BAD);
+			return;
+		}
+		if (!volume.isActive()) {
+			drawLine(graphics, "Dormant: no regeneration.", x, y + 13, MUTED);
+		} else {
+			double bandwidth = CirculationIncomeRules.bandwidthPerWindow(
+					HemoServerConfig.CIRCULATION_BASE_BANDWIDTH.get(),
+					HemoServerConfig.CIRCULATION_BANDWIDTH_PER_DEGREE.get(),
+					degree,
+					HemoServerConfig.CIRCULATION_BANDWIDTH_PER_CAPACITY_POINT.get(),
+					SkillPointHelper.getCapacityBonus(player));
+			int windowTicks = HemoServerConfig.CIRCULATION_WINDOW_TICKS.get();
+			double regenPerTick = bandwidth / windowTicks;
+			drawValue(graphics, "Rate", String.format(Locale.ROOT, "%.2f ml/tick", regenPerTick), x, y + 13, GOOD);
+		}
 	}
 
 	private void drawSection(GuiGraphics graphics, String text, int x, int y) {

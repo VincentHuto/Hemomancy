@@ -5,15 +5,27 @@ public final class LastRiteRulesTest {
 	}
 
 	public static void main(String[] args) {
-		firstRiteMayFireWhenNoCooldownIsActive();
+		armedRiteMayFireWhenNoCooldownIsActive();
+		unarmedRiteNeverFires();
+		armedMismatchNeverFires();
 		sharedCooldownBlocksEverySource();
-		cooldownExpiryFreesAnySource();
+		cooldownExpiryFreesTheArmedSourceOnly();
 		emptySourceIdsNeverFire();
 	}
 
-	private static void firstRiteMayFireWhenNoCooldownIsActive() {
-		assertTrue("ink mantle fires on a fresh player",
+	private static void armedRiteMayFireWhenNoCooldownIsActive() {
+		assertTrue("ink mantle fires when it is armed",
+				LastRiteRules.canFire("hemomancy:ink_mantle", "hemomancy:ink_mantle", 1_000L, 0L));
+	}
+
+	private static void unarmedRiteNeverFires() {
+		assertFalse("fresh unarmed players must be armed before any rite fires",
 				LastRiteRules.canFire("", "hemomancy:ink_mantle", 1_000L, 0L));
+	}
+
+	private static void armedMismatchNeverFires() {
+		assertFalse("silent refusal cannot fire while ink mantle is armed",
+				LastRiteRules.canFire("hemomancy:ink_mantle", "hemomancy:silent_refusal", 1_000L, 0L));
 	}
 
 	private static void sharedCooldownBlocksEverySource() {
@@ -25,9 +37,11 @@ public final class LastRiteRulesTest {
 				LastRiteRules.canFire("hemomancy:ink_mantle", "hemomancy:silent_refusal", 5_000L, until));
 	}
 
-	private static void cooldownExpiryFreesAnySource() {
+	private static void cooldownExpiryFreesTheArmedSourceOnly() {
 		long until = LastRiteRules.nextSharedCooldownUntil(1_000L, LastRiteRules.DEFAULT_SHARED_COOLDOWN_TICKS);
-		assertTrue("after expiry another source may fire",
+		assertTrue("after expiry the armed source may fire",
+				LastRiteRules.canFire("hemomancy:ink_mantle", "hemomancy:ink_mantle", until, until));
+		assertFalse("after expiry an unarmed source still cannot fire",
 				LastRiteRules.canFire("hemomancy:ink_mantle", "hemomancy:silent_refusal", until, until));
 	}
 

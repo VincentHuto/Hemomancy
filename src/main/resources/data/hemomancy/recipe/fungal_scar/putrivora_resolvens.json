@@ -1,16 +1,16 @@
 {
   "type": "hemomancy:fungal_scar_cultivation",
-  "tendency": "LUX",
+  "tendency": "MORTEM",
   "blood_cost_phase1": 2400,
   "phase1_duration": 2400,
   "maturation_threshold": 3000,
   "seed": {
-    "id": "hemomancy:pale_distillate"
+    "id": "hemomancy:ruinous_spores"
   },
   "immature_result": {
     "id": "hemomancy:immature_fungal_scar"
   },
   "result": {
-    "id": "hemomancy:anastocordyceps_nexus"
+    "id": "hemomancy:putrivora_resolvens"
   }
 }

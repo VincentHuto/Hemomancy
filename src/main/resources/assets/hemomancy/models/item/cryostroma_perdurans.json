@@ -1,6 +1,6 @@
 {
   "parent": "minecraft:item/generated",
   "textures": {
-    "layer0": "hemomancy:item/thanomyces_resurgens"
+    "layer0": "hemomancy:item/cryostroma_perdurans"
   }
 }
