@@ -101,6 +101,31 @@ test('moving material atlas label does not move auto-positioned nodes', () => {
   expect(after.nodes.map(node => [node.id, node.x, node.y])).toEqual(before.nodes.map(node => [node.id, node.x, node.y]));
 });
 
+test('moving a category label plaque does not move nodes or redraw traces from shifted coordinates', () => {
+  const topPlaquePath: MaterialAtlasPathModel = {
+    ...pathModel,
+    buckets: [{
+      ...pathModel.buckets[0],
+      plaqueY: 25
+    }]
+  };
+  const before = layoutMaterialAtlasPath(topPlaquePath);
+  const movedPlaquePath: MaterialAtlasPathModel = {
+    ...topPlaquePath,
+    buckets: [{
+      ...topPlaquePath.buckets[0],
+      plaqueY: 120
+    }]
+  };
+  const after = layoutMaterialAtlasPath(movedPlaquePath);
+
+  expect(after.labelPlaques.find(plaque => plaque.id === 'bloodcraft_core')).toEqual(expect.objectContaining({
+    y: 120
+  }));
+  expect(after.nodes.map(node => [node.id, node.x, node.y])).toEqual(before.nodes.map(node => [node.id, node.x, node.y]));
+  expect(after.traces.map(trace => trace.path)).toEqual(before.traces.map(trace => trace.path));
+});
+
 test('material graph only draws explicit parent traces', () => {
   const layout = layoutMaterialAtlasPath(pathModel);
   const rootTrace = layout.traces.filter(trace => trace.fromId === 'sanguine_formation' && trace.toId === 'blood_crystal_shard');
@@ -173,7 +198,7 @@ test('material alignment chooses the nearest matching axis candidate', () => {
   expect(aligned).toEqual({ x: 504, y: 296 });
 });
 
-test('rendered material drag positions convert back through atlas layout offset', () => {
+test('rendered material drag positions preserve authored atlas coordinates', () => {
   const shiftedPath: MaterialAtlasPathModel = {
     ...pathModel,
     hubLabelX: pathModel.hubLabelX,
@@ -192,7 +217,8 @@ test('rendered material drag positions convert back through atlas layout offset'
   const layout = layoutMaterialAtlasPath(shiftedPath);
   const node = layout.nodes.find(candidate => candidate.id === 'sanguine_formation')!;
 
-  expect(layout.offsetX).toBeGreaterThan(0);
+  expect(layout.offsetX).toBe(0);
+  expect(node.x).toBe(shiftedPath.entries[0].nodeX);
   expect(materialModelPositionFromRendered(layout, { x: node.x + 24, y: node.y + 16 })).toEqual({
     x: shiftedPath.entries[0].nodeX! + 24,
     y: shiftedPath.entries[0].nodeY! + 16

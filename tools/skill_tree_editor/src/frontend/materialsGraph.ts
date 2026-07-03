@@ -112,38 +112,19 @@ export function layoutMaterialAtlasPath(path: MaterialAtlasPathModel): MaterialG
     color: bucket.color
   }));
   const traces: MaterialGraphTrace[] = [];
-  let minX = atlasHub.x - contentPad;
-  let minY = atlasHub.y - contentPad;
   let maxX = atlasHub.x + contentPad;
   let maxY = atlasHub.y + contentPad;
-  minX = Math.min(minX, layoutHub.x - contentPad);
-  minY = Math.min(minY, layoutHub.y - contentPad);
   maxX = Math.max(maxX, layoutHub.x + contentPad);
   maxY = Math.max(maxY, layoutHub.y + contentPad);
 
   for (const node of nodes) {
-    minX = Math.min(minX, node.x - nodeSize - contentPad / 2);
-    minY = Math.min(minY, node.y - nodeSize - contentPad / 2);
     maxX = Math.max(maxX, node.x + nodeSize + contentPad / 2);
     maxY = Math.max(maxY, node.y + nodeSize + contentPad / 2);
   }
 
   for (const bucket of path.buckets) {
-    minX = Math.min(minX, Math.min(bucket.centerX, bucket.plaqueX) - contentPad);
-    minY = Math.min(minY, Math.min(bucket.centerY, bucket.plaqueY) - contentPad);
     maxX = Math.max(maxX, Math.max(bucket.centerX, bucket.plaqueX) + contentPad);
     maxY = Math.max(maxY, Math.max(bucket.centerY, bucket.plaqueY) + contentPad);
-  }
-
-  const offsetX = minX < 0 ? -minX : 0;
-  const offsetY = minY < 0 ? -minY : 0;
-  if (offsetX || offsetY) {
-    for (const node of nodes) {
-      node.x += offsetX;
-      node.y += offsetY;
-    }
-    maxX += offsetX;
-    maxY += offsetY;
   }
 
   const nodeById = new Map(nodes.map(node => [node.id, node] as const));
@@ -159,8 +140,8 @@ export function layoutMaterialAtlasPath(path: MaterialAtlasPathModel): MaterialG
     height: Math.max(1, maxY + contentPad),
     viewBoxX: 0,
     viewBoxY: 0,
-    offsetX,
-    offsetY,
+    offsetX: 0,
+    offsetY: 0,
     hub: atlasHub,
     nodes,
     categoryAnchors,
