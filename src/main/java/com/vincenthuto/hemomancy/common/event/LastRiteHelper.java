@@ -2,8 +2,9 @@ package com.vincenthuto.hemomancy.common.event;
 
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.PowerGuardrailState;
-import com.vincenthuto.hemomancy.common.item.harbinger.morphlings.CuttlefishMorphlingItem;
+import com.vincenthuto.hemomancy.common.item.harbinger.morphlings.FoxfireMorphlingItem;
 import com.vincenthuto.hemomancy.common.item.harbinger.morphlings.MorphlingItem;
+import com.vincenthuto.hemomancy.common.item.harbinger.morphlings.WinterShroudMorphlingItem;
 import com.vincenthuto.hemomancy.config.HemoServerConfig;
 
 import net.minecraft.world.entity.player.Player;
@@ -20,6 +21,7 @@ public final class LastRiteHelper {
 	public static final String INK_MANTLE_ID = "hemomancy:ink_mantle";
 	public static final String LAST_LIGHT_ID = "hemomancy:last_light";
 	public static final String SILENT_REFUSAL_ID = "hemomancy:silent_refusal";
+	public static final String CRYPTOBIOSIS_ID = "hemomancy:cryptobiosis";
 
 	private LastRiteHelper() {
 	}
@@ -97,17 +99,23 @@ public final class LastRiteHelper {
 	public static void clearMorphlingRites(Player player) {
 		clearIfArmed(player, INK_MANTLE_ID);
 		clearIfArmed(player, LAST_LIGHT_ID);
+		clearIfArmed(player, CRYPTOBIOSIS_ID);
 	}
 
 	private static String sourceIdForMorphling(ItemStack stack) {
-		if (stack == null || stack.isEmpty() || !(stack.getItem() instanceof CuttlefishMorphlingItem)) {
+		if (stack == null || stack.isEmpty()) {
 			return "";
 		}
-		if (MorphlingItem.isPrimal(stack)) {
-			return LAST_LIGHT_ID;
+		if (stack.getItem() instanceof FoxfireMorphlingItem) {
+			if (MorphlingItem.isPrimal(stack)) {
+				return LAST_LIGHT_ID;
+			}
+			if (MorphlingItem.getMaturityLevel(stack) >= 4) {
+				return INK_MANTLE_ID;
+			}
 		}
-		if (MorphlingItem.getMaturityLevel(stack) >= 4) {
-			return INK_MANTLE_ID;
+		if (stack.getItem() instanceof WinterShroudMorphlingItem && MorphlingItem.isPrimal(stack)) {
+			return CRYPTOBIOSIS_ID;
 		}
 		return "";
 	}

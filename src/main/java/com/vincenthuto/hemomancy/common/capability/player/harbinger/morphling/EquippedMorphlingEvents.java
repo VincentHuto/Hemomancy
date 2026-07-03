@@ -5,6 +5,7 @@ import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodVolumeEvents;
 import com.vincenthuto.hemomancy.common.event.LastRiteHelper;
 import com.vincenthuto.hemomancy.common.item.harbinger.morphlings.IMorphling;
+import com.vincenthuto.hemomancy.common.item.harbinger.morphlings.MorphlingItem;
 import com.vincenthuto.hemomancy.common.network.morphling.SyncEquippedMorphlingPacket;
 import com.vincenthuto.hemomancy.config.HemoServerConfig;
 import net.minecraft.ChatFormatting;
@@ -16,6 +17,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.living.LivingDamageEvent;
@@ -24,6 +26,7 @@ import net.neoforged.neoforge.event.entity.living.LivingFallEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent.PlayerChangedDimensionEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent.PlayerRespawnEvent;
+import net.neoforged.neoforge.event.level.BlockEvent;
 import net.neoforged.neoforge.event.tick.LevelTickEvent;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 import net.neoforged.neoforge.network.PacketDistributor;
@@ -49,7 +52,9 @@ public class EquippedMorphlingEvents {
 		if (player.level().isClientSide) return;
 		HemoCapabilityAccess.getEquippedMorphling(player).ifPresent(morphCap -> {
 			if (morphCap.hasMorphling()) {
-				LastRiteHelper.armForMorphlingIfUnarmed(player, morphCap.getEquippedMorphling());
+				ItemStack stack = morphCap.getEquippedMorphling();
+				LastRiteHelper.armForMorphlingIfUnarmed(player, stack);
+				MorphlingItem.applyHungerTick(player, stack);
 			}
 		});
 		if (!HemoServerConfig.MORPHLING_PASSIVE_DRAIN_ENABLED.get()) return;
@@ -172,6 +177,22 @@ public class EquippedMorphlingEvents {
 				if (morphling.onEquippedFall(player, morphStack, event.getDistance())) {
 					event.setCanceled(true);
 				}
+			}
+		});
+	}
+
+	@SubscribeEvent
+	public static void onPlayerBreakBlock(BlockEvent.BreakEvent event) {
+		Player player = event.getPlayer();
+		if (player == null || player.level().isClientSide) return;
+		BlockPos pos = event.getPos();
+		BlockState state = event.getState();
+
+		HemoCapabilityAccess.getEquippedMorphling(player).ifPresent(morphCap -> {
+			if (!morphCap.hasMorphling()) return;
+			ItemStack morphStack = morphCap.getEquippedMorphling();
+			if (morphStack.getItem() instanceof IMorphling morphling) {
+				morphling.onEquippedBlockBreak(player, morphStack, pos, state);
 			}
 		});
 	}

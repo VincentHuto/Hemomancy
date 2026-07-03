@@ -63,6 +63,10 @@ public class HemoServerConfig {
 	public static ModConfigSpec.DoubleValue MORPHLING_DRAIN_RATE;
 	public static ModConfigSpec.IntValue MORPHLING_DRAIN_INTERVAL;
 	public static ModConfigSpec.BooleanValue MORPHLING_CRADLE_LEECH_TARGET_PLAYERS;
+	public static ModConfigSpec.BooleanValue MORPHLING_HUNGER_ENABLED;
+	public static ModConfigSpec.IntValue MORPHLING_FED_DURATION_TICKS;
+	public static ModConfigSpec.DoubleValue MORPHLING_STARVING_DRAIN_RATE;
+	public static ModConfigSpec.IntValue MORPHLING_HUSBANDRY_STAGE_QUOTA;
 
 	// ===== Ghastly Alembic Leak =====
 	public static ModConfigSpec.IntValue ALEMBIC_LEAK_INTERVAL_TICKS;
@@ -284,6 +288,22 @@ public class HemoServerConfig {
 		MORPHLING_CRADLE_LEECH_TARGET_PLAYERS = builder
 				.comment("Whether Leech Morphling Cradles can target non-owner players.")
 				.define("morphlingCradleLeechTargetPlayers", false);
+
+		MORPHLING_HUNGER_ENABLED = builder
+				.comment("Whether Mature+ non-wild-bound morphlings track Fed, Hungry, and Starving states.")
+				.define("hungerEnabled", false);
+
+		MORPHLING_FED_DURATION_TICKS = builder
+				.comment("Ticks a fed Mature+ morphling stays Fed before becoming Hungry. 24000 = one Minecraft day.")
+				.defineInRange("fedDurationTicks", 24000, 20, 240000);
+
+		MORPHLING_STARVING_DRAIN_RATE = builder
+				.comment("Extra blood drained per hunger tick by a Starving morphling when hunger is enabled.")
+				.defineInRange("starvingDrainRate", 2.0, 0.0, 100.0);
+
+		MORPHLING_HUSBANDRY_STAGE_QUOTA = builder
+				.comment("Husbandry progress required per post-Fledgling maturity stage. 0 preserves enzyme-only progression.")
+				.defineInRange("husbandryStageQuota", 0, 0, 100000);
 
 		builder.pop();
 

@@ -230,6 +230,14 @@ public final class BestiaryTabView {
 		gfx.drawString(ctx.font(), Component.translatable(statusKey).withStyle(s -> s.withColor(0xFF9DB09D)),
 				x, cy, 0, false);
 		cy += 16;
+		if (entry.discovered() && entry.kind() == BestiaryTabState.Kind.MORPHLING
+				&& !entry.classificationKey().isBlank()) {
+			Component classification = Component.translatable("bestiary.hemomancy.morphling.classification",
+					Component.translatable(entry.classificationKey()))
+					.withStyle(s -> s.withColor(0xFF8FA68F));
+			gfx.drawString(ctx.font(), classification, x, cy, 0, false);
+			cy += 14;
+		}
 		gfx.fill(x, cy, x + w, cy + 1, 0xFF24442D);
 		cy += 9;
 

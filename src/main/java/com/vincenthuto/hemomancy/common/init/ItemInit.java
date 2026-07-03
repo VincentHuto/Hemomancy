@@ -536,30 +536,22 @@ public class ItemInit {
     // Morphlings
     public static final DeferredHolder<Item, Item> morphling_polyp = BASEITEMS.register("morphling_polyp",
             () -> new ItemMorphlingPolyp(new Item.Properties()));
-    public static final DeferredHolder<Item, Item> morphling_fungal = BASEITEMS.register("morphling_fungal",
-            () -> new FungalMorphlingItem(new Item.Properties().stacksTo(1)));
-    public static final DeferredHolder<Item, Item> morphling_leeches = BASEITEMS.register("morphling_leeches",
-            () -> new LeechesMorphlingItem(new Item.Properties().stacksTo(1)));
-    public static final DeferredHolder<Item, Item> morphling_chitinite = BASEITEMS.register("morphling_chitinite",
-            () -> new ChitiniteMorphlingItem(new Item.Properties().stacksTo(1)));
-    public static final DeferredHolder<Item, Item> morphling_serpent = BASEITEMS.register("morphling_serpent",
-            () -> new SerpentMorphlingItem(new Item.Properties().stacksTo(1)));
-    public static final DeferredHolder<Item, Item> morphling_pests = BASEITEMS.register("morphling_pests",
-            () -> new PestsMorphlingItem(new Item.Properties().stacksTo(1)));
-    public static final DeferredHolder<Item, Item> morphling_spider = BASEITEMS.register("morphling_spider",
-            () -> new SpiderMorphlingItem(new Item.Properties().stacksTo(1)));
-    public static final DeferredHolder<Item, Item> morphling_cuttlefish = BASEITEMS.register("morphling_cuttlefish",
-            () -> new CuttlefishMorphlingItem(new Item.Properties().stacksTo(1)));
-    public static final DeferredHolder<Item, Item> morphling_tick = BASEITEMS.register("morphling_tick",
-            () -> new TickMorphlingItem(new Item.Properties().stacksTo(1)));
-    public static final DeferredHolder<Item, Item> morphling_centipede = BASEITEMS.register("morphling_centipede",
-            () -> new CentipedeMorphlingItem(new Item.Properties().stacksTo(1)));
-    public static final DeferredHolder<Item, Item> morphling_bat = BASEITEMS.register("morphling_bat",
-            () -> new BatMorphlingItem(new Item.Properties().stacksTo(1)));
-    public static final DeferredHolder<Item, Item> morphling_urchin = BASEITEMS.register("morphling_urchin",
-            () -> new UrchinMorphlingItem(new Item.Properties().stacksTo(1)));
-    public static final DeferredHolder<Item, Item> morphling_mole = BASEITEMS.register("morphling_mole",
-            () -> new MoleMorphlingItem(new Item.Properties().stacksTo(1)));
+    public static final DeferredHolder<Item, Item> morphling_deadmans_purse = BASEITEMS.register("morphling_deadmans_purse",
+            () -> new DeadmansPurseMorphlingItem(new Item.Properties().stacksTo(1)));
+    public static final DeferredHolder<Item, Item> morphling_gravecap = BASEITEMS.register("morphling_gravecap",
+            () -> new GravecapMorphlingItem(new Item.Properties().stacksTo(1)));
+    public static final DeferredHolder<Item, Item> morphling_witchs_ear = BASEITEMS.register("morphling_witchs_ear",
+            () -> new WitchsEarMorphlingItem(new Item.Properties().stacksTo(1)));
+    public static final DeferredHolder<Item, Item> morphling_foxfire = BASEITEMS.register("morphling_foxfire",
+            () -> new FoxfireMorphlingItem(new Item.Properties().stacksTo(1)));
+    public static final DeferredHolder<Item, Item> morphling_bootlace = BASEITEMS.register("morphling_bootlace",
+            () -> new BootlaceMorphlingItem(new Item.Properties().stacksTo(1)));
+    public static final DeferredHolder<Item, Item> morphling_irontooth = BASEITEMS.register("morphling_irontooth",
+            () -> new IrontoothMorphlingItem(new Item.Properties().stacksTo(1)));
+    public static final DeferredHolder<Item, Item> morphling_emberfang = BASEITEMS.register("morphling_emberfang",
+            () -> new EmberfangMorphlingItem(new Item.Properties().stacksTo(1)));
+    public static final DeferredHolder<Item, Item> morphling_winter_shroud = BASEITEMS.register("morphling_winter_shroud",
+            () -> new WinterShroudMorphlingItem(new Item.Properties().stacksTo(1)));
     /// Blood Gourds
     public static final DeferredHolder<Item, Item> dried_gourd = BASEITEMS.register("dried_gourd",
             () -> new BloodGourdItem(new Item.Properties().stacksTo(1), EnumBloodGourdTiers.DRIED));

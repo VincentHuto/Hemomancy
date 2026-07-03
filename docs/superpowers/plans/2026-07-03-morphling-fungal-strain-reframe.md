@@ -4,7 +4,7 @@
 
 **Design spec:** [2026-07-02-morphling-fungal-strain-reframe-design.md](../specs/2026-07-02-morphling-fungal-strain-reframe-design.md) — read it first; this plan implements it verbatim and does not re-argue decisions.
 
-**Goal:** Consolidate the 12 animal-mimic morphlings into 8 original fungal strains (one per blood tendency), migrate the cut species' best abilities into the survivors, remove all armor-lane (contact-reactive) abilities, introduce the folk-name/binomial naming presentation, retarget the incubator/polyp/cradle/bestiary pipelines, and migrate existing save data losslessly.
+**Goal:** Consolidate the 12 animal-mimic morphlings into 8 original fungal strains (one per blood tendency), migrate the cut species' best abilities into the survivors, remove all armor-lane (contact-reactive) abilities, introduce the folk-name/binomial naming presentation, retarget the incubator/polyp/cradle/bestiary pipelines, ship hunger/husbandry behind a default-off config flag, and migrate existing save data losslessly.
 
 **Architecture:** The `MorphlingItem` base class, `IEquippedMorphling` capability, jar/staff/cradle stations, and the client mutation layer all survive unchanged in *shape* — this is an identity-and-ability reshuffle, not a systems rewrite. Species behavior stays in per-strain `MorphlingItem` subclasses. A new `MorphlingMigrationRules` helper owns every old→new stack conversion so migration is testable in isolation. Ability re-roles follow the ownership laws in [POWER_SYSTEMS_AUDIT.md](../../POWER_SYSTEMS_AUDIT.md) §4: no on-hit/contact triggers (armor's lane), ecology/state/resource/movement verbs only.
 
@@ -25,6 +25,12 @@
 | Wild pipeline | `ItemMorphlingPolyp` (+ `MorphlingLayers` custom data), `WildMorphlingRules`, `SpecimenJarBlockEntity`, `common/capability/player/harbinger/bestiary/SpecimenBestiaryProgress.java` |
 | Cradle | `MorphlingCradleBlockEntity` (cradle-suitable set currently: Fungal, Leeches, Chitinite, Pests, Urchin — **three of five are being cut**, so this set must be retargeted) |
 | Config | `HemoServerConfig` `morphling` section: `morphlingPassiveDrainEnabled` (true), `morphlingDrainRate` (0.5), `morphlingDrainInterval` (60) — currently unused because `getBloodCost()` returns 0 |
+
+## Landed prerequisites for this branch
+
+- The guardrail pass has landed. Use `BorrowedBloodReserve`, `LastRiteHelper`, and the shared guardrail attachment directly; do not add stack-local borrowed-blood or Last Rite TODO fallbacks.
+- The fungal-scar consolidation pass has landed. `Sanguiflora cadens` is no longer a fungal scar, so Gravecap can absorb the on-kill resource fantasy in this stage without a cross-branch dependency.
+- Hunger + husbandry are in scope for this pass. `hungerEnabled` must default to `false`; when enabled later, hunger applies to Mature+ morphlings only, leaving wild-bound Developing-capped morphlings gentle for early use.
 
 ## The identity map (from the spec, restated for implementers)
 
@@ -98,9 +104,9 @@ Each step names exact old behavior → new behavior. All removed triggers are **
 **Files:** the 8 strain classes; `common/init/EffectInit.java` if an effect rename is needed.
 
 - [ ] **Step 1 — Foxfire:** remove Mature "Chromatophore Flash" (on-hit attacker blind). Add **Chromatic Camouflage**: while stationary ≥2s in water or light ≤7, apply fading invisibility (re-check each tick; break on move/attack). Keep Sepia Wake (sprint), Ink Mantle (Apex), Last-Light (Primal).
-- [ ] **Step 2 — Deadman's Purse:** remove Developing flat lifesteal (Blood Lust armor's bonus). Replace with **feed-banking**: melee hits/kills deposit into the shared `BorrowedBloodReserve` attachment from the [guardrails plan](2026-07-03-audit-phase1-guardrails.md) Task 3, drained before player blood when Primal Hemophage fires; if the guardrails plan has not landed yet, use a stack-local `BorrowedBlood` float (cap ~500) with a `// TODO(guardrails Task 3)` reroute marker. Add Tick's **Blood Fever** as the Mature slot (Speed near wounded entities). Primal Hemophage Covenant absorbs Tick's spread-on-kill flavor.
-- [ ] **Step 3 — Winter Shroud (reskin of Centipede):** passive = **Cryptobiotic Hide** (Resistance amplifier scaling while stationary/low HP, replacing Centipede's poison-immunity+speed). Developing = **Tun Plating** (Chitinite's ablative Absorption regen, harvested from `ChitiniteMorphlingItem` before deletion). Mature = **Anhydrobiosis** (Centipede's cleanse, reflavored). Apex = **Tun Molt** (Centipede's Hundredfold-Molt escape + Urchin's Tidal-Anchor knockback pulse on emergence, harvested from `UrchinMorphlingItem`). Primal = **Cryptobiosis** stasis (Centipede Primal rework; register it with `LastRiteRules` as `hemomancy:cryptobiosis` per the [guardrails plan](2026-07-03-audit-phase1-guardrails.md) Task 2, else `// TODO(guardrails Task 2)`).
-- [ ] **Step 4 — Gravecap:** Apex Cordyceps Burst gains Pests' **Infest** (kills spawn a small hostile-targeting fungling swarm — harvest the spawn code from `PestsMorphlingItem`). Confirm the relocated fungal-scar fantasy: Vein Orchard-style resource bloom rolls fold into Cordyceps loot rolls (see fungal-scar spec §4 Sanguiflora row).
+- [ ] **Step 2 — Deadman's Purse:** remove Developing flat lifesteal (Blood Lust armor's bonus). Replace with **feed-banking**: melee hits/kills deposit into the shared `BorrowedBloodReserve` attachment, drained before player blood when Primal Hemophage fires. Add Tick's **Blood Fever** as the Mature slot (Speed near wounded entities). Primal Hemophage Covenant absorbs Tick's spread-on-kill flavor.
+- [ ] **Step 3 — Winter Shroud (reskin of Centipede):** passive = **Cryptobiotic Hide** (Resistance amplifier scaling while stationary/low HP, replacing Centipede's poison-immunity+speed). Developing = **Tun Plating** (Chitinite's ablative Absorption regen, harvested from `ChitiniteMorphlingItem` before deletion). Mature = **Anhydrobiosis** (Centipede's cleanse, reflavored). Apex = **Tun Molt** (Centipede's Hundredfold-Molt escape + Urchin's Tidal-Anchor knockback pulse on emergence, harvested from `UrchinMorphlingItem`). Primal = **Cryptobiosis** stasis; arm and consume it through `LastRiteHelper`/`LastRiteRules` as source id `hemomancy:cryptobiosis`, sharing the guardrail Last Rite cooldown with Foxfire and Silent Archon sources.
+- [ ] **Step 4 — Gravecap:** Apex Cordyceps Burst gains Pests' **Infest** (kills spawn a small hostile-targeting fungling swarm — harvest the spawn code from `PestsMorphlingItem`). Fold the removed Sanguiflora Vein Orchard fantasy into Cordyceps loot rolls now that fungal-scar consolidation has removed Sanguiflora from that system.
 - [ ] **Step 5 — Bootlace:** Mature = **Web Nest** (place short-lived slowing web terrain — Pests' area-denial re-expressed as silk; new block or reuse temporary cobweb from Silk Tether). Web Cocoon moves from on-hit trigger to a **proximity trap** check (hostile within 2 blocks while sneaking) to exit the contact lane.
 - [ ] **Step 6 — Irontooth:** add Urchin's harvest as a cooldown drop: heavy hits taken underground (or mining milestones) shed 1 `chalybeate_sclerite`-family material (pick an existing item; do not add a new one).
 - [ ] **Step 7 — Witch's Ear / Emberfang:** no trigger surgery (already ecology/state) — verify only; rename effect display strings where they referenced the old animal.
@@ -140,10 +146,10 @@ Each step names exact old behavior → new behavior. All removed triggers are **
 **Files:**
 - Modify: `MorphlingItem.java`, `EquippedMorphlingEvents.java`, `HemoServerConfig`
 
-- [ ] **Step 1:** Add `hungerEnabled` (default **false** for the first alpha build — flip after balance pass), `fedDurationTicks`, `starvingDrainRate` to the config `morphling` section alongside the existing drain keys.
-- [ ] **Step 2:** Stack data `LastFedGameTime` (long). States: **Fed** (within `fedDurationTicks`), **Hungry** (past it — passive amplifier −1, min 0), **Starving** (past 3×— apply the existing `morphlingDrainRate` drain + Morphic Strain pulse). Feeding = right-click with matching enzyme, or blooded kills while equipped. **Equip sets state to Hungry** (swap friction per audit §4.3).
-- [ ] **Step 3:** Husbandry counters: per-strain `ExperienceProgress` int on the stack; increment on the strain's signature verb (Emberfang: poison ticks dealt; Irontooth: blocks mined below y=0; Gravecap: nearby hostile deaths; etc. — one cheap hook per strain). Stage-up now requires `EnzymePower ≥ threshold` **AND** `ExperienceProgress ≥ stage quota` (quota configurable; 0 = disabled, preserving current behavior when the flag is off).
-- [ ] **Step 4:** HUD/tooltip: hunger state line on the tooltip + a small icon tint on `MorphlingMutationLayer` (desaturate when Hungry). Compile + focused test on the state math.
+- [ ] **Step 1:** Add `hungerEnabled` (default **false** for the first alpha build — flip only after a named balance pass), `fedDurationTicks`, `starvingDrainRate`, and `husbandryStageQuota` to the config `morphling` section alongside the existing drain keys.
+- [ ] **Step 2:** Stack data `LastFedGameTime` (long). States apply only when `hungerEnabled` is true and the stack is Mature+ after wild-bound caps: **Fed** (within `fedDurationTicks`), **Hungry** (past it — passive amplifier −1, min 0), **Starving** (past 3× — apply the configured starving drain + Morphic Strain pulse). Feeding = right-click with matching enzyme, or blooded kills while equipped. **Equip sets state to Hungry** for eligible Mature+ morphlings.
+- [ ] **Step 3:** Husbandry counters: per-strain `ExperienceProgress` int on the stack; increment on the strain's signature verb (Emberfang: poison ticks dealt; Irontooth: blocks mined below y=0; Gravecap: nearby hostile deaths; etc. — one cheap hook per strain). Stage-up now requires `EnzymePower ≥ threshold` **AND** `ExperienceProgress ≥ stage quota` only when `husbandryStageQuota > 0`; default quota 0 preserves current behavior while the hunger flag is off.
+- [ ] **Step 4:** HUD/tooltip: hunger state line on the tooltip when enabled, plus a small icon tint on `MorphlingMutationLayer` (desaturate when Hungry). Compile + focused test on the state math with `hungerEnabled=false`, `hungerEnabled=true Mature+`, and wild-bound exempt cases.
 
 ### Task 9: Save-data migration events
 
@@ -166,6 +172,6 @@ Each step names exact old behavior → new behavior. All removed triggers are **
 
 ## Dependency & sequencing notes
 
-- Tasks 1→2→(3,4 parallel)→(5,6,7 parallel)→8→9→10. Task 8 is feature-flagged and can slip to a follow-up PR without blocking the reskin.
-- The borrowed-blood reserve (Task 4 Step 2) and Last-Rite group (Task 4 Step 3) are delivered by the [guardrails mini-plan](2026-07-03-audit-phase1-guardrails.md) — build it first (full family order in [DEFERRED_IDEAS.md](../../DEFERRED_IDEAS.md) §C); the local-TODO fallbacks remain legal if ordering slips.
-- Coordinate with the [fungal-scar consolidation spec](../specs/2026-07-02-fungal-scar-consolidation-design.md) (no implementation plan yet) at the single shared point: Gravecap absorbing Sanguiflora's on-kill resource fantasy. The [Wills plan](2026-07-03-rogue-hemomancer-wills.md) is independent of this one.
+- Tasks 1→2→(3,4 parallel)→(5,6,7 parallel)→8→9→10. Task 8 is required in this pass but feature-flagged default-off, so implementation can land without changing alpha balance.
+- The borrowed-blood reserve (Task 4 Step 2) and Last-Rite group (Task 4 Step 3) are already available from the guardrails mini-plan. Use them directly.
+- Fungal-scar consolidation is already available. Gravecap now owns the relocated Sanguiflora on-kill resource fantasy. The [Wills plan](2026-07-03-rogue-hemomancer-wills.md) is independent of this one.

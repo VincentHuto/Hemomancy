@@ -7,6 +7,7 @@ import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillPoin
 import com.vincenthuto.hemomancy.common.event.LastRiteHelper;
 import com.vincenthuto.hemomancy.common.item.harbinger.morphlings.IMorphling;
 import com.vincenthuto.hemomancy.common.item.harbinger.morphlings.ItemMorphlingJar;
+import com.vincenthuto.hemomancy.common.item.harbinger.morphlings.MorphlingItem;
 import com.vincenthuto.hemomancy.common.item.itemhandler.MorphlingJarItemHandler;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
@@ -67,6 +68,7 @@ public class ChangeMorphKeyPacket implements CustomPacketPayload {
 				HemoCapabilityAccess.getEquippedMorphling(player).ifPresent(cap -> {
 					cap.setEquippedMorphling(equippedMorphling);
 				});
+				MorphlingItem.markEquipped(player, equippedMorphling);
 				LastRiteHelper.armForMorphling(player, equippedMorphling);
 
 				// Award morphling bond milestone

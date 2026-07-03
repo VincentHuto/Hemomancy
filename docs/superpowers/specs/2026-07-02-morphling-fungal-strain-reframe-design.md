@@ -1,7 +1,7 @@
 # Morphling Fungal-Strain Reframe — Design
 
 > **Date:** 2026-07-02
-> **Status:** Design / planned. No code or data changes yet.
+> **Status:** Approved for implementation planning. Guardrails and fungal-scar prerequisites have landed; hunger/husbandry is in scope behind a default-off config flag.
 > **Implementation plan:** [2026-07-03-morphling-fungal-strain-reframe.md](../plans/2026-07-03-morphling-fungal-strain-reframe.md)
 > **Parent audit:** [POWER_SYSTEMS_AUDIT.md](../../POWER_SYSTEMS_AUDIT.md)
 > **Sibling specs:** [Fungal Scar Consolidation](2026-07-02-fungal-scar-consolidation-design.md) · [Rogue Hemomancer Wills](2026-07-02-rogue-hemomancer-wills-design.md)
@@ -133,6 +133,6 @@ On-kill resource generation currently belongs to *both* a fungal scar (Sanguiflo
 
 - **Rename map (planned):** `morphling_serpent` → `morphling_emberfang`, `morphling_cuttlefish` → `morphling_foxfire`, `morphling_mole` → `morphling_irontooth`, `morphling_leeches` → `morphling_deadmans_purse`, `morphling_bat` → `morphling_witchs_ear`, `morphling_spider` → `morphling_bootlace`, `morphling_fungal` → `morphling_gravecap`, `morphling_centipede` → `morphling_winter_shroud`. Removed: `morphling_chitinite`, `morphling_urchin`, `morphling_pests`, `morphling_tick`. Provide data-fixer/alias handling for existing saves.
 - **Assets:** audit which existing morphling models/textures can be retinted vs. need new geometry for the new silhouettes.
-- **Open — hunger/husbandry:** the audit's Fed/Hungry/Starving loop and per-species husbandry stage-ups (§Progression) should land alongside this reskin, not after, so the new identities ship with their intended progression.
-- **Open — does hunger apply to wild-bound (Developing-capped) morphlings, or only Mature+?** Lean gentler early.
+- **Hunger/husbandry decision:** the audit's Fed/Hungry/Starving loop and per-strain husbandry stage-ups land alongside this reskin, behind `hungerEnabled=false` by default.
+- **Wild-bound decision:** hunger applies only to Mature+ morphlings when enabled later; wild-bound Developing-capped morphlings remain gentle early.
 - **Testing:** focused resource/source tests for the 8 registrations, rename aliases, incubator recipe retargeting, and Bestiary classification-line rendering; update [MORPHLING_REFERENCE.md](../../MORPHLING_REFERENCE.md) and [HEMOMANCY_REFERENCE.md](../../HEMOMANCY_REFERENCE.md) §16.

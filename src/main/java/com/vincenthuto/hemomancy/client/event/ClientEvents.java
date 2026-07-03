@@ -889,30 +889,22 @@ public class ClientEvents {
                         ItemStack selectedStack = ItemStack.parseOptional(
                                 world != null ? world.registryAccess() : RegistryAccess.EMPTY,
                                 ((ListTag) items.get("Items")).getCompound(0));
-                        if (selectedStack.getItem() == ItemInit.morphling_serpent.get()) {
+                        if (selectedStack.getItem() == ItemInit.morphling_emberfang.get()) {
                             return 1.0F;
-                        } else if (selectedStack.getItem() == ItemInit.morphling_leeches.get()) {
+                        } else if (selectedStack.getItem() == ItemInit.morphling_deadmans_purse.get()) {
                             return 2.0F;
-                        } else if (selectedStack.getItem() == ItemInit.morphling_fungal.get()) {
+                        } else if (selectedStack.getItem() == ItemInit.morphling_gravecap.get()) {
                             return 3.0F;
-                        } else if (selectedStack.getItem() == ItemInit.morphling_pests.get()) {
+                        } else if (selectedStack.getItem() == ItemInit.morphling_bootlace.get()) {
                             return 4.0F;
-                        } else if (selectedStack.getItem() == ItemInit.morphling_chitinite.get()) {
+                        } else if (selectedStack.getItem() == ItemInit.morphling_winter_shroud.get()) {
                             return 5.0F;
-                        } else if (selectedStack.getItem() == ItemInit.morphling_spider.get()) {
+                        } else if (selectedStack.getItem() == ItemInit.morphling_foxfire.get()) {
                             return 6.0F;
-                        } else if (selectedStack.getItem() == ItemInit.morphling_cuttlefish.get()) {
+                        } else if (selectedStack.getItem() == ItemInit.morphling_witchs_ear.get()) {
                             return 7.0F;
-                        } else if (selectedStack.getItem() == ItemInit.morphling_tick.get()) {
+                        } else if (selectedStack.getItem() == ItemInit.morphling_irontooth.get()) {
                             return 8.0F;
-                        } else if (selectedStack.getItem() == ItemInit.morphling_centipede.get()) {
-                            return 9.0F;
-                        } else if (selectedStack.getItem() == ItemInit.morphling_bat.get()) {
-                            return 10.0F;
-                        } else if (selectedStack.getItem() == ItemInit.morphling_urchin.get()) {
-                            return 11.0F;
-                        } else if (selectedStack.getItem() == ItemInit.morphling_mole.get()) {
-                            return 12.0F;
                         }
                         return 0.0F;
                     }

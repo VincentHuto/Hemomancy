@@ -641,64 +641,44 @@ public final class MaterialsData {
                 "Morphlings", () -> new ItemStack(ItemInit.morphling_polyp.get()),
                 true, UnlockPredicate.minDegree(3)));
 
-                                                                                                                                                        list.add(new MaterialEntry("morphling_fungal", "Morphling: Fungal",
-                "A morphling shaped into fungal form. Produces spore-related effects.",
-                "Morphlings", () -> new ItemStack(ItemInit.morphling_fungal.get()),
+                                                                                                                                                        list.add(new MaterialEntry("morphling_deadmans_purse", "Morphling: Deadman's Purse",
+                "A fungal strain that preserves the blood-siphon role of the old leech cluster.",
+                "Morphlings", () -> new ItemStack(ItemInit.morphling_deadmans_purse.get()),
                 true, UnlockPredicate.minDegree(3)));
 
-                                                                                                                                                        list.add(new MaterialEntry("morphling_leeches", "Morphling: Leeches",
-                "A morphling that manifests as a blood-drinking leech cluster.",
-                "Morphlings", () -> new ItemStack(ItemInit.morphling_leeches.get()),
+                                                                                                                                                        list.add(new MaterialEntry("morphling_gravecap", "Morphling: Gravecap",
+                "A fungal strain shaped around decay, spore healing, and corpse-bloom pressure.",
+                "Morphlings", () -> new ItemStack(ItemInit.morphling_gravecap.get()),
                 true, UnlockPredicate.minDegree(3)));
 
-                                                                                                                                                        list.add(new MaterialEntry("morphling_chitinite", "Morphling: Chitinite",
-                "A morphling encased in hardened chitin plating.",
-                "Morphlings", () -> new ItemStack(ItemInit.morphling_chitinite.get()),
+                                                                                                                                                        list.add(new MaterialEntry("morphling_witchs_ear", "Morphling: Witch's Ear",
+                "A fungal strain that keeps the old nocturnal sensing and glide profile.",
+                "Morphlings", () -> new ItemStack(ItemInit.morphling_witchs_ear.get()),
                 true, UnlockPredicate.minDegree(3)));
 
-                                                                                                                                                        list.add(new MaterialEntry("morphling_serpent", "Morphling: Serpent",
-                "A morphling in serpentine form. Applies venom on attack.",
-                "Morphlings", () -> new ItemStack(ItemInit.morphling_serpent.get()),
+                                                                                                                                                        list.add(new MaterialEntry("morphling_foxfire", "Morphling: Foxfire",
+                "A luminous fungal strain that flashes and blinds like the former cuttlefish form.",
+                "Morphlings", () -> new ItemStack(ItemInit.morphling_foxfire.get()),
                 true, UnlockPredicate.minDegree(3)));
 
-                                                                                                                                                        list.add(new MaterialEntry("morphling_pests", "Morphling: Pests",
-                "A morphling that erupts into a swarm of biting insects.",
-                "Morphlings", () -> new ItemStack(ItemInit.morphling_pests.get()),
+                                                                                                                                                        list.add(new MaterialEntry("morphling_bootlace", "Morphling: Bootlace",
+                "A threadlike fungal strain retaining the former web, climb, and tether profile.",
+                "Morphlings", () -> new ItemStack(ItemInit.morphling_bootlace.get()),
                 true, UnlockPredicate.minDegree(3)));
 
-                                                                                                                                                        list.add(new MaterialEntry("morphling_spider", "Morphling: Spider",
-                "A morphling taking arachnid form. Webs and ambushes.",
-                "Morphlings", () -> new ItemStack(ItemInit.morphling_spider.get()),
+                                                                                                                                                        list.add(new MaterialEntry("morphling_irontooth", "Morphling: Irontooth",
+                "A dense fungal strain that preserves the old burrowing and tremor-sense profile.",
+                "Morphlings", () -> new ItemStack(ItemInit.morphling_irontooth.get()),
                 true, UnlockPredicate.minDegree(3)));
 
-                                                                                                                                                        list.add(new MaterialEntry("morphling_cuttlefish", "Morphling: Cuttlefish",
-                "A morphling shaped into a cuttlefish. Flashes chromatophores and leaves blinding sepia.",
-                "Morphlings", () -> new ItemStack(ItemInit.morphling_cuttlefish.get()),
+                                                                                                                                                        list.add(new MaterialEntry("morphling_emberfang", "Morphling: Emberfang",
+                "A heated fungal strain that keeps the venom-strike profile of the old serpent form.",
+                "Morphlings", () -> new ItemStack(ItemInit.morphling_emberfang.get()),
                 true, UnlockPredicate.minDegree(3)));
 
-                                                                                                                                                        list.add(new MaterialEntry("morphling_tick", "Morphling: Tick",
-                "A morphling that latches and slowly drains blood volume.",
-                "Morphlings", () -> new ItemStack(ItemInit.morphling_tick.get()),
-                true, UnlockPredicate.minDegree(3)));
-
-                                                                                                                                                        list.add(new MaterialEntry("morphling_centipede", "Morphling: Centipede",
-                "A morphling taking centipede form. Fast, venomous, difficult to shake.",
-                "Morphlings", () -> new ItemStack(ItemInit.morphling_centipede.get()),
-                true, UnlockPredicate.minDegree(3)));
-
-                                                                                                                                                        list.add(new MaterialEntry("morphling_bat", "Morphling: Bat",
-                "A morphling shaped as a blood-drinking bat. Echolocates blood reserves.",
-                "Morphlings", () -> new ItemStack(ItemInit.morphling_bat.get()),
-                true, UnlockPredicate.minDegree(3)));
-
-                                                                                                                                                        list.add(new MaterialEntry("morphling_urchin", "Morphling: Urchin",
-                "A morphling with spines deployed outward. Retaliates on being struck.",
-                "Morphlings", () -> new ItemStack(ItemInit.morphling_urchin.get()),
-                true, UnlockPredicate.minDegree(3)));
-
-                                                                                                                                                        list.add(new MaterialEntry("morphling_mole", "Morphling: Mole",
-                "A morphling shaped for burrowing. Tunnels to reach its target.",
-                "Morphlings", () -> new ItemStack(ItemInit.morphling_mole.get()),
+                                                                                                                                                        list.add(new MaterialEntry("morphling_winter_shroud", "Morphling: Winter Shroud",
+                "A cold fungal strain that preserves the old segmented resilience profile.",
+                "Morphlings", () -> new ItemStack(ItemInit.morphling_winter_shroud.get()),
                 true, UnlockPredicate.minDegree(3)));
 
         // ── Scars & Patterns ──

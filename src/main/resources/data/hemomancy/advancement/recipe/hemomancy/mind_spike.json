@@ -6,12 +6,12 @@
     ]
   },
   "criteria": {
-    "has_morphling_chitinite": {
+    "has_morphling_winter_shroud": {
       "trigger": "minecraft:inventory_changed",
       "conditions": {
         "items": [
           {
-            "items": "hemomancy:morphling_chitinite"
+            "items": "hemomancy:morphling_winter_shroud"
           }
         ]
       }
@@ -25,7 +25,7 @@
   },
   "requirements": [
     [
-      "has_morphling_chitinite",
+      "has_morphling_winter_shroud",
       "has_the_recipe"
     ]
   ]

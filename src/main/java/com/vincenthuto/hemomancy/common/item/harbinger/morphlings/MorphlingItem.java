@@ -5,6 +5,7 @@ import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodVolumeEvents;
 import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillPointHelper;
 import com.vincenthuto.hemomancy.common.init.EffectInit;
+import com.vincenthuto.hemomancy.config.HemoServerConfig;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
@@ -35,6 +36,8 @@ public class MorphlingItem extends Item implements IMorphling {
 	public static final String PRIMALIZED_KEY = "Primalized";
 	public static final String WILD_BOUND_KEY = "WildBound";
 	public static final String PRIMAL_ABILITY_PREFIX = "Primal:";
+	public static final String LAST_FED_GAME_TIME_KEY = "LastFedGameTime";
+	public static final String EXPERIENCE_PROGRESS_KEY = "ExperienceProgress";
 
 	// Maturity thresholds based on effective EnzymePower
 	public static final float[] MATURITY_THRESHOLDS = { 0f, 10f, 30f, 60f, 100f, 100f };
@@ -89,6 +92,8 @@ public class MorphlingItem extends Item implements IMorphling {
 				break;
 			}
 		}
+		maturity = MorphlingHungerRules.capMaturityByHusbandry(maturity,
+				tag.getInt(EXPERIENCE_PROGRESS_KEY), husbandryStageQuota());
 		return WildMorphlingRules.applyMaturityCap(maturity, tag.getBoolean(WILD_BOUND_KEY),
 				tag.getBoolean(PRIMALIZED_KEY));
 	}
@@ -131,6 +136,84 @@ public class MorphlingItem extends Item implements IMorphling {
 		stack.set(DataComponents.CUSTOM_DATA, CustomData.of(tag));
 	}
 
+	public static void markEquipped(Player player, ItemStack stack) {
+		if (player == null || stack.isEmpty() || !isHungerEnabled()) {
+			return;
+		}
+		if (getMaturityLevel(stack) >= 3 && !isWildBound(stack) && getLastFedGameTime(stack) <= 0L) {
+			writeLong(stack, LAST_FED_GAME_TIME_KEY, 0L);
+		}
+	}
+
+	public static void markFedNow(ItemStack stack, long gameTime) {
+		if (stack.isEmpty()) {
+			return;
+		}
+		writeLong(stack, LAST_FED_GAME_TIME_KEY, Math.max(0L, gameTime));
+	}
+
+	public static long getLastFedGameTime(ItemStack stack) {
+		if (!stack.has(DataComponents.CUSTOM_DATA)) {
+			return 0L;
+		}
+		return stack.get(DataComponents.CUSTOM_DATA).copyTag().getLong(LAST_FED_GAME_TIME_KEY);
+	}
+
+	public static int getHusbandryProgress(ItemStack stack) {
+		if (!stack.has(DataComponents.CUSTOM_DATA)) {
+			return 0;
+		}
+		return Math.max(0, stack.get(DataComponents.CUSTOM_DATA).copyTag().getInt(EXPERIENCE_PROGRESS_KEY));
+	}
+
+	public static int addHusbandryProgress(ItemStack stack, int amount) {
+		if (stack.isEmpty() || amount <= 0) {
+			return getHusbandryProgress(stack);
+		}
+		CompoundTag tag = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
+		int next = Math.max(0, tag.getInt(EXPERIENCE_PROGRESS_KEY) + amount);
+		tag.putInt(EXPERIENCE_PROGRESS_KEY, next);
+		stack.set(DataComponents.CUSTOM_DATA, CustomData.of(tag));
+		return next;
+	}
+
+	public static MorphlingHungerRules.HungerState hungerState(ItemStack stack, long now) {
+		return MorphlingHungerRules.state(isHungerEnabled(), getMaturityLevel(stack), isWildBound(stack),
+				now, getLastFedGameTime(stack), fedDurationTicks());
+	}
+
+	public static int passiveAmplifier(Player player, ItemStack stack, int baseAmplifier) {
+		long now = player == null ? 0L : player.level().getGameTime();
+		return MorphlingHungerRules.adjustedAmplifier(baseAmplifier, hungerState(stack, now));
+	}
+
+	public static void applyHungerTick(Player player, ItemStack stack) {
+		if (player == null || player.level().isClientSide || !isHungerEnabled()) {
+			return;
+		}
+		MorphlingHungerRules.HungerState state = hungerState(stack, player.level().getGameTime());
+		if (!MorphlingHungerRules.shouldApplyStarvingDrain(state)) {
+			return;
+		}
+		int interval = Math.max(1, drainIntervalTicks());
+		if (player.tickCount % interval != 0) {
+			return;
+		}
+		double rate = starvingDrainRate();
+		HemoCapabilityAccess.getBloodVolume(player).ifPresent(volume -> {
+			if (!volume.isActive()) {
+				return;
+			}
+			if (rate > 0.0D && volume.getBloodVolume() > 0.0D) {
+				double drained = Math.min(rate, volume.getBloodVolume());
+				if (volume.drain(drained) && player instanceof ServerPlayer serverPlayer) {
+					BloodVolumeEvents.syncVolume(serverPlayer, volume);
+				}
+			}
+		});
+		applyMorphicStrain(player, 80, 0);
+	}
+
 	/**
 	 * Returns the maturity level name for display purposes.
 	 */
@@ -159,6 +242,12 @@ public class MorphlingItem extends Item implements IMorphling {
 	public void appendHoverText(ItemStack stack, Item.TooltipContext context, List<Component> tooltip, TooltipFlag flagIn) {
 		super.appendHoverText(stack, context, tooltip, flagIn);
 
+		String binomial = binomialKey();
+		if (!binomial.isBlank()) {
+			tooltip.add(Component.translatable(binomial)
+					.withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC));
+		}
+
 		// Show preferred enzyme info
 		EnumBloodTendency preferred = this.getPreferredTendency();
 		EnumBloodTendency secondary = this.getSecondaryTendency();
@@ -183,6 +272,11 @@ public class MorphlingItem extends Item implements IMorphling {
 					tooltip.add(Component.literal("Wild-bound: Incubate to unlock further maturity")
 							.withStyle(ChatFormatting.DARK_AQUA));
 				}
+				if (isHungerEnabled() && maturity >= 3 && !morphTag.getBoolean(WILD_BOUND_KEY)) {
+					long now = context.level() == null ? 0L : context.level().getGameTime();
+					tooltip.add(Component.literal("Hunger: " + formatHungerState(hungerState(stack, now)))
+							.withStyle(ChatFormatting.DARK_RED));
+				}
 
 				// Show progress to next level
 				if (maturity < PrimalMorphlingRules.APEX_LEVEL) {
@@ -206,10 +300,19 @@ public class MorphlingItem extends Item implements IMorphling {
 		}
 	}
 
+	protected String binomialKey() {
+		return "";
+	}
+
 	private static String formatTendencyName(EnumBloodTendency tendency) {
 		String name = tendency.name();
 		if (name.isEmpty()) return "Unknown";
 		return name.charAt(0) + name.substring(1).toLowerCase();
+	}
+
+	private static String formatHungerState(MorphlingHungerRules.HungerState state) {
+		String name = state.name().toLowerCase();
+		return name.charAt(0) + name.substring(1);
 	}
 
 	/**
@@ -297,6 +400,37 @@ public class MorphlingItem extends Item implements IMorphling {
 		}
 		tag.getCompound("Cooldowns").putLong(abilityKey, tick);
 		stack.set(DataComponents.CUSTOM_DATA, CustomData.of(tag));
+	}
+
+	private static void writeLong(ItemStack stack, String key, long value) {
+		CompoundTag tag = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
+		tag.putLong(key, value);
+		stack.set(DataComponents.CUSTOM_DATA, CustomData.of(tag));
+	}
+
+	private static boolean isHungerEnabled() {
+		return HemoServerConfig.MORPHLING_HUNGER_ENABLED != null
+				&& HemoServerConfig.MORPHLING_HUNGER_ENABLED.get();
+	}
+
+	private static int fedDurationTicks() {
+		return HemoServerConfig.MORPHLING_FED_DURATION_TICKS == null
+				? 24000 : HemoServerConfig.MORPHLING_FED_DURATION_TICKS.get();
+	}
+
+	private static double starvingDrainRate() {
+		return HemoServerConfig.MORPHLING_STARVING_DRAIN_RATE == null
+				? 0.0D : HemoServerConfig.MORPHLING_STARVING_DRAIN_RATE.get();
+	}
+
+	private static int husbandryStageQuota() {
+		return HemoServerConfig.MORPHLING_HUSBANDRY_STAGE_QUOTA == null
+				? 0 : HemoServerConfig.MORPHLING_HUSBANDRY_STAGE_QUOTA.get();
+	}
+
+	private static int drainIntervalTicks() {
+		return HemoServerConfig.MORPHLING_DRAIN_INTERVAL == null
+				? 60 : HemoServerConfig.MORPHLING_DRAIN_INTERVAL.get();
 	}
 
 }
