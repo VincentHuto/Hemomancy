@@ -629,6 +629,66 @@
       }
     ]
   },
+  "entity.will.ambient": {
+    "category": "entity",
+    "subtitle": "subtitle.hemomancy.entity.will.ambient",
+    "sounds": [
+      {
+        "name": "hemomancy:entity/abhorent_thought/ambient",
+        "stream": true
+      }
+    ]
+  },
+  "entity.will.hurt": {
+    "category": "entity",
+    "subtitle": "subtitle.hemomancy.entity.will.hurt",
+    "sounds": [
+      {
+        "name": "hemomancy:entity/abhorent_thought/hurt",
+        "stream": true
+      }
+    ]
+  },
+  "entity.will.dissolve": {
+    "category": "entity",
+    "subtitle": "subtitle.hemomancy.entity.will.dissolve",
+    "sounds": [
+      {
+        "name": "hemomancy:entity/abhorent_thought/death",
+        "stream": true
+      }
+    ]
+  },
+  "entity.will.materialize": {
+    "category": "entity",
+    "subtitle": "subtitle.hemomancy.entity.will.materialize",
+    "sounds": [
+      {
+        "name": "hemomancy:entity/abhorent_thought/summon",
+        "stream": true
+      }
+    ]
+  },
+  "entity.will.falter": {
+    "category": "entity",
+    "subtitle": "subtitle.hemomancy.entity.will.falter",
+    "sounds": [
+      {
+        "name": "hemomancy:entity/abhorent_thought/hurt",
+        "stream": true
+      }
+    ]
+  },
+  "entity.will.presence_sting": {
+    "category": "entity",
+    "subtitle": "subtitle.hemomancy.entity.will.presence_sting",
+    "sounds": [
+      {
+        "name": "hemomancy:entity/abhorent_thought/summon",
+        "stream": true
+      }
+    ]
+  },
   "entity.enthralled_doll.ambient": {
     "category": "entity",
     "subtitle": "subtitle.hemomancy.entity.enthralled_doll.ambient",

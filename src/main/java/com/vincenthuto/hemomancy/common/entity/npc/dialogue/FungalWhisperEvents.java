@@ -81,6 +81,8 @@ public class FungalWhisperEvents {
 
 		DialogueTree tree = FungalWhisperDialogueTrees.forDegree(degree, variant);
 
+		HemoCapabilityAccess.getWillAmbushState(serverPlayer)
+				.setHeraldUntilGameTime(serverPlayer.level().getGameTime() + 2400L);
 		PacketHandler.sendToPlayer(serverPlayer, new OpenDialoguePacket(tree));
 	}
 }

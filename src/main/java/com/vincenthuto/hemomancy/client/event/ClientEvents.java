@@ -48,6 +48,8 @@ import com.vincenthuto.hemomancy.client.render.entity.misc.ArmatureRestraintRend
 import com.vincenthuto.hemomancy.client.render.entity.misc.CovenantThroneSeatRenderer;
 import com.vincenthuto.hemomancy.client.render.entity.mob.arthropod.*;
 import com.vincenthuto.hemomancy.client.render.entity.mob.monster.*;
+import com.vincenthuto.hemomancy.client.render.entity.mob.will.WillAnchorRenderer;
+import com.vincenthuto.hemomancy.client.render.entity.mob.will.WillRenderer;
 import com.vincenthuto.hemomancy.client.render.entity.npc.*;
 import com.vincenthuto.hemomancy.client.render.entity.projectile.*;
 import com.vincenthuto.hemomancy.client.render.entity.summon.*;
@@ -229,6 +231,9 @@ public class ClientEvents {
         }
         if (FungalWhisperVignetteOverlay.instance != null) {
             FungalWhisperVignetteOverlay.instance.tick();
+        }
+        if (WillPresenceOverlay.instance != null) {
+            WillPresenceOverlay.instance.tick();
         }
         EndgameBossMusicHandler.tick();
         handleArmatureCameraFallback();
@@ -639,6 +644,8 @@ public class ClientEvents {
             event.registerEntityRenderer(EntityInit.iron_spike.get(), IronSpikeRenderer::new);
             event.registerEntityRenderer(EntityInit.iron_wall.get(), IronWallRenderer::new);
             event.registerEntityRenderer(EntityInit.wretched_will.get(), WretchedWillRenderer::new);
+            event.registerEntityRenderer(EntityInit.will.get(), WillRenderer::new);
+            event.registerEntityRenderer(EntityInit.will_anchor.get(), WillAnchorRenderer::new);
             event.registerEntityRenderer(EntityInit.leech.get(), LeechRenderer::new);
             event.registerEntityRenderer(EntityInit.iron_pillar.get(), IronPillarRenderer::new);
             event.registerEntityRenderer(EntityInit.iron_spike.get(), IronSpikeRenderer::new);
@@ -751,6 +758,7 @@ public class ClientEvents {
             UnstainedGaugeOverlay.instance = new UnstainedGaugeOverlay();
             FungalWhisperVignetteOverlay.instance = new FungalWhisperVignetteOverlay();
             SanguineOmenOverlay.instance = new SanguineOmenOverlay();
+            WillPresenceOverlay.instance = new WillPresenceOverlay();
             CurorLensOverlay.instance = new CurorLensOverlay();
             // Tiles
             BlockEntityRenderers.register(BlockEntityInit.discovery_inscription.get(),
@@ -1078,6 +1086,12 @@ public class ClientEvents {
                 if (SanguineOmenOverlay.instance != null) {
                     float partialTicks = deltaTracker.getGameTimeDeltaPartialTick(true);
                     SanguineOmenOverlay.instance.renderHUD(graphics, graphics.guiWidth(), graphics.guiHeight(), partialTicks);
+                }
+            });
+            event.registerAboveAll(Hemomancy.rloc("will_presence"), (graphics, deltaTracker) -> {
+                if (WillPresenceOverlay.instance != null) {
+                    float partialTicks = deltaTracker.getGameTimeDeltaPartialTick(true);
+                    WillPresenceOverlay.instance.renderHUD(graphics, graphics.guiWidth(), graphics.guiHeight(), partialTicks);
                 }
             });
             event.registerAboveAll(Hemomancy.rloc("curor_lens"), (graphics, deltaTracker) -> {

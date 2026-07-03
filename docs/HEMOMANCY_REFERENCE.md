@@ -143,6 +143,7 @@ All player-attached NeoForge attachments and exposed capabilities are registered
 |---|---|---|
 | Blood Volume | `IBloodVolume` | Current/max blood, active state, bloodline link, trickle/auto-draw settings, direct-routing bloodline opt-in, blood debt tracking (Hemorath encounter) |
 | Power Guardrails | `PowerGuardrailState` attachment | Internal player attachment for circulation window use, borrowed-blood reserve, and Last Rite armed source/shared cooldown. Access through `HemoCapabilityAccess.getPowerGuardrails`; no public capability key is exposed. |
+| Will Ambush State | `WillAmbushState` attachment | Internal player attachment for Rogue Hemomancer Will ambush cooldowns, Fungal Whisper herald windows, and hidden hive-attention/ripeness pressure. Access through `HemoCapabilityAccess.getWillAmbushState`; no public capability key is exposed. |
 | Known Still Arts | `IKnownStillArts` | Set of Still Arts granted by Our Lady / Unstained rites; selected art; synced via `KnownStillArtsServerPacket` |
 | Known Summons | `IKnownSummons` | Permanently unlocked puppeteer summon shapes; synced via `KnownSummonsServerPacket` and refreshed on progress-screen open |
 | Liber Knowledge | `IBookKnowledge` | Player-owned Liber Sanguinum / Liber Immaculatus unlock state, memo discovery, and entry visibility |
@@ -246,6 +247,28 @@ Hemomancy registers active server, client, and common config specs through `Hemo
 | `morphlingPassiveDrainEnabled` | Boolean | `true` | â€” | Whether equipped morphlings drain blood |
 | `morphlingDrainRate` | Double | `0.5` | 0.01â€“100.0 | Blood drained per drain tick |
 | `morphlingDrainInterval` | Int | `60` | 1â€“6000 | Ticks between drain ticks |
+
+**Rogue Hemomancer Wills** (`wills`):
+
+| Key | Type | Default | Range | Description |
+|-----|------|---------|-------|-------------|
+| `willsEnabled` | Boolean | `true` | - | Enables ambient Rogue Will ambushes, anchors, rewards, and bend interactions |
+| `ambushCheckIntervalTicks` | Int | `200` | 20-72000 | Per-player server tick cadence for ambush rolls |
+| `baseChancePerCheck` | Double | `0.02` | 0.0-1.0 | Base chance before terrain, Blood Moon, Blood Drunkenness, herald, bloom, and hive-attention multipliers |
+| `ambushCooldownTicks` | Int | `24000` | 0-240000 | Minimum ticks between successful ambushes per player |
+| `maxActivePerPlayer` | Int | `3` | 1-32 | Nearby unclaimed Rogue Will cap around a target player |
+| `maxActivePerDimension` | Int | `8` | 1-128 | Dimension-wide unclaimed Rogue Will cap |
+| `terrainMultiplier` | Double | `3.0` | 0.0-16.0 | Chance multiplier for ripe terrain, darkness, or fungal pressure |
+| `bloodMoonMultiplier` | Double | `2.0` | 0.0-16.0 | Chance multiplier while Blood Moon is active |
+| `bloodDrunkennessMultiplierPerAmplifier` | Double | `0.5` | 0.0-8.0 | Additive chance multiplier per Blood Drunkenness amplifier level |
+| `heraldMultiplier` | Double | `4.0` | 0.0-16.0 | Chance multiplier while a natural Fungal Whisper herald window is active |
+| `anchorLifetimeTicks` | Int | `80` | 20-600 | Delay between anchor spawn and Will materialization |
+| `falterWindowTicks` | Int | `100` | 20-1200 | Broken Will bindable falter window |
+| `bendEnabled` | Boolean | `true` | - | Enables Absorb, Redirect, Commandeer, and backfire interactions |
+| `commandeerEnabled` | Boolean | `true` | - | Enables Marionette Crossbar commandeering specifically |
+| `claimedWillBonusCapSilentArchon` | Int | `1` | 0-8 | Extra claimed-Will cap for the Silent Archon edge |
+| `puppeteerSpawnChance` | Double | `0.2` | 0.0-1.0 | Chance to replace the first Broken Will slot with a Blood Drunk Puppeteer archetype |
+| `minDegree` | Int | `4` | 0-8 | Minimum Harbinger degree for ambient Will ambushes |
 
 ### 3.2 Client Config (`HemoClientConfig`)
 
@@ -1754,6 +1777,18 @@ Current summon definitions:
 | `mnemonist_puppet` | 5 | Memory echo specialist | 26 | 3 | 64 | 16/min | 1400 |
 
 `mnemonist_puppet` is the bounded V1 memory-replay summon. It records up to six recent damage memories against its current target, drops stale memories after 160 ticks, and every 40 ticks can replay one as reduced, capped magic damage with red/pale memory particles. Replay damage is marked so it cannot record itself, and the implementation intentionally avoids full action replay.
+
+### 17.1 Rogue Hemomancer Wills
+
+Rogue Hemomancer Wills are late-Harbinger ambushers keyed to the player's blood tendency rather than ordinary biome spawns. The system uses one data-driven `will` entity with two origins: **Broken** Wills use fixed tier stats forever, while **Sent** Wills snapshot scaled stats from the target player when spawned. Both cast school-specific manipulation kits through the widened `DrudgeAction`/`MobManipCaster` bridge; Drudge-only manipulation hooks stay guarded so existing Drudge behavior is unchanged.
+
+Ambient ambushes are driven by `WillAmbushDirector` and `WillAmbushState`. Eligible active-blood Harbingers at the configured minimum degree roll on a cooldown, with chance multipliers from ripe/dark terrain, Qliphoth bloom ownership, Blood Moon, Blood Drunkenness, Fungal Whisper herald windows, and hidden hive attention. Founding Fanes, the Chamber of Will, and placed Harbinger Outpost pieces are sanctuary exclusions through `WillSanctuaryRules`.
+
+Successful ambushes spawn a `will_anchor` first. All nearby players receive a short sound/overlay cue through `WillPresenceCuePacket`. Oculiflora carriers get the stronger counterplay: `WillAnchorRenderer` renders the pre-materialization anchor only when `OculifloraReticularisItem.networkSightActive(localPlayer)` is true. After the anchor lifetime expires, it materializes the composed group and may replace the first Broken slot with a `blood_drunk_puppeteer`, making the Puppeteer part of the Will archetype without replacing its existing combat identity.
+
+Wills dissolve instead of using ordinary corpse loot. Dissolve rewards are school-keyed through `WillCombatRules.lootFor`: the matching representative enzyme always drops, and Broken Wills have a small `faded_memory` chance. Sent Will dissolution increments hidden hive attention on the targeted player only; no Apotheos or progression gate is attached to that pressure in this stage.
+
+Broken Wills below their falter threshold enter a short bindable window; Sent Wills never falter. Right-clicking a faltering Broken Will can **Absorb** it for alignment/reward, **Redirect** it temporarily for a blood cost, or **Commandeer** it with a Marionette Crossbar. Commandeered Wills implement `BoundPuppeteerSummon`, count against the puppeteer active-summon cap, spend crossbar thread, and unravel through the shared tether/upkeep behavior. Silent Archon players receive the planned edge: cheaper Commandeer costs from `WillBendRules` and the configured `claimedWillBonusCapSilentArchon` cap bonus.
 
 Legacy summon/test entities (`enthralled_doll`, `wretched_will`, and `blood_thrall`) remain mechanically unchanged by this pass.
 

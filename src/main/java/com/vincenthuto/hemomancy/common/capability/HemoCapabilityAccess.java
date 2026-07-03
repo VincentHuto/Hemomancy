@@ -21,6 +21,7 @@ import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.IVa
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.organs.IVisceralOrgans;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.PowerGuardrailState;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.will.WillAmbushState;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.white_humor.IWhiteHumorVolume;
 import com.vincenthuto.hemomancy.common.item.harbinger.memory.LastDeathMemory;
 import com.vincenthuto.hemomancy.common.tile.IBloodReservoir;
@@ -69,6 +70,10 @@ public static IBloodVolume requireBloodVolume(Entity entity) {
 
 public static PowerGuardrailState getPowerGuardrails(Player player) {
     return player.getData(HemoAttachmentTypes.POWER_GUARDRAILS);
+}
+
+public static WillAmbushState getWillAmbushState(Player player) {
+    return player.getData(HemoAttachmentTypes.WILL_AMBUSH_STATE);
 }
 
 // ── Blood Tendency ────────────────────────────────────────────────────────

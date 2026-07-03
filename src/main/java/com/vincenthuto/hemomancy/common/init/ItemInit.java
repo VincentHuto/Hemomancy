@@ -232,6 +232,8 @@ public class ItemInit {
             () -> new HeartyCompassItem(new Item.Properties().rarity(Rarity.UNCOMMON)));
     public static final DeferredHolder<Item, Item> memory_thread = BASEITEMS.register("memory_thread",
             () -> new MemoryThreadItem(new Item.Properties().rarity(Rarity.UNCOMMON)));
+    public static final DeferredHolder<Item, Item> faded_memory = BASEITEMS.register("faded_memory",
+            () -> new Item(new Item.Properties().rarity(Rarity.UNCOMMON)));
     public static final DeferredHolder<Item, Item> void_eye_organ = BASEITEMS.register("void_eye_organ",
             () -> new VoidEyeOrganItem(new Item.Properties().rarity(Rarity.RARE)));
     public static final DeferredHolder<Item, Item> vein_spider = BASEITEMS.register("vein_spider",
@@ -999,6 +1001,9 @@ public class ItemInit {
     public static final DeferredHolder<Item, DeferredSpawnEggItem> spawn_egg_blood_drunk_puppeteer = SPAWNEGGS.register(
             "spawn_egg_blood_drunk_puppeteer",
             () -> new DeferredSpawnEggItem(EntityInit.blood_drunk_puppeteer, 12124160, 12152064, new Item.Properties()));
+    public static final DeferredHolder<Item, DeferredSpawnEggItem> spawn_egg_will = SPAWNEGGS.register(
+            "spawn_egg_will",
+            () -> new DeferredSpawnEggItem(EntityInit.will, 0x241327, 0xB65C84, new Item.Properties()));
     public static final DeferredHolder<Item, DeferredSpawnEggItem> spawn_egg_enthralled_doll = SPAWNEGGS.register(
             "spawn_egg_enthralled_doll",
             () -> new DeferredSpawnEggItem(EntityInit.enthralled_doll, 12124160, 12564912, new Item.Properties()));

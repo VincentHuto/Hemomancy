@@ -3094,6 +3094,16 @@
   "bestiary.hemomancy.title": "Living Bestiary",
   "death.attack.phantasmal_echo": "%1$s was lost in the masquerade",
   "death.attack.phantasmal_echo.player": "%1$s was lost in %2$s's masquerade",
-  "entity.hemomancy.phantasmal_echo": "Phantasmal Echo"
+  "entity.hemomancy.phantasmal_echo": "Phantasmal Echo",
+  "entity.hemomancy.will": "Rogue Will",
+  "entity.hemomancy.will_anchor": "Will Anchor",
+  "item.hemomancy.faded_memory": "Faded Memory",
+  "item.hemomancy.spawn_egg_will": "Rogue Will Spawn Egg",
+  "subtitle.hemomancy.entity.will.ambient": "A will murmurs",
+  "subtitle.hemomancy.entity.will.hurt": "A will fractures",
+  "subtitle.hemomancy.entity.will.dissolve": "A will dissolves",
+  "subtitle.hemomancy.entity.will.materialize": "A will materializes",
+  "subtitle.hemomancy.entity.will.falter": "A will falters",
+  "subtitle.hemomancy.entity.will.presence_sting": "A will presses near"
 
 }

@@ -83,6 +83,25 @@ public class HemoServerConfig {
 	public static ModConfigSpec.BooleanValue BORROWED_BLOOD_ENABLED;
 	public static ModConfigSpec.DoubleValue BORROWED_BLOOD_CAP;
 
+	// ===== Rogue Hemomancer Wills =====
+	public static ModConfigSpec.BooleanValue WILL_ENABLED;
+	public static ModConfigSpec.IntValue WILL_AMBUSH_CHECK_INTERVAL_TICKS;
+	public static ModConfigSpec.DoubleValue WILL_BASE_CHANCE_PER_CHECK;
+	public static ModConfigSpec.IntValue WILL_AMBUSH_COOLDOWN_TICKS;
+	public static ModConfigSpec.IntValue WILL_MAX_ACTIVE_PER_PLAYER;
+	public static ModConfigSpec.IntValue WILL_MAX_ACTIVE_PER_DIMENSION;
+	public static ModConfigSpec.DoubleValue WILL_TERRAIN_MULTIPLIER;
+	public static ModConfigSpec.DoubleValue WILL_BLOOD_MOON_MULTIPLIER;
+	public static ModConfigSpec.DoubleValue WILL_BLOOD_DRUNKENNESS_MULTIPLIER_PER_AMPLIFIER;
+	public static ModConfigSpec.DoubleValue WILL_HERALD_MULTIPLIER;
+	public static ModConfigSpec.IntValue WILL_ANCHOR_LIFETIME_TICKS;
+	public static ModConfigSpec.IntValue WILL_FALTER_WINDOW_TICKS;
+	public static ModConfigSpec.BooleanValue WILL_BEND_ENABLED;
+	public static ModConfigSpec.BooleanValue WILL_COMMANDEER_ENABLED;
+	public static ModConfigSpec.IntValue WILL_CLAIMED_BONUS_CAP_SILENT_ARCHON;
+	public static ModConfigSpec.DoubleValue WILL_PUPPETEER_SPAWN_CHANCE;
+	public static ModConfigSpec.IntValue WILL_MIN_DEGREE;
+
 	// ===== Drudge System =====
 	public static ModConfigSpec.IntValue DRUDGE_LEASH_RADIUS;
 	public static ModConfigSpec.IntValue DRUDGE_MAX_PER_SSC;
@@ -401,6 +420,79 @@ public class HemoServerConfig {
 		BORROWED_BLOOD_CAP = builder
 				.comment("Maximum blood the borrowed reserve can hold.")
 				.defineInRange("borrowedBloodCap", 500.0, 0.0, 10000.0);
+
+		builder.pop();
+
+		// ───── Rogue Hemomancer Wills ─────
+		builder.comment("Rogue Hemomancer Will Settings").push("wills");
+
+		WILL_ENABLED = builder
+				.comment("Whether Rogue Hemomancer Will ambushes, anchors, rewards, and bend interactions are enabled.")
+				.define("willsEnabled", true);
+
+		WILL_AMBUSH_CHECK_INTERVAL_TICKS = builder
+				.comment("Ticks between ambient Will ambush checks per eligible player.")
+				.defineInRange("ambushCheckIntervalTicks", 200, 20, 72000);
+
+		WILL_BASE_CHANCE_PER_CHECK = builder
+				.comment("Base chance per eligible ambush check before terrain, blood moon, drunkenness, and herald multipliers.")
+				.defineInRange("baseChancePerCheck", 0.02, 0.0, 1.0);
+
+		WILL_AMBUSH_COOLDOWN_TICKS = builder
+				.comment("Ticks between successful Will ambushes for one player.")
+				.defineInRange("ambushCooldownTicks", 24000, 0, 240000);
+
+		WILL_MAX_ACTIVE_PER_PLAYER = builder
+				.comment("Maximum ambient hostile Wills allowed near one player before the director skips new anchors.")
+				.defineInRange("maxActivePerPlayer", 3, 1, 32);
+
+		WILL_MAX_ACTIVE_PER_DIMENSION = builder
+				.comment("Maximum ambient hostile Wills allowed in a dimension before the director skips new anchors.")
+				.defineInRange("maxActivePerDimension", 8, 1, 128);
+
+		WILL_TERRAIN_MULTIPLIER = builder
+				.comment("Ambush chance multiplier in dark, cave-like, or fungus-adjacent terrain.")
+				.defineInRange("terrainMultiplier", 3.0, 0.0, 25.0);
+
+		WILL_BLOOD_MOON_MULTIPLIER = builder
+				.comment("Ambush chance multiplier while a Blood Moon is active.")
+				.defineInRange("bloodMoonMultiplier", 2.0, 0.0, 25.0);
+
+		WILL_BLOOD_DRUNKENNESS_MULTIPLIER_PER_AMPLIFIER = builder
+				.comment("Additional ambush chance multiplier per Blood Drunkenness amplifier level.")
+				.defineInRange("bloodDrunkennessMultiplierPerAmplifier", 0.5, 0.0, 10.0);
+
+		WILL_HERALD_MULTIPLIER = builder
+				.comment("Ambush chance multiplier while a recent Fungal Whisper herald window is active.")
+				.defineInRange("heraldMultiplier", 4.0, 0.0, 25.0);
+
+		WILL_ANCHOR_LIFETIME_TICKS = builder
+				.comment("Ticks a Will anchor telegraphs before the ambush materializes.")
+				.defineInRange("anchorLifetimeTicks", 80, 1, 1200);
+
+		WILL_FALTER_WINDOW_TICKS = builder
+				.comment("Ticks a Broken Will remains faltering and bindable after being wounded below its threshold.")
+				.defineInRange("falterWindowTicks", 100, 1, 1200);
+
+		WILL_BEND_ENABLED = builder
+				.comment("Whether faltering Broken Wills can be Absorbed, Redirected, or Commandeered.")
+				.define("bendEnabled", true);
+
+		WILL_COMMANDEER_ENABLED = builder
+				.comment("Whether the Commandeer bend may bind faltering Broken Wills into the Puppeteer thread economy.")
+				.define("commandeerEnabled", true);
+
+		WILL_CLAIMED_BONUS_CAP_SILENT_ARCHON = builder
+				.comment("Extra claimed-Will summon cap granted by the Silent Archon edge.")
+				.defineInRange("claimedBonusCapSilentArchon", 1, 0, 8);
+
+		WILL_PUPPETEER_SPAWN_CHANCE = builder
+				.comment("Chance for the ambush director to replace one Broken Will slot with a Blood Drunk Puppeteer.")
+				.defineInRange("puppeteerSpawnChance", 0.2, 0.0, 1.0);
+
+		WILL_MIN_DEGREE = builder
+				.comment("Minimum Harbinger degree for ambient Rogue Will ambushes.")
+				.defineInRange("minDegree", 4, 0, 8);
 
 		builder.pop();
 	}

@@ -1,11 +1,12 @@
 package com.vincenthuto.hemomancy.common.manipulation;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.world.entity.PathfinderMob;
 import net.minecraft.world.level.Level;
 
 /**
  * Functional interface that describes what a {@link BloodManipulation} does when
- * executed on behalf of a Drudge construct rather than a player.
+ * executed on behalf of a Drudge construct or Will-like mob rather than a player.
  *
  * <p>Each manipulation that can be equipped by a Drudge registers its own
  * {@code DrudgeAction} via
@@ -23,17 +24,16 @@ import net.minecraft.world.level.Level;
 public interface DrudgeAction {
 
     /**
-     * Execute the manipulation on behalf of the given Drudge.
+     * Execute the manipulation on behalf of the given mob caster.
      *
-     * @param drudge  the executing Drudge entity
+     * @param caster  the executing PathfinderMob caster
      * @param world   the server-side level (never client-side; callers guarantee this)
-     * @param centre  the Drudge's current block position used as the work origin
+     * @param centre  the caster's current block position used as the work origin
      * @param radius  the configured work radius ({@code HemoServerConfig.DRUDGE_WORK_RADIUS})
      * @return {@code true} if the effect fired and blood should be drained / cooldown applied;
      *         {@code false} if there was nothing to act on this tick
      */
-    boolean execute(com.vincenthuto.hemomancy.common.entity.npc.DrudgeEntity drudge,
-                    Level world, BlockPos centre, int radius);
+    boolean execute(PathfinderMob caster, Level world, BlockPos centre, int radius);
 
     /**
      * Sentinel value indicating that the manipulation cannot be equipped by a Drudge.

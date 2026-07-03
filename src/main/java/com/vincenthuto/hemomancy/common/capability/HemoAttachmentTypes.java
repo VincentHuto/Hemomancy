@@ -18,6 +18,7 @@ import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.Vas
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.organs.VisceralOrgans;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodVolume;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.PowerGuardrailState;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.will.WillAmbushState;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.white_humor.WhiteHumorVolume;
 import com.vincenthuto.hemomancy.common.item.harbinger.memory.LastDeathMemoryAttachment;
 import net.neoforged.neoforge.attachment.AttachmentType;
@@ -39,6 +40,10 @@ public final class HemoAttachmentTypes {
     public static final DeferredHolder<AttachmentType<?>, AttachmentType<PowerGuardrailState>> POWER_GUARDRAILS =
             ATTACHMENT_TYPES.register("power_guardrails",
                     () -> AttachmentType.serializable(PowerGuardrailState::new).copyOnDeath().build());
+
+    public static final DeferredHolder<AttachmentType<?>, AttachmentType<WillAmbushState>> WILL_AMBUSH_STATE =
+            ATTACHMENT_TYPES.register("will_ambush_state",
+                    () -> AttachmentType.serializable(WillAmbushState::new).copyOnDeath().build());
 
     public static final DeferredHolder<AttachmentType<?>, AttachmentType<BloodTendency>> BLOOD_TENDENCY =
             ATTACHMENT_TYPES.register("blood_tendency",

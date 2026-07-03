@@ -564,13 +564,18 @@ public class ManipulationInit {
 					.setSecondaryTend(EnumBloodTendency.ANIMUS)
 					.setCooldownTicks(60)
 					.setDrudgeAction((drudge, world, centre, radius) -> {
-						if (drudge.getBloodCharge() >= DrudgeEntity.MAX_BLOOD_CHARGE * 0.9f) return false;
+						if (drudge instanceof DrudgeEntity drudgeEntity
+								&& drudgeEntity.getBloodCharge() >= DrudgeEntity.MAX_BLOOD_CHARGE * 0.9f) return false;
 						AABB area = new AABB(centre).inflate(radius);
 						Monster target = world.getEntitiesOfClass(Monster.class, area).stream()
 								.min(Comparator.comparingDouble(drudge::distanceToSqr)).orElse(null);
 						if (target == null) return false;
 						target.hurt(world.damageSources().magic(), 2.0f);
-						drudge.fillBloodCharge(200f);
+						if (drudge instanceof DrudgeEntity drudgeEntity) {
+							drudgeEntity.fillBloodCharge(200f);
+						} else {
+							drudge.heal(4.0F);
+						}
 						return true;
 					}, "Draws blood from nearby hostile"));
 

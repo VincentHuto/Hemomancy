@@ -206,6 +206,20 @@ public class SoundInit {
 	public static final DeferredHolder<SoundEvent, SoundEvent> ENTITY_BLOOD_DRUNK_PUPPETEER_DEATH = registerSoundEvent(
 			"entity.blood_drunk_puppeteer.death");
 
+	// Rogue Hemomancer Will
+	public static final DeferredHolder<SoundEvent, SoundEvent> ENTITY_WILL_AMBIENT = registerSoundEvent(
+			"entity.will.ambient");
+	public static final DeferredHolder<SoundEvent, SoundEvent> ENTITY_WILL_HURT = registerSoundEvent(
+			"entity.will.hurt");
+	public static final DeferredHolder<SoundEvent, SoundEvent> ENTITY_WILL_DISSOLVE = registerSoundEvent(
+			"entity.will.dissolve");
+	public static final DeferredHolder<SoundEvent, SoundEvent> ENTITY_WILL_MATERIALIZE = registerSoundEvent(
+			"entity.will.materialize");
+	public static final DeferredHolder<SoundEvent, SoundEvent> ENTITY_WILL_FALTER = registerSoundEvent(
+			"entity.will.falter");
+	public static final DeferredHolder<SoundEvent, SoundEvent> ENTITY_WILL_PRESENCE_STING = registerSoundEvent(
+			"entity.will.presence_sting");
+
 	// Enthralled Doll (puppet construct)
 	public static final DeferredHolder<SoundEvent, SoundEvent> ENTITY_ENTHRALLED_DOLL_AMBIENT = registerSoundEvent(
 			"entity.enthralled_doll.ambient");
