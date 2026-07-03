@@ -185,9 +185,9 @@ Phased to match the alpha posture in [PUBLIC_ALPHA_READINESS.md](PUBLIC_ALPHA_RE
 ### Phase 1 — Guardrails (low code risk)
 
 - [ ] Adopt §4 ownership rules as the review checklist for new triad content.
-- [ ] Implement the circulation bandwidth helper and route Hematic Iron regen, Leeches siphon, Lodestone trickle, and cradle leeching through it.
-- [ ] Implement the shared Last Rite tag/cooldown across Ink Mantle, Winter Shroud Cryptobiosis, and Silent Archon refusal.
-- [ ] Rename the Chitinite morphling passive so no effect name is shared across systems.
+- [x] Implement the circulation bandwidth helper and route Hematic Iron regen, Leeches siphon, Lodestone trickle, and cradle leeching through it. *(2026-07-03: `CirculationIncomeRules` + `CirculationIncomeHelper`; pure layer test-verified, dev-machine gradle gate pending — see the guardrails plan execution log.)*
+- [x] Implement the shared Last Rite tag/cooldown across Ink Mantle, Winter Shroud Cryptobiosis, and Silent Archon refusal. *(2026-07-03: `LastRiteRules` + `LastRiteHelper` wired into Ink Mantle Reprieve, Last-Light Mantle, and Silent Archon refusal; Cryptobiosis joins when the morphling reframe lands.)*
+- [ ] ~~Rename the Chitinite morphling passive so no effect name is shared across systems.~~ *Superseded — the morphling reframe cuts the Chitinite species outright.*
 
 ### Phase 2 — Collision migrations
 

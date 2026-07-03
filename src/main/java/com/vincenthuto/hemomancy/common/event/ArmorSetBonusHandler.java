@@ -3,6 +3,8 @@ package com.vincenthuto.hemomancy.common.event;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodVolumeEvents;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BorrowedBloodReserve;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.CirculationIncomeHelper;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.init.EffectInit;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
@@ -122,7 +124,8 @@ public class ArmorSetBonusHandler {
 		if (player.tickCount % HEMATIC_IRON_REGEN_INTERVAL == 0 && hasFullSet(player, EnumModArmorTiers.HEMATIC_IRON)) {
 			HemoCapabilityAccess.getBloodVolume(player).ifPresent(volume -> {
 				if (volume.isActive() && !volume.isFull()) {
-					volume.fill(HEMATIC_IRON_BLOOD_REGEN);
+					CirculationIncomeHelper.grant(player, volume, HEMATIC_IRON_BLOOD_REGEN,
+							CirculationIncomeHelper.IncomeChannel.ARMOR);
 					syncVolume((ServerPlayer) player, volume);
 				}
 			});
@@ -166,7 +169,14 @@ public class ArmorSetBonusHandler {
 		if (hasFullSet(player, EnumModArmorTiers.BLOODLUST)) {
 			float healAmount = event.getNewDamage() * BLOOD_LUST_LIFESTEAL_FRACTION;
 			if (healAmount > 0) {
+				float healthBefore = player.getHealth();
 				player.heal(healAmount);
+				// Lifesteal past full health is not wasted: the overkill slice
+				// banks into the borrowed-blood reserve.
+				float overkill = BorrowedBloodRules.overkillHealing(healthBefore, player.getMaxHealth(), healAmount);
+				if (overkill > 0.0F) {
+					BorrowedBloodReserve.deposit(player, overkill * BorrowedBloodRules.BLOOD_PER_OVERKILL_HEALTH);
+				}
 			}
 			applyBloodLustMaskBonus(player, event.getEntity());
 		}
@@ -263,6 +273,9 @@ public class ArmorSetBonusHandler {
 		if (!canRefuse) {
 			return false;
 		}
+		if (!LastRiteHelper.canFire(player, LastRiteHelper.SILENT_REFUSAL_ID)) {
+			return false;
+		}
 
 		volume.drain(SilentArchonArmorRules.DEATH_REFUSAL_BLOOD_COST);
 		if (player instanceof ServerPlayer serverPlayer) {
@@ -270,6 +283,7 @@ public class ArmorSetBonusHandler {
 		}
 		player.getPersistentData().putLong(SILENT_ARCHON_COOLDOWN_TAG,
 				SilentArchonArmorRules.nextCooldownUntil(now));
+		LastRiteHelper.consume(player, LastRiteHelper.SILENT_REFUSAL_ID);
 		event.setNewDamage(SilentArchonArmorRules.damageLeavingBarelyAlive(player.getHealth()));
 		player.addEffect(new MobEffectInstance(MobEffects.DAMAGE_RESISTANCE, 40, 4, false, true, true));
 		player.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, 240, 1, false, true, true));
@@ -289,7 +303,8 @@ public class ArmorSetBonusHandler {
 			case GRINNING -> target.addEffect(new MobEffectInstance(EffectInit.blood_loss, 40, 0, false, true, true));
 			case LODESTONE -> HemoCapabilityAccess.getBloodVolume(player).ifPresent(volume -> {
 				if (volume.isActive() && !volume.isFull()) {
-					volume.fill(4.0D);
+					CirculationIncomeHelper.grant(player, volume, 4.0D,
+							CirculationIncomeHelper.IncomeChannel.ARMOR);
 					if (player instanceof ServerPlayer serverPlayer) {
 						syncVolume(serverPlayer, volume);
 					}
@@ -340,9 +355,11 @@ public class ArmorSetBonusHandler {
 		AttributeModifier existing = toughness.getModifier(CHITINITE_TOUGHNESS_ID);
 
 		if (hasSet && existing == null) {
+			// Pre-clamped against the triad toughness budget; morphling and
+			// scar layers join this accounting on the dev-machine pass.
 			toughness.addTransientModifier(new AttributeModifier(
 					CHITINITE_TOUGHNESS_ID,
-					CHITINITE_TOUGHNESS_BONUS,
+					TriadAttributeCaps.clampToughness(0.0D, CHITINITE_TOUGHNESS_BONUS),
 					AttributeModifier.Operation.ADD_VALUE));
 		} else if (!hasSet && existing != null) {
 			toughness.removeModifier(CHITINITE_TOUGHNESS_ID);

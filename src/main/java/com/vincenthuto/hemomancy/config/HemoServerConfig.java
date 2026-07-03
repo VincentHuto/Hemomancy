@@ -68,6 +68,17 @@ public class HemoServerConfig {
 	public static ModConfigSpec.IntValue ALEMBIC_LEAK_INTERVAL_TICKS;
 	public static ModConfigSpec.DoubleValue ALEMBIC_LEAK_RATE_PER_TICK;
 
+	// ===== Power Systems Guardrails (audit phase 1) =====
+	public static ModConfigSpec.BooleanValue CIRCULATION_ENABLED;
+	public static ModConfigSpec.DoubleValue CIRCULATION_BASE_BANDWIDTH;
+	public static ModConfigSpec.DoubleValue CIRCULATION_BANDWIDTH_PER_DEGREE;
+	public static ModConfigSpec.DoubleValue CIRCULATION_BANDWIDTH_PER_CAPACITY_POINT;
+	public static ModConfigSpec.IntValue CIRCULATION_WINDOW_TICKS;
+	public static ModConfigSpec.BooleanValue LAST_RITE_ENABLED;
+	public static ModConfigSpec.IntValue LAST_RITE_SHARED_COOLDOWN_TICKS;
+	public static ModConfigSpec.BooleanValue BORROWED_BLOOD_ENABLED;
+	public static ModConfigSpec.DoubleValue BORROWED_BLOOD_CAP;
+
 	// ===== Drudge System =====
 	public static ModConfigSpec.IntValue DRUDGE_LEASH_RADIUS;
 	public static ModConfigSpec.IntValue DRUDGE_MAX_PER_SSC;
@@ -324,6 +335,52 @@ public class HemoServerConfig {
 		DRUDGE_WORK_RADIUS = builder
 				.comment("Radius (blocks) within which the Drudge scans for targets to apply its memory.")
 				.defineInRange("drudgeWorkRadius", 12, 2, 48);
+
+		builder.pop();
+
+		// ───── Power Systems Guardrails (audit phase 1) ─────
+		builder.comment("Power Systems Guardrail Settings — shared governors for stacked passive income, "
+				+ "death-saves, and the borrowed-blood reserve. Single sources are never affected; only stacks are disciplined.")
+				.push("guardrails");
+
+		CIRCULATION_ENABLED = builder
+				.comment("Whether all passive blood income (armor regen, mask trickles, morphling siphons, cradle redistribution) "
+						+ "shares one bandwidth window. Disabled = pure pass-through, pre-guardrail behavior.")
+				.define("circulationEnabled", true);
+
+		CIRCULATION_BASE_BANDWIDTH = builder
+				.comment("Base passive blood income allowed per window, before degree and Capacity scaling.")
+				.defineInRange("circulationBaseBandwidth", 6.0, 0.0, 1000.0);
+
+		CIRCULATION_BANDWIDTH_PER_DEGREE = builder
+				.comment("Additional bandwidth per Initiatory Degree.")
+				.defineInRange("circulationBandwidthPerDegree", 1.5, 0.0, 100.0);
+
+		CIRCULATION_BANDWIDTH_PER_CAPACITY_POINT = builder
+				.comment("Additional bandwidth per point of Capacity-skill blood bonus (500 bonus = one skill level).")
+				.defineInRange("circulationBandwidthPerCapacityPoint", 0.002, 0.0, 1.0);
+
+		CIRCULATION_WINDOW_TICKS = builder
+				.comment("Length of the circulation window in ticks. 20 ticks = 1 second.")
+				.defineInRange("circulationWindowTicks", 20, 1, 1200);
+
+		LAST_RITE_ENABLED = builder
+				.comment("Whether all death-prevention effects (Ink Mantle, Last-Light Mantle, Silent Archon refusal) "
+						+ "share one cooldown: the blood may refuse the return only once per window.")
+				.define("lastRiteEnabled", true);
+
+		LAST_RITE_SHARED_COOLDOWN_TICKS = builder
+				.comment("Shared cooldown after any death-save fires, in ticks (12000 = 10 minutes).")
+				.defineInRange("lastRiteSharedCooldownTicks", 12000, 0, 240000);
+
+		BORROWED_BLOOD_ENABLED = builder
+				.comment("Whether the borrowed-blood reserve accepts deposits (Blood Lust overkill lifesteal; "
+						+ "future morphling feed-banking). Draining an existing reserve always works.")
+				.define("borrowedBloodEnabled", true);
+
+		BORROWED_BLOOD_CAP = builder
+				.comment("Maximum blood the borrowed reserve can hold.")
+				.defineInRange("borrowedBloodCap", 500.0, 0.0, 10000.0);
 
 		builder.pop();
 	}

@@ -160,6 +160,19 @@ All player-attached NeoForge attachments and exposed capabilities are registered
 
 Block and item storage use the same attachment/capability style. Current block attachments cover blood volume, blood tendency, and white humor volume; item capabilities cover portable blood volume, registry-backed scar metadata, and non-scar Harbinger equipment metadata.
 
+### 2.3a Power-System Guardrail Helpers (Audit Phase 1)
+
+Shared governors from [POWER_SYSTEMS_AUDIT.md](POWER_SYSTEMS_AUDIT.md) §3.2, implemented as pure rules classes (`common/event/CirculationIncomeRules`, `LastRiteRules`, `BorrowedBloodRules`, `TriadAttributeCaps` — each with a main()-style test) plus thin adapters using the persistent-data-tag pattern:
+
+| Helper | Adapter | Behavior |
+|---|---|---|
+| Circulation income cap | `CirculationIncomeHelper.grant(player, volume, amount, channel)` | All passive blood income (Hematic Iron set regen, Lodestone mask trickle, Sanguine Siphon morphling passive, cradle redistribution) shares one bandwidth window scaled by degree + Capacity bonus. Returns the amount actually delivered (fill clamping is measured). Skill regen and active casts are exempt by design. |
+| Last Rite group | `LastRiteHelper.canFire / consume` | One death-save per shared cooldown across Ink Mantle Reprieve, Last-Light Mantle, and Silent Archon refusal (ids `hemomancy:ink_mantle`, `hemomancy:last_light`, `hemomancy:silent_refusal`). Arm-on-use v1. |
+| Borrowed-blood reserve | `BorrowedBloodReserve.deposit / drainToCover / get` | Blood Lust overkill lifesteal banks into a capped reserve (`hemomancy:borrowed_blood`); manipulation casts that would fail for lack of blood drain it first, all-or-nothing (`BloodManipulation`). |
+| Triad attribute caps | `TriadAttributeCaps.clampToughness / clampMoveSpeed` | Budget clamps for stacked toughness/speed across armor/morphling/scar layers; currently wired at the Chitinite toughness grant, other sites join per the guardrails plan. |
+
+Config lives in the `guardrails` section of `HemoServerConfig` (`circulationEnabled`, `circulationBaseBandwidth`, `lastRiteEnabled`, `lastRiteSharedCooldownTicks`, `borrowedBloodEnabled`, `borrowedBloodCap`, …). Single sources are never affected; only stacks are disciplined.
+
 ### 2.4 Data Generation & Focused Tests
 
 `runData` writes into `src/generated/resources`, with `src/main/resources` taking precedence on duplicates. The active providers are `HemoBlockStateProvider`, `HemoItemModelProvider`, and `HemoLanguageProvider`; server recipe/tag/loot providers remain commented in `DataGeneration.java`.

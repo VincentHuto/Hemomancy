@@ -2,6 +2,7 @@ package com.vincenthuto.hemomancy.common.effect;
 
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodVolumeEvents;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.CirculationIncomeHelper;
 
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
@@ -32,7 +33,8 @@ public class SanguineSiphonEffect extends MobEffect {
 			if (!volume.isActive()) return;
 			if (!volume.isFull()) {
 				double fillAmount = 1.0 + amplifier * 0.5;
-				volume.fill(fillAmount);
+				CirculationIncomeHelper.grant(player, volume, fillAmount,
+						CirculationIncomeHelper.IncomeChannel.MORPHLING);
 				BloodVolumeEvents.syncVolume((ServerPlayer) player, volume);
 			}
 		});

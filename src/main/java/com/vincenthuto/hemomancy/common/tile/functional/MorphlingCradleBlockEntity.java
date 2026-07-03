@@ -3,6 +3,7 @@ package com.vincenthuto.hemomancy.common.tile.functional;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.Bloodline;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodlineSavedData;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.CirculationIncomeHelper;
 import com.vincenthuto.hemomancy.common.init.BlockEntityInit;
 import com.vincenthuto.hemomancy.common.item.harbinger.morphlings.IMorphling;
 import com.vincenthuto.hemomancy.common.item.harbinger.morphlings.MorphlingItem;
@@ -297,9 +298,8 @@ public class MorphlingCradleBlockEntity extends BlockEntity {
 		if (owner != null) {
 			HemoCapabilityAccess.getBloodVolume(owner).ifPresent(vol -> {
 				if (vol.isActive() && !vol.isFull() && bloodBuffer > 0) {
-					double before = vol.getBloodVolume();
-					vol.fill(bloodBuffer);
-					double moved = Math.max(0, vol.getBloodVolume() - before);
+					double moved = CirculationIncomeHelper.grant(owner, vol, bloodBuffer,
+							CirculationIncomeHelper.IncomeChannel.CRADLE);
 					bloodBuffer -= moved;
 				}
 			});

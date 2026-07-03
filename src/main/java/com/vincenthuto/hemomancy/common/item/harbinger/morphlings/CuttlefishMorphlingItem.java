@@ -3,6 +3,7 @@ package com.vincenthuto.hemomancy.common.item.harbinger.morphlings;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodVolumeEvents;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
+import com.vincenthuto.hemomancy.common.event.LastRiteHelper;
 import com.vincenthuto.hemomancy.common.init.EffectInit;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
@@ -104,7 +105,8 @@ public class CuttlefishMorphlingItem extends MorphlingItem {
 			}
 		}
 
-		if (maturity >= 4 && player.getHealth() - amount <= 0) {
+		if (maturity >= 4 && player.getHealth() - amount <= 0
+				&& LastRiteHelper.canFire(player, LastRiteHelper.INK_MANTLE_ID)) {
 			long lastReprieve = getLastAbilityTick(stack, "InkMantleReprieve");
 			long now = player.level().getGameTime();
 			if (now - lastReprieve >= INK_MANTLE_REPRIEVE_COOLDOWN) {
@@ -119,6 +121,7 @@ public class CuttlefishMorphlingItem extends MorphlingItem {
 							BloodVolumeEvents.syncVolume(serverPlayer, volume);
 						}
 						setLastAbilityTick(stack, "InkMantleReprieve", now);
+						LastRiteHelper.consume(player, LastRiteHelper.INK_MANTLE_ID);
 					}
 				});
 			}
@@ -126,8 +129,10 @@ public class CuttlefishMorphlingItem extends MorphlingItem {
 	}
 
 	private boolean triggerPrimalLastLightMantle(Player player, ItemStack stack) {
+		if (!LastRiteHelper.canFire(player, LastRiteHelper.LAST_LIGHT_ID)) return false;
 		if (!MorphlingItem.tryBeginPrimalAbility(player, stack, "LastLightMantle",
 				750.0, 12000, 700, 1)) return false;
+		LastRiteHelper.consume(player, LastRiteHelper.LAST_LIGHT_ID);
 		player.removeAllEffects();
 		player.setHealth(Math.max(player.getHealth(), 12.0f));
 		player.invulnerableTime = 80;

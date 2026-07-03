@@ -72,3 +72,22 @@
 - [ ] **Step 2:** Document the three helpers + config keys in `HEMOMANCY_REFERENCE.md` (short subsection under player capabilities).
 - [ ] **Step 3:** Update the [morphling plan](2026-07-03-morphling-fungal-strain-reframe.md) TODO references to point at the now-real APIs (its Task 4 Steps 2–3).
 - [ ] **Step 4:** Full `./gradlew build`; note in the PR that behavior with any *single* income/death-save/buff source is unchanged — this plan only disciplines *stacks*.
+
+---
+
+## Execution log — 2026-07-03 (first implementation pass)
+
+**Environment limitation, disclosed up front:** this pass ran in a remote container whose network policy blocks the Gradle distribution download (403), and `libs/` + the HutosLib composite are dev-machine-local — so **no `./gradlew compileJava` / `test` / `build` gate could run here.** Verification split accordingly:
+
+- **Verified in this environment (compiled AND executed):** the four pure rules classes and their four main()-style tests (`CirculationIncomeRulesTest`, `LastRiteRulesTest`, `BorrowedBloodRulesTest`, `TriadAttributeCapsTest`) — all PASS under plain `javac`/`java` 21.
+- **Pattern-mirrored, dev-machine gate pending:** the three adapters (`CirculationIncomeHelper`, `BorrowedBloodReserve`, `LastRiteHelper`), the `guardrails` config section, and the seven wired sites. Every touched file was fully read first and edits mirror existing idioms (persistent-data tags per `ArmorSetBonusHandler` cooldowns; `SilentArchonArmorRules` pure-rules pattern). **Run `./gradlew build` on the dev machine before merging.**
+
+**Landed:** Task 1 Steps 1–3 + config (grant-site inventory: Hematic Iron regen, Lodestone trickle, `SanguineSiphonEffect`, cradle redistribution; exemptions documented in the rules javadoc) · Task 2 Steps 1–3 (Ink Mantle, Last-Light, Silent refusal wired) · Task 3 Steps 1–3 (overkill writer + `BloodManipulation` all-or-nothing emergency reader) · Task 4 Steps 1–2 (Chitinite site).
+
+**Deviations from the written plan:**
+1. **Persistent-data tags instead of attachments** — matches the existing cooldown-tag idiom in `ArmorSetBonusHandler` (smaller diff, consistent). Shared limitation: like the existing Silent Archon cooldown tag, these do not survive death unless copied; acceptable and consistent, revisit with an attachment if that ever bites.
+2. **Last Rite v1 = shared-cooldown + arm-on-use.** `canFire` is governed by the shared cooldown; the armed id is recorded on consumption for tooling. Most-recently-equipped arming (plan Task 2 Step 2 full form) deferred — equip-listener wiring across two systems wasn't worth the risk without a compile gate.
+3. **Debug-command channel readout (Task 1 Step 4) deferred**; config landed.
+4. **Helper returns actual delivered blood** (measures fill clamping) rather than the granted amount — caught in self-review because the cradle decrements its buffer by the return value; the window is likewise never charged for undelivered blood.
+
+**Remaining for the dev machine:** `./gradlew build` green; the Task 1/2/3/4 `runClient` verifications; dormant-tooltip line for unarmed Last Rite sources (cosmetic, optional); Task 5 doc ticks are done (audit §7, HEMOMANCY_REFERENCE §2.3a).

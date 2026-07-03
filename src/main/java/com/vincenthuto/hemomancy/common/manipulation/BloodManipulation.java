@@ -9,6 +9,7 @@ import com.vincenthuto.hemomancy.common.capability.player.harbinger.scar.fungal.
 import com.vincenthuto.hemomancy.common.capability.player.unstained.EnumPurityStage;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.PurityGainEvents;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.EnumVeinSections;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BorrowedBloodReserve;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.entity.boss.saint.hemorath.HemorathEntity;
 import com.vincenthuto.hemomancy.common.effect.MnemonicCandleRules;
@@ -408,6 +409,14 @@ public class BloodManipulation  {
 				effectiveCost *= SporiticThuribleResonanceState.getCostMultiplier(player, tend);
 				effectiveCost *= MnemonicPotionRules.manipulationCostMultiplier(player.hasEffect(EffectInit.mnemonic_screams));
 
+				// Emergency cover: when the cast would fail for lack of blood,
+				// the borrowed-blood reserve closes the gap first — all or nothing.
+				if (volume.getBloodVolume() <= effectiveCost) {
+					double deficit = effectiveCost - volume.getBloodVolume() + 1.0D;
+					if (BorrowedBloodReserve.get(player) >= deficit) {
+						volume.fill(BorrowedBloodReserve.drainToCover(player, deficit));
+					}
+				}
 				if (volume.getBloodVolume() > effectiveCost) {
 					if (tendency.getAlignmentByTendency(tend) >= alignLevel) {
 						volume.drain(effectiveCost);
