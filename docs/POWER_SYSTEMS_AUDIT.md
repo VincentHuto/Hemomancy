@@ -6,6 +6,7 @@
 > **Status vocabulary:** `implemented` / `partial` / `dormant` / `planned`, matching HEMOMANCY_REFERENCE.md.
 > **Follow-on specs (2026-07-02):** [Rogue Hemomancer Wills](superpowers/specs/2026-07-02-rogue-hemomancer-wills-design.md) → [Fungal Scar Consolidation](superpowers/specs/2026-07-02-fungal-scar-consolidation-design.md) → [Morphling Fungal-Strain Reframe](superpowers/specs/2026-07-02-morphling-fungal-strain-reframe-design.md). These three cross-linked docs carry the morphling 12→8, fungal-scar 9→8, naming register, and the Wills ambusher system forward from this audit.
 > **Companion examination:** [BLOOD_MANIPULATION_EXAMINATION.md](BLOOD_MANIPULATION_EXAMINATION.md) — current-state deep dive on the manipulation (expenditure) system: the 60-entry catalog by tendency, acquisition lanes, modifier economy, and code-verified runway gaps.
+> **Implementation plans (2026-07-03), recommended build order:** [Guardrails / Phase 1](superpowers/plans/2026-07-03-audit-phase1-guardrails.md) → [Fungal Scars](superpowers/plans/2026-07-03-fungal-scar-consolidation.md) → [Morphlings](superpowers/plans/2026-07-03-morphling-fungal-strain-reframe.md) → [Wills](superpowers/plans/2026-07-03-rogue-hemomancer-wills.md). Orphaned ideas and pending decisions are ledgered in [DEFERRED_IDEAS.md](DEFERRED_IDEAS.md).
 
 ---
 
