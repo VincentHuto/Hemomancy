@@ -2,6 +2,7 @@
 
 > **Date:** 2026-07-02
 > **Status:** Design / planned. Largest item in this cluster — a new enemy system, not a tweak. No code yet.
+> **Implementation plan:** [2026-07-03-rogue-hemomancer-wills.md](../plans/2026-07-03-rogue-hemomancer-wills.md)
 > **Parent audit:** [POWER_SYSTEMS_AUDIT.md](../../POWER_SYSTEMS_AUDIT.md)
 > **Counter-mechanic lives in:** [Fungal Scar Consolidation](2026-07-02-fungal-scar-consolidation-design.md) §5.3 (*Oculiflora reticularis*)
 > **Also references:** [Morphling Fungal-Strain Reframe](2026-07-02-morphling-fungal-strain-reframe-design.md) · [LORE_REFERENCE.md](../../LORE_REFERENCE.md) · [HEMOMANCY_REFERENCE.md](../../HEMOMANCY_REFERENCE.md)

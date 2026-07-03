@@ -2,6 +2,7 @@
 
 > **Date:** 2026-07-02
 > **Status:** Design / planned. No code or data changes yet.
+> **Implementation plan:** [2026-07-03-morphling-fungal-strain-reframe.md](../plans/2026-07-03-morphling-fungal-strain-reframe.md)
 > **Parent audit:** [POWER_SYSTEMS_AUDIT.md](../../POWER_SYSTEMS_AUDIT.md)
 > **Sibling specs:** [Fungal Scar Consolidation](2026-07-02-fungal-scar-consolidation-design.md) · [Rogue Hemomancer Wills](2026-07-02-rogue-hemomancer-wills-design.md)
 > **Current-state references:** [MORPHLING_REFERENCE.md](../../MORPHLING_REFERENCE.md), [HEMOMANCY_REFERENCE.md](../../HEMOMANCY_REFERENCE.md) §16
