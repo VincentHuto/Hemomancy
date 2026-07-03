@@ -65,8 +65,10 @@ public final class WillCombatRulesTest {
 	}
 
 	private static void falterAndCadenceConstantsAreStable(String source) {
-		assertContains("falter fraction", source, "FALTER_FRACTION = 0.25D");
+		assertContains("falter burst fraction", source, "FALTER_BURST_FRACTION = 0.25D");
+		assertContains("falter burst window", source, "FALTER_BURST_WINDOW_TICKS = 80");
 		assertContains("falter window", source, "FALTER_WINDOW_TICKS = 100");
+		assertNotContains("old hp threshold fraction is removed", source, "FALTER_FRACTION");
 		assertContains("tier one cadence", source, "case 1 -> 100");
 		assertContains("tier two cadence", source, "case 2 -> 80");
 		assertContains("tier three cadence", source, "case 3 -> 70");
@@ -92,6 +94,12 @@ public final class WillCombatRulesTest {
 	private static void assertTrue(String label, boolean condition) {
 		if (!condition) {
 			throw new AssertionError(label);
+		}
+	}
+
+	private static void assertNotContains(String label, String source, String unexpected) {
+		if (source.contains(unexpected)) {
+			throw new AssertionError(label + ": found `" + unexpected + "`");
 		}
 	}
 }

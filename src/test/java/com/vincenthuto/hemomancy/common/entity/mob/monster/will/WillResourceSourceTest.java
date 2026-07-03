@@ -11,7 +11,7 @@ public final class WillResourceSourceTest {
 	public static void main(String[] args) throws IOException {
 		entityAndItemRegistrationsExist();
 		resourcesExistAndReferenceWills();
-		willEntityUsesConfiguredFalterWindow();
+		willEntityUsesConfiguredFalterBurstRules();
 		drudgeActionIsWidenedSafely();
 		oculifloraAnchorGateIsLive();
 		willAmbushStateIsAttachmentBacked();
@@ -46,10 +46,17 @@ public final class WillResourceSourceTest {
 		assertContains("will presence sting sound resource", sounds, "\"entity.will.presence_sting\"");
 	}
 
-	private static void willEntityUsesConfiguredFalterWindow() throws IOException {
+	private static void willEntityUsesConfiguredFalterBurstRules() throws IOException {
 		String will = read("src/main/java/com/vincenthuto/hemomancy/common/entity/mob/monster/will/WillEntity.java");
+		String config = read("src/main/java/com/vincenthuto/hemomancy/config/HemoServerConfig.java");
+		assertContains("falter burst fraction uses server config", will, "HemoServerConfig.WILL_FALTER_BURST_FRACTION");
+		assertContains("falter burst fraction falls back to rule default", will, "WillCombatRules.falterBurstFraction()");
+		assertContains("falter burst window uses server config", will, "HemoServerConfig.WILL_FALTER_BURST_WINDOW_TICKS");
+		assertContains("falter burst window falls back to rule default", will, "WillCombatRules.falterBurstWindowTicks()");
 		assertContains("falter window uses server config", will, "HemoServerConfig.WILL_FALTER_WINDOW_TICKS");
 		assertContains("falter config falls back to rule default", will, "WillCombatRules.falterWindowTicks()");
+		assertContains("falter burst fraction is configurable", config, "falterBurstFraction");
+		assertContains("falter burst window is configurable", config, "falterBurstWindowTicks");
 	}
 
 	private static void drudgeActionIsWidenedSafely() throws IOException {

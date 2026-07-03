@@ -39,6 +39,10 @@ public class ShaderInit {
 			DefaultVertexFormat.NEW_ENTITY, "HemoTime", "ShardSeed", "Burden", "Attuned",
 			"FractalScale");
 
+	public static ShaderHolder WILL_STATE_MONOLITH = new ShaderHolder(Hemomancy.rloc("item/will_state_monolith"),
+			DefaultVertexFormat.NEW_ENTITY, "HemoTime", "ShardSeed", "Burden", "Attuned",
+			"FractalScale", "WillMonolithColor");
+
 	public static ShaderHolder HERMIT_FAREWELL_DISSOLVE = new ShaderHolder(Hemomancy.rloc("entity/hermit_farewell_dissolve"),
 			DefaultVertexFormat.NEW_ENTITY, "HemoTime", "HermitDissolveProgress", "HermitDissolveSeed");
 
@@ -96,6 +100,7 @@ public class ShaderInit {
         registerShader(event, SCAR_GLOW.createInstance(provider));
         registerShader(event, MONOLITH_FRAGMENT.createInstance(provider));
         registerShader(event, MONOLITH_FRAGMENT_ENTITY.createInstance(provider));
+        registerShader(event, WILL_STATE_MONOLITH.createInstance(provider));
         registerShader(event, HERMIT_FAREWELL_DISSOLVE.createInstance(provider));
         registerShader(event, BLOOD_STRUCTURE_WARP.createInstance(provider));
         registerShader(event, LOOM_ORB.createInstance(provider));

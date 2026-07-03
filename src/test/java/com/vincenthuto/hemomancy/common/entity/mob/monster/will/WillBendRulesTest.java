@@ -5,20 +5,18 @@ public final class WillBendRulesTest {
 	}
 
 	public static void main(String[] args) {
-		brokenFalteringWillResolvesBendVerbs();
+		brokenFalteringWillKeepsRightClickToCommandeeringOnly();
 		sentOrNonFalteringWillBackfires();
 		costsAndSilentArchonEdgeStayStable();
 	}
 
-	private static void brokenFalteringWillResolvesBendVerbs() {
-		assertEquals("plain use absorbs",
-				WillBendRules.BendVerb.ABSORB,
+	private static void brokenFalteringWillKeepsRightClickToCommandeeringOnly() {
+		assertTrue("plain use no longer absorbs",
 				WillBendRules.resolve(WillOrigin.BROKEN, WillPhase.FALTERING, 7,
-						WillBendRules.HeldItemKind.EMPTY_OR_STAFF, false, true, false).verb());
-		assertEquals("sneak plain use redirects",
-				WillBendRules.BendVerb.REDIRECT,
+						WillBendRules.HeldItemKind.EMPTY_OR_STAFF, false, true, false).backfire());
+		assertTrue("sneak plain use no longer redirects",
 				WillBendRules.resolve(WillOrigin.BROKEN, WillPhase.FALTERING, 7,
-						WillBendRules.HeldItemKind.EMPTY_OR_STAFF, true, true, false).verb());
+						WillBendRules.HeldItemKind.EMPTY_OR_STAFF, true, true, false).backfire());
 		assertEquals("crossbar commandeers",
 				WillBendRules.BendVerb.COMMANDEER,
 				WillBendRules.resolve(WillOrigin.BROKEN, WillPhase.FALTERING, 7,
@@ -38,9 +36,6 @@ public final class WillBendRulesTest {
 	}
 
 	private static void costsAndSilentArchonEdgeStayStable() {
-		WillBendRules.BendOutcome redirect = WillBendRules.resolve(WillOrigin.BROKEN, WillPhase.FALTERING, 7,
-				WillBendRules.HeldItemKind.EMPTY_OR_STAFF, true, true, false);
-		assertEquals("redirect blood cost", 400, redirect.bloodCost());
 		WillBendRules.BendOutcome command = WillBendRules.resolve(WillOrigin.BROKEN, WillPhase.FALTERING, 7,
 				WillBendRules.HeldItemKind.MARIONETTE_CROSSBAR, false, true, false);
 		WillBendRules.BendOutcome silentCommand = WillBendRules.resolve(WillOrigin.BROKEN, WillPhase.FALTERING, 7,

@@ -41,10 +41,5 @@ public class WillPresenceOverlay {
 		int edge = Math.max(24, (int) (Math.min(screenWidth, screenHeight) * 0.34F));
 		graphics.fillGradient(0, 0, screenWidth, edge, edgeColor, clearColor);
 		graphics.fillGradient(0, screenHeight - edge, screenWidth, screenHeight, clearColor, edgeColor);
-
-		int barAlpha = (int) (alpha * 170.0F);
-		int barColor = (barAlpha << 24) | (0xD8 << 16) | (0x8B << 8) | 0xA5;
-		int midY = screenHeight / 2;
-		graphics.fill(0, midY - 1, screenWidth, midY + 1, barColor);
 	}
 }

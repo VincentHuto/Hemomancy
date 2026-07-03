@@ -1,10 +1,13 @@
 package com.vincenthuto.hemomancy.common.command;
 
 import com.mojang.brigadier.CommandDispatcher;
+import com.mojang.brigadier.arguments.BoolArgumentType;
 import com.mojang.brigadier.arguments.DoubleArgumentType;
 import com.mojang.brigadier.arguments.FloatArgumentType;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
+import com.mojang.brigadier.suggestion.Suggestions;
+import com.mojang.brigadier.suggestion.SuggestionsBuilder;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.PathMutualExclusionHelper;
@@ -35,6 +38,11 @@ import com.vincenthuto.hemomancy.common.event.LastRiteHelper;
 import com.vincenthuto.hemomancy.common.event.worldevent.BloodMoonSavedData;
 import com.vincenthuto.hemomancy.common.event.worldevent.FoundingFaneEvents;
 import com.vincenthuto.hemomancy.common.event.worldevent.FaneBoundaryRelation;
+import com.vincenthuto.hemomancy.common.entity.mob.monster.will.WillAnchorEntity;
+import com.vincenthuto.hemomancy.common.entity.mob.monster.will.WillCompositionRules;
+import com.vincenthuto.hemomancy.common.entity.mob.monster.will.WillEntity;
+import com.vincenthuto.hemomancy.common.entity.mob.monster.will.WillOrigin;
+import com.vincenthuto.hemomancy.common.init.EntityInit;
 import com.vincenthuto.hemomancy.common.item.harbinger.morphlings.ItemMorphlingJar;
 import com.vincenthuto.hemomancy.common.item.harbinger.morphlings.MorphlingItem;
 import com.vincenthuto.hemomancy.common.item.harbinger.morphlings.PrimalMorphlingRules;
@@ -57,10 +65,12 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.CustomData;
+import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.network.PacketDistributor;
 
 import java.util.Locale;
+import java.util.concurrent.CompletableFuture;
 
 /**
  * Unified console commands for testing all progression systems.
@@ -399,6 +409,54 @@ public class HemoCommand {
 										.then(Commands.argument("player", EntityArgument.player())
 												.executes(ctx -> resetChamberTheme(ctx.getSource(),
 														EntityArgument.getPlayer(ctx, "player")))))))
+
+				.then(Commands.literal("will")
+						.then(Commands.literal("ambush")
+								.then(Commands.literal("anchor")
+										.then(Commands.argument("school", StringArgumentType.word())
+												.suggests((ctx, builder) -> suggestBloodTendencies(builder))
+												.then(Commands.argument("tier", IntegerArgumentType.integer(1, 4))
+														.then(Commands.argument("broken_count", IntegerArgumentType.integer(0, 8))
+																.then(Commands.argument("sent_present", BoolArgumentType.bool())
+																		.executes(ctx -> summonWillAmbushAnchor(ctx.getSource(),
+																				ctx.getSource().getPlayerOrException(),
+																				parseBloodTendency(StringArgumentType.getString(ctx, "school")),
+																				IntegerArgumentType.getInteger(ctx, "tier"),
+																				IntegerArgumentType.getInteger(ctx, "broken_count"),
+																				BoolArgumentType.getBool(ctx, "sent_present")))
+																		.then(Commands.argument("player", EntityArgument.player())
+																				.executes(ctx -> summonWillAmbushAnchor(ctx.getSource(),
+																						EntityArgument.getPlayer(ctx, "player"),
+																						parseBloodTendency(StringArgumentType.getString(ctx, "school")),
+																						IntegerArgumentType.getInteger(ctx, "tier"),
+																						IntegerArgumentType.getInteger(ctx, "broken_count"),
+																						BoolArgumentType.getBool(ctx, "sent_present")))))))))
+								.then(Commands.literal("immediate")
+										.then(Commands.argument("school", StringArgumentType.word())
+												.suggests((ctx, builder) -> suggestBloodTendencies(builder))
+												.then(Commands.argument("tier", IntegerArgumentType.integer(1, 4))
+														.then(Commands.argument("origin", StringArgumentType.word())
+																.suggests((ctx, builder) -> suggestWillOrigins(builder))
+																.executes(ctx -> summonWillAmbushImmediate(ctx.getSource(),
+																		ctx.getSource().getPlayerOrException(),
+																		parseBloodTendency(StringArgumentType.getString(ctx, "school")),
+																		IntegerArgumentType.getInteger(ctx, "tier"),
+																		parseWillOrigin(StringArgumentType.getString(ctx, "origin")),
+																		1))
+																.then(Commands.argument("count", IntegerArgumentType.integer(1, 8))
+																		.executes(ctx -> summonWillAmbushImmediate(ctx.getSource(),
+																				ctx.getSource().getPlayerOrException(),
+																				parseBloodTendency(StringArgumentType.getString(ctx, "school")),
+																				IntegerArgumentType.getInteger(ctx, "tier"),
+																				parseWillOrigin(StringArgumentType.getString(ctx, "origin")),
+																				IntegerArgumentType.getInteger(ctx, "count")))
+																		.then(Commands.argument("player", EntityArgument.player())
+																				.executes(ctx -> summonWillAmbushImmediate(ctx.getSource(),
+																						EntityArgument.getPlayer(ctx, "player"),
+																						parseBloodTendency(StringArgumentType.getString(ctx, "school")),
+																						IntegerArgumentType.getInteger(ctx, "tier"),
+																						parseWillOrigin(StringArgumentType.getString(ctx, "origin")),
+																						IntegerArgumentType.getInteger(ctx, "count")))))))))))
 
 				.then(Commands.literal("slots")
 						.then(Commands.literal("get")
@@ -1103,9 +1161,31 @@ public class HemoCommand {
 		BloodTendencyEvents.syncTendency(player, bloodTendency);
 	}
 
+	private static CompletableFuture<Suggestions> suggestBloodTendencies(SuggestionsBuilder builder) {
+		for (EnumBloodTendency tendency : EnumBloodTendency.values()) {
+			builder.suggest(tendency.name().toLowerCase(Locale.ROOT));
+		}
+		return builder.buildFuture();
+	}
+
 	private static EnumBloodTendency parseBloodTendency(String tendencyName) {
 		try {
 			return EnumBloodTendency.valueOf(tendencyName.trim().replace('-', '_').toUpperCase(Locale.ROOT));
+		} catch (IllegalArgumentException ignored) {
+			return null;
+		}
+	}
+
+	private static CompletableFuture<Suggestions> suggestWillOrigins(SuggestionsBuilder builder) {
+		for (WillOrigin origin : WillOrigin.values()) {
+			builder.suggest(origin.name().toLowerCase(Locale.ROOT));
+		}
+		return builder.buildFuture();
+	}
+
+	private static WillOrigin parseWillOrigin(String originName) {
+		try {
+			return WillOrigin.valueOf(originName.trim().replace('-', '_').toUpperCase(Locale.ROOT));
 		} catch (IllegalArgumentException ignored) {
 			return null;
 		}
@@ -1176,6 +1256,73 @@ public class HemoCommand {
 	}
 
 	// ═══════════════════ Blood Moon ═══════════════════
+
+	private static int summonWillAmbushAnchor(CommandSourceStack source, ServerPlayer player,
+			EnumBloodTendency school, int tier, int brokenCount, boolean sentPresent) {
+		if (school == null) {
+			source.sendFailure(Component.literal("Unknown Will school. Valid: " + getValidTendencyNames()));
+			return 0;
+		}
+		ServerLevel level = source.getLevel();
+		WillAnchorEntity anchor = EntityInit.will_anchor.get().create(level);
+		if (anchor == null) {
+			source.sendFailure(Component.literal("Could not create Will anchor."));
+			return 0;
+		}
+		Vec3 pos = source.getPosition();
+		WillCompositionRules.Composition composition =
+				new WillCompositionRules.Composition(tier, brokenCount, Math.min(2, tier), sentPresent);
+		anchor.moveTo(pos.x, pos.y, pos.z, player.getYRot(), 0.0F);
+		anchor.configure(school, composition, player);
+		level.addFreshEntity(anchor);
+		source.sendSuccess(() -> Component.literal("Summoned Will ambush anchor: ")
+				.append(Component.literal(school.name().toLowerCase(Locale.ROOT)).withStyle(ChatFormatting.DARK_RED))
+				.append(Component.literal(" tier " + tier + ", broken " + brokenCount
+						+ ", sent " + sentPresent + ", target "))
+				.append(Component.literal(player.getName().getString()).withStyle(ChatFormatting.GOLD)),
+				true);
+		return 1;
+	}
+
+	private static int summonWillAmbushImmediate(CommandSourceStack source, ServerPlayer player,
+			EnumBloodTendency school, int tier, WillOrigin origin, int count) {
+		if (school == null) {
+			source.sendFailure(Component.literal("Unknown Will school. Valid: " + getValidTendencyNames()));
+			return 0;
+		}
+		if (origin == null) {
+			source.sendFailure(Component.literal("Unknown Will origin. Valid: broken, sent"));
+			return 0;
+		}
+		ServerLevel level = source.getLevel();
+		Vec3 pos = source.getPosition();
+		int spawned = 0;
+		for (int i = 0; i < count; i++) {
+			WillEntity will = EntityInit.will.get().create(level);
+			if (will == null) continue;
+			double offsetX = (i % 3 - 1) * 1.35D;
+			double offsetZ = (i / 3) * 1.35D;
+			will.moveTo(pos.x + offsetX, pos.y, pos.z + offsetZ, player.getYRot(), 0.0F);
+			will.configure(origin, school, tier, player, true);
+			level.addFreshEntity(will);
+			spawned++;
+		}
+		if (spawned <= 0) {
+			source.sendFailure(Component.literal("Could not create any Wills."));
+			return 0;
+		}
+		final int spawnedCount = spawned;
+		source.sendSuccess(() -> Component.literal("Summoned ")
+				.append(Component.literal(String.valueOf(spawnedCount)).withStyle(ChatFormatting.AQUA))
+				.append(Component.literal(" immediate "))
+				.append(Component.literal(origin.name().toLowerCase(Locale.ROOT)).withStyle(ChatFormatting.GRAY))
+				.append(Component.literal(" Will(s): "))
+				.append(Component.literal(school.name().toLowerCase(Locale.ROOT)).withStyle(ChatFormatting.DARK_RED))
+				.append(Component.literal(" tier " + tier + ", target "))
+				.append(Component.literal(player.getName().getString()).withStyle(ChatFormatting.GOLD)),
+				true);
+		return 1;
+	}
 
 	private static int summonBloodMoon(CommandSourceStack source) {
 		ServerLevel overworld = source.getServer().overworld();

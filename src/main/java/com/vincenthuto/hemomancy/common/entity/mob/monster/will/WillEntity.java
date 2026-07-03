@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.entity.mob.monster.will;
 
+import com.vincenthuto.hemomancy.client.particle.factory.WillAbsorptionGlowParticleFactory;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.entity.summon.BoundPuppeteerSummon;
@@ -16,9 +17,12 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
+import net.minecraft.util.Mth;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -41,6 +45,8 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
+import net.minecraft.world.phys.Vec3;
+import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -48,6 +54,8 @@ import java.util.Optional;
 import java.util.UUID;
 
 public class WillEntity extends Monster implements BoundPuppeteerSummon {
+	private static final int NORMAL_DISSOLVE_TICKS = 40;
+	private static final int BLOOD_ABSORPTION_DISSOLVE_TICKS = 120;
 	private static final EntityDataAccessor<Byte> DATA_ORIGIN =
 			SynchedEntityData.defineId(WillEntity.class, EntityDataSerializers.BYTE);
 	private static final EntityDataAccessor<Byte> DATA_SCHOOL =
@@ -70,9 +78,19 @@ public class WillEntity extends Monster implements BoundPuppeteerSummon {
 			SynchedEntityData.defineId(WillEntity.class, EntityDataSerializers.BOOLEAN);
 	private static final EntityDataAccessor<Optional<UUID>> DATA_TRIAL_CASTER_UUID =
 			SynchedEntityData.defineId(WillEntity.class, EntityDataSerializers.OPTIONAL_UUID);
+	private static final EntityDataAccessor<Boolean> DATA_ABSORPTION_DISSOLVE =
+			SynchedEntityData.defineId(WillEntity.class, EntityDataSerializers.BOOLEAN);
+	private static final EntityDataAccessor<Integer> DATA_DISSOLVE_TICKS =
+			SynchedEntityData.defineId(WillEntity.class, EntityDataSerializers.INT);
+	private static final EntityDataAccessor<Integer> DATA_DISSOLVE_DURATION =
+			SynchedEntityData.defineId(WillEntity.class, EntityDataSerializers.INT);
 
 	private int falterTicks;
+	private float falterBurstDamage;
+	private int falterBurstWindowTicks;
+	private UUID falterBurstAttackerId;
 	private int dissolveTicks;
+	private int dissolveDurationTicks = NORMAL_DISSOLVE_TICKS;
 	private int castCooldown;
 	private int kitIndex;
 	private UUID redirectedOwner;
@@ -116,6 +134,9 @@ public class WillEntity extends Monster implements BoundPuppeteerSummon {
 		builder.define(DATA_DISMISSAL_TICKS, 0);
 		builder.define(DATA_TRIAL_SUMMON, false);
 		builder.define(DATA_TRIAL_CASTER_UUID, Optional.empty());
+		builder.define(DATA_ABSORPTION_DISSOLVE, false);
+		builder.define(DATA_DISSOLVE_TICKS, 0);
+		builder.define(DATA_DISSOLVE_DURATION, NORMAL_DISSOLVE_TICKS);
 	}
 
 	@Nullable
@@ -137,6 +158,7 @@ public class WillEntity extends Monster implements BoundPuppeteerSummon {
 			setTarget(target);
 		}
 		setPhase(drifting ? WillPhase.DRIFTING : WillPhase.MATERIALIZED);
+		clearFalterBurst();
 		applyRuleStats(target);
 	}
 
@@ -182,16 +204,24 @@ public class WillEntity extends Monster implements BoundPuppeteerSummon {
 			setPhase(WillPhase.MATERIALIZED);
 			playSound(SoundInit.ENTITY_WILL_MATERIALIZE.get(), 0.9F, 0.9F + random.nextFloat() * 0.25F);
 		}
+		if (getPhase() == WillPhase.MATERIALIZED) {
+			tickFalterBurstWindow();
+		}
 		if (getPhase() == WillPhase.FALTERING) {
 			if (--falterTicks <= 0) {
 				setNoAi(false);
 				setPhase(WillPhase.MATERIALIZED);
+				clearFalterBurst();
 			}
 			return;
 		}
 		if (getPhase() == WillPhase.DISSOLVING) {
-			if (++dissolveTicks >= 40) {
+			dissolveTicks++;
+			entityData.set(DATA_DISSOLVE_TICKS, dissolveTicks);
+			if (dissolveTicks >= dissolveDurationTicks) {
 				if (dropsOnDissolve) dropDissolveLoot();
+				if (entityData.get(DATA_ABSORPTION_DISSOLVE)) dropAbsorptionDissolveLoot();
+				if (entityData.get(DATA_ABSORPTION_DISSOLVE)) spawnAbsorptionDissolvePulse();
 				discard();
 			}
 			return;
@@ -221,20 +251,71 @@ public class WillEntity extends Monster implements BoundPuppeteerSummon {
 			startDissolving(true);
 			return true;
 		}
+		float healthBefore = getHealth();
 		boolean result = super.hurt(source, amount);
-		if (result && getOrigin() == WillOrigin.BROKEN && getPhase() == WillPhase.MATERIALIZED
-				&& getHealth() <= getMaxHealth() * WillCombatRules.falterFraction()) {
-			setPhase(WillPhase.FALTERING);
-			falterTicks = safeConfig(HemoServerConfig.WILL_FALTER_WINDOW_TICKS, WillCombatRules.falterWindowTicks());
-			setNoAi(true);
-			playSound(SoundInit.ENTITY_WILL_FALTER.get(), 0.8F, 1.25F);
+		if (result) {
+			float dealt = Math.max(0.0F, healthBefore - getHealth());
+			trackFalterBurst(source, dealt);
 		}
 		return result;
 	}
 
+	private void trackFalterBurst(DamageSource source, float amount) {
+		if (amount <= 0.0F) return;
+		if (getOrigin() != WillOrigin.BROKEN) return;
+		if (getPhase() != WillPhase.MATERIALIZED) return;
+		if (!(source.getEntity() instanceof Player player)) return;
+		if (falterBurstWindowTicks <= 0 || falterBurstAttackerId == null
+				|| !player.getUUID().equals(falterBurstAttackerId)) {
+			clearFalterBurst();
+			falterBurstAttackerId = player.getUUID();
+			falterBurstWindowTicks = safeConfig(HemoServerConfig.WILL_FALTER_BURST_WINDOW_TICKS,
+					WillCombatRules.falterBurstWindowTicks());
+		}
+		falterBurstDamage += amount;
+		double threshold = getMaxHealth() * safeConfig(HemoServerConfig.WILL_FALTER_BURST_FRACTION,
+				WillCombatRules.falterBurstFraction());
+		if (falterBurstDamage >= threshold) {
+			enterFaltering();
+		}
+	}
+
+	private void tickFalterBurstWindow() {
+		if (falterBurstWindowTicks > 0 && --falterBurstWindowTicks <= 0) {
+			clearFalterBurst();
+		}
+	}
+
+	private void enterFaltering() {
+		clearFalterBurst();
+		setPhase(WillPhase.FALTERING);
+		falterTicks = safeConfig(HemoServerConfig.WILL_FALTER_WINDOW_TICKS, WillCombatRules.falterWindowTicks());
+		setNoAi(true);
+		playSound(SoundInit.ENTITY_WILL_FALTER.get(), 0.8F, 1.25F);
+	}
+
+	private void clearFalterBurst() {
+		falterBurstDamage = 0.0F;
+		falterBurstWindowTicks = 0;
+		falterBurstAttackerId = null;
+	}
+
 	private void startDissolving(boolean drops) {
+		startDissolving(drops, NORMAL_DISSOLVE_TICKS, false);
+	}
+
+	private void startDissolving(boolean drops, int durationTicks) {
+		startDissolving(drops, durationTicks, false);
+	}
+
+	private void startDissolving(boolean drops, int durationTicks, boolean absorptionDissolve) {
+		clearFalterBurst();
 		dropsOnDissolve = drops;
 		dissolveTicks = 0;
+		dissolveDurationTicks = Math.max(1, durationTicks);
+		entityData.set(DATA_ABSORPTION_DISSOLVE, absorptionDissolve);
+		entityData.set(DATA_DISSOLVE_TICKS, 0);
+		entityData.set(DATA_DISSOLVE_DURATION, dissolveDurationTicks);
 		if (getTarget() instanceof ServerPlayer player) {
 			dissolveTargetId = player.getUUID();
 		} else {
@@ -244,6 +325,83 @@ public class WillEntity extends Monster implements BoundPuppeteerSummon {
 		setTarget(null);
 		setPhase(WillPhase.DISSOLVING);
 		playSound(SoundInit.ENTITY_WILL_DISSOLVE.get(), 0.9F, 0.75F);
+	}
+
+	public boolean canBloodUtilityBend() {
+		return isAlive() && getOrigin() == WillOrigin.BROKEN && getPhase() == WillPhase.FALTERING;
+	}
+
+	public boolean canBloodAbsorptionDrawParticles() {
+		return isAlive() && getOrigin() == WillOrigin.BROKEN
+				&& (getPhase() == WillPhase.FALTERING
+						|| (getPhase() == WillPhase.DISSOLVING && entityData.get(DATA_ABSORPTION_DISSOLVE)));
+	}
+
+	public boolean isAbsorptionDissolving() {
+		return getPhase() == WillPhase.DISSOLVING && entityData.get(DATA_ABSORPTION_DISSOLVE);
+	}
+
+	public float getDissolveProgress(float partialTicks) {
+		if (getPhase() != WillPhase.DISSOLVING) {
+			return 0.0F;
+		}
+		float ticks = entityData.get(DATA_DISSOLVE_TICKS) + partialTicks;
+		return Mth.clamp(ticks / Math.max(1.0F, entityData.get(DATA_DISSOLVE_DURATION)), 0.0F, 1.0F);
+	}
+
+	public float absorbFalteringWithBlood(ServerPlayer player, float amount) {
+		if (!canBloodUtilityBend()) {
+			return 0.0F;
+		}
+		float absorbed = Math.max(0.0F, Math.min(getHealth(), amount));
+		if (absorbed <= 0.0F) {
+			return 0.0F;
+		}
+		float remainingHealth = getHealth() - absorbed;
+		if (remainingHealth > 1.0F) {
+			setHealth(remainingHealth);
+			return absorbed;
+		}
+		setHealth(1.0F);
+		HemoCapabilityAccess.getBloodTendency(player)
+				.ifPresent(tendency -> tendency.addTendencyAlignment(getSchool(), 3.0F));
+		startDissolving(false, BLOOD_ABSORPTION_DISSOLVE_TICKS, true);
+		return absorbed;
+	}
+
+	public boolean projectBanishWithBlood(ServerPlayer player) {
+		if (!canBloodUtilityBend()) {
+			return false;
+		}
+		HemoCapabilityAccess.getBloodTendency(player)
+				.ifPresent(tendency -> tendency.addTendencyAlignment(getSchool(), -3.0F));
+		spawnProjectedBanishmentBurst();
+		startDissolving(false);
+		return true;
+	}
+
+	private void spawnProjectedBanishmentBurst() {
+		if (level() instanceof ServerLevel serverLevel) {
+			serverLevel.sendParticles(ParticleTypes.POOF, getX(), getY() + getBbHeight() * 0.55D, getZ(),
+					24, getBbWidth() * 0.55D, getBbHeight() * 0.35D, getBbWidth() * 0.55D, 0.04D);
+			serverLevel.sendParticles(ParticleTypes.CRIMSON_SPORE, getX(), getY() + getBbHeight() * 0.55D, getZ(),
+					18, getBbWidth() * 0.65D, getBbHeight() * 0.4D, getBbWidth() * 0.65D, 0.02D);
+		}
+	}
+
+	private void spawnAbsorptionDissolvePulse() {
+		if (level() instanceof ServerLevel serverLevel) {
+			Vec3 center = position().add(0.0D, getBbHeight() * 0.55D, 0.0D);
+			for (int i = 0; i < 42; i++) {
+				Vec3 direction = new Vec3(random.nextDouble() * 2.0D - 1.0D,
+						random.nextDouble() * 1.6D - 0.55D,
+						random.nextDouble() * 2.0D - 1.0D).normalize();
+				double speed = 0.12D + random.nextDouble() * 0.16D;
+				serverLevel.sendParticles(WillAbsorptionGlowParticleFactory.createPulseData(ParticleColor.BLACK),
+						center.x, center.y, center.z, 0,
+						direction.x * speed, direction.y * speed, direction.z * speed, 1.0D);
+			}
+		}
 	}
 
 	@Override
@@ -275,6 +433,11 @@ public class WillEntity extends Monster implements BoundPuppeteerSummon {
 		}
 	}
 
+	private void dropAbsorptionDissolveLoot() {
+		if (random.nextFloat() < 0.5F) spawnAtLocation(EnumBloodTendency.getRepEnzyme(getSchool()));
+		if (random.nextFloat() < 0.15F) spawnAtLocation(ItemInit.faded_memory.get());
+	}
+
 	@Override
 	public InteractionResult mobInteract(Player player, InteractionHand hand) {
 		if (!(player instanceof ServerPlayer serverPlayer)) {
@@ -284,6 +447,9 @@ public class WillEntity extends Monster implements BoundPuppeteerSummon {
 			return InteractionResult.PASS;
 		}
 		ItemStack stack = player.getItemInHand(hand);
+		if (!(stack.getItem() instanceof MarionetteCrossbarItem)) {
+			return InteractionResult.PASS;
+		}
 		WillBendRules.HeldItemKind held = stack.getItem() instanceof MarionetteCrossbarItem
 				? WillBendRules.HeldItemKind.MARIONETTE_CROSSBAR
 				: WillBendRules.HeldItemKind.EMPTY_OR_STAFF;
@@ -309,6 +475,7 @@ public class WillEntity extends Monster implements BoundPuppeteerSummon {
 			if (!paid) return InteractionResult.CONSUME;
 			redirectedOwner = serverPlayer.getUUID();
 			redirectUntilGameTime = level().getGameTime() + 1800L;
+			clearFalterBurst();
 			setNoAi(false);
 			setPhase(WillPhase.MATERIALIZED);
 			return InteractionResult.CONSUME;
@@ -319,15 +486,11 @@ public class WillEntity extends Monster implements BoundPuppeteerSummon {
 			hemomancy$setOwnerUUID(serverPlayer.getUUID());
 			hemomancy$setCrossbarUUID(MarionetteCrossbarItem.ensureCrossbarId(stack));
 			hemomancy$setSummonName("claimed_will");
+			clearFalterBurst();
 			setNoAi(false);
 			setPhase(WillPhase.MATERIALIZED);
 			return InteractionResult.CONSUME;
 		}
-		HemoCapabilityAccess.getBloodTendency(serverPlayer)
-				.ifPresent(tendency -> tendency.addTendencyAlignment(getSchool(), 3.0F));
-		if (random.nextFloat() < 0.5F) spawnAtLocation(EnumBloodTendency.getRepEnzyme(getSchool()));
-		if (random.nextFloat() < 0.15F) spawnAtLocation(ItemInit.faded_memory.get());
-		startDissolving(false);
 		return InteractionResult.CONSUME;
 	}
 
@@ -336,6 +499,10 @@ public class WillEntity extends Monster implements BoundPuppeteerSummon {
 	}
 
 	private static int safeConfig(net.neoforged.neoforge.common.ModConfigSpec.IntValue value, int fallback) {
+		return value == null ? fallback : value.get();
+	}
+
+	private static double safeConfig(net.neoforged.neoforge.common.ModConfigSpec.DoubleValue value, double fallback) {
 		return value == null ? fallback : value.get();
 	}
 
@@ -387,7 +554,12 @@ public class WillEntity extends Monster implements BoundPuppeteerSummon {
 		tag.putInt("WillTier", getTier());
 		tag.putString("WillPhase", getPhase().name());
 		tag.putInt("FalterTicks", falterTicks);
+		tag.putFloat("FalterBurstDamage", falterBurstDamage);
+		tag.putInt("FalterBurstWindowTicks", falterBurstWindowTicks);
+		if (falterBurstAttackerId != null) tag.putUUID("FalterBurstAttacker", falterBurstAttackerId);
 		tag.putInt("DissolveTicks", dissolveTicks);
+		tag.putInt("DissolveDurationTicks", dissolveDurationTicks);
+		tag.putBoolean("AbsorptionDissolve", entityData.get(DATA_ABSORPTION_DISSOLVE));
 		if (redirectedOwner != null) tag.putUUID("RedirectedOwner", redirectedOwner);
 		if (dissolveTargetId != null) tag.putUUID("DissolveTarget", dissolveTargetId);
 		tag.putLong("RedirectUntilGameTime", redirectUntilGameTime);
@@ -402,7 +574,16 @@ public class WillEntity extends Monster implements BoundPuppeteerSummon {
 		setTier(tag.getInt("WillTier"));
 		if (tag.contains("WillPhase")) setPhase(WillPhase.valueOf(tag.getString("WillPhase")));
 		falterTicks = tag.getInt("FalterTicks");
+		falterBurstDamage = tag.getFloat("FalterBurstDamage");
+		falterBurstWindowTicks = tag.getInt("FalterBurstWindowTicks");
+		falterBurstAttackerId = tag.hasUUID("FalterBurstAttacker") ? tag.getUUID("FalterBurstAttacker") : null;
 		dissolveTicks = tag.getInt("DissolveTicks");
+		dissolveDurationTicks = tag.contains("DissolveDurationTicks")
+				? Math.max(1, tag.getInt("DissolveDurationTicks"))
+				: NORMAL_DISSOLVE_TICKS;
+		entityData.set(DATA_ABSORPTION_DISSOLVE, tag.getBoolean("AbsorptionDissolve"));
+		entityData.set(DATA_DISSOLVE_TICKS, dissolveTicks);
+		entityData.set(DATA_DISSOLVE_DURATION, dissolveDurationTicks);
 		if (tag.hasUUID("RedirectedOwner")) redirectedOwner = tag.getUUID("RedirectedOwner");
 		if (tag.hasUUID("DissolveTarget")) dissolveTargetId = tag.getUUID("DissolveTarget");
 		redirectUntilGameTime = tag.getLong("RedirectUntilGameTime");

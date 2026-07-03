@@ -95,6 +95,8 @@ public class HemoServerConfig {
 	public static ModConfigSpec.DoubleValue WILL_BLOOD_DRUNKENNESS_MULTIPLIER_PER_AMPLIFIER;
 	public static ModConfigSpec.DoubleValue WILL_HERALD_MULTIPLIER;
 	public static ModConfigSpec.IntValue WILL_ANCHOR_LIFETIME_TICKS;
+	public static ModConfigSpec.DoubleValue WILL_FALTER_BURST_FRACTION;
+	public static ModConfigSpec.IntValue WILL_FALTER_BURST_WINDOW_TICKS;
 	public static ModConfigSpec.IntValue WILL_FALTER_WINDOW_TICKS;
 	public static ModConfigSpec.BooleanValue WILL_BEND_ENABLED;
 	public static ModConfigSpec.BooleanValue WILL_COMMANDEER_ENABLED;
@@ -470,12 +472,20 @@ public class HemoServerConfig {
 				.comment("Ticks a Will anchor telegraphs before the ambush materializes.")
 				.defineInRange("anchorLifetimeTicks", 80, 1, 1200);
 
+		WILL_FALTER_BURST_FRACTION = builder
+				.comment("Fraction of max health one player must deal to a materialized Broken Will within the burst window to make it falter.")
+				.defineInRange("falterBurstFraction", 0.25, 0.05, 1.0);
+
+		WILL_FALTER_BURST_WINDOW_TICKS = builder
+				.comment("Ticks a single-player damage burst is tracked before it expires for Broken Will faltering.")
+				.defineInRange("falterBurstWindowTicks", 80, 20, 400);
+
 		WILL_FALTER_WINDOW_TICKS = builder
-				.comment("Ticks a Broken Will remains faltering and bindable after being wounded below its threshold.")
+				.comment("Ticks a burst-staggered Broken Will remains faltering and bindable.")
 				.defineInRange("falterWindowTicks", 100, 1, 1200);
 
 		WILL_BEND_ENABLED = builder
-				.comment("Whether faltering Broken Wills can be Absorbed, Redirected, or Commandeered.")
+				.comment("Whether faltering Broken Wills can be resolved through blood utilities or Commandeered.")
 				.define("bendEnabled", true);
 
 		WILL_COMMANDEER_ENABLED = builder

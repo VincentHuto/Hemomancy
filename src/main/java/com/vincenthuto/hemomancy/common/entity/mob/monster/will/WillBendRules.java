@@ -20,10 +20,7 @@ public final class WillBendRules {
 			int threadCost = silentArchon ? COMMANDEER_THREAD_COST / 2 : COMMANDEER_THREAD_COST;
 			return new BendOutcome(BendVerb.COMMANDEER, 0, threadCost, false, 0);
 		}
-		if (sneaking) {
-			return new BendOutcome(BendVerb.REDIRECT, REDIRECT_BLOOD_COST, 0, false, 0);
-		}
-		return new BendOutcome(BendVerb.ABSORB, 0, 0, false, 0);
+		return backfire();
 	}
 
 	public static int silentArchonBonusCap() {

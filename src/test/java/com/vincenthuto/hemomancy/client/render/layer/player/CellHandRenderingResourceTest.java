@@ -17,6 +17,9 @@ public final class CellHandRenderingResourceTest {
 		String particleEffects = read("src/main/java/com/vincenthuto/hemomancy/client/render/item/hematic/CellHandParticleEffects.java");
 		String bloodCellParticle = read("src/main/java/com/vincenthuto/hemomancy/client/particle/BloodCellParticle.java");
 		String absorbedBloodCellParticle = read("src/main/java/com/vincenthuto/hemomancy/client/particle/AbsorbedBloodCellParticle.java");
+		String willAbsorptionGlowParticle = read("src/main/java/com/vincenthuto/hemomancy/client/particle/WillAbsorptionGlowParticle.java");
+		String willAbsorptionGlowFactory = read("src/main/java/com/vincenthuto/hemomancy/client/particle/factory/WillAbsorptionGlowParticleFactory.java");
+		String particleInit = read("src/main/java/com/vincenthuto/hemomancy/common/init/ParticleInit.java");
 		String projectionItem = read("src/main/java/com/vincenthuto/hemomancy/common/item/harbinger/tool/living/BloodProjectionItem.java");
 		String absorptionItem = read("src/main/java/com/vincenthuto/hemomancy/common/item/harbinger/tool/living/BloodAbsorptionItem.java");
 
@@ -81,6 +84,36 @@ public final class CellHandRenderingResourceTest {
 				"spawnAbsorbedBloodParticle");
 		assertBefore("block absorption visual takes priority before entity absorption targets", particleEffects,
 				"findLookedAtBloodBlockSource", "getAbsorptionParticleTargets");
+		assertContains("faltering Will absorption particles use the dedicated dark glow mote", particleEffects,
+				"WillAbsorptionGlowParticleFactory.createData(WILL_ABSORPTION_GLOW)");
+		assertContains("faltering Will absorption uses black glow color", particleEffects,
+				"WILL_ABSORPTION_GLOW = ParticleColor.BLACK");
+		assertBefore("faltering Will absorption visual takes priority before normal entity absorption particles",
+				particleEffects, "getFalteringWillAbsorptionParticleTarget", "getAbsorptionParticleTargets");
+		assertContains("Will absorption particles continue during the absorption dissolve phase", particleEffects,
+				"WillEntity::canBloodAbsorptionDrawParticles");
+		assertContains("Will absorption glow is registered as its own particle type", particleInit,
+				"will_absorption_glow");
+		assertContains("Will absorption glow uses its own factory", particleInit,
+				"WillAbsorptionGlowParticleFactory::new");
+		assertContains("Will absorption glow factory creates its registered data", willAbsorptionGlowFactory,
+				"ParticleInit.will_absorption_glow.get()");
+		assertContains("Will absorption glow factory creates pulse data with same particle type", willAbsorptionGlowFactory,
+				"createPulseData");
+		assertContains("Will absorption glow factory passes pulse mode into particle", willAbsorptionGlowFactory,
+				"data.outwardPulse");
+		assertContains("Will absorption glow uses dark particle compositing", willAbsorptionGlowParticle,
+				"HLRenderTypeInit.DARK_GLOW_RENDER");
+		assertContains("Will absorption glow has outward pulse motion", willAbsorptionGlowParticle,
+				"outwardPulse");
+		assertContains("Will absorption glow pulse mode moves away from origin", willAbsorptionGlowParticle,
+				"this.move(this.xd, this.yd, this.zd);");
+		assertContains("Will absorption glow can retarget to the moving first-person hand", willAbsorptionGlowParticle,
+				"this.setPosFromFirstPersonTarget();");
+		assertContains("Will absorption glow target anchors use camera basis vectors", willAbsorptionGlowParticle,
+				"camera.getLookVector()");
+		assertContains("Will absorption glow stops terminal downward sag when hand-targeted", willAbsorptionGlowParticle,
+				"this.targetYOffset = 0.0D;");
 		assertContains("first-person particle anchors follow camera rotation", bloodCellParticle,
 				"this.setPosFromCameraAnchor();");
 		assertContains("camera anchored motes use camera basis vectors", bloodCellParticle,

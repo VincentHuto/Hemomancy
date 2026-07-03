@@ -10,6 +10,8 @@ import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.IKnown
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillPointHelper;
 import com.vincenthuto.hemomancy.common.entity.HemoEntityPredicates;
+import com.vincenthuto.hemomancy.common.entity.mob.monster.will.WillBloodUtilityInteractions;
+import com.vincenthuto.hemomancy.common.entity.mob.monster.will.WillEntity;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.BloodVolumeServerPacket;
 import net.minecraft.ChatFormatting;
@@ -26,6 +28,7 @@ import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.decoration.ArmorStand;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -124,6 +127,12 @@ public class BloodAbsorptionItem extends Item implements IDispellable, ICellHand
 				LivingStaffFocusRules.bareAbsorptionRange(),
 				LivingStaffFocusRules.bareBlockAbsorptionPerTick());
 		if (blockHandled > 0.0D) {
+			updateChannelStrain(player, false);
+			return;
+		}
+		double willHandled = WillBloodUtilityInteractions.tryAbsorbFalteringWill(worldIn, player,
+				LivingStaffFocusRules.bareAbsorptionRange());
+		if (willHandled > 0.0D) {
 			updateChannelStrain(player, false);
 			return;
 		}
@@ -246,7 +255,16 @@ public class BloodAbsorptionItem extends Item implements IDispellable, ICellHand
 				&& target.isAlive()
 				&& !target.isSpectator()
 				&& !HemoEntityPredicates.NOBLOOD.test(target)
+				&& !(target instanceof ArmorStand)
+				&& !(target instanceof WillEntity)
+				&& !isHemomancyNpc(target)
 				&& !(target instanceof Player);
+	}
+
+	private static boolean isHemomancyNpc(LivingEntity target) {
+		Package targetPackage = target.getClass().getPackage();
+		return targetPackage != null
+				&& targetPackage.getName().startsWith("com.vincenthuto.hemomancy.common.entity.npc.");
 	}
 
 	@SuppressWarnings("unused")

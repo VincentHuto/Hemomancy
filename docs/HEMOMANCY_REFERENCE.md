@@ -263,8 +263,10 @@ Hemomancy registers active server, client, and common config specs through `Hemo
 | `bloodDrunkennessMultiplierPerAmplifier` | Double | `0.5` | 0.0-8.0 | Additive chance multiplier per Blood Drunkenness amplifier level |
 | `heraldMultiplier` | Double | `4.0` | 0.0-16.0 | Chance multiplier while a natural Fungal Whisper herald window is active |
 | `anchorLifetimeTicks` | Int | `80` | 20-600 | Delay between anchor spawn and Will materialization |
-| `falterWindowTicks` | Int | `100` | 20-1200 | Broken Will bindable falter window |
-| `bendEnabled` | Boolean | `true` | - | Enables Absorb, Redirect, Commandeer, and backfire interactions |
+| `falterBurstFraction` | Double | `0.25` | 0.05-1.0 | Fraction of max health one player must deal inside the burst window to make a Broken Will falter |
+| `falterBurstWindowTicks` | Int | `80` | 20-400 | Burst-damage tracking window before pressure expires |
+| `falterWindowTicks` | Int | `100` | 20-1200 | Broken Will bindable duration after a burst-triggered falter |
+| `bendEnabled` | Boolean | `true` | - | Enables faltering-Will blood utility interactions, Commandeer, and backfire interactions |
 | `commandeerEnabled` | Boolean | `true` | - | Enables Marionette Crossbar commandeering specifically |
 | `claimedWillBonusCapSilentArchon` | Int | `1` | 0-8 | Extra claimed-Will cap for the Silent Archon edge |
 | `puppeteerSpawnChance` | Double | `0.2` | 0.0-1.0 | Chance to replace the first Broken Will slot with a Blood Drunk Puppeteer archetype |
@@ -1788,7 +1790,7 @@ Successful ambushes spawn a `will_anchor` first. All nearby players receive a sh
 
 Wills dissolve instead of using ordinary corpse loot. Dissolve rewards are school-keyed through `WillCombatRules.lootFor`: the matching representative enzyme always drops, and Broken Wills have a small `faded_memory` chance. Sent Will dissolution increments hidden hive attention on the targeted player only; no Apotheos or progression gate is attached to that pressure in this stage.
 
-Broken Wills below their falter threshold enter a short bindable window; Sent Wills never falter. Right-clicking a faltering Broken Will can **Absorb** it for alignment/reward, **Redirect** it temporarily for a blood cost, or **Commandeer** it with a Marionette Crossbar. Commandeered Wills implement `BoundPuppeteerSummon`, count against the puppeteer active-summon cap, spend crossbar thread, and unravel through the shared tether/upkeep behavior. Silent Archon players receive the planned edge: cheaper Commandeer costs from `WillBendRules` and the configured `claimedWillBonusCapSilentArchon` cap bonus.
+Broken Wills enter their short bindable falter window when one player deals enough burst damage: by default, 25% of max health within 80 ticks. Non-player damage does not build pressure, mixed players do not pool pressure, and the meter resets when the burst window expires or a different player takes over. Sent Wills never falter. Blood Absorption does not affect Wills by default, but channeling it near a faltering Broken Will resolves Absorb: the channel drains the Will's actual health first, so stopping early leaves it weakened but still able to recover from the falter window. Once absorption pushes the Will through its final heart, it fades into a longer dissolution, grants +3 alignment toward its school, keeps the representative enzyme/faded-memory reward chance, and does not use ordinary dissolve loot. Those absorption item rewards spawn only when the Will actually finishes disappearing. This Will-specific absorption draw uses small black glow motes pulled toward the active hand or staff instead of the normal blood-cell siphon particles; the Will shell flickers faster as the dissolve progresses, then releases a final outward pulse of the same black glow motes. Blood Projection aimed at a faltering Broken Will resolves the new Redirect-as-banishment path: it spends projection blood, bursts the Will into a particle cloud, subtracts 3 alignment from that school, and dissolves it without turning it into a temporary ally. Right-click behavior is now reserved for **Commandeer** with a Marionette Crossbar. Commandeered Wills implement `BoundPuppeteerSummon`, count against the puppeteer active-summon cap, spend crossbar thread, and unravel through the shared tether/upkeep behavior. Silent Archon players receive the planned edge: cheaper Commandeer costs from `WillBendRules` and the configured `claimedWillBonusCapSilentArchon` cap bonus.
 
 Legacy summon/test entities (`enthralled_doll`, `wretched_will`, and `blood_thrall`) remain mechanically unchanged by this pass.
 
@@ -2240,8 +2242,8 @@ All are single-stack, use the `LIVING` tool tier. The Living Staff is the prefer
 | Living Crossbow | `LivingCrossbowItem` | Fires Blood Bolts |
 | Sanguis Lancea | `SanguisLanceaItem` | Throwable blood lance (25 base dmg) |
 | Annetta's Sanguis Lancea | `AnnettasSanguisLanceaItem` | Epic Harbinger-route Annetta drop. Held/item rendering uses `AnnettasSanguisLanceaItemRenderer`, `AnnettasSanguisLanceaModel`, `model_annettas_sanguis_lancea.png`, and a crimson glint overlay; the thrown form still uses the shared `SanguisLanceaEntity`/renderer path. |
-| ![](../src/main/resources/assets/hemomancy/textures/item/blood_absorption.png) Blood Absorption | `BloodAbsorptionItem` | Conjured blood-absorbing tool; checks `BlockBloodEndpoint` targets before living-entity absorption |
-| ![](../src/main/resources/assets/hemomancy/textures/item/blood_projection.png) Blood Projection | `BloodProjectionItem` | Conjured blood projection tool; checks `BlockBloodEndpoint` targets before legacy structure/tile transfer |
+| ![](../src/main/resources/assets/hemomancy/textures/item/blood_absorption.png) Blood Absorption | `BloodAbsorptionItem` | Conjured blood-absorbing tool; checks `BlockBloodEndpoint` targets before living-entity absorption, and fades faltering Broken Wills without ordinary mob drain |
+| ![](../src/main/resources/assets/hemomancy/textures/item/blood_projection.png) Blood Projection | `BloodProjectionItem` | Conjured blood projection tool; can banish looked-at faltering Broken Wills before checking `BlockBloodEndpoint` targets and legacy structure/tile transfer |
 
 #### 21.2.1 Living Staff Weapon Forms
 
@@ -2272,9 +2274,9 @@ Hot-swap cost is handled by `LivingStaffWeaponFormRules`: 250mL base, reduced by
 
 #### 21.2.3 Staff Blood Utility Rates
 
-Bare Blood Absorption now acts as the fallback hand tool against one target within 5 blocks. When aimed at a block implementing `BlockBloodEndpoint`, it asks that block to provide blood before falling back to blood reservoir extraction and then living-entity targeting; the Consecrated Bloodwell uses this to draw directly from the bound bloodline pool. Living-entity absorption is pulsed instead of every tick: the base cadence is every 10 ticks, improving through Quickened Draw, Hungry Pulse, and Arterial Cadence to every 4 ticks. Living Staff absorption uses the selected `blood_absorption` manipulation while holding the staff, starts at 4mL per target per pulse, and has a base target cap of 2 and base range of 6 blocks. It checks the same block endpoint / blood reservoir path before nearby living targets and outperforms bare absorption once multiple targets are available.
+Bare Blood Absorption now acts as the fallback hand tool against one target within 5 blocks. When aimed at a block implementing `BlockBloodEndpoint`, it asks that block to provide blood before falling back to blood reservoir extraction, faltering Broken Will absorption, and then living-entity targeting; the Consecrated Bloodwell uses this to draw directly from the bound bloodline pool. Living-entity absorption is pulsed instead of every tick: the base cadence is every 10 ticks, improving through Quickened Draw, Hungry Pulse, and Arterial Cadence to every 4 ticks. Living Staff absorption uses the selected `blood_absorption` manipulation while holding the staff, starts at 4mL per target per pulse, and has a base target cap of 2 and base range of 6 blocks. It checks the same block endpoint / blood reservoir path before faltering Broken Wills and nearby living targets, and outperforms bare absorption once multiple targets are available.
 
-While actively channeling Blood Absorption, the player is rooted in place by default. Dragging Siphon unlocks slow movement, Mobile Conduit reduces the slowdown, and Unbound Siphon removes the movement penalty. Drawing from blocks, reservoirs, and bloodwells does not build strain. Draining living mobs builds Blood Absorption strain on the player: sustained overuse escalates through Weakness, Nausea, and a short Wither effect representing blood poisoning. Blood Tolerance delays those strain thresholds, and strain decays when the channel is held without successfully draining a living target.
+While actively channeling Blood Absorption, the player is rooted in place by default. Dragging Siphon unlocks slow movement, Mobile Conduit reduces the slowdown, and Unbound Siphon removes the movement penalty. Drawing from blocks, reservoirs, bloodwells, and faltering Wills does not build strain. Draining living mobs builds Blood Absorption strain on the player: sustained overuse escalates through Weakness, Nausea, and a short Wither effect representing blood poisoning. Blood Tolerance delays those strain thresholds, and strain decays when the channel is held without successfully draining a living target. Blood Absorption target selection and absorbed-cell particles ignore players, bloodless entities, Wills, armor stands, and Hemomancy NPCs.
 
 Staff focus scaling is centralized in `LivingStaffFocusRules`:
 
@@ -2287,7 +2289,7 @@ Staff focus scaling is centralized in `LivingStaffFocusRules`:
 | Vesper memory awakened | +1 target cap, +1.5 range, +0.5 absorption, +3 structure feed, +75 tile transfer |
 | Vesper's Refusal | Only while Vesper memory is awakened: +1 target cap, +0.75 range, +0.25 absorption, +2 structure feed, +50 tile transfer per level |
 
-Blood Projection is now server-authoritative through `BloodProjectionItem.projectFromEntity`. Projection first checks `BlockBloodEndpoint` on the looked-at block, then falls back to blood-structure feeding, Somatic Loom ritual charging, and `IBloodReservoir` transfer. The Consecrated Bloodwell endpoint contributes directly to the bound bloodline pool instead of filling a local reservoir buffer. Reservoir transfer uses `BloodVolumeTransferRules` so larger staff transfer chunks clamp to available source blood and target capacity before draining.
+Blood Projection is now server-authoritative through `BloodProjectionItem.projectFromEntity`. Projection first checks for a looked-at faltering Broken Will to banish, then checks `BlockBloodEndpoint` on the looked-at block before falling back to blood-structure feeding, Somatic Loom ritual charging, and `IBloodReservoir` transfer. The Consecrated Bloodwell endpoint contributes directly to the bound bloodline pool instead of filling a local reservoir buffer. Reservoir transfer uses `BloodVolumeTransferRules` so larger staff transfer chunks clamp to available source blood and target capacity before draining.
 
 > *Note: Living tools (blade, axe, spear, staff, syringe, crossbow, lancea, baghnakh) use 3D entity models rather than flat item textures â€” see `src/main/resources/assets/hemomancy/textures/entity/` for their model textures:*
 >
@@ -3507,6 +3509,10 @@ The `/hemo` command tree (via `HemoCommand`, permission level 2) is the main in-
 **Blood Moon:**
 - `bloodmoon summon` â€” start a Blood Moon in the overworld and sync the state to players
 - `bloodmoon cancel` â€” end the active Blood Moon and sync the shutdown to players
+
+**Will Ambush Testing:**
+- `/hemo will ambush anchor <school> <tier> <broken_count> <sent_present> [player]` - spawn a real Will anchor at the command source position, then let it materialize the selected Broken/Sent composition against the target player
+- `/hemo will ambush immediate <school> <tier> <origin> [count] [player]` - spawn configured Broken or Sent Wills immediately around the command source position for renderer and mechanics testing
 
 **Fane Preview:**
 - `fane preview` commands are op-only single-player/debug aids for previewing relation-specific boundary rendering without needing a second account or live hostile bloodline.

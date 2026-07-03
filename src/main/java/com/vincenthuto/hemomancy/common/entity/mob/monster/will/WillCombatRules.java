@@ -11,7 +11,8 @@ public final class WillCombatRules {
 	private static final double[] BROKEN_HEALTH = { 20.0D, 30.0D, 34.0D, 38.0D };
 	private static final double[] BROKEN_DAMAGE = { 3.0D, 5.0D, 6.0D, 6.0D };
 	private static final double[] BROKEN_SPEED = { 0.24D, 0.26D, 0.27D, 0.28D };
-	private static final double FALTER_FRACTION = 0.25D;
+	private static final double FALTER_BURST_FRACTION = 0.25D;
+	private static final int FALTER_BURST_WINDOW_TICKS = 80;
 	private static final int FALTER_WINDOW_TICKS = 100;
 
 	private static final Map<EnumBloodTendency, List<ResourceLocation>> SCHOOL_KITS = Map.of(
@@ -61,8 +62,12 @@ public final class WillCombatRules {
 		return COUNTERS.getOrDefault(school, EnumBloodTendency.MORTEM);
 	}
 
-	public static double falterFraction() {
-		return FALTER_FRACTION;
+	public static double falterBurstFraction() {
+		return FALTER_BURST_FRACTION;
+	}
+
+	public static int falterBurstWindowTicks() {
+		return FALTER_BURST_WINDOW_TICKS;
 	}
 
 	public static int falterWindowTicks() {
