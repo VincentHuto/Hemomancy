@@ -10,8 +10,8 @@ import java.util.Map;
 public final class MaterialAtlasSpec {
 	private static final int HARBINGER_HUB_X = 686;
 	private static final int HARBINGER_HUB_Y = 617;
-	private static final int HARBINGER_HUB_LABEL_X = 590;
-	private static final int HARBINGER_HUB_LABEL_Y = 625;
+	private static final int HARBINGER_HUB_LABEL_X = 502;
+	private static final int HARBINGER_HUB_LABEL_Y = 585;
 	private static final int UNSTAINED_HUB_X = 495;
 	private static final int UNSTAINED_HUB_Y = 522;
 	private static final int UNSTAINED_HUB_LABEL_X = 495;
@@ -74,21 +74,21 @@ public final class MaterialAtlasSpec {
 	}
 
 	private static void registerBuckets() {
-		bucket(MaterialAtlasPath.HARBINGER, "bloodcraft_core", "Bloodcraft Core", 0xFFD04436, 615, 500, 477, 625);
-		bucket(MaterialAtlasPath.HARBINGER, "vascular_craft", "Vascular Craft", 0xFFB64044, 660, 220, 623, 85);
-		bucket(MaterialAtlasPath.HARBINGER, "alchemy_enzymes", "Alchemy & Enzymes", 0xFFD99B2D, 360, 350, 885, 1123);
-		bucket(MaterialAtlasPath.HARBINGER, "fungal_ecology", "Botany and Mycology", 0xFF714D41, 850, 610, 860, 837);
-		bucket(MaterialAtlasPath.HARBINGER, "morphlings", "Morphlings", 0xFFB45BA5, 760, 875, 1192, 1141);
-		bucket(MaterialAtlasPath.HARBINGER, "scars_patterns", "Scars & Patterns", 0xFF6FC2D8, 660, 1260, 432, 64);
+		bucket(MaterialAtlasPath.HARBINGER, "bloodcraft_core", "Bloodcraft Core", 0xFFD04436, 615, 500, 197, 481);
+		bucket(MaterialAtlasPath.HARBINGER, "vascular_craft", "Vascular Craft", 0xFFB64044, 660, 220, 615, 21);
+		bucket(MaterialAtlasPath.HARBINGER, "alchemy_enzymes", "Alchemy & Enzymes", 0xFFD99B2D, 360, 350, 869, 859);
+		bucket(MaterialAtlasPath.HARBINGER, "fungal_ecology", "Botany and Mycology", 0xFF714D41, 850, 610, 868, 581);
+		bucket(MaterialAtlasPath.HARBINGER, "morphlings", "Morphlings", 0xFFB45BA5, 760, 875, 1000, 1109);
+		bucket(MaterialAtlasPath.HARBINGER, "scars_patterns", "Scars & Patterns", 0xFF6FC2D8, 660, 1260, 416, 40);
 		bucket(MaterialAtlasPath.HARBINGER, "living_implements", "Living Implements", 0xFFC58B35, 280, 850, 195, 900);
-		bucket(MaterialAtlasPath.HARBINGER, "architecture", "Architecture", 0xFF9A6A45, 470, 615, 458, 790);
-		bucket(MaterialAtlasPath.HARBINGER, "new_category", "Biomaterials", 0xFF19711A, 1050, 390, 916, 320);
-		bucket(MaterialAtlasPath.HARBINGER, "gourds_vessels", "Gourds & Vessels", 0xFFC78539, 240, 590, 760, 457);
+		bucket(MaterialAtlasPath.HARBINGER, "architecture", "Architecture", 0xFF9A6A45, 470, 615, 410, 638);
+		bucket(MaterialAtlasPath.HARBINGER, "new_category", "Biomaterials", 0xFF19711A, 1050, 390, 908, 272);
+		bucket(MaterialAtlasPath.HARBINGER, "gourds_vessels", "Gourds & Vessels", 0xFFC78539, 240, 590, 696, 409);
 		bucket(MaterialAtlasPath.HARBINGER, "spores_cultures", "Spores & Cultures", 0xFF8EA441, 1065, 805, 1310, 843);
-		bucket(MaterialAtlasPath.HARBINGER, "myco_realm_blocks", "Myco-Realm Blocks", 0xFF7B8F4D, 1045, 590, 1137, 594);
-		bucket(MaterialAtlasPath.HARBINGER, "masks_vestments", "Masks & Vestments", 0xFFC15872, 560, 930, 482, 1019);
-		bucket(MaterialAtlasPath.HARBINGER, "idols_fixtures", "Idols & Fixtures", 0xFF9E7A58, 815, 365, 642, 855);
-		bucket(MaterialAtlasPath.HARBINGER, "qliphoth_reagents", "Qliphoth Reagents", 0xFF7F4FA2, 925, 150, 820, 25);
+		bucket(MaterialAtlasPath.HARBINGER, "myco_realm_blocks", "Myco-Realm Blocks", 0xFF7B8F4D, 1045, 590, 1129, 546);
+		bucket(MaterialAtlasPath.HARBINGER, "masks_vestments", "Masks & Vestments", 0xFFC15872, 560, 930, 482, 963);
+		bucket(MaterialAtlasPath.HARBINGER, "idols_fixtures", "Idols & Fixtures", 0xFF9E7A58, 815, 365, 642, 799);
+		bucket(MaterialAtlasPath.HARBINGER, "qliphoth_reagents", "Qliphoth Reagents", 0xFF7F4FA2, 925, 150, 852, 25);
 		bucket(MaterialAtlasPath.UNSTAINED, "still_waters_core", "Still Waters Core", 0xFF80B0A0, 520, 230, 520, 170);
 		bucket(MaterialAtlasPath.UNSTAINED, "cleansing_facilities", "Cleansing Facilities", 0xFF8FB8D8, 790, 360, 870, 330);
 		bucket(MaterialAtlasPath.UNSTAINED, "lethean_flora", "Lethean Flora", 0xFFA6C58A, 760, 720, 840, 760);
