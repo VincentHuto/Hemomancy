@@ -9,7 +9,7 @@ import com.vincenthuto.hemomancy.common.init.EffectInit;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.init.SoundInit;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.MarionetteCrossbarItem;
-import com.vincenthuto.hemomancy.common.manipulation.MobManipCaster;
+import com.vincenthuto.hemomancy.common.manipulation.WillManipulationCaster;
 import com.vincenthuto.hemomancy.common.summon.PuppeteerSummonRules;
 import com.vincenthuto.hemomancy.common.worldgen.FungalGardenTravelHelper;
 import com.vincenthuto.hemomancy.config.HemoServerConfig;
@@ -28,6 +28,7 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.MobSpawnType;
@@ -55,7 +56,6 @@ import java.util.UUID;
 
 public class WillEntity extends Monster implements BoundPuppeteerSummon {
 	private static final int NORMAL_DISSOLVE_TICKS = 40;
-	private static final int BLOOD_ABSORPTION_DISSOLVE_TICKS = 120;
 	private static final EntityDataAccessor<Byte> DATA_ORIGIN =
 			SynchedEntityData.defineId(WillEntity.class, EntityDataSerializers.BYTE);
 	private static final EntityDataAccessor<Byte> DATA_SCHOOL =
@@ -78,8 +78,12 @@ public class WillEntity extends Monster implements BoundPuppeteerSummon {
 			SynchedEntityData.defineId(WillEntity.class, EntityDataSerializers.BOOLEAN);
 	private static final EntityDataAccessor<Optional<UUID>> DATA_TRIAL_CASTER_UUID =
 			SynchedEntityData.defineId(WillEntity.class, EntityDataSerializers.OPTIONAL_UUID);
-	private static final EntityDataAccessor<Boolean> DATA_ABSORPTION_DISSOLVE =
-			SynchedEntityData.defineId(WillEntity.class, EntityDataSerializers.BOOLEAN);
+	private static final EntityDataAccessor<Optional<UUID>> DATA_ABSORPTION_OWNER_UUID =
+			SynchedEntityData.defineId(WillEntity.class, EntityDataSerializers.OPTIONAL_UUID);
+	private static final EntityDataAccessor<Float> DATA_ABSORPTION_PROGRESS =
+			SynchedEntityData.defineId(WillEntity.class, EntityDataSerializers.FLOAT);
+	private static final EntityDataAccessor<Integer> DATA_ABSORPTION_STAGE =
+			SynchedEntityData.defineId(WillEntity.class, EntityDataSerializers.INT);
 	private static final EntityDataAccessor<Integer> DATA_DISSOLVE_TICKS =
 			SynchedEntityData.defineId(WillEntity.class, EntityDataSerializers.INT);
 	private static final EntityDataAccessor<Integer> DATA_DISSOLVE_DURATION =
@@ -91,6 +95,10 @@ public class WillEntity extends Monster implements BoundPuppeteerSummon {
 	private UUID falterBurstAttackerId;
 	private int dissolveTicks;
 	private int dissolveDurationTicks = NORMAL_DISSOLVE_TICKS;
+	private float absorptionProgress;
+	private int absorptionGraceTicks;
+	private int absorptionRageTicks;
+	private UUID absorptionOwnerId;
 	private int castCooldown;
 	private int kitIndex;
 	private UUID redirectedOwner;
@@ -134,7 +142,9 @@ public class WillEntity extends Monster implements BoundPuppeteerSummon {
 		builder.define(DATA_DISMISSAL_TICKS, 0);
 		builder.define(DATA_TRIAL_SUMMON, false);
 		builder.define(DATA_TRIAL_CASTER_UUID, Optional.empty());
-		builder.define(DATA_ABSORPTION_DISSOLVE, false);
+		builder.define(DATA_ABSORPTION_OWNER_UUID, Optional.empty());
+		builder.define(DATA_ABSORPTION_PROGRESS, 0.0F);
+		builder.define(DATA_ABSORPTION_STAGE, 0);
 		builder.define(DATA_DISSOLVE_TICKS, 0);
 		builder.define(DATA_DISSOLVE_DURATION, NORMAL_DISSOLVE_TICKS);
 	}
@@ -145,6 +155,7 @@ public class WillEntity extends Monster implements BoundPuppeteerSummon {
 			MobSpawnType reason, @Nullable SpawnGroupData spawnData) {
 		SpawnGroupData data = super.finalizeSpawn(level, difficulty, reason, spawnData);
 		applyRuleStats(null);
+		WillWeaponController.equip(this);
 		return data;
 	}
 
@@ -159,7 +170,12 @@ public class WillEntity extends Monster implements BoundPuppeteerSummon {
 		}
 		setPhase(drifting ? WillPhase.DRIFTING : WillPhase.MATERIALIZED);
 		clearFalterBurst();
+		clearAbsorptionStruggle();
+		absorptionRageTicks = 0;
 		applyRuleStats(target);
+		WillWeaponController.equip(this);
+		castCooldown = 20 + random.nextInt(40);
+		kitIndex = 0;
 	}
 
 	private void applyRuleStats(@Nullable Player target) {
@@ -183,8 +199,12 @@ public class WillEntity extends Monster implements BoundPuppeteerSummon {
 	public void tick() {
 		super.tick();
 		if (level().isClientSide) return;
+		if (absorptionRageTicks > 0) {
+			absorptionRageTicks--;
+		}
 		if (hemomancy$getOwnerUUID() != null) {
 			if (BoundSummonBehavior.commonServerTick(this, this)) {
+				WillWeaponController.tick(this);
 				tickCasting();
 			}
 			return;
@@ -215,18 +235,29 @@ public class WillEntity extends Monster implements BoundPuppeteerSummon {
 			}
 			return;
 		}
+		if (getPhase() == WillPhase.ABSORBING) {
+			tickAbsorptionStruggle();
+			return;
+		}
 		if (getPhase() == WillPhase.DISSOLVING) {
 			dissolveTicks++;
 			entityData.set(DATA_DISSOLVE_TICKS, dissolveTicks);
 			if (dissolveTicks >= dissolveDurationTicks) {
 				if (dropsOnDissolve) dropDissolveLoot();
-				if (entityData.get(DATA_ABSORPTION_DISSOLVE)) dropAbsorptionDissolveLoot();
-				if (entityData.get(DATA_ABSORPTION_DISSOLVE)) spawnAbsorptionDissolvePulse();
 				discard();
 			}
 			return;
 		}
+		WillWeaponController.tick(this);
 		tickCasting();
+	}
+
+	private void tickAbsorptionStruggle() {
+		setNoAi(true);
+		setTarget(null);
+		if (--absorptionGraceTicks <= 0) {
+			escapeAbsorptionAngry();
+		}
 	}
 
 	private void tickCasting() {
@@ -236,16 +267,86 @@ public class WillEntity extends Monster implements BoundPuppeteerSummon {
 		if (castCooldown-- > 0) return;
 		castCooldown = WillCombatRules.castIntervalTicks(getTier());
 		List<ResourceLocation> kit = WillCombatRules.schoolKit(getSchool(), getTier());
-		ResourceLocation id = kit.get(kitIndex++ % kit.size());
-		boolean fired = MobManipCaster.cast(this, id, HemoServerConfig.DRUDGE_WORK_RADIUS.get());
+		ResourceLocation id = getOrigin() == WillOrigin.SENT ? selectSentCast(kit, target) : selectBrokenCast(kit, target);
+		if (id == null) return;
+		boolean fired = WillManipulationCaster.cast(this, id);
 		if (!fired && distanceToSqr(target) < 24.0D * 24.0D) {
-			target.hurt(damageSources().mobAttack(this), (float) getAttributeValue(Attributes.ATTACK_DAMAGE) * 0.75F);
+			target.hurt(damageSources().mobAttack(this), (float) getAttributeValue(Attributes.ATTACK_DAMAGE) * 0.35F);
 		}
+	}
+
+	@Nullable
+	private ResourceLocation selectBrokenCast(List<ResourceLocation> kit, LivingEntity target) {
+		if (kit.isEmpty()) return null;
+		if (random.nextFloat() < 0.18F) {
+			kitIndex++;
+			return null;
+		}
+		return kit.get(kitIndex++ % kit.size());
+	}
+
+	private ResourceLocation selectSentCast(List<ResourceLocation> kit, LivingEntity target) {
+		if (kit.isEmpty()) return null;
+		double distanceSqr = distanceToSqr(target);
+		if (getHealth() < getMaxHealth() * 0.45F) {
+			ResourceLocation defensive = firstInKit(kit, "blood_eclipse_mantle", "glacial_bastion", "void_shroud",
+					"scalding_updraft", "crimson_sight");
+			if (defensive != null) return defensive;
+		}
+		if (distanceSqr > 12.0D * 12.0D) {
+			ResourceLocation mobility = firstInKit(kit, "umbral_step", "crimson_flame_conjuration", "blood_shot",
+					"blood_needle", "prismatic_reproof", "deadly_gaze");
+			if (mobility != null) return mobility;
+		}
+		if (distanceSqr < 5.0D * 5.0D) {
+			ResourceLocation pressure = firstInKit(kit, "sanguine_ignition", "cryogenic_pulse", "activation_potential",
+					"blood_eclipse", "blood_aneurysm", "bloom_of_rot");
+			if (pressure != null) return pressure;
+		}
+		if (target.getHealth() <= target.getMaxHealth() * 0.35F) {
+			ResourceLocation finisher = firstInKit(kit, "exsanguinate");
+			if (finisher != null) return finisher;
+		}
+		ResourceLocation burst = firstInKit(kit, "vitric_combustion", "blood_aneurysm", "blood_eclipse",
+				"prismatic_reproof", "hemorrhage", "glacial_grasp", "pyretic_forge");
+		return burst != null ? burst : kit.get(kitIndex++ % kit.size());
+	}
+
+	@Nullable
+	private static ResourceLocation firstInKit(List<ResourceLocation> kit, String... names) {
+		for (String name : names) {
+			for (ResourceLocation id : kit) {
+				if (id.getPath().equals(name)) {
+					return id;
+				}
+			}
+		}
+		return null;
+	}
+
+	@Override
+	public boolean doHurtTarget(Entity target) {
+		boolean hit = super.doHurtTarget(target);
+		if (hit && target instanceof LivingEntity living) {
+			WillWeaponController.onMeleeHit(this, living);
+		}
+		return hit;
 	}
 
 	@Override
 	public boolean hurt(DamageSource source, float amount) {
 		if (getPhase() == WillPhase.DISSOLVING) return false;
+		if (getPhase() == WillPhase.ABSORBING) {
+			if (amount >= getHealth()) {
+				setHealth(1.0F);
+				return true;
+			}
+			boolean result = super.hurt(source, amount);
+			if (getHealth() < 1.0F) {
+				setHealth(1.0F);
+			}
+			return result;
+		}
 		if (amount >= getHealth()) {
 			setHealth(1.0F);
 			startDissolving(true);
@@ -264,6 +365,7 @@ public class WillEntity extends Monster implements BoundPuppeteerSummon {
 		if (amount <= 0.0F) return;
 		if (getOrigin() != WillOrigin.BROKEN) return;
 		if (getPhase() != WillPhase.MATERIALIZED) return;
+		if (absorptionRageTicks > 0) return;
 		if (!(source.getEntity() instanceof Player player)) return;
 		if (falterBurstWindowTicks <= 0 || falterBurstAttackerId == null
 				|| !player.getUUID().equals(falterBurstAttackerId)) {
@@ -300,20 +402,25 @@ public class WillEntity extends Monster implements BoundPuppeteerSummon {
 		falterBurstAttackerId = null;
 	}
 
+	private void clearAbsorptionStruggle() {
+		absorptionProgress = 0.0F;
+		absorptionGraceTicks = 0;
+		absorptionOwnerId = null;
+		entityData.set(DATA_ABSORPTION_OWNER_UUID, Optional.empty());
+		entityData.set(DATA_ABSORPTION_PROGRESS, 0.0F);
+		entityData.set(DATA_ABSORPTION_STAGE, 0);
+	}
+
 	private void startDissolving(boolean drops) {
-		startDissolving(drops, NORMAL_DISSOLVE_TICKS, false);
+		startDissolving(drops, NORMAL_DISSOLVE_TICKS);
 	}
 
 	private void startDissolving(boolean drops, int durationTicks) {
-		startDissolving(drops, durationTicks, false);
-	}
-
-	private void startDissolving(boolean drops, int durationTicks, boolean absorptionDissolve) {
 		clearFalterBurst();
+		clearAbsorptionStruggle();
 		dropsOnDissolve = drops;
 		dissolveTicks = 0;
 		dissolveDurationTicks = Math.max(1, durationTicks);
-		entityData.set(DATA_ABSORPTION_DISSOLVE, absorptionDissolve);
 		entityData.set(DATA_DISSOLVE_TICKS, 0);
 		entityData.set(DATA_DISSOLVE_DURATION, dissolveDurationTicks);
 		if (getTarget() instanceof ServerPlayer player) {
@@ -331,14 +438,22 @@ public class WillEntity extends Monster implements BoundPuppeteerSummon {
 		return isAlive() && getOrigin() == WillOrigin.BROKEN && getPhase() == WillPhase.FALTERING;
 	}
 
+	public boolean canBloodAbsorb(ServerPlayer player) {
+		if (!isAlive() || getOrigin() != WillOrigin.BROKEN) {
+			return false;
+		}
+		if (getPhase() == WillPhase.FALTERING) {
+			return true;
+		}
+		return getPhase() == WillPhase.ABSORBING
+				&& player != null
+				&& player.getUUID().equals(entityData.get(DATA_ABSORPTION_OWNER_UUID).orElse(null));
+	}
+
 	public boolean canBloodAbsorptionDrawParticles() {
 		return isAlive() && getOrigin() == WillOrigin.BROKEN
 				&& (getPhase() == WillPhase.FALTERING
-						|| (getPhase() == WillPhase.DISSOLVING && entityData.get(DATA_ABSORPTION_DISSOLVE)));
-	}
-
-	public boolean isAbsorptionDissolving() {
-		return getPhase() == WillPhase.DISSOLVING && entityData.get(DATA_ABSORPTION_DISSOLVE);
+						|| getPhase() == WillPhase.ABSORBING);
 	}
 
 	public float getDissolveProgress(float partialTicks) {
@@ -349,24 +464,89 @@ public class WillEntity extends Monster implements BoundPuppeteerSummon {
 		return Mth.clamp(ticks / Math.max(1.0F, entityData.get(DATA_DISSOLVE_DURATION)), 0.0F, 1.0F);
 	}
 
-	public float absorbFalteringWithBlood(ServerPlayer player, float amount) {
-		if (!canBloodUtilityBend()) {
+	public float getAbsorptionProgress(float partialTicks) {
+		return entityData.get(DATA_ABSORPTION_PROGRESS);
+	}
+
+	public int getAbsorptionStage() {
+		return entityData.get(DATA_ABSORPTION_STAGE);
+	}
+
+	public float absorbWithBlood(ServerPlayer player, float progressPerTick) {
+		if (!canBloodAbsorb(player)) {
 			return 0.0F;
 		}
-		float absorbed = Math.max(0.0F, Math.min(getHealth(), amount));
-		if (absorbed <= 0.0F) {
+		float progressAmount = Math.max(0.0F, progressPerTick);
+		if (progressAmount <= 0.0F) {
 			return 0.0F;
 		}
-		float remainingHealth = getHealth() - absorbed;
-		if (remainingHealth > 1.0F) {
-			setHealth(remainingHealth);
+		if (getPhase() == WillPhase.FALTERING) {
+			startAbsorbing(player);
+		}
+		absorptionOwnerId = player.getUUID();
+		entityData.set(DATA_ABSORPTION_OWNER_UUID, Optional.of(absorptionOwnerId));
+		absorptionGraceTicks = safeConfig(HemoServerConfig.WILL_ABSORPTION_GRACE_TICKS,
+				WillAbsorptionRules.GRACE_TICKS);
+		float required = WillAbsorptionRules.progressRequired(safeConfig(
+				HemoServerConfig.WILL_ABSORPTION_PROGRESS_REQUIRED,
+				(double) WillAbsorptionRules.DEFAULT_PROGRESS_REQUIRED));
+		float before = absorptionProgress;
+		setAbsorptionProgress(Math.min(required, absorptionProgress + progressAmount), required);
+		float absorbed = Math.max(0.0F, absorptionProgress - before);
+		if (absorptionProgress < required) {
 			return absorbed;
 		}
-		setHealth(1.0F);
-		HemoCapabilityAccess.getBloodTendency(player)
-				.ifPresent(tendency -> tendency.addTendencyAlignment(getSchool(), 3.0F));
-		startDissolving(false, BLOOD_ABSORPTION_DISSOLVE_TICKS, true);
+		completeAbsorption(player);
 		return absorbed;
+	}
+
+	private void startAbsorbing(ServerPlayer player) {
+		clearFalterBurst();
+		absorptionOwnerId = player.getUUID();
+		absorptionGraceTicks = safeConfig(HemoServerConfig.WILL_ABSORPTION_GRACE_TICKS,
+				WillAbsorptionRules.GRACE_TICKS);
+		absorptionProgress = 0.0F;
+		entityData.set(DATA_ABSORPTION_OWNER_UUID, Optional.of(absorptionOwnerId));
+		entityData.set(DATA_ABSORPTION_PROGRESS, 0.0F);
+		entityData.set(DATA_ABSORPTION_STAGE, 0);
+		setNoAi(true);
+		setTarget(null);
+		if (getHealth() < 1.0F) {
+			setHealth(1.0F);
+		}
+		setPhase(WillPhase.ABSORBING);
+		playSound(SoundInit.ENTITY_WILL_FALTER.get(), 0.9F, 0.65F);
+	}
+
+	private void setAbsorptionProgress(float progress, float required) {
+		absorptionProgress = Math.max(0.0F, progress);
+		entityData.set(DATA_ABSORPTION_PROGRESS,
+				Mth.clamp(absorptionProgress / Math.max(1.0F, required), 0.0F, 1.0F));
+		entityData.set(DATA_ABSORPTION_STAGE,
+				WillAbsorptionRules.stageForProgress(absorptionProgress, required));
+	}
+
+	private void escapeAbsorptionAngry() {
+		UUID ownerId = absorptionOwnerId != null
+				? absorptionOwnerId
+				: entityData.get(DATA_ABSORPTION_OWNER_UUID).orElse(null);
+		clearAbsorptionStruggle();
+		setNoAi(false);
+		setPhase(WillPhase.MATERIALIZED);
+		float floor = WillAbsorptionRules.escapeHealthFloor(getMaxHealth(), safeConfig(
+				HemoServerConfig.WILL_ABSORPTION_ESCAPE_HEALTH_FRACTION,
+				WillAbsorptionRules.ESCAPE_HEALTH_FRACTION));
+		setHealth(Math.max(getHealth(), floor));
+		absorptionRageTicks = safeConfig(HemoServerConfig.WILL_ABSORPTION_RAGE_TICKS,
+				WillAbsorptionRules.CONTROLLED_RAGE_TICKS);
+		castCooldown = 0;
+		if (ownerId != null && level().getServer() != null) {
+			ServerPlayer player = level().getServer().getPlayerList().getPlayer(ownerId);
+			if (player != null && player.isAlive()) {
+				setTarget(player);
+			}
+		}
+		playSound(SoundInit.ENTITY_WILL_MATERIALIZE.get(), 1.0F, 0.55F);
 	}
 
 	public boolean projectBanishWithBlood(ServerPlayer player) {
@@ -389,7 +569,17 @@ public class WillEntity extends Monster implements BoundPuppeteerSummon {
 		}
 	}
 
-	private void spawnAbsorptionDissolvePulse() {
+	private void completeAbsorption(ServerPlayer player) {
+		HemoCapabilityAccess.getBloodTendency(player)
+				.ifPresent(tendency -> tendency.addTendencyAlignment(getSchool(), 3.0F));
+		clearFalterBurst();
+		clearAbsorptionStruggle();
+		dropAbsorptionCompletionLoot();
+		spawnAbsorptionCompletionPulse();
+		discard();
+	}
+
+	private void spawnAbsorptionCompletionPulse() {
 		if (level() instanceof ServerLevel serverLevel) {
 			Vec3 center = position().add(0.0D, getBbHeight() * 0.55D, 0.0D);
 			for (int i = 0; i < 42; i++) {
@@ -433,7 +623,7 @@ public class WillEntity extends Monster implements BoundPuppeteerSummon {
 		}
 	}
 
-	private void dropAbsorptionDissolveLoot() {
+	private void dropAbsorptionCompletionLoot() {
 		if (random.nextFloat() < 0.5F) spawnAtLocation(EnumBloodTendency.getRepEnzyme(getSchool()));
 		if (random.nextFloat() < 0.15F) spawnAtLocation(ItemInit.faded_memory.get());
 	}
@@ -557,9 +747,12 @@ public class WillEntity extends Monster implements BoundPuppeteerSummon {
 		tag.putFloat("FalterBurstDamage", falterBurstDamage);
 		tag.putInt("FalterBurstWindowTicks", falterBurstWindowTicks);
 		if (falterBurstAttackerId != null) tag.putUUID("FalterBurstAttacker", falterBurstAttackerId);
+		tag.putFloat("AbsorptionProgress", absorptionProgress);
+		tag.putInt("AbsorptionGraceTicks", absorptionGraceTicks);
+		tag.putInt("AbsorptionRageTicks", absorptionRageTicks);
+		if (absorptionOwnerId != null) tag.putUUID("AbsorptionOwner", absorptionOwnerId);
 		tag.putInt("DissolveTicks", dissolveTicks);
 		tag.putInt("DissolveDurationTicks", dissolveDurationTicks);
-		tag.putBoolean("AbsorptionDissolve", entityData.get(DATA_ABSORPTION_DISSOLVE));
 		if (redirectedOwner != null) tag.putUUID("RedirectedOwner", redirectedOwner);
 		if (dissolveTargetId != null) tag.putUUID("DissolveTarget", dissolveTargetId);
 		tag.putLong("RedirectUntilGameTime", redirectUntilGameTime);
@@ -577,11 +770,19 @@ public class WillEntity extends Monster implements BoundPuppeteerSummon {
 		falterBurstDamage = tag.getFloat("FalterBurstDamage");
 		falterBurstWindowTicks = tag.getInt("FalterBurstWindowTicks");
 		falterBurstAttackerId = tag.hasUUID("FalterBurstAttacker") ? tag.getUUID("FalterBurstAttacker") : null;
+		absorptionProgress = tag.getFloat("AbsorptionProgress");
+		absorptionGraceTicks = tag.getInt("AbsorptionGraceTicks");
+		absorptionRageTicks = tag.getInt("AbsorptionRageTicks");
+		absorptionOwnerId = tag.hasUUID("AbsorptionOwner") ? tag.getUUID("AbsorptionOwner") : null;
+		entityData.set(DATA_ABSORPTION_OWNER_UUID, Optional.ofNullable(absorptionOwnerId));
+		float required = WillAbsorptionRules.progressRequired(safeConfig(
+				HemoServerConfig.WILL_ABSORPTION_PROGRESS_REQUIRED,
+				(double) WillAbsorptionRules.DEFAULT_PROGRESS_REQUIRED));
+		setAbsorptionProgress(absorptionProgress, required);
 		dissolveTicks = tag.getInt("DissolveTicks");
 		dissolveDurationTicks = tag.contains("DissolveDurationTicks")
 				? Math.max(1, tag.getInt("DissolveDurationTicks"))
 				: NORMAL_DISSOLVE_TICKS;
-		entityData.set(DATA_ABSORPTION_DISSOLVE, tag.getBoolean("AbsorptionDissolve"));
 		entityData.set(DATA_DISSOLVE_TICKS, dissolveTicks);
 		entityData.set(DATA_DISSOLVE_DURATION, dissolveDurationTicks);
 		if (tag.hasUUID("RedirectedOwner")) redirectedOwner = tag.getUUID("RedirectedOwner");

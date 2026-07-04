@@ -36,4 +36,4 @@
 1. [Guardrails mini-plan](superpowers/plans/2026-07-03-audit-phase1-guardrails.md) — shared helpers; erases the content plans' TODO seams.
 2. [Fungal Scar Consolidation](superpowers/plans/2026-07-03-fungal-scar-consolidation.md) — landed as the eight-scar roster pass; Oculiflora remains reveal-only and Sanguiflora has moved out of fungal scars ahead of morphling work.
 3. [Morphling Fungal-Strain Reframe](superpowers/plans/2026-07-03-morphling-fungal-strain-reframe.md) — **land before public-alpha saves exist** (item renames = migration surface grows with every tester world).
-4. [Rogue Hemomancer Wills](superpowers/plans/2026-07-03-rogue-hemomancer-wills.md) — largest/new-system risk; Phase A may start in parallel with #3 (near-zero file overlap; only the `DrudgeAction` widening touches shared code).
+4. [Rogue Hemomancer Wills](superpowers/plans/2026-07-03-rogue-hemomancer-wills.md) — largest/new-system risk; combat now uses the Will entity-cast path while Drudge casting remains isolated to Drudges.

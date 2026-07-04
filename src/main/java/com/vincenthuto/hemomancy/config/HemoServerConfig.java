@@ -98,6 +98,10 @@ public class HemoServerConfig {
 	public static ModConfigSpec.DoubleValue WILL_FALTER_BURST_FRACTION;
 	public static ModConfigSpec.IntValue WILL_FALTER_BURST_WINDOW_TICKS;
 	public static ModConfigSpec.IntValue WILL_FALTER_WINDOW_TICKS;
+	public static ModConfigSpec.DoubleValue WILL_ABSORPTION_PROGRESS_REQUIRED;
+	public static ModConfigSpec.IntValue WILL_ABSORPTION_GRACE_TICKS;
+	public static ModConfigSpec.DoubleValue WILL_ABSORPTION_ESCAPE_HEALTH_FRACTION;
+	public static ModConfigSpec.IntValue WILL_ABSORPTION_RAGE_TICKS;
 	public static ModConfigSpec.BooleanValue WILL_BEND_ENABLED;
 	public static ModConfigSpec.BooleanValue WILL_COMMANDEER_ENABLED;
 	public static ModConfigSpec.IntValue WILL_CLAIMED_BONUS_CAP_SILENT_ARCHON;
@@ -483,6 +487,22 @@ public class HemoServerConfig {
 		WILL_FALTER_WINDOW_TICKS = builder
 				.comment("Ticks a burst-staggered Broken Will remains faltering and bindable.")
 				.defineInRange("falterWindowTicks", 100, 1, 1200);
+
+		WILL_ABSORPTION_PROGRESS_REQUIRED = builder
+				.comment("Progress required to fully absorb a faltering Broken Will once Blood Absorption latches.")
+				.defineInRange("willAbsorptionProgressRequired", 100.0, 1.0, 10000.0);
+
+		WILL_ABSORPTION_GRACE_TICKS = builder
+				.comment("Ticks an absorbing Broken Will waits without a Blood Absorption channel before escaping angry.")
+				.defineInRange("willAbsorptionGraceTicks", 20, 1, 200);
+
+		WILL_ABSORPTION_ESCAPE_HEALTH_FRACTION = builder
+				.comment("Minimum fraction of max health restored when an absorbing Broken Will escapes angry.")
+				.defineInRange("willAbsorptionEscapeHealthFraction", 0.4, 0.0, 1.0);
+
+		WILL_ABSORPTION_RAGE_TICKS = builder
+				.comment("Ticks an escaped Will resists immediate refalter after a broken absorption channel.")
+				.defineInRange("willAbsorptionRageTicks", 160, 1, 2400);
 
 		WILL_BEND_ENABLED = builder
 				.comment("Whether faltering Broken Wills can be resolved through blood utilities or Commandeered.")

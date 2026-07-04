@@ -6,7 +6,7 @@ import net.minecraft.world.level.Level;
 
 /**
  * Functional interface that describes what a {@link BloodManipulation} does when
- * executed on behalf of a Drudge construct or Will-like mob rather than a player.
+ * executed on behalf of a Drudge construct rather than a player.
  *
  * <p>Each manipulation that can be equipped by a Drudge registers its own
  * {@code DrudgeAction} via
@@ -24,7 +24,7 @@ import net.minecraft.world.level.Level;
 public interface DrudgeAction {
 
     /**
-     * Execute the manipulation on behalf of the given mob caster.
+     * Execute the manipulation on behalf of the given Drudge-compatible mob caster.
      *
      * @param caster  the executing PathfinderMob caster
      * @param world   the server-side level (never client-side; callers guarantee this)

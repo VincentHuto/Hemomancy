@@ -65,6 +65,7 @@ public final class CellHandParticleEffects {
 					WillEntity will = willTarget.get();
 					spawnWillAbsorptionGlowParticle(mc, origin,
 							will.position().add(0.0D, will.getBbHeight() * 0.55D, 0.0D), rand, Optional.empty());
+					spawnWillAbsorptionTendencySpiralParticle(mc, origin, will, rand, Optional.empty());
 				} else {
 					for (LivingEntity livingTarget : getAbsorptionParticleTargets(living, activeStack)) {
 						Vector3 targetVec = Vector3.fromEntityCenter(livingTarget);
@@ -136,6 +137,7 @@ public final class CellHandParticleEffects {
 					WillEntity will = willTarget.get();
 					spawnWillAbsorptionGlowParticle(mc, origin,
 							will.position().add(0.0D, will.getBbHeight() * 0.55D, 0.0D), rand, Optional.of(anchor));
+					spawnWillAbsorptionTendencySpiralParticle(mc, origin, will, rand, Optional.of(anchor));
 				} else {
 					for (LivingEntity livingTarget : getAbsorptionParticleTargets(player, stack)) {
 						Vector3 targetVec = Vector3.fromEntityCenter(livingTarget);
@@ -169,6 +171,32 @@ public final class CellHandParticleEffects {
 					particleOrigin.x(), particleOrigin.y(), particleOrigin.z(), 0, 0.00, 0);
 			if (created instanceof BloodCellParticle particle) {
 				particle.setFirstPersonAnchor(localOffset);
+			}
+		}
+	}
+
+	private static void spawnWillAbsorptionTendencySpiralParticle(Minecraft mc, Vec3 origin, WillEntity will,
+			Random rand, Optional<Vec3> firstPersonTargetAnchor) {
+		double age = will.tickCount + HLClientUtils.getPartialTicks();
+		double spiralAngle = age * 0.42D + rand.nextDouble() * Math.PI * 0.45D;
+		double heightPhase = (age * 0.075D + rand.nextDouble()) % 1.0D;
+		double radius = 0.38D + 0.08D * Math.sin(age * 0.17D);
+		Vec3 source = will.position().add(
+				Math.cos(spiralAngle) * radius,
+				will.getBbHeight() * (0.18D + 0.68D * heightPhase),
+				Math.sin(spiralAngle) * radius);
+		Vec3 finalPos = source.subtract(origin);
+		Particle created = mc.particleEngine.createParticle(
+				WillAbsorptionGlowParticleFactory.createData(will.getSchool().getColor()),
+				origin.x, origin.y, origin.z,
+				finalPos.x + rand.nextDouble() * 0.08D - 0.04D,
+				finalPos.y + rand.nextDouble() * 0.08D - 0.04D,
+				finalPos.z + rand.nextDouble() * 0.08D - 0.04D);
+		if (created instanceof WillAbsorptionGlowParticle particle) {
+			if (firstPersonTargetAnchor.isPresent()) {
+				particle.setFirstPersonTargetAnchor(firstPersonTargetAnchor.get());
+			} else {
+				particle.setTargetYOffset(0.0D);
 			}
 		}
 	}

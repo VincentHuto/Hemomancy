@@ -12,7 +12,7 @@ public final class WillResourceSourceTest {
 		entityAndItemRegistrationsExist();
 		resourcesExistAndReferenceWills();
 		willEntityUsesConfiguredFalterBurstRules();
-		drudgeActionIsWidenedSafely();
+		willCombatUsesEntityCasterAndKeepsDrudgesSeparate();
 		oculifloraAnchorGateIsLive();
 		willAmbushStateIsAttachmentBacked();
 		directorChecksOutpostSanctuary();
@@ -59,10 +59,13 @@ public final class WillResourceSourceTest {
 		assertContains("falter burst window is configurable", config, "falterBurstWindowTicks");
 	}
 
-	private static void drudgeActionIsWidenedSafely() throws IOException {
+	private static void willCombatUsesEntityCasterAndKeepsDrudgesSeparate() throws IOException {
+		String will = read("src/main/java/com/vincenthuto/hemomancy/common/entity/mob/monster/will/WillEntity.java");
 		String drudgeAction = read("src/main/java/com/vincenthuto/hemomancy/common/manipulation/DrudgeAction.java");
 		String caster = read("src/main/java/com/vincenthuto/hemomancy/common/manipulation/MobManipCaster.java");
 		String manipInit = read("src/main/java/com/vincenthuto/hemomancy/common/init/ManipulationInit.java");
+		assertContains("will uses real manipulation caster", will, "WillManipulationCaster.cast(this, id)");
+		assertNotContains("will no longer imports drudge caster", will, "MobManipCaster");
 		assertContains("drudge action accepts generic pathfinder mob", drudgeAction, "PathfinderMob caster");
 		assertContains("mob caster bridge exists", caster, "public static boolean cast(PathfinderMob caster");
 		assertContains("drudge-only charge path is guarded", manipInit, "instanceof DrudgeEntity drudgeEntity");
@@ -100,6 +103,12 @@ public final class WillResourceSourceTest {
 	private static void assertContains(String label, String source, String expected) {
 		if (!source.contains(expected)) {
 			throw new AssertionError(label + ": missing `" + expected + "`");
+		}
+	}
+
+	private static void assertNotContains(String label, String source, String unexpected) {
+		if (source.contains(unexpected)) {
+			throw new AssertionError(label + ": found `" + unexpected + "`");
 		}
 	}
 }

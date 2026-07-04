@@ -9,6 +9,7 @@ import com.vincenthuto.hemomancy.common.capability.player.harbinger.livingstaff.
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.ManipulationEquipHelper;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillPointHelper;
+import com.vincenthuto.hemomancy.common.entity.mob.monster.will.WillAbsorptionRules;
 import com.vincenthuto.hemomancy.common.entity.mob.monster.will.WillBloodUtilityInteractions;
 import com.vincenthuto.hemomancy.common.item.harbinger.morphlings.IMorphling;
 import com.vincenthuto.hemomancy.common.item.itemhandler.LivingStaffItemHandler;
@@ -186,7 +187,8 @@ public class LivingStaffItem extends LivingItem implements IDispellable {
 					return;
 				}
 				double willHandled = WillBloodUtilityInteractions.tryAbsorbFalteringWill(pLevel, player,
-						LivingStaffFocusRules.absorptionRange(focus));
+						LivingStaffFocusRules.absorptionRange(focus),
+						WillAbsorptionRules.staffProgressPerTick(focus));
 				if (willHandled > 0.0D) {
 					BloodAbsorptionItem.updateChannelStrain(player, false);
 					return;

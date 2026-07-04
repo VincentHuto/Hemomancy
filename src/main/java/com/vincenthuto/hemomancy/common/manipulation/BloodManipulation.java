@@ -44,7 +44,7 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import javax.annotation.Nullable;
 
-public class BloodManipulation  {
+public class BloodManipulation implements EntityCastableManipulation {
 	public static BloodManipulation BLANK = new BloodManipulation("No Selected", 0, 0, 0, EnumManipulationType.QUICK,
 			EnumManipulationRank.HUMILIS, EnumBloodTendency.ANIMUS, EnumVeinSections.HEAD);
 	/*
@@ -110,6 +110,11 @@ public class BloodManipulation  {
 
 	public void getAction(Player player, Level world, ItemStack heldItemMainhand, BlockPos position) {
 
+	}
+
+	@Override
+	public boolean castFromEntity(ManipulationCastContext context) {
+		return EntityManipulationEffects.cast(this, context);
 	}
 
 	public double getAlignLevel() {

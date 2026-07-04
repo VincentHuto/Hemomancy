@@ -4,5 +4,6 @@ public enum WillPhase {
 	DRIFTING,
 	MATERIALIZED,
 	FALTERING,
+	ABSORBING,
 	DISSOLVING
 }

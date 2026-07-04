@@ -6,7 +6,7 @@
 
 **Goal:** Ship the Wills ambusher system: one data-driven `WillEntity` with Broken/Sent origins and school-keyed manipulation combat; a degree-scaled ambush director with sanctuary exclusion and a pre-materialization telegraph; school-keyed dissolve loot; the Blood Drunk Puppeteer reintegration; and the Archon-gated bend layer (Absorb / Redirect / Commandeer).
 
-**Architecture:** Combat math, spawn eligibility, composition, and bend rules live in pure, unit-testable `*Rules` classes (the `EndgameBossCombatRules` pattern). The entity is one type with synched `ORIGIN / SCHOOL / TIER / PHASE` data. Casting reuses the existing per-manipulation `DrudgeAction` behaviors by widening their caster parameter — Wills get ~40 school behaviors for free. The ambush director is a server `PlayerTickEvent.Post` system (the `FungalWhisperEvents.onPlayerTick` pattern). The telegraph is a tracked anchor entity that all clients receive but only Oculiflora-wearing clients *render* — no per-player packet filtering needed, because scar state is already client-synced.
+**Architecture:** Combat math, spawn eligibility, composition, and bend rules live in pure, unit-testable `*Rules` classes (the `EndgameBossCombatRules` pattern). The entity is one type with synched `ORIGIN / SCHOOL / TIER / PHASE` data. Casting uses `WillManipulationCaster` plus `EntityCastableManipulation` / `ManipulationCastContext` so Wills execute mob-safe real manipulation effects instead of Drudge work actions. The ambush director is a server `PlayerTickEvent.Post` system (the `FungalWhisperEvents.onPlayerTick` pattern). The telegraph is a tracked anchor entity that all clients receive but only Oculiflora-wearing clients *render* — no per-player packet filtering needed, because scar state is already client-synced.
 
 **Tech Stack:** NeoForge 1.21.1, Java 21, `PathfinderMob` + goal AI, synched entity data, `HemoServerConfig` section pattern, `HemoAttachmentTypes` player attachments, payload packets via `PacketHandler`, HutosLib/monolith shader render types, focused resource/source tests.
 
@@ -16,7 +16,7 @@
 
 | Concern | Anchor |
 |---|---|
-| Manipulation-casting mobs | `common/manipulation/DrudgeAction.java` — functional interface `(drudge, world, centre, radius) -> boolean`, assigned per-manipulation via `.setDrudgeAction(...)` in `ManipulationInit` (~40 behaviors) |
+| Manipulation-casting mobs | `common/manipulation/WillManipulationCaster.java`, `EntityCastableManipulation.java`, and `ManipulationCastContext.java` — Will-only entity casts for curated school kits; `DrudgeAction` / `MobManipCaster` remain Drudge infrastructure |
 | Hostile mob home | `common/entity/mob/monster/` (e.g. `BloodDrunkPuppeteerEntity.java`) — Wills go in `common/entity/mob/monster/will/` |
 | Player degree | `IInitiatoryDegree` via `HemoCapabilityAccess` |
 | Whisper scheduler (herald hook) | `common/entity/npc/dialogue/FungalWhisperEvents.onPlayerTick(PlayerTickEvent.Post)` + `FungalWhisperDialogueTrees` |
@@ -48,7 +48,8 @@
 - Create `common/entity/mob/monster/will/WillSanctuaryRules.java` — pure core + thin level-facing wrapper.
 - Create `common/entity/mob/monster/will/WillBendRules.java` — pure: bend eligibility (origin/phase/degree), verb costs, backfire outcomes.
 - Create `common/event/WillAmbushDirector.java` — server tick system: eligibility, site scoring, anchor spawn, cooldowns, herald/blood-moon/drunkenness modifiers.
-- Create `common/manipulation/MobManipCaster.java` — bridge that invokes a manipulation's `DrudgeAction` with a generic mob caster (see Task 3 for the widening strategy).
+- Create `common/manipulation/EntityCastableManipulation.java`, `ManipulationCastContext.java`, `EntityManipulationEffects.java`, and `WillManipulationCaster.java` — Will-only bridge for real school manipulation effects.
+- Create `common/entity/mob/monster/will/WillEquipmentRules.java` and `WillWeaponController.java` — tendency/tier living-weapon loadout and mob-safe weapon pressure.
 - Create `client/render/entity/mob/will/WillRenderer.java` + `WillModel.java` (+ `WillAnchorRenderer.java`) — flicker/translucent Broken pass, solid hive-marked Sent pass, anchor outline.
 - Create `client/screen/overlay/WillPresenceOverlay.java` — the non-scar warning pulse.
 - Create `common/network/will/WillPresenceCuePacket.java` — server→client cue on materialization.
@@ -77,16 +78,16 @@
 - [ ] **Step 3 — Registration.** `EntityInit`: register `will` + attributes supplier (baseline; per-instance overrides in `finalizeSpawn`) + creative spawn egg (testing affordance, matching repo convention). Add both `will` and `blood_drunk_puppeteer` to new tag `data/hemomancy/tags/entity_type/wills.json`.
 - [ ] **Step 4 — Gate.** `./gradlew compileJava`; `runClient`: `/summon hemomancy:will` yields a (temporarily cube-rendered) mob that chases and melees. Melee is the pre-Task-3 fallback attack — keep a weak melee goal permanently as the out-of-blood fallback.
 
-### Task 3: Manipulation casting via `DrudgeAction` widening
+### Task 3: Will manipulation casting without Drudge actions
 
-The single highest-leverage step: Wills inherit ~40 authored behaviors.
+**Superseded note (2026-07-03):** The first implementation used `DrudgeAction` widening and `MobManipCaster` for Wills. That path has been replaced. Wills now use `WillManipulationCaster` and entity-castable school effects; Drudges keep `DrudgeAction` and installed memory behavior.
 
-**Files:** modify `common/manipulation/DrudgeAction.java`, create `common/manipulation/MobManipCaster.java`, create `goal/WillCastGoal.java`; touch `ManipulationInit` lambdas only where compilation demands.
+**Files:** create `common/manipulation/EntityCastableManipulation.java`, `ManipulationCastContext.java`, `EntityManipulationEffects.java`, `WillManipulationCaster.java`; modify `WillEntity`; keep `MobManipCaster` for Drudges only.
 
-- [ ] **Step 1 — Widen the caster parameter.** Change `DrudgeAction`'s first parameter type from `DrudgeEntity` to `PathfinderMob` (keep the interface name — call sites are lambdas and mostly use position/level/targeting). Compile. For each lambda that used Drudge-specific members (expected: `vital_reservoir` refilling drudge charge, possibly `sanguine_mending`/ally checks), add an `instanceof DrudgeEntity d` guard preserving old behavior and a sensible mob fallback (e.g. `vital_reservoir` for a Will: restore health instead of charge). **Document each guarded site in the PR description.**
-- [ ] **Step 2 — `MobManipCaster`.** Static helper: `boolean cast(PathfinderMob caster, ResourceLocation manipId, int radius)` → looks up the manipulation, invokes its action with the caster's position, returns success. No blood accounting for mobs (their budget is cadence, not mL) — cadence lives in `WillCombatRules`.
-- [ ] **Step 3 — `WillCastGoal`.** While MATERIALIZED with a living target: every `castIntervalTicks(tier)` (from `WillCombatRules`, ~60–100t), pick the next kit entry (cycle for Broken — *perseveration*, spec §3.1; priority-pick for Sent: mobility when player far, burst when close — spec §3.2). Face target, cast via `MobManipCaster`, play cast sound. Broken Wills occasionally (15%) *stall* one interval (muscle-memory skip).
-- [ ] **Step 4 — Gate.** `./gradlew compileJava && ./gradlew test` (Drudge tests must stay green — the widening must not change Drudge behavior). `runClient`: summoned Flammeus Will visibly casts ignition/updraft/combustion at the player; Drudge still executes an installed memory normally.
+- [ ] **Step 1 — Entity-cast surface.** Add `EntityCastableManipulation` and `ManipulationCastContext` so a manipulation can execute from any `LivingEntity` caster without player blood-volume, inventory, purity, or cooldown hooks.
+- [ ] **Step 2 — Shared curated effects.** Implement entity-cast support for the curated Will school-kit ids only: Animus, Flammeus, Ductilis, Lux, Mortem, Congeatio, Ferric, and Tenebris entries from `WillCombatRules.schoolKit`.
+- [ ] **Step 3 — Will cast controller.** While MATERIALIZED with a living target: Broken Wills cycle/stutter through their kit; Sent Wills priority-pick mobility, defense, burst, or close pressure based on range/health. Cast via `WillManipulationCaster`.
+- [ ] **Step 4 — Gate.** `./gradlew compileJava && ./gradlew test` plus source guards that `WillEntity` does not reference `MobManipCaster`, every `WillCombatRules.schoolKit` id is entity-castable, and Drudge memory execution still uses `DrudgeAction`.
 
 ### Task 4: Rendering, sound, and the two looks
 
@@ -143,8 +144,8 @@ The single highest-leverage step: Wills inherit ~40 authored behaviors.
 **Files:** create `WillBendRules` + test; modify `WillEntity` (falter + interaction), `WillFalterGoal`; small hooks in the Marionette Crossbar item for the Commandeer path.
 
 - [ ] **Step 1 — Falter.** In `WillEntity.hurt`: Broken Will crossing below `falterFraction` → PHASE=FALTERING for `falterWindowTicks`; flicker spike; AI frozen (`WillFalterGoal` supersedes others). Recover to MATERIALIZED afterward. Sent Wills **never** falter.
-- [ ] **Step 2 — `WillBendRules` (pure).** `BendVerb resolve(origin, phase, playerDegree, heldItemKind)`: FALTERING + Broken + degree ≥ 7 + empty/staff hand → ABSORB (plain use) or REDIRECT (sneak-use); + Marionette Crossbar in hand → COMMANDEER. Sent or non-faltering → BACKFIRE. Costs: Redirect 400 blood; Commandeer 56 thread from the crossbar + counts against the puppeteer active-summon cap (`PuppeteerSummonRules` owner scan). Backfire: apply Blood Drunkenness II 60s + Hematic Strain 30s + `hiveAttention += 2`. Encode all as returned data; no side effects in the rules class.
-- [ ] **Step 3 — Absorb.** `mobInteract` path: consume the Will (DISSOLVING immediately, no loot roll), grant: +alignment in its school (reuse the tendency-gain path manipulation casts use, ~3 units), 50% one matching enzyme, 15% `faded_memory`. Play a drain visual (reuse the `bloodDrainConfig` HutosLib tendril preset used by exsanguinate).
+- [ ] **Step 2 — `WillBendRules` (pure).** `BendVerb resolve(origin, phase, playerDegree, heldItemKind)`: FALTERING + Broken + degree >= 7 + Marionette Crossbar in hand -> COMMANDEER. Sent, non-faltering, empty/staff, sneaking, or cap-full attempts -> BACKFIRE. Commandeer costs 56 thread from the crossbar and counts against the puppeteer active-summon cap (`PuppeteerSummonRules` owner scan). Backfire: apply Blood Drunkenness II 60s + Hematic Strain 30s + `hiveAttention += 2`. Blood Absorption and Blood Projection are utility-channel paths, not `mobInteract` bend verbs.
+- [ ] **Step 3 — Absorb.** Blood Absorption path: channeling near a faltering Broken Will moves it into `ABSORBING`, pins AI/casting/weapon pressure, and advances `WillAbsorptionRules` progress instead of draining health. Completion grants +3 alignment in its school, rolls 50% one matching enzyme plus 15% `faded_memory`, emits the final pulse, and removes the Will immediately instead of starting a second dissolve phase. Dropping the channel past the grace window snaps the Will back angry with a partial health floor, immediate target pressure, and short refalter immunity.
 - [ ] **Step 4 — Redirect.** Set `redirectedOwner` UUID + `redirectUntilGameTime` (+90s). Targeting goals invert: attack hostiles and other Wills, never the owner's team; on expiry → DISSOLVING (standard loot). No cap interaction, no persistence (redirect does not survive unload — deliberate).
 - [ ] **Step 5 — Commandeer.** Convert in place to OWNED state: store owner UUID + crossbar UUID (the crossbar already carries a stable UUID for summon binding); the Will now follows the puppeteer tether contract — red thread render to owner, upkeep drain from crossbar thread per minute (reuse the summon upkeep path via `PuppeteerSummonFactory`/rules where the contract is generic; where it is summon-definition-specific, mirror the drain in a small `WillOwnedRules` and **note the duplication for a later unification pass**), unravel on unpaid upkeep or unequipped crossbar (5s grace, same as summons). Claimed Wills count in the owner's active-summon cap scan. Silent-Archon edge (spec §11.3): if `archon_choice_made == "silent"`, Commandeer thread cost ×0.5 and cap +1.
 - [ ] **Step 6 — Tests + gate.** `WillBendRulesTest`: verb resolution truth table (origin × phase × degree × held item), backfire on Sent always, cost numbers stable. `runClient`: full loop — weaken a Faded, Absorb one, Redirect one against a second Will, Commandeer one and watch upkeep/tether/unravel; attempt on a Sent Will → backfire effects land.
@@ -163,7 +164,7 @@ The single highest-leverage step: Wills inherit ~40 authored behaviors.
 
 ## Sequencing, dependencies, risks
 
-- **Strict order:** Task 1 → 2 → 3 → 4, then 5 → 6 → 7, then 8/9 (parallel), 10, 11 alongside 6+, 12 last. Nothing outside Task 3 touches shared systems; Task 3's `DrudgeAction` widening is the one cross-system risk — its gate (Drudge tests green) is mandatory before proceeding.
+- **Strict order:** Task 1 -> 2 -> 3 -> 4, then 5 -> 6 -> 7, then 8/9 (parallel), 10, 11 alongside 6+, 12 last. Task 3 now keeps Will casting on the entity-cast path and leaves Drudge memory execution isolated; its gate is that Will source guards and existing Drudge tests stay green together.
 - **Oculiflora:** intentionally *not* a dependency. Task 6 ships the anchor scar-ready with a no-op render gate; the [fungal-scar plan](2026-07-03-fungal-scar-consolidation.md) delivers the scar and flips the gate on. Cross-reference both PRs. The full family build order lives in [DEFERRED_IDEAS.md](../../DEFERRED_IDEAS.md) §C.
 - **Deferred by design:** Sent-Will player-mirroring silhouette; Faded Memory loom recipes; ripeness gating anything; boss-bar/music treatment for Tier IV; the "Claimed Will decay" open question (spec §14 Q7 — decide after first balance pass).
 - **Kill-switch philosophy:** every phase lands behind `willsEnabled` + its own sub-flag (`bendEnabled`, `commandeerEnabled`), so alpha testers can run the enemy without the bend layer or disable the system wholesale without a rebuild.

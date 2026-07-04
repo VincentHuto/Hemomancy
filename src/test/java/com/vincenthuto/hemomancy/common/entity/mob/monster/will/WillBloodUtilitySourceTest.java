@@ -16,42 +16,53 @@ public final class WillBloodUtilitySourceTest {
 		String absorption = read("src/main/java/com/vincenthuto/hemomancy/common/item/harbinger/tool/living/BloodAbsorptionItem.java");
 		String projection = read("src/main/java/com/vincenthuto/hemomancy/common/item/harbinger/tool/living/BloodProjectionItem.java");
 		String staff = read("src/main/java/com/vincenthuto/hemomancy/common/item/harbinger/tool/living/LivingStaffItem.java");
+		String phase = read("src/main/java/com/vincenthuto/hemomancy/common/entity/mob/monster/will/WillPhase.java");
+		String rules = read("src/main/java/com/vincenthuto/hemomancy/common/entity/mob/monster/will/WillAbsorptionRules.java");
+		String config = read("src/main/java/com/vincenthuto/hemomancy/config/HemoServerConfig.java");
 
-		assertContains("Will exposes blood absorption resolution", will, "absorbFalteringWithBlood");
+		assertContains("Will has a dedicated absorbing phase", phase, "ABSORBING");
+		assertContains("Will exposes blood absorption resolution", will, "absorbWithBlood");
+		assertContains("Will absorption tracks an owning channeler", will, "DATA_ABSORPTION_OWNER_UUID");
+		assertContains("Will absorption syncs progress for render feedback", will, "DATA_ABSORPTION_PROGRESS");
+		assertContains("Will absorption uses progress stage rules", will, "WillAbsorptionRules.stageForProgress");
+		assertContains("Will absorption enters the absorbing phase", will, "setPhase(WillPhase.ABSORBING)");
+		assertContains("Will absorption ticks its interruption grace", will, "tickAbsorptionStruggle()");
+		assertContains("Will absorption failure escapes angry", will, "escapeAbsorptionAngry()");
+		assertContains("Will absorption escape suppresses immediate refalter", will, "absorptionRageTicks");
+		assertContains("Will absorption rage targets the absorber", will, "setTarget(player)");
+		assertContains("Will absorption clamps lethal absorbing damage", will,
+				"if (getPhase() == WillPhase.ABSORBING)");
 		assertContains("Will absorption grants tendency", will, "addTendencyAlignment(getSchool(), 3.0F)");
-		assertContains("Will absorption uses an extended dissolve duration", will,
+		assertContains("Will absorption completes immediately at the end of the channel", will,
+				"completeAbsorption(player)");
+		assertContains("Will absorption completion drops rewards immediately", will,
+				"dropAbsorptionCompletionLoot()");
+		assertContains("Will absorption completion emits final glow pulse", will,
+				"spawnAbsorptionCompletionPulse()");
+		assertContains("Will absorption completion removes the Will immediately", will, "discard();");
+		assertNotContains("Will absorption no longer uses a second dissolve duration", will,
 				"BLOOD_ABSORPTION_DISSOLVE_TICKS");
-		assertContains("Will absorption dissolve state is synced to clients for particles", will,
+		assertNotContains("Will absorption no longer syncs a dissolve state", will,
 				"DATA_ABSORPTION_DISSOLVE");
-		assertContains("Will dissolve ticks are synced for client flicker", will,
-				"DATA_DISSOLVE_TICKS");
-		assertContains("Will dissolve duration is synced for client flicker", will,
-				"DATA_DISSOLVE_DURATION");
-		assertContains("Will exposes dissolve progress for render flicker", will,
-				"getDissolveProgress");
-		assertContains("Will absorption starts the longer dissolve", will,
-				"startDissolving(false, BLOOD_ABSORPTION_DISSOLVE_TICKS, true)");
-		assertContains("Will absorption dissolve drops item rewards at disappearance", will,
-				"if (entityData.get(DATA_ABSORPTION_DISSOLVE)) dropAbsorptionDissolveLoot();");
-		assertContains("Will absorption has a separate disappearance reward helper", will,
-				"private void dropAbsorptionDissolveLoot()");
-		assertNotContains("Will absorption does not spawn item loot at health threshold",
-				methodBody(will, "public float absorbFalteringWithBlood"), "spawnAtLocation(");
-		assertContains("Will absorption drains health before resolving", will,
-				"absorbFalteringWithBlood(ServerPlayer player, float amount)");
-		assertContains("Will absorption leaves a partly drained Will alive if channel stops", will,
-				"setHealth(remainingHealth)");
-		assertContains("Will absorption only resolves when drained through the last heart", will,
-				"if (remainingHealth > 1.0F)");
-		assertContains("Will absorption helper uses a gradual per-tick drain", helper,
+		assertNotContains("Will absorption does not start a second dissolve state",
+				methodBody(will, "public float absorbWithBlood"), "startDissolving(");
+		assertContains("Will absorption does not use ordinary dissolve loot",
+				methodBody(will, "private void completeAbsorption"), "dropAbsorptionCompletionLoot();");
+		assertNotContains("Will absorption no longer drains health as progress",
+				methodBody(will, "public float absorbWithBlood"), "setHealth(remainingHealth)");
+		assertNotContains("Will absorption no longer resolves through final heart",
+				methodBody(will, "public float absorbWithBlood"), "if (remainingHealth > 1.0F)");
+		assertNotContains("Will absorption helper no longer has a health-drain constant", helper,
 				"BLOOD_ABSORPTION_HEALTH_PER_TICK");
-		assertContains("Will absorption helper passes drain amount to the Will", helper,
-				"absorbFalteringWithBlood(player, BLOOD_ABSORPTION_HEALTH_PER_TICK)");
-		assertContains("Will exposes faltering or absorption-dissolving particle target state", will,
+		assertContains("Will absorption helper uses bare progress rules", helper,
+				"WillAbsorptionRules.bareProgressPerTick()");
+		assertContains("Will absorption helper passes progress amount to the Will", helper,
+				"will.absorbWithBlood(player, progressPerTick)");
+		assertContains("Will exposes faltering or absorbing particle target state", will,
 				"canBloodAbsorptionDrawParticles");
-		assertContains("Will absorption dissolve emits final glow pulse", will,
-				"spawnAbsorptionDissolvePulse");
-		assertContains("Will absorption dissolve pulse uses the Will glow particle", will,
+		assertContains("Will absorption particles include absorbing phase", will,
+				"getPhase() == WillPhase.ABSORBING");
+		assertContains("Will absorption completion pulse uses the Will glow particle", will,
 				"WillAbsorptionGlowParticleFactory.createPulseData(ParticleColor.BLACK)");
 		assertContains("Will projection subtracts tendency", will, "addTendencyAlignment(getSchool(), -3.0F)");
 		assertContains("Will projection banishes without dissolve loot", will, "projectBanishWithBlood");
@@ -65,7 +76,15 @@ public final class WillBloodUtilitySourceTest {
 		assertContains("Blood Absorption excludes Wills from normal mob drain", absorption, "!(target instanceof WillEntity)");
 		assertContains("Blood Projection checks Will utility before block projection", projection, "tryProjectBanishFalteringWill");
 		assertContains("Living Staff absorption checks Will utility before generic targets", staff, "tryAbsorbFalteringWill");
+		assertContains("Living Staff absorption passes staff focus to Will absorption", staff, "tryAbsorbFalteringWill(pLevel, player,");
+		assertContains("Living Staff absorption uses focus-scaled Will progress", staff, "WillAbsorptionRules.staffProgressPerTick(focus)");
 		assertContains("Living Staff projection remains covered by BloodProjectionItem", staff, "BloodProjectionItem.projectFromEntity");
+		assertContains("Will absorption progress required is configurable", config, "willAbsorptionProgressRequired");
+		assertContains("Will absorption grace is configurable", config, "willAbsorptionGraceTicks");
+		assertContains("Will absorption escape health is configurable", config, "willAbsorptionEscapeHealthFraction");
+		assertContains("Will absorption rage is configurable", config, "willAbsorptionRageTicks");
+		assertContains("Will absorption rules expose progress required", rules, "progressRequired");
+		assertContains("Will absorption rules expose controlled rage defaults", rules, "CONTROLLED_RAGE_TICKS");
 	}
 
 	private static String read(String path) throws IOException {

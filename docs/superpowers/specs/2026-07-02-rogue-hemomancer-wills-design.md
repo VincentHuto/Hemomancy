@@ -143,7 +143,7 @@ The dread has an intended **resolution**: once the player's own Will is strong e
 **Subdue first.** You cannot claim a Will at full strength. Reduce a Broken Will below a health threshold and it **falters** — its flicker spikes, its muscle-memory stalls, and it becomes bindable for a short window (a "kneeling"/execute-style opening, echoing Exsanguinate's low-HP gate). The bend must land in that window.
 
 ### 11.1 Absorb *(entry — Archon+)*
-Channel on a faltering or dissolving Broken Will to reclaim it into yourself: a permanent minor tendency-alignment gain in its school, or a **Faded Memory** / crude shard, or a blood-and-essence surge. This is "to one it shall return" routed *through you* — reclamation. It consumes the Will and has no upkeep. **Apotheos-flavored:** a body that has half-joined the hive naturally pulls strays back into the network.
+Channel Blood Absorption on a faltering Broken Will to reclaim it into yourself. The Will enters an `ABSORBING` struggle state with its own progress meter rather than losing ordinary health; completing the channel grants a permanent minor tendency-alignment gain in its school and the absorption reward chance. Dropping the channel lets the Will snap back angry instead of rematerializing helplessly at 1 HP. This is "to one it shall return" routed *through you* — reclamation. It consumes the Will and has no upkeep. **Apotheos-flavored:** a body that has half-joined the hive naturally pulls strays back into the network.
 
 ### 11.2 Redirect *(Archon+, blood cost)*
 Seize a faltering Will and turn it loose as a **temporary ally** for a short duration: it fights other Wills and hostiles with its school's manipulation, then dissolves. A momentary puppet — ideal for turning a Faded pack against its own Proctor escort. No lasting bind, no cap cost.
@@ -183,7 +183,7 @@ The Whispers *tell* the truth; the Wills *show* the stakes (fail = become the Fa
 2. Should the "ripeness" track (§10) be real, or pure flavor? Decide before wiring Sent Wills.
 3. Do Wills despawn if the player flees to a sanctuary mid-fight, or pursue to the boundary?
 4. How many schools spawn per encounter at Tier IV — single mirrored school, or a small coven with a Faded escort?
-5. **Commandeer routing:** are Claimed Wills literally puppeteer summons (Marionette Crossbar/Spindle), a new Drudge variant, or their own tethered class? Lean puppeteer-summon reuse.
+5. **Commandeer routing:** Claimed Wills reuse the puppeteer summon route (Marionette Crossbar/Spindle economy), not a Drudge variant.
 6. **Bend gating:** is Archon (D7) the right entry, or should Absorb open earlier (D6) with Commandeer reserved for D7/endgame?
 7. Should a **Claimed Will decay** over time (the empty vessel unravels) even with upkeep paid, to keep them impermanent and thematic?
 8. Testing: entity registration/AI, degree-gated spawn rules, fixed-vs-scaling stat split, sanctuary exclusion, the Oculiflora telegraph render, loot tables, and the subdue→bend state machine; update [HEMOMANCY_REFERENCE.md](../../HEMOMANCY_REFERENCE.md) (mob entities) and [LORE_REFERENCE.md](../../LORE_REFERENCE.md) (the Wills, the two origins, the Puppeteer reintegration, commandeering).

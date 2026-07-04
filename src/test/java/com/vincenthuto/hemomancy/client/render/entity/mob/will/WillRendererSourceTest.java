@@ -16,14 +16,16 @@ public final class WillRendererSourceTest {
 		String shader = read("src/main/resources/assets/hemomancy/shaders/core/item/will_state_monolith.fsh");
 		String shaderJson = read("src/main/resources/assets/hemomancy/shaders/core/item/will_state_monolith.json");
 
-		assertContains("Will renderer reads dissolve progress from entity", renderer,
-				"entity.getDissolveProgress(partialTicks)");
-		assertContains("Will renderer accelerates flicker as absorption dissolve progresses", renderer,
-				"absorptionFlickerSpeed(dissolveProgress)");
+		assertContains("Will renderer reads absorption progress from entity", renderer,
+				"entity.getAbsorptionProgress(partialTicks)");
+		assertContains("Will renderer accelerates flicker as absorption channel progresses", renderer,
+				"absorptionFlickerSpeed(absorptionProgress)");
 		assertContains("Will renderer passes flicker alpha into the monolith shell", renderer,
 				"flickerAlpha");
-		assertContains("Will renderer only applies fast flicker to absorption dissolves", renderer,
-				"entity.isAbsorptionDissolving()");
+		assertContains("Will renderer only applies fast absorption flicker while absorbing", renderer,
+				"entity.getPhase() == WillPhase.ABSORBING");
+		assertDoesNotContain("Will renderer no longer depends on absorption dissolve state", renderer,
+				"isAbsorptionDissolving");
 		assertContains("Will render type accepts dissolve progress", renderTypes,
 				"float dissolveProgress");
 		assertContains("Will render type accepts flicker alpha", renderTypes,
@@ -55,6 +57,12 @@ public final class WillRendererSourceTest {
 	private static void assertContains(String label, String text, String expected) {
 		if (!text.contains(expected)) {
 			throw new AssertionError(label + " (missing '" + expected + "')");
+		}
+	}
+
+	private static void assertDoesNotContain(String label, String text, String unexpected) {
+		if (text.contains(unexpected)) {
+			throw new AssertionError(label + " (still contains '" + unexpected + "')");
 		}
 	}
 }

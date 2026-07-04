@@ -88,9 +88,19 @@ public final class CellHandRenderingResourceTest {
 				"WillAbsorptionGlowParticleFactory.createData(WILL_ABSORPTION_GLOW)");
 		assertContains("faltering Will absorption uses black glow color", particleEffects,
 				"WILL_ABSORPTION_GLOW = ParticleColor.BLACK");
+		assertContains("Will absorption adds a school-colored spiral layer", particleEffects,
+				"spawnWillAbsorptionTendencySpiralParticle");
+		assertContains("Will absorption spiral uses the aligned tendency color", particleEffects,
+				"will.getSchool().getColor()");
+		assertContains("Will absorption spiral reuses the Will glow particle path", particleEffects,
+				"WillAbsorptionGlowParticleFactory.createData(will.getSchool().getColor())");
+		assertContains("Will absorption spiral rotates around the Will source", particleEffects,
+				"double spiralAngle");
+		assertContains("Will absorption spiral targets the active hand or staff anchor", particleEffects,
+				"particle.setFirstPersonTargetAnchor(firstPersonTargetAnchor.get())");
 		assertBefore("faltering Will absorption visual takes priority before normal entity absorption particles",
 				particleEffects, "getFalteringWillAbsorptionParticleTarget", "getAbsorptionParticleTargets");
-		assertContains("Will absorption particles continue during the absorption dissolve phase", particleEffects,
+		assertContains("Will absorption particles continue during the absorbing channel", particleEffects,
 				"WillEntity::canBloodAbsorptionDrawParticles");
 		assertContains("Will absorption glow is registered as its own particle type", particleInit,
 				"will_absorption_glow");

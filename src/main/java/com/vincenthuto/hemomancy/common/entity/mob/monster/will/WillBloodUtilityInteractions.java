@@ -14,22 +14,25 @@ import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 
 import java.util.Comparator;
+import java.util.List;
 import java.util.Optional;
 
 public final class WillBloodUtilityInteractions {
 	private static final double PROJECTION_RANGE = 5.5D;
-	private static final float BLOOD_ABSORPTION_HEALTH_PER_TICK = 0.25F;
 
 	private WillBloodUtilityInteractions() {
 	}
 
 	public static double tryAbsorbFalteringWill(Level level, LivingEntity user, double range) {
+		return tryAbsorbFalteringWill(level, user, range, WillAbsorptionRules.bareProgressPerTick());
+	}
+
+	public static double tryAbsorbFalteringWill(Level level, LivingEntity user, double range, float progressPerTick) {
 		if (level.isClientSide || !(user instanceof ServerPlayer player)) {
 			return 0.0D;
 		}
-		return findNearestFalteringWill(user, range)
-				.filter(WillEntity::canBloodUtilityBend)
-				.map(will -> (double) will.absorbFalteringWithBlood(player, BLOOD_ABSORPTION_HEALTH_PER_TICK))
+		return findNearestAbsorbableWill(player, range)
+				.map(will -> (double) will.absorbWithBlood(player, progressPerTick))
 				.orElse(0.0D);
 	}
 
@@ -62,6 +65,17 @@ public final class WillBloodUtilityInteractions {
 						WillEntity::canBloodUtilityBend)
 				.stream()
 				.min(Comparator.comparingDouble(user::distanceToSqr));
+	}
+
+	private static Optional<WillEntity> findNearestAbsorbableWill(ServerPlayer player, double range) {
+		List<WillEntity> candidates = player.level().getEntitiesOfClass(WillEntity.class,
+				player.getBoundingBox().inflate(range), will -> will.canBloodAbsorb(player));
+		Optional<WillEntity> activeStruggle = candidates.stream()
+				.filter(will -> will.getPhase() == WillPhase.ABSORBING)
+				.min(Comparator.comparingDouble(player::distanceToSqr));
+		return activeStruggle.isPresent()
+				? activeStruggle
+				: candidates.stream().min(Comparator.comparingDouble(player::distanceToSqr));
 	}
 
 	private static Optional<WillEntity> findLookedAtFalteringWill(Level level, LivingEntity user, double range) {

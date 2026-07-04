@@ -67,6 +67,7 @@ public class WillRenderer extends MobRenderer<WillEntity, WillModel> {
 			case DRIFTING -> "Drifting";
 			case MATERIALIZED -> "Materialized";
 			case FALTERING -> "Faltering";
+			case ABSORBING -> "Absorbing";
 			case DISSOLVING -> "Dissolving";
 		});
 	}
@@ -76,6 +77,7 @@ public class WillRenderer extends MobRenderer<WillEntity, WillModel> {
 			case DRIFTING -> new float[] { 0.35F, 0.55F, 1.0F };
 			case MATERIALIZED -> new float[] { 0.95F, 0.95F, 1.0F };
 			case FALTERING -> new float[] { 1.0F, 0.82F, 0.29F };
+			case ABSORBING -> new float[] { 0.24F, 0.05F, 0.08F };
 			case DISSOLVING -> new float[] { 1.0F, 0.24F, 0.24F };
 		};
 	}
@@ -95,8 +97,9 @@ public class WillRenderer extends MobRenderer<WillEntity, WillModel> {
 			float seed = Math.floorMod(entity.getUUID().hashCode(), 10007) / 10007.0F;
 			float[] color = shellColor(entity.getPhase());
 			float dissolveProgress = entity.getDissolveProgress(partialTicks);
-			float flickerAlpha = entity.isAbsorptionDissolving()
-					? absorptionFlickerAlpha(ageInTicks, dissolveProgress, seed)
+			float absorptionProgress = entity.getAbsorptionProgress(partialTicks);
+			float flickerAlpha = entity.getPhase() == WillPhase.ABSORBING
+					? absorptionFlickerAlpha(ageInTicks, absorptionProgress, seed)
 					: 1.0F;
 			VertexConsumer consumer = buffer.getBuffer(HemoRenderTypes.willStateMonolithShell(
 					ageInTicks / 20.0F, seed, color[0], color[1], color[2], dissolveProgress, flickerAlpha));
@@ -107,13 +110,13 @@ public class WillRenderer extends MobRenderer<WillEntity, WillModel> {
 			poseStack.popPose();
 		}
 
-		private static float absorptionFlickerSpeed(float dissolveProgress) {
-			return 8.0F + dissolveProgress * dissolveProgress * 54.0F;
+		private static float absorptionFlickerSpeed(float absorptionProgress) {
+			return 8.0F + absorptionProgress * absorptionProgress * 54.0F;
 		}
 
-		private static float absorptionFlickerAlpha(float ageInTicks, float dissolveProgress, float seed) {
-			float wave = Mth.sin(ageInTicks * absorptionFlickerSpeed(dissolveProgress) + seed * 31.0F);
-			float amplitude = 0.12F + dissolveProgress * 0.38F;
+		private static float absorptionFlickerAlpha(float ageInTicks, float absorptionProgress, float seed) {
+			float wave = Mth.sin(ageInTicks * absorptionFlickerSpeed(absorptionProgress) + seed * 31.0F);
+			float amplitude = 0.12F + absorptionProgress * 0.38F;
 			return Mth.clamp(0.72F + wave * amplitude, 0.10F, 1.0F);
 		}
 	}
