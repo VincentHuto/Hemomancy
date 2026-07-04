@@ -232,6 +232,8 @@ public class ItemInit {
             () -> new HeartyCompassItem(new Item.Properties().rarity(Rarity.UNCOMMON)));
     public static final DeferredHolder<Item, Item> memory_thread = BASEITEMS.register("memory_thread",
             () -> new MemoryThreadItem(new Item.Properties().rarity(Rarity.UNCOMMON)));
+    public static final DeferredHolder<Item, Item> faded_memory = BASEITEMS.register("faded_memory",
+            () -> new Item(new Item.Properties().rarity(Rarity.UNCOMMON)));
     public static final DeferredHolder<Item, Item> void_eye_organ = BASEITEMS.register("void_eye_organ",
             () -> new VoidEyeOrganItem(new Item.Properties().rarity(Rarity.RARE)));
     public static final DeferredHolder<Item, Item> vein_spider = BASEITEMS.register("vein_spider",
@@ -536,30 +538,22 @@ public class ItemInit {
     // Morphlings
     public static final DeferredHolder<Item, Item> morphling_polyp = BASEITEMS.register("morphling_polyp",
             () -> new ItemMorphlingPolyp(new Item.Properties()));
-    public static final DeferredHolder<Item, Item> morphling_fungal = BASEITEMS.register("morphling_fungal",
-            () -> new FungalMorphlingItem(new Item.Properties().stacksTo(1)));
-    public static final DeferredHolder<Item, Item> morphling_leeches = BASEITEMS.register("morphling_leeches",
-            () -> new LeechesMorphlingItem(new Item.Properties().stacksTo(1)));
-    public static final DeferredHolder<Item, Item> morphling_chitinite = BASEITEMS.register("morphling_chitinite",
-            () -> new ChitiniteMorphlingItem(new Item.Properties().stacksTo(1)));
-    public static final DeferredHolder<Item, Item> morphling_serpent = BASEITEMS.register("morphling_serpent",
-            () -> new SerpentMorphlingItem(new Item.Properties().stacksTo(1)));
-    public static final DeferredHolder<Item, Item> morphling_pests = BASEITEMS.register("morphling_pests",
-            () -> new PestsMorphlingItem(new Item.Properties().stacksTo(1)));
-    public static final DeferredHolder<Item, Item> morphling_spider = BASEITEMS.register("morphling_spider",
-            () -> new SpiderMorphlingItem(new Item.Properties().stacksTo(1)));
-    public static final DeferredHolder<Item, Item> morphling_cuttlefish = BASEITEMS.register("morphling_cuttlefish",
-            () -> new CuttlefishMorphlingItem(new Item.Properties().stacksTo(1)));
-    public static final DeferredHolder<Item, Item> morphling_tick = BASEITEMS.register("morphling_tick",
-            () -> new TickMorphlingItem(new Item.Properties().stacksTo(1)));
-    public static final DeferredHolder<Item, Item> morphling_centipede = BASEITEMS.register("morphling_centipede",
-            () -> new CentipedeMorphlingItem(new Item.Properties().stacksTo(1)));
-    public static final DeferredHolder<Item, Item> morphling_bat = BASEITEMS.register("morphling_bat",
-            () -> new BatMorphlingItem(new Item.Properties().stacksTo(1)));
-    public static final DeferredHolder<Item, Item> morphling_urchin = BASEITEMS.register("morphling_urchin",
-            () -> new UrchinMorphlingItem(new Item.Properties().stacksTo(1)));
-    public static final DeferredHolder<Item, Item> morphling_mole = BASEITEMS.register("morphling_mole",
-            () -> new MoleMorphlingItem(new Item.Properties().stacksTo(1)));
+    public static final DeferredHolder<Item, Item> morphling_deadmans_purse = BASEITEMS.register("morphling_deadmans_purse",
+            () -> new DeadmansPurseMorphlingItem(new Item.Properties().stacksTo(1)));
+    public static final DeferredHolder<Item, Item> morphling_gravecap = BASEITEMS.register("morphling_gravecap",
+            () -> new GravecapMorphlingItem(new Item.Properties().stacksTo(1)));
+    public static final DeferredHolder<Item, Item> morphling_witchs_ear = BASEITEMS.register("morphling_witchs_ear",
+            () -> new WitchsEarMorphlingItem(new Item.Properties().stacksTo(1)));
+    public static final DeferredHolder<Item, Item> morphling_foxfire = BASEITEMS.register("morphling_foxfire",
+            () -> new FoxfireMorphlingItem(new Item.Properties().stacksTo(1)));
+    public static final DeferredHolder<Item, Item> morphling_bootlace = BASEITEMS.register("morphling_bootlace",
+            () -> new BootlaceMorphlingItem(new Item.Properties().stacksTo(1)));
+    public static final DeferredHolder<Item, Item> morphling_irontooth = BASEITEMS.register("morphling_irontooth",
+            () -> new IrontoothMorphlingItem(new Item.Properties().stacksTo(1)));
+    public static final DeferredHolder<Item, Item> morphling_emberfang = BASEITEMS.register("morphling_emberfang",
+            () -> new EmberfangMorphlingItem(new Item.Properties().stacksTo(1)));
+    public static final DeferredHolder<Item, Item> morphling_winter_shroud = BASEITEMS.register("morphling_winter_shroud",
+            () -> new WinterShroudMorphlingItem(new Item.Properties().stacksTo(1)));
     /// Blood Gourds
     public static final DeferredHolder<Item, Item> dried_gourd = BASEITEMS.register("dried_gourd",
             () -> new BloodGourdItem(new Item.Properties().stacksTo(1), EnumBloodGourdTiers.DRIED));
@@ -800,24 +794,21 @@ public class ItemInit {
 			() -> new ItemScarPattern(new Item.Properties()));
 //    public static final DeferredHolder<Item, Item> scar_binder_upgraded = BASEITEMS.register("scar_binder_upgraded",
 //            () -> new ItemScarBinder("scar_binder_upgraded", 27, Rarity.RARE));
-    public static final DeferredHolder<Item, Item> respergillus = BASEITEMS.register("respergillus",
-            () -> new RespergillusItem(new Item.Properties().stacksTo(1), ScarInit.respergillus));
-
     // Functional Spores
+    public static final DeferredHolder<Item, Item> rhizovitta_communis = BASEITEMS.register("rhizovitta_communis",
+            () -> new RhizovittaCommunisItem(new Item.Properties().stacksTo(1), ScarInit.rhizovitta_communis));
     public static final DeferredHolder<Item, Item> talaromyces_minus = BASEITEMS.register("talaromyces_minus",
             () -> new TalaromycesMinusItem(new Item.Properties().stacksTo(1), ScarInit.talaromyces_minus));
-    public static final DeferredHolder<Item, Item> lumina_devorans = BASEITEMS.register("lumina_devorans",
-            () -> new NoctiluminaDevoransItem(new Item.Properties().stacksTo(1), ScarInit.lumina_devorans));
     public static final DeferredHolder<Item, Item> noctifly_agaric = BASEITEMS.register("noctifly_agaric",
             () -> new NoctiflyAgaricItem(new Item.Properties().stacksTo(1), ScarInit.noctifly_agaric));
     public static final DeferredHolder<Item, Item> antiphonomyces_resonans = BASEITEMS.register("antiphonomyces_resonans",
             () -> new AntiphonomycesResonansItem(new Item.Properties().stacksTo(1), ScarInit.antiphonomyces_resonans));
-    public static final DeferredHolder<Item, Item> sanguiflora_cadens = BASEITEMS.register("sanguiflora_cadens",
-            () -> new SanguifloraeCadensItem(new Item.Properties().stacksTo(1), ScarInit.sanguiflora_cadens));
-    public static final DeferredHolder<Item, Item> thanomyces_resurgens = BASEITEMS.register("thanomyces_resurgens",
-            () -> new ThanomycesResurgensItem(new Item.Properties().stacksTo(1), ScarInit.thanomyces_resurgens));
-    public static final DeferredHolder<Item, Item> anastocordyceps_nexus = BASEITEMS.register("anastocordyceps_nexus",
-            () -> new AnastocordycepsNexusItem(new Item.Properties().stacksTo(1), ScarInit.anastocordyceps_nexus));
+    public static final DeferredHolder<Item, Item> putrivora_resolvens = BASEITEMS.register("putrivora_resolvens",
+            () -> new PutrivoraResolvensItem(new Item.Properties().stacksTo(1), ScarInit.putrivora_resolvens));
+    public static final DeferredHolder<Item, Item> oculiflora_reticularis = BASEITEMS.register("oculiflora_reticularis",
+            () -> new OculifloraReticularisItem(new Item.Properties().stacksTo(1), ScarInit.oculiflora_reticularis));
+    public static final DeferredHolder<Item, Item> cryostroma_perdurans = BASEITEMS.register("cryostroma_perdurans",
+            () -> new CryostromaPerduransItem(new Item.Properties().stacksTo(1), ScarInit.cryostroma_perdurans));
     public static final DeferredHolder<Item, Item> saprovitta_vestigium = BASEITEMS.register("saprovitta_vestigium",
             () -> new SaprovittaVestigiumItem(new Item.Properties().stacksTo(1), ScarInit.saprovitta_vestigium));
 
@@ -1010,6 +1001,9 @@ public class ItemInit {
     public static final DeferredHolder<Item, DeferredSpawnEggItem> spawn_egg_blood_drunk_puppeteer = SPAWNEGGS.register(
             "spawn_egg_blood_drunk_puppeteer",
             () -> new DeferredSpawnEggItem(EntityInit.blood_drunk_puppeteer, 12124160, 12152064, new Item.Properties()));
+    public static final DeferredHolder<Item, DeferredSpawnEggItem> spawn_egg_will = SPAWNEGGS.register(
+            "spawn_egg_will",
+            () -> new DeferredSpawnEggItem(EntityInit.will, 0x241327, 0xB65C84, new Item.Properties()));
     public static final DeferredHolder<Item, DeferredSpawnEggItem> spawn_egg_enthralled_doll = SPAWNEGGS.register(
             "spawn_egg_enthralled_doll",
             () -> new DeferredSpawnEggItem(EntityInit.enthralled_doll, 12124160, 12564912, new Item.Properties()));

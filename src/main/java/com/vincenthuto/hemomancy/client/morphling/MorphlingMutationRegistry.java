@@ -41,81 +41,55 @@ public class MorphlingMutationRegistry {
             Hemomancy.rloc("textures/models/armor/avatar_glow.png");
 
     public static void init() {
-        // Bat — head crest attachment example
-        register(ItemInit.morphling_bat.get(),
+        // Witch's Ear: interim strain silhouette using the old head crest attachment.
+        register(ItemInit.morphling_witchs_ear.get(),
                 MorphlingVisualMutation.builder(0.24f, 0.10f, 0.42f, 0.38f)
                         .pulse(0.06f).emissive()
                         .attach(batHeadAttachment())
                         .build());
 
-        // Spider — torso carapace attachment example
-        register(ItemInit.morphling_spider.get(),
+        // Bootlace: interim strain silhouette using the old torso web attachment.
+        register(ItemInit.morphling_bootlace.get(),
                 MorphlingVisualMutation.builder(0.10f, 0.10f, 0.18f, 0.42f)
                         .attach(spiderBodyAttachment())
                         .build());
 
-        // Fungal — head-replacement mushroom parasite
-        register(ItemInit.morphling_fungal.get(),
+        // Gravecap: interim strain silhouette using the old fungal head attachment.
+        register(ItemInit.morphling_gravecap.get(),
                 MorphlingVisualMutation.builder(0.78f, 0.18f, 0.05f, 0.34f)
                         .swirl(SWIRL_TEX, 0.008f).emissive()
                         .attach(fungalHeadAttachment())
                         .build());
 
-        // Leeches — paired arm cluster attachment example
-        register(ItemInit.morphling_leeches.get(),
+        // Deadman's Purse: interim strain silhouette using the old arm cluster attachment.
+        register(ItemInit.morphling_deadmans_purse.get(),
                 MorphlingVisualMutation.builder(0.55f, 0.03f, 0.03f, 0.42f)
                         .pulse(0.04f)
                         .attach(leechArmAttachment())
                         .build());
 
-        // Chitinite — paired leg plating attachment example
-        register(ItemInit.morphling_chitinite.get(),
-                MorphlingVisualMutation.builder(0.55f, 0.42f, 0.08f, 0.36f)
-                        .attach(chitiniteLegAttachment())
-                        .build());
-
-        // Serpent — paired leg coil attachment example
-        register(ItemInit.morphling_serpent.get(),
+        // Emberfang: interim strain silhouette using the old paired leg coil attachment.
+        register(ItemInit.morphling_emberfang.get(),
                 MorphlingVisualMutation.builder(0.10f, 0.48f, 0.16f, 0.36f)
                         .swirl(SWIRL_TEX, 0.012f)
                         .attach(serpentLegAttachment())
                         .build());
 
-        // Pests — sickly dark verminous tint, fast flutter pulse
-        register(ItemInit.morphling_pests.get(),
-                MorphlingVisualMutation.builder(0.20f, 0.22f, 0.04f, 0.36f)
-                        .pulse(0.10f)
-                        .attach(pestsBodyAttachment())
-                        .build());
-
-        // Cuttlefish - pearly sepia chromatophores, slow breath pulse, full glow
-        register(ItemInit.morphling_cuttlefish.get(),
+        // Foxfire: interim strain silhouette using the old pearly head attachment.
+        register(ItemInit.morphling_foxfire.get(),
                 MorphlingVisualMutation.builder(0.64f, 0.48f, 0.32f, 0.36f)
                         .pulse(0.05f).emissive()
                         .attach(cuttlefishHeadAttachment())
                         .build());
 
-        // Tick — dark vein crimson, slow throb
-        register(ItemInit.morphling_tick.get(),
-                MorphlingVisualMutation.builder(0.42f, 0.04f, 0.04f, 0.46f)
-                        .pulse(0.03f)
-                        .attach(tickBodyAttachment())
-                        .build());
-
-        // Urchin — barbed dark brown silhouette
-        register(ItemInit.morphling_urchin.get(),
-                MorphlingVisualMutation.builder(0.36f, 0.23f, 0.12f, 0.40f)
-                        .attach(urchinBodyAttachment())
-                        .build());
-
-        // Centipede — cool blue-grey segmented overlay
-        register(ItemInit.morphling_centipede.get(),
+        // Winter Shroud: interim strain silhouette using the old segmented body attachment.
+        register(ItemInit.morphling_winter_shroud.get(),
                 MorphlingVisualMutation.builder(0.10f, 0.23f, 0.36f, 0.36f)
                         .attach(centipedeBodyAttachment())
                         .build());
 
-        // Mole — earthy brown earthen tint
-        register(ItemInit.morphling_mole.get(),
+        // Irontooth: interim strain silhouette using the old digging arm attachment.
+        register(ItemInit.morphling_irontooth.get(),
                 MorphlingVisualMutation.builder(0.29f, 0.22f, 0.16f, 0.30f)
                         .attach(moleArmAttachment())
                         .build());

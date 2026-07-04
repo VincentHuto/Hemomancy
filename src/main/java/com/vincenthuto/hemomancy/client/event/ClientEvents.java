@@ -48,6 +48,8 @@ import com.vincenthuto.hemomancy.client.render.entity.misc.ArmatureRestraintRend
 import com.vincenthuto.hemomancy.client.render.entity.misc.CovenantThroneSeatRenderer;
 import com.vincenthuto.hemomancy.client.render.entity.mob.arthropod.*;
 import com.vincenthuto.hemomancy.client.render.entity.mob.monster.*;
+import com.vincenthuto.hemomancy.client.render.entity.mob.will.WillAnchorRenderer;
+import com.vincenthuto.hemomancy.client.render.entity.mob.will.WillRenderer;
 import com.vincenthuto.hemomancy.client.render.entity.npc.*;
 import com.vincenthuto.hemomancy.client.render.entity.projectile.*;
 import com.vincenthuto.hemomancy.client.render.entity.summon.*;
@@ -55,6 +57,7 @@ import com.vincenthuto.hemomancy.client.render.item.MorphicNectarItemDecorator;
 import com.vincenthuto.hemomancy.client.render.item.MorphlingPolypItemRenderer;
 import com.vincenthuto.hemomancy.client.render.item.QliphothSeedItemEntityRenderer;
 import com.vincenthuto.hemomancy.client.render.CrimsonFireRenderer;
+import com.vincenthuto.hemomancy.client.render.scar.OculifloraRevealRenderer;
 import com.vincenthuto.hemomancy.client.render.item.ScarPatternBakedModel;
 import com.vincenthuto.hemomancy.client.render.item.ScarPatternItemColor;
 import com.vincenthuto.hemomancy.client.morphling.MorphlingPlayerPartVisibility;
@@ -228,6 +231,9 @@ public class ClientEvents {
         }
         if (FungalWhisperVignetteOverlay.instance != null) {
             FungalWhisperVignetteOverlay.instance.tick();
+        }
+        if (WillPresenceOverlay.instance != null) {
+            WillPresenceOverlay.instance.tick();
         }
         EndgameBossMusicHandler.tick();
         handleArmatureCameraFallback();
@@ -511,6 +517,7 @@ public class ClientEvents {
             BlackVeilRenderer.render(event.getPoseStack(), partialTick);
             BloodCraftRingRenderer.render(event.getPoseStack(), partialTick);
             QliphothBloomRenderer.render(event.getPoseStack(), partialTick);
+            OculifloraRevealRenderer.render(event.getPoseStack(), partialTick);
             BloodBallRenderer.render(event.getPoseStack(), partialTick);
             SanguineMonolithShatterRenderer.render(event.getPoseStack(), partialTick);
             PuppeteerThreadRenderer.render(event.getPoseStack(), partialTick);
@@ -637,6 +644,8 @@ public class ClientEvents {
             event.registerEntityRenderer(EntityInit.iron_spike.get(), IronSpikeRenderer::new);
             event.registerEntityRenderer(EntityInit.iron_wall.get(), IronWallRenderer::new);
             event.registerEntityRenderer(EntityInit.wretched_will.get(), WretchedWillRenderer::new);
+            event.registerEntityRenderer(EntityInit.will.get(), WillRenderer::new);
+            event.registerEntityRenderer(EntityInit.will_anchor.get(), WillAnchorRenderer::new);
             event.registerEntityRenderer(EntityInit.leech.get(), LeechRenderer::new);
             event.registerEntityRenderer(EntityInit.iron_pillar.get(), IronPillarRenderer::new);
             event.registerEntityRenderer(EntityInit.iron_spike.get(), IronSpikeRenderer::new);
@@ -749,6 +758,7 @@ public class ClientEvents {
             UnstainedGaugeOverlay.instance = new UnstainedGaugeOverlay();
             FungalWhisperVignetteOverlay.instance = new FungalWhisperVignetteOverlay();
             SanguineOmenOverlay.instance = new SanguineOmenOverlay();
+            WillPresenceOverlay.instance = new WillPresenceOverlay();
             CurorLensOverlay.instance = new CurorLensOverlay();
             // Tiles
             BlockEntityRenderers.register(BlockEntityInit.discovery_inscription.get(),
@@ -887,30 +897,22 @@ public class ClientEvents {
                         ItemStack selectedStack = ItemStack.parseOptional(
                                 world != null ? world.registryAccess() : RegistryAccess.EMPTY,
                                 ((ListTag) items.get("Items")).getCompound(0));
-                        if (selectedStack.getItem() == ItemInit.morphling_serpent.get()) {
+                        if (selectedStack.getItem() == ItemInit.morphling_emberfang.get()) {
                             return 1.0F;
-                        } else if (selectedStack.getItem() == ItemInit.morphling_leeches.get()) {
+                        } else if (selectedStack.getItem() == ItemInit.morphling_deadmans_purse.get()) {
                             return 2.0F;
-                        } else if (selectedStack.getItem() == ItemInit.morphling_fungal.get()) {
+                        } else if (selectedStack.getItem() == ItemInit.morphling_gravecap.get()) {
                             return 3.0F;
-                        } else if (selectedStack.getItem() == ItemInit.morphling_pests.get()) {
+                        } else if (selectedStack.getItem() == ItemInit.morphling_bootlace.get()) {
                             return 4.0F;
-                        } else if (selectedStack.getItem() == ItemInit.morphling_chitinite.get()) {
+                        } else if (selectedStack.getItem() == ItemInit.morphling_winter_shroud.get()) {
                             return 5.0F;
-                        } else if (selectedStack.getItem() == ItemInit.morphling_spider.get()) {
+                        } else if (selectedStack.getItem() == ItemInit.morphling_foxfire.get()) {
                             return 6.0F;
-                        } else if (selectedStack.getItem() == ItemInit.morphling_cuttlefish.get()) {
+                        } else if (selectedStack.getItem() == ItemInit.morphling_witchs_ear.get()) {
                             return 7.0F;
-                        } else if (selectedStack.getItem() == ItemInit.morphling_tick.get()) {
+                        } else if (selectedStack.getItem() == ItemInit.morphling_irontooth.get()) {
                             return 8.0F;
-                        } else if (selectedStack.getItem() == ItemInit.morphling_centipede.get()) {
-                            return 9.0F;
-                        } else if (selectedStack.getItem() == ItemInit.morphling_bat.get()) {
-                            return 10.0F;
-                        } else if (selectedStack.getItem() == ItemInit.morphling_urchin.get()) {
-                            return 11.0F;
-                        } else if (selectedStack.getItem() == ItemInit.morphling_mole.get()) {
-                            return 12.0F;
                         }
                         return 0.0F;
                     }
@@ -1084,6 +1086,12 @@ public class ClientEvents {
                 if (SanguineOmenOverlay.instance != null) {
                     float partialTicks = deltaTracker.getGameTimeDeltaPartialTick(true);
                     SanguineOmenOverlay.instance.renderHUD(graphics, graphics.guiWidth(), graphics.guiHeight(), partialTicks);
+                }
+            });
+            event.registerAboveAll(Hemomancy.rloc("will_presence"), (graphics, deltaTracker) -> {
+                if (WillPresenceOverlay.instance != null) {
+                    float partialTicks = deltaTracker.getGameTimeDeltaPartialTick(true);
+                    WillPresenceOverlay.instance.renderHUD(graphics, graphics.guiWidth(), graphics.guiHeight(), partialTicks);
                 }
             });
             event.registerAboveAll(Hemomancy.rloc("curor_lens"), (graphics, deltaTracker) -> {

@@ -1,0 +1,16 @@
+{
+  "type": "hemomancy:fungal_scar_cultivation",
+  "tendency": "TENEBRIS",
+  "blood_cost_phase1": 2400,
+  "phase1_duration": 2400,
+  "maturation_threshold": 3000,
+  "seed": {
+    "id": "hemomancy:umbral_spores"
+  },
+  "immature_result": {
+    "id": "hemomancy:immature_fungal_scar"
+  },
+  "result": {
+    "id": "hemomancy:oculiflora_reticularis"
+  }
+}

@@ -16,6 +16,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.Vec3;
 
+
 import java.util.UUID;
 
 public final class PuppeteerThreadRenderer {
@@ -63,7 +64,11 @@ public final class PuppeteerThreadRenderer {
 	private static void renderThreadToSummon(PoseStack poseStack, VertexConsumer consumer,
 											 LivingEntity summon, BoundPuppeteerSummon bound,
 											 float partialTick, Vec3 camera) {
-		Player owner = summon.level().getPlayerByUUID(bound.hemomancy$getOwnerUUID());
+		UUID ownerId = bound.hemomancy$getOwnerUUID();
+		if (ownerId == null) {
+			return;
+		}
+		Player owner = summon.level().getPlayerByUUID(ownerId);
 		if (owner == null) {
 			return;
 		}
@@ -155,3 +160,6 @@ public final class PuppeteerThreadRenderer {
 		return start.add(delta.x * t + wobbleX, delta.y * t + sag, delta.z * t + wobbleZ);
 	}
 }
+
+
+

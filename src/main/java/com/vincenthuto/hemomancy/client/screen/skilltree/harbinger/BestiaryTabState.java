@@ -46,12 +46,12 @@ public class BestiaryTabState {
 		for (SpecimenBestiaryDefinitions.ResearchEntry entry : SpecimenBestiaryDefinitions.orderedResearchEntries()) {
 			String id = entry.id().toString();
 			entries.add(new Entry(Kind.SPECIMEN, id, entry.titleKey(), entry.descriptionKey(), entry.sourceKey(),
-					recordedSpecimens.contains(id), surrenderedSpecimens.contains(id)));
+					"", recordedSpecimens.contains(id), surrenderedSpecimens.contains(id)));
 		}
 		for (SpecimenBestiaryDefinitions.MorphlingEntry entry : SpecimenBestiaryDefinitions.orderedMorphlingEntries()) {
 			String id = entry.layer().serializedName();
 			entries.add(new Entry(Kind.MORPHLING, id, entry.titleKey(), entry.descriptionKey(), entry.sourceKey(),
-					recordedMorphlingLayers.contains(id), false));
+					entry.binomialKey(), recordedMorphlingLayers.contains(id), false));
 		}
 		recordedSpecimenCount = recordedSpecimens.size();
 		surrenderedSpecimenCount = surrenderedSpecimens.size();
@@ -105,7 +105,7 @@ public class BestiaryTabState {
 		return -1;
 	}
 
-	record Entry(Kind kind, String key, String titleKey, String descriptionKey, String sourceKey,
+	record Entry(Kind kind, String key, String titleKey, String descriptionKey, String sourceKey, String classificationKey,
 			boolean discovered, boolean surrendered) {
 		ResourceLocation previewId() {
 			if (kind != Kind.SPECIMEN) {

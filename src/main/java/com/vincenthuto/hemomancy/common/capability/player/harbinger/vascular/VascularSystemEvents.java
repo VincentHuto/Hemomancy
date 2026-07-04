@@ -2,6 +2,7 @@ package com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular;
 
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.scar.fungal.ConserveStateHelper;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.VascularSystemServerPacket;
 import com.vincenthuto.hemomancy.config.HemoServerConfig;
@@ -152,7 +153,8 @@ public class VascularSystemEvents {	/**
 			if (HemoServerConfig.VASCULAR_PASSIVE_HEAL_ENABLED.get()) {
 				int healInterval = HemoServerConfig.VASCULAR_HEAL_INTERVAL.get();
 				if (player.tickCount % healInterval == 0) {
-					float healRate = HemoServerConfig.VASCULAR_HEAL_RATE.get().floatValue();
+					float healRate = (float) (HemoServerConfig.VASCULAR_HEAL_RATE.get().floatValue()
+							* ConserveStateHelper.vascularHealMultiplier(player));
 
 					// Only heal if the player has enough food / saturation
 					boolean wellFed = player.getFoodData().getFoodLevel() > 6;

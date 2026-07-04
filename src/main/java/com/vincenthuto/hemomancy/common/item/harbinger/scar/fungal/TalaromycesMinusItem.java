@@ -3,9 +3,6 @@ package com.vincenthuto.hemomancy.common.item.harbinger.scar.fungal;
 import com.vincenthuto.hemomancy.common.item.harbinger.scar.ScarDefinition;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
-import net.minecraft.world.effect.MobEffectInstance;
-import net.minecraft.world.effect.MobEffects;
-import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
@@ -20,26 +17,10 @@ public class TalaromycesMinusItem extends ItemFungalScar {
 	}
 
 	@Override
-	public void onWornTick(LivingEntity player) {
-		super.onWornTick(player);
-		player.addEffect(new MobEffectInstance(MobEffects.DIG_SPEED));
-	}
-	
-	
-	@Override
-	public void onEquipped(LivingEntity player) {
-		super.onEquipped(player);
-	}
-	
-	@Override
-	public void onUnequipped(LivingEntity player) {
-		super.onUnequipped(player);
-	}
-	
-	@Override
-	public void appendHoverText(ItemStack stack, Item.TooltipContext context, List<Component> tooltip, TooltipFlag flagIn) {
+	public void appendHoverText(ItemStack stack, Item.TooltipContext context, List<Component> tooltip,
+			TooltipFlag flagIn) {
 		super.appendHoverText(stack, context, tooltip, flagIn);
-		tooltip.add(Component.literal("A quiet decomposer. The hands quicken — the scar is impatient.").withStyle(ChatFormatting.ITALIC));
+		tooltip.add(Component.literal("A quiet decomposer. Shift-mining ore lets its hyphae follow the vein.")
+				.withStyle(ChatFormatting.ITALIC));
 	}
-
 }

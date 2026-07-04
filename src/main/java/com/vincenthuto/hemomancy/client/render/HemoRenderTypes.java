@@ -239,6 +239,41 @@ public final class HemoRenderTypes {
 						.createCompositeState(false));
 	}
 
+	public static RenderType willStateMonolithShell(float gameTime, float shardSeed, float red, float green,
+			float blue, float dissolveProgress, float flickerAlpha) {
+		RenderStateShard.TexturingStateShard uniforms = new RenderStateShard.TexturingStateShard(
+				"will_state_monolith_shell_uniforms",
+				() -> {
+					ShaderInstance shader = ShaderInit.WILL_STATE_MONOLITH.getInstance().get();
+					setUniform(shader, "HemoTime", gameTime);
+					setUniform(shader, "ShardSeed", shardSeed);
+					setUniform(shader, "Burden", 0.32f);
+					setUniform(shader, "Attuned", 1.0f);
+					setUniform(shader, "FractalScale", 12.5f);
+					setUniform(shader, "WillMonolithColor", red, green, blue);
+					setUniform(shader, "WillDissolveProgress", dissolveProgress);
+					setUniform(shader, "WillDissolveFlicker", flickerAlpha);
+				},
+				() -> {
+					ShaderInstance shader = ShaderInit.WILL_STATE_MONOLITH.getInstance().get();
+					if (shader instanceof ExtendedShaderInstance extended) {
+						extended.setUniformDefaults();
+					}
+				});
+		return RenderType.create("will_state_monolith_shell",
+				DefaultVertexFormat.NEW_ENTITY, VertexFormat.Mode.QUADS, 1536, true, true,
+				RenderType.CompositeState.builder()
+						.setShaderState(ShaderInit.WILL_STATE_MONOLITH.getShard())
+						.setTexturingState(uniforms)
+						.setTransparencyState(RenderType.TRANSLUCENT_TRANSPARENCY)
+						.setDepthTestState(RenderType.LEQUAL_DEPTH_TEST)
+						.setWriteMaskState(RenderType.COLOR_WRITE)
+						.setCullState(RenderType.NO_CULL)
+						.setLightmapState(RenderType.NO_LIGHTMAP)
+						.setOverlayState(RenderType.OVERLAY)
+						.createCompositeState(false));
+	}
+
 	public static RenderType monolithEntitySurface(float gameTime, float shardSeed, float burden, float attuned,
 			float fractalScale) {
 		RenderStateShard.TexturingStateShard uniforms = new RenderStateShard.TexturingStateShard(

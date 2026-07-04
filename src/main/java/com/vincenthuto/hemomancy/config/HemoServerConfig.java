@@ -63,10 +63,50 @@ public class HemoServerConfig {
 	public static ModConfigSpec.DoubleValue MORPHLING_DRAIN_RATE;
 	public static ModConfigSpec.IntValue MORPHLING_DRAIN_INTERVAL;
 	public static ModConfigSpec.BooleanValue MORPHLING_CRADLE_LEECH_TARGET_PLAYERS;
+	public static ModConfigSpec.BooleanValue MORPHLING_HUNGER_ENABLED;
+	public static ModConfigSpec.IntValue MORPHLING_FED_DURATION_TICKS;
+	public static ModConfigSpec.DoubleValue MORPHLING_STARVING_DRAIN_RATE;
+	public static ModConfigSpec.IntValue MORPHLING_HUSBANDRY_STAGE_QUOTA;
 
 	// ===== Ghastly Alembic Leak =====
 	public static ModConfigSpec.IntValue ALEMBIC_LEAK_INTERVAL_TICKS;
 	public static ModConfigSpec.DoubleValue ALEMBIC_LEAK_RATE_PER_TICK;
+
+	// ===== Power Systems Guardrails (audit phase 1) =====
+	public static ModConfigSpec.BooleanValue CIRCULATION_ENABLED;
+	public static ModConfigSpec.DoubleValue CIRCULATION_BASE_BANDWIDTH;
+	public static ModConfigSpec.DoubleValue CIRCULATION_BANDWIDTH_PER_DEGREE;
+	public static ModConfigSpec.DoubleValue CIRCULATION_BANDWIDTH_PER_CAPACITY_POINT;
+	public static ModConfigSpec.IntValue CIRCULATION_WINDOW_TICKS;
+	public static ModConfigSpec.BooleanValue LAST_RITE_ENABLED;
+	public static ModConfigSpec.IntValue LAST_RITE_SHARED_COOLDOWN_TICKS;
+	public static ModConfigSpec.BooleanValue BORROWED_BLOOD_ENABLED;
+	public static ModConfigSpec.DoubleValue BORROWED_BLOOD_CAP;
+
+	// ===== Rogue Hemomancer Wills =====
+	public static ModConfigSpec.BooleanValue WILL_ENABLED;
+	public static ModConfigSpec.IntValue WILL_AMBUSH_CHECK_INTERVAL_TICKS;
+	public static ModConfigSpec.DoubleValue WILL_BASE_CHANCE_PER_CHECK;
+	public static ModConfigSpec.IntValue WILL_AMBUSH_COOLDOWN_TICKS;
+	public static ModConfigSpec.IntValue WILL_MAX_ACTIVE_PER_PLAYER;
+	public static ModConfigSpec.IntValue WILL_MAX_ACTIVE_PER_DIMENSION;
+	public static ModConfigSpec.DoubleValue WILL_TERRAIN_MULTIPLIER;
+	public static ModConfigSpec.DoubleValue WILL_BLOOD_MOON_MULTIPLIER;
+	public static ModConfigSpec.DoubleValue WILL_BLOOD_DRUNKENNESS_MULTIPLIER_PER_AMPLIFIER;
+	public static ModConfigSpec.DoubleValue WILL_HERALD_MULTIPLIER;
+	public static ModConfigSpec.IntValue WILL_ANCHOR_LIFETIME_TICKS;
+	public static ModConfigSpec.DoubleValue WILL_FALTER_BURST_FRACTION;
+	public static ModConfigSpec.IntValue WILL_FALTER_BURST_WINDOW_TICKS;
+	public static ModConfigSpec.IntValue WILL_FALTER_WINDOW_TICKS;
+	public static ModConfigSpec.DoubleValue WILL_ABSORPTION_PROGRESS_REQUIRED;
+	public static ModConfigSpec.IntValue WILL_ABSORPTION_GRACE_TICKS;
+	public static ModConfigSpec.DoubleValue WILL_ABSORPTION_ESCAPE_HEALTH_FRACTION;
+	public static ModConfigSpec.IntValue WILL_ABSORPTION_RAGE_TICKS;
+	public static ModConfigSpec.BooleanValue WILL_BEND_ENABLED;
+	public static ModConfigSpec.BooleanValue WILL_COMMANDEER_ENABLED;
+	public static ModConfigSpec.IntValue WILL_CLAIMED_BONUS_CAP_SILENT_ARCHON;
+	public static ModConfigSpec.DoubleValue WILL_PUPPETEER_SPAWN_CHANCE;
+	public static ModConfigSpec.IntValue WILL_MIN_DEGREE;
 
 	// ===== Drudge System =====
 	public static ModConfigSpec.IntValue DRUDGE_LEASH_RADIUS;
@@ -274,6 +314,22 @@ public class HemoServerConfig {
 				.comment("Whether Leech Morphling Cradles can target non-owner players.")
 				.define("morphlingCradleLeechTargetPlayers", false);
 
+		MORPHLING_HUNGER_ENABLED = builder
+				.comment("Whether Mature+ non-wild-bound morphlings track Fed, Hungry, and Starving states.")
+				.define("hungerEnabled", false);
+
+		MORPHLING_FED_DURATION_TICKS = builder
+				.comment("Ticks a fed Mature+ morphling stays Fed before becoming Hungry. 24000 = one Minecraft day.")
+				.defineInRange("fedDurationTicks", 24000, 20, 240000);
+
+		MORPHLING_STARVING_DRAIN_RATE = builder
+				.comment("Extra blood drained per hunger tick by a Starving morphling when hunger is enabled.")
+				.defineInRange("starvingDrainRate", 2.0, 0.0, 100.0);
+
+		MORPHLING_HUSBANDRY_STAGE_QUOTA = builder
+				.comment("Husbandry progress required per post-Fledgling maturity stage. 0 preserves enzyme-only progression.")
+				.defineInRange("husbandryStageQuota", 0, 0, 100000);
+
 		builder.pop();
 
 		// ───── Ghastly Alembic Leak ─────
@@ -324,6 +380,149 @@ public class HemoServerConfig {
 		DRUDGE_WORK_RADIUS = builder
 				.comment("Radius (blocks) within which the Drudge scans for targets to apply its memory.")
 				.defineInRange("drudgeWorkRadius", 12, 2, 48);
+
+		builder.pop();
+
+		// ───── Power Systems Guardrails (audit phase 1) ─────
+		builder.comment("Power Systems Guardrail Settings — shared governors for stacked passive income, "
+				+ "death-saves, and the borrowed-blood reserve. Single sources are never affected; only stacks are disciplined.")
+				.push("guardrails");
+
+		CIRCULATION_ENABLED = builder
+				.comment("Whether all passive blood income (armor regen, mask trickles, morphling siphons, cradle redistribution) "
+						+ "shares one bandwidth window. Disabled = pure pass-through, pre-guardrail behavior.")
+				.define("circulationEnabled", true);
+
+		CIRCULATION_BASE_BANDWIDTH = builder
+				.comment("Base passive blood income allowed per window, before degree and Capacity scaling.")
+				.defineInRange("circulationBaseBandwidth", 6.0, 0.0, 1000.0);
+
+		CIRCULATION_BANDWIDTH_PER_DEGREE = builder
+				.comment("Additional bandwidth per Initiatory Degree.")
+				.defineInRange("circulationBandwidthPerDegree", 1.5, 0.0, 100.0);
+
+		CIRCULATION_BANDWIDTH_PER_CAPACITY_POINT = builder
+				.comment("Additional bandwidth per point of Capacity-skill blood bonus (500 bonus = one skill level).")
+				.defineInRange("circulationBandwidthPerCapacityPoint", 0.002, 0.0, 1.0);
+
+		CIRCULATION_WINDOW_TICKS = builder
+				.comment("Length of the circulation window in ticks. 20 ticks = 1 second.")
+				.defineInRange("circulationWindowTicks", 20, 1, 1200);
+
+		LAST_RITE_ENABLED = builder
+				.comment("Whether all death-prevention effects (Ink Mantle, Last-Light Mantle, Silent Archon refusal) "
+						+ "share one cooldown: the blood may refuse the return only once per window.")
+				.define("lastRiteEnabled", true);
+
+		LAST_RITE_SHARED_COOLDOWN_TICKS = builder
+				.comment("Shared cooldown after any death-save fires, in ticks (12000 = 10 minutes).")
+				.defineInRange("lastRiteSharedCooldownTicks", 12000, 0, 240000);
+
+		BORROWED_BLOOD_ENABLED = builder
+				.comment("Whether the borrowed-blood reserve accepts deposits (Blood Lust overkill lifesteal; "
+						+ "future morphling feed-banking). Draining an existing reserve always works.")
+				.define("borrowedBloodEnabled", true);
+
+		BORROWED_BLOOD_CAP = builder
+				.comment("Maximum blood the borrowed reserve can hold.")
+				.defineInRange("borrowedBloodCap", 500.0, 0.0, 10000.0);
+
+		builder.pop();
+
+		// ───── Rogue Hemomancer Wills ─────
+		builder.comment("Rogue Hemomancer Will Settings").push("wills");
+
+		WILL_ENABLED = builder
+				.comment("Whether Rogue Hemomancer Will ambushes, anchors, rewards, and bend interactions are enabled.")
+				.define("willsEnabled", true);
+
+		WILL_AMBUSH_CHECK_INTERVAL_TICKS = builder
+				.comment("Ticks between ambient Will ambush checks per eligible player.")
+				.defineInRange("ambushCheckIntervalTicks", 200, 20, 72000);
+
+		WILL_BASE_CHANCE_PER_CHECK = builder
+				.comment("Base chance per eligible ambush check before terrain, blood moon, drunkenness, and herald multipliers.")
+				.defineInRange("baseChancePerCheck", 0.02, 0.0, 1.0);
+
+		WILL_AMBUSH_COOLDOWN_TICKS = builder
+				.comment("Ticks between successful Will ambushes for one player.")
+				.defineInRange("ambushCooldownTicks", 24000, 0, 240000);
+
+		WILL_MAX_ACTIVE_PER_PLAYER = builder
+				.comment("Maximum ambient hostile Wills allowed near one player before the director skips new anchors.")
+				.defineInRange("maxActivePerPlayer", 3, 1, 32);
+
+		WILL_MAX_ACTIVE_PER_DIMENSION = builder
+				.comment("Maximum ambient hostile Wills allowed in a dimension before the director skips new anchors.")
+				.defineInRange("maxActivePerDimension", 8, 1, 128);
+
+		WILL_TERRAIN_MULTIPLIER = builder
+				.comment("Ambush chance multiplier in dark, cave-like, or fungus-adjacent terrain.")
+				.defineInRange("terrainMultiplier", 3.0, 0.0, 25.0);
+
+		WILL_BLOOD_MOON_MULTIPLIER = builder
+				.comment("Ambush chance multiplier while a Blood Moon is active.")
+				.defineInRange("bloodMoonMultiplier", 2.0, 0.0, 25.0);
+
+		WILL_BLOOD_DRUNKENNESS_MULTIPLIER_PER_AMPLIFIER = builder
+				.comment("Additional ambush chance multiplier per Blood Drunkenness amplifier level.")
+				.defineInRange("bloodDrunkennessMultiplierPerAmplifier", 0.5, 0.0, 10.0);
+
+		WILL_HERALD_MULTIPLIER = builder
+				.comment("Ambush chance multiplier while a recent Fungal Whisper herald window is active.")
+				.defineInRange("heraldMultiplier", 4.0, 0.0, 25.0);
+
+		WILL_ANCHOR_LIFETIME_TICKS = builder
+				.comment("Ticks a Will anchor telegraphs before the ambush materializes.")
+				.defineInRange("anchorLifetimeTicks", 80, 1, 1200);
+
+		WILL_FALTER_BURST_FRACTION = builder
+				.comment("Fraction of max health one player must deal to a materialized Broken Will within the burst window to make it falter.")
+				.defineInRange("falterBurstFraction", 0.25, 0.05, 1.0);
+
+		WILL_FALTER_BURST_WINDOW_TICKS = builder
+				.comment("Ticks a single-player damage burst is tracked before it expires for Broken Will faltering.")
+				.defineInRange("falterBurstWindowTicks", 80, 20, 400);
+
+		WILL_FALTER_WINDOW_TICKS = builder
+				.comment("Ticks a burst-staggered Broken Will remains faltering and bindable.")
+				.defineInRange("falterWindowTicks", 100, 1, 1200);
+
+		WILL_ABSORPTION_PROGRESS_REQUIRED = builder
+				.comment("Progress required to fully absorb a faltering Broken Will once Blood Absorption latches.")
+				.defineInRange("willAbsorptionProgressRequired", 100.0, 1.0, 10000.0);
+
+		WILL_ABSORPTION_GRACE_TICKS = builder
+				.comment("Ticks an absorbing Broken Will waits without a Blood Absorption channel before escaping angry.")
+				.defineInRange("willAbsorptionGraceTicks", 20, 1, 200);
+
+		WILL_ABSORPTION_ESCAPE_HEALTH_FRACTION = builder
+				.comment("Minimum fraction of max health restored when an absorbing Broken Will escapes angry.")
+				.defineInRange("willAbsorptionEscapeHealthFraction", 0.4, 0.0, 1.0);
+
+		WILL_ABSORPTION_RAGE_TICKS = builder
+				.comment("Ticks an escaped Will resists immediate refalter after a broken absorption channel.")
+				.defineInRange("willAbsorptionRageTicks", 160, 1, 2400);
+
+		WILL_BEND_ENABLED = builder
+				.comment("Whether faltering Broken Wills can be resolved through blood utilities or Commandeered.")
+				.define("bendEnabled", true);
+
+		WILL_COMMANDEER_ENABLED = builder
+				.comment("Whether the Commandeer bend may bind faltering Broken Wills into the Puppeteer thread economy.")
+				.define("commandeerEnabled", true);
+
+		WILL_CLAIMED_BONUS_CAP_SILENT_ARCHON = builder
+				.comment("Extra claimed-Will summon cap granted by the Silent Archon edge.")
+				.defineInRange("claimedBonusCapSilentArchon", 1, 0, 8);
+
+		WILL_PUPPETEER_SPAWN_CHANCE = builder
+				.comment("Chance for the ambush director to replace one Broken Will slot with a Blood Drunk Puppeteer.")
+				.defineInRange("puppeteerSpawnChance", 0.2, 0.0, 1.0);
+
+		WILL_MIN_DEGREE = builder
+				.comment("Minimum Harbinger degree for ambient Rogue Will ambushes.")
+				.defineInRange("minDegree", 4, 0, 8);
 
 		builder.pop();
 	}

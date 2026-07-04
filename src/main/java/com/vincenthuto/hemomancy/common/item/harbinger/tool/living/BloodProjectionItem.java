@@ -8,6 +8,7 @@ import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.IBloodTendency;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.IKnownManipulations;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
+import com.vincenthuto.hemomancy.common.entity.mob.monster.will.WillBloodUtilityInteractions;
 import com.vincenthuto.hemomancy.common.event.BloodStructureFeedManager;
 import com.vincenthuto.hemomancy.common.event.SanguineFormationProjectionHandler;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
@@ -100,6 +101,12 @@ public class BloodProjectionItem extends Item implements IDispellable, ICellHand
 		IBloodVolume playerVolume = HemoCapabilityAccess.getBloodVolume(player)
 				.orElseThrow(NullPointerException::new);
 		double beforeBlood = playerVolume.getBloodVolume();
+
+		double willHandled = WillBloodUtilityInteractions.tryProjectBanishFalteringWill(worldIn, player,
+				tileTransferRate);
+		if (willHandled > 0.0D) {
+			return willHandled;
+		}
 
 		double blockHandled = BlockBloodInteractions.tryProjectIntoLookedAtBlock(worldIn, player, tileTransferRate);
 		if (blockHandled > 0.0D) {

@@ -71,6 +71,10 @@ public final class BloodAbsorptionItemSourceTest {
 
 		assertContains("absorption excludes bloodless entities",
 				source, "HemoEntityPredicates.NOBLOOD");
+		assertContains("absorption excludes armor stands from server and particle targeting",
+				source, "target instanceof ArmorStand");
+		assertContains("absorption excludes Hemomancy NPCs from server and particle targeting",
+				source, "isHemomancyNpc(target)");
 	}
 
 	private static String read(String path) throws IOException {

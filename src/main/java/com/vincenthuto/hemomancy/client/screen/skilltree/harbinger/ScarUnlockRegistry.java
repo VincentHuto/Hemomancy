@@ -31,14 +31,17 @@ public final class ScarUnlockRegistry {
 		//    with the Fungal Entity's influence.  They become visible once the
 		//    player has unlocked the ENTITY LiberKnowledge entry (degree 7,
 		//    abyssal_ichor/void_ichor pickup, or Entity-related memos).
-		register("scar/respergillus",
-				UnlockPredicate.hasLiberEntry(LiberEntryDefinitions.ENTITY));
-		register("scar/talaromyces_minus",
-				UnlockPredicate.hasLiberEntry(LiberEntryDefinitions.ENTITY));
-		register("scar/lumina_devorans",
-				UnlockPredicate.hasLiberEntry(LiberEntryDefinitions.ENTITY));
-		register("scar/noctifly_agaric",
-				UnlockPredicate.hasLiberEntry(LiberEntryDefinitions.ENTITY));
+		for (String id : new String[] {
+				"rhizovitta_communis",
+				"talaromyces_minus",
+				"noctifly_agaric",
+				"antiphonomyces_resonans",
+				"putrivora_resolvens",
+				"oculiflora_reticularis",
+				"cryostroma_perdurans",
+				"saprovitta_vestigium" }) {
+			register("scar/" + id, UnlockPredicate.hasLiberEntry(LiberEntryDefinitions.ENTITY));
+		}
 	}
 
 	private ScarUnlockRegistry() {}

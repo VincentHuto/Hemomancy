@@ -580,6 +580,24 @@
 				"hemomancy:morph": 5
 			},
 			"model": "hemomancy:item/living_staff_chitinite"
+		},
+		{
+			"predicate": {
+				"hemomancy:morph": 6
+			},
+			"model": "hemomancy:item/living_staff_pests"
+		},
+		{
+			"predicate": {
+				"hemomancy:morph": 7
+			},
+			"model": "hemomancy:item/living_staff_fungal"
+		},
+		{
+			"predicate": {
+				"hemomancy:morph": 8
+			},
+			"model": "hemomancy:item/living_staff_chitinite"
 		}
 	]
 }

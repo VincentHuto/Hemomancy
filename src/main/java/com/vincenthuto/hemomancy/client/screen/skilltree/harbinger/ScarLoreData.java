@@ -141,25 +141,42 @@ public final class ScarLoreData {
 
 		// ── Fungal scars — cultivated rather than carved ──
 
-		LORE.put("respergillus",
-				"Named for a mould that colonises grain stores, the Respergillus scar draws moisture "
-				+ "from the practitioner's blood and redistributes it. You may breathe underwater — "
-				+ "but something in the gills feels borrowed, not given.");
+		LORE.put("rhizovitta_communis",
+				"Rhizovitta Communis does not act alone; it roots the vessel into the fungal floor "
+				+ "and lets the surrounding mycelium answer blood spent in motion. The gift feels "
+				+ "less like breathing and more like being fed through buried veins.");
 
 		LORE.put("talaromyces_minus",
 				"Talaromyces Minus is a soil-dweller, a quiet decomposer of dead matter. Etched into "
-				+ "the hemomantic lattice it accelerates the hands, quickens the pulse of labour — "
+				+ "the hemomantic lattice it teaches the hand to follow ferric seams through stone, "
 				+ "as if the scar is impatient for you to break things down.");
 
-		LORE.put("lumina_devorans",
-				"Noctilumina Devorans. 'The light-eater.' This scar does not merely grant vision in "
-				+ "the dark — it feeds on illumination, growing stronger in the absence of light. "
-				+ "Those who wear it too long begin to find daylight... irritating.");
+		LORE.put("oculiflora_reticularis",
+				"Oculiflora Reticularis opens in the dark like an eye made from hyphae. It does not "
+				+ "steal secrets from the world; it notices the signals already near enough for the "
+				+ "wearer's blood to understand.");
 
 		LORE.put("noctifly_agaric",
 				"The Noctifly Agaric cap unfurls wings of pale mycelium in response to the wearer's "
 				+ "will. Flight granted by fungus. The practitioner hovers effortlessly, but the "
 				+ "sensation is less like flying and more like being carried.");
+
+		LORE.put("putrivora_resolvens",
+				"Putrivora Resolvens knows the taste of poison, wither, hunger, and blood loss. "
+				+ "It does not prevent suffering; it shortens the meal and gives back what little "
+				+ "nutrition the affliction contained.");
+
+		LORE.put("cryostroma_perdurans",
+				"Cryostroma Perdurans is a cold skin over living mycelium. Motion and casting crack "
+				+ "the frost; stillness lets it conserve blood and knit damaged vascular paths faster.");
+
+		LORE.put("antiphonomyces_resonans",
+				"Antiphonomyces Resonans answers impact with a counter-song. The scar does not stop "
+				+ "violence so much as teach the body to echo it in useful directions.");
+
+		LORE.put("saprovitta_vestigium",
+				"Saprovitta Vestigium leaves a feeding wake behind the moving practitioner, a trail "
+				+ "of hungry blood-fungus that turns pursuit into contact with the garden's appetite.");
 	}
 
 	/**

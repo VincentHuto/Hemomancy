@@ -4,8 +4,10 @@ import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.morphling.EquippedMorphlingEvents;
 import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillPointGainEvents;
+import com.vincenthuto.hemomancy.common.event.LastRiteHelper;
 import com.vincenthuto.hemomancy.common.item.harbinger.morphlings.IMorphling;
 import com.vincenthuto.hemomancy.common.item.harbinger.morphlings.ItemMorphlingJar;
+import com.vincenthuto.hemomancy.common.item.harbinger.morphlings.MorphlingItem;
 import com.vincenthuto.hemomancy.common.item.itemhandler.MorphlingJarItemHandler;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
@@ -60,11 +62,14 @@ public class ChangeMorphKeyPacket implements CustomPacketPayload {
 				Random rand = new Random();
 				int chosen = validSlots.get(rand.nextInt(validSlots.size()));
 				ItemStack selectedStack = jarHandler.getStackInSlot(chosen);
+				ItemStack equippedMorphling = selectedStack.copy();
 
 				// Equip to player capability
 				HemoCapabilityAccess.getEquippedMorphling(player).ifPresent(cap -> {
-					cap.setEquippedMorphling(selectedStack.copy());
+					cap.setEquippedMorphling(equippedMorphling);
 				});
+				MorphlingItem.markEquipped(player, equippedMorphling);
+				LastRiteHelper.armForMorphling(player, equippedMorphling);
 
 				// Award morphling bond milestone
 				SkillPointGainEvents.onMorphlingEquipped(player);

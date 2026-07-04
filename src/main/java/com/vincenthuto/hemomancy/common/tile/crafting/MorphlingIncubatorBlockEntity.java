@@ -330,6 +330,9 @@ public class MorphlingIncubatorBlockEntity extends BaseContainerBlockEntity impl
 		tag.putInt("EnzymeFeedings", existingFeedings + enzymeCount);
 		tag.remove(MorphlingItem.WILD_BOUND_KEY);
 		result.set(DataComponents.CUSTOM_DATA, CustomData.of(tag));
+		if (level != null) {
+			MorphlingItem.markFedNow(result, level.getGameTime());
+		}
 
 		// Move center to output
 		inventory.set(SLOT_CENTER, ItemStack.EMPTY);

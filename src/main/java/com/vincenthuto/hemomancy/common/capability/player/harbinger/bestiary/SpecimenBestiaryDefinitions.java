@@ -37,18 +37,18 @@ public final class SpecimenBestiaryDefinitions {
 	);
 
 	private static final List<MorphlingEntry> MORPHLING_ENTRIES = List.of(
-			morphling(MorphlingPolypLayer.BAT, ItemInit.morphling_bat),
-			morphling(MorphlingPolypLayer.CENTIPEDE, ItemInit.morphling_centipede),
-			morphling(MorphlingPolypLayer.CHITINITE, ItemInit.morphling_chitinite),
-			morphling(MorphlingPolypLayer.CUTTLEFISH, ItemInit.morphling_cuttlefish),
-			morphling(MorphlingPolypLayer.FUNGAL, ItemInit.morphling_fungal),
-			morphling(MorphlingPolypLayer.LEECHES, ItemInit.morphling_leeches),
-			morphling(MorphlingPolypLayer.MOLE, ItemInit.morphling_mole),
-			morphling(MorphlingPolypLayer.PESTS, ItemInit.morphling_pests),
-			morphling(MorphlingPolypLayer.SERPENT, ItemInit.morphling_serpent),
-			morphling(MorphlingPolypLayer.SPIDER, ItemInit.morphling_spider),
-			morphling(MorphlingPolypLayer.TICK, ItemInit.morphling_tick),
-			morphling(MorphlingPolypLayer.URCHIN, ItemInit.morphling_urchin)
+			morphling(MorphlingPolypLayer.BAT, ItemInit.morphling_witchs_ear, "witchs_ear"),
+			morphling(MorphlingPolypLayer.CENTIPEDE, ItemInit.morphling_winter_shroud, "winter_shroud"),
+			morphling(MorphlingPolypLayer.CHITINITE, ItemInit.morphling_winter_shroud, "winter_shroud"),
+			morphling(MorphlingPolypLayer.CUTTLEFISH, ItemInit.morphling_foxfire, "foxfire"),
+			morphling(MorphlingPolypLayer.FUNGAL, ItemInit.morphling_gravecap, "gravecap"),
+			morphling(MorphlingPolypLayer.LEECHES, ItemInit.morphling_deadmans_purse, "deadmans_purse"),
+			morphling(MorphlingPolypLayer.MOLE, ItemInit.morphling_irontooth, "irontooth"),
+			morphling(MorphlingPolypLayer.PESTS, ItemInit.morphling_gravecap, "gravecap"),
+			morphling(MorphlingPolypLayer.SERPENT, ItemInit.morphling_emberfang, "emberfang"),
+			morphling(MorphlingPolypLayer.SPIDER, ItemInit.morphling_bootlace, "bootlace"),
+			morphling(MorphlingPolypLayer.TICK, ItemInit.morphling_deadmans_purse, "deadmans_purse"),
+			morphling(MorphlingPolypLayer.URCHIN, ItemInit.morphling_winter_shroud, "winter_shroud")
 	);
 	private static final Set<ResourceLocation> ECOLOGY_SPECIMENS = RESEARCH_ENTRIES.stream()
 			.map(ResearchEntry::id)
@@ -113,18 +113,20 @@ public final class SpecimenBestiaryDefinitions {
 				"bestiary.hemomancy.specimen." + path + ".source");
 	}
 
-	private static MorphlingEntry morphling(MorphlingPolypLayer layer, DeferredHolder<Item, Item> item) {
+	private static MorphlingEntry morphling(MorphlingPolypLayer layer, DeferredHolder<Item, Item> item,
+			String binomialPath) {
 		String id = layer.serializedName();
 		return new MorphlingEntry(layer, item,
 				"bestiary.hemomancy.morphling." + id + ".title",
 				"bestiary.hemomancy.morphling." + id + ".description",
-				"bestiary.hemomancy.morphling." + id + ".source");
+				"bestiary.hemomancy.morphling." + id + ".source",
+				"morphling.hemomancy." + binomialPath + ".binomial");
 	}
 
 	public record ResearchEntry(ResourceLocation id, String titleKey, String descriptionKey, String sourceKey) {
 	}
 
 	public record MorphlingEntry(MorphlingPolypLayer layer, DeferredHolder<Item, Item> morphling,
-			String titleKey, String descriptionKey, String sourceKey) {
+			String titleKey, String descriptionKey, String sourceKey, String binomialKey) {
 	}
 }

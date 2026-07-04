@@ -31,7 +31,7 @@ import java.util.function.Supplier;
  * <p>Usage example:
  * <pre>{@code
  * // In MorphlingMutationRegistry.init():
- * register(ItemInit.morphling_bat.get(),
+ * register(ItemInit.morphling_witchs_ear.get(),
  *     MorphlingVisualMutation.builder(0.24f, 0.10f, 0.42f, 0.38f)
  *         .pulse(0.06f).emissive()
  *         .attach(SimpleBodyAttachment.of(

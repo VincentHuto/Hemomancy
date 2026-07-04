@@ -31,7 +31,7 @@ public final class RegistryBackedScarRefactorSourceTest {
 		assertContains("registry helper lookup", source, "getByName(String name)");
 		assertContains("cerebral scar definition", source, "scar_heart");
 		assertContains("blood-honed definition", source, "scar_blood_honed");
-		assertContains("fungal scar definition", source, "respergillus");
+		assertContains("fungal scar definition", source, "rhizovitta_communis");
 	}
 
 	private static void itemScarsPointAtDefinitions() throws IOException {

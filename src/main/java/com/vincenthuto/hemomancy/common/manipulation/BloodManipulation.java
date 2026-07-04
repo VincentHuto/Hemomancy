@@ -5,14 +5,18 @@ import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillPoin
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.IBloodTendency;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.KnownManipulationEvents;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.scar.fungal.ConserveStateHelper;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.scar.fungal.CrawlingChoirHandler;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.scar.fungal.RootedStateHelper;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.EnumPurityStage;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.PurityGainEvents;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.EnumVeinSections;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BorrowedBloodReserve;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.entity.boss.saint.hemorath.HemorathEntity;
 import com.vincenthuto.hemomancy.common.effect.MnemonicCandleRules;
 import com.vincenthuto.hemomancy.common.effect.MnemonicPotionRules;
+import com.vincenthuto.hemomancy.common.event.BorrowedBloodRules;
 import com.vincenthuto.hemomancy.common.event.worldevent.BloodMoonEvents;
 import com.vincenthuto.hemomancy.common.init.EffectInit;
 import com.vincenthuto.hemomancy.common.item.harbinger.CheapBloodInfusionHelper;
@@ -40,7 +44,7 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import javax.annotation.Nullable;
 
-public class BloodManipulation  {
+public class BloodManipulation implements EntityCastableManipulation {
 	public static BloodManipulation BLANK = new BloodManipulation("No Selected", 0, 0, 0, EnumManipulationType.QUICK,
 			EnumManipulationRank.HUMILIS, EnumBloodTendency.ANIMUS, EnumVeinSections.HEAD);
 	/*
@@ -106,6 +110,11 @@ public class BloodManipulation  {
 
 	public void getAction(Player player, Level world, ItemStack heldItemMainhand, BlockPos position) {
 
+	}
+
+	@Override
+	public boolean castFromEntity(ManipulationCastContext context) {
+		return EntityManipulationEffects.cast(this, context);
 	}
 
 	public double getAlignLevel() {
@@ -408,34 +417,45 @@ public class BloodManipulation  {
 				effectiveCost *= SporiticThuribleResonanceState.getCostMultiplier(player, tend);
 				effectiveCost *= MnemonicPotionRules.manipulationCostMultiplier(player.hasEffect(EffectInit.mnemonic_screams));
 
+				boolean hasRequiredAlignment = tendency.getAlignmentByTendency(tend) >= alignLevel;
+				if (!hasRequiredAlignment) {
+					player.displayClientMessage(Component.translatable("Not Enough Alignment for Manipulation!")
+							.withStyle(ChatFormatting.RED), true);
+					return;
+				}
+
+				// Emergency cover: when a valid cast would fail for lack of blood,
+				// the borrowed-blood reserve closes the gap first.
+				double deficit = BorrowedBloodRules.castDeficitToCover(hasRequiredAlignment,
+						volume.getBloodVolume(), effectiveCost);
+				if (deficit > 0.0D && BorrowedBloodReserve.get(player) >= deficit) {
+					volume.fill(BorrowedBloodReserve.drainToCover(player, deficit));
+				}
 				if (volume.getBloodVolume() > effectiveCost) {
-					if (tendency.getAlignmentByTendency(tend) >= alignLevel) {
-						volume.drain(effectiveCost);
-						volume.addBloodSpend(effectiveCost);
-						HemorathEntity
-								.onPlayerBloodSpend(player, effectiveCost);
-						PacketHandler.sendToPlayer((ServerPlayer) player, new BloodVolumeServerPacket(volume));
-						getAction(player, world, heldItemMainhand, position);
+					volume.drain(effectiveCost);
+					volume.addBloodSpend(effectiveCost);
+					HemorathEntity
+							.onPlayerBloodSpend(player, effectiveCost);
+					RootedStateHelper.refundManipulationCost(player, effectiveCost);
+					ConserveStateHelper.markManipulationCast(player);
+					PacketHandler.sendToPlayer((ServerPlayer) player, new BloodVolumeServerPacket(volume));
+					getAction(player, world, heldItemMainhand, position);
 
-						// Crawling Choir: chance to echo-cast at no additional blood cost
-						CrawlingChoirHandler.tryEchoCast(player, world, heldItemMainhand, position, this);
+					// Crawling Choir: chance to echo-cast at no additional blood cost
+					CrawlingChoirHandler.tryEchoCast(player, world, heldItemMainhand, position, this);
 
-						// Apply cross-system consequences: vascular strain, tendency shift, XP
-						KnownManipulationEvents.onManipulationUsed((ServerPlayer) player, this);
-						PurityGainEvents.onBloodManipulationUsed((ServerPlayer) player);
+					// Apply cross-system consequences: vascular strain, tendency shift, XP
+					KnownManipulationEvents.onManipulationUsed((ServerPlayer) player, this);
+					PurityGainEvents.onBloodManipulationUsed((ServerPlayer) player);
 
-						// MnA Combo System: Grant Sanguine Clarity (reduces next spell mana cost)
-						// and consume Arcane Resonance if present (it already reduced this manipulation's cost)
-						if (ModList.get().isLoaded("mna")) {
-							invokeMnAComboHelper(player);
-						}
-
-						long appliedCooldown = ignoresCooldown(player) ? 0L : startCooldown(player);
-						PacketHandler.sendToPlayer((ServerPlayer) player, new ManipCooldownPacket((int) appliedCooldown));
-					} else {
-						player.displayClientMessage(Component.translatable("Not Enough Alignment for Manipulation!")
-								.withStyle(ChatFormatting.RED), true);
+					// MnA Combo System: Grant Sanguine Clarity (reduces next spell mana cost)
+					// and consume Arcane Resonance if present (it already reduced this manipulation's cost)
+					if (ModList.get().isLoaded("mna")) {
+						invokeMnAComboHelper(player);
 					}
+
+					long appliedCooldown = ignoresCooldown(player) ? 0L : startCooldown(player);
+					PacketHandler.sendToPlayer((ServerPlayer) player, new ManipCooldownPacket((int) appliedCooldown));
 				} else {
 					player.displayClientMessage(
 							Component.translatable("Not Enough Blood to be Shed!").withStyle(ChatFormatting.RED), true);

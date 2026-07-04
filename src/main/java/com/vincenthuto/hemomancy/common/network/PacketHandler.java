@@ -26,6 +26,7 @@ import com.vincenthuto.hemomancy.common.network.routing.PacketSpawnVeinSpiderCou
 import com.vincenthuto.hemomancy.common.network.particle.*;
 import com.vincenthuto.hemomancy.common.network.routing.PacketSyncSutureLinks;
 import com.vincenthuto.hemomancy.common.network.summon.PacketPuppeteersSpindleAction;
+import com.vincenthuto.hemomancy.common.network.will.WillPresenceCuePacket;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.server.level.ServerLevel;
@@ -187,6 +188,7 @@ public class PacketHandler {
         net.playToClient(SpawnSanguineOmenEffectPacket.TYPE, SpawnSanguineOmenEffectPacket.STREAM_CODEC, SpawnSanguineOmenEffectPacket::handle);
         net.playToClient(SpawnBlackVeilPacket.TYPE, SpawnBlackVeilPacket.STREAM_CODEC, SpawnBlackVeilPacket::handle);
         net.playToClient(SpawnPomePulsePacket.TYPE, SpawnPomePulsePacket.STREAM_CODEC, SpawnPomePulsePacket::handle);
+        net.playToClient(WillPresenceCuePacket.TYPE, WillPresenceCuePacket.STREAM_CODEC, WillPresenceCuePacket::handle);
         // HutosLib registers this payload in HLPacketHandler; re-registering here causes
         // "already registered" crashes for hutoslib:packet_spawn_lightning.
 

@@ -2,12 +2,15 @@ package com.vincenthuto.hemomancy.client.render.item.hematic;
 
 import com.vincenthuto.hemomancy.client.particle.AbsorbedBloodCellParticle;
 import com.vincenthuto.hemomancy.client.particle.BloodCellParticle;
+import com.vincenthuto.hemomancy.client.particle.WillAbsorptionGlowParticle;
 import com.vincenthuto.hemomancy.client.particle.factory.AbsorbedBloodCellParticleFactory;
 import com.vincenthuto.hemomancy.client.particle.factory.BloodCellParticleFactory;
+import com.vincenthuto.hemomancy.client.particle.factory.WillAbsorptionGlowParticleFactory;
 import com.vincenthuto.hemomancy.client.particle.util.EntityParticleUtils;
 import com.vincenthuto.hemomancy.common.block.shared.BlockBloodInteractions;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.livingstaff.ILivingStaffProgress;
+import com.vincenthuto.hemomancy.common.entity.mob.monster.will.WillEntity;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.BloodAbsorptionItem;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.ICellHand;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.LivingStaffFocusProfile;
@@ -39,6 +42,7 @@ import java.util.function.Predicate;
 
 public final class CellHandParticleEffects {
 	private static final int GLOBAL_PARTICLE_COUNT = 20;
+	private static final ParticleColor WILL_ABSORPTION_GLOW = ParticleColor.BLACK;
 
 	private CellHandParticleEffects() {
 	}
@@ -56,12 +60,20 @@ public final class CellHandParticleEffects {
 			if (blockSource.isPresent()) {
 				spawnAbsorbedBloodParticle(mc, origin, blockSource.get(), ParticleColor.BLOOD, rand, Optional.empty());
 			} else {
-				for (LivingEntity livingTarget : getAbsorptionParticleTargets(living, activeStack)) {
-					Vector3 targetVec = Vector3.fromEntityCenter(livingTarget);
-					Predicate<Entity> targetPred = EntityParticleUtils.getEntityPredicate(livingTarget);
-					ParticleColor targetColor = EntityParticleUtils.getColorFromPredicate(targetPred);
-					spawnAbsorbedBloodParticle(mc, origin, new Vec3(targetVec.x, targetVec.y, targetVec.z),
-							targetColor, rand, Optional.empty());
+				Optional<WillEntity> willTarget = getFalteringWillAbsorptionParticleTarget(living, activeStack);
+				if (willTarget.isPresent()) {
+					WillEntity will = willTarget.get();
+					spawnWillAbsorptionGlowParticle(mc, origin,
+							will.position().add(0.0D, will.getBbHeight() * 0.55D, 0.0D), rand, Optional.empty());
+					spawnWillAbsorptionTendencySpiralParticle(mc, origin, will, rand, Optional.empty());
+				} else {
+					for (LivingEntity livingTarget : getAbsorptionParticleTargets(living, activeStack)) {
+						Vector3 targetVec = Vector3.fromEntityCenter(livingTarget);
+						Predicate<Entity> targetPred = EntityParticleUtils.getEntityPredicate(livingTarget);
+						ParticleColor targetColor = EntityParticleUtils.getColorFromPredicate(targetPred);
+						spawnAbsorbedBloodParticle(mc, origin, new Vec3(targetVec.x, targetVec.y, targetVec.z),
+								targetColor, rand, Optional.empty());
+					}
 				}
 			}
 		} else if (isProjectionMode(living, activeStack)) {
@@ -120,12 +132,20 @@ public final class CellHandParticleEffects {
 				spawnAbsorbedBloodParticle(mc, origin, blockSource.get(), ParticleColor.BLOOD, rand,
 						Optional.of(anchor));
 			} else {
-				for (LivingEntity livingTarget : getAbsorptionParticleTargets(player, stack)) {
-					Vector3 targetVec = Vector3.fromEntityCenter(livingTarget);
-					Predicate<Entity> targetPred = EntityParticleUtils.getEntityPredicate(livingTarget);
-					ParticleColor targetColor = EntityParticleUtils.getColorFromPredicate(targetPred);
-					spawnAbsorbedBloodParticle(mc, origin, new Vec3(targetVec.x, targetVec.y, targetVec.z),
-							targetColor, rand, Optional.of(anchor));
+				Optional<WillEntity> willTarget = getFalteringWillAbsorptionParticleTarget(player, stack);
+				if (willTarget.isPresent()) {
+					WillEntity will = willTarget.get();
+					spawnWillAbsorptionGlowParticle(mc, origin,
+							will.position().add(0.0D, will.getBbHeight() * 0.55D, 0.0D), rand, Optional.of(anchor));
+					spawnWillAbsorptionTendencySpiralParticle(mc, origin, will, rand, Optional.of(anchor));
+				} else {
+					for (LivingEntity livingTarget : getAbsorptionParticleTargets(player, stack)) {
+						Vector3 targetVec = Vector3.fromEntityCenter(livingTarget);
+						Predicate<Entity> targetPred = EntityParticleUtils.getEntityPredicate(livingTarget);
+						ParticleColor targetColor = EntityParticleUtils.getColorFromPredicate(targetPred);
+						spawnAbsorbedBloodParticle(mc, origin, new Vec3(targetVec.x, targetVec.y, targetVec.z),
+								targetColor, rand, Optional.of(anchor));
+					}
 				}
 			}
 		} else if (isProjectionMode(player, stack)) {
@@ -151,6 +171,50 @@ public final class CellHandParticleEffects {
 					particleOrigin.x(), particleOrigin.y(), particleOrigin.z(), 0, 0.00, 0);
 			if (created instanceof BloodCellParticle particle) {
 				particle.setFirstPersonAnchor(localOffset);
+			}
+		}
+	}
+
+	private static void spawnWillAbsorptionTendencySpiralParticle(Minecraft mc, Vec3 origin, WillEntity will,
+			Random rand, Optional<Vec3> firstPersonTargetAnchor) {
+		double age = will.tickCount + HLClientUtils.getPartialTicks();
+		double spiralAngle = age * 0.42D + rand.nextDouble() * Math.PI * 0.45D;
+		double heightPhase = (age * 0.075D + rand.nextDouble()) % 1.0D;
+		double radius = 0.38D + 0.08D * Math.sin(age * 0.17D);
+		Vec3 source = will.position().add(
+				Math.cos(spiralAngle) * radius,
+				will.getBbHeight() * (0.18D + 0.68D * heightPhase),
+				Math.sin(spiralAngle) * radius);
+		Vec3 finalPos = source.subtract(origin);
+		Particle created = mc.particleEngine.createParticle(
+				WillAbsorptionGlowParticleFactory.createData(will.getSchool().getColor()),
+				origin.x, origin.y, origin.z,
+				finalPos.x + rand.nextDouble() * 0.08D - 0.04D,
+				finalPos.y + rand.nextDouble() * 0.08D - 0.04D,
+				finalPos.z + rand.nextDouble() * 0.08D - 0.04D);
+		if (created instanceof WillAbsorptionGlowParticle particle) {
+			if (firstPersonTargetAnchor.isPresent()) {
+				particle.setFirstPersonTargetAnchor(firstPersonTargetAnchor.get());
+			} else {
+				particle.setTargetYOffset(0.0D);
+			}
+		}
+	}
+
+	private static void spawnWillAbsorptionGlowParticle(Minecraft mc, Vec3 origin, Vec3 source, Random rand,
+			Optional<Vec3> firstPersonTargetAnchor) {
+		Vec3 finalPos = source.subtract(origin);
+		Particle created = mc.particleEngine.createParticle(
+				WillAbsorptionGlowParticleFactory.createData(WILL_ABSORPTION_GLOW),
+				origin.x, origin.y, origin.z,
+				finalPos.x + rand.nextDouble() * 0.22D - 0.11D,
+				finalPos.y + rand.nextDouble() * 0.32D - 0.16D,
+				finalPos.z + rand.nextDouble() * 0.22D - 0.11D);
+		if (created instanceof WillAbsorptionGlowParticle particle) {
+			if (firstPersonTargetAnchor.isPresent()) {
+				particle.setFirstPersonTargetAnchor(firstPersonTargetAnchor.get());
+			} else {
+				particle.setTargetYOffset(0.0D);
 			}
 		}
 	}
@@ -202,6 +266,23 @@ public final class CellHandParticleEffects {
 				.sorted(Comparator.comparingDouble(player::distanceToSqr))
 				.limit(LivingStaffFocusRules.absorptionTargetCap(true, focus))
 				.toList();
+	}
+
+	private static Optional<WillEntity> getFalteringWillAbsorptionParticleTarget(LivingEntity living, ItemStack stack) {
+		double range;
+		if (stack.getItem() instanceof BloodAbsorptionItem) {
+			range = LivingStaffFocusRules.bareAbsorptionRange();
+		} else if (living instanceof Player player && LivingStaffItem.isLivingStaffAbsorptionUse(player, stack)) {
+			ILivingStaffProgress progress = HemoCapabilityAccess.getLivingStaffProgress(player).orElse(null);
+			LivingStaffFocusProfile focus = LivingStaffFocusProfile.fromPlayer(player, progress);
+			range = LivingStaffFocusRules.absorptionRange(focus);
+		} else {
+			return Optional.empty();
+		}
+		return living.level().getEntitiesOfClass(WillEntity.class, living.getBoundingBox().inflate(range),
+						WillEntity::canBloodAbsorptionDrawParticles)
+				.stream()
+				.min(Comparator.comparingDouble(living::distanceToSqr));
 	}
 
 	private static Vec3 calculateFirstPersonHandAnchor(HumanoidArm hand) {

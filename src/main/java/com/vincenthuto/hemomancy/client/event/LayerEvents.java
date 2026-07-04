@@ -19,6 +19,7 @@ import com.vincenthuto.hemomancy.client.model.entity.mob.animal.*;
 import com.vincenthuto.hemomancy.client.model.entity.mob.aquatic.*;
 import com.vincenthuto.hemomancy.client.model.entity.mob.arthropod.*;
 import com.vincenthuto.hemomancy.client.model.entity.mob.monster.*;
+import com.vincenthuto.hemomancy.client.model.entity.mob.will.WillModel;
 import com.vincenthuto.hemomancy.client.model.entity.npc.*;
 import com.vincenthuto.hemomancy.client.model.entity.summon.*;
 import com.vincenthuto.hemomancy.client.model.item.*;
@@ -92,6 +93,7 @@ public class LayerEvents {
 		event.registerLayerDefinition(IronPillarModel.iron_pillar, IronPillarModel::createBodyLayer);
 		event.registerLayerDefinition(BloodBulletModel.blood_bullet, BloodBulletModel::createBodyLayer);
 		event.registerLayerDefinition(WretchedWillModel.wretched_will, WretchedWillModel::createBodyLayer);
+		event.registerLayerDefinition(WillModel.LAYER_LOCATION, WillModel::createBodyLayer);
 		event.registerLayerDefinition(BloodGourdModel.blood_gourd, BloodGourdModel::createBodyLayer);
 		event.registerLayerDefinition(CurvedHornModel.curved_horn, CurvedHornModel::createBodyLayer);
 		event.registerLayerDefinition(HemorathRibModel.hemorath_rib, HemorathRibModel::createBodyLayer);

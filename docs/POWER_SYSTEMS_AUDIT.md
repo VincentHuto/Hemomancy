@@ -6,6 +6,7 @@
 > **Status vocabulary:** `implemented` / `partial` / `dormant` / `planned`, matching HEMOMANCY_REFERENCE.md.
 > **Follow-on specs (2026-07-02):** [Rogue Hemomancer Wills](superpowers/specs/2026-07-02-rogue-hemomancer-wills-design.md) → [Fungal Scar Consolidation](superpowers/specs/2026-07-02-fungal-scar-consolidation-design.md) → [Morphling Fungal-Strain Reframe](superpowers/specs/2026-07-02-morphling-fungal-strain-reframe-design.md). These three cross-linked docs carry the morphling 12→8, fungal-scar 9→8, naming register, and the Wills ambusher system forward from this audit.
 > **Companion examination:** [BLOOD_MANIPULATION_EXAMINATION.md](BLOOD_MANIPULATION_EXAMINATION.md) — current-state deep dive on the manipulation (expenditure) system: the 60-entry catalog by tendency, acquisition lanes, modifier economy, and code-verified runway gaps.
+> **Implementation plans (2026-07-03), recommended build order:** [Guardrails / Phase 1](superpowers/plans/2026-07-03-audit-phase1-guardrails.md) → [Fungal Scars](superpowers/plans/2026-07-03-fungal-scar-consolidation.md) → [Morphlings](superpowers/plans/2026-07-03-morphling-fungal-strain-reframe.md) → [Wills](superpowers/plans/2026-07-03-rogue-hemomancer-wills.md). Orphaned ideas and pending decisions are ledgered in [DEFERRED_IDEAS.md](DEFERRED_IDEAS.md).
 
 ---
 
@@ -60,11 +61,11 @@ Collision severity: **HIGH** = same trigger *and* same effect family (direct dup
 | 2 | **Melee reflect / thorns** | Barbed set (2 dmg + Blood Loss) · Urchin **Spine Lash** (reflect 25–45% + slow) · Chitinite morphling **Carapace Thorns** (reflect 20–40%) · Scars of Thorn/Anvil/Crucible (reflect 1/2/3) | **HIGH** — two morphlings duplicate each other *and* the armor fork |
 | 3 | **Passive blood income** | Hematic Iron set (+2 blood/s) · Leeches **Sanguine Siphon** passive · Lodestone Faceplate trickle · `ferric_transmutation` granting Sanguine Siphon II · Cradle leeching | **MEDIUM** — different systems, one uncapped income channel |
 | 4 | **Melee lifesteal** | Blood Lust set bonus (10% of melee damage) · Leeches **Life Steal** (Developing: 15–25%) | **HIGH** — same trigger, same effect, stacks |
-| 5 | **Death prevention** | Cuttlefish **Ink Mantle Reprieve** (Apex, blood spend, 10 min) · **Thanomyces resurgens** fungal scar Split Husk (drain all blood, reform at 25%, 15 min) · Silent Archon refusal (3,000 blood, 10 min) | **MEDIUM** — three armable cheat-deaths on one body |
+| 5 | **Death prevention** | Cuttlefish **Ink Mantle Reprieve** (Apex, blood spend, 10 min) · Silent Archon refusal (3,000 blood, 10 min) | **LOW** — Thanomyces Split Husk was removed during fungal-scar consolidation, leaving two high-cost reprieves with different sources |
 | 6 | **Armor toughness** | Chitinite *armor* set (+2.0 toughness, 25% projectile DR) · Chitinite *morphling* **Chitinous Bulwark** passive (toughness) — same effect name across two systems | **MEDIUM** — brand confusion plus stacking |
 | 7 | **Move/attack speed** | Serpent **Serpentine Guile** (+15%/+10%) · `blood_rush` effect (+20%/+10%) · Tengu mask (speed on hit) | **MEDIUM** — persistent vs cast vs contact; needs a cap, not a redesign |
 | 8 | **Reveal/Glowing** | Bat **Echoic Perception** (passive radius glow) · `hemolymphal_pulse` / `crimson_sight` / `unclosing_eye` (cast reveals) · Mole **Burrow Sense** | **LOW** — passive sense vs willed sonar is a legible split; keep |
-| 9 | **Mining haste** | Mole **Burrower's Instinct** · Talaromyces Minus fungal scar (Haste + vein mining) · `ferric_resonance` (Haste II, 30s) | **LOW** — context-locked (underground) vs scar vs short buff; keep, watch stacking |
+| 9 | **Mining haste** | Mole **Burrower's Instinct** · Talaromyces Minus fungal scar (vein mining only) · `ferric_resonance` (Haste II, 30s) | **LOW** — Talaromyces no longer contributes Haste, so this is now a utility overlap rather than a stacking-speed risk |
 | 10 | **Fall/flight mitigation** | Noctifly Agaric (fungal elytra) · Bat **Membrane Glide** · Spider fall arrest / Silk Tether · Edacious flight · Venous Strider Sabatons · Scar of Descendence | **LOW** — mobility spread across tiers is fine; Edacious flight must stay the only true flight below Apotheos |
 
 **Root cause:** all three systems are currently allowed to answer the same question — *"what buff do you have?"* — so they compete on one axis and inevitably converge on the same effect vocabulary (regen, thorns, lifesteal, blind, reveal, speed, cheat-death).
@@ -184,9 +185,9 @@ Phased to match the alpha posture in [PUBLIC_ALPHA_READINESS.md](PUBLIC_ALPHA_RE
 ### Phase 1 — Guardrails (low code risk)
 
 - [ ] Adopt §4 ownership rules as the review checklist for new triad content.
-- [ ] Implement the circulation bandwidth helper and route Hematic Iron regen, Leeches siphon, Lodestone trickle, and cradle leeching through it.
-- [ ] Implement the shared Last Rite tag/cooldown across Ink Mantle, Winter Shroud Cryptobiosis, and Silent Archon refusal.
-- [ ] Rename the Chitinite morphling passive so no effect name is shared across systems.
+- [x] Implement the circulation bandwidth helper and route Hematic Iron regen, Leeches siphon, Lodestone trickle, and cradle leeching through it. *(2026-07-03: `CirculationIncomeRules` + `CirculationIncomeHelper`; pure layer test-verified, dev-machine gradle gate pending — see the guardrails plan execution log.)*
+- [x] Implement the shared Last Rite tag/cooldown across Ink Mantle, Winter Shroud Cryptobiosis, and Silent Archon refusal. *(2026-07-03: `LastRiteRules` + `LastRiteHelper` wired into Ink Mantle Reprieve, Last-Light Mantle, and Silent Archon refusal; Cryptobiosis joins when the morphling reframe lands.)*
+- [ ] ~~Rename the Chitinite morphling passive so no effect name is shared across systems.~~ *Superseded — the morphling reframe cuts the Chitinite species outright.*
 
 ### Phase 2 — Collision migrations
 

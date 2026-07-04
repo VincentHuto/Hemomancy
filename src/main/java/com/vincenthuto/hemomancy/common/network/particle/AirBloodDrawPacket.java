@@ -39,11 +39,11 @@ public class AirBloodDrawPacket implements CustomPacketPayload {
 //				if (items != null) {
 //					if (items.contains("Items", 9)) {
 //						selected = staff.of(((ListTag) items.get("Items")).getCompound(0));
-//						if (selected.getItem() == ItemInit.morphling_pests.get()) {
+//						if (selected.getItem() == ItemInit.morphling_bootlace.get()) {
 //							sLevel.sendParticles(GlowParticleFactory.createData(new ParticleColor(0, 255, 0)),
 //									airTrace.getLocation().x, airTrace.getLocation().y, airTrace.getLocation().z, 5, 0,
 //									0, 0, 0.015f);
-//						} else if (selected.getItem() == ItemInit.morphling_serpent.get()) {
+//						} else if (selected.getItem() == ItemInit.morphling_emberfang.get()) {
 //							sLevel.sendParticles(SerpentParticleFactory.createData(new ParticleColor(255, 20, 0)),
 //									airTrace.getLocation().x, airTrace.getLocation().y, airTrace.getLocation().z, 2, 0,
 //									0, 0, 0.0015f);

@@ -27,6 +27,8 @@ import com.vincenthuto.hemomancy.common.entity.mob.aquatic.MnemonicWhaleTuning;
 import com.vincenthuto.hemomancy.common.entity.mob.aquatic.PrismCuttleEntity;
 import com.vincenthuto.hemomancy.common.entity.mob.arthropod.*;
 import com.vincenthuto.hemomancy.common.entity.mob.monster.*;
+import com.vincenthuto.hemomancy.common.entity.mob.monster.will.WillAnchorEntity;
+import com.vincenthuto.hemomancy.common.entity.mob.monster.will.WillEntity;
 import com.vincenthuto.hemomancy.common.entity.npc.DrudgeEntity;
 import com.vincenthuto.hemomancy.common.entity.npc.harbinger.HarbingerAlchemistEntity;
 import com.vincenthuto.hemomancy.common.entity.npc.harbinger.HarbingerCicatrixAnchoriteEntity;
@@ -73,6 +75,7 @@ public class EntityInit {
     public static final TagKey<EntityType<?>> FRIGID_TAG = createTag("frigid");
     public static final TagKey<EntityType<?>> HEMOMANCY_MOB = createTag("hemomancy_mob");
     public static final TagKey<EntityType<?>> SPECIMEN_JAR_CAPTURABLE = createTag("specimen_jar_capturable");
+    public static final TagKey<EntityType<?>> WILLS = createTag("wills");
 
     public static final DeferredHolder<EntityType<?>, EntityType<CovenantThroneSeatEntity>> covenant_throne_seat =
             ENTITY_TYPES.register("covenant_throne_seat",
@@ -311,6 +314,23 @@ public class EntityInit {
                             .of(BloodDrunkPuppeteerEntity::new, MobCategory.MONSTER)
                             .sized(0.6F, 1.8F)
                             .build(Hemomancy.rloc("blood_drunk_puppeteer").toString()));
+
+    public static final DeferredHolder<EntityType<?>, EntityType<WillEntity>> will = ENTITY_TYPES
+            .register("will",
+                    () -> EntityType.Builder
+                            .<WillEntity>of(WillEntity::new, MobCategory.MONSTER)
+                            .sized(0.6F, 1.95F)
+                            .clientTrackingRange(8)
+                            .build(Hemomancy.rloc("will").toString()));
+
+    public static final DeferredHolder<EntityType<?>, EntityType<WillAnchorEntity>> will_anchor = ENTITY_TYPES
+            .register("will_anchor",
+                    () -> EntityType.Builder
+                            .<WillAnchorEntity>of(WillAnchorEntity::new, MobCategory.MISC)
+                            .sized(0.5F, 0.5F)
+                            .clientTrackingRange(8)
+                            .updateInterval(10)
+                            .build(Hemomancy.rloc("will_anchor").toString()));
 
     public static final DeferredHolder<EntityType<?>, EntityType<BloodThrallEntity>> blood_thrall = ENTITY_TYPES
             .register("blood_thrall",
@@ -782,6 +802,7 @@ public class EntityInit {
         event.put(EntityInit.abhorent_thought.get(), AbhorentThoughtEntity.setAttributes().build());
         event.put(EntityInit.erythromycelium_eruptus.get(), ErythromyceliumEruptusEntity.setAttributes().build());
         event.put(EntityInit.blood_drunk_puppeteer.get(), BloodDrunkPuppeteerEntity.setAttributes().build());
+        event.put(EntityInit.will.get(), WillEntity.setAttributes().build());
         event.put(EntityInit.morphling_polyp.get(), MorphlingPolypEntity.setAttributes().build());
         event.put(EntityInit.enthralled_doll.get(), EnthralledDollEntity.setAttributes().build());
         event.put(EntityInit.blood_thrall.get(), BloodThrallEntity.setAttributes().build());

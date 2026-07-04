@@ -29,7 +29,7 @@ public final class MycelialSkillBranch {
 			SkillPointInit.skill_primal_morphogenesis = SkillPointInit.registerSkill(branch,
 					new SkillPoint(37, "skill_primal_morphogenesis", 1000, 3, EnumSkillStates.LOCKED, SkillPointInit.skill_qliphoth_gestation)
 							.setSkillPointCost(5).setRequiredDegree(8).setTreePosition(289, 671).setBranch("mycelial").setBranchColor(0xFF6E8F3A)
-							.setIconItem(() -> new ItemStack(ItemInit.morphling_fungal.get())));
+							.setIconItem(() -> new ItemStack(ItemInit.morphling_gravecap.get())));
 		// </skill-editor>
 	}
 }

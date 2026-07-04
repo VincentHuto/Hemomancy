@@ -142,6 +142,8 @@ All player-attached NeoForge attachments and exposed capabilities are registered
 | Capability | Interface | Purpose |
 |---|---|---|
 | Blood Volume | `IBloodVolume` | Current/max blood, active state, bloodline link, trickle/auto-draw settings, direct-routing bloodline opt-in, blood debt tracking (Hemorath encounter) |
+| Power Guardrails | `PowerGuardrailState` attachment | Internal player attachment for circulation window use, borrowed-blood reserve, and Last Rite armed source/shared cooldown. Access through `HemoCapabilityAccess.getPowerGuardrails`; no public capability key is exposed. |
+| Will Ambush State | `WillAmbushState` attachment | Internal player attachment for Rogue Hemomancer Will ambush cooldowns, Fungal Whisper herald windows, and hidden hive-attention/ripeness pressure. Access through `HemoCapabilityAccess.getWillAmbushState`; no public capability key is exposed. |
 | Known Still Arts | `IKnownStillArts` | Set of Still Arts granted by Our Lady / Unstained rites; selected art; synced via `KnownStillArtsServerPacket` |
 | Known Summons | `IKnownSummons` | Permanently unlocked puppeteer summon shapes; synced via `KnownSummonsServerPacket` and refreshed on progress-screen open |
 | Liber Knowledge | `IBookKnowledge` | Player-owned Liber Sanguinum / Liber Immaculatus unlock state, memo discovery, and entry visibility |
@@ -159,6 +161,19 @@ All player-attached NeoForge attachments and exposed capabilities are registered
 | Visceral Organs | `IVisceralOrgans` | Tracks extracted/modified organs (Spleen, Liver, Lungs, Kidneys, Heart) for the Visceral Mirror ritual system |
 
 Block and item storage use the same attachment/capability style. Current block attachments cover blood volume, blood tendency, and white humor volume; item capabilities cover portable blood volume, registry-backed scar metadata, and non-scar Harbinger equipment metadata.
+
+### 2.3a Power-System Guardrail Helpers (Audit Phase 1)
+
+Shared governors from [POWER_SYSTEMS_AUDIT.md](POWER_SYSTEMS_AUDIT.md) §3.2, implemented as pure rules classes (`common/event/CirculationIncomeRules`, `LastRiteRules`, `BorrowedBloodRules`, `TriadAttributeCaps` — each with a main()-style test) plus thin adapters using the `PowerGuardrailState` player attachment:
+
+| Helper | Adapter | Behavior |
+|---|---|---|
+| Circulation income cap | `CirculationIncomeHelper.grant(player, volume, amount, channel)` | All passive blood income (Hematic Iron set regen, Lodestone mask trickle, Sanguine Siphon morphling passive, cradle redistribution) shares one bandwidth window scaled by degree + Capacity bonus. Returns the amount actually delivered (fill clamping is measured). Skill regen and active casts are exempt by design. |
+| Last Rite group | `LastRiteHelper.arm / clearIfArmed / armForMorphling / canFire / consume` | One death-save per shared cooldown across Ink Mantle Reprieve, Last-Light Mantle, and Silent Archon refusal (ids `hemomancy:ink_mantle`, `hemomancy:last_light`, `hemomancy:silent_refusal`). Requests fire only when the requested id matches the most-recent eligible armed source and the shared cooldown has expired. |
+| Borrowed-blood reserve | `BorrowedBloodReserve.deposit / drainToCover / get` | Blood Lust overkill lifesteal banks into a capped reserve on `PowerGuardrailState`; manipulation casts drain it only after non-blood gates such as alignment pass and only when the cast would otherwise fail for lack of blood. |
+| Triad attribute caps | `TriadAttributeCaps.clampToughness / clampMoveSpeed` | Budget clamps for stacked toughness/speed across armor/morphling/scar layers; currently wired at the Chitinite toughness grant, other sites join per the guardrails plan. |
+
+Config lives in the `guardrails` section of `HemoServerConfig` (`circulationEnabled`, `circulationBaseBandwidth`, `lastRiteEnabled`, `lastRiteSharedCooldownTicks`, `borrowedBloodEnabled`, `borrowedBloodCap`, …). Single sources are never affected; only stacks are disciplined.
 
 ### 2.4 Data Generation & Focused Tests
 
@@ -232,6 +247,34 @@ Hemomancy registers active server, client, and common config specs through `Hemo
 | `morphlingPassiveDrainEnabled` | Boolean | `true` | â€” | Whether equipped morphlings drain blood |
 | `morphlingDrainRate` | Double | `0.5` | 0.01â€“100.0 | Blood drained per drain tick |
 | `morphlingDrainInterval` | Int | `60` | 1â€“6000 | Ticks between drain ticks |
+
+**Rogue Hemomancer Wills** (`wills`):
+
+| Key | Type | Default | Range | Description |
+|-----|------|---------|-------|-------------|
+| `willsEnabled` | Boolean | `true` | - | Enables ambient Rogue Will ambushes, anchors, rewards, and bend interactions |
+| `ambushCheckIntervalTicks` | Int | `200` | 20-72000 | Per-player server tick cadence for ambush rolls |
+| `baseChancePerCheck` | Double | `0.02` | 0.0-1.0 | Base chance before terrain, Blood Moon, Blood Drunkenness, herald, bloom, and hive-attention multipliers |
+| `ambushCooldownTicks` | Int | `24000` | 0-240000 | Minimum ticks between successful ambushes per player |
+| `maxActivePerPlayer` | Int | `3` | 1-32 | Nearby unclaimed Rogue Will cap around a target player |
+| `maxActivePerDimension` | Int | `8` | 1-128 | Dimension-wide unclaimed Rogue Will cap |
+| `terrainMultiplier` | Double | `3.0` | 0.0-16.0 | Chance multiplier for ripe terrain, darkness, or fungal pressure |
+| `bloodMoonMultiplier` | Double | `2.0` | 0.0-16.0 | Chance multiplier while Blood Moon is active |
+| `bloodDrunkennessMultiplierPerAmplifier` | Double | `0.5` | 0.0-8.0 | Additive chance multiplier per Blood Drunkenness amplifier level |
+| `heraldMultiplier` | Double | `4.0` | 0.0-16.0 | Chance multiplier while a natural Fungal Whisper herald window is active |
+| `anchorLifetimeTicks` | Int | `80` | 20-600 | Delay between anchor spawn and Will materialization |
+| `falterBurstFraction` | Double | `0.25` | 0.05-1.0 | Fraction of max health one player must deal inside the burst window to make a Broken Will falter |
+| `falterBurstWindowTicks` | Int | `80` | 20-400 | Burst-damage tracking window before pressure expires |
+| `falterWindowTicks` | Int | `100` | 20-1200 | Broken Will bindable duration after a burst-triggered falter |
+| `willAbsorptionProgressRequired` | Double | `100.0` | 1.0-10000.0 | Progress required to consume a faltering Broken Will after Blood Absorption latches |
+| `willAbsorptionGraceTicks` | Int | `20` | 1-200 | Ticks an absorbing Will waits without an active absorption channel before escaping angry |
+| `willAbsorptionEscapeHealthFraction` | Double | `0.4` | 0.0-1.0 | Minimum max-health fraction restored when an absorbing Will escapes |
+| `willAbsorptionRageTicks` | Int | `160` | 1-2400 | Ticks an escaped Will resists immediate refaltering |
+| `bendEnabled` | Boolean | `true` | - | Enables faltering-Will blood utility interactions, Commandeer, and backfire interactions |
+| `commandeerEnabled` | Boolean | `true` | - | Enables Marionette Crossbar commandeering specifically |
+| `claimedWillBonusCapSilentArchon` | Int | `1` | 0-8 | Extra claimed-Will cap for the Silent Archon edge |
+| `puppeteerSpawnChance` | Double | `0.2` | 0.0-1.0 | Chance to replace the first Broken Will slot with a Blood Drunk Puppeteer archetype |
+| `minDegree` | Int | `4` | 0-8 | Minimum Harbinger degree for ambient Will ambushes |
 
 ### 3.2 Client Config (`HemoClientConfig`)
 
@@ -614,11 +657,11 @@ At around **Degree 3â€“4**, the Harbinger Vicar and/or the player's own res
 | Saint | Tendencies | Somatic Loom Pattern | Canon Memory | Related Fungal Scar |
 |-------|-----------|----------------------|--------------|----------------------|
 | **Hemorath** | MORTEM + ANIMUS | `hallowed_residuum_hemorath` + `animus: 1`, `mortem: 1`, `blood: 100` | Crimson Tithe | Talaromyces Minus |
-| **Seraphae** | LUX + DUCTILIS | `hallowed_residuum_seraphae` + `ductilis: 1`, `lux: 1`, `blood: 100` | Unclosing Eye | Noctifly Agaric / Anastocordyceps nexus / Antiphonomyces resonans |
-| **Putriciel** | MORTEM + FLAMMEUS | `hallowed_residuum_putriciel` + `flammeus: 1`, `mortem: 1`, `blood: 100` | Bloom of Rot | Respergillus / Sanguiflora cadens / Saprovitta vestigium |
-| **Velorum** | CONGEATIO + TENEBRIS | `hallowed_residuum_velorum` + `congeatio: 1`, `tenebris: 1`, `blood: 100` | Endless Hour | Lumina Devorans / Thanomyces resurgens |
+| **Seraphae** | LUX + DUCTILIS | `hallowed_residuum_seraphae` + `ductilis: 1`, `lux: 1`, `blood: 100` | Unclosing Eye | Noctifly Agaric / Antiphonomyces resonans / Oculiflora reticularis |
+| **Putriciel** | MORTEM + FLAMMEUS | `hallowed_residuum_putriciel` + `flammeus: 1`, `mortem: 1`, `blood: 100` | Bloom of Rot | Putrivora resolvens / Saprovitta vestigium |
+| **Velorum** | CONGEATIO + TENEBRIS | `hallowed_residuum_velorum` + `congeatio: 1`, `tenebris: 1`, `blood: 100` | Endless Hour | Cryostroma perdurans |
 
-> The older saint-residuum + vanilla-catalyst incubator recipes for fungal scars have been replaced by Mycelial Crucible cultivation recipes. Hallowed Residuum still matters for Canon Memories and Saint rewards; scar growth now keys off the recipe tendency, blood cost, and aligned enzymes. Phase 1 cleanup removed the last duplicate Incubator holdovers for `respergillus`, `talaromyces_minus`, `noctifly_agaric`, and `lumina_devorans`.
+> The older saint-residuum + vanilla-catalyst incubator recipes for fungal scars have been replaced by Mycelial Crucible cultivation recipes. Hallowed Residuum still matters for Canon Memories and Saint rewards; scar growth now keys off the recipe tendency, blood cost, and aligned enzymes. The active fungal roster now has eight crucible-grown scars and no Incubator holdovers.
 
 There are **four Saints** in total; which one a player encounters first is partially randomized.
 
@@ -1298,24 +1341,23 @@ The **Scar Pattern** is now one dynamic item, `scar_pattern`, whose custom data 
 
 Special fungal scar items with active effects extend `ItemFungalScar`, render as rotating 3D scar items on the player, have rare rarity/foil visuals, and occupy the dedicated fungal scar `ItemStack` slot in the `SCARS` capability (`ScarType.FUNGAL`, slot 0). The current implementation uses the **Mycelial Crucible**, not the Morphling Incubator, and the old four-scar incubator plan has been superseded.
 
-The basic saint-linked set remains tuned at 1,200 blood / 1,200 ticks / 2,000 enzyme-power threshold:
+The consolidated fungal-scar roster is eight crucible-grown identities. The legacy removed scar ids migrate on login/tick to the nearest survivor and do not retain removed per-stack custom data:
 
 | Item | Tendency | Active Effect |
 |------|----------|---------------|
 | ![](../src/main/resources/assets/hemomancy/textures/item/noctifly_agaric.png) Noctifly Agaric | Animus | Grants the `fungal_elytra` effect while equipped; glide support is maintained by `HarbingerEquipmentEntityEventHandler.onGlideTick()` |
-| ![](../src/main/resources/assets/hemomancy/textures/item/respergillus.png) Respergillus | Animus | Grants Water Breathing while equipped |
-| ![](../src/main/resources/assets/hemomancy/textures/item/talaromyces_minus.png) Talaromyces Minus | Ferric | Grants Haste while worn and enables shift-mining ore vein mining through `VeinMinerHelper` |
-| ![](../src/main/resources/assets/hemomancy/textures/item/lumina_devorans.png) Lumina Devorans | Tenebris | Grants Night Vision, Strength, and Resistance while equipped |
+| ![](../src/main/resources/assets/hemomancy/textures/item/rhizovitta_communis.png) Rhizovitta Communis | Animus | While grounded in a fungal network, sustains a guarded scar-channel blood trickle and refunds a small share of successful blood-manipulation cost |
+| ![](../src/main/resources/assets/hemomancy/textures/item/talaromyces_minus.png) Talaromyces Minus | Ferric | Enables shift-mining ore vein mining through `VeinMinerHelper`; it no longer grants Haste |
+| ![](../src/main/resources/assets/hemomancy/textures/item/oculiflora_reticularis.png) Oculiflora Reticularis | Tenebris | Client-local network sight only: reveals equipped scar state, synced Qliphoth bloom data, nearby entities, and nearby morphic nectar/fluid signals |
 
-The new advanced set is also registered and has live event handlers for the non-tooltip effects:
+The remaining advanced scars use the same live event-handler surface:
 
 | Item | Tendency | Active Effect | Cultivation Cost |
 |------|----------|---------------|------------------|
-| **Saprovitta vestigium** | Flammeus | **Feeding Wake** â€” movement leaves a brief damaging blood-fungal trail (1.5 magic damage pulses every 6 ticks while moving) | 1,200 blood / 1,200 ticks / 2,000 enzyme power |
-| **Antiphonomyces resonans** | Ductilis | **Crawling Choir** â€” 20% chance for a successful blood manipulation to echo-cast at no extra blood cost | 2,400 blood / 2,400 ticks / 3,000 enzyme power |
-| **Sanguiflora cadens** | Mortem | **Vein Orchard** â€” 30% chance on kill to bloom blood resources at the death site (Spore Sac, sometimes Hematic Iron Scrap) | 2,400 blood / 2,400 ticks / 3,000 enzyme power |
-| **Thanomyces resurgens** | Congeatio | **Split Husk** â€” prevents death once, drains all active blood, reforms at 25% health, 15-minute per-stack cooldown | 2,400 blood / 2,400 ticks / 3,000 enzyme power |
-| **Anastocordyceps nexus** | Lux | **Latching Vein** â€” striking an enemy tethers nearby foes for 6 seconds; tethered targets share 20% of damage taken | 2,400 blood / 2,400 ticks / 3,000 enzyme power |
+| **Saprovitta vestigium** | Flammeus | **Feeding Wake** - movement leaves a brief damaging blood-fungal trail (1.5 magic damage pulses every 6 ticks while moving) | 1,200 blood / 1,200 ticks / 2,000 enzyme power |
+| **Antiphonomyces resonans** | Ductilis | **Crawling Choir** - 20% chance for a successful blood manipulation to echo-cast at no extra blood cost | 2,400 blood / 2,400 ticks / 3,000 enzyme power |
+| **Putrivora resolvens** | Mortem | **Affliction Digestion** - poison, wither, hunger, and blood-loss effects tick down faster and feed back limited guarded scar-channel blood recovery | 2,400 blood / 2,400 ticks / 3,000 enzyme power |
+| **Cryostroma perdurans** | Congeatio | **Conservative Resilience** - stillness ramps passive vascular recovery without reviving the removed death-save behavior | 2,400 blood / 2,400 ticks / 3,000 enzyme power |
 
 **Mycelial Crucible recipe format** (`data/hemomancy/recipe/fungal_scar/*.json`):
 ```json
@@ -1326,7 +1368,7 @@ The new advanced set is also registered and has live event handlers for the non-
   "phase1_duration": 2400,
   "maturation_threshold": 3000,
   "immature_result": { "id": "hemomancy:immature_fungal_scar" },
-  "result": { "id": "hemomancy:anastocordyceps_nexus" }
+  "result": { "id": "hemomancy:oculiflora_reticularis" }
 }
 ```
 
@@ -1375,7 +1417,7 @@ When placed, the crucible reserves a rotating 3x2x1 footprint: the main block is
 
 **Phase 2 â€” Maturation:** The immature culture stores `Tendency`, `MatureThreshold`, `MatureProgress`, and `TargetScarId` in `DataComponents.CUSTOM_DATA`. Feeding aligned enzymes advances `MatureProgress`; when progress reaches the threshold, the crucible converts it into the target `ItemFungalScar`. Progress is preserved on the item stack, and blood shortages pause the process rather than resetting it.
 
-`Hyphal Substrate` is registered as a supporting crafting ingredient, and `immature_fungal_scar` uses one model/texture with dynamic translated names such as `item.hemomancy.immature_scar.anastocordyceps_nexus`.
+`Hyphal Substrate` is registered as a supporting crafting ingredient, and `immature_fungal_scar` uses one model/texture with dynamic translated names such as `item.hemomancy.immature_scar.oculiflora_reticularis`.
 
 > **Design status:** The extractor / harvested Fungal Gardens scar plan has been replaced for now by crucible cultivation. The deeper Apotheos-tier fungal scar concept remains open-ended design space, but the implemented fourth scar family is already live through `ItemFungalScar` + `MycelialCrucible`.
 
@@ -1741,6 +1783,22 @@ Current summon definitions:
 | `mnemonist_puppet` | 5 | Memory echo specialist | 26 | 3 | 64 | 16/min | 1400 |
 
 `mnemonist_puppet` is the bounded V1 memory-replay summon. It records up to six recent damage memories against its current target, drops stale memories after 160 ticks, and every 40 ticks can replay one as reduced, capped magic damage with red/pale memory particles. Replay damage is marked so it cannot record itself, and the implementation intentionally avoids full action replay.
+
+### 17.1 Rogue Hemomancer Wills
+
+Rogue Hemomancer Wills are late-Harbinger ambushers keyed to the player's blood tendency rather than ordinary biome spawns. The system uses one data-driven `will` entity with two origins: **Broken** Wills use fixed tier stats forever, while **Sent** Wills snapshot scaled stats from the target player when spawned. Wills cast their curated school kits through `WillManipulationCaster`, `ManipulationCastContext`, and the `EntityCastableManipulation` path, so their combat uses mob-safe versions of the same projectile, fire, ice, light, death, and shadow manipulation fantasies the player uses. `DrudgeAction` and `MobManipCaster` remain Drudge infrastructure only.
+
+Broken Wills cycle through their kit with occasional stutters, selling incomplete former-Harbinger muscle memory. Sent Wills use a small priority controller instead: they prefer mobility at range, defensive casts when injured, close-range pressure when the target is inside melee space, and finishers or burst casts when the target is vulnerable.
+
+Wills also spawn with visible, non-drop living weapons through `WillEquipmentRules`. Tier-I Broken Wills carry a `living_staff`; Tier-II+ Broken Wills and all Sent Wills carry tendency weapons: Animus blade, Flammeus torch, Ductilis crossbow, Lux spear, Mortem axe, Congeatio flail, Ferric staff, and Tenebris baghnakh. `WillWeaponController` supplies mob-safe weapon pressure without invoking player inventory or blood-volume hooks: torches burn, flails slow, crossbows fire blood bolts, claws/bladework bleed, staffs guard or knock back, and school weapons reinforce the Will's combat identity.
+
+Ambient ambushes are driven by `WillAmbushDirector` and `WillAmbushState`. Eligible active-blood Harbingers at the configured minimum degree roll on a cooldown, with chance multipliers from ripe/dark terrain, Qliphoth bloom ownership, Blood Moon, Blood Drunkenness, Fungal Whisper herald windows, and hidden hive attention. Founding Fanes, the Chamber of Will, and placed Harbinger Outpost pieces are sanctuary exclusions through `WillSanctuaryRules`.
+
+Successful ambushes spawn a `will_anchor` first. All nearby players receive a short sound/overlay cue through `WillPresenceCuePacket`. Oculiflora carriers get the stronger counterplay: `WillAnchorRenderer` renders the pre-materialization anchor only when `OculifloraReticularisItem.networkSightActive(localPlayer)` is true. After the anchor lifetime expires, it materializes the composed group and may replace the first Broken slot with a `blood_drunk_puppeteer`, making the Puppeteer part of the Will archetype without replacing its existing combat identity.
+
+Wills dissolve instead of using ordinary corpse loot. Dissolve rewards are school-keyed through `WillCombatRules.lootFor`: the matching representative enzyme always drops, and Broken Wills have a small `faded_memory` chance. Sent Will dissolution increments hidden hive attention on the targeted player only; no Apotheos or progression gate is attached to that pressure in this stage.
+
+Broken Wills enter their short bindable falter window when one player deals enough burst damage: by default, 25% of max health within 80 ticks. Non-player damage does not build pressure, mixed players do not pool pressure, and the meter resets when the burst window expires or a different player takes over. Sent Wills never falter. Blood Absorption does not affect Wills by default, but channeling it near a faltering Broken Will resolves Absorb: the channel latches the Will into `ABSORBING`, freezes AI/casting/weapon pressure, and advances a separate absorption-progress meter instead of draining health. Bare Blood Absorption advances the struggle steadily; Living Staff absorption advances faster and scales through Vascular Draw, Hematic Focus, awakened Vesper memory, and Vesper's Refusal. Completing the staged struggle immediately consumes and removes the Will: it grants +3 alignment toward its school, rolls the absorption enzyme/faded-memory reward chance at that moment, emits the final black-glow pulse, and does not enter a second dissolve phase or use ordinary dissolve loot. If the channel is dropped past the grace window, the Will snaps back to `MATERIALIZED` in controlled rage: it restores to at least 40% max health, targets the absorber, suppresses immediate refaltering, and resumes pressure. This Will-specific absorption draw uses small black glow motes pulled toward the active hand or staff instead of the normal blood-cell siphon particles, with a second spiral of the Will's school-colored motes wrapping inward along the same pull; the Will shell flickers during `ABSORBING` as the channel approaches completion. Blood Projection aimed at a faltering Broken Will resolves the new Redirect-as-banishment path: it spends projection blood, bursts the Will into a particle cloud, subtracts 3 alignment from that school, and dissolves it without turning it into a temporary ally. Right-click behavior is now reserved for **Commandeer** with a Marionette Crossbar. Commandeered Wills implement `BoundPuppeteerSummon`, count against the puppeteer active-summon cap, spend crossbar thread, and unravel through the shared tether/upkeep behavior. Silent Archon players receive the planned edge: cheaper Commandeer costs from `WillBendRules` and the configured `claimedWillBonusCapSilentArchon` cap bonus.
 
 Legacy summon/test entities (`enthralled_doll`, `wretched_will`, and `blood_thrall`) remain mechanically unchanged by this pass.
 
@@ -2192,8 +2250,8 @@ All are single-stack, use the `LIVING` tool tier. The Living Staff is the prefer
 | Living Crossbow | `LivingCrossbowItem` | Fires Blood Bolts |
 | Sanguis Lancea | `SanguisLanceaItem` | Throwable blood lance (25 base dmg) |
 | Annetta's Sanguis Lancea | `AnnettasSanguisLanceaItem` | Epic Harbinger-route Annetta drop. Held/item rendering uses `AnnettasSanguisLanceaItemRenderer`, `AnnettasSanguisLanceaModel`, `model_annettas_sanguis_lancea.png`, and a crimson glint overlay; the thrown form still uses the shared `SanguisLanceaEntity`/renderer path. |
-| ![](../src/main/resources/assets/hemomancy/textures/item/blood_absorption.png) Blood Absorption | `BloodAbsorptionItem` | Conjured blood-absorbing tool; checks `BlockBloodEndpoint` targets before living-entity absorption |
-| ![](../src/main/resources/assets/hemomancy/textures/item/blood_projection.png) Blood Projection | `BloodProjectionItem` | Conjured blood projection tool; checks `BlockBloodEndpoint` targets before legacy structure/tile transfer |
+| ![](../src/main/resources/assets/hemomancy/textures/item/blood_absorption.png) Blood Absorption | `BloodAbsorptionItem` | Conjured blood-absorbing tool; checks `BlockBloodEndpoint` targets before living-entity absorption, and fades faltering Broken Wills without ordinary mob drain |
+| ![](../src/main/resources/assets/hemomancy/textures/item/blood_projection.png) Blood Projection | `BloodProjectionItem` | Conjured blood projection tool; can banish looked-at faltering Broken Wills before checking `BlockBloodEndpoint` targets and legacy structure/tile transfer |
 
 #### 21.2.1 Living Staff Weapon Forms
 
@@ -2224,9 +2282,9 @@ Hot-swap cost is handled by `LivingStaffWeaponFormRules`: 250mL base, reduced by
 
 #### 21.2.3 Staff Blood Utility Rates
 
-Bare Blood Absorption now acts as the fallback hand tool against one target within 5 blocks. When aimed at a block implementing `BlockBloodEndpoint`, it asks that block to provide blood before falling back to blood reservoir extraction and then living-entity targeting; the Consecrated Bloodwell uses this to draw directly from the bound bloodline pool. Living-entity absorption is pulsed instead of every tick: the base cadence is every 10 ticks, improving through Quickened Draw, Hungry Pulse, and Arterial Cadence to every 4 ticks. Living Staff absorption uses the selected `blood_absorption` manipulation while holding the staff, starts at 4mL per target per pulse, and has a base target cap of 2 and base range of 6 blocks. It checks the same block endpoint / blood reservoir path before nearby living targets and outperforms bare absorption once multiple targets are available.
+Bare Blood Absorption now acts as the fallback hand tool against one target within 5 blocks. When aimed at a block implementing `BlockBloodEndpoint`, it asks that block to provide blood before falling back to blood reservoir extraction, faltering Broken Will absorption, and then living-entity targeting; the Consecrated Bloodwell uses this to draw directly from the bound bloodline pool. Living-entity absorption is pulsed instead of every tick: the base cadence is every 10 ticks, improving through Quickened Draw, Hungry Pulse, and Arterial Cadence to every 4 ticks. Living Staff absorption uses the selected `blood_absorption` manipulation while holding the staff, starts at 4mL per target per pulse, and has a base target cap of 2 and base range of 6 blocks. It checks the same block endpoint / blood reservoir path before faltering Broken Wills and nearby living targets, and outperforms bare absorption once multiple targets are available.
 
-While actively channeling Blood Absorption, the player is rooted in place by default. Dragging Siphon unlocks slow movement, Mobile Conduit reduces the slowdown, and Unbound Siphon removes the movement penalty. Drawing from blocks, reservoirs, and bloodwells does not build strain. Draining living mobs builds Blood Absorption strain on the player: sustained overuse escalates through Weakness, Nausea, and a short Wither effect representing blood poisoning. Blood Tolerance delays those strain thresholds, and strain decays when the channel is held without successfully draining a living target.
+While actively channeling Blood Absorption, the player is rooted in place by default. Dragging Siphon unlocks slow movement, Mobile Conduit reduces the slowdown, and Unbound Siphon removes the movement penalty. Drawing from blocks, reservoirs, bloodwells, and faltering Wills does not build strain. Draining living mobs builds Blood Absorption strain on the player: sustained overuse escalates through Weakness, Nausea, and a short Wither effect representing blood poisoning. Blood Tolerance delays those strain thresholds, and strain decays when the channel is held without successfully draining a living target. Blood Absorption target selection and absorbed-cell particles ignore players, bloodless entities, Wills, armor stands, and Hemomancy NPCs.
 
 Staff focus scaling is centralized in `LivingStaffFocusRules`:
 
@@ -2239,7 +2297,7 @@ Staff focus scaling is centralized in `LivingStaffFocusRules`:
 | Vesper memory awakened | +1 target cap, +1.5 range, +0.5 absorption, +3 structure feed, +75 tile transfer |
 | Vesper's Refusal | Only while Vesper memory is awakened: +1 target cap, +0.75 range, +0.25 absorption, +2 structure feed, +50 tile transfer per level |
 
-Blood Projection is now server-authoritative through `BloodProjectionItem.projectFromEntity`. Projection first checks `BlockBloodEndpoint` on the looked-at block, then falls back to blood-structure feeding, Somatic Loom ritual charging, and `IBloodReservoir` transfer. The Consecrated Bloodwell endpoint contributes directly to the bound bloodline pool instead of filling a local reservoir buffer. Reservoir transfer uses `BloodVolumeTransferRules` so larger staff transfer chunks clamp to available source blood and target capacity before draining.
+Blood Projection is now server-authoritative through `BloodProjectionItem.projectFromEntity`. Projection first checks for a looked-at faltering Broken Will to banish, then checks `BlockBloodEndpoint` on the looked-at block before falling back to blood-structure feeding, Somatic Loom ritual charging, and `IBloodReservoir` transfer. The Consecrated Bloodwell endpoint contributes directly to the bound bloodline pool instead of filling a local reservoir buffer. Reservoir transfer uses `BloodVolumeTransferRules` so larger staff transfer chunks clamp to available source blood and target capacity before draining.
 
 > *Note: Living tools (blade, axe, spear, staff, syringe, crossbow, lancea, baghnakh) use 3D entity models rather than flat item textures â€” see `src/main/resources/assets/hemomancy/textures/entity/` for their model textures:*
 >
@@ -2599,7 +2657,7 @@ This section tracks shared recipe infrastructure and Harbinger-facing recipe cat
 | `recaller_recipe_type` | `RecallerRecipeSerializer` | Visceral Recaller | Creating Hematic Memories |
 | `memory_weaving` | `MemoryWeavingRecipeSerializer` | Somatic Loom | Refined Hematic Memory crafting. Recipes require a blank memory vessel, a `catalysts` list, integer stored-enzyme requirements, projected ritual blood, and the physical orb-weaving event. |
 | `incubator_recipe_type` | `IncubatorRecipeSerializer` | Morphling Incubator | Growing Morphling Polyps into specific morphlings using enzyme catalysts (13 morphling recipes). JEI-integrated via `IncubatorRecipeCategory`. Fungal scar crafting has moved out to the Mycelial Crucible. |
-| `fungal_scar_cultivation` | `FungalScarCultivationSerializer` | Mycelial Crucible | Two-phase fungal scar cultivation. Phase 1 produces `immature_fungal_scar`; Phase 2 matures the culture with aligned enzymes into one of 9 finished `ItemFungalScar` variants. |
+| `fungal_scar_cultivation` | `FungalScarCultivationSerializer` | Mycelial Crucible | Two-phase fungal scar cultivation. Phase 1 produces `immature_fungal_scar`; Phase 2 matures the culture with aligned enzymes into one of 8 finished `ItemFungalScar` variants. |
 | `enzyme_fruiting` | `EnzymeFruitingRecipeSerializer` | Mycelial Lantern | Reusable aligned spore culture + blood -> matching enzyme. Defaults: 2,400 ticks, 0.25 blood/tick, 600 total blood, output count 1; JSON-tunable per recipe. |
 | `armature_upgrade` | `ArmatureUpgradeRecipeSerializer` | Hematic Armature | Data-driven worn-armor upgrades. JSONs declare required degree, armor slot, valid worn base item(s), bowl reagent, blood cost, result item, optional stack data output, and optional persistent-data gate. |
 | `blood_structure_recipe` | `BloodStructureRecipeSerializer` | In-world structure | Harbinger structure crafting; Unstained entries that share the serializer are cataloged in Â§15.3. |
@@ -2659,10 +2717,22 @@ Harbinger Blood Structure crafting is introduced through the Alchemist dialogue 
 Blood Structure JSONs may also declare optional item offerings:
 
 ```json
-"offerings": [
-  { "ingredient": { "item": "minecraft:diamond" }, "count": 2 },
-  { "ingredient": { "tag": "minecraft:flowers" }, "count": 1 }
-]
+{
+  "offerings": [
+    {
+      "ingredient": {
+        "item": "minecraft:diamond"
+      },
+      "count": 2
+    },
+    {
+      "ingredient": {
+        "tag": "minecraft:flowers"
+      },
+      "count": 1
+    }
+  ]
+}
 ```
 
 Each `count` is the number of separate lit Iron Braziers that must hold one matching item near the activate block. Players light a brazier by projecting 50 ml of blood into it with Blood Projection or a Living Staff; normal right-clicking only inserts or retrieves the offering item. The offering scan uses the matched structure footprint as a cube, then expands that cube outward by the recipe pattern dimensions on every side; a 3x3x3 structure therefore accepts offerings up to three blocks past any face. Matched brazier items are consumed only when the craft completes; their items render as item-particle fragments flying to the center, and the brazier is returned to its unlit state. Braziers are not part of the matched structure footprint, visible outline, or structure shader position list.
@@ -3448,6 +3518,10 @@ The `/hemo` command tree (via `HemoCommand`, permission level 2) is the main in-
 - `bloodmoon summon` â€” start a Blood Moon in the overworld and sync the state to players
 - `bloodmoon cancel` â€” end the active Blood Moon and sync the shutdown to players
 
+**Will Ambush Testing:**
+- `/hemo will ambush anchor <school> <tier> <broken_count> <sent_present> [player]` - spawn a real Will anchor at the command source position, then let it materialize the selected Broken/Sent composition against the target player
+- `/hemo will ambush immediate <school> <tier> <origin> [count] [player]` - spawn configured Broken or Sent Wills immediately around the command source position for renderer and mechanics testing
+
 **Fane Preview:**
 - `fane preview` commands are op-only single-player/debug aids for previewing relation-specific boundary rendering without needing a second account or live hostile bloodline.
 - `fane preview member` â€” preview fane boundaries as a member
@@ -3645,7 +3719,7 @@ This section is a maintenance rollup, not a changelog. It uses the status legend
 - **Custom Block Item Render Angles** â€” **Implemented:** Hematic Armature, Earthen Vein, Puppeteer's Spindle, and Visceral Mirror use custom item rendering/GUI transforms so inventory icons show the 3D models at a readable down-right angle instead of flat face-on block thumbnails.
 - **Memory Overlay Textures** â€” **Implemented for active memory set:** active memories use the layered memory item model system (`memory_blank` + per-memory overlay), including Glacial Circulation and Osseous Bloom. Memory item JSONs and overlays live under `models/item/memory_*.json` and `textures/item/memories/memory_*_overlay.png`.
 - **Incubator Recipe System** â€” Full `IncubatorRecipe` + `IncubatorRecipeSerializer` added with 13 JSON recipes for all morphling types. JEI integration via `IncubatorRecipeCategory`. Recipes stored in `data/hemomancy/recipe/incubator/`.
-- **Fungal Scar Cultivation** â€” **Implemented:** `MycelialCrucibleBlockEntity`, `FungalScarCultivationRecipe`, and `FungalScarCultivationSerializer` now support the two-phase fungal scar flow. Nine recipes live in `data/hemomancy/recipe/fungal_scar/`; all use the consolidated `immature_fungal_scar` culture item with target metadata and aligned-enzyme maturation.
+- **Fungal Scar Cultivation** - **Implemented:** `MycelialCrucibleBlockEntity`, `FungalScarCultivationRecipe`, and `FungalScarCultivationSerializer` now support the two-phase fungal scar flow. Eight recipes live in `data/hemomancy/recipe/fungal_scar/`; all use the consolidated `immature_fungal_scar` culture item with target metadata and aligned-enzyme maturation.
 - **Visceral Organs Brazier Route** - **Disabled/WIP:** the Iron Brazier no longer accepts organ reagents or Organ Echo upgrades. Its block entity stores one Blood Structure offering item instead.
 - **Mycelial Lantern / Enzyme Fruiting** â€” **Implemented:** `MycelialLanternBlockEntity`, `EnzymeFruitingRecipe`, `EnzymeFruitingRecipeSerializer`, eight spore culture items, eight enzyme-fruiting JSON recipes, Blood Structure recipe, menu/screen, block entity renderer, item renderer, Blockbench source, and JEI category/catalyst/recipe registration are present.
 - **Hematic Armature / Armor Upgrade Path** â€” **Implemented:** `HematicArmatureBlockEntity`, `ArmatureUpgradeRecipe`, custom renderer/model/item renderer, hidden restraint entity, no-GUI right-click bowl interaction, walk-on mounting, filler-block multiblock bounds, 5-second per-piece processing, bowl/player particle feedback, and JEI category/catalyst wiring are present. Recipes live in `data/hemomancy/recipe/armature_upgrade/`.
@@ -3669,7 +3743,7 @@ This section is a maintenance rollup, not a changelog. It uses the status legend
 - **Fungal Whisper System** â€” `FungalWhisperDialogueTrees` and `FungalWhisperEvents` deliver degree-gated (4â€“7, with degree 8 using the Archon-tier whisper set) intrusive fungal consciousness whispers. 12 variants across 4 tiers progressively reveal that hemomancy is a fungal infection masquerading as blood magic. High-degree players receive whispers on random intervals. Additional one-shot event dialogues: `postMonolithShatter()` (Entity comments on the seed hiding inside), `postBloom()` (acknowledgment of first fruiting), `pomeDropped(index, offerMemo)` (per-husk drop announcement; always delivered to the online bloom owner, with memo capture only when still relevant), `qliphothCommunion()` (nine-shell completion), `coreWitnessDialogue()` (Archon dimension choice fork). Whisper nodes now include Hematic Field Notes memo capture options where appropriate; ordinary high-tier whispers unlock Entity/Hyphae knowledge, while truth, communion, and core-witness moments unlock Truth or Qliphoth pages.
 - **Ancestral Communion Dialogue** â€” `AncestralCommunionDialogueTrees` provides 5 unique lore-revelation dialogues for the Grand Rite of Ancestral Communion (degree 7). Variants: The Origin, The Schism, The Infection, The Harbingers, The True Name.
 - **Harbinger Outpost NPCs** â€” Harbinger Alchemist, Vicar, and Mnemonist are implemented with degree-gated dialogue trees. The Alchemist covers machine lore, the Vicar covers faction history/doctrine, and the Mnemonist covers crude memories, active manipulation slots, Mnemonic Reliquary loadout management, Somatic Loom memory weaving, and the one-time Degree 1+ starter crude-memory choice. Degree 5+ bloodline recruitment is implemented for these three NPCs with mutually exclusive pledge/release dialogue, one recruited NPC per entity type, and one recruited NPC per originating Harbinger Outpost. Entities are registered with textures, lang keys, client render hooks, dialogue handlers, and outpost `afterPlace()` spawning.
-- **Scar Tier System** â€” All three standard cerebral tiers are registered through `ScarInit` as `ScarDefinition` entries with active gameplay effects. `ItemScar` instances in `ItemInit` point at those definitions. Current active set is 24 standard cerebral scars (8 tendencies Ã— 3 tiers), Blood-Honed as a special cerebral definition, and 9 fungal scar definitions. The old unregistered Ichor scar resource stub has been removed.
+- **Scar Tier System** - All three standard cerebral tiers are registered through `ScarInit` as `ScarDefinition` entries with active gameplay effects. `ItemScar` instances in `ItemInit` point at those definitions. Current active set is 24 standard cerebral scars (8 tendencies x 3 tiers), Blood-Honed as a special cerebral definition, and 8 fungal scar definitions. The old unregistered Ichor scar resource stub has been removed.
 - **HemoItemModelProvider Enhancements** â€” Data generator now handles `BloodMemoryItem` 2-layer models, `ItemScarPattern` 2-layer models, and properly excludes special blocks (sanguine panes, cleansed sanguine panes, ash trails, engram, filler, crimson flames) from automatic block model generation.
 - **Saints System** â€” **Partial:** Four canon Saints exist: Hemorath, Seraphae the Chain Saint, Putriciel, and Velorum. The shared sarcophagus spine and boss dispatch are implemented, and Hemorath's trial is the first complete trial flow. Bespoke Trial Chamber rooms/world placement for Seraphae, Putriciel, and Velorum remain WIP. Boss models/textures/GeckoLib animations are stub/placeholder. See Â§5.8.
 - **Founding Fane** - **Partial:** The core Flexible Founding Fane model is implemented: Consecrated Bloodwell heart binding, one-heart-per-footprint prevention, up-front bloodline validation for the rite, bloodline-gated bloodwell conduit use, dynamic block blood absorption/projection endpoints, heart-break/reconsecration/disband stake cleanup, progenitor-manifested Hematic Stake anchors, stake budget/connection validation, `FaneFootprint` inside/outside and strength scaling, footprint-based routing/bloodwell/Blood Moon checks, full-sphere Soft Envelope rendering, viewer relation colors, bloodwell fountain renderer/particles, and `/hemo fane preview` testing commands. Remaining work is final balance, art polish, and broader gameplay tuning. See §5.7.

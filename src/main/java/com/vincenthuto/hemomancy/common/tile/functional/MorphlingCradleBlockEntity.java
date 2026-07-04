@@ -3,7 +3,9 @@ package com.vincenthuto.hemomancy.common.tile.functional;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.Bloodline;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodlineSavedData;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.CirculationIncomeHelper;
 import com.vincenthuto.hemomancy.common.init.BlockEntityInit;
+import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.item.harbinger.morphlings.IMorphling;
 import com.vincenthuto.hemomancy.common.item.harbinger.morphlings.MorphlingItem;
 import com.vincenthuto.hemomancy.config.HemoServerConfig;
@@ -141,6 +143,10 @@ public class MorphlingCradleBlockEntity extends BlockEntity {
 	private InteractionResult insertMorphling(Player player, InteractionHand hand) {
 		ItemStack held = player.getItemInHand(hand);
 		if (!(held.getItem() instanceof MorphlingItem)) return InteractionResult.PASS;
+		if (!canHostMorphling(held)) {
+			player.displayClientMessage(Component.literal("The cradle rejects that primal strain."), true);
+			return InteractionResult.CONSUME;
+		}
 		ItemStack inserted = held.copy();
 		inserted.setCount(1);
 		morphlingItem = inserted;
@@ -171,6 +177,10 @@ public class MorphlingCradleBlockEntity extends BlockEntity {
 	private InteractionResult swapMorphling(Player player, InteractionHand hand) {
 		ItemStack held = player.getItemInHand(hand);
 		if (!(held.getItem() instanceof MorphlingItem)) return InteractionResult.PASS;
+		if (!canHostMorphling(held)) {
+			player.displayClientMessage(Component.literal("The cradle rejects that primal strain."), true);
+			return InteractionResult.CONSUME;
+		}
 		ItemStack outgoing = morphlingItem.copy();
 		ItemStack incoming = held.copy();
 		incoming.setCount(1);
@@ -185,6 +195,22 @@ public class MorphlingCradleBlockEntity extends BlockEntity {
 		}
 		setChangedAndSync();
 		return InteractionResult.CONSUME;
+	}
+
+	private static boolean canHostMorphling(ItemStack stack) {
+		return stack.getItem() instanceof MorphlingItem
+				&& (!MorphlingItem.isPrimal(stack) || isCradleSupportedPrimalStrain(stack));
+	}
+
+	public static boolean isCradleSupportedPrimalStrain(ItemStack stack) {
+		if (stack == null || stack.isEmpty()) {
+			return false;
+		}
+		return stack.getItem() == ItemInit.morphling_gravecap.get()
+				|| stack.getItem() == ItemInit.morphling_deadmans_purse.get()
+				|| stack.getItem() == ItemInit.morphling_winter_shroud.get()
+				|| stack.getItem() == ItemInit.morphling_bootlace.get()
+				|| stack.getItem() == ItemInit.morphling_irontooth.get();
 	}
 
 	private void tickServer() {
@@ -297,9 +323,8 @@ public class MorphlingCradleBlockEntity extends BlockEntity {
 		if (owner != null) {
 			HemoCapabilityAccess.getBloodVolume(owner).ifPresent(vol -> {
 				if (vol.isActive() && !vol.isFull() && bloodBuffer > 0) {
-					double before = vol.getBloodVolume();
-					vol.fill(bloodBuffer);
-					double moved = Math.max(0, vol.getBloodVolume() - before);
+					double moved = CirculationIncomeHelper.grant(owner, vol, bloodBuffer,
+							CirculationIncomeHelper.IncomeChannel.CRADLE);
 					bloodBuffer -= moved;
 				}
 			});
