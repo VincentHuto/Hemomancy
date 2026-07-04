@@ -262,6 +262,7 @@ public class Hemomancy {
         populator.accept(BlockInit.sanguine_vigil.get());
         populator.accept(BlockInit.sanguine_omen.get());
         populator.accept(BlockInit.visceral_mirror.get());
+        populator.accept(BlockInit.non_euclidean_hallway.get());
         populator.accept(BlockInit.blood_basin.get());
         populator.accept(BlockInit.blood_pylon.get());
         populator.accept(BlockInit.blood_trial_altar.get());
@@ -340,6 +341,7 @@ public class Hemomancy {
                 || block == BlockInit.sanguine_vigil.get()
                 || block == BlockInit.sanguine_omen.get()
                 || block == BlockInit.visceral_mirror.get()
+                || block == BlockInit.non_euclidean_hallway.get()
                 || block == BlockInit.blood_basin.get()
                 || block == BlockInit.blood_pylon.get()
                 || block == BlockInit.blood_trial_altar.get()

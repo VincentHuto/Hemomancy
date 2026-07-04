@@ -1,0 +1,12 @@
+{
+  "variants": {
+    "facing=north,waterlogged=false": { "model": "hemomancy:block/non_euclidean_hallway", "y": 180 },
+    "facing=north,waterlogged=true": { "model": "hemomancy:block/non_euclidean_hallway", "y": 180 },
+    "facing=south,waterlogged=false": { "model": "hemomancy:block/non_euclidean_hallway" },
+    "facing=south,waterlogged=true": { "model": "hemomancy:block/non_euclidean_hallway" },
+    "facing=west,waterlogged=false": { "model": "hemomancy:block/non_euclidean_hallway", "y": 270 },
+    "facing=west,waterlogged=true": { "model": "hemomancy:block/non_euclidean_hallway", "y": 270 },
+    "facing=east,waterlogged=false": { "model": "hemomancy:block/non_euclidean_hallway", "y": 90 },
+    "facing=east,waterlogged=true": { "model": "hemomancy:block/non_euclidean_hallway", "y": 90 }
+  }
+}

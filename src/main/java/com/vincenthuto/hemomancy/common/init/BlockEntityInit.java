@@ -161,6 +161,10 @@ public class BlockEntityInit {
 			.register("visceral_mirror", () -> BlockEntityType.Builder
 					.of(VisceralMirrorBlockEntity::new, BlockInit.visceral_mirror.get()).build(null));
 
+	public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<NonEuclideanHallwayBlockEntity>> non_euclidean_hallway = TILES
+			.register("non_euclidean_hallway", () -> BlockEntityType.Builder
+					.of(NonEuclideanHallwayBlockEntity::new, BlockInit.non_euclidean_hallway.get()).build(null));
+
 	public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<MnemonicReliquaryBlockEntity>> mnemonic_reliquary = TILES
 			.register("mnemonic_reliquary", () -> BlockEntityType.Builder
 					.of(MnemonicReliquaryBlockEntity::new, BlockInit.mnemonic_reliquary.get()).build(null));

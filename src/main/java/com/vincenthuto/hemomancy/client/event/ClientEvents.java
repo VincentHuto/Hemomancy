@@ -799,6 +799,7 @@ public class ClientEvents {
             BlockEntityRenderers.register(BlockEntityInit.mnemonic_reliquary.get(), MnemonicReliquaryRenderer::new);
             BlockEntityRenderers.register(BlockEntityInit.dictation_table.get(), DictationTableRenderer::new);
             BlockEntityRenderers.register(BlockEntityInit.visceral_mirror.get(), VisceralMirrorRenderer::new);
+            BlockEntityRenderers.register(BlockEntityInit.non_euclidean_hallway.get(), NonEuclideanHallwayRenderer::new);
             BlockEntityRenderers.register(BlockEntityInit.qliphoth_bloom.get(),
                     QliphothBloomBlockRenderer::new);
             BlockEntityRenderers.register(BlockEntityInit.saint_sarcophagus.get(),
