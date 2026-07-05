@@ -2,6 +2,7 @@ package com.vincenthuto.hemomancy.common.item.harbinger.tool.living;
 
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
+import com.vincenthuto.hemomancy.common.entity.mob.monster.will.WillEntity;
 import com.vincenthuto.hemomancy.common.manipulation.TendencyAffinityRules;
 import com.vincenthuto.hemomancy.common.init.EntityInit;
 import net.minecraft.ChatFormatting;
@@ -83,9 +84,18 @@ public final class TendencyWeaponHelper {
 	}
 
 	public static boolean isOpposingTarget(LivingEntity target, EnumBloodTendency weaponTendency) {
+		if (target instanceof WillEntity will) {
+			return isOpposingTendency(weaponTendency, will.getSchool());
+		}
 		EnumBloodTendency opposingTendency = getOpposingTendency(weaponTendency);
 		TagKey<EntityType<?>> opposingTag = getEntityTagForTendency(opposingTendency);
 		return opposingTag != null && target.getType().is(opposingTag);
+	}
+
+	public static boolean isOpposingTendency(@Nullable EnumBloodTendency weaponTendency,
+			@Nullable EnumBloodTendency targetTendency) {
+		return weaponTendency != null && targetTendency != null
+				&& getOpposingTendency(weaponTendency) == targetTendency;
 	}
 
 	public static EnumBloodTendency getOpposingTendency(EnumBloodTendency tendency) {

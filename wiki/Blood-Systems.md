@@ -269,6 +269,8 @@ The **Scrying Podium** **Tendency** tab shows your dominant and latent tendencie
 - Vision control
 - Countered by Tenebris tendency
 
+**Current implemented combat notes:** Lux now has `hematic_flare` as a Humilis true-offense ray: it deals magic damage, applies Glowing, strips Invisibility, and hits concealed enemies harder. `prismatic_reproof` remains the larger cone follow-up, but now always deals base magic damage and doubles its bite against Glowing targets. Lux attacks dynamically oppose Tenebris-school Rogue Wills by their synced Will school.
+
 ---
 
 ### Mortem (Death/Decay)
@@ -368,6 +370,8 @@ The **Scrying Podium** **Tendency** tab shows your dominant and latent tendencie
 - Rogue/stealth builds
 - Escape and infiltration
 - Countered by Lux tendency
+
+**Current implemented combat notes:** Tenebris now has `gloam_laceration` as a Humilis ambush slash: it applies Blood Loss and Weakness, deals magic damage, hits harder while the caster is invisible or standing in natural/synthetic darkness, and uses a three-line tapered claw ribbon visual instead of generic glow motes. `void_shroud`, `black_veil_covenant`, `umbral_step`, and `blood_eclipse` remain the core stealth/darkness chain. Tenebris attacks dynamically oppose Lux-school Rogue Wills by their synced Will school.
 
 ---
 

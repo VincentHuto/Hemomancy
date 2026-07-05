@@ -1014,8 +1014,9 @@ Secondary tendencies do not change a manipulation's required alignment, tree clu
 | `summon_thrall` | 500 | Quick | Mediocritas | Animus | Body | 60t | Two-step: (1) raycast to spawn a Blood Thrall at source block, (2) raycast again to set its destination â€” thrall then works autonomously |
 | `crimson_flame_conjuration` | 150 | Quick | Humilis | Animus | Right Arm | 15t | Places Crimson Flames on the targeted block face (range 16, scales with Sanguine Reach) |
 | `blood_lamp` | 75 | Quick | Humilis | Lux | Left Arm | 10t | Places an invisible light block (level 15) at the targeted surface (range 16, scales with Sanguine Reach) |
+| `hematic_flare` | 125 | Quick | Humilis | Lux | Head | 30t | Short Lux ray: deals 3 magic damage, applies Glowing, strips Invisibility, and deals +2 damage to concealed targets |
 | `crimson_sight` | 250 | Quick | Mediocritas | Lux | Head | 60t | Grants Night Vision (60s) and applies Glowing to all mobs within 32 blocks (30s) |
-| `prismatic_reproof` | 325 | Quick | Mediocritas | Lux | Head | 80t | Cone of refracted Lux: blinds and weakens targets; marked/glowing targets also take magic damage |
+| `prismatic_reproof` | 325 | Quick | Mediocritas | Lux | Head | 80t | Cone of refracted Lux: blinds and weakens targets; deals 2 magic damage, or 4 against marked/glowing targets |
 | `hematic_beacon` | 350 | Quick | Mediocritas | Lux | Body | 160t | Aimed blood-light rally point: grants brief Regeneration/Resistance to players and Glowing to mobs in an 8-block radius |
 | `lumen_suture` | 250 | Quick | Mediocritas | Lux | Right Arm | 120t | Supports the nearest wounded player: heals 1 heart, grants Absorption II, clears Blindness and Wither |
 | `crimson_harvest` | 200 | Quick | Humilis | Ductilis | Left Leg | 60t | Bone-meals all growable blocks in a 5Ã—5 area around the caster |
@@ -1036,7 +1037,8 @@ Secondary tendencies do not change a manipulation's required alignment, tree clu
 | `hemorrhage` | 100 | Quick | Humilis | Mortem | Right Arm | 20t | Targets the closest living entity within 8 blocks and applies Wither II (6s) |
 | `exsanguinate` | 300 | Quick | Mediocritas | Mortem | Right Arm | 50t | Executes a weakened target (â‰¤30% HP) within 10 blocks: deals 1.5Ã— their current HP as damage and restores 600 blood to the caster |
 | `void_shroud` | 100 | Quick | Humilis | Tenebris | Body | 20t | **Dash-stealth** â€” grants Invisibility + Speed II + Night Vision for 5 seconds. Designed as a repositioning tool; pairs with `umbral_step` (shroud first, then teleport through shadow). |
-| `blood_eclipse` | 300 | Quick | Mediocritas | Tenebris | Head | 45t | Forward cone attack (18 blocks, 30Â° half-angle): applies Blindness II (5s) + Weakness I (6s) + 0.5 heart shadow damage |
+| `gloam_laceration` | 175 | Quick | Humilis | Tenebris | Right Arm | 35t | Short ambush slash: deals 3.5 magic damage, applies Blood Loss + Weakness, deals +2.5 from Invisibility or darkness, and renders a three-stroke claw ribbon rather than generic glow motes |
+| `blood_eclipse` | 300 | Quick | Mediocritas | Tenebris | Head | 45t | Forward cone attack (18 blocks, 30Â° half-angle): applies Blindness II (5s) + Weakness I (6s) + 1.5 hearts shadow damage |
 | `black_veil_covenant` | 425 | Quick | Mediocritas | Tenebris | Body | 220t | Raises a temporary black-veined sphere around the caster; the zone counts as synthetic darkness for `umbral_step` and other darkness checks |
 | `umbral_reversal` | 375 | Quick | Mediocritas | Tenebris | Left Leg | 100t | Slips backward into a nearby safe dark space (natural or Black Veil darkness) and blinds pursuers left near the origin |
 | `blood_eclipse_mantle` | 325 | Quick | Mediocritas | Tenebris | Body | 180t | Defensive eclipse stance: Resistance II + Fire Resistance with Weakness as the tradeoff |
@@ -1800,6 +1802,8 @@ Rogue Hemomancer Wills are late-Harbinger ambushers keyed to the player's blood 
 
 Broken Wills cycle through their kit with occasional stutters, selling incomplete former-Harbinger muscle memory. Sent Wills use a small priority controller instead: they prefer mobility at range, defensive casts when injured, close-range pressure when the target is inside melee space, and finishers or burst casts when the target is vulnerable.
 
+Lux and Tenebris Will kits now mirror the player's improved combat style verbs. Lux Wills open with `hematic_flare`, then escalate into `prismatic_reproof`, `crimson_sight`, and `unclosing_eye`; Tenebris Wills keep `void_shroud` and `umbral_step`, but add `gloam_laceration` before the wider `blood_eclipse` cone. Tendency weapon/manipulation counter checks special-case Wills by their synced school, so Lux attacks dynamically oppose Tenebris-school Wills and Tenebris attacks dynamically oppose Lux-school Wills instead of relying only on static entity-type tags.
+
 Wills also spawn with visible, non-drop living weapons through `WillEquipmentRules`. Tier-I Broken Wills carry a `living_staff`; Tier-II+ Broken Wills and all Sent Wills carry tendency weapons: Animus blade, Flammeus torch, Ductilis crossbow, Lux spear, Mortem axe, Congeatio flail, Ferric staff, and Tenebris baghnakh. `WillWeaponController` supplies mob-safe weapon pressure without invoking player inventory or blood-volume hooks: torches burn, flails slow, crossbows fire blood bolts, claws/bladework bleed, staffs guard or knock back, and school weapons reinforce the Will's combat identity.
 
 Ambient ambushes are driven by `WillAmbushDirector` and `WillAmbushState`. Eligible active-blood Harbingers at the configured minimum degree roll on a cooldown, with chance multipliers from ripe/dark terrain, Qliphoth bloom ownership, Blood Moon, Blood Drunkenness, Fungal Whisper herald windows, and hidden hive attention. Founding Fanes, the Chamber of Will, and placed Harbinger Outpost pieces are sanctuary exclusions through `WillSanctuaryRules`.
@@ -1888,6 +1892,7 @@ The Drudge is a persistent, player-owned semi-organic construct that holds a sin
 | `sanguine_mending` | Repairs up to 100 durability on the most-damaged armor piece of the nearest player ally |
 | `hemosynthesis` | Heals the most-wounded nearby player ally for 4 HP |
 | `blood_lamp` | Places a torch at a nearby dark, supported air block |
+| `hematic_flare` | Marks, reveals, and magic-damages the nearest hidden hostile |
 | `crimson_harvest` | Bonemeal-accelerates nearby growable blocks in the work radius |
 | `glacial_grasp` | Freezes, heavily slows, and damages the nearest hostile |
 | `sanguine_excavation` | Mines the block the Drudge is facing, dropping normal block drops |
@@ -1904,6 +1909,7 @@ The Drudge is a persistent, player-owned semi-organic construct that holds a sin
 | `sanguine_ignition` | Ignites and damages the nearest hostile |
 | `vitric_combustion` | Ignites and heavily fire-damages all hostiles in the work radius |
 | `void_shroud` | Cloaks the Drudge with Invisibility for 30 seconds |
+| `gloam_laceration` | Blood-losses, weakens, and magic-damages the nearest hostile; stronger from darkness |
 | `blood_eclipse` | Blinds and magic-damages all hostiles in the work radius |
 | `hemorrhage` | Applies Wither to the nearest hostile |
 | `exsanguinate` | Deals 20% max-health magic damage to the nearest hostile and heals the Drudge for half that amount |
@@ -2124,6 +2130,13 @@ Living weapon memory weaving recipes keep a shared family identity without being
 | `memory_living_torch` | `conjure_torch` | `fervent_spores` | `flammeus: 1`, `ferric: 1` | 100 |
 | `memory_living_flail` | `conjure_flail` | `frigid_spores` | `congeatio: 1`, `ferric: 1` | 100 |
 
+Focused combat memory weaving additions for Lux and Tenebris:
+
+| Memory | Teaches | Catalyst Pattern | Enzyme Requirements | Ritual Blood |
+|--------|---------|------------------|---------------------|--------------|
+| `memory_hematic_flare` | `hematic_flare` | `glow_ink_sac` | `lux: 1`, `flammeus: 1` | 100 |
+| `memory_gloam_laceration` | `gloam_laceration` | `phantom_membrane` | `tenebris: 1`, `mortem: 1` | 100 |
+
 **Memory Textures Gallery:**
 
 > **Note:** Memory items use a 2-layer model system â€” the base `hematic_memory.png` is overlaid with a unique per-manipulation overlay from `textures/item/memories/memory_*_overlay.png`.
@@ -2134,7 +2147,7 @@ Living weapon memory weaving recipes keep a shared family identity without being
 | ![](../src/main/resources/assets/hemomancy/textures/item/memories/memory_blood_cloud_overlay.png) Blood Cloud | ![](../src/main/resources/assets/hemomancy/textures/item/memories/memory_blood_aneurysm_overlay.png) Blood Aneurysm | ![](../src/main/resources/assets/hemomancy/textures/item/memories/memory_activation_potential_overlay.png) Activation Potential | ![](../src/main/resources/assets/hemomancy/textures/item/memories/memory_sanguine_ward_overlay.png) Sanguine Ward |
 | ![](../src/main/resources/assets/hemomancy/textures/item/memories/memory_venous_travel_overlay.png) Venous Travel | ![](../src/main/resources/assets/hemomancy/textures/item/memories/memory_ferric_transmutation_overlay.png) Sanguine Alloy *(item id: memory_ferric_transmutation)* | ![](../src/main/resources/assets/hemomancy/textures/item/memories/memory_living_blade_overlay.png) Living Blade | ![](../src/main/resources/assets/hemomancy/textures/item/memories/memory_blood_absorption_overlay.png) Blood Absorption |
 | ![](../src/main/resources/assets/hemomancy/textures/item/memories/memory_living_axe_overlay.png) Living Axe | ![](../src/main/resources/assets/hemomancy/textures/item/memories/memory_living_spear_overlay.png) Living Spear | ![](../src/main/resources/assets/hemomancy/textures/item/memories/memory_living_claws_overlay.png) Living Claws | ![](../src/main/resources/assets/hemomancy/textures/item/memories/memory_living_crossbow_overlay.png) Living Crossbow |
-| ![](../src/main/resources/assets/hemomancy/textures/item/memories/memory_living_torch_overlay.png) Living Torch | ![](../src/main/resources/assets/hemomancy/textures/item/memories/memory_living_flail_overlay.png) Living Flail |  |  |
+| ![](../src/main/resources/assets/hemomancy/textures/item/memories/memory_living_torch_overlay.png) Living Torch | ![](../src/main/resources/assets/hemomancy/textures/item/memories/memory_living_flail_overlay.png) Living Flail | ![](../src/main/resources/assets/hemomancy/textures/item/memories/memory_hematic_flare_overlay.png) Hematic Flare | ![](../src/main/resources/assets/hemomancy/textures/item/memories/memory_gloam_laceration_overlay.png) Gloam Laceration |
 | ![](../src/main/resources/assets/hemomancy/textures/item/memories/memory_blood_projection_overlay.png) Blood Projection | ![](../src/main/resources/assets/hemomancy/textures/item/memories/memory_summon_avatar_overlay.png) Summon Avatar | ![](../src/main/resources/assets/hemomancy/textures/item/memories/memory_crimson_flame_conjuration_overlay.png) Crimson Flame Conjuration | ![](../src/main/resources/assets/hemomancy/textures/item/memories/memory_blood_lamp_overlay.png) Blood Lamp |
 | ![](../src/main/resources/assets/hemomancy/textures/item/memories/memory_crimson_sight_overlay.png) Crimson Sight | ![](../src/main/resources/assets/hemomancy/textures/item/memories/memory_crimson_harvest_overlay.png) Crimson Harvest | ![](../src/main/resources/assets/hemomancy/textures/item/memories/memory_hemosynthesis_overlay.png) Hemosynthesis | ![](../src/main/resources/assets/hemomancy/textures/item/memories/memory_pyretic_forge_overlay.png) Pyretic Forge |
 | ![](../src/main/resources/assets/hemomancy/textures/item/memories/memory_vital_effusion_overlay.png) Vital Effusion | ![](../src/main/resources/assets/hemomancy/textures/item/memories/memory_hemolymphal_pulse_overlay.png) Hemolymphal Pulse | ![](../src/main/resources/assets/hemomancy/textures/item/memories/memory_vascular_dowsing_overlay.png) Vascular Dowsing | ![](../src/main/resources/assets/hemomancy/textures/item/memories/memory_ferric_resonance_overlay.png) Ferric Resonance |
@@ -2253,7 +2266,7 @@ All are single-stack, use the `LIVING` tool tier. The Living Staff is the prefer
 | Living Blade | `LivingBladeItem` | Blood-feeding sword (25 base dmg, +3 speed) |
 | Living Axe | `LivingAxeItem` | Blood-feeding axe |
 | Living Spear | `LivingSpearItem` | Blood-feeding polearm |
-| Living Baghnakh | `LivingBaghnakhItem` | Blood-feeding claw weapon |
+| Living Baghnakh | `LivingBaghnakhItem` | Blood-feeding Tenebris claw weapon; holding attack repeats strikes only when the attack cooldown is ready, and successful hits emit the randomized three-ribbon claw slash |
 | Living Torch | `LivingTorchItem` | Flammeus staff weapon form; ignites struck targets |
 | Living Flail | `LivingFlailItem` | Congeatio staff weapon form; slows struck targets and uses a physics-rendered chain/head model |
 | Living Staff | `LivingStaffItem` | Channels morphlings, blood magic, and living weapon forms. First blood-structure craft unlocks the player Living Staff bond and `conjure_staff`; absorption/projection power now reads from Living Conduit, Vascular Draw, Crimson Projection, and the Blood Absorption channel/cadence skills, while Weapons Master reduces weapon-form hot-swap cost. |
@@ -2274,7 +2287,7 @@ The Living Staff can inherit living weapons as temporary forms rather than creat
 | `conjure_blade` | `living_blade` | Animus living blade form; retains living tool blood-failure recoil |
 | `conjure_axe` | `living_axe` | Mortem living axe form |
 | `conjure_spear` | `living_spear` | Lux living spear form |
-| `conjure_claws` | `living_baghnakh` | Tenebris living claw form |
+| `conjure_claws` | `living_baghnakh` | Tenebris living claw form; hold attack for cooldown-paced auto-strikes, and struck enemies flash with the claw slash ribbon effect |
 | `conjure_crossbow` | `living_crossbow` | Ductilis living crossbow form; Blood Bolt firing can recoil to staff if blood runs out |
 | `conjure_torch` | `living_torch` | Flammeus living torch form; ignites struck targets |
 | `conjure_flail` | `living_flail` | Congeatio living flail form; slows struck targets and renders with a damped physics chain patterned after the Sporitic Thurible |
@@ -3585,6 +3598,8 @@ Registered in `ParticleInit`:
 - **Abocipher Structure Ambience** - Blood Temple and Harbinger Outpost generation places hidden `abocipher_emitter` technical blocks during `afterPlace`. These invisible, non-colliding block entities emit client-side Abocipher glyph particles with Blood Temple and Harbinger Outpost profiles. Harbinger Outposts spread their emitters across lower, middle, and upper ambience bands, and the glyph particles swim laterally for several blocks with slow organic turn/writhe motion instead of only rising and fading. Existing explored structures are not retroactively migrated.
 
 > The mod also makes heavy use of HutosLib particles (`GlowParticleFactory` with `ParticleColor`) for manipulation-specific effects (crimson glows, ice crystals, flame sparks, etc.). These are not registered in Hemomancy's `ParticleInit` but are spawned via `ServerLevel.sendParticles()` in each manipulation's `getAction()` method.
+
+Gloam Laceration is the current exception for slash-shaped manipulation visuals: the server sends `SpawnClawSlashPacket`, and the client `ClawSlashRenderer` draws a short-lived three-line tapered ribbon using `RenderTypeInit.CLAW_SLASH_GLOW` and `CLAW_SLASH_CORE`. This keeps true claw/sweep effects distinct from ordinary glow particles.
 
 HutosLib now also supplies reusable visual-effect tooling that Hemomancy can consume without registering new Hemomancy particle types:
 

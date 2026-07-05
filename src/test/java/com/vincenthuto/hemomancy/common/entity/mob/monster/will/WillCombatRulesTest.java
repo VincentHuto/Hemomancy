@@ -13,10 +13,10 @@ public final class WillCombatRulesTest {
 			"blood_shot", "blood_needle", "blood_aneurysm", "blood_cloud",
 			"crimson_flame_conjuration", "sanguine_ignition", "scalding_updraft", "vitric_combustion",
 			"deadly_gaze", "hemolymphal_pulse", "activation_potential",
-			"crimson_sight", "prismatic_reproof", "unclosing_eye",
+			"hematic_flare", "crimson_sight", "prismatic_reproof", "unclosing_eye",
 			"hemorrhage", "exsanguinate", "bloom_of_rot",
 			"cryogenic_pulse", "glacial_grasp", "glacial_bastion", "glacial_rampart",
-			"pyretic_forge", "void_shroud", "umbral_step", "blood_eclipse", "blood_eclipse_mantle"
+			"pyretic_forge", "void_shroud", "gloam_laceration", "umbral_step", "blood_eclipse"
 	};
 
 	private WillCombatRulesTest() {
@@ -27,6 +27,7 @@ public final class WillCombatRulesTest {
 		brokenStatsAreFixedByTier(source);
 		sentStatsScaleFromTargetSnapshot(source);
 		schoolKitsCoverEveryTendency(source);
+		luxAndTenebrisKitsCarryParityOffense(source);
 		counterSchoolCoversEveryTendency(source);
 		falterAndCadenceConstantsAreStable(source);
 	}
@@ -53,6 +54,13 @@ public final class WillCombatRulesTest {
 			assertContains("kit id " + id + " is authored", source, "\"" + id + "\"");
 		}
 		assertContains("kits return hemomancy ids", source, "map(Hemomancy::rloc)");
+	}
+
+	private static void luxAndTenebrisKitsCarryParityOffense(String source) {
+		assertContains("lux kit starts with a Humilis attack", source,
+				"EnumBloodTendency.LUX, ids(\"hematic_flare\", \"prismatic_reproof\", \"crimson_sight\", \"unclosing_eye\")");
+		assertContains("tenebris kit keeps stealth but gains an ambush slash", source,
+				"EnumBloodTendency.TENEBRIS, ids(\"void_shroud\", \"gloam_laceration\", \"umbral_step\", \"blood_eclipse\")");
 	}
 
 	private static void counterSchoolCoversEveryTendency(String source) {

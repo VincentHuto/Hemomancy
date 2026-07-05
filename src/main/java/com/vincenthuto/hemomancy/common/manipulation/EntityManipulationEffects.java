@@ -5,7 +5,10 @@ import com.vincenthuto.hemomancy.common.entity.projectile.BloodCloudCarrierEntit
 import com.vincenthuto.hemomancy.common.entity.projectile.BloodNeedleEntity;
 import com.vincenthuto.hemomancy.common.entity.projectile.BloodShotEntity;
 import com.vincenthuto.hemomancy.common.init.BlockInit;
+import com.vincenthuto.hemomancy.common.init.EffectInit;
 import com.vincenthuto.hemomancy.common.manipulation.congeatio.TemporaryIceManager;
+import com.vincenthuto.hemomancy.common.manipulation.tenebris.BlackVeilCovenantManager;
+import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.util.CrimsonFireHelper;
 import com.vincenthuto.hutoslib.client.particle.factory.GlowParticleFactory;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
@@ -39,10 +42,11 @@ public final class EntityManipulationEffects {
 			"blood_shot", "blood_needle", "blood_aneurysm", "blood_cloud",
 			"crimson_flame_conjuration", "sanguine_ignition", "scalding_updraft", "vitric_combustion",
 			"deadly_gaze", "hemolymphal_pulse", "activation_potential",
-			"crimson_sight", "prismatic_reproof", "unclosing_eye",
+			"hematic_flare", "crimson_sight", "prismatic_reproof", "unclosing_eye",
 			"hemorrhage", "exsanguinate", "bloom_of_rot",
 			"cryogenic_pulse", "glacial_grasp", "glacial_bastion", "glacial_rampart",
-			"pyretic_forge", "void_shroud", "umbral_step", "blood_eclipse", "blood_eclipse_mantle");
+			"pyretic_forge", "void_shroud", "gloam_laceration", "umbral_step", "blood_eclipse",
+			"blood_eclipse_mantle");
 
 	private EntityManipulationEffects() {
 	}
@@ -65,6 +69,7 @@ public final class EntityManipulationEffects {
 		case "deadly_gaze" -> deadlyGaze(context);
 		case "hemolymphal_pulse" -> hemolymphalPulse(context);
 		case "activation_potential" -> activationPotential(context);
+		case "hematic_flare" -> hematicFlare(context);
 		case "crimson_sight" -> crimsonSight(context);
 		case "prismatic_reproof" -> prismaticReproof(context);
 		case "unclosing_eye" -> unclosingEye(context);
@@ -77,6 +82,7 @@ public final class EntityManipulationEffects {
 		case "glacial_rampart" -> glacialRampart(context);
 		case "pyretic_forge" -> pyreticForge(context);
 		case "void_shroud" -> voidShroud(context);
+		case "gloam_laceration" -> gloamLaceration(context);
 		case "umbral_step" -> umbralStep(context);
 		case "blood_eclipse" -> bloodEclipse(context);
 		case "blood_eclipse_mantle" -> bloodEclipseMantle(context);
@@ -242,6 +248,21 @@ public final class EntityManipulationEffects {
 		context.level().playSound(null, context.origin(), SoundEvents.TRIDENT_THUNDER.value(), SoundSource.HOSTILE,
 				0.55F, 1.5F);
 		return hits > 0;
+	}
+
+	private static boolean hematicFlare(ManipulationCastContext context) {
+		LivingEntity target = preferredTarget(context, context.scaleRange(16.0D));
+		if (target == null) return false;
+		boolean concealed = target.hasEffect(MobEffects.INVISIBILITY);
+		if (concealed) {
+			target.removeEffect(MobEffects.INVISIBILITY);
+		}
+		target.addEffect(new MobEffectInstance(MobEffects.GLOWING, 180, 0, false, true));
+		target.hurt(context.level().damageSources().magic(), context.scaleDamage(concealed ? 5.0F : 3.0F));
+		context.level().playSound(null, target.blockPosition(), SoundEvents.AMETHYST_BLOCK_CHIME, SoundSource.HOSTILE,
+				0.75F, concealed ? 1.75F : 1.45F);
+		sendParticles(context.level(), target.getEyePosition(), 20, new ParticleColor(255, 235, 175), 0.8D);
+		return true;
 	}
 
 	private static boolean crimsonSight(ManipulationCastContext context) {
@@ -434,6 +455,24 @@ public final class EntityManipulationEffects {
 		return true;
 	}
 
+	private static boolean gloamLaceration(ManipulationCastContext context) {
+		LivingEntity target = preferredTarget(context, context.scaleRange(7.0D));
+		if (target == null) return false;
+		boolean ambush = context.caster().hasEffect(MobEffects.INVISIBILITY)
+				|| BlackVeilCovenantManager.isDarkEnough(context.level(), context.caster().blockPosition(), 7);
+		target.addEffect(new MobEffectInstance(EffectInit.blood_loss, 140, 0, false, true));
+		target.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, 120, 0, false, true));
+		target.hurt(context.level().damageSources().magic(), context.scaleDamage(ambush ? 6.0F : 3.5F));
+		context.level().playSound(null, target.blockPosition(), SoundEvents.PLAYER_ATTACK_SWEEP, SoundSource.HOSTILE,
+				0.75F, ambush ? 0.65F : 0.85F);
+		if (context.level() instanceof ServerLevel serverLevel) {
+			PacketHandler.sendClawSlash(target.position().add(0.0D, target.getBbHeight() * 0.55D, 0.0D),
+					context.aim(), new ParticleColor(ambush ? 55 : 85, 0, ambush ? 135 : 100),
+					ambush, ambush ? 1.05F : 0.92F, 64.0D, serverLevel);
+		}
+		return true;
+	}
+
 	private static boolean umbralStep(ManipulationCastContext context) {
 		if (!context.hasTarget()) return false;
 		BlockPos landing = findLandingNearTarget(context.caster(), context.target());
@@ -460,7 +499,7 @@ public final class EntityManipulationEffects {
 			if (toTarget.lengthSqr() <= 1.0E-4D || look.dot(toTarget.normalize()) < coneDot) continue;
 			target.addEffect(new MobEffectInstance(MobEffects.BLINDNESS, 100, 1, false, true));
 			target.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, 120, 0, false, true));
-			target.hurt(context.level().damageSources().magic(), context.scaleDamage(1.0F));
+			target.hurt(context.level().damageSources().magic(), context.scaleDamage(3.0F));
 			hits++;
 		}
 		context.level().playSound(null, context.origin(), SoundEvents.WITHER_SHOOT, SoundSource.HOSTILE, 0.6F, 2.0F);

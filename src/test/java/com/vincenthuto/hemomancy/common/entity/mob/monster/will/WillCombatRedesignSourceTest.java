@@ -9,10 +9,10 @@ public final class WillCombatRedesignSourceTest {
 			"blood_shot", "blood_needle", "blood_aneurysm", "blood_cloud",
 			"crimson_flame_conjuration", "sanguine_ignition", "scalding_updraft", "vitric_combustion",
 			"deadly_gaze", "hemolymphal_pulse", "activation_potential",
-			"crimson_sight", "prismatic_reproof", "unclosing_eye",
+			"hematic_flare", "crimson_sight", "prismatic_reproof", "unclosing_eye",
 			"hemorrhage", "exsanguinate", "bloom_of_rot",
 			"cryogenic_pulse", "glacial_grasp", "glacial_bastion", "glacial_rampart",
-			"pyretic_forge", "void_shroud", "umbral_step", "blood_eclipse", "blood_eclipse_mantle"
+			"pyretic_forge", "void_shroud", "gloam_laceration", "umbral_step", "blood_eclipse"
 	};
 
 	private WillCombatRedesignSourceTest() {
@@ -35,6 +35,10 @@ public final class WillCombatRedesignSourceTest {
 		for (String id : REQUIRED_KIT_IDS) {
 			assertContains("entity support covers " + id, support, "\"" + id + "\"");
 		}
+		assertContains("entity support dispatches Lux flare", support,
+				"case \"hematic_flare\" -> hematicFlare(context);");
+		assertContains("entity support dispatches Tenebris slash", support,
+				"case \"gloam_laceration\" -> gloamLaceration(context);");
 		assertContains("drudge caster still exists", read("src/main/java/com/vincenthuto/hemomancy/common/manipulation/MobManipCaster.java"),
 				"class MobManipCaster");
 	}

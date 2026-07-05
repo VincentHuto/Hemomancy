@@ -119,6 +119,7 @@ public class ManipulationTreeInit {
 		// Row 2 (bottom) — HUMILIS
 		register("hemosynthesis",1340,170);
 		register("blood_lamp",1200,160);
+		register("hematic_flare",1285,220);
 		register("conjure_spear",1240,260, "crimson_sight")
 				.setSoftParents("conjure_staff");
 
@@ -170,6 +171,7 @@ public class ManipulationTreeInit {
 
 		// Row 1 (bottom) — HUMILIS / MEDIOCRITAS
 		register("void_shroud",1880,110);
+		register("gloam_laceration",1980,110);
 		register("blood_eclipse",2050,70);
 		register("blood_eclipse_mantle",2090,120, "blood_eclipse");
 		register("conjure_claws",1950,150, "void_shroud")

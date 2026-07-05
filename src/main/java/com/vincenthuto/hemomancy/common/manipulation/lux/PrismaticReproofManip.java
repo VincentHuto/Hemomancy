@@ -39,7 +39,6 @@ public class PrismaticReproofManip extends BloodManipulation {
 
 		Vec3 eye = player.getEyePosition();
 		Vec3 look = player.getLookAngle().normalize();
-		float damage = (float) (4.0F * SkillPointHelper.getCrimsonMasteryMultiplier(player));
 		int struck = 0;
 
 		for (LivingEntity target : world.getEntitiesOfClass(LivingEntity.class,
@@ -50,10 +49,10 @@ public class PrismaticReproofManip extends BloodManipulation {
 			if (look.dot(toTarget.normalize()) < HALF_CONE_DOT) continue;
 			target.addEffect(new MobEffectInstance(MobEffects.BLINDNESS, 100, 0, false, true));
 			target.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, 140, 0, false, true));
-			if (target.hasEffect(MobEffects.GLOWING)) {
-				target.hurt(world.damageSources().magic(),
-						TendencyAffinityRules.adjustManipulationDamage(player, target, this, damage));
-			}
+			float damage = (float) ((target.hasEffect(MobEffects.GLOWING) ? 4.0F : 2.0F)
+					* SkillPointHelper.getCrimsonMasteryMultiplier(player));
+			target.hurt(world.damageSources().magic(),
+					TendencyAffinityRules.adjustManipulationDamage(player, target, this, damage));
 			struck++;
 		}
 

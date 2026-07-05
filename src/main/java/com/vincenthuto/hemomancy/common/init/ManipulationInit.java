@@ -391,6 +391,25 @@ public class ManipulationInit {
 						return true;
 					}, "Places a light source in the dark"));
 
+	public static final DeferredHolder<BloodManipulation, BloodManipulation> hematic_flare = MANIPS.register("hematic_flare",
+			() -> new HematicFlareManip("hematic_flare", 125, 0, 0, EnumManipulationType.QUICK,
+					EnumManipulationRank.HUMILIS, EnumBloodTendency.LUX, EnumVeinSections.HEAD)
+					.setSecondaryTend(EnumBloodTendency.FLAMMEUS)
+					.setCooldownTicks(30)
+					.setDrudgeAction((drudge, world, centre, radius) -> {
+						AABB area = new AABB(centre).inflate(radius);
+						Monster target = world.getEntitiesOfClass(Monster.class, area).stream()
+								.min(Comparator.comparingDouble(drudge::distanceToSqr)).orElse(null);
+						if (target == null) return false;
+						boolean concealed = target.hasEffect(MobEffects.INVISIBILITY);
+						if (concealed) {
+							target.removeEffect(MobEffects.INVISIBILITY);
+						}
+						target.addEffect(new MobEffectInstance(MobEffects.GLOWING, 180, 0, false, true));
+						target.hurt(world.damageSources().magic(), concealed ? 5.0F : 3.0F);
+						return true;
+					}, "Marks and burns the nearest hidden hostile"));
+
 	public static final DeferredHolder<BloodManipulation, BloodManipulation> crimson_harvest = MANIPS.register("crimson_harvest",
 			() -> new CrimsonHarvestManip("crimson_harvest", 200, 0, 0, EnumManipulationType.QUICK,
 					EnumManipulationRank.HUMILIS, EnumBloodTendency.DUCTILIS, EnumVeinSections.LEGS)
@@ -725,6 +744,24 @@ public class ManipulationInit {
 								new MobEffectInstance(MobEffects.INVISIBILITY, 600, 0, false, false));
 						return true;
 					}, "Cloaks the Drudge with Invisibility"));
+
+	public static final DeferredHolder<BloodManipulation, BloodManipulation> gloam_laceration = MANIPS.register("gloam_laceration",
+			() -> new GloamLacerationManip("gloam_laceration", 175, 0, 0, EnumManipulationType.QUICK,
+					EnumManipulationRank.HUMILIS, EnumBloodTendency.TENEBRIS, EnumVeinSections.ARMS)
+					.setSecondaryTend(EnumBloodTendency.MORTEM)
+					.setCooldownTicks(35)
+					.setDrudgeAction((drudge, world, centre, radius) -> {
+						AABB area = new AABB(centre).inflate(radius);
+						Monster target = world.getEntitiesOfClass(Monster.class, area).stream()
+								.min(Comparator.comparingDouble(drudge::distanceToSqr)).orElse(null);
+						if (target == null) return false;
+						boolean ambush = drudge.hasEffect(MobEffects.INVISIBILITY)
+								|| BlackVeilCovenantManager.isDarkEnough(world, drudge.blockPosition(), 7);
+						target.addEffect(new MobEffectInstance(EffectInit.blood_loss, 140, 0, false, true));
+						target.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, 120, 0, false, true));
+						target.hurt(world.damageSources().magic(), ambush ? 6.0F : 3.5F);
+						return true;
+					}, "Slashes the nearest hostile from darkness"));
 
 	public static final DeferredHolder<BloodManipulation, BloodManipulation> blood_eclipse = MANIPS.register("blood_eclipse",
 			() -> new BloodEclipseManip("blood_eclipse", 300, 10, 0, EnumManipulationType.QUICK,

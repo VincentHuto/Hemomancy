@@ -191,6 +191,7 @@ public class PacketHandler {
         net.playToClient(SpawnFlaskParticlesPacket.TYPE, SpawnFlaskParticlesPacket.STREAM_CODEC, SpawnFlaskParticlesPacket::handle);
         net.playToClient(SpawnAvatarParticlesPacket.TYPE, SpawnAvatarParticlesPacket.STREAM_CODEC, SpawnAvatarParticlesPacket::handle);
         net.playToClient(SpawnBloodClawParticlesPacket.TYPE, SpawnBloodClawParticlesPacket.STREAM_CODEC, SpawnBloodClawParticlesPacket::handle);
+        net.playToClient(SpawnClawSlashPacket.TYPE, SpawnClawSlashPacket.STREAM_CODEC, SpawnClawSlashPacket::handle);
         net.playToClient(SpawnLivingToolParticlesPacket.TYPE, SpawnLivingToolParticlesPacket.STREAM_CODEC, SpawnLivingToolParticlesPacket::handle);
         net.playToClient(SpawnMonolithShatterBurstPacket.TYPE, SpawnMonolithShatterBurstPacket.STREAM_CODEC, SpawnMonolithShatterBurstPacket::handle);
         net.playToClient(SpawnSanguineOmenEffectPacket.TYPE, SpawnSanguineOmenEffectPacket.STREAM_CODEC, SpawnSanguineOmenEffectPacket::handle);
@@ -287,6 +288,12 @@ public class PacketHandler {
             ServerLevel level) {
         PacketDistributor.sendToPlayersNear(level, null, pos.x, pos.y, pos.z, radius,
                 new SpawnBloodClawParticlesPacket(pos, color));
+    }
+
+    public static void sendClawSlash(Vec3 pos, Vec3 forward, ParticleColor color, boolean ambush, float scale,
+            double radius, ServerLevel level) {
+        PacketDistributor.sendToPlayersNear(level, null, pos.x, pos.y, pos.z, radius,
+                new SpawnClawSlashPacket(pos, forward, color, ambush, scale, level.random.nextInt()));
     }
 
     public static void sendLivingToolBreakParticles(Vec3 pos, ParticleColor color, double radius,
