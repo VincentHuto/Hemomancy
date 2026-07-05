@@ -3,13 +3,16 @@ package com.vincenthuto.hemomancy.common.network.capa.harbinger.manips;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.IKnownManipulations;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.ManipulationDiagnosticsSync;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.CellHandFormHelper;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.LivingStaffWeaponFormHelper;
 import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
+import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 
@@ -74,6 +77,8 @@ public class ChangeSelectedManipPacket implements CustomPacketPayload {
 				}
 				known.setSelectedManip(target);
 				player.displayClientMessage(Component.literal("Selected:" + target.getProperName()), true);
+				PacketHandler.sendToPlayer((ServerPlayer) player, new KnownManipulationServerPacket(known));
+				ManipulationDiagnosticsSync.sync((ServerPlayer) player);
 			}
 
 		});

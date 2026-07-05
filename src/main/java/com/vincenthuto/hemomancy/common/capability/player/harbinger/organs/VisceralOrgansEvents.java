@@ -2,11 +2,10 @@ package com.vincenthuto.hemomancy.common.capability.player.harbinger.organs;
 
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodVolumeEvents;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodFlowContribution.Category;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodFlowLedger;
 import com.vincenthuto.hemomancy.common.event.worldevent.BloodMoonEvents;
 import com.vincenthuto.hemomancy.common.item.harbinger.OrganEchoItem;
-import net.minecraft.ChatFormatting;
-import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
@@ -54,25 +53,7 @@ public class VisceralOrgansEvents {
 		boolean bloodMoonActive = BloodMoonEvents.isBloodMoonActive(player.level());
 
 		HemoCapabilityAccess.getVisceralOrgans(player).ifPresent(organs -> {
-			// Spleen — increased max blood volume per modification level
-			if (organs.isExtracted(EnumOrgan.SPLEEN)) {
-				int level = organs.getOrganLevel(EnumOrgan.SPLEEN);
-				HemoCapabilityAccess.getBloodVolume(player).ifPresent(vol -> {
-					double baseMax = 5000.0;
-					double bonus = level * 1000.0; // +1000 per modification level
-					double targetMax = baseMax + bonus;
-					if (vol.getMaxBloodVolume() < targetMax) {
-						vol.setMaxBloodVolume(targetMax);
-						// Announce expansion so the player notices the new capacity
-						player.displayClientMessage(
-								Component.literal("Your blood reservoir has expanded \u2014 capacity now "
-										+ (int) targetMax + ".")
-										.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC),
-								false);
-					}
-				});
-			}
-
+			// Spleen max blood is resolved by MaxBloodLedger.
 			// Liver — poison/toxin resistance
 			if (organs.isExtracted(EnumOrgan.LIVER)) {
 				int level = organs.getOrganLevel(EnumOrgan.LIVER);
@@ -131,10 +112,9 @@ public class VisceralOrgansEvents {
 				// Blood cost: sustaining circulation without a heart is taxing
 				HemoCapabilityAccess.getBloodVolume(player).ifPresent(vol -> {
 					double cost = 10.0 / level; // Higher level = less cost
-					vol.drain(cost);
 					if (player instanceof ServerPlayer sp) {
-						BloodVolumeEvents
-								.syncVolume(sp, vol);
+						BloodFlowLedger.applyDrain(sp, vol, "heartless_circulation",
+								"Heartless Circulation", Category.ORGAN, cost, 40, false);
 					}
 				});
 			}

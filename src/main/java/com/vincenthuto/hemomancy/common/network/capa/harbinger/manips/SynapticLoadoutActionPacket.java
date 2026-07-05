@@ -6,6 +6,7 @@ import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.IKnownManipulations;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.ManipSlotHelper;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.ManipulationDiagnosticsSync;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.ManipulationEquipHelper;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.ManipulationLoadout;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.SynapticLoadoutSlotHelper;
@@ -229,6 +230,7 @@ public class SynapticLoadoutActionPacket implements CustomPacketPayload {
 
 	private static void syncKnown(ServerPlayer player, IKnownManipulations known) {
 		PacketHandler.sendToPlayer(player, new KnownManipulationServerPacket(known));
+		ManipulationDiagnosticsSync.sync(player);
 	}
 
 	private static void fail(ServerPlayer player, String message) {

@@ -1,6 +1,9 @@
 package com.vincenthuto.hemomancy.common.network.capa.harbinger.manips;
 
 import com.vincenthuto.hemomancy.Hemomancy;
+import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodVolumeEvents;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.MaxBloodLedger;
 import com.vincenthuto.hemomancy.common.init.BlockInit;
 import com.vincenthuto.hemomancy.common.menu.ScryingDiagnosticsMenuProvider;
 import net.minecraft.core.BlockPos;
@@ -37,6 +40,10 @@ public class PacketOpenScryingDiagnostics implements CustomPacketPayload {
 				if (!canOpenScryingDiagnostics(player, msg.pos)) {
 					return;
 				}
+				HemoCapabilityAccess.getBloodVolume(player).ifPresent(volume -> {
+					MaxBloodLedger.apply(player, volume);
+					BloodVolumeEvents.syncVolume(player, volume);
+				});
 				player.closeContainer();
 				player.openMenu(new ScryingDiagnosticsMenuProvider());
 			}

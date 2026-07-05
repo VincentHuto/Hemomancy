@@ -22,6 +22,7 @@ import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.Bloodline;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodlineDisbandHelper;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodlineSavedData;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.MaxBloodLedger;
 import com.vincenthuto.hemomancy.common.entity.HemoEntityPredicates;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.AncestralCommunionDialogueTrees;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.DialogueTree;
@@ -458,10 +459,6 @@ public class HarbingerCardinalRiteEvents {
 	private static final String HORN_OF_CULMINATION_RITE = "cardinal_rite/horn_of_culmination_rite";
 
 
-	/** Eternal Covenant max blood volume bonus, applied once per player. */
-	private static final double ETERNAL_COVENANT_BONUS = 500.0;
-	/** NBT key stored on player persistent data to track covenant usage. */
-	private static final String ETERNAL_COVENANT_TAG = "hemomancy:eternal_covenant_used";
 	/** Radius (in blocks) for Hungering Earth terrain corruption. */
 	private static final int HUNGERING_EARTH_RADIUS = 16;
 	/** Chunk radius for Sanguine Dominion blood domain. */
@@ -1153,7 +1150,7 @@ public class HarbingerCardinalRiteEvents {
 	 */
 	private static void completeEternalCovenant(ServerPlayer caster) {
 		CompoundTag persistentData = caster.getPersistentData();
-		if (persistentData.getBoolean(ETERNAL_COVENANT_TAG)) {
+		if (persistentData.getBoolean(MaxBloodLedger.ETERNAL_COVENANT_TAG)) {
 			caster.displayClientMessage(
 					Component.literal("The covenant has already been sealed. Its boon cannot be granted twice.")
 							.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC),
@@ -1161,15 +1158,12 @@ public class HarbingerCardinalRiteEvents {
 			return;
 		}
 
-		HemoCapabilityAccess.getBloodVolume(caster).ifPresent(volume -> {
-			volume.addMaxBloodVolume(ETERNAL_COVENANT_BONUS);
-			BloodVolumeEvents.syncVolume(caster, volume);
-		});
-		persistentData.putBoolean(ETERNAL_COVENANT_TAG, true);
+		persistentData.putBoolean(MaxBloodLedger.ETERNAL_COVENANT_TAG, true);
+		HemoCapabilityAccess.getBloodVolume(caster).ifPresent(volume -> MaxBloodLedger.apply(caster, volume));
 
 		caster.displayClientMessage(
 				Component.literal("The Eternal Covenant is sealed! Your maximum blood volume has been permanently increased by "
-						+ (int) ETERNAL_COVENANT_BONUS + ".")
+						+ (int) MaxBloodLedger.ETERNAL_COVENANT_BONUS + ".")
 						.withStyle(ChatFormatting.GOLD, ChatFormatting.BOLD),
 				false);
 		HarbingerAdvancementGranter.grantIfNotDone(caster, HarbingerAdvancementGranter.ADV_ETERNAL_COVENANT_SEALED);

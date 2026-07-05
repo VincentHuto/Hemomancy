@@ -2,7 +2,8 @@ package com.vincenthuto.hemomancy.common.event.worldevent;
 
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodVolumeEvents;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodFlowContribution.Category;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodFlowLedger;
 import com.vincenthuto.hemomancy.common.init.EntityInit;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.PacketSyncBloodMoon;
@@ -302,10 +303,8 @@ public class BloodMoonEvents {
 			player.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, EFFECT_DURATION, 0, true, false, true));
 			// Passive blood drain for active (initiated-blood) players caught in the moon
 			HemoCapabilityAccess.getBloodVolume(player).ifPresent(vol -> {
-				if (vol.isActive()) {
-					vol.drain(BLOOD_MOON_DRAIN_AMOUNT);
-					BloodVolumeEvents.syncVolume(player, vol);
-				}
+				BloodFlowLedger.applyDrain(player, vol, "blood_moon",
+						"Blood Moon", Category.WORLD, BLOOD_MOON_DRAIN_AMOUNT, EFFECT_INTERVAL_TICKS, false);
 			});
 		}
 	}

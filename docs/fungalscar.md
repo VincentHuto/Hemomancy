@@ -37,4 +37,4 @@ It does not add sight-to-tap, terrain-drain behavior, ore reveal, Saint chamber 
 
 ## Blood guardrails
 
-Any passive blood gain introduced by fungal scars must route through `CirculationIncomeHelper` using `IncomeChannel.SCAR`, so the shared circulation guardrails remain authoritative.
+Any passive blood gain introduced by fungal scars must route through `BloodFlowLedger.applyCirculationIncome(...)` or the `CirculationIncomeHelper` compatibility path using `IncomeChannel.SCAR`, so the shared circulation guardrails and Scrying Diagnostics source rows remain authoritative.

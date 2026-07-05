@@ -2,7 +2,9 @@ package com.vincenthuto.hemomancy.common.rite.harbinger;
 
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodVolumeEvents;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodFlowContribution.Category;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodFlowLedger;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.CirculationIncomeHelper;
 import com.vincenthuto.hemomancy.common.capability.player.shared.knowledge.discovery.MemoDefinitions;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.FungalWhisperDialogueTrees;
 import com.vincenthuto.hemomancy.common.init.BlockInit;
@@ -73,13 +75,9 @@ public class QliphothBloomEvents {
 						REGEN_DURATION, 0, true, false, true));
 
 				HemoCapabilityAccess.getBloodVolume(player).ifPresent(volume -> {
-					if (volume.isActive()) {
-						double maxBlood = volume.getMaxBloodVolume();
-						if (volume.getBloodVolume() < maxBlood) {
-							volume.fill(BLOOD_REGEN_PER_TICK);
-							BloodVolumeEvents.syncVolume(player, volume);
-						}
-					}
+					BloodFlowLedger.applyCirculationIncome(player, volume, "qliphoth_bloom",
+							"Qliphoth Bloom", Category.WORLD, BLOOD_REGEN_PER_TICK,
+							EFFECT_APPLICATION_INTERVAL_TICKS, CirculationIncomeHelper.IncomeChannel.OTHER);
 				});
 			}
 

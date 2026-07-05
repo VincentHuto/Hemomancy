@@ -1,26 +1,17 @@
 package com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume;
 
-import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
-import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillPointHelper;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodFlowContribution.Category;
 import com.vincenthuto.hemomancy.common.event.CirculationIncomeRules;
-import com.vincenthuto.hemomancy.config.HemoServerConfig;
-
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 
 /**
- * Minecraft-facing adapter for {@link CirculationIncomeRules}: all passive
- * blood-income sources (armor set regen, mask trickles, morphling siphons,
- * cradle redistribution) route their fills through {@link #grant} so they
- * share one bandwidth window instead of stacking additively.
- *
- * <p>Callers keep their own capability lookups and sync calls — this helper
- * only decides how much of the requested income fits through the pipe this
- * window, fills that much, and records the usage on the player's guardrail
- * attachment.</p>
+ * Compatibility adapter for the shared passive blood-income bandwidth.
+ * Prefer {@link BloodFlowLedger#applyCirculationIncome} for new call sites so
+ * diagnostics can use a specific source id and label.
  */
 public final class CirculationIncomeHelper {
 
-	/** Which system is asking; recorded for future debug readouts. */
 	public enum IncomeChannel {
 		ARMOR, MORPHLING, CRADLE, SCAR, OTHER
 	}
@@ -30,49 +21,38 @@ public final class CirculationIncomeHelper {
 
 	/**
 	 * Request passive income for the player. Fills the granted amount into the
-	 * supplied volume and returns it; returns 0 when the pipe is saturated,
-	 * the volume is inactive/full, or the request is non-positive. With the
-	 * governor disabled in config this is a pure pass-through fill.
+	 * supplied volume and returns what actually moved. The math is delegated to the
+	 * unified blood-flow ledger so legacy sources still appear in diagnostics.
 	 */
 	public static double grant(Player player, IBloodVolume volume, double requested, IncomeChannel channel) {
-		if (player == null || volume == null || requested <= 0.0D) {
+		if (!(player instanceof ServerPlayer serverPlayer) || volume == null || requested <= 0.0D) {
 			return 0.0D;
 		}
-		if (player.level().isClientSide()) {
-			return 0.0D;
-		}
-		if (!volume.isActive() || volume.isFull()) {
-			return 0.0D;
-		}
-		if (!HemoServerConfig.CIRCULATION_ENABLED.get()) {
-			double before = volume.getBloodVolume();
-			volume.fill(requested);
-			return Math.max(0.0D, volume.getBloodVolume() - before);
-		}
+		return BloodFlowLedger.applyCirculationIncome(serverPlayer, volume,
+				"circulation_" + channelName(channel), titleCase(channelName(channel)), category(channel), requested,
+				CirculationIncomeRules.DEFAULT_WINDOW_TICKS, channel);
+	}
 
-		long now = player.level().getGameTime();
-		PowerGuardrailState state = HemoCapabilityAccess.getPowerGuardrails(player);
-		double bandwidth = CirculationIncomeRules.bandwidthPerWindow(
-				HemoServerConfig.CIRCULATION_BASE_BANDWIDTH.get(),
-				HemoServerConfig.CIRCULATION_BANDWIDTH_PER_DEGREE.get(),
-				HemoCapabilityAccess.getPlayerDegreeNumber(player),
-				HemoServerConfig.CIRCULATION_BANDWIDTH_PER_CAPACITY_POINT.get(),
-				SkillPointHelper.getCapacityBonus(player));
-		CirculationIncomeRules.Grant grant = CirculationIncomeRules.grant(requested, now,
-				HemoServerConfig.CIRCULATION_WINDOW_TICKS.get(), state.getCirculationWindowStart(),
-				state.getCirculationWindowUsed(), bandwidth);
-
-		double actual = 0.0D;
-		if (grant.granted() > 0.0D) {
-			double before = volume.getBloodVolume();
-			volume.fill(grant.granted());
-			actual = Math.max(0.0D, volume.getBloodVolume() - before);
+	private static Category category(IncomeChannel channel) {
+		if (channel == null) {
+			return Category.OTHER;
 		}
-		// Record what actually moved — fill may clamp at max volume, and the
-		// window must never charge for blood that was not delivered (callers
-		// like the cradle decrement their buffers by the returned amount).
-		state.setCirculationWindowStart(grant.windowStart());
-		state.setCirculationWindowUsed(grant.usedInWindow() - (grant.granted() - actual));
-		return actual;
+		return switch (channel) {
+			case ARMOR -> Category.ARMOR;
+			case MORPHLING, CRADLE -> Category.MORPHLING;
+			case SCAR -> Category.SCAR;
+			case OTHER -> Category.OTHER;
+		};
+	}
+
+	private static String channelName(IncomeChannel channel) {
+		return channel == null ? "other" : channel.name().toLowerCase();
+	}
+
+	private static String titleCase(String value) {
+		if (value == null || value.isEmpty()) {
+			return "Other";
+		}
+		return Character.toUpperCase(value.charAt(0)) + value.substring(1);
 	}
 }

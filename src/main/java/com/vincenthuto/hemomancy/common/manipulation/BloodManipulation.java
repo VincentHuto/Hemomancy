@@ -5,6 +5,8 @@ import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillPoin
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.IBloodTendency;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.KnownManipulationEvents;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.ManipulationCostLedger;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.ManipulationCostSnapshot;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.scar.fungal.ConserveStateHelper;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.scar.fungal.CrawlingChoirHandler;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.scar.fungal.RootedStateHelper;
@@ -17,15 +19,12 @@ import com.vincenthuto.hemomancy.common.entity.boss.saint.hemorath.HemorathEntit
 import com.vincenthuto.hemomancy.common.effect.MnemonicCandleRules;
 import com.vincenthuto.hemomancy.common.effect.MnemonicPotionRules;
 import com.vincenthuto.hemomancy.common.event.BorrowedBloodRules;
-import com.vincenthuto.hemomancy.common.event.worldevent.BloodMoonEvents;
 import com.vincenthuto.hemomancy.common.init.EffectInit;
 import com.vincenthuto.hemomancy.common.item.harbinger.CheapBloodInfusionHelper;
-import com.vincenthuto.hemomancy.common.item.harbinger.QliphothPomeRules;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.SporiticThuribleResonanceState;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.BloodVolumeServerPacket;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.manips.ManipCooldownPacket;
-import com.vincenthuto.hemomancy.common.rite.harbinger.QliphothBloomEvents;
 import com.vincenthuto.hutoslib.client.HLTextUtils;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
@@ -354,68 +353,9 @@ public class BloodManipulation implements EntityCastableManipulation {
 			}
 
 			if (volume.isActive()) {
-				// Apply Efficiency skill discount to manipulation cost
-				double effectiveCost = cost * SkillPointHelper.getEfficiencyMultiplier(player) * costMultiplier;
-
-				// ── ManipLevel — per-use mastery reduces cost ──
-				double levelCostMultiplier = HemoCapabilityAccess.getKnownManipulations(player)
-						.map(k -> k.getManipLevel(this))
-						.map(ManipLevel::getCostMultiplier)
-						.orElse(1.0);
-				effectiveCost *= levelCostMultiplier;
-
-				// ── Skill: Dynamic Use — reduce cost further when this manipulation's
-				//    tendency matches the player's strongest tendency ──
-				EnumBloodTendency strongest = null;
-				float highestVal = 0;
-				for (EnumBloodTendency t : EnumBloodTendency.values()) {
-					float val = tendency.getAlignmentByTendency(t);
-					if (val > highestVal) {
-						highestVal = val;
-						strongest = t;
-					}
-				}
-				if (strongest != null && strongest.equals(tend)) {
-					// Dynamic Use returns e.g. 1.2 at level 2 — invert to
-					// get a discount: cost / 1.2 ≈ 17% discount.
-					effectiveCost /= SkillPointHelper.getDynamicUseMultiplier(player);
-				}
-
-				// MnA Combo System: Arcane Resonance reduces blood cost
-				if (ModList.get().isLoaded("mna")
-						&& player.hasEffect(com.vincenthuto.hemomancy.common.init.EffectInit.arcane_resonance)) {
-					try {
-						double reduction = com.vincenthuto.hemomancy.config.HemoMnAConfig.ARCANE_RESONANCE_BLOOD_REDUCTION.get();
-						effectiveCost *= (1.0 - reduction);
-					} catch (Exception ignored) {}
-				}
-
-				// Qliphoth Bloom: 25% cost reduction when within a bloom's radius
-				if (player instanceof ServerPlayer serverPlayer
-						&& QliphothBloomEvents.isInQliphothBloom(serverPlayer)) {
-					effectiveCost *= 0.75;
-				}
-
-				// Qliphoth Pome Empowerment: 25% cost reduction for 3 minutes after eating a Pome
-				long pomeExpiry = HemoCapabilityAccess.getInitiatoryDegree(player)
-						.map(d -> d.getPomeEmpowermentExpiry()).orElse(0L);
-				if (player.level().getGameTime() < pomeExpiry) {
-					effectiveCost *= QliphothPomeRules.empowermentCostMultiplier(
-							SkillPointHelper.getQliphothGestationLevel(player));
-				}
-
-				// Blood Moon: 25% cost reduction while the blood moon is active
-				if (BloodMoonEvents.isBloodMoonActive(world)) {
-					effectiveCost *= 0.75;
-				}
-
-				// Qliphoth Pome Corruption: each pome consumed increases cost by 12% (1–8 pomes)
-				if (pomesConsumed > 0) {
-					effectiveCost *= (1.0 + pomesConsumed * 0.12);
-				}
-				effectiveCost *= CheapBloodInfusionHelper.getManipulationCostMultiplier(player);
-				effectiveCost *= SporiticThuribleResonanceState.getCostMultiplier(player, tend);
-				effectiveCost *= MnemonicPotionRules.manipulationCostMultiplier(player.hasEffect(EffectInit.mnemonic_screams));
+				// Unified manipulation cost ledger covers skill, rites, effects, world, and tool modifiers.
+				ManipulationCostSnapshot costSnapshot = ManipulationCostLedger.collect(player, this, costMultiplier);
+				double effectiveCost = costSnapshot.effectiveCost();
 
 				boolean hasRequiredAlignment = tendency.getAlignmentByTendency(tend) >= alignLevel;
 				if (!hasRequiredAlignment) {

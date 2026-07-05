@@ -182,6 +182,8 @@ Effective cost / cooldown / power runs through an unusually deep, fully diegetic
 
 Casting is a market with subsidies and taxes — every modifier is a piece of fiction, not a stat line.
 
+Implementation note: selected-manipulation blood cost now resolves through `ManipulationCostLedger` and syncs a `ManipulationCostSnapshot` to the Scrying Podium, so active discounts, surcharges, and blocking conditions can be inspected as exact source rows.
+
 ---
 
 ## 6. Second lives — manipulations reused as content

@@ -96,18 +96,6 @@ public class ScarDefinition {
 				player.addEffect(new MobEffectInstance(eff.effect(), -1, eff.amplifier(), true, false));
 			}
 
-			if (maxBloodModifier != 0.0) {
-				HemoCapabilityAccess.getBloodVolume(player).ifPresent(v -> {
-					if (v.isActive()) {
-						double absAmount = Math.abs(maxBloodModifier);
-						if (maxBloodModifier > 0) {
-							v.addMaxBloodVolume(absAmount);
-						} else {
-							v.subtractMaxBloodVolume(absAmount);
-						}
-					}
-				});
-			}
 		}
 	}
 
@@ -133,18 +121,6 @@ public class ScarDefinition {
 				}
 			}
 
-			if (maxBloodModifier != 0.0) {
-				HemoCapabilityAccess.getBloodVolume(player).ifPresent(v -> {
-					if (v.isActive()) {
-						double absAmount = Math.abs(maxBloodModifier);
-						if (maxBloodModifier > 0) {
-							v.subtractMaxBloodVolume(absAmount);
-						} else {
-							v.addMaxBloodVolume(absAmount);
-						}
-					}
-				});
-			}
 		}
 	}
 
@@ -418,6 +394,10 @@ public class ScarDefinition {
 
 	public int getTier() {
 		return tier;
+	}
+
+	public double getMaxBloodModifier() {
+		return maxBloodModifier;
 	}
 
 	public List<ScarModifier> getPassiveModifiers() {

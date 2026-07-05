@@ -80,6 +80,10 @@ public class PacketHandler {
                 BloodVolumeClientPacket.STREAM_CODEC, BloodVolumeClientPacket::handle);
         net.playToClient(BloodVolumeServerPacket.TYPE,
                 BloodVolumeServerPacket.STREAM_CODEC, BloodVolumeServerPacket::handle);
+        net.playToClient(PacketSyncBloodFlowDiagnostics.TYPE,
+                PacketSyncBloodFlowDiagnostics.STREAM_CODEC, PacketSyncBloodFlowDiagnostics::handle);
+        net.playToClient(PacketSyncMaxBloodDiagnostics.TYPE,
+                PacketSyncMaxBloodDiagnostics.STREAM_CODEC, PacketSyncMaxBloodDiagnostics::handle);
 
         net.playToClient(PacketSyncPomeProgress.TYPE,
                 PacketSyncPomeProgress.STREAM_CODEC, PacketSyncPomeProgress::handle);
@@ -124,6 +128,10 @@ public class PacketHandler {
         // ── Known Manipulations ───────────────────────────────────────────────
         net.playBidirectional(KnownManipulationClientPacket.TYPE, KnownManipulationClientPacket.STREAM_CODEC, KnownManipulationClientPacket::handle);
         net.playToClient(KnownManipulationServerPacket.TYPE, KnownManipulationServerPacket.STREAM_CODEC, KnownManipulationServerPacket::handle);
+        net.playToClient(PacketSyncManipulationCostDiagnostics.TYPE,
+                PacketSyncManipulationCostDiagnostics.STREAM_CODEC, PacketSyncManipulationCostDiagnostics::handle);
+        net.playToClient(PacketSyncManipulationSlotDiagnostics.TYPE,
+                PacketSyncManipulationSlotDiagnostics.STREAM_CODEC, PacketSyncManipulationSlotDiagnostics::handle);
         net.playBidirectional(DisplayKnownManipsPacket.TYPE, DisplayKnownManipsPacket.STREAM_CODEC, DisplayKnownManipsPacket::handle);
         net.playBidirectional(ChangeSelectedManipPacket.TYPE, ChangeSelectedManipPacket.STREAM_CODEC, ChangeSelectedManipPacket::handle);
         net.playBidirectional(UseQuickManipKeyPacket.TYPE, UseQuickManipKeyPacket.STREAM_CODEC, UseQuickManipKeyPacket::handle);
