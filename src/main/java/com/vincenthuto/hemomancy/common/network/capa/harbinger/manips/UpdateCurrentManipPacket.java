@@ -4,6 +4,7 @@ import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.IKnownManipulations;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.ManipulationDiagnosticsSync;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.ManipulationRetirementRules;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.CellHandFormHelper;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.LivingStaffWeaponFormHelper;
 import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
@@ -38,6 +39,14 @@ public class UpdateCurrentManipPacket implements CustomPacketPayload {
 					List<BloodManipulation> manips = known.getManipList();
 					if (msg.selected >= 0 && msg.selected < manips.size() && manips.get(msg.selected) != null) {
 						BloodManipulation target = manips.get(msg.selected);
+						if (ManipulationRetirementRules.isRetiredManipulation(target)) {
+							player.displayClientMessage(
+									Component.literal("That manipulation has gone dormant.")
+											.withStyle(net.minecraft.ChatFormatting.DARK_GRAY), true);
+							ManipulationRetirementRules.sanitizeKnownManipulations(known);
+							PacketHandler.sendToPlayer((ServerPlayer) player, new KnownManipulationServerPacket(known));
+							return;
+						}
 						// Only allow selecting equipped manipulations
 						if (!known.isManipEquipped(target)) {
 							player.displayClientMessage(

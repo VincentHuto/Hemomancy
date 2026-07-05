@@ -5,6 +5,7 @@ import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.IKnownManipulations;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.ManipulationDiagnosticsSync;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.ManipulationEquipHelper;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.ManipulationRetirementRules;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.ManipSlotHelper;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import net.minecraft.ChatFormatting;
@@ -52,6 +53,14 @@ public class EquipManipulationPacket implements CustomPacketPayload {
 			if (known == null) return;
 
 			if (msg.equip) {
+				if (ManipulationRetirementRules.isRetiredManipulation(msg.manipName)) {
+					player.displayClientMessage(
+							Component.literal("That manipulation has gone dormant.")
+									.withStyle(ChatFormatting.DARK_GRAY), true);
+					ManipulationRetirementRules.sanitizeKnownManipulations(known);
+					PacketHandler.sendToPlayer((ServerPlayer) player, new KnownManipulationServerPacket(known));
+					return;
+				}
 				int maxSlots = ManipSlotHelper.getMaxSlots(player);
 				if (known.equipManip(msg.manipName, maxSlots)) {
 					player.displayClientMessage(

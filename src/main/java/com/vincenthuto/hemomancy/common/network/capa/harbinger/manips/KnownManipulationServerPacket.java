@@ -5,6 +5,7 @@ import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.block.vein.VeinLocation;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.IKnownManipulations;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.ManipulationLoadout;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.ManipulationRetirementRules;
 import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
 import com.vincenthuto.hemomancy.common.manipulation.ManipLevel;
 import net.minecraft.core.BlockPos;
@@ -38,6 +39,7 @@ public class KnownManipulationServerPacket implements CustomPacketPayload {
 	private List<ManipulationLoadout> loadouts = new ArrayList<>();
 
 	public KnownManipulationServerPacket(IKnownManipulations known) {
+		ManipulationRetirementRules.sanitizeKnownManipulations(known);
 		this.known = known.getKnownManips();
 		this.selected = known.getSelectedManip();
 		this.veinList = known.getVeinList();
@@ -140,6 +142,7 @@ public class KnownManipulationServerPacket implements CustomPacketPayload {
 			known.setLastVeinMineStart(msg.lastVeinMineStart);
 			known.setEquippedManipNames(msg.equippedManipNames);
 			known.setLoadouts(msg.loadouts);
+			ManipulationRetirementRules.sanitizeKnownManipulations(known);
 
 	
 		});

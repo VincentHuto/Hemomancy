@@ -9,6 +9,7 @@ import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.ManipS
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.ManipulationDiagnosticsSync;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.ManipulationEquipHelper;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.ManipulationLoadout;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.ManipulationRetirementRules;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.SynapticLoadoutSlotHelper;
 import com.vincenthuto.hemomancy.common.init.BlockEntityInit;
 import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
@@ -202,6 +203,9 @@ public class SynapticLoadoutActionPacket implements CustomPacketPayload {
 
 	private static BloodManipulation findKnownManipulation(IKnownManipulations known, String manipName) {
 		if (manipName == null || manipName.isBlank()) {
+			return null;
+		}
+		if (ManipulationRetirementRules.isRetiredManipulation(manipName)) {
 			return null;
 		}
 		for (BloodManipulation manipulation : known.getManipList()) {

@@ -3,6 +3,7 @@ package com.vincenthuto.hemomancy.common.item.harbinger.memories;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.IKnownManipulations;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.ManipulationEquipHelper;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.ManipulationRetirementRules;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.ManipSlotHelper;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
@@ -42,6 +43,11 @@ public class BloodMemoryItem extends Item {
 		super.appendHoverText(stack, context, tooltip, flagIn);
 		if (getManip() != null) {
 			tooltip.add(Component.literal(getManip().getProperName()));
+			if (isRetiredMemoryItem()) {
+				tooltip.add(Component.literal("This memory has gone dormant.")
+						.withStyle(ChatFormatting.DARK_GRAY, ChatFormatting.ITALIC));
+				return;
+			}
 			getManip().getDrudgeAction().ifPresentOrElse(da -> {
 				if (da == com.vincenthuto.hemomancy.common.manipulation.DrudgeAction.DRUDGE_UNSUPPORTED) {
 					tooltip.add(Component.literal("§cNot usable by Drudges"));
@@ -55,6 +61,10 @@ public class BloodMemoryItem extends Item {
 
 	public BloodManipulation getManip() {
 		return manip.get();
+	}
+
+	public boolean isRetiredMemoryItem() {
+		return ManipulationRetirementRules.isRetiredMemoryItem(this, getManip());
 	}
 
 	@Override
@@ -80,6 +90,11 @@ public class BloodMemoryItem extends Item {
 				if (volume.isActive()) {
 					if (!playerIn.isShiftKeyDown()) {
 						BloodManipulation manipulation = getManip();
+						if (ManipulationRetirementRules.isRetiredMemoryItem(this, manipulation)) {
+							playerIn.displayClientMessage(Component.literal("This memory has gone dormant.")
+									.withStyle(ChatFormatting.DARK_GRAY), true);
+							return InteractionResultHolder.fail(stack);
+						}
 						int playerDegree = HemoCapabilityAccess.getPlayerDegreeNumber(playerIn);
 						if (!ManipulationRankGates.playerMeetsRank(playerDegree, manipulation.getRank())) {
 							playerIn.displayClientMessage(Component.literal("This memory requires Degree "

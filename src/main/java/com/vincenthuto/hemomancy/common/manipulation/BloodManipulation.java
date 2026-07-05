@@ -2,6 +2,7 @@ package com.vincenthuto.hemomancy.common.manipulation;
 
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillPointHelper;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.ManipulationRetirementRules;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.IBloodTendency;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.KnownManipulationEvents;
@@ -113,6 +114,9 @@ public class BloodManipulation implements EntityCastableManipulation {
 
 	@Override
 	public boolean castFromEntity(ManipulationCastContext context) {
+		if (ManipulationRetirementRules.isRetiredManipulation(this)) {
+			return false;
+		}
 		return EntityManipulationEffects.cast(this, context);
 	}
 
@@ -318,6 +322,11 @@ public class BloodManipulation implements EntityCastableManipulation {
 				.orElseThrow(NullPointerException::new);
 
 		if (!player.level().isClientSide) {
+			if (ManipulationRetirementRules.isRetiredManipulation(this)) {
+				player.displayClientMessage(Component.literal("That manipulation has gone dormant.")
+						.withStyle(ChatFormatting.DARK_GRAY), true);
+				return;
+			}
 			if (!ignoresCooldown(player) && isAnyManipOnCooldown(player)) {
 				long remaining = getRemainingCooldownTicks(player);
 				double seconds = remaining / TICKS_PER_SECOND;
@@ -483,6 +492,7 @@ public class BloodManipulation implements EntityCastableManipulation {
 	@Deprecated
 	public boolean performDrudgeAction(com.vincenthuto.hemomancy.common.entity.npc.DrudgeEntity drudge, Level world, BlockPos position) {
 		if (world.isClientSide) return false;
+		if (ManipulationRetirementRules.isRetiredManipulation(this)) return false;
 		DrudgeAction action = getDrudgeAction().orElse(null);
 		if (action == null || action == DrudgeAction.DRUDGE_UNSUPPORTED) return false;
 		double costMult = com.vincenthuto.hemomancy.config.HemoServerConfig.DRUDGE_ACTION_COST_MULTIPLIER.get();

@@ -36,7 +36,7 @@ public final class KnownManipulationGrantHelperTest {
 		equipped.add("existing_one");
 		equipped.add("existing_two");
 
-		boolean changed = ManipulationEquipHelper.equipNameIfPossible(equipped, "blood_lamp", 2);
+		boolean changed = ManipulationEquipHelper.equipNameIfPossible(equipped, "deadly_gaze", 2);
 
 		assertFalse("full slots unchanged", changed);
 		assertEquals("equipped count unchanged", 4, equipped.size());
@@ -80,7 +80,7 @@ public final class KnownManipulationGrantHelperTest {
 		List<String> equipped = new ArrayList<>();
 
 		assertTrue("first normal equip", ManipulationEquipHelper.equipNameIfPossible(equipped, "blood_shot", 3));
-		assertTrue("second normal equip", ManipulationEquipHelper.equipNameIfPossible(equipped, "blood_lamp", 3));
+		assertTrue("second normal equip", ManipulationEquipHelper.equipNameIfPossible(equipped, "deadly_gaze", 3));
 		assertTrue("third normal equip", ManipulationEquipHelper.equipNameIfPossible(equipped, "blood_needle", 3));
 		assertFalse("fourth normal blocked by normal slot limit",
 				ManipulationEquipHelper.equipNameIfPossible(equipped, "blood_burst", 3));

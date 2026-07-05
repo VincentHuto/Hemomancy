@@ -18,14 +18,16 @@ public final class KnownManipulationGrantHelper {
 
 	public static boolean learnAndEquipIfPossible(IKnownManipulations known, BloodManipulation manipulation,
 			int maxSlots) {
-		if (known == null || manipulation == null || manipulation == BloodManipulation.BLANK) return false;
+		if (known == null || manipulation == null || manipulation == BloodManipulation.BLANK
+				|| ManipulationRetirementRules.isRetiredManipulation(manipulation)) return false;
 		return learnAndEquipIfPossible(known.getKnownManips(), known.getEquippedManipNames(), manipulation, maxSlots);
 	}
 
 	public static boolean learnAndEquipIfPossible(LinkedHashMap<BloodManipulation, ManipLevel> knownManips,
 			List<String> equippedNames, BloodManipulation manipulation, int maxSlots) {
 		if (knownManips == null || equippedNames == null || manipulation == null
-				|| manipulation == BloodManipulation.BLANK) {
+				|| manipulation == BloodManipulation.BLANK
+				|| ManipulationRetirementRules.isRetiredManipulation(manipulation)) {
 			return false;
 		}
 

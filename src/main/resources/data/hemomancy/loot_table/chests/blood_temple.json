@@ -286,11 +286,6 @@
           "name": "hemomancy:memory_blood_needle"
         },
         {
-          "type": "minecraft:item",
-          "weight": 4,
-          "name": "hemomancy:memory_blood_absorption"
-        },
-        {
           "type": "minecraft:empty",
           "weight": 28
         }

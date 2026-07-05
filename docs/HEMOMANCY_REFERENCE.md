@@ -1015,14 +1015,11 @@ Secondary tendencies do not change a manipulation's required alignment, tree clu
 | `summon_avatar` | 500 | Quick | Summa | Animus | Body | 100t | Toggles the Blood Avatar form (visual transformation synced to all players) |
 | `summon_thrall` | 500 | Quick | Mediocritas | Animus | Body | 60t | Two-step: (1) raycast to spawn a Blood Thrall at source block, (2) raycast again to set its destination â€” thrall then works autonomously |
 | `crimson_flame_conjuration` | 150 | Quick | Humilis | Animus | Right Arm | 15t | Places Crimson Flames on the targeted block face (range 16, scales with Sanguine Reach) |
-| `blood_lamp` | 75 | Quick | Humilis | Lux | Left Arm | 10t | Places an invisible light block (level 15) at the targeted surface (range 16, scales with Sanguine Reach) |
 | `hematic_flare` | 125 | Quick | Humilis | Lux | Head | 30t | Short Lux ray: deals 3 magic damage, applies Glowing, strips Invisibility, and deals +2 damage to concealed targets |
 | `crimson_sight` | 250 | Quick | Mediocritas | Lux | Head | 60t | Grants Night Vision (60s) and applies Glowing to all mobs within 32 blocks (30s) |
 | `prismatic_reproof` | 325 | Quick | Mediocritas | Lux | Head | 80t | Cone of refracted Lux: blinds and weakens targets; deals 2 magic damage, or 4 against marked/glowing targets |
 | `hematic_beacon` | 350 | Quick | Mediocritas | Lux | Body | 160t | Aimed blood-light rally point: grants brief Regeneration/Resistance to players and Glowing to mobs in an 8-block radius |
 | `lumen_suture` | 250 | Quick | Mediocritas | Lux | Right Arm | 120t | Supports the nearest wounded player: heals 1 heart, grants Absorption II, clears Blindness and Wither |
-| `crimson_harvest` | 200 | Quick | Humilis | Ductilis | Left Leg | 60t | Bone-meals all growable blocks in a 5Ã—5 area around the caster |
-| `hemosynthesis` | 200 | Quick | Humilis | Lux | Body | 40t | Converts blood into food â€” restores 4 hunger and 4.0 saturation |
 | `pyretic_forge` | 350 | Quick | Mediocritas | Flammeus | Body | 30t | Smelts held items in-hand using blood heat (base 8 items, scales with Crimson Mastery) |
 | `sanguine_ignition` | 125 | Quick | Humilis | Flammeus | Body | 25t | AoE fire pulse in 5-block radius: sets targets alight for 4s and deals 1 heart ignition damage |
 | `scalding_updraft` | 225 | Quick | Humilis | Flammeus | Left Leg | 80t | Superheats air underfoot to launch the caster upward/forward, grants brief Slow Falling, and scorches nearby enemies |
@@ -1035,7 +1032,6 @@ Secondary tendencies do not change a manipulation's required alignment, tree clu
 | `glacial_circulation` | 175 | Quick | Humilis | Congeatio | Body | 100t | Chills blood for 90s: grants Fire Resistance + Slowness I. Works everywhere (unlike GlacialGrasp's water dependency). The tradeoff: fire immunity at the cost of movement speed. |
 | `osseous_bloom` | 600 | Quick | Summa | Congeatio | Body | 60t | Crystallisation burst in 6-block radius: deals 25% of each target's **current** HP as freeze damage (punishes full-health targets hardest) + Slowness IV for 4s. Scales with Crimson Mastery. Best as an opener, not a finisher. |
 | `sanguine_mending` | 150 | Quick | Humilis | Ferric | Right Arm | 30t | Repairs the held item by 50 durability using blood |
-| `vital_reservoir` | 50 | Quick | Mediocritas | Mortem | Heart | 60t | Converts 10 XP levels into 1000 blood volume |
 | `hemorrhage` | 100 | Quick | Humilis | Mortem | Right Arm | 20t | Targets the closest living entity within 8 blocks and applies Wither II (6s) |
 | `insatiable_hunger` | 225 | Quick | Mediocritas | Mortem | Body | 70t | Debuffs a target for 220t: healing is reduced to 25%, and affected players who finish food gain Hunger II plus exhaustion |
 | `grave_debt` | 325 | Quick | Mediocritas | Mortem | Heart | 75t | Marks a target for 180t; crossing 25% health causes one damaging burst, while death refunds blood to the original caster |
@@ -1046,7 +1042,6 @@ Secondary tendencies do not change a manipulation's required alignment, tree clu
 | `black_veil_covenant` | 425 | Quick | Mediocritas | Tenebris | Body | 220t | Raises a temporary black-veined sphere around the caster; the zone counts as synthetic darkness for `umbral_step` and other darkness checks |
 | `umbral_reversal` | 375 | Quick | Mediocritas | Tenebris | Left Leg | 100t | Slips backward into a nearby safe dark space (natural or Black Veil darkness) and blinds pursuers left near the origin |
 | `blood_eclipse_mantle` | 325 | Quick | Mediocritas | Tenebris | Body | 180t | Defensive eclipse stance: Resistance II + Fire Resistance with Weakness as the tradeoff |
-| `sanguine_excavation` | 400 | Quick | Mediocritas | Ferric | Right Arm | 40t | Flood-fill mines a cluster of matching blocks at look target (base 9 blocks, scales with Sanguine Reach) |
 | `vascular_dowsing` | 500 | Quick | Humilis | Ferric | Right Arm | 20t | Scans nearby ore blocks and reveals them to the caster with ore-colored dust particles |
 | `ferric_resonance` | 600 | Quick | Mediocritas | Ferric | Right Arm | 200t | Ferric self-buff for 30s: grants Haste II, Strength I, and Resistance I |
 | `iron_retort` | 250 | Quick | Mediocritas | Ferric | Body | 80t | Brief 60t guard: the first direct living attacker has damage halved and takes thorns-style metal retaliation |
@@ -1058,6 +1053,18 @@ Secondary tendencies do not change a manipulation's required alignment, tree clu
 | `endless_hour` | 600 | Quick | Summa | Congeatio | Body | 200t | **Canon Memory (Velorum)** â€” absorbs all incoming damage for 10s (Absorption V + Resistance IV), then repays the full accumulated damage when the effect expires. |
 
 The current combat-gap additions are **Synaptic Jolt**, **Conductive Mark**, **Insatiable Hunger**, **Grave Debt**, **Iron Retort**, and **Sanguine Magnetism**. `ManipulationStatusEvents` owns their cross-cutting status behavior: Conductive Mark arcs can be triggered by any player's valid Ductilis/Lux/Ferric manipulation or living-weapon hit, Insatiable Hunger modifies healing and food completion, Grave Debt tracks low-health burst and death refund state, Iron Retort consumes itself on the first direct living attacker, and Sanguine Magnetism reuses the existing iron pillar entity with hostile-only pull logic.
+
+#### Retired Manipulations
+
+These registry IDs remain for old save compatibility, but their memories are hidden, inert, non-lootable, non-recipeable, absent from the manipulation tree, and scrubbed out of equipped slots/loadouts during sync. `blood_lamp` is covered by the Lantern Tick helmet, `vital_reservoir` is a future rite candidate, and `hemosynthesis` plus `sanguine_excavation` are future morphling ability candidates.
+
+| Retired ID | Previous role | Replacement direction |
+|------------|---------------|-----------------------|
+| `blood_lamp` | Blood-made cave light | Lantern Tick helmet |
+| `crimson_harvest` | Area crop bonemeal | Removed from player manipulations; `vital_effusion` remains the growth spell |
+| `hemosynthesis` | Blood-to-food conversion | Future morphling ability |
+| `vital_reservoir` | XP-to-blood conversion | Future rite candidate |
+| `sanguine_excavation` | Flood-fill mining | Future morphling ability |
 
 #### 8.2.1 Living Staff Rework Summary
 
@@ -1111,9 +1118,7 @@ Current crude memory shard items:
 | `crude_memory_blood_shot` | `blood_shot` | Starter Animus |
 | `crude_memory_blood_rush` | `blood_rush` | Starter Animus |
 | `crude_memory_deadly_gaze` | `deadly_gaze` | Starter Animus |
-| `crude_memory_crimson_harvest` | `crimson_harvest` | Ductilis starter |
 | `crude_memory_sanguine_mending` | `sanguine_mending` | Ferric starter |
-| `crude_memory_blood_lamp` | `blood_lamp` | Lux starter |
 | `crude_memory_hemorrhage` | `hemorrhage` | Mortem starter |
 | `crude_memory_glacial_grasp` | `glacial_grasp` | Congeatio starter |
 | `crude_memory_sanguine_ignition` | `sanguine_ignition` | Flammeus starter |
@@ -1900,12 +1905,8 @@ The Drudge is a persistent, player-owned semi-organic construct that holds a sin
 | `summon_thrall` | Unsupported; cannot be used by Drudges |
 | `crimson_flame_conjuration` | Ignites the nearest hostile for 6 seconds |
 | `sanguine_mending` | Repairs up to 100 durability on the most-damaged armor piece of the nearest player ally |
-| `hemosynthesis` | Heals the most-wounded nearby player ally for 4 HP |
-| `blood_lamp` | Places a torch at a nearby dark, supported air block |
 | `hematic_flare` | Marks, reveals, and magic-damages the nearest hidden hostile |
-| `crimson_harvest` | Bonemeal-accelerates nearby growable blocks in the work radius |
 | `glacial_grasp` | Freezes, heavily slows, and damages the nearest hostile |
-| `sanguine_excavation` | Mines the block the Drudge is facing, dropping normal block drops |
 | `vascular_dowsing` | Unsupported; cannot be used by Drudges |
 | `ferric_resonance` | Unsupported; cannot be used by Drudges |
 | `iron_retort` | Guards the Drudge so its next direct living attacker is punished |
@@ -1913,7 +1914,6 @@ The Drudge is a persistent, player-owned semi-organic construct that holds a sin
 | `pyretic_forge` | Utility smelting for held items |
 | `umbral_step` | Teleports the Drudge to a random dark valid spot within the work radius |
 | `crimson_sight` | Applies Glowing to nearby hostiles |
-| `vital_reservoir` | Damages the nearest hostile for 2 magic damage and refills 200 Drudge blood charge, unless near full |
 | `cryogenic_pulse` | Slows all hostiles in the work radius |
 | `glacial_circulation` | No registered Drudge action; currently does not fire |
 | `glacial_bastion` | Raises a temporary ring of packed ice around the Drudge |
@@ -2125,7 +2125,7 @@ Acquisition: Venous Stone has a rare 2.5% global loot modifier chance to shed a 
 | ![](../src/main/resources/assets/hemomancy/textures/item/fervent_husk.png) Fervent Husk | Memory processing ingredient |
 | ![](../src/main/resources/assets/hemomancy/textures/item/blood_stained_stone.png) Blood Stained Stone | Memory-related item |
 | Blood Memory (per manipulation) | One for each registered manipulation â€” using it teaches the player |
-| Crude Memory Shards | Early starter memories that teach and auto-equip weak manipulations without needing the Mnemonic Reliquary; current set covers `blood_shot`, `blood_rush`, `deadly_gaze`, `crimson_harvest`, `sanguine_mending`, `blood_lamp`, `hemorrhage`, `glacial_grasp`, `sanguine_ignition`, and `void_shroud` |
+| Crude Memory Shards | Early starter memories that teach and auto-equip weak manipulations without needing the Mnemonic Reliquary; current set covers `blood_shot`, `blood_rush`, `deadly_gaze`, `sanguine_mending`, `hemorrhage`, `glacial_grasp`, `sanguine_ignition`, and `void_shroud` |
 | Living Weapon Memories | `memory_living_blade`, `memory_living_axe`, `memory_living_spear`, `memory_living_claws`, `memory_living_crossbow`, `memory_living_torch`, and `memory_living_flail` teach the Living Staff weapon-form manipulations |
 | **Canon Memory: Crimson Tithe** | Saint manipulation memory (Hemorath) â€” obtained through the Somatic Loom ritual with Hallowed Residuum of Hemorath, paired stored enzymes, and projected blood |
 | **Canon Memory: Unclosing Eye** | Saint manipulation memory (Seraphae) â€” obtained through the Somatic Loom ritual with Hallowed Residuum of Seraphae, paired stored enzymes, and projected blood |

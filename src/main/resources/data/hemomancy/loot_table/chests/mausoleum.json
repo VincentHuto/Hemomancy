@@ -184,11 +184,6 @@
           "name": "hemomancy:memory_hemorrhage"
         },
         {
-          "type": "minecraft:item",
-          "weight": 3,
-          "name": "hemomancy:memory_vital_reservoir"
-        },
-        {
           "type": "minecraft:empty",
           "weight": 18
         }

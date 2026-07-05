@@ -4,6 +4,6 @@
   "texture": "hemomancy:textures/gui/guide/page.png",
   "title": "Incandescent Manipulations",
   "subtitle": "Lux - blood remembers light",
-  "text": "The Incandescent tendency belongs to blood that has witnessed things that glow. Blood Lamp (QUICK, 75) places a persistent light. Hemosynthesis (QUICK, 200) channels blood into living growth. Crimson Sight (QUICK, 250) grants night vision and marks nearby mobs. Prismatic Reproof (QUICK, 325) blinds and weakens enemies in a cone, striking marked targets harder. Hematic Beacon (QUICK, 350) creates an aimed blood-light rally point that reveals mobs and steadies allies. Lumen Suture (QUICK, 250) grants absorption to a wounded ally and clears blindness.",
+  "text": "The Incandescent tendency belongs to blood that has witnessed things that glow. Hematic Flare (QUICK, 125) lashes concealed targets with revealing blood-light. Crimson Sight (QUICK, 250) grants night vision and marks nearby mobs. Prismatic Reproof (QUICK, 325) blinds and weakens enemies in a cone, striking marked targets harder. Hematic Beacon (QUICK, 350) creates an aimed blood-light rally point that reveals mobs and steadies allies. Lumen Suture (QUICK, 250) grants absorption to a wounded ally and clears blindness.",
   "icon": "hemomancy:incandescent_enzyme"
 }
