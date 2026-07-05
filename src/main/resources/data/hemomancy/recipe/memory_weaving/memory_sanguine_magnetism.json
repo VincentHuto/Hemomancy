@@ -1,0 +1,21 @@
+{
+  "type": "hemomancy:memory_weaving",
+  "catalysts": [
+    {
+      "item": "minecraft:lodestone"
+    }
+  ],
+  "enzymes": {
+    "animus": 0,
+    "flammeus": 0,
+    "ductilis": 1,
+    "lux": 0,
+    "mortem": 0,
+    "congeatio": 0,
+    "ferric": 2,
+    "tenebris": 0
+  },
+  "blood": 250,
+  "result": "hemomancy:memory_sanguine_magnetism",
+  "count": 1
+}

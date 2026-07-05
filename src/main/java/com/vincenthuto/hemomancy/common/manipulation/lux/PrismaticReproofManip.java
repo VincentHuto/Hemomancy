@@ -6,6 +6,7 @@ import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillPoin
 import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
 import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationRank;
 import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationType;
+import com.vincenthuto.hemomancy.common.manipulation.SchoolHitHelper;
 import com.vincenthuto.hemomancy.common.manipulation.TendencyAffinityRules;
 import com.vincenthuto.hutoslib.client.particle.factory.GlowParticleFactory;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
@@ -51,8 +52,11 @@ public class PrismaticReproofManip extends BloodManipulation {
 			target.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, 140, 0, false, true));
 			float damage = (float) ((target.hasEffect(MobEffects.GLOWING) ? 4.0F : 2.0F)
 					* SkillPointHelper.getCrimsonMasteryMultiplier(player));
-			target.hurt(world.damageSources().magic(),
-					TendencyAffinityRules.adjustManipulationDamage(player, target, this, damage));
+			float adjusted = TendencyAffinityRules.adjustManipulationDamage(player, target, this, damage);
+			if (target.hurt(world.damageSources().magic(), adjusted)) {
+				SchoolHitHelper.tryTriggerConductiveArc(player, target, EnumBloodTendency.LUX, getSecondaryTend(),
+						adjusted);
+			}
 			struck++;
 		}
 

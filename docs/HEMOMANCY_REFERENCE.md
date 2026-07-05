@@ -984,7 +984,7 @@ Secondary tendencies do not change a manipulation's required alignment, tree clu
 
 ### 8.2 Registered Manipulations
 
-`ManipulationInit` currently registers 60 blood manipulations. The catalog below tracks active registry entries and their developer-facing gameplay role. The Tendency column lists the primary tendency; secondary tendencies are assigned in code and surfaced in the Manipulations tab detail panel.
+`ManipulationInit` currently registers 66 blood manipulations. The catalog below tracks active registry entries and their developer-facing gameplay role. The Tendency column lists the primary tendency; secondary tendencies are assigned in code and surfaced in the Manipulations tab detail panel.
 
 | Name | Cost | Type | Rank | Tendency | Vein Section | Cooldown | Description |
 |------|------|------|------|----------|-------------|----------|-------------|
@@ -999,6 +999,8 @@ Secondary tendencies do not change a manipulation's required alignment, tree clu
 | `activation_potential` | 200 | Quick | Mediocritas | Ductilis | Body | 30t | AoE lightning bolt to all entities within 5 blocks, dealing 5 damage each |
 | `sanguine_ward` | 10 | Continuous | Mediocritas | Ductilis | Body | 20t | Passive damage reduction shield (logic handled in ManipEvents on hurt) |
 | `hemolymphal_pulse` | 400 | Quick | Humilis | Ductilis | Head | 20t | Blood-sense pulse that applies Glowing to nearby living entities for 15 seconds |
+| `synaptic_jolt` | 150 | Quick | Humilis | Ductilis | Head | 25t | Short-range lightning nerve shock: small magic damage, movement/navigation stagger, Slowness, Weakness, and HutosLib lightning visuals |
+| `conductive_mark` | 225 | Quick | Mediocritas | Ductilis | Head | 50t | Marks a target for 160t; later Ductilis, Lux, Ferric, or living-weapon hits from any player arc to up to 3 nearby enemies with a short per-target throttle |
 | `ferric_transmutation` | 1000 | Quick | Summa | Ferric | Body | 20t | **Sanguine Alloy** â€” saturates the caster's blood with ferrous compounds for 90s: grants Strength II (iron-enriched blood hits harder) + Sanguine Siphon II (accelerated blood regeneration). Memory item display name: "Memory Sanguine Alloy". |
 | `conjure_blade` | 250 hot-swap | Quick (Living Staff Form) | Mediocritas | Animus | Right Arm | â€” | Reshapes a held Living Staff into a Living Blade; cost reduced by Weapons Master |
 | `conjure_axe` | 250 hot-swap | Quick (Living Staff Form) | Mediocritas | Mortem | Right Arm | â€” | Reshapes a held Living Staff into a Living Axe; cost reduced by Weapons Master |
@@ -1035,6 +1037,8 @@ Secondary tendencies do not change a manipulation's required alignment, tree clu
 | `sanguine_mending` | 150 | Quick | Humilis | Ferric | Right Arm | 30t | Repairs the held item by 50 durability using blood |
 | `vital_reservoir` | 50 | Quick | Mediocritas | Mortem | Heart | 60t | Converts 10 XP levels into 1000 blood volume |
 | `hemorrhage` | 100 | Quick | Humilis | Mortem | Right Arm | 20t | Targets the closest living entity within 8 blocks and applies Wither II (6s) |
+| `insatiable_hunger` | 225 | Quick | Mediocritas | Mortem | Body | 70t | Debuffs a target for 220t: healing is reduced to 25%, and affected players who finish food gain Hunger II plus exhaustion |
+| `grave_debt` | 325 | Quick | Mediocritas | Mortem | Heart | 75t | Marks a target for 180t; crossing 25% health causes one damaging burst, while death refunds blood to the original caster |
 | `exsanguinate` | 300 | Quick | Mediocritas | Mortem | Right Arm | 50t | Executes a weakened target (â‰¤30% HP) within 10 blocks: deals 1.5Ã— their current HP as damage and restores 600 blood to the caster |
 | `void_shroud` | 100 | Quick | Humilis | Tenebris | Body | 20t | **Dash-stealth** â€” grants Invisibility + Speed II + Night Vision for 5 seconds. Designed as a repositioning tool; pairs with `umbral_step` (shroud first, then teleport through shadow). |
 | `gloam_laceration` | 175 | Quick | Humilis | Tenebris | Right Arm | 35t | Short ambush slash: deals 3.5 magic damage, applies Blood Loss + Weakness, deals +2.5 from Invisibility or darkness, and renders a three-stroke claw ribbon rather than generic glow motes |
@@ -1045,11 +1049,15 @@ Secondary tendencies do not change a manipulation's required alignment, tree clu
 | `sanguine_excavation` | 400 | Quick | Mediocritas | Ferric | Right Arm | 40t | Flood-fill mines a cluster of matching blocks at look target (base 9 blocks, scales with Sanguine Reach) |
 | `vascular_dowsing` | 500 | Quick | Humilis | Ferric | Right Arm | 20t | Scans nearby ore blocks and reveals them to the caster with ore-colored dust particles |
 | `ferric_resonance` | 600 | Quick | Mediocritas | Ferric | Right Arm | 200t | Ferric self-buff for 30s: grants Haste II, Strength I, and Resistance I |
+| `iron_retort` | 250 | Quick | Mediocritas | Ferric | Body | 80t | Brief 60t guard: the first direct living attacker has damage halved and takes thorns-style metal retaliation |
+| `sanguine_magnetism` | 450 | Quick | Summa | Ferric | Body | 140t | Summons a magnetic iron pillar for 120t; hostile mobs in range are pulled inward and pinned near the pillar |
 | `umbral_step` | 300 | Quick | Mediocritas | Tenebris | Left Leg | 40t | Teleports to the targeted block (range 24, scales with Sanguine Reach) â€” destination must be dark (light â‰¤ 7) |
 | `crimson_tithe` | 400 | Quick | Summa | Mortem | Heart | 100t | **Canon Memory (Hemorath)** â€” stores 500 blood as a debt; if not repaid within 30s, the caster is charged double and takes 6 magic damage. Gambling mechanic: high-risk short-term power. |
 | `unclosing_eye` | 350 | Quick | Summa | Lux | Head | 120t | **Canon Memory (Seraphae)** â€” applies Glowing to ALL living entities in 32 blocks (including the caster), strips Invisibility from any target that has it, grants Night Vision 30s. Anti-stealth weapon; total mutual exposure. Feedback reports concealments dissolved. |
 | `bloom_of_rot` | 500 | Quick | Summa | Mortem | Body | 80t | **Canon Memory (Putriciel)** â€” 8-block AoE: applies Wither II (10s) + Poison I (10s) + Slowness III (10s) to all entities; caster also receives Poison I (5s). |
 | `endless_hour` | 600 | Quick | Summa | Congeatio | Body | 200t | **Canon Memory (Velorum)** â€” absorbs all incoming damage for 10s (Absorption V + Resistance IV), then repays the full accumulated damage when the effect expires. |
+
+The current combat-gap additions are **Synaptic Jolt**, **Conductive Mark**, **Insatiable Hunger**, **Grave Debt**, **Iron Retort**, and **Sanguine Magnetism**. `ManipulationStatusEvents` owns their cross-cutting status behavior: Conductive Mark arcs can be triggered by any player's valid Ductilis/Lux/Ferric manipulation or living-weapon hit, Insatiable Hunger modifies healing and food completion, Grave Debt tracks low-health burst and death refund state, Iron Retort consumes itself on the first direct living attacker, and Sanguine Magnetism reuses the existing iron pillar entity with hostile-only pull logic.
 
 #### 8.2.1 Living Staff Rework Summary
 
@@ -1877,6 +1885,8 @@ The Drudge is a persistent, player-owned semi-organic construct that holds a sin
 | `activation_potential` | Grants Regeneration II to nearby player allies for 5 seconds |
 | `sanguine_ward` | Grants Resistance I to nearby player allies for 10 seconds |
 | `hemolymphal_pulse` | Applies short-duration Glowing to nearby living entities |
+| `synaptic_jolt` | Jolts the nearest hostile with lightning damage and a brief movement stagger |
+| `conductive_mark` | Marks the nearest hostile so later Ductilis, Lux, Ferric, or living-weapon hits can arc |
 | `conjure_blade` | Unsupported; cannot be used by Drudges |
 | `conjure_axe` | Unsupported; cannot be used by Drudges |
 | `conjure_spear` | Unsupported; cannot be used by Drudges |
@@ -1898,6 +1908,8 @@ The Drudge is a persistent, player-owned semi-organic construct that holds a sin
 | `sanguine_excavation` | Mines the block the Drudge is facing, dropping normal block drops |
 | `vascular_dowsing` | Unsupported; cannot be used by Drudges |
 | `ferric_resonance` | Unsupported; cannot be used by Drudges |
+| `iron_retort` | Guards the Drudge so its next direct living attacker is punished |
+| `sanguine_magnetism` | Spawns a magnetic iron pillar near the nearest hostile, pulling hostile mobs only |
 | `pyretic_forge` | Utility smelting for held items |
 | `umbral_step` | Teleports the Drudge to a random dark valid spot within the work radius |
 | `crimson_sight` | Applies Glowing to nearby hostiles |
@@ -1912,6 +1924,8 @@ The Drudge is a persistent, player-owned semi-organic construct that holds a sin
 | `gloam_laceration` | Blood-losses, weakens, and magic-damages the nearest hostile; stronger from darkness |
 | `blood_eclipse` | Blinds and magic-damages all hostiles in the work radius |
 | `hemorrhage` | Applies Wither to the nearest hostile |
+| `insatiable_hunger` | Debuffs the nearest hostile with reduced healing and food punishment |
+| `grave_debt` | Marks the nearest hostile for a low-health burst and death refund |
 | `exsanguinate` | Deals 20% max-health magic damage to the nearest hostile and heals the Drudge for half that amount |
 | `crimson_tithe` | Unsupported; cannot be used by Drudges |
 | `unclosing_eye` | Applies long-duration Glowing to all nearby living entities |

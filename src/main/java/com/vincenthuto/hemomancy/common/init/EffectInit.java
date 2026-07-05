@@ -214,6 +214,18 @@ public class EffectInit {
     public static final DeferredHolder<MobEffect, MobEffect> hemophagy = EFFECTS.register("hemophagy",
             () -> new HemophagyEffect(MobEffectCategory.HARMFUL, 0x4B0000));
 
+    public static final DeferredHolder<MobEffect, MobEffect> conductive_mark = EFFECTS.register("conductive_mark",
+            () -> new ManipulationStatusEffect("conductive_mark", MobEffectCategory.HARMFUL, 0xE8D84A));
+
+    public static final DeferredHolder<MobEffect, MobEffect> insatiable_hunger = EFFECTS.register("insatiable_hunger",
+            () -> new ManipulationStatusEffect("insatiable_hunger", MobEffectCategory.HARMFUL, 0x35651F));
+
+    public static final DeferredHolder<MobEffect, MobEffect> grave_debt = EFFECTS.register("grave_debt",
+            () -> new ManipulationStatusEffect("grave_debt", MobEffectCategory.HARMFUL, 0x3A4F24));
+
+    public static final DeferredHolder<MobEffect, MobEffect> iron_retort = EFFECTS.register("iron_retort",
+            () -> new ManipulationStatusEffect("iron_retort", MobEffectCategory.BENEFICIAL, 0x9A9A94));
+
     // Inner Trial â€” Hematic Strain (40% max HP reduction while in trial chamber)
     public static final DeferredHolder<MobEffect, MobEffect> hematic_strain = EFFECTS.register("hematic_strain",
             () -> new HematicStrainEffect(MobEffectCategory.HARMFUL, 0x660000));

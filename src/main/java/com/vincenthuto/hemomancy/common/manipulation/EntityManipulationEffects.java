@@ -4,9 +4,13 @@ import com.vincenthuto.hemomancy.common.entity.projectile.BloodBoltEntity;
 import com.vincenthuto.hemomancy.common.entity.projectile.BloodCloudCarrierEntity;
 import com.vincenthuto.hemomancy.common.entity.projectile.BloodNeedleEntity;
 import com.vincenthuto.hemomancy.common.entity.projectile.BloodShotEntity;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.init.BlockInit;
 import com.vincenthuto.hemomancy.common.init.EffectInit;
 import com.vincenthuto.hemomancy.common.manipulation.congeatio.TemporaryIceManager;
+import com.vincenthuto.hemomancy.common.manipulation.ductilis.DuctilisLightningEffects;
+import com.vincenthuto.hemomancy.common.manipulation.ductilis.SynapticJoltManip;
+import com.vincenthuto.hemomancy.common.manipulation.ferric.SanguineMagnetismManip;
 import com.vincenthuto.hemomancy.common.manipulation.tenebris.BlackVeilCovenantManager;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.util.CrimsonFireHelper;
@@ -41,11 +45,12 @@ public final class EntityManipulationEffects {
 	private static final Set<String> SUPPORTED_CASTS = Set.of(
 			"blood_shot", "blood_needle", "blood_aneurysm", "blood_cloud",
 			"crimson_flame_conjuration", "sanguine_ignition", "scalding_updraft", "vitric_combustion",
-			"deadly_gaze", "hemolymphal_pulse", "activation_potential",
+			"deadly_gaze", "hemolymphal_pulse", "activation_potential", "synaptic_jolt", "conductive_mark",
 			"hematic_flare", "crimson_sight", "prismatic_reproof", "unclosing_eye",
-			"hemorrhage", "exsanguinate", "bloom_of_rot",
+			"hemorrhage", "exsanguinate", "insatiable_hunger", "grave_debt", "bloom_of_rot",
 			"cryogenic_pulse", "glacial_grasp", "glacial_bastion", "glacial_rampart",
-			"pyretic_forge", "void_shroud", "gloam_laceration", "umbral_step", "blood_eclipse",
+			"pyretic_forge", "iron_retort", "sanguine_magnetism",
+			"void_shroud", "gloam_laceration", "umbral_step", "blood_eclipse",
 			"blood_eclipse_mantle");
 
 	private EntityManipulationEffects() {
@@ -69,18 +74,24 @@ public final class EntityManipulationEffects {
 		case "deadly_gaze" -> deadlyGaze(context);
 		case "hemolymphal_pulse" -> hemolymphalPulse(context);
 		case "activation_potential" -> activationPotential(context);
+		case "synaptic_jolt" -> synapticJolt(context);
+		case "conductive_mark" -> conductiveMark(context);
 		case "hematic_flare" -> hematicFlare(context);
 		case "crimson_sight" -> crimsonSight(context);
 		case "prismatic_reproof" -> prismaticReproof(context);
 		case "unclosing_eye" -> unclosingEye(context);
 		case "hemorrhage" -> hemorrhage(context);
 		case "exsanguinate" -> exsanguinate(context);
+		case "insatiable_hunger" -> insatiableHunger(context);
+		case "grave_debt" -> graveDebt(context);
 		case "bloom_of_rot" -> bloomOfRot(context);
 		case "cryogenic_pulse" -> cryogenicPulse(context);
 		case "glacial_grasp" -> glacialGrasp(context);
 		case "glacial_bastion" -> glacialBastion(context);
 		case "glacial_rampart" -> glacialRampart(context);
 		case "pyretic_forge" -> pyreticForge(context);
+		case "iron_retort" -> ironRetort(context);
+		case "sanguine_magnetism" -> sanguineMagnetism(context);
 		case "void_shroud" -> voidShroud(context);
 		case "gloam_laceration" -> gloamLaceration(context);
 		case "umbral_step" -> umbralStep(context);
@@ -240,7 +251,9 @@ public final class EntityManipulationEffects {
 	private static boolean activationPotential(ManipulationCastContext context) {
 		int hits = 0;
 		for (LivingEntity target : targetsAroundCaster(context, 5.0D)) {
-			target.hurt(context.level().damageSources().mobAttack(context.caster()), context.scaleDamage(5.0F));
+			float damage = context.scaleDamage(5.0F);
+			target.hurt(context.level().damageSources().mobAttack(context.caster()), damage);
+			SchoolHitHelper.tryTriggerConductiveArc(context.caster(), target, EnumBloodTendency.DUCTILIS, null, damage);
 			target.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 80, 0, false, true));
 			hits++;
 		}
@@ -248,6 +261,31 @@ public final class EntityManipulationEffects {
 		context.level().playSound(null, context.origin(), SoundEvents.TRIDENT_THUNDER.value(), SoundSource.HOSTILE,
 				0.55F, 1.5F);
 		return hits > 0;
+	}
+
+	private static boolean synapticJolt(ManipulationCastContext context) {
+		LivingEntity target = preferredTarget(context, context.scaleRange(7.0D));
+		if (target == null) return false;
+		SynapticJoltManip.staggerTarget(target);
+		DuctilisLightningEffects.synapticJolt(context.caster(), target);
+		float damage = context.scaleDamage(3.0F);
+		target.hurt(context.level().damageSources().magic(), damage);
+		SchoolHitHelper.tryTriggerConductiveArc(context.caster(), target, EnumBloodTendency.DUCTILIS, null, damage);
+		context.level().playSound(null, target.blockPosition(), SoundEvents.TRIDENT_THUNDER.value(), SoundSource.HOSTILE,
+				0.45F, 1.75F);
+		return true;
+	}
+
+	private static boolean conductiveMark(ManipulationCastContext context) {
+		LivingEntity target = preferredTarget(context, context.scaleRange(14.0D));
+		if (target == null) return false;
+		SchoolHitHelper.markConductive(target, ManipulationStatusRules.CONDUCTIVE_MARK_TICKS);
+		target.addEffect(new MobEffectInstance(MobEffects.GLOWING, ManipulationStatusRules.CONDUCTIVE_MARK_TICKS,
+				0, false, true, true));
+		DuctilisLightningEffects.conductiveMark(context.caster(), target);
+		context.level().playSound(null, target.blockPosition(), SoundEvents.TRIDENT_THUNDER.value(), SoundSource.HOSTILE,
+				0.35F, 2.0F);
+		return true;
 	}
 
 	private static boolean hematicFlare(ManipulationCastContext context) {
@@ -258,7 +296,10 @@ public final class EntityManipulationEffects {
 			target.removeEffect(MobEffects.INVISIBILITY);
 		}
 		target.addEffect(new MobEffectInstance(MobEffects.GLOWING, 180, 0, false, true));
-		target.hurt(context.level().damageSources().magic(), context.scaleDamage(concealed ? 5.0F : 3.0F));
+		float damage = context.scaleDamage(concealed ? 5.0F : 3.0F);
+		target.hurt(context.level().damageSources().magic(), damage);
+		SchoolHitHelper.tryTriggerConductiveArc(context.caster(), target, EnumBloodTendency.LUX,
+				EnumBloodTendency.FLAMMEUS, damage);
 		context.level().playSound(null, target.blockPosition(), SoundEvents.AMETHYST_BLOCK_CHIME, SoundSource.HOSTILE,
 				0.75F, concealed ? 1.75F : 1.45F);
 		sendParticles(context.level(), target.getEyePosition(), 20, new ParticleColor(255, 235, 175), 0.8D);
@@ -282,9 +323,15 @@ public final class EntityManipulationEffects {
 		target.addEffect(new MobEffectInstance(MobEffects.BLINDNESS, 100, 0, false, true));
 		target.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, 140, 0, false, true));
 		if (target.hasEffect(MobEffects.GLOWING)) {
-			target.hurt(context.level().damageSources().magic(), context.scaleDamage(4.0F));
+			float damage = context.scaleDamage(4.0F);
+			target.hurt(context.level().damageSources().magic(), damage);
+			SchoolHitHelper.tryTriggerConductiveArc(context.caster(), target, EnumBloodTendency.LUX,
+					EnumBloodTendency.DUCTILIS, damage);
 		} else {
-			target.hurt(context.level().damageSources().magic(), context.scaleDamage(2.0F));
+			float damage = context.scaleDamage(2.0F);
+			target.hurt(context.level().damageSources().magic(), damage);
+			SchoolHitHelper.tryTriggerConductiveArc(context.caster(), target, EnumBloodTendency.LUX,
+					EnumBloodTendency.DUCTILIS, damage);
 		}
 		context.level().playSound(null, context.origin(), SoundEvents.AMETHYST_BLOCK_CHIME, SoundSource.HOSTILE,
 				0.8F, 1.4F);
@@ -325,6 +372,34 @@ public final class EntityManipulationEffects {
 		context.caster().heal(Math.min(6.0F, damage * 0.35F));
 		context.level().playSound(null, context.origin(), SoundEvents.WITHER_DEATH, SoundSource.HOSTILE, 0.7F, 1.8F);
 		sendParticles(context.level(), midpoint(target, context.caster()), 28, new ParticleColor(145, 0, 20), 1.1D);
+		return true;
+	}
+
+	private static boolean insatiableHunger(ManipulationCastContext context) {
+		LivingEntity target = preferredTarget(context, context.scaleRange(10.0D));
+		if (target == null) return false;
+		target.addEffect(new MobEffectInstance(EffectInit.insatiable_hunger, 220, 0, false, true, true));
+		context.level().playSound(null, target.blockPosition(), SoundEvents.HUSK_AMBIENT, SoundSource.HOSTILE,
+				0.65F, 0.7F);
+		sendParticles(context.level(), target.position().add(0.0D, target.getBbHeight() * 0.55D, 0.0D),
+				22, new ParticleColor(45, 105, 30), 0.9D);
+		return true;
+	}
+
+	private static boolean graveDebt(ManipulationCastContext context) {
+		LivingEntity target = preferredTarget(context, context.scaleRange(12.0D));
+		if (target == null) return false;
+		if (context.caster() instanceof net.minecraft.world.entity.player.Player player) {
+			SchoolHitHelper.markGraveDebt(target, player, ManipulationStatusRules.GRAVE_DEBT_TICKS);
+		} else {
+			target.addEffect(new MobEffectInstance(EffectInit.grave_debt,
+					ManipulationStatusRules.GRAVE_DEBT_TICKS, 0, false, true, true));
+			target.getPersistentData().putBoolean("hemomancy:grave_debt_burst_used", false);
+		}
+		context.level().playSound(null, target.blockPosition(), SoundEvents.SCULK_SHRIEKER_SHRIEK, SoundSource.HOSTILE,
+				0.45F, 0.55F);
+		sendParticles(context.level(), target.position().add(0.0D, target.getBbHeight() * 0.5D, 0.0D),
+				24, new ParticleColor(70, 105, 35), 1.0D);
 		return true;
 	}
 
@@ -442,6 +517,26 @@ public final class EntityManipulationEffects {
 		context.level().playSound(null, context.origin(), SoundEvents.FIRECHARGE_USE, SoundSource.HOSTILE, 0.8F, 1.0F);
 		sendParticles(context.level(), target.position().add(0.0D, target.getBbHeight() * 0.5D, 0.0D), 26,
 				new ParticleColor(230, 105, 20), 1.1D);
+		return true;
+	}
+
+	private static boolean ironRetort(ManipulationCastContext context) {
+		context.caster().addEffect(new MobEffectInstance(EffectInit.iron_retort,
+				ManipulationStatusRules.IRON_RETORT_TICKS, 0, false, true, true));
+		context.level().playSound(null, context.origin(), SoundEvents.ANVIL_USE, SoundSource.HOSTILE,
+				0.55F, 1.8F);
+		sendParticles(context.level(), context.caster().position().add(0.0D, context.caster().getBbHeight() * 0.58D, 0.0D),
+				28, new ParticleColor(155, 155, 150), 1.1D);
+		return true;
+	}
+
+	private static boolean sanguineMagnetism(ManipulationCastContext context) {
+		if (!(context.level() instanceof ServerLevel serverLevel)) return false;
+		Vec3 center = context.hasTarget()
+				? context.target().position()
+				: context.caster().position().add(context.aim().normalize().scale(8.0D));
+		SanguineMagnetismManip.spawnMagneticPillar(context.caster(), serverLevel, center,
+				ManipulationStatusRules.SANGUINE_MAGNETISM_TICKS);
 		return true;
 	}
 

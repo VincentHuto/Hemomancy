@@ -6,6 +6,7 @@ import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillPoin
 import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
 import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationRank;
 import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationType;
+import com.vincenthuto.hemomancy.common.manipulation.SchoolHitHelper;
 import com.vincenthuto.hemomancy.common.manipulation.TendencyAffinityRules;
 import com.vincenthuto.hutoslib.client.particle.factory.GlowParticleFactory;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
@@ -55,8 +56,11 @@ public class HematicFlareManip extends BloodManipulation {
 			target.addEffect(new MobEffectInstance(MobEffects.GLOWING, GLOWING_TICKS, 0, false, true));
 			float damage = (float) ((BASE_DAMAGE + (concealed ? CONCEALED_BONUS : 0.0F))
 					* SkillPointHelper.getCrimsonMasteryMultiplier(player));
-			target.hurt(world.damageSources().magic(),
-					TendencyAffinityRules.adjustManipulationDamage(player, target, this, damage));
+			float adjusted = TendencyAffinityRules.adjustManipulationDamage(player, target, this, damage);
+			if (target.hurt(world.damageSources().magic(), adjusted)) {
+				SchoolHitHelper.tryTriggerConductiveArc(player, target, EnumBloodTendency.LUX, getSecondaryTend(),
+						adjusted);
+			}
 			world.playSound(null, target.blockPosition(), SoundEvents.AMETHYST_BLOCK_CHIME, SoundSource.PLAYERS,
 					0.85F, concealed ? 1.75F : 1.45F);
 			sendImpactParticles(sLevel, target);

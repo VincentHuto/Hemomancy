@@ -78,6 +78,8 @@ public class ManipulationTreeInit {
 		register("blood_projection",980,50);
 		register("sanguine_excavation",860,50, "ferric_transmutation");
 		register("ferric_resonance",850,140, "sanguine_mending", "sanguine_excavation");
+		register("iron_retort",790,140, "sanguine_mending");
+		register("sanguine_magnetism",790,60, "iron_retort", "sanguine_excavation");
 
 		// Row 2 (bottom) — HUMILIS / MEDIOCRITAS roots
 		register("venous_travel",1067,60, "activation_potential");
@@ -98,6 +100,8 @@ public class ManipulationTreeInit {
 
 		// Row 2 (bottom) — HUMILIS
 		register("crimson_harvest",990,170);
+		register("synaptic_jolt",990,230, "crimson_harvest");
+		register("conductive_mark",1125,110, "activation_potential");
 		register("hemolymphal_pulse",1110,210, "activation_potential", "deadly_gaze");
 		register("conjure_crossbow",1050,250, "hemolymphal_pulse")
 				.setSoftParents("conjure_staff");
@@ -186,6 +190,8 @@ public class ManipulationTreeInit {
 
 		// Row 1 (middle) — MEDIOCRITAS
 		register("vital_reservoir",2180,0, "hemorrhage", "exsanguinate");
+		register("grave_debt",2180,70, "exsanguinate", "vital_reservoir");
+		register("insatiable_hunger",2320,70, "hemorrhage");
 
 		// Row 2 (bottom) — HUMILIS / MEDIOCRITAS
 		register("hemorrhage",2240,-30);

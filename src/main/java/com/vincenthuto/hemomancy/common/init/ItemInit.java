@@ -356,6 +356,10 @@ public class ItemInit {
             () -> new BloodMemoryItem(new Item.Properties(), ManipulationInit.sanguine_ward));
     public static final DeferredHolder<Item, Item> memory_hemolymphal_pulse = BASEITEMS.register("memory_hemolymphal_pulse",
             () -> new BloodMemoryItem(new Item.Properties(), ManipulationInit.hemolymphal_pulse));
+    public static final DeferredHolder<Item, Item> memory_synaptic_jolt = BASEITEMS.register("memory_synaptic_jolt",
+            () -> new BloodMemoryItem(new Item.Properties(), ManipulationInit.synaptic_jolt));
+    public static final DeferredHolder<Item, Item> memory_conductive_mark = BASEITEMS.register("memory_conductive_mark",
+            () -> new BloodMemoryItem(new Item.Properties(), ManipulationInit.conductive_mark));
     public static final DeferredHolder<Item, Item> memory_vital_effusion = BASEITEMS.register("memory_vital_effusion",
             () -> new BloodMemoryItem(new Item.Properties(), ManipulationInit.vital_effusion));
     public static final DeferredHolder<Item, Item> memory_living_blade = BASEITEMS.register("memory_living_blade",
@@ -446,6 +450,10 @@ public class ItemInit {
             () -> new BloodMemoryItem(new Item.Properties(), ManipulationInit.vascular_dowsing));
     public static final DeferredHolder<Item, Item> memory_ferric_resonance = BASEITEMS.register("memory_ferric_resonance",
             () -> new BloodMemoryItem(new Item.Properties(), ManipulationInit.ferric_resonance));
+    public static final DeferredHolder<Item, Item> memory_iron_retort = BASEITEMS.register("memory_iron_retort",
+            () -> new BloodMemoryItem(new Item.Properties(), ManipulationInit.iron_retort));
+    public static final DeferredHolder<Item, Item> memory_sanguine_magnetism = BASEITEMS.register("memory_sanguine_magnetism",
+            () -> new BloodMemoryItem(new Item.Properties(), ManipulationInit.sanguine_magnetism));
     public static final DeferredHolder<Item, Item> memory_pyretic_forge = BASEITEMS.register("memory_pyretic_forge",
             () -> new BloodMemoryItem(new Item.Properties(), ManipulationInit.pyretic_forge));
     public static final DeferredHolder<Item, Item> memory_umbral_step = BASEITEMS.register("memory_umbral_step",
@@ -495,6 +503,10 @@ public class ItemInit {
             () -> new BloodMemoryItem(new Item.Properties(), ManipulationInit.hemorrhage));
     public static final DeferredHolder<Item, Item> memory_exsanguinate = BASEITEMS.register("memory_exsanguinate",
             () -> new BloodMemoryItem(new Item.Properties(), ManipulationInit.exsanguinate));
+    public static final DeferredHolder<Item, Item> memory_insatiable_hunger = BASEITEMS.register("memory_insatiable_hunger",
+            () -> new BloodMemoryItem(new Item.Properties(), ManipulationInit.insatiable_hunger));
+    public static final DeferredHolder<Item, Item> memory_grave_debt = BASEITEMS.register("memory_grave_debt",
+            () -> new BloodMemoryItem(new Item.Properties(), ManipulationInit.grave_debt));
     // Saint Canon Memories  imprinted from Sainted Mausoleums via Hallowed Residuum
     public static final DeferredHolder<Item, Item> memory_crimson_tithe = BASEITEMS.register("memory_crimson_tithe",
             () -> new BloodMemoryItem(new Item.Properties(), ManipulationInit.crimson_tithe));
