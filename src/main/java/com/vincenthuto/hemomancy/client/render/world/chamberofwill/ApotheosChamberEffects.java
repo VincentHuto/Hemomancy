@@ -25,6 +25,24 @@ final class ApotheosChamberEffects extends AbstractChamberThemeEffects {
 	private static final float APOTHEOS_FLOOR_MEAT_NOISE_SCALE = 7.8F;
 	private static final float APOTHEOS_FLOOR_HIGHLIGHT_INTENSITY = 1.18F;
 	private static final float APOTHEOS_FLOOR_CENTER_VOID_RADIUS = 0.095F;
+
+	private static final int APOTHEOS_WALL_RING_SEGMENTS = 96;
+	private static final int APOTHEOS_WALL_VERTICAL_SEGMENTS = 20;
+	private static final int APOTHEOS_WALL_FRAME_RIBS = 20;
+
+	private static final float APOTHEOS_WALL_RADIUS_SCALE = 0.66F;
+	private static final float APOTHEOS_WALL_BOTTOM_Y_SCALE = -0.58F;
+	private static final float APOTHEOS_WALL_TOP_Y_SCALE = 1.86F;
+	private static final float APOTHEOS_WALL_FIBER_SCALE = 2.4F;
+	private static final float APOTHEOS_WALL_TRACE_INTENSITY = 0.68F;
+	private static final float APOTHEOS_WALL_RED_GLOW_INTENSITY = 0.95F;
+	private static final float APOTHEOS_WALL_CEILING_FADE_START = 0.68F;
+	private static final float APOTHEOS_WALL_CEILING_FADE_END = 0.92F;
+
+	private static final int APOTHEOS_WALL_WEB_RIBBONS = 18;
+	private static final int APOTHEOS_WALL_WEB_RIBBON_SEGMENTS = 22;
+	private static final float APOTHEOS_WALL_WEB_MIN_HEIGHT_T = 0.46F;
+
 	private static final float APOTHEOS_PORTAL_GLOW_RADIUS = 0.42F;
 	private static final float APOTHEOS_PORTAL_GLOW_INTENSITY = 1.35F;
 	private static final float APOTHEOS_PORTAL_HAZE_SPEED = 0.58F;
@@ -44,8 +62,68 @@ final class ApotheosChamberEffects extends AbstractChamberThemeEffects {
 
 	@Override
 	protected void renderBeforeSharedLayers(ChamberThemeRenderContext context) {
+		renderApotheosWallMembrane(context.poseStack(), context.time(), context.skyDistance());
+		renderApotheosWallFrames(context.poseStack(), context.time(), context.skyDistance());
 		renderApotheosPortalGlow(context.poseStack(), context.time(), context.skyDistance());
 		renderApotheosFloorFunnel(context.poseStack(), context.time(), context.skyDistance());
+	}
+
+	private static void renderApotheosWallMembrane(PoseStack poseStack, float time, float skyDistance) {
+		RenderSystem.enableBlend();
+		RenderSystem.disableCull();
+		RenderSystem.disableDepthTest();
+		RenderSystem.depthMask(false);
+		RenderSystem.blendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA,
+				GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE,
+				GlStateManager.DestFactor.ZERO);
+		RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
+
+		MultiBufferSource.BufferSource buffer = Minecraft.getInstance().renderBuffers().bufferSource();
+		RenderType renderType = HemoRenderTypes.apotheosWallMembrane(time * APOTHEOS_FLOOR_SHADER_TIME_SCALE,
+				311.0F, APOTHEOS_WALL_FIBER_SCALE, APOTHEOS_WALL_TRACE_INTENSITY,
+				APOTHEOS_WALL_RED_GLOW_INTENSITY, APOTHEOS_WALL_CEILING_FADE_START,
+				APOTHEOS_WALL_CEILING_FADE_END);
+		VertexConsumer consumer = buffer.getBuffer(renderType);
+		emitApotheosWallCylinderMesh(consumer, poseStack.last().pose(), skyDistance);
+		buffer.endBatch(renderType);
+
+		RenderSystem.depthMask(true);
+		RenderSystem.enableDepthTest();
+		RenderSystem.enableCull();
+	}
+
+	private static void renderApotheosWallFrames(PoseStack poseStack, float time, float skyDistance) {
+		RenderSystem.enableBlend();
+		RenderSystem.disableCull();
+		RenderSystem.disableDepthTest();
+		RenderSystem.depthMask(false);
+		RenderSystem.blendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA,
+				GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE,
+				GlStateManager.DestFactor.ZERO);
+		RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
+
+		MultiBufferSource.BufferSource buffer = Minecraft.getInstance().renderBuffers().bufferSource();
+		RenderType renderType = HemoRenderTypes.QLIPHOTH_GLOW;
+		VertexConsumer consumer = buffer.getBuffer(renderType);
+		Matrix4f matrix = poseStack.last().pose();
+		for (int rib = 0; rib < APOTHEOS_WALL_FRAME_RIBS; rib++) {
+			float angleT = rib / (float) APOTHEOS_WALL_FRAME_RIBS;
+			emitApotheosWallRib(consumer, matrix, skyDistance, time, angleT, rib % 3 == 0, rib * 17.31F);
+		}
+		for (int ribbon = 0; ribbon < APOTHEOS_WALL_WEB_RIBBONS; ribbon++) {
+			float startAngleT = (ribbon * 0.071F + 0.034F) % 1.0F;
+			float endAngleT = startAngleT + 0.035F + apotheosWallHash(ribbon * 3.17F) * 0.052F;
+			float startHeightT = APOTHEOS_WALL_WEB_MIN_HEIGHT_T + apotheosWallHash(ribbon * 7.09F) * 0.30F;
+			float endHeightT = Mth.clamp(startHeightT + (apotheosWallHash(ribbon * 11.43F) - 0.5F) * 0.22F,
+					APOTHEOS_WALL_WEB_MIN_HEIGHT_T, 0.76F);
+			emitApotheosWallWebRibbon(consumer, matrix, skyDistance, startAngleT, endAngleT, startHeightT,
+					endHeightT, ribbon * 5.61F);
+		}
+		buffer.endBatch(renderType);
+
+		RenderSystem.depthMask(true);
+		RenderSystem.enableDepthTest();
+		RenderSystem.enableCull();
 	}
 
 	static void renderApotheosFloorFunnel(PoseStack poseStack, float time, float skyDistance) {
@@ -103,6 +181,184 @@ final class ApotheosChamberEffects extends AbstractChamberThemeEffects {
 		VertexConsumer consumer = buffer.getBuffer(renderType);
 		emitApotheosFunnelMesh(consumer, matrix, skyDistance);
 		buffer.endBatch(renderType);
+	}
+
+	private static void emitApotheosWallCylinderMesh(VertexConsumer consumer, Matrix4f matrix, float skyDistance) {
+		for (int vertical = 0; vertical < APOTHEOS_WALL_VERTICAL_SEGMENTS; vertical++) {
+			float h0 = vertical / (float) APOTHEOS_WALL_VERTICAL_SEGMENTS;
+			float h1 = (vertical + 1) / (float) APOTHEOS_WALL_VERTICAL_SEGMENTS;
+			for (int ring = 0; ring < APOTHEOS_WALL_RING_SEGMENTS; ring++) {
+				float a0 = ring / (float) APOTHEOS_WALL_RING_SEGMENTS;
+				float a1 = (ring + 1) / (float) APOTHEOS_WALL_RING_SEGMENTS;
+				addApotheosWallVertex(consumer, matrix, skyDistance, a0, h0);
+				addApotheosWallVertex(consumer, matrix, skyDistance, a1, h0);
+				addApotheosWallVertex(consumer, matrix, skyDistance, a1, h1);
+				addApotheosWallVertex(consumer, matrix, skyDistance, a0, h1);
+			}
+		}
+	}
+
+	private static void addApotheosWallVertex(VertexConsumer consumer, Matrix4f matrix, float skyDistance,
+			float angleT, float heightT) {
+		float angle = angleT * Mth.TWO_PI;
+		float lowWall = 1.0F - smoothstep(0.12F, 0.46F, heightT);
+		float radiusRipple = Mth.sin(angle * 7.0F + heightT * 12.0F) * 0.006F
+				+ Mth.sin(angle * 3.0F - heightT * 17.0F) * 0.004F;
+		float radius = skyDistance * (APOTHEOS_WALL_RADIUS_SCALE - lowWall * 0.010F + radiusRipple);
+		float x = Mth.cos(angle) * radius;
+		float y = apotheosWallY(skyDistance, heightT);
+		float z = Mth.sin(angle) * radius;
+		float alpha = (194.0F + lowWall * 42.0F) * apotheosWallCeilingFade(heightT);
+		consumer.addVertex(matrix, x, y, z).setUv(angleT, heightT)
+				.setColor(255, 255, 255, (int) Mth.clamp(alpha, 0.0F, 242.0F));
+	}
+
+	private static void emitApotheosWallRib(VertexConsumer consumer, Matrix4f matrix, float skyDistance, float time,
+			float angleT, boolean majorRib, float phase) {
+		int segments = 20;
+		for (int segment = 0; segment < segments; segment++) {
+			float h0 = segment / (float) segments;
+			float h1 = (segment + 1) / (float) segments;
+			float wobble0 = Mth.sin(h0 * 8.0F + phase + time * 0.045F) * 0.0048F;
+			float wobble1 = Mth.sin(h1 * 8.0F + phase + time * 0.045F) * 0.0048F;
+			float width0 = apotheosWallRibWidth(skyDistance, h0, majorRib, phase);
+			float width1 = apotheosWallRibWidth(skyDistance, h1, majorRib, phase);
+			float a0 = (angleT + wobble0) * Mth.TWO_PI;
+			float a1 = (angleT + wobble1) * Mth.TWO_PI;
+			float r0 = skyDistance * (APOTHEOS_WALL_RADIUS_SCALE - 0.018F + (majorRib ? 0.006F : 0.0F));
+			float r1 = skyDistance * (APOTHEOS_WALL_RADIUS_SCALE - 0.018F + (majorRib ? 0.006F : 0.0F));
+			float x0 = Mth.cos(a0) * r0;
+			float y0 = apotheosWallY(skyDistance, h0);
+			float z0 = Mth.sin(a0) * r0;
+			float x1 = Mth.cos(a1) * r1;
+			float y1 = apotheosWallY(skyDistance, h1);
+			float z1 = Mth.sin(a1) * r1;
+			float tangentX0 = -Mth.sin(a0);
+			float tangentZ0 = Mth.cos(a0);
+			float tangentX1 = -Mth.sin(a1);
+			float tangentZ1 = Mth.cos(a1);
+			int red0 = apotheosWallRibRed(h0, majorRib);
+			int red1 = apotheosWallRibRed(h1, majorRib);
+			int green = majorRib ? 48 : 35;
+			int blue = majorRib ? 72 : 62;
+			int alpha0 = apotheosWallRibAlpha(h0, majorRib);
+			int alpha1 = apotheosWallRibAlpha(h1, majorRib);
+
+			addApotheosWallFrameVertex(consumer, matrix, x0 - tangentX0 * width0, y0, z0 - tangentZ0 * width0,
+					red0, green, blue, alpha0);
+			addApotheosWallFrameVertex(consumer, matrix, x1 - tangentX1 * width1, y1, z1 - tangentZ1 * width1,
+					red1, green, blue, alpha1);
+			addApotheosWallFrameVertex(consumer, matrix, x1 + tangentX1 * width1, y1, z1 + tangentZ1 * width1,
+					red1, green, blue, alpha1);
+			addApotheosWallFrameVertex(consumer, matrix, x0 + tangentX0 * width0, y0, z0 + tangentZ0 * width0,
+					red0, green, blue, alpha0);
+		}
+	}
+
+	private static void emitApotheosWallWebRibbon(VertexConsumer consumer, Matrix4f matrix, float skyDistance,
+			float startAngleT, float endAngleT, float startHeightT, float endHeightT, float phase) {
+		for (int segment = 0; segment < APOTHEOS_WALL_WEB_RIBBON_SEGMENTS; segment++) {
+			float t0 = segment / (float) APOTHEOS_WALL_WEB_RIBBON_SEGMENTS;
+			float t1 = (segment + 1) / (float) APOTHEOS_WALL_WEB_RIBBON_SEGMENTS;
+			float angleT0 = apotheosWallWebArcAngle(startAngleT, endAngleT, t0, phase);
+			float angleT1 = apotheosWallWebArcAngle(startAngleT, endAngleT, t1, phase);
+			float heightT0 = apotheosWallWebArcHeight(startHeightT, endHeightT, t0, phase);
+			float heightT1 = apotheosWallWebArcHeight(startHeightT, endHeightT, t1, phase);
+			emitApotheosWallWebRibbonSpan(consumer, matrix, skyDistance, angleT0, angleT1, heightT0, heightT1);
+		}
+	}
+
+	private static void emitApotheosWallWebRibbonSpan(VertexConsumer consumer, Matrix4f matrix, float skyDistance,
+			float startAngleT, float endAngleT, float startHeightT, float endHeightT) {
+		float startAngle = startAngleT * Mth.TWO_PI;
+		float endAngle = endAngleT * Mth.TWO_PI;
+		float radius = skyDistance * (APOTHEOS_WALL_RADIUS_SCALE - 0.026F);
+		float x0 = Mth.cos(startAngle) * radius;
+		float y0 = apotheosWallY(skyDistance, startHeightT);
+		float z0 = Mth.sin(startAngle) * radius;
+		float x1 = Mth.cos(endAngle) * radius;
+		float y1 = apotheosWallY(skyDistance, endHeightT);
+		float z1 = Mth.sin(endAngle) * radius;
+		float dx = x1 - x0;
+		float dz = z1 - z0;
+		float horizontalLength = Mth.sqrt(dx * dx + dz * dz);
+		if (horizontalLength < 0.001F) {
+			return;
+		}
+		float width = skyDistance * 0.0026F;
+		float offsetX = -dz / horizontalLength * width;
+		float offsetZ = dx / horizontalLength * width;
+		float heightMid = (startHeightT + endHeightT) * 0.5F;
+		int alpha = (int) (118.0F * apotheosWallCeilingFade(heightMid)
+				* (1.0F - smoothstep(0.60F, 0.82F, heightMid)));
+		int red = (int) Mth.lerp(1.0F - smoothstep(0.10F, 0.42F, heightMid), 132.0F, 190.0F);
+		int green = 158;
+		int blue = 196;
+		addApotheosWallFrameVertex(consumer, matrix, x0 - offsetX, y0, z0 - offsetZ, red, green, blue, alpha);
+		addApotheosWallFrameVertex(consumer, matrix, x1 - offsetX, y1, z1 - offsetZ, red, green, blue, alpha);
+		addApotheosWallFrameVertex(consumer, matrix, x1 + offsetX, y1, z1 + offsetZ, red, green, blue, alpha);
+		addApotheosWallFrameVertex(consumer, matrix, x0 + offsetX, y0, z0 + offsetZ, red, green, blue, alpha);
+	}
+
+	private static float apotheosWallWebArcAngle(float startAngleT, float endAngleT, float t, float phase) {
+		float sideBow = Mth.sin(t * Mth.TWO_PI * 0.5F) * (apotheosWallHash(phase + 4.31F) - 0.5F) * 0.034F;
+		float tremor = Mth.sin(t * Mth.TWO_PI * 2.0F + phase * 0.71F) * 0.0045F;
+		return Mth.lerp(t, startAngleT, endAngleT) + sideBow + tremor;
+	}
+
+	private static float apotheosWallWebArcHeight(float startHeightT, float endHeightT, float t, float phase) {
+		return Mth.clamp(Mth.lerp(t, startHeightT, endHeightT) + apotheosWallWebArcBend(t, phase),
+				APOTHEOS_WALL_WEB_MIN_HEIGHT_T, 0.80F);
+	}
+
+	private static float apotheosWallWebArcBend(float t, float phase) {
+		float arc = Mth.sin(t * Mth.TWO_PI * 0.5F) * (0.038F + apotheosWallHash(phase + 1.9F) * 0.034F);
+		float wobble = Mth.sin(t * Mth.TWO_PI * 2.0F + phase) * 0.012F;
+		float direction = apotheosWallHash(phase + 8.73F) < 0.5F ? -1.0F : 1.0F;
+		return arc * direction + wobble;
+	}
+
+	private static float apotheosWallRibWidth(float skyDistance, float heightT, boolean majorRib, float phase) {
+		float baseWidth = majorRib ? 0.017F : 0.010F;
+		float lowerRoot = 1.0F - smoothstep(0.10F, 0.48F, heightT);
+		float taper = 1.0F - heightT * 0.32F;
+		float organicWaver = 0.86F + Mth.sin(heightT * 11.0F + phase) * 0.14F;
+		return skyDistance * baseWidth * taper * organicWaver * (1.0F + lowerRoot * 0.22F);
+	}
+
+	private static int apotheosWallRibRed(float heightT, boolean majorRib) {
+		float lowRed = 1.0F - smoothstep(0.08F, 0.44F, heightT);
+		return (int) Mth.lerp(lowRed, majorRib ? 42.0F : 28.0F, majorRib ? 136.0F : 92.0F);
+	}
+
+	private static int apotheosWallRibAlpha(float heightT, boolean majorRib) {
+		float ceilingFade = apotheosWallCeilingFade(heightT);
+		float lowerStrength = 0.82F + (1.0F - smoothstep(0.12F, 0.54F, heightT)) * 0.18F;
+		float alpha = (majorRib ? 224.0F : 166.0F) * ceilingFade * lowerStrength;
+		return (int) Mth.clamp(alpha, 0.0F, 238.0F);
+	}
+
+	private static void addApotheosWallFrameVertex(VertexConsumer consumer, Matrix4f matrix, float x, float y,
+			float z, int red, int green, int blue, int alpha) {
+		consumer.addVertex(matrix, x, y, z).setColor(red, green, blue, alpha);
+	}
+
+	private static float apotheosWallY(float skyDistance, float heightT) {
+		return skyDistance * Mth.lerp(heightT, APOTHEOS_WALL_BOTTOM_Y_SCALE, APOTHEOS_WALL_TOP_Y_SCALE);
+	}
+
+	private static float apotheosWallCeilingFade(float heightT) {
+		return 1.0F - smoothstep(APOTHEOS_WALL_CEILING_FADE_START, APOTHEOS_WALL_CEILING_FADE_END, heightT);
+	}
+
+	private static float smoothstep(float edge0, float edge1, float value) {
+		float t = Mth.clamp((value - edge0) / (edge1 - edge0), 0.0F, 1.0F);
+		return t * t * (3.0F - 2.0F * t);
+	}
+
+	private static float apotheosWallHash(float value) {
+		double hashed = Math.sin(value * 12.9898D + 78.233D) * 43758.5453D;
+		return (float) (hashed - Math.floor(hashed));
 	}
 
 	private static void emitApotheosFunnelMesh(VertexConsumer consumer, Matrix4f matrix, float skyDistance) {

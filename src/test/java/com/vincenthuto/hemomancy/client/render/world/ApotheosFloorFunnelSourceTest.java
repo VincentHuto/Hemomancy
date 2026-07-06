@@ -31,6 +31,12 @@ public final class ApotheosFloorFunnelSourceTest {
 			"src/main/resources/assets/hemomancy/shaders/core/world/apotheos_portal_glow.vsh");
 	private static final Path GLOW_SHADER_FRAGMENT = Path.of(
 			"src/main/resources/assets/hemomancy/shaders/core/world/apotheos_portal_glow.fsh");
+	private static final Path WALL_SHADER_JSON = Path.of(
+			"src/main/resources/assets/hemomancy/shaders/core/world/apotheos_wall_membrane.json");
+	private static final Path WALL_SHADER_VERTEX = Path.of(
+			"src/main/resources/assets/hemomancy/shaders/core/world/apotheos_wall_membrane.vsh");
+	private static final Path WALL_SHADER_FRAGMENT = Path.of(
+			"src/main/resources/assets/hemomancy/shaders/core/world/apotheos_wall_membrane.fsh");
 	private static final Path REFERENCE = Path.of("docs/HEMOMANCY_REFERENCE.md");
 
 	private ApotheosFloorFunnelSourceTest() {
@@ -47,6 +53,9 @@ public final class ApotheosFloorFunnelSourceTest {
 		assertFileExists("apotheos portal glow shader json", GLOW_SHADER_JSON);
 		assertFileExists("apotheos portal glow vertex shader", GLOW_SHADER_VERTEX);
 		assertFileExists("apotheos portal glow fragment shader", GLOW_SHADER_FRAGMENT);
+		assertFileExists("apotheos wall membrane shader json", WALL_SHADER_JSON);
+		assertFileExists("apotheos wall membrane vertex shader", WALL_SHADER_VERTEX);
+		assertFileExists("apotheos wall membrane fragment shader", WALL_SHADER_FRAGMENT);
 
 		String apotheosEffects = read(APOTHEOS_EFFECTS);
 		String registry = read(REGISTRY);
@@ -61,6 +70,9 @@ public final class ApotheosFloorFunnelSourceTest {
 		String glowShaderJson = read(GLOW_SHADER_JSON);
 		String glowVertexShader = read(GLOW_SHADER_VERTEX);
 		String glowFragmentShader = read(GLOW_SHADER_FRAGMENT);
+		String wallShaderJson = read(WALL_SHADER_JSON);
+		String wallVertexShader = read(WALL_SHADER_VERTEX);
+		String wallFragmentShader = read(WALL_SHADER_FRAGMENT);
 		String reference = read(REFERENCE);
 
 		assertContains("registry registers dedicated apotheos effects", registry,
@@ -76,18 +88,24 @@ public final class ApotheosFloorFunnelSourceTest {
 				"APOTHEOS_PORTAL_HAZE");
 		assertContains("shader init declares apotheos portal glow shader", shaderInit,
 				"APOTHEOS_PORTAL_GLOW");
+		assertContains("shader init declares apotheos wall membrane shader", shaderInit,
+				"APOTHEOS_WALL_MEMBRANE");
 		assertContains("shader init uses world apotheos shader path", shaderInit,
 				"Hemomancy.rloc(\"world/apotheos_floor_funnel\")");
 		assertContains("shader init uses world apotheos portal haze shader path", shaderInit,
 				"Hemomancy.rloc(\"world/apotheos_portal_haze\")");
 		assertContains("shader init uses world apotheos portal glow shader path", shaderInit,
 				"Hemomancy.rloc(\"world/apotheos_portal_glow\")");
+		assertContains("shader init uses world apotheos wall membrane shader path", shaderInit,
+				"Hemomancy.rloc(\"world/apotheos_wall_membrane\")");
 		assertContains("shader init registers apotheos floor shader", shaderInit,
 				"registerShader(event, APOTHEOS_FLOOR_FUNNEL.createInstance(provider));");
 		assertContains("shader init registers apotheos portal haze shader", shaderInit,
 				"registerShader(event, APOTHEOS_PORTAL_HAZE.createInstance(provider));");
 		assertContains("shader init registers apotheos portal glow shader", shaderInit,
 				"registerShader(event, APOTHEOS_PORTAL_GLOW.createInstance(provider));");
+		assertContains("shader init registers apotheos wall membrane shader", shaderInit,
+				"registerShader(event, APOTHEOS_WALL_MEMBRANE.createInstance(provider));");
 		assertContains("shader init requests ring rise uniform", shaderInit,
 				"\"RingRise\"");
 		assertContains("shader init requests center void uniform", shaderInit,
@@ -99,14 +117,28 @@ public final class ApotheosFloorFunnelSourceTest {
 				"public static RenderType apotheosPortalHaze(");
 		assertContains("portal glow render type method exists", renderTypes,
 				"public static RenderType apotheosPortalGlow(");
+		assertContains("wall membrane render type method exists", renderTypes,
+				"public static RenderType apotheosWallMembrane(");
 		assertContains("render type uses apotheos shader shard", renderTypes,
 				"ShaderInit.APOTHEOS_FLOOR_FUNNEL.getShard()");
 		assertContains("portal haze render type uses apotheos haze shader shard", renderTypes,
 				"ShaderInit.APOTHEOS_PORTAL_HAZE.getShard()");
 		assertContains("portal glow render type uses apotheos glow shader shard", renderTypes,
 				"ShaderInit.APOTHEOS_PORTAL_GLOW.getShard()");
+		assertContains("wall membrane render type uses apotheos wall shader shard", renderTypes,
+				"ShaderInit.APOTHEOS_WALL_MEMBRANE.getShard()");
 		assertContains("render type uploads ring speed", renderTypes,
 				"setUniform(shader, \"RingSpeed\", ringSpeed);");
+		assertContains("wall membrane render type uploads fiber scale", renderTypes,
+				"setUniform(shader, \"FiberScale\", fiberScale);");
+		assertContains("wall membrane render type uploads trace intensity", renderTypes,
+				"setUniform(shader, \"TraceIntensity\", traceIntensity);");
+		assertContains("wall membrane render type uploads red glow intensity", renderTypes,
+				"setUniform(shader, \"RedGlowIntensity\", redGlowIntensity);");
+		assertContains("wall membrane render type uploads ceiling fade start", renderTypes,
+				"setUniform(shader, \"CeilingFadeStart\", ceilingFadeStart);");
+		assertContains("wall membrane render type uploads ceiling fade end", renderTypes,
+				"setUniform(shader, \"CeilingFadeEnd\", ceilingFadeEnd);");
 		assertContains("render type uploads center void radius", renderTypes,
 				"setUniform(shader, \"CenterVoidRadius\", centerVoidRadius);");
 		assertContains("render type disables depth test for skybox-space floor funnel", renderTypes,
@@ -118,6 +150,10 @@ public final class ApotheosFloorFunnelSourceTest {
 				"extends AbstractChamberThemeEffects");
 		assertContains("apotheos effects render in the chamber sky pass", apotheosEffects,
 				"protected void renderBeforeSharedLayers(ChamberThemeRenderContext context)");
+		assertContains("apotheos effects render the wall membrane before portal and floor layers", apotheosEffects,
+				"renderApotheosWallMembrane(context.poseStack(), context.time(), context.skyDistance());\n\t\trenderApotheosWallFrames(context.poseStack(), context.time(), context.skyDistance());\n\t\trenderApotheosPortalGlow");
+		assertContains("apotheos effects render prominent wall frames after the wall membrane", apotheosEffects,
+				"renderApotheosWallFrames(context.poseStack(), context.time(), context.skyDistance());");
 		assertContains("apotheos effects draw the floor funnel before future wall and ceiling passes", apotheosEffects,
 				"renderApotheosFloorFunnel(context.poseStack(), context.time(), context.skyDistance())");
 		assertContains("apotheos effects draw the portal glow before the floor funnel", apotheosEffects,
@@ -126,8 +162,8 @@ public final class ApotheosFloorFunnelSourceTest {
 				"renderApotheosPortalHaze");
 		assertContains("apotheos effects draw a separate third portal glow layer", apotheosEffects,
 				"renderApotheosPortalGlow");
-		assertContains("apotheos effects extends portal glow toward the green rings", apotheosEffects,
-				"APOTHEOS_PORTAL_GLOW_RADIUS = 0.52F");
+		assertContains("apotheos effects keeps the accepted portal glow radius", apotheosEffects,
+				"APOTHEOS_PORTAL_GLOW_RADIUS = 0.42F");
 		assertContains("apotheos effects keep a true central aperture", apotheosEffects,
 				"APOTHEOS_FLOOR_INNER_RADIUS_SCALE = 0.018F");
 		assertContains("apotheos effects shrink the shader center void", apotheosEffects,
@@ -144,6 +180,40 @@ public final class ApotheosFloorFunnelSourceTest {
 				"APOTHEOS_FLOOR_RADIAL_SEGMENTS");
 		assertContains("apotheos effects use angular subdivisions for a circular aperture", apotheosEffects,
 				"APOTHEOS_FLOOR_RING_SEGMENTS");
+		assertContains("apotheos effects use cylindrical wall angular subdivisions", apotheosEffects,
+				"APOTHEOS_WALL_RING_SEGMENTS = 96");
+		assertContains("apotheos effects use cylindrical wall vertical subdivisions", apotheosEffects,
+				"APOTHEOS_WALL_VERTICAL_SEGMENTS = 20");
+		assertContains("apotheos effects place wall membrane just outside the floor rim", apotheosEffects,
+				"APOTHEOS_WALL_RADIUS_SCALE = 0.66F");
+		assertContains("apotheos effects extend the wall below the portal rim for floor blending", apotheosEffects,
+				"APOTHEOS_WALL_BOTTOM_Y_SCALE = -0.58F");
+		assertContains("apotheos effects boost wall trace readability", apotheosEffects,
+				"APOTHEOS_WALL_TRACE_INTENSITY = 0.68F");
+		assertContains("apotheos effects boost the low red wall glow", apotheosEffects,
+				"APOTHEOS_WALL_RED_GLOW_INTENSITY = 0.95F");
+		assertContains("apotheos effects builds a cylindrical APOTHEOS wall mesh", apotheosEffects,
+				"emitApotheosWallCylinderMesh");
+		assertContains("apotheos effects builds prominent APOTHEOS wall ribs", apotheosEffects,
+				"emitApotheosWallRib");
+		assertContains("apotheos effects builds thin APOTHEOS wall web ribbons", apotheosEffects,
+				"emitApotheosWallWebRibbon");
+		assertContains("apotheos effects segment wall web ribbons into arcs", apotheosEffects,
+				"APOTHEOS_WALL_WEB_RIBBON_SEGMENTS = 22");
+		assertContains("apotheos effects keep wall web ribbons out of the red lower glow area", apotheosEffects,
+				"APOTHEOS_WALL_WEB_MIN_HEIGHT_T = 0.46F");
+		assertContains("apotheos effects clamps web arc spans above the red wall zone", apotheosEffects,
+				"APOTHEOS_WALL_WEB_MIN_HEIGHT_T, 0.80F");
+		assertContains("apotheos effects keeps wall web arc geometry stable between frames", apotheosEffects,
+				"endHeightT, ribbon * 5.61F);");
+		assertContains("apotheos effects bends APOTHEOS web ribbons into arcs", apotheosEffects,
+				"apotheosWallWebArcBend");
+		assertContains("apotheos effects emits curved APOTHEOS web ribbon spans", apotheosEffects,
+				"emitApotheosWallWebRibbonSpan");
+		assertNotContains("apotheos wall pass should not include wall nodules yet", apotheosEffects,
+				"wallNodule");
+		assertNotContains("apotheos wall pass should not include suspended droplets yet", apotheosEffects,
+				"suspendedDroplet");
 		assertContains("apotheos effects send shader time for outward ring travel", apotheosEffects,
 				"time * APOTHEOS_FLOOR_SHADER_TIME_SCALE");
 		assertContains("apotheos effects scale from chamber sky distance", apotheosEffects,
@@ -177,8 +247,22 @@ public final class ApotheosFloorFunnelSourceTest {
 				"\"name\": \"GlowIntensity\"");
 		assertContains("portal glow shader json exposes glow radius", glowShaderJson,
 				"\"name\": \"GlowRadius\"");
+		assertContains("portal glow shader json defaults to the accepted glow radius", glowShaderJson,
+				"\"name\": \"GlowRadius\", \"type\": \"float\", \"count\": 1, \"values\": [ 0.42 ]");
 		assertContains("portal glow shader json exposes center void radius", glowShaderJson,
 				"\"name\": \"CenterVoidRadius\"");
+		assertContains("wall membrane shader json points to vertex program", wallShaderJson,
+				"\"vertex\": \"hemomancy:world/apotheos_wall_membrane\"");
+		assertContains("wall membrane shader json exposes fiber scale", wallShaderJson,
+				"\"name\": \"FiberScale\"");
+		assertContains("wall membrane shader json exposes trace intensity", wallShaderJson,
+				"\"name\": \"TraceIntensity\"");
+		assertContains("wall membrane shader json exposes red glow intensity", wallShaderJson,
+				"\"name\": \"RedGlowIntensity\"");
+		assertContains("wall membrane shader json exposes ceiling fade start", wallShaderJson,
+				"\"name\": \"CeilingFadeStart\"");
+		assertContains("wall membrane shader json exposes ceiling fade end", wallShaderJson,
+				"\"name\": \"CeilingFadeEnd\"");
 
 		assertContains("vertex shader lowers the center into a funnel", vertexShader,
 				"funnelDrop");
@@ -200,6 +284,10 @@ public final class ApotheosFloorFunnelSourceTest {
 				"radialDistance =");
 		assertContains("portal glow vertex shader keeps the center aperture dark and open", glowVertexShader,
 				"centerAperture =");
+		assertContains("wall membrane vertex shader passes wall angle", wallVertexShader,
+				"wallAngleT =");
+		assertContains("wall membrane vertex shader passes wall height", wallVertexShader,
+				"wallHeightT =");
 
 		assertContains("fragment shader computes radial distance", fragmentShader,
 				"radialDistance");
@@ -343,13 +431,43 @@ public final class ApotheosFloorFunnelSourceTest {
 				glowFragmentShader, "behindRingGlowSurvival");
 		assertNotContains("portal glow fragment shader should not require a static texture sampler", glowFragmentShader,
 				"sampler2D");
+		assertContains("wall membrane fragment shader uses seam-safe cylindrical coordinates", wallFragmentShader,
+				"unitCircle");
+		assertContains("wall membrane fragment shader creates deep teal-black fungal fibers", wallFragmentShader,
+				"deepTealBlack");
+		assertContains("wall membrane fragment shader lifts the wall out of near-black", wallFragmentShader,
+				"readableTealMembrane");
+		assertContains("wall membrane fragment shader adds controlled readability without washing out black", wallFragmentShader,
+				"wallReadabilityLift");
+		assertContains("wall membrane fragment shader adds a low red wall glow", wallFragmentShader,
+				"redLowWallGlow");
+		assertContains("wall membrane fragment shader feathers the lower wall into the portal floor",
+				wallFragmentShader, "wallFloorBlendFeather");
+		assertContains("wall membrane fragment shader extends red glow down into the floor rim", wallFragmentShader,
+				"portalFloorGlowBlend");
+		assertContains("wall membrane fragment shader keeps pale web traces subtle", wallFragmentShader,
+				"subtlePaleWebTrace");
+		assertContains("wall membrane fragment shader brightens pale traces enough to read", wallFragmentShader,
+				"visiblePaleTraceBoost");
+		assertContains("wall membrane fragment shader raises wall opacity headroom", wallFragmentShader,
+				"wallOpacityHeadroom");
+		assertContains("wall membrane fragment shader fades before the ceiling pass", wallFragmentShader,
+				"ceilingHandoffFade");
+		assertNotContains("wall membrane fragment shader should not require a static texture sampler", wallFragmentShader,
+				"sampler2D");
+		assertNotContains("wall membrane fragment shader should not include nodules", wallFragmentShader,
+				"wallNodule");
+		assertNotContains("wall membrane fragment shader should not include suspended droplets", wallFragmentShader,
+				"suspendedDroplet");
 
 		assertContains("reference documents apotheos floor funnel", reference,
 				"APOTHEOS floor funnel");
+		assertContains("reference documents apotheos wall membrane", reference,
+				"APOTHEOS wall membrane");
 		assertContains("reference documents renderer-only floor treatment", reference,
 				"renderer-only");
-		assertContains("reference documents pending wall and ceiling passes", reference,
-				"walls and ceiling remain pending");
+		assertContains("reference documents pending ceiling pass", reference,
+				"ceiling remains pending");
 	}
 
 	private static String read(Path path) throws IOException {

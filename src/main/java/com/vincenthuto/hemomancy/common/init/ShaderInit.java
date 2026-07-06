@@ -86,6 +86,11 @@ public class ShaderInit {
 			DefaultVertexFormat.POSITION_TEX_COLOR, "HemoTime", "FunnelSeed", "RingRise", "RingSpeed",
 			"MeatNoiseScale", "HighlightIntensity", "CenterVoidRadius");
 
+	public static ShaderHolder APOTHEOS_WALL_MEMBRANE = new ShaderHolder(
+			Hemomancy.rloc("world/apotheos_wall_membrane"), DefaultVertexFormat.POSITION_TEX_COLOR,
+			"HemoTime", "WallSeed", "FiberScale", "TraceIntensity", "RedGlowIntensity", "CeilingFadeStart",
+			"CeilingFadeEnd");
+
 	public static ShaderHolder APOTHEOS_PORTAL_GLOW = new ShaderHolder(Hemomancy.rloc("world/apotheos_portal_glow"),
 			DefaultVertexFormat.POSITION_TEX_COLOR, "HemoTime", "GlowSeed", "GlowIntensity", "GlowRadius",
 			"CenterVoidRadius");
@@ -125,6 +130,7 @@ public class ShaderInit {
         registerShader(event, SILENT_ARCHON_STORM_CLOUD.createInstance(provider));
         registerShader(event, QLIPHOTH_BLACK_HOLE.createInstance(provider));
         registerShader(event, APOTHEOS_FLOOR_FUNNEL.createInstance(provider));
+        registerShader(event, APOTHEOS_WALL_MEMBRANE.createInstance(provider));
         registerShader(event, APOTHEOS_PORTAL_GLOW.createInstance(provider));
         registerShader(event, APOTHEOS_PORTAL_HAZE.createInstance(provider));
 

@@ -466,6 +466,39 @@ public final class HemoRenderTypes {
 						.createCompositeState(false));
 	}
 
+	public static RenderType apotheosWallMembrane(float gameTime, float wallSeed, float fiberScale,
+			float traceIntensity, float redGlowIntensity, float ceilingFadeStart, float ceilingFadeEnd) {
+		RenderStateShard.TexturingStateShard uniforms = new RenderStateShard.TexturingStateShard(
+				"apotheos_wall_membrane_uniforms",
+				() -> {
+					ShaderInstance shader = ShaderInit.APOTHEOS_WALL_MEMBRANE.getInstance().get();
+					setUniform(shader, "HemoTime", gameTime);
+					setUniform(shader, "WallSeed", wallSeed);
+					setUniform(shader, "FiberScale", fiberScale);
+					setUniform(shader, "TraceIntensity", traceIntensity);
+					setUniform(shader, "RedGlowIntensity", redGlowIntensity);
+					setUniform(shader, "CeilingFadeStart", ceilingFadeStart);
+					setUniform(shader, "CeilingFadeEnd", ceilingFadeEnd);
+				},
+				() -> {
+					ShaderInstance shader = ShaderInit.APOTHEOS_WALL_MEMBRANE.getInstance().get();
+					if (shader instanceof ExtendedShaderInstance extended) {
+						extended.setUniformDefaults();
+					}
+				});
+		return RenderType.create("apotheos_wall_membrane",
+				DefaultVertexFormat.POSITION_TEX_COLOR, VertexFormat.Mode.QUADS, 32768, false, true,
+				RenderType.CompositeState.builder()
+						.setShaderState(ShaderInit.APOTHEOS_WALL_MEMBRANE.getShard())
+						.setTexturingState(uniforms)
+						.setTransparencyState(RenderType.TRANSLUCENT_TRANSPARENCY)
+						.setDepthTestState(RenderType.NO_DEPTH_TEST)
+						.setWriteMaskState(RenderType.COLOR_WRITE)
+						.setCullState(RenderType.NO_CULL)
+						.setLightmapState(RenderType.NO_LIGHTMAP)
+						.createCompositeState(false));
+	}
+
 	public static RenderType apotheosPortalGlow(float gameTime, float glowSeed, float glowIntensity, float glowRadius,
 			float centerVoidRadius) {
 		RenderStateShard.TexturingStateShard uniforms = new RenderStateShard.TexturingStateShard(
