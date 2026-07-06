@@ -1,55 +1,45 @@
 package com.vincenthuto.hemomancy.common.item.harbinger.armor;
 
+import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.client.item.HemoClientItemExtensionsProvider;
-import com.vincenthuto.hemomancy.client.model.armor.BloodLustArmorModel;
 import com.vincenthuto.hemomancy.client.render.item.ModelBackedArmorItemRenderer;
-import com.vincenthuto.hemomancy.common.init.ItemInit;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.HumanoidModel;
+import net.minecraft.client.model.Model;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.core.Holder;
-import net.minecraft.core.component.DataComponents;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.core.particles.DustParticleOptions;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.*;
-import net.minecraft.world.item.component.CustomData;
+import net.minecraft.world.item.ArmorItem;
+import net.minecraft.world.item.ArmorItem.Type;
+import net.minecraft.world.item.ArmorMaterial;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.client.extensions.common.IClientItemExtensions;
 
 import java.util.List;
 
-public class BloodLustArmorItem extends ArmorItem implements HemoClientItemExtensionsProvider {
-	public static final String TAG_LINEAGE = "hemomancy:lineage";
+public abstract class AbstractSpecialBloodLustArmorItem extends ArmorItem implements HemoClientItemExtensionsProvider {
+	private final String texturePrefix;
 
-	public enum MaskType {
-		NONE,
-		TENGU,
-		GRINNING,
-		LODESTONE,
-		VELORUM
-	}
-
-	MaskType maskType;
-
-	public BloodLustArmorItem(Holder<ArmorMaterial> materialIn, Type slot, MaskType maskType) {
+	protected AbstractSpecialBloodLustArmorItem(Holder<ArmorMaterial> materialIn, Type slot, String texturePrefix) {
 		super(materialIn, slot, new Item.Properties().stacksTo(1));
-		this.maskType = maskType;
+		this.texturePrefix = texturePrefix;
 	}
 
-	public MaskType getMaskType() {
-		return maskType;
-	}
-
-	public static String getLineage(ItemStack stack) {
-		CustomData customData = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY);
-		CompoundTag tag = customData.copyTag();
-		return tag.getString(TAG_LINEAGE);
+	@Override
+	public ResourceLocation getArmorTexture(ItemStack stack, Entity entity, EquipmentSlot slot, ArmorMaterial.Layer layer,
+			boolean innerModel) {
+		return Hemomancy.rloc("textures/models/armor/" + this.texturePrefix + "_layer_"
+				+ (slot == EquipmentSlot.LEGS ? "2" : "1") + ".png");
 	}
 
 	@Override
@@ -66,24 +56,14 @@ public class BloodLustArmorItem extends ArmorItem implements HemoClientItemExten
 			@Override
 			public HumanoidModel<?> getHumanoidArmorModel(LivingEntity entityLiving, ItemStack itemStack,
 					EquipmentSlot armorSlot, HumanoidModel<?> _default) {
-				if (itemStack.getItem() == ItemInit.blood_lust_helm.get()) {
-					return BloodLustArmorModel.helmet.get();
-				} else if (itemStack.getItem() == ItemInit.blood_lust_helm_grinning.get()) {
-					return BloodLustArmorModel.grinning.get();
-				} else if (itemStack.getItem() == ItemInit.blood_lust_helm_tengu.get()) {
-					return BloodLustArmorModel.tengu.get();
-				} else if (itemStack.getItem() == ItemInit.blood_lust_helm_lodestone.get()) {
-					return BloodLustArmorModel.helmet.get();
-				} else if (itemStack.getItem() == ItemInit.blood_lust_helm_velorum.get()) {
-					return BloodLustArmorModel.tengu.get();
-				} else if (itemStack.getItem() == ItemInit.blood_lust_chest.get()) {
-					return BloodLustArmorModel.chest.get();
-				} else if (itemStack.getItem() == ItemInit.blood_lust_legs.get()) {
-					return BloodLustArmorModel.legs.get();
-				} else if (itemStack.getItem() == ItemInit.blood_lust_boots.get()) {
-					return BloodLustArmorModel.boots.get();
-				}
-				return IClientItemExtensions.super.getHumanoidArmorModel(entityLiving, itemStack, armorSlot, _default);
+				return modelForSlot(armorSlot);
+			}
+
+			@Override
+			public void setupModelAnimations(LivingEntity entityLiving, ItemStack itemStack, EquipmentSlot equipmentSlot,
+					Model model, float limbSwing, float limbSwingAmount, float partialTick, float ageInTicks,
+					float netHeadYaw, float headPitch) {
+				setupSpecialModelAnimations(entityLiving, equipmentSlot, model, ageInTicks);
 			}
 
 			@Override
@@ -103,6 +83,12 @@ public class BloodLustArmorItem extends ArmorItem implements HemoClientItemExten
 		}
 	}
 
+	protected abstract HumanoidModel<?> modelForSlot(EquipmentSlot slot);
+
+	protected void setupSpecialModelAnimations(LivingEntity entityLiving, EquipmentSlot equipmentSlot, Model model,
+			float ageInTicks) {
+	}
+
 	private static boolean isEquipped(Player player, ItemStack stack) {
 		for (EquipmentSlot slot : new EquipmentSlot[] { EquipmentSlot.HEAD, EquipmentSlot.CHEST, EquipmentSlot.LEGS,
 				EquipmentSlot.FEET }) {
@@ -112,9 +98,4 @@ public class BloodLustArmorItem extends ArmorItem implements HemoClientItemExten
 		}
 		return false;
 	}
-
-	public void setMaskType(MaskType maskType) {
-		this.maskType = maskType;
-	}
-
 }
