@@ -4,6 +4,7 @@ import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.entity.projectile.CombatWeaponCarrierProjectile;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.TendencyWeaponHelper;
+import com.vincenthuto.hemomancy.common.manipulation.SchoolHitHelper;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
@@ -43,6 +44,7 @@ public final class TendencyWeaponCombatEvents {
 		}
 
 		EnumBloodTendency secondaryTendency = TendencyWeaponHelper.getWeaponSecondaryTendency(weaponStack).orElse(null);
+		SchoolHitHelper.tryTriggerConductiveArc(player, target, weaponTendency, secondaryTendency, event.getAmount());
 		float multiplier = TendencyWeaponHelper.getDamageMultiplier(player, target, weaponTendency, secondaryTendency);
 		if (multiplier <= 1.0f) {
 			return;

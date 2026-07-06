@@ -13,6 +13,7 @@ import com.vincenthuto.hemomancy.common.armor.ability.ArmorSetAbilityRegistry;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.IKnownManipulations;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.ManipulationEquipHelper;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.ManipulationRetirementRules;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.equipment.IHarbingerEquipmentItemHandler;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.item.harbinger.bloodline.VasculariumCharmItem;
@@ -141,7 +142,9 @@ public class RadialChooseManipScreen extends Screen {
 
 			for (int i = 0; i < allManips.size(); i++) {
 				BloodManipulation c = allManips.get(i);
-				if (!equippedNames.contains(c.getName()) || ManipulationEquipHelper.isFixedMechanicalManip(c.getName())) {
+				if (!equippedNames.contains(c.getName())
+						|| ManipulationEquipHelper.isFixedMechanicalManip(c.getName())
+						|| ManipulationRetirementRules.isRetiredManipulation(c)) {
 					continue;
 				}
 				this.cachedMenuItems.add(createManipulationItem(c, i, selectedManipName));

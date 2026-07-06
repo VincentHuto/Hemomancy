@@ -700,6 +700,16 @@ public class BlockInit {
 					.noOcclusion().strength(2.0F, 8.0F).sound(SoundType.GLASS)));
 
 	// Puzzle / boss-room blocks â€” Hemorath encounter
+	public static final DeferredHolder<Block, Block> non_euclidean_hallway = MODELEDBLOCKS.register(
+			"non_euclidean_hallway",
+			() -> new NonEuclideanHallwayBlock(BlockBehaviour.Properties.of()
+					.mapColor(MapColor.COLOR_RED)
+					.noCollission()
+					.noOcclusion()
+					.strength(0.8F, 8.0F)
+					.sound(SoundType.GLASS)
+					.lightLevel(state -> 4)));
+
 	public static final DeferredHolder<Block, Block> blood_basin = MODELEDBLOCKS.register("blood_basin",
 			() -> new BloodBasinBlock(BlockBehaviour.Properties.of().requiresCorrectToolForDrops()
 					.strength(2.0F, 6.0F).sound(SoundType.STONE)));

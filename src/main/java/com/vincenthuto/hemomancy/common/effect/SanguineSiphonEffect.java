@@ -1,7 +1,8 @@
 package com.vincenthuto.hemomancy.common.effect;
 
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodVolumeEvents;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodFlowContribution.Category;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodFlowLedger;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.CirculationIncomeHelper;
 
 import net.minecraft.network.chat.Component;
@@ -30,12 +31,11 @@ public class SanguineSiphonEffect extends MobEffect {
 		if (!(entity instanceof Player player)) return true;
 
 		HemoCapabilityAccess.getBloodVolume(player).ifPresent(volume -> {
-			if (!volume.isActive()) return;
-			if (!volume.isFull()) {
+			if (player instanceof ServerPlayer serverPlayer) {
 				double fillAmount = 1.0 + amplifier * 0.5;
-				CirculationIncomeHelper.grant(player, volume, fillAmount,
+				BloodFlowLedger.applyCirculationIncome(serverPlayer, volume, "sanguine_siphon",
+						"Sanguine Siphon", Category.EFFECT, fillAmount, 40,
 						CirculationIncomeHelper.IncomeChannel.MORPHLING);
-				BloodVolumeEvents.syncVolume((ServerPlayer) player, volume);
 			}
 		});
 		return true;

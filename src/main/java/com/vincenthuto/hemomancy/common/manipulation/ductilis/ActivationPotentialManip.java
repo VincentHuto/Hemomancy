@@ -6,6 +6,7 @@ import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.Enu
 import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
 import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationRank;
 import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationType;
+import com.vincenthuto.hemomancy.common.manipulation.SchoolHitHelper;
 import com.vincenthuto.hemomancy.common.manipulation.TendencyAffinityRules;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.Entity;
@@ -34,8 +35,11 @@ public class ActivationPotentialManip extends BloodManipulation {
 					LivingEntity target = (LivingEntity) target2;
 					DuctilisLightningEffects.activationPotential(player, target, targetIndex++);
 					float damage = (float) (5.0f * SkillPointHelper.getCrimsonMasteryMultiplier(player));
-					target.hurt(player.damageSources().playerAttack(player),
-							TendencyAffinityRules.adjustManipulationDamage(player, target, this, damage));
+					float adjusted = TendencyAffinityRules.adjustManipulationDamage(player, target, this, damage);
+					if (target.hurt(player.damageSources().playerAttack(player), adjusted)) {
+						SchoolHitHelper.tryTriggerConductiveArc(player, target, EnumBloodTendency.DUCTILIS,
+								getSecondaryTend(), adjusted);
+					}
 				}
 			}
 		}

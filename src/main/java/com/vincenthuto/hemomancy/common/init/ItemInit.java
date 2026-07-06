@@ -9,8 +9,11 @@ import com.vincenthuto.hemomancy.common.capability.player.harbinger.organs.EnumO
 import com.vincenthuto.hemomancy.common.entity.boss.saint.EnumSaintType;
 import com.vincenthuto.hemomancy.common.item.harbinger.*;
 import com.vincenthuto.hemomancy.common.item.harbinger.armor.BloodLustArmorItem;
+import com.vincenthuto.hemomancy.common.item.harbinger.armor.EdaciousBloodLustArmorItem;
 import com.vincenthuto.hemomancy.common.item.harbinger.armor.HematicIronArmorItem;
 import com.vincenthuto.hemomancy.common.item.harbinger.armor.MarrowCrownArmorItem;
+import com.vincenthuto.hemomancy.common.item.harbinger.armor.PhantasmalBloodLustArmorItem;
+import com.vincenthuto.hemomancy.common.item.harbinger.armor.SheolicBloodLustArmorItem;
 import com.vincenthuto.hemomancy.common.item.harbinger.armor.SilentArchonArmorItem;
 import com.vincenthuto.hemomancy.common.item.harbinger.bloodline.MycophantTendrilItem;
 import com.vincenthuto.hemomancy.common.item.harbinger.bloodline.UnsignedLedgerItem;
@@ -356,6 +359,10 @@ public class ItemInit {
             () -> new BloodMemoryItem(new Item.Properties(), ManipulationInit.sanguine_ward));
     public static final DeferredHolder<Item, Item> memory_hemolymphal_pulse = BASEITEMS.register("memory_hemolymphal_pulse",
             () -> new BloodMemoryItem(new Item.Properties(), ManipulationInit.hemolymphal_pulse));
+    public static final DeferredHolder<Item, Item> memory_synaptic_jolt = BASEITEMS.register("memory_synaptic_jolt",
+            () -> new BloodMemoryItem(new Item.Properties(), ManipulationInit.synaptic_jolt));
+    public static final DeferredHolder<Item, Item> memory_conductive_mark = BASEITEMS.register("memory_conductive_mark",
+            () -> new BloodMemoryItem(new Item.Properties(), ManipulationInit.conductive_mark));
     public static final DeferredHolder<Item, Item> memory_vital_effusion = BASEITEMS.register("memory_vital_effusion",
             () -> new BloodMemoryItem(new Item.Properties(), ManipulationInit.vital_effusion));
     public static final DeferredHolder<Item, Item> memory_living_blade = BASEITEMS.register("memory_living_blade",
@@ -433,6 +440,8 @@ public class ItemInit {
             () -> new BloodMemoryItem(new Item.Properties(), ManipulationInit.hemosynthesis));
     public static final DeferredHolder<Item, Item> memory_blood_lamp = BASEITEMS.register("memory_blood_lamp",
             () -> new BloodMemoryItem(new Item.Properties(), ManipulationInit.blood_lamp));
+    public static final DeferredHolder<Item, Item> memory_hematic_flare = BASEITEMS.register("memory_hematic_flare",
+            () -> new BloodMemoryItem(new Item.Properties(), ManipulationInit.hematic_flare));
     public static final DeferredHolder<Item, Item> memory_crimson_harvest = BASEITEMS.register("memory_crimson_harvest",
             () -> new BloodMemoryItem(new Item.Properties(), ManipulationInit.crimson_harvest));
     public static final DeferredHolder<Item, Item> memory_glacial_grasp = BASEITEMS.register("memory_glacial_grasp",
@@ -444,6 +453,10 @@ public class ItemInit {
             () -> new BloodMemoryItem(new Item.Properties(), ManipulationInit.vascular_dowsing));
     public static final DeferredHolder<Item, Item> memory_ferric_resonance = BASEITEMS.register("memory_ferric_resonance",
             () -> new BloodMemoryItem(new Item.Properties(), ManipulationInit.ferric_resonance));
+    public static final DeferredHolder<Item, Item> memory_iron_retort = BASEITEMS.register("memory_iron_retort",
+            () -> new BloodMemoryItem(new Item.Properties(), ManipulationInit.iron_retort));
+    public static final DeferredHolder<Item, Item> memory_sanguine_magnetism = BASEITEMS.register("memory_sanguine_magnetism",
+            () -> new BloodMemoryItem(new Item.Properties(), ManipulationInit.sanguine_magnetism));
     public static final DeferredHolder<Item, Item> memory_pyretic_forge = BASEITEMS.register("memory_pyretic_forge",
             () -> new BloodMemoryItem(new Item.Properties(), ManipulationInit.pyretic_forge));
     public static final DeferredHolder<Item, Item> memory_umbral_step = BASEITEMS.register("memory_umbral_step",
@@ -473,6 +486,8 @@ public class ItemInit {
             () -> new BloodMemoryItem(new Item.Properties(), ManipulationInit.scalding_updraft));
     public static final DeferredHolder<Item, Item> memory_void_shroud = BASEITEMS.register("memory_void_shroud",
             () -> new BloodMemoryItem(new Item.Properties(), ManipulationInit.void_shroud));
+    public static final DeferredHolder<Item, Item> memory_gloam_laceration = BASEITEMS.register("memory_gloam_laceration",
+            () -> new BloodMemoryItem(new Item.Properties(), ManipulationInit.gloam_laceration));
     public static final DeferredHolder<Item, Item> memory_blood_eclipse = BASEITEMS.register("memory_blood_eclipse",
             () -> new BloodMemoryItem(new Item.Properties(), ManipulationInit.blood_eclipse));
     public static final DeferredHolder<Item, Item> memory_black_veil_covenant = BASEITEMS.register("memory_black_veil_covenant",
@@ -491,6 +506,10 @@ public class ItemInit {
             () -> new BloodMemoryItem(new Item.Properties(), ManipulationInit.hemorrhage));
     public static final DeferredHolder<Item, Item> memory_exsanguinate = BASEITEMS.register("memory_exsanguinate",
             () -> new BloodMemoryItem(new Item.Properties(), ManipulationInit.exsanguinate));
+    public static final DeferredHolder<Item, Item> memory_insatiable_hunger = BASEITEMS.register("memory_insatiable_hunger",
+            () -> new BloodMemoryItem(new Item.Properties(), ManipulationInit.insatiable_hunger));
+    public static final DeferredHolder<Item, Item> memory_grave_debt = BASEITEMS.register("memory_grave_debt",
+            () -> new BloodMemoryItem(new Item.Properties(), ManipulationInit.grave_debt));
     // Saint Canon Memories  imprinted from Sainted Mausoleums via Hallowed Residuum
     public static final DeferredHolder<Item, Item> memory_crimson_tithe = BASEITEMS.register("memory_crimson_tithe",
             () -> new BloodMemoryItem(new Item.Properties(), ManipulationInit.crimson_tithe));
@@ -692,41 +711,29 @@ public class ItemInit {
             () -> new BloodLustArmorItem(EnumModArmorTiers.BLOODLUST.holder(), ArmorItem.Type.BOOTS,
                     BloodLustArmorItem.MaskType.NONE));
     public static final DeferredHolder<Item, Item> edacious_blood_lust_helm = BASEITEMS.register("edacious_blood_lust_helm",
-            () -> new BloodLustArmorItem(EnumModArmorTiers.BLOODLUST.holder(), ArmorItem.Type.HELMET,
-                    BloodLustArmorItem.MaskType.TENGU));
+            () -> new EdaciousBloodLustArmorItem(EnumModArmorTiers.BLOODLUST.holder(), ArmorItem.Type.HELMET));
     public static final DeferredHolder<Item, Item> edacious_blood_lust_chest = BASEITEMS.register("edacious_blood_lust_chest",
-            () -> new BloodLustArmorItem(EnumModArmorTiers.BLOODLUST.holder(), ArmorItem.Type.CHESTPLATE,
-                    BloodLustArmorItem.MaskType.NONE));
+            () -> new EdaciousBloodLustArmorItem(EnumModArmorTiers.BLOODLUST.holder(), ArmorItem.Type.CHESTPLATE));
     public static final DeferredHolder<Item, Item> edacious_blood_lust_legs = BASEITEMS.register("edacious_blood_lust_legs",
-            () -> new BloodLustArmorItem(EnumModArmorTiers.BLOODLUST.holder(), ArmorItem.Type.LEGGINGS,
-                    BloodLustArmorItem.MaskType.NONE));
+            () -> new EdaciousBloodLustArmorItem(EnumModArmorTiers.BLOODLUST.holder(), ArmorItem.Type.LEGGINGS));
     public static final DeferredHolder<Item, Item> edacious_blood_lust_boots = BASEITEMS.register("edacious_blood_lust_boots",
-            () -> new BloodLustArmorItem(EnumModArmorTiers.BLOODLUST.holder(), ArmorItem.Type.BOOTS,
-                    BloodLustArmorItem.MaskType.NONE));
+            () -> new EdaciousBloodLustArmorItem(EnumModArmorTiers.BLOODLUST.holder(), ArmorItem.Type.BOOTS));
     public static final DeferredHolder<Item, Item> sheolic_blood_lust_helm = BASEITEMS.register("sheolic_blood_lust_helm",
-            () -> new BloodLustArmorItem(EnumModArmorTiers.BLOODLUST.holder(), ArmorItem.Type.HELMET,
-                    BloodLustArmorItem.MaskType.LODESTONE));
+            () -> new SheolicBloodLustArmorItem(EnumModArmorTiers.BLOODLUST.holder(), ArmorItem.Type.HELMET));
     public static final DeferredHolder<Item, Item> sheolic_blood_lust_chest = BASEITEMS.register("sheolic_blood_lust_chest",
-            () -> new BloodLustArmorItem(EnumModArmorTiers.BLOODLUST.holder(), ArmorItem.Type.CHESTPLATE,
-                    BloodLustArmorItem.MaskType.NONE));
+            () -> new SheolicBloodLustArmorItem(EnumModArmorTiers.BLOODLUST.holder(), ArmorItem.Type.CHESTPLATE));
     public static final DeferredHolder<Item, Item> sheolic_blood_lust_legs = BASEITEMS.register("sheolic_blood_lust_legs",
-            () -> new BloodLustArmorItem(EnumModArmorTiers.BLOODLUST.holder(), ArmorItem.Type.LEGGINGS,
-                    BloodLustArmorItem.MaskType.NONE));
+            () -> new SheolicBloodLustArmorItem(EnumModArmorTiers.BLOODLUST.holder(), ArmorItem.Type.LEGGINGS));
     public static final DeferredHolder<Item, Item> sheolic_blood_lust_boots = BASEITEMS.register("sheolic_blood_lust_boots",
-            () -> new BloodLustArmorItem(EnumModArmorTiers.BLOODLUST.holder(), ArmorItem.Type.BOOTS,
-                    BloodLustArmorItem.MaskType.NONE));
+            () -> new SheolicBloodLustArmorItem(EnumModArmorTiers.BLOODLUST.holder(), ArmorItem.Type.BOOTS));
     public static final DeferredHolder<Item, Item> phantasmal_blood_lust_helm = BASEITEMS.register("phantasmal_blood_lust_helm",
-            () -> new BloodLustArmorItem(EnumModArmorTiers.BLOODLUST.holder(), ArmorItem.Type.HELMET,
-                    BloodLustArmorItem.MaskType.VELORUM));
+            () -> new PhantasmalBloodLustArmorItem(EnumModArmorTiers.BLOODLUST.holder(), ArmorItem.Type.HELMET));
     public static final DeferredHolder<Item, Item> phantasmal_blood_lust_chest = BASEITEMS.register("phantasmal_blood_lust_chest",
-            () -> new BloodLustArmorItem(EnumModArmorTiers.BLOODLUST.holder(), ArmorItem.Type.CHESTPLATE,
-                    BloodLustArmorItem.MaskType.NONE));
+            () -> new PhantasmalBloodLustArmorItem(EnumModArmorTiers.BLOODLUST.holder(), ArmorItem.Type.CHESTPLATE));
     public static final DeferredHolder<Item, Item> phantasmal_blood_lust_legs = BASEITEMS.register("phantasmal_blood_lust_legs",
-            () -> new BloodLustArmorItem(EnumModArmorTiers.BLOODLUST.holder(), ArmorItem.Type.LEGGINGS,
-                    BloodLustArmorItem.MaskType.NONE));
+            () -> new PhantasmalBloodLustArmorItem(EnumModArmorTiers.BLOODLUST.holder(), ArmorItem.Type.LEGGINGS));
     public static final DeferredHolder<Item, Item> phantasmal_blood_lust_boots = BASEITEMS.register("phantasmal_blood_lust_boots",
-            () -> new BloodLustArmorItem(EnumModArmorTiers.BLOODLUST.holder(), ArmorItem.Type.BOOTS,
-                    BloodLustArmorItem.MaskType.NONE));
+            () -> new PhantasmalBloodLustArmorItem(EnumModArmorTiers.BLOODLUST.holder(), ArmorItem.Type.BOOTS));
     // Silent Archon
     public static final DeferredHolder<Item, Item> silent_archon_helm = BASEITEMS.register("silent_archon_helm",
             () -> new SilentArchonArmorItem(EnumModArmorTiers.SILENT_ARCHON.holder(), ArmorItem.Type.HELMET));

@@ -3,9 +3,10 @@ package com.vincenthuto.hemomancy.common.item.harbinger.tool;
 import com.vincenthuto.hemomancy.client.item.HemoClientItemExtensionsProvider;
 import com.vincenthuto.hemomancy.client.render.item.BloodGourdItemRenderer;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodFlowLedger;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.equipment.HarbingerEquipmentType;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.equipment.IHarbingerEquipment;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
@@ -13,6 +14,7 @@ import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.Entity;
@@ -148,8 +150,10 @@ public class BloodGourdItem extends Item implements IHarbingerEquipment, HemoCli
 			if (playerVolume.getBloodVolume() < playerVolume.getMaxBloodVolume() && bloodVolume.getBloodVolume() > 0) {
 				double transfer = Math.min(this.tier.getTransferRate(), bloodVolume.getBloodVolume());
 				transfer = Math.min(transfer, playerVolume.getMaxBloodVolume() - playerVolume.getBloodVolume());
-				bloodVolume.drain(transfer);
-				playerVolume.fill(transfer);
+				if (player instanceof ServerPlayer serverPlayer) {
+					BloodFlowLedger.transferFromVessel(serverPlayer, playerVolume, bloodVolume,
+							"open_blood_gourd", "Open Blood Gourd", transfer, 1);
+				}
 			}
 
 		} else {

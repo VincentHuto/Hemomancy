@@ -1,6 +1,8 @@
 package com.vincenthuto.hemomancy.common.capability.player.harbinger.scar.fungal;
 
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodFlowContribution.Category;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodFlowLedger;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.CirculationIncomeHelper;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.init.EffectInit;
@@ -74,9 +76,9 @@ public final class AfflictionDigestHelper {
 
 		serverPlayer.heal(healForEffectSeconds(targets.size()));
 		HemoCapabilityAccess.getBloodVolume(serverPlayer).ifPresent(volume -> {
-			double granted = CirculationIncomeHelper.grant(serverPlayer, volume,
-					bloodFeedForEffectSeconds(targets.size()), CirculationIncomeHelper.IncomeChannel.SCAR);
-			syncBlood(serverPlayer, volume, granted);
+			BloodFlowLedger.applyCirculationIncome(serverPlayer, volume, "putrivora_digest",
+					"Putrivora Digest", Category.SCAR, bloodFeedForEffectSeconds(targets.size()), 20,
+					CirculationIncomeHelper.IncomeChannel.SCAR);
 		});
 	}
 

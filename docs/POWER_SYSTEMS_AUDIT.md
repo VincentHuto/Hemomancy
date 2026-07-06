@@ -43,7 +43,7 @@ Cerebral and fungal **Scars** are the quiet fourth layer. They are not part of t
 
 ### 1.1 What each system does well today
 
-**Manipulations** are already a clean expenditure system: per-cast blood/XP costs, cooldowns, anatomical vein strain, and a deep modifier economy (Efficiency, Dynamic Use, Blood Flow, Sporitic Resonance, Blood Drunkenness, purity penalties). Roughly a third of the catalog is non-combat utility, which sells hemomancy as a way of living rather than a combat kit. No structural changes needed; the gaps are runway (empty `MAGISTER`/`PERFECTUS` ranks, unused `CHARGED` type, thin `ManipLevel` payoff).
+**Manipulations** are already a clean expenditure system: per-cast blood/XP costs, cooldowns, anatomical vein strain, and a deep modifier economy (Efficiency, Dynamic Use, Blood Flow, Sporitic Resonance, Blood Drunkenness, purity penalties). Manipulation blood-cost modifiers now route through `ManipulationCostLedger`, while equipped manipulation capacity routes through `ManipulationSlotLedger`; the Scrying Podium exposes the selected manipulation's base -> effective cost and the active slot cap breakdown. Roughly a third of the catalog is non-combat utility, which sells hemomancy as a way of living rather than a combat kit. No structural changes needed; the gaps are runway (empty `MAGISTER`/`PERFECTUS` ranks, unused `CHARGED` type, thin `ManipLevel` payoff).
 
 **Armor sets** already read as contact contracts: Barbed (wounding me costs you blood), Blood Lust (my wounds on you feed me), Sheolic (fire cannot touch me; touching me burns), Silent Archon (physical contact severed in both directions). Flat shared base stats put all identity in behavior. The Armature ritual gives armor high commitment weight. This is the membrane system and should own that role exclusively.
 
@@ -216,7 +216,7 @@ Each phase should land with focused resource/source tests per repo convention an
 
 ## 8. Open Questions
 
-1. Should circulation bandwidth be visible to the player (a flow meter on the blood HUD), or remain an invisible cap? Visibility fits the mod's diegetic-teaching habits.
+1. **Decided 2026-07-04:** circulation bandwidth is visible in the Scrying Podium Blood Flow diagnostics, alongside positive/negative/net mL/t and per-source requested/applied rows.
 2. Does the Cradle count as a second morphling "slot" against the power budget, or as covenant infrastructure outside it? Current lean: infrastructure — it already pays staged blood upkeep.
 3. Do Saint Canon memories participate in triad Resonance, or stay outside it (they already ignore Dynamic Use)? Current lean: outside — imprinted, not aligned.
 4. Should hunger apply to wild-bound (Developing-capped) morphlings, or only Mature+? Starting gentler on early-game players is probably right.

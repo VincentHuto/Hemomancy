@@ -196,17 +196,7 @@
         {
           "type": "minecraft:item",
           "weight": 3,
-          "name": "hemomancy:crude_memory_crimson_harvest"
-        },
-        {
-          "type": "minecraft:item",
-          "weight": 3,
           "name": "hemomancy:crude_memory_sanguine_mending"
-        },
-        {
-          "type": "minecraft:item",
-          "weight": 3,
-          "name": "hemomancy:crude_memory_blood_lamp"
         },
         {
           "type": "minecraft:item",

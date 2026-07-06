@@ -8,17 +8,24 @@ import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
 import com.vincenthuto.hemomancy.common.manipulation.DrudgeAction;
 import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationRank;
 import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationType;
+import com.vincenthuto.hemomancy.common.manipulation.ManipulationStatusRules;
+import com.vincenthuto.hemomancy.common.manipulation.SchoolHitHelper;
 import com.vincenthuto.hemomancy.common.manipulation.animus.*;
 import com.vincenthuto.hemomancy.common.manipulation.congeatio.*;
 import com.vincenthuto.hemomancy.common.manipulation.ductilis.ActivationPotentialManip;
+import com.vincenthuto.hemomancy.common.manipulation.ductilis.ConductiveMarkManip;
 import com.vincenthuto.hemomancy.common.manipulation.ductilis.CrimsonHarvestManip;
+import com.vincenthuto.hemomancy.common.manipulation.ductilis.DuctilisLightningEffects;
 import com.vincenthuto.hemomancy.common.manipulation.ductilis.HemolymphalPulseManip;
 import com.vincenthuto.hemomancy.common.manipulation.ductilis.SanguineWardManip;
+import com.vincenthuto.hemomancy.common.manipulation.ductilis.SynapticJoltManip;
 import com.vincenthuto.hemomancy.common.manipulation.ferric.*;
 import com.vincenthuto.hemomancy.common.manipulation.flammeus.*;
 import com.vincenthuto.hemomancy.common.manipulation.lux.*;
 import com.vincenthuto.hemomancy.common.manipulation.mortem.ExsanguinateManip;
+import com.vincenthuto.hemomancy.common.manipulation.mortem.GraveDebtManip;
 import com.vincenthuto.hemomancy.common.manipulation.mortem.HemorrhageManip;
+import com.vincenthuto.hemomancy.common.manipulation.mortem.InsatiableHungerManip;
 import com.vincenthuto.hemomancy.common.manipulation.mortem.VitalReservoirManip;
 import com.vincenthuto.hemomancy.common.manipulation.saint.BloomOfRotManip;
 import com.vincenthuto.hemomancy.common.manipulation.saint.CrimsonTitheManip;
@@ -214,6 +221,36 @@ public class ManipulationInit {
 						return true;
 					}, "Grants Regeneration to nearby allies"));
 
+	public static final DeferredHolder<BloodManipulation, BloodManipulation> synaptic_jolt = MANIPS.register("synaptic_jolt",
+			() -> new SynapticJoltManip("synaptic_jolt", 150, 0, 0, EnumManipulationType.QUICK,
+					EnumManipulationRank.HUMILIS, EnumBloodTendency.DUCTILIS, EnumVeinSections.HEAD)
+					.setCooldownTicks(25)
+					.setDrudgeAction((drudge, world, centre, radius) -> {
+						AABB area = new AABB(centre).inflate(Math.min(radius, 7.0D));
+						Monster target = world.getEntitiesOfClass(Monster.class, area).stream()
+								.min(Comparator.comparingDouble(drudge::distanceToSqr)).orElse(null);
+						if (target == null) return false;
+						SynapticJoltManip.staggerTarget(target);
+						DuctilisLightningEffects.synapticJolt(drudge, target);
+						target.hurt(world.damageSources().mobAttack(drudge), 3.0F);
+						return true;
+					}, "Interrupts and staggers nearest hostile"));
+
+	public static final DeferredHolder<BloodManipulation, BloodManipulation> conductive_mark = MANIPS.register("conductive_mark",
+			() -> new ConductiveMarkManip("conductive_mark", 225, 10, 0, EnumManipulationType.QUICK,
+					EnumManipulationRank.MEDIOCRITAS, EnumBloodTendency.DUCTILIS, EnumVeinSections.HEAD)
+					.setSecondaryTend(EnumBloodTendency.FERRIC)
+					.setCooldownTicks(50)
+					.setDrudgeAction((drudge, world, centre, radius) -> {
+						AABB area = new AABB(centre).inflate(Math.min(radius, 14.0D));
+						Monster target = world.getEntitiesOfClass(Monster.class, area).stream()
+								.min(Comparator.comparingDouble(drudge::distanceToSqr)).orElse(null);
+						if (target == null) return false;
+						SchoolHitHelper.markConductive(target, ManipulationStatusRules.CONDUCTIVE_MARK_TICKS);
+						DuctilisLightningEffects.conductiveMark(drudge, target);
+						return true;
+					}, "Marks nearest hostile for conductive arcs"));
+
 	public static final DeferredHolder<BloodManipulation, BloodManipulation> sanguine_ward = MANIPS.register("sanguine_ward",
 			() -> new SanguineWardManip("sanguine_ward", 10, 10, 0, EnumManipulationType.CONTINUOUS,
 					EnumManipulationRank.MEDIOCRITAS, EnumBloodTendency.DUCTILIS, EnumVeinSections.BODY)
@@ -391,6 +428,25 @@ public class ManipulationInit {
 						return true;
 					}, "Places a light source in the dark"));
 
+	public static final DeferredHolder<BloodManipulation, BloodManipulation> hematic_flare = MANIPS.register("hematic_flare",
+			() -> new HematicFlareManip("hematic_flare", 125, 0, 0, EnumManipulationType.QUICK,
+					EnumManipulationRank.HUMILIS, EnumBloodTendency.LUX, EnumVeinSections.HEAD)
+					.setSecondaryTend(EnumBloodTendency.FLAMMEUS)
+					.setCooldownTicks(30)
+					.setDrudgeAction((drudge, world, centre, radius) -> {
+						AABB area = new AABB(centre).inflate(radius);
+						Monster target = world.getEntitiesOfClass(Monster.class, area).stream()
+								.min(Comparator.comparingDouble(drudge::distanceToSqr)).orElse(null);
+						if (target == null) return false;
+						boolean concealed = target.hasEffect(MobEffects.INVISIBILITY);
+						if (concealed) {
+							target.removeEffect(MobEffects.INVISIBILITY);
+						}
+						target.addEffect(new MobEffectInstance(MobEffects.GLOWING, 180, 0, false, true));
+						target.hurt(world.damageSources().magic(), concealed ? 5.0F : 3.0F);
+						return true;
+					}, "Marks and burns the nearest hidden hostile"));
+
 	public static final DeferredHolder<BloodManipulation, BloodManipulation> crimson_harvest = MANIPS.register("crimson_harvest",
 			() -> new CrimsonHarvestManip("crimson_harvest", 200, 0, 0, EnumManipulationType.QUICK,
 					EnumManipulationRank.HUMILIS, EnumBloodTendency.DUCTILIS, EnumVeinSections.LEGS)
@@ -460,6 +516,33 @@ public class ManipulationInit {
 					.setSecondaryTend(EnumBloodTendency.FLAMMEUS)
 					.setCooldownTicks(200)
 					.setDrudgeAction(DrudgeAction.DRUDGE_UNSUPPORTED, "Not usable by Drudges"));
+
+	public static final DeferredHolder<BloodManipulation, BloodManipulation> iron_retort = MANIPS.register("iron_retort",
+			() -> new IronRetortManip("iron_retort", 250, 10, 0, EnumManipulationType.QUICK,
+					EnumManipulationRank.MEDIOCRITAS, EnumBloodTendency.FERRIC, EnumVeinSections.BODY)
+					.setSecondaryTend(EnumBloodTendency.DUCTILIS)
+					.setCooldownTicks(80)
+					.setDrudgeAction((drudge, world, centre, radius) -> {
+						drudge.addEffect(new MobEffectInstance(EffectInit.iron_retort,
+								ManipulationStatusRules.IRON_RETORT_TICKS, 0, false, true));
+						return true;
+					}, "Brief retaliatory iron guard"));
+
+	public static final DeferredHolder<BloodManipulation, BloodManipulation> sanguine_magnetism = MANIPS.register("sanguine_magnetism",
+			() -> new SanguineMagnetismManip("sanguine_magnetism", 450, 20, 0, EnumManipulationType.QUICK,
+					EnumManipulationRank.SUMMA, EnumBloodTendency.FERRIC, EnumVeinSections.BODY)
+					.setSecondaryTend(EnumBloodTendency.DUCTILIS)
+					.setCooldownTicks(140)
+					.setDrudgeAction((drudge, world, centre, radius) -> {
+						if (!(world instanceof ServerLevel serverLevel)) return false;
+						AABB area = new AABB(centre).inflate(radius);
+						Monster target = world.getEntitiesOfClass(Monster.class, area).stream()
+								.min(Comparator.comparingDouble(drudge::distanceToSqr)).orElse(null);
+						Vec3 anchor = target != null ? target.position() : Vec3.atBottomCenterOf(centre);
+						SanguineMagnetismManip.spawnMagneticPillar(drudge, serverLevel, anchor,
+								ManipulationStatusRules.SANGUINE_MAGNETISM_TICKS);
+						return true;
+					}, "Raises a magnetic iron pillar that traps hostiles"));
 
 	public static final DeferredHolder<BloodManipulation, BloodManipulation> pyretic_forge = MANIPS.register("pyretic_forge",
 			() -> new PyreticForgeManip("pyretic_forge", 350, 10, 0, EnumManipulationType.QUICK,
@@ -726,6 +809,24 @@ public class ManipulationInit {
 						return true;
 					}, "Cloaks the Drudge with Invisibility"));
 
+	public static final DeferredHolder<BloodManipulation, BloodManipulation> gloam_laceration = MANIPS.register("gloam_laceration",
+			() -> new GloamLacerationManip("gloam_laceration", 175, 0, 0, EnumManipulationType.QUICK,
+					EnumManipulationRank.HUMILIS, EnumBloodTendency.TENEBRIS, EnumVeinSections.ARMS)
+					.setSecondaryTend(EnumBloodTendency.MORTEM)
+					.setCooldownTicks(35)
+					.setDrudgeAction((drudge, world, centre, radius) -> {
+						AABB area = new AABB(centre).inflate(radius);
+						Monster target = world.getEntitiesOfClass(Monster.class, area).stream()
+								.min(Comparator.comparingDouble(drudge::distanceToSqr)).orElse(null);
+						if (target == null) return false;
+						boolean ambush = drudge.hasEffect(MobEffects.INVISIBILITY)
+								|| BlackVeilCovenantManager.isDarkEnough(world, drudge.blockPosition(), 7);
+						target.addEffect(new MobEffectInstance(EffectInit.blood_loss, 140, 0, false, true));
+						target.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, 120, 0, false, true));
+						target.hurt(world.damageSources().magic(), ambush ? 6.0F : 3.5F);
+						return true;
+					}, "Slashes the nearest hostile from darkness"));
+
 	public static final DeferredHolder<BloodManipulation, BloodManipulation> blood_eclipse = MANIPS.register("blood_eclipse",
 			() -> new BloodEclipseManip("blood_eclipse", 300, 10, 0, EnumManipulationType.QUICK,
 					EnumManipulationRank.MEDIOCRITAS, EnumBloodTendency.TENEBRIS, EnumVeinSections.HEAD)
@@ -800,6 +901,36 @@ public class ManipulationInit {
 						drudge.heal(drain * 0.5f);
 						return true;
 					}, "Drains and reflects HP from nearest hostile"));
+
+	public static final DeferredHolder<BloodManipulation, BloodManipulation> insatiable_hunger = MANIPS.register("insatiable_hunger",
+			() -> new InsatiableHungerManip("insatiable_hunger", 225, 10, 0, EnumManipulationType.QUICK,
+					EnumManipulationRank.MEDIOCRITAS, EnumBloodTendency.MORTEM, EnumVeinSections.BODY)
+					.setSecondaryTend(EnumBloodTendency.ANIMUS)
+					.setCooldownTicks(70)
+					.setDrudgeAction((drudge, world, centre, radius) -> {
+						AABB area = new AABB(centre).inflate(radius);
+						Monster target = world.getEntitiesOfClass(Monster.class, area).stream()
+								.min(Comparator.comparingDouble(drudge::distanceToSqr)).orElse(null);
+						if (target == null) return false;
+						target.addEffect(new MobEffectInstance(EffectInit.insatiable_hunger, 220, 0, false, true));
+						return true;
+					}, "Curses nearest hostile with anti-healing hunger"));
+
+	public static final DeferredHolder<BloodManipulation, BloodManipulation> grave_debt = MANIPS.register("grave_debt",
+			() -> new GraveDebtManip("grave_debt", 325, 10, 0, EnumManipulationType.QUICK,
+					EnumManipulationRank.MEDIOCRITAS, EnumBloodTendency.MORTEM, EnumVeinSections.HEART)
+					.setSecondaryTend(EnumBloodTendency.ANIMUS)
+					.setCooldownTicks(75)
+					.setDrudgeAction((drudge, world, centre, radius) -> {
+						AABB area = new AABB(centre).inflate(radius);
+						Monster target = world.getEntitiesOfClass(Monster.class, area).stream()
+								.min(Comparator.comparingDouble(drudge::distanceToSqr)).orElse(null);
+						if (target == null) return false;
+						SchoolHitHelper.markGraveDebt(target,
+								drudge instanceof DrudgeEntity drudgeEntity ? drudgeEntity.getOwnerUUID() : null,
+								ManipulationStatusRules.GRAVE_DEBT_TICKS);
+						return true;
+					}, "Marks nearest hostile to burst at low health"));
 
 	// ── SAINT — Canon Memories (imprinted from Sainted Mausoleums) ──
 

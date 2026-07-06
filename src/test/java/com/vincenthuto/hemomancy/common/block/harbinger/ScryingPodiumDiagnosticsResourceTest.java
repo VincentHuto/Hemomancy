@@ -55,6 +55,14 @@ public final class ScryingPodiumDiagnosticsResourceTest {
 		assertContains("diagnostics screen should expose vascular health", diagnosticsScreen, "Vascular Health");
 		assertContains("diagnostics screen should expose known memories", diagnosticsScreen, "Known Memories");
 		assertContains("diagnostics screen should expose rite readiness", diagnosticsScreen, "Rite Readiness");
+		assertContains("diagnostics screen should expose tabbed blood diagnostics", diagnosticsScreen,
+				"ScryingDiagnosticsTabs.Tab.BLOOD");
+		assertContains("diagnostics screen should expose tabbed manipulation diagnostics", diagnosticsScreen,
+				"case MANIPULATIONS");
+		assertContains("diagnostics screen should expose tabbed tendency diagnostics", diagnosticsScreen,
+				"case TENDENCY");
+		assertContains("diagnostics screen should use shared progress-screen tab rendering", diagnosticsScreen,
+				"ScreenDrawUtils.drawTabs");
 		assertContains("diagnostics screen should use the shared procedural vein background pattern", diagnosticsScreen,
 				"renderVeinBackground(graphics, x, y, PANEL_WIDTH, PANEL_HEIGHT);");
 		assertContains("diagnostics screen should keep the procedural background under a tight vein budget",

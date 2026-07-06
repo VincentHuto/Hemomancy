@@ -315,6 +315,7 @@ public class LayerEvents {
 			renderer.addLayer(new HemolymphopodaHeadpieceLayer(renderer));
 			renderer.addLayer(new LanternTickHelmetLayer(renderer));
 			renderer.addLayer(new SilentArchonArmorOverlayLayer(renderer));
+			renderer.addLayer(new EdaciousBloodLustWingLayer(renderer));
 		}
 	}
 
@@ -362,6 +363,7 @@ public class LayerEvents {
 			livingRenderer.addLayer(new SporiticThuribleLayer<>(livingRenderer));
 			livingRenderer.addLayer(new LivingFlailLayer<>(livingRenderer));
 			livingRenderer.addLayer(new SilentArchonArmorOverlayLayer(livingRenderer));
+			livingRenderer.addLayer(new EdaciousBloodLustWingLayer(livingRenderer));
 		}
 	}
 

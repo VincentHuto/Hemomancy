@@ -111,6 +111,28 @@ public class RenderTypeInit extends RenderType {
 					.setLightmapState(NO_LIGHTMAP)
 					.createCompositeState(false));
 
+	public static final RenderType CLAW_SLASH_GLOW = create("ClawSlashGlow",
+			DefaultVertexFormat.POSITION_COLOR, VertexFormat.Mode.QUADS, 512, false, true,
+			RenderType.CompositeState.builder()
+					.setShaderState(RENDERTYPE_LIGHTNING_SHADER)
+					.setTransparencyState(TRANSLUCENT_TRANSPARENCY)
+					.setDepthTestState(LEQUAL_DEPTH_TEST)
+					.setWriteMaskState(COLOR_WRITE)
+					.setCullState(NO_CULL)
+					.setLightmapState(NO_LIGHTMAP)
+					.createCompositeState(false));
+
+	public static final RenderType CLAW_SLASH_CORE = create("ClawSlashCore",
+			DefaultVertexFormat.POSITION_COLOR, VertexFormat.Mode.QUADS, 512, false, true,
+			RenderType.CompositeState.builder()
+					.setShaderState(RENDERTYPE_LIGHTNING_SHADER)
+					.setTransparencyState(TRANSLUCENT_TRANSPARENCY)
+					.setDepthTestState(LEQUAL_DEPTH_TEST)
+					.setWriteMaskState(COLOR_DEPTH_WRITE)
+					.setCullState(NO_CULL)
+					.setLightmapState(NO_LIGHTMAP)
+					.createCompositeState(false));
+
 	// Somatic Loom beam render types — always render on top of world geometry (legacy, used by MorphlingIncubator)
 	public static final RenderType LOOM_BEAM_CORE = create("LoomBeamCore",
 			DefaultVertexFormat.POSITION_TEX_COLOR, VertexFormat.Mode.QUADS, 256, false, true,

@@ -35,7 +35,7 @@ import java.util.List;
  * <ul>
  *   <li>Blindness II for 5 seconds</li>
  *   <li>Weakness I for 6 seconds</li>
- *   <li>0.5 hearts of shadow damage</li>
+ *   <li>1.5 hearts of shadow damage</li>
  * </ul>
  * Best used to reduce pressure from ranged enemies or to open a gap in melee.
  */
@@ -48,7 +48,7 @@ public class BloodEclipseManip extends BloodManipulation {
 	private static final int BLINDNESS_AMP = 1;     // Blindness II
 	private static final int WEAKNESS_TICKS = 120;  // 6 s
 	private static final int WEAKNESS_AMP = 0;      // Weakness I
-	private static final float SHADOW_DAMAGE = 1.0f; // 0.5 hearts
+	private static final float SHADOW_DAMAGE = 3.0f; // 1.5 hearts
 
 	public BloodEclipseManip(String name, double cost, double alignLevel, double xpCost,
 			EnumManipulationType type, EnumManipulationRank rank, EnumBloodTendency tendency,

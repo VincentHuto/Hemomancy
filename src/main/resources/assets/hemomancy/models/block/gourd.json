@@ -1,5 +1,6 @@
 {
   "textures": {
+    "render_type": "cutout",
     "end": "hemomancy:block/gourd_top",
     "side": "hemomancy:block/gourd_side",
     "particle": "hemomancy:block/gourd_side"

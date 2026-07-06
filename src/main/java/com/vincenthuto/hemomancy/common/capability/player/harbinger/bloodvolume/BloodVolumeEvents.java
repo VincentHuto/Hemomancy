@@ -2,6 +2,8 @@ package com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume
 
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodFlowContribution.Category;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.ManipulationDiagnosticsSync;
 import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillPointGainEvents;
 import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillPointHelper;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.equipment.IHarbingerEquipmentItemHandler;
@@ -13,7 +15,9 @@ import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.BloodGourdItem;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.BloodVolumeServerPacket;
+import com.vincenthuto.hemomancy.common.network.capa.harbinger.PacketSyncBloodFlowDiagnostics;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.PacketSyncBloodlinePool;
+import com.vincenthuto.hemomancy.common.network.capa.harbinger.PacketSyncMaxBloodDiagnostics;
 import com.vincenthuto.hemomancy.config.HemoServerConfig;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
@@ -53,45 +57,42 @@ public class BloodVolumeEvents {
 				recordEnzymeMastery(serverPlayer);
 			}
 
-			// â”€â”€ Skill: Capacity â€” add flat bonus to max blood â”€â”€
-			double baseMax = 5000.0;
-			double capacityBonus = SkillPointHelper.getCapacityBonus(player);
-			double desiredMax = baseMax + capacityBonus;
-			if (Math.abs(volume.getMaxBloodVolume() - desiredMax) > 0.01) {
-				volume.setMaxBloodVolume(desiredMax);
+			// Resolve all max-blood sources before tick-based blood flow runs.
+			if (player instanceof ServerPlayer serverPlayer) {
+				MaxBloodLedger.apply(serverPlayer, volume);
 			}
 
 			// â”€â”€ Passive blood regen â”€â”€
 			if (HemoServerConfig.BLOOD_REGEN_ENABLED.get()) {
 				int interval = HemoServerConfig.BLOOD_REGEN_INTERVAL.get();
-				if (player.tickCount % interval == 0 && !volume.isFull()) {
+				if (player.tickCount % interval == 0) {
 					double regenRate = HemoServerConfig.BLOOD_REGEN_RATE.get();
-					volume.fill(regenRate);
-					syncVolume((ServerPlayer) player, volume);
+					BloodFlowLedger.applyDirectIncome((ServerPlayer) player, volume, "base_regen",
+							"Base Regen", Category.BODY, regenRate, interval);
 				}
 			}
 
 			// â”€â”€ Skill: Sanguine Surge â€” passive blood regen per tick â”€â”€
 			double surgeRegen = SkillPointHelper.getSanguineSurgeRegen(player);
-			if (surgeRegen > 0 && !volume.isFull()) {
-				volume.fill(surgeRegen);
-				syncVolume((ServerPlayer) player, volume);
+			if (surgeRegen > 0) {
+				BloodFlowLedger.applyDirectIncome((ServerPlayer) player, volume, "sanguine_surge",
+						"Sanguine Surge", Category.SKILL, surgeRegen, 1);
 			}
 
 			// â”€â”€ Skill: Last Wind â€” emergency regen when blood is critically low â”€â”€
 			double candleRegen = MnemonicCandleRules.bonusBloodRegenPerTick(
 					player.hasEffect(EffectInit.mnemonic_candle_aura));
-			if (candleRegen > 0 && !volume.isFull()) {
-				volume.fill(candleRegen);
-				syncVolume((ServerPlayer) player, volume);
+			if (candleRegen > 0) {
+				BloodFlowLedger.applyDirectIncome((ServerPlayer) player, volume, "mnemonic_candle_aura",
+						"Mnemonic Candle Aura", Category.EFFECT, candleRegen, 1);
 			}
 
 			double lastWindRegen = SkillPointHelper.getLastWindRegenPerTick(player);
 			if (lastWindRegen > 0) {
 				double threshold = volume.getMaxBloodVolume() * SkillPointHelper.getLastWindThreshold();
 				if (volume.getBloodVolume() < threshold && volume.getBloodVolume() > 0) {
-					volume.fill(lastWindRegen);
-					syncVolume((ServerPlayer) player, volume);
+					BloodFlowLedger.applyDirectIncome((ServerPlayer) player, volume, "last_wind",
+							"Last Wind", Category.SKILL, lastWindRegen, 1);
 				}
 			}
 
@@ -110,12 +111,12 @@ public class BloodVolumeEvents {
 						// â”€â”€ Per-player trickle donation â”€â”€
 						if (volume.isTrickleEnabled()) {
 							contributeToBloodlinePool((ServerPlayer) player, volume, globalLine, savedData,
-									overworld, volume.getTrickleRate(), minThreshold);
+									overworld, volume.getTrickleRate(), minThreshold, poolInterval);
 						} else {
 							// â”€â”€ Default server-config-driven passive contribution â”€â”€
 							double contributionRate = HemoServerConfig.BLOODLINE_POOL_CONTRIBUTION_RATE.get();
 							contributeToBloodlinePool((ServerPlayer) player, volume, globalLine, savedData,
-									overworld, contributionRate, minThreshold);
+									overworld, contributionRate, minThreshold, poolInterval);
 						}
 
 						// â”€â”€ Per-player auto-draw from pool â”€â”€
@@ -130,7 +131,12 @@ public class BloodVolumeEvents {
 								double drawAmount = Math.min(deficit, maxDraw);
 								float drawn = globalLine.drawBlood((float) drawAmount);
 								if (drawn > 0) {
+									double before = volume.getBloodVolume();
 									volume.fill(drawn);
+									double accepted = Math.max(0.0D, volume.getBloodVolume() - before);
+									BloodFlowLedger.recordApplied((ServerPlayer) player, "bloodline_auto_draw",
+											"Bloodline Auto-Draw", Category.BLOODLINE, drawAmount, accepted,
+											poolInterval, false, accepted + 0.000001D < drawAmount ? "Pool limited" : "");
 									savedData.setDirty();
 									syncVolume((ServerPlayer) player, volume);
 									syncBloodlinePool(overworld, globalLine);
@@ -330,19 +336,25 @@ public class BloodVolumeEvents {
 	}
 
 	private static void contributeToBloodlinePool(ServerPlayer player, IBloodVolume volume, Bloodline globalLine,
-			BloodlineSavedData savedData, ServerLevel overworld, double requestedAmount, double minThreshold) {
+			BloodlineSavedData savedData, ServerLevel overworld, double requestedAmount, double minThreshold,
+			int intervalTicks) {
 		double protectedBlood = volume.getMaxBloodVolume() * minThreshold;
 		double availableToDonate = Math.max(0.0, volume.getBloodVolume() - protectedBlood);
 		double poolRoom = Math.max(0.0, globalLine.getMaxBloodVolume() - globalLine.getBloodVolume());
 		double actualDonation = Math.min(requestedAmount, Math.min(availableToDonate, poolRoom));
 
-		if (actualDonation <= 0 || !volume.drain(actualDonation)) {
+		if (actualDonation <= 0) {
 			return;
 		}
 
-		globalLine.contributeBlood((float) actualDonation);
+		BloodFlowLedger.DrainResult result = BloodFlowLedger.applyDrain(player, volume, "bloodline_trickle",
+				"Bloodline Trickle", Category.BLOODLINE, actualDonation, intervalTicks, false);
+		if (result.actual() <= 0.0D) {
+			return;
+		}
+
+		globalLine.contributeBlood((float) result.actual());
 		savedData.setDirty();
-		syncVolume(player, volume);
 		syncBloodlinePool(overworld, globalLine);
 	}
 
@@ -363,6 +375,9 @@ public class BloodVolumeEvents {
 
 	public static void syncVolume(ServerPlayer player, IBloodVolume volume) {
 		PacketHandler.sendToPlayer(player, new BloodVolumeServerPacket(volume));
+		PacketHandler.sendToPlayer(player, new PacketSyncBloodFlowDiagnostics(BloodFlowLedger.collect(player, volume)));
+		PacketHandler.sendToPlayer(player, new PacketSyncMaxBloodDiagnostics(MaxBloodLedger.collect(player, volume)));
+		ManipulationDiagnosticsSync.sync(player);
 	}
 
 	@SubscribeEvent

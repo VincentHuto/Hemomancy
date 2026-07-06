@@ -2,7 +2,8 @@ package com.vincenthuto.hemomancy.common.capability.player.harbinger.morphling;
 
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodVolumeEvents;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodFlowContribution.Category;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodFlowLedger;
 import com.vincenthuto.hemomancy.common.event.LastRiteHelper;
 import com.vincenthuto.hemomancy.common.item.harbinger.morphlings.IMorphling;
 import com.vincenthuto.hemomancy.common.item.harbinger.morphlings.MorphlingItem;
@@ -79,8 +80,8 @@ public class EquippedMorphlingEvents {
 				}
 
 				if (volume.getBloodVolume() > drainRate) {
-					volume.drain(drainRate);
-					BloodVolumeEvents.syncVolume((ServerPlayer) player, volume);
+					BloodFlowLedger.applyDrain((ServerPlayer) player, volume, "morphling_upkeep",
+							"Morphling Upkeep", Category.MORPHLING, drainRate, drainInterval, true);
 				} else {
 					// Not enough blood â€” unequip the morphling
 					morphCap.clearMorphling();

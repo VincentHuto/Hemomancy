@@ -1,12 +1,12 @@
 package com.vincenthuto.hemomancy.common.effect;
 
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodFlowContribution.Category;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodFlowLedger;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillPointHelper;
 import com.vincenthuto.hemomancy.common.entity.HemoEntityPredicates;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
-import com.vincenthuto.hemomancy.common.network.PacketHandler;
-import com.vincenthuto.hemomancy.common.network.capa.harbinger.BloodVolumeServerPacket;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -38,14 +38,17 @@ public class BloodLossEffect extends MobEffect {
 					// ── Skill: Coagulation — chance to block this blood-drain tick ──
 					double coagChance = SkillPointHelper.getCoagulationChance(playerIn);
 					if (coagChance > 0 && playerIn.level().random.nextDouble() < coagChance) {
+						BloodFlowLedger.recordApplied((ServerPlayer) playerIn, "blood_loss",
+								"Blood Loss", Category.EFFECT, -(0.5f * amplifier), 0.0D, 1, false,
+								"Blocked by Coagulation");
 						return true; // Blocked by Coagulation skill
 					}
 
 					IBloodVolume playerVolume = HemoCapabilityAccess.getBloodVolume(playerIn)
 							.orElseThrow(NullPointerException::new);
 					if (playerVolume != null) {
-						playerVolume.drain(0.5f * amplifier);
-						PacketHandler.sendToPlayer((ServerPlayer) playerIn, new BloodVolumeServerPacket(playerVolume));
+						BloodFlowLedger.applyDrain((ServerPlayer) playerIn, playerVolume, "blood_loss",
+								"Blood Loss", Category.EFFECT, 0.5f * amplifier, 1, false);
 					}
 
 				}

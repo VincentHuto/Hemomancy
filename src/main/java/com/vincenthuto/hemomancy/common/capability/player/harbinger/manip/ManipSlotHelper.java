@@ -1,9 +1,5 @@
 package com.vincenthuto.hemomancy.common.capability.player.harbinger.manip;
 
-import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
-import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillPointHelper;
-import com.vincenthuto.hemomancy.common.init.SkillPointInit;
-
 import net.minecraft.world.entity.player.Player;
 
 /**
@@ -30,13 +26,7 @@ public final class ManipSlotHelper {
 	 * Capped at {@link #MAX_SLOTS}.
 	 */
 	public static int getMaxSlots(Player player) {
-		int degree = HemoCapabilityAccess.getPlayerDegreeNumber(player);
-		int skillBonus = 0;
-		if (SkillPointInit.skill_manip_slots != null) {
-			skillBonus = SkillPointHelper.getSkillLevel(player, SkillPointInit.skill_manip_slots);
-		}
-		int raw = BASE_SLOTS + (degree / 2) + skillBonus;
-		return Math.min(raw, MAX_SLOTS);
+		return ManipulationSlotLedger.getMaxSlots(player);
 	}
 
 	/**
@@ -45,17 +35,6 @@ public final class ManipSlotHelper {
 	 * Each wasted level should be converted into a skill point refund.
 	 */
 	public static int getExcessSkillLevels(Player player) {
-		int degree = HemoCapabilityAccess.getPlayerDegreeNumber(player);
-		int baseAndDegree = BASE_SLOTS + (degree / 2);
-		int skillBonus = 0;
-		if (SkillPointInit.skill_manip_slots != null) {
-			skillBonus = SkillPointHelper.getSkillLevel(player, SkillPointInit.skill_manip_slots);
-		}
-		if (baseAndDegree >= MAX_SLOTS) {
-			// All skill levels are excess
-			return skillBonus;
-		}
-		int room = MAX_SLOTS - baseAndDegree;
-		return Math.max(0, skillBonus - room);
+		return ManipulationSlotLedger.getExcessSkillLevels(player);
 	}
 }

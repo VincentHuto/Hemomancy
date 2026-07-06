@@ -152,10 +152,12 @@ import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Pose;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.component.CustomData;
+import net.minecraft.world.phys.EntityHitResult;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.EventPriority;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -224,6 +226,7 @@ public class ClientEvents {
         BloodBallClientData.tick();
         VeinSpiderCourierClientData.tick();
         SanguineMonolithShatterRenderer.tick();
+        ClawSlashRenderer.tick();
         MonolithicDislocationClientState.tick();
         CrimsonFireClientState.tick();
         if (SanguineOmenOverlay.instance != null) {
@@ -237,7 +240,31 @@ public class ClientEvents {
         }
         EndgameBossMusicHandler.tick();
         handleArmatureCameraFallback();
+        handleLivingBaghnakhAutoAttack();
         handleCommonClientTickInput();
+    }
+
+    private static void handleLivingBaghnakhAutoAttack() {
+        Minecraft minecraft = Minecraft.getInstance();
+        if (minecraft.screen != null || minecraft.player == null || minecraft.gameMode == null) {
+            return;
+        }
+        Player player = minecraft.player;
+        if (!player.getMainHandItem().is(ItemInit.living_baghnakh.get())) {
+            return;
+        }
+        if (!minecraft.options.keyAttack.isDown()) {
+            return;
+        }
+        if (player.getAttackStrengthScale(0.0F) < 1.0F) {
+            return;
+        }
+        if (!(minecraft.hitResult instanceof EntityHitResult entityHit)) {
+            return;
+        }
+        minecraft.gameMode.attack(player, entityHit.getEntity());
+        player.swing(InteractionHand.MAIN_HAND);
+        player.resetAttackStrengthTicker();
     }
 
     @SubscribeEvent
@@ -520,6 +547,7 @@ public class ClientEvents {
             OculifloraRevealRenderer.render(event.getPoseStack(), partialTick);
             BloodBallRenderer.render(event.getPoseStack(), partialTick);
             SanguineMonolithShatterRenderer.render(event.getPoseStack(), partialTick);
+            ClawSlashRenderer.render(event.getPoseStack(), partialTick);
             PuppeteerThreadRenderer.render(event.getPoseStack(), partialTick);
             HematicSutureLinkRenderer.render(event.getPoseStack(), partialTick);
             TendonLineRenderer.render(event.getPoseStack(), partialTick);
@@ -799,6 +827,7 @@ public class ClientEvents {
             BlockEntityRenderers.register(BlockEntityInit.mnemonic_reliquary.get(), MnemonicReliquaryRenderer::new);
             BlockEntityRenderers.register(BlockEntityInit.dictation_table.get(), DictationTableRenderer::new);
             BlockEntityRenderers.register(BlockEntityInit.visceral_mirror.get(), VisceralMirrorRenderer::new);
+            BlockEntityRenderers.register(BlockEntityInit.non_euclidean_hallway.get(), NonEuclideanHallwayRenderer::new);
             BlockEntityRenderers.register(BlockEntityInit.qliphoth_bloom.get(),
                     QliphothBloomBlockRenderer::new);
             BlockEntityRenderers.register(BlockEntityInit.saint_sarcophagus.get(),

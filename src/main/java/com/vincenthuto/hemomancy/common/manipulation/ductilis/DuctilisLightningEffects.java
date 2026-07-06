@@ -39,6 +39,47 @@ public final class DuctilisLightningEffects {
 		}
 	}
 
+	public static void synapticJolt(LivingEntity caster, LivingEntity target) {
+		if (!(caster.level() instanceof ServerLevel level)) {
+			return;
+		}
+
+		Vec3 start = caster.getEyePosition().subtract(0.0D, 0.18D, 0.0D);
+		Vec3 end = target.position().add(0.0D, target.getBbHeight() * 0.62D, 0.0D);
+		long seed = seed(level, caster, target.getId() * 17L);
+		spawn(level, caster, start, end, seed, 72.0F, 2.4F, 6, 8, 0.09F, 0.038F);
+		spawn(level, caster, end, end.add(randomSigned(level.random, 0.35D), 0.18D,
+				randomSigned(level.random, 0.35D)), seed ^ 0xBADC0FFEE0DDF00DL, 56.0F, 2.0F, 4, 5, 0.05F, 0.026F);
+	}
+
+	public static void conductiveMark(LivingEntity caster, LivingEntity target) {
+		if (!(caster.level() instanceof ServerLevel level)) {
+			return;
+		}
+
+		Vec3 center = target.position().add(0.0D, target.getBbHeight() * 0.55D, 0.0D);
+		double rotation = level.getGameTime() * 0.19D + target.getId();
+		for (int i = 0; i < 5; i++) {
+			double angle = rotation + i * Math.PI * 2.0D / 5.0D;
+			Vec3 start = center.add(Math.cos(angle) * 0.52D, -0.25D + (i % 2) * 0.24D, Math.sin(angle) * 0.52D);
+			Vec3 end = center.add(Math.cos(angle + 0.95D) * 0.52D, 0.25D - (i % 2) * 0.24D,
+					Math.sin(angle + 0.95D) * 0.52D);
+			spawn(level, caster, start, end, seed(level, caster, target.getId() * 53L + i), 44.0F, 1.6F, 5, 5,
+					0.055F, 0.024F);
+		}
+	}
+
+	public static void conductiveArc(LivingEntity source, LivingEntity target, int index) {
+		if (!(source.level() instanceof ServerLevel level)) {
+			return;
+		}
+
+		Vec3 start = source.position().add(0.0D, source.getBbHeight() * 0.58D, 0.0D);
+		Vec3 end = target.position().add(0.0D, target.getBbHeight() * 0.55D, 0.0D);
+		spawn(level, source, start, end, seed(level, source, target.getId() * 97L + index), 62.0F, 2.1F, 6, 7,
+				0.085F, 0.033F);
+	}
+
 	public static void hemolymphalPulse(Player player) {
 		if (!(player.level() instanceof ServerLevel level)) {
 			return;
@@ -97,6 +138,12 @@ public final class DuctilisLightningEffects {
 				config(start.distanceTo(end), seed, ticksPerMeter, speed, maxAge, fract, maxOffset, size));
 	}
 
+	private static void spawn(ServerLevel level, LivingEntity caster, Vec3 start, Vec3 end, long seed,
+			float ticksPerMeter, float speed, int maxAge, int fract, float maxOffset, float size) {
+		LightningTesterSpawner.spawn(level, caster instanceof ServerPlayer serverPlayer ? serverPlayer : null, start, end,
+				config(start.distanceTo(end), seed, ticksPerMeter, speed, maxAge, fract, maxOffset, size));
+	}
+
 	private static LightningTestConfig config(double range, long seed, float ticksPerMeter, float speed, int maxAge,
 			int fract, float maxOffset, float size) {
 		return new LightningTestConfig(LightningTestConfig.Backend.BOLT, OUTER_YELLOW, OUTER_YELLOW, INNER_WHITE,
@@ -111,6 +158,11 @@ public final class DuctilisLightningEffects {
 
 	private static long seed(ServerLevel level, Player player, long salt) {
 		return level.random.nextLong() ^ player.getUUID().getLeastSignificantBits() ^ (level.getGameTime() << 16)
+				^ salt;
+	}
+
+	private static long seed(ServerLevel level, LivingEntity caster, long salt) {
+		return level.random.nextLong() ^ caster.getUUID().getLeastSignificantBits() ^ (level.getGameTime() << 16)
 				^ salt;
 	}
 

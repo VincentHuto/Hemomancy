@@ -1,19 +1,26 @@
 package com.vincenthuto.hemomancy.client.screen.item;
 
 import com.mojang.blaze3d.systems.RenderSystem;
+import com.vincenthuto.hemomancy.client.data.BloodFlowDiagnosticsClientData;
+import com.vincenthuto.hemomancy.client.data.ManipulationCostDiagnosticsClientData;
+import com.vincenthuto.hemomancy.client.data.ManipulationSlotDiagnosticsClientData;
+import com.vincenthuto.hemomancy.client.data.MaxBloodDiagnosticsClientData;
+import com.vincenthuto.hemomancy.client.screen.skilltree.util.ScreenDrawUtils;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodFlowContribution;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodFlowSnapshot;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.MaxBloodSnapshot;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.IKnownManipulations;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.ManipulationCostSnapshot;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.ManipulationEquipHelper;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.ManipulationSlotSnapshot;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.IBloodTendency;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.EnumVeinSections;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.IVascularSystem;
 import com.vincenthuto.hemomancy.common.menu.ScryingDiagnosticsMenu;
 import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
-import com.vincenthuto.hemomancy.common.event.CirculationIncomeRules;
-import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillPointHelper;
-import com.vincenthuto.hemomancy.config.HemoServerConfig;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
@@ -23,12 +30,20 @@ import net.minecraft.Util;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Inventory;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
+import java.util.Optional;
 import java.util.Random;
 
 public class ScryingDiagnosticsScreen extends AbstractContainerScreen<ScryingDiagnosticsMenu> {
 	private static final int PANEL_WIDTH = 322;
-	private static final int PANEL_HEIGHT = 218;
+	private static final int PANEL_HEIGHT = 230;
+	private static final int TAB_HEIGHT = 16;
+	private static final int TAB_PAD = 4;
+	private static final int TAB_TOP = 34;
+	private static final int CONTENT_TOP = 56;
+	private static final int FLOW_VISIBLE_ROWS = 5;
 	private static final int PANEL = 0xF00A0204;
 	private static final int VEIN_COUNT = 10;
 	private static final int VEIN_STEP_STRIDE = 4;
@@ -49,6 +64,12 @@ public class ScryingDiagnosticsScreen extends AbstractContainerScreen<ScryingDia
 	private int[][] speckleParams;
 	private float animTime = 0.0F;
 	private long lastAnimMillis = -1L;
+	private int flowScrollOffset = 0;
+	private ScryingDiagnosticsTabs.Tab activeTab = ScryingDiagnosticsTabs.Tab.BLOOD;
+	private HoverRegion maxBloodModsRegion = HoverRegion.EMPTY;
+	private HoverRegion bloodFlowModsRegion = HoverRegion.EMPTY;
+	private HoverRegion manipulationCostModsRegion = HoverRegion.EMPTY;
+	private HoverRegion manipulationSlotModsRegion = HoverRegion.EMPTY;
 
 	public ScryingDiagnosticsScreen(ScryingDiagnosticsMenu menu, Inventory inventory, Component title) {
 		super(menu, inventory, title);
@@ -100,42 +121,94 @@ public class ScryingDiagnosticsScreen extends AbstractContainerScreen<ScryingDia
 	public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
 		this.renderBackground(graphics, mouseX, mouseY, partialTick);
 		super.render(graphics, mouseX, mouseY, partialTick);
-		renderDiagnostics(graphics);
+		renderDiagnostics(graphics, mouseX, mouseY);
 		this.renderTooltip(graphics, mouseX, mouseY);
+		renderDiagnosticsTooltips(graphics, mouseX, mouseY);
 	}
 
 	@Override
 	protected void renderLabels(GuiGraphics graphics, int mouseX, int mouseY) {
 	}
 
-	private void renderDiagnostics(GuiGraphics graphics) {
+	@Override
+	public boolean mouseClicked(double mouseX, double mouseY, int button) {
+		if (button == 0) {
+			int index = ScreenDrawUtils.tabIndexUnder(font, ScryingDiagnosticsTabs.descriptors(activeTab),
+					this.leftPos, tabsVirtualTop(), PANEL_WIDTH, TAB_HEIGHT, TAB_PAD, mouseX, mouseY);
+			if (index >= 0) {
+				activeTab = ScryingDiagnosticsTabs.tabs().get(index);
+				return true;
+			}
+		}
+		return super.mouseClicked(mouseX, mouseY, button);
+	}
+
+	private void renderDiagnostics(GuiGraphics graphics, int mouseX, int mouseY) {
 		LocalPlayer player = Minecraft.getInstance().player;
 		if (player == null) {
 			return;
 		}
 		int x = this.leftPos;
 		int y = this.topPos;
+		maxBloodModsRegion = HoverRegion.EMPTY;
+		bloodFlowModsRegion = HoverRegion.EMPTY;
+		manipulationCostModsRegion = HoverRegion.EMPTY;
+		manipulationSlotModsRegion = HoverRegion.EMPTY;
 		graphics.drawCenteredString(this.font, this.title, x + PANEL_WIDTH / 2, y + 8, HEADER);
 		graphics.drawCenteredString(this.font, "The podium reads what the blood is already saying.",
 				x + PANEL_WIDTH / 2, y + 21, MUTED);
+		drawTabs(graphics, mouseX, mouseY);
 
-		int leftX = x + 16;
-		int rightX = x + 168;
-		drawBloodVolume(graphics, player, leftX, y + 42);
-		drawTendency(graphics, player, leftX, y + 96);
-		drawKnownMemories(graphics, player, leftX, y + 150);
-		drawVascularHealth(graphics, player, rightX, y + 42);
-		drawRiteReadiness(graphics, player, rightX, y + 112);
-		drawBloodRegenRate(graphics, player, rightX, y + 162);
+		switch (activeTab) {
+			case BLOOD -> drawBloodTab(graphics, player, x + 16, y + CONTENT_TOP);
+			case MANIPULATIONS -> drawManipulationsTab(graphics, player, x + 16, y + CONTENT_TOP);
+			case TENDENCY -> drawTendencyTab(graphics, player, x + 16, y + CONTENT_TOP);
+		}
+	}
+
+	private void drawTabs(GuiGraphics graphics, int mouseX, int mouseY) {
+		ScreenDrawUtils.drawTabs(graphics, font, ScryingDiagnosticsTabs.descriptors(activeTab),
+				this.leftPos, tabsVirtualTop(), PANEL_WIDTH, TAB_HEIGHT, TAB_PAD, mouseX, mouseY);
+	}
+
+	private int tabsVirtualTop() {
+		return this.topPos + TAB_TOP - TAB_PAD;
+	}
+
+	private void drawBloodTab(GuiGraphics graphics, LocalPlayer player, int x, int y) {
+		int rightX = x + 152;
+		drawBloodVolume(graphics, player, x, y);
+		drawVascularHealth(graphics, player, rightX, y);
+		drawBloodFlow(graphics, player, x, y + 58);
+	}
+
+	private void drawManipulationsTab(GuiGraphics graphics, LocalPlayer player, int x, int y) {
+		drawKnownMemories(graphics, player, x, y);
+	}
+
+	private void drawTendencyTab(GuiGraphics graphics, LocalPlayer player, int x, int y) {
+		drawTendency(graphics, player, x, y);
+		drawTendencyProfile(graphics, player, x, y + 48);
+		drawRiteReadiness(graphics, player, x, y + 122);
 	}
 
 	private void drawBloodVolume(GuiGraphics graphics, LocalPlayer player, int x, int y) {
 		drawSection(graphics, "Blood Volume", x, y);
 		HemoCapabilityAccess.getBloodVolume(player).ifPresentOrElse(volume -> {
-			String reserve = format(volume.getBloodVolume()) + " / " + format(volume.getMaxBloodVolume());
-			drawValue(graphics, "Reserve", reserve, x, y + 13, colorForBlood(volume));
-			drawValue(graphics, "State", volume.isActive() ? "Active covenant" : "Dormant", x, y + 25,
-					volume.isActive() ? GOOD : WARN);
+			MaxBloodSnapshot maxBlood = MaxBloodDiagnosticsClientData.get();
+			double totalMax = volume.isActive() ? maxBlood.totalMax() : volume.getMaxBloodVolume();
+			String reserve = format(volume.getBloodVolume()) + " / " + format(totalMax);
+			drawValue(graphics, "Reserve", reserve, x, y + 13, colorForBlood(volume, totalMax));
+			if (volume.isActive()) {
+				drawValue(graphics, "Max", format(totalMax) + " (" + signedWhole(maxBlood.netBonus()) + ")",
+						x, y + 25, colorForMaxBonus(maxBlood.netBonus()));
+				drawValue(graphics, "Mods", signedWhole(maxBlood.positiveBonus()) + " / "
+						+ signedWhole(-maxBlood.negativePenalty()), x, y + 37,
+						colorForMaxBonus(maxBlood.netBonus()));
+				maxBloodModsRegion = new HoverRegion(x, y + 37, 142, 10);
+			} else {
+				drawValue(graphics, "State", "Dormant", x, y + 25, WARN);
+			}
 		}, () -> drawLine(graphics, "No blood record found.", x, y + 13, BAD));
 	}
 
@@ -154,10 +227,42 @@ public class ScryingDiagnosticsScreen extends AbstractContainerScreen<ScryingDia
 		HemoCapabilityAccess.getKnownManipulations(player).ifPresentOrElse(known -> {
 			int knownCount = known.getKnownManips().size();
 			int equippedCount = ManipulationEquipHelper.countNormalEquippedNames(known.getEquippedManipNames());
+			ManipulationSlotSnapshot slots = ManipulationSlotDiagnosticsClientData.get();
+			ManipulationCostSnapshot cost = ManipulationCostDiagnosticsClientData.get();
+			String equipped = slots.maxSlots() > 0
+					? equippedCount + " / " + slots.appliedSlots()
+					: equippedCount + " slotted";
+			String costText = isEmptyCost(cost)
+					? "No selected cost"
+					: amount(cost.baseCost()) + " -> " + amount(cost.effectiveCost()) + " mL";
 			drawValue(graphics, "Carried", knownCount + " memories", x, y + 13, TEXT);
-			drawValue(graphics, "Equipped", equippedCount + " slotted", x, y + 25, TEXT);
-			drawValue(graphics, "Current", selectedManipName(known), x, y + 37, MUTED);
+			drawValue(graphics, "Equipped", equipped, x, y + 25,
+					slots.cappedOffSlots() > 0 ? WARN : TEXT);
+			drawValue(graphics, "Selected", trimToWidth(selectedManipName(known), PANEL_WIDTH - 106),
+					x, y + 37, TEXT);
+			drawValue(graphics, "Cost", trimToWidth(costText, PANEL_WIDTH - 106), x, y + 49,
+					colorForCost(cost));
+			manipulationSlotModsRegion = new HoverRegion(x, y + 25, 142, 10);
+			manipulationCostModsRegion = new HoverRegion(x, y + 49, 220, 10);
 		}, () -> drawLine(graphics, "No manipulation record found.", x, y + 13, BAD));
+	}
+
+	private void drawTendencyProfile(GuiGraphics graphics, LocalPlayer player, int x, int y) {
+		drawSection(graphics, "Tendency Profile", x, y);
+		HemoCapabilityAccess.getBloodTendency(player).ifPresentOrElse(tendency -> {
+			EnumBloodTendency[] values = EnumBloodTendency.values();
+			for (int i = 0; i < values.length; i++) {
+				EnumBloodTendency value = values[i];
+				int col = i / 4;
+				int row = i % 4;
+				int rowX = x + col * 150;
+				int rowY = y + 14 + row * 14;
+				String label = trimToWidth(titleCase(value.name()), 70);
+				String amount = String.format(Locale.ROOT, "%.2f", tendency.getAlignmentByTendency(value));
+				graphics.drawString(this.font, label, rowX, rowY, tendencyColor(value));
+				graphics.drawString(this.font, amount, rowX + 78, rowY, TEXT);
+			}
+		}, () -> drawLine(graphics, "No tendency record found.", x, y + 13, BAD));
 	}
 
 	private void drawVascularHealth(GuiGraphics graphics, LocalPlayer player, int x, int y) {
@@ -194,27 +299,91 @@ public class ScryingDiagnosticsScreen extends AbstractContainerScreen<ScryingDia
 		drawValue(graphics, "Degree", String.valueOf(degree), x, y + 29, TEXT);
 	}
 
-	private void drawBloodRegenRate(GuiGraphics graphics, LocalPlayer player, int x, int y) {
-		drawSection(graphics, "Blood Regeneration", x, y);
-		int degree = HemoCapabilityAccess.getPlayerDegreeNumber(player);
+	private void drawBloodFlow(GuiGraphics graphics, LocalPlayer player, int x, int y) {
+		drawSection(graphics, "Blood Flow", x, y);
 		IBloodVolume volume = HemoCapabilityAccess.getBloodVolume(player).orElse(null);
 		if (volume == null) {
 			drawLine(graphics, "Unreadable: no blood record.", x, y + 13, BAD);
 			return;
 		}
 		if (!volume.isActive()) {
-			drawLine(graphics, "Dormant: no regeneration.", x, y + 13, MUTED);
-		} else {
-			double bandwidth = CirculationIncomeRules.bandwidthPerWindow(
-					HemoServerConfig.CIRCULATION_BASE_BANDWIDTH.get(),
-					HemoServerConfig.CIRCULATION_BANDWIDTH_PER_DEGREE.get(),
-					degree,
-					HemoServerConfig.CIRCULATION_BANDWIDTH_PER_CAPACITY_POINT.get(),
-					SkillPointHelper.getCapacityBonus(player));
-			int windowTicks = HemoServerConfig.CIRCULATION_WINDOW_TICKS.get();
-			double regenPerTick = bandwidth / windowTicks;
-			drawValue(graphics, "Rate", String.format(Locale.ROOT, "%.2f ml/tick", regenPerTick), x, y + 13, GOOD);
+			drawLine(graphics, "Dormant: no blood magic flow.", x, y + 13, MUTED);
+			return;
 		}
+
+		BloodFlowSnapshot snapshot = BloodFlowDiagnosticsClientData.get();
+		bloodFlowModsRegion = new HoverRegion(x, y + 13, PANEL_WIDTH - 32, 62);
+		String positive = "Positive " + signed(snapshot.positivePerTick()) + " mL/t";
+		String negative = "Negative " + signed(-snapshot.negativePerTick()) + " mL/t";
+		String net = "Net " + signed(snapshot.netPerTick()) + " mL/t";
+		graphics.drawString(this.font, positive, x, y + 13, GOOD);
+		graphics.drawString(this.font, negative, x + 104, y + 13, BAD);
+		graphics.drawString(this.font, net, x + 210, y + 13, colorForRate(snapshot.netPerTick()));
+
+		String bandwidth = snapshot.circulationEnabled()
+				? "Bandwidth " + amount(snapshot.circulationUsedInWindow()) + " used / "
+				+ amount(snapshot.circulationBandwidthPerWindow()) + " cap / "
+				+ amount(snapshot.circulationRemainingInWindow()) + " available"
+				: "Bandwidth disabled: capped sources pass through";
+		drawLine(graphics, trimToWidth(bandwidth, PANEL_WIDTH - 32), x, y + 25, MUTED);
+
+		int rowCount = snapshot.contributions().size();
+		int maxOffset = Math.max(0, rowCount - FLOW_VISIBLE_ROWS);
+		flowScrollOffset = Mth.clamp(flowScrollOffset, 0, maxOffset);
+		if (rowCount == 0) {
+			drawLine(graphics, "No active blood-flow rows.", x, y + 39, MUTED);
+			return;
+		}
+		for (int i = 0; i < FLOW_VISIBLE_ROWS && flowScrollOffset + i < rowCount; i++) {
+			BloodFlowContribution contribution = snapshot.contributions().get(flowScrollOffset + i);
+			int rowY = y + 39 + i * 12;
+			String label = trimToWidth(sourceLabel(contribution), 205);
+			String rate = rowRate(contribution);
+			graphics.drawString(this.font, label, x, rowY, rowColor(contribution));
+			graphics.drawString(this.font, rate, x + 218, rowY, rowColor(contribution));
+		}
+	}
+
+	private void renderDiagnosticsTooltips(GuiGraphics graphics, int mouseX, int mouseY) {
+		if (maxBloodModsRegion.contains(mouseX, mouseY)) {
+			renderStringTooltip(graphics, "Max Blood Modifiers",
+					ScryingDiagnosticsTooltipLines.maxBloodMods(MaxBloodDiagnosticsClientData.get()), mouseX, mouseY);
+		} else if (bloodFlowModsRegion.contains(mouseX, mouseY)) {
+			renderStringTooltip(graphics, "Blood Flow Modifiers",
+					ScryingDiagnosticsTooltipLines.bloodFlowMods(BloodFlowDiagnosticsClientData.get()), mouseX, mouseY);
+		} else if (manipulationSlotModsRegion.contains(mouseX, mouseY)) {
+			renderStringTooltip(graphics, "Manipulation Slot Modifiers",
+					ScryingDiagnosticsTooltipLines.manipulationSlotMods(ManipulationSlotDiagnosticsClientData.get()),
+					mouseX, mouseY);
+		} else if (manipulationCostModsRegion.contains(mouseX, mouseY)) {
+			renderStringTooltip(graphics, "Selected Manipulation Cost",
+					ScryingDiagnosticsTooltipLines.manipulationCostMods(ManipulationCostDiagnosticsClientData.get()),
+					mouseX, mouseY);
+		}
+	}
+
+	private void renderStringTooltip(GuiGraphics graphics, String title, List<String> lines, int mouseX, int mouseY) {
+		List<Component> tooltip = new ArrayList<>();
+		tooltip.add(Component.literal(title));
+		for (String line : lines) {
+			tooltip.add(Component.literal(line));
+		}
+		graphics.renderTooltip(this.font, tooltip, Optional.empty(), mouseX, mouseY);
+	}
+
+	@Override
+	public boolean mouseScrolled(double mouseX, double mouseY, double scrollX, double scrollY) {
+		if (activeTab != ScryingDiagnosticsTabs.Tab.BLOOD) {
+			return super.mouseScrolled(mouseX, mouseY, scrollX, scrollY);
+		}
+		BloodFlowSnapshot snapshot = BloodFlowDiagnosticsClientData.get();
+		int maxOffset = Math.max(0, snapshot.contributions().size() - FLOW_VISIBLE_ROWS);
+		if (maxOffset > 0 && mouseX >= this.leftPos && mouseX <= this.leftPos + PANEL_WIDTH
+				&& mouseY >= this.topPos && mouseY <= this.topPos + PANEL_HEIGHT) {
+			flowScrollOffset = Mth.clamp(flowScrollOffset - (int) Math.signum(scrollY), 0, maxOffset);
+			return true;
+		}
+		return super.mouseScrolled(mouseX, mouseY, scrollX, scrollY);
 	}
 
 	private void drawSection(GuiGraphics graphics, String text, int x, int y) {
@@ -228,6 +397,13 @@ public class ScryingDiagnosticsScreen extends AbstractContainerScreen<ScryingDia
 
 	private void drawLine(GuiGraphics graphics, String text, int x, int y, int color) {
 		graphics.drawString(this.font, text, x, y, color);
+	}
+
+	private String trimToWidth(String text, int maxWidth) {
+		if (this.font.width(text) <= maxWidth) {
+			return text;
+		}
+		return this.font.plainSubstrByWidth(text, Math.max(0, maxWidth - this.font.width("..."))) + "...";
 	}
 
 	private void drawFrame(GuiGraphics graphics, int x, int y, int width, int height) {
@@ -335,11 +511,11 @@ public class ScryingDiagnosticsScreen extends AbstractContainerScreen<ScryingDia
 		}
 	}
 
-	private static int colorForBlood(IBloodVolume volume) {
-		if (volume.getMaxBloodVolume() <= 0) {
+	private static int colorForBlood(IBloodVolume volume, double maxBlood) {
+		if (maxBlood <= 0) {
 			return BAD;
 		}
-		double percent = volume.getBloodVolume() / volume.getMaxBloodVolume();
+		double percent = volume.getBloodVolume() / maxBlood;
 		if (percent >= 0.5D) {
 			return GOOD;
 		}
@@ -418,6 +594,79 @@ public class ScryingDiagnosticsScreen extends AbstractContainerScreen<ScryingDia
 		return String.format(Locale.ROOT, "%.0f", value);
 	}
 
+	private static String amount(double value) {
+		return String.format(Locale.ROOT, "%.2f", value);
+	}
+
+	private static String signed(double value) {
+		return String.format(Locale.ROOT, "%+.2f", value);
+	}
+
+	private static String signedWhole(double value) {
+		return String.format(Locale.ROOT, "%+.0f", value);
+	}
+
+	private static int colorForMaxBonus(double value) {
+		if (value > 0.000001D) {
+			return GOOD;
+		}
+		if (value < -0.000001D) {
+			return BAD;
+		}
+		return TEXT;
+	}
+
+	private static int colorForRate(double value) {
+		if (value > 0.000001D) {
+			return GOOD;
+		}
+		if (value < -0.000001D) {
+			return BAD;
+		}
+		return MUTED;
+	}
+
+	private static int colorForCost(ManipulationCostSnapshot snapshot) {
+		if (isEmptyCost(snapshot)) {
+			return MUTED;
+		}
+		if (snapshot.effectiveCost() + 0.000001D < snapshot.baseCost()) {
+			return GOOD;
+		}
+		if (snapshot.effectiveCost() > snapshot.baseCost() + 0.000001D) {
+			return BAD;
+		}
+		return TEXT;
+	}
+
+	private static boolean isEmptyCost(ManipulationCostSnapshot snapshot) {
+		return snapshot == null || (snapshot.contributions().isEmpty()
+				&& Math.abs(snapshot.baseCost()) < 0.000001D
+				&& Math.abs(snapshot.effectiveCost()) < 0.000001D);
+	}
+
+	private static int rowColor(BloodFlowContribution contribution) {
+		if (!contribution.condition().isEmpty()) {
+			return WARN;
+		}
+		return colorForRate(contribution.appliedPerTick());
+	}
+
+	private static String rowRate(BloodFlowContribution contribution) {
+		if (Math.abs(contribution.requestedPerTick() - contribution.appliedPerTick()) > 0.000001D) {
+			return signed(contribution.appliedPerTick()) + "/" + signed(contribution.requestedPerTick());
+		}
+		return signed(contribution.appliedPerTick());
+	}
+
+	private static String sourceLabel(BloodFlowContribution contribution) {
+		String label = titleCase(contribution.category().name()) + " - " + contribution.label();
+		if (!contribution.condition().isEmpty()) {
+			label += " [" + contribution.condition() + "]";
+		}
+		return label;
+	}
+
 	private static String titleCase(String value) {
 		String[] parts = value.toLowerCase(Locale.ROOT).split("_");
 		StringBuilder builder = new StringBuilder();
@@ -431,5 +680,15 @@ public class ScryingDiagnosticsScreen extends AbstractContainerScreen<ScryingDia
 			builder.append(Character.toUpperCase(part.charAt(0))).append(part.substring(1));
 		}
 		return builder.toString();
+	}
+
+	private record HoverRegion(int x, int y, int width, int height) {
+		private static final HoverRegion EMPTY = new HoverRegion(0, 0, 0, 0);
+
+		private boolean contains(int mouseX, int mouseY) {
+			return width > 0 && height > 0
+					&& mouseX >= x && mouseX < x + width
+					&& mouseY >= y && mouseY < y + height;
+		}
 	}
 }

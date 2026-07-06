@@ -2,6 +2,8 @@ package com.vincenthuto.hemomancy.common.item.harbinger.morphlings;
 
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodFlowContribution.Category;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodFlowLedger;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodVolumeEvents;
 import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillPointHelper;
 import com.vincenthuto.hemomancy.common.init.EffectInit;
@@ -206,8 +208,9 @@ public class MorphlingItem extends Item implements IMorphling {
 			}
 			if (rate > 0.0D && volume.getBloodVolume() > 0.0D) {
 				double drained = Math.min(rate, volume.getBloodVolume());
-				if (volume.drain(drained) && player instanceof ServerPlayer serverPlayer) {
-					BloodVolumeEvents.syncVolume(serverPlayer, volume);
+				if (player instanceof ServerPlayer serverPlayer) {
+					BloodFlowLedger.applyDrain(serverPlayer, volume, "morphling_starvation",
+							"Morphling Starvation", Category.MORPHLING, drained, interval, false);
 				}
 			}
 		});

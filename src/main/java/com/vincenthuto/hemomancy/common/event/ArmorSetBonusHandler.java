@@ -2,6 +2,8 @@ package com.vincenthuto.hemomancy.common.event;
 
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodFlowContribution.Category;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodFlowLedger;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodVolumeEvents;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BorrowedBloodReserve;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.CirculationIncomeHelper;
@@ -125,10 +127,10 @@ public class ArmorSetBonusHandler {
 		// Hematic Iron set bonus: passive blood regen (every HEMATIC_IRON_REGEN_INTERVAL ticks)
 		if (player.tickCount % HEMATIC_IRON_REGEN_INTERVAL == 0 && hasFullSet(player, EnumModArmorTiers.HEMATIC_IRON)) {
 			HemoCapabilityAccess.getBloodVolume(player).ifPresent(volume -> {
-				if (volume.isActive() && !volume.isFull()) {
-					CirculationIncomeHelper.grant(player, volume, HEMATIC_IRON_BLOOD_REGEN,
-							CirculationIncomeHelper.IncomeChannel.ARMOR);
-					syncVolume((ServerPlayer) player, volume);
+				if (player instanceof ServerPlayer serverPlayer) {
+					BloodFlowLedger.applyCirculationIncome(serverPlayer, volume, "hematic_iron_set",
+							"Hematic Iron Set", Category.ARMOR, HEMATIC_IRON_BLOOD_REGEN,
+							HEMATIC_IRON_REGEN_INTERVAL, CirculationIncomeHelper.IncomeChannel.ARMOR);
 				}
 			});
 		}
@@ -364,9 +366,9 @@ public class ArmorSetBonusHandler {
 			nearby.addEffect(new MobEffectInstance(MobEffects.DAMAGE_RESISTANCE, 60, 0, false, true, true));
 			granted = true;
 		}
-		if (granted && volume.drain(COVENANT_MANTLE_BLOOD_COST)
-				&& player instanceof ServerPlayer serverPlayer) {
-			syncVolume(serverPlayer, volume);
+		if (granted && player instanceof ServerPlayer serverPlayer) {
+			BloodFlowLedger.applyDrain(serverPlayer, volume, "covenant_mantle",
+					"Covenant Mantle", Category.ARMOR, COVENANT_MANTLE_BLOOD_COST, 40, true);
 		}
 	}
 

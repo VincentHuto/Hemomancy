@@ -3,6 +3,7 @@ package com.vincenthuto.hemomancy.common.item.harbinger.memories;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.KnownManipulationGrantHelper;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.IKnownManipulations;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.ManipulationRetirementRules;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.ManipSlotHelper;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
@@ -61,6 +62,11 @@ public class CrudeMemoryShardItem extends Item {
 		if (getManip() != null) {
 			tooltip.add(Component.literal(getManip().getProperName())
 					.withStyle(ChatFormatting.DARK_RED));
+			if (ManipulationRetirementRules.isRetiredMemoryItem(this, getManip())) {
+				tooltip.add(Component.literal("This echo has gone dormant.")
+						.withStyle(ChatFormatting.DARK_GRAY, ChatFormatting.ITALIC));
+				return;
+			}
 			tooltip.add(Component.literal("Blood cost to absorb: " + (int) BLOOD_COST + " mL")
 					.withStyle(ChatFormatting.DARK_RED));
 		}
@@ -83,6 +89,13 @@ public class CrudeMemoryShardItem extends Item {
 		}
 
 		BloodManipulation manipulation = getManip();
+		if (ManipulationRetirementRules.isRetiredMemoryItem(this, manipulation)) {
+			player.displayClientMessage(
+					Component.literal("This echo has gone dormant.")
+							.withStyle(ChatFormatting.DARK_GRAY),
+					true);
+			return InteractionResultHolder.fail(stack);
+		}
 		if (manipulation == null) {
 			player.displayClientMessage(
 					Component.literal("This memory is too complex to absorb raw.")

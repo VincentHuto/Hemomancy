@@ -1,6 +1,8 @@
 package com.vincenthuto.hemomancy.common.capability.player.harbinger.scar.fungal;
 
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodFlowContribution.Category;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodFlowLedger;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.CirculationIncomeHelper;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
@@ -52,9 +54,9 @@ public final class RootedStateHelper {
 			return;
 		}
 		HemoCapabilityAccess.getBloodVolume(serverPlayer).ifPresent(volume -> {
-			double granted = CirculationIncomeHelper.grant(serverPlayer, volume, regenPerSecond(true),
+			BloodFlowLedger.applyCirculationIncome(serverPlayer, volume, "rhizovitta_rooted",
+					"Rhizovitta Rooted", Category.SCAR, regenPerSecond(true), 20,
 					CirculationIncomeHelper.IncomeChannel.SCAR);
-			syncBlood(serverPlayer, volume, granted);
 		});
 	}
 

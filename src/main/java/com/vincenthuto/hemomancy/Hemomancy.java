@@ -3,6 +3,7 @@ package com.vincenthuto.hemomancy;
 import com.vincenthuto.hemomancy.common.block.harbinger.EngramTextureCache;
 import com.vincenthuto.hemomancy.common.capability.HemoAttachmentTypes;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityRegistrar;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.ManipulationRetirementRules;
 import com.vincenthuto.hemomancy.common.capability.player.shared.knowledge.discovery.LiberDiscoveryEvents;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.UnstainedProgressEvents;
 import com.vincenthuto.hemomancy.common.data.book.BloodStructurePageTemplate;
@@ -262,6 +263,7 @@ public class Hemomancy {
         populator.accept(BlockInit.sanguine_vigil.get());
         populator.accept(BlockInit.sanguine_omen.get());
         populator.accept(BlockInit.visceral_mirror.get());
+        populator.accept(BlockInit.non_euclidean_hallway.get());
         populator.accept(BlockInit.blood_basin.get());
         populator.accept(BlockInit.blood_pylon.get());
         populator.accept(BlockInit.blood_trial_altar.get());
@@ -274,6 +276,7 @@ public class Hemomancy {
         return item != ItemInit.active_befouling_ash.get()
                 && item != ItemInit.active_smouldering_ash.get()
                 && item != ItemInit.memory_conjure_living_staff.get()
+                && !ManipulationRetirementRules.isRetiredMemoryItem(item)
                 && !isWipItem(item);
     }
 
@@ -340,6 +343,7 @@ public class Hemomancy {
                 || block == BlockInit.sanguine_vigil.get()
                 || block == BlockInit.sanguine_omen.get()
                 || block == BlockInit.visceral_mirror.get()
+                || block == BlockInit.non_euclidean_hallway.get()
                 || block == BlockInit.blood_basin.get()
                 || block == BlockInit.blood_pylon.get()
                 || block == BlockInit.blood_trial_altar.get()

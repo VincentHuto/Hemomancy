@@ -8,10 +8,8 @@ public final class CrudeMemoryModelDataTest {
 	private static final Path MODEL_ROOT = Path.of("src/main/resources/assets/hemomancy/models/item");
 
 	private static final String[] CRUDE_MEMORIES = {
-			"blood_lamp",
 			"blood_rush",
 			"blood_shot",
-			"crimson_harvest",
 			"deadly_gaze",
 			"glacial_grasp",
 			"hemorrhage",

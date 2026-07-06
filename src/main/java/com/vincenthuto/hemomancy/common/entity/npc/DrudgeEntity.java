@@ -4,6 +4,7 @@ import com.vincenthuto.hemomancy.common.item.harbinger.memories.BloodMemoryItem;
 import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
 import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationType;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.routing.DrudgeTenderSource;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.ManipulationRetirementRules;
 import com.vincenthuto.hemomancy.config.HemoServerConfig;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
@@ -359,6 +360,10 @@ public class DrudgeEntity extends PathfinderMob implements OwnableEntity {
 
         // Right-click with a Blood Memory → equip it
         if (!held.isEmpty() && held.getItem() instanceof BloodMemoryItem memItem) {
+            if (memItem.isRetiredMemoryItem()) {
+                player.displayClientMessage(Component.literal("§8That memory has gone dormant."), true);
+                return InteractionResult.FAIL;
+            }
             com.vincenthuto.hemomancy.common.manipulation.DrudgeAction da =
                     memItem.getManip().getDrudgeAction().orElse(null);
             if (da == null || da == com.vincenthuto.hemomancy.common.manipulation.DrudgeAction.DRUDGE_UNSUPPORTED) {
@@ -392,6 +397,13 @@ public class DrudgeEntity extends PathfinderMob implements OwnableEntity {
     /** Drops the currently equipped memory as an item near the drudge. */
     private void dropMemoryItem(@Nullable Player player) {
         if (equippedMemory == null) return;
+        if (ManipulationRetirementRules.isRetiredManipulation(equippedMemory)) {
+            setEquippedMemory(null);
+            if (player != null) {
+                player.displayClientMessage(Component.literal("§8The dormant memory flakes away."), true);
+            }
+            return;
+        }
         // Find the BloodMemoryItem that matches this manipulation across all item registers.
         // Short-circuits after the first successful match/drop.
         boolean dropped = dropMemoryItemFromRegister(player, com.vincenthuto.hemomancy.common.init.ItemInit.BASEITEMS)
@@ -599,6 +611,7 @@ public class DrudgeEntity extends PathfinderMob implements OwnableEntity {
             if (drudge.isRogue()) return false;
             BloodManipulation mem = drudge.equippedMemory;
             if (mem == null) return false;
+            if (ManipulationRetirementRules.isRetiredManipulation(mem)) return false;
             if (drudge.getBloodCharge() < LOW_CHARGE_THRESHOLD) return false;
             boolean modeOk = drudge.isPassiveMode() || drudge.electrodeSignalPending;
             if (!modeOk) return false;
@@ -622,6 +635,10 @@ public class DrudgeEntity extends PathfinderMob implements OwnableEntity {
         public void start() {
             BloodManipulation mem = drudge.equippedMemory;
             if (mem == null) return;
+            if (ManipulationRetirementRules.isRetiredManipulation(mem)) {
+                drudge.setEquippedMemory(null);
+                return;
+            }
 
             drudge.electrodeSignalPending = false;
 

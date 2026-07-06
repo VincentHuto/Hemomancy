@@ -565,7 +565,7 @@ public final class MaterialsData {
                 "Equipment", () -> new ItemStack(ItemInit.living_staff.get()),
                 true, UnlockPredicate.minDegree(3)));
 
-        list.add(new MaterialEntry("living_baghnakh", "Living Baghnakh", "Clawed gauntlet of living tissue. Tears and drains on each strike.", "Equipment", () -> new ItemStack(ItemInit.living_baghnakh.get()), true, UnlockPredicate.minDegree(4)));
+        list.add(new MaterialEntry("living_baghnakh", "Living Baghnakh", "Clawed gauntlet of living tissue. Hold attack to rake again whenever the strike cooldown readies.", "Equipment", () -> new ItemStack(ItemInit.living_baghnakh.get()), true, UnlockPredicate.minDegree(4)));
 
         list.add(new MaterialEntry("living_crossbow", "Living Crossbow", "A crossbow grown from blood-iron sinew. Fires bolts of coagulated blood.", "Equipment", () -> new ItemStack(ItemInit.living_crossbow.get()), true, UnlockPredicate.minDegree(4)));
 

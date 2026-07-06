@@ -20,11 +20,11 @@ public final class WillCombatRules {
 			EnumBloodTendency.FLAMMEUS,
 			ids("crimson_flame_conjuration", "sanguine_ignition", "scalding_updraft", "vitric_combustion"),
 			EnumBloodTendency.DUCTILIS, ids("deadly_gaze", "hemolymphal_pulse", "activation_potential"),
-			EnumBloodTendency.LUX, ids("crimson_sight", "prismatic_reproof", "unclosing_eye"),
+			EnumBloodTendency.LUX, ids("hematic_flare", "prismatic_reproof", "crimson_sight", "unclosing_eye"),
 			EnumBloodTendency.MORTEM, ids("hemorrhage", "exsanguinate", "bloom_of_rot"),
 			EnumBloodTendency.CONGEATIO, ids("cryogenic_pulse", "glacial_grasp", "glacial_bastion", "glacial_rampart"),
 			EnumBloodTendency.FERRIC, ids("blood_needle", "prismatic_reproof", "glacial_bastion", "pyretic_forge"),
-			EnumBloodTendency.TENEBRIS, ids("void_shroud", "umbral_step", "blood_eclipse", "blood_eclipse_mantle"));
+			EnumBloodTendency.TENEBRIS, ids("void_shroud", "gloam_laceration", "umbral_step", "blood_eclipse"));
 
 	private static final Map<EnumBloodTendency, EnumBloodTendency> COUNTERS = Map.of(
 			EnumBloodTendency.ANIMUS, EnumBloodTendency.MORTEM,

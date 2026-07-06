@@ -1,0 +1,33 @@
+{
+  "parent": "block/block",
+  "textures": {
+    "particle": "hemomancy:block/venous_stone",
+    "base": "hemomancy:block/polished_venous_stone",
+    "core": "hemomancy:block/hematic_iron_block"
+  },
+  "elements": [
+    {
+      "from": [2, 0, 2],
+      "to": [14, 2, 14],
+      "faces": {
+        "north": { "texture": "#base" },
+        "south": { "texture": "#base" },
+        "east": { "texture": "#base" },
+        "west": { "texture": "#base" },
+        "up": { "texture": "#base" },
+        "down": { "texture": "#base" }
+      }
+    },
+    {
+      "from": [6, 2, 6],
+      "to": [10, 6, 10],
+      "faces": {
+        "north": { "texture": "#core" },
+        "south": { "texture": "#core" },
+        "east": { "texture": "#core" },
+        "west": { "texture": "#core" },
+        "up": { "texture": "#core" }
+      }
+    }
+  ]
+}

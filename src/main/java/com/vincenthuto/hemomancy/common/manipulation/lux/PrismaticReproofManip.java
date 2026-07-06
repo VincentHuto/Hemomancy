@@ -6,6 +6,7 @@ import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillPoin
 import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
 import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationRank;
 import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationType;
+import com.vincenthuto.hemomancy.common.manipulation.SchoolHitHelper;
 import com.vincenthuto.hemomancy.common.manipulation.TendencyAffinityRules;
 import com.vincenthuto.hutoslib.client.particle.factory.GlowParticleFactory;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
@@ -39,7 +40,6 @@ public class PrismaticReproofManip extends BloodManipulation {
 
 		Vec3 eye = player.getEyePosition();
 		Vec3 look = player.getLookAngle().normalize();
-		float damage = (float) (4.0F * SkillPointHelper.getCrimsonMasteryMultiplier(player));
 		int struck = 0;
 
 		for (LivingEntity target : world.getEntitiesOfClass(LivingEntity.class,
@@ -50,9 +50,12 @@ public class PrismaticReproofManip extends BloodManipulation {
 			if (look.dot(toTarget.normalize()) < HALF_CONE_DOT) continue;
 			target.addEffect(new MobEffectInstance(MobEffects.BLINDNESS, 100, 0, false, true));
 			target.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, 140, 0, false, true));
-			if (target.hasEffect(MobEffects.GLOWING)) {
-				target.hurt(world.damageSources().magic(),
-						TendencyAffinityRules.adjustManipulationDamage(player, target, this, damage));
+			float damage = (float) ((target.hasEffect(MobEffects.GLOWING) ? 4.0F : 2.0F)
+					* SkillPointHelper.getCrimsonMasteryMultiplier(player));
+			float adjusted = TendencyAffinityRules.adjustManipulationDamage(player, target, this, damage);
+			if (target.hurt(world.damageSources().magic(), adjusted)) {
+				SchoolHitHelper.tryTriggerConductiveArc(player, target, EnumBloodTendency.LUX, getSecondaryTend(),
+						adjusted);
 			}
 			struck++;
 		}

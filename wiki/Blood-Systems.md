@@ -11,8 +11,12 @@ This page provides a comprehensive overview of Hemomancy's blood mechanics, from
 ### Key Stats
 - **Starting Volume:** 1000 mL (after Mortal Display activation)
 - **Human Maximum:** ~5000 mL (natural)
-- **Extended Maximum:** 6000+ mL (high-degree Harbingers only)
+- **Extended Maximum:** `5000 + Capacity + Spleen + Eternal Covenant - scars`
 - **Average Adult:** 5000 mL
+
+### Maximum Blood Diagnostics
+
+Player maximum blood is resolved server-side by the max-blood ledger. Capacity, Spleen, and Eternal Covenant stack additively, then scar penalties subtract from the final bonus total. The Scrying Podium **Blood** tab shows the computed maximum, net modifier, and exact positive/negative modifier totals; hovering `Mods` lists the source of each modifier.
 
 ### Regeneration
 - **Base Rate:** Slow passive regeneration over time
@@ -27,6 +31,12 @@ This page provides a comprehensive overview of Hemomancy's blood mechanics, from
   - Overuse of manipulations
   - Certain status effects
   - Environmental hazards
+
+### Blood Flow Diagnostics
+
+The **Scrying Podium** shows server-truth blood flow in `mL/t` rather than estimating regeneration from circulation bandwidth. Its **Blood** tab displays Blood Volume, Vascular Health, positive flow, negative flow, net flow, circulation bandwidth used/cap/available, and source rows with applied/requested rates. Hovering the Blood Flow modifier area opens the full active source breakdown.
+
+Player/body sources such as base regeneration, **Sanguine Surge**, **Last Wind**, and **Mnemonic Candle Aura** stack directly. External passive income such as armor set regeneration, Sanguine Siphon, fungal scar income, Qliphoth Bloom, Morphling Cradle feed, and Open Blood Gourd transfer shares the circulation bandwidth cap where applicable. Active costs, kill rewards, weapon hits, manual draws, and structure feeding are not treated as passive `mL/t` flow.
 
 ### Death and Volume
 - Configurable: volume may reset on death
@@ -135,6 +145,12 @@ Manipulations are organized into four power tiers:
 - Organize by tendency or frequency of use
 - Monitor cooldowns via HUD
 
+### Manipulation Diagnostics
+
+The **Scrying Podium** **Manipulations** tab is synced from the server. It shows how many manipulations you know, how many are currently equipped, the current equipped-slot cap, and the selected manipulation's base blood cost versus effective blood cost.
+
+Hover the equipped-slot modifier row to see the active slot formula: `min(9, 3 + degree / 2 + Manip Slots skill)`. Hover the selected manipulation's cost modifier row to see each active discount or surcharge, including skills, manipulation mastery, tendency-match bonuses, purity penalties, potion effects, world effects, rite effects, and equipped tools.
+
 ### Synaptic Loadouts
 
 At Degree 5, the **Dendritic Distributor** becomes a Synaptic Loadout station. It stores whole manipulation arrangements as named neural patterns:
@@ -152,6 +168,8 @@ Use this for combat, travel, ritual, and fane-work presets without relearning ma
 ## The Eight Tendencies
 
 **Tendency** (also called **Kinship**) represents the quality or affinity of your blood. Each tendency unlocks different manipulations and playstyles.
+
+The **Scrying Podium** **Tendency** tab shows your dominant and latent tendencies, a full tendency-value profile, and rite readiness.
 
 ### Animus (Life/Vitality)
 
@@ -250,6 +268,8 @@ Use this for combat, travel, ritual, and fane-work presets without relearning ma
 - Strong against undead and corrupted
 - Vision control
 - Countered by Tenebris tendency
+
+**Current implemented combat notes:** Lux now has `hematic_flare` as a Humilis true-offense ray: it deals magic damage, applies Glowing, strips Invisibility, and hits concealed enemies harder. `prismatic_reproof` remains the larger cone follow-up, but now always deals base magic damage and doubles its bite against Glowing targets. Lux attacks dynamically oppose Tenebris-school Rogue Wills by their synced Will school.
 
 ---
 
@@ -350,6 +370,8 @@ Use this for combat, travel, ritual, and fane-work presets without relearning ma
 - Rogue/stealth builds
 - Escape and infiltration
 - Countered by Lux tendency
+
+**Current implemented combat notes:** Tenebris now has `gloam_laceration` as a Humilis ambush slash: it applies Blood Loss and Weakness, deals magic damage, hits harder while the caster is invisible or standing in natural/synthetic darkness, and uses a three-line tapered claw ribbon visual instead of generic glow motes. `void_shroud`, `black_veil_covenant`, `umbral_step`, and `blood_eclipse` remain the core stealth/darkness chain. Tenebris attacks dynamically oppose Lux-school Rogue Wills by their synced Will school.
 
 ---
 

@@ -295,12 +295,12 @@ public class WillEntity extends Monster implements BoundPuppeteerSummon {
 		}
 		if (distanceSqr > 12.0D * 12.0D) {
 			ResourceLocation mobility = firstInKit(kit, "umbral_step", "crimson_flame_conjuration", "blood_shot",
-					"blood_needle", "prismatic_reproof", "deadly_gaze");
+					"hematic_flare", "blood_needle", "prismatic_reproof", "deadly_gaze");
 			if (mobility != null) return mobility;
 		}
 		if (distanceSqr < 5.0D * 5.0D) {
 			ResourceLocation pressure = firstInKit(kit, "sanguine_ignition", "cryogenic_pulse", "activation_potential",
-					"blood_eclipse", "blood_aneurysm", "bloom_of_rot");
+					"gloam_laceration", "blood_eclipse", "blood_aneurysm", "bloom_of_rot");
 			if (pressure != null) return pressure;
 		}
 		if (target.getHealth() <= target.getMaxHealth() * 0.35F) {
@@ -308,7 +308,8 @@ public class WillEntity extends Monster implements BoundPuppeteerSummon {
 			if (finisher != null) return finisher;
 		}
 		ResourceLocation burst = firstInKit(kit, "vitric_combustion", "blood_aneurysm", "blood_eclipse",
-				"prismatic_reproof", "hemorrhage", "glacial_grasp", "pyretic_forge");
+				"gloam_laceration", "hematic_flare", "prismatic_reproof", "hemorrhage", "glacial_grasp",
+				"pyretic_forge");
 		return burst != null ? burst : kit.get(kitIndex++ % kit.size());
 	}
 

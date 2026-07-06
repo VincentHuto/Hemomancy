@@ -113,8 +113,9 @@ All 60 registered manipulations. Cost is mL; `hot-swap` marks Living Staff weapo
 |---|---|---|---|---|
 | `blood_lamp` | 75 | Humilis | L.Arm · 10t | Places an invisible light-15 block — torchless caving |
 | `hemosynthesis` | 200 | Humilis | Body · 40t | Blood → food (4 hunger, 4 saturation): eat yourself |
+| `hematic_flare` | 125 | Humilis | Head · 30t | Short ray: 3 magic damage, Glowing, strips Invisibility, +2 vs concealed targets |
 | `crimson_sight` | 250 | Medioc. | Head · 60t | Night Vision 60s + Glowing on mobs in 32 blocks |
-| `prismatic_reproof` | 325 | Medioc. | Head · 80t | Refracted cone: blind + weaken; marked targets take magic damage |
+| `prismatic_reproof` | 325 | Medioc. | Head · 80t | Refracted cone: blind + weaken; 2 magic damage, or 4 against marked/glowing targets |
 | `hematic_beacon` | 350 | Medioc. | Body · 160t | Rally point: Regen/Resistance to players, Glowing to mobs (8-block) |
 | `lumen_suture` | 250 | Medioc. | R.Arm · 120t | Heal nearest wounded player + Absorption II, clear Blindness/Wither |
 | `unclosing_eye` ⛧ | 350 | Summa | Head · 120t | **Seraphae Canon:** Glowing on ALL life in 32 blocks incl. self; strips Invisibility |
@@ -159,16 +160,17 @@ All 60 registered manipulations. Cost is mL; `hot-swap` marks Living Staff weapo
 | Manipulation | Cost | Rank | Vein · CD | Use |
 |---|---|---|---|---|
 | `void_shroud` | 100 | Humilis | Body · 20t | 5s Invisibility + Speed II + Night Vision — the dash-stealth opener |
+| `gloam_laceration` | 175 | Humilis | R.Arm · 35t | Short ambush slash: 3.5 magic damage, Blood Loss + Weakness, +2.5 from Invisibility/darkness, rendered as a three-line claw ribbon |
 | `umbral_step` | 300 | Medioc. | L.Leg · 40t | Teleport to target block (range 24) — **destination must be dark (light ≤ 7)** |
-| `blood_eclipse` | 300 | Medioc. | Head · 45t | 18-block cone: Blindness II + Weakness + shadow damage |
+| `blood_eclipse` | 300 | Medioc. | Head · 45t | 18-block cone: Blindness II + Weakness + 1.5 hearts shadow damage |
 | `blood_eclipse_mantle` | 325 | Medioc. | Body · 180t | Defensive stance: Resistance II + Fire Resistance, Weakness the price |
 | `umbral_reversal` | 375 | Medioc. | L.Leg · 100t | Slip backward into the nearest dark space, blinding pursuers at the origin |
 | `black_veil_covenant` | 425 | Medioc. | Body · 220t | Raises a black-veined sphere that **counts as synthetic darkness** for umbral checks |
 | `conjure_claws` | 250 hot-swap | Medioc. | R.Arm | Staff → Living Baghnakh claws |
 
-**Tally:** Animus 11 · Flammeus 6 · Ductilis 5 · Lux 8 · Mortem 6 · Congeatio 8 · Ferric 9 · Tenebris 7 = **60**.
+**Tally:** Animus 11 · Flammeus 6 · Ductilis 5 · Lux 9 · Mortem 6 · Congeatio 8 · Ferric 9 · Tenebris 8 = **62**.
 
-Tenebris is the most *systemic* school: Umbral Step is gated on darkness → Black Veil Covenant manufactures darkness → Umbral Reversal is the defensive inverse → Void Shroud is the approach — and the Phantasmal Bloodlust armor set later removes Umbral Step's darkness gate as its endgame payoff. A verb economy with counterplay and a gear capstone.
+Lux and Tenebris both now have Humilis true-offense verbs before their broader Mediocritas control tools: `hematic_flare` gives Lux a mark/reveal hit that can answer concealed enemies, while `gloam_laceration` gives Tenebris a short ambush slash that rewards its darkness and invisibility setup. Tenebris remains the most *systemic* school: Umbral Step is gated on darkness → Black Veil Covenant manufactures darkness → Umbral Reversal is the defensive inverse → Void Shroud is the approach — and the Phantasmal Bloodlust armor set later removes Umbral Step's darkness gate as its endgame payoff. A verb economy with counterplay and a gear capstone.
 
 ---
 
@@ -181,6 +183,8 @@ Effective cost / cooldown / power runs through an unusually deep, fully diegetic
 **Taxes (increase cost/CD):** purity progression on the Unstained path (+10% → +25% → +50% → blocked), Blood Drunkenness (+15–60% cost, +25% CD at amp 3), Mnemonic Screams (+50% cost, the anti-abuse backlash), and vein-section degradation debuffs.
 
 Casting is a market with subsidies and taxes — every modifier is a piece of fiction, not a stat line.
+
+Implementation note: selected-manipulation blood cost now resolves through `ManipulationCostLedger` and syncs a `ManipulationCostSnapshot` to the Scrying Podium, so active discounts, surcharges, and blocking conditions can be inspected as exact source rows.
 
 ---
 

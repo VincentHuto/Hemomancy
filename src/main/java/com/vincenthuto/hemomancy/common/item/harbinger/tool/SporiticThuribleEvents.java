@@ -3,11 +3,11 @@ package com.vincenthuto.hemomancy.common.item.harbinger.tool;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.client.particle.data.SporiticSporeParticleData;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodFlowContribution.Category;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodFlowLedger;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillPointHelper;
 import com.vincenthuto.hemomancy.common.init.EffectInit;
-import com.vincenthuto.hemomancy.common.network.PacketHandler;
-import com.vincenthuto.hemomancy.common.network.capa.harbinger.BloodVolumeServerPacket;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.Mth;
@@ -84,14 +84,14 @@ public class SporiticThuribleEvents {
 			return false;
 		}
 		IBloodVolume volume = volumeOpt.orElseThrow();
-		boolean drained = volume.drain(drain);
-		if (drained) {
+		BloodFlowLedger.DrainResult result = BloodFlowLedger.applyDrain(player, volume, "sporitic_thurible",
+				"Sporitic Thurible", Category.TOOL, drain, SporiticThuribleRules.UPKEEP_INTERVAL_TICKS, false);
+		if (result.satisfied()) {
 			volume.addBloodSpend(drain);
 		} else {
 			SporiticThuribleItem.extinguish(stack);
 		}
-		PacketHandler.sendToPlayer(player, new BloodVolumeServerPacket(volume));
-		return drained;
+		return result.satisfied();
 	}
 
 	private static void spawnAmbientCloud(ServerPlayer owner, SporiticThuribleSpore spore, double intensity) {
