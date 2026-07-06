@@ -1140,6 +1140,22 @@ final class ChamberOfWillRenderHelpers {
         }
     }
 
+    static void renderSolidBox(PoseStack poseStack, Tesselator tesselator, float skyDistance, int color) {
+        RenderSystem.setShader(GameRenderer::getPositionColorShader);
+        for (int i = 0; i < 6; i++) {
+            poseStack.pushPose();
+            rotateSkyFace(poseStack, i);
+            Matrix4f matrix4f = poseStack.last().pose();
+            BufferBuilder bufferbuilder = tesselator.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
+            bufferbuilder.addVertex(matrix4f, -skyDistance, -skyDistance, -skyDistance).setColor(color);
+            bufferbuilder.addVertex(matrix4f, -skyDistance, -skyDistance, skyDistance).setColor(color);
+            bufferbuilder.addVertex(matrix4f, skyDistance, -skyDistance, skyDistance).setColor(color);
+            bufferbuilder.addVertex(matrix4f, skyDistance, -skyDistance, -skyDistance).setColor(color);
+            BufferUploader.drawWithShader(bufferbuilder.buildOrThrow());
+            poseStack.popPose();
+        }
+    }
+
     static void renderPlane(PoseStack poseStack, Tesselator tesselator, float skyDistance, float uvMin, float uvMax, Supplier<ShaderInstance> shaderSupplier, ResourceLocation texture, float scale, int color) {
         RenderSystem.setShader(shaderSupplier);
         RenderSystem.setShaderTexture(0, texture);

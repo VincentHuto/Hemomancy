@@ -1,5 +1,6 @@
 {
   "parent": "minecraft:block/chain",
+  "render_type": "cutout",
   "textures": {
     "particle": "hemomancy:block/pallid_silver_chain",
     "all": "hemomancy:block/pallid_silver_chain"

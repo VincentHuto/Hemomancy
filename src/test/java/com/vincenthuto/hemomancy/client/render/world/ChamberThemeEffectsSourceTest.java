@@ -24,10 +24,13 @@ public final class ChamberThemeEffectsSourceTest {
 		String renderContext = Files.readString(RENDER_CONTEXT).replace("\r\n", "\n");
 		String helpers = Files.readString(HELPERS).replace("\r\n", "\n");
 		String registry = Files.readString(REGISTRY).replace("\r\n", "\n");
+		String blankEffects = Files.readString(PACKAGE.resolve("BlankChamberThemeEffects.java")).replace("\r\n", "\n");
 		String qliphothEffects = Files.readString(QLIPHOTH_EFFECTS).replace("\r\n", "\n");
 		String silentArchonEffects = Files.readString(SILENT_ARCHON_EFFECTS).replace("\r\n", "\n");
 		String lowtideEffects = Files.readString(LOWTIDE_EFFECTS).replace("\r\n", "\n");
 		String reference = Files.readString(REFERENCE).replace("\r\n", "\n");
+		String removedApotheosEffectsFile = "Apotheos" + "ChamberEffects.java";
+		String removedApotheosEffectsConstructor = "new Apotheos" + "ChamberEffects(";
 
 		assertFileExists("theme effects interface exists", "ChamberThemeEffects.java");
 		assertFileExists("render context exists", "ChamberThemeRenderContext.java");
@@ -37,7 +40,7 @@ public final class ChamberThemeEffectsSourceTest {
 		assertFileExists("archon revelation theme effects exists", "ArchonRevelationChamberEffects.java");
 		assertFileExists("qliphoth communion theme effects exists", "QliphothCommunionChamberEffects.java");
 		assertFileExists("silent archon theme effects exists", "SilentArchonChamberEffects.java");
-		assertFileExists("apotheos theme effects exists", "ApotheosChamberEffects.java");
+		assertFileDoesNotExist("apotheos custom theme effects were removed", removedApotheosEffectsFile);
 		assertFileExists("mnemonic lowtide effects exists", "MnemonicLowtideChamberEffects.java");
 
 		assertContains("renderer delegates sky rendering to active theme effects", renderer,
@@ -83,8 +86,20 @@ public final class ChamberThemeEffectsSourceTest {
 				"context.skyDistance()");
 		assertNotContains("lowtide effects should not place lake below physical floor", lowtideEffects,
 				"ChamberOfWillManager.FLOOR_Y");
-		assertContains("apotheos effects are registered", registry,
-				"new ApotheosChamberEffects(");
+		assertContains("apotheos uses blank-slate effects", registry,
+				"new BlankChamberThemeEffects(apotheos)");
+		assertNotContains("apotheos custom effects are not registered", registry,
+				removedApotheosEffectsConstructor);
+		assertContains("apotheos disables chamber overlay layers", registry,
+				".layers(0, 0, 0, 0)");
+		assertContains("apotheos uses black skybox color values", registry,
+				".skybox(0xFF000000, 0xFF000000)");
+		assertContains("apotheos keeps only the blank base pass enabled", registry,
+				".toggles(true, false, false, false)");
+		assertContains("blank effects render a solid box instead of textured skybox", blankEffects,
+				"ChamberOfWillRenderHelpers.renderSolidBox(");
+		assertContains("helpers provide untextured solid skybox rendering", helpers,
+				"static void renderSolidBox(");
 
 		assertContains("qliphoth effects own qliphoth backdrop rendering", qliphothEffects,
 				"static void renderQliphothCommunionBackdrop(");
@@ -131,6 +146,13 @@ public final class ChamberThemeEffectsSourceTest {
 		Path file = PACKAGE.resolve(fileName);
 		if (!Files.exists(file)) {
 			throw new AssertionError(label + ": missing " + file);
+		}
+	}
+
+	private static void assertFileDoesNotExist(String label, String fileName) {
+		Path file = PACKAGE.resolve(fileName);
+		if (Files.exists(file)) {
+			throw new AssertionError(label + ": still exists " + file);
 		}
 	}
 

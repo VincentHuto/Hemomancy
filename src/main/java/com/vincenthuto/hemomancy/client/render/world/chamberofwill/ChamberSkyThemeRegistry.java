@@ -80,14 +80,15 @@ public final class ChamberSkyThemeRegistry {
 				.build();
 		register(silentArchon, new SilentArchonChamberEffects(silentArchon));
 		ChamberSkyTheme apotheos = ChamberSkyTheme.builder(ChamberOfWillManager.THEME_APOTHEOS)
-				.skybox(0xFF251B2B, 0xFF8C5E9E)
-				.nebula(0x35124A, 0x7A154A, 0x8A7011)
-				.tints(0xF1B8FF, 0xFF9BE4, 0xB3BBFF, 0xFFF3A8)
-				.pulse(1.7F)
-				.motion(1.22F)
-				.layers(2, 2, 3, 4)
+				.skybox(0xFF000000, 0xFF000000)
+				.nebula(0x000000, 0x000000, 0x000000)
+				.tints(0xFFFFFF, 0xFFFFFF, 0xFFFFFF, 0xFFFFFF)
+				.pulse(0.0F)
+				.motion(1.0F)
+				.layers(0, 0, 0, 0)
+				.toggles(true, false, false, false)
 				.build();
-		register(apotheos, new ApotheosChamberEffects(apotheos));
+		register(apotheos, new BlankChamberThemeEffects(apotheos));
 	}
 
 	private ChamberSkyThemeRegistry() {

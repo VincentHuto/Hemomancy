@@ -3,6 +3,7 @@ package com.vincenthuto.hemomancy.client.render.item;
 import com.mojang.blaze3d.platform.Lighting;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import com.vincenthuto.hemomancy.client.model.armor.EdaciousBloodLustArmorModel;
 import com.vincenthuto.hemomancy.client.render.armor.ArmorItemDisplayTransformHelper;
 import com.vincenthuto.hemomancy.client.render.armor.ArmorItemModelPoseHelper;
 import com.vincenthuto.hemomancy.client.render.armor.ModelBackedArmorItemRenderHelper;
@@ -47,7 +48,13 @@ public class ModelBackedArmorItemRenderer extends BlockEntityWithoutLevelRendere
 		applySlotVisibility(model, definition.slot());
 
 		VertexConsumer consumer = buffer.getBuffer(RenderType.entityTranslucent(definition.texture()));
+		if (model instanceof EdaciousBloodLustArmorModel<?> edaciousModel) {
+			edaciousModel.setRenderWingsInMainPass(false);
+		}
 		model.renderToBuffer(poseStack, consumer, packedLight, OverlayTexture.NO_OVERLAY, -1);
+		if (model instanceof EdaciousBloodLustArmorModel<?> edaciousModel) {
+			edaciousModel.setRenderWingsInMainPass(true);
+		}
 		poseStack.popPose();
 
 		if (gui) {
@@ -94,6 +101,10 @@ public class ModelBackedArmorItemRenderer extends BlockEntityWithoutLevelRendere
 			if( stack.is(ItemInit.covenant_mantle.get())) {
 				poseStack.translate(0.0F, 0F, 0.0F);
 				poseStack.scale(0.78F, 0.78F, 0.78F);
+			}
+			if( stack.is(ItemInit.phantasmal_blood_lust_helm.get())) {
+				poseStack.translate(0.0F, 0.02F, 0.0F);
+				poseStack.scale(0.7F, 0.7F, 0.7F);
 			}
 		}
 	}

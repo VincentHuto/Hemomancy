@@ -1,5 +1,6 @@
 {
   "parent": "minecraft:block/chain",
+  "render_type": "cutout",
   "textures": {
     "particle": "hemomancy:block/hematic_iron_chain",
     "all": "hemomancy:block/hematic_iron_chain"
