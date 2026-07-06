@@ -1,0 +1,27 @@
+{
+  "blend": {
+    "func": "add",
+    "srcrgb": "srcalpha",
+    "dstrgb": "1-srcalpha"
+  },
+  "vertex": "hemomancy:world/apotheos_floor_funnel",
+  "fragment": "hemomancy:world/apotheos_floor_funnel",
+  "attributes": [
+    "Position",
+    "Color",
+    "UV0"
+  ],
+  "samplers": [],
+  "uniforms": [
+    { "name": "ModelViewMat", "type": "matrix4x4", "count": 16, "values": [ 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0 ] },
+    { "name": "ProjMat", "type": "matrix4x4", "count": 16, "values": [ 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0 ] },
+    { "name": "ColorModulator", "type": "float", "count": 4, "values": [ 1.0, 1.0, 1.0, 1.0 ] },
+    { "name": "HemoTime", "type": "float", "count": 1, "values": [ 0.0 ] },
+    { "name": "FunnelSeed", "type": "float", "count": 1, "values": [ 0.0 ] },
+    { "name": "RingRise", "type": "float", "count": 1, "values": [ 0.72 ] },
+    { "name": "RingSpeed", "type": "float", "count": 1, "values": [ 0.92 ] },
+    { "name": "MeatNoiseScale", "type": "float", "count": 1, "values": [ 7.8 ] },
+    { "name": "HighlightIntensity", "type": "float", "count": 1, "values": [ 1.18 ] },
+    { "name": "CenterVoidRadius", "type": "float", "count": 1, "values": [ 0.095 ] }
+  ]
+}

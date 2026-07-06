@@ -3,6 +3,7 @@ package com.vincenthuto.hemomancy.common.network.capa.harbinger;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.equipment.HarbingerEquipmentEntityEventHandler;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.scar.IScars;
 import com.vincenthuto.hemomancy.common.menu.HarbingerEquipmentMenu;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
@@ -46,7 +47,8 @@ public class ToggleEquipmentLayerVisibilityPacket implements CustomPacketPayload
 	}
 
 	private static boolean isToggleableSlot(int slot) {
-		return slot == HarbingerEquipmentMenu.JAR_SLOT_INDEX
+		return slot == IScars.FUNGAL_SLOT
+				|| slot == HarbingerEquipmentMenu.JAR_SLOT_INDEX
 				|| slot == HarbingerEquipmentMenu.CHARM_SLOT_INDEX
 				|| slot == HarbingerEquipmentMenu.GOURD_SLOT_INDEX;
 	}

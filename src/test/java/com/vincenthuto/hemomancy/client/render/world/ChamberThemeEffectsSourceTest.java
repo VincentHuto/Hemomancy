@@ -29,8 +29,6 @@ public final class ChamberThemeEffectsSourceTest {
 		String silentArchonEffects = Files.readString(SILENT_ARCHON_EFFECTS).replace("\r\n", "\n");
 		String lowtideEffects = Files.readString(LOWTIDE_EFFECTS).replace("\r\n", "\n");
 		String reference = Files.readString(REFERENCE).replace("\r\n", "\n");
-		String removedApotheosEffectsFile = "Apotheos" + "ChamberEffects.java";
-		String removedApotheosEffectsConstructor = "new Apotheos" + "ChamberEffects(";
 
 		assertFileExists("theme effects interface exists", "ChamberThemeEffects.java");
 		assertFileExists("render context exists", "ChamberThemeRenderContext.java");
@@ -40,7 +38,7 @@ public final class ChamberThemeEffectsSourceTest {
 		assertFileExists("archon revelation theme effects exists", "ArchonRevelationChamberEffects.java");
 		assertFileExists("qliphoth communion theme effects exists", "QliphothCommunionChamberEffects.java");
 		assertFileExists("silent archon theme effects exists", "SilentArchonChamberEffects.java");
-		assertFileDoesNotExist("apotheos custom theme effects were removed", removedApotheosEffectsFile);
+		assertFileExists("apotheos custom theme effects exists", "ApotheosChamberEffects.java");
 		assertFileExists("mnemonic lowtide effects exists", "MnemonicLowtideChamberEffects.java");
 
 		assertContains("renderer delegates sky rendering to active theme effects", renderer,
@@ -86,10 +84,10 @@ public final class ChamberThemeEffectsSourceTest {
 				"context.skyDistance()");
 		assertNotContains("lowtide effects should not place lake below physical floor", lowtideEffects,
 				"ChamberOfWillManager.FLOOR_Y");
-		assertContains("apotheos uses blank-slate effects", registry,
+		assertContains("apotheos uses dedicated floor-funnel effects", registry,
+				"new ApotheosChamberEffects(apotheos)");
+		assertNotContains("apotheos no longer uses blank-slate effects", registry,
 				"new BlankChamberThemeEffects(apotheos)");
-		assertNotContains("apotheos custom effects are not registered", registry,
-				removedApotheosEffectsConstructor);
 		assertContains("apotheos disables chamber overlay layers", registry,
 				".layers(0, 0, 0, 0)");
 		assertContains("apotheos uses black skybox color values", registry,

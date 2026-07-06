@@ -2,9 +2,12 @@ package com.vincenthuto.hemomancy.client.screen.tile.functional;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.vincenthuto.hemomancy.client.screen.util.InventoryPanelTextures;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.scar.IScars;
 import com.vincenthuto.hemomancy.common.menu.slot.ScarSlot;
 import com.vincenthuto.hemomancy.common.menu.slot.SelectiveEquipmentTypeSlot;
 import com.vincenthuto.hemomancy.common.menu.tile.functional.SporeImplantMenu;
+import com.vincenthuto.hemomancy.common.network.PacketHandler;
+import com.vincenthuto.hemomancy.common.network.capa.harbinger.ToggleEquipmentLayerVisibilityPacket;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.network.chat.Component;
@@ -32,6 +35,7 @@ public class SporeImplantScreen extends AbstractContainerScreen<SporeImplantMenu
 
 	private static final int TENDRIL_COUNT = 18;
 	private static final int SPORE_COUNT = 40;
+	private static final int LAYER_TOGGLE_SIZE = 7;
 
 	// Upper fungal area height (where scar slots sit)
 	private static final int FUNGAL_AREA_HEIGHT = 76;
@@ -96,8 +100,18 @@ public class SporeImplantScreen extends AbstractContainerScreen<SporeImplantMenu
 	public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
 		this.renderBackground(graphics, mouseX, mouseY, partialTicks);
 		super.render(graphics, mouseX, mouseY, partialTicks);
+		renderLayerToggleIcon(graphics, mouseX, mouseY);
 		this.renderTooltip(graphics, mouseX, mouseY);
+		renderLayerToggleTooltip(graphics, mouseX, mouseY);
 
+	}
+
+	@Override
+	public boolean mouseClicked(double mouseX, double mouseY, int button) {
+		if (handleLayerToggleClick(mouseX, mouseY, button)) {
+			return true;
+		}
+		return super.mouseClicked(mouseX, mouseY, button);
 	}
 
 	@Override
@@ -341,6 +355,64 @@ public class SporeImplantScreen extends AbstractContainerScreen<SporeImplantMenu
 		else if (slot instanceof ScarSlot) {
 			gfx.fill(sx, sy, sx + 16, sy + 16, 0x15AA4400);
 		}
+	}
+
+	private void renderLayerToggleIcon(GuiGraphics gfx, int mouseX, int mouseY) {
+		Slot slot = this.menu.slots.get(SporeImplantMenu.FUNGAL_SLOT_UI);
+		int iconX = this.leftPos + slot.x + 16;
+		int iconY = this.topPos + slot.y - 5;
+		boolean visible = this.menu.equipment.isRenderLayerVisible(IScars.FUNGAL_SLOT);
+		boolean hovered = isMouseOver(iconX, iconY, LAYER_TOGGLE_SIZE, LAYER_TOGGLE_SIZE, mouseX, mouseY);
+		drawLayerVisibilityIcon(gfx, iconX, iconY, visible, hovered);
+	}
+
+	private void drawLayerVisibilityIcon(GuiGraphics gfx, int x, int y, boolean visible, boolean hovered) {
+		int outline = visible ? 0xFFE8A765 : 0xFF6A4323;
+		int pupil = visible ? 0xFFFFD998 : 0xFF8A5A30;
+		int shadow = hovered ? 0xAA3A1A08 : 0x88140A02;
+
+		gfx.fill(x, y, x + LAYER_TOGGLE_SIZE, y + LAYER_TOGGLE_SIZE, shadow);
+		gfx.fill(x + 1, y + 2, x + 6, y + 3, outline);
+		gfx.fill(x, y + 3, x + 2, y + 4, outline);
+		gfx.fill(x + 5, y + 3, x + 7, y + 4, outline);
+		gfx.fill(x + 1, y + 4, x + 6, y + 5, outline);
+		gfx.fill(x + 3, y + 3, x + 4, y + 4, pupil);
+		if (!visible) {
+			gfx.fill(x + 1, y + 5, x + 2, y + 6, 0xFFFFAA22);
+			gfx.fill(x + 2, y + 4, x + 3, y + 5, 0xFFFFAA22);
+			gfx.fill(x + 3, y + 3, x + 4, y + 4, 0xFFFFAA22);
+			gfx.fill(x + 4, y + 2, x + 5, y + 3, 0xFFFFAA22);
+			gfx.fill(x + 5, y + 1, x + 6, y + 2, 0xFFFFAA22);
+		}
+	}
+
+	private void renderLayerToggleTooltip(GuiGraphics gfx, int mouseX, int mouseY) {
+		if (!isOverLayerToggle(mouseX, mouseY)) {
+			return;
+		}
+		String key = this.menu.equipment.isRenderLayerVisible(IScars.FUNGAL_SLOT)
+				? "screen.hemomancy.scarlet_vanity.layer.hide"
+				: "screen.hemomancy.scarlet_vanity.layer.show";
+		gfx.renderTooltip(this.font, Component.translatable(key), mouseX, mouseY);
+	}
+
+	private boolean handleLayerToggleClick(double mouseX, double mouseY, int button) {
+		if (button != 0 || !isOverLayerToggle(mouseX, mouseY)) {
+			return false;
+		}
+		PacketHandler.sendToServer(new ToggleEquipmentLayerVisibilityPacket(IScars.FUNGAL_SLOT));
+		return true;
+	}
+
+	private boolean isOverLayerToggle(double mouseX, double mouseY) {
+		Slot slot = this.menu.slots.get(SporeImplantMenu.FUNGAL_SLOT_UI);
+		int iconX = this.leftPos + slot.x + 16;
+		int iconY = this.topPos + slot.y - 5;
+		return isMouseOver(iconX, iconY, LAYER_TOGGLE_SIZE, LAYER_TOGGLE_SIZE, mouseX, mouseY);
+	}
+
+	private static boolean isMouseOver(int x, int y, int width, int height, double mouseX, double mouseY) {
+		return mouseX >= x && mouseX < x + width && mouseY >= y && mouseY < y + height;
 	}
 
 }

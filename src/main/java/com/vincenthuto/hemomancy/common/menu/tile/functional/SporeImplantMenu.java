@@ -1,6 +1,7 @@
 package com.vincenthuto.hemomancy.common.menu.tile.functional;
 
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.equipment.IHarbingerEquipmentItemHandler;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.scar.IScars;
 import com.vincenthuto.hemomancy.common.init.ContainerInit;
 import com.vincenthuto.hemomancy.common.item.harbinger.scar.fungal.ItemFungalScar;
@@ -22,6 +23,7 @@ public class SporeImplantMenu extends AbstractContainerMenu {
 	private final Player player;
 
 	public IScars scars;
+	public IHarbingerEquipmentItemHandler equipment;
 
 	public SporeImplantMenu(final int windowId, final Inventory playerInventory) {
 		this(windowId, playerInventory.player.level(), playerInventory.player.blockPosition(), playerInventory,
@@ -37,6 +39,7 @@ public class SporeImplantMenu extends AbstractContainerMenu {
 		this.player = playerInventory.player;
 
 		this.scars = HemoCapabilityAccess.requireScarState(this.player);
+		this.equipment = HemoCapabilityAccess.requireEquipment(this.player);
 
 		// Slot layout (scar/fungus slots only):
 		// 0        : fungal scar slot (scar cap slot 0) — center

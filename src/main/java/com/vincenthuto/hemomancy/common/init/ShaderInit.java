@@ -82,6 +82,18 @@ public class ShaderInit {
 			DefaultVertexFormat.POSITION_TEX_COLOR, "HemoTime", "HoleSeed", "LensStrength", "RingIntensity",
 			"FinalHole");
 
+	public static ShaderHolder APOTHEOS_FLOOR_FUNNEL = new ShaderHolder(Hemomancy.rloc("world/apotheos_floor_funnel"),
+			DefaultVertexFormat.POSITION_TEX_COLOR, "HemoTime", "FunnelSeed", "RingRise", "RingSpeed",
+			"MeatNoiseScale", "HighlightIntensity", "CenterVoidRadius");
+
+	public static ShaderHolder APOTHEOS_PORTAL_GLOW = new ShaderHolder(Hemomancy.rloc("world/apotheos_portal_glow"),
+			DefaultVertexFormat.POSITION_TEX_COLOR, "HemoTime", "GlowSeed", "GlowIntensity", "GlowRadius",
+			"CenterVoidRadius");
+
+	public static ShaderHolder APOTHEOS_PORTAL_HAZE = new ShaderHolder(Hemomancy.rloc("world/apotheos_portal_haze"),
+			DefaultVertexFormat.POSITION_TEX_COLOR, "HemoTime", "HazeSeed", "OutwardSpeed", "HazeIntensity",
+			"CenterVoidRadius");
+
 	@SubscribeEvent
 	public static void register(RegisterShadersEvent event) throws IOException {
         ResourceProvider provider = event.getResourceProvider();
@@ -112,6 +124,9 @@ public class ShaderInit {
         registerShader(event, SILENT_ARCHON_FOG.createInstance(provider));
         registerShader(event, SILENT_ARCHON_STORM_CLOUD.createInstance(provider));
         registerShader(event, QLIPHOTH_BLACK_HOLE.createInstance(provider));
+        registerShader(event, APOTHEOS_FLOOR_FUNNEL.createInstance(provider));
+        registerShader(event, APOTHEOS_PORTAL_GLOW.createInstance(provider));
+        registerShader(event, APOTHEOS_PORTAL_HAZE.createInstance(provider));
 
 	}
 	   public static void registerShader(RegisterShadersEvent event, ExtendedShaderInstance extendedShaderInstance) {

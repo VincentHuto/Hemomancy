@@ -3,6 +3,7 @@ package com.vincenthuto.hemomancy.client.render.layer.player;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.equipment.IRenderHarbingerEquipment;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.scar.IScars;
 
 import net.minecraft.client.model.PlayerModel;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -29,6 +30,9 @@ public class RenderScarsLayer<T extends Player, M extends PlayerModel<T>> extend
 
 	private void dispatchRenders(PoseStack matrix, int packedLightIn, MultiBufferSource iRenderTypeBuffer,
 	                             Player player, float partialTicks) {
+		if (!isFungalScarLayerVisible(player)) {
+			return;
+		}
 		HemoCapabilityAccess.getScarState(player).ifPresent(scars -> {
 			ItemStack stack = scars.getFungalScar();
 			if (!stack.isEmpty()) {
@@ -39,5 +43,11 @@ public class RenderScarsLayer<T extends Player, M extends PlayerModel<T>> extend
 				}
 			}
 		});
+	}
+
+	private boolean isFungalScarLayerVisible(Player player) {
+		return HemoCapabilityAccess.getEquipment(player)
+				.map(equipment -> equipment.isRenderLayerVisible(IScars.FUNGAL_SLOT))
+				.orElse(true);
 	}
 }

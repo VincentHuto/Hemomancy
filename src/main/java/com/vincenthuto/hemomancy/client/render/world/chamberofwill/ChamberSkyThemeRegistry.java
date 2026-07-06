@@ -88,7 +88,7 @@ public final class ChamberSkyThemeRegistry {
 				.layers(0, 0, 0, 0)
 				.toggles(true, false, false, false)
 				.build();
-		register(apotheos, new BlankChamberThemeEffects(apotheos));
+		register(apotheos, new ApotheosChamberEffects(apotheos));
 	}
 
 	private ChamberSkyThemeRegistry() {

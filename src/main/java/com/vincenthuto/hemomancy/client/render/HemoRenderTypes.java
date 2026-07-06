@@ -433,6 +433,101 @@ public final class HemoRenderTypes {
 						.createCompositeState(false));
 	}
 
+	public static RenderType apotheosFloorFunnel(float gameTime, float funnelSeed, float ringRise, float ringSpeed,
+			float meatNoiseScale, float highlightIntensity, float centerVoidRadius) {
+		RenderStateShard.TexturingStateShard uniforms = new RenderStateShard.TexturingStateShard(
+				"apotheos_floor_funnel_uniforms",
+				() -> {
+					ShaderInstance shader = ShaderInit.APOTHEOS_FLOOR_FUNNEL.getInstance().get();
+					setUniform(shader, "HemoTime", gameTime);
+					setUniform(shader, "FunnelSeed", funnelSeed);
+					setUniform(shader, "RingRise", ringRise);
+					setUniform(shader, "RingSpeed", ringSpeed);
+					setUniform(shader, "MeatNoiseScale", meatNoiseScale);
+					setUniform(shader, "HighlightIntensity", highlightIntensity);
+					setUniform(shader, "CenterVoidRadius", centerVoidRadius);
+				},
+				() -> {
+					ShaderInstance shader = ShaderInit.APOTHEOS_FLOOR_FUNNEL.getInstance().get();
+					if (shader instanceof ExtendedShaderInstance extended) {
+						extended.setUniformDefaults();
+					}
+				});
+		return RenderType.create("apotheos_floor_funnel",
+				DefaultVertexFormat.POSITION_TEX_COLOR, VertexFormat.Mode.QUADS, 32768, false, true,
+				RenderType.CompositeState.builder()
+						.setShaderState(ShaderInit.APOTHEOS_FLOOR_FUNNEL.getShard())
+						.setTexturingState(uniforms)
+						.setTransparencyState(RenderType.TRANSLUCENT_TRANSPARENCY)
+						.setDepthTestState(RenderType.NO_DEPTH_TEST)
+						.setWriteMaskState(RenderType.COLOR_WRITE)
+						.setCullState(RenderType.NO_CULL)
+						.setLightmapState(RenderType.NO_LIGHTMAP)
+						.createCompositeState(false));
+	}
+
+	public static RenderType apotheosPortalGlow(float gameTime, float glowSeed, float glowIntensity, float glowRadius,
+			float centerVoidRadius) {
+		RenderStateShard.TexturingStateShard uniforms = new RenderStateShard.TexturingStateShard(
+				"apotheos_portal_glow_uniforms",
+				() -> {
+					ShaderInstance shader = ShaderInit.APOTHEOS_PORTAL_GLOW.getInstance().get();
+					setUniform(shader, "HemoTime", gameTime);
+					setUniform(shader, "GlowSeed", glowSeed);
+					setUniform(shader, "GlowIntensity", glowIntensity);
+					setUniform(shader, "GlowRadius", glowRadius);
+					setUniform(shader, "CenterVoidRadius", centerVoidRadius);
+				},
+				() -> {
+					ShaderInstance shader = ShaderInit.APOTHEOS_PORTAL_GLOW.getInstance().get();
+					if (shader instanceof ExtendedShaderInstance extended) {
+						extended.setUniformDefaults();
+					}
+				});
+		return RenderType.create("apotheos_portal_glow",
+				DefaultVertexFormat.POSITION_TEX_COLOR, VertexFormat.Mode.QUADS, 32768, false, true,
+				RenderType.CompositeState.builder()
+						.setShaderState(ShaderInit.APOTHEOS_PORTAL_GLOW.getShard())
+						.setTexturingState(uniforms)
+						.setTransparencyState(RenderType.TRANSLUCENT_TRANSPARENCY)
+						.setDepthTestState(RenderType.NO_DEPTH_TEST)
+						.setWriteMaskState(RenderType.COLOR_WRITE)
+						.setCullState(RenderType.NO_CULL)
+						.setLightmapState(RenderType.NO_LIGHTMAP)
+						.createCompositeState(false));
+	}
+
+	public static RenderType apotheosPortalHaze(float gameTime, float hazeSeed, float outwardSpeed,
+			float hazeIntensity, float centerVoidRadius) {
+		RenderStateShard.TexturingStateShard uniforms = new RenderStateShard.TexturingStateShard(
+				"apotheos_portal_haze_uniforms",
+				() -> {
+					ShaderInstance shader = ShaderInit.APOTHEOS_PORTAL_HAZE.getInstance().get();
+					setUniform(shader, "HemoTime", gameTime);
+					setUniform(shader, "HazeSeed", hazeSeed);
+					setUniform(shader, "OutwardSpeed", outwardSpeed);
+					setUniform(shader, "HazeIntensity", hazeIntensity);
+					setUniform(shader, "CenterVoidRadius", centerVoidRadius);
+				},
+				() -> {
+					ShaderInstance shader = ShaderInit.APOTHEOS_PORTAL_HAZE.getInstance().get();
+					if (shader instanceof ExtendedShaderInstance extended) {
+						extended.setUniformDefaults();
+					}
+				});
+		return RenderType.create("apotheos_portal_haze",
+				DefaultVertexFormat.POSITION_TEX_COLOR, VertexFormat.Mode.QUADS, 32768, false, true,
+				RenderType.CompositeState.builder()
+						.setShaderState(ShaderInit.APOTHEOS_PORTAL_HAZE.getShard())
+						.setTexturingState(uniforms)
+						.setTransparencyState(RenderType.TRANSLUCENT_TRANSPARENCY)
+						.setDepthTestState(RenderType.NO_DEPTH_TEST)
+						.setWriteMaskState(RenderType.COLOR_WRITE)
+						.setCullState(RenderType.NO_CULL)
+						.setLightmapState(RenderType.NO_LIGHTMAP)
+						.createCompositeState(false));
+	}
+
 	public static RenderType mnemonicLowtideSkybox(float gameTime, float faceSeed, float coverageBias,
 			float tunnelScale, float bubbleScale, float tendrilIntensity) {
 		RenderStateShard.TexturingStateShard uniforms = new RenderStateShard.TexturingStateShard(

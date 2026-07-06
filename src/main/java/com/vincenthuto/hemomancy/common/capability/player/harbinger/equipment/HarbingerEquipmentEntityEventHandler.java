@@ -3,6 +3,7 @@ package com.vincenthuto.hemomancy.common.capability.player.harbinger.equipment;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.scar.IScars;
 import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillPointHelper;
 import com.vincenthuto.hemomancy.common.init.AttributeInit;
 import com.vincenthuto.hemomancy.common.init.EffectInit;
@@ -191,6 +192,7 @@ public class HarbingerEquipmentEntityEventHandler {
         HemoCapabilityAccess.getEquipment(player).ifPresent(equipment -> {
             PacketDistributor.sendToPlayersTrackingEntityAndSelf(player,
                     new SyncEquipmentLayerVisibilityPacket(player.getId(),
+                            equipment.isRenderLayerVisible(IScars.FUNGAL_SLOT),
                             equipment.isRenderLayerVisible(com.vincenthuto.hemomancy.common.menu.HarbingerEquipmentMenu.JAR_SLOT_INDEX),
                             equipment.isRenderLayerVisible(com.vincenthuto.hemomancy.common.menu.HarbingerEquipmentMenu.CHARM_SLOT_INDEX),
                             equipment.isRenderLayerVisible(com.vincenthuto.hemomancy.common.menu.HarbingerEquipmentMenu.GOURD_SLOT_INDEX)));
@@ -201,6 +203,7 @@ public class HarbingerEquipmentEntityEventHandler {
         HemoCapabilityAccess.getEquipment(source).ifPresent(equipment -> {
             PacketDistributor.sendToPlayer(receiver,
                     new SyncEquipmentLayerVisibilityPacket(source.getId(),
+                            equipment.isRenderLayerVisible(IScars.FUNGAL_SLOT),
                             equipment.isRenderLayerVisible(com.vincenthuto.hemomancy.common.menu.HarbingerEquipmentMenu.JAR_SLOT_INDEX),
                             equipment.isRenderLayerVisible(com.vincenthuto.hemomancy.common.menu.HarbingerEquipmentMenu.CHARM_SLOT_INDEX),
                             equipment.isRenderLayerVisible(com.vincenthuto.hemomancy.common.menu.HarbingerEquipmentMenu.GOURD_SLOT_INDEX)));
