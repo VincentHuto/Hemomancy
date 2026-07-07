@@ -117,7 +117,7 @@ public class MnemonicReliquaryScreen extends AbstractContainerScreen<MnemonicRel
 		for (Item item : BuiltInRegistries.ITEM) {
 			if (item instanceof BloodMemoryItem memItem) {
 				BloodManipulation manip = memItem.getManip();
-				if (manip != null && !memItem.isRetiredMemoryItem()) {
+				if (manip != null && !ManipulationRetirementRules.isRetiredManipulation(manip)) {
 					manipItemCache.put(manip.getName(), new ItemStack(item));
 				}
 			}

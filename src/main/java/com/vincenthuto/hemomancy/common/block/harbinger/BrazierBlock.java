@@ -6,6 +6,7 @@ import com.vincenthuto.hemomancy.common.block.shared.WaterloggedBlockSupport;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodVolumeEvents;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
+import com.vincenthuto.hemomancy.common.item.harbinger.memories.LivingWeaponGraftRite;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.BloodAbsorptionItem;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.BloodProjectionItem;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.LivingStaffItem;
@@ -266,7 +267,7 @@ public class BrazierBlock extends Block implements EntityBlock, SimpleWaterlogge
 	@Override
 	public double absorbBloodFromBlock(ServerLevel level, BlockPos pos, BlockState state, ServerPlayer player,
 			double maxAmount) {
-		return 0.0D;
+		return LivingWeaponGraftRite.tryAbsorb(level, pos, state, player, maxAmount);
 	}
 
 	@Override

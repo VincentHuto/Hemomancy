@@ -17,6 +17,8 @@ public final class MnemonicReliquaryConjurationIconSourceTest {
 				screen, "import com.vincenthuto.hemomancy.common.manipulation.ferric.ConjurationManip;");
 		assertContains("reliquary should centralize manipulation icon stack lookup",
 				screen, "private ItemStack iconStackFor(BloodManipulation manip)");
+		assertContains("reliquary should cache hidden active-manipulation memory icons",
+				screen, "!ManipulationRetirementRules.isRetiredManipulation(manip)");
 		assertContains("reliquary should fall back to the conjured item stack",
 				screen, "manip instanceof ConjurationManip conjuration");
 		assertContains("reliquary should render conjuration manipulations with their conjured item",

@@ -11,6 +11,7 @@ import com.vincenthuto.hemomancy.common.block.inscription.DiscoveryInscriptionLo
 import com.vincenthuto.hemomancy.common.entity.HemoEntityPredicates;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.inquiry.ItemInquiryLoader;
 import com.vincenthuto.hemomancy.common.init.*;
+import com.vincenthuto.hemomancy.common.item.harbinger.memories.LivingWeaponGraftItem;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.worldgen.ChamberOfWillManager;
 import com.vincenthuto.hemomancy.config.HemoConfig;
@@ -207,6 +208,7 @@ public class Hemomancy {
                     populator.accept(item.get());
                 }
             });
+            LivingWeaponGraftItem.creativeStacks().forEach(populator::accept);
             var b = BlockInit.getAllBlockEntriesAsStream();
             b.forEach(block -> {
                 if (shouldShowBlockInCreativeTab(block.get())) {
@@ -275,9 +277,21 @@ public class Hemomancy {
     private static boolean shouldShowItemInCreativeTab(Item item) {
         return item != ItemInit.active_befouling_ash.get()
                 && item != ItemInit.active_smouldering_ash.get()
+                && item != ItemInit.living_weapon_graft.get()
                 && item != ItemInit.memory_conjure_living_staff.get()
+                && !isLegacyLivingWeaponMemory(item)
                 && !ManipulationRetirementRules.isRetiredMemoryItem(item)
                 && !isWipItem(item);
+    }
+
+    private static boolean isLegacyLivingWeaponMemory(Item item) {
+        return item == ItemInit.memory_living_blade.get()
+                || item == ItemInit.memory_living_axe.get()
+                || item == ItemInit.memory_living_spear.get()
+                || item == ItemInit.memory_living_claws.get()
+                || item == ItemInit.memory_living_crossbow.get()
+                || item == ItemInit.memory_living_torch.get()
+                || item == ItemInit.memory_living_flail.get();
     }
 
     private static boolean isWipItem(Item item) {

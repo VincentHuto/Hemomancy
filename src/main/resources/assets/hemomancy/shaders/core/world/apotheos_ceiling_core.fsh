@@ -14,6 +14,7 @@ in float ceilingAngleT;
 in float ceilingRadialT;
 in float ceilingBowlDepth;
 in float organicShift;
+in float innerSurfaceIrregularity;
 
 out vec4 fragColor;
 
@@ -153,6 +154,12 @@ void main() {
     color += vec3(0.95, 0.92, 0.88) * whiteTrace * 0.55;
     color += vec3(1.0, 0.74, 0.055) * yellowBiolume * 0.28;
     color += vec3(0.72, 1.0, 0.16) * greenOrbGlow * 0.38;
+    float animatedRidgeGleam = sin(time * 3.4 + ceilingAngleT * 34.0 - ceilingRadialT * 21.0)
+            * sin(time * 1.7 - ceilingAngleT * 11.0 + ceilingRadialT * 29.0);
+    float innerSurfaceRidgeShade = clamp(abs(innerSurfaceIrregularity) * 9.5
+            + animatedRidgeGleam * abs(innerSurfaceIrregularity) * 2.2, 0.0, 1.0);
+    color = mix(color, color * vec3(0.76, 0.58, 0.66) + vec3(0.13, 0.012, 0.020),
+            innerSurfaceRidgeShade * 0.22);
     color = mix(color * (0.94 + planetoidLayerDepth * 0.24), color * 0.76 + vec3(0.12, 0.010, 0.055),
             planetoidLimbShade * 0.28);
     color *= 0.78 + ceilingRadialT * 0.18 + ceilingBowlDepth * 0.14 + organicShift * 0.34;

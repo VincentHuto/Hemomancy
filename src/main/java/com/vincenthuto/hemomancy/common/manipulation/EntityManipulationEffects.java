@@ -7,6 +7,7 @@ import com.vincenthuto.hemomancy.common.entity.projectile.BloodShotEntity;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.init.BlockInit;
 import com.vincenthuto.hemomancy.common.init.EffectInit;
+import com.vincenthuto.hemomancy.common.item.harbinger.memories.LivingWeaponGraftRecipeUnlockEvents;
 import com.vincenthuto.hemomancy.common.manipulation.congeatio.TemporaryIceManager;
 import com.vincenthuto.hemomancy.common.manipulation.ductilis.DuctilisLightningEffects;
 import com.vincenthuto.hemomancy.common.manipulation.ductilis.SynapticJoltManip;
@@ -173,6 +174,9 @@ public final class EntityManipulationEffects {
 		context.level().playSound(null, context.origin(), SoundEvents.FIRECHARGE_USE, SoundSource.HOSTILE, 0.9F, 0.8F);
 		sendParticles(context.level(), context.caster().position().add(0.0D, 0.8D, 0.0D), 32,
 				new ParticleColor(245, 95, 10), 3.0D);
+		if (hits > 0) {
+			LivingWeaponGraftRecipeUnlockEvents.onTorchAlignedManipulation(context.caster());
+		}
 		return hits > 0;
 	}
 
@@ -193,6 +197,7 @@ public final class EntityManipulationEffects {
 		context.level().playSound(null, context.origin(), SoundEvents.FIRECHARGE_USE, SoundSource.HOSTILE, 0.9F, 0.6F);
 		sendParticles(context.level(), context.caster().position().add(0.0D, 0.7D, 0.0D), 40,
 				new ParticleColor(255, 140, 20), 1.4D);
+		LivingWeaponGraftRecipeUnlockEvents.onTorchAlignedManipulation(context.caster());
 		return true;
 	}
 
@@ -245,6 +250,9 @@ public final class EntityManipulationEffects {
 			}
 		}
 		context.level().playSound(null, context.origin(), SoundEvents.WARDEN_HEARTBEAT, SoundSource.HOSTILE, 0.8F, 0.6F);
+		if (tagged > 0) {
+			LivingWeaponGraftRecipeUnlockEvents.onSpearAlignedManipulation(context.caster());
+		}
 		return tagged > 0;
 	}
 
@@ -303,6 +311,7 @@ public final class EntityManipulationEffects {
 		context.level().playSound(null, target.blockPosition(), SoundEvents.AMETHYST_BLOCK_CHIME, SoundSource.HOSTILE,
 				0.75F, concealed ? 1.75F : 1.45F);
 		sendParticles(context.level(), target.getEyePosition(), 20, new ParticleColor(255, 235, 175), 0.8D);
+		LivingWeaponGraftRecipeUnlockEvents.onSpearAlignedManipulation(context.caster());
 		return true;
 	}
 
@@ -314,6 +323,9 @@ public final class EntityManipulationEffects {
 			glowed++;
 		}
 		context.level().playSound(null, context.origin(), SoundEvents.BEACON_ACTIVATE, SoundSource.HOSTILE, 0.5F, 1.8F);
+		if (glowed > 0) {
+			LivingWeaponGraftRecipeUnlockEvents.onSpearAlignedManipulation(context.caster());
+		}
 		return glowed > 0 || !context.playerCast();
 	}
 
@@ -361,6 +373,7 @@ public final class EntityManipulationEffects {
 		target.addEffect(new MobEffectInstance(MobEffects.WITHER, 120, 1, false, true));
 		context.level().playSound(null, context.origin(), SoundEvents.WITHER_HURT, SoundSource.HOSTILE, 0.7F, 1.6F);
 		sendParticles(context.level(), midpoint(context.caster(), target), 20, new ParticleColor(0, 75, 0), 0.9D);
+		LivingWeaponGraftRecipeUnlockEvents.onAxeAlignedManipulation(context.caster());
 		return true;
 	}
 
@@ -428,6 +441,9 @@ public final class EntityManipulationEffects {
 		context.level().playSound(null, context.origin(), SoundEvents.GLASS_PLACE, SoundSource.HOSTILE, 1.0F, 0.7F);
 		sendParticles(context.level(), context.caster().position().add(0.0D, 0.7D, 0.0D), 36,
 				new ParticleColor(145, 215, 255), 3.0D);
+		if (hits > 0) {
+			LivingWeaponGraftRecipeUnlockEvents.onFlailAlignedManipulation(context.caster());
+		}
 		return hits > 0;
 	}
 
@@ -462,6 +478,9 @@ public final class EntityManipulationEffects {
 			}
 		}
 		context.level().playSound(null, context.origin(), SoundEvents.GLASS_PLACE, SoundSource.HOSTILE, 0.8F, 1.3F);
+		if (controlled) {
+			LivingWeaponGraftRecipeUnlockEvents.onFlailAlignedManipulation(context.caster());
+		}
 		return controlled;
 	}
 
@@ -517,6 +536,7 @@ public final class EntityManipulationEffects {
 		context.level().playSound(null, context.origin(), SoundEvents.FIRECHARGE_USE, SoundSource.HOSTILE, 0.8F, 1.0F);
 		sendParticles(context.level(), target.position().add(0.0D, target.getBbHeight() * 0.5D, 0.0D), 26,
 				new ParticleColor(230, 105, 20), 1.1D);
+		LivingWeaponGraftRecipeUnlockEvents.onTorchAlignedManipulation(context.caster());
 		return true;
 	}
 

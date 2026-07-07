@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "hemomancy:item/hematic_memory",
+    "layer1": "hemomancy:item/memories/memory_living_axe_overlay"
+  }
+}

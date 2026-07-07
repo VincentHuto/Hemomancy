@@ -11,12 +11,14 @@ import com.vincenthuto.hemomancy.common.block.shared.BlockBloodInteractions;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.livingstaff.ILivingStaffProgress;
 import com.vincenthuto.hemomancy.common.entity.mob.monster.will.WillEntity;
+import com.vincenthuto.hemomancy.common.item.component.LivingWeaponGraftData;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.BloodAbsorptionItem;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.ICellHand;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.LivingStaffFocusProfile;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.LivingStaffFocusRules;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.LivingStaffItem;
 import com.vincenthuto.hutoslib.client.HLClientUtils;
+import com.vincenthuto.hutoslib.client.particle.factory.GlowParticleFactory;
 import com.vincenthuto.hutoslib.client.particle.util.HLParticleUtils;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import com.vincenthuto.hutoslib.math.Vector3;
@@ -24,6 +26,8 @@ import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.particle.Particle;
 import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.core.particles.ItemParticleOption;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.HumanoidArm;
@@ -175,6 +179,68 @@ public final class CellHandParticleEffects {
 		}
 	}
 
+	public static void spawnGraftRiteItemParticles(ItemStack graftStack, Vec3 source) {
+		Minecraft mc = Minecraft.getInstance();
+		if (mc.isPaused() || graftStack.isEmpty()) {
+			return;
+		}
+		LocalPlayer player = mc.player;
+		if (player == null || !player.isUsingItem() || player.getUseItemRemainingTicks() <= 0) {
+			return;
+		}
+		ItemStack activeStack = player.getUseItem();
+		if (!isAbsorptionMode(player, activeStack)) {
+			return;
+		}
+
+		HumanoidArm activeArm = player.getUsedItemHand() == InteractionHand.MAIN_HAND
+				? player.getMainArm()
+				: player.getMainArm().getOpposite();
+		Vec3 origin = mc.options.getCameraType().isFirstPerson()
+				? firstPersonAnchorToWorld(calculateFirstPersonHandAnchor(activeArm))
+				: calculateThirdPersonHandOrigin(player, activeArm);
+		spawnItemParticlesAlongAbsorptionPath(mc, graftStack, origin, source);
+	}
+
+	private static void spawnItemParticlesAlongAbsorptionPath(Minecraft mc, ItemStack graftStack, Vec3 origin,
+			Vec3 source) {
+		if (mc.level == null) {
+			return;
+		}
+		Vec3 path = source.subtract(origin);
+		if (path.lengthSqr() < 0.0001D) {
+			return;
+		}
+		Random rand = new Random();
+		Vec3 inwardVelocity = origin.subtract(source).normalize().scale(0.035D);
+		ParticleColor graftColor = graftTendencyColor(graftStack);
+		for (int i = 0; i < 5; i++) {
+			double pathOffset = 0.18D + rand.nextDouble() * 0.72D;
+			Vec3 side = path.cross(new Vec3(0.0D, 1.0D, 0.0D));
+			if (side.lengthSqr() < 0.0001D) {
+				side = new Vec3(1.0D, 0.0D, 0.0D);
+			}
+			side = side.normalize().scale((rand.nextDouble() - 0.5D) * 0.08D);
+			Vec3 point = origin.add(path.scale(pathOffset)).add(side);
+			double velocityX = inwardVelocity.x + (rand.nextDouble() - 0.5D) * 0.025D;
+			double velocityY = inwardVelocity.y + (rand.nextDouble() - 0.5D) * 0.025D;
+			double velocityZ = inwardVelocity.z + (rand.nextDouble() - 0.5D) * 0.025D;
+			mc.level.addParticle(new ItemParticleOption(ParticleTypes.ITEM, graftStack),
+					point.x, point.y, point.z,
+					velocityX, velocityY, velocityZ);
+			mc.level.addParticle(GlowParticleFactory.createData(graftColor),
+					point.x + side.x * 0.35D, point.y + side.y * 0.35D, point.z + side.z * 0.35D,
+					velocityX * 0.75D, velocityY * 0.75D, velocityZ * 0.75D);
+		}
+	}
+
+	private static ParticleColor graftTendencyColor(ItemStack graftStack) {
+		return LivingWeaponGraftData.fromStack(graftStack)
+				.map(LivingWeaponGraftData::form)
+				.map(form -> form.manipulationHolder().get().getTend().getColor())
+				.orElse(ParticleColor.BLOOD);
+	}
+
 	private static void spawnWillAbsorptionTendencySpiralParticle(Minecraft mc, Vec3 origin, WillEntity will,
 			Random rand, Optional<Vec3> firstPersonTargetAnchor) {
 		double age = will.tickCount + HLClientUtils.getPartialTicks();
@@ -307,5 +373,17 @@ public final class CellHandParticleEffects {
 		Vec3 up = new Vec3(camera.getUpVector()).scale(localOffset.y);
 		Vec3 forward = new Vec3(camera.getLookVector()).scale(localOffset.z);
 		return camera.getPosition().add(right).add(up).add(forward);
+	}
+
+	private static Vec3 calculateThirdPersonHandOrigin(LivingEntity living, HumanoidArm side) {
+		double bodyYaw = Math.toRadians(living.yBodyRot);
+		Vec3 forward = new Vec3(-Math.sin(bodyYaw), 0.0D, Math.cos(bodyYaw));
+		Vec3 right = new Vec3(-forward.z, 0.0D, forward.x);
+		double sideOffset = side == HumanoidArm.RIGHT ? 0.36D : -0.36D;
+
+		return living.position()
+				.add(0.0D, living.getBbHeight() * 0.72D, 0.0D)
+				.add(forward.scale(0.46D))
+				.add(right.scale(sideOffset));
 	}
 }

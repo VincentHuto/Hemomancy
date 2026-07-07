@@ -12,6 +12,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.Tesselator;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.blaze3d.vertex.VertexFormat;
+import com.mojang.math.Axis;
 import com.vincenthuto.hemomancy.client.render.HemoRenderTypes;
 import com.vincenthuto.hutoslib.client.particle.data.TendrilGeometry;
 import com.vincenthuto.hutoslib.common.tendril.TendrilEffectConfig;
@@ -72,11 +73,17 @@ final class ApotheosChamberEffects extends AbstractChamberThemeEffects {
 	private static final float APOTHEOS_CEILING_CORE_RADIUS_SCALE = 0.82F;
 	private static final float APOTHEOS_CEILING_ATMOSPHERE_RADIUS_SCALE = 1.1F;
 	private static final float APOTHEOS_CEILING_ATMOSPHERE_Y_OFFSET_SCALE = -0.045F;
-	private static final float APOTHEOS_CEILING_CORE_UNDULATION_INTENSITY = 1.18F;
+
+	private static final float APOTHEOS_CEILING_CORE_UNDULATION_INTENSITY = 0.18F;
+	private static final float APOTHEOS_CEILING_CORE_BODY_YAW_SPEED = 0.82F;
+	private static final float APOTHEOS_CEILING_CORE_BODY_PITCH_SPEED = 0F;
+	private static final float APOTHEOS_CEILING_CORE_BODY_ROLL_SPEED = -0F;
+	private static final float APOTHEOS_CEILING_CORE_INNER_IRREGULARITY_SCALE = 0.026F;
+	private static final float APOTHEOS_CEILING_CORE_INNER_RIDGE_SCALE = 0.008F;
 	private static final float APOTHEOS_CEILING_ATMOSPHERE_STORM_INTENSITY = 1.45F;
-	private static final float APOTHEOS_CEILING_ATMOSPHERE_OPACITY = 0.18F;
+	private static final float APOTHEOS_CEILING_ATMOSPHERE_OPACITY = 0.28F;
 	private static final float APOTHEOS_CEILING_CORE_CENTER_ANGLE_T = 0.5F;
-	private static final float APOTHEOS_CEILING_CORE_CENTER_RADIAL_EPSILON = 0.0001F;
+	private static final float APOTHEOS_CEILING_CORE_CENTER_RADIAL_EPSILON = 0.001F;
 
 	private static final float APOTHEOS_CEILING_OUTWARD_TENDRIL_ROOT_RADIAL_T = 0.56F;
 	private static final float APOTHEOS_CEILING_OUTWARD_TENDRIL_MIN_LENGTH_MULTIPLIER = 0.88F;
@@ -238,7 +245,15 @@ final class ApotheosChamberEffects extends AbstractChamberThemeEffects {
 				APOTHEOS_CEILING_YELLOW_GLOW_INTENSITY, APOTHEOS_CEILING_GREEN_ORB_INTENSITY,
 				APOTHEOS_CEILING_CORE_UNDULATION_INTENSITY);
 		VertexConsumer consumer = buffer.getBuffer(renderType);
+		poseStack.pushPose();
+		float coreCenterY = apotheosCeilingCoreCenterY(skyDistance);
+		poseStack.translate(0.0F, coreCenterY, 0.0F);
+		poseStack.mulPose(Axis.YP.rotationDegrees(time * APOTHEOS_CEILING_CORE_BODY_YAW_SPEED));
+		poseStack.mulPose(Axis.XP.rotationDegrees(time * APOTHEOS_CEILING_CORE_BODY_PITCH_SPEED));
+		poseStack.mulPose(Axis.ZP.rotationDegrees(time * APOTHEOS_CEILING_CORE_BODY_ROLL_SPEED));
+		poseStack.translate(0.0F, -coreCenterY, 0.0F);
 		emitApotheosCeilingCoreMesh(consumer, poseStack.last().pose(), skyDistance);
+		poseStack.popPose();
 		buffer.endBatch(renderType);
 
 		RenderSystem.depthMask(true);
@@ -618,9 +633,11 @@ final class ApotheosChamberEffects extends AbstractChamberThemeEffects {
 				? APOTHEOS_CEILING_CORE_CENTER_ANGLE_T
 				: angleT;
 		float angle = stableAngleT * Mth.TWO_PI;
-		float radius = apotheosCeilingCoreRadius(skyDistance, radialT);
+		float radius = apotheosCeilingCoreRadius(skyDistance, radialT)
+				+ apotheosCeilingCoreInnerIrregularity(skyDistance, stableAngleT, radialT);
 		float x = Mth.cos(angle) * radius;
-		float y = apotheosCeilingCoreY(skyDistance, radialT, stableAngleT);
+		float y = apotheosCeilingCoreY(skyDistance, radialT, stableAngleT)
+				+ apotheosCeilingCoreInnerRidge(skyDistance, stableAngleT, radialT);
 		float z = Mth.sin(angle) * radius;
 		float edgePresence = 1.0F - smoothstep(0.92F, 1.0F, radialT) * 0.28F;
 		float alpha = Mth.clamp(214.0F + radialT * 28.0F, 0.0F, 246.0F) * edgePresence;
@@ -991,6 +1008,10 @@ final class ApotheosChamberEffects extends AbstractChamberThemeEffects {
 				APOTHEOS_CEILING_DOME_SPAN_SCALE * APOTHEOS_CEILING_CORE_RADIUS_SCALE);
 	}
 
+	private static float apotheosCeilingCoreCenterY(float skyDistance) {
+		return apotheosCeilingCoreY(skyDistance, 0.5F, APOTHEOS_CEILING_CORE_CENTER_ANGLE_T);
+	}
+
 	private static float apotheosCeilingAtmosphereRadius(float skyDistance, float radialT) {
 		float shapedRadiusT = apotheosCeilingPlanetoidRadiusT(radialT);
 		return skyDistance * Mth.lerp(shapedRadiusT, 0.045F,
@@ -1011,6 +1032,28 @@ final class ApotheosChamberEffects extends AbstractChamberThemeEffects {
 		float ripple = Mth.sin(angleT * Mth.TWO_PI * 6.0F + radialT * 12.0F) * skyDistance * 0.0045F
 				* centerRippleMask;
 		return skyDistance * APOTHEOS_CEILING_Y_SCALE - centerDrop + edgeRise + ripple;
+	}
+
+	private static float apotheosCeilingCoreInnerIrregularity(float skyDistance, float angleT, float radialT) {
+		float angle = angleT * Mth.TWO_PI;
+		float mask = apotheosCeilingCoreInnerIrregularityMask(radialT);
+		float cellularSurface = Mth.sin(angle * 8.0F + radialT * 19.0F)
+				+ Mth.sin(angle * 13.0F - radialT * 27.0F) * 0.52F
+				+ Mth.sin(angle * 21.0F + radialT * 8.0F) * 0.28F;
+		return skyDistance * APOTHEOS_CEILING_CORE_INNER_IRREGULARITY_SCALE * mask * cellularSurface;
+	}
+
+	private static float apotheosCeilingCoreInnerRidge(float skyDistance, float angleT, float radialT) {
+		float angle = angleT * Mth.TWO_PI;
+		float mask = apotheosCeilingCoreInnerIrregularityMask(radialT);
+		float foldedRidge = Mth.sin(angle * 6.0F - radialT * 22.0F)
+				* Mth.sin(angle * 15.0F + radialT * 31.0F);
+		float fineRidge = Mth.sin(angle * 28.0F + radialT * 17.0F) * 0.34F;
+		return skyDistance * APOTHEOS_CEILING_CORE_INNER_RIDGE_SCALE * mask * (foldedRidge + fineRidge);
+	}
+
+	private static float apotheosCeilingCoreInnerIrregularityMask(float radialT) {
+		return smoothstep(0.05F, 0.20F, radialT) * (1.0F - smoothstep(0.58F, 0.93F, radialT));
 	}
 
 	private static float apotheosCeilingAtmosphereY(float skyDistance, float radialT, float angleT) {

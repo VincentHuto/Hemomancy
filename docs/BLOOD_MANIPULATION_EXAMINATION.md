@@ -54,7 +54,7 @@ Degrees 5–6 currently gate *systems* (synaptic loadouts, covenants) rather tha
 4. **Scar-catalyst alternates.** Five memories accept a cerebral **scar** as their catalyst, often *cheaper* than the standard route (e.g. `blood_rush` via `scar_heart` needs 2 enzyme orbs + 100 blood vs. the standard 7 orbs + 350 blood). Scar investment pays back in the memory economy.
 5. **Saint Canon Memories.** Hallowed Residuum as catalyst yields the four SUMMA capstones — "imprinted rather than learned" (Dynamic Use discount does not apply).
 
-**Special cases:** the 7 **Living Weapon memories** teach staff forms with material-poetry catalysts (iron powder → blade, snail sclerite → axe, urchin spine → spear, chitin husk → claws, puppeteer thread → crossbow, fervent spores → torch, frigid spores → flail); `conjure_staff` unlocks via the staff *bond* (first Living Staff craft); and a few entries (`vital_effusion`, `hemolymphal_pulse`, `vascular_dowsing`, `ferric_resonance`) sit outside the weaving catalog.
+**Special cases:** the 7 base Living Staff weapon forms are normal `conjure_*` manipulations, but their current acquisition route is a Living Weapon Graft: form-aligned behavior unlocks the graft recipe, the player crafts the componentized `living_weapon_graft`, then completes the Iron Brazier + Living Staff Blood Absorption rite to teach the memory. Legacy `memory_living_*` items still teach the same forms for old saves, but their normal survival recipes are removed. `conjure_staff` unlocks via the staff *bond* (first Living Staff craft); a few entries (`vital_effusion`, `hemolymphal_pulse`, `vascular_dowsing`, `ferric_resonance`) sit outside the weaving catalog.
 
 ### 2.1 Catalyst symbolism
 

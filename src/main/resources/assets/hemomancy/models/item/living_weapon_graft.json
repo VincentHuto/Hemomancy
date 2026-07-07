@@ -1,0 +1,50 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "hemomancy:item/living_weapon_graft"
+  },
+  "overrides": [
+    {
+      "predicate": {
+        "hemomancy:form": 1
+      },
+      "model": "hemomancy:item/living_weapon_graft_blade"
+    },
+    {
+      "predicate": {
+        "hemomancy:form": 2
+      },
+      "model": "hemomancy:item/living_weapon_graft_axe"
+    },
+    {
+      "predicate": {
+        "hemomancy:form": 3
+      },
+      "model": "hemomancy:item/living_weapon_graft_spear"
+    },
+    {
+      "predicate": {
+        "hemomancy:form": 4
+      },
+      "model": "hemomancy:item/living_weapon_graft_claws"
+    },
+    {
+      "predicate": {
+        "hemomancy:form": 5
+      },
+      "model": "hemomancy:item/living_weapon_graft_crossbow"
+    },
+    {
+      "predicate": {
+        "hemomancy:form": 6
+      },
+      "model": "hemomancy:item/living_weapon_graft_torch"
+    },
+    {
+      "predicate": {
+        "hemomancy:form": 7
+      },
+      "model": "hemomancy:item/living_weapon_graft_flail"
+    }
+  ]
+}

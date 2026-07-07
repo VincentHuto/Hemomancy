@@ -13,22 +13,12 @@ public final class BloodMemoryItemAutoEquipSourceTest {
 	public static void main(String[] args) throws IOException {
 		String source = read("src/main/java/com/vincenthuto/hemomancy/common/item/harbinger/memories/BloodMemoryItem.java");
 
-		assertContains("blood memory imports manipulation slot helper", source,
-				"com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.ManipSlotHelper");
-		assertContains("blood memory imports manipulation equip helper", source,
-				"com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.ManipulationEquipHelper");
-		assertContains("blood memory computes current player slot count", source,
-				"ManipSlotHelper.getMaxSlots(playerIn)");
-		assertContains("blood memory counts normal slots before auto-equip", source,
-				"ManipulationEquipHelper.countNormalEquippedNames(");
-		assertContains("blood memory counts current equipped names", source,
-				"known.getEquippedManipNames())");
-		assertContains("blood memory treats fixed mechanics separately from normal slots", source,
-				"ManipulationEquipHelper.isFixedMechanicalManip(manipulation.getName())");
-		assertContains("blood memory attempts to equip newly learned memory", source,
-				"known.equipManip(manipulation.getName(), maxSlots)");
-		assertContains("blood memory syncs learned and equipped state", source,
-				"PacketHandler.sendToPlayer((ServerPlayer) playerIn, new KnownManipulationServerPacket(known));");
+		assertContains("blood memory delegates grant and auto-equip behavior", source,
+				"KnownManipulationGrantHelper.grantMemory");
+		assertContains("blood memory handles equipped grant feedback", source,
+				"MemoryGrantStatus.GRANTED_EQUIPPED");
+		assertContains("blood memory handles learned-only feedback", source,
+				"MemoryGrantStatus.GRANTED");
 		assertContains("blood memory tells player when auto-equipped", source,
 				"Memorized and equipped: ");
 		assertContains("blood memory tells player when reliquary is needed", source,

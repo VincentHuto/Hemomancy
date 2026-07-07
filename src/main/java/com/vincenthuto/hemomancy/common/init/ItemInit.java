@@ -365,6 +365,8 @@ public class ItemInit {
             () -> new BloodMemoryItem(new Item.Properties(), ManipulationInit.conductive_mark));
     public static final DeferredHolder<Item, Item> memory_vital_effusion = BASEITEMS.register("memory_vital_effusion",
             () -> new BloodMemoryItem(new Item.Properties(), ManipulationInit.vital_effusion));
+    public static final DeferredHolder<Item, Item> living_weapon_graft = BASEITEMS.register("living_weapon_graft",
+            () -> new LivingWeaponGraftItem(new Item.Properties().stacksTo(16)));
     public static final DeferredHolder<Item, Item> memory_living_blade = BASEITEMS.register("memory_living_blade",
             () -> new BloodMemoryItem(new Item.Properties(), ManipulationInit.conjure_blade));
     public static final DeferredHolder<Item, Item> memory_living_axe = BASEITEMS.register("memory_living_axe",

@@ -1,6 +1,7 @@
 package com.vincenthuto.hemomancy.common.tile;
 
 import com.vincenthuto.hemomancy.common.init.BlockEntityInit;
+import com.vincenthuto.hemomancy.common.item.component.LivingWeaponForm;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
@@ -8,6 +9,7 @@ import net.minecraft.network.Connection;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -15,16 +17,26 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 
+import java.util.UUID;
+
 public class IronBrazierBlockEntity extends BlockEntity {
 	private static final String TAG_OFFERING = "Offering";
 
 	private ItemStack offering = ItemStack.EMPTY;
+	private UUID graftRitePlayer;
+	private String graftRiteForm = "";
+	private int graftRiteProgressTicks;
+	private long graftRiteLastTick;
 
 	public IronBrazierBlockEntity(BlockPos pos, BlockState state) {
 		super(BlockEntityInit.iron_brazier.get(), pos, state);
 	}
 
 	public static void serverTick(Level level, BlockPos pos, BlockState state, IronBrazierBlockEntity te) {
+		if (te.graftRiteProgressTicks > 0
+				&& (te.offering.isEmpty() || level.getGameTime() - te.graftRiteLastTick > 8L)) {
+			te.resetGraftRiteProgress();
+		}
 	}
 
 	public ItemStack getOfferingDisplayStack() {
@@ -43,6 +55,7 @@ public class IronBrazierBlockEntity extends BlockEntity {
 		if (stack.isEmpty() || !offering.isEmpty()) {
 			return false;
 		}
+		resetGraftRiteProgress();
 		offering = stack.copyWithCount(1);
 		if (player == null || !player.getAbilities().instabuild) {
 			stack.shrink(1);
@@ -56,6 +69,7 @@ public class IronBrazierBlockEntity extends BlockEntity {
 			return ItemStack.EMPTY;
 		}
 		ItemStack extracted = offering.copy();
+		resetGraftRiteProgress();
 		offering = ItemStack.EMPTY;
 		markDirtyAndSync();
 		return extracted;
@@ -63,6 +77,32 @@ public class IronBrazierBlockEntity extends BlockEntity {
 
 	public ItemStack consumeOffering() {
 		return extractOffering();
+	}
+
+	public int advanceGraftRite(ServerPlayer player, LivingWeaponForm form, int requiredTicks) {
+		if (player == null || form == null || level == null) {
+			resetGraftRiteProgress();
+			return 0;
+		}
+		UUID playerId = player.getUUID();
+		String formId = form.serializedName();
+		if (!playerId.equals(graftRitePlayer) || !formId.equals(graftRiteForm)) {
+			resetGraftRiteProgress();
+			graftRitePlayer = playerId;
+			graftRiteForm = formId;
+		}
+		graftRiteProgressTicks = Math.min(requiredTicks, graftRiteProgressTicks + 1);
+		graftRiteLastTick = level.getGameTime();
+		setChanged();
+		return graftRiteProgressTicks;
+	}
+
+	public void resetGraftRiteProgress() {
+		graftRitePlayer = null;
+		graftRiteForm = "";
+		graftRiteProgressTicks = 0;
+		graftRiteLastTick = 0L;
+		setChanged();
 	}
 
 	public void markDirtyAndSync() {

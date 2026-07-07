@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    { "item": "hemomancy:hematic_memory" },
+    { "item": "hemomancy:sanguine_formation" },
+    { "item": "hemomancy:chitinous_husk" },
+    { "item": "hemomancy:umbral_enzyme" }
+  ],
+  "result": {
+    "id": "hemomancy:living_weapon_graft",
+    "count": 1,
+    "components": {
+      "hemomancy:living_weapon_graft_data": {
+        "form": "claws"
+      }
+    }
+  }
+}

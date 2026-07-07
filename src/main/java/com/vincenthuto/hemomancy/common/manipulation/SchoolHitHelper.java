@@ -4,6 +4,7 @@ import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodVolumeEvents;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.init.EffectInit;
+import com.vincenthuto.hemomancy.common.item.harbinger.memories.LivingWeaponGraftRecipeUnlockEvents;
 import com.vincenthuto.hemomancy.common.manipulation.ductilis.DuctilisLightningEffects;
 import com.vincenthuto.hutoslib.client.particle.factory.GlowParticleFactory;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
@@ -72,12 +73,14 @@ public final class SchoolHitHelper {
 			data.putLong(CONDUCTIVE_LAST_ARC_KEY, now);
 			markedTarget.level().playSound(null, markedTarget.blockPosition(), SoundEvents.TRIDENT_THUNDER.value(),
 					SoundSource.PLAYERS, 0.45F, 1.85F);
+			LivingWeaponGraftRecipeUnlockEvents.onConductiveArcTriggered(attacker);
 		}
 		return arcs[0] > 0;
 	}
 
 	public static void markGraveDebt(LivingEntity target, Player caster, int durationTicks) {
 		markGraveDebt(target, caster.getUUID(), durationTicks);
+		LivingWeaponGraftRecipeUnlockEvents.onAxeAlignedManipulation(caster);
 	}
 
 	public static void markGraveDebt(LivingEntity target, @Nullable UUID ownerId, int durationTicks) {

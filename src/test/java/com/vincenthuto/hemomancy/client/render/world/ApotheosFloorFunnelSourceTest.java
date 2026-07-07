@@ -329,13 +329,18 @@ public final class ApotheosFloorFunnelSourceTest {
 				"renderApotheosPortalGlow(context.poseStack(), context.time(), context.skyDistance());");
 		assertContains("apotheos effects render floor funnel before shared chamber layers", apotheosEffects,
 				"renderApotheosFloorFunnel(context.poseStack(), context.time(), context.skyDistance());");
-		assertContains("apotheos effects render the ceiling mass after the wall frames", apotheosEffects,
-				"renderApotheosWallFrames(context.poseStack(), context.time(), context.skyDistance());\n\t\trenderApotheosCeilingMass(context.poseStack(), context.time(), context.skyDistance());");
-        assertOrder("apotheos effects render tendrils after the full ceiling mass", apotheosEffects,
-                "renderApotheosCeilingMass(context.poseStack(), context.time(), context.skyDistance());",
-                "renderApotheosCeilingTendrils(context.poseStack(), context.time(), context.skyDistance());");
-		assertContains("apotheos effects render outward tendrils after the hanging tendrils", apotheosEffects,
-				"renderApotheosCeilingTendrils(context.poseStack(), context.time(), context.skyDistance());\n\t\trenderApotheosCeilingOutwardTendrils(context.poseStack(), context.tesselator(), context.time()");
+		assertOrder("apotheos effects render the ceiling mass after the wall frames", apotheosEffects,
+				"renderApotheosWallFrames(context.poseStack(), context.time(), context.skyDistance());",
+				"renderApotheosCeilingMass(context.poseStack(), context.time(), context.skyDistance());");
+		assertOrder("apotheos effects render hanging tendrils before the full ceiling mass", apotheosEffects,
+				"renderApotheosCeilingTendrils(context.poseStack(), context.time(), context.skyDistance());",
+				"renderApotheosCeilingMass(context.poseStack(), context.time(), context.skyDistance());");
+		assertOrder("apotheos effects render outward tendrils after the hanging tendrils", apotheosEffects,
+				"renderApotheosCeilingTendrils(context.poseStack(), context.time(), context.skyDistance());",
+				"renderApotheosCeilingOutwardTendrils(context.poseStack(), context.tesselator(), context.time()");
+		assertOrder("apotheos effects render outward tendrils after the ceiling mass", apotheosEffects,
+				"renderApotheosCeilingMass(context.poseStack(), context.time(), context.skyDistance());",
+				"renderApotheosCeilingOutwardTendrils(context.poseStack(), context.tesselator(), context.time()");
 		assertContains("apotheos effects render orbs after the outward tendrils", apotheosEffects,
 				"renderApotheosCeilingOutwardTendrils(context.poseStack(), context.tesselator(), context.time(),\n\t\t\t\tcontext.skyDistance());\n\t\trenderApotheosCeilingOrbsAndGlow(context.poseStack(), context.time(), context.skyDistance());");
 		assertContains("apotheos effects draw the floor funnel after the portal glow", apotheosEffects,
@@ -386,10 +391,30 @@ public final class ApotheosFloorFunnelSourceTest {
 				"APOTHEOS_CEILING_ATMOSPHERE_RADIUS_SCALE = 1.1F");
 		assertContains("apotheos effects expose core undulation tuning", apotheosEffects,
 				"APOTHEOS_CEILING_CORE_UNDULATION_INTENSITY");
+		assertContains("apotheos effects expose inner core yaw body rotation tuning", apotheosEffects,
+				"APOTHEOS_CEILING_CORE_BODY_YAW_SPEED");
+		assertContains("apotheos effects expose inner core pitch body rotation tuning", apotheosEffects,
+				"APOTHEOS_CEILING_CORE_BODY_PITCH_SPEED");
+		assertContains("apotheos effects expose inner core roll body rotation tuning", apotheosEffects,
+				"APOTHEOS_CEILING_CORE_BODY_ROLL_SPEED");
+		assertContains("apotheos effects rotate the inner core around its own center", apotheosEffects,
+				"apotheosCeilingCoreCenterY");
+		assertContains("apotheos effects physically rotates the inner core on yaw", apotheosEffects,
+				"poseStack.mulPose(Axis.YP.rotationDegrees(time * APOTHEOS_CEILING_CORE_BODY_YAW_SPEED))");
+		assertContains("apotheos effects physically rotates the inner core on pitch", apotheosEffects,
+				"poseStack.mulPose(Axis.XP.rotationDegrees(time * APOTHEOS_CEILING_CORE_BODY_PITCH_SPEED))");
+		assertContains("apotheos effects physically rotates the inner core on roll", apotheosEffects,
+				"poseStack.mulPose(Axis.ZP.rotationDegrees(time * APOTHEOS_CEILING_CORE_BODY_ROLL_SPEED))");
+		assertContains("apotheos effects expose inner core vertex roughness tuning", apotheosEffects,
+				"APOTHEOS_CEILING_CORE_INNER_IRREGULARITY_SCALE = 0.026F");
+		assertContains("apotheos effects expose inner core ridge roughness tuning", apotheosEffects,
+				"APOTHEOS_CEILING_CORE_INNER_RIDGE_SCALE = 0.008F");
+		assertContains("apotheos effects apply inner core roughness while building core mesh", apotheosEffects,
+				"apotheosCeilingCoreInnerIrregularity");
 		assertContains("apotheos effects expose atmosphere storm tuning", apotheosEffects,
 				"APOTHEOS_CEILING_ATMOSPHERE_STORM_INTENSITY");
 		assertContains("apotheos effects keep the atmosphere transparent", apotheosEffects,
-				"APOTHEOS_CEILING_ATMOSPHERE_OPACITY = 0.18F");
+				"APOTHEOS_CEILING_ATMOSPHERE_OPACITY = 0.28F");
 		assertNotContains("apotheos effects should not keep shared mass radius constants", apotheosEffects,
 				"APOTHEOS_CEILING_MASS_CORE_RADIUS_SCALE");
 		assertNotContains("apotheos effects should not keep shared atmosphere opacity constants", apotheosEffects,
@@ -415,21 +440,21 @@ public final class ApotheosFloorFunnelSourceTest {
 		assertContains("apotheos outward tendrils expose per-segment wriggle speed", apotheosEffects,
 				"APOTHEOS_CEILING_OUTWARD_TENDRIL_SEGMENT_WRIGGLE_TIME_SCALE = 0.24F");
 		assertContains("apotheos outward tendrils expose per-segment wriggle distance", apotheosEffects,
-				"APOTHEOS_CEILING_OUTWARD_TENDRIL_SEGMENT_WRIGGLE_SCALE = 0.055F");
+				"APOTHEOS_CEILING_OUTWARD_TENDRIL_SEGMENT_WRIGGLE_SCALE = 0.015F");
 		assertContains("apotheos outward tendrils expose per-segment wriggle frequency", apotheosEffects,
-				"APOTHEOS_CEILING_OUTWARD_TENDRIL_SEGMENT_WRIGGLE_FREQUENCY = 14.0F");
+				"APOTHEOS_CEILING_OUTWARD_TENDRIL_SEGMENT_WRIGGLE_FREQUENCY = 3.0F");
 		assertContains("apotheos outward tendrils expose faster geometry animation", apotheosEffects,
-				"APOTHEOS_CEILING_OUTWARD_TENDRIL_GEOMETRY_TIME_SCALE = 0.24F");
+				"APOTHEOS_CEILING_OUTWARD_TENDRIL_GEOMETRY_TIME_SCALE = 0.124F");
 		assertContains("apotheos outward tendrils expose minimum length variation", apotheosEffects,
 				"APOTHEOS_CEILING_OUTWARD_TENDRIL_MIN_LENGTH_MULTIPLIER = 0.88F");
 		assertContains("apotheos outward tendrils expose maximum length variation", apotheosEffects,
-				"APOTHEOS_CEILING_OUTWARD_TENDRIL_MAX_LENGTH_MULTIPLIER = 1.82F");
+				"APOTHEOS_CEILING_OUTWARD_TENDRIL_MAX_LENGTH_MULTIPLIER = 1.22F");
 		assertContains("apotheos outward tendrils compute deterministic length variation", apotheosEffects,
 				"apotheosCeilingOutwardTendrilLengthMultiplier");
 		assertContains("apotheos outward tendrils are wide enough to read against the mass", apotheosEffects,
 				"APOTHEOS_CEILING_OUTWARD_TENDRIL_WIDTH_SCALE = 0.014F");
 		assertContains("apotheos outward tendrils include enough white strands to be visible", apotheosEffects,
-				"APOTHEOS_CEILING_OUTWARD_TENDRIL_WHITE_RATIO = 0.48F");
+				"APOTHEOS_CEILING_OUTWARD_TENDRIL_WHITE_RATIO = 0.8F");
 		assertContains("apotheos outward tendrils expose bright strand alpha", apotheosEffects,
 				"APOTHEOS_CEILING_OUTWARD_TENDRIL_WHITE_ALPHA");
 		assertContains("apotheos outward tendrils expose yellow strand alpha", apotheosEffects,
@@ -698,6 +723,16 @@ public final class ApotheosFloorFunnelSourceTest {
 				"ceilingRadialT =");
 		assertContains("ceiling core vertex shader shifts the organic surface", ceilingCoreVertexShader,
 				"organicShift");
+		assertContains("ceiling core vertex shader exposes inner surface irregularity", ceilingCoreVertexShader,
+				"innerSurfaceIrregularity");
+		assertContains("ceiling core vertex shader creates cellular inner surface bumps", ceilingCoreVertexShader,
+				"cellularSurfaceBump");
+		assertContains("ceiling core vertex shader animates inner roughness with a crawl phase", ceilingCoreVertexShader,
+				"innerSurfaceCrawlTime");
+		assertContains("ceiling core vertex shader pulses roughness amplitude over time", ceilingCoreVertexShader,
+				"innerSurfacePulse");
+		assertContains("ceiling core vertex shader pushes inner roughness sideways as geometry", ceilingCoreVertexShader,
+				"surfacePosition.xz += unitCircle * innerSurfaceRadialPush");
 		assertNotContains("ceiling core vertex shader should not use Java float suffixes", ceilingCoreVertexShader,
 				"2f");
 		assertContains("ceiling atmosphere vertex shader passes ceiling angle", ceilingAtmosphereVertexShader,
@@ -895,6 +930,12 @@ public final class ApotheosFloorFunnelSourceTest {
 				ceilingCoreFragmentShader, "centerVoidSuppression");
 		assertContains("ceiling core vertex shader damps pole writhe to avoid lens distortion", ceilingCoreVertexShader,
 				"centerWritheMask");
+		assertContains("ceiling core vertex shader roughens the inner planetoid surface", ceilingCoreVertexShader,
+				"innerSurfaceRoughnessMask");
+		assertContains("ceiling core fragment shader shades inner surface irregularity", ceilingCoreFragmentShader,
+				"innerSurfaceIrregularity");
+		assertContains("ceiling core fragment shader makes irregularity highlights drift over time",
+				ceilingCoreFragmentShader, "animatedRidgeGleam");
 		assertContains("ceiling core fragment shader adds layered planetoid depth", ceilingCoreFragmentShader,
 				"planetoidLayerDepth");
 		assertContains("ceiling core fragment shader shades the limb as a rounded body", ceilingCoreFragmentShader,

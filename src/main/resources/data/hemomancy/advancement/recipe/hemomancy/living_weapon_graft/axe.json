@@ -1,0 +1,17 @@
+{
+  "rewards": {
+    "recipes": [
+      "hemomancy:living_weapon_graft/axe"
+    ]
+  },
+  "criteria": {
+    "earned": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "requirements": [
+    [
+      "earned"
+    ]
+  ]
+}

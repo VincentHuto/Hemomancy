@@ -97,6 +97,7 @@ import com.vincenthuto.hemomancy.common.entity.utility.ArmatureRestraintEntity;
 import com.vincenthuto.hemomancy.common.event.worldevent.BloodMoonClientState;
 import com.vincenthuto.hemomancy.common.init.*;
 import com.vincenthuto.hemomancy.common.item.MorphicNectarMutationRules;
+import com.vincenthuto.hemomancy.common.item.component.LivingWeaponGraftData;
 import com.vincenthuto.hemomancy.common.item.harbinger.bloodline.VasculariumCharmItem;
 import com.vincenthuto.hemomancy.common.item.harbinger.morphlings.MorphlingItem;
 import com.vincenthuto.hemomancy.common.item.harbinger.scar.ItemScarPattern;
@@ -907,6 +908,12 @@ public class ClientEvents {
                         HemoItemProperties.booleanTag("state"));
                 ItemProperties.register(ItemInit.morphling_jar.get(), Hemomancy.rloc("size"),
                         HemoItemProperties.intTag("size"));
+
+                ItemProperties.register(ItemInit.living_weapon_graft.get(), Hemomancy.rloc("form"),
+                        (ItemStack stack, ClientLevel world, LivingEntity ent, int seed) ->
+                                LivingWeaponGraftData.fromStack(stack)
+                                        .map(data -> (float) data.form().ordinal() + 1.0F)
+                                        .orElse(1.0F));
 
                 ItemProperties.register(ItemInit.drudge_electrode.get(), Hemomancy.rloc("mode"),
                         HemoItemProperties.booleanTag(DrudgeElectrodeItem.TAG_MODE));

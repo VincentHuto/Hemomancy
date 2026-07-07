@@ -1,6 +1,7 @@
 package com.vincenthuto.hemomancy.common.init;
 
 import com.vincenthuto.hemomancy.Hemomancy;
+import com.vincenthuto.hemomancy.common.item.component.LivingWeaponGraftData;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.StructureScannerTooltipComponent;
 
 import net.minecraft.core.component.DataComponentType;
@@ -17,6 +18,13 @@ public class DataComponentInit {
 			.register("structure_scanner_tooltip", () -> DataComponentType.<StructureScannerTooltipComponent>builder()
 					.persistent(StructureScannerTooltipComponent.CODEC)
 					.networkSynchronized(StructureScannerTooltipComponent.STREAM_CODEC)
+					.cacheEncoding()
+					.build());
+
+	public static final DeferredHolder<DataComponentType<?>, DataComponentType<LivingWeaponGraftData>> LIVING_WEAPON_GRAFT_DATA = COMPONENTS
+			.register("living_weapon_graft_data", () -> DataComponentType.<LivingWeaponGraftData>builder()
+					.persistent(LivingWeaponGraftData.CODEC)
+					.networkSynchronized(LivingWeaponGraftData.STREAM_CODEC)
 					.cacheEncoding()
 					.build());
 

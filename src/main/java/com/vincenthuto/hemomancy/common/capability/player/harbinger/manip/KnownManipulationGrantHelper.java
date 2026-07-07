@@ -1,12 +1,15 @@
 package com.vincenthuto.hemomancy.common.capability.player.harbinger.manip;
 
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.init.ManipulationInit;
 import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
 import com.vincenthuto.hemomancy.common.manipulation.ManipLevel;
+import com.vincenthuto.hemomancy.common.manipulation.ManipulationRankGates;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.manips.KnownManipulationServerPacket;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.item.Item;
 import net.neoforged.neoforge.registries.DeferredHolder;
 
 import java.util.LinkedHashMap;
@@ -14,6 +17,75 @@ import java.util.List;
 
 public final class KnownManipulationGrantHelper {
 	private KnownManipulationGrantHelper() {
+	}
+
+	public enum MemoryGrantStatus {
+		GRANTED_EQUIPPED,
+		GRANTED,
+		ALREADY_KNOWN,
+		NO_ACTIVE_BLOOD,
+		RANK_TOO_LOW,
+		RETIRED,
+		INVALID
+	}
+
+	public record MemoryGrantResult(MemoryGrantStatus status, BloodManipulation manipulation, int requiredDegree) {
+		public boolean success() {
+			return status == MemoryGrantStatus.GRANTED_EQUIPPED || status == MemoryGrantStatus.GRANTED;
+		}
+	}
+
+	public static MemoryGrantResult checkMemoryGrant(ServerPlayer player, BloodManipulation manipulation) {
+		return checkMemoryGrant(player, manipulation, null);
+	}
+
+	public static MemoryGrantResult checkMemoryGrant(ServerPlayer player, BloodManipulation manipulation,
+			Item memoryItem) {
+		if (player == null || manipulation == null || manipulation == BloodManipulation.BLANK) {
+			return new MemoryGrantResult(MemoryGrantStatus.INVALID, manipulation, 0);
+		}
+		if (ManipulationRetirementRules.isRetiredManipulation(manipulation)
+				|| (memoryItem != null && ManipulationRetirementRules.isRetiredMemoryItem(memoryItem, manipulation))) {
+			return new MemoryGrantResult(MemoryGrantStatus.RETIRED, manipulation, 0);
+		}
+		IBloodVolume volume = HemoCapabilityAccess.getBloodVolume(player).orElse(null);
+		if (volume == null || !volume.isActive()) {
+			return new MemoryGrantResult(MemoryGrantStatus.NO_ACTIVE_BLOOD, manipulation, 0);
+		}
+		int requiredDegree = ManipulationRankGates.minDegreeForRank(manipulation.getRank());
+		if (!ManipulationRankGates.playerMeetsRank(HemoCapabilityAccess.getPlayerDegreeNumber(player),
+				manipulation.getRank())) {
+			return new MemoryGrantResult(MemoryGrantStatus.RANK_TOO_LOW, manipulation, requiredDegree);
+		}
+		IKnownManipulations known = HemoCapabilityAccess.getKnownManipulations(player).orElse(null);
+		if (known == null) {
+			return new MemoryGrantResult(MemoryGrantStatus.INVALID, manipulation, requiredDegree);
+		}
+		if (known.doesListContainName(known.getKnownManips(), manipulation)) {
+			return new MemoryGrantResult(MemoryGrantStatus.ALREADY_KNOWN, manipulation, requiredDegree);
+		}
+		return new MemoryGrantResult(MemoryGrantStatus.GRANTED, manipulation, requiredDegree);
+	}
+
+	public static MemoryGrantResult grantMemory(ServerPlayer player, BloodManipulation manipulation) {
+		return grantMemory(player, manipulation, null);
+	}
+
+	public static MemoryGrantResult grantMemory(ServerPlayer player, BloodManipulation manipulation, Item memoryItem) {
+		MemoryGrantResult checked = checkMemoryGrant(player, manipulation, memoryItem);
+		if (!checked.success() || player == null) {
+			return checked;
+		}
+		IKnownManipulations known = HemoCapabilityAccess.getKnownManipulations(player).orElse(null);
+		if (known == null) {
+			return new MemoryGrantResult(MemoryGrantStatus.INVALID, manipulation, checked.requiredDegree());
+		}
+		known.getKnownManips().put(manipulation, ManipLevel.BLANK);
+		boolean equipped = ManipulationEquipHelper.equipNameIfPossible(known.getEquippedManipNames(),
+				manipulation.getName(), ManipSlotHelper.getMaxSlots(player));
+		PacketHandler.sendToPlayer(player, new KnownManipulationServerPacket(known));
+		return new MemoryGrantResult(equipped ? MemoryGrantStatus.GRANTED_EQUIPPED : MemoryGrantStatus.GRANTED,
+				manipulation, checked.requiredDegree());
 	}
 
 	public static boolean learnAndEquipIfPossible(IKnownManipulations known, BloodManipulation manipulation,

@@ -1,16 +1,10 @@
 package com.vincenthuto.hemomancy.common.item.harbinger.memories;
 
-import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.IKnownManipulations;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.ManipulationEquipHelper;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.KnownManipulationGrantHelper;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.KnownManipulationGrantHelper.MemoryGrantResult;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.KnownManipulationGrantHelper.MemoryGrantStatus;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.ManipulationRetirementRules;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.ManipSlotHelper;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
-import com.vincenthuto.hemomancy.common.manipulation.ManipulationRankGates;
-import com.vincenthuto.hemomancy.common.manipulation.ManipLevel;
-import com.vincenthuto.hemomancy.common.network.PacketHandler;
-import com.vincenthuto.hemomancy.common.network.capa.harbinger.manips.KnownManipulationServerPacket;
 import com.vincenthuto.hutoslib.client.HLTextUtils;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
@@ -26,7 +20,6 @@ import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.neoforge.registries.DeferredHolder;
 
-import java.util.LinkedHashMap;
 import java.util.List;
 
 public class BloodMemoryItem extends Item {
@@ -78,61 +71,45 @@ public class BloodMemoryItem extends Item {
 
 	@Override
 	public InteractionResultHolder<ItemStack> use(Level worldIn, Player playerIn, InteractionHand handIn) {
-		IKnownManipulations known = HemoCapabilityAccess.getKnownManipulations(playerIn)
-				.orElseThrow(NullPointerException::new);
-		IBloodVolume volume = HemoCapabilityAccess.getBloodVolume(playerIn)
-				.orElseThrow(NullPointerException::new);
-		LinkedHashMap<BloodManipulation, ManipLevel> knownList = known.getKnownManips();
-
 		if (handIn == InteractionHand.MAIN_HAND) {
 			ItemStack stack = playerIn.getItemInHand(handIn);
-			if (!worldIn.isClientSide) {
-				if (volume.isActive()) {
-					if (!playerIn.isShiftKeyDown()) {
-						BloodManipulation manipulation = getManip();
-						if (ManipulationRetirementRules.isRetiredMemoryItem(this, manipulation)) {
-							playerIn.displayClientMessage(Component.literal("This memory has gone dormant.")
-									.withStyle(ChatFormatting.DARK_GRAY), true);
-							return InteractionResultHolder.fail(stack);
-						}
-						int playerDegree = HemoCapabilityAccess.getPlayerDegreeNumber(playerIn);
-						if (!ManipulationRankGates.playerMeetsRank(playerDegree, manipulation.getRank())) {
-							playerIn.displayClientMessage(Component.literal("This memory requires Degree "
-											+ ManipulationRankGates.minDegreeForRank(manipulation.getRank()) + ".")
-									.withStyle(ChatFormatting.DARK_RED), true);
-						} else if (!known.doesListContainName(knownList, manipulation)) {
-							knownList.put(manipulation, ManipLevel.BLANK);
-							int maxSlots = ManipSlotHelper.getMaxSlots(playerIn);
-							boolean fixedMechanical = ManipulationEquipHelper.isFixedMechanicalManip(manipulation.getName());
-							boolean hasOpenNormalSlot = ManipulationEquipHelper.countNormalEquippedNames(
-									known.getEquippedManipNames()) < maxSlots;
-							boolean equipped = fixedMechanical || (hasOpenNormalSlot
-									&& known.equipManip(manipulation.getName(), maxSlots));
-							if (equipped) {
-								playerIn.displayClientMessage(Component.literal("Memorized and equipped: "
-												+ manipulation.getProperName())
-										.withStyle(ChatFormatting.DARK_RED), true);
-							} else {
-								playerIn.displayClientMessage(Component.literal(
-												"Memory learned. Use a Mnemonic Reliquary to change equipped memories.")
-										.withStyle(ChatFormatting.DARK_RED), true);
-							}
-							PacketHandler.sendToPlayer((ServerPlayer) playerIn, new KnownManipulationServerPacket(known));
-							stack.shrink(1);
-						} else {
-							playerIn.displayClientMessage(Component.literal("Player Already Knowns This Manipulation!")
-									.withStyle(ChatFormatting.DARK_RED), true);
-						}
-					}
-				} else {
-					playerIn.displayClientMessage(
-							Component.literal("You lack understanding of what your even holding...")
-									.withStyle(ChatFormatting.DARK_RED),
-							true);
+			if (!worldIn.isClientSide && !playerIn.isShiftKeyDown() && playerIn instanceof ServerPlayer serverPlayer) {
+				MemoryGrantResult result = KnownManipulationGrantHelper.grantMemory(serverPlayer, getManip(), this);
+				reportGrantResult(playerIn, result);
+				if (result.success()) {
+					stack.shrink(1);
+					return InteractionResultHolder.sidedSuccess(stack, false);
 				}
+				return InteractionResultHolder.fail(stack);
 			}
 		}
 		return super.use(worldIn, playerIn, handIn);
 
+	}
+
+	private static void reportGrantResult(Player player, MemoryGrantResult result) {
+		BloodManipulation manipulation = result.manipulation();
+		switch (result.status()) {
+		case MemoryGrantStatus.GRANTED_EQUIPPED -> player.displayClientMessage(Component.literal("Memorized and equipped: "
+						+ manipulation.getProperName())
+				.withStyle(ChatFormatting.DARK_RED), true);
+		case MemoryGrantStatus.GRANTED -> player.displayClientMessage(Component.literal(
+						"Memory learned. Use a Mnemonic Reliquary to change equipped memories.")
+				.withStyle(ChatFormatting.DARK_RED), true);
+		case MemoryGrantStatus.ALREADY_KNOWN -> player.displayClientMessage(Component.literal(
+						"Player Already Knowns This Manipulation!")
+				.withStyle(ChatFormatting.DARK_RED), true);
+		case MemoryGrantStatus.NO_ACTIVE_BLOOD -> player.displayClientMessage(
+				Component.literal("You lack understanding of what your even holding...")
+						.withStyle(ChatFormatting.DARK_RED),
+				true);
+		case MemoryGrantStatus.RANK_TOO_LOW -> player.displayClientMessage(Component.literal("This memory requires Degree "
+						+ result.requiredDegree() + ".")
+				.withStyle(ChatFormatting.DARK_RED), true);
+		case MemoryGrantStatus.RETIRED -> player.displayClientMessage(Component.literal("This memory has gone dormant.")
+				.withStyle(ChatFormatting.DARK_GRAY), true);
+		case MemoryGrantStatus.INVALID -> player.displayClientMessage(Component.literal("This memory will not take.")
+				.withStyle(ChatFormatting.DARK_RED), true);
+		}
 	}
 }
