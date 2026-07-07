@@ -75,6 +75,17 @@ public final class HemoRenderTypes {
 					.setLightmapState(RenderType.NO_LIGHTMAP)
 					.createCompositeState(false));
 
+	public static final RenderType APOTHEOS_CEILING_PRIMITIVES = RenderType.create("apotheos_ceiling_primitives",
+			DefaultVertexFormat.POSITION_COLOR, VertexFormat.Mode.QUADS, 24576, false, true,
+			RenderType.CompositeState.builder()
+					.setShaderState(RenderType.RENDERTYPE_LIGHTNING_SHADER)
+					.setTransparencyState(RenderType.TRANSLUCENT_TRANSPARENCY)
+					.setDepthTestState(RenderType.NO_DEPTH_TEST)
+					.setWriteMaskState(RenderType.COLOR_WRITE)
+					.setCullState(RenderType.NO_CULL)
+					.setLightmapState(RenderType.NO_LIGHTMAP)
+					.createCompositeState(false));
+
 	public static final RenderType MNEMONIC_LOWTIDE_CEILING_ROOTS = RenderType.create(
 			"mnemonic_lowtide_ceiling_roots",
 			DefaultVertexFormat.POSITION_COLOR, VertexFormat.Mode.QUADS, 8192, false, true,
@@ -501,6 +512,69 @@ public final class HemoRenderTypes {
 				DefaultVertexFormat.POSITION_TEX_COLOR, VertexFormat.Mode.QUADS, 32768, false, true,
 				RenderType.CompositeState.builder()
 						.setShaderState(ShaderInit.APOTHEOS_WALL_MEMBRANE.getShard())
+						.setTexturingState(uniforms)
+						.setTransparencyState(RenderType.TRANSLUCENT_TRANSPARENCY)
+						.setDepthTestState(RenderType.NO_DEPTH_TEST)
+						.setWriteMaskState(RenderType.COLOR_WRITE)
+						.setCullState(RenderType.NO_CULL)
+						.setLightmapState(RenderType.NO_LIGHTMAP)
+						.createCompositeState(false));
+	}
+
+	public static RenderType apotheosCeilingMass(float gameTime, float ceilingSeed, float massNoiseScale,
+			float rotationSpeed, float yellowGlowIntensity, float greenOrbIntensity) {
+		RenderStateShard.TexturingStateShard uniforms = new RenderStateShard.TexturingStateShard(
+				"apotheos_ceiling_mass_uniforms",
+				() -> {
+					ShaderInstance shader = ShaderInit.APOTHEOS_CEILING_MASS.getInstance().get();
+					setUniform(shader, "HemoTime", gameTime);
+					setUniform(shader, "CeilingSeed", ceilingSeed);
+					setUniform(shader, "MassNoiseScale", massNoiseScale);
+					setUniform(shader, "RotationSpeed", rotationSpeed);
+					setUniform(shader, "YellowGlowIntensity", yellowGlowIntensity);
+					setUniform(shader, "GreenOrbIntensity", greenOrbIntensity);
+				},
+				() -> {
+					ShaderInstance shader = ShaderInit.APOTHEOS_CEILING_MASS.getInstance().get();
+					if (shader instanceof ExtendedShaderInstance extended) {
+						extended.setUniformDefaults();
+					}
+				});
+		return RenderType.create("apotheos_ceiling_mass",
+				DefaultVertexFormat.POSITION_TEX_COLOR, VertexFormat.Mode.QUADS, 49152, false, true,
+				RenderType.CompositeState.builder()
+						.setShaderState(ShaderInit.APOTHEOS_CEILING_MASS.getShard())
+						.setTexturingState(uniforms)
+						.setTransparencyState(RenderType.TRANSLUCENT_TRANSPARENCY)
+						.setDepthTestState(RenderType.NO_DEPTH_TEST)
+						.setWriteMaskState(RenderType.COLOR_WRITE)
+						.setCullState(RenderType.NO_CULL)
+						.setLightmapState(RenderType.NO_LIGHTMAP)
+						.createCompositeState(false));
+	}
+
+	public static RenderType apotheosWallTopRim(float gameTime, float rimSeed, float rimPulseSpeed,
+			float rimCoreIntensity, float rimGlowIntensity) {
+		RenderStateShard.TexturingStateShard uniforms = new RenderStateShard.TexturingStateShard(
+				"apotheos_wall_top_rim_uniforms",
+				() -> {
+					ShaderInstance shader = ShaderInit.APOTHEOS_WALL_TOP_RIM.getInstance().get();
+					setUniform(shader, "HemoTime", gameTime);
+					setUniform(shader, "RimSeed", rimSeed);
+					setUniform(shader, "RimPulseSpeed", rimPulseSpeed);
+					setUniform(shader, "RimCoreIntensity", rimCoreIntensity);
+					setUniform(shader, "RimGlowIntensity", rimGlowIntensity);
+				},
+				() -> {
+					ShaderInstance shader = ShaderInit.APOTHEOS_WALL_TOP_RIM.getInstance().get();
+					if (shader instanceof ExtendedShaderInstance extended) {
+						extended.setUniformDefaults();
+					}
+				});
+		return RenderType.create("apotheos_wall_top_rim",
+				DefaultVertexFormat.POSITION_TEX_COLOR, VertexFormat.Mode.QUADS, 8192, false, true,
+				RenderType.CompositeState.builder()
+						.setShaderState(ShaderInit.APOTHEOS_WALL_TOP_RIM.getShard())
 						.setTexturingState(uniforms)
 						.setTransparencyState(RenderType.TRANSLUCENT_TRANSPARENCY)
 						.setDepthTestState(RenderType.NO_DEPTH_TEST)

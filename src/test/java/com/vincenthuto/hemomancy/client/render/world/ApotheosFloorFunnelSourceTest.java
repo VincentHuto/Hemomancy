@@ -37,7 +37,20 @@ public final class ApotheosFloorFunnelSourceTest {
 			"src/main/resources/assets/hemomancy/shaders/core/world/apotheos_wall_membrane.vsh");
 	private static final Path WALL_SHADER_FRAGMENT = Path.of(
 			"src/main/resources/assets/hemomancy/shaders/core/world/apotheos_wall_membrane.fsh");
+	private static final Path CEILING_SHADER_JSON = Path.of(
+			"src/main/resources/assets/hemomancy/shaders/core/world/apotheos_ceiling_mass.json");
+	private static final Path CEILING_SHADER_VERTEX = Path.of(
+			"src/main/resources/assets/hemomancy/shaders/core/world/apotheos_ceiling_mass.vsh");
+	private static final Path CEILING_SHADER_FRAGMENT = Path.of(
+			"src/main/resources/assets/hemomancy/shaders/core/world/apotheos_ceiling_mass.fsh");
+	private static final Path RIM_SHADER_JSON = Path.of(
+			"src/main/resources/assets/hemomancy/shaders/core/world/apotheos_wall_top_rim.json");
+	private static final Path RIM_SHADER_VERTEX = Path.of(
+			"src/main/resources/assets/hemomancy/shaders/core/world/apotheos_wall_top_rim.vsh");
+	private static final Path RIM_SHADER_FRAGMENT = Path.of(
+			"src/main/resources/assets/hemomancy/shaders/core/world/apotheos_wall_top_rim.fsh");
 	private static final Path REFERENCE = Path.of("docs/HEMOMANCY_REFERENCE.md");
+	private static final Path LORE_REFERENCE = Path.of("docs/LORE_REFERENCE.md");
 
 	private ApotheosFloorFunnelSourceTest() {
 	}
@@ -56,6 +69,12 @@ public final class ApotheosFloorFunnelSourceTest {
 		assertFileExists("apotheos wall membrane shader json", WALL_SHADER_JSON);
 		assertFileExists("apotheos wall membrane vertex shader", WALL_SHADER_VERTEX);
 		assertFileExists("apotheos wall membrane fragment shader", WALL_SHADER_FRAGMENT);
+		assertFileExists("apotheos ceiling mass shader json", CEILING_SHADER_JSON);
+		assertFileExists("apotheos ceiling mass vertex shader", CEILING_SHADER_VERTEX);
+		assertFileExists("apotheos ceiling mass fragment shader", CEILING_SHADER_FRAGMENT);
+		assertFileExists("apotheos wall-top rim shader json", RIM_SHADER_JSON);
+		assertFileExists("apotheos wall-top rim vertex shader", RIM_SHADER_VERTEX);
+		assertFileExists("apotheos wall-top rim fragment shader", RIM_SHADER_FRAGMENT);
 		assertFileMissing("removed apotheos ceiling canopy shader json",
 				Path.of("src/main/resources/assets/hemomancy/shaders/core/world/apotheos_ceiling_canopy.json"));
 		assertFileMissing("removed apotheos ceiling canopy vertex shader",
@@ -79,7 +98,14 @@ public final class ApotheosFloorFunnelSourceTest {
 		String wallShaderJson = read(WALL_SHADER_JSON);
 		String wallVertexShader = read(WALL_SHADER_VERTEX);
 		String wallFragmentShader = read(WALL_SHADER_FRAGMENT);
+		String ceilingShaderJson = read(CEILING_SHADER_JSON);
+		String ceilingVertexShader = read(CEILING_SHADER_VERTEX);
+		String ceilingFragmentShader = read(CEILING_SHADER_FRAGMENT);
+		String rimShaderJson = read(RIM_SHADER_JSON);
+		String rimVertexShader = read(RIM_SHADER_VERTEX);
+		String rimFragmentShader = read(RIM_SHADER_FRAGMENT);
 		String reference = read(REFERENCE);
+		String loreReference = read(LORE_REFERENCE);
 
 		assertContains("registry registers dedicated apotheos effects", registry,
 				"new ApotheosChamberEffects(apotheos)");
@@ -96,6 +122,10 @@ public final class ApotheosFloorFunnelSourceTest {
 				"APOTHEOS_PORTAL_GLOW");
 		assertContains("shader init declares apotheos wall membrane shader", shaderInit,
 				"APOTHEOS_WALL_MEMBRANE");
+		assertContains("shader init declares apotheos ceiling mass shader", shaderInit,
+				"APOTHEOS_CEILING_MASS");
+		assertContains("shader init declares apotheos wall-top rim shader", shaderInit,
+				"APOTHEOS_WALL_TOP_RIM");
 		assertContains("shader init uses world apotheos shader path", shaderInit,
 				"Hemomancy.rloc(\"world/apotheos_floor_funnel\")");
 		assertContains("shader init uses world apotheos portal haze shader path", shaderInit,
@@ -104,6 +134,10 @@ public final class ApotheosFloorFunnelSourceTest {
 				"Hemomancy.rloc(\"world/apotheos_portal_glow\")");
 		assertContains("shader init uses world apotheos wall membrane shader path", shaderInit,
 				"Hemomancy.rloc(\"world/apotheos_wall_membrane\")");
+		assertContains("shader init uses world apotheos ceiling mass shader path", shaderInit,
+				"Hemomancy.rloc(\"world/apotheos_ceiling_mass\")");
+		assertContains("shader init uses world apotheos wall-top rim shader path", shaderInit,
+				"Hemomancy.rloc(\"world/apotheos_wall_top_rim\")");
 		assertContains("shader init registers apotheos floor shader", shaderInit,
 				"registerShader(event, APOTHEOS_FLOOR_FUNNEL.createInstance(provider));");
 		assertContains("shader init registers apotheos portal haze shader", shaderInit,
@@ -112,10 +146,30 @@ public final class ApotheosFloorFunnelSourceTest {
 				"registerShader(event, APOTHEOS_PORTAL_GLOW.createInstance(provider));");
 		assertContains("shader init registers apotheos wall membrane shader", shaderInit,
 				"registerShader(event, APOTHEOS_WALL_MEMBRANE.createInstance(provider));");
+		assertContains("shader init registers apotheos ceiling mass shader", shaderInit,
+				"registerShader(event, APOTHEOS_CEILING_MASS.createInstance(provider));");
+		assertContains("shader init registers apotheos wall-top rim shader", shaderInit,
+				"registerShader(event, APOTHEOS_WALL_TOP_RIM.createInstance(provider));");
 		assertContains("shader init requests ring rise uniform", shaderInit,
 				"\"RingRise\"");
 		assertContains("shader init requests center void uniform", shaderInit,
 				"\"CenterVoidRadius\"");
+		assertContains("shader init requests ceiling seed uniform", shaderInit,
+				"\"CeilingSeed\"");
+		assertContains("shader init requests ceiling mass noise uniform", shaderInit,
+				"\"MassNoiseScale\"");
+		assertContains("shader init requests ceiling rotation speed uniform", shaderInit,
+				"\"RotationSpeed\"");
+		assertContains("shader init requests ceiling yellow glow uniform", shaderInit,
+				"\"YellowGlowIntensity\"");
+		assertContains("shader init requests ceiling green orb uniform", shaderInit,
+				"\"GreenOrbIntensity\"");
+		assertContains("shader init requests wall-top rim glow uniform", shaderInit,
+				"\"RimGlowIntensity\"");
+		assertContains("shader init requests wall-top rim pulse speed uniform", shaderInit,
+				"\"RimPulseSpeed\"");
+		assertNotContains("ceiling mass shader holder should not own the rim glow uniform", shaderInit,
+				"\"GreenOrbIntensity\", \"RimGlowIntensity\"");
 		assertNotContains("shader init should not declare apotheos ceiling canopy shader", shaderInit,
 				"APOTHEOS_CEILING_CANOPY");
 		assertNotContains("shader init should not use world apotheos ceiling canopy shader path", shaderInit,
@@ -129,6 +183,10 @@ public final class ApotheosFloorFunnelSourceTest {
 				"public static RenderType apotheosPortalGlow(");
 		assertContains("wall membrane render type method exists", renderTypes,
 				"public static RenderType apotheosWallMembrane(");
+		assertContains("ceiling mass render type method exists", renderTypes,
+				"public static RenderType apotheosCeilingMass(");
+		assertContains("wall-top rim render type method exists", renderTypes,
+				"public static RenderType apotheosWallTopRim(");
 		assertContains("render type uses apotheos shader shard", renderTypes,
 				"ShaderInit.APOTHEOS_FLOOR_FUNNEL.getShard()");
 		assertContains("portal haze render type uses apotheos haze shader shard", renderTypes,
@@ -137,6 +195,14 @@ public final class ApotheosFloorFunnelSourceTest {
 				"ShaderInit.APOTHEOS_PORTAL_GLOW.getShard()");
 		assertContains("wall membrane render type uses apotheos wall shader shard", renderTypes,
 				"ShaderInit.APOTHEOS_WALL_MEMBRANE.getShard()");
+		assertContains("ceiling mass render type uses apotheos ceiling shader shard", renderTypes,
+				"ShaderInit.APOTHEOS_CEILING_MASS.getShard()");
+		assertContains("wall-top rim render type uses apotheos rim shader shard", renderTypes,
+				"ShaderInit.APOTHEOS_WALL_TOP_RIM.getShard()");
+		assertContains("apotheos ceiling primitive render type exists", renderTypes,
+				"APOTHEOS_CEILING_PRIMITIVES");
+		assertContains("apotheos ceiling primitive render type ignores skybox depth", renderTypes,
+				"RenderType.create(\"apotheos_ceiling_primitives\"");
 		assertContains("apotheos wall frame render type exists", renderTypes,
 				"APOTHEOS_WALL_FRAME");
 		assertContains("apotheos wall frame render type ignores skybox depth", renderTypes,
@@ -155,6 +221,18 @@ public final class ApotheosFloorFunnelSourceTest {
 				"setUniform(shader, \"CeilingFadeStart\", ceilingFadeStart);");
 		assertContains("wall membrane render type uploads ceiling fade end", renderTypes,
 				"setUniform(shader, \"CeilingFadeEnd\", ceilingFadeEnd);");
+		assertContains("ceiling mass render type uploads mass noise", renderTypes,
+				"setUniform(shader, \"MassNoiseScale\", massNoiseScale);");
+		assertContains("ceiling mass render type uploads rotation speed", renderTypes,
+				"setUniform(shader, \"RotationSpeed\", rotationSpeed);");
+		assertContains("ceiling mass render type uploads yellow glow", renderTypes,
+				"setUniform(shader, \"YellowGlowIntensity\", yellowGlowIntensity);");
+		assertContains("ceiling mass render type uploads green orb glow", renderTypes,
+				"setUniform(shader, \"GreenOrbIntensity\", greenOrbIntensity);");
+		assertContains("wall-top rim render type uploads rim glow", renderTypes,
+				"setUniform(shader, \"RimGlowIntensity\", rimGlowIntensity);");
+		assertContains("wall-top rim render type uploads rim pulse speed", renderTypes,
+				"setUniform(shader, \"RimPulseSpeed\", rimPulseSpeed);");
 		assertNotContains("render types should not keep apotheos ceiling canopy method", renderTypes,
 				"apotheosCeilingCanopy");
 		assertNotContains("render types should not keep apotheos ceiling canopy shader", renderTypes,
@@ -170,8 +248,30 @@ public final class ApotheosFloorFunnelSourceTest {
 				"extends AbstractChamberThemeEffects");
 		assertContains("apotheos effects render in the chamber sky pass", apotheosEffects,
 				"protected void renderBeforeSharedLayers(ChamberThemeRenderContext context)");
-		assertContains("apotheos effects render wall, portal, and floor before shared chamber layers", apotheosEffects,
-				"renderApotheosWallMembrane(context.poseStack(), context.time(), context.skyDistance());\n\t\trenderApotheosWallFrames(context.poseStack(), context.time(), context.skyDistance());\n\t\trenderApotheosPortalGlow(context.poseStack(), context.time(), context.skyDistance());\n\t\trenderApotheosFloorFunnel(context.poseStack(), context.time(), context.skyDistance());");
+		assertContains("apotheos effects render wall membrane before shared chamber layers", apotheosEffects,
+				"renderApotheosWallMembrane(context.poseStack(), context.time(), context.skyDistance());");
+		assertContains("apotheos effects render wall frames before shared chamber layers", apotheosEffects,
+				"renderApotheosWallFrames(context.poseStack(), context.time(), context.skyDistance());");
+		assertContains("apotheos effects render ceiling mass before shared chamber layers", apotheosEffects,
+				"renderApotheosCeilingMass(context.poseStack(), context.time(), context.skyDistance());");
+		assertContains("apotheos effects render ceiling tendrils before shared chamber layers", apotheosEffects,
+				"renderApotheosCeilingTendrils(context.poseStack(), context.time(), context.skyDistance());");
+		assertContains("apotheos effects render ceiling orbs before shared chamber layers", apotheosEffects,
+				"renderApotheosCeilingOrbsAndGlow(context.poseStack(), context.time(), context.skyDistance());");
+		assertContains("apotheos effects render wall-top rim before shared chamber layers", apotheosEffects,
+				"renderApotheosWallTopRim(context.poseStack(), context.time(), context.skyDistance());");
+		assertContains("apotheos effects render portal glow before shared chamber layers", apotheosEffects,
+				"renderApotheosPortalGlow(context.poseStack(), context.time(), context.skyDistance());");
+		assertContains("apotheos effects render floor funnel before shared chamber layers", apotheosEffects,
+				"renderApotheosFloorFunnel(context.poseStack(), context.time(), context.skyDistance());");
+		assertContains("apotheos effects render the ceiling mass after the wall frames", apotheosEffects,
+				"renderApotheosWallFrames(context.poseStack(), context.time(), context.skyDistance());\n\t\trenderApotheosCeilingMass(context.poseStack(), context.time(), context.skyDistance());");
+		assertContains("apotheos effects render tendrils after the ceiling mass", apotheosEffects,
+				"renderApotheosCeilingMass(context.poseStack(), context.time(), context.skyDistance());\n\t\trenderApotheosCeilingTendrils(context.poseStack(), context.time(), context.skyDistance());");
+		assertContains("apotheos effects render outward tendrils after the hanging tendrils", apotheosEffects,
+				"renderApotheosCeilingTendrils(context.poseStack(), context.time(), context.skyDistance());\n\t\trenderApotheosCeilingOutwardTendrils(context.poseStack(), context.tesselator(), context.time()");
+		assertContains("apotheos effects render orbs after the outward tendrils", apotheosEffects,
+				"renderApotheosCeilingOutwardTendrils(context.poseStack(), context.tesselator(), context.time(),\n\t\t\t\tcontext.skyDistance());\n\t\trenderApotheosCeilingOrbsAndGlow(context.poseStack(), context.time(), context.skyDistance());");
 		assertContains("apotheos effects draw the floor funnel after the portal glow", apotheosEffects,
 				"renderApotheosPortalGlow(context.poseStack(), context.time(), context.skyDistance());\n\t\trenderApotheosFloorFunnel(context.poseStack(), context.time(), context.skyDistance())");
 		assertContains("apotheos effects draw the portal glow before the floor funnel", apotheosEffects,
@@ -202,6 +302,84 @@ public final class ApotheosFloorFunnelSourceTest {
 				"APOTHEOS_WALL_RING_SEGMENTS = 96");
 		assertContains("apotheos effects use cylindrical wall vertical subdivisions", apotheosEffects,
 				"APOTHEOS_WALL_VERTICAL_SEGMENTS = 20");
+		assertContains("apotheos effects use radial ceiling mass subdivisions", apotheosEffects,
+				"APOTHEOS_CEILING_RADIAL_SEGMENTS");
+		assertContains("apotheos effects use angular ceiling mass subdivisions", apotheosEffects,
+				"APOTHEOS_CEILING_RING_SEGMENTS");
+		assertContains("apotheos effects use deterministic ceiling tendrils", apotheosEffects,
+				"APOTHEOS_CEILING_TENDRIL_COUNT");
+		assertContains("apotheos effects use qliphoth-style outward mass tendrils", apotheosEffects,
+				"APOTHEOS_CEILING_OUTWARD_TENDRIL_COUNT");
+		assertContains("apotheos effects expose outward mass tendril length", apotheosEffects,
+				"APOTHEOS_CEILING_OUTWARD_TENDRIL_LENGTH_SCALE");
+		assertContains("apotheos effects expose outward mass tendril width", apotheosEffects,
+				"APOTHEOS_CEILING_OUTWARD_TENDRIL_WIDTH_SCALE");
+		assertContains("apotheos effects expose outward mass tendril white ratio", apotheosEffects,
+				"APOTHEOS_CEILING_OUTWARD_TENDRIL_WHITE_RATIO");
+		assertContains("apotheos outward tendrils start inside the visible mass edge", apotheosEffects,
+				"APOTHEOS_CEILING_OUTWARD_TENDRIL_ROOT_RADIAL_T = 0.66F");
+		assertContains("apotheos outward tendrils keep their pull within the visible chamber span", apotheosEffects,
+				"APOTHEOS_CEILING_OUTWARD_TENDRIL_LENGTH_SCALE = 0.24F");
+		assertContains("apotheos outward tendrils are wide enough to read against the mass", apotheosEffects,
+				"APOTHEOS_CEILING_OUTWARD_TENDRIL_WIDTH_SCALE = 0.014F");
+		assertContains("apotheos outward tendrils include enough white strands to be visible", apotheosEffects,
+				"APOTHEOS_CEILING_OUTWARD_TENDRIL_WHITE_RATIO = 0.48F");
+		assertContains("apotheos outward tendrils expose bright strand alpha", apotheosEffects,
+				"APOTHEOS_CEILING_OUTWARD_TENDRIL_WHITE_ALPHA");
+		assertContains("apotheos outward tendrils expose yellow strand alpha", apotheosEffects,
+				"APOTHEOS_CEILING_OUTWARD_TENDRIL_YELLOW_ALPHA");
+		assertContains("apotheos outward tendrils use yellow-red color", apotheosEffects,
+				"APOTHEOS_CEILING_OUTWARD_TENDRIL_YELLOW_RED = 255");
+		assertContains("apotheos outward tendrils use yellow-green color", apotheosEffects,
+				"APOTHEOS_CEILING_OUTWARD_TENDRIL_YELLOW_GREEN = 218");
+		assertContains("apotheos outward tendrils use yellow-blue color", apotheosEffects,
+				"APOTHEOS_CEILING_OUTWARD_TENDRIL_YELLOW_BLUE = 46");
+		assertNotContains("apotheos outward tendrils should no longer expose black strand constants",
+				apotheosEffects, "APOTHEOS_CEILING_OUTWARD_TENDRIL_BLACK_");
+		assertContains("apotheos outward tendrils use visible qliphoth-style tube geometry", apotheosEffects,
+				"TendrilGeometry.generate");
+		assertContains("apotheos outward tendrils emit tube quads instead of flat ceiling strips", apotheosEffects,
+				"TendrilGeometry.createTubeQuads");
+		assertContains("apotheos outward tendrils use the qliphoth direct position-color shader path",
+				apotheosEffects, "RenderSystem.setShader(GameRenderer::getPositionColorShader);");
+		assertContains("apotheos outward tendrils use the qliphoth direct buffer builder path", apotheosEffects,
+				"BufferBuilder buffer = tesselator.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);");
+		assertContains("apotheos outward tendrils flush like qliphoth communion", apotheosEffects,
+				"BufferUploader.drawWithShader(buffer.buildOrThrow());");
+		assertContains("apotheos outward tendrils are a separate direct render pass", apotheosEffects,
+				"renderApotheosCeilingOutwardTendrils(context.poseStack(), context.tesselator()");
+		assertContains("apotheos outward tendrils use freeform hutoslib tendril config", apotheosEffects,
+				"APOTHEOS_CEILING_OUTWARD_TENDRIL_CONFIG");
+		assertContains("apotheos outward tendrils pull toward the viewer like qliphoth communion", apotheosEffects,
+				"APOTHEOS_CEILING_OUTWARD_TENDRIL_CAMERA_PULL_SCALE");
+		assertContains("apotheos outward tendril tube width stays scaled to the chamber sky distance",
+				apotheosEffects, "skyDistance * APOTHEOS_CEILING_OUTWARD_TENDRIL_WIDTH_SCALE");
+		assertContains("apotheos outward tendril tube compensates for hutoslib base width scaling",
+				apotheosEffects, "APOTHEOS_CEILING_OUTWARD_TENDRIL_CONFIG.baseWidth()");
+		assertContains("apotheos effects use deterministic ceiling orbs", apotheosEffects,
+				"APOTHEOS_CEILING_ORB_COUNT");
+		assertContains("apotheos effects anchor the red rim to the wall handoff", apotheosEffects,
+				"APOTHEOS_WALL_TOP_RIM_HEIGHT_T");
+		assertContains("apotheos effects expose an independent rim radius", apotheosEffects,
+				"APOTHEOS_WALL_TOP_RIM_RADIUS_SCALE");
+		assertContains("apotheos effects expose an independent bright rim width", apotheosEffects,
+				"APOTHEOS_WALL_TOP_RIM_CORE_WIDTH_SCALE");
+		assertContains("apotheos effects expose an independent rim glow width", apotheosEffects,
+				"APOTHEOS_WALL_TOP_RIM_GLOW_WIDTH_SCALE");
+		assertContains("apotheos effects expose wall-top rim glow red color", apotheosEffects,
+				"APOTHEOS_WALL_TOP_RIM_GLOW_RED");
+		assertContains("apotheos effects expose wall-top rim glow green color", apotheosEffects,
+				"APOTHEOS_WALL_TOP_RIM_GLOW_GREEN");
+		assertContains("apotheos effects expose wall-top rim glow blue color", apotheosEffects,
+				"APOTHEOS_WALL_TOP_RIM_GLOW_BLUE");
+		assertContains("apotheos effects uses the configurable wall-top rim glow color", apotheosEffects,
+				"APOTHEOS_WALL_TOP_RIM_GLOW_RED, APOTHEOS_WALL_TOP_RIM_GLOW_GREEN, APOTHEOS_WALL_TOP_RIM_GLOW_BLUE");
+		assertContains("apotheos effects uses rim radius independent from the ceiling mass", apotheosEffects,
+				"skyDistance * APOTHEOS_WALL_TOP_RIM_RADIUS_SCALE");
+		assertNotContains("apotheos rim should not inherit the wall radius directly in its band helper",
+				apotheosEffects, "float baseRadius = skyDistance * APOTHEOS_WALL_RADIUS_SCALE;");
+		assertNotContains("apotheos rim should not size from ceiling mass span", apotheosEffects,
+				"APOTHEOS_WALL_TOP_RIM_RADIUS_SCALE = APOTHEOS_CEILING_DOME_SPAN_SCALE");
 		assertContains("apotheos effects place wall membrane just outside the floor rim", apotheosEffects,
 				"APOTHEOS_WALL_RADIUS_SCALE = 0.66F");
 		assertContains("apotheos effects extend the wall below the portal rim for floor blending", apotheosEffects,
@@ -244,16 +422,40 @@ public final class ApotheosFloorFunnelSourceTest {
 				"emitApotheosCeilingFunnelCore");
 		assertNotContains("apotheos effects should not own the visible lip from the ceiling pass", apotheosEffects,
 				"emitApotheosCeilingFleshyRimLip");
-		assertNotContains("apotheos effects should not keep old radial ceiling mesh constant", apotheosEffects,
-				"APOTHEOS_CEILING_RADIAL_SEGMENTS");
 		assertNotContains("apotheos effects should not keep old radial ceiling mass radius", apotheosEffects,
 				"APOTHEOS_CEILING_MASS_RADIUS");
-		assertNotContains("apotheos effects should not keep new ceiling constants while restarting ceiling work",
-				apotheosEffects, "APOTHEOS_CEILING_");
-		assertNotContains("apotheos effects should not keep new ceiling helper names while restarting ceiling work",
-				apotheosEffects, "emitApotheosCeiling");
-		assertNotContains("apotheos render types should not keep ceiling geometry render types while restarting ceiling work",
-				renderTypes, "APOTHEOS_CEILING_");
+		assertContains("apotheos effects build the ceiling mass mesh", apotheosEffects,
+				"emitApotheosCeilingMassMesh");
+		assertContains("apotheos effects build yellow and white ceiling tendrils", apotheosEffects,
+				"emitApotheosCeilingTendril");
+		assertContains("apotheos ceiling tendrils use yellow instead of black red channel", apotheosEffects,
+				"int red = whiteTendril ? 230 : 255");
+		assertContains("apotheos ceiling tendrils use yellow instead of black green channel", apotheosEffects,
+				"int green = whiteTendril ? 230 : 218");
+		assertContains("apotheos ceiling tendrils use yellow instead of black blue channel", apotheosEffects,
+				"int blue = whiteTendril ? 226 : 46");
+		assertContains("apotheos effects build qliphoth-style outward yellow and white mass tendrils", apotheosEffects,
+				"emitApotheosCeilingOutwardTendril");
+		assertContains("apotheos outward tendrils start from the mass perimeter", apotheosEffects,
+				"APOTHEOS_CEILING_OUTWARD_TENDRIL_ROOT_RADIAL_T");
+		assertContains("apotheos outward tendrils pull away from the mass edge", apotheosEffects,
+				"APOTHEOS_CEILING_OUTWARD_TENDRIL_LENGTH_SCALE * t");
+		assertContains("apotheos outward tendrils render white strands", apotheosEffects,
+				"APOTHEOS_CEILING_OUTWARD_TENDRIL_WHITE_RED");
+		assertContains("apotheos outward tendrils render yellow strands", apotheosEffects,
+				"APOTHEOS_CEILING_OUTWARD_TENDRIL_YELLOW_RED");
+		assertContains("apotheos outward tendrils do not use the flat ceiling span helper", apotheosEffects,
+				"emitApotheosCeilingOutwardTendrilTube");
+		assertContains("apotheos outward tendril geometry writes directly to BufferBuilder like qliphoth",
+				apotheosEffects, "emitApotheosCeilingOutwardTendril(BufferBuilder buffer");
+		assertContains("apotheos effects build yellow and green ceiling orbs", apotheosEffects,
+				"emitApotheosCeilingOrb");
+		assertContains("apotheos effects build the wall-top red rim", apotheosEffects,
+				"emitApotheosWallTopRim");
+		assertContains("apotheos rim pass uses the dedicated rim render type", apotheosEffects,
+				"RenderType renderType = HemoRenderTypes.apotheosWallTopRim(");
+		assertNotContains("apotheos rim should not render through the ceiling primitive layer", apotheosEffects,
+				"renderApotheosWallTopRim(PoseStack poseStack, float time, float skyDistance) {\n\t\tRenderSystem.enableBlend();\n\t\tRenderSystem.disableCull();\n\t\tRenderSystem.disableDepthTest();\n\t\tRenderSystem.depthMask(false);\n\t\tRenderSystem.blendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA,\n\t\t\t\tGlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE,\n\t\t\t\tGlStateManager.DestFactor.ZERO);\n\t\tRenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);\n\n\t\tMultiBufferSource.BufferSource buffer = Minecraft.getInstance().renderBuffers().bufferSource();\n\t\tRenderType renderType = HemoRenderTypes.APOTHEOS_CEILING_PRIMITIVES;");
 		assertContains("apotheos effects send shader time for outward ring travel", apotheosEffects,
 				"time * APOTHEOS_FLOOR_SHADER_TIME_SCALE");
 		assertContains("apotheos effects scale from chamber sky distance", apotheosEffects,
@@ -303,6 +505,22 @@ public final class ApotheosFloorFunnelSourceTest {
 				"\"name\": \"CeilingFadeStart\"");
 		assertContains("wall membrane shader json exposes ceiling fade end", wallShaderJson,
 				"\"name\": \"CeilingFadeEnd\"");
+		assertContains("ceiling mass shader json points to vertex program", ceilingShaderJson,
+				"\"vertex\": \"hemomancy:world/apotheos_ceiling_mass\"");
+		assertContains("ceiling mass shader json exposes mass noise scale", ceilingShaderJson,
+				"\"name\": \"MassNoiseScale\"");
+		assertContains("ceiling mass shader json exposes yellow glow intensity", ceilingShaderJson,
+				"\"name\": \"YellowGlowIntensity\"");
+		assertContains("ceiling mass shader json exposes green orb intensity", ceilingShaderJson,
+				"\"name\": \"GreenOrbIntensity\"");
+		assertNotContains("ceiling mass shader json should not expose rim glow intensity", ceilingShaderJson,
+				"\"name\": \"RimGlowIntensity\"");
+		assertContains("wall-top rim shader json points to vertex program", rimShaderJson,
+				"\"vertex\": \"hemomancy:world/apotheos_wall_top_rim\"");
+		assertContains("wall-top rim shader json exposes rim glow intensity", rimShaderJson,
+				"\"name\": \"RimGlowIntensity\"");
+		assertContains("wall-top rim shader json exposes rim pulse speed", rimShaderJson,
+				"\"name\": \"RimPulseSpeed\"");
 
 		assertContains("vertex shader lowers the center into a funnel", vertexShader,
 				"funnelDrop");
@@ -328,6 +546,14 @@ public final class ApotheosFloorFunnelSourceTest {
 				"wallAngleT =");
 		assertContains("wall membrane vertex shader passes wall height", wallVertexShader,
 				"wallHeightT =");
+		assertContains("ceiling mass vertex shader passes ceiling angle", ceilingVertexShader,
+				"ceilingAngleT =");
+		assertContains("ceiling mass vertex shader passes ceiling radius", ceilingVertexShader,
+				"ceilingRadialT =");
+		assertContains("ceiling mass vertex shader shifts the organic surface", ceilingVertexShader,
+				"organicShift");
+		assertNotContains("ceiling mass vertex shader should not use Java float suffixes", ceilingVertexShader,
+				"2f");
 
 		assertContains("fragment shader computes radial distance", fragmentShader,
 				"radialDistance");
@@ -499,18 +725,84 @@ public final class ApotheosFloorFunnelSourceTest {
 				"wallNodule");
 		assertNotContains("wall membrane fragment shader should not include suspended droplets", wallFragmentShader,
 				"suspendedDroplet");
+		assertContains("ceiling mass fragment shader uses seam-safe circular coordinates", ceilingFragmentShader,
+				"unitCircle");
+		assertContains("ceiling mass fragment shader creates red and purple organic mass", ceilingFragmentShader,
+				"redPurpleOrganicMass");
+		assertContains("ceiling mass fragment shader creates black and white tendril traces", ceilingFragmentShader,
+				"blackWhiteTendrilTrace");
+		assertContains("ceiling mass fragment shader creates yellow glow lighting", ceilingFragmentShader,
+				"yellowBiolume");
+		assertContains("ceiling mass fragment shader creates green orb glow", ceilingFragmentShader,
+				"greenOrbGlow");
+		assertContains("ceiling mass fragment shader defines x-axis rotation", ceilingFragmentShader,
+				"vec3 rotateX(");
+		assertContains("ceiling mass fragment shader defines y-axis rotation", ceilingFragmentShader,
+				"vec3 rotateY(");
+		assertContains("ceiling mass fragment shader defines z-axis rotation", ceilingFragmentShader,
+				"vec3 rotateZ(");
+		assertContains("ceiling mass fragment shader samples a rotated sphere position", ceilingFragmentShader,
+				"rotatedSpherePosition");
+		assertContains("ceiling mass fragment shader derives organic noise from 3d sphere motion", ceilingFragmentShader,
+				"sphericalMassFlow");
+		assertNotContains("ceiling mass fragment shader should not rely on a single flat rotating circle",
+				ceilingFragmentShader, "rotatingCircle");
+		assertNotContains("ceiling mass fragment shader should not own rim glow", ceilingFragmentShader,
+				"rimGlow");
+		assertNotContains("ceiling mass fragment shader should not reference rim glow uniform", ceilingFragmentShader,
+				"RimGlowIntensity");
+		assertNotContains("ceiling mass fragment shader should not require a static texture sampler", ceilingFragmentShader,
+				"sampler2D");
+		assertNotContains("ceiling mass fragment shader should not use Java float suffixes", ceilingFragmentShader,
+				"2f");
+		assertContains("rim vertex shader passes rim angle", rimVertexShader,
+				"rimAngleT =");
+		assertContains("rim vertex shader passes rim width", rimVertexShader,
+				"rimWidthT =");
+		assertContains("rim fragment shader creates a separate rim core", rimFragmentShader,
+				"separateRimCore");
+		assertContains("rim fragment shader creates a separate rim halo", rimFragmentShader,
+				"separateRimHalo");
+		assertContains("rim fragment shader derives glow hue from chamber effect vertex color", rimFragmentShader,
+				"rimGlowColor = max(vertexColor.rgb");
+		assertContains("rim fragment shader builds heat color from configurable rim color", rimFragmentShader,
+				"rimHeatColor = mix(rimGlowColor");
+		assertNotContains("rim fragment shader should not bake the rim glow as blood red", rimFragmentShader,
+				"vec3 bloodRed");
+		assertNotContains("rim fragment shader should not bake the rim glow as hot orange", rimFragmentShader,
+				"vec3 hotOrange");
+		assertNotContains("rim fragment shader should not force configurable rim colors toward yellow-white heat",
+				rimFragmentShader, "vec3(1.0, 0.78, 0.48)");
+		assertNotContains("rim fragment shader should not add a standalone yellow-white heat layer",
+				rimFragmentShader, "whiteHeat");
+		assertContains("rim fragment shader uses seam-safe angular phase", rimFragmentShader,
+				"seamSafeRimPhase");
+		assertContains("rim fragment shader keeps the pulse periodic across the uv wrap", rimFragmentShader,
+				"sin(seamSafeRimPhase * 8.0 - time * 5.2 + pulseNoise * 1.4)");
+		assertNotContains("rim fragment shader should not pulse directly from the wrapping uv coordinate",
+				rimFragmentShader, "sin(rimAngleT *");
+		assertNotContains("rim fragment shader should not require a static texture sampler", rimFragmentShader,
+				"sampler2D");
 		assertContains("reference documents apotheos floor funnel", reference,
 				"APOTHEOS floor funnel");
 		assertContains("reference documents apotheos wall membrane", reference,
 				"APOTHEOS wall membrane");
+		assertContains("reference documents apotheos ceiling mass", reference,
+				"APOTHEOS ceiling mass");
 		assertNotContains("reference should not document removed apotheos ceiling canopy", reference,
 				"APOTHEOS ceiling canopy");
 		assertContains("reference documents renderer-only floor treatment", reference,
 				"renderer-only");
+		assertContains("reference documents renderer-only ceiling treatment", reference,
+				"ceiling mass is renderer-only");
 		assertNotContains("reference should not document removed sparse ceiling drops", reference,
 				"sparse high hanging drops");
 		assertNotContains("reference should not document removed deep hanging ceiling funnel", reference,
 				"deep hanging ceiling funnel");
+		assertContains("lore reference documents apotheos ceiling mass", loreReference,
+				"Apotheos ceiling mass");
+		assertNotContains("lore reference should no longer say the apotheos ceiling remains pending", loreReference,
+				"APOTHEOS ceiling remains pending");
 	}
 
 	private static String read(Path path) throws IOException {
