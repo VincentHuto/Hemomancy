@@ -48,6 +48,39 @@ final class ApotheosChamberEffects extends AbstractChamberThemeEffects {
 	private static final float APOTHEOS_PORTAL_HAZE_SPEED = 0.58F;
 	private static final float APOTHEOS_PORTAL_HAZE_INTENSITY = 1.18F;
 
+	// ========== CEILING (descending overhead mass + spanning canopy membrane) ==========
+	private static final float APOTHEOS_CEILING_SHADER_TIME_SCALE = 0.062F;
+	private static final float APOTHEOS_CEILING_FIBER_SCALE = 2.6F;
+	private static final float APOTHEOS_CEILING_TRACE_INTENSITY = 0.60F;
+	private static final float APOTHEOS_CEILING_RED_GLOW_INTENSITY = 1.12F;
+	private static final float APOTHEOS_CEILING_RIM_FADE_START = 0.84F;
+	private static final float APOTHEOS_CEILING_RIM_FADE_END = 0.98F;
+
+	// Canopy: a fibrous dome spanning from the descending mass out to the wall rim.
+	private static final int APOTHEOS_CANOPY_RING_SEGMENTS = 96;
+	private static final int APOTHEOS_CANOPY_RADIAL_SEGMENTS = 30;
+	private static final float APOTHEOS_CANOPY_INNER_RADIUS_SCALE = 0.090F;
+	private static final float APOTHEOS_CANOPY_OUTER_RADIUS_SCALE = 0.66F;
+	private static final float APOTHEOS_CANOPY_APEX_Y_SCALE = 2.02F;
+	private static final float APOTHEOS_CANOPY_RIM_Y_SCALE = 1.56F;
+	private static final float APOTHEOS_CANOPY_INNER_RADIAL_T = 0.14F;
+	private static final float APOTHEOS_CANOPY_MASS_MOUTH_DIP = 0.10F;
+
+	// Descending mass: a bulbous vascular bloom hanging from the canopy apex into the room.
+	private static final int APOTHEOS_MASS_RING_SEGMENTS = 64;
+	private static final int APOTHEOS_MASS_VERTICAL_SEGMENTS = 28;
+	private static final float APOTHEOS_MASS_TOP_Y_SCALE = 2.00F;
+	private static final float APOTHEOS_MASS_TIP_Y_SCALE = 0.62F;
+	private static final float APOTHEOS_MASS_TOP_RADIUS_SCALE = 0.090F;
+	private static final float APOTHEOS_MASS_TIP_RADIUS_SCALE = 0.014F;
+	private static final float APOTHEOS_MASS_MAX_RADIUS_SCALE = 0.235F;
+	private static final float APOTHEOS_MASS_RED_GLOW_INTENSITY = 1.55F;
+
+	// Red glow nodes and hanging drip tendrils studding the overhead mass.
+	private static final int APOTHEOS_CEILING_NODE_COUNT = 30;
+	private static final int APOTHEOS_CEILING_TENDRIL_COUNT = 22;
+	private static final int APOTHEOS_CEILING_TENDRIL_SEGMENTS = 14;
+
 	ApotheosChamberEffects(ChamberSkyTheme theme) {
 		super(theme);
 	}
@@ -66,6 +99,9 @@ final class ApotheosChamberEffects extends AbstractChamberThemeEffects {
 		renderApotheosWallFrames(context.poseStack(), context.time(), context.skyDistance());
 		renderApotheosPortalGlow(context.poseStack(), context.time(), context.skyDistance());
 		renderApotheosFloorFunnel(context.poseStack(), context.time(), context.skyDistance());
+		renderApotheosCeilingCanopy(context.poseStack(), context.time(), context.skyDistance());
+		renderApotheosCeilingMass(context.poseStack(), context.time(), context.skyDistance());
+		renderApotheosCeilingGrowths(context.poseStack(), context.time(), context.skyDistance());
 	}
 
 	private static void renderApotheosWallMembrane(PoseStack poseStack, float time, float skyDistance) {
@@ -392,5 +428,204 @@ final class ApotheosChamberEffects extends AbstractChamberThemeEffects {
 		float y = skyDistance * APOTHEOS_FLOOR_Y_SCALE - centerDrop + outerRise + ringRelief;
 		float alpha = Mth.clamp(Mth.lerp(radialT, 184.0F, 238.0F), 0.0F, 255.0F);
 		consumer.addVertex(matrix, x, y, z).setUv(angleT, radialT).setColor(255, 255, 255, (int) alpha);
+	}
+
+	static void renderApotheosCeilingCanopy(PoseStack poseStack, float time, float skyDistance) {
+		beginApotheosOverheadPass();
+		MultiBufferSource.BufferSource buffer = Minecraft.getInstance().renderBuffers().bufferSource();
+		RenderType renderType = HemoRenderTypes.apotheosCeilingMembrane(
+				time * APOTHEOS_CEILING_SHADER_TIME_SCALE, 137.0F, APOTHEOS_CEILING_FIBER_SCALE,
+				APOTHEOS_CEILING_TRACE_INTENSITY, APOTHEOS_CEILING_RED_GLOW_INTENSITY, 1.0F,
+				APOTHEOS_CEILING_RIM_FADE_START, APOTHEOS_CEILING_RIM_FADE_END);
+		VertexConsumer consumer = buffer.getBuffer(renderType);
+		emitApotheosCanopyMesh(consumer, poseStack.last().pose(), skyDistance);
+		buffer.endBatch(renderType);
+		endApotheosOverheadPass();
+	}
+
+	static void renderApotheosCeilingMass(PoseStack poseStack, float time, float skyDistance) {
+		beginApotheosOverheadPass();
+		MultiBufferSource.BufferSource buffer = Minecraft.getInstance().renderBuffers().bufferSource();
+		RenderType renderType = HemoRenderTypes.apotheosCeilingMembrane(
+				time * APOTHEOS_CEILING_SHADER_TIME_SCALE, 263.0F, APOTHEOS_CEILING_FIBER_SCALE * 1.15F,
+				APOTHEOS_CEILING_TRACE_INTENSITY * 0.85F, APOTHEOS_MASS_RED_GLOW_INTENSITY, 1.0F,
+				APOTHEOS_CEILING_RIM_FADE_START, APOTHEOS_CEILING_RIM_FADE_END);
+		VertexConsumer consumer = buffer.getBuffer(renderType);
+		emitApotheosMassMesh(consumer, poseStack.last().pose(), skyDistance);
+		buffer.endBatch(renderType);
+		endApotheosOverheadPass();
+	}
+
+	static void renderApotheosCeilingGrowths(PoseStack poseStack, float time, float skyDistance) {
+		beginApotheosOverheadPass();
+		MultiBufferSource.BufferSource buffer = Minecraft.getInstance().renderBuffers().bufferSource();
+		RenderType renderType = HemoRenderTypes.QLIPHOTH_GLOW;
+		VertexConsumer consumer = buffer.getBuffer(renderType);
+		Matrix4f matrix = poseStack.last().pose();
+		for (int node = 0; node < APOTHEOS_CEILING_NODE_COUNT; node++) {
+			emitApotheosCeilingNode(consumer, matrix, skyDistance, time, node);
+		}
+		for (int tendril = 0; tendril < APOTHEOS_CEILING_TENDRIL_COUNT; tendril++) {
+			emitApotheosCeilingTendril(consumer, matrix, skyDistance, time, tendril);
+		}
+		buffer.endBatch(renderType);
+		endApotheosOverheadPass();
+	}
+
+	private static void beginApotheosOverheadPass() {
+		RenderSystem.enableBlend();
+		RenderSystem.disableCull();
+		RenderSystem.disableDepthTest();
+		RenderSystem.depthMask(false);
+		RenderSystem.blendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA,
+				GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE,
+				GlStateManager.DestFactor.ZERO);
+		RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
+	}
+
+	private static void endApotheosOverheadPass() {
+		RenderSystem.depthMask(true);
+		RenderSystem.enableDepthTest();
+		RenderSystem.enableCull();
+	}
+
+	private static void emitApotheosCanopyMesh(VertexConsumer consumer, Matrix4f matrix, float skyDistance) {
+		for (int radial = 0; radial < APOTHEOS_CANOPY_RADIAL_SEGMENTS; radial++) {
+			float t0 = radial / (float) APOTHEOS_CANOPY_RADIAL_SEGMENTS;
+			float t1 = (radial + 1) / (float) APOTHEOS_CANOPY_RADIAL_SEGMENTS;
+			for (int ring = 0; ring < APOTHEOS_CANOPY_RING_SEGMENTS; ring++) {
+				float a0 = ring / (float) APOTHEOS_CANOPY_RING_SEGMENTS;
+				float a1 = (ring + 1) / (float) APOTHEOS_CANOPY_RING_SEGMENTS;
+				addApotheosCanopyVertex(consumer, matrix, skyDistance, a0, t0);
+				addApotheosCanopyVertex(consumer, matrix, skyDistance, a0, t1);
+				addApotheosCanopyVertex(consumer, matrix, skyDistance, a1, t1);
+				addApotheosCanopyVertex(consumer, matrix, skyDistance, a1, t0);
+			}
+		}
+	}
+
+	private static void addApotheosCanopyVertex(VertexConsumer consumer, Matrix4f matrix, float skyDistance,
+			float angleT, float stepT) {
+		float shapedRadiusT = (float) Math.pow(stepT, 0.85F);
+		float radiusScale = Mth.lerp(shapedRadiusT, APOTHEOS_CANOPY_INNER_RADIUS_SCALE,
+				APOTHEOS_CANOPY_OUTER_RADIUS_SCALE);
+		float angle = angleT * Mth.TWO_PI;
+		float relief = Mth.sin(stepT * Mth.TWO_PI * 9.0F + angle * 3.0F) * 0.006F * Mth.lerp(stepT, 0.4F, 1.0F);
+		float radius = skyDistance * (radiusScale + relief);
+		float x = Mth.cos(angle) * radius;
+		float z = Mth.sin(angle) * radius;
+		float domeDrop = (float) Math.pow(stepT, 0.85F);
+		float mouthDip = APOTHEOS_CANOPY_MASS_MOUTH_DIP * (1.0F - smoothstep(0.0F, 0.22F, stepT));
+		float y = skyDistance * (Mth.lerp(domeDrop, APOTHEOS_CANOPY_APEX_Y_SCALE, APOTHEOS_CANOPY_RIM_Y_SCALE)
+				- mouthDip);
+		float radialT = Mth.lerp(stepT, APOTHEOS_CANOPY_INNER_RADIAL_T, 1.0F);
+		float alpha = Mth.clamp(Mth.lerp(stepT, 240.0F, 226.0F), 0.0F, 255.0F);
+		consumer.addVertex(matrix, x, y, z).setUv(angleT, radialT).setColor(255, 255, 255, (int) alpha);
+	}
+
+	private static void emitApotheosMassMesh(VertexConsumer consumer, Matrix4f matrix, float skyDistance) {
+		for (int vertical = 0; vertical < APOTHEOS_MASS_VERTICAL_SEGMENTS; vertical++) {
+			float v0 = vertical / (float) APOTHEOS_MASS_VERTICAL_SEGMENTS;
+			float v1 = (vertical + 1) / (float) APOTHEOS_MASS_VERTICAL_SEGMENTS;
+			for (int ring = 0; ring < APOTHEOS_MASS_RING_SEGMENTS; ring++) {
+				float a0 = ring / (float) APOTHEOS_MASS_RING_SEGMENTS;
+				float a1 = (ring + 1) / (float) APOTHEOS_MASS_RING_SEGMENTS;
+				addApotheosMassVertex(consumer, matrix, skyDistance, a0, v0);
+				addApotheosMassVertex(consumer, matrix, skyDistance, a1, v0);
+				addApotheosMassVertex(consumer, matrix, skyDistance, a1, v1);
+				addApotheosMassVertex(consumer, matrix, skyDistance, a0, v1);
+			}
+		}
+	}
+
+	private static void addApotheosMassVertex(VertexConsumer consumer, Matrix4f matrix, float skyDistance,
+			float angleT, float verticalT) {
+		float angle = angleT * Mth.TWO_PI;
+		float radius = skyDistance * apotheosMassRadiusScale(verticalT, angle);
+		float x = Mth.cos(angle) * radius;
+		float z = Mth.sin(angle) * radius;
+		float y = skyDistance * Mth.lerp(verticalT, APOTHEOS_MASS_TIP_Y_SCALE, APOTHEOS_MASS_TOP_Y_SCALE);
+		float radialT = verticalT * APOTHEOS_CANOPY_INNER_RADIAL_T;
+		float alpha = Mth.clamp(Mth.lerp(verticalT, 246.0F, 232.0F), 0.0F, 255.0F);
+		consumer.addVertex(matrix, x, y, z).setUv(angleT, radialT).setColor(255, 255, 255, (int) alpha);
+	}
+
+	private static float apotheosMassRadiusScale(float verticalT, float angle) {
+		float bulge = (float) Math.pow(Math.max(0.0F, Mth.sin(verticalT * Mth.PI)), 0.90F);
+		float innerRadius = Mth.lerp(smoothstep(0.0F, 1.0F, verticalT), APOTHEOS_MASS_TIP_RADIUS_SCALE,
+				APOTHEOS_MASS_TOP_RADIUS_SCALE);
+		float lobeWaver = 0.90F + Mth.sin(angle * 5.0F + verticalT * 7.0F) * 0.10F;
+		return Mth.lerp(bulge, innerRadius, APOTHEOS_MASS_MAX_RADIUS_SCALE) * lobeWaver;
+	}
+
+	private static void emitApotheosCeilingNode(VertexConsumer consumer, Matrix4f matrix, float skyDistance,
+			float time, int index) {
+		float angleT = apotheosWallHash(index * 4.13F);
+		float verticalT = 0.14F + apotheosWallHash(index * 9.71F) * 0.78F;
+		float angle = angleT * Mth.TWO_PI;
+		float radius = skyDistance * (apotheosMassRadiusScale(verticalT, angle) + 0.006F);
+		float x = Mth.cos(angle) * radius;
+		float z = Mth.sin(angle) * radius;
+		float y = skyDistance * Mth.lerp(verticalT, APOTHEOS_MASS_TIP_Y_SCALE, APOTHEOS_MASS_TOP_Y_SCALE);
+		float flare = 0.72F + 0.28F * Mth.sin(time * 0.05F + index * 1.7F);
+		float size = skyDistance * (0.010F + apotheosWallHash(index * 2.53F) * 0.012F);
+		int red = 255;
+		int green = (int) (26.0F + verticalT * 34.0F);
+		int blue = (int) (30.0F + verticalT * 26.0F);
+		int alpha = (int) Mth.clamp((150.0F + (1.0F - verticalT) * 90.0F) * flare, 0.0F, 235.0F);
+		addApotheosCeilingQuad(consumer, matrix, x, y, z, size, red, green, blue, alpha);
+	}
+
+	private static void emitApotheosCeilingTendril(VertexConsumer consumer, Matrix4f matrix, float skyDistance,
+			float time, int index) {
+		float angleT = (index * 0.093F + apotheosWallHash(index * 5.9F) * 0.05F) % 1.0F;
+		float angle = angleT * Mth.TWO_PI;
+		float rootRadiusScale = Mth.lerp(apotheosWallHash(index * 3.31F), APOTHEOS_CANOPY_INNER_RADIUS_SCALE + 0.02F,
+				APOTHEOS_MASS_MAX_RADIUS_SCALE + 0.10F);
+		float dropScale = 0.42F + apotheosWallHash(index * 8.17F) * 0.55F;
+		float topY = APOTHEOS_CANOPY_APEX_Y_SCALE - 0.10F;
+		float width = skyDistance * (0.0022F + apotheosWallHash(index * 6.4F) * 0.0022F);
+		float phase = index * 12.9F;
+		for (int segment = 0; segment < APOTHEOS_CEILING_TENDRIL_SEGMENTS; segment++) {
+			float s0 = segment / (float) APOTHEOS_CEILING_TENDRIL_SEGMENTS;
+			float s1 = (segment + 1) / (float) APOTHEOS_CEILING_TENDRIL_SEGMENTS;
+			float[] p0 = apotheosTendrilPoint(skyDistance, time, angle, rootRadiusScale, topY, dropScale, phase, s0);
+			float[] p1 = apotheosTendrilPoint(skyDistance, time, angle, rootRadiusScale, topY, dropScale, phase, s1);
+			float taper0 = width * (1.0F - s0 * 0.7F);
+			float taper1 = width * (1.0F - s1 * 0.7F);
+			int red = 200;
+			int green = 24;
+			int blue = 30;
+			int alpha0 = (int) Mth.clamp(Mth.lerp(s0, 150.0F, 210.0F), 0.0F, 220.0F);
+			int alpha1 = (int) Mth.clamp(Mth.lerp(s1, 150.0F, 210.0F), 0.0F, 220.0F);
+			addApotheosCeilingFrameVertex(consumer, matrix, p0[0] - taper0, p0[1], p0[2], red, green, blue, alpha0);
+			addApotheosCeilingFrameVertex(consumer, matrix, p1[0] - taper1, p1[1], p1[2], red, green, blue, alpha1);
+			addApotheosCeilingFrameVertex(consumer, matrix, p1[0] + taper1, p1[1], p1[2], red, green, blue, alpha1);
+			addApotheosCeilingFrameVertex(consumer, matrix, p0[0] + taper0, p0[1], p0[2], red, green, blue, alpha0);
+		}
+	}
+
+	private static float[] apotheosTendrilPoint(float skyDistance, float time, float angle, float rootRadiusScale,
+			float topY, float dropScale, float phase, float s) {
+		float sway = Mth.sin(s * 5.0F + phase + time * 0.03F) * 0.012F * s;
+		float radiusScale = rootRadiusScale + sway;
+		float radius = skyDistance * radiusScale;
+		float x = Mth.cos(angle) * radius;
+		float z = Mth.sin(angle) * radius;
+		float y = skyDistance * (topY - dropScale * s);
+		return new float[] { x, y, z };
+	}
+
+	private static void addApotheosCeilingQuad(VertexConsumer consumer, Matrix4f matrix, float x, float y, float z,
+			float size, int red, int green, int blue, int alpha) {
+		addApotheosCeilingFrameVertex(consumer, matrix, x - size, y, z - size, red, green, blue, alpha);
+		addApotheosCeilingFrameVertex(consumer, matrix, x + size, y, z - size, red, green, blue, alpha);
+		addApotheosCeilingFrameVertex(consumer, matrix, x + size, y, z + size, red, green, blue, alpha);
+		addApotheosCeilingFrameVertex(consumer, matrix, x - size, y, z + size, red, green, blue, alpha);
+	}
+
+	private static void addApotheosCeilingFrameVertex(VertexConsumer consumer, Matrix4f matrix, float x, float y,
+			float z, int red, int green, int blue, int alpha) {
+		consumer.addVertex(matrix, x, y, z).setColor(red, green, blue, alpha);
 	}
 }

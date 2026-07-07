@@ -561,6 +561,40 @@ public final class HemoRenderTypes {
 						.createCompositeState(false));
 	}
 
+	public static RenderType apotheosCeilingMembrane(float gameTime, float ceilSeed, float fiberScale,
+			float traceIntensity, float redGlowIntensity, float massDescent, float rimFadeStart, float rimFadeEnd) {
+		RenderStateShard.TexturingStateShard uniforms = new RenderStateShard.TexturingStateShard(
+				"apotheos_ceiling_membrane_uniforms",
+				() -> {
+					ShaderInstance shader = ShaderInit.APOTHEOS_CEILING_MEMBRANE.getInstance().get();
+					setUniform(shader, "HemoTime", gameTime);
+					setUniform(shader, "CeilSeed", ceilSeed);
+					setUniform(shader, "FiberScale", fiberScale);
+					setUniform(shader, "TraceIntensity", traceIntensity);
+					setUniform(shader, "RedGlowIntensity", redGlowIntensity);
+					setUniform(shader, "MassDescent", massDescent);
+					setUniform(shader, "RimFadeStart", rimFadeStart);
+					setUniform(shader, "RimFadeEnd", rimFadeEnd);
+				},
+				() -> {
+					ShaderInstance shader = ShaderInit.APOTHEOS_CEILING_MEMBRANE.getInstance().get();
+					if (shader instanceof ExtendedShaderInstance extended) {
+						extended.setUniformDefaults();
+					}
+				});
+		return RenderType.create("apotheos_ceiling_membrane",
+				DefaultVertexFormat.POSITION_TEX_COLOR, VertexFormat.Mode.QUADS, 32768, false, true,
+				RenderType.CompositeState.builder()
+						.setShaderState(ShaderInit.APOTHEOS_CEILING_MEMBRANE.getShard())
+						.setTexturingState(uniforms)
+						.setTransparencyState(RenderType.TRANSLUCENT_TRANSPARENCY)
+						.setDepthTestState(RenderType.NO_DEPTH_TEST)
+						.setWriteMaskState(RenderType.COLOR_WRITE)
+						.setCullState(RenderType.NO_CULL)
+						.setLightmapState(RenderType.NO_LIGHTMAP)
+						.createCompositeState(false));
+	}
+
 	public static RenderType mnemonicLowtideSkybox(float gameTime, float faceSeed, float coverageBias,
 			float tunnelScale, float bubbleScale, float tendrilIntensity) {
 		RenderStateShard.TexturingStateShard uniforms = new RenderStateShard.TexturingStateShard(

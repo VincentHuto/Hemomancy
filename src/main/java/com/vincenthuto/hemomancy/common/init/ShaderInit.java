@@ -99,6 +99,11 @@ public class ShaderInit {
 			DefaultVertexFormat.POSITION_TEX_COLOR, "HemoTime", "HazeSeed", "OutwardSpeed", "HazeIntensity",
 			"CenterVoidRadius");
 
+	public static ShaderHolder APOTHEOS_CEILING_MEMBRANE = new ShaderHolder(
+			Hemomancy.rloc("world/apotheos_ceiling_membrane"), DefaultVertexFormat.POSITION_TEX_COLOR,
+			"HemoTime", "CeilSeed", "FiberScale", "TraceIntensity", "RedGlowIntensity", "MassDescent",
+			"RimFadeStart", "RimFadeEnd");
+
 	@SubscribeEvent
 	public static void register(RegisterShadersEvent event) throws IOException {
         ResourceProvider provider = event.getResourceProvider();
@@ -133,6 +138,7 @@ public class ShaderInit {
         registerShader(event, APOTHEOS_WALL_MEMBRANE.createInstance(provider));
         registerShader(event, APOTHEOS_PORTAL_GLOW.createInstance(provider));
         registerShader(event, APOTHEOS_PORTAL_HAZE.createInstance(provider));
+        registerShader(event, APOTHEOS_CEILING_MEMBRANE.createInstance(provider));
 
 	}
 	   public static void registerShader(RegisterShadersEvent event, ExtendedShaderInstance extendedShaderInstance) {

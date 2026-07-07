@@ -466,8 +466,8 @@ public final class ApotheosFloorFunnelSourceTest {
 				"APOTHEOS wall membrane");
 		assertContains("reference documents renderer-only floor treatment", reference,
 				"renderer-only");
-		assertContains("reference documents pending ceiling pass", reference,
-				"ceiling remains pending");
+		assertContains("reference documents the apotheos ceiling membrane pass", reference,
+				"APOTHEOS ceiling membrane");
 	}
 
 	private static String read(Path path) throws IOException {
