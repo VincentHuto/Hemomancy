@@ -521,29 +521,62 @@ public final class HemoRenderTypes {
 						.createCompositeState(false));
 	}
 
-	public static RenderType apotheosCeilingMass(float gameTime, float ceilingSeed, float massNoiseScale,
-			float rotationSpeed, float yellowGlowIntensity, float greenOrbIntensity) {
+	public static RenderType apotheosCeilingCore(float gameTime, float ceilingSeed, float coreNoiseScale,
+			float rotationSpeed, float yellowGlowIntensity, float greenOrbIntensity, float coreUndulationIntensity) {
 		RenderStateShard.TexturingStateShard uniforms = new RenderStateShard.TexturingStateShard(
-				"apotheos_ceiling_mass_uniforms",
+				"apotheos_ceiling_core_uniforms",
 				() -> {
-					ShaderInstance shader = ShaderInit.APOTHEOS_CEILING_MASS.getInstance().get();
+					ShaderInstance shader = ShaderInit.APOTHEOS_CEILING_CORE.getInstance().get();
 					setUniform(shader, "HemoTime", gameTime);
 					setUniform(shader, "CeilingSeed", ceilingSeed);
-					setUniform(shader, "MassNoiseScale", massNoiseScale);
+					setUniform(shader, "CoreNoiseScale", coreNoiseScale);
 					setUniform(shader, "RotationSpeed", rotationSpeed);
 					setUniform(shader, "YellowGlowIntensity", yellowGlowIntensity);
 					setUniform(shader, "GreenOrbIntensity", greenOrbIntensity);
+					setUniform(shader, "CoreUndulationIntensity", coreUndulationIntensity);
 				},
 				() -> {
-					ShaderInstance shader = ShaderInit.APOTHEOS_CEILING_MASS.getInstance().get();
+					ShaderInstance shader = ShaderInit.APOTHEOS_CEILING_CORE.getInstance().get();
 					if (shader instanceof ExtendedShaderInstance extended) {
 						extended.setUniformDefaults();
 					}
 				});
-		return RenderType.create("apotheos_ceiling_mass",
+		return RenderType.create("apotheos_ceiling_core",
 				DefaultVertexFormat.POSITION_TEX_COLOR, VertexFormat.Mode.QUADS, 49152, false, true,
 				RenderType.CompositeState.builder()
-						.setShaderState(ShaderInit.APOTHEOS_CEILING_MASS.getShard())
+						.setShaderState(ShaderInit.APOTHEOS_CEILING_CORE.getShard())
+						.setTexturingState(uniforms)
+						.setTransparencyState(RenderType.TRANSLUCENT_TRANSPARENCY)
+						.setDepthTestState(RenderType.NO_DEPTH_TEST)
+						.setWriteMaskState(RenderType.COLOR_WRITE)
+						.setCullState(RenderType.NO_CULL)
+						.setLightmapState(RenderType.NO_LIGHTMAP)
+						.createCompositeState(false));
+	}
+
+	public static RenderType apotheosCeilingAtmosphere(float gameTime, float ceilingSeed, float atmosphereNoiseScale,
+			float rotationSpeed, float stormIntensity, float atmosphereOpacity) {
+		RenderStateShard.TexturingStateShard uniforms = new RenderStateShard.TexturingStateShard(
+				"apotheos_ceiling_atmosphere_uniforms",
+				() -> {
+					ShaderInstance shader = ShaderInit.APOTHEOS_CEILING_ATMOSPHERE.getInstance().get();
+					setUniform(shader, "HemoTime", gameTime);
+					setUniform(shader, "CeilingSeed", ceilingSeed);
+					setUniform(shader, "AtmosphereNoiseScale", atmosphereNoiseScale);
+					setUniform(shader, "RotationSpeed", rotationSpeed);
+					setUniform(shader, "StormIntensity", stormIntensity);
+					setUniform(shader, "AtmosphereOpacity", atmosphereOpacity);
+				},
+				() -> {
+					ShaderInstance shader = ShaderInit.APOTHEOS_CEILING_ATMOSPHERE.getInstance().get();
+					if (shader instanceof ExtendedShaderInstance extended) {
+						extended.setUniformDefaults();
+					}
+				});
+		return RenderType.create("apotheos_ceiling_atmosphere",
+				DefaultVertexFormat.POSITION_TEX_COLOR, VertexFormat.Mode.QUADS, 49152, false, true,
+				RenderType.CompositeState.builder()
+						.setShaderState(ShaderInit.APOTHEOS_CEILING_ATMOSPHERE.getShard())
 						.setTexturingState(uniforms)
 						.setTransparencyState(RenderType.TRANSLUCENT_TRANSPARENCY)
 						.setDepthTestState(RenderType.NO_DEPTH_TEST)

@@ -91,10 +91,15 @@ public class ShaderInit {
 			"HemoTime", "WallSeed", "FiberScale", "TraceIntensity", "RedGlowIntensity", "CeilingFadeStart",
 			"CeilingFadeEnd");
 
-	public static ShaderHolder APOTHEOS_CEILING_MASS = new ShaderHolder(
-			Hemomancy.rloc("world/apotheos_ceiling_mass"), DefaultVertexFormat.POSITION_TEX_COLOR,
-			"HemoTime", "CeilingSeed", "MassNoiseScale", "RotationSpeed", "YellowGlowIntensity",
-			"GreenOrbIntensity");
+	public static ShaderHolder APOTHEOS_CEILING_CORE = new ShaderHolder(
+			Hemomancy.rloc("world/apotheos_ceiling_core"), DefaultVertexFormat.POSITION_TEX_COLOR,
+			"HemoTime", "CeilingSeed", "CoreNoiseScale", "RotationSpeed", "YellowGlowIntensity",
+			"GreenOrbIntensity", "CoreUndulationIntensity");
+
+	public static ShaderHolder APOTHEOS_CEILING_ATMOSPHERE = new ShaderHolder(
+			Hemomancy.rloc("world/apotheos_ceiling_atmosphere"), DefaultVertexFormat.POSITION_TEX_COLOR,
+			"HemoTime", "CeilingSeed", "AtmosphereNoiseScale", "RotationSpeed", "StormIntensity",
+			"AtmosphereOpacity");
 
 	public static ShaderHolder APOTHEOS_WALL_TOP_RIM = new ShaderHolder(
 			Hemomancy.rloc("world/apotheos_wall_top_rim"), DefaultVertexFormat.POSITION_TEX_COLOR,
@@ -140,7 +145,8 @@ public class ShaderInit {
         registerShader(event, QLIPHOTH_BLACK_HOLE.createInstance(provider));
         registerShader(event, APOTHEOS_FLOOR_FUNNEL.createInstance(provider));
         registerShader(event, APOTHEOS_WALL_MEMBRANE.createInstance(provider));
-        registerShader(event, APOTHEOS_CEILING_MASS.createInstance(provider));
+        registerShader(event, APOTHEOS_CEILING_CORE.createInstance(provider));
+        registerShader(event, APOTHEOS_CEILING_ATMOSPHERE.createInstance(provider));
         registerShader(event, APOTHEOS_WALL_TOP_RIM.createInstance(provider));
         registerShader(event, APOTHEOS_PORTAL_GLOW.createInstance(provider));
         registerShader(event, APOTHEOS_PORTAL_HAZE.createInstance(provider));

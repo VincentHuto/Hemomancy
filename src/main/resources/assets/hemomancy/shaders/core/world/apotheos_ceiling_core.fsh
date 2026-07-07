@@ -3,7 +3,7 @@
 uniform vec4 ColorModulator;
 uniform float HemoTime;
 uniform float CeilingSeed;
-uniform float MassNoiseScale;
+uniform float CoreNoiseScale;
 uniform float RotationSpeed;
 uniform float YellowGlowIntensity;
 uniform float GreenOrbIntensity;
@@ -88,27 +88,51 @@ void main() {
                     time * 0.49 + CeilingSeed * 0.002),
             time * 0.27 + cos(time * 0.41) * 0.22);
 
-    vec2 sphericalMassFlow = vec2(rotatedSpherePosition.x * MassNoiseScale
+    vec2 sphericalMassFlow = vec2(rotatedSpherePosition.x * CoreNoiseScale
             + rotatedSpherePosition.y * 2.2 + ceilingBowlDepth * 1.4,
-            rotatedSpherePosition.z * MassNoiseScale + rotatedSpherePosition.y * 5.6 - time * 0.92);
+            rotatedSpherePosition.z * CoreNoiseScale + rotatedSpherePosition.y * 5.6 - time * 0.92);
     float primaryNoise = fbm(sphericalMassFlow);
+    float poleSwirlMask = smoothstep(0.24, 0.62, ceilingRadialT);
     float fiberNoise = fbm(vec2(rotatedSpherePosition.x * 5.8 + rotatedSpherePosition.z * 2.1
-            + primaryNoise * 1.5 - time * 0.28,
-            rotatedSpherePosition.y * 7.6 + ceilingRadialT * 11.0 + time * 0.18));
+            + primaryNoise * 1.5 * poleSwirlMask - time * 0.28,
+            rotatedSpherePosition.y * 7.6 + ceilingRadialT * 11.0 * poleSwirlMask + time * 0.18));
     float veinNoise = fbm(vec2(rotatedSpherePosition.z * 8.4 + rotatedSpherePosition.y * 3.7
-            + ceilingRadialT * 5.5,
-            rotatedSpherePosition.x * 8.4 - ceilingRadialT * 12.0 + primaryNoise * 1.9));
+            + ceilingRadialT * 5.5 * poleSwirlMask,
+            rotatedSpherePosition.x * 8.4 - ceilingRadialT * 12.0 * poleSwirlMask + primaryNoise * 1.9));
 
     float meatFold = smoothstep(0.24, 0.88, primaryNoise + fiberNoise * 0.24);
     float purpleBruise = smoothstep(0.32, 0.78, fiberNoise + ceilingBowlDepth * 0.18);
     float redPulse = smoothstep(0.40, 0.86, veinNoise + sin(time + ceilingRadialT * 13.0) * 0.09);
+    float centerPoleFleshFill = 1.0 - smoothstep(0.0, 0.155, ceilingRadialT);
+    float centerVoidSuppression = 1.0 - centerPoleFleshFill;
+    float planetoidLayerDepth = pow(clamp(hemisphereY, 0.0, 1.0), 0.62);
+    float planetoidLimbShade = smoothstep(0.54, 1.0, ceilingRadialT);
+
     vec3 clottedRed = vec3(0.34, 0.012, 0.026);
     vec3 wetRed = vec3(0.72, 0.025, 0.050);
     vec3 deepPurple = vec3(0.21, 0.020, 0.34);
     vec3 voidBlack = vec3(0.004, 0.003, 0.006);
-    vec3 redPurpleOrganicMass = mix(clottedRed, deepPurple, purpleBruise);
-    redPurpleOrganicMass = mix(redPurpleOrganicMass, wetRed, redPulse * 0.46);
-    redPurpleOrganicMass = mix(voidBlack, redPurpleOrganicMass, meatFold);
+    vec3 meatyCoreColor = mix(clottedRed, deepPurple, purpleBruise);
+    meatyCoreColor = mix(meatyCoreColor, wetRed, redPulse * 0.46);
+    meatyCoreColor = mix(voidBlack, meatyCoreColor, mix(1.0, meatFold, centerVoidSuppression));
+
+    float fleshPulse = 0.5 + sin(time * 2.1 + fiberNoise * 7.2 + ceilingBowlDepth * 4.6) * 0.5;
+    vec3 solidFleshCore = mix(vec3(0.46, 0.010, 0.030), vec3(0.90, 0.035, 0.050),
+            clamp(redPulse * 0.64 + primaryNoise * 0.26 + fleshPulse * 0.22, 0.0, 1.0));
+    solidFleshCore = mix(solidFleshCore, vec3(0.30, 0.010, 0.13), purpleBruise * 0.22);
+    meatyCoreColor = mix(meatyCoreColor, solidFleshCore, 0.62);
+
+    vec3 centerPoleFlesh = mix(vec3(0.86, 0.18, 0.035), vec3(1.0, 0.42, 0.055),
+            clamp(redPulse * 0.52 + fleshPulse * 0.38 + primaryNoise * 0.16, 0.0, 1.0));
+    meatyCoreColor = mix(meatyCoreColor, centerPoleFlesh, centerPoleFleshFill);
+
+    float yellowBiolume = smoothstep(0.72, 1.05, primaryNoise + redPulse * 0.35 + ceilingBowlDepth * 0.22)
+            * YellowGlowIntensity;
+    vec3 undersideMassColor = mix(vec3(0.20, 0.010, 0.055), vec3(0.58, 0.020, 0.070),
+            clamp(primaryNoise * 0.72 + redPulse * 0.28, 0.0, 1.0));
+    float solidUndersideFill = 1.0 - smoothstep(0.0, 0.42, ceilingRadialT);
+    float undersideMassLift = solidUndersideFill * (0.58 + meatFold * 0.24 + yellowBiolume * 0.12);
+    meatyCoreColor = mix(meatyCoreColor, undersideMassColor, undersideMassLift);
 
     float tendrilPhase = abs(fract(ceilingAngleT * 24.0 + fiberNoise * 0.58 + time * 0.10) - 0.5);
     float tendrilRadialBreak = smoothstep(0.12, 0.92, ceilingRadialT)
@@ -116,8 +140,6 @@ void main() {
     float blackWhiteTendrilTrace = (1.0 - smoothstep(0.020, 0.070, tendrilPhase)) * tendrilRadialBreak;
     float whiteTrace = pow(blackWhiteTendrilTrace, 4.0) * smoothstep(0.55, 0.96, veinNoise);
 
-    float yellowBiolume = smoothstep(0.72, 1.05, primaryNoise + redPulse * 0.35 + ceilingBowlDepth * 0.22)
-            * YellowGlowIntensity;
     float orbField = 0.0;
     for (int i = 0; i < 7; i++) {
         orbField += orbPulse(ceilingAngleT, ceilingRadialT, float(i), time);
@@ -125,23 +147,24 @@ void main() {
     orbField = clamp(orbField, 0.0, 1.0);
     float greenOrbGlow = orbField * GreenOrbIntensity
             * (0.74 + sin(time * 2.7 + ceilingAngleT * 17.0) * 0.14);
-    float edgeFade = 1.0 - smoothstep(0.985, 1.0, ceilingRadialT);
 
-    vec3 color = redPurpleOrganicMass;
+    vec3 color = meatyCoreColor;
     color = mix(color, voidBlack, blackWhiteTendrilTrace * 0.58);
     color += vec3(0.95, 0.92, 0.88) * whiteTrace * 0.55;
     color += vec3(1.0, 0.74, 0.055) * yellowBiolume * 0.28;
     color += vec3(0.72, 1.0, 0.16) * greenOrbGlow * 0.38;
-    color *= 0.74 + ceilingRadialT * 0.22 + ceilingBowlDepth * 0.12 + organicShift * 0.32;
+    color = mix(color * (0.94 + planetoidLayerDepth * 0.24), color * 0.76 + vec3(0.12, 0.010, 0.055),
+            planetoidLimbShade * 0.28);
+    color *= 0.78 + ceilingRadialT * 0.18 + ceilingBowlDepth * 0.14 + organicShift * 0.34;
 
-    float opacityCore = 0.62 + meatFold * 0.20 + redPulse * 0.10 + yellowBiolume * 0.06
-            + greenOrbGlow * 0.16;
-    float centerFeather = smoothstep(0.0, 0.08, ceilingRadialT);
-    float alpha = opacityCore * centerFeather * edgeFade * vertexColor.a * ColorModulator.a;
+    float edgeFade = 1.0 - smoothstep(0.985, 1.0, ceilingRadialT);
+    float opacityCore = 0.82 + meatFold * 0.10 + redPulse * 0.08 + yellowBiolume * 0.04
+            + greenOrbGlow * 0.12 + undersideMassLift * 0.14;
+    float alpha = opacityCore * edgeFade * vertexColor.a * ColorModulator.a;
 
     if (alpha < 0.01) {
         discard;
     }
 
-    fragColor = vec4(color * ColorModulator.rgb, min(alpha, 0.95));
+    fragColor = vec4(color * ColorModulator.rgb, min(alpha, 0.98));
 }

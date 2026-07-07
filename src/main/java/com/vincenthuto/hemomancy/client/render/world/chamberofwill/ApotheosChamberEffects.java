@@ -1,5 +1,8 @@
 package com.vincenthuto.hemomancy.client.render.world.chamberofwill;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.BufferBuilder;
@@ -50,7 +53,7 @@ final class ApotheosChamberEffects extends AbstractChamberThemeEffects {
 
 	private static final int APOTHEOS_CEILING_RING_SEGMENTS = 96;
 	private static final int APOTHEOS_CEILING_RADIAL_SEGMENTS = 36;
-	private static final int APOTHEOS_CEILING_TENDRIL_COUNT = 34;
+	private static final int APOTHEOS_CEILING_TENDRIL_COUNT = 14;
 	private static final int APOTHEOS_CEILING_TENDRIL_SEGMENTS = 18;
 	private static final int APOTHEOS_CEILING_OUTWARD_TENDRIL_COUNT = 18;
 	private static final int APOTHEOS_CEILING_OUTWARD_TENDRIL_SEGMENTS = 15;
@@ -60,17 +63,35 @@ final class ApotheosChamberEffects extends AbstractChamberThemeEffects {
 	private static final float APOTHEOS_CEILING_Y_SCALE = 1.83F;
 	private static final float APOTHEOS_CEILING_DROP_SCALE = 0.29F;
 	private static final float APOTHEOS_CEILING_SHADER_TIME_SCALE = 0.052F;
-	private static final float APOTHEOS_CEILING_MASS_NOISE_SCALE = 5.6F;
-	private static final float APOTHEOS_CEILING_ROTATION_SPEED = 0.22F;
+	private static final float APOTHEOS_CEILING_CORE_NOISE_SCALE = 5.8F;
+	private static final float APOTHEOS_CEILING_ATMOSPHERE_NOISE_SCALE = 9.4F;
+	private static final float APOTHEOS_CEILING_CORE_ROTATION_SPEED = 0.20F;
+	private static final float APOTHEOS_CEILING_ATMOSPHERE_ROTATION_SPEED = 0.56F;
 	private static final float APOTHEOS_CEILING_YELLOW_GLOW_INTENSITY = 2.25F;
 	private static final float APOTHEOS_CEILING_GREEN_ORB_INTENSITY = 1.82F;
-	private static final float APOTHEOS_CEILING_OUTWARD_TENDRIL_ROOT_RADIAL_T = 0.66F;
-	private static final float APOTHEOS_CEILING_OUTWARD_TENDRIL_LENGTH_SCALE = 0.24F;
+	private static final float APOTHEOS_CEILING_CORE_RADIUS_SCALE = 0.82F;
+	private static final float APOTHEOS_CEILING_ATMOSPHERE_RADIUS_SCALE = 1.1F;
+	private static final float APOTHEOS_CEILING_ATMOSPHERE_Y_OFFSET_SCALE = -0.045F;
+	private static final float APOTHEOS_CEILING_CORE_UNDULATION_INTENSITY = 1.18F;
+	private static final float APOTHEOS_CEILING_ATMOSPHERE_STORM_INTENSITY = 1.45F;
+	private static final float APOTHEOS_CEILING_ATMOSPHERE_OPACITY = 0.18F;
+	private static final float APOTHEOS_CEILING_CORE_CENTER_ANGLE_T = 0.5F;
+	private static final float APOTHEOS_CEILING_CORE_CENTER_RADIAL_EPSILON = 0.0001F;
+
+	private static final float APOTHEOS_CEILING_OUTWARD_TENDRIL_ROOT_RADIAL_T = 0.56F;
+	private static final float APOTHEOS_CEILING_OUTWARD_TENDRIL_MIN_LENGTH_MULTIPLIER = 0.88F;
+	private static final float APOTHEOS_CEILING_OUTWARD_TENDRIL_MAX_LENGTH_MULTIPLIER = 1.22F;
 	private static final float APOTHEOS_CEILING_OUTWARD_TENDRIL_WIDTH_SCALE = 0.014F;
 	private static final float APOTHEOS_CEILING_OUTWARD_TENDRIL_CORE_WIDTH_MULTIPLIER = 0.95F;
 	private static final float APOTHEOS_CEILING_OUTWARD_TENDRIL_GLOW_WIDTH_MULTIPLIER = 2.10F;
-	private static final float APOTHEOS_CEILING_OUTWARD_TENDRIL_CAMERA_PULL_SCALE = 0.28F;
-	private static final float APOTHEOS_CEILING_OUTWARD_TENDRIL_WHITE_RATIO = 0.48F;
+	private static final float APOTHEOS_CEILING_OUTWARD_TENDRIL_CAMERA_PULL_SCALE = 0.30F;
+	private static final float APOTHEOS_CEILING_OUTWARD_TENDRIL_RADIAL_PUSH_SCALE = 0.78F;
+	private static final float APOTHEOS_CEILING_OUTWARD_TENDRIL_VERTICAL_SAG_SCALE = 0.026F;
+	private static final float APOTHEOS_CEILING_OUTWARD_TENDRIL_SEGMENT_WRIGGLE_TIME_SCALE = 0.24F;
+	private static final float APOTHEOS_CEILING_OUTWARD_TENDRIL_SEGMENT_WRIGGLE_SCALE = 0.015F;
+	private static final float APOTHEOS_CEILING_OUTWARD_TENDRIL_SEGMENT_WRIGGLE_FREQUENCY = 3.0F;
+	private static final float APOTHEOS_CEILING_OUTWARD_TENDRIL_GEOMETRY_TIME_SCALE = 0.124F;
+	private static final float APOTHEOS_CEILING_OUTWARD_TENDRIL_WHITE_RATIO = 0.8F;
 	private static final float APOTHEOS_CEILING_OUTWARD_TENDRIL_YELLOW_ALPHA = 236.0F;
 	private static final float APOTHEOS_CEILING_OUTWARD_TENDRIL_WHITE_ALPHA = 224.0F;
 	private static final int APOTHEOS_CEILING_OUTWARD_TENDRIL_YELLOW_RED = 255;
@@ -85,7 +106,7 @@ final class ApotheosChamberEffects extends AbstractChamberThemeEffects {
 			.withLifecycle(1, 1, 1)
 			.withShape(28, 1, 0.088F, 0.13F)
 			.withBranching(2, 1, 0.18F, 0.72F)
-			.withWrithe(1.35F, 0.070F, 1.62F, -0.42F);
+			.withWrithe(1.85F, 0.135F, 2.35F, -0.42F);
 
 	private static final float APOTHEOS_WALL_TOP_RIM_HEIGHT_T = 0.28F;
 	private static final float APOTHEOS_WALL_TOP_RIM_RADIUS_SCALE = 0.2F;
@@ -128,8 +149,8 @@ final class ApotheosChamberEffects extends AbstractChamberThemeEffects {
 	protected void renderBeforeSharedLayers(ChamberThemeRenderContext context) {
 		renderApotheosWallMembrane(context.poseStack(), context.time(), context.skyDistance());
 		renderApotheosWallFrames(context.poseStack(), context.time(), context.skyDistance());
-		renderApotheosCeilingMass(context.poseStack(), context.time(), context.skyDistance());
 		renderApotheosCeilingTendrils(context.poseStack(), context.time(), context.skyDistance());
+		renderApotheosCeilingMass(context.poseStack(), context.time(), context.skyDistance());
 		renderApotheosCeilingOutwardTendrils(context.poseStack(), context.tesselator(), context.time(),
 				context.skyDistance());
 		renderApotheosCeilingOrbsAndGlow(context.poseStack(), context.time(), context.skyDistance());
@@ -197,6 +218,11 @@ final class ApotheosChamberEffects extends AbstractChamberThemeEffects {
 	}
 
 	private static void renderApotheosCeilingMass(PoseStack poseStack, float time, float skyDistance) {
+		renderApotheosCeilingAtmosphere(poseStack, time, skyDistance);
+		renderApotheosCeilingCore(poseStack, time, skyDistance);
+	}
+
+	private static void renderApotheosCeilingCore(PoseStack poseStack, float time, float skyDistance) {
 		RenderSystem.enableBlend();
 		RenderSystem.disableCull();
 		RenderSystem.disableDepthTest();
@@ -207,11 +233,35 @@ final class ApotheosChamberEffects extends AbstractChamberThemeEffects {
 		RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
 
 		MultiBufferSource.BufferSource buffer = Minecraft.getInstance().renderBuffers().bufferSource();
-		RenderType renderType = HemoRenderTypes.apotheosCeilingMass(time * APOTHEOS_CEILING_SHADER_TIME_SCALE,
-				509.0F, APOTHEOS_CEILING_MASS_NOISE_SCALE, APOTHEOS_CEILING_ROTATION_SPEED,
-				APOTHEOS_CEILING_YELLOW_GLOW_INTENSITY, APOTHEOS_CEILING_GREEN_ORB_INTENSITY);
+		RenderType renderType = HemoRenderTypes.apotheosCeilingCore(time * APOTHEOS_CEILING_SHADER_TIME_SCALE,
+				509.0F, APOTHEOS_CEILING_CORE_NOISE_SCALE, APOTHEOS_CEILING_CORE_ROTATION_SPEED,
+				APOTHEOS_CEILING_YELLOW_GLOW_INTENSITY, APOTHEOS_CEILING_GREEN_ORB_INTENSITY,
+				APOTHEOS_CEILING_CORE_UNDULATION_INTENSITY);
 		VertexConsumer consumer = buffer.getBuffer(renderType);
-		emitApotheosCeilingMassMesh(consumer, poseStack.last().pose(), skyDistance);
+		emitApotheosCeilingCoreMesh(consumer, poseStack.last().pose(), skyDistance);
+		buffer.endBatch(renderType);
+
+		RenderSystem.depthMask(true);
+		RenderSystem.enableDepthTest();
+		RenderSystem.enableCull();
+	}
+
+	private static void renderApotheosCeilingAtmosphere(PoseStack poseStack, float time, float skyDistance) {
+		RenderSystem.enableBlend();
+		RenderSystem.disableCull();
+		RenderSystem.disableDepthTest();
+		RenderSystem.depthMask(false);
+		RenderSystem.blendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA,
+				GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE,
+				GlStateManager.DestFactor.ZERO);
+		RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
+
+		MultiBufferSource.BufferSource buffer = Minecraft.getInstance().renderBuffers().bufferSource();
+		RenderType renderType = HemoRenderTypes.apotheosCeilingAtmosphere(time * APOTHEOS_CEILING_SHADER_TIME_SCALE,
+				613.0F, APOTHEOS_CEILING_ATMOSPHERE_NOISE_SCALE, APOTHEOS_CEILING_ATMOSPHERE_ROTATION_SPEED,
+				APOTHEOS_CEILING_ATMOSPHERE_STORM_INTENSITY, APOTHEOS_CEILING_ATMOSPHERE_OPACITY);
+		VertexConsumer consumer = buffer.getBuffer(renderType);
+		emitApotheosCeilingAtmosphereMesh(consumer, poseStack.last().pose(), skyDistance);
 		buffer.endBatch(renderType);
 
 		RenderSystem.depthMask(true);
@@ -531,32 +581,67 @@ final class ApotheosChamberEffects extends AbstractChamberThemeEffects {
 		consumer.addVertex(matrix, x, y, z).setColor(red, green, blue, alpha);
 	}
 
-	private static void emitApotheosCeilingMassMesh(VertexConsumer consumer, Matrix4f matrix, float skyDistance) {
+	private static void emitApotheosCeilingCoreMesh(VertexConsumer consumer, Matrix4f matrix, float skyDistance) {
 		for (int radial = 0; radial < APOTHEOS_CEILING_RADIAL_SEGMENTS; radial++) {
 			float t0 = radial / (float) APOTHEOS_CEILING_RADIAL_SEGMENTS;
 			float t1 = (radial + 1) / (float) APOTHEOS_CEILING_RADIAL_SEGMENTS;
 			for (int ring = 0; ring < APOTHEOS_CEILING_RING_SEGMENTS; ring++) {
 				float a0 = ring / (float) APOTHEOS_CEILING_RING_SEGMENTS;
 				float a1 = (ring + 1) / (float) APOTHEOS_CEILING_RING_SEGMENTS;
-				addApotheosCeilingMassVertex(consumer, matrix, skyDistance, a0, t0);
-				addApotheosCeilingMassVertex(consumer, matrix, skyDistance, a1, t0);
-				addApotheosCeilingMassVertex(consumer, matrix, skyDistance, a1, t1);
-				addApotheosCeilingMassVertex(consumer, matrix, skyDistance, a0, t1);
+				addApotheosCeilingCoreVertex(consumer, matrix, skyDistance, a0, t0);
+				addApotheosCeilingCoreVertex(consumer, matrix, skyDistance, a1, t0);
+				addApotheosCeilingCoreVertex(consumer, matrix, skyDistance, a1, t1);
+				addApotheosCeilingCoreVertex(consumer, matrix, skyDistance, a0, t1);
 			}
 		}
 	}
 
-	private static void addApotheosCeilingMassVertex(VertexConsumer consumer, Matrix4f matrix, float skyDistance,
+	private static void emitApotheosCeilingAtmosphereMesh(VertexConsumer consumer, Matrix4f matrix,
+			float skyDistance) {
+		for (int radial = 0; radial < APOTHEOS_CEILING_RADIAL_SEGMENTS; radial++) {
+			float t0 = radial / (float) APOTHEOS_CEILING_RADIAL_SEGMENTS;
+			float t1 = (radial + 1) / (float) APOTHEOS_CEILING_RADIAL_SEGMENTS;
+			for (int ring = 0; ring < APOTHEOS_CEILING_RING_SEGMENTS; ring++) {
+				float a0 = ring / (float) APOTHEOS_CEILING_RING_SEGMENTS;
+				float a1 = (ring + 1) / (float) APOTHEOS_CEILING_RING_SEGMENTS;
+				addApotheosCeilingAtmosphereVertex(consumer, matrix, skyDistance, a0, t0);
+				addApotheosCeilingAtmosphereVertex(consumer, matrix, skyDistance, a1, t0);
+				addApotheosCeilingAtmosphereVertex(consumer, matrix, skyDistance, a1, t1);
+				addApotheosCeilingAtmosphereVertex(consumer, matrix, skyDistance, a0, t1);
+			}
+		}
+	}
+
+	private static void addApotheosCeilingCoreVertex(VertexConsumer consumer, Matrix4f matrix, float skyDistance,
 			float angleT, float radialT) {
-		float angle = angleT * Mth.TWO_PI;
-		float radius = apotheosCeilingRadius(skyDistance, radialT);
+		float stableAngleT = radialT <= APOTHEOS_CEILING_CORE_CENTER_RADIAL_EPSILON
+				? APOTHEOS_CEILING_CORE_CENTER_ANGLE_T
+				: angleT;
+		float angle = stableAngleT * Mth.TWO_PI;
+		float radius = apotheosCeilingCoreRadius(skyDistance, radialT);
 		float x = Mth.cos(angle) * radius;
-		float y = apotheosCeilingMassY(skyDistance, radialT, angleT);
+		float y = apotheosCeilingCoreY(skyDistance, radialT, stableAngleT);
 		float z = Mth.sin(angle) * radius;
 		float edgePresence = 1.0F - smoothstep(0.92F, 1.0F, radialT) * 0.28F;
-		float alpha = Mth.clamp(204.0F + radialT * 34.0F, 0.0F, 246.0F) * edgePresence;
-		consumer.addVertex(matrix, x, y, z).setUv(angleT, radialT)
+		float alpha = Mth.clamp(214.0F + radialT * 28.0F, 0.0F, 246.0F) * edgePresence;
+		consumer.addVertex(matrix, x, y, z).setUv(stableAngleT, radialT)
 				.setColor(255, 255, 255, (int) Mth.clamp(alpha, 0.0F, 248.0F));
+	}
+
+	private static void addApotheosCeilingAtmosphereVertex(VertexConsumer consumer, Matrix4f matrix,
+			float skyDistance, float angleT, float radialT) {
+		float stableAngleT = radialT <= APOTHEOS_CEILING_CORE_CENTER_RADIAL_EPSILON
+				? APOTHEOS_CEILING_CORE_CENTER_ANGLE_T
+				: angleT;
+		float angle = stableAngleT * Mth.TWO_PI;
+		float radius = apotheosCeilingAtmosphereRadius(skyDistance, radialT);
+		float x = Mth.cos(angle) * radius;
+		float y = apotheosCeilingAtmosphereY(skyDistance, radialT, stableAngleT);
+		float z = Mth.sin(angle) * radius;
+		float shellPresence = smoothstep(0.04F, 0.22F, radialT) * (1.0F - smoothstep(0.94F, 1.0F, radialT));
+		float alpha = Mth.clamp(255.0F * shellPresence, 0.0F, 255.0F);
+		consumer.addVertex(matrix, x, y, z).setUv(stableAngleT, radialT)
+				.setColor(255, 255, 255, (int) alpha);
 	}
 
 	private static void emitApotheosCeilingTendril(VertexConsumer consumer, Matrix4f matrix, float skyDistance,
@@ -577,14 +662,14 @@ final class ApotheosChamberEffects extends AbstractChamberThemeEffects {
 			float angleT1 = apotheosCeilingTendrilAngle(rootAngleT, drift, phase, time, t1);
 			float radialT0 = Mth.lerp(t0, rootRadialT, endRadialT);
 			float radialT1 = Mth.lerp(t1, rootRadialT, endRadialT);
-			float x0 = apotheosCeilingX(skyDistance, angleT0, radialT0);
-			float y0 = apotheosCeilingMassY(skyDistance, radialT0, angleT0) - skyDistance * hang * t0
+			float x0 = apotheosCeilingCoreX(skyDistance, angleT0, radialT0);
+			float y0 = apotheosCeilingCoreY(skyDistance, radialT0, angleT0) - skyDistance * hang * t0
 					- skyDistance * 0.014F * Mth.sin(t0 * Mth.TWO_PI + phase + time * 0.030F);
-			float z0 = apotheosCeilingZ(skyDistance, angleT0, radialT0);
-			float x1 = apotheosCeilingX(skyDistance, angleT1, radialT1);
-			float y1 = apotheosCeilingMassY(skyDistance, radialT1, angleT1) - skyDistance * hang * t1
+			float z0 = apotheosCeilingCoreZ(skyDistance, angleT0, radialT0);
+			float x1 = apotheosCeilingCoreX(skyDistance, angleT1, radialT1);
+			float y1 = apotheosCeilingCoreY(skyDistance, radialT1, angleT1) - skyDistance * hang * t1
 					- skyDistance * 0.014F * Mth.sin(t1 * Mth.TWO_PI + phase + time * 0.030F);
-			float z1 = apotheosCeilingZ(skyDistance, angleT1, radialT1);
+			float z1 = apotheosCeilingCoreZ(skyDistance, angleT1, radialT1);
 			float width = skyDistance * (0.0028F + apotheosWallHash(phase + 9.7F) * 0.0046F)
 					* (1.0F - t0 * 0.46F);
 			int alpha = (int) Mth.clamp((whiteTendril ? 132.0F : 178.0F) * (1.0F - t0 * 0.38F), 34.0F,
@@ -631,39 +716,58 @@ final class ApotheosChamberEffects extends AbstractChamberThemeEffects {
 		float rootRadialT = APOTHEOS_CEILING_OUTWARD_TENDRIL_ROOT_RADIAL_T
 				+ apotheosWallHash(phase + 5.0F) * 0.10F;
 		float drift = (apotheosWallHash(phase + 7.0F) - 0.5F) * 0.22F;
+		float lengthMultiplier = apotheosCeilingOutwardTendrilLengthMultiplier(phase);
 		boolean whiteTendril = apotheosWallHash(phase + 11.0F) < APOTHEOS_CEILING_OUTWARD_TENDRIL_WHITE_RATIO;
-		Vec3 source = apotheosCeilingOutwardTendrilPoint(skyDistance, rootAngleT, rootRadialT, drift, phase, time,
-				0.0F);
-		Vec3 target = apotheosCeilingOutwardTendrilPoint(skyDistance, rootAngleT, rootRadialT, drift, phase, time,
-				1.0F);
-		Vec3 forward = source.normalize();
+		Vec3 sourceAtMass = apotheosCeilingOutwardTendrilPoint(skyDistance, rootAngleT, rootRadialT, drift, phase,
+				time, 0.0F);
+		Vec3 forward = new Vec3(sourceAtMass.x * 0.56D, sourceAtMass.y * 0.12D, sourceAtMass.z * 0.56D).normalize();
+		Vec3 radialOut = new Vec3(sourceAtMass.x, 0.0D, sourceAtMass.z);
+		if (radialOut.lengthSqr() < 0.0001D) {
+			radialOut = new Vec3(1.0D, 0.0D, 0.0D);
+		} else {
+			radialOut = radialOut.normalize();
+		}
 		Vec3 tangent = new Vec3(-forward.z, 0.0D, forward.x);
 		if (tangent.lengthSqr() < 0.0001D) {
 			tangent = new Vec3(1.0D, 0.0D, 0.0D);
 		} else {
 			tangent = tangent.normalize();
 		}
-		double curl = Math.sin(time * 0.035D + phase) * skyDistance * 0.060D;
-		target = target.subtract(forward.scale(skyDistance * APOTHEOS_CEILING_OUTWARD_TENDRIL_CAMERA_PULL_SCALE))
+		double pull = skyDistance * APOTHEOS_CEILING_OUTWARD_TENDRIL_CAMERA_PULL_SCALE * lengthMultiplier;
+		double radialPush = skyDistance * APOTHEOS_CEILING_OUTWARD_TENDRIL_RADIAL_PUSH_SCALE * lengthMultiplier;
+		double verticalSag = skyDistance * APOTHEOS_CEILING_OUTWARD_TENDRIL_VERTICAL_SAG_SCALE
+				* (0.35D + apotheosWallHash(phase + 13.0F) * 0.65D);
+		double curl = Math.sin(phase) * skyDistance * 0.055D;
+		Vec3 targetTowardPlayer = sourceAtMass.subtract(forward.scale(pull))
+				.add(radialOut.scale(radialPush))
 				.add(tangent.scale(curl))
-				.add(0.0D, -skyDistance * (0.055D + apotheosWallHash(phase + 13.0F) * 0.070D), 0.0D);
+				.add(0.0D, -verticalSag, 0.0D);
 		long tendrilSeed = apotheosCeilingOutwardTendrilSeed(tendril, whiteTendril);
 		TendrilEffectConfig config = APOTHEOS_CEILING_OUTWARD_TENDRIL_CONFIG
 				.withColors(apotheosCeilingOutwardTendrilCoreColor(whiteTendril),
 						apotheosCeilingOutwardTendrilGlowColor(whiteTendril))
 				.withFixedSeed(true, tendrilSeed);
-		TendrilGeometry geometry = TendrilGeometry.generate(source, target, config, tendrilSeed, time * 0.052F,
+		TendrilGeometry geometry = TendrilGeometry.generate(sourceAtMass, targetTowardPlayer, config, tendrilSeed,
+				time * APOTHEOS_CEILING_OUTWARD_TENDRIL_GEOMETRY_TIME_SCALE,
 				TendrilGeometry.SurfaceResolver.NONE);
-		emitApotheosCeilingOutwardTendrilTube(buffer, matrix, geometry, whiteTendril, skyDistance);
+		emitApotheosCeilingOutwardTendrilTube(buffer, matrix, geometry, whiteTendril, skyDistance, time,
+				tendrilSeed);
 	}
 
 	private static Vec3 apotheosCeilingOutwardTendrilPoint(float skyDistance, float rootAngleT, float rootRadialT,
 			float drift, float phase, float time, float t) {
 		float angleT = apotheosCeilingOutwardTendrilAngle(rootAngleT, drift, phase, time, t);
-		float radialT = rootRadialT + APOTHEOS_CEILING_OUTWARD_TENDRIL_LENGTH_SCALE * t;
-		return new Vec3(apotheosCeilingX(skyDistance, angleT, radialT),
+		float radialT = rootRadialT;
+		return apotheosCeilingCorePoint(skyDistance, angleT, radialT,
 				apotheosCeilingOutwardTendrilY(skyDistance, angleT, radialT, phase, time, t),
-				apotheosCeilingZ(skyDistance, angleT, radialT));
+				0.0F);
+	}
+
+	private static float apotheosCeilingOutwardTendrilLengthMultiplier(float phase) {
+		float longTailBias = Mth.square(apotheosWallHash(phase + 17.0F));
+		float lengthT = Mth.lerp(0.36F, apotheosWallHash(phase + 19.0F), longTailBias);
+		return Mth.lerp(lengthT, APOTHEOS_CEILING_OUTWARD_TENDRIL_MIN_LENGTH_MULTIPLIER,
+				APOTHEOS_CEILING_OUTWARD_TENDRIL_MAX_LENGTH_MULTIPLIER);
 	}
 
 	private static long apotheosCeilingOutwardTendrilSeed(int tendril, boolean whiteTendril) {
@@ -694,7 +798,7 @@ final class ApotheosChamberEffects extends AbstractChamberThemeEffects {
 	}
 
 	private static void emitApotheosCeilingOutwardTendrilTube(BufferBuilder buffer, Matrix4f matrix,
-			TendrilGeometry geometry, boolean whiteTendril, float skyDistance) {
+			TendrilGeometry geometry, boolean whiteTendril, float skyDistance, float time, long tendrilSeed) {
 		int coreAlpha = (int) (whiteTendril ? APOTHEOS_CEILING_OUTWARD_TENDRIL_WHITE_ALPHA
 				: APOTHEOS_CEILING_OUTWARD_TENDRIL_YELLOW_ALPHA);
 		int glowAlpha = whiteTendril ? 92 : 118;
@@ -712,18 +816,48 @@ final class ApotheosChamberEffects extends AbstractChamberThemeEffects {
 				* APOTHEOS_CEILING_OUTWARD_TENDRIL_CORE_WIDTH_MULTIPLIER / baseWidth;
 		float glowWidthScale = skyDistance * APOTHEOS_CEILING_OUTWARD_TENDRIL_WIDTH_SCALE
 				* APOTHEOS_CEILING_OUTWARD_TENDRIL_GLOW_WIDTH_MULTIPLIER / baseWidth;
+		int strandIndex = 0;
 		for (TendrilGeometry.Strand strand : geometry.strands()) {
-			TendrilGeometry.TubeQuads glowQuads = TendrilGeometry.createTubeQuads(strand, glowWidthScale);
+			TendrilGeometry.Strand wriggledStrand = apotheosCeilingOutwardWriggledStrand(strand, time, skyDistance,
+					tendrilSeed, strandIndex++);
+			TendrilGeometry.TubeQuads glowQuads = TendrilGeometry.createTubeQuads(wriggledStrand, glowWidthScale);
 			for (Vec3 vertex : glowQuads.vertices()) {
 				buffer.addVertex(matrix, (float) vertex.x, (float) vertex.y, (float) vertex.z)
 						.setColor(glowRed, glowGreen, glowBlue, glowAlpha);
 			}
-			TendrilGeometry.TubeQuads coreQuads = TendrilGeometry.createTubeQuads(strand, coreWidthScale);
+			TendrilGeometry.TubeQuads coreQuads = TendrilGeometry.createTubeQuads(wriggledStrand, coreWidthScale);
 			for (Vec3 vertex : coreQuads.vertices()) {
 				buffer.addVertex(matrix, (float) vertex.x, (float) vertex.y, (float) vertex.z)
 						.setColor(coreRed, coreGreen, coreBlue, coreAlpha);
 			}
 		}
+	}
+
+	private static TendrilGeometry.Strand apotheosCeilingOutwardWriggledStrand(TendrilGeometry.Strand strand,
+			float time, float skyDistance, long tendrilSeed, int strandIndex) {
+		float strandPhase = (float) (((tendrilSeed & 0xFFFFL) * 0.0017D) + strandIndex * 1.91D
+				+ strand.depth() * 0.73D + (strand.branch() ? 0.47D : 0.0D));
+		List<TendrilGeometry.Ring> wriggledRings = new ArrayList<>(strand.rings().size());
+		for (TendrilGeometry.Ring ring : strand.rings()) {
+			Vec3 offset = apotheosCeilingOutwardWriggleOffset(ring, time, skyDistance, strandPhase);
+			wriggledRings.add(new TendrilGeometry.Ring(ring.center().add(offset), ring.width(), ring.right(),
+					ring.up(), ring.progress()));
+		}
+		return new TendrilGeometry.Strand(List.copyOf(wriggledRings), strand.branch(), strand.depth());
+	}
+
+	private static Vec3 apotheosCeilingOutwardWriggleOffset(TendrilGeometry.Ring ring, float time,
+			float skyDistance, float strandPhase) {
+		float bodyMask = Mth.sin(ring.progress() * (float) Math.PI);
+		double animatedTime = time * APOTHEOS_CEILING_OUTWARD_TENDRIL_SEGMENT_WRIGGLE_TIME_SCALE;
+		double segmentPhase = ring.progress() * APOTHEOS_CEILING_OUTWARD_TENDRIL_SEGMENT_WRIGGLE_FREQUENCY;
+		double wriggleScale = skyDistance * APOTHEOS_CEILING_OUTWARD_TENDRIL_SEGMENT_WRIGGLE_SCALE * bodyMask;
+		double lateralWave = Math.sin(animatedTime + strandPhase + segmentPhase) * wriggleScale;
+		double crossWave = Math.cos(animatedTime * 1.37D + strandPhase * 0.71D + segmentPhase * 1.43D)
+				* wriggleScale * 0.56D;
+		double fineWave = Math.sin(animatedTime * 2.18D - strandPhase + segmentPhase * 1.91D) * wriggleScale
+				* 0.24D;
+		return ring.right().scale(lateralWave + fineWave).add(ring.up().scale(crossWave));
 	}
 
 	private static float apotheosCeilingOutwardTendrilAngle(float rootAngleT, float drift, float phase, float time,
@@ -735,7 +869,7 @@ final class ApotheosChamberEffects extends AbstractChamberThemeEffects {
 
 	private static float apotheosCeilingOutwardTendrilY(float skyDistance, float angleT, float radialT, float phase,
 			float time, float t) {
-		float surfaceY = apotheosCeilingMassY(skyDistance, Math.min(radialT, 1.0F), angleT);
+		float surfaceY = apotheosCeilingCoreY(skyDistance, Math.min(radialT, 1.0F), angleT);
 		float outwardSag = skyDistance * (0.025F + t * t * 0.115F);
 		float livingWobble = skyDistance * 0.010F * Mth.sin(time * 0.033F + phase + t * Mth.TWO_PI * 1.6F);
 		return surfaceY - outwardSag + livingWobble;
@@ -748,10 +882,10 @@ final class ApotheosChamberEffects extends AbstractChamberThemeEffects {
 		float angleT = apotheosWrap01(orb / (float) APOTHEOS_CEILING_ORB_COUNT
 				+ (apotheosWallHash(phase + 1.1F) - 0.5F) * 0.085F + drift);
 		float radialT = 0.24F + apotheosWallHash(phase + 5.9F) * 0.56F;
-		float x = apotheosCeilingX(skyDistance, angleT, radialT);
-		float y = apotheosCeilingMassY(skyDistance, radialT, angleT)
+		float x = apotheosCeilingCoreX(skyDistance, angleT, radialT);
+		float y = apotheosCeilingCoreY(skyDistance, radialT, angleT)
 				- skyDistance * (0.018F + apotheosWallHash(phase + 9.0F) * 0.055F);
-		float z = apotheosCeilingZ(skyDistance, angleT, radialT);
+		float z = apotheosCeilingCoreZ(skyDistance, angleT, radialT);
 		float pulse = 0.82F + Mth.sin(time * 0.090F + phase) * 0.18F;
 		float glowSize = skyDistance * (0.020F + apotheosWallHash(phase + 2.4F) * 0.024F) * pulse;
 		boolean greenOrb = orb % 3 == 0 || apotheosWallHash(phase + 7.4F) > 0.74F;
@@ -837,24 +971,53 @@ final class ApotheosChamberEffects extends AbstractChamberThemeEffects {
 		consumer.addVertex(matrix, x, y, z).setUv(angleT, widthT).setColor(red, green, blue, alpha);
 	}
 
-	private static float apotheosCeilingX(float skyDistance, float angleT, float radialT) {
-		return Mth.cos(angleT * Mth.TWO_PI) * apotheosCeilingRadius(skyDistance, radialT);
+	private static Vec3 apotheosCeilingCorePoint(float skyDistance, float angleT, float radialT, float y,
+			float yOffsetScale) {
+		return new Vec3(apotheosCeilingCoreX(skyDistance, angleT, radialT), y + skyDistance * yOffsetScale,
+				apotheosCeilingCoreZ(skyDistance, angleT, radialT));
 	}
 
-	private static float apotheosCeilingZ(float skyDistance, float angleT, float radialT) {
-		return Mth.sin(angleT * Mth.TWO_PI) * apotheosCeilingRadius(skyDistance, radialT);
+	private static float apotheosCeilingCoreX(float skyDistance, float angleT, float radialT) {
+		return Mth.cos(angleT * Mth.TWO_PI) * apotheosCeilingCoreRadius(skyDistance, radialT);
 	}
 
-	private static float apotheosCeilingRadius(float skyDistance, float radialT) {
-		float shapedRadiusT = Mth.sqrt(radialT);
-		return skyDistance * Mth.lerp(shapedRadiusT, 0.035F, APOTHEOS_CEILING_DOME_SPAN_SCALE);
+	private static float apotheosCeilingCoreZ(float skyDistance, float angleT, float radialT) {
+		return Mth.sin(angleT * Mth.TWO_PI) * apotheosCeilingCoreRadius(skyDistance, radialT);
 	}
 
-	private static float apotheosCeilingMassY(float skyDistance, float radialT, float angleT) {
-		float centerDrop = (float) Math.pow(1.0F - radialT, 1.55F) * APOTHEOS_CEILING_DROP_SCALE * skyDistance;
+	private static float apotheosCeilingCoreRadius(float skyDistance, float radialT) {
+		float shapedRadiusT = apotheosCeilingPlanetoidRadiusT(radialT);
+		return skyDistance * Mth.lerp(shapedRadiusT, 0.035F,
+				APOTHEOS_CEILING_DOME_SPAN_SCALE * APOTHEOS_CEILING_CORE_RADIUS_SCALE);
+	}
+
+	private static float apotheosCeilingAtmosphereRadius(float skyDistance, float radialT) {
+		float shapedRadiusT = apotheosCeilingPlanetoidRadiusT(radialT);
+		return skyDistance * Mth.lerp(shapedRadiusT, 0.045F,
+				APOTHEOS_CEILING_DOME_SPAN_SCALE * APOTHEOS_CEILING_ATMOSPHERE_RADIUS_SCALE);
+	}
+
+	private static float apotheosCeilingPlanetoidRadiusT(float radialT) {
+		float smoothed = smoothstep(0.0F, 1.0F, radialT);
+		return Mth.lerp(radialT, smoothed, 0.72F);
+	}
+
+	private static float apotheosCeilingCoreY(float skyDistance, float radialT, float angleT) {
+		float planetoidDepthT = 1.0F - Mth.square(1.0F - radialT);
+		float centerDrop = (float) Math.pow(1.0F - planetoidDepthT, 1.20F) * APOTHEOS_CEILING_DROP_SCALE
+				* skyDistance;
 		float edgeRise = Mth.square(radialT) * skyDistance * 0.030F;
-		float ripple = Mth.sin(angleT * Mth.TWO_PI * 6.0F + radialT * 12.0F) * skyDistance * 0.0045F;
+		float centerRippleMask = smoothstep(0.24F, 0.68F, radialT);
+		float ripple = Mth.sin(angleT * Mth.TWO_PI * 6.0F + radialT * 12.0F) * skyDistance * 0.0045F
+				* centerRippleMask;
 		return skyDistance * APOTHEOS_CEILING_Y_SCALE - centerDrop + edgeRise + ripple;
+	}
+
+	private static float apotheosCeilingAtmosphereY(float skyDistance, float radialT, float angleT) {
+		float coreY = apotheosCeilingCoreY(skyDistance, radialT, angleT);
+		float shellLift = skyDistance * (0.045F + smoothstep(0.12F, 0.86F, radialT) * 0.045F);
+		float stormSag = skyDistance * APOTHEOS_CEILING_ATMOSPHERE_Y_OFFSET_SCALE;
+		return coreY + shellLift + stormSag;
 	}
 
 	private static float apotheosWallY(float skyDistance, float heightT) {

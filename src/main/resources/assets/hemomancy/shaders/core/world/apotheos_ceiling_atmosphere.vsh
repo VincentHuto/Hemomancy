@@ -4,6 +4,7 @@ uniform mat4 ModelViewMat;
 uniform mat4 ProjMat;
 uniform float HemoTime;
 uniform float RotationSpeed;
+uniform float StormIntensity;
 
 in vec3 Position;
 in vec4 Color;
@@ -14,20 +15,20 @@ out vec2 texCoord0;
 out float ceilingAngleT;
 out float ceilingRadialT;
 out float ceilingBowlDepth;
-out float organicShift;
+out float stormShift;
 
 void main() {
     float angle = UV0.x * 6.2831853;
     float radial = UV0.y;
     float time = HemoTime * RotationSpeed;
-    float foldA = sin(angle * 3.0 + radial * 8.0 + time * 1.6);
-    float foldB = sin(angle * 7.0 - radial * 5.0 - time * 1.1);
-    float inwardWeight = pow(1.0 - radial, 1.35);
-    organicShift = (foldA * 0.035 + foldB * 0.018) * (0.28 + inwardWeight * 0.72)
-            - inwardWeight * 0.075;
+    float inwardWeight = pow(1.0 - radial, 1.10);
+    float stormWrithe = sin(angle * 9.0 + radial * 17.0 + time * 3.2)
+            + sin(angle * 4.0 - radial * 23.0 - time * 2.1) * 0.58
+            + sin(angle * 15.0 + time * 1.4) * 0.22;
+    stormShift = stormWrithe * 0.030 * StormIntensity * (0.28 + radial * 0.92);
 
     vec3 surfacePosition = Position;
-    surfacePosition.y += organicShift;
+    surfacePosition.y += stormShift;
 
     gl_Position = ProjMat * ModelViewMat * vec4(surfacePosition, 1.0);
     vertexColor = Color;
