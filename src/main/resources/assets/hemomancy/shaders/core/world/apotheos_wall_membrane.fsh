@@ -92,7 +92,8 @@ void main() {
             * subtlePaleWebTrace * visiblePaleTraceBoost;
     color *= 0.94 + lowWallMask * 0.18 + threadNoise * 0.18;
 
-    float wallOpacityHeadroom = 0.90 + redLowWallGlow * 0.09 + subtlePaleWebTrace * 0.06;
+    float wallOpacityHeadroom = 0.90 + redLowWallGlow * 0.09 + subtlePaleWebTrace * 0.06
+            + smoothstep(0.12, 0.52, 1.0 - height) * 0.04;
     float alpha = (0.66 + fiberDepth * 0.20 + redLowWallGlow * 0.24 + subtlePaleWebTrace * 0.16)
             * wallFloorBlendFeather * ceilingHandoffFade * vertexColor.a * ColorModulator.a;
     alpha *= wallOpacityHeadroom * (0.86 + broadFiberNoise * 0.18 + verticalStrands * 0.08);

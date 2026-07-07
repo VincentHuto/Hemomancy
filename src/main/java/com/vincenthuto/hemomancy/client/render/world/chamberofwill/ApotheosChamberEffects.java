@@ -32,14 +32,14 @@ final class ApotheosChamberEffects extends AbstractChamberThemeEffects {
 
 	private static final float APOTHEOS_WALL_RADIUS_SCALE = 0.66F;
 	private static final float APOTHEOS_WALL_BOTTOM_Y_SCALE = -0.58F;
-	private static final float APOTHEOS_WALL_TOP_Y_SCALE = 1.86F;
+	private static final float APOTHEOS_WALL_TOP_Y_SCALE = 1.36F;
 	private static final float APOTHEOS_WALL_FIBER_SCALE = 2.4F;
 	private static final float APOTHEOS_WALL_TRACE_INTENSITY = 0.68F;
 	private static final float APOTHEOS_WALL_RED_GLOW_INTENSITY = 0.95F;
 	private static final float APOTHEOS_WALL_CEILING_FADE_START = 0.68F;
 	private static final float APOTHEOS_WALL_CEILING_FADE_END = 0.92F;
 
-	private static final int APOTHEOS_WALL_WEB_RIBBONS = 18;
+	private static final int APOTHEOS_WALL_WEB_RIBBONS = 0;
 	private static final int APOTHEOS_WALL_WEB_RIBBON_SEGMENTS = 22;
 	private static final float APOTHEOS_WALL_WEB_MIN_HEIGHT_T = 0.46F;
 
@@ -103,7 +103,7 @@ final class ApotheosChamberEffects extends AbstractChamberThemeEffects {
 		RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
 
 		MultiBufferSource.BufferSource buffer = Minecraft.getInstance().renderBuffers().bufferSource();
-		RenderType renderType = HemoRenderTypes.QLIPHOTH_GLOW;
+		RenderType renderType = HemoRenderTypes.APOTHEOS_WALL_FRAME;
 		VertexConsumer consumer = buffer.getBuffer(renderType);
 		Matrix4f matrix = poseStack.last().pose();
 		for (int rib = 0; rib < APOTHEOS_WALL_FRAME_RIBS; rib++) {

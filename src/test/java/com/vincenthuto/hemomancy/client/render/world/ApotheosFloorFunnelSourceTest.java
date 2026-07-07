@@ -56,6 +56,12 @@ public final class ApotheosFloorFunnelSourceTest {
 		assertFileExists("apotheos wall membrane shader json", WALL_SHADER_JSON);
 		assertFileExists("apotheos wall membrane vertex shader", WALL_SHADER_VERTEX);
 		assertFileExists("apotheos wall membrane fragment shader", WALL_SHADER_FRAGMENT);
+		assertFileMissing("removed apotheos ceiling canopy shader json",
+				Path.of("src/main/resources/assets/hemomancy/shaders/core/world/apotheos_ceiling_canopy.json"));
+		assertFileMissing("removed apotheos ceiling canopy vertex shader",
+				Path.of("src/main/resources/assets/hemomancy/shaders/core/world/apotheos_ceiling_canopy.vsh"));
+		assertFileMissing("removed apotheos ceiling canopy fragment shader",
+				Path.of("src/main/resources/assets/hemomancy/shaders/core/world/apotheos_ceiling_canopy.fsh"));
 
 		String apotheosEffects = read(APOTHEOS_EFFECTS);
 		String registry = read(REGISTRY);
@@ -110,6 +116,10 @@ public final class ApotheosFloorFunnelSourceTest {
 				"\"RingRise\"");
 		assertContains("shader init requests center void uniform", shaderInit,
 				"\"CenterVoidRadius\"");
+		assertNotContains("shader init should not declare apotheos ceiling canopy shader", shaderInit,
+				"APOTHEOS_CEILING_CANOPY");
+		assertNotContains("shader init should not use world apotheos ceiling canopy shader path", shaderInit,
+				"world/apotheos_ceiling_canopy");
 
 		assertContains("render type method exists", renderTypes,
 				"public static RenderType apotheosFloorFunnel(");
@@ -127,6 +137,12 @@ public final class ApotheosFloorFunnelSourceTest {
 				"ShaderInit.APOTHEOS_PORTAL_GLOW.getShard()");
 		assertContains("wall membrane render type uses apotheos wall shader shard", renderTypes,
 				"ShaderInit.APOTHEOS_WALL_MEMBRANE.getShard()");
+		assertContains("apotheos wall frame render type exists", renderTypes,
+				"APOTHEOS_WALL_FRAME");
+		assertContains("apotheos wall frame render type ignores skybox depth", renderTypes,
+				"RenderType.create(\"apotheos_wall_frame\"");
+		assertContains("apotheos wall frame render type uses no depth test", renderTypes,
+				".setDepthTestState(RenderType.NO_DEPTH_TEST)");
 		assertContains("render type uploads ring speed", renderTypes,
 				"setUniform(shader, \"RingSpeed\", ringSpeed);");
 		assertContains("wall membrane render type uploads fiber scale", renderTypes,
@@ -139,6 +155,10 @@ public final class ApotheosFloorFunnelSourceTest {
 				"setUniform(shader, \"CeilingFadeStart\", ceilingFadeStart);");
 		assertContains("wall membrane render type uploads ceiling fade end", renderTypes,
 				"setUniform(shader, \"CeilingFadeEnd\", ceilingFadeEnd);");
+		assertNotContains("render types should not keep apotheos ceiling canopy method", renderTypes,
+				"apotheosCeilingCanopy");
+		assertNotContains("render types should not keep apotheos ceiling canopy shader", renderTypes,
+				"APOTHEOS_CEILING_CANOPY");
 		assertContains("render type uploads center void radius", renderTypes,
 				"setUniform(shader, \"CenterVoidRadius\", centerVoidRadius);");
 		assertContains("render type disables depth test for skybox-space floor funnel", renderTypes,
@@ -150,12 +170,10 @@ public final class ApotheosFloorFunnelSourceTest {
 				"extends AbstractChamberThemeEffects");
 		assertContains("apotheos effects render in the chamber sky pass", apotheosEffects,
 				"protected void renderBeforeSharedLayers(ChamberThemeRenderContext context)");
-		assertContains("apotheos effects render the wall membrane before portal and floor layers", apotheosEffects,
-				"renderApotheosWallMembrane(context.poseStack(), context.time(), context.skyDistance());\n\t\trenderApotheosWallFrames(context.poseStack(), context.time(), context.skyDistance());\n\t\trenderApotheosPortalGlow");
-		assertContains("apotheos effects render prominent wall frames after the wall membrane", apotheosEffects,
-				"renderApotheosWallFrames(context.poseStack(), context.time(), context.skyDistance());");
-		assertContains("apotheos effects draw the floor funnel before future wall and ceiling passes", apotheosEffects,
-				"renderApotheosFloorFunnel(context.poseStack(), context.time(), context.skyDistance())");
+		assertContains("apotheos effects render wall, portal, and floor before shared chamber layers", apotheosEffects,
+				"renderApotheosWallMembrane(context.poseStack(), context.time(), context.skyDistance());\n\t\trenderApotheosWallFrames(context.poseStack(), context.time(), context.skyDistance());\n\t\trenderApotheosPortalGlow(context.poseStack(), context.time(), context.skyDistance());\n\t\trenderApotheosFloorFunnel(context.poseStack(), context.time(), context.skyDistance());");
+		assertContains("apotheos effects draw the floor funnel after the portal glow", apotheosEffects,
+				"renderApotheosPortalGlow(context.poseStack(), context.time(), context.skyDistance());\n\t\trenderApotheosFloorFunnel(context.poseStack(), context.time(), context.skyDistance())");
 		assertContains("apotheos effects draw the portal glow before the floor funnel", apotheosEffects,
 				"renderApotheosPortalGlow(context.poseStack(), context.time(), context.skyDistance());\n\t\trenderApotheosFloorFunnel");
 		assertContains("apotheos effects draw a second portal haze layer", apotheosEffects,
@@ -210,10 +228,32 @@ public final class ApotheosFloorFunnelSourceTest {
 				"apotheosWallWebArcBend");
 		assertContains("apotheos effects emits curved APOTHEOS web ribbon spans", apotheosEffects,
 				"emitApotheosWallWebRibbonSpan");
-		assertNotContains("apotheos wall pass should not include wall nodules yet", apotheosEffects,
-				"wallNodule");
-		assertNotContains("apotheos wall pass should not include suspended droplets yet", apotheosEffects,
-				"suspendedDroplet");
+		assertNotContains("apotheos effects should not render apotheos ceiling canopy", apotheosEffects,
+				"renderApotheosCeilingCanopy");
+		assertNotContains("apotheos effects should not render the removed apotheos ceiling funnel", apotheosEffects,
+				"renderApotheosCeilingFunnel");
+		assertContains("apotheos wall frame pass uses the no-depth wall frame render type", apotheosEffects,
+				"RenderType renderType = HemoRenderTypes.APOTHEOS_WALL_FRAME");
+		assertNotContains("apotheos effects should not keep old ceiling-mouth collar helper", apotheosEffects,
+				"emitApotheosWallTopFleshyCollar");
+		assertNotContains("apotheos effects should not keep old collar y anchor", apotheosEffects,
+				"apotheosWallTopCollarY");
+		assertNotContains("apotheos effects should not keep old flat ceiling cap helper", apotheosEffects,
+				"emitApotheosCeilingCanopyMesh");
+		assertNotContains("apotheos effects should not keep old separate ceiling funnel core", apotheosEffects,
+				"emitApotheosCeilingFunnelCore");
+		assertNotContains("apotheos effects should not own the visible lip from the ceiling pass", apotheosEffects,
+				"emitApotheosCeilingFleshyRimLip");
+		assertNotContains("apotheos effects should not keep old radial ceiling mesh constant", apotheosEffects,
+				"APOTHEOS_CEILING_RADIAL_SEGMENTS");
+		assertNotContains("apotheos effects should not keep old radial ceiling mass radius", apotheosEffects,
+				"APOTHEOS_CEILING_MASS_RADIUS");
+		assertNotContains("apotheos effects should not keep new ceiling constants while restarting ceiling work",
+				apotheosEffects, "APOTHEOS_CEILING_");
+		assertNotContains("apotheos effects should not keep new ceiling helper names while restarting ceiling work",
+				apotheosEffects, "emitApotheosCeiling");
+		assertNotContains("apotheos render types should not keep ceiling geometry render types while restarting ceiling work",
+				renderTypes, "APOTHEOS_CEILING_");
 		assertContains("apotheos effects send shader time for outward ring travel", apotheosEffects,
 				"time * APOTHEOS_FLOOR_SHADER_TIME_SCALE");
 		assertContains("apotheos effects scale from chamber sky distance", apotheosEffects,
@@ -459,15 +499,18 @@ public final class ApotheosFloorFunnelSourceTest {
 				"wallNodule");
 		assertNotContains("wall membrane fragment shader should not include suspended droplets", wallFragmentShader,
 				"suspendedDroplet");
-
 		assertContains("reference documents apotheos floor funnel", reference,
 				"APOTHEOS floor funnel");
 		assertContains("reference documents apotheos wall membrane", reference,
 				"APOTHEOS wall membrane");
+		assertNotContains("reference should not document removed apotheos ceiling canopy", reference,
+				"APOTHEOS ceiling canopy");
 		assertContains("reference documents renderer-only floor treatment", reference,
 				"renderer-only");
-		assertContains("reference documents pending ceiling pass", reference,
-				"ceiling remains pending");
+		assertNotContains("reference should not document removed sparse ceiling drops", reference,
+				"sparse high hanging drops");
+		assertNotContains("reference should not document removed deep hanging ceiling funnel", reference,
+				"deep hanging ceiling funnel");
 	}
 
 	private static String read(Path path) throws IOException {
@@ -477,6 +520,12 @@ public final class ApotheosFloorFunnelSourceTest {
 	private static void assertFileExists(String label, Path path) {
 		if (!Files.exists(path)) {
 			throw new AssertionError(label + ": missing " + path);
+		}
+	}
+
+	private static void assertFileMissing(String label, Path path) {
+		if (Files.exists(path)) {
+			throw new AssertionError(label + ": still exists " + path);
 		}
 	}
 
