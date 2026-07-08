@@ -44,6 +44,10 @@ public class HematicArmatureRecipeCategory implements IRecipeCategory<ArmatureUp
 	private static final int TEXT_RED = 0xFFB83A35;
 	private static final int TEXT_MUTED = 0xFF93817C;
 	private static final int TEXT_GOLD = 0xFFC49A55;
+	private static final int RIGHT_LABEL_X = 64;
+	private static final int RIGHT_LABEL_W = BG_W - RIGHT_LABEL_X - 5;
+	private static final int ARMOR_MAP_X = REAGENT_X - 4;
+	private static final int ARMOR_MAP_Y = SLOT_Y + 25;
 
 	private final IDrawable background;
 	private final IDrawable icon;
@@ -100,8 +104,10 @@ public class HematicArmatureRecipeCategory implements IRecipeCategory<ArmatureUp
 		drawSlot(gfx, BASE_X - 1, SLOT_Y - 1);
 		drawSlot(gfx, REAGENT_X - 1, SLOT_Y - 1);
 		drawSlot(gfx, OUTPUT_X - 1, SLOT_Y - 1);
-		drawArrow(gfx, BASE_X + 22, SLOT_Y + 7, REAGENT_X - 6, time);
-		drawArrow(gfx, REAGENT_X + 22, SLOT_Y + 7, OUTPUT_X - 6, time + 0.6f);
+		JeiProgressArrow.draw(gfx, BASE_X + 22, SLOT_Y + 7, REAGENT_X - 6, time,
+				0x553A1212, 0x663A1212, 170, 42, 35);
+		JeiProgressArrow.draw(gfx, REAGENT_X + 22, SLOT_Y + 7, OUTPUT_X - 6, time + 0.6f,
+				0x553A1212, 0x663A1212, 170, 42, 35);
 		drawBowlMap(gfx, recipe);
 
 		Component slotText = Component.literal(recipe.getArmorSlot().name());
@@ -116,13 +122,13 @@ public class HematicArmatureRecipeCategory implements IRecipeCategory<ArmatureUp
 		if (recipe.getRequiredArmatureTier() != ArmatureUpgradeRules.ArmatureTier.BASE) {
 			Component tierText = Component.translatable("block.hemomancy.hematic_armature.tier."
 					+ recipe.getRequiredArmatureTier().serializedName());
-			gfx.drawString(font, tierText, BG_W - font.width(tierText) - 5, 5, TEXT_MUTED, false);
+			drawRightAlignedFitted(gfx, font, tierText, BG_W - 5, 5, RIGHT_LABEL_W, TEXT_MUTED);
 		}
 
 		if (recipe.getPersistentDataGate() != null) {
 			Component gateText = Component.literal("Gate: " + recipe.getPersistentDataGate().value());
 			int gateY = recipe.getRequiredArmatureTier() == ArmatureUpgradeRules.ArmatureTier.BASE ? 5 : 16;
-			gfx.drawString(font, gateText, BG_W - font.width(gateText) - 5, gateY, TEXT_MUTED, false);
+			drawRightAlignedFitted(gfx, font, gateText, BG_W - 5, gateY, RIGHT_LABEL_W, TEXT_MUTED);
 		}
 	}
 
@@ -152,8 +158,8 @@ public class HematicArmatureRecipeCategory implements IRecipeCategory<ArmatureUp
 	}
 
 	private void drawBowlMap(GuiGraphics gfx, ArmatureUpgradeRecipe recipe) {
-		int startX = 72;
-		int startY = 8;
+		int startX = ARMOR_MAP_X;
+		int startY = ARMOR_MAP_Y;
 		for (int i = 0; i < 4; i++) {
 			int x = startX + (i % 2) * 12;
 			int y = startY + (i / 2) * 10;
@@ -183,51 +189,21 @@ public class HematicArmatureRecipeCategory implements IRecipeCategory<ArmatureUp
 		gfx.fill(x + 17, y, x + 18, y + 18, SLOT_BORDER_LIGHT);
 	}
 
-	private void drawArrow(GuiGraphics gfx, int startX, int y, int tipX, float time) {
-		int shaftEnd = tipX - 5;
-		int trackColor = 0x553A1212;
-		int dimHeadColor = 0x663A1212;
-
-		gfx.fill(startX, y, shaftEnd, y + 2, trackColor);
-		drawArrowHead(gfx, tipX, y, dimHeadColor);
-
-		float progress = (time * 0.85f) % 1.0f;
-		float trail = 0.34f;
-		int totalW = Math.max(tipX - startX + 1, 1);
-		for (int x = startX; x <= tipX; x++) {
-			float xProgress = (float) (x - startX) / totalW;
-			float dist = progress - xProgress;
-			if (dist < 0f || dist > trail) {
-				continue;
-			}
-
-			float intensity = 1f - dist / trail;
-			int alpha = (int) (85 + 170 * intensity);
-			int red = (int) Mth.clamp(170 + 65 * intensity, 0, 255);
-			int green = (int) Mth.clamp(42 + 36 * intensity, 0, 255);
-			int blue = (int) Mth.clamp(35 + 28 * intensity, 0, 255);
-			int color = (alpha << 24) | (red << 16) | (green << 8) | blue;
-
-			if (x < shaftEnd) {
-				gfx.fill(x, y, x + 1, y + 2, color);
-			} else {
-				drawArrowHeadColumn(gfx, x, tipX, y, color);
-			}
-		}
-	}
-
-	private void drawArrowHead(GuiGraphics gfx, int tipX, int y, int color) {
-		for (int x = tipX - 5; x <= tipX; x++) {
-			drawArrowHeadColumn(gfx, x, tipX, y, color);
-		}
-	}
-
-	private void drawArrowHeadColumn(GuiGraphics gfx, int x, int tipX, int y, int color) {
-		int fromTip = tipX - x;
-		if (fromTip < 0 || fromTip > 5) {
+	private void drawRightAlignedFitted(GuiGraphics gfx, Font font, Component text, int rightX, int y, int maxWidth,
+			int color) {
+		int width = font.width(text);
+		if (width <= maxWidth) {
+			gfx.drawString(font, text, rightX - width, y, color, false);
 			return;
 		}
-		int halfHeight = Math.max(0, fromTip / 2);
-		gfx.fill(x, y - halfHeight, x + 1, y + 2 + halfHeight, color);
+
+		float scale = Math.max(0.55f, maxWidth / (float) width);
+		gfx.pose().pushPose();
+		gfx.pose().scale(scale, scale, 1.0f);
+		int scaledRight = Math.round(rightX / scale);
+		int scaledY = Math.round(y / scale);
+		gfx.drawString(font, text, scaledRight - width, scaledY, color, false);
+		gfx.pose().popPose();
 	}
+
 }

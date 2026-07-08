@@ -126,6 +126,8 @@ public class IncubatorRecipeCategory implements IRecipeCategory<IncubatorRecipe>
 		// Output slot (highlighted)
 		drawSlot(gfx, OUTPUT_X, OUTPUT_Y);
 		gfx.fill(OUTPUT_X, OUTPUT_Y, OUTPUT_X + 16, OUTPUT_Y + 16, 0x18FF4444);
+		JeiProgressArrow.draw(gfx, CENTER_X + 52, CENTER_Y + 7, OUTPUT_X - 8, time,
+				0x553A1212, 0x665A1816, 170, 42, 35);
 
 
 		// ── Label ──

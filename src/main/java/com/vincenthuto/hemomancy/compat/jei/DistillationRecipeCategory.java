@@ -1,15 +1,10 @@
 package com.vincenthuto.hemomancy.compat.jei;
 
-import com.google.common.cache.CacheBuilder;
-import com.google.common.cache.CacheLoader;
-import com.google.common.cache.LoadingCache;
-import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.init.BlockInit;
 import com.vincenthuto.hemomancy.common.recipe.DistillationRecipe;
 import mezz.jei.api.constants.VanillaTypes;
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
 import mezz.jei.api.gui.drawable.IDrawable;
-import mezz.jei.api.gui.drawable.IDrawableAnimated;
 import mezz.jei.api.gui.ingredient.IRecipeSlotsView;
 import mezz.jei.api.helpers.IGuiHelper;
 import mezz.jei.api.recipe.IFocusGroup;
@@ -21,7 +16,6 @@ import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -49,26 +43,12 @@ public class DistillationRecipeCategory implements IRecipeCategory<DistillationR
 	private final IDrawable background;
 	private final IDrawable icon;
 	private final boolean pallid;
-	private final LoadingCache<Integer, IDrawableAnimated> cachedArrows;
-
-	private String getOverlayTexturePath() {
-		return pallid ? "textures/gui/pallid_retort_gui_overlay.png" : "textures/gui/ghastly_alembic_gui_overlay.png";
-	}
 
 	public DistillationRecipeCategory(IGuiHelper guiHelper, boolean pallid) {
 		this.pallid = pallid;
 		background = guiHelper.createBlankDrawable(BG_W, BG_H);
 		icon = guiHelper.createDrawableIngredient(VanillaTypes.ITEM_STACK,
 				new ItemStack(pallid ? BlockInit.pallid_retort.get() : BlockInit.ghastly_alembic.get()));
-		this.cachedArrows = CacheBuilder.newBuilder().maximumSize(25).build(new CacheLoader<>() {
-			@Override
-			public IDrawableAnimated load(Integer cookTime) {
-				return guiHelper.drawableBuilder(
-						ResourceLocation.tryBuild(Hemomancy.MOD_ID, getOverlayTexturePath()),
-						143 + 16, 14, 24, 17
-				).buildAnimated(cookTime, IDrawableAnimated.StartDirection.LEFT, false);
-			}
-		});
 	}
 	private float animTime = 0f;
 
@@ -137,39 +117,12 @@ public class DistillationRecipeCategory implements IRecipeCategory<DistillationR
 		}
 
 		// ── Progress arrow ──
-		int arrowX = 44;
-		int arrowY = 28;
-		int arrowW = 58;
-		int arrowH = 8;
-		// Track
-		gfx.fill(arrowX, arrowY, arrowX + arrowW, arrowY + arrowH, pallid ? 0x40081020 : 0x40200808);
-		gfx.fill(arrowX, arrowY + 3, arrowX + arrowW, arrowY + 5, pallid ? 0x30102840 : 0x30400808);
-		// Arrowhead outline — points RIGHT (narrows to tip)
-		int headBaseX = arrowX + arrowW;
-		int midY = arrowY + arrowH / 2;
-		int headLen = 5;
-		for (int i = 0; i < headLen; i++) {
-			int spread = headLen - 1 - i;
-			gfx.fill(headBaseX + i, midY - spread, headBaseX + i + 1, midY + spread + 1,
-					pallid ? 0x30204060 : 0x30600808);
-		}
-		// Animated fill
-		int cookTime = recipe.getCookingTime();
-		if (cookTime <= 0) cookTime = 200;
-		float period = cookTime / 20f; // seconds per cook
-		float animProgress = (time % period) / period;
-		int filledW = (int) (arrowW * animProgress);
-		if (filledW > 0) {
-			for (int col = 0; col < filledW; col++) {
-				float pulse = 0.7f + 0.3f * Mth.sin(time * 4f + col * 0.15f);
-				int r = (int) ((pallid ? 60 : 180) * pulse);
-				int g = (int) ((pallid ? 140 : 20) * pulse);
-				int b = (int) ((pallid ? 220 : 15) * pulse);
-				int alpha = (int) (200 * pulse);
-				gfx.fill(arrowX + col, arrowY + 1, arrowX + col + 1, arrowY + arrowH - 1,
-						(alpha << 24) | (r << 16) | (g << 8) | b);
-			}
-		}
+		JeiProgressArrow.draw(gfx, 47, 31, 104, time,
+				pallid ? 0x55304A60 : 0x553A1212,
+				pallid ? 0x665F8297 : 0x665A1816,
+				pallid ? 60 : 170,
+				pallid ? 140 : 42,
+				pallid ? 220 : 35);
 
 		// ── Text ──
 		drawExperience(recipe, gfx, BG_H - 20);

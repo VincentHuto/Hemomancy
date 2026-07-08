@@ -110,8 +110,10 @@ public class MorphicNectarRecipeCategory implements IRecipeCategory<MorphicNecta
 		drawBackground(gfx, time);
 		drawSlot(gfx, INPUT_X, INPUT_Y);
 		drawSlot(gfx, OUTPUT_X, OUTPUT_Y);
-		drawArrow(gfx, INPUT_X + 23, INPUT_Y + 7, POOL_X - 5, time);
-		drawArrow(gfx, POOL_X + POOL_W + 5, OUTPUT_Y + 7, OUTPUT_X - 5, time);
+		JeiProgressArrow.draw(gfx, INPUT_X + 23, INPUT_Y + 7, POOL_X - 5, time,
+				0x553A5010, 0x66526E18, 160, 205, 32);
+		JeiProgressArrow.draw(gfx, POOL_X + POOL_W + 5, OUTPUT_Y + 7, OUTPUT_X - 5, time,
+				0x553A5010, 0x66526E18, 160, 205, 32);
 		drawNectarPool(gfx, time);
 
 		Component fluidLabel = Component.translatable("fluid.hemomancy.morphic_nectar");
@@ -218,55 +220,6 @@ public class MorphicNectarRecipeCategory implements IRecipeCategory<MorphicNecta
 		gfx.fill(x, y, x + 16, y + 16, SLOT_BG);
 		gfx.fill(x + 16, y, x + 17, y + 17, SLOT_BORDER_LIGHT);
 		gfx.fill(x, y + 16, x + 17, y + 17, SLOT_BORDER_LIGHT);
-	}
-
-	private void drawArrow(GuiGraphics gfx, int startX, int y, int tipX, float time) {
-		int shaftEnd = tipX - 5;
-		int trackColor = 0x553A5010;
-		int dimHeadColor = 0x66526E18;
-
-		gfx.fill(startX, y, shaftEnd, y + 2, trackColor);
-		drawArrowHead(gfx, tipX, y, dimHeadColor);
-
-		float progress = (time * 0.85f) % 1.0f;
-		float trail = 0.34f;
-		int totalW = Math.max(tipX - startX + 1, 1);
-		for (int x = startX; x <= tipX; x++) {
-			float xProgress = (float) (x - startX) / totalW;
-			float dist = progress - xProgress;
-			if (dist < 0f || dist > trail) {
-				continue;
-			}
-
-			float intensity = 1f - dist / trail;
-			int alpha = (int) (85 + 170 * intensity);
-			int red = (int) Mth.clamp(160 + 75 * intensity, 0, 255);
-			int green = (int) Mth.clamp(205 + 50 * intensity, 0, 255);
-			int blue = (int) Mth.clamp(32 + 66 * intensity, 0, 255);
-			int color = (alpha << 24) | (red << 16) | (green << 8) | blue;
-
-			if (x < shaftEnd) {
-				gfx.fill(x, y, x + 1, y + 2, color);
-			} else {
-				drawArrowHeadColumn(gfx, x, tipX, y, color);
-			}
-		}
-	}
-
-	private void drawArrowHead(GuiGraphics gfx, int tipX, int y, int color) {
-		for (int x = tipX - 5; x <= tipX; x++) {
-			drawArrowHeadColumn(gfx, x, tipX, y, color);
-		}
-	}
-
-	private void drawArrowHeadColumn(GuiGraphics gfx, int x, int tipX, int y, int color) {
-		int fromTip = tipX - x;
-		if (fromTip < 0 || fromTip > 5) {
-			return;
-		}
-
-		int halfHeight = Math.max(0, fromTip / 2);
-		gfx.fill(x, y - halfHeight, x + 1, y + 2 + halfHeight, color);
 	}
 
 	private void drawTransformTime(MorphicNectarRecipe recipe, GuiGraphics gfx, Font font) {

@@ -50,10 +50,10 @@ public class MycelialCrucibleRecipeCategory implements IRecipeCategory<FungalSca
     private static final int SLOT_BG       = 0xFF101807;
     private static final int SLOT_BORDER_D = 0xFF090E03;
     private static final int SLOT_BORDER_L = 0xFF223A0C;
-    private static final int ARROW_COLOR   = 0xFF44AA33;
     private static final int LABEL_COLOR   = 0xFF66CC44;
 
     private final IDrawable icon;
+    private float animTime = 0f;
 
     public MycelialCrucibleRecipeCategory(IGuiHelper helpers) {
         this.icon       = helpers.createDrawableItemStack(new ItemStack(BlockInit.mycelial_crucible.get()));
@@ -95,6 +95,8 @@ public class MycelialCrucibleRecipeCategory implements IRecipeCategory<FungalSca
     public void draw(@Nonnull FungalScarCultivationRecipe recipe,
             @Nonnull IRecipeSlotsView slots, @Nonnull GuiGraphics gfx, double mouseX, double mouseY) {
         Font font = Minecraft.getInstance().font;
+        animTime += 0.016f;
+        float time = animTime;
 
         // Background
         gfx.fill(0, 0, BG_W, BG_H, BG_COLOR);
@@ -109,10 +111,12 @@ public class MycelialCrucibleRecipeCategory implements IRecipeCategory<FungalSca
         drawSlot(gfx, OUTPUT_X, OUTPUT_Y);
 
         // Arrow: seed → immature
-        drawArrow(gfx, SEED_X + 18, SEED_Y + 7, IMMATURE_X - 4, IMMATURE_Y + 7);
+        JeiProgressArrow.draw(gfx, SEED_X + 22, SEED_Y + 7, IMMATURE_X - 5, time,
+                0x553A5010, 0x66526E18, 120, 185, 32);
 
         // Arrow: immature → output (with enzymes label)
-        drawArrow(gfx, IMMATURE_X + 18, IMMATURE_Y + 7, OUTPUT_X - 4, OUTPUT_Y + 7);
+        JeiProgressArrow.draw(gfx, IMMATURE_X + 22, IMMATURE_Y + 7, OUTPUT_X - 5, time + 0.45f,
+                0x553A5010, 0x66526E18, 120, 185, 32);
 
         // Phase labels
 
@@ -135,14 +139,4 @@ public class MycelialCrucibleRecipeCategory implements IRecipeCategory<FungalSca
         gfx.fill(x, y + 16, x + 17, y + 17, SLOT_BORDER_L);
     }
 
-    private void drawArrow(GuiGraphics gfx, int x1, int y1, int x2, int y2) {
-        for (int x = x1; x < x2 - 4; x++) {
-            gfx.fill(x, y1, x + 1, y1 + 2, ARROW_COLOR);
-        }
-        int ax = x2 - 4;
-        gfx.fill(ax,     y1 - 2, ax + 1, y1 + 4, ARROW_COLOR);
-        gfx.fill(ax + 1, y1 - 1, ax + 2, y1 + 3, ARROW_COLOR);
-        gfx.fill(ax + 2, y1,     ax + 3, y1 + 2, ARROW_COLOR);
-        gfx.fill(ax + 3, y1,     ax + 4, y1 + 2, ARROW_COLOR);
-    }
 }

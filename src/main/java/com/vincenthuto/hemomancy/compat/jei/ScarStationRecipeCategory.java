@@ -111,36 +111,9 @@ public class ScarStationRecipeCategory implements IRecipeCategory<ScarRecipe> {
 		drawPatternGrid(recipe, gfx, time);
 
 		// ── Progress arrow (input → grid → output) ──
-		int arrowX = 108;
-		int arrowY = GRID_Y + (GRID_SIZE * CELL_SIZE) / 2 - 4;
-		int arrowW = 16;
-		int arrowH = 8;
-		// Track
-//		gfx.fill(arrowX, arrowY, arrowX + arrowW, arrowY + arrowH, 0x40200808);
-//		gfx.fill(arrowX, arrowY + 3, arrowX + arrowW, arrowY + 5, 0x30400808);
-		// Arrowhead
-		int headBaseX = arrowX + arrowW;
-		int midY = arrowY + arrowH / 2;
-		int headLen = 5;
-		for (int i = 0; i < headLen; i++) {
-			int spread = headLen - 1 - i;
-			//gfx.fill(headBaseX + i, midY - spread, headBaseX + i + 1, midY + spread + 1, 0x30600808);
-		}
-		// Animated fill
-		float period = 3f;
-		float animProgress = (time % period) / period;
-		int filledW = (int) (arrowW * animProgress);
-		if (filledW > 0) {
-			for (int col = 0; col < filledW; col++) {
-				float p = 0.7f + 0.3f * Mth.sin(time * 4f + col * 0.15f);
-				int r = (int) (180 * p);
-				int g = (int) (20 * p);
-				int b = (int) (15 * p);
-				int a = (int) (200 * p);
-//				gfx.fill(arrowX + col, arrowY + 1, arrowX + col + 1, arrowY + arrowH - 1,
-//						(a << 24) | (r << 16) | (g << 8) | b);
-			}
-		}
+		JeiProgressArrow.draw(gfx, GRID_X + GRID_SIZE * CELL_SIZE + 5,
+				GRID_Y + (GRID_SIZE * CELL_SIZE) / 2, OUTPUT_SLOT_X - 6, time,
+				0x553A1212, 0x665A1816, 170, 42, 35);
 
 		// ── Text labels ──
 		Font font = Minecraft.getInstance().font;

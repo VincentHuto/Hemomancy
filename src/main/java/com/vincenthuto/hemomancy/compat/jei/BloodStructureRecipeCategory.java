@@ -167,7 +167,8 @@ public class BloodStructureRecipeCategory implements IRecipeCategory<BloodStruct
 		}
 
 		// ── Arrow indicator ──
-		drawArrow(gfx, 100, OUTPUT_SLOT_Y + 4, time);
+		JeiProgressArrow.draw(gfx, 99, OUTPUT_SLOT_Y + 7, OUTPUT_SLOT_X - 6, time,
+				0x553A1212, 0x665A1816, 170, 42, 35);
 
 		// ── Labels ──
 		Font font = Minecraft.getInstance().font;
@@ -377,14 +378,4 @@ public class BloodStructureRecipeCategory implements IRecipeCategory<BloodStruct
 		gfx.fill(x + 17, y, x + 18, y + 18, SLOT_BORDER_LIGHT);
 	}
 
-	/** Draws a pulsing arrow between preview and output. */
-	private void drawArrow(GuiGraphics gfx, int x, int y, float time) {
-		float pulse = 0.4f + 0.6f * Mth.sin(time * 3f);
-		int alpha = (int) (180 * pulse);
-		int color = (alpha << 24) | (0xAA << 16) | (0x10 << 8) | 0x08;
-		gfx.fill(x, y + 3, x + 8, y + 4, color);
-		gfx.fill(x + 6, y + 1, x + 7, y + 6, color);
-		gfx.fill(x + 7, y + 2, x + 8, y + 5, color);
-		gfx.fill(x + 8, y + 3, x + 9, y + 4, color);
-	}
 }

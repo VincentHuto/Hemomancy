@@ -103,8 +103,10 @@ public class WhiteHumorPurificationRecipeCategory implements IRecipeCategory<Whi
 		drawBackground(gfx, time);
 		drawSlot(gfx, INPUT_X, INPUT_Y);
 		drawSlot(gfx, OUTPUT_X, OUTPUT_Y);
-		drawArrow(gfx, INPUT_X + 23, INPUT_Y + 7, POOL_X - 5, time);
-		drawArrow(gfx, POOL_X + POOL_W + 5, OUTPUT_Y + 7, OUTPUT_X - 5, time);
+		JeiProgressArrow.draw(gfx, INPUT_X + 23, INPUT_Y + 7, POOL_X - 5, time,
+				0x55476273, 0x665F8297, 200, 220, 235);
+		JeiProgressArrow.draw(gfx, POOL_X + POOL_W + 5, OUTPUT_Y + 7, OUTPUT_X - 5, time,
+				0x55476273, 0x665F8297, 200, 220, 235);
 		drawWhiteHumorPool(gfx, time);
 
 		Component fluidLabel = Component.translatable("fluid.hemomancy.white_humor");
@@ -157,41 +159,6 @@ public class WhiteHumorPurificationRecipeCategory implements IRecipeCategory<Whi
 		gfx.fill(x, y, x + 16, y + 16, SLOT_BG);
 		gfx.fill(x + 16, y, x + 17, y + 17, SLOT_BORDER_LIGHT);
 		gfx.fill(x, y + 16, x + 17, y + 17, SLOT_BORDER_LIGHT);
-	}
-
-	private void drawArrow(GuiGraphics gfx, int startX, int y, int tipX, float time) {
-		int shaftEnd = tipX - 5;
-		gfx.fill(startX, y, shaftEnd, y + 2, 0x55476273);
-		drawArrowHead(gfx, tipX, y, 0x665F8297);
-		float progress = (time * 0.65f) % 1.0f;
-		float trail = 0.34f;
-		int totalW = Math.max(tipX - startX + 1, 1);
-		for (int x = startX; x <= tipX; x++) {
-			float xProgress = (float) (x - startX) / totalW;
-			float dist = progress - xProgress;
-			if (dist < 0f || dist > trail) continue;
-			float intensity = 1f - dist / trail;
-			int alpha = (int) (80 + 160 * intensity);
-			int color = (alpha << 24) | (0xE8 << 16) | (0xF6 << 8) | 0xFF;
-			if (x < shaftEnd) {
-				gfx.fill(x, y, x + 1, y + 2, color);
-			} else {
-				drawArrowHeadColumn(gfx, x, tipX, y, color);
-			}
-		}
-	}
-
-	private void drawArrowHead(GuiGraphics gfx, int tipX, int y, int color) {
-		for (int x = tipX - 5; x <= tipX; x++) {
-			drawArrowHeadColumn(gfx, x, tipX, y, color);
-		}
-	}
-
-	private void drawArrowHeadColumn(GuiGraphics gfx, int x, int tipX, int y, int color) {
-		int fromTip = tipX - x;
-		if (fromTip < 0 || fromTip > 5) return;
-		int halfHeight = Math.max(0, fromTip / 2);
-		gfx.fill(x, y - halfHeight, x + 1, y + 2 + halfHeight, color);
 	}
 
 	private void drawTransformTime(WhiteHumorPurificationRecipe recipe, GuiGraphics gfx, Font font) {

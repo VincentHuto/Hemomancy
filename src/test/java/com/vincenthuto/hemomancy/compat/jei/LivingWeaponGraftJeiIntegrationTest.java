@@ -57,15 +57,11 @@ public final class LivingWeaponGraftJeiIntegrationTest {
 				"private static final int GRAFT_Y");
 		assertContains("JEI category puts graft slot above brazier slot", category,
 				"RecipeIngredientRole.INPUT, GRAFT_X + 1, GRAFT_Y + 1");
-		assertContains("JEI category uses animated progress arrow trail", category,
-				"float trail = 0.34f;");
-		assertContains("JEI category renders animated arrow head columns", category,
-				"drawArrowHeadColumn(gfx, x, tipX, y, color)");
+		assertContains("JEI category uses the shared animated progress arrow", category,
+				"JeiProgressArrow.draw(");
 
-		assertContains("Hematic Armature uses animated progress arrow trail", armatureCategory,
-				"float trail = 0.34f;");
-		assertContains("Hematic Armature renders animated arrow head columns", armatureCategory,
-				"drawArrowHeadColumn(gfx, x, tipX, y, color)");
+		assertContains("Hematic Armature uses the shared animated progress arrow", armatureCategory,
+				"JeiProgressArrow.draw(");
 
 		assertContains("language names living weapon graft JEI category", lang,
 				"\"hemomancy.jei.living_weapon_graft\": \"Living Weapon Grafts\"");
