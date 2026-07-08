@@ -29,6 +29,7 @@ public final class LivingWeaponGraftSourceTest {
 		for (String name : new String[] { "BLADE", "AXE", "SPEAR", "CLAWS", "CROSSBOW", "TORCH", "FLAIL" }) {
 			assertContains("form enum has " + name, form, name);
 		}
+		assertNotContains("form enum keeps vesper out of graft forms", form, "VESPER");
 		assertContains("form enum exposes serialized id", form, "serializedName()");
 		assertContains("form enum maps blade to manipulation", form, "conjure_blade");
 		assertContains("form enum maps flail to manipulation", form, "conjure_flail");
@@ -44,6 +45,7 @@ public final class LivingWeaponGraftSourceTest {
 		assertContains("graft item exposes creative variants", item, "creativeStacks()");
 		assertContains("blade display is player-facing", item, "Blade Graft");
 		assertContains("flail display is player-facing", item, "Flail Graft");
+		assertNotContains("graft item does not expose Vesper Graft", item, "Vesper Graft");
 
 		assertContains("creative tab expands graft variants", hemomancy, "LivingWeaponGraftItem.creativeStacks()");
 
@@ -57,6 +59,7 @@ public final class LivingWeaponGraftSourceTest {
 			assertContains("graft " + name + " model uses old memory overlay", model,
 					"\"layer1\": \"hemomancy:item/memories/memory_living_" + name + "_overlay\"");
 		}
+		assertNoPath("src/main/resources/assets/hemomancy/models/item/living_weapon_graft_vesper.json");
 	}
 
 	private static String read(String path) throws IOException {
@@ -70,6 +73,18 @@ public final class LivingWeaponGraftSourceTest {
 	private static void assertContains(String label, String text, String expected) {
 		if (!text.contains(expected)) {
 			throw new AssertionError(label + " (missing '" + expected + "')");
+		}
+	}
+
+	private static void assertNotContains(String label, String text, String unexpected) {
+		if (text.contains(unexpected)) {
+			throw new AssertionError(label + " (found '" + unexpected + "')");
+		}
+	}
+
+	private static void assertNoPath(String path) {
+		if (Files.exists(ROOT.resolve(path))) {
+			throw new AssertionError("unexpected path exists: " + path);
 		}
 	}
 }

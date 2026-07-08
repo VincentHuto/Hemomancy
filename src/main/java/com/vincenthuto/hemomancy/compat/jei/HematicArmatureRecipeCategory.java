@@ -2,6 +2,7 @@ package com.vincenthuto.hemomancy.compat.jei;
 
 import com.vincenthuto.hemomancy.common.init.BlockInit;
 import com.vincenthuto.hemomancy.common.recipe.ArmatureUpgradeRecipe;
+import com.vincenthuto.hemomancy.common.recipe.ArmatureUpgradeRules;
 import mezz.jei.api.constants.VanillaTypes;
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
 import mezz.jei.api.gui.drawable.IDrawable;
@@ -112,9 +113,16 @@ public class HematicArmatureRecipeCategory implements IRecipeCategory<ArmatureUp
 		Component bloodText = Component.literal("Blood " + (int) recipe.getBloodCost());
 		gfx.drawString(font, bloodText, BG_W - font.width(bloodText) - 5, BG_H - 12, TEXT_RED, false);
 
+		if (recipe.getRequiredArmatureTier() != ArmatureUpgradeRules.ArmatureTier.BASE) {
+			Component tierText = Component.translatable("block.hemomancy.hematic_armature.tier."
+					+ recipe.getRequiredArmatureTier().serializedName());
+			gfx.drawString(font, tierText, BG_W - font.width(tierText) - 5, 5, TEXT_MUTED, false);
+		}
+
 		if (recipe.getPersistentDataGate() != null) {
 			Component gateText = Component.literal("Gate: " + recipe.getPersistentDataGate().value());
-			gfx.drawString(font, gateText, BG_W - font.width(gateText) - 5, 5, TEXT_MUTED, false);
+			int gateY = recipe.getRequiredArmatureTier() == ArmatureUpgradeRules.ArmatureTier.BASE ? 5 : 16;
+			gfx.drawString(font, gateText, BG_W - font.width(gateText) - 5, gateY, TEXT_MUTED, false);
 		}
 	}
 
@@ -176,15 +184,50 @@ public class HematicArmatureRecipeCategory implements IRecipeCategory<ArmatureUp
 	}
 
 	private void drawArrow(GuiGraphics gfx, int startX, int y, int tipX, float time) {
-		gfx.fill(startX, y, tipX - 4, y + 2, 0x553A1212);
-		for (int x = tipX - 5; x <= tipX; x++) {
-			int fromTip = tipX - x;
-			int halfHeight = Math.max(0, fromTip / 2);
-			gfx.fill(x, y - halfHeight, x + 1, y + 2 + halfHeight, 0x663A1212);
-		}
+		int shaftEnd = tipX - 5;
+		int trackColor = 0x553A1212;
+		int dimHeadColor = 0x663A1212;
 
-		float progress = (time * 0.7f) % 1.0f;
-		int trailX = startX + (int) ((tipX - startX) * progress);
-		gfx.fill(Math.max(startX, trailX - 8), y, Math.min(tipX, trailX), y + 2, 0xCCB83A35);
+		gfx.fill(startX, y, shaftEnd, y + 2, trackColor);
+		drawArrowHead(gfx, tipX, y, dimHeadColor);
+
+		float progress = (time * 0.85f) % 1.0f;
+		float trail = 0.34f;
+		int totalW = Math.max(tipX - startX + 1, 1);
+		for (int x = startX; x <= tipX; x++) {
+			float xProgress = (float) (x - startX) / totalW;
+			float dist = progress - xProgress;
+			if (dist < 0f || dist > trail) {
+				continue;
+			}
+
+			float intensity = 1f - dist / trail;
+			int alpha = (int) (85 + 170 * intensity);
+			int red = (int) Mth.clamp(170 + 65 * intensity, 0, 255);
+			int green = (int) Mth.clamp(42 + 36 * intensity, 0, 255);
+			int blue = (int) Mth.clamp(35 + 28 * intensity, 0, 255);
+			int color = (alpha << 24) | (red << 16) | (green << 8) | blue;
+
+			if (x < shaftEnd) {
+				gfx.fill(x, y, x + 1, y + 2, color);
+			} else {
+				drawArrowHeadColumn(gfx, x, tipX, y, color);
+			}
+		}
+	}
+
+	private void drawArrowHead(GuiGraphics gfx, int tipX, int y, int color) {
+		for (int x = tipX - 5; x <= tipX; x++) {
+			drawArrowHeadColumn(gfx, x, tipX, y, color);
+		}
+	}
+
+	private void drawArrowHeadColumn(GuiGraphics gfx, int x, int tipX, int y, int color) {
+		int fromTip = tipX - x;
+		if (fromTip < 0 || fromTip > 5) {
+			return;
+		}
+		int halfHeight = Math.max(0, fromTip / 2);
+		gfx.fill(x, y - halfHeight, x + 1, y + 2 + halfHeight, color);
 	}
 }

@@ -31,6 +31,7 @@ import com.vincenthuto.hemomancy.common.entity.mob.monster.will.WillAnchorEntity
 import com.vincenthuto.hemomancy.common.entity.mob.monster.will.WillEntity;
 import com.vincenthuto.hemomancy.common.entity.npc.DrudgeEntity;
 import com.vincenthuto.hemomancy.common.entity.npc.harbinger.HarbingerAlchemistEntity;
+import com.vincenthuto.hemomancy.common.entity.npc.harbinger.HarbingerArtificerEntity;
 import com.vincenthuto.hemomancy.common.entity.npc.harbinger.HarbingerCicatrixAnchoriteEntity;
 import com.vincenthuto.hemomancy.common.entity.npc.harbinger.HarbingerHermitEntity;
 import com.vincenthuto.hemomancy.common.entity.npc.harbinger.HarbingerMnemonistEntity;
@@ -143,6 +144,12 @@ public class EntityInit {
             () -> EntityType.Builder.of(HarbingerAlchemistEntity::new, MobCategory.CREATURE)
                     .sized(0.6F, 1.95F)
                     .build(Hemomancy.rloc("harbinger_alchemist").toString()));
+
+    public static final DeferredHolder<EntityType<?>, EntityType<HarbingerArtificerEntity>> harbinger_artificer = ENTITY_TYPES.register(
+            "harbinger_artificer",
+            () -> EntityType.Builder.of(HarbingerArtificerEntity::new, MobCategory.CREATURE)
+                    .sized(0.6F, 1.95F)
+                    .build(Hemomancy.rloc("harbinger_artificer").toString()));
 
     public static final DeferredHolder<EntityType<?>, EntityType<HarbingerCicatrixAnchoriteEntity>> harbinger_cicatrix_anchorite = ENTITY_TYPES.register(
             "harbinger_cicatrix_anchorite",
@@ -819,6 +826,7 @@ public class EntityInit {
         event.put(EntityInit.phantasmal_echo.get(), PhantasmalEchoEntity.setAttributes().build());
         event.put(EntityInit.harbinger_hermit.get(), HarbingerHermitEntity.setAttributes().build());
         event.put(EntityInit.harbinger_alchemist.get(), HarbingerAlchemistEntity.setAttributes().build());
+        event.put(EntityInit.harbinger_artificer.get(), HarbingerArtificerEntity.setAttributes().build());
         event.put(EntityInit.harbinger_cicatrix_anchorite.get(), HarbingerCicatrixAnchoriteEntity.setAttributes().build());
         event.put(EntityInit.harbinger_mnemonist.get(), HarbingerMnemonistEntity.setAttributes().build());
         event.put(EntityInit.harbinger_vicar.get(), HarbingerVicarEntity.setAttributes().build());

@@ -38,6 +38,8 @@ public final class LivingWeaponGraftRecipeResourceTest {
 			assertRecipeUnlockAdvancement(form);
 			assertOldMemoryRecipeRemoved(form);
 		}
+		assertNoVesperGraftRecipe();
+		assertNoVesperRecipeUnlockAdvancement();
 	}
 
 	private static void assertDirectGraftRecipe(String form) throws IOException {
@@ -63,6 +65,20 @@ public final class LivingWeaponGraftRecipeResourceTest {
 		Path path = OLD_MEMORY_RECIPES.resolve("memory_living_" + form + ".json");
 		if (Files.exists(path)) {
 			throw new AssertionError("old survival recipe should be removed: " + path);
+		}
+	}
+
+	private static void assertNoVesperGraftRecipe() {
+		Path path = GRAFT_RECIPES.resolve("vesper.json");
+		if (Files.exists(path)) {
+			throw new AssertionError("memory_of_vesper should be absorbed directly, not crafted into a graft: " + path);
+		}
+	}
+
+	private static void assertNoVesperRecipeUnlockAdvancement() {
+		Path path = RECIPE_ADVANCEMENTS.resolve("vesper.json");
+		if (Files.exists(path)) {
+			throw new AssertionError("memory_of_vesper should not unlock a Vesper graft recipe: " + path);
 		}
 	}
 

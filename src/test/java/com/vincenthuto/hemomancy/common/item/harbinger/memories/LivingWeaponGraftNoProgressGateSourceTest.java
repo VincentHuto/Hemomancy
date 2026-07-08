@@ -13,7 +13,6 @@ public final class LivingWeaponGraftNoProgressGateSourceTest {
 	public static void main(String[] args) throws IOException {
 		for (String path : new String[] {
 				"src/main/java/com/vincenthuto/hemomancy/common/item/harbinger/memories/LivingWeaponMemoryUnlocks.java",
-				"src/main/java/com/vincenthuto/hemomancy/common/item/harbinger/memories/LivingWeaponGraftRite.java",
 				"src/main/java/com/vincenthuto/hemomancy/common/item/harbinger/memories/LivingWeaponGraftRecipeUnlockEvents.java",
 				"src/main/java/com/vincenthuto/hemomancy/common/item/harbinger/memories/LivingWeaponGraftItem.java",
 				"src/main/java/com/vincenthuto/hemomancy/common/item/component/LivingWeaponGraftData.java",
@@ -23,6 +22,11 @@ public final class LivingWeaponGraftNoProgressGateSourceTest {
 			assertDoesNotContain(path + " must not gate base forms on ILivingStaffProgress", source, "ILivingStaffProgress");
 			assertDoesNotContain(path + " must not introduce base form progress checks", source, "hasForm(");
 		}
+		String rite = read("src/main/java/com/vincenthuto/hemomancy/common/item/harbinger/memories/LivingWeaponGraftRite.java");
+		assertContains("graft rite keeps vesper progress access special-cased", rite,
+				"offering.is(ItemInit.memory_of_vesper.get())");
+		assertContains("graft rite uses existing vesper staff progress", rite, "ILivingStaffProgress");
+		assertDoesNotContain("graft rite must not introduce base form progress checks", rite, "hasForm(");
 		assertNoPath("src/main/java/com/vincenthuto/hemomancy/client/screen/LivingArsenalScreen.java");
 		assertNoPath("src/main/java/com/vincenthuto/hemomancy/client/screen/StaffFormUnlockScreen.java");
 	}
@@ -44,6 +48,12 @@ public final class LivingWeaponGraftNoProgressGateSourceTest {
 	private static void assertDoesNotContain(String label, String text, String unexpected) {
 		if (text.contains(unexpected)) {
 			throw new AssertionError(label + " (contained '" + unexpected + "')");
+		}
+	}
+
+	private static void assertContains(String label, String text, String expected) {
+		if (!text.contains(expected)) {
+			throw new AssertionError(label + " (missing '" + expected + "')");
 		}
 	}
 }

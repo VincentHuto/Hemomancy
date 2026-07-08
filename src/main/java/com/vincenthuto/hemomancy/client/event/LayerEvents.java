@@ -168,6 +168,7 @@ public class LayerEvents {
 		event.registerLayerDefinition(UnstainedScoutModel.LAYER_LOCATION, UnstainedScoutModel::createBodyLayer);
 		event.registerLayerDefinition(HarbingerHermitModel.LAYER_LOCATION, HarbingerHermitModel::createBodyLayer);
 		event.registerLayerDefinition(HarbingerAlchemistModel.LAYER_LOCATION, HarbingerAlchemistModel::createBodyLayer);
+		event.registerLayerDefinition(HarbingerArtificerModel.LAYER_LOCATION, HarbingerArtificerModel::createBodyLayer);
 		event.registerLayerDefinition(HarbingerCicatrixAnchoriteModel.LAYER_LOCATION,
 				HarbingerCicatrixAnchoriteModel::createBodyLayer);
 		event.registerLayerDefinition(HarbingerMnemonistModel.LAYER_LOCATION, HarbingerMnemonistModel::createBodyLayer);

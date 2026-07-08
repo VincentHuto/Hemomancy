@@ -43,6 +43,8 @@ public class JEIPlugin implements IModPlugin {
 			MorphicNectarRecipeCategory.JEI_TYPE;
 	public static final RecipeType<WhiteHumorPurificationRecipe> white_humor_purification_recipe_type =
 			WhiteHumorPurificationRecipeCategory.JEI_TYPE;
+	public static final RecipeType<LivingWeaponGraftJeiRecipe> living_weapon_graft_type =
+			RecipeType.create(Hemomancy.MOD_ID, "living_weapon_graft", LivingWeaponGraftJeiRecipe.class);
 
 	@Nonnull
 	@Override
@@ -63,6 +65,7 @@ public class JEIPlugin implements IModPlugin {
 		registry.addRecipeCategories(new EnzymeFruitingRecipeCategory(registry.getJeiHelpers().getGuiHelper()));
 		registry.addRecipeCategories(new MorphicNectarRecipeCategory(registry.getJeiHelpers().getGuiHelper()));
 		registry.addRecipeCategories(new WhiteHumorPurificationRecipeCategory(registry.getJeiHelpers().getGuiHelper()));
+		registry.addRecipeCategories(new LivingWeaponGraftRecipeCategory(registry.getJeiHelpers().getGuiHelper()));
 
 	}
 
@@ -78,10 +81,15 @@ public class JEIPlugin implements IModPlugin {
 		registry.addRecipeCatalyst(new ItemStack(BlockInit.mycelial_crucible.get()), mycelial_crucible_recipe_type);
 		registry.addRecipeCatalyst(new ItemStack(BlockInit.mycelial_lantern.get()), enzyme_fruiting_recipe_type);
 		registry.addRecipeCatalyst(new ItemStack(ItemInit.pale_humor_flask.get()), white_humor_purification_recipe_type);
+		registry.addRecipeCatalyst(new ItemStack(BlockInit.iron_brazier.get()), living_weapon_graft_type);
+		registry.addRecipeCatalyst(new ItemStack(ItemInit.living_staff.get()), living_weapon_graft_type);
+		registry.addRecipeCatalyst(new ItemStack(ItemInit.living_weapon_graft.get()), living_weapon_graft_type);
 	}
 
 	@Override
 	public void registerRecipes(@Nonnull IRecipeRegistration registry) {
+		registry.addRecipes(living_weapon_graft_type, LivingWeaponGraftJeiRecipe.all());
+
 		ClientLevel world = Minecraft.getInstance().level;
 		if (world == null) {
 			Hemomancy.LOGGER.warn("JEI recipe registration skipped: client level is null.");

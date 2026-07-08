@@ -5,5 +5,6 @@
   "base": { "item": "hemomancy:chitinite_helm" },
   "reagent": { "item": "hemomancy:lodestone_faceplate" },
   "blood_cost": 1800,
+  "required_armature_tier": "vicar_consecrated",
   "result": { "id": "hemomancy:sheolic_blood_lust_helm" }
 }

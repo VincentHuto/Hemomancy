@@ -11,6 +11,7 @@ import com.vincenthuto.hemomancy.common.block.shared.BlockBloodInteractions;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.livingstaff.ILivingStaffProgress;
 import com.vincenthuto.hemomancy.common.entity.mob.monster.will.WillEntity;
+import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.item.component.LivingWeaponGraftData;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.BloodAbsorptionItem;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.ICellHand;
@@ -235,6 +236,9 @@ public final class CellHandParticleEffects {
 	}
 
 	private static ParticleColor graftTendencyColor(ItemStack graftStack) {
+		if (graftStack.is(ItemInit.memory_of_vesper.get())) {
+			return new ParticleColor(180, 10, 30);
+		}
 		return LivingWeaponGraftData.fromStack(graftStack)
 				.map(LivingWeaponGraftData::form)
 				.map(form -> form.manipulationHolder().get().getTend().getColor())

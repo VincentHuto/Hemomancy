@@ -36,6 +36,7 @@ public class ArmatureUpgradeRecipe extends CustomRecipe {
 	private final Ingredient reagent;
 	private final double bloodCost;
 	private final ItemStack result;
+	private final ArmatureUpgradeRules.ArmatureTier requiredArmatureTier;
 	@Nullable
 	private final CompoundTag resultData;
 	@Nullable
@@ -54,6 +55,14 @@ public class ArmatureUpgradeRecipe extends CustomRecipe {
 			ArmatureUpgradeRules.ArmatureSlot armorSlot, Ingredient validBase, Ingredient reagent,
 			double bloodCost, ItemStack result, @Nullable CompoundTag resultData,
 			@Nullable PersistentDataGate persistentDataGate) {
+		this(id, requiredDegree, armorSlot, validBase, reagent, bloodCost, result,
+				ArmatureUpgradeRules.requiredTierForDegree(requiredDegree), resultData, persistentDataGate);
+	}
+
+	public ArmatureUpgradeRecipe(ResourceLocation id, int requiredDegree,
+			ArmatureUpgradeRules.ArmatureSlot armorSlot, Ingredient validBase, Ingredient reagent,
+			double bloodCost, ItemStack result, ArmatureUpgradeRules.ArmatureTier requiredArmatureTier,
+			@Nullable CompoundTag resultData, @Nullable PersistentDataGate persistentDataGate) {
 		super(CraftingBookCategory.EQUIPMENT);
 		this.id = id;
 		this.requiredDegree = Math.max(0, requiredDegree);
@@ -62,6 +71,9 @@ public class ArmatureUpgradeRecipe extends CustomRecipe {
 		this.reagent = reagent;
 		this.bloodCost = Math.max(0, bloodCost);
 		this.result = result;
+		this.requiredArmatureTier = requiredArmatureTier == null
+				? ArmatureUpgradeRules.requiredTierForDegree(this.requiredDegree)
+				: requiredArmatureTier;
 		this.resultData = resultData == null ? null : resultData.copy();
 		this.persistentDataGate = persistentDataGate;
 	}
@@ -94,6 +106,10 @@ public class ArmatureUpgradeRecipe extends CustomRecipe {
 		return bloodCost;
 	}
 
+	public ArmatureUpgradeRules.ArmatureTier getRequiredArmatureTier() {
+		return requiredArmatureTier;
+	}
+
 	@Nullable
 	public CompoundTag getResultData() {
 		return resultData == null ? null : resultData.copy();
@@ -120,7 +136,7 @@ public class ArmatureUpgradeRecipe extends CustomRecipe {
 		if (HemoCapabilityAccess.getPlayerDegreeNumber(player) < requiredDegree) {
 			return false;
 		}
-		if (!armatureTier.canCraftRequiredDegree(requiredDegree)) {
+		if (armatureTier.id() < requiredArmatureTier.id()) {
 			return false;
 		}
 		return persistentDataGate == null || persistentDataGate.matches(player);

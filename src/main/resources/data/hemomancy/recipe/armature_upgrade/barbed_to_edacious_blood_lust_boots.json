@@ -5,5 +5,6 @@
   "base": { "item": "hemomancy:barbed_boots" },
   "reagent": { "item": "hemomancy:fargone_proboscis" },
   "blood_cost": 1800,
+  "required_armature_tier": "vicar_consecrated",
   "result": { "id": "hemomancy:edacious_blood_lust_boots" }
 }

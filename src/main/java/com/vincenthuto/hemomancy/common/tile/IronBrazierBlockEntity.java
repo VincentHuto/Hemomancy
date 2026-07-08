@@ -80,16 +80,19 @@ public class IronBrazierBlockEntity extends BlockEntity {
 	}
 
 	public int advanceGraftRite(ServerPlayer player, LivingWeaponForm form, int requiredTicks) {
-		if (player == null || form == null || level == null) {
+		return form == null ? 0 : advanceGraftRite(player, form.serializedName(), requiredTicks);
+	}
+
+	public int advanceGraftRite(ServerPlayer player, String riteId, int requiredTicks) {
+		if (player == null || riteId == null || riteId.isBlank() || level == null) {
 			resetGraftRiteProgress();
 			return 0;
 		}
 		UUID playerId = player.getUUID();
-		String formId = form.serializedName();
-		if (!playerId.equals(graftRitePlayer) || !formId.equals(graftRiteForm)) {
+		if (!playerId.equals(graftRitePlayer) || !riteId.equals(graftRiteForm)) {
 			resetGraftRiteProgress();
 			graftRitePlayer = playerId;
-			graftRiteForm = formId;
+			graftRiteForm = riteId;
 		}
 		graftRiteProgressTicks = Math.min(requiredTicks, graftRiteProgressTicks + 1);
 		graftRiteLastTick = level.getGameTime();

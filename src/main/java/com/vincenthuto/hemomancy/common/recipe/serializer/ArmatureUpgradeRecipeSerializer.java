@@ -31,7 +31,7 @@ public class ArmatureUpgradeRecipeSerializer implements RecipeSerializer<Armatur
 		@Override
 		public <T> Stream<T> keys(DynamicOps<T> ops) {
 			return Stream.of("id", "required_degree", "armor_slot", "base", "reagent",
-					"blood_cost", "result", "result_data", "persistent_data_gate")
+					"blood_cost", "result", "required_armature_tier", "result_data", "persistent_data_gate")
 					.map(ops::createString);
 		}
 
@@ -60,6 +60,7 @@ public class ArmatureUpgradeRecipeSerializer implements RecipeSerializer<Armatur
 			prefix.add("blood_cost", ops.createDouble(recipe.getBloodCost()));
 			ItemStack.CODEC.encodeStart(JsonOps.INSTANCE, recipe.getResultItem(null)).result()
 					.ifPresent(e -> prefix.add("result", JsonOps.INSTANCE.convertTo(ops, e)));
+			prefix.add("required_armature_tier", ops.createString(recipe.getRequiredArmatureTier().serializedName()));
 			if (recipe.getPersistentDataGate() != null) {
 				JsonObject gate = new JsonObject();
 				gate.addProperty("key", recipe.getPersistentDataGate().key());
@@ -103,6 +104,9 @@ public class ArmatureUpgradeRecipeSerializer implements RecipeSerializer<Armatur
 				? GsonHelper.getAsDouble(json, "blood_cost")
 				: GsonHelper.getAsDouble(json, "bloodCost", 0);
 		ItemStack result = RecipeResultStackParser.parseResultStack(json, "result");
+		ArmatureUpgradeRules.ArmatureTier requiredArmatureTier = json.has("required_armature_tier")
+				? ArmatureUpgradeRules.ArmatureTier.byName(GsonHelper.getAsString(json, "required_armature_tier"))
+				: ArmatureUpgradeRules.requiredTierForDegree(requiredDegree);
 		CompoundTag resultData = json.has("result_data") && json.get("result_data").isJsonObject()
 				? compoundFromJson(json.getAsJsonObject("result_data"))
 				: null;
@@ -110,7 +114,7 @@ public class ArmatureUpgradeRecipeSerializer implements RecipeSerializer<Armatur
 				? gateFromJson(json.getAsJsonObject("persistent_data_gate"))
 				: null;
 		return new ArmatureUpgradeRecipe(id, requiredDegree, armorSlot, base, reagent,
-				bloodCost, result, resultData, gate);
+				bloodCost, result, requiredArmatureTier, resultData, gate);
 	}
 
 	private static int requiredDegreeFromJson(JsonObject json) {
@@ -181,13 +185,15 @@ public class ArmatureUpgradeRecipeSerializer implements RecipeSerializer<Armatur
 		Ingredient reagent = Ingredient.CONTENTS_STREAM_CODEC.decode(buffer);
 		double bloodCost = buffer.readDouble();
 		ItemStack result = ItemStack.STREAM_CODEC.decode(buffer);
+		ArmatureUpgradeRules.ArmatureTier requiredArmatureTier =
+				ArmatureUpgradeRules.ArmatureTier.byName(buffer.readUtf());
 		CompoundTag resultData = buffer.readBoolean() ? buffer.readNbt() : null;
 		ArmatureUpgradeRecipe.PersistentDataGate gate = null;
 		if (buffer.readBoolean()) {
 			gate = new ArmatureUpgradeRecipe.PersistentDataGate(buffer.readUtf(), buffer.readUtf());
 		}
 		return new ArmatureUpgradeRecipe(id, requiredDegree, slot, base, reagent,
-				bloodCost, result, resultData, gate);
+				bloodCost, result, requiredArmatureTier, resultData, gate);
 	}
 
 	private static void toNetwork(RegistryFriendlyByteBuf buffer, ArmatureUpgradeRecipe recipe) {
@@ -198,6 +204,7 @@ public class ArmatureUpgradeRecipeSerializer implements RecipeSerializer<Armatur
 		Ingredient.CONTENTS_STREAM_CODEC.encode(buffer, recipe.getReagent());
 		buffer.writeDouble(recipe.getBloodCost());
 		ItemStack.STREAM_CODEC.encode(buffer, recipe.getResultItem(null));
+		buffer.writeUtf(recipe.getRequiredArmatureTier().serializedName());
 		CompoundTag resultData = recipe.getResultData();
 		buffer.writeBoolean(resultData != null && !resultData.isEmpty());
 		if (resultData != null && !resultData.isEmpty()) {

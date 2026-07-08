@@ -1089,6 +1089,10 @@ public class ItemInit {
     public static final DeferredHolder<Item, DeferredSpawnEggItem> spawn_egg_harbinger_voyager = SPAWNEGGS.register(
             "spawn_egg_harbinger_voyager",
             () -> new DeferredSpawnEggItem(EntityInit.harbinger_voyager, 0x4A1F27, 0xC29A68, new Item.Properties()));
+    public static final DeferredHolder<Item, DeferredSpawnEggItem> spawn_egg_harbinger_artificer = SPAWNEGGS.register(
+            "spawn_egg_harbinger_artificer",
+            () -> new DeferredSpawnEggItem(EntityInit.harbinger_artificer, 0x4A1218, 0xC74832,
+                    new Item.Properties()));
     public static final DeferredHolder<Item, DeferredSpawnEggItem> spawn_egg_harbinger_votary_wayfarer = SPAWNEGGS.register(
             "spawn_egg_harbinger_votary_wayfarer",
             () -> new DeferredSpawnEggItem(EntityInit.harbinger_votary_wayfarer, 0x63232A, 0x7C8B88,

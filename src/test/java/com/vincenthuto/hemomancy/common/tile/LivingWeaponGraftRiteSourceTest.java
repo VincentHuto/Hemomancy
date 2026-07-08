@@ -14,6 +14,7 @@ public final class LivingWeaponGraftRiteSourceTest {
 		String blockEntity = read("src/main/java/com/vincenthuto/hemomancy/common/tile/IronBrazierBlockEntity.java");
 		String block = read("src/main/java/com/vincenthuto/hemomancy/common/block/harbinger/BrazierBlock.java");
 		String rite = read("src/main/java/com/vincenthuto/hemomancy/common/item/harbinger/memories/LivingWeaponGraftRite.java");
+		String memoryOfVesper = read("src/main/java/com/vincenthuto/hemomancy/common/item/harbinger/MemoryOfVesperItem.java");
 		String packetHandler = read("src/main/java/com/vincenthuto/hemomancy/common/network/PacketHandler.java");
 		String cellHandParticles = read("src/main/java/com/vincenthuto/hemomancy/client/render/item/hematic/CellHandParticleEffects.java");
 
@@ -41,11 +42,21 @@ public final class LivingWeaponGraftRiteSourceTest {
 		assertContains("graft particles use manipulation tendency color", cellHandParticles, "form.manipulationHolder().get().getTend().getColor()");
 		assertContains("graft particles add hutoslib glow", cellHandParticles, "GlowParticleFactory.createData(graftColor)");
 		assertContains("rite grants through form memory helper", rite, "LivingWeaponMemoryUnlocks.grantFormMemory");
+		assertContains("rite accepts memory of vesper directly", rite, "offering.is(ItemInit.memory_of_vesper.get())");
+		assertContains("rite awakens vesper staff progress", rite, "progress.awakenVesperMemory()");
+		assertContains("rite syncs vesper staff progress", rite, "LivingStaffBondHelper.syncProgress(player)");
 		assertContains("rite requires living staff absorption", rite, "isLivingStaffAbsorptionUse");
 		assertContains("rite checks earned condition", rite, "hasEarnedRecipeUnlock");
 		assertContains("rite bypasses earned condition for creative testing", rite, "player.isCreative()");
 		assertContains("rite refuses already known forms", rite, "ALREADY_KNOWN");
 		assertContains("rite returns handled blood amount", rite, "return maxAmount");
+
+		assertContains("vesper memory item guides to brazier rite", memoryOfVesper,
+				"hemomancy.memory_of_vesper.rite_guidance");
+		assertNotContains("vesper memory item no longer awakens staff directly", memoryOfVesper,
+				"progress.awakenVesperMemory()");
+		assertNotContains("vesper memory item no longer consumes itself directly", memoryOfVesper,
+				"stack.shrink(1)");
 	}
 
 	private static String read(String path) throws IOException {
@@ -59,6 +70,12 @@ public final class LivingWeaponGraftRiteSourceTest {
 	private static void assertContains(String label, String text, String expected) {
 		if (!text.contains(expected)) {
 			throw new AssertionError(label + " (missing '" + expected + "')");
+		}
+	}
+
+	private static void assertNotContains(String label, String text, String unexpected) {
+		if (text.contains(unexpected)) {
+			throw new AssertionError(label + " (found '" + unexpected + "')");
 		}
 	}
 }

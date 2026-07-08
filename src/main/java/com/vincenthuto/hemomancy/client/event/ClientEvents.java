@@ -718,6 +718,7 @@ public class ClientEvents {
             event.registerEntityRenderer(EntityInit.unstained_scout.get(), UnstainedScoutRenderer::new);
             event.registerEntityRenderer(EntityInit.harbinger_hermit.get(), HarbingerHermitRenderer::new);
             event.registerEntityRenderer(EntityInit.harbinger_alchemist.get(), HarbingerAlchemistRenderer::new);
+            event.registerEntityRenderer(EntityInit.harbinger_artificer.get(), HarbingerArtificerRenderer::new);
             event.registerEntityRenderer(EntityInit.harbinger_cicatrix_anchorite.get(), HarbingerCicatrixAnchoriteRenderer::new);
             event.registerEntityRenderer(EntityInit.harbinger_mnemonist.get(), HarbingerMnemonistRenderer::new);
             event.registerEntityRenderer(EntityInit.harbinger_vicar.get(), HarbingerVicarRenderer::new);

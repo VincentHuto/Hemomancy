@@ -1,8 +1,13 @@
 package com.vincenthuto.hemomancy.common.item.harbinger.memories;
 
 import com.vincenthuto.hemomancy.common.block.harbinger.BrazierBlock;
+import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.livingstaff.ILivingStaffProgress;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.livingstaff.LivingStaffBondHelper;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.KnownManipulationGrantHelper.MemoryGrantResult;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.KnownManipulationGrantHelper.MemoryGrantStatus;
+import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.item.component.LivingWeaponForm;
 import com.vincenthuto.hemomancy.common.item.component.LivingWeaponGraftData;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.LivingStaffItem;
@@ -37,30 +42,42 @@ public final class LivingWeaponGraftRite {
 		}
 		ItemStack offering = brazier.getOfferingForMatching();
 		LivingWeaponGraftData data = LivingWeaponGraftData.fromStack(offering).orElse(null);
-		if (data == null) {
+		boolean vesperMemoryOffering = offering.is(ItemInit.memory_of_vesper.get());
+		if (data == null && !vesperMemoryOffering) {
 			return 0.0D;
 		}
-		LivingWeaponForm form = data.form();
+		LivingWeaponForm form = data == null ? null : data.form();
 		if (!LivingStaffItem.isLivingStaffAbsorptionUse(player, player.getUseItem())) {
 			brazier.resetGraftRiteProgress();
-			messageEverySecond(level, player, "Hold the Living Staff to receive the limb.");
+			messageEverySecond(level, player, vesperMemoryOffering
+					? "Hold the Living Staff to receive the memory."
+					: "Hold the Living Staff to receive the limb.");
 			return 0.0D;
 		}
-		MemoryGrantResult check = LivingWeaponMemoryUnlocks.checkFormMemory(player, form);
-		if (!check.success()) {
-			brazier.resetGraftRiteProgress();
-			reportFailure(level, player, check);
-			return 0.0D;
-		}
-		if (!hasEarnedRecipeUnlockOrCreative(player, form)) {
-			brazier.resetGraftRiteProgress();
-			messageEverySecond(level, player, "The graft knows the shape. Your blood has not earned it.");
-			return 0.0D;
+		if (vesperMemoryOffering) {
+			if (!checkVesperMemory(level, player)) {
+				brazier.resetGraftRiteProgress();
+				return 0.0D;
+			}
+		} else {
+			MemoryGrantResult check = LivingWeaponMemoryUnlocks.checkFormMemory(player, form);
+			if (!check.success()) {
+				brazier.resetGraftRiteProgress();
+				reportFailure(level, player, check);
+				return 0.0D;
+			}
+			if (!hasEarnedRecipeUnlockOrCreative(player, form)) {
+				brazier.resetGraftRiteProgress();
+				messageEverySecond(level, player, "The graft knows the shape. Your blood has not earned it.");
+				return 0.0D;
+			}
 		}
 		if (state.hasProperty(BrazierBlock.RITUAL_PHASE) && state.getValue(BrazierBlock.RITUAL_PHASE) == 0) {
 			level.setBlock(pos, state.setValue(BrazierBlock.RITUAL_PHASE, 2), Block.UPDATE_ALL);
 		}
-		int progress = brazier.advanceGraftRite(player, form, REQUIRED_CHANNEL_TICKS);
+		int progress = vesperMemoryOffering
+				? brazier.advanceGraftRite(player, "memory_of_vesper", REQUIRED_CHANNEL_TICKS)
+				: brazier.advanceGraftRite(player, form, REQUIRED_CHANNEL_TICKS);
 		if (progress % 10 == 0) {
 			spawnChannelParticles(level, pos);
 			spawnGraftDrawParticles(level, pos, player, offering);
@@ -68,21 +85,65 @@ public final class LivingWeaponGraftRite {
 		if (progress < REQUIRED_CHANNEL_TICKS) {
 			return maxAmount;
 		}
-		MemoryGrantResult result = LivingWeaponMemoryUnlocks.grantFormMemory(player, form);
-		if (!result.success()) {
-			brazier.resetGraftRiteProgress();
-			reportFailure(level, player, result);
-			return 0.0D;
+		if (vesperMemoryOffering) {
+			if (!awakenVesperMemory(level, player)) {
+				brazier.resetGraftRiteProgress();
+				return 0.0D;
+			}
+		} else {
+			MemoryGrantResult result = LivingWeaponMemoryUnlocks.grantFormMemory(player, form);
+			if (!result.success()) {
+				brazier.resetGraftRiteProgress();
+				reportFailure(level, player, result);
+				return 0.0D;
+			}
 		}
 		brazier.consumeOffering();
 		brazier.resetGraftRiteProgress();
 		extinguishBrazier(level, pos);
-		player.displayClientMessage(Component.literal("Your blood remembers " + form.manipulationDisplayName()
-						+ ". The staff will answer this shape when called.")
-				.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC), false);
+		if (vesperMemoryOffering) {
+			player.displayClientMessage(Component.translatable("hemomancy.memory_of_vesper.awakened")
+					.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC), false);
+		} else {
+			player.displayClientMessage(Component.literal("Your blood remembers " + form.manipulationDisplayName()
+							+ ". The staff will answer this shape when called.")
+					.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC), false);
+		}
 		level.playSound(null, pos, SoundEvents.BLAZE_SHOOT, SoundSource.BLOCKS, 0.55F, 0.65F);
 		spawnCompletionParticles(level, pos);
 		return maxAmount;
+	}
+
+	private static boolean checkVesperMemory(ServerLevel level, ServerPlayer player) {
+		IBloodVolume volume = HemoCapabilityAccess.getBloodVolume(player).orElse(null);
+		if (volume == null || !volume.isActive()) {
+			messageEverySecond(level, player, "The graft dries before it can speak.");
+			return false;
+		}
+		ILivingStaffProgress progress = HemoCapabilityAccess.getLivingStaffProgress(player).orElse(null);
+		if (progress == null || !progress.hasLivingStaffBond()) {
+			messageEverySecond(level, player, "The memory refuses a hand without a Living Staff bond.");
+			return false;
+		}
+		if (progress.isVesperMemoryAwakened()) {
+			messageEverySecond(level, player, "Vesper's refusal is already disciplined within your staff-bond.");
+			return false;
+		}
+		return true;
+	}
+
+	private static boolean awakenVesperMemory(ServerLevel level, ServerPlayer player) {
+		ILivingStaffProgress progress = HemoCapabilityAccess.getLivingStaffProgress(player).orElse(null);
+		if (progress == null || !progress.hasLivingStaffBond()) {
+			messageEverySecond(level, player, "The memory refuses a hand without a Living Staff bond.");
+			return false;
+		}
+		if (!progress.awakenVesperMemory()) {
+			messageEverySecond(level, player, "Vesper's refusal is already disciplined within your staff-bond.");
+			return false;
+		}
+		LivingStaffBondHelper.syncProgress(player);
+		return true;
 	}
 
 	private static boolean hasEarnedRecipeUnlockOrCreative(ServerPlayer player, LivingWeaponForm form) {
