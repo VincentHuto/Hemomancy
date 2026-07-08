@@ -35,7 +35,21 @@ public record OpenHarbingerAssignmentLedgerPacket(
 		boolean veinMasonFirstScarCarved,
 		boolean veinMasonFirstScarLearned,
 		boolean veinMasonFirstEffigyPattern,
-		boolean veinMasonFirstEffigyLoadout) implements CustomPacketPayload {
+		boolean veinMasonFirstEffigyLoadout,
+		boolean artificerArmaturePlaced,
+		boolean artificerFirstHematicUpgrade,
+		boolean artificerHematicIronFitting,
+		boolean artificerFirstForkUpgrade,
+		boolean artificerForkFitting,
+		boolean artificerFrameConsecrated,
+		boolean artificerFirstBloodLustUpgrade,
+		boolean artificerBloodLustFitting,
+		boolean artificerMonolithicFrame,
+		boolean artificerFirstD7Upgrade,
+		boolean artificerD7Fitting,
+		boolean artificerFirstLivingGraft,
+		int artificerLivingWeaponFormCount,
+		boolean artificerLivingArsenalFitting) implements CustomPacketPayload {
 	public static final Type<OpenHarbingerAssignmentLedgerPacket> TYPE =
 			new Type<>(Hemomancy.rloc("open_harbinger_assignment_ledger"));
 	public static final StreamCodec<FriendlyByteBuf, OpenHarbingerAssignmentLedgerPacket> STREAM_CODEC =
@@ -70,6 +84,20 @@ public record OpenHarbingerAssignmentLedgerPacket(
 		buf.writeBoolean(msg.veinMasonFirstScarLearned);
 		buf.writeBoolean(msg.veinMasonFirstEffigyPattern);
 		buf.writeBoolean(msg.veinMasonFirstEffigyLoadout);
+		buf.writeBoolean(msg.artificerArmaturePlaced);
+		buf.writeBoolean(msg.artificerFirstHematicUpgrade);
+		buf.writeBoolean(msg.artificerHematicIronFitting);
+		buf.writeBoolean(msg.artificerFirstForkUpgrade);
+		buf.writeBoolean(msg.artificerForkFitting);
+		buf.writeBoolean(msg.artificerFrameConsecrated);
+		buf.writeBoolean(msg.artificerFirstBloodLustUpgrade);
+		buf.writeBoolean(msg.artificerBloodLustFitting);
+		buf.writeBoolean(msg.artificerMonolithicFrame);
+		buf.writeBoolean(msg.artificerFirstD7Upgrade);
+		buf.writeBoolean(msg.artificerD7Fitting);
+		buf.writeBoolean(msg.artificerFirstLivingGraft);
+		buf.writeVarInt(msg.artificerLivingWeaponFormCount);
+		buf.writeBoolean(msg.artificerLivingArsenalFitting);
 	}
 
 	public static OpenHarbingerAssignmentLedgerPacket decode(FriendlyByteBuf buf) {
@@ -101,6 +129,20 @@ public record OpenHarbingerAssignmentLedgerPacket(
 				buf.readBoolean(),
 				buf.readBoolean(),
 				buf.readBoolean(),
+				buf.readBoolean(),
+				buf.readBoolean(),
+				buf.readBoolean(),
+				buf.readBoolean(),
+				buf.readBoolean(),
+				buf.readBoolean(),
+				buf.readBoolean(),
+				buf.readBoolean(),
+				buf.readBoolean(),
+				buf.readBoolean(),
+				buf.readBoolean(),
+				buf.readBoolean(),
+				buf.readBoolean(),
+				buf.readVarInt(),
 				buf.readBoolean());
 	}
 
@@ -118,7 +160,13 @@ public record OpenHarbingerAssignmentLedgerPacket(
 				msg.mnemonistWovenVesselComplete, msg.mnemonistFirstWeaveComplete, msg.vicarMasonsRespiteDirective,
 				msg.veinMasonFirstLesson, msg.veinMasonFirstScarCarved,
 				msg.veinMasonFirstScarLearned, msg.veinMasonFirstEffigyPattern,
-				msg.veinMasonFirstEffigyLoadout));
+				msg.veinMasonFirstEffigyLoadout,
+				msg.artificerArmaturePlaced, msg.artificerFirstHematicUpgrade,
+				msg.artificerHematicIronFitting, msg.artificerFirstForkUpgrade, msg.artificerForkFitting,
+				msg.artificerFrameConsecrated, msg.artificerFirstBloodLustUpgrade,
+				msg.artificerBloodLustFitting, msg.artificerMonolithicFrame,
+				msg.artificerFirstD7Upgrade, msg.artificerD7Fitting, msg.artificerFirstLivingGraft,
+				msg.artificerLivingWeaponFormCount, msg.artificerLivingArsenalFitting));
 	}
 
 	@Override

@@ -11,6 +11,15 @@ public final class HarbingerArtificerDialogueTrees {
 	private static final ResourceLocation ARTIFICER_ICON = Hemomancy.rloc(
 			"textures/entity/harbinger_artificer/harbinger_artificer.png");
 	private static final String SPEAKER = "entity.hemomancy.harbinger_artificer";
+	public static final String EVENT_CLAIM_WORN_VOW_REWARD = "artificer_claim_worn_vow_reward";
+	public static final String EVENT_CLAIM_THREE_ANSWERS_REWARD = "artificer_claim_three_answers_reward";
+	public static final String EVENT_CLAIM_CRIMSON_VESTMENT_REWARD = "artificer_claim_crimson_vestment_reward";
+	public static final String EVENT_CLAIM_ASSUMED_LIMB_REWARD = "artificer_claim_assumed_limb_reward";
+	public static final String EVENT_CLAIM_HEMATIC_IRON_FITTING = "artificer_claim_hematic_iron_fitting";
+	public static final String EVENT_CLAIM_FORK_FITTING = "artificer_claim_fork_fitting";
+	public static final String EVENT_CLAIM_BLOOD_LUST_FITTING = "artificer_claim_blood_lust_fitting";
+	public static final String EVENT_CLAIM_D7_FITTING = "artificer_claim_d7_fitting";
+	public static final String EVENT_CLAIM_LIVING_ARSENAL_FITTING = "artificer_claim_living_arsenal_fitting";
 
 	private HarbingerArtificerDialogueTrees() {
 	}
@@ -82,6 +91,7 @@ public final class HarbingerArtificerDialogueTrees {
 		options.add(new DialogueOption("hemomancy.dialogue.artificer.option.who_are_you", "identity", null));
 		if (degree >= 2) {
 			options.add(new DialogueOption("hemomancy.dialogue.artificer.option.teach_armature", "armature", null));
+			options.add(new DialogueOption("hemomancy.dialogue.artificer.option.assignments", "assignments", null));
 		}
 		if (degree >= 3) {
 			options.add(new DialogueOption("hemomancy.dialogue.artificer.option.armor_path", "armor_forks", null));
@@ -107,6 +117,7 @@ public final class HarbingerArtificerDialogueTrees {
 				.addNode(identityNode());
 		if (degree >= 2) {
 			builder.addNode(armatureNode());
+			builder.addNode(assignmentsNode(degree, livingStaffBond));
 		}
 		if (degree >= 3) {
 			builder.addNode(armorForksNode());
@@ -167,6 +178,41 @@ public final class HarbingerArtificerDialogueTrees {
 				"hemomancy.artificer.monolithic_armature.line1",
 				"hemomancy.artificer.monolithic_armature.line2"
 		), List.of(new DialogueOption("hemomancy.dialogue.artificer.option.leave", null, null)));
+	}
+
+	private static DialogueNode assignmentsNode(int degree, boolean livingStaffBond) {
+		List<DialogueOption> options = new ArrayList<>();
+		options.add(new DialogueOption("hemomancy.dialogue.artificer.option.claim_worn_vow_reward",
+				null, EVENT_CLAIM_WORN_VOW_REWARD));
+		options.add(new DialogueOption("hemomancy.dialogue.artificer.option.claim_hematic_iron_fitting",
+				null, EVENT_CLAIM_HEMATIC_IRON_FITTING));
+		if (degree >= 3) {
+			options.add(new DialogueOption("hemomancy.dialogue.artificer.option.claim_three_answers_reward",
+					null, EVENT_CLAIM_THREE_ANSWERS_REWARD));
+			options.add(new DialogueOption("hemomancy.dialogue.artificer.option.claim_fork_fitting",
+					null, EVENT_CLAIM_FORK_FITTING));
+		}
+		if (degree >= 5) {
+			options.add(new DialogueOption("hemomancy.dialogue.artificer.option.claim_crimson_vestment_reward",
+					null, EVENT_CLAIM_CRIMSON_VESTMENT_REWARD));
+			options.add(new DialogueOption("hemomancy.dialogue.artificer.option.claim_blood_lust_fitting",
+					null, EVENT_CLAIM_BLOOD_LUST_FITTING));
+		}
+		if (degree >= 7) {
+			options.add(new DialogueOption("hemomancy.dialogue.artificer.option.claim_d7_fitting",
+					null, EVENT_CLAIM_D7_FITTING));
+		}
+		if (livingStaffBond) {
+			options.add(new DialogueOption("hemomancy.dialogue.artificer.option.claim_assumed_limb_reward",
+					null, EVENT_CLAIM_ASSUMED_LIMB_REWARD));
+			options.add(new DialogueOption("hemomancy.dialogue.artificer.option.claim_living_arsenal_fitting",
+					null, EVENT_CLAIM_LIVING_ARSENAL_FITTING));
+		}
+		options.add(new DialogueOption("hemomancy.dialogue.artificer.option.leave", null, null));
+		return new DialogueNode("assignments", List.of(
+				"hemomancy.artificer.assignments.line1",
+				"hemomancy.artificer.assignments.line2"
+		), options);
 	}
 
 	private static DialogueNode itemHintNode() {

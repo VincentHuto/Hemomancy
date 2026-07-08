@@ -19,7 +19,7 @@ import java.util.List;
 
 public class HarbingerEquipmentContainer extends ItemStackHandler implements IHarbingerEquipmentItemHandler, INBTSerializable<CompoundTag> {
 
-	private final static int SCAR_SLOTS = 8;
+	private final static int SCAR_SLOTS = 9;
 	private final ItemStack[] eventPrevious = new ItemStack[SCAR_SLOTS];
 	private final ItemStack[] syncPrevious = new ItemStack[SCAR_SLOTS];
 	private final boolean[] renderLayerVisible = new boolean[SCAR_SLOTS];

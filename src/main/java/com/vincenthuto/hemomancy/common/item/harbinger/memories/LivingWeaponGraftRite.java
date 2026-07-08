@@ -11,6 +11,7 @@ import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.item.component.LivingWeaponForm;
 import com.vincenthuto.hemomancy.common.item.component.LivingWeaponGraftData;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.LivingStaffItem;
+import com.vincenthuto.hemomancy.common.mission.HarbingerArtificerAssignmentHelper;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.particle.SpawnGraftRiteItemParticlesPacket;
 import com.vincenthuto.hemomancy.common.tile.IronBrazierBlockEntity;
@@ -97,6 +98,7 @@ public final class LivingWeaponGraftRite {
 				reportFailure(level, player, result);
 				return 0.0D;
 			}
+			HarbingerArtificerAssignmentHelper.onLivingWeaponGraftComplete(player);
 		}
 		brazier.consumeOffering();
 		brazier.resetGraftRiteProgress();

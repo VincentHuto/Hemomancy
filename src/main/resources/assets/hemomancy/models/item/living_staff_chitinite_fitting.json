@@ -1,0 +1,10 @@
+{
+  "parent": "hemomancy:item/living_staff_chitinite",
+  "textures": {
+    "0": "hemomancy:block/chiseled_hematic_iron_block",
+    "1": "hemomancy:block/venous_stone",
+    "2": "hemomancy:block/venous_stone_trans",
+    "3": "hemomancy:block/infected_cap",
+    "particle": "hemomancy:block/chiseled_hematic_iron_block"
+  }
+}

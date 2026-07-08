@@ -45,6 +45,8 @@ public class HarbingerEquipmentScreen extends EffectRenderingInventoryScreen<Har
 			Hemomancy.rloc("textures/gui/empty_gourd_slot_background.png");
 	private static final ResourceLocation EMPTY_JAR_SLOT =
 			Hemomancy.rloc("textures/gui/empty_jar_slot_background.png");
+	private static final ResourceLocation EMPTY_FITTING_SLOT =
+			Hemomancy.rloc("textures/gui/empty_staf_fitting_slot_background.png");
 
 	private final Inventory playerInventory;
 	private float oldMouseX;
@@ -127,12 +129,12 @@ public class HarbingerEquipmentScreen extends EffectRenderingInventoryScreen<Har
 		renderMirrorPanel(gfx, gx, gy);
 		renderSlotRails(gfx, gx, gy);
 
-		Slot firstInventorySlot = this.menu.slots.get(7);
+		Slot firstInventorySlot = this.menu.slots.get(8);
 		InventoryPanelTextures.blit(gfx, InventoryPanelTextures.BLOODY,
 				gx + firstInventorySlot.x - 5, gy + firstInventorySlot.y - 6);
 
 		for (int i = 0; i < this.menu.slots.size(); i++) {
-			if (i >= 7 && i <= 42) {
+			if (i >= 8 && i <= 43) {
 				continue;
 			}
 			Slot slot = this.menu.slots.get(i);
@@ -178,9 +180,9 @@ public class HarbingerEquipmentScreen extends EffectRenderingInventoryScreen<Har
 
 	private void renderSlotRails(GuiGraphics gfx, int gx, int gy) {
 		gfx.fill(gx + 12, gy + 13, gx + 42, gy + 101, 0x77060203);
-		gfx.fill(gx + 170, gy + 20, gx + 200, gy + 101, 0x77060203);
+		gfx.fill(gx + 170, gy + 6, gx + 200, gy + 105, 0x77060203);
 		drawBorder(gfx, gx + 12, gy + 13, 30, 88);
-		drawBorder(gfx, gx + 170, gy + 20, 30, 81);
+		drawBorder(gfx, gx + 170, gy + 6, 30, 99);
 		gfx.fill(gx + 45, gy + 73, gx + 74, gy + 101, 0x66060203);
 		drawInventoryBorder(gfx, gx + 45, gy + 73, 29, 28);
 	}
@@ -205,9 +207,12 @@ public class HarbingerEquipmentScreen extends EffectRenderingInventoryScreen<Har
 	}
 
 	private void renderLayerToggleIcons(GuiGraphics gfx, int mouseX, int mouseY) {
-		renderLayerToggleIcon(gfx, mouseX, mouseY, 4, HarbingerEquipmentMenu.JAR_SLOT_INDEX);
-		renderLayerToggleIcon(gfx, mouseX, mouseY, 5, HarbingerEquipmentMenu.CHARM_SLOT_INDEX);
-		renderLayerToggleIcon(gfx, mouseX, mouseY, 6, HarbingerEquipmentMenu.GOURD_SLOT_INDEX);
+		renderLayerToggleIcon(gfx, mouseX, mouseY, HarbingerEquipmentMenu.JAR_MENU_SLOT,
+				HarbingerEquipmentMenu.JAR_SLOT_INDEX);
+		renderLayerToggleIcon(gfx, mouseX, mouseY, HarbingerEquipmentMenu.CHARM_MENU_SLOT,
+				HarbingerEquipmentMenu.CHARM_SLOT_INDEX);
+		renderLayerToggleIcon(gfx, mouseX, mouseY, HarbingerEquipmentMenu.GOURD_MENU_SLOT,
+				HarbingerEquipmentMenu.GOURD_SLOT_INDEX);
 	}
 
 	private void renderLayerToggleIcon(GuiGraphics gfx, int mouseX, int mouseY, int menuSlot, int slotIndex) {
@@ -263,13 +268,13 @@ public class HarbingerEquipmentScreen extends EffectRenderingInventoryScreen<Har
 	}
 
 	private Integer layerToggleSlotAt(double mouseX, double mouseY) {
-		if (isOverLayerToggle(this.menu.slots.get(4), mouseX, mouseY)) {
+		if (isOverLayerToggle(this.menu.slots.get(HarbingerEquipmentMenu.JAR_MENU_SLOT), mouseX, mouseY)) {
 			return HarbingerEquipmentMenu.JAR_SLOT_INDEX;
 		}
-		if (isOverLayerToggle(this.menu.slots.get(5), mouseX, mouseY)) {
+		if (isOverLayerToggle(this.menu.slots.get(HarbingerEquipmentMenu.CHARM_MENU_SLOT), mouseX, mouseY)) {
 			return HarbingerEquipmentMenu.CHARM_SLOT_INDEX;
 		}
-		if (isOverLayerToggle(this.menu.slots.get(6), mouseX, mouseY)) {
+		if (isOverLayerToggle(this.menu.slots.get(HarbingerEquipmentMenu.GOURD_MENU_SLOT), mouseX, mouseY)) {
 			return HarbingerEquipmentMenu.GOURD_SLOT_INDEX;
 		}
 		return null;
@@ -293,10 +298,12 @@ public class HarbingerEquipmentScreen extends EffectRenderingInventoryScreen<Har
 		if (slot instanceof VasculariumCharmSlot) {
 			gfx.blit(EMPTY_CHARM_SLOT, sx, sy, 0, 0, 16, 16, 16, 16);
 		} else if (slot instanceof SelectiveEquipmentTypeSlot) {
-			if (slot.index == HarbingerEquipmentMenu.GOURD_SLOT_INDEX || menuSlot == 6) {
+			if (menuSlot == HarbingerEquipmentMenu.GOURD_MENU_SLOT) {
 				gfx.blit(EMPTY_GOURD_SLOT, sx, sy, 0, 0, 16, 16, 16, 16);
-			} else if (slot.index == HarbingerEquipmentMenu.JAR_SLOT_INDEX || menuSlot == 4) {
+			} else if (menuSlot == HarbingerEquipmentMenu.JAR_MENU_SLOT) {
 				gfx.blit(EMPTY_JAR_SLOT, sx, sy, 0, 0, 16, 16, 16, 16);
+			} else if (menuSlot == HarbingerEquipmentMenu.FITTING_MENU_SLOT) {
+				gfx.blit(EMPTY_FITTING_SLOT, sx, sy, 0, 0, 16, 16, 16, 16);
 			}
 		}
 	}

@@ -149,6 +149,8 @@ public class ScarletVanityRenderer implements BlockEntityRenderer<ScarletVanityB
 					combinedLightIn, combinedOverlayIn, 0.72D, 0.885D, 0.36D, 24.0F, 0.34F);
 			renderEquippedItem(te, facing, equipment, HarbingerEquipmentMenu.JAR_SLOT_INDEX, poseStack, bufferIn,
 					combinedLightIn, combinedOverlayIn, 0.74D, 0.89D, 0.70D, -36.0F, 0.36F);
+			renderEquippedItem(te, facing, equipment, HarbingerEquipmentMenu.FITTING_SLOT_INDEX, poseStack, bufferIn,
+					combinedLightIn, combinedOverlayIn, 0.28D, 0.89D, 0.70D, 36.0F, 0.30F);
 
 			poseStack.popPose();
 		});

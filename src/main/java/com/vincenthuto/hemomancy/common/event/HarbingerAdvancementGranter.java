@@ -108,6 +108,36 @@ public final class HarbingerAdvancementGranter {
 			Hemomancy.rloc("hemomancy/vein_mason_first_effigy_loadout");
 	public static final ResourceLocation ADV_VEIN_MASON_REWARD_CLAIMED =
 			Hemomancy.rloc("hemomancy/vein_mason_reward_claimed");
+	public static final ResourceLocation ADV_ARTIFICER_ARMATURE_PLACED =
+			Hemomancy.rloc("hemomancy/artificer_armature_placed");
+	public static final ResourceLocation ADV_ARTIFICER_FIRST_HEMATIC_UPGRADE =
+			Hemomancy.rloc("hemomancy/artificer_first_hematic_upgrade");
+	public static final ResourceLocation ADV_ARTIFICER_HEMATIC_IRON_FITTING =
+			Hemomancy.rloc("hemomancy/artificer_hematic_iron_fitting");
+	public static final ResourceLocation ADV_ARTIFICER_FIRST_FORK_UPGRADE =
+			Hemomancy.rloc("hemomancy/artificer_first_fork_upgrade");
+	public static final ResourceLocation ADV_ARTIFICER_BARBED_FITTING =
+			Hemomancy.rloc("hemomancy/artificer_barbed_fitting");
+	public static final ResourceLocation ADV_ARTIFICER_CHITINITE_FITTING =
+			Hemomancy.rloc("hemomancy/artificer_chitinite_fitting");
+	public static final ResourceLocation ADV_ARTIFICER_PRISMATIC_FITTING =
+			Hemomancy.rloc("hemomancy/artificer_prismatic_fitting");
+	public static final ResourceLocation ADV_ARTIFICER_FRAME_CONSECRATED =
+			Hemomancy.rloc("hemomancy/artificer_frame_consecrated");
+	public static final ResourceLocation ADV_ARTIFICER_FIRST_BLOOD_LUST_UPGRADE =
+			Hemomancy.rloc("hemomancy/artificer_first_blood_lust_upgrade");
+	public static final ResourceLocation ADV_ARTIFICER_BLOOD_LUST_FITTING =
+			Hemomancy.rloc("hemomancy/artificer_blood_lust_fitting");
+	public static final ResourceLocation ADV_ARTIFICER_MONOLITHIC_FRAME =
+			Hemomancy.rloc("hemomancy/artificer_monolithic_frame");
+	public static final ResourceLocation ADV_ARTIFICER_FIRST_D7_UPGRADE =
+			Hemomancy.rloc("hemomancy/artificer_first_d7_upgrade");
+	public static final ResourceLocation ADV_ARTIFICER_D7_FITTING =
+			Hemomancy.rloc("hemomancy/artificer_d7_fitting");
+	public static final ResourceLocation ADV_ARTIFICER_FIRST_LIVING_GRAFT =
+			Hemomancy.rloc("hemomancy/artificer_first_living_graft");
+	public static final ResourceLocation ADV_ARTIFICER_LIVING_ARSENAL_FITTING =
+			Hemomancy.rloc("hemomancy/artificer_living_arsenal_fitting");
 
 	// ── Endgame milestones ─────────────────────────────────────────────────────
 	public static final ResourceLocation ADV_VOICES_IN_THE_VEIN =
@@ -277,5 +307,71 @@ public final class HarbingerAdvancementGranter {
 
 	public static boolean isVeinMasonRewardClaimed(ServerPlayer player) {
 		return hasAdvancement(player, ADV_VEIN_MASON_REWARD_CLAIMED);
+	}
+
+	public static boolean isArtificerArmaturePlaced(ServerPlayer player) {
+		return hasAdvancement(player, ADV_ARTIFICER_ARMATURE_PLACED);
+	}
+
+	public static boolean isArtificerFirstHematicUpgrade(ServerPlayer player) {
+		return hasAdvancement(player, ADV_ARTIFICER_FIRST_HEMATIC_UPGRADE);
+	}
+
+	public static boolean isArtificerHematicIronFitting(ServerPlayer player) {
+		return hasAdvancement(player, ADV_ARTIFICER_HEMATIC_IRON_FITTING);
+	}
+
+	public static boolean isArtificerFirstForkUpgrade(ServerPlayer player) {
+		return hasAdvancement(player, ADV_ARTIFICER_FIRST_FORK_UPGRADE);
+	}
+
+	public static boolean isArtificerBarbedFitting(ServerPlayer player) {
+		return hasAdvancement(player, ADV_ARTIFICER_BARBED_FITTING);
+	}
+
+	public static boolean isArtificerChitiniteFitting(ServerPlayer player) {
+		return hasAdvancement(player, ADV_ARTIFICER_CHITINITE_FITTING);
+	}
+
+	public static boolean isArtificerPrismaticFitting(ServerPlayer player) {
+		return hasAdvancement(player, ADV_ARTIFICER_PRISMATIC_FITTING);
+	}
+
+	public static boolean isArtificerForkFitting(ServerPlayer player) {
+		return isArtificerBarbedFitting(player)
+				|| isArtificerChitiniteFitting(player)
+				|| isArtificerPrismaticFitting(player);
+	}
+
+	public static boolean isArtificerFrameConsecrated(ServerPlayer player) {
+		return hasAdvancement(player, ADV_ARTIFICER_FRAME_CONSECRATED);
+	}
+
+	public static boolean isArtificerFirstBloodLustUpgrade(ServerPlayer player) {
+		return hasAdvancement(player, ADV_ARTIFICER_FIRST_BLOOD_LUST_UPGRADE);
+	}
+
+	public static boolean isArtificerBloodLustFitting(ServerPlayer player) {
+		return hasAdvancement(player, ADV_ARTIFICER_BLOOD_LUST_FITTING);
+	}
+
+	public static boolean isArtificerMonolithicFrame(ServerPlayer player) {
+		return hasAdvancement(player, ADV_ARTIFICER_MONOLITHIC_FRAME);
+	}
+
+	public static boolean isArtificerFirstD7Upgrade(ServerPlayer player) {
+		return hasAdvancement(player, ADV_ARTIFICER_FIRST_D7_UPGRADE);
+	}
+
+	public static boolean isArtificerD7Fitting(ServerPlayer player) {
+		return hasAdvancement(player, ADV_ARTIFICER_D7_FITTING);
+	}
+
+	public static boolean isArtificerFirstLivingGraft(ServerPlayer player) {
+		return hasAdvancement(player, ADV_ARTIFICER_FIRST_LIVING_GRAFT);
+	}
+
+	public static boolean isArtificerLivingArsenalFitting(ServerPlayer player) {
+		return hasAdvancement(player, ADV_ARTIFICER_LIVING_ARSENAL_FITTING);
 	}
 }

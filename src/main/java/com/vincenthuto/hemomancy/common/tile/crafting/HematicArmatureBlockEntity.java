@@ -8,6 +8,7 @@ import com.vincenthuto.hemomancy.common.init.BlockEntityInit;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.item.harbinger.BloodyFlaskItem;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.BloodGourdItem;
+import com.vincenthuto.hemomancy.common.mission.HarbingerArtificerAssignmentHelper;
 import com.vincenthuto.hemomancy.common.recipe.ArmatureUpgradeRecipe;
 import com.vincenthuto.hemomancy.common.recipe.ArmatureUpgradeRules;
 import com.vincenthuto.hemomancy.common.tile.BloodContainerTransfer;
@@ -153,6 +154,7 @@ public class HematicArmatureBlockEntity extends BaseContainerBlockEntity impleme
 			mergeCustomData(worn, upgraded);
 			copyDamage(worn, upgraded);
 			player.setItemSlot(equipmentSlot, upgraded);
+			HarbingerArtificerAssignmentHelper.onArmatureUpgrade(player, upgraded, recipe.getRequiredDegree());
 			ItemStack reagent = match.reagent();
 			reagent.shrink(1);
 			if (reagent.isEmpty()) {
@@ -442,6 +444,7 @@ public class HematicArmatureBlockEntity extends BaseContainerBlockEntity impleme
 		if (!player.getAbilities().instabuild) {
 			held.shrink(1);
 		}
+		HarbingerArtificerAssignmentHelper.onArmatureTierApplied(player, targetTier);
 		sendUpdates();
 		player.sendSystemMessage(Component.translatable(
 				"block.hemomancy.hematic_armature.upgrade_tier_applied",

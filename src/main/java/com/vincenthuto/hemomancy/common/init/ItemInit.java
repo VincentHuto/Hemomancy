@@ -367,6 +367,22 @@ public class ItemInit {
             () -> new BloodMemoryItem(new Item.Properties(), ManipulationInit.vital_effusion));
     public static final DeferredHolder<Item, Item> living_weapon_graft = BASEITEMS.register("living_weapon_graft",
             () -> new LivingWeaponGraftItem(new Item.Properties().stacksTo(16)));
+    public static final DeferredHolder<Item, Item> worn_vow_fitting = BASEITEMS.register("worn_vow_fitting",
+            () -> new LivingStaffFittingItem(new Item.Properties(), LivingStaffFittingHelper.WORN_VOW_VISUAL));
+    public static final DeferredHolder<Item, Item> barbed_fitting = BASEITEMS.register("barbed_fitting",
+            () -> new LivingStaffFittingItem(new Item.Properties(), LivingStaffFittingHelper.BARBED_VISUAL));
+    public static final DeferredHolder<Item, Item> chitinite_fitting = BASEITEMS.register("chitinite_fitting",
+            () -> new LivingStaffFittingItem(new Item.Properties(), LivingStaffFittingHelper.CHITINITE_VISUAL));
+    public static final DeferredHolder<Item, Item> prismatic_fitting = BASEITEMS.register("prismatic_fitting",
+            () -> new LivingStaffFittingItem(new Item.Properties(), LivingStaffFittingHelper.PRISMATIC_VISUAL));
+    public static final DeferredHolder<Item, Item> crimson_vestment_fitting = BASEITEMS.register(
+            "crimson_vestment_fitting",
+            () -> new LivingStaffFittingItem(new Item.Properties(), LivingStaffFittingHelper.CRIMSON_VESTMENT_VISUAL));
+    public static final DeferredHolder<Item, Item> monolithic_frame_fitting = BASEITEMS.register(
+            "monolithic_frame_fitting",
+            () -> new LivingStaffFittingItem(new Item.Properties(), LivingStaffFittingHelper.MONOLITHIC_FRAME_VISUAL));
+    public static final DeferredHolder<Item, Item> assumed_limb_fitting = BASEITEMS.register("assumed_limb_fitting",
+            () -> new LivingStaffFittingItem(new Item.Properties(), LivingStaffFittingHelper.ASSUMED_LIMB_VISUAL));
     public static final DeferredHolder<Item, Item> memory_living_blade = BASEITEMS.register("memory_living_blade",
             () -> new BloodMemoryItem(new Item.Properties(), ManipulationInit.conjure_blade));
     public static final DeferredHolder<Item, Item> memory_living_axe = BASEITEMS.register("memory_living_axe",

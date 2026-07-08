@@ -1,0 +1,10 @@
+{
+  "parent": "hemomancy:item/living_staff_fungal",
+  "textures": {
+    "0": "hemomancy:block/venous_stone",
+    "1": "hemomancy:block/chiseled_hematic_iron_block",
+    "2": "hemomancy:block/infected_cap",
+    "3": "hemomancy:block/snake_head",
+    "particle": "hemomancy:block/infected_cap"
+  }
+}

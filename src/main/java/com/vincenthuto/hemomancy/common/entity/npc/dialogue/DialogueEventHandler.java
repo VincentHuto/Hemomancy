@@ -16,6 +16,7 @@ import com.vincenthuto.hemomancy.common.entity.npc.harbinger.HarbingerHermitEnti
 import com.vincenthuto.hemomancy.common.event.HarbingerAdvancementGranter;
 import com.vincenthuto.hemomancy.common.entity.npc.unstained.UnstainedScoutEntity;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
+import com.vincenthuto.hemomancy.common.mission.HarbingerArtificerAssignmentHelper;
 import com.vincenthuto.hemomancy.common.util.SpecimenJarData;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.BloodStructureHintItem;
 import com.vincenthuto.hemomancy.common.item.shared.PreWrittenMemoItem;
@@ -33,6 +34,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -40,6 +42,8 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
+
+import java.util.List;
 
 /**
  * Listens for {@link DialogueEvent}s fired by dialogue option selection and
@@ -54,6 +58,14 @@ public class DialogueEventHandler {
 			"hemomancy.vicar_consecration_kit_claimed";
 	private static final String MONOLITH_CORNERSTONE_CLAIM_KEY =
 			"hemomancy.monolithic_cornerstone_claimed";
+	private static final String ARTIFICER_WORN_VOW_REWARD_CLAIM_KEY =
+			"hemomancy.artificer.worn_vow_reward_claimed";
+	private static final String ARTIFICER_THREE_ANSWERS_REWARD_CLAIM_KEY =
+			"hemomancy.artificer.three_answers_reward_claimed";
+	private static final String ARTIFICER_CRIMSON_VESTMENT_REWARD_CLAIM_KEY =
+			"hemomancy.artificer.crimson_vestment_reward_claimed";
+	private static final String ARTIFICER_ASSUMED_LIMB_REWARD_CLAIM_KEY =
+			"hemomancy.artificer.assumed_limb_reward_claimed";
 
 	@SubscribeEvent
 	public static void onDialogueOption(DialogueEvent event) {
@@ -163,6 +175,87 @@ public class DialogueEventHandler {
 			}
 			case SanguineMonolithDialogueTrees.EVENT_CORNERSTONE -> {
 				handleMonolithCornerstone(player, event.getEntityId());
+			}
+			case HarbingerArtificerDialogueTrees.EVENT_CLAIM_WORN_VOW_REWARD -> {
+				handleArtificerLessonReward(player, event.getEntityId(),
+						ARTIFICER_WORN_VOW_REWARD_CLAIM_KEY,
+						HarbingerAdvancementGranter.ADV_ARTIFICER_FIRST_HEMATIC_UPGRADE,
+						new ItemStack(ItemInit.hematic_iron_scrap.get(), 4),
+						"hemomancy.dialogue.event.artificer_worn_vow_reward_unready",
+						"hemomancy.dialogue.event.artificer_worn_vow_reward_known",
+						"hemomancy.dialogue.event.artificer_worn_vow_reward_granted");
+			}
+			case HarbingerArtificerDialogueTrees.EVENT_CLAIM_THREE_ANSWERS_REWARD -> {
+				handleArtificerLessonReward(player, event.getEntityId(),
+						ARTIFICER_THREE_ANSWERS_REWARD_CLAIM_KEY,
+						HarbingerAdvancementGranter.ADV_ARTIFICER_FIRST_FORK_UPGRADE,
+						matchingForkReagentReward(player),
+						"hemomancy.dialogue.event.artificer_three_answers_reward_unready",
+						"hemomancy.dialogue.event.artificer_three_answers_reward_known",
+						"hemomancy.dialogue.event.artificer_three_answers_reward_granted");
+			}
+			case HarbingerArtificerDialogueTrees.EVENT_CLAIM_CRIMSON_VESTMENT_REWARD -> {
+				handleArtificerLessonReward(player, event.getEntityId(),
+						ARTIFICER_CRIMSON_VESTMENT_REWARD_CLAIM_KEY,
+						HarbingerAdvancementGranter.ADV_ARTIFICER_FIRST_BLOOD_LUST_UPGRADE,
+						new ItemStack(ItemInit.crimson_lacquer.get(), 1),
+						"hemomancy.dialogue.event.artificer_crimson_vestment_reward_unready",
+						"hemomancy.dialogue.event.artificer_crimson_vestment_reward_known",
+						"hemomancy.dialogue.event.artificer_crimson_vestment_reward_granted");
+			}
+			case HarbingerArtificerDialogueTrees.EVENT_CLAIM_ASSUMED_LIMB_REWARD -> {
+				handleArtificerLessonReward(player, event.getEntityId(),
+						ARTIFICER_ASSUMED_LIMB_REWARD_CLAIM_KEY,
+						HarbingerAdvancementGranter.ADV_ARTIFICER_FIRST_LIVING_GRAFT,
+						new ItemStack(ItemInit.hematic_memory.get(), 1),
+						"hemomancy.dialogue.event.artificer_assumed_limb_reward_unready",
+						"hemomancy.dialogue.event.artificer_assumed_limb_reward_known",
+						"hemomancy.dialogue.event.artificer_assumed_limb_reward_granted");
+			}
+			case HarbingerArtificerDialogueTrees.EVENT_CLAIM_HEMATIC_IRON_FITTING -> {
+				handleArtificerFittingClaim(player, event.getEntityId(),
+						claimant -> HarbingerArtificerAssignmentHelper.earnedHematicIronFitting(claimant),
+						claimant -> HarbingerArtificerAssignmentHelper.tryGrantHematicIronFitting(claimant),
+						"hemomancy.dialogue.event.artificer_hematic_iron_fitting_unready",
+						"hemomancy.dialogue.event.artificer_hematic_iron_fitting_known",
+						"hemomancy.dialogue.event.artificer_hematic_iron_fitting_granted",
+						"hemomancy.dialogue.event.artificer_hematic_iron_fitting_reissued");
+			}
+			case HarbingerArtificerDialogueTrees.EVENT_CLAIM_FORK_FITTING -> {
+				handleArtificerFittingClaim(player, event.getEntityId(),
+						claimant -> HarbingerArtificerAssignmentHelper.earnedForkFitting(claimant),
+						claimant -> HarbingerArtificerAssignmentHelper.tryGrantForkFitting(claimant),
+						"hemomancy.dialogue.event.artificer_fork_fitting_unready",
+						"hemomancy.dialogue.event.artificer_fork_fitting_known",
+						"hemomancy.dialogue.event.artificer_fork_fitting_granted",
+						"hemomancy.dialogue.event.artificer_fork_fitting_reissued");
+			}
+			case HarbingerArtificerDialogueTrees.EVENT_CLAIM_BLOOD_LUST_FITTING -> {
+				handleArtificerFittingClaim(player, event.getEntityId(),
+						claimant -> HarbingerArtificerAssignmentHelper.earnedBloodLustFitting(claimant),
+						claimant -> HarbingerArtificerAssignmentHelper.tryGrantBloodLustFitting(claimant),
+						"hemomancy.dialogue.event.artificer_blood_lust_fitting_unready",
+						"hemomancy.dialogue.event.artificer_blood_lust_fitting_known",
+						"hemomancy.dialogue.event.artificer_blood_lust_fitting_granted",
+						"hemomancy.dialogue.event.artificer_blood_lust_fitting_reissued");
+			}
+			case HarbingerArtificerDialogueTrees.EVENT_CLAIM_D7_FITTING -> {
+				handleArtificerFittingClaim(player, event.getEntityId(),
+						claimant -> HarbingerArtificerAssignmentHelper.earnedD7Fitting(claimant),
+						claimant -> HarbingerArtificerAssignmentHelper.tryGrantD7Fitting(claimant),
+						"hemomancy.dialogue.event.artificer_d7_fitting_unready",
+						"hemomancy.dialogue.event.artificer_d7_fitting_known",
+						"hemomancy.dialogue.event.artificer_d7_fitting_granted",
+						"hemomancy.dialogue.event.artificer_d7_fitting_reissued");
+			}
+			case HarbingerArtificerDialogueTrees.EVENT_CLAIM_LIVING_ARSENAL_FITTING -> {
+				handleArtificerFittingClaim(player, event.getEntityId(),
+						claimant -> HarbingerArtificerAssignmentHelper.earnedLivingArsenalFitting(claimant),
+						claimant -> HarbingerArtificerAssignmentHelper.tryGrantLivingArsenalFitting(claimant),
+						"hemomancy.dialogue.event.artificer_living_arsenal_fitting_unready",
+						"hemomancy.dialogue.event.artificer_living_arsenal_fitting_known",
+						"hemomancy.dialogue.event.artificer_living_arsenal_fitting_granted",
+						"hemomancy.dialogue.event.artificer_living_arsenal_fitting_reissued");
 			}
 			case HarbingerCicatrixAnchoriteDialogueTrees.EVENT_FIRST_LESSON -> {
 				handleVeinMasonFirstLesson(player, event.getEntityId());
@@ -336,6 +429,120 @@ public class DialogueEventHandler {
 				Component.translatable("hemomancy.dialogue.event.monolith_cornerstone_granted")
 						.withStyle(ChatFormatting.DARK_RED),
 				false);
+	}
+
+	private static void handleArtificerLessonReward(ServerPlayer player, int entityId, String claimKey,
+			ResourceLocation prerequisite, ItemStack reward, String unreadyKey, String knownKey, String grantedKey) {
+		if (!HarbingerAdvancementGranter.hasAdvancement(player, prerequisite)) {
+			player.displayClientMessage(
+					Component.translatable(unreadyKey).withStyle(ChatFormatting.GRAY),
+					false);
+			return;
+		}
+		if (player.getPersistentData().getBoolean(claimKey)) {
+			player.displayClientMessage(
+					Component.translatable(knownKey).withStyle(ChatFormatting.GRAY),
+					false);
+			return;
+		}
+
+		giveOrDropAtEntity(player, entityId, reward);
+		player.getPersistentData().putBoolean(claimKey, true);
+		player.displayClientMessage(
+				Component.translatable(grantedKey).withStyle(ChatFormatting.DARK_RED),
+				false);
+	}
+
+	private static void handleArtificerFittingClaim(ServerPlayer player, int entityId,
+			ArtificerFittingStackProvider earned, ArtificerFittingStackProvider grant,
+			String unreadyKey, String knownKey, String grantedKey, String reissuedKey) {
+		ItemStack fitting = earned.stackFor(player);
+		if (!fitting.isEmpty()) {
+			if (!playerHasFitting(player, fitting)) {
+				giveOrDropAtEntity(player, entityId, fitting.copy());
+				player.displayClientMessage(
+						Component.translatable(reissuedKey).withStyle(ChatFormatting.DARK_RED),
+						false);
+				return;
+			}
+			player.displayClientMessage(
+					Component.translatable(knownKey).withStyle(ChatFormatting.GRAY),
+					false);
+			return;
+		}
+
+		fitting = grant.stackFor(player);
+		if (fitting.isEmpty()) {
+			player.displayClientMessage(
+					Component.translatable(unreadyKey).withStyle(ChatFormatting.GRAY),
+					false);
+			return;
+		}
+		giveOrDropAtEntity(player, entityId, fitting.copy());
+		player.displayClientMessage(
+				Component.translatable(grantedKey).withStyle(ChatFormatting.DARK_RED),
+				false);
+	}
+
+	private static boolean playerHasFitting(ServerPlayer player, ItemStack fitting) {
+		if (fitting.isEmpty()) {
+			return false;
+		}
+		for (ItemStack stack : player.getInventory().items) {
+			if (stack.is(fitting.getItem())) {
+				return true;
+			}
+		}
+		for (ItemStack stack : player.getInventory().armor) {
+			if (stack.is(fitting.getItem())) {
+				return true;
+			}
+		}
+		for (ItemStack stack : player.getInventory().offhand) {
+			if (stack.is(fitting.getItem())) {
+				return true;
+			}
+		}
+		return HemoCapabilityAccess.getEquipment(player)
+				.map(equipment -> {
+					for (int slot = 0; slot < equipment.getSlots(); slot++) {
+						if (equipment.getStackInSlot(slot).is(fitting.getItem())) {
+							return true;
+						}
+					}
+					return false;
+				})
+				.orElse(false);
+	}
+
+	private static ItemStack matchingForkReagentReward(ServerPlayer player) {
+		if (wearsAny(player, ItemInit.chitinite_helm.get(), ItemInit.chitinite_chestplate.get(),
+				ItemInit.chitinite_leggings.get(), ItemInit.chitinite_boots.get())) {
+			return new ItemStack(ItemInit.sclerotic_oleum.get());
+		}
+		if (wearsAny(player, ItemInit.prismatic_helm.get(), ItemInit.prismatic_chestplate.get(),
+				ItemInit.prismatic_leggings.get(), ItemInit.prismatic_boots.get())) {
+			return new ItemStack(ItemInit.chromatic_sublimate.get());
+		}
+		return new ItemStack(ItemInit.aculeate_vitriol.get());
+	}
+
+	private static boolean wearsAny(ServerPlayer player, Item... items) {
+		for (EquipmentSlot slot : List.of(EquipmentSlot.HEAD, EquipmentSlot.CHEST,
+				EquipmentSlot.LEGS, EquipmentSlot.FEET)) {
+			ItemStack worn = player.getItemBySlot(slot);
+			for (Item item : items) {
+				if (worn.is(item)) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+
+	@FunctionalInterface
+	private interface ArtificerFittingStackProvider {
+		ItemStack stackFor(ServerPlayer player);
 	}
 
 	private static void handleVeinMasonFirstLesson(ServerPlayer player, int entityId) {

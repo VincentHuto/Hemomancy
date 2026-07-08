@@ -6,6 +6,7 @@ import com.vincenthuto.hemomancy.common.capability.player.harbinger.bestiary.Spe
 import com.vincenthuto.hemomancy.common.event.HarbingerAdvancementGranter;
 import com.vincenthuto.hemomancy.common.init.BlockInit;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
+import com.vincenthuto.hemomancy.common.mission.HarbingerArtificerAssignmentHelper;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.mission.OpenHarbingerAssignmentLedgerPacket;
 import com.vincenthuto.hutoslib.common.item.ItemGuideBook;
@@ -31,6 +32,31 @@ public class HarbingerAssignmentLedgerItem extends ItemGuideBook {
 	public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
 		ItemStack stack = player.getItemInHand(hand);
 		if (!level.isClientSide && player instanceof ServerPlayer serverPlayer) {
+			boolean artificerArmaturePlaced = HarbingerAdvancementGranter.isArtificerArmaturePlaced(serverPlayer);
+			boolean artificerFirstHematicUpgrade =
+					HarbingerAdvancementGranter.isArtificerFirstHematicUpgrade(serverPlayer);
+			boolean artificerHematicIronFitting =
+					HarbingerAdvancementGranter.isArtificerHematicIronFitting(serverPlayer);
+			boolean artificerFirstForkUpgrade =
+					HarbingerAdvancementGranter.isArtificerFirstForkUpgrade(serverPlayer);
+			boolean artificerForkFitting = HarbingerAdvancementGranter.isArtificerForkFitting(serverPlayer);
+			boolean artificerFrameConsecrated =
+					HarbingerAdvancementGranter.isArtificerFrameConsecrated(serverPlayer);
+			boolean artificerFirstBloodLustUpgrade =
+					HarbingerAdvancementGranter.isArtificerFirstBloodLustUpgrade(serverPlayer);
+			boolean artificerBloodLustFitting =
+					HarbingerAdvancementGranter.isArtificerBloodLustFitting(serverPlayer);
+			boolean artificerMonolithicFrame =
+					HarbingerAdvancementGranter.isArtificerMonolithicFrame(serverPlayer);
+			boolean artificerFirstD7Upgrade =
+					HarbingerAdvancementGranter.isArtificerFirstD7Upgrade(serverPlayer);
+			boolean artificerD7Fitting = HarbingerAdvancementGranter.isArtificerD7Fitting(serverPlayer);
+			boolean artificerFirstLivingGraft =
+					HarbingerAdvancementGranter.isArtificerFirstLivingGraft(serverPlayer);
+			int artificerLivingWeaponFormCount =
+					HarbingerArtificerAssignmentHelper.knownLivingWeaponFormCount(serverPlayer);
+			boolean artificerLivingArsenalFitting =
+					HarbingerAdvancementGranter.isArtificerLivingArsenalFitting(serverPlayer);
 			PacketHandler.sendToPlayer(serverPlayer, new OpenHarbingerAssignmentLedgerPacket(
 					HemoCapabilityAccess.getPlayerDegreeNumber(serverPlayer),
 					HarbingerAdvancementGranter.hasAdvancement(serverPlayer,
@@ -65,7 +91,12 @@ public class HarbingerAssignmentLedgerItem extends ItemGuideBook {
 					HarbingerAdvancementGranter.isVeinMasonFirstScarCarved(serverPlayer),
 					HarbingerAdvancementGranter.isVeinMasonFirstScarLearned(serverPlayer),
 					HarbingerAdvancementGranter.isVeinMasonFirstEffigyPattern(serverPlayer),
-					HarbingerAdvancementGranter.isVeinMasonFirstEffigyLoadout(serverPlayer)));
+					HarbingerAdvancementGranter.isVeinMasonFirstEffigyLoadout(serverPlayer),
+					artificerArmaturePlaced, artificerFirstHematicUpgrade, artificerHematicIronFitting,
+					artificerFirstForkUpgrade, artificerForkFitting, artificerFrameConsecrated,
+					artificerFirstBloodLustUpgrade, artificerBloodLustFitting, artificerMonolithicFrame,
+					artificerFirstD7Upgrade, artificerD7Fitting, artificerFirstLivingGraft,
+					artificerLivingWeaponFormCount, artificerLivingArsenalFitting));
 		}
 		return InteractionResultHolder.sidedSuccess(stack, level.isClientSide);
 	}

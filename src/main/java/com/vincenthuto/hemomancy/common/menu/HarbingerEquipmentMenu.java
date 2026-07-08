@@ -6,6 +6,7 @@ import com.vincenthuto.hemomancy.common.init.ContainerInit;
 import com.vincenthuto.hemomancy.common.item.harbinger.bloodline.VasculariumCharmItem;
 import com.vincenthuto.hemomancy.common.item.harbinger.morphlings.ItemMorphlingJar;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.BloodGourdItem;
+import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.LivingStaffFittingItem;
 import com.vincenthuto.hemomancy.common.menu.slot.EquipmentArmorSlot;
 import com.vincenthuto.hemomancy.common.menu.slot.ScarOffHandSlot;
 import com.vincenthuto.hemomancy.common.menu.slot.SelectiveEquipmentTypeSlot;
@@ -28,6 +29,11 @@ public class HarbingerEquipmentMenu extends AbstractContainerMenu {
     public final static int GOURD_SLOT_INDEX = 6;
     public final static int CHARM_SLOT_INDEX = 5;
     public final static int JAR_SLOT_INDEX = 7; // Index in the scar capability handler for the Morphling jar slot
+    public final static int FITTING_SLOT_INDEX = 8;
+    public final static int JAR_MENU_SLOT = 4;
+    public final static int CHARM_MENU_SLOT = 5;
+    public final static int GOURD_MENU_SLOT = 6;
+    public final static int FITTING_MENU_SLOT = 7;
     private static final EquipmentSlot[] VALID_EQUIPMENT_SLOTS = new EquipmentSlot[]{EquipmentSlot.HEAD,
             EquipmentSlot.CHEST, EquipmentSlot.LEGS, EquipmentSlot.FEET};
     private final Player player;
@@ -66,10 +72,12 @@ public class HarbingerEquipmentMenu extends AbstractContainerMenu {
 //		this.addSlot(new ScarSlot(player, scars, 1, 77 + 1 * 18, 8));
 //		this.addSlot(new ScarSlot(player, scars, 2, 77 + 2 * 18, 8));
 //		this.addSlot(new ScarSlot(player, scars, 3, 77 + 3 * 18, 8));
-        this.addSlot(new SelectiveEquipmentTypeSlot(player, ItemMorphlingJar.class, equipment, JAR_SLOT_INDEX, 176, 28));
-        this.addSlot(new VasculariumCharmSlot(player, equipment, CHARM_SLOT_INDEX, 176, 52,
+        this.addSlot(new SelectiveEquipmentTypeSlot(player, ItemMorphlingJar.class, equipment, JAR_SLOT_INDEX, 176, 14));
+        this.addSlot(new VasculariumCharmSlot(player, equipment, CHARM_SLOT_INDEX, 176, 38,
                 this.openedFromScarletVanity));
-        this.addSlot(new SelectiveEquipmentTypeSlot(player, BloodGourdItem.class, equipment, GOURD_SLOT_INDEX, 176, 76));
+        this.addSlot(new SelectiveEquipmentTypeSlot(player, BloodGourdItem.class, equipment, GOURD_SLOT_INDEX, 176, 62));
+        this.addSlot(new SelectiveEquipmentTypeSlot(player, LivingStaffFittingItem.class, equipment,
+                FITTING_SLOT_INDEX, 176, 86));
 
         for (int l = 0; l < 3; ++l) {
             for (int j1 = 0; j1 < 9; ++j1) {
@@ -101,16 +109,17 @@ public class HarbingerEquipmentMenu extends AbstractContainerMenu {
 
         final int armorStart = 0;
         final int armorEnd = 3;
-        final int jarSlotUI = 4;
-        final int charmSlotUI = 5;
-        final int gourdSlotUI = 6;
-        final int containerEnd = 7;
-        final int playerInvStart = 7;
-        final int hotbarStart = 34;
-        final int hotbarEnd = 42;
-        final int offhandSlot = 43;
+        final int jarSlotUI = JAR_MENU_SLOT;
+        final int charmSlotUI = CHARM_MENU_SLOT;
+        final int gourdSlotUI = GOURD_MENU_SLOT;
+        final int fittingSlotUI = FITTING_MENU_SLOT;
+        final int containerEnd = 8;
+        final int playerInvStart = 8;
+        final int hotbarStart = 35;
+        final int hotbarEnd = 43;
+        final int offhandSlot = 44;
 
-        if (index == jarSlotUI || index == charmSlotUI || index == gourdSlotUI) {
+        if (index == jarSlotUI || index == charmSlotUI || index == gourdSlotUI || index == fittingSlotUI) {
             if (!slot.mayPickup(playerIn)) {
                 return ItemStack.EMPTY;
             }
@@ -187,6 +196,15 @@ public class HarbingerEquipmentMenu extends AbstractContainerMenu {
                 Slot gourdSlot = this.slots.get(gourdSlotUI);
                 if (!gourdSlot.hasItem() && gourdSlot.mayPlace(stackInSlot)) {
                     gourdSlot.set(stackInSlot.split(1));
+                    moved = true;
+                }
+            }
+
+            // Living Staff fitting -> fitting slot
+            if (!moved && stackInSlot.getItem() instanceof LivingStaffFittingItem) {
+                Slot fittingSlot = this.slots.get(fittingSlotUI);
+                if (!fittingSlot.hasItem() && fittingSlot.mayPlace(stackInSlot)) {
+                    fittingSlot.set(stackInSlot.split(1));
                     moved = true;
                 }
             }

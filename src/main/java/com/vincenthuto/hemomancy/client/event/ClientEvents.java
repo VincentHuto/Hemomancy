@@ -104,6 +104,7 @@ import com.vincenthuto.hemomancy.common.item.harbinger.scar.ItemScarPattern;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.DrudgeElectrodeItem;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.BloodAbsorptionItem;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.LivingCrossbowItem;
+import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.LivingStaffFittingHelper;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.VialRackItem;
 import com.vincenthuto.hemomancy.common.item.shared.HemoItemProperties;
 import com.vincenthuto.hemomancy.common.item.shared.StructureScannerItem;
@@ -919,9 +920,18 @@ public class ClientEvents {
                 ItemProperties.register(ItemInit.drudge_electrode.get(), Hemomancy.rloc("mode"),
                         HemoItemProperties.booleanTag(DrudgeElectrodeItem.TAG_MODE));
 
-                ItemProperties.register(ItemInit.living_staff.get(), Hemomancy.rloc("morph"), new ItemPropertyFunction() {
+                ItemProperties.register(ItemInit.living_staff.get(), Hemomancy.rloc("staff_visual"), new ItemPropertyFunction() {
                     @Override
                     public float call(ItemStack stack, ClientLevel world, LivingEntity ent, int seed) {
+                        Player player = ent instanceof Player livingPlayer ? livingPlayer : Minecraft.getInstance().player;
+                        int fittingVisual = LivingStaffFittingHelper.staffVisualFor(player);
+                        if (fittingVisual > 0) {
+                            return fittingVisual;
+                        }
+                        return staffVisualFromMorphlingInventory(stack, world);
+                    }
+
+                    private float staffVisualFromMorphlingInventory(ItemStack stack, ClientLevel world) {
                         if (!stack.has(DataComponents.CUSTOM_DATA)) {
                             return 0.0F;
                         }

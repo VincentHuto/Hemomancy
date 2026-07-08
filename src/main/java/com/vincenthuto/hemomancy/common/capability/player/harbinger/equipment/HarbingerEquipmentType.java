@@ -1,7 +1,7 @@
 package com.vincenthuto.hemomancy.common.capability.player.harbinger.equipment;
 
 public enum HarbingerEquipmentType {
-	VASC(5), GOURD(6), JAR(7);
+	VASC(5), GOURD(6), JAR(7), FITTING(8);
 
 	int[] validSlots;
 
