@@ -1,6 +1,6 @@
 {
   "parent": "minecraft:item/generated",
   "textures": {
-    "layer0": "hemomancy:item/crimson_lacquer"
+    "layer0": "hemomancy:item/crimson_vestment_fitting"
   }
 }

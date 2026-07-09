@@ -173,7 +173,10 @@ public final class VeinMasonMissionSourceTest {
 		assertContains("ledger packet carries first lesson state", packet, "veinMasonFirstLesson");
 		assertContains("ledger packet carries effigy pattern state", packet, "veinMasonFirstEffigyPattern");
 		assertContains("ledger screen renders vein mason assignment", screen, "renderVeinMason");
-		assertContains("ledger shows four visible vein mason parts", screen, "drawProgressBar(gfx, x + 8, y + 31, w - 16, 7, veinMasonProgress(), 4)");
+		assertContains("ledger computes vein mason progress", screen, "veinMasonProgress()");
+		assertContains("ledger shows four visible vein mason parts", screen,
+				"progress, 4, veinMasonFirstEffigyLoadout");
+		assertContains("ledger renders Vein-Mason assigner portrait", screen, "VEIN_MASON_PORTRAIT");
 		assertContains("ledger part one is finding the Vein-Mason", screen, "if (veinMasonFirstLesson) completed++");
 		assertContains("ledger part two is learned scar after carve and burn", screen, "if (veinMasonFirstScarLearned) completed++");
 		assertContains("ledger part three is prepared effigy pattern", screen, "if (veinMasonFirstEffigyPattern) completed++");

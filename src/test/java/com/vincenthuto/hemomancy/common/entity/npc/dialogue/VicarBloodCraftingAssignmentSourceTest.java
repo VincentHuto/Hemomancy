@@ -40,8 +40,10 @@ public final class VicarBloodCraftingAssignmentSourceTest {
 		assertContains("Ledger renders Hematic Iron crafting", ledger, "step.craft_hematic_iron");
 		assertContains("Ledger renders First Bloodcraft as D1 main assignment", ledger, "renderFirstBloodcraft");
 		assertContains("Ledger renders Hermit Road as D1 side assignment", ledger, "renderHermitRoad");
-		assertContains("First Bloodcraft counts three main steps", ledger, "firstBloodcraftProgress(), 3");
-		assertContains("Hermit Road counts two side steps", ledger, "hermitRoadProgress(), 2");
+		assertContains("First Bloodcraft computes main progress", ledger, "firstBloodcraftProgress()");
+		assertContains("First Bloodcraft counts three main steps", ledger, "progress, 3, progress >= 3");
+		assertContains("Hermit Road computes side progress", ledger, "hermitRoadProgress()");
+		assertContains("Hermit Road counts two side steps", ledger, "progress, 2, progress >= 2");
 
 		assertContains("Blood crafting option has lang", lang, "hemomancy.dialogue.vicar.option.ask_about_blood_crafting");
 		assertContains("First Bloodcraft main title has lang", lang,

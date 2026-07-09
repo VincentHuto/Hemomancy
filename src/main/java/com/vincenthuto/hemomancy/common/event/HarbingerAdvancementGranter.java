@@ -56,6 +56,8 @@ public final class HarbingerAdvancementGranter {
 			Hemomancy.rloc("hemomancy/iron_in_the_blood");
 	public static final ResourceLocation ADV_FIRST_SEPARATION_STARTED =
 			Hemomancy.rloc("hemomancy/first_separation_started");
+	public static final ResourceLocation ADV_FIRST_SEPARATION_COMPLETE =
+			Hemomancy.rloc("hemomancy/first_separation_complete");
 	public static final ResourceLocation ADV_RED_TAXONOMY_INFECTED_FUNGUS =
 			Hemomancy.rloc("hemomancy/red_taxonomy_infected_fungus");
 	public static final ResourceLocation ADV_RED_TAXONOMY_STINKHORN_FUNGUS =
@@ -94,6 +96,8 @@ public final class HarbingerAdvancementGranter {
 			Hemomancy.rloc("hemomancy/mnemonist_woven_vessel_complete");
 	public static final ResourceLocation ADV_MNEMONIST_FIRST_WEAVE_COMPLETE =
 			Hemomancy.rloc("hemomancy/mnemonist_first_weave_complete");
+	public static final ResourceLocation ADV_MNEMONIST_WOVEN_VESSEL_FINISHED =
+			Hemomancy.rloc("hemomancy/mnemonist_woven_vessel_finished");
 	public static final ResourceLocation ADV_VICAR_MASONS_RESPITE_DIRECTIVE =
 			Hemomancy.rloc("hemomancy/vicar_masons_respite_directive");
 	public static final ResourceLocation ADV_VEIN_MASON_FIRST_LESSON =
@@ -106,16 +110,26 @@ public final class HarbingerAdvancementGranter {
 			Hemomancy.rloc("hemomancy/vein_mason_first_effigy_pattern");
 	public static final ResourceLocation ADV_VEIN_MASON_FIRST_EFFIGY_LOADOUT =
 			Hemomancy.rloc("hemomancy/vein_mason_first_effigy_loadout");
+	public static final ResourceLocation ADV_VEIN_MASON_CONTINUATION_READY =
+			Hemomancy.rloc("hemomancy/vein_mason_continuation_ready");
 	public static final ResourceLocation ADV_VEIN_MASON_REWARD_CLAIMED =
 			Hemomancy.rloc("hemomancy/vein_mason_reward_claimed");
 	public static final ResourceLocation ADV_ARTIFICER_ARMATURE_PLACED =
 			Hemomancy.rloc("hemomancy/artificer_armature_placed");
 	public static final ResourceLocation ADV_ARTIFICER_FIRST_HEMATIC_UPGRADE =
 			Hemomancy.rloc("hemomancy/artificer_first_hematic_upgrade");
+	public static final ResourceLocation ADV_ARTIFICER_WORN_VOW_LESSON_READY =
+			Hemomancy.rloc("hemomancy/artificer_worn_vow_lesson_ready");
+	public static final ResourceLocation ADV_ARTIFICER_WORN_VOW_FITTING_READY =
+			Hemomancy.rloc("hemomancy/artificer_worn_vow_fitting_ready");
 	public static final ResourceLocation ADV_ARTIFICER_HEMATIC_IRON_FITTING =
 			Hemomancy.rloc("hemomancy/artificer_hematic_iron_fitting");
 	public static final ResourceLocation ADV_ARTIFICER_FIRST_FORK_UPGRADE =
 			Hemomancy.rloc("hemomancy/artificer_first_fork_upgrade");
+	public static final ResourceLocation ADV_ARTIFICER_THREE_ANSWERS_LESSON_READY =
+			Hemomancy.rloc("hemomancy/artificer_three_answers_lesson_ready");
+	public static final ResourceLocation ADV_ARTIFICER_THREE_ANSWERS_FITTING_READY =
+			Hemomancy.rloc("hemomancy/artificer_three_answers_fitting_ready");
 	public static final ResourceLocation ADV_ARTIFICER_BARBED_FITTING =
 			Hemomancy.rloc("hemomancy/artificer_barbed_fitting");
 	public static final ResourceLocation ADV_ARTIFICER_CHITINITE_FITTING =
@@ -126,16 +140,26 @@ public final class HarbingerAdvancementGranter {
 			Hemomancy.rloc("hemomancy/artificer_frame_consecrated");
 	public static final ResourceLocation ADV_ARTIFICER_FIRST_BLOOD_LUST_UPGRADE =
 			Hemomancy.rloc("hemomancy/artificer_first_blood_lust_upgrade");
+	public static final ResourceLocation ADV_ARTIFICER_CRIMSON_VESTMENT_LESSON_READY =
+			Hemomancy.rloc("hemomancy/artificer_crimson_vestment_lesson_ready");
+	public static final ResourceLocation ADV_ARTIFICER_CRIMSON_VESTMENT_FITTING_READY =
+			Hemomancy.rloc("hemomancy/artificer_crimson_vestment_fitting_ready");
 	public static final ResourceLocation ADV_ARTIFICER_BLOOD_LUST_FITTING =
 			Hemomancy.rloc("hemomancy/artificer_blood_lust_fitting");
 	public static final ResourceLocation ADV_ARTIFICER_MONOLITHIC_FRAME =
 			Hemomancy.rloc("hemomancy/artificer_monolithic_frame");
 	public static final ResourceLocation ADV_ARTIFICER_FIRST_D7_UPGRADE =
 			Hemomancy.rloc("hemomancy/artificer_first_d7_upgrade");
+	public static final ResourceLocation ADV_ARTIFICER_WEIGHT_OF_THE_FRAME_FITTING_READY =
+			Hemomancy.rloc("hemomancy/artificer_weight_of_the_frame_fitting_ready");
 	public static final ResourceLocation ADV_ARTIFICER_D7_FITTING =
 			Hemomancy.rloc("hemomancy/artificer_d7_fitting");
 	public static final ResourceLocation ADV_ARTIFICER_FIRST_LIVING_GRAFT =
 			Hemomancy.rloc("hemomancy/artificer_first_living_graft");
+	public static final ResourceLocation ADV_ARTIFICER_ASSUMED_LIMB_LESSON_READY =
+			Hemomancy.rloc("hemomancy/artificer_assumed_limb_lesson_ready");
+	public static final ResourceLocation ADV_ARTIFICER_ASSUMED_LIMB_FITTING_READY =
+			Hemomancy.rloc("hemomancy/artificer_assumed_limb_fitting_ready");
 	public static final ResourceLocation ADV_ARTIFICER_LIVING_ARSENAL_FITTING =
 			Hemomancy.rloc("hemomancy/artificer_living_arsenal_fitting");
 
@@ -273,12 +297,20 @@ public final class HarbingerAdvancementGranter {
 		return hasAdvancement(player, ADV_FIRST_SEPARATION_STARTED);
 	}
 
+	public static boolean isFirstSeparationComplete(ServerPlayer player) {
+		return hasAdvancement(player, ADV_FIRST_SEPARATION_COMPLETE);
+	}
+
 	public static boolean isMnemonistWovenVesselComplete(ServerPlayer player) {
 		return hasAdvancement(player, ADV_MNEMONIST_WOVEN_VESSEL_COMPLETE);
 	}
 
 	public static boolean isMnemonistFirstWeaveComplete(ServerPlayer player) {
 		return hasAdvancement(player, ADV_MNEMONIST_FIRST_WEAVE_COMPLETE);
+	}
+
+	public static boolean isMnemonistWovenVesselFinished(ServerPlayer player) {
+		return hasAdvancement(player, ADV_MNEMONIST_WOVEN_VESSEL_FINISHED);
 	}
 
 	public static boolean isVicarMasonsRespiteDirective(ServerPlayer player) {
@@ -305,6 +337,10 @@ public final class HarbingerAdvancementGranter {
 		return hasAdvancement(player, ADV_VEIN_MASON_FIRST_EFFIGY_LOADOUT);
 	}
 
+	public static boolean isVeinMasonContinuationReady(ServerPlayer player) {
+		return hasAdvancement(player, ADV_VEIN_MASON_CONTINUATION_READY);
+	}
+
 	public static boolean isVeinMasonRewardClaimed(ServerPlayer player) {
 		return hasAdvancement(player, ADV_VEIN_MASON_REWARD_CLAIMED);
 	}
@@ -317,12 +353,28 @@ public final class HarbingerAdvancementGranter {
 		return hasAdvancement(player, ADV_ARTIFICER_FIRST_HEMATIC_UPGRADE);
 	}
 
+	public static boolean isArtificerWornVowLessonReady(ServerPlayer player) {
+		return hasAdvancement(player, ADV_ARTIFICER_WORN_VOW_LESSON_READY);
+	}
+
+	public static boolean isArtificerWornVowFittingReady(ServerPlayer player) {
+		return hasAdvancement(player, ADV_ARTIFICER_WORN_VOW_FITTING_READY);
+	}
+
 	public static boolean isArtificerHematicIronFitting(ServerPlayer player) {
 		return hasAdvancement(player, ADV_ARTIFICER_HEMATIC_IRON_FITTING);
 	}
 
 	public static boolean isArtificerFirstForkUpgrade(ServerPlayer player) {
 		return hasAdvancement(player, ADV_ARTIFICER_FIRST_FORK_UPGRADE);
+	}
+
+	public static boolean isArtificerThreeAnswersLessonReady(ServerPlayer player) {
+		return hasAdvancement(player, ADV_ARTIFICER_THREE_ANSWERS_LESSON_READY);
+	}
+
+	public static boolean isArtificerThreeAnswersFittingReady(ServerPlayer player) {
+		return hasAdvancement(player, ADV_ARTIFICER_THREE_ANSWERS_FITTING_READY);
 	}
 
 	public static boolean isArtificerBarbedFitting(ServerPlayer player) {
@@ -351,6 +403,14 @@ public final class HarbingerAdvancementGranter {
 		return hasAdvancement(player, ADV_ARTIFICER_FIRST_BLOOD_LUST_UPGRADE);
 	}
 
+	public static boolean isArtificerCrimsonVestmentLessonReady(ServerPlayer player) {
+		return hasAdvancement(player, ADV_ARTIFICER_CRIMSON_VESTMENT_LESSON_READY);
+	}
+
+	public static boolean isArtificerCrimsonVestmentFittingReady(ServerPlayer player) {
+		return hasAdvancement(player, ADV_ARTIFICER_CRIMSON_VESTMENT_FITTING_READY);
+	}
+
 	public static boolean isArtificerBloodLustFitting(ServerPlayer player) {
 		return hasAdvancement(player, ADV_ARTIFICER_BLOOD_LUST_FITTING);
 	}
@@ -363,12 +423,24 @@ public final class HarbingerAdvancementGranter {
 		return hasAdvancement(player, ADV_ARTIFICER_FIRST_D7_UPGRADE);
 	}
 
+	public static boolean isArtificerWeightOfTheFrameFittingReady(ServerPlayer player) {
+		return hasAdvancement(player, ADV_ARTIFICER_WEIGHT_OF_THE_FRAME_FITTING_READY);
+	}
+
 	public static boolean isArtificerD7Fitting(ServerPlayer player) {
 		return hasAdvancement(player, ADV_ARTIFICER_D7_FITTING);
 	}
 
 	public static boolean isArtificerFirstLivingGraft(ServerPlayer player) {
 		return hasAdvancement(player, ADV_ARTIFICER_FIRST_LIVING_GRAFT);
+	}
+
+	public static boolean isArtificerAssumedLimbLessonReady(ServerPlayer player) {
+		return hasAdvancement(player, ADV_ARTIFICER_ASSUMED_LIMB_LESSON_READY);
+	}
+
+	public static boolean isArtificerAssumedLimbFittingReady(ServerPlayer player) {
+		return hasAdvancement(player, ADV_ARTIFICER_ASSUMED_LIMB_FITTING_READY);
 	}
 
 	public static boolean isArtificerLivingArsenalFitting(ServerPlayer player) {

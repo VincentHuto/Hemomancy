@@ -10,6 +10,15 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
 
 public final class HarbingerArtificerAssignmentHelper {
+	public static final String WORN_VOW_REWARD_CLAIM_KEY =
+			"hemomancy.artificer.worn_vow_reward_claimed";
+	public static final String THREE_ANSWERS_REWARD_CLAIM_KEY =
+			"hemomancy.artificer.three_answers_reward_claimed";
+	public static final String CRIMSON_VESTMENT_REWARD_CLAIM_KEY =
+			"hemomancy.artificer.crimson_vestment_reward_claimed";
+	public static final String ASSUMED_LIMB_REWARD_CLAIM_KEY =
+			"hemomancy.artificer.assumed_limb_reward_claimed";
+
 	private HarbingerArtificerAssignmentHelper() {
 	}
 
@@ -22,14 +31,26 @@ public final class HarbingerArtificerAssignmentHelper {
 		if (ArmorSetHelper.isHematicIronArmorPiece(upgraded)) {
 			HarbingerAdvancementGranter.grantIfNotDone(player,
 					HarbingerAdvancementGranter.ADV_ARTIFICER_FIRST_HEMATIC_UPGRADE);
+			grantLessonReadyIfUnclaimed(player,
+					HarbingerAdvancementGranter.ADV_ARTIFICER_FIRST_HEMATIC_UPGRADE,
+					WORN_VOW_REWARD_CLAIM_KEY,
+					HarbingerAdvancementGranter.ADV_ARTIFICER_WORN_VOW_LESSON_READY);
 		}
 		if (ArmorSetHelper.isForkArmorPiece(upgraded)) {
 			HarbingerAdvancementGranter.grantIfNotDone(player,
 					HarbingerAdvancementGranter.ADV_ARTIFICER_FIRST_FORK_UPGRADE);
+			grantLessonReadyIfUnclaimed(player,
+					HarbingerAdvancementGranter.ADV_ARTIFICER_FIRST_FORK_UPGRADE,
+					THREE_ANSWERS_REWARD_CLAIM_KEY,
+					HarbingerAdvancementGranter.ADV_ARTIFICER_THREE_ANSWERS_LESSON_READY);
 		}
 		if (ArmorSetHelper.isBloodLustArmorPiece(upgraded)) {
 			HarbingerAdvancementGranter.grantIfNotDone(player,
 					HarbingerAdvancementGranter.ADV_ARTIFICER_FIRST_BLOOD_LUST_UPGRADE);
+			grantLessonReadyIfUnclaimed(player,
+					HarbingerAdvancementGranter.ADV_ARTIFICER_FIRST_BLOOD_LUST_UPGRADE,
+					CRIMSON_VESTMENT_REWARD_CLAIM_KEY,
+					HarbingerAdvancementGranter.ADV_ARTIFICER_CRIMSON_VESTMENT_LESSON_READY);
 		}
 		if (requiredDegree >= 7 || ArmorSetHelper.isD7ArmorPiece(upgraded)) {
 			HarbingerAdvancementGranter.grantIfNotDone(player,
@@ -51,6 +72,71 @@ public final class HarbingerArtificerAssignmentHelper {
 	public static void onLivingWeaponGraftComplete(ServerPlayer player) {
 		HarbingerAdvancementGranter.grantIfNotDone(player,
 				HarbingerAdvancementGranter.ADV_ARTIFICER_FIRST_LIVING_GRAFT);
+		grantLessonReadyIfUnclaimed(player,
+				HarbingerAdvancementGranter.ADV_ARTIFICER_FIRST_LIVING_GRAFT,
+				ASSUMED_LIMB_REWARD_CLAIM_KEY,
+				HarbingerAdvancementGranter.ADV_ARTIFICER_ASSUMED_LIMB_LESSON_READY);
+	}
+
+	public static void syncReadyToClaimAdvancements(ServerPlayer player) {
+		grantLessonReadyIfUnclaimed(player,
+				HarbingerAdvancementGranter.ADV_ARTIFICER_FIRST_HEMATIC_UPGRADE,
+				WORN_VOW_REWARD_CLAIM_KEY,
+				HarbingerAdvancementGranter.ADV_ARTIFICER_WORN_VOW_LESSON_READY);
+		grantLessonReadyIfUnclaimed(player,
+				HarbingerAdvancementGranter.ADV_ARTIFICER_FIRST_FORK_UPGRADE,
+				THREE_ANSWERS_REWARD_CLAIM_KEY,
+				HarbingerAdvancementGranter.ADV_ARTIFICER_THREE_ANSWERS_LESSON_READY);
+		grantLessonReadyIfUnclaimed(player,
+				HarbingerAdvancementGranter.ADV_ARTIFICER_FIRST_BLOOD_LUST_UPGRADE,
+				CRIMSON_VESTMENT_REWARD_CLAIM_KEY,
+				HarbingerAdvancementGranter.ADV_ARTIFICER_CRIMSON_VESTMENT_LESSON_READY);
+		grantLessonReadyIfUnclaimed(player,
+				HarbingerAdvancementGranter.ADV_ARTIFICER_FIRST_LIVING_GRAFT,
+				ASSUMED_LIMB_REWARD_CLAIM_KEY,
+				HarbingerAdvancementGranter.ADV_ARTIFICER_ASSUMED_LIMB_LESSON_READY);
+
+		if (!HarbingerAdvancementGranter.isArtificerHematicIronFitting(player)
+				&& ArmorSetHelper.hasFullHematicIronSet(player)) {
+			HarbingerAdvancementGranter.grantIfNotDone(player,
+					HarbingerAdvancementGranter.ADV_ARTIFICER_WORN_VOW_FITTING_READY);
+		}
+		if (!HarbingerAdvancementGranter.isArtificerForkFitting(player)
+				&& ArmorSetHelper.hasFullForkSet(player)) {
+			HarbingerAdvancementGranter.grantIfNotDone(player,
+					HarbingerAdvancementGranter.ADV_ARTIFICER_THREE_ANSWERS_FITTING_READY);
+		}
+		if (!HarbingerAdvancementGranter.isArtificerBloodLustFitting(player)
+				&& ArmorSetHelper.hasFullBloodLustSet(player)) {
+			HarbingerAdvancementGranter.grantIfNotDone(player,
+					HarbingerAdvancementGranter.ADV_ARTIFICER_CRIMSON_VESTMENT_FITTING_READY);
+		}
+		if (!HarbingerAdvancementGranter.isArtificerD7Fitting(player)
+				&& ArmorSetHelper.hasFullD7Set(player)) {
+			HarbingerAdvancementGranter.grantIfNotDone(player,
+					HarbingerAdvancementGranter.ADV_ARTIFICER_WEIGHT_OF_THE_FRAME_FITTING_READY);
+		}
+		if (!HarbingerAdvancementGranter.isArtificerLivingArsenalFitting(player)
+				&& knowsFullLivingArsenal(player)) {
+			HarbingerAdvancementGranter.grantIfNotDone(player,
+					HarbingerAdvancementGranter.ADV_ARTIFICER_ASSUMED_LIMB_FITTING_READY);
+		}
+	}
+
+	public static boolean isArtificerLessonRewardClaimed(ServerPlayer player, String claimKey) {
+		return player.getPersistentData().getBoolean(claimKey);
+	}
+
+	public static void markArtificerLessonRewardClaimed(ServerPlayer player, String claimKey) {
+		player.getPersistentData().putBoolean(claimKey, true);
+	}
+
+	private static void grantLessonReadyIfUnclaimed(ServerPlayer player, net.minecraft.resources.ResourceLocation prerequisite,
+			String claimKey, net.minecraft.resources.ResourceLocation readyAdvancement) {
+		if (HarbingerAdvancementGranter.hasAdvancement(player, prerequisite)
+				&& !isArtificerLessonRewardClaimed(player, claimKey)) {
+			HarbingerAdvancementGranter.grantIfNotDone(player, readyAdvancement);
+		}
 	}
 
 	public static int knownLivingWeaponFormCount(ServerPlayer player) {

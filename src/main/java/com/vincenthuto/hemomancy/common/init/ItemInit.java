@@ -125,7 +125,8 @@ public class ItemInit {
 //                    .food(new FoodProperties.Builder().nutrition(1).saturationModifier(0.2F).fast().build())));
     public static final DeferredHolder<Item, Item> gourd_stew = BASEITEMS.register("gourd_stew",
             () -> new Item(new Item.Properties().stacksTo(1).craftRemainder(Items.BOWL)
-                    .food(new FoodProperties.Builder().nutrition(7).saturationModifier(0.6F).build())));
+                    .food(new FoodProperties.Builder().nutrition(7).saturationModifier(0.6F)
+                            .usingConvertsTo(Items.BOWL).build())));
     public static final DeferredHolder<Item, Item> sanguine_formation = BASEITEMS.register("sanguine_formation",
             () -> new Item(new Item.Properties()));
 //    public static final DeferredHolder<Item, Item> field_notes = BASEITEMS.register("field_notes",

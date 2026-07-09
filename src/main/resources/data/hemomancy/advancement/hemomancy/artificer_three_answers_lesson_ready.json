@@ -1,0 +1,29 @@
+{
+  "display": {
+    "icon": {
+      "count": 1,
+      "id": "hemomancy:aculeate_vitriol"
+    },
+    "title": {
+      "translate": "advancements.hemomancy.artificer_three_answers_lesson_ready.title"
+    },
+    "description": {
+      "translate": "advancements.hemomancy.artificer_three_answers_lesson_ready.description"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": false,
+    "hidden": true
+  },
+  "parent": "hemomancy:hemomancy/artificer_first_fork_upgrade",
+  "criteria": {
+    "completed": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "requirements": [
+    [
+      "completed"
+    ]
+  ]
+}

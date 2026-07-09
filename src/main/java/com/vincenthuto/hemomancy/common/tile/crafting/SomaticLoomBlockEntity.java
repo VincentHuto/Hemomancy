@@ -724,6 +724,10 @@ public class SomaticLoomBlockEntity extends BlockEntity implements IBloodReservo
 			SkillPointGainEvents.onMemoryWeavingCompleted(serverPlayer);
 			HarbingerAdvancementGranter.grantIfNotDone(serverPlayer,
 					HarbingerAdvancementGranter.ADV_MNEMONIST_FIRST_WEAVE_COMPLETE);
+			if (HarbingerAdvancementGranter.isMnemonistWovenVesselComplete(serverPlayer)) {
+				HarbingerAdvancementGranter.grantIfNotDone(serverPlayer,
+						HarbingerAdvancementGranter.ADV_MNEMONIST_WOVEN_VESSEL_FINISHED);
+			}
 		}
 
 		clearActiveRitual(false);

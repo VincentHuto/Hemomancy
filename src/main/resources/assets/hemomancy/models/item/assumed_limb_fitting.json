@@ -1,6 +1,6 @@
 {
   "parent": "minecraft:item/generated",
   "textures": {
-    "layer0": "hemomancy:item/living_weapon_graft"
+    "layer0": "hemomancy:item/assumed_limb_fitting"
   }
 }

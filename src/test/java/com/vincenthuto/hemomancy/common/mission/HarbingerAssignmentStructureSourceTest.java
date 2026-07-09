@@ -60,7 +60,8 @@ public final class HarbingerAssignmentStructureSourceTest {
 		assertContains("ledger packet carries centrifuge startup state", ledgerPacket, "firstSeparationStarted");
 		assertContains("ledger packet carries enzyme acquisition state", ledgerPacket, "hasAnyEnzyme");
 		assertContains("ledger screen renders first separation", ledgerScreen, "renderFirstSeparation");
-		assertContains("first separation displays four steps", ledgerScreen, "firstSeparationProgress(), 4");
+		assertContains("first separation computes progress", ledgerScreen, "firstSeparationProgress()");
+		assertContains("first separation displays four steps", ledgerScreen, "progress, 4, progress >= 4");
 		assertContains("first separation language title exists", language,
 				"screen.hemomancy.harbinger_assignment_ledger.first_separation.title");
 		assertContains("first separation advancement exists", read(RESOURCE_ROOT.resolve(

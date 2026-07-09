@@ -1,6 +1,6 @@
 {
   "parent": "minecraft:item/generated",
   "textures": {
-    "layer0": "hemomancy:item/chromatic_sublimate"
+    "layer0": "hemomancy:item/prismatic_fitting"
   }
 }

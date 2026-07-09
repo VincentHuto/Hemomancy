@@ -297,7 +297,9 @@ public final class HarbingerHermitRoadMissionSourceTest {
 		assertContains("ledger packet carries woven vessel completion", ledgerPacket, "mnemonistWovenVesselComplete");
 		assertContains("ledger packet carries first weave completion", ledgerPacket, "mnemonistFirstWeaveComplete");
 		assertContains("ledger screen renders woven vessel assignment", ledgerScreen, "renderWovenVessel");
-		assertContains("woven vessel progress displays three steps", ledgerScreen, "wovenVesselProgress(), 3");
+		assertContains("woven vessel progress is computed", ledgerScreen, "wovenVesselProgress()");
+		assertContains("woven vessel progress displays three steps", ledgerScreen,
+				"progress, 3, mnemonistFirstWeaveComplete");
 		assertDoesNotContain("woven vessel progress no longer includes red taxonomy", ledgerScreen,
 				"if (redTaxonomyComplete) completed++");
 		assertDoesNotContain("woven vessel progress no longer includes degree reached", ledgerScreen,

@@ -126,6 +126,10 @@ public class AnastomoticBrazierBlockEntity extends BlockEntity {
 		if (player instanceof ServerPlayer serverPlayer) {
 			HarbingerAdvancementGranter.grantIfNotDone(serverPlayer,
 					HarbingerAdvancementGranter.ADV_VEIN_MASON_FIRST_EFFIGY_LOADOUT);
+			if (!HarbingerAdvancementGranter.isVeinMasonRewardClaimed(serverPlayer)) {
+				HarbingerAdvancementGranter.grantIfNotDone(serverPlayer,
+						HarbingerAdvancementGranter.ADV_VEIN_MASON_CONTINUATION_READY);
+			}
 		}
 		stack.shrink(1);
 		syncScarState(player, scars);

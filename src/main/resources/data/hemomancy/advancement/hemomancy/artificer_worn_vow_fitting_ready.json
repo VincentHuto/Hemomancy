@@ -1,0 +1,29 @@
+{
+  "display": {
+    "icon": {
+      "count": 1,
+      "id": "hemomancy:worn_vow_fitting"
+    },
+    "title": {
+      "translate": "advancements.hemomancy.artificer_worn_vow_fitting_ready.title"
+    },
+    "description": {
+      "translate": "advancements.hemomancy.artificer_worn_vow_fitting_ready.description"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": false,
+    "hidden": true
+  },
+  "parent": "hemomancy:hemomancy/artificer_first_hematic_upgrade",
+  "criteria": {
+    "completed": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "requirements": [
+    [
+      "completed"
+    ]
+  ]
+}

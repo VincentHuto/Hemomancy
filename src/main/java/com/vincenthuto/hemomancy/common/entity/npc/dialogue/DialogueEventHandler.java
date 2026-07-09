@@ -58,14 +58,6 @@ public class DialogueEventHandler {
 			"hemomancy.vicar_consecration_kit_claimed";
 	private static final String MONOLITH_CORNERSTONE_CLAIM_KEY =
 			"hemomancy.monolithic_cornerstone_claimed";
-	private static final String ARTIFICER_WORN_VOW_REWARD_CLAIM_KEY =
-			"hemomancy.artificer.worn_vow_reward_claimed";
-	private static final String ARTIFICER_THREE_ANSWERS_REWARD_CLAIM_KEY =
-			"hemomancy.artificer.three_answers_reward_claimed";
-	private static final String ARTIFICER_CRIMSON_VESTMENT_REWARD_CLAIM_KEY =
-			"hemomancy.artificer.crimson_vestment_reward_claimed";
-	private static final String ARTIFICER_ASSUMED_LIMB_REWARD_CLAIM_KEY =
-			"hemomancy.artificer.assumed_limb_reward_claimed";
 
 	@SubscribeEvent
 	public static void onDialogueOption(DialogueEvent event) {
@@ -178,7 +170,7 @@ public class DialogueEventHandler {
 			}
 			case HarbingerArtificerDialogueTrees.EVENT_CLAIM_WORN_VOW_REWARD -> {
 				handleArtificerLessonReward(player, event.getEntityId(),
-						ARTIFICER_WORN_VOW_REWARD_CLAIM_KEY,
+						HarbingerArtificerAssignmentHelper.WORN_VOW_REWARD_CLAIM_KEY,
 						HarbingerAdvancementGranter.ADV_ARTIFICER_FIRST_HEMATIC_UPGRADE,
 						new ItemStack(ItemInit.hematic_iron_scrap.get(), 4),
 						"hemomancy.dialogue.event.artificer_worn_vow_reward_unready",
@@ -187,7 +179,7 @@ public class DialogueEventHandler {
 			}
 			case HarbingerArtificerDialogueTrees.EVENT_CLAIM_THREE_ANSWERS_REWARD -> {
 				handleArtificerLessonReward(player, event.getEntityId(),
-						ARTIFICER_THREE_ANSWERS_REWARD_CLAIM_KEY,
+						HarbingerArtificerAssignmentHelper.THREE_ANSWERS_REWARD_CLAIM_KEY,
 						HarbingerAdvancementGranter.ADV_ARTIFICER_FIRST_FORK_UPGRADE,
 						matchingForkReagentReward(player),
 						"hemomancy.dialogue.event.artificer_three_answers_reward_unready",
@@ -196,7 +188,7 @@ public class DialogueEventHandler {
 			}
 			case HarbingerArtificerDialogueTrees.EVENT_CLAIM_CRIMSON_VESTMENT_REWARD -> {
 				handleArtificerLessonReward(player, event.getEntityId(),
-						ARTIFICER_CRIMSON_VESTMENT_REWARD_CLAIM_KEY,
+						HarbingerArtificerAssignmentHelper.CRIMSON_VESTMENT_REWARD_CLAIM_KEY,
 						HarbingerAdvancementGranter.ADV_ARTIFICER_FIRST_BLOOD_LUST_UPGRADE,
 						new ItemStack(ItemInit.crimson_lacquer.get(), 1),
 						"hemomancy.dialogue.event.artificer_crimson_vestment_reward_unready",
@@ -205,7 +197,7 @@ public class DialogueEventHandler {
 			}
 			case HarbingerArtificerDialogueTrees.EVENT_CLAIM_ASSUMED_LIMB_REWARD -> {
 				handleArtificerLessonReward(player, event.getEntityId(),
-						ARTIFICER_ASSUMED_LIMB_REWARD_CLAIM_KEY,
+						HarbingerArtificerAssignmentHelper.ASSUMED_LIMB_REWARD_CLAIM_KEY,
 						HarbingerAdvancementGranter.ADV_ARTIFICER_FIRST_LIVING_GRAFT,
 						new ItemStack(ItemInit.hematic_memory.get(), 1),
 						"hemomancy.dialogue.event.artificer_assumed_limb_reward_unready",
@@ -439,7 +431,7 @@ public class DialogueEventHandler {
 					false);
 			return;
 		}
-		if (player.getPersistentData().getBoolean(claimKey)) {
+		if (HarbingerArtificerAssignmentHelper.isArtificerLessonRewardClaimed(player, claimKey)) {
 			player.displayClientMessage(
 					Component.translatable(knownKey).withStyle(ChatFormatting.GRAY),
 					false);
@@ -447,7 +439,7 @@ public class DialogueEventHandler {
 		}
 
 		giveOrDropAtEntity(player, entityId, reward);
-		player.getPersistentData().putBoolean(claimKey, true);
+		HarbingerArtificerAssignmentHelper.markArtificerLessonRewardClaimed(player, claimKey);
 		player.displayClientMessage(
 				Component.translatable(grantedKey).withStyle(ChatFormatting.DARK_RED),
 				false);
@@ -886,6 +878,10 @@ public class DialogueEventHandler {
 		giveOrDropAtEntity(player, entityId, new ItemStack(ItemInit.vivacious_enzyme.get()));
 		HarbingerAdvancementGranter.grantIfNotDone(player,
 				HarbingerAdvancementGranter.ADV_MNEMONIST_WOVEN_VESSEL_COMPLETE);
+		if (HarbingerAdvancementGranter.isMnemonistFirstWeaveComplete(player)) {
+			HarbingerAdvancementGranter.grantIfNotDone(player,
+					HarbingerAdvancementGranter.ADV_MNEMONIST_WOVEN_VESSEL_FINISHED);
+		}
 		player.displayClientMessage(
 				Component.translatable("hemomancy.dialogue.event.mnemonist_woven_vessel_complete")
 						.withStyle(ChatFormatting.DARK_RED),

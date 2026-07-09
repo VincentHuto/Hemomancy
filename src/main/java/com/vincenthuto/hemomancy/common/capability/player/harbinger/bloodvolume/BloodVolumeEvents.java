@@ -13,6 +13,7 @@ import com.vincenthuto.hemomancy.common.event.HarbingerAdvancementGranter;
 import com.vincenthuto.hemomancy.common.init.EffectInit;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.BloodGourdItem;
+import com.vincenthuto.hemomancy.common.mission.HarbingerArtificerAssignmentHelper;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.BloodVolumeServerPacket;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.PacketSyncBloodFlowDiagnostics;
@@ -55,6 +56,9 @@ public class BloodVolumeEvents {
 			if (player instanceof ServerPlayer serverPlayer
 					&& HemoCapabilityAccess.getPlayerDegreeNumber(player) >= 2) {
 				recordEnzymeMastery(serverPlayer);
+			}
+			if (player instanceof ServerPlayer serverPlayer && player.tickCount % 20 == 0) {
+				syncReturnReadyAdvancements(serverPlayer);
 			}
 
 			// Resolve all max-blood sources before tick-based blood flow runs.
@@ -181,7 +185,11 @@ public class BloodVolumeEvents {
 	}
 
 	private static void recordEnzymeMastery(ServerPlayer serverPlayer) {
+		boolean hasAnyEnzyme = false;
 		for (ItemStack stack : serverPlayer.getInventory().items) {
+			if (isEnzyme(stack)) {
+				hasAnyEnzyme = true;
+			}
 			if (stack.is(ItemInit.vivacious_enzyme.get())) {
 				HarbingerAdvancementGranter.grantIfNotDone(serverPlayer,
 						HarbingerAdvancementGranter.ADV_ENZYME_MASTERY_VIVACIOUS);
@@ -212,6 +220,30 @@ public class BloodVolumeEvents {
 			HarbingerAdvancementGranter.grantIfNotDone(serverPlayer,
 					HarbingerAdvancementGranter.ADV_ENZYME_MASTERY_COMPLETE);
 		}
+		if (hasAnyEnzyme && HarbingerAdvancementGranter.isFirstSeparationStarted(serverPlayer)) {
+			HarbingerAdvancementGranter.grantIfNotDone(serverPlayer,
+					HarbingerAdvancementGranter.ADV_FIRST_SEPARATION_COMPLETE);
+		}
+	}
+
+	private static void syncReturnReadyAdvancements(ServerPlayer serverPlayer) {
+		HarbingerArtificerAssignmentHelper.syncReadyToClaimAdvancements(serverPlayer);
+		if (HarbingerAdvancementGranter.isVeinMasonFirstEffigyLoadout(serverPlayer)
+				&& !HarbingerAdvancementGranter.isVeinMasonRewardClaimed(serverPlayer)) {
+			HarbingerAdvancementGranter.grantIfNotDone(serverPlayer,
+					HarbingerAdvancementGranter.ADV_VEIN_MASON_CONTINUATION_READY);
+		}
+	}
+
+	private static boolean isEnzyme(ItemStack stack) {
+		return stack.is(ItemInit.vivacious_enzyme.get())
+				|| stack.is(ItemInit.fervent_enzyme.get())
+				|| stack.is(ItemInit.neurotic_enzyme.get())
+				|| stack.is(ItemInit.incandescent_enzyme.get())
+				|| stack.is(ItemInit.ruinous_enzyme.get())
+				|| stack.is(ItemInit.frigid_enzyme.get())
+				|| stack.is(ItemInit.ferric_enzyme.get())
+				|| stack.is(ItemInit.umbral_enzyme.get());
 	}
 
 	/**
