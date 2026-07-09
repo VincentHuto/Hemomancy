@@ -80,25 +80,27 @@ public class HarbingerAssignmentLedgerScreen extends Screen {
 			Hemomancy.rloc("textures/entity/harbinger_artificer/harbinger_artificer_portrait.png");
 
 	private enum AssignmentSection {
-		FIRST_BLOODCRAFT(1, FIRST_BLOODCRAFT_HEIGHT),
-		HERMIT_ROAD(1, HERMIT_ROAD_HEIGHT),
-		FIRST_SEPARATION(2, FIRST_SEPARATION_HEIGHT),
-		RED_TAXONOMY(2, RED_TAXONOMY_HEIGHT),
-		LIVING_BESTIARY(2, LIVING_BESTIARY_HEIGHT),
-		ENZYME_MASTERY(2, ENZYME_MASTERY_HEIGHT),
-		THE_WORN_VOW(2, THE_WORN_VOW_HEIGHT),
-		WOVEN_VESSEL(3, WOVEN_VESSEL_HEIGHT),
-		THE_THREE_ANSWERS(3, THE_THREE_ANSWERS_HEIGHT),
-		VEIN_MASON(4, VEIN_MASON_HEIGHT),
-		CRIMSON_VESTMENT(5, CRIMSON_VESTMENT_HEIGHT),
-		THE_ASSUMED_LIMB(5, THE_ASSUMED_LIMB_HEIGHT),
-		WEIGHT_OF_THE_FRAME(7, WEIGHT_OF_THE_FRAME_HEIGHT);
+		FIRST_BLOODCRAFT(1, "screen.hemomancy.harbinger_assignment_ledger.assignment_label.main", FIRST_BLOODCRAFT_HEIGHT),
+		HERMIT_ROAD(1, "screen.hemomancy.harbinger_assignment_ledger.assignment_label.side", HERMIT_ROAD_HEIGHT),
+		FIRST_SEPARATION(2, "screen.hemomancy.harbinger_assignment_ledger.assignment_label.main", FIRST_SEPARATION_HEIGHT),
+		RED_TAXONOMY(2, "screen.hemomancy.harbinger_assignment_ledger.assignment_label.side", RED_TAXONOMY_HEIGHT),
+		LIVING_BESTIARY(2, "screen.hemomancy.harbinger_assignment_ledger.assignment_label.side", LIVING_BESTIARY_HEIGHT),
+		ENZYME_MASTERY(2, "screen.hemomancy.harbinger_assignment_ledger.assignment_label.side", ENZYME_MASTERY_HEIGHT),
+		THE_WORN_VOW(2, "screen.hemomancy.harbinger_assignment_ledger.assignment_label.main", THE_WORN_VOW_HEIGHT),
+		WOVEN_VESSEL(3, "screen.hemomancy.harbinger_assignment_ledger.assignment_label.main", WOVEN_VESSEL_HEIGHT),
+		THE_THREE_ANSWERS(3, "screen.hemomancy.harbinger_assignment_ledger.assignment_label.main", THE_THREE_ANSWERS_HEIGHT),
+		VEIN_MASON(4, "screen.hemomancy.harbinger_assignment_ledger.assignment_label.main", VEIN_MASON_HEIGHT),
+		CRIMSON_VESTMENT(5, "screen.hemomancy.harbinger_assignment_ledger.assignment_label.main", CRIMSON_VESTMENT_HEIGHT),
+		THE_ASSUMED_LIMB(5, "screen.hemomancy.harbinger_assignment_ledger.assignment_label.side", THE_ASSUMED_LIMB_HEIGHT),
+		WEIGHT_OF_THE_FRAME(7, "screen.hemomancy.harbinger_assignment_ledger.assignment_label.main", WEIGHT_OF_THE_FRAME_HEIGHT);
 
 		private final int assignmentDegree;
+		private final String assignmentLabelKey;
 		private final int expandedHeight;
 
-		AssignmentSection(int assignmentDegree, int expandedHeight) {
+		AssignmentSection(int assignmentDegree, String assignmentLabelKey, int expandedHeight) {
 			this.assignmentDegree = assignmentDegree;
+			this.assignmentLabelKey = assignmentLabelKey;
 			this.expandedHeight = expandedHeight;
 		}
 	}
@@ -443,11 +445,11 @@ public class HarbingerAssignmentLedgerScreen extends Screen {
 		if (!isAssignmentCollapsed(section)) {
 			return false;
 		}
-		renderCollapsedAssignment(gfx, x, y, w, portrait, titleKey, progressKey, progress, total, done);
+		renderCollapsedAssignment(gfx, section, x, y, w, portrait, titleKey, progressKey, progress, total, done);
 		return true;
 	}
 
-	private void renderCollapsedAssignment(GuiGraphics gfx, int x, int y, int w, ResourceLocation portrait,
+	private void renderCollapsedAssignment(GuiGraphics gfx, AssignmentSection section, int x, int y, int w, ResourceLocation portrait,
 			String titleKey, String progressKey, int progress, int total, boolean done) {
 		int h = COLLAPSED_ASSIGNMENT_HEIGHT;
 		renderAssignerPortrait(gfx, portrait, x, y, h);
@@ -464,9 +466,10 @@ public class HarbingerAssignmentLedgerScreen extends Screen {
 		String title = truncateWithEllipsis(Component.translatable(titleKey).getString(), titleMaxW);
 
 		gfx.drawString(font, Component.literal("+"), cardX + 8, y + 10, done ? DONE : CURRENT, false);
-		gfx.drawString(font, title, titleX, y + 10, done ? DONE : TITLE, false);
+		renderAssignmentLabel(gfx, section, cardX + 22, y + 4, done ? DONE : MUTED);
+		gfx.drawString(font, title, titleX, y + 14, done ? DONE : TITLE, false);
 		if (progressX > titleX) {
-			gfx.drawString(font, progressText, progressX, y + 10, done ? DONE : CURRENT, false);
+			gfx.drawString(font, progressText, progressX, y + 14, done ? DONE : CURRENT, false);
 		}
 	}
 
@@ -533,7 +536,7 @@ public class HarbingerAssignmentLedgerScreen extends Screen {
 		}
 		gfx.fill(x, y, x + w, y + FIRST_BLOODCRAFT_HEIGHT, PANEL_DARK);
 		ScreenDrawUtils.drawBorder(gfx, x, y, w, FIRST_BLOODCRAFT_HEIGHT, BORDER, BORDER_MUTED);
-		renderGroupHeader(gfx, x + 8, y + 6, w - 16,
+		renderGroupHeader(gfx, AssignmentSection.FIRST_BLOODCRAFT, x + 8, y + 6, w - 16,
 				"screen.hemomancy.harbinger_assignment_ledger.first_bloodcraft.title",
 				"screen.hemomancy.harbinger_assignment_ledger.first_bloodcraft.progress",
 				progress, 3, progress >= 3);
@@ -562,7 +565,7 @@ public class HarbingerAssignmentLedgerScreen extends Screen {
 		}
 		gfx.fill(x, y, x + w, y + HERMIT_ROAD_HEIGHT, PANEL_DARK);
 		ScreenDrawUtils.drawBorder(gfx, x, y, w, HERMIT_ROAD_HEIGHT, BORDER, BORDER_MUTED);
-		renderGroupHeader(gfx, x + 8, y + 6, w - 16,
+		renderGroupHeader(gfx, AssignmentSection.HERMIT_ROAD, x + 8, y + 6, w - 16,
 				"screen.hemomancy.harbinger_assignment_ledger.hermit_road.side_title",
 				"screen.hemomancy.harbinger_assignment_ledger.hermit_road.progress",
 				progress, 2, progress >= 2);
@@ -587,7 +590,7 @@ public class HarbingerAssignmentLedgerScreen extends Screen {
 		}
 		gfx.fill(x, y, x + w, y + FIRST_SEPARATION_HEIGHT, PANEL_DARK);
 		ScreenDrawUtils.drawBorder(gfx, x, y, w, FIRST_SEPARATION_HEIGHT, BORDER, BORDER_MUTED);
-		renderGroupHeader(gfx, x + 8, y + 6, w - 16,
+		renderGroupHeader(gfx, AssignmentSection.FIRST_SEPARATION, x + 8, y + 6, w - 16,
 				"screen.hemomancy.harbinger_assignment_ledger.first_separation.title",
 				"screen.hemomancy.harbinger_assignment_ledger.first_separation.progress",
 				progress, 4, progress >= 4);
@@ -673,15 +676,10 @@ public class HarbingerAssignmentLedgerScreen extends Screen {
 	}
 
 	private void renderTaxonomyHeader(GuiGraphics gfx, int x, int y, int w) {
-		List<FormattedCharSequence> wrapped = font.split(
-				Component.translatable("screen.hemomancy.harbinger_assignment_ledger.red_taxonomy.side_title"), w);
-		if (!wrapped.isEmpty()) {
-			gfx.drawString(font, wrapped.get(0), x, y, HEADER, false);
-		}
-		gfx.drawString(font,
-				Component.translatable("screen.hemomancy.harbinger_assignment_ledger.red_taxonomy.progress",
-						redTaxonomyCount, 4),
-				x, y + 12, redTaxonomyComplete ? DONE : CURRENT, false);
+		renderGroupHeader(gfx, AssignmentSection.RED_TAXONOMY, x, y, w,
+				"screen.hemomancy.harbinger_assignment_ledger.red_taxonomy.side_title",
+				"screen.hemomancy.harbinger_assignment_ledger.red_taxonomy.progress",
+				redTaxonomyCount, 4, redTaxonomyComplete);
 	}
 
 	private void renderEnzymeMastery(GuiGraphics gfx, int x, int y, int w, int mouseX, int mouseY) {
@@ -731,27 +729,17 @@ public class HarbingerAssignmentLedgerScreen extends Screen {
 	}
 
 	private void renderLivingBestiaryHeader(GuiGraphics gfx, int x, int y, int w, int total) {
-		List<FormattedCharSequence> wrapped = font.split(
-				Component.translatable("screen.hemomancy.harbinger_assignment_ledger.living_bestiary.side_title"), w);
-		if (!wrapped.isEmpty()) {
-			gfx.drawString(font, wrapped.get(0), x, y, HEADER, false);
-		}
-		gfx.drawString(font,
-				Component.translatable("screen.hemomancy.harbinger_assignment_ledger.living_bestiary.progress",
-						livingBestiaryCount, total),
-				x, y + 12, livingBestiaryCount >= total ? DONE : CURRENT, false);
+		renderGroupHeader(gfx, AssignmentSection.LIVING_BESTIARY, x, y, w,
+				"screen.hemomancy.harbinger_assignment_ledger.living_bestiary.side_title",
+				"screen.hemomancy.harbinger_assignment_ledger.living_bestiary.progress",
+				livingBestiaryCount, total, livingBestiaryCount >= total);
 	}
 
 	private void renderEnzymeMasteryHeader(GuiGraphics gfx, int x, int y, int w) {
-		List<FormattedCharSequence> wrapped = font.split(
-				Component.translatable("screen.hemomancy.harbinger_assignment_ledger.enzyme_mastery.side_title"), w);
-		if (!wrapped.isEmpty()) {
-			gfx.drawString(font, wrapped.get(0), x, y, HEADER, false);
-		}
-		gfx.drawString(font,
-				Component.translatable("screen.hemomancy.harbinger_assignment_ledger.enzyme_mastery.progress",
-						enzymeMasteryCount, 8),
-				x, y + 12, enzymeMasteryComplete ? DONE : CURRENT, false);
+		renderGroupHeader(gfx, AssignmentSection.ENZYME_MASTERY, x, y, w,
+				"screen.hemomancy.harbinger_assignment_ledger.enzyme_mastery.side_title",
+				"screen.hemomancy.harbinger_assignment_ledger.enzyme_mastery.progress",
+				enzymeMasteryCount, 8, enzymeMasteryComplete);
 	}
 
 	private void renderWovenVessel(GuiGraphics gfx, int x, int y, int w, int mouseX, int mouseY) {
@@ -777,15 +765,10 @@ public class HarbingerAssignmentLedgerScreen extends Screen {
 	}
 
 	private void renderWovenVesselHeader(GuiGraphics gfx, int x, int y, int w, int progress) {
-		List<FormattedCharSequence> wrapped = font.split(
-				Component.translatable("screen.hemomancy.harbinger_assignment_ledger.woven_vessel.title"), w);
-		if (!wrapped.isEmpty()) {
-			gfx.drawString(font, wrapped.get(0), x, y, HEADER, false);
-		}
-		gfx.drawString(font,
-				Component.translatable("screen.hemomancy.harbinger_assignment_ledger.woven_vessel.progress",
-						progress, 3),
-				x, y + 12, mnemonistFirstWeaveComplete ? DONE : CURRENT, false);
+		renderGroupHeader(gfx, AssignmentSection.WOVEN_VESSEL, x, y, w,
+				"screen.hemomancy.harbinger_assignment_ledger.woven_vessel.title",
+				"screen.hemomancy.harbinger_assignment_ledger.woven_vessel.progress",
+				progress, 3, mnemonistFirstWeaveComplete);
 	}
 
 	private int wovenVesselProgress() {
@@ -796,14 +779,24 @@ public class HarbingerAssignmentLedgerScreen extends Screen {
 		return completed;
 	}
 
-	private void renderGroupHeader(GuiGraphics gfx, int x, int y, int w, String titleKey, String progressKey,
+	private void renderGroupHeader(GuiGraphics gfx, AssignmentSection section, int x, int y, int w, String titleKey, String progressKey,
 			int progress, int total, boolean done) {
-		List<FormattedCharSequence> wrapped = font.split(Component.translatable(titleKey), w);
-		if (!wrapped.isEmpty()) {
-			gfx.drawString(font, wrapped.get(0), x, y, HEADER, false);
-		}
-		gfx.drawString(font, Component.translatable(progressKey, progress, total),
-				x, y + 12, done ? DONE : CURRENT, false);
+		Component progressText = Component.translatable(progressKey, progress, total);
+		int progressX = x + w - font.width(progressText);
+		int titleMaxW = Math.max(20, progressX - x - 8);
+		String title = truncateWithEllipsis(Component.translatable(titleKey).getString(), titleMaxW);
+		renderAssignmentLabel(gfx, section, x, y, done ? DONE : MUTED);
+		gfx.drawString(font, title, x, y + 8, done ? DONE : HEADER, false);
+		gfx.drawString(font, progressText, progressX, y + 8, done ? DONE : CURRENT, false);
+	}
+
+	private void renderAssignmentLabel(GuiGraphics gfx, AssignmentSection section, int x, int y, int color) {
+		float scale = 0.75F;
+		gfx.pose().pushPose();
+		gfx.pose().scale(scale, scale, 1.0F);
+		gfx.drawString(font, Component.translatable(section.assignmentLabelKey, section.assignmentDegree),
+				(int) (x / scale), (int) (y / scale), color, false);
+		gfx.pose().popPose();
 	}
 
 	private void renderVeinMason(GuiGraphics gfx, int x, int y, int w, int mouseX, int mouseY) {
@@ -827,15 +820,10 @@ public class HarbingerAssignmentLedgerScreen extends Screen {
 	}
 
 	private void renderVeinMasonHeader(GuiGraphics gfx, int x, int y, int w, int progress) {
-		List<FormattedCharSequence> wrapped = font.split(
-				Component.translatable("screen.hemomancy.harbinger_assignment_ledger.vein_mason.title"), w);
-		if (!wrapped.isEmpty()) {
-			gfx.drawString(font, wrapped.get(0), x, y, HEADER, false);
-		}
-		gfx.drawString(font,
-				Component.translatable("screen.hemomancy.harbinger_assignment_ledger.vein_mason.progress",
-						progress, 4),
-				x, y + 12, veinMasonFirstEffigyLoadout ? DONE : CURRENT, false);
+		renderGroupHeader(gfx, AssignmentSection.VEIN_MASON, x, y, w,
+				"screen.hemomancy.harbinger_assignment_ledger.vein_mason.title",
+				"screen.hemomancy.harbinger_assignment_ledger.vein_mason.progress",
+				progress, 4, veinMasonFirstEffigyLoadout);
 	}
 
 	private String veinMasonDescriptionKey() {
@@ -876,7 +864,7 @@ public class HarbingerAssignmentLedgerScreen extends Screen {
 				progress, 3, artificerHematicIronFitting)) {
 			return;
 		}
-		renderCompactArtificerAssignment(gfx, x, y, w,
+		renderCompactArtificerAssignment(gfx, AssignmentSection.THE_WORN_VOW, x, y, w,
 				ARTIFICER_PORTRAIT,
 				"screen.hemomancy.harbinger_assignment_ledger.the_worn_vow.title",
 				"screen.hemomancy.harbinger_assignment_ledger.the_worn_vow.progress",
@@ -892,7 +880,7 @@ public class HarbingerAssignmentLedgerScreen extends Screen {
 				progress, 2, artificerForkFitting)) {
 			return;
 		}
-		renderCompactArtificerAssignment(gfx, x, y, w,
+		renderCompactArtificerAssignment(gfx, AssignmentSection.THE_THREE_ANSWERS, x, y, w,
 				ARTIFICER_PORTRAIT,
 				"screen.hemomancy.harbinger_assignment_ledger.the_three_answers.title",
 				"screen.hemomancy.harbinger_assignment_ledger.the_three_answers.progress",
@@ -908,7 +896,7 @@ public class HarbingerAssignmentLedgerScreen extends Screen {
 				progress, 3, artificerBloodLustFitting)) {
 			return;
 		}
-		renderCompactArtificerAssignment(gfx, x, y, w,
+		renderCompactArtificerAssignment(gfx, AssignmentSection.CRIMSON_VESTMENT, x, y, w,
 				ARTIFICER_PORTRAIT,
 				"screen.hemomancy.harbinger_assignment_ledger.crimson_vestment.title",
 				"screen.hemomancy.harbinger_assignment_ledger.crimson_vestment.progress",
@@ -924,7 +912,7 @@ public class HarbingerAssignmentLedgerScreen extends Screen {
 				progress, 3, artificerD7Fitting)) {
 			return;
 		}
-		renderCompactArtificerAssignment(gfx, x, y, w,
+		renderCompactArtificerAssignment(gfx, AssignmentSection.WEIGHT_OF_THE_FRAME, x, y, w,
 				ARTIFICER_PORTRAIT,
 				"screen.hemomancy.harbinger_assignment_ledger.weight_of_the_frame.title",
 				"screen.hemomancy.harbinger_assignment_ledger.weight_of_the_frame.progress",
@@ -940,7 +928,7 @@ public class HarbingerAssignmentLedgerScreen extends Screen {
 				progress, 3, artificerLivingArsenalFitting)) {
 			return;
 		}
-		renderCompactArtificerAssignment(gfx, x, y, w,
+		renderCompactArtificerAssignment(gfx, AssignmentSection.THE_ASSUMED_LIMB, x, y, w,
 				ARTIFICER_PORTRAIT,
 				"screen.hemomancy.harbinger_assignment_ledger.the_assumed_limb.side_title",
 				"screen.hemomancy.harbinger_assignment_ledger.the_assumed_limb.progress",
@@ -948,7 +936,7 @@ public class HarbingerAssignmentLedgerScreen extends Screen {
 				theAssumedLimbDescriptionKey(), mouseX, mouseY);
 	}
 
-	private void renderCompactArtificerAssignment(GuiGraphics gfx, int x, int y, int w,
+	private void renderCompactArtificerAssignment(GuiGraphics gfx, AssignmentSection section, int x, int y, int w,
 			ResourceLocation assignerPortrait, String titleKey,
 			String progressKey, int progress, int total, boolean done, String descriptionKey, int mouseX, int mouseY) {
 		int h = THE_WORN_VOW_HEIGHT;
@@ -957,7 +945,8 @@ public class HarbingerAssignmentLedgerScreen extends Screen {
 		int cardW = compactCardWidth(w, h);
 		gfx.fill(cardX, y, cardX + cardW, y + h, PANEL_DARK);
 		ScreenDrawUtils.drawBorder(gfx, cardX, y, cardW, h, BORDER, BORDER_MUTED);
-		renderGroupHeader(gfx, cardX + 8, y + 6, cardW - 16, titleKey, progressKey, progress, total, done);
+		renderGroupHeader(gfx, section, cardX + 8, y + 6, cardW - 16,
+				titleKey, progressKey, progress, total, done);
 		drawProgressBar(gfx, cardX + 8, y + 31, cardW - 16, 7, progress, total);
 		renderTruncatedDescription(gfx, Component.translatable(descriptionKey,
 						Math.min(artificerLivingWeaponFormCount, 7), 7),

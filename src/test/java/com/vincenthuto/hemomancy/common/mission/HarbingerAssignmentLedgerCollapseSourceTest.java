@@ -14,6 +14,7 @@ public final class HarbingerAssignmentLedgerCollapseSourceTest {
 		ledgerDefinesCollapsibleAssignmentSections();
 		ledgerUsesDynamicAssignmentHeights();
 		ledgerOrdersAssignmentsByDegree();
+		ledgerSeparatesAssignmentLabelsFromTitles();
 		ledgerTogglesAssignmentsFromClickHitboxes();
 		ledgerProvidesGlobalCollapseControls();
 	}
@@ -72,11 +73,27 @@ public final class HarbingerAssignmentLedgerCollapseSourceTest {
 		assertContains("ledger renders sections from degree ordering", ledger,
 				"for (AssignmentSection section : ORDERED_ASSIGNMENT_SECTIONS)");
 		assertContains("D2 Artificer assignment sits with D2 entries", ledger,
-				"THE_WORN_VOW(2, THE_WORN_VOW_HEIGHT)");
+				"THE_WORN_VOW(2, \"screen.hemomancy.harbinger_assignment_ledger.assignment_label.main\"");
 		assertContains("D3 Artificer assignment sits with D3 entries", ledger,
-				"THE_THREE_ANSWERS(3, THE_THREE_ANSWERS_HEIGHT)");
+				"THE_THREE_ANSWERS(3, \"screen.hemomancy.harbinger_assignment_ledger.assignment_label.main\"");
 		assertContains("D7 Artificer assignment sits with D7 entries", ledger,
-				"WEIGHT_OF_THE_FRAME(7, WEIGHT_OF_THE_FRAME_HEIGHT)");
+				"WEIGHT_OF_THE_FRAME(7, \"screen.hemomancy.harbinger_assignment_ledger.assignment_label.main\"");
+	}
+
+	private static void ledgerSeparatesAssignmentLabelsFromTitles() throws IOException {
+		String ledger = readLedger();
+		String language = Files.readString(Path.of("src/main/resources/assets/hemomancy/lang/en_us.json"))
+				.replace("\r\n", "\n");
+
+		assertContains("assignment sections define a label type", ledger, "assignmentLabelKey");
+		assertContains("expanded rows render the assignment label above the title", ledger,
+				"renderAssignmentLabel(gfx, section, x, y");
+		assertContains("collapsed rows render the assignment label above the title", ledger,
+				"renderAssignmentLabel(gfx, section, cardX + 22, y + 4");
+		assertContains("main assignment label has language", language,
+				"screen.hemomancy.harbinger_assignment_ledger.assignment_label.main");
+		assertContains("side assignment label has language", language,
+				"screen.hemomancy.harbinger_assignment_ledger.assignment_label.side");
 	}
 
 	private static void ledgerTogglesAssignmentsFromClickHitboxes() throws IOException {
