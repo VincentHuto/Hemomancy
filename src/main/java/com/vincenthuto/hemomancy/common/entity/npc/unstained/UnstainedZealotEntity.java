@@ -4,6 +4,7 @@ import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.EnumInitiatoryDegree;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.DialogueItemInquiryNodes;
+import com.vincenthuto.hemomancy.common.entity.npc.dialogue.DialogueHubFactory;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.DialogueTree;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.ZealotDialogueTrees;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
@@ -24,7 +25,6 @@ import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
 import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
 import net.minecraft.world.entity.ai.goal.WaterAvoidingRandomStrollGoal;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 
 public class UnstainedZealotEntity extends PathfinderMob {
@@ -93,7 +93,6 @@ public class UnstainedZealotEntity extends PathfinderMob {
             }
 
             DialogueTree tree;
-            ItemStack held = player.getMainHandItem();
             if (hasBegunPurification) {
                 tree = ZealotDialogueTrees.alreadyOnPath(this.getId(), purity, clarityUnlocked, enlightened);
             } else if (volume == null || !volume.isActive()) {
@@ -103,8 +102,8 @@ public class UnstainedZealotEntity extends PathfinderMob {
             } else {
                 tree = ZealotDialogueTrees.tooDeep(this.getId());
             }
-            tree = DialogueItemInquiryNodes.withHeldItemInquiry(tree, held, "zealot",
-                    "hemomancy.zealot.item_inquiry.unknown", 0, purity);
+            tree = DialogueItemInquiryNodes.withInventoryItemInquiries(tree, serverPlayer, "zealot", 0, purity);
+            tree = DialogueHubFactory.decorate(tree, "zealot", serverPlayer);
 
             PacketHandler.sendToPlayer(serverPlayer, new OpenDialoguePacket(tree));
         }

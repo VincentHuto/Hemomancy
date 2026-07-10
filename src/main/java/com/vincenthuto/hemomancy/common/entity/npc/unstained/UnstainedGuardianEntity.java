@@ -1,6 +1,7 @@
 package com.vincenthuto.hemomancy.common.entity.npc.unstained;
 
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.DialogueItemInquiryNodes;
+import com.vincenthuto.hemomancy.common.entity.npc.dialogue.DialogueHubFactory;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.DialogueTree;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.GuardianDialogueTrees;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
@@ -20,7 +21,6 @@ import net.minecraft.world.entity.ai.goal.FloatGoal;
 import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
 import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 
 /**
@@ -79,10 +79,10 @@ public class UnstainedGuardianEntity extends PathfinderMob {
     @Override
     protected InteractionResult mobInteract(Player player, InteractionHand hand) {
         if (!player.level().isClientSide && hand == InteractionHand.MAIN_HAND && player instanceof ServerPlayer serverPlayer) {
-            ItemStack held = player.getMainHandItem();
-            DialogueTree tree = DialogueItemInquiryNodes.withHeldItemInquiry(
-                    GuardianDialogueTrees.ambient(this.getId()), held, "guardian",
-                    "hemomancy.guardian.item_inquiry.unknown", 0, 0f);
+            DialogueTree tree = DialogueItemInquiryNodes.withInventoryItemInquiries(
+                    GuardianDialogueTrees.ambient(this.getId()), serverPlayer, "guardian",
+                    0, 0f);
+            tree = DialogueHubFactory.decorate(tree, "guardian", serverPlayer);
             PacketHandler.sendToPlayer(serverPlayer, new OpenDialoguePacket(tree));
         }
         return InteractionResult.sidedSuccess(player.level().isClientSide);

@@ -3,6 +3,7 @@ package com.vincenthuto.hemomancy.common.entity.npc.harbinger;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.IUnstainedProgress;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.DialogueItemInquiryNodes;
+import com.vincenthuto.hemomancy.common.entity.npc.dialogue.DialogueHubFactory;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.DialogueTree;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.HarbingerVoyagerDialogueTrees;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
@@ -21,7 +22,6 @@ import net.minecraft.world.entity.ai.goal.FloatGoal;
 import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
 import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 
 public class HarbingerVoyagerEntity extends PathfinderMob {
@@ -71,7 +71,6 @@ public class HarbingerVoyagerEntity extends PathfinderMob {
 	protected InteractionResult mobInteract(Player player, InteractionHand hand) {
 		if (!player.level().isClientSide && hand == InteractionHand.MAIN_HAND && player instanceof ServerPlayer serverPlayer) {
 			int degree = HemoCapabilityAccess.getPlayerDegreeNumber(player);
-			ItemStack held = player.getMainHandItem();
 			DialogueTree tree;
 
 			if (hasClarityUnlocked(player)) {
@@ -81,8 +80,8 @@ public class HarbingerVoyagerEntity extends PathfinderMob {
 			} else {
 				tree = HarbingerVoyagerDialogueTrees.forDegree(degree, this.getId());
 			}
-			tree = DialogueItemInquiryNodes.withHeldItemInquiry(tree, held, "voyager",
-					"hemomancy.voyager.item_inquiry.unknown", degree, 0f);
+			tree = DialogueItemInquiryNodes.withInventoryItemInquiries(tree, serverPlayer, "voyager", degree, 0f);
+			tree = DialogueHubFactory.decorate(tree, "voyager", serverPlayer);
 
 			PacketHandler.sendToPlayer(serverPlayer, new OpenDialoguePacket(tree));
 		}

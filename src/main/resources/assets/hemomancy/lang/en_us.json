@@ -3367,6 +3367,21 @@
   "item.hemomancy.memory_insatiable_hunger": "Memory Insatiable Hunger",
   "item.hemomancy.memory_grave_debt": "Memory Grave Debt",
   "item.hemomancy.memory_iron_retort": "Memory Iron Retort",
-  "item.hemomancy.memory_sanguine_magnetism": "Memory Sanguine Magnetism"
+  "item.hemomancy.memory_sanguine_magnetism": "Memory Sanguine Magnetism",
+  "hemomancy.dialogue.category.quests": "Quest Work",
+  "hemomancy.dialogue.category.quests.summary": "Assignments, progress, and rewards.",
+  "hemomancy.dialogue.category.inquiries": "Inquiries",
+  "hemomancy.dialogue.category.inquiries.summary": "Choose an item from your inventory to ask about.",
+  "hemomancy.dialogue.category.lore": "Lore",
+  "hemomancy.dialogue.category.lore.summary": "Doctrine, history, and dangerous truths.",
+  "hemomancy.dialogue.category.conversation": "Conversation",
+  "hemomancy.dialogue.category.conversation.summary": "Speak freely about other matters.",
+  "hemomancy.dialogue.topic.speak_freely": "Speak Freely",
+  "hemomancy.dialogue.topic.held_item": "Held Item",
+  "hemomancy.dialogue.topic.inventory_item": "Inventory Item",
+  "hemomancy.dialogue.topic.inventory_item.summary": "Ask about this item.",
+  "hemomancy.dialogue.ui.no_topics": "No topics are available right now.",
+  "hemomancy.dialogue.ui.back": "Back",
+  "hemomancy.dialogue.ui.leave": "Leave"
 
 }

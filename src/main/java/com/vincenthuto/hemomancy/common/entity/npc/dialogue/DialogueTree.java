@@ -22,8 +22,13 @@ public record DialogueTree(
 		String startNodeId,
 		Map<String, DialogueNode> nodes,
 		int entityId,
-		DialogueTheme theme
+		DialogueTheme theme,
+		DialoguePresentation presentation
 ) {
+	public DialogueTree(String speakerName, ResourceLocation speakerIcon, String startNodeId,
+			Map<String, DialogueNode> nodes, int entityId, DialogueTheme theme) {
+		this(speakerName, speakerIcon, startNodeId, nodes, entityId, theme, DialoguePresentation.focused());
+	}
 
 	public DialogueNode getStartNode() {
 		return nodes.get(startNodeId);
@@ -41,6 +46,7 @@ public record DialogueTree(
 		for (DialogueNode node : nodes.values()) node.toNetwork(buf);
 		buf.writeInt(entityId);
 		buf.writeInt(theme.ordinal());
+		presentation.toNetwork(buf);
 	}
 
 	public static DialogueTree fromNetwork(FriendlyByteBuf buf) {
@@ -55,7 +61,8 @@ public record DialogueTree(
 		}
 		int entityId = buf.readInt();
 		DialogueTheme theme = DialogueTheme.fromOrdinal(buf.readInt());
-		return new DialogueTree(name, icon, start, nodes, entityId, theme);
+		DialoguePresentation presentation = DialoguePresentation.fromNetwork(buf);
+		return new DialogueTree(name, icon, start, nodes, entityId, theme, presentation);
 	}
 
 	// ── Builder ──
@@ -69,6 +76,7 @@ public record DialogueTree(
 		private final ResourceLocation speakerIcon;
 		private final int entityId;
 		private DialogueTheme theme = DialogueTheme.BLOOD;
+		private DialoguePresentation presentation = DialoguePresentation.focused();
 		private String startNodeId;
 		private final Map<String, DialogueNode> nodes = new LinkedHashMap<>();
 
@@ -80,6 +88,11 @@ public record DialogueTree(
 
 		public Builder theme(DialogueTheme theme) {
 			this.theme = theme;
+			return this;
+		}
+
+		public Builder presentation(DialoguePresentation presentation) {
+			this.presentation = presentation == null ? DialoguePresentation.focused() : presentation;
 			return this;
 		}
 
@@ -95,7 +108,7 @@ public record DialogueTree(
 		}
 
 		public DialogueTree build() {
-			return new DialogueTree(speakerName, speakerIcon, startNodeId, nodes, entityId, theme);
+			return new DialogueTree(speakerName, speakerIcon, startNodeId, nodes, entityId, theme, presentation);
 		}
 	}
 }

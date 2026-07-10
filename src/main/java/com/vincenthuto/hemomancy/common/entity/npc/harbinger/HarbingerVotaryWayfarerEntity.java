@@ -3,6 +3,7 @@ package com.vincenthuto.hemomancy.common.entity.npc.harbinger;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.IUnstainedProgress;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.DialogueItemInquiryNodes;
+import com.vincenthuto.hemomancy.common.entity.npc.dialogue.DialogueHubFactory;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.DialogueTree;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.HarbingerVotaryWayfarerDialogueTrees;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
@@ -21,7 +22,6 @@ import net.minecraft.world.entity.ai.goal.FloatGoal;
 import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
 import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 
 public class HarbingerVotaryWayfarerEntity extends PathfinderMob {
@@ -71,7 +71,6 @@ public class HarbingerVotaryWayfarerEntity extends PathfinderMob {
 	protected InteractionResult mobInteract(Player player, InteractionHand hand) {
 		if (!player.level().isClientSide && hand == InteractionHand.MAIN_HAND && player instanceof ServerPlayer serverPlayer) {
 			int degree = HemoCapabilityAccess.getPlayerDegreeNumber(player);
-			ItemStack held = player.getMainHandItem();
 			DialogueTree tree;
 
 			if (hasClarityUnlocked(player)) {
@@ -81,8 +80,9 @@ public class HarbingerVotaryWayfarerEntity extends PathfinderMob {
 			} else {
 				tree = HarbingerVotaryWayfarerDialogueTrees.forDegree(degree, this.getId());
 			}
-			tree = DialogueItemInquiryNodes.withHeldItemInquiry(tree, held, "votary_wayfarer",
-					"hemomancy.votary_wayfarer.item_inquiry.unknown", degree, 0f);
+			tree = DialogueItemInquiryNodes.withInventoryItemInquiries(tree, serverPlayer,
+					"votary_wayfarer", degree, 0f);
+			tree = DialogueHubFactory.decorate(tree, "votary_wayfarer", serverPlayer);
 
 			PacketHandler.sendToPlayer(serverPlayer, new OpenDialoguePacket(tree));
 		}

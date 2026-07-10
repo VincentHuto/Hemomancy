@@ -3,6 +3,7 @@ package com.vincenthuto.hemomancy.common.entity.npc.harbinger;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.IUnstainedProgress;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.DialogueItemInquiryNodes;
+import com.vincenthuto.hemomancy.common.entity.npc.dialogue.DialogueHubFactory;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.DialogueTree;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.HarbingerMnemonistDialogueTrees;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.HarbingerRecruitmentRules;
@@ -25,7 +26,6 @@ import net.minecraft.world.entity.ai.goal.FloatGoal;
 import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
 import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 
 /**
@@ -79,7 +79,6 @@ public class HarbingerMnemonistEntity extends PathfinderMob {
 	protected InteractionResult mobInteract(Player player, InteractionHand hand) {
 		if (!player.level().isClientSide && hand == InteractionHand.MAIN_HAND && player instanceof ServerPlayer serverPlayer) {
 			int degree = HemoCapabilityAccess.getPlayerDegreeNumber(player);
-			ItemStack held = player.getMainHandItem();
 			DialogueTree tree;
 
 			boolean purifying = isPurifying(player);
@@ -95,8 +94,8 @@ public class HarbingerMnemonistEntity extends PathfinderMob {
 						isNpcInPlayerBloodline(player, this), canClaimStarter,
 						HarbingerAdvancementGranter.isMnemonistWovenVesselComplete(serverPlayer));
 			}
-			tree = DialogueItemInquiryNodes.withHeldItemInquiry(tree, held, "mnemonist",
-					"hemomancy.mnemonist.item_inquiry.unknown", degree, 0f);
+			tree = DialogueItemInquiryNodes.withInventoryItemInquiries(tree, serverPlayer, "mnemonist", degree, 0f);
+			tree = DialogueHubFactory.decorate(tree, "mnemonist", serverPlayer);
 
 			PacketHandler.sendToPlayer(serverPlayer, new OpenDialoguePacket(tree));
 		}

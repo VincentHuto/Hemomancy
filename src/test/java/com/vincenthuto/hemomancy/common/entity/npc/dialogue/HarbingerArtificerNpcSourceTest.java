@@ -49,9 +49,9 @@ public final class HarbingerArtificerNpcSourceTest {
 
 		assertContains("entity opens Artificer dialogue", entity, "HarbingerArtificerDialogueTrees.forState");
 		assertContains("entity gates graft branch by living staff bond", entity, "ILivingStaffProgress::hasLivingStaffBond");
-		assertContains("entity keeps dialogue while holding inquiry items", entity, "DialogueItemInquiryNodes.withHeldItemInquiry");
+		assertContains("entity exposes inventory inquiry items", entity, "DialogueItemInquiryNodes.withInventoryItemInquiries");
 		assertContains("entity uses Artificer inquiry speaker id", entity, "\"artificer\"");
-		assertContains("entity has Artificer unknown inquiry fallback", entity,
+		assertNotContains("entity does not expose unsupported inventory items through a fallback", entity,
 				"hemomancy.artificer.item_inquiry.unknown");
 		assertNotContains("entity must not subclass or delegate to Alchemist", entity, "HarbingerAlchemist");
 

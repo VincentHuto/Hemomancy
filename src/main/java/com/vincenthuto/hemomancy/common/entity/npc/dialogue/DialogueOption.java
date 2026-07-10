@@ -12,7 +12,15 @@ import net.minecraft.network.FriendlyByteBuf;
  *                   option (e.g. {@code "accept_church"}, {@code "reject_help"}).
  *                   May be {@code null} if no event should fire.
  */
-public record DialogueOption(String text, String nextNodeId, String eventId) {
+public record DialogueOption(String text, String nextNodeId, String eventId, DialogueOptionPresentation presentation) {
+
+	public DialogueOption(String text, String nextNodeId, String eventId) {
+		this(text, nextNodeId, eventId, DialogueOptionPresentation.normal());
+	}
+
+	public DialogueOption {
+		if (presentation == null) presentation = DialogueOptionPresentation.normal();
+	}
 
 	public void toNetwork(FriendlyByteBuf buf) {
 		buf.writeUtf(text);
@@ -20,12 +28,13 @@ public record DialogueOption(String text, String nextNodeId, String eventId) {
 		if (nextNodeId != null) buf.writeUtf(nextNodeId);
 		buf.writeBoolean(eventId != null);
 		if (eventId != null) buf.writeUtf(eventId);
+		presentation.toNetwork(buf);
 	}
 
 	public static DialogueOption fromNetwork(FriendlyByteBuf buf) {
 		String text = buf.readUtf();
 		String next = buf.readBoolean() ? buf.readUtf() : null;
 		String event = buf.readBoolean() ? buf.readUtf() : null;
-		return new DialogueOption(text, next, event);
+		return new DialogueOption(text, next, event, DialogueOptionPresentation.fromNetwork(buf));
 	}
 }

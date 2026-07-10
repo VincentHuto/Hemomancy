@@ -15,6 +15,7 @@ import com.vincenthuto.hemomancy.common.network.capa.harbinger.visceral.Visceral
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.visceral.VisceralMirrorExtractPacket;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.visceral.VisceralMirrorUpdatePacket;
 import com.vincenthuto.hemomancy.common.network.dialogue.DialogueOptionPacket;
+import com.vincenthuto.hemomancy.common.network.dialogue.DialogueTopicOpenedPacket;
 import com.vincenthuto.hemomancy.common.network.dialogue.OpenDialoguePacket;
 import com.vincenthuto.hemomancy.common.network.discovery.OpenInscriptionPacket;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.BloodCraftingKeyPressPacket;
@@ -246,6 +247,8 @@ public class PacketHandler {
         // ── Dialogue system ───────────────────────────────────────────────────
         net.playToClient(OpenDialoguePacket.TYPE, OpenDialoguePacket.STREAM_CODEC, OpenDialoguePacket::handle);
         net.playToServer(DialogueOptionPacket.TYPE, DialogueOptionPacket.STREAM_CODEC, DialogueOptionPacket::handle);
+        net.playToServer(DialogueTopicOpenedPacket.TYPE, DialogueTopicOpenedPacket.STREAM_CODEC,
+                DialogueTopicOpenedPacket::handle);
         net.playToClient(OpenInscriptionPacket.TYPE, OpenInscriptionPacket.STREAM_CODEC, OpenInscriptionPacket::handle);
         net.playToClient(OpenHarbingerAssignmentLedgerPacket.TYPE,
                 OpenHarbingerAssignmentLedgerPacket.STREAM_CODEC, OpenHarbingerAssignmentLedgerPacket::handle);

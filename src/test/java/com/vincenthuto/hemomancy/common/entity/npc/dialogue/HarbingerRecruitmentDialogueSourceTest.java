@@ -150,7 +150,7 @@ public final class HarbingerRecruitmentDialogueSourceTest {
 	}
 
 	private static void assertEntityPreservesDialogueWhileHoldingItems(String label, String source) {
-		assertContains(label + " rewrites item hint node", source, "DialogueItemInquiryNodes.withHeldItemInquiry");
+		assertContains(label + " builds inventory inquiry nodes", source, "DialogueItemInquiryNodes.withInventoryItemInquiries");
 		assertNotContains(label + " does not replace the whole tree for held items", source, "if (!held.isEmpty())");
 		assertNotContains(label + " does not use held-item ternary tree selection", source, "held.isEmpty()");
 		assertNotContains(label + " does not open item inquiry as root tree", source, "itemInquiry(held");

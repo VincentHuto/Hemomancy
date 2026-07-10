@@ -3,6 +3,7 @@ package com.vincenthuto.hemomancy.common.entity.npc.harbinger;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.DialogueTree;
+import com.vincenthuto.hemomancy.common.entity.npc.dialogue.DialogueHubFactory;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.HarbingerHermitDialogueTrees;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.dialogue.OpenDialoguePacket;
@@ -377,6 +378,7 @@ public class HarbingerHermitEntity extends PathfinderMob {
             boolean hasActiveBlood = volume != null && volume.isActive();
 
             DialogueTree tree = HarbingerHermitDialogueTrees.forDegree(degree, hasActiveBlood, this.getId());
+            tree = DialogueHubFactory.decorate(tree, "hermit", serverPlayer);
 
             PacketHandler.sendToPlayer(serverPlayer, new OpenDialoguePacket(tree));
         }

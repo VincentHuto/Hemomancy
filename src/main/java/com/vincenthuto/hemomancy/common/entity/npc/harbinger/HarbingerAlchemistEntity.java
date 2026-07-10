@@ -3,6 +3,7 @@ package com.vincenthuto.hemomancy.common.entity.npc.harbinger;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.IUnstainedProgress;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.DialogueItemInquiryNodes;
+import com.vincenthuto.hemomancy.common.entity.npc.dialogue.DialogueHubFactory;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.DialogueTree;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.HarbingerAlchemistDialogueTrees;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.HarbingerAlchemistDialogueTrees.HeldSpecimenJar;
@@ -111,8 +112,8 @@ public class HarbingerAlchemistEntity extends PathfinderMob {
                         FirstSeparationAssignmentHelper.canBrief(serverPlayer),
                         FirstSeparationAssignmentHelper.canClaim(serverPlayer));
             }
-            tree = DialogueItemInquiryNodes.withHeldItemInquiry(tree, held, "alchemist",
-                    "hemomancy.alchemist.item_inquiry.unknown", degree, 0f);
+            tree = DialogueItemInquiryNodes.withInventoryItemInquiries(tree, serverPlayer, "alchemist", degree, 0f);
+            tree = DialogueHubFactory.decorate(tree, "alchemist", serverPlayer);
 
             PacketHandler.sendToPlayer(serverPlayer, new OpenDialoguePacket(tree));
         }

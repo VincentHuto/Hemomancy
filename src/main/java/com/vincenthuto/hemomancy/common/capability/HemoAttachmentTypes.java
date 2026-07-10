@@ -6,6 +6,7 @@ import com.vincenthuto.hemomancy.common.capability.player.harbinger.bestiary.Spe
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.livingstaff.LivingStaffProgress;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.BloodTendency;
 import com.vincenthuto.hemomancy.common.capability.player.shared.knowledge.LiberKnowledge;
+import com.vincenthuto.hemomancy.common.capability.player.shared.knowledge.DialogueKnowledge;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.KnownManipulations;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.morphling.EquippedMorphling;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.equipment.HarbingerEquipmentContainer;
@@ -88,6 +89,10 @@ public final class HemoAttachmentTypes {
     public static final DeferredHolder<AttachmentType<?>, AttachmentType<LiberKnowledge>> LIBER_KNOWLEDGE =
             ATTACHMENT_TYPES.register("liber_knowledge",
                     () -> AttachmentType.serializable(LiberKnowledge::new).copyOnDeath().build());
+
+    public static final DeferredHolder<AttachmentType<?>, AttachmentType<DialogueKnowledge>> DIALOGUE_KNOWLEDGE =
+            ATTACHMENT_TYPES.register("dialogue_knowledge",
+                    () -> AttachmentType.serializable(DialogueKnowledge::new).copyOnDeath().build());
 
     public static final DeferredHolder<AttachmentType<?>, AttachmentType<SkillProgress>> SKILL_PROGRESS =
             ATTACHMENT_TYPES.register("skill_progress",

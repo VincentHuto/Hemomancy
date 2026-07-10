@@ -3,6 +3,7 @@ package com.vincenthuto.hemomancy.common.entity.npc.harbinger;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.IUnstainedProgress;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.DialogueItemInquiryNodes;
+import com.vincenthuto.hemomancy.common.entity.npc.dialogue.DialogueHubFactory;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.DialogueTree;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.HarbingerCicatrixAnchoriteDialogueTrees;
 import com.vincenthuto.hemomancy.common.event.HarbingerAdvancementGranter;
@@ -22,7 +23,6 @@ import net.minecraft.world.entity.ai.goal.FloatGoal;
 import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
 import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 
 public class HarbingerCicatrixAnchoriteEntity extends PathfinderMob {
@@ -72,7 +72,6 @@ public class HarbingerCicatrixAnchoriteEntity extends PathfinderMob {
 	protected InteractionResult mobInteract(Player player, InteractionHand hand) {
 		if (!player.level().isClientSide && hand == InteractionHand.MAIN_HAND && player instanceof ServerPlayer serverPlayer) {
 			int degree = HemoCapabilityAccess.getPlayerDegreeNumber(player);
-			ItemStack held = player.getMainHandItem();
 			boolean activeBlood = HemoCapabilityAccess.getBloodVolume(player)
 					.map(volume -> volume.isActive())
 					.orElse(false);
@@ -86,8 +85,9 @@ public class HarbingerCicatrixAnchoriteEntity extends PathfinderMob {
 			DialogueTree tree = HarbingerCicatrixAnchoriteDialogueTrees.forState(this.getId(), degree, activeBlood,
 					purifying, clarity, veinMasonFirstLesson, veinMasonFirstScarLearned,
 					veinMasonFirstEffigyPattern, veinMasonFirstEffigyLoadout, veinMasonRewardClaimed);
-			tree = DialogueItemInquiryNodes.withHeldItemInquiry(tree, held, "cicatrix_anchorite",
-					"hemomancy.cicatrix_anchorite.item_inquiry.unknown", degree, 0f);
+			tree = DialogueItemInquiryNodes.withInventoryItemInquiries(tree, serverPlayer,
+					"cicatrix_anchorite", degree, 0f);
+			tree = DialogueHubFactory.decorate(tree, "cicatrix_anchorite", serverPlayer);
 
 			PacketHandler.sendToPlayer(serverPlayer, new OpenDialoguePacket(tree));
 		}

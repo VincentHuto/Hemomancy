@@ -6,6 +6,7 @@ import com.vincenthuto.hemomancy.common.capability.player.shared.knowledge.disco
 import com.vincenthuto.hemomancy.common.capability.player.shared.knowledge.discovery.LiberKnowledgeHelper;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.IUnstainedProgress;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.DialogueItemInquiryNodes;
+import com.vincenthuto.hemomancy.common.entity.npc.dialogue.DialogueHubFactory;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.DialogueTree;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.HarbingerRecruitmentRules;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.HarbingerVicarDialogueTrees;
@@ -23,7 +24,6 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.*;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 
 /**
@@ -168,7 +168,6 @@ public class HarbingerVicarEntity extends PathfinderMob {
             }
 
             int degree = HemoCapabilityAccess.getPlayerDegreeNumber(player);
-            ItemStack held = player.getMainHandItem();
             DialogueTree tree;
 
             if (isPurifying(player)) {
@@ -186,8 +185,8 @@ public class HarbingerVicarEntity extends PathfinderMob {
                         FirstBloodcraftAssignmentHelper.canClaim(serverPlayer),
                         FirstBloodcraftAssignmentHelper.isClaimed(serverPlayer));
             }
-            tree = DialogueItemInquiryNodes.withHeldItemInquiry(tree, held, "vicar",
-                    "hemomancy.vicar.item_inquiry.unknown", degree, 0f);
+            tree = DialogueItemInquiryNodes.withInventoryItemInquiries(tree, serverPlayer, "vicar", degree, 0f);
+            tree = DialogueHubFactory.decorate(tree, "vicar", serverPlayer);
 
             PacketHandler.sendToPlayer(serverPlayer, new OpenDialoguePacket(tree));
         }
