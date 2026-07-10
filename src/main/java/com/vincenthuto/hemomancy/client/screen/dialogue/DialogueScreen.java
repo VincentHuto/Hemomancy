@@ -159,8 +159,10 @@ public final class DialogueScreen extends Screen {
 			int cardWidth = card.width();
 			int cardHeight = card.height();
 			boolean enabled = tree.presentation().hasTopics(category);
-			renderCard(gfx, x, y, cardWidth, cardHeight, mouseX, mouseY, enabled,
-					navigation.focusIndex() == i);
+			boolean selected = enabled && (contains(x, y, cardWidth, cardHeight, mouseX, mouseY)
+					|| navigation.focusIndex() == i);
+			gfx.blitSprite(enabled ? DialogueThemeStyle.categoryCard(category, selected)
+					: style.cardDisabledSprite(), x, y, cardWidth, cardHeight);
 			ResourceLocation icon = DialogueThemeStyle.categoryIcon(category);
 			gfx.blitSprite(icon, x + 8, y + 8, 16, 16);
 			gfx.drawString(font, categoryTitle(category), x + 30, y + 8,

@@ -35,6 +35,11 @@ public record DialogueThemeStyle(ResourceLocation frameSprite, ResourceLocation 
 		return sprite("dialogue/icons/" + category.name().toLowerCase());
 	}
 
+	public static ResourceLocation categoryCard(DialogueCategory category, boolean selected) {
+		return sprite("dialogue/categories/" + category.name().toLowerCase()
+				+ (selected ? "_selected" : ""));
+	}
+
 	public static ResourceLocation statusIcon(String state) {
 		return sprite("dialogue/icons/" + state);
 	}
