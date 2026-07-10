@@ -1,8 +1,12 @@
 package com.vincenthuto.hemomancy.common.network;
 
 import com.vincenthuto.hemomancy.Hemomancy;
+import com.vincenthuto.hemomancy.common.block.harbinger.BrazierBlock;
+import com.vincenthuto.hemomancy.common.init.BlockInit;
+import com.vincenthuto.hemomancy.common.recipe.BloodStructureOfferingPlacement;
 import com.vincenthuto.hemomancy.common.recipe.BloodStructureRecipe;
 import com.vincenthuto.hemomancy.common.recipe.CardinalRiteRecipe;
+import com.vincenthuto.hemomancy.common.tile.IronBrazierBlockEntity;
 import com.vincenthuto.hutoslib.math.BlockPosBlockPair;
 import com.vincenthuto.hutoslib.math.MultiblockPattern;
 import net.minecraft.core.BlockPos;
@@ -14,6 +18,8 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 import java.util.List;
@@ -58,11 +64,13 @@ public class PlaceStructurePacket implements CustomPacketPayload {
 
 				ServerLevel level = player.serverLevel();
 				MultiblockPattern pattern = null;
+				BloodStructureRecipe bloodStructure = null;
 
 				if (msg.type == StructureType.BLOOD_STRUCTURE) {
 					BloodStructureRecipe recipe = BloodStructureRecipe.getStructureByLocation(level, msg.recipeId);
 					if (recipe != null) {
 						pattern = recipe.getPattern();
+						bloodStructure = recipe;
 					}
 				} else if (msg.type == StructureType.CARDINAL_RITE) {
 					CardinalRiteRecipe recipe = CardinalRiteRecipe.getRiteByLocation(level, msg.recipeId);
@@ -153,6 +161,27 @@ public class PlaceStructurePacket implements CustomPacketPayload {
 				for (BlockPos pos : placedPositions) {
 					level.blockUpdated(pos, level.getBlockState(pos).getBlock());
 					level.updateNeighborsAt(pos, level.getBlockState(pos).getBlock());
+				}
+
+				if (bloodStructure != null) {
+					BlockPos offeringCenter = playerPos.offset(0, minY, 0);
+					int halfWidth = Math.max(centerX - minX, maxX - centerX);
+					int halfDepth = Math.max(centerZ - minZ, maxZ - centerZ);
+					for (var slot : BloodStructureOfferingPlacement.plan(
+							offeringCenter, halfWidth, halfDepth, 1, bloodStructure.getOfferings())) {
+						BlockPos support = slot.pos().below();
+						if (!level.getBlockState(support).isFaceSturdy(level, support,
+								net.minecraft.core.Direction.UP)) {
+							level.setBlock(support, Blocks.SMOOTH_STONE.defaultBlockState(), Block.UPDATE_CLIENTS);
+						}
+						BlockState brazierState = BlockInit.iron_brazier.get().defaultBlockState()
+								.setValue(BrazierBlock.RITUAL_PHASE, 1);
+						level.setBlock(slot.pos(), brazierState, Block.UPDATE_ALL);
+						if (level.getBlockEntity(slot.pos()) instanceof IronBrazierBlockEntity brazier) {
+							var offeringStack = slot.representativeStack().copy();
+							brazier.insertOffering(null, offeringStack);
+						}
+					}
 				}
 
 				player.sendSystemMessage(Component.literal("§aPlaced " + placed + " blocks for: " + msg.recipeId.getPath()));

@@ -9,6 +9,7 @@ import com.mojang.authlib.GameProfile;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.entity.npc.harbinger.HarbingerVicarEntity;
 import com.vincenthuto.hemomancy.common.event.SanguineFormationProjectionHandler;
+import com.vincenthuto.hemomancy.common.block.harbinger.BrazierBlock;
 import com.vincenthuto.hemomancy.common.init.BlockInit;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
@@ -16,6 +17,9 @@ import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.KnownM
 import com.vincenthuto.hemomancy.common.init.ManipulationInit;
 import com.vincenthuto.hemomancy.common.manipulation.ManipLevel;
 import com.vincenthuto.hemomancy.common.mission.FirstBloodcraftAssignmentHelper;
+import com.vincenthuto.hemomancy.common.recipe.BloodStructureOffering;
+import com.vincenthuto.hemomancy.common.recipe.BloodStructureOfferingPlacement;
+import com.vincenthuto.hemomancy.common.tile.IronBrazierBlockEntity;
 import com.vincenthuto.hemomancy.gametest.journey.HemoJourneyChecks;
 import com.vincenthuto.hemomancy.gametest.journey.HemoJourneyFixtures;
 import com.vincenthuto.hemomancy.gametest.journey.HemoJourneyResult;
@@ -34,6 +38,8 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.nbt.ListTag;
 import net.neoforged.neoforge.gametest.GameTestHolder;
 import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
@@ -105,7 +111,7 @@ public final class HarbingerJourneyFixtureGameTests {
 					{ BlockInit.engram_block.get(), BlockInit.hematic_iron_block.get(), BlockInit.engram_block.get() },
 					{ Blocks.STONE_BRICKS, BlockInit.engram_block.get(), Blocks.STONE_BRICKS }
 			};
-			assertWall(helper, origin, rows);
+			assertFloor(helper, origin, rows);
 		});
 	}
 
@@ -123,7 +129,7 @@ public final class HarbingerJourneyFixtureGameTests {
 					"Journey landing must remain inside the Sanguine Initiation fixture boundary");
 			Vec3 eye = new Vec3(landing.getX() + 0.5D, landing.getY() + player.getEyeHeight(),
 					landing.getZ() + 0.5D);
-			helper.assertTrue(eye.distanceTo(Vec3.atCenterOf(origin.above(2))) <= player.blockInteractionRange(),
+			helper.assertTrue(eye.distanceTo(Vec3.atCenterOf(origin.above())) <= player.blockInteractionRange(),
 					"Sanguine Initiation center must remain within actual block interaction reach");
 		});
 	}
@@ -133,6 +139,49 @@ public final class HarbingerJourneyFixtureGameTests {
 		withFixture(helper, HemoJourneyStage.FORMATION_PROJECTED, (origin, player) -> helper.assertTrue(
 				helper.getLevel().getBlockState(origin.above()).is(SanguineFormationProjectionHandler.PROJECTOR_TAG),
 				"Expected an attuned formation projector at the fixture target"));
+	}
+
+	@GameTest(templateNamespace = "minecraft", template = EMPTY_TEMPLATE, timeoutTicks = 40)
+	public static void tallStructureBaseClearsPlatform(GameTestHelper helper) {
+		helper.assertTrue(HemoJourneyFixtures.structureBaseHeight(1) == 1, "One-layer structure base is wrong");
+		helper.assertTrue(HemoJourneyFixtures.structureBaseHeight(2) == 2, "Two-layer structure base is wrong");
+		helper.assertTrue(HemoJourneyFixtures.structureBaseHeight(3) == 3, "Three-layer structure base is wrong");
+		helper.succeed();
+	}
+
+	@GameTest(templateNamespace = "minecraft", template = EMPTY_TEMPLATE, timeoutTicks = 40)
+	public static void offeringPlannerExpandsDistinctPerimeterSlots(GameTestHelper helper) {
+		BlockPos center = helper.absolutePos(new BlockPos(4, 3, 4));
+		List<BloodStructureOffering> offerings = List.of(
+				new BloodStructureOffering(Ingredient.of(Items.GLASS_BOTTLE), 1),
+				new BloodStructureOffering(Ingredient.of(Items.COPPER_INGOT), 2));
+		var slots = BloodStructureOfferingPlacement.plan(center, 1, 1, 1, offerings);
+		helper.assertTrue(slots.size() == 3, "Offering counts must expand into distinct braziers");
+		helper.assertTrue(slots.stream().map(slot -> slot.pos()).distinct().count() == 3,
+				"Offering brazier positions must be unique");
+		helper.assertTrue(slots.stream().noneMatch(slot -> Math.abs(slot.pos().getX() - center.getX()) <= 1
+				&& Math.abs(slot.pos().getZ() - center.getZ()) <= 1), "Offering braziers must be outside the structure");
+		helper.succeed();
+	}
+
+	@GameTest(templateNamespace = "minecraft", template = EMPTY_TEMPLATE, timeoutTicks = 40)
+	public static void centrifugeJourneySuppliesEmptyUnlitOfferingBraziers(GameTestHelper helper) {
+		withFixture(helper, HemoJourneyStage.CENTRIFUGE_PREPARED, (origin, player) -> {
+			for (BlockPos brazierPos : List.of(origin.offset(-2, 1, 0), origin.offset(2, 1, 0))) {
+				assertBlock(helper, brazierPos, BlockInit.iron_brazier.get());
+				helper.assertTrue(helper.getLevel().getBlockState(brazierPos).getValue(BrazierBlock.RITUAL_PHASE) == 0,
+						"Journey offering braziers must begin unlit");
+				helper.assertTrue(helper.getLevel().getBlockEntity(brazierPos) instanceof IronBrazierBlockEntity brazier
+						&& !brazier.hasOffering(), "Journey offering braziers must begin empty");
+			}
+			helper.assertTrue(player.getInventory().countItem(Items.GLASS_BOTTLE) == 1,
+					"Journey must supply the bottle offering");
+			helper.assertTrue(player.getInventory().countItem(Items.COPPER_INGOT) == 1,
+					"Journey must supply the copper offering");
+			helper.assertTrue(HemoCapabilityAccess.requireBloodVolume(player).getBloodVolume()
+					>= 150.0D + 2.0D * BrazierBlock.BLOOD_TO_LIGHT,
+					"Journey blood budget must cover both braziers and the structure craft");
+		});
 	}
 
 	@GameTest(templateNamespace = "minecraft", template = EMPTY_TEMPLATE, timeoutTicks = 40)

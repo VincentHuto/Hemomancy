@@ -6,13 +6,20 @@ import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
+import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
+import com.vincenthuto.hemomancy.common.block.harbinger.BrazierBlock;
 import com.vincenthuto.hemomancy.common.entity.npc.harbinger.HarbingerVicarEntity;
+import com.vincenthuto.hemomancy.common.entity.npc.harbinger.HarbingerAlchemistEntity;
 import com.vincenthuto.hemomancy.common.init.BlockInit;
 import com.vincenthuto.hemomancy.common.init.EntityInit;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
+import com.vincenthuto.hemomancy.common.item.harbinger.BloodVialItem;
+import com.vincenthuto.hemomancy.common.tile.crafting.VialCentrifugeBlockEntity;
 import com.vincenthuto.hemomancy.common.event.HarbingerAdvancementGranter;
 import com.vincenthuto.hemomancy.common.mission.FirstBloodcraftAssignmentHelper;
+import com.vincenthuto.hemomancy.common.recipe.BloodStructureOfferingPlacement;
+import com.vincenthuto.hemomancy.common.recipe.BloodStructureRecipe;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -30,6 +37,8 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.component.CustomData;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
@@ -97,7 +106,7 @@ public final class HemoJourneyFixtures {
 			switch (stage) {
 				case MORTAL_DISPLAY -> set(player, origin.above(), BlockInit.mortal_display.get());
 				case SANGUINE_INITIATION -> {
-					buildWall(player, origin, new Block[][] {
+					buildFloor(player, origin, new Block[][] {
 							{ Blocks.STONE_BRICKS, BlockInit.engram_block.get(), Blocks.STONE_BRICKS },
 							{ BlockInit.engram_block.get(), BlockInit.hematic_iron_block.get(), BlockInit.engram_block.get() },
 							{ Blocks.STONE_BRICKS, BlockInit.engram_block.get(), Blocks.STONE_BRICKS }
@@ -122,6 +131,10 @@ public final class HemoJourneyFixtures {
 					player.setItemSlot(EquipmentSlot.OFFHAND, new ItemStack(Items.INK_SAC));
 				}
 				case VICAR_REWARD -> spawnVicar(level, origin);
+				case VOTARY_RITE -> buildVotaryRite(player, origin);
+				case DEGREE_2_REACHED, ALCHEMIST_BRIEFING, ALCHEMIST_REWARD -> spawnAlchemist(level, origin);
+				case CENTRIFUGE_PREPARED -> prepareCentrifugeCraft(player, origin);
+				case SEPARATION_STARTED, ENZYME_RECOVERED -> prepareCentrifuge(player, origin);
 				case COMPLETE -> { }
 			}
 			recordBaseline(player, stage, origin);
@@ -352,10 +365,16 @@ public final class HemoJourneyFixtures {
 		for (int x = -2; x <= 2; x++) for (int z = -2; z <= 2; z++) positions.add(origin.offset(x, 0, z));
 		if (stage == HemoJourneyStage.MORTAL_DISPLAY || stage == HemoJourneyStage.FORMATION_PROJECTED) {
 			positions.add(origin.above());
-		} else if (stage == HemoJourneyStage.SANGUINE_INITIATION) {
-			for (int y = 1; y <= 3; y++) for (int x = -1; x <= 1; x++) positions.add(origin.offset(x, y, 0));
-		} else if (stage == HemoJourneyStage.LIBER_CRAFTED || stage == HemoJourneyStage.HEMATIC_IRON_CRAFTED) {
+		} else if (stage == HemoJourneyStage.SANGUINE_INITIATION || stage == HemoJourneyStage.LIBER_CRAFTED || stage == HemoJourneyStage.HEMATIC_IRON_CRAFTED) {
 			for (int x = -1; x <= 1; x++) for (int z = -1; z <= 1; z++) positions.add(origin.offset(x, 1, z));
+		} else if (stage == HemoJourneyStage.VOTARY_RITE) {
+			for (int x = -2; x <= 2; x++) for (int z = -2; z <= 2; z++) positions.add(origin.offset(x, 1, z));
+		} else if (stage == HemoJourneyStage.CENTRIFUGE_PREPARED || stage == HemoJourneyStage.SEPARATION_STARTED || stage == HemoJourneyStage.ENZYME_RECOVERED) {
+			for (int x = -1; x <= 1; x++) for (int z = -1; z <= 1; z++) positions.add(origin.offset(x, 2, z));
+			if (stage == HemoJourneyStage.CENTRIFUGE_PREPARED) {
+				positions.add(origin.offset(-2, 1, 0));
+				positions.add(origin.offset(2, 1, 0));
+			}
 		}
 		return positions;
 	}
@@ -378,11 +397,20 @@ public final class HemoJourneyFixtures {
 	}
 
 	private static void buildFloor(ServerPlayer player, BlockPos origin, Block[][] rows) {
+		buildFloorAt(player, origin, 1, rows);
+	}
+
+	private static void buildFloorAt(ServerPlayer player, BlockPos origin, int y, Block[][] rows) {
 		for (int z = 0; z < rows.length; z++) {
 			for (int x = 0; x < rows[z].length; x++) {
-				set(player, origin.offset(x - 1, 1, z - 1), rows[z][x]);
+				set(player, origin.offset(x - 1, y, z - 1), rows[z][x]);
 			}
 		}
+	}
+
+	/** Tall recipes start above the platform by their full pattern height. */
+	public static int structureBaseHeight(int patternHeight) {
+		return Math.max(1, patternHeight);
 	}
 
 	private static void spawnVicar(ServerLevel level, BlockPos origin) {
@@ -393,6 +421,53 @@ public final class HemoJourneyFixtures {
 		vicar.setInvulnerable(true);
 		vicar.addTag(ENTITY_MARKER);
 		if (!level.addFreshEntity(vicar)) throw new IllegalStateException("Harbinger Vicar could not be spawned");
+	}
+
+	private static void spawnAlchemist(ServerLevel level, BlockPos origin) {
+		HarbingerAlchemistEntity alchemist = EntityInit.harbinger_alchemist.get().create(level);
+		if (alchemist == null) throw new IllegalStateException("Harbinger Alchemist entity creation returned null");
+		alchemist.setPos(origin.getX() + 0.5D, origin.getY() + 1.0D, origin.getZ() + 0.5D);
+		alchemist.setNoAi(true); alchemist.setInvulnerable(true); alchemist.addTag(ENTITY_MARKER);
+		if (!level.addFreshEntity(alchemist)) throw new IllegalStateException("Harbinger Alchemist could not be spawned");
+	}
+
+	private static void buildVotaryRite(ServerPlayer player, BlockPos origin) {
+		String[] rows = { "OEOEO", "E H E", "OHBHO", "E H E", "OEOEO" };
+		for (int z = 0; z < rows.length; z++) for (int x = 0; x < rows[z].length(); x++) {
+			char key = rows[z].charAt(x);
+			if (key != ' ') set(player, origin.offset(x - 2, 1, z - 2), key == 'O' ? Blocks.OBSIDIAN
+					: key == 'E' ? BlockInit.engram_block.get() : BlockInit.hematic_iron_block.get());
+		}
+		var blood = HemoCapabilityAccess.requireBloodVolume(player); blood.setBloodVolume(Math.max(blood.getBloodVolume(), 250.0D));
+	}
+
+	private static void prepareCentrifuge(ServerPlayer player, BlockPos origin) {
+		if (!fixtureLevel(player).getBlockState(origin.above(2)).is(BlockInit.vial_centrifuge.get())) return;
+		if (!(fixtureLevel(player).getBlockEntity(origin.above(2)) instanceof VialCentrifugeBlockEntity centrifuge)) return;
+		ItemStack vial = new ItemStack(ItemInit.bloody_vial.get()); CompoundTag tag = new CompoundTag();
+		tag.putString(BloodVialItem.TAG_ENTITY_TYPE, "hemomancy:crimson_doe"); tag.putBoolean(BloodVialItem.TAG_STATE, true);
+		vial.set(DataComponents.CUSTOM_DATA, CustomData.of(tag)); centrifuge.inventory.set(2, vial); centrifuge.inventory.set(6, vial.copy()); centrifuge.setChanged();
+	}
+
+	private static void prepareCentrifugeCraft(ServerPlayer player, BlockPos origin) {
+		buildFloorAt(player, origin, structureBaseHeight(2), new Block[][] {
+				{ BlockInit.hematic_iron_block.get(), Blocks.GLASS, BlockInit.hematic_iron_block.get() },
+				{ Blocks.GLASS, BlockInit.hematic_iron_block.get(), Blocks.GLASS },
+				{ BlockInit.hematic_iron_block.get(), Blocks.GLASS, BlockInit.hematic_iron_block.get() }
+		});
+		player.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(ItemInit.blood_projection.get()));
+		player.setItemSlot(EquipmentSlot.OFFHAND, new ItemStack(ItemInit.ferric_binder.get()));
+		BloodStructureRecipe recipe = BloodStructureRecipe.getStructureByLocation(fixtureLevel(player),
+				Hemomancy.rloc("blood_structure/vial_centrifuge"));
+		if (recipe == null) throw new IllegalStateException("Vial Centrifuge blood structure recipe is unavailable");
+		var offeringSlots = BloodStructureOfferingPlacement.plan(origin.above(), 1, 1, 1, recipe.getOfferings());
+		for (var slot : offeringSlots) {
+			set(player, slot.pos(), BlockInit.iron_brazier.get());
+			player.getInventory().add(slot.representativeStack().copy());
+		}
+		var blood = HemoCapabilityAccess.requireBloodVolume(player);
+		double requiredBlood = recipe.getBloodCost() + offeringSlots.size() * BrazierBlock.BLOOD_TO_LIGHT;
+		blood.setBloodVolume(Math.max(blood.getBloodVolume(), requiredBlood));
 	}
 
 	private static void set(ServerPlayer player, BlockPos pos, Block block) {

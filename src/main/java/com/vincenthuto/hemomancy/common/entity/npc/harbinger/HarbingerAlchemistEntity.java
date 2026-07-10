@@ -8,6 +8,7 @@ import com.vincenthuto.hemomancy.common.entity.npc.dialogue.HarbingerAlchemistDi
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.HarbingerAlchemistDialogueTrees.HeldSpecimenJar;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.HarbingerAlchemistDialogueTrees.RedTaxonomySample;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.HarbingerRecruitmentRules;
+import com.vincenthuto.hemomancy.common.mission.FirstSeparationAssignmentHelper;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.dialogue.OpenDialoguePacket;
 import com.vincenthuto.hemomancy.common.util.SpecimenJarData;
@@ -106,7 +107,9 @@ public class HarbingerAlchemistEntity extends PathfinderMob {
                 RedTaxonomySample heldRedTaxonomySample = degree >= 2 ? findHeldRedTaxonomySample(held) : null;
                 HeldSpecimenJar heldSpecimenJar = degree >= 2 ? findHeldSpecimenJar(held) : null;
                 tree = HarbingerAlchemistDialogueTrees.forDegree(degree, this.getId(), canShowRecruitment(player, this),
-                        isNpcInPlayerBloodline(player, this), heldRedTaxonomySample, heldSpecimenJar);
+                        isNpcInPlayerBloodline(player, this), heldRedTaxonomySample, heldSpecimenJar,
+                        FirstSeparationAssignmentHelper.canBrief(serverPlayer),
+                        FirstSeparationAssignmentHelper.canClaim(serverPlayer));
             }
             tree = DialogueItemInquiryNodes.withHeldItemInquiry(tree, held, "alchemist",
                     "hemomancy.alchemist.item_inquiry.unknown", degree, 0f);

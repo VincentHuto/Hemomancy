@@ -8,12 +8,16 @@ import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.event.HarbingerAdvancementGranter;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.mission.FirstBloodcraftAssignmentHelper;
+import com.vincenthuto.hemomancy.common.mission.FirstSeparationAssignmentHelper;
+import com.vincenthuto.hemomancy.common.tile.crafting.VialCentrifugeBlockEntity;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.stats.Stats;
+import com.vincenthuto.hemomancy.common.init.BlockInit;
 
 /** Reads server-authoritative outcomes and optionally attributes exact output UUIDs. */
 public final class HemoJourneyChecks {
@@ -41,6 +45,16 @@ public final class HemoJourneyChecks {
 			case HEMATIC_IRON_CRAFTED -> verifyCraft(player, stage, origin, unmet, claimOutputs,
 					HarbingerAdvancementGranter.isHematicIronBlockCrafted(player), "Hematic Iron Block", "Iron in the Blood");
 			case VICAR_REWARD -> verifyVicarReward(player, origin, unmet, claimOutputs);
+			case VOTARY_RITE -> require(unmet, HemoCapabilityAccess.requireInitiatoryDegree(player).getDegreeNumber() == 2
+					&& HarbingerAdvancementGranter.hasAdvancement(player, HarbingerAdvancementGranter.ADV_DEGREE_2_VOTARY), "Rite of the Votary is incomplete.");
+			case DEGREE_2_REACHED -> require(unmet, HemoCapabilityAccess.requireInitiatoryDegree(player).getDegreeNumber() == 2, "Initiatory degree is not exactly 2.");
+			case ALCHEMIST_BRIEFING -> require(unmet, FirstSeparationAssignmentHelper.isBriefed(player), "The First Separation briefing was not accepted.");
+			case CENTRIFUGE_PREPARED -> require(unmet, player.getStats().getValue(Stats.ITEM_CRAFTED.get(BlockInit.vial_centrifuge.get().asItem())) > 0
+					&& centrifuge(player, origin) != null, "Craft and place your own Vial Centrifuge at the fixture center.");
+			case SEPARATION_STARTED -> require(unmet, centrifuge(player, origin) != null && centrifuge(player, origin).isSpinning()
+					&& HarbingerAdvancementGranter.isFirstSeparationStarted(player), "Vial Centrifuge separation has not started.");
+			case ENZYME_RECOVERED -> require(unmet, HarbingerAdvancementGranter.isFirstSeparationComplete(player), "Recover the enzyme from the centrifuge output.");
+			case ALCHEMIST_REWARD -> require(unmet, FirstSeparationAssignmentHelper.isClaimed(player), "First Separation reward has not been claimed.");
 			case COMPLETE -> { return new HemoJourneyResult(true, stage, "Journey checkpoints complete; ready to restore the snapshot."); }
 		}
 		return unmet.isEmpty() ? new HemoJourneyResult(true, stage, "All checkpoint conditions passed.")
@@ -126,5 +140,9 @@ public final class HemoJourneyChecks {
 
 	private static void require(List<String> unmet, boolean condition, String message) {
 		if (!condition) unmet.add(message);
+	}
+
+	private static VialCentrifugeBlockEntity centrifuge(ServerPlayer player, BlockPos origin) {
+		return HemoJourneyFixtures.fixtureLevel(player).getBlockEntity(origin.above(2)) instanceof VialCentrifugeBlockEntity value ? value : null;
 	}
 }

@@ -6,6 +6,7 @@ import com.vincenthuto.hemomancy.common.entity.summon.MorphlingPolypLayer;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.inquiry.ItemInquiryRegistry;
 import com.vincenthuto.hemomancy.common.event.HarbingerAdvancementGranter;
 import com.vincenthuto.hemomancy.common.init.BlockInit;
+import com.vincenthuto.hemomancy.common.mission.FirstSeparationAssignmentHelper;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
@@ -28,6 +29,8 @@ public final class HarbingerAlchemistDialogueTrees {
 	public static final String EVENT_BESTIARY_RECORD = "alchemist_bestiary_record";
 	public static final String EVENT_BESTIARY_SURRENDER = "alchemist_bestiary_surrender";
 	public static final String EVENT_BESTIARY_SURRENDER_MORPHLING_PREFIX = "alchemist_bestiary_surrender_morphling_";
+	public static final String EVENT_FIRST_SEPARATION_BRIEF = "alchemist_first_separation_brief";
+	public static final String EVENT_FIRST_SEPARATION_CLAIM = "alchemist_first_separation_claim";
 
 	private HarbingerAlchemistDialogueTrees() {}
 
@@ -50,13 +53,20 @@ public final class HarbingerAlchemistDialogueTrees {
 
 	public static DialogueTree forDegree(int degree, int entityId, boolean hasBloodline, boolean isNpcRecruited,
 			RedTaxonomySample heldRedTaxonomySample, HeldSpecimenJar heldSpecimenJar) {
+		return forDegree(degree, entityId, hasBloodline, isNpcRecruited, heldRedTaxonomySample, heldSpecimenJar,
+				false, false);
+	}
+
+	public static DialogueTree forDegree(int degree, int entityId, boolean hasBloodline, boolean isNpcRecruited,
+			RedTaxonomySample heldRedTaxonomySample, HeldSpecimenJar heldSpecimenJar,
+			boolean canBriefFirstSeparation, boolean canClaimFirstSeparation) {
 		if (degree >= 2 && (heldRedTaxonomySample != null || heldSpecimenJar != null)) {
-			return votary(entityId, heldRedTaxonomySample, heldSpecimenJar);
+			return votary(entityId, heldRedTaxonomySample, heldSpecimenJar, canBriefFirstSeparation, canClaimFirstSeparation);
 		}
 		return switch (degree) {
 			case 0 -> uninitiated(entityId);
 			case 1 -> neophyte(entityId);
-			case 2 -> votary(entityId, heldRedTaxonomySample, heldSpecimenJar);
+			case 2 -> votary(entityId, heldRedTaxonomySample, heldSpecimenJar, canBriefFirstSeparation, canClaimFirstSeparation);
 			case 3 -> initiate(entityId);
 			case 4 -> adept(entityId);
 			case 5 -> illuminatus(entityId, hasBloodline, isNpcRecruited);
@@ -277,6 +287,11 @@ public final class HarbingerAlchemistDialogueTrees {
 
 	public static DialogueTree votary(int entityId, RedTaxonomySample heldRedTaxonomySample,
 			HeldSpecimenJar heldSpecimenJar) {
+		return votary(entityId, heldRedTaxonomySample, heldSpecimenJar, false, false);
+	}
+
+	public static DialogueTree votary(int entityId, RedTaxonomySample heldRedTaxonomySample,
+			HeldSpecimenJar heldSpecimenJar, boolean canBriefFirstSeparation, boolean canClaimFirstSeparation) {
 		List<DialogueOption> greetingOptions = new ArrayList<>();
 		if (heldSpecimenJar != null && heldSpecimenJar.isResearchSpecimen()) {
 			greetingOptions.add(new DialogueOption("hemomancy.dialogue.alchemist.option.record_living_specimen",
@@ -300,6 +315,14 @@ public final class HarbingerAlchemistDialogueTrees {
 				"living_bestiary_intro", null));
 		greetingOptions.add(new DialogueOption("hemomancy.dialogue.alchemist.option.begin_red_taxonomy",
 				"red_taxonomy_intro", null));
+		if (canBriefFirstSeparation) {
+			greetingOptions.add(new DialogueOption("hemomancy.dialogue.alchemist.option.accept_first_separation",
+					"first_separation_briefing", EVENT_FIRST_SEPARATION_BRIEF));
+		}
+		if (canClaimFirstSeparation) {
+			greetingOptions.add(new DialogueOption("hemomancy.dialogue.alchemist.option.complete_first_separation",
+					"first_separation_complete", EVENT_FIRST_SEPARATION_CLAIM));
+		}
 		greetingOptions.add(new DialogueOption("hemomancy.dialogue.alchemist.option.tell_me_about_centrifuge",
 				"centrifuge_lore", null));
 		greetingOptions.add(new DialogueOption("hemomancy.dialogue.alchemist.option.how_do_i_upgrade_my_gourd",
@@ -389,6 +412,12 @@ public final class HarbingerAlchemistDialogueTrees {
 								"gourd_upgrades", null),
 						new DialogueOption("hemomancy.dialogue.alchemist.option.leave", null, null)
 				)))
+				.addNode(new DialogueNode("first_separation_briefing", List.of(
+						"hemomancy.alchemist.first_separation.briefing"
+				), List.of(new DialogueOption("hemomancy.dialogue.alchemist.option.leave", null, null))) )
+				.addNode(new DialogueNode("first_separation_complete", List.of(
+						"hemomancy.alchemist.first_separation.complete"
+				), List.of(new DialogueOption("hemomancy.dialogue.alchemist.option.leave", null, null))) )
 				.addNode(new DialogueNode("gourd_upgrades", List.of(
 						"hemomancy.alchemist.votary.gourd_upgrades"
 				), List.of(

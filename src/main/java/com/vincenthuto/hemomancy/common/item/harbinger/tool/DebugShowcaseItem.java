@@ -3,8 +3,12 @@ package com.vincenthuto.hemomancy.common.item.harbinger.tool;
 import com.vincenthuto.hemomancy.common.init.BlockInit;
 import com.vincenthuto.hemomancy.common.init.EntityInit;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
+import com.vincenthuto.hemomancy.common.block.harbinger.BrazierBlock;
+import com.vincenthuto.hemomancy.common.recipe.BloodStructureOffering;
+import com.vincenthuto.hemomancy.common.recipe.BloodStructureOfferingPlacement;
 import com.vincenthuto.hemomancy.common.recipe.BloodStructureRecipe;
 import com.vincenthuto.hemomancy.common.recipe.CardinalRiteRecipe;
+import com.vincenthuto.hemomancy.common.tile.IronBrazierBlockEntity;
 import com.vincenthuto.hutoslib.math.BlockPosBlockPair;
 import com.vincenthuto.hutoslib.math.MultiblockPattern;
 import net.minecraft.core.BlockPos;
@@ -373,7 +377,7 @@ public class DebugShowcaseItem extends Item {
 
 			for (BloodStructureRecipe recipe : structures) {
 				z = placeStructurePattern(level, origin, z, recipe.getPattern(),
-						recipe.getId().getPath());
+						recipe.getId().getPath(), recipe.getOfferings());
 				z += 3;
 			}
 		}
@@ -387,7 +391,7 @@ public class DebugShowcaseItem extends Item {
 				String name = recipe.getRiteName() != null && !recipe.getRiteName().isEmpty()
 						? recipe.getRiteName()
 						: recipe.getId().getPath();
-				z = placeStructurePattern(level, origin, z, recipe.getPattern(), name);
+				z = placeStructurePattern(level, origin, z, recipe.getPattern(), name, List.of());
 				z += 3;
 			}
 		}
@@ -402,17 +406,20 @@ public class DebugShowcaseItem extends Item {
 	 * Returns the Z position after the structure.
 	 */
 	private int placeStructurePattern(ServerLevel level, BlockPos origin, int z,
-									  MultiblockPattern pattern, String name) {
+									  MultiblockPattern pattern, String name,
+									  List<BloodStructureOffering> offerings) {
 		List<BlockPosBlockPair> blockPairs = pattern.getBlockPosBlockList();
 		if (blockPairs.isEmpty()) return z;
 
 		// Find bounding box
 		int minX = Integer.MAX_VALUE, maxX = Integer.MIN_VALUE;
+		int minY = Integer.MAX_VALUE;
 		int minZ = Integer.MAX_VALUE, maxZ = Integer.MIN_VALUE;
 		for (BlockPosBlockPair pair : blockPairs) {
 			BlockPos pos = pair.getPos();
 			minX = Math.min(minX, pos.getX());
 			maxX = Math.max(maxX, pos.getX());
+			minY = Math.min(minY, pos.getY());
 			minZ = Math.min(minZ, pos.getZ());
 			maxZ = Math.max(maxZ, pos.getZ());
 		}
@@ -448,7 +455,22 @@ public class DebugShowcaseItem extends Item {
 			}
 		}
 
-		return z + structWidth + 1;
+		BlockPos offeringCenter = placeOrigin.offset(0, minY, 0);
+		int halfWidth = Math.max(centerX - minX, maxX - centerX);
+		int halfDepth = Math.max(centerZ - minZ, maxZ - centerZ);
+		for (var slot : BloodStructureOfferingPlacement.plan(
+				offeringCenter, halfWidth, halfDepth, 1, offerings)) {
+			level.setBlock(slot.pos().below(), Blocks.SMOOTH_STONE.defaultBlockState(), Block.UPDATE_CLIENTS);
+			BlockState brazierState = BlockInit.iron_brazier.get().defaultBlockState()
+					.setValue(BrazierBlock.RITUAL_PHASE, 1);
+			level.setBlock(slot.pos(), brazierState, Block.UPDATE_ALL);
+			if (level.getBlockEntity(slot.pos()) instanceof IronBrazierBlockEntity brazier) {
+				ItemStack offeringStack = slot.representativeStack().copy();
+				brazier.insertOffering(null, offeringStack);
+			}
+		}
+
+		return z + structWidth + (offerings.isEmpty() ? 1 : 3);
 	}
 
 	// ===================== HELPER METHODS =====================

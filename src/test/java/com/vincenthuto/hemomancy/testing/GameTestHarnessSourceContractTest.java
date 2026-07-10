@@ -68,7 +68,8 @@ class GameTestHarnessSourceContractTest {
 				"formation_projected",
 				"liber_crafted",
 				"hematic_iron_crafted",
-				"vicar_reward",
+				"vicar_reward", "votary_rite", "degree_2_reached", "alchemist_briefing",
+				"centrifuge_prepared", "separation_started", "enzyme_recovered", "alchemist_reward",
 				"complete"), stageIds);
 
 		int journeyStart = commands.indexOf("literal(\"journey\")");
@@ -258,6 +259,31 @@ class GameTestHarnessSourceContractTest {
 		assertTrue(resetStart >= 0 && restoreStart > resetStart);
 		assertTrue(snapshot.substring(resetStart, restoreStart).contains("player.removeAllEffects();"),
 				"Journey reset must clear effects acquired during test stages, including Blood Drunkenness");
+	}
+
+	@Test
+	void structureSpawnerLoadsAndLightsRecipeOfferings() throws IOException {
+		String placement = read("src/main/java/com/vincenthuto/hemomancy/common/network/PlaceStructurePacket.java");
+		String showcase = read(
+				"src/main/java/com/vincenthuto/hemomancy/common/item/harbinger/tool/DebugShowcaseItem.java");
+
+		assertTrue(placement.contains("bloodStructure.getOfferings()"),
+				"Blood structure offerings must be passed into Structure Spawner placement");
+		assertTrue(placement.contains("BloodStructureOfferingPlacement.plan("),
+				"Structure Spawner offerings must use the shared deterministic planner");
+		assertTrue(placement.contains("BlockInit.iron_brazier.get().defaultBlockState()"));
+		assertTrue(placement.contains("setValue(BrazierBlock.RITUAL_PHASE, 1)"),
+				"Structure Spawner offering braziers must spawn lit");
+		assertTrue(placement.contains("insertOffering(null, offeringStack)"),
+				"Structure Spawner offering braziers must contain representative recipe items");
+		assertTrue(showcase.contains("recipe.getOfferings()"),
+				"Debug Showcase must pass each Blood Structure recipe's offerings into placement");
+		assertTrue(showcase.contains("BloodStructureOfferingPlacement.plan("),
+				"Debug Showcase offerings must use the shared deterministic planner");
+		assertTrue(showcase.contains("setValue(BrazierBlock.RITUAL_PHASE, 1)"),
+				"Debug Showcase offering braziers must spawn lit");
+		assertTrue(showcase.contains("insertOffering(null, offeringStack)"),
+				"Debug Showcase offering braziers must contain representative recipe items");
 	}
 
 	private static String read(String relativePath) throws IOException {

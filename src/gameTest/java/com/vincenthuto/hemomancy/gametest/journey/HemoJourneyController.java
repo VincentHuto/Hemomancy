@@ -72,8 +72,12 @@ public final class HemoJourneyController {
 		HemoJourneyStage next = HemoJourneyTransition.next(current, true, true);
 		CompoundTag priorBaseline = player.getPersistentData().getCompound(HemoJourneyFixtures.BASELINE_KEY).copy();
 		try {
-			HemoJourneyFixtures.cleanupOwnedOutputs(player, origin);
-			if (next == HemoJourneyStage.COMPLETE) {
+			boolean retainCentrifuge = current == HemoJourneyStage.SEPARATION_STARTED
+					&& next == HemoJourneyStage.ENZYME_RECOVERED;
+			if (!retainCentrifuge) HemoJourneyFixtures.cleanupOwnedOutputs(player, origin);
+			if (retainCentrifuge) {
+				// The live centrifuge must survive so the player can recover its real output.
+			} else if (next == HemoJourneyStage.COMPLETE) {
 				HemoJourneyFixtures.cleanup(player, origin);
 			} else {
 				HemoJourneyFixtures.prepare(player, next, origin);
@@ -193,6 +197,13 @@ public final class HemoJourneyController {
 			case LIBER_CRAFTED -> "The fixture supplied Blood Projection and one Sanguine Formation in your offhand. Hold projection on the center Bookshelf, then pick up the crafted Liber Sanguinum before running journey next.";
 			case HEMATIC_IRON_CRAFTED -> "The fixture supplied Blood Projection and one Ink Sac in your offhand. Hold projection on the center Iron Block, then pick up the crafted Hematic Iron Block before running journey next.";
 			case VICAR_REWARD -> "Speak to the marked Vicar and claim the First Bloodcraft completion kit. Keep inventory rewards and leave any overflow drops beside the Vicar until journey next.";
+			case VOTARY_RITE -> "Invoke the Rite of the Votary at its center Hematic Iron block, then run journey next.";
+			case DEGREE_2_REACHED -> "You are now a Votary. Run journey next to meet the Alchemist.";
+			case ALCHEMIST_BRIEFING -> "Speak to the marked Alchemist and accept The First Separation.";
+			case CENTRIFUGE_PREPARED -> "Place the supplied Glass Bottle and Copper Ingot into the two Iron Braziers, light both with Blood Projection, then project the centrifuge structure with the Ferric Binder. Pick up and place the crafted Vial Centrifuge at the fixture center, then run journey next.";
+			case SEPARATION_STARTED -> "Wait for the centrifuge to finish spinning, then run journey next.";
+			case ENZYME_RECOVERED -> "Open the centrifuge, take the Vivacious Enzyme from its output, then run journey next.";
+			case ALCHEMIST_REWARD -> "Speak to the marked Alchemist and claim the First Separation sampling kit.";
 			case COMPLETE -> "Run journey next to restore the pre-journey snapshot.";
 		};
 	}
@@ -200,10 +211,13 @@ public final class HemoJourneyController {
 	private static BlockPos target(HemoJourneyStage stage, BlockPos origin) {
 		return switch (stage) {
 			case MORTAL_DISPLAY, FORMATION_PROJECTED -> origin.above();
-			case SANGUINE_INITIATION -> origin.above(2);
+			case SANGUINE_INITIATION -> origin.above();
 			case LIBER_CRAFTED, HEMATIC_IRON_CRAFTED -> origin.above();
 			case VESSEL_FILLED -> origin.above();
 			case VICAR_REWARD -> origin.above();
+			case VOTARY_RITE -> origin.above();
+			case DEGREE_2_REACHED, ALCHEMIST_BRIEFING, ALCHEMIST_REWARD -> origin.above();
+			case CENTRIFUGE_PREPARED, SEPARATION_STARTED, ENZYME_RECOVERED -> origin.above(2);
 			case COMPLETE -> origin;
 		};
 	}

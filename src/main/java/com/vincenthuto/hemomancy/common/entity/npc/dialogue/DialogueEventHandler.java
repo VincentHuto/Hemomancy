@@ -18,6 +18,7 @@ import com.vincenthuto.hemomancy.common.entity.npc.unstained.UnstainedScoutEntit
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.mission.HarbingerArtificerAssignmentHelper;
 import com.vincenthuto.hemomancy.common.mission.FirstBloodcraftAssignmentHelper;
+import com.vincenthuto.hemomancy.common.mission.FirstSeparationAssignmentHelper;
 import com.vincenthuto.hemomancy.common.util.SpecimenJarData;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.BloodStructureHintItem;
 import com.vincenthuto.hemomancy.common.item.shared.PreWrittenMemoItem;
@@ -162,6 +163,12 @@ public class DialogueEventHandler {
 			}
 			case HarbingerVicarDialogueTrees.EVENT_CLAIM_FIRST_BLOODCRAFT_REWARD -> {
 				handleVicarFirstBloodcraftReward(player, event.getEntityId());
+			}
+			case HarbingerAlchemistDialogueTrees.EVENT_FIRST_SEPARATION_BRIEF -> {
+				handleAlchemistFirstSeparationBrief(player);
+			}
+			case HarbingerAlchemistDialogueTrees.EVENT_FIRST_SEPARATION_CLAIM -> {
+				handleAlchemistFirstSeparationReward(player, event.getEntityId());
 			}
 			case HarbingerVicarDialogueTrees.EVENT_MASONS_RESPITE_DIRECTIVE -> {
 				handleVicarMasonsRespiteDirective(player, event.getEntityId());
@@ -381,6 +388,19 @@ public class DialogueEventHandler {
 				Component.translatable("hemomancy.dialogue.event.vicar_first_bloodcraft_reward_granted")
 						.withStyle(ChatFormatting.DARK_RED),
 				false);
+	}
+
+	private static void handleAlchemistFirstSeparationBrief(ServerPlayer player) {
+		if (!FirstSeparationAssignmentHelper.canBrief(player)) return;
+		FirstSeparationAssignmentHelper.markBriefed(player);
+	}
+
+	private static void handleAlchemistFirstSeparationReward(ServerPlayer player, int entityId) {
+		if (!FirstSeparationAssignmentHelper.canClaim(player)) return;
+		if (!FirstSeparationAssignmentHelper.markClaimed(player)) return;
+		for (ItemStack stack : FirstSeparationAssignmentHelper.rewardStacks()) {
+			giveOrDropAtEntity(player, entityId, stack);
+		}
 	}
 
 	private static void handleVicarMasonsRespiteDirective(ServerPlayer player, int entityId) {
