@@ -45,7 +45,8 @@ public final class MemoryWeavingRecipeResourceShapeTest {
 			for (Path path : paths.filter(p -> p.toString().endsWith(".json")).toList()) {
 				String json = Files.readString(path).replace("\r\n", "\n");
 				String signature = section(json, "\"catalysts\"", "\"result\"")
-						.replaceAll("\\s+", "");
+						.replaceAll("\\s+", "")
+						+ json.substring(json.indexOf("\"result\"")).replaceAll("\\s+", "");
 				if (!signatures.add(signature)) {
 					throw new AssertionError("duplicate memory weaving catalyst/enzyme signature in " + path);
 				}

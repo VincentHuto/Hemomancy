@@ -64,13 +64,26 @@ sourceSets.main.java {
 }
 
 repositories {
-    // Add here additi
-    // onal repositories if required by some of the dependencies below.
+    mavenCentral()
+}
+
+// Development-only in-game scenarios and NeoForge GameTests. Keeping these in
+// their own source set makes them available to dev runs without packaging them
+// in the release jar.
+sourceSets {
+    gameTest {
+        java.srcDir('src/gameTest/java')
+        resources.srcDir('src/gameTest/resources')
+        compileClasspath += sourceSets.main.output + sourceSets.main.compileClasspath
+        runtimeClasspath += output + compileClasspath + sourceSets.main.runtimeClasspath
+    }
 }
 
 base {
     archivesName = mod_id
 }
+
+def clientLocalRuntime = configurations.create('clientLocalRuntime')
 
 // Mojang ships Java 21 to end users in 1.21, so mods should target Java 21.
 java.toolchain.languageVersion = JavaLanguageVersion.of(21)
@@ -92,6 +105,7 @@ neoForge {
     runs {
         client {
             client()
+            additionalRuntimeClasspathConfiguration.extendsFrom(clientLocalRuntime)
             jvmArguments.addAll("-Xms8G", "-Xmx24G")
             // Comma-separated list of namespaces to load gametests from. Empty = all namespaces.
             systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
@@ -108,7 +122,9 @@ neoForge {
         // The gametest system is also enabled by default for other run configs under the /test command.
         gameTestServer {
             type = "gameTestServer"
-            systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
+            // The pilot tests deliberately reuse Mojang's one-block empty
+            // template, so their template namespace is minecraft.
+            systemProperty 'neoforge.enabledGameTestNamespaces', "${project.mod_id},minecraft"
         }
 
         data {
@@ -143,6 +159,7 @@ neoForge {
         // multi mod projects should define one per mod
         "${mod_id}" {
             sourceSet(sourceSets.main)
+            sourceSet(sourceSets.gameTest)
         }
     }
 }
@@ -153,6 +170,8 @@ neoForge {
 // "optional", meaning it will not be pulled by dependents of this mod.
 configurations {
     runtimeClasspath.extendsFrom localRuntime
+    gameTestImplementation.extendsFrom implementation
+    gameTestRuntimeOnly.extendsFrom runtimeOnly, localRuntime
 }
 
 dependencies {
@@ -166,7 +185,7 @@ dependencies {
     //implementation "software.bernie.geckolib:geckolib-neoforge-${minecraft_version}:${geckolib_version}"
   //  implementation files("libs/geckolib-neoforge-${minecraft_version}-${geckolib_version}.jar")
 
-    implementation files("libs/create-1.21.1-6.0.10.jar")
+    add('clientLocalRuntime', files("libs/create-1.21.1-6.0.10.jar"))
 
     implementation files("libs/buildinggadgets2-1.3.9.jar")
 
@@ -217,6 +236,13 @@ dependencies {
 
     // Mixin annotation processor
     annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
+
+    testImplementation platform('org.junit:junit-bom:5.11.4')
+    testImplementation 'org.junit.jupiter:junit-jupiter'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+    testImplementation files(layout.buildDirectory.file("moddev/artifacts/neoforge-${neo_version}-merged.jar"))
+    testImplementation "net.neoforged:minecraft-dependencies:${minecraft_version}"
+    testRuntimeOnly 'net.neoforged.fancymodloader:loader:4.0.42'
 }
 // Template expansion is handled directly in processResources.
 
@@ -237,6 +263,21 @@ publishing {
 tasks.withType(JavaCompile).configureEach {
     options.encoding = 'UTF-8' // Use the UTF-8 charset for Java compilation
     options.compilerArgs << '-Xlint:deprecation' << '-Xlint:unchecked'
+}
+
+tasks.named('test', Test).configure {
+    dependsOn tasks.named('createMinecraftArtifacts')
+    useJUnitPlatform()
+}
+
+tasks.named('runGameTestServer').configure {
+    mustRunAfter tasks.named('test')
+}
+
+tasks.register('alphaCheck') {
+    group = 'verification'
+    description = 'Runs JVM contracts followed by the dedicated Hemomancy GameTest pilots.'
+    dependsOn tasks.named('test'), tasks.named('runGameTestServer')
 }
 
 // IDEA no longer automatically downloads sources/javadoc jars for dependencies, so we need to explicitly enable the behavior.

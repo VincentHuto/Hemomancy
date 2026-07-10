@@ -91,7 +91,7 @@ public final class MorphlingStage4To8SourceTest {
 		assertContains("cradle gravecap support", cradle, "ItemInit.morphling_gravecap");
 		assertContains("client registry marks interim assets", clientRegistry, "interim strain silhouette");
 		for (int i = 1; i <= 8; i++) {
-			assertContains("staff predicate " + i, staffModel, "\"hemomancy:morph\": " + i);
+			assertContains("staff predicate " + i, staffModel, "\"hemomancy:staff_visual\": " + i);
 		}
 	}
 

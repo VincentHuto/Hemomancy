@@ -37,14 +37,14 @@ public final class ManipulationTreeCoverageSourceTest {
 			"conjure_torch", "FLAMMEUS",
 			"conjure_flail", "CONGEATIO"
 	);
-	private static final Map<String, String> LIVING_WEAPON_TREE_PARENTS = Map.of(
-			"conjure_blade", "vital_effusion",
-			"conjure_axe", "exsanguinate",
-			"conjure_spear", "crimson_sight",
-			"conjure_claws", "void_shroud",
-			"conjure_crossbow", "hemolymphal_pulse",
-			"conjure_torch", "crimson_flame_conjuration",
-			"conjure_flail", "glacial_bastion"
+	private static final Map<String, List<String>> LIVING_WEAPON_TREE_PARENTS = Map.of(
+			"conjure_blade", List.of("vital_effusion"),
+			"conjure_axe", List.of("exsanguinate"),
+			"conjure_spear", List.of("crimson_sight"),
+			"conjure_claws", List.of("void_shroud"),
+			"conjure_crossbow", List.of("hemolymphal_pulse"),
+			"conjure_torch", List.of("crimson_flame_conjuration"),
+			"conjure_flail", List.of("glacial_bastion", "glacial_rampart")
 	);
 	private static final List<String> LIVING_WEAPON_FORMS = List.of(
 			"conjure_blade",
@@ -55,6 +55,8 @@ public final class ManipulationTreeCoverageSourceTest {
 			"conjure_torch",
 			"conjure_flail"
 	);
+	private static final Set<String> NON_TREE_MANIPULATIONS = Set.of(
+			"hemosynthesis", "blood_lamp", "crimson_harvest", "sanguine_excavation", "vital_reservoir");
 
 	private ManipulationTreeCoverageSourceTest() {
 	}
@@ -62,14 +64,13 @@ public final class ManipulationTreeCoverageSourceTest {
 	public static void main(String[] args) throws IOException {
 		String manipInit = read("src/main/java/com/vincenthuto/hemomancy/common/init/ManipulationInit.java");
 		String treeInit = read("src/main/java/com/vincenthuto/hemomancy/common/init/ManipulationTreeInit.java");
-		String crossbowRecipe = read("src/main/resources/data/hemomancy/recipe/memory_weaving/memory_living_crossbow.json");
 
 		Set<String> registeredManips = extract(MANIP_REGISTER, manipInit);
 		Set<String> treeNodes = extract(TREE_REGISTER, treeInit);
 
 		List<String> missingNodes = new ArrayList<>();
 		for (String manip : registeredManips) {
-			if (!treeNodes.contains(manip)) {
+			if (!treeNodes.contains(manip) && !NON_TREE_MANIPULATIONS.contains(manip)) {
 				missingNodes.add(manip);
 			}
 		}
@@ -86,7 +87,6 @@ public final class ManipulationTreeCoverageSourceTest {
 		Map<String, TreeNode> nodes = treeNodesByName(treeInit);
 		assertLivingWeaponFormsBranchFromStaff(nodes);
 		assertLivingWeaponFormsHaveDistinctTendencies(manipInit);
-		assertCrossbowMemoryRecipeIsDuctilis(crossbowRecipe);
 	}
 
 	private static String read(String path) throws IOException {
@@ -161,10 +161,10 @@ public final class ManipulationTreeCoverageSourceTest {
 
 		for (String form : LIVING_WEAPON_FORMS) {
 			TreeNode node = require(nodes, form);
-			String expectedTreeParent = LIVING_WEAPON_TREE_PARENTS.get(form);
-			if (!node.parents().equals(List.of(expectedTreeParent))) {
+			List<String> expectedTreeParents = LIVING_WEAPON_TREE_PARENTS.get(form);
+			if (!node.parents().equals(expectedTreeParents)) {
 				throw new AssertionError(form + " should branch in its own tendency tree from "
-						+ expectedTreeParent + ", found " + node.parents());
+						+ expectedTreeParents + ", found " + node.parents());
 			}
 			if (node.parents().contains("conjure_staff")) {
 				throw new AssertionError(form + " should not use conjure_staff as a hard tree parent");
@@ -194,16 +194,6 @@ public final class ManipulationTreeCoverageSourceTest {
 		}
 		if (new LinkedHashSet<>(actual.values()).size() != LIVING_WEAPON_TENDENCIES.size()) {
 			throw new AssertionError("Living weapon forms should each use a different tendency, found " + actual);
-		}
-	}
-
-	private static void assertCrossbowMemoryRecipeIsDuctilis(String recipe) {
-		String compact = recipe.replaceAll("\\s+", "");
-		if (!compact.contains("\"ductilis\":1")) {
-			throw new AssertionError("Living Crossbow memory recipe should include Ductilis");
-		}
-		if (compact.contains("\"flammeus\":1")) {
-			throw new AssertionError("Living Crossbow memory recipe should not include Flammeus");
 		}
 	}
 

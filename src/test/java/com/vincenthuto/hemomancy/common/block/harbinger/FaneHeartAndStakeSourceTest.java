@@ -84,7 +84,8 @@ public final class FaneHeartAndStakeSourceTest {
 		assertContains("bloodwell breaks associated stakes on removal", bloodwell, "removeBlock(stakePos, false)");
 		assertContains("bloodwell uses footprint membership", bloodwell, "isInOwnFane");
 		assertContains("bloodwell default constructor does not occlude supporting blocks", bloodwell, ".noOcclusion()");
-		assertContains("bloodwell opens bloodline pool screen", bloodwell, "BloodlinePoolScreen.openScreen()");
+		assertContains("bloodwell opens bloodline pool screen", bloodwell,
+				"new PacketOpenBloodlinePoolScreen()");
 		assertContains("bloodwell lets absorption/projection tools target endpoint", bloodwell,
 				"ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION");
 		assertContains("bloodwell implements dynamic block blood endpoint", bloodwell,

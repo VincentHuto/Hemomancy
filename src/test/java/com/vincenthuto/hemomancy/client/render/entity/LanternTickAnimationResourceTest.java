@@ -24,7 +24,8 @@ public final class LanternTickAnimationResourceTest {
 		assertContains("model has abdomen glow part", model, "abdomenGlow");
 		assertContains("model has angled legs", model, "addAngledLeg");
 		assertContains("model legs roll outward instead of folding in", model, "LEG_OUTWARD_Z_ROT");
-		assertContains("model keeps top abdomen glow above shell", model, "TOP_GLOW_Y = -5.55F");
+		assertContains("model keeps top abdomen glow above shell", model,
+				"addBox(-3.25F, -4.05F, -2.25F, 6.5F, 0.25F, 9.0F");
 		assertDoesNotContain("model does not use angler lure part", model, "root.addOrReplaceChild(\"lure\"");
 		assertDoesNotContain("model does not animate a lure stalk", model, "this.lure");
 		assertDoesNotContain("abdomen glow does not rotate into body", model, "abdomenGlow.xRot = Mth.sin");
@@ -33,7 +34,7 @@ public final class LanternTickAnimationResourceTest {
 		assertContains("model animates leaping", model, "applyLeapingAnimation");
 		assertContains("model animates latched", model, "applyLatchedAnimation");
 		assertContains("model animates bite", model, "applyBitePulse");
-		assertContains("helmet layer keeps tick on top of head", layer, "HEAD_Y_OFFSET = -1.08F");
+		assertContains("helmet layer keeps tick on top of head", layer, "HEAD_Y_OFFSET = -1.25F");
 		assertContains("helmet layer avoids face placement", layer, "HEAD_Z_OFFSET = -0.02F");
 	}
 

@@ -13,10 +13,10 @@ public final class LivingStaffWeaponFormSourceTest {
 	public static void main(String[] args) throws IOException {
 		String manipInit = read("src/main/java/com/vincenthuto/hemomancy/common/init/ManipulationInit.java");
 		String itemInit = read("src/main/java/com/vincenthuto/hemomancy/common/init/ItemInit.java");
-		String changePacket = read("src/main/java/com/vincenthuto/hemomancy/common/network/capa/manips/ChangeSelectedManipPacket.java");
-		String updatePacket = read("src/main/java/com/vincenthuto/hemomancy/common/network/capa/manips/UpdateCurrentManipPacket.java");
-		String usePacket = read("src/main/java/com/vincenthuto/hemomancy/common/network/capa/manips/UseManipKeyPacket.java");
-		String quickPacket = read("src/main/java/com/vincenthuto/hemomancy/common/network/capa/manips/UseQuickManipKeyPacket.java");
+		String changePacket = read("src/main/java/com/vincenthuto/hemomancy/common/network/capa/harbinger/manips/ChangeSelectedManipPacket.java");
+		String updatePacket = read("src/main/java/com/vincenthuto/hemomancy/common/network/capa/harbinger/manips/UpdateCurrentManipPacket.java");
+		String usePacket = read("src/main/java/com/vincenthuto/hemomancy/common/network/capa/harbinger/manips/UseManipKeyPacket.java");
+		String quickPacket = read("src/main/java/com/vincenthuto/hemomancy/common/network/capa/harbinger/manips/UseQuickManipKeyPacket.java");
 		String formHelper = read("src/main/java/com/vincenthuto/hemomancy/common/item/harbinger/tool/living/LivingStaffWeaponFormHelper.java");
 		String tool = read("src/main/java/com/vincenthuto/hemomancy/common/item/harbinger/tool/living/LivingToolItem.java");
 		String blade = read("src/main/java/com/vincenthuto/hemomancy/common/item/harbinger/tool/living/LivingBladeItem.java");

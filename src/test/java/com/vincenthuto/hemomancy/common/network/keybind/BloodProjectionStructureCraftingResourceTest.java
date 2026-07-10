@@ -15,17 +15,17 @@ public final class BloodProjectionStructureCraftingResourceTest {
 		String projectionItem = read(SOURCE_ROOT.resolve(
 				"com/vincenthuto/hemomancy/common/item/harbinger/tool/living/BloodProjectionItem.java"));
 		String keyPacket = read(SOURCE_ROOT.resolve(
-				"com/vincenthuto/hemomancy/common/network/keybind/BloodCraftingKeyPressPacket.java"));
+				"com/vincenthuto/hemomancy/common/network/capa/harbinger/BloodCraftingKeyPressPacket.java"));
 		String packetHandler = read(SOURCE_ROOT.resolve(
 				"com/vincenthuto/hemomancy/common/network/PacketHandler.java"));
 		String feedPacket = read(SOURCE_ROOT.resolve(
-				"com/vincenthuto/hemomancy/common/network/capa/PacketBloodStructureFeed.java"));
+				"com/vincenthuto/hemomancy/common/network/capa/harbinger/PacketBloodStructureFeed.java"));
 		String feedManager = read(SOURCE_ROOT.resolve(
 				"com/vincenthuto/hemomancy/common/event/BloodStructureFeedManager.java"));
 		String craftingHelper = read(SOURCE_ROOT.resolve(
-				"com/vincenthuto/hemomancy/common/network/keybind/BloodStructureCraftingHelper.java"));
+				"com/vincenthuto/hemomancy/common/network/capa/harbinger/BloodStructureCraftingHelper.java"));
 		String visiblePositionRules = read(SOURCE_ROOT.resolve(
-				"com/vincenthuto/hemomancy/common/network/keybind/BloodStructureVisiblePositionRules.java"));
+				"com/vincenthuto/hemomancy/common/network/capa/harbinger/BloodStructureVisiblePositionRules.java"));
 		String clientData = read(SOURCE_ROOT.resolve(
 				"com/vincenthuto/hemomancy/client/data/ActiveBloodStructureFeedClientData.java"));
 		String renderer = read(SOURCE_ROOT.resolve(

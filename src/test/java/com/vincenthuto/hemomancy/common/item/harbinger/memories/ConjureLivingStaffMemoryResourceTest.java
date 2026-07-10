@@ -25,7 +25,7 @@ public final class ConjureLivingStaffMemoryResourceTest {
 		assertContains("living staff memory teaches conjure staff", itemInit,
 				"new BloodMemoryItem(new Item.Properties(), ManipulationInit.conjure_staff)");
 		assertContains("living staff memory is hidden from creative tab", hemomancy,
-				"item.get() != ItemInit.memory_conjure_living_staff.get()");
+				"item != ItemInit.memory_conjure_living_staff.get()");
 		assertContains("living staff memory has lang entry", lang,
 				"\"item.hemomancy.memory_conjure_living_staff\": \"Memory Conjure Living Staff\"");
 		assertExists("living staff memory model exists", model);

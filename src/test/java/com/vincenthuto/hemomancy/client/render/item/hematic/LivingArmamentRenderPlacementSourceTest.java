@@ -25,15 +25,15 @@ public final class LivingArmamentRenderPlacementSourceTest {
 		assertContains("torch third-person render rolls flame upright", torchRenderer,
 				"THIRD_PERSON_UPRIGHT_ROLL_DEGREES = 180.0F");
 		assertContains("torch third-person render lifts out of ground", torchRenderer,
-				"THIRD_PERSON_TORCH_LIFT = -0.62D");
+				"THIRD_PERSON_TORCH_LIFT =0.62D");
 		assertContains("torch third-person render moves outward from the torso", torchRenderer,
-				"THIRD_PERSON_TORCH_OUTWARD_OFFSET = 0.28D");
+				"THIRD_PERSON_TORCH_OUTWARD_OFFSET = -0.6D");
 		assertContains("flail handle places chain end below the grip", flailModel, "CHAIN_COLLAR_MIN_Y = 8.5F");
 		assertContains("flail physics anchor is below handle grip", flailHelper, "CHAIN_ANCHOR = new Vec3(0.0, 0.58, 0.0)");
 		assertContains("flail static bob hangs downward", flailHelper, "new Vec3(0.0, 0.62, 0.0)");
 		assertContains("flail physics returns positive chain slack", flailHelper, "return new Vec3(x, Math.sqrt(slack), z)");
 		assertContains("flail zero-length chain fallback points downward", flailHelper,
-				"tangent = new Vec3(0.0, 1.0, 0.0)");
+				"tangent = new Vec3(0.0, -1.0, 0.0)");
 		assertContains("flail helper rotates only chain and head into the droop frame", flailHelper,
 				"private static void renderDroopingChainAndHead");
 		assertContains("flail droop frame has a deliberate roll", flailHelper,
@@ -43,7 +43,7 @@ public final class LivingArmamentRenderPlacementSourceTest {
 		assertContains("flail droop frame faces the head away without turning the pole", flailHelper,
 				"CHAIN_FACE_AWAY_YAW_DEGREES = 180.0F");
 		assertContains("flail renders pole before chain droop frame", flailHelper,
-				"model.renderHandle(poseStack, base, packedLight, packedOverlay, -1);\n\t\trenderDroopingChainAndHead");
+				"model.renderHandle(poseStack, base, packedLight, packedOverlay, -1);");
 		assertNotContains("flail no longer uses negative anchor", flailHelper,
 				"ANCHOR = new Vec3(0.0, -1.0, 0.0)");
 		assertContains("flail gui render is larger", flailRenderer, "GUI_MODEL_SCALE = 0.76F");

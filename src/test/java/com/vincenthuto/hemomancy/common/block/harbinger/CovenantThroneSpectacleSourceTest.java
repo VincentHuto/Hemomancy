@@ -98,7 +98,7 @@ public final class CovenantThroneSpectacleSourceTest {
 		assertContains("item renderer should scale the larger throne model up in GUI",
 				itemRenderer, "GUI_MODEL_SCALE");
 		assertContains("item renderer should use a cleaner GUI-facing rotation",
-				itemRenderer, "Vector3.YP, 28");
+				itemRenderer, "Vector3.YP, 220");
 	}
 
 	private static String read(Path path) throws IOException {

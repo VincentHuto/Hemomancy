@@ -19,6 +19,8 @@ public final class HematicArmatureInteractionSourceTest {
 				"com/vincenthuto/hemomancy/common/tile/crafting/HematicArmatureBlockEntity.java"));
 		String block = read(SOURCE_ROOT.resolve(
 				"com/vincenthuto/hemomancy/common/block/harbinger/crafting/HematicArmatureBlock.java"));
+		String rotationHelper = read(SOURCE_ROOT.resolve(
+				"com/vincenthuto/hemomancy/common/block/shared/HorizontalFacingRotationHelper.java"));
 		String fillerBlock = read(SOURCE_ROOT.resolve(
 				"com/vincenthuto/hemomancy/common/block/shared/FillerBlock.java"));
 		String renderer = read(SOURCE_ROOT.resolve(
@@ -72,15 +74,17 @@ public final class HematicArmatureInteractionSourceTest {
 				"RESERVOIR_HEART_FILLER_OFFSETS");
 		assertContains("armature blocks the reservoir heart", block,
 				"new BlockPos(0, 4, 0)");
-		assertContains("armature blocks above the reservoir heart", block,
+		assertNotContains("armature leaves access above the reservoir heart", block,
 				"new BlockPos(0, 5, 0)");
 		assertContains("armature placement checks full filler height", block,
 				"pos.getY() + MAX_FILLER_Y_OFFSET");
 		assertContains("armature rotates bowl stand filler boundaries with block facing", block,
 				"rotatedFillerOffsets(facing)");
-		assertContains("armature rotates east-facing filler boundaries to the correct side", block,
+		assertContains("armature delegates filler boundary rotation to the shared helper", block,
+				"HorizontalFacingRotationHelper.rotateSouthOffsets(FILLER_OFFSETS, facing)");
+		assertContains("armature rotates east-facing filler boundaries to the correct side", rotationHelper,
 				"case EAST -> new BlockPos(offset.getZ(), offset.getY(), -offset.getX());");
-		assertContains("armature rotates west-facing filler boundaries to the correct side", block,
+		assertContains("armature rotates west-facing filler boundaries to the correct side", rotationHelper,
 				"case WEST -> new BlockPos(-offset.getZ(), offset.getY(), offset.getX());");
 		assertContains("armature placement checks rotated bowl stand filler boundaries", block,
 				"canPlaceMultiBlock(level, pos, facing)");

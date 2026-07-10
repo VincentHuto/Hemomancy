@@ -56,9 +56,9 @@ public final class CustomBlockItemGuiPoseSourceTest {
 		assertContains(label + " should define the shared GUI pitch",
 				renderer, "GUI_MODEL_PITCH_DEGREES = 198.0F");
 		assertContains(label + " should define the right-facing front GUI yaw",
-				renderer, "GUI_MODEL_YAW_DEGREES = 42.0F");
+				renderer, "GUI_MODEL_YAW_DEGREES = -45.0F");
 		assertContains(label + " should define the shared GUI roll",
-				renderer, "GUI_MODEL_ROLL_DEGREES = -8.0F");
+				renderer, "GUI_MODEL_ROLL_DEGREES = 1.0F");
 		assertContains(label + " should apply the GUI pitch",
 				renderer, "GUI_MODEL_PITCH_DEGREES");
 		assertContains(label + " should apply the reversed GUI yaw",

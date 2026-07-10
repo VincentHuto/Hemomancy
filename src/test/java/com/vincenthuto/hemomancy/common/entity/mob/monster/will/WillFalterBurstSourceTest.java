@@ -49,7 +49,7 @@ public final class WillFalterBurstSourceTest {
 
 	private static void burstStateClearsWhenResolved(String source) {
 		assertContains("faltering clears burst tracking", source, "private void enterFaltering()");
-		assertContains("dissolving clears burst tracking", source, "startDissolving(drops, durationTicks, false)");
+		assertContains("dissolving clears burst tracking", source, "clearFalterBurst();");
 		assertContains("burst damage is zeroed", source, "falterBurstDamage = 0.0F;");
 		assertContains("burst window is zeroed", source, "falterBurstWindowTicks = 0;");
 		assertContains("burst attacker is zeroed", source, "falterBurstAttackerId = null;");

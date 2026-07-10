@@ -31,8 +31,11 @@ public final class HarbingerArmorTextureResourceTest {
 	public static void main(String[] args) throws IOException {
 		for (String item : DISTINCT_ITEM_TEXTURES) {
 			assertItemModelUsesOwnTexture(item);
-			assertExists("item texture for " + item,
-					RESOURCE_ROOT.resolve("assets/hemomancy/textures/item/" + item + ".png"));
+			String model = read(RESOURCE_ROOT.resolve("assets/hemomancy/models/item/" + item + ".json"));
+			if (!model.contains("\"parent\": \"builtin/entity\"")) {
+				assertExists("item texture for " + item,
+						RESOURCE_ROOT.resolve("assets/hemomancy/textures/item/" + item + ".png"));
+			}
 		}
 
 		assertExists("Silent Archon worn layer 1",
@@ -78,7 +81,14 @@ public final class HarbingerArmorTextureResourceTest {
 
 	private static void assertItemModelUsesOwnTexture(String item) throws IOException {
 		String model = read(RESOURCE_ROOT.resolve("assets/hemomancy/models/item/" + item + ".json"));
-		assertContains("model texture for " + item, model, "\"layer0\": \"hemomancy:item/" + item + "\"");
+		if (item.equals("monolith_imbued_cloth")) {
+			assertContains("custom renderer model for " + item, model, "\"parent\": \"builtin/entity\"");
+		} else if (item.equals("blood_lust_helm_lodestone")) {
+			assertContains("lodestone helm reuses its component texture", model,
+					"\"layer0\": \"hemomancy:item/lodestone_faceplate\"");
+		} else {
+			assertContains("model texture for " + item, model, "\"layer0\": \"hemomancy:item/" + item + "\"");
+		}
 	}
 
 	private static String read(Path path) throws IOException {

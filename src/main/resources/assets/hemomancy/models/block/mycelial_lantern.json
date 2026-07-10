@@ -1,6 +1,6 @@
 {
 	"format_version": "1.21.11",
-	"credit": "Made with Blockbench",
+	"credit": "Mechanical conversion from MycelialLanternModel Java addBox definitions",
 	"parent": "minecraft:block/block",
 	"render_type": "translucent",
 	"textures": {

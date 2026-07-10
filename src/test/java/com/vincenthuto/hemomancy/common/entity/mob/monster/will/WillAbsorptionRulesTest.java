@@ -33,7 +33,7 @@ public final class WillAbsorptionRulesTest {
 		assertClose("bare progress rate", 1.0F, WillAbsorptionRules.bareProgressPerTick());
 		assertClose("unfocused staff progress rate", 1.5F,
 				WillAbsorptionRules.staffProgressPerTick(LivingStaffFocusProfile.NONE));
-		LivingStaffFocusProfile heavilyFocused = new LivingStaffFocusProfile(0, 5, 5, 0, 5, true);
+		LivingStaffFocusProfile heavilyFocused = new LivingStaffFocusProfile(0, 5, 0, 5, 5, true);
 		assertClose("staff progress rate clamps", 2.25F, WillAbsorptionRules.staffProgressPerTick(heavilyFocused));
 		LivingStaffFocusProfile modestFocus = new LivingStaffFocusProfile(0, 1, 0, 1, 0, false);
 		assertClose("staff progress rate scales with draw and focus", 1.65F,

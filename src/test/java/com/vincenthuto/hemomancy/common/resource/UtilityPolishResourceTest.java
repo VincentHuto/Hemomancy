@@ -173,7 +173,9 @@ public final class UtilityPolishResourceTest {
 				"block != BlockInit.lethean_poppy_wreath.get()");
 		assertContains("wreath blockstate has north variant", blockstate, "facing=north");
 		assertContains("wreath blockstate has rotation", blockstate, "\"y\": 180");
-		assertContains("wreath item uses block model", itemModel, "\"parent\": \"hemomancy:block/lethean_poppy_wreath\"");
+		assertContains("wreath item keeps explicit generated geometry", itemModel, "\"elements\"");
+		assertContains("wreath item uses the block texture", itemModel,
+				"\"0\": \"hemomancy:block/lethean_poppy_wreath\"");
 		assertNotContains("wreath model element rotations must use vanilla axis format", read(ASSETS.resolve("models/block/lethean_poppy_wreath.json")),
 				"\"rotation\": {\"x\"");
 		assertContains("wreath block localization exists", lang,

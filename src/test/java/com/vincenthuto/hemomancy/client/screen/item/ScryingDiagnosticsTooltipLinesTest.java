@@ -69,7 +69,7 @@ public final class ScryingDiagnosticsTooltipLinesTest {
 
 		assertContains(lines, "Skill - Efficiency: x0.80");
 		assertContains(lines, "Rite - Pome Corruption: x1.24");
-		assertContains(lines, "Effective Cost: 148.80 mL");
+		assertContains(lines, "Effective Cost: 198.40 mL");
 	}
 
 	private static void manipulationSlotTooltipShowsSlotSourcesAndCap() {

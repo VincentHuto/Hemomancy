@@ -1,6 +1,5 @@
 package com.vincenthuto.hemomancy.common.entity.boss.endgame;
 
-import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.init.SoundInit;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerBossEvent;
@@ -21,7 +20,6 @@ import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
 import net.minecraft.world.entity.ai.goal.WaterAvoidingRandomStrollGoal;
 import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
-import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
@@ -45,12 +43,7 @@ public class MycophantEntity extends Monster {
     }
     @Override
     protected void dropCustomDeathLoot(ServerLevel level, DamageSource damageSource, boolean recentlyHit) {
-        //super.dropCustomDeathLoot(level, damageSource, recentlyHit);
-        ItemEntity itementity = this.spawnAtLocation(ItemInit.mycophant_tendril.get());
-        if (itementity != null) {
-            itementity.setExtendedLifetime();
-            itementity.setInvulnerable(true);
-        }
+        super.dropCustomDeathLoot(level, damageSource, recentlyHit);
     }
 
     public static AttributeSupplier.Builder setAttributes() {

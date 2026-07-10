@@ -2,6 +2,7 @@ package com.vincenthuto.hemomancy.common.event;
 
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.command.HemoCommand;
+import com.vincenthuto.hemomancy.common.testing.DevTestHooks;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.RegisterCommandsEvent;
@@ -12,6 +13,7 @@ public class CommonEvents {
 	@SubscribeEvent
 	public static void onRegisterCommands(RegisterCommandsEvent event) {
 		HemoCommand.register(event.getDispatcher());
+		DevTestHooks.registerCommandsIfPresent(event.getDispatcher());
 	}
 
 

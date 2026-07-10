@@ -167,12 +167,16 @@ public final class HarbingerArtificerAssignmentHelper {
 	}
 
 	public static ItemStack tryGrantHematicIronFitting(ServerPlayer player) {
-		if (!ArmorSetHelper.hasFullHematicIronSet(player)) {
+		if (!canGrantHematicIronFitting(player)) {
 			return ItemStack.EMPTY;
 		}
 		HarbingerAdvancementGranter.grantIfNotDone(player,
 				HarbingerAdvancementGranter.ADV_ARTIFICER_HEMATIC_IRON_FITTING);
 		return new ItemStack(ItemInit.worn_vow_fitting.get());
+	}
+
+	public static boolean canGrantHematicIronFitting(ServerPlayer player) {
+		return ArmorSetHelper.hasFullHematicIronSet(player);
 	}
 
 	public static ItemStack earnedForkFitting(ServerPlayer player) {

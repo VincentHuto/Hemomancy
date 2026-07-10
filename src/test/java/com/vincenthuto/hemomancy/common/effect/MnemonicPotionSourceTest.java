@@ -8,6 +8,8 @@ public final class MnemonicPotionSourceTest {
 	private static final Path EFFECT_INIT = Path.of("src/main/java/com/vincenthuto/hemomancy/common/init/EffectInit.java");
 	private static final Path BLOOD_MANIPULATION = Path.of(
 			"src/main/java/com/vincenthuto/hemomancy/common/manipulation/BloodManipulation.java");
+	private static final Path MANIPULATION_COST_LEDGER = Path.of(
+			"src/main/java/com/vincenthuto/hemomancy/common/capability/player/harbinger/manip/ManipulationCostLedger.java");
 	private static final Path LANG = Path.of("src/main/resources/assets/hemomancy/lang/en_us.json");
 	private static final Path MOB_EFFECT_TEXTURES = Path.of("src/main/resources/assets/hemomancy/textures/mob_effect");
 
@@ -17,6 +19,7 @@ public final class MnemonicPotionSourceTest {
 	public static void main(String[] args) throws IOException {
 		String effectInit = Files.readString(EFFECT_INIT).replace("\r\n", "\n");
 		String bloodManipulation = Files.readString(BLOOD_MANIPULATION).replace("\r\n", "\n");
+		String manipulationCostLedger = Files.readString(MANIPULATION_COST_LEDGER).replace("\r\n", "\n");
 		String lang = Files.readString(LANG).replace("\r\n", "\n");
 
 		assertContains("registers Mnemonic Whispers effect", effectInit, "mnemonic_whispers");
@@ -31,7 +34,7 @@ public final class MnemonicPotionSourceTest {
 				"removeEffect(mnemonic_whispers");
 		assertContains("cooldown uses Mnemonic Whispers", bloodManipulation,
 				"MnemonicPotionRules.manipulationCooldownMultiplier");
-		assertContains("cost uses Mnemonic Screams", bloodManipulation,
+		assertContains("cost uses Mnemonic Screams", manipulationCostLedger,
 				"MnemonicPotionRules.manipulationCostMultiplier");
 		assertContains("Whispers lang", lang, "\"effect.hemomancy.mnemonic_whispers\"");
 		assertContains("Screams lang", lang, "\"effect.hemomancy.mnemonic_screams\"");

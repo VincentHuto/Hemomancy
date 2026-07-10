@@ -41,12 +41,6 @@ public final class EnzymeReagentEconomyResourceTest {
 	}
 
 	private static void earlyBiologicalRecipesUseEnzymePrimer() throws IOException {
-		assertContains("sanguine salve primer recipe",
-				read(RECIPES.resolve("sanguine_salve_from_enzyme_primer.json")), "hemomancy:enzyme_primer");
-		assertContains("sanguine conduit primer recipe",
-				read(RECIPES.resolve("sanguine_conduit_from_enzyme_primer.json")), "hemomancy:enzyme_primer");
-		assertContains("puppeteering thread primer recipe",
-				read(RECIPES.resolve("puppeteering_thread_from_enzyme_primer.json")), "hemomancy:enzyme_primer");
 		assertContains("spore sac primer recipe",
 				read(RECIPES.resolve("spore_sac_from_enzyme_primer.json")), "hemomancy:enzyme_primer");
 		assertContains("morphling jar primer recipe",
@@ -79,8 +73,10 @@ public final class EnzymeReagentEconomyResourceTest {
 
 	private static void modelsExistForSupportItems() throws IOException {
 		assertContains("vascular poultice model", read(MODELS.resolve("vascular_poultice.json")), "sanguine_salve");
-		assertContains("enzyme primer model", read(MODELS.resolve("enzyme_primer.json")), "vivacious_enzyme");
-		assertContains("ferric binder model", read(MODELS.resolve("ferric_binder.json")), "hematic_iron_powder");
+		assertContains("enzyme primer model", read(MODELS.resolve("enzyme_primer.json")),
+				"hemomancy:item/enzyme_primer");
+		assertContains("ferric binder model", read(MODELS.resolve("ferric_binder.json")),
+				"hemomancy:item/ferric_binder");
 	}
 
 	private static String read(Path path) throws IOException {

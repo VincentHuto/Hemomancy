@@ -6,9 +6,9 @@ import java.nio.file.Path;
 
 public final class DesiccantStingSourceTest {
 	private static final Path ENTITY_SOURCE = Path.of(
-			"src/main/java/com/vincenthuto/hemomancy/common/entity/mob/monster/DesiccantEntity.java");
+			"src/main/java/com/vincenthuto/hemomancy/common/entity/mob/arthropod/DesiccantEntity.java");
 	private static final Path MODEL_SOURCE = Path.of(
-			"src/main/java/com/vincenthuto/hemomancy/client/model/entity/mob/monster/DesiccantModel.java");
+			"src/main/java/com/vincenthuto/hemomancy/client/model/entity/mob/arthropod/DesiccantModel.java");
 	private static final Path HEMOMANCY_REFERENCE = Path.of("docs/HEMOMANCY_REFERENCE.md");
 
 	private DesiccantStingSourceTest() {

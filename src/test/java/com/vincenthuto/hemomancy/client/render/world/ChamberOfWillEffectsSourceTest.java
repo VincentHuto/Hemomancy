@@ -8,23 +8,23 @@ import javax.imageio.ImageIO;
 
 public final class ChamberOfWillEffectsSourceTest {
 	private static final Path WRAPPER = Path.of(
-            "src/main/java/com/vincenthuto/hemomancy/client/render/world/ChamberOfWillEffects.java");
+			"src/main/java/com/vincenthuto/hemomancy/client/render/world/chamberofwill/ChamberOfWillEffects.java");
 	private static final Path HELPERS = Path.of(
-			"src/main/java/com/vincenthuto/hemomancy/client/render/world/ChamberOfWillRenderHelpers.java");
+			"src/main/java/com/vincenthuto/hemomancy/client/render/world/chamberofwill/ChamberOfWillRenderHelpers.java");
 	private static final Path ABSTRACT_EFFECTS = Path.of(
-			"src/main/java/com/vincenthuto/hemomancy/client/render/world/AbstractChamberThemeEffects.java");
+			"src/main/java/com/vincenthuto/hemomancy/client/render/world/chamberofwill/AbstractChamberThemeEffects.java");
 	private static final Path THEME_EFFECTS = Path.of(
-			"src/main/java/com/vincenthuto/hemomancy/client/render/world/ChamberThemeEffects.java");
+			"src/main/java/com/vincenthuto/hemomancy/client/render/world/chamberofwill/ChamberThemeEffects.java");
 	private static final Path QLIPHOTH_EFFECTS = Path.of(
-			"src/main/java/com/vincenthuto/hemomancy/client/render/world/QliphothCommunionChamberEffects.java");
+			"src/main/java/com/vincenthuto/hemomancy/client/render/world/chamberofwill/QliphothCommunionChamberEffects.java");
 	private static final Path SILENT_ARCHON_EFFECTS = Path.of(
-			"src/main/java/com/vincenthuto/hemomancy/client/render/world/SilentArchonChamberEffects.java");
+			"src/main/java/com/vincenthuto/hemomancy/client/render/world/chamberofwill/SilentArchonChamberEffects.java");
 	private static final Path CLIENT_EVENTS = Path.of(
 			"src/main/java/com/vincenthuto/hemomancy/client/event/ClientEvents.java");
     private static final Path THEME = Path.of(
-            "src/main/java/com/vincenthuto/hemomancy/client/render/world/ChamberSkyTheme.java");
+			"src/main/java/com/vincenthuto/hemomancy/client/render/world/chamberofwill/ChamberSkyTheme.java");
     private static final Path REGISTRY = Path.of(
-            "src/main/java/com/vincenthuto/hemomancy/client/render/world/ChamberSkyThemeRegistry.java");
+			"src/main/java/com/vincenthuto/hemomancy/client/render/world/chamberofwill/ChamberSkyThemeRegistry.java");
     private static final Path RENDER_TYPES = Path.of(
             "src/main/java/com/vincenthuto/hemomancy/client/render/HemoRenderTypes.java");
     private static final Path SHADER_INIT = Path.of(

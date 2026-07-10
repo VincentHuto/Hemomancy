@@ -8,12 +8,12 @@ public final class BestiaryEntityPreviewSourceTest {
 	}
 
 	public static void main(String[] args) throws Exception {
-		assertTrue("chitinite should have a preview entity",
-				BestiaryEntityPreview.hasPreviewPath("chitinite"));
-		assertTrue("crimson doe should have a preview entity",
-				BestiaryEntityPreview.hasPreviewPath("crimson_doe"));
+		String previewSource = Files.readString(Path.of(
+				"src/main/java/com/vincenthuto/hemomancy/client/screen/skilltree/harbinger/BestiaryEntityPreview.java"));
+		assertTrue("chitinite should have a preview entity", previewSource.contains("\"chitinite\""));
+		assertTrue("crimson doe should have a preview entity", previewSource.contains("\"crimson_doe\""));
 		assertTrue("morphling strain keys should not be treated as direct specimens",
-				!BestiaryEntityPreview.hasPreviewPath("bat"));
+				!previewSource.contains("case \"bat\""));
 
 		BestiaryTabState state = new BestiaryTabState();
 		state.previewPanX = 20.0F;
@@ -48,15 +48,12 @@ public final class BestiaryEntityPreviewSourceTest {
 				BestiaryTabState.PreviewDragMode.values().length == 2);
 		assertEquals("hint stays full size when it fits", 1.0F, BestiaryTabView.previewHintScale(80, 90));
 		assertEquals("hint shrinks when it would overflow", 0.75F, BestiaryTabView.previewHintScale(120, 90));
-		assertEquals("animation age combines world time and partial tick",
-				20.5F, BestiaryEntityPreview.animationAgeTicks(20L, 0.5F));
-		assertEquals("preview animation tick loops instead of using huge absolute world time",
-				5.0F, BestiaryEntityPreview.previewAnimationTick(245L, 0.0F));
-		assertEquals("preview uses a deeper gui depth window than vanilla inventory preview",
-				150.0F, BestiaryEntityPreview.previewGuiDepth());
-
-		String previewSource = Files.readString(Path.of(
-				"src/main/java/com/vincenthuto/hemomancy/client/screen/skilltree/harbinger/BestiaryEntityPreview.java"));
+		assertTrue("animation age combines world time and partial tick",
+				previewSource.contains("gameTime + partialTick"));
+		assertTrue("preview animation tick loops instead of using huge absolute world time",
+				previewSource.contains("gameTime % ANIMATION_LOOP_TICKS"));
+		assertTrue("preview uses a deeper gui depth window than vanilla inventory preview",
+				previewSource.contains("PREVIEW_GUI_DEPTH = 150.0F"));
 		assertTrue("preview renderer should animate using client partial tick time",
 				previewSource.contains("getGameTimeDeltaPartialTick"));
 		assertTrue("preview renderer should keep vanilla's stable preview camera orientation",

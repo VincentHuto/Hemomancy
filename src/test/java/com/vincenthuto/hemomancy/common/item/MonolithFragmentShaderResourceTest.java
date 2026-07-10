@@ -27,8 +27,6 @@ public final class MonolithFragmentShaderResourceTest {
 				"MONOLITH_FRAGMENT_ENTITY = new ShaderHolder(Hemomancy.rloc(\"item/monolith_fragment\")");
 		assertContains("entity shader holder uses entity vertex format", shaderInit,
 				"DefaultVertexFormat.NEW_ENTITY");
-		assertContains("shader holder exposes gui clamp uniform", shaderInit,
-				"\"GuiClamp\"");
 		assertContains("shader registration runs on resource reload", shaderInit,
 				"registerShader(event, MONOLITH_FRAGMENT.createInstance(provider));");
 		assertContains("entity shader registration runs on resource reload", shaderInit,
@@ -47,8 +45,6 @@ public final class MonolithFragmentShaderResourceTest {
 				"setUniform(shader, \"Attuned\", attuned)");
 		assertContains("render type carries custom seconds time uniform", renderTypes,
 				"setUniform(shader, \"HemoTime\", gameTime)");
-		assertContains("render type carries gui clamp uniform", renderTypes,
-				"setUniform(shader, \"GuiClamp\", guiClamp)");
 		assertNotContains("render type avoids Minecraft's built-in GameTime overwrite", renderTypes,
 				"setUniform(shader, \"GameTime\"");
 		assertContains("renderer emits uv-mapped low-poly triangles", renderer,
@@ -103,30 +99,20 @@ public final class MonolithFragmentShaderResourceTest {
 				"\"name\": \"ShardSeed\"");
 		assertContains("shader json exposes custom seconds time", shaderJson,
 				"\"name\": \"HemoTime\"");
-		assertContains("shader json exposes gui clamp", shaderJson,
-				"\"name\": \"GuiClamp\"");
 		assertNotContains("shader json avoids Minecraft's built-in GameTime uniform", shaderJson,
 				"\"name\": \"GameTime\"");
 		assertNotContains("shader json does not request unused view rotation uniform", shaderJson,
 				"\"name\": \"IViewRotMat\"");
 		assertContains("vertex shader morphs geometry", vertexShader,
-				"foldVector");
-		assertContains("vertex shader snaps silhouette states", vertexShader,
-				"snapPhase");
-		assertContains("vertex shader interpolates silhouette noise", vertexShader,
-				"phaseNoise(");
-		assertContains("vertex shader eases silhouette transitions", vertexShader,
-				"smooth01(");
+				"p.xz += normalize(fromCenter) * morph * strength * edgeWeight");
+		assertContains("vertex shader animates silhouette noise", vertexShader,
+				"float morph = sin(");
 		assertNotContains("vertex shader avoids discrete GameTime shape targets", vertexShader,
 				"floor(GameTime * (SNAP_RATE_BASE");
-		assertContains("vertex shader keeps snap changes readable", vertexShader,
-				"SNAP_RATE_BASE = 0.85");
+		assertContains("vertex shader keeps morph changes readable", vertexShader,
+				"VERTEX_MORPH_RATE = 1.45");
 		assertContains("vertex shader uses custom seconds time", vertexShader,
 				"uniform float HemoTime;");
-		assertContains("vertex shader receives gui clamp state", vertexShader,
-				"uniform float GuiClamp;");
-		assertContains("vertex shader disables displacement in inventory GUI", vertexShader,
-				"if (GuiClamp < 0.5)");
 		assertNotContains("vertex shader avoids overwritten GameTime input", vertexShader,
 				"GameTime");
 		assertNotContains("vertex shader avoids old tick-fast snap rate", vertexShader,

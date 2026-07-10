@@ -40,8 +40,7 @@ public final class HemomancyCreativeTabsSourceTest {
 			"echo_of_lungs",
 			"echo_of_kidneys",
 			"draught_of_still_mercy",
-			"lethean_brew",
-			"liber_immaculatus");
+			"lethean_brew");
 	private static final List<String> WIP_BLOCKS = List.of(
 			"humane_idol",
 			"serpentine_idol",
@@ -49,7 +48,6 @@ public final class HemomancyCreativeTabsSourceTest {
 			"witness_organ",
 			"saint_sarcophagus",
 			"gourdvine_tap",
-			"covenant_throne",
 			"sanguine_vigil",
 			"visceral_mirror",
 			"blood_basin",

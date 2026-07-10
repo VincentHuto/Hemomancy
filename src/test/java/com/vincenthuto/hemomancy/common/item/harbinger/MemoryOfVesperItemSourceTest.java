@@ -15,12 +15,10 @@ public final class MemoryOfVesperItemSourceTest {
 		String recipeInit = read("src/main/java/com/vincenthuto/hemomancy/common/init/RecipeInit.java");
 
 		assertContains("memory use override", source, "InteractionResultHolder<ItemStack> use");
-		assertContains("memory requires active blood", source, "volume == null || !volume.isActive()");
-		assertContains("memory requires living staff bond", source, "!progress.hasLivingStaffBond()");
-		assertContains("memory rejects duplicate awakening", source, "progress.isVesperMemoryAwakened()");
-		assertContains("memory awakens player progress", source, "progress.awakenVesperMemory()");
-		assertContains("memory consumes only after awakening", source, "stack.shrink(1)");
-		assertContains("memory syncs player progress", source, "LivingStaffBondHelper.syncProgress");
+		assertContains("memory directs the player to its graft rite", source,
+				"hemomancy.memory_of_vesper.rite_guidance");
+		assertNotContains("memory no longer awakens directly", source, "progress.awakenVesperMemory()");
+		assertNotContains("memory is consumed by the rite instead of item use", source, "stack.shrink(1)");
 		assertNotContains("old vesper staff serializer removed", recipeInit, "vesper_staff_upgrade");
 	}
 

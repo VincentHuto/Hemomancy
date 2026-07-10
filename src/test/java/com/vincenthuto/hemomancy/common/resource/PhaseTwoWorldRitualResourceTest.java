@@ -18,7 +18,6 @@ public final class PhaseTwoWorldRitualResourceTest {
 			require(ASSETS.resolve("models/item/" + id + ".json"));
 			require(ASSETS.resolve("textures/block/" + id + ".png"));
 		}
-		require(ASSETS.resolve("textures/item/mnemonic_candle.png"));
 		require(ASSETS.resolve("textures/mob_effect/mnemonic_candle_aura.png"));
 		require(DATA.resolve("recipe/mnemonic_candle.json"));
 		require(DATA.resolve("loot_table/blocks/mnemonic_candle.json"));

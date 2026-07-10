@@ -14,7 +14,7 @@ public final class MorphlingStrainReframeResourceTest {
 	private static final Pattern STAFF_PREDICATE_RETURN = Pattern.compile(
 			"ItemInit\\.morphling_[a-z_]+\\.get\\(\\)\\) \\{\\R\\s*return ([0-9]+)\\.0F;");
 	private static final Pattern STAFF_MODEL_OVERRIDE = Pattern.compile(
-			"\"hemomancy:morph\"\\s*:\\s*([0-9]+)");
+			"\"hemomancy:staff_visual\"\\s*:\\s*([0-9]+)");
 
 	private static final String[][] SURVIVING_STRAINS = {
 			{ "leeches", "deadmans_purse", "LeechesMorphlingItem", "DeadmansPurseMorphlingItem",
@@ -139,7 +139,7 @@ public final class MorphlingStrainReframeResourceTest {
 		assertEquals("active living staff morph predicates", Set.of(1, 2, 3, 4, 5, 6, 7, 8), predicateReturns);
 		for (int predicate : predicateReturns) {
 			if (!modelOverrides.contains(predicate)) {
-				throw new AssertionError("living_staff.json missing override for hemomancy:morph " + predicate);
+				throw new AssertionError("living_staff.json missing override for hemomancy:staff_visual " + predicate);
 			}
 		}
 	}

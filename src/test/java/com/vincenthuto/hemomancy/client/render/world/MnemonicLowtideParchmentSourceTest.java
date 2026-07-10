@@ -58,7 +58,7 @@ public final class MnemonicLowtideParchmentSourceTest {
 		assertContains("water parchment wind ripple stays visible without distance scaling", lowtideEffects,
 				"LOWTIDE_PARCHMENT_WATER_WIND_STRENGTH = 0.055F");
 		assertContains("air parchment wind ripple stays visible without distance scaling", lowtideEffects,
-				"LOWTIDE_PARCHMENT_AIR_WIND_STRENGTH = 0.120F");
+				"LOWTIDE_PARCHMENT_AIR_WIND_STRENGTH = 0.420F");
 		assertNotContains("parchment wind ripple should not scale by sky distance", lowtideEffects,
 				"skyDistance * windStrength");
 		assertNotContains("parchment render type should not use the new-entity shader layout", parchmentRenderType,

@@ -143,15 +143,15 @@ public final class HarbingerArmor3dModelResourceTest {
 		assertContains("armor item helmet gui transform", displayTransformHelper,
 				"poseStack.mulPose(Axis.YP.rotationDegrees(-24.0F));");
 		assertContains("armor item helmet first-person transform", displayTransformHelper,
-				"applyHelmetFirstPersonTransform(context, slot, poseStack);");
+				"applyArmorFirstPersonTransform(context, slot, poseStack);");
 		assertContains("armor item helmet first-person transform", displayTransformHelper,
-				"private static void applyHelmetFirstPersonTransform(ItemDisplayContext context, EquipmentSlot slot, PoseStack poseStack)");
+				"private static void applyArmorFirstPersonTransform(ItemDisplayContext context, EquipmentSlot slot, PoseStack poseStack)");
 		assertContains("armor item helmet first-person transform", displayTransformHelper,
-				"context == ItemDisplayContext.FIRST_PERSON_LEFT_HAND ? -24.0F : 24.0F");
+				"context == ItemDisplayContext.FIRST_PERSON_LEFT_HAND ? -54.0F : 54.0F");
 		assertNotContains("armor item helmet first-person transform should not use reversed yaw", displayTransformHelper,
-				"context == ItemDisplayContext.FIRST_PERSON_LEFT_HAND ? 24.0F : -24.0F");
+				"context == ItemDisplayContext.FIRST_PERSON_LEFT_HAND ? 54.0F : -54.0F");
 		assertContains("armor item helmet first-person transform", displayTransformHelper,
-				"poseStack.translate(0.0D, 0.28D, 0.0D);");
+				"poseStack.translate(0.0D, 0.15D, 0.0D);");
 		assertContains("armor item helmet first-person transform", displayTransformHelper,
 				"poseStack.mulPose(Axis.YP.rotationDegrees(yaw));");
 		assertContains("armor item head y normalization", displayTransformHelper, "case HEAD -> 0.55D;");

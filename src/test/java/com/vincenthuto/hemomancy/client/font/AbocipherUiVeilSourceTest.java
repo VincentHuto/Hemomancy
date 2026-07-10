@@ -24,10 +24,10 @@ public final class AbocipherUiVeilSourceTest {
 		String vicar = read(SOURCE_ROOT.resolve(
 				"com/vincenthuto/hemomancy/common/entity/npc/dialogue/HarbingerVicarDialogueTrees.java"));
 		assertContains("vicar literacy-aware factory", vicar,
-				"forDegree(int degree, int entityId, boolean hasBloodline, boolean hasAbocipherLiteracy)");
+				"forDegree(int degree, int entityId, boolean hasBloodline, boolean isNpcRecruited,");
 		assertContains("degree 3 should use ordinary initiate dialogue", vicar, "case 3 -> initiate(entityId);");
 		assertContains("degree 4 should keep literacy-aware adept dialogue", vicar,
-				"case 4 -> adept(entityId, hasAbocipherLiteracy);");
+				"case 4 -> adept(entityId, hasAbocipherLiteracy, masonsRespiteDirective);");
 		assertContains("vicar blood-shotting event", vicar, "vicar_blood_shotting");
 		assertContains("vicar ritual option", vicar, "hemomancy.dialogue.vicar.option.open_blood_script");
 		assertNotContains("initiate dialogue should not include blood-script ritual",

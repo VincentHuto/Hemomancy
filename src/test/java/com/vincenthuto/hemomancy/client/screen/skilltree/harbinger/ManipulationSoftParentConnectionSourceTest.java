@@ -12,7 +12,7 @@ public final class ManipulationSoftParentConnectionSourceTest {
 
 	public static void main(String[] args) throws IOException {
 		String entry = read("src/main/java/com/vincenthuto/hemomancy/client/screen/skilltree/harbinger/ManipulationTreeEntry.java");
-		String controller = read("src/main/java/com/vincenthuto/hemomancy/client/screen/skilltree/harbinger/ManipulationsTabController.java");
+		String controller = read("src/main/java/com/vincenthuto/hemomancy/client/screen/skilltree/harbinger/ManipulationTraceLayerCache.java");
 
 		assertContains("entry keeps soft parents as a separate dependency list",
 				entry, "public List<String> getSoftParentNames()");

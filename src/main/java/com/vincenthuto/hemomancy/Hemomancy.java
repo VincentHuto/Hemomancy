@@ -13,6 +13,7 @@ import com.vincenthuto.hemomancy.common.entity.npc.dialogue.inquiry.ItemInquiryL
 import com.vincenthuto.hemomancy.common.init.*;
 import com.vincenthuto.hemomancy.common.item.harbinger.memories.LivingWeaponGraftItem;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
+import com.vincenthuto.hemomancy.common.testing.DevTestHooks;
 import com.vincenthuto.hemomancy.common.worldgen.ChamberOfWillManager;
 import com.vincenthuto.hemomancy.config.HemoConfig;
 import com.vincenthuto.hutoslib.common.data.book.BookPlaceboReloadListener;
@@ -122,6 +123,7 @@ public class Hemomancy {
         modEventBus.addListener((FMLCommonSetupEvent event) -> LiberDiscoveryEvents.commonSetup(event));
         modEventBus.addListener((FMLCommonSetupEvent event) -> UnstainedProgressEvents.commonSetup(event));
         modEventBus.addListener(this::buildContents);
+        modEventBus.addListener(DevTestHooks::registerGameTests);
         forgeBus.register(this);
         forgeBus.addListener(this::onAddReloadListeners);
         forgeBus.addListener(this::onLevelTick);

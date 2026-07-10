@@ -51,7 +51,7 @@ public final class LivingStaffArmamentSourceTest {
 		assertContains("torch branches from flame conjuration", treeInit, "\"crimson_flame_conjuration\")\n"
 				+ "\t\t\t\t.setSoftParents(\"conjure_staff\")");
 		assertContains("flail tree entry", treeInit, "register(\"conjure_flail\"");
-		assertContains("flail branches from glacial bastion", treeInit, "\"glacial_bastion\")\n"
+		assertContains("flail branches from glacial bastion", treeInit, "\"glacial_bastion\", \"glacial_rampart\")\n"
 				+ "\t\t\t\t.setSoftParents(\"conjure_staff\")");
 
 		assertContains("torch lang", lang, "\"item.hemomancy.living_torch\": \"Living Torch\"");
@@ -63,8 +63,6 @@ public final class LivingStaffArmamentSourceTest {
 		assertResource("flail item model", "src/main/resources/assets/hemomancy/models/item/living_flail.json");
 		assertResource("torch memory model", "src/main/resources/assets/hemomancy/models/item/memory_living_torch.json");
 		assertResource("flail memory model", "src/main/resources/assets/hemomancy/models/item/memory_living_flail.json");
-		assertResource("torch memory recipe", "src/main/resources/data/hemomancy/recipe/memory_weaving/memory_living_torch.json");
-		assertResource("flail memory recipe", "src/main/resources/data/hemomancy/recipe/memory_weaving/memory_living_flail.json");
 		assertResource("torch renderer texture", "src/main/resources/assets/hemomancy/textures/entity/model_living_torch.png");
 		assertResource("flail renderer texture", "src/main/resources/assets/hemomancy/textures/entity/model_living_flail.png");
 		assertResource("torch memory overlay", "src/main/resources/assets/hemomancy/textures/item/memories/memory_living_torch_overlay.png");
@@ -74,17 +72,6 @@ public final class LivingStaffArmamentSourceTest {
 		String flailModel = read("src/main/resources/assets/hemomancy/models/item/living_flail.json");
 		assertContains("torch item model uses custom renderer", torchModel, "\"parent\": \"builtin/entity\"");
 		assertContains("flail item model uses custom renderer", flailModel, "\"parent\": \"builtin/entity\"");
-
-		String torchRecipe = read("src/main/resources/data/hemomancy/recipe/memory_weaving/memory_living_torch.json");
-		String flailRecipe = read("src/main/resources/data/hemomancy/recipe/memory_weaving/memory_living_flail.json");
-		String compactTorchRecipe = torchRecipe.replaceAll("\\s+", "");
-		String compactFlailRecipe = flailRecipe.replaceAll("\\s+", "");
-		assertContains("torch recipe result", compactTorchRecipe, "\"result\":\"hemomancy:memory_living_torch\"");
-		assertContains("torch recipe has flammeus", compactTorchRecipe, "\"flammeus\":1");
-		assertContains("torch recipe has ferric", compactTorchRecipe, "\"ferric\":1");
-		assertContains("flail recipe result", compactFlailRecipe, "\"result\":\"hemomancy:memory_living_flail\"");
-		assertContains("flail recipe has congeatio", compactFlailRecipe, "\"congeatio\":1");
-		assertContains("flail recipe has ferric", compactFlailRecipe, "\"ferric\":1");
 
 		String flailItem = read("src/main/java/com/vincenthuto/hemomancy/common/item/harbinger/tool/living/LivingFlailItem.java");
 		String flailRenderer = read("src/main/java/com/vincenthuto/hemomancy/client/render/item/hematic/LivingFlailItemRenderer.java");

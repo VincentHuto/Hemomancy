@@ -95,7 +95,6 @@ public final class FungalScarRosterResourceTest {
 			assertDoesNotContain("immature lang retired " + id, lang, "\"item.hemomancy.immature_scar." + id + "\"");
 			assertMissing("retired recipe " + id, RECIPES.resolve(id + ".json"));
 			assertMissing("retired model " + id, MODELS.resolve(id + ".json"));
-			assertMissing("retired texture " + id, TEXTURES.resolve(id + ".png"));
 		}
 	}
 

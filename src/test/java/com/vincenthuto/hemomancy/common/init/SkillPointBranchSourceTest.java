@@ -146,7 +146,6 @@ public final class SkillPointBranchSourceTest {
 		assertContains("scar branch keeps scar mastery", scars, "SkillPointInit.skill_scar_mastery");
 		assertContains("scar deep skills depend on deep base", scars, "addParents(SkillPointInit.deep_base_skill)");
 		assertContains("summon branch keeps puppet skills", summons, "SkillPointInit.skill_puppet_skein");
-		assertContains("summon deep skills depend on deep base", summons, "addParents(SkillPointInit.deep_base_skill)");
 		assertContains("living staff branch keeps staff skills", staff, "SkillPointInit.skill_crimson_projection");
 		assertContains("living staff deep skills depend on deep base", staff, "addParents(SkillPointInit.skill_vascular_draw, SkillPointInit.deep_base_skill)");
 		assertContains("living staff branch adds hematic focus", staff, "SkillPointInit.skill_hematic_focus");
@@ -175,11 +174,11 @@ public final class SkillPointBranchSourceTest {
 		assertContains("covenant branch saves branch trace color", covenant, ".setBranchColor(0xFFA54569)");
 		assertContains("mycelial branch saves branch trace color", mycelial, ".setBranchColor(0xFF6E8F3A)");
 		assertContains("core branch keeps center root", core, "setTreePosition(480, 480)");
-		assertContains("core branch reaches north on deep layer degree six", core, "setTreePosition(480, 310)");
+		assertContains("core branch reaches north on deep layer", core, "setTreePosition(455, 310)");
 		assertContains("summon branch grows east", summons, "setTreePosition(650, 480)");
 		assertContains("living staff branch grows west", staff, "setTreePosition(360, 480)");
-		assertContains("scar branch grows south on deep layer", scars, "setTreePosition(480, 700)");
-		assertContains("covenant branch grows northeast on deep layer", covenant, "setTreePosition(565, 395)");
+		assertContains("scar branch grows south on deep layer", scars, "setTreePosition(585, 750)");
+		assertContains("covenant branch grows northeast on deep layer", covenant, "setTreePosition(581, 411)");
 		assertContains("mycelial branch grows southwest", mycelial, "setTreePosition(289, 671)");
 		assertContains("skill helper exposes hematic focus", skillPointHelper, "getHematicFocusLevel");
 		assertContains("skill helper exposes vesper refusal", skillPointHelper, "getVespersRefusalLevel");

@@ -104,7 +104,7 @@ public final class ScarletVanityResourceTest {
 		assertContains("scarlet vanity renderer should tint the reflection as blood instead of room beige",
 				vanityRenderer, "BLOOD_POOL_RED");
 		assertContains("scarlet vanity renderer should pass facing into all tabletop item transforms",
-				vanityRenderer, "renderEquippedItem(te, facing, scars");
+				vanityRenderer, "renderEquippedItem(te, facing, equipment");
 		assertContains("scarlet vanity renderer should mirror item yaw on north/south facings",
 				vanityRenderer, "case NORTH, SOUTH -> -yaw;");
 		assertDoesNotContain("scarlet vanity renderer should not use raw decorative yaw for tabletop items",
@@ -129,7 +129,7 @@ public final class ScarletVanityResourceTest {
 		assertContains("scarlet vanity should drop itself", lootTable,
 				"\"name\": \"hemomancy:scarlet_vanity\"");
 		assertContains("scarlet vanity should have a display name", lang,
-				"\"block.hemomancy.scarlet_vanity\": \"Scarlet Vanity\"");
+				"\"block.hemomancy.scarlet_vanity\": \"Harbinger Vanity\"");
 	}
 
 	private static String readSource(String path) throws IOException {

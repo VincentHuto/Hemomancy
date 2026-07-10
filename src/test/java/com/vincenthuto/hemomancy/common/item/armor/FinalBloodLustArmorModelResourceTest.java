@@ -14,25 +14,30 @@ public final class FinalBloodLustArmorModelResourceTest {
 	}
 
 	public static void main(String[] args) throws IOException {
-		String bloodLustItem = read(SOURCE_ROOT.resolve(
-				"com/vincenthuto/hemomancy/common/item/harbinger/armor/BloodLustArmorItem.java"));
 		String layers = read(SOURCE_ROOT.resolve(
 				"com/vincenthuto/hemomancy/client/event/LayerEvents.java"));
 		String helper = read(SOURCE_ROOT.resolve(
 				"com/vincenthuto/hemomancy/client/render/armor/ModelBackedArmorItemRenderHelper.java"));
 
-		assertFinalSet("edacious", "EdaciousBloodLustArmorModel", "EDACIOUS_BLOOD_LUST", bloodLustItem, layers,
+		assertFinalSet("edacious", "EdaciousBloodLustArmorModel", "EDACIOUS_BLOOD_LUST", layers,
 				helper, 256, 256);
-		assertFinalSet("sheolic", "SheolicBloodLustArmorModel", "SHEOLIC_BLOOD_LUST", bloodLustItem, layers,
-				helper, 256, 256);
-		assertFinalSet("phantasmal", "PhantasmalBloodLustArmorModel", "PHANTASMAL_BLOOD_LUST", bloodLustItem,
+		assertFinalSet("sheolic", "SheolicBloodLustArmorModel", "SHEOLIC_BLOOD_LUST", layers,
+				helper, 128, 128);
+		assertFinalSet("phantasmal", "PhantasmalBloodLustArmorModel", "PHANTASMAL_BLOOD_LUST",
 				layers, helper, 128, 128);
 	}
 
-	private static void assertFinalSet(String prefix, String modelClass, String constantPrefix, String bloodLustItem,
+	private static void assertFinalSet(String prefix, String modelClass, String constantPrefix,
 			String layers, String helper, int expectedWidth, int expectedHeight) throws IOException {
 		String model = read(SOURCE_ROOT.resolve(
 				"com/vincenthuto/hemomancy/client/model/armor/" + modelClass + ".java"));
+		String itemClass = Character.toUpperCase(prefix.charAt(0)) + prefix.substring(1) + "BloodLustArmorItem.java";
+		String bloodLustItem = read(SOURCE_ROOT.resolve(
+				"com/vincenthuto/hemomancy/common/item/harbinger/armor/" + itemClass))
+				+ read(SOURCE_ROOT.resolve(
+						"com/vincenthuto/hemomancy/common/item/harbinger/armor/AbstractSpecialBloodLustArmorItem.java"))
+				+ read(SOURCE_ROOT.resolve(
+						"com/vincenthuto/hemomancy/client/item/SpecialBloodLustClientExtensions.java"));
 		assertContains(prefix + " model should define helmet layer", model, constantPrefix + "_HELMET_LAYER");
 		assertContains(prefix + " model should define chest layer", model, constantPrefix + "_CHEST_LAYER");
 		assertContains(prefix + " model should define legs layer", model, constantPrefix + "_LEGS_LAYER");
@@ -46,8 +51,8 @@ public final class FinalBloodLustArmorModelResourceTest {
 		assertContains(prefix + " worn chest should use copied model", bloodLustItem, modelClass + ".chest.get()");
 		assertContains(prefix + " worn legs should use copied model", bloodLustItem, modelClass + ".legs.get()");
 		assertContains(prefix + " worn boots should use copied model", bloodLustItem, modelClass + ".boots.get()");
-		assertContains(prefix + " worn texture should use final atlas", bloodLustItem,
-				"armorTexture(\"" + prefix + "_blood_lust_layer_\"");
+		assertContains(prefix + " worn texture should use the final atlas key", bloodLustItem,
+				"super(materialIn, slot, \"" + prefix + "_blood_lust\")");
 
 		assertContains(prefix + " layer should register helmet", layers, modelClass + "." + constantPrefix + "_HELMET_LAYER");
 		assertContains(prefix + " layer should register chest", layers, modelClass + "." + constantPrefix + "_CHEST_LAYER");

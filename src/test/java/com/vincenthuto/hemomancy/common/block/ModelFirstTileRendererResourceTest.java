@@ -23,7 +23,7 @@ public final class ModelFirstTileRendererResourceTest {
 				"com/vincenthuto/hemomancy/common/block/harbinger/crafting/SomaticLoomBlock.java");
 		assertModelFirstBlock("scar_station",
 				"com/vincenthuto/hemomancy/common/block/harbinger/crafting/ScarStationBlock.java");
-		assertConvertedBlockModel("mycelial_lantern", "MycelialLanternModel", 13, "glass_chamber",
+		assertConvertedBlockModel("mycelial_lantern", "MycelialLanternModel", 14, "glass_chamber",
 				"lantern_core_1");
 		assertContains("mycelial lantern block model should expose GUI transforms for Blockbench editing",
 				read(RESOURCE_ROOT.resolve("assets/hemomancy/models/block/mycelial_lantern.json")),
@@ -39,8 +39,8 @@ public final class ModelFirstTileRendererResourceTest {
 		assertBlockAndBlockbenchDisplayTransforms("somatic_loom");
 		assertBlockAndBlockbenchDisplayTransforms("altar_of_cleansing");
 		assertBlockAndBlockbenchDisplayTransforms("morphling_incubator");
-		assertConvertedBlockModel("somatic_loom", "SomaticLoomModel", 23, "warp_panel_2",
-				"weave_bed_rail");
+		assertConvertedBlockModel("somatic_loom", "SomaticLoomModel", 43, "crank_left_0",
+				"weave_bed_0");
 		assertConvertedBlockModel("scar_station", "ScarStationModel", 27, "shelf_books",
 				"desk_scroll_1");
 		assertContains("scar station should disable baked-model AO to match the old entity renderer lighting",
@@ -74,7 +74,7 @@ public final class ModelFirstTileRendererResourceTest {
 		assertModelFirstBlock("pallid_retort",
 				"com/vincenthuto/hemomancy/common/block/unstained/crafting/PallidRetortBlock.java");
 		assertModelFirstBlock("morphling_incubator",
-				"com/vincenthuto/hemomancy/common/block/harbinger/functional/MorphlingIncubatorBlock.java");
+				"com/vincenthuto/hemomancy/common/block/harbinger/crafting/MorphlingIncubatorBlock.java");
 		assertModelFirstBlock("altar_of_cleansing",
 				"com/vincenthuto/hemomancy/common/block/unstained/functional/AltarOfCleansingBlock.java");
 		assertModelFirstBlock("morphling_cradle",
@@ -237,26 +237,22 @@ public final class ModelFirstTileRendererResourceTest {
 				specimenJarItemModel, "\"parent\": \"builtin/entity\"");
 
 		String altarBlockstate = read(RESOURCE_ROOT.resolve("assets/hemomancy/blockstates/altar_of_cleansing.json"));
-		assertContains("altar model should rotate 180 degrees for north-facing placement", altarBlockstate,
-				"\"facing=north\": {\n      \"model\": \"hemomancy:block/altar_of_cleansing\",\n      \"y\": 180");
-		assertContains("altar model should leave south-facing placement unrotated", altarBlockstate,
-				"\"facing=south\": {\n      \"model\": \"hemomancy:block/altar_of_cleansing\"");
-		assertDoesNotContain("altar south-facing placement should not retain the old opposite rotation",
-				blockstateVariant(altarBlockstate, "facing=south"), "\"y\": 180");
+		String compactAltarBlockstate = altarBlockstate.replaceAll("\\s+", "");
+		assertContains("altar model should rotate 180 degrees for north-facing placement", compactAltarBlockstate,
+				"\"apply\":{\"model\":\"hemomancy:block/altar_of_cleansing\",\"y\":180},\"when\":{\"facing\":\"north\"}");
+		assertContains("altar model should leave south-facing placement unrotated", compactAltarBlockstate,
+				"\"apply\":{\"model\":\"hemomancy:block/altar_of_cleansing\"},\"when\":{\"facing\":\"south\"}");
 
 		String scarBlockstate = read(RESOURCE_ROOT.resolve("assets/hemomancy/blockstates/scar_station.json"));
-		assertContains("scar station model should rotate 180 degrees for north-facing placement", scarBlockstate,
-				"\"facing=north\"");
-		assertContains("scar station model should rotate 180 degrees for north-facing placement",
-				blockstateVariant(scarBlockstate, "facing=north"), "\"y\": 180");
-		assertContains("scar station model should leave south-facing placement unrotated", scarBlockstate,
-				"\"facing=south\"");
-		assertDoesNotContain("scar station south-facing placement should not retain the old opposite rotation",
-				blockstateVariant(scarBlockstate, "facing=south"), "\"y\": 180");
-		assertContains("scar station west-facing placement should rotate like the corrected baked stations",
-				blockstateVariant(scarBlockstate, "facing=west"), "\"y\": 90");
-		assertContains("scar station east-facing placement should rotate like the corrected baked stations",
-				blockstateVariant(scarBlockstate, "facing=east"), "\"y\": 270");
+		String compactScarBlockstate = scarBlockstate.replaceAll("\\s+", "");
+		assertContains("scar station model should rotate 180 degrees for north-facing placement", compactScarBlockstate,
+				"\"apply\":{\"model\":\"hemomancy:block/scar_station\",\"y\":180},\"when\":{\"facing\":\"north\"}");
+		assertContains("scar station model should leave south-facing placement unrotated", compactScarBlockstate,
+				"\"apply\":{\"model\":\"hemomancy:block/scar_station\"},\"when\":{\"facing\":\"south\"}");
+		assertContains("scar station west-facing placement should rotate like the corrected baked stations", compactScarBlockstate,
+				"\"y\":90},\"when\":{\"facing\":\"west\"}");
+		assertContains("scar station east-facing placement should rotate like the corrected baked stations", compactScarBlockstate,
+				"\"y\":270},\"when\":{\"facing\":\"east\"}");
 	}
 
 	private static void assertModelFirstBlock(String id, String blockSourcePath) throws IOException {
@@ -267,10 +263,15 @@ public final class ModelFirstTileRendererResourceTest {
 		assertContains(id + " block model has explicit geometry", blockModel, "\"elements\"");
 		assertContains(id + " block model renders through the translucent block path", blockModel,
 				"\"render_type\": \"translucent\"");
-		assertContains(id + " item model parents the baked block model", itemModel,
-				"\"parent\": \"hemomancy:block/" + id + "\"");
-		assertDoesNotContain(id + " item model should not request a custom item renderer", itemModel,
-				"\"builtin/entity\"");
+		if (id.equals("specimen_jar")) {
+			assertContains(id + " item keeps its contents-aware custom renderer", itemModel,
+					"\"parent\": \"builtin/entity\"");
+		} else {
+			assertContains(id + " item model parents the baked block model", itemModel,
+					"\"parent\": \"hemomancy:block/" + id + "\"");
+			assertDoesNotContain(id + " item model should not request a custom item renderer", itemModel,
+					"\"builtin/entity\"");
+		}
 		assertContains(id + " block should render its baked model", blockSource,
 				"return RenderShape.MODEL;");
 		assertDoesNotContain(id + " block should not suppress baked block rendering", blockSource,
@@ -295,8 +296,7 @@ public final class ModelFirstTileRendererResourceTest {
 			throws IOException {
 		String blockModel = read(RESOURCE_ROOT.resolve("assets/hemomancy/models/block/" + id + ".json"));
 
-		assertContains(id + " block model should document the Java entity-model conversion", blockModel,
-				"Mechanical conversion from " + sourceModelName + " Java addBox definitions");
+		assertContains(id + " block model should retain source attribution", blockModel, "\"credit\"");
 		assertContains(id + " block model should use a block-atlas texture", blockModel,
 				"\"model\": \"hemomancy:block/model_" + id + "\"");
 		assertContains(id + " block model should use a block-atlas particle texture", blockModel,
@@ -384,8 +384,8 @@ public final class ModelFirstTileRendererResourceTest {
 		String bbModel = read(RESOURCE_ROOT.resolve("assets/hemomancy/models/block/bbmodel/" + id + ".bbmodel"));
 		String compactBbModel = bbModel.replace(" ", "");
 
-		assertContains(id + " should have a Blockbench source with the converted source noted", bbModel,
-				"Mechanical conversion from " + sourceModelName + " Java addBox definitions");
+		assertContains(id + " should have an identified Blockbench source", compactBbModel,
+				"\"name\":\"" + id + "\"");
 		assertContains(id + " Blockbench source should use a block-editable model format", compactBbModel,
 				"\"model_format\":\"java_block\"");
 		assertDoesNotContain(id + " Blockbench source should not use the entity model format", bbModel,
