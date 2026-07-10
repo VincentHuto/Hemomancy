@@ -329,10 +329,6 @@ public final class HarbingerAlchemistDialogueTrees {
 				"gourd_upgrades", null));
 		greetingOptions.add(new DialogueOption("hemomancy.dialogue.alchemist.option.tell_me_about_alembic",
 				"alembic_lore", null));
-		greetingOptions.add(new DialogueOption("hemomancy.dialogue.alchemist.option.tell_me_about_blood_structures",
-				"blood_structure_intro", null));
-		greetingOptions.add(new DialogueOption("hemomancy.dialogue.alchemist.option.tell_me_about_armature",
-				"armature_lore", null));
 		greetingOptions.add(new DialogueOption("hemomancy.dialogue.alchemist.option.ask_about_item",
 				"item_hint", null));
 		greetingOptions.add(new DialogueOption("hemomancy.dialogue.alchemist.option.leave", null, null));
@@ -430,20 +426,6 @@ public final class HarbingerAlchemistDialogueTrees {
 								"gourd_upgrades", null),
 						new DialogueOption("hemomancy.dialogue.alchemist.option.leave", null, null)
 				)))
-				.addNode(new DialogueNode("blood_structure_intro", List.of(
-						"hemomancy.alchemist.votary.blood_structure_intro"
-				), List.of(
-						new DialogueOption("hemomancy.dialogue.alchemist.option.tell_me_about_armature",
-								"armature_lore", null),
-						new DialogueOption("hemomancy.dialogue.alchemist.option.leave", null, null)
-				)))
-				.addNode(new DialogueNode("armature_lore", List.of(
-						"hemomancy.alchemist.votary.armature_lore.line1",
-						"hemomancy.alchemist.votary.armature_lore.line2",
-						"hemomancy.alchemist.votary.armature_lore.line3"
-				), List.of(
-						new DialogueOption("hemomancy.dialogue.alchemist.option.leave", null, null)
-				)))
 				.addNode(new DialogueNode("item_hint", List.of(
 						"hemomancy.alchemist.item_hint"
 				), List.of(
@@ -452,7 +434,7 @@ public final class HarbingerAlchemistDialogueTrees {
 				.build();
 	}
 
-	/** Degree 2 — Votary. Explains the Vial Centrifuge, blood tendency separation, and introduces blood structure crafting. */
+	/** Degree 2 — Votary. Explains the Vial Centrifuge and blood tendency separation. */
 	public static DialogueTree votary(int entityId) {
 		return DialogueTree.builder(SPEAKER, ALCHEMIST_ICON, entityId)
 				.addNode(new DialogueNode("greeting", List.of(
@@ -461,8 +443,6 @@ public final class HarbingerAlchemistDialogueTrees {
 						new DialogueOption("hemomancy.dialogue.alchemist.option.tell_me_about_centrifuge", "centrifuge_lore", null),
 						new DialogueOption("hemomancy.dialogue.alchemist.option.how_do_i_upgrade_my_gourd", "gourd_upgrades", null),
 						new DialogueOption("hemomancy.dialogue.alchemist.option.tell_me_about_alembic", "alembic_lore", null),
-						new DialogueOption("hemomancy.dialogue.alchemist.option.tell_me_about_blood_structures", "blood_structure_intro", null),
-						new DialogueOption("hemomancy.dialogue.alchemist.option.tell_me_about_armature", "armature_lore", null),
       new DialogueOption("hemomancy.dialogue.alchemist.option.ask_about_item", "item_hint", null),
 						new DialogueOption("hemomancy.dialogue.alchemist.option.leave", null, null)
 				)))
@@ -481,19 +461,6 @@ public final class HarbingerAlchemistDialogueTrees {
 						"hemomancy.alchemist.neophyte.alembic_lore"
 				), List.of(
 						new DialogueOption("hemomancy.dialogue.alchemist.option.how_do_i_upgrade_my_gourd", "gourd_upgrades", null),
-						new DialogueOption("hemomancy.dialogue.alchemist.option.leave", null, null)
-				)))
-				.addNode(new DialogueNode("blood_structure_intro", List.of(
-						"hemomancy.alchemist.votary.blood_structure_intro"
-				), List.of(
-						new DialogueOption("hemomancy.dialogue.alchemist.option.tell_me_about_armature", "armature_lore", null),
-						new DialogueOption("hemomancy.dialogue.alchemist.option.leave", null, null)
-				)))
-				.addNode(new DialogueNode("armature_lore", List.of(
-						"hemomancy.alchemist.votary.armature_lore.line1",
-						"hemomancy.alchemist.votary.armature_lore.line2",
-						"hemomancy.alchemist.votary.armature_lore.line3"
-				), List.of(
 						new DialogueOption("hemomancy.dialogue.alchemist.option.leave", null, null)
 				)))
 				.addNode(new DialogueNode("item_hint", List.of(
@@ -573,10 +540,9 @@ public final class HarbingerAlchemistDialogueTrees {
 				.build();
 	}
 
-	/** Degree 5 — Illuminatus. Speaks of advanced blood crafting and cardinal rite machines. */
+	/** Degree 5 — Illuminatus. Speaks of advanced biological processing and cardinal rite machines. */
 	public static DialogueTree illuminatus(int entityId, boolean hasBloodline, boolean isNpcRecruited) {
 		List<DialogueOption> greetingOptions = new ArrayList<>();
-		greetingOptions.add(new DialogueOption("hemomancy.dialogue.alchemist.option.tell_me_about_blood_crafting", "blood_crafting_lore", null));
 		greetingOptions.add(new DialogueOption("hemomancy.dialogue.alchemist.option.tell_me_about_morphling_incubator", "incubator_lore", null));
 		greetingOptions.add(new DialogueOption("hemomancy.dialogue.alchemist.option.ask_about_item", "item_hint", null));
 		addRecruitmentOption(greetingOptions, hasBloodline, isNpcRecruited);
@@ -585,12 +551,6 @@ public final class HarbingerAlchemistDialogueTrees {
 				.addNode(new DialogueNode("greeting", List.of(
 						"hemomancy.alchemist.illuminatus.line1"
 				), greetingOptions))
-				.addNode(new DialogueNode("blood_crafting_lore", List.of(
-						"hemomancy.alchemist.illuminatus.blood_crafting_lore"
-				), List.of(
-      new DialogueOption("hemomancy.dialogue.alchemist.option.ask_about_item", "item_hint", null),
-						new DialogueOption("hemomancy.dialogue.alchemist.option.leave", null, null)
-				)))
 				.addNode(new DialogueNode("incubator_lore", List.of(
 						"hemomancy.alchemist.illuminatus.incubator_lore"
 				), List.of(
