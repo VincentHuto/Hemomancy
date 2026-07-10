@@ -16,6 +16,32 @@ From the project root on Windows:
 - `runGameTestServer` starts a headless NeoForge server, runs the registered progression scenarios, and exits non-zero if a required scenario fails.
 - `alphaCheck` runs both layers in order. Use this before an alpha build or whenever progression, crafting, quests, or rewards change.
 
+## Manual Harbinger journey
+
+Launch the isolated journey client from the project root:
+
+```powershell
+./gradlew.bat runAlphaJourneyClient
+```
+
+This profile stores its world and client settings under `run-alpha-journey`, separate from the normal development client. On the first launch, select **Singleplayer**, create or open a world, and enter that world before running commands. A new isolated directory has no world to open until you create one.
+
+Run the checkpoint journey as an operator:
+
+```text
+/hemo test journey start
+/hemo test journey status
+/hemo test journey next
+/hemo test journey reset
+/hemo test clear
+```
+
+`journey start` captures the player's pre-journey state, resets the player to the starting conditions, and prepares the first checkpoint. At each checkpoint, perform the requested gameplay action, use `journey status` to inspect the current requirements, then use `journey next` to verify them and advance. If verification fails, remain at that checkpoint, correct the unmet requirement, and run `journey next` again. After all checkpoints pass and the journey reports `complete`, run `journey next` once more to remove the fixtures and restore the captured state automatically.
+
+`journey reset` removes journey-owned fixture output, clears active potion effects acquired during the run (including Blood Drunkenness), and restarts at the first checkpoint while retaining the original snapshot. `/hemo test clear` exits the journey, removes its fixtures, and restores the snapshot captured by `journey start`. Run it before returning to other manual testing. `alphaCheck` remains the automated JVM and dedicated GameTest gate; this isolated client workflow is the operator-driven complement, not a replacement.
+
+The controller stores the fixture dimension with its origin. Invoking `next`, `reset`, or `clear` after traveling to another dimension still operates on the original fixture level; stage transitions and resets return the player there safely. `status` inspects that stored level without moving the player. If the saved dimension is unavailable, the command reports its exact resource key instead of touching the current dimension.
+
 ## In-game scenario commands
 
 Development client/server runs add the following operator-only commands beneath the existing `/hemo` root:

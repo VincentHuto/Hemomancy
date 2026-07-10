@@ -12,6 +12,7 @@ import com.vincenthuto.hemomancy.common.entity.npc.dialogue.HarbingerVicarDialog
 import com.vincenthuto.hemomancy.common.event.HarbingerAdvancementGranter;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.dialogue.OpenDialoguePacket;
+import com.vincenthuto.hemomancy.common.mission.FirstBloodcraftAssignmentHelper;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -181,7 +182,9 @@ public class HarbingerVicarEntity extends PathfinderMob {
                         isNpcInPlayerBloodline(player, this), hasAbocipherLiteracy(player),
                         hasAdvancement(serverPlayer, HarbingerAdvancementGranter.ADV_HERMIT_ROAD_FIRST_REMNANT),
                         hasAdvancement(serverPlayer, HarbingerAdvancementGranter.ADV_HERMIT_ROAD_LEDGER_GRANTED),
-                        hasAdvancement(serverPlayer, HarbingerAdvancementGranter.ADV_VICAR_MASONS_RESPITE_DIRECTIVE));
+                        hasAdvancement(serverPlayer, HarbingerAdvancementGranter.ADV_VICAR_MASONS_RESPITE_DIRECTIVE),
+                        FirstBloodcraftAssignmentHelper.canClaim(serverPlayer),
+                        FirstBloodcraftAssignmentHelper.isClaimed(serverPlayer));
             }
             tree = DialogueItemInquiryNodes.withHeldItemInquiry(tree, held, "vicar",
                     "hemomancy.vicar.item_inquiry.unknown", degree, 0f);

@@ -17,6 +17,7 @@ import com.vincenthuto.hemomancy.common.event.HarbingerAdvancementGranter;
 import com.vincenthuto.hemomancy.common.entity.npc.unstained.UnstainedScoutEntity;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.mission.HarbingerArtificerAssignmentHelper;
+import com.vincenthuto.hemomancy.common.mission.FirstBloodcraftAssignmentHelper;
 import com.vincenthuto.hemomancy.common.util.SpecimenJarData;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.BloodStructureHintItem;
 import com.vincenthuto.hemomancy.common.item.shared.PreWrittenMemoItem;
@@ -158,6 +159,9 @@ public class DialogueEventHandler {
 			}
 			case HarbingerVicarDialogueTrees.EVENT_HERMIT_ROAD_REPORT -> {
 				handleVicarHermitRoadReport(player, event.getEntityId());
+			}
+			case HarbingerVicarDialogueTrees.EVENT_CLAIM_FIRST_BLOODCRAFT_REWARD -> {
+				handleVicarFirstBloodcraftReward(player, event.getEntityId());
 			}
 			case HarbingerVicarDialogueTrees.EVENT_MASONS_RESPITE_DIRECTIVE -> {
 				handleVicarMasonsRespiteDirective(player, event.getEntityId());
@@ -349,6 +353,32 @@ public class DialogueEventHandler {
 				HarbingerAdvancementGranter.ADV_HERMIT_ROAD_LEDGER_GRANTED);
 		player.displayClientMessage(
 				Component.translatable("hemomancy.dialogue.event.vicar_hermit_road_ledger")
+						.withStyle(ChatFormatting.DARK_RED),
+				false);
+	}
+
+	private static void handleVicarFirstBloodcraftReward(ServerPlayer player, int entityId) {
+		if (!FirstBloodcraftAssignmentHelper.canClaim(player)) {
+			String messageKey = FirstBloodcraftAssignmentHelper.isClaimed(player)
+					? "hemomancy.dialogue.event.vicar_first_bloodcraft_reward_known"
+					: "hemomancy.dialogue.event.vicar_first_bloodcraft_reward_unready";
+			player.displayClientMessage(
+					Component.translatable(messageKey).withStyle(ChatFormatting.GRAY),
+					false);
+			return;
+		}
+
+		if (!FirstBloodcraftAssignmentHelper.markClaimed(player)) {
+			player.displayClientMessage(
+					Component.translatable("hemomancy.dialogue.event.vicar_first_bloodcraft_reward_claim_failed")
+							.withStyle(ChatFormatting.RED), false);
+			return;
+		}
+		for (ItemStack stack : FirstBloodcraftAssignmentHelper.rewardStacks()) {
+			giveOrDropAtEntity(player, entityId, stack);
+		}
+		player.displayClientMessage(
+				Component.translatable("hemomancy.dialogue.event.vicar_first_bloodcraft_reward_granted")
 						.withStyle(ChatFormatting.DARK_RED),
 				false);
 	}

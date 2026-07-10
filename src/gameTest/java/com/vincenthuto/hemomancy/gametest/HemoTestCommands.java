@@ -2,6 +2,8 @@ package com.vincenthuto.hemomancy.gametest;
 
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.StringArgumentType;
+import com.vincenthuto.hemomancy.gametest.journey.HemoJourneyController;
+import com.vincenthuto.hemomancy.gametest.journey.HemoJourneyResult;
 import net.minecraft.ChatFormatting;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
@@ -25,6 +27,11 @@ public final class HemoTestCommands {
 								.executes(context -> run(context.getSource(), scenarioId(context)))))
 						.then(Commands.literal("run_all").executes(context -> runAll(context.getSource())))
 						.then(Commands.literal("status").executes(context -> status(context.getSource())))
+						.then(Commands.literal("journey")
+								.then(Commands.literal("start").executes(context -> journeyStart(context.getSource())))
+								.then(Commands.literal("next").executes(context -> journeyNext(context.getSource())))
+								.then(Commands.literal("status").executes(context -> journeyStatus(context.getSource())))
+								.then(Commands.literal("reset").executes(context -> journeyReset(context.getSource()))))
 						.then(Commands.literal("clear").executes(context -> clear(context.getSource())))));
 	}
 
@@ -129,9 +136,49 @@ public final class HemoTestCommands {
 
 	private static int clear(CommandSourceStack source) throws com.mojang.brigadier.exceptions.CommandSyntaxException {
 		ServerPlayer player = source.getPlayerOrException();
+		HemoJourneyResult journeyClear = HemoJourneyController.clear(player);
+		if (!journeyClear.passed()) {
+			source.sendFailure(Component.literal(journeyClear.message()));
+			return 0;
+		}
 		HemoTestScenarioCatalog.clearActive(player);
 		source.sendSuccess(() -> Component.literal("Cleared the active Hemomancy test fixture."), false);
 		return 1;
+	}
+
+	private static int journeyStart(CommandSourceStack source)
+			throws com.mojang.brigadier.exceptions.CommandSyntaxException {
+		ServerPlayer player = source.getPlayerOrException();
+		return reportJourney(source, HemoJourneyController.start(player));
+	}
+
+	private static int journeyNext(CommandSourceStack source)
+			throws com.mojang.brigadier.exceptions.CommandSyntaxException {
+		ServerPlayer player = source.getPlayerOrException();
+		return reportJourney(source, HemoJourneyController.next(player));
+	}
+
+	private static int journeyStatus(CommandSourceStack source)
+			throws com.mojang.brigadier.exceptions.CommandSyntaxException {
+		ServerPlayer player = source.getPlayerOrException();
+		return reportJourney(source, HemoJourneyController.status(player));
+	}
+
+	private static int journeyReset(CommandSourceStack source)
+			throws com.mojang.brigadier.exceptions.CommandSyntaxException {
+		ServerPlayer player = source.getPlayerOrException();
+		return reportJourney(source, HemoJourneyController.reset(player));
+	}
+
+	private static int reportJourney(CommandSourceStack source, HemoJourneyResult result) {
+		Component message = Component.literal(result.stage().id() + ": " + result.message())
+				.withStyle(result.passed() ? ChatFormatting.GREEN : ChatFormatting.RED);
+		if (result.passed()) {
+			source.sendSuccess(() -> message, false);
+			return 1;
+		}
+		source.sendFailure(message);
+		return 0;
 	}
 
 	private static HemoTestScenario requireScenario(CommandSourceStack source, String id) {

@@ -22,6 +22,7 @@ public final class HarbingerVicarDialogueTrees {
 	private static final String SPEAKER = "entity.hemomancy.harbinger_vicar";
 	public static final String EVENT_BLOOD_SHOTTING = "vicar_blood_shotting";
 	public static final String EVENT_HERMIT_ROAD_REPORT = "vicar_hermit_road_report";
+	public static final String EVENT_CLAIM_FIRST_BLOODCRAFT_REWARD = "vicar_claim_first_bloodcraft_reward";
 	public static final String EVENT_MASONS_RESPITE_DIRECTIVE = "vicar_masons_respite_directive";
 	public static final String EVENT_CONSECRATION_KIT = "vicar_consecration_kit";
 
@@ -51,9 +52,18 @@ public final class HarbingerVicarDialogueTrees {
 	public static DialogueTree forDegree(int degree, int entityId, boolean hasBloodline, boolean isNpcRecruited,
 			boolean hasAbocipherLiteracy, boolean hasFoundHermitRoadRemnant, boolean hasHermitRoadLedger,
 			boolean masonsRespiteDirective) {
+		return forDegree(degree, entityId, hasBloodline, isNpcRecruited, hasAbocipherLiteracy,
+				hasFoundHermitRoadRemnant, hasHermitRoadLedger, masonsRespiteDirective, false, false);
+	}
+
+	public static DialogueTree forDegree(int degree, int entityId, boolean hasBloodline, boolean isNpcRecruited,
+			boolean hasAbocipherLiteracy, boolean hasFoundHermitRoadRemnant, boolean hasHermitRoadLedger,
+			boolean masonsRespiteDirective, boolean canClaimFirstBloodcraftReward,
+			boolean firstBloodcraftRewardClaimed) {
 		return switch (degree) {
 			case 0 -> uninitiated(entityId);
-			case 1 -> neophyte(entityId, hasFoundHermitRoadRemnant, hasHermitRoadLedger);
+			case 1 -> neophyte(entityId, hasFoundHermitRoadRemnant, hasHermitRoadLedger,
+					canClaimFirstBloodcraftReward, firstBloodcraftRewardClaimed);
 			case 2 -> votary(entityId);
 			case 3 -> initiate(entityId);
 			case 4 -> adept(entityId, hasAbocipherLiteracy, masonsRespiteDirective);
@@ -174,6 +184,12 @@ public final class HarbingerVicarDialogueTrees {
 
 	public static DialogueTree neophyte(int entityId, boolean hasFoundHermitRoadRemnant,
 			boolean hasHermitRoadLedger) {
+		return neophyte(entityId, hasFoundHermitRoadRemnant, hasHermitRoadLedger, false, false);
+	}
+
+	public static DialogueTree neophyte(int entityId, boolean hasFoundHermitRoadRemnant,
+			boolean hasHermitRoadLedger, boolean canClaimFirstBloodcraftReward,
+			boolean firstBloodcraftRewardClaimed) {
 		List<DialogueOption> greetingOptions = new ArrayList<>();
 		greetingOptions.add(new DialogueOption("hemomancy.dialogue.vicar.option.tell_me_about_covenant",
 				"covenant_lore", null));
@@ -191,6 +207,16 @@ public final class HarbingerVicarDialogueTrees {
 		}
 		greetingOptions.add(new DialogueOption("hemomancy.dialogue.vicar.option.ask_about_blood_crafting",
 				"blood_crafting", null));
+		if (canClaimFirstBloodcraftReward) {
+			greetingOptions.add(new DialogueOption("hemomancy.dialogue.vicar.option.claim_first_bloodcraft_reward",
+					"first_bloodcraft_reward_granted", EVENT_CLAIM_FIRST_BLOODCRAFT_REWARD));
+		} else if (firstBloodcraftRewardClaimed) {
+			greetingOptions.add(new DialogueOption("hemomancy.dialogue.vicar.option.first_bloodcraft_reward_claimed",
+					"first_bloodcraft_reward_claimed", null));
+		} else {
+			greetingOptions.add(new DialogueOption("hemomancy.dialogue.vicar.option.first_bloodcraft_reward_unready",
+					"first_bloodcraft_reward_unready", null));
+		}
 		greetingOptions.add(new DialogueOption("hemomancy.dialogue.vicar.option.ask_about_item",
 				"item_hint", null));
 		greetingOptions.add(new DialogueOption("hemomancy.dialogue.vicar.option.leave", null, null));
@@ -215,6 +241,21 @@ public final class HarbingerVicarDialogueTrees {
 						"hemomancy.vicar.blood_crafting.absorption",
 						"hemomancy.vicar.blood_crafting.projection",
 						"hemomancy.vicar.blood_crafting.structure"
+				), List.of(
+						new DialogueOption("hemomancy.dialogue.vicar.option.leave", null, null)
+				)))
+				.addNode(new DialogueNode("first_bloodcraft_reward_granted", List.of(
+						"hemomancy.vicar.neophyte.first_bloodcraft_reward.granted"
+				), List.of(
+						new DialogueOption("hemomancy.dialogue.vicar.option.leave", null, null)
+				)))
+				.addNode(new DialogueNode("first_bloodcraft_reward_claimed", List.of(
+						"hemomancy.vicar.neophyte.first_bloodcraft_reward.claimed"
+				), List.of(
+						new DialogueOption("hemomancy.dialogue.vicar.option.leave", null, null)
+				)))
+				.addNode(new DialogueNode("first_bloodcraft_reward_unready", List.of(
+						"hemomancy.vicar.neophyte.first_bloodcraft_reward.unready"
 				), List.of(
 						new DialogueOption("hemomancy.dialogue.vicar.option.leave", null, null)
 				)))
