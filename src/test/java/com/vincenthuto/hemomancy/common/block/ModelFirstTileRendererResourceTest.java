@@ -189,6 +189,8 @@ public final class ModelFirstTileRendererResourceTest {
 				"com/vincenthuto/hemomancy/client/render/tile/crafting/ScarStationRenderer.java"));
 		assertContains("scar station keeps dynamic displayed slot rendering", scarStationRenderer,
 				"renderStatic(stack, ItemDisplayContext.GROUND");
+		assertDoesNotContain("scar station renderer must not render the baked block model twice", scarStationRenderer,
+				"renderStationModel");
 		assertDoesNotContain("scar station renderer should not render the static model body", scarStationRenderer,
 				"ScarStationModel");
 

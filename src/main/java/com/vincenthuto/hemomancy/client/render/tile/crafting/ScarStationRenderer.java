@@ -1,23 +1,17 @@
 package com.vincenthuto.hemomancy.client.render.tile.crafting;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.vincenthuto.hemomancy.common.tile.crafting.ScarStationBlockEntity;
 import com.vincenthuto.hutoslib.math.Quaternion;
 import com.vincenthuto.hutoslib.math.Vector3;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.client.renderer.FaceInfo;
 import net.minecraft.client.renderer.LevelRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.Sheets;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.client.renderer.texture.TextureAtlas;
-import net.minecraft.world.level.block.state.BlockState;
-import net.neoforged.neoforge.client.model.data.ModelData;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.HorizontalDirectionalBlock;
@@ -42,7 +36,6 @@ public class ScarStationRenderer implements BlockEntityRenderer<ScarStationBlock
 		// ── Render the chisel station entity model ──
 		// ── Render items on the station ──
 		Minecraft mc = Minecraft.getInstance();
-		renderStationModel(te, matrixStackIn, bufferIn, stationModelLight(te, combinedLightIn), combinedOverlayIn, mc);
 
 		Minecraft.getInstance().getTextureManager().bindForSetup(TextureAtlas.LOCATION_BLOCKS);
 		int itemLight = displayItemLight(te, combinedLightIn);
@@ -221,24 +214,6 @@ public class ScarStationRenderer implements BlockEntityRenderer<ScarStationBlock
 		}
 		int tableLight = LevelRenderer.getLightColor(te.getLevel(), te.getBlockPos().above());
 		return capPackedLight(tableLight, DISPLAY_ITEM_MAX_LIGHT);
-	}
-
-	private static int stationModelLight(ScarStationBlockEntity te, int fallbackLight) {
-		if (te.getLevel() == null) {
-			return fallbackLight;
-		}
-		return LevelRenderer.getLightColor(te.getLevel(), te.getBlockPos().above());
-	}
-
-	private static void renderStationModel(ScarStationBlockEntity te, PoseStack poseStack, MultiBufferSource buffer,
-			int packedLight, int packedOverlay, Minecraft mc) {
-		BlockState state = te.getBlockState();
-		poseStack.pushPose();
-		BakedModel model = mc.getBlockRenderer().getBlockModel(state);
-		VertexConsumer vertexConsumer = buffer.getBuffer(Sheets.translucentCullBlockSheet());
-		mc.getBlockRenderer().getModelRenderer().renderModel(poseStack.last(), vertexConsumer, state, model, 1.0F,
-				1.0F, 1.0F, packedLight, packedOverlay, ModelData.EMPTY, RenderType.translucent());
-		poseStack.popPose();
 	}
 
 	private static int capPackedLight(int packedLight, int maxLight) {
