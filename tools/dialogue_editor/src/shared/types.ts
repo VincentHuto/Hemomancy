@@ -25,6 +25,7 @@ export interface NpcMetadataOption {
 export interface NpcMetadata {
   version: number;
   options: Record<string, NpcMetadataOption>;
+  layouts?: Record<string, { positions: Record<string, { x: number; y: number; pinned?: boolean }> }>;
 }
 
 export type SelectedRow =
@@ -47,6 +48,11 @@ export interface DialogueTreeModel {
   startNode: string | null;
   nodes: DialogueNodeModel[];
   sourceSpan?: SourceSpan;
+  methodSourceSpan?: SourceSpan;
+  sourceMethod?: string;
+  paramSource?: string;
+  newTree?: boolean;
+  routes?: RouteTarget[];
   dispatchOnly?: boolean;
   speaker?: string;
   icon?: string;
@@ -110,6 +116,7 @@ export interface Diagnostic {
 
 export interface DialogueWorkspace {
   repoRoot: string;
+  revision?: string;
   dialogueFiles: DialogueFile[];
   translations: Record<string, string>;
   inquiries: DialogueInquiryEntry[];
@@ -117,6 +124,19 @@ export interface DialogueWorkspace {
   events: DialogueEventCatalogEntry[];
   memos: DialogueEventCatalogEntry[];
   diagnostics: Diagnostic[];
+  metadata?: Record<string, NpcMetadata>;
+}
+
+export interface RouteTarget {
+  method: string;
+  condition: string;
+  sourceLine?: number;
+}
+
+export interface DialogueRouterModel {
+  method: string;
+  params: string[];
+  targets: RouteTarget[];
 }
 
 export interface FileChange {
@@ -125,11 +145,13 @@ export interface FileChange {
 }
 
 export interface PreviewRequest {
+  baseRevision?: string;
   files?: FileChange[];
   dialogueFiles?: DialogueFile[];
   translations?: Record<string, string>;
   inquiries?: DialogueInquiryEntry[];
   newEvents?: string[];
+  metadata?: Record<string, NpcMetadata>;
 }
 
 export interface FileDiff {

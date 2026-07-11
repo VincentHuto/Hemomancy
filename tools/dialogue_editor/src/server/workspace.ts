@@ -1,4 +1,5 @@
 import { existsSync, mkdirSync, readFileSync, readdirSync, writeFileSync } from 'node:fs';
+import { createHash } from 'node:crypto';
 import { dirname, join, relative, resolve, sep } from 'node:path';
 import type {
   Diagnostic,
@@ -24,6 +25,26 @@ import { makeFileDiff } from './diff';
 import { hasBlockingDiagnostics, validateDialogueFile } from './validation';
 
 const previews = new Map<string, PreviewResult>();
+const previewRevisions = new Map<string, string>();
+
+export function workspaceRevision(repoRoot: string): string {
+  const candidates = [
+    join(repoRoot, 'src/main/java/com/vincenthuto/hemomancy/common/entity/npc/dialogue'),
+    join(repoRoot, 'src/main/resources/assets/hemomancy/lang/en_us.json'),
+    join(repoRoot, 'src/main/resources/data/hemomancy/dialogue_inquiry')
+  ];
+  const files = candidates.flatMap(candidate => {
+    if (!existsSync(candidate)) return [];
+    try { return readdirSync(candidate, { withFileTypes: true }).length >= 0 ? walkFiles(candidate) : [candidate]; }
+    catch { return [candidate]; }
+  });
+  const metadataDir = join(repoRoot, 'tools/dialogue_editor');
+  if (existsSync(metadataDir)) files.push(...readdirSync(metadataDir).filter(name => name.endsWith('Metadata.json')).map(name => join(metadataDir, name)));
+  files.sort();
+  const hash = createHash('sha256');
+  files.forEach(file => { hash.update(relative(repoRoot, file).replaceAll('\\', '/')); hash.update(readFileSync(file)); });
+  return hash.digest('hex');
+}
 
 export function loadMetadata(metadataDir: string, speaker: string): NpcMetadata {
   const path = join(metadataDir, `${speaker}Metadata.json`);
@@ -88,6 +109,10 @@ export async function loadWorkspace(repoRoot = defaultRepoRoot()): Promise<Dialo
       file.diagnostics = validateDialogueFile(file, translations, knownEvents);
       return file;
     });
+  const metadata = Object.fromEntries(dialogueFiles.map(file => {
+    const slug = file.path.split(/[\\/]/).at(-1)?.replace(/DialogueTrees\.java$/, '') ?? file.speaker;
+    return [slug, loadMetadata(join(repoRoot, 'tools/dialogue_editor'), slug)];
+  }));
 
   const inquiries = loadInquiries(repoRoot);
   const registries = loadRegistryEntries(repoRoot, inquiries);
@@ -101,7 +126,7 @@ export async function loadWorkspace(repoRoot = defaultRepoRoot()): Promise<Dialo
     }))
   ];
 
-  return { repoRoot, dialogueFiles, translations, inquiries, registries, events, memos, diagnostics };
+  return { repoRoot, revision: workspaceRevision(repoRoot), dialogueFiles, translations, inquiries, registries, events, memos, diagnostics, metadata };
 }
 
 export async function loadDialogueFile(repoRoot: string, filePath: string): Promise<DialogueFile> {
@@ -112,25 +137,44 @@ export async function loadDialogueFile(repoRoot: string, filePath: string): Prom
 export async function previewWorkspaceChanges(repoRoot: string, request: PreviewRequest): Promise<PreviewResult> {
   const diagnostics: Diagnostic[] = [];
   const changes = new Map<string, string>();
+  const currentRevision = workspaceRevision(repoRoot);
+
+  if (request.baseRevision && request.baseRevision !== currentRevision) {
+    diagnostics.push({ severity: 'error', code: 'workspace_changed', message: 'Dialogue source changed outside the studio. Reload and reconcile the recovered draft before applying.' });
+  }
 
   for (const file of request.files ?? []) {
     changes.set(file.path, file.content);
   }
 
+  const langPath = 'src/main/resources/assets/hemomancy/lang/en_us.json';
+  const currentTranslations = readJson<Record<string, string>>(safeResolve(repoRoot, langPath), {});
+  const effectiveTranslations = { ...currentTranslations, ...(request.translations ?? {}) };
+  const knownEvents = new Set(request.newEvents ?? []);
+  const handlerPath = join(repoRoot, 'src/main/java/com/vincenthuto/hemomancy/common/entity/npc/dialogue/DialogueEventHandler.java');
+  if (existsSync(handlerPath)) {
+    const currentWorkspace = await loadWorkspace(repoRoot);
+    currentWorkspace.events.forEach(event => knownEvents.add(event.id));
+    currentWorkspace.memos.forEach(memo => knownEvents.add(`memo_capture:${memo.id}`));
+  }
   for (const file of request.dialogueFiles ?? []) {
+    diagnostics.push(...validateDialogueFile(file, effectiveTranslations, knownEvents));
     const original = readFileSync(safeResolve(repoRoot, file.path), 'utf8');
     changes.set(file.path, renderDialogueFile(original, file));
   }
 
-  if (request.translations) {
-    const langPath = 'src/main/resources/assets/hemomancy/lang/en_us.json';
-    const current = readJson<Record<string, string>>(safeResolve(repoRoot, langPath), {});
-    const merged = { ...current, ...request.translations };
+  if (request.translations && Object.keys(request.translations).length > 0) {
+    const merged = { ...currentTranslations, ...request.translations };
     changes.set(langPath, JSON.stringify(sortObject(merged), null, 2) + '\n');
   }
 
   for (const inquiry of request.inquiries ?? []) {
     changes.set(inquiry.path, JSON.stringify(renderInquiryJson(inquiry), null, 2) + '\n');
+  }
+
+  for (const [slug, metadata] of Object.entries(request.metadata ?? {})) {
+    const path = `tools/dialogue_editor/${slug}Metadata.json`;
+    changes.set(path, JSON.stringify(metadata, null, 2) + '\n');
   }
 
   if (request.newEvents?.length) {
@@ -154,6 +198,7 @@ export async function previewWorkspaceChanges(repoRoot: string, request: Preview
     canApply: !hasBlockingDiagnostics(diagnostics)
   };
   previews.set(result.id, result);
+  previewRevisions.set(result.id, currentRevision);
   return result;
 }
 
@@ -161,10 +206,22 @@ export async function applyPreview(repoRoot: string, previewId: string): Promise
   const preview = previews.get(previewId);
   if (!preview) throw new Error(`Unknown preview id: ${previewId}`);
   if (!preview.canApply) throw new Error('Preview has blocking diagnostics and cannot be applied.');
+  const expectedRevision = previewRevisions.get(previewId);
+  if (expectedRevision && workspaceRevision(repoRoot) !== expectedRevision) throw new Error('Dialogue source changed after preview. Generate a new preview before applying.');
   for (const diff of preview.diffs) {
     const abs = safeResolve(repoRoot, diff.path);
     mkdirSync(dirname(abs), { recursive: true });
     writeFileSync(abs, diff.after, 'utf8');
+  }
+}
+
+function walkFiles(root: string): string[] {
+  if (!existsSync(root)) return [];
+  try {
+    const entries = readdirSync(root, { withFileTypes: true });
+    return entries.flatMap(entry => entry.isDirectory() ? walkFiles(join(root, entry.name)) : [join(root, entry.name)]);
+  } catch {
+    return [root];
   }
 }
 

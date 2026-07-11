@@ -48,6 +48,11 @@ repo/
 /tools/dialogue_editor/node_modules/
 /tools/dialogue_editor/dist/
 /tools/*
+!/tools/dialogue_editor/
+!/tools/dialogue_editor/**
+/tools/dialogue_editor/node_modules/
+/tools/dialogue_editor/dist/
+/tools/dialogue_editor/*.log
 !/tools/skill_tree_editor/
 !/tools/skill_tree_editor/**
 /tools/skill_tree_editor/node_modules/

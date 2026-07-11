@@ -32,7 +32,7 @@ public class IronBrazierRenderer implements BlockEntityRenderer<IronBrazierBlock
 		float spin = (time * 2.0F) % 360.0F;
 
 		poseStack.pushPose();
-		poseStack.translate(0.5F, 1.35F + bob, 0.5F);
+		poseStack.translate(0.5F, 1.05F + bob, 0.5F);
 		poseStack.mulPose(Axis.YP.rotationDegrees(spin));
 		poseStack.mulPose(Axis.XP.rotationDegrees(12.0F));
 		poseStack.scale(0.5F, 0.5F, 0.5F);

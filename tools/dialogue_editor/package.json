@@ -1,0 +1,29 @@
+{
+  "name": "hemomancy-dialogue-workspace",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "dev": "node scripts/dev.mjs",
+    "build": "tsc --noEmit && vite build",
+    "test": "vitest run",
+    "server": "tsx src/server/httpServer.ts"
+  },
+  "dependencies": {
+    "@xyflow/react": "^12.4.2",
+    "elkjs": "^0.9.3",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "tsx": "4.20.6",
+    "vite": "^6.4.3",
+    "zustand": "^5.0.2"
+  },
+  "devDependencies": {
+    "@types/node": "^20.17.9",
+    "@types/react": "^18.3.12",
+    "@types/react-dom": "^18.3.1",
+    "@vitejs/plugin-react": "^4.3.4",
+    "typescript": "^5.6.3",
+    "vitest": "^3.2.7"
+  }
+}

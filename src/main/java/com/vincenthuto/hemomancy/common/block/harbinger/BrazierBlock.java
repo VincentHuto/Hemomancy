@@ -73,11 +73,7 @@ public class BrazierBlock extends Block implements EntityBlock, SimpleWaterlogge
 	 */
 	public static final IntegerProperty RITUAL_PHASE = IntegerProperty.create("ritual_phase", 0, 2);
 
-	private static final VoxelShape SHAPE_N = Stream
-			.of(Block.box(4, 0, 4, 12, 2, 12), Block.box(5, 2, 5, 11, 4, 11), Block.box(6, 4, 6, 10, 13, 10),
-					Block.box(5, 13, 5, 11, 16, 11), Block.box(6, 15, 6, 10, 17, 10), Block.box(5, 14, 11, 11, 17, 12),
-					Block.box(11, 14, 5, 12, 17, 11), Block.box(5, 14, 4, 11, 17, 5), Block.box(4, 14, 5, 5, 17, 11))
-			.reduce((v1, v2) -> Shapes.join(v1, v2, BooleanOp.OR)).get();
+	private static final VoxelShape SHAPE_N =Block.box(4, 0, 4, 12, 17, 12);
 
 	public BrazierBlock(Properties properties) {
 		super(properties);

@@ -1,73 +1,49 @@
-# Dialogue Workspace Editor
+# Hemomancy Dialogue Studio
 
-Java-first workspace editor for Hemomancy dialogue trees, translations,
-dialogue inquiry JSON, and dialogue event references.
+A visual, Java-first authoring studio for Hemomancy NPC conversations.
 
-The mod runtime still uses the Java `*DialogueTrees.java` files as the source
-of truth. This tool reads those files, builds an editable workspace model, and
-only writes repo files after you preview and apply a diff.
+The studio reads the live `*DialogueTrees.java` sources, English language file,
+item inquiries, event catalog, and memo catalog. Edits remain in a recoverable
+workspace draft until they pass validation and are explicitly applied.
 
-## Quick Start
-
-From `tools/dialogue_editor`:
+## Start
 
 ```bash
+cd tools/dialogue_editor
 npm install
 npm run dev
 ```
 
-Open:
+Open `http://127.0.0.1:5174/workspace.html`.
 
-```text
-http://127.0.0.1:5174/workspace.html
-```
+## Authoring workflow
 
-The dev command starts:
+- Pick an NPC and dialogue tree from the left navigator.
+- Read and edit complete NPC prose and player responses directly on the canvas.
+- Choose destinations and events without manually copying identifiers.
+- Drag a node to pin it; unpinned nodes use automatic left-to-right layout.
+- Use **Play-through** to walk the conversation and jump between visited nodes.
+- Use **Routes** to follow read-only Java router conditions into concrete trees.
+- Use **Inquiries** for item-specific NPC responses.
+- Press `Ctrl/Cmd + K` to find any NPC, tree, node, or spoken line.
+- Open **Changes** or click **Review changes** for validation, a readable summary,
+  optional raw patches, and the final Apply action.
 
-- Vite UI on port `5174`
-- Dialogue Workspace API on port `5175`
+The draft is restored after a browser refresh when the underlying source
+revision still matches. If source changes outside the studio, preview/apply is
+blocked until the workspace is reloaded and reconciled.
 
-## What The Workspace Edits
+## Safety model
 
-- Dialogue builder chains in `src/main/java/.../npc/dialogue/*DialogueTrees.java`
-- Translation entries in `src/main/resources/assets/hemomancy/lang/en_us.json`
-- Item inquiry JSON in `src/main/resources/data/hemomancy/dialogue_inquiry/`
-- Event IDs handled by `DialogueEventHandler`
-- Memo-producing dialogue events as a read-only catalog from `MemoDefinitions`
+- Java and resource files are never written while editing.
+- Preview validates all submitted dialogue trees and creates exact file diffs.
+- Apply rejects invalid, unknown, or stale previews.
+- Arbitrary Java router logic is visualized but never rewritten.
+- Existing localization keys are preserved; new content receives stable keys.
 
-## Main Tabs
-
-- `Graph` - node graph preview and node/option selection.
-- `Translations` - inline text editing for keys used by the selected file.
-- `Events` - handled event catalog, memo event catalog, and new event stub queue.
-- `Item Inquiries` - editable inquiry line-key JSON files.
-- `Validation` - broken links, duplicate nodes, unknown events, missing lang keys.
-- `Diff` - generated patch preview before any file write happens.
-
-## Save Model
-
-1. Edit nodes, options, translation values, inquiry lines, or queue a new event.
-2. Click `Preview Diff`.
-3. Review generated Java/lang/JSON patches.
-4. Click `Apply Preview` only when the preview is valid.
-
-The preview step does not write files. The apply step only writes the exact
-validated preview currently shown.
-
-## Tests And Build
+## Verification
 
 ```bash
 npm test
 npm run build
 ```
-
-The backend tests cover Java parsing, private helper tree discovery, memo event
-expression preservation, validation diagnostics, event/memo catalogs, and
-preview/apply safety.
-
-## Legacy JSON Scripts
-
-The old self-contained `index.html` editor has been removed so the workspace
-app is the only browser entry point. The `export_to_json.py` and
-`import_from_json.py` scripts remain only for older JSON snapshots and migration
-work; live dialogue authoring should use `workspace.html`.
