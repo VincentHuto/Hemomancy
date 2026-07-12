@@ -7,7 +7,11 @@
   "hitBlock": "hemomancy:conscious_mass",
   "consume_pattern": true,
   "pattern": [
-    ["EEEEE", "EGGGE", "EGCGE", "EGGGE", "EEEEE"]
+    ["EEEEE"],
+    ["EGGGE"],
+    ["EGCGE"],
+    ["EGGGE"],
+    ["EEEEE"]
   ],
   "key": {
     "E": {

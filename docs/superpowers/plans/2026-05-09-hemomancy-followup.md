@@ -1,5 +1,7 @@
 # Hemomancy Follow-up Implementation Plan
 
+> **Historical plan:** Its original Spindle-side calling/unlocking controls are superseded. The canonical contract is now `docs/HEMOMANCY_REFERENCE.md` §17: the Spindle owner-attunes, fuels, selects, and prepares; the equipped Crossbar calls, recalls, cycles, and focuses in the field.
+
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
 **Goal:** Improve inscription presentation, puppeteer usability, summon follow reliability, and blood-route visibility.
@@ -38,8 +40,8 @@
 
 - [ ] Register a menu type and screen.
 - [ ] Open the menu from the spindle block instead of doing item-click workflows directly.
-- [ ] Move bind, wind, unlock, select, call, and recall operations into reusable `MarionetteCrossbarItem`/spindle helpers.
-- [ ] Add a server packet for screen buttons: `SELECT`, `BIND`, `WIND`, `UNLOCK`, `CALL_OR_RECALL`.
+- [ ] Move owner-attunement, fueling, selection, and preparation into reusable `MarionetteCrossbarItem`/spindle helpers; keep call, recall, cycle, and focus on the field Crossbar.
+- [ ] Add a server packet for screen buttons: `SELECT`, `BIND`, `PREPARE`.
 - [ ] Render known summons, selected summon, thread meter, costs, and action buttons.
 
 ### Task 3: Veinwing Vulture Follow Reliability

@@ -4,6 +4,7 @@ import com.vincenthuto.hemomancy.client.screen.skilltree.util.IProgressTab;
 import com.vincenthuto.hemomancy.client.screen.skilltree.util.PanZoomState;
 import com.vincenthuto.hemomancy.client.screen.skilltree.util.ProgressScreenContext;
 import com.vincenthuto.hemomancy.common.recipe.BloodStructureRecipe;
+import com.vincenthuto.hemomancy.common.recipe.PuppeteerTrialRecipe;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
@@ -43,6 +44,8 @@ public class CraftingTabController implements IProgressTab {
         if (mc.player != null && mc.level != null)
             for (BloodStructureRecipe r : BloodStructureRecipe.getAllRecipes(mc.level))
                 if (r.isUnstained() == unstained) state.craftingRecipes.add(r);
+		if (!unstained && mc.player != null && mc.level != null)
+			state.craftingRecipes.addAll(PuppeteerTrialRecipe.getAllTrialRecipes(mc.level));
         state.rebuildTierMap();
         state.autoSelectFirstTier(ctx.playerDegree());
     }

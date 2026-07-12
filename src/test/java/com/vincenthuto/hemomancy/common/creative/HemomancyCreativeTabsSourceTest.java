@@ -8,6 +8,8 @@ import java.util.List;
 public final class HemomancyCreativeTabsSourceTest {
 	private static final Path ROOT = Path.of("").toAbsolutePath();
 	private static final List<String> WIP_ITEMS = List.of(
+			"drudge_electrode",
+			"drudge_submission_device",
 			"hematic_suture_needle",
 			"unsigned_ancestral_ledger",
 			"sanguine_blob",
@@ -42,6 +44,7 @@ public final class HemomancyCreativeTabsSourceTest {
 			"draught_of_still_mercy",
 			"lethean_brew");
 	private static final List<String> WIP_BLOCKS = List.of(
+			"semi_sentient_construct",
 			"humane_idol",
 			"serpentine_idol",
 			"morphling_cradle",
@@ -80,13 +83,29 @@ public final class HemomancyCreativeTabsSourceTest {
 				lang, "\"item.hemomancy.vascular_poultice\": \"Vascular Poultice\"");
 
 		for (String item : WIP_ITEMS) {
-			assertContains("WIP item list should contain " + item,
+			assertAppearsAtLeastTwice("WIP item should be accepted and excluded from main tab: " + item,
 					hemomancy, "ItemInit." + item + ".get()");
 		}
 		for (String block : WIP_BLOCKS) {
-			assertContains("WIP block list should contain " + block,
+			assertAppearsAtLeastTwice("WIP block should be accepted and excluded from main tab: " + block,
 					hemomancy, "BlockInit." + block + ".get()");
 		}
+
+		String reference = read("docs/HEMOMANCY_REFERENCE.md");
+		String readiness = read("wiki/Public-Alpha-Readiness.md");
+		String materials = read("src/main/java/com/vincenthuto/hemomancy/client/screen/skilltree/shared/MaterialsData.java");
+		String covenantSkills = read("src/main/java/com/vincenthuto/hemomancy/common/init/skills/CovenantSkillBranch.java");
+		String summonSkills = read("src/main/java/com/vincenthuto/hemomancy/common/init/skills/SummonSkillBranch.java");
+		assertContains("technical reference should mark Drudges as post-alpha WIP", reference,
+				"**Status:** `WIP — post-alpha`" );
+		assertContains("readiness page should exclude Drudges from alpha core", readiness,
+				"**Drudges are post-alpha WIP.**");
+		assertNotContains("core Materials Atlas should not advertise the WIP SSC", materials,
+				"new MaterialEntry(\"semi_sentient_construct\"");
+		assertNotContains("core Covenant skill icon should not expose the WIP electrode", covenantSkills,
+				"ItemInit.drudge_electrode");
+		assertNotContains("core summon skill icon should not expose the WIP submission device", summonSkills,
+				"ItemInit.drudge_submission_device");
 	}
 
 	private static String read(String path) throws IOException {
@@ -96,6 +115,20 @@ public final class HemomancyCreativeTabsSourceTest {
 	private static void assertContains(String label, String text, String expected) {
 		if (!text.contains(expected)) {
 			throw new AssertionError(label + " (missing '" + expected + "')");
+		}
+	}
+
+	private static void assertAppearsAtLeastTwice(String label, String text, String expected) {
+		int first = text.indexOf(expected);
+		int second = first < 0 ? -1 : text.indexOf(expected, first + expected.length());
+		if (second < 0) {
+			throw new AssertionError(label + " (expected at least two occurrences of '" + expected + "')");
+		}
+	}
+
+	private static void assertNotContains(String label, String text, String unexpected) {
+		if (text.contains(unexpected)) {
+			throw new AssertionError(label + " (unexpected '" + unexpected + "')");
 		}
 	}
 }

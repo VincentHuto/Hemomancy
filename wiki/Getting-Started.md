@@ -112,7 +112,7 @@ If you wish to walk the path of the Hematic Order:
 
 **Pros:**
 - Powerful offensive and utility manipulations
-- Can create drudges and morphlings
+- Can create morphlings; Drudges are reserved as post-alpha WIP
 - Access to puppeteering and blood constructs
 - Rich progression system with clear milestones
 
@@ -237,8 +237,8 @@ Choose carefully. This is not a system you can min-max by switching back and for
 
 **Trial Chambers** (WIP)
 - Special encounter areas for Saints
-- Currently only Hemorath's chamber is fully implemented
-- Expect deadly challenges and unique rewards
+- Hemorath supplies the complete first-release trial
+- The other Saints' bespoke chambers are reserved for the first major post-release Saints update
 
 ### Important Resources
 

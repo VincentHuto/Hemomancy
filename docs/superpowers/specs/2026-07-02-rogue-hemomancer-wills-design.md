@@ -149,7 +149,7 @@ Channel Blood Absorption on a faltering Broken Will to reclaim it into yourself.
 Seize a faltering Will and turn it loose as a **temporary ally** for a short duration: it fights other Wills and hostiles with its school's manipulation, then dissolves. A momentary puppet — ideal for turning a Faded pack against its own Proctor escort. No lasting bind, no cap cost.
 
 ### 11.3 Commandeer *(deep endgame — the capstone)*
-Permanently bind a subdued Broken Will as a **Claimed Will**: a tethered servant that keeps its school's manipulation and fights for you, counting against a cap. **Reuse the existing Marionette Crossbar / Puppeteer's Spindle economy** — thread upkeep, a tether that unravels if unsupported, a summon cap — so a Claimed Will is effectively a puppeteer summon you *harvested from the world* instead of unlocking through a trial. **Silent Archon-flavored:** a fixed, overpowering will is that path's whole identity, so it gets the edge here — higher Claimed-Will cap and cheaper binds.
+Permanently bind a subdued Broken Will as a **Claimed Will**: a tethered servant that keeps its school's manipulation and fights for you, counting against a cap. **Reuse the existing Marionette Crossbar / Puppeteer's Spindle economy** — Crossbar charge upkeep, equipped-owner tether support, and the player-wide summon cap — so a Claimed Will is effectively a puppeteer summon you *harvested from the world* instead of unlocking through a trial. **Silent Archon-flavored:** a fixed, overpowering will is that path's whole identity, so it gets the edge here — higher Claimed-Will cap and cheaper Commandeer charge.
 
 ### 11.4 The path parallel (why it's elegant)
 The two endgame identities get *different default verbs* on the same mechanic, matching their philosophies:

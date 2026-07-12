@@ -499,6 +499,20 @@ public final class SkillPointHelper {
 		return progress.getLevel(sp);
 	}
 
+	public static int getSkeinTranspositionLevel(Player player) {
+		return getSkeinTranspositionLevel(progress(player));
+	}
+
+	public static int getSkeinTranspositionLevel() {
+		return getSkeinTranspositionLevel(progress(null));
+	}
+
+	private static int getSkeinTranspositionLevel(SkillProgress progress) {
+		SkillPoint sp = SkillPointInit.skill_skein_transposition;
+		if (sp == null || !progress.isUnlocked(sp)) return 0;
+		return progress.getLevel(sp);
+	}
+
 	public static int getBoundCommandLevel(Player player) {
 		return getBoundCommandLevel(progress(player));
 	}

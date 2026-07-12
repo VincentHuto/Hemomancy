@@ -5,6 +5,7 @@ import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.PlaceStructurePacket;
 import com.vincenthuto.hemomancy.common.recipe.BloodStructureRecipe;
 import com.vincenthuto.hemomancy.common.recipe.CardinalRiteRecipe;
+import com.vincenthuto.hemomancy.common.recipe.PuppeteerTrialRecipe;
 import com.vincenthuto.hemomancy.common.recipe.RecipeDegreeGates;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
@@ -109,6 +110,20 @@ public class StructureSpawnerScreen extends AbstractContainerScreen<StructureSpa
 				));
 			}
 
+			List<PuppeteerTrialRecipe> puppetTrials =
+					PuppeteerTrialRecipe.getAllTrialRecipes(Minecraft.getInstance().level);
+			for (PuppeteerTrialRecipe recipe : puppetTrials) {
+				String name = formatName(recipe.getId().getPath());
+				entries.add(new StructureEntry(
+						recipe.getId(),
+						name,
+						createEntryLabel(PlaceStructurePacket.StructureType.PUPPETEER_TRIAL, name),
+						PlaceStructurePacket.StructureType.PUPPETEER_TRIAL,
+						RecipeDegreeGates.getRequiredDegree(recipe),
+						false
+				));
+			}
+
 			// Gather all cardinal rite recipes
 			List<CardinalRiteRecipe> rites = CardinalRiteRecipe.getAllRecipes(Minecraft.getInstance().level);
 			for (CardinalRiteRecipe recipe : rites) {
@@ -159,10 +174,16 @@ public class StructureSpawnerScreen extends AbstractContainerScreen<StructureSpa
 	}
 
 	private static Component createEntryLabel(PlaceStructurePacket.StructureType type, String name) {
-		ChatFormatting prefixColor = type == PlaceStructurePacket.StructureType.BLOOD_STRUCTURE
-				? ChatFormatting.AQUA
-				: ChatFormatting.LIGHT_PURPLE;
-		String prefix = type == PlaceStructurePacket.StructureType.BLOOD_STRUCTURE ? "[Structure] " : "[Rite] ";
+		ChatFormatting prefixColor = switch (type) {
+			case BLOOD_STRUCTURE -> ChatFormatting.AQUA;
+			case CARDINAL_RITE -> ChatFormatting.LIGHT_PURPLE;
+			case PUPPETEER_TRIAL -> ChatFormatting.YELLOW;
+		};
+		String prefix = switch (type) {
+			case BLOOD_STRUCTURE -> "[Structure] ";
+			case CARDINAL_RITE -> "[Rite] ";
+			case PUPPETEER_TRIAL -> "[Puppet Trial] ";
+		};
 		return Component.literal(prefix).withStyle(prefixColor)
 				.append(Component.literal(name).withStyle(ChatFormatting.WHITE));
 	}

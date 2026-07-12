@@ -10,6 +10,7 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.util.Mth;
 import org.apache.logging.log4j.util.TriConsumer;
 import org.lwjgl.glfw.GLFW;
@@ -44,6 +45,10 @@ public class GenericRadialMenu {
 	public float radiusOut;
 	public float itemRadius;
 	public float animTop;
+	private float targetCenterRadius = 18;
+	private float targetInnerRadiusOut = 42;
+	private float targetRadiusIn = 50;
+	private float targetRadiusOut = 86;
 
 	private MutableComponent centralText;
 
@@ -92,6 +97,13 @@ public class GenericRadialMenu {
 
 	public int getVisibleItemCount() {
 		return visibleItems.size();
+	}
+
+	public void setRadii(float center, float innerOut, float outerIn, float outerOut) {
+		targetCenterRadius = center;
+		targetInnerRadiusOut = innerOut;
+		targetRadiusIn = outerIn;
+		targetRadiusOut = outerOut;
 	}
 
 	public int getTotalVisibleItemCount() {
@@ -212,10 +224,10 @@ public class GenericRadialMenu {
 		Font font = host.getFontRenderer();
 
 		boolean animated = state == State.OPENING || state == State.CLOSING;
-		centerRadius = animated ? Math.max(0.1f, 18 * animProgress) : 18;
-		innerRadiusOut = animated ? Math.max(centerRadius + 0.1f, 42 * animProgress) : 42;
-		radiusIn = animated ? Math.max(innerRadiusOut + 0.1f, 50 * animProgress) : 50;
-		radiusOut = animated ? Math.max(radiusIn + 0.1f, 86 * animProgress) : 86;
+		centerRadius = animated ? Math.max(0.1f, targetCenterRadius * animProgress) : targetCenterRadius;
+		innerRadiusOut = animated ? Math.max(centerRadius + 0.1f, targetInnerRadiusOut * animProgress) : targetInnerRadiusOut;
+		radiusIn = animated ? Math.max(innerRadiusOut + 0.1f, targetRadiusIn * animProgress) : targetRadiusIn;
+		radiusOut = animated ? Math.max(radiusIn + 0.1f, targetRadiusOut * animProgress) : targetRadiusOut;
 		innerItemRadius = (centerRadius + innerRadiusOut) * 0.5f;
 		itemRadius = (radiusIn + radiusOut) * 0.5f;
 		animTop = animated ? (1 - animProgress) * owner.height / 2.0f : 0;
@@ -254,13 +266,21 @@ public class GenericRadialMenu {
 			}
 
 			if (currentCentralText != null) {
-				List<String> lines = RadialTextLines.split(currentCentralText.getString());
-				float blockTop = (owner.height - font.lineHeight * lines.size()) / 2.0f;
+				int centralTextWidth = Math.max(24, Mth.floor(centerRadius * 2 - 8));
+				List<FormattedCharSequence> lines = font.split(currentCentralText, centralTextWidth);
+				float textHeight = font.lineHeight * lines.size();
+				float centralTextScale = Math.min(1.0f, Math.max(0.65f,
+						(centerRadius * 2 - 8) / Math.max(font.lineHeight, textHeight)));
+				poseStack.pushPose();
+				poseStack.translate(owner.width / 2.0f, owner.height / 2.0f, 0);
+				poseStack.scale(centralTextScale, centralTextScale, 1.0f);
+				float blockTop = -textHeight / 2.0f;
 				for (int i = 0; i < lines.size(); i++) {
-					String text = lines.get(i);
-					float textX = (owner.width - font.width(text)) / 2.0f;
+					FormattedCharSequence text = lines.get(i);
+					float textX = -font.width(text) / 2.0f;
 					graphics.drawString(font, text, textX, blockTop + font.lineHeight * i, 0xFFFFFFFF, true);
 				}
+				poseStack.popPose();
 			}
 
 			poseStack.pushPose();

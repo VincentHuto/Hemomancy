@@ -35,7 +35,7 @@ Players face a fundamental choice:
 - **[[Unstained Path]]** — Purification mechanics and guardian powers
 - **[[Blood Systems]]** — Understanding manipulations, tendencies, and the vascular system
 - **[[World Content]]** — Biomes, structures, mobs, and items to discover
-- **[[Advanced Mechanics]]** — Morphlings, puppeteering, drudges, and cardinal rites
+- **[[Advanced Mechanics]]** — Morphlings, puppeteering, cardinal rites, and post-alpha Drudge WIP notes
 
 ### For Lore Enthusiasts
 - **[[Lore and Story]]** — The Fungal Entity, factions, characters, and moral themes

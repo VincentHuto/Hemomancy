@@ -7,7 +7,11 @@
   "hitBlock": "hemomancy:conscious_mass",
   "consume_pattern": true,
   "pattern": [
-    ["EMEME", "MCCCM", "ECQCE", "MCCCM", "EMEME"]
+    ["EMEME"],
+    ["MCCCM"],
+    ["ECQCE"],
+    ["MCCCM"],
+    ["EMEME"]
   ],
   "key": {
     "E": {

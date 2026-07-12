@@ -276,7 +276,6 @@ public final class MaterialAtlasSpec {
 		entryAt("mnemonic_candle", h, "idols_fixtures", d(4), 659, 838);
 		entryAt("mycelial_lantern", h, "spores_cultures", d(4), 1205, 649, "spore_sac");
 		entryAt("puppeteers_spindle", h, "vascular_craft", d(4), 1052, 391, "puppeteering_thread");
-		entryAt("semi_sentient_construct", h, "idols_fixtures", d(4), 697, 838);
 		entryAt("serpentine_idol", h, "idols_fixtures", d(4), 625, 883);
 		entryAt("specimen_jar", h, "new_category", d(4), 740, 310, "vivianite_glass");
 		entryAt("witness_organ", h, "idols_fixtures", d(4), 697, 883);

@@ -12,6 +12,7 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ContainerData;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 
@@ -67,15 +68,34 @@ public class PuppeteersSpindleMenu extends AbstractContainerMenu {
 		for (int row = 0; row < 3; ++row) {
 			for (int col = 0; col < 9; ++col) {
 				this.addSlot(new Slot(playerInventory, col + row * 9 + 9,
-						57 + col * 18, 154 + row * 18));
+						78 + col * 18, 154 + row * 18));
 			}
 		}
 
 		for (int col = 0; col < 9; ++col) {
-			this.addSlot(new Slot(playerInventory, col, 57 + col * 18, 212));
+			this.addSlot(new Slot(playerInventory, col, 78 + col * 18, 212));
 		}
 
 		this.addDataSlots(data);
+		if (!level.isClientSide) ensureCrossbarAttuned(playerInventory.player);
+	}
+
+	public boolean ensureCrossbarAttuned(Player player) {
+		ItemStack crossbar = getCrossbarStack();
+		if (!(player instanceof ServerPlayer serverPlayer)
+				|| !(crossbar.getItem() instanceof MarionetteCrossbarItem)) return false;
+		if (MarionetteCrossbarItem.isBoundTo(crossbar, player)) {
+			MarionetteCrossbarItem.updateThreadCapacity(crossbar, player);
+			return true;
+		}
+		return MarionetteCrossbarItem.getBoundOwner(crossbar) == null
+				&& MarionetteCrossbarItem.bindCrossbar(crossbar, serverPlayer);
+	}
+
+	public boolean prepareSelection(Player player, String summonName) {
+		return player instanceof ServerPlayer serverPlayer
+				&& ensureCrossbarAttuned(player)
+				&& MarionetteCrossbarItem.prepareSelectedSummon(getCrossbarStack(), serverPlayer, summonName);
 	}
 
 	private static PuppeteersSpindleBlockEntity getBlockEntity(Inventory inventory, FriendlyByteBuf data) {
@@ -119,7 +139,18 @@ public class PuppeteersSpindleMenu extends AbstractContainerMenu {
 	}
 
 	public int getScaledCrossbarThreadWidth(int width) {
-		return getCrossbarThread() * width / PuppeteerSummonRules.THREAD_CAPACITY;
+		ItemStack crossbar = getCrossbarStack();
+		int capacity = crossbar.getItem() instanceof MarionetteCrossbarItem
+				? MarionetteCrossbarItem.getThreadCapacity(crossbar)
+				: PuppeteerSummonRules.THREAD_CAPACITY;
+		return getCrossbarThread() * width / Math.max(1, capacity);
+	}
+
+	public int getCrossbarCapacity() {
+		ItemStack crossbar = getCrossbarStack();
+		return crossbar.getItem() instanceof MarionetteCrossbarItem
+				? MarionetteCrossbarItem.getThreadCapacity(crossbar)
+				: PuppeteerSummonRules.THREAD_CAPACITY;
 	}
 
 	@Override

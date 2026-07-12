@@ -223,6 +223,8 @@ public class Hemomancy {
     }
 
     private static void acceptWipCreativeTabContents(BuildCreativeModeTabContentsEvent populator) {
+        populator.accept(ItemInit.drudge_electrode.get());
+        populator.accept(ItemInit.drudge_submission_device.get());
         populator.accept(ItemInit.hematic_suture_needle.get());
         populator.accept(ItemInit.unsigned_ancestral_ledger.get());
         populator.accept(ItemInit.sanguine_blob.get());
@@ -257,6 +259,7 @@ public class Hemomancy {
         populator.accept(ItemInit.draught_of_still_mercy.get());
         populator.accept(ItemInit.lethean_brew.get());
         populator.accept(ItemInit.tome_of_the_unstained.get());
+        populator.accept(BlockInit.semi_sentient_construct.get());
         populator.accept(BlockInit.humane_idol.get());
         populator.accept(BlockInit.serpentine_idol.get());
         populator.accept(BlockInit.morphling_cradle.get());
@@ -297,7 +300,9 @@ public class Hemomancy {
     }
 
     private static boolean isWipItem(Item item) {
-        return item == ItemInit.hematic_suture_needle.get()
+        return item == ItemInit.drudge_electrode.get()
+                || item == ItemInit.drudge_submission_device.get()
+                || item == ItemInit.hematic_suture_needle.get()
                 || item == ItemInit.unsigned_ancestral_ledger.get()
                 || item == ItemInit.sanguine_blob.get()
                 || item == ItemInit.fervent_husk.get()
@@ -349,7 +354,8 @@ public class Hemomancy {
     }
 
     private static boolean isWipBlock(Block block) {
-        return block == BlockInit.humane_idol.get()
+        return block == BlockInit.semi_sentient_construct.get()
+                || block == BlockInit.humane_idol.get()
                 || block == BlockInit.serpentine_idol.get()
                 || block == BlockInit.morphling_cradle.get()
                 || block == BlockInit.witness_organ.get()

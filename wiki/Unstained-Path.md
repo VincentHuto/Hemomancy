@@ -74,8 +74,7 @@ The Unstained path progresses through increasing **Purity** levels, measured by 
 - NPCs react differently — some with relief, others with concern
 
 **Physical Changes:**
-- Slight pallor to skin
-- Eyes begin to clear (lose warmth)
+- Blood-magic signs begin to fade; no unrelated bodily or cosmetic change occurs during Purity
 
 ---
 
@@ -103,10 +102,7 @@ The Unstained path progresses through increasing **Purity** levels, measured by 
 - Common folk sense your purity (reactions vary)
 
 **Physical Changes:**
-- Skin becomes notably paler
-- Eyes take on a glassy quality
-- Hair may lighten or gray slightly
-- Slight decrease in bleeding when wounded
+- Bleeding diminishes as the infection loosens; skin, eyes, hair, hunger, poison, and ordinary healing remain unchanged
 
 ---
 
@@ -139,28 +135,21 @@ The Unstained path progresses through increasing **Purity** levels, measured by 
 - Physical appearance clearly marks you as Unstained
 
 **Physical Changes:**
-- Very pale, almost porcelain-like skin
-- Eyes fully glassy and reflective
-- No bleeding from minor wounds
-- Slight chemical smell (Hemolytic Solution)
+- Blood-themed signs and bleeding continue to diminish; there are no additional progressive bodily changes during Purity
 
 ---
 
-### Stage 4: Paragon (75-95% Purity)
-**"Biologically Immortal"**
+### Stage 4: Absolved (75-100% Purity)
+**"Prepared for the Stillness"**
 
 **Process:**
 - Final purification rituals
-- Complete replacement of natural blood chemistry
-- Fusion with Hemolytic Solution at cellular level
-- Become a living monument to purity
+- Complete the rejection of blood magic
+- Prepare Consecrated Copper at the Podium after reaching full Purity
+- Perform Clarity Ascension to begin preserved biology
 
 **What You Gain:**
-- **Biological Immortality** (configurable)
-  - Do not age
-  - Immune to disease and poison
-  - Regenerate slowly but surely
-  - Can still die from damage, but recover from most injuries
+- Preparation for the Clarity path toward biological immortality
 - Enhanced Guardian abilities
 - Aura of Stillness (massive anti-corruption field)
 - Ability to consecrate areas with copper
@@ -168,11 +157,17 @@ The Unstained path progresses through increasing **Purity** levels, measured by 
 - The Pale Lady's direct attention
 
 **What Changes:**
-- You are no longer fully human (biologically preserved)
-- Your body has been embalmed while living
-- Temperature regulation changes (always slightly cold)
-- Food and water optional (but can still consume)
-- Sleep optional (but can still rest)
+- Blood magic has been fully rejected, but broader preserved physiology does not begin until Clarity is unlocked
+- No new cosmetic transformation occurs during the Purity phase
+
+### Clarity and Preserved Biology
+
+After Clarity Ascension, bodily processes diminish gradually with Clarity rather than changing all at once:
+
+- Instant Health potions and Regeneration restore progressively less health, reaching 25% effectiveness at 100 Clarity.
+- Poison deals progressively less damage, reaching 25% damage at 100 Clarity.
+- Hunger drains progressively more slowly, reaching 35% of normal exhaustion at 100 Clarity.
+- Purity alone provides none of these effects, and unrelated healing, drowning, and ordinary damage remain unchanged.
 - You exist in a state of perfect preservation
 - Fungal Entity cannot touch you
 

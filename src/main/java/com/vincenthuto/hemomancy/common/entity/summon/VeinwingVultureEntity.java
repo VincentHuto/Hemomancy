@@ -6,17 +6,21 @@ import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.MoverType;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
-import net.minecraft.world.entity.ai.goal.MeleeAttackGoal;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.monster.Vex;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.Vec3;
 
 import java.util.Optional;
 import java.util.UUID;
 
 public class VeinwingVultureEntity extends Vex implements BoundPuppeteerSummon {
+	private static final int ATTACK_COOLDOWN_TICKS = 15;
 	private static final EntityDataAccessor<Optional<UUID>> DATA_OWNER_UUID =
 			SynchedEntityData.defineId(VeinwingVultureEntity.class, EntityDataSerializers.OPTIONAL_UUID);
 	private static final EntityDataAccessor<Optional<UUID>> DATA_CROSSBAR_UUID =
@@ -29,6 +33,7 @@ public class VeinwingVultureEntity extends Vex implements BoundPuppeteerSummon {
 			SynchedEntityData.defineId(VeinwingVultureEntity.class, EntityDataSerializers.BOOLEAN);
 	private static final EntityDataAccessor<Optional<UUID>> DATA_TRIAL_CASTER_UUID =
 			SynchedEntityData.defineId(VeinwingVultureEntity.class, EntityDataSerializers.OPTIONAL_UUID);
+	private int attackCooldown;
 
 	public VeinwingVultureEntity(EntityType<? extends Vex> type, Level level) {
 		super(type, level);
@@ -44,7 +49,7 @@ public class VeinwingVultureEntity extends Vex implements BoundPuppeteerSummon {
 
 	@Override
 	protected void registerGoals() {
-		this.goalSelector.addGoal(3, new MeleeAttackGoal(this, 1.15, true));
+		// Vex navigation is move-controller driven; combat is handled in tickVultureCombat.
 	}
 
 	@Override
@@ -66,19 +71,57 @@ public class VeinwingVultureEntity extends Vex implements BoundPuppeteerSummon {
 		}
 		if (hemomancy$isTrialSummon()) {
 			BoundSummonBehavior.trialServerTick(this, this);
+			tickVultureCombat();
 			return;
 		}
 		if (BoundSummonBehavior.commonServerTick(this, this)) {
 			Optional<Player> owner = BoundSummonBehavior.ownerFor(this, this);
-			if (owner.isPresent() && (getTarget() == null || distanceToSqr(owner.get()) > 144.0)) {
+			if (owner.isPresent()
+					&& BoundSummonBehavior.shouldFollowOwner((net.minecraft.server.level.ServerPlayer) owner.get(), this)
+					&& (getTarget() == null || distanceToSqr(owner.get()) > 144.0)) {
 				BoundSummonBehavior.followFlyingOwner(this, owner.get(), 1.12, 18.0);
 			}
+			tickVultureCombat();
+		}
+	}
+
+	private void tickVultureCombat() {
+		if (attackCooldown > 0) attackCooldown--;
+		LivingEntity target = getTarget();
+		if (target == null || !target.isAlive() || !canAttack(target)) {
+			return;
+		}
+		Vec3 destination = target.position().add(0.0, target.getBbHeight() * 0.55, 0.0);
+		Vec3 delta = destination.subtract(position());
+		if (delta.lengthSqr() > 0.01) {
+			getMoveControl().setWantedPosition(destination.x, destination.y, destination.z, 1.25);
+			setDeltaMovement(getDeltaMovement().scale(0.82).add(delta.normalize().scale(0.11)));
+		}
+		double attackReach = getBbWidth() * 2.0 + target.getBbWidth() + 0.75;
+		if (attackCooldown == 0 && distanceToSqr(target) <= attackReach * attackReach) {
+			swing(InteractionHand.MAIN_HAND);
+			doHurtTarget(target);
+			attackCooldown = ATTACK_COOLDOWN_TICKS;
 		}
 	}
 
 	@Override
 	public boolean canAttack(net.minecraft.world.entity.LivingEntity target) {
 		return BoundSummonBehavior.canAttack(this, this, target) && super.canAttack(target);
+	}
+
+	@Override
+	public void move(MoverType type, Vec3 movement) {
+		// Vex movement deliberately enables no-clip. Trial vultures are physical enemies;
+		// only a vulture bound to a Crossbar may retain that puppeteered phasing.
+		if (hemomancy$isTrialSummon()) this.noPhysics = false;
+		super.move(type, movement);
+	}
+
+	@Override
+	protected boolean shouldDespawnInPeaceful() {
+		return PuppeteerSummonRules.shouldDespawnInPeaceful(
+				hemomancy$isTrialSummon(), hemomancy$getOwnerUUID());
 	}
 
 	@Override

@@ -19,9 +19,7 @@ public record PacketPuppeteersSpindleAction(Action action, String summonName) im
 			StreamCodec.of(PacketPuppeteersSpindleAction::encode, PacketPuppeteersSpindleAction::decode);
 
 	public enum Action {
-		SELECT,
-		BIND,
-		CALL_OR_RECALL
+		PREPARE
 	}
 
 	public static void encode(FriendlyByteBuf buf, PacketPuppeteersSpindleAction msg) {
@@ -52,11 +50,7 @@ public record PacketPuppeteersSpindleAction(Action action, String summonName) im
 			return;
 		}
 
-		switch (msg.action) {
-			case SELECT -> MarionetteCrossbarItem.selectSummon(crossbar, player, msg.summonName);
-			case BIND -> MarionetteCrossbarItem.bindCrossbar(crossbar, player);
-			case CALL_OR_RECALL -> MarionetteCrossbarItem.callOrRecallSelectedSummon(crossbar, player);
-		}
+		menu.prepareSelection(player, msg.summonName);
 		menu.getSpindle().sendUpdates();
 	}
 

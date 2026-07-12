@@ -38,7 +38,7 @@ public class SkillPointInit {
 			skill_dragging_siphon, skill_mobile_conduit, skill_blood_tolerance,
 			skill_unbound_siphon, skill_quickened_draw, skill_hungry_pulse,
 			skill_arterial_cadence,
-			skill_thread_economy, skill_bound_command,
+			skill_thread_economy, skill_skein_transposition, skill_bound_command,
 			skill_deep_inscription, skill_fungal_symbiosis,
 			skill_fane_suture, skill_bloodline_concord, skill_servitor_tender,
 			skill_ancestral_sovereignty,

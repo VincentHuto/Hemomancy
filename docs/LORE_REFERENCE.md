@@ -354,6 +354,8 @@ From the Harbinger Vicar's lore branches:
 
 **Blood Drunk Puppeteers are Broken Wills commandeered by the hive's strings.** Their visible control and their susceptibility to player commandeering are literal extensions of that origin. These categories describe implemented origins, not competing NPC theories: Broken/Faded are failed people, Sent/Proctor are made assessors, and Blood Drunk Puppeteers are failed people being actively pulled.
 
+Harbinger puppeteering imitates that visible principle without accepting the hive's claim over the practitioner. A Puppeteer's Spindle fixes a learned blood-memory into a prepared shape and permanently attunes its Marionette Crossbar to one owner; the Spindle does not project the body itself. Puppeteering Thread becomes stored tension in the Crossbar, and the attuned Harbinger spends that tension to call, sustain, recall, or direct the shaped body in the field. A Crossbar can hold a shared behavioral command for its exact skein, while the Degree 5 discipline **Skein Transposition** lets an advanced Harbinger replace the prepared artificial shape without returning to the Spindle. Transposition changes the shaped expression, not the identity of the tether: unrelated shapes and claimed people are not rewritten. The tether is personal and local: another practitioner cannot inherit the Crossbar, starvation unravels only the body whose upkeep failed, and crossing dimensions, death, or the owner's departure severs the projection even when its chunk was asleep. A faltering Broken Will can be Commandeered into the same tether system and obey its commands, but it remains a claimed failed person rather than becoming one of the four learned artificial shapes or a candidate for transposition.
+
 ---
 
 ## 7. The Unstained
@@ -406,7 +408,9 @@ Their field equipment is practical before it is mystical. A **Pale Silver Bell**
 
 ### 7.5 What Happens to the Purified
 
-Once a practitioner completes the full purification process (Phase 1: Purity 100%), they enter a brief coma and wake fundamentally changed. They are, biologically, no longer fully human. The Hemolytic Solution they drank was essentially **formaldehyde** — they have embalmed their own veins from the inside. Their blood no longer flows in a conventional sense. Their eyes drain of color, hair and nails may appear to continue growing as skin recedes, giving them a gaunt, glassy-eyed appearance.
+During Phase 1, purification changes the practitioner's relationship to blood rather than visibly remaking the rest of the body: blood magic weakens, bleeding diminishes, and sanguine signs fade. There are no additional progressive changes to skin, eyes, hair, nails, food, poison, or ordinary healing during the Purity stages.
+
+At Purity 100%, the Hemolytic Solution has prepared the practitioner for preservation, but its broader physiology unfolds only after **Clarity Ascension**. As Clarity rises, their veins become functionally embalmed and their blood ceases to behave conventionally. The change is expressed through diminishing bodily processes, not a sequence of new cosmetic mutations.
 
 Abilities that emerge at this stage:
 - Improved night vision
@@ -415,7 +419,7 @@ Abilities that emerge at this stage:
 - Passive plant growth in their vicinity
 - Greatly enhanced resistance to blood corruption
 
-And critically: **biological immortality**. A fully purified Unstained does not age, does not hunger in the normal sense, and cannot die from blood loss (they have none). They can only be killed through physical destruction — being blown apart, burned, destroyed by magic — or by fungal means. Even severing a limb does not kill them; they simply won't bleed.
+And critically, the path tends toward **biological immortality**. Across Clarity, ordinary healing potions and Regeneration work progressively less, poison has progressively less purchase, and hunger slows as the preserved body needs less food. At Enlightenment those responses are greatly diminished, not wholly removed. The Unstained can still die through sufficient physical destruction, fire, magic, or fungal means; the release scope does not grant general invulnerability or rewrite drowning and every ordinary damage source.
 
 The Unstained Church does not need many members. High-quality, immortal practitioners who arrive at purity and stay are sufficient. The church grows slowly, surely, and endures.
 
@@ -517,7 +521,7 @@ Players are directed to seek the Saints around **Degree 3–4**, when they are s
 
 **Triggering a boss fight deliberately**: Smearing **Foul Paste** on a sarcophagus will anger the saint and force a fight even if the player had already extracted a sample peacefully.
 
-**Implementation status:** Partial. The shared sarcophagus spine, peaceful aligned extraction, unaligned awakening, Foul Paste forced awakening, saint-specific boss dispatch, syringe tagging, and direct residuum rewards are implemented for all four Saints. Hemorath's trial flow is the first complete chamber. Seraphae, Putriciel, and Velorum have registered boss AI, but bespoke chambers, world placement, final balance, and dedicated art/animation remain WIP.
+**Release scope:** Saints are intentionally modular expansion content. The first release needs their initial lore, shared sarcophagus foundation, and Hemorath's complete trial; it does not require four finished trial suites. Bespoke rooms, environmental storytelling, victory-condition refinement, placement, balance, and final presentation for Seraphae, Putriciel, and Velorum are reserved for the first major post-release Saints update.
 
 ### 10.1 Hemorath — The First Saint
 

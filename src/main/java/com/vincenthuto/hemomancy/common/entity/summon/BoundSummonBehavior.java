@@ -1,20 +1,30 @@
 package com.vincenthuto.hemomancy.common.entity.summon;
 
 import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillPointHelper;
+import com.vincenthuto.hemomancy.common.entity.mob.monster.will.WillBendRules;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.MarionetteCrossbarItem;
 import com.vincenthuto.hemomancy.common.summon.PuppeteerSummonDefinition;
+import com.vincenthuto.hemomancy.common.summon.PuppeteerSummonDefinitions;
 import com.vincenthuto.hemomancy.common.summon.PuppeteerSummonRules;
+import com.vincenthuto.hemomancy.common.summon.PuppeteerCommandMode;
+import com.vincenthuto.hemomancy.common.worldgen.FungalGardenTravelHelper;
+import com.vincenthuto.hemomancy.config.HemoServerConfig;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.attributes.Attributes;
-import net.minecraft.world.entity.monster.Monster;
+import net.minecraft.world.entity.monster.Enemy;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 
+import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -25,6 +35,11 @@ public final class BoundSummonBehavior {
 	private static final String TAG_DISMISSAL_TICKS = "HemomancyDismissalTicks";
 	private static final String TAG_TRIAL = "HemomancyTrial";
 	private static final String TAG_TRIAL_CASTER = "HemomancyTrialCaster";
+	private static final String TAG_NEXT_UPKEEP = "HemomancyNextUpkeepGameTime";
+	private static final String TAG_OWNER_SESSION = "HemomancyOwnerSession";
+	private static final String TAG_BOUND_AT = "HemomancyBoundAtGameTime";
+	private static final String TAG_FOCUS_TARGET = "HemomancyFocusTarget";
+	private static final String PLAYER_TAG_OWNER_SESSION = "HemomancyPuppeteerSession";
 
 	private BoundSummonBehavior() {
 	}
@@ -70,6 +85,11 @@ public final class BoundSummonBehavior {
 		summon.hemomancy$setTrialSummon(tag.getBoolean(TAG_TRIAL));
 		if (tag.hasUUID(TAG_TRIAL_CASTER)) {
 			summon.hemomancy$setTrialCasterUUID(tag.getUUID(TAG_TRIAL_CASTER));
+		}
+		if (summon instanceof Mob mob
+				&& !PuppeteerSummonRules.shouldDespawnInPeaceful(
+						summon.hemomancy$isTrialSummon(), summon.hemomancy$getOwnerUUID())) {
+			mob.setPersistenceRequired();
 		}
 	}
 
@@ -127,33 +147,289 @@ public final class BoundSummonBehavior {
 	}
 
 	public static boolean commonServerTick(Mob mob, BoundPuppeteerSummon summon) {
-		Optional<Player> ownerOpt = ownerFor(mob, summon);
+		Optional<ServerPlayer> ownerOpt = ownerOnServer(mob, summon);
 		if (ownerOpt.isEmpty()) {
 			mob.discard();
 			return false;
 		}
-		Player owner = ownerOpt.get();
+		return commonServerTick(mob, summon, ownerOpt.get());
+	}
+
+	public static boolean commonServerTick(Mob mob, BoundPuppeteerSummon summon, ServerPlayer owner) {
+		if (mob == null || summon == null || owner == null
+				|| !owner.getUUID().equals(summon.hemomancy$getOwnerUUID())) {
+			if (mob != null) {
+				mob.discard();
+			}
+			return false;
+		}
+		if (PuppeteerSummonRules.shouldUnravelForDimension(owner.level() == mob.level())) {
+			unravel(mob, owner, "hemomancy.summon.dimension.unravel");
+			return false;
+		}
+		if (!ownerSessionMatches(mob, owner)) {
+			unravel(mob, owner, "hemomancy.summon.session.unravel");
+			return false;
+		}
+		if (mob.tickCount <= 1 && !reconcileLoadedActiveCap(mob, owner)) {
+			return false;
+		}
 		UUID crossbarId = summon.hemomancy$getCrossbarUUID();
 		if (crossbarId == null) {
 			mob.discard();
 			return false;
 		}
-		if (MarionetteCrossbarItem.findEquippedCrossbar(owner, crossbarId).isEmpty()) {
+		Optional<net.minecraft.world.item.ItemStack> crossbar =
+				MarionetteCrossbarItem.findEquippedCrossbar(owner, crossbarId);
+		if (crossbar.isEmpty()) {
 			return tickMissingEquippedCrossbar(mob, summon, owner);
 		}
 		if (summon.hemomancy$getDismissalTicks() > 0) {
 			summon.hemomancy$setDismissalTicks(0);
 			mob.setNoAi(false);
 		}
+		long gameTime = mob.level().getGameTime();
+		CompoundTag persistentData = mob.getPersistentData();
+		long nextUpkeep = persistentData.getLong(TAG_NEXT_UPKEEP);
+		if (nextUpkeep <= 0L) {
+			persistentData.putLong(TAG_NEXT_UPKEEP, PuppeteerSummonRules.nextUpkeepGameTime(gameTime));
+		} else if (PuppeteerSummonRules.upkeepDue(gameTime, nextUpkeep)) {
+			if (!payUpkeep(summon, owner, crossbar.get())) {
+				unravel(mob, owner, "hemomancy.summon.upkeep.failed");
+				return false;
+			}
+			persistentData.putLong(TAG_NEXT_UPKEEP, PuppeteerSummonRules.nextUpkeepGameTime(gameTime));
+		}
 		double range = PuppeteerSummonRules.commandRange(SkillPointHelper.getFarTetherLevel(owner),
 				SkillPointHelper.getBoundCommandLevel(owner));
 		if (mob.distanceToSqr(owner) > range * range * 9.0) {
 			mob.teleportTo(owner.getX(), owner.getY(), owner.getZ());
 		}
-		if (mob.getTarget() == null || !mob.getTarget().isAlive() || !canAttack(mob, summon, mob.getTarget())) {
-			findTarget(mob, summon, range).ifPresent(mob::setTarget);
+		net.minecraft.world.item.ItemStack equippedCrossbar = crossbar.get();
+		PuppeteerCommandMode mode = MarionetteCrossbarItem.getCommandMode(equippedCrossbar);
+		if (mode == PuppeteerCommandMode.GUARD && !validGuardAnchor(owner, equippedCrossbar, range)) {
+			MarionetteCrossbarItem.setCommandMode(equippedCrossbar, PuppeteerCommandMode.FOLLOW);
+			MarionetteCrossbarItem.clearGuardAnchor(equippedCrossbar);
+			mode = PuppeteerCommandMode.FOLLOW;
+		}
+		boolean focused = isFocusedTarget(mob, mob.getTarget());
+		if (mob.getTarget() == null || !mob.getTarget().isAlive() || !canAttack(mob, summon, mob.getTarget())
+				|| !PuppeteerSummonRules.withinTetherRange(owner.distanceToSqr(mob.getTarget()), range)) {
+			mob.setTarget(null);
+			mob.getPersistentData().remove(TAG_FOCUS_TARGET);
+			mob.getNavigation().stop();
+			focused = false;
+		}
+		if (!focused && mob.getTarget() != null && (!mode.retainsAutomaticTarget()
+				|| mode == PuppeteerCommandMode.GUARD
+				&& !withinGuardAnchor(equippedCrossbar, mob.getTarget(), range))) {
+			mob.setTarget(null);
+			mob.getNavigation().stop();
+		}
+		if (mob.getTarget() == null) {
+			Optional<LivingEntity> target = switch (mode) {
+				case FOLLOW -> findRetaliationTarget(mob, summon, owner, range)
+						.or(() -> findTarget(mob, summon, owner, Math.min(range, 12.0)));
+				case GUARD -> findGuardTarget(mob, summon, owner, equippedCrossbar, range);
+				case HUNT -> findTarget(mob, summon, owner, range);
+				case PASSIVE -> Optional.empty();
+			};
+			target.ifPresent(mob::setTarget);
+		}
+		if (mode == PuppeteerCommandMode.GUARD && mob.getTarget() == null) {
+			MarionetteCrossbarItem.getGuardPosition(equippedCrossbar).ifPresent(anchor ->
+					mob.getNavigation().moveTo(anchor.getX() + 0.5, anchor.getY(), anchor.getZ() + 0.5, 1.0));
 		}
 		return true;
+	}
+
+	public static void setFocusedTarget(Mob mob, LivingEntity target) {
+		if (mob != null && target != null) {
+			mob.getPersistentData().putUUID(TAG_FOCUS_TARGET, target.getUUID());
+			mob.setTarget(target);
+		}
+	}
+
+	public static boolean shouldFollowOwner(ServerPlayer owner, BoundPuppeteerSummon summon) {
+		if (owner == null || summon == null || summon.hemomancy$getCrossbarUUID() == null) return true;
+		return MarionetteCrossbarItem.findEquippedCrossbar(owner, summon.hemomancy$getCrossbarUUID())
+				.map(stack -> MarionetteCrossbarItem.getCommandMode(stack) != PuppeteerCommandMode.GUARD)
+				.orElse(true);
+	}
+
+	private static boolean isFocusedTarget(Mob mob, LivingEntity target) {
+		return target != null && mob.getPersistentData().hasUUID(TAG_FOCUS_TARGET)
+				&& target.getUUID().equals(mob.getPersistentData().getUUID(TAG_FOCUS_TARGET));
+	}
+
+	private static boolean validGuardAnchor(ServerPlayer owner, net.minecraft.world.item.ItemStack crossbar,
+			double range) {
+		return MarionetteCrossbarItem.getGuardDimension(crossbar).filter(owner.level().dimension()::equals).isPresent()
+				&& MarionetteCrossbarItem.getGuardPosition(crossbar)
+						.filter(pos -> pos.distToCenterSqr(owner.position()) <= range * range).isPresent();
+	}
+
+	private static boolean withinGuardAnchor(net.minecraft.world.item.ItemStack crossbar,
+			LivingEntity target, double range) {
+		return MarionetteCrossbarItem.getGuardPosition(crossbar)
+				.filter(pos -> pos.distToCenterSqr(target.position()) <= range * range).isPresent();
+	}
+
+	private static Optional<LivingEntity> findRetaliationTarget(Mob mob, BoundPuppeteerSummon summon,
+			ServerPlayer owner, double range) {
+		List<LivingEntity> candidates = new ArrayList<>();
+		if (owner.getLastHurtByMob() != null) candidates.add(owner.getLastHurtByMob());
+		for (Mob body : MarionetteCrossbarItem.activeSummonsForCrossbar(owner,
+				summon.hemomancy$getCrossbarUUID(), null)) {
+			if (body.getLastHurtByMob() != null) candidates.add(body.getLastHurtByMob());
+		}
+		return candidates.stream().filter(target -> canAttack(mob, summon, target))
+				.filter(target -> PuppeteerSummonRules.withinTetherRange(owner.distanceToSqr(target), range))
+				.min(Comparator.comparingDouble(mob::distanceToSqr));
+	}
+
+	private static Optional<LivingEntity> findGuardTarget(Mob mob, BoundPuppeteerSummon summon,
+			ServerPlayer owner, net.minecraft.world.item.ItemStack crossbar, double range) {
+		return MarionetteCrossbarItem.getGuardPosition(crossbar).flatMap(anchor ->
+				mob.level().getEntitiesOfClass(Mob.class, new AABB(anchor).inflate(range),
+						target -> target instanceof Enemy && canAttack(mob, summon, target)
+								&& PuppeteerSummonRules.withinTetherRange(owner.distanceToSqr(target), range))
+						.stream().min(Comparator.comparingDouble(mob::distanceToSqr)).map(LivingEntity.class::cast));
+	}
+
+	public static void bindOwnerSession(Mob mob, ServerPlayer owner) {
+		if (mob == null || owner == null) {
+			return;
+		}
+		CompoundTag data = mob.getPersistentData();
+		data.putUUID(TAG_OWNER_SESSION, currentOwnerSession(owner));
+		if (!data.contains(TAG_BOUND_AT)) {
+			data.putLong(TAG_BOUND_AT, Math.max(1L, owner.level().getGameTime()));
+		}
+	}
+
+	public static void rotateOwnerSession(ServerPlayer owner) {
+		if (owner != null) {
+			owner.getPersistentData().putUUID(PLAYER_TAG_OWNER_SESSION, UUID.randomUUID());
+		}
+	}
+
+	private static UUID currentOwnerSession(ServerPlayer owner) {
+		CompoundTag data = owner.getPersistentData();
+		if (!data.hasUUID(PLAYER_TAG_OWNER_SESSION)) {
+			data.putUUID(PLAYER_TAG_OWNER_SESSION, UUID.randomUUID());
+		}
+		return data.getUUID(PLAYER_TAG_OWNER_SESSION);
+	}
+
+	private static boolean ownerSessionMatches(Mob mob, ServerPlayer owner) {
+		CompoundTag data = mob.getPersistentData();
+		UUID current = currentOwnerSession(owner);
+		if (!data.hasUUID(TAG_OWNER_SESSION)) {
+			// One-time migration for bodies saved before session-bound tethers existed.
+			data.putUUID(TAG_OWNER_SESSION, current);
+			if (!data.contains(TAG_BOUND_AT)) {
+				data.putLong(TAG_BOUND_AT, Math.max(1L, mob.level().getGameTime()));
+			}
+			return true;
+		}
+		return current.equals(data.getUUID(TAG_OWNER_SESSION));
+	}
+
+	public static int claimedWillBonusCap(Player owner) {
+		boolean silentArchon = FungalGardenTravelHelper.ARCHON_CHOICE_SILENCE.equals(
+				owner.getPersistentData().getString(FungalGardenTravelHelper.ARCHON_CHOICE_KEY));
+		if (!silentArchon) {
+			return 0;
+		}
+		int configuredBonus = HemoServerConfig.WILL_CLAIMED_BONUS_CAP_SILENT_ARCHON == null
+				? WillBendRules.silentArchonBonusCap()
+				: HemoServerConfig.WILL_CLAIMED_BONUS_CAP_SILENT_ARCHON.get();
+		return Math.max(0, configuredBonus);
+	}
+
+	public static int totalActiveCap(ServerPlayer owner) {
+		return PuppeteerSummonRules.activeSummonCap(SkillPointHelper.getPuppetSkeinLevel(owner))
+				+ claimedWillBonusCap(owner);
+	}
+
+	public static boolean isClaimedWill(Mob mob) {
+		return mob instanceof BoundPuppeteerSummon bound
+				&& "claimed_will".equals(bound.hemomancy$getSummonName());
+	}
+
+	private static boolean reconcileLoadedActiveCap(Mob candidate, ServerPlayer owner) {
+		int baseCap = PuppeteerSummonRules.activeSummonCap(SkillPointHelper.getPuppetSkeinLevel(owner));
+		int claimedBonusCap = claimedWillBonusCap(owner);
+		List<Mob> loaded = new ArrayList<>(MarionetteCrossbarItem.activeSummonsForOwner(owner));
+		loaded.removeIf(mob -> mob.level() != owner.level() || !ownerSessionMatches(mob, owner));
+		loaded.sort(Comparator
+				.comparingLong(BoundSummonBehavior::boundAtGameTime)
+				.thenComparing(Mob::getUUID));
+
+		int keptTotal = 0;
+		int keptShapedBodies = 0;
+		boolean candidateKept = false;
+		List<Mob> overflow = new ArrayList<>();
+		for (Mob loadedBody : loaded) {
+			boolean claimedWill = isClaimedWill(loadedBody);
+			boolean keep = PuppeteerSummonRules.canRetainBody(claimedWill, keptTotal, keptShapedBodies,
+					baseCap, claimedBonusCap);
+			if (keep) {
+				keptTotal++;
+				if (!claimedWill) {
+					keptShapedBodies++;
+				}
+				candidateKept |= loadedBody == candidate;
+			} else {
+				overflow.add(loadedBody);
+			}
+		}
+		for (Mob overflowBody : overflow) {
+			unravel(overflowBody, owner, "hemomancy.summon.cap.unravel");
+		}
+		if (!candidateKept && !candidate.isRemoved()) {
+			unravel(candidate, owner, "hemomancy.summon.cap.unravel");
+		}
+		return candidateKept && !candidate.isRemoved();
+	}
+
+	private static long boundAtGameTime(Mob mob) {
+		long boundAt = mob.getPersistentData().getLong(TAG_BOUND_AT);
+		return boundAt <= 0L ? Long.MAX_VALUE : boundAt;
+	}
+
+	private static Optional<ServerPlayer> ownerOnServer(Mob mob, BoundPuppeteerSummon summon) {
+		UUID ownerId = summon.hemomancy$getOwnerUUID();
+		if (ownerId == null || mob.level().getServer() == null) {
+			return Optional.empty();
+		}
+		return Optional.ofNullable(mob.level().getServer().getPlayerList().getPlayer(ownerId));
+	}
+
+	private static boolean payUpkeep(BoundPuppeteerSummon summon, Player owner,
+			net.minecraft.world.item.ItemStack crossbar) {
+		int fallbackUpkeep = "claimed_will".equals(summon.hemomancy$getSummonName())
+				? PuppeteerSummonRules.CLAIMED_WILL_UPKEEP_PER_MINUTE
+				: 1;
+		int baseUpkeep = PuppeteerSummonDefinitions.byName(summon.hemomancy$getSummonName())
+				.map(PuppeteerSummonDefinition::threadUpkeepPerMinute)
+				.orElse(fallbackUpkeep);
+		int upkeep = PuppeteerSummonRules.adjustedThreadCost(baseUpkeep,
+				SkillPointHelper.getThreadEconomyLevel(owner));
+		return MarionetteCrossbarItem.consumeThread(crossbar, upkeep);
+	}
+
+	private static void unravel(Mob mob, ServerPlayer owner, String messageKey) {
+		if (mob.level() instanceof ServerLevel serverLevel) {
+			serverLevel.sendParticles(ParticleTypes.CRIMSON_SPORE,
+					mob.getX(), mob.getY() + mob.getBbHeight() * 0.5, mob.getZ(),
+					18, 0.25, 0.35, 0.25, 0.02);
+		}
+		mob.playSound(SoundEvents.CHAIN_BREAK, 0.5F, 0.8F);
+		owner.displayClientMessage(net.minecraft.network.chat.Component.translatable(messageKey,
+				mob.getDisplayName()).withStyle(net.minecraft.ChatFormatting.GRAY), true);
+		mob.discard();
 	}
 
 	private static boolean tickMissingEquippedCrossbar(Mob mob, BoundPuppeteerSummon summon, Player owner) {
@@ -183,7 +459,12 @@ public final class BoundSummonBehavior {
 		if (ownerId != null && ownerId.equals(target.getUUID())) {
 			return false;
 		}
-		return !(target instanceof BoundPuppeteerSummon);
+		if (target instanceof BoundPuppeteerSummon boundTarget
+				&& !boundTarget.hemomancy$isTrialSummon()
+				&& boundTarget.hemomancy$getOwnerUUID() != null) {
+			return false;
+		}
+		return target instanceof Enemy;
 	}
 
 	public static void followFlyingOwner(Mob mob, Player owner, double speed, double teleportDistance) {
@@ -199,10 +480,13 @@ public final class BoundSummonBehavior {
 		}
 	}
 
-	private static Optional<LivingEntity> findTarget(Mob mob, BoundPuppeteerSummon summon, double range) {
+	private static Optional<LivingEntity> findTarget(Mob mob, BoundPuppeteerSummon summon, Player owner,
+			double range) {
 		AABB search = mob.getBoundingBox().inflate(range);
-		return mob.level().getEntitiesOfClass(Monster.class, search,
-						target -> canAttack(mob, summon, target))
+		return mob.level().getEntitiesOfClass(Mob.class, search,
+					target -> target instanceof Enemy
+							&& canAttack(mob, summon, target)
+							&& PuppeteerSummonRules.withinTetherRange(owner.distanceToSqr(target), range))
 				.stream()
 				.min(Comparator.comparingDouble(mob::distanceToSqr))
 				.map(LivingEntity.class::cast);

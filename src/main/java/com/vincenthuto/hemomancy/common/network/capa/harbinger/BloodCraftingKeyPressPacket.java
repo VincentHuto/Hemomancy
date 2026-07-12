@@ -84,10 +84,6 @@ public class BloodCraftingKeyPressPacket implements CustomPacketPayload {
 				BlockPos hitPos = blockResult.getBlockPos();
 				ServerLevel sLevel = (ServerLevel) player.level();
 
-				if (tryActivatePuppeteerTrial(player, sLevel, hitPos)) {
-					handled = true;
-				}
-
 				if (!handled) {
 				for (BloodStructureRecipe targetPattern : BloodCraftingPatternSearchRules.sortedByPatternSearchCost(
 						BloodStructureRecipe.getAllRecipes(player.level()),
@@ -259,21 +255,6 @@ public class BloodCraftingKeyPressPacket implements CustomPacketPayload {
 							}
 							handled = true;
 							break;
-						}
-					}
-					if (!handled) {
-						for (PuppeteerTrialRecipe recipe : BloodCraftingPatternSearchRules.sortedByPatternSearchCost(
-								PuppeteerTrialRecipe.getAllTrialRecipes(player.level()),
-								targetPattern -> targetPattern.getPattern().getPatternArray())) {
-							BlockPattern.BlockPatternMatch match = findStructurePatternAtHit(recipe, sLevel, hitPos);
-							if (match != null && player.getMainHandItem().getItem() != recipe.getHeldItem().getItem()) {
-								player.displayClientMessage(
-										Component.translatable("hemomancy.summon.trial.needs_catalyst",
-												recipe.getHeldItem().getHoverName()).withStyle(ChatFormatting.RED),
-										false);
-								handled = true;
-								break;
-							}
 						}
 					}
 				}

@@ -194,7 +194,7 @@ public record MyPacket(int data) implements CustomPacketPayload {
 - Vein section
 - Cooldown
 - Action lambda (what it does)
-- Optional: Drudge action
+- Optional post-alpha WIP: Drudge action
 
 **Tendencies (Internal):**
 - `ANIMUS`, `FLAMMEUS`, `DUCTILIS`, `LUX`

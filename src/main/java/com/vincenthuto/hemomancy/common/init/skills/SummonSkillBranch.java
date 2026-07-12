@@ -30,10 +30,14 @@ public final class SummonSkillBranch {
 					new SkillPoint(26, "skill_thread_economy", 500, 3, EnumSkillStates.LOCKED, SkillPointInit.skill_far_tether)
 							.setSkillPointCost(3).setRequiredDegree(5).setTreePosition(584, 512).setBranch("summons").setBranchColor(0xFF2370DB)
 							.setIconItem(() -> new ItemStack(ItemInit.marionette_crossbar.get())));
+			SkillPointInit.skill_skein_transposition = SkillPointInit.registerSkill(branch,
+					new SkillPoint(49, "skill_skein_transposition", 500, 1, EnumSkillStates.LOCKED, SkillPointInit.skill_far_tether)
+							.setSkillPointCost(3).setRequiredDegree(5).setTreePosition(816, 512).setBranch("summons").setBranchColor(0xFF2370DB)
+							.setIconItem(() -> new ItemStack(ItemInit.marionette_crossbar.get())));
 			SkillPointInit.skill_bound_command = SkillPointInit.registerSkill(branch,
 					new SkillPoint(27, "skill_bound_command", 600, 3, EnumSkillStates.LOCKED, SkillPointInit.skill_thread_economy)
 							.setSkillPointCost(4).setRequiredDegree(6).setTreePosition(650, 528).setBranch("summons").setBranchColor(0xFF2370DB)
-							.setIconItem(() -> new ItemStack(ItemInit.drudge_submission_device.get())));
+							.setIconItem(() -> new ItemStack(ItemInit.marionette_crossbar.get())));
 		// </skill-editor>
 	}
 }

@@ -549,6 +549,8 @@ Combine manipulations for enhanced effects:
 
 ### Drudge Actions
 
+> **Post-alpha WIP:** Drudge automation is documented for development testing and is not first-release progression.
+
 Teach your Drudges specific manipulations:
 
 1. Learn manipulation yourself
@@ -671,7 +673,7 @@ Curios compatibility is dormant in the NeoForge 1.21.1 branch. The Charm of Vasc
 ## Next Steps
 
 - **[[Harbinger Path]]** — Learn how to progress through degrees
-- **[[Advanced Mechanics]]** — Master drudges, morphlings, and puppeteering
+- **[[Advanced Mechanics]]** — Master morphlings and puppeteering; review post-alpha Drudge WIP notes
 - **[[World Content]]** — Find enzymes, catalysts, and rare materials
 
 ---

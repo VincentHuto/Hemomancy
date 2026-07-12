@@ -192,15 +192,15 @@ Implementation note: selected-manipulation blood cost now resolves through `Mani
 
 Manipulations are deliberately re-consumed by other systems rather than living only in the radial:
 
-- **Drudge programs:** ~40 manipulations carry a bespoke `DrudgeAction` — installing the memory item into a Drudge makes it execute that manipulation autonomously (e.g. `blood_lamp` lights a base, `sanguine_mending` repairs allies' armor, `umbral_step` teleports the drudge). Some manipulations are intentionally unsupported (conjurations, `summon_avatar`, `crimson_tithe`).
+- **Post-alpha WIP — Drudge programs:** ~40 manipulations carry a bespoke `DrudgeAction` retained for development — installing the memory item into a Drudge makes it execute that manipulation autonomously (e.g. `blood_lamp` lights a base, `sanguine_mending` repairs allies' armor, `umbral_step` teleports the drudge). Some manipulations are intentionally unsupported (conjurations, `summon_avatar`, `crimson_tithe`).
 - **Living Staff arsenal:** the 7 `conjure_*` forms are the staff's hot-swappable weapon platform, each with its own tendency and the 75/25 mixed-damage rule.
-- **Canon-as-program:** Saint Canons double as elite Drudge behaviors (a drudge with `endless_hour` self-buffs; one with `unclosing_eye` becomes a permanent watchtower).
+- **Post-alpha WIP — Canon-as-program:** Saint Canons can double as elite Drudge behaviors during development testing (a drudge with `endless_hour` self-buffs; one with `unclosing_eye` becomes a permanent watchtower).
 
 ---
 
 ## 7. Assessment
 
-**Strengths.** Of 60 entries, roughly a third are non-combat utility (light, food, repair, smelting, farming, mining, travel, sensing), which sells hemomancy as a way of *living in the world*, not just a combat kit. The best designs encode a cost-philosophy per school: Mortem trades in debt and executes-as-refuel; Congeatio trades power for immobility; Lux pays in exposure (Unclosing Eye reveals the caster); Tenebris pays in positioning constraints. Acquisition redundancy across five lanes means no build is bricked by one missing catalyst. And the reuse of manipulations as Drudge programs and staff forms multiplies the value of every authored spell.
+**Strengths.** Of 60 entries, roughly a third are non-combat utility (light, food, repair, smelting, farming, mining, travel, sensing), which sells hemomancy as a way of *living in the world*, not just a combat kit. The best designs encode a cost-philosophy per school: Mortem trades in debt and executes-as-refuel; Congeatio trades power for immobility; Lux pays in exposure (Unclosing Eye reveals the caster); Tenebris pays in positioning constraints. Acquisition redundancy across five lanes means no build is bricked by one missing catalyst. Staff-form reuse multiplies the value of authored spells, while Drudge-program reuse remains a post-alpha development path.
 
 **Honest, code-verified gaps.**
 1. **The spell ladder plateaus at Summa.** `MAGISTER` and `PERFECTUS` are defined but hold zero manipulations; degrees 5–6 gate *systems* (synaptic loadouts, covenants) rather than spell tiers. This is deliberate runway, aligned with [POWER_SYSTEMS_AUDIT.md](POWER_SYSTEMS_AUDIT.md) §3.3.

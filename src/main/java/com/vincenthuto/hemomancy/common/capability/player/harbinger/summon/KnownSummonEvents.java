@@ -15,6 +15,9 @@ import net.neoforged.neoforge.event.entity.player.PlayerEvent.PlayerRespawnEvent
 @EventBusSubscriber(modid = Hemomancy.MOD_ID)
 public class KnownSummonEvents {
 	public static void sync(ServerPlayer player, IKnownSummons known) {
+		if (player == null || player.connection == null) {
+			return;
+		}
 		PacketHandler.sendToPlayer(player, new KnownSummonsServerPacket(known));
 	}
 

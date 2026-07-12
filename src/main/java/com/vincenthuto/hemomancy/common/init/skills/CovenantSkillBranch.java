@@ -25,7 +25,7 @@ public final class CovenantSkillBranch {
 			SkillPointInit.skill_servitor_tender = SkillPointInit.registerSkill(branch,
 					new SkillPoint(32, "skill_servitor_tender", 650, 3, EnumSkillStates.LOCKED, SkillPointInit.skill_fane_suture)
 							.setSkillPointCost(4).setRequiredDegree(6).setTreePosition(642, 434).setBranch("covenant").setBranchColor(0xFFA54569)
-							.setIconItem(() -> new ItemStack(ItemInit.drudge_electrode.get())));
+							.setIconItem(() -> new ItemStack(ItemInit.hematic_suture_needle.get())));
 			SkillPointInit.skill_ancestral_sovereignty = SkillPointInit.registerSkill(branch,
 					new SkillPoint(33, "skill_ancestral_sovereignty", 850, 3, EnumSkillStates.LOCKED, SkillPointInit.skill_bloodline_concord)
 							.setSkillPointCost(5).setRequiredDegree(7).setTreePosition(652, 340).setBranch("covenant").setBranchColor(0xFFA54569).addParents(SkillPointInit.skill_servitor_tender)

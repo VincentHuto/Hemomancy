@@ -16,7 +16,7 @@ The Harbinger Path is the way of the **Hematic Order** — a secret society that
 - Progressive degree system with clear milestones
 - Hundreds of blood manipulations across eight tendencies
 - Bloodline creation and follower recruitment
-- Drudge creation, morphling incubation, puppeteering
+- Morphling incubation and puppeteering; Drudge creation is post-alpha WIP
 - Cardinal rites for advancement and utility
 - Founding Fanes with powerful buffs
 - The Chamber of Will, a Degree 6 inner refuge that grows with late Harbinger progression
@@ -45,7 +45,7 @@ The Hematic Order publicly recognizes seven degrees. Apotheos is the hidden eigh
 
 - **Rite:** Initiate Rite
 - **Theme:** Incarnadine Fane; blood becomes shaped memory and external craft
-- **Core progression:** Drudges, deliberate puppeteering, advanced Somatic Loom work, and Saint trials
+- **Core progression:** deliberate puppeteering and advanced Somatic Loom work; Drudges and non-Hemorath Saint trials are post-alpha expansion content
 
 ### Degree 4: Adept
 
@@ -176,6 +176,8 @@ The Somatic Loom is where you craft **Hematic Memories** to learn new manipulati
 **Tip:** Memory weaving feels like taming dormant biology. Each tendency has different patterns and behaviors.
 
 ### Drudges (Blood Servants)
+> **Post-alpha WIP:** This system is retained for development testing but is not part of the first-release progression promise. Its items and Semi-Sentient Construct are in the WIP creative tab.
+
 Starting at Degree 3, you can create **Drudges** — mindless blood constructs that obey simple commands.
 
 **Creation:**
@@ -214,28 +216,41 @@ Starting at Degree 3, you can create **Drudges** — mindless blood constructs t
 - More varieties based on source creature
 
 **Uses:**
-- Permanent companions (stronger than Drudges)
+- Permanent companions distinct from the post-alpha Drudge system
 - Specialized roles
 - Can be ridden (some types)
 - Part of your bloodline
 
 ### Puppeteering
-Advanced Harbingers can create and control **Puppets** — temporary extensions of their will.
+Advanced Harbingers can call shaped bodies as temporary extensions of learned blood-memory. These are tethered summons, not possessed creatures or first-person avatars.
 
-**Puppet Creation:**
-- Craft Puppet Cores
-- Perform puppeteer ritual
-- Summon puppet through trial (difficulty varies)
-- Control temporarily or permanently bind
+**Learning shapes:**
 
-**Puppet Types:**
-- **Sanguilith** — Floating blood crystal turret
-- **Hemomancer Puppet** — Caster support unit
+- Degree 3: **Veinwing Vulture** and **Marrow Spitter** trials, each activated with Sanguine Quintessence.
+- Degree 4: **Gorebound Hulk** trial, also activated with Sanguine Quintessence.
+- Degree 5: **Mnemonist Puppet** trial, activated with Mnemonic Ambergris.
+- Defeating an unbound trial form permanently teaches that shape to the recorded caster.
 
-**Control:**
-- Direct control (see through puppet's eyes)
-- Command mode (issue orders)
-- Autonomous defense mode
+**Preparing a Crossbar:**
+
+- Feed Puppeteering Thread to a **Puppeteer's Spindle**. Each item becomes 8 charge; the Spindle stores 512.
+- A fresh **Marionette Crossbar** permanently attunes to the first player who right-clicks with it. Insert it into the Spindle to fill it to its skill-scaled capacity; clicking a learned puppet row immediately prepares that shape, with no separate Attune or Prepare button.
+- The Crossbar holds 256 base charge, plus 32 per Bound Command level. A foreign owner cannot use or retune it.
+- The Spindle prepares only; it never calls or recalls a body.
+
+**Field control:**
+
+- Tap air-use with the equipped Crossbar to call or recall the prepared shape. Hold for 10 ticks to open its command radial.
+- The inner ring applies **Follow**, **Guard**, **Hunt**, or **Passive** to every shaped body and Commandeered Will attached to that exact Crossbar. Follow stays near the puppeteer and attacks hostiles within 12 blocks; Hunt searches the full tether range.
+- Shape changes remain at the Spindle until the one-rank Degree 5 skill **Skein Transposition**. It adds an outer ring with all four artificial shapes; choosing another valid shape recalls only the formerly prepared cohort and calls one replacement at the normal adjusted charge cost. Other shapes and claimed Wills remain.
+- Attack a hostile while holding the Crossbar in the main hand to focus only summons attached to that exact Crossbar. Players and friendly bound bodies cannot be marked, and focus drops outside tether range.
+- Each body draws its own periodic upkeep from the matching equipped Crossbar. A starved body alone unravels. Bound bodies persist through ordinary hostile despawn and Peaceful difficulty so upkeep, recall, and severance remain in control of the tether system.
+- Unequipping the matching Crossbar begins a short fade; Bound Command extends that grace and tether range.
+- Crossing dimensions deliberately severs the tether rather than teleporting summons between worlds.
+- Logging out or dying also severs the owner's active tether session, including bodies whose chunks were unloaded at the time.
+- Puppet Skein sets a player-wide active-body cap, so carrying extra Crossbars does not bypass it.
+
+A faltering Broken Will may also be **Commandeered** with an owner-attuned Crossbar. It counts toward the same cap, costs Crossbar charge to claim, pays a base 16 charge per minute before Thread Economy, and follows the same tether, focus, persistence, and severance rules. Silent Archon's bonus cap slots are claimed-Will-only: claiming a Will first does not consume the ordinary shaped-body slot, and an artificial shape cannot occupy a Will bonus slot. It remains a claimed failed person, not a learned puppet shape.
 
 ### Scars and Spores
 As you progress, your body accumulates **Fungal Scars** — visible marks of corruption.
@@ -482,7 +497,7 @@ A: No. They're people who've embraced a taboo art. Some are kind, some are dange
 ## Next Steps
 
 - **[[Blood Systems]]** — Deep dive into manipulations and tendencies
-- **[[Advanced Mechanics]]** — Master drudges, morphlings, and puppeteering
+- **[[Advanced Mechanics]]** — Master morphlings and puppeteering; review post-alpha Drudge WIP notes
 - **[[Lore and Story]]** — Understand the cosmic truth behind the Order
 - **[[World Content]]** — Find structures, resources, and encounters
 

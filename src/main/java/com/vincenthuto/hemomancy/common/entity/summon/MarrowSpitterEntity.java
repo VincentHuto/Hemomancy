@@ -89,7 +89,9 @@ public class MarrowSpitterEntity extends Skeleton implements BoundPuppeteerSummo
 		}
 		if (BoundSummonBehavior.commonServerTick(this, this)) {
 			Optional<Player> owner = BoundSummonBehavior.ownerFor(this, this);
-			if (getTarget() == null && owner.isPresent() && distanceToSqr(owner.get()) > 36.0) {
+			if (getTarget() == null && owner.isPresent()
+					&& BoundSummonBehavior.shouldFollowOwner((net.minecraft.server.level.ServerPlayer) owner.get(), this)
+					&& distanceToSqr(owner.get()) > 36.0) {
 				getNavigation().moveTo(owner.get(), 1.0);
 			}
 		}
@@ -98,6 +100,12 @@ public class MarrowSpitterEntity extends Skeleton implements BoundPuppeteerSummo
 	@Override
 	public boolean canAttack(net.minecraft.world.entity.LivingEntity target) {
 		return BoundSummonBehavior.canAttack(this, this, target) && super.canAttack(target);
+	}
+
+	@Override
+	protected boolean shouldDespawnInPeaceful() {
+		return PuppeteerSummonRules.shouldDespawnInPeaceful(
+				hemomancy$isTrialSummon(), hemomancy$getOwnerUUID());
 	}
 
 	@Override

@@ -162,7 +162,7 @@ public final class SummonsTabView {
 		if (!degreeOk) {
 			gfx.drawCenteredString(ctx.font(), "Rite-shape withheld",
 					x + w / 2, y + h / 2 - 4, 0xFF555555);
-			ScreenDrawUtils.renderScaledItem(gfx, new ItemStack(ItemInit.sanguine_quintessence.get()),
+			ScreenDrawUtils.renderScaledItem(gfx, trialCatalyst(definition),
 					x + w / 2, y + h / 2 + 20, 14);
 		} else {
 			renderPreviewEntity(gfx, ctx, state, definition, x + 12, entityTop, x + w - 12, entityBottom);
@@ -331,18 +331,24 @@ public final class SummonsTabView {
 		drawY = drawStackedDetailLine(gfx, ctx, "Mobility", String.format("%.2f", definition.movementSpeed()), textX, drawY, textW, lineH);
 		drawY += 4;
 
-		drawY = drawStackedDetailLine(gfx, ctx, "Summon Thread", definition.threadSummonCost() + " charge", textX, drawY, textW, lineH);
-		drawY = drawStackedDetailLine(gfx, ctx, "Upkeep", definition.threadUpkeepPerMinute() + " charge/min", textX, drawY, textW, lineH);
-		drawY = drawStackedDetailLine(gfx, ctx, "Trial Catalyst", Component.translatable("item.hemomancy.sanguine_quintessence").getString(),
+		int economy = SkillPointHelper.getThreadEconomyLevel();
+		int callCost = PuppeteerSummonRules.adjustedThreadCost(definition.threadSummonCost(), economy);
+		int upkeep = PuppeteerSummonRules.adjustedThreadCost(definition.threadUpkeepPerMinute(), economy);
+		drawY = drawStackedDetailLine(gfx, ctx, "Call Charge", callCost + " charge", textX, drawY, textW, lineH);
+		drawY = drawStackedDetailLine(gfx, ctx, "Upkeep", upkeep + " charge/min", textX, drawY, textW, lineH);
+		drawY = drawStackedDetailLine(gfx, ctx, "Trial Catalyst", trialCatalyst(definition).getHoverName().getString(),
 				textX, drawY, textW, lineH);
 		drawY = drawStackedDetailLine(gfx, ctx, "Unlock", "Blood Crafting effigy trial", textX, drawY, textW, lineH);
 		drawY += 4;
 
 		int skein = SkillPointHelper.getPuppetSkeinLevel();
 		int tether = SkillPointHelper.getFarTetherLevel();
+		int boundCommand = SkillPointHelper.getBoundCommandLevel();
 		drawY = drawStackedDetailLine(gfx, ctx, "Active Cap", String.valueOf(PuppeteerSummonRules.activeSummonCap(skein)),
 				textX, drawY, textW, lineH);
-		drawY = drawStackedDetailLine(gfx, ctx, "Command Range", String.format("%.0f blocks", PuppeteerSummonRules.commandRange(tether)),
+		drawY = drawStackedDetailLine(gfx, ctx, "Tether Range", String.format("%.0f blocks", PuppeteerSummonRules.commandRange(tether, boundCommand)),
+				textX, drawY, textW, lineH);
+		drawY = drawStackedDetailLine(gfx, ctx, "Crossbar Capacity", PuppeteerSummonRules.threadCapacity(boundCommand) + " charge",
 				textX, drawY, textW, lineH);
 		drawY += 6;
 
@@ -356,6 +362,12 @@ public final class SummonsTabView {
 		if (drawY - y > h && state.infoScroll > 0) {
 			gfx.drawCenteredString(ctx.font(), "\u25B2", x + w / 2, y + 2, 0xAAFFFFFF);
 		}
+	}
+
+	private static ItemStack trialCatalyst(PuppeteerSummonDefinition definition) {
+		return new ItemStack(PuppeteerSummonDefinitions.MNEMONIST_PUPPET.equals(definition.name())
+				? ItemInit.mnemonic_ambergris.get()
+				: ItemInit.sanguine_quintessence.get());
 	}
 
 	private static int drawStackedDetailLine(GuiGraphics gfx, ProgressScreenContext ctx, String label, String value,

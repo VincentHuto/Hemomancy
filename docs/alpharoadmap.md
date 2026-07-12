@@ -73,9 +73,9 @@ Used for gap analysis below. Ordered from most to least impactful on alpha recep
 
 #### CRITICAL — Blocks Alpha Release
 
-**G1. Boss Visual Assets (3 of 4 Saints + Annetta)**
+**G1. Annetta Visual Polish (Saint visuals deferred)**
 - **Issue**: Seraphae, Putriciel, and Velorum have full AI and combat mechanics but placeholder or unfinished presentation. Annetta Knowles now has a Broken Church trigger plus dedicated Java models/textures, but her final animations, Sanguis Lancea rendering, and Phase 1 combat polish remain WIP.
-- **Impact**: Placeholder humanoid models in boss fights destroy first impressions. This is the single highest-visibility gap.
+- **Impact**: Annetta remains a first-release polish concern. Seraphae, Putriciel, and Velorum are reserved for the first major post-release Saints update and are not alpha blockers.
 - **Files**:
     - `src/main/java/com/vincenthuto/hemomancy/common/entity/boss/SeraphaeEntity.java`
     - `src/main/java/com/vincenthuto/hemomancy/common/entity/boss/PutricielEntity.java`
@@ -84,13 +84,13 @@ Used for gap analysis below. Ordered from most to least impactful on alpha recep
     - `src/main/resources/assets/hemomancy/textures/entity/` (missing textures for above)
 - **Resolution**: Either create proper models + GeckoLib animations, or explicitly label these saints as "in development" in the Liber and disable their trial chamber spawning until ready.
 
-**G2. Saint Trial Chambers — 3 of 4 Incomplete**
+**Post-release Saints Update — 3 Bespoke Trials**
 - **Issue**: Hemorath's full trial (blood basin puzzle, sarcophagus, boss fight) is complete. Seraphae, Putriciel, Velorum have boss AI but no bespoke trial chamber NBT structures and untuned world placement.
-- **Impact**: Players who find these structures will hit undefined content.
+- **Impact**: These encounters must remain outside ordinary first-release placement; their absence is intentional expansion scope.
 - **Files**:
     - `src/main/resources/data/hemomancy/structure/` (saint trial NBTs)
     - `src/main/java/com/vincenthuto/hemomancy/common/worldgen/` (placement configs)
-- **Resolution**: Option A — complete the three chambers. Option B — disable Seraphae/Putriciel/Velorum trial chamber world placement for alpha, keeping Hemorath as the only complete saint encounter.
+- **Resolution**: Keep Hemorath as the complete first-release Saint trial. Build the other three bespoke rooms, environmental stories, victory conditions, and final presentation together in the first major post-release Saints update.
 
 **G3. New Player Onboarding — First-Hour Clarity**
 - **Issue**: No "Welcome to Hemomancy" guidance. Players finding their first Blood Temple have no hint of what to do. The Hermit dialogue starts abruptly without context. Breadcrumbs to Harbinger Outpost don't exist. The Unstained Church discovery path is unclear.
@@ -161,8 +161,8 @@ Used for gap analysis below. Ordered from most to least impactful on alpha recep
 | A1 | Audit + fix advancement JSON chain (verify all degree_1-8 fire) | Low |
 | A2 | Confirm Liber Sanguinum opens correctly for new players | Low-Medium |
 | A3 | Add "root" onboarding advancement + first Blood Temple hint | Medium |
-| A4 | Decision on G2: complete 3 saint chambers OR disable trial spawning for incomplete saints | High (complete) / Low (disable) |
-| A5 | Decision on G1: model work for 3 saints OR explicitly mark WIP in-world | Very High (model) / Low (disable) |
+| A4 | Keep non-Hemorath bespoke Saint trials out of first-release placement | Settled: post-release Saints update |
+| A5 | Keep non-Hemorath final Saint presentation out of first-release scope | Settled: post-release Saints update |
 
 ### Phase B — Pre-Alpha Polish (Ship with alpha if possible)
 
@@ -178,8 +178,8 @@ Used for gap analysis below. Ordered from most to least impactful on alpha recep
 
 | Priority | Task | Effort |
 |----------|------|--------|
-| C1 | Complete all 4 saint boss models + GeckoLib animations | Very High |
-| C2 | Complete Seraphae/Putriciel/Velorum trial chambers | High |
+| C1 | Complete non-Hemorath Saint models + GeckoLib animations in the Saints update | Post-release |
+| C2 | Complete Seraphae/Putriciel/Velorum trial chambers in the Saints update | Post-release |
 | C3 | Blood Moon ritual trigger | Medium |
 | C4 | Manipulation rank forcing ritual | Medium |
 | C5 | MnA + Curios compatibility (pending upstream builds) | Medium (once deps exist) |

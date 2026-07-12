@@ -14,6 +14,7 @@ import com.vincenthuto.hemomancy.common.summon.PuppeteerSummonRules;
 import com.vincenthuto.hemomancy.common.worldgen.FungalGardenTravelHelper;
 import com.vincenthuto.hemomancy.config.HemoServerConfig;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
@@ -641,15 +642,15 @@ public class WillEntity extends Monster implements BoundPuppeteerSummon {
 		if (!(stack.getItem() instanceof MarionetteCrossbarItem)) {
 			return InteractionResult.PASS;
 		}
+		if (!MarionetteCrossbarItem.validateControl(stack, serverPlayer, true)) {
+			return InteractionResult.CONSUME;
+		}
 		WillBendRules.HeldItemKind held = stack.getItem() instanceof MarionetteCrossbarItem
 				? WillBendRules.HeldItemKind.MARIONETTE_CROSSBAR
 				: WillBendRules.HeldItemKind.EMPTY_OR_STAFF;
 		boolean silent = FungalGardenTravelHelper.ARCHON_CHOICE_SILENCE.equals(
 				player.getPersistentData().getString(FungalGardenTravelHelper.ARCHON_CHOICE_KEY));
-		int archonBonus = HemoServerConfig.WILL_CLAIMED_BONUS_CAP_SILENT_ARCHON == null
-				? WillBendRules.silentArchonBonusCap()
-				: HemoServerConfig.WILL_CLAIMED_BONUS_CAP_SILENT_ARCHON.get();
-		int cap = PuppeteerSummonRules.activeSummonCap(0) + (silent ? archonBonus : 0);
+		int cap = BoundSummonBehavior.totalActiveCap(serverPlayer);
 		boolean capAvailable = MarionetteCrossbarItem.activeSummonsForOwner(player).size() < cap;
 		WillBendRules.BendOutcome outcome = WillBendRules.resolve(getOrigin(), getPhase(),
 				HemoCapabilityAccess.getPlayerDegreeNumber(player), held, player.isShiftKeyDown(), capAvailable, silent);
@@ -673,10 +674,18 @@ public class WillEntity extends Monster implements BoundPuppeteerSummon {
 		}
 		if (outcome.verb() == WillBendRules.BendVerb.COMMANDEER) {
 			if (!safeConfig(HemoServerConfig.WILL_COMMANDEER_ENABLED, true)) return InteractionResult.CONSUME;
-			if (!MarionetteCrossbarItem.consumeThread(stack, outcome.threadCost())) return InteractionResult.CONSUME;
+			if (!MarionetteCrossbarItem.consumeThread(stack, outcome.threadCost())) {
+				serverPlayer.displayClientMessage(Component.translatable("hemomancy.summon.thread.low")
+						.withStyle(net.minecraft.ChatFormatting.GRAY), true);
+				return InteractionResult.CONSUME;
+			}
 			hemomancy$setOwnerUUID(serverPlayer.getUUID());
+			setPersistenceRequired();
 			hemomancy$setCrossbarUUID(MarionetteCrossbarItem.ensureCrossbarId(stack));
 			hemomancy$setSummonName("claimed_will");
+			BoundSummonBehavior.bindOwnerSession(this, serverPlayer);
+			setTarget(null);
+			getNavigation().stop();
 			clearFalterBurst();
 			setNoAi(false);
 			setPhase(WillPhase.MATERIALIZED);
@@ -703,6 +712,12 @@ public class WillEntity extends Monster implements BoundPuppeteerSummon {
 			return BoundSummonBehavior.canAttack(this, this, target) && super.canAttack(target);
 		}
 		return super.canAttack(target);
+	}
+
+	@Override
+	protected boolean shouldDespawnInPeaceful() {
+		return PuppeteerSummonRules.shouldDespawnInPeaceful(
+				hemomancy$isTrialSummon(), hemomancy$getOwnerUUID());
 	}
 
 	public WillOrigin getOrigin() {

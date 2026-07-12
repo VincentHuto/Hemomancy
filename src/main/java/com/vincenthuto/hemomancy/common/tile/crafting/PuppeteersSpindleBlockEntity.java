@@ -61,7 +61,8 @@ public class PuppeteersSpindleBlockEntity extends BaseContainerBlockEntity {
 	}
 
 	public static void serverTick(Level level, BlockPos pos, BlockState state, PuppeteersSpindleBlockEntity spindle) {
-		boolean changed = spindle.consumeThreadInput();
+		boolean changed = spindle.refreshSlottedCrossbarCapacity();
+		changed |= spindle.consumeThreadInput();
 		changed |= spindle.refillSlottedCrossbar();
 		if (changed) {
 			spindle.sendUpdates();
@@ -69,17 +70,38 @@ public class PuppeteersSpindleBlockEntity extends BaseContainerBlockEntity {
 		}
 	}
 
+	private boolean refreshSlottedCrossbarCapacity() {
+		ItemStack crossbar = inventory.get(SLOT_CROSSBAR);
+		if (!(crossbar.getItem() instanceof MarionetteCrossbarItem) || level == null || level.getServer() == null) {
+			return false;
+		}
+		java.util.UUID ownerId = MarionetteCrossbarItem.getBoundOwner(crossbar);
+		if (ownerId == null) {
+			return false;
+		}
+		Player owner = level.getServer().getPlayerList().getPlayer(ownerId);
+		if (owner == null) {
+			return false;
+		}
+		int before = MarionetteCrossbarItem.getThreadCapacity(crossbar);
+		int threadBefore = MarionetteCrossbarItem.getThread(crossbar);
+		MarionetteCrossbarItem.updateThreadCapacity(crossbar, owner);
+		return MarionetteCrossbarItem.getThreadCapacity(crossbar) != before
+				|| MarionetteCrossbarItem.getThread(crossbar) != threadBefore;
+	}
+
 	private boolean consumeThreadInput() {
 		ItemStack stack = inventory.get(SLOT_THREAD);
 		if (stack.isEmpty() || !stack.is(ItemInit.puppeteering_thread.get()) || threadBuffer >= THREAD_BUFFER_CAPACITY) {
 			return false;
 		}
-		int accepted = Math.min(stack.getCount(), THREAD_BUFFER_CAPACITY - threadBuffer);
-		if (accepted <= 0) {
+		int acceptedItems = PuppeteerSummonRules.threadItemsAccepted(
+				THREAD_BUFFER_CAPACITY - threadBuffer, stack.getCount());
+		if (acceptedItems <= 0) {
 			return false;
 		}
-		threadBuffer += accepted;
-		stack.shrink(accepted);
+		threadBuffer += PuppeteerSummonRules.threadChargeFromItems(acceptedItems);
+		stack.shrink(acceptedItems);
 		if (stack.isEmpty()) {
 			inventory.set(SLOT_THREAD, ItemStack.EMPTY);
 		}
@@ -95,7 +117,7 @@ public class PuppeteersSpindleBlockEntity extends BaseContainerBlockEntity {
 			return false;
 		}
 		int before = MarionetteCrossbarItem.getThread(crossbar);
-		int space = Math.max(0, PuppeteerSummonRules.THREAD_CAPACITY - before);
+		int space = Math.max(0, MarionetteCrossbarItem.getThreadCapacity(crossbar) - before);
 		if (space <= 0) {
 			return false;
 		}

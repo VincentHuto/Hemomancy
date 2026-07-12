@@ -32,9 +32,13 @@ public final class PuppeteerSummonFactory {
 		};
 		if (mob instanceof BoundPuppeteerSummon bound) {
 			bound.hemomancy$setOwnerUUID(owner.getUUID());
+			mob.setPersistenceRequired();
 			bound.hemomancy$setCrossbarUUID(crossbarId);
 			bound.hemomancy$setSummonName(definition.name());
 			BoundSummonBehavior.applyStats(mob, definition, livingSinewLevel);
+			if (owner instanceof ServerPlayer serverOwner) {
+				BoundSummonBehavior.bindOwnerSession(mob, serverOwner);
+			}
 			mob.setPos(owner.getX(), owner.getY() + 0.15, owner.getZ());
 			return Optional.of(mob);
 		}

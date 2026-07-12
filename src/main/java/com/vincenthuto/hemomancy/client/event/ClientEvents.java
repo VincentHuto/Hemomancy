@@ -80,6 +80,8 @@ import com.vincenthuto.hemomancy.client.screen.item.living.LivingSyringeScreen;
 import com.vincenthuto.hemomancy.client.screen.item.living.MorphlingJarScreen;
 import com.vincenthuto.hemomancy.client.screen.manips.RadialChooseManipScreen;
 import com.vincenthuto.hemomancy.client.screen.manips.RadialChooseVeinScreen;
+import com.vincenthuto.hemomancy.client.screen.summon.CrossbarRadialScreen;
+import com.vincenthuto.hemomancy.common.item.harbinger.tool.MarionetteCrossbarItem;
 import com.vincenthuto.hemomancy.client.screen.overlay.*;
 import com.vincenthuto.hemomancy.client.sound.EndgameBossMusicHandler;
 import com.vincenthuto.hemomancy.client.screen.tile.crafting.*;
@@ -396,6 +398,7 @@ public class ClientEvents {
 
     private static void handleRadialMenuTick() {
         Minecraft mc = Minecraft.getInstance();
+		handleCrossbarRadialTick(mc);
         if (mc.screen == null) {
             boolean vascCharmKeyIsDown = openVascCharmMenu.isDown();
 
@@ -506,6 +509,28 @@ public class ClientEvents {
         // HutosLib now retains read tracker state across disconnect/reload.
         FaneBoundaryClientData.clear();
     }
+
+	private static boolean crossbarRadialOpened;
+
+	private static void handleCrossbarRadialTick(Minecraft mc) {
+		if (!isKeyDown(mc.options.keyUse)) {
+			crossbarRadialOpened = false;
+			return;
+		}
+		if (mc.screen instanceof CrossbarRadialScreen) return;
+		if (mc.player == null || !mc.player.isUsingItem()
+				|| !(mc.player.getUseItem().getItem() instanceof MarionetteCrossbarItem)) return;
+		if (!MarionetteCrossbarItem.isBoundTo(mc.player.getUseItem(), mc.player)) return;
+		if (mc.screen == null && !crossbarRadialOpened
+				&& mc.player.getTicksUsingItem() >= MarionetteCrossbarItem.RADIAL_HOLD_TICKS) {
+			ItemStack stack = mc.player.getUseItem();
+			java.util.UUID id = MarionetteCrossbarItem.getCrossbarId(stack);
+			if (id != null) {
+				crossbarRadialOpened = true;
+				mc.setScreen(new CrossbarRadialScreen(stack, id));
+			}
+		}
+	}
 
     @SubscribeEvent
     public static void renderMorphicNectarScreenOverlay(RenderGuiEvent.Pre event) {

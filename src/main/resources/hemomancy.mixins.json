@@ -6,7 +6,11 @@
   "mixins": [
     "MixinEntity",
     "MixinFishingHook",
-    "MixinLivingEntity"
+    "MixinHealOrHarmMobEffect",
+    "MixinLivingEntity",
+    "MixinPlayer",
+    "MixinPoisonMobEffect",
+    "MixinRegenerationMobEffect"
   ],
   "client": [
     "MixinEntityRenderDispatcher",

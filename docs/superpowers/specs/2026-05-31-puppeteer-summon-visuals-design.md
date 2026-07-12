@@ -1,8 +1,10 @@
 # Puppeteer Summon Visuals Design
 
+> **Historical visual pass:** This document covers the original three-model art scope. The canonical gameplay roster now also includes `mnemonist_puppet`; current mechanics and unlock rules live in `docs/HEMOMANCY_REFERENCE.md` §17.
+
 ## Context
 
-Hemomancy has three Harbinger puppeteer summons: `veinwing_vulture`, `marrow_spitter`, and `gorebound_hulk`. Their gameplay classes currently extend vanilla Vex, Skeleton, and Zombie classes to reuse movement, targeting, ranged attack, and trial behavior. Their renderers also reuse vanilla renderers, so the summons look like ordinary vanilla mobs despite their custom names, roles, thread economy, and lore.
+This visual pass covered the original three Harbinger puppeteer summons: `veinwing_vulture`, `marrow_spitter`, and `gorebound_hulk`. Their gameplay classes extended vanilla Vex, Skeleton, and Zombie classes to reuse movement, targeting, ranged attack, and trial behavior. Their renderers also reused vanilla renderers, so the summons looked like ordinary vanilla mobs despite their custom names, roles, charge economy, and lore.
 
 The goal is to give each puppeteer summon a distinct Hemomancy construct silhouette while preserving existing server behavior, owner/crossbar binding, trial handling, and dismissal rendering.
 

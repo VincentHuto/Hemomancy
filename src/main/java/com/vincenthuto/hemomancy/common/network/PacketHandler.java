@@ -27,6 +27,7 @@ import com.vincenthuto.hemomancy.common.network.routing.PacketSpawnVeinSpiderCou
 import com.vincenthuto.hemomancy.common.network.particle.*;
 import com.vincenthuto.hemomancy.common.network.routing.PacketSyncSutureLinks;
 import com.vincenthuto.hemomancy.common.network.summon.PacketPuppeteersSpindleAction;
+import com.vincenthuto.hemomancy.common.network.summon.PacketCrossbarRadialAction;
 import com.vincenthuto.hemomancy.common.network.will.WillPresenceCuePacket;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
@@ -163,6 +164,7 @@ public class PacketHandler {
         net.playToServer(PacketRequestSpecimenBestiary.TYPE, PacketRequestSpecimenBestiary.STREAM_CODEC, PacketRequestSpecimenBestiary::handle);
         net.playToClient(PacketSyncSpecimenBestiary.TYPE, PacketSyncSpecimenBestiary.STREAM_CODEC, PacketSyncSpecimenBestiary::handle);
         net.playToServer(PacketPuppeteersSpindleAction.TYPE, PacketPuppeteersSpindleAction.STREAM_CODEC, PacketPuppeteersSpindleAction::handle);
+        net.playToServer(PacketCrossbarRadialAction.TYPE, PacketCrossbarRadialAction.STREAM_CODEC, PacketCrossbarRadialAction::handle);
         net.playToClient(PacketSyncLastDeathMemory.TYPE, PacketSyncLastDeathMemory.STREAM_CODEC, PacketSyncLastDeathMemory::handle);
         net.playToClient(PacketSyncSutureLinks.TYPE, PacketSyncSutureLinks.STREAM_CODEC, PacketSyncSutureLinks::handle);
         net.playToClient(PacketSpawnVeinSpiderCourier.TYPE,

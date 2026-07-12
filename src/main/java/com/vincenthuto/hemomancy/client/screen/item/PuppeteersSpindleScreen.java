@@ -4,6 +4,7 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.client.screen.util.InventoryPanelTextures;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
+import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillPointHelper;
 import com.vincenthuto.hemomancy.common.menu.PuppeteersSpindleMenu;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.summon.PacketPuppeteersSpindleAction;
@@ -14,8 +15,6 @@ import com.vincenthuto.hemomancy.common.tile.crafting.PuppeteersSpindleBlockEnti
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.gui.components.Button;
-import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;
@@ -29,17 +28,15 @@ import java.util.List;
 import java.util.Random;
 
 public class PuppeteersSpindleScreen extends AbstractContainerScreen<PuppeteersSpindleMenu> {
-	private static final int GUI_WIDTH = 276;
+	private static final int GUI_WIDTH = 280;
 	private static final int GUI_HEIGHT = 234;
 	private static final int CRAFT_AREA_HEIGHT = 146;
 	private static final int VEIN_COUNT = 10;
-	private static final int INPUT_X = 10;
-	private static final int PATTERN_X = 110;
-	private static final int WORK_X = 224;
+	private static final int INPUT_X = 8;
+	private static final int PATTERN_X = 132;
 	private static final int PANEL_Y = 28;
-	private static final int INPUT_W = 92;
-	private static final int PATTERN_W = 104;
-	private static final int WORK_W = 42;
+	private static final int INPUT_W = 116;
+	private static final int PATTERN_W = 140;
 	private static final int PANEL_H = 102;
 	private static final int SLOT_BG = 0xFF1A0808;
 	private static final int SLOT_BORDER_DARK = 0xFF0D0303;
@@ -61,7 +58,7 @@ public class PuppeteersSpindleScreen extends AbstractContainerScreen<PuppeteersS
 		super(menu, inv, title);
 		this.imageWidth = GUI_WIDTH;
 		this.imageHeight = GUI_HEIGHT;
-		this.inventoryLabelX = 57;
+		this.inventoryLabelX = 78;
 		this.inventoryLabelY = CRAFT_AREA_HEIGHT + 7;
 	}
 
@@ -71,7 +68,6 @@ public class PuppeteersSpindleScreen extends AbstractContainerScreen<PuppeteersS
 		this.titleLabelX = (this.imageWidth - this.font.width(this.title)) / 2;
 		reloadKnownSummons();
 		seedVeins();
-		addActionButtons();
 	}
 
 	private void seedVeins() {
@@ -107,19 +103,9 @@ public class PuppeteersSpindleScreen extends AbstractContainerScreen<PuppeteersS
 		}
 	}
 
-	private void addActionButtons() {
-		int x = leftPos + WORK_X + 5;
-		int y = topPos + 52;
-		addRenderableWidget(new SpindleButton(x, y, WORK_W - 10, 16,
-				Component.translatable("screen.hemomancy.puppeteers_spindle.bind"),
-				btn -> send(PacketPuppeteersSpindleAction.Action.BIND, selectedSummonName())));
-		addRenderableWidget(new SpindleButton(x, y + 22, WORK_W - 10, 16,
-				Component.translatable("screen.hemomancy.puppeteers_spindle.call"),
-				btn -> send(PacketPuppeteersSpindleAction.Action.CALL_OR_RECALL, selectedSummonName())));
-	}
-
-	private void send(PacketPuppeteersSpindleAction.Action action, String summon) {
-		PacketHandler.sendToServer(new PacketPuppeteersSpindleAction(action, summon == null ? "" : summon));
+	private void sendPrepare(String summon) {
+		PacketHandler.sendToServer(new PacketPuppeteersSpindleAction(
+				PacketPuppeteersSpindleAction.Action.PREPARE, summon == null ? "" : summon));
 	}
 
 	@Override
@@ -135,11 +121,10 @@ public class PuppeteersSpindleScreen extends AbstractContainerScreen<PuppeteersS
 		if (button == 0) {
 			int clicked = summonRowAt(mouseX, mouseY);
 			if (clicked >= 0) {
+				String clickedName = PuppeteerSummonDefinitions.all().get(clicked).name();
+				if (!knownSummons.contains(clickedName)) return true;
 				selectedIndex = clicked;
-				PuppeteerSummonDefinition definition = PuppeteerSummonDefinitions.all().get(clicked);
-				if (knownSummons.contains(definition.name())) {
-					send(PacketPuppeteersSpindleAction.Action.SELECT, definition.name());
-				}
+				sendPrepare(selectedSummonName());
 				return true;
 			}
 		}
@@ -155,7 +140,6 @@ public class PuppeteersSpindleScreen extends AbstractContainerScreen<PuppeteersS
 		renderVeinBackground(graphics, gx, gy, imageWidth, CRAFT_AREA_HEIGHT);
 		drawPanel(graphics, gx + INPUT_X, gy + PANEL_Y, INPUT_W, PANEL_H);
 		drawPanel(graphics, gx + PATTERN_X, gy + PANEL_Y, PATTERN_W, PANEL_H);
-		drawPanel(graphics, gx + WORK_X, gy + PANEL_Y, WORK_W, PANEL_H);
 		drawBorder(graphics, gx, gy, imageWidth, CRAFT_AREA_HEIGHT);
 		Slot firstInventorySlot = this.menu.slots.get(PuppeteersSpindleMenu.SLOT_COUNT);
 		InventoryPanelTextures.blit(graphics, InventoryPanelTextures.BLOODY,
@@ -177,33 +161,91 @@ public class PuppeteersSpindleScreen extends AbstractContainerScreen<PuppeteersS
 				INPUT_X + 7, PANEL_Y + 8, INPUT_W - 14, TEXT_MUTED);
 		drawTrimmedString(graphics, Component.translatable("screen.hemomancy.puppeteers_spindle.crossbar"),
 				INPUT_X + 35, 50, INPUT_W - 40, TEXT_MUTED);
-		drawTrimmedString(graphics, Component.translatable("screen.hemomancy.puppeteers_spindle.thread_slot"),
+		drawTrimmedString(graphics, Component.translatable("screen.hemomancy.puppeteers_spindle.thread_slot_short"),
 				INPUT_X + 35, 74, INPUT_W - 40, TEXT_MUTED);
 		drawTrimmedString(graphics, Component.translatable("screen.hemomancy.puppeteers_spindle.patterns"),
 				PATTERN_X + 7, PANEL_Y + 8, PATTERN_W - 14, TEXT_MUTED);
-		drawTrimmedString(graphics, Component.translatable("screen.hemomancy.puppeteers_spindle.work"),
-				WORK_X + 7, PANEL_Y + 8, WORK_W - 14, TEXT_MUTED);
 	}
 
 	private void renderMeters(GuiGraphics graphics, int gx, int gy) {
 		int x = gx + INPUT_X + 8;
 		int w = INPUT_W - 16;
-		drawTrimmedString(graphics, "Bar " + menu.getCrossbarThread() + "/" + PuppeteerSummonRules.THREAD_CAPACITY,
-				x, gy + 96, w, TEXT_MUTED);
-		drawMeter(graphics, x, gy + 107, w, 6,
-				menu.getScaledCrossbarThreadWidth(w - 2), 0xFFB51B25);
-		drawTrimmedString(graphics, "Thread " + menu.getThreadBuffer() + "/"
-						+ PuppeteersSpindleBlockEntity.THREAD_BUFFER_CAPACITY,
-				x, gy + 114, w, TEXT_MUTED);
-		drawMeter(graphics, x, gy + 125, w, 5,
-				menu.getScaledThreadBufferWidth(w - 2), 0xFFC0444C);
+		drawMeterLabelValue(graphics, Component.translatable("screen.hemomancy.puppeteers_spindle.crossbar"),
+				menu.getCrossbarThread(), menu.getCrossbarCapacity(), x, gy + 88, w);
+		drawThreadSpoolMeter(graphics, x, gy + 98, w,
+				menu.getCrossbarThread(), menu.getCrossbarCapacity(), 0xFFC72C3C, 0xFFFF7A7F);
+		drawMeterLabelValue(graphics, Component.translatable("screen.hemomancy.puppeteers_spindle.spindle"),
+				menu.getThreadBuffer(), PuppeteersSpindleBlockEntity.THREAD_BUFFER_CAPACITY, x, gy + 110, w);
+		drawThreadSpoolMeter(graphics, x, gy + 120, w,
+				menu.getThreadBuffer(), PuppeteersSpindleBlockEntity.THREAD_BUFFER_CAPACITY,
+				0xFF9E3041, 0xFFE96A74);
 	}
 
-	private void drawMeter(GuiGraphics graphics, int x, int y, int w, int h, int fill, int color) {
-		graphics.fill(x, y, x + w, y + h, 0xFF060203);
-		graphics.fill(x + 1, y + 1, x + 1 + Mth.clamp(fill, 0, w - 2), y + h - 1, color);
-		graphics.fill(x, y, x + w, y + 1, 0xFF2A0A0D);
-		graphics.fill(x, y + h - 1, x + w, y + h, 0xFF4A151B);
+	private void drawMeterLabelValue(GuiGraphics graphics, Component label, int current, int capacity,
+			int x, int y, int width) {
+		String value = current + " / " + capacity;
+		int valueWidth = font.width(value);
+		drawTrimmedString(graphics, label, x, y, Math.max(0, width - valueWidth - 4), TEXT_MUTED);
+		graphics.drawString(font, value, x + width - valueWidth, y, TEXT_RED, false);
+	}
+
+	private void drawThreadSpoolMeter(GuiGraphics graphics, int x, int y, int width,
+			int current, int capacity, int threadColor, int highlightColor) {
+		float ratio = capacity <= 0 ? 0.0f : Mth.clamp(current / (float) capacity, 0.0f, 1.0f);
+		int shaftStart = x + 5;
+		int shaftEnd = x + width - 5;
+		int threadStart = x + 6;
+		int threadEnd = x + width - 10;
+		int woundEnd = threadStart + Math.round((threadEnd - threadStart) * ratio);
+
+		// Recessed needle shaft: visible wherever thread has not yet been wound.
+		graphics.fill(shaftStart, y + 3, shaftEnd, y + 7, 0xFF090203);
+		graphics.fill(shaftStart, y + 4, shaftEnd, y + 6, 0xFF5A2630);
+		graphics.fill(shaftStart, y + 4, shaftEnd, y + 5, 0xFF9A4A55);
+		drawSpoolEndCaps(graphics, x, y, width, highlightColor);
+		drawThreadWraps(graphics, threadStart, woundEnd, y, threadColor, highlightColor);
+
+		// The collar marks the live edge of the stored thread.
+		int collar = Mth.clamp(woundEnd, threadStart, threadEnd);
+		graphics.fill(collar - 1, y + 1, collar + 2, y + 9, 0xFF24070C);
+		graphics.fill(collar, y + 2, collar + 1, y + 7, highlightColor);
+		graphics.fill(collar, y + 7, collar + 1, y + 8, shadeColor(threadColor, 0.55f));
+	}
+
+	private void drawThreadWraps(GuiGraphics graphics, int start, int end, int y,
+			int threadColor, int highlightColor) {
+		if (end <= start) return;
+		graphics.fill(start, y + 1, end + 1, y + 9, 0xFF2A070D);
+		graphics.fill(start + 1, y + 2, end, y + 8, shadeColor(threadColor, 0.55f));
+		graphics.fill(start + 1, y + 3, end, y + 7, threadColor);
+		graphics.fill(start + 1, y + 3, end, y + 4, shadeColor(threadColor, 0.78f));
+		graphics.fill(start + 1, y + 2, end, y + 3, highlightColor);
+		for (int wrap = start + 2; wrap < end; wrap += 3) {
+			graphics.fill(wrap, y + 2, wrap + 1, y + 8, shadeColor(threadColor, 0.55f));
+			if (wrap + 1 < end) {
+				graphics.fill(wrap + 1, y + 3, wrap + 2, y + 6, highlightColor);
+				graphics.fill(wrap + 1, y + 6, wrap + 2, y + 7, shadeColor(threadColor, 0.78f));
+			}
+		}
+	}
+
+	private void drawSpoolEndCaps(GuiGraphics graphics, int x, int y, int width, int highlightColor) {
+		graphics.fill(x, y + 3, x + 2, y + 7, 0xFF180408);
+		graphics.fill(x + 2, y + 1, x + 5, y + 9, 0xFF3C1018);
+		graphics.fill(x + 3, y + 2, x + 4, y + 6, highlightColor);
+		graphics.fill(x + 3, y + 6, x + 4, y + 8, 0xFF6A202C);
+		graphics.fill(x + width - 5, y + 1, x + width - 2, y + 9, 0xFF3C1018);
+		graphics.fill(x + width - 4, y + 2, x + width - 3, y + 6, highlightColor);
+		graphics.fill(x + width - 4, y + 6, x + width - 3, y + 8, 0xFF6A202C);
+		graphics.fill(x + width - 2, y + 3, x + width, y + 7, 0xFF180408);
+	}
+
+	private static int shadeColor(int color, float factor) {
+		int alpha = color >>> 24;
+		int red = Math.round(((color >>> 16) & 0xFF) * factor);
+		int green = Math.round(((color >>> 8) & 0xFF) * factor);
+		int blue = Math.round((color & 0xFF) * factor);
+		return alpha << 24 | red << 16 | green << 8 | blue;
 	}
 
 	private void renderSummonRows(GuiGraphics graphics, int gx, int gy, int mouseX, int mouseY) {
@@ -226,15 +268,9 @@ public class PuppeteersSpindleScreen extends AbstractContainerScreen<PuppeteersS
 			}
 
 			Component name = Component.translatable(definition.translationKey());
-			boolean degreeOk = playerDegree() >= definition.requiredDegree();
-			boolean recipeUnlocked = hasTrialRecipe(definition);
-			int color = known ? TEXT_RED : (degreeOk ? 0xFF9C6D76 : TEXT_LOCKED);
-			String status = statusLabel(definition, known, degreeOk, recipeUnlocked);
-			int statusWidth = font.width(status);
-			String label = trimToWidth(name.getString(), w - statusWidth - 14);
+			int color = known ? TEXT_RED : TEXT_LOCKED;
+			String label = trimToWidth(name.getString(), w - 10);
 			graphics.drawString(font, label, x + 5, rowY + 4, color, false);
-			graphics.drawString(font, status, x + w - font.width(status) - 5, rowY + 4,
-					known ? 0xFFB4A0A2 : 0xFF766166, false);
 		}
 	}
 
@@ -249,21 +285,6 @@ public class PuppeteersSpindleScreen extends AbstractContainerScreen<PuppeteersS
 		}
 		return player.getRecipeBook()
 				.contains(Hemomancy.rloc("puppeteer_trial/" + definition.name()));
-	}
-
-	private String statusLabel(PuppeteerSummonDefinition definition, boolean known,
-			boolean degreeOk, boolean recipeUnlocked) {
-		if (known) {
-			return Component.translatable("screen.hemomancy.puppeteers_spindle.status_ready").getString();
-		}
-		if (!degreeOk) {
-			return Component.translatable("screen.hemomancy.puppeteers_spindle.status_degree",
-					definition.requiredDegree()).getString();
-		}
-		if (!recipeUnlocked) {
-			return Component.translatable("screen.hemomancy.puppeteers_spindle.status_recipe").getString();
-		}
-		return Component.translatable("screen.hemomancy.puppeteers_spindle.status_trial").getString();
 	}
 
 	private int summonRowAt(double mouseX, double mouseY) {
@@ -293,10 +314,13 @@ public class PuppeteersSpindleScreen extends AbstractContainerScreen<PuppeteersS
 		if (row >= 0) {
 			PuppeteerSummonDefinition definition = PuppeteerSummonDefinitions.all().get(row);
 			boolean known = knownSummons.contains(definition.name());
+			int economy = SkillPointHelper.getThreadEconomyLevel();
+			int callCost = PuppeteerSummonRules.adjustedThreadCost(definition.threadSummonCost(), economy);
+			int upkeep = PuppeteerSummonRules.adjustedThreadCost(definition.threadUpkeepPerMinute(), economy);
 			List<Component> tooltip = new ArrayList<>();
 			tooltip.add(Component.translatable(definition.translationKey()).withStyle(ChatFormatting.RED));
 			tooltip.add(Component.translatable("screen.hemomancy.puppeteers_spindle.cost",
-					definition.threadSummonCost(), definition.threadUpkeepPerMinute()).withStyle(ChatFormatting.GRAY));
+					callCost, upkeep).withStyle(ChatFormatting.GRAY));
 			if (known) {
 				tooltip.add(Component.translatable("screen.hemomancy.puppeteers_spindle.known")
 						.withStyle(ChatFormatting.DARK_RED));
@@ -311,6 +335,12 @@ public class PuppeteersSpindleScreen extends AbstractContainerScreen<PuppeteersS
 						definition.requiredDegree()).withStyle(ChatFormatting.DARK_GRAY));
 			}
 			graphics.renderComponentTooltip(font, tooltip, mouseX, mouseY);
+		}
+		Slot threadSlot = menu.slots.get(PuppeteersSpindleMenu.THREAD_SLOT);
+		if (isHovering(threadSlot.x, threadSlot.y, 16, 16, mouseX, mouseY)) {
+			graphics.renderTooltip(font,
+					Component.translatable("screen.hemomancy.puppeteers_spindle.thread_slot"),
+					mouseX, mouseY);
 		}
 	}
 
@@ -410,28 +440,4 @@ public class PuppeteersSpindleScreen extends AbstractContainerScreen<PuppeteersS
 		}
 	}
 
-	private static class SpindleButton extends Button {
-		protected SpindleButton(int x, int y, int width, int height, Component message, OnPress onPress) {
-			super(x, y, width, height, message, onPress, DEFAULT_NARRATION);
-		}
-
-		@Override
-		protected void renderWidget(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
-			Minecraft minecraft = Minecraft.getInstance();
-			int bg = isHoveredOrFocused() ? 0xFFE0444E : 0xFF54121A;
-			int edge = isHoveredOrFocused() ? 0xFFFFA0A4 : 0xFF8C2530;
-			graphics.fill(getX(), getY(), getX() + width, getY() + height, 0xFF110407);
-			graphics.fill(getX() + 1, getY() + 1, getX() + width - 1, getY() + height - 1, bg);
-			graphics.fill(getX(), getY(), getX() + width, getY() + 1, edge);
-			graphics.fill(getX(), getY() + height - 1, getX() + width, getY() + height, 0xFF21060A);
-			String label = minecraft.font.plainSubstrByWidth(getMessage().getString(), Math.max(0, width - 6));
-			graphics.drawCenteredString(minecraft.font, label,
-					getX() + width / 2, getY() + (height - 8) / 2, 0xFFFFE2DC);
-		}
-
-		@Override
-		public void updateWidgetNarration(NarrationElementOutput narrationElementOutput) {
-			defaultButtonNarrationText(narrationElementOutput);
-		}
-	}
 }

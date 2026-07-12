@@ -6,6 +6,7 @@ import com.vincenthuto.hemomancy.common.init.BlockInit;
 import com.vincenthuto.hemomancy.common.recipe.BloodStructureOffering;
 import com.vincenthuto.hemomancy.common.recipe.BloodStructureRecipe;
 import com.vincenthuto.hemomancy.common.recipe.RecipeDegreeGates;
+import com.vincenthuto.hemomancy.common.recipe.PuppeteerTrialRecipe;
 import com.vincenthuto.hemomancy.common.tile.IronBrazierBlockEntity;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
@@ -34,8 +35,10 @@ public final class BloodStructureCraftingHelper {
 
 	public static Optional<ProjectionCraftMatch> findProjectionCraftMatch(
 			Player player, ServerLevel level, BlockPos hitPos, ItemStack offhandCatalyst) {
+		List<BloodStructureRecipe> projectionRecipes = new ArrayList<>(BloodStructureRecipe.getAllRecipes(level));
+		projectionRecipes.addAll(PuppeteerTrialRecipe.getAllTrialRecipes(level));
 		for (BloodStructureRecipe recipe : BloodCraftingPatternSearchRules.sortedByPatternSearchCost(
-				BloodStructureRecipe.getAllRecipes(level),
+				projectionRecipes,
 				targetPattern -> targetPattern.getPattern().getPatternArray())) {
 			if (recipe.isUnstained()) {
 				continue;
@@ -51,6 +54,12 @@ public final class BloodStructureCraftingHelper {
 
 			if (!offhandCatalyst.is(recipe.getHeldItem().getItem())) {
 				return Optional.of(ProjectionCraftMatch.invalid(recipe, match, missingOffhandCatalystMessage(recipe)));
+			}
+
+			if (recipe instanceof PuppeteerTrialRecipe trial && HemoCapabilityAccess.getKnownSummons(player)
+					.map(known -> known.getKnownSummonNames().contains(trial.getSummonName())).orElse(false)) {
+				return Optional.of(ProjectionCraftMatch.invalid(recipe, match,
+						Component.translatable("hemomancy.summon.trial.already_known").withStyle(ChatFormatting.GRAY)));
 			}
 
 			int playerLevel = RecipeDegreeGates.getPlayerLevel(player, recipe.isUnstained());

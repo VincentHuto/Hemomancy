@@ -1065,11 +1065,6 @@ public final class MaterialsData {
                 "Idols & Fixtures", () -> new ItemStack(BlockInit.sanguine_omen.get()),
                 true, UnlockPredicate.minDegree(4)));
 
-                                                                                                                                                                                list.add(new MaterialEntry("semi_sentient_construct", "Semi Sentient Construct",
-                "A ritual fixture or idol used to anchor advanced bloodcraft structures.",
-                "Idols & Fixtures", () -> new ItemStack(BlockInit.semi_sentient_construct.get()),
-                true, UnlockPredicate.minDegree(4)));
-
                                                                                                                                                                                 list.add(new MaterialEntry("serpentine_idol", "Serpentine Idol",
                 "A ritual fixture or idol used to anchor advanced bloodcraft structures.",
                 "Idols & Fixtures", () -> new ItemStack(BlockInit.serpentine_idol.get()),

@@ -97,7 +97,7 @@ Complete Harbinger guide:
 - Cardinal Rites
 - Bloodlines and recruitment
 - Somatic Loom (Memory Weaving)
-- Drudges, Morphlings, Puppeteering
+- Morphlings, Puppeteering, and post-alpha Drudge WIP documentation
 - Equipment and armor
 - The Qliphoth
 - Fungal Whispers
@@ -163,7 +163,7 @@ Technical documentation:
 
 Pages that could be added:
 - **World-Content.md** — Biomes, structures, mobs in detail
-- **Advanced-Mechanics.md** — Detailed guides for drudges, morphlings, puppeteering, blood routing
+- **Advanced-Mechanics.md** — Detailed guides for morphlings, puppeteering, blood routing, and retained post-alpha Drudge WIP
 - **Factions.md** — Deep dive into Hematic Order and Unstained beliefs
 - **Items-and-Blocks.md** — Complete item/block reference
 - **Configuration.md** — Detailed config option documentation
