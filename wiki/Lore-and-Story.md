@@ -132,7 +132,7 @@ Hemolytic Solution is essentially formaldehyde — they're embalming themselves 
 **Their Methods:**
 - **Brutal** — Self-inflicted chemical purification
 - **Antiseptic** — Copper, hemolytic solution, Lethean water
-- **No bloodshed** — Refuse to use bladed weapons
+- **Minimized bloodshed** — favor blunt defense while sanctioning the Silthmere Glaive and universal hemolytic Absolution Dagger
 - **Guardian role** — Protect others from infection
 - **Living preservation** — Become biologically immortal statues
 
@@ -216,7 +216,7 @@ The **Chamber of Will** is a high-degree Harbinger refuge unlocked at Degree 6 t
 
 ### The Fungal Dimension
 
-The "Flesh Beyond" — accessed at Apotheos via **Fungal Spine**.
+The "Flesh Beyond" — first witnessed at Degree 7 when the ninth Qliphoth Pome grants the **Fungal Spine**, before either endgame rite.
 
 **What It Is:**
 - **Astral projection**, not physical teleportation
@@ -236,7 +236,8 @@ The "Flesh Beyond" — accessed at Apotheos via **Fungal Spine**.
 - Everything is hostile, even to Archons
 - Sense of being "babe in the woods"
 - Profound existential horror
-- Must find a way to return (not automatic)
+- The first projection returns automatically after two minutes as a red vignette accelerates
+- No inventory or armor is accessible during that first projection
 
 **Two Possible Bosses:**
 - **The Mycophant** — If you embrace dissolution (fruiting body endpoint)
@@ -247,7 +248,7 @@ The "Flesh Beyond" — accessed at Apotheos via **Fungal Spine**.
 ### Blood Moons
 
 **Cosmological Event:**
-When the Pale Lady manifests her immune response aggressively.
+A fungal surge pressing into the world; the Pale Lady's pale effects are its containment response.
 
 **Visual:**
 - Red lunar face in the sky
@@ -265,7 +266,8 @@ When the Pale Lady manifests her immune response aggressively.
 **Lore Meaning:**
 - The Pale Lady fighting the Entity
 - Costs her immense energy
-- Temporary surge of immune response
+- Fungal surge causes the red moon, blood empowerment, and increased fungal activity
+- The Lady's response supplies pale containment and enables Lethean Tide to end the event
 - Neither side "wins" — just escalation
 - World caught in the middle
 

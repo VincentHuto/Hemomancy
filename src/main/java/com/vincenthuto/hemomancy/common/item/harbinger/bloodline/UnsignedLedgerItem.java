@@ -81,33 +81,10 @@ public class UnsignedLedgerItem extends Item {
 					.orElseThrow(NullPointerException::new);
 
 			if (!compound.getBoolean(TAG_STATE)) {
-				// First use: leader signs the ledger, creating a new bloodline
-				String bloodLineName = playerIn.getName().getString() + "'s Blood Line";
-				ArrayList<UUID> uuids = new ArrayList<>();
-				UUID bloodLineUUID = new UUID(playerIn.getUUID().getMostSignificantBits(),
-						playerIn.level().getGameTime());
-				Bloodline playerLine = new Bloodline(bloodLineName, playerIn.getUUID(), bloodLineUUID, uuids);
-
-				playerIn.playSound(SoundEvents.BOOK_PUT, 0.40f, 1F);
-				compound.putBoolean(TAG_STATE, true);
-				compound.put(TAG_BLOODLINE, playerLine.serialize());
-				stack.set(DataComponents.CUSTOM_DATA, CustomData.of(compound));
-
 				if (!worldIn.isClientSide) {
-					volume.setBloodLine(playerLine);
-					// Register in world-level saved data
-					ServerLevel overworld = ((ServerLevel) worldIn).getServer().overworld();
-					BloodlineSavedData savedData = BloodlineSavedData.get(overworld);
-					savedData.registerBloodline(playerLine);
-
-					PacketHandler.sendToPlayer((ServerPlayer) playerIn, new BloodVolumeServerPacket(volume));
-					playerIn.displayClientMessage(
-							Component.literal("You have founded: " + playerLine.getName())
-									.withStyle(ChatFormatting.DARK_RED),
-							true);
-
-					// Award bloodline milestone
-					SkillPointGainEvents.onBloodlineJoined((ServerPlayer) playerIn);
+					playerIn.displayClientMessage(Component.literal(
+							"Only the Bloodline Founding rite can write the first name into this ledger.")
+							.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC), true);
 				}
 			} else {
 				// Signed ledger: open the ledger GUI for lodge actions,

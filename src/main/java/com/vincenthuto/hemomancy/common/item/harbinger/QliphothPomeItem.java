@@ -5,8 +5,10 @@ import com.vincenthuto.hemomancy.client.render.item.QliphothPomeItemRenderer;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodVolumeEvents;
 import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillPointHelper;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.InitiatoryDegreeEvents;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.FungalWhisperDialogueTrees;
 import com.vincenthuto.hemomancy.common.init.SoundInit;
+import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.PacketSyncPomeProgress;
 import com.vincenthuto.hemomancy.common.network.dialogue.OpenDialoguePacket;
@@ -342,6 +344,17 @@ public class QliphothPomeItem extends Item implements HemoClientItemExtensionsPr
 			int count = degree.recordPomeConsumed(bloomOrigin);
 			if (count >= 9) {
 				degree.setQliphothCommunionDone(true);
+				if (QliphothPomeRules.shouldGrantFungalSpine(count, degree.hasFungalSpineGranted())) {
+					ItemStack spine = new ItemStack(ItemInit.fungal_spine.get());
+					degree.setFungalSpineGranted(true);
+					InitiatoryDegreeEvents.syncDegree(player, degree);
+					if (!player.getInventory().add(spine)) {
+						player.drop(spine, false);
+					}
+					player.displayClientMessage(Component.literal(
+							"The ninth husk opens. A calcified thread tears free from your back.")
+							.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC), false);
+				}
 				PacketHandler.sendToPlayer(player, new OpenDialoguePacket(
 						FungalWhisperDialogueTrees.qliphothCommunion()));
 				return true;

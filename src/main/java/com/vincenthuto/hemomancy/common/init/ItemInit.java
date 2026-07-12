@@ -656,10 +656,14 @@ public class ItemInit {
             () -> new HematicIronArmorItem(EnumModArmorTiers.HEMATIC_IRON.holder(), ArmorItem.Type.LEGGINGS));
     public static final DeferredHolder<Item, Item> hematic_iron_boots = BASEITEMS.register("hematic_iron_boots",
             () -> new HematicIronArmorItem(EnumModArmorTiers.HEMATIC_IRON.holder(), ArmorItem.Type.BOOTS));
+
     public static final DeferredHolder<Item, Item> hematic_iron_sword = HANDHELDITEMS.register("hematic_iron_sword",
-            () -> new SwordItem(EnumModToolTiers.HEMATIC_IRON, new Item.Properties()));
+            () -> new SwordItem(EnumModToolTiers.HEMATIC_IRON, new Item.Properties()
+                    .attributes(SwordItem.createAttributes(EnumModToolTiers.HEMATIC_IRON, 3.0F, -2.4F))));
+
     public static final DeferredHolder<Item, Item> hematic_iron_knapper = HANDHELDITEMS.register("hematic_iron_knapper",
             () -> new ItemKnapper(42f, 1, 0, EnumModToolTiers.HEMATIC_IRON, new Item.Properties()));
+
     // Barbed/Barbed
     public static final DeferredHolder<Item, Item> barbed_blade = SPECIALITEMS.register("barbed_blade",
             () -> new SwordItem(EnumModToolTiers.LIVING, new Item.Properties().stacksTo(1)));

@@ -27,6 +27,8 @@ import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.BloodVolumeServerPacket;
 import com.vincenthuto.hemomancy.common.network.particle.SpawnSanguineOmenEffectPacket;
 import com.vincenthuto.hemomancy.common.worldgen.FungalGardenTravelHelper;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.EnumArchonPath;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.InitiatoryDegreeEvents;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import com.vincenthuto.hutoslib.common.network.HLPacketHandler;
 import net.minecraft.ChatFormatting;
@@ -275,22 +277,27 @@ public class DialogueEventHandler {
 						false);
 			}
 			case "archon_choice_silence" -> {
+				player.getPersistentData().remove(FungalGardenTravelHelper.REVELATION_CHOICE_PENDING);
 				// Archon chose to carry the truth in silence — they turn back from the Eighth Degree.
-				player.getPersistentData().putString(
-						FungalGardenTravelHelper.ARCHON_CHOICE_KEY,
-						FungalGardenTravelHelper.ARCHON_CHOICE_SILENCE);
-				FungalGardenTravelHelper.performReturnTravel(player);
+				HemoCapabilityAccess.getInitiatoryDegree(player).ifPresent(degree -> {
+					degree.setArchonPath(EnumArchonPath.SILENT_PENDING);
+					InitiatoryDegreeEvents.syncDegree(player, degree);
+				});
 				player.displayClientMessage(
 						Component.translatable("hemomancy.dialogue.event.archon_choice_silence")
 								.withStyle(ChatFormatting.DARK_GRAY, ChatFormatting.ITALIC),
 						false);
 			}
 			case "archon_choice_eighth_degree" -> {
+				player.getPersistentData().remove(FungalGardenTravelHelper.REVELATION_CHOICE_PENDING);
 				// Archon chose to pursue the Eighth Degree — the Apotheos path opens.
 				player.getPersistentData().putString(
 						FungalGardenTravelHelper.ARCHON_CHOICE_KEY,
 						FungalGardenTravelHelper.ARCHON_CHOICE_APOTHEOS);
-				FungalGardenTravelHelper.performReturnTravel(player);
+				HemoCapabilityAccess.getInitiatoryDegree(player).ifPresent(degree -> {
+					degree.setArchonPath(EnumArchonPath.APOTHEOS_PENDING);
+					InitiatoryDegreeEvents.syncDegree(player, degree);
+				});
 				player.displayClientMessage(
 						Component.translatable("hemomancy.dialogue.event.archon_choice_eighth_degree")
 								.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC),

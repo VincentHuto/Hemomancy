@@ -1,7 +1,10 @@
 package com.vincenthuto.hemomancy.common.entity.boss.annetta;
 
+import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
+import com.vincenthuto.hemomancy.common.capability.player.unstained.UnstainedProgressEvents;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
@@ -32,6 +35,8 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
 
+import java.util.UUID;
+
 public class LatentAnnettaInfectionEntity extends Monster {
     private static final EntityDataAccessor<Integer> DATA_VISUAL_STATE =
             SynchedEntityData.defineId(LatentAnnettaInfectionEntity.class, EntityDataSerializers.INT);
@@ -44,6 +49,7 @@ public class LatentAnnettaInfectionEntity extends Monster {
 
     private static final int INFECTION_BLOOM_INTERVAL = 70;
     private static final int PRESSURE_SPIKE_INTERVAL = 110;
+	private UUID curingPlayer;
 
     private final ServerBossEvent bossEvent = new ServerBossEvent(
             Component.translatable("entity.hemomancy.latent_annetta_infection"),
@@ -96,6 +102,22 @@ public class LatentAnnettaInfectionEntity extends Monster {
         this.entityData.set(DATA_VISUAL_STATE, visualState);
         this.entityData.set(DATA_VISUAL_TICKS, Math.max(0, ticks));
     }
+
+	public void setCuringPlayer(UUID playerUUID) {
+		this.curingPlayer = playerUUID;
+	}
+
+	@Override
+	public void addAdditionalSaveData(CompoundTag tag) {
+		super.addAdditionalSaveData(tag);
+		if (curingPlayer != null) tag.putUUID("CuringPlayer", curingPlayer);
+	}
+
+	@Override
+	public void readAdditionalSaveData(CompoundTag tag) {
+		super.readAdditionalSaveData(tag);
+		curingPlayer = tag.hasUUID("CuringPlayer") ? tag.getUUID("CuringPlayer") : null;
+	}
 
     @Override
     public void startSeenByPlayer(ServerPlayer player) {
@@ -188,6 +210,17 @@ public class LatentAnnettaInfectionEntity extends Monster {
     @Override
     public void die(DamageSource source) {
         if (!this.level().isClientSide && this.level() instanceof ServerLevel server) {
+			if (curingPlayer != null) {
+				ServerPlayer curer = server.getServer().getPlayerList().getPlayer(curingPlayer);
+				if (curer != null) {
+					HemoCapabilityAccess.getUnstainedProgress(curer).ifPresent(progress -> {
+						progress.setAnnettaSeveranceUnlocked(true);
+						UnstainedProgressEvents.syncProgress(curer, progress);
+					});
+					curer.displayClientMessage(Component.literal(
+							"Annetta's severed infection has shown you how a founder may cut their own covenant-root."), false);
+				}
+			}
             for (AnnettaKnowlesEntity annetta : server.getEntitiesOfClass(AnnettaKnowlesEntity.class,
                     new AABB(this.blockPosition()).inflate(32.0D))) {
                 if (annetta.isCuredSupport()) {

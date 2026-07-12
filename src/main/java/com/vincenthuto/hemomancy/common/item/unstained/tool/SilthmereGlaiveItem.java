@@ -25,7 +25,7 @@ import java.util.stream.Collectors;
 /**
  * Silthmere Glaive — a reach weapon for the Unstained path.
  * <p>
- * A pale silver glaive blessed in the memory of Silthmere. Its extended
+ * A pale silver glaive blessed under Silthmere, the liturgical title of Our Lady. Its extended
  * reach lets the wielder keep blood-touched foes at a safe distance.
  * <p>
  * Passive (mainhand): removes Glowing from the wielder every 40 ticks,
@@ -51,7 +51,7 @@ public class SilthmereGlaiveItem extends SwordItem implements HemoClientItemExte
 	public void appendHoverText(ItemStack stack, Item.TooltipContext context, List<Component> tooltip, TooltipFlag flagIn) {
 		super.appendHoverText(stack, context, tooltip, flagIn);
 		tooltip.add(Component.literal(
-				"A pale silver glaive forged in Silthmere's memory. Its reach keeps corruption at arm's length.")
+				"A pale silver glaive consecrated under Silthmere, Our Lady's title. Its reach keeps corruption at arm's length.")
 				.withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC));
 		tooltip.add(Component.literal("+1.5 Attack Range").withStyle(ChatFormatting.WHITE));
 		tooltip.add(Component.literal("On hit: cleaves up to 2 additional enemies in front (3 total).")

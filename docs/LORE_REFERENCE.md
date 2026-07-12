@@ -2,13 +2,29 @@
 
 > This document covers **lore only**: world history, cosmic origins, factions, characters, beliefs, mythology, and narrative themes. For mechanics, systems, and code details see [HEMOMANCY_REFERENCE.md](HEMOMANCY_REFERENCE.md).
 >
-> **Last Updated:** 2026-06-27 Chamber of Will Degree 6 refuge, dynamic chamber skies, Cicatrix Anchorite / Vein-Mason hermitage lesson, registry-backed scars, Mason's Effigy scar-pattern preparation, and Anastomotic Brazier loadout burning. Implementation-status notes use the same implemented / partial / dormant / planned vocabulary as `HEMOMANCY_REFERENCE.md`; lore intent remains canonical here, while mechanics details remain code/reference-doc sourced.
+> **Last Updated:** 2026-07-11 settled lore standardization. LORE_REFERENCE.md is the authority for canon. `HEMOMANCY_REFERENCE.md` describes the mechanics that implement it. Game code, dialogue, inquiries, item text, advancements, and wiki pages are downstream and must be corrected when they disagree with these documents.
+
+## Canon Governance
+
+This file and the settled decisions incorporated into it are the canonical narrative source. `HEMOMANCY_REFERENCE.md` is the canonical mechanics specification, but it may not redefine the lore. The wiki is a downstream presentation of these docs, never an independent authority. Superseded design notes and implementation plans are historical records only.
+
+The following settled facts are non-negotiable consistency anchors:
+
+- Annetta's canonical creature is the Tooth Peck. Tooth Pecks seek active infection, and their interest causes Annetta's horrifying realization that she is infected. Chthonians remain a separate termite ecology and have no role in that revelation.
+- Verdigris Aura is the early Purity defense; Silver Ward is its advanced Clarity form.
+- The ninth and final Qliphoth Pome grants the Fungal Spine. The first Fungal Spine visit is a two-minute consciousness projection: the player can move and run but has no accessible items or armor, and an accelerating red vignette warns of forced return to the physical body.
+- After that forced return, the Rite of Pruning leaves the player at Degree 7 as a Silent Archon, while the Rite of Apotheosis alone advances the player to Degree 8 Apotheos.
+- The ordinary Unstained cure closes when a Harbinger founds a bloodline. Reaching Degree 5 or joining another bloodline does not close it. Curing Annetta unlocks an exceptional severance route for a founder.
+- A bloodline is founded only by the Degree-5 Bloodline Founding rite. An Unsigned Ledger records or joins a covenant; it does not create one by itself.
+- Pale Silver is refined only from Consecrated Copper. It is never a natural metal and is never refined directly from iron.
+- Hemorath expresses Ferric and Mortem. Seraphae expresses Animus and Lux.
+- Eight canonical Morphling strains are implemented. Older references to twelve describe superseded prototypes.
 
 > **Current Lore-State Snapshot (2026-06-18 audit):**
 > - Core narrative pillars remain directly represented in gameplay: Harbinger initiation/degrees (now including the explicit Apotheos gate), Unstained purification path, faction NPC dialogue trees, blood-memory framing, and fungal-whisper escalation.
 > - **Memory Weaving now reads as a physical Somatic Loom rite:** blank Hematic Memories, catalyst patterns, enzyme-dye reservoirs, projected blood, and unruly colored memory-orbs all make refined manipulation learning feel like wrestling dormant biology into a chosen shape rather than selecting a recipe from a menu.
 > - Qliphoth Communion now has a clearer in-game ritual rhythm: the Sanguine Monolith breaks open with a black void-bloom, the Qliphoth Tree drops nine named husks with personal whispers, and only Cult Pruning can remove the bloom by normal progression.
-> - Blood Moons now visibly match their lore state in the sky: the red lunar face and fungal-vein overlay appear while the Pale Lady's costly immune response is active.
+> - Blood Moons now visibly match their lore state in the sky: the red lunar face and fungal-vein overlay express a fungal surge, while pale effects represent the Lady's containment response.
 > - **The Chamber of Will is now the Degree 6 inward refuge:** not the external Fungal Dimension, but a private blood-memory chamber whose space and sky react to Archon, Qliphoth, Silent Archon, and Apotheos progression.
 > - **Vesper and The Mycophant now have documented endgame roles:** Vesper is the two-phase boss for Archons who refuse fungal dissolution, while The Mycophant is the fruiting-body endpoint for Apotheos-aligned Harbingers. Their entities, rendering, sound hooks, boss music, core combat behavior, and guaranteed final reward loot tables are wired; summoning rituals remain WIP.
 > - **Annetta Knowles encounter is partially complete:** the two-route encounter is wired and playable, dedicated Java models/textures are present, and Annetta's Sanguis Lancea has custom held/item rendering. Final animation polish, fuller Phase 1 biological combat identity, and Annetta-specific thrown projectile rendering remain WIP.
@@ -16,7 +32,7 @@
 > - Covenant social structure gained stricter in-game expression: bloodline leadership can now ritually sever members, reinforcing the Order's "chosen-family covenant" framing over biological lineage.
 > - Harbinger outpost recruitment now reflects covenant restraint: a player's bloodline can draw one pledged voice from an outpost and one of each calling, supporting the Order's doctrine of spreading the cause rather than absorbing an entire lodge.
 > - Cerebral scars now read more like internalized mind-maps than worn trinkets: Scar items are burned into memory, Mason's Effigy prepares known scars into a motif, projected blood writes the motif into a dynamic Scar Pattern, and the Anastomotic Brazier burns that pattern to set the active scar loadout.
-> - This document remains canonical for worldbuilding intent; for implementation status and mechanics-level detail, treat [HEMOMANCY_REFERENCE.md](HEMOMANCY_REFERENCE.md) as the source of truth.
+> - This document remains canonical for worldbuilding. [HEMOMANCY_REFERENCE.md](HEMOMANCY_REFERENCE.md) records how that canon is implemented and must be updated when the implementation changes.
 
 ---
 
@@ -68,6 +84,8 @@ Think of it this way: just as a sphere passing through a flat two-dimensional pl
 
 **It is not God.** It is a deity in an infinite universe — powerful, incomprehensible, old, but not omnipotent. Think of a pagan god versus an archangel in scale of being — the Pale Lady is the pagan god; the Fungal Entity is something even beyond that.
 
+The fungal voice does not knowingly lie. It is nevertheless wholly self-serving: it states observations through the scale and values of the mycelium, omits what does not serve proliferation, and presents its interpretation as if no other interpretation mattered. Its words may mislead through framing, but literal factual contradictions must be rewritten rather than excused as deception.
+
 ### 2.2 How It Infects a World
 
 The Entity extends **hyphae tendrils** across the surface of whichever world it has "landed" on. These tendrils reach upward; the bulb-shaped nodes at their tips eventually break free of gravity and drift off as **spores**, spreading pockets of Erythrocytic Mycelium across the land. The infection zones do not multiply exponentially. They are slow, deliberate, geologically patient.
@@ -84,7 +102,7 @@ The Entity's existence is not entirely self-contained. If a player aligned with 
 
 ## 3. The Fungal Dimension (The Flesh Beyond)
 
-At the peak of the Harbinger path — after reaching Archon (Degree 7), completing Qliphoth Communion by eating all nine pomes from one bloom, and completing the Rite of Apotheos — the player receives a **Fungal Spine** that tears free from their back. Using it transports them to what appears to be a separate dimension.
+At Archon (Degree 7), consuming the ninth and final Qliphoth Pome causes a **Fungal Spine** to tear free from the player's back. Its first use projects only their consciousness into what appears to be a separate dimension; neither Apotheosis nor Pruning has happened yet.
 
 ### 3.1 What It Is
 
@@ -101,9 +119,9 @@ Everything here is hostile, even to an Archon. The player is a babe in the woods
 
 ### 3.2 Return and Choice
 
-The player keeps their Fungal Spine and can use it to return. There may also be natural exits or anchored places of transit, but the spine is the personal return-thread. If the player digs to the very bottom of the space and "punctures" through the core, it severs their connection temporarily (as though they harmed the Entity's surface), ejecting them.
+The first visit lasts roughly two minutes. The projection can move and run, but carries no accessible inventory, armor, or physical equipment. An increasingly rapid red vignette is the body's warning; when time expires, consciousness is forced back without item loss. Later visits use the Spine as a normal return-thread after the player has answered the revelation.
 
-Upon returning, the player faces a choice: **stay silent and remain an Archon**, or **continue deeper into the eldritch truth** and pursue the true 8th degree. This choice is the mod's deepest opt-in.
+Upon forced return, the player faces a choice: perform **Pruning of the Qliphoth** to stay Degree 7 as a **Silent Archon**, or perform the **Rite of Apotheosis** to pursue Degree 8 **Apotheos**. This choice is the mod's deepest opt-in.
 
 ### 3.3 Transcendence (Late/DLC Content)
 
@@ -227,7 +245,7 @@ Each degree carries a **lore theme** — the historical/metaphysical institution
 **Gameplay:** Blood as a living resource. The Vicar teaches Blood Absorption and Blood Projection at this stage: fill the vessel, then spend stored blood into blood-structure recipes. The first Neophyte assignment asks the player to carry 5000 ml, project blood into a Liber Sanguinum, and harden a Hematic Iron Block. The **Vial Centrifuge** is introduced as the first blood-processing station, separating bloody vials into early tendency and iron outputs. First Humilis-rank blood manipulations become unlockable. Core loop: fill blood, spend blood, craft with projection, cast manipulations.
 
 #### VOTARY 2 — *of the Hematic Covenant*
-**Lore:** A Votary has taken a vow — not to the Order as an institution but to the Covenant as a compact between practitioners. The difference between someone who was bitten and someone who *chose to stay bitten*. The Vicar introduces the seven blood tendencies. The Fungal Podium becomes accessible (gated at Votary+), framed as a meditation or resonance tool — the player does not yet know what it connects to.
+**Lore:** A Votary has taken a vow — not to the Order as an institution but to the Covenant as a compact between practitioners. The difference between someone who was bitten and someone who *chose to stay bitten*. The Vicar introduces the seven blood tendencies. The Fungal Podium may be encountered as an unreadable Lodge apparatus, but it cannot open the Fungal Gardens until a Degree-7 Archon has received the ninth-pome Fungal Spine.
 
 **Gameplay:** The **Ghastly Alembic** and the wider tendency system become available. Players distill organic inputs into concentrated alchemical compounds while continuing the Living Syringe + Vial Rack workflow. The Alchemist's D2 work now runs on two formal tracks: Red Taxonomy field specimens and the Eightfold Centrifuge enzyme record, which asks the player to obtain all eight enzyme expressions without consuming them. A quieter Living Bestiary runs alongside those assignments: specimen jars can bring Hemomancy fauna, including wild Morphling Polyps, to the Alchemist for record-and-return study or surrender. Captured polyps introduce morphling layer families early through wild-bound morphlings, while the Degree 5 Incubator remains the full cultivation path. Tendency alignment scores begin shifting toward chosen affinities. The Blood Tendency UI is fully revealed. Humilis and Mediocritas manipulations from the chosen tendency line become craftable. More involved blood-structure crafting continues to open from here: Basic-tier multiblock patterns are available early, Advanced patterns unlock at Degree 4 (Adept), and Grand-tier patterns requiring sustained Blood Conduit flow unlock at Degree 5 (Illuminatus).
 
@@ -244,7 +262,7 @@ Each degree carries a **lore theme** — the historical/metaphysical institution
 #### ILLUMINATUS 5 — *of the Crimson Lodge*
 **Lore:** The Crimson Lodge documented the link between hemomancy and the mycelial network — and kept that knowledge secret, insisting it must be "arrived at independently." Becoming Illuminatus means the Lodge judges the player ready to receive what they recorded. The Vicar reveals it: *"The blood you command… it was not always blood."* Most Harbingers never reach this degree. Fungal Whispers become clearer intrusions.
 
-**Gameplay:** Three major unlocks. (1) **Morphling Incubator** — biological/fungal crafting for organism-derived items. (2) **Blood Structure Grand tier** — the Blood Conduit pipeline network becomes a mandatory crafting input for the most complex structural patterns; sustained flow within range is required, not just a single key strike. (3) **Sanguine Quintessence & Founding Fane** — the Illuminatus rite is the degree-advancement rite into the Crimson Lodge, while the separate **Founding Fane ritual** is the true consecration rite. Sanguine Quintessence serves as the founding catalyst placed at the fane heart; the Founding Fane ritual uses it to establish a 5×5 chunk Harbinger Fane with shared buffs, visible boundary phenomena, and bloodline-owned territory for covenant infrastructure and ledger actions. The Sanguine Monolith becomes accessible (Degree 5+ gated).
+**Gameplay:** Three major unlocks. (1) **Morphling Incubator** — biological/fungal crafting for organism-derived items. (2) **Blood Structure Grand tier** — the Blood Conduit pipeline network becomes a mandatory crafting input for the most complex structural patterns; sustained flow within range is required, not just a single key strike. (3) **Sanguine Quintessence & Founding Fane** — the Illuminatus rite is the degree-advancement rite into the Crimson Lodge, while the separate **Founding Fane ritual** is the true consecration rite. Sanguine Quintessence serves as the founding catalyst placed at the fane heart; the rite establishes a bloodline-owned **Flexible Envelope** shaped by its Consecrated Bloodwell heart and connected Hematic Stakes. The Sanguine Monolith becomes accessible (Degree 5+ gated).
 
 #### SANCTIFIED 6 — *of the Bloodline Covenant*
 **Lore:** The Sanctified do not belong to the Order — they *are* the Order. The Vicar delivers the degree's doctrine: *"The blood becomes indistinguishable from the blood of the world."* The Bloodline Covenant is revealed — a ritual compact between Harbingers that merges blood pools and capabilities. Fungal Whispers grow direct and revelatory: *"The first Archons did not discover hemomancy. They were infected by it."* Erythromycelium is named as the original organism.
@@ -257,9 +275,9 @@ Each degree carries a **lore theme** — the historical/metaphysical institution
 **Gameplay:** **Qliphoth Communion** — the 5-stage endgame sequence. Shatter the Sanguine Monolith; perform the Bloom of the Qliphoth rite; collect and eat all nine Qliphoth Pomes; prune the bloom via the Cult Pruning rite. The most elaborate multi-step sequence in the mod. Completing Communion unlocks the Apotheos rite choice. **Fungal Scars** are implemented as a fourth scar family through Mycelial Crucible cultivation rather than the older Fungal Gardens harvesting plan; they alter the player's relationship to the mycelial network rather than deepening tendency alignment. Deeper Apotheos-tier fungal scar concepts remain planned design space.
 
 #### APOTHEOS 8 — *of the Hematic Order*
-**Lore:** Not an ascension to godhood — a *completion of the sporulation cycle*. The Fungal Spine tears free from the player's back. Their consciousness is cast into the Fungal Dimension — not physically, but as astral projection into the Entity's local surface. There is no body here. Everything here is hostile, even to an Apotheos. On returning, the player faces the choice: carry the truth in silence, or continue deeper into hive-mind dissolution (expansion content).
+**Lore:** Not an ascension to godhood — a *completion of the sporulation cycle*. Apotheosis is chosen only after the ninth Pome has produced the Spine and the first temporary projection has returned the player to their body.
 
-**Gameplay:** **Fungal Dimension** access via the Fungal Spine item. On first exit attempt from the dimension, the Fungal Podium fires the core witness dialogue and the two-option choice fork (stamped as `archon_choice_made`). Post-return, the Apotheos retains full Qliphoth Pome empowerment (reduced manipulation costs), maximum blood capacity, and unique cosmetic effects reflecting the fungal transformation.
+**Gameplay:** The first Spine use is a forced two-minute projection with no accessible equipment and an accelerating red vignette. The choice opens after automatic return. Pruning establishes Silent Archon at Degree 7; Apotheosis alone advances to Degree 8.
 
 ### 6.4b Endgame Bosses: Refusal and Fruiting
 
@@ -293,7 +311,7 @@ One-off pieces should remain covenant-breaking tradeoffs in tone as well as mech
 
 ### 6.5 The Founding Fane
 
-At Degree 5, a Harbinger becomes eligible to perform the **Founding Fane ritual** — a distinct ceremony separate from the Illuminatus rank-up rite. The **Rite of the Crimson Lodge** makes the practitioner Illuminatus; the **Founding Fane ritual** is what actually consecrates an area around their chosen base. A **5×5 chunk area** becomes a Harbinger Fane — a zone where all Harbingers present receive enhanced powers: stronger regeneration, lower cooldowns, more potent attacks. The rite also makes the fane real as covenant territory: its visible boundary, its bloodline ownership, and the recall/summoning ground used by the Ancestral Ledger. **Sanguine Quintessence** is the catalyst set at the rite's heart, but the Quintessence itself is not the consecration — the founding ritual is.
+At Degree 5, a Harbinger becomes eligible to perform the **Founding Fane ritual** — a distinct ceremony separate from both the Illuminatus rank-up rite and the Bloodline Founding rite. The **Rite of the Crimson Lodge** makes the practitioner Illuminatus; **Bloodline Founding** creates the covenant; the **Founding Fane ritual** gives that existing bloodline territory. Its boundary is a **Flexible Envelope**, beginning at the Consecrated Bloodwell heart and expanding through connected Hematic Stakes rather than occupying a fixed chunk square. Harbingers inside receive strength scaled by the living footprint, while its visible boundary, recall ground, and ledger permissions follow the envelope. **Sanguine Quintessence** is the catalyst set at the rite's heart, but the Quintessence itself is not the consecration — the founding ritual is.
 
 ### 6.5a The Sanguine Monolith (The Crimson Lodestone)
 
@@ -328,6 +346,14 @@ From the Harbinger Vicar's lore branches:
 - The **Crimson Lodge** documented the link between hemomancy and the mycelial network. This knowledge was kept secret — considered something that must be "arrived at independently" to be understood correctly.
 - The **Hematic Order** itself is described by the Vicar not as a rank, but as a state of being, where "the blood becomes indistinguishable from the blood of the world."
 
+### 6.7 Rogue Hemomancer Wills
+
+**Broken Wills are remnants of failed former Harbingers**: practitioners whose bodies or identities collapsed while trained blood-memory continued to repeat incomplete techniques. Faded Wills are the most eroded members of this same family, not a separate species.
+
+**Sent Wills are purpose-built by the Fungal Entity** to assess practitioners who are approaching ripeness. Proctors are their deliberate, evaluative expression. They are not dead Harbingers and should behave with more coherent priorities than Broken Wills.
+
+**Blood Drunk Puppeteers are Broken Wills commandeered by the hive's strings.** Their visible control and their susceptibility to player commandeering are literal extensions of that origin. These categories describe implemented origins, not competing NPC theories: Broken/Faded are failed people, Sent/Proctor are made assessors, and Blood Drunk Puppeteers are failed people being actively pulled.
+
 ---
 
 ## 7. The Unstained
@@ -336,9 +362,7 @@ From the Harbinger Vicar's lore branches:
 
 The Unstained are not a wholly separate tradition. Their **original members were Harbingers who left** — practitioners who had experienced blood magic firsthand and then chose to reject it. This is why they are so effective at combating it: the founders knew it from the inside. Their methods of purification, their understanding of what hemolytic solution does to blood-infused veins — this was all discovered and refined by people who had once been what they now oppose.
 
-This also explains why the Unstained will **warmly welcome back** a Harbinger who wants to leave, even at high degrees. They have no investment in keeping people out. A former high-ranking Harbinger who wants purification is an *asset* — someone who understands the enemy as well as anyone.
-
-> *Exception:* A full Archon who has begun to accept the Fungal Whispers and their truth is a different matter. The Unstained will still permit them to seek purity, but are far more cautious.
+This also explains why the Unstained welcome Harbingers who sincerely seek a cure. The ordinary hard cutoff is not a degree and not membership in someone else's covenant: it is **founding a bloodline**, the act that roots the infection through a covenant created by the practitioner. A founder may still use the Draught of Still Mercy to spare and cure Annetta even though ordinary Unstained initiation is closed; defeating her separated infection teaches the exceptional founder-severance rite that can reopen the path.
 
 ### 7.2 What They Believe
 
@@ -351,8 +375,8 @@ They are devout, but not fanatical in the way of those who seek to convert or co
 - Degree 0: concerned sadness; the Church sees a newly blood-touched person as infected and frightened rather than culpable
 - Degree 1-2: careful welcome; help is offered plainly, though the Unstained warn that every rite makes the blood harder to shed
 - Degree 3-4: wary help; Zealots and Acolytes still offer cure, but ask whether the player seeks healing or merely another power
-- Degree 5: hesitant disdain; aid is still possible, but the Church assumes the player has loved the crimson road long enough to make repentance suspect
-- Degree 6+: ordinary Church members refuse the normal cure path, treating the infection as too deeply rooted for safe hemolytic rites
+- Degree 5+: caution rises with experience, but degree alone never closes ordinary cure
+- Bloodline founder: ordinary cure is refused until the exceptional Annetta-derived severance has cut the founder's integration
 - Guardians use blunt force to escort hostile or deceptive visitors out when necessary; they do not spill blood near the church
 
 ### 7.3 Appearance and Equipment
@@ -362,7 +386,7 @@ The Unstained aesthetic is **white, silver, and oxidized copper**. Their Guardia
 - Oxidized (fully patinated) copper accents and components
 - Glass helmets — intentionally suggesting they are not breathing the same air as others, either literally or metaphorically
 
-Their weapons are exclusively **blunt instruments**: maces, war hammers, staves. They explicitly refuse to carry bladed weapons. The philosophy is simple: they do not want blood spilled anywhere near them.
+Their doctrine minimizes bloodshed rather than banning every blade. Guardians favor maces, war hammers, and staves. The **Silthmere Glaive** is sanctioned because its reach keeps infection away from the wielder. Every initiated Unstained carries an **Absolution Dagger**, whose inherent special hemolytic coating makes it an antiseptic last resort rather than an ordinary knife.
 
 Their field equipment is practical before it is mystical. A **Pale Silver Bell** makes blood-magic hesitate and gives frightened practitioners a moment to breathe. A **Lethean Chalice** carries still water for rinsing poison, fever, and old influence from the body. A **Verdigris Censer** burns oxidized copper salts into a diagnostic smoke that marks blood-active bodies without needing to open them.
 
@@ -377,6 +401,8 @@ Their field equipment is practical before it is mystical. A **Pale Silver Bell**
 **Virid Salis** is the Unstained's green salt-ash: a verdigris-colored ritual powder that borrows the holiness of patinated copper without pretending the copper is clean. It marks lines of warding and purification in the same practical spirit as ash trails, but its meaning is defensive and antiseptic rather than sanguine.
 
 **Silver** in this world does not spawn naturally. It is **consecrated copper** — copper that has been processed through a ritual of purification until it achieves a purer, refined state. Pale Silver Ingots are the primary high-tier Unstained material.
+
+**Silthmere is a liturgical title of Our Lady of Still Waters** — a shorter, name-like title used in rites and sacred instruments, not the name of a separate historical mortal. “Remembrance” invokes the Lady under that title and recalls the discipline she represents; it does not commemorate a person who once walked the path.
 
 ### 7.5 What Happens to the Purified
 
@@ -452,7 +478,7 @@ Wherever Our Lady once walked, **Lethean Poppies** bloom. These pale flowers blo
 
 The **Tears of Silthmere** are Lethean Dew distilled to its purest form — a one-time blessing from the Lady herself, offering a significant burst of purification when offered at an Altar of Cleansing.
 
-The **Pallid Icon** — a rare relic carved from pale silver found at the bottom of a forgotten river — is said to allow an Unstained practitioner to summon a brief apparition of Our Lady and ask her lore questions directly. She does not manifest physically in any other way.
+The original **Pallid Icon** is a rare relic carved from pale silver and found at the bottom of a forgotten river. Consecrated copies reproduce its posture and serve as the carried emblems used by Guardians and rites; they do not become the historical river relic merely because they share its item form. The Icon is said to allow an Unstained practitioner to summon a brief apparition of Our Lady and ask her lore questions directly. She does not manifest physically in any other way.
 
 ### 8.6 Her Hidden Nature — A Warning
 
@@ -462,9 +488,9 @@ Toward the end of the Clarity path, Our Lady's whispers change subtly. She grows
 
 ## 9. Blood Moons — Cosmological Significance
 
-Blood Moons in Hemomancy are not just a gameplay event. They are a **manifestation of the conflict** between the Pale Lady and the Fungal Entity.
+Blood Moons in Hemomancy are not just a gameplay event. **Blood Moons are fungal surges**: periods when the Entity's influence presses unusually hard into the world. The red lunar face, fungal-vein overlay, Harbinger empowerment, Loom discount, and increased fungal activity all belong to that surge.
 
-When a Blood Moon rises, it is the Pale Lady expending a significant burst of her power to push back against the fungal infection for another cycle — a kind of cosmic immune response. She wins these small battles, which is why the world is not already a meatball of flesh. But each one costs her something. The night after a Blood Moon, the moon may appear new or very dim — she is recovering.
+Our Lady does not create the Blood Moon. Pale and Unstained effects during the event are her costly containment response, and the Rite of Lethean Tide ends the event by strengthening that response until the surge is forced back. The red night therefore shows attack and defense at once, but its initiating cause is fungal.
 
 From the player's perspective:
 - Blood Moons are uncommon natural events; current gameplay checks once per night and may start one for the rest of that night
@@ -513,7 +539,7 @@ Players are directed to seek the Saints around **Degree 3–4**, when they are s
 
 Annetta Knowles is a boss character and one of the more tragic figures in the mod's lore. She was one of the **highest-ranking members of the Unstained**, a cleric who had given her life to purification and the service of Our Lady.
 
-Her downfall came from a single, impossible fact: a **Chthonian** (one of the iron-mandible termite creatures that the lore establishes as only seeking out infected individuals) found its way into the church and **bit her**. These creatures do not bite the uninfected. They have no interest in the clean.
+Her downfall came from a single, impossible fact: **Tooth Pecks sought her out** inside the church and would not leave her alone. Tooth Pecks seek active infection rather than the mundane residue carried by most people. Their fixation should have been impossible for someone of Annetta's standing, and she understood what they had detected before anyone else would admit it.
 
 This one small fact — an insect bite that should not have been possible — **shattered everything she had built herself on**. If she could be bitten, she was infected. If she was infected, had she ever truly been clean? Had any of her purification been real? Had she been walking the Lady's path, or had she been deluding herself while the infection marinated inside her all along?
 
@@ -523,14 +549,14 @@ Her sanity broke under the weight of this question. And in that fracture, the la
 
 **Her thematic domain:** Teeth, nails, hair — the biological materials that are *not* blood-connected (calcium, keratin) but are undeniably biological. These fall into neither the Harbinger (blood, iron, bone) nor the fully Unstained (copper, silver) domain. They are hers.
 
-**Draught of Still Mercy** — a specialized Unstained-crafted tincture that can suppress the latent infection in a host who has not yet fully converted. If brought to Annetta by an Unstained practitioner with sufficient Clarity, she will drink it, allowing the infection to be externalized and fought separately rather than burning through her. This is not a cure in the traditional sense — it is a violent purging — but it leaves the host alive and, eventually, at peace.
+**Draught of Still Mercy** — a specialized Unstained-crafted tincture that can suppress the latent infection in a host who has not yet fully converted. An Unstained practitioner with sufficient Clarity can bring it to her through the ordinary pale route. A bloodline founder may also bring it despite being barred from ordinary Unstained initiation; curing Annetta is the exceptional act that later teaches the founder how to sever their covenant integration. The draught externalizes Annetta's infection so it can be fought separately rather than burning through her. This is not a gentle cure, but it leaves the host alive and, eventually, at peace.
 
 > *She is not the Pale Lady.* Our Lady of Still Waters is a force of nature, non-physical and non-corporeal. Annetta is a person — a broken person with enormous and terrible power.
 
 **Implementation status:** Partial. Annetta's encounter is wired and playable. She spawns in COWERING state inside a `BrokenChurchStructure` with contextual scene dressing (a ToothPecks Specimen Jar placed beside her, Devil's Tooth decorations). Two routes are implemented:
 
-- **Harbinger route**: Approach holding a ToothPecks Specimen Jar. The jar shatters, the termite bites her, and the boss fight begins (silver aura, hemolytic vials, hair-and-nails slash). If the fight proceeds to near-death she mutates into the Stained Priestess — a more powerful blood-spear phase. The Harbinger route drops `Annetta's Sanguis Lancea`.
-- **Unstained route**: Approach holding a Draught of Still Mercy (requires Clarity unlocked). She drinks it, transitions to a cured ally state, and the **Latent Infection** — the suppressed blood magic given physical form — tears itself free as a separate boss. Cured Annetta fights alongside the player until the infection is destroyed. The Unstained route drops `Annetta's Absolution Dagger` and Pale Silver Ingots.
+- **Harbinger route**: Approach holding a ToothPecks Specimen Jar. The jar shatters, the Tooth Pecks swarm toward the infection they sensed in her, and the boss fight begins (silver aura, hemolytic vials, hair-and-nails slash). If the fight proceeds to near-death she mutates into the Stained Priestess — a more powerful blood-spear phase. The Harbinger route drops `Annetta's Sanguis Lancea`.
+- **Mercy route**: Approach holding a Draught of Still Mercy while Clarity is unlocked **or** while carrying the founder integration that makes Annetta's exception necessary. She drinks it, transitions to a cured ally state, and the **Latent Infection** — the suppressed blood magic given physical form — tears itself free as a separate boss. Cured Annetta fights alongside the player until the infection is destroyed. The route drops `Annetta's Absolution Dagger` and Pale Silver Ingots and unlocks Severed Covenant knowledge for a founder.
 
 After either route concludes she either lies broken (Harbinger) or stands resolved and at peace (Unstained).
 
@@ -546,7 +572,7 @@ Hemomancy draws on this concept not as good-versus-evil but as complementary for
 
 The Qliphoth Tree:
 - Provides **blood volume regeneration** and enhanced regen auras in its area
-- Produces **Qliphoth Pome** fruits — void-dark fruits grown around a crystallized blood core. Each pome is one of nine husks of the Qliphoth. Eating one causes a brief expansion of awareness into the void-register — perceived from the outside as darkness — alongside a surge of blood power and reduced manipulation costs. Nine pomes drop from a single tree's lifecycle, each corresponding to one of the nine corrupted shells of the Qliphoth system; eating all nine from a single bloom is the unnamed act that prepares the Eighth Degree, and Apotheosis forces the Fungal Spine from the player's body.
+- Produces **Qliphoth Pome** fruits — void-dark fruits grown around a crystallized blood core. Each pome is one of nine husks of the Qliphoth. Eating one causes a brief expansion of awareness into the void-register — perceived from the outside as darkness — alongside a surge of blood power and reduced manipulation costs. Nine pomes drop from a single tree's lifecycle, each corresponding to one of the nine corrupted shells of the Qliphoth system. Consuming the ninth pome from one bloom completes Communion and forces the Fungal Spine from the Archon before either endgame rite.
 - Whispers through those fruits in a personal register — the voice naming the husk feels directed to the current bearer, not to the crowd at large.
 - **Must be summoned through ritual** — placed trees don't work, because you can't cheat god
 - Grows with slight random variation each time (no two trees are identical)

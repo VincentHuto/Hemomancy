@@ -5,7 +5,7 @@
 > **Target:** Minecraft `1.21.1`, NeoForge `21.1.219`, Java `21`
 > **Version:** `6.0.1-neoforge.1.21.1.0`
 
-This is the canonical developer reference for Hemomancy. Current code and data are authoritative when older prose, design notes, or screenshots disagree. Use [LORE_REFERENCE.md](LORE_REFERENCE.md) for tone, faction beliefs, cosmology, and character/narrative context.
+This is the canonical mechanics specification for Hemomancy. [LORE_REFERENCE.md](LORE_REFERENCE.md) and the settled rulings incorporated there are authoritative for narrative canon. When implementation or older notes disagree, gameplay, dialogue, inquiries, item text, and wiki pages must be corrected to match the docs. Code and data show implementation status; they do not overrule settled lore.
 
 Hemomancy is a NeoForge blood magic mod built around the *quality* of blood manipulation rather than just quantity. Its public fiction frames blood magic as a sacred inheritance of the Hematic Order, while the deeper biological truth is fungal blood-memory/infection tied to a slow cosmic reproductive cycle. Keep that moral grayness intact: Harbingers are taboo and dangerous but not simple villains, and the Unstained are not simple heroes.
 
@@ -530,7 +530,7 @@ At Archon (Degree 7), **3â€“5 Fungal Whispers** fire before the Fungal Spin
 
 ### 5.6 The Fungal Spine and The Realm Beyond
 
-After completing Qliphoth Communion by eating all nine pomes from a single bloom and then completing the Rite of Apotheos, a **Fungal Spine** item tears free from the player's back and drops into the world. Using it transports the player's consciousness to the Fungal Dimension.
+Completing Qliphoth Communion by eating the ninth pome from a single bloom grants the **Fungal Spine** before either endgame rite. Its first use starts a 2,400-tick consciousness projection: inventory and armor remain on the physical body but are inaccessible and invisible, damage and interaction are suppressed, and an accelerating red vignette ends in forced return. The post-return choice makes Pruning the Degree-7 Silent Archon route or unlocks the Degree-8 Rite of Apotheosis.
 
 **The Fungal Dimension:**
 - A vast sphere of flesh, meat, and pulsing biology â€” the local "surface" of the fourth-dimensional Fungal Entity
@@ -543,12 +543,12 @@ After completing Qliphoth Communion by eating all nine pomes from a single bloom
 - Digging to the bottom of the space and "puncturing" the core severs the connection temporarily (ejecting the player)
 - May contain **morphic pools** or podiums as place-based anchors, but the portable **Fungal Spine** is the primary player-owned travel key. See Â§5.9 for the Archon choice fork behaviour.
 
-**Player Choice at the End:**
-- Stay silent and simply return; remain an Archon and tell no one â€” choice stamped as `hemomancy:archon_choice_made = "silent"` in persistent data
-- Continue deeper into the eldritch truth toward the true 8th Degree (transcendence) â€” choice stamped as `hemomancy:archon_choice_made = "apotheos"`; `apotheos_rite` is now unblocked in combination with the Qliphoth Communion flag
-- The Archon may draw a Fungal Spine at any time to return or revisit; the podium delegates to the same helper but is no longer the core dependency
+**Player Choice After the First Return:**
+- The first visit is a two-minute consciousness projection. The player can move and run, but cannot access or use inventory, armor, attacks, blocks, or containers. The accelerating red vignette warns that forced return is approaching.
+- After consciousness returns to the physical body, the revelation choice opens. Choosing silence creates a pending Silent route that is finalized only by successfully performing Pruning of the Qliphoth; the player remains Degree 7. Choosing the Eighth Degree creates a pending Apotheos route and permits the Rite of Apotheosis when Qliphoth Communion is complete.
+- Later visits are normal Spine travel and use the stored source dimension and exact return position.
 
-> **Status: Partial.** Spawn placement, dimension-exclusive mob population, safe return placement, and the Archon first-exit choice fork are implemented. `FungalPodiumBlock.use()` fires `FungalWhisperDialogueTrees.coreWitnessDialogue()` on the first Degree-7 exit attempt, stamps `hemomancy:archon_choice_made`, and then delegates to `performReturnTravel()`. Remaining WIP is terrain feature population depth and broader dimension content.
+> **Status: Implemented core loop.** The persisted projection timer, interaction suppression, forced return, post-return choice, route capability, Pruning finalization, and Apotheosis gate are implemented. Terrain population depth and broader dimension content remain WIP.
 
 ### 5.7 The Founding Fane (Degree 5)
 
@@ -674,8 +674,8 @@ At around **Degree 3â€“4**, the Harbinger Vicar and/or the player's own res
 
 | Saint | Tendencies | Somatic Loom Pattern | Canon Memory | Related Fungal Scar |
 |-------|-----------|----------------------|--------------|----------------------|
-| **Hemorath** | MORTEM + ANIMUS | `hallowed_residuum_hemorath` + `animus: 1`, `mortem: 1`, `blood: 100` | Crimson Tithe | Talaromyces Minus |
-| **Seraphae** | LUX + DUCTILIS | `hallowed_residuum_seraphae` + `ductilis: 1`, `lux: 1`, `blood: 100` | Unclosing Eye | Noctifly Agaric / Antiphonomyces resonans / Oculiflora reticularis |
+| **Hemorath** | FERRIC + MORTEM | `hallowed_residuum_hemorath` + `ferric: 1`, `mortem: 1`, `blood: 100` | Crimson Tithe | Talaromyces Minus |
+| **Seraphae** | ANIMUS + LUX | `hallowed_residuum_seraphae` + `animus: 1`, `lux: 1`, `blood: 100` | Unclosing Eye | Noctifly Agaric / Antiphonomyces resonans / Oculiflora reticularis |
 | **Putriciel** | MORTEM + FLAMMEUS | `hallowed_residuum_putriciel` + `flammeus: 1`, `mortem: 1`, `blood: 100` | Bloom of Rot | Putrivora resolvens / Saprovitta vestigium |
 | **Velorum** | CONGEATIO + TENEBRIS | `hallowed_residuum_velorum` + `congeatio: 1`, `tenebris: 1`, `blood: 100` | Endless Hour | Cryostroma perdurans |
 
@@ -687,8 +687,8 @@ There are **four Saints** in total; which one a player encounters first is parti
 
 | Saint | Trial Type | Boss Mechanic | Thematic Tendency |
 |-------|-----------|---------------|------------------|
-| **Hemorath** | Four-basin blood-filling puzzle (fill each basin to correct level, monsters spawn throughout; wrong levels set you back) | Hybrid blood-debt/overload fight. Blood magic spent near the active fight increases the player's debt while also feeding Hemorath's absorbed-blood meter; enough absorbed blood triggers an exsanguination collapse and awards Hallowed Residuum. | MORTEM + ANIMUS (iron permanence, death/life) |
-| **Seraphae, the Chain Saint** | Light/containment trial room (WIP) | `SeraphaeEntity`: containment integrity mechanic. Fragments, anchors, and CONDENSING hits increase integrity until Seraphae's bound radiance is chained again; the fight is containment, not execution. | LUX + DUCTILIS (witness, light, neural) |
+| **Hemorath** | Four-basin blood-filling puzzle (fill each basin to correct level, monsters spawn throughout; wrong levels set you back) | Hybrid blood-debt/overload fight. Blood magic spent near the active fight increases the player's debt while also feeding Hemorath's absorbed-blood meter; enough absorbed blood triggers an exsanguination collapse and awards Hallowed Residuum. | FERRIC + MORTEM (iron permanence and death) |
+| **Seraphae, the Chain Saint** | Light/containment trial room (WIP) | `SeraphaeEntity`: containment integrity mechanic. Fragments, anchors, and CONDENSING hits increase integrity until Seraphae's bound radiance is chained again; the fight is containment, not execution. | ANIMUS + LUX (raw life and radiance) |
 | **Putriciel** | Absolution-window victory condition â€” players must deal damage during brief periodic absolution cycles (opens every 300 ticks, lasts 80 ticks); requires 5 successful absolution hits. Rot nova pulses Wither+fire to the whole arena. | `PutricielEntity`: `DATA_ABSOLVED` synched flag; `openAbsolutionWindow()` / `endAbsolutionWindow()` cycle; `hurt()` increments absolution counter during window; ordinary lethal damage outside the intended condition is clamped so the reward cannot be bypassed. | MORTEM + FLAMMEUS (absolution, rot-fire) |
 | **Velorum** | Martyrdom resistance â€” gains brief Resistance I on every hit, creating attack-rhythm windows. Frost nova roots players. Veil of darkness blinds (Nausea for blood-active players). Silence drain strips blood from nearby Harbingers at low HP (â‰¤25%). | `VelorumEntity`: `DATA_MARTYRDOM` synched flag; `fireFrostNova()`, `fireVeilOfDarkness()`, `fireSilenceDrain()` per-tick methods; martyrdom Resistance in `hurt()`, with the synced martyrdom visual/state cleared after the resistance window expires. | CONGEATIO + TENEBRIS (martyrdom, silence, frozen dark) |
 
@@ -752,7 +752,7 @@ Creative-spawned / untagged pomes do not have a real bloom origin, so they use a
 **Stage 5 â€” Rite of Apotheos Unlocked**
 `BloodCraftingKeyPressPacket` (server-side rite activation) checks `IInitiatoryDegree#isQliphothCommunionDone()` before allowing the `apotheos_rite` to begin. `CardinalRiteEvents.completeRite()` repeats the same check before granting Degree 8, so old active rites or alternate completion paths cannot bypass the gate. If absent, the player receives: *"The Eighth Degree remains sealed. Consume all nine Qliphoth husks from a single bloom."* If present (and degree â‰¥ 7), the rite proceeds normally.
 
-When degree rites actually advance the player to Degrees 5, 6, and 7, `FungalWhisperDialogueTrees.spineGrowth(degree)` fires one-shot bodily hints that the Fungal Spine is growing. On successful Degree 8 advancement, `CardinalRiteEvents` plays wet flesh sounds, drops `fungal_spine` behind the player, and opens `FungalWhisperDialogueTrees.fungalSpineEmerged()` with usage guidance.
+Degree rites at Degrees 5 and 6 may foreshadow the growth, but Degree 7 does not drop a Spine. Consuming the ninth pome from one bloom completes Qliphoth Communion and grants the Fungal Spine once; this happens before either endgame rite.
 
 **Key fields serialized inside the player's `IInitiatoryDegree` capability:**
 
@@ -762,7 +762,9 @@ When degree rites actually advance the player to Degrees 5, 6, and 7, `FungalWhi
 | `pome_communion_progress` | CompoundTag | Per-bloom pome consumption counters (keys = bloom origin Long as String) |
 | `pome_empowerment_expiry` | Long | Game-time tick when pome manipulation discount expires (0 = none) |
 | `pome_total_consumed` | Int | Total pome counter for HUD display, capped at 9 |
-| `hemomancy:archon_choice_made` | String | `"silent"` or `"apotheos"` â€” set when Archon resolves the Fungal Dimension choice fork |
+| `archon_path` | Enum | `NONE`, `SILENT_PENDING`, `SILENT_ARCHON`, `APOTHEOS_PENDING`, or `APOTHEOS`; canonical persisted route state |
+| `fungal_spine_granted` | Boolean | Ninth-pome Spine grant has occurred |
+| `fungal_revelation_witnessed` | Boolean | First projection completed and the post-return choice was presented |
 
 ---
 
@@ -814,7 +816,7 @@ The **Lethean Poppies** that grow across the world are said to bloom wherever Ou
 
 **Tears of Silthmere** are distilled from Lethean Dew at an Altar of Cleansing, concentrating Our Lady's blessing into a single potent draught. When offered at her altar, these tears trigger a powerful purification â€” a one-time gift from the Lady herself.
 
-**The Pallid Icon** is an exceedingly rare relic depicting Our Lady, said to have been carved by the first Unstained from pale silver found at the bottom of a forgotten river. Those who possess it are considered to be under her direct protection.
+**The Pallid Icon** began as a historically unique devotional relic recovered from the bottom of a forgotten river. Later Unstained reproduced its posture as consecrated copies, which is why the ordinary item can exist more than once. The game does not distinguish the original with a separate item, tag, or stronger mechanic; the distinction is historical lore only.
 
 ### 6.2 Unstained NPC Dialogue System
 
@@ -831,10 +833,10 @@ Two Unstained NPC types guide the player through the purification journey. All d
 | Active blood, Degree 6+ | Refuses recruitment; the Church believes the stain has rooted too deeply for ordinary hemolytic cure |
 | Active blood, Degree 0-5 (plea) | Explains the hemolytic rites, offers craft-hemolytic info branch, `zealot_accept_purification` / `zealot_accept_church` / `zealot_reject_help` outcomes |
 | Already on purification path â€” Corrupted | "Continue your work at the podium, and the stain shall lift." |
-| Purity 25â€“49 (Tainted) | Silver Ward info branch |
+| Purity 25–49 (Tainted) | Verdigris Aura info branch |
 | Purity 50â€“74 (Cleansing) | Altar of Cleansing info branch |
 | Purity 75â€“99 (Absolved) | Clarity Rite info branch |
-| Clarity unlocked | Verdigris info branch |
+| Clarity unlocked | Silver Ward info branch |
 | Enlightened | Final reverence: the journey complete |
 
 **Unstained Acolyte** (`AcolyteDialogueTrees`) â€” found at Unstained temples; provides stage-aware guidance and tasks.
@@ -847,21 +849,21 @@ Two Unstained NPC types guide the player through the purification journey. All d
 | Cleansing (50â€“74) | **Silver Veil lore** (inner layer of purity shielding the soul); task: consecration |
 | Absolved (75â€“99) | Explains the Clarity path (3-line clarity branch) |
 | Purified (100, pre-Clarity) | Explains how to unlock Clarity |
-| Clarity phase | Verdigris lore; task: chalice offering (`acolyte_task_chalice`) |
+| Clarity phase | Silver Ward lore; task: chalice offering (`acolyte_task_chalice`) |
 | Enlightened | Ultimate reverence: "The Lady weeps for joy." |
 
 ### 6.3 Entry Requirements
 
 - Standard path: the player finds a Blood Temple, activates blood control, then later finds an Unstained Church seeking cure or healing
-- Unstained Zealots offer purification to blood-active players from **Degree 0 through Degree 5 (Illuminatus)**, with tone shifting from concerned sadness to wary disdain as degree rises
-- **Degree 6+** Harbingers are not accepted by the normal Church route; the Church treats them as too deeply rooted in the blood-memory infection for ordinary cure
-- The Zealot directs the player to bring **Hemolytic Solution** ![Hemolytic Solution](../src/main/resources/assets/hemomancy/textures/item/hemolytic_solution.png) to an **Unstained Podium** block
+- Unstained Zealots can offer ordinary purification at any Harbinger degree until the player actually founds a bloodline. Degree alone never closes the route.
+- Founding a bloodline closes ordinary cure because the founder has integrated the infection into other lives. A founder may still use the Draught of Still Mercy to spare and cure Annetta; defeating her separated infection unlocks the exceptional Severed Covenant rite. Completing it disbands the founder's bloodline and reopens cure.
+- The Zealot directs the player to suppress the infection with **Hemolytic Solution** at an **Unstained Podium**, then perform the **Rite of Lethean Baptism**.
 
 ### 6.4 Phase 1: Purity (0â€“100)
 
-Initiated by using Hemolytic Solution at the Unstained Podium:
-- Sets `begunPurification = true`, grants 5.0 starting purity
-- **Resets Harbinger degree to 0**
+Prepared by using Hemolytic Solution at the Unstained Podium, then initiated by the Rite of Lethean Baptism:
+- The podium records that the infection is suppressed; it does not itself begin Purity.
+- The first successful Baptism sets `begunPurification = true`, grants 5.0 starting purity, and gives the canonical Absolution Dagger.
 
 As purity rises, blood magic becomes increasingly penalized:
 
@@ -873,7 +875,7 @@ As purity rises, blood magic becomes increasingly penalized:
 | Absolved | 75 | +50% cost (1.50Ã—) |
 | Purified | 100 | **Completely blocked** |
 
-- **Silver Ward** resistance scales linearly: `purity / 100`
+- **Verdigris Aura** is the early defense and scales linearly with `purity / 100`.
 
 #### Purity Sources
 
@@ -890,7 +892,7 @@ As purity rises, blood magic becomes increasingly penalized:
 
 | Source | Purity Gained | Condition |
 |--------|---------------|-----------|
-| **Hemolytic Solution on Podium** | +10.0 | Each use (first use grants +5.0 and begins path) |
+| **Hemolytic Solution on Podium** | 0 | One-time infection suppression required before Lethean Baptism |
 | **Tears of Silthmere on Altar of Cleansing** | +25.0 | One-time blessing from Our Lady of Still Waters |
 | **Lethean Poppy Wreath on Altar** | +5.0 | Repeatable offering at the Altar of Cleansing |
 | **Completing an Advancement** | +1.5 | Any advancement (boss kills, exploration, progression) |
@@ -918,9 +920,9 @@ As purity rises, blood magic becomes increasingly penalized:
 
 ### 6.5 Phase 2: Clarity (0â€“100)
 
-Unlocked after reaching Purified (purity = 100) and using **Consecrated Copper** at the Unstained Podium:
-- Sets `clarityUnlocked = true`
-- **Permanently disables blood magic** (`BloodVolume.active = false`)
+Prepared after reaching Purified (purity = 100) by using **Consecrated Copper** at the Unstained Podium, then unlocked by the **Rite of Clarity Ascension**:
+- The podium records clarity preparation; it does not itself unlock Clarity.
+- The rite sets `clarityUnlocked = true` and permanently disables blood magic (`BloodVolume.active = false`).
 
 | Stage | Clarity â‰¥ |
 |-------|-----------|
@@ -930,7 +932,7 @@ Unlocked after reaching Purified (purity = 100) and using **Consecrated Copper**
 | Resolute | 75 |
 | Enlightened | 100 |
 
-- **Verdigris Aura** (anti-blood field) scales linearly: `clarity / 100`
+- **Silver Ward** is the advanced defense and scales linearly with `clarity / 100`.
 - Reaching 100 clarity = **Enlightenment**, the final state
 
 ### 6.6 Unstained Progression Level (`getPlayerUnstainedLevel`)
@@ -956,9 +958,9 @@ These levels are compared against each Unstained recipe's explicit `required_deg
 ## 7. Mutual Exclusion of Paths
 
 The two paths are **mutually exclusive**. Resets are handled by `PathMutualExclusionHelper`:
-- **Starting Unstained** (Hemolytic Solution at podium) â†’ resets Harbinger degree to 0, resets Pome Communion
+- **Beginning Purity** (Lethean Baptism after podium suppression) starts the escalating blood-magic penalties; Harbinger progression is not stripped until Clarity is confirmed
 - **Completing a Harbinger degree rite** â†’ resets all Unstained progress (purity â†’ 0, clarity â†’ 0, clarityUnlocked â†’ false, begunPurification â†’ false, **all KnownStillArts cleared**)
-- **Unlocking Clarity** (Consecrated Copper at podium) â†’ `enforceHarbingerResetOnClarity()` is called; if any Harbinger degree was held, it is stripped at the moment clarity is confirmed
+- **Unlocking Clarity** (Clarity Ascension after Consecrated Copper preparation) calls `enforceHarbingerResetOnClarity()`; any remaining Harbinger progression is stripped when clarity is confirmed
 - Message: *"Your purification has been undone by the blood rite."* / *"The Hematic Order falls silent within you."*
 
 ---
@@ -1498,7 +1500,7 @@ Most crafted status effects have a corresponding potion, splash potion, lingerin
 | ![](../src/main/resources/assets/hemomancy/textures/mob_effect/sporitic_resonance.png) **Sporitic Resonance** | Beneficial | Catalyst-tinted | Granted by a lit Sporitic Thurible aura. Matching-tendency manipulations cost 15% less blood and receive 10% shorter cooldown while the resonance state is active; nonmatching manipulations receive no bonus and multiple thuribles do not stack. |
 | ![](../src/main/resources/assets/hemomancy/textures/mob_effect/morphic_strain.png) **Morphic Strain** | Harmful | Fungal green | Primal morphling drawback. Modest max-health and movement-speed reduction after successful Primal powers. |
 | ![](../src/main/resources/assets/hemomancy/textures/mob_effect/silver_ward.png) **Silver Ward** | Beneficial | 0xC0C0C0 | Unstained protection; grants armor/knockback resistance and reduces damage from hemomancy-coded threats. |
-| ![](../src/main/resources/assets/hemomancy/textures/mob_effect/verdigris_aura.png) **Verdigris Aura** | Beneficial | 0x4A8B6F | Unstained clarity field; weakens and slows hemomancy-tagged mobs with oxidized-copper resonance. |
+| ![](../src/main/resources/assets/hemomancy/textures/mob_effect/verdigris_aura.png) **Verdigris Aura** | Beneficial | 0x4A8B6F | Early Unstained Purity field; weakens and slows hemomancy-tagged mobs with oxidized-copper resonance. |
 
 **Potion and icon notes:**
 - `potion_of_mnemonic_whispers` is registered in `EffectInit.POTION_TYPES`; normal vanilla conversion produces splash, lingering, and tipped-arrow variants with language entries.
@@ -1536,7 +1538,7 @@ Current basic Still Arts:
 | Quietus Bell | Resolute | Protective bell pulse that weakens surrounding hostiles |
 | Autoimmune Edge | Enlightened | Dangerous pale backlash against nearby living bodies |
 
-The Rite of Clarity (Consecrated Copper at the Unstained Podium) directly grants **Silver Rebuke** as the first Still Art via `KnownStillArtEvents.grantArt(player, StillArtInit.silver_rebuke)`. The remaining arts are granted by **advancements** through `StillArtRewardTable` â€” `KnownStillArtEvents.onAdvancementEarned` maps specific Unstained advancements to their eligible `EnumClarityStage` and calls `grantArtsForStage()`, which grants all arts whose required stage is â‰¤ the earned stage:
+The Rite of Clarity Ascension, after Consecrated Copper preparation at the Unstained Podium, directly grants **Silver Rebuke** as the first Still Art. The remaining arts are granted by advancements through `StillArtRewardTable`:
 
 | Advancement | Clarity Stage | Arts Granted |
 |---|---|---|
@@ -1560,7 +1562,7 @@ All Unstained rites have `bloodCost: 0` â€” they draw from purity/clarity r
 | Rite of Still Waters | `still_waters` | Minor | 1 (Begun) | Creates a 5-min zone (16 block radius) reducing magic damage by 30% |
 | Rite of Pale Consecration | `pale_consecration` | Lesser | 2 (Tainted) | 10-min zone that sears and slows hostile mobs entering the consecrated ground |
 | Rite of the Silver Veil | `silver_veil` | Lesser | 2 (Tainted) | Grants Silver Ward effect (30 min, amplifier 1) to the caster |
-| Rite of Silthmere's Remembrance | `silthmeres_remembrance` | Greater | 5 (Purified) | Bursts +5 purity and refreshes Silver Ward for all Unstained within 32 blocks |
+| Rite of Silthmere's Remembrance | `silthmeres_remembrance` | Greater | 5 (Purified) | Invokes Silthmere, a liturgical title of Our Lady; bursts +5 purity and refreshes Verdigris Aura for all Unstained within 32 blocks |
 | Rite of the Lethean Tide | `lethean_tide` | Greater | 3 (Cleansing) | Forcibly ends an active Blood Moon; grants the caster +10 purity |
 | Rite of Clarity Ascension | `clarity_ascension` | Greater | 5 (Purified) | Unlocks the clarity phase (`clarityUnlocked = true`); requires full purity enforced in handler |
 | Rite of the Closed Vein | `closed_vein` | Minor | 5 (Purified) | Reusable, non-breaking rite; clears Blood Loss, grants Silver Ward, slows nearby hostiles, and grants Lethean Mute after Clarity |
@@ -1603,7 +1605,7 @@ Clean Unstained witness blocks within 4 blocks accelerate the process. Bloomed L
 | Input | Output | Transform Time |
 |---|---|---|
 | Blood Crystal Shard | Cleansed Blood Crystal Shard | 300 ticks |
-| Hematic Iron Block | Pale Silver Block | 600 ticks |
+| Consecrated Copper Ingot | Pale Silver Ingot | 600 ticks |
 | Venous Stone | Cleansed Stone | 240 ticks |
 | Infested Venous Stone | Cleansed Stone | 260 ticks |
 | Sanguine Glass | Cleansed Sanguine Glass | 240 ticks |
@@ -1777,7 +1779,7 @@ Current registered mutation attachments:
 | Tick | `BODY` | `MorphlingTickBodyAttachmentModel` / `textures/models/morphling/tick_body_attachment.png` | Engorged blood sac with claspers and feeding latch |
 | Mole | `ARMS` | `MorphlingMoleArmAttachmentModel` / `textures/models/morphling/mole_arm_attachment.png` | Paired digging forearm plates and spade claws |
 
-All 12 morphlings now have registered mutation attachments. Lower maturity still keeps the biology mostly as tint/glow, with attachment geometry appearing from Developing onward and scaling into Mature/Apex/Primal silhouettes.
+All eight canonical Morphling strains have registered mutation attachments. Lower maturity still keeps the biology mostly as tint/glow, with attachment geometry appearing from Developing onward and scaling into Mature/Apex/Primal silhouettes.
 
 Java model sources live under `src/main/java/com/vincenthuto/hemomancy/client/model/entity/summon/`. Editable Blockbench examples live under `src/main/resources/assets/hemomancy/models/entity/bbmodel/morphling/`, with matching PNG atlases under `textures/models/morphling/`.
 
@@ -2406,7 +2408,7 @@ The Hematic Artificer / Redwright is the in-world teacher for this progression. 
 | D7 Monolithic Armature | Barbed | Tengu Mask / Fargone Proboscis | 1,800 | Edacious Bloodlust |
 | D7 Monolithic Armature | Chitinite | Lodestone Faceplate / Fervent Husk | 1,800 | Sheolic Bloodlust |
 | D7 Monolithic Armature | Prismatic | Grinning Mask / Mnemonic Ambergris | 1,800 | Phantasmal Bloodlust |
-| D7 Silent Archon | Blood Lust | Monolith Imbued Cloth | 2,000 | Silent Archon Vestments; gated by `hemomancy:archon_choice_made = "silent"` |
+| D7 Silent Archon | Blood Lust | Monolith Imbued Cloth | 2,000 | Silent Archon Vestments; available only after the Silent route is finalized by a successful Pruning |
 
 Direct shaped recipes for Hematic Iron, Barbed, Chitinite, and Prismatic armor are intentionally removed; weapons, shields, and reagent components remain regular crafting where present.
 
@@ -2490,7 +2492,7 @@ Anti-blood zealot armor (for the Unstained path):
 - ![](../src/main/resources/assets/hemomancy/textures/item/unstained_helm.png) Helm, ![](../src/main/resources/assets/hemomancy/textures/item/unstained_chestplate.png) Chestplate, ![](../src/main/resources/assets/hemomancy/textures/item/unstained_leggings.png) Leggings, ![](../src/main/resources/assets/hemomancy/textures/item/unstained_boots.png) Boots
 - ![](../src/main/resources/assets/hemomancy/textures/item/vestment_of_the_final_molt.png) **Vestment of the Final Molt:** pinnacle Enlightened reward chestpiece. Uses the Unstained armor tier for set-bonus counting, with a luna moth hood/cloak model whose hood lowers when a helmet is worn.
 - **Stats:** Defense 3/6/8/3 (20 total), Toughness 3.0, KB Resist 0.1, Durability Ã—37, Enchantability 15
-- **Repair:** Chitinous Husk (placeholder â€” should be Pale Silver Ingot or Consecrated Copper)
+- **Repair:** Consecrated Copper Ingot
 - **Set Bonus (4 pieces):** Immunity to Blood Loss and Hemolysis effects (auto-removed on tick)
 
 > Armor model: ![](../src/main/resources/assets/hemomancy/textures/models/armor/unstained_layer_1.png) ![](../src/main/resources/assets/hemomancy/textures/models/armor/unstained_layer_2.png)
@@ -2510,7 +2512,7 @@ Special artifact helmet (`MarrowCrownArmorItem`), uses `MARROW_CROWN` tier.
 
 ### 22.8 Silent Archon Vestments and One-Off Pieces
 
-**Silent Archon Vestments** are D7 survivor-duelist vestments made by reforging Blood Lust armor with Monolith Imbued Cloth after choosing the Silent Archon path (`hemomancy:archon_choice_made = "silent"`). Their full-set bonus now makes the wearer functionally incorporeal against physical force: melee strikes, projectiles, explosions, fall impacts, wall impact, falling blocks, and in-wall pressure pass through for no damage. The tradeoff is equally severe: a Silent Archon cannot deal mundane physical damage while wearing the full set, so normal melee weapons, bows, and ordinary projectiles are suppressed. Blood manipulations, Hemomancy projectiles, and living weapons remain valid offense. Their old death-refusal safety net remains as a separate last resort against damage outside that incorporeal envelope, refusing lethal damage once per 12,000-tick cooldown by spending 3,000 player blood, leaving the player barely alive and applying Resistance briefly plus harsh Weakness, Slowness, Mining Fatigue, and Darkness recovery debuffs. The bonus excludes Degree 8 Apotheos players. Runtime rendering uses `SilentArchonArmorModel`, the robe-derived `silent_archon_layer_1/2.png` armor textures, and a semi-translucent Monolith Fragment shader overlay when worn; with the complete set equipped, the base player body renders as a monolith core beneath the translucent Silent Archon armor. Inventory, hand, frame, and dropped item stacks use the same custom 3D armor-piece renderer instead of flat generated sprites.
+**Silent Archon Vestments** are D7 survivor-duelist vestments made by reforging Blood Lust armor with Monolith Imbued Cloth after the Silent route is finalized through a successful Pruning of the Qliphoth. Their full-set bonus now makes the wearer functionally incorporeal against physical force: melee strikes, projectiles, explosions, fall impacts, wall impact, falling blocks, and in-wall pressure pass through for no damage. The tradeoff is equally severe: a Silent Archon cannot deal mundane physical damage while wearing the full set, so normal melee weapons, bows, and ordinary projectiles are suppressed. Blood manipulations, Hemomancy projectiles, and living weapons remain valid offense. Their old death-refusal safety net remains as a separate last resort against damage outside that incorporeal envelope, refusing lethal damage once per 12,000-tick cooldown by spending 3,000 player blood, leaving the player barely alive and applying Resistance briefly plus harsh Weakness, Slowness, Mining Fatigue, and Darkness recovery debuffs. The bonus excludes Degree 8 Apotheos players. Runtime rendering uses `SilentArchonArmorModel`, the robe-derived `silent_archon_layer_1/2.png` armor textures, and a semi-translucent Monolith Fragment shader overlay when worn; with the complete set equipped, the base player body renders as a monolith core beneath the translucent Silent Archon armor. Inventory, hand, frame, and dropped item stacks use the same custom 3D armor-piece renderer instead of flat generated sprites.
 
 **Silent Severance:** the full Silent Archon set registers `hemomancy:silent_archon_severance` as its armor-born radial combat ability. It appears in the manipulation radial with the Silent Archon Veil icon, costs blood, and releases a short-range monolith-shatter silence burst with red-black Qliphoth Seed-style tendrils blasting outward from the player instead of vanilla soul/portal particles. The burst deals non-physical magic damage and applies **Monolithic Dislocation** instead of a conventional debuff stack. While Monolithic Dislocation lasts, the victim is temporarily intangible: incoming damage is negated except for blood manipulations and living weapons, and the dislocated entity cannot deal damage. Affected living entities render with a thin translucent monolith shell, using a charged-creeper-style model wrap with the same black-and-red monolith shader language as Silent Archon visuals; an in-render fallback draws the shell before the model transform is popped if a renderer misses the normal layer pass.
 
@@ -2554,7 +2556,7 @@ One-off armor pieces intentionally use distinct material holders so they break f
 | **Mycelial Lantern**                 | `MycelialLanternBlockEntity`               | Degree 5 passive enzyme-fruiting machine. A 1x2x1 multiblock (main block below, `filler_block` above) crafted via Blood Structure recipe. Slots: reusable spore culture (0), blood input for Bloody Flasks/Blood Gourds (1), enzyme output (2), empty flask output (3). Uses a 4,000 blood internal reservoir; each default recipe takes 2,400 ticks at 0.25 blood/tick (600 total) for 1 matching enzyme. Progress pauses without reset when blood or output space is unavailable. Automation: top inserts culture, sides insert blood containers, bottom extracts enzyme/empty containers; culture is not auto-extracted. Rendered by `MycelialLanternRenderer` / `MycelialLanternModel`, with translucent glass rendered after the displayed culture/output item and Blockbench source at `assets/hemomancy/models/block/bbmodel/mycelial_lantern.bbmodel`. |
 | **Morphling Cradle**                 | `MorphlingCradleBlockEntity`               | Owner-bound morphling support cradle. Hosts one morphling, runs staged aura/leech logic, and can route blood through internal buffer / owner / bloodline fallback. Supports floor, wall, and ceiling placement. Rendered with custom block entity + item renderers (`MorphlingCradleRenderer`, `MorphlingCradleItemRenderer`). |
 | **Specimen Jar**                     | `SpecimenJarBlockEntity`                   | Vivianite glass and Hematic Iron containment jar for Hemomancy specimens. Empty jars place normally and face the placer. Right-clicking a capturable Hemomancy creature with an empty jar stores that exact entity's NBT in the jar item and removes the live mob. Filled jars place with the specimen displayed inside by `SpecimenJarRenderer` / `SpecimenJarItemRenderer`, rotated with the jar's horizontal facing and animated via the renderer's client-only entity copy. Shift-right-clicking a placed jar picks it back up without releasing the specimen; breaking a filled jar releases the stored entity and drops an empty jar. Capturable scope is data-driven by `data/hemomancy/tags/entity_type/specimen_jar_capturable.json` and now covers the older special captures plus Hemomancy ecology mobs such as Barbed Urchin, Chalybeate Snail, Blood Lantern Jelly, Prism Cuttle, Desiccant, Hematic Burrower, Lantern Tick, Morphling Polyp, Hemojelly, Crimson Doe, Scarlet Serpent, Tooth Pecks, Venous Strider, Verdigris Moth, Chitinite, Fervent Chitinite, Hemolymphopoda, and Venom-Rib Centipede. Filled ecology jars can be submitted to the Alchemist's Living Bestiary; wild polyp jars preserve `MorphlingLayers` for layer-specific morphling conversion. |
-| **Fungal Podium**                    | `FungalPodiumBlockEntity`                  | Portal to the Fungal Gardens dimension. Degree 2+ (Votary) required; costs 500 blood. Stores overworld return coordinates in player persistent data. Degree-7 Archons on first exit attempt see the `coreWitnessDialogue()` choice fork instead of teleporting home; subsequent uses proceed directly. See Â§5.6, Â§5.9.                                                                                                                                                                                                                                                                                                                                               |
+| **Fungal Podium**                    | `FungalPodiumBlockEntity`                  | Alternate access point for the Fungal Spine travel helper. Degree 7 and the ninth-pome Spine grant are required; costs 500 blood. The first visit is a persisted two-minute projection with forced return, followed by the revelation choice in the physical body. Later travel restores the exact stored source dimension and coordinates. See Â§5.6, Â§5.9. |
 | **Sanguine Monolith** (*The Crimson Lodestone*) | `SanguineMonolithBlockEntity` | 1Ã—2 multiblock (base + filler above) available to Degree 5+ players. Provides degree-gated guidance (degrees 4â€“7) via `SanguineMonolithDialogueTrees`. The dialogue speaker is displayed as **"The Crimson Lodestone"** (`hemomancy.monolith.lodestone_name`). Each degree includes a `what_are_you` branch that progressively discloses the Monolith's nature: a sealed incubation vessel containing a dormant mycelial fragment built by the Crimson Lodge. At Degree 7 the player can press further for the pre-shatter warning (`press_again` node). At Degree 7 an Archon may interact with it **twice** to shatter it â€” rendering black shards plus a black orb blast client-side, dropping a **Qliphoth Seed** plus 5-8 **Monolith Fragments**, and firing `FungalWhisperDialogueTrees.postMonolithShatter()`. The first step of Qliphoth Communion. Custom animated model (`SanguineMonolithModel`). See Â§5.9 and LORE_REFERENCE Â§6.5a. |
 | **Qliphoth Bloom**                   | `QliphothBloomBlockEntity`                 | 1Ã—1Ã—8 multiblock tree (base + 7 filler blocks) placed by the Bloom of the Qliphoth rite. Stores owner UUID and chunk radius. Effects (Regeneration I, +5 blood/tick) are tick-driven via `QliphothBloomEvents`. Slowly drops 9 Qliphoth Pomes over its lifetime â€” one per Qliphoth husk (Nahemoth â†’ Ghagiel), with owner whisper alerts on each drop. Registered and synced via `QliphothBloomSavedData`. Player breaking is canceled for the bloom and its filler shell; intended removal is the Rite of Cult Pruning. The bloom keeps its custom staged `QliphothBloomRenderer`; HutosLib tendrils are reserved for seed/item and spell flourishes. See Â§5.9.                                                                                                                                                                                                                       |
 | **Fungal Implantation Pylon**        | `FungalImplantationPylonBlockEntity`       | Sporic implantation station ![](../src/main/resources/assets/hemomancy/textures/ref%20doc%20images/fungal_implant.png)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      |
@@ -2562,7 +2564,7 @@ One-off armor pieces intentionally use distinct material holders so they break f
 | **Consecrated Bloodwell**            | *(see block/entity class)*                 | Degree 5 Founding Fane heart and bloodline-pool conduit. The Founding Fane rite binds one bloodwell position to the owner's bloodline; only one bloodwell may exist inside an active fane footprint, and breaking the heart collapses the active fane until reattuned while removing all associated stakes. Right-click opens the Bloodline Pool Monitor screen. Blood Projection contributes directly from the player to the shared bloodline pool, and Blood Absorption draws directly from that pool into the player; both require membership in the bound bloodline. The block entity only syncs linked pool fullness for the renderer. Rendered as a fullness-scaled blood fountain with real blood/glow particles; block properties use `noOcclusion()` so supporting blocks remain visible under its non-full model. |
 | **Hematic Stake**                    | -                                          | Jagged hematic-metal spike block used as a Founding Fane anchor. It is manifested by the bloodline progenitor with crouch + empty-hand right-click rather than crafted. Placement is accepted only when the stake connects to the existing Soft Envelope by overlap/chaining and the bloodline is under its stake budget. Stakes are passable, non-solid, light-friendly, instant-mined by the owner/progenitor, and removed automatically when the heart breaks, the fane is reconsecrated, or the bloodline is disbanded. |
 | **Non-Euclidean Hallway**            | `NonEuclideanHallwayBlockEntity`           | Creative/WIP prototype block (`hemomancy:non_euclidean_hallway`) for testing a player-only folded hallway. It is a single shallow controller for a 3x3 doorway, with default real depth 2 blocks and perceived length 32 blocks. It does not create a pocket dimension, load screen, hidden hallway, or intentional teleport; active players have the hallway-forward movement component compressed while vanilla collision is redirected to synthetic folded-space floor, ceiling, and side-wall shapes. The controller block itself remains passable so entry through the aperture is not blocked. Live opposite-exit world projection is disabled: a nested `LevelRenderer.renderLevel(...)` pass corrupted unrelated world rendering such as clouds and custom models. Interactions, block picking, breaking, and placing are suppressed while inside. Debug tools such as F3, commands, minimaps, or observers can reveal the compressed physical depth, and mobs/items/projectiles/multiplayer observer parity are not production-supported. |
-| **Unstained Podium**                 | `UnstainedPodiumBlockEntity`               | Central interaction block for the Unstained path. Four recognized interaction modes (server-side only, degree-gated at > Illuminatus): **Hemolytic Solution** â€” first use begins purification (`begunPurification = true`, +5 purity, resets Harbinger degree); subsequent uses add +10 purity per flask while unpurified. **Consecrated Copper Ingot** â€” requires `isPurified() == true` and `!hasClarityUnlocked()`; performs the Rite of Clarity: sets `clarityUnlocked = true`, disables blood magic permanently (`IBloodVolume.active = false`), grants first Still Art (Silver Rebuke), runs `enforceHarbingerResetOnClarity()`, and syncs both capabilities. **Hemolytic Plating** â€” requires `hasClarityUnlocked()`; adds +15 clarity per plating while not yet enlightened. **Empty hand** â€” prints current purity stage + percent; if clarity is unlocked, also prints clarity stage + percent. Scrying Dish item converts the podium into a Scrying Podium. |
+| **Unstained Podium**                 | `UnstainedPodiumBlockEntity`               | Preparation station for the Unstained path. **Hemolytic Solution** suppresses the infection and enables Lethean Baptism; it does not itself begin Purity. **Consecrated Copper Ingot** at full Purity prepares Clarity Ascension; it does not itself unlock Clarity. **Hemolytic Plating** adds Clarity after Ascension. **Empty hand** reports current state. A bloodline founder is refused unless Annetta's exception has enabled and completed Severed Covenant. |
 | **Altar of Cleansing**               | `AltarOfCleansingBlockEntity`              | Sacred altar of Our Lady of Still Waters â€” grants one-time purity boost with Tears of Silthmere; accepts Lethean Poppy Wreaths and Silver Chalices for repeatable offerings                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
 | **Semi-Sentient Construct**          | `SemiSentientConstructBlockEntity`         | Blood construct-related block and Drudge home anchor; nearby Drudges can tend linked direct-routing machines around their SSC without creating blood                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
 | **Hematic Suture Node**              | `HematicSutureNodeBlockEntity`             | Optional direct-routing anchor. Stores its link in `BloodRoutingSavedData`, holds no persistent blood/reservoir, emits red routing particles, and routes adjacent linked machines from the bound source contract                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
@@ -2913,7 +2915,7 @@ Plants and fungi found in hemomancy biomes serve as ingredients across multiple 
 | Lethean Poppy Wreath | Shapeless | 4Ã— Lethean Poppy + String | 1 |
 | The Pale Distillate | Shapeless | Lethean Dew + Consecrated Copper Ingot | 1 |
 | Tears of Silthmere | Shapeless | The Pale Distillate + Silver Chalice | 1 |
-| Pale Silver Ingot | Shapeless | Iron Ingot + The Pale Distillate | 1 |
+| Pale Silver Ingot | Shapeless | Consecrated Copper Ingot + The Pale Distillate | 1 |
 | Spore Sac | Shapeless | Puffball Fungus + Hyphae | 2 |
 | Foul Paste (fungi) | Shapeless | Infected Fungus + Stinkhorn Fungus + Bone Meal | 3 |
 | Befouling Ash | Smelting | Foul Paste | 1 |
@@ -3123,7 +3125,7 @@ Processing a **Consecrated Syringe** (tagged with a saint type) in the **Vial Ce
 | **Vesper, The Crowned Refusal** | ![](../src/main/resources/assets/hemomancy/textures/entity/boss/endgame/vesper_crowned_refusal.png) | Boss | Endgame Silent / refusal Archon boss phase 1, entity ID `hemomancy:vesper_crowned_refusal`. Uses the former Xanthous King reference as a red/black Vesper form. Stats: 520 HP, 0.16 speed, 1.0 knockback resistance. Boss bar: RED. Abilities include hostile targeting, low-health cadence scaling, blood-orb missiles, grip/spike hazards, Morphling Polyp add pressure, and shield-disabling melee hits. On defeat it transitions into `hemomancy:vesper_evening_star` and drops no final loot. Current access is direct summon until the endgame summoning ritual is wired. |
 | **Vesper, The Evening Star** | ![](../src/main/resources/assets/hemomancy/textures/entity/boss/endgame/vesper_evening_star.png) | Boss | Endgame Silent / refusal Archon boss phase 2, entity ID `hemomancy:vesper_evening_star`. Uses the former True Xanthous King reference as Vesper's final red/black form. Stats: 640 HP, 0.22 speed, 1.0 knockback resistance. Boss bar: RED. Keeps the Vesper missile/grip/spike/add-pressure kit with stronger final-phase pressure, delayed death spectacle, copied Vesper boss music, and `VesperEveningStarLinesLayer` emissive line rendering that only appears at half health or lower. Guaranteed final reward: `memory_of_vesper`, which is placed directly in the Iron Brazier and absorbed through Living Staff Blood Absorption to awaken the player's Living Staff bond. |
 | **The Mycophant** | ![](../src/main/resources/assets/hemomancy/textures/entity/boss/endgame/mycophant.png) | Boss | Endgame Apotheos / fungal ascension boss, entity ID `hemomancy:mycophant`. Uses the former Uzouthrhix reference recolored into the red/orange/yellow mushroom palette. Stats: 720 HP, 0.18 speed, 1.15 knockback resistance. Boss bar: YELLOW. Abilities include hostile targeting, low-health cadence scaling, crimson flame placement, blindness/confusion/slowness pulses, repel/claw pressure, Fungling summons, fire immunity, copied Mycophant music, `hurtother` lash audio, and `MycophantAwokenMaskLayer` half-health emissive rendering. Guaranteed entity loot-table drop: `mycophant_tendril`, a Charm of Vascularium slot item that fully fungalizes the player render while equipped. |
-| **Annetta Knowles (The Stained Priestess)** | | Boss / NPC | Separate Unstained boss arc with a full two-route encounter, implemented in `entity/boss/annetta/`. She spawns in COWERING state inside a `BrokenChurchStructure` (see Â§29), with a ToothPecks Specimen Jar placed beside her and Devil's Tooth decorations around the scene. Dedicated Java models/textures are present for the encounter entities, and Annetta's Sanguis Lancea has a custom held/item renderer; GeckoLib animation polish, fuller Phase 1 biological combat identity, and Annetta-specific thrown projectile rendering remain WIP. `AnnettaKnowlesEntity` has four states: **COWERING** (hiding, dialogue only), **PHASE_ONE** (Harbinger-route boss fight), **CURED_SUPPORT** (Unstained-route ally phase), **RESOLVED** (post-encounter).<br><br>**Harbinger route** (interact while holding a ToothPecks Specimen Jar): the jar shatters, Annetta is bitten, and she transitions to PHASE_ONE. Boss bar: PURPLE, NOTCHED_10. Stats: 350 HP, 7 ATK, 0.26 SPD, 0.8 KB resist, 8 armor. Phase abilities: â‘  Silver Aura (every 60t, 6-block radius, 3 magic damage + Weakness II to blood-active players) â‘¡ Hemolytic Vial throw (every 90t, projectile applies Weakness + Mining Fatigue) â‘¢ Hair-and-Nails Slash at â‰¤50% HP (every 70t, 5-block AoE, 5 damage + Slowness III). When she would die: if the player holds `annettas_sanguis_lancea`, she mutates into **`StainedPriestessEntity`** (Phase 2 â€” see below). Harbinger-route drops: `annettas_sanguis_lancea` + hematic_iron_scrap Ã—4 (if Phase 2 not triggered).<br><br>**Unstained route** (interact while holding a Draught of Still Mercy and `clarityUnlocked == true`): Annetta drinks the draught, transitions to CURED_SUPPORT, and **`LatentAnnettaInfectionEntity`** spawns as a separate boss (the latent infection made physical). In CURED_SUPPORT mode Annetta moves toward the infection entity and applies slow/debuffs near it; she also heals nearby Unstained players every 80t. When the `LatentAnnettaInfectionEntity` dies, it calls `annetta.markResolvedAfterCure()`, transitioning Annetta to RESOLVED state. Unstained-route drops (from LatentAnnettaInfection): `annettas_absolution_dagger` + pale_silver_ingot Ã—3. |
+| **Annetta Knowles (The Stained Priestess)** | | Boss / NPC | Separate Unstained boss arc with a full two-route encounter, implemented in `entity/boss/annetta/`. She spawns in COWERING state inside a `BrokenChurchStructure` (see Â§29), with a ToothPecks Specimen Jar placed beside her and Devil's Tooth decorations around the scene. Dedicated Java models/textures are present for the encounter entities, and Annetta's Sanguis Lancea has a custom held/item renderer; GeckoLib animation polish, fuller Phase 1 biological combat identity, and Annetta-specific thrown projectile rendering remain WIP. `AnnettaKnowlesEntity` has four states: **COWERING** (hiding, dialogue only), **PHASE_ONE** (Harbinger-route boss fight), **CURED_SUPPORT** (Unstained-route ally phase), **RESOLVED** (post-encounter).<br><br>**Harbinger route** (interact while holding a ToothPecks Specimen Jar): the jar shatters and the Tooth Pecks swarm toward the infection they sensed in Annetta, and she transitions to PHASE_ONE. Boss bar: PURPLE, NOTCHED_10. Stats: 350 HP, 7 ATK, 0.26 SPD, 0.8 KB resist, 8 armor. Phase abilities: â‘  Silver Aura (every 60t, 6-block radius, 3 magic damage + Weakness II to blood-active players) â‘¡ Hemolytic Vial throw (every 90t, projectile applies Weakness + Mining Fatigue) â‘¢ Hair-and-Nails Slash at â‰¤50% HP (every 70t, 5-block AoE, 5 damage + Slowness III). When she would die: if the player holds `annettas_sanguis_lancea`, she mutates into **`StainedPriestessEntity`** (Phase 2 â€” see below). Harbinger-route drops: `annettas_sanguis_lancea` + hematic_iron_scrap Ã—4 (if Phase 2 not triggered).<br><br>**Mercy route** (interact while holding a Draught of Still Mercy while Clarity is unlocked or founder integration is present): Annetta drinks the draught, transitions to CURED_SUPPORT, and **`LatentAnnettaInfectionEntity`** spawns as a separate boss (the latent infection made physical). In CURED_SUPPORT mode Annetta moves toward the infection entity and applies slow/debuffs near it; she also heals nearby Unstained players every 80t. When the `LatentAnnettaInfectionEntity` dies, it calls `annetta.markResolvedAfterCure()`, transitioning Annetta to RESOLVED state. Mercy-route drops (from LatentAnnettaInfection): `annettas_absolution_dagger` + pale_silver_ingot Ã—3. |
 | **Stained Priestess (`StainedPriestessEntity`)** | | Boss | Phase 2 of the Harbinger-route Annetta encounter. Stats: 420 HP, 12 ATK, 0.32 SPD, 0.9 KB resist, 10 armor. Boss bar: WHITE, NOTCHED_10. Phase abilities: â‘  Blood Lances (every 70t, fires `SanguisLanceaEntity` projectile in look direction + 2 angled variants) â‘¡ Lunge attack (every 100t, moves rapidly toward target and strikes) â‘¢ Blood Pressure Bloom (every 85t, 7-block AoE, 6 magic damage + Slowness to all nearby). Melee hits drain 300 blood from blood-active players (`BLOOD_DRAIN = 300`). Drops: `annettas_sanguis_lancea` + hematic_iron_scrap Ã—4. |
 | **Latent Annetta Infection (`LatentAnnettaInfectionEntity`)** | | Boss | Final challenge of the Unstained-route Annetta encounter: the latent infection given physical form. Stats: 360 HP, 10 ATK, 0.27 SPD, 0.85 KB resist, 8 armor. Boss bar: WHITE, NOTCHED_10. Abilities: â‘  Infection Bloom (every 70t, MYCELIUM particle burst, Sculk Shrieker sound, 6-block AoE, 5 magic damage + Confusion + Slowness) â‘¡ Pressure Spike (every 110t, SOUL_FIRE_FLAME particles, 9-block AoE, 4 indirect magic damage + Weakness). Melee hits apply Poison I. On death: if a linked `AnnettaKnowlesEntity` is in CURED_SUPPORT within 32 blocks, calls `markResolvedAfterCure()`. Drops: `annettas_absolution_dagger` + pale_silver_ingot Ã—3. |
 | **Spectral Companion** | | Misc | Spectral ally entity |
@@ -3262,7 +3264,7 @@ Blood Moons are a world event distinct from normal nights, with their own moon t
 - **Kidneys** organ (if extracted): regeneration amplifier increases by +1 during a Blood Moon (overclocked filtration under pressure) â€” see Â§20.8 Organ Echo Items
 - Clients render the red Blood Moon phase texture and the `BloodMoonVeinSkyRenderer` tendril overlay when `PacketSyncBloodMoon` marks the event active; the RGB-only Blood Moon phase sheet is drawn additively so its black background texels do not appear as a visible square at dawn/dusk
 
-**Lore significance:** Blood Moons represent the Pale Lady expending a burst of power to push back the fungal infection for another cycle. The moon appearing full and blood-red is her doing. After such a night, the moon may appear dim or new â€” she is recovering. See [LORE_REFERENCE.md](LORE_REFERENCE.md) Â§9 for the full cosmological explanation.
+**Lore significance:** A Blood Moon is a fungal surge. Its red lunar face, fungal-vein sky overlay, Harbinger empowerment, Loom discount, and fungal spawning express the Entity pressing into the world. Pale and Unstained effects are Our Lady's containment response, and Lethean Tide ends the event by strengthening that response. See [LORE_REFERENCE.md](LORE_REFERENCE.md) Â§9 for the full cosmological explanation.
 
 > **Status: Implemented.** `BloodMoonEvents` handles natural trigger, commands, gameplay effects, mob spawning, and client sync. Blood drain for uninitiated, loom discount, and fane mob-sealing are all implemented. Ritual trigger via the **Rite of the Sanguine Eclipse** is implemented.
 
@@ -3771,8 +3773,8 @@ This section is a maintenance rollup, not a changelog. It uses the status legend
 - **Gourdvine Tap** â€” `Partial`: Draft living "machine plant" block (`gourdvine_tap`) that passively generates blood into an internal reservoir and slowly fills an inserted Blood Gourd; bone meal cultivation advances 4 growth stages that increase its fill rate. Anchors: `GourdvineTapBlock`, `GourdvineTapBlockEntity`, `assets/hemomancy/blockstates/gourdvine_tap.json`.
 - **Visceral Organs System** -- **Implemented:** All 5 organ effects are fully implemented in `VisceralOrgansEvents`: **Spleen** contributes +1000 max blood per level through `MaxBloodLedger` and stacks with Capacity, Eternal Covenant, and scars; **Liver** (removes Poison at level 2+, Wither at level 3+); **Lungs** (Water Breathing while underwater); **Kidneys** (Regeneration at level-1 amplifier; amplifier +1 during a Blood Moon); **Heart** (Damage Resistance capped at Resistance II; Wither immunity at level 3 -- Cardiac Autonomy fully mastered; blood drain 10/level per 2 s). **Iron Brazier** reagent system is organ-specific. See Section 20.8.
 - **Armor Set Bonuses** â€” **Implemented:** Current full sets have unique set bonuses implemented in `ArmorSetBonusHandler`, `EdaciousBloodburstArmorAbilityHandler`, `SheolicBastionBloodlustArmorAbilityHandler`, `PhanstmalBloodlustArmorAbilityHandler`, and `SilentArchonArmorAbilityHandler`: Hematic Iron (blood regen), Blood Lust (lifesteal plus minor mask modifiers), Barbed (thorns + Blood Loss), Chitinite (toughness + projectile/non-direct reduction), Unstained (Blood Loss/Hemolysis immunity), final Bloodlust lineages (radial armor abilities plus Edacious flight, Sheolic infernal defense, and Phantasmal displacement), and Silent Archon Vestments (incorporeal physical defense, mundane physical offense suppression outside blood manipulations and living weapons, radial Silent Severance, double-tap jump Silent Slipping, and blood-spending death refusal gated to Silent Archons and excluding Apotheos). One-off tradeoff pieces such as Marrow Crown, Venous Strider Sabatons, and Covenant Mantle have standalone bonuses that intentionally break full-set bonuses. See Â§22 for details.
-- **Morphling Maturity** â€” **Implemented:** All 12 morphlings now have named maturity-tier reactive abilities (Developing â†’ Mature â†’ Apex) and secondary tendencies defined. See Â§16.1.
-- **Morphling Mutation Visual Layer** â€” **Implemented:** Equipped morphlings can render player tint/swirl overlays and animated model attachments through `MorphlingMutationLayer`, `MorphlingVisualMutation`, `MorphlingModelAttachment`, and `MorphlingMutationRegistry`. Attachment state syncs to tracking players through `SyncEquippedMorphlingPacket`; replacement attachments can hide vanilla humanoid parts through `MorphlingPlayerPartVisibility`. All 12 morphlings now have registered attachment examples. See Â§16.5.
+- **Morphling Maturity** — **Implemented:** All eight canonical Morphling strains have named maturity-tier reactive abilities (Developing → Mature → Apex) and secondary tendencies defined. See §16.1.
+- **Morphling Mutation Visual Layer** — **Implemented:** Equipped Morphlings can render player tint/swirl overlays and animated model attachments through `MorphlingMutationLayer`, `MorphlingVisualMutation`, `MorphlingModelAttachment`, and `MorphlingMutationRegistry`. Attachment state syncs to tracking players through `SyncEquippedMorphlingPacket`; replacement attachments can hide vanilla humanoid parts through `MorphlingPlayerPartVisibility`. All eight canonical strains have registered attachment examples. See §16.5.
 - **Morphling Jar Screen** - **Implemented:** `MorphlingJarScreen` is now the single storage and selection UI. It keeps the server-backed jar slots available for item dragging while rendering the animated green morphling display in the center; right-click, shift-right-click, and the jar keybind all open this unified container.
 - **Scar Gameplay Effects** â€” **Implemented:** All standard scars now have full triggered effect implementations. Effect durations respect `getScarMasteryDurationMultiplier()`.
 - **Vial Centrifuge Rework** â€” New 3D stand model (`CentrifugeStandModel`) and custom item renderer implemented; UI and menu updated. `VialCentrifugeBlockItem` has custom `BlockEntityWithoutLevelRenderer`.
@@ -3794,7 +3796,7 @@ This section is a maintenance rollup, not a changelog. It uses the status legend
 - **Debug Showcase Item** â€” Creative-mode testing tool (`DebugShowcaseItem`) that generates an organized showcase of all mod content in 4 sections: items in chests, blocks on platforms, mobs in fenced pens, and multiblock structures placed as patterns.
 - **Cardinal Rite Boundary Renderer** â€” Client-side visual renderer (`CardinalRiteBoundaryRenderer`) for cardinal rite boundaries during active rites.
 - **Morphling Item Textures** â€” All morphling types now have individual item textures and item models (bat, centipede, chitinite, cuttlefish, fungal, leeches, mole, pests, serpent, spider, tick, urchin).
-- **Morphling Attachment Models/Textures** â€” All 12 morphlings have Java attachment models, matching Blockbench `.bbmodel` examples, and per-attachment PNG atlases under `textures/models/morphling/`. The Java-to-Blockbench exporter under `tools/model_export/java_model_to_bbmodel.mjs` supports the `morphling` batch and direct Java model conversion.
+- **Morphling Attachment Models/Textures** — All eight canonical Morphling strains have Java attachment models, matching Blockbench `.bbmodel` examples, and per-attachment PNG atlases under `textures/models/morphling/`. The Java-to-Blockbench exporter under `tools/model_export/java_model_to_bbmodel.mjs` supports the `morphling` batch and direct Java model conversion.
 - **MnA Compatibility Expansion** â€” Extensive brainstorming and dormant compat source are documented in `MNA_COMPATIBILITY_BRAINSTORM.md` and `compat/mna/**`. Current NeoForge 1.21.1 branch excludes MnA compat from compilation because no compatible MnA build is available; `Hemomancy.java` registration is commented. Treat spell components, Blood Tithe, Spell â†” Manipulation combo, and `HemoMnAConfig` as preserved design/port targets rather than active runtime features until compat is re-enabled.
 - **GhastlyAlembic Custom Renderer** â€” `GhastlyAlembicRenderer` now renders the block as a full 3D entity model (`GhastlyAlembicModel`) with facing-aware rotation. Previously was a static block.
 - **MorphlingIncubator Custom Renderer** â€” `MorphlingIncubatorRenderer` now renders the incubator as a full 3D entity model with custom animation.
@@ -3809,7 +3811,7 @@ This section is a maintenance rollup, not a changelog. It uses the status legend
 - **Saints System** â€” **Partial:** Four canon Saints exist: Hemorath, Seraphae the Chain Saint, Putriciel, and Velorum. The shared sarcophagus spine and boss dispatch are implemented, and Hemorath's trial is the first complete trial flow. Bespoke Trial Chamber rooms/world placement for Seraphae, Putriciel, and Velorum remain WIP. Boss models/textures/GeckoLib animations are stub/placeholder. See Â§5.8.
 - **Founding Fane** - **Partial:** The core Flexible Founding Fane model is implemented: Consecrated Bloodwell heart binding, one-heart-per-footprint prevention, up-front bloodline validation for the rite, bloodline-gated bloodwell conduit use, dynamic block blood absorption/projection endpoints, heart-break/reconsecration/disband stake cleanup, progenitor-manifested Hematic Stake anchors, stake budget/connection validation, `FaneFootprint` inside/outside and strength scaling, footprint-based routing/bloodwell/Blood Moon checks, full-sphere Soft Envelope rendering, viewer relation colors, bloodwell fountain renderer/particles, and `/hemo fane preview` testing commands. Remaining work is final balance, art polish, and broader gameplay tuning. See §5.7.
 - **Blood Moon Mechanics** â€” **Implemented:** `BloodMoonEvents` handles natural trigger, commands, gameplay effects, mob spawning, Somatic Loom discount, fane sealing, organ synergy, ritual trigger, and client sync/rendering. See Â§28.1.1.
-- **Fungal Dimension** â€” **Partial:** Fungal Spine access, safe travel placement, dimension mob spawning, and the Archon first-exit choice fork are implemented. Terrain feature population and broader dimension content remain WIP. See Â§5.6.
+- **Fungal Dimension** â€” **Partial:** Ninth-pome Fungal Spine access, the persisted two-minute first projection, safe forced return, post-return Archon choice, and dimension mob spawning are implemented. Terrain feature population and broader dimension content remain WIP. See Â§5.6.
 - **Endgame Vesper / Mycophant Bosses** â€” **Partial:** `VesperTheCrownedRefusalEntity`, `VesperTheEveningStarEntity`, and `MycophantEntity` are registered with attributes, models, textures, renderers, render layers, boss bars, sound events, client boss music, legacy-inspired combat behaviors, and guaranteed final entity loot-table drops. Vesper phase 1 transitions into the Evening Star phase and has no final loot. Vesper phase 2 drops `memory_of_vesper`; The Mycophant drops `mycophant_tendril`, which fits the Charm of Vascularium slot and triggers full-body fungalization rendering. Remaining work is the summoning ritual layer. See Â§5.10 and Â§26.3.
 - **Annetta Knowles / Stained Priestess** â€” **Partial:** The two-route encounter is wired through `AnnettaKnowlesEntity`, `StainedPriestessEntity`, `LatentAnnettaInfectionEntity`, and `BrokenChurchStructure`. Dedicated encounter entity models/textures and Annetta's Sanguis Lancea held/item renderer are present. Remaining work is GeckoLib animation polish, fuller Phase 1 biological combat identity, and Annetta-specific thrown projectile rendering. See Â§26.3 and LORE_REFERENCE Â§11.
 - **Chthonian Termite Mound** â€” **Implemented:** Savanna structure, guaranteed queen spawn, loot chest, wood-chewing behavior, wooden tool degradation, tuned spawn rate, and spawn placements are present. See Â§29.

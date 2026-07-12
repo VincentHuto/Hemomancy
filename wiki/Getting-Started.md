@@ -75,7 +75,7 @@ As you use blood magic, your blood develops **qualities** or **tendencies**. The
 The eight tendencies are:
 - **Animus** (Life/Vitality)
 - **Flammeus** (Fire/Heat)
-- **Ductilis** (Metal/Iron)
+- **Ductilis** (Lightning/Nerves)
 - **Lux** (Light/Radiance)
 - **Mortem** (Death/Decay)
 - **Congeatio** (Ice/Cold)
@@ -105,7 +105,7 @@ Learn manipulations by crafting **Hematic Memories** at the **Somatic Loom**.
 
 If you wish to walk the path of the Hematic Order:
 1. Perform the **Sanguine Initiation** ritual using the **Cardinal Altar**
-2. You'll become **Pledged** (Degree 1) in the Hematic Order
+2. You'll become a **Neophyte** (Degree 1) in the Hematic Order
 3. Progress through seven degrees, each unlocking more power
 4. Build a bloodline, recruit followers, establish fanes
 5. Eventually face a choice at Degree 7: resist or transcend
@@ -144,7 +144,7 @@ If you view blood magic as infection to be cleansed:
 **Cons:**
 - Gives up all blood manipulation powers
 - Purification process is painful
-- Methods are brutal (no bladed weapons)
+- Methods are brutal and defensive; ordinary blades are shunned, but the Silthmere Glaive and Absolution Dagger are sanctioned
 - Late stages hint at autoimmune consequences
 - Physically changed (glassy-eyed appearance)
 
@@ -187,7 +187,7 @@ Choose carefully. This is not a system you can min-max by switching back and for
 - Requires blank memories, enzymes, and catalysts
 - Complex but rewarding crafting system
 
-**Founding Stakes**
+**Hematic Stakes**
 - Extend your Founding Fane boundaries (Degree 5+)
 - Place around your base for powerful buffs
 

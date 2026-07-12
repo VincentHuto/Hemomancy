@@ -1,10 +1,10 @@
 {
   "type": "hemomancy:white_humor_purification",
   "input": {
-    "item": "hemomancy:hematic_iron_block"
+    "item": "hemomancy:consecrated_copper_ingot"
   },
   "result": {
-    "id": "hemomancy:pale_silver_block",
+    "id": "hemomancy:pale_silver_ingot",
     "count": 1
   },
   "transform_time": 600

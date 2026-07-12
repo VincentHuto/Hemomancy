@@ -7,6 +7,9 @@ import net.neoforged.neoforge.common.util.INBTSerializable;
 public class UnstainedProgress implements IUnstainedProgress, INBTSerializable<CompoundTag> {
 
     private boolean begunPurification = false;
+	private boolean infectionSuppressed = false;
+	private boolean clarityPrepared = false;
+	private boolean annettaSeveranceUnlocked = false;
     private float purity = 0.0f;
     private boolean clarityUnlocked = false;
     private float clarity = 0.0f;
@@ -44,6 +47,13 @@ public class UnstainedProgress implements IUnstainedProgress, INBTSerializable<C
     public void setBegunPurification(boolean begun) {
         this.begunPurification = begun;
     }
+
+	@Override public boolean isInfectionSuppressed() { return infectionSuppressed; }
+	@Override public void setInfectionSuppressed(boolean suppressed) { infectionSuppressed = suppressed; }
+	@Override public boolean isClarityPrepared() { return clarityPrepared; }
+	@Override public void setClarityPrepared(boolean prepared) { clarityPrepared = prepared; }
+	@Override public boolean isAnnettaSeveranceUnlocked() { return annettaSeveranceUnlocked; }
+	@Override public void setAnnettaSeveranceUnlocked(boolean unlocked) { annettaSeveranceUnlocked = unlocked; }
 
     @Override
     public float getPurity() {
@@ -188,6 +198,9 @@ public class UnstainedProgress implements IUnstainedProgress, INBTSerializable<C
     public CompoundTag serializeNBT(HolderLookup.Provider provider) {
         CompoundTag tag = new CompoundTag();
         tag.putBoolean("begunPurification", begunPurification);
+		tag.putBoolean("infectionSuppressed", infectionSuppressed);
+		tag.putBoolean("clarityPrepared", clarityPrepared);
+		tag.putBoolean("annettaSeveranceUnlocked", annettaSeveranceUnlocked);
         tag.putFloat("purity", purity);
         tag.putBoolean("clarityUnlocked", clarityUnlocked);
         tag.putFloat("clarity", clarity);
@@ -215,6 +228,9 @@ public class UnstainedProgress implements IUnstainedProgress, INBTSerializable<C
     @Override
     public void deserializeNBT(HolderLookup.Provider provider, CompoundTag tag) {
         begunPurification = tag.getBoolean("begunPurification");
+		infectionSuppressed = tag.getBoolean("infectionSuppressed");
+		clarityPrepared = tag.getBoolean("clarityPrepared");
+		annettaSeveranceUnlocked = tag.getBoolean("annettaSeveranceUnlocked");
         purity = tag.getFloat("purity");
         clarityUnlocked = tag.getBoolean("clarityUnlocked");
         clarity = tag.getFloat("clarity");

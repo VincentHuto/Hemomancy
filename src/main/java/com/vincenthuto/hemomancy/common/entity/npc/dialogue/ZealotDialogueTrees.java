@@ -108,14 +108,14 @@ public final class ZealotDialogueTrees {
                             "hemomancy.zealot.clarity_phase.line1",
                             "hemomancy.zealot.clarity_phase.line2"
                     ), List.of(
-                            new DialogueOption("hemomancy.dialogue.zealot.option.about_verdigris", "verdigris_info", null),
+							new DialogueOption("hemomancy.dialogue.zealot.option.about_silver_ward", "silver_ward_info", null),
                             new DialogueOption("hemomancy.dialogue.zealot.option.ask_about_annetta", "annetta_map", null),
                             new DialogueOption("hemomancy.dialogue.zealot.option.ask_about_item", "item_hint", null),
                             new DialogueOption("hemomancy.dialogue.zealot.option.leave", null, null)
                     )))
-                    .addNode(new DialogueNode("verdigris_info", List.of(
-                            "hemomancy.zealot.verdigris_info.line1",
-                            "hemomancy.zealot.verdigris_info.line2"
+					.addNode(new DialogueNode("silver_ward_info", List.of(
+							"hemomancy.zealot.silver_ward_info.line1",
+							"hemomancy.zealot.silver_ward_info.line2"
                     ), List.of(
                             new DialogueOption("hemomancy.dialogue.zealot.option.leave", null, null)
                     )))
@@ -191,13 +191,13 @@ public final class ZealotDialogueTrees {
                             "hemomancy.zealot.tainted.line1",
                             "hemomancy.zealot.tainted.line2"
                     ), List.of(
-                            new DialogueOption("hemomancy.dialogue.zealot.option.about_silver_ward", "silver_ward_info", null),
+							new DialogueOption("hemomancy.dialogue.zealot.option.about_verdigris", "verdigris_info", null),
                             new DialogueOption("hemomancy.dialogue.zealot.option.ask_about_item", "item_hint", null),
                             new DialogueOption("hemomancy.dialogue.zealot.option.leave", null, null)
                     )))
-                    .addNode(new DialogueNode("silver_ward_info", List.of(
-                            "hemomancy.zealot.silver_ward_info.line1",
-                            "hemomancy.zealot.silver_ward_info.line2"
+					.addNode(new DialogueNode("verdigris_info", List.of(
+							"hemomancy.zealot.verdigris_info.line1",
+							"hemomancy.zealot.verdigris_info.line2"
                     ), List.of(
                             new DialogueOption("hemomancy.dialogue.zealot.option.leave", null, null)
                     )))

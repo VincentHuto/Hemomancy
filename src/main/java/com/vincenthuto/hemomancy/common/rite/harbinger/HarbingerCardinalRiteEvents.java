@@ -9,6 +9,7 @@ import com.vincenthuto.hemomancy.common.block.shared.IMultiBlock;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.PathMutualExclusionHelper;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.EnumInitiatoryDegree;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.EnumArchonPath;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.InitiatoryDegreeEvents;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.BloodTendencyEvents;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
@@ -50,6 +51,7 @@ import com.vincenthuto.hemomancy.common.rite.ActiveCardinalRite;
 import com.vincenthuto.hemomancy.common.rite.CardinalRiteSavedData;
 import com.vincenthuto.hemomancy.common.rite.unstained.UnstainedCardinalRiteEvents;
 import com.vincenthuto.hemomancy.common.worldgen.ChamberOfWillManager;
+import com.vincenthuto.hemomancy.common.worldgen.FungalGardenTravelHelper;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
@@ -515,6 +517,15 @@ public class HarbingerCardinalRiteEvents {
 			return;
 		}
 
+		if (isApotheosRite(recipe.getId()) && HemoCapabilityAccess.getInitiatoryDegree(caster)
+				.map(degree -> degree.getArchonPath() != EnumArchonPath.APOTHEOS_PENDING)
+				.orElse(true)) {
+			caster.displayClientMessage(Component.literal(
+					"Apotheosis has not been chosen. Witness the first projection and answer the truth it leaves behind.")
+					.withStyle(ChatFormatting.DARK_PURPLE, ChatFormatting.ITALIC), false);
+			return;
+		}
+
 		// Qliphoth Pome Corruption: at 9 pomes only the Pruning and Apotheosis rites may be cast
 		int pomesConsumed = HemoCapabilityAccess.getInitiatoryDegree(caster)
 				.map(d -> d.getTotalPomesConsumed())
@@ -731,7 +742,18 @@ public class HarbingerCardinalRiteEvents {
 
 		// Pruning of the Qliphoth: remove a bloom tree rooted in the same chunk
 		if (PRUNING_OF_QLIPHOTH_RITE.equals(ritePath)) {
-			completePruningOfQliphoth(sLevel, caster, center);
+			boolean pruned = completePruningOfQliphoth(sLevel, caster, center);
+			if (pruned) HemoCapabilityAccess.getInitiatoryDegree(caster).ifPresent(degree -> {
+				if (degree.getDegreeNumber() == 7 && degree.getArchonPath() == EnumArchonPath.SILENT_PENDING) {
+					degree.setArchonPath(EnumArchonPath.SILENT_ARCHON);
+					caster.getPersistentData().putString(FungalGardenTravelHelper.ARCHON_CHOICE_KEY,
+							FungalGardenTravelHelper.ARCHON_CHOICE_SILENCE);
+					InitiatoryDegreeEvents.syncDegree(caster, degree);
+					caster.displayClientMessage(Component.literal(
+							"The final root is cut. You remain an Archon, and carry its truth in silence.")
+							.withStyle(ChatFormatting.DARK_GRAY, ChatFormatting.ITALIC), false);
+				}
+			});
 		}
 
 		// Rite of Sanguine Fervor: boost mob spawn rates in a 3-chunk radius for 5 minutes
@@ -779,6 +801,7 @@ public class HarbingerCardinalRiteEvents {
 				int currentDegree = degree.getDegreeNumber();
 				if (currentDegree < targetDegree) {
 					degree.setDegreeNumber(targetDegree);
+					if (targetDegree == 8) degree.setArchonPath(EnumArchonPath.APOTHEOS);
 					InitiatoryDegreeEvents.syncDegree(caster, degree);
 
 					// Award degree milestone skill points
@@ -1398,7 +1421,7 @@ public class HarbingerCardinalRiteEvents {
 	 * A Harbinger pruner receives normal (live) pomes; an Unstained pruner receives
 	 * tainted pomes â€” the husks were severed before they were ready to ripen.
 	 */
-	private static void completePruningOfQliphoth(ServerLevel sLevel, ServerPlayer caster, BlockPos center) {
+	private static boolean completePruningOfQliphoth(ServerLevel sLevel, ServerPlayer caster, BlockPos center) {
 		ServerLevel overworld = sLevel.getServer().overworld();
 		QliphothBloomSavedData data = QliphothBloomSavedData.get(overworld);
 		String dimension = sLevel.dimension().location().toString();
@@ -1469,6 +1492,7 @@ public class HarbingerCardinalRiteEvents {
 							.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC),
 			false);
 		}
+		return removed != null;
 	}
 
 	@SubscribeEvent
@@ -1658,6 +1682,10 @@ public class HarbingerCardinalRiteEvents {
 			volume.setBloodLine(playerLine);
 			BloodVolumeEvents.syncVolume(caster, volume);
 		});
+		HemoCapabilityAccess.getInitiatoryDegree(caster).ifPresent(degree -> {
+			degree.setHasFoundedBloodline(true);
+			InitiatoryDegreeEvents.syncDegree(caster, degree);
+		});
 
 		// Write signed state and bloodline data onto the ledger
 		CompoundTag compound = ledgerStack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
@@ -1710,11 +1738,7 @@ public class HarbingerCardinalRiteEvents {
 			return;
 		}
 
-		if (targetDegree == 8) {
-			popFungalSpineFromBack(level, player);
-			PacketHandler.sendToPlayer(player, new OpenDialoguePacket(FungalWhisperDialogueTrees.fungalSpineEmerged()));
-			return;
-		}
+		if (targetDegree == 8) return;
 
 		PacketHandler.sendToPlayer(player, new OpenDialoguePacket(FungalWhisperDialogueTrees.spineGrowth(targetDegree)));
 	}

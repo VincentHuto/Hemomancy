@@ -26,263 +26,63 @@ The Harbinger Path is the way of the **Hematic Order** — a secret society that
 
 ## The Seven Degrees (+ One)
 
-The Hematic Order is structured around **seven degrees of initiation**, each representing a deeper understanding of blood magic. Unknown to most Harbingers, each degree is also a stage in the Fungal Entity's reproductive cycle.
+The Hematic Order publicly recognizes seven degrees. Apotheos is the hidden eighth threshold reached only after the fungal revelation.
 
-> Current implementation note: the reference docs use Degree 5 **Illuminatus**, Degree 6 **Sanctified**, Degree 7 **Archon**, and Degree 8 **Apotheos**. Some older public wording on this page still uses legacy title names, but the Chamber of Will unlock below follows the current implementation.
+### Degree 1: Neophyte
 
-### Degree 1: Pledged (Humilis)
-**"The First Step"**
+- **Rite:** Sanguine Initiation
+- **Theme:** Crimson Veil; blood becomes a deliberate living resource
+- **Core progression:** Blood Absorption, Blood Projection, first structures, early tendency awareness
 
-**How to Achieve:**
-- Activate blood volume at a Mortal Display
-- Craft a **Cardinal Altar** (basic tier)
-- Perform the **Sanguine Initiation** ritual
-  - Place specific items on the altar
-  - Use ritual knife or similar trigger item
-  - Consume the prepared materials
+### Degree 2: Votary
 
-**What You Gain:**
-- Official entry into the Hematic Order
-- Access to Humilis-rank manipulations
-- Ability to learn basic blood techniques
-- Recognition by other Harbingers
-- First entry in the Liber Sanguinum (guidebook)
+- **Rite:** Votary Rite
+- **Theme:** Hematic Covenant; choosing to remain infected
+- **Core progression:** the seven blood tendencies and deeper vascular practice
+- A Fungal Podium may be encountered, but it cannot open the Fungal Gardens without the Degree-7 ninth-pome Spine.
 
-**What Changes:**
-- NPCs in Harbinger Outposts now recognize you as kin
-- You can begin building tendency alignment
-- Minor fungal whispers (rare, subtle)
-- Slight social stigma if discovered
+### Degree 3: Initiate
 
-**Blood Volume Cap:** 2000 mL
+- **Rite:** Initiate Rite
+- **Theme:** Incarnadine Fane; blood becomes shaped memory and external craft
+- **Core progression:** Drudges, deliberate puppeteering, advanced Somatic Loom work, and Saint trials
 
----
+### Degree 4: Adept
 
-### Degree 2: Illuminatus (Mediocritas)
-**"Understanding the Inner Light"**
+- **Rite:** Sanguine Brotherhood
+- **Theme:** shared martial and surgical practice
+- **Core progression:** cerebral scars, Brotherhood equipment, and stronger communal blood techniques
 
-**Requirements:**
-- Degree 1 (Pledged)
-- Mastery of several Humilis manipulations
-- Collected ritual components (varies)
+### Degree 5: Illuminatus
 
-**Ritual:** Rite of the Crimson Lodge
-- Performed at Cardinal Altar
-- Requires illuminating blood samples
-- Consumes specific enzyme combinations
+- **Rite:** Illuminatus Rite / Rite of the Crimson Lodge
+- **Theme:** the Crimson Lodge and its concealed mycelial research
+- **Core progression:** Bloodline Founding, Morphling Incubator, Sanguine Monolith, and Founding Fane eligibility
+- Bloodline Founding creates the covenant. The later Founding Fane rite gives that covenant a Flexible Envelope shaped by a Consecrated Bloodwell and connected Hematic Stakes.
 
-**What You Gain:**
-- Access to Mediocritas-rank manipulations
-- Enhanced blood regeneration rate
-- Ability to perceive blood tendencies in others
-- Deeper understanding of the vascular system
-- Second degree benefits (check Liber Sanguinum)
+### Degree 6: Sanctified
 
-**What Changes:**
-- Fungal whispers become more frequent
-- Dreams of flesh and hyphae
-- First hints that something is... off
-- Can sense other Harbingers nearby
+- **Rite:** Sanctified Rite
+- **Theme:** Bloodline Covenant; individual blood becomes covenant infrastructure
+- **Core progression:** Chamber of Will, Eternal Covenant, expanded shared blood systems, and deeper bloodline authority
 
-**Blood Volume Cap:** 3000 mL
+### Degree 7: Archon
 
----
+- **Rite:** Archon Rite
+- **Theme:** Hematic Order; the practitioner approaches the truth the Lodge could not fully state
+- **Core progression:** shatter the Sanguine Monolith, grow the Qliphoth, consume all nine pomes, and receive the Fungal Spine
+- The first Spine use is a two-minute consciousness projection. Forced return presents the endgame response.
+- **Pruning:** remain Degree 7 as a Silent Archon.
+- **Apotheosis:** unlock the hidden eighth rite.
 
-### Degree 3: Adeptus (Summa)
-**"Mastery of Manipulation"**
+### Degree 8: Apotheos
 
-**Requirements:**
-- Degree 2 (Illuminatus)
-- High proficiency in at least two tendencies
-- Completed several lesser rituals
-- Specific rare materials
+- **Rite:** Apotheosis
+- **Requirements:** Degree 7, Qliphoth Communion, the ninth-pome Spine, completed revelation, and the Apotheos response
+- **Theme:** transcendence and fungal fruiting
+- **Core progression:** Apotheos-scale Chamber state, Primal Morphlings, and the Mycophant consequence
 
-**Ritual:** Rite of Adeptus Sanguinem
-- Advanced Cardinal Altar setup
-- Multi-step ritual process
-- Blood sacrifice (your own, willingly given)
-
-**What You Gain:**
-- Access to Summa-rank manipulations
-- Ability to create **Drudges** (blood servants)
-- Enhanced tendency alignment efficiency
-- Unlock Somatic Loom advanced patterns
-- Third degree skills
-
-**What Changes:**
-- Fungal corruption becomes visible (scarring)
-- Whispers now include fragmentary visions
-- Common folk may actively avoid you
-- Your blood "remembers" things you never learned
-- Can feel the pulse of the fungal network (faintly)
-
-**Blood Volume Cap:** 4000 mL
-
----
-
-### Degree 4: Sentinel
-**"Guardian of the Order"**
-
-**Requirements:**
-- Degree 3 (Adeptus)
-- Demonstrated loyalty and skill
-- Protected or aided other Harbingers
-- Rare ritual components
-
-**Ritual:** Rite of the Blood Sentinel
-- Requires witnesses (other Harbingers recommended)
-- Oath-taking component
-- Consecration of a guardian weapon
-
-**What You Gain:**
-- Access to Perfectus-rank manipulations
-- Ability to create **Blood Constructs** (combat entities)
-- Enhanced combat-focused manipulations
-- Authority to discipline lower-degree Harbingers
-- Sentinel-specific equipment recipes
-
-**What Changes:**
-- You are now a pillar of the Order
-- Other Harbingers look to you for guidance
-- Fungal whispers speak of "protecting the bloom"
-- Your presence can frighten mundane creatures
-- Scars may form fungal patterns
-
-**Blood Volume Cap:** 5000 mL (human maximum)
-
----
-
-### Degree 5: Apostle
-**"Spreading the Cause"**
-
-**Requirements:**
-- Degree 4 (Sentinel)
-- Recruited at least one new Pledged
-- Established or aided a Harbinger community
-- Completed missionary work
-
-**Ritual:** Rite of the Apostolic Blood
-- Performed with gathered followers
-- Sharing of blood among participants
-- Consecration of a home territory
-
-**What You Gain:**
-- Ability to establish a **Founding Fane**
-- Enhanced bloodline management
-- Can perform Sanguine Initiation for others
-- Access to recruitment and leadership mechanics
-- Apostle authority over local Harbingers
-
-**Special Feature: Founding Fane**
-- Place a **Founding Heart** to establish your territory
-- Extend boundaries with **Founding Stakes**
-- All Harbingers within gain powerful buffs:
-  - Increased blood regeneration
-  - Reduced manipulation costs
-  - Enhanced tendency alignment
-  - Damage resistance
-- Only one Fane per Apostle or higher
-- Can invite others to benefit from your Fane
-
-**What Changes:**
-- You are now a leader, not just a practitioner
-- Fungal whispers speak of "spreading spores"
-- Your bloodline becomes a literal lineage
-- Other Harbingers swear loyalty to you
-- Recruiting NPCs becomes available
-
-**Blood Volume Cap:** 5000 mL
-
----
-
-### Degree 6: Archon
-**"Command and Leadership"**
-
-**Requirements:**
-- Degree 5 (Apostle)
-- Large established bloodline (multiple members)
-- Successful Founding Fane
-- Proven leadership and wisdom
-- Extremely rare components
-
-**Ritual:** Rite of the Archon's Throne
-- Massive multi-stage ritual
-- Requires participation of your bloodline
-- Blood pact with the Order itself
-- Consecration of a throne or seat of power
-
-**What You Gain:**
-- Supreme command over lower-degree Harbingers
-- Access to Grand Rites (reality-altering rituals)
-- Enhanced puppeteering capabilities
-- Ability to **sever bloodline members** (excommunication)
-- Archon vestments and regalia
-- The **Silent Archon** title and powers
-
-**Special Feature: The Chamber of Will**
-- Current implementation unlocks at **Degree 6 (Sanctified)** through `hemomancy:cardinal_rite/chamber_of_will`.
-- This is an inward refuge, not the external Fungal Dimension: the caster enters a private blood-memory chamber and can use the rite/teleport behavior to return home.
-- The first chamber is a compact 9x9 space. Later progression expands the usable radius.
-- The sky is dynamic and reflects progression:
-  - Degree 6: `will_default`
-  - Degree 7 before Qliphoth Communion: `archon_revelation`
-  - Qliphoth Communion complete: `qliphoth_communion`
-  - Silent Archon path: `silent_archon`
-  - Degree 8 / Apotheos: `apotheos`
-- V1 is caster-only. A future owner/guest rite can pull nearby players and mobs into the caster's chamber once that model is stable.
-
-**What Changes:**
-- Fungal whispers become clearer: "You are the bloom"
-- You realize the truth: each degree is a stage of fruiting
-- Other Harbingers sense your authority instinctively
-- Your presence affects reality subtly
-- You must choose: resist or embrace?
-
-**Blood Volume Cap:** 6000 mL (beyond human normal)
-
----
-
-### Degree 7: Apotheos
-**"Transcendence... or Dissolution"**
-
-**Requirements:**
-- Degree 6 (Archon)
-- Completed **Qliphoth Communion** (ate all 9 pomes from one bloom)
-- Confronted the truth about the Fungal Entity
-- Made peace with what you've become
-
-**Ritual:** Rite of Apotheos
-- The final rite
-- No clear recipe — you must discover it
-- Requires total commitment
-- Point of no return
-
-**What You Gain:**
-- Access to the **Fungal Dimension** via Fungal Spine
-- Transcendent power beyond mortal limits
-- Choice: become **The Mycophant** (fruiting body endpoint) or resist
-- Ultimate understanding of blood magic's true nature
-
-**What Changes:**
-Everything. You are no longer simply human. You have become something else.
-
-**Two Endings:**
-
-1. **Embrace (The Mycophant Path)**
-   - You willingly become the fruiting body
-   - Serve as the Entity's reproductive endpoint
-   - Immense power, but loss of self
-   - Guaranteed unique rewards from The Mycophant entity
-   - Lore endpoint: you spread spores to new worlds
-
-2. **Resist (The Vesper Path)**
-   - You reject dissolution and fight for autonomy
-   - Face **Vesper** (two-phase boss fight)
-   - Maintain your identity but at great cost
-   - Guaranteed unique rewards from Vesper defeat
-   - Lore endpoint: you break free, but the network remains
-
-**Note:** This degree is endgame content. Reaching it means you've seen the mod's full progression. Both paths are valid and offer unique conclusions.
+Silent Archon is never Degree 8. It is the flagged Degree-7 refusal state created by successful Pruning after the revelation.
 
 ---
 
@@ -321,11 +121,12 @@ More utility rites exist — experiment and discover them!
 
 ## Bloodlines
 
-At Degree 5 (Apostle) and higher, you can create and manage a **bloodline** — your personal covenant family within the Hematic Order.
+At Degree 5 (Illuminatus) and higher, you can found and manage a **bloodline** — your chosen covenant family within the Hematic Order.
 
 ### Creating a Bloodline
-- Automatically created when you reach Apostle
-- Named after you or your chosen title
+- Reach Degree 5, then perform the **Bloodline Founding** rite; the degree alone creates nothing
+- The rite creates the covenant and returns its first signed ledger
+- An Unsigned Ledger cannot found a bloodline by right-clicking it
 - Can have multiple members across degrees
 
 ### Recruiting Members
@@ -430,7 +231,6 @@ Advanced Harbingers can create and control **Puppets** — temporary extensions 
 **Puppet Types:**
 - **Sanguilith** — Floating blood crystal turret
 - **Hemomancer Puppet** — Caster support unit
-- **Crimson Sentinel** — Heavy warrior
 
 **Control:**
 - Direct control (see through puppet's eyes)
@@ -537,7 +337,7 @@ As you progress, your body accumulates **Fungal Scars** — visible marks of cor
 ### Interacting with NPCs
 - **Right-click with empty hand** — Open dialogue tree
 - **Right-click with item** — Item Inquiry (learn lore about items)
-- **Recruitment** — Once you're Apostle+, recruit them to your bloodline
+- **Recruitment** — Once you are Illuminatus and have founded a bloodline by rite, recruit eligible outpost NPCs
 
 ### Item Inquiry System
 Many items in Hemomancy have hidden lore. Hold an item and right-click an NPC to ask about it. They'll share:
@@ -561,7 +361,7 @@ Different NPCs have different knowledge. Experiment!
 The **Qliphoth** is a massive fungal structure that grows after performing Qliphoth Communion ritual.
 
 ### Summoning the Qliphoth
-- Requires Degree 6 (Archon)
+- Requires Degree 7 (Archon)
 - Build a **Sanguine Monolith**
 - Perform the Communion rite
 - The Monolith breaks open with a black void-bloom
@@ -637,7 +437,7 @@ As you ascend, you'll hear **Fungal Whispers** — messages from the Erythrocyti
 
 1. **Specialize Early** — Focus on 2-3 tendencies for faster progression
 
-2. **Build Your Fane** — Once you hit Apostle, establish your Founding Fane immediately. The buffs are essential.
+2. **Build Your Fane** — Once you reach Illuminatus, found a bloodline and establish its Flexible Envelope when you are ready to support the territory.
 
 3. **Recruit Wisely** — You have limited NPC recruitment slots. Choose callings that match your playstyle.
 

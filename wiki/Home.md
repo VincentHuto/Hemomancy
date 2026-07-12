@@ -1,5 +1,7 @@
 # Hemomancy Wiki
 
+> This wiki is a downstream player-facing presentation of `docs/LORE_REFERENCE.md` and `docs/HEMOMANCY_REFERENCE.md`. When wording differs, the docs are canonical and this wiki must be corrected.
+
 ![Hemomancy Banner](https://img.shields.io/badge/Minecraft-1.21.1-brightgreen) ![NeoForge](https://img.shields.io/badge/NeoForge-21.1.x-orange) ![Version](https://img.shields.io/badge/Version-6.0.1-blue)
 
 Welcome to the official wiki for **Hemomancy**, a blood magic mod for Minecraft that explores the moral ambiguity of power drawn from the carnal fluid flowing through your veins.
@@ -57,27 +59,28 @@ Players face a fundamental choice:
 Manipulations are organized into **eight tendencies** (blood qualities), each with unique powers:
 - **Animus** (Life) — Healing, regeneration, vitality
 - **Flammeus** (Fire) — Combustion and heat
-- **Ductilis** (Metal) — Iron control and weaponry
+- **Ductilis** (Lightning/Nerves) — speed, nervous energy, and electrical impulse
 - **Lux** (Light) — Radiance and purification
 - **Mortem** (Death) — Decay and withering
 - **Congeatio** (Ice) — Freezing and preservation
-- **Ferric** (Raw Iron) — Magnetic forces
+- **Ferric** (Iron) — barbs, solidity, permanence, and magnetic force
 - **Tenebris** (Shadow) — Darkness and concealment
 
 ### Progressive Degrees
-Harbingers advance through **seven degrees** of the Hematic Order, each unlocking new powers and deeper secrets:
-1. **Pledged** — The first step, marked by the Sanguine Initiation
-2. **Illuminatus** — Understanding the blood's inner light
-3. **Adeptus** — Mastery of manipulation
-4. **Sentinel** — Guardian of the Order
-5. **Apostle** — Spreading the cause
-6. **Archon** — Leadership and command
-7. **Apotheos** — Transcendence... or dissolution
+Harbingers advance through **eight degrees** of the Hematic Order:
+1. **Neophyte**
+2. **Votary**
+3. **Initiate**
+4. **Adept**
+5. **Illuminatus**
+6. **Sanctified**
+7. **Archon**
+8. **Apotheos** — reached only through the post-projection Rite of Apotheosis
 
 ### Living World
 - **Fungal Biomes** — Explore the eerie Sporecrown Thicket, Hyphal Spires, and Fungal Gardens
 - **Dynamic Structures** — Discover Harbinger Outposts, Mausoleums, and hidden trial chambers
-- **Blood Moons** — Witness the Pale Lady's costly immune response in the sky
+- **Blood Moons** — Endure a fungal surge while the Pale Lady mounts a costly containment response
 - **Unique Mobs** — Face Sanguine Thralls, Morphlings, Blood Constructs, and worse
 
 ### Deep Lore

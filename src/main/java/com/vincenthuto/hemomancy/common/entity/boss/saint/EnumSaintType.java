@@ -5,11 +5,11 @@ import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.Enu
 public enum EnumSaintType {
 
 	HEMORATH("Hemorath",
-			EnumBloodTendency.MORTEM, EnumBloodTendency.ANIMUS,
+			EnumBloodTendency.FERRIC, EnumBloodTendency.MORTEM,
 			EnumDoctrineTag.JUDGMENT, EnumDoctrineTag.SILENCE),
 
 	SERAPHAE("Seraphae",
-			EnumBloodTendency.LUX, EnumBloodTendency.DUCTILIS,
+			EnumBloodTendency.ANIMUS, EnumBloodTendency.LUX,
 			EnumDoctrineTag.WITNESS, EnumDoctrineTag.ABSOLUTION),
 
 	PUTRICIEL("Putriciel",

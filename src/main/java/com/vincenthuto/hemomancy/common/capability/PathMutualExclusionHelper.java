@@ -55,6 +55,8 @@ public final class PathMutualExclusionHelper {
 				|| progress.getPurity() > 0.0f
 				|| progress.hasClarityUnlocked()
 				|| progress.getClarity() > 0.0f
+				|| progress.isInfectionSuppressed()
+				|| progress.isClarityPrepared()
 				|| hadKnownStillArts;
 		if (!hadProgress) {
 			return false;
@@ -63,6 +65,8 @@ public final class PathMutualExclusionHelper {
 		progress.setPurity(0.0f);
 		progress.setClarityUnlocked(false);
 		progress.setClarity(0.0f);
+		progress.setInfectionSuppressed(false);
+		progress.setClarityPrepared(false);
 		UnstainedProgressEvents.syncProgress(player, progress);
 		HemoCapabilityAccess.getKnownStillArts(player).ifPresent(known -> {
 			known.setKnownArtNames(List.of());

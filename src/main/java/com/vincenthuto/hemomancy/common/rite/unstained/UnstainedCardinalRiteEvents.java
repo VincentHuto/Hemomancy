@@ -3,9 +3,14 @@ package com.vincenthuto.hemomancy.common.rite.unstained;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.PathMutualExclusionHelper;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.UnstainedProgressEvents;
+import com.vincenthuto.hemomancy.common.capability.player.unstained.UnstainedEntryRules;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.stillart.KnownStillArtEvents;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.EnumVeinSections;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.VascularSystemEvents;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.Bloodline;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodlineDisbandHelper;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodlineSavedData;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.InitiatoryDegreeEvents;
 import com.vincenthuto.hemomancy.common.event.worldevent.BloodMoonSavedData;
 import com.vincenthuto.hemomancy.common.init.BlockInit;
 import com.vincenthuto.hemomancy.common.init.EffectInit;
@@ -53,6 +58,7 @@ public class UnstainedCardinalRiteEvents {
 	private static final String ANTISEPTIC_GROUND_RITE = "cardinal_rite/antiseptic_ground";
 	private static final String GLASS_LUNGS_RITE = "cardinal_rite/glass_lungs";
 	private static final String MOON_WASHED_COPPER_RITE = "cardinal_rite/moon_washed_copper";
+	private static final String SEVERED_COVENANT_RITE = "cardinal_rite/severed_covenant";
 	/** Radius (in blocks) for Lethean Judgment anti-blood disruption. */
 	private static final int LETHEAN_JUDGMENT_RADIUS = 16;
 	/** Duration in ticks for Silver Veil effect (30 minutes = 36000 ticks). */
@@ -152,7 +158,40 @@ public class UnstainedCardinalRiteEvents {
 			completeMoonWashedCopper(sLevel, caster, center);
 			return true;
 		}
+		if (SEVERED_COVENANT_RITE.equals(ritePath)) {
+			completeSeveredCovenant(sLevel, caster);
+			return true;
+		}
 		return false;
+	}
+
+	private static void completeSeveredCovenant(ServerLevel level, ServerPlayer caster) {
+		var degree = HemoCapabilityAccess.requireInitiatoryDegree(caster);
+		var unstained = HemoCapabilityAccess.getUnstainedProgress(caster).orElse(null);
+		if (!degree.hasFoundedBloodline() || degree.isFounderIntegrationSevered()
+				|| unstained == null || !unstained.isAnnettaSeveranceUnlocked()) {
+			caster.displayClientMessage(Component.literal(
+					"The exceptional cut is not yours to make. Only a founder who cured Annetta knows its shape.")
+					.withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC), false);
+			return;
+		}
+		BloodlineSavedData savedData = BloodlineSavedData.get(level.getServer().overworld());
+		Bloodline line = savedData.getBloodlineForPlayer(caster.getUUID());
+		if (line == null || !line.isValid() || !caster.getUUID().equals(line.getLeaderUUID())) {
+			caster.displayClientMessage(Component.literal("No founder's covenant answers the rite."), false);
+			return;
+		}
+		Bloodline disbanded = savedData.disbandBloodline(line.getBloodlineUUID());
+		if (disbanded == null) return;
+		BloodlineDisbandHelper.removeOwnedFanes(level.getServer(), disbanded);
+		BloodlineDisbandHelper.resetOnlineMembers(level.getServer(), disbanded,
+				member -> Component.literal("The founder's covenant has been severed.")
+						.withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC));
+		degree.setFounderIntegrationSevered(true);
+		InitiatoryDegreeEvents.syncDegree(caster, degree);
+		caster.displayClientMessage(Component.literal(
+				"The bloodline is gone. What Annetta survived has taught your own infection how to release you.")
+				.withStyle(ChatFormatting.AQUA, ChatFormatting.ITALIC), false);
 	}
 	// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 	// Unstained Rite Completion Handlers
@@ -164,13 +203,38 @@ public class UnstainedCardinalRiteEvents {
 	 * purity and sets the purification flag.
 	 */
 	private static void completeLetheanBaptism(ServerLevel sLevel, ServerPlayer caster) {
-		HemoCapabilityAccess.getUnstainedProgress(caster).ifPresent(unstained -> {
-			if (!unstained.hasBegunPurification()) {
-				unstained.setBegunPurification(true);
-			}
-			unstained.addPurity(5.0f);
-			UnstainedProgressEvents.syncProgress(caster, unstained);
-		});
+		boolean maySeekCure = HemoCapabilityAccess.getInitiatoryDegree(caster)
+				.map(degree -> UnstainedEntryRules.canBeginCure(
+						degree.hasFoundedBloodline(), degree.isFounderIntegrationSevered()))
+				.orElse(true);
+		if (!maySeekCure) {
+			caster.displayClientMessage(Component.literal(
+					"A bloodline founder cannot enter Lethe by the ordinary rite.")
+					.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC), false);
+			return;
+		}
+		if (HemoCapabilityAccess.getUnstainedProgress(caster)
+				.map(progress -> !progress.isInfectionSuppressed()).orElse(true)) {
+			caster.displayClientMessage(Component.literal(
+					"The infection must first be suppressed at an Unstained Podium.")
+					.withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC), false);
+			return;
+		}
+		var unstained = HemoCapabilityAccess.getUnstainedProgress(caster).orElse(null);
+		if (unstained == null) return;
+		boolean firstBaptism = !unstained.hasBegunPurification();
+		if (!firstBaptism) {
+			caster.displayClientMessage(Component.literal("Lethean Baptism has already named your path.")
+					.withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC), false);
+			return;
+		}
+		unstained.setBegunPurification(true);
+		unstained.addPurity(5.0f);
+		ItemStack dagger = new ItemStack(ItemInit.absolution_dagger);
+		if (!caster.getInventory().add(dagger)) {
+			caster.drop(dagger, false);
+		}
+		UnstainedProgressEvents.syncProgress(caster, unstained);
 
 		caster.displayClientMessage(
 				Component.literal("The still waters wash over you. The Unstained path has begun.")
@@ -183,7 +247,7 @@ public class UnstainedCardinalRiteEvents {
 
 	/**
 	 * Rite of the Silver Veil (Lesser, 0 blood):
-	 * Grants the Silver Ward mob effect for 30 minutes and adds 10 purity.
+	 * Grants the early Verdigris Aura effect for 30 minutes and adds 10 purity.
 	 * Requires purity >= 25 (Tainted stage).
 	 */
 	private static void completeSilverVeil(ServerLevel sLevel, ServerPlayer caster) {
@@ -198,13 +262,13 @@ public class UnstainedCardinalRiteEvents {
 			unstained.addPurity(10.0f);
 			UnstainedProgressEvents.syncProgress(caster, unstained);
 
-			// Apply Silver Ward effect (amplifier 1, 30 minutes)
+			// Apply Verdigris Aura (early Purity defense; amplifier 1, 30 minutes)
 			caster.addEffect(new MobEffectInstance(
-					EffectInit.silver_ward, SILVER_VEIL_DURATION_TICKS, 1, false, true, true));
+					EffectInit.verdigris_aura, SILVER_VEIL_DURATION_TICKS, 1, false, true, true));
 
 			caster.displayClientMessage(
-					Component.literal("A veil of pale silver light surrounds you. Blood magic cannot touch you.")
-							.withStyle(ChatFormatting.WHITE, ChatFormatting.ITALIC),
+					Component.literal("Verdigris smoke gathers into the first ward against awakened blood.")
+							.withStyle(ChatFormatting.AQUA, ChatFormatting.ITALIC),
 					false);
 			sLevel.sendParticles(ParticleTypes.END_ROD,
 					caster.getX(), caster.getY() + 1.0, caster.getZ(),
@@ -232,8 +296,15 @@ public class UnstainedCardinalRiteEvents {
 						false);
 				return;
 			}
+			if (!unstained.isClarityPrepared()) {
+				caster.displayClientMessage(Component.literal(
+						"Consecrated Copper must prepare your clarity at an Unstained Podium first.")
+						.withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC), false);
+				return;
+			}
 
 			unstained.setClarityUnlocked(true);
+			unstained.setClarityPrepared(false);
 			UnstainedProgressEvents.syncProgress(caster, unstained);
 			if (PathMutualExclusionHelper.enforceHarbingerResetOnClarity(caster, unstained)) {
 				caster.displayClientMessage(
@@ -496,8 +567,7 @@ public class UnstainedCardinalRiteEvents {
 			SILVER_DAWN_CONVERSIONS = Map.of(
 					BlockInit.venous_stone.get(), BlockInit.cleansed_stone.get(),
 					BlockInit.sanguine_glass.get(), BlockInit.cleansed_sanguine_glass.get(),
-					BlockInit.infested_venous_stone.get(), BlockInit.cleansed_stone.get(),
-					BlockInit.hematic_iron_block.get(), BlockInit.pale_silver_block.get()
+					BlockInit.infested_venous_stone.get(), BlockInit.cleansed_stone.get()
 			);
 		}
 		return SILVER_DAWN_CONVERSIONS;
@@ -640,20 +710,20 @@ public class UnstainedCardinalRiteEvents {
 	}
 
 	// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-	//  SILTHMERE'S REMEMBRANCE â€” one-time burst purity + Silver Ward
+	//  SILTHMERE'S REMEMBRANCE â€” one-time burst purity + Verdigris Aura
 	// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
 	/** Radius within which Unstained players receive the Remembrance burst. */
 	private static final int REMEMBRANCE_RADIUS = 32;
 	/** Purity granted per Unstained player by the burst. */
 	private static final float REMEMBRANCE_PURITY = 5.0f;
-	/** Silver Ward refresh duration in ticks (15 minutes). */
-	private static final int REMEMBRANCE_SILVER_WARD_DURATION = 18000;
+	/** Verdigris Aura refresh duration in ticks (15 minutes). */
+	private static final int REMEMBRANCE_VERDIGRIS_DURATION = 18000;
 
 	/**
 	 * Rite of Silthmere's Remembrance (Greater, 0 blood):
 	 * A one-time burst. All Unstained players within 32 blocks immediately gain
-	 * +5 purity and have their Silver Ward refreshed or applied (amplifier 1).
+	 * +5 purity and have their early Verdigris Aura refreshed or applied (amplifier 1).
 	 */
 	private static void completeSilthmereRemembrance(ServerLevel sLevel, ServerPlayer caster, BlockPos center) {
 		AABB area = new AABB(center).inflate(REMEMBRANCE_RADIUS);
@@ -669,11 +739,11 @@ public class UnstainedCardinalRiteEvents {
 				UnstainedProgressEvents.syncProgress(target, progress);
 
 				target.addEffect(new MobEffectInstance(
-						EffectInit.silver_ward, REMEMBRANCE_SILVER_WARD_DURATION, 1,
+						EffectInit.verdigris_aura, REMEMBRANCE_VERDIGRIS_DURATION, 1,
 						false, true, true));
 
 				target.displayClientMessage(
-						Component.literal("Silthmere's memory washes over you. Purity blooms within.")
+						Component.literal("Still water answers the title Silthmere. Purity blooms within.")
 								.withStyle(ChatFormatting.AQUA, ChatFormatting.ITALIC),
 						false);
 				affected[0]++;
@@ -681,8 +751,8 @@ public class UnstainedCardinalRiteEvents {
 		}
 
 		String msg = affected[0] > 0
-				? "Silthmere remembers. " + affected[0] + " Unstained soul(s) have been blessed."
-				: "Silthmere's remembrance echoes, but no Unstained walk near enough to hear it.";
+				? "The title Silthmere is answered. " + affected[0] + " Unstained soul(s) have been blessed."
+				: "Silthmere's invocation echoes, but no Unstained walk near enough to hear it.";
 		caster.displayClientMessage(
 				Component.literal(msg).withStyle(ChatFormatting.WHITE, ChatFormatting.ITALIC),
 				false);

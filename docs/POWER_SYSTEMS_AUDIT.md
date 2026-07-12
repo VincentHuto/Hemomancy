@@ -2,7 +2,7 @@
 
 > **Last updated:** 2026-07-02
 > **Scope:** Cross-system design audit of the three main player buff/bonus systems: Blood Manipulations, Harbinger Armor Sets, and Morphlings. Covers role comparison, overlap diagnosis, cleanup/cut targets, and the forward plan for coherent, balanced growth.
-> **Sources:** [HEMOMANCY_REFERENCE.md](HEMOMANCY_REFERENCE.md) §8 (Manipulations), §13 (Scars & Spores), §16 (Morphlings), §22 (Armor Sets); [MORPHLING_REFERENCE.md](MORPHLING_REFERENCE.md); current code anchors listed per section. Current code and data are authoritative where this document and older prose disagree.
+> **Sources:** [LORE_REFERENCE.md](LORE_REFERENCE.md) for canon, [HEMOMANCY_REFERENCE.md](HEMOMANCY_REFERENCE.md) for mechanics, and [MORPHLING_REFERENCE.md](MORPHLING_REFERENCE.md) for the eight canonical strains. Code anchors report implementation status and must be corrected when they contradict those docs.
 > **Status vocabulary:** `implemented` / `partial` / `dormant` / `planned`, matching HEMOMANCY_REFERENCE.md.
 > **Follow-on specs (2026-07-02):** [Rogue Hemomancer Wills](superpowers/specs/2026-07-02-rogue-hemomancer-wills-design.md) → [Fungal Scar Consolidation](superpowers/specs/2026-07-02-fungal-scar-consolidation-design.md) → [Morphling Fungal-Strain Reframe](superpowers/specs/2026-07-02-morphling-fungal-strain-reframe-design.md). These three cross-linked docs carry the morphling 12→8, fungal-scar 9→8, naming register, and the Wills ambusher system forward from this audit.
 > **Companion examination:** [BLOOD_MANIPULATION_EXAMINATION.md](BLOOD_MANIPULATION_EXAMINATION.md) — current-state deep dive on the manipulation (expenditure) system: the 60-entry catalog by tendency, acquisition lanes, modifier economy, and code-verified runway gaps.

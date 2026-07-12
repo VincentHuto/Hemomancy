@@ -8,6 +8,7 @@ import com.vincenthuto.hemomancy.common.capability.player.unstained.EnumClarityS
 import com.vincenthuto.hemomancy.common.capability.player.unstained.EnumPurityStage;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.IUnstainedProgress;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.UnstainedProgressEvents;
+import com.vincenthuto.hemomancy.common.capability.player.unstained.UnstainedEntryRules;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.stillart.KnownStillArtEvents;
 import com.vincenthuto.hemomancy.common.event.MachineAccessEvents;
 import com.vincenthuto.hemomancy.common.init.BlockInit;
@@ -148,12 +149,15 @@ public class UnstainedPodiumBlock extends Block implements EntityBlock, SimpleWa
 	}
 
 	private void handleUnstainedInteraction(Level worldIn, BlockPos pos, Player player, ItemStack stack) {
-		int degreeNumber = HemoCapabilityAccess.getPlayerDegreeNumber(player);
+		boolean maySeekCure = HemoCapabilityAccess.getInitiatoryDegree(player)
+				.map(degree -> UnstainedEntryRules.canBeginCure(
+						degree.hasFoundedBloodline(), degree.isFounderIntegrationSevered()))
+				.orElse(true);
 		HemoCapabilityAccess.getUnstainedProgress(player).ifPresent(unstained -> {
-			if (!unstained.hasBegunPurification()
-					&& degreeNumber > EnumInitiatoryDegree.ILLUMINATUS.getNumber()) {
-				player.displayClientMessage(
-						Component.translatable("hemomancy.unstained.too_deep"), false);
+			if (!unstained.hasBegunPurification() && !maySeekCure) {
+				player.displayClientMessage(Component.literal(
+						"The covenant you founded is rooted through every vein. Ordinary cure can no longer reach you.")
+						.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC), false);
 				return;
 			}
 
@@ -172,87 +176,30 @@ public class UnstainedPodiumBlock extends Block implements EntityBlock, SimpleWa
 
 	private void handleHemolyticSolution(Level worldIn, BlockPos pos, Player player, ItemStack stack,
 			IUnstainedProgress unstained) {
-		if (!unstained.hasBegunPurification()) {
-			// Begin purification — leaving the Harbingers path
+		if (!unstained.isInfectionSuppressed()) {
 			stack.shrink(1);
-			unstained.setBegunPurification(true);
-			unstained.setPurity(5.0f);
-
-			// Mutual exclusion: reset initiatory degree (Harbingers path)
-			if (!worldIn.isClientSide && player instanceof ServerPlayer serverPlayer) {
-				HemoCapabilityAccess.getInitiatoryDegree(player).ifPresent(degree -> {
-					if (degree.getDegreeNumber() > 0) {
-						degree.setDegreeNumber(0);
-						InitiatoryDegreeEvents.syncDegree(serverPlayer, degree);
-						player.displayClientMessage(
-								Component.literal("You have renounced the Hematic Order.")
-										.withStyle(net.minecraft.ChatFormatting.GRAY, net.minecraft.ChatFormatting.ITALIC),
-								false);
-					}
-				});
-			}
-
-			player.displayClientMessage(
-					Component.translatable("hemomancy.unstained.purification_begun"), false);
+			unstained.setInfectionSuppressed(true);
+			player.displayClientMessage(Component.literal(
+					"The Podium quiets the infection. Seek Lethean Baptism before the silence breaks.")
+					.withStyle(ChatFormatting.AQUA, ChatFormatting.ITALIC), false);
 			worldIn.playSound(null, pos, SoundEvents.BEACON_ACTIVATE, SoundSource.BLOCKS, 1.0f, 1.0f);
 			spawnPurityParticles(worldIn, pos);
 			syncUnstainedProgress(worldIn, player, unstained);
-		} else if (!unstained.isPurified()) {
-			// Add purity progress
-			stack.shrink(1);
-			unstained.addPurity(10.0f);
-			worldIn.playSound(null, pos, SoundEvents.EXPERIENCE_ORB_PICKUP, SoundSource.BLOCKS, 1.0f, 1.0f);
-			spawnPurityParticles(worldIn, pos);
-			if (unstained.isPurified()) {
-				player.displayClientMessage(
-						Component.translatable("hemomancy.unstained.purity_complete"), false);
-			} else {
-				player.displayClientMessage(
-						Component.translatable("hemomancy.unstained.purity_progress",
-								unstained.getPurity()),
-						false);
-			}
-			syncUnstainedProgress(worldIn, player, unstained);
 		} else {
-			player.displayClientMessage(
-					Component.translatable("hemomancy.unstained.already_purified"), false);
+			player.displayClientMessage(Component.literal("The infection is already held in suppression.")
+					.withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC), false);
 		}
 	}
 
 	private void handleConsecratedCopper(Level worldIn, BlockPos pos, Player player, ItemStack stack,
 			IUnstainedProgress unstained) {
-		if (!unstained.isPurified()) {
-			// Not yet purified — cannot perform the ritual
-			return;
-		}
-		if (unstained.hasClarityUnlocked()) {
-			// Ritual already done
-			return;
-		}
-		// Perform the Rite of Clarity
+		if (!unstained.isPurified()) return;
+		if (unstained.isClarityPrepared() || unstained.hasClarityUnlocked()) return;
 		stack.shrink(1);
-		unstained.setClarityUnlocked(true);
-		if (player instanceof ServerPlayer serverPlayer) {
-			if (PathMutualExclusionHelper.enforceHarbingerResetOnClarity(serverPlayer, unstained)) {
-				player.displayClientMessage(
-						Component.literal("The Hematic Order falls silent within you. Your former rank is washed away.")
-								.withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC),
-						false);
-			}
-			if (KnownStillArtEvents.grantArt(serverPlayer, StillArtInit.silver_rebuke.get())) {
-				player.displayClientMessage(
-						Component.literal("A first Still Art settles into you: Silver Rebuke.")
-								.withStyle(ChatFormatting.AQUA, ChatFormatting.ITALIC),
-						false);
-			}
-		}
-		// Disable blood magic permanently
-		HemoCapabilityAccess.getBloodVolume(player).ifPresent(volume -> {
-			volume.setActive(false);
-			PacketHandler.sendToPlayer((ServerPlayer) player, new BloodVolumeServerPacket(volume));
-		});
-		player.displayClientMessage(
-				Component.translatable("hemomancy.unstained.clarity_unlocked"), false);
+		unstained.setClarityPrepared(true);
+		player.displayClientMessage(Component.literal(
+				"Consecrated Copper steadies the next crossing. The Rite of Clarity Ascension may now be performed.")
+				.withStyle(ChatFormatting.AQUA, ChatFormatting.ITALIC), false);
 		worldIn.playSound(null, pos, SoundEvents.BEACON_ACTIVATE, SoundSource.BLOCKS, 1.5f, 0.8f);
 		spawnClarityParticles(worldIn, pos);
 		syncUnstainedProgress(worldIn, player, unstained);

@@ -72,7 +72,7 @@ public class SilthmereGlaiveEvents {
 			progress.addPurity(KILL_PURITY_REWARD);
 			UnstainedProgressEvents.syncProgress(killer, progress);
 			killer.displayClientMessage(
-					Component.literal("Silthmere's memory stirs â€” purity grows.")
+					Component.literal("The title Silthmere answers â€” purity grows.")
 							.withStyle(ChatFormatting.AQUA, ChatFormatting.ITALIC),
 					true);
 		});

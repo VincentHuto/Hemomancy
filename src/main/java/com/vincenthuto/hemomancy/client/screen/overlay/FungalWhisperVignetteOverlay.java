@@ -4,10 +4,9 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.util.Mth;
 
 /**
- * Full-screen orange vignette overlay that flashes briefly when a fungal
- * whisper dialogue is triggered. The effect rapidly flashes in over a few
- * ticks, holds briefly, then fades out smoothly — giving the impression
- * of fungal spores at the edges of the player's vision.
+ * Full-screen fungal vignette overlay. Ordinary whispers use a short orange
+ * flash; the first Fungal Gardens projection uses an accelerating red pulse
+ * that warns the player their forced return is approaching.
  */
 public class FungalWhisperVignetteOverlay {
 
@@ -24,6 +23,19 @@ public class FungalWhisperVignetteOverlay {
 	private static final float PEAK_ALPHA = 0.7f;
 
 	private int remainingTicks = 0;
+	private static int projectionRemainingTicks = 0;
+	private static int projectionTotalTicks = 1;
+	private static boolean projectionActive = false;
+
+	public static void setProjectionState(boolean active, int remainingTicks, int totalTicks) {
+		projectionActive = active;
+		projectionRemainingTicks = Math.max(0, remainingTicks);
+		projectionTotalTicks = Math.max(1, totalTicks);
+	}
+
+	public static boolean isProjectionActive() {
+		return projectionActive;
+	}
 
 	/**
 	 * Triggers the vignette flash. Can be called multiple times —
@@ -43,9 +55,14 @@ public class FungalWhisperVignetteOverlay {
 		if (remainingTicks > 0) {
 			remainingTicks--;
 		}
+		if (projectionActive && projectionRemainingTicks > 0) projectionRemainingTicks--;
 	}
 
 	public void renderHUD(GuiGraphics gfx, int screenWidth, int screenHeight, float partialTicks) {
+		if (projectionActive) {
+			renderProjectionVignette(gfx, screenWidth, screenHeight, partialTicks);
+			return;
+		}
 		if (remainingTicks <= 0) {
 			return;
 		}
@@ -135,6 +152,29 @@ public class FungalWhisperVignetteOverlay {
 			gfx.fill(0, screenHeight - size, size, screenHeight, color);
 			// Bottom-right
 			gfx.fill(screenWidth - size, screenHeight - size, screenWidth, screenHeight, color);
+		}
+	}
+
+	private static void renderProjectionVignette(GuiGraphics gfx, int width, int height, float partialTicks) {
+		float progress = 1.0F - Mth.clamp((projectionRemainingTicks - partialTicks) / projectionTotalTicks, 0.0F, 1.0F);
+		float period = Mth.lerp(progress, 40.0F, 5.0F);
+		float phase = ((projectionTotalTicks - projectionRemainingTicks) + partialTicks) % period / period;
+		float pulse = Mth.sin(phase * (float) Math.PI);
+		float alpha = Mth.clamp(0.08F + progress * 0.30F + pulse * (0.10F + progress * 0.42F), 0.0F, 0.88F);
+		int a = (int) (alpha * 255.0F);
+		int red = (a << 24) | (230 << 16) | (20 << 8) | 20;
+		int clearRed = (230 << 16) | (20 << 8) | 20;
+		int edge = (int) (Math.min(width, height) * (0.24F + progress * 0.18F));
+		gfx.fillGradient(0, 0, width, edge, red, clearRed);
+		gfx.fillGradient(0, height - edge, width, height, clearRed, red);
+		int bands = 10;
+		for (int band = 0; band < bands; band++) {
+			float strength = 1.0F - (band + 0.5F) / bands;
+			int color = ((int) (a * strength) << 24) | (230 << 16) | (20 << 8) | 20;
+			int x0 = band * edge / bands;
+			int x1 = (band + 1) * edge / bands;
+			gfx.fill(x0, 0, x1, height, color);
+			gfx.fill(width - x1, 0, width - x0, height, color);
 		}
 	}
 }

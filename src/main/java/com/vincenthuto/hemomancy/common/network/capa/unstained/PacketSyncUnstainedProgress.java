@@ -29,6 +29,7 @@ public class PacketSyncUnstainedProgress implements CustomPacketPayload {
     // Bonus toggle state
     private final boolean silverWardEnabled, verdigrisAuraEnabled;
     private final boolean usedAltarOfCleansing;
+	private final boolean infectionSuppressed, clarityPrepared, annettaSeveranceUnlocked;
 
     public PacketSyncUnstainedProgress(IUnstainedProgress p) {
         this.begunPurification = p.hasBegunPurification();
@@ -52,6 +53,9 @@ public class PacketSyncUnstainedProgress implements CustomPacketPayload {
         this.silverWardEnabled = p.isSilverWardEnabled();
         this.verdigrisAuraEnabled = p.isVerdigrisAuraEnabled();
         this.usedAltarOfCleansing = p.hasUsedAltarOfCleansing();
+		this.infectionSuppressed = p.isInfectionSuppressed();
+		this.clarityPrepared = p.isClarityPrepared();
+		this.annettaSeveranceUnlocked = p.isAnnettaSeveranceUnlocked();
     }
 
     private PacketSyncUnstainedProgress(FriendlyByteBuf buf) {
@@ -76,6 +80,9 @@ public class PacketSyncUnstainedProgress implements CustomPacketPayload {
         this.silverWardEnabled = buf.readBoolean();
         this.verdigrisAuraEnabled = buf.readBoolean();
         this.usedAltarOfCleansing = buf.readBoolean();
+		this.infectionSuppressed = buf.readBoolean();
+		this.clarityPrepared = buf.readBoolean();
+		this.annettaSeveranceUnlocked = buf.readBoolean();
     }
 
     public static void encode(FriendlyByteBuf buf, PacketSyncUnstainedProgress msg) {
@@ -100,6 +107,9 @@ public class PacketSyncUnstainedProgress implements CustomPacketPayload {
         buf.writeBoolean(msg.silverWardEnabled);
         buf.writeBoolean(msg.verdigrisAuraEnabled);
         buf.writeBoolean(msg.usedAltarOfCleansing);
+		buf.writeBoolean(msg.infectionSuppressed);
+		buf.writeBoolean(msg.clarityPrepared);
+		buf.writeBoolean(msg.annettaSeveranceUnlocked);
     }
 
     public static PacketSyncUnstainedProgress decode(FriendlyByteBuf buf) {
@@ -134,6 +144,9 @@ public class PacketSyncUnstainedProgress implements CustomPacketPayload {
                             progress.setSilverWardEnabled(msg.silverWardEnabled);
                             progress.setVerdigrisAuraEnabled(msg.verdigrisAuraEnabled);
                             progress.setUsedAltarOfCleansing(msg.usedAltarOfCleansing);
+							progress.setInfectionSuppressed(msg.infectionSuppressed);
+							progress.setClarityPrepared(msg.clarityPrepared);
+							progress.setAnnettaSeveranceUnlocked(msg.annettaSeveranceUnlocked);
                         });
             }
         });

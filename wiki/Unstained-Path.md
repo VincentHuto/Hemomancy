@@ -16,7 +16,7 @@ The Unstained Path is the way of purification — viewing blood magic not as sac
 - Progressive purification stages (Clarity system)
 - Hemolytic Solution-based rituals
 - Copper and white aesthetics
-- Guardian combat style (blunt weapons only)
+- Defensive combat doctrine: Guardians favor blunt weapons, while the long-reach Silthmere Glaive and universal Absolution Dagger remain sanctioned
 - Defensive and anti-corruption abilities
 - Biological immortality (configurable)
 - Service to Our Lady of Still Waters
@@ -35,15 +35,15 @@ Unlike Harbingers with their seven discrete degrees, the Unstained pursue a grad
 - Desire to be free of corruption
 
 **First Steps:**
-1. Craft **Hemolytic Solution** (formaldehyde-equivalent antiseptic)
-2. Build a **Copper Altar** (for purification rituals)
-3. Perform your first **White Humor Purification** ritual
-4. Accept the pain and commit to the path
+1. Use **Hemolytic Solution** at an **Unstained Podium** to suppress the infection
+2. Perform **Lethean Baptism** to begin the Unstained path and start Purity
+3. At full Purity, offer **Consecrated Copper** at the Podium to prepare Clarity
+4. Perform **Clarity Ascension** to unlock Clarity and the advanced Silver Ward
 
 **What Happens:**
-- Your Harbinger degree (if any) zeroes out
-- Purification progress begins tracking
-- Clarity stat starts accumulating
+- Lethean Baptism begins Purity; the Podium alone does not
+- Clarity remains locked until Consecrated Copper preparation and Clarity Ascension
+- Founding a bloodline closes ordinary cure; curing Annetta can unlock an exceptional founder-severance rite
 - You officially begin purging the infection
 
 ---
@@ -280,7 +280,9 @@ Copper is sacred to the Unstained, representing conductivity of purity and resis
 - Can be oxidized for different bonuses
 
 **Copper Weapons**
-- Maces, hammers, clubs (blunt only)
+- Maces, hammers, and clubs are preferred
+- The Silthmere Glaive is sanctioned for defensive reach
+- Every initiated Unstained carries an inherently hemolytic Absolution Dagger
 - Extra damage to corrupted entities
 - No bleed effects (by design)
 - Can be blessed at Copper Altar for enhancement
@@ -297,7 +299,7 @@ Copper is sacred to the Unstained, representing conductivity of purity and resis
 
 ### Guardian Combat Style
 
-Unstained Guardians refuse to use bladed weapons (no bloodshed) and specialize in blunt combat.
+Unstained Guardians minimize bloodshed and specialize in blunt combat, but their doctrine explicitly permits the defensive Silthmere Glaive and universal Absolution Dagger.
 
 **Allowed Weapons:**
 - Maces
@@ -306,12 +308,12 @@ Unstained Guardians refuse to use bladed weapons (no bloodshed) and specialize i
 - Fists
 - Copper implements
 - Staves
+- Silthmere Glaive
+- Absolution Dagger
 
-**Forbidden Weapons:**
-- Swords
-- Axes (as weapons)
-- Spears
-- Anything that causes bleeding
+**Discouraged Weapons:**
+- Ordinary swords and axes used to spill blood
+- Close-range blades without an antiseptic or reach-based purpose
 
 **Combat Abilities:**
 
@@ -504,7 +506,7 @@ A sacred item representing Our Lady of Still Waters.
 
 4. **Accept the Pain** — Purification hurts. That's the point. Have healing ready.
 
-5. **Blunt Weapons Only** — Get comfortable with maces early. Muscle memory matters.
+5. **Carry the Right Tool** — The polearm is the battlefield standard; every initiated Unstained also carries an Absolution Dagger for close infection work.
 
 6. **Find Lethean Water** — Locate a source and protect it. It's your best healing.
 

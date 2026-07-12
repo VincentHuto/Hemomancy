@@ -13,6 +13,18 @@ public interface IUnstainedProgress {
 
     void setBegunPurification(boolean begun);
 
+	boolean isInfectionSuppressed();
+
+	void setInfectionSuppressed(boolean suppressed);
+
+	boolean isClarityPrepared();
+
+	void setClarityPrepared(boolean prepared);
+
+	boolean isAnnettaSeveranceUnlocked();
+
+	void setAnnettaSeveranceUnlocked(boolean unlocked);
+
     // --- Purity System (Phase 1) ---
     // Purity ranges from 0.0 (fully corrupted) to 100.0 (fully pure)
 
@@ -45,10 +57,10 @@ public interface IUnstainedProgress {
 
     // --- Anti-Hemomancy Properties ---
 
-    /** Resistance to blood magic (scales with purity: purity / 100). */
+    /** Advanced resistance to blood magic (scales with clarity: clarity / 100). */
     float getSilverWardStrength();
 
-    /** Copper-based anti-blood field radius (scales with clarity: clarity / 100). */
+    /** Early copper-based anti-blood field (scales with purity: purity / 100). */
     float getVerdigrisAura();
 
     // --- Bonus Toggle State ---

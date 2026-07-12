@@ -1,0 +1,20 @@
+{
+  "type": "hemomancy:cardinal_rite_recipe",
+  "bloodCost": 0,
+  "riteType": "greater",
+  "required_degree": 0,
+  "riteName": "Rite of the Severed Covenant",
+  "riteDescription": "An exceptional founder's renunciation learned by curing Annetta Knowles. It disbands the founder's bloodline and cuts its integration from their infection.",
+  "pattern": [
+    ["PCP"],
+    ["CDC"],
+    ["PCP"]
+  ],
+  "key": {
+    "P": { "block": "hemomancy:lethean_poppy" },
+    "C": { "block": "hemomancy:cleansed_stone" },
+    "D": { "block": "hemomancy:unstained_podium" }
+  },
+  "result": { "id": "hemomancy:lethean_poppy_wreath" },
+  "unstained": true
+}

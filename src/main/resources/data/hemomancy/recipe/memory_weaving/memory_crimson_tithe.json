@@ -6,13 +6,13 @@
                       }
                   ],
     "enzymes":  {
-                    "animus":  1,
+                    "animus":  0,
                     "flammeus":  0,
                     "ductilis":  0,
                     "lux":  0,
                     "mortem":  1,
                     "congeatio":  0,
-                    "ferric":  0,
+                    "ferric":  1,
                     "tenebris":  0
                 },
     "blood":  100,

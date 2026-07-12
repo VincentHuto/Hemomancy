@@ -18,6 +18,11 @@ public class InitiatoryDegree implements IInitiatoryDegree, INBTSerializable<Com
 	private boolean qliphothCommunionDone = false;
 	private long pomeEmpowermentExpiry = 0L;
 	private int totalPomesConsumed = 0;
+	private boolean hasFoundedBloodline = false;
+	private boolean founderIntegrationSevered = false;
+	private boolean fungalRevelationWitnessed = false;
+	private boolean fungalSpineGranted = false;
+	private EnumArchonPath archonPath = EnumArchonPath.NONE;
 
 	@Override
 	public int getDegreeNumber() {
@@ -88,6 +93,17 @@ public class InitiatoryDegree implements IInitiatoryDegree, INBTSerializable<Com
 	@Override
 	public void setPomeEmpowermentExpiry(long tick) { this.pomeEmpowermentExpiry = tick; }
 
+	@Override public boolean hasFoundedBloodline() { return hasFoundedBloodline; }
+	@Override public void setHasFoundedBloodline(boolean founded) { hasFoundedBloodline = founded; }
+	@Override public boolean isFounderIntegrationSevered() { return founderIntegrationSevered; }
+	@Override public void setFounderIntegrationSevered(boolean severed) { founderIntegrationSevered = severed; }
+	@Override public boolean hasWitnessedFungalRevelation() { return fungalRevelationWitnessed; }
+	@Override public void setFungalRevelationWitnessed(boolean witnessed) { fungalRevelationWitnessed = witnessed; }
+	@Override public boolean hasFungalSpineGranted() { return fungalSpineGranted; }
+	@Override public void setFungalSpineGranted(boolean granted) { fungalSpineGranted = granted; }
+	@Override public EnumArchonPath getArchonPath() { return archonPath; }
+	@Override public void setArchonPath(EnumArchonPath path) { archonPath = path == null ? EnumArchonPath.NONE : path; }
+
 	@Override
 	public CompoundTag serializeNBT(HolderLookup.Provider provider) {
 		CompoundTag tag = new CompoundTag();
@@ -95,6 +111,11 @@ public class InitiatoryDegree implements IInitiatoryDegree, INBTSerializable<Com
 		tag.putBoolean("pome_communion_done", qliphothCommunionDone);
 		tag.putLong("pome_empowerment_expiry", pomeEmpowermentExpiry);
 		tag.putInt("pome_total_consumed", totalPomesConsumed);
+		tag.putBoolean("has_founded_bloodline", hasFoundedBloodline);
+		tag.putBoolean("founder_integration_severed", founderIntegrationSevered);
+		tag.putBoolean("fungal_revelation_witnessed", fungalRevelationWitnessed);
+		tag.putBoolean("fungal_spine_granted", fungalSpineGranted);
+		tag.putString("archon_path", archonPath.name());
 		CompoundTag progressTag = new CompoundTag();
 		pomeCommunionProgress.forEach((origin, count) ->
 				progressTag.putInt(String.valueOf(origin), count));
@@ -108,6 +129,11 @@ public class InitiatoryDegree implements IInitiatoryDegree, INBTSerializable<Com
 		qliphothCommunionDone = nbt.getBoolean("pome_communion_done");
 		pomeEmpowermentExpiry = nbt.getLong("pome_empowerment_expiry");
 		totalPomesConsumed = Math.min(9, nbt.getInt("pome_total_consumed"));
+		hasFoundedBloodline = nbt.getBoolean("has_founded_bloodline");
+		founderIntegrationSevered = nbt.getBoolean("founder_integration_severed");
+		fungalRevelationWitnessed = nbt.getBoolean("fungal_revelation_witnessed");
+		fungalSpineGranted = nbt.getBoolean("fungal_spine_granted");
+		archonPath = EnumArchonPath.byName(nbt.getString("archon_path"));
 		pomeCommunionProgress.clear();
 		CompoundTag progressTag = nbt.getCompound("pome_communion_progress");
 		for (String key : progressTag.getAllKeys()) {

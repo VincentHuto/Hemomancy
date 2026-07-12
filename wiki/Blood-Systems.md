@@ -80,7 +80,7 @@ Player/body sources such as base regeneration, **Sanguine Surge**, **Last Wind**
 Manipulations are organized into four power tiers:
 
 **HUMILIS** (Humble)
-- Degree 1 (Pledged) access
+- Degree 1 (Neophyte) access
 - Low blood cost (100-500 mL)
 - Basic effects
 - Foundation of blood magic
@@ -92,13 +92,13 @@ Manipulations are organized into four power tiers:
 - Specialized applications
 
 **SUMMA** (Superior)
-- Degree 3 (Adeptus) access
+- Degree 3 (Initiate) access
 - High blood cost (1500-3500 mL)
 - Powerful effects
 - Tactical importance
 
 **PERFECTUS** (Perfect)
-- Degree 4 (Sentinel) and higher
+- Degree 4 (Adept) and higher
 - Very high blood cost (3500-7000 mL)
 - Elite effects
 - Game-changing abilities
@@ -221,7 +221,7 @@ The **Scrying Podium** **Tendency** tab shows your dominant and latent tendencie
 
 ---
 
-### Ductilis (Metal/Iron)
+### Ductilis (Lightning / Nerves)
 
 **Theme:** Iron manipulation, weaponry, metallurgy
 
@@ -569,7 +569,7 @@ Teach your Drudges specific manipulations:
 
 ### Types
 
-**Sanguilith** (Sentinel+)
+**Sanguilith** (dormant MnA compatibility content)
 - Floating turret
 - Auto-targets enemies
 - Shoots blood projectiles
@@ -580,12 +580,6 @@ Teach your Drudges specific manipulations:
 - Blocks movement
 - Takes damage for you
 - Can be shaped
-
-**Crimson Sentinel**
-- Temporary warrior
-- Follows and fights
-- Medium duration
-- Moderate blood cost
 
 ### Creation
 - Requires specific manipulation

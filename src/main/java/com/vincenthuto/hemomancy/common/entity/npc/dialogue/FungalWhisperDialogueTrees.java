@@ -200,7 +200,7 @@ public final class FungalWhisperDialogueTrees {
 					.theme(DialogueTheme.FUNGAL)
 					.addNode(new DialogueNode("root", List.of(
 							"hemomancy.whisper.sanctified.v2.line1",
-							"hemomancy.whisper.sanctified.v2.line2"
+							"hemomancy.whisper.sanctified.v2.line2.canon"
 					), List.of(
 							memoOption(MemoDefinitions.FUNGAL_WHISPER_SANCTIFIED),
 							new DialogueOption("hemomancy.whisper.option.dismiss", null, null)
@@ -233,7 +233,7 @@ public final class FungalWhisperDialogueTrees {
 					.theme(DialogueTheme.FUNGAL)
 					.addNode(new DialogueNode("root", List.of(
 							"hemomancy.whisper.archon.v1.line1",
-							"hemomancy.whisper.archon.v1.line2",
+							"hemomancy.whisper.archon.v1.line2.canon",
 							"hemomancy.whisper.archon.v1.line3"
 					), List.of(
 							memoOption(MemoDefinitions.FUNGAL_WHISPER_ARCHON),
@@ -250,7 +250,7 @@ public final class FungalWhisperDialogueTrees {
 							new DialogueOption("hemomancy.whisper.option.dismiss", null, null)
 					)))
 					.addNode(new DialogueNode("truth", List.of(
-							"hemomancy.whisper.archon.v2.truth1",
+							"hemomancy.whisper.archon.v2.truth1.canon",
 							"hemomancy.whisper.archon.v2.truth2"
 					), List.of(
 							memoOption(MemoDefinitions.FUNGAL_WHISPER_TRUTH),
@@ -267,7 +267,7 @@ public final class FungalWhisperDialogueTrees {
 			case 5 -> "hemomancy.whisper.spine_growth.degree5";
 			case 6 -> "hemomancy.whisper.spine_growth.degree6";
 			case 7 -> "hemomancy.whisper.spine_growth.degree7";
-			case 8 -> "hemomancy.whisper.spine_growth.degree8";
+			case 8 -> "hemomancy.whisper.spine_growth.degree8.canon";
 			default -> "hemomancy.whisper.spine_growth.degree5";
 		};
 
@@ -300,8 +300,9 @@ public final class FungalWhisperDialogueTrees {
 	 * Archon with two mutually exclusive paths: carry the truth in silence and
 	 * walk away, or commit to the Eighth Degree and become its finest spore.
 	 * <p>
-	 * Selecting an option stamps {@code hemomancy:archon_choice_made} in the
-	 * player's persistent data and triggers the return journey to the overworld.
+	 * This dialogue opens after the projection has already returned the Archon to
+	 * their body. The selected route is stored in the initiatory-degree capability;
+	 * the Silent route is finalized only by successfully pruning the Qliphoth.
 	 */
 	public static DialogueTree coreWitnessDialogue() {
 		return DialogueTree.builder(SPEAKER, MYSTERY_ICON, 0)

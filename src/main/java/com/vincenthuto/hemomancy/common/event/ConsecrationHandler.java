@@ -36,7 +36,6 @@ import java.util.Map;
  *   <li>Venous Stone â†’ Cleansed Stone</li>
  *   <li>Sanguine Glass â†’ Cleansed Sanguine Glass</li>
  *   <li>Infested Venous Stone â†’ Cleansed Stone</li>
- *   <li>Hematic Iron Block â†’ Pale Silver Block</li>
  * </ul>
  */
 @EventBusSubscriber(modid = Hemomancy.MOD_ID)
@@ -58,8 +57,7 @@ public class ConsecrationHandler {
 			CONVERSIONS = Map.of(
 					BlockInit.venous_stone.get(), BlockInit.cleansed_stone.get(),
 					BlockInit.sanguine_glass.get(), BlockInit.cleansed_sanguine_glass.get(),
-					BlockInit.infested_venous_stone.get(), BlockInit.cleansed_stone.get(),
-					BlockInit.hematic_iron_block.get(), BlockInit.pale_silver_block.get()
+					BlockInit.infested_venous_stone.get(), BlockInit.cleansed_stone.get()
 			);
 		}
 		return CONVERSIONS;

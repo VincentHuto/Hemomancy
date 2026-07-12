@@ -28,7 +28,7 @@ public enum EnumModArmorTiers {
 	PRISMATIC("prismatic", 15, SoundEvents.ARMOR_EQUIP_GENERIC, 3.0F, 0.1F,
 			() -> Ingredient.of(Items.GLOW_INK_SAC)),
 	UNSTAINED("unstained", 15, SoundEvents.ARMOR_EQUIP_GENERIC, 3.0F, 0.1F,
-			() -> Ingredient.of(ItemInit.chitinous_husk.get())),
+			() -> Ingredient.of(ItemInit.consecrated_copper_ingot.get())),
 	BLOODLUST("blood_lust", 15, SoundEvents.ARMOR_EQUIP_GENERIC, 3.0F, 0.1F,
 			() -> Ingredient.of(ItemInit.hematic_iron_scrap.get())),
 	SILENT_ARCHON("silent_archon", 18, SoundEvents.ARMOR_EQUIP_NETHERITE, 3.0F, 0.1F,

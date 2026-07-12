@@ -29,18 +29,10 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
-import net.minecraft.world.entity.AnimationState;
-import net.minecraft.world.entity.EquipmentSlot;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
-import net.minecraft.world.entity.ai.goal.FloatGoal;
-import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
-import net.minecraft.world.entity.ai.goal.MeleeAttackGoal;
-import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
-import net.minecraft.world.entity.ai.goal.WaterAvoidingRandomStrollGoal;
+import net.minecraft.world.entity.ai.goal.*;
 import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.monster.Monster;
@@ -251,6 +243,7 @@ public class AnnettaKnowlesEntity extends Monster {
 
         LatentAnnettaInfectionEntity infection = EntityInit.latent_annetta_infection.get().create(server);
         if (infection != null) {
+			infection.setCuringPlayer(player.getUUID());
             infection.moveTo(this.getX() + 2.0D, this.getY(), this.getZ() + 2.0D, this.getYRot(), 0.0F);
             infection.setTarget(player);
             infection.setPersistenceRequired();
@@ -453,9 +446,13 @@ public class AnnettaKnowlesEntity extends Monster {
     }
 
     private boolean canCure(Player player) {
-        return HemoCapabilityAccess.getUnstainedProgress(player)
+        boolean clarityRoute = HemoCapabilityAccess.getUnstainedProgress(player)
                 .map(progress -> progress.hasClarityUnlocked())
                 .orElse(false);
+        boolean founderException = HemoCapabilityAccess.getInitiatoryDegree(player)
+                .map(degree -> degree.hasFoundedBloodline())
+                .orElse(false);
+        return clarityRoute || founderException;
     }
 
     private boolean isToothPecksJar(ItemStack stack) {

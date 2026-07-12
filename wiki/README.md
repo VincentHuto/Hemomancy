@@ -1,5 +1,7 @@
 # Hemomancy Wiki
 
+> Canon policy: this wiki is based on the authoritative lore and mechanics documents under `docs/`; it does not override them.
+
 This directory contains the GitHub Wiki pages for the Hemomancy mod.
 
 ## Wiki Structure
@@ -59,7 +61,7 @@ Alternatively, use GitHub's wiki web interface to create/edit pages by copying t
 When updating, always check:
 - **docs/HEMOMANCY_REFERENCE.md** — Implementation details and status
 - **docs/LORE_REFERENCE.md** — Canonical lore and worldbuilding
-- Current code in `src/` — Source of truth when docs conflict
+- Current code in `src/` — implementation evidence that must be corrected when it conflicts with the docs
 
 ## Wiki Pages Overview
 

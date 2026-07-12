@@ -5,7 +5,6 @@ import com.vincenthuto.hemomancy.client.render.item.unstained.AbsolutionDaggerIt
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.EnumPurityStage;
 import com.vincenthuto.hemomancy.common.init.EffectInit;
-import com.vincenthuto.hemomancy.common.item.unstained.PaleHumorFlaskItem;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.core.component.DataComponents;
@@ -54,7 +53,7 @@ public class AbsolutionDaggerItem extends SwordItem implements HemoClientItemExt
 		tooltip.add(Component.literal(
 				"Coated in a hyper coagulant that seems to halt any blood from being spilled.")
 				.withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC));
-		tooltip.add(Component.literal("On hit: Weakness I (2s)")
+		tooltip.add(Component.literal("Inherent hemolytic edge: Hemolysis and Weakness on hit.")
 				.withStyle(ChatFormatting.WHITE));
 		tooltip.add(Component.literal("Deals increased damage to low-health enemies.")
 				.withStyle(ChatFormatting.WHITE));
@@ -73,11 +72,8 @@ public class AbsolutionDaggerItem extends SwordItem implements HemoClientItemExt
 			// Always apply Weakness I for 2 seconds
 			target.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, WEAKNESS_DURATION, 0, false, true, true));
 
-			// Apply hemolysis if coated with white humor
-			CompoundTag coatTag = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
-			if (coatTag.getBoolean(PaleHumorFlaskItem.TAG_WHITE_HUMOR_COATED)) {
-				target.addEffect(new MobEffectInstance(EffectInit.hemolysis, 120, 0, false, true, true));
-			}
+			// Every initiated Unstained dagger carries its special hemolytic edge inherently.
+			target.addEffect(new MobEffectInstance(EffectInit.hemolysis, 120, 0, false, true, true));
 			float maxHealth = target.getMaxHealth();
 			if (maxHealth > 0.0F) {
 				float missingHealthRatio = 1.0F - (target.getHealth() / maxHealth);

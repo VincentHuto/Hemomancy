@@ -84,4 +84,24 @@ public interface IInitiatoryDegree {
 
 	/** Sets the game tick at which the pome empowerment expires. */
 	void setPomeEmpowermentExpiry(long tick);
+
+	boolean hasFoundedBloodline();
+
+	void setHasFoundedBloodline(boolean founded);
+
+	boolean isFounderIntegrationSevered();
+
+	void setFounderIntegrationSevered(boolean severed);
+
+	boolean hasWitnessedFungalRevelation();
+
+	void setFungalRevelationWitnessed(boolean witnessed);
+
+	boolean hasFungalSpineGranted();
+
+	void setFungalSpineGranted(boolean granted);
+
+	EnumArchonPath getArchonPath();
+
+	void setArchonPath(EnumArchonPath path);
 }
