@@ -2,6 +2,8 @@ package com.vincenthuto.hemomancy.common.entity.projectile;
 
 import com.vincenthuto.hemomancy.common.init.EffectInit;
 import com.vincenthuto.hemomancy.common.init.EntityInit;
+import com.vincenthuto.hemomancy.common.entity.summon.BoundPuppeteerSummon;
+import com.vincenthuto.hemomancy.common.entity.summon.BoundSummonBehavior;
 import com.vincenthuto.hutoslib.client.particle.factory.GlowParticleFactory;
 import com.vincenthuto.hutoslib.client.particle.util.HLParticleUtils;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
@@ -11,8 +13,10 @@ import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.projectile.AbstractArrow;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.EntityHitResult;
 
@@ -27,7 +31,8 @@ public class BloodShotEntity extends AbstractArrow implements CombatWeaponCarrie
 	}
 
 	public BloodShotEntity(Level worldIn, double x, double y, double z) {
-		super(EntityInit.blood_shot.get(), x, y, z, worldIn, ItemStack.EMPTY, (ItemStack) null);
+		super(EntityInit.blood_shot.get(), x, y, z, worldIn, new ItemStack(Items.ARROW), (ItemStack) null);
+		this.pickup = Pickup.DISALLOWED;
 	}
 
 	public BloodShotEntity(Level worldIn, LivingEntity shooter) {
@@ -35,8 +40,9 @@ public class BloodShotEntity extends AbstractArrow implements CombatWeaponCarrie
 	}
 
 	public BloodShotEntity(Level worldIn, LivingEntity shooter, @Nullable ItemStack firedFromWeapon) {
-		super(EntityInit.blood_shot.get(), shooter, worldIn, ItemStack.EMPTY,
+		super(EntityInit.blood_shot.get(), shooter, worldIn, new ItemStack(Items.ARROW),
 				firedFromWeapon != null && !firedFromWeapon.isEmpty() ? firedFromWeapon : null);
+		this.pickup = Pickup.DISALLOWED;
 		this.combatWeaponItem = copyCombatWeapon(firedFromWeapon);
 	}
 
@@ -70,7 +76,9 @@ public class BloodShotEntity extends AbstractArrow implements CombatWeaponCarrie
 
 	@Override
 	protected ItemStack getDefaultPickupItem() {
-		return ItemStack.EMPTY;
+		// Vanilla 1.21.1 requires a non-empty internal pickup stack when saving arrows.
+		// Blood Shots remain non-pickable and render as their own projectile entity.
+		return new ItemStack(Items.ARROW);
 	}
 
 	@Override
@@ -82,6 +90,16 @@ public class BloodShotEntity extends AbstractArrow implements CombatWeaponCarrie
 
 		}
 
+	}
+
+	@Override
+	protected boolean canHitEntity(Entity target) {
+		Entity owner = getOwner();
+		if (owner instanceof Mob mob && owner instanceof BoundPuppeteerSummon bound
+				&& target instanceof LivingEntity living) {
+			return super.canHitEntity(target) && BoundSummonBehavior.canAttack(mob, bound, living);
+		}
+		return super.canHitEntity(target);
 	}
 
 	@Override

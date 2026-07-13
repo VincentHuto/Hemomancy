@@ -330,6 +330,13 @@ public class BlockInit {
 			() -> new Block(BlockBehaviour.Properties.of().strength(1.5F, 3.0F).sound(SoundType.AMETHYST)
 					.lightLevel((state) -> 10).noOcclusion()));
 
+	public static final DeferredHolder<Block, Block> organic_prism = BASEBLOCKS.register("organic_prism",
+			() -> new Block(BlockBehaviour.Properties.of().strength(1.5F, 3.0F).sound(SoundType.AMETHYST)
+					.lightLevel((state) -> 10).noOcclusion()));
+
+	public static final DeferredHolder<Block, Block> puppeteers_wool = BASEBLOCKS.register("puppeteers_wool",
+			() -> new Block(BlockBehaviour.Properties.of().strength(0.8F).sound(SoundType.WOOL)));
+
 	public static final DeferredHolder<Block, Block> hematic_iron_block = BASEBLOCKS.register("hematic_iron_block",
 			() -> new Block(BlockBehaviour.Properties.of().requiresCorrectToolForDrops().strength(5.0F, 6.0F)
 					.sound(SoundType.METAL)));

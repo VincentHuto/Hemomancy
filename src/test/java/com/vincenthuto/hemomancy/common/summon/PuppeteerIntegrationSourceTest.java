@@ -37,12 +37,14 @@ public final class PuppeteerIntegrationSourceTest {
 		String spitter = read("src/main/java/com/vincenthuto/hemomancy/common/entity/summon/MarrowSpitterEntity.java");
 		String hulk = read("src/main/java/com/vincenthuto/hemomancy/common/entity/summon/GoreboundHulkEntity.java");
 		String puppet = read("src/main/java/com/vincenthuto/hemomancy/common/entity/summon/MnemonistPuppetEntity.java");
+		String groundPuppet = read("src/main/java/com/vincenthuto/hemomancy/common/entity/summon/GroundPuppetEntity.java");
 		String lang = read("src/main/resources/assets/hemomancy/lang/en_us.json");
 		String reference = read("docs/HEMOMANCY_REFERENCE.md");
 		String loreReference = read("docs/LORE_REFERENCE.md");
 		String harbingerWiki = read("wiki/Harbinger-Path.md");
 		String mechanicsWiki = read("wiki/Advanced-Mechanics.md");
 		String attachments = read("src/main/java/com/vincenthuto/hemomancy/common/capability/HemoAttachmentTypes.java");
+		String bloodShot = read("src/main/java/com/vincenthuto/hemomancy/common/entity/projectile/BloodShotEntity.java");
 		String craftingKey = read("src/main/java/com/vincenthuto/hemomancy/common/network/capa/harbinger/BloodCraftingKeyPressPacket.java");
 		String craftingHelper = read("src/main/java/com/vincenthuto/hemomancy/common/network/capa/harbinger/BloodStructureCraftingHelper.java");
 		String feedManager = read("src/main/java/com/vincenthuto/hemomancy/common/event/BloodStructureFeedManager.java");
@@ -163,8 +165,25 @@ public final class PuppeteerIntegrationSourceTest {
 		assertContains(feedManager, "recipe instanceof PuppeteerTrialRecipe trial");
 		assertNotContains(craftingKey, "if (tryActivatePuppeteerTrial(player, sLevel, hitPos))");
 		assertContains(spitter, "shouldDespawnInPeaceful");
+		assertContains(spitter, "protected boolean isSunBurnTick()");
+		assertContains(spitter, "new BloodShotEntity(level(), this)");
+		assertContains(spitter, "performRangedAttack");
+		assertContains(spitter, "tickBoundOrbit");
+		assertContains(spitter, "setNoGravity(true)");
+		assertNotContains(spitter, "Items.BOW");
+		assertNotContains(spitter, "RangedBowAttackGoal");
+		assertNotContains(spitter, "getNavigation().moveTo(owner");
+		assertContains(bloodShot, "owner instanceof BoundPuppeteerSummon");
 		assertContains(hulk, "shouldDespawnInPeaceful");
+		assertContains(hulk, "extends GroundPuppetEntity");
 		assertContains(puppet, "shouldDespawnInPeaceful");
+		assertContains(puppet, "extends GroundPuppetEntity");
+		assertOrdered(puppet, "BoundSummonBehavior.trialServerTick(this, this);", "tickMemoryReplay();", "return;");
+		assertContains(groundPuppet, "protected boolean isSunSensitive()");
+		assertContains(groundPuppet, "protected boolean convertsInWater()");
+		assertContains(groundPuppet, "setCanPickUpLoot(false)");
+		assertContains(groundPuppet, "setBaby(false)");
+		assertContains(groundPuppet, "populateDefaultEquipmentSlots");
 		assertOrdered(will,
 				"if (!(stack.getItem() instanceof MarionetteCrossbarItem))",
 				"MarionetteCrossbarItem.validateControl(stack, serverPlayer, true)",

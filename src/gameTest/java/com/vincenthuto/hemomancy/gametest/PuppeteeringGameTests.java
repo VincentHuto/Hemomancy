@@ -6,6 +6,7 @@ import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.shared.skill.EnumSkillStates;
 import com.vincenthuto.hemomancy.common.entity.summon.BoundPuppeteerSummon;
 import com.vincenthuto.hemomancy.common.entity.summon.BoundSummonBehavior;
+import com.vincenthuto.hemomancy.common.entity.projectile.BloodShotEntity;
 import com.vincenthuto.hemomancy.common.init.BlockInit;
 import com.vincenthuto.hemomancy.common.init.EntityInit;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
@@ -216,6 +217,71 @@ public final class PuppeteeringGameTests {
 			} finally {
 				summon.discard();
 				removePlayer(owner);
+			}
+		});
+	}
+
+	@GameTest(templateNamespace = "minecraft", template = EMPTY_TEMPLATE, timeoutTicks = 80)
+	public static void marrowSpitterFiresBloodShotsInsteadOfArrows(GameTestHelper helper) {
+		ServerPlayer target = testPlayer(helper);
+		PuppeteerSummonDefinition definition = PuppeteerSummonDefinitions
+				.byName(PuppeteerSummonDefinitions.MARROW_SPITTER).orElseThrow();
+		Mob spitter = PuppeteerSummonFactory.createTrial(definition, helper.getLevel(), target,
+				helper.absolutePos(new BlockPos(1, 3, 6))).orElseThrow();
+		spitter.setTarget(target);
+		net.minecraft.world.phys.Vec3 startingPosition = spitter.position();
+		helper.getLevel().addFreshEntity(spitter);
+
+		helper.runAfterDelay(50, () -> {
+			try {
+				int shots = helper.getLevel().getEntitiesOfClass(BloodShotEntity.class,
+						spitter.getBoundingBox().inflate(32.0)).size();
+				helper.assertTrue(shots > 0, "Marrow Spitter must fire BloodShot projectiles");
+				helper.assertTrue(spitter.position().distanceTo(startingPosition) > 0.5,
+						"Marrow Spitter must hover around its player anchor instead of remaining ground-locked");
+				helper.assertTrue(!spitter.isOnFire(), "Marrow Spitter must not ignite in sunlight");
+				helper.succeed();
+			} finally {
+				spitter.discard();
+				removePlayer(target);
+			}
+		});
+	}
+
+	@GameTest(templateNamespace = "minecraft", template = EMPTY_TEMPLATE, timeoutTicks = 100)
+	public static void goreboundHulkSurvivesDaylightAndPursuesItsTarget(GameTestHelper helper) {
+		assertGroundPuppetPursuesTarget(helper, PuppeteerSummonDefinitions.GOREBOUND_HULK,
+				"Gorebound Hulk");
+	}
+
+	@GameTest(templateNamespace = "minecraft", template = EMPTY_TEMPLATE, timeoutTicks = 100)
+	public static void mnemonistSurvivesDaylightAndPursuesItsTarget(GameTestHelper helper) {
+		assertGroundPuppetPursuesTarget(helper, PuppeteerSummonDefinitions.MNEMONIST_PUPPET,
+				"Mnemonist Puppet");
+	}
+
+	private static void assertGroundPuppetPursuesTarget(GameTestHelper helper, String summonName, String displayName) {
+		ServerPlayer target = testPlayer(helper);
+		PuppeteerSummonDefinition definition = PuppeteerSummonDefinitions.byName(summonName).orElseThrow();
+		Mob puppet = PuppeteerSummonFactory.createTrial(definition, helper.getLevel(), target,
+				helper.absolutePos(new BlockPos(1, 1, 5))).orElseThrow();
+		puppet.setTarget(target);
+		double startingDistance = puppet.distanceTo(target);
+		helper.getLevel().addFreshEntity(puppet);
+
+		helper.runAfterDelay(60, () -> {
+			try {
+				helper.assertTrue(puppet.isAlive(), displayName + " must remain alive during combat");
+				helper.assertTrue(!puppet.isOnFire(), displayName + " must not ignite in sunlight");
+				helper.assertTrue(puppet.getTarget() == target,
+						displayName + " must retain its assigned hostile target");
+				helper.assertTrue(puppet.distanceTo(target) < startingDistance - 0.75,
+						displayName + " must navigate toward its target; startDistance=" + startingDistance
+								+ ", finalDistance=" + puppet.distanceTo(target) + ", pos=" + puppet.position());
+				helper.succeed();
+			} finally {
+				puppet.discard();
+				removePlayer(target);
 			}
 		});
 	}

@@ -1,0 +1,15 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "PP",
+    "PP"
+  ],
+  "key": {
+    "P": {
+      "item": "hemomancy:puppeteering_thread"
+    }
+  },
+  "result": {
+    "id": "hemomancy:puppeteers_wool"
+  }
+}

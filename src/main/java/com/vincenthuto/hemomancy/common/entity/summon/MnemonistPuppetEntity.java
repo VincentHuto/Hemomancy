@@ -25,7 +25,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-public class MnemonistPuppetEntity extends Zombie implements BoundPuppeteerSummon {
+public class MnemonistPuppetEntity extends GroundPuppetEntity implements BoundPuppeteerSummon {
 	private static final EntityDataAccessor<Optional<UUID>> DATA_OWNER_UUID =
 			SynchedEntityData.defineId(MnemonistPuppetEntity.class, EntityDataSerializers.OPTIONAL_UUID);
 	private static final EntityDataAccessor<Optional<UUID>> DATA_CROSSBAR_UUID =
@@ -81,6 +81,7 @@ public class MnemonistPuppetEntity extends Zombie implements BoundPuppeteerSummo
 		}
 		if (hemomancy$isTrialSummon()) {
 			BoundSummonBehavior.trialServerTick(this, this);
+			tickMemoryReplay();
 			return;
 		}
 		if (BoundSummonBehavior.commonServerTick(this, this)) {

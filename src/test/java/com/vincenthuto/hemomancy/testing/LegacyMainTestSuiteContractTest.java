@@ -7,6 +7,6 @@ import org.junit.jupiter.api.Test;
 class LegacyMainTestSuiteContractTest {
 	@Test
 	void discoversEveryExistingLegacyMainTest() throws Exception {
-		assertEquals(335, LegacyMainTestAdapterTest.discoverLegacyMainClasses().size());
+		assertEquals(337, LegacyMainTestAdapterTest.discoverLegacyMainClasses().size());
 	}
 }

@@ -226,9 +226,9 @@ Advanced Harbingers can call shaped bodies as temporary extensions of learned bl
 
 **Learning shapes:**
 
-- Degree 3: **Veinwing Vulture** and **Marrow Spitter** trials, each activated with Sanguine Quintessence.
-- Degree 4: **Gorebound Hulk** trial, also activated with Sanguine Quintessence.
-- Degree 5: **Mnemonist Puppet** trial, activated with Mnemonic Ambergris.
+- Degree 3: **Veinwing Vulture** and **Marrow Spitter** trials, each activated with Sanguine Quintessence. The Spitter is a sunlight-immune hovering sentry: when bound it slowly orbits its puppeteer and fires Blood Shots without physically charging targets.
+- Degree 4: **Gorebound Hulk** trial, also activated with Sanguine Quintessence. The Hulk is a sunlight-immune constructed bruiser that pursues assigned targets on foot.
+- Degree 5: **Mnemonist Puppet** trial, activated with Mnemonic Ambergris. The Mnemonist is likewise a constructed, sunlight-immune body; it pursues assigned targets and replays captured damage memories in both trial and bound forms.
 - Defeating an unbound trial form permanently teaches that shape to the recorded caster.
 
 **Preparing a Crossbar:**

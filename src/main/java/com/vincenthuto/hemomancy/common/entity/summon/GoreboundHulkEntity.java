@@ -17,7 +17,7 @@ import net.minecraft.world.level.Level;
 import java.util.Optional;
 import java.util.UUID;
 
-public class GoreboundHulkEntity extends Zombie implements BoundPuppeteerSummon {
+public class GoreboundHulkEntity extends GroundPuppetEntity implements BoundPuppeteerSummon {
 	private static final EntityDataAccessor<Optional<UUID>> DATA_OWNER_UUID =
 			SynchedEntityData.defineId(GoreboundHulkEntity.class, EntityDataSerializers.OPTIONAL_UUID);
 	private static final EntityDataAccessor<Optional<UUID>> DATA_CROSSBAR_UUID =

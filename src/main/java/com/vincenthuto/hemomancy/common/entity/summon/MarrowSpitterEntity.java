@@ -1,6 +1,7 @@
 package com.vincenthuto.hemomancy.common.entity.summon;
 
 import com.vincenthuto.hemomancy.common.summon.PuppeteerSummonRules;
+import com.vincenthuto.hemomancy.common.entity.projectile.BloodShotEntity;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
@@ -8,24 +9,29 @@ import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.entity.SpawnGroupData;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.FloatGoal;
-import net.minecraft.world.entity.ai.goal.RangedBowAttackGoal;
 import net.minecraft.world.entity.monster.Skeleton;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
+import net.minecraft.world.phys.Vec3;
 
 import javax.annotation.Nullable;
 import java.util.Optional;
 import java.util.UUID;
 
 public class MarrowSpitterEntity extends Skeleton implements BoundPuppeteerSummon {
+	private static final int SHOT_INTERVAL_TICKS = 35;
+	private static final double ORBIT_RADIUS = 3.25;
+	private static final double ORBIT_HEIGHT = 1.8;
 	private static final EntityDataAccessor<Optional<UUID>> DATA_OWNER_UUID =
 			SynchedEntityData.defineId(MarrowSpitterEntity.class, EntityDataSerializers.OPTIONAL_UUID);
 	private static final EntityDataAccessor<Optional<UUID>> DATA_CROSSBAR_UUID =
@@ -38,10 +44,11 @@ public class MarrowSpitterEntity extends Skeleton implements BoundPuppeteerSummo
 			SynchedEntityData.defineId(MarrowSpitterEntity.class, EntityDataSerializers.BOOLEAN);
 	private static final EntityDataAccessor<Optional<UUID>> DATA_TRIAL_CASTER_UUID =
 			SynchedEntityData.defineId(MarrowSpitterEntity.class, EntityDataSerializers.OPTIONAL_UUID);
+	private int shotCooldown = 10;
 
 	public MarrowSpitterEntity(EntityType<? extends Skeleton> type, Level level) {
 		super(type, level);
-		setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(Items.BOW));
+		setNoGravity(true);
 	}
 
 	public static AttributeSupplier.Builder setAttributes() {
@@ -54,7 +61,6 @@ public class MarrowSpitterEntity extends Skeleton implements BoundPuppeteerSummo
 	@Override
 	protected void registerGoals() {
 		this.goalSelector.addGoal(0, new FloatGoal(this));
-		this.goalSelector.addGoal(2, new RangedBowAttackGoal<>(this, 1.0, 30, 15.0F));
 	}
 
 	@Override
@@ -72,29 +78,80 @@ public class MarrowSpitterEntity extends Skeleton implements BoundPuppeteerSummo
 	@Override
 	public SpawnGroupData finalizeSpawn(ServerLevelAccessor level, DifficultyInstance difficulty,
 										MobSpawnType reason, @Nullable SpawnGroupData spawnData) {
+		setNoGravity(true);
 		SpawnGroupData data = super.finalizeSpawn(level, difficulty, reason, spawnData);
-		setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(Items.BOW));
+		setItemSlot(EquipmentSlot.MAINHAND, ItemStack.EMPTY);
 		return data;
 	}
 
 	@Override
 	public void tick() {
 		super.tick();
+		setNoGravity(true);
 		if (level().isClientSide) {
 			return;
 		}
 		if (hemomancy$isTrialSummon()) {
 			BoundSummonBehavior.trialServerTick(this, this);
+			LivingEntity target = getTarget();
+			if (target != null) tickHoverAround(target, 6.0, 2.2);
+			tickSentryFire();
 			return;
 		}
 		if (BoundSummonBehavior.commonServerTick(this, this)) {
 			Optional<Player> owner = BoundSummonBehavior.ownerFor(this, this);
-			if (getTarget() == null && owner.isPresent()
-					&& BoundSummonBehavior.shouldFollowOwner((net.minecraft.server.level.ServerPlayer) owner.get(), this)
-					&& distanceToSqr(owner.get()) > 36.0) {
-				getNavigation().moveTo(owner.get(), 1.0);
+			getNavigation().stop();
+			if (owner.isPresent()
+					&& BoundSummonBehavior.shouldFollowOwner((net.minecraft.server.level.ServerPlayer) owner.get(), this)) {
+				tickBoundOrbit(owner.get());
 			}
+			tickSentryFire();
 		}
+	}
+
+	private void tickBoundOrbit(Player owner) {
+		tickHoverAround(owner, ORBIT_RADIUS, ORBIT_HEIGHT);
+	}
+
+	private void tickHoverAround(LivingEntity anchor, double radius, double height) {
+		double phase = tickCount * 0.025 + Math.floorMod(getUUID().hashCode(), 360) * (Math.PI / 180.0);
+		double bob = Math.sin(tickCount * 0.055 + phase) * 0.22;
+		Vec3 desired = anchor.position().add(Math.cos(phase) * radius, height + bob, Math.sin(phase) * radius);
+		Vec3 correction = desired.subtract(position());
+		Vec3 velocity = getDeltaMovement().scale(0.78).add(correction.scale(0.035));
+		double speed = velocity.length();
+		if (speed > 0.18) velocity = velocity.scale(0.18 / speed);
+		setDeltaMovement(velocity);
+		hurtMarked = true;
+	}
+
+	private void tickSentryFire() {
+		if (shotCooldown > 0) shotCooldown--;
+		LivingEntity target = getTarget();
+		if (target == null || !target.isAlive() || !canAttack(target)) return;
+		getLookControl().setLookAt(target, 30.0F, 30.0F);
+		if (shotCooldown <= 0 && distanceToSqr(target) <= 24.0 * 24.0) {
+			performRangedAttack(target, 1.0F);
+			shotCooldown = SHOT_INTERVAL_TICKS;
+		}
+	}
+
+	@Override
+	public void performRangedAttack(LivingEntity target, float distanceFactor) {
+		BloodShotEntity shot = new BloodShotEntity(level(), this);
+		double dx = target.getX() - getX();
+		double dz = target.getZ() - getZ();
+		double horizontal = Math.sqrt(dx * dx + dz * dz);
+		double dy = target.getY(0.55) - shot.getY() + horizontal * 0.06;
+		shot.setBaseDamage(Math.max(2.0, getAttributeValue(Attributes.ATTACK_DAMAGE)));
+		shot.shoot(dx, dy, dz, 1.7F, 2.5F);
+		level().addFreshEntity(shot);
+		level().playSound(null, blockPosition(), SoundEvents.LLAMA_SPIT, SoundSource.HOSTILE, 0.65F, 0.75F);
+	}
+
+	@Override
+	protected boolean isSunBurnTick() {
+		return false;
 	}
 
 	@Override
@@ -118,6 +175,7 @@ public class MarrowSpitterEntity extends Skeleton implements BoundPuppeteerSummo
 	public void readAdditionalSaveData(CompoundTag tag) {
 		super.readAdditionalSaveData(tag);
 		BoundSummonBehavior.load(this, tag);
+		setItemSlot(EquipmentSlot.MAINHAND, ItemStack.EMPTY);
 	}
 
 	@Override public UUID hemomancy$getOwnerUUID() { return entityData.get(DATA_OWNER_UUID).orElse(null); }
