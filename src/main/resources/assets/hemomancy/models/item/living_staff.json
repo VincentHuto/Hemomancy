@@ -1,5 +1,5 @@
 {
-	"format_version": "1.21.11",
+	"format_version": "1.9.0",
 	"credit": "Made with Blockbench",
 	"textures": {
 		"0": "hemomancy:block/venous_stone",
@@ -629,55 +629,6 @@
 					]
 				}
 			]
-		},
-		{
-			"name": "living_staff_barbed_fitting",
-			"origin": [8, 8, 8],
-			"scope": 0,
-			"color": 0,
-			"children": []
-		},
-		{
-			"name": "living_staff_worn_vow",
-			"origin": [8, 8, 8],
-			"scope": 0,
-			"color": 0,
-			"children": []
-		},
-		{
-			"name": "living_staff_chitinite_fitting",
-			"origin": [8, 8, 8],
-			"scope": 0,
-			"color": 0,
-			"children": []
-		},
-		{
-			"name": "living_staff_prismatic_fitting",
-			"origin": [8, 8, 8],
-			"scope": 0,
-			"color": 0,
-			"children": []
-		},
-		{
-			"name": "living_staff_crimson_vestment",
-			"origin": [8, 8, 8],
-			"scope": 0,
-			"color": 0,
-			"children": []
-		},
-		{
-			"name": "living_staff_monolithic_frame",
-			"origin": [8, 8, 8],
-			"scope": 0,
-			"color": 0,
-			"children": []
-		},
-		{
-			"name": "living_staff_assumed_limb",
-			"origin": [8, 8, 8],
-			"scope": 0,
-			"color": 0,
-			"children": []
 		}
 	]
 }

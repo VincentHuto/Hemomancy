@@ -330,9 +330,25 @@ public class BlockInit {
 			() -> new Block(BlockBehaviour.Properties.of().strength(1.5F, 3.0F).sound(SoundType.AMETHYST)
 					.lightLevel((state) -> 10).noOcclusion()));
 
+	public static final DeferredHolder<Block, Block> chitinite_block = BASEBLOCKS.register("chitinite_block",
+			() -> new Block(BlockBehaviour.Properties.of().strength(1.5F, 3.0F).sound(SoundType.STONE)
+					.lightLevel((state) -> 10).noOcclusion()));
+
+	public static final DeferredHolder<Block, Block> sclerite_block = BASEBLOCKS.register("sclerite_block",
+			() -> new Block(BlockBehaviour.Properties.of().strength(1.5F, 3.0F).sound(SoundType.COPPER)
+					.lightLevel((state) -> 10).noOcclusion()));
+
 	public static final DeferredHolder<Block, Block> organic_prism = BASEBLOCKS.register("organic_prism",
 			() -> new Block(BlockBehaviour.Properties.of().strength(1.5F, 3.0F).sound(SoundType.AMETHYST)
 					.lightLevel((state) -> 10).noOcclusion()));
+
+	public static final DeferredHolder<Block, Block> mnemonic_ambergris_block = BASEBLOCKS.register("mnemonic_ambergris_block",
+			() -> new Block(BlockBehaviour.Properties.of().strength(1.5F, 3.0F).sound(SoundType.WART_BLOCK)
+					.lightLevel((state) -> 10).noOcclusion()));
+
+
+
+
 
 	public static final DeferredHolder<Block, Block> puppeteers_wool = BASEBLOCKS.register("puppeteers_wool",
 			() -> new Block(BlockBehaviour.Properties.of().strength(0.8F).sound(SoundType.WOOL)));
