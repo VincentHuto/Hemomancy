@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "##",
+    "##"
+  ],
+  "key": {
+    "#": { "item": "hemomancy:chitinite" }
+  },
+  "result": { "item": "hemomancy:chitinite_block", "count": 1 }
+}

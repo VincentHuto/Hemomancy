@@ -57,6 +57,10 @@
 	  "hemomancy:pallid_silver_chain",
 	  "hemomancy:hematic_iron_chain",
 	  "hemomancy:ossuary_clock",
-	  "hemomancy:humoral_barometer"
+	  "hemomancy:humoral_barometer",
+	  "hemomancy:mnemonic_ambergris_block",
+	  "hemomancy:organic_prism",
+	  "hemomancy:sclerite_block",
+	  "hemomancy:chitinite_block"
   ]
 }

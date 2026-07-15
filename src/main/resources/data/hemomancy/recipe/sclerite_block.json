@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "##",
+    "##"
+  ],
+  "key": {
+    "#": { "item": "hemomancy:sclerite" }
+  },
+  "result": { "item": "hemomancy:sclerite_block", "count": 1 }
+}
