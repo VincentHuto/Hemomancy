@@ -1009,6 +1009,8 @@ public class HemoCommand {
 		cap.setPurity(0);
 		cap.setClarityUnlocked(false);
 		cap.setClarity(0);
+		cap.setAcceptedObservances(0);
+		cap.setClaimedObservances(0);
 		UnstainedProgressEvents.syncProgress(player, cap);
 		source.sendSuccess(() -> Component.literal("Reset ")
 				.append(Component.literal(player.getName().getString()).withStyle(ChatFormatting.GOLD))

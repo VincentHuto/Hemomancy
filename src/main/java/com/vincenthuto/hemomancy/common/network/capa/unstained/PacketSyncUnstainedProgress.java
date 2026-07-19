@@ -30,6 +30,7 @@ public class PacketSyncUnstainedProgress implements CustomPacketPayload {
     private final boolean silverWardEnabled, verdigrisAuraEnabled;
     private final boolean usedAltarOfCleansing;
 	private final boolean infectionSuppressed, clarityPrepared, annettaSeveranceUnlocked;
+	private final int acceptedObservances, claimedObservances;
 
     public PacketSyncUnstainedProgress(IUnstainedProgress p) {
         this.begunPurification = p.hasBegunPurification();
@@ -56,6 +57,8 @@ public class PacketSyncUnstainedProgress implements CustomPacketPayload {
 		this.infectionSuppressed = p.isInfectionSuppressed();
 		this.clarityPrepared = p.isClarityPrepared();
 		this.annettaSeveranceUnlocked = p.isAnnettaSeveranceUnlocked();
+		this.acceptedObservances = p.getAcceptedObservances();
+		this.claimedObservances = p.getClaimedObservances();
     }
 
     private PacketSyncUnstainedProgress(FriendlyByteBuf buf) {
@@ -83,6 +86,8 @@ public class PacketSyncUnstainedProgress implements CustomPacketPayload {
 		this.infectionSuppressed = buf.readBoolean();
 		this.clarityPrepared = buf.readBoolean();
 		this.annettaSeveranceUnlocked = buf.readBoolean();
+		this.acceptedObservances = buf.readVarInt();
+		this.claimedObservances = buf.readVarInt();
     }
 
     public static void encode(FriendlyByteBuf buf, PacketSyncUnstainedProgress msg) {
@@ -110,6 +115,8 @@ public class PacketSyncUnstainedProgress implements CustomPacketPayload {
 		buf.writeBoolean(msg.infectionSuppressed);
 		buf.writeBoolean(msg.clarityPrepared);
 		buf.writeBoolean(msg.annettaSeveranceUnlocked);
+		buf.writeVarInt(msg.acceptedObservances);
+		buf.writeVarInt(msg.claimedObservances);
     }
 
     public static PacketSyncUnstainedProgress decode(FriendlyByteBuf buf) {
@@ -147,6 +154,8 @@ public class PacketSyncUnstainedProgress implements CustomPacketPayload {
 							progress.setInfectionSuppressed(msg.infectionSuppressed);
 							progress.setClarityPrepared(msg.clarityPrepared);
 							progress.setAnnettaSeveranceUnlocked(msg.annettaSeveranceUnlocked);
+							progress.setAcceptedObservances(msg.acceptedObservances);
+							progress.setClaimedObservances(msg.claimedObservances);
                         });
             }
         });

@@ -19,6 +19,7 @@ import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.mission.HarbingerArtificerAssignmentHelper;
 import com.vincenthuto.hemomancy.common.mission.FirstBloodcraftAssignmentHelper;
 import com.vincenthuto.hemomancy.common.mission.FirstSeparationAssignmentHelper;
+import com.vincenthuto.hemomancy.common.mission.UnstainedObservanceHelper;
 import com.vincenthuto.hemomancy.common.util.SpecimenJarData;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.BloodStructureHintItem;
 import com.vincenthuto.hemomancy.common.item.shared.PreWrittenMemoItem;
@@ -82,6 +83,16 @@ public class DialogueEventHandler {
 			return;
 		}
 		switch (event.getEventId()) {
+			case "acolyte_task_gather_ghost_pipe" -> UnstainedObservanceHelper.handle(player,
+					UnstainedObservanceHelper.Observance.GATHER_GHOST_PIPE);
+			case "acolyte_task_wreath" -> UnstainedObservanceHelper.handle(player,
+					UnstainedObservanceHelper.Observance.WEAVE_WREATH);
+			case "acolyte_task_hemolytic" -> UnstainedObservanceHelper.handle(player,
+					UnstainedObservanceHelper.Observance.PREPARE_HEMOLYTIC);
+			case "acolyte_task_consecrate" -> UnstainedObservanceHelper.handle(player,
+					UnstainedObservanceHelper.Observance.CONSECRATE_COPPER);
+			case "acolyte_task_chalice" -> UnstainedObservanceHelper.handle(player,
+					UnstainedObservanceHelper.Observance.OFFER_CHALICE);
 			case "zealot_accept_church" -> {
 				player.displayClientMessage(
 						Component.translatable("hemomancy.dialogue.event.accept_church")

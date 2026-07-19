@@ -37,6 +37,8 @@ public class UnstainedProgress implements IUnstainedProgress, INBTSerializable<C
     private boolean emptiedBlood = false;
     private boolean earnedAdvancement = false;
     private boolean usedAltarOfCleansing = false;
+    private int acceptedObservances = 0;
+    private int claimedObservances = 0;
 
     @Override
     public boolean hasBegunPurification() {
@@ -193,6 +195,10 @@ public class UnstainedProgress implements IUnstainedProgress, INBTSerializable<C
 
     @Override public boolean hasUsedAltarOfCleansing() { return usedAltarOfCleansing; }
     @Override public void setUsedAltarOfCleansing(boolean value) { usedAltarOfCleansing = value; }
+    @Override public int getAcceptedObservances() { return acceptedObservances; }
+    @Override public void setAcceptedObservances(int mask) { acceptedObservances = mask; }
+    @Override public int getClaimedObservances() { return claimedObservances; }
+    @Override public void setClaimedObservances(int mask) { claimedObservances = mask; }
 
     @Override
     public CompoundTag serializeNBT(HolderLookup.Provider provider) {
@@ -222,6 +228,8 @@ public class UnstainedProgress implements IUnstainedProgress, INBTSerializable<C
         tag.putBoolean("silverWardEnabled", silverWardEnabled);
         tag.putBoolean("verdigrisAuraEnabled", verdigrisAuraEnabled);
         tag.putBoolean("usedAltarOfCleansing", usedAltarOfCleansing);
+        tag.putInt("acceptedObservances", acceptedObservances);
+        tag.putInt("claimedObservances", claimedObservances);
         return tag;
     }
 
@@ -252,5 +260,7 @@ public class UnstainedProgress implements IUnstainedProgress, INBTSerializable<C
         silverWardEnabled = !tag.contains("silverWardEnabled") || tag.getBoolean("silverWardEnabled");
         verdigrisAuraEnabled = !tag.contains("verdigrisAuraEnabled") || tag.getBoolean("verdigrisAuraEnabled");
         usedAltarOfCleansing = tag.getBoolean("usedAltarOfCleansing");
+        acceptedObservances = tag.getInt("acceptedObservances");
+        claimedObservances = tag.getInt("claimedObservances");
     }
 }

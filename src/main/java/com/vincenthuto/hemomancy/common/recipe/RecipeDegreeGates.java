@@ -49,11 +49,50 @@ public final class RecipeDegreeGates {
 	}
 
 	public static boolean playerMeets(Player player, BloodStructureRecipe recipe) {
-		return getPlayerLevel(player, recipe.isUnstained()) >= getRequiredDegree(recipe);
+		return getPlayerLevel(player, recipe.isUnstained()) >= getRequiredDegree(recipe)
+				&& meetsUnstainedThresholds(player, recipe.isUnstained(), recipe.getRequiredPurity(), recipe.getRequiredClarity());
 	}
 
 	public static boolean playerMeets(Player player, CardinalRiteRecipe recipe) {
-		return getPlayerLevel(player, recipe.isUnstained()) >= getRequiredDegree(recipe);
+		return getPlayerLevel(player, recipe.isUnstained()) >= getRequiredDegree(recipe)
+				&& meetsUnstainedThresholds(player, recipe.isUnstained(), recipe.getRequiredPurity(), recipe.getRequiredClarity());
+	}
+
+	private static boolean meetsUnstainedThresholds(Player player, boolean unstained, float requiredPurity,
+			float requiredClarity) {
+		if (!unstained || (requiredPurity < 0 && requiredClarity < 0)) {
+			return true;
+		}
+		return HemoCapabilityAccess.getUnstainedProgress(player)
+				.map(progress -> (requiredPurity < 0 || progress.getPurity() >= requiredPurity)
+						&& (requiredClarity < 0 || progress.hasClarityUnlocked()
+								&& progress.getClarity() >= requiredClarity))
+				.orElse(false);
+	}
+
+	public static String requirementLabel(BloodStructureRecipe recipe) {
+		return requirementLabel(recipe.isUnstained(), recipe.getRequiredDegree(), recipe.getRequiredPurity(),
+				recipe.getRequiredClarity());
+	}
+
+	public static String requirementLabel(CardinalRiteRecipe recipe) {
+		return requirementLabel(recipe.isUnstained(), recipe.getRequiredDegree(), recipe.getRequiredPurity(),
+				recipe.getRequiredClarity());
+	}
+
+	private static String requirementLabel(boolean unstained, int requiredDegree, float requiredPurity,
+			float requiredClarity) {
+		if (unstained && requiredClarity >= 0) {
+			return "Clarity " + formatThreshold(requiredClarity);
+		}
+		if (unstained && requiredPurity >= 0) {
+			return "Purity " + formatThreshold(requiredPurity);
+		}
+		return unstained ? unstainedStageLabel(requiredDegree) : degreeLabel(requiredDegree);
+	}
+
+	private static String formatThreshold(float value) {
+		return value == Math.rint(value) ? Integer.toString((int) value) : Float.toString(value);
 	}
 
 	public static Integer getRankupTargetDegree(ResourceLocation riteId) {

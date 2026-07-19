@@ -3,6 +3,7 @@
   "bloodCost": 0,
   "riteType": "lesser",
   "required_degree": 7,
+  "required_clarity": 50,
   "breakBlocksOnCreation": false,
   "riteName": "Rite of Glass Lungs",
   "riteDescription": "White glass, pale water, and copper still the breath. Poison and wither are rinsed from the chest, leaving the supplicant able to breathe where corruption would choke them.",

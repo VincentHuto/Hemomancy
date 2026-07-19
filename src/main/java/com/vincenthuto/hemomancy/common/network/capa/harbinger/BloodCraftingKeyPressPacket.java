@@ -116,12 +116,9 @@ public class BloodCraftingKeyPressPacket implements CustomPacketPayload {
 							.orElseThrow(NullPointerException::new);
 
 					// Explicit recipe degree / stage check.
-					int playerLevel = RecipeDegreeGates.getPlayerLevel(player, targetPattern.isUnstained());
 					int requiredDegree = RecipeDegreeGates.getRequiredDegree(targetPattern);
-					if (playerLevel < requiredDegree) {
-						String requiredName = targetPattern.isUnstained()
-								? RecipeDegreeGates.unstainedStageLabel(requiredDegree)
-								: RecipeDegreeGates.degreeLabel(requiredDegree);
+					if (!RecipeDegreeGates.playerMeets(player, targetPattern)) {
+						String requiredName = RecipeDegreeGates.requirementLabel(targetPattern);
 						player.displayClientMessage(
 								Component.literal("This formation requires " + targetPattern.getId().getPath() + " to be held, and demands ")
 										.withStyle(ChatFormatting.RED)
@@ -225,12 +222,9 @@ public class BloodCraftingKeyPressPacket implements CustomPacketPayload {
 						}
 						if (match != null && player.getMainHandItem().getItem() != recipe.getHeldItem().getItem()) {
 							// Check progression first, so locked recipes explain the missing degree/stage.
-							int playerLevel = RecipeDegreeGates.getPlayerLevel(player, recipe.isUnstained());
 							int requiredDegree = RecipeDegreeGates.getRequiredDegree(recipe);
-							if (playerLevel < requiredDegree) {
-								String requiredName = recipe.isUnstained()
-										? RecipeDegreeGates.unstainedStageLabel(requiredDegree)
-										: RecipeDegreeGates.degreeLabel(requiredDegree);
+							if (!RecipeDegreeGates.playerMeets(player, recipe)) {
+								String requiredName = RecipeDegreeGates.requirementLabel(recipe);
 								player.displayClientMessage(
 										Component.literal("This formation requires " + recipe.getId().getPath() + " to be held, and demands ")
 												.withStyle(ChatFormatting.RED)
@@ -280,9 +274,8 @@ public class BloodCraftingKeyPressPacket implements CustomPacketPayload {
 				continue;
 			}
 
-			int playerLevel = RecipeDegreeGates.getPlayerLevel(player, recipe.isUnstained());
 			int requiredDegree = RecipeDegreeGates.getRequiredDegree(recipe);
-			if (playerLevel < requiredDegree) {
+			if (!RecipeDegreeGates.playerMeets(player, recipe)) {
 				player.displayClientMessage(
 						Component.translatable("hemomancy.summon.trial.degree_locked",
 								RecipeDegreeGates.degreeLabel(requiredDegree)).withStyle(ChatFormatting.RED),
@@ -425,16 +418,15 @@ public class BloodCraftingKeyPressPacket implements CustomPacketPayload {
 					}
 				} else {
 					// Unstained: check purity/clarity progression level (0â€“8)
-					int playerLevel = HemoCapabilityAccess.getPlayerUnstainedLevel(player);
 					int requiredLevel = RecipeDegreeGates.getRequiredDegree(recipe);
-					if (playerLevel < requiredLevel) {
-						String stageName = RecipeDegreeGates.unstainedStageLabel(requiredLevel);
+					if (!RecipeDegreeGates.playerMeets(player, recipe)) {
+						String stageName = RecipeDegreeGates.requirementLabel(recipe);
 						player.displayClientMessage(
 								Component.literal("This rite demands ")
 										.withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC)
 										.append(Component.literal(stageName)
 												.withStyle(ChatFormatting.AQUA, ChatFormatting.BOLD))
-										.append(Component.literal(" purity (Stage " + requiredLevel + ")")
+								.append(Component.literal(" (Unstained requirement)")
 												.withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC)),
 								false);
 						return;

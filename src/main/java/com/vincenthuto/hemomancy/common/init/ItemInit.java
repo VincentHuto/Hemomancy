@@ -107,6 +107,9 @@ public class ItemInit {
             () -> new HarbingerAssignmentLedgerItem(new Item.Properties().stacksTo(1),
                     Hemomancy.rloc("textures/entity/field_notes.png")));
 
+    public static final DeferredHolder<Item, Item> book_of_observances = SPECIALITEMS.register("book_of_observances",
+            () -> new BookOfObservancesItem(new Item.Properties().stacksTo(1)));
+
 //    public static final DeferredHolder<Item, Item> field_notes = SPECIALITEMS.register("field_notes",
 //            () -> new FieldNotesBookItem(new Item.Properties().stacksTo(1),
 //                    Hemomancy.rloc("textures/entity/field_notes.png")));
@@ -804,8 +807,8 @@ public class ItemInit {
 //                    new Item.Properties().stacksTo(1)));
     public static final DeferredHolder<Item, Item> pale_silver_bell = HANDHELDITEMS.register("pale_silver_bell",
             () -> new PaleSilverBellItem(new Item.Properties().stacksTo(1).rarity(Rarity.UNCOMMON)));
-//    public static final DeferredHolder<Item, Item> lethean_chalice = SPECIALITEMS.register("lethean_chalice",
-//            () -> new LetheanChaliceItem(new Item.Properties().stacksTo(1).rarity(Rarity.UNCOMMON)));
+    public static final DeferredHolder<Item, Item> lethean_chalice = SPECIALITEMS.register("lethean_chalice",
+            () -> new LetheanChaliceItem(new Item.Properties().stacksTo(1).rarity(Rarity.UNCOMMON)));
 //    public static final DeferredHolder<Item, Item> verdigris_censer = SPECIALITEMS.register("verdigris_censer",
 //            () -> new VerdigrisCenserItem(new Item.Properties().stacksTo(1).rarity(Rarity.RARE)));
 

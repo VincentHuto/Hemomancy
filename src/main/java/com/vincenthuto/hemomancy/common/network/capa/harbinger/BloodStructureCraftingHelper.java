@@ -62,9 +62,8 @@ public final class BloodStructureCraftingHelper {
 						Component.translatable("hemomancy.summon.trial.already_known").withStyle(ChatFormatting.GRAY)));
 			}
 
-			int playerLevel = RecipeDegreeGates.getPlayerLevel(player, recipe.isUnstained());
 			int requiredDegree = RecipeDegreeGates.getRequiredDegree(recipe);
-			if (playerLevel < requiredDegree) {
+			if (!RecipeDegreeGates.playerMeets(player, recipe)) {
 				return Optional.of(ProjectionCraftMatch.invalid(recipe, match, missingDegreeMessage(recipe, requiredDegree)));
 			}
 
@@ -315,7 +314,7 @@ public final class BloodStructureCraftingHelper {
 	private static Component missingDegreeMessage(BloodStructureRecipe recipe, int requiredDegree) {
 		return Component.literal("This formation requires " + recipe.getId().getPath() + " and demands ")
 				.withStyle(ChatFormatting.RED)
-				.append(Component.literal(RecipeDegreeGates.degreeLabel(requiredDegree))
+				.append(Component.literal(RecipeDegreeGates.requirementLabel(recipe))
 						.withStyle(ChatFormatting.GOLD, ChatFormatting.BOLD))
 				.append(Component.literal(".").withStyle(ChatFormatting.RED));
 	}

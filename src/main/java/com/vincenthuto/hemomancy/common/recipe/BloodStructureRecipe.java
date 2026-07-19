@@ -79,6 +79,8 @@ public class BloodStructureRecipe extends CustomRecipe {
 	 * this structure craft.
 	 */
 	protected int requiredDegree;
+	protected float requiredPurity = -1.0f;
+	protected float requiredClarity = -1.0f;
 
 	public BloodStructureRecipe(ResourceLocation pId, double bloodCost, MultiblockPattern pattern, ItemStack heldItem,
 			Block hitBlock, ItemStack result) {
@@ -228,6 +230,14 @@ public class BloodStructureRecipe extends CustomRecipe {
 	public void setRequiredDegree(int requiredDegree) {
 		this.requiredDegree = requiredDegree;
 	}
+
+	public float getRequiredPurity() { return requiredPurity; }
+
+	public void setRequiredPurity(float requiredPurity) { this.requiredPurity = requiredPurity; }
+
+	public float getRequiredClarity() { return requiredClarity; }
+
+	public void setRequiredClarity(float requiredClarity) { this.requiredClarity = requiredClarity; }
 
 	@Override
 	public String toString() {

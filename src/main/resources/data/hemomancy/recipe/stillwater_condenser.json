@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": ["CSC", "GPG", "CCC"],
+  "key": {
+    "C": { "item": "hemomancy:consecrated_copper_ingot" },
+    "S": { "item": "hemomancy:pale_silver_ingot" },
+    "G": { "item": "minecraft:glass" },
+    "P": { "item": "hemomancy:pale_distillate" }
+  },
+  "result": { "id": "hemomancy:stillwater_condenser" }
+}

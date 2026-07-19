@@ -26,6 +26,9 @@ public class KnownStillArtEvents {
 	}
 
 	public static boolean grantArt(ServerPlayer player, StillArt art) {
+		if (!art.isUnlockedFor(player)) {
+			return false;
+		}
 		return HemoCapabilityAccess.getKnownStillArts(player)
 				.map(known -> {
 					boolean learned = known.learnArt(art);

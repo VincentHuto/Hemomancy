@@ -1,14 +1,10 @@
 {
-  "type": "minecraft:crafting_shaped",
-  "pattern": [
-    "CC",
-    "CC"
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    { "item": "hemomancy:conscious_mass" },
+    { "item": "hemomancy:hyphae_block" },
+    { "item": "hemomancy:erythrocoral_block" }
   ],
-  "key": {
-    "C": {
-      "item": "hemomancy:cuttlefish_chromatophores"
-    }
-  },
   "result": {
     "id": "hemomancy:organic_prism"
   }

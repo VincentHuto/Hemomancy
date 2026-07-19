@@ -68,6 +68,8 @@ public class CardinalRiteRecipe extends CustomRecipe {
 	protected String riteName;
 	protected String riteDescription;
 	protected int requiredDegree;
+	protected float requiredPurity = -1.0f;
+	protected float requiredClarity = -1.0f;
 	protected boolean breakBlocksOnCreation;
 	protected boolean unstained;
 	protected boolean rankup;
@@ -216,6 +218,14 @@ public class CardinalRiteRecipe extends CustomRecipe {
 	public void setRequiredDegree(int requiredDegree) {
 		this.requiredDegree = requiredDegree;
 	}
+
+	public float getRequiredPurity() { return requiredPurity; }
+
+	public void setRequiredPurity(float requiredPurity) { this.requiredPurity = requiredPurity; }
+
+	public float getRequiredClarity() { return requiredClarity; }
+
+	public void setRequiredClarity(float requiredClarity) { this.requiredClarity = requiredClarity; }
 
 	/**
 	 * Returns whether the rite should break the multiblock structure blocks

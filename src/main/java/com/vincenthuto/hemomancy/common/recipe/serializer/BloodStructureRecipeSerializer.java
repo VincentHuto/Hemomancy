@@ -189,8 +189,11 @@ public class BloodStructureRecipeSerializer implements RecipeSerializer<BloodStr
 		boolean unstained = GsonHelper.getAsBoolean(pJson, "unstained", false);
 		int requiredDegree = requiredDegreeFromJson(pJson);
 		List<BloodStructureOffering> offerings = offeringsFromJson(pJson);
-		return new BloodStructureRecipe(pRecipeId, cost, mbPattern, heldItem, hitBlock, result, unstained, requiredDegree,
-				offerings);
+		BloodStructureRecipe recipe = new BloodStructureRecipe(pRecipeId, cost, mbPattern, heldItem, hitBlock, result,
+				unstained, requiredDegree, offerings);
+		recipe.setRequiredPurity(GsonHelper.getAsFloat(pJson, "required_purity", -1.0f));
+		recipe.setRequiredClarity(GsonHelper.getAsFloat(pJson, "required_clarity", -1.0f));
+		return recipe;
 	}
 
 	// ---- RecipeSerializer 1.21.1 API ----
@@ -198,7 +201,8 @@ public class BloodStructureRecipeSerializer implements RecipeSerializer<BloodStr
 	private static final MapCodec<BloodStructureRecipe> CODEC = new MapCodec<BloodStructureRecipe>() {
 		@Override
 		public <T> Stream<T> keys(DynamicOps<T> ops) {
-			return Stream.of("id", "bloodCost", "heldItem", "hitBlock", "pattern", "key", "result", "unstained", "required_degree", "offerings")
+			return Stream.of("id", "bloodCost", "heldItem", "hitBlock", "pattern", "key", "result", "unstained",
+					"required_degree", "required_purity", "required_clarity", "offerings")
 					.map(ops::createString);
 		}
 
@@ -227,6 +231,8 @@ public class BloodStructureRecipeSerializer implements RecipeSerializer<BloodStr
 					.ifPresent(e -> prefix.add("result", JsonOps.INSTANCE.convertTo(ops, e)));
 			prefix.add("unstained", ops.createBoolean(recipe.isUnstained()));
 			prefix.add("required_degree", ops.createInt(recipe.getRequiredDegree()));
+			if (recipe.getRequiredPurity() >= 0.0f) prefix.add("required_purity", ops.createFloat(recipe.getRequiredPurity()));
+			if (recipe.getRequiredClarity() >= 0.0f) prefix.add("required_clarity", ops.createFloat(recipe.getRequiredClarity()));
 			JsonArray offerings = new JsonArray();
 			for (BloodStructureOffering offering : recipe.getOfferings()) {
 				JsonObject offeringJson = new JsonObject();
@@ -286,6 +292,8 @@ public class BloodStructureRecipeSerializer implements RecipeSerializer<BloodStr
 		ItemStack result = hasResult ? ItemStack.STREAM_CODEC.decode(pBuffer) : ItemStack.EMPTY;
 		boolean unstained = pBuffer.readBoolean();
 		int requiredDegree = pBuffer.readInt();
+		float requiredPurity = pBuffer.readFloat();
+		float requiredClarity = pBuffer.readFloat();
 		int offeringCount = pBuffer.readVarInt();
 		List<BloodStructureOffering> offerings = new ArrayList<>();
 		for (int i = 0; i < offeringCount; i++) {
@@ -293,8 +301,11 @@ public class BloodStructureRecipeSerializer implements RecipeSerializer<BloodStr
 			int count = pBuffer.readVarInt();
 			offerings.add(new BloodStructureOffering(ingredient, count));
 		}
-		return new BloodStructureRecipe(id, cost, mbPattern, heldItem, hitBlock, result, unstained, requiredDegree,
-				offerings);
+		BloodStructureRecipe recipe = new BloodStructureRecipe(id, cost, mbPattern, heldItem, hitBlock, result, unstained,
+				requiredDegree, offerings);
+		recipe.setRequiredPurity(requiredPurity);
+		recipe.setRequiredClarity(requiredClarity);
+		return recipe;
 	}
 
 	private static void toNetwork(RegistryFriendlyByteBuf pBuffer, BloodStructureRecipe pRecipe) {
@@ -325,6 +336,8 @@ public class BloodStructureRecipeSerializer implements RecipeSerializer<BloodStr
 		}
 		pBuffer.writeBoolean(pRecipe.isUnstained());
 		pBuffer.writeInt(pRecipe.getRequiredDegree());
+		pBuffer.writeFloat(pRecipe.getRequiredPurity());
+		pBuffer.writeFloat(pRecipe.getRequiredClarity());
 		pBuffer.writeVarInt(pRecipe.getOfferings().size());
 		for (BloodStructureOffering offering : pRecipe.getOfferings()) {
 			Ingredient.CONTENTS_STREAM_CODEC.encode(pBuffer, offering.ingredient());

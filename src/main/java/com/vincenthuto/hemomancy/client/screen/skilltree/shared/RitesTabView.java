@@ -3,7 +3,6 @@ package com.vincenthuto.hemomancy.client.screen.skilltree.shared;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.vincenthuto.hemomancy.client.screen.skilltree.util.ProgressScreenContext;
 import com.vincenthuto.hemomancy.client.screen.skilltree.util.ScreenDrawUtils;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.EnumInitiatoryDegree;
 import com.vincenthuto.hemomancy.common.init.BlockInit;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.recipe.CardinalRiteRecipe;
@@ -464,9 +463,10 @@ public final class RitesTabView {
 		if (state.enableDegreeLock) {
 			int reqDeg = RecipeDegreeGates.getRequiredDegree(rite);
 			if (reqDeg > 0) {
-				EnumInitiatoryDegree needed = EnumInitiatoryDegree.byNumber(reqDeg);
-				String degName = needed != null ? needed.getTitle() : ("Degree " + reqDeg);
-				int degColor = ctx.playerDegree() >= reqDeg ? 0xFF88CC88 : 0xFFCC4444;
+				String degName = RecipeDegreeGates.requirementLabel(rite);
+				boolean meets = Minecraft.getInstance().player != null
+						&& RecipeDegreeGates.playerMeets(Minecraft.getInstance().player, rite);
+				int degColor = meets ? 0xFF88CC88 : 0xFFCC4444;
 				gfx.drawString(ctx.font(), Component.literal("Requires: ")
 						.withStyle(s -> s.withColor(0x888888))
 						.append(Component.literal(degName).withStyle(s -> s.withColor(degColor))),

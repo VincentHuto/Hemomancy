@@ -58,27 +58,27 @@ import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 public class PurityGainEvents {
 
     // â”€â”€ Kill rewards â”€â”€
-    private static final float PURITY_KILL_HEMOMANCY_MOB = 2.0f;
-    private static final float PURITY_KILL_UNDEAD        = 0.5f;
-    private static final float PURITY_KILL_HOSTILE       = 0.25f;
-    private static final float PURITY_FLAWLESS_KILL      = 0.5f;
+    private static final float PURITY_KILL_HEMOMANCY_MOB = 0.75f;
+    private static final float PURITY_KILL_UNDEAD        = 0.25f;
+    private static final float PURITY_KILL_HOSTILE       = 0.10f;
+    private static final float PURITY_FLAWLESS_KILL      = 0.25f;
 
     // â”€â”€ Survival / exploration â”€â”€
     private static final float PURITY_XP_PICKUP          = 0.1f;
-    private static final float PURITY_SLEEP              = 3.0f;
+    private static final float PURITY_SLEEP              = 5.0f;
     private static final float PURITY_ADVANCEMENT        = 1.5f;
-    private static final float PURITY_BREED_ANIMAL       = 0.3f;
-    private static final float PURITY_PLANT_CROP         = 0.05f;
+    private static final float PURITY_BREED_ANIMAL       = 0.75f;
+    private static final float PURITY_PLANT_CROP         = 0.10f;
     private static final float PURITY_HEAL               = 0.1f;
 
     // â”€â”€ Restraint / discipline â”€â”€
-    private static final float PURITY_ABSTINENCE         = 0.5f;
+    private static final float PURITY_ABSTINENCE         = 1.0f;
     private static final long  ABSTINENCE_INTERVAL_TICKS = 6000L;  // 5 minutes (5 * 60 * 20)
-    private static final float PURITY_EMPTY_BLOOD        = 0.15f;
+    private static final float PURITY_EMPTY_BLOOD        = 0.30f;
     private static final long  EMPTY_BLOOD_INTERVAL      = 1200L;  // 1 minute
 
     // â”€â”€ Mercy â”€â”€
-    private static final float PURITY_HEAL_TAMED         = 0.2f;
+    private static final float PURITY_HEAL_TAMED         = 1.0f;
 
     // â”€â”€ Flawless kill â€” "recently" = damaged within last 5 seconds â”€â”€
     private static final int FLAWLESS_THRESHOLD_TICKS    = 100;

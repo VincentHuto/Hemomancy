@@ -1,0 +1,8 @@
+{
+  "parent": "minecraft:block/cube_bottom_top",
+  "textures": {
+    "bottom": "hemomancy:block/pale_silver_block",
+    "side": "hemomancy:block/model_pallid_retort",
+    "top": "hemomancy:block/pale_silver_block"
+  }
+}

@@ -3,6 +3,7 @@
   "bloodCost": 0,
   "riteType": "greater",
   "required_degree": 7,
+  "required_clarity": 75,
   "breakBlocksOnCreation": false,
   "riteName": "Rite of Moon-Washed Copper",
   "riteDescription": "Oxidized copper is washed in moon-cold clarity. Verdigris becomes halo, halo becomes diagnosis, and the highest Still Arts begin to answer.",
@@ -89,7 +90,7 @@
     }
   },
   "result": {
-    "id": "hemomancy:verdigris_censer"
+    "id": "hemomancy:pale_silver_bell"
   },
   "unstained": true
 }

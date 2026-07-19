@@ -131,4 +131,10 @@ public interface IUnstainedProgress {
     /** Has the player used the Altar of Cleansing (one-time blessing)? */
     boolean hasUsedAltarOfCleansing();
     void setUsedAltarOfCleansing(boolean value);
+
+    /** Bit sets for Acolyte-issued observances; persisted and synchronised with the path data. */
+    int getAcceptedObservances();
+    void setAcceptedObservances(int mask);
+    int getClaimedObservances();
+    void setClaimedObservances(int mask);
 }

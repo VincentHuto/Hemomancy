@@ -138,6 +138,7 @@ public class UnstainedProgressScreen extends Screen {
 	private int mHemoKills, mUndeadKills, mHostileKills, mFlawlessKills;
 	private int mAnimalsBreed, mCropsPlanted, mAdvancementsEarned, mNightsSlept, mPetsHealed;
 	private boolean mSleptHemolysis, mFirstHemoKill, mReachedAbstinence, mEmptiedBlood, mEarnedAdvancement;
+	private int acceptedObservances, claimedObservances;
 
 	// ────────────────────────────────────────────────────────────
 	//  Construction / opening
@@ -209,6 +210,8 @@ public class UnstainedProgressScreen extends Screen {
 				mReachedAbstinence  = cap.hasReachedAbstinence();
 				mEmptiedBlood       = cap.hasEmptiedBlood();
 				mEarnedAdvancement  = cap.hasEarnedAdvancement();
+				acceptedObservances = cap.getAcceptedObservances();
+				claimedObservances  = cap.getClaimedObservances();
 			});
 		}
 	}
@@ -992,10 +995,23 @@ animTime += 0.016f; // ~60 FPS approximation
 		int centerX = sideX + sideW / 2;
 
 		// Section title
-		gfx.drawCenteredString(font, Component.literal("Milestones"), centerX, y, 0xFFB0C0E0);
+		gfx.drawCenteredString(font, Component.literal("Book of Observances"), centerX, y, 0xFFB0C0E0);
 		y += 14;
 
 		// Thin divider
+		gfx.fill(sideX + 8, y, sideX + sideW - 8, y + 1, 0x33607890);
+		y += 5;
+
+		gfx.drawString(font, Component.literal("Next rite: " + nextRiteLabel()), x, y, 0xFF80D0C0, false);
+		y += 12;
+		String[] observances = { "Gather Ghost Pipe", "Weave a Poppy Wreath", "Prepare Hemolytic Solution",
+				"Consecrate Copper", "Offer a Lethean Chalice" };
+		for (int i = 0; i < observances.length; i++) {
+			int mask = 1 << i;
+			if ((acceptedObservances & mask) == 0) continue;
+			y = drawCheckItem(gfx, x, y, observances[i], (claimedObservances & mask) != 0);
+		}
+		y += 3;
 		gfx.fill(sideX + 8, y, sideX + sideW - 8, y + 1, 0x33607890);
 		y += 5;
 
@@ -1039,6 +1055,20 @@ animTime += 0.016f; // ~60 FPS approximation
 
 		gfx.disableScissor();
 		pose.popPose();
+	}
+
+	private String nextRiteLabel() {
+		if (!begunPurification) return "Rite of Purification";
+		if (purity < 25f) return "Lethean Wreath";
+		if (purity < 50f) return "Pallid Separation";
+		if (purity < 75f) return "Baptism of Absolution";
+		if (purity < 100f) return "Final Purification";
+		if (!clarityUnlocked) return "Rite of Clarity";
+		if (clarity < 25f) return "Still Pulse";
+		if (clarity < 50f) return "Glass Lungs";
+		if (clarity < 75f) return "Moon-Washed Copper";
+		if (clarity < 100f) return "Pale Apotheosis";
+		return "Path complete";
 	}
 
 	/**

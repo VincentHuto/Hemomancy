@@ -494,12 +494,8 @@ public class HarbingerCardinalRiteEvents {
 		CardinalRiteRecipe recipe = CardinalRiteRecipe.getRiteByLocation(sLevel, rite.getRecipeId());
 		if (recipe == null) return;
 
-		int playerLevel = RecipeDegreeGates.getPlayerLevel(caster, recipe.isUnstained());
-		int requiredLevel = RecipeDegreeGates.getRequiredDegree(recipe);
-		if (playerLevel < requiredLevel) {
-			String requirement = recipe.isUnstained()
-					? RecipeDegreeGates.unstainedStageLabel(requiredLevel)
-					: RecipeDegreeGates.degreeLabel(requiredLevel);
+		if (!RecipeDegreeGates.playerMeets(caster, recipe)) {
+			String requirement = RecipeDegreeGates.requirementLabel(recipe);
 			caster.displayClientMessage(
 					Component.literal("The rite falls silent. It requires ")
 							.withStyle(recipe.isUnstained() ? ChatFormatting.GRAY : ChatFormatting.DARK_RED)

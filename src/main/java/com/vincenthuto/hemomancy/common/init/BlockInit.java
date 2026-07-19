@@ -23,6 +23,8 @@ import com.vincenthuto.hemomancy.common.block.shared.WaterloggedDoorBlock;
 import com.vincenthuto.hemomancy.common.block.unstained.SuspendedCleansedBloodCrystalBlock;
 import com.vincenthuto.hemomancy.common.block.unstained.ViridSalisTrailBlock;
 import com.vincenthuto.hemomancy.common.block.unstained.crafting.PallidRetortBlock;
+import com.vincenthuto.hemomancy.common.block.unstained.crafting.StillwaterCondenserBlock;
+import com.vincenthuto.hemomancy.common.block.unstained.crafting.VerdigrisLatticeBlock;
 import com.vincenthuto.hemomancy.common.block.unstained.decor.LetheanPoppyWreathBlock;
 import com.vincenthuto.hemomancy.common.block.unstained.functional.AltarOfCleansingBlock;
 import com.vincenthuto.hemomancy.common.block.unstained.functional.PaleSilverBellsBlock;
@@ -576,6 +578,12 @@ public class BlockInit {
 	public static final DeferredHolder<Block, Block> pallid_retort = MODELEDBLOCKS.register("pallid_retort",
 			() -> new PallidRetortBlock(BlockBehaviour.Properties.of().requiresCorrectToolForDrops().strength(1.5F, 6.0F)
 					.sound(SoundType.METAL)));
+	public static final DeferredHolder<Block, Block> stillwater_condenser = MODELEDBLOCKS.register("stillwater_condenser",
+			() -> new StillwaterCondenserBlock(BlockBehaviour.Properties.of()
+					.strength(2.0F, 6.0F).sound(SoundType.COPPER).noOcclusion()));
+	public static final DeferredHolder<Block, Block> verdigris_lattice = MODELEDBLOCKS.register("verdigris_lattice",
+			() -> new VerdigrisLatticeBlock(BlockBehaviour.Properties.of()
+					.strength(2.5F, 8.0F).sound(SoundType.COPPER).randomTicks().lightLevel(state -> 3)));
 
 	// Idols / late utility fixtures
 	public static final DeferredHolder<Block, Block> humane_idol = MODELEDBLOCKS.register("humane_idol",

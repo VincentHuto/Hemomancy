@@ -1,0 +1,9 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": ["C C", "CSC", "C C"],
+  "key": {
+    "C": { "item": "hemomancy:consecrated_copper_ingot" },
+    "S": { "item": "hemomancy:pale_silver_ingot" }
+  },
+  "result": { "id": "hemomancy:verdigris_lattice" }
+}
