@@ -47,7 +47,8 @@ public class DictationTableRenderer implements BlockEntityRenderer<DictationTabl
 		// HutosLib now keeps book animation state per entity instead of on the item
 		// singleton, so sample the local client's cached state for page flip motion.
 		BookAnimState state = ItemGuideBook.getOrCreateState(
-				Minecraft.getInstance().player != null ? Minecraft.getInstance().player.getUUID() : null);
+				Minecraft.getInstance().player != null ? Minecraft.getInstance().player.getUUID() : null,
+				item);
 		float f3 = Mth.lerp(partialTicks, state.oFlip, state.flip);
 		float f4 = Mth.frac(f3 + 0.25F) * 1.6F - 0.3F;
 		float f5 = Mth.frac(f3 + 0.75F) * 1.6F - 0.3F;
