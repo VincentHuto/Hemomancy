@@ -320,7 +320,7 @@ A massive fungal tree structure summoned at high degree.
 Powerful entities associated with specific trials. Currently two are implemented:
 
 **Saint Hemorath**
-- First Saint, fully implemented
+- First Saint prototype, retained as WIP for the post-release Saints update
 - Trial chamber encounter
 - Guardian of blood secrets
 - Rewards unique items and lore

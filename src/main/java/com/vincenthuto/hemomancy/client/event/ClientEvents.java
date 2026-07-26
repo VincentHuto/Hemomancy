@@ -1003,6 +1003,7 @@ public class ClientEvents {
             event.register(ContainerInit.living_staff.get(), LivingStaffScreen::new);
             event.register(ContainerInit.ghastly_alembic.get(), GhastlyAlembicScreen::new);
             event.register(ContainerInit.pallid_retort.get(), PallidRetortScreen::new);
+            event.register(ContainerInit.stillwater_condenser.get(), StillwaterCondenserScreen::new);
             event.register(ContainerInit.scar_station.get(), ScarStationScreen::new);
             event.register(ContainerInit.scar_binder.get(), ScarBinderScreen::new);
             event.register(ContainerInit.vascular_view.get(), VascularViewScreen::new);

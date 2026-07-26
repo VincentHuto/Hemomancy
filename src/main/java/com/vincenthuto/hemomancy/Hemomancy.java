@@ -86,7 +86,6 @@ public class Hemomancy {
         EffectInit.POTION_TYPES.register(modEventBus);
         CarverInit.CARVERS.register(modEventBus);
         BaseFeatureInit.FEATURE_REGISTER.register(modEventBus);
-        ItemInit.BANNERPATTERNS.register(modEventBus);
         ItemInit.BASEITEMS.register(modEventBus);
         ItemInit.HANDHELDITEMS.register(modEventBus);
         ItemInit.SPECIALITEMS.register(modEventBus);
@@ -251,6 +250,11 @@ public class Hemomancy {
         populator.accept(ItemInit.saint_relic_seraphae.get());
         populator.accept(ItemInit.saint_relic_putriciel.get());
         populator.accept(ItemInit.saint_relic_velorum.get());
+        populator.accept(ItemInit.memory_crimson_tithe.get());
+        populator.accept(ItemInit.memory_unclosing_eye.get());
+        populator.accept(ItemInit.memory_bloom_of_rot.get());
+        populator.accept(ItemInit.memory_endless_hour.get());
+        populator.accept(ItemInit.hemorath_rib.get());
         populator.accept(ItemInit.echo_of_spleen.get());
         populator.accept(ItemInit.echo_of_liver.get());
         populator.accept(ItemInit.echo_of_heart.get());
@@ -328,6 +332,11 @@ public class Hemomancy {
                 || item == ItemInit.saint_relic_seraphae.get()
                 || item == ItemInit.saint_relic_putriciel.get()
                 || item == ItemInit.saint_relic_velorum.get()
+                || item == ItemInit.memory_crimson_tithe.get()
+                || item == ItemInit.memory_unclosing_eye.get()
+                || item == ItemInit.memory_bloom_of_rot.get()
+                || item == ItemInit.memory_endless_hour.get()
+                || item == ItemInit.hemorath_rib.get()
                 || item == ItemInit.echo_of_spleen.get()
                 || item == ItemInit.echo_of_liver.get()
                 || item == ItemInit.echo_of_heart.get()

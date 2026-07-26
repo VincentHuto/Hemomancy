@@ -4,6 +4,6 @@
   "texture": "hemomancy:textures/gui/guide/page.png",
   "title": "The First Habit",
   "subtitle": "A note from the Hermit",
-  "text": "Some messages are too brief to survive ordinary memory. A Harbinger keeps a small notebook near the pulse and writes before the voice passes. Later, at a Dictation Table, those field notes may be made permanent in the Liber. The blood does not make the words truer. It makes them harder to lose.",
-  "icon": "hemomancy:field_notes"
+  "text": "Some messages are too brief to survive ordinary memory. A Harbinger catches them in the notes kept beside the inventory, before the voice passes. Later, at a Dictation Table, those field notes may be made permanent in the Liber. The blood does not make the words truer. It makes them harder to lose.",
+  "icon": "minecraft:writable_book"
 }

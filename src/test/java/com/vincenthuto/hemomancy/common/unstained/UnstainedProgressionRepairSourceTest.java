@@ -49,6 +49,8 @@ public final class UnstainedProgressionRepairSourceTest {
 		String observances = read("src/main/java/com/vincenthuto/hemomancy/common/mission/UnstainedObservanceHelper.java");
 		assertContains(observances, "GATHER_GHOST_PIPE");
 		assertContains(observances, "OFFER_CHALICE");
+		assertContains(observances, "enum Issuer");
+		assertContains(observances, "public static boolean isReady");
 		assertContains(observances, "progress.setClaimedObservances");
 
 		String blockInit = read("src/main/java/com/vincenthuto/hemomancy/common/init/BlockInit.java");
@@ -58,6 +60,42 @@ public final class UnstainedProgressionRepairSourceTest {
 				"progress.getPurity() >= 50f");
 		assertContains(read("src/main/java/com/vincenthuto/hemomancy/common/block/unstained/crafting/VerdigrisLatticeBlock.java"),
 				"MobEffects.DAMAGE_RESISTANCE");
+
+		String condenser = read("src/main/java/com/vincenthuto/hemomancy/common/block/unstained/crafting/StillwaterCondenserBlock.java");
+		assertContains(condenser, "extends BaseEntityBlock");
+		assertContains(condenser, "StillwaterCondenserBlockEntity");
+		String condenserTile = read("src/main/java/com/vincenthuto/hemomancy/common/tile/crafting/StillwaterCondenserBlockEntity.java");
+		assertContains(condenserTile, "SLOT_BOTTLES");
+		assertContains(condenserTile, "SLOT_DEW");
+		assertContains(condenserTile, "DATA_PROGRESS");
+		assertContains(read("src/main/java/com/vincenthuto/hemomancy/common/menu/tile/crafting/StillwaterCondenserMenu.java"),
+				"class StillwaterCondenserMenu");
+		assertContains(read("src/main/java/com/vincenthuto/hemomancy/client/screen/tile/crafting/StillwaterCondenserScreen.java"),
+				"class StillwaterCondenserScreen");
+		assertContains(read("src/main/resources/assets/hemomancy/models/block/stillwater_condenser.json"), "\"name\": \"coil\"");
+
+		String bookItem = read("src/main/java/com/vincenthuto/hemomancy/common/item/unstained/BookOfObservancesItem.java");
+		assertContains(bookItem, "extends ItemGuideBook");
+		assertContains(bookItem, "OpenBookOfObservancesPacket");
+		assertContains(bookItem, "PacketHandler.sendToPlayer");
+		assertNotContains(bookItem, "UnstainedProgressScreen");
+		String bookPacket = read("src/main/java/com/vincenthuto/hemomancy/common/network/mission/OpenBookOfObservancesPacket.java");
+		assertContains(bookPacket, "acceptedMask");
+		assertContains(bookPacket, "claimedMask");
+		assertContains(bookPacket, "availableMask");
+		assertContains(bookPacket, "readyMask");
+		assertContains(read("src/main/java/com/vincenthuto/hemomancy/common/network/PacketHandler.java"),
+				"OpenBookOfObservancesPacket.TYPE");
+		String bookScreen = read("src/main/java/com/vincenthuto/hemomancy/client/screen/item/BookOfObservancesScreen.java");
+		assertContains(bookScreen, "class BookOfObservancesScreen");
+		assertContains(bookScreen, "NpcSection");
+		assertContains(bookScreen, "collapsedSections");
+		assertContains(bookScreen, "renderObservanceCard");
+		assertNotContains(bookScreen, "UnstainedProgressScreen");
+		assertContains(read("src/main/resources/assets/hemomancy/models/item/book_of_observances.json"), "\"parent\": \"builtin/entity\"");
+		String latticeModel = read("src/main/resources/assets/hemomancy/models/block/verdigris_lattice.json");
+		assertContains(latticeModel, "\"name\": \"copper_frame\"");
+		assertContains(latticeModel, "\"name\": \"ward_core\"");
 	}
 
 	private static void observanceStateRoundTripsAndUnlocksByStage() {

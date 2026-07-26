@@ -35,7 +35,7 @@ These are expected rough edges for public alpha:
 - **Founding Fane is mechanically present but still being tuned.** The bloodwell/stake footprint system, relation-aware boundary rendering, and blood routing hooks exist; final balance and art polish are still pending.
 - **Chamber of Will V1 is caster-only.** The Degree 6 rite, personal chamber, radius growth, and dynamic sky themes exist; the later rite that pulls nearby players and mobs into the caster's chamber is not part of V1.
 - **Drudges are post-alpha WIP.** Their implementation remains available for development, but the Electrode, Submission Device, and Semi-Sentient Construct have been moved to the WIP creative tab and the system is not part of the first-release progression promise.
-- **Saints are intentionally expansion-scoped.** Initial lore, the shared sarcophagus foundation, and Hemorath's complete trial are the first-release scope. Bespoke Seraphae, Putriciel, and Velorum rooms, environmental storytelling, encounter refinement, and final presentation are reserved for the first major post-release Saints update and are not alpha blockers.
+- **The entire Saints suite is post-release WIP.** Hemorath now remains behind the same WIP boundary as Seraphae, Putriciel, and Velorum. Saint chambers do not generate naturally, and their encounter components, rewards, and Canon memories are development-facing content for the first major post-release update—not launch blockers or first-release progression.
 - **Fungal Dimension is partial.** Access, safe return, dimension mob population, and the Archon choice fork exist; deeper terrain and broader dimension content remain WIP.
 - **Endgame bosses are partial.** Vesper and the Mycophant have entities, rendering, sound, combat, boss music, and loot, but their summoning rituals still need another pass.
 - **Annetta is playable but not final.** The Broken Church encounter and two-route structure are wired; animation polish, fuller biological combat identity, and unique thrown-projectile rendering remain WIP.
@@ -59,7 +59,7 @@ These are expected rough edges for public alpha:
 4. Open Field Notes or book surfaces and confirm the first steps are understandable.
 5. Follow the Harbinger path far enough to perform Sanguine Initiation and learn/use at least one manipulation.
 6. In a separate world/profile, follow the Unstained path far enough to perform White Humor Purification and unlock/use at least one Still Art.
-7. In a controlled test world, validate advanced systems: Somatic Loom, Mycelial Lantern, Hematic Armature, Morphling Jar, puppeteering, direct blood routing, Founding Fane, Chamber of Will, Blood Moon, and one saint or Annetta encounter. For puppeteering, verify 8 charge per Thread, owner attunement, Spindle preparation without spawning, field call/recall, hostile focus on the matching Crossbar, per-body upkeep, unequipped grace, and deliberate dimension severance.
+7. In a controlled test world, validate advanced release systems: Somatic Loom, Mycelial Lantern, Hematic Armature, Morphling Jar, puppeteering, direct blood routing, Founding Fane, Chamber of Will, Blood Moon, and the Annetta encounter. Saint encounters are excluded from first-release acceptance. For puppeteering, verify 8 charge per Thread, owner attunement, Spindle preparation without spawning, field call/recall, hostile focus on the matching Crossbar, per-body upkeep, unequipped grace, and deliberate dimension severance.
 
 ---
 

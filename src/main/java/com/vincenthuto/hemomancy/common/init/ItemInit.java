@@ -45,7 +45,6 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.*;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.entity.BannerPattern;
 import net.neoforged.neoforge.common.DeferredSpawnEggItem;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
@@ -57,8 +56,6 @@ import java.util.stream.Stream;
 public class ItemInit {
     public static final DeferredRegister<Item> BASEITEMS = DeferredRegister.create(Registries.ITEM,
             Hemomancy.MOD_ID);
-    public static final DeferredRegister<BannerPattern> BANNERPATTERNS = DeferredRegister
-            .create(Registries.BANNER_PATTERN, Hemomancy.MOD_ID);
     public static final DeferredRegister<Item> HANDHELDITEMS = DeferredRegister.create(Registries.ITEM,
             Hemomancy.MOD_ID);
     public static final DeferredRegister<Item> SPECIALITEMS = DeferredRegister.create(Registries.ITEM,
@@ -79,8 +76,6 @@ public class ItemInit {
             });
 
     // public static final DamageSource bloodLoss = new DamageSource("bloodloss");
-    public static final DeferredHolder<BannerPattern, BannerPattern> heart = BANNERPATTERNS.register("hemomancy_heart",
-            () -> new BannerPattern(Hemomancy.rloc("hemomancy_heart"), "hemomancy_heart"));
     public static final DeferredHolder<Item, Item> heart_pattern = BASEITEMS.register("heart_pattern",
             () -> new BannerPatternItem(
                     TagKey.create(Registries.BANNER_PATTERN, Hemomancy.rloc("pattern_item/hemomancy_heart")),
@@ -108,7 +103,8 @@ public class ItemInit {
                     Hemomancy.rloc("textures/entity/field_notes.png")));
 
     public static final DeferredHolder<Item, Item> book_of_observances = SPECIALITEMS.register("book_of_observances",
-            () -> new BookOfObservancesItem(new Item.Properties().stacksTo(1)));
+            () -> new BookOfObservancesItem(new Item.Properties().stacksTo(1),
+                    Hemomancy.rloc("textures/entity/book_of_observances.png")));
 
 //    public static final DeferredHolder<Item, Item> field_notes = SPECIALITEMS.register("field_notes",
 //            () -> new FieldNotesBookItem(new Item.Properties().stacksTo(1),
@@ -146,8 +142,6 @@ public class ItemInit {
             () -> new StainedChurchMapItem(new Item.Properties().fireResistant()));
     public static final DeferredHolder<Item, Item> masons_respite_map = BASEITEMS.register("masons_respite_map",
             () -> new MasonsRespiteMapItem(new Item.Properties().fireResistant()));
-    public static final DeferredHolder<BannerPattern, BannerPattern> veins = BANNERPATTERNS.register("hemomancy_veins",
-            () -> new BannerPattern(Hemomancy.rloc("hemomancy_veins"), "hemomancy_veins"));
     public static final DeferredHolder<Item, Item> veins_pattern = BASEITEMS.register("veins_pattern",
             () -> new BannerPatternItem(
                     TagKey.create(Registries.BANNER_PATTERN, Hemomancy.rloc("pattern_item/hemomancy_veins")),

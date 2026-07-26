@@ -58,6 +58,12 @@ public final class UnstainedAdvancementGranter {
 	 * @param id     The ResourceLocation of the advancement to grant.
 	 */
 	public static void grantIfNotDone(ServerPlayer player, ResourceLocation id) {
+		// Detached server players are used by semantic GameTests. Awarding an
+		// advancement fires HutosLib discovery sync, which correctly assumes a
+		// real logged-in client; the underlying progression is still testable
+		// without manufacturing a network connection.
+		if (player.connection == null) return;
+
 		AdvancementHolder advancement = player.server.getAdvancements().get(id);
 		if (advancement == null) return;
 

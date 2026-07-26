@@ -2,7 +2,7 @@
   "display": {
     "icon": {
       "count": 1,
-      "id": "hemomancy:scar_binder"
+      "id": "hemomancy:scar_pattern"
     },
     "title": {
       "translate": "advancements.hemomancy.scars_of_the_mind.title"
@@ -16,14 +16,13 @@
   },
   "parent": "hemomancy:hemomancy/degree_4_adept",
   "criteria": {
-    "has_scar_binder": {
+    "has_scar_pattern": {
       "trigger": "minecraft:inventory_changed",
       "conditions": {
         "items": [
           {
             "items": [
-              "hemomancy:scar_binder",
-              "hemomancy:scar_binder_upgraded"
+              "hemomancy:scar_pattern"
             ]
           }
         ]
@@ -32,7 +31,7 @@
   },
   "requirements": [
     [
-      "has_scar_binder"
+      "has_scar_pattern"
     ]
   ]
 }

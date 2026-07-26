@@ -282,10 +282,36 @@ tasks.named('runGameTestServer').configure {
     mustRunAfter tasks.named('test')
 }
 
+tasks.register('verifyGameTestResourceLog') {
+    group = 'verification'
+    description = 'Fails when the dedicated server reports Hemomancy resource errors.'
+    dependsOn tasks.named('runGameTestServer')
+
+    doLast {
+        File gameTestLog = layout.projectDirectory.file('run/logs/latest.log').asFile
+        if (!gameTestLog.isFile()) {
+            throw new GradleException("GameTest log was not created: ${gameTestLog}")
+        }
+
+        List<String> logLines = gameTestLog.readLines('UTF-8')
+        if (!logLines.any { line -> line.contains('required tests passed') }) {
+            throw new GradleException('GameTest log does not contain a successful required-test summary.')
+        }
+
+        List<String> hemomancyErrors = logLines.findAll { line ->
+            line.contains('/ERROR]') && line.toLowerCase(Locale.ROOT).contains('hemomancy')
+        }
+        if (!hemomancyErrors.isEmpty()) {
+            throw new GradleException(
+                    "GameTest server reported Hemomancy resource errors:\n" + hemomancyErrors.join('\n'))
+        }
+    }
+}
+
 tasks.register('alphaCheck') {
     group = 'verification'
-    description = 'Runs JVM contracts followed by the dedicated Hemomancy GameTest pilots.'
-    dependsOn tasks.named('test'), tasks.named('runGameTestServer')
+    description = 'Runs JVM contracts, dedicated Hemomancy GameTests, and the runtime resource-error gate.'
+    dependsOn tasks.named('test'), tasks.named('verifyGameTestResourceLog')
 }
 
 // IDEA no longer automatically downloads sources/javadoc jars for dependencies, so we need to explicitly enable the behavior.

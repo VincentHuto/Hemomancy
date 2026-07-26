@@ -204,6 +204,11 @@ public final class HemoJourneyController {
 			case SEPARATION_STARTED -> "Wait for the centrifuge to finish spinning, then run journey next.";
 			case ENZYME_RECOVERED -> "Open the centrifuge, take the Vivacious Enzyme from its output, then run journey next.";
 			case ALCHEMIST_REWARD -> "Speak to the marked Alchemist and claim the First Separation sampling kit.";
+			case INITIATE_RITE -> "Invoke the prepared Rite of the Incarnadine Fane and wait until Degree 3 is awarded.";
+			case ADEPT_RITE -> "Invoke the prepared Rite of the Sanguine Brotherhood and wait until Degree 4 is awarded.";
+			case ILLUMINATUS_RITE -> "Invoke the prepared Rite of the Crimson Lodge and wait until Degree 5 is awarded.";
+			case SANCTIFIED_RITE -> "Invoke the prepared Rite of the Bloodline Covenant and wait until Degree 6 is awarded.";
+			case ARCHON_RITE -> "Invoke the prepared Rite of the Hematic Order and wait until Degree 7 is awarded.";
 			case COMPLETE -> "Run journey next to restore the pre-journey snapshot.";
 		};
 	}
@@ -218,6 +223,7 @@ public final class HemoJourneyController {
 			case VOTARY_RITE -> origin.above();
 			case DEGREE_2_REACHED, ALCHEMIST_BRIEFING, ALCHEMIST_REWARD -> origin.above();
 			case CENTRIFUGE_PREPARED, SEPARATION_STARTED, ENZYME_RECOVERED -> origin.above(2);
+			case INITIATE_RITE, ADEPT_RITE, ILLUMINATUS_RITE, SANCTIFIED_RITE, ARCHON_RITE -> origin.above(3);
 			case COMPLETE -> origin;
 		};
 	}

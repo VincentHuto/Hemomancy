@@ -34,7 +34,7 @@ import net.minecraft.world.level.material.FluidState;
 
 public class GourdBlock extends PumpkinBlock implements SimpleWaterloggedBlock {
 	public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
-	private static final VoxelShape SHAPE = Block.box(3.0D, 0.0D, 4.0D, 13.0D, 7.0D, 12.0D);
+	private static final VoxelShape SHAPE = Block.box(4.0D, 0.0D, 3.0D, 12.0D, 14.0D, 13.0D);
 
 	public GourdBlock(BlockBehaviour.Properties p_55284_) {
 		super(p_55284_);

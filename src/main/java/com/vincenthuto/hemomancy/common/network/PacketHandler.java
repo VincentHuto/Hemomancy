@@ -23,6 +23,7 @@ import com.vincenthuto.hemomancy.common.network.capa.harbinger.BloodFormationKey
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.ToggleGourdKeyPacket;
 import com.vincenthuto.hemomancy.common.network.morphling.*;
 import com.vincenthuto.hemomancy.common.network.mission.OpenHarbingerAssignmentLedgerPacket;
+import com.vincenthuto.hemomancy.common.network.mission.OpenBookOfObservancesPacket;
 import com.vincenthuto.hemomancy.common.network.routing.PacketSpawnVeinSpiderCourier;
 import com.vincenthuto.hemomancy.common.network.particle.*;
 import com.vincenthuto.hemomancy.common.network.routing.PacketSyncSutureLinks;
@@ -256,6 +257,8 @@ public class PacketHandler {
         net.playToClient(OpenInscriptionPacket.TYPE, OpenInscriptionPacket.STREAM_CODEC, OpenInscriptionPacket::handle);
         net.playToClient(OpenHarbingerAssignmentLedgerPacket.TYPE,
                 OpenHarbingerAssignmentLedgerPacket.STREAM_CODEC, OpenHarbingerAssignmentLedgerPacket::handle);
+        net.playToClient(OpenBookOfObservancesPacket.TYPE,
+                OpenBookOfObservancesPacket.STREAM_CODEC, OpenBookOfObservancesPacket::handle);
 
         // ── World events ──────────────────────────────────────────────────────
         net.playToClient(PacketSyncQliphothBlooms.TYPE, PacketSyncQliphothBlooms.STREAM_CODEC, PacketSyncQliphothBlooms::handle);
@@ -357,6 +360,12 @@ public class PacketHandler {
     /** Helper – send a payload to a specific player (server → client). */
     public static <P extends CustomPacketPayload> void sendToPlayer(
             ServerPlayer player, P payload) {
+        // Semantic GameTests use detached server players so progression can be
+        // exercised without a fake client connection. Logged-in players always
+        // have one, and detached players have nothing to synchronize.
+        if (player.connection == null) {
+            return;
+        }
         PacketDistributor.sendToPlayer(player, payload);
     }
 

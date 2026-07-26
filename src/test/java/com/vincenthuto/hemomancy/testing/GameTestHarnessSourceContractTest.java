@@ -70,6 +70,7 @@ class GameTestHarnessSourceContractTest {
 				"hematic_iron_crafted",
 				"vicar_reward", "votary_rite", "degree_2_reached", "alchemist_briefing",
 				"centrifuge_prepared", "separation_started", "enzyme_recovered", "alchemist_reward",
+				"initiate_rite", "adept_rite", "illuminatus_rite", "sanctified_rite", "archon_rite",
 				"complete"), stageIds);
 
 		int journeyStart = commands.indexOf("literal(\"journey\")");

@@ -20,6 +20,7 @@ import com.vincenthuto.hemomancy.common.event.HarbingerAdvancementGranter;
 import com.vincenthuto.hemomancy.common.mission.FirstBloodcraftAssignmentHelper;
 import com.vincenthuto.hemomancy.common.recipe.BloodStructureOfferingPlacement;
 import com.vincenthuto.hemomancy.common.recipe.BloodStructureRecipe;
+import com.vincenthuto.hemomancy.common.recipe.CardinalRiteRecipe;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -60,7 +61,7 @@ public final class HemoJourneyFixtures {
 	private static final String BASELINE_BLOOD = "blood";
 	private static final String BASELINE_ADVANCEMENT = "advancement_complete";
 	private static final int RADIUS = 4;
-	private static final int HEIGHT = 5;
+	private static final int HEIGHT = 10;
 
 	private HemoJourneyFixtures() {
 	}
@@ -135,6 +136,8 @@ public final class HemoJourneyFixtures {
 				case DEGREE_2_REACHED, ALCHEMIST_BRIEFING, ALCHEMIST_REWARD -> spawnAlchemist(level, origin);
 				case CENTRIFUGE_PREPARED -> prepareCentrifugeCraft(player, origin);
 				case SEPARATION_STARTED, ENZYME_RECOVERED -> prepareCentrifuge(player, origin);
+				case INITIATE_RITE, ADEPT_RITE, ILLUMINATUS_RITE, SANCTIFIED_RITE, ARCHON_RITE ->
+					buildRankupRite(player, origin, rankupRecipe(stage));
 				case COMPLETE -> { }
 			}
 			recordBaseline(player, stage, origin);
@@ -375,6 +378,12 @@ public final class HemoJourneyFixtures {
 				positions.add(origin.offset(-2, 1, 0));
 				positions.add(origin.offset(2, 1, 0));
 			}
+		} else if (isRankupStage(stage)) {
+			for (int x = -RADIUS; x <= RADIUS; x++) {
+				for (int y = 1; y <= 9; y++) {
+					for (int z = -RADIUS; z <= RADIUS; z++) positions.add(origin.offset(x, y, z));
+				}
+			}
 		}
 		return positions;
 	}
@@ -439,6 +448,42 @@ public final class HemoJourneyFixtures {
 					: key == 'E' ? BlockInit.engram_block.get() : BlockInit.hematic_iron_block.get());
 		}
 		var blood = HemoCapabilityAccess.requireBloodVolume(player); blood.setBloodVolume(Math.max(blood.getBloodVolume(), 250.0D));
+	}
+
+	private static void buildRankupRite(ServerPlayer player, BlockPos origin, String recipePath) {
+		CardinalRiteRecipe recipe = CardinalRiteRecipe.getRiteByLocation(
+				fixtureLevel(player), Hemomancy.rloc("cardinal_rite/" + recipePath));
+		if (recipe == null || !recipe.isRankup()) {
+			throw new IllegalStateException("Rank-up rite recipe is unavailable: " + recipePath);
+		}
+		int halfWidth = recipe.getPattern().getBlockPattern().getWidth() / 2;
+		int halfDepth = recipe.getPattern().getBlockPattern().getDepth() / 2;
+		for (var pair : recipe.getPattern().getBlockPosBlockList()) {
+			Block block = pair.getBlock();
+			if (block == null || block == Blocks.AIR) continue;
+			BlockPos relative = pair.getPos();
+			set(player, origin.offset(relative.getX() - halfWidth, relative.getY() + 1,
+					relative.getZ() - halfDepth), block);
+		}
+		var blood = HemoCapabilityAccess.requireBloodVolume(player);
+		blood.setBloodVolume(Math.max(blood.getBloodVolume(), recipe.getBloodCost()));
+	}
+
+	private static boolean isRankupStage(HemoJourneyStage stage) {
+		return stage == HemoJourneyStage.INITIATE_RITE || stage == HemoJourneyStage.ADEPT_RITE
+				|| stage == HemoJourneyStage.ILLUMINATUS_RITE || stage == HemoJourneyStage.SANCTIFIED_RITE
+				|| stage == HemoJourneyStage.ARCHON_RITE;
+	}
+
+	private static String rankupRecipe(HemoJourneyStage stage) {
+		return switch (stage) {
+			case INITIATE_RITE -> "initiate_rite";
+			case ADEPT_RITE -> "sanguine_brotherhood";
+			case ILLUMINATUS_RITE -> "illuminatus_rite";
+			case SANCTIFIED_RITE -> "sanctified_rite";
+			case ARCHON_RITE -> "archon_rite";
+			default -> throw new IllegalArgumentException("Not a rank-up journey stage: " + stage);
+		};
 	}
 
 	private static void prepareCentrifuge(ServerPlayer player, BlockPos origin) {

@@ -5,7 +5,7 @@
     "##"
   ],
   "key": {
-    "#": { "item": "hemomancy:chitinite" }
+    "#": { "item": "hemomancy:chitinous_husk" }
   },
-  "result": { "item": "hemomancy:chitinite_block", "count": 1 }
+  "result": { "id": "hemomancy:chitinite_block", "count": 1 }
 }

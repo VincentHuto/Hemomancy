@@ -1,0 +1,9 @@
+{
+  "type": "hutoslib:page",
+  "ordinality": 5,
+  "texture": "hemomancy:textures/gui/guide/page.png",
+  "title": "Directed Observances",
+  "subtitle": "Service made legible",
+  "text": "Lethean Baptism opens more than a measure of Purity. Acolytes, Zealots, and Guardians assign Observances: practical offerings that teach the habits of cleansing. Speak to the directing guide to accept available work, gather the named offering, and return to an NPC of that office to fulfill it. The Book of Observances records what is locked, available, active, ready to return, or fulfilled. Rewards and offerings are granted or consumed only once. Some Observances require a threshold of Purity or the awakening of Clarity before they appear.",
+  "icon": "hemomancy:book_of_observances"
+}

@@ -319,6 +319,8 @@ These conflicts now have author decisions. The conflict/options/recommendation t
 
 **Author decision - settled:** Use the staged route. The Podium and Consecrated Copper ready the fully Purified practitioner; the Rite of Clarity Ascension performs the actual transition and sets `clarityUnlocked`.
 
+**Runtime resolution:** Implemented. Consecrated Copper preparation sets the persisted readiness gate at the Podium; Clarity Ascension rejects an unprepared practitioner, consumes that readiness on success, unlocks Clarity, and clears any remaining Harbinger degree state.
+
 ### S-08 - Is Ancestral Communion/Fungal Voice telling objective truth?
 
 **Conflict:** Dialogue branches are labeled as the full truth while making claims that contradict established lore, including that the mycelium pruned the Unstained and that Our Lady is merely scar tissue. Current canon says former Harbingers founded the Unstained and Our Lady predates the fungal arrival.

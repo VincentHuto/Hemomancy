@@ -223,27 +223,35 @@ public final class PuppeteeringGameTests {
 
 	@GameTest(templateNamespace = "minecraft", template = EMPTY_TEMPLATE, timeoutTicks = 80)
 	public static void marrowSpitterFiresBloodShotsInsteadOfArrows(GameTestHelper helper) {
-		ServerPlayer target = testPlayer(helper);
+		ServerPlayer owner = testPlayer(helper);
 		PuppeteerSummonDefinition definition = PuppeteerSummonDefinitions
 				.byName(PuppeteerSummonDefinitions.MARROW_SPITTER).orElseThrow();
-		Mob spitter = PuppeteerSummonFactory.createTrial(definition, helper.getLevel(), target,
+		Mob spitter = PuppeteerSummonFactory.createTrial(definition, helper.getLevel(), owner,
 				helper.absolutePos(new BlockPos(1, 3, 6))).orElseThrow();
+		Zombie target = EntityType.ZOMBIE.create(helper.getLevel());
+		helper.assertTrue(target != null, "Marrow Spitter test target must spawn");
+		target.setPos(net.minecraft.world.phys.Vec3.atCenterOf(helper.absolutePos(new BlockPos(12, 2, 6))));
+		target.setNoAi(true);
+		helper.getLevel().addFreshEntity(target);
 		spitter.setTarget(target);
 		net.minecraft.world.phys.Vec3 startingPosition = spitter.position();
 		helper.getLevel().addFreshEntity(spitter);
+		((net.minecraft.world.entity.monster.RangedAttackMob) spitter).performRangedAttack(target, 1.0F);
+		boolean firedBloodShot = !helper.getLevel().getEntitiesOfClass(BloodShotEntity.class,
+				spitter.getBoundingBox().inflate(32.0),
+				shot -> shot.getOwner() == spitter).isEmpty();
 
 		helper.runAfterDelay(50, () -> {
 			try {
-				int shots = helper.getLevel().getEntitiesOfClass(BloodShotEntity.class,
-						spitter.getBoundingBox().inflate(32.0)).size();
-				helper.assertTrue(shots > 0, "Marrow Spitter must fire BloodShot projectiles");
+				helper.assertTrue(firedBloodShot, "Marrow Spitter must fire BloodShot projectiles");
 				helper.assertTrue(spitter.position().distanceTo(startingPosition) > 0.5,
 						"Marrow Spitter must hover around its player anchor instead of remaining ground-locked");
 				helper.assertTrue(!spitter.isOnFire(), "Marrow Spitter must not ignite in sunlight");
 				helper.succeed();
 			} finally {
 				spitter.discard();
-				removePlayer(target);
+				target.discard();
+				removePlayer(owner);
 			}
 		});
 	}

@@ -599,7 +599,7 @@ A: Not necessarily. Their methods are brutal. Neither path is objectively good o
 
 ## Observances and Quiet Work
 
-Church Acolytes offer five persistent assignments called **Observances**. Speak to an Acolyte to accept one, then return with its offering to claim the reward. The first accepted assignment grants the **Book of Observances**, which opens the Unstained progress screen and records active/completed work and the next rite.
+Church Acolytes, Zealots, and Guardians offer nine persistent assignments called **Observances**. Speak to the relevant office to accept one, then return with its offering to claim the reward. The first accepted assignment grants the **Book of Observances**, which opens its own ledger of active and completed work grouped by the NPC who directed it. The **Self-Reflection Mirror** remains the separate Unstained progression screen.
 
 - Gather four Ghost Pipe blooms.
 - Weave a Lethean Poppy Wreath.
@@ -607,13 +607,13 @@ Church Acolytes offer five persistent assignments called **Observances**. Speak 
 - Consecrate four Copper Ingots.
 - Offer a Lethean Chalice after Clarity is awakened.
 
-Observances pay substantial one-time Purity or Clarity and useful pale reagents. They are deliberately non-combat objectives, making patient gathering, cultivation, restraint, and service the fastest thematic route through purification.
+Observances pay substantial one-time Purity or Clarity and useful pale reagents. Acolytes teach gathering and preparation, Zealots ask for distilled water and devotional craft, and Guardians provision the church's hemolytic watch. They are deliberately non-combat objectives, making patient gathering, cultivation, restraint, and service the fastest thematic route through purification.
 
 ## Specialized Stations
 
-The **Stillwater Condenser** turns glass bottles into Lethean Dew when placed beside source water with living Ghost Pipe nearby. It unlocks in practice at 50 Purity, has a settling cooldown, and produces twice as much when a Verdigris Lattice is nearby.
+The **Stillwater Condenser** has a dedicated vessel interface that turns stored glass bottles into Lethean Dew when placed directly above source water with living Ghost Pipe within four blocks. It unlocks in practice at 50 Purity. A nearby Verdigris Lattice within five blocks halves processing time and doubles each batch.
 
-The **Verdigris Lattice** is a passive defensive fixture. It grants Resistance to nearby Unstained players while weakening and slowing Hemomancy creatures. Its ward also improves nearby Stillwater Condensers.
+The **Verdigris Lattice** is a visible copper-and-silver ward fixture rather than a solid construction block. Its core pulses every four seconds, granting Resistance to nearby Unstained players while weakening and slowing Hemomancy creatures. Inspecting it reports its eight-block shelter and condenser effect.
 
 The Pale Silver Pickaxe and Verdigris Censer are intentionally not part of the active path.
 

@@ -85,10 +85,10 @@ Avoid sharing mutable fixture state between tests. Prefer throwaway players and 
 
 ## Unstained progression smoke test
 
-1. Begin purification and talk to an Acolyte. Accept each available Observance; verify the Book of Observances is only granted once and survives relog/death.
-2. Reopen the dialogue with the required offering. Verify it is consumed once, the reward is granted once, and the journal marks the assignment complete.
+1. Begin purification and talk to an Acolyte, Zealot, and Guardian as their Observances become available. Verify the ledger groups all nine assignments under the correct directing office and the Book of Observances is only granted once and survives relog/death.
+2. Reopen the matching NPC dialogue with each required offering. Verify it is consumed once, the reward is granted once, and the journal marks the assignment complete.
 3. At Clarity 49, verify Glass Lungs is blocked; at 50 it may start and yields a Lethean Chalice. At Clarity 74, verify Moon-Washed Copper is blocked; at 75 it yields a Pale Silver Bell.
 4. Verify a Still Art cannot be learned below its declared Clarity stage, including through a rite reward, then verify stage advancement backfills it.
-5. Place a Stillwater Condenser beside source water and within four blocks of Ghost Pipe. At less than 50 Purity it must reject a glass bottle; at 50 it produces Lethean Dew. A Verdigris Lattice within five blocks doubles output.
+5. Place a Stillwater Condenser beside source water and within four blocks of Ghost Pipe. Below 50 Purity its menu must remain locked. At 50, open its two-slot screen, insert glass bottles, and verify the water/Ghost Pipe indicators and progress channel produce Lethean Dew. A Verdigris Lattice within five blocks must light the lattice indicator, halve processing time, and double output.
 6. Stand near a Verdigris Lattice as an Unstained player and verify Resistance. Spawn a tagged Hemomancy creature and verify Weakness and Slowness after a random tick.
 7. Confirm no active recipe, dialogue inquiry, or registered item references `pale_silver_pickaxe` or `verdigris_censer`.

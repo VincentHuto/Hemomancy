@@ -124,6 +124,10 @@ public class BlockEntityInit {
 	public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<PallidRetortBlockEntity>> pallid_retort = TILES.register(
 			"pallid_retort",
 			() -> BlockEntityType.Builder.of(PallidRetortBlockEntity::new, BlockInit.pallid_retort.get()).build(null));
+	public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<StillwaterCondenserBlockEntity>> stillwater_condenser = TILES.register(
+			"stillwater_condenser",
+			() -> BlockEntityType.Builder.of(StillwaterCondenserBlockEntity::new,
+					BlockInit.stillwater_condenser.get()).build(null));
 
 	public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<VialCentrifugeBlockEntity>> vial_centrifuge = TILES
 			.register("vial_centrifuge", () -> BlockEntityType.Builder

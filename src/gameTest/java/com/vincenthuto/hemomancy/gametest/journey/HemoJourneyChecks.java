@@ -55,6 +55,16 @@ public final class HemoJourneyChecks {
 					&& HarbingerAdvancementGranter.isFirstSeparationStarted(player), "Vial Centrifuge separation has not started.");
 			case ENZYME_RECOVERED -> require(unmet, HarbingerAdvancementGranter.isFirstSeparationComplete(player), "Recover the enzyme from the centrifuge output.");
 			case ALCHEMIST_REWARD -> require(unmet, FirstSeparationAssignmentHelper.isClaimed(player), "First Separation reward has not been claimed.");
+			case INITIATE_RITE -> verifyRankup(player, 3, HarbingerAdvancementGranter.ADV_DEGREE_3_INITIATE,
+					"Rite of the Incarnadine Fane", unmet);
+			case ADEPT_RITE -> verifyRankup(player, 4, HarbingerAdvancementGranter.ADV_DEGREE_4_ADEPT,
+					"Rite of the Sanguine Brotherhood", unmet);
+			case ILLUMINATUS_RITE -> verifyRankup(player, 5, HarbingerAdvancementGranter.ADV_DEGREE_5_ILLUMINATUS,
+					"Rite of the Crimson Lodge", unmet);
+			case SANCTIFIED_RITE -> verifyRankup(player, 6, HarbingerAdvancementGranter.ADV_DEGREE_6_SANCTIFIED,
+					"Rite of the Bloodline Covenant", unmet);
+			case ARCHON_RITE -> verifyRankup(player, 7, HarbingerAdvancementGranter.ADV_DEGREE_7_ARCHON,
+					"Rite of the Hematic Order", unmet);
 			case COMPLETE -> { return new HemoJourneyResult(true, stage, "Journey checkpoints complete; ready to restore the snapshot."); }
 		}
 		return unmet.isEmpty() ? new HemoJourneyResult(true, stage, "All checkpoint conditions passed.")
@@ -113,6 +123,14 @@ public final class HemoJourneyChecks {
 		require(unmet, HemoJourneyCheckpointRules.rewardPassed(outputs,
 				HemoJourneyFixtures.baselineAdvancementIncomplete(player), FirstBloodcraftAssignmentHelper.isClaimed(player)),
 				"First Bloodcraft reward has not been newly claimed with its exact kit.");
+	}
+
+	private static void verifyRankup(ServerPlayer player, int degree,
+			net.minecraft.resources.ResourceLocation advancement, String riteName, List<String> unmet) {
+		require(unmet, HemoCapabilityAccess.requireInitiatoryDegree(player).getDegreeNumber() == degree,
+				riteName + " has not raised the Initiatory Degree to " + degree + ".");
+		require(unmet, HarbingerAdvancementGranter.hasAdvancement(player, advancement),
+				riteName + " advancement is incomplete.");
 	}
 
 	private static boolean outputPresent(ServerPlayer player, HemoJourneyStage stage, BlockPos origin,

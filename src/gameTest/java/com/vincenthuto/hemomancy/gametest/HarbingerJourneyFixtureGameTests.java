@@ -55,6 +55,24 @@ public final class HarbingerJourneyFixtureGameTests {
 	}
 
 	@GameTest(templateNamespace = "minecraft", template = EMPTY_TEMPLATE, timeoutTicks = 40)
+	public static void journeyRankupRunwayReachesArchon(GameTestHelper helper) {
+		List<String> stages = java.util.Arrays.stream(HemoJourneyStage.values()).map(HemoJourneyStage::id).toList();
+		List<String> expectedTail = List.of("initiate_rite", "adept_rite", "illuminatus_rite",
+				"sanctified_rite", "archon_rite", "complete");
+		helper.assertTrue(stages.size() >= expectedTail.size()
+						&& stages.subList(stages.size() - expectedTail.size(), stages.size()).equals(expectedTail),
+				"The operator journey must continue through every public Harbinger rank-up to Archon");
+		for (String rite : List.of("initiate_rite", "sanguine_brotherhood", "illuminatus_rite",
+				"sanctified_rite", "archon_rite")) {
+			var recipe = com.vincenthuto.hemomancy.common.recipe.CardinalRiteRecipe.getRiteByLocation(
+					helper.getLevel(), Hemomancy.rloc("cardinal_rite/" + rite));
+			helper.assertTrue(recipe != null && recipe.isRankup(),
+					"Journey rank-up recipe must load as a rank-up: " + rite);
+		}
+		helper.succeed();
+	}
+
+	@GameTest(templateNamespace = "minecraft", template = EMPTY_TEMPLATE, timeoutTicks = 40)
 	public static void vicarRewardAcceptsAllInventory(GameTestHelper helper) {
 		helper.assertTrue(HemoJourneyCheckpointRules.rewardQuantityPassed(3, 7, 0, 4),
 				"A positive inventory delta may satisfy the exact reward quantity");

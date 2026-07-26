@@ -11,6 +11,6 @@
     "minecraft:mushroom_fields",
     "minecraft:lush_caves",
     "minecraft:dripstone_caves",
-    "#forge:is_swamp"
+    "#c:is_swamp"
   ]
 }

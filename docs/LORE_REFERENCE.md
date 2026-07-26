@@ -28,7 +28,7 @@ The following settled facts are non-negotiable consistency anchors:
 > - **The Chamber of Will is now the Degree 6 inward refuge:** not the external Fungal Dimension, but a private blood-memory chamber whose space and sky react to Archon, Qliphoth, Silent Archon, and Apotheos progression.
 > - **Vesper and The Mycophant now have documented endgame roles:** Vesper is the two-phase boss for Archons who refuse fungal dissolution, while The Mycophant is the fruiting-body endpoint for Apotheos-aligned Harbingers. Their entities, rendering, sound hooks, boss music, core combat behavior, and guaranteed final reward loot tables are wired; summoning rituals remain WIP.
 > - **Annetta Knowles encounter is partially complete:** the two-route encounter is wired and playable, dedicated Java models/textures are present, and Annetta's Sanguis Lancea has custom held/item rendering. Final animation polish, fuller Phase 1 biological combat identity, and Annetta-specific thrown projectile rendering remain WIP.
-> - Several high-impact lore arcs are intentionally established as foreshadowed endgame content and remain partial in gameplay implementation: broader Fungal Dimension progression, Vesper/Mycophant summoning rituals, non-Hemorath Saint chambers/world placement, and fuller boss artwork.
+> - Several high-impact lore arcs are intentionally established as foreshadowed endgame content and remain partial in gameplay implementation: broader Fungal Dimension progression, Vesper/Mycophant summoning rituals, every Saint chamber/world placement (including Hemorath), and fuller boss artwork.
 > - Covenant social structure gained stricter in-game expression: bloodline leadership can now ritually sever members, reinforcing the Order's "chosen-family covenant" framing over biological lineage.
 > - Harbinger outpost recruitment now reflects covenant restraint: a player's bloodline can draw one pledged voice from an outpost and one of each calling, supporting the Order's doctrine of spreading the cause rather than absorbing an entire lodge.
 > - Cerebral scars now read more like internalized mind-maps than worn trinkets: Scar items are burned into memory, Mason's Effigy prepares known scars into a motif, projected blood writes the motif into a dynamic Scar Pattern, and the Anastomotic Brazier burns that pattern to set the active scar loadout.
@@ -521,7 +521,7 @@ Players are directed to seek the Saints around **Degree 3–4**, when they are s
 
 **Triggering a boss fight deliberately**: Smearing **Foul Paste** on a sarcophagus will anger the saint and force a fight even if the player had already extracted a sample peacefully.
 
-**Release scope:** Saints are intentionally modular expansion content. The first release needs their initial lore, shared sarcophagus foundation, and Hemorath's complete trial; it does not require four finished trial suites. Bespoke rooms, environmental storytelling, victory-condition refinement, placement, balance, and final presentation for Seraphae, Putriciel, and Velorum are reserved for the first major post-release Saints update.
+**Release scope:** The entire Saints system is modular expansion content. Initial lore may foreshadow the four Saints, but no Saint encounter—including Hemorath—is part of first-release progression. Chambers, environmental storytelling, victory conditions, placement, rewards, Canon memories, balance, and final presentation are reserved for the first major post-release content update.
 
 ### 10.1 Hemorath — The First Saint
 

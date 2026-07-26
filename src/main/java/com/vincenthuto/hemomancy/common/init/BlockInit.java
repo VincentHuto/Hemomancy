@@ -583,7 +583,7 @@ public class BlockInit {
 					.strength(2.0F, 6.0F).sound(SoundType.COPPER).noOcclusion()));
 	public static final DeferredHolder<Block, Block> verdigris_lattice = MODELEDBLOCKS.register("verdigris_lattice",
 			() -> new VerdigrisLatticeBlock(BlockBehaviour.Properties.of()
-					.strength(2.5F, 8.0F).sound(SoundType.COPPER).randomTicks().lightLevel(state -> 3)));
+					.strength(2.5F, 8.0F).sound(SoundType.COPPER).noOcclusion().lightLevel(state -> 3)));
 
 	// Idols / late utility fixtures
 	public static final DeferredHolder<Block, Block> humane_idol = MODELEDBLOCKS.register("humane_idol",

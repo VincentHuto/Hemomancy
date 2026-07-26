@@ -1,8 +1,106 @@
 {
-  "parent": "minecraft:block/cube_bottom_top",
+  "credit": "Hemomancy Stillwater Condenser",
+  "parent": "minecraft:block/block",
+  "ambientocclusion": false,
+  "render_type": "cutout",
   "textures": {
-    "bottom": "hemomancy:block/pale_silver_block",
-    "side": "hemomancy:block/model_pallid_retort",
-    "top": "hemomancy:block/pale_silver_block"
-  }
+    "particle": "minecraft:block/oxidized_copper",
+    "copper": "minecraft:block/oxidized_copper",
+    "cut_copper": "minecraft:block/weathered_cut_copper",
+    "silver": "hemomancy:block/pale_silver_block",
+    "glass": "minecraft:block/light_blue_stained_glass",
+    "water": "minecraft:block/cyan_concrete"
+  },
+  "elements": [
+    {
+      "name": "foot",
+      "from": [1, 0, 1], "to": [15, 2, 15],
+      "faces": {
+        "north": {"texture": "#cut_copper"}, "south": {"texture": "#cut_copper"},
+        "east": {"texture": "#cut_copper"}, "west": {"texture": "#cut_copper"},
+        "up": {"texture": "#copper"}, "down": {"texture": "#copper"}
+      }
+    },
+    {
+      "name": "basin",
+      "from": [2, 2, 2], "to": [14, 5, 14],
+      "faces": {
+        "north": {"texture": "#copper"}, "south": {"texture": "#copper"},
+        "east": {"texture": "#copper"}, "west": {"texture": "#copper"},
+        "up": {"texture": "#water"}, "down": {"texture": "#cut_copper"}
+      }
+    },
+    {
+      "name": "glass_chamber",
+      "from": [5, 5, 5], "to": [11, 11, 11],
+      "faces": {
+        "north": {"texture": "#glass"}, "south": {"texture": "#glass"},
+        "east": {"texture": "#glass"}, "west": {"texture": "#glass"},
+        "up": {"texture": "#glass"}, "down": {"texture": "#glass"}
+      }
+    },
+    {
+      "name": "coil",
+      "from": [7, 5, 7], "to": [9, 13, 9],
+      "faces": {
+        "north": {"texture": "#silver"}, "south": {"texture": "#silver"},
+        "east": {"texture": "#silver"}, "west": {"texture": "#silver"},
+        "up": {"texture": "#silver"}, "down": {"texture": "#silver"}
+      }
+    },
+    {
+      "name": "coil_cap",
+      "from": [6, 12, 6], "to": [10, 14, 10],
+      "faces": {
+        "north": {"texture": "#silver"}, "south": {"texture": "#silver"},
+        "east": {"texture": "#silver"}, "west": {"texture": "#silver"},
+        "up": {"texture": "#silver"}, "down": {"texture": "#silver"}
+      }
+    },
+    {
+      "name": "north_pipe",
+      "from": [7, 4, 1], "to": [9, 8, 3],
+      "faces": {
+        "north": {"texture": "#cut_copper"}, "south": {"texture": "#cut_copper"},
+        "east": {"texture": "#copper"}, "west": {"texture": "#copper"},
+        "up": {"texture": "#copper"}, "down": {"texture": "#copper"}
+      }
+    },
+    {
+      "name": "south_pipe",
+      "from": [7, 4, 13], "to": [9, 8, 15],
+      "faces": {
+        "north": {"texture": "#cut_copper"}, "south": {"texture": "#cut_copper"},
+        "east": {"texture": "#copper"}, "west": {"texture": "#copper"},
+        "up": {"texture": "#copper"}, "down": {"texture": "#copper"}
+      }
+    },
+    {
+      "name": "left_support",
+      "from": [3, 5, 7], "to": [5, 12, 9],
+      "faces": {
+        "north": {"texture": "#cut_copper"}, "south": {"texture": "#cut_copper"},
+        "east": {"texture": "#copper"}, "west": {"texture": "#copper"},
+        "up": {"texture": "#silver"}, "down": {"texture": "#copper"}
+      }
+    },
+    {
+      "name": "right_support",
+      "from": [11, 5, 7], "to": [13, 12, 9],
+      "faces": {
+        "north": {"texture": "#cut_copper"}, "south": {"texture": "#cut_copper"},
+        "east": {"texture": "#copper"}, "west": {"texture": "#copper"},
+        "up": {"texture": "#silver"}, "down": {"texture": "#copper"}
+      }
+    },
+    {
+      "name": "collector_arch",
+      "from": [3, 11, 7], "to": [13, 13, 9],
+      "faces": {
+        "north": {"texture": "#cut_copper"}, "south": {"texture": "#cut_copper"},
+        "east": {"texture": "#copper"}, "west": {"texture": "#copper"},
+        "up": {"texture": "#silver"}, "down": {"texture": "#copper"}
+      }
+    }
+  ]
 }

@@ -15,6 +15,11 @@ public enum HemoJourneyStage {
 	SEPARATION_STARTED("separation_started"),
 	ENZYME_RECOVERED("enzyme_recovered"),
 	ALCHEMIST_REWARD("alchemist_reward"),
+	INITIATE_RITE("initiate_rite"),
+	ADEPT_RITE("adept_rite"),
+	ILLUMINATUS_RITE("illuminatus_rite"),
+	SANCTIFIED_RITE("sanctified_rite"),
+	ARCHON_RITE("archon_rite"),
 	COMPLETE("complete");
 
 	private final String id;

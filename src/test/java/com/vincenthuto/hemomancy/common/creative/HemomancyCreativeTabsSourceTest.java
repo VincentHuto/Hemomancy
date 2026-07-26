@@ -36,6 +36,11 @@ public final class HemomancyCreativeTabsSourceTest {
 			"saint_relic_seraphae",
 			"saint_relic_putriciel",
 			"saint_relic_velorum",
+			"memory_crimson_tithe",
+			"memory_unclosing_eye",
+			"memory_bloom_of_rot",
+			"memory_endless_hour",
+			"hemorath_rib",
 			"echo_of_spleen",
 			"echo_of_liver",
 			"echo_of_heart",
@@ -100,6 +105,8 @@ public final class HemomancyCreativeTabsSourceTest {
 				"**Status:** `WIP — post-alpha`" );
 		assertContains("readiness page should exclude Drudges from alpha core", readiness,
 				"**Drudges are post-alpha WIP.**");
+		assertContains("readiness page should exclude every Saint encounter from the first release", readiness,
+				"**The entire Saints suite is post-release WIP.**");
 		assertNotContains("core Materials Atlas should not advertise the WIP SSC", materials,
 				"new MaterialEntry(\"semi_sentient_construct\"");
 		assertNotContains("core Covenant skill icon should not expose the WIP electrode", covenantSkills,

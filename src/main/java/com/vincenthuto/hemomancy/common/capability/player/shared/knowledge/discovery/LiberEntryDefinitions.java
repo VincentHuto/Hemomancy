@@ -43,6 +43,8 @@ public final class LiberEntryDefinitions {
 	public static final ResourceLocation IMMACULATUS_INFECTION = immaculatusEntry("intro/pages/the_infection");
 	public static final ResourceLocation IMMACULATUS_HEMOLYTIC_SOLUTION = immaculatusEntry("sacred_tools/pages/hemolytic_solution");
 	public static final ResourceLocation IMMACULATUS_COPPER_AND_SILVER = immaculatusEntry("sacred_tools/pages/copper_and_silver");
+	public static final ResourceLocation IMMACULATUS_OBSERVANCES = immaculatusEntry("sacred_tools/pages/book_of_observances");
+	public static final ResourceLocation IMMACULATUS_STILLWATER_CONDENSER = immaculatusEntry("sacred_tools/pages/stillwater_condenser");
 	public static final ResourceLocation IMMACULATUS_SHE_WHO_LISTENS = immaculatusEntry("our_lady/pages/she_who_listens");
 	public static final ResourceLocation IMMACULATUS_CLARITY_PRICE = immaculatusEntry("our_lady/pages/clarity_and_its_price");
 	public static final ResourceLocation ANNETTA_KNOWLES_GEODE = entry("cosmic_forces/pages/annetta_geode_memo");
@@ -81,6 +83,8 @@ public final class LiberEntryDefinitions {
 		register(IMMACULATUS_INFECTION, HemomancyDiscoverySource.MEMO, CommonDiscoverySource.ITEM_PICKUP);
 		register(IMMACULATUS_HEMOLYTIC_SOLUTION, HemomancyDiscoverySource.MEMO, CommonDiscoverySource.ITEM_PICKUP);
 		register(IMMACULATUS_COPPER_AND_SILVER, HemomancyDiscoverySource.MEMO, HemomancyDiscoverySource.RITE, CommonDiscoverySource.ITEM_PICKUP);
+		register(IMMACULATUS_OBSERVANCES, HemomancyDiscoverySource.RITE, CommonDiscoverySource.ITEM_PICKUP);
+		register(IMMACULATUS_STILLWATER_CONDENSER, CommonDiscoverySource.ITEM_PICKUP);
 		register(IMMACULATUS_SHE_WHO_LISTENS, HemomancyDiscoverySource.MEMO, HemomancyDiscoverySource.DIALOGUE,
 				HemomancyDiscoverySource.RITE_FRAGMENT);
 		register(IMMACULATUS_CLARITY_PRICE, HemomancyDiscoverySource.MEMO, HemomancyDiscoverySource.RITE,
@@ -102,6 +106,7 @@ public final class LiberEntryDefinitions {
 		registerRite("cardinal_rite/bloom_of_qliphoth", QLIPHOTH);
 		registerRite("cardinal_rite/lethean_baptism", THE_UNSTAINED);
 		registerRite("cardinal_rite/lethean_baptism", IMMACULATUS_FIRST_STEPS);
+		registerRite("cardinal_rite/lethean_baptism", IMMACULATUS_OBSERVANCES);
 		registerRite("cardinal_rite/silver_veil", COPPER_AND_SILVER);
 		registerRite("cardinal_rite/silver_veil", IMMACULATUS_COPPER_AND_SILVER);
 		registerRite("cardinal_rite/clarity_ascension", PURIFIED);

@@ -1,4 +1,89 @@
 {
-  "parent": "minecraft:block/cube_all",
-  "textures": { "all": "minecraft:block/oxidized_cut_copper" }
+  "credit": "Hemomancy Verdigris Lattice",
+  "parent": "minecraft:block/block",
+  "ambientocclusion": false,
+  "render_type": "cutout",
+  "textures": {
+    "particle": "minecraft:block/oxidized_cut_copper",
+    "copper": "minecraft:block/oxidized_cut_copper",
+    "silver": "hemomancy:block/pale_silver_block",
+    "glass": "minecraft:block/light_blue_stained_glass"
+  },
+  "elements": [
+    {
+      "name": "base",
+      "from": [1, 0, 1], "to": [15, 2, 15],
+      "faces": {
+        "north": {"texture": "#copper"}, "south": {"texture": "#copper"},
+        "east": {"texture": "#copper"}, "west": {"texture": "#copper"},
+        "up": {"texture": "#silver"}, "down": {"texture": "#copper"}
+      }
+    },
+    {
+      "name": "copper_frame",
+      "from": [2, 2, 7], "to": [4, 15, 9],
+      "faces": {
+        "north": {"texture": "#copper"}, "south": {"texture": "#copper"},
+        "east": {"texture": "#copper"}, "west": {"texture": "#copper"},
+        "up": {"texture": "#silver"}, "down": {"texture": "#copper"}
+      }
+    },
+    {
+      "name": "right_frame",
+      "from": [12, 2, 7], "to": [14, 15, 9],
+      "faces": {
+        "north": {"texture": "#copper"}, "south": {"texture": "#copper"},
+        "east": {"texture": "#copper"}, "west": {"texture": "#copper"},
+        "up": {"texture": "#silver"}, "down": {"texture": "#copper"}
+      }
+    },
+    {
+      "name": "upper_frame",
+      "from": [4, 13, 7], "to": [12, 15, 9],
+      "faces": {
+        "north": {"texture": "#copper"}, "south": {"texture": "#copper"},
+        "east": {"texture": "#copper"}, "west": {"texture": "#copper"},
+        "up": {"texture": "#silver"}, "down": {"texture": "#copper"}
+      }
+    },
+    {
+      "name": "lower_frame",
+      "from": [4, 3, 7], "to": [12, 5, 9],
+      "faces": {
+        "north": {"texture": "#copper"}, "south": {"texture": "#copper"},
+        "east": {"texture": "#copper"}, "west": {"texture": "#copper"},
+        "up": {"texture": "#silver"}, "down": {"texture": "#copper"}
+      }
+    },
+    {
+      "name": "crossbar_a",
+      "from": [7, 5, 7.25], "to": [9, 13, 8.75],
+      "rotation": {"origin": [8, 9, 8], "axis": "z", "angle": 45, "rescale": true},
+      "faces": {
+        "north": {"texture": "#copper"}, "south": {"texture": "#copper"},
+        "east": {"texture": "#silver"}, "west": {"texture": "#silver"},
+        "up": {"texture": "#copper"}, "down": {"texture": "#copper"}
+      }
+    },
+    {
+      "name": "crossbar_b",
+      "from": [7, 5, 7.25], "to": [9, 13, 8.75],
+      "rotation": {"origin": [8, 9, 8], "axis": "z", "angle": -45, "rescale": true},
+      "faces": {
+        "north": {"texture": "#copper"}, "south": {"texture": "#copper"},
+        "east": {"texture": "#silver"}, "west": {"texture": "#silver"},
+        "up": {"texture": "#copper"}, "down": {"texture": "#copper"}
+      }
+    },
+    {
+      "name": "ward_core",
+      "from": [6, 7, 6], "to": [10, 11, 10],
+      "rotation": {"origin": [8, 9, 8], "axis": "y", "angle": 45, "rescale": true},
+      "faces": {
+        "north": {"texture": "#glass"}, "south": {"texture": "#glass"},
+        "east": {"texture": "#glass"}, "west": {"texture": "#glass"},
+        "up": {"texture": "#silver"}, "down": {"texture": "#silver"}
+      }
+    }
+  ]
 }

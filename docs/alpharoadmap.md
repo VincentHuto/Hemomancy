@@ -58,7 +58,7 @@ Used for gap analysis below. Ordered from most to least impactful on alpha recep
 
 **5. Worldgen — PASSES**
 - 3 Harbinger biomes (Fungal Gardens, Fungal Isles, Hemorrhagic Plateau) + Unstained equivalents via TerraBlender.
-- Blood Temple, Harbinger Outpost, Unstained Church, Saint Trial Chamber (Hemorath complete).
+- Blood Temple, Harbinger Outpost, and Unstained Church. All Saint Trial Chambers, including Hemorath, are post-release WIP.
 - Fungal Dimension accessible via Fungal Spine item.
 
 **6. Lore depth — PASSES**
@@ -75,7 +75,7 @@ Used for gap analysis below. Ordered from most to least impactful on alpha recep
 
 **G1. Annetta Visual Polish (Saint visuals deferred)**
 - **Issue**: Seraphae, Putriciel, and Velorum have full AI and combat mechanics but placeholder or unfinished presentation. Annetta Knowles now has a Broken Church trigger plus dedicated Java models/textures, but her final animations, Sanguis Lancea rendering, and Phase 1 combat polish remain WIP.
-- **Impact**: Annetta remains a first-release polish concern. Seraphae, Putriciel, and Velorum are reserved for the first major post-release Saints update and are not alpha blockers.
+- **Impact**: Annetta remains a first-release polish concern. Hemorath, Seraphae, Putriciel, and Velorum are reserved together for the first major post-release Saints update and are not alpha blockers.
 - **Files**:
     - `src/main/java/com/vincenthuto/hemomancy/common/entity/boss/SeraphaeEntity.java`
     - `src/main/java/com/vincenthuto/hemomancy/common/entity/boss/PutricielEntity.java`
@@ -84,13 +84,13 @@ Used for gap analysis below. Ordered from most to least impactful on alpha recep
     - `src/main/resources/assets/hemomancy/textures/entity/` (missing textures for above)
 - **Resolution**: Either create proper models + GeckoLib animations, or explicitly label these saints as "in development" in the Liber and disable their trial chamber spawning until ready.
 
-**Post-release Saints Update — 3 Bespoke Trials**
-- **Issue**: Hemorath's full trial (blood basin puzzle, sarcophagus, boss fight) is complete. Seraphae, Putriciel, Velorum have boss AI but no bespoke trial chamber NBT structures and untuned world placement.
+**First Major Post-release Content Update — The Saints**
+- **Issue**: Hemorath's trial prototype (blood basin puzzle, sarcophagus, boss fight) is substantially implemented, while Seraphae, Putriciel, and Velorum have boss foundations without complete bespoke chambers or tuned world placement. Releasing Hemorath alone would fragment the system's introduction.
 - **Impact**: These encounters must remain outside ordinary first-release placement; their absence is intentional expansion scope.
 - **Files**:
     - `src/main/resources/data/hemomancy/structure/` (saint trial NBTs)
     - `src/main/java/com/vincenthuto/hemomancy/common/worldgen/` (placement configs)
-- **Resolution**: Keep Hemorath as the complete first-release Saint trial. Build the other three bespoke rooms, environmental stories, victory conditions, and final presentation together in the first major post-release Saints update.
+- **Resolution**: Keep all four Saints behind the WIP boundary. Ship their bespoke rooms, environmental stories, victory conditions, rewards, balance, and final presentation together in the first major post-release content update.
 
 **G3. New Player Onboarding — First-Hour Clarity**
 - **Issue**: No "Welcome to Hemomancy" guidance. Players finding their first Blood Temple have no hint of what to do. The Hermit dialogue starts abruptly without context. Breadcrumbs to Harbinger Outpost don't exist. The Unstained Church discovery path is unclear.
@@ -161,8 +161,8 @@ Used for gap analysis below. Ordered from most to least impactful on alpha recep
 | A1 | Audit + fix advancement JSON chain (verify all degree_1-8 fire) | Low |
 | A2 | Confirm Liber Sanguinum opens correctly for new players | Low-Medium |
 | A3 | Add "root" onboarding advancement + first Blood Temple hint | Medium |
-| A4 | Keep non-Hemorath bespoke Saint trials out of first-release placement | Settled: post-release Saints update |
-| A5 | Keep non-Hemorath final Saint presentation out of first-release scope | Settled: post-release Saints update |
+| A4 | Keep every Saint trial, including Hemorath, out of first-release placement | Settled: post-release Saints update |
+| A5 | Keep all final Saint presentation and rewards out of first-release scope | Settled: post-release Saints update |
 
 ### Phase B — Pre-Alpha Polish (Ship with alpha if possible)
 
@@ -178,8 +178,8 @@ Used for gap analysis below. Ordered from most to least impactful on alpha recep
 
 | Priority | Task | Effort |
 |----------|------|--------|
-| C1 | Complete non-Hemorath Saint models + GeckoLib animations in the Saints update | Post-release |
-| C2 | Complete Seraphae/Putriciel/Velorum trial chambers in the Saints update | Post-release |
+| C1 | Complete all Saint models + GeckoLib animations in the Saints update | Post-release |
+| C2 | Finish and jointly release all four Saint trial chambers in the Saints update | Post-release |
 | C3 | Blood Moon ritual trigger | Medium |
 | C4 | Manipulation rank forcing ritual | Medium |
 | C5 | MnA + Curios compatibility (pending upstream builds) | Medium (once deps exist) |
@@ -232,7 +232,7 @@ From grepping 23 TODO/FIXME/HACK comments across the codebase:
 1. **Fresh world test** — create new world, confirm no crash on load
 2. **Harbinger path** — find Blood Temple → meet Hermit → Degree 1 → verify Liber opens → complete Sanguine Initiation rite → advance to Degree 3 via crafting/rites → unlock manipulations → verify blood economy feels correct → reach Archon (Degree 7) → Fungal Spine → enter dimension → Qliphoth Bloom → Apotheos
 3. **Unstained path** — find Unstained Church → meet Zealot → drink Hemolytic Solution → Purification stages → Clarity → Still Arts
-4. **Hemorath encounter** — locate Saint Trial Chamber → complete trial → boss fight → residuum rewards
+4. **Saint encounters** — first major post-release update; excluded from the launch playthrough
 5. **JEI audit** — open JEI and verify every custom machine recipe category is populated
 6. **Advancement pop audit** — confirm each degree advancement fires + displays on screen
 7. **Performance test** — 30 minutes of play in a world with Blood Temple, Harbinger Outpost, and fungal biome loaded simultaneously

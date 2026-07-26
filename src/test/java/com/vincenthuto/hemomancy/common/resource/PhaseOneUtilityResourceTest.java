@@ -16,7 +16,7 @@ public final class PhaseOneUtilityResourceTest {
 	public static void main(String[] args) throws IOException {
 		assertUnstainedLootDoesNotDropSanguineBlob();
 		assertDuplicateIncubatorFungalScarsRemoved();
-		assertDicentraSapIsLegacyOnly();
+		assertDicentraSapIsFullyRetired();
 		assertPhaseOneUtilityAssetsExist();
 	}
 
@@ -49,17 +49,13 @@ public final class PhaseOneUtilityResourceTest {
 		}
 	}
 
-	private static void assertDicentraSapIsLegacyOnly() throws IOException {
-		assertContains("legacy dicentra sap distillation should remain",
-				read(DATA.resolve("recipe/distillation/dicentra_sap.json")), "hemomancy:bleeding_bulb");
+	private static void assertDicentraSapIsFullyRetired() throws IOException {
 		try (Stream<Path> paths = Files.walk(DATA)) {
 			for (Path path : paths.filter(Files::isRegularFile)
 					.filter(path -> path.toString().endsWith(".json")).toList()) {
-				String normalized = path.toString().replace('\\', '/');
 				String text = read(path);
-				if (text.contains("hemomancy:dicentra_sap")
-						&& !normalized.endsWith("recipe/distillation/dicentra_sap.json")) {
-					throw new AssertionError("non-legacy dicentra sap data reference remains: " + path);
+				if (text.contains("hemomancy:dicentra_sap")) {
+					throw new AssertionError("retired dicentra sap data reference remains: " + path);
 				}
 			}
 		}

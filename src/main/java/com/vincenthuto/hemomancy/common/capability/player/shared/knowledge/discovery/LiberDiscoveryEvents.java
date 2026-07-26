@@ -64,7 +64,6 @@ public final class LiberDiscoveryEvents {
 		BookEntryRegistry.registerItemUnlock(Hemomancy.rloc("talaromyces_minus"),     LiberEntryDefinitions.ERYTHROMYCELIUM);
 		BookEntryRegistry.registerItemUnlock(Hemomancy.rloc("blood_gourd_red"),       LiberEntryDefinitions.ERYTHROMYCELIUM);
 
-		BookEntryRegistry.registerItemUnlock(Hemomancy.rloc("blood_tendency_gauge"),  LiberEntryDefinitions.THE_HARBINGERS);
 		BookEntryRegistry.registerItemUnlock(Hemomancy.rloc("barbed_blade"),          LiberEntryDefinitions.THE_HARBINGERS);
 
 		BookEntryRegistry.registerItemUnlock(Hemomancy.rloc("fungal_spine"),          LiberEntryDefinitions.HYPHAE);
@@ -110,6 +109,8 @@ public final class LiberDiscoveryEvents {
 		BookEntryRegistry.registerItemUnlock(Hemomancy.rloc("cleansing_hemolymph"),    LiberEntryDefinitions.IMMACULATUS_HEMOLYTIC_SOLUTION);
 
 		BookEntryRegistry.registerItemUnlock(Hemomancy.rloc("consecrated_copper_ingot"),  LiberEntryDefinitions.IMMACULATUS_COPPER_AND_SILVER);
+		BookEntryRegistry.registerItemUnlock(Hemomancy.rloc("book_of_observances"),       LiberEntryDefinitions.IMMACULATUS_OBSERVANCES);
+		BookEntryRegistry.registerItemUnlock(Hemomancy.rloc("stillwater_condenser"),      LiberEntryDefinitions.IMMACULATUS_STILLWATER_CONDENSER);
 
 		BookEntryRegistry.registerItemUnlock(Hemomancy.rloc("tears_of_silthmere"),  LiberEntryDefinitions.IMMACULATUS_SHE_WHO_LISTENS);
 

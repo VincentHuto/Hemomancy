@@ -5,7 +5,7 @@
     "##"
   ],
   "key": {
-    "#": { "item": "hemomancy:sclerite" }
+    "#": { "item": "hemomancy:chalybeate_sclerite" }
   },
-  "result": { "item": "hemomancy:sclerite_block", "count": 1 }
+  "result": { "id": "hemomancy:sclerite_block", "count": 1 }
 }

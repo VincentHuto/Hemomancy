@@ -21,16 +21,13 @@ public final class GourdPresentationResourceTest {
 		assertDoesNotContain("gourd model should not inherit a full cube column", blockModel,
 				"\"parent\": \"minecraft:block/cube_column\"");
 		assertContains("gourd model has explicit element geometry", blockModel, "\"elements\"");
-		assertContains("gourd model has compact cocoa-pod body", blockModel, "\"from\": [3, 0, 4]");
-		assertContains("gourd model body stays low and pod-sized", blockModel, "\"to\": [13, 7, 12]");
-		assertContains("gourd model has a small stem nub", blockModel, "\"from\": [7, 7, 6]");
-		assertContains("gourd model reaches the west attached-stem edge", blockModel, "\"from\": [0, 2, 6]");
-		assertContains("gourd model reaches the east attached-stem edge", blockModel, "\"from\": [13, 2, 6]");
-		assertContains("gourd model reaches the north attached-stem edge", blockModel, "\"from\": [6, 2, 0]");
-		assertContains("gourd model reaches the south attached-stem edge", blockModel, "\"from\": [6, 2, 12]");
+		assertContains("gourd model has the lower pod body", blockModel, "\"from\": [4, 0, 4]");
+		assertContains("gourd model has the upper pod body", blockModel, "\"from\": [4, 7, 4]");
+		assertContains("gourd model reaches its full ripe height", blockModel, "\"to\": [8.5, 14, 9.5]");
+		assertContains("gourd model has a narrow stem nub", blockModel, "\"from\": [7.5, 13, 6.5]");
 
-		assertContains("gourd block exposes compact selection/collision shape", gourdBlock,
-				"private static final VoxelShape SHAPE = Block.box(3.0D, 0.0D, 4.0D, 13.0D, 7.0D, 12.0D);");
+		assertContains("gourd block selection/collision encloses the current tall pod model", gourdBlock,
+				"private static final VoxelShape SHAPE = Block.box(4.0D, 0.0D, 3.0D, 12.0D, 14.0D, 13.0D);");
 		assertContains("gourd block overrides getShape", gourdBlock, "protected VoxelShape getShape(");
 		assertContains("gourd block overrides getCollisionShape", gourdBlock,
 				"protected VoxelShape getCollisionShape(");

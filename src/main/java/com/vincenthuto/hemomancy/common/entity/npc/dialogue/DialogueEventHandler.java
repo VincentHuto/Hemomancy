@@ -93,6 +93,14 @@ public class DialogueEventHandler {
 					UnstainedObservanceHelper.Observance.CONSECRATE_COPPER);
 			case "acolyte_task_chalice" -> UnstainedObservanceHelper.handle(player,
 					UnstainedObservanceHelper.Observance.OFFER_CHALICE);
+			case "zealot_task_still_waters" -> UnstainedObservanceHelper.handle(player,
+					UnstainedObservanceHelper.Observance.CONDENSE_STILL_WATERS);
+			case "zealot_task_pallid_icon" -> UnstainedObservanceHelper.handle(player,
+					UnstainedObservanceHelper.Observance.BEAR_PALLID_ICON);
+			case "guardian_task_plating" -> UnstainedObservanceHelper.handle(player,
+					UnstainedObservanceHelper.Observance.PLATE_THE_WARD);
+			case "guardian_task_bell" -> UnstainedObservanceHelper.handle(player,
+					UnstainedObservanceHelper.Observance.RING_THE_PALE_WATCH);
 			case "zealot_accept_church" -> {
 				player.displayClientMessage(
 						Component.translatable("hemomancy.dialogue.event.accept_church")

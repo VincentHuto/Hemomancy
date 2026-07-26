@@ -7,5 +7,5 @@
   "key": {
     "#": { "item": "hemomancy:mnemonic_ambergris" }
   },
-  "result": { "item": "hemomancy:mnemonic_ambergris_block", "count": 1 }
+  "result": { "id": "hemomancy:mnemonic_ambergris_block", "count": 1 }
 }

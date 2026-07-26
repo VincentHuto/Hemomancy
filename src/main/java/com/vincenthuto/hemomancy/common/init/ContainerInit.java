@@ -30,6 +30,8 @@ public class ContainerInit {
 			() -> IMenuTypeExtension.create(GhastlyAlembicMenu::new));
 	public static final DeferredHolder<MenuType<?>, MenuType<PallidRetortMenu>> pallid_retort = CONTAINERS.register("pallid_retort",
 			() -> IMenuTypeExtension.create(PallidRetortMenu::new));
+	public static final DeferredHolder<MenuType<?>, MenuType<StillwaterCondenserMenu>> stillwater_condenser = CONTAINERS.register(
+			"stillwater_condenser", () -> IMenuTypeExtension.create(StillwaterCondenserMenu::new));
 
 	public static final DeferredHolder<MenuType<?>, MenuType<MorphlingJarMenu>> morphling_jar = CONTAINERS.register("morphling_jar",
 			() -> IMenuTypeExtension.create(MorphlingJarMenu::new));

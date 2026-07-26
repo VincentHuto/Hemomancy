@@ -45,7 +45,7 @@ The Hematic Order publicly recognizes seven degrees. Apotheos is the hidden eigh
 
 - **Rite:** Initiate Rite
 - **Theme:** Incarnadine Fane; blood becomes shaped memory and external craft
-- **Core progression:** deliberate puppeteering and advanced Somatic Loom work; Drudges and non-Hemorath Saint trials are post-alpha expansion content
+- **Core progression:** deliberate puppeteering and advanced non-Canon Somatic Loom work; Drudges and every Saint trial, including Hemorath, are post-release expansion content
 
 ### Degree 4: Adept
 

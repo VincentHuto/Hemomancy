@@ -237,8 +237,8 @@ Choose carefully. This is not a system you can min-max by switching back and for
 
 **Trial Chambers** (WIP)
 - Special encounter areas for Saints
-- Hemorath supplies the complete first-release trial
-- The other Saints' bespoke chambers are reserved for the first major post-release Saints update
+- Hemorath and the other Saints are reserved together for the first major post-release content update
+- Their chambers, rewards, Canon memories, and final encounter presentation remain WIP until that update
 
 ### Important Resources
 
