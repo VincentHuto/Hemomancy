@@ -31,6 +31,10 @@ public final class CardinalRiteOverlay {
 			return;
 		}
 
+		graphics.pose().pushPose();
+		graphics.pose().scale(CardinalRiteOverlayGeometry.HUD_SCALE,
+				CardinalRiteOverlayGeometry.HUD_SCALE, 1.0F);
+		screenWidth = CardinalRiteOverlayGeometry.virtualScreenWidth(screenWidth);
 		int x = (screenWidth - WIDTH) / 2;
 		int y = 8;
 		long now = System.nanoTime();
@@ -73,6 +77,7 @@ public final class CardinalRiteOverlay {
 		} else if (!rite.getCue().isBlank()) {
 			drawCentered(graphics, readable(rite.getCue()), screenWidth / 2, y + 57, 0xFFFFD36A);
 		}
+		graphics.pose().popPose();
 	}
 
 	private static void drawBar(GuiGraphics graphics, int x, int y, double progress,
