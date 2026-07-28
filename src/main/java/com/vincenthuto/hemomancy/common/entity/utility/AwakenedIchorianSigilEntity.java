@@ -6,16 +6,19 @@ import com.vincenthuto.hemomancy.common.rite.CardinalRiteFootprintRules;
 import com.vincenthuto.hemomancy.common.rite.CardinalRiteSavedData;
 import com.vincenthuto.hemomancy.common.rite.harbinger.HarbingerCardinalRiteEvents;
 import com.vincenthuto.hemomancy.common.rite.sigil.AwakenedIchorianSigilMotion;
+import com.vincenthuto.hemomancy.common.rite.sigil.AwakenedIchorianSigilFacing;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.Mth;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.AABB;
 
 import java.util.Optional;
 import java.util.UUID;
@@ -45,6 +48,8 @@ public final class AwakenedIchorianSigilEntity extends Entity {
 	private double clientLerpY;
 	private double clientLerpZ;
 	private int clientLerpSteps;
+	private float previousRenderFacingYaw;
+	private float renderFacingYaw;
 
 	public AwakenedIchorianSigilEntity(EntityType<? extends AwakenedIchorianSigilEntity> type, Level level) {
 		super(type, level);
@@ -72,6 +77,14 @@ public final class AwakenedIchorianSigilEntity extends Entity {
 	public float getPeelProgress(float partialTick) {
 		if (entityData.get(FULLY_PEELED)) return 1.0F;
 		return AwakenedIchorianSigilMotion.peelProgress(Math.round(tickCount + partialTick));
+	}
+
+	public float getRenderFacingYaw(float partialTick) {
+		return Mth.rotLerp(partialTick, previousRenderFacingYaw, renderFacingYaw);
+	}
+
+	public AABB getAnatomyRenderBounds() {
+		return getBoundingBox().inflate(1.5D);
 	}
 
 	@Override
@@ -140,11 +153,16 @@ public final class AwakenedIchorianSigilEntity extends Entity {
 
 	private void tickClientInterpolation() {
 		if (clientLerpSteps <= 0) return;
+		double previousX = getX();
+		double previousZ = getZ();
 		AwakenedIchorianSigilMotion.Position next = AwakenedIchorianSigilMotion.smoothStep(
 				new AwakenedIchorianSigilMotion.Position(getX(), getY(), getZ()),
 				new AwakenedIchorianSigilMotion.Position(clientLerpX, clientLerpY, clientLerpZ),
 				clientLerpSteps);
 		setPos(next.x(), next.y(), next.z());
+		previousRenderFacingYaw = renderFacingYaw;
+		renderFacingYaw = AwakenedIchorianSigilFacing.update(
+				renderFacingYaw, next.x() - previousX, next.z() - previousZ, 0.25F);
 		clientLerpSteps--;
 	}
 
