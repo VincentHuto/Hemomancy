@@ -1,0 +1,9 @@
+{
+  "kind": "support",
+  "tier": 3,
+  "color": "0xA56BFF",
+  "name": "Mnemonic",
+  "purpose": "Exposes false anchors, counterfeit omens, and puppeteer deceptions.",
+  "stability": 12,
+  "nodes": [[-1.5, 0], [-1, -1], [0, -1.5], [1, -1], [1.5, 0], [1, 1], [0, 1.5], [-1, 1]]
+}

@@ -68,6 +68,10 @@ public class CardinalRiteSavedData extends SavedData {
 		return activeRites.containsKey(playerUUID);
 	}
 
+	public boolean hasRiteAt(net.minecraft.core.BlockPos centerPos) {
+		return activeRites.values().stream().anyMatch(rite -> rite.getCenterPos().equals(centerPos));
+	}
+
 	public Map<UUID, ActiveCardinalRite> getActiveRites() {
 		return activeRites;
 	}

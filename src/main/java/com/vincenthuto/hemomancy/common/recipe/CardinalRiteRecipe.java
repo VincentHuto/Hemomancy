@@ -1,6 +1,7 @@
 package com.vincenthuto.hemomancy.common.recipe;
 
 import com.vincenthuto.hemomancy.common.init.RecipeInit;
+import com.vincenthuto.hemomancy.common.rite.CardinalRiteCeremonyDefinition;
 import com.vincenthuto.hutoslib.math.MultiblockPattern;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
@@ -73,6 +74,7 @@ public class CardinalRiteRecipe extends CustomRecipe {
 	protected boolean breakBlocksOnCreation;
 	protected boolean unstained;
 	protected boolean rankup;
+	protected CardinalRiteCeremonyDefinition ceremony;
 
 	public CardinalRiteRecipe(ResourceLocation pId, double bloodCost, CardinalRiteType riteType,
 			MultiblockPattern pattern, ItemStack result, String riteName, String riteDescription) {
@@ -259,6 +261,18 @@ public class CardinalRiteRecipe extends CustomRecipe {
 
 	public void setRankup(boolean rankup) {
 		this.rankup = rankup;
+	}
+
+	public CardinalRiteCeremonyDefinition getCeremony() {
+		return ceremony;
+	}
+
+	public void setCeremony(CardinalRiteCeremonyDefinition ceremony) {
+		this.ceremony = ceremony;
+	}
+
+	public boolean hasInteractiveCeremony() {
+		return !unstained && ceremony != null;
 	}
 
 	@Override

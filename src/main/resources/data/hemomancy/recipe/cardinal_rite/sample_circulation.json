@@ -1,0 +1,64 @@
+{
+  "type": "hemomancy:cardinal_rite_recipe",
+  "bloodCost": 0,
+  "riteType": "minor",
+  "required_degree": 0,
+  "breakBlocksOnCreation": false,
+  "riteName": "[TEST] First Circulation",
+  "riteDescription": "An abbreviated prototype rite for testing anchor projection, ring completion, sealing, the HUD, and a first Ichorian sigil discovery.",
+  "pattern": [
+    [
+      "CRC"
+    ],
+    [
+      "RGR"
+    ],
+    [
+      "CRC"
+    ]
+  ],
+  "key": {
+    "C": {
+      "block": "minecraft:cut_copper"
+    },
+    "R": {
+      "block": "minecraft:redstone_block"
+    },
+    "G": {
+      "block": "minecraft:gold_block"
+    }
+  },
+  "ceremony": {
+    "profile": "abbreviated",
+    "layout": "cardinal",
+    "rotation": 0,
+    "support_sockets": [
+      {
+        "x": 4,
+        "y": 0,
+        "z": 0,
+        "suggested_sigil": "reservoir"
+      },
+      {
+        "x": -4,
+        "y": 0,
+        "z": 0,
+        "suggested_sigil": "bastion"
+      }
+    ],
+    "waves": [
+      "bloodlicker_siphon"
+    ],
+    "guaranteed_waves": [
+      "discover_reservoir"
+    ],
+    "signature": "first_circulation",
+    "fragile_offsets": [
+      [
+        0,
+        0,
+        0
+      ]
+    ]
+  }
+}

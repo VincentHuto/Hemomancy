@@ -1,0 +1,9 @@
+{
+  "kind": "support",
+  "tier": 4,
+  "color": "0xF4D35E",
+  "name": "Hematic Lattice",
+  "purpose": "Distributes blood and instability evenly across every completed ring.",
+  "stability": 20,
+  "nodes": [[-2, 0], [-1, -1], [0, -2], [1, -1], [2, 0], [1, 1], [0, 2], [-1, 1], [-1, 0], [0, -1], [1, 0], [0, 1]]
+}

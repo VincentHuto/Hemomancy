@@ -8,6 +8,9 @@ import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.recipe.CardinalRiteRecipe;
 import com.vincenthuto.hemomancy.common.recipe.CardinalRiteType;
 import com.vincenthuto.hemomancy.common.recipe.RecipeDegreeGates;
+import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
+import com.vincenthuto.hemomancy.common.rite.sigil.IchorianSigilDefinition;
+import com.vincenthuto.hemomancy.common.rite.sigil.IchorianSigilRegistry;
 import com.vincenthuto.hutoslib.client.HLTextUtils;
 import com.vincenthuto.hutoslib.math.BlockPosBlockPair;
 import com.vincenthuto.hutoslib.math.MultiblockPattern;
@@ -178,6 +181,9 @@ public final class RitesTabView {
 		int sw  = ProgressScreenContext.TIER_SIDEBAR_W - 8;
 		int rowH = 22;
 
+		if (state.showIchorianSigils) {
+			sy = drawIchorianDropdown(gfx, ctx, state, sx, sy, sw);
+		}
 		gfx.drawString(ctx.font(), Component.literal("Rite Degrees")
 				.withStyle(s -> s.withColor(state.tabColor).withBold(true)), sx + 2, sy, 0);
 		sy += 14;
@@ -274,6 +280,62 @@ public final class RitesTabView {
 			if (state.riteSidebarScroll < contentH - visibleH)
 				gfx.drawCenteredString(ctx.font(), "\u25BC", sx + sw / 2, clipBottom - 10, 0xAAFFFFFF);
 		}
+	}
+
+	private static int drawIchorianDropdown(GuiGraphics gfx, ProgressScreenContext ctx,
+			RitesTabState state, int x, int y, int width) {
+		gfx.fill(x, y, x + width, y + 18, state.rowBgNormal);
+		gfx.drawString(ctx.font(), "Ichorian Sigils " + (state.ichorianSigilsExpanded ? "▲" : "▼"),
+				x + 3, y + 5, 0xFFE8B75A, false);
+		y += 20;
+		if (!state.ichorianSigilsExpanded) return y + 2;
+		Minecraft minecraft = Minecraft.getInstance();
+		var knowledge = minecraft.player == null ? null
+				: HemoCapabilityAccess.getIchorianKnowledge(minecraft.player).orElse(null);
+		List<IchorianSigilDefinition> definitions = IchorianSigilRegistry.all().stream()
+				.sorted(java.util.Comparator.comparingInt(IchorianSigilDefinition::tier)
+						.thenComparing(definition -> definition.id().toString()))
+				.toList();
+		for (IchorianSigilDefinition sigil : definitions) {
+			boolean known = knowledge != null && knowledge.isKnown(sigil.id());
+			int partial = knowledge == null ? 0 : knowledge.discoveredNodeCount(sigil.id());
+			if (!known && partial == 0) continue;
+			gfx.fill(x + 2, y, x + width - 2, y + 14, 0x99100616);
+			int color = 0xFF000000 | sigil.color();
+			gfx.fill(x + 4, y + 3, x + 10, y + 10, color);
+			String label = known ? sigil.name() + " · " + sigil.bloodCostMl() + "ml"
+					: "Unknown shape · " + partial + "/" + sigil.nodes().size();
+			gfx.drawString(ctx.font(), label, x + 13, y + 3, known ? 0xFFE9D8AE : 0xFF9B879F, false);
+			int pipX = x + 13;
+			for (int i = 0; i < sigil.nodes().size() && pipX + i * 3 < x + width - 4; i++) {
+				boolean seen = knowledge != null && knowledge.hasDiscoveredNode(sigil.id(), i);
+				gfx.fill(pipX + i * 3, y + 12, pipX + i * 3 + 2, y + 13,
+						seen ? color : 0xFF392D3B);
+			}
+			y += 16;
+		}
+		return y + 4;
+	}
+
+	private static int ichorianDropdownHeight(RitesTabState state) {
+		if (!state.showIchorianSigils) return 0;
+		if (!state.ichorianSigilsExpanded) return 22;
+		Minecraft minecraft = Minecraft.getInstance();
+		var knowledge = minecraft.player == null ? null
+				: HemoCapabilityAccess.getIchorianKnowledge(minecraft.player).orElse(null);
+		long visible = IchorianSigilRegistry.all().stream().filter(sigil ->
+				knowledge != null && (knowledge.isKnown(sigil.id())
+						|| knowledge.discoveredNodeCount(sigil.id()) > 0)).count();
+		return 24 + (int) visible * 16;
+	}
+
+	public static boolean isOverIchorianDropdown(ProgressScreenContext ctx, RitesTabState state,
+			double mouseX, double mouseY) {
+		if (!state.showIchorianSigils) return false;
+		int x = ctx.guiLeft() + 4;
+		int y = ctx.guiTop() + 24;
+		int width = ProgressScreenContext.TIER_SIDEBAR_W - 8;
+		return mouseX >= x && mouseX <= x + width && mouseY >= y && mouseY <= y + 18;
 	}
 
 	// ────────────────────────────────────────────────────────────
@@ -621,7 +683,7 @@ public final class RitesTabView {
 	public static Integer tierUnder(ProgressScreenContext ctx,
 											  RitesTabState state, double mx, double my) {
 		int sx  = ctx.guiLeft() + 4;
-		int sy  = ctx.guiTop()  + 24 + 14 + 4;
+		int sy  = ctx.guiTop()  + 24 + ichorianDropdownHeight(state) + 14 + 4;
 		int sw  = ProgressScreenContext.TIER_SIDEBAR_W - 8;
 		int rowH = 22;
 		int clipTop    = sy;
@@ -651,7 +713,7 @@ public final class RitesTabView {
 		if (recipes.isEmpty()) return -1;
 
 		int sx  = ctx.guiLeft() + 4;
-		int sy  = ctx.guiTop()  + 24 + 14 + 4;
+		int sy  = ctx.guiTop()  + 24 + ichorianDropdownHeight(state) + 14 + 4;
 		int sw  = ProgressScreenContext.TIER_SIDEBAR_W - 8;
 		int rowH = 22;
 		int clipTop    = sy;

@@ -17,6 +17,8 @@ import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
 import com.vincenthuto.hemomancy.common.menu.LivingStaffMenu;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.BloodVolumeServerPacket;
+import com.vincenthuto.hemomancy.common.network.capa.harbinger.BloodCraftingKeyPressPacket;
+import com.vincenthuto.hemomancy.common.rite.harbinger.CardinalRiteActivationRules;
 import com.vincenthuto.hemomancy.common.tile.crafting.SomaticLoomBlockEntity;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import net.minecraft.ChatFormatting;
@@ -28,6 +30,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.stats.Stats;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.Entity;
@@ -41,6 +44,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.UseAnim;
+import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
@@ -268,6 +272,18 @@ public class LivingStaffItem extends LivingItem implements IDispellable {
 			return isClientPlayerVesperAwakened() || super.isFoil(stack);
 		}
 		return super.isFoil(stack);
+	}
+
+	@Override
+	public InteractionResult useOn(UseOnContext context) {
+		if (!context.getLevel().isClientSide
+				&& context.getPlayer() instanceof ServerPlayer serverPlayer
+				&& BloodCraftingKeyPressPacket.tryStartCardinalRite(
+						serverPlayer, context.getClickedPos(),
+						CardinalRiteActivationRules.Trigger.LIVING_STAFF_BLOCK_USE).handled()) {
+			return InteractionResult.SUCCESS;
+		}
+		return super.useOn(context);
 	}
 
 	@Override

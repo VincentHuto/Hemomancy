@@ -6,6 +6,7 @@ import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodlineSavedData;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.PacketSyncFaneBoundaries;
+import com.vincenthuto.hemomancy.common.rite.harbinger.CardinalRiteThreatRules;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -82,7 +83,10 @@ public class FoundingFaneEvents {
 								FoundingFaneSavedData.FANE_RADIUS + FaneFootprint.STAKE_RADIUS + 64);
 				for (LivingEntity mob : sLevel.getEntitiesOfClass(LivingEntity.class, searchBox,
 						e -> e instanceof net.minecraft.world.entity.monster.Monster
-								&& !(e instanceof ServerPlayer))) {
+								&& !(e instanceof ServerPlayer)
+								&& !CardinalRiteThreatRules.isProtectedFromPassiveRiteDamage(
+										e.getPersistentData().getBoolean(
+												CardinalRiteThreatRules.RITE_BOUND_TAG)))) {
 					double dx = mob.getX() - (center.getX() + 0.5);
 					double dz = mob.getZ() - (center.getZ() + 0.5);
 					if (footprint.contains(mob.blockPosition())) {

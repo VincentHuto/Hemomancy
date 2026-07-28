@@ -53,7 +53,11 @@ public class SanguineDominionEvents {
 			}
 
 			List<LivingEntity> entities = sLevel.getEntitiesOfClass(LivingEntity.class, domainBounds,
-					entity -> entity.isAlive() && !HemoEntityPredicates.NOBLOOD.test(entity));
+					entity -> entity.isAlive()
+							&& !HemoEntityPredicates.NOBLOOD.test(entity)
+							&& !CardinalRiteThreatRules.isProtectedFromPassiveRiteDamage(
+									entity.getPersistentData().getBoolean(
+											CardinalRiteThreatRules.RITE_BOUND_TAG)));
 
 			for (LivingEntity entity : entities) {
 				// Skip the domain owner

@@ -9,6 +9,7 @@ import com.vincenthuto.hemomancy.client.data.ActiveBloodCraftClientData;
 import com.vincenthuto.hemomancy.client.data.ActiveBloodStructureFeedClientData;
 import com.vincenthuto.hemomancy.client.data.ActiveBloodStructureOfferingBurstClientData;
 import com.vincenthuto.hemomancy.client.data.ActiveSanguineFormationProjectionClientData;
+import com.vincenthuto.hemomancy.client.data.ActiveRiteClientData;
 import com.vincenthuto.hemomancy.client.data.BloodBallClientData;
 import com.vincenthuto.hemomancy.client.data.CrimsonFireClientState;
 import com.vincenthuto.hemomancy.client.data.FaneBoundaryClientData;
@@ -34,6 +35,7 @@ import com.vincenthuto.hemomancy.client.render.entity.mob.animal.CrimsonDoeRende
 import com.vincenthuto.hemomancy.client.render.entity.mob.animal.FunglingRenderer;
 import com.vincenthuto.hemomancy.client.render.entity.mob.animal.HematicBurrowerRenderer;
 import com.vincenthuto.hemomancy.client.render.entity.mob.animal.LeechRenderer;
+import com.vincenthuto.hemomancy.client.render.entity.mob.animal.BloodlickerRenderer;
 import com.vincenthuto.hemomancy.client.render.entity.mob.animal.ScarletSerpentRenderer;
 import com.vincenthuto.hemomancy.client.render.entity.mob.animal.VenousStriderRenderer;
 import com.vincenthuto.hemomancy.client.render.entity.mob.animal.VerdigrisMothRenderer;
@@ -45,7 +47,10 @@ import com.vincenthuto.hemomancy.client.render.entity.mob.aquatic.HemojellyRende
 import com.vincenthuto.hemomancy.client.render.entity.mob.aquatic.MnemonicWhaleRenderer;
 import com.vincenthuto.hemomancy.client.render.entity.mob.aquatic.PrismCuttleRenderer;
 import com.vincenthuto.hemomancy.client.render.entity.misc.ArmatureRestraintRenderer;
+import com.vincenthuto.hemomancy.client.render.entity.misc.AwakenedIchorianSigilRenderer;
 import com.vincenthuto.hemomancy.client.render.entity.misc.CovenantThroneSeatRenderer;
+import com.vincenthuto.hemomancy.client.render.entity.misc.HumanitySpriteRenderer;
+import com.vincenthuto.hemomancy.client.render.entity.misc.UnsettledIchorRenderer;
 import com.vincenthuto.hemomancy.client.render.entity.mob.arthropod.*;
 import com.vincenthuto.hemomancy.client.render.entity.mob.monster.*;
 import com.vincenthuto.hemomancy.client.render.entity.mob.will.WillAnchorRenderer;
@@ -226,6 +231,7 @@ public class ClientEvents {
         ActiveBloodStructureFeedClientData.tick();
         ActiveBloodStructureOfferingBurstClientData.tick();
         ActiveSanguineFormationProjectionClientData.tick();
+        ActiveRiteClientData.tick();
         BloodStructureFeedSpiralParticles.tick();
         BloodBallClientData.tick();
         VeinSpiderCourierClientData.tick();
@@ -702,6 +708,11 @@ public class ClientEvents {
             event.registerEntityRenderer(EntityInit.will.get(), WillRenderer::new);
             event.registerEntityRenderer(EntityInit.will_anchor.get(), WillAnchorRenderer::new);
             event.registerEntityRenderer(EntityInit.leech.get(), LeechRenderer::new);
+            event.registerEntityRenderer(EntityInit.bloodlicker.get(), BloodlickerRenderer::new);
+            event.registerEntityRenderer(EntityInit.unsettled_ichor.get(), UnsettledIchorRenderer::new);
+            event.registerEntityRenderer(EntityInit.awakened_ichorian_sigil.get(),
+                    AwakenedIchorianSigilRenderer::new);
+            event.registerEntityRenderer(EntityInit.humanity_sprite.get(), HumanitySpriteRenderer::new);
             event.registerEntityRenderer(EntityInit.iron_pillar.get(), IronPillarRenderer::new);
             event.registerEntityRenderer(EntityInit.iron_spike.get(), IronSpikeRenderer::new);
             event.registerEntityRenderer(EntityInit.iron_wall.get(), IronWallRenderer::new);
@@ -816,6 +827,7 @@ public class ClientEvents {
             SanguineOmenOverlay.instance = new SanguineOmenOverlay();
             WillPresenceOverlay.instance = new WillPresenceOverlay();
             CurorLensOverlay.instance = new CurorLensOverlay();
+            CardinalRiteOverlay.instance = new CardinalRiteOverlay();
             // Tiles
             BlockEntityRenderers.register(BlockEntityInit.discovery_inscription.get(),
                     DiscoveryInscriptionBlockRenderer::new);
@@ -1119,6 +1131,12 @@ public class ClientEvents {
         // Overlay
         @SubscribeEvent
         public static void registerGuiOverlays(RegisterGuiLayersEvent event) {
+            event.registerAboveAll(Hemomancy.rloc("cardinal_rite"), (graphics, deltaTracker) -> {
+                if (CardinalRiteOverlay.instance != null) {
+                    float partialTicks = deltaTracker.getGameTimeDeltaPartialTick(true);
+                    CardinalRiteOverlay.instance.renderHUD(graphics, graphics.guiWidth(), graphics.guiHeight(), partialTicks);
+                }
+            });
             event.registerAboveAll(Hemomancy.rloc("bloodvolume"), (graphics, deltaTracker) -> {
                 if (BloodVolumeOverlay.instance != null) {
                     float partialTicks = deltaTracker.getGameTimeDeltaPartialTick(true);

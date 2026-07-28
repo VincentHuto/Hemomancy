@@ -16,6 +16,8 @@ public final class BloodProjectionStructureCraftingResourceTest {
 				"com/vincenthuto/hemomancy/common/item/harbinger/tool/living/BloodProjectionItem.java"));
 		String keyPacket = read(SOURCE_ROOT.resolve(
 				"com/vincenthuto/hemomancy/common/network/capa/harbinger/BloodCraftingKeyPressPacket.java"));
+		String livingStaff = read(SOURCE_ROOT.resolve(
+				"com/vincenthuto/hemomancy/common/item/harbinger/tool/living/LivingStaffItem.java"));
 		String packetHandler = read(SOURCE_ROOT.resolve(
 				"com/vincenthuto/hemomancy/common/network/PacketHandler.java"));
 		String feedPacket = read(SOURCE_ROOT.resolve(
@@ -65,8 +67,10 @@ public final class BloodProjectionStructureCraftingResourceTest {
 				"use Blood Projection");
 		assertContains("puppeteer trials remain key based", keyPacket,
 				"tryActivatePuppeteerTrial");
-		assertContains("cardinal rites remain key based", keyPacket,
-				"tryStartCardinalRite");
+		assertContains("blood crafting key is restricted to unstained rite activation", keyPacket,
+				"CardinalRiteActivationRules.Trigger.BLOOD_CRAFTING_KEY");
+		assertContains("living staff block use initiates Harbinger cardinal rites", livingStaff,
+				"CardinalRiteActivationRules.Trigger.LIVING_STAFF_BLOCK_USE");
 		assertContains("feed manager uses current projection feed rate", feedManager,
 				"BloodStructureFeedRules.STRUCTURE_FEED_RATE");
 		assertContains("feed manager sends only visible pattern cells to the warp renderer", feedManager,

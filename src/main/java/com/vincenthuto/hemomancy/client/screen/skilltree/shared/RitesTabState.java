@@ -38,6 +38,8 @@ public class RitesTabState {
 	// ── Scroll offsets ───────────────────────────────────────────
 	public int riteSidebarScroll = 0;
 	public int riteInfoScroll = 0;
+	public boolean showIchorianSigils = true;
+	public boolean ichorianSigilsExpanded = false;
 
 	// ── Theme / behaviour flags ───────────────────────────────────
 	/** Accent colour used for borders, header text, layer buttons, and accents (default: Harbinger purple). */

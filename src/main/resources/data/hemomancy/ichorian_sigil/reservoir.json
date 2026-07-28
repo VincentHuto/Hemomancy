@@ -1,0 +1,9 @@
+{
+  "kind": "support",
+  "tier": 1,
+  "color": "0xE6A23C",
+  "name": "Reservoir",
+  "purpose": "Stores 200ml of supplemental blood for repairs and responses.",
+  "capacity_ml": 200,
+  "nodes": [[-1, 0], [0, -1], [1, 0], [0, 1]]
+}

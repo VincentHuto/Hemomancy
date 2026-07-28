@@ -26,6 +26,7 @@ public class RitesTabController implements IProgressTab {
      */
     public RitesTabController(boolean unstained) {
         this.unstained = unstained;
+        state.showIchorianSigils = !unstained;
         if (unstained) {
             state.tabColor         = 0xFF8090BB;
             state.separatorColor   = 0xFF203050;
@@ -66,6 +67,11 @@ public class RitesTabController implements IProgressTab {
     @Override
     public boolean mouseClicked(ProgressScreenContext ctx, double mx, double my, int btn) {
         if (btn != 0) return false;
+        if (RitesTabView.isOverIchorianDropdown(ctx, state, mx, my)) {
+            state.ichorianSigilsExpanded = !state.ichorianSigilsExpanded;
+            state.riteSidebarScroll = 0;
+            return true;
+        }
         Integer clickedTier = RitesTabView.tierUnder(ctx, state, mx, my);
         if (clickedTier != null) {
             boolean degreeOk = !state.enableDegreeLock

@@ -127,7 +127,7 @@ public class ItemInit {
                     .food(new FoodProperties.Builder().nutrition(7).saturationModifier(0.6F)
                             .usingConvertsTo(Items.BOWL).build())));
     public static final DeferredHolder<Item, Item> sanguine_formation = BASEITEMS.register("sanguine_formation",
-            () -> new Item(new Item.Properties()));
+            () -> new SanguineFormationItem(new Item.Properties()));
 //    public static final DeferredHolder<Item, Item> field_notes = BASEITEMS.register("field_notes",
 //            () -> new FieldNotesItem(new Item.Properties()));
     public static final DeferredHolder<Item, Item> sanguine_blob = BASEITEMS.register("sanguine_blob",

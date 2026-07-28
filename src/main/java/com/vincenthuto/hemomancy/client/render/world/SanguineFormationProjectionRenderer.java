@@ -80,7 +80,7 @@ public final class SanguineFormationProjectionRenderer {
 		return Vec3.atCenterOf(pos).add(Vec3.atLowerCornerOf(face.getNormal()).scale(0.58D));
 	}
 
-	private static void renderSphere(VertexConsumer consumer, Matrix4f matrix, float baseRadius, float time, long seed,
+	public static void renderSphere(VertexConsumer consumer, Matrix4f matrix, float baseRadius, float time, long seed,
 			float red, float green, float blue, float alpha) {
 		for (int lat = 0; lat < LAT_BANDS; lat++) {
 			double theta0 = Math.PI * lat / LAT_BANDS;
@@ -90,10 +90,14 @@ public final class SanguineFormationProjectionRenderer {
 				double phi0 = 2.0D * Math.PI * lon / LON_BANDS;
 				double phi1 = 2.0D * Math.PI * (lon + 1) / LON_BANDS;
 
-				float r00 = baseRadius + undulation(theta0, phi0, time, seed);
-				float r10 = baseRadius + undulation(theta1, phi0, time, seed);
-				float r11 = baseRadius + undulation(theta1, phi1, time, seed);
-				float r01 = baseRadius + undulation(theta0, phi1, time, seed);
+				float r00 = baseRadius + scaledUndulation(
+						baseRadius, undulation(theta0, phi0, time, seed));
+				float r10 = baseRadius + scaledUndulation(
+						baseRadius, undulation(theta1, phi0, time, seed));
+				float r11 = baseRadius + scaledUndulation(
+						baseRadius, undulation(theta1, phi1, time, seed));
+				float r01 = baseRadius + scaledUndulation(
+						baseRadius, undulation(theta0, phi1, time, seed));
 
 				addVertex(consumer, matrix, theta0, phi0, r00, red, green, blue, alpha);
 				addVertex(consumer, matrix, theta1, phi0, r10, red, green, blue, alpha);
@@ -115,6 +119,11 @@ public final class SanguineFormationProjectionRenderer {
 		double offset = (seed & 255) * 0.013D;
 		return (float) (0.018D * Math.sin(theta * 4.0D + time * 0.17D + offset)
 				+ 0.012D * Math.cos(phi * 5.0D + time * 0.11D + offset));
+	}
+
+	static float scaledUndulation(float baseRadius, float rawUndulation) {
+		float emergence = Math.max(0.0F, Math.min(1.0F, baseRadius / 0.04F));
+		return rawUndulation * emergence;
 	}
 
 	private static float lerp(float from, float to, float amount) {

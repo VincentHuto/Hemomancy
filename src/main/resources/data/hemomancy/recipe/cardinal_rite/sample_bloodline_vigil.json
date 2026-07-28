@@ -1,0 +1,101 @@
+{
+  "type": "hemomancy:cardinal_rite_recipe",
+  "bloodCost": 0,
+  "riteType": "greater",
+  "required_degree": 4,
+  "breakBlocksOnCreation": false,
+  "rankup": true,
+  "riteName": "[TEST] Bloodline Vigil",
+  "riteDescription": "A Degree Five prototype for testing one recruited ally, shared blood reserves, Anchor, Attendant, and Warden duties, anchor decay, recovery waves, and a signature profession.",
+  "pattern": [
+    [
+      "BQBQB"
+    ],
+    [
+      "QCOCQ"
+    ],
+    [
+      "BOHOB"
+    ],
+    [
+      "QCOCQ"
+    ],
+    [
+      "BQBQB"
+    ]
+  ],
+  "key": {
+    "B": {
+      "block": "minecraft:polished_blackstone_bricks"
+    },
+    "Q": {
+      "block": "minecraft:quartz_block"
+    },
+    "C": {
+      "block": "minecraft:crying_obsidian"
+    },
+    "O": {
+      "block": "minecraft:obsidian"
+    },
+    "H": {
+      "block": "hemomancy:hematic_iron_block"
+    }
+  },
+  "ceremony": {
+    "profile": "full",
+    "layout": "crooked",
+    "rotation": 2,
+    "support_sockets": [
+      {
+        "x": 8,
+        "y": 0,
+        "z": 0,
+        "suggested_sigil": "bastion"
+      },
+      {
+        "x": -8,
+        "y": 0,
+        "z": 0,
+        "suggested_sigil": "reservoir"
+      },
+      {
+        "x": 0,
+        "y": 0,
+        "z": 8,
+        "suggested_sigil": "mnemonic"
+      },
+      {
+        "x": 0,
+        "y": 0,
+        "z": -8,
+        "suggested_sigil": "cage"
+      }
+    ],
+    "waves": [
+      "fargone_dive",
+      "rogue_will",
+      "false_omens"
+    ],
+    "guaranteed_waves": [
+      "discover_mnemonic"
+    ],
+    "signature": "simulacrum_wound",
+    "fragile_offsets": [
+      [
+        0,
+        0,
+        0
+      ],
+      [
+        1,
+        0,
+        1
+      ],
+      [
+        -1,
+        0,
+        -1
+      ]
+    ]
+  }
+}

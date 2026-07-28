@@ -25,6 +25,7 @@ import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodlineSavedData;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.MaxBloodLedger;
 import com.vincenthuto.hemomancy.common.entity.HemoEntityPredicates;
+import com.vincenthuto.hemomancy.common.entity.utility.HumanitySpriteEntity;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.AncestralCommunionDialogueTrees;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.DialogueTree;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.FungalWhisperDialogueTrees;
@@ -35,6 +36,7 @@ import com.vincenthuto.hemomancy.common.event.SanguineFormationProjectionHandler
 import com.vincenthuto.hemomancy.common.event.worldevent.BloodMoonSavedData;
 import com.vincenthuto.hemomancy.common.event.worldevent.FoundingFaneSavedData;
 import com.vincenthuto.hemomancy.common.init.BlockInit;
+import com.vincenthuto.hemomancy.common.init.EntityInit;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.item.harbinger.QliphothPomeItem;
 import com.vincenthuto.hemomancy.common.item.harbinger.QliphothPomeRules;
@@ -49,10 +51,21 @@ import com.vincenthuto.hemomancy.common.recipe.CardinalRiteRecipe;
 import com.vincenthuto.hemomancy.common.recipe.RecipeDegreeGates;
 import com.vincenthuto.hemomancy.common.rite.ActiveCardinalRite;
 import com.vincenthuto.hemomancy.common.rite.CardinalRiteSavedData;
+import com.vincenthuto.hemomancy.common.rite.CardinalRiteCeremonyRules;
+import com.vincenthuto.hemomancy.common.rite.CardinalRiteBoundaryProgress;
+import com.vincenthuto.hemomancy.common.rite.CardinalRiteChecklist;
+import com.vincenthuto.hemomancy.common.rite.CardinalRiteFootprintRules;
+import com.vincenthuto.hemomancy.common.rite.sigil.CardinalRiteSigilProgress;
+import com.vincenthuto.hemomancy.common.rite.sigil.CardinalRiteSigilRules;
+import com.vincenthuto.hemomancy.common.rite.sigil.IchorianSigilDefinition;
+import com.vincenthuto.hemomancy.common.rite.sigil.IchorianSigilRegistry;
+import com.vincenthuto.hemomancy.common.rite.CardinalRitePhase;
 import com.vincenthuto.hemomancy.common.rite.unstained.UnstainedCardinalRiteEvents;
 import com.vincenthuto.hemomancy.common.worldgen.ChamberOfWillManager;
 import com.vincenthuto.hemomancy.common.worldgen.FungalGardenTravelHelper;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
+import com.vincenthuto.hutoslib.client.particle.factory.DarkGlowParticleFactory;
+import com.vincenthuto.hutoslib.client.particle.data.EmberParticleData;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -101,7 +114,7 @@ public class HarbingerCardinalRiteEvents {
 	private static final double CASTER_BOUNDARY_BLOOD_DRAIN_PER_TICK = 25.0;
 	private static final float SACRIFICE_DAMAGE_PER_TICK = 0.5f;
 	private static final int SACRIFICE_DAMAGE_INTERVAL = 10;
-	private static final int PARTICLE_SPAWN_INTERVAL = 2;
+	private static final int PARTICLE_SPAWN_INTERVAL = CardinalRitePillarTiming.SPAWN_INTERVAL_TICKS;
 	private static final int RITE_SYNC_INTERVAL = 10;
 
 	@SubscribeEvent
@@ -135,21 +148,37 @@ public class HarbingerCardinalRiteEvents {
 			ServerPlayer caster = sLevel.getServer().getPlayerList().getPlayer(playerUUID);
 
 			if (caster == null || !caster.level().equals(sLevel)) {
-				// Caster is offline or in a different dimension â€” stall the rite
+				if (rite.getPhase() != CardinalRitePhase.LEGACY) {
+					rite.setDisconnectTicks(rite.getDisconnectTicks() + 1);
+					if (rite.getDisconnectTicks() > CardinalRiteCeremonyRules.DISCONNECT_GRACE_TICKS) {
+						CardinalRiteOrdealEngine.clearThreats(sLevel, rite);
+						rite.markCollapsed();
+						toRemove.add(playerUUID);
+					}
+					savedData.setDirty();
+				}
 				continue;
 			}
+			rite.setDisconnectTicks(0);
 
 			BlockPos center = rite.getCenterPos();
-			// Compute the outermost boundary radius to match the rendered ring.
-			// Renderer: baseRadius = riteSize / 2.0 + 1.0, ringCount rings spaced 2 blocks apart.
 			int riteSize = rite.getRiteSize();
-			int ringCount = Math.max(1, (riteSize - 1) / 2);
-			double outermostRadius = riteSize / 2.0 + 1.0 + (ringCount - 1) * 2.0;
-			AABB bounds = new AABB(center).inflate(outermostRadius);
+			CardinalRiteRecipe recipe = CardinalRiteRecipe.getRiteByLocation(sLevel, rite.getRecipeId());
+			if (recipe != null && recipe.getCeremony() != null) {
+				rite.setInstabilityDamagePriority(
+						com.vincenthuto.hemomancy.common.rite.CardinalRiteInstabilityBoundaryRules
+								.damagePriority(recipe.getCeremony().anchors()).stream()
+								.mapToInt(Integer::intValue).toArray());
+			}
+			double footprintRadius = ritualFootprintRadius(rite, recipe);
+			AABB ritualBounds = new AABB(center).inflate(
+					Math.max(CardinalRiteBoundaryLeashRules.ritualRadius(riteSize), footprintRadius));
+			AABB casterBounds = new AABB(center).inflate(
+					Math.max(CardinalRiteBoundaryLeashRules.casterLeashRadius(riteSize), footprintRadius));
 
 			// === Caster boundary enforcement ===
 			// Only the caster takes damage and blood drain for leaving the rite bounds
-			if (!bounds.contains(caster.position())) {
+			if (!casterBounds.contains(caster.position())) {
 				caster.hurt(caster.damageSources().generic(), CASTER_BOUNDARY_DAMAGE_PER_TICK);
 				HemoCapabilityAccess.getBloodVolume(caster).ifPresent(volume -> {
 					volume.drain(CASTER_BOUNDARY_BLOOD_DRAIN_PER_TICK);
@@ -165,19 +194,33 @@ public class HarbingerCardinalRiteEvents {
 
 			// === Unwilling sacrifice processing ===
 			// Non-caster living entities within bounds take damage and feed the ritual
-			if (sLevel.getGameTime() % SACRIFICE_DAMAGE_INTERVAL == 0) {
-				processSacrifices(sLevel, rite, caster, bounds);
+			if (rite.getPhase() == CardinalRitePhase.LEGACY
+					&& sLevel.getGameTime() % SACRIFICE_DAMAGE_INTERVAL == 0) {
+				processSacrifices(sLevel, rite, caster, ritualBounds);
 			}
 
 			// === Spawn helix particles ===
 			if (sLevel.getGameTime() % PARTICLE_SPAWN_INTERVAL == 0) {
-				spawnHelixParticles(sLevel, rite);
+				spawnHelixParticles(sLevel, caster, rite);
 			}
 
 
-			// Tick the rite
-			rite.tick();
+			if (rite.getPhase() == CardinalRitePhase.LEGACY || recipe == null
+					|| !recipe.hasInteractiveCeremony()) {
+				rite.tick();
+			} else {
+				if (sLevel.getGameTime() % 20 == 0 && !verifyRiteStructure(sLevel, rite)) {
+					rite.addInstability(5);
+				}
+				CardinalRiteOrdealEngine.tick(sLevel, caster, rite, recipe);
+			}
 			savedData.setDirty();
+
+			if (rite.getPhase() == CardinalRitePhase.COLLAPSED) {
+				collapseInteractiveRite(sLevel, caster, rite, recipe);
+				toRemove.add(playerUUID);
+				continue;
+			}
 
 			// Check if rite is complete
 			if (rite.isComplete()) {
@@ -187,12 +230,17 @@ public class HarbingerCardinalRiteEvents {
 					toRemove.add(playerUUID);
 					continue;
 				}
+				spawnHumanityDispersal(sLevel, caster);
 				completeRite(sLevel, caster, rite);
 				toRemove.add(playerUUID);
 			}
 		}
 
 		for (UUID uuid : toRemove) {
+			ActiveCardinalRite removedRite = activeRites.get(uuid);
+			if (removedRite != null) {
+				discardHumanitySprites(sLevel, uuid, removedRite.getCenterPos());
+			}
 			savedData.removeRite(uuid);
 		}
 
@@ -200,10 +248,7 @@ public class HarbingerCardinalRiteEvents {
 		if (sLevel.getGameTime() % RITE_SYNC_INTERVAL == 0 || !toRemove.isEmpty()) {
 			List<ActiveRiteClientData.RiteEntry> entries = new ArrayList<>();
 			for (ActiveCardinalRite rite : activeRites.values()) {
-				CardinalRiteRecipe recipe = CardinalRiteRecipe.getRiteByLocation(sLevel, rite.getRecipeId());
-				boolean isUnstained = recipe != null && recipe.isUnstained();
-				entries.add(new ActiveRiteClientData.RiteEntry(
-						rite.getCenterPos(), rite.getRiteSize(), rite.getProgress(), rite.getRecipeId(), isUnstained));
+				entries.add(toClientEntry(sLevel, rite));
 			}
 			PacketDistributor.sendToAllPlayers(new PacketSyncActiveRites(entries));
 		}
@@ -218,6 +263,11 @@ public class HarbingerCardinalRiteEvents {
 		CardinalRiteSavedData savedData = CardinalRiteSavedData.get(sLevel);
 
 		if (savedData.hasActiveRite(player.getUUID())) {
+			ActiveCardinalRite broken = savedData.getRite(player.getUUID());
+			if (broken != null) {
+				CardinalRiteOrdealEngine.clearThreats(sLevel, broken);
+				discardHumanitySprites(sLevel, player.getUUID(), broken.getCenterPos());
+			}
 			savedData.removeRite(player.getUUID());
 			player.displayClientMessage(
 					Component.literal("The rite has been broken by your death...")
@@ -227,10 +277,7 @@ public class HarbingerCardinalRiteEvents {
 			// Sync updated rite list to clients so boundary circle is removed
 			List<ActiveRiteClientData.RiteEntry> entries = new ArrayList<>();
 			for (ActiveCardinalRite rite : savedData.getActiveRites().values()) {
-				CardinalRiteRecipe recipe = CardinalRiteRecipe.getRiteByLocation(sLevel, rite.getRecipeId());
-				boolean isUnstained = recipe != null && recipe.isUnstained();
-				entries.add(new ActiveRiteClientData.RiteEntry(
-						rite.getCenterPos(), rite.getRiteSize(), rite.getProgress(), rite.getRecipeId(), isUnstained));
+				entries.add(toClientEntry(sLevel, rite));
 			}
 			PacketDistributor.sendToAllPlayers(new PacketSyncActiveRites(entries));
 		}
@@ -245,7 +292,9 @@ public class HarbingerCardinalRiteEvents {
 	private static void processSacrifices(ServerLevel sLevel, ActiveCardinalRite rite, ServerPlayer caster,
 			AABB bounds) {
 		List<LivingEntity> entities = sLevel.getEntitiesOfClass(LivingEntity.class, bounds,
-				entity -> entity != caster && entity.isAlive());
+				entity -> entity != caster && entity.isAlive()
+						&& !CardinalRiteThreatRules.isProtectedFromPassiveRiteDamage(
+								entity.getPersistentData().getBoolean(CardinalRiteThreatRules.RITE_BOUND_TAG)));
 
 		boolean fedThisTick = false;
 		for (LivingEntity entity : entities) {
@@ -275,7 +324,7 @@ public class HarbingerCardinalRiteEvents {
 		}
 	}
 
-	private static void spawnHelixParticles(ServerLevel sLevel, ActiveCardinalRite rite) {
+	private static void spawnHelixParticles(ServerLevel sLevel, ServerPlayer caster, ActiveCardinalRite rite) {
 		BlockPos center = rite.getCenterPos();
 		int elapsed = rite.getTotalTicks() - rite.getRemainingTicks();
 		double progress = rite.getProgress();
@@ -303,6 +352,69 @@ public class HarbingerCardinalRiteEvents {
 						x, y, z, 1, 0.02, 0.02, 0.02, 0);
 			}
 		}
+
+		if (currentMaxHeight >= 0.75D) {
+			updateHumanitySprite(sLevel, caster, rite, currentMaxHeight, progress);
+		}
+	}
+
+	private static void updateHumanitySprite(ServerLevel level, ServerPlayer caster,
+			ActiveCardinalRite rite, double height, double riteProgress) {
+		BlockPos center = rite.getCenterPos();
+		double sourceX = center.getX() + 0.5D;
+		double sourceY = center.getY() + 1.0D + height * 0.5D;
+		double sourceZ = center.getZ() + 0.5D;
+		double targetX = caster.getX();
+		double targetY = caster.getY() + caster.getBbHeight() * 0.55D;
+		double targetZ = caster.getZ();
+		double absorption = CardinalRiteHumanityGeometry.absorptionProgress(riteProgress);
+		double contraction = CardinalRiteHumanityGeometry.contractionScale(riteProgress);
+		HumanitySpriteEntity sprite = HumanitySpriteEntity.findBoundToRite(
+				level, rite.getPlayerUUID(), center);
+		if (sprite == null) {
+			sprite = EntityInit.humanity_sprite.get().create(level);
+			if (sprite == null) return;
+			sprite.initialize(new Vec3(sourceX, sourceY, sourceZ), 1.0F);
+			sprite.bindToRite(rite.getPlayerUUID());
+			level.addFreshEntity(sprite);
+		}
+		sprite.setPos(
+				lerp(absorption, sourceX, targetX),
+				lerp(absorption, sourceY, targetY),
+				lerp(absorption, sourceZ, targetZ));
+		sprite.setSpriteScale((float) (height
+				/ CardinalRiteHumanityGeometry.DEFAULT_ENTITY_HEIGHT * contraction));
+		sprite.faceDirection(targetX - sourceX, targetZ - sourceZ);
+	}
+
+	private static void discardHumanitySprites(ServerLevel level, UUID owner, BlockPos center) {
+		for (HumanitySpriteEntity sprite : level.getEntitiesOfClass(
+				HumanitySpriteEntity.class, new AABB(center).inflate(128.0D),
+				entity -> entity.isBoundToRite(owner))) {
+			sprite.discard();
+		}
+	}
+
+	private static void spawnHumanityDispersal(ServerLevel level, ServerPlayer caster) {
+		double x = caster.getX();
+		double y = caster.getY() + caster.getBbHeight() * 0.55D;
+		double z = caster.getZ();
+		level.sendParticles(
+				DarkGlowParticleFactory.createData(new ParticleColor(3, 0, 2)),
+				x, y, z, 48, 0.28D, 0.42D, 0.28D, 0.16D);
+		level.sendParticles(
+				new EmberParticleData(new ParticleColor(225, 8, 18), 0.9F, 0.055F, 52),
+				x, y, z, 32, 0.25D, 0.38D, 0.25D, 0.22D);
+		level.sendParticles(
+				new EmberParticleData(new ParticleColor(235, 230, 225), 0.62F, 0.035F, 38),
+				x, y, z, 20, 0.32D, 0.45D, 0.32D, 0.26D);
+		level.sendParticles(
+				BloodCellParticleFactory.createData(new ParticleColor(190, 0, 12)),
+				x, y, z, 24, 0.30D, 0.42D, 0.30D, 0.20D);
+	}
+
+	private static double lerp(double amount, double start, double end) {
+		return start + (end - start) * amount;
 	}
 
 	/**
@@ -430,6 +542,289 @@ public class HarbingerCardinalRiteEvents {
 				false);
 	}
 
+	private static ActiveRiteClientData.RiteEntry toClientEntry(ServerLevel level, ActiveCardinalRite rite) {
+		CardinalRiteRecipe recipe = CardinalRiteRecipe.getRiteByLocation(level, rite.getRecipeId());
+		boolean unstained = recipe != null && recipe.isUnstained();
+		int totalRings = rite.getPhase() == CardinalRitePhase.LEGACY
+				? Math.max(1, (rite.getRiteSize() - 1) / 2) : Math.max(1, rite.getDegree());
+		int upfront = rite.getAnchorBloodMl().length * CardinalRiteCeremonyRules.BLOOD_PER_ANCHOR_ML;
+		int sharedBlood = -1;
+		ServerPlayer caster = level.getServer().getPlayerList().getPlayer(rite.getPlayerUUID());
+		if (caster != null) {
+			sharedBlood = HemoCapabilityAccess.getBloodVolume(caster)
+					.map(volume -> volume.getBloodLine())
+					.filter(Bloodline::isValid)
+					.map(line -> (int) line.getBloodVolume())
+					.orElse(-1);
+		}
+		String cue = "";
+		if (rite.getPhase() == CardinalRitePhase.ORDEAL
+				&& rite.getCurrentWave() < rite.getWaveDeck().size()) {
+			cue = rite.getWaveDeck().get(rite.getCurrentWave());
+		}
+		var boundarySegments = recipe == null || recipe.getCeremony() == null
+				? java.util.List.<CardinalRiteBoundaryProgress.Segment>of()
+				: CardinalRiteBoundaryProgress.completedSegments(
+						recipe.getCeremony().anchors(), rite.getAnchorBloodMl()).stream()
+						.map(segment -> segment.withIntegrity(
+								rite.instabilityAnchorIntegrity(segment.startAnchorIndex())))
+						.toList();
+		var sigilSegments = visibleSigilSegments(level, rite);
+		var sanguineBlobs = visibleSanguineBlobs(level, rite, recipe);
+		float footprintRadius = ritualFootprintRadius(rite, recipe);
+		java.util.List<String> checklist = buildChecklist(level, rite, recipe);
+		int stillIntervalTicks = CardinalRiteCeremonyRules.stillIntervalTicks(recipe == null ? 0
+				: CardinalRiteCeremonyRules.formIndex(recipe.getRiteType()));
+		return new ActiveRiteClientData.RiteEntry(
+				rite.getCenterPos(), rite.getRiteSize(), rite.getProgress(stillIntervalTicks),
+				rite.getRecipeId(), unstained,
+				rite.getPhase().name(), rite.getInstability(), rite.getCurrentWave(), rite.getTotalWaves(),
+				rite.completedRings(), totalRings, rite.getCommittedBloodMl(), upfront,
+				rite.getCarriedIchorMl(), rite.getAllyRoles().size(), sharedBlood, cue,
+				footprintRadius, checklist,
+				boundarySegments, sigilSegments, sanguineBlobs);
+	}
+
+	public static float ritualFootprintRadius(ActiveCardinalRite rite, CardinalRiteRecipe recipe) {
+		if (recipe == null || recipe.getCeremony() == null) {
+			return (float) CardinalRiteBoundaryLeashRules.ritualRadius(rite.getRiteSize());
+		}
+		java.util.List<BlockPos> anchors = recipe.getCeremony().anchors().stream()
+				.map(com.vincenthuto.hemomancy.common.rite.CardinalRiteCeremonyDefinition.Anchor::offset)
+				.toList();
+		java.util.List<BlockPos> sigilPoints = new java.util.ArrayList<>();
+		for (CardinalRiteInteractionHandler.SigilPlacement placement
+				: CardinalRiteInteractionHandler.supportSigils(recipe)) {
+			IchorianSigilDefinition sigil = IchorianSigilRegistry.get(placement.id());
+			if (sigil == null) continue;
+			for (IchorianSigilDefinition.Node node : sigil.nodes()) {
+				sigilPoints.add(new BlockPos(
+						placement.x() + (int) Math.round(node.x()), 0,
+						placement.z() + (int) Math.round(node.z())));
+			}
+		}
+		for (IchorianSigilDefinition sigil : IchorianSigilRegistry.all()) {
+			for (IchorianSigilDefinition.Node node : sigil.nodes()) {
+				sigilPoints.add(new BlockPos((int) Math.round(node.x()), 0, (int) Math.round(node.z())));
+			}
+		}
+		return CardinalRiteFootprintRules.radius(anchors, sigilPoints);
+	}
+
+	private static java.util.List<String> buildChecklist(ServerLevel level, ActiveCardinalRite rite,
+			CardinalRiteRecipe recipe) {
+		if (rite.getPhase() == CardinalRitePhase.CONSECRATION) {
+			int missing = 0;
+			for (int blood : rite.getAnchorBloodMl()) {
+				if (blood < CardinalRiteCeremonyRules.BLOOD_PER_ANCHOR_ML) missing++;
+			}
+			return java.util.List.of(
+					"Boundary rings: " + rite.completedRings() + "/" + Math.max(1, rite.getDegree()),
+					"Anchors remaining: " + missing,
+					"Project blood into the glowing boundary anchors");
+		}
+		if (rite.getPhase() == CardinalRitePhase.INSCRIPTION) {
+			java.util.List<CardinalRiteInteractionHandler.SigilPlacement> supports =
+					recipe == null ? java.util.List.of() : CardinalRiteInteractionHandler.supportSigils(recipe);
+			int complete = 0;
+			for (CardinalRiteInteractionHandler.SigilPlacement placement : supports) {
+				IchorianSigilDefinition sigil = IchorianSigilRegistry.get(placement.id());
+				if (sigil != null && (rite.isSigilAwakened(placement.progressKey())
+						|| rite.isSigilComplete(placement.progressKey(), sigil.nodes().size()))) complete++;
+			}
+			boolean catalystReady = recipe == null
+					|| CardinalRiteInteractionHandler.sealCatalystReady(level, rite, recipe);
+			return CardinalRiteChecklist.inscription(
+					supports.size(), complete, rite.getAllyRoles().size(), catalystReady);
+		}
+		if (rite.getPhase() == CardinalRitePhase.ORDEAL) {
+			String wave = rite.getCurrentWave() < rite.getWaveDeck().size()
+					? rite.getWaveDeck().get(rite.getCurrentWave()) : "";
+			long dry = java.util.Arrays.stream(rite.getAnchorBloodMl())
+					.filter(blood -> blood < CardinalRiteCeremonyRules.BLOOD_PER_ANCHOR_ML).count();
+			return java.util.List.of(
+					"Wave " + Math.min(rite.getCurrentWave() + 1, rite.getTotalWaves())
+							+ "/" + rite.getTotalWaves(),
+					CardinalRiteChecklist.ordealObjective(wave),
+					"Damaged anchors: " + rite.getBrokenInstabilityAnchors().size(),
+					"Dry anchors: " + dry);
+		}
+		if (rite.getPhase() == CardinalRitePhase.STILL_INTERVAL) {
+			int duration = CardinalRiteCeremonyRules.stillIntervalTicks(recipe == null ? 0
+					: CardinalRiteCeremonyRules.formIndex(recipe.getRiteType()));
+			int seconds = Math.max(0, duration - rite.getPhaseTicks() + 19) / 20;
+			return java.util.List.of(
+					"Still interval: " + seconds + "s",
+					"Repair damaged anchors: " + rite.getBrokenInstabilityAnchors().size(),
+					"Restore every dry cardinal station");
+		}
+		if (rite.getPhase() == CardinalRitePhase.PROFESSION && recipe != null) {
+			CardinalRiteProfessionActs.Act act = CardinalRiteProfessionActs.forRite(rite, recipe);
+			return java.util.List.of(
+					act.prompt(),
+					"Response " + (rite.getProfessionStep() + 1) + "/" + Math.max(1, act.order().size()),
+					CardinalRiteProfessionActs.requiresBlood(act)
+							? "Use projected blood on the highlighted target"
+							: "Interact with the highlighted target");
+		}
+		if (rite.getPhase() == CardinalRitePhase.CULMINATION) {
+			return java.util.List.of("The rite is resolving", "No further input is required");
+		}
+		return java.util.List.of();
+	}
+
+	private static java.util.List<ActiveRiteClientData.SanguineBlob> visibleSanguineBlobs(
+			ServerLevel level, ActiveCardinalRite rite, CardinalRiteRecipe recipe) {
+		java.util.List<ActiveRiteClientData.SanguineBlob> result = new java.util.ArrayList<>();
+		if (recipe != null && recipe.getCeremony() != null) {
+			int[] blood = rite.getAnchorBloodMl();
+			for (int i = 0; i < recipe.getCeremony().anchors().size() && i < blood.length; i++) {
+				boolean instabilityDamaged = rite.isInstabilityDamagedAnchor(i);
+				if (!instabilityDamaged && CardinalRiteAnchorVisualRules.boundaryVisual(
+						blood[i], CardinalRiteCeremonyRules.BLOOD_PER_ANCHOR_ML)
+						!= CardinalRiteAnchorVisualRules.Visual.SANGUINE_BLOB) continue;
+				BlockPos offset = recipe.getCeremony().anchors().get(i).offset();
+				double x = rite.getCenterPos().getX() + offset.getX() + 0.5D;
+				double y = CardinalRiteAnchorVisualRules.ritePlaneY(rite.getCenterPos().getY()) + 0.14D;
+				double z = rite.getCenterPos().getZ() + offset.getZ() + 0.5D;
+				float integrity = rite.instabilityAnchorIntegrity(i);
+				int color = boundaryAnchorColor(integrity);
+				float radius = instabilityDamaged ? 0.19F
+						: CardinalRiteAnchorVisualRules.formingBoundaryRadius(
+								blood[i], CardinalRiteCeremonyRules.BLOOD_PER_ANCHOR_ML);
+				result.add(new ActiveRiteClientData.SanguineBlob(
+						x, y, z, radius, color,
+						blobSeed(x, y, z, i), integrity));
+			}
+		}
+		for (CardinalRiteInteractionHandler.SigilPlacement placement
+				: CardinalRiteInteractionHandler.activeSigils(level, rite)) {
+			IchorianSigilDefinition sigil = IchorianSigilRegistry.get(placement.id());
+			if (sigil == null) continue;
+			int completed = rite.getSigilProgress().getOrDefault(placement.progressKey(), 0);
+			BlockPos base = rite.getCenterPos().offset(0, placement.y(), 0);
+			for (int i = 0; i < sigil.nodes().size(); i++) {
+				if (CardinalRiteAnchorVisualRules.sigilVisual(i, completed)
+						!= CardinalRiteAnchorVisualRules.Visual.SANGUINE_BLOB) continue;
+				IchorianSigilDefinition.Node node = sigil.nodes().get(i);
+				BlockPos surface = CardinalRiteSigilRules.surfaceAirPosition(level, base,
+						placement.x() + (int) Math.round(node.x()),
+						placement.z() + (int) Math.round(node.z()));
+				double x = rite.getCenterPos().getX() + 0.5D + placement.x() + node.x();
+				double y = surface.getY() + 0.17D;
+				double z = rite.getCenterPos().getZ() + 0.5D + placement.z() + node.z();
+				result.add(new ActiveRiteClientData.SanguineBlob(
+						x, y, z, 0.16F, CardinalRiteAnchorVisualRules.sigilColor(sigil.color()),
+						blobSeed(x, y, z, i)));
+			}
+			int nodeBlood = rite.getSigilProgress().getOrDefault(
+					"blood:" + placement.progressKey(), 0);
+			if (completed < sigil.nodes().size() && nodeBlood > 0) {
+				IchorianSigilDefinition.Node forming = sigil.nodes().get(completed);
+				BlockPos surface = CardinalRiteSigilRules.surfaceAirPosition(level, base,
+						placement.x() + (int) Math.round(forming.x()),
+						placement.z() + (int) Math.round(forming.z()));
+				double x = rite.getCenterPos().getX() + 0.5D + placement.x() + forming.x();
+				double y = surface.getY() + 0.17D;
+				double z = rite.getCenterPos().getZ() + 0.5D + placement.z() + forming.z();
+				result.add(new ActiveRiteClientData.SanguineBlob(
+						x, y, z, CardinalRiteSigilRules.formingNodeRadius(nodeBlood),
+						CardinalRiteAnchorVisualRules.sigilColor(sigil.color()),
+						blobSeed(x, y, z, completed)));
+			}
+		}
+		return java.util.List.copyOf(result);
+	}
+
+	private static int boundaryAnchorColor(float integrity) {
+		float clamped = Math.max(0.0F, Math.min(1.0F, integrity));
+		int red = Math.round(((CardinalRiteAnchorVisualRules.BOUNDARY_COLOR >> 16) & 255) * clamped);
+		int green = Math.round(((CardinalRiteAnchorVisualRules.BOUNDARY_COLOR >> 8) & 255) * clamped);
+		int blue = Math.max(5, Math.round((CardinalRiteAnchorVisualRules.BOUNDARY_COLOR & 255) * clamped));
+		return (red << 16) | (green << 8) | blue;
+	}
+
+	private static long blobSeed(double x, double y, double z, int index) {
+		long seed = Double.doubleToLongBits(x);
+		seed = seed * 31L + Double.doubleToLongBits(y);
+		seed = seed * 31L + Double.doubleToLongBits(z);
+		return seed * 31L + index;
+	}
+
+	private static java.util.List<ActiveRiteClientData.SigilSegment> visibleSigilSegments(
+			ServerLevel level, ActiveCardinalRite rite) {
+		java.util.List<ActiveRiteClientData.SigilSegment> result = new java.util.ArrayList<>();
+		for (CardinalRiteInteractionHandler.SigilPlacement placement
+				: CardinalRiteInteractionHandler.activeSigils(level, rite)) {
+			IchorianSigilDefinition sigil = IchorianSigilRegistry.get(placement.id());
+			if (sigil == null) continue;
+			int completed = rite.getSigilProgress().getOrDefault(placement.progressKey(), 0);
+			for (CardinalRiteSigilProgress.Connection connection
+					: CardinalRiteSigilProgress.completedConnections(sigil.nodes(), completed)) {
+				result.add(toClientSigilSegment(level, rite, placement, connection, sigil.color()));
+			}
+		}
+		return java.util.List.copyOf(result);
+	}
+
+	private static ActiveRiteClientData.SigilSegment toClientSigilSegment(
+			ServerLevel level, ActiveCardinalRite rite,
+			CardinalRiteInteractionHandler.SigilPlacement placement,
+			CardinalRiteSigilProgress.Connection connection, int color) {
+		IchorianSigilDefinition.Node start = connection.start();
+		IchorianSigilDefinition.Node end = connection.end();
+		BlockPos base = rite.getCenterPos().offset(0, placement.y(), 0);
+		BlockPos startSurface = CardinalRiteSigilRules.surfaceAirPosition(level, base,
+				placement.x() + (int) Math.round(start.x()),
+				placement.z() + (int) Math.round(start.z()));
+		BlockPos endSurface = CardinalRiteSigilRules.surfaceAirPosition(level, base,
+				placement.x() + (int) Math.round(end.x()),
+				placement.z() + (int) Math.round(end.z()));
+		return new ActiveRiteClientData.SigilSegment(
+				rite.getCenterPos().getX() + 0.5D + placement.x() + start.x(),
+				startSurface.getY() + 0.10D,
+				rite.getCenterPos().getZ() + 0.5D + placement.z() + start.z(),
+				rite.getCenterPos().getX() + 0.5D + placement.x() + end.x(),
+				endSurface.getY() + 0.10D,
+				rite.getCenterPos().getZ() + 0.5D + placement.z() + end.z(),
+				color);
+	}
+
+	private static void collapseInteractiveRite(ServerLevel level, ServerPlayer caster,
+			ActiveCardinalRite rite, CardinalRiteRecipe recipe) {
+		CardinalRiteOrdealEngine.clearThreats(level, rite);
+		int form = recipe == null ? Math.max(0, (rite.getRiteSize() - 3) / 2)
+				: CardinalRiteCeremonyRules.formIndex(recipe.getRiteType());
+		caster.hurt(caster.damageSources().magic(), CardinalRiteCeremonyRules.collapseDamage(form));
+		if (recipe != null && recipe.getCeremony() != null) {
+			int remaining = CardinalRiteCeremonyRules.fragileBlocksOnCollapse(form);
+			for (BlockPos offset : recipe.getCeremony().fragileOffsets()) {
+				if (remaining <= 0) break;
+				BlockPos pos = rite.getCenterPos().offset(offset);
+				BlockState state = level.getBlockState(pos);
+				float hardness = state.getDestroySpeed(level, pos);
+				if (state.isAir() || level.getBlockEntity(pos) != null || hardness < 0.0F || hardness > 5.0F) {
+					continue;
+				}
+				if (level.destroyBlock(pos, true, caster)) remaining--;
+			}
+		}
+		int sectionHits = form >= 3 ? 2 : form >= 2 ? 1 : 0;
+		float sectionDamage = form >= 3 ? 15.0F : 10.0F;
+		HemoCapabilityAccess.getVascularSystem(caster).ifPresent(vascular -> {
+			EnumVeinSections[] sections = EnumVeinSections.values();
+			for (int i = 0; i < sectionHits; i++) {
+				vascular.setVascularSectionHealth(
+						sections[caster.getRandom().nextInt(sections.length)], -sectionDamage);
+			}
+			VascularSystemEvents.syncVascular(caster, vascular);
+		});
+		level.playSound(null, rite.getCenterPos(), SoundEvents.GENERIC_EXPLODE.value(),
+				SoundSource.BLOCKS, 1.5F, 0.55F);
+		caster.displayClientMessage(Component.literal("The cardinal boundary collapses into backlash.")
+				.withStyle(ChatFormatting.DARK_RED, ChatFormatting.BOLD), false);
+	}
+
 	private static final String BLOODLINE_FOUNDING_RITE = "cardinal_rite/bloodline_founding";
 	private static final String BLOODLINE_RECALL_RITE = "cardinal_rite/bloodline_recall";
 	private static final String SANGUINE_INITIATION_RITE = "cardinal_rite/sanguine_initiation";
@@ -536,11 +931,14 @@ public class HarbingerCardinalRiteEvents {
 			return;
 		}
 
-		// Drain blood cost
-		HemoCapabilityAccess.getBloodVolume(caster).ifPresent(volume -> {
-			volume.drain(recipe.getBloodCost());
-			BloodVolumeEvents.syncVolume(caster, volume);
-		});
+		// Interactive Harbinger ceremonies already paid their base cost node by
+		// node. Only legacy/Unstained countdown rites retain the completion drain.
+		if (rite.getPhase() == CardinalRitePhase.LEGACY) {
+			HemoCapabilityAccess.getBloodVolume(caster).ifPresent(volume -> {
+				volume.drain(recipe.getBloodCost());
+				BloodVolumeEvents.syncVolume(caster, volume);
+			});
+		}
 
 		// Destroy the multiblock pattern (only structure blocks, not wildcard positions)
 		BlockPos center = rite.getCenterPos();
@@ -789,6 +1187,17 @@ public class HarbingerCardinalRiteEvents {
 		// Award rite completion milestone (first rite + tiered)
 		SkillPointGainEvents.onRiteCompleted(caster);
 		LiberKnowledgeHelper.unlockForRite(caster, ritePath);
+
+		// The Votary profession is a declaration rather than a pass/fail prompt:
+		// its chosen cardinal answer leaves a small, permanent alignment trace.
+		if ("cardinal_rite/votary_rite".equals(ritePath) && rite.getProfessionChoice() >= 0) {
+			EnumBloodTendency[] tendencies = EnumBloodTendency.values();
+			EnumBloodTendency chosen = tendencies[Math.floorMod(rite.getProfessionChoice(), tendencies.length)];
+			HemoCapabilityAccess.getBloodTendency(caster).ifPresent(tendency -> {
+				tendency.addTendencyAlignment(chosen, 3.0F);
+				BloodTendencyEvents.syncTendency(caster, tendency);
+			});
+		}
 
 		// Check if this rite grants an initiatory degree
 		Integer targetDegree = DEGREE_RITE_PATHS.get(ritePath);

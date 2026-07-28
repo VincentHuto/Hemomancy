@@ -1,5 +1,6 @@
 {
   "_comment_mna_spell_components": "=== MnA Spell Components ===",
+  "entity.hemomancy.humanity_sprite": "Daemon",
   "advancements.hemomancy.absolved.description": "Reach the Absolved stage — the blood's influence is almost gone",
   "advancements.hemomancy.absolved.title": "Absolved",
   "advancements.hemomancy.armed_to_the_veins.description": "Equip a full set of Hematic Iron armor",

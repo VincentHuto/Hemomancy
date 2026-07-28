@@ -7,7 +7,9 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 public class Bloodline {
@@ -48,6 +50,12 @@ public class Bloodline {
 								line.npcMemberOutposts.add(comp.contains("outpost" + i)
 										? comp.getString("outpost" + i)
 										: null);
+								UUID npcId = line.npcMemberUUIDs.get(line.npcMemberUUIDs.size() - 1);
+								line.npcRiteReserves.put(npcId,
+										comp.contains("riteReserve" + i) ? comp.getInt("riteReserve" + i) : 1000);
+								if (comp.contains("bloodspentUntil" + i)) {
+									line.npcBloodspentUntil.put(npcId, comp.getLong("bloodspentUntil" + i));
+								}
 							}
 						}
 						line.recalculateMaxVolume();
@@ -75,6 +83,8 @@ public class Bloodline {
 	List<UUID> npcMemberUUIDs = new ArrayList<>();
 	List<ResourceLocation> npcMemberTypes = new ArrayList<>();
 	List<String> npcMemberOutposts = new ArrayList<>();
+	private final Map<UUID, Integer> npcRiteReserves = new HashMap<>();
+	private final Map<UUID, Long> npcBloodspentUntil = new HashMap<>();
 
 	public Bloodline() {
 		this.name = "No Bloodline";
@@ -137,6 +147,7 @@ public class Bloodline {
 			npcMemberUUIDs.add(npcUUID);
 			npcMemberTypes.add(null);
 			npcMemberOutposts.add(null);
+			npcRiteReserves.put(npcUUID, 1000);
 			recalculateMaxVolume();
 			return true;
 		}
@@ -182,6 +193,8 @@ public class Bloodline {
 			if (index < npcMemberOutposts.size()) {
 				npcMemberOutposts.remove(index);
 			}
+			npcRiteReserves.remove(npcUUID);
+			npcBloodspentUntil.remove(npcUUID);
 			recalculateMaxVolume();
 			return true;
 		}
@@ -225,6 +238,34 @@ public class Bloodline {
 
 	public List<String> getNpcMemberOutposts() {
 		return npcMemberOutposts;
+	}
+
+	public boolean isNpcBloodspent(UUID npcUUID, long gameTime) {
+		return npcBloodspentUntil.getOrDefault(npcUUID, 0L) > gameTime;
+	}
+
+	/**
+	 * Returns the NPC's private rite reserve. A completed 24,000 tick rest
+	 * automatically restores the reserve for the next ceremony.
+	 */
+	public int getNpcRiteReserve(UUID npcUUID, long gameTime) {
+		if (!hasNpcMember(npcUUID)) return 0;
+		long until = npcBloodspentUntil.getOrDefault(npcUUID, 0L);
+		if (until > 0 && gameTime >= until) {
+			npcBloodspentUntil.remove(npcUUID);
+			npcRiteReserves.put(npcUUID, 1000);
+		}
+		return npcRiteReserves.getOrDefault(npcUUID, 1000);
+	}
+
+	public int drawNpcRiteReserve(UUID npcUUID, int requestedMl, long gameTime) {
+		if (requestedMl <= 0 || isNpcBloodspent(npcUUID, gameTime)) return 0;
+		int reserve = getNpcRiteReserve(npcUUID, gameTime);
+		int drawn = Math.min(reserve, requestedMl);
+		int remaining = reserve - drawn;
+		npcRiteReserves.put(npcUUID, remaining);
+		if (remaining == 0) npcBloodspentUntil.put(npcUUID, gameTime + 24000L);
+		return drawn;
 	}
 
 	/**
@@ -335,6 +376,9 @@ public class Bloodline {
 						npc.putString("outpost" + i, npcOutpost);
 					}
 				}
+				npc.putInt("riteReserve" + i, npcRiteReserves.getOrDefault(npcMemberUUIDs.get(i), 1000));
+				long bloodspent = npcBloodspentUntil.getOrDefault(npcMemberUUIDs.get(i), 0L);
+				if (bloodspent > 0) npc.putLong("bloodspentUntil" + i, bloodspent);
 				npcList.add(npc);
 			}
 			tag.put("npcMembers", npcList);

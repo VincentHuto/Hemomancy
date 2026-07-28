@@ -1,0 +1,9 @@
+{
+  "kind": "response",
+  "tier": 2,
+  "color": "0x80CBC4",
+  "name": "Shunt",
+  "purpose": "Redirects blood away from a threatened anchor.",
+  "stability": 8,
+  "nodes": [[-1, -1], [0, 0], [1, -1], [0, 1], [1, 1]]
+}

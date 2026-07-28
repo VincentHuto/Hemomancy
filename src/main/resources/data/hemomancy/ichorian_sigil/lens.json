@@ -1,0 +1,9 @@
+{
+  "kind": "response",
+  "tier": 5,
+  "color": "0xFFF59D",
+  "name": "Lens",
+  "purpose": "Reveals the true node among illusory anchors.",
+  "stability": 18,
+  "nodes": [[-2, 0], [-1, -1], [0, -1.5], [1, -1], [2, 0], [1, 1], [0, 1.5], [-1, 1], [0, 0]]
+}

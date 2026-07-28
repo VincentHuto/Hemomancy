@@ -1,0 +1,9 @@
+{
+  "kind": "response",
+  "tier": 4,
+  "color": "0xCE93D8",
+  "name": "Cage",
+  "purpose": "Binds a manifested rite threat in place.",
+  "stability": 15,
+  "nodes": [[-1.5, -1], [0, -1.5], [1.5, -1], [1.5, 1], [0, 1.5], [-1.5, 1], [-1.5, -1]]
+}

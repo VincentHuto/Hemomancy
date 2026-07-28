@@ -45,7 +45,10 @@ import com.vincenthuto.hemomancy.common.entity.npc.unstained.UnstainedZealotEnti
 import com.vincenthuto.hemomancy.common.entity.projectile.*;
 import com.vincenthuto.hemomancy.common.entity.summon.*;
 import com.vincenthuto.hemomancy.common.entity.utility.ArmatureRestraintEntity;
+import com.vincenthuto.hemomancy.common.entity.utility.AwakenedIchorianSigilEntity;
 import com.vincenthuto.hemomancy.common.entity.utility.CovenantThroneSeatEntity;
+import com.vincenthuto.hemomancy.common.entity.utility.HumanitySpriteEntity;
+import com.vincenthuto.hemomancy.common.entity.utility.UnsettledIchorEntity;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.EntityType;
@@ -93,6 +96,31 @@ public class EntityInit {
                             .clientTrackingRange(8)
                             .updateInterval(20)
                             .build(Hemomancy.rloc("hematic_armature_restraint").toString()));
+
+    public static final DeferredHolder<EntityType<?>, EntityType<UnsettledIchorEntity>> unsettled_ichor =
+            ENTITY_TYPES.register("unsettled_ichor",
+                    () -> EntityType.Builder.<UnsettledIchorEntity>of(UnsettledIchorEntity::new, MobCategory.MISC)
+                            .sized(0.4F, 0.4F)
+                            .clientTrackingRange(8)
+                            .updateInterval(2)
+                            .build(Hemomancy.rloc("unsettled_ichor").toString()));
+
+    public static final DeferredHolder<EntityType<?>, EntityType<AwakenedIchorianSigilEntity>> awakened_ichorian_sigil =
+            ENTITY_TYPES.register("awakened_ichorian_sigil",
+                    () -> EntityType.Builder.<AwakenedIchorianSigilEntity>of(
+                                    AwakenedIchorianSigilEntity::new, MobCategory.MISC)
+                            .sized(2.5F, 2.5F)
+                            .clientTrackingRange(12)
+                            .updateInterval(2)
+                            .build(Hemomancy.rloc("awakened_ichorian_sigil").toString()));
+
+    public static final DeferredHolder<EntityType<?>, EntityType<HumanitySpriteEntity>> humanity_sprite =
+            ENTITY_TYPES.register("humanity_sprite",
+                    () -> EntityType.Builder.<HumanitySpriteEntity>of(HumanitySpriteEntity::new, MobCategory.MISC)
+                            .sized(1.25F, 4.25F)
+                            .clientTrackingRange(32)
+                            .updateInterval(1)
+                            .build(Hemomancy.rloc("humanity_sprite").toString()));
 
     // Mobs
     public static final DeferredHolder<EntityType<?>, EntityType<UnstainedZealotEntity>> unstained_zealot = ENTITY_TYPES.register(
@@ -288,6 +316,12 @@ public class EntityInit {
     public static final DeferredHolder<EntityType<?>, EntityType<LeechEntity>> leech = ENTITY_TYPES.register("leech",
             () -> EntityType.Builder.of(LeechEntity::new, MobCategory.CREATURE).sized(0.4F, 0.1F)
                     .build(Hemomancy.rloc("leech").toString()));
+    public static final DeferredHolder<EntityType<?>, EntityType<BloodlickerEntity>> bloodlicker =
+            ENTITY_TYPES.register("bloodlicker",
+                    () -> EntityType.Builder.of(BloodlickerEntity::new, MobCategory.MONSTER)
+                            .sized(1.15F, 1.45F)
+                            .clientTrackingRange(8)
+                            .build(Hemomancy.rloc("bloodlicker").toString()));
     public static final DeferredHolder<EntityType<?>, EntityType<BogRevenantEntity>> bog_revenant = ENTITY_TYPES.register("bog_revenant",
             () -> EntityType.Builder.of(BogRevenantEntity::new, MobCategory.MONSTER).sized(0.6F, 1.95F)
                     .clientTrackingRange(8)
@@ -789,6 +823,7 @@ public class EntityInit {
         event.put(EntityInit.iron_spike.get(), BloodConstructEntity.setAttributes().build());
         event.put(EntityInit.wretched_will.get(), BloodConstructEntity.setAttributes().build());
         event.put(EntityInit.leech.get(), LeechEntity.setAttributes().build());
+        event.put(EntityInit.bloodlicker.get(), BloodlickerEntity.setAttributes().build());
         event.put(EntityInit.bog_revenant.get(), BogRevenantEntity.setAttributes().build());
         event.put(EntityInit.fargone.get(), FargoneEntity.setAttributes().build());
         event.put(EntityInit.fungling.get(), FargoneEntity.setAttributes().build());

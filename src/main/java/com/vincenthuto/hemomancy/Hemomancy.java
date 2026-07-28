@@ -8,6 +8,7 @@ import com.vincenthuto.hemomancy.common.capability.player.shared.knowledge.disco
 import com.vincenthuto.hemomancy.common.capability.player.unstained.UnstainedProgressEvents;
 import com.vincenthuto.hemomancy.common.data.book.BloodStructurePageTemplate;
 import com.vincenthuto.hemomancy.common.block.inscription.DiscoveryInscriptionLoader;
+import com.vincenthuto.hemomancy.common.rite.sigil.IchorianSigilLoader;
 import com.vincenthuto.hemomancy.common.entity.HemoEntityPredicates;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.inquiry.ItemInquiryLoader;
 import com.vincenthuto.hemomancy.common.init.*;
@@ -391,6 +392,7 @@ public class Hemomancy {
     private void onAddReloadListeners(AddReloadListenerEvent event) {
         event.addListener(new ItemInquiryLoader());
         event.addListener(new DiscoveryInscriptionLoader());
+        event.addListener(new IchorianSigilLoader());
     }
 
     private void clientSetup(final FMLClientSetupEvent event) {

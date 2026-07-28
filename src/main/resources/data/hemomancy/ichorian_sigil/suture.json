@@ -1,0 +1,9 @@
+{
+  "kind": "response",
+  "tier": 1,
+  "color": "0xFF8A80",
+  "name": "Suture",
+  "purpose": "Closes a ruptured boundary segment.",
+  "stability": 10,
+  "nodes": [[-1, -1], [1, 1], [1, -1], [-1, 1]]
+}

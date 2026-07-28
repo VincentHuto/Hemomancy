@@ -1,0 +1,9 @@
+{
+  "kind": "response",
+  "tier": 3,
+  "color": "0x90CAF9",
+  "name": "Seal",
+  "purpose": "Silences a rogue will's interference.",
+  "stability": 12,
+  "nodes": [[-1, -1], [1, -1], [1, 1], [-1, 1], [-1, -1], [0, 0]]
+}

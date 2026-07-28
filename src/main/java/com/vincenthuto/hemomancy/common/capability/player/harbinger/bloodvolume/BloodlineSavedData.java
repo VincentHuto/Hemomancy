@@ -173,6 +173,14 @@ public class BloodlineSavedData extends SavedData {
 		return line;
 	}
 
+	public int drawNpcRiteReserve(UUID bloodlineUUID, UUID npcUUID, int amount, long gameTime) {
+		Bloodline line = bloodlines.get(bloodlineUUID);
+		if (line == null) return 0;
+		int drawn = line.drawNpcRiteReserve(npcUUID, amount, gameTime);
+		if (drawn > 0) setDirty();
+		return drawn;
+	}
+
 	public Bloodline addNpcMember(UUID bloodlineUUID, UUID npcUUID, ResourceLocation npcType) {
 		return addNpcMember(bloodlineUUID, npcUUID, npcType, null);
 	}

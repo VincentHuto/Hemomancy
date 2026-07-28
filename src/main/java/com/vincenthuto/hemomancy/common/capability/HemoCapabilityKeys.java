@@ -19,6 +19,7 @@ import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.IVa
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.organs.IVisceralOrgans;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.white_humor.IWhiteHumorVolume;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.rite.IchorianKnowledge;
 import com.vincenthuto.hutoslib.common.book.knowledge.IBookKnowledge;
 import net.neoforged.neoforge.capabilities.EntityCapability;
 import net.neoforged.neoforge.capabilities.ItemCapability;
@@ -61,6 +62,9 @@ public final class HemoCapabilityKeys {
 
     public static final EntityCapability<IBookKnowledge, Void> LIBER_KNOWLEDGE =
             EntityCapability.createVoid(Hemomancy.rloc("liber_knowledge"), IBookKnowledge.class);
+
+    public static final EntityCapability<IchorianKnowledge, Void> ICHORIAN_KNOWLEDGE =
+            EntityCapability.createVoid(Hemomancy.rloc("ichorian_knowledge"), IchorianKnowledge.class);
 
     public static final EntityCapability<SkillProgress, Void> SKILL_PROGRESS =
             EntityCapability.createVoid(Hemomancy.rloc("skill_progress"), SkillProgress.class);

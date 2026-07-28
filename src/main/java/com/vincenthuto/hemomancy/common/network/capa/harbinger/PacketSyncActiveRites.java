@@ -2,6 +2,7 @@ package com.vincenthuto.hemomancy.common.network.capa.harbinger;
 
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.client.data.ActiveRiteClientData;
+import com.vincenthuto.hemomancy.common.rite.CardinalRiteBoundaryProgress;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
@@ -35,6 +36,49 @@ public class PacketSyncActiveRites implements CustomPacketPayload {
 			buf.writeDouble(entry.getProgress());
 			buf.writeResourceLocation(entry.getRecipeId());
 			buf.writeBoolean(entry.isUnstained());
+			buf.writeUtf(entry.getPhase());
+			buf.writeVarInt(entry.getInstability());
+			buf.writeVarInt(entry.getCurrentWave());
+			buf.writeVarInt(entry.getTotalWaves());
+			buf.writeVarInt(entry.getCompletedRings());
+			buf.writeVarInt(entry.getTotalRings());
+			buf.writeVarInt(entry.getCommittedBloodMl());
+			buf.writeVarInt(entry.getUpfrontBloodMl());
+			buf.writeVarInt(entry.getCarriedIchorMl());
+			buf.writeVarInt(entry.getAllyCount());
+			buf.writeInt(entry.getSharedBloodMl());
+			buf.writeUtf(entry.getCue());
+			buf.writeFloat(entry.getFootprintRadius());
+			buf.writeVarInt(entry.getChecklist().size());
+			for (String line : entry.getChecklist()) buf.writeUtf(line);
+			buf.writeVarInt(entry.getBoundarySegments().size());
+			for (CardinalRiteBoundaryProgress.Segment segment : entry.getBoundarySegments()) {
+				buf.writeVarInt(segment.ring());
+				buf.writeDouble(segment.startAngle());
+				buf.writeDouble(segment.sweepAngle());
+				buf.writeInt(segment.startAnchorIndex());
+				buf.writeFloat(segment.integrity());
+			}
+			buf.writeVarInt(entry.getSigilSegments().size());
+			for (ActiveRiteClientData.SigilSegment segment : entry.getSigilSegments()) {
+				buf.writeDouble(segment.startX());
+				buf.writeDouble(segment.startY());
+				buf.writeDouble(segment.startZ());
+				buf.writeDouble(segment.endX());
+				buf.writeDouble(segment.endY());
+				buf.writeDouble(segment.endZ());
+				buf.writeInt(segment.color());
+			}
+			buf.writeVarInt(entry.getSanguineBlobs().size());
+			for (ActiveRiteClientData.SanguineBlob blob : entry.getSanguineBlobs()) {
+				buf.writeDouble(blob.x());
+				buf.writeDouble(blob.y());
+				buf.writeDouble(blob.z());
+				buf.writeFloat(blob.radius());
+				buf.writeInt(blob.color());
+				buf.writeLong(blob.seed());
+				buf.writeFloat(blob.integrity());
+			}
 		}
 	}
 
@@ -47,7 +91,49 @@ public class PacketSyncActiveRites implements CustomPacketPayload {
 			double progress = buf.readDouble();
 			ResourceLocation recipeId = buf.readResourceLocation();
 			boolean unstained = buf.readBoolean();
-			entries.add(new ActiveRiteClientData.RiteEntry(center, riteSize, progress, recipeId, unstained));
+			String phase = buf.readUtf();
+			int instability = buf.readVarInt();
+			int currentWave = buf.readVarInt();
+			int totalWaves = buf.readVarInt();
+			int completedRings = buf.readVarInt();
+			int totalRings = buf.readVarInt();
+			int committedBlood = buf.readVarInt();
+			int upfrontBlood = buf.readVarInt();
+			int carriedIchor = buf.readVarInt();
+			int allyCount = buf.readVarInt();
+			int sharedBlood = buf.readInt();
+			String cue = buf.readUtf();
+			float footprintRadius = buf.readFloat();
+			int checklistCount = buf.readVarInt();
+			List<String> checklist = new ArrayList<>(checklistCount);
+			for (int lineIndex = 0; lineIndex < checklistCount; lineIndex++) checklist.add(buf.readUtf());
+			int segmentCount = buf.readVarInt();
+			List<CardinalRiteBoundaryProgress.Segment> boundarySegments = new ArrayList<>(segmentCount);
+			for (int segmentIndex = 0; segmentIndex < segmentCount; segmentIndex++) {
+				boundarySegments.add(new CardinalRiteBoundaryProgress.Segment(
+						buf.readVarInt(), buf.readDouble(), buf.readDouble(),
+						buf.readInt(), buf.readFloat()));
+			}
+			int sigilSegmentCount = buf.readVarInt();
+			List<ActiveRiteClientData.SigilSegment> sigilSegments = new ArrayList<>(sigilSegmentCount);
+			for (int segmentIndex = 0; segmentIndex < sigilSegmentCount; segmentIndex++) {
+				sigilSegments.add(new ActiveRiteClientData.SigilSegment(
+						buf.readDouble(), buf.readDouble(), buf.readDouble(),
+						buf.readDouble(), buf.readDouble(), buf.readDouble(),
+						buf.readInt()));
+			}
+			int blobCount = buf.readVarInt();
+			List<ActiveRiteClientData.SanguineBlob> sanguineBlobs = new ArrayList<>(blobCount);
+			for (int blobIndex = 0; blobIndex < blobCount; blobIndex++) {
+				sanguineBlobs.add(new ActiveRiteClientData.SanguineBlob(
+						buf.readDouble(), buf.readDouble(), buf.readDouble(),
+						buf.readFloat(), buf.readInt(), buf.readLong(), buf.readFloat()));
+			}
+			entries.add(new ActiveRiteClientData.RiteEntry(center, riteSize, progress, recipeId, unstained,
+					phase, instability, currentWave, totalWaves, completedRings, totalRings,
+					committedBlood, upfrontBlood, carriedIchor, allyCount, sharedBlood, cue,
+					footprintRadius, checklist,
+					boundarySegments, sigilSegments, sanguineBlobs));
 		}
 		return new PacketSyncActiveRites(entries);
 	}

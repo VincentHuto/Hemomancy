@@ -1,0 +1,9 @@
+{
+  "kind": "support",
+  "tier": 2,
+  "color": "0x39C5D9",
+  "name": "Bastion",
+  "purpose": "Repels rite-bound enemies from the cardinal station.",
+  "stability": 8,
+  "nodes": [[-1, -1], [0, -1.5], [1, -1], [1, 1], [0, 1.5], [-1, 1]]
+}

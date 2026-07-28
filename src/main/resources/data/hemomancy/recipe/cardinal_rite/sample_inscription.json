@@ -1,0 +1,82 @@
+{
+  "type": "hemomancy:cardinal_rite_recipe",
+  "bloodCost": 0,
+  "riteType": "lesser",
+  "required_degree": 1,
+  "breakBlocksOnCreation": false,
+  "riteName": "[TEST] Inscription Crucible",
+  "riteDescription": "A focused sigil laboratory for testing diagonal circulation, optional support sockets, discovery, response inscription, siphoning, repair, and still intervals.",
+  "pattern": [
+    [
+      "DAD"
+    ],
+    [
+      "ALA"
+    ],
+    [
+      "DAD"
+    ]
+  ],
+  "key": {
+    "D": {
+      "block": "minecraft:polished_deepslate"
+    },
+    "A": {
+      "block": "minecraft:amethyst_block"
+    },
+    "L": {
+      "block": "minecraft:lapis_block"
+    }
+  },
+  "ceremony": {
+    "profile": "full",
+    "layout": "diagonal",
+    "rotation": 1,
+    "support_sockets": [
+      {
+        "x": 5,
+        "y": 0,
+        "z": 0,
+        "suggested_sigil": "bastion"
+      },
+      {
+        "x": -5,
+        "y": 0,
+        "z": 0,
+        "suggested_sigil": "reservoir"
+      },
+      {
+        "x": 0,
+        "y": 0,
+        "z": 5,
+        "suggested_sigil": "suture"
+      },
+      {
+        "x": 0,
+        "y": 0,
+        "z": -5,
+        "suggested_sigil": "shunt"
+      }
+    ],
+    "waves": [
+      "response_sigil",
+      "bloodlicker_siphon"
+    ],
+    "guaranteed_waves": [
+      "discover_bastion"
+    ],
+    "signature": "tendency_response",
+    "fragile_offsets": [
+      [
+        0,
+        0,
+        0
+      ],
+      [
+        1,
+        0,
+        1
+      ]
+    ]
+  }
+}

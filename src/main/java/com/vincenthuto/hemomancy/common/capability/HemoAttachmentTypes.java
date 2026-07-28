@@ -20,6 +20,7 @@ import com.vincenthuto.hemomancy.common.capability.player.harbinger.organs.Visce
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodVolume;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.PowerGuardrailState;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.will.WillAmbushState;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.rite.IchorianKnowledge;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.white_humor.WhiteHumorVolume;
 import com.vincenthuto.hemomancy.common.item.harbinger.memory.LastDeathMemoryAttachment;
 import net.neoforged.neoforge.attachment.AttachmentType;
@@ -89,6 +90,10 @@ public final class HemoAttachmentTypes {
     public static final DeferredHolder<AttachmentType<?>, AttachmentType<LiberKnowledge>> LIBER_KNOWLEDGE =
             ATTACHMENT_TYPES.register("liber_knowledge",
                     () -> AttachmentType.serializable(LiberKnowledge::new).copyOnDeath().build());
+
+    public static final DeferredHolder<AttachmentType<?>, AttachmentType<IchorianKnowledge>> ICHORIAN_KNOWLEDGE =
+            ATTACHMENT_TYPES.register("ichorian_knowledge",
+                    () -> AttachmentType.serializable(IchorianKnowledge::new).copyOnDeath().build());
 
     public static final DeferredHolder<AttachmentType<?>, AttachmentType<DialogueKnowledge>> DIALOGUE_KNOWLEDGE =
             ATTACHMENT_TYPES.register("dialogue_knowledge",

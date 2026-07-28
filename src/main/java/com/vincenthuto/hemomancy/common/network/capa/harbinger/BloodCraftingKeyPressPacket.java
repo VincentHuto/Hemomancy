@@ -16,6 +16,7 @@ import com.vincenthuto.hemomancy.common.recipe.PuppeteerTrialRecipe;
 import com.vincenthuto.hemomancy.common.recipe.RecipeDegreeGates;
 import com.vincenthuto.hemomancy.common.rite.ActiveCardinalRite;
 import com.vincenthuto.hemomancy.common.rite.CardinalRiteSavedData;
+import com.vincenthuto.hemomancy.common.rite.harbinger.CardinalRiteActivationRules;
 import com.vincenthuto.hemomancy.common.summon.PuppeteerSummonDefinitions;
 import com.vincenthuto.hemomancy.common.summon.PuppeteerSummonFactory;
 import net.minecraft.ChatFormatting;
@@ -254,9 +255,11 @@ public class BloodCraftingKeyPressPacket implements CustomPacketPayload {
 				}
 			}
 
-			// === Cardinal Rite Recipes (delayed casting) ===
-			if (!handled) {
-				tryStartCardinalRite(player);
+			// Unstained rites retain their existing key activation. Harbinger
+			// rites deliberately require their progression-appropriate item use.
+			if (!handled && rayTrace instanceof BlockHitResult blockResult) {
+				tryStartCardinalRite(player, blockResult.getBlockPos(),
+						CardinalRiteActivationRules.Trigger.BLOOD_CRAFTING_KEY);
 			}
 
 		});
@@ -353,39 +356,57 @@ public class BloodCraftingKeyPressPacket implements CustomPacketPayload {
 				false);
 	}
 
-	private static void tryStartCardinalRite(Player player) {
+	public static CardinalRiteActivationRules.ActivationAttempt tryStartCardinalRite(Player player, BlockPos hitPos,
+			CardinalRiteActivationRules.Trigger trigger) {
 		ServerLevel sLevel = (ServerLevel) player.level();
 		ServerPlayer serverPlayer = (ServerPlayer) player;
 
-		// Check if player already has an active rite
 		CardinalRiteSavedData savedData = CardinalRiteSavedData.get(sLevel);
-		if (savedData.hasActiveRite(player.getUUID())) {
-			player.displayClientMessage(
-					Component.literal("A rite is already in progress...")
-							.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC),
-					true);
-			return;
-		}
 
 		IBloodVolume bloodVolume = HemoCapabilityAccess.getBloodVolume(player)
 				.orElseThrow(NullPointerException::new);
 
-		HitResult rayTrace = player.pick(5, 0, false);
-		if (rayTrace.getType() != HitResult.Type.BLOCK) return;
-
-		BlockHitResult blockResult = (BlockHitResult) rayTrace;
-		BlockPos hitPos = blockResult.getBlockPos();
 		var hitState = sLevel.getBlockState(hitPos);
 
 		for (CardinalRiteRecipe recipe : BloodCraftingPatternSearchRules.sortedByPatternSearchCost(
 				CardinalRiteRecipe.getAllRecipes(player.level()),
 				rite -> rite.getPattern().getPatternArray())) {
+			if (!CardinalRiteActivationRules.mayInitiate(
+					trigger, recipe.isUnstained(), RecipeDegreeGates.getRequiredDegree(recipe))) {
+				continue;
+			}
 			if (!BloodCraftingPatternBlockRules.patternMayContainBlock(recipe.getPattern(), hitState)) {
 				continue;
 			}
 			BlockPattern bp = recipe.getPattern().getBlockPattern();
 			BlockPattern.BlockPatternMatch match = findPatternAtHit(bp, sLevel, hitPos);
 			if (match != null) {
+				if (trigger != CardinalRiteActivationRules.Trigger.BLOOD_CRAFTING_KEY) {
+					CardinalRiteActivationRules.Cell activation =
+							CardinalRiteActivationRules.activationCell(recipe.getPattern().getPatternArray());
+					if (activation == null) continue;
+					BlockPos activationPos = match.getBlock(
+							activation.x(), activation.y(), activation.z()).getPos();
+					if (!activationPos.equals(hitPos)) {
+						String activator = trigger == CardinalRiteActivationRules.Trigger.LIVING_STAFF_BLOCK_USE
+								? "The living staff points" : "The sanguine formation draws";
+						player.displayClientMessage(
+								Component.literal(activator + " toward the rite's central ")
+										.withStyle(ChatFormatting.DARK_RED)
+										.append(sLevel.getBlockState(activationPos).getBlock().getName()
+												.withStyle(ChatFormatting.GOLD, ChatFormatting.BOLD))
+										.append(Component.literal(".").withStyle(ChatFormatting.DARK_RED)),
+								true);
+						return CardinalRiteActivationRules.ActivationAttempt.HANDLED;
+					}
+				}
+				if (savedData.hasActiveRite(player.getUUID())) {
+					player.displayClientMessage(
+							Component.literal("A rite is already in progress...")
+									.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC),
+							true);
+					return CardinalRiteActivationRules.ActivationAttempt.HANDLED;
+				}
 				// Explicit recipe degree / stage progression check.
 				if (!recipe.isUnstained()) {
 					// Harbinger: check Hematic Order degree
@@ -398,7 +419,7 @@ public class BloodCraftingKeyPressPacket implements CustomPacketPayload {
 										.append(Component.literal(RecipeDegreeGates.degreeLabel(requiredDegree))
 												.withStyle(ChatFormatting.LIGHT_PURPLE, ChatFormatting.BOLD)),
 								false);
-						return;
+						return CardinalRiteActivationRules.ActivationAttempt.HANDLED;
 					}
 					if (recipe.isRankup()) {
 						Integer targetDegree = RecipeDegreeGates.getRankupTargetDegree(recipe.getId());
@@ -413,7 +434,7 @@ public class BloodCraftingKeyPressPacket implements CustomPacketPayload {
 											.append(Component.literal(". This rank rite has no further hold on you.")
 													.withStyle(ChatFormatting.DARK_RED)),
 									false);
-							return;
+							return CardinalRiteActivationRules.ActivationAttempt.HANDLED;
 						}
 					}
 				} else {
@@ -429,7 +450,7 @@ public class BloodCraftingKeyPressPacket implements CustomPacketPayload {
 								.append(Component.literal(" (Unstained requirement)")
 												.withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC)),
 								false);
-						return;
+						return CardinalRiteActivationRules.ActivationAttempt.HANDLED;
 					}
 				}
 
@@ -442,14 +463,14 @@ public class BloodCraftingKeyPressPacket implements CustomPacketPayload {
 							Component.literal("Those who have sworn blood to the Hematic Order cannot walk the Unstained path.")
 									.withStyle(ChatFormatting.DARK_GRAY, ChatFormatting.ITALIC),
 							false);
-					return;
+					return CardinalRiteActivationRules.ActivationAttempt.HANDLED;
 				}
 				if (!recipe.isUnstained() && playerIsUnstained) {
 					player.displayClientMessage(
 							Component.literal("One who has begun the purification cannot invoke the rites of the Hematic Order.")
 									.withStyle(ChatFormatting.DARK_GRAY, ChatFormatting.ITALIC),
 							false);
-					return;
+					return CardinalRiteActivationRules.ActivationAttempt.HANDLED;
 				}
 
 				// â”€â”€ Apotheos gate: requires completed Qliphoth Communion â”€â”€
@@ -460,16 +481,16 @@ public class BloodCraftingKeyPressPacket implements CustomPacketPayload {
 							Component.literal("The Eighth Degree remains sealed. Consume all nine Qliphoth husks from a single bloom.")
 									.withStyle(ChatFormatting.DARK_PURPLE, ChatFormatting.ITALIC),
 							false);
-					return;
+					return CardinalRiteActivationRules.ActivationAttempt.HANDLED;
 				}
 
 				// â”€â”€ Blood cost check â”€â”€
-				if (bloodVolume.getBloodVolume() < recipe.getBloodCost()) {
+				if (!recipe.hasInteractiveCeremony() && bloodVolume.getBloodVolume() < recipe.getBloodCost()) {
 					player.displayClientMessage(
 							Component.literal("Not enough blood to begin the " + recipe.getRiteName())
 									.withStyle(ChatFormatting.DARK_RED),
 							true);
-					return;
+					return CardinalRiteActivationRules.ActivationAttempt.HANDLED;
 				}
 
 				// Calculate the center of the matched pattern
@@ -477,62 +498,89 @@ public class BloodCraftingKeyPressPacket implements CustomPacketPayload {
 				int centerHeight = recipe.getPattern().getBlockPattern().getHeight() / 2;
 				int centerDepth = recipe.getPattern().getBlockPattern().getDepth() / 2;
 				BlockPos centerPos = match.getBlock(centerWidth, centerHeight, centerDepth).getPos();
+				if (savedData.hasRiteAt(centerPos)) {
+					player.displayClientMessage(
+							Component.literal("This cardinal station is already carrying a rite.")
+									.withStyle(ChatFormatting.DARK_RED),
+							true);
+					return CardinalRiteActivationRules.ActivationAttempt.HANDLED;
+				}
 
 				// Bloom of the Qliphoth requires a planted Qliphoth Seed catalyst at center
 				if (BLOOM_OF_QLIPHOTH_RITE_ID.equals(recipe.getId())) {
-					if (!consumeCatalystWithinMatch(sLevel, match, bp, ItemInit.qliphoth_seed.get())) {
+					if (!hasCatalystWithinMatch(sLevel, match, bp, ItemInit.qliphoth_seed.get())) {
 						player.displayClientMessage(
 								Component.literal("The Bloom of the Qliphoth demands a planted Qliphoth Seed within the rite.")
 										.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC),
 								false);
-						return;
+						return CardinalRiteActivationRules.ActivationAttempt.HANDLED;
 					}
 				}
 
 				// Founding Fane requires a Consecrated Bloodwell heart and a Sanguine Quintessence catalyst.
 				if (FOUNDING_FANE_RITE_ID.equals(recipe.getId())) {
 					if (!canStartFoundingFane(serverPlayer)) {
-						return;
+						return CardinalRiteActivationRules.ActivationAttempt.HANDLED;
 					}
 					if (!canManifestFoundingFaneHeart(sLevel, centerPos)) {
 						player.displayClientMessage(
 								Component.literal("The rite's heart must remain clear so a Consecrated Bloodwell can be manifested there.")
 										.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC),
 							false);
-						return;
+						return CardinalRiteActivationRules.ActivationAttempt.HANDLED;
 					}
-					if (!consumeCatalystWithinMatch(sLevel, match, bp, ItemInit.sanguine_quintessence.get())) {
+					if (!hasCatalystWithinMatch(sLevel, match, bp, ItemInit.sanguine_quintessence.get())) {
 						player.displayClientMessage(
 								Component.literal("The Founding Fane demands a Sanguine Quintessence within the rite.")
 										.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC),
 								false);
-						return;
+						return CardinalRiteActivationRules.ActivationAttempt.HANDLED;
 					}
 				}
 
 				// Start the rite
 				int castingDuration = recipe.getRiteType().getCastingDurationTicks();
-				ActiveCardinalRite rite = new ActiveCardinalRite(
-						player.getUUID(), centerPos, recipe.getId(),
-						castingDuration, recipe.getRiteType().getSize());
+				int ceremonyDegree = recipe.isRankup()
+						? Math.max(1, recipe.getRequiredDegree() + 1)
+						: recipe.getRiteType().ordinal() + 1;
+				ActiveCardinalRite rite = recipe.hasInteractiveCeremony()
+						? ActiveCardinalRite.interactive(
+								player.getUUID(), centerPos, recipe.getId(), castingDuration,
+								recipe.getRiteType().getSize(), ceremonyDegree,
+								recipe.getCeremony().abbreviated(),
+								recipe.getCeremony().abbreviated() ? 1
+										: com.vincenthuto.hemomancy.common.rite.CardinalRiteCeremonyRules
+												.fullWaveCount(recipe.getRiteType()),
+								recipe.getCeremony().anchors().size())
+						: new ActiveCardinalRite(player.getUUID(), centerPos, recipe.getId(),
+								castingDuration, recipe.getRiteType().getSize());
+				if (recipe.hasInteractiveCeremony()) {
+					rite.setInstabilityDamagePriority(
+							com.vincenthuto.hemomancy.common.rite.CardinalRiteInstabilityBoundaryRules
+									.damagePriority(recipe.getCeremony().anchors()).stream()
+									.mapToInt(Integer::intValue).toArray());
+				}
 				savedData.startRite(rite);
 
 				// Play start sound
 				sLevel.playSound(null, centerPos, SoundEvents.BEACON_ACTIVATE, SoundSource.BLOCKS, 1.0f, 1.5f);
 
 				// Notify the player
-				int seconds = castingDuration / 20;
 				player.displayClientMessage(
-						Component.literal("The " + recipe.getRiteName() + " begins... (" + seconds + "s)")
+						Component.literal(recipe.hasInteractiveCeremony()
+								? "The " + recipe.getRiteName()
+										+ " awaits consecration. Fill the crimson anchors."
+								: "The " + recipe.getRiteName() + " begins... (" + castingDuration / 20 + "s)")
 								.withStyle(ChatFormatting.DARK_RED, ChatFormatting.BOLD),
 						false);
 				player.displayClientMessage(
 						Component.literal("Do not leave the ritual circle!")
 								.withStyle(ChatFormatting.RED, ChatFormatting.ITALIC),
 						false);
-				return;
+				return CardinalRiteActivationRules.ActivationAttempt.STARTED;
 			}
 		}
+		return CardinalRiteActivationRules.ActivationAttempt.NOT_HANDLED;
 	}
 
 	private static boolean canStartFoundingFane(ServerPlayer player) {
@@ -645,24 +693,13 @@ public class BloodCraftingKeyPressPacket implements CustomPacketPayload {
 		return true;
 	}
 
-	private static boolean consumeCatalystWithinMatch(ServerLevel level, BlockPattern.BlockPatternMatch match,
+	private static boolean hasCatalystWithinMatch(ServerLevel level, BlockPattern.BlockPatternMatch match,
 			BlockPattern blockPattern, Item requiredItem) {
 		AABB matchBounds = getMatchBounds(match, blockPattern).inflate(
-				BLOOM_CATALYST_MATCH_INFLATE_XZ, BLOOM_CATALYST_MATCH_INFLATE_Y, BLOOM_CATALYST_MATCH_INFLATE_XZ);
-		List<ItemEntity> entities = level.getEntitiesOfClass(ItemEntity.class, matchBounds,
-				e -> e.isAlive() && e.getItem().is(requiredItem));
-		if (entities.isEmpty()) {
-			return false;
-		}
-		ItemEntity entity = entities.get(0);
-		ItemStack stack = entity.getItem();
-		stack.shrink(1);
-		if (stack.isEmpty()) {
-			entity.discard();
-		} else {
-			entity.setItem(stack);
-		}
-		return true;
+				BLOOM_CATALYST_MATCH_INFLATE_XZ, BLOOM_CATALYST_MATCH_INFLATE_Y,
+				BLOOM_CATALYST_MATCH_INFLATE_XZ);
+		return !level.getEntitiesOfClass(ItemEntity.class, matchBounds,
+				entity -> entity.isAlive() && entity.getItem().is(requiredItem)).isEmpty();
 	}
 
 	private static void clearMatchedPattern(ServerLevel level, BlockPattern.BlockPatternMatch match,

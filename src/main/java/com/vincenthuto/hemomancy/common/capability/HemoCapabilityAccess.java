@@ -24,6 +24,7 @@ import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.will.WillAmbushState;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.white_humor.IWhiteHumorVolume;
 import com.vincenthuto.hemomancy.common.item.harbinger.memory.LastDeathMemory;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.rite.IchorianKnowledge;
 import com.vincenthuto.hemomancy.common.tile.IBloodReservoir;
 import com.vincenthuto.hemomancy.common.tile.IWhiteHumorTile;
 import com.vincenthuto.hutoslib.common.book.knowledge.IBookKnowledge;
@@ -217,6 +218,18 @@ public static IBookKnowledge requireLiberKnowledge(Player player) {
 
 public static IBookKnowledge requireLiberKnowledge(Entity entity) {
     return getLiberKnowledge(entity).orElseThrow(IllegalStateException::new);
+}
+
+public static Optional<IchorianKnowledge> getIchorianKnowledge(Player player) {
+    return Optional.ofNullable(player.getCapability(HemoCapabilityKeys.ICHORIAN_KNOWLEDGE));
+}
+
+public static Optional<IchorianKnowledge> getIchorianKnowledge(Entity entity) {
+    return Optional.ofNullable(entity.getCapability(HemoCapabilityKeys.ICHORIAN_KNOWLEDGE));
+}
+
+public static IchorianKnowledge requireIchorianKnowledge(Player player) {
+    return getIchorianKnowledge(player).orElseThrow(IllegalStateException::new);
 }
 
 public static Optional<SkillProgress> getSkillProgress(Player player) {

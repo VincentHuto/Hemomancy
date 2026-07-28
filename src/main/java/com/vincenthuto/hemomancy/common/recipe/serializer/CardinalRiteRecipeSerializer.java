@@ -6,10 +6,15 @@ import com.mojang.serialization.*;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.recipe.CardinalRiteRecipe;
 import com.vincenthuto.hemomancy.common.recipe.CardinalRiteType;
+import com.vincenthuto.hemomancy.common.rite.CardinalRiteCeremonyCatalog;
+import com.vincenthuto.hemomancy.common.rite.CardinalRiteCeremonyDefinition;
+import com.vincenthuto.hemomancy.common.rite.CardinalRiteCeremonyProfile;
+import com.vincenthuto.hemomancy.common.rite.CardinalRiteCeremonyRules;
 import com.vincenthuto.hutoslib.math.MultiblockPattern;
 import com.vincenthuto.hutoslib.math.MultiblockPatternKey;
 import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.RegistryFriendlyByteBuf;
@@ -128,6 +133,70 @@ public class CardinalRiteRecipeSerializer implements RecipeSerializer<CardinalRi
 		return GsonHelper.getAsInt(pJson, "requiredDegree", 0);
 	}
 
+	private static CardinalRiteCeremonyDefinition ceremonyFromJson(JsonObject json, ResourceLocation recipeId,
+			CardinalRiteType riteType, int degree) {
+		if (!json.has("ceremony")) {
+			return CardinalRiteCeremonyDefinition.convertedDefault(recipeId, riteType, degree);
+		}
+		JsonObject ceremony = GsonHelper.getAsJsonObject(json, "ceremony");
+		CardinalRiteCeremonyProfile profile = CardinalRiteCeremonyProfile.byName(
+				GsonHelper.getAsString(ceremony, "profile", "full"));
+		List<CardinalRiteCeremonyDefinition.Anchor> anchors = new ArrayList<>();
+		if (ceremony.has("anchors")) {
+			for (JsonElement element : ceremony.getAsJsonArray("anchors")) {
+				JsonObject anchor = element.getAsJsonObject();
+				anchors.add(new CardinalRiteCeremonyDefinition.Anchor(
+						GsonHelper.getAsInt(anchor, "x"), GsonHelper.getAsInt(anchor, "y", 1),
+						GsonHelper.getAsInt(anchor, "z"), GsonHelper.getAsInt(anchor, "ring", 0),
+						GsonHelper.getAsInt(anchor, "order", anchors.size())));
+			}
+		} else if (ceremony.has("layout")) {
+			CardinalRiteCeremonyCatalog.Layout layout = CardinalRiteCeremonyCatalog.Layout.byName(
+					GsonHelper.getAsString(ceremony, "layout", "cardinal"));
+			int rotation = GsonHelper.getAsInt(ceremony, "rotation", 0);
+			anchors.addAll(CardinalRiteCeremonyDefinition.anchorsForLayout(degree, rotation, layout));
+		}
+		List<CardinalRiteCeremonyDefinition.SupportSocket> sockets = new ArrayList<>();
+		if (ceremony.has("support_sockets")) {
+			for (JsonElement element : ceremony.getAsJsonArray("support_sockets")) {
+				JsonObject socket = element.getAsJsonObject();
+				sockets.add(new CardinalRiteCeremonyDefinition.SupportSocket(
+						GsonHelper.getAsInt(socket, "x"), GsonHelper.getAsInt(socket, "y", 0),
+						GsonHelper.getAsInt(socket, "z"),
+						GsonHelper.getAsString(socket, "suggested_sigil", "")));
+			}
+		}
+		List<String> waves = stringList(ceremony, "waves");
+		List<String> guaranteed = stringList(ceremony, "guaranteed_waves");
+		String handler = GsonHelper.getAsString(ceremony, "signature", "");
+		List<BlockPos> fragile = new ArrayList<>();
+		if (ceremony.has("fragile_offsets")) {
+			for (JsonElement element : ceremony.getAsJsonArray("fragile_offsets")) {
+				JsonArray offset = element.getAsJsonArray();
+				if (offset.size() == 3) {
+					fragile.add(new BlockPos(offset.get(0).getAsInt(), offset.get(1).getAsInt(),
+							offset.get(2).getAsInt()));
+				}
+			}
+		}
+		CardinalRiteCeremonyDefinition fallback =
+				CardinalRiteCeremonyDefinition.convertedDefault(recipeId, riteType, degree);
+		return new CardinalRiteCeremonyDefinition(profile,
+				anchors.isEmpty() ? fallback.anchors() : anchors,
+				sockets.isEmpty() ? fallback.supportSockets() : sockets,
+				waves.isEmpty() ? fallback.waves() : waves,
+				guaranteed.isEmpty() ? fallback.guaranteedWaves() : guaranteed,
+				handler.isBlank() ? fallback.signatureHandler() : handler,
+				fragile.isEmpty() ? fallback.fragileOffsets() : fragile);
+	}
+
+	private static List<String> stringList(JsonObject json, String key) {
+		if (!json.has(key)) return List.of();
+		List<String> values = new ArrayList<>();
+		for (JsonElement element : json.getAsJsonArray(key)) values.add(element.getAsString());
+		return values;
+	}
+
 	// ---- JSON helpers ----
 
 	private static <T> JsonObject toJsonObject(DynamicOps<T> ops, MapLike<T> input) {
@@ -162,6 +231,10 @@ public class CardinalRiteRecipeSerializer implements RecipeSerializer<CardinalRi
 				riteDescription, requiredDegree, breakBlocksOnCreation, unstained, rankup);
 		recipe.setRequiredPurity(GsonHelper.getAsFloat(pJson, "required_purity", -1.0f));
 		recipe.setRequiredClarity(GsonHelper.getAsFloat(pJson, "required_clarity", -1.0f));
+		if (!unstained) {
+			int ceremonyDegree = rankup ? requiredDegree + 1 : CardinalRiteCeremonyRules.formIndex(riteType) + 1;
+			recipe.setCeremony(ceremonyFromJson(pJson, pRecipeId, riteType, ceremonyDegree));
+		}
 		return recipe;
 	}
 
@@ -172,7 +245,7 @@ public class CardinalRiteRecipeSerializer implements RecipeSerializer<CardinalRi
 		public <T> Stream<T> keys(DynamicOps<T> ops) {
 			return Stream.of("id", "bloodCost", "riteType", "riteName", "riteDescription", "pattern", "key",
 					"result", "required_degree", "required_purity", "required_clarity",
-					"breakBlocksOnCreation", "unstained", "rankup").map(ops::createString);
+					"breakBlocksOnCreation", "unstained", "rankup", "ceremony").map(ops::createString);
 		}
 
 		@Override
@@ -263,6 +336,9 @@ public class CardinalRiteRecipeSerializer implements RecipeSerializer<CardinalRi
 				riteDescription, requiredDegree, breakBlocksOnCreation, unstained, rankup);
 		recipe.setRequiredPurity(requiredPurity);
 		recipe.setRequiredClarity(requiredClarity);
+		if (pBuffer.readBoolean()) {
+			recipe.setCeremony(readCeremony(pBuffer));
+		}
 		return recipe;
 	}
 
@@ -299,6 +375,65 @@ public class CardinalRiteRecipeSerializer implements RecipeSerializer<CardinalRi
 		pBuffer.writeBoolean(pRecipe.shouldBreakBlocksOnCreation());
 		pBuffer.writeBoolean(pRecipe.isUnstained());
 		pBuffer.writeBoolean(pRecipe.isRankup());
+		pBuffer.writeBoolean(pRecipe.getCeremony() != null);
+		if (pRecipe.getCeremony() != null) {
+			writeCeremony(pBuffer, pRecipe.getCeremony());
+		}
+	}
+
+	private static CardinalRiteCeremonyDefinition readCeremony(RegistryFriendlyByteBuf buffer) {
+		CardinalRiteCeremonyProfile profile = buffer.readEnum(CardinalRiteCeremonyProfile.class);
+		List<CardinalRiteCeremonyDefinition.Anchor> anchors = new ArrayList<>();
+		for (int i = 0, count = buffer.readVarInt(); i < count; i++) {
+			anchors.add(new CardinalRiteCeremonyDefinition.Anchor(buffer.readVarInt(), buffer.readVarInt(),
+					buffer.readVarInt(), buffer.readVarInt(), buffer.readVarInt()));
+		}
+		List<CardinalRiteCeremonyDefinition.SupportSocket> sockets = new ArrayList<>();
+		for (int i = 0, count = buffer.readVarInt(); i < count; i++) {
+			sockets.add(new CardinalRiteCeremonyDefinition.SupportSocket(buffer.readVarInt(), buffer.readVarInt(),
+					buffer.readVarInt(), buffer.readUtf()));
+		}
+		List<String> waves = readStrings(buffer);
+		List<String> guaranteed = readStrings(buffer);
+		String handler = buffer.readUtf();
+		List<BlockPos> fragile = new ArrayList<>();
+		for (int i = 0, count = buffer.readVarInt(); i < count; i++) fragile.add(buffer.readBlockPos());
+		return new CardinalRiteCeremonyDefinition(profile, anchors, sockets, waves, guaranteed, handler, fragile);
+	}
+
+	private static void writeCeremony(RegistryFriendlyByteBuf buffer, CardinalRiteCeremonyDefinition ceremony) {
+		buffer.writeEnum(ceremony.profile());
+		buffer.writeVarInt(ceremony.anchors().size());
+		for (CardinalRiteCeremonyDefinition.Anchor anchor : ceremony.anchors()) {
+			buffer.writeVarInt(anchor.x());
+			buffer.writeVarInt(anchor.y());
+			buffer.writeVarInt(anchor.z());
+			buffer.writeVarInt(anchor.ring());
+			buffer.writeVarInt(anchor.order());
+		}
+		buffer.writeVarInt(ceremony.supportSockets().size());
+		for (CardinalRiteCeremonyDefinition.SupportSocket socket : ceremony.supportSockets()) {
+			buffer.writeVarInt(socket.x());
+			buffer.writeVarInt(socket.y());
+			buffer.writeVarInt(socket.z());
+			buffer.writeUtf(socket.suggestedSigil());
+		}
+		writeStrings(buffer, ceremony.waves());
+		writeStrings(buffer, ceremony.guaranteedWaves());
+		buffer.writeUtf(ceremony.signatureHandler());
+		buffer.writeVarInt(ceremony.fragileOffsets().size());
+		for (BlockPos offset : ceremony.fragileOffsets()) buffer.writeBlockPos(offset);
+	}
+
+	private static List<String> readStrings(RegistryFriendlyByteBuf buffer) {
+		List<String> values = new ArrayList<>();
+		for (int i = 0, count = buffer.readVarInt(); i < count; i++) values.add(buffer.readUtf());
+		return values;
+	}
+
+	private static void writeStrings(RegistryFriendlyByteBuf buffer, List<String> values) {
+		buffer.writeVarInt(values.size());
+		for (String value : values) buffer.writeUtf(value);
 	}
 
 	private static List<Block> readDisplayBlocks(RegistryFriendlyByteBuf pBuffer) {

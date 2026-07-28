@@ -11,6 +11,8 @@ import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.
 import com.vincenthuto.hemomancy.common.entity.mob.monster.will.WillBloodUtilityInteractions;
 import com.vincenthuto.hemomancy.common.event.BloodStructureFeedManager;
 import com.vincenthuto.hemomancy.common.event.SanguineFormationProjectionHandler;
+import com.vincenthuto.hemomancy.common.rite.harbinger.CardinalRiteInteractionHandler;
+import com.vincenthuto.hemomancy.common.rite.harbinger.CardinalRiteProjectionResult;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.BloodVolumeServerPacket;
 import com.vincenthuto.hemomancy.common.tile.IBloodReservoir;
@@ -106,6 +108,12 @@ public class BloodProjectionItem extends Item implements IDispellable, ICellHand
 				tileTransferRate);
 		if (willHandled > 0.0D) {
 			return willHandled;
+		}
+
+		CardinalRiteProjectionResult riteResult =
+				CardinalRiteInteractionHandler.tryProject(worldIn, player, structureFeedRate);
+		if (!riteResult.allowsOrdinaryProjection()) {
+			return riteResult.bloodSpent();
 		}
 
 		double blockHandled = BlockBloodInteractions.tryProjectIntoLookedAtBlock(worldIn, player, tileTransferRate);

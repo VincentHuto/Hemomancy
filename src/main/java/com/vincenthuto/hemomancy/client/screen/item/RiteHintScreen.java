@@ -323,8 +323,7 @@ public class RiteHintScreen extends Screen {
 		// ── How to perform ──
 		gfx.drawString(font, Component.literal("How to Perform:").withStyle(s -> s.withColor(TITLE_COLOR)), panelX, y, 0);
 		y += lineH;
-		String instructions = "Build the structure shown on the left using the required materials. "
-				+ "Stand at the center and press the Blood Craft keybind (default: V) while looking at any block in the pattern.";
+		String instructions = performanceInstructions();
 		for (String line : ScreenDrawUtils.wrapText(font, instructions, panelW)) {
 			gfx.drawString(font, Component.literal(line)
 					.withStyle(s -> s.withColor(DESC_COLOR)), panelX, y, 0);
@@ -420,8 +419,7 @@ public class RiteHintScreen extends Screen {
 
 		// Instructions
 		y += lineH; // "How to Perform:"
-		String instructions = "Build the structure shown on the left using the required materials. "
-				+ "Stand at the center and press the Blood Craft keybind (default: V) while looking at any block in the pattern.";
+		String instructions = performanceInstructions();
 		y += ScreenDrawUtils.wrapText(font, instructions, panelW).size() * lineH + 6;
 
 		// Result
@@ -456,6 +454,22 @@ public class RiteHintScreen extends Screen {
 		}
 
 		return y;
+	}
+
+	private String performanceInstructions() {
+		if (rite.isUnstained()) {
+			return "Build the structure shown on the left using the required materials. "
+					+ "Stand at the center and press the Blood Craft keybind (default: C) "
+					+ "while looking at any block in the pattern.";
+		}
+		if (rite.getRequiredDegree() < 1) {
+			return "Build the structure shown on the left using the required materials. "
+					+ "Right-click the central ground-level activation block with a Sanguine Formation. "
+					+ "The formation is consumed only when the rite successfully begins.";
+		}
+		return "Build the structure shown on the left using the required materials. "
+				+ "Right-click the central ground-level activation block with a Living Staff. "
+				+ "If you choose another pattern block, the staff will identify the correct one.";
 	}
 
 	// ── Layer Buttons ──
