@@ -9,6 +9,9 @@ import com.vincenthuto.hemomancy.common.init.RenderTypeInit;
 import com.vincenthuto.hemomancy.common.rite.sigil.IchorianSigilOrganicGeometry;
 import com.vincenthuto.hemomancy.common.rite.sigil.IchorianSigilDefinition;
 import com.vincenthuto.hemomancy.common.rite.sigil.IchorianSigilRegistry;
+import com.vincenthuto.hemomancy.common.rite.sigil.AwakenedIchorianSigilPose;
+import com.vincenthuto.hemomancy.common.rite.sigil.AwakenedIchorianSigilPoseCalculator;
+import net.minecraft.client.renderer.culling.Frustum;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
@@ -42,6 +45,16 @@ public final class AwakenedIchorianSigilRenderer extends EntityRenderer<Awakened
 		blue *= 0.55F;
 
 		stack.pushPose();
+		if (sigil.awakenedForm().isPresent()) {
+			stack.mulPose(Axis.YP.rotationDegrees(entity.getRenderFacingYaw(partialTick)));
+			AwakenedIchorianSigilPose pose =
+					AwakenedIchorianSigilPoseCalculator.calculate(sigil, time);
+			AwakenedIchorianSigilGeometryRenderer.render(
+					pose, stack, buffers, time, color, sigil.id().hashCode());
+			stack.popPose();
+			super.render(entity, yaw, partialTick, stack, buffers, packedLight);
+			return;
+		}
 		float heartbeat = (float) Math.sin(time * 0.14F);
 		stack.mulPose(Axis.YP.rotationDegrees(
 				(time * 0.62F + (float) Math.sin(time * 0.045F) * 12.0F) * peel));
@@ -55,6 +68,12 @@ public final class AwakenedIchorianSigilRenderer extends EntityRenderer<Awakened
 				sigil, time, red, green, blue, false);
 		stack.popPose();
 		super.render(entity, yaw, partialTick, stack, buffers, packedLight);
+	}
+
+	@Override
+	public boolean shouldRender(AwakenedIchorianSigilEntity entity, Frustum frustum,
+			double cameraX, double cameraY, double cameraZ) {
+		return frustum.isVisible(entity.getAnatomyRenderBounds());
 	}
 
 	private static void renderShape(VertexConsumer consumer, Matrix4f matrix,
