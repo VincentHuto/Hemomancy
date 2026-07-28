@@ -2,7 +2,10 @@ package com.vincenthuto.hemomancy.common.rite.sigil;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import java.util.List;
 
 import org.junit.jupiter.api.Test;
 
@@ -51,6 +54,39 @@ final class IchorianSigilOrganicGeometryTest {
 		assertNotEquals(first, second);
 		assertTrue(first >= 0.88F && first <= 1.12F);
 		assertTrue(second >= 0.88F && second <= 1.12F);
+	}
+
+	@Test
+	void writhingRibbonUsesOneSharedCrossSectionAtEachJoint() {
+		List<IchorianSigilOrganicGeometry.Sample> samples = List.of(
+				new IchorianSigilOrganicGeometry.Sample(0.0D, 0.0D, 0.0D, 0.1F),
+				new IchorianSigilOrganicGeometry.Sample(1.0D, 0.0D, 0.25D, 0.12F),
+				new IchorianSigilOrganicGeometry.Sample(2.0D, 0.0D, 0.0D, 0.1F));
+
+		var joints = IchorianSigilOrganicGeometry.ribbonJoints(samples);
+		var segments = IchorianSigilOrganicGeometry.ribbonSegments(samples);
+
+		assertEquals(samples.size(), joints.size());
+		assertEquals(2, segments.size());
+		assertSame(segments.get(0).end(), segments.get(1).start(),
+				"neighboring quads must reuse the exact same joint object");
+		assertEquals(0.25D, joints.get(1).centerZ(), 0.000001D);
+	}
+
+	@Test
+	void tubeFramesRemainFiniteAndSharedThroughAThreeDimensionalBend() {
+		List<IchorianSigilOrganicGeometry.Sample> samples = List.of(
+				new IchorianSigilOrganicGeometry.Sample(0.0D, 0.0D, 0.0D, 0.08F),
+				new IchorianSigilOrganicGeometry.Sample(0.0D, 0.7D, 0.1D, 0.09F),
+				new IchorianSigilOrganicGeometry.Sample(0.4D, 1.1D, 0.2D, 0.07F));
+
+		var frames = IchorianSigilOrganicGeometry.tubeFrames(samples);
+
+		assertEquals(samples.size(), frames.size());
+		assertTrue(Double.isFinite(frames.get(1).sideX()));
+		assertTrue(Double.isFinite(frames.get(1).verticalY()));
+		assertEquals(samples.get(1).x(), frames.get(1).centerX(), 0.0D);
+		assertEquals(samples.get(1).halfWidth(), frames.get(1).radius(), 0.0F);
 	}
 
 	private static void assertPoint(IchorianSigilOrganicGeometry.Sample point,

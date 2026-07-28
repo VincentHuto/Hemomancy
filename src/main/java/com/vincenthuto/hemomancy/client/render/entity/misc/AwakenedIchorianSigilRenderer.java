@@ -7,6 +7,7 @@ import com.vincenthuto.hemomancy.client.render.world.SanguineFormationProjection
 import com.vincenthuto.hemomancy.common.entity.utility.AwakenedIchorianSigilEntity;
 import com.vincenthuto.hemomancy.common.init.RenderTypeInit;
 import com.vincenthuto.hemomancy.common.rite.sigil.IchorianSigilOrganicGeometry;
+import com.vincenthuto.hemomancy.common.rite.sigil.IchorianSigilRenderPalette;
 import com.vincenthuto.hemomancy.common.rite.sigil.IchorianSigilDefinition;
 import com.vincenthuto.hemomancy.common.rite.sigil.IchorianSigilRegistry;
 import com.vincenthuto.hemomancy.common.rite.sigil.AwakenedIchorianSigilPose;
@@ -17,6 +18,9 @@ import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.resources.ResourceLocation;
 import org.joml.Matrix4f;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public final class AwakenedIchorianSigilRenderer extends EntityRenderer<AwakenedIchorianSigilEntity> {
 	private static final float SHAPE_SCALE = 0.42F;
@@ -37,12 +41,6 @@ public final class AwakenedIchorianSigilRenderer extends EntityRenderer<Awakened
 		float time = entity.tickCount + partialTick;
 		float peel = entity.getPeelProgress(partialTick);
 		int color = sigil.color();
-		float red = ((color >> 16) & 255) / 255.0F;
-		float green = ((color >> 8) & 255) / 255.0F;
-		float blue = (color & 255) / 255.0F;
-		red = Math.min(1.0F, red * 0.62F + 0.30F);
-		green *= 0.55F;
-		blue *= 0.55F;
 
 		stack.pushPose();
 		if (sigil.awakenedForm().isPresent()) {
@@ -63,9 +61,9 @@ public final class AwakenedIchorianSigilRenderer extends EntityRenderer<Awakened
 		float breath = 1.0F + heartbeat * 0.035F;
 		stack.scale(SHAPE_SCALE * breath, SHAPE_SCALE, SHAPE_SCALE * breath);
 		renderShape(buffers.getBuffer(RenderTypeInit.RITE_BOUNDARY_GLOW), stack.last().pose(),
-				sigil, time, red, green, blue, true);
+				sigil, time, color, true);
 		renderShape(buffers.getBuffer(RenderTypeInit.RITE_BOUNDARY_CORE), stack.last().pose(),
-				sigil, time, red, green, blue, false);
+				sigil, time, color, false);
 		stack.popPose();
 		super.render(entity, yaw, partialTick, stack, buffers, packedLight);
 	}
@@ -77,16 +75,18 @@ public final class AwakenedIchorianSigilRenderer extends EntityRenderer<Awakened
 	}
 
 	private static void renderShape(VertexConsumer consumer, Matrix4f matrix,
-			IchorianSigilDefinition sigil, float time,
-			float red, float green, float blue, boolean glow) {
+			IchorianSigilDefinition sigil, float time, int sigilColor, boolean glow) {
 		float halfWidth = glow ? 0.18F : 0.065F;
 		float alpha = glow ? 0.28F : 0.88F;
+		IchorianSigilRenderPalette.Color vesselColor = IchorianSigilRenderPalette.vessel(glow);
+		IchorianSigilRenderPalette.Color nodeColor =
+				IchorianSigilRenderPalette.node(sigilColor, glow);
 		for (int index = 1; index < sigil.nodes().size(); index++) {
 			IchorianSigilDefinition.Node start = sigil.nodes().get(index - 1);
 			IchorianSigilDefinition.Node end = sigil.nodes().get(index);
 			renderBand(consumer, matrix, start.x(), start.z(), end.x(), end.z(),
 					halfWidth, time, sigil.id().hashCode() * 31L + index,
-					red, green, blue, alpha);
+					vesselColor.red(), vesselColor.green(), vesselColor.blue(), alpha);
 		}
 		for (int index = 0; index < sigil.nodes().size(); index++) {
 			IchorianSigilDefinition.Node node = sigil.nodes().get(index);
@@ -97,7 +97,7 @@ public final class AwakenedIchorianSigilRenderer extends EntityRenderer<Awakened
 			SanguineFormationProjectionRenderer.renderSphere(
 					consumer, translated, (glow ? 0.28F : 0.17F) * nodePulse,
 					time, sigil.id().hashCode() * 31L + index,
-					red, green, blue, alpha);
+					nodeColor.red(), nodeColor.green(), nodeColor.blue(), alpha);
 		}
 	}
 
@@ -105,39 +105,35 @@ public final class AwakenedIchorianSigilRenderer extends EntityRenderer<Awakened
 			double startX, double startZ, double endX, double endZ, float halfWidth,
 			float time, long seed,
 			float red, float green, float blue, float alpha) {
-		IchorianSigilOrganicGeometry.Sample previous = IchorianSigilOrganicGeometry.sample(
-				startX, 0.0D, startZ, endX, 0.0D, endZ,
-				time, seed, 0, VESSEL_SEGMENTS, halfWidth);
-		for (int step = 1; step <= VESSEL_SEGMENTS; step++) {
-			IchorianSigilOrganicGeometry.Sample next = IchorianSigilOrganicGeometry.sample(
+		List<IchorianSigilOrganicGeometry.Sample> samples = new ArrayList<>(VESSEL_SEGMENTS + 1);
+		for (int step = 0; step <= VESSEL_SEGMENTS; step++) {
+			samples.add(IchorianSigilOrganicGeometry.sample(
 					startX, 0.0D, startZ, endX, 0.0D, endZ,
-					time, seed, step, VESSEL_SEGMENTS, halfWidth);
-			renderVesselSection(consumer, matrix, previous, next, red, green, blue, alpha);
-			previous = next;
+					time, seed, step, VESSEL_SEGMENTS, halfWidth));
+		}
+		for (IchorianSigilOrganicGeometry.RibbonSegment segment
+				: IchorianSigilOrganicGeometry.ribbonSegments(samples)) {
+			renderVesselSection(consumer, matrix, segment, red, green, blue, alpha);
 		}
 	}
 
 	private static void renderVesselSection(VertexConsumer consumer, Matrix4f matrix,
-			IchorianSigilOrganicGeometry.Sample start, IchorianSigilOrganicGeometry.Sample end,
+			IchorianSigilOrganicGeometry.RibbonSegment segment,
 			float red, float green, float blue, float alpha) {
-		double dx = end.x() - start.x();
-		double dz = end.z() - start.z();
-		double length = Math.hypot(dx, dz);
-		if (length < 0.001D) return;
-		float normalX = (float) (-dz / length);
-		float normalZ = (float) (dx / length);
+		IchorianSigilOrganicGeometry.RibbonJoint start = segment.start();
+		IchorianSigilOrganicGeometry.RibbonJoint end = segment.end();
 		consumer.addVertex(matrix,
-				(float) start.x() - normalX * start.halfWidth(), (float) start.y(),
-				(float) start.z() - normalZ * start.halfWidth()).setColor(red, green, blue, alpha);
+				(float) start.leftX(), (float) start.centerY(),
+				(float) start.leftZ()).setColor(red, green, blue, alpha);
 		consumer.addVertex(matrix,
-				(float) start.x() + normalX * start.halfWidth(), (float) start.y(),
-				(float) start.z() + normalZ * start.halfWidth()).setColor(red, green, blue, alpha);
+				(float) start.rightX(), (float) start.centerY(),
+				(float) start.rightZ()).setColor(red, green, blue, alpha);
 		consumer.addVertex(matrix,
-				(float) end.x() + normalX * end.halfWidth(), (float) end.y(),
-				(float) end.z() + normalZ * end.halfWidth()).setColor(red, green, blue, alpha);
+				(float) end.rightX(), (float) end.centerY(),
+				(float) end.rightZ()).setColor(red, green, blue, alpha);
 		consumer.addVertex(matrix,
-				(float) end.x() - normalX * end.halfWidth(), (float) end.y(),
-				(float) end.z() - normalZ * end.halfWidth()).setColor(red, green, blue, alpha);
+				(float) end.leftX(), (float) end.centerY(),
+				(float) end.leftZ()).setColor(red, green, blue, alpha);
 	}
 
 	@Override

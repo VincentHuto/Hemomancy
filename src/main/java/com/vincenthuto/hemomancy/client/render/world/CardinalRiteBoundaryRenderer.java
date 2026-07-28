@@ -6,6 +6,7 @@ import com.vincenthuto.hemomancy.client.data.ActiveRiteClientData;
 import com.vincenthuto.hemomancy.common.init.RenderTypeInit;
 import com.vincenthuto.hemomancy.common.rite.CardinalRiteBoundaryProgress;
 import com.vincenthuto.hemomancy.common.rite.sigil.IchorianSigilOrganicGeometry;
+import com.vincenthuto.hemomancy.common.rite.sigil.IchorianSigilRenderPalette;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.core.BlockPos;
@@ -241,57 +242,44 @@ public class CardinalRiteBoundaryRenderer {
 		float halfWidth = glow ? 0.18F : 0.055F;
 		float alpha = glow ? 0.20F + pulse * 0.16F : 0.72F + pulse * 0.24F;
 		Matrix4f matrix = stack.last().pose();
+		IchorianSigilRenderPalette.Color vesselColor = IchorianSigilRenderPalette.vessel(glow);
 		for (ActiveRiteClientData.SigilSegment segment : rite.getSigilSegments()) {
-			float red = ((segment.color() >> 16) & 255) / 255.0F;
-			float green = ((segment.color() >> 8) & 255) / 255.0F;
-			float blue = (segment.color() & 255) / 255.0F;
-			red = Math.min(1.0F, red * 0.62F + 0.30F);
-			green *= 0.55F;
-			blue *= 0.55F;
 			long seed = Double.doubleToLongBits(segment.startX())
 					^ Long.rotateLeft(Double.doubleToLongBits(segment.startZ()), 17)
 					^ Long.rotateLeft(Double.doubleToLongBits(segment.endX()), 31)
 					^ segment.color();
-			IchorianSigilOrganicGeometry.Sample previous = IchorianSigilOrganicGeometry.sample(
-					segment.startX(), segment.startY(), segment.startZ(),
-					segment.endX(), segment.endY(), segment.endZ(),
-					currentTime, seed, 0, SIGIL_VESSEL_SEGMENTS, halfWidth);
-			for (int step = 1; step <= SIGIL_VESSEL_SEGMENTS; step++) {
-				IchorianSigilOrganicGeometry.Sample next = IchorianSigilOrganicGeometry.sample(
+			List<IchorianSigilOrganicGeometry.Sample> samples =
+					new java.util.ArrayList<>(SIGIL_VESSEL_SEGMENTS + 1);
+			for (int step = 0; step <= SIGIL_VESSEL_SEGMENTS; step++) {
+				samples.add(IchorianSigilOrganicGeometry.sample(
 						segment.startX(), segment.startY(), segment.startZ(),
 						segment.endX(), segment.endY(), segment.endZ(),
-						currentTime, seed, step, SIGIL_VESSEL_SEGMENTS, halfWidth);
-				drawOrganicSigilSection(consumer, matrix, previous, next, cam,
-						red, green, blue, alpha, glow);
-				previous = next;
+						currentTime, seed, step, SIGIL_VESSEL_SEGMENTS, halfWidth));
+			}
+			for (IchorianSigilOrganicGeometry.RibbonSegment vessel
+					: IchorianSigilOrganicGeometry.ribbonSegments(samples)) {
+				drawOrganicSigilSection(consumer, matrix, vessel, cam,
+						vesselColor.red(), vesselColor.green(), vesselColor.blue(), alpha, glow);
 			}
 		}
 	}
 
 	private static void drawOrganicSigilSection(VertexConsumer consumer, Matrix4f matrix,
-			IchorianSigilOrganicGeometry.Sample start, IchorianSigilOrganicGeometry.Sample end,
+			IchorianSigilOrganicGeometry.RibbonSegment segment,
 			Vec3 cam, float red, float green, float blue, float alpha, boolean glow) {
-		double dx = end.x() - start.x();
-		double dz = end.z() - start.z();
-		double length = Math.hypot(dx, dz);
-		if (length < 0.001D) return;
-		float normalX = (float) (-dz / length);
-		float normalZ = (float) (dx / length);
-		float startX = (float) (start.x() - cam.x);
-		float startY = (float) (start.y() - cam.y);
-		float startZ = (float) (start.z() - cam.z);
-		float endX = (float) (end.x() - cam.x);
-		float endY = (float) (end.y() - cam.y);
-		float endZ = (float) (end.z() - cam.z);
+		IchorianSigilOrganicGeometry.RibbonJoint start = segment.start();
+		IchorianSigilOrganicGeometry.RibbonJoint end = segment.end();
+		float startY = (float) (start.centerY() - cam.y);
+		float endY = (float) (end.centerY() - cam.y);
 		emitQuad(consumer, matrix,
-				startX - normalX * start.halfWidth(), startY,
-				startZ - normalZ * start.halfWidth(), red, green, blue, glow ? 0.0F : alpha,
-				startX + normalX * start.halfWidth(), startY,
-				startZ + normalZ * start.halfWidth(), red, green, blue, alpha,
-				endX + normalX * end.halfWidth(), endY,
-				endZ + normalZ * end.halfWidth(), red, green, blue, alpha,
-				endX - normalX * end.halfWidth(), endY,
-				endZ - normalZ * end.halfWidth(), red, green, blue, glow ? 0.0F : alpha);
+				(float) (start.leftX() - cam.x), startY,
+				(float) (start.leftZ() - cam.z), red, green, blue, glow ? 0.0F : alpha,
+				(float) (start.rightX() - cam.x), startY,
+				(float) (start.rightZ() - cam.z), red, green, blue, alpha,
+				(float) (end.rightX() - cam.x), endY,
+				(float) (end.rightZ() - cam.z), red, green, blue, alpha,
+				(float) (end.leftX() - cam.x), endY,
+				(float) (end.leftZ() - cam.z), red, green, blue, glow ? 0.0F : alpha);
 	}
 
 	private static void drawSanguineBlobs(PoseStack stack, VertexConsumer consumer,
@@ -306,19 +294,14 @@ public class CardinalRiteBoundaryRenderer {
 					: 1.0F - (1.0F - blob.integrity())
 							* (0.65F + 0.35F * (float) ((Math.sin(
 									currentTime * 1.75F + (blob.seed() & 15L)) + 1.0D) * 0.5D));
-			float red = ((blob.color() >> 16) & 255) / 255.0F;
-			float green = ((blob.color() >> 8) & 255) / 255.0F;
-			float blue = (blob.color() & 255) / 255.0F;
-			if (glow) {
-				red = Math.min(1.0F, red * 1.18F + 0.08F);
-				green = Math.min(1.0F, green * 1.18F + 0.02F);
-				blue = Math.min(1.0F, blue * 1.18F + 0.02F);
-			}
+			IchorianSigilRenderPalette.Color nodeColor =
+					IchorianSigilRenderPalette.node(blob.color(), glow);
 			stack.pushPose();
 			stack.translate(blob.x() - cam.x, blob.y() - cam.y, blob.z() - cam.z);
 			SanguineFormationProjectionRenderer.renderSphere(
 					consumer, stack.last().pose(), radius, currentTime, blob.seed(),
-					red, green, blue, (glow ? 0.24F : 0.84F) * damageFlicker);
+					nodeColor.red(), nodeColor.green(), nodeColor.blue(),
+					(glow ? 0.24F : 0.84F) * damageFlicker);
 			stack.popPose();
 		}
 	}

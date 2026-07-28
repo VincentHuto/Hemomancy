@@ -6,10 +6,13 @@ import com.vincenthuto.hemomancy.client.render.world.SanguineFormationProjection
 import com.vincenthuto.hemomancy.common.init.RenderTypeInit;
 import com.vincenthuto.hemomancy.common.rite.sigil.AwakenedIchorianSigilPose;
 import com.vincenthuto.hemomancy.common.rite.sigil.IchorianSigilAnatomy;
+import com.vincenthuto.hemomancy.common.rite.sigil.IchorianSigilOrganicGeometry;
+import com.vincenthuto.hemomancy.common.rite.sigil.IchorianSigilRenderPalette;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.world.phys.Vec3;
 import org.joml.Matrix4f;
 
+import java.util.ArrayList;
 import java.util.List;
 
 final class AwakenedIchorianSigilGeometryRenderer {
@@ -20,33 +23,41 @@ final class AwakenedIchorianSigilGeometryRenderer {
 
 	static void render(AwakenedIchorianSigilPose pose, PoseStack stack,
 			MultiBufferSource buffers, float time, int color, long seed) {
-		float red = Math.min(0.72F, ((color >> 16) & 255) / 255.0F * 0.42F + 0.22F);
-		float green = ((color >> 8) & 255) / 255.0F * 0.12F;
-		float blue = (color & 255) / 255.0F * 0.15F;
-
 		renderGlowPass(buffers.getBuffer(RenderTypeInit.RITE_BOUNDARY_GLOW),
-				pose, stack, time, seed, red, green, blue);
+				pose, stack, time, seed,
+				IchorianSigilRenderPalette.vessel(true),
+				IchorianSigilRenderPalette.node(color, true));
 		renderCorePass(buffers.getBuffer(RenderTypeInit.RITE_BOUNDARY_CORE),
-				pose, stack, time, seed, red, green, blue);
+				pose, stack, time, seed,
+				IchorianSigilRenderPalette.vessel(false),
+				IchorianSigilRenderPalette.node(color, false));
 	}
 
 	private static void renderGlowPass(VertexConsumer glow, AwakenedIchorianSigilPose pose,
-			PoseStack stack, float time, long seed, float red, float green, float blue) {
+			PoseStack stack, float time, long seed,
+			IchorianSigilRenderPalette.Color vesselColor,
+			IchorianSigilRenderPalette.Color nodeColor) {
 		renderVessels(glow, stack.last().pose(), pose, pose.primaryVessels(),
-				red, green, blue, 0.20F, time, seed);
+				vesselColor.red(), vesselColor.green(), vesselColor.blue(), 0.20F, time, seed);
 		renderVessels(glow, stack.last().pose(), pose, pose.secondaryVessels(),
-				red, green, blue, 0.18F, time, seed + 71);
-		renderLandmarkGlow(pose, stack, glow, time, seed, red, green, blue);
+				vesselColor.red(), vesselColor.green(), vesselColor.blue(), 0.18F, time, seed + 71);
+		renderLandmarkGlow(pose, stack, glow, time, seed,
+				nodeColor.red(), nodeColor.green(), nodeColor.blue());
 	}
 
 	private static void renderCorePass(VertexConsumer core, AwakenedIchorianSigilPose pose,
-			PoseStack stack, float time, long seed, float red, float green, float blue) {
-		renderMembranes(core, stack.last().pose(), pose, red * 0.34F, green, blue, 0.20F);
+			PoseStack stack, float time, long seed,
+			IchorianSigilRenderPalette.Color vesselColor,
+			IchorianSigilRenderPalette.Color nodeColor) {
+		renderMembranes(core, stack.last().pose(), pose,
+				nodeColor.red() * 0.34F, nodeColor.green() * 0.34F,
+				nodeColor.blue() * 0.34F, 0.20F);
 		renderVessels(core, stack.last().pose(), pose, pose.primaryVessels(),
-				red * 0.58F, green, blue, 0.88F, time, seed);
+				vesselColor.red(), vesselColor.green(), vesselColor.blue(), 0.88F, time, seed);
 		renderVessels(core, stack.last().pose(), pose, pose.secondaryVessels(),
-				red * 0.65F, green, blue, 0.78F, time, seed + 71);
-		renderLandmarkCore(pose, stack, core, time, seed, red, green, blue);
+				vesselColor.red(), vesselColor.green(), vesselColor.blue(), 0.78F, time, seed + 71);
+		renderLandmarkCore(pose, stack, core, time, seed,
+				nodeColor.red(), nodeColor.green(), nodeColor.blue());
 	}
 
 	private static void renderLandmarkGlow(AwakenedIchorianSigilPose pose, PoseStack stack,
@@ -92,8 +103,7 @@ final class AwakenedIchorianSigilGeometryRenderer {
 				float organ = landmark.role() == IchorianSigilAnatomy.Role.ORGAN ? 1.12F : 1.0F;
 				SanguineFormationProjectionRenderer.renderSphere(core, stack.last().pose(),
 						radius * organ, time, seed + landmark.source(),
-						landmark.role() == IchorianSigilAnatomy.Role.ORGAN ? red * 0.42F : red,
-						green, blue, 0.88F);
+						red, green, blue, 0.88F);
 			}
 			stack.popPose();
 		}
@@ -107,35 +117,43 @@ final class AwakenedIchorianSigilGeometryRenderer {
 			if (vessel.growth() <= 0.001F) continue;
 			Vec3 start = pose.landmarks().get(vessel.from()).position();
 			Vec3 end = pose.landmarks().get(vessel.to()).position();
-			Vec3 previous = start;
-			for (int step = 1; step <= VESSEL_SEGMENTS; step++) {
+			float radius = vessel.thickness() * vessel.growth();
+			List<IchorianSigilOrganicGeometry.Sample> samples =
+					new ArrayList<>(VESSEL_SEGMENTS + 1);
+			for (int step = 0; step <= VESSEL_SEGMENTS; step++) {
 				double progress = step / (double) VESSEL_SEGMENTS;
 				Vec3 next = start.lerp(end, progress);
 				double envelope = Math.sin(Math.PI * progress);
 				double writhe = Math.sin(time * 0.08D + progress * Math.PI * 3
 						+ vesselIndex + seed * 0.001D) * envelope * 0.018D;
 				next = next.add(writhe, writhe * 0.55D, -writhe * 0.4D);
-				renderTubeSection(consumer, matrix, previous, next,
-						vessel.thickness() * vessel.growth(), red, green, blue,
-						alpha * vessel.growth());
-				previous = next;
+				samples.add(new IchorianSigilOrganicGeometry.Sample(
+						next.x, next.y, next.z, radius));
+			}
+			List<IchorianSigilOrganicGeometry.TubeFrame> frames =
+					IchorianSigilOrganicGeometry.tubeFrames(samples);
+			for (int step = 1; step < frames.size(); step++) {
+				renderTubeSection(consumer, matrix, frames.get(step - 1), frames.get(step),
+						red, green, blue, alpha * vessel.growth());
 			}
 		}
 	}
 
 	private static void renderTubeSection(VertexConsumer consumer, Matrix4f matrix,
-			Vec3 start, Vec3 end, float radius,
+			IchorianSigilOrganicGeometry.TubeFrame start,
+			IchorianSigilOrganicGeometry.TubeFrame end,
 			float red, float green, float blue, float alpha) {
-		Vec3 direction = end.subtract(start);
-		if (direction.lengthSqr() < 1.0E-8D) return;
-		Vec3 side = direction.cross(new Vec3(0, 1, 0));
-		if (side.lengthSqr() < 1.0E-8D) side = direction.cross(new Vec3(1, 0, 0));
-		side = side.normalize().scale(radius);
-		Vec3 vertical = direction.normalize().cross(side).normalize().scale(radius);
-		quad(consumer, matrix, start.subtract(side), start.add(side),
-				end.add(side), end.subtract(side), red, green, blue, alpha);
-		quad(consumer, matrix, start.subtract(vertical), start.add(vertical),
-				end.add(vertical), end.subtract(vertical), red, green, blue, alpha);
+		Vec3 startCenter = new Vec3(start.centerX(), start.centerY(), start.centerZ());
+		Vec3 endCenter = new Vec3(end.centerX(), end.centerY(), end.centerZ());
+		Vec3 startSide = new Vec3(start.sideX(), start.sideY(), start.sideZ());
+		Vec3 endSide = new Vec3(end.sideX(), end.sideY(), end.sideZ());
+		Vec3 startVertical = new Vec3(start.verticalX(), start.verticalY(), start.verticalZ());
+		Vec3 endVertical = new Vec3(end.verticalX(), end.verticalY(), end.verticalZ());
+		quad(consumer, matrix, startCenter.subtract(startSide), startCenter.add(startSide),
+				endCenter.add(endSide), endCenter.subtract(endSide), red, green, blue, alpha);
+		quad(consumer, matrix, startCenter.subtract(startVertical), startCenter.add(startVertical),
+				endCenter.add(endVertical), endCenter.subtract(endVertical),
+				red, green, blue, alpha);
 	}
 
 	private static void renderMembranes(VertexConsumer consumer, Matrix4f matrix,
