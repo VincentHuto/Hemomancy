@@ -23,23 +23,34 @@ final class AwakenedIchorianSigilGeometryRenderer {
 		float red = Math.min(0.72F, ((color >> 16) & 255) / 255.0F * 0.42F + 0.22F);
 		float green = ((color >> 8) & 255) / 255.0F * 0.12F;
 		float blue = (color & 255) / 255.0F * 0.15F;
-		VertexConsumer glow = buffers.getBuffer(RenderTypeInit.RITE_BOUNDARY_GLOW);
-		VertexConsumer core = buffers.getBuffer(RenderTypeInit.RITE_BOUNDARY_CORE);
 
-		renderMembranes(core, stack.last().pose(), pose, red * 0.34F, green, blue, 0.20F);
+		renderGlowPass(buffers.getBuffer(RenderTypeInit.RITE_BOUNDARY_GLOW),
+				pose, stack, time, seed, red, green, blue);
+		renderCorePass(buffers.getBuffer(RenderTypeInit.RITE_BOUNDARY_CORE),
+				pose, stack, time, seed, red, green, blue);
+	}
+
+	private static void renderGlowPass(VertexConsumer glow, AwakenedIchorianSigilPose pose,
+			PoseStack stack, float time, long seed, float red, float green, float blue) {
 		renderVessels(glow, stack.last().pose(), pose, pose.primaryVessels(),
 				red, green, blue, 0.20F, time, seed);
 		renderVessels(glow, stack.last().pose(), pose, pose.secondaryVessels(),
 				red, green, blue, 0.18F, time, seed + 71);
+		renderLandmarkGlow(pose, stack, glow, time, seed, red, green, blue);
+	}
+
+	private static void renderCorePass(VertexConsumer core, AwakenedIchorianSigilPose pose,
+			PoseStack stack, float time, long seed, float red, float green, float blue) {
+		renderMembranes(core, stack.last().pose(), pose, red * 0.34F, green, blue, 0.20F);
 		renderVessels(core, stack.last().pose(), pose, pose.primaryVessels(),
 				red * 0.58F, green, blue, 0.88F, time, seed);
 		renderVessels(core, stack.last().pose(), pose, pose.secondaryVessels(),
 				red * 0.65F, green, blue, 0.78F, time, seed + 71);
-		renderLandmarks(pose, stack, glow, core, time, seed, red, green, blue);
+		renderLandmarkCore(pose, stack, core, time, seed, red, green, blue);
 	}
 
-	private static void renderLandmarks(AwakenedIchorianSigilPose pose, PoseStack stack,
-			VertexConsumer glow, VertexConsumer core, float time, long seed,
+	private static void renderLandmarkGlow(AwakenedIchorianSigilPose pose, PoseStack stack,
+			VertexConsumer glow, float time, long seed,
 			float red, float green, float blue) {
 		for (AwakenedIchorianSigilPose.Landmark landmark : pose.landmarks()) {
 			if (landmark.activation() <= 0.001F && pose.migration() > 0.001F) continue;
@@ -51,6 +62,27 @@ final class AwakenedIchorianSigilGeometryRenderer {
 				stack.scale(0.82F, 0.82F, 1.15F);
 				SanguineFormationProjectionRenderer.renderSphere(glow, stack.last().pose(),
 						radius * 1.20F, time, seed, 0.32F, 0.0F, 0.01F, 0.24F);
+			} else {
+				float organ = landmark.role() == IchorianSigilAnatomy.Role.ORGAN ? 1.12F : 1.0F;
+				SanguineFormationProjectionRenderer.renderSphere(glow, stack.last().pose(),
+						radius * organ * 1.25F, time, seed + landmark.source(),
+						red, green, blue, 0.16F);
+			}
+			stack.popPose();
+		}
+	}
+
+	private static void renderLandmarkCore(AwakenedIchorianSigilPose pose, PoseStack stack,
+			VertexConsumer core, float time, long seed,
+			float red, float green, float blue) {
+		for (AwakenedIchorianSigilPose.Landmark landmark : pose.landmarks()) {
+			if (landmark.activation() <= 0.001F && pose.migration() > 0.001F) continue;
+			stack.pushPose();
+			Vec3 point = landmark.position();
+			stack.translate(point.x, point.y, point.z);
+			float radius = landmark.radius();
+			if (landmark.role() == IchorianSigilAnatomy.Role.EYE) {
+				stack.scale(0.82F, 0.82F, 1.15F);
 				SanguineFormationProjectionRenderer.renderSphere(core, stack.last().pose(),
 						radius, time, seed, 0.45F, 0.01F, 0.02F, 0.96F);
 				stack.translate(0, 0, -radius * 0.72F);
@@ -58,9 +90,6 @@ final class AwakenedIchorianSigilGeometryRenderer {
 						radius * 0.38F, time, seed + 3, 0.015F, 0.0F, 0.0F, 1.0F);
 			} else {
 				float organ = landmark.role() == IchorianSigilAnatomy.Role.ORGAN ? 1.12F : 1.0F;
-				SanguineFormationProjectionRenderer.renderSphere(glow, stack.last().pose(),
-						radius * organ * 1.25F, time, seed + landmark.source(),
-						red, green, blue, 0.16F);
 				SanguineFormationProjectionRenderer.renderSphere(core, stack.last().pose(),
 						radius * organ, time, seed + landmark.source(),
 						landmark.role() == IchorianSigilAnatomy.Role.ORGAN ? red * 0.42F : red,
