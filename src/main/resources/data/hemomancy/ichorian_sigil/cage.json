@@ -5,5 +5,21 @@
   "name": "Cage",
   "purpose": "Binds a manifested rite threat in place.",
   "stability": 15,
-  "nodes": [[-1.5, -1], [0, -1.5], [1.5, -1], [1.5, 1], [0, 1.5], [-1.5, 1], [-1.5, -1]]
+  "nodes":[[-1.2,1.2],[-1.2,0],[-1.2,-1.2],[0,-1.45],[1.2,-1.2],[1.2,0],[1.2,1.2]],
+  "connections":[[0,1],[1,2],[2,3],[3,4],[4,5],[5,6],[0,6],[1,5],[2,4]],
+  "awakened_form":{
+    "forward":[1,0,0],
+    "animation":{"style":"walking_rib_tower","pulse":0.7,"flex":0.95,"lag":0.4},
+    "nodes":[
+      {"source":0,"position":[-0.42,0.52,0],"role":"rib","radius":0.1},
+      {"source":1,"position":[-0.46,0,0.02],"role":"rib","radius":0.1},
+      {"source":2,"position":[-0.38,-0.48,0],"role":"rib","radius":0.1},
+      {"source":3,"position":[0,-0.58,-0.08],"role":"organ","radius":0.17},
+      {"source":4,"position":[0.38,-0.48,0],"role":"rib","radius":0.1},
+      {"source":5,"position":[0.46,0,0.02],"role":"rib","radius":0.1},
+      {"source":6,"position":[0.42,0.52,-0.08],"role":"eye","radius":0.13}
+    ],
+    "vessels":[{"from":0,"to":6,"thickness":0.055},{"from":1,"to":5,"thickness":0.055},{"from":2,"to":4,"thickness":0.055}],
+    "membranes":[]
+  }
 }

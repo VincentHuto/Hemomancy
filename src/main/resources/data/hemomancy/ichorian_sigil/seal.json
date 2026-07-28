@@ -5,5 +5,24 @@
   "name": "Seal",
   "purpose": "Silences a rogue will's interference.",
   "stability": 12,
-  "nodes": [[-1, -1], [1, -1], [1, 1], [-1, 1], [-1, -1], [0, 0]]
+  "nodes": [[0,-1.35],[1.28,-0.42],[0.79,1.09],[-0.79,1.09],[-1.28,-0.42],[0,0]],
+  "connections": [[5,0],[5,1],[5,2],[5,3],[5,4]],
+  "awakened_form": {
+    "forward":[0,0,-1],
+    "animation":{"style":"five_lipped_shutter","pulse":0.8,"flex":0.85,"lag":0.35},
+    "nodes":[
+      {"source":0,"position":[0,0.02,-0.58],"role":"eye","radius":0.13},
+      {"source":1,"position":[0.54,0.1,-0.18],"role":"limb_tip","radius":0.11},
+      {"source":2,"position":[0.34,-0.08,0.48],"role":"limb_tip","radius":0.11},
+      {"source":3,"position":[-0.34,0.08,0.48],"role":"limb_tip","radius":0.11},
+      {"source":4,"position":[-0.54,-0.1,-0.18],"role":"limb_tip","radius":0.11},
+      {"source":5,"position":[0,0,0],"role":"organ","radius":0.19}
+    ],
+    "vessels":[
+      {"from":5,"to":0,"thickness":0.06},{"from":5,"to":1,"thickness":0.06},
+      {"from":5,"to":2,"thickness":0.06},{"from":5,"to":3,"thickness":0.06},
+      {"from":5,"to":4,"thickness":0.06}
+    ],
+    "membranes":[[5,0,1],[5,1,2],[5,2,3],[5,3,4],[5,4,0]]
+  }
 }

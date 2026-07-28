@@ -5,5 +5,25 @@
   "name": "Lens",
   "purpose": "Reveals the true node among illusory anchors.",
   "stability": 18,
-  "nodes": [[-2, 0], [-1, -1], [0, -1.5], [1, -1], [2, 0], [1, 1], [0, 1.5], [-1, 1], [0, 0]]
+  "nodes": [[-2, 0], [-1, -1], [0, -1.5], [1, -1], [2, 0], [1, 1], [0, 1.5], [-1, 1], [0, 0]],
+  "awakened_form":{
+    "forward":[0,0,-1],
+    "animation":{"style":"optic_stalk_veil","pulse":0.9,"flex":0.75,"lag":1.15},
+    "nodes":[
+      {"source":0,"position":[-0.54,0.2,0.26],"role":"membrane_tip","radius":0.09},
+      {"source":1,"position":[-0.38,-0.18,0.34],"role":"membrane_tip","radius":0.09},
+      {"source":2,"position":[0,-0.3,0.38],"role":"organ","radius":0.15},
+      {"source":3,"position":[0.38,-0.18,0.34],"role":"membrane_tip","radius":0.09},
+      {"source":4,"position":[0.54,0.2,0.26],"role":"membrane_tip","radius":0.09},
+      {"source":5,"position":[0.38,0.42,0.18],"role":"membrane_tip","radius":0.09},
+      {"source":6,"position":[0,0.52,0.14],"role":"joint","radius":0.1},
+      {"source":7,"position":[-0.38,0.42,0.18],"role":"membrane_tip","radius":0.09},
+      {"source":8,"position":[0,0,-0.62],"role":"eye","radius":0.22}
+    ],
+    "vessels":[
+      {"from":8,"to":0,"thickness":0.05},{"from":8,"to":2,"thickness":0.07},
+      {"from":8,"to":4,"thickness":0.05},{"from":8,"to":6,"thickness":0.05}
+    ],
+    "membranes":[[8,0,1],[8,1,2],[8,2,3],[8,3,4],[8,4,5],[8,5,6],[8,6,7],[8,7,0]]
+  }
 }

@@ -5,5 +5,22 @@
   "name": "Mnemonic",
   "purpose": "Exposes false anchors, counterfeit omens, and puppeteer deceptions.",
   "stability": 12,
-  "nodes": [[-1.5, 0], [-1, -1], [0, -1.5], [1, -1], [1.5, 0], [1, 1], [0, 1.5], [-1, 1]]
+  "nodes": [[-1.4, 0], [-0.7, -0.8], [0, -0.12], [0.7, 0.8], [1.4, 0], [0.7, -0.8], [0, 0.12], [-0.7, 0.8]],
+  "connections": [[0,1], [1,2], [2,3], [3,4], [4,5], [5,6], [6,7], [7,0]],
+  "awakened_form": {
+    "forward": [-1, 0, 0],
+    "animation": {"style": "recall_ribbon", "pulse": 0.95, "flex": 1.1, "lag": 0.65},
+    "nodes": [
+      {"source":0,"position":[-0.58,0.02,-0.1],"role":"eye","radius":0.12},
+      {"source":1,"position":[-0.34,-0.28,-0.24],"role":"ganglion","radius":0.1},
+      {"source":2,"position":[0,-0.12,0.02],"role":"joint","radius":0.09},
+      {"source":3,"position":[0.36,0.3,0.22],"role":"ganglion","radius":0.1},
+      {"source":4,"position":[0.62,0.02,0.08],"role":"organ","radius":0.16},
+      {"source":5,"position":[0.32,-0.3,-0.22],"role":"ganglion","radius":0.1},
+      {"source":6,"position":[0,0.14,-0.02],"role":"joint","radius":0.09},
+      {"source":7,"position":[-0.36,0.3,0.22],"role":"ganglion","radius":0.1}
+    ],
+    "vessels":[{"from":0,"to":7,"thickness":0.05},{"from":2,"to":6,"thickness":0.045}],
+    "membranes":[]
+  }
 }
