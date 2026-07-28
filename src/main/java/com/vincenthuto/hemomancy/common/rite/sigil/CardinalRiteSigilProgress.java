@@ -18,6 +18,24 @@ public final class CardinalRiteSigilProgress {
 		return List.copyOf(result);
 	}
 
+	public static List<Connection> completedConnections(
+			IchorianSigilDefinition definition, int completedNodes) {
+		if (definition == null || definition.connections().isEmpty()) {
+			return definition == null ? List.of()
+					: completedConnections(definition.nodes(), completedNodes);
+		}
+		int visibleNodes = Math.min(definition.nodes().size(), Math.max(0, completedNodes));
+		List<Connection> result = new ArrayList<>(definition.connections().size());
+		for (IchorianSigilDefinition.Connection authored : definition.connections()) {
+			if (authored.from() < 0 || authored.to() < 0
+					|| authored.from() >= visibleNodes || authored.to() >= visibleNodes) continue;
+			result.add(new Connection(
+					definition.nodes().get(authored.from()),
+					definition.nodes().get(authored.to())));
+		}
+		return List.copyOf(result);
+	}
+
 	public record Connection(IchorianSigilDefinition.Node start, IchorianSigilDefinition.Node end) {
 	}
 }

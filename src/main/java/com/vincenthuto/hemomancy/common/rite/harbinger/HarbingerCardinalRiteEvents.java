@@ -760,7 +760,7 @@ public class HarbingerCardinalRiteEvents {
 			if (sigil == null) continue;
 			int completed = rite.getSigilProgress().getOrDefault(placement.progressKey(), 0);
 			for (CardinalRiteSigilProgress.Connection connection
-					: CardinalRiteSigilProgress.completedConnections(sigil.nodes(), completed)) {
+					: CardinalRiteSigilProgress.completedConnections(sigil, completed)) {
 				result.add(toClientSigilSegment(level, rite, placement, connection, sigil.color()));
 			}
 		}
