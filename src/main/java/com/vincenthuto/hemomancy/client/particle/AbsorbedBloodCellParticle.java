@@ -29,6 +29,9 @@ public class AbsorbedBloodCellParticle extends TextureSheetParticle {
 	private final double sourceZ;
 	private double targetYOffset = 1.2D;
 	private Vec3 firstPersonTargetAnchor;
+	private Vec3 projectionSource;
+	private Vec3 projectionTarget;
+	private Vec3 projectionDeviation;
 
 	public AbsorbedBloodCellParticle(ClientLevel worldIn, double x, double y, double z, double vx, double vy, double vz,
 			float r, float g, float b, float a, float scale, int lifetime, SpriteSet sprite) {
@@ -79,6 +82,23 @@ public class AbsorbedBloodCellParticle extends TextureSheetParticle {
 		this.targetYOffset = targetYOffset;
 	}
 
+	public void setProjectionPath(Vec3 source, Vec3 target, Vec3 deviation) {
+		this.projectionSource = source;
+		this.projectionTarget = target;
+		this.projectionDeviation = deviation;
+		this.firstPersonTargetAnchor = null;
+		this.targetYOffset = 0.0D;
+		this.xd = 0.0D;
+		this.yd = 0.0D;
+		this.zd = 0.0D;
+		this.x = source.x;
+		this.y = source.y;
+		this.z = source.z;
+		this.xo = source.x;
+		this.yo = source.y;
+		this.zo = source.z;
+	}
+
 	@Override
 	public int getLightColor(float partialTick) {
 		int i = super.getLightColor(partialTick);
@@ -102,6 +122,9 @@ public class AbsorbedBloodCellParticle extends TextureSheetParticle {
 
 	@Override
 	public boolean isAlive() {
+		if (this.projectionSource != null) {
+			return this.age <= this.lifetime;
+		}
 		return this.age < this.lifetime;
 	}
 
@@ -121,6 +144,21 @@ public class AbsorbedBloodCellParticle extends TextureSheetParticle {
 		this.xo = this.x;
 		this.yo = this.y;
 		this.zo = this.z;
+		if (this.projectionSource != null) {
+			if (this.age >= this.lifetime) {
+				this.age = this.lifetime + 1;
+				this.remove();
+				return;
+			}
+			double progress = BloodProjectionParticlePath.progress(this.age, this.lifetime);
+			Vec3 position = BloodProjectionParticlePath.position(this.projectionSource, this.projectionTarget,
+					this.projectionDeviation, progress);
+			this.x = position.x;
+			this.y = position.y;
+			this.z = position.z;
+			this.age++;
+			return;
+		}
 		if (this.age++ >= this.lifetime) {
 			this.remove();
 		} else {

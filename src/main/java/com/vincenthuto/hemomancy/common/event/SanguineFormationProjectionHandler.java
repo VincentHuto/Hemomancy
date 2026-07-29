@@ -38,7 +38,6 @@ import java.util.Map;
 public final class SanguineFormationProjectionHandler {
 	public static final TagKey<Block> PROJECTOR_TAG = TagKey.create(Registries.BLOCK,
 			Hemomancy.rloc("sanguine_formation_projectors"));
-	private static final double BLOCK_REACH = 5.5D;
 	private static final double SYNC_RANGE = 64.0D;
 	private static final int FORMING_VISIBLE_TICKS = 6;
 	private static final int FINAL_VISIBLE_TICKS = 10;
@@ -51,7 +50,8 @@ public final class SanguineFormationProjectionHandler {
 		if (!(level instanceof ServerLevel serverLevel) || !(user instanceof ServerPlayer player) || maxAmount <= 0.0D) {
 			return 0.0D;
 		}
-		HitResult trace = player.pick(BLOCK_REACH, 0, true);
+		HitResult trace = SanguineProjectionTargeting.pick(serverLevel, player,
+				SanguineProjectionTargeting.PROJECTION_REACH, true);
 		if (!(trace instanceof BlockHitResult hit) || trace.getType() != HitResult.Type.BLOCK) {
 			return 0.0D;
 		}

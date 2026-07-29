@@ -2,6 +2,7 @@ package com.vincenthuto.hemomancy.common.block.shared;
 
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
+import com.vincenthuto.hemomancy.common.event.SanguineProjectionTargeting;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.BloodVolumeServerPacket;
 import com.vincenthuto.hemomancy.common.tile.FillerBlockEntity;
@@ -46,7 +47,9 @@ public final class BlockBloodInteractions {
 		if (!(level instanceof ServerLevel serverLevel) || !(user instanceof ServerPlayer player) || maxAmount <= 0.0D) {
 			return 0.0D;
 		}
-		BlockPos pos = findLookedAtBlockPos(player, BLOCK_REACH);
+		HitResult trace = SanguineProjectionTargeting.pick(serverLevel, player,
+				SanguineProjectionTargeting.PROJECTION_REACH, true);
+		BlockPos pos = trace.getType() == HitResult.Type.BLOCK ? ((BlockHitResult) trace).getBlockPos() : null;
 		if (pos == null) {
 			return 0.0D;
 		}

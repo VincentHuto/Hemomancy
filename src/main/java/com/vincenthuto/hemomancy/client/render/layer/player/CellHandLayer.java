@@ -6,9 +6,11 @@ import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.client.model.item.BloodArmModel;
 import com.vincenthuto.hemomancy.client.render.item.hematic.CellHandParticleEffects;
+import com.vincenthuto.hemomancy.client.render.item.hematic.CellHandRenderOrigin;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.ICellHand;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.LivingStaffItem;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.model.ArmedModel;
 import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -24,7 +26,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.Vec3;
 
-public class CellHandLayer<T extends LivingEntity, M extends EntityModel<T>> extends RenderLayer<T, M> {
+public class CellHandLayer<T extends LivingEntity, M extends EntityModel<T> & ArmedModel> extends RenderLayer<T, M> {
 
 	private final BloodArmModel<T> model;
 	public final ResourceLocation skinTexture = Hemomancy.rloc("textures/entity/hardened_skin.png");
@@ -60,16 +62,16 @@ public class CellHandLayer<T extends LivingEntity, M extends EntityModel<T>> ext
 		// Right InteractionHand only
 		if (rightHandPresentation && !leftHandPresentation) {
 			this.renderBloodArm(matrixStackIn, bufferIn, packedLightIn, true, false);
-			this.renderHandParticle(entitylivingbaseIn, rightHandItem, HumanoidArm.RIGHT);
+			this.renderHandParticle(matrixStackIn, entitylivingbaseIn, rightHandItem, HumanoidArm.RIGHT);
 			// Left InteractionHand only
 		} else if (leftHandPresentation && !rightHandPresentation) {
 			this.renderBloodArm(matrixStackIn, bufferIn, packedLightIn, false, true);
-			this.renderHandParticle(entitylivingbaseIn, leftHandItem, HumanoidArm.LEFT);
+			this.renderHandParticle(matrixStackIn, entitylivingbaseIn, leftHandItem, HumanoidArm.LEFT);
 			// Both Hands
 		} else if (leftHandPresentation && rightHandPresentation) {
 			this.renderBloodArm(matrixStackIn, bufferIn, packedLightIn, true, true);
-			this.renderHandParticle(entitylivingbaseIn, rightHandItem, HumanoidArm.RIGHT);
-			this.renderHandParticle(entitylivingbaseIn, leftHandItem, HumanoidArm.LEFT);
+			this.renderHandParticle(matrixStackIn, entitylivingbaseIn, rightHandItem, HumanoidArm.RIGHT);
+			this.renderHandParticle(matrixStackIn, entitylivingbaseIn, leftHandItem, HumanoidArm.LEFT);
 
 		}
 		matrixStackIn.popPose();
@@ -92,7 +94,7 @@ public class CellHandLayer<T extends LivingEntity, M extends EntityModel<T>> ext
 		}
 	}
 
-	private void renderHandParticle(LivingEntity living, ItemStack stack, HumanoidArm side) {
+	private void renderHandParticle(PoseStack poseStack, LivingEntity living, ItemStack stack, HumanoidArm side) {
 		if (Minecraft.getInstance().isPaused()) {
 			return;
 		}
@@ -101,7 +103,7 @@ public class CellHandLayer<T extends LivingEntity, M extends EntityModel<T>> ext
 					? living.getMainArm()
 					: living.getMainArm().getOpposite();
 			if (activeArm == side) {
-				this.spawnParticleFromOrigin(calculateThirdPersonHandOrigin(living, side), living, stack);
+				this.spawnParticleFromOrigin(calculateThirdPersonHandOrigin(poseStack, side), living, stack);
 			}
 		}
 	}
@@ -110,16 +112,14 @@ public class CellHandLayer<T extends LivingEntity, M extends EntityModel<T>> ext
 		return stack.getItem() instanceof ICellHand || LivingStaffItem.isLivingStaffUtilityUse(living, stack);
 	}
 
-	private Vec3 calculateThirdPersonHandOrigin(LivingEntity living, HumanoidArm side) {
-		double bodyYaw = Math.toRadians(living.yBodyRot);
-		Vec3 forward = new Vec3(-Math.sin(bodyYaw), 0.0D, Math.cos(bodyYaw));
-		Vec3 right = new Vec3(-forward.z, 0.0D, forward.x);
-		double sideOffset = side == HumanoidArm.RIGHT ? 0.36D : -0.36D;
-
-		return living.position()
-				.add(0.0D, living.getBbHeight() * 0.72D, 0.0D)
-				.add(forward.scale(0.46D))
-				.add(right.scale(sideOffset));
+	private Vec3 calculateThirdPersonHandOrigin(PoseStack poseStack, HumanoidArm side) {
+		poseStack.pushPose();
+		getParentModel().translateToHand(side, poseStack);
+		Vec3 origin = CellHandRenderOrigin.fromPose(poseStack.last().pose(),
+				Minecraft.getInstance().gameRenderer.getMainCamera().getPosition(),
+				0.0F, CellHandRenderOrigin.PALM_OFFSET_Y, 0.0F);
+		poseStack.popPose();
+		return origin;
 	}
 
 	private void spawnParticleFromOrigin(Vec3 origin, LivingEntity player, ItemStack activeStack) {

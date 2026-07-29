@@ -58,6 +58,8 @@ import com.vincenthuto.hemomancy.common.rite.CardinalRiteFootprintRules;
 import com.vincenthuto.hemomancy.common.rite.sigil.CardinalRiteSigilProgress;
 import com.vincenthuto.hemomancy.common.rite.sigil.CardinalRiteSigilRules;
 import com.vincenthuto.hemomancy.common.rite.sigil.IchorianSigilDefinition;
+import com.vincenthuto.hemomancy.common.rite.sigil.IchorianSigilAnatomy;
+import com.vincenthuto.hemomancy.common.rite.sigil.IchorianSigilRoleResolver;
 import com.vincenthuto.hemomancy.common.rite.sigil.IchorianSigilRegistry;
 import com.vincenthuto.hemomancy.common.rite.CardinalRitePhase;
 import com.vincenthuto.hemomancy.common.rite.unstained.UnstainedCardinalRiteEvents;
@@ -694,7 +696,9 @@ public class HarbingerCardinalRiteEvents {
 								blood[i], CardinalRiteCeremonyRules.BLOOD_PER_ANCHOR_ML);
 				result.add(new ActiveRiteClientData.SanguineBlob(
 						x, y, z, radius, color,
-						blobSeed(x, y, z, i), integrity));
+						blobSeed(x, y, z, i), integrity,
+						ActiveRiteClientData.NodeKind.BOUNDARY_ANCHOR,
+						IchorianSigilAnatomy.Role.JOINT));
 			}
 		}
 		for (CardinalRiteInteractionHandler.SigilPlacement placement
@@ -715,7 +719,9 @@ public class HarbingerCardinalRiteEvents {
 				double z = rite.getCenterPos().getZ() + 0.5D + placement.z() + node.z();
 				result.add(new ActiveRiteClientData.SanguineBlob(
 						x, y, z, 0.16F, CardinalRiteAnchorVisualRules.sigilColor(sigil.color()),
-						blobSeed(x, y, z, i)));
+						blobSeed(x, y, z, i), 1.0F,
+						ActiveRiteClientData.NodeKind.SIGIL_NODE,
+						IchorianSigilRoleResolver.forSource(sigil, i)));
 			}
 			int nodeBlood = rite.getSigilProgress().getOrDefault(
 					"blood:" + placement.progressKey(), 0);
@@ -730,7 +736,9 @@ public class HarbingerCardinalRiteEvents {
 				result.add(new ActiveRiteClientData.SanguineBlob(
 						x, y, z, CardinalRiteSigilRules.formingNodeRadius(nodeBlood),
 						CardinalRiteAnchorVisualRules.sigilColor(sigil.color()),
-						blobSeed(x, y, z, completed)));
+						blobSeed(x, y, z, completed), 1.0F,
+						ActiveRiteClientData.NodeKind.SIGIL_NODE,
+						IchorianSigilRoleResolver.forSource(sigil, completed)));
 			}
 		}
 		return java.util.List.copyOf(result);

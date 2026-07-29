@@ -11,6 +11,7 @@ import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.
 import com.vincenthuto.hemomancy.common.entity.mob.monster.will.WillBloodUtilityInteractions;
 import com.vincenthuto.hemomancy.common.event.BloodStructureFeedManager;
 import com.vincenthuto.hemomancy.common.event.SanguineFormationProjectionHandler;
+import com.vincenthuto.hemomancy.common.event.SanguineProjectionTargeting;
 import com.vincenthuto.hemomancy.common.rite.harbinger.CardinalRiteInteractionHandler;
 import com.vincenthuto.hemomancy.common.rite.harbinger.CardinalRiteProjectionResult;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
@@ -121,7 +122,8 @@ public class BloodProjectionItem extends Item implements IDispellable, ICellHand
 			return blockHandled;
 		}
 
-		HitResult trace = player.pick(5.5,0, true);
+		HitResult trace = SanguineProjectionTargeting.pick(worldIn, player,
+				SanguineProjectionTargeting.PROJECTION_REACH, true);
 		if (trace.getType() == Type.BLOCK) {
 			BlockPos targetPos = ((BlockHitResult) trace).getBlockPos();
 			if (player instanceof ServerPlayer serverPlayer

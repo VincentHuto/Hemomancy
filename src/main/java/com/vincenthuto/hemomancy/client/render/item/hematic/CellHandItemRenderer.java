@@ -26,6 +26,7 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.client.model.data.ModelData;
 
 public class CellHandItemRenderer extends BlockEntityWithoutLevelRenderer {
@@ -81,7 +82,7 @@ public class CellHandItemRenderer extends BlockEntityWithoutLevelRenderer {
 			matrixStackIn.translate(0.0, -0.3, 0.6);
 			renderArm(matrixStackIn, bufferIn, combinedLightIn, mc.player, side, stack);
 		}
-		spawnFirstPersonParticlesForStack(stack, side);
+		spawnFirstPersonParticlesForStack(stack, side, matrixStackIn);
 		matrixStackIn.popPose();
 	}
 
@@ -193,7 +194,17 @@ public class CellHandItemRenderer extends BlockEntityWithoutLevelRenderer {
 				OverlayTexture.NO_OVERLAY);
 	}
 
-	private void spawnFirstPersonParticlesForStack(ItemStack stack, HumanoidArm hand) {
-		CellHandParticleEffects.spawnFirstPersonParticlesForStack(stack, hand);
+	private void spawnFirstPersonParticlesForStack(ItemStack stack, HumanoidArm hand, PoseStack poseStack) {
+		Minecraft mc = Minecraft.getInstance();
+		PlayerRenderer playerRenderer = (PlayerRenderer) mc.getEntityRenderDispatcher().getRenderer(mc.player);
+		ModelPart arm = hand == HumanoidArm.RIGHT
+				? playerRenderer.getModel().rightArm
+				: playerRenderer.getModel().leftArm;
+		poseStack.pushPose();
+		arm.translateAndRotate(poseStack);
+		Vec3 origin = CellHandRenderOrigin.fromPose(poseStack.last().pose(),
+				mc.gameRenderer.getMainCamera().getPosition(), 0.0F, CellHandRenderOrigin.PALM_OFFSET_Y, 0.0F);
+		poseStack.popPose();
+		CellHandParticleEffects.spawnFirstPersonParticlesForStack(stack, hand, origin);
 	}
 }

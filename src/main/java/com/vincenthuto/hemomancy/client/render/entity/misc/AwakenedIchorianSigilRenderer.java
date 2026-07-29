@@ -92,7 +92,7 @@ public final class AwakenedIchorianSigilRenderer extends EntityRenderer<Awakened
 		float alpha = glow ? 0.28F : 0.88F;
 		IchorianSigilRenderPalette.Color vesselColor = IchorianSigilRenderPalette.vessel(glow);
 		IchorianSigilRenderPalette.Color nodeColor =
-				IchorianSigilRenderPalette.node(sigilColor, glow);
+				IchorianSigilRenderPalette.authoredIchor(sigilColor, glow);
 		for (int index = 1; index < sigil.nodes().size(); index++) {
 			IchorianSigilDefinition.Node start = sigil.nodes().get(index - 1);
 			IchorianSigilDefinition.Node end = sigil.nodes().get(index);
@@ -134,18 +134,20 @@ public final class AwakenedIchorianSigilRenderer extends EntityRenderer<Awakened
 			float red, float green, float blue, float alpha) {
 		IchorianSigilOrganicGeometry.RibbonJoint start = segment.start();
 		IchorianSigilOrganicGeometry.RibbonJoint end = segment.end();
+		float startRed = Math.min(1.0F, red * start.redIntensity());
+		float endRed = Math.min(1.0F, red * end.redIntensity());
 		consumer.addVertex(matrix,
 				(float) start.leftX(), (float) start.centerY(),
-				(float) start.leftZ()).setColor(red, green, blue, alpha);
+				(float) start.leftZ()).setColor(startRed, green, blue, alpha);
 		consumer.addVertex(matrix,
 				(float) start.rightX(), (float) start.centerY(),
-				(float) start.rightZ()).setColor(red, green, blue, alpha);
+				(float) start.rightZ()).setColor(startRed, green, blue, alpha);
 		consumer.addVertex(matrix,
 				(float) end.rightX(), (float) end.centerY(),
-				(float) end.rightZ()).setColor(red, green, blue, alpha);
+				(float) end.rightZ()).setColor(endRed, green, blue, alpha);
 		consumer.addVertex(matrix,
 				(float) end.leftX(), (float) end.centerY(),
-				(float) end.leftZ()).setColor(red, green, blue, alpha);
+				(float) end.leftZ()).setColor(endRed, green, blue, alpha);
 	}
 
 	@Override

@@ -52,6 +52,27 @@ public final class CardinalRiteBoundaryGeometry {
 		return false;
 	}
 
+	public static float integrityWidth(float healthyWidth, float integrity) {
+		float clamped = Math.max(0.0F, Math.min(1.0F, integrity));
+		return healthyWidth * (0.22F + 0.78F * clamped);
+	}
+
+	public static float integrityBrightness(float integrity) {
+		float clamped = Math.max(0.0F, Math.min(1.0F, integrity));
+		return 0.12F + 0.88F * clamped;
+	}
+
+	public static float arterialHighlight(double angle, float time, int ring) {
+		double phase = normalizeAngle(angle - arterialHighlightPosition(time, ring));
+		double distance = Math.min(phase, Math.PI * 2.0D - phase);
+		double normalized = Math.max(0.0D, 1.0D - distance / 0.42D);
+		return (float) (normalized * normalized * (3.0D - 2.0D * normalized));
+	}
+
+	public static double arterialHighlightPosition(float time, int ring) {
+		return normalizeAngle(time * 0.035D + ring * 0.73D);
+	}
+
 	private static double normalizeAngle(double angle) {
 		double fullCircle = Math.PI * 2.0D;
 		double normalized = angle % fullCircle;

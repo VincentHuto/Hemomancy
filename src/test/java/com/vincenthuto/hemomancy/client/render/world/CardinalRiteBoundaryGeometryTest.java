@@ -69,6 +69,30 @@ public final class CardinalRiteBoundaryGeometryTest {
 				List.of(), 0.0D), "thorn with no boundary");
 	}
 
+	@Test
+	void damagedBoundaryBecomesThinAndDryInsteadOfMerelyTransparent() {
+		assertEquals(0.09F, CardinalRiteBoundaryGeometry.integrityWidth(0.09F, 1.0F),
+				"healthy wet artery");
+		assertTrue(CardinalRiteBoundaryGeometry.integrityWidth(0.09F, 0.2F) < 0.04F,
+				"damaged arc narrows");
+		assertTrue(CardinalRiteBoundaryGeometry.integrityBrightness(0.2F) < 0.35F,
+				"damaged arc darkens");
+	}
+
+	@Test
+	void arterialHighlightTravelsAndRemainsBounded() {
+		double firstPosition = CardinalRiteBoundaryGeometry.arterialHighlightPosition(10.0F, 2);
+		double laterPosition = CardinalRiteBoundaryGeometry.arterialHighlightPosition(20.0F, 2);
+		float first = CardinalRiteBoundaryGeometry.arterialHighlight(firstPosition, 10.0F, 2);
+		float later = CardinalRiteBoundaryGeometry.arterialHighlight(laterPosition, 20.0F, 2);
+
+		assertTrue(first >= 0.0F && first <= 1.0F, "bounded first highlight");
+		assertTrue(later >= 0.0F && later <= 1.0F, "bounded later highlight");
+		assertTrue(first > 0.99F && later > 0.99F, "computed positions locate the pulse peak");
+		assertTrue(Math.abs(firstPosition - laterPosition) > 0.0001D,
+				"highlight travels around the ring");
+	}
+
 	private static void assertEquals(float expected, float actual, String label) {
 		if (Math.abs(expected - actual) > 0.0001F) {
 			throw new AssertionError(label + ": expected " + expected + " but got " + actual);

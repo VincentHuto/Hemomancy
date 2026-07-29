@@ -89,6 +89,30 @@ final class IchorianSigilOrganicGeometryTest {
 		assertEquals(samples.get(1).halfWidth(), frames.get(1).radius(), 0.0F);
 	}
 
+	@Test
+	void vesselTaperAndHeartbeatStayBoundedAndContinuousAtLandmarks() {
+		float beat = IchorianSigilOrganicGeometry.heartbeat(40.0F);
+		float start = IchorianSigilOrganicGeometry.vesselWidth(0.1F, 0.0F, beat, 0.4F);
+		float middle = IchorianSigilOrganicGeometry.vesselWidth(0.1F, 0.5F, beat, 0.4F);
+		float end = IchorianSigilOrganicGeometry.vesselWidth(0.1F, 1.0F, beat, 0.4F);
+
+		assertEquals(start, end, 0.000001F);
+		assertTrue(start >= 0.04F && start <= 0.08F);
+		assertTrue(middle >= start && middle <= 0.13F);
+	}
+
+	@Test
+	void travellingBolusMovesWithoutChangingItsStableSeedPhase() {
+		float first = IchorianSigilOrganicGeometry.bolusPosition(10.0F, 91L);
+		float later = IchorianSigilOrganicGeometry.bolusPosition(15.0F, 91L);
+
+		assertNotEquals(first, later);
+		assertEquals(first, IchorianSigilOrganicGeometry.bolusPosition(10.0F, 91L), 0.0F);
+		assertTrue(IchorianSigilOrganicGeometry.bolusIntensity(first, first) > 0.9F);
+		assertTrue(IchorianSigilOrganicGeometry.bolusIntensity(1.0F - first, first) >= 0.0F);
+		assertTrue(IchorianSigilOrganicGeometry.bolusIntensity(1.0F - first, first) <= 1.0F);
+	}
+
 	private static void assertPoint(IchorianSigilOrganicGeometry.Sample point,
 			double x, double y, double z) {
 		assertEquals(x, point.x(), 0.000001D);

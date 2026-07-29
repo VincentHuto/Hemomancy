@@ -1,6 +1,7 @@
 package com.vincenthuto.hemomancy.client.data;
 
 import com.vincenthuto.hemomancy.common.rite.CardinalRiteBoundaryProgress;
+import com.vincenthuto.hemomancy.common.rite.sigil.IchorianSigilAnatomy;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 
@@ -15,6 +16,10 @@ import java.util.Map;
  * Updated by PacketSyncActiveRites from the server.
  */
 public class ActiveRiteClientData {
+	public enum NodeKind {
+		BOUNDARY_ANCHOR,
+		SIGIL_NODE
+	}
 
 	public static class RiteEntry {
 		private final BlockPos center;
@@ -140,15 +145,25 @@ public class ActiveRiteClientData {
 		private final int color;
 		private final long seed;
 		private final float integrity;
+		private final NodeKind kind;
+		private final IchorianSigilAnatomy.Role role;
 		private float previousRenderRadius;
 		private float currentRenderRadius;
 
 		public SanguineBlob(double x, double y, double z, float radius, int color, long seed) {
-			this(x, y, z, radius, color, seed, 1.0F);
+			this(x, y, z, radius, color, seed, 1.0F, NodeKind.SIGIL_NODE,
+					IchorianSigilAnatomy.Role.JOINT);
 		}
 
 		public SanguineBlob(double x, double y, double z, float radius,
 				int color, long seed, float integrity) {
+			this(x, y, z, radius, color, seed, integrity, NodeKind.SIGIL_NODE,
+					IchorianSigilAnatomy.Role.JOINT);
+		}
+
+		public SanguineBlob(double x, double y, double z, float radius,
+				int color, long seed, float integrity, NodeKind kind,
+				IchorianSigilAnatomy.Role role) {
 			this.x = x;
 			this.y = y;
 			this.z = z;
@@ -156,6 +171,8 @@ public class ActiveRiteClientData {
 			this.color = color;
 			this.seed = seed;
 			this.integrity = integrity;
+			this.kind = kind;
+			this.role = role;
 			this.previousRenderRadius = this.radius;
 			this.currentRenderRadius = this.radius;
 		}
@@ -167,6 +184,8 @@ public class ActiveRiteClientData {
 		public int color() { return color; }
 		public long seed() { return seed; }
 		public float integrity() { return integrity; }
+		public NodeKind kind() { return kind; }
+		public IchorianSigilAnatomy.Role role() { return role; }
 
 		public float renderRadius(float partialTick) {
 			float clampedPartialTick = Math.max(0.0F, Math.min(1.0F, partialTick));

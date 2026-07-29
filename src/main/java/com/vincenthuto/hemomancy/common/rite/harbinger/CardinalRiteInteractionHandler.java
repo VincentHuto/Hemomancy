@@ -6,6 +6,7 @@ import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.entity.utility.AwakenedIchorianSigilEntity;
 import com.vincenthuto.hemomancy.common.entity.utility.HumanitySpriteEntity;
+import com.vincenthuto.hemomancy.common.event.SanguineProjectionTargeting;
 import com.vincenthuto.hemomancy.common.init.EntityInit;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.recipe.CardinalRiteRecipe;
@@ -71,7 +72,8 @@ public final class CardinalRiteInteractionHandler {
 		if (!(level instanceof ServerLevel serverLevel) || !(source instanceof ServerPlayer player)) {
 			return CardinalRiteProjectionResult.unhandled();
 		}
-		HitResult trace = player.pick(5.5D, 0.0F, true);
+		HitResult trace = SanguineProjectionTargeting.pick(serverLevel, player,
+				SanguineProjectionTargeting.PROJECTION_REACH, true);
 		BlockPos physicalTarget = trace instanceof BlockHitResult blockHit ? blockHit.getBlockPos() : null;
 
 		CardinalRiteSavedData data = CardinalRiteSavedData.get(serverLevel);

@@ -2,6 +2,9 @@ package com.vincenthuto.hemomancy.client.render.item.hematic;
 
 import com.vincenthuto.hemomancy.client.particle.AbsorbedBloodCellParticle;
 import com.vincenthuto.hemomancy.client.particle.BloodCellParticle;
+import com.vincenthuto.hemomancy.client.particle.BloodProjectionParticlePath;
+import com.vincenthuto.hemomancy.client.particle.ProjectionParticleEmissionGate;
+import com.vincenthuto.hemomancy.client.particle.ProjectionParticlePerspective;
 import com.vincenthuto.hemomancy.client.particle.WillAbsorptionGlowParticle;
 import com.vincenthuto.hemomancy.client.particle.factory.AbsorbedBloodCellParticleFactory;
 import com.vincenthuto.hemomancy.client.particle.factory.BloodCellParticleFactory;
@@ -11,6 +14,7 @@ import com.vincenthuto.hemomancy.common.block.shared.BlockBloodInteractions;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.livingstaff.ILivingStaffProgress;
 import com.vincenthuto.hemomancy.common.entity.mob.monster.will.WillEntity;
+import com.vincenthuto.hemomancy.common.event.SanguineProjectionTargeting;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.item.component.LivingWeaponGraftData;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.BloodAbsorptionItem;
@@ -48,12 +52,18 @@ import java.util.function.Predicate;
 public final class CellHandParticleEffects {
 	private static final int GLOBAL_PARTICLE_COUNT = 20;
 	private static final ParticleColor WILL_ABSORPTION_GLOW = ParticleColor.BLACK;
+	private static final ProjectionParticleEmissionGate PROJECTION_EMISSION_GATE =
+			new ProjectionParticleEmissionGate();
 
 	private CellHandParticleEffects() {
 	}
 
 	public static void spawnThirdPersonParticlesFromOrigin(Vec3 origin, LivingEntity living, ItemStack activeStack) {
 		Minecraft mc = Minecraft.getInstance();
+		if (!ProjectionParticlePerspective.allowsThirdPersonEmission(
+				living == mc.player, mc.options.getCameraType().isFirstPerson())) {
+			return;
+		}
 		if (mc.isPaused() || !living.isUsingItem() || living.getUseItemRemainingTicks() <= 0) {
 			return;
 		}
@@ -82,15 +92,12 @@ public final class CellHandParticleEffects {
 				}
 			}
 		} else if (isProjectionMode(living, activeStack)) {
-			HitResult trace = living.pick(5, HLClientUtils.getPartialTicks(), true);
-			if (trace.getType() == HitResult.Type.BLOCK) {
-				Vec3 projectionTarget = trace.getLocation().add(0.0D, 1.05D, 0.0D);
-				Vec3 finalPos = projectionTarget.subtract(origin.x, origin.y, origin.z).reverse();
-				world.addParticle(AbsorbedBloodCellParticleFactory.createData(ParticleColor.BLOOD),
-						projectionTarget.x, projectionTarget.y, projectionTarget.z,
-						(float) finalPos.x + rand.nextFloat() - 0.5D,
-						(float) finalPos.y - rand.nextFloat() - 0.5F,
-						(float) finalPos.z + rand.nextFloat() - 0.5D);
+			if (PROJECTION_EMISSION_GATE.tryAcquire(living.getId(), world.getGameTime())) {
+				HitResult trace = SanguineProjectionTargeting.pick(world, living,
+						SanguineProjectionTargeting.PROJECTION_REACH, true);
+				if (trace.getType() == HitResult.Type.BLOCK) {
+					spawnProjectionParticle(mc, origin, trace, rand);
+				}
 			}
 		}
 
@@ -105,7 +112,7 @@ public final class CellHandParticleEffects {
 		}
 	}
 
-	public static void spawnFirstPersonParticlesForStack(ItemStack stack, HumanoidArm hand) {
+	public static void spawnFirstPersonParticlesForStack(ItemStack stack, HumanoidArm hand, Vec3 origin) {
 		Minecraft mc = Minecraft.getInstance();
 		if (mc.isPaused() || !mc.options.getCameraType().isFirstPerson()) {
 			return;
@@ -128,8 +135,7 @@ public final class CellHandParticleEffects {
 
 		Level world = player.level();
 		Random rand = new Random();
-		Vec3 anchor = calculateFirstPersonHandAnchor(hand);
-		Vec3 origin = firstPersonAnchorToWorld(anchor);
+		Vec3 anchor = worldToFirstPersonAnchor(origin);
 
 		if (isAbsorptionMode(player, stack)) {
 			Optional<Vec3> blockSource = BlockBloodInteractions.findLookedAtBloodBlockSource(world, player);
@@ -154,15 +160,12 @@ public final class CellHandParticleEffects {
 				}
 			}
 		} else if (isProjectionMode(player, stack)) {
-			HitResult trace = player.pick(5, HLClientUtils.getPartialTicks(), true);
-			if (trace.getType() == HitResult.Type.BLOCK) {
-				Vec3 projectionTarget = trace.getLocation().add(0.0, 1.05D, 0.0);
-				Vec3 finalPos = projectionTarget.subtract(origin.x, origin.y, origin.z).reverse();
-				mc.particleEngine.createParticle(AbsorbedBloodCellParticleFactory.createData(ParticleColor.BLOOD),
-						projectionTarget.x, projectionTarget.y, projectionTarget.z,
-						(float) finalPos.x + rand.nextFloat() - 0.5D,
-						(float) finalPos.y - rand.nextFloat(),
-						(float) finalPos.z + rand.nextFloat() - 0.5D);
+			if (PROJECTION_EMISSION_GATE.tryAcquire(player.getId(), world.getGameTime())) {
+				HitResult trace = SanguineProjectionTargeting.pick(world, player,
+						SanguineProjectionTargeting.PROJECTION_REACH, true);
+				if (trace.getType() == HitResult.Type.BLOCK) {
+					spawnProjectionParticle(mc, origin, trace, rand);
+				}
 			}
 		}
 
@@ -178,6 +181,10 @@ public final class CellHandParticleEffects {
 				particle.setFirstPersonAnchor(localOffset);
 			}
 		}
+	}
+
+	public static void spawnFirstPersonParticlesForStack(ItemStack stack, HumanoidArm hand) {
+		spawnFirstPersonParticlesForStack(stack, hand, fallbackFirstPersonHandOrigin(hand));
 	}
 
 	public static void spawnGraftRiteItemParticles(ItemStack graftStack, Vec3 source) {
@@ -198,7 +205,7 @@ public final class CellHandParticleEffects {
 				? player.getMainArm()
 				: player.getMainArm().getOpposite();
 		Vec3 origin = mc.options.getCameraType().isFirstPerson()
-				? firstPersonAnchorToWorld(calculateFirstPersonHandAnchor(activeArm))
+				? fallbackFirstPersonHandOrigin(activeArm)
 				: calculateThirdPersonHandOrigin(player, activeArm);
 		spawnItemParticlesAlongAbsorptionPath(mc, graftStack, origin, source);
 	}
@@ -308,6 +315,22 @@ public final class CellHandParticleEffects {
 		}
 	}
 
+	private static void spawnProjectionParticle(Minecraft mc, Vec3 origin, HitResult trace, Random rand) {
+		Particle created = mc.particleEngine.createParticle(
+				AbsorbedBloodCellParticleFactory.createData(ParticleColor.BLOOD),
+				origin.x, origin.y, origin.z, 0.0D, 0.0D, 0.0D);
+		if (created instanceof AbsorbedBloodCellParticle particle) {
+			particle.setProjectionPath(origin, trace.getLocation(),
+					projectionDeviation(origin, trace.getLocation(), rand));
+		}
+	}
+
+	private static Vec3 projectionDeviation(Vec3 source, Vec3 target, Random rand) {
+		return BloodProjectionParticlePath.arcDeviation(source, target,
+				rand.nextDouble() * 2.0D - 1.0D,
+				rand.nextDouble() * 2.0D - 1.0D);
+	}
+
 	private static boolean isAbsorptionMode(LivingEntity living, ItemStack stack) {
 		return stack.getItem() instanceof BloodAbsorptionItem
 				|| LivingStaffItem.isLivingStaffAbsorptionUse(living, stack);
@@ -355,28 +378,26 @@ public final class CellHandParticleEffects {
 				.min(Comparator.comparingDouble(living::distanceToSqr));
 	}
 
-	private static Vec3 calculateFirstPersonHandAnchor(HumanoidArm hand) {
-		LocalPlayer player = Minecraft.getInstance().player;
-		float useTicks = 0.0F;
-		if (player != null && player.isUsingItem()) {
-			ItemStack useStack = player.getUseItem();
-			useTicks = useStack.getUseDuration(player) - player.getUseItemRemainingTicks()
-					+ HLClientUtils.getPartialTicks();
-		}
-
-		float sideSign = hand == HumanoidArm.RIGHT ? 1.0F : -1.0F;
-		float wave = net.minecraft.util.Mth.sin(useTicks * 0.35F);
-		float pulse = net.minecraft.util.Mth.sin(useTicks * 0.18F);
-		return new Vec3(sideSign * (0.32D + 0.035D * wave), -0.14D + 0.035D * pulse,
-				0.66D - 0.03D * pulse);
-	}
-
 	private static Vec3 firstPersonAnchorToWorld(Vec3 localOffset) {
 		Camera camera = Minecraft.getInstance().gameRenderer.getMainCamera();
 		Vec3 right = new Vec3(camera.getLeftVector()).scale(-localOffset.x);
 		Vec3 up = new Vec3(camera.getUpVector()).scale(localOffset.y);
 		Vec3 forward = new Vec3(camera.getLookVector()).scale(localOffset.z);
 		return camera.getPosition().add(right).add(up).add(forward);
+	}
+
+	private static Vec3 fallbackFirstPersonHandOrigin(HumanoidArm hand) {
+		double side = hand == HumanoidArm.RIGHT ? 0.32D : -0.32D;
+		return firstPersonAnchorToWorld(new Vec3(side, -0.14D, 0.66D));
+	}
+
+	private static Vec3 worldToFirstPersonAnchor(Vec3 worldPosition) {
+		Camera camera = Minecraft.getInstance().gameRenderer.getMainCamera();
+		Vec3 delta = worldPosition.subtract(camera.getPosition());
+		Vec3 right = new Vec3(camera.getLeftVector()).scale(-1.0D);
+		Vec3 up = new Vec3(camera.getUpVector());
+		Vec3 forward = new Vec3(camera.getLookVector());
+		return new Vec3(delta.dot(right), delta.dot(up), delta.dot(forward));
 	}
 
 	private static Vec3 calculateThirdPersonHandOrigin(LivingEntity living, HumanoidArm side) {

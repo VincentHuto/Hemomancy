@@ -6,6 +6,7 @@ import com.vincenthuto.hemomancy.client.data.ActiveRiteClientData;
 import com.vincenthuto.hemomancy.common.init.RenderTypeInit;
 import com.vincenthuto.hemomancy.common.rite.CardinalRiteBoundaryProgress;
 import com.vincenthuto.hemomancy.common.rite.sigil.IchorianSigilOrganicGeometry;
+import com.vincenthuto.hemomancy.common.rite.sigil.IchorianSigilLandmarkGeometry;
 import com.vincenthuto.hemomancy.common.rite.sigil.IchorianSigilRenderPalette;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -132,9 +133,6 @@ public class CardinalRiteBoundaryRenderer {
 		int ringCount = legacy ? Math.max(1, riteTier) : rite.getTotalRings();
 		if (ringCount <= 0) return;
 
-		// Global breathing pulse (0..1)
-		double pulse = (Math.sin(currentTime * 0.08) + 1.0) * 0.5;
-
 		stack.pushPose();
 		stack.translate(cx - cam.x, cy - cam.y, cz - cam.z);
 		Matrix4f mat = stack.last().pose();
@@ -157,15 +155,16 @@ public class CardinalRiteBoundaryRenderer {
 			// lighten goes 0.0 (innermost, darkest) → ~0.6 (outermost, lightest)
 			float lighten = (ringCount > 1) ? (float) ring / (ringCount - 1) * 0.6f : 0f;
 
-			float coreAlpha = (float) (0.65 + 0.35 * pulse) * ringFade;
-			float glowAlpha = (float) (0.15 + 0.15 * pulse) * ringFade;
+			float heartbeat = IchorianSigilOrganicGeometry.heartbeat(currentTime);
+			float coreAlpha = (0.76F + (heartbeat - 0.92F) * 0.8F) * ringFade;
+			float glowAlpha = (0.12F + (heartbeat - 0.92F) * 0.5F) * ringFade;
 
-			float coreR = Math.min(1.0f, (float) (0.85 + 0.15 * pulse) + lighten * 0.15f);
-			float coreG = 0.05f + lighten * 0.20f;
-			float coreB = 0.04f + lighten * 0.15f;
-			float glowR = Math.min(1.0f, (float) (0.55 + 0.2 * pulse) + lighten * 0.25f);
-			float glowG = 0.02f + lighten * 0.12f;
-			float glowB = 0.02f + lighten * 0.10f;
+			float coreR = 0.34F + lighten * 0.10F;
+			float coreG = 0.008F + lighten * 0.018F;
+			float coreB = 0.012F + lighten * 0.014F;
+			float glowR = 0.72F + lighten * 0.12F;
+			float glowG = 0.025F + lighten * 0.04F;
+			float glowB = 0.03F + lighten * 0.03F;
 
 			// ── Draw the undulating ring ──
 			for (int i = 0; i < SEGMENTS; i++) {
@@ -176,6 +175,12 @@ public class CardinalRiteBoundaryRenderer {
 				if (arcIntegrity <= 0.01F) continue;
 				float segmentCoreAlpha = coreAlpha * arcIntegrity;
 				float segmentGlowAlpha = glowAlpha * arcIntegrity;
+				float dry = CardinalRiteBoundaryGeometry.integrityBrightness(arcIntegrity);
+				float arterial = CardinalRiteBoundaryGeometry.arterialHighlight(
+						(a1 + a2) * 0.5D, currentTime, ring);
+				float segmentCoreR = Math.min(1.0F, coreR * dry + arterial * 0.34F * arcIntegrity);
+				float segmentCoreG = coreG * dry + arterial * 0.018F;
+				float segmentCoreB = coreB * dry + arterial * 0.012F;
 
 				float r1 = ringRadius + undulation(a1, currentTime, directionSign);
 				float r2 = ringRadius + undulation(a2, currentTime, directionSign);
@@ -189,15 +194,19 @@ public class CardinalRiteBoundaryRenderer {
 				float cos2 = (float) Math.cos(a2);
 				float sin2 = (float) Math.sin(a2);
 
-				float iGlow1 = r1 - GLOW_WIDTH - CORE_WIDTH * 0.5f;
-				float iCore1 = r1 - CORE_WIDTH * 0.5f;
-				float oCore1 = r1 + CORE_WIDTH * 0.5f;
-				float oGlow1 = r1 + GLOW_WIDTH + CORE_WIDTH * 0.5f;
+				float integrityCoreWidth = CardinalRiteBoundaryGeometry.integrityWidth(
+						CORE_WIDTH, arcIntegrity);
+				float integrityGlowWidth = CardinalRiteBoundaryGeometry.integrityWidth(
+						GLOW_WIDTH, arcIntegrity);
+				float iGlow1 = r1 - integrityGlowWidth - integrityCoreWidth * 0.5f;
+				float iCore1 = r1 - integrityCoreWidth * 0.5f;
+				float oCore1 = r1 + integrityCoreWidth * 0.5f;
+				float oGlow1 = r1 + integrityGlowWidth + integrityCoreWidth * 0.5f;
 
-				float iGlow2 = r2 - GLOW_WIDTH - CORE_WIDTH * 0.5f;
-				float iCore2 = r2 - CORE_WIDTH * 0.5f;
-				float oCore2 = r2 + CORE_WIDTH * 0.5f;
-				float oGlow2 = r2 + GLOW_WIDTH + CORE_WIDTH * 0.5f;
+				float iGlow2 = r2 - integrityGlowWidth - integrityCoreWidth * 0.5f;
+				float iCore2 = r2 - integrityCoreWidth * 0.5f;
+				float oCore2 = r2 + integrityCoreWidth * 0.5f;
+				float oGlow2 = r2 + integrityGlowWidth + integrityCoreWidth * 0.5f;
 
 				if (glowVC != null) {
 					// Inner glow
@@ -218,10 +227,10 @@ public class CardinalRiteBoundaryRenderer {
 				if (coreVC != null) {
 					// Core
 					emitQuad(coreVC, mat,
-							cos1 * iCore1, y1, sin1 * iCore1, coreR, coreG, coreB, segmentCoreAlpha,
-							cos1 * oCore1, y1, sin1 * oCore1, coreR, coreG, coreB, segmentCoreAlpha,
-							cos2 * oCore2, y2, sin2 * oCore2, coreR, coreG, coreB, segmentCoreAlpha,
-							cos2 * iCore2, y2, sin2 * iCore2, coreR, coreG, coreB, segmentCoreAlpha);
+							cos1 * iCore1, y1, sin1 * iCore1, segmentCoreR, segmentCoreG, segmentCoreB, segmentCoreAlpha,
+							cos1 * oCore1, y1, sin1 * oCore1, segmentCoreR, segmentCoreG, segmentCoreB, segmentCoreAlpha,
+							cos2 * oCore2, y2, sin2 * oCore2, segmentCoreR, segmentCoreG, segmentCoreB, segmentCoreAlpha,
+							cos2 * iCore2, y2, sin2 * iCore2, segmentCoreR, segmentCoreG, segmentCoreB, segmentCoreAlpha);
 				}
 			}
 
@@ -268,39 +277,34 @@ public class CardinalRiteBoundaryRenderer {
 			Vec3 cam, float red, float green, float blue, float alpha, boolean glow) {
 		IchorianSigilOrganicGeometry.RibbonJoint start = segment.start();
 		IchorianSigilOrganicGeometry.RibbonJoint end = segment.end();
+		float startRed = Math.min(1.0F, red * start.redIntensity());
+		float endRed = Math.min(1.0F, red * end.redIntensity());
 		float startY = (float) (start.centerY() - cam.y);
 		float endY = (float) (end.centerY() - cam.y);
 		emitQuad(consumer, matrix,
 				(float) (start.leftX() - cam.x), startY,
-				(float) (start.leftZ() - cam.z), red, green, blue, glow ? 0.0F : alpha,
+				(float) (start.leftZ() - cam.z), startRed, green, blue, glow ? 0.0F : alpha,
 				(float) (start.rightX() - cam.x), startY,
-				(float) (start.rightZ() - cam.z), red, green, blue, alpha,
+				(float) (start.rightZ() - cam.z), startRed, green, blue, alpha,
 				(float) (end.rightX() - cam.x), endY,
-				(float) (end.rightZ() - cam.z), red, green, blue, alpha,
+				(float) (end.rightZ() - cam.z), endRed, green, blue, alpha,
 				(float) (end.leftX() - cam.x), endY,
-				(float) (end.leftZ() - cam.z), red, green, blue, glow ? 0.0F : alpha);
+				(float) (end.leftZ() - cam.z), endRed, green, blue, glow ? 0.0F : alpha);
 	}
 
 	private static void drawSanguineBlobs(PoseStack stack, VertexConsumer consumer,
 			ActiveRiteClientData.RiteEntry rite, float currentTime, Vec3 cam, boolean glow) {
 		for (ActiveRiteClientData.SanguineBlob blob : rite.getSanguineBlobs()) {
-			float pulse = 1.0F + 0.055F * (float) Math.sin(
-					currentTime * 0.16F + (blob.seed() & 31L) * 0.31F);
 			float radius = blob.renderRadius(currentTime - (float) Math.floor(currentTime))
-					* pulse + (glow ? 0.09F : 0.0F);
-			float damageFlicker = blob.integrity() <= 0.0F || blob.integrity() >= 1.0F
-					? 1.0F
-					: 1.0F - (1.0F - blob.integrity())
-							* (0.65F + 0.35F * (float) ((Math.sin(
-									currentTime * 1.75F + (blob.seed() & 15L)) + 1.0D) * 0.5D));
-			IchorianSigilRenderPalette.Color nodeColor =
-					IchorianSigilRenderPalette.node(blob.color(), glow);
+					+ (glow ? 0.09F : 0.0F);
 			stack.pushPose();
 			stack.translate(blob.x() - cam.x, blob.y() - cam.y, blob.z() - cam.z);
-			SanguineFormationProjectionRenderer.renderSphere(
-					consumer, stack.last().pose(), radius, currentTime, blob.seed(),
-					nodeColor.red(), nodeColor.green(), nodeColor.blue(),
-					(glow ? 0.24F : 0.84F) * damageFlicker);
+			var recipe = blob.kind() == ActiveRiteClientData.NodeKind.BOUNDARY_ANCHOR
+					? IchorianSigilLandmarkGeometry.boundaryAnchor(blob.seed())
+					: IchorianSigilLandmarkGeometry.forRole(blob.role(), blob.seed());
+			IchorianSigilLandmarkRenderer.render(
+					consumer, stack, recipe, radius, blob.color(), currentTime,
+					blob.seed(), blob.integrity(), glow, true);
 			stack.popPose();
 		}
 	}

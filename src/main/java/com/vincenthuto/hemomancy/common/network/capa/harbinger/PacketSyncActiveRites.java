@@ -1,8 +1,8 @@
 package com.vincenthuto.hemomancy.common.network.capa.harbinger;
 
-import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.client.data.ActiveRiteClientData;
 import com.vincenthuto.hemomancy.common.rite.CardinalRiteBoundaryProgress;
+import com.vincenthuto.hemomancy.common.rite.sigil.IchorianSigilAnatomy;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
@@ -19,13 +19,18 @@ import java.util.List;
  */
 public class PacketSyncActiveRites implements CustomPacketPayload {
 
-	public static final Type<PacketSyncActiveRites> TYPE = new Type<>(Hemomancy.rloc("packet_sync_active_rites"));
+	public static final Type<PacketSyncActiveRites> TYPE = new Type<>(
+			ResourceLocation.fromNamespaceAndPath("hemomancy", "packet_sync_active_rites"));
 	public static final StreamCodec<FriendlyByteBuf, PacketSyncActiveRites> STREAM_CODEC = StreamCodec.of(PacketSyncActiveRites::encode, PacketSyncActiveRites::decode);
 
 	private final List<ActiveRiteClientData.RiteEntry> entries;
 
 	public PacketSyncActiveRites(List<ActiveRiteClientData.RiteEntry> entries) {
-		this.entries = entries;
+		this.entries = List.copyOf(entries);
+	}
+
+	List<ActiveRiteClientData.RiteEntry> entries() {
+		return entries;
 	}
 
 	public static void encode(FriendlyByteBuf buf, PacketSyncActiveRites msg) {
@@ -78,6 +83,8 @@ public class PacketSyncActiveRites implements CustomPacketPayload {
 				buf.writeInt(blob.color());
 				buf.writeLong(blob.seed());
 				buf.writeFloat(blob.integrity());
+				buf.writeEnum(blob.kind());
+				buf.writeEnum(blob.role());
 			}
 		}
 	}
@@ -127,7 +134,9 @@ public class PacketSyncActiveRites implements CustomPacketPayload {
 			for (int blobIndex = 0; blobIndex < blobCount; blobIndex++) {
 				sanguineBlobs.add(new ActiveRiteClientData.SanguineBlob(
 						buf.readDouble(), buf.readDouble(), buf.readDouble(),
-						buf.readFloat(), buf.readInt(), buf.readLong(), buf.readFloat()));
+						buf.readFloat(), buf.readInt(), buf.readLong(), buf.readFloat(),
+						buf.readEnum(ActiveRiteClientData.NodeKind.class),
+						buf.readEnum(IchorianSigilAnatomy.Role.class)));
 			}
 			entries.add(new ActiveRiteClientData.RiteEntry(center, riteSize, progress, recipeId, unstained,
 					phase, instability, currentWave, totalWaves, completedRings, totalRings,

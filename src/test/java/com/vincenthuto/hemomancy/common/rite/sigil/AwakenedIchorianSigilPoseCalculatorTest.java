@@ -44,6 +44,16 @@ final class AwakenedIchorianSigilPoseCalculatorTest {
 	}
 
 	@Test
+	void landmarkRadiiScaleMoreGentlyThanPositionalExtent() {
+		assertEquals(List.of(0.8F, 0.9F, 1.0F, 1.1F, 1.2F),
+				java.util.stream.IntStream.rangeClosed(1, 5)
+						.mapToObj(AwakenedIchorianSigilPoseCalculator::radiusScale).toList());
+		var tierFive = AwakenedIchorianSigilPoseCalculator.calculate(
+				definition(IchorianSigilAnatomy.Style.ARTERIAL_FORK, 5), 0);
+		assertEquals(0.13F * 1.2F, tierFive.landmarks().getFirst().radius(), 0.0001F);
+	}
+
+	@Test
 	void everyCasteHasADistinctLivingDeformationSignature() {
 		Set<String> signatures = new HashSet<>();
 		for (IchorianSigilAnatomy.Style style : IchorianSigilAnatomy.Style.values()) {
@@ -105,6 +115,31 @@ final class AwakenedIchorianSigilPoseCalculatorTest {
 			assertTrue(moving.landmarks().get(index).position()
 					.distanceTo(idle.landmarks().get(index).position()) <= 0.12D);
 		}
+	}
+
+	@Test
+	void flightJointsSweepThroughBroadSmoothArcsInsteadOfVibratingInPlace() {
+		IchorianSigilDefinition definition = definition(
+				IchorianSigilAnatomy.Style.ARTERIAL_FORK, 3);
+		double minShiftX = Double.POSITIVE_INFINITY;
+		double maxShiftX = Double.NEGATIVE_INFINITY;
+		Vec3 previousShift = null;
+		for (int age = 40; age <= 160; age++) {
+			var idle = AwakenedIchorianSigilPoseCalculator.calculate(definition, age, 0.0F);
+			var moving = AwakenedIchorianSigilPoseCalculator.calculate(definition, age, 0.08F);
+			Vec3 shift = moving.landmarks().get(2).position()
+					.subtract(idle.landmarks().get(2).position());
+			minShiftX = Math.min(minShiftX, shift.x);
+			maxShiftX = Math.max(maxShiftX, shift.x);
+			if (previousShift != null) {
+				assertTrue(shift.distanceTo(previousShift) < 0.008D,
+						"adjacent joint poses must remain smooth");
+			}
+			previousShift = shift;
+		}
+
+		assertTrue(maxShiftX - minShiftX > 0.075D,
+				"joint should visibly shift through space instead of trembling in place");
 	}
 
 	private static IchorianSigilDefinition definition(

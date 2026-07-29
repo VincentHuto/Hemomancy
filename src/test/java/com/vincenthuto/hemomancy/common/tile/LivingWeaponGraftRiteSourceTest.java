@@ -36,7 +36,8 @@ public final class LivingWeaponGraftRiteSourceTest {
 		assertContains("rite sends matching graft stack as particle", rite, "particleStack.setCount(1)");
 		assertContains("rite anchors graft particles to absorption path", rite, "spawnGraftDrawParticles(level, pos, player, offering)");
 		assertContains("graft particle packet is registered", packetHandler, "SpawnGraftRiteItemParticlesPacket.TYPE");
-		assertContains("graft particles use absorption hand anchor", cellHandParticles, "calculateFirstPersonHandAnchor(activeArm)");
+		assertContains("graft particles use the first-person fallback outside an item render callback",
+				cellHandParticles, "fallbackFirstPersonHandOrigin(activeArm)");
 		assertContains("graft particles use item particle option", cellHandParticles, "new ItemParticleOption(ParticleTypes.ITEM, graftStack)");
 		assertContains("graft particles read graft form data", cellHandParticles, "LivingWeaponGraftData.fromStack(graftStack)");
 		assertContains("graft particles use manipulation tendency color", cellHandParticles, "form.manipulationHolder().get().getTend().getColor()");

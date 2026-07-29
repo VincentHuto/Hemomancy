@@ -33,15 +33,41 @@ public final class IchorianSigilOrganicGeometry {
 		}
 		y += envelope * Math.sin(progress * Math.PI * 3.0D
 				+ time * 0.061D + phase * 0.73D) * 0.025D;
-		float beat = 0.90F + 0.10F * (float) Math.sin(
-				time * 0.14D - progress * 2.5D + phase);
-		float taper = 0.78F + 0.22F * (float) envelope;
-		return new Sample(x, y, z, Math.max(0.001F, baseHalfWidth * beat * taper));
+		float beat = heartbeat(time);
+		float bolus = bolusIntensity((float) progress, bolusPosition(time, seed));
+		return new Sample(x, y, z,
+				vesselWidth(baseHalfWidth, (float) progress, beat, bolus),
+				0.72F + bolus * 0.28F);
 	}
 
 	public static float nodePulse(float time, long seed, int nodeIndex) {
-		double phase = phase(seed + nodeIndex * 0x9E3779B97F4A7C15L);
-		return 1.0F + 0.10F * (float) Math.sin(time * 0.14D + phase);
+		return heartbeat(time) + 0.018F * (float) Math.sin(
+				phase(seed + nodeIndex * 0x9E3779B97F4A7C15L));
+	}
+
+	public static float heartbeat(float time) {
+		return 1.0F + 0.08F * (float) Math.sin(time * 0.14D);
+	}
+
+	public static float vesselWidth(float baseHalfWidth, float progress,
+			float heartbeat, float bolusIntensity) {
+		float clampedProgress = Math.max(0.0F, Math.min(1.0F, progress));
+		float endpointTaper = 0.58F + 0.42F * (float) Math.sin(Math.PI * clampedProgress);
+		float bolusWidth = 1.0F + 0.16F * Math.max(0.0F, Math.min(1.0F, bolusIntensity));
+		return Math.max(0.001F, baseHalfWidth * endpointTaper
+				* Math.max(0.90F, Math.min(1.10F, heartbeat)) * bolusWidth);
+	}
+
+	public static float bolusPosition(float time, long seed) {
+		double raw = time * 0.035D + phase(seed) / (Math.PI * 2.0D);
+		return (float) (raw - Math.floor(raw));
+	}
+
+	public static float bolusIntensity(float progress, float bolusPosition) {
+		float distance = Math.abs(progress - bolusPosition);
+		distance = Math.min(distance, 1.0F - distance);
+		float normalized = Math.max(0.0F, 1.0F - distance / 0.18F);
+		return normalized * normalized * (3.0F - 2.0F * normalized);
 	}
 
 	public static List<RibbonJoint> ribbonJoints(List<Sample> samples) {
@@ -66,7 +92,8 @@ public final class IchorianSigilOrganicGeometry {
 					current.x() - normalX * current.halfWidth(),
 					current.z() - normalZ * current.halfWidth(),
 					current.x() + normalX * current.halfWidth(),
-					current.z() + normalZ * current.halfWidth()));
+					current.z() + normalZ * current.halfWidth(),
+					current.redIntensity()));
 		}
 		return List.copyOf(joints);
 	}
@@ -144,11 +171,15 @@ public final class IchorianSigilOrganicGeometry {
 		return start + (end - start) * progress;
 	}
 
-	public record Sample(double x, double y, double z, float halfWidth) {
+	public record Sample(double x, double y, double z, float halfWidth, float redIntensity) {
+		public Sample(double x, double y, double z, float halfWidth) {
+			this(x, y, z, halfWidth, 1.0F);
+		}
 	}
 
 	public record RibbonJoint(double centerX, double centerY, double centerZ,
-			double leftX, double leftZ, double rightX, double rightZ) {
+			double leftX, double leftZ, double rightX, double rightZ,
+			float redIntensity) {
 	}
 
 	public record RibbonSegment(RibbonJoint start, RibbonJoint end) {
