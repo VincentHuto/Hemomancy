@@ -64,7 +64,6 @@ final class AwakenedIchorianSigilGeometryRenderer {
 			VertexConsumer glow, float time, long seed,
 			float red, float green, float blue) {
 		for (AwakenedIchorianSigilPose.Landmark landmark : pose.landmarks()) {
-			if (landmark.activation() <= 0.001F && pose.migration() > 0.001F) continue;
 			stack.pushPose();
 			Vec3 point = landmark.position();
 			stack.translate(point.x, point.y, point.z);
@@ -87,7 +86,6 @@ final class AwakenedIchorianSigilGeometryRenderer {
 			VertexConsumer core, float time, long seed,
 			float red, float green, float blue) {
 		for (AwakenedIchorianSigilPose.Landmark landmark : pose.landmarks()) {
-			if (landmark.activation() <= 0.001F && pose.migration() > 0.001F) continue;
 			stack.pushPose();
 			Vec3 point = landmark.position();
 			stack.translate(point.x, point.y, point.z);

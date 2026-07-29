@@ -30,4 +30,13 @@ class AwakenedIchorianSigilRenderBufferSourceTest {
 		assertFalse(source.contains("VertexConsumer core = buffers.getBuffer"),
 				"a shared-buffer consumer must not be retained while another RenderType is requested");
 	}
+
+	@Test
+	void coloredLandmarksRemainVisibleThroughoutUnfolding() throws IOException {
+		String source = Files.readString(SOURCE);
+
+		assertFalse(source.contains(
+				"landmark.activation() <= 0.001F && pose.migration() > 0.001F"),
+				"migrating ground nodes must not disappear before quickening begins");
+	}
 }
