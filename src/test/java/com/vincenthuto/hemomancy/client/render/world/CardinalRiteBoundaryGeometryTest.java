@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.client.render.world;
 
+import com.vincenthuto.hemomancy.common.rite.CardinalRiteBoundaryProgress;
 import net.minecraft.core.BlockPos;
 import org.junit.jupiter.api.Test;
 
@@ -53,6 +54,19 @@ public final class CardinalRiteBoundaryGeometryTest {
 		assertEquals(11.75F, CardinalRiteBoundaryGeometry.footprintRadius(
 				List.of(new BlockPos(7, 0, 0)),
 				List.of(new BlockPos(11, 0, 0))), "sigil footprint plus marker clearance");
+	}
+
+	@Test
+	void thornsOnlyRootInsideVisibleBoundaryArcs() {
+		var quarterArc = List.of(new CardinalRiteBoundaryProgress.Segment(
+				0, -Math.PI / 2.0D, Math.PI / 2.0D));
+
+		assertTrue(CardinalRiteBoundaryGeometry.hasVisibleBeamAt(
+				quarterArc, -Math.PI / 4.0D), "thorn over completed quarter");
+		assertFalse(CardinalRiteBoundaryGeometry.hasVisibleBeamAt(
+				quarterArc, Math.PI / 2.0D), "thorn over missing boundary");
+		assertFalse(CardinalRiteBoundaryGeometry.hasVisibleBeamAt(
+				List.of(), 0.0D), "thorn with no boundary");
 	}
 
 	private static void assertEquals(float expected, float actual, String label) {

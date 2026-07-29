@@ -1,7 +1,8 @@
 package com.vincenthuto.hemomancy.client.render.world;
 
-import com.vincenthuto.hemomancy.common.rite.harbinger.CardinalRiteAnchorVisualRules;
+import com.vincenthuto.hemomancy.common.rite.CardinalRiteBoundaryProgress;
 import com.vincenthuto.hemomancy.common.rite.CardinalRiteFootprintRules;
+import com.vincenthuto.hemomancy.common.rite.harbinger.CardinalRiteAnchorVisualRules;
 import net.minecraft.core.BlockPos;
 
 import java.util.List;
@@ -37,5 +38,23 @@ public final class CardinalRiteBoundaryGeometry {
 
 	public static float footprintRadius(List<BlockPos> boundaryPoints, List<BlockPos> sigilPoints) {
 		return CardinalRiteFootprintRules.radius(boundaryPoints, sigilPoints);
+	}
+
+	public static boolean hasVisibleBeamAt(
+			List<CardinalRiteBoundaryProgress.Segment> arcs, double angle) {
+		double normalizedAngle = normalizeAngle(angle);
+		for (CardinalRiteBoundaryProgress.Segment arc : arcs) {
+			if (arc.integrity() <= 0.01F) continue;
+			double fromStart = normalizeAngle(
+					normalizedAngle - normalizeAngle(arc.startAngle()));
+			if (fromStart <= arc.sweepAngle()) return true;
+		}
+		return false;
+	}
+
+	private static double normalizeAngle(double angle) {
+		double fullCircle = Math.PI * 2.0D;
+		double normalized = angle % fullCircle;
+		return normalized < 0.0D ? normalized + fullCircle : normalized;
 	}
 }

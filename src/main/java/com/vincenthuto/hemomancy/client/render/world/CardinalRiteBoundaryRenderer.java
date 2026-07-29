@@ -226,10 +226,9 @@ public class CardinalRiteBoundaryRenderer {
 			}
 
 			// ── Draw vein branches sprouting inward from each ring ──
-			if (legacy || visibleArcs.stream().allMatch(segment -> segment.integrity() >= 0.999F)) {
-				drawVeins(glowVC, coreVC, mat, ringRadius, currentTime, directionSign,
-						coreR, coreG, coreB, coreAlpha, glowR, glowG, glowB);
-			}
+			drawVeins(glowVC, coreVC, mat, ringRadius, currentTime, directionSign,
+					coreR, coreG, coreB, coreAlpha, glowR, glowG, glowB,
+					visibleArcs, legacy);
 		}
 
 		stack.popPose();
@@ -350,13 +349,19 @@ public class CardinalRiteBoundaryRenderer {
 	private static void drawVeins(VertexConsumer glowVC, VertexConsumer coreVC, Matrix4f mat,
 			float baseRadius, float time, float directionSign,
 			float cR, float cG, float cB, float cA,
-			float gR, float gG, float gB) {
+			float gR, float gG, float gB,
+			List<CardinalRiteBoundaryProgress.Segment> visibleArcs, boolean legacy) {
 
 		// Veins are evenly spaced but their angular position crawls slowly over time
 		double crawlOffset = time * VEIN_CRAWL_SPEED * directionSign;
 
 		for (int v = 0; v < VEIN_COUNT; v++) {
 			double baseAngle = crawlOffset + (Math.PI * 2.0 / VEIN_COUNT) * v;
+			if (!legacy && !CardinalRiteBoundaryGeometry.hasVisibleBeamAt(
+					visibleArcs, baseAngle)) continue;
+			float rootIntegrity = legacy ? 1.0F
+					: arcIntegrity(visibleArcs, baseAngle, time);
+			if (rootIntegrity <= 0.01F) continue;
 
 			// Each vein has a slightly different length and curve based on its index
 			// Use a deterministic hash-like value from the vein index for variety
@@ -365,7 +370,7 @@ public class CardinalRiteBoundaryRenderer {
 
 			// Vein pulsing — individual veins throb at slightly offset phases
 			double veinPulse = (Math.sin(time * 0.1 + v * 1.7) + 1.0) * 0.5;
-			float veinAlpha = (float) (0.3 + 0.5 * veinPulse);
+			float veinAlpha = (float) (0.3 + 0.5 * veinPulse) * rootIntegrity;
 
 			// Slight angular wander as it grows inward (gives curve)
 			double curvature = Math.sin(veinSeed * 17.3) * 0.35;
