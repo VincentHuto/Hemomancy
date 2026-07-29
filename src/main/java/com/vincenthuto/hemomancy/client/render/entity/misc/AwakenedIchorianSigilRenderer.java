@@ -6,6 +6,8 @@ import com.mojang.math.Axis;
 import com.vincenthuto.hemomancy.client.render.world.SanguineFormationProjectionRenderer;
 import com.vincenthuto.hemomancy.common.entity.utility.AwakenedIchorianSigilEntity;
 import com.vincenthuto.hemomancy.common.init.RenderTypeInit;
+import com.vincenthuto.hemomancy.common.rite.sigil.AwakenedIchorianSigilBodyAnimation;
+import com.vincenthuto.hemomancy.common.rite.sigil.AwakenedIchorianSigilFacing;
 import com.vincenthuto.hemomancy.common.rite.sigil.IchorianSigilOrganicGeometry;
 import com.vincenthuto.hemomancy.common.rite.sigil.IchorianSigilRenderPalette;
 import com.vincenthuto.hemomancy.common.rite.sigil.IchorianSigilDefinition;
@@ -43,8 +45,21 @@ public final class AwakenedIchorianSigilRenderer extends EntityRenderer<Awakened
 		int color = sigil.color();
 
 		stack.pushPose();
+		stack.mulPose(Axis.YP.rotationDegrees(entity.getRenderFacingYaw(partialTick)));
+		stack.mulPose(Axis.XP.rotationDegrees(entity.getRenderFacingPitch(partialTick)));
+		stack.mulPose(Axis.ZP.rotationDegrees(entity.getRenderBankRoll(partialTick)));
+		sigil.awakenedForm().ifPresent(anatomy -> stack.mulPose(Axis.YP.rotationDegrees(
+				AwakenedIchorianSigilFacing.authoredForwardCorrection(
+						anatomy.forward().x, anatomy.forward().z))));
+		AwakenedIchorianSigilBodyAnimation.BodyPose body =
+				AwakenedIchorianSigilBodyAnimation.pose(
+						sigilId, time, entity.getRenderMovementSpeed(partialTick));
+		stack.translate(body.offsetX(), body.offsetY(), body.offsetZ());
+		stack.mulPose(Axis.YP.rotationDegrees(body.yawDegrees()));
+		stack.mulPose(Axis.XP.rotationDegrees(body.pitchDegrees()));
+		stack.mulPose(Axis.ZP.rotationDegrees(body.rollDegrees()));
+		stack.scale(body.scaleX(), body.scaleY(), body.scaleZ());
 		if (sigil.awakenedForm().isPresent()) {
-			stack.mulPose(Axis.YP.rotationDegrees(entity.getRenderFacingYaw(partialTick)));
 			AwakenedIchorianSigilPose pose =
 					AwakenedIchorianSigilPoseCalculator.calculate(sigil, time);
 			AwakenedIchorianSigilGeometryRenderer.render(
@@ -53,13 +68,8 @@ public final class AwakenedIchorianSigilRenderer extends EntityRenderer<Awakened
 			super.render(entity, yaw, partialTick, stack, buffers, packedLight);
 			return;
 		}
-		float heartbeat = (float) Math.sin(time * 0.14F);
-		stack.mulPose(Axis.YP.rotationDegrees(
-				(time * 0.62F + (float) Math.sin(time * 0.045F) * 12.0F) * peel));
 		stack.mulPose(Axis.XP.rotationDegrees(90.0F * peel));
-		stack.mulPose(Axis.ZP.rotationDegrees(heartbeat * 4.5F * peel));
-		float breath = 1.0F + heartbeat * 0.035F;
-		stack.scale(SHAPE_SCALE * breath, SHAPE_SCALE, SHAPE_SCALE * breath);
+		stack.scale(SHAPE_SCALE, SHAPE_SCALE, SHAPE_SCALE);
 		renderShape(buffers.getBuffer(RenderTypeInit.RITE_BOUNDARY_GLOW), stack.last().pose(),
 				sigil, time, color, true);
 		renderShape(buffers.getBuffer(RenderTypeInit.RITE_BOUNDARY_CORE), stack.last().pose(),

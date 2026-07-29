@@ -50,6 +50,12 @@ public final class AwakenedIchorianSigilEntity extends Entity {
 	private int clientLerpSteps;
 	private float previousRenderFacingYaw;
 	private float renderFacingYaw;
+	private float previousRenderFacingPitch;
+	private float renderFacingPitch;
+	private float previousRenderBankRoll;
+	private float renderBankRoll;
+	private float previousRenderMovementSpeed;
+	private float renderMovementSpeed;
 
 	public AwakenedIchorianSigilEntity(EntityType<? extends AwakenedIchorianSigilEntity> type, Level level) {
 		super(type, level);
@@ -81,6 +87,18 @@ public final class AwakenedIchorianSigilEntity extends Entity {
 
 	public float getRenderFacingYaw(float partialTick) {
 		return Mth.rotLerp(partialTick, previousRenderFacingYaw, renderFacingYaw);
+	}
+
+	public float getRenderFacingPitch(float partialTick) {
+		return Mth.lerp(partialTick, previousRenderFacingPitch, renderFacingPitch);
+	}
+
+	public float getRenderBankRoll(float partialTick) {
+		return Mth.lerp(partialTick, previousRenderBankRoll, renderBankRoll);
+	}
+
+	public float getRenderMovementSpeed(float partialTick) {
+		return Mth.lerp(partialTick, previousRenderMovementSpeed, renderMovementSpeed);
 	}
 
 	public AABB getAnatomyRenderBounds() {
@@ -152,17 +170,36 @@ public final class AwakenedIchorianSigilEntity extends Entity {
 	}
 
 	private void tickClientInterpolation() {
-		if (clientLerpSteps <= 0) return;
+		previousRenderFacingYaw = renderFacingYaw;
+		previousRenderFacingPitch = renderFacingPitch;
+		previousRenderBankRoll = renderBankRoll;
+		previousRenderMovementSpeed = renderMovementSpeed;
+		if (clientLerpSteps <= 0) {
+			renderBankRoll *= 0.82F;
+			renderMovementSpeed *= 0.86F;
+			return;
+		}
 		double previousX = getX();
+		double previousY = getY();
 		double previousZ = getZ();
 		AwakenedIchorianSigilMotion.Position next = AwakenedIchorianSigilMotion.smoothStep(
 				new AwakenedIchorianSigilMotion.Position(getX(), getY(), getZ()),
 				new AwakenedIchorianSigilMotion.Position(clientLerpX, clientLerpY, clientLerpZ),
 				clientLerpSteps);
 		setPos(next.x(), next.y(), next.z());
-		previousRenderFacingYaw = renderFacingYaw;
-		renderFacingYaw = AwakenedIchorianSigilFacing.update(
-				renderFacingYaw, next.x() - previousX, next.z() - previousZ, 0.25F);
+		double dx = next.x() - previousX;
+		double dy = next.y() - previousY;
+		double dz = next.z() - previousZ;
+		AwakenedIchorianSigilFacing.Orientation orientation =
+				AwakenedIchorianSigilFacing.update(
+						new AwakenedIchorianSigilFacing.Orientation(
+								renderFacingYaw, renderFacingPitch, renderBankRoll),
+						dx, dy, dz, 0.25F);
+		renderFacingYaw = orientation.yaw();
+		renderFacingPitch = orientation.pitch();
+		renderBankRoll = orientation.roll();
+		float measuredSpeed = (float) Math.sqrt(dx * dx + dy * dy + dz * dz);
+		renderMovementSpeed = Mth.lerp(0.35F, renderMovementSpeed, measuredSpeed);
 		clientLerpSteps--;
 	}
 

@@ -3,6 +3,7 @@ package com.vincenthuto.hemomancy.common.rite.sigil;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 final class AwakenedIchorianSigilFacingTest {
 
@@ -29,5 +30,35 @@ final class AwakenedIchorianSigilFacingTest {
 				179.0F, Math.sin(radians), Math.cos(radians), 0.5F);
 
 		assertEquals(180.0F, Math.abs(result), 0.001F);
+	}
+
+	@Test
+	void threeDimensionalFacingPitchesIntoVerticalTravel() {
+		var result = AwakenedIchorianSigilFacing.update(
+				new AwakenedIchorianSigilFacing.Orientation(0.0F, 0.0F, 0.0F),
+				0.0D, 1.0D, 1.0D, 1.0F);
+
+		assertEquals(0.0F, result.yaw(), 0.001F);
+		assertEquals(-45.0F, result.pitch(), 0.001F);
+	}
+
+	@Test
+	void turningBodiesBankTowardTheirNewTravelDirection() {
+		var result = AwakenedIchorianSigilFacing.update(
+				new AwakenedIchorianSigilFacing.Orientation(0.0F, 0.0F, 0.0F),
+				1.0D, 0.0D, 0.0D, 1.0F);
+
+		assertEquals(-90.0F, result.yaw(), 0.001F);
+		assertTrue(Math.abs(result.roll()) >= 20.0F);
+	}
+
+	@Test
+	void authoredRigFrontIsCorrectedToTheTravelForwardAxis() {
+		assertEquals(180.0F, Math.abs(
+				AwakenedIchorianSigilFacing.authoredForwardCorrection(0.0D, -1.0D)), 0.001F);
+		assertEquals(-90.0F,
+				AwakenedIchorianSigilFacing.authoredForwardCorrection(-1.0D, 0.0D), 0.001F);
+		assertEquals(90.0F,
+				AwakenedIchorianSigilFacing.authoredForwardCorrection(1.0D, 0.0D), 0.001F);
 	}
 }
