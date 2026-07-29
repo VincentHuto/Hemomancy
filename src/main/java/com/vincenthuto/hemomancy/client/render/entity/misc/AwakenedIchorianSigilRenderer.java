@@ -61,7 +61,8 @@ public final class AwakenedIchorianSigilRenderer extends EntityRenderer<Awakened
 		stack.scale(body.scaleX(), body.scaleY(), body.scaleZ());
 		if (sigil.awakenedForm().isPresent()) {
 			AwakenedIchorianSigilPose pose =
-					AwakenedIchorianSigilPoseCalculator.calculate(sigil, time);
+					AwakenedIchorianSigilPoseCalculator.calculate(
+							sigil, time, entity.getRenderMovementSpeed(partialTick));
 			AwakenedIchorianSigilGeometryRenderer.render(
 					pose, stack, buffers, time, color, sigil.id().hashCode());
 			stack.popPose();

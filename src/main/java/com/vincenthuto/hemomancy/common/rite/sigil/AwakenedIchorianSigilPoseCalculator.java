@@ -13,6 +13,11 @@ public final class AwakenedIchorianSigilPoseCalculator {
 
 	public static AwakenedIchorianSigilPose calculate(
 			IchorianSigilDefinition definition, float ageTicks) {
+		return calculate(definition, ageTicks, 0.0F);
+	}
+
+	public static AwakenedIchorianSigilPose calculate(
+			IchorianSigilDefinition definition, float ageTicks, float movementSpeed) {
 		IchorianSigilAnatomy anatomy = definition.awakenedForm().orElseThrow();
 		float detachment = stage(ageTicks, 0, 10);
 		float migration = stage(ageTicks, 6, 32);
@@ -32,6 +37,9 @@ public final class AwakenedIchorianSigilPoseCalculator {
 			double offset = wave * anatomy.animation().flex() * quickening * 0.08D;
 			position = position.add(offset * ((source & 1) == 0 ? 1 : -1),
 					offset * roleVertical(landmark.role()), offset * 0.45D);
+			position = position.add(flightArticulation(
+					anatomy.animation().style(), landmark, ageTicks,
+					movementSpeed, extent).scale(quickening));
 			float radius = landmark.radius() * extent
 					* (1.0F + wave * anatomy.animation().pulse() * quickening * 0.12F);
 			landmarks.add(new AwakenedIchorianSigilPose.Landmark(
@@ -104,6 +112,27 @@ public final class AwakenedIchorianSigilPoseCalculator {
 			case RIB -> -0.35D;
 			default -> 0.15D;
 		};
+	}
+
+	private static Vec3 flightArticulation(IchorianSigilAnatomy.Style style,
+			IchorianSigilAnatomy.Landmark landmark, float age, float movementSpeed,
+			float extent) {
+		float activity = Mth.clamp(movementSpeed * 18.0F, 0.0F, 1.0F);
+		if (activity <= 0.0F) return Vec3.ZERO;
+		double roleAmplitude = switch (landmark.role()) {
+			case HOOK, LIMB_TIP, MEMBRANE_TIP -> 1.20D;
+			case EYE, ORGAN -> 0.62D;
+			case RIB -> 0.82D;
+			default -> 1.0D;
+		};
+		double amplitude = (0.018D + extent * 0.007D) * roleAmplitude * activity;
+		double phase = age * (0.105D + style.ordinal() * 0.006D)
+				+ landmark.source() * 1.17D + style.ordinal() * 0.43D;
+		double counter = (landmark.source() & 1) == 0 ? 1.0D : -1.0D;
+		return new Vec3(
+				Math.sin(phase) * amplitude * counter,
+				Math.sin(phase * 1.61D + 0.8D) * amplitude * 0.62D,
+				Math.cos(phase * 0.83D - 0.4D) * amplitude * 0.88D * counter);
 	}
 
 	private static float stage(float age, float start, float end) {

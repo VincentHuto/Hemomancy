@@ -76,6 +76,37 @@ final class AwakenedIchorianSigilPoseCalculatorTest {
 		}
 	}
 
+	@Test
+	void movementAnimatesIndividualNodesInsteadOfDraggingTheRigAsOnePiece() {
+		IchorianSigilDefinition definition = definition(
+				IchorianSigilAnatomy.Style.ARTERIAL_FORK, 4);
+		var idle = AwakenedIchorianSigilPoseCalculator.calculate(definition, 72.0F, 0.0F);
+		var moving = AwakenedIchorianSigilPoseCalculator.calculate(definition, 72.0F, 0.08F);
+
+		Vec3 firstShift = moving.landmarks().get(0).position()
+				.subtract(idle.landmarks().get(0).position());
+		Vec3 secondShift = moving.landmarks().get(1).position()
+				.subtract(idle.landmarks().get(1).position());
+
+		assertTrue(firstShift.lengthSqr() > 0.000001D);
+		assertTrue(secondShift.lengthSqr() > 0.000001D);
+		assertNotEquals(firstShift, secondShift,
+				"joint phases should bend vessels rather than translate the entire rig");
+	}
+
+	@Test
+	void nodeArticulationRemainsSubtleAtFlightSpeed() {
+		IchorianSigilDefinition definition = definition(
+				IchorianSigilAnatomy.Style.OPTIC_STALK_VEIL, 5);
+		var idle = AwakenedIchorianSigilPoseCalculator.calculate(definition, 90.0F, 0.0F);
+		var moving = AwakenedIchorianSigilPoseCalculator.calculate(definition, 90.0F, 0.12F);
+
+		for (int index = 0; index < moving.landmarks().size(); index++) {
+			assertTrue(moving.landmarks().get(index).position()
+					.distanceTo(idle.landmarks().get(index).position()) <= 0.12D);
+		}
+	}
+
 	private static IchorianSigilDefinition definition(
 			IchorianSigilAnatomy.Style style, int tier) {
 		var nodes = List.of(
