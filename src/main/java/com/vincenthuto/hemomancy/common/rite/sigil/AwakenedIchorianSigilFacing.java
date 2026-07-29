@@ -37,8 +37,11 @@ public final class AwakenedIchorianSigilFacing {
 
 	public static float authoredForwardCorrection(double forwardX, double forwardZ) {
 		if (forwardX * forwardX + forwardZ * forwardZ < 1.0E-12D) return 0.0F;
-		float authoredYaw = (float) Math.toDegrees(Math.atan2(-forwardX, forwardZ));
-		return Mth.wrapDegrees(-authoredYaw);
+		return Mth.wrapDegrees((float) Math.toDegrees(Math.atan2(-forwardX, forwardZ)));
+	}
+
+	public static float renderYaw(float minecraftYaw) {
+		return -minecraftYaw;
 	}
 
 	public record Orientation(float yaw, float pitch, float roll) {

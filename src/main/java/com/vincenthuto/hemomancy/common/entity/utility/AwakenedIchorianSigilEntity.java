@@ -153,6 +153,13 @@ public final class AwakenedIchorianSigilEntity extends Entity {
 				originX, originY, originZ,
 				center.getX() + 0.5D, center.getY() + 2.5D, center.getZ() + 0.5D,
 				entityData.get(ORBIT_RADIUS), entityData.get(STARTING_ANGLE), motionAge);
+		AwakenedIchorianSigilFacing.Orientation travelFacing =
+				AwakenedIchorianSigilFacing.update(
+						new AwakenedIchorianSigilFacing.Orientation(
+								getYRot(), getXRot(), 0.0F),
+						target.x() - getX(), target.y() - getY(), target.z() - getZ(), 1.0F);
+		setYRot(travelFacing.yaw());
+		setXRot(travelFacing.pitch());
 		setPos(target.x(), target.y(), target.z());
 		setDeltaMovement(0.0D, 0.0D, 0.0D);
 	}
@@ -194,10 +201,12 @@ public final class AwakenedIchorianSigilEntity extends Entity {
 				AwakenedIchorianSigilFacing.update(
 						new AwakenedIchorianSigilFacing.Orientation(
 								renderFacingYaw, renderFacingPitch, renderBankRoll),
-						dx, dy, dz, 0.25F);
+						dx, dy, dz, 1.0F);
 		renderFacingYaw = orientation.yaw();
 		renderFacingPitch = orientation.pitch();
 		renderBankRoll = orientation.roll();
+		setYRot(renderFacingYaw);
+		setXRot(renderFacingPitch);
 		float measuredSpeed = (float) Math.sqrt(dx * dx + dy * dy + dz * dz);
 		renderMovementSpeed = Mth.lerp(0.35F, renderMovementSpeed, measuredSpeed);
 		clientLerpSteps--;

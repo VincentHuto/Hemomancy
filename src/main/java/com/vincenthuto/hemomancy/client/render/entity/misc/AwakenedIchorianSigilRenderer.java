@@ -45,7 +45,8 @@ public final class AwakenedIchorianSigilRenderer extends EntityRenderer<Awakened
 		int color = sigil.color();
 
 		stack.pushPose();
-		stack.mulPose(Axis.YP.rotationDegrees(entity.getRenderFacingYaw(partialTick)));
+		stack.mulPose(Axis.YP.rotationDegrees(AwakenedIchorianSigilFacing.renderYaw(
+				entity.getRenderFacingYaw(partialTick))));
 		stack.mulPose(Axis.XP.rotationDegrees(entity.getRenderFacingPitch(partialTick)));
 		stack.mulPose(Axis.ZP.rotationDegrees(entity.getRenderBankRoll(partialTick)));
 		sigil.awakenedForm().ifPresent(anatomy -> stack.mulPose(Axis.YP.rotationDegrees(
