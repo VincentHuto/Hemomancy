@@ -514,6 +514,8 @@ public class ClientEvents {
     public static void onClientPlayerLogout(net.neoforged.neoforge.client.event.ClientPlayerNetworkEvent.LoggingOut event) {
         // HutosLib now retains read tracker state across disconnect/reload.
         FaneBoundaryClientData.clear();
+        ActiveRiteClientData.clear();
+        CardinalRiteFogRenderer.clear();
     }
 
 	private static boolean crossbarRadialOpened;

@@ -15,6 +15,8 @@ public class HemoClientConfig {
 	public static ModConfigSpec.BooleanValue RENDER_MORPHLING_MUTATION_LAYER;
 	public static ModConfigSpec.BooleanValue RENDER_BLOOD_ORB_RENDERER;
 	public static ModConfigSpec.BooleanValue RENDER_FANE_BOUNDARY;
+	public static ModConfigSpec.BooleanValue RENDER_CARDINAL_RITE_FOG;
+	public static ModConfigSpec.DoubleValue CARDINAL_RITE_FOG_VERTICAL_OFFSET;
 	public static ModConfigSpec.BooleanValue RENDER_OCULIFLORA_REVEAL;
 	public static ModConfigSpec.EnumValue<LowtideRuinStructureQuality> LOWTIDE_RUIN_STRUCTURE_QUALITY;
 
@@ -78,6 +80,14 @@ public class HemoClientConfig {
 		RENDER_FANE_BOUNDARY = CLIENT_BUILDER
 				.comment("Render Founding Fane boundary domes and screen distortion.")
 				.define("renderFaneBoundary", true);
+
+		RENDER_CARDINAL_RITE_FOG = CLIENT_BUILDER
+				.comment("Render rolling red and black ground fog around active Harbinger cardinal rites.")
+				.define("renderCardinalRiteFog", true);
+
+		CARDINAL_RITE_FOG_VERTICAL_OFFSET = CLIENT_BUILDER
+				.comment("Moves the diffuse cardinal rite smoke ring up or down in blocks.")
+				.defineInRange("cardinalRiteFogVerticalOffset", 0.0D, -4.0D, 8.0D);
 
 		RENDER_OCULIFLORA_REVEAL = CLIENT_BUILDER
 				.comment("Render Oculiflora Reticularis local network-sight markers.")

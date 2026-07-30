@@ -15,6 +15,35 @@ public final class CardinalRiteBoundaryProgress {
 	private CardinalRiteBoundaryProgress() {
 	}
 
+	public static List<Segment> authoredSegments(
+			List<CardinalRiteCeremonyDefinition.Anchor> anchors) {
+		if (anchors == null || anchors.isEmpty()) return List.of();
+		List<Segment> result = new ArrayList<>();
+		int maxRing = anchors.stream().mapToInt(CardinalRiteCeremonyDefinition.Anchor::ring).max().orElse(-1);
+		for (int ring = 0; ring <= maxRing; ring++) {
+			final int targetRing = ring;
+			List<IndexedAnchor> ringAnchors = new ArrayList<>();
+			for (int index = 0; index < anchors.size(); index++) {
+				var anchor = anchors.get(index);
+				if (anchor.ring() == targetRing) {
+					ringAnchors.add(new IndexedAnchor(index, anchor));
+				}
+			}
+			ringAnchors.sort(Comparator.comparingInt(entry -> entry.anchor().order()));
+			if (ringAnchors.size() < 2) continue;
+			for (int index = 0; index < ringAnchors.size(); index++) {
+				IndexedAnchor start = ringAnchors.get(index);
+				IndexedAnchor end = ringAnchors.get((index + 1) % ringAnchors.size());
+				double startAngle = Math.atan2(start.anchor().z(), start.anchor().x());
+				double endAngle = Math.atan2(end.anchor().z(), end.anchor().x());
+				result.add(new Segment(
+						ring, startAngle, normalizeAngle(endAngle - startAngle),
+						start.index(), 1.0F));
+			}
+		}
+		return List.copyOf(result);
+	}
+
 	public static List<Segment> completedSegments(
 			List<CardinalRiteCeremonyDefinition.Anchor> anchors, int[] anchorBloodMl) {
 		if (anchors == null || anchors.isEmpty() || anchorBloodMl == null) return List.of();

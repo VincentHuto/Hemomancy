@@ -68,6 +68,8 @@ import com.vincenthuto.hemomancy.common.worldgen.FungalGardenTravelHelper;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import com.vincenthuto.hutoslib.client.particle.factory.DarkGlowParticleFactory;
 import com.vincenthuto.hutoslib.client.particle.data.EmberParticleData;
+import com.vincenthuto.hutoslib.common.lightning.LightningTestConfig;
+import com.vincenthuto.hutoslib.common.lightning.LightningTesterSpawner;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -118,6 +120,8 @@ public class HarbingerCardinalRiteEvents {
 	private static final int SACRIFICE_DAMAGE_INTERVAL = 10;
 	private static final int PARTICLE_SPAWN_INTERVAL = CardinalRitePillarTiming.SPAWN_INTERVAL_TICKS;
 	private static final int RITE_SYNC_INTERVAL = 10;
+	private static final int BROKEN_ANCHOR_OUTER_BLACK = 0xE806020A;
+	private static final int BROKEN_ANCHOR_INNER_PURPLE = 0xFF5A167D;
 
 	@SubscribeEvent
 	public static void onLevelTick(LevelTickEvent.Post event) {
@@ -212,7 +216,9 @@ public class HarbingerCardinalRiteEvents {
 				rite.tick();
 			} else {
 				if (sLevel.getGameTime() % 20 == 0 && !verifyRiteStructure(sLevel, rite)) {
-					rite.addInstability(5);
+					failRite(sLevel, caster, rite);
+					toRemove.add(playerUUID);
+					continue;
 				}
 				CardinalRiteOrdealEngine.tick(sLevel, caster, rite, recipe);
 			}
@@ -512,6 +518,10 @@ public class HarbingerCardinalRiteEvents {
 	 */
 	private static void failRite(ServerLevel sLevel, ServerPlayer caster, ActiveCardinalRite rite) {
 		BlockPos center = rite.getCenterPos();
+		CardinalRiteRecipe recipe = CardinalRiteRecipe.getRiteByLocation(sLevel, rite.getRecipeId());
+
+		CardinalRiteOrdealEngine.clearThreats(sLevel, rite);
+		spawnBrokenAnchorDispersal(sLevel, rite, recipe);
 
 		// Deal damage to the caster
 		caster.hurt(caster.damageSources().magic(), 10.0f);
@@ -542,6 +552,46 @@ public class HarbingerCardinalRiteEvents {
 				Component.literal("The rite structure has been broken! The ritual backlashes!")
 						.withStyle(ChatFormatting.DARK_RED, ChatFormatting.BOLD),
 				false);
+	}
+
+	private static void spawnBrokenAnchorDispersal(ServerLevel sLevel, ActiveCardinalRite rite,
+			CardinalRiteRecipe recipe) {
+		if (recipe == null || recipe.getCeremony() == null) return;
+
+		Vec3 center = Vec3.atCenterOf(rite.getCenterPos());
+		int anchorIndex = 0;
+		for (var anchor : recipe.getCeremony().anchors()) {
+			Vec3 origin = CardinalRiteTargetGeometry.anchorAimPoint(
+					rite.getCenterPos(), anchor.offset()).add(0.0D, 0.08D, 0.0D);
+			sLevel.sendParticles(DarkGlowParticleFactory.createData(ParticleColor.BLACK),
+					origin.x, origin.y, origin.z, 24, 0.22D, 0.18D, 0.22D, 0.12D);
+			sLevel.sendParticles(new EmberParticleData(ParticleColor.PURPLE, 0.92F, 0.065F, 24),
+					origin.x, origin.y, origin.z, 18, 0.20D, 0.16D, 0.20D, 0.18D);
+
+			Vec3 outward = origin.subtract(center.x, origin.y, center.z);
+			if (outward.lengthSqr() < 1.0E-6D) outward = new Vec3(0.0D, 0.0D, 1.0D);
+			outward = outward.normalize();
+			Vec3 sideways = new Vec3(-outward.z, 0.0D, outward.x);
+			for (int bolt = 0; bolt < 5; bolt++) {
+				double reach = 0.45D + sLevel.random.nextDouble() * 0.55D;
+				double lateral = (sLevel.random.nextDouble() - 0.5D) * 0.75D;
+				double rise = (sLevel.random.nextDouble() - 0.15D) * 0.65D;
+				Vec3 end = origin.add(outward.scale(reach))
+						.add(sideways.scale(lateral))
+						.add(0.0D, rise, 0.0D);
+				long seed = sLevel.random.nextLong() ^ ((long) anchorIndex << 32) ^ bolt;
+				LightningTesterSpawner.spawn(sLevel, origin, end,
+						new LightningTestConfig(
+								LightningTestConfig.Backend.BOLT,
+								BROKEN_ANCHOR_OUTER_BLACK,
+								BROKEN_ANCHOR_OUTER_BLACK,
+								BROKEN_ANCHOR_INNER_PURPLE,
+								8.0F, 0.0F, 0.0F, 0.0F,
+								64.0F, 2.6F, 7, 5, 0.08F, 0.028F,
+								true, seed, false, 24));
+			}
+			anchorIndex++;
+		}
 	}
 
 	private static ActiveRiteClientData.RiteEntry toClientEntry(ServerLevel level, ActiveCardinalRite rite) {

@@ -75,6 +75,9 @@ public class ShaderInit {
 	public static ShaderHolder SILENT_ARCHON_FOG = new ShaderHolder(Hemomancy.rloc("world/silent_archon_fog"),
 			DefaultVertexFormat.POSITION_TEX_COLOR, "HemoTime", "FogSeed", "FogLayer", "FogDensity");
 
+	public static ShaderHolder CARDINAL_RITE_FOG = new ShaderHolder(Hemomancy.rloc("world/cardinal_rite_fog"),
+			DefaultVertexFormat.POSITION_TEX_COLOR, "HemoTime", "FogSeed");
+
 	public static ShaderHolder SILENT_ARCHON_STORM_CLOUD = new ShaderHolder(Hemomancy.rloc("world/silent_archon_storm_cloud"),
 			DefaultVertexFormat.POSITION_TEX_COLOR, "HemoTime", "CloudSeed", "CloudDensity");
 
@@ -141,6 +144,7 @@ public class ShaderInit {
         registerShader(event, MNEMONIC_LOWTIDE_SKYBOX.createInstance(provider));
         registerShader(event, MNEMONIC_LOWTIDE_PARCHMENT.createInstance(provider));
         registerShader(event, SILENT_ARCHON_FOG.createInstance(provider));
+        registerShader(event, CARDINAL_RITE_FOG.createInstance(provider));
         registerShader(event, SILENT_ARCHON_STORM_CLOUD.createInstance(provider));
         registerShader(event, QLIPHOTH_BLACK_HOLE.createInstance(provider));
         registerShader(event, APOTHEOS_FLOOR_FUNNEL.createInstance(provider));

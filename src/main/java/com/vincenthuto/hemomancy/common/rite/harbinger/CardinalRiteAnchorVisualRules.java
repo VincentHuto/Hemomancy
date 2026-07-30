@@ -5,7 +5,7 @@ package com.vincenthuto.hemomancy.common.rite.harbinger;
  */
 public final class CardinalRiteAnchorVisualRules {
 	public static final int BOUNDARY_COLOR = 0xFF3746;
-	public static final double RITE_PLANE_OFFSET = 0.065D;
+	public static final double RITE_PLANE_OFFSET = 0.1D;
 
 	private CardinalRiteAnchorVisualRules() {
 	}

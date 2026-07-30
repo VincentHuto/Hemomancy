@@ -65,6 +65,19 @@ sourceSets.main.java {
 
 repositories {
     mavenCentral()
+    maven {
+        name = 'GeckoLib'
+        url = 'https://dl.cloudsmith.io/public/geckolib3/geckolib/maven/'
+    }
+    maven {
+        name = 'Curios'
+        url = 'https://maven.theillusivec4.top/'
+    }
+    maven {
+        name = 'Modrinth'
+        url = 'https://api.modrinth.com/maven/'
+        content { includeGroup 'maven.modrinth' }
+    }
 }
 
 // Development-only in-game scenarios and NeoForge GameTests. Keeping these in
@@ -203,23 +216,19 @@ dependencies {
     implementation files ("libs/dummmmmmy-1.21-2.0.12-neoforge.jar")
 
     implementation files ("libs/theoneprobe-1.21_neo-12.0.8.jar")
+    implementation files ("libs/mna-3.1.11-neoforge.1.21.1.0.jar")
+
 
     // Optional client-side LOD testing mod. Disabled for alpha smoke tests because
     // 3.0.3-b crashes during its startup updater on NeoForge dev launch.
-   // implementation files("libs/DistantHorizons-3.0.3-b-1.21.1-fabric-neoforge.jar")
+   implementation files("libs/DistantHorizons-3.0.3-b-1.21.1-fabric-neoforge.jar")
 
 
     // ── HutosLib – use the local workspace build when available ─────────────────
     implementation "com.vincenthuto.hutoslib:hutoslib:${hutoslib_version}"
 
-    // ── Curios – DISABLED: awaiting NeoForge 1.21.1 build ────────────────────────
-    // TODO: re-enable once top.theillusivec4.curios:curios-neoforge:1.21.1+X is released
-    // compileOnly "top.theillusivec4.curios:curios-neoforge:${minecraft_version}+${curios_version}"
-
-    // ── JEI – DISABLED: awaiting NeoForge 1.21.1 build ───────────────────────────
-    // TODO: re-enable once mezz.jei builds for 1.21.1+neoforge are published
-    // compileOnly "mezz.jei:jei-${minecraft_version}-neoforge-api:${jei_version}"
-    // runtimeOnly "mezz.jei:jei-${minecraft_version}-neoforge:${jei_version}"
+    implementation "software.bernie.geckolib:geckolib-neoforge-${minecraft_version}:${geckolib_version}"
+    implementation "top.theillusivec4.curios:curios-neoforge:${curios_version}"
     implementation files("libs/jei-1.21.1-neoforge-19.27.0.340.jar")
 
 

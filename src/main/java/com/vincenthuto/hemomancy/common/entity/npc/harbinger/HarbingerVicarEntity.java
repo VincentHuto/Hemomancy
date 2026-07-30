@@ -18,6 +18,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
@@ -134,6 +135,9 @@ public class HarbingerVicarEntity extends PathfinderMob {
 
     @Override
     public boolean hurt(DamageSource source, float amount) {
+        if (source.is(DamageTypes.GENERIC_KILL)) {
+            return super.hurt(source, amount);
+        }
         // Allow full damage while the Vicar is actively fighting a clarity-bearing player
         if (this.getTarget() != null) {
             return super.hurt(source, amount);

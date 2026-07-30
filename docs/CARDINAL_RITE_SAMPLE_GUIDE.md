@@ -21,10 +21,18 @@ profession acts is still real.
    Crafting key (`C` by default).
 5. Project blood into the glowing red anchors in their displayed order. On the
    Degree One sample, an empty-hand right-click also fills an anchor at the
-   cost of health. Each pair of adjacent completed anchors draws the
-   quarter-circle between them, so four completed anchors close one boundary
-   ring. The engulfing black/red Fane exterior appears only on Degree 3+
-   rites.
+   cost of health. Each anchor is framed by a dim recessed socket; while blood
+   fills it, small droplets circulate inward before the completed anchor settles
+   into the gap. Each pair of adjacent completed anchors draws the
+   quarter-circle inward from both sockets, so four completed anchors close one
+   boundary ring. Each completed line leaves a faint recessed blood stain
+   beneath it. When the fronts meet, a brief seal pulse and heartbeat mark the
+   join before a blood bolus runs back toward both anchors. Damaged sockets
+   visibly twitch and deform as instability approaches failure. Rolling
+   black/red ground fog encloses the full Harbinger rite
+   footprint for the entire ceremony, with intermittent black and purple
+   lightning arcing cloud-to-cloud within the bank. The engulfing Fane exterior
+   remains a separate effect that appears only on Degree 3+ rites.
 6. During Inscription, optionally fill any differently colored Ichorian sigil
    sockets and assign allies where available, then keep the projection tool in
    hand and project into the daemon manifested over the altar's center to seal

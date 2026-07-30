@@ -13,6 +13,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.entity.AnimationState;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.Mob;
@@ -59,6 +60,9 @@ public class UnstainedGuardianEntity extends PathfinderMob {
 
     @Override
     public boolean hurt(DamageSource source, float amount) {
+        if (source.is(DamageTypes.GENERIC_KILL)) {
+            return super.hurt(source, amount);
+        }
         if (source.getEntity() instanceof Player player && player.isCreative()) {
             return super.hurt(source, amount);
         }

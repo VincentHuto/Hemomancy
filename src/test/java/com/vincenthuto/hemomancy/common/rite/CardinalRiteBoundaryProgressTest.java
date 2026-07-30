@@ -42,6 +42,19 @@ public final class CardinalRiteBoundaryProgressTest {
 		}
 	}
 
+	@Test
+	void authoredBackingExistsBeforeAnyAnchorsAreFilled() {
+		var backing = CardinalRiteBoundaryProgress.authoredSegments(CARDINAL_RING);
+		var redBoundary = CardinalRiteBoundaryProgress.completedSegments(
+				CARDINAL_RING, new int[] {0, 0, 0, 0});
+
+		assertEquals(4, backing.size(), "pre-existing stain segment count");
+		assertEquals(0, redBoundary.size(), "unfilled red boundary segment count");
+		for (var segment : backing) {
+			assertNear(Math.PI / 2.0D, segment.sweepAngle(), "backing quarter sweep");
+		}
+	}
+
 	private static void assertEquals(int expected, int actual, String label) {
 		if (expected != actual) {
 			throw new AssertionError(label + ": expected " + expected + " but got " + actual);

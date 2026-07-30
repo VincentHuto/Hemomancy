@@ -803,6 +803,33 @@ public final class HemoRenderTypes {
 						.createCompositeState(false));
 	}
 
+	public static RenderType cardinalRiteFog(float gameTime, float fogSeed) {
+		RenderStateShard.TexturingStateShard uniforms = new RenderStateShard.TexturingStateShard(
+				"cardinal_rite_fog_uniforms",
+				() -> {
+					ShaderInstance shader = ShaderInit.CARDINAL_RITE_FOG.getInstance().get();
+					setUniform(shader, "HemoTime", gameTime);
+					setUniform(shader, "FogSeed", fogSeed);
+				},
+				() -> {
+					ShaderInstance shader = ShaderInit.CARDINAL_RITE_FOG.getInstance().get();
+					if (shader instanceof ExtendedShaderInstance extended) {
+						extended.setUniformDefaults();
+					}
+				});
+		return RenderType.create("cardinal_rite_fog",
+				DefaultVertexFormat.POSITION_TEX_COLOR, VertexFormat.Mode.QUADS, 16384, false, true,
+				RenderType.CompositeState.builder()
+						.setShaderState(ShaderInit.CARDINAL_RITE_FOG.getShard())
+						.setTexturingState(uniforms)
+						.setTransparencyState(RenderType.TRANSLUCENT_TRANSPARENCY)
+						.setDepthTestState(RenderType.LEQUAL_DEPTH_TEST)
+						.setWriteMaskState(RenderType.COLOR_WRITE)
+						.setCullState(RenderType.NO_CULL)
+						.setLightmapState(RenderType.NO_LIGHTMAP)
+						.createCompositeState(false));
+	}
+
 	public static RenderType silentArchonVolumetricFog(ResourceLocation texture, float gameTime, float fogSeed,
 			float fogLayer, float fogDensity) {
 		RenderStateShard.TexturingStateShard uniforms = new RenderStateShard.TexturingStateShard(

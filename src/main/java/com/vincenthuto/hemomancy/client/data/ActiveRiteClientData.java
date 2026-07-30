@@ -44,6 +44,9 @@ public class ActiveRiteClientData {
 		private final List<CardinalRiteBoundaryProgress.Segment> boundarySegments;
 		private final List<SigilSegment> sigilSegments;
 		private final List<SanguineBlob> sanguineBlobs;
+		private final Map<BoundarySegmentKey, BoundaryGrowth> boundaryGrowth;
+		private float previousStainFade;
+		private float currentStainFade;
 
 		public RiteEntry(BlockPos center, int riteSize, double progress, ResourceLocation recipeId, boolean unstained) {
 			this(center, riteSize, progress, recipeId, unstained, "LEGACY", 0, 0, 0,
@@ -89,6 +92,10 @@ public class ActiveRiteClientData {
 			this.boundarySegments = List.copyOf(boundarySegments);
 			this.sigilSegments = List.copyOf(sigilSegments);
 			this.sanguineBlobs = List.copyOf(sanguineBlobs);
+			this.boundaryGrowth = new HashMap<>();
+			for (CardinalRiteBoundaryProgress.Segment segment : boundarySegments) {
+				this.boundaryGrowth.put(BoundarySegmentKey.of(segment), new BoundaryGrowth());
+			}
 		}
 
 		public BlockPos getCenter() {
@@ -127,6 +134,42 @@ public class ActiveRiteClientData {
 		public List<CardinalRiteBoundaryProgress.Segment> getBoundarySegments() { return boundarySegments; }
 		public List<SigilSegment> getSigilSegments() { return sigilSegments; }
 		public List<SanguineBlob> getSanguineBlobs() { return sanguineBlobs; }
+
+		public float boundaryGrowth(CardinalRiteBoundaryProgress.Segment segment, float partialTick) {
+			BoundaryGrowth growth = boundaryGrowth.get(BoundarySegmentKey.of(segment));
+			return growth == null ? 1.0F : growth.render(partialTick);
+		}
+
+		public float boundaryEffectAge(CardinalRiteBoundaryProgress.Segment segment, float partialTick) {
+			BoundaryGrowth growth = boundaryGrowth.get(BoundarySegmentKey.of(segment));
+			return growth == null ? -1.0F : growth.renderEffectAge(partialTick);
+		}
+
+		public float stainFadeProgress(float partialTick) {
+			float clampedPartialTick = Math.max(0.0F, Math.min(1.0F, partialTick));
+			return previousStainFade
+					+ (currentStainFade - previousStainFade) * clampedPartialTick;
+		}
+
+		public boolean consumeBoundaryCompletion(CardinalRiteBoundaryProgress.Segment segment) {
+			BoundaryGrowth growth = boundaryGrowth.get(BoundarySegmentKey.of(segment));
+			return growth != null && growth.consumeCompletion();
+		}
+
+		private void continueBoundaryGrowthFrom(RiteEntry previous) {
+			previousStainFade = previous.previousStainFade;
+			currentStainFade = previous.currentStainFade;
+			for (var entry : boundaryGrowth.entrySet()) {
+				BoundaryGrowth previousGrowth = previous.boundaryGrowth.get(entry.getKey());
+				if (previousGrowth != null) entry.getValue().continueFrom(previousGrowth);
+			}
+		}
+
+		private void tickBoundaryGrowth() {
+			previousStainFade = currentStainFade;
+			currentStainFade = Math.min(1.0F, currentStainFade + 1.0F / 30.0F);
+			for (BoundaryGrowth growth : boundaryGrowth.values()) growth.tick();
+		}
 	}
 
 	public record SigilSegment(
@@ -217,12 +260,17 @@ public class ActiveRiteClientData {
 
 	public static void set(List<RiteEntry> rites) {
 		Map<BlobKey, SanguineBlob> previousBlobs = new HashMap<>();
+		Map<RiteKey, RiteEntry> previousRites = new HashMap<>();
 		for (RiteEntry entry : activeRites) {
+			previousRites.put(new RiteKey(entry.getCenter(), entry.getRecipeId()), entry);
 			for (SanguineBlob blob : entry.getSanguineBlobs()) {
 				previousBlobs.put(new BlobKey(entry.getCenter(), blob.seed()), blob);
 			}
 		}
 		for (RiteEntry entry : rites) {
+			RiteEntry previousRite = previousRites.get(
+					new RiteKey(entry.getCenter(), entry.getRecipeId()));
+			if (previousRite != null) entry.continueBoundaryGrowthFrom(previousRite);
 			for (SanguineBlob blob : entry.getSanguineBlobs()) {
 				SanguineBlob previous = previousBlobs.get(new BlobKey(entry.getCenter(), blob.seed()));
 				if (previous == null) {
@@ -237,6 +285,7 @@ public class ActiveRiteClientData {
 
 	public static void tick() {
 		for (RiteEntry entry : activeRites) {
+			entry.tickBoundaryGrowth();
 			for (SanguineBlob blob : entry.getSanguineBlobs()) {
 				blob.tickGrowth();
 			}
@@ -252,5 +301,68 @@ public class ActiveRiteClientData {
 	}
 
 	private record BlobKey(BlockPos center, long seed) {
+	}
+
+	private record RiteKey(BlockPos center, ResourceLocation recipeId) {
+	}
+
+	private record BoundarySegmentKey(
+			int ring, int startAnchorIndex, long startAngleBits, long sweepAngleBits) {
+		private static BoundarySegmentKey of(CardinalRiteBoundaryProgress.Segment segment) {
+			return new BoundarySegmentKey(segment.ring(), segment.startAnchorIndex(),
+					Double.doubleToLongBits(segment.startAngle()),
+					Double.doubleToLongBits(segment.sweepAngle()));
+		}
+	}
+
+	private static final class BoundaryGrowth {
+		private static final float STEP = 1.0F / 20.0F;
+
+		private float previous;
+		private float current;
+		private float previousEffectAge = -1.0F;
+		private float currentEffectAge = -1.0F;
+		private boolean completionPending;
+
+		private float render(float partialTick) {
+			float clampedPartialTick = Math.max(0.0F, Math.min(1.0F, partialTick));
+			return previous + (current - previous) * clampedPartialTick;
+		}
+
+		private void continueFrom(BoundaryGrowth source) {
+			previous = source.previous;
+			current = source.current;
+			previousEffectAge = source.previousEffectAge;
+			currentEffectAge = source.currentEffectAge;
+			completionPending = source.completionPending;
+		}
+
+		private void tick() {
+			previous = current;
+			if (current < 1.0F) {
+				current = Math.min(1.0F, current + STEP);
+				if (current >= 1.0F) {
+					previousEffectAge = -1.0F;
+					currentEffectAge = 0.0F;
+					completionPending = true;
+				}
+			} else if (currentEffectAge >= 0.0F) {
+				previousEffectAge = currentEffectAge;
+				currentEffectAge++;
+			}
+		}
+
+		private float renderEffectAge(float partialTick) {
+			if (currentEffectAge < 0.0F) return -1.0F;
+			float clampedPartialTick = Math.max(0.0F, Math.min(1.0F, partialTick));
+			return previousEffectAge
+					+ (currentEffectAge - previousEffectAge) * clampedPartialTick;
+		}
+
+		private boolean consumeCompletion() {
+			if (!completionPending) return false;
+			completionPending = false;
+			return true;
+		}
 	}
 }
