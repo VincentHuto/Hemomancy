@@ -3,125 +3,53 @@
   "bloodCost": 5000,
   "riteType": "grand",
   "required_degree": 6,
-  "breakBlocksOnCreation": false,
   "riteName": "Rite of the Hematic Order",
   "riteDescription": "The seventh rite of the Hematic Order, crowning the practitioner as Archon and preparing the way for the hidden Eighth Degree.",
   "rankup": true,
-  "pattern": [
-    [
-      "         ",
-      "         ",
-      "         ",
-      "         ",
-      "         ",
-      "         ",
-      "         ",
-      "         ",
-      "   GCG   "
-    ],
-    [
-      "         ",
-      "         ",
-      " G     G ",
-      " H     H ",
-      " H  G  H ",
-      " H  H  H ",
-      " H  H  H ",
-      " H  H  H ",
-      " HG H GH "
-    ],
-    [
-      "         ",
-      "         ",
-      "         ",
-      "         ",
-      "         ",
-      "         ",
-      "         ",
-      "         ",
-      " G  C  G "
-    ],
-    [
-      "         ",
-      "         ",
-      "         ",
-      "         ",
-      "         ",
-      "         ",
-      "         ",
-      "         ",
-      "G   C   G"
-    ],
-    [
-      "         ",
-      "         ",
-      "    H    ",
-      "    G    ",
-      " G  H  G ",
-      " H  G  H ",
-      " H  H  H ",
-      " H  G  H ",
-      "CHCCCCCHC"
-    ],
-    [
-      "         ",
-      "         ",
-      "         ",
-      "         ",
-      "         ",
-      "         ",
-      "         ",
-      "         ",
-      "G   C   G"
-    ],
-    [
-      "         ",
-      "         ",
-      "         ",
-      "         ",
-      "         ",
-      "         ",
-      "         ",
-      "         ",
-      " G  C  G "
-    ],
-    [
-      "         ",
-      "         ",
-      " G     G ",
-      " H     H ",
-      " H  G  H ",
-      " H  H  H ",
-      " H  H  H ",
-      " H  H  H ",
-      " HG H GH "
-    ],
-    [
-      "         ",
-      "         ",
-      "         ",
-      "         ",
-      "         ",
-      "         ",
-      "         ",
-      "         ",
-      "   GCG   "
-    ]
-  ],
-  "key": {
-    "H": {
-      "block": "hemomancy:hematic_iron_pillar"
-    },
-    "G": {
-      "tag": "hemomancy:progression/void_ritual_stone",
-      "fallback": "minecraft:crying_obsidian"
-    },
-    "C": {
-      "tag": "hemomancy:progression/dragon_proof_blocks",
-      "fallback": "minecraft:dragon_egg"
-    }
-  },
   "result": {
     "id": "hemomancy:sanguine_quintessence"
-  }
+  },
+  "floor": "hemomancy:threshold_grand",
+  "required_structure": {
+    "pattern": [
+      [
+        "P   P",
+        "P   P",
+        "P   P"
+      ],
+      [
+        "     ",
+        "     ",
+        "     "
+      ],
+      [
+        "     ",
+        "     ",
+        "     "
+      ],
+      [
+        "     ",
+        "     ",
+        "     "
+      ],
+      [
+        "P   P",
+        "P   P",
+        "P   P"
+      ]
+    ],
+    "key": {
+      "P": {
+        "block": "hemomancy:hematic_iron_pillar"
+      }
+    }
+  },
+  "brazier_signature": [
+    {
+      "ingredient": {
+        "item": "minecraft:fermented_spider_eye"
+      },
+      "count": 1
+    }
+  ]
 }

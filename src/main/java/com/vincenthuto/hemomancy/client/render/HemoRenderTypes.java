@@ -521,6 +521,43 @@ public final class HemoRenderTypes {
 						.createCompositeState(false));
 	}
 
+	public static RenderType cardinalStaffBloodMelt(float gameTime, float blockSeed, float wiggleAmp,
+			float centerX, float centerY, float centerZ, float finalizeProgress,
+			float meltGroundY, float meltHeight) {
+		RenderStateShard.TexturingStateShard uniforms = new RenderStateShard.TexturingStateShard(
+				"cardinal_staff_blood_melt_uniforms",
+				() -> {
+					ShaderInstance shader = ShaderInit.BLOOD_STRUCTURE_WARP_ENTITY.getInstance().get();
+					setUniform(shader, "HemoTime", gameTime);
+					setUniform(shader, "Progress", 1.0F);
+					setUniform(shader, "BlockSeed", blockSeed);
+					setUniform(shader, "WiggleAmp", wiggleAmp);
+					setUniform(shader, "WarpCenter", centerX, centerY, centerZ);
+					setUniform(shader, "FinalizeProgress", finalizeProgress);
+					setUniform(shader, "MeltGroundY", meltGroundY);
+					setUniform(shader, "MeltHeight", meltHeight);
+				},
+				() -> {
+					ShaderInstance shader = ShaderInit.BLOOD_STRUCTURE_WARP_ENTITY.getInstance().get();
+					if (shader instanceof ExtendedShaderInstance extended) {
+						extended.setUniformDefaults();
+					}
+				});
+		return RenderType.create("cardinal_staff_blood_melt",
+				DefaultVertexFormat.NEW_ENTITY, VertexFormat.Mode.QUADS, 1536, true, true,
+				RenderType.CompositeState.builder()
+						.setShaderState(ShaderInit.BLOOD_STRUCTURE_WARP_ENTITY.getShard())
+						.setTexturingState(uniforms)
+						.setLayeringState(RenderType.VIEW_OFFSET_Z_LAYERING)
+						.setTransparencyState(RenderType.TRANSLUCENT_TRANSPARENCY)
+						.setDepthTestState(RenderType.LEQUAL_DEPTH_TEST)
+						.setWriteMaskState(RenderType.COLOR_WRITE)
+						.setCullState(RenderType.NO_CULL)
+						.setLightmapState(RenderType.LIGHTMAP)
+						.setOverlayState(RenderType.OVERLAY)
+						.createCompositeState(false));
+	}
+
 	public static RenderType apotheosCeilingCore(float gameTime, float ceilingSeed, float coreNoiseScale,
 			float rotationSpeed, float yellowGlowIntensity, float greenOrbIntensity, float coreUndulationIntensity) {
 		RenderStateShard.TexturingStateShard uniforms = new RenderStateShard.TexturingStateShard(

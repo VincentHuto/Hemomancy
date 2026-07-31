@@ -2,20 +2,35 @@ package com.vincenthuto.hemomancy.client.render.world;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import com.mojang.math.Axis;
+import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.client.data.ActiveRiteClientData;
+import com.vincenthuto.hemomancy.client.render.HemoRenderTypes;
+import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.init.RenderTypeInit;
+import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.LivingStaffFittingHelper;
 import com.vincenthuto.hemomancy.common.recipe.CardinalRiteRecipe;
 import com.vincenthuto.hemomancy.common.rite.CardinalRiteBoundaryProgress;
 import com.vincenthuto.hemomancy.common.rite.CardinalRiteCeremonyDefinition;
+import com.vincenthuto.hemomancy.common.rite.harbinger.CardinalRiteAnchorVisualRules;
 import com.vincenthuto.hemomancy.common.rite.sigil.IchorianSigilOrganicGeometry;
 import com.vincenthuto.hemomancy.common.rite.sigil.IchorianSigilLandmarkGeometry;
 import com.vincenthuto.hemomancy.common.rite.sigil.IchorianSigilRenderPalette;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.LightTexture;
+import net.minecraft.client.resources.model.BakedModel;
+import net.minecraft.client.resources.model.ModelResourceLocation;
+import net.minecraft.client.renderer.texture.OverlayTexture;
+import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.core.BlockPos;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.item.ItemDisplayContext;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.Vec3;
+import net.neoforged.neoforge.client.ClientHooks;
 import org.joml.Matrix4f;
 
 import java.util.List;
@@ -101,6 +116,7 @@ public class CardinalRiteBoundaryRenderer {
 			drawBoundaryRing(poseStack, glowVC, null, rite, currentTime, partialTick, cam);
 			drawSigilSegments(poseStack, glowVC, rite, currentTime, cam, true);
 			drawSanguineBlobs(poseStack, glowVC, rite, currentTime, cam, true);
+			drawStaffTendrils(poseStack, glowVC, rite, currentTime, partialTick, cam, true);
 		}
 		buffer.endBatch(RenderTypeInit.RITE_BOUNDARY_GLOW);
 
@@ -110,8 +126,75 @@ public class CardinalRiteBoundaryRenderer {
 			drawBoundaryRing(poseStack, null, coreVC, rite, currentTime, partialTick, cam);
 			drawSigilSegments(poseStack, coreVC, rite, currentTime, cam, false);
 			drawSanguineBlobs(poseStack, coreVC, rite, currentTime, cam, false);
+			drawStaffTendrils(poseStack, coreVC, rite, currentTime, partialTick, cam, false);
 		}
 		buffer.endBatch(RenderTypeInit.RITE_BOUNDARY_CORE);
+		for (ActiveRiteClientData.RiteEntry rite : rites) {
+			if (rite.hasPlantedStaff()) drawPlantedStaff(poseStack, buffer, rite, cam, partialTick);
+		}
+		buffer.endBatch();
+	}
+
+	private static void drawStaffTendrils(PoseStack poseStack, VertexConsumer consumer,
+			ActiveRiteClientData.RiteEntry rite, float currentTime, float partialTick,
+			Vec3 camera, boolean glowPass) {
+		if (!rite.hasPlantedStaff()) return;
+		float visibilityProgress = CardinalRiteStaffTendrilGeometry.visibilityProgress(
+				rite.staffPlantingRenderTicks(partialTick),
+				rite.cancellationRenderTicks(partialTick));
+		CardinalRiteStaffTendrilRenderer.render(poseStack, consumer, rite.getCenter(),
+				currentTime, camera, visibilityProgress, glowPass);
+	}
+
+	private static void drawPlantedStaff(PoseStack poseStack, MultiBufferSource.BufferSource buffer,
+			ActiveRiteClientData.RiteEntry rite, Vec3 camera, float partialTick) {
+		Minecraft mc = Minecraft.getInstance();
+		float cancellationTicks = rite.cancellationRenderTicks(partialTick);
+		CardinalRitePlantedStaffGeometry.AbsorptionPose plantedPose =
+				CardinalRitePlantedStaffGeometry.absorptionPose(
+						rite.getCenter(), cancellationTicks);
+		if (plantedPose.scale() <= 0.001F || plantedPose.opacity() <= 0.001F) return;
+		poseStack.pushPose();
+		poseStack.translate(
+				plantedPose.position().x - camera.x,
+				plantedPose.position().y - camera.y,
+				plantedPose.position().z - camera.z);
+		if (plantedPose.pitchDegrees() != 0.0F) {
+			poseStack.mulPose(Axis.XP.rotationDegrees(plantedPose.pitchDegrees()));
+		}
+		poseStack.scale(plantedPose.scale(), plantedPose.scale(), plantedPose.scale());
+		ItemStack staff = new ItemStack(ItemInit.living_staff.get());
+		int visual = LivingStaffFittingHelper.staffVisualFor(mc.player);
+		BakedModel model = mc.getModelManager().getModel(ModelResourceLocation.standalone(
+				Hemomancy.rloc("item/" + CardinalRitePlantedStaffModels.modelName(visual))));
+		model = ClientHooks.handleCameraTransforms(
+				poseStack, model, ItemDisplayContext.FIXED, false);
+		poseStack.translate(-0.5F, -0.5F, -0.5F);
+		CardinalRitePlantedStaffGeometry.MeltStyle melt = plantedPose.melt();
+		RenderType staffRenderType;
+		if (melt.active()) {
+			staffRenderType = HemoRenderTypes.cardinalStaffBloodMelt(
+					(float) (mc.level.getGameTime() + partialTick),
+					melt.seed(), melt.wiggleAmplitude(),
+					(float) (melt.poolCenter().x - camera.x),
+					(float) (melt.poolCenter().y - camera.y),
+					(float) (melt.poolCenter().z - camera.z),
+					melt.shaderProgress(),
+					(float) (melt.poolCenter().y - camera.y),
+					melt.height());
+		} else {
+			staffRenderType = RenderType.entityTranslucent(TextureAtlas.LOCATION_BLOCKS);
+		}
+		VertexConsumer fadingConsumer = new CardinalRiteFadingVertexConsumer(
+				buffer.getBuffer(staffRenderType),
+				plantedPose.opacity());
+		for (BakedModel renderPass : model.getRenderPasses(staff, true)) {
+			mc.getItemRenderer().renderModelLists(renderPass, staff,
+					LightTexture.FULL_BRIGHT, OverlayTexture.NO_OVERLAY,
+					poseStack, fadingConsumer);
+		}
+		buffer.endBatch(staffRenderType);
+		poseStack.popPose();
 	}
 
 	private static void drawExteriorField(PoseStack poseStack, MultiBufferSource.BufferSource buffer,
@@ -124,8 +207,9 @@ public class CardinalRiteBoundaryRenderer {
 						rite.getRiteSize(), rite.getCompletedRings(), legacy);
 		if (radius <= 0.0F) return;
 		float seed = FaneBoundaryRenderer.revealedFaneStyleSeed(rite.getCenter(), radius);
+		BlockPos surface = CardinalRiteAnchorVisualRules.riteSurface(rite.getCenter());
 		FaneBoundaryRenderer.drawRevealedFaneStyleDome(
-				poseStack, buffer, cam, rite.getCenter(), radius, currentTime, seed);
+				poseStack, buffer, cam, surface, radius, currentTime, seed);
 	}
 
 	private static void playBoundaryCompletionSounds(Minecraft mc,

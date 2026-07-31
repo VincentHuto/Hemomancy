@@ -45,8 +45,8 @@ public final class CardinalRiteBoundaryGeometryTest {
 	}
 
 	@Test
-	void boundaryPlaneClearsTheGroundByOneTenthOfABlock() {
-		assertEquals(64.1F, CardinalRiteBoundaryGeometry.boundaryPlaneY(64),
+	void boundaryPlaneClearsTheFloorTopByOneTenthOfABlock() {
+		assertEquals(65.1F, CardinalRiteBoundaryGeometry.boundaryPlaneY(64),
 				"raised rite plane");
 	}
 

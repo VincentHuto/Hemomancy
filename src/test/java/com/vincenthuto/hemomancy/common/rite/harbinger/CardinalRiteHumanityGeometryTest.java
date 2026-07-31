@@ -219,6 +219,26 @@ class CardinalRiteHumanityGeometryTest {
 		assertTrue(CardinalRiteHumanityGeometry.contractionScale(1.0D) <= 0.15D);
 	}
 
+	@Test
+	void daemonBodyTiltsProneAlongItsTravelDirection() {
+		CardinalRiteHumanityGeometry.Point upright = CardinalRiteHumanityGeometry.orientPoint(
+				new CardinalRiteHumanityGeometry.Point(
+						CardinalRiteHumanityGeometry.Layer.VOID_CORE, 0.0D, 2.0D, 0.0D,
+						3, 0, 2),
+				0.0D, 1.0D, 0.0F);
+		CardinalRiteHumanityGeometry.Point prone = CardinalRiteHumanityGeometry.orientPoint(
+				new CardinalRiteHumanityGeometry.Point(
+						CardinalRiteHumanityGeometry.Layer.VOID_CORE, 0.0D, 2.0D, 0.0D,
+						3, 0, 2),
+				0.0D, 1.0D, 90.0F);
+
+		assertEquals(2.0D, upright.y(), 0.0001D);
+		assertEquals(0.0D, upright.z(), 0.0001D);
+		assertEquals(0.0D, prone.y(), 0.0001D);
+		assertEquals(2.0D, prone.z(), 0.0001D,
+				"a fully prone daemon points its former vertical body axis into its direction of travel");
+	}
+
 	private static long count(List<CardinalRiteHumanityGeometry.Point> points,
 			CardinalRiteHumanityGeometry.Layer layer) {
 		return points.stream().filter(point -> point.layer() == layer).count();

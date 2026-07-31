@@ -1,10 +1,16 @@
 package com.vincenthuto.hemomancy.common.rite;
 
+import com.vincenthuto.hemomancy.common.rite.harbinger.CardinalRitePlantingSequence;
+import com.vincenthuto.hemomancy.common.rite.harbinger.CardinalRiteCancellationGeometry;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.phys.Vec3;
+import net.minecraft.core.Direction;
 
 import java.util.ArrayList;
 import java.util.EnumMap;
@@ -22,7 +28,7 @@ import java.util.UUID;
  */
 public class ActiveCardinalRite {
 	private static final String STATE_VERSION = "StateVersion";
-	private static final int CURRENT_STATE_VERSION = 2;
+	private static final int CURRENT_STATE_VERSION = 4;
 
 	private final UUID playerUUID;
 	private final BlockPos centerPos;
@@ -60,6 +66,33 @@ public class ActiveCardinalRite {
 	private final Map<UUID, Long> bloodspentUntil = new HashMap<>();
 	private final Set<UUID> riteThreats = new HashSet<>();
 	private final List<String> waveDeck = new ArrayList<>();
+	private CompoundTag escrowedStaff = new CompoundTag();
+	private boolean completionCommitted;
+	private ResourceLocation matchedFloorId;
+	private Direction floorForwards = Direction.NORTH;
+	private Direction floorUp = Direction.UP;
+	private final List<RiteOffering> offeringItinerary = new ArrayList<>();
+	private boolean offeringItineraryCaptured;
+	private int offeringVisitIndex;
+	private boolean returningFromOfferings;
+	private int offeringDwellTicks;
+	private int cancellationTicks;
+	private int cancellationResumeTicks;
+	private int cancellationResumeDecayTicks;
+	private long cancellationRequestedGameTime = Long.MIN_VALUE;
+	private Vec3 cancellationDaemonStartPos;
+	private float cancellationDaemonStartScale;
+	private int cancellationRecoveryTicks;
+	private Vec3 cancellationRecoveryTargetPos;
+	private float cancellationRecoveryTargetScale;
+	private int staffPlantingTicks = -1;
+
+	public record RiteOffering(BlockPos pos, ItemStack stack, boolean consume) {
+		public RiteOffering {
+			if (pos == null) throw new IllegalArgumentException("Offering position cannot be null");
+			if (stack != null && !stack.isEmpty()) stack = stack.copyWithCount(1);
+		}
+	}
 
 	/**
 	 * Compatibility constructor. Rites created through it retain the former
@@ -104,6 +137,34 @@ public class ActiveCardinalRite {
 				carriedIchorMl = 0;
 			}
 		}
+	}
+
+	public void beginStaffPlanting() {
+		staffPlantingTicks = 0;
+	}
+
+	/**
+	 * Advances the intro without advancing ceremony phase time.
+	 *
+	 * @return true only on the frame that drives the staff into the focus
+	 */
+	public boolean tickStaffPlanting() {
+		if (!isStaffPlanting()) return false;
+		staffPlantingTicks++;
+		return staffPlantingTicks == CardinalRitePlantingSequence.IMPACT_TICK;
+	}
+
+	public boolean isStaffPlanting() {
+		return CardinalRitePlantingSequence.isAnimating(staffPlantingTicks);
+	}
+
+	public boolean isStaffImpactReached() {
+		return staffPlantingTicks < 0
+				|| CardinalRitePlantingSequence.isPlanted(staffPlantingTicks);
+	}
+
+	public int getStaffPlantingTicks() {
+		return staffPlantingTicks;
 	}
 
 	public boolean fillAnchor(int anchorIndex, int availableBloodMl) {
@@ -172,11 +233,83 @@ public class ActiveCardinalRite {
 
 	public void finishStillInterval(boolean professionRite) {
 		if (phase != CardinalRitePhase.STILL_INTERVAL) return;
-		setPhase(professionRite ? CardinalRitePhase.PROFESSION : CardinalRitePhase.CULMINATION);
+		setPhase(professionRite ? CardinalRitePhase.PROFESSION : finalePhase());
 	}
 
 	public void finishProfession() {
-		if (phase == CardinalRitePhase.PROFESSION) setPhase(CardinalRitePhase.CULMINATION);
+		if (phase == CardinalRitePhase.PROFESSION) setPhase(finalePhase());
+	}
+
+	private CardinalRitePhase finalePhase() {
+		return offeringItinerary.isEmpty()
+				? CardinalRitePhase.CULMINATION : CardinalRitePhase.OFFERING_PROCESSION;
+	}
+
+	public void captureOfferingItinerary(List<RiteOffering> offerings) {
+		if (phase == CardinalRitePhase.LEGACY || offeringVisitIndex > 0 || returningFromOfferings) return;
+		offeringItinerary.clear();
+		offeringItineraryCaptured = true;
+		if (offerings != null) {
+			offerings.stream()
+					.filter(RiteOffering::consume)
+					.forEach(offering -> offeringItinerary.add(new RiteOffering(
+							offering.pos(), offering.stack(), true)));
+		}
+	}
+
+	public List<RiteOffering> getOfferingItinerary() {
+		return offeringItinerary.stream()
+				.map(offering -> new RiteOffering(offering.pos(), offering.stack(), offering.consume()))
+				.toList();
+	}
+
+	public boolean hasCapturedOfferingItinerary() {
+		return offeringItineraryCaptured;
+	}
+
+	public RiteOffering getCurrentOffering() {
+		return offeringVisitIndex >= 0 && offeringVisitIndex < offeringItinerary.size()
+				? offeringItinerary.get(offeringVisitIndex) : null;
+	}
+
+	public List<RiteOffering> getAbsorbedOfferings() {
+		return offeringItinerary.subList(0, Math.min(offeringVisitIndex, offeringItinerary.size())).stream()
+				.map(offering -> new RiteOffering(offering.pos(), offering.stack(), true))
+				.toList();
+	}
+
+	public boolean absorbCurrentOffering() {
+		if (offeringVisitIndex >= offeringItinerary.size()) return false;
+		offeringVisitIndex++;
+		returningFromOfferings = offeringVisitIndex >= offeringItinerary.size();
+		offeringDwellTicks = com.vincenthuto.hemomancy.common.rite.harbinger.CardinalRiteFinaleTiming
+				.OFFERING_DWELL_TICKS;
+		phaseTicks = 0;
+		return true;
+	}
+
+	public boolean tickOfferingDwell() {
+		if (offeringDwellTicks <= 0) return false;
+		offeringDwellTicks--;
+		return true;
+	}
+
+	public int getOfferingDwellTicks() {
+		return offeringDwellTicks;
+	}
+
+	public int getOfferingVisitIndex() {
+		return offeringVisitIndex;
+	}
+
+	public boolean isReturningFromOfferings() {
+		return returningFromOfferings;
+	}
+
+	public boolean finishOfferingProcession() {
+		if (phase != CardinalRitePhase.OFFERING_PROCESSION || !returningFromOfferings) return false;
+		setPhase(CardinalRitePhase.CULMINATION);
+		return true;
 	}
 
 	public void advanceProfessionStep() {
@@ -415,6 +548,95 @@ public class ActiveCardinalRite {
 		setPhase(CardinalRitePhase.COLLAPSED);
 	}
 
+	public boolean requestCancellation(long gameTime) {
+		if (isTerminal()) return false;
+		cancellationRequestedGameTime = gameTime;
+		return true;
+	}
+
+	public boolean tickCancellation(long gameTime) {
+		long requestAge = gameTime - cancellationRequestedGameTime;
+		boolean channeling = !isTerminal()
+				&& cancellationRequestedGameTime != Long.MIN_VALUE
+				&& requestAge >= 0L
+				&& requestAge <= 1L;
+		cancellationRequestedGameTime = Long.MIN_VALUE;
+		if (!channeling) {
+			interruptCancellation();
+			return false;
+		}
+		clearCancellationRecovery();
+		if (cancellationTicks == 0 && cancellationResumeTicks > 0) {
+			cancellationTicks = cancellationResumeTicks;
+			clearCancellationResume();
+		}
+		cancellationTicks = CardinalRiteCancellationRules.nextChannelTicks(cancellationTicks, true);
+		return cancellationTicks > 0;
+	}
+
+	public void resetCancellation() {
+		clearCancellationAttempt();
+		clearCancellationResume();
+		clearCancellationRecovery();
+	}
+
+	private void beginCancellationRecovery() {
+		if (cancellationTicks > 0) {
+			cancellationResumeTicks = cancellationTicks;
+			cancellationResumeDecayTicks = 0;
+			if (cancellationDaemonStartPos != null) {
+				cancellationRecoveryTicks = CardinalRiteCancellationGeometry.RECOVERY_TICKS;
+				cancellationRecoveryTargetPos = cancellationDaemonStartPos;
+				cancellationRecoveryTargetScale = cancellationDaemonStartScale;
+			}
+			clearCancellationAttempt();
+		} else if (cancellationResumeTicks > 0) {
+			cancellationResumeDecayTicks++;
+			if (cancellationResumeDecayTicks >= 2) {
+				cancellationResumeTicks--;
+				cancellationResumeDecayTicks = 0;
+			}
+		}
+	}
+
+	public void interruptCancellation() {
+		beginCancellationRecovery();
+	}
+
+	private void clearCancellationAttempt() {
+		cancellationTicks = 0;
+		cancellationRequestedGameTime = Long.MIN_VALUE;
+		cancellationDaemonStartPos = null;
+		cancellationDaemonStartScale = 0.0F;
+	}
+
+	private void clearCancellationResume() {
+		cancellationResumeTicks = 0;
+		cancellationResumeDecayTicks = 0;
+	}
+
+	private void clearCancellationRecovery() {
+		cancellationRecoveryTicks = 0;
+		cancellationRecoveryTargetPos = null;
+		cancellationRecoveryTargetScale = 0.0F;
+	}
+
+	public void advanceCancellationRecovery() {
+		if (cancellationRecoveryTicks <= 0) return;
+		cancellationRecoveryTicks--;
+		if (cancellationRecoveryTicks == 0) clearCancellationRecovery();
+	}
+
+	public boolean isCancellationComplete() {
+		return CardinalRiteCancellationRules.isComplete(cancellationTicks);
+	}
+
+	public void captureCancellationDaemonStart(Vec3 position, float scale) {
+		if (cancellationDaemonStartPos != null || position == null) return;
+		cancellationDaemonStartPos = position;
+		cancellationDaemonStartScale = scale;
+	}
+
 	private void setPhase(CardinalRitePhase phase) {
 		this.phase = phase;
 		this.phaseTicks = 0;
@@ -432,6 +654,15 @@ public class ActiveCardinalRite {
 	public boolean isAbbreviated() { return abbreviated; }
 	public boolean isAltarSealed() { return altarSealed; }
 	public int getPhaseTicks() { return phaseTicks; }
+	public int getCancellationTicks() { return cancellationTicks; }
+	public Vec3 getCancellationDaemonStartPos() { return cancellationDaemonStartPos; }
+	public float getCancellationDaemonStartScale() { return cancellationDaemonStartScale; }
+	public boolean isCancellationRecovering() {
+		return cancellationRecoveryTicks > 0 && cancellationRecoveryTargetPos != null;
+	}
+	public int getCancellationRecoveryTicks() { return cancellationRecoveryTicks; }
+	public Vec3 getCancellationRecoveryTargetPos() { return cancellationRecoveryTargetPos; }
+	public float getCancellationRecoveryTargetScale() { return cancellationRecoveryTargetScale; }
 	public int getIdleTicks() { return idleTicks; }
 	public void incrementIdleTicks() { idleTicks++; }
 	public int getDisconnectTicks() { return disconnectTicks; }
@@ -460,6 +691,29 @@ public class ActiveCardinalRite {
 	public Map<UUID, Long> getBloodspentUntil() { return bloodspentUntil; }
 	public Set<UUID> getRiteThreats() { return Set.copyOf(riteThreats); }
 	public List<String> getWaveDeck() { return waveDeck; }
+	public boolean hasEscrowedStaff() { return !escrowedStaff.isEmpty(); }
+	public void setEscrowedStaff(ItemStack stack, HolderLookup.Provider provider) {
+		escrowedStaff = stack == null || stack.isEmpty() ? new CompoundTag()
+				: (CompoundTag) stack.copyWithCount(1).save(provider);
+	}
+	public ItemStack releaseEscrowedStaff(HolderLookup.Provider provider) {
+		ItemStack released = ItemStack.parseOptional(provider, escrowedStaff);
+		escrowedStaff = new CompoundTag();
+		return released;
+	}
+	public boolean commitCompletion() {
+		if (completionCommitted) return false;
+		completionCommitted = true;
+		return true;
+	}
+	public void setMatchedFloor(ResourceLocation floorId, Direction forwards, Direction up) {
+		this.matchedFloorId = floorId;
+		this.floorForwards = forwards;
+		this.floorUp = up;
+	}
+	public ResourceLocation getMatchedFloorId() { return matchedFloorId; }
+	public Direction getFloorForwards() { return floorForwards; }
+	public Direction getFloorUp() { return floorUp; }
 
 	public double getProgress() {
 		return getProgress(CardinalRiteCeremonyRules.stillIntervalTicks(0));
@@ -477,7 +731,9 @@ public class ActiveCardinalRite {
 			case ORDEAL -> 0.25D + (totalWaves == 0 ? 0.0D : 0.5D * currentWave / totalWaves);
 			case STILL_INTERVAL -> 0.75D + 0.10D * boundedPhaseProgress(stillIntervalTicks);
 			case PROFESSION -> 0.85D;
-			case CULMINATION -> 0.95D + 0.05D * boundedPhaseProgress(40);
+			case OFFERING_PROCESSION -> 0.90D;
+			case CULMINATION -> 0.95D + 0.05D * boundedPhaseProgress(
+					com.vincenthuto.hemomancy.common.rite.harbinger.CardinalRiteFinaleTiming.TOTAL_TICKS);
 			case COMPLETE -> 1.0D;
 			case COLLAPSED -> 0.0D;
 			default -> 0.0D;
@@ -489,7 +745,7 @@ public class ActiveCardinalRite {
 		return Math.max(0.0D, Math.min(1.0D, phaseTicks / (double) durationTicks));
 	}
 
-	public CompoundTag serialize() {
+	public CompoundTag serialize(HolderLookup.Provider provider) {
 		CompoundTag tag = new CompoundTag();
 		tag.putInt(STATE_VERSION, CURRENT_STATE_VERSION);
 		tag.putUUID("PlayerUUID", playerUUID);
@@ -543,7 +799,32 @@ public class ActiveCardinalRite {
 			waves.add(entry);
 		}
 		tag.put("WaveDeck", waves);
+		if (!escrowedStaff.isEmpty()) tag.put("EscrowedStaff", escrowedStaff.copy());
+		tag.putBoolean("CompletionCommitted", completionCommitted);
+		if (matchedFloorId != null) tag.putString("MatchedFloor", matchedFloorId.toString());
+		tag.putString("FloorForwards", floorForwards.getName());
+		tag.putString("FloorUp", floorUp.getName());
+		tag.putInt("OfferingVisitIndex", offeringVisitIndex);
+		tag.putBoolean("OfferingItineraryCaptured", offeringItineraryCaptured);
+		tag.putBoolean("ReturningFromOfferings", returningFromOfferings);
+		tag.putInt("OfferingDwellTicks", offeringDwellTicks);
+		tag.putInt("StaffPlantingTicks", staffPlantingTicks);
+		if (provider != null && !offeringItinerary.isEmpty()) {
+			ListTag offerings = new ListTag();
+			for (RiteOffering offering : offeringItinerary) {
+				if (offering.stack() == null || offering.stack().isEmpty()) continue;
+				CompoundTag entry = new CompoundTag();
+				entry.putLong("Pos", offering.pos().asLong());
+				entry.put("Stack", offering.stack().save(provider));
+				offerings.add(entry);
+			}
+			tag.put("OfferingItinerary", offerings);
+		}
 		return tag;
+	}
+
+	public CompoundTag serialize() {
+		return serialize(null);
 	}
 
 	private ListTag writeAllies() {
@@ -589,7 +870,7 @@ public class ActiveCardinalRite {
 		return list;
 	}
 
-	public static ActiveCardinalRite deserialize(CompoundTag tag) {
+	public static ActiveCardinalRite deserialize(CompoundTag tag, HolderLookup.Provider provider) {
 		UUID playerUUID = tag.getUUID("PlayerUUID");
 		BlockPos centerPos = BlockPos.of(tag.getLong("CenterPos"));
 		ResourceLocation recipeId = ResourceLocation.parse(tag.getString("RecipeId"));
@@ -638,7 +919,38 @@ public class ActiveCardinalRite {
 		readUuidSet(tag.getList("RiteThreats", Tag.TAG_COMPOUND), rite.riteThreats);
 		ListTag waves = tag.getList("WaveDeck", Tag.TAG_COMPOUND);
 		for (int i = 0; i < waves.size(); i++) rite.waveDeck.add(waves.getCompound(i).getString("Id"));
+		rite.escrowedStaff = tag.contains("EscrowedStaff")
+				? tag.getCompound("EscrowedStaff").copy() : new CompoundTag();
+		rite.completionCommitted = tag.getBoolean("CompletionCommitted");
+		if (tag.contains("MatchedFloor")) rite.matchedFloorId =
+				ResourceLocation.parse(tag.getString("MatchedFloor"));
+		rite.floorForwards = Direction.byName(tag.getString("FloorForwards"));
+		if (rite.floorForwards == null) rite.floorForwards = Direction.NORTH;
+		rite.floorUp = Direction.byName(tag.getString("FloorUp"));
+		if (rite.floorUp == null) rite.floorUp = Direction.UP;
+		rite.staffPlantingTicks = tag.contains("StaffPlantingTicks")
+				? tag.getInt("StaffPlantingTicks") : -1;
+		ListTag offerings = tag.getList("OfferingItinerary", Tag.TAG_COMPOUND);
+		for (int i = 0; i < offerings.size(); i++) {
+			CompoundTag entry = offerings.getCompound(i);
+			ItemStack stack = provider == null ? ItemStack.EMPTY
+					: ItemStack.parseOptional(provider, entry.getCompound("Stack"));
+			if (!stack.isEmpty()) {
+				rite.offeringItinerary.add(new RiteOffering(
+						BlockPos.of(entry.getLong("Pos")), stack, true));
+			}
+		}
+		rite.offeringVisitIndex = Math.min(tag.getInt("OfferingVisitIndex"),
+				rite.offeringItinerary.size());
+		rite.offeringItineraryCaptured = tag.getBoolean("OfferingItineraryCaptured")
+				|| !rite.offeringItinerary.isEmpty();
+		rite.returningFromOfferings = tag.getBoolean("ReturningFromOfferings");
+		rite.offeringDwellTicks = tag.getInt("OfferingDwellTicks");
 		return rite;
+	}
+
+	public static ActiveCardinalRite deserialize(CompoundTag tag) {
+		return deserialize(tag, null);
 	}
 
 	private static void readAllies(ListTag list, Map<UUID, CardinalRiteAllyRole> output) {

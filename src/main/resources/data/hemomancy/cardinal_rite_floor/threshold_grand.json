@@ -1,0 +1,132 @@
+{
+  "style": "threshold",
+  "tier": "grand",
+  "pattern": [
+    [
+      "BBBBABBBB"
+    ],
+    [
+      "BBBBABBBB"
+    ],
+    [
+      "BBBBABBBB"
+    ],
+    [
+      "BBBBABBBB"
+    ],
+    [
+      "AAAAFAAAA"
+    ],
+    [
+      "BBBBABBBB"
+    ],
+    [
+      "BBBBABBBB"
+    ],
+    [
+      "BBBBABBBB"
+    ],
+    [
+      "BBBBABBBB"
+    ]
+  ],
+  "key": {
+    "B": {
+      "block": "minecraft:stone_bricks"
+    },
+    "A": {
+      "block": "hemomancy:hematic_iron_block"
+    },
+    "F": {
+      "block": "hemomancy:cardinal_focus"
+    }
+  },
+  "focus": [
+    4,
+    0,
+    4
+  ],
+  "brazier_sockets": [
+    [
+      6,
+      1,
+      0
+    ],
+    [
+      6,
+      1,
+      2
+    ],
+    [
+      4,
+      1,
+      4
+    ],
+    [
+      2,
+      1,
+      6
+    ],
+    [
+      0,
+      1,
+      6
+    ],
+    [
+      -2,
+      1,
+      6
+    ],
+    [
+      -4,
+      1,
+      4
+    ],
+    [
+      -6,
+      1,
+      2
+    ],
+    [
+      -6,
+      1,
+      0
+    ],
+    [
+      -6,
+      1,
+      -2
+    ],
+    [
+      -4,
+      1,
+      -4
+    ],
+    [
+      -2,
+      1,
+      -6
+    ],
+    [
+      0,
+      1,
+      -6
+    ],
+    [
+      2,
+      1,
+      -6
+    ],
+    [
+      4,
+      1,
+      -4
+    ],
+    [
+      6,
+      1,
+      -2
+    ]
+  ],
+  "footprint_radius": 7.5
+}

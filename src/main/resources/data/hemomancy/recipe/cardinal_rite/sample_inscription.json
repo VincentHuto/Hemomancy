@@ -3,31 +3,8 @@
   "bloodCost": 0,
   "riteType": "lesser",
   "required_degree": 1,
-  "breakBlocksOnCreation": false,
   "riteName": "[TEST] Inscription Crucible",
   "riteDescription": "A focused sigil laboratory for testing diagonal circulation, optional support sockets, discovery, response inscription, siphoning, repair, and still intervals.",
-  "pattern": [
-    [
-      "DAD"
-    ],
-    [
-      "ALA"
-    ],
-    [
-      "DAD"
-    ]
-  ],
-  "key": {
-    "D": {
-      "block": "minecraft:polished_deepslate"
-    },
-    "A": {
-      "block": "minecraft:amethyst_block"
-    },
-    "L": {
-      "block": "minecraft:lapis_block"
-    }
-  },
   "ceremony": {
     "profile": "full",
     "layout": "diagonal",
@@ -78,5 +55,14 @@
         1
       ]
     ]
-  }
+  },
+  "floor": "hemomancy:working_lesser",
+  "brazier_signature": [
+    {
+      "ingredient": {
+        "item": "minecraft:quartz"
+      },
+      "count": 1
+    }
+  ]
 }

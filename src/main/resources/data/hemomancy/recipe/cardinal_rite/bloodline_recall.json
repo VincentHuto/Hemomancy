@@ -5,64 +5,16 @@
   "required_degree": 5,
   "riteName": "Rite of Bloodline Recall",
   "riteDescription": "A penitent rite that reconjures a lost ancestral ledger from the caster's blood memory. The covenant does not forget â€” but neither does it forgive carelessness lightly.",
-  "pattern": [
-    [
-      "     ",
-      "     ",
-      "     ",
-      "     ",
-      " PCP "
-    ],
-    [
-      "  G  ",
-      "  P  ",
-      "  P  ",
-      " EPE ",
-      "PCPCP"
-    ],
-    [
-      " G G ",
-      " PGP ",
-      " PPP ",
-      " PGP ",
-      "CPCPC"
-    ],
-    [
-      "  G  ",
-      "  P  ",
-      "  P  ",
-      " EPE ",
-      "PCPCP"
-    ],
-    [
-      "     ",
-      "     ",
-      "     ",
-      "     ",
-      " PCP "
-    ]
-  ],
-  "key": {
-    "G": {
-      "block": "hemomancy:gilded_venous_stone"
-    },
-    "E": {
-      "block": "hemomancy:engram_block"
-    },
-    "C": {
-      "block": "hemomancy:polished_venous_stone"
-    },
-    "P": {
-      "block": "hemomancy:hematic_iron_block"
-    },
-    "B": {
-      "block": "minecraft:crying_obsidian"
-    },
-    "L": {
-      "block": "minecraft:iron_bars"
-    }
-  },
   "result": {
     "id": "hemomancy:unsigned_ancestral_ledger"
-  }
+  },
+  "floor": "hemomancy:communion_lesser",
+  "brazier_signature": [
+    {
+      "ingredient": {
+        "item": "minecraft:ender_pearl"
+      },
+      "count": 1
+    }
+  ]
 }

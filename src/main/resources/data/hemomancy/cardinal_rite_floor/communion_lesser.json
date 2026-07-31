@@ -1,0 +1,80 @@
+{
+  "style": "communion",
+  "tier": "lesser",
+  "pattern": [
+    [
+      "ABABA"
+    ],
+    [
+      "BABAB"
+    ],
+    [
+      "ABFBA"
+    ],
+    [
+      "BABAB"
+    ],
+    [
+      "ABABA"
+    ]
+  ],
+  "key": {
+    "B": {
+      "block": "hemomancy:polished_venous_stone"
+    },
+    "A": {
+      "block": "hemomancy:blood_wood_planks"
+    },
+    "F": {
+      "block": "hemomancy:cardinal_focus"
+    }
+  },
+  "focus": [
+    2,
+    0,
+    2
+  ],
+  "brazier_sockets": [
+    [
+      4,
+      1,
+      0
+    ],
+    [
+      3,
+      1,
+      3
+    ],
+    [
+      0,
+      1,
+      4
+    ],
+    [
+      -3,
+      1,
+      3
+    ],
+    [
+      -4,
+      1,
+      0
+    ],
+    [
+      -3,
+      1,
+      -3
+    ],
+    [
+      0,
+      1,
+      -4
+    ],
+    [
+      3,
+      1,
+      -3
+    ]
+  ],
+  "footprint_radius": 5.5
+}

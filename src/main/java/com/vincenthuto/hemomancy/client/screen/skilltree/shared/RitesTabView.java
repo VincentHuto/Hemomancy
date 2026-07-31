@@ -360,8 +360,8 @@ public final class RitesTabView {
 	private static void drawModelForRite(GuiGraphics gfx, RitesTabState state,
 										  CardinalRiteRecipe rite,
 										  int areaX, int areaY, int areaW, int areaH) {
-		if (rite.getPattern() == null) return;
-		List<BlockPosBlockPair> blockPairs = rite.getPattern().getDisplayBlockPosBlockList(materialCycleIndex());
+		if (rite.getPreviewPattern() == null) return;
+		List<BlockPosBlockPair> blockPairs = rite.getPreviewPattern().getDisplayBlockPosBlockList(materialCycleIndex());
 		if (blockPairs.isEmpty()) return;
 
 		int minX = Integer.MAX_VALUE, maxX = Integer.MIN_VALUE;
@@ -488,6 +488,27 @@ public final class RitesTabView {
 		}
 		drawScrollingTitle(gfx, ctx, name, panelX, y, panelW-17, state.nameColor);
 		y += lineH;
+		if (rite.hasLayeredStation()) {
+			String floor = rite.getFloorId().getPath().replace('_', ' ');
+			gfx.drawString(ctx.font(), Component.literal("Minimum Floor: ")
+					.withStyle(s -> s.withColor(0x888888))
+					.append(Component.literal(HLTextUtils.toProperCase(floor) + " (higher same-style tiers valid)")
+							.withStyle(s -> s.withColor(0xBB7777))), panelX, y, 0);
+			y += lineH;
+			String structure = rite.getRequiredStructure() == null ? "None"
+					: rite.shouldConsumeRequiredStructure() ? "Consumed on success" : "Reusable";
+			gfx.drawString(ctx.font(), Component.literal("Upper Structure: ")
+					.withStyle(s -> s.withColor(0x888888))
+					.append(Component.literal(structure).withStyle(s -> s.withColor(0xAAAAAA))),
+					panelX, y, 0);
+			y += lineH;
+			gfx.drawString(ctx.font(), Component.literal("Lit Brazier Offerings: ")
+					.withStyle(s -> s.withColor(0x888888))
+					.append(Component.literal(String.valueOf(rite.getBrazierSignature().stream()
+							.mapToInt(CardinalRiteRecipe.BrazierRequirement::count).sum()))
+							.withStyle(s -> s.withColor(0xCC9966))), panelX, y, 0);
+			y += lineH;
+		}
 		y += 4;
 		gfx.fill(panelX, y, panelX + panelW, y + 1, state.separatorColor);
 		y += 6;
@@ -566,8 +587,8 @@ public final class RitesTabView {
 		y += 6;
 
 		// Block materials list
-		if (rite.getPattern() != null) {
-			List<MultiblockPattern.MaterialCount> materials = rite.getPattern().getMaterialCounts(false);
+		if (rite.getPreviewPattern() != null) {
+			List<MultiblockPattern.MaterialCount> materials = rite.getPreviewPattern().getMaterialCounts(false);
 			if (!materials.isEmpty()) {
 				gfx.drawString(ctx.font(), Component.literal("Materials:")
 						.withStyle(s -> s.withColor(0x888888)), panelX, y, 0);
@@ -628,6 +649,7 @@ public final class RitesTabView {
 			y += ScreenDrawUtils.wrapText(font, desc, panelW).size() * lineH + 4;
 
 		y += lineH; // rite form
+		if (rite.hasLayeredStation()) y += lineH * 3;
 		y += lineH; // blood cost
 
 		if (enableDegreeLock) {
@@ -645,8 +667,8 @@ public final class RitesTabView {
 		}
 		y += 6;
 
-		if (rite.getPattern() != null) {
-			List<MultiblockPattern.MaterialCount> materials = rite.getPattern().getMaterialCounts(false);
+		if (rite.getPreviewPattern() != null) {
+			List<MultiblockPattern.MaterialCount> materials = rite.getPreviewPattern().getMaterialCounts(false);
 			if (!materials.isEmpty()) {
 				y += lineH;
 				int materialWrapW = panelW - 24;

@@ -7,6 +7,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
+import java.util.UUID;
 
 public final class ActiveRiteClientDataGrowthTest {
 	@AfterEach
@@ -127,6 +128,37 @@ public final class ActiveRiteClientDataGrowthTest {
 				"completion effect partial-tick age");
 	}
 
+	@Test
+	void interruptedStaffAbsorptionReformsAtHalfChannelSpeed() {
+		ActiveRiteClientData.set(List.of(riteWithCancellationTicks(40)));
+		assertFloatEquals(40.0F, currentRite().cancellationRenderTicks(1.0F),
+				"half-melted starting state");
+
+		ActiveRiteClientData.set(List.of(riteWithCancellationTicks(0)));
+		ActiveRiteClientData.tick();
+		assertFloatEquals(39.5F, currentRite().cancellationRenderTicks(1.0F),
+				"reformation begins gradually instead of snapping");
+
+		for (int tick = 1; tick < 80; tick++) ActiveRiteClientData.tick();
+		assertFloatEquals(0.0F, currentRite().cancellationRenderTicks(1.0F),
+				"half-melted staff takes eighty client ticks to reform");
+	}
+
+	@Test
+	void plantedStaffGrowthAdvancesLocallyBetweenServerSnapshots() {
+		ActiveRiteClientData.set(List.of(riteWithStaffPlantingTicks(14)));
+		assertFloatEquals(14.0F, currentRite().staffPlantingRenderTicks(0.0F),
+				"impact snapshot starts at the authoritative server tick");
+
+		for (int tick = 0; tick < 4; tick++) ActiveRiteClientData.tick();
+		assertFloatEquals(18.0F, currentRite().staffPlantingRenderTicks(1.0F),
+				"client advances through the tendril growth window");
+
+		ActiveRiteClientData.set(List.of(riteWithStaffPlantingTicks(14)));
+		assertFloatEquals(18.0F, currentRite().staffPlantingRenderTicks(1.0F),
+				"a repeated server snapshot does not reset visible growth");
+	}
+
 	private static ActiveRiteClientData.SanguineBlob currentBlob() {
 		return currentRite().getSanguineBlobs().get(0);
 	}
@@ -154,6 +186,28 @@ public final class ActiveRiteClientDataGrowthTest {
 				false, "CONSECRATION", 0, 0, 1, 0, 1,
 				0, 200, 0, 0, 0, "",
 				0.0F, List.of(), segments, List.of(), List.of());
+	}
+
+	private static ActiveRiteClientData.RiteEntry riteWithCancellationTicks(int cancellationTicks) {
+		return new ActiveRiteClientData.RiteEntry(
+				BlockPos.ZERO, 3, 0.0D,
+				ResourceLocation.fromNamespaceAndPath("hemomancy", "growth_test"),
+				false, "CONSECRATION", 0, 0, 1, 0, 1,
+				0, 200, 0, 0, 0, "",
+				0.0F, List.of(), List.of(), List.of(), List.of(),
+				true, UUID.fromString("e9ca8f95-7a66-4a57-9344-dadc7358c5ce"),
+				cancellationTicks, -1);
+	}
+
+	private static ActiveRiteClientData.RiteEntry riteWithStaffPlantingTicks(int staffPlantingTicks) {
+		return new ActiveRiteClientData.RiteEntry(
+				BlockPos.ZERO, 3, 0.0D,
+				ResourceLocation.fromNamespaceAndPath("hemomancy", "growth_test"),
+				false, "CONSECRATION", 0, 0, 1, 0, 1,
+				0, 200, 0, 0, 0, "",
+				0.0F, List.of(), List.of(), List.of(), List.of(),
+				true, UUID.fromString("e9ca8f95-7a66-4a57-9344-dadc7358c5ce"),
+				0, staffPlantingTicks);
 	}
 
 	private static void assertFloatEquals(float expected, float actual, String label) {

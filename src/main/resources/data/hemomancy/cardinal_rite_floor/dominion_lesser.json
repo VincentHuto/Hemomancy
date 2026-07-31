@@ -1,0 +1,80 @@
+{
+  "style": "dominion",
+  "tier": "lesser",
+  "pattern": [
+    [
+      "AAAAA"
+    ],
+    [
+      "ABBBA"
+    ],
+    [
+      "ABFBA"
+    ],
+    [
+      "ABBBA"
+    ],
+    [
+      "AAAAA"
+    ]
+  ],
+  "key": {
+    "B": {
+      "block": "minecraft:polished_blackstone_bricks"
+    },
+    "A": {
+      "block": "hemomancy:chiseled_hematic_iron_block"
+    },
+    "F": {
+      "block": "hemomancy:cardinal_focus"
+    }
+  },
+  "focus": [
+    2,
+    0,
+    2
+  ],
+  "brazier_sockets": [
+    [
+      4,
+      1,
+      0
+    ],
+    [
+      3,
+      1,
+      3
+    ],
+    [
+      0,
+      1,
+      4
+    ],
+    [
+      -3,
+      1,
+      3
+    ],
+    [
+      -4,
+      1,
+      0
+    ],
+    [
+      -3,
+      1,
+      -3
+    ],
+    [
+      0,
+      1,
+      -4
+    ],
+    [
+      3,
+      1,
+      -3
+    ]
+  ],
+  "footprint_radius": 5.5
+}

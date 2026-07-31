@@ -16,15 +16,28 @@ final class CardinalRiteFogGeometryTest {
 	@Test
 	void fullFootprintDefinesTheFogPerimeterBeforeRingsAreCompleted() {
 		assertEquals(11.75F,
-				CardinalRiteFogGeometry.perimeterRadius(11.75F, 9, 0, false));
+				CardinalRiteFogGeometry.perimeterRadius(11.75F, 9, 0, 7, false));
 	}
 
 	@Test
 	void completedBoundaryAndRiteSizeProvideOrderedFallbacks() {
 		assertEquals(5.0F,
-				CardinalRiteFogGeometry.perimeterRadius(0.0F, 9, 3, false));
+				CardinalRiteFogGeometry.perimeterRadius(0.0F, 9, 3, 1, false));
 		assertEquals(2.5F,
-				CardinalRiteFogGeometry.perimeterRadius(0.0F, 3, 0, false));
+				CardinalRiteFogGeometry.perimeterRadius(0.0F, 3, 0, 1, false));
+	}
+
+	@Test
+	void compactMultiRingRitesReceiveBreathingRoomOutsideTheirBoundaryLines() {
+		assertEquals(6.75F,
+				CardinalRiteFogGeometry.perimeterRadius(5.5F, 5, 2, 2, false),
+				"lesser two-ring rite fog clears the outer line");
+		assertEquals(4.5F,
+				CardinalRiteFogGeometry.perimeterRadius(4.5F, 3, 1, 1, false),
+				"single-ring rite keeps its authored footprint");
+		assertEquals(7.5F,
+				CardinalRiteFogGeometry.perimeterRadius(7.5F, 9, 4, 4, false),
+				"large rites are not expanded unnecessarily");
 	}
 
 	@Test
@@ -41,11 +54,11 @@ final class CardinalRiteFogGeometryTest {
 		int smallPopulation = CardinalRiteFogGeometry.puffs(2.7F, 3.0F).size();
 		int largePopulation = CardinalRiteFogGeometry.puffs(2.7F, 30.0F).size();
 
-		assertTrue(smallPopulation >= 165 && smallPopulation <= 220,
-				"small rites retain enough overlapping puffs to stay continuous");
-		assertTrue(largePopulation > smallPopulation && largePopulation <= 430,
-				"very large rites cap their billboard cost");
-		assertTrue(CardinalRiteFogGeometry.puffs(2.7F, 12.0F).size() > 70,
+		assertTrue(smallPopulation >= 600 && smallPopulation <= 620,
+				"small rites retain the primary clouds and their supporting scatter layer");
+		assertTrue(largePopulation > smallPopulation && largePopulation <= 5700,
+				"very large rites cap the combined primary and scatter billboard cost");
+		assertTrue(CardinalRiteFogGeometry.puffs(2.7F, 12.0F).size() > smallPopulation,
 				"normal large rites receive a denser cloud population");
 	}
 

@@ -16,6 +16,7 @@
     "MixinEntityRenderDispatcher",
     "MixinGameRenderer",
     "MixinHumanoidArmorLayer",
+    "MixinHumanoidModel",
     "MixinLivingEntityRenderer",
     "MixinLocalPlayer",
     "MixinPlayerItemInHandLayer"

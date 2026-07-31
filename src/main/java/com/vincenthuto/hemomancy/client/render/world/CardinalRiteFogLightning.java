@@ -12,7 +12,7 @@ import java.util.Random;
 
 public final class CardinalRiteFogLightning {
 	private static final int OUTER_BLACK = 0xE806020A;
-	private static final int INNER_PURPLE = 0xFF5A167D;
+	private static final int INNER_PURPLE = 0xFF5A1629;
 	private static final CardinalRiteFogLightningSchedule SCHEDULE =
 			new CardinalRiteFogLightningSchedule();
 
@@ -26,7 +26,8 @@ public final class CardinalRiteFogLightning {
 			ActiveRiteClientData.RiteEntry rite = scheduled.rite();
 			boolean legacy = "LEGACY".equals(rite.getPhase());
 			float radius = CardinalRiteFogGeometry.perimeterRadius(
-					rite.getFootprintRadius(), rite.getRiteSize(), rite.getCompletedRings(), legacy);
+					rite.getFootprintRadius(), rite.getRiteSize(), rite.getCompletedRings(),
+					rite.getTotalRings(), legacy);
 			StrikeGeometry strike = geometry(rite.getCenter(), radius, scheduled.seed());
 			LightningTestConfig config = config(
 					scheduled.seed(), strike.start().distanceTo(strike.end()));

@@ -5,29 +5,16 @@
   "required_degree": 1,
   "riteName": "Rite of Sanguine Attunement",
   "riteDescription": "A cleansing rite that purges and resets the caster's blood tendency alignments, allowing them to realign their kinship from a blank slate.",
-  "pattern": [
-    [
-      "VEV"
-    ],
-    [
-      "EPE"
-    ],
-    [
-      "VEV"
-    ]
-  ],
-  "key": {
-    "E": {
-      "block": "hemomancy:engram_block"
-    },
-    "V": {
-      "block": "minecraft:dark_oak_planks"
-    },
-    "P": {
-      "block": "minecraft:iron_bars"
-    }
-  },
   "result": {
     "id": "hemomancy:sanguine_formation"
-  }
+  },
+  "floor": "hemomancy:communion_minor",
+  "brazier_signature": [
+    {
+      "ingredient": {
+        "item": "minecraft:redstone"
+      },
+      "count": 1
+    }
+  ]
 }

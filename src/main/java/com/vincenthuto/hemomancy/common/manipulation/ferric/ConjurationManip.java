@@ -15,6 +15,10 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.network.chat.Component;
+import net.minecraft.ChatFormatting;
+import com.vincenthuto.hemomancy.common.rite.CardinalRiteStaffEscrow;
 import net.neoforged.neoforge.registries.DeferredHolder;
 
 public class ConjurationManip extends BloodManipulation {
@@ -29,6 +33,13 @@ public class ConjurationManip extends BloodManipulation {
 
 	@Override
 	public void getAction(Player player, Level world, ItemStack heldItemMainhand, BlockPos position) {
+		if (item.get() == ItemInit.living_staff.get() && player instanceof ServerPlayer serverPlayer
+				&& CardinalRiteStaffEscrow.isPlanted(serverPlayer)) {
+			player.displayClientMessage(Component.literal(
+					"Your Living Staff is planted in an active Cardinal Rite.")
+					.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC), true);
+			return;
+		}
 		if (CellHandFormHelper.applySelection(player, this)
 				&& CellHandFormHelper.isCellHandManip(getName())
 				&& CellHandFormHelper.isCellHandForm(player.getMainHandItem())) {

@@ -438,6 +438,8 @@ Managed by `CardinalRiteEvents`:
 3. Each tick: particles spawn, boundary checked, sacrifices processed
 4. On completion: degree awarded, Unstained progress reset (if any), chat message sent
 
+An active Harbinger rite can also be cancelled only by its caster. Holding Blood Absorption on the center focus/planted Living Staff for 80 uninterrupted ticks pauses normal rite progress: during the first 50 ticks the central daemon shrinks and is drawn back into the staff, then over 30 ticks the staff shrinks away while absorbed-blood particles travel to the caster's hand. Any interruption resets the channel and resumes the rite. Successful cancellation clears rite-spawned threats and restores the exact escrowed Living Staff stack, but intentionally gives no rite result and refunds none of the blood, offerings, or other committed costs. Cancellation progress is transient (a reload interrupts it) and is included in `PacketSyncActiveRites` for client interpolation.
+
 `BloodCraftingKeyPressPacket` validates the explicit `required_degree` before activation through `RecipeDegreeGates`, then performs the rank-up redundancy check. If a rite's `rankup` flag is true and the caster is already at or above the rank it grants, the server refuses to start the rite so players do not spend materials or time on redundant degree-up rituals. `CardinalRiteEvents` re-checks the same gate before completion so saved/active rites cannot finish after a player loses access. The same packet also accepts structure-spawner-placed rite structures by scanning the matched multiblock pattern rather than assuming the clicked block is the rite origin.
 
 ### 5.4 Harbinger NPC Dialogue System

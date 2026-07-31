@@ -5,68 +5,16 @@
   "required_degree": 3,
   "riteName": "Rite of the Sanguine Eclipse",
   "riteDescription": "A forbidden rite that tears the veil between night and will. The caster forces a Blood Moon to rise, empowering all Harbingers while weakening the uninitiated.",
-  "pattern": [
-    [
-      "       ",
-      "       ",
-      "       ",
-      "       ",
-      "       ",
-      "       ",
-      "  GIG  "
-    ],
-    [
-      "       ",
-      " S   S ",
-      " G   G ",
-      " G G G ",
-      " G G G ",
-      " GEGEG ",
-      " GIGIG "
-    ],
-    [
-      "       ",
-      "       ",
-      "   G   ",
-      " G S G ",
-      " G G G ",
-      " GESEG ",
-      "IGIIIGI"
-    ],
-    [
-      "       ",
-      " S   S ",
-      " G   G ",
-      " G G G ",
-      " G G G ",
-      " GEGEG ",
-      " GIGIG "
-    ],
-    [
-      "       ",
-      "       ",
-      "       ",
-      "       ",
-      "       ",
-      "       ",
-      "  GIG  "
-    ]
-  ],
-  "key": {
-    "E": {
-      "block": "hemomancy:engram_block"
-    },
-    "S": {
-      "block": "minecraft:tinted_glass"
-    },
-    "I": {
-      "block": "hemomancy:hematic_iron_pillar"
-    },
-    "G": {
-      "block": "minecraft:red_stained_glass"
-    }
-  },
   "result": {
     "id": "hemomancy:sanguine_formation"
-  }
+  },
+  "floor": "hemomancy:working_greater",
+  "brazier_signature": [
+    {
+      "ingredient": {
+        "item": "minecraft:flint"
+      },
+      "count": 1
+    }
+  ]
 }

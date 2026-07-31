@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.client.render.item.hematic;
 
+import com.vincenthuto.hemomancy.client.data.ActiveRiteClientData;
 import com.vincenthuto.hemomancy.client.particle.AbsorbedBloodCellParticle;
 import com.vincenthuto.hemomancy.client.particle.BloodCellParticle;
 import com.vincenthuto.hemomancy.client.particle.BloodProjectionParticlePath;
@@ -71,7 +72,8 @@ public final class CellHandParticleEffects {
 		Level world = living.level();
 		Random rand = new Random();
 		if (isAbsorptionMode(living, activeStack)) {
-			Optional<Vec3> blockSource = BlockBloodInteractions.findLookedAtBloodBlockSource(world, living);
+			Optional<Vec3> blockSource = findCardinalRiteCancellationSource(living)
+					.or(() -> BlockBloodInteractions.findLookedAtBloodBlockSource(world, living));
 			if (blockSource.isPresent()) {
 				spawnAbsorbedBloodParticle(mc, origin, blockSource.get(), ParticleColor.BLOOD, rand, Optional.empty());
 			} else {
@@ -138,7 +140,8 @@ public final class CellHandParticleEffects {
 		Vec3 anchor = worldToFirstPersonAnchor(origin);
 
 		if (isAbsorptionMode(player, stack)) {
-			Optional<Vec3> blockSource = BlockBloodInteractions.findLookedAtBloodBlockSource(world, player);
+			Optional<Vec3> blockSource = findCardinalRiteCancellationSource(player)
+					.or(() -> BlockBloodInteractions.findLookedAtBloodBlockSource(world, player));
 			if (blockSource.isPresent()) {
 				spawnAbsorbedBloodParticle(mc, origin, blockSource.get(), ParticleColor.BLOOD, rand,
 						Optional.of(anchor));
@@ -185,6 +188,14 @@ public final class CellHandParticleEffects {
 
 	public static void spawnFirstPersonParticlesForStack(ItemStack stack, HumanoidArm hand) {
 		spawnFirstPersonParticlesForStack(stack, hand, fallbackFirstPersonHandOrigin(hand));
+	}
+
+	private static Optional<Vec3> findCardinalRiteCancellationSource(LivingEntity caster) {
+		return ActiveRiteClientData.getActiveRites().stream()
+				.filter(rite -> caster.getUUID().equals(rite.getOwner()))
+				.filter(rite -> rite.getCancellationTicks() > 0)
+				.findFirst()
+				.map(rite -> Vec3.atCenterOf(rite.getCenter()).add(0.0D, 0.45D, 0.0D));
 	}
 
 	public static void spawnGraftRiteItemParticles(ItemStack graftStack, Vec3 source) {

@@ -6,6 +6,7 @@ import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.
 import com.vincenthuto.hemomancy.common.entity.mob.animal.BloodlickerEntity;
 import com.vincenthuto.hemomancy.common.init.EntityInit;
 import com.vincenthuto.hemomancy.common.entity.utility.UnsettledIchorEntity;
+import com.vincenthuto.hemomancy.common.entity.utility.HumanitySpriteEntity;
 import com.vincenthuto.hemomancy.common.recipe.CardinalRiteRecipe;
 import com.vincenthuto.hemomancy.common.rite.ActiveCardinalRite;
 import com.vincenthuto.hemomancy.common.rite.CardinalRiteCeremonyRules;
@@ -14,11 +15,14 @@ import com.vincenthuto.hemomancy.common.rite.CardinalRiteAllyRole;
 import com.vincenthuto.hemomancy.common.rite.sigil.IchorianSigilDefinition;
 import com.vincenthuto.hemomancy.common.rite.sigil.IchorianSigilRegistry;
 import com.vincenthuto.hemomancy.common.rite.sigil.CardinalRiteSigilRules;
+import com.vincenthuto.hemomancy.common.tile.IronBrazierBlockEntity;
 import com.vincenthuto.hutoslib.client.particle.factory.GlowParticleFactory;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
+import net.minecraft.core.particles.ItemParticleOption;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -29,6 +33,7 @@ import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.Vec3;
 
 import java.util.ArrayList;
@@ -57,12 +62,136 @@ public final class CardinalRiteOrdealEngine {
 			case ORDEAL -> tickOrdeal(level, caster, rite, recipe);
 			case STILL_INTERVAL -> tickStillInterval(caster, rite, recipe);
 			case PROFESSION -> tickProfession(level, caster, rite, recipe);
-			case CULMINATION -> {
-				if (rite.getPhaseTicks() >= 40) rite.markComplete();
-			}
+			case OFFERING_PROCESSION -> tickOfferingProcession(level, caster, rite);
+			case CULMINATION -> tickCulmination(level, caster, rite);
 			default -> {
 			}
 		}
+	}
+
+	private static void tickOfferingProcession(ServerLevel level, ServerPlayer caster,
+			ActiveCardinalRite rite) {
+		HumanitySpriteEntity daemon = findOrCreateDaemon(level, rite,
+				CardinalRiteFinaleTiming.PROCESSION_SCALE);
+		if (daemon == null) {
+			rite.markCollapsed();
+			return;
+		}
+		daemon.setSpriteScale(CardinalRiteFinaleTiming.PROCESSION_SCALE);
+		if (rite.tickOfferingDwell()) return;
+
+		ActiveCardinalRite.RiteOffering offering = rite.getCurrentOffering();
+		Vec3 target = rite.isReturningFromOfferings() || offering == null
+				? centerPosition(rite, CardinalRiteFinaleTiming.PROCESSION_SCALE)
+				: Vec3.atCenterOf(offering.pos()).add(0.0D, 1.15D, 0.0D);
+		if (!moveDaemonToward(daemon, target)) return;
+
+		if (rite.isReturningFromOfferings() || offering == null) {
+			rite.finishOfferingProcession();
+			caster.displayClientMessage(Component.literal(
+					"The daemon returns to the staff and swells with the offerings.")
+					.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC), false);
+			return;
+		}
+		if (!(level.getBlockEntity(offering.pos()) instanceof IronBrazierBlockEntity brazier)) {
+			rite.markCollapsed();
+			return;
+		}
+		ItemStack present = brazier.getOfferingForMatching();
+		if (present.isEmpty() || offering.stack() == null
+				|| !ItemStack.isSameItemSameComponents(present, offering.stack())) {
+			rite.markCollapsed();
+			return;
+		}
+		ItemStack consumed = brazier.consumeOffering();
+		if (consumed.isEmpty()) {
+			rite.markCollapsed();
+			return;
+		}
+		emitOfferingAbsorption(level, daemon, offering.pos(), consumed);
+		rite.absorbCurrentOffering();
+		level.playSound(null, offering.pos(), SoundEvents.FIRECHARGE_USE,
+				SoundSource.BLOCKS, 0.9F, 0.65F + level.random.nextFloat() * 0.2F);
+	}
+
+	private static void tickCulmination(ServerLevel level, ServerPlayer caster,
+			ActiveCardinalRite rite) {
+		double growth = CardinalRiteFinaleTiming.growthProgress(rite.getPhaseTicks());
+		float matureScale = matureDaemonScale(rite);
+		float scale = (float) lerp(growth, CardinalRiteFinaleTiming.PROCESSION_SCALE, matureScale);
+		HumanitySpriteEntity daemon = findOrCreateDaemon(level, rite, scale);
+		if (daemon == null) {
+			rite.markCollapsed();
+			return;
+		}
+		double merge = smoothstep(CardinalRiteFinaleTiming.mergeProgress(rite.getPhaseTicks()));
+		Vec3 center = centerPosition(rite, scale);
+		Vec3 player = new Vec3(caster.getX(),
+				caster.getY() + caster.getBbHeight() * 0.55D, caster.getZ());
+		daemon.setPos(center.lerp(player, merge));
+		daemon.setSpriteScale((float) lerp(merge, scale, HumanitySpriteEntity.MIN_SCALE));
+		daemon.faceDirection(player.x - center.x, player.z - center.z);
+		daemon.setFlying(merge > 0.0D);
+		if (rite.getPhaseTicks() >= CardinalRiteFinaleTiming.TOTAL_TICKS) {
+			rite.markComplete();
+		}
+	}
+
+	private static HumanitySpriteEntity findOrCreateDaemon(ServerLevel level,
+			ActiveCardinalRite rite, float scale) {
+		HumanitySpriteEntity daemon = HumanitySpriteEntity.findBoundToRite(
+				level, rite.getPlayerUUID(), rite.getCenterPos());
+		if (daemon != null) return daemon;
+		daemon = EntityInit.humanity_sprite.get().create(level);
+		if (daemon == null) return null;
+		daemon.initialize(centerPosition(rite, scale), scale);
+		daemon.bindToRite(rite.getPlayerUUID());
+		return level.addFreshEntity(daemon) ? daemon : null;
+	}
+
+	private static boolean moveDaemonToward(HumanitySpriteEntity daemon, Vec3 target) {
+		Vec3 delta = target.subtract(daemon.position());
+		double distance = delta.length();
+		if (distance <= CardinalRiteFinaleTiming.DAEMON_TRAVEL_BLOCKS_PER_TICK) {
+			daemon.setPos(target);
+			daemon.setFlying(false);
+			return true;
+		}
+		Vec3 step = delta.scale(CardinalRiteFinaleTiming.DAEMON_TRAVEL_BLOCKS_PER_TICK / distance);
+		daemon.setPos(daemon.position().add(step));
+		daemon.faceDirection(delta.x, delta.z);
+		daemon.setFlying(true);
+		return false;
+	}
+
+	private static Vec3 centerPosition(ActiveCardinalRite rite, float scale) {
+		return Vec3.atCenterOf(rite.getCenterPos()).add(0.0D,
+				0.5D + CardinalRiteHumanityGeometry.DEFAULT_ENTITY_HEIGHT * scale * 0.5D, 0.0D);
+	}
+
+	private static float matureDaemonScale(ActiveCardinalRite rite) {
+		double matureHeight = 3.0D + rite.getRiteSize() * 0.5D;
+		return (float) (matureHeight / CardinalRiteHumanityGeometry.DEFAULT_ENTITY_HEIGHT);
+	}
+
+	private static void emitOfferingAbsorption(ServerLevel level, HumanitySpriteEntity daemon,
+			BlockPos brazierPos, ItemStack stack) {
+		double x = brazierPos.getX() + 0.5D;
+		double y = brazierPos.getY() + 1.2D;
+		double z = brazierPos.getZ() + 0.5D;
+		Vec3 pull = daemon.position().subtract(x, y, z).normalize().scale(0.18D);
+		level.sendParticles(new ItemParticleOption(ParticleTypes.ITEM, stack),
+				x, y, z, 32, 0.22D, 0.18D, 0.22D, 0.12D);
+		level.sendParticles(new ItemParticleOption(ParticleTypes.ITEM, stack),
+				x, y, z, 12, Math.abs(pull.x), Math.abs(pull.y), Math.abs(pull.z), 0.18D);
+	}
+
+	private static double smoothstep(double value) {
+		return value * value * (3.0D - 2.0D * value);
+	}
+
+	private static double lerp(double amount, double start, double end) {
+		return start + (end - start) * amount;
 	}
 
 	private static void tickConsecration(ServerLevel level, ServerPlayer caster, ActiveCardinalRite rite,
@@ -215,7 +344,9 @@ public final class CardinalRiteOrdealEngine {
 					Entity threat = level.getEntity(threatId);
 					if (!(threat instanceof Mob mob)) continue;
 					int anchor = nearestAnchor(recipe, rite, threat.blockPosition());
-					BlockPos anchorPos = rite.getCenterPos().offset(recipe.getCeremony().anchors().get(anchor).offset());
+					BlockPos anchorOffset = recipe.getCeremony().anchors().get(anchor).offset();
+					BlockPos anchorPos = CardinalRiteAnchorVisualRules.riteSurface(rite.getCenterPos())
+							.offset(anchorOffset.getX(), 0, anchorOffset.getZ());
 					mob.getNavigation().moveTo(anchorPos.getX() + 0.5D, anchorPos.getY(), anchorPos.getZ() + 0.5D, 1.2D);
 					if (!CardinalRiteThreatRules.canSiphonAnchor(threat.distanceToSqr(
 							anchorPos.getX() + 0.5D, anchorPos.getY(), anchorPos.getZ() + 0.5D))) continue;
@@ -267,7 +398,8 @@ public final class CardinalRiteOrdealEngine {
 		if (ichor == null) return;
 		BlockPos offset = anchor < recipe.getCeremony().anchors().size()
 				? recipe.getCeremony().anchors().get(anchor).offset() : BlockPos.ZERO;
-		BlockPos position = rite.getCenterPos().offset(offset.getX(), 0, offset.getZ());
+		BlockPos position = CardinalRiteAnchorVisualRules.riteSurface(rite.getCenterPos())
+				.offset(offset.getX(), 0, offset.getZ());
 		ichor.initialize(rite.getPlayerUUID(), bloodMl);
 		ichor.moveTo(position.getX() + 0.5D, position.getY() + 0.4D, position.getZ() + 0.5D);
 		ichor.setDeltaMovement((level.random.nextDouble() - 0.5D) * 0.12D, 0.16D,
@@ -386,7 +518,8 @@ public final class CardinalRiteOrdealEngine {
 		double nearestDistance = Double.MAX_VALUE;
 		for (int i = 0; i < recipe.getCeremony().anchors().size(); i++) {
 			BlockPos offset = recipe.getCeremony().anchors().get(i).offset();
-			BlockPos pos = rite.getCenterPos().offset(offset.getX(), 0, offset.getZ());
+			BlockPos pos = CardinalRiteAnchorVisualRules.riteSurface(rite.getCenterPos())
+					.offset(offset.getX(), 0, offset.getZ());
 			double distance = pos.distSqr(from);
 			if (distance < nearestDistance) {
 				nearestDistance = distance;

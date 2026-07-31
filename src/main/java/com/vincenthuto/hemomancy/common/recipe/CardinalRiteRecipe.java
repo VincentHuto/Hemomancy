@@ -2,6 +2,7 @@ package com.vincenthuto.hemomancy.common.recipe;
 
 import com.vincenthuto.hemomancy.common.init.RecipeInit;
 import com.vincenthuto.hemomancy.common.rite.CardinalRiteCeremonyDefinition;
+import com.vincenthuto.hemomancy.common.rite.floor.CardinalRiteFloorRegistry;
 import com.vincenthuto.hutoslib.math.MultiblockPattern;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
@@ -75,6 +76,17 @@ public class CardinalRiteRecipe extends CustomRecipe {
 	protected boolean unstained;
 	protected boolean rankup;
 	protected CardinalRiteCeremonyDefinition ceremony;
+	protected ResourceLocation floorId;
+	protected MultiblockPattern requiredStructure;
+	protected boolean consumeRequiredStructure;
+	protected List<BrazierRequirement> brazierSignature = List.of();
+
+	public record BrazierRequirement(Ingredient ingredient, int count, boolean consumeOnSuccess) {
+		public BrazierRequirement {
+			if (ingredient == null) throw new IllegalArgumentException("Brazier ingredient cannot be null");
+			if (count < 1) throw new IllegalArgumentException("Brazier ingredient count must be positive");
+		}
+	}
 
 	public CardinalRiteRecipe(ResourceLocation pId, double bloodCost, CardinalRiteType riteType,
 			MultiblockPattern pattern, ItemStack result, String riteName, String riteDescription) {
@@ -148,6 +160,54 @@ public class CardinalRiteRecipe extends CustomRecipe {
 
 	public MultiblockPattern getPattern() {
 		return pattern;
+	}
+
+	public MultiblockPattern getFloorPattern() {
+		return floorId == null ? null
+				: CardinalRiteFloorRegistry.get(floorId)
+						.map(com.vincenthuto.hemomancy.common.rite.floor.CardinalRiteFloorDefinition::pattern)
+						.orElse(null);
+	}
+
+	public MultiblockPattern getPreviewPattern() {
+		return requiredStructure != null ? requiredStructure
+				: hasLayeredStation() ? getFloorPattern() : pattern;
+	}
+
+	public boolean hasLayeredStation() {
+		return floorId != null;
+	}
+
+	public ResourceLocation getFloorId() {
+		return floorId;
+	}
+
+	public void setFloorId(ResourceLocation floorId) {
+		this.floorId = floorId;
+	}
+
+	public MultiblockPattern getRequiredStructure() {
+		return requiredStructure;
+	}
+
+	public void setRequiredStructure(MultiblockPattern requiredStructure) {
+		this.requiredStructure = requiredStructure;
+	}
+
+	public boolean shouldConsumeRequiredStructure() {
+		return consumeRequiredStructure;
+	}
+
+	public void setConsumeRequiredStructure(boolean consumeRequiredStructure) {
+		this.consumeRequiredStructure = consumeRequiredStructure;
+	}
+
+	public List<BrazierRequirement> getBrazierSignature() {
+		return brazierSignature;
+	}
+
+	public void setBrazierSignature(List<BrazierRequirement> brazierSignature) {
+		this.brazierSignature = List.copyOf(brazierSignature);
 	}
 
 	public ItemStack getResult() {

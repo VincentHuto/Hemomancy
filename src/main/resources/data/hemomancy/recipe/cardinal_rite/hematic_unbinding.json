@@ -5,64 +5,16 @@
   "required_degree": 2,
   "riteName": "Rite of Hematic Unbinding",
   "riteDescription": "A severance rite that dissolves the caster's bloodline, freeing all members and returning any shared blood deposits. The covenant is broken â€” what was bound by blood is unbound.",
-  "pattern": [
-    [
-      "     ",
-      "     ",
-      "     ",
-      "     ",
-      " PVP "
-    ],
-    [
-      "  G  ",
-      "  P  ",
-      "  P  ",
-      " EPE ",
-      "PVPVP"
-    ],
-    [
-      " G G ",
-      " PGP ",
-      " PPP ",
-      " PGP ",
-      "VPVPV"
-    ],
-    [
-      "  G  ",
-      "  P  ",
-      "  P  ",
-      " EPE ",
-      "PVPVP"
-    ],
-    [
-      "     ",
-      "     ",
-      "     ",
-      "     ",
-      " PVP "
-    ]
-  ],
-  "key": {
-    "E": {
-      "block": "hemomancy:engram_block"
-    },
-    "G": {
-      "block": "minecraft:crying_obsidian"
-    },
-    "V": {
-      "block": "hemomancy:venous_stone"
-    },
-    "C": {
-      "block": "hemomancy:polished_venous_stone"
-    },
-    "P": {
-      "block": "hemomancy:hematic_iron_block"
-    },
-    "B": {
-      "block": "minecraft:soul_sand"
-    }
-  },
   "result": {
     "id": "hemomancy:sanguine_formation"
-  }
+  },
+  "floor": "hemomancy:working_lesser",
+  "brazier_signature": [
+    {
+      "ingredient": {
+        "item": "minecraft:nether_star"
+      },
+      "count": 1
+    }
+  ]
 }

@@ -49,6 +49,11 @@ public class ShaderInit {
 	public static ShaderHolder BLOOD_STRUCTURE_WARP = new ShaderHolder(Hemomancy.rloc("world/blood_structure_warp"),
 			DefaultVertexFormat.BLOCK, "HemoTime", "Progress", "BlockSeed", "WiggleAmp");
 
+	public static ShaderHolder BLOOD_STRUCTURE_WARP_ENTITY = new ShaderHolder(
+			Hemomancy.rloc("world/blood_structure_warp"),
+			DefaultVertexFormat.NEW_ENTITY, "HemoTime", "Progress", "BlockSeed", "WiggleAmp",
+			"WarpCenter", "FinalizeProgress", "MeltGroundY", "MeltHeight");
+
 	public static ShaderHolder LOOM_ORB = new ShaderHolder(Hemomancy.rloc("world/loom_orb"),
 			DefaultVertexFormat.POSITION_COLOR, "HemoTime", "OrbSeed", "OrbCenter", "OrbRadius", "WritheStrength",
 			"ThreadScale", "GlowLayer");
@@ -137,6 +142,7 @@ public class ShaderInit {
         registerShader(event, WILL_STATE_MONOLITH.createInstance(provider));
         registerShader(event, HERMIT_FAREWELL_DISSOLVE.createInstance(provider));
         registerShader(event, BLOOD_STRUCTURE_WARP.createInstance(provider));
+        registerShader(event, BLOOD_STRUCTURE_WARP_ENTITY.createInstance(provider));
         registerShader(event, LOOM_ORB.createInstance(provider));
         registerShader(event, MYCELIAL_CRUCIBLE_BASIN.createInstance(provider));
         registerShader(event, MNEMONIC_LOWTIDE_LAKE.createInstance(provider));

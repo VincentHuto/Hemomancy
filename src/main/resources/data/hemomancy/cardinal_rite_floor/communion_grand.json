@@ -1,0 +1,132 @@
+{
+  "style": "communion",
+  "tier": "grand",
+  "pattern": [
+    [
+      "ABABABABA"
+    ],
+    [
+      "BABABABAB"
+    ],
+    [
+      "ABABABABA"
+    ],
+    [
+      "BABABABAB"
+    ],
+    [
+      "ABABFBABA"
+    ],
+    [
+      "BABABABAB"
+    ],
+    [
+      "ABABABABA"
+    ],
+    [
+      "BABABABAB"
+    ],
+    [
+      "ABABABABA"
+    ]
+  ],
+  "key": {
+    "B": {
+      "block": "hemomancy:polished_venous_stone"
+    },
+    "A": {
+      "block": "hemomancy:blood_wood_planks"
+    },
+    "F": {
+      "block": "hemomancy:cardinal_focus"
+    }
+  },
+  "focus": [
+    4,
+    0,
+    4
+  ],
+  "brazier_sockets": [
+    [
+      6,
+      1,
+      0
+    ],
+    [
+      6,
+      1,
+      2
+    ],
+    [
+      4,
+      1,
+      4
+    ],
+    [
+      2,
+      1,
+      6
+    ],
+    [
+      0,
+      1,
+      6
+    ],
+    [
+      -2,
+      1,
+      6
+    ],
+    [
+      -4,
+      1,
+      4
+    ],
+    [
+      -6,
+      1,
+      2
+    ],
+    [
+      -6,
+      1,
+      0
+    ],
+    [
+      -6,
+      1,
+      -2
+    ],
+    [
+      -4,
+      1,
+      -4
+    ],
+    [
+      -2,
+      1,
+      -6
+    ],
+    [
+      0,
+      1,
+      -6
+    ],
+    [
+      2,
+      1,
+      -6
+    ],
+    [
+      4,
+      1,
+      -4
+    ],
+    [
+      6,
+      1,
+      -2
+    ]
+  ],
+  "footprint_radius": 7.5
+}

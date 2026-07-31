@@ -6,29 +6,16 @@
   "riteName": "Rite of Sanguine Initiation",
   "riteDescription": "A basic initiation rite that awakens the hematic potential within the practitioner.",
   "rankup": true,
-  "pattern": [
-    [
-      "CEC"
-    ],
-    [
-      "EPE"
-    ],
-    [
-      "CEC"
-    ]
-  ],
-  "key": {
-    "E": {
-      "block": "hemomancy:engram_block"
-    },
-    "C": {
-      "block": "minecraft:stone_bricks"
-    },
-    "P": {
-      "block": "hemomancy:hematic_iron_block"
-    }
-  },
   "result": {
     "id": "hemomancy:sanguine_formation"
-  }
+  },
+  "floor": "hemomancy:threshold_minor",
+  "brazier_signature": [
+    {
+      "ingredient": {
+        "item": "minecraft:paper"
+      },
+      "count": 1
+    }
+  ]
 }

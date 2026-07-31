@@ -358,6 +358,9 @@ public class BlockInit {
 	public static final DeferredHolder<Block, Block> hematic_iron_block = BASEBLOCKS.register("hematic_iron_block",
 			() -> new Block(BlockBehaviour.Properties.of().requiresCorrectToolForDrops().strength(5.0F, 6.0F)
 					.sound(SoundType.METAL)));
+	public static final DeferredHolder<Block, Block> cardinal_focus = BASEBLOCKS.register("cardinal_focus",
+			() -> new Block(BlockBehaviour.Properties.of().requiresCorrectToolForDrops().strength(5.0F, 12.0F)
+					.sound(SoundType.METAL).lightLevel(state -> 5)));
 	public static final DeferredHolder<Block, Block> hematic_iron_pillar = COLUMNBLOCKS.register("hematic_iron_pillar",
 			() -> new RotatedPillarBlock(BlockBehaviour.Properties.of().requiresCorrectToolForDrops()
 					.strength(5.0F, 6.0F).sound(SoundType.METAL)));

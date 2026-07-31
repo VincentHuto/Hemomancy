@@ -13,8 +13,14 @@ final class CardinalRiteTargetGeometryTest {
 				new BlockPos(20, 64, -10), new BlockPos(3, 1, 0));
 
 		assertEquals(23.5D, point.x, 0.0001D);
-		assertEquals(CardinalRiteAnchorVisualRules.ritePlaneY(64), point.y, 0.0001D);
+		assertEquals(65.1D, point.y, 0.0001D);
 		assertEquals(-9.5D, point.z, 0.0001D);
+	}
+
+	@Test
+	void riteSurfaceIsTheAirBlockDirectlyAboveTheFloorFocus() {
+		assertEquals(new BlockPos(20, 65, -10),
+				CardinalRiteAnchorVisualRules.riteSurface(new BlockPos(20, 64, -10)));
 	}
 
 	@Test

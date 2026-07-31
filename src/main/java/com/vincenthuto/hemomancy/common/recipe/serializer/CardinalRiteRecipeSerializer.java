@@ -10,6 +10,7 @@ import com.vincenthuto.hemomancy.common.rite.CardinalRiteCeremonyCatalog;
 import com.vincenthuto.hemomancy.common.rite.CardinalRiteCeremonyDefinition;
 import com.vincenthuto.hemomancy.common.rite.CardinalRiteCeremonyProfile;
 import com.vincenthuto.hemomancy.common.rite.CardinalRiteCeremonyRules;
+import com.vincenthuto.hemomancy.common.rite.CardinalRiteOfferingConsumptionRules;
 import com.vincenthuto.hutoslib.math.MultiblockPattern;
 import com.vincenthuto.hutoslib.math.MultiblockPatternKey;
 import net.minecraft.core.Holder;
@@ -23,6 +24,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
@@ -215,27 +217,50 @@ public class CardinalRiteRecipeSerializer implements RecipeSerializer<CardinalRi
 		CardinalRiteType riteType = CardinalRiteType.byName(riteTypeName);
 		String riteName = GsonHelper.getAsString(pJson, "riteName", "");
 		String riteDescription = GsonHelper.getAsString(pJson, "riteDescription", "");
-		String[][] pattern = patternFromJson(GsonHelper.getAsJsonArray(pJson, "pattern"));
-		Map<String, PatternKeyEntry> keyEntries = keyEntriesFromJson(GsonHelper.getAsJsonObject(pJson, "key"));
 		ItemStack result = ItemStack.EMPTY;
 		if (pJson.has("result")) {
 			result = RecipeResultStackParser.parseResultStack(pJson, "result");
 		}
-		BlockPattern bp = generateBlockPatternFromKeyEntries(keyEntries, pattern);
-		MultiblockPattern mbPattern = new MultiblockPattern(bp, displayKeyMapFromKeyEntries(keyEntries), pattern, true);
 		int requiredDegree = requiredDegreeFromJson(pJson);
-		boolean breakBlocksOnCreation = GsonHelper.getAsBoolean(pJson, "breakBlocksOnCreation", true);
 		boolean unstained = GsonHelper.getAsBoolean(pJson, "unstained", false);
+		boolean layered = pJson.has("floor");
+		MultiblockPattern mbPattern = layered ? null : CardinalRitePatternJson.parse(pJson);
+		boolean breakBlocksOnCreation = GsonHelper.getAsBoolean(pJson, "breakBlocksOnCreation", !layered);
 		boolean rankup = GsonHelper.getAsBoolean(pJson, "rankup", false);
 		CardinalRiteRecipe recipe = new CardinalRiteRecipe(pRecipeId, cost, riteType, mbPattern, result, riteName,
 				riteDescription, requiredDegree, breakBlocksOnCreation, unstained, rankup);
 		recipe.setRequiredPurity(GsonHelper.getAsFloat(pJson, "required_purity", -1.0f));
 		recipe.setRequiredClarity(GsonHelper.getAsFloat(pJson, "required_clarity", -1.0f));
+		if (layered) {
+			recipe.setFloorId(ResourceLocation.parse(GsonHelper.getAsString(pJson, "floor")));
+			if (pJson.has("required_structure")) {
+				JsonObject structure = GsonHelper.getAsJsonObject(pJson, "required_structure");
+				recipe.setRequiredStructure(CardinalRitePatternJson.parse(structure));
+				recipe.setConsumeRequiredStructure(
+						GsonHelper.getAsBoolean(structure, "consume_on_success", false));
+			}
+			recipe.setBrazierSignature(brazierSignatureFromJson(pJson));
+		}
 		if (!unstained) {
 			int ceremonyDegree = rankup ? requiredDegree + 1 : CardinalRiteCeremonyRules.formIndex(riteType) + 1;
 			recipe.setCeremony(ceremonyFromJson(pJson, pRecipeId, riteType, ceremonyDegree));
 		}
 		return recipe;
+	}
+
+	private static List<CardinalRiteRecipe.BrazierRequirement> brazierSignatureFromJson(JsonObject json) {
+		if (!json.has("brazier_signature")) return List.of();
+		List<CardinalRiteRecipe.BrazierRequirement> result = new ArrayList<>();
+		for (JsonElement element : json.getAsJsonArray("brazier_signature")) {
+			JsonObject entry = element.getAsJsonObject();
+			Ingredient ingredient = Ingredient.CODEC_NONEMPTY.parse(JsonOps.INSTANCE, entry.get("ingredient"))
+					.getOrThrow(message -> new JsonSyntaxException("Invalid brazier ingredient: " + message));
+			result.add(new CardinalRiteRecipe.BrazierRequirement(
+					ingredient, GsonHelper.getAsInt(entry, "count", 1),
+					CardinalRiteOfferingConsumptionRules.fromNullable(entry.has("consume_on_success")
+							? entry.get("consume_on_success").getAsBoolean() : null)));
+		}
+		return List.copyOf(result);
 	}
 
 	// ---- RecipeSerializer 1.21.1 API ----
@@ -245,7 +270,8 @@ public class CardinalRiteRecipeSerializer implements RecipeSerializer<CardinalRi
 		public <T> Stream<T> keys(DynamicOps<T> ops) {
 			return Stream.of("id", "bloodCost", "riteType", "riteName", "riteDescription", "pattern", "key",
 					"result", "required_degree", "required_purity", "required_clarity",
-					"breakBlocksOnCreation", "unstained", "rankup", "ceremony").map(ops::createString);
+					"breakBlocksOnCreation", "unstained", "rankup", "ceremony", "floor",
+					"required_structure", "brazier_signature").map(ops::createString);
 		}
 
 		@Override
@@ -297,33 +323,7 @@ public class CardinalRiteRecipeSerializer implements RecipeSerializer<CardinalRi
 		CardinalRiteType riteType = CardinalRiteType.byName(pBuffer.readUtf());
 		String riteName = pBuffer.readUtf();
 		String riteDescription = pBuffer.readUtf();
-		int length = pBuffer.readInt();
-		List<String[]> patternList = new ArrayList<>();
-		for (int i = 0; i < length; i++) {
-			int width = pBuffer.readInt();
-			String[] row = new String[width];
-			for (int j = 0; j < width; j++) row[j] = pBuffer.readUtf();
-			patternList.add(row);
-		}
-		String[][] pattern = patternList.toArray(new String[0][]);
-		Map<String, Block> map = Maps.newHashMap();
-		Map<String, MultiblockPatternKey> displayKeys = Maps.newHashMap();
-		int symbolListLength = pBuffer.readInt();
-		for (int i = 0; i < symbolListLength; i++) {
-			String key = pBuffer.readUtf();
-			boolean tagged = pBuffer.readBoolean();
-			Block fallback = BuiltInRegistries.BLOCK.get(pBuffer.readResourceLocation());
-			ResourceLocation tagId = tagged ? pBuffer.readResourceLocation() : null;
-			List<Block> displayBlocks = readDisplayBlocks(pBuffer);
-			map.put(key, fallback);
-			if (tagged) {
-				displayKeys.put(key, MultiblockPatternKey.tag(key, tagId, fallback, displayBlocks));
-			} else {
-				displayKeys.put(key, MultiblockPatternKey.block(key, fallback));
-			}
-		}
-		BlockPattern bp = generateBlockPatternFromArray(map, pattern);
-		MultiblockPattern mbPattern = new MultiblockPattern(bp, displayKeys, pattern, true);
+		MultiblockPattern mbPattern = pBuffer.readBoolean() ? readPattern(pBuffer) : null;
 		boolean hasResult = pBuffer.readBoolean();
 		ItemStack result = hasResult ? ItemStack.STREAM_CODEC.decode(pBuffer) : ItemStack.EMPTY;
 		int requiredDegree = pBuffer.readInt();
@@ -339,7 +339,52 @@ public class CardinalRiteRecipeSerializer implements RecipeSerializer<CardinalRi
 		if (pBuffer.readBoolean()) {
 			recipe.setCeremony(readCeremony(pBuffer));
 		}
+		if (pBuffer.readBoolean()) {
+			recipe.setFloorId(pBuffer.readResourceLocation());
+			if (pBuffer.readBoolean()) recipe.setRequiredStructure(readPattern(pBuffer));
+			recipe.setConsumeRequiredStructure(pBuffer.readBoolean());
+			List<CardinalRiteRecipe.BrazierRequirement> requirements = new ArrayList<>();
+			for (int i = 0, count = pBuffer.readVarInt(); i < count; i++) {
+				requirements.add(new CardinalRiteRecipe.BrazierRequirement(
+						Ingredient.CONTENTS_STREAM_CODEC.decode(pBuffer), pBuffer.readVarInt(), pBuffer.readBoolean()));
+			}
+			recipe.setBrazierSignature(requirements);
+		}
 		return recipe;
+	}
+
+	private static MultiblockPattern readPattern(RegistryFriendlyByteBuf pBuffer) {
+		int length = pBuffer.readInt();
+		List<String[]> patternList = new ArrayList<>();
+		for (int i = 0; i < length; i++) {
+			int width = pBuffer.readInt();
+			String[] row = new String[width];
+			for (int j = 0; j < width; j++) row[j] = pBuffer.readUtf();
+			patternList.add(row);
+		}
+		String[][] pattern = patternList.toArray(new String[0][]);
+		Map<String, Block> map = Maps.newHashMap();
+		Map<String, PatternKeyEntry> predicateKeys = Maps.newHashMap();
+		Map<String, MultiblockPatternKey> displayKeys = Maps.newHashMap();
+		int symbolListLength = pBuffer.readInt();
+		for (int i = 0; i < symbolListLength; i++) {
+			String key = pBuffer.readUtf();
+			boolean tagged = pBuffer.readBoolean();
+			Block fallback = BuiltInRegistries.BLOCK.get(pBuffer.readResourceLocation());
+			ResourceLocation tagId = tagged ? pBuffer.readResourceLocation() : null;
+			List<Block> displayBlocks = readDisplayBlocks(pBuffer);
+			map.put(key, fallback);
+			ResourceLocation fallbackId = BuiltInRegistries.BLOCK.getKey(fallback);
+			predicateKeys.put(key, PatternKeyEntry.fromNetwork(key,
+					tagged ? null : fallbackId, tagId, fallbackId));
+			if (tagged) {
+				displayKeys.put(key, MultiblockPatternKey.tag(key, tagId, fallback, displayBlocks));
+			} else {
+				displayKeys.put(key, MultiblockPatternKey.block(key, fallback));
+			}
+		}
+		BlockPattern bp = generateBlockPatternFromKeyEntries(predicateKeys, pattern);
+		return new MultiblockPattern(bp, displayKeys, pattern, true);
 	}
 
 	private static void toNetwork(RegistryFriendlyByteBuf pBuffer, CardinalRiteRecipe pRecipe) {
@@ -348,21 +393,8 @@ public class CardinalRiteRecipeSerializer implements RecipeSerializer<CardinalRi
 		pBuffer.writeUtf(pRecipe.getRiteType().getSerializedName());
 		pBuffer.writeUtf(pRecipe.getRiteName());
 		pBuffer.writeUtf(pRecipe.getRiteDescription());
-		pBuffer.writeInt(pRecipe.getPattern().getPatternArray().length);
-		for (String[] row : pRecipe.getPattern().getPatternArray()) {
-			pBuffer.writeInt(row.length);
-			for (String cell : row) pBuffer.writeUtf(cell);
-		}
-		pBuffer.writeInt(pRecipe.getPattern().getKeyList().size());
-		pRecipe.getPattern().getKeyList().forEach((k, v) -> {
-			pBuffer.writeUtf(k);
-			pBuffer.writeBoolean(v.isTag());
-			pBuffer.writeResourceLocation(BuiltInRegistries.BLOCK.getKey(v.fallbackBlock()));
-			if (v.isTag()) {
-				pBuffer.writeResourceLocation(v.tagId());
-			}
-			writeDisplayBlocks(pBuffer, displayBlocksForNetwork(pBuffer, v));
-		});
+		pBuffer.writeBoolean(pRecipe.getPattern() != null);
+		if (pRecipe.getPattern() != null) writePattern(pBuffer, pRecipe.getPattern());
 		ItemStack result = pRecipe.getResult();
 		boolean hasResult = result != null && !result.isEmpty();
 		pBuffer.writeBoolean(hasResult);
@@ -379,6 +411,37 @@ public class CardinalRiteRecipeSerializer implements RecipeSerializer<CardinalRi
 		if (pRecipe.getCeremony() != null) {
 			writeCeremony(pBuffer, pRecipe.getCeremony());
 		}
+		pBuffer.writeBoolean(pRecipe.hasLayeredStation());
+		if (pRecipe.hasLayeredStation()) {
+			pBuffer.writeResourceLocation(pRecipe.getFloorId());
+			pBuffer.writeBoolean(pRecipe.getRequiredStructure() != null);
+			if (pRecipe.getRequiredStructure() != null) writePattern(pBuffer, pRecipe.getRequiredStructure());
+			pBuffer.writeBoolean(pRecipe.shouldConsumeRequiredStructure());
+			pBuffer.writeVarInt(pRecipe.getBrazierSignature().size());
+			for (CardinalRiteRecipe.BrazierRequirement requirement : pRecipe.getBrazierSignature()) {
+				Ingredient.CONTENTS_STREAM_CODEC.encode(pBuffer, requirement.ingredient());
+				pBuffer.writeVarInt(requirement.count());
+				pBuffer.writeBoolean(requirement.consumeOnSuccess());
+			}
+		}
+	}
+
+	private static void writePattern(RegistryFriendlyByteBuf pBuffer, MultiblockPattern pattern) {
+		pBuffer.writeInt(pattern.getPatternArray().length);
+		for (String[] row : pattern.getPatternArray()) {
+			pBuffer.writeInt(row.length);
+			for (String cell : row) pBuffer.writeUtf(cell);
+		}
+		pBuffer.writeInt(pattern.getKeyList().size());
+		pattern.getKeyList().forEach((k, v) -> {
+			pBuffer.writeUtf(k);
+			pBuffer.writeBoolean(v.isTag());
+			pBuffer.writeResourceLocation(BuiltInRegistries.BLOCK.getKey(v.fallbackBlock()));
+			if (v.isTag()) {
+				pBuffer.writeResourceLocation(v.tagId());
+			}
+			writeDisplayBlocks(pBuffer, displayBlocksForNetwork(pBuffer, v));
+		});
 	}
 
 	private static CardinalRiteCeremonyDefinition readCeremony(RegistryFriendlyByteBuf buffer) {

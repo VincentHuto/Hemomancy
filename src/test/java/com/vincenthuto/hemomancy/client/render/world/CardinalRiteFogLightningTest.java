@@ -42,8 +42,8 @@ final class CardinalRiteFogLightningTest {
 
 		assertWithinFogBand(strike.start(), radius);
 		assertWithinFogBand(strike.end(), radius);
-		assertTrue(strike.start().y >= 0.32D && strike.start().y <= 1.12D);
-		assertTrue(strike.end().y >= 0.32D && strike.end().y <= 1.12D);
+		assertTrue(strike.start().y >= 1.32D && strike.start().y <= 2.12D);
+		assertTrue(strike.end().y >= 1.32D && strike.end().y <= 2.12D);
 		assertTrue(Math.abs(strike.start().y - strike.end().y) <= 0.28D);
 		double horizontalSpan = Math.sqrt(
 				Math.pow(strike.start().x - strike.end().x, 2.0D)

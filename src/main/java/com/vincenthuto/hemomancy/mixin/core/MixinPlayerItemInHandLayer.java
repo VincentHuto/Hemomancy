@@ -2,6 +2,7 @@ package com.vincenthuto.hemomancy.mixin.core;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.vincenthuto.hemomancy.client.morphling.MorphlingPlayerPartVisibility;
+import com.vincenthuto.hemomancy.client.rite.CardinalRiteStaffPlantingClientState;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.SporiticThuribleItem;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.LivingFlailItem;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -23,7 +24,8 @@ public class MixinPlayerItemInHandLayer {
     private void hemomancy$hideHeldItemsForMorphlingReplacementParts(LivingEntity livingEntity,
             ItemStack itemStack, ItemDisplayContext displayContext, HumanoidArm arm,
             PoseStack poseStack, MultiBufferSource buffer, int packedLight, CallbackInfo ci) {
-        if (MorphlingPlayerPartVisibility.shouldHideHeldItem(arm)
+        if (CardinalRiteStaffPlantingClientState.isAnimating(livingEntity)
+                || MorphlingPlayerPartVisibility.shouldHideHeldItem(arm)
                 || itemStack.is(Items.SPYGLASS) && MorphlingPlayerPartVisibility.isHeadHidden()
                 || itemStack.getItem() instanceof SporiticThuribleItem
                 || itemStack.getItem() instanceof LivingFlailItem) {

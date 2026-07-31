@@ -5,64 +5,16 @@
   "required_degree": 5,
   "riteName": "Rite of Bloodline Founding",
   "riteDescription": "A lesser rite that binds the caster's essence into a new bloodline, producing a presigned ancestral ledger that others may use to join.",
-  "pattern": [
-    [
-      "     ",
-      "     ",
-      "     ",
-      "     ",
-      " PVP "
-    ],
-    [
-      "  C  ",
-      "  P  ",
-      "  P  ",
-      " EPE ",
-      "PVPVP"
-    ],
-    [
-      " C C ",
-      " PCP ",
-      " PPP ",
-      " PCP ",
-      "VPVPV"
-    ],
-    [
-      "  C  ",
-      "  P  ",
-      "  P  ",
-      " EPE ",
-      "PVPVP"
-    ],
-    [
-      "     ",
-      "     ",
-      "     ",
-      "     ",
-      " PVP "
-    ]
-  ],
-  "key": {
-    "E": {
-      "block": "hemomancy:engram_block"
-    },
-    "V": {
-      "block": "hemomancy:venous_stone"
-    },
-    "C": {
-      "block": "minecraft:dark_oak_log"
-    },
-    "P": {
-      "block": "hemomancy:hematic_iron_block"
-    },
-    "B": {
-      "block": "minecraft:iron_bars"
-    },
-    "L": {
-      "block": "hemomancy:gilded_venous_stone"
-    }
-  },
   "result": {
     "id": "hemomancy:unsigned_ancestral_ledger"
-  }
+  },
+  "floor": "hemomancy:communion_lesser",
+  "brazier_signature": [
+    {
+      "ingredient": {
+        "item": "minecraft:blaze_powder"
+      },
+      "count": 1
+    }
+  ]
 }

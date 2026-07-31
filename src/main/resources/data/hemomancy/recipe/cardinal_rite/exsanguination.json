@@ -5,61 +5,16 @@
   "required_degree": 2,
   "riteName": "Rite of Exsanguination",
   "riteDescription": "A dark sacrifice rite that drains the lifeblood of a named creature within the ritual circle, crystallizing their essence into Sanguine Quintessence â€” a rare and potent material.",
-  "pattern": [
-    [
-      "     ",
-      "     ",
-      "     ",
-      "     ",
-      " PVP "
-    ],
-    [
-      "  G  ",
-      "  P  ",
-      "  P  ",
-      " EPE ",
-      "PVPVP"
-    ],
-    [
-      " G G ",
-      " PGP ",
-      " PPP ",
-      " PGP ",
-      "VPVPV"
-    ],
-    [
-      "  G  ",
-      "  P  ",
-      "  P  ",
-      " EPE ",
-      "PVPVP"
-    ],
-    [
-      "     ",
-      "     ",
-      "     ",
-      "     ",
-      " PVP "
-    ]
-  ],
-  "key": {
-    "E": {
-      "block": "hemomancy:engram_block"
-    },
-    "V": {
-      "block": "hemomancy:venous_stone"
-    },
-    "G": {
-      "block": "minecraft:crying_obsidian"
-    },
-    "P": {
-      "block": "hemomancy:hematic_iron_block"
-    },
-    "B": {
-      "block": "minecraft:soul_sand"
-    }
-  },
   "result": {
     "id": "hemomancy:sanguine_quintessence"
-  }
+  },
+  "floor": "hemomancy:working_lesser",
+  "brazier_signature": [
+    {
+      "ingredient": {
+        "item": "minecraft:turtle_scute"
+      },
+      "count": 1
+    }
+  ]
 }

@@ -5,61 +5,16 @@
   "required_degree": 2,
   "riteName": "Rite of Hematic Fortification",
   "riteDescription": "A lesser rite that strengthens the caster's connection to the blood arts.",
-  "pattern": [
-    [
-      "C   C",
-      "P   P",
-      "P   P",
-      "P   P",
-      "P P P"
-    ],
-    [
-      "     ",
-      "  C  ",
-      "  P  ",
-      " EPE ",
-      " VPV "
-    ],
-    [
-      "     ",
-      " C C ",
-      " PPP ",
-      " PCP ",
-      "PPPPP"
-    ],
-    [
-      "     ",
-      "  C  ",
-      "  P  ",
-      " EPE ",
-      " VPV "
-    ],
-    [
-      "C   C",
-      "P   P",
-      "P   P",
-      "P   P",
-      "P P P"
-    ]
-  ],
-  "key": {
-    "E": {
-      "block": "hemomancy:engram_block"
-    },
-    "V": {
-      "block": "hemomancy:venous_stone"
-    },
-    "C": {
-      "block": "minecraft:iron_bars"
-    },
-    "P": {
-      "block": "minecraft:polished_basalt"
-    },
-    "B": {
-      "block": "hemomancy:hematic_iron_block"
-    }
-  },
   "result": {
     "id": "hemomancy:liber_sanguinum"
-  }
+  },
+  "floor": "hemomancy:working_lesser",
+  "brazier_signature": [
+    {
+      "ingredient": {
+        "item": "minecraft:heart_of_the_sea"
+      },
+      "count": 1
+    }
+  ]
 }

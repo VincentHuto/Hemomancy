@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "III",
+    "ICI",
+    "III"
+  ],
+  "key": {
+    "I": {
+      "item": "hemomancy:hematic_iron_scrap"
+    },
+    "C": {
+      "item": "hemomancy:chiseled_polished_venous_stone"
+    }
+  },
+  "result": {
+    "id": "hemomancy:cardinal_focus"
+  }
+}

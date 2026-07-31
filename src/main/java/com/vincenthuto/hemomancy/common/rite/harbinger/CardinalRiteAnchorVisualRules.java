@@ -1,11 +1,13 @@
 package com.vincenthuto.hemomancy.common.rite.harbinger;
 
+import net.minecraft.core.BlockPos;
+
 /**
  * Shared state rules for the visual language of interactive rite anchors.
  */
 public final class CardinalRiteAnchorVisualRules {
 	public static final int BOUNDARY_COLOR = 0xFF3746;
-	public static final double RITE_PLANE_OFFSET = 0.1D;
+	public static final double RITE_PLANE_OFFSET = 1.1D;
 
 	private CardinalRiteAnchorVisualRules() {
 	}
@@ -45,5 +47,9 @@ public final class CardinalRiteAnchorVisualRules {
 
 	public static double ritePlaneY(int centerY) {
 		return centerY + RITE_PLANE_OFFSET;
+	}
+
+	public static BlockPos riteSurface(BlockPos floorFocus) {
+		return floorFocus.above();
 	}
 }

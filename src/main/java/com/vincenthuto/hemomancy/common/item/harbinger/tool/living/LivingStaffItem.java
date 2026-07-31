@@ -19,6 +19,7 @@ import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.BloodVolumeServerPacket;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.BloodCraftingKeyPressPacket;
 import com.vincenthuto.hemomancy.common.rite.harbinger.CardinalRiteActivationRules;
+import com.vincenthuto.hemomancy.common.rite.harbinger.CardinalRiteCancellationHandler;
 import com.vincenthuto.hemomancy.common.tile.crafting.SomaticLoomBlockEntity;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import net.minecraft.ChatFormatting;
@@ -180,6 +181,16 @@ public class LivingStaffItem extends LivingItem implements IDispellable {
 
 		}
 		if (!pLevel.isClientSide && pLivingEntity instanceof Player player) {
+			if (player instanceof ServerPlayer serverPlayer
+					&& isSelectedStaffUtility(player, ManipulationEquipHelper.BLOOD_ABSORPTION)) {
+				ILivingStaffProgress progress = HemoCapabilityAccess.getLivingStaffProgress(player).orElse(null);
+				LivingStaffFocusProfile focus = LivingStaffFocusProfile.fromPlayer(player, progress);
+				if (CardinalRiteCancellationHandler.tryChannel(
+						serverPlayer, LivingStaffFocusRules.absorptionRange(focus))) {
+					BloodAbsorptionItem.updateChannelStrain(player, false);
+					return;
+				}
+			}
 			if (dragNearestLoomOrb(pLevel, player)) {
 				return;
 			}

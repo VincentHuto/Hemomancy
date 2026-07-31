@@ -6,64 +6,37 @@
   "riteName": "Rite of the Sanguine Brotherhood",
   "riteDescription": "The fourth rite of the Hematic Order, proving mastery of the foundational blood arts.",
   "rankup": true,
-  "pattern": [
-    [
-      "     ",
-      "     ",
-      "     ",
-      "     ",
-      " PCP "
-    ],
-    [
-      "  P  ",
-      "  H  ",
-      "  H  ",
-      "  H  ",
-      "P H P"
-    ],
-    [
-      " P P ",
-      " HPH ",
-      " HHH ",
-      " HPH ",
-      "CHCHC"
-    ],
-    [
-      "  P  ",
-      "  H  ",
-      "  H  ",
-      "  H  ",
-      "P H P"
-    ],
-    [
-      "     ",
-      "     ",
-      "     ",
-      "     ",
-      " PCP "
-    ]
-  ],
-  "key": {
-    "H": {
-      "block": "hemomancy:hematic_iron_pillar"
-    },
-    "V": {
-      "block": "minecraft:iron_bars"
-    },
-    "C": {
-      "block": "hemomancy:chiseled_hematic_iron_block"
-    },
-    "P": {
-      "block": "hemomancy:hemolytic_plating_block"
-    },
-    "G": {
-      "block": "hemomancy:gilded_venous_stone"
-    },
-    "B": {
-      "block": "hemomancy:hematic_iron_block"
-    }
-  },
   "result": {
     "id": "hemomancy:sanguine_quintessence"
-  }
+  },
+  "floor": "hemomancy:threshold_lesser",
+  "required_structure": {
+    "pattern": [
+      [
+        "P P",
+        "P P"
+      ],
+      [
+        "   ",
+        "   "
+      ],
+      [
+        "P P",
+        "P P"
+      ]
+    ],
+    "key": {
+      "P": {
+        "block": "hemomancy:hematic_iron_pillar"
+      }
+    }
+  },
+  "brazier_signature": [
+    {
+      "ingredient": {
+        "item": "minecraft:glowstone_dust"
+      },
+      "count": 1
+    }
+  ]
 }

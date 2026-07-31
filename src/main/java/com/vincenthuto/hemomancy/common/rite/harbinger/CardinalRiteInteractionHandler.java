@@ -178,7 +178,8 @@ public final class CardinalRiteInteractionHandler {
 				var anchor = recipe.getCeremony().anchors().get(index);
 				BlockPos offset = anchor.offset();
 				targets.add(new ProjectionTarget(
-						rite.getCenterPos().offset(offset.getX(), 0, offset.getZ()),
+						CardinalRiteAnchorVisualRules.riteSurface(rite.getCenterPos())
+								.offset(offset.getX(), 0, offset.getZ()),
 						CardinalRiteTargetGeometry.anchorAimPoint(rite.getCenterPos(), offset)));
 			}
 		}
@@ -766,7 +767,8 @@ public final class CardinalRiteInteractionHandler {
 		if (recipe == null || recipe.getCeremony() == null) return -1;
 		for (int i = 0; i < recipe.getCeremony().anchors().size(); i++) {
 			BlockPos offset = recipe.getCeremony().anchors().get(i).offset();
-			BlockPos anchor = rite.getCenterPos().offset(offset.getX(), 0, offset.getZ());
+			BlockPos anchor = CardinalRiteAnchorVisualRules.riteSurface(rite.getCenterPos())
+					.offset(offset.getX(), 0, offset.getZ());
 			if (target.closerThan(anchor, 1.6D) || target.closerThan(anchor.above(), 1.6D)) return i;
 		}
 		return -1;

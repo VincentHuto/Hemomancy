@@ -5,58 +5,16 @@
   "required_degree": 3,
   "riteName": "Rite of the Pallid Vessel",
   "riteDescription": "The dried gourd is consecrated within a ring of venous stone and ash, its hollow interior awakening to hold the lifeblood of its creator.",
-  "pattern": [
-    [
-      "     ",
-      "     ",
-      "     ",
-      "  E  ",
-      " GVG "
-    ],
-    [
-      "  G  ",
-      "  V  ",
-      "  V  ",
-      " BVB ",
-      "GVVVG"
-    ],
-    [
-      " G G ",
-      " VGV ",
-      " VVV ",
-      "EVGVE",
-      "VVVVV"
-    ],
-    [
-      "  G  ",
-      "  V  ",
-      "  V  ",
-      " EVE ",
-      "GVVVG"
-    ],
-    [
-      "     ",
-      "     ",
-      "     ",
-      "  E  ",
-      " GVG "
-    ]
-  ],
-  "key": {
-    "V": {
-      "block": "hemomancy:venous_stone"
-    },
-    "G": {
-      "block": "hemomancy:gourd"
-    },
-    "B": {
-      "block": "hemomancy:befouling_ash_trail"
-    },
-    "E": {
-      "block": "hemomancy:engram_block"
-    }
-  },
   "result": {
     "id": "hemomancy:blood_gourd_white"
-  }
+  },
+  "floor": "hemomancy:threshold_lesser",
+  "brazier_signature": [
+    {
+      "ingredient": {
+        "item": "minecraft:spider_eye"
+      },
+      "count": 1
+    }
+  ]
 }

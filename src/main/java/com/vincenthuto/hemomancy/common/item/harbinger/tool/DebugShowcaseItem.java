@@ -8,6 +8,8 @@ import com.vincenthuto.hemomancy.common.recipe.BloodStructureOffering;
 import com.vincenthuto.hemomancy.common.recipe.BloodStructureOfferingPlacement;
 import com.vincenthuto.hemomancy.common.recipe.BloodStructureRecipe;
 import com.vincenthuto.hemomancy.common.recipe.CardinalRiteRecipe;
+import com.vincenthuto.hemomancy.common.network.PlaceStructurePacket;
+import com.vincenthuto.hemomancy.common.rite.floor.CardinalRiteFloorRegistry;
 import com.vincenthuto.hemomancy.common.tile.IronBrazierBlockEntity;
 import com.vincenthuto.hutoslib.math.BlockPosBlockPair;
 import com.vincenthuto.hutoslib.math.MultiblockPattern;
@@ -391,7 +393,21 @@ public class DebugShowcaseItem extends Item {
 				String name = recipe.getRiteName() != null && !recipe.getRiteName().isEmpty()
 						? recipe.getRiteName()
 						: recipe.getId().getPath();
-				z = placeStructurePattern(level, origin, z, recipe.getPattern(), name, List.of());
+				if (recipe.hasLayeredStation()) {
+					placeGroupLabel(level, origin, z, name);
+					PlaceStructurePacket.placeLayeredCardinalRite(
+							level, origin.offset(0, 0, z), recipe, player);
+					MultiblockPattern floorPattern = recipe.getFloorPattern();
+					MultiblockPattern upperPattern = recipe.getRequiredStructure();
+					int floorDepth = floorPattern == null ? 1 : floorPattern.getBlockPattern().getDepth();
+					int upperDepth = upperPattern == null ? 1 : upperPattern.getBlockPattern().getDepth();
+					int footprintDepth = CardinalRiteFloorRegistry.get(recipe.getFloorId())
+							.map(floor -> (int) Math.ceil(floor.footprintRadius() * 2.0F) + 1)
+							.orElse(floorDepth);
+					z += Math.max(Math.max(floorDepth, upperDepth), footprintDepth);
+				} else {
+					z = placeStructurePattern(level, origin, z, recipe.getPattern(), name, List.of());
+				}
 				z += 3;
 			}
 		}
@@ -408,6 +424,7 @@ public class DebugShowcaseItem extends Item {
 	private int placeStructurePattern(ServerLevel level, BlockPos origin, int z,
 									  MultiblockPattern pattern, String name,
 									  List<BloodStructureOffering> offerings) {
+		if (pattern == null) return z;
 		List<BlockPosBlockPair> blockPairs = pattern.getBlockPosBlockList();
 		if (blockPairs.isEmpty()) return z;
 

@@ -5,89 +5,40 @@
   "required_degree": 3,
   "riteName": "Rite of the Scarlet Summons",
   "riteDescription": "A commanding rite that draws upon the shared bloodline pool to teleport all online bloodline members to the rite location. The cost scales with the number of members summoned.",
-  "pattern": [
-    [
-      "       ",
-      "       ",
-      "       ",
-      "       ",
-      "       ",
-      "       ",
-      "  PCP  "
-    ],
-    [
-      "       ",
-      " P   P ",
-      " H   H ",
-      " H P H ",
-      " H H H ",
-      " HEHEH ",
-      " HCHCH "
-    ],
-    [
-      "       ",
-      "       ",
-      "       ",
-      "       ",
-      "       ",
-      " E   E ",
-      "PC C CP"
-    ],
-    [
-      "       ",
-      "       ",
-      "   H   ",
-      " P P P ",
-      " H H H ",
-      " H P H ",
-      "CHCCCHC"
-    ],
-    [
-      "       ",
-      "       ",
-      "       ",
-      "       ",
-      "       ",
-      " E   E ",
-      "PC C CP"
-    ],
-    [
-      "       ",
-      " P   P ",
-      " H   H ",
-      " H P H ",
-      " H H H ",
-      " HEHEH ",
-      " HCHCH "
-    ],
-    [
-      "       ",
-      "       ",
-      "       ",
-      "       ",
-      "       ",
-      "       ",
-      "  PCP  "
-    ]
-  ],
-  "key": {
-    "H": {
-      "block": "hemomancy:hematic_iron_pillar"
-    },
-    "C": {
-      "block": "minecraft:soul_sand"
-    },
-    "G": {
-      "block": "hemomancy:gilded_venous_stone"
-    },
-    "E": {
-      "block": "hemomancy:engram_block"
-    },
-    "P": {
-      "block": "minecraft:nether_wart_block"
-    }
-  },
   "result": {
     "id": "hemomancy:sanguine_formation"
-  }
+  },
+  "floor": "hemomancy:dominion_greater",
+  "required_structure": {
+    "pattern": [
+      [
+        "P P",
+        "P P",
+        "P P"
+      ],
+      [
+        "   ",
+        "   ",
+        "   "
+      ],
+      [
+        "P P",
+        "P P",
+        "P P"
+      ]
+    ],
+    "key": {
+      "P": {
+        "block": "hemomancy:hematic_iron_pillar"
+      }
+    }
+  },
+  "brazier_signature": [
+    {
+      "ingredient": {
+        "item": "minecraft:book"
+      },
+      "count": 1
+    }
+  ]
 }

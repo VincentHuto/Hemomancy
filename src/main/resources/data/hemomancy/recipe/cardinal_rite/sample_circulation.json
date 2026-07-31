@@ -3,31 +3,8 @@
   "bloodCost": 0,
   "riteType": "minor",
   "required_degree": 0,
-  "breakBlocksOnCreation": false,
   "riteName": "[TEST] First Circulation",
   "riteDescription": "An abbreviated prototype rite for testing anchor projection, ring completion, sealing, the HUD, and a first Ichorian sigil discovery.",
-  "pattern": [
-    [
-      "CRC"
-    ],
-    [
-      "RGR"
-    ],
-    [
-      "CRC"
-    ]
-  ],
-  "key": {
-    "C": {
-      "block": "minecraft:cut_copper"
-    },
-    "R": {
-      "block": "minecraft:redstone_block"
-    },
-    "G": {
-      "block": "minecraft:gold_block"
-    }
-  },
   "ceremony": {
     "profile": "abbreviated",
     "layout": "cardinal",
@@ -60,5 +37,14 @@
         0
       ]
     ]
-  }
+  },
+  "floor": "hemomancy:threshold_minor",
+  "brazier_signature": [
+    {
+      "ingredient": {
+        "item": "minecraft:gunpowder"
+      },
+      "count": 1
+    }
+  ]
 }

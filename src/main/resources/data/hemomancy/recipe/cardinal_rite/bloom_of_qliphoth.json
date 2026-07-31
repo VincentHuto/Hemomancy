@@ -5,61 +5,50 @@
   "required_degree": 7,
   "riteName": "Bloom of the Qliphoth",
   "riteDescription": "A dark rite that calls forth a blooming tree of the Qliphoth, its roots drinking deep from the blood of the earth. A Qliphoth Seed must be planted within the rite. Within its shadow, all blood manipulations are empowered and the flesh knits itself anew.",
-  "breakBlocksOnCreation": false,
-  "pattern": [
-    [
-      "A     A",
-      "ABBBBBA"
-    ],
-    [
-      " EB BE ",
-      "BACDCAB"
-    ],
-    [
-      " BAFAB ",
-      "BCFFFCB"
-    ],
-    [
-      "  FAF  ",
-      "BDFAFDB"
-    ],
-    [
-      " BAFAB ",
-      "BCFFFCB"
-    ],
-    [
-      " EB BE ",
-      "BACDCAB"
-    ],
-    [
-      "A     A",
-      "ABBBBBA"
-    ]
-  ],
-  "key": {
-    "A": {
-      "block": "hemomancy:blood_wood_log"
-    },
-    "B": {
-      "tag": "hemomancy:progression/qliphoth_soil",
-      "fallback": "minecraft:nether_wart_block"
-    },
-    "C": {
-      "tag": "hemomancy:progression/end_city_ritual_blocks",
-      "fallback": "minecraft:purpur_block"
-    },
-    "D": {
-      "block": "hemomancy:chiseled_polished_venous_stone"
-    },
-    "E": {
-      "block": "hemomancy:engram_block"
-    },
-    "F": {
-      "tag": "hemomancy:progression/qliphoth_soil",
-      "fallback": "minecraft:soul_soil"
-    }
-  },
   "result": {
     "id": "hemomancy:sanguine_formation"
-  }
+  },
+  "floor": "hemomancy:dominion_grand",
+  "required_structure": {
+    "pattern": [
+      [
+        "P   P",
+        "P   P",
+        "P   P"
+      ],
+      [
+        "     ",
+        "     ",
+        "     "
+      ],
+      [
+        "     ",
+        "     ",
+        "     "
+      ],
+      [
+        "     ",
+        "     ",
+        "     "
+      ],
+      [
+        "P   P",
+        "P   P",
+        "P   P"
+      ]
+    ],
+    "key": {
+      "P": {
+        "block": "hemomancy:hematic_iron_pillar"
+      }
+    }
+  },
+  "brazier_signature": [
+    {
+      "ingredient": {
+        "item": "minecraft:amethyst_shard"
+      },
+      "count": 1
+    }
+  ]
 }

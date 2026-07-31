@@ -5,125 +5,50 @@
   "required_degree": 7,
   "riteName": "Rite of Ancestral Communion",
   "riteDescription": "The ultimate rite of revelation. The caster opens a channel to the ancient fungal consciousness, receiving cryptic lore and hidden truths about the origins of hemomancy itself.",
-  "pattern": [
-    [
-      "         ",
-      "         ",
-      "         ",
-      "         ",
-      "         ",
-      "         ",
-      "         ",
-      "         ",
-      "         "
-    ],
-    [
-      "         ",
-      "         ",
-      "         ",
-      "         ",
-      "         ",
-      "       P ",
-      "       H ",
-      "   E E H ",
-      "   C C HP"
-    ],
-    [
-      "         ",
-      "         ",
-      "         ",
-      "         ",
-      "         ",
-      "         ",
-      "         ",
-      "      E  ",
-      "      P  "
-    ],
-    [
-      "         ",
-      "         ",
-      "         ",
-      "         ",
-      "      P  ",
-      "      H  ",
-      "      H  ",
-      "    E HE ",
-      "    CPHC "
-    ],
-    [
-      "         ",
-      "    P    ",
-      "    H    ",
-      "    H    ",
-      "    H    ",
-      "    H    ",
-      "    H    ",
-      "   EHE E ",
-      "   CHC C "
-    ],
-    [
-      "         ",
-      "         ",
-      "         ",
-      "         ",
-      "         ",
-      "  P      ",
-      "  H      ",
-      "  H E  E ",
-      "  HPC  C "
-    ],
-    [
-      "         ",
-      "         ",
-      "         ",
-      "         ",
-      "         ",
-      "         ",
-      "         ",
-      "      E  ",
-      "  P C C  "
-    ],
-    [
-      "         ",
-      "         ",
-      "         ",
-      " P       ",
-      " H       ",
-      " H       ",
-      " H       ",
-      " H  E    ",
-      "PH  C    "
-    ],
-    [
-      "         ",
-      "         ",
-      "         ",
-      "         ",
-      "         ",
-      "         ",
-      "         ",
-      "         ",
-      "    C    "
-    ]
-  ],
-  "key": {
-    "H": {
-      "block": "hemomancy:hematic_iron_pillar"
-    },
-    "G": {
-      "block": "minecraft:nether_wart_block"
-    },
-    "C": {
-      "block": "minecraft:mushroom_stem"
-    },
-    "E": {
-      "block": "hemomancy:engram_block"
-    },
-    "P": {
-      "block": "hemomancy:hematic_iron_block"
-    }
-  },
   "result": {
     "id": "hemomancy:sanguine_quintessence"
-  }
+  },
+  "floor": "hemomancy:communion_grand",
+  "required_structure": {
+    "pattern": [
+      [
+        "P   P",
+        "P   P",
+        "P   P"
+      ],
+      [
+        "     ",
+        "     ",
+        "     "
+      ],
+      [
+        "     ",
+        "     ",
+        "     "
+      ],
+      [
+        "     ",
+        "     ",
+        "     "
+      ],
+      [
+        "P   P",
+        "P   P",
+        "P   P"
+      ]
+    ],
+    "key": {
+      "P": {
+        "block": "hemomancy:hematic_iron_pillar"
+      }
+    }
+  },
+  "brazier_signature": [
+    {
+      "ingredient": {
+        "item": "minecraft:bone"
+      },
+      "count": 1
+    }
+  ]
 }

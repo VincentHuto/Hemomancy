@@ -4,12 +4,15 @@ import com.vincenthuto.hemomancy.common.init.EntityInit;
 import com.vincenthuto.hemomancy.common.rite.ActiveCardinalRite;
 import com.vincenthuto.hemomancy.common.rite.CardinalRiteSavedData;
 import com.vincenthuto.hemomancy.common.rite.harbinger.CardinalRiteHumanityGeometry;
+import com.vincenthuto.hemomancy.common.rite.harbinger.CardinalRiteFinaleTiming;
 import com.vincenthuto.hemomancy.client.particle.factory.DaemonDiffuseGlowParticleFactory;
 import com.vincenthuto.hutoslib.client.particle.data.EmberParticleData;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleOptions;
+import net.minecraft.core.particles.ItemParticleOption;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
@@ -37,11 +40,14 @@ import java.util.UUID;
 public final class HumanitySpriteEntity extends Entity {
 	public static final float MIN_SCALE = 0.1F;
 	public static final float MAX_SCALE = 8.0F;
+	private static final float PRONE_PITCH_DEGREES = 90.0F;
+	private static final float BODY_ROTATION_DEGREES_PER_TICK = 18.0F;
 
 	private static final EntityDataAccessor<Float> SPRITE_SCALE =
 			SynchedEntityData.defineId(HumanitySpriteEntity.class, EntityDataSerializers.FLOAT);
 	private static final EntityDataAccessor<Optional<UUID>> RITE_OWNER =
 			SynchedEntityData.defineId(HumanitySpriteEntity.class, EntityDataSerializers.OPTIONAL_UUID);
+	private float targetBodyPitch;
 
 	public HumanitySpriteEntity(EntityType<? extends HumanitySpriteEntity> type, Level level) {
 		super(type, level);
@@ -96,6 +102,10 @@ public final class HumanitySpriteEntity extends Entity {
 		setYRot((float) Math.toDegrees(Math.atan2(-x, z)));
 	}
 
+	public void setFlying(boolean flying) {
+		targetBodyPitch = flying ? PRONE_PITCH_DEGREES : 0.0F;
+	}
+
 	@Override
 	protected void defineSynchedData(SynchedEntityData.Builder builder) {
 		builder.define(SPRITE_SCALE, 1.0F);
@@ -108,6 +118,7 @@ public final class HumanitySpriteEntity extends Entity {
 		noPhysics = true;
 		setNoGravity(true);
 		setDeltaMovement(Vec3.ZERO);
+		setXRot(Mth.approach(getXRot(), targetBodyPitch, BODY_ROTATION_DEGREES_PER_TICK));
 		if (level().isClientSide) return;
 
 		if (tickCount % 20 == 0 && hasExpiredRiteBinding((ServerLevel) level())) {
@@ -138,7 +149,12 @@ public final class HumanitySpriteEntity extends Entity {
 					pointIndex, tickCount, CardinalRiteHumanityGeometry.EMISSION_INTERVAL_TICKS)) {
 				continue;
 			}
-			CardinalRiteHumanityGeometry.Point point = cloud.get(pointIndex);
+			CardinalRiteHumanityGeometry.Point sourcePoint = cloud.get(pointIndex);
+			CardinalRiteHumanityGeometry.Point point = CardinalRiteHumanityGeometry.orientPoint(
+					new CardinalRiteHumanityGeometry.Point(sourcePoint.layer(), sourcePoint.x(),
+							sourcePoint.y() - centerOffset, sourcePoint.z(), sourcePoint.red(),
+							sourcePoint.green(), sourcePoint.blue()),
+					forwardX, forwardZ, getXRot());
 			ParticleColor color = new ParticleColor(point.red(), point.green(), point.blue());
 			float alpha = switch (point.layer()) {
 				case VOID_CORE -> 0.92F;
@@ -162,9 +178,33 @@ public final class HumanitySpriteEntity extends Entity {
 			};
 			level.sendParticles(particle,
 					getX() + point.x(),
-					getY() + point.y() - centerOffset,
+					getY() + point.y(),
 					getZ() + point.z(),
 					1, spread, spread, spread, 0.0D);
+		}
+		emitAbsorbedOfferingParticles(level, scale);
+	}
+
+	private void emitAbsorbedOfferingParticles(ServerLevel level, float scale) {
+		UUID owner = entityData.get(RITE_OWNER).orElse(null);
+		if (owner == null) return;
+		ActiveCardinalRite rite = CardinalRiteSavedData.get(level).getRite(owner);
+		if (rite == null || rite.getAbsorbedOfferings().isEmpty()) return;
+		double strength = switch (rite.getPhase()) {
+			case OFFERING_PROCESSION -> 1.0D;
+			case CULMINATION -> CardinalRiteFinaleTiming.offeringParticleStrength(rite.getPhaseTicks());
+			default -> 0.0D;
+		};
+		if (strength <= 0.0D) return;
+		int period = strength > 0.66D ? 2 : strength > 0.33D ? 4 : 8;
+		if (tickCount % period != 0) return;
+		double horizontalSpread = Math.max(0.08D, 0.24D * scale);
+		double verticalSpread = Math.max(0.12D, 0.55D * scale);
+		for (ActiveCardinalRite.RiteOffering offering : rite.getAbsorbedOfferings()) {
+			if (offering.stack() == null || offering.stack().isEmpty()) continue;
+			level.sendParticles(new ItemParticleOption(ParticleTypes.ITEM, offering.stack()),
+					getX(), getY(), getZ(),
+					1, horizontalSpread, verticalSpread, horizontalSpread, 0.015D);
 		}
 	}
 

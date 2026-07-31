@@ -285,6 +285,30 @@ class GameTestHarnessSourceContractTest {
 				"Debug Showcase offering braziers must spawn lit");
 		assertTrue(showcase.contains("insertOffering(null, offeringStack)"),
 				"Debug Showcase offering braziers must contain representative recipe items");
+		assertTrue(showcase.contains("recipe.hasLayeredStation()"),
+				"Debug Showcase must branch away from the nullable legacy pattern for layered rites");
+		assertTrue(showcase.contains("PlaceStructurePacket.placeLayeredCardinalRite("),
+				"Debug Showcase must use the Structure Spawner's complete layered station placement");
+		assertTrue(showcase.contains("floor.footprintRadius()"),
+				"Debug Showcase spacing must include the floor's external brazier footprint");
+	}
+
+	@Test
+	void structureSpawnerPlacesCompleteLayeredCardinalRiteStations() throws IOException {
+		String placement = read("src/main/java/com/vincenthuto/hemomancy/common/network/PlaceStructurePacket.java");
+
+		assertTrue(placement.contains("placeLayeredCardinalRite("),
+				"Layered Cardinal Rites must not fall through the legacy null-pattern recipe check");
+		assertTrue(placement.contains("CardinalRiteFloorRegistry.get(recipe.getFloorId())"),
+				"The spawner must resolve and place the rite's independently loaded floor");
+		assertTrue(placement.contains("floor.focus()"),
+				"The floor must be positioned with its declared focus at the spawn point");
+		assertTrue(placement.contains("recipe.getRequiredStructure()"),
+				"The optional upper structure must be placed above the floor focus");
+		assertTrue(placement.contains("floor.brazierSockets()"),
+				"Cardinal Rite offerings must occupy the selected floor's declared sockets");
+		assertTrue(placement.contains("recipe.getBrazierSignature()"),
+				"Cardinal Rite braziers must be populated from the selected rite signature");
 	}
 
 	private static String read(String relativePath) throws IOException {

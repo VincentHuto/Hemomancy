@@ -7,10 +7,13 @@ import com.vincenthuto.hemomancy.common.recipe.BloodStructureOfferingPlacement;
 import com.vincenthuto.hemomancy.common.recipe.BloodStructureRecipe;
 import com.vincenthuto.hemomancy.common.recipe.CardinalRiteRecipe;
 import com.vincenthuto.hemomancy.common.recipe.PuppeteerTrialRecipe;
+import com.vincenthuto.hemomancy.common.rite.floor.CardinalRiteFloorDefinition;
+import com.vincenthuto.hemomancy.common.rite.floor.CardinalRiteFloorRegistry;
 import com.vincenthuto.hemomancy.common.tile.IronBrazierBlockEntity;
 import com.vincenthuto.hutoslib.math.BlockPosBlockPair;
 import com.vincenthuto.hutoslib.math.MultiblockPattern;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.codec.StreamCodec;
@@ -18,6 +21,7 @@ import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
@@ -67,6 +71,7 @@ public class PlaceStructurePacket implements CustomPacketPayload {
 				ServerLevel level = player.serverLevel();
 				MultiblockPattern pattern = null;
 				BloodStructureRecipe bloodStructure = null;
+				CardinalRiteRecipe cardinalRite = null;
 
 				if (msg.type == StructureType.BLOOD_STRUCTURE) {
 					BloodStructureRecipe recipe = BloodStructureRecipe.getStructureByLocation(level, msg.recipeId);
@@ -77,6 +82,7 @@ public class PlaceStructurePacket implements CustomPacketPayload {
 				} else if (msg.type == StructureType.CARDINAL_RITE) {
 					CardinalRiteRecipe recipe = CardinalRiteRecipe.getRiteByLocation(level, msg.recipeId);
 					if (recipe != null) {
+						cardinalRite = recipe;
 						pattern = recipe.getPattern();
 					}
 				} else if (msg.type == StructureType.PUPPETEER_TRIAL) {
@@ -87,6 +93,15 @@ public class PlaceStructurePacket implements CustomPacketPayload {
 						pattern = recipe.getPattern();
 						bloodStructure = recipe;
 					}
+				}
+
+				if (cardinalRite != null && cardinalRite.hasLayeredStation()) {
+					int placed = placeLayeredCardinalRite(level, player.blockPosition(), cardinalRite, player);
+					if (placed >= 0) {
+						player.sendSystemMessage(Component.literal(
+								"§aPlaced " + placed + " blocks for: " + msg.recipeId.getPath()));
+					}
+					return;
 				}
 
 				if (pattern == null) {
@@ -197,6 +212,126 @@ public class PlaceStructurePacket implements CustomPacketPayload {
 				player.sendSystemMessage(Component.literal("§aPlaced " + placed + " blocks for: " + msg.recipeId.getPath()));
 			}
 		});
+	}
+
+	public static int placeLayeredCardinalRite(ServerLevel level, BlockPos focusPos,
+			CardinalRiteRecipe recipe, ServerPlayer player) {
+		CardinalRiteFloorDefinition floor = CardinalRiteFloorRegistry.get(recipe.getFloorId()).orElse(null);
+		if (floor == null) {
+			player.sendSystemMessage(Component.literal(
+					"§cCould not find Cardinal Rite floor: " + recipe.getFloorId()));
+			return -1;
+		}
+
+		int requiredBraziers = recipe.getBrazierSignature().stream()
+				.mapToInt(CardinalRiteRecipe.BrazierRequirement::count)
+				.sum();
+		if (requiredBraziers > floor.brazierSockets().size()) {
+			player.sendSystemMessage(Component.literal(
+					"§cRite requires " + requiredBraziers + " braziers, but floor "
+							+ floor.id() + " only defines " + floor.brazierSockets().size() + " sockets"));
+			return -1;
+		}
+		for (CardinalRiteRecipe.BrazierRequirement requirement : recipe.getBrazierSignature()) {
+			if (requirement.ingredient().getItems().length == 0) {
+				player.sendSystemMessage(Component.literal(
+						"§cRite has a brazier ingredient with no available representative item"));
+				return -1;
+			}
+		}
+
+		List<BlockPos> placedPositions = new java.util.ArrayList<>();
+		int placed = placePatternAtCell(level, floor.pattern(), focusPos,
+				floor.focus().getX(), floor.focus().getY(), floor.focus().getZ(), placedPositions);
+
+		MultiblockPattern requiredStructure = recipe.getRequiredStructure();
+		if (requiredStructure != null) {
+			placed += placePatternAtCell(level, requiredStructure, focusPos.above(),
+					requiredStructure.getBlockPattern().getWidth() / 2,
+					requiredStructure.getBlockPattern().getHeight() - 1,
+					requiredStructure.getBlockPattern().getDepth() / 2,
+					placedPositions);
+		}
+
+		// Reset every socket so spawning another rite at this station cannot leave
+		// stale offerings that make exact brazier-signature matching fail.
+		for (BlockPos socket : floor.brazierSockets()) {
+			level.setBlock(riteOffset(focusPos, socket), Blocks.AIR.defaultBlockState(), Block.UPDATE_CLIENTS);
+		}
+
+		int socketIndex = 0;
+		for (CardinalRiteRecipe.BrazierRequirement requirement : recipe.getBrazierSignature()) {
+			for (int copy = 0; copy < requirement.count(); copy++) {
+				BlockPos socketPos = riteOffset(focusPos, floor.brazierSockets().get(socketIndex++));
+				BlockPos supportPos = socketPos.below();
+				if (!level.getBlockState(supportPos).isFaceSturdy(level, supportPos, Direction.UP)) {
+					level.setBlock(supportPos, Blocks.SMOOTH_STONE.defaultBlockState(), Block.UPDATE_CLIENTS);
+					placedPositions.add(supportPos);
+					placed++;
+				}
+				BlockState brazierState = BlockInit.iron_brazier.get().defaultBlockState()
+						.setValue(BrazierBlock.RITUAL_PHASE, 1);
+				level.setBlock(socketPos, brazierState, Block.UPDATE_ALL);
+				placedPositions.add(socketPos);
+				placed++;
+				if (level.getBlockEntity(socketPos) instanceof IronBrazierBlockEntity brazier) {
+					ItemStack offeringStack = requirement.ingredient().getItems()[0].copy();
+					offeringStack.setCount(1);
+					brazier.insertOffering(null, offeringStack);
+					brazier.setChanged();
+				}
+			}
+		}
+
+		notifyPlacedBlocks(level, placedPositions);
+		return placed;
+	}
+
+	/**
+	 * Places a pattern in the same canonical orientation used for Cardinal Rite
+	 * socket offsets: north is forwards, east is right, and positive Y is up.
+	 * Pattern rows run top-to-bottom, while BlockPosBlockPair Y runs bottom-to-top.
+	 */
+	private static int placePatternAtCell(ServerLevel level, MultiblockPattern pattern,
+			BlockPos targetCell, int cellX, int cellY, int cellZ, List<BlockPos> placedPositions) {
+		int physicalCellY = pattern.getBlockPattern().getHeight() - cellY - 1;
+		List<BlockPosBlockPair> pairs = pattern.getBlockPosBlockList();
+
+		for (BlockPosBlockPair pair : pairs) {
+			BlockPos worldPos = patternOffset(targetCell, pair.getPos(), cellX, physicalCellY, cellZ);
+			level.setBlock(worldPos, Blocks.AIR.defaultBlockState(), Block.UPDATE_CLIENTS);
+		}
+
+		pairs.sort(java.util.Comparator.comparingInt(pair -> pair.getPos().getY()));
+		int placed = 0;
+		for (BlockPosBlockPair pair : pairs) {
+			Block block = pair.getBlock();
+			if (block == null || block == Blocks.AIR) continue;
+			BlockPos worldPos = patternOffset(targetCell, pair.getPos(), cellX, physicalCellY, cellZ);
+			level.setBlock(worldPos, block.defaultBlockState(), Block.UPDATE_CLIENTS);
+			placedPositions.add(worldPos);
+			placed++;
+		}
+		return placed;
+	}
+
+	private static BlockPos patternOffset(BlockPos targetCell, BlockPos patternPos,
+			int cellX, int physicalCellY, int cellZ) {
+		return targetCell.offset(
+				patternPos.getX() - cellX,
+				patternPos.getY() - physicalCellY,
+				cellZ - patternPos.getZ());
+	}
+
+	private static BlockPos riteOffset(BlockPos focusPos, BlockPos relative) {
+		return focusPos.offset(relative.getX(), relative.getY(), -relative.getZ());
+	}
+
+	private static void notifyPlacedBlocks(ServerLevel level, List<BlockPos> placedPositions) {
+		for (BlockPos pos : placedPositions) {
+			level.blockUpdated(pos, level.getBlockState(pos).getBlock());
+			level.updateNeighborsAt(pos, level.getBlockState(pos).getBlock());
+		}
 	}
 
 	@Override

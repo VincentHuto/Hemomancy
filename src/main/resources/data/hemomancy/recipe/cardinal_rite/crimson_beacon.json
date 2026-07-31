@@ -5,64 +5,16 @@
   "required_degree": 2,
   "riteName": "Rite of the Crimson Beacon",
   "riteDescription": "A binding rite that anchors the caster's dying essence to this location. Upon taking a fatal blow, the caster's body will be returned here before death claims them.",
-  "pattern": [
-    [
-      "     ",
-      "     ",
-      "     ",
-      "  B  ",
-      " PVP "
-    ],
-    [
-      "  G  ",
-      "  P  ",
-      "  P  ",
-      " EPE ",
-      "PVPVP"
-    ],
-    [
-      " G G ",
-      " PGP ",
-      " PPP ",
-      "BPGPB",
-      "VPVPV"
-    ],
-    [
-      "  G  ",
-      "  P  ",
-      "  P  ",
-      " BPB ",
-      "PVPVP"
-    ],
-    [
-      "     ",
-      "     ",
-      "     ",
-      "  B  ",
-      " PVP "
-    ]
-  ],
-  "key": {
-    "E": {
-      "block": "hemomancy:engram_block"
-    },
-    "V": {
-      "block": "hemomancy:venous_stone"
-    },
-    "C": {
-      "block": "minecraft:red_stained_glass"
-    },
-    "P": {
-      "block": "hemomancy:hematic_iron_block"
-    },
-    "B": {
-      "block": "hemomancy:befouling_ash_trail"
-    },
-    "G": {
-      "block": "minecraft:sea_lantern"
-    }
-  },
   "result": {
     "id": "hemomancy:sanguine_formation"
-  }
+  },
+  "floor": "hemomancy:dominion_lesser",
+  "brazier_signature": [
+    {
+      "ingredient": {
+        "item": "minecraft:prismarine_crystals"
+      },
+      "count": 1
+    }
+  ]
 }

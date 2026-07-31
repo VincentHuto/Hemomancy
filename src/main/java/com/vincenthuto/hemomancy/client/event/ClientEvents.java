@@ -1103,6 +1103,8 @@ public class ClientEvents {
         public static void modelRegisterEvent(ModelEvent.RegisterAdditional event) {
             event.register(ModelResourceLocation.standalone(Hemomancy.rloc("item/blood_absorption_texture")));
             event.register(ModelResourceLocation.standalone(Hemomancy.rloc("item/blood_projection_texture")));
+            CardinalRitePlantedStaffModels.uniqueModelNames().forEach(model ->
+                    event.register(ModelResourceLocation.standalone(Hemomancy.rloc("item/" + model))));
             LowtideRuinObjModels.register(event);
 
         }

@@ -14,6 +14,7 @@ import com.vincenthuto.hemomancy.common.entity.mob.monster.will.WillBloodUtility
 import com.vincenthuto.hemomancy.common.entity.mob.monster.will.WillEntity;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.BloodVolumeServerPacket;
+import com.vincenthuto.hemomancy.common.rite.harbinger.CardinalRiteCancellationHandler;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.client.resources.model.BakedModel;
@@ -121,6 +122,12 @@ public class BloodAbsorptionItem extends Item implements IDispellable, ICellHand
 			applyChannelMovementPenalty(channelingPlayer);
 		}
 		if (worldIn.isClientSide) {
+			return;
+		}
+		if (player instanceof ServerPlayer serverPlayer
+				&& CardinalRiteCancellationHandler.tryChannel(
+						serverPlayer, LivingStaffFocusRules.bareAbsorptionRange())) {
+			updateChannelStrain(player, false);
 			return;
 		}
 		double blockHandled = BlockBloodInteractions.tryAbsorbFromLookedAtBlock(worldIn, player,
@@ -278,7 +285,11 @@ public class BloodAbsorptionItem extends Item implements IDispellable, ICellHand
 		IBloodVolume volume = HemoCapabilityAccess.getBloodVolume(playerIn)
 				.orElseThrow(NullPointerException::new);
 		if (volume.isActive()) {
-			if (volume.getBloodVolume() < volume.getMaxBloodVolume()) {
+			boolean canCancelRite = playerIn instanceof ServerPlayer serverPlayer
+					&& CardinalRiteCancellationHandler.canStart(
+							serverPlayer, LivingStaffFocusRules.bareAbsorptionRange());
+			if (worldIn.isClientSide || volume.getBloodVolume() < volume.getMaxBloodVolume()
+					|| canCancelRite) {
 				playerIn.startUsingItem(handIn);
 				return new InteractionResultHolder<>(InteractionResult.SUCCESS, stack);
 			}

@@ -5,61 +5,16 @@
   "required_degree": 2,
   "riteName": "Rite of the Hungering Earth",
   "riteDescription": "A corruption rite that feeds the caster's blood into the earth, converting the surrounding terrain into blood-touched stone and befouling ash.",
-  "pattern": [
-    [
-      "C   C",
-      "P   P",
-      "P   P",
-      "P   P",
-      "P P P"
-    ],
-    [
-      "     ",
-      "  C  ",
-      "  P  ",
-      " EPE ",
-      " VPV "
-    ],
-    [
-      "     ",
-      " C C ",
-      " PPP ",
-      " PCP ",
-      "PPPPP"
-    ],
-    [
-      "     ",
-      "  C  ",
-      "  P  ",
-      " EPE ",
-      " VPV "
-    ],
-    [
-      "C   C",
-      "P   P",
-      "P   P",
-      "P   P",
-      "P P P"
-    ]
-  ],
-  "key": {
-    "E": {
-      "block": "hemomancy:engram_block"
-    },
-    "V": {
-      "block": "minecraft:podzol"
-    },
-    "C": {
-      "block": "minecraft:soul_soil"
-    },
-    "P": {
-      "block": "hemomancy:hematic_iron_block"
-    },
-    "B": {
-      "block": "minecraft:rooted_dirt"
-    }
-  },
   "result": {
     "id": "hemomancy:sanguine_formation"
-  }
+  },
+  "floor": "hemomancy:working_lesser",
+  "brazier_signature": [
+    {
+      "ingredient": {
+        "item": "minecraft:magma_cream"
+      },
+      "count": 1
+    }
+  ]
 }

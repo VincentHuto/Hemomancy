@@ -1,6 +1,7 @@
 package com.vincenthuto.hemomancy.client.data;
 
 import com.vincenthuto.hemomancy.common.rite.CardinalRiteBoundaryProgress;
+import com.vincenthuto.hemomancy.common.rite.harbinger.CardinalRitePlantingSequence;
 import com.vincenthuto.hemomancy.common.rite.sigil.IchorianSigilAnatomy;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
@@ -10,6 +11,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 /**
  * Client-side cache for active cardinal rite boundaries.
@@ -40,6 +42,10 @@ public class ActiveRiteClientData {
 		private final int sharedBloodMl;
 		private final String cue;
 		private final float footprintRadius;
+		private final boolean plantedStaff;
+		private final UUID owner;
+		private final int cancellationTicks;
+		private final int staffPlantingTicks;
 		private final List<String> checklist;
 		private final List<CardinalRiteBoundaryProgress.Segment> boundarySegments;
 		private final List<SigilSegment> sigilSegments;
@@ -47,6 +53,10 @@ public class ActiveRiteClientData {
 		private final Map<BoundarySegmentKey, BoundaryGrowth> boundaryGrowth;
 		private float previousStainFade;
 		private float currentStainFade;
+		private float previousCancellationTicks;
+		private float currentCancellationTicks;
+		private float previousStaffPlantingTicks;
+		private float currentStaffPlantingTicks;
 
 		public RiteEntry(BlockPos center, int riteSize, double progress, ResourceLocation recipeId, boolean unstained) {
 			this(center, riteSize, progress, recipeId, unstained, "LEGACY", 0, 0, 0,
@@ -70,6 +80,45 @@ public class ActiveRiteClientData {
 				String cue, float footprintRadius, List<String> checklist,
 				List<CardinalRiteBoundaryProgress.Segment> boundarySegments,
 				List<SigilSegment> sigilSegments, List<SanguineBlob> sanguineBlobs) {
+			this(center, riteSize, progress, recipeId, unstained, phase, instability, currentWave, totalWaves,
+					completedRings, totalRings, committedBloodMl, upfrontBloodMl, carriedIchorMl, allyCount,
+					sharedBloodMl, cue, footprintRadius, checklist, boundarySegments, sigilSegments,
+					sanguineBlobs, false, null);
+		}
+
+		public RiteEntry(BlockPos center, int riteSize, double progress, ResourceLocation recipeId, boolean unstained,
+				String phase, int instability, int currentWave, int totalWaves, int completedRings, int totalRings,
+				int committedBloodMl, int upfrontBloodMl, int carriedIchorMl, int allyCount, int sharedBloodMl,
+				String cue, float footprintRadius, List<String> checklist,
+				List<CardinalRiteBoundaryProgress.Segment> boundarySegments,
+				List<SigilSegment> sigilSegments, List<SanguineBlob> sanguineBlobs, boolean plantedStaff,
+				UUID owner) {
+			this(center, riteSize, progress, recipeId, unstained, phase, instability, currentWave, totalWaves,
+					completedRings, totalRings, committedBloodMl, upfrontBloodMl, carriedIchorMl, allyCount,
+					sharedBloodMl, cue, footprintRadius, checklist, boundarySegments, sigilSegments,
+					sanguineBlobs, plantedStaff, owner, 0);
+		}
+
+		public RiteEntry(BlockPos center, int riteSize, double progress, ResourceLocation recipeId, boolean unstained,
+				String phase, int instability, int currentWave, int totalWaves, int completedRings, int totalRings,
+				int committedBloodMl, int upfrontBloodMl, int carriedIchorMl, int allyCount, int sharedBloodMl,
+				String cue, float footprintRadius, List<String> checklist,
+				List<CardinalRiteBoundaryProgress.Segment> boundarySegments,
+				List<SigilSegment> sigilSegments, List<SanguineBlob> sanguineBlobs, boolean plantedStaff,
+				UUID owner, int cancellationTicks) {
+			this(center, riteSize, progress, recipeId, unstained, phase, instability, currentWave, totalWaves,
+					completedRings, totalRings, committedBloodMl, upfrontBloodMl, carriedIchorMl, allyCount,
+					sharedBloodMl, cue, footprintRadius, checklist, boundarySegments, sigilSegments,
+					sanguineBlobs, plantedStaff, owner, cancellationTicks, -1);
+		}
+
+		public RiteEntry(BlockPos center, int riteSize, double progress, ResourceLocation recipeId, boolean unstained,
+				String phase, int instability, int currentWave, int totalWaves, int completedRings, int totalRings,
+				int committedBloodMl, int upfrontBloodMl, int carriedIchorMl, int allyCount, int sharedBloodMl,
+				String cue, float footprintRadius, List<String> checklist,
+				List<CardinalRiteBoundaryProgress.Segment> boundarySegments,
+				List<SigilSegment> sigilSegments, List<SanguineBlob> sanguineBlobs, boolean plantedStaff,
+				UUID owner, int cancellationTicks, int staffPlantingTicks) {
 			this.center = center;
 			this.riteSize = riteSize;
 			this.progress = progress;
@@ -88,6 +137,14 @@ public class ActiveRiteClientData {
 			this.sharedBloodMl = sharedBloodMl;
 			this.cue = cue;
 			this.footprintRadius = footprintRadius;
+			this.plantedStaff = plantedStaff;
+			this.owner = owner;
+			this.cancellationTicks = Math.max(0, cancellationTicks);
+			this.staffPlantingTicks = staffPlantingTicks;
+			this.previousCancellationTicks = this.cancellationTicks;
+			this.currentCancellationTicks = this.cancellationTicks;
+			this.previousStaffPlantingTicks = this.staffPlantingTicks;
+			this.currentStaffPlantingTicks = this.staffPlantingTicks;
 			this.checklist = List.copyOf(checklist);
 			this.boundarySegments = List.copyOf(boundarySegments);
 			this.sigilSegments = List.copyOf(sigilSegments);
@@ -130,6 +187,10 @@ public class ActiveRiteClientData {
 		public int getSharedBloodMl() { return sharedBloodMl; }
 		public String getCue() { return cue; }
 		public float getFootprintRadius() { return footprintRadius; }
+		public boolean hasPlantedStaff() { return plantedStaff; }
+		public UUID getOwner() { return owner; }
+		public int getCancellationTicks() { return cancellationTicks; }
+		public int getStaffPlantingTicks() { return staffPlantingTicks; }
 		public List<String> getChecklist() { return checklist; }
 		public List<CardinalRiteBoundaryProgress.Segment> getBoundarySegments() { return boundarySegments; }
 		public List<SigilSegment> getSigilSegments() { return sigilSegments; }
@@ -151,6 +212,18 @@ public class ActiveRiteClientData {
 					+ (currentStainFade - previousStainFade) * clampedPartialTick;
 		}
 
+		public float cancellationRenderTicks(float partialTick) {
+			float clampedPartialTick = Math.max(0.0F, Math.min(1.0F, partialTick));
+			return previousCancellationTicks
+					+ (currentCancellationTicks - previousCancellationTicks) * clampedPartialTick;
+		}
+
+		public float staffPlantingRenderTicks(float partialTick) {
+			float clampedPartialTick = Math.max(0.0F, Math.min(1.0F, partialTick));
+			return previousStaffPlantingTicks
+					+ (currentStaffPlantingTicks - previousStaffPlantingTicks) * clampedPartialTick;
+		}
+
 		public boolean consumeBoundaryCompletion(CardinalRiteBoundaryProgress.Segment segment) {
 			BoundaryGrowth growth = boundaryGrowth.get(BoundarySegmentKey.of(segment));
 			return growth != null && growth.consumeCompletion();
@@ -159,6 +232,11 @@ public class ActiveRiteClientData {
 		private void continueBoundaryGrowthFrom(RiteEntry previous) {
 			previousStainFade = previous.previousStainFade;
 			currentStainFade = previous.currentStainFade;
+			previousCancellationTicks = previous.previousCancellationTicks;
+			currentCancellationTicks = previous.currentCancellationTicks;
+			float continuedPlantingTicks = previous.currentStaffPlantingTicks;
+			previousStaffPlantingTicks = continuedPlantingTicks;
+			currentStaffPlantingTicks = Math.max(continuedPlantingTicks, staffPlantingTicks);
 			for (var entry : boundaryGrowth.entrySet()) {
 				BoundaryGrowth previousGrowth = previous.boundaryGrowth.get(entry.getKey());
 				if (previousGrowth != null) entry.getValue().continueFrom(previousGrowth);
@@ -168,6 +246,19 @@ public class ActiveRiteClientData {
 		private void tickBoundaryGrowth() {
 			previousStainFade = currentStainFade;
 			currentStainFade = Math.min(1.0F, currentStainFade + 1.0F / 30.0F);
+			previousCancellationTicks = currentCancellationTicks;
+			if (currentCancellationTicks < cancellationTicks) {
+				currentCancellationTicks = Math.min(cancellationTicks, currentCancellationTicks + 1.0F);
+			} else if (currentCancellationTicks > cancellationTicks && cancellationTicks == 0) {
+				currentCancellationTicks = Math.max(0.0F, currentCancellationTicks - 0.5F);
+			}
+			previousStaffPlantingTicks = currentStaffPlantingTicks;
+			if (currentStaffPlantingTicks >= 0.0F
+					&& currentStaffPlantingTicks < CardinalRitePlantingSequence.DURATION_TICKS) {
+				currentStaffPlantingTicks = Math.min(
+						CardinalRitePlantingSequence.DURATION_TICKS,
+						currentStaffPlantingTicks + 1.0F);
+			}
 			for (BoundaryGrowth growth : boundaryGrowth.values()) growth.tick();
 		}
 	}
@@ -298,6 +389,11 @@ public class ActiveRiteClientData {
 
 	public static void clear() {
 		activeRites = Collections.emptyList();
+	}
+
+	public static boolean isStaffPlanted(UUID playerId) {
+		return playerId != null && activeRites.stream()
+				.anyMatch(rite -> rite.hasPlantedStaff() && playerId.equals(rite.getOwner()));
 	}
 
 	private record BlobKey(BlockPos center, long seed) {

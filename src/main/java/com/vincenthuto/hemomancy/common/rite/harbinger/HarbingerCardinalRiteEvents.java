@@ -51,8 +51,12 @@ import com.vincenthuto.hemomancy.common.recipe.CardinalRiteRecipe;
 import com.vincenthuto.hemomancy.common.recipe.RecipeDegreeGates;
 import com.vincenthuto.hemomancy.common.rite.ActiveCardinalRite;
 import com.vincenthuto.hemomancy.common.rite.CardinalRiteSavedData;
+import com.vincenthuto.hemomancy.common.rite.CardinalRiteStationMatcher;
+import com.vincenthuto.hemomancy.common.rite.CardinalRiteStaffEscrow;
+import com.vincenthuto.hemomancy.common.rite.floor.CardinalRiteFloorRegistry;
 import com.vincenthuto.hemomancy.common.rite.CardinalRiteCeremonyRules;
 import com.vincenthuto.hemomancy.common.rite.CardinalRiteBoundaryProgress;
+import com.vincenthuto.hemomancy.common.rite.CardinalRiteCancellationRules;
 import com.vincenthuto.hemomancy.common.rite.CardinalRiteChecklist;
 import com.vincenthuto.hemomancy.common.rite.CardinalRiteFootprintRules;
 import com.vincenthuto.hemomancy.common.rite.sigil.CardinalRiteSigilProgress;
@@ -68,6 +72,7 @@ import com.vincenthuto.hemomancy.common.worldgen.FungalGardenTravelHelper;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import com.vincenthuto.hutoslib.client.particle.factory.DarkGlowParticleFactory;
 import com.vincenthuto.hutoslib.client.particle.data.EmberParticleData;
+import com.vincenthuto.hutoslib.math.MultiblockPattern;
 import com.vincenthuto.hutoslib.common.lightning.LightningTestConfig;
 import com.vincenthuto.hutoslib.common.lightning.LightningTesterSpawner;
 import net.minecraft.ChatFormatting;
@@ -159,7 +164,6 @@ public class HarbingerCardinalRiteEvents {
 					if (rite.getDisconnectTicks() > CardinalRiteCeremonyRules.DISCONNECT_GRACE_TICKS) {
 						CardinalRiteOrdealEngine.clearThreats(sLevel, rite);
 						rite.markCollapsed();
-						toRemove.add(playerUUID);
 					}
 					savedData.setDirty();
 				}
@@ -170,6 +174,17 @@ public class HarbingerCardinalRiteEvents {
 			BlockPos center = rite.getCenterPos();
 			int riteSize = rite.getRiteSize();
 			CardinalRiteRecipe recipe = CardinalRiteRecipe.getRiteByLocation(sLevel, rite.getRecipeId());
+			if (recipe != null && recipe.hasLayeredStation()
+					&& !rite.hasCapturedOfferingItinerary()) {
+				CardinalRiteStationMatcher.StationMatch station =
+						layeredStationMatch(sLevel, rite, recipe);
+				if (station != null) {
+					rite.captureOfferingItinerary(station.braziers().stream()
+							.map(offering -> new ActiveCardinalRite.RiteOffering(
+									offering.pos(), offering.stack(), offering.consumeOnSuccess()))
+							.toList());
+				}
+			}
 			if (recipe != null && recipe.getCeremony() != null) {
 				rite.setInstabilityDamagePriority(
 						com.vincenthuto.hemomancy.common.rite.CardinalRiteInstabilityBoundaryRules
@@ -182,9 +197,32 @@ public class HarbingerCardinalRiteEvents {
 			AABB casterBounds = new AABB(center).inflate(
 					Math.max(CardinalRiteBoundaryLeashRules.casterLeashRadius(riteSize), footprintRadius));
 
+			if (rite.isStaffPlanting()) {
+				Vec3 motion = caster.getDeltaMovement();
+				caster.setDeltaMovement(0.0D, motion.y, 0.0D);
+				caster.hurtMarked = true;
+				boolean impact = rite.tickStaffPlanting();
+				savedData.setDirty();
+				if (impact) {
+					sLevel.playSound(null, center, SoundEvents.RAVAGER_STEP,
+							SoundSource.BLOCKS, 0.9F, 0.62F);
+					sLevel.playSound(null, center, SoundEvents.ROOTED_DIRT_HIT,
+							SoundSource.BLOCKS, 1.0F, 0.55F);
+					sLevel.playSound(null, center, SoundEvents.BEACON_ACTIVATE,
+							SoundSource.BLOCKS, 0.8F, 1.25F);
+					List<ActiveRiteClientData.RiteEntry> entries = new ArrayList<>();
+					for (ActiveCardinalRite active : activeRites.values()) {
+						entries.add(toClientEntry(sLevel, active));
+					}
+					PacketDistributor.sendToAllPlayers(new PacketSyncActiveRites(entries));
+				}
+				if (!rite.isStaffImpactReached()) continue;
+			}
+
 			// === Caster boundary enforcement ===
 			// Only the caster takes damage and blood drain for leaving the rite bounds
 			if (!casterBounds.contains(caster.position())) {
+				rite.interruptCancellation();
 				caster.hurt(caster.damageSources().generic(), CASTER_BOUNDARY_DAMAGE_PER_TICK);
 				HemoCapabilityAccess.getBloodVolume(caster).ifPresent(volume -> {
 					volume.drain(CASTER_BOUNDARY_BLOOD_DRAIN_PER_TICK);
@@ -197,6 +235,18 @@ public class HarbingerCardinalRiteEvents {
 				// Don't tick the rite forward while the caster is outside
 				continue;
 			}
+
+			if (rite.tickCancellation(sLevel.getGameTime())) {
+				tickRiteCancellation(sLevel, caster, rite);
+				savedData.setDirty();
+				if (rite.isCancellationComplete()) {
+					completeRiteCancellation(sLevel, caster, rite);
+					toRemove.add(playerUUID);
+				}
+				continue;
+			}
+
+			applyCancellationDaemonRecovery(sLevel, rite);
 
 			// === Unwilling sacrifice processing ===
 			// Non-caster living entities within bounds take damage and feed the ritual
@@ -222,6 +272,7 @@ public class HarbingerCardinalRiteEvents {
 				}
 				CardinalRiteOrdealEngine.tick(sLevel, caster, rite, recipe);
 			}
+			rite.advanceCancellationRecovery();
 			savedData.setDirty();
 
 			if (rite.getPhase() == CardinalRitePhase.COLLAPSED) {
@@ -275,6 +326,7 @@ public class HarbingerCardinalRiteEvents {
 			if (broken != null) {
 				CardinalRiteOrdealEngine.clearThreats(sLevel, broken);
 				discardHumanitySprites(sLevel, player.getUUID(), broken.getCenterPos());
+				CardinalRiteStaffEscrow.restore(player, broken);
 			}
 			savedData.removeRite(player.getUUID());
 			player.displayClientMessage(
@@ -361,13 +413,18 @@ public class HarbingerCardinalRiteEvents {
 			}
 		}
 
-		if (currentMaxHeight >= 0.75D) {
-			updateHumanitySprite(sLevel, caster, rite, currentMaxHeight, progress);
+		if (currentMaxHeight >= 0.75D
+				&& rite.getPhase() != CardinalRitePhase.OFFERING_PROCESSION
+				&& rite.getPhase() != CardinalRitePhase.CULMINATION) {
+			updateHumanitySprite(sLevel, caster, rite,
+					CardinalRiteFinaleTiming.preProcessionHeight(currentMaxHeight), progress);
 		}
 	}
 
 	private static void updateHumanitySprite(ServerLevel level, ServerPlayer caster,
 			ActiveCardinalRite rite, double height, double riteProgress) {
+		if (rite.isCancellationRecovering()) return;
+
 		BlockPos center = rite.getCenterPos();
 		double sourceX = center.getX() + 0.5D;
 		double sourceY = center.getY() + 1.0D + height * 0.5D;
@@ -382,17 +439,39 @@ public class HarbingerCardinalRiteEvents {
 		if (sprite == null) {
 			sprite = EntityInit.humanity_sprite.get().create(level);
 			if (sprite == null) return;
-			sprite.initialize(new Vec3(sourceX, sourceY, sourceZ), 1.0F);
+			sprite.initialize(new Vec3(sourceX, center.getY() + 0.75D, sourceZ),
+					HumanitySpriteEntity.MIN_SCALE);
 			sprite.bindToRite(rite.getPlayerUUID());
 			level.addFreshEntity(sprite);
+		}
+		double emergence = CardinalRiteDaemonEmergence.progress(sprite.tickCount);
+		if (emergence < 1.0D) {
+			emitDaemonEmergence(level, center, sprite.tickCount);
+			sourceY = lerp(emergence, center.getY() + 0.75D, sourceY);
 		}
 		sprite.setPos(
 				lerp(absorption, sourceX, targetX),
 				lerp(absorption, sourceY, targetY),
 				lerp(absorption, sourceZ, targetZ));
 		sprite.setSpriteScale((float) (height
-				/ CardinalRiteHumanityGeometry.DEFAULT_ENTITY_HEIGHT * contraction));
+				/ CardinalRiteHumanityGeometry.DEFAULT_ENTITY_HEIGHT * contraction * emergence));
 		sprite.faceDirection(targetX - sourceX, targetZ - sourceZ);
+	}
+
+	private static void emitDaemonEmergence(ServerLevel level, BlockPos center, int elapsedTicks) {
+		for (int pointIndex = 0; pointIndex < CardinalRiteDaemonEmergence.SPIRAL_POINTS; pointIndex++) {
+			CardinalRiteDaemonEmergence.SpiralPoint black = CardinalRiteDaemonEmergence.spiralPoint(
+					center.getX() + 0.5D, center.getZ() + 0.5D, elapsedTicks, pointIndex, 0);
+			CardinalRiteDaemonEmergence.SpiralPoint white = CardinalRiteDaemonEmergence.spiralPoint(
+					center.getX() + 0.5D, center.getZ() + 0.5D, elapsedTicks, pointIndex, 1);
+			level.sendParticles(DarkGlowParticleFactory.createData(ParticleColor.BLACK),
+					black.x(), center.getY() + black.y(), black.z(), 1,
+					0.01D, 0.01D, 0.01D, 0.0D);
+			level.sendParticles(new EmberParticleData(new ParticleColor(240, 240, 240),
+					0.8F, 0.035F, 24),
+					white.x(), center.getY() + white.y(), white.z(), 1,
+					0.01D, 0.01D, 0.01D, 0.0D);
+		}
 	}
 
 	private static void discardHumanitySprites(ServerLevel level, UUID owner, BlockPos center) {
@@ -401,6 +480,67 @@ public class HarbingerCardinalRiteEvents {
 				entity -> entity.isBoundToRite(owner))) {
 			sprite.discard();
 		}
+	}
+
+	private static void tickRiteCancellation(ServerLevel level, ServerPlayer caster,
+			ActiveCardinalRite rite) {
+		BlockPos center = rite.getCenterPos();
+		Vec3 staff = new Vec3(center.getX() + 0.5D, center.getY() + 0.95D,
+				center.getZ() + 0.5D);
+		HumanitySpriteEntity daemon = HumanitySpriteEntity.findBoundToRite(
+				level, rite.getPlayerUUID(), center);
+		if (!CardinalRiteCancellationRules.canAnimateDaemon(daemon != null)) return;
+		rite.captureCancellationDaemonStart(daemon.position(), daemon.getSpriteScale());
+		daemon.setPos(CardinalRiteCancellationGeometry.daemonPosition(
+				rite.getCancellationDaemonStartPos(), staff, rite.getCancellationTicks()));
+		daemon.setSpriteScale(CardinalRiteCancellationGeometry.daemonScale(
+				rite.getCancellationDaemonStartScale(), rite.getCancellationTicks()));
+		daemon.faceDirection(caster.getX() - staff.x, caster.getZ() - staff.z);
+		daemon.setFlying(true);
+
+		if (rite.getCancellationTicks() == 1) {
+			caster.displayClientMessage(Component.literal(
+					"Hold the absorption steady. Draw the rite back into your hand.")
+					.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC), true);
+		}
+		if (rite.getCancellationTicks() % 10 == 0) {
+			level.playSound(null, center, SoundEvents.SCULK_SHRIEKER_SHRIEK,
+					SoundSource.BLOCKS, 0.25F,
+					1.45F + rite.getCancellationTicks()
+							/ (float) CardinalRiteCancellationRules.TOTAL_TICKS * 0.35F);
+		}
+	}
+
+	private static void applyCancellationDaemonRecovery(ServerLevel level,
+			ActiveCardinalRite rite) {
+		if (!rite.isCancellationRecovering()) return;
+
+		HumanitySpriteEntity daemon = HumanitySpriteEntity.findBoundToRite(
+				level, rite.getPlayerUUID(), rite.getCenterPos());
+		if (daemon == null) {
+			rite.resetCancellation();
+			return;
+		}
+
+		int remainingTicks = rite.getCancellationRecoveryTicks();
+		daemon.setPos(CardinalRiteCancellationGeometry.recoveryPosition(
+				daemon.position(), rite.getCancellationRecoveryTargetPos(), remainingTicks));
+		daemon.setSpriteScale(CardinalRiteCancellationGeometry.recoveryScale(
+				daemon.getSpriteScale(), rite.getCancellationRecoveryTargetScale(), remainingTicks));
+		daemon.setFlying(true);
+	}
+
+	private static void completeRiteCancellation(ServerLevel level, ServerPlayer caster,
+			ActiveCardinalRite rite) {
+		CardinalRiteOrdealEngine.clearThreats(level, rite);
+		CardinalRiteStaffEscrow.restore(caster, rite);
+		level.playSound(null, rite.getCenterPos(), SoundEvents.BEACON_DEACTIVATE,
+				SoundSource.BLOCKS, 1.0F, 0.65F);
+		level.playSound(null, caster.blockPosition(), SoundEvents.BOTTLE_FILL,
+				SoundSource.PLAYERS, 0.8F, 0.75F);
+		caster.displayClientMessage(Component.literal(
+				"The daemon folds into the Living Staff, and the rite returns to your blood.")
+				.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC), false);
 	}
 
 	private static void spawnHumanityDispersal(ServerLevel level, ServerPlayer caster) {
@@ -467,6 +607,16 @@ public class HarbingerCardinalRiteEvents {
 		}
 
 		BlockPos center = rite.getCenterPos();
+		if (recipe.hasLayeredStation()) {
+			boolean valid = (rite.getOfferingVisitIndex() > 0
+					? layeredStructureMatch(sLevel, rite, recipe)
+					: layeredStationMatch(sLevel, rite, recipe)) != null;
+			if (!valid) {
+				Hemomancy.LOGGER.warn("Layered Cardinal Rite station no longer matches {} at {}",
+						rite.getRecipeId(), center);
+			}
+			return valid;
+		}
 		BlockPattern blockPattern = recipe.getPattern().getBlockPattern();
 		BlockPattern.BlockPatternMatch match = findPatternNearCenter(blockPattern, sLevel, center);
 		if (match == null) {
@@ -552,6 +702,7 @@ public class HarbingerCardinalRiteEvents {
 				Component.literal("The rite structure has been broken! The ritual backlashes!")
 						.withStyle(ChatFormatting.DARK_RED, ChatFormatting.BOLD),
 				false);
+		CardinalRiteStaffEscrow.restore(caster, rite);
 	}
 
 	private static void spawnBrokenAnchorDispersal(ServerLevel sLevel, ActiveCardinalRite rite,
@@ -634,10 +785,16 @@ public class HarbingerCardinalRiteEvents {
 				rite.completedRings(), totalRings, rite.getCommittedBloodMl(), upfront,
 				rite.getCarriedIchorMl(), rite.getAllyRoles().size(), sharedBlood, cue,
 				footprintRadius, checklist,
-				boundarySegments, sigilSegments, sanguineBlobs);
+				boundarySegments, sigilSegments, sanguineBlobs,
+				rite.hasEscrowedStaff() && rite.isStaffImpactReached(), rite.getPlayerUUID(),
+				rite.getCancellationTicks(), rite.getStaffPlantingTicks());
 	}
 
 	public static float ritualFootprintRadius(ActiveCardinalRite rite, CardinalRiteRecipe recipe) {
+		if (rite.getMatchedFloorId() != null) {
+			var matchedFloor = CardinalRiteFloorRegistry.get(rite.getMatchedFloorId());
+			if (matchedFloor.isPresent()) return matchedFloor.get().footprintRadius();
+		}
 		if (recipe == null || recipe.getCeremony() == null) {
 			return (float) CardinalRiteBoundaryLeashRules.ritualRadius(rite.getRiteSize());
 		}
@@ -665,6 +822,12 @@ public class HarbingerCardinalRiteEvents {
 
 	private static java.util.List<String> buildChecklist(ServerLevel level, ActiveCardinalRite rite,
 			CardinalRiteRecipe recipe) {
+		if (rite.getCancellationTicks() > 0) {
+			int remaining = CardinalRiteCancellationRules.TOTAL_TICKS - rite.getCancellationTicks();
+			return java.util.List.of(
+					"Absorbing the rite: " + Math.max(0, remaining + 19) / 20 + "s",
+					"Keep Blood Absorption trained on the planted staff");
+		}
 		if (rite.getPhase() == CardinalRitePhase.CONSECRATION) {
 			int missing = 0;
 			for (int blood : rite.getAnchorBloodMl()) {
@@ -719,8 +882,23 @@ public class HarbingerCardinalRiteEvents {
 							? "Use projected blood on the highlighted target"
 							: "Interact with the highlighted target");
 		}
+		if (rite.getPhase() == CardinalRitePhase.OFFERING_PROCESSION) {
+			int total = rite.getOfferingItinerary().size();
+			if (rite.isReturningFromOfferings()) {
+				return java.util.List.of(
+						"Offerings absorbed: " + total + "/" + total,
+						"The daemon is returning to the planted staff");
+			}
+			return java.util.List.of(
+					"Offering " + Math.min(rite.getOfferingVisitIndex() + 1, total) + "/" + total,
+					"The daemon is consuming the burning offerings");
+		}
 		if (rite.getPhase() == CardinalRitePhase.CULMINATION) {
-			return java.util.List.of("The rite is resolving", "No further input is required");
+			return java.util.List.of(
+					rite.getPhaseTicks() <= CardinalRiteFinaleTiming.GROWTH_TICKS
+							? "The daemon grows as the offerings fade"
+							: "The daemon is returning to your blood",
+					"No further input is required");
 		}
 		return java.util.List.of();
 	}
@@ -881,6 +1059,7 @@ public class HarbingerCardinalRiteEvents {
 				SoundSource.BLOCKS, 1.5F, 0.55F);
 		caster.displayClientMessage(Component.literal("The cardinal boundary collapses into backlash.")
 				.withStyle(ChatFormatting.DARK_RED, ChatFormatting.BOLD), false);
+		CardinalRiteStaffEscrow.restore(caster, rite);
 	}
 
 	private static final String BLOODLINE_FOUNDING_RITE = "cardinal_rite/bloodline_founding";
@@ -998,42 +1177,11 @@ public class HarbingerCardinalRiteEvents {
 			});
 		}
 
-		// Destroy the multiblock pattern (only structure blocks, not wildcard positions)
+		// Floors are reusable. A recipe may explicitly consume only its matched upper structure.
 		BlockPos center = rite.getCenterPos();
-		BlockPattern blockPattern = recipe.getPattern().getBlockPattern();
-		BlockPattern.BlockPatternMatch match = findPatternNearCenter(blockPattern, sLevel, center);
-		if (match != null && recipe.shouldBreakBlocksOnCreation()) {
-			// Build a lookup of which (charIndex, invertedRow, aisle) positions are
-			// actual structure blocks vs wildcard spaces
-			String[][] patternArray = recipe.getPattern().getPatternArray();
-			java.util.Map<String, Block> symbolList = recipe.getPattern().getSymbolList();
-			int width = blockPattern.getWidth();
-			int height = blockPattern.getHeight();
-			int depth = blockPattern.getDepth();
-
-			// patternArray maps as: aisle -> rows (top-to-bottom) -> chars (left-to-right)
-			// BlockPattern maps as: i=charIndex (width), j=invertedRow (height), k=aisle (depth)
-			for (int k = 0; k < depth; k++) {
-				String[] aisle = patternArray[k];
-				for (int j = 0; j < height; j++) {
-					String row = aisle[j];
-					for (int i = 0; i < width; i++) {
-						if (i >= row.length()) continue;
-						char c = row.charAt(i);
-						// Space character is a wildcard â€” don't destroy whatever happens to be there
-						if (c == ' ') continue;
-						Block expected = symbolList.get(String.valueOf(c));
-						if (expected == null || expected == Blocks.AIR) continue;
-
-						// match.getBlock handles rotation so we get the correct world pos
-						BlockPos worldPos = match.getBlock(i, j, k).getPos();
-						BlockState state = sLevel.getBlockState(worldPos);
-						sLevel.setBlock(worldPos, Blocks.AIR.defaultBlockState(), 2);
-						sLevel.levelEvent(2001, worldPos, Block.getId(state));
-					}
-				}
-			}
-		}
+		CardinalRiteStationMatcher.StationMatch layeredMatch = recipe.hasLayeredStation()
+				? layeredStructureMatch(sLevel, rite, recipe)
+				: null;
 
 		// Spawn result item
 		String ritePath = rite.getRecipeId().getPath();
@@ -1328,6 +1476,10 @@ public class HarbingerCardinalRiteEvents {
 		if (CHAMBER_OF_WILL_RITE.equals(ritePath)) {
 			ChamberOfWillManager.get(sLevel.getServer()).enterChamber(caster);
 		}
+		if (rite.commitCompletion()) {
+			consumeMatchedStructure(sLevel, recipe, center, layeredMatch);
+		}
+		CardinalRiteStaffEscrow.restore(caster, rite);
 	}
 
 	// Gourd Upgrade Helpers
@@ -1337,6 +1489,54 @@ public class HarbingerCardinalRiteEvents {
 	 * the given prerequisite. If found, one stack entry is consumed and true is returned.
 	 * Prefers the main hand, then off hand, then the first matching inventory slot.
 	 */
+	private static CardinalRiteStationMatcher.StationMatch layeredStationMatch(
+			ServerLevel level, ActiveCardinalRite rite, CardinalRiteRecipe recipe) {
+		if (rite.getMatchedFloorId() != null) {
+			return CardinalRiteStationMatcher.findCaptured(level, rite.getCenterPos(), recipe,
+					rite.getMatchedFloorId(), rite.getFloorForwards(), rite.getFloorUp()).orElse(null);
+		}
+		return CardinalRiteStationMatcher.find(level, rite.getCenterPos(), recipe).orElse(null);
+	}
+
+	private static CardinalRiteStationMatcher.StationMatch layeredStructureMatch(
+			ServerLevel level, ActiveCardinalRite rite, CardinalRiteRecipe recipe) {
+		if (rite.getMatchedFloorId() == null) return layeredStationMatch(level, rite, recipe);
+		return CardinalRiteStationMatcher.findCapturedStructure(level, rite.getCenterPos(), recipe,
+				rite.getMatchedFloorId(), rite.getFloorForwards(), rite.getFloorUp()).orElse(null);
+	}
+
+	private static void consumeMatchedStructure(ServerLevel level, CardinalRiteRecipe recipe, BlockPos center,
+			CardinalRiteStationMatcher.StationMatch layeredMatch) {
+		MultiblockPattern pattern = recipe.hasLayeredStation()
+				? recipe.getRequiredStructure()
+				: recipe.getPattern();
+		boolean consume = recipe.hasLayeredStation()
+				? recipe.shouldConsumeRequiredStructure()
+				: recipe.shouldBreakBlocksOnCreation();
+		if (!consume || pattern == null) return;
+		BlockPattern.BlockPatternMatch match = recipe.hasLayeredStation()
+				? layeredMatch == null ? null : layeredMatch.structureMatch()
+				: findPatternNearCenter(pattern.getBlockPattern(), level, center);
+		if (match == null) return;
+		String[][] patternArray = pattern.getPatternArray();
+		java.util.Map<String, Block> symbols = pattern.getSymbolList();
+		BlockPattern blockPattern = pattern.getBlockPattern();
+		for (int z = 0; z < blockPattern.getDepth(); z++) {
+			for (int y = 0; y < blockPattern.getHeight(); y++) {
+				String row = patternArray[z][y];
+				for (int x = 0; x < blockPattern.getWidth(); x++) {
+					if (x >= row.length() || row.charAt(x) == ' ') continue;
+					Block expected = symbols.get(String.valueOf(row.charAt(x)));
+					if (expected == null || expected == Blocks.AIR) continue;
+					BlockPos worldPos = match.getBlock(x, y, z).getPos();
+					BlockState state = level.getBlockState(worldPos);
+					level.setBlock(worldPos, Blocks.AIR.defaultBlockState(), 2);
+					level.levelEvent(2001, worldPos, Block.getId(state));
+				}
+			}
+		}
+	}
+
 	private static boolean consumeGourdPrerequisite(ServerPlayer caster, net.minecraft.world.item.Item prerequisite) {
 		// Check main hand first
 		ItemStack mainHand = caster.getMainHandItem();

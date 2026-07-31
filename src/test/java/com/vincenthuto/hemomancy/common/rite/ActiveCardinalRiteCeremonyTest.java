@@ -1,10 +1,13 @@
 package com.vincenthuto.hemomancy.common.rite;
 
+import com.vincenthuto.hemomancy.common.rite.harbinger.CardinalRiteCancellationGeometry;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.phys.Vec3;
 import org.junit.jupiter.api.Test;
 
+import java.util.List;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -30,6 +33,9 @@ final class ActiveCardinalRiteCeremonyTest {
 	@Test
 	void ordealFlowsThroughStillIntervalAndCulmination() {
 		ActiveCardinalRite rite = rite(1, true, 1);
+		rite.captureOfferingItinerary(List.of(
+				new ActiveCardinalRite.RiteOffering(new BlockPos(2, 0, 0),
+						null, true)));
 		rite.fillAnchor(0, 50);
 		rite.fillAnchor(1, 50);
 		rite.fillAnchor(2, 50);
@@ -39,9 +45,37 @@ final class ActiveCardinalRiteCeremonyTest {
 		rite.completeWave();
 		assertEquals(CardinalRitePhase.STILL_INTERVAL, rite.getPhase());
 		rite.finishStillInterval(false);
+		assertEquals(CardinalRitePhase.OFFERING_PROCESSION, rite.getPhase());
+		assertEquals(new BlockPos(2, 0, 0), rite.getCurrentOffering().pos());
+		assertTrue(rite.absorbCurrentOffering());
+		assertTrue(rite.isReturningFromOfferings());
+		assertTrue(rite.finishOfferingProcession());
 		assertEquals(CardinalRitePhase.CULMINATION, rite.getPhase());
 		rite.markComplete();
 		assertTrue(rite.isComplete());
+	}
+
+	@Test
+	void offeringProcessionVisitsOnlyConsumableOfferingsInCapturedOrder() {
+		ActiveCardinalRite rite = rite(1, true, 1);
+		BlockPos paperBrazier = new BlockPos(2, 0, 0);
+		BlockPos preservedBrazier = new BlockPos(0, 0, 2);
+		BlockPos boneBrazier = new BlockPos(-2, 0, 0);
+		rite.captureOfferingItinerary(List.of(
+				new ActiveCardinalRite.RiteOffering(paperBrazier, null, true),
+				new ActiveCardinalRite.RiteOffering(preservedBrazier, null, false),
+				new ActiveCardinalRite.RiteOffering(boneBrazier, null, true)));
+
+		assertEquals(List.of(paperBrazier, boneBrazier),
+				rite.getOfferingItinerary().stream()
+						.map(ActiveCardinalRite.RiteOffering::pos).toList());
+		assertEquals(paperBrazier, rite.getCurrentOffering().pos());
+		assertTrue(rite.absorbCurrentOffering());
+		assertEquals(boneBrazier, rite.getCurrentOffering().pos());
+		assertTrue(rite.absorbCurrentOffering());
+		assertTrue(rite.isReturningFromOfferings());
+		assertEquals(2, rite.getAbsorbedOfferings().size());
+		assertFalse(rite.absorbCurrentOffering(), "an absorbed itinerary cannot be consumed twice");
 	}
 
 	@Test
@@ -62,7 +96,9 @@ final class ActiveCardinalRiteCeremonyTest {
 		rite.finishStillInterval(false);
 		assertEquals(0.95D, rite.getProgress(100), 0.0001D, "culmination begins");
 		for (int tick = 0; tick < 20; tick++) rite.tick();
-		assertEquals(0.975D, rite.getProgress(100), 0.0001D, "culmination midpoint");
+		assertEquals(0.9625D, rite.getProgress(100), 0.0001D, "growth midpoint");
+		for (int tick = 0; tick < 20; tick++) rite.tick();
+		assertEquals(0.975D, rite.getProgress(100), 0.0001D, "merge begins after growth");
 	}
 
 	@Test
@@ -159,5 +195,153 @@ final class ActiveCardinalRiteCeremonyTest {
 		return ActiveCardinalRite.interactive(UUID.randomUUID(), BlockPos.ZERO,
 				ResourceLocation.fromNamespaceAndPath("hemomancy", "cardinal_rite/test"),
 				100, 3, degree, abbreviated, waves);
+	}
+
+	@Test
+	void capturedFloorTransformAndCompletionGuardPersist() {
+		ActiveCardinalRite rite = rite(2, false, 2);
+		rite.setMatchedFloor(ResourceLocation.fromNamespaceAndPath("hemomancy", "threshold_grand"),
+				net.minecraft.core.Direction.EAST, net.minecraft.core.Direction.UP);
+		assertTrue(rite.commitCompletion());
+		assertFalse(rite.commitCompletion());
+
+		ActiveCardinalRite copy = ActiveCardinalRite.deserialize(rite.serialize());
+		assertEquals(ResourceLocation.fromNamespaceAndPath("hemomancy", "threshold_grand"),
+				copy.getMatchedFloorId());
+		assertEquals(net.minecraft.core.Direction.EAST, copy.getFloorForwards());
+		assertFalse(copy.commitCompletion(), "completion guard survives reload");
+	}
+
+	@Test
+	void cancellationRequiresAContinuousPerTickRequest() {
+		ActiveCardinalRite rite = rite(2, false, 2);
+		assertTrue(rite.requestCancellation(120L));
+		assertTrue(rite.tickCancellation(120L));
+		assertEquals(1, rite.getCancellationTicks());
+
+		assertFalse(rite.tickCancellation(121L));
+		assertEquals(0, rite.getCancellationTicks(), "releasing absorption resets the attempt");
+	}
+
+	@Test
+	void cancellationRequestSurvivesUntilTheFollowingLevelPostTick() {
+		ActiveCardinalRite rite = rite(2, false, 2);
+		assertTrue(rite.requestCancellation(120L));
+		assertTrue(rite.tickCancellation(121L),
+				"item-use requests made after a level callback must be consumed by the next callback");
+		assertEquals(1, rite.getCancellationTicks());
+
+		assertFalse(rite.tickCancellation(122L),
+				"a consumed request cannot advance the channel for a second tick");
+		assertEquals(0, rite.getCancellationTicks());
+	}
+
+	@Test
+	void restartedCancellationContinuesFromItsCurrentRecoveryProgress() {
+		ActiveCardinalRite rite = rite(2, false, 2);
+		for (int tick = 0; tick < 40; tick++) {
+			assertTrue(rite.requestCancellation(tick));
+			assertTrue(rite.tickCancellation(tick));
+		}
+
+		assertFalse(rite.tickCancellation(40L), "releasing absorption stops the channel");
+		for (int tick = 41; tick <= 60; tick++) {
+			assertFalse(rite.tickCancellation(tick));
+		}
+
+		assertTrue(rite.requestCancellation(61L));
+		assertTrue(rite.tickCancellation(61L));
+		assertEquals(31, rite.getCancellationTicks(),
+				"restart resumes after half-speed recovery instead of resetting to one tick");
+	}
+
+	@Test
+	void cancellationCompletesAfterTheConfiguredContinuousDuration() {
+		ActiveCardinalRite rite = rite(2, false, 2);
+		for (int tick = 0; tick < CardinalRiteCancellationRules.TOTAL_TICKS; tick++) {
+			assertTrue(rite.requestCancellation(tick));
+			assertTrue(rite.tickCancellation(tick));
+		}
+
+		assertTrue(rite.isCancellationComplete());
+		assertEquals(CardinalRiteCancellationRules.TOTAL_TICKS, rite.getCancellationTicks());
+		assertEquals(CardinalRitePhase.CONSECRATION, rite.getPhase(),
+				"cancellation is orthogonal to the ceremony phase");
+		assertEquals(0, rite.getPhaseTicks(), "the ceremony stays frozen while cancellation is processed");
+	}
+
+	@Test
+	void cancellationKeepsOneDaemonStartingPoseUntilTheAttemptResets() {
+		ActiveCardinalRite rite = rite(2, false, 2);
+		Vec3 first = new Vec3(1.0D, 2.0D, 3.0D);
+		Vec3 later = new Vec3(7.0D, 8.0D, 9.0D);
+
+		rite.captureCancellationDaemonStart(first, 2.5F);
+		rite.captureCancellationDaemonStart(later, 5.0F);
+		assertEquals(first, rite.getCancellationDaemonStartPos());
+		assertEquals(2.5F, rite.getCancellationDaemonStartScale());
+
+		rite.resetCancellation();
+		rite.captureCancellationDaemonStart(later, 5.0F);
+		assertEquals(later, rite.getCancellationDaemonStartPos());
+		assertEquals(5.0F, rite.getCancellationDaemonStartScale());
+	}
+
+	@Test
+	void interruptedCancellationPreservesTheDaemonOriginalPoseForRecovery() {
+		ActiveCardinalRite rite = rite(2, false, 2);
+		Vec3 original = new Vec3(1.0D, 2.0D, 3.0D);
+		assertTrue(rite.requestCancellation(40L));
+		assertTrue(rite.tickCancellation(40L));
+		rite.captureCancellationDaemonStart(original, 2.5F);
+
+		assertFalse(rite.tickCancellation(41L));
+
+		assertTrue(rite.isCancellationRecovering());
+		assertEquals(CardinalRiteCancellationGeometry.RECOVERY_TICKS,
+				rite.getCancellationRecoveryTicks());
+		assertEquals(original, rite.getCancellationRecoveryTargetPos());
+		assertEquals(2.5F, rite.getCancellationRecoveryTargetScale());
+		assertNull(rite.getCancellationDaemonStartPos(),
+				"a new absorption attempt must capture its own starting pose");
+	}
+
+	@Test
+	void cancellationBeforeDaemonEmergenceCreatesNoRecoveryVisual() {
+		ActiveCardinalRite rite = rite(2, false, 2);
+		assertTrue(rite.requestCancellation(40L));
+		assertTrue(rite.tickCancellation(40L));
+
+		assertFalse(rite.tickCancellation(41L));
+
+		assertFalse(rite.isCancellationRecovering());
+	}
+
+	@Test
+	void plantingIntroRevealsTheStaffOnlyOnItsImpactTick() {
+		ActiveCardinalRite rite = rite(2, false, 2);
+		rite.beginStaffPlanting();
+
+		for (int tick = 0; tick < 13; tick++) {
+			assertFalse(rite.tickStaffPlanting());
+			assertFalse(rite.isStaffImpactReached());
+		}
+		assertTrue(rite.tickStaffPlanting());
+		assertTrue(rite.isStaffImpactReached());
+		assertEquals(14, rite.getStaffPlantingTicks());
+		assertEquals(0, rite.getPhaseTicks(), "ceremony progression is frozen during planting");
+	}
+
+	@Test
+	void plantingIntroProgressSurvivesWorldReload() {
+		ActiveCardinalRite rite = rite(2, false, 2);
+		rite.beginStaffPlanting();
+		for (int tick = 0; tick < 9; tick++) rite.tickStaffPlanting();
+
+		ActiveCardinalRite copy = ActiveCardinalRite.deserialize(rite.serialize());
+
+		assertTrue(copy.isStaffPlanting());
+		assertEquals(9, copy.getStaffPlantingTicks());
+		assertFalse(copy.isStaffImpactReached());
 	}
 }

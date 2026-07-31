@@ -165,9 +165,9 @@ public class RiteHintScreen extends Screen {
 	// ── 3D Multiblock Preview ──
 
 	private void drawRiteModel(GuiGraphics gfx, int areaX, int areaY, int areaW, int areaH, float partial) {
-		if (rite.getPattern() == null) return;
+		if (rite.getPreviewPattern() == null) return;
 
-		List<BlockPosBlockPair> blockPairs = rite.getPattern().getDisplayBlockPosBlockList(materialCycleIndex());
+		List<BlockPosBlockPair> blockPairs = rite.getPreviewPattern().getDisplayBlockPosBlockList(materialCycleIndex());
 		if (blockPairs.isEmpty()) return;
 
 		// Determine bounding box
@@ -351,8 +351,8 @@ public class RiteHintScreen extends Screen {
 		y += 6;
 
 		// ── Materials list ──
-		if (rite.getPattern() != null) {
-			List<MultiblockPattern.MaterialCount> materials = rite.getPattern().getMaterialCounts(false);
+		if (rite.getPreviewPattern() != null) {
+			List<MultiblockPattern.MaterialCount> materials = rite.getPreviewPattern().getMaterialCounts(false);
 			if (!materials.isEmpty()) {
 				gfx.drawString(font, Component.literal("Materials:").withStyle(s -> s.withColor(LABEL_COLOR)), panelX, y, 0);
 				y += lineH;
@@ -433,8 +433,8 @@ public class RiteHintScreen extends Screen {
 		y += 6;
 
 		// Materials
-		if (rite.getPattern() != null) {
-			List<MultiblockPattern.MaterialCount> materials = rite.getPattern().getMaterialCounts(false);
+		if (rite.getPreviewPattern() != null) {
+			List<MultiblockPattern.MaterialCount> materials = rite.getPreviewPattern().getMaterialCounts(false);
 			if (!materials.isEmpty()) {
 				y += lineH;
 				long cycleIndex = materialCycleIndex();
@@ -463,13 +463,25 @@ public class RiteHintScreen extends Screen {
 					+ "while looking at any block in the pattern.";
 		}
 		if (rite.getRequiredDegree() < 1) {
-			return "Build the structure shown on the left using the required materials. "
+			return layeredInstructions()
 					+ "Right-click the central ground-level activation block with a Sanguine Formation. "
 					+ "The formation is consumed only when the rite successfully begins.";
 		}
-		return "Build the structure shown on the left using the required materials. "
-				+ "Right-click the central ground-level activation block with a Living Staff. "
-				+ "If you choose another pattern block, the staff will identify the correct one.";
+		return layeredInstructions()
+				+ "Shove the Living Staff into the Cardinal Focus to begin; it remains planted until the rite ends.";
+	}
+
+	private String layeredInstructions() {
+		if (!rite.hasLayeredStation()) {
+			return "Build the structure shown on the left using the required materials. ";
+		}
+		String structure = rite.getRequiredStructure() == null ? "No upper structure is required. "
+				: rite.shouldConsumeRequiredStructure()
+						? "Build the shown upper structure; it is consumed only on success. "
+						: "Build the shown reusable upper structure. ";
+		return "Build at least the " + rite.getFloorId().getPath().replace('_', ' ')
+				+ " floor; higher tiers of the same style also work. " + structure
+				+ "Place the exact offerings in lit braziers at the floor sockets. ";
 	}
 
 	// ── Layer Buttons ──

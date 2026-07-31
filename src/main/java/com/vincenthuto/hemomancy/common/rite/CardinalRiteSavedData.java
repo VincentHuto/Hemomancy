@@ -34,7 +34,7 @@ public class CardinalRiteSavedData extends SavedData {
 		CardinalRiteSavedData data = new CardinalRiteSavedData();
 		ListTag list = tag.getList("ActiveRites", Tag.TAG_COMPOUND);
 		for (int i = 0; i < list.size(); i++) {
-			ActiveCardinalRite rite = ActiveCardinalRite.deserialize(list.getCompound(i));
+			ActiveCardinalRite rite = ActiveCardinalRite.deserialize(list.getCompound(i), provider);
 			data.activeRites.put(rite.getPlayerUUID(), rite);
 		}
 		return data;
@@ -44,7 +44,7 @@ public class CardinalRiteSavedData extends SavedData {
 	public CompoundTag save(CompoundTag tag, HolderLookup.Provider provider) {
 		ListTag list = new ListTag();
 		for (ActiveCardinalRite rite : activeRites.values()) {
-			list.add(rite.serialize());
+			list.add(rite.serialize(provider));
 		}
 		tag.put("ActiveRites", list);
 		return tag;

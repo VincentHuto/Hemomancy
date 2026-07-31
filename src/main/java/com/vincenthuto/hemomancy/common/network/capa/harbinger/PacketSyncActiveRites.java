@@ -54,6 +54,10 @@ public class PacketSyncActiveRites implements CustomPacketPayload {
 			buf.writeInt(entry.getSharedBloodMl());
 			buf.writeUtf(entry.getCue());
 			buf.writeFloat(entry.getFootprintRadius());
+			buf.writeBoolean(entry.hasPlantedStaff());
+			buf.writeUUID(entry.getOwner() == null ? new java.util.UUID(0L, 0L) : entry.getOwner());
+			buf.writeVarInt(entry.getCancellationTicks());
+			buf.writeInt(entry.getStaffPlantingTicks());
 			buf.writeVarInt(entry.getChecklist().size());
 			for (String line : entry.getChecklist()) buf.writeUtf(line);
 			buf.writeVarInt(entry.getBoundarySegments().size());
@@ -111,6 +115,10 @@ public class PacketSyncActiveRites implements CustomPacketPayload {
 			int sharedBlood = buf.readInt();
 			String cue = buf.readUtf();
 			float footprintRadius = buf.readFloat();
+			boolean plantedStaff = buf.readBoolean();
+			java.util.UUID owner = buf.readUUID();
+			int cancellationTicks = buf.readVarInt();
+			int staffPlantingTicks = buf.readInt();
 			int checklistCount = buf.readVarInt();
 			List<String> checklist = new ArrayList<>(checklistCount);
 			for (int lineIndex = 0; lineIndex < checklistCount; lineIndex++) checklist.add(buf.readUtf());
@@ -142,7 +150,8 @@ public class PacketSyncActiveRites implements CustomPacketPayload {
 					phase, instability, currentWave, totalWaves, completedRings, totalRings,
 					committedBlood, upfrontBlood, carriedIchor, allyCount, sharedBlood, cue,
 					footprintRadius, checklist,
-					boundarySegments, sigilSegments, sanguineBlobs));
+					boundarySegments, sigilSegments, sanguineBlobs, plantedStaff, owner,
+					cancellationTicks, staffPlantingTicks));
 		}
 		return new PacketSyncActiveRites(entries);
 	}

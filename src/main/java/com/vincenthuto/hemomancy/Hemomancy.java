@@ -9,6 +9,7 @@ import com.vincenthuto.hemomancy.common.capability.player.unstained.UnstainedPro
 import com.vincenthuto.hemomancy.common.data.book.BloodStructurePageTemplate;
 import com.vincenthuto.hemomancy.common.block.inscription.DiscoveryInscriptionLoader;
 import com.vincenthuto.hemomancy.common.rite.sigil.IchorianSigilLoader;
+import com.vincenthuto.hemomancy.common.rite.floor.CardinalRiteFloorLoader;
 import com.vincenthuto.hemomancy.common.entity.HemoEntityPredicates;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.inquiry.ItemInquiryLoader;
 import com.vincenthuto.hemomancy.common.init.*;
@@ -393,6 +394,7 @@ public class Hemomancy {
         event.addListener(new ItemInquiryLoader());
         event.addListener(new DiscoveryInscriptionLoader());
         event.addListener(new IchorianSigilLoader());
+        event.addListener(new CardinalRiteFloorLoader());
     }
 
     private void clientSetup(final FMLClientSetupEvent event) {

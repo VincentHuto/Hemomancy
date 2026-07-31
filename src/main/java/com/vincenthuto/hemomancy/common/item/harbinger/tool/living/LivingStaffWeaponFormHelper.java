@@ -9,6 +9,7 @@ import com.vincenthuto.hemomancy.common.init.ManipulationInit;
 import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.BloodVolumeServerPacket;
+import com.vincenthuto.hemomancy.common.rite.CardinalRiteStaffEscrow;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.component.DataComponents;
@@ -113,6 +114,12 @@ public final class LivingStaffWeaponFormHelper {
 	}
 
 	private static boolean applyWeaponForm(Player player, String formName) {
+		if (player instanceof ServerPlayer serverPlayer && CardinalRiteStaffEscrow.isPlanted(serverPlayer)) {
+			player.displayClientMessage(Component.literal(
+					"The Living Arsenal cannot answer while its staff is planted in a Cardinal Rite.")
+					.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC), true);
+			return false;
+		}
 		ItemStack held = player.getMainHandItem();
 		String currentForm = currentFormName(held);
 		if (formName.equals(currentForm)) {

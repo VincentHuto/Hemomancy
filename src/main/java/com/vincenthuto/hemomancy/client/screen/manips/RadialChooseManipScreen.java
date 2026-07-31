@@ -2,6 +2,8 @@ package com.vincenthuto.hemomancy.client.screen.manips;
 
 import com.google.common.collect.Lists;
 import com.vincenthuto.hemomancy.Hemomancy;
+import com.vincenthuto.hemomancy.client.data.ActiveRiteClientData;
+import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.LivingStaffWeaponFormRules;
 import com.vincenthuto.hemomancy.client.event.ClientEvents;
 import com.vincenthuto.hemomancy.client.screen.radial.BlitRadialMenuItem;
 import com.vincenthuto.hemomancy.client.screen.radial.GenericRadialMenu;
@@ -249,18 +251,25 @@ public class RadialChooseManipScreen extends Screen {
 	}
 
 	private BlitRadialMenuItem createManipulationItem(BloodManipulation manipulation, int slot, String selectedManipName) {
+		boolean staffUnavailable = mc.player != null
+				&& ActiveRiteClientData.isStaffPlanted(mc.player.getUUID())
+				&& ("conjure_staff".equals(manipulation.getName())
+						|| LivingStaffWeaponFormRules.isStaffWeaponFormManip(manipulation.getName()));
 		BlitRadialMenuItem item = new BlitRadialMenuItem(this.menu, slot,
 				memoryOverlayTexture(manipulation),
 				Hemomancy.rloc("textures/item/memories/memory_blank.png"),
 				0, 0, 16, 16, 16, 16,
-				Component.literal(manipulation.getProperName())) {
+				Component.literal(manipulation.getProperName()
+						+ (staffUnavailable ? " (staff planted in active rite)" : ""))) {
 			@Override
 			public boolean onClick() {
+				if (staffUnavailable) return false;
 				PacketHandler.sendToServer(new UpdateCurrentManipPacket(slot));
 				RadialChooseManipScreen.this.menu.close();
 				return true;
 			}
 		};
+		if (staffUnavailable) item.setBackgroundColor(UNAVAILABLE_ABILITY_SLICE_TINT);
 		if (manipulation.getName().equals(selectedManipName)) {
 			item.setBackgroundColor(SELECTED_MANIP_SLICE_TINT);
 		}

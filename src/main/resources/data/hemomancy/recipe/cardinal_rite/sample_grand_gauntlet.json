@@ -3,41 +3,9 @@
   "bloodCost": 0,
   "riteType": "grand",
   "required_degree": 6,
-  "breakBlocksOnCreation": false,
   "rankup": true,
   "riteName": "[TEST] Grand Ordeal Gauntlet",
   "riteDescription": "A Degree Seven stress test with three ally stations, six fixed ordeal waves, every threat family, sigil discovery, fast decay, fragile structure damage, and a collapse-grade profession.",
-  "pattern": [
-    [
-      "TMTMT"
-    ],
-    [
-      "MGGGM"
-    ],
-    [
-      "TGHGT"
-    ],
-    [
-      "MGGGM"
-    ],
-    [
-      "TMTMT"
-    ]
-  ],
-  "key": {
-    "T": {
-      "block": "minecraft:tuff_bricks"
-    },
-    "M": {
-      "block": "minecraft:magma_block"
-    },
-    "G": {
-      "block": "minecraft:gilded_blackstone"
-    },
-    "H": {
-      "block": "hemomancy:chiseled_hematic_iron_block"
-    }
-  },
   "ceremony": {
     "profile": "full",
     "layout": "serpentine",
@@ -101,5 +69,14 @@
         0
       ]
     ]
-  }
+  },
+  "floor": "hemomancy:dominion_grand",
+  "brazier_signature": [
+    {
+      "ingredient": {
+        "item": "minecraft:fire_charge"
+      },
+      "count": 1
+    }
+  ]
 }

@@ -5,86 +5,16 @@
   "required_degree": 4,
   "riteName": "Rite of the Crimson Vessel",
   "riteDescription": "The pallid vessel is steeped in the deepest scarlet, its walls drinking in the vitality of the blood arts until they flush crimson with purpose.",
-  "pattern": [
-    [
-      "       ",
-      "       ",
-      "       ",
-      "       ",
-      "       ",
-      "   E   ",
-      "  GVG  "
-    ],
-    [
-      "       ",
-      " G   G ",
-      " V   V ",
-      " V G V ",
-      " V V V ",
-      " VBVBV ",
-      " VVVVV "
-    ],
-    [
-      "       ",
-      "       ",
-      "       ",
-      "       ",
-      "       ",
-      " E E B ",
-      "GV V VG"
-    ],
-    [
-      "       ",
-      "       ",
-      "   V   ",
-      " G G G ",
-      " V V V ",
-      "EVEGEVE",
-      "VVVVVVV"
-    ],
-    [
-      "       ",
-      "       ",
-      "       ",
-      "       ",
-      "       ",
-      " E E B ",
-      "GV V VG"
-    ],
-    [
-      "       ",
-      " G   G ",
-      " V   V ",
-      " V G V ",
-      " V V V ",
-      " VEVEV ",
-      " VVVVV "
-    ],
-    [
-      "       ",
-      "       ",
-      "       ",
-      "       ",
-      "       ",
-      "   E   ",
-      "  GVG  "
-    ]
-  ],
-  "key": {
-    "V": {
-      "block": "hemomancy:venous_stone"
-    },
-    "G": {
-      "block": "hemomancy:gourd"
-    },
-    "B": {
-      "block": "hemomancy:befouling_ash_trail"
-    },
-    "E": {
-      "block": "hemomancy:engram_block"
-    }
-  },
   "result": {
     "id": "hemomancy:blood_gourd_red"
-  }
+  },
+  "floor": "hemomancy:threshold_greater",
+  "brazier_signature": [
+    {
+      "ingredient": {
+        "item": "minecraft:phantom_membrane"
+      },
+      "count": 1
+    }
+  ]
 }

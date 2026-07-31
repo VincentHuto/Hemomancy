@@ -13,7 +13,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.pattern.BlockInWorld;
 
-final class PatternKeyEntry {
+public final class PatternKeyEntry {
 	private final String symbol;
 	private final ResourceLocation blockId;
 	private final ResourceLocation tagId;
@@ -27,11 +27,16 @@ final class PatternKeyEntry {
 		this.fallbackId = fallbackId;
 	}
 
+	public static PatternKeyEntry fromNetwork(String symbol, ResourceLocation blockId,
+			ResourceLocation tagId, ResourceLocation fallbackId) {
+		return new PatternKeyEntry(symbol, blockId, tagId, fallbackId);
+	}
+
 	static PatternKeyEntry fromJsonLiteral(String symbol, String json) {
 		return fromJson(symbol, JsonParser.parseString(json).getAsJsonObject());
 	}
 
-	static PatternKeyEntry fromJson(String symbol, JsonObject json) {
+	public static PatternKeyEntry fromJson(String symbol, JsonObject json) {
 		if (GsonHelper.isStringValue(json, "tag")) {
 			ResourceLocation tagId = ResourceLocation.parse(GsonHelper.getAsString(json, "tag"));
 			ResourceLocation fallbackId = ResourceLocation.parse(GsonHelper.getAsString(json, "fallback"));
@@ -41,15 +46,18 @@ final class PatternKeyEntry {
 		return new PatternKeyEntry(symbol, blockId, null, blockId);
 	}
 
-	boolean matches(BlockInWorld blockInWorld) {
+	public boolean matches(BlockInWorld blockInWorld) {
+		if (blockInWorld == null) return false;
+		var state = blockInWorld.getState();
+		if (state == null) return false;
 		if (isTag()) {
 			TagKey<Block> tag = TagKey.create(Registries.BLOCK, tagId);
-			return blockInWorld.getState().is(tag);
+			return state.is(tag);
 		}
-		return blockInWorld.getState().getBlock() == fallbackBlock();
+		return state.getBlock() == fallbackBlock();
 	}
 
-	Block fallbackBlock() {
+	public Block fallbackBlock() {
 		Block block = BuiltInRegistries.BLOCK.get(fallbackId);
 		if (block == Blocks.AIR) {
 			throw new JsonSyntaxException("Invalid fallback block for key '" + symbol + "': " + fallbackId);
@@ -57,26 +65,26 @@ final class PatternKeyEntry {
 		return block;
 	}
 
-	MultiblockPatternKey toMultiblockPatternKey() {
+	public MultiblockPatternKey toMultiblockPatternKey() {
 		if (isTag()) {
 			return MultiblockPatternKey.tag(symbol, tagId, fallbackBlock());
 		}
 		return MultiblockPatternKey.block(symbol, fallbackBlock());
 	}
 
-	boolean isTag() {
+	public boolean isTag() {
 		return tagId != null;
 	}
 
-	ResourceLocation blockId() {
+	public ResourceLocation blockId() {
 		return blockId;
 	}
 
-	ResourceLocation tagId() {
+	public ResourceLocation tagId() {
 		return tagId;
 	}
 
-	ResourceLocation fallbackId() {
+	public ResourceLocation fallbackId() {
 		return fallbackId;
 	}
 

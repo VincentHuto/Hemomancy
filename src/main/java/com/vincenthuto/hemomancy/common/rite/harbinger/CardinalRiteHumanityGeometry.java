@@ -129,6 +129,24 @@ public final class CardinalRiteHumanityGeometry {
 				.toList();
 	}
 
+	public static Point orientPoint(Point point, double forwardX, double forwardZ, float proneDegrees) {
+		double forwardLength = Math.hypot(forwardX, forwardZ);
+		double normalizedForwardX = forwardLength < 0.0001D ? 0.0D : forwardX / forwardLength;
+		double normalizedForwardZ = forwardLength < 0.0001D ? 1.0D : forwardZ / forwardLength;
+		double rightX = normalizedForwardZ;
+		double rightZ = -normalizedForwardX;
+		double lateral = point.x() * rightX + point.z() * rightZ;
+		double longitudinal = point.x() * normalizedForwardX + point.z() * normalizedForwardZ;
+		double pitchRadians = Math.toRadians(proneDegrees);
+		double vertical = point.y() * Math.cos(pitchRadians) - longitudinal * Math.sin(pitchRadians);
+		double forward = point.y() * Math.sin(pitchRadians) + longitudinal * Math.cos(pitchRadians);
+		return new Point(point.layer(),
+				rightX * lateral + normalizedForwardX * forward,
+				vertical,
+				rightZ * lateral + normalizedForwardZ * forward,
+				point.red(), point.green(), point.blue());
+	}
+
 	private static double verticalPosition(double heightFraction, double height) {
 		double headFraction = clamp((heightFraction - 0.76D) / 0.24D, 0.0D, 1.0D);
 		double easedStretch = headFraction * headFraction * (3.0D - 2.0D * headFraction);

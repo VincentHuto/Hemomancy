@@ -16,6 +16,8 @@ import com.vincenthuto.hemomancy.common.recipe.PuppeteerTrialRecipe;
 import com.vincenthuto.hemomancy.common.recipe.RecipeDegreeGates;
 import com.vincenthuto.hemomancy.common.rite.ActiveCardinalRite;
 import com.vincenthuto.hemomancy.common.rite.CardinalRiteSavedData;
+import com.vincenthuto.hemomancy.common.rite.CardinalRiteStationMatcher;
+import com.vincenthuto.hemomancy.common.rite.CardinalRiteStaffEscrow;
 import com.vincenthuto.hemomancy.common.rite.harbinger.CardinalRiteActivationRules;
 import com.vincenthuto.hemomancy.common.summon.PuppeteerSummonDefinitions;
 import com.vincenthuto.hemomancy.common.summon.PuppeteerSummonFactory;
@@ -367,21 +369,46 @@ public class BloodCraftingKeyPressPacket implements CustomPacketPayload {
 				.orElseThrow(NullPointerException::new);
 
 		var hitState = sLevel.getBlockState(hitPos);
+		List<CardinalRiteRecipe> allRites = CardinalRiteRecipe.getAllRecipes(player.level());
+		CardinalRiteStationMatcher.Resolution layeredResolution = CardinalRiteStationMatcher.resolve(
+				sLevel, hitPos, allRites.stream().filter(recipe ->
+						CardinalRiteActivationRules.mayInitiate(
+								trigger, recipe.isUnstained(), RecipeDegreeGates.getRequiredDegree(recipe)))
+						.toList());
+		if (layeredResolution.status() == CardinalRiteStationMatcher.Status.AMBIGUOUS_FLOOR
+				|| layeredResolution.status() == CardinalRiteStationMatcher.Status.AMBIGUOUS_RITE) {
+			player.displayClientMessage(Component.literal(layeredResolution.status()
+							== CardinalRiteStationMatcher.Status.AMBIGUOUS_FLOOR
+							? "The Cardinal Focus answers to more than one floor."
+							: "The offerings answer to more than one rite.")
+					.withStyle(ChatFormatting.RED, ChatFormatting.BOLD), false);
+			return CardinalRiteActivationRules.ActivationAttempt.HANDLED;
+		}
+		CardinalRiteStationMatcher.ResolvedRecipe layeredResolved =
+				layeredResolution.status() == CardinalRiteStationMatcher.Status.MATCHED
+						? layeredResolution.matches().get(0) : null;
 
-		for (CardinalRiteRecipe recipe : BloodCraftingPatternSearchRules.sortedByPatternSearchCost(
-				CardinalRiteRecipe.getAllRecipes(player.level()),
-				rite -> rite.getPattern().getPatternArray())) {
+		for (CardinalRiteRecipe recipe : allRites) {
 			if (!CardinalRiteActivationRules.mayInitiate(
 					trigger, recipe.isUnstained(), RecipeDegreeGates.getRequiredDegree(recipe))) {
 				continue;
 			}
-			if (!BloodCraftingPatternBlockRules.patternMayContainBlock(recipe.getPattern(), hitState)) {
-				continue;
-			}
-			BlockPattern bp = recipe.getPattern().getBlockPattern();
-			BlockPattern.BlockPatternMatch match = findPatternAtHit(bp, sLevel, hitPos);
+			if (recipe.hasLayeredStation()
+					&& (layeredResolved == null || layeredResolved.recipe() != recipe)) continue;
+			CardinalRiteStationMatcher.StationMatch stationMatch =
+					recipe.hasLayeredStation() ? layeredResolved.station() : null;
+			if (recipe.hasLayeredStation() && stationMatch == null) continue;
+			if (!recipe.hasLayeredStation()
+					&& !BloodCraftingPatternBlockRules.patternMayContainBlock(recipe.getPattern(), hitState)) continue;
+			BlockPattern bp = recipe.hasLayeredStation()
+					? stationMatch.floor().pattern().getBlockPattern()
+					: recipe.getPattern().getBlockPattern();
+			BlockPattern.BlockPatternMatch match = recipe.hasLayeredStation()
+					? stationMatch.floorMatch()
+					: findPatternAtHit(bp, sLevel, hitPos);
 			if (match != null) {
-				if (trigger != CardinalRiteActivationRules.Trigger.BLOOD_CRAFTING_KEY) {
+				if (!recipe.hasLayeredStation()
+						&& trigger != CardinalRiteActivationRules.Trigger.BLOOD_CRAFTING_KEY) {
 					CardinalRiteActivationRules.Cell activation =
 							CardinalRiteActivationRules.activationCell(recipe.getPattern().getPatternArray());
 					if (activation == null) continue;
@@ -494,10 +521,15 @@ public class BloodCraftingKeyPressPacket implements CustomPacketPayload {
 				}
 
 				// Calculate the center of the matched pattern
-				int centerWidth = recipe.getPattern().getBlockPattern().getWidth() / 2;
-				int centerHeight = recipe.getPattern().getBlockPattern().getHeight() / 2;
-				int centerDepth = recipe.getPattern().getBlockPattern().getDepth() / 2;
-				BlockPos centerPos = match.getBlock(centerWidth, centerHeight, centerDepth).getPos();
+				BlockPos centerPos;
+				if (recipe.hasLayeredStation()) {
+					centerPos = hitPos;
+				} else {
+					int centerWidth = recipe.getPattern().getBlockPattern().getWidth() / 2;
+					int centerHeight = recipe.getPattern().getBlockPattern().getHeight() / 2;
+					int centerDepth = recipe.getPattern().getBlockPattern().getDepth() / 2;
+					centerPos = match.getBlock(centerWidth, centerHeight, centerDepth).getPos();
+				}
 				if (savedData.hasRiteAt(centerPos)) {
 					player.displayClientMessage(
 							Component.literal("This cardinal station is already carrying a rite.")
@@ -557,13 +589,41 @@ public class BloodCraftingKeyPressPacket implements CustomPacketPayload {
 				if (recipe.hasInteractiveCeremony()) {
 					rite.setInstabilityDamagePriority(
 							com.vincenthuto.hemomancy.common.rite.CardinalRiteInstabilityBoundaryRules
-									.damagePriority(recipe.getCeremony().anchors()).stream()
+												.damagePriority(recipe.getCeremony().anchors()).stream()
 									.mapToInt(Integer::intValue).toArray());
+				}
+				if (stationMatch != null) {
+					rite.setMatchedFloor(stationMatch.floor().id(),
+							stationMatch.floorMatch().getForwards(), stationMatch.floorMatch().getUp());
+					rite.captureOfferingItinerary(stationMatch.braziers().stream()
+							.map(offering -> new ActiveCardinalRite.RiteOffering(
+									offering.pos(), offering.stack(), offering.consumeOnSuccess()))
+							.toList());
+				}
+				ItemStack plantingStaff = ItemStack.EMPTY;
+				if (!recipe.isUnstained() && HemoCapabilityAccess.getPlayerDegreeNumber(player) >= 1) {
+					ItemStack staff = CardinalRiteStaffEscrow.capture(serverPlayer);
+					if (staff.isEmpty()) {
+						player.displayClientMessage(
+								Component.literal("A Living Staff must be planted in the Cardinal Focus.")
+										.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC),
+								false);
+						return CardinalRiteActivationRules.ActivationAttempt.HANDLED;
+					}
+					rite.setEscrowedStaff(staff, serverPlayer.registryAccess());
+					rite.beginStaffPlanting();
+					plantingStaff = staff;
 				}
 				savedData.startRite(rite);
 
-				// Play start sound
-				sLevel.playSound(null, centerPos, SoundEvents.BEACON_ACTIVATE, SoundSource.BLOCKS, 1.0f, 1.5f);
+				if (!plantingStaff.isEmpty()) {
+					PacketDistributor.sendToPlayersTrackingEntityAndSelf(serverPlayer,
+							new PacketCardinalRiteStaffPlanting(
+									serverPlayer.getId(), centerPos, plantingStaff));
+				} else {
+					sLevel.playSound(null, centerPos, SoundEvents.BEACON_ACTIVATE,
+							SoundSource.BLOCKS, 1.0F, 1.5F);
+				}
 
 				// Notify the player
 				player.displayClientMessage(
@@ -579,6 +639,14 @@ public class BloodCraftingKeyPressPacket implements CustomPacketPayload {
 						false);
 				return CardinalRiteActivationRules.ActivationAttempt.STARTED;
 			}
+		}
+		if (hitState.is(BlockInit.cardinal_focus.get())) {
+			player.displayClientMessage(Component.literal(layeredResolution.status()
+							== CardinalRiteStationMatcher.Status.NO_FLOOR
+							? "The Cardinal Focus cannot find a complete rite floor."
+							: "The floor answers, but no structure and lit-brazier signature names a valid rite.")
+					.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC), false);
+			return CardinalRiteActivationRules.ActivationAttempt.HANDLED;
 		}
 		return CardinalRiteActivationRules.ActivationAttempt.NOT_HANDLED;
 	}

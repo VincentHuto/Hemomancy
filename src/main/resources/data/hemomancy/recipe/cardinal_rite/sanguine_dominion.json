@@ -5,92 +5,16 @@
   "required_degree": 5,
   "riteName": "Rite of Sanguine Dominion",
   "riteDescription": "An imperial rite that claims the surrounding land as a Blood Domain. Within its bounds, the caster's manipulations cost less blood, enemies suffer a slow bleeding curse, and blood-touched blocks are empowered.",
-  "pattern": [
-    [
-      "       ",
-      "       ",
-      "       ",
-      "       ",
-      "       ",
-      "       ",
-      "   P   "
-    ],
-    [
-      "       ",
-      "       ",
-      " P   P ",
-      " H P H ",
-      " H H H ",
-      " HEHEH ",
-      " HVHVH "
-    ],
-    [
-      "       ",
-      "       ",
-      "       ",
-      "       ",
-      "       ",
-      " EE EE ",
-      " VVPVV "
-    ],
-    [
-      "       ",
-      "       ",
-      "       ",
-      " P   P ",
-      " H H H ",
-      " H P H ",
-      "PHPPPHP"
-    ],
-    [
-      "       ",
-      "       ",
-      "       ",
-      "       ",
-      "       ",
-      " EE EE ",
-      " VVPVV "
-    ],
-    [
-      "       ",
-      "       ",
-      " P   P ",
-      " H P H ",
-      " H H H ",
-      " HEHEH ",
-      " HVHVH "
-    ],
-    [
-      "       ",
-      "       ",
-      "       ",
-      "       ",
-      "       ",
-      "       ",
-      "   P   "
-    ]
-  ],
-  "key": {
-    "H": {
-      "block": "hemomancy:hematic_iron_pillar"
-    },
-    "G": {
-      "block": "minecraft:red_nether_bricks"
-    },
-    "V": {
-      "block": "minecraft:deepslate_bricks"
-    },
-    "C": {
-      "block": "hemomancy:chiseled_hematic_iron_block"
-    },
-    "E": {
-      "block": "hemomancy:engram_block"
-    },
-    "P": {
-      "block": "hemomancy:hematic_iron_block"
-    }
-  },
   "result": {
     "id": "hemomancy:sanguine_quintessence"
-  }
+  },
+  "floor": "hemomancy:dominion_greater",
+  "brazier_signature": [
+    {
+      "ingredient": {
+        "item": "minecraft:clay_ball"
+      },
+      "count": 1
+    }
+  ]
 }

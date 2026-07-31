@@ -5,88 +5,41 @@
   "required_degree": 4,
   "riteName": "Rite of the Crimson Lodge",
   "riteDescription": "The fifth rite of the Hematic Order, by which an adept is admitted as Illuminatus of the Crimson Lodge. This is a rite of ascension, not the consecration of a Fane.",
-  "breakBlocksOnCreation": false,
   "rankup": true,
-  "pattern": [
-    [
-      "       ",
-      "       ",
-      "       ",
-      "       ",
-      "       ",
-      "       ",
-      "  GCG  "
-    ],
-    [
-      "       ",
-      " G   G ",
-      " H   H ",
-      " H G H ",
-      " H H H ",
-      " H H H ",
-      " H H H "
-    ],
-    [
-      "       ",
-      "       ",
-      "       ",
-      "       ",
-      "       ",
-      "       ",
-      "G  C  G"
-    ],
-    [
-      "       ",
-      "       ",
-      "   H   ",
-      " G G G ",
-      " H H H ",
-      " H G H ",
-      "CHCCCHC"
-    ],
-    [
-      "       ",
-      "       ",
-      "       ",
-      "       ",
-      "       ",
-      "       ",
-      "G  C  G"
-    ],
-    [
-      "       ",
-      " G   G ",
-      " H   H ",
-      " H G H ",
-      " H H H ",
-      " H H H ",
-      " H H H "
-    ],
-    [
-      "       ",
-      "       ",
-      "       ",
-      "       ",
-      "       ",
-      "       ",
-      "  GCG  "
-    ]
-  ],
-  "key": {
-    "H": {
-      "block": "hemomancy:hematic_iron_pillar"
-    },
-    "C": {
-      "block": "minecraft:polished_deepslate"
-    },
-    "G": {
-      "block": "minecraft:deepslate_bricks"
-    },
-    "W": {
-      "block": "hemomancy:voidtouched_vessel"
-    }
-  },
   "result": {
     "id": "hemomancy:sanguine_quintessence"
-  }
+  },
+  "floor": "hemomancy:threshold_greater",
+  "required_structure": {
+    "pattern": [
+      [
+        "P P",
+        "P P",
+        "P P"
+      ],
+      [
+        "   ",
+        "   ",
+        "   "
+      ],
+      [
+        "P P",
+        "P P",
+        "P P"
+      ]
+    ],
+    "key": {
+      "P": {
+        "block": "hemomancy:hematic_iron_pillar"
+      }
+    }
+  },
+  "brazier_signature": [
+    {
+      "ingredient": {
+        "item": "minecraft:slime_ball"
+      },
+      "count": 1
+    }
+  ]
 }

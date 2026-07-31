@@ -9,6 +9,7 @@ import net.minecraft.resources.ResourceLocation;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -42,5 +43,20 @@ final class ActiveRiteRoleSyncPacketTest {
 
 		assertEquals(ActiveRiteClientData.NodeKind.SIGIL_NODE, blob.kind());
 		assertEquals(IchorianSigilAnatomy.Role.JOINT, blob.role());
+	}
+
+	@Test
+	void packetRoundTripsCancellationTicks() {
+		var entry = new ActiveRiteClientData.RiteEntry(BlockPos.ZERO, 3, 0,
+				ResourceLocation.parse("hemomancy:cancel_sync_test"), false,
+				"ORDEAL", 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, "",
+				4.0F, List.of(), List.of(), List.of(), List.of(),
+				true, UUID.randomUUID(), 37);
+		FriendlyByteBuf buffer = new FriendlyByteBuf(Unpooled.buffer());
+
+		PacketSyncActiveRites.encode(buffer, new PacketSyncActiveRites(List.of(entry)));
+		var decoded = PacketSyncActiveRites.decode(buffer).entries().getFirst();
+
+		assertEquals(37, decoded.getCancellationTicks());
 	}
 }

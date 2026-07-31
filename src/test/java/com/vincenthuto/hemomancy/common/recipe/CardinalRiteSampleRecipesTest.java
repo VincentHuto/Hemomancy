@@ -59,7 +59,15 @@ public final class CardinalRiteSampleRecipesTest {
 		}) {
 			JsonObject recipe = read(name);
 			assertEquals(0, recipe.get("bloodCost").getAsInt(), name + " legacy blood cost");
-			assertTrue(!recipe.get("breakBlocksOnCreation").getAsBoolean(), name + " preserves structure");
+			assertTrue(recipe.has("floor"), name + " names a reusable floor");
+			assertTrue(recipe.has("brazier_signature"), name + " has a brazier signature");
+			if (recipe.has("required_structure")) {
+				assertTrue(!recipe.getAsJsonObject("required_structure")
+						.has("consume_on_success")
+						|| !recipe.getAsJsonObject("required_structure")
+								.get("consume_on_success").getAsBoolean(),
+						name + " preserves its upper structure");
+			}
 			JsonObject ceremony = recipe.getAsJsonObject("ceremony");
 			assertTrue(ceremony.getAsJsonArray("support_sockets").size() >= 2,
 					name + " support sockets");

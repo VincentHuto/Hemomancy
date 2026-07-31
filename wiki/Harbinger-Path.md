@@ -90,6 +90,12 @@ Silent Archon is never Degree 8. It is the flagged Degree-7 refusal state create
 
 Besides degree advancement, the Cardinal Altar enables **utility rites** for practical benefits:
 
+### Cancelling an Active Rite
+
+The caster can safely recall an active Harbinger Cardinal Rite by holding **Blood Absorption** on its center focus or planted Living Staff for four uninterrupted seconds. The central daemon contracts back into the staff first; the staff then dissolves into blood and flows back to the caster's hand.
+
+Releasing Blood Absorption, looking away, moving out of range, or leaving the rite boundary resets the recall and lets the rite resume. A completed recall returns the exact planted Living Staff and dismisses rite-spawned threats, but it does not refund blood, offerings, or other committed rite costs and grants no rite result.
+
 ### Vascular Mending
 - **Purpose:** Heal blood-related damage and corruption
 - **Cost:** Medium blood, specific reagents

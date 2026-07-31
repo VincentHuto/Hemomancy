@@ -3,124 +3,52 @@
   "bloodCost": 2000,
   "riteType": "grand",
   "required_degree": 5,
-  "breakBlocksOnCreation": false,
   "riteName": "Rite of the Founding Fane",
   "riteDescription": "A grand consecration rite available only to the Illuminatus. The caster binds a Sanguine Quintessence to the earth, establishing a Harbinger Founding Fane whose boundary, recall anchor, and bloodline-tied ground are made real by the rite itself.",
-  "pattern": [
-    [
-      "         ",
-      "         ",
-      "         ",
-      "         ",
-      "         ",
-      "         ",
-      "         ",
-      "         ",
-      "    G    "
-    ],
-    [
-      "         ",
-      "         ",
-      " G     G ",
-      " H     H ",
-      " H  G  H ",
-      " H  H  H ",
-      " H  H  H ",
-      " H  H  H ",
-      " H CHC H "
-    ],
-    [
-      "         ",
-      "         ",
-      "         ",
-      "         ",
-      "         ",
-      "         ",
-      "         ",
-      "         ",
-      "  C G C  "
-    ],
-    [
-      "         ",
-      "         ",
-      "         ",
-      "         ",
-      "         ",
-      "         ",
-      "         ",
-      "         ",
-      " C  G  C "
-    ],
-    [
-      "         ",
-      "         ",
-      "         ",
-      "         ",
-      " G     G ",
-      " H  H  H ",
-      " H  H  H ",
-      " H  G  H ",
-      "GHGGGGGHG"
-    ],
-    [
-      "         ",
-      "         ",
-      "         ",
-      "         ",
-      "         ",
-      "         ",
-      "         ",
-      "         ",
-      " C  G  C "
-    ],
-    [
-      "         ",
-      "         ",
-      "         ",
-      "         ",
-      "         ",
-      "         ",
-      "         ",
-      "         ",
-      "  C G C  "
-    ],
-    [
-      "         ",
-      "         ",
-      " G     G ",
-      " H     H ",
-      " H  G  H ",
-      " H  H  H ",
-      " H  H  H ",
-      " H  H  H ",
-      " H CHC H "
-    ],
-    [
-      "         ",
-      "         ",
-      "         ",
-      "         ",
-      "         ",
-      "         ",
-      "         ",
-      "         ",
-      "    G    "
-    ]
-  ],
-  "key": {
-    "H": {
-      "block": "hemomancy:hematic_iron_pillar"
-    },
-    "G": {
-      "tag": "hemomancy:progression/nether_ritual_stone",
-      "fallback": "minecraft:polished_basalt"
-    },
-    "C": {
-      "tag": "hemomancy:progression/deep_ritual_stone",
-      "fallback": "minecraft:deepslate_bricks"
-    }
-  },
   "result": {
     "id": "hemomancy:sanguine_formation"
-  }
+  },
+  "floor": "hemomancy:dominion_grand",
+  "required_structure": {
+    "pattern": [
+      [
+        "P   P",
+        "P   P",
+        "P   P"
+      ],
+      [
+        "     ",
+        "     ",
+        "     "
+      ],
+      [
+        "     ",
+        "     ",
+        "     "
+      ],
+      [
+        "     ",
+        "     ",
+        "     "
+      ],
+      [
+        "P   P",
+        "P   P",
+        "P   P"
+      ]
+    ],
+    "key": {
+      "P": {
+        "block": "hemomancy:hematic_iron_pillar"
+      }
+    }
+  },
+  "brazier_signature": [
+    {
+      "ingredient": {
+        "item": "minecraft:nautilus_shell"
+      },
+      "count": 1
+    }
+  ]
 }

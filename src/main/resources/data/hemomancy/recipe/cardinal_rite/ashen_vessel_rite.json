@@ -5,89 +5,16 @@
   "required_degree": 5,
   "riteName": "Rite of the Ashen Vessel",
   "riteDescription": "Through fire and ash the vessel is reborn â€” blackened, hardened, and hungry. The ashen gourd drinks deeper than any before it.",
-  "pattern": [
-    [
-      "       ",
-      "       ",
-      "       ",
-      "       ",
-      "       ",
-      "   E   ",
-      "  PVP  "
-    ],
-    [
-      "       ",
-      " G   G ",
-      " P   P ",
-      " P P P ",
-      " P P P ",
-      " PBPBP ",
-      " VVPVV "
-    ],
-    [
-      "       ",
-      "       ",
-      "       ",
-      "       ",
-      "       ",
-      " E E B ",
-      "PV V VP"
-    ],
-    [
-      "       ",
-      "       ",
-      "   P   ",
-      " P G P ",
-      " P P P ",
-      "EPEGEPE",
-      "VVVVVVV"
-    ],
-    [
-      "       ",
-      "       ",
-      "       ",
-      "       ",
-      "       ",
-      " E E B ",
-      "PV V VP"
-    ],
-    [
-      "       ",
-      " G   G ",
-      " P   P ",
-      " P P P ",
-      " P P P ",
-      " PEPEP ",
-      " VVPVV "
-    ],
-    [
-      "       ",
-      "       ",
-      "       ",
-      "       ",
-      "       ",
-      "   E   ",
-      "  PVP  "
-    ]
-  ],
-  "key": {
-    "V": {
-      "block": "hemomancy:venous_stone"
-    },
-    "G": {
-      "block": "hemomancy:gourd"
-    },
-    "B": {
-      "block": "hemomancy:befouling_ash_trail"
-    },
-    "E": {
-      "block": "hemomancy:engram_block"
-    },
-    "P": {
-      "block": "hemomancy:polished_venous_stone"
-    }
-  },
   "result": {
     "id": "hemomancy:blood_gourd_black"
-  }
+  },
+  "floor": "hemomancy:threshold_greater",
+  "brazier_signature": [
+    {
+      "ingredient": {
+        "item": "minecraft:ghast_tear"
+      },
+      "count": 1
+    }
+  ]
 }

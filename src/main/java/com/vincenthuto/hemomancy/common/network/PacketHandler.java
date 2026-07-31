@@ -224,6 +224,9 @@ public class PacketHandler {
 
         // ── Cardinal rites ────────────────────────────────────────────────────
         net.playToClient(PacketSyncActiveRites.TYPE, PacketSyncActiveRites.STREAM_CODEC, PacketSyncActiveRites::handle);
+        net.playToClient(PacketCardinalRiteStaffPlanting.TYPE,
+                PacketCardinalRiteStaffPlanting.STREAM_CODEC,
+                PacketCardinalRiteStaffPlanting::handle);
         net.playToClient(PacketSyncIchorianKnowledge.TYPE, PacketSyncIchorianKnowledge.STREAM_CODEC,
                 PacketSyncIchorianKnowledge::handle);
         net.playToClient(PacketSyncFaneBoundaries.TYPE, PacketSyncFaneBoundaries.STREAM_CODEC, PacketSyncFaneBoundaries::handle);

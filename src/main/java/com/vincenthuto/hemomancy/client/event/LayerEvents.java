@@ -364,6 +364,7 @@ public class LayerEvents {
 			livingRenderer.addLayer(new MorphlingJarLayer<>(livingRenderer));
 			livingRenderer.addLayer(new SporiticThuribleLayer<>(livingRenderer));
 			livingRenderer.addLayer(new LivingFlailLayer<>(livingRenderer));
+			livingRenderer.addLayer(new CardinalRiteStaffPlantingLayer(livingRenderer));
 			livingRenderer.addLayer(new SilentArchonArmorOverlayLayer(livingRenderer));
 			livingRenderer.addLayer(new EdaciousBloodLustWingLayer(livingRenderer));
 		}

@@ -9,22 +9,25 @@ import java.util.List;
 public final class CardinalRiteFogGeometry {
 	private static final float RENDER_MARGIN = 0.0F;
 	private static final int MINIMUM_PUFFS = 165;
-	private static final int MAXIMUM_PUFFS = 2150;
+	private static final int MAXIMUM_PUFFS = 150;
 	private static final float PUFFS_PER_RADIUS = 12.25F;
+	private static final float COMPACT_MULTI_RING_MINIMUM_RADIUS = 6.75F;
 
 	private CardinalRiteFogGeometry() {
 	}
 
 	public static float perimeterRadius(float footprintRadius, int riteSize,
-			int completedRings, boolean legacy) {
-		if (footprintRadius > 0.0F) {
-			return footprintRadius;
-		}
+			int completedRings, int totalRings, boolean legacy) {
 		float completedBoundary = CardinalRiteBoundaryGeometry.exteriorRadius(
 				riteSize, completedRings, legacy);
-		return completedBoundary > 0.0F
+		float radius = footprintRadius > 0.0F
+				? footprintRadius
+				: completedBoundary > 0.0F
 				? completedBoundary
 				: (float) (riteSize / 2.0D + 1.0D);
+		return !legacy && totalRings >= 2
+				? Math.max(radius, COMPACT_MULTI_RING_MINIMUM_RADIUS)
+				: radius;
 	}
 
 	public static boolean isWithinRenderDistance(BlockPos center, Vec3 camera,
