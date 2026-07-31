@@ -10,7 +10,9 @@ import com.vincenthuto.hemomancy.common.rite.CardinalRiteCeremonyCatalog;
 import com.vincenthuto.hemomancy.common.rite.CardinalRiteCeremonyDefinition;
 import com.vincenthuto.hemomancy.common.rite.CardinalRiteCeremonyProfile;
 import com.vincenthuto.hemomancy.common.rite.CardinalRiteCeremonyRules;
+import com.vincenthuto.hemomancy.common.rite.CardinalRiteRingTuning;
 import com.vincenthuto.hemomancy.common.rite.CardinalRiteOfferingConsumptionRules;
+import com.vincenthuto.hemomancy.common.rite.CardinalRiteProgressionPolicy;
 import com.vincenthuto.hutoslib.math.MultiblockPattern;
 import com.vincenthuto.hutoslib.math.MultiblockPatternKey;
 import net.minecraft.core.Holder;
@@ -138,58 +140,84 @@ public class CardinalRiteRecipeSerializer implements RecipeSerializer<CardinalRi
 	private static CardinalRiteCeremonyDefinition ceremonyFromJson(JsonObject json, ResourceLocation recipeId,
 			CardinalRiteType riteType, int degree) {
 		if (!json.has("ceremony")) {
-			return CardinalRiteCeremonyDefinition.convertedDefault(recipeId, riteType, degree);
+			throw new JsonSyntaxException("Harbinger cardinal rite " + recipeId + " is missing required ceremony data");
 		}
 		JsonObject ceremony = GsonHelper.getAsJsonObject(json, "ceremony");
 		CardinalRiteCeremonyProfile profile = CardinalRiteCeremonyProfile.byName(
-				GsonHelper.getAsString(ceremony, "profile", "full"));
+				GsonHelper.getAsString(ceremony, "profile"));
 		List<CardinalRiteCeremonyDefinition.Anchor> anchors = new ArrayList<>();
 		if (ceremony.has("anchors")) {
 			for (JsonElement element : ceremony.getAsJsonArray("anchors")) {
 				JsonObject anchor = element.getAsJsonObject();
-				anchors.add(new CardinalRiteCeremonyDefinition.Anchor(
-						GsonHelper.getAsInt(anchor, "x"), GsonHelper.getAsInt(anchor, "y", 1),
-						GsonHelper.getAsInt(anchor, "z"), GsonHelper.getAsInt(anchor, "ring", 0),
-						GsonHelper.getAsInt(anchor, "order", anchors.size())));
+				int ring = GsonHelper.getAsInt(anchor, "ring", 0);
+				int order = GsonHelper.getAsInt(anchor, "order", anchors.size());
+				anchors.add(CardinalRiteRingTuning.anchor(
+						ring, order, GsonHelper.getAsInt(anchor, "y", 1)));
 			}
 		} else if (ceremony.has("layout")) {
 			CardinalRiteCeremonyCatalog.Layout layout = CardinalRiteCeremonyCatalog.Layout.byName(
 					GsonHelper.getAsString(ceremony, "layout", "cardinal"));
 			int rotation = GsonHelper.getAsInt(ceremony, "rotation", 0);
 			anchors.addAll(CardinalRiteCeremonyDefinition.anchorsForLayout(degree, rotation, layout));
+		} else {
+			throw new JsonSyntaxException("Harbinger cardinal rite " + recipeId
+					+ " ceremony must declare anchors or layout");
 		}
+		requireCeremonyField(ceremony, recipeId, "support_sockets");
+		requireCeremonyField(ceremony, recipeId, "waves");
+		requireCeremonyField(ceremony, recipeId, "signature");
+		requireCeremonyField(ceremony, recipeId, "fragile_offsets");
 		List<CardinalRiteCeremonyDefinition.SupportSocket> sockets = new ArrayList<>();
-		if (ceremony.has("support_sockets")) {
-			for (JsonElement element : ceremony.getAsJsonArray("support_sockets")) {
-				JsonObject socket = element.getAsJsonObject();
-				sockets.add(new CardinalRiteCeremonyDefinition.SupportSocket(
-						GsonHelper.getAsInt(socket, "x"), GsonHelper.getAsInt(socket, "y", 0),
-						GsonHelper.getAsInt(socket, "z"),
-						GsonHelper.getAsString(socket, "suggested_sigil", "")));
-			}
+		for (JsonElement element : ceremony.getAsJsonArray("support_sockets")) {
+			JsonObject socket = element.getAsJsonObject();
+			sockets.add(new CardinalRiteCeremonyDefinition.SupportSocket(
+					GsonHelper.getAsInt(socket, "x"), GsonHelper.getAsInt(socket, "y", 0),
+					GsonHelper.getAsInt(socket, "z"),
+					GsonHelper.getAsString(socket, "suggested_sigil", ""),
+					GsonHelper.getAsBoolean(socket, "required")));
 		}
 		List<String> waves = stringList(ceremony, "waves");
 		List<String> guaranteed = stringList(ceremony, "guaranteed_waves");
-		String handler = GsonHelper.getAsString(ceremony, "signature", "");
+		String handler = GsonHelper.getAsString(ceremony, "signature");
 		List<BlockPos> fragile = new ArrayList<>();
-		if (ceremony.has("fragile_offsets")) {
-			for (JsonElement element : ceremony.getAsJsonArray("fragile_offsets")) {
-				JsonArray offset = element.getAsJsonArray();
-				if (offset.size() == 3) {
-					fragile.add(new BlockPos(offset.get(0).getAsInt(), offset.get(1).getAsInt(),
-							offset.get(2).getAsInt()));
-				}
+		for (JsonElement element : ceremony.getAsJsonArray("fragile_offsets")) {
+			JsonArray offset = element.getAsJsonArray();
+			if (offset.size() != 3) {
+				throw new JsonSyntaxException("Harbinger cardinal rite " + recipeId
+						+ " has a fragile offset that is not [x,y,z]");
 			}
+			fragile.add(new BlockPos(offset.get(0).getAsInt(), offset.get(1).getAsInt(),
+					offset.get(2).getAsInt()));
 		}
-		CardinalRiteCeremonyDefinition fallback =
-				CardinalRiteCeremonyDefinition.convertedDefault(recipeId, riteType, degree);
-		return new CardinalRiteCeremonyDefinition(profile,
-				anchors.isEmpty() ? fallback.anchors() : anchors,
-				sockets.isEmpty() ? fallback.supportSockets() : sockets,
-				waves.isEmpty() ? fallback.waves() : waves,
-				guaranteed.isEmpty() ? fallback.guaranteedWaves() : guaranteed,
-				handler.isBlank() ? fallback.signatureHandler() : handler,
-				fragile.isEmpty() ? fallback.fragileOffsets() : fragile);
+		requireCeremonyField(ceremony, recipeId, "target_duration_ticks");
+		requireCeremonyField(ceremony, recipeId, "focus");
+		requireCeremonyField(ceremony, recipeId, "required_helpers");
+		requireCeremonyField(ceremony, recipeId, "helper_roles");
+		requireCeremonyField(ceremony, recipeId, "still_interval_ticks");
+		requireCeremonyField(ceremony, recipeId, "atmosphere");
+		requireCeremonyField(ceremony, recipeId, "failure");
+		JsonObject atmosphere = ceremony.getAsJsonObject("atmosphere");
+		requireCeremonyField(atmosphere, recipeId, "fog");
+		requireCeremonyField(atmosphere, recipeId, "lightning");
+		requireCeremonyField(atmosphere, recipeId, "dome");
+		return new CardinalRiteCeremonyDefinition(profile, anchors, sockets, waves, guaranteed, handler, fragile,
+				GsonHelper.getAsInt(ceremony, "target_duration_ticks"),
+				GsonHelper.getAsString(ceremony, "focus"),
+				GsonHelper.getAsInt(ceremony, "required_helpers"),
+				stringList(ceremony, "helper_roles"),
+				GsonHelper.getAsInt(ceremony, "still_interval_ticks"),
+				new CardinalRiteCeremonyDefinition.Atmosphere(
+						GsonHelper.getAsString(atmosphere, "fog"),
+						GsonHelper.getAsBoolean(atmosphere, "lightning"),
+						GsonHelper.getAsBoolean(atmosphere, "dome")),
+				GsonHelper.getAsString(ceremony, "failure"));
+	}
+
+	private static void requireCeremonyField(JsonObject ceremony, ResourceLocation recipeId, String field) {
+		if (!ceremony.has(field)) {
+			throw new JsonSyntaxException("Harbinger cardinal rite " + recipeId
+					+ " ceremony is missing required field " + field);
+		}
 	}
 
 	private static List<String> stringList(JsonObject json, String key) {
@@ -242,8 +270,16 @@ public class CardinalRiteRecipeSerializer implements RecipeSerializer<CardinalRi
 			recipe.setBrazierSignature(brazierSignatureFromJson(pJson));
 		}
 		if (!unstained) {
-			int ceremonyDegree = rankup ? requiredDegree + 1 : CardinalRiteCeremonyRules.formIndex(riteType) + 1;
-			recipe.setCeremony(ceremonyFromJson(pJson, pRecipeId, riteType, ceremonyDegree));
+			recipe.setCeremony(ceremonyFromJson(pJson, pRecipeId, riteType, requiredDegree));
+			int offeringCount = recipe.getBrazierSignature().stream()
+					.mapToInt(CardinalRiteRecipe.BrazierRequirement::count).sum();
+			List<String> violations = CardinalRiteProgressionPolicy.violations(
+					pRecipeId.getPath(), requiredDegree, recipe.getCeremony(), offeringCount);
+			if (!violations.isEmpty()) {
+				throw new JsonSyntaxException("Harbinger cardinal rite " + pRecipeId
+						+ " exceeds its degree " + requiredDegree + " ceremony ceiling: "
+						+ String.join("; ", violations));
+			}
 		}
 		return recipe;
 	}
@@ -454,14 +490,25 @@ public class CardinalRiteRecipeSerializer implements RecipeSerializer<CardinalRi
 		List<CardinalRiteCeremonyDefinition.SupportSocket> sockets = new ArrayList<>();
 		for (int i = 0, count = buffer.readVarInt(); i < count; i++) {
 			sockets.add(new CardinalRiteCeremonyDefinition.SupportSocket(buffer.readVarInt(), buffer.readVarInt(),
-					buffer.readVarInt(), buffer.readUtf()));
+					buffer.readVarInt(), buffer.readUtf(), buffer.readBoolean()));
 		}
 		List<String> waves = readStrings(buffer);
 		List<String> guaranteed = readStrings(buffer);
 		String handler = buffer.readUtf();
 		List<BlockPos> fragile = new ArrayList<>();
 		for (int i = 0, count = buffer.readVarInt(); i < count; i++) fragile.add(buffer.readBlockPos());
-		return new CardinalRiteCeremonyDefinition(profile, anchors, sockets, waves, guaranteed, handler, fragile);
+		int targetDurationTicks = buffer.readVarInt();
+		String focusMode = buffer.readUtf();
+		int requiredHelpers = buffer.readVarInt();
+		List<String> helperRoles = readStrings(buffer);
+		int stillIntervalTicks = buffer.readVarInt();
+		CardinalRiteCeremonyDefinition.Atmosphere atmosphere =
+				new CardinalRiteCeremonyDefinition.Atmosphere(
+						buffer.readUtf(), buffer.readBoolean(), buffer.readBoolean());
+		String failureProfile = buffer.readUtf();
+		return new CardinalRiteCeremonyDefinition(profile, anchors, sockets, waves, guaranteed, handler, fragile,
+				targetDurationTicks, focusMode, requiredHelpers, helperRoles, stillIntervalTicks,
+				atmosphere, failureProfile);
 	}
 
 	private static void writeCeremony(RegistryFriendlyByteBuf buffer, CardinalRiteCeremonyDefinition ceremony) {
@@ -480,12 +527,22 @@ public class CardinalRiteRecipeSerializer implements RecipeSerializer<CardinalRi
 			buffer.writeVarInt(socket.y());
 			buffer.writeVarInt(socket.z());
 			buffer.writeUtf(socket.suggestedSigil());
+			buffer.writeBoolean(socket.required());
 		}
 		writeStrings(buffer, ceremony.waves());
 		writeStrings(buffer, ceremony.guaranteedWaves());
 		buffer.writeUtf(ceremony.signatureHandler());
 		buffer.writeVarInt(ceremony.fragileOffsets().size());
 		for (BlockPos offset : ceremony.fragileOffsets()) buffer.writeBlockPos(offset);
+		buffer.writeVarInt(ceremony.targetDurationTicks());
+		buffer.writeUtf(ceremony.focusMode());
+		buffer.writeVarInt(ceremony.requiredHelpers());
+		writeStrings(buffer, ceremony.helperRoles());
+		buffer.writeVarInt(ceremony.stillIntervalTicks());
+		buffer.writeUtf(ceremony.atmosphere().fog());
+		buffer.writeBoolean(ceremony.atmosphere().lightning());
+		buffer.writeBoolean(ceremony.atmosphere().dome());
+		buffer.writeUtf(ceremony.failureProfile());
 	}
 
 	private static List<String> readStrings(RegistryFriendlyByteBuf buffer) {

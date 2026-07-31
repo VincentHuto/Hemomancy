@@ -19,7 +19,7 @@ public final class CardinalRiteFogLightningSchedule {
 	public List<Strike> update(List<ActiveRiteClientData.RiteEntry> activeRites, long gameTick) {
 		Set<BlockPos> activeCenters = new HashSet<>();
 		for (ActiveRiteClientData.RiteEntry rite : activeRites) {
-			if (!rite.isUnstained()) {
+			if (!rite.isUnstained() && rite.hasFogLightning()) {
 				activeCenters.add(rite.getCenter());
 			}
 		}
@@ -27,7 +27,7 @@ public final class CardinalRiteFogLightningSchedule {
 
 		List<Strike> strikes = new ArrayList<>();
 		for (ActiveRiteClientData.RiteEntry rite : activeRites) {
-			if (rite.isUnstained()) {
+			if (rite.isUnstained() || !rite.hasFogLightning()) {
 				continue;
 			}
 			BlockPos center = rite.getCenter();

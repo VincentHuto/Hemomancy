@@ -4,23 +4,34 @@ import org.junit.jupiter.api.Test;
 
 public final class CardinalRiteActivationRulesTest {
 	@Test
-	void preStaffHarbingerRitesConsumeSanguineFormationActivation() {
-		assertTrue(CardinalRiteActivationRules.mayInitiate(
-				CardinalRiteActivationRules.Trigger.SANGUINE_FORMATION_BLOCK_USE, false, 0),
-				"sanguine formation block use");
+	void templeInitiationDoesNotUseTheLegacyFormationOrStaffTriggers() {
 		assertFalse(CardinalRiteActivationRules.mayInitiate(
-				CardinalRiteActivationRules.Trigger.LIVING_STAFF_BLOCK_USE, false, 0),
-				"premature living staff block use");
+				CardinalRiteActivationRules.Trigger.SANGUINE_FORMATION_BLOCK_USE,
+				false, 0, "temple_medium"), "legacy formation bypass");
+		assertFalse(CardinalRiteActivationRules.mayInitiate(
+				CardinalRiteActivationRules.Trigger.LIVING_STAFF_BLOCK_USE,
+				false, 0, "temple_medium"), "premature living staff block use");
 	}
 
 	@Test
-	void ritesAvailableWithTheStaffRequireLivingStaffActivation() {
+	void authoredHematicMediumRitesBeginFromTheCardinalFocus() {
 		assertTrue(CardinalRiteActivationRules.mayInitiate(
-				CardinalRiteActivationRules.Trigger.LIVING_STAFF_BLOCK_USE, false, 1),
+				CardinalRiteActivationRules.Trigger.HEMATIC_MEDIUM_BLOCK_USE,
+				false, 1, "hematic_medium"), "iron medium focus use");
+		assertFalse(CardinalRiteActivationRules.mayInitiate(
+				CardinalRiteActivationRules.Trigger.LIVING_STAFF_BLOCK_USE,
+				false, 1, "hematic_medium"), "staff bypass");
+	}
+
+	@Test
+	void authoredStaffRitesRequireLivingStaffActivation() {
+		assertTrue(CardinalRiteActivationRules.mayInitiate(
+				CardinalRiteActivationRules.Trigger.LIVING_STAFF_BLOCK_USE,
+				false, 2, "living_staff"),
 				"living staff block use");
 		assertFalse(CardinalRiteActivationRules.mayInitiate(
-				CardinalRiteActivationRules.Trigger.SANGUINE_FORMATION_BLOCK_USE, false, 1),
-				"late sanguine formation block use");
+				CardinalRiteActivationRules.Trigger.HEMATIC_MEDIUM_BLOCK_USE,
+				false, 2, "living_staff"), "iron medium bypass");
 	}
 
 	@Test

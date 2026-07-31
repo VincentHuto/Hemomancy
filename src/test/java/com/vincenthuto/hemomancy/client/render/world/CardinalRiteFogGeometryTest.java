@@ -35,14 +35,16 @@ final class CardinalRiteFogGeometryTest {
 	}
 
 	@Test
-	void fullFootprintDefinesTheFogPerimeterBeforeRingsAreCompleted() {
-		assertEquals(11.75F,
+	void gameplayFootprintDoesNotPushFogBeyondTheAuthoredFloor() {
+		assertEquals(7.5F,
 				CardinalRiteFogGeometry.perimeterRadius(11.75F, 9, 0, 7, false));
+		assertEquals(6.75F,
+				CardinalRiteFogGeometry.perimeterRadius(9.75F, 7, 0, 5, false));
 	}
 
 	@Test
 	void completedBoundaryAndRiteSizeProvideOrderedFallbacks() {
-		assertEquals(5.0F,
+		assertEquals(4.0F,
 				CardinalRiteFogGeometry.perimeterRadius(0.0F, 9, 3, 1, false));
 		assertEquals(2.5F,
 				CardinalRiteFogGeometry.perimeterRadius(0.0F, 3, 0, 1, false));
@@ -71,16 +73,15 @@ final class CardinalRiteFogGeometryTest {
 	}
 
 	@Test
-	void puffPopulationScalesWithRadiusWithoutBecomingExcessive() {
+	void puffPopulationStaysWithinTheKnownWorkingRenderBudget() {
 		int smallPopulation = CardinalRiteFogGeometry.puffs(2.7F, 3.0F).size();
 		int largePopulation = CardinalRiteFogGeometry.puffs(2.7F, 30.0F).size();
 
-		assertTrue(smallPopulation >= 600 && smallPopulation <= 620,
-				"small rites retain the primary clouds and their supporting scatter layer");
-		assertTrue(largePopulation > smallPopulation && largePopulation <= 5700,
-				"very large rites cap the combined primary and scatter billboard cost");
-		assertTrue(CardinalRiteFogGeometry.puffs(2.7F, 12.0F).size() > smallPopulation,
-				"normal large rites receive a denser cloud population");
+		assertEquals(437, smallPopulation,
+				"the working renderer used 165 primary and 272 scatter billboards");
+		assertEquals(smallPopulation, largePopulation,
+				"rite radius must not multiply the expensive procedural billboard pass");
+		assertEquals(smallPopulation, CardinalRiteFogGeometry.puffs(2.7F, 12.0F).size());
 	}
 
 	@Test

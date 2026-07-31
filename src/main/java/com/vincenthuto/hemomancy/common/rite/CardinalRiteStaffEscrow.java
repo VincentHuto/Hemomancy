@@ -14,9 +14,9 @@ public final class CardinalRiteStaffEscrow {
 		for (int slot = 0; slot < player.getInventory().getContainerSize(); slot++) {
 			ItemStack stack = player.getInventory().getItem(slot);
 			if (!stack.is(ItemInit.living_staff.get())) continue;
-			ItemStack captured = stack.copyWithCount(1);
-			stack.shrink(1);
+			ItemStack captured = player.getInventory().removeItem(slot, 1);
 			player.getInventory().setChanged();
+			player.containerMenu.broadcastChanges();
 			return captured;
 		}
 		return ItemStack.EMPTY;

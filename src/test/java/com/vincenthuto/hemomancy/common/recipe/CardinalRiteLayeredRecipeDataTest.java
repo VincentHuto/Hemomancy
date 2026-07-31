@@ -10,6 +10,8 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.HashSet;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -85,20 +87,17 @@ final class CardinalRiteLayeredRecipeDataTest {
 	}
 
 	@Test
-	void structurelessRitesCanBeDistinguishedByFloorAndOfferings() throws IOException {
+	void preBrazierRitesMayUseAnEmptySignature() throws IOException {
 		JsonObject recipe = read(RITE_ROOT.resolve("sanguine_attunement.json"));
 		assertFalse(recipe.has("required_structure"));
 		JsonArray signature = recipe.getAsJsonArray("brazier_signature");
-		assertFalse(signature.isEmpty());
-		for (JsonElement element : signature) {
-			assertTrue(element.getAsJsonObject().has("ingredient"));
-			assertTrue(element.getAsJsonObject().has("count"));
-		}
+		assertTrue(signature.isEmpty(),
+				"degree-one rites must not introduce braziers before their lesson");
 	}
 
 	@Test
-	void harbingerSelectorsAreNotIndistinguishable() throws IOException {
-		Set<String> selectors = new HashSet<>();
+	void simultaneouslyAvailableHarbingerSelectorsAreNotIndistinguishable() throws IOException {
+		Map<String, java.util.List<JsonObject>> selectors = new HashMap<>();
 		try (var paths = Files.list(RITE_ROOT)) {
 			for (Path path : paths.filter(p -> p.toString().endsWith(".json")).toList()) {
 				JsonObject recipe = read(path);
@@ -107,7 +106,17 @@ final class CardinalRiteLayeredRecipeDataTest {
 						+ recipe.getAsJsonArray("brazier_signature") + "|"
 						+ (recipe.has("required_structure")
 								? recipe.getAsJsonObject("required_structure").get("pattern") : "none");
-				assertTrue(selectors.add(selector), path + " duplicates another layered selector");
+				selectors.computeIfAbsent(selector, ignored -> new java.util.ArrayList<>()).add(recipe);
+			}
+		}
+		for (java.util.List<JsonObject> duplicates : selectors.values()) {
+			if (duplicates.size() < 2) continue;
+			Set<Integer> degrees = new HashSet<>();
+			for (JsonObject recipe : duplicates) {
+				assertTrue(recipe.has("rankup") && recipe.get("rankup").getAsBoolean(),
+						"only exact-degree rank rites may share a physical selector");
+				assertTrue(degrees.add(recipe.get("required_degree").getAsInt()),
+						"shared rank-rite selectors must occupy different degree windows");
 			}
 		}
 	}

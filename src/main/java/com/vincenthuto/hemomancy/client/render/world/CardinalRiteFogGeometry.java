@@ -9,7 +9,7 @@ import java.util.List;
 public final class CardinalRiteFogGeometry {
 	private static final float RENDER_MARGIN = 0.0F;
 	private static final int MINIMUM_PUFFS = 165;
-	private static final int MAXIMUM_PUFFS = 2_150;
+	private static final int MAXIMUM_PUFFS = 165;
 	private static final float PUFFS_PER_RADIUS = 12.25F;
 	private static final float COMPACT_MULTI_RING_MINIMUM_RADIUS = 6.75F;
 
@@ -20,8 +20,9 @@ public final class CardinalRiteFogGeometry {
 			int completedRings, int totalRings, boolean legacy) {
 		float completedBoundary = CardinalRiteBoundaryGeometry.exteriorRadius(
 				riteSize, completedRings, legacy);
+		float authoredFloorRadius = riteSize * 0.5F + 3.0F;
 		float radius = footprintRadius > 0.0F
-				? footprintRadius
+				? legacy ? footprintRadius : Math.min(footprintRadius, authoredFloorRadius)
 				: completedBoundary > 0.0F
 				? completedBoundary
 				: (float) (riteSize / 2.0D + 1.0D);

@@ -1,20 +1,55 @@
 {
   "type": "hemomancy:cardinal_rite_recipe",
-  "bloodCost": 800,
+  "bloodCost": 0,
   "riteType": "lesser",
   "required_degree": 1,
   "riteName": "Rite of Vascular Mending",
   "riteDescription": "A restorative rite that floods the caster's vascular system with purified blood, fully healing all seven vein sections from strain and damage.",
-  "result": {
-    "id": "hemomancy:sanguine_formation"
-  },
   "floor": "hemomancy:working_lesser",
-  "brazier_signature": [
-    {
-      "ingredient": {
-        "item": "minecraft:honeycomb"
+  "brazier_signature": [],
+  "ceremony": {
+    "profile": "simple",
+    "anchors": [
+      {
+        "y": 1,
+        "ring": 0,
+        "order": 0
       },
-      "count": 1
-    }
-  ]
+      {
+        "y": 1,
+        "ring": 0,
+        "order": 1
+      },
+      {
+        "y": 1,
+        "ring": 0,
+        "order": 2
+      },
+      {
+        "y": 1,
+        "ring": 0,
+        "order": 3
+      }
+    ],
+    "support_sockets": [],
+    "waves": [],
+    "guaranteed_waves": [],
+    "signature": "vascular_mending",
+    "fragile_offsets": [],
+    "target_duration_ticks": 400,
+    "focus": "hematic_medium",
+    "required_helpers": 0,
+    "helper_roles": [
+      "anchor",
+      "attendant",
+      "warden"
+    ],
+    "still_interval_ticks": 0,
+    "atmosphere": {
+      "fog": "none",
+      "lightning": false,
+      "dome": false
+    },
+    "failure": "safe_retry"
+  }
 }

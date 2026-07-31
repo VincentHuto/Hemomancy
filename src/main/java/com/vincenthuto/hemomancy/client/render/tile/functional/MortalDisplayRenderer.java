@@ -29,6 +29,7 @@ public class MortalDisplayRenderer implements BlockEntityRenderer<MortalDisplayB
 	@Override
 	public void render(MortalDisplayBlockEntity te, float partialTicks, PoseStack matrixStackIn,
 			MultiBufferSource bufferIn, int combinedLightIn, int combinedOverlayIn) {
+		if (te.isClaimed()) return;
 
 		double ticks = HlClientTickHandler.ticksInGame + HlClientTickHandler.partialTicks - 1.3 * 0.14;
 		matrixStackIn.pushPose();

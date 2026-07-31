@@ -1,6 +1,6 @@
 {
   "type": "hemomancy:cardinal_rite_recipe",
-  "bloodCost": 500,
+  "bloodCost": 0,
   "riteType": "lesser",
   "required_degree": 3,
   "riteName": "Rite of the Pallid Vessel",
@@ -12,9 +12,54 @@
   "brazier_signature": [
     {
       "ingredient": {
-        "item": "minecraft:spider_eye"
+        "item": "hemomancy:dried_gourd"
       },
       "count": 1
     }
-  ]
+  ],
+  "ceremony": {
+    "profile": "simple",
+    "anchors": [
+      {
+        "y": 1,
+        "ring": 0,
+        "order": 0
+      },
+      {
+        "y": 1,
+        "ring": 0,
+        "order": 1
+      },
+      {
+        "y": 1,
+        "ring": 0,
+        "order": 2
+      },
+      {
+        "y": 1,
+        "ring": 0,
+        "order": 3
+      }
+    ],
+    "support_sockets": [],
+    "waves": [],
+    "guaranteed_waves": [],
+    "signature": "pallid_vessel_rite",
+    "fragile_offsets": [],
+    "target_duration_ticks": 400,
+    "focus": "living_staff",
+    "required_helpers": 0,
+    "helper_roles": [
+      "anchor",
+      "attendant",
+      "warden"
+    ],
+    "still_interval_ticks": 0,
+    "atmosphere": {
+      "fog": "faint",
+      "lightning": false,
+      "dome": false
+    },
+    "failure": "safe_retry"
+  }
 }

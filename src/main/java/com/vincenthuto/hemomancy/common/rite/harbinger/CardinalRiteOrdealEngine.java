@@ -261,8 +261,7 @@ public final class CardinalRiteOrdealEngine {
 		}
 		drawSupportSockets(caster.serverLevel(), rite, recipe);
 		drawAnchors(caster.serverLevel(), rite, recipe);
-		int duration = CardinalRiteCeremonyRules.stillIntervalTicks(
-				CardinalRiteCeremonyRules.formIndex(recipe.getRiteType()));
+		int duration = recipe.getCeremony().stillIntervalTicks();
 		if (rite.getPhaseTicks() >= duration) {
 			if (rite.areAnchorsConsecrated()) {
 				rite.finishStillInterval(recipe.isRankup());
@@ -388,6 +387,18 @@ public final class CardinalRiteOrdealEngine {
 						CardinalRiteThreatRules.BASTION_DAMAGE_PER_PULSE);
 			}
 		}
+		if (CardinalRiteSupportSigilRules.bindsThreats(isComplete(rite, "cage"))) {
+			for (UUID id : rite.getRiteThreats()) {
+				Entity threat = level.getEntity(id);
+				if (threat instanceof Mob mob) {
+					mob.addEffect(new MobEffectInstance(
+							MobEffects.MOVEMENT_SLOWDOWN,
+							CardinalRiteSupportSigilRules.CAGE_EFFECT_TICKS,
+							CardinalRiteSupportSigilRules.CAGE_SLOWNESS_AMPLIFIER,
+							false, true, true));
+				}
+			}
+		}
 		if (isComplete(rite, "hematic_lattice")) rite.balanceAnchors();
 		applyAnchorDecay(rite, recipe);
 	}
@@ -408,8 +419,11 @@ public final class CardinalRiteOrdealEngine {
 	}
 
 	private static void applyAnchorDecay(ActiveCardinalRite rite, CardinalRiteRecipe recipe) {
-		double decay = CardinalRiteCeremonyRules.anchorDecayPerSecond(
-				CardinalRiteCeremonyRules.formIndex(recipe.getRiteType()));
+		double decay = switch (recipe.getCeremony().atmosphere().fog()) {
+			case "dense" -> 0.25D;
+			case "storm" -> 0.5D;
+			default -> 0.0D;
+		};
 		if (decay <= 0.0D) return;
 		int period = Math.max(1, (int) Math.round(20.0D / decay));
 		if (rite.getPhaseTicks() % period == 0) {
@@ -568,13 +582,14 @@ public final class CardinalRiteOrdealEngine {
 				rite.getCenterPos().offset(-2, 1, -2),
 				rite.getCenterPos().offset(2, 1, -2)
 		};
-		boolean mnemonic = isComplete(rite, "mnemonic");
-		ParticleColor fakeColor = mnemonic ? new ParticleColor(90, 210, 255)
+		boolean revealed = CardinalRiteSupportSigilRules.revealsFalseOmens(
+				isComplete(rite, "mnemonic"), isComplete(rite, "lens"));
+		ParticleColor fakeColor = revealed ? new ParticleColor(90, 210, 255)
 				: new ParticleColor(185, 40, 220);
 		for (BlockPos fake : fakes) {
 			drawInteractionMarker(level, fakeColor,
 					fake.getX() + 0.5D, fake.getY() + 0.12D, fake.getZ() + 0.5D,
-					mnemonic ? 1 : 3, 0.18D, 0.02D, 0.18D);
+					revealed ? 1 : 3, 0.18D, 0.02D, 0.18D);
 		}
 	}
 

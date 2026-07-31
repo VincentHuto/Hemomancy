@@ -1,20 +1,55 @@
 {
   "type": "hemomancy:cardinal_rite_recipe",
-  "bloodCost": 600,
+  "bloodCost": 0,
   "riteType": "lesser",
   "required_degree": 2,
   "riteName": "Rite of the Crimson Beacon",
   "riteDescription": "A binding rite that anchors the caster's dying essence to this location. Upon taking a fatal blow, the caster's body will be returned here before death claims them.",
-  "result": {
-    "id": "hemomancy:sanguine_formation"
-  },
   "floor": "hemomancy:dominion_lesser",
-  "brazier_signature": [
-    {
-      "ingredient": {
-        "item": "minecraft:prismarine_crystals"
+  "brazier_signature": [],
+  "ceremony": {
+    "profile": "simple",
+    "anchors": [
+      {
+        "y": 1,
+        "ring": 0,
+        "order": 0
       },
-      "count": 1
-    }
-  ]
+      {
+        "y": 1,
+        "ring": 0,
+        "order": 1
+      },
+      {
+        "y": 1,
+        "ring": 0,
+        "order": 2
+      },
+      {
+        "y": 1,
+        "ring": 0,
+        "order": 3
+      }
+    ],
+    "support_sockets": [],
+    "waves": [],
+    "guaranteed_waves": [],
+    "signature": "crimson_beacon",
+    "fragile_offsets": [],
+    "target_duration_ticks": 400,
+    "focus": "living_staff",
+    "required_helpers": 0,
+    "helper_roles": [
+      "anchor",
+      "attendant",
+      "warden"
+    ],
+    "still_interval_ticks": 0,
+    "atmosphere": {
+      "fog": "faint",
+      "lightning": false,
+      "dome": false
+    },
+    "failure": "safe_retry"
+  }
 }

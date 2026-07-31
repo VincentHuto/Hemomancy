@@ -534,10 +534,13 @@ public final class RitesTabView {
 				panelX, y, 0);
 		y += lineH;
 
-		// Blood cost
-		gfx.drawString(ctx.font(), Component.literal("Blood Cost: ")
+		// Upfront blood cost (interactive ceremonies feed their declared anchors instead).
+		String bloodLabel = rite.hasInteractiveCeremony() && rite.getBloodCost() == 0.0D
+				? "None"
+				: (int) rite.getBloodCost() + " mL";
+		gfx.drawString(ctx.font(), Component.literal("Upfront Blood: ")
 				.withStyle(s -> s.withColor(0x888888))
-				.append(Component.literal((int) rite.getBloodCost() + " mL")
+				.append(Component.literal(bloodLabel)
 						.withStyle(s -> s.withColor(0xAA4444))),
 				panelX, y, 0);
 		y += lineH;
@@ -559,13 +562,30 @@ public final class RitesTabView {
 		}
 
 		// Cast time
-		float seconds = type.getCastingDurationTicks() / 20f;
+		float seconds = (rite.hasInteractiveCeremony()
+				? rite.getCeremony().targetDurationTicks()
+				: type.getCastingDurationTicks()) / 20f;
 		gfx.drawString(ctx.font(), Component.literal("Cast Time: ")
 				.withStyle(s -> s.withColor(0x888888))
 				.append(Component.literal(String.format("%.1fs", seconds))
 						.withStyle(s -> s.withColor(0xAAAA88))),
 				panelX, y, 0);
 		y += lineH + 6;
+
+		if (rite.hasInteractiveCeremony()) {
+			gfx.drawString(ctx.font(), Component.literal("Ceremony:")
+					.withStyle(s -> s.withColor(state.tabColor & 0xFFFFFF).withBold(true)),
+					panelX, y, 0);
+			y += lineH;
+			for (String summary : ceremonySummaryLines(rite)) {
+				for (String line : ScreenDrawUtils.wrapText(ctx.font(), summary, panelW)) {
+					gfx.drawString(ctx.font(), Component.literal(line)
+							.withStyle(s -> s.withColor(0xAAAAAA)), panelX, y, 0);
+					y += lineH;
+				}
+			}
+			y += 6;
+		}
 
 		// Result item
 		ItemStack result = rite.getResult();
@@ -659,6 +679,14 @@ public final class RitesTabView {
 
 		y += lineH + 6; // cast time
 
+		if (rite.hasInteractiveCeremony()) {
+			y += lineH; // ceremony heading
+			for (String summary : ceremonySummaryLines(rite)) {
+				y += ScreenDrawUtils.wrapText(font, summary, panelW).size() * lineH;
+			}
+			y += 6;
+		}
+
 		ItemStack result = rite.getResult();
 		if (result != null && !result.isEmpty()) {
 			y += lineH;
@@ -687,6 +715,60 @@ public final class RitesTabView {
 			}
 		}
 		return y;
+	}
+
+	private static List<String> ceremonySummaryLines(CardinalRiteRecipe rite) {
+		var ceremony = rite.getCeremony();
+		if (ceremony == null) return List.of();
+		long rings = ceremony.anchors().stream()
+				.mapToInt(com.vincenthuto.hemomancy.common.rite.CardinalRiteCeremonyDefinition.Anchor::ring)
+				.distinct().count();
+		long requiredSigils = ceremony.supportSockets().stream()
+				.filter(com.vincenthuto.hemomancy.common.rite.CardinalRiteCeremonyDefinition.SupportSocket::required)
+				.count();
+		String focus = switch (ceremony.focusMode()) {
+			case "temple_medium" -> "prebuilt temple focus + iron nugget (4 health)";
+			case "hematic_medium" -> "Cardinal Focus + disposable iron nugget";
+			case "living_staff" -> "Living Staff planted in the Cardinal Focus";
+			default -> ceremony.focusMode().isBlank() ? "rite-specific" : ceremony.focusMode();
+		};
+		String boundary = ceremony.anchors().isEmpty()
+				? "Boundary: small visual ring; no anchors to fill"
+				: "Boundary: " + ceremony.anchors().size() + " blood-fed anchors across "
+						+ rings + (rings == 1 ? " ring" : " rings")
+						+ " (" + ceremony.anchorBloodCostMl() + " mL total)";
+		String support = ceremony.supportSockets().isEmpty()
+				? "Inscriptions: none"
+				: "Inscriptions: " + ceremony.supportSockets().size() + " support sigils; "
+						+ requiredSigils + " required";
+		String ordeal = ceremony.waves().isEmpty() && ceremony.guaranteedWaves().isEmpty()
+				? "Ordeal: none"
+				: "Ordeal: enabled; still interval " + ceremony.stillIntervalTicks() + " ticks";
+		String atmosphere = "Atmosphere: " + ceremony.atmosphere().fog() + " fog"
+				+ (ceremony.atmosphere().lightning() ? ", rite lightning" : "")
+				+ (ceremony.atmosphere().dome() ? ", boundary dome" : "");
+		return List.of(
+				"Activation: " + focus,
+				boundary,
+				support,
+				"Helpers: " + ceremony.requiredHelpers() + " required",
+				ordeal,
+				atmosphere,
+				"Failure: " + ceremony.failureProfile().replace('_', ' '),
+				"Progression lesson: " + progressionLesson(rite.getRequiredDegree()));
+	}
+
+	private static String progressionLesson(int degree) {
+		return switch (degree) {
+			case 0 -> "consent and awakening on a prebuilt temple threshold";
+			case 1 -> "build the first floor, seat an iron medium, and feed four anchors";
+			case 2 -> "take up the Living Staff and prepare the first brazier offering";
+			case 3 -> "repeat Lesser practice under the first faint ritual fog";
+			case 4 -> "inscribe the first support sigil and coordinate multiple offerings";
+			case 5 -> "sustain eight anchors through lightning and the first ordeal";
+			case 6 -> "raise a domed Grand boundary and accept required aid and safety sigils";
+			default -> "coordinate a full Grand rite with multiple helpers, sigils, and a lengthy ordeal";
+		};
 	}
 
 	/** @deprecated Use {@link #measureInfoPanelHeight(net.minecraft.client.gui.Font, int, CardinalRiteRecipe, int, boolean)} */

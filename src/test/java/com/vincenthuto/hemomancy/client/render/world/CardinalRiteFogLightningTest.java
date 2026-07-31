@@ -35,6 +35,16 @@ final class CardinalRiteFogLightningTest {
 	}
 
 	@Test
+	void atmosphereWithoutLightningNeverSchedulesAStrike() {
+		CardinalRiteFogLightningSchedule schedule = new CardinalRiteFogLightningSchedule();
+		ActiveRiteClientData.RiteEntry denseButStill = rite(false, "dense", false);
+
+		for (long tick = 0; tick < 80; tick++) {
+			assertTrue(schedule.update(List.of(denseButStill), tick).isEmpty());
+		}
+	}
+
+	@Test
 	void strikeArcsCloudToCloudInsideTheFogPerimeter() {
 		float radius = 8.0F;
 		CardinalRiteFogLightning.StrikeGeometry strike =
@@ -72,9 +82,17 @@ final class CardinalRiteFogLightningTest {
 	}
 
 	private static ActiveRiteClientData.RiteEntry rite(boolean unstained) {
+		return rite(unstained, unstained ? "none" : "storm", !unstained);
+	}
+
+	private static ActiveRiteClientData.RiteEntry rite(boolean unstained,
+			String fogProfile, boolean lightning) {
 		return new ActiveRiteClientData.RiteEntry(
-				BlockPos.ZERO, 3, 0.0D,
+				BlockPos.ZERO, 9, 0.0D,
 				ResourceLocation.fromNamespaceAndPath("hemomancy", "fog_lightning_test"),
-				unstained);
+				unstained, "ORDEAL", 0, 0, 3, 3, 3,
+				0, 600, 0, 0, -1, "", 9.0F,
+				List.of(), List.of(), List.of(), List.of(), false, null, 0, 0,
+				fogProfile, lightning, true);
 	}
 }

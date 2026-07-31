@@ -58,6 +58,21 @@ public final class RecipeDegreeGates {
 				&& meetsUnstainedThresholds(player, recipe.isUnstained(), recipe.getRequiredPurity(), recipe.getRequiredClarity());
 	}
 
+	/**
+	 * Whether a rite should participate in station resolution for this player.
+	 * Completed rank rites are deliberately excluded before floor/offering
+	 * matching so an old promotion cannot make the next promotion ambiguous.
+	 */
+	public static boolean playerMayAttempt(Player player, CardinalRiteRecipe recipe) {
+		if (!playerMeets(player, recipe)) return false;
+		Integer target = recipe.isRankup() ? getRankupTargetDegree(recipe.getId()) : null;
+		return target == null || rankupWindowOpen(getPlayerLevel(player, recipe.isUnstained()), target);
+	}
+
+	static boolean rankupWindowOpen(int playerLevel, int targetDegree) {
+		return clampLevel(playerLevel) < clampLevel(targetDegree);
+	}
+
 	private static boolean meetsUnstainedThresholds(Player player, boolean unstained, float requiredPurity,
 			float requiredClarity) {
 		if (!unstained || (requiredPurity < 0 && requiredClarity < 0)) {

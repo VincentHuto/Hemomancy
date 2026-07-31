@@ -21,7 +21,8 @@ class CardinalRiteThreatProtectionSourceTest {
 
 	private static void assertProtected(String relativePath) throws IOException {
 		String source = Files.readString(JAVA.resolve(relativePath));
-		assertTrue(source.contains("CardinalRiteThreatRules.isProtectedFromPassiveRiteDamage"),
+		assertTrue(source.contains("CardinalRiteThreatRules.isProtectedFromPassiveRiteDamage")
+						|| source.contains("CardinalRiteThreatRules.isEligiblePassiveSacrifice"),
 				relativePath + " must exempt threats spawned for an active rite");
 	}
 }

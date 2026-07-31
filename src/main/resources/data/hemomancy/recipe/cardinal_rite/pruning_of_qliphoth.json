@@ -1,13 +1,10 @@
 {
   "type": "hemomancy:cardinal_rite_recipe",
-  "bloodCost": 200,
-  "riteType": "minor",
-  "required_degree": 0,
+  "bloodCost": 0,
+  "riteType": "grand",
+  "required_degree": 7,
   "riteName": "Pruning of the Qliphoth",
   "riteDescription": "A small counter-rite that severs the roots of a nearby Qliphoth bloom, causing the dark tree to wither and vanish. Must be performed within the same chunk as the bloom.",
-  "result": {
-    "id": "hemomancy:sanguine_formation"
-  },
   "floor": "hemomancy:working_minor",
   "brazier_signature": [
     {
@@ -16,5 +13,50 @@
       },
       "count": 1
     }
-  ]
+  ],
+  "ceremony": {
+    "profile": "simple",
+    "anchors": [
+      {
+        "y": 1,
+        "ring": 0,
+        "order": 0
+      },
+      {
+        "y": 1,
+        "ring": 0,
+        "order": 1
+      },
+      {
+        "y": 1,
+        "ring": 0,
+        "order": 2
+      },
+      {
+        "y": 1,
+        "ring": 0,
+        "order": 3
+      }
+    ],
+    "support_sockets": [],
+    "waves": [],
+    "guaranteed_waves": [],
+    "signature": "pruning_of_qliphoth",
+    "fragile_offsets": [],
+    "target_duration_ticks": 400,
+    "focus": "living_staff",
+    "required_helpers": 0,
+    "helper_roles": [
+      "anchor",
+      "attendant",
+      "warden"
+    ],
+    "still_interval_ticks": 0,
+    "atmosphere": {
+      "fog": "storm",
+      "lightning": true,
+      "dome": true
+    },
+    "failure": "collapse"
+  }
 }

@@ -1,6 +1,6 @@
 {
   "type": "hemomancy:cardinal_rite_recipe",
-  "bloodCost": 750,
+  "bloodCost": 0,
   "riteType": "lesser",
   "required_degree": 5,
   "riteName": "Rite of Bloodline Recall",
@@ -16,5 +16,58 @@
       },
       "count": 1
     }
-  ]
+  ],
+  "ceremony": {
+    "profile": "simple",
+    "anchors": [
+      {
+        "y": 1,
+        "ring": 0,
+        "order": 0
+      },
+      {
+        "y": 1,
+        "ring": 0,
+        "order": 1
+      },
+      {
+        "y": 1,
+        "ring": 0,
+        "order": 2
+      },
+      {
+        "y": 1,
+        "ring": 0,
+        "order": 3
+      }
+    ],
+    "support_sockets": [
+      {
+        "x": 4,
+        "y": 0,
+        "z": 0,
+        "suggested_sigil": "bastion",
+        "required": true
+      }
+    ],
+    "waves": [],
+    "guaranteed_waves": [],
+    "signature": "bloodline_recall",
+    "fragile_offsets": [],
+    "target_duration_ticks": 400,
+    "focus": "living_staff",
+    "required_helpers": 0,
+    "helper_roles": [
+      "anchor",
+      "attendant",
+      "warden"
+    ],
+    "still_interval_ticks": 0,
+    "atmosphere": {
+      "fog": "storm",
+      "lightning": true,
+      "dome": false
+    },
+    "failure": "fragile_damage"
+  }
 }

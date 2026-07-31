@@ -1,0 +1,157 @@
+{
+  "type": "hemomancy:cardinal_rite_recipe",
+  "bloodCost": 0,
+  "riteType": "greater",
+  "required_degree": 6,
+  "riteName": "Rite of the Covenant Vigil",
+  "riteDescription": "A bloodline vigil in which one sworn helper shares the boundary and survives a full Grand ordeal beside the caster. Every assigned survivor gains ten minutes of resistance and regeneration.",
+  "floor": "hemomancy:communion_greater",
+  "brazier_signature": [
+    {
+      "ingredient": {
+        "item": "hemomancy:hematic_memory"
+      },
+      "count": 1
+    },
+    {
+      "ingredient": {
+        "item": "hemomancy:puppeteering_thread"
+      },
+      "count": 1
+    }
+  ],
+  "ceremony": {
+    "profile": "standard",
+    "anchors": [
+      {
+        "y": 1,
+        "ring": 0,
+        "order": 0
+      },
+      {
+        "y": 1,
+        "ring": 0,
+        "order": 1
+      },
+      {
+        "y": 1,
+        "ring": 0,
+        "order": 2
+      },
+      {
+        "y": 1,
+        "ring": 0,
+        "order": 3
+      },
+      {
+        "y": 1,
+        "ring": 1,
+        "order": 0
+      },
+      {
+        "y": 1,
+        "ring": 1,
+        "order": 1
+      },
+      {
+        "y": 1,
+        "ring": 1,
+        "order": 2
+      },
+      {
+        "y": 1,
+        "ring": 1,
+        "order": 3
+      },
+      {
+        "y": 1,
+        "ring": 2,
+        "order": 0
+      },
+      {
+        "y": 1,
+        "ring": 2,
+        "order": 1
+      },
+      {
+        "y": 1,
+        "ring": 2,
+        "order": 2
+      },
+      {
+        "y": 1,
+        "ring": 2,
+        "order": 3
+      }
+    ],
+    "support_sockets": [
+      {
+        "x": 6,
+        "y": 0,
+        "z": 0,
+        "suggested_sigil": "bastion",
+        "required": true
+      },
+      {
+        "x": -6,
+        "y": 0,
+        "z": 0,
+        "suggested_sigil": "reservoir",
+        "required": true
+      },
+      {
+        "x": 0,
+        "y": 0,
+        "z": 6,
+        "suggested_sigil": "mnemonic",
+        "required": false
+      },
+      {
+        "x": 0,
+        "y": 0,
+        "z": -6,
+        "suggested_sigil": "hematic_lattice",
+        "required": false
+      }
+    ],
+    "waves": [
+      "bloodlicker_siphon",
+      "fargone_dive",
+      "rogue_will"
+    ],
+    "guaranteed_waves": [],
+    "signature": "simulacrum_wound",
+    "fragile_offsets": [
+      [
+        1,
+        0,
+        1
+      ],
+      [
+        -1,
+        0,
+        -1
+      ],
+      [
+        1,
+        0,
+        -1
+      ]
+    ],
+    "target_duration_ticks": 1200,
+    "focus": "living_staff",
+    "required_helpers": 1,
+    "helper_roles": [
+      "anchor",
+      "attendant",
+      "warden"
+    ],
+    "still_interval_ticks": 200,
+    "atmosphere": {
+      "fog": "storm",
+      "lightning": true,
+      "dome": true
+    },
+    "failure": "collapse"
+  }
+}

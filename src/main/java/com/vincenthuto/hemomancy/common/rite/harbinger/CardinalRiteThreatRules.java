@@ -20,4 +20,13 @@ public final class CardinalRiteThreatRules {
 	public static boolean isProtectedFromPassiveRiteDamage(boolean riteBound) {
 		return riteBound;
 	}
+
+	public static boolean allowsPassiveSacrifice(String ritePath) {
+		return "cardinal_rite/exsanguination".equals(ritePath);
+	}
+
+	public static boolean isEligiblePassiveSacrifice(boolean riteBound, boolean player,
+			boolean allied, boolean tamed, boolean boss) {
+		return !riteBound && !player && !allied && !tamed && !boss;
+	}
 }

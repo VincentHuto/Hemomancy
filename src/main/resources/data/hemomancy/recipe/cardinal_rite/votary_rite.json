@@ -1,14 +1,11 @@
 {
   "type": "hemomancy:cardinal_rite_recipe",
-  "bloodCost": 250,
-  "riteType": "lesser",
+  "bloodCost": 0,
+  "riteType": "minor",
   "required_degree": 1,
   "riteName": "Rite of the Votary",
   "riteDescription": "The second rite of the Hematic Order, binding the practitioner deeper into the Covenant.",
   "rankup": true,
-  "result": {
-    "id": "hemomancy:sanguine_formation"
-  },
   "floor": "hemomancy:threshold_lesser",
   "required_structure": {
     "pattern": [
@@ -31,12 +28,50 @@
       }
     }
   },
-  "brazier_signature": [
-    {
-      "ingredient": {
-        "item": "minecraft:sugar"
+  "brazier_signature": [],
+  "ceremony": {
+    "profile": "simple",
+    "anchors": [
+      {
+        "y": 1,
+        "ring": 0,
+        "order": 0
       },
-      "count": 1
-    }
-  ]
+      {
+        "y": 1,
+        "ring": 0,
+        "order": 1
+      },
+      {
+        "y": 1,
+        "ring": 0,
+        "order": 2
+      },
+      {
+        "y": 1,
+        "ring": 0,
+        "order": 3
+      }
+    ],
+    "support_sockets": [],
+    "waves": [],
+    "guaranteed_waves": [],
+    "signature": "tendency_response",
+    "fragile_offsets": [],
+    "target_duration_ticks": 400,
+    "focus": "hematic_medium",
+    "required_helpers": 0,
+    "helper_roles": [
+      "anchor",
+      "attendant",
+      "warden"
+    ],
+    "still_interval_ticks": 0,
+    "atmosphere": {
+      "fog": "none",
+      "lightning": false,
+      "dome": false
+    },
+    "failure": "safe_retry"
+  }
 }

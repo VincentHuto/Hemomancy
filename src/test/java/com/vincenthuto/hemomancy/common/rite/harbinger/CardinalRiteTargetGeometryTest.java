@@ -4,6 +4,8 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.world.phys.Vec3;
 import org.junit.jupiter.api.Test;
 
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 final class CardinalRiteTargetGeometryTest {
@@ -32,5 +34,17 @@ final class CardinalRiteTargetGeometryTest {
 		assertEquals(24.5D, point.x, 0.0001D);
 		assertEquals(67.08D, point.y, 0.0001D);
 		assertEquals(-11.0D, point.z, 0.0001D);
+	}
+
+	@Test
+	void denseRingsResolveTheExactRenderedAnchorInsteadOfTheFirstNearbyAnchor() {
+		BlockPos surface = new BlockPos(20, 65, -10);
+		List<BlockPos> offsets = List.of(
+				new BlockPos(0, 1, -1),
+				new BlockPos(1, 1, -1));
+		BlockPos renderedTarget = new BlockPos(21, 65, -11);
+
+		assertEquals(1, CardinalRiteTargetGeometry.nearestAnchorIndex(
+				surface, offsets, renderedTarget, 1.6D));
 	}
 }

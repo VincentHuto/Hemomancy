@@ -15,7 +15,7 @@ public final class HarbingerHermitRoadMissionSourceTest {
 	}
 
 	public static void main(String[] args) throws IOException {
-		mortalDisplayLeavesPersonalBloodStainedStone();
+		mortalDisplayRequiresAndRecordsTheTempleOath();
 		ledgerIsSeparateFromFieldNotesAndUsesGuideRenderer();
 		vicarGrantsLedgerAfterFirstWildHermitageReport();
 		alchemistRedTaxonomyAssignmentExists();
@@ -24,14 +24,15 @@ public final class HarbingerHermitRoadMissionSourceTest {
 		hermitageRemnantWorldgenTemplateExists();
 	}
 
-	private static void mortalDisplayLeavesPersonalBloodStainedStone() throws IOException {
+	private static void mortalDisplayRequiresAndRecordsTheTempleOath() throws IOException {
 		String source = read(SOURCE_ROOT.resolve(
 				"com/vincenthuto/hemomancy/common/block/harbinger/functional/MortalDisplayBlock.java"));
-		assertContains("mortal display imports block registry", source, "import com.vincenthuto.hemomancy.common.init.BlockInit;");
-		assertContains("mortal display leaves blood stained stone marker", source,
-				"BlockInit.placed_blood_stained_stone.get().defaultBlockState()");
-		assertContains("mortal display no longer explodes for active blood players", source,
-				"hemomancy.mortal_display.already_invited");
+		assertContains("mortal display checks the linked hermit's blessing", source,
+				"TempleOathRules.canClaimHeart");
+		assertContains("mortal display records the exact claimed heart", source,
+				"TempleOathRules.recordHeartClaim");
+		assertContains("mortal display leaves blood dormant before initiation", source,
+				"volume == null || !volume.isActive()");
 		assertDoesNotContain("mortal display no longer calls explosion", source, "worldIn.explode(");
 	}
 

@@ -1,14 +1,11 @@
 {
   "type": "hemomancy:cardinal_rite_recipe",
-  "bloodCost": 2000,
+  "bloodCost": 0,
   "riteType": "greater",
   "required_degree": 4,
   "riteName": "Rite of the Crimson Lodge",
   "riteDescription": "The fifth rite of the Hematic Order, by which an adept is admitted as Illuminatus of the Crimson Lodge. This is a rite of ascension, not the consecration of a Fane.",
   "rankup": true,
-  "result": {
-    "id": "hemomancy:sanguine_quintessence"
-  },
   "floor": "hemomancy:threshold_greater",
   "required_structure": {
     "pattern": [
@@ -37,9 +34,68 @@
   "brazier_signature": [
     {
       "ingredient": {
-        "item": "minecraft:slime_ball"
+        "item": "hemomancy:hematic_memory"
+      },
+      "count": 1
+    },
+    {
+      "ingredient": {
+        "item": "minecraft:glowstone_dust"
       },
       "count": 1
     }
-  ]
+  ],
+  "ceremony": {
+    "profile": "ceremonial",
+    "anchors": [
+      {
+        "y": 1,
+        "ring": 0,
+        "order": 0
+      },
+      {
+        "y": 1,
+        "ring": 0,
+        "order": 1
+      },
+      {
+        "y": 1,
+        "ring": 0,
+        "order": 2
+      },
+      {
+        "y": 1,
+        "ring": 0,
+        "order": 3
+      }
+    ],
+    "support_sockets": [
+      {
+        "x": 4,
+        "y": 0,
+        "z": 0,
+        "suggested_sigil": "bastion",
+        "required": true
+      }
+    ],
+    "waves": [],
+    "guaranteed_waves": [],
+    "signature": "fungal_root",
+    "fragile_offsets": [],
+    "target_duration_ticks": 3600,
+    "focus": "living_staff",
+    "required_helpers": 0,
+    "helper_roles": [
+      "anchor",
+      "attendant",
+      "warden"
+    ],
+    "still_interval_ticks": 0,
+    "atmosphere": {
+      "fog": "dense",
+      "lightning": false,
+      "dome": false
+    },
+    "failure": "offering_loss"
+  }
 }

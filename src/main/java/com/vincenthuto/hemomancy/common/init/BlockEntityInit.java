@@ -113,6 +113,9 @@ public class BlockEntityInit {
 	public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<MortalDisplayBlockEntity>> mortal_display = TILES
 			.register("mortal_display", () -> BlockEntityType.Builder
 					.of(MortalDisplayBlockEntity::new, BlockInit.mortal_display.get()).build(null));
+	public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<CardinalFocusBlockEntity>> cardinal_focus = TILES
+			.register("cardinal_focus", () -> BlockEntityType.Builder
+					.of(CardinalFocusBlockEntity::new, BlockInit.cardinal_focus.get()).build(null));
 
 	public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<SomaticLoomBlockEntity>> somatic_loom = TILES
 			.register("somatic_loom", () -> BlockEntityType.Builder

@@ -46,6 +46,9 @@ public class ActiveRiteClientData {
 		private final UUID owner;
 		private final int cancellationTicks;
 		private final int staffPlantingTicks;
+		private final String fogProfile;
+		private final boolean fogLightning;
+		private final boolean boundaryDome;
 		private final List<String> checklist;
 		private final List<CardinalRiteBoundaryProgress.Segment> boundarySegments;
 		private final List<SigilSegment> sigilSegments;
@@ -119,6 +122,21 @@ public class ActiveRiteClientData {
 				List<CardinalRiteBoundaryProgress.Segment> boundarySegments,
 				List<SigilSegment> sigilSegments, List<SanguineBlob> sanguineBlobs, boolean plantedStaff,
 				UUID owner, int cancellationTicks, int staffPlantingTicks) {
+			this(center, riteSize, progress, recipeId, unstained, phase, instability, currentWave, totalWaves,
+					completedRings, totalRings, committedBloodMl, upfrontBloodMl, carriedIchorMl, allyCount,
+					sharedBloodMl, cue, footprintRadius, checklist, boundarySegments, sigilSegments,
+					sanguineBlobs, plantedStaff, owner, cancellationTicks, staffPlantingTicks,
+					unstained ? "none" : "storm", !unstained, !unstained);
+		}
+
+		public RiteEntry(BlockPos center, int riteSize, double progress, ResourceLocation recipeId, boolean unstained,
+				String phase, int instability, int currentWave, int totalWaves, int completedRings, int totalRings,
+				int committedBloodMl, int upfrontBloodMl, int carriedIchorMl, int allyCount, int sharedBloodMl,
+				String cue, float footprintRadius, List<String> checklist,
+				List<CardinalRiteBoundaryProgress.Segment> boundarySegments,
+				List<SigilSegment> sigilSegments, List<SanguineBlob> sanguineBlobs, boolean plantedStaff,
+				UUID owner, int cancellationTicks, int staffPlantingTicks,
+				String fogProfile, boolean fogLightning, boolean boundaryDome) {
 			this.center = center;
 			this.riteSize = riteSize;
 			this.progress = progress;
@@ -141,6 +159,9 @@ public class ActiveRiteClientData {
 			this.owner = owner;
 			this.cancellationTicks = Math.max(0, cancellationTicks);
 			this.staffPlantingTicks = staffPlantingTicks;
+			this.fogProfile = normalizeFogProfile(fogProfile);
+			this.fogLightning = fogLightning && !"none".equals(this.fogProfile);
+			this.boundaryDome = boundaryDome;
 			this.previousCancellationTicks = this.cancellationTicks;
 			this.currentCancellationTicks = this.cancellationTicks;
 			this.previousStaffPlantingTicks = this.staffPlantingTicks;
@@ -174,6 +195,13 @@ public class ActiveRiteClientData {
 		public boolean isUnstained() {
 			return unstained;
 		}
+
+		private static String normalizeFogProfile(String profile) {
+			return switch (profile == null ? "none" : profile.toLowerCase(java.util.Locale.ROOT)) {
+				case "faint", "dense", "storm" -> profile.toLowerCase(java.util.Locale.ROOT);
+				default -> "none";
+			};
+		}
 		public String getPhase() { return phase; }
 		public int getInstability() { return instability; }
 		public int getCurrentWave() { return currentWave; }
@@ -191,6 +219,10 @@ public class ActiveRiteClientData {
 		public UUID getOwner() { return owner; }
 		public int getCancellationTicks() { return cancellationTicks; }
 		public int getStaffPlantingTicks() { return staffPlantingTicks; }
+		public String getFogProfile() { return fogProfile; }
+		public boolean hasFog() { return !"none".equals(fogProfile); }
+		public boolean hasFogLightning() { return fogLightning; }
+		public boolean hasBoundaryDome() { return boundaryDome; }
 		public List<String> getChecklist() { return checklist; }
 		public List<CardinalRiteBoundaryProgress.Segment> getBoundarySegments() { return boundarySegments; }
 		public List<SigilSegment> getSigilSegments() { return sigilSegments; }

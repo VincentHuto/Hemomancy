@@ -2853,9 +2853,24 @@ Current trial recipes:
 
 ### 25.2 Harbinger Cardinal Rite Recipes
 
-The current interactive ceremony clarity contract is consistent across every phase: projected ritual markers remain targetable even over air; Inscription ends by projecting into the rite's daemon while catalyst requirements remain visible blockers; instability consumes authored boundary rings from the outside inward; the Degree 3+ Fane exterior encloses the complete resolved sigil footprint; and the HUD exposes a persistent checklist of objectives, optional preparation, and blockers.
+The Degree 0-7 progression contract is defined in
+`docs/Cardinal Rite Progression Restructure.md`. Ceremony JSON is explicit and the
+serializer enforces degree ceilings for anchors, support sockets, required sigils,
+offerings, waves, helpers, activation focus, atmosphere, and failure severity.
+Recipes may remain simpler than their degree permits.
 
-Harbinger Cardinal Rites are initiated by right-clicking the structure's activation block, not by the Blood Craft key. Degree 0 rites performed before the Living Staff is available use one Sanguine Formation, consumed only when the rite successfully begins; Degree 1+ rites use the Living Staff. The resulting Degree 1 ceremony uses empty-hand bloodletting for both its boundary anchors and Ichorian sigil nodes: each successful node stroke costs 2 health and contributes 50ml without taking the player's final heart. The activation block is the occupied cell nearest the horizontal center on the pattern's lowest layer. Right-clicking a different block in a completed rite identifies the correct activation block. Unstained Cardinal Rites retain Blood Craft key activation.
+Activation progresses through three authored modes. Sanguine Initiation uses the
+prepared Blood Temple Focus after the Hermit's temple-bound oath
+(`temple_medium`). Degree 1 rites use an iron nugget seated in a crafted Focus
+(`hematic_medium`). Degree 2+ rites plant and escrow the exact Living Staff
+(`living_staff`). Harbinger rites are initiated through their progression-
+appropriate item interaction; Unstained Cardinal Rites retain Blood Craft key
+activation.
+
+Interactive Harbinger rites carry `bloodCost: 0`; their blood is paid visibly
+through anchors, inscription, repairs, helpers, and rite-specific effects rather
+than through a hidden completion drain. Apotheos retains its old economy pending
+its separate Degree 8 pass.
 
 During Consecration, every authored boundary anchor sits inside a persistent hollow, pulsing boundary socket with a faint recessed floor stain. Empty sockets remain dim, brighten as their Sanguine blob fills the gap, and frame the completed anchor instead of letting it sit on top of the larger ring. While a socket is filling, small blood droplets briefly circulate inward before being absorbed. Every pair of adjacent filled anchors then reveals its connecting arc over one second, growing equally from both socket edges until the two fronts meet at the midpoint; opposite anchors do not create a disconnected arc. Once complete, each socket-clipped arc leaves the same faint recessed blood stain beneath the boundary line, allowing a fully completed ring to read as one embedded channel. The meeting point emits a short seal pulse with a quiet heartbeat and wet electrical charge, followed by a compact blood bolus that travels outward along the new line toward both anchors. Damaged sockets twitch and deform in proportion to their instability so threatened anchors telegraph failure before their section breaks. The boundary mesh and its generated anchor markers share the altar's low ground-surface plane. A shader-driven bank of rolling black and blood-red fog follows the complete outer footprint of every active Harbinger rite from activation through completion or collapse. Intermittent black-sheathed, purple-cored bolts use HutosLib's shared lightning implementation to arc laterally from cloud to cloud within that bank. The fog and its lightning do not apply to Unstained rites and can be disabled together with the client `renderCardinalRiteFog` option. A filled boundary anchor replaces its prompt with a persistent red, glowing Sanguine Formation-like blob. Instability is divided evenly across all authored anchors: the next threatened anchor and its outgoing ring portion flicker as their band fills, then the portion breaks and its anchor remains as a black-glowing blob. A full 50 ml projected repair restores one tier-scaled instability band; degree-one rites repair the same damage through their normal empty-hand bloodletting interaction. Degree 3+ Harbinger rites also render the engulfing black/red Fane exterior beyond the ritual boundary, while smaller rites omit it. Ichorian sigil nodes resolve to the highest nearby block surface for both particles and interaction instead of remaining fixed to the recipe layer. Each completed sigil node becomes the same living 3D blob in the sigil's authored color, and correctly completed consecutive nodes draw matching core/glow connections so only the successfully traced portion of the shape is shown. When its final node is fed, the completed shape peels away from the surface, rotates upright, and persists as an `awakened_ichorian_sigil` entity until the rite ends. Its flight expresses its function while remaining inside its assigned ritual radius: Reservoir hangs low and breathes inward and outward; Bastion dashes between perimeter watch-posts; Hematic Lattice maintains a steady woven circulation; Mnemonic traces a searching figure-eight; Suture stitches a looping seam; Shunt darts through rapid redirections; Seal holds a close, quiet orbit around the ritual heart; Cage glides between angular containment corners; and Lens scans from a high elliptical path. Client movement updates interpolate over their packet window, keeping even deliberate watch-post and corner transitions fluid rather than teleporting between server positions.
 
@@ -2871,36 +2886,40 @@ Cardinal rite patterns now follow a function-first visual pass: Harbinger rites 
 
 | Rite | Blood Cost | Rite Form | Required Degree | Degree -> | Description |
 |------|-----------|-----------|-----------------|----------|-------------|
-| Sanguine Initiation | 100 | Minor | 0 | 0 -> 1 | Basic initiation awakening hematic potential |
-| Rite of the Votary | 250 | Lesser | 1 | 1 -> 2 | Binds the practitioner deeper into the Covenant |
-| Rite of the Incarnadine Fane | 500 | Lesser | 2 | 2 -> 3 | Grants formal entry into the Incarnadine Fane |
-| Adept Rite | *(see JSON)* | Lesser | 3 | 3 -> 4 | Fourth rite of the Hematic Order |
-| Rite of the Crimson Lodge | 2000 | Greater | 4 | 4 -> 5 | Degree-advancement rite admitting the practitioner as Illuminatus; it does **not** consecrate a Fane |
-| Rite of the Bloodline Covenant | 3000 | Greater | 5 | 5 -> 6 | Consecrates the practitioner to the Bloodline Covenant |
-| Rite of the Hematic Order | 5000 | Grand | 6 | 6 -> 7 | Crowns the practitioner as Archon |
+| Sanguine Initiation | 0 (visible health medium) | Minor | 0 | 0 -> 1 | Temple-provided initiation with no anchors, sigils, offerings, fog, or ordeal |
+| Rite of the Votary | 0 (visible anchor blood) | Minor | 1 | 1 -> 2 | First player-built floor, crude medium, and four-anchor lesson |
+| Rite of the Incarnadine Fane | 0 (visible ceremony blood) | Lesser | 2 | 2 -> 3 | First Living Staff rank rite; one Hematic Iron Powder offering |
+| Adept Rite | 0 (visible ceremony blood) | Lesser | 3 | 3 -> 4 | Four-anchor Lesser rank rite |
+| Rite of the Crimson Lodge | 0 (visible ceremony blood) | Greater | 4 | 4 -> 5 | First required support sigil; admits the practitioner as Illuminatus but does **not** consecrate a Fane |
+| Rite of the Bloodline Covenant | 0 (visible ceremony blood) | Greater | 5 | 5 -> 6 | Two-ring ordeal admitting the practitioner to the Bloodline Covenant |
+| Rite of the Hematic Order | 0 (visible ceremony blood) | Grand | 6 | 6 -> 7 | Twelve-anchor Grand ordeal with one required helper |
 | Rite of Apotheos | 7000 | Grand | 7 | 7 -> 8 | Final ascension beyond Archon; requires completed Qliphoth Communion |
 
 **Utility Rites:**
 
-Utility rite `required_degree` values are authored per recipe rather than inferred from their form. For example, Vascular Mending is Degree 1, the Bloodline/Beacon/Hungering Earth cluster is Degree 2, Scarlet Summons and Sanguine Eclipse are Degree 3, Crimson Vessel is Degree 4, Founding Fane/Pallid Shadow/Sanguine Dominion are Degree 5, Eternal Covenant is Degree 6, and Ancestral Communion/Bloom of the Qliphoth are Degree 7.
+Utility rite `required_degree` values are authored per recipe rather than inferred
+from form. The production catalog is validated as a whole against the degree
+ceilings. Material-result rites retain their real output; effect-only rites no
+longer emit placeholder items.
 
 | Rite | Blood Cost | Rite Form | Description |
 |------|-----------|-----------|-------------|
-| **Bloodline Founding** | 500 | Lesser | Binds the caster's essence into a new bloodline, producing a presigned ancestral ledger |
-| **Bloodline Recall** | 750 | Lesser | Reconjures a lost ancestral ledger from the caster's blood memory |
-| **Vascular Mending** | 800 | Lesser | Floods the caster's vascular system with purified blood, fully healing all 7 vein sections |
-| **Hematic Fortification** | 500 | Lesser | Strengthens the caster's connection to the blood arts |
-| **Hematic Unbinding** | 1000 | Lesser | Dissolves the caster's bloodline, freeing all members and returning shared blood |
-| **Crimson Beacon** | 600 | Lesser | Anchors the caster's dying essence to this location: respawn point on fatal blow |
-| **Hungering Earth** | 750 | Lesser | Feeds blood into the earth, converting terrain into blood-touched stone and ash |
-| **Exsanguination** | 500 | Lesser | Drains the lifeblood of a creature within the ritual circle, crystallizing their essence into Sanguine Quintessence |
-| **Sanguine Attunement** | 300 | Minor | Purges and resets the caster's blood tendency alignments to a blank slate |
-| **Scarlet Summons** | 2000 | Greater | Teleports all online bloodline members to the rite location (cost scales with members) |
-| **Sanguine Dominion** | 3500 | Greater | Claims the surrounding land as a Blood Domain: reduced manip cost, bleeding curse on enemies, empowered blood blocks |
-| **Eternal Covenant** | 4000 | Greater | Permanently expands the caster's maximum blood volume (one-time only) |
-| **Pallid Shadow** | 5000 | Grand | Strips Unstained purification from a nearby player: a blasphemous assault on Our Lady's path |
-| **Ancestral Communion** | 5000 | Grand | Opens a channel to the ancient fungal consciousness. Triggers `AncestralCommunionDialogueTrees`: 5 dialogue variants (Origin, The Schism, The Infection, The Harbingers, The True Name) that reveal the fungal origins of hemomancy. Fires `communion_lore_*` events on completion. |
-| **Bloom of the Qliphoth** | 1200 | Grand | Degree 7. Plants a Qliphoth Seed (placed as catalyst within the rite pattern), summons a `QliphothBloomBlock` (1x1x8 tree, 3-chunk radius), and starts the Qliphoth Communion chain. See section 5.9. |
+| **Bloodline Founding** | 0 + ceremony | Lesser | Creates a new bloodline and produces its presigned Ancestral Ledger |
+| **Bloodline Recall** | 0 + ceremony | Lesser | Reconjures a signed ledger from an existing bloodline |
+| **Vascular Mending** | 0 + ceremony | Lesser | Fully heals all seven vascular sections |
+| **Hematic Fortification** | 0 + ceremony | Lesser | Permanently reduces vascular and manipulation strain by 15% |
+| **Hematic Unbinding** | 0 + ceremony | Greater | Two-performance irreversible confirmation dissolves the leader's bloodline |
+| **Crimson Beacon** | 0 + ceremony | Lesser | Records or relocates the caster's death waypoint |
+| **Hungering Earth** | 0 + ceremony | Lesser | Converts nearby terrain into blood-touched stone and ash |
+| **Exsanguination** | 0 + ceremony | Lesser | The sole passive-sacrifice rite; produces Sanguine Quintessence |
+| **Sanguine Attunement** | 0 + ceremony | Minor | Resets blood tendency alignments |
+| **Scarlet Summons** | 0 + ceremony/effect | Greater | Teleports online bloodline members; shared-pool cost scales per member |
+| **Sanguine Dominion** | 0 + ceremony | Greater | Establishes or relocates one owner-bound Blood Domain |
+| **Eternal Covenant** | 0 + ceremony | Greater | Permanently expands maximum blood volume once |
+| **Covenant Vigil** | 0 + ceremony | Greater | Requires one helper; all assigned survivors gain ten minutes of Resistance and Regeneration |
+| **Pallid Shadow** | 0 + ceremony | Grand | With PvP and target safeguards, strips real Unstained progress from the nearest valid player |
+| **Ancestral Communion** | 0 + ceremony | Grand | Advances through five persistent sequential fungal-lore dialogues |
+| **Bloom of the Qliphoth** | 0 + ceremony | Grand | Uses a planted Qliphoth Seed to summon a persistent 1x1x8 bloom |
 
 ### 25.3 Enzyme Fruiting Recipes
 

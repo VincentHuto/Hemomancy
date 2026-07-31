@@ -1,20 +1,55 @@
 {
   "type": "hemomancy:cardinal_rite_recipe",
-  "bloodCost": 300,
+  "bloodCost": 0,
   "riteType": "minor",
   "required_degree": 1,
   "riteName": "Rite of Sanguine Attunement",
   "riteDescription": "A cleansing rite that purges and resets the caster's blood tendency alignments, allowing them to realign their kinship from a blank slate.",
-  "result": {
-    "id": "hemomancy:sanguine_formation"
-  },
   "floor": "hemomancy:communion_minor",
-  "brazier_signature": [
-    {
-      "ingredient": {
-        "item": "minecraft:redstone"
+  "brazier_signature": [],
+  "ceremony": {
+    "profile": "simple",
+    "anchors": [
+      {
+        "y": 1,
+        "ring": 0,
+        "order": 0
       },
-      "count": 1
-    }
-  ]
+      {
+        "y": 1,
+        "ring": 0,
+        "order": 1
+      },
+      {
+        "y": 1,
+        "ring": 0,
+        "order": 2
+      },
+      {
+        "y": 1,
+        "ring": 0,
+        "order": 3
+      }
+    ],
+    "support_sockets": [],
+    "waves": [],
+    "guaranteed_waves": [],
+    "signature": "sanguine_attunement",
+    "fragile_offsets": [],
+    "target_duration_ticks": 400,
+    "focus": "hematic_medium",
+    "required_helpers": 0,
+    "helper_roles": [
+      "anchor",
+      "attendant",
+      "warden"
+    ],
+    "still_interval_ticks": 0,
+    "atmosphere": {
+      "fog": "none",
+      "lightning": false,
+      "dome": false
+    },
+    "failure": "safe_retry"
+  }
 }

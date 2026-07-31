@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.rite;
 
+import com.vincenthuto.hemomancy.common.rite.harbinger.CardinalRiteAllyService;
 import org.junit.jupiter.api.Test;
 
 import java.util.HashSet;
@@ -7,12 +8,37 @@ import java.util.Set;
 
 public final class CardinalRiteCeremonyRulesTest {
 	@Test
-	void anchorCostsScaleByDegree() {
+	void authoredHelperRequirementIsARealStartGate() {
+		assertFalse(CardinalRiteAllyService.hasRequiredHelperCount(0, 1));
+		assertTrue(CardinalRiteAllyService.hasRequiredHelperCount(1, 1));
+		assertTrue(CardinalRiteAllyService.hasRequiredHelperCount(0, 0));
+	}
+
+	@Test
+	void authoredFailureProfilesProtectEarlyRitesFromPunitiveCollapse() {
+		assertEquals(0.0F, CardinalRiteCeremonyRules.collapseDamage("safe_retry"),
+				"safe retry damage");
+		assertEquals(0, CardinalRiteCeremonyRules.fragileBlocksOnCollapse("offering_loss"),
+				"offering loss fragile blocks");
+		assertEquals(1, CardinalRiteCeremonyRules.fragileBlocksOnCollapse("fragile_damage"),
+				"fragile damage blocks");
+		assertEquals(3, CardinalRiteCeremonyRules.fragileBlocksOnCollapse("collapse"),
+				"collapse fragile blocks");
+	}
+
+	@Test
+	void anchorCostsFollowTheProgressiveDegreeCeiling() {
 		assertEquals(4, CardinalRiteCeremonyRules.anchorCount(1), "degree one anchors");
-		assertEquals(8, CardinalRiteCeremonyRules.anchorCount(2), "degree two anchors");
-		assertEquals(32, CardinalRiteCeremonyRules.anchorCount(8), "degree eight anchors");
+		assertEquals(4, CardinalRiteCeremonyRules.anchorCount(2), "degree two anchors");
+		assertEquals(4, CardinalRiteCeremonyRules.anchorCount(3), "degree three anchors");
+		assertEquals(4, CardinalRiteCeremonyRules.anchorCount(4), "degree four anchors");
+		assertEquals(8, CardinalRiteCeremonyRules.anchorCount(5), "degree five anchors");
+		assertEquals(12, CardinalRiteCeremonyRules.anchorCount(6), "degree six anchors");
+		assertEquals(12, CardinalRiteCeremonyRules.anchorCount(7), "degree seven anchors");
 		assertEquals(200, CardinalRiteCeremonyRules.upfrontBloodCost(1), "degree one blood");
-		assertEquals(1_600, CardinalRiteCeremonyRules.upfrontBloodCost(8), "degree eight blood");
+		assertEquals(200, CardinalRiteCeremonyRules.upfrontBloodCost(4), "degree four blood");
+		assertEquals(400, CardinalRiteCeremonyRules.upfrontBloodCost(5), "degree five blood");
+		assertEquals(600, CardinalRiteCeremonyRules.upfrontBloodCost(7), "degree seven blood");
 	}
 
 	@Test
@@ -28,8 +54,8 @@ public final class CardinalRiteCeremonyRulesTest {
 	@Test
 	void onlyUpperDegreesReceiveAllies() {
 		assertEquals(0, CardinalRiteCeremonyRules.allyQuota(4), "degree four quota");
-		assertEquals(1, CardinalRiteCeremonyRules.allyQuota(5), "degree five quota");
-		assertEquals(2, CardinalRiteCeremonyRules.allyQuota(6), "degree six quota");
+		assertEquals(0, CardinalRiteCeremonyRules.allyQuota(5), "degree five quota");
+		assertEquals(1, CardinalRiteCeremonyRules.allyQuota(6), "degree six quota");
 		assertEquals(3, CardinalRiteCeremonyRules.allyQuota(7), "degree seven quota");
 		assertEquals(3, CardinalRiteCeremonyRules.allyQuota(8), "degree eight quota");
 	}
@@ -46,6 +72,7 @@ public final class CardinalRiteCeremonyRulesTest {
 	@Test
 	void professionFailureEscalatesByDegree() {
 		assertEquals(CardinalRiteProfessionFailure.RETRY, CardinalRiteCeremonyRules.professionFailure(2), "early");
+		assertEquals(CardinalRiteProfessionFailure.RETRY, CardinalRiteCeremonyRules.professionFailure(3), "early offering");
 		assertEquals(CardinalRiteProfessionFailure.RECOVERY_WAVE, CardinalRiteCeremonyRules.professionFailure(4), "middle");
 		assertEquals(CardinalRiteProfessionFailure.SEVERE_RECOVERY, CardinalRiteCeremonyRules.professionFailure(6), "high");
 		assertEquals(CardinalRiteProfessionFailure.COLLAPSE, CardinalRiteCeremonyRules.professionFailure(7), "archon");
@@ -64,24 +91,54 @@ public final class CardinalRiteCeremonyRulesTest {
 	}
 
 	@Test
-	void innermostGeneratedAnchorsMeetTheExpandedBoundaryOutsideAThreeByThreeAltar() {
-		var anchors = CardinalRiteCeremonyDefinition.anchorsForLayout(
-				1, 0, CardinalRiteCeremonyCatalog.Layout.CARDINAL);
+	void innermostGeneratedAnchorsAreInsetOneBlockFromTheFormerBoundary() {
+		double originalAngle = CardinalRiteRingTuning.ROTATION_DEGREES[0];
+		double originalRadius = CardinalRiteRingTuning.RADIUS_BLOCKS[0];
+		try {
+			CardinalRiteRingTuning.ROTATION_DEGREES[0] = 0.0D;
+			CardinalRiteRingTuning.RADIUS_BLOCKS[0] = 2.0D;
 
-		assertEquals(3, Math.abs(anchors.get(0).z()), "first ring radius");
+			var anchors = CardinalRiteCeremonyDefinition.anchorsForLayout(
+					1, 0, CardinalRiteCeremonyCatalog.Layout.CARDINAL);
+
+			assertEquals(2, Math.abs(anchors.get(0).z()), "first ring radius");
+		} finally {
+			CardinalRiteRingTuning.ROTATION_DEGREES[0] = originalAngle;
+			CardinalRiteRingTuning.RADIUS_BLOCKS[0] = originalRadius;
+		}
 	}
 
 	@Test
-	void successiveBoundaryRingsRotateTheirAnchorLocationsByFortyFiveDegrees() {
-		var anchors = CardinalRiteCeremonyDefinition.anchorsForLayout(
-				3, 0, CardinalRiteCeremonyCatalog.Layout.CARDINAL);
+	void secondBoundaryRingCanBeTunedClearOfThePillarCorners() {
+		double[] originalAngles = CardinalRiteRingTuning.ROTATION_DEGREES.clone();
+		double[] originalRadii = CardinalRiteRingTuning.RADIUS_BLOCKS.clone();
+		try {
+			CardinalRiteRingTuning.ROTATION_DEGREES[0] = 0.0D;
+			CardinalRiteRingTuning.RADIUS_BLOCKS[0] = 2.0D;
+			CardinalRiteRingTuning.ROTATION_DEGREES[1] = 67.5D;
+			CardinalRiteRingTuning.RADIUS_BLOCKS[1] = Math.sqrt(10.0D);
+			CardinalRiteRingTuning.ROTATION_DEGREES[2] = 90.0D;
+			CardinalRiteRingTuning.RADIUS_BLOCKS[2] = 4.0D;
 
-		assertEquals(0, anchors.get(0).x(), "inner ring first anchor x");
-		assertEquals(-3, anchors.get(0).z(), "inner ring first anchor z");
-		assertEquals(3, anchors.get(4).x(), "second ring first anchor x");
-		assertEquals(-3, anchors.get(4).z(), "second ring first anchor z");
-		assertEquals(5, anchors.get(8).x(), "third ring first anchor x");
-		assertEquals(0, anchors.get(8).z(), "third ring first anchor z");
+			var anchors = CardinalRiteCeremonyDefinition.anchorsForLayout(
+					3, 0, CardinalRiteCeremonyCatalog.Layout.CARDINAL);
+
+			assertEquals(0, anchors.get(0).x(), "inner ring first anchor x");
+			assertEquals(-2, anchors.get(0).z(), "inner ring first anchor z");
+			assertEquals(3, anchors.get(4).x(), "second ring first anchor x");
+			assertEquals(-1, anchors.get(4).z(), "second ring first anchor z");
+			for (int index = 4; index < 8; index++) {
+				var anchor = anchors.get(index);
+				assertFalse(Math.abs(anchor.x()) == 2 && Math.abs(anchor.z()) == 2);
+			}
+			assertEquals(4, anchors.get(8).x(), "third ring first anchor x");
+			assertEquals(0, anchors.get(8).z(), "third ring first anchor z");
+		} finally {
+			System.arraycopy(originalAngles, 0, CardinalRiteRingTuning.ROTATION_DEGREES,
+					0, originalAngles.length);
+			System.arraycopy(originalRadii, 0, CardinalRiteRingTuning.RADIUS_BLOCKS,
+					0, originalRadii.length);
+		}
 	}
 
 	@Test
@@ -101,5 +158,13 @@ public final class CardinalRiteCeremonyRulesTest {
 		if (!expected.equals(actual)) {
 			throw new AssertionError(label + ": expected " + expected + " but got " + actual);
 		}
+	}
+
+	private static void assertTrue(boolean value) {
+		if (!value) throw new AssertionError("expected true");
+	}
+
+	private static void assertFalse(boolean value) {
+		if (value) throw new AssertionError("expected false");
 	}
 }

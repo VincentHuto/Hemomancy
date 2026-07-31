@@ -47,6 +47,9 @@ public class ActiveCardinalRite {
 	private int instability;
 	private int currentWave;
 	private int totalWaves;
+	private boolean professionAfterOrdeal;
+	private boolean betweenWaveStillIntervals;
+	private boolean finalStillInterval;
 	private int committedBloodMl;
 	private int carriedIchorMl;
 	private int carriedIchorTicks;
@@ -120,7 +123,7 @@ public class ActiveCardinalRite {
 		rite.phase = CardinalRitePhase.CONSECRATION;
 		rite.degree = Math.max(1, degree);
 		rite.abbreviated = abbreviated;
-		rite.totalWaves = abbreviated ? 1 : Math.max(1, totalWaves);
+		rite.totalWaves = Math.max(0, totalWaves);
 		rite.anchorBloodMl = new int[Math.max(1, anchorCount)];
 		rite.instabilityRepairBloodMl = new int[rite.anchorBloodMl.length];
 		return rite;
@@ -195,7 +198,9 @@ public class ActiveCardinalRite {
 
 	public int completedRings() {
 		int completed = 0;
-		for (int ring = 0; ring < degree; ring++) {
+		int authoredRings = (anchorBloodMl.length + CardinalRiteCeremonyRules.ANCHORS_PER_DEGREE - 1)
+				/ CardinalRiteCeremonyRules.ANCHORS_PER_DEGREE;
+		for (int ring = 0; ring < authoredRings; ring++) {
 			boolean full = true;
 			int start = ring * CardinalRiteCeremonyRules.ANCHORS_PER_DEGREE;
 			for (int i = start; i < Math.min(start + CardinalRiteCeremonyRules.ANCHORS_PER_DEGREE,
@@ -220,20 +225,38 @@ public class ActiveCardinalRite {
 	public boolean sealAltar() {
 		if (phase != CardinalRitePhase.INSCRIPTION) return false;
 		altarSealed = true;
-		setPhase(CardinalRitePhase.ORDEAL);
+		finalStillInterval = true;
+		setPhase(totalWaves > 0 ? CardinalRitePhase.ORDEAL : CardinalRitePhase.STILL_INTERVAL);
+		return true;
+	}
+
+	public boolean sealAltar(boolean professionRite, boolean hasStillInterval) {
+		if (phase != CardinalRitePhase.INSCRIPTION) return false;
+		altarSealed = true;
+		professionAfterOrdeal = professionRite;
+		betweenWaveStillIntervals = hasStillInterval;
+		finalStillInterval = false;
+		if (totalWaves > 0) setPhase(CardinalRitePhase.ORDEAL);
+		else if (hasStillInterval) setPhase(CardinalRitePhase.STILL_INTERVAL);
+		else setPhase(professionRite ? CardinalRitePhase.PROFESSION : finalePhase());
 		return true;
 	}
 
 	public void completeWave() {
 		if (phase != CardinalRitePhase.ORDEAL) return;
 		currentWave = Math.min(totalWaves, currentWave + 1);
-		if (currentWave >= totalWaves) setPhase(CardinalRitePhase.STILL_INTERVAL);
-		else setPhase(CardinalRitePhase.ORDEAL);
+		if (currentWave >= totalWaves) {
+			setPhase(finalStillInterval ? CardinalRitePhase.STILL_INTERVAL
+					: professionAfterOrdeal ? CardinalRitePhase.PROFESSION : finalePhase());
+		} else {
+			setPhase(betweenWaveStillIntervals ? CardinalRitePhase.STILL_INTERVAL : CardinalRitePhase.ORDEAL);
+		}
 	}
 
 	public void finishStillInterval(boolean professionRite) {
 		if (phase != CardinalRitePhase.STILL_INTERVAL) return;
-		setPhase(professionRite ? CardinalRitePhase.PROFESSION : finalePhase());
+		if (currentWave < totalWaves) setPhase(CardinalRitePhase.ORDEAL);
+		else setPhase(professionRite || professionAfterOrdeal ? CardinalRitePhase.PROFESSION : finalePhase());
 	}
 
 	public void finishProfession() {
@@ -764,6 +787,9 @@ public class ActiveCardinalRite {
 		tag.putInt("Instability", instability);
 		tag.putInt("CurrentWave", currentWave);
 		tag.putInt("TotalWaves", totalWaves);
+		tag.putBoolean("ProfessionAfterOrdeal", professionAfterOrdeal);
+		tag.putBoolean("BetweenWaveStillIntervals", betweenWaveStillIntervals);
+		tag.putBoolean("FinalStillInterval", finalStillInterval);
 		tag.putInt("CommittedBloodMl", committedBloodMl);
 		tag.putInt("CarriedIchorMl", carriedIchorMl);
 		tag.putInt("CarriedIchorTicks", carriedIchorTicks);
@@ -890,6 +916,9 @@ public class ActiveCardinalRite {
 		rite.instability = tag.getInt("Instability");
 		rite.currentWave = tag.getInt("CurrentWave");
 		rite.totalWaves = tag.getInt("TotalWaves");
+		rite.professionAfterOrdeal = tag.getBoolean("ProfessionAfterOrdeal");
+		rite.betweenWaveStillIntervals = tag.getBoolean("BetweenWaveStillIntervals");
+		rite.finalStillInterval = tag.getBoolean("FinalStillInterval");
 		rite.committedBloodMl = tag.getInt("CommittedBloodMl");
 		rite.carriedIchorMl = tag.getInt("CarriedIchorMl");
 		rite.carriedIchorTicks = tag.getInt("CarriedIchorTicks");

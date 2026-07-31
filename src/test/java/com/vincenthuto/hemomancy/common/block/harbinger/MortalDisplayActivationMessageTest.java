@@ -29,9 +29,9 @@ public final class MortalDisplayActivationMessageTest {
 		if (charmMessage < 0) {
 			throw new AssertionError("living adornment message key is missing");
 		}
-		int serverSideGuard = source.lastIndexOf("if (!worldIn.isClientSide)", charmMessage);
-		if (serverSideGuard < 0) {
-			throw new AssertionError("living adornment message is not guarded to the server side");
+		int clientReturn = source.lastIndexOf("if (worldIn.isClientSide) return", charmMessage);
+		if (clientReturn < 0) {
+			throw new AssertionError("living adornment message is not behind the server-side early return");
 		}
 	}
 

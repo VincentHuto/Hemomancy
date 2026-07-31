@@ -1,14 +1,11 @@
 {
   "type": "hemomancy:cardinal_rite_recipe",
-  "bloodCost": 3000,
+  "bloodCost": 0,
   "riteType": "greater",
   "required_degree": 5,
   "riteName": "Rite of the Bloodline Covenant",
   "riteDescription": "The sixth rite of the Hematic Order, consecrating the practitioner fully to the Bloodline Covenant.",
   "rankup": true,
-  "result": {
-    "id": "hemomancy:sanguine_quintessence"
-  },
   "floor": "hemomancy:threshold_greater",
   "required_structure": {
     "pattern": [
@@ -37,9 +34,119 @@
   "brazier_signature": [
     {
       "ingredient": {
-        "item": "minecraft:lapis_lazuli"
+        "item": "hemomancy:sanguine_quintessence"
+      },
+      "count": 1
+    },
+    {
+      "ingredient": {
+        "item": "hemomancy:puppeteering_thread"
+      },
+      "count": 1
+    },
+    {
+      "ingredient": {
+        "item": "minecraft:amethyst_shard"
       },
       "count": 1
     }
-  ]
+  ],
+  "ceremony": {
+    "profile": "ceremonial",
+    "anchors": [
+      {
+        "y": 1,
+        "ring": 0,
+        "order": 0
+      },
+      {
+        "y": 1,
+        "ring": 0,
+        "order": 1
+      },
+      {
+        "y": 1,
+        "ring": 0,
+        "order": 2
+      },
+      {
+        "y": 1,
+        "ring": 0,
+        "order": 3
+      },
+      {
+        "y": 1,
+        "ring": 1,
+        "order": 0
+      },
+      {
+        "y": 1,
+        "ring": 1,
+        "order": 1
+      },
+      {
+        "y": 1,
+        "ring": 1,
+        "order": 2
+      },
+      {
+        "y": 1,
+        "ring": 1,
+        "order": 3
+      }
+    ],
+    "support_sockets": [
+      {
+        "x": 5,
+        "y": 0,
+        "z": 0,
+        "suggested_sigil": "bastion",
+        "required": true
+      },
+      {
+        "x": -5,
+        "y": 0,
+        "z": 0,
+        "suggested_sigil": "reservoir",
+        "required": false
+      }
+    ],
+    "waves": [
+      "bloodlicker_siphon"
+    ],
+    "guaranteed_waves": [],
+    "signature": "covenant_currents",
+    "fragile_offsets": [
+      [
+        1,
+        0,
+        1
+      ],
+      [
+        -1,
+        0,
+        -1
+      ],
+      [
+        1,
+        0,
+        -1
+      ]
+    ],
+    "target_duration_ticks": 3600,
+    "focus": "living_staff",
+    "required_helpers": 0,
+    "helper_roles": [
+      "anchor",
+      "attendant",
+      "warden"
+    ],
+    "still_interval_ticks": 0,
+    "atmosphere": {
+      "fog": "storm",
+      "lightning": true,
+      "dome": false
+    },
+    "failure": "fragile_damage"
+  }
 }

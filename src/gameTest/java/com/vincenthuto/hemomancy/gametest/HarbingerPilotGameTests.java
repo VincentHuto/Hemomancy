@@ -3,11 +3,16 @@ package com.vincenthuto.hemomancy.gametest;
 import com.mojang.authlib.GameProfile;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.init.EntityInit;
+import com.vincenthuto.hemomancy.common.init.ItemInit;
+import com.vincenthuto.hemomancy.common.rite.CardinalRiteStaffEscrow;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.server.level.ClientInformation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Mob;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.inventory.ContainerListener;
+import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.gametest.GameTestHolder;
 import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 
@@ -85,6 +90,31 @@ public final class HarbingerPilotGameTests {
 		}
 	}
 
+	@GameTest(templateNamespace = "minecraft", template = EMPTY_TEMPLATE, timeoutTicks = 40)
+	public static void creativeStaffEscrowRemovesAndSynchronizesHeldStaff(GameTestHelper helper) {
+		ServerPlayer player = detachedTestPlayer(helper);
+		try {
+			player.getAbilities().instabuild = true;
+			player.getInventory().selected = 0;
+			player.getInventory().setItem(0, new ItemStack(ItemInit.living_staff.get()));
+			StaffRemovalListener listener = new StaffRemovalListener();
+			player.inventoryMenu.addSlotListener(listener);
+			listener.reset();
+
+			ItemStack captured = CardinalRiteStaffEscrow.capture(player);
+
+			helper.assertTrue(captured.is(ItemInit.living_staff.get()),
+					"The exact Living Staff must enter rite escrow");
+			helper.assertTrue(player.getInventory().getItem(0).isEmpty(),
+					"Creative mode must not retain the planted Living Staff");
+			helper.assertTrue(listener.sawEmptySlot,
+					"Staff removal must be synchronized immediately to the creative client");
+			helper.succeed();
+		} finally {
+			player.discard();
+		}
+	}
+
 	private static void runScenario(GameTestHelper helper, String id) {
 		HemoTestScenario scenario = HemoTestScenarioCatalog.find(id)
 				.orElseThrow(() -> new IllegalArgumentException("Unknown scenario " + id));
@@ -106,6 +136,23 @@ public final class HarbingerPilotGameTests {
 				helper.getLevel(),
 				new GameProfile(UUID.randomUUID(), "hemomancy-test-player"),
 				ClientInformation.createDefault());
+	}
+
+	private static final class StaffRemovalListener implements ContainerListener {
+		private boolean sawEmptySlot;
+
+		@Override
+		public void slotChanged(AbstractContainerMenu menu, int slot, ItemStack stack) {
+			if (stack.isEmpty()) sawEmptySlot = true;
+		}
+
+		@Override
+		public void dataChanged(AbstractContainerMenu menu, int slot, int value) {
+		}
+
+		private void reset() {
+			sawEmptySlot = false;
+		}
 	}
 
 }

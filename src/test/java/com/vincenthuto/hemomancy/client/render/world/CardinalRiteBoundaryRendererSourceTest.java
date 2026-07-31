@@ -29,4 +29,16 @@ public final class CardinalRiteBoundaryRendererSourceTest {
 		assertFalse(source.contains("drawSocketStain(coreVC"),
 				"transparent socket feather must not write depth");
 	}
+
+	@Test
+	void removedRecipeFromAnOldWorldFallsBackToPlainBoundaryGeometry() throws IOException {
+		String source = Files.readString(RENDERER).replace("\r\n", "\n");
+
+		assertTrue(source.contains("CardinalRiteCeremonyDefinition ceremony = recipe == null"),
+				"renderer must tolerate an active rite whose recipe was removed by a datapack update");
+		assertTrue(source.contains("hasAnchorSockets ? segmentClearances("),
+				"missing ceremony should use zero-clearance boundary arcs");
+		assertTrue(source.contains("if (!legacy && glowVC != null && hasAnchorSockets)"),
+				"ceremony-authored floor stains must be skipped when recipe data is unavailable");
+	}
 }

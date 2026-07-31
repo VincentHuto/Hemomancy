@@ -2,6 +2,7 @@ package com.vincenthuto.hemomancy.client.render.world;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.client.data.ActiveRiteClientData;
 import com.vincenthuto.hemomancy.client.render.HemoRenderTypes;
 import com.vincenthuto.hemomancy.common.init.ShaderInit;
@@ -20,6 +21,7 @@ import java.util.List;
 
 public final class CardinalRiteFogRenderer {
 	private static final CardinalRiteFogState STATE = new CardinalRiteFogState();
+	private static String lastDiagnosticSignature = "";
 
 	private CardinalRiteFogRenderer() {
 	}
@@ -27,8 +29,11 @@ public final class CardinalRiteFogRenderer {
 	public static void render(PoseStack poseStack, MultiBufferSource.BufferSource buffer,
 			List<ActiveRiteClientData.RiteEntry> activeRites, float time, Camera camera) {
 		List<CardinalRiteFogState.Sample> samples = STATE.update(activeRites, time);
-		if (!enabled() || ShaderInit.CARDINAL_RITE_FOG.getInstance().get() == null) {
-			if (!enabled()) {
+		boolean fogEnabled = enabled();
+		boolean shaderReady = ShaderInit.CARDINAL_RITE_FOG.getInstance().get() != null;
+		logAtmosphereState(activeRites, samples.size(), fogEnabled, shaderReady);
+		if (!fogEnabled || !shaderReady) {
+			if (!fogEnabled) {
 				STATE.clear();
 			}
 			CardinalRiteFogLightning.clear();
@@ -58,6 +63,26 @@ public final class CardinalRiteFogRenderer {
 	public static void clear() {
 		STATE.clear();
 		CardinalRiteFogLightning.clear();
+		lastDiagnosticSignature = "";
+	}
+
+	private static void logAtmosphereState(List<ActiveRiteClientData.RiteEntry> activeRites,
+			int sampleCount, boolean fogEnabled, boolean shaderReady) {
+		StringBuilder signature = new StringBuilder()
+				.append("enabled=").append(fogEnabled)
+				.append(", shaderReady=").append(shaderReady)
+				.append(", samples=").append(sampleCount);
+		for (ActiveRiteClientData.RiteEntry rite : activeRites) {
+			signature.append(" | recipe=").append(rite.getRecipeId())
+					.append(", fog=").append(rite.getFogProfile())
+					.append(", lightning=").append(rite.hasFogLightning())
+					.append(", dome=").append(rite.hasBoundaryDome());
+		}
+		String current = signature.toString();
+		if (!current.equals(lastDiagnosticSignature)) {
+			lastDiagnosticSignature = current;
+			Hemomancy.LOGGER.info("Cardinal rite atmosphere renderer: {}", current);
+		}
 	}
 
 	private static boolean enabled() {

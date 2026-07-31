@@ -18,4 +18,32 @@ class CardinalRiteThreatRulesTest {
 		assertTrue(CardinalRiteThreatRules.BLOODLICKER_MAX_HEALTH
 				> CardinalRiteThreatRules.BASTION_DAMAGE_PER_PULSE);
 	}
+
+	@Test
+	void onlyExsanguinationFeedsOnBystanders() {
+		assertFalse(CardinalRiteThreatRules.allowsPassiveSacrifice(
+				"cardinal_rite/sanguine_initiation"));
+		assertTrue(CardinalRiteThreatRules.allowsPassiveSacrifice(
+				"cardinal_rite/exsanguination"));
+		assertFalse(CardinalRiteThreatRules.allowsPassiveSacrifice(
+				"cardinal_rite/vascular_mending"));
+		assertFalse(CardinalRiteThreatRules.allowsPassiveSacrifice(
+				"cardinal_rite/archon_rite"));
+	}
+
+	@Test
+	void protectedRelationshipsAndBossesCannotBeSacrificed() {
+		assertTrue(CardinalRiteThreatRules.isEligiblePassiveSacrifice(
+				false, false, false, false, false));
+		assertFalse(CardinalRiteThreatRules.isEligiblePassiveSacrifice(
+				true, false, false, false, false));
+		assertFalse(CardinalRiteThreatRules.isEligiblePassiveSacrifice(
+				false, true, false, false, false));
+		assertFalse(CardinalRiteThreatRules.isEligiblePassiveSacrifice(
+				false, false, true, false, false));
+		assertFalse(CardinalRiteThreatRules.isEligiblePassiveSacrifice(
+				false, false, false, true, false));
+		assertFalse(CardinalRiteThreatRules.isEligiblePassiveSacrifice(
+				false, false, false, false, true));
+	}
 }

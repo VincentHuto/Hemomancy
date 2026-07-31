@@ -1,13 +1,10 @@
 {
   "type": "hemomancy:cardinal_rite_recipe",
-  "bloodCost": 2000,
+  "bloodCost": 0,
   "riteType": "greater",
-  "required_degree": 3,
+  "required_degree": 5,
   "riteName": "Rite of the Scarlet Summons",
   "riteDescription": "A commanding rite that draws upon the shared bloodline pool to teleport all online bloodline members to the rite location. The cost scales with the number of members summoned.",
-  "result": {
-    "id": "hemomancy:sanguine_formation"
-  },
   "floor": "hemomancy:dominion_greater",
   "required_structure": {
     "pattern": [
@@ -40,5 +37,85 @@
       },
       "count": 1
     }
-  ]
+  ],
+  "ceremony": {
+    "profile": "standard",
+    "anchors": [
+      {
+        "y": 1,
+        "ring": 0,
+        "order": 0
+      },
+      {
+        "y": 1,
+        "ring": 0,
+        "order": 1
+      },
+      {
+        "y": 1,
+        "ring": 0,
+        "order": 2
+      },
+      {
+        "y": 1,
+        "ring": 0,
+        "order": 3
+      },
+      {
+        "y": 1,
+        "ring": 1,
+        "order": 0
+      },
+      {
+        "y": 1,
+        "ring": 1,
+        "order": 1
+      },
+      {
+        "y": 1,
+        "ring": 1,
+        "order": 2
+      },
+      {
+        "y": 1,
+        "ring": 1,
+        "order": 3
+      }
+    ],
+    "support_sockets": [
+      {
+        "x": 5,
+        "y": 0,
+        "z": 0,
+        "suggested_sigil": "bastion",
+        "required": true
+      },
+      {
+        "x": -5,
+        "y": 0,
+        "z": 0,
+        "suggested_sigil": "reservoir",
+        "required": false
+      }
+    ],
+    "waves": [],
+    "guaranteed_waves": [],
+    "signature": "scarlet_summons",
+    "fragile_offsets": [],
+    "target_duration_ticks": 1200,
+    "focus": "living_staff",
+    "required_helpers": 0,
+    "helper_roles": [
+      "anchor",
+      "attendant",
+      "warden"
+    ],
+    "still_interval_ticks": 0,
+    "atmosphere": {
+      "fog": "storm",
+      "lightning": true,
+      "dome": false
+    },
+    "failure": "fragile_damage"
+  }
 }

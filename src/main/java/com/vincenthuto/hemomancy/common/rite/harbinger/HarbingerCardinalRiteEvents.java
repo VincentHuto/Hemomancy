@@ -87,6 +87,9 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
@@ -174,6 +177,19 @@ public class HarbingerCardinalRiteEvents {
 			BlockPos center = rite.getCenterPos();
 			int riteSize = rite.getRiteSize();
 			CardinalRiteRecipe recipe = CardinalRiteRecipe.getRiteByLocation(sLevel, rite.getRecipeId());
+			if (recipe == null && rite.getPhase() != CardinalRitePhase.LEGACY) {
+				Hemomancy.LOGGER.warn("Retiring active cardinal rite {} at {} because its recipe no longer exists",
+						rite.getRecipeId(), center);
+				CardinalRiteOrdealEngine.clearThreats(sLevel, rite);
+				CardinalRiteStaffEscrow.restore(caster, rite);
+				caster.displayClientMessage(
+						Component.literal("The rite dissolves harmlessly because its pattern is no longer known.")
+								.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC),
+						false);
+				toRemove.add(playerUUID);
+				savedData.setDirty();
+				continue;
+			}
 			if (recipe != null && recipe.hasLayeredStation()
 					&& !rite.hasCapturedOfferingItinerary()) {
 				CardinalRiteStationMatcher.StationMatch station =
@@ -251,6 +267,8 @@ public class HarbingerCardinalRiteEvents {
 			// === Unwilling sacrifice processing ===
 			// Non-caster living entities within bounds take damage and feed the ritual
 			if (rite.getPhase() == CardinalRitePhase.LEGACY
+					&& CardinalRiteThreatRules.allowsPassiveSacrifice(
+							rite.getRecipeId().getPath())
 					&& sLevel.getGameTime() % SACRIFICE_DAMAGE_INTERVAL == 0) {
 				processSacrifices(sLevel, rite, caster, ritualBounds);
 			}
@@ -353,8 +371,13 @@ public class HarbingerCardinalRiteEvents {
 			AABB bounds) {
 		List<LivingEntity> entities = sLevel.getEntitiesOfClass(LivingEntity.class, bounds,
 				entity -> entity != caster && entity.isAlive()
-						&& !CardinalRiteThreatRules.isProtectedFromPassiveRiteDamage(
-								entity.getPersistentData().getBoolean(CardinalRiteThreatRules.RITE_BOUND_TAG)));
+						&& CardinalRiteThreatRules.isEligiblePassiveSacrifice(
+								entity.getPersistentData().getBoolean(CardinalRiteThreatRules.RITE_BOUND_TAG),
+								entity instanceof Player,
+								caster.isAlliedTo(entity),
+								entity instanceof net.minecraft.world.entity.TamableAnimal tame && tame.isTame(),
+								entity instanceof net.minecraft.world.entity.boss.enderdragon.EnderDragon
+										|| entity instanceof net.minecraft.world.entity.boss.wither.WitherBoss));
 
 		boolean fedThisTick = false;
 		for (LivingEntity entity : entities) {
@@ -776,8 +799,13 @@ public class HarbingerCardinalRiteEvents {
 		var sanguineBlobs = visibleSanguineBlobs(level, rite, recipe);
 		float footprintRadius = ritualFootprintRadius(rite, recipe);
 		java.util.List<String> checklist = buildChecklist(level, rite, recipe);
-		int stillIntervalTicks = CardinalRiteCeremonyRules.stillIntervalTicks(recipe == null ? 0
-				: CardinalRiteCeremonyRules.formIndex(recipe.getRiteType()));
+		int stillIntervalTicks = recipe == null || recipe.getCeremony() == null ? 0
+				: recipe.getCeremony().stillIntervalTicks();
+		var atmosphere = recipe == null || recipe.getCeremony() == null
+				? null : recipe.getCeremony().atmosphere();
+		String fogProfile = atmosphere == null ? (unstained ? "none" : "storm") : atmosphere.fog();
+		boolean fogLightning = atmosphere == null ? !unstained : atmosphere.lightning();
+		boolean boundaryDome = atmosphere == null ? !unstained : atmosphere.dome();
 		return new ActiveRiteClientData.RiteEntry(
 				rite.getCenterPos(), rite.getRiteSize(), rite.getProgress(stillIntervalTicks),
 				rite.getRecipeId(), unstained,
@@ -787,7 +815,8 @@ public class HarbingerCardinalRiteEvents {
 				footprintRadius, checklist,
 				boundarySegments, sigilSegments, sanguineBlobs,
 				rite.hasEscrowedStaff() && rite.isStaffImpactReached(), rite.getPlayerUUID(),
-				rite.getCancellationTicks(), rite.getStaffPlantingTicks());
+				rite.getCancellationTicks(), rite.getStaffPlantingTicks(),
+				fogProfile, fogLightning, boundaryDome);
 	}
 
 	public static float ritualFootprintRadius(ActiveCardinalRite rite, CardinalRiteRecipe recipe) {
@@ -875,8 +904,8 @@ public class HarbingerCardinalRiteEvents {
 					"Dry anchors: " + dry);
 		}
 		if (rite.getPhase() == CardinalRitePhase.STILL_INTERVAL) {
-			int duration = CardinalRiteCeremonyRules.stillIntervalTicks(recipe == null ? 0
-					: CardinalRiteCeremonyRules.formIndex(recipe.getRiteType()));
+			int duration = recipe == null || recipe.getCeremony() == null ? 0
+					: recipe.getCeremony().stillIntervalTicks();
 			int seconds = Math.max(0, duration - rite.getPhaseTicks() + 19) / 20;
 			return java.util.List.of(
 					"Still interval: " + seconds + "s",
@@ -1039,11 +1068,19 @@ public class HarbingerCardinalRiteEvents {
 	private static void collapseInteractiveRite(ServerLevel level, ServerPlayer caster,
 			ActiveCardinalRite rite, CardinalRiteRecipe recipe) {
 		CardinalRiteOrdealEngine.clearThreats(level, rite);
-		int form = recipe == null ? Math.max(0, (rite.getRiteSize() - 3) / 2)
+		int legacyForm = recipe == null ? Math.max(0, (rite.getRiteSize() - 3) / 2)
 				: CardinalRiteCeremonyRules.formIndex(recipe.getRiteType());
-		caster.hurt(caster.damageSources().magic(), CardinalRiteCeremonyRules.collapseDamage(form));
+		String failureProfile = recipe == null || recipe.getCeremony() == null
+				? null
+				: recipe.getCeremony().failureProfile();
+		float collapseDamage = failureProfile == null
+				? CardinalRiteCeremonyRules.collapseDamage(legacyForm)
+				: CardinalRiteCeremonyRules.collapseDamage(failureProfile);
+		if (collapseDamage > 0.0F) {
+			caster.hurt(caster.damageSources().magic(), collapseDamage);
+		}
 		if (recipe != null && recipe.getCeremony() != null) {
-			int remaining = CardinalRiteCeremonyRules.fragileBlocksOnCollapse(form);
+			int remaining = CardinalRiteCeremonyRules.fragileBlocksOnCollapse(failureProfile);
 			for (BlockPos offset : recipe.getCeremony().fragileOffsets()) {
 				if (remaining <= 0) break;
 				BlockPos pos = rite.getCenterPos().offset(offset);
@@ -1055,8 +1092,12 @@ public class HarbingerCardinalRiteEvents {
 				if (level.destroyBlock(pos, true, caster)) remaining--;
 			}
 		}
-		int sectionHits = form >= 3 ? 2 : form >= 2 ? 1 : 0;
-		float sectionDamage = form >= 3 ? 15.0F : 10.0F;
+		int sectionHits = failureProfile == null
+				? (legacyForm >= 3 ? 2 : legacyForm >= 2 ? 1 : 0)
+				: ("collapse".equals(failureProfile) ? 2 : "fragile_damage".equals(failureProfile) ? 1 : 0);
+		float sectionDamage = failureProfile == null
+				? (legacyForm >= 3 ? 15.0F : 10.0F)
+				: ("collapse".equals(failureProfile) ? 15.0F : 10.0F);
 		HemoCapabilityAccess.getVascularSystem(caster).ifPresent(vascular -> {
 			EnumVeinSections[] sections = EnumVeinSections.values();
 			for (int i = 0; i < sectionHits; i++) {
@@ -1080,6 +1121,7 @@ public class HarbingerCardinalRiteEvents {
 	private static final String SANGUINE_ATTUNEMENT_RITE = "cardinal_rite/sanguine_attunement";
 	private static final String CRIMSON_BEACON_RITE = "cardinal_rite/crimson_beacon";
 	private static final String VASCULAR_MENDING_RITE = "cardinal_rite/vascular_mending";
+	private static final String HEMATIC_FORTIFICATION_RITE = "cardinal_rite/hematic_fortification";
 	private static final String HUNGERING_EARTH_RITE = "cardinal_rite/hungering_earth";
 	private static final String SCARLET_SUMMONS_RITE = "cardinal_rite/scarlet_summons";
 	private static final String SANGUINE_DOMINION_RITE = "cardinal_rite/sanguine_dominion";
@@ -1094,6 +1136,7 @@ public class HarbingerCardinalRiteEvents {
 	private static final String SANGUINE_ECLIPSE_RITE = "cardinal_rite/sanguine_eclipse";
 	private static final String FOUNDING_FANE_RITE = "cardinal_rite/founding_fane";
 	private static final String SANGUINE_FERVOR_RITE = "cardinal_rite/sanguine_fervor";
+	private static final String COVENANT_VIGIL_RITE = "cardinal_rite/covenant_vigil";
 	private static final String ILLUMINATUS_RITE = "cardinal_rite/illuminatus_rite";
 
 	// â”€â”€ Gourd upgrade rite paths â”€â”€
@@ -1310,6 +1353,10 @@ public class HarbingerCardinalRiteEvents {
 			completeVascularMending(caster);
 		}
 
+		if (HEMATIC_FORTIFICATION_RITE.equals(ritePath)) {
+			completeHematicFortification(caster);
+		}
+
 		// Rite of the Hungering Earth: corrupt terrain in a radius
 		if (HUNGERING_EARTH_RITE.equals(ritePath)) {
 			completeHungeringEarth(sLevel, caster, center);
@@ -1342,7 +1389,7 @@ public class HarbingerCardinalRiteEvents {
 
 		// Rite of the Pallid Shadow: strip Unstained progress from a nearby player
 		if (PALLID_SHADOW_RITE.equals(ritePath)) {
-			completePallidShadow(sLevel, caster, center);
+			completePallidShadow(sLevel, caster, center, rite.getRiteSize());
 		}
 
 		// Bloom of the Qliphoth: summon a persistent bloom tree that buffs nearby players
@@ -1369,6 +1416,12 @@ public class HarbingerCardinalRiteEvents {
 		// Rite of Sanguine Fervor: boost mob spawn rates in a 3-chunk radius for 5 minutes
 		if (SANGUINE_FERVOR_RITE.equals(ritePath)) {
 			completeSanguineFervor(sLevel, caster, center);
+		}
+
+		// Rite of the Covenant Vigil: everyone who held an assigned station
+		// through the ordeal shares the same temporary protection.
+		if (COVENANT_VIGIL_RITE.equals(ritePath)) {
+			completeCovenantVigil(sLevel, caster, rite);
 		}
 
 		// Rite of the Crimson Lodge: degree advancement only; territorial consecration belongs to Founding Fane
@@ -1460,6 +1513,16 @@ public class HarbingerCardinalRiteEvents {
 
 		// Sanguine Initiation: give the caster a Sanguine Conduit so they can monitor their progress
 		if (SANGUINE_INITIATION_RITE.equals(ritePath)) {
+			HemoCapabilityAccess.getBloodVolume(caster).ifPresent(volume -> {
+				volume.setActive(true);
+				BloodVolumeEvents.syncVolume(caster, volume);
+			});
+			if (sLevel.getBlockState(center).is(BlockInit.cardinal_focus.get())) {
+				sLevel.setBlockAndUpdate(center,
+						BlockInit.placed_blood_stained_stone.get().defaultBlockState());
+			}
+			HarbingerAdvancementGranter.grantIfNotDone(caster,
+					Hemomancy.rloc("hemomancy/the_first_awakening"));
 			ItemStack conduit = new ItemStack(ItemInit.sanguine_conduit.get());
 			if (!caster.getInventory().add(conduit)) {
 				sLevel.addFreshEntity(new ItemEntity(sLevel,
@@ -1603,10 +1666,13 @@ public class HarbingerCardinalRiteEvents {
 	private static void completeCrimsonBeacon(ServerLevel sLevel, ServerPlayer caster, BlockPos center) {
 		CrimsonBeaconSavedData data = CrimsonBeaconSavedData.get(sLevel.getServer().overworld());
 		String dimension = sLevel.dimension().location().toString();
+		CrimsonBeaconSavedData.BeaconEntry previous = data.getBeacon(caster.getUUID());
 		data.setBeacon(caster.getUUID(), center, dimension);
 
 		caster.displayClientMessage(
-				Component.literal("A Crimson Beacon is anchored here. Should you fall, your body will return.")
+				Component.literal(previous == null
+						? "A Crimson Beacon is anchored here. Should you fall, your body will return."
+						: "Your Crimson Beacon tears free of its former anchor and settles here.")
 						.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC),
 				false);
 	}
@@ -1790,12 +1856,14 @@ public class HarbingerCardinalRiteEvents {
 
 		SanguineDominionSavedData.DominionEntry entry = new SanguineDominionSavedData.DominionEntry(
 				caster.getUUID(), center, dimension, DOMINION_CHUNK_RADIUS, sLevel.getGameTime());
-		data.addDominion(entry);
+		SanguineDominionSavedData.DominionEntry previous = data.replaceDominionForOwner(entry);
 
 		int blockRadius = DOMINION_CHUNK_RADIUS * 16;
 		caster.displayClientMessage(
-				Component.literal("A Blood Domain has been established! " + blockRadius
-						+ " blocks in every direction now bow to your crimson will.")
+				Component.literal((previous == null
+						? "A Blood Domain has been established! "
+						: "Your Blood Domain abandons its former bounds and reforms here. ")
+						+ blockRadius + " blocks in every direction now bow to your crimson will.")
 						.withStyle(ChatFormatting.DARK_RED, ChatFormatting.BOLD),
 				false);
 		HarbingerAdvancementGranter.grantIfNotDone(caster, HarbingerAdvancementGranter.ADV_SANGUINE_DOMAIN);
@@ -1871,8 +1939,15 @@ public class HarbingerCardinalRiteEvents {
 	 * Each invocation uses a different dialogue variant from a pool.
 	 */
 	private static void completeAncestralCommunion(ServerLevel sLevel, ServerPlayer caster) {
-		// Determine variant based on game time for variety
-		int variant = (int) ((sLevel.getGameTime() / 100) % AncestralCommunionDialogueTrees.VARIANT_COUNT);
+		int variant = HemoCapabilityAccess.getInitiatoryDegree(caster)
+				.map(degree -> {
+					int next = Math.floorMod(degree.getAncestralCommunions(),
+							AncestralCommunionDialogueTrees.VARIANT_COUNT);
+					degree.setAncestralCommunions(degree.getAncestralCommunions() + 1);
+					InitiatoryDegreeEvents.syncDegree(caster, degree);
+					return next;
+				})
+				.orElse(0);
 		DialogueTree tree = AncestralCommunionDialogueTrees.forVariant(variant);
 
 		PacketHandler.sendToPlayer(caster, new OpenDialoguePacket(tree));
@@ -1890,11 +1965,15 @@ public class HarbingerCardinalRiteEvents {
 	 * in the pool is returned proportionally to the remaining members.
 	 */
 	private static void completeHematicUnbinding(ServerLevel sLevel, ServerPlayer caster) {
+		final String pendingLineKey = "hemomancy:pending_unbinding_bloodline";
+		final String pendingUntilKey = "hemomancy:pending_unbinding_until";
 		ServerLevel overworld = sLevel.getServer().overworld();
 		BloodlineSavedData bloodlineData = BloodlineSavedData.get(overworld);
 		Bloodline bloodline = bloodlineData.getBloodlineForPlayer(caster.getUUID());
 
 		if (bloodline == null || !bloodline.isValid()) {
+			caster.getPersistentData().remove(pendingLineKey);
+			caster.getPersistentData().remove(pendingUntilKey);
 			caster.displayClientMessage(
 					Component.literal("You have no bloodline to unbind.")
 							.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC),
@@ -1910,6 +1989,26 @@ public class HarbingerCardinalRiteEvents {
 					false);
 			return;
 		}
+
+		CompoundTag playerData = caster.getPersistentData();
+		UUID warnedLine = playerData.hasUUID(pendingLineKey)
+				? playerData.getUUID(pendingLineKey) : null;
+		long warningUntil = playerData.getLong(pendingUntilKey);
+		if (HematicUnbindingRules.decision(bloodline.getBloodlineUUID(), warnedLine,
+				warningUntil, sLevel.getGameTime()) == HematicUnbindingRules.Decision.WARN) {
+			playerData.putUUID(pendingLineKey, bloodline.getBloodlineUUID());
+			playerData.putLong(pendingUntilKey,
+					sLevel.getGameTime() + HematicUnbindingRules.CONFIRMATION_TICKS);
+			caster.displayClientMessage(
+					Component.literal("The covenant loosens but does not break. Performing Hematic Unbinding again "
+									+ "within ten minutes will permanently dissolve " + bloodline.getName()
+									+ ", remove its fanes, and free every member.")
+							.withStyle(ChatFormatting.RED, ChatFormatting.BOLD),
+					false);
+			return;
+		}
+		playerData.remove(pendingLineKey);
+		playerData.remove(pendingUntilKey);
 
 		String bloodlineName = bloodline.getName();
 		float poolBlood = bloodline.getBloodVolume();
@@ -1957,13 +2056,20 @@ public class HarbingerCardinalRiteEvents {
 	 * their Unstained purification progress. A direct hematic assault against
 	 * followers of Our Lady of Still Waters.
 	 */
-	private static void completePallidShadow(ServerLevel sLevel, ServerPlayer caster, BlockPos center) {
-		int halfSize = (9 - 1) / 2; // Grand rite 9x9 structure
+	private static void completePallidShadow(ServerLevel sLevel, ServerPlayer caster,
+			BlockPos center, int riteSize) {
+		int halfSize = (Math.max(1, riteSize) - 1) / 2;
 		AABB bounds = new AABB(center).inflate(halfSize + 1);
 
-		// Find the nearest non-caster player in the rite bounds
-		List<Player> nearbyPlayers = sLevel.getEntitiesOfClass(Player.class, bounds,
-				p -> p.isAlive() && !p.getUUID().equals(caster.getUUID()));
+		List<ServerPlayer> nearbyPlayers = sLevel.getEntitiesOfClass(ServerPlayer.class, bounds,
+				target -> target.isAlive() && !target.getUUID().equals(caster.getUUID())
+						&& PallidShadowRules.canTarget(
+								sLevel.getServer().isPvpAllowed(),
+								target.isCreative(), target.isSpectator(),
+								caster.isAlliedTo(target),
+								HemoCapabilityAccess.getUnstainedProgress(target)
+										.map(progress -> progress.hasBegunPurification())
+										.orElse(false)));
 
 		if (nearbyPlayers.isEmpty()) {
 			caster.displayClientMessage(
@@ -1974,9 +2080,9 @@ public class HarbingerCardinalRiteEvents {
 		}
 
 		// Target the closest player
-		Player target = nearbyPlayers.get(0);
+		ServerPlayer target = nearbyPlayers.get(0);
 		double closestDist = target.distanceToSqr(center.getX(), center.getY(), center.getZ());
-		for (Player p : nearbyPlayers) {
+		for (ServerPlayer p : nearbyPlayers) {
 			double dist = p.distanceToSqr(center.getX(), center.getY(), center.getZ());
 			if (dist < closestDist) {
 				target = p;
@@ -1984,17 +2090,15 @@ public class HarbingerCardinalRiteEvents {
 			}
 		}
 
-		final Player victim = target;
+		final ServerPlayer victim = target;
 		HemoCapabilityAccess.getUnstainedProgress(victim).ifPresent(unstained -> {
-			boolean hadProgress = PathMutualExclusionHelper.resetUnstainedProgress((ServerPlayer) victim, unstained);
+			boolean hadProgress = PathMutualExclusionHelper.resetUnstainedProgress(victim, unstained);
 
 			if (hadProgress) {
-				if (victim instanceof ServerPlayer sp) {
-					sp.displayClientMessage(
-							Component.literal("A shadow of crimson corruption washes over you... Your purification has been destroyed!")
-									.withStyle(ChatFormatting.DARK_RED, ChatFormatting.BOLD),
-							false);
-				}
+				victim.displayClientMessage(
+						Component.literal("A shadow of crimson corruption washes over you... Your purification has been destroyed!")
+								.withStyle(ChatFormatting.DARK_RED, ChatFormatting.BOLD),
+						false);
 				caster.displayClientMessage(
 						Component.literal("The Pallid Shadow consumes " + victim.getName().getString()
 								+ "'s purity. Their purification is undone.")
@@ -2168,6 +2272,17 @@ public class HarbingerCardinalRiteEvents {
 		return removed != null;
 	}
 
+	private static void completeHematicFortification(ServerPlayer caster) {
+		HemoCapabilityAccess.getInitiatoryDegree(caster).ifPresent(degree -> {
+			degree.setHematicFortification(true);
+			InitiatoryDegreeEvents.syncDegree(caster, degree);
+		});
+		caster.displayClientMessage(
+				Component.literal("Your vascular lattice hardens. Future strain is reduced by fifteen percent.")
+						.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC),
+				false);
+	}
+
 	@SubscribeEvent
 	public static void onPlayerLoggedIn(PlayerEvent.PlayerLoggedInEvent event) {
 		if (!(event.getEntity() instanceof ServerPlayer player)) {
@@ -2267,6 +2382,46 @@ public class HarbingerCardinalRiteEvents {
 			entity.setInvulnerable(true);
 			entity.lifespan = Integer.MAX_VALUE;
 			sLevel.addFreshEntity(entity);
+		}
+	}
+
+	/**
+	 * Rite of the Covenant Vigil (Grand): rewards the caster and every assigned
+	 * ally who is still present at completion. The common effects make the
+	 * covenant mechanically shared instead of treating the helper as a key used
+	 * only to unlock the ceremony.
+	 */
+	private static void completeCovenantVigil(ServerLevel sLevel, ServerPlayer caster, ActiveCardinalRite rite) {
+		grantCovenantVigilReward(caster);
+		for (UUID allyId : rite.getAllyRoles().keySet()) {
+			if (!CardinalRiteAllyService.isAvailable(sLevel, rite, allyId)) continue;
+			Entity entity = sLevel.getEntity(allyId);
+			if (entity instanceof LivingEntity ally && ally.isAlive()) {
+				grantCovenantVigilReward(ally);
+			}
+		}
+		caster.displayClientMessage(
+				Component.literal("The vigil closes around every survivor. The covenant guards and restores you.")
+						.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC),
+				false);
+	}
+
+	private static void grantCovenantVigilReward(LivingEntity participant) {
+		participant.addEffect(new MobEffectInstance(
+				MobEffects.DAMAGE_RESISTANCE,
+				CovenantVigilRules.REWARD_DURATION_TICKS,
+				CovenantVigilRules.RESISTANCE_AMPLIFIER,
+				false, true, true));
+		participant.addEffect(new MobEffectInstance(
+				MobEffects.REGENERATION,
+				CovenantVigilRules.REWARD_DURATION_TICKS,
+				CovenantVigilRules.REGENERATION_AMPLIFIER,
+				false, true, true));
+		if (participant instanceof ServerPlayer player) {
+			player.displayClientMessage(
+					Component.literal("Your shared vigil lingers: resistance and regeneration for ten minutes.")
+							.withStyle(ChatFormatting.GOLD, ChatFormatting.ITALIC),
+					false);
 		}
 	}
 
@@ -2492,11 +2647,15 @@ public class HarbingerCardinalRiteEvents {
 		}
 		UUID faneOwner = bloodline.getLeaderUUID();
 		FoundingFaneSavedData faneData = FoundingFaneSavedData.get(sLevel);
-		boolean isReconsecrating = faneData.hasFane(faneOwner);
-		List<BlockPos> oldStakes = isReconsecrating ? faneData.removeStakesAndGet(faneOwner) : List.of();
-		for (BlockPos stakePos : oldStakes) {
-			if (sLevel.getBlockState(stakePos).is(BlockInit.hematic_stake.get())) {
-				sLevel.removeBlock(stakePos, false);
+		boolean isReconsecrating = false;
+		for (ServerLevel oldLevel : sLevel.getServer().getAllLevels()) {
+			FoundingFaneSavedData oldData = FoundingFaneSavedData.get(oldLevel);
+			if (!oldData.hasFane(faneOwner)) continue;
+			isReconsecrating = true;
+			for (BlockPos stakePos : oldData.removeStakesAndGet(faneOwner)) {
+				if (oldLevel.getBlockState(stakePos).is(BlockInit.hematic_stake.get())) {
+					oldLevel.removeBlock(stakePos, false);
+				}
 			}
 		}
 		if (!sLevel.getBlockState(center).is(BlockInit.consecrated_bloodwell.get())

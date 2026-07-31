@@ -34,7 +34,7 @@ public final class BloodlineScreenRegressionSourceTest {
 		assertNotContains("founding fane cannot fall back to solo owner", harbingerRites,
 				"? bloodline.getLeaderUUID() : caster.getUUID()");
 		assertContains("founding fane validates bloodline before activation", bloodCraftPacket,
-				"canStartFoundingFane(serverPlayer)");
+				"canStartFoundingFane(serverPlayer, centerPos)");
 		assertContains("founding fane activation rejects missing bloodline", bloodCraftPacket,
 				"bloodline == null || !bloodline.isValid()");
 		assertContains("founding fane activation requires progenitor", bloodCraftPacket,
@@ -46,7 +46,7 @@ public final class BloodlineScreenRegressionSourceTest {
 		assertContains("founding fane validation rejects an already-active fane", foundingFaneGate,
 				"hasActiveFane(player, bloodline.getLeaderUUID())");
 		assertOrder("founding fane activation gate runs before catalyst validation", bloodCraftPacket,
-				"canStartFoundingFane(serverPlayer)",
+				"canStartFoundingFane(serverPlayer, centerPos)",
 				"hasCatalystWithinMatch(sLevel, match, bp, ItemInit.sanguine_quintessence.get())");
 		assertNotContains("interactive catalyst is not consumed until altar sealing", bloodCraftPacket,
 				"consumeCatalystWithinMatch");

@@ -14,17 +14,52 @@ import static org.junit.jupiter.api.Assertions.*;
 
 final class ActiveCardinalRiteCeremonyTest {
 	@Test
+	void riteWithoutAuthoredWavesSkipsTheOrdealAndStillInterval() {
+		ActiveCardinalRite rite = ActiveCardinalRite.interactive(UUID.randomUUID(), BlockPos.ZERO,
+				ResourceLocation.parse("hemomancy:cardinal_rite/lower_tier"), 400, 3, 2,
+				true, 0, 4);
+		for (int i = 0; i < 4; i++) rite.fillAnchor(i, 50);
+		assertTrue(rite.enterInscription());
+
+		assertTrue(rite.sealAltar(true, false));
+
+		assertEquals(CardinalRitePhase.PROFESSION, rite.getPhase());
+		assertEquals(0, rite.getTotalWaves());
+	}
+
+	@Test
+	void threeWaveRiteHasExactlyTwoBetweenWaveStillIntervals() {
+		ActiveCardinalRite rite = ActiveCardinalRite.interactive(UUID.randomUUID(), BlockPos.ZERO,
+				ResourceLocation.parse("hemomancy:cardinal_rite/grand"), 1200, 7, 6,
+				false, 3, 12);
+		for (int i = 0; i < 12; i++) rite.fillAnchor(i, 50);
+		assertTrue(rite.enterInscription());
+		assertTrue(rite.sealAltar(false, true));
+
+		rite.completeWave();
+		assertEquals(CardinalRitePhase.STILL_INTERVAL, rite.getPhase());
+		rite.finishStillInterval(false);
+		assertEquals(CardinalRitePhase.ORDEAL, rite.getPhase());
+		rite.completeWave();
+		assertEquals(CardinalRitePhase.STILL_INTERVAL, rite.getPhase());
+		rite.finishStillInterval(false);
+		assertEquals(CardinalRitePhase.ORDEAL, rite.getPhase());
+		rite.completeWave();
+		assertEquals(CardinalRitePhase.CULMINATION, rite.getPhase());
+	}
+
+	@Test
 	void consecrationRequiresEveryAnchorBeforeInscription() {
 		ActiveCardinalRite rite = rite(2, false, 3);
 		assertEquals(CardinalRitePhase.CONSECRATION, rite.getPhase());
 		assertFalse(rite.enterInscription());
 
-		for (int i = 0; i < 8; i++) {
+		for (int i = 0; i < 4; i++) {
 			assertTrue(rite.fillAnchor(i, 50));
 		}
 
-		assertEquals(2, rite.completedRings());
-		assertEquals(400, rite.getCommittedBloodMl());
+		assertEquals(1, rite.completedRings());
+		assertEquals(200, rite.getCommittedBloodMl());
 		assertTrue(rite.enterInscription());
 		assertTrue(rite.sealAltar());
 		assertEquals(CardinalRitePhase.ORDEAL, rite.getPhase());

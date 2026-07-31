@@ -42,7 +42,11 @@ public class VascularSystemEvents {	/**
 		if (!bloodActive) return;
 
 		HemoCapabilityAccess.getVascularSystem(player).ifPresent(vascular -> {
-			float strain = (float) (event.getNewDamage() * HemoServerConfig.VASCULAR_DAMAGE_PER_HIT.get().doubleValue());
+			boolean fortified = HemoCapabilityAccess.getInitiatoryDegree(player)
+					.map(degree -> degree.hasHematicFortification()).orElse(false);
+			float strain = HematicFortificationRules.adjustedStrain(
+					(float) (event.getNewDamage() * HemoServerConfig.VASCULAR_DAMAGE_PER_HIT.get().doubleValue()),
+					fortified);
 			EnumVeinSections section = determineSectionFromDamage(event, player);
 
 			// Negative value = damage to the section
@@ -112,7 +116,10 @@ public class VascularSystemEvents {	/**
 		if (!HemoServerConfig.VASCULAR_DEGRADATION_ON_MANIP_ENABLED.get()) return;
 
 		HemoCapabilityAccess.getVascularSystem(player).ifPresent(vascular -> {
-			float strain = HemoServerConfig.VASCULAR_MANIP_STRAIN.get().floatValue();
+			boolean fortified = HemoCapabilityAccess.getInitiatoryDegree(player)
+					.map(degree -> degree.hasHematicFortification()).orElse(false);
+			float strain = HematicFortificationRules.adjustedStrain(
+					HemoServerConfig.VASCULAR_MANIP_STRAIN.get().floatValue(), fortified);
 			vascular.setVascularSectionHealth(section, -strain);
 
 			if (vascular.getHealthBySection(section) < 0) {

@@ -1,77 +1,228 @@
-   # Problem Statment
-    One needs to rethink and overall re-layout how necessary every single step within the Cardinal Rite system is, especially at lower tiers. It really doesn't make sense for the first few rites a player needs to perform requiring everything from sigil writing, to the fog, to floor layout, to large amounts of offerings, and having multiple things like refreshes and ordeals, yada yada yada.
+# Cardinal Rite Progression Restructure
 
-    These separate features should feel like things that appear at higher levels or progressively not all at once 
+## Status
 
-    For example, performing the right of initiation. Basically the first thing a player does before even meeting the harbingers before even getting any manipulations before learning their staff. Anything in its current state requires them to draw sigils. Activate the rights. Go through ordeals etc etc ALL WHILE THEY DONT EVEN HAVE BLOOD ABSORPTION OR PROJECTION 
+This document is the design contract for the Harbinger Cardinal Rite progression pass.
+It covers Degrees 0-7. Apotheos and Degree 8 remain a separate pass because the
+player's relationship to rites changes after Apotheosis.
 
-    Heck at this point they can't even MAKE or know what a cardinal focus is which is a new requirement block of ours
+## Problem
 
-    I feel like we swung a little to far into the deep end during the initial redesign away from the "just build a structure and click a key" phase and didn't really think about the PROGRESSION 
+The earlier ceremony redesign made every rite use nearly the entire ritual
+vocabulary at once: a constructed floor, a Cardinal Focus, offerings, boundary
+anchors, sigil inscription, fog, refreshes, ordeals, helpers, and severe failure.
+That produced impressive individual ceremonies but a poor learning curve.
 
-# Rationale
-    I want to do this because if we instead made the player automatically get sucked into the mod via clicking on the mortal display they may accidentally 
-    get involved in the mod when they didn't intend on it, I want true mod starting to act as a proper opt in
+At initiation the player does not yet know Blood Absorption, Blood Projection, how
+to make a Cardinal Focus, or how to use a Living Staff. Requiring all of those
+systems before teaching any of them turns the first rite into an out-of-game
+research problem.
 
-    so FIRST-Make it so each mortal displayed is tied directly to a single hermit who spawns with the temple, the player shouldnt be able to right click/activate the mortal display WITHOUT FIRST talking to the hermit, and gaining their blessing for their heart, then being able to take the heart and get the vascular charm etc, once again an opt in gate
-    A Player who has already been initiated or has gained the 'blessing of a hermit' should be able to right click the heart in the temple AND ONLY THAT TEMPLE so they cant go around short circuiting living hermits in other temples
+The redesign therefore follows one rule:
 
-    The Hermit should also note as they die/start to dissolve for the player should they seek inittiation follow the rite and seek out others(aka the harbinger outpost) for more direction
+> A rite may use only mechanics the player has already learned, and each new
+> mechanic must first appear in a ceremony simple enough to teach it clearly.
 
-    AFTER THIS when the player takes the heart and gets the rite blueprints from the hermit, the rite blueprint should explain that to begin intitiation it shoud
-    take place IN the temple(since again the first 3x3 pattern will already be ON the floor), which will need a small floor/space redesign to accommodate the floor pattern
-    The structure will need the floor changed, including a cardinal focus that the player can activate for nothing but a small amount of HP 
-    by right clicking on it with an iron nugget as a 'hematic medium', again this should be noted on the rite blueprint
+Later rites may intentionally remain simpler than their degree ceiling. Degree is
+a maximum ritual vocabulary, not a mandatory checklist.
 
-    it should have a small boundary ring without any anchors/sockets for the player to have to fill and a SMALL daemon that  appears for a few seconds before flying into the player 'initiating them' 
-    After this 'initiatory/forced' rite happens the iron nugget should become lodged in the focus and cause it to break , this way it lays the path for them to have to make it themselves in the next stage
+## Opt-in entry
 
-**The Sanguine Conduit should begin having these sorts of things available to read about as well**
+Hemomancy must not begin because a player accidentally clicked a block.
 
-# OVERALL ORDERING/ROUGH PROGRESSION IDEA
-D1-d2(Minor Rites become available)
-- should involve the player having to build the floor themselves this time however requiring them to again use an iron nugget in the focus to activate the rite and then 4 sockets in the first ring
-this teaches them socketing and will once again require them to to perform a forced/medium induced rite since they have yet to master the ability to reuse a focus block yet(aka use their staff)
-other non degree/rank up rites available around this time as well as blood crafting now being available, rites will now potentially begin using braziers/offerings 
+1. Each Blood Temple spawns one Harbinger Hermit tied to that temple's Mortal
+   Display.
+2. The Display cannot be claimed until that Hermit has granted the player the
+   blessing to take their heart.
+3. The blessing is bound to that exact temple. A blessing from one Hermit cannot
+   be used to bypass another living Hermit.
+4. After the oath, the player may claim the heart from that temple's Display.
+5. The Hermit's farewell tells the player to follow the initiation blueprint and
+   then seek the Harbinger Outpost for further instruction.
+6. An already initiated player may still use the Display that belongs to the
+   temple they legitimately opened, but cannot use that state to short-circuit
+   other temples.
 
-D2-D3(Minor/Lesser rites are the norm)
-- Should require a staff for the first time going forward
-- as well as a single brazier and a hematic iron dust offering 
-- still just 1 ring and 4 sockets 
-- faint fog should begin appearing around this time for all rites 
+This makes dialogue and the explicit oath the opt-in point. The Display is the
+physical consequence of that choice, not the choice itself.
 
-D4-D5(greater rites first become available towards the end of D5)
-- Denser fog and first time having to inscribe a sigil
-- First rites that begin requiring multiple offerings
+## Degree 0: Sanguine Initiation
 
-D5-D6(greater rites are the norm)
-- Fog gets even denser/densist it will be at this point and it can now start creating the Cardinal Rite Fog Lightning
-- First 'Ordeals' begin being required'
-- as well as things like being able to recruit bloodline members so they become potentially optional/allowed to aid
-- 2 Ring/8 anchor rites become the norm
-- Multiple offerings(2-3) are common
-- 2-3 sigils become possible
-- Some rites may require up to 5 offerings/braziers
+The Blood Temple contains the complete first station:
 
-D6-D7(Grand rites become first available around D6 into D7)
-- Fane boundary style dome begins appearing potentially
-- first 3 ring/12 anchor rites
-- First Rites that require help in the form of ATLEAST 1 recruited NPC if not another player, as players are expected to have founded a  bloodline at this point
-- 5+offerings not uncommon, max of 9
-- 3-5 sigils become possible with 1 to 2 required for saftey/stability
+- a small prebuilt threshold floor;
+- a Cardinal Focus already in the floor;
+- enough clear space for the ceremony;
+- no anchors;
+- no support sockets or sigils;
+- no brazier offerings;
+- no fog, lightning, dome, ordeal, refresh, or helper.
 
-D7+(Grand rites become the norm)
-- Multiple helper rites become possible, with silent archon ones being the excepetions as they no longer 'need the help'
-- first 3 ring/12 anchor rites
-- Most rites at this point should require 9 offerings/braziers
-- 4-6 sigils can appear with up to 3 required sigils, lengthy ordeals 
+The blueprint tells the player to seat an iron nugget in the Focus as a crude
+hematic medium. Activating it takes a small, nonlethal amount of health. A small
+daemon appears briefly and enters the player, completing initiation.
 
+The nugget lodges in and breaks the temple Focus when the rite succeeds. This is
+deliberate: the temple demonstrates a Focus once, then sends the player outward to
+learn how to build and reuse one.
 
+Completion:
 
-## D8/Apotheos Rites will need to be a seperate pass as the players journey fundementally changes at this point due to Apotheosis##
+- grants Degree 1;
+- activates the player's blood volume;
+- grants the Sanguine Conduit;
+- unlocks the first progression guidance;
+- does not use passive sacrifice or produce a dummy material result.
 
+## Progressive ritual vocabulary
 
-**Let's both replan progression and how rites grow and progress as the player does and look into other lore friendly ways of intitiation of rites or progressing the player through d0-d1 or d2 without needing all of the current setup**
+| Degree available | Expected rite vocabulary | New lesson |
+|---|---|---|
+| D0 | Temple-provided floor and Focus; iron-nugget medium; no anchors, sigils, offerings, fog, ordeal, or helper | Explicit opt-in and the meaning of initiation |
+| D1 | Player-built floor; crude hematic medium; one ring of four anchors; no sigils, fog, ordeal, or offering required | Build a station and fill boundary anchors |
+| D2-D3 | Living Staff; one ring/four anchors; faint fog; normally one brazier offering; no support sigils or ordeals | Reusable activation and a small material commitment |
+| D4 | One required support sigil; dense fog; up to three offerings; safe offering-loss failure | Inscription and prepared support |
+| D5 | Up to two rings/eight anchors; up to three support sockets with one required; storm fog and lightning; first ordeal waves; up to five offerings | Active pressure, repairs, and optional bloodline assistance |
+| D6 | Greater rites are normal and Grand rites appear; up to three rings/twelve anchors; up to five support sockets with two required; dome; up to six wave options; one required helper; up to nine offerings | Shared ceremonies, role stations, and collapse risk |
+| D7 | Grand rites are normal; twelve anchors; up to six support sockets with three required; lengthy ordeals; up to three required helpers; up to nine offerings | Full ceremonial mastery |
 
+The serializer enforces these as hard ceilings for every shipped Harbinger rite.
+Apotheos is explicitly exempt until its separate pass.
 
+## Activation progression
 
+There are three authored Focus modes:
+
+- `temple_medium` — Degree 0 only. Uses the temple's prepared Focus and the
+  Hermit's temple-bound oath.
+- `hematic_medium` — Degree 1. The player seats an iron nugget in a crafted Focus.
+- `living_staff` — Degree 2 onward. The exact staff is planted, held in escrow
+  during the rite, and returned after success, safe recall, or handled failure.
+
+Rank-up rites can be attempted only in their exact advancement window. Completing
+a rank rite removes it from station resolution for players who already hold that
+degree, preventing shared floor-and-offering signatures from selecting an obsolete
+rite.
+
+## Ceremony phases
+
+Interactive ceremonies use only phases supported by their authored definition:
+
+1. **Consecration** — fill authored anchors. Missing anchors do not exist as
+   invisible requirements.
+2. **Inscription** — complete required support sockets. A rite with no sockets
+   skips this lesson entirely.
+3. **Sealing** — confirm the altar and committed offerings.
+4. **Ordeal** — run authored response waves, if any.
+5. **Culmination** — draw committed offerings inward and resolve the result.
+
+The HUD and Rite Hint show authored values, including upfront blood, ceremony
+duration, anchors, support sockets, required sigils, helpers, fog, and failure
+profile. They must not infer complexity from rite form alone.
+
+## Blood and offerings
+
+Interactive Harbinger rites do not also charge a hidden lump-sum `bloodCost`.
+Blood is paid visibly through boundary filling, sigil work, repairs, helper
+actions, or a rite-specific effect. Legacy and Unstained countdown rites retain
+their existing completion drain.
+
+Offerings are exact unordered brazier signatures. They are committed at sealing
+and consumed only through the captured offering itinerary. Floors are reusable;
+only explicitly consumable upper structures may be removed.
+
+## Support sigils
+
+Prepared support sigils have concrete jobs:
+
+- **Reservoir** stores and returns rite blood.
+- **Bastion** damages manifested rite threats.
+- **Hematic Lattice** balances blood across anchors.
+- **Mnemonic** exposes false omens.
+- **Cage** strongly binds manifested threats in place.
+- **Lens** exposes false omens as an alternate late-game answer.
+
+Response sigils such as Suture, Shunt, Seal, Cage, and Lens resolve their authored
+ordeal wave when correctly drawn. Repeated response waves keep separate progress.
+
+## Helpers
+
+Helpers begin at Degree 5 as optional assistance and become an authored
+requirement only at Degree 6+.
+
+- **Anchor** helpers feed depleted anchors.
+- **Attendants** may correct one missed response per wave.
+- **Wardens** spend blood to hinder manifested threats.
+
+Both recruited NPCs and other players can occupy stations. Required helpers must
+remain available; merely assigning a UUID does not satisfy the ceremony.
+
+The Covenant Vigil is the dedicated first shared-ordeal demonstration. It requires
+one helper and rewards every assigned survivor—not just the caster—with ten
+minutes of Resistance and Regeneration.
+
+## Failure and safety
+
+Failure severity also progresses:
+
+- D0-D3: safe retry;
+- D4: offering loss;
+- D5: fragile floor damage;
+- D6-D7: full collapse may be authored.
+
+Only Exsanguination permits passive sacrifice. Players, allies, tamed creatures,
+bosses, and entities bound as rite threats are never eligible passive sacrifices.
+
+An active Harbinger rite can be safely recalled by holding Blood Absorption on its
+Focus or planted staff for four uninterrupted seconds. Recall returns the exact
+staff and dismisses rite threats, but does not refund committed blood or offerings.
+
+Irreversible or hostile utility rites have additional safeguards:
+
+- Hematic Unbinding requires two completed performances against the same bloodline
+  within ten minutes.
+- Moving a Founding Fane requires a second activation of the exact new formation
+  within thirty seconds.
+- Pallid Shadow requires server PvP, a valid non-allied survival target, and real
+  Unstained progress.
+- Crimson Beacon, Sanguine Dominion, and Founding Fane replace or relocate their
+  prior owner-bound location instead of silently accumulating duplicates.
+
+## Rite-specific outcomes retained by the pass
+
+Removing placeholder outputs must not remove a rite's real reward:
+
+- Bloodline Founding produces a presigned Ancestral Ledger.
+- Exsanguination produces Sanguine Quintessence.
+- Initiate grants the first Sanguine Blob used by subsequent practice.
+- Vessel rites still return their upgraded vessel and require the prior vessel.
+- Hematic Fortification permanently reduces vascular and manipulation strain by
+  fifteen percent.
+- Ancestral Communion advances through its lore variants in persistent sequence.
+- Covenant Vigil rewards all assigned survivors.
+- Effect-only rites such as Beacon, Mending, Fervor, Dominion, Eclipse, Chamber,
+  Fane, Bloom, and Pruning resolve through their dedicated completion behavior and
+  do not emit placeholder items.
+
+## Player guidance
+
+The Sanguine Conduit is the durable in-game manual for this progression. Its Rites
+tab explains:
+
+- the three activation modes;
+- which mechanics unlock at each degree;
+- the difference between required and optional support sockets;
+- helper roles;
+- ordeal responses;
+- failure and safe recall;
+- the authored requirements and reward of each known rite.
+
+The Rite Hint remains the spatial blueprint for the currently selected rite. NPC
+dialogue points the player toward those two tools instead of requiring wiki
+knowledge.
+
+## Explicitly deferred
+
+The Degree 8 / Apotheos ceremony remains mechanically intact and outside these
+ceilings. Its economy, ritual vocabulary, and post-human activation logic require
+a dedicated design pass rather than being normalized to the D0-D7 teaching curve.

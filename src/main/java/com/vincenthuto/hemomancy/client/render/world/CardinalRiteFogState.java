@@ -20,7 +20,7 @@ public final class CardinalRiteFogState {
 			tracked.active = false;
 		}
 		for (ActiveRiteClientData.RiteEntry rite : activeRites) {
-			if (rite.isUnstained()) {
+			if (rite.isUnstained() || !rite.hasFog()) {
 				trackedRites.remove(rite.getCenter());
 				continue;
 			}
@@ -36,8 +36,9 @@ public final class CardinalRiteFogState {
 			TrackedRite tracked = iterator.next();
 			float elapsed = Math.max(0.0F, time - tracked.lastTime);
 			float step = elapsed / (tracked.active ? FADE_IN_TICKS : FADE_OUT_TICKS);
+			float targetOpacity = fogOpacity(tracked.rite.getFogProfile());
 			tracked.opacity = tracked.active
-					? Math.min(1.0F, tracked.opacity + step)
+					? Math.min(targetOpacity, tracked.opacity + step * targetOpacity)
 					: Math.max(0.0F, tracked.opacity - step);
 			tracked.lastTime = time;
 			if (!tracked.active && tracked.opacity <= 0.001F) {
@@ -47,6 +48,15 @@ public final class CardinalRiteFogState {
 			}
 		}
 		return List.copyOf(samples);
+	}
+
+	private static float fogOpacity(String profile) {
+		return switch (profile) {
+			case "faint" -> 0.38F;
+			case "dense" -> 0.70F;
+			case "storm" -> 1.0F;
+			default -> 0.0F;
+		};
 	}
 
 	public void clear() {

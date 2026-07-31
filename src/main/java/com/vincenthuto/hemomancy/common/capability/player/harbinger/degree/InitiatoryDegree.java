@@ -22,6 +22,8 @@ public class InitiatoryDegree implements IInitiatoryDegree, INBTSerializable<Com
 	private boolean founderIntegrationSevered = false;
 	private boolean fungalRevelationWitnessed = false;
 	private boolean fungalSpineGranted = false;
+	private boolean hematicFortification = false;
+	private int ancestralCommunions = 0;
 	private EnumArchonPath archonPath = EnumArchonPath.NONE;
 
 	@Override
@@ -101,6 +103,12 @@ public class InitiatoryDegree implements IInitiatoryDegree, INBTSerializable<Com
 	@Override public void setFungalRevelationWitnessed(boolean witnessed) { fungalRevelationWitnessed = witnessed; }
 	@Override public boolean hasFungalSpineGranted() { return fungalSpineGranted; }
 	@Override public void setFungalSpineGranted(boolean granted) { fungalSpineGranted = granted; }
+	@Override public boolean hasHematicFortification() { return hematicFortification; }
+	@Override public void setHematicFortification(boolean fortified) { hematicFortification = fortified; }
+	@Override public int getAncestralCommunions() { return ancestralCommunions; }
+	@Override public void setAncestralCommunions(int communions) {
+		ancestralCommunions = Math.max(0, communions);
+	}
 	@Override public EnumArchonPath getArchonPath() { return archonPath; }
 	@Override public void setArchonPath(EnumArchonPath path) { archonPath = path == null ? EnumArchonPath.NONE : path; }
 
@@ -115,6 +123,8 @@ public class InitiatoryDegree implements IInitiatoryDegree, INBTSerializable<Com
 		tag.putBoolean("founder_integration_severed", founderIntegrationSevered);
 		tag.putBoolean("fungal_revelation_witnessed", fungalRevelationWitnessed);
 		tag.putBoolean("fungal_spine_granted", fungalSpineGranted);
+		tag.putBoolean("hematic_fortification", hematicFortification);
+		tag.putInt("ancestral_communions", ancestralCommunions);
 		tag.putString("archon_path", archonPath.name());
 		CompoundTag progressTag = new CompoundTag();
 		pomeCommunionProgress.forEach((origin, count) ->
@@ -133,6 +143,8 @@ public class InitiatoryDegree implements IInitiatoryDegree, INBTSerializable<Com
 		founderIntegrationSevered = nbt.getBoolean("founder_integration_severed");
 		fungalRevelationWitnessed = nbt.getBoolean("fungal_revelation_witnessed");
 		fungalSpineGranted = nbt.getBoolean("fungal_spine_granted");
+		hematicFortification = nbt.getBoolean("hematic_fortification");
+		ancestralCommunions = Math.max(0, nbt.getInt("ancestral_communions"));
 		archonPath = EnumArchonPath.byName(nbt.getString("archon_path"));
 		pomeCommunionProgress.clear();
 		CompoundTag progressTag = nbt.getCompound("pome_communion_progress");

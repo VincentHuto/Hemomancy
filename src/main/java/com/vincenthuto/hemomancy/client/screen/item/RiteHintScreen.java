@@ -309,14 +309,16 @@ public class RiteHintScreen extends Screen {
 		y += lineH;
 
 		// ── Blood cost ──
-		gfx.drawString(font, Component.literal("Blood Cost: ").withStyle(s -> s.withColor(LABEL_COLOR))
+		gfx.drawString(font, Component.literal("Upfront Blood: ").withStyle(s -> s.withColor(LABEL_COLOR))
 				.append(Component.literal((int) rite.getBloodCost() + " mL").withStyle(s -> s.withColor(COST_COLOR))), panelX, y, 0);
 		y += lineH;
 
 		// ── Cast time ──
-		int ticks = type.getCastingDurationTicks();
+		int ticks = rite.getCeremony() == null
+				? type.getCastingDurationTicks()
+				: rite.getCeremony().targetDurationTicks();
 		float seconds = ticks / 20f;
-		gfx.drawString(font, Component.literal("Cast Time: ").withStyle(s -> s.withColor(LABEL_COLOR))
+		gfx.drawString(font, Component.literal("Ceremony Time: ").withStyle(s -> s.withColor(LABEL_COLOR))
 				.append(Component.literal(String.format("%.1fs", seconds)).withStyle(s -> s.withColor(VALUE_COLOR))), panelX, y, 0);
 		y += lineH + 6;
 
@@ -462,13 +464,31 @@ public class RiteHintScreen extends Screen {
 					+ "Stand at the center and press the Blood Craft keybind (default: C) "
 					+ "while looking at any block in the pattern.";
 		}
+		String focusMode = rite.getCeremony() == null ? "" : rite.getCeremony().focusMode();
+		if ("temple_medium".equals(focusMode)) {
+			return "Return to the Blood Temple whose Hermit blessed you and claim that temple's heart. "
+					+ "The temple floor and boundary are already prepared. With at least six health, "
+					+ "right-click its Cardinal Focus with an iron nugget; the focus takes four health "
+					+ "and calls the brief initiatory daemon. Remain inside the small ring until it enters you.";
+		}
+		if ("hematic_medium".equals(focusMode)) {
+			return layeredInstructions()
+					+ "Right-click the Cardinal Focus with an iron nugget. The nugget seats as a disposable "
+					+ "hematic medium and begins the matching rite. " + ceremonyInstructions();
+		}
+		if ("living_staff".equals(focusMode)) {
+			return layeredInstructions()
+					+ "Shove the Living Staff into the Cardinal Focus to begin; it remains planted until the rite ends. "
+					+ ceremonyInstructions();
+		}
 		if (rite.getRequiredDegree() < 1) {
 			return layeredInstructions()
 					+ "Right-click the central ground-level activation block with a Sanguine Formation. "
-					+ "The formation is consumed only when the rite successfully begins.";
+					+ "The formation is consumed only when the rite successfully begins. "
+					+ ceremonyInstructions();
 		}
 		return layeredInstructions()
-				+ "Shove the Living Staff into the Cardinal Focus to begin; it remains planted until the rite ends.";
+				+ "Use the rite's declared focus to begin. " + ceremonyInstructions();
 	}
 
 	private String layeredInstructions() {
@@ -479,9 +499,33 @@ public class RiteHintScreen extends Screen {
 				: rite.shouldConsumeRequiredStructure()
 						? "Build the shown upper structure; it is consumed only on success. "
 						: "Build the shown reusable upper structure. ";
+		String offerings = rite.getBrazierSignature().isEmpty()
+				? ""
+				: "Place the exact offerings in lit braziers at the marked floor sockets. ";
 		return "Build at least the " + rite.getFloorId().getPath().replace('_', ' ')
-				+ " floor; higher tiers of the same style also work. " + structure
-				+ "Place the exact offerings in lit braziers at the floor sockets. ";
+				+ " floor; higher tiers of the same style also work. " + structure + offerings;
+	}
+
+	private String ceremonyInstructions() {
+		if (rite.getCeremony() == null) return "";
+		int anchors = rite.getCeremony().anchors().size();
+		long requiredSigils = rite.getCeremony().supportSockets().stream()
+				.filter(com.vincenthuto.hemomancy.common.rite.CardinalRiteCeremonyDefinition.SupportSocket::required)
+				.count();
+		String anchorText = anchors == 0 ? ""
+				: "Once the boundary appears, feed its " + anchors
+						+ " anchors with Blood Projection. ";
+		String sigilText = rite.getCeremony().supportSockets().isEmpty() ? ""
+				: requiredSigils == 0
+						? "Its support sigils are optional preparations. "
+						: "Awaken all " + requiredSigils + " required support "
+								+ (requiredSigils == 1 ? "sigil" : "sigils")
+								+ " before sealing the daemon. ";
+		String ordealText = rite.getCeremony().waves().isEmpty()
+				&& rite.getCeremony().guaranteedWaves().isEmpty()
+						? "No ordeal follows the seal."
+						: "Seal the daemon with Blood Projection, then endure the authored ordeal.";
+		return anchorText + sigilText + ordealText;
 	}
 
 	// ── Layer Buttons ──

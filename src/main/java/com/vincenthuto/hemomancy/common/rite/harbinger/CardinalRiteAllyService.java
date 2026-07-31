@@ -2,9 +2,9 @@ package com.vincenthuto.hemomancy.common.rite.harbinger;
 
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.Bloodline;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodlineSavedData;
+import com.vincenthuto.hemomancy.common.recipe.CardinalRiteRecipe;
 import com.vincenthuto.hemomancy.common.rite.ActiveCardinalRite;
 import com.vincenthuto.hemomancy.common.rite.CardinalRiteAllyRole;
-import com.vincenthuto.hemomancy.common.rite.CardinalRiteCeremonyRules;
 import com.vincenthuto.hemomancy.common.rite.CardinalRitePhase;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
@@ -41,7 +41,7 @@ public final class CardinalRiteAllyService {
 		if (role == null) return false;
 		Bloodline line = bloodline(level, rite);
 		if (line == null || !line.hasMember(player.getUUID())) return false;
-		int quota = CardinalRiteCeremonyRules.allyQuota(rite.getDegree());
+		int quota = helperQuota(level, rite);
 		if (!rite.getAllyRoles().containsKey(player.getUUID()) && rite.getAllyRoles().size() >= quota) {
 			player.displayClientMessage(Component.literal("Every bloodline station is already occupied.")
 					.withStyle(ChatFormatting.DARK_RED), true);
@@ -71,7 +71,7 @@ public final class CardinalRiteAllyService {
 					.withStyle(ChatFormatting.DARK_RED), true);
 			return true;
 		}
-		int quota = CardinalRiteCeremonyRules.allyQuota(rite.getDegree());
+		int quota = helperQuota(level, rite);
 		if (!rite.getAllyRoles().containsKey(npc.getUUID()) && rite.getAllyRoles().size() >= quota) {
 			caster.displayClientMessage(Component.literal("Every bloodline station is already occupied.")
 					.withStyle(ChatFormatting.DARK_RED), true);
@@ -109,6 +109,19 @@ public final class CardinalRiteAllyService {
 		return level.getServer().getPlayerList().getPlayer(ally) != null;
 	}
 
+	public static boolean hasRequiredHelperCount(int available, int required) {
+		return Math.max(0, available) >= Math.max(0, required);
+	}
+
+	public static boolean hasRequiredHelpers(ServerLevel level, ActiveCardinalRite rite) {
+		CardinalRiteRecipe recipe = CardinalRiteRecipe.getRiteByLocation(level, rite.getRecipeId());
+		if (recipe == null || recipe.getCeremony() == null) return true;
+		long available = rite.getAllyRoles().keySet().stream()
+				.filter(ally -> isAvailable(level, rite, ally))
+				.count();
+		return hasRequiredHelperCount((int) available, recipe.getCeremony().requiredHelpers());
+	}
+
 	public static boolean tryCorrectMiss(ServerLevel level, ActiveCardinalRite rite) {
 		for (var entry : rite.getAllyRoles().entrySet()) {
 			if (entry.getValue() != CardinalRiteAllyRole.ATTENDANT
@@ -123,6 +136,12 @@ public final class CardinalRiteAllyService {
 
 	private static Bloodline bloodline(ServerLevel level, ActiveCardinalRite rite) {
 		return BloodlineSavedData.get(level.getServer().overworld()).getBloodlineForPlayer(rite.getPlayerUUID());
+	}
+
+	private static int helperQuota(ServerLevel level, ActiveCardinalRite rite) {
+		CardinalRiteRecipe recipe = CardinalRiteRecipe.getRiteByLocation(level, rite.getRecipeId());
+		if (recipe == null || recipe.getCeremony() == null) return 0;
+		return recipe.getCeremony().helperRoles().size();
 	}
 
 	private static CardinalRiteAllyRole roleAt(ActiveCardinalRite rite, BlockPos clicked) {

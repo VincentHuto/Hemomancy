@@ -28,6 +28,7 @@ import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.BloodVolumeServerPacket;
 import com.vincenthuto.hemomancy.common.network.particle.SpawnSanguineOmenEffectPacket;
 import com.vincenthuto.hemomancy.common.worldgen.FungalGardenTravelHelper;
+import com.vincenthuto.hemomancy.common.rite.TempleOathRules;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.EnumArchonPath;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.InitiatoryDegreeEvents;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
@@ -126,6 +127,10 @@ public class DialogueEventHandler {
 						false);
 			}
 			case "hermit_heart_offered" -> {
+				Entity entity = player.level().getEntity(event.getEntityId());
+				if (entity instanceof HarbingerHermitEntity hermit) {
+					TempleOathRules.bless(player, hermit.getUUID());
+				}
 				player.displayClientMessage(
 						Component.translatable("hemomancy.dialogue.event.hermit_heart_offered")
 								.withStyle(ChatFormatting.DARK_RED),

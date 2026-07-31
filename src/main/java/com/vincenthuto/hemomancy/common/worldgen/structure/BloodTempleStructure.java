@@ -7,6 +7,8 @@ import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.init.EntityInit;
 import com.vincenthuto.hemomancy.common.init.BlockInit;
 import com.vincenthuto.hemomancy.common.init.StructureInit;
+import com.vincenthuto.hemomancy.common.tile.functional.MortalDisplayBlockEntity;
+import com.vincenthuto.hemomancy.common.tile.functional.CardinalFocusBlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.resources.ResourceLocation;
@@ -129,6 +131,8 @@ public class BloodTempleStructure extends Structure {
 				new BlockPos(centerX, centerY + 3, centerZ));
 
 		BlockPos spawnPos = new BlockPos(centerX, centerY + 1, centerZ);
+		BlockPos displayPos = findMortalDisplay(level, fullBox);
+		BlockPos focusPos = findCardinalFocus(level, fullBox);
 
 		// Search for a suitable air block near the centre
 		for (int attempt = 0; attempt < 16; attempt++) {
@@ -137,13 +141,34 @@ public class BloodTempleStructure extends Structure {
 			if (level.getBlockState(candidate).isAir()
 					&& level.getBlockState(candidate.below()).isFaceSturdy(level, candidate.below(),
 							net.minecraft.core.Direction.UP)) {
-				spawnMob(level, EntityInit.harbinger_hermit.get(), candidate);
+				spawnMob(level, EntityInit.harbinger_hermit.get(), candidate, displayPos, focusPos);
 				return;
 			}
 		}
 
 		// Last resort: force-spawn at centre
-		spawnMob(level, EntityInit.harbinger_hermit.get(), spawnPos);
+		spawnMob(level, EntityInit.harbinger_hermit.get(), spawnPos, displayPos, focusPos);
+	}
+
+	private BlockPos findMortalDisplay(WorldGenLevel level, BoundingBox box) {
+		return findBlock(level, box, BlockInit.mortal_display.get());
+	}
+
+	private BlockPos findCardinalFocus(WorldGenLevel level, BoundingBox box) {
+		return findBlock(level, box, BlockInit.cardinal_focus.get());
+	}
+
+	private BlockPos findBlock(WorldGenLevel level, BoundingBox box,
+			net.minecraft.world.level.block.Block block) {
+		for (int y = box.minY(); y <= box.maxY(); y++) {
+			for (int x = box.minX(); x <= box.maxX(); x++) {
+				for (int z = box.minZ(); z <= box.maxZ(); z++) {
+					BlockPos pos = new BlockPos(x, y, z);
+					if (level.getBlockState(pos).is(block)) return pos;
+				}
+			}
+		}
+		return null;
 	}
 
 	/**
@@ -152,7 +177,8 @@ public class BloodTempleStructure extends Structure {
 	 * because the standard {@code EntityType.spawn()} requires a {@code ServerLevel}
 	 * which is not available during structure placement (only {@code WorldGenRegion}).
 	 */
-	private <T extends Entity> void spawnMob(WorldGenLevel level, EntityType<T> type, BlockPos pos) {
+	private <T extends Entity> void spawnMob(WorldGenLevel level, EntityType<T> type, BlockPos pos,
+			BlockPos displayPos, BlockPos focusPos) {
 		T entity = type.create(level.getLevel());
 		if (entity == null) return;
 		entity.moveTo(pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5,
@@ -163,5 +189,13 @@ public class BloodTempleStructure extends Structure {
 			mob.setPersistenceRequired();
 		}
 		level.addFreshEntityWithPassengers(entity);
+		if (displayPos != null
+				&& level.getBlockEntity(displayPos) instanceof MortalDisplayBlockEntity display) {
+			display.linkHermit(entity.getUUID());
+		}
+		if (focusPos != null && displayPos != null
+				&& level.getBlockEntity(focusPos) instanceof CardinalFocusBlockEntity focus) {
+			focus.linkTempleDisplay(displayPos);
+		}
 	}
 }

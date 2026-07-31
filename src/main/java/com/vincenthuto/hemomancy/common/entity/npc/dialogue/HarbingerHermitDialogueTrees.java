@@ -3,6 +3,7 @@ package com.vincenthuto.hemomancy.common.entity.npc.dialogue;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.player.shared.knowledge.discovery.MemoDefinitions;
 import com.vincenthuto.hemomancy.common.capability.player.shared.knowledge.discovery.MemoHelper;
+import com.vincenthuto.hemomancy.common.rite.TempleOathRules;
 import net.minecraft.resources.ResourceLocation;
 
 import java.util.List;
@@ -27,7 +28,12 @@ public final class HarbingerHermitDialogueTrees {
 	 * @param entityId     The entity id of the hermit being spoken to.
 	 */
 	public static DialogueTree forDegree(int degree, boolean hasBlood, int entityId) {
-		if (!hasBlood) {
+		return forDegree(degree, hasBlood, false, entityId);
+	}
+
+	public static DialogueTree forDegree(int degree, boolean hasBlood,
+			boolean hasClaimedThisHermitsHeart, int entityId) {
+		if (!TempleOathRules.shouldShowInitiationGuidance(hasBlood, hasClaimedThisHermitsHeart)) {
 			return noBlood(entityId);
 		}
 		return switch (degree) {

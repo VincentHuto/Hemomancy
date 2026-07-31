@@ -1,8 +1,8 @@
 {
   "type": "hemomancy:cardinal_rite_recipe",
-  "bloodCost": 500,
+  "bloodCost": 0,
   "riteType": "lesser",
-  "required_degree": 2,
+  "required_degree": 3,
   "riteName": "Rite of Exsanguination",
   "riteDescription": "A dark sacrifice rite that drains the lifeblood of a named creature within the ritual circle, crystallizing their essence into Sanguine Quintessence â€” a rare and potent material.",
   "result": {
@@ -12,9 +12,54 @@
   "brazier_signature": [
     {
       "ingredient": {
-        "item": "minecraft:turtle_scute"
+        "item": "hemomancy:hematic_iron_powder"
       },
       "count": 1
     }
-  ]
+  ],
+  "ceremony": {
+    "profile": "standard",
+    "anchors": [
+      {
+        "y": 1,
+        "ring": 0,
+        "order": 0
+      },
+      {
+        "y": 1,
+        "ring": 0,
+        "order": 1
+      },
+      {
+        "y": 1,
+        "ring": 0,
+        "order": 2
+      },
+      {
+        "y": 1,
+        "ring": 0,
+        "order": 3
+      }
+    ],
+    "support_sockets": [],
+    "waves": [],
+    "guaranteed_waves": [],
+    "signature": "exsanguination",
+    "fragile_offsets": [],
+    "target_duration_ticks": 1200,
+    "focus": "living_staff",
+    "required_helpers": 0,
+    "helper_roles": [
+      "anchor",
+      "attendant",
+      "warden"
+    ],
+    "still_interval_ticks": 0,
+    "atmosphere": {
+      "fog": "faint",
+      "lightning": false,
+      "dome": false
+    },
+    "failure": "safe_retry"
+  }
 }

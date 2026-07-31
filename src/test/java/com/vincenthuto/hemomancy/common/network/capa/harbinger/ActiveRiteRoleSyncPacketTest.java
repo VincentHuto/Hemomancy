@@ -59,4 +59,26 @@ final class ActiveRiteRoleSyncPacketTest {
 
 		assertEquals(37, decoded.getCancellationTicks());
 	}
+
+	@Test
+	void packetRoundTripsTheServerAuthoredStormAtmosphere() {
+		var entry = atmosphereEntry("storm", true, true);
+		FriendlyByteBuf buffer = new FriendlyByteBuf(Unpooled.buffer());
+
+		PacketSyncActiveRites.encode(buffer, new PacketSyncActiveRites(List.of(entry)));
+		var decoded = PacketSyncActiveRites.decode(buffer).entries().getFirst();
+
+		assertEquals("storm", decoded.getFogProfile());
+		assertEquals(true, decoded.hasFogLightning());
+		assertEquals(true, decoded.hasBoundaryDome());
+	}
+
+	private static ActiveRiteClientData.RiteEntry atmosphereEntry(
+			String fogProfile, boolean lightning, boolean dome) {
+		return new ActiveRiteClientData.RiteEntry(BlockPos.ZERO, 9, 0,
+				ResourceLocation.parse("hemomancy:cardinal_rite/pallid_shadow"), false,
+				"CONSECRATION", 0, 0, 3, 0, 3, 0, 600, 0, 0, -1, "",
+				9.0F, List.of(), List.of(), List.of(), List.of(),
+				true, UUID.randomUUID(), 0, 40, fogProfile, lightning, dome);
+	}
 }

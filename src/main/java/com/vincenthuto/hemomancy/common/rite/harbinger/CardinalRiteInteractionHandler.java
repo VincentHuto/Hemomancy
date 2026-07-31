@@ -149,11 +149,28 @@ public final class CardinalRiteInteractionHandler {
 				List.of(daemon.position())) < 0) return false;
 		CardinalRiteRecipe recipe = CardinalRiteRecipe.getRiteByLocation(level, rite.getRecipeId());
 		if (recipe == null || !consumeSealCatalyst(level, rite, recipe)) return true;
+		if (!CardinalRiteAllyService.hasRequiredHelpers(level, rite)) {
+			player.displayClientMessage(Component.literal("The rite cannot be sealed until its required bloodline helpers take their stations.")
+					.withStyle(ChatFormatting.DARK_RED, ChatFormatting.BOLD), false);
+			return true;
+		}
+		for (var socket : recipe.getCeremony().supportSockets()) {
+			if (socket.required()
+					&& !rite.isSigilAwakened(Hemomancy.rloc(socket.suggestedSigil()).toString())) {
+				player.displayClientMessage(Component.literal(
+								"The required " + socket.suggestedSigil() + " support sigil has not awakened.")
+						.withStyle(ChatFormatting.DARK_RED, ChatFormatting.BOLD), false);
+				return true;
+			}
+		}
 		prepareWaveDeck(rite, recipe);
-		rite.sealAltar();
+		rite.sealAltar(!recipe.getCeremony().signatureHandler().isBlank(),
+				recipe.getCeremony().stillIntervalTicks() > 0);
 		level.playSound(null, rite.getCenterPos(), SoundEvents.BEACON_POWER_SELECT,
 				SoundSource.BLOCKS, 1.0F, 0.8F);
-		player.displayClientMessage(Component.literal("The altar is sealed. Endure the ordeal.")
+		player.displayClientMessage(Component.literal(rite.getTotalWaves() > 0
+						? "The altar is sealed. Endure the ordeal."
+						: "The altar is sealed. Complete the rite's profession.")
 				.withStyle(ChatFormatting.DARK_RED, ChatFormatting.BOLD), false);
 		return true;
 	}
@@ -787,13 +804,12 @@ public final class CardinalRiteInteractionHandler {
 	private static int anchorAt(ServerLevel level, ActiveCardinalRite rite, BlockPos target) {
 		CardinalRiteRecipe recipe = CardinalRiteRecipe.getRiteByLocation(level, rite.getRecipeId());
 		if (recipe == null || recipe.getCeremony() == null) return -1;
-		for (int i = 0; i < recipe.getCeremony().anchors().size(); i++) {
-			BlockPos offset = recipe.getCeremony().anchors().get(i).offset();
-			BlockPos anchor = CardinalRiteAnchorVisualRules.riteSurface(rite.getCenterPos())
-					.offset(offset.getX(), 0, offset.getZ());
-			if (target.closerThan(anchor, 1.6D) || target.closerThan(anchor.above(), 1.6D)) return i;
-		}
-		return -1;
+		return CardinalRiteTargetGeometry.nearestAnchorIndex(
+				CardinalRiteAnchorVisualRules.riteSurface(rite.getCenterPos()),
+				recipe.getCeremony().anchors().stream()
+						.map(com.vincenthuto.hemomancy.common.rite.CardinalRiteCeremonyDefinition.Anchor::offset)
+						.toList(),
+				target, 1.6D);
 	}
 
 	private static void prepareWaveDeck(ActiveCardinalRite rite, CardinalRiteRecipe recipe) {

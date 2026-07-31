@@ -847,6 +847,7 @@ public final class HemoRenderTypes {
 					ShaderInstance shader = ShaderInit.CARDINAL_RITE_FOG.getInstance().get();
 					setUniform(shader, "HemoTime", gameTime);
 					setUniform(shader, "FogSeed", fogSeed);
+					setUniform(shader, "ColorModulator", 1.0F, 1.0F, 1.0F, 1.0F);
 				},
 				() -> {
 					ShaderInstance shader = ShaderInit.CARDINAL_RITE_FOG.getInstance().get();
@@ -915,6 +916,17 @@ public final class HemoRenderTypes {
 		Uniform uniform = shader.getUniform(name);
 		if (uniform != null) {
 			uniform.set(x, y, z);
+		}
+	}
+
+	private static void setUniform(ShaderInstance shader, String name,
+			float x, float y, float z, float w) {
+		if (shader == null) {
+			return;
+		}
+		Uniform uniform = shader.getUniform(name);
+		if (uniform != null) {
+			uniform.set(x, y, z, w);
 		}
 	}
 }

@@ -38,4 +38,17 @@ final class CardinalRiteStructureFailureSourceTest {
 		assertTrue(events.contains("new EmberParticleData(ParticleColor.PURPLE"),
 				"each vanished anchor must burst into purple particles");
 	}
+
+	@Test
+	void removedInteractiveRecipeIsRetiredWithoutPunishingThePlayer() throws IOException {
+		String events = Files.readString(ROOT.resolve(
+				"src/main/java/com/vincenthuto/hemomancy/common/rite/harbinger/HarbingerCardinalRiteEvents.java"));
+
+		assertTrue(events.contains("if (recipe == null && rite.getPhase() != CardinalRitePhase.LEGACY)"),
+				"datapack updates must retire active ceremonies whose recipes no longer exist");
+		assertTrue(events.contains("CardinalRiteStaffEscrow.restore(caster, rite);"),
+				"retiring a removed rite must return an escrowed Living Staff");
+		assertTrue(events.contains("toRemove.add(playerUUID);"),
+				"the orphaned rite must be removed from saved and synced active state");
+	}
 }

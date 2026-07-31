@@ -5,6 +5,7 @@ import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.DialogueTree;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.DialogueHubFactory;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.HarbingerHermitDialogueTrees;
+import com.vincenthuto.hemomancy.common.rite.TempleOathRules;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.dialogue.OpenDialoguePacket;
 import com.vincenthuto.hemomancy.client.particle.factory.HermitEdgeGlowParticleFactory;
@@ -381,7 +382,9 @@ public class HarbingerHermitEntity extends PathfinderMob {
             IBloodVolume volume = HemoCapabilityAccess.getBloodVolume(player).orElse(null);
             boolean hasActiveBlood = volume != null && volume.isActive();
 
-            DialogueTree tree = HarbingerHermitDialogueTrees.forDegree(degree, hasActiveBlood, this.getId());
+            boolean hasClaimedThisHeart = TempleOathRules.hasClaimedHeartFrom(player, this.getUUID());
+            DialogueTree tree = HarbingerHermitDialogueTrees.forDegree(
+                    degree, hasActiveBlood, hasClaimedThisHeart, this.getId());
             tree = DialogueHubFactory.decorate(tree, "hermit", serverPlayer);
 
             PacketHandler.sendToPlayer(serverPlayer, new OpenDialoguePacket(tree));

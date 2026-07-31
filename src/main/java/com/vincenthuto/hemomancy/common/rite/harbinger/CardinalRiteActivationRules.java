@@ -9,6 +9,7 @@ public final class CardinalRiteActivationRules {
 	public enum Trigger {
 		LIVING_STAFF_BLOCK_USE,
 		SANGUINE_FORMATION_BLOCK_USE,
+		HEMATIC_MEDIUM_BLOCK_USE,
 		BLOOD_CRAFTING_KEY
 	}
 
@@ -33,6 +34,19 @@ public final class CardinalRiteActivationRules {
 		if (unstained) return trigger == Trigger.BLOOD_CRAFTING_KEY;
 		if (requiredDegree < 1) return trigger == Trigger.SANGUINE_FORMATION_BLOCK_USE;
 		return trigger == Trigger.LIVING_STAFF_BLOCK_USE;
+	}
+
+	public static boolean mayInitiate(Trigger trigger, boolean unstained, int requiredDegree,
+			String focusMode) {
+		if (unstained) return trigger == Trigger.BLOOD_CRAFTING_KEY;
+		if ("temple_medium".equals(focusMode)) return false;
+		if ("hematic_medium".equals(focusMode)) {
+			return trigger == Trigger.HEMATIC_MEDIUM_BLOCK_USE;
+		}
+		if ("living_staff".equals(focusMode)) {
+			return trigger == Trigger.LIVING_STAFF_BLOCK_USE;
+		}
+		return mayInitiate(trigger, false, requiredDegree);
 	}
 
 	public static Cell activationCell(String[][] pattern) {

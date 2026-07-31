@@ -58,6 +58,9 @@ public class PacketSyncActiveRites implements CustomPacketPayload {
 			buf.writeUUID(entry.getOwner() == null ? new java.util.UUID(0L, 0L) : entry.getOwner());
 			buf.writeVarInt(entry.getCancellationTicks());
 			buf.writeInt(entry.getStaffPlantingTicks());
+			buf.writeUtf(entry.getFogProfile());
+			buf.writeBoolean(entry.hasFogLightning());
+			buf.writeBoolean(entry.hasBoundaryDome());
 			buf.writeVarInt(entry.getChecklist().size());
 			for (String line : entry.getChecklist()) buf.writeUtf(line);
 			buf.writeVarInt(entry.getBoundarySegments().size());
@@ -119,6 +122,9 @@ public class PacketSyncActiveRites implements CustomPacketPayload {
 			java.util.UUID owner = buf.readUUID();
 			int cancellationTicks = buf.readVarInt();
 			int staffPlantingTicks = buf.readInt();
+			String fogProfile = buf.readUtf();
+			boolean fogLightning = buf.readBoolean();
+			boolean boundaryDome = buf.readBoolean();
 			int checklistCount = buf.readVarInt();
 			List<String> checklist = new ArrayList<>(checklistCount);
 			for (int lineIndex = 0; lineIndex < checklistCount; lineIndex++) checklist.add(buf.readUtf());
@@ -151,7 +157,8 @@ public class PacketSyncActiveRites implements CustomPacketPayload {
 					committedBlood, upfrontBlood, carriedIchor, allyCount, sharedBlood, cue,
 					footprintRadius, checklist,
 					boundarySegments, sigilSegments, sanguineBlobs, plantedStaff, owner,
-					cancellationTicks, staffPlantingTicks));
+					cancellationTicks, staffPlantingTicks,
+					fogProfile, fogLightning, boundaryDome));
 		}
 		return new PacketSyncActiveRites(entries);
 	}

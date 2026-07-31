@@ -1,20 +1,62 @@
 {
   "type": "hemomancy:cardinal_rite_recipe",
-  "bloodCost": 900,
+  "bloodCost": 0,
   "riteType": "lesser",
-  "required_degree": 2,
+  "required_degree": 3,
   "riteName": "Rite of Sanguine Fervor",
   "riteDescription": "A hunting rite that saturates the earth with vital blood-heat, drawing creatures from the dark. For a short time, mobs spawn at greatly increased rates within a 3-chunk radius, making the area ideal for farming.",
-  "result": {
-    "id": "hemomancy:sanguine_formation"
-  },
   "floor": "hemomancy:working_lesser",
   "brazier_signature": [
     {
       "ingredient": {
-        "item": "minecraft:feather"
+        "item": "hemomancy:blood_chum"
       },
       "count": 1
     }
-  ]
+  ],
+  "ceremony": {
+    "profile": "standard",
+    "anchors": [
+      {
+        "y": 1,
+        "ring": 0,
+        "order": 0
+      },
+      {
+        "y": 1,
+        "ring": 0,
+        "order": 1
+      },
+      {
+        "y": 1,
+        "ring": 0,
+        "order": 2
+      },
+      {
+        "y": 1,
+        "ring": 0,
+        "order": 3
+      }
+    ],
+    "support_sockets": [],
+    "waves": [],
+    "guaranteed_waves": [],
+    "signature": "sanguine_fervor",
+    "fragile_offsets": [],
+    "target_duration_ticks": 1200,
+    "focus": "living_staff",
+    "required_helpers": 0,
+    "helper_roles": [
+      "anchor",
+      "attendant",
+      "warden"
+    ],
+    "still_interval_ticks": 0,
+    "atmosphere": {
+      "fog": "faint",
+      "lightning": false,
+      "dome": false
+    },
+    "failure": "safe_retry"
+  }
 }

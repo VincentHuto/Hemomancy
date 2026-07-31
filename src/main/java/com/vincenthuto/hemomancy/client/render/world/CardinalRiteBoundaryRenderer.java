@@ -199,6 +199,7 @@ public class CardinalRiteBoundaryRenderer {
 
 	private static void drawExteriorField(PoseStack poseStack, MultiBufferSource.BufferSource buffer,
 			ActiveRiteClientData.RiteEntry rite, float currentTime, Vec3 cam) {
+		if (!rite.hasBoundaryDome()) return;
 		if (!CardinalRiteBoundaryGeometry.shouldRenderExterior(rite.getTotalRings())) return;
 		boolean legacy = "LEGACY".equals(rite.getPhase());
 		float fogPerimeterRadius = CardinalRiteFogGeometry.perimeterRadius(
@@ -258,7 +259,8 @@ public class CardinalRiteBoundaryRenderer {
 		if (ringCount <= 0) return;
 		CardinalRiteRecipe recipe = legacy ? null
 				: CardinalRiteRecipe.getRiteByLocation(Minecraft.getInstance().level, rite.getRecipeId());
-		boolean hasAnchorSockets = recipe != null && recipe.getCeremony() != null;
+		CardinalRiteCeremonyDefinition ceremony = recipe == null ? null : recipe.getCeremony();
+		boolean hasAnchorSockets = ceremony != null;
 		float stainOpacity = legacy ? 1.0F
 				: CardinalRiteBoundaryGeometry.stainOpacity(
 						rite.stainFadeProgress(partialTick));
@@ -273,7 +275,7 @@ public class CardinalRiteBoundaryRenderer {
 			float ringRadius = !hasAnchorSockets ? nominalRingRadius
 					: CardinalRiteBoundaryGeometry.anchorAlignedRingRadius(
 							nominalRingRadius,
-							recipe.getCeremony().anchors().stream()
+							ceremony.anchors().stream()
 									.filter(anchor -> anchor.ring() == activeRing)
 									.map(CardinalRiteCeremonyDefinition.Anchor::offset)
 									.toList());
@@ -283,27 +285,27 @@ public class CardinalRiteBoundaryRenderer {
 							.filter(segment -> segment.ring() == activeRing)
 							.toList();
 			List<Double> socketEndpoints = hasAnchorSockets
-					? socketEndpointAngles(recipe.getCeremony(), ring, ringRadius)
+					? socketEndpointAngles(ceremony, ring, ringRadius)
 					: List.of();
 			List<CardinalRiteBoundaryProgress.Segment> visibleArcs = legacy
 					? List.of(new CardinalRiteBoundaryProgress.Segment(ring, 0.0D, Math.PI * 2.0D))
 					: visibleSegments.stream()
 							.flatMap(segment -> {
-								SegmentClearances clearances = segmentClearances(
-										segment, recipe.getCeremony(), ringRadius);
+								SegmentClearances clearances = hasAnchorSockets ? segmentClearances(
+										segment, ceremony, ringRadius) : new SegmentClearances(0.0D, 0.0D);
 								return CardinalRiteBoundaryGeometry.animatedSocketArcs(
 										segment, rite.boundaryGrowth(segment, partialTick),
 										clearances.start(), clearances.end()).stream();
 							})
 							.toList();
-			if (!legacy && glowVC != null) {
+			if (!legacy && glowVC != null && hasAnchorSockets) {
 				List<CardinalRiteBoundaryProgress.Segment> backingArcs =
 						CardinalRiteBoundaryProgress.authoredSegments(
-										recipe.getCeremony().anchors()).stream()
+									ceremony.anchors()).stream()
 								.filter(segment -> segment.ring() == activeRing)
 								.toList();
 				List<CardinalRiteCeremonyDefinition.Anchor> stainAnchors =
-						recipe.getCeremony().anchors().stream()
+						ceremony.anchors().stream()
 								.filter(anchor -> anchor.ring() == activeRing)
 								.toList();
 				drawBoundaryFloorStain(
@@ -423,12 +425,12 @@ public class CardinalRiteBoundaryRenderer {
 					visibleArcs, legacy);
 		}
 
-		if (!legacy) {
+		if (!legacy && hasAnchorSockets) {
 			drawBoundaryCompletionEffects(
-					glowVC, coreVC, mat, rite, recipe.getCeremony(), partialTick);
+					glowVC, coreVC, mat, rite, ceremony, partialTick);
 		}
 		if (hasAnchorSockets) {
-			drawAnchorSockets(glowVC, coreVC, mat, rite, recipe.getCeremony(),
+			drawAnchorSockets(glowVC, coreVC, mat, rite, ceremony,
 					currentTime, partialTick, ringCount, stainOpacity);
 		}
 

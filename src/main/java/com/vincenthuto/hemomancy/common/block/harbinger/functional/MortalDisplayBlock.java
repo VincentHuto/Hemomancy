@@ -3,11 +3,11 @@ package com.vincenthuto.hemomancy.common.block.harbinger.functional;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
-import com.vincenthuto.hemomancy.common.event.HarbingerAdvancementGranter;
 import com.vincenthuto.hemomancy.common.init.BlockInit;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.tile.functional.MortalDisplayBlockEntity;
+import com.vincenthuto.hemomancy.common.rite.TempleOathRules;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import com.vincenthuto.hutoslib.common.network.HLPacketHandler;
 import net.minecraft.ChatFormatting;
@@ -97,30 +97,38 @@ public class MortalDisplayBlock extends Block implements EntityBlock, SimpleWate
 	}
 
 	private InteractionResult handleInteraction(BlockState state, Level worldIn, BlockPos pos, Player player) {
+		if (worldIn.isClientSide) return InteractionResult.SUCCESS;
+		if (!(worldIn.getBlockEntity(pos) instanceof MortalDisplayBlockEntity display)
+				|| display.getLinkedHermit() == null) {
+			player.displayClientMessage(Component.literal(
+					"This heart has no living oath to answer.").withStyle(ChatFormatting.GRAY), false);
+			return InteractionResult.SUCCESS;
+		}
+		if (!TempleOathRules.canClaimHeart(display.getLinkedHermit(),
+				TempleOathRules.blessedHermit(player), display.isClaimed())) {
+			player.displayClientMessage(Component.literal(display.isClaimed()
+							? "The heart has already been claimed."
+							: "Speak with this temple's hermit and accept their blessing first.")
+					.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC), false);
+			return InteractionResult.SUCCESS;
+		}
 
-		IBloodVolume volume = HemoCapabilityAccess.getBloodVolume(player)
-				.orElseThrow(NullPointerException::new);
-		if (!volume.isActive()) {
-			worldIn.setBlockAndUpdate(pos, BlockInit.placed_blood_stained_stone.get().defaultBlockState());
-			volume.setActive(true);
-			if (!worldIn.isClientSide && player instanceof ServerPlayer serverPlayer) {
-				HarbingerAdvancementGranter.grantIfNotDone(serverPlayer, Hemomancy.rloc("hemomancy/the_first_awakening"));
-			}
+		display.claim(player.getUUID());
+		TempleOathRules.recordHeartClaim(player, display.getLinkedHermit());
+		IBloodVolume volume = HemoCapabilityAccess.getBloodVolume(player).orElse(null);
+		if (volume == null || !volume.isActive()) {
 			for (int i = 0; i < 10; i++) {
 				Vec3 startVec = new Vec3(pos.getX(), pos.getY(), pos.getZ()).add(0.5, 0.5, 0.5);
 				Vec3 endVec = player.position().add(0, player.getBbHeight() - worldIn.random.nextDouble(), 0).add(
 						worldIn.random.nextDouble() - worldIn.random.nextDouble(), 0,
 						worldIn.random.nextDouble() - worldIn.random.nextDouble());
-				if (!worldIn.isClientSide) {
-					PacketHandler.sendClawParticles(endVec, ParticleColor.BLOOD, 64f, (ServerLevel) worldIn);
-					HLPacketHandler.sendLightningSpawn(startVec, endVec, 64.0f, player.level().dimension(),
-							ParticleColor.RED, 2, 20, 9, 1.2f);
-				}
+				PacketHandler.sendClawParticles(endVec, ParticleColor.BLOOD, 64f, (ServerLevel) worldIn);
+				HLPacketHandler.sendLightningSpawn(startVec, endVec, 64.0f, player.level().dimension(),
+						ParticleColor.RED, 2, 20, 9, 1.2f);
 			}
 
 			// Equip the Charm of Vascularium into the player's VASC scar slot
-			if (!worldIn.isClientSide) {
-				HemoCapabilityAccess.getEquipment(player).ifPresent(scars -> {
+			HemoCapabilityAccess.getEquipment(player).ifPresent(scars -> {
 					ItemStack charm = new ItemStack(ItemInit.charm_of_vascularium.get());
 					int vascSlot = 5; // HarbingerEquipmentType.VASC slot
 					if (scars.getStackInSlot(vascSlot).isEmpty()) {
@@ -134,16 +142,10 @@ public class MortalDisplayBlock extends Block implements EntityBlock, SimpleWate
 						ItemEntity drop = new ItemEntity(worldIn, pos.getX() + 0.5, pos.getY() + 1.0, pos.getZ() + 0.5, charm);
 						worldIn.addFreshEntity(drop);
 					}
-				});
-			}
-
-		} else {
-			if (!worldIn.isClientSide) {
-				player.displayClientMessage(
-						Component.translatable("hemomancy.mortal_display.already_invited")
-								.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC),
-						false);
-			}
+			});
+			player.displayClientMessage(Component.literal(
+					"The heart is yours. The charm remains dormant until the temple rite is completed.")
+					.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC), false);
 		}
 
 		return InteractionResult.SUCCESS;

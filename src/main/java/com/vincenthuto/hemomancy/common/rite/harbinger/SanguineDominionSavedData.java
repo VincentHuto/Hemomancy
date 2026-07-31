@@ -78,6 +78,20 @@ public class SanguineDominionSavedData extends SavedData {
 		setDirty();
 	}
 
+	/**
+	 * Establishes the owner's single personal domain, returning the former
+	 * location when the rite relocated one.
+	 */
+	public DominionEntry replaceDominionForOwner(DominionEntry entry) {
+		DominionEntry previous = dominions.stream()
+				.filter(existing -> existing.ownerUUID().equals(entry.ownerUUID()))
+				.findFirst().orElse(null);
+		dominions.removeIf(existing -> existing.ownerUUID().equals(entry.ownerUUID()));
+		dominions.add(entry);
+		setDirty();
+		return previous;
+	}
+
 	public List<DominionEntry> getDominions() {
 		return dominions;
 	}

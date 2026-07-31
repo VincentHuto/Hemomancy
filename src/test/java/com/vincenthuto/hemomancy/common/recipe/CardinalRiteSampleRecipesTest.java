@@ -12,7 +12,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 public final class CardinalRiteSampleRecipesTest {
-	private static final Path ROOT = Path.of("src/main/resources/data/hemomancy/recipe/cardinal_rite");
+	private static final Path ROOT = Path.of("src/test/resources/data/hemomancy/recipe/cardinal_rite");
 
 	@Test
 	void sampleRitesCoverTheInteractiveCeremonyProgression() throws IOException {

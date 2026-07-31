@@ -862,6 +862,7 @@ public class ClientEvents {
             BlockEntityRenderers.register(BlockEntityInit.hematic_stake.get(), HematicStakeRenderer::new);
             BlockEntityRenderers.register(BlockEntityInit.consecrated_bloodwell.get(), ConsecratedBloodwellRenderer::new);
             BlockEntityRenderers.register(BlockEntityInit.mortal_display.get(), MortalDisplayRenderer::new);
+            BlockEntityRenderers.register(BlockEntityInit.cardinal_focus.get(), CardinalFocusRenderer::new);
             BlockEntityRenderers.register(BlockEntityInit.vial_centrifuge.get(), VialCentrifugeRenderer::new);
             BlockEntityRenderers.register(BlockEntityInit.somatic_loom.get(),
                     SomaticLoomRenderer::new);

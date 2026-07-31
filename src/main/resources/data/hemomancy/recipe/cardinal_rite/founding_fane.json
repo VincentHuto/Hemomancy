@@ -1,13 +1,10 @@
 {
   "type": "hemomancy:cardinal_rite_recipe",
-  "bloodCost": 2000,
-  "riteType": "grand",
+  "bloodCost": 0,
+  "riteType": "greater",
   "required_degree": 5,
   "riteName": "Rite of the Founding Fane",
   "riteDescription": "A grand consecration rite available only to the Illuminatus. The caster binds a Sanguine Quintessence to the earth, establishing a Harbinger Founding Fane whose boundary, recall anchor, and bloodline-tied ground are made real by the rite itself.",
-  "result": {
-    "id": "hemomancy:sanguine_formation"
-  },
   "floor": "hemomancy:dominion_grand",
   "required_structure": {
     "pattern": [
@@ -50,5 +47,110 @@
       },
       "count": 1
     }
-  ]
+  ],
+  "ceremony": {
+    "profile": "ceremonial",
+    "anchors": [
+      {
+        "y": 1,
+        "ring": 0,
+        "order": 0
+      },
+      {
+        "y": 1,
+        "ring": 0,
+        "order": 1
+      },
+      {
+        "y": 1,
+        "ring": 0,
+        "order": 2
+      },
+      {
+        "y": 1,
+        "ring": 0,
+        "order": 3
+      },
+      {
+        "y": 1,
+        "ring": 1,
+        "order": 0
+      },
+      {
+        "y": 1,
+        "ring": 1,
+        "order": 1
+      },
+      {
+        "y": 1,
+        "ring": 1,
+        "order": 2
+      },
+      {
+        "y": 1,
+        "ring": 1,
+        "order": 3
+      }
+    ],
+    "support_sockets": [
+      {
+        "x": 5,
+        "y": 0,
+        "z": 0,
+        "suggested_sigil": "bastion",
+        "required": true
+      },
+      {
+        "x": -5,
+        "y": 0,
+        "z": 0,
+        "suggested_sigil": "reservoir",
+        "required": false
+      },
+      {
+        "x": 0,
+        "y": 0,
+        "z": 5,
+        "suggested_sigil": "mnemonic",
+        "required": false
+      }
+    ],
+    "waves": [
+      "bloodlicker_siphon"
+    ],
+    "guaranteed_waves": [],
+    "signature": "founding_fane",
+    "fragile_offsets": [
+      [
+        1,
+        0,
+        1
+      ],
+      [
+        -1,
+        0,
+        -1
+      ],
+      [
+        1,
+        0,
+        -1
+      ]
+    ],
+    "target_duration_ticks": 3600,
+    "focus": "living_staff",
+    "required_helpers": 0,
+    "helper_roles": [
+      "anchor",
+      "attendant",
+      "warden"
+    ],
+    "still_interval_ticks": 0,
+    "atmosphere": {
+      "fog": "storm",
+      "lightning": true,
+      "dome": false
+    },
+    "failure": "fragile_damage"
+  }
 }

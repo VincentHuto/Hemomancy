@@ -101,6 +101,14 @@ public interface IInitiatoryDegree {
 
 	void setFungalSpineGranted(boolean granted);
 
+	boolean hasHematicFortification();
+
+	void setHematicFortification(boolean fortified);
+
+	int getAncestralCommunions();
+
+	void setAncestralCommunions(int communions);
+
 	EnumArchonPath getArchonPath();
 
 	void setArchonPath(EnumArchonPath path);

@@ -35,10 +35,14 @@ See **[[Public Alpha Readiness]]** for the current alpha status and known limita
 ### The Choice
 When you first enter a world with Hemomancy installed, nothing will happen automatically. **The mod is completely opt-in.** You must make a conscious choice to engage with its systems.
 
-The world contains fungal biomes, structures, and items, but you won't be infected or affected by blood magic until you choose to interact with the **Mortal Display**.
+The world contains fungal biomes, structures, and items, but Harbinger initiation
+begins only when you knowingly swear an oath to a **Harbinger Hermit** in a Blood
+Temple.
 
-### Finding a Mortal Display
-The Mortal Display is a mysterious object found in:
+### Finding a Blood Temple
+Each Blood Temple contains a Mortal Display, a prepared initiation floor, and one
+Hermit bound to that exact temple. The Display cannot be claimed while its Hermit
+still withholds permission. Older Displays elsewhere do not begin this progression:
 - **Harbinger Outposts** — Small structures in the overworld with blood-stained banners
 - **Mausoleums** — Underground crypts containing Harbinger artifacts
 - Can also be crafted (recipe available via JEI)
@@ -46,16 +50,26 @@ The Mortal Display is a mysterious object found in:
 The Mortal Display appears as an ornate pedestal with a crimson aura.
 
 ### The Moment of Choice
-Right-click the Mortal Display. You will see a message asking if you wish to "pierce the veil" and become aware of the blood flowing through your veins.
+Speak with the Hermit and follow the dialogue until you deliberately accept the
+oath. Only then may you take the Hermit's heart from that temple's Mortal Display.
+A blessing from one temple cannot bypass the living Hermit in another.
 
-**This is your point of no return.** Accepting this choice activates your blood volume capability and permanently marks you as someone who can perceive and manipulate blood.
+**The oath is the opt-in point.** Merely finding or clicking a Display does not
+start the mod's progression.
 
 ### What Happens Next
-Once you accept:
-- Your **blood volume** becomes active (you start with 1000 mL)
-- You gain access to the **Field Notes** journal (press `B` by default to open)
-- You can begin learning **blood manipulations**
-- You must now choose: Harbinger or Unstained?
+The Hermit's blueprint directs you to the small pattern already built into the
+temple floor:
+
+1. Seat an iron nugget in the prepared Cardinal Focus as a crude hematic medium.
+2. Activate the Focus and pay its small, nonlethal health cost.
+3. Remain inside the small boundary while the initiation daemon appears and enters
+   you.
+
+This first rite has no anchors to fill, sigils to draw, braziers to prepare, fog,
+ordeal, or helper requirement. On success the lodged nugget breaks the temple
+Focus, your blood volume becomes active, and you receive a **Sanguine Conduit**.
+The Conduit's Rites tab explains how later ceremonies add each mechanic.
 
 ---
 
@@ -104,11 +118,12 @@ Learn manipulations by crafting **Hematic Memories** at the **Somatic Loom**.
 **Theme:** Embrace blood magic as sacred inheritance
 
 If you wish to walk the path of the Hematic Order:
-1. Perform the **Sanguine Initiation** ritual using the **Cardinal Altar**
-2. You'll become a **Neophyte** (Degree 1) in the Hematic Order
-3. Progress through seven degrees, each unlocking more power
-4. Build a bloodline, recruit followers, establish fanes
-5. Eventually face a choice at Degree 7: resist or transcend
+1. Find a Blood Temple, swear the Hermit's oath, and claim its temple-bound heart
+2. Perform the simplified **Sanguine Initiation** on the prepared temple floor
+3. Become a **Neophyte** (Degree 1) and use the Sanguine Conduit for guidance
+4. Progress through seven degrees, each adding new ritual vocabulary
+5. Build a bloodline, recruit followers, and establish fanes
+6. Eventually face a choice at Degree 7: resist or transcend
 
 **Pros:**
 - Powerful offensive and utility manipulations

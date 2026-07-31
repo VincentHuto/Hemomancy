@@ -1,20 +1,62 @@
 {
   "type": "hemomancy:cardinal_rite_recipe",
-  "bloodCost": 500,
+  "bloodCost": 0,
   "riteType": "lesser",
   "required_degree": 2,
   "riteName": "Rite of Hematic Fortification",
   "riteDescription": "A lesser rite that strengthens the caster's connection to the blood arts.",
-  "result": {
-    "id": "hemomancy:liber_sanguinum"
-  },
-  "floor": "hemomancy:working_lesser",
+  "floor": "hemomancy:dominion_lesser",
   "brazier_signature": [
     {
       "ingredient": {
-        "item": "minecraft:heart_of_the_sea"
+        "item": "hemomancy:hematic_iron_powder"
       },
       "count": 1
     }
-  ]
+  ],
+  "ceremony": {
+    "profile": "simple",
+    "anchors": [
+      {
+        "y": 1,
+        "ring": 0,
+        "order": 0
+      },
+      {
+        "y": 1,
+        "ring": 0,
+        "order": 1
+      },
+      {
+        "y": 1,
+        "ring": 0,
+        "order": 2
+      },
+      {
+        "y": 1,
+        "ring": 0,
+        "order": 3
+      }
+    ],
+    "support_sockets": [],
+    "waves": [],
+    "guaranteed_waves": [],
+    "signature": "hematic_fortification",
+    "fragile_offsets": [],
+    "target_duration_ticks": 400,
+    "focus": "living_staff",
+    "required_helpers": 0,
+    "helper_roles": [
+      "anchor",
+      "attendant",
+      "warden"
+    ],
+    "still_interval_ticks": 0,
+    "atmosphere": {
+      "fog": "faint",
+      "lightning": false,
+      "dome": false
+    },
+    "failure": "safe_retry"
+  }
 }

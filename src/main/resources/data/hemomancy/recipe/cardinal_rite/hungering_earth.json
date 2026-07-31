@@ -1,20 +1,62 @@
 {
   "type": "hemomancy:cardinal_rite_recipe",
-  "bloodCost": 750,
+  "bloodCost": 0,
   "riteType": "lesser",
-  "required_degree": 2,
+  "required_degree": 3,
   "riteName": "Rite of the Hungering Earth",
   "riteDescription": "A corruption rite that feeds the caster's blood into the earth, converting the surrounding terrain into blood-touched stone and befouling ash.",
-  "result": {
-    "id": "hemomancy:sanguine_formation"
-  },
   "floor": "hemomancy:working_lesser",
   "brazier_signature": [
     {
       "ingredient": {
-        "item": "minecraft:magma_cream"
+        "item": "hemomancy:sanguine_formation"
       },
       "count": 1
     }
-  ]
+  ],
+  "ceremony": {
+    "profile": "standard",
+    "anchors": [
+      {
+        "y": 1,
+        "ring": 0,
+        "order": 0
+      },
+      {
+        "y": 1,
+        "ring": 0,
+        "order": 1
+      },
+      {
+        "y": 1,
+        "ring": 0,
+        "order": 2
+      },
+      {
+        "y": 1,
+        "ring": 0,
+        "order": 3
+      }
+    ],
+    "support_sockets": [],
+    "waves": [],
+    "guaranteed_waves": [],
+    "signature": "hungering_earth",
+    "fragile_offsets": [],
+    "target_duration_ticks": 1200,
+    "focus": "living_staff",
+    "required_helpers": 0,
+    "helper_roles": [
+      "anchor",
+      "attendant",
+      "warden"
+    ],
+    "still_interval_ticks": 0,
+    "atmosphere": {
+      "fog": "faint",
+      "lightning": false,
+      "dome": false
+    },
+    "failure": "safe_retry"
+  }
 }

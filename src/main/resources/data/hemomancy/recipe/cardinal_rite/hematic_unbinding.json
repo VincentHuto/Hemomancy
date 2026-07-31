@@ -1,13 +1,10 @@
 {
   "type": "hemomancy:cardinal_rite_recipe",
-  "bloodCost": 1000,
-  "riteType": "lesser",
-  "required_degree": 2,
+  "bloodCost": 0,
+  "riteType": "greater",
+  "required_degree": 5,
   "riteName": "Rite of Hematic Unbinding",
   "riteDescription": "A severance rite that dissolves the caster's bloodline, freeing all members and returning any shared blood deposits. The covenant is broken â€” what was bound by blood is unbound.",
-  "result": {
-    "id": "hemomancy:sanguine_formation"
-  },
   "floor": "hemomancy:working_lesser",
   "brazier_signature": [
     {
@@ -16,5 +13,87 @@
       },
       "count": 1
     }
-  ]
+  ],
+  "ceremony": {
+    "profile": "standard",
+    "anchors": [
+      {
+        "y": 1,
+        "ring": 0,
+        "order": 0
+      },
+      {
+        "y": 1,
+        "ring": 0,
+        "order": 1
+      },
+      {
+        "y": 1,
+        "ring": 0,
+        "order": 2
+      },
+      {
+        "y": 1,
+        "ring": 0,
+        "order": 3
+      },
+      {
+        "y": 1,
+        "ring": 1,
+        "order": 0
+      },
+      {
+        "y": 1,
+        "ring": 1,
+        "order": 1
+      },
+      {
+        "y": 1,
+        "ring": 1,
+        "order": 2
+      },
+      {
+        "y": 1,
+        "ring": 1,
+        "order": 3
+      }
+    ],
+    "support_sockets": [
+      {
+        "x": 5,
+        "y": 0,
+        "z": 0,
+        "suggested_sigil": "bastion",
+        "required": true
+      },
+      {
+        "x": -5,
+        "y": 0,
+        "z": 0,
+        "suggested_sigil": "reservoir",
+        "required": false
+      }
+    ],
+    "waves": [
+      "bloodlicker_siphon"
+    ],
+    "guaranteed_waves": [],
+    "signature": "hematic_unbinding",
+    "fragile_offsets": [],
+    "target_duration_ticks": 1200,
+    "focus": "living_staff",
+    "required_helpers": 0,
+    "helper_roles": [
+      "anchor",
+      "attendant",
+      "warden"
+    ],
+    "still_interval_ticks": 0,
+    "atmosphere": {
+      "fog": "storm",
+      "lightning": true,
+      "dome": false
+    },
+    "failure": "fragile_damage"
+  }
 }

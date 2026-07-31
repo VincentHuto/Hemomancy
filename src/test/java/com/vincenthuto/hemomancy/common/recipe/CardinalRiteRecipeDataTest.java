@@ -27,15 +27,17 @@ public final class CardinalRiteRecipeDataTest {
 		String votary = read("hemomancy/recipe/cardinal_rite/votary_rite.json");
 		assertContains("sanguine initiation floor", initiation, "\"floor\": \"hemomancy:threshold_minor\"");
 		assertContains("votary floor", votary, "\"floor\": \"hemomancy:threshold_lesser\"");
-		assertContains("sanguine initiation signature", initiation, "\"item\": \"minecraft:paper\"");
-		assertContains("votary signature", votary, "\"item\": \"minecraft:sugar\"");
+		assertContains("sanguine initiation uses temple medium", initiation, "\"focus\": \"temple_medium\"");
+		assertContains("votary uses hematic medium", votary, "\"focus\": \"hematic_medium\"");
+		assertContains("sanguine initiation has no offerings", initiation, "\"brazier_signature\": []");
+		assertContains("votary has no offerings", votary, "\"brazier_signature\": []");
 		assertFalse(initiation.contains("\"required_structure\""),
 				"sanguine initiation should be structureless");
 	}
 
 	private static void votaryRiteUsesLayeredStation() throws IOException {
 		String votary = read("hemomancy/recipe/cardinal_rite/votary_rite.json");
-		assertContains("votary rite tier", votary, "\"riteType\": \"lesser\"");
+		assertContains("votary rite tier", votary, "\"riteType\": \"minor\"");
 		assertContains("votary required structure", votary, "\"required_structure\"");
 		assertContains("votary keyed pillar", votary,
 				"\"block\": \"hemomancy:hematic_iron_pillar\"");

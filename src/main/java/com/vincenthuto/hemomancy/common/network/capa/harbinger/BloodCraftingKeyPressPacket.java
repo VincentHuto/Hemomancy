@@ -373,7 +373,9 @@ public class BloodCraftingKeyPressPacket implements CustomPacketPayload {
 		CardinalRiteStationMatcher.Resolution layeredResolution = CardinalRiteStationMatcher.resolve(
 				sLevel, hitPos, allRites.stream().filter(recipe ->
 						CardinalRiteActivationRules.mayInitiate(
-								trigger, recipe.isUnstained(), RecipeDegreeGates.getRequiredDegree(recipe)))
+								trigger, recipe.isUnstained(), RecipeDegreeGates.getRequiredDegree(recipe),
+								focusMode(recipe))
+								&& RecipeDegreeGates.playerMayAttempt(player, recipe))
 						.toList());
 		if (layeredResolution.status() == CardinalRiteStationMatcher.Status.AMBIGUOUS_FLOOR
 				|| layeredResolution.status() == CardinalRiteStationMatcher.Status.AMBIGUOUS_RITE) {
@@ -390,7 +392,8 @@ public class BloodCraftingKeyPressPacket implements CustomPacketPayload {
 
 		for (CardinalRiteRecipe recipe : allRites) {
 			if (!CardinalRiteActivationRules.mayInitiate(
-					trigger, recipe.isUnstained(), RecipeDegreeGates.getRequiredDegree(recipe))) {
+					trigger, recipe.isUnstained(), RecipeDegreeGates.getRequiredDegree(recipe),
+					focusMode(recipe))) {
 				continue;
 			}
 			if (recipe.hasLayeredStation()
@@ -551,7 +554,7 @@ public class BloodCraftingKeyPressPacket implements CustomPacketPayload {
 
 				// Founding Fane requires a Consecrated Bloodwell heart and a Sanguine Quintessence catalyst.
 				if (FOUNDING_FANE_RITE_ID.equals(recipe.getId())) {
-					if (!canStartFoundingFane(serverPlayer)) {
+					if (!canStartFoundingFane(serverPlayer, centerPos)) {
 						return CardinalRiteActivationRules.ActivationAttempt.HANDLED;
 					}
 					if (!canManifestFoundingFaneHeart(sLevel, centerPos)) {
@@ -571,18 +574,35 @@ public class BloodCraftingKeyPressPacket implements CustomPacketPayload {
 				}
 
 				// Start the rite
-				int castingDuration = recipe.getRiteType().getCastingDurationTicks();
-				int ceremonyDegree = recipe.isRankup()
-						? Math.max(1, recipe.getRequiredDegree() + 1)
-						: recipe.getRiteType().ordinal() + 1;
+				if (recipe.hasInteractiveCeremony()
+						&& "hematic_medium".equals(recipe.getCeremony().focusMode())) {
+					if (!(sLevel.getBlockEntity(centerPos)
+							instanceof com.vincenthuto.hemomancy.common.tile.functional.CardinalFocusBlockEntity focus)
+							|| !focus.consumeMedium(player.getUUID())) {
+						player.displayClientMessage(Component.literal(
+										"Seat an iron nugget in the Cardinal Focus before beginning this rite.")
+								.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC), false);
+						return CardinalRiteActivationRules.ActivationAttempt.HANDLED;
+					}
+				}
+				int castingDuration = recipe.hasInteractiveCeremony()
+						? recipe.getCeremony().targetDurationTicks()
+						: recipe.getRiteType().getCastingDurationTicks();
+				int ceremonyDegree = Math.max(1, recipe.getRequiredDegree());
 				ActiveCardinalRite rite = recipe.hasInteractiveCeremony()
 						? ActiveCardinalRite.interactive(
 								player.getUUID(), centerPos, recipe.getId(), castingDuration,
 								recipe.getRiteType().getSize(), ceremonyDegree,
 								recipe.getCeremony().abbreviated(),
-								recipe.getCeremony().abbreviated() ? 1
-										: com.vincenthuto.hemomancy.common.rite.CardinalRiteCeremonyRules
-												.fullWaveCount(recipe.getRiteType()),
+								recipe.getCeremony().waves().isEmpty()
+										? recipe.getCeremony().guaranteedWaves().size()
+										: Math.max(recipe.getCeremony().guaranteedWaves().size(),
+												recipe.getRequiredDegree() == 5 ? 1
+														: recipe.getRequiredDegree() == 6 ? 3
+														: recipe.getRequiredDegree() >= 7
+																? Math.min(6, Math.max(4,
+																		recipe.getCeremony().waves().size()))
+																: 0),
 								recipe.getCeremony().anchors().size())
 						: new ActiveCardinalRite(player.getUUID(), centerPos, recipe.getId(),
 								castingDuration, recipe.getRiteType().getSize());
@@ -601,7 +621,8 @@ public class BloodCraftingKeyPressPacket implements CustomPacketPayload {
 							.toList());
 				}
 				ItemStack plantingStaff = ItemStack.EMPTY;
-				if (!recipe.isUnstained() && HemoCapabilityAccess.getPlayerDegreeNumber(player) >= 1) {
+				if (!recipe.isUnstained() && recipe.hasInteractiveCeremony()
+						&& "living_staff".equals(recipe.getCeremony().focusMode())) {
 					ItemStack staff = CardinalRiteStaffEscrow.capture(serverPlayer);
 					if (staff.isEmpty()) {
 						player.displayClientMessage(
@@ -651,7 +672,11 @@ public class BloodCraftingKeyPressPacket implements CustomPacketPayload {
 		return CardinalRiteActivationRules.ActivationAttempt.NOT_HANDLED;
 	}
 
-	private static boolean canStartFoundingFane(ServerPlayer player) {
+	private static String focusMode(CardinalRiteRecipe recipe) {
+		return recipe.getCeremony() == null ? "" : recipe.getCeremony().focusMode();
+	}
+
+	private static boolean canStartFoundingFane(ServerPlayer player, BlockPos requestedCenter) {
 		Bloodline bloodline = HemoCapabilityAccess.getBloodVolume(player)
 				.map(IBloodVolume::getBloodLine)
 				.orElse(Bloodline.NOBLOODLINE);
@@ -670,9 +695,29 @@ public class BloodCraftingKeyPressPacket implements CustomPacketPayload {
 			return false;
 		}
 		if (hasActiveFane(player, bloodline.getLeaderUUID())) {
+			final String pendingPosKey = "hemomancy:pending_fane_relocation_pos";
+			final String pendingDimensionKey = "hemomancy:pending_fane_relocation_dimension";
+			final String pendingUntilKey = "hemomancy:pending_fane_relocation_until";
+			var data = player.getPersistentData();
+			BlockPos warned = data.contains(pendingPosKey)
+					? BlockPos.of(data.getLong(pendingPosKey)) : null;
+			String dimension = player.level().dimension().location().toString();
+			if (com.vincenthuto.hemomancy.common.rite.harbinger.RiteRelocationConfirmationRules.confirmed(
+					requestedCenter, dimension, player.level().getGameTime(),
+					warned, data.getString(pendingDimensionKey), data.getLong(pendingUntilKey))) {
+				data.remove(pendingPosKey);
+				data.remove(pendingDimensionKey);
+				data.remove(pendingUntilKey);
+				return true;
+			}
+			data.putLong(pendingPosKey, requestedCenter.asLong());
+			data.putString(pendingDimensionKey, dimension);
+			data.putLong(pendingUntilKey, player.level().getGameTime()
+					+ com.vincenthuto.hemomancy.common.rite.harbinger.RiteRelocationConfirmationRules.CONFIRMATION_TICKS);
 			player.displayClientMessage(
-					Component.literal("Your bloodline already has an active Founding Fane.")
-							.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC),
+					Component.literal("Your bloodline already has a Founding Fane. Activate this exact formation "
+									+ "again within thirty seconds to abandon its old heart and relocate it here.")
+							.withStyle(ChatFormatting.RED, ChatFormatting.BOLD),
 					false);
 			return false;
 		}

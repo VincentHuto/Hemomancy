@@ -7,6 +7,9 @@ import org.junit.jupiter.api.Test;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.io.IOException;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
@@ -47,6 +50,19 @@ final class CardinalRiteFogShaderResourceTest {
 					uniform.getAsJsonArray("values").size(),
 					"wrong default value count for " + uniform.get("name").getAsString());
 		});
+	}
+
+	@Test
+	void fogPassForcesAnOpaqueColorModulatorInsteadOfInheritingEarlierRenderState()
+			throws IOException {
+		String renderTypes = Files.readString(Path.of(
+				"src/main/java/com/vincenthuto/hemomancy/client/render/HemoRenderTypes.java"));
+		int fogMethod = renderTypes.indexOf("public static RenderType cardinalRiteFog(");
+		int nextMethod = renderTypes.indexOf("public static RenderType silentArchonVolumetricFog(", fogMethod);
+		String fogPass = renderTypes.substring(fogMethod, nextMethod);
+
+		assertTrue(fogPass.contains("setUniform(shader, \"ColorModulator\", 1.0F, 1.0F, 1.0F, 1.0F)"),
+				"fog must not inherit a zero-alpha ColorModulator from an earlier world pass");
 	}
 
 	private static JsonObject readJson(String path) {

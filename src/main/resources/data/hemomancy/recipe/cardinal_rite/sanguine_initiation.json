@@ -1,21 +1,35 @@
 {
   "type": "hemomancy:cardinal_rite_recipe",
-  "bloodCost": 100,
+  "bloodCost": 0,
   "riteType": "minor",
   "required_degree": 0,
   "riteName": "Rite of Sanguine Initiation",
   "riteDescription": "A basic initiation rite that awakens the hematic potential within the practitioner.",
   "rankup": true,
-  "result": {
-    "id": "hemomancy:sanguine_formation"
-  },
   "floor": "hemomancy:threshold_minor",
-  "brazier_signature": [
-    {
-      "ingredient": {
-        "item": "minecraft:paper"
-      },
-      "count": 1
-    }
-  ]
+  "brazier_signature": [],
+  "ceremony": {
+    "profile": "simple",
+    "anchors": [],
+    "support_sockets": [],
+    "waves": [],
+    "guaranteed_waves": [],
+    "signature": "first_circulation",
+    "fragile_offsets": [],
+    "target_duration_ticks": 400,
+    "focus": "temple_medium",
+    "required_helpers": 0,
+    "helper_roles": [
+      "anchor",
+      "attendant",
+      "warden"
+    ],
+    "still_interval_ticks": 0,
+    "atmosphere": {
+      "fog": "none",
+      "lightning": false,
+      "dome": false
+    },
+    "failure": "safe_retry"
+  }
 }

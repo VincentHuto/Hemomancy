@@ -90,6 +90,27 @@ Silent Archon is never Degree 8. It is the flagged Degree-7 refusal state create
 
 Besides degree advancement, the Cardinal Altar enables **utility rites** for practical benefits:
 
+Cardinal Rites teach their ritual vocabulary progressively:
+
+- **Sanguine Initiation (D0):** performed on the prepared Blood Temple floor
+  after the Hermit's temple-bound oath. It uses an iron-nugget medium, with no
+  anchors, sigils, offerings, fog, ordeal, or helper.
+- **Degree 1:** the player builds the floor, seats another crude medium, and
+  learns one ring of four blood anchors.
+- **Degrees 2-3:** the Living Staff and normally one brazier offering enter the
+  loop; faint fog appears, but sigils and ordeals do not.
+- **Degree 4:** the first required support sigil and dense fog appear.
+- **Degree 5:** two-ring rites, storm fog, lightning, and the first ordeals
+  appear. Bloodline helpers can assist.
+- **Degree 6:** Grand rites, domes, twelve anchors, and required helper stations
+  become possible.
+- **Degree 7:** lengthy Grand ceremonies may use the full support and helper
+  vocabulary.
+
+A later-degree utility rite may remain deliberately simple. Degree is a ceiling,
+not a demand that every rite use every mechanic. The Sanguine Conduit's Rites tab
+and each Rite Hint show the exact authored requirements.
+
 ### Cancelling an Active Rite
 
 The caster can safely recall an active Harbinger Cardinal Rite by holding **Blood Absorption** on its center focus or planted Living Staff for four uninterrupted seconds. The central daemon contracts back into the staff first; the staff then dissolves into blood and flows back to the caster's hand.
@@ -97,29 +118,26 @@ The caster can safely recall an active Harbinger Cardinal Rite by holding **Bloo
 Releasing Blood Absorption, looking away, moving out of range, or leaving the rite boundary resets the recall and lets the rite resume. A completed recall returns the exact planted Living Staff and dismisses rite-spawned threats, but it does not refund blood, offerings, or other committed rite costs and grants no rite result.
 
 ### Vascular Mending
-- **Purpose:** Heal blood-related damage and corruption
-- **Cost:** Medium blood, specific reagents
-- **Effect:** Removes negative blood effects, cleanses minor corruption
+- **Purpose:** Repair all seven vascular sections
+- **Effect:** Fully restores vascular damage
 
 ### Crimson Beacon
-- **Purpose:** Signal other Harbingers or mark territory
-- **Cost:** High blood, beacon materials
-- **Effect:** Creates a pillar of red light visible for kilometers
+- **Purpose:** Anchor the caster's dying essence
+- **Effect:** Records one movable personal death waypoint
 
-### Blood Pact Ritual
-- **Purpose:** Formalize agreements between Harbingers
-- **Cost:** Blood from all participants
-- **Effect:** Binding contract enforced by blood magic
+### Covenant Vigil
+- **Purpose:** Prove the first required helper ceremony
+- **Effect:** Every assigned survivor gains ten minutes of Resistance and Regeneration
 
-### Bloodline Severance
-- **Purpose:** Excommunicate a member from your bloodline (Archon+)
-- **Cost:** High blood, painful process
-- **Effect:** Removes member, breaks blood ties, resets their degree
+### Hematic Unbinding
+- **Purpose:** Dissolve the caster's entire bloodline
+- **Safety:** The leader must complete the rite twice against the same bloodline
+  within ten minutes
+- **Effect:** Frees all members, returns shared blood, and removes owned fanes
 
 ### Cult Pruning
 - **Purpose:** Remove Qliphoth void-bloom from the world
-- **Cost:** Specific items, moderate blood
-- **Effect:** Closes the bloom, ends whispers from that tree
+- **Effect:** Removes the bloom in the rite's chunk and resolves its remaining pomes
 
 More utility rites exist — experiment and discover them!
 

@@ -1,8 +1,6 @@
 package com.vincenthuto.hemomancy.common.rite;
 
-import com.vincenthuto.hemomancy.common.recipe.CardinalRiteType;
 import net.minecraft.core.BlockPos;
-import net.minecraft.resources.ResourceLocation;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -19,21 +17,30 @@ public record CardinalRiteCeremonyDefinition(
 		List<String> waves,
 		List<String> guaranteedWaves,
 		String signatureHandler,
-		List<BlockPos> fragileOffsets) {
-
-	private static final Set<String> ABBREVIATED_RITES = Set.of(
-			"sanguine_attunement", "vascular_mending", "crimson_beacon", "hematic_fortification",
-			"bloodline_recall", "pallid_vessel_rite", "crimson_vessel_rite", "ashen_vessel_rite",
-			"horn_of_culmination_rite", "chamber_of_will", "ancestral_communion");
+		List<BlockPos> fragileOffsets,
+		int targetDurationTicks,
+		String focusMode,
+		int requiredHelpers,
+		List<String> helperRoles,
+		int stillIntervalTicks,
+		Atmosphere atmosphere,
+		String failureProfile) {
 
 	public CardinalRiteCeremonyDefinition {
-		profile = profile == null ? CardinalRiteCeremonyProfile.FULL : profile;
+		profile = profile == null ? CardinalRiteCeremonyProfile.STANDARD : profile;
 		anchors = List.copyOf(anchors == null ? List.of() : anchors);
 		supportSockets = List.copyOf(supportSockets == null ? List.of() : supportSockets);
 		waves = List.copyOf(waves == null ? List.of() : waves);
 		guaranteedWaves = List.copyOf(guaranteedWaves == null ? List.of() : guaranteedWaves);
 		signatureHandler = signatureHandler == null ? "" : signatureHandler;
 		fragileOffsets = List.copyOf(fragileOffsets == null ? List.of() : fragileOffsets);
+		targetDurationTicks = Math.max(1, targetDurationTicks);
+		focusMode = focusMode == null ? "" : focusMode;
+		requiredHelpers = Math.max(0, requiredHelpers);
+		helperRoles = List.copyOf(helperRoles == null ? List.of() : helperRoles);
+		stillIntervalTicks = Math.max(0, stillIntervalTicks);
+		atmosphere = atmosphere == null ? new Atmosphere("none", false, false) : atmosphere;
+		failureProfile = failureProfile == null ? "" : failureProfile;
 	}
 
 	public int anchorBloodCostMl() {
@@ -41,38 +48,7 @@ public record CardinalRiteCeremonyDefinition(
 	}
 
 	public boolean abbreviated() {
-		return profile == CardinalRiteCeremonyProfile.ABBREVIATED;
-	}
-
-	/**
-	 * Safe built-in conversion for older Harbinger recipe packs. Explicit
-	 * ceremony JSON replaces this definition when present.
-	 */
-	public static CardinalRiteCeremonyDefinition convertedDefault(ResourceLocation recipeId, CardinalRiteType riteType,
-			int degree) {
-		String path = recipeId == null ? "unknown" : recipeId.getPath();
-		int slash = path.lastIndexOf('/');
-		if (slash >= 0) path = path.substring(slash + 1);
-		CardinalRiteCeremonyCatalog.Spec authored = CardinalRiteCeremonyCatalog.spec(path);
-		CardinalRiteCeremonyProfile profile = authored != null ? authored.profile() : ABBREVIATED_RITES.contains(path)
-				? CardinalRiteCeremonyProfile.ABBREVIATED
-				: CardinalRiteCeremonyProfile.FULL;
-		int rings = Math.max(1, degree);
-		int rotation = authored != null ? authored.rotation() : Math.floorMod(path.hashCode(), 4);
-		List<Anchor> anchors = anchorsForLayout(rings, rotation,
-				authored == null ? CardinalRiteCeremonyCatalog.Layout.CARDINAL : authored.layout());
-		List<SupportSocket> sockets = List.of(
-				new SupportSocket(rings + 3, 0, 0, "bastion"),
-				new SupportSocket(-(rings + 3), 0, 0, "reservoir"),
-				new SupportSocket(0, 0, rings + 3, "mnemonic"),
-				new SupportSocket(0, 0, -(rings + 3), "hematic_lattice"));
-		List<String> wavePool = List.of("bloodlicker_siphon", "fargone_dive", "rogue_will",
-				"false_omens", "response_sigil");
-		List<String> guaranteed = guaranteedSupportWave(riteType);
-		String handler = signatureFor(path);
-		List<BlockPos> fragile = List.of(new BlockPos(1, 0, 1), new BlockPos(-1, 0, -1),
-				new BlockPos(1, 0, -1));
-		return new CardinalRiteCeremonyDefinition(profile, anchors, sockets, wavePool, guaranteed, handler, fragile);
+		return profile == CardinalRiteCeremonyProfile.SIMPLE;
 	}
 
 	/**
@@ -85,6 +61,15 @@ public record CardinalRiteCeremonyDefinition(
 		List<Anchor> anchors = new ArrayList<>();
 		Set<BlockPos> occupied = new HashSet<>();
 		for (int ring = 1; ring <= rings; ring++) {
+			if (layout == CardinalRiteCeremonyCatalog.Layout.CARDINAL) {
+				for (int step = 0; step < 4; step++) {
+					int placementOrder = (step + rotation) & 3;
+					Anchor tuned = CardinalRiteRingTuning.anchor(ring - 1, placementOrder, 1);
+					anchors.add(new Anchor(tuned.x(), tuned.y(), tuned.z(), ring - 1, step));
+					occupied.add(new BlockPos(tuned.x(), 0, tuned.z()));
+				}
+				continue;
+			}
 			int radius = ring + 2;
 			int diagonalX = Math.max(1, (int) Math.round(radius / Math.sqrt(2.0D)));
 			int diagonalZ = diagonalX;
@@ -102,11 +87,29 @@ public record CardinalRiteCeremonyDefinition(
 			for (int step = 0; step < 4; step++) {
 				int index = (step + rotation) & 3;
 				int[] rotated = rotateForRing(points[index][0], points[index][1], ring - 1);
-				anchors.add(new Anchor(rotated[0], 1, rotated[1], ring - 1, step));
-				occupied.add(new BlockPos(rotated[0], 0, rotated[1]));
+				int insetX = insetTowardCenter(rotated[0]);
+				int insetZ = insetTowardCenter(rotated[1]);
+				int[] staggered = staggerClearOfPillars(insetX, insetZ, ring - 1);
+				anchors.add(new Anchor(staggered[0], 1, staggered[1], ring - 1, step));
+				occupied.add(new BlockPos(staggered[0], 0, staggered[1]));
 			}
 		}
 		return anchors;
+	}
+
+	private static int insetTowardCenter(int coordinate) {
+		return coordinate - Integer.signum(coordinate);
+	}
+
+	private static int[] staggerClearOfPillars(int x, int z, int ringIndex) {
+		if (ringIndex != 1) return new int[] {x, z};
+		double angle = Math.PI / 8.0D;
+		double cosine = Math.cos(angle);
+		double sine = Math.sin(angle);
+		return new int[] {
+				(int) Math.round(x * cosine - z * sine),
+				(int) Math.round(x * sine + z * cosine)
+		};
 	}
 
 	private static int[] rotateForRing(int x, int z, int ringIndex) {
@@ -126,38 +129,21 @@ public record CardinalRiteCeremonyDefinition(
 				|| occupied.contains(new BlockPos(-x, 0, z));
 	}
 
-	private static List<String> guaranteedSupportWave(CardinalRiteType type) {
-		return switch (CardinalRiteCeremonyRules.formIndex(type)) {
-			case 0 -> List.of("discover_reservoir");
-			case 1 -> List.of("discover_bastion");
-			case 2 -> List.of("discover_mnemonic");
-			default -> List.of("discover_hematic_lattice");
-		};
-	}
-
-	private static String signatureFor(String path) {
-		return switch (path) {
-			case "sanguine_initiation" -> "first_circulation";
-			case "votary_rite" -> "tendency_response";
-			case "initiate_rite" -> "blood_memory";
-			case "sanguine_brotherhood" -> "simulacrum_wound";
-			case "illuminatus_rite" -> "fungal_root";
-			case "sanctified_rite" -> "covenant_currents";
-			case "archon_rite" -> "trifold_judgment";
-			case "apotheos_rite" -> "reverse_circulation";
-			default -> path;
-		};
-	}
-
 	public record Anchor(int x, int y, int z, int ring, int order) {
 		public BlockPos offset() {
 			return new BlockPos(x, y, z);
 		}
 	}
 
-	public record SupportSocket(int x, int y, int z, String suggestedSigil) {
+	public record SupportSocket(int x, int y, int z, String suggestedSigil, boolean required) {
 		public BlockPos offset() {
 			return new BlockPos(x, y, z);
+		}
+	}
+
+	public record Atmosphere(String fog, boolean lightning, boolean dome) {
+		public Atmosphere {
+			fog = fog == null ? "none" : fog;
 		}
 	}
 }

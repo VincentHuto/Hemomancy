@@ -26,7 +26,9 @@ public final class CardinalRiteCeremonyRules {
 	}
 
 	public static int anchorCount(int degree) {
-		return Math.max(1, degree) * ANCHORS_PER_DEGREE;
+		if (degree <= 4) return ANCHORS_PER_DEGREE;
+		if (degree == 5) return ANCHORS_PER_DEGREE * 2;
+		return ANCHORS_PER_DEGREE * 3;
 	}
 
 	public static int upfrontBloodCost(int degree) {
@@ -57,10 +59,28 @@ public final class CardinalRiteCeremonyRules {
 		return COLLAPSE_DAMAGE[clampForm(formIndex)];
 	}
 
+	public static int fragileBlocksOnCollapse(String failureProfile) {
+		return switch (requireFailureProfile(failureProfile)) {
+			case "safe_retry", "offering_loss" -> 0;
+			case "fragile_damage" -> 1;
+			case "collapse" -> 3;
+			default -> throw new IllegalStateException("Unhandled cardinal rite failure profile");
+		};
+	}
+
+	public static float collapseDamage(String failureProfile) {
+		return switch (requireFailureProfile(failureProfile)) {
+			case "safe_retry" -> 0.0F;
+			case "offering_loss" -> 2.0F;
+			case "fragile_damage" -> 4.0F;
+			case "collapse" -> 8.0F;
+			default -> throw new IllegalStateException("Unhandled cardinal rite failure profile");
+		};
+	}
+
 	public static int allyQuota(int degree) {
-		if (degree < 5) return 0;
-		if (degree == 5) return 1;
-		if (degree == 6) return 2;
+		if (degree < 6) return 0;
+		if (degree == 6) return 1;
 		return 3;
 	}
 
@@ -74,7 +94,7 @@ public final class CardinalRiteCeremonyRules {
 	public static CardinalRiteProfessionFailure professionFailure(int degree) {
 		if (degree >= 7) return CardinalRiteProfessionFailure.COLLAPSE;
 		if (degree >= 5) return CardinalRiteProfessionFailure.SEVERE_RECOVERY;
-		if (degree >= 3) return CardinalRiteProfessionFailure.RECOVERY_WAVE;
+		if (degree >= 4) return CardinalRiteProfessionFailure.RECOVERY_WAVE;
 		return CardinalRiteProfessionFailure.RETRY;
 	}
 
@@ -100,5 +120,15 @@ public final class CardinalRiteCeremonyRules {
 
 	private static int clampForm(int formIndex) {
 		return Math.max(0, Math.min(FULL_WAVES.length - 1, formIndex));
+	}
+
+	private static String requireFailureProfile(String failureProfile) {
+		if ("safe_retry".equals(failureProfile)
+				|| "offering_loss".equals(failureProfile)
+				|| "fragile_damage".equals(failureProfile)
+				|| "collapse".equals(failureProfile)) {
+			return failureProfile;
+		}
+		throw new IllegalArgumentException("Unknown cardinal rite failure profile: " + failureProfile);
 	}
 }

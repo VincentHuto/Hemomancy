@@ -1,48 +1,12 @@
 {
   "type": "hemomancy:cardinal_rite_recipe",
-  "bloodCost": 1200,
+  "bloodCost": 0,
   "riteType": "grand",
   "required_degree": 7,
   "riteName": "Bloom of the Qliphoth",
   "riteDescription": "A dark rite that calls forth a blooming tree of the Qliphoth, its roots drinking deep from the blood of the earth. A Qliphoth Seed must be planted within the rite. Within its shadow, all blood manipulations are empowered and the flesh knits itself anew.",
-  "result": {
-    "id": "hemomancy:sanguine_formation"
-  },
   "floor": "hemomancy:dominion_grand",
-  "required_structure": {
-    "pattern": [
-      [
-        "P   P",
-        "P   P",
-        "P   P"
-      ],
-      [
-        "     ",
-        "     ",
-        "     "
-      ],
-      [
-        "     ",
-        "     ",
-        "     "
-      ],
-      [
-        "     ",
-        "     ",
-        "     "
-      ],
-      [
-        "P   P",
-        "P   P",
-        "P   P"
-      ]
-    ],
-    "key": {
-      "P": {
-        "block": "hemomancy:hematic_iron_pillar"
-      }
-    }
-  },
+
   "brazier_signature": [
     {
       "ingredient": {
@@ -50,5 +14,156 @@
       },
       "count": 1
     }
-  ]
+  ],
+  "ceremony": {
+    "profile": "ceremonial",
+    "anchors": [
+      {
+        "y": 1,
+        "ring": 0,
+        "order": 0
+      },
+      {
+        "y": 1,
+        "ring": 0,
+        "order": 1
+      },
+      {
+        "y": 1,
+        "ring": 0,
+        "order": 2
+      },
+      {
+        "y": 1,
+        "ring": 0,
+        "order": 3
+      },
+      {
+        "y": 1,
+        "ring": 1,
+        "order": 0
+      },
+      {
+        "y": 1,
+        "ring": 1,
+        "order": 1
+      },
+      {
+        "y": 1,
+        "ring": 1,
+        "order": 2
+      },
+      {
+        "y": 1,
+        "ring": 1,
+        "order": 3
+      },
+      {
+        "y": 1,
+        "ring": 2,
+        "order": 0
+      },
+      {
+        "y": 1,
+        "ring": 2,
+        "order": 1
+      },
+      {
+        "y": 1,
+        "ring": 2,
+        "order": 2
+      },
+      {
+        "y": 1,
+        "ring": 2,
+        "order": 3
+      }
+    ],
+    "support_sockets": [
+      {
+        "x": 6,
+        "y": 0,
+        "z": 0,
+        "suggested_sigil": "bastion",
+        "required": true
+      },
+      {
+        "x": -6,
+        "y": 0,
+        "z": 0,
+        "suggested_sigil": "reservoir",
+        "required": true
+      },
+      {
+        "x": 0,
+        "y": 0,
+        "z": 6,
+        "suggested_sigil": "mnemonic",
+        "required": true
+      },
+      {
+        "x": 0,
+        "y": 0,
+        "z": -6,
+        "suggested_sigil": "hematic_lattice",
+        "required": false
+      },
+      {
+        "x": 6,
+        "y": 0,
+        "z": 6,
+        "suggested_sigil": "cage",
+        "required": false
+      },
+      {
+        "x": -6,
+        "y": 0,
+        "z": -6,
+        "suggested_sigil": "lens",
+        "required": false
+      }
+    ],
+    "waves": [
+      "bloodlicker_siphon",
+      "fargone_dive",
+      "rogue_will",
+      "false_omens",
+      "response_sigil",
+      "covenant_pressure"
+    ],
+    "guaranteed_waves": [],
+    "signature": "bloom_of_qliphoth",
+    "fragile_offsets": [
+      [
+        1,
+        0,
+        1
+      ],
+      [
+        -1,
+        0,
+        -1
+      ],
+      [
+        1,
+        0,
+        -1
+      ]
+    ],
+    "target_duration_ticks": 3600,
+    "focus": "living_staff",
+    "required_helpers": 1,
+    "helper_roles": [
+      "anchor",
+      "attendant",
+      "warden"
+    ],
+    "still_interval_ticks": 160,
+    "atmosphere": {
+      "fog": "storm",
+      "lightning": true,
+      "dome": true
+    },
+    "failure": "collapse"
+  }
 }

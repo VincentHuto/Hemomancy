@@ -187,7 +187,7 @@ public final class CardinalRiteBoundaryGeometry {
 	}
 
 	public static float interactiveRingRadius(int ringIndex) {
-		return 3.0F + Math.max(0, ringIndex);
+		return 2.0F + Math.max(0, ringIndex);
 	}
 
 	public static float anchorAlignedRingRadius(

@@ -12,18 +12,18 @@ public final class CardinalRiteBoundaryGeometryTest {
 		assertEquals(0.0F,
 				CardinalRiteBoundaryGeometry.exteriorRadius(9, 0, false),
 				"no boundary before first completed ring");
-		assertEquals(3.0F,
+		assertEquals(2.0F,
 				CardinalRiteBoundaryGeometry.exteriorRadius(9, 1, false),
 				"first interactive ring");
-		assertEquals(6.0F,
+		assertEquals(5.0F,
 				CardinalRiteBoundaryGeometry.exteriorRadius(9, 4, false),
 				"fourth interactive ring");
-		assertEquals(9.0F,
+		assertEquals(8.0F,
 				CardinalRiteBoundaryGeometry.exteriorRadius(9, 7, false),
 				"degree seven outer ring");
-		assertEquals(3.0F,
+		assertEquals(2.0F,
 				CardinalRiteBoundaryGeometry.interactiveRingRadius(0),
-				"first ring clears the three-by-three altar");
+				"first ring is inset from the former three-block boundary");
 	}
 
 	@Test
