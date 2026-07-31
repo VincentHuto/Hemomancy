@@ -11,6 +11,7 @@ import com.vincenthuto.hemomancy.common.init.EntityInit;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.recipe.CardinalRiteRecipe;
 import com.vincenthuto.hemomancy.common.rite.ActiveCardinalRite;
+import com.vincenthuto.hemomancy.common.rite.CardinalRiteCeremonyDefinition;
 import com.vincenthuto.hemomancy.common.rite.CardinalRiteCeremonyRules;
 import com.vincenthuto.hemomancy.common.rite.CardinalRiteFootprintRules;
 import com.vincenthuto.hemomancy.common.rite.CardinalRiteInstabilityBoundaryRules;
@@ -539,8 +540,31 @@ public final class CardinalRiteInteractionHandler {
 		if (sigil == null || recipe == null || recipe.getCeremony() == null) {
 			return new SigilPlacement(id, 0, 0, 0, progressKey);
 		}
+		BlockPos resolved = resolveResponseSigilPlacement(
+				recipe.getCeremony().anchors(), supportPlacements, sigil);
+		return new SigilPlacement(id, resolved.getX(), 0, resolved.getZ(), progressKey);
+	}
+
+	static List<BlockPos> resolvedResponseSigilPoints(
+			List<CardinalRiteCeremonyDefinition.Anchor> anchors,
+			List<SigilPlacement> supportPlacements, IchorianSigilDefinition sigil) {
+		if (sigil == null) return List.of();
+		return List.copyOf(CardinalRiteSigilPlacementRules.resolvedFootprint(
+				BlockPos.ZERO, sigil.nodes(), occupiedSigilTargets(anchors, supportPlacements)));
+	}
+
+	private static BlockPos resolveResponseSigilPlacement(
+			List<CardinalRiteCeremonyDefinition.Anchor> anchors,
+			List<SigilPlacement> supportPlacements, IchorianSigilDefinition sigil) {
+		return CardinalRiteSigilPlacementRules.resolveNearestPlacement(
+				BlockPos.ZERO, sigil.nodes(), occupiedSigilTargets(anchors, supportPlacements));
+	}
+
+	private static Set<BlockPos> occupiedSigilTargets(
+			List<CardinalRiteCeremonyDefinition.Anchor> anchors,
+			List<SigilPlacement> supportPlacements) {
 		Set<BlockPos> occupied = new HashSet<>();
-		for (var anchor : recipe.getCeremony().anchors()) {
+		for (var anchor : anchors) {
 			occupied.add(new BlockPos(anchor.x(), 0, anchor.z()));
 		}
 		for (SigilPlacement placement : supportPlacements) {
@@ -549,9 +573,7 @@ public final class CardinalRiteInteractionHandler {
 			occupied.addAll(CardinalRiteSigilPlacementRules.footprint(
 					new BlockPos(placement.x(), 0, placement.z()), support.nodes()));
 		}
-		BlockPos resolved = CardinalRiteSigilPlacementRules.resolveNearestPlacement(
-				BlockPos.ZERO, sigil.nodes(), occupied);
-		return new SigilPlacement(id, resolved.getX(), 0, resolved.getZ(), progressKey);
+		return occupied;
 	}
 
 	static List<SigilPlacement> supportSigils(CardinalRiteRecipe recipe) {

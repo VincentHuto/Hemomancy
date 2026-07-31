@@ -4,12 +4,17 @@ package com.vincenthuto.hemomancy.common.rite.harbinger;
 public final class CardinalRiteDaemonEmergence {
 	public static final int EMERGENCE_TICKS = 24;
 	public static final int SPIRAL_POINTS = 8;
+	private static final double STAFF_TOP_Y_OFFSET = 3.65D;
 
 	private CardinalRiteDaemonEmergence() {
 	}
 
 	public static double progress(int elapsedTicks) {
 		return Math.max(0.0D, Math.min(1.0D, elapsedTicks / (double) EMERGENCE_TICKS));
+	}
+
+	public static double daemonY(double focusY, double matureSourceY) {
+		return Math.max(focusY + STAFF_TOP_Y_OFFSET, matureSourceY);
 	}
 
 	public static SpiralPoint spiralPoint(double centerX, double centerZ, int elapsedTicks,

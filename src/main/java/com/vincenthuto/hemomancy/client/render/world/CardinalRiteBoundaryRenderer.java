@@ -201,15 +201,16 @@ public class CardinalRiteBoundaryRenderer {
 			ActiveRiteClientData.RiteEntry rite, float currentTime, Vec3 cam) {
 		if (!CardinalRiteBoundaryGeometry.shouldRenderExterior(rite.getTotalRings())) return;
 		boolean legacy = "LEGACY".equals(rite.getPhase());
-		float radius = rite.getFootprintRadius() > 0.0F
-				? rite.getFootprintRadius()
-				: CardinalRiteBoundaryGeometry.exteriorRadius(
-						rite.getRiteSize(), rite.getCompletedRings(), legacy);
-		if (radius <= 0.0F) return;
-		float seed = FaneBoundaryRenderer.revealedFaneStyleSeed(rite.getCenter(), radius);
+		float fogPerimeterRadius = CardinalRiteFogGeometry.perimeterRadius(
+				rite.getFootprintRadius(), rite.getRiteSize(), rite.getCompletedRings(),
+				rite.getTotalRings(), legacy);
+		if (fogPerimeterRadius <= 0.0F) return;
+		float domeRadius = CardinalRiteFogGeometry.enclosingDomeRadius(
+				fogPerimeterRadius, CardinalRiteFogRenderer.fogVerticalOffset());
+		float seed = FaneBoundaryRenderer.revealedFaneStyleSeed(rite.getCenter(), domeRadius);
 		BlockPos surface = CardinalRiteAnchorVisualRules.riteSurface(rite.getCenter());
 		FaneBoundaryRenderer.drawRevealedFaneStyleDome(
-				poseStack, buffer, cam, surface, radius, currentTime, seed);
+				poseStack, buffer, cam, surface, domeRadius, currentTime, seed);
 	}
 
 	private static void playBoundaryCompletionSounds(Minecraft mc,

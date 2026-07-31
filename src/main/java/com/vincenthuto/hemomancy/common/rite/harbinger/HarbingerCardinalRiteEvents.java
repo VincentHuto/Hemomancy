@@ -427,7 +427,8 @@ public class HarbingerCardinalRiteEvents {
 
 		BlockPos center = rite.getCenterPos();
 		double sourceX = center.getX() + 0.5D;
-		double sourceY = center.getY() + 1.0D + height * 0.5D;
+		double sourceY = CardinalRiteDaemonEmergence.daemonY(
+				center.getY(), center.getY() + 1.0D + height * 0.5D);
 		double sourceZ = center.getZ() + 0.5D;
 		double targetX = caster.getX();
 		double targetY = caster.getY() + caster.getBbHeight() * 0.55D;
@@ -439,7 +440,7 @@ public class HarbingerCardinalRiteEvents {
 		if (sprite == null) {
 			sprite = EntityInit.humanity_sprite.get().create(level);
 			if (sprite == null) return;
-			sprite.initialize(new Vec3(sourceX, center.getY() + 0.75D, sourceZ),
+			sprite.initialize(new Vec3(sourceX, sourceY, sourceZ),
 					HumanitySpriteEntity.MIN_SCALE);
 			sprite.bindToRite(rite.getPlayerUUID());
 			level.addFreshEntity(sprite);
@@ -447,7 +448,6 @@ public class HarbingerCardinalRiteEvents {
 		double emergence = CardinalRiteDaemonEmergence.progress(sprite.tickCount);
 		if (emergence < 1.0D) {
 			emitDaemonEmergence(level, center, sprite.tickCount);
-			sourceY = lerp(emergence, center.getY() + 0.75D, sourceY);
 		}
 		sprite.setPos(
 				lerp(absorption, sourceX, targetX),
@@ -791,19 +791,29 @@ public class HarbingerCardinalRiteEvents {
 	}
 
 	public static float ritualFootprintRadius(ActiveCardinalRite rite, CardinalRiteRecipe recipe) {
+		float fallbackRadius = (float) CardinalRiteBoundaryLeashRules.ritualRadius(rite.getRiteSize());
+		float floorRadius = 0.0F;
 		if (rite.getMatchedFloorId() != null) {
 			var matchedFloor = CardinalRiteFloorRegistry.get(rite.getMatchedFloorId());
-			if (matchedFloor.isPresent()) return matchedFloor.get().footprintRadius();
+			if (matchedFloor.isPresent()) floorRadius = matchedFloor.get().footprintRadius();
 		}
 		if (recipe == null || recipe.getCeremony() == null) {
-			return (float) CardinalRiteBoundaryLeashRules.ritualRadius(rite.getRiteSize());
+			return CardinalRiteFootprintRules.enclosingRadius(
+					fallbackRadius, floorRadius, java.util.List.of(),
+					java.util.List.of(), java.util.List.of());
 		}
 		java.util.List<BlockPos> anchors = recipe.getCeremony().anchors().stream()
 				.map(com.vincenthuto.hemomancy.common.rite.CardinalRiteCeremonyDefinition.Anchor::offset)
 				.toList();
+		java.util.List<BlockPos> supportSockets = new java.util.ArrayList<>();
+		recipe.getCeremony().supportSockets().stream()
+				.map(com.vincenthuto.hemomancy.common.rite.CardinalRiteCeremonyDefinition.SupportSocket::offset)
+				.forEach(supportSockets::add);
 		java.util.List<BlockPos> sigilPoints = new java.util.ArrayList<>();
-		for (CardinalRiteInteractionHandler.SigilPlacement placement
-				: CardinalRiteInteractionHandler.supportSigils(recipe)) {
+		java.util.List<CardinalRiteInteractionHandler.SigilPlacement> supportPlacements =
+				CardinalRiteInteractionHandler.supportSigils(recipe);
+		for (CardinalRiteInteractionHandler.SigilPlacement placement : supportPlacements) {
+			supportSockets.add(new BlockPos(placement.x(), 0, placement.z()));
 			IchorianSigilDefinition sigil = IchorianSigilRegistry.get(placement.id());
 			if (sigil == null) continue;
 			for (IchorianSigilDefinition.Node node : sigil.nodes()) {
@@ -813,11 +823,11 @@ public class HarbingerCardinalRiteEvents {
 			}
 		}
 		for (IchorianSigilDefinition sigil : IchorianSigilRegistry.all()) {
-			for (IchorianSigilDefinition.Node node : sigil.nodes()) {
-				sigilPoints.add(new BlockPos((int) Math.round(node.x()), 0, (int) Math.round(node.z())));
-			}
+			sigilPoints.addAll(CardinalRiteInteractionHandler.resolvedResponseSigilPoints(
+					recipe.getCeremony().anchors(), supportPlacements, sigil));
 		}
-		return CardinalRiteFootprintRules.radius(anchors, sigilPoints);
+		return CardinalRiteFootprintRules.enclosingRadius(
+				fallbackRadius, floorRadius, anchors, supportSockets, sigilPoints);
 	}
 
 	private static java.util.List<String> buildChecklist(ServerLevel level, ActiveCardinalRite rite,

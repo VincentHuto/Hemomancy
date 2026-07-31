@@ -53,6 +53,11 @@ public final class CardinalRiteSigilPlacementRules {
 		throw new IllegalStateException("Unable to place ichorian sigil clear of ritual targets");
 	}
 
+	public static Set<BlockPos> resolvedFootprint(BlockPos requested,
+			List<IchorianSigilDefinition.Node> nodes, Set<BlockPos> occupied) {
+		return footprint(resolveNearestPlacement(requested, nodes, occupied), nodes);
+	}
+
 	public static Set<BlockPos> footprint(BlockPos placement,
 			List<IchorianSigilDefinition.Node> nodes) {
 		Set<BlockPos> positions = new LinkedHashSet<>();

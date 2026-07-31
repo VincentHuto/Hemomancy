@@ -14,6 +14,27 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 final class CardinalRiteFogGeometryTest {
 	@Test
+	void faneDomeLinesUpWithTheFogPerimeterAcrossRiteSizes() {
+		float[] radii = {4.5F, 6.75F, 9.75F, 11.75F};
+		float[] verticalOffsets = {-3.0F, 0.0F, 4.5F};
+
+		for (float radius : radii) {
+			for (float verticalOffset : verticalOffsets) {
+				assertEquals(radius,
+						CardinalRiteFogGeometry.enclosingDomeRadius(radius, verticalOffset),
+						0.0001F,
+						"the shell edge follows the fog centerline instead of its scattered outskirts");
+			}
+		}
+	}
+
+	@Test
+	void faneDomeRadiusSanitizesInvalidFogPerimeters() {
+		assertEquals(0.0F, CardinalRiteFogGeometry.enclosingDomeRadius(-4.0F, 0.0F));
+		assertEquals(0.0F, CardinalRiteFogGeometry.enclosingDomeRadius(Float.NaN, 0.0F));
+	}
+
+	@Test
 	void fullFootprintDefinesTheFogPerimeterBeforeRingsAreCompleted() {
 		assertEquals(11.75F,
 				CardinalRiteFogGeometry.perimeterRadius(11.75F, 9, 0, 7, false));

@@ -144,7 +144,7 @@ public final class CardinalRiteFogRenderer {
 		return center.getX() * 0.137F + center.getY() * 0.071F + center.getZ() * 0.193F;
 	}
 
-	private static float fogVerticalOffset() {
+	static float fogVerticalOffset() {
 		return HemoClientConfig.CARDINAL_RITE_FOG_VERTICAL_OFFSET == null
 				? 0.0F
 				: HemoClientConfig.CARDINAL_RITE_FOG_VERTICAL_OFFSET.get().floatValue();

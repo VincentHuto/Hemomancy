@@ -19,9 +19,24 @@ public final class CardinalRiteFootprintRules {
 		return (float) farthest + MARKER_CLEARANCE;
 	}
 
+	public static float enclosingRadius(float fallbackRadius, float floorRadius,
+			List<BlockPos> boundaryPoints, List<BlockPos> supportSocketPoints,
+			List<BlockPos> sigilPoints) {
+		double farthest = 0.0D;
+		for (BlockPos point : boundaryPoints) farthest = Math.max(farthest, horizontalDistance(point));
+		for (BlockPos point : supportSocketPoints) farthest = Math.max(farthest, horizontalDistance(point));
+		for (BlockPos point : sigilPoints) farthest = Math.max(farthest, horizontalDistance(point));
+		float contentRadius = farthest > 0.0D ? (float) farthest + MARKER_CLEARANCE : 0.0F;
+		return Math.max(safeRadius(fallbackRadius), Math.max(safeRadius(floorRadius), contentRadius));
+	}
+
 	public static float awakenedSigilOrbitRadius(float footprintRadius) {
 		float safeFootprint = Float.isFinite(footprintRadius) ? Math.max(0.0F, footprintRadius) : 0.0F;
 		return Math.max(MIN_AWAKENED_SIGIL_ORBIT_RADIUS, safeFootprint - AWAKENED_SIGIL_CLEARANCE);
+	}
+
+	private static float safeRadius(float radius) {
+		return Float.isFinite(radius) ? Math.max(0.0F, radius) : 0.0F;
 	}
 
 	private static double horizontalDistance(BlockPos point) {

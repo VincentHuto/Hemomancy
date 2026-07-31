@@ -12,7 +12,7 @@ import java.util.Random;
 
 public final class CardinalRiteFogLightning {
 	private static final int OUTER_BLACK = 0xE806020A;
-	private static final int INNER_PURPLE = 0xFF5A1629;
+	private static final int INNER_PURPLE = 0xFF5A167D;
 	private static final CardinalRiteFogLightningSchedule SCHEDULE =
 			new CardinalRiteFogLightningSchedule();
 
