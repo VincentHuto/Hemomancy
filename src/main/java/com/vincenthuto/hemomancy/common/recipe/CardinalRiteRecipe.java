@@ -81,6 +81,16 @@ public class CardinalRiteRecipe extends CustomRecipe {
 	protected boolean consumeRequiredStructure;
 	protected List<BrazierRequirement> brazierSignature = List.of();
 	protected Ingredient medium = Ingredient.EMPTY;
+	protected boolean consumeMediumOnSuccess = true;
+	protected PuppeteerTrial puppeteerTrial;
+
+	public record PuppeteerTrial(String summonName) {
+		public PuppeteerTrial {
+			if (summonName == null || summonName.isBlank()) {
+				throw new IllegalArgumentException("Puppeteer trial summon name cannot be blank");
+			}
+		}
+	}
 
 	public record BrazierRequirement(Ingredient ingredient, int count, boolean consumeOnSuccess) {
 		public BrazierRequirement {
@@ -221,6 +231,26 @@ public class CardinalRiteRecipe extends CustomRecipe {
 
 	public void setMedium(Ingredient medium) {
 		this.medium = medium == null ? Ingredient.EMPTY : medium;
+	}
+
+	public boolean shouldConsumeMediumOnSuccess() {
+		return consumeMediumOnSuccess;
+	}
+
+	public void setConsumeMediumOnSuccess(boolean consumeMediumOnSuccess) {
+		this.consumeMediumOnSuccess = consumeMediumOnSuccess;
+	}
+
+	public boolean isPuppeteerTrial() {
+		return puppeteerTrial != null;
+	}
+
+	public PuppeteerTrial getPuppeteerTrial() {
+		return puppeteerTrial;
+	}
+
+	public void setPuppeteerTrial(PuppeteerTrial puppeteerTrial) {
+		this.puppeteerTrial = puppeteerTrial;
 	}
 
 	public ItemStack getResult() {

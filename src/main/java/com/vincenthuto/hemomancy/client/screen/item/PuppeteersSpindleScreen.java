@@ -284,7 +284,7 @@ public class PuppeteersSpindleScreen extends AbstractContainerScreen<PuppeteersS
 			return false;
 		}
 		return player.getRecipeBook()
-				.contains(Hemomancy.rloc("puppeteer_trial/" + definition.name()));
+				.contains(com.vincenthuto.hemomancy.common.summon.PuppeteerSummonTrialEvents.recipeId(definition));
 	}
 
 	private int summonRowAt(double mouseX, double mouseY) {

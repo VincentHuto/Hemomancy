@@ -60,6 +60,7 @@ final class CardinalRiteProgressionResourceTest {
 				JsonObject json = read(path);
 				if (json.has("unstained") && json.get("unstained").getAsBoolean()) continue;
 				if ("apotheos_rite.json".equals(path.getFileName().toString())) continue;
+				if (json.has("puppeteer_trial")) continue;
 				assertEquals(0.0D, json.get("bloodCost").getAsDouble(), 0.0D, path.getFileName().toString());
 			}
 		}
@@ -122,6 +123,7 @@ final class CardinalRiteProgressionResourceTest {
 				JsonObject json = read(path);
 				if (json.has("unstained") && json.get("unstained").getAsBoolean()) continue;
 				if (json.has("result")) continue;
+				if (json.has("puppeteer_trial")) continue;
 				String id = path.getFileName().toString().replace(".json", "");
 				assertTrue(completionSource.contains("\"cardinal_rite/" + id + "\""),
 						id + " has neither a material result nor a named completion path");

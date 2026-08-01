@@ -15,9 +15,14 @@ import com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.EnumI
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.IInitiatoryDegree;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.InitiatoryDegreeEvents;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.IKnownManipulations;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.KnownManipulationEvents;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.ManipulationDiagnosticsSync;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.ManipulationEquipHelper;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.ManipulationRetirementRules;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.ManipSlotHelper;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.morphling.EquippedMorphlingEvents;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.summon.IKnownSummons;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.summon.KnownSummonEvents;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.BloodTendencyEvents;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.IBloodTendency;
@@ -43,6 +48,7 @@ import com.vincenthuto.hemomancy.common.entity.mob.monster.will.WillCompositionR
 import com.vincenthuto.hemomancy.common.entity.mob.monster.will.WillEntity;
 import com.vincenthuto.hemomancy.common.entity.mob.monster.will.WillOrigin;
 import com.vincenthuto.hemomancy.common.init.EntityInit;
+import com.vincenthuto.hemomancy.common.init.ManipulationInit;
 import com.vincenthuto.hemomancy.common.item.harbinger.morphlings.ItemMorphlingJar;
 import com.vincenthuto.hemomancy.common.item.harbinger.morphlings.MorphlingItem;
 import com.vincenthuto.hemomancy.common.item.harbinger.morphlings.PrimalMorphlingRules;
@@ -51,6 +57,9 @@ import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.PacketSyncBloodMoon;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.PacketSyncPomeProgress;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.PacketSyncSkills;
+import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
+import com.vincenthuto.hemomancy.common.manipulation.ManipLevel;
+import com.vincenthuto.hemomancy.common.summon.PuppeteerSummonDefinitions;
 import com.vincenthuto.hemomancy.common.worldgen.ChamberOfWillManager;
 import net.minecraft.ChatFormatting;
 import net.minecraft.commands.CommandSourceStack;
@@ -69,6 +78,10 @@ import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.network.PacketDistributor;
 
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.CompletableFuture;
 
@@ -87,6 +100,18 @@ import java.util.concurrent.CompletableFuture;
  * ── Initiatory Degree ──
  * /hemo degree get [player]
  * /hemo degree set &lt;0-8&gt; [player]
+ *
+ * â”€â”€ Puppeteer Summons â”€â”€
+ * /hemo summons list [player]
+ * /hemo summons add &lt;summon|all&gt; [player]
+ * /hemo summons remove &lt;summon|all&gt; [player]
+ * /hemo summons clear [player]
+ *
+ * â”€â”€ Known Manipulations â”€â”€
+ * /hemo manipulations list [player]
+ * /hemo manipulations add &lt;manipulation|all&gt; [player]
+ * /hemo manipulations remove &lt;manipulation|all&gt; [player]
+ * /hemo manipulations clear [player]
  *
  * ── Skill Points (global static state) ──
  * /hemo skills get
@@ -458,6 +483,58 @@ public class HemoCommand {
 																						parseWillOrigin(StringArgumentType.getString(ctx, "origin")),
 																						IntegerArgumentType.getInteger(ctx, "count")))))))))))
 
+				.then(Commands.literal("summons")
+						.then(Commands.literal("list")
+								.executes(ctx -> listKnownSummons(ctx.getSource(), ctx.getSource().getPlayerOrException()))
+								.then(Commands.argument("player", EntityArgument.player())
+										.executes(ctx -> listKnownSummons(ctx.getSource(), EntityArgument.getPlayer(ctx, "player")))))
+						.then(Commands.literal("add")
+								.then(Commands.argument("summon", StringArgumentType.word())
+										.suggests((ctx, builder) -> suggestPuppeteerSummons(builder))
+										.executes(ctx -> addKnownSummon(ctx.getSource(), ctx.getSource().getPlayerOrException(),
+												StringArgumentType.getString(ctx, "summon")))
+										.then(Commands.argument("player", EntityArgument.player())
+												.executes(ctx -> addKnownSummon(ctx.getSource(), EntityArgument.getPlayer(ctx, "player"),
+														StringArgumentType.getString(ctx, "summon"))))))
+						.then(Commands.literal("remove")
+								.then(Commands.argument("summon", StringArgumentType.word())
+										.suggests((ctx, builder) -> suggestPuppeteerSummons(builder))
+										.executes(ctx -> removeKnownSummon(ctx.getSource(), ctx.getSource().getPlayerOrException(),
+												StringArgumentType.getString(ctx, "summon")))
+										.then(Commands.argument("player", EntityArgument.player())
+												.executes(ctx -> removeKnownSummon(ctx.getSource(), EntityArgument.getPlayer(ctx, "player"),
+														StringArgumentType.getString(ctx, "summon"))))))
+						.then(Commands.literal("clear")
+								.executes(ctx -> clearKnownSummons(ctx.getSource(), ctx.getSource().getPlayerOrException()))
+								.then(Commands.argument("player", EntityArgument.player())
+										.executes(ctx -> clearKnownSummons(ctx.getSource(), EntityArgument.getPlayer(ctx, "player"))))))
+
+				.then(Commands.literal("manipulations")
+						.then(Commands.literal("list")
+								.executes(ctx -> listKnownManipulations(ctx.getSource(), ctx.getSource().getPlayerOrException()))
+								.then(Commands.argument("player", EntityArgument.player())
+										.executes(ctx -> listKnownManipulations(ctx.getSource(), EntityArgument.getPlayer(ctx, "player")))))
+						.then(Commands.literal("add")
+								.then(Commands.argument("manipulation", StringArgumentType.word())
+										.suggests((ctx, builder) -> suggestManipulations(builder))
+										.executes(ctx -> addKnownManipulation(ctx.getSource(), ctx.getSource().getPlayerOrException(),
+												StringArgumentType.getString(ctx, "manipulation")))
+										.then(Commands.argument("player", EntityArgument.player())
+												.executes(ctx -> addKnownManipulation(ctx.getSource(), EntityArgument.getPlayer(ctx, "player"),
+														StringArgumentType.getString(ctx, "manipulation"))))))
+						.then(Commands.literal("remove")
+								.then(Commands.argument("manipulation", StringArgumentType.word())
+										.suggests((ctx, builder) -> suggestManipulations(builder))
+										.executes(ctx -> removeKnownManipulation(ctx.getSource(), ctx.getSource().getPlayerOrException(),
+												StringArgumentType.getString(ctx, "manipulation")))
+										.then(Commands.argument("player", EntityArgument.player())
+												.executes(ctx -> removeKnownManipulation(ctx.getSource(), EntityArgument.getPlayer(ctx, "player"),
+														StringArgumentType.getString(ctx, "manipulation"))))))
+						.then(Commands.literal("clear")
+								.executes(ctx -> clearKnownManipulations(ctx.getSource(), ctx.getSource().getPlayerOrException()))
+								.then(Commands.argument("player", EntityArgument.player())
+										.executes(ctx -> clearKnownManipulations(ctx.getSource(), EntityArgument.getPlayer(ctx, "player"))))))
+
 				.then(Commands.literal("slots")
 						.then(Commands.literal("get")
 								.executes(ctx -> getSlots(ctx.getSource(), ctx.getSource().getPlayerOrException()))
@@ -626,7 +703,100 @@ public class HemoCommand {
 		return 1;
 	}
 
-	// ═══════════════════ Skill Points ═══════════════════
+	// ═══════════════════ Puppeteer Summons ═══════════════════
+
+	private static int listKnownSummons(CommandSourceStack source, ServerPlayer player) {
+		List<String> names = HemoCapabilityAccess.requireKnownSummons(player).getKnownSummonNames();
+		String display = names.isEmpty() ? "none" : String.join(", ", names);
+		source.sendSuccess(() -> Component.literal(player.getName().getString())
+				.append(Component.literal(" known puppeteer summons: ").withStyle(ChatFormatting.GRAY))
+				.append(Component.literal(display).withStyle(names.isEmpty() ? ChatFormatting.DARK_GRAY : ChatFormatting.GREEN)),
+				false);
+		return Math.max(1, names.size());
+	}
+
+	private static int addKnownSummon(CommandSourceStack source, ServerPlayer player, String summonName) {
+		IKnownSummons known = HemoCapabilityAccess.requireKnownSummons(player);
+		List<String> current = new ArrayList<>(known.getKnownSummonNames());
+		int added;
+		if ("all".equals(summonName)) {
+			List<String> everySummon = PuppeteerSummonDefinitions.all().stream()
+					.map(definition -> definition.name()).toList();
+			added = (int) everySummon.stream().filter(name -> !current.contains(name)).count();
+			known.setKnownSummonNames(everySummon);
+		} else {
+			var definition = PuppeteerSummonDefinitions.byName(summonName).orElse(null);
+			if (definition == null) {
+				source.sendFailure(Component.literal("Unknown puppeteer summon '" + summonName
+						+ "'. Valid: " + puppeteerSummonList()));
+				return 0;
+			}
+			if (current.contains(definition.name())) {
+				source.sendFailure(Component.literal(player.getName().getString() + " already knows "
+						+ definition.name() + "."));
+				return 0;
+			}
+			current.add(definition.name());
+			known.setKnownSummonNames(current);
+			added = 1;
+		}
+		KnownSummonEvents.sync(player, known);
+		int changed = added;
+		source.sendSuccess(() -> Component.literal("Added " + changed + " puppeteer summon"
+				+ (changed == 1 ? "" : "s") + " for ")
+				.append(Component.literal(player.getName().getString()).withStyle(ChatFormatting.GOLD)), true);
+		return Math.max(1, added);
+	}
+
+	private static int removeKnownSummon(CommandSourceStack source, ServerPlayer player, String summonName) {
+		if ("all".equals(summonName)) {
+			return clearKnownSummons(source, player);
+		}
+		var definition = PuppeteerSummonDefinitions.byName(summonName).orElse(null);
+		if (definition == null) {
+			source.sendFailure(Component.literal("Unknown puppeteer summon '" + summonName
+					+ "'. Valid: " + puppeteerSummonList()));
+			return 0;
+		}
+		IKnownSummons known = HemoCapabilityAccess.requireKnownSummons(player);
+		List<String> remaining = new ArrayList<>(known.getKnownSummonNames());
+		if (!remaining.remove(definition.name())) {
+			source.sendFailure(Component.literal(player.getName().getString() + " does not know "
+					+ definition.name() + "."));
+			return 0;
+		}
+		known.setKnownSummonNames(remaining);
+		KnownSummonEvents.sync(player, known);
+		source.sendSuccess(() -> Component.literal("Removed ")
+				.append(Component.literal(definition.name()).withStyle(ChatFormatting.RED))
+				.append(Component.literal(" from "))
+				.append(Component.literal(player.getName().getString()).withStyle(ChatFormatting.GOLD)), true);
+		return 1;
+	}
+
+	private static int clearKnownSummons(CommandSourceStack source, ServerPlayer player) {
+		IKnownSummons known = HemoCapabilityAccess.requireKnownSummons(player);
+		int removed = known.getKnownSummonNames().size();
+		known.setKnownSummonNames(List.of());
+		KnownSummonEvents.sync(player, known);
+		source.sendSuccess(() -> Component.literal("Cleared " + removed + " known puppeteer summon"
+				+ (removed == 1 ? "" : "s") + " from ")
+				.append(Component.literal(player.getName().getString()).withStyle(ChatFormatting.GOLD)), true);
+		return Math.max(1, removed);
+	}
+
+	private static CompletableFuture<Suggestions> suggestPuppeteerSummons(SuggestionsBuilder builder) {
+		builder.suggest("all");
+		for (var definition : PuppeteerSummonDefinitions.all()) {
+			builder.suggest(definition.name());
+		}
+		return builder.buildFuture();
+	}
+
+	private static String puppeteerSummonList() {
+		return String.join(", ", PuppeteerSummonDefinitions.all().stream()
+				.map(definition -> definition.name()).toList()) + ", all";
+	}
 
 	private static int getMorphlingStage(CommandSourceStack source, ServerPlayer player) {
 		ItemStack stack = getEquippedMorphlingStack(source, player);
@@ -832,6 +1002,8 @@ public class HemoCommand {
 				true);
 		return 1;
 	}
+
+	// ═══════════════════ Skill Points ═══════════════════
 
 	private static int getSkills(CommandSourceStack source, ServerPlayer player) {
 		SkillProgress progress = HemoCapabilityAccess.requireSkillProgress(player);
@@ -1202,6 +1374,124 @@ public class HemoCommand {
 			builder.append(tendency.name().toLowerCase(Locale.ROOT));
 		}
 		return builder.toString();
+	}
+
+	// ═══════════════════ Known Manipulations ═══════════════════
+
+	private static int listKnownManipulations(CommandSourceStack source, ServerPlayer player) {
+		List<String> names = HemoCapabilityAccess.requireKnownManipulations(player).getKnownManips().keySet().stream()
+				.map(BloodManipulation::getName).sorted().toList();
+		String display = names.isEmpty() ? "none" : String.join(", ", names);
+		source.sendSuccess(() -> Component.literal(player.getName().getString())
+				.append(Component.literal(" known manipulations: ").withStyle(ChatFormatting.GRAY))
+				.append(Component.literal(display).withStyle(names.isEmpty() ? ChatFormatting.DARK_GRAY : ChatFormatting.GREEN)),
+				false);
+		return Math.max(1, names.size());
+	}
+
+	private static int addKnownManipulation(CommandSourceStack source, ServerPlayer player, String manipulationName) {
+		IKnownManipulations known = HemoCapabilityAccess.requireKnownManipulations(player);
+		LinkedHashMap<BloodManipulation, ManipLevel> updated = new LinkedHashMap<>(known.getKnownManips());
+		int added = 0;
+		if ("all".equals(manipulationName)) {
+			for (BloodManipulation manipulation : availableManipulations()) {
+				if (!known.doesListContainName(updated, manipulation)) {
+					updated.put(manipulation, new ManipLevel(0, 0));
+					added++;
+				}
+			}
+		} else {
+			BloodManipulation manipulation = ManipulationInit.getByName(manipulationName);
+			if (!isAvailableManipulation(manipulation)) {
+				source.sendFailure(Component.literal("Unknown manipulation '" + manipulationName
+						+ "'. Use tab completion or 'all'."));
+				return 0;
+			}
+			if (known.doesListContainName(updated, manipulation)) {
+				source.sendFailure(Component.literal(player.getName().getString() + " already knows "
+						+ manipulation.getName() + "."));
+				return 0;
+			}
+			updated.put(manipulation, new ManipLevel(0, 0));
+			added = 1;
+		}
+		known.setKnownManips(updated);
+		syncKnownManipulations(player);
+		int changed = added;
+		source.sendSuccess(() -> Component.literal("Added " + changed + " manipulation"
+				+ (changed == 1 ? "" : "s") + " for ")
+				.append(Component.literal(player.getName().getString()).withStyle(ChatFormatting.GOLD)), true);
+		return Math.max(1, added);
+	}
+
+	private static int removeKnownManipulation(CommandSourceStack source, ServerPlayer player,
+			String manipulationName) {
+		if ("all".equals(manipulationName)) {
+			return clearKnownManipulations(source, player);
+		}
+		BloodManipulation manipulation = ManipulationInit.getByName(manipulationName);
+		if (!isAvailableManipulation(manipulation)) {
+			source.sendFailure(Component.literal("Unknown manipulation '" + manipulationName
+					+ "'. Use tab completion or 'all'."));
+			return 0;
+		}
+		IKnownManipulations known = HemoCapabilityAccess.requireKnownManipulations(player);
+		boolean removed = known.getKnownManips().entrySet().removeIf(entry ->
+				manipulation.getName().equals(entry.getKey().getName()));
+		if (!removed) {
+			source.sendFailure(Component.literal(player.getName().getString() + " does not know "
+					+ manipulation.getName() + "."));
+			return 0;
+		}
+		if (known.getSelectedManip() != null
+				&& manipulation.getName().equals(known.getSelectedManip().getName())) {
+			known.setSelectedManip(BloodManipulation.BLANK);
+		}
+		List<String> equipped = new ArrayList<>(known.getEquippedManipNames());
+		equipped.removeIf(manipulation.getName()::equals);
+		known.setEquippedManipNames(equipped);
+		syncKnownManipulations(player);
+		source.sendSuccess(() -> Component.literal("Removed ")
+				.append(Component.literal(manipulation.getName()).withStyle(ChatFormatting.RED))
+				.append(Component.literal(" from "))
+				.append(Component.literal(player.getName().getString()).withStyle(ChatFormatting.GOLD)), true);
+		return 1;
+	}
+
+	private static int clearKnownManipulations(CommandSourceStack source, ServerPlayer player) {
+		IKnownManipulations known = HemoCapabilityAccess.requireKnownManipulations(player);
+		int removed = known.getKnownManips().size();
+		known.setKnownManips(new LinkedHashMap<>());
+		known.setSelectedManip(BloodManipulation.BLANK);
+		known.setEquippedManipNames(List.of());
+		syncKnownManipulations(player);
+		source.sendSuccess(() -> Component.literal("Cleared " + removed + " known manipulation"
+				+ (removed == 1 ? "" : "s") + " from ")
+				.append(Component.literal(player.getName().getString()).withStyle(ChatFormatting.GOLD)), true);
+		return Math.max(1, removed);
+	}
+
+	private static List<BloodManipulation> availableManipulations() {
+		return ManipulationInit.getAllEntries().stream().filter(HemoCommand::isAvailableManipulation)
+				.sorted(Comparator.comparing(BloodManipulation::getName)).toList();
+	}
+
+	private static boolean isAvailableManipulation(BloodManipulation manipulation) {
+		return manipulation != null && manipulation != BloodManipulation.BLANK
+				&& !ManipulationRetirementRules.isRetiredManipulation(manipulation);
+	}
+
+	private static CompletableFuture<Suggestions> suggestManipulations(SuggestionsBuilder builder) {
+		builder.suggest("all");
+		for (BloodManipulation manipulation : availableManipulations()) {
+			builder.suggest(manipulation.getName());
+		}
+		return builder.buildFuture();
+	}
+
+	private static void syncKnownManipulations(ServerPlayer player) {
+		KnownManipulationEvents.syncPlayerEvent(player);
+		ManipulationDiagnosticsSync.sync(player);
 	}
 
 	// ═══════════════════ Manipulation Slots ═══════════════════

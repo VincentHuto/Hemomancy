@@ -221,7 +221,7 @@ public final class HarbingerAdvancementGranter {
 			grantIfNotDone(player, DEGREE_ADVANCEMENTS[i - 1]);
 		}
 		LiberKnowledgeHelper.unlockForDegree(player, degree);
-		PuppeteerSummonTrialEvents.awardTrialRecipes(player, degree);
+		PuppeteerSummonTrialEvents.awardOrdealRecipes(player, degree);
 	}
 
 	/**

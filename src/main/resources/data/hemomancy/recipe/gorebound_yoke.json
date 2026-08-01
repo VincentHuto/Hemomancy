@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": ["SLS", " F ", "SLS"],
+  "key": {
+    "S": { "item": "hemomancy:hematic_iron_scrap" },
+    "L": { "item": "minecraft:leather" },
+    "F": { "item": "hemomancy:sanguine_formation" }
+  },
+  "result": { "id": "hemomancy:gorebound_yoke", "count": 1 }
+}

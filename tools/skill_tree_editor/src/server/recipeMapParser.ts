@@ -30,12 +30,12 @@ export function parseRecipeMapDefinitionsJava(path: string, source: string): {
     createTab('CRAFTING', parseFamilies(source, 'CRAFTING_FAMILIES'))
   ];
 
-  for (const match of body.matchAll(/register(Rites|Crafting|Puppetry)\(\s*"([^"]+)"\s*((?:,\s*"[^"]+")*)\s*\)\s*;/g)) {
+  for (const match of body.matchAll(/register(Rites|Crafting)\(\s*"([^"]+)"\s*((?:,\s*"[^"]+")*)\s*\)\s*;/g)) {
     const method = match[1];
     const family = match[2];
     const ids = [...match[3].matchAll(/"([^"]+)"/g)].map(id => id[1]);
     const tab = method === 'Rites' ? tabs[0] : tabs[1];
-    const prefix = method === 'Rites' ? 'cardinal_rite/' : method === 'Puppetry' ? 'puppeteer_trial/' : 'blood_structure/';
+    const prefix = method === 'Rites' ? 'cardinal_rite/' : 'blood_structure/';
     for (const id of ids) {
       const fullId = id.includes('/') ? id : prefix + id;
       tab.entries.push({
@@ -70,10 +70,7 @@ export function renderRecipeMapDefinitionsJava(source: string, tabs: RecipeMapEd
       if (!entries.length) continue;
       const groups = tab.key === 'RITES'
         ? [{ method: 'registerRites', prefix: 'cardinal_rite/', entries }]
-        : [
-          { method: 'registerCrafting', prefix: 'blood_structure/', entries: entries.filter(entry => entry.id.startsWith('blood_structure/')) },
-          { method: 'registerPuppetry', prefix: 'puppeteer_trial/', entries: entries.filter(entry => entry.id.startsWith('puppeteer_trial/')) }
-        ];
+        : [{ method: 'registerCrafting', prefix: 'blood_structure/', entries }];
       for (const group of groups) {
         if (!group.entries.length) continue;
         const ids = group.entries.map(entry => `"${entry.id.slice(group.prefix.length)}"`).join(', ');

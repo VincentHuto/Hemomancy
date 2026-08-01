@@ -9,9 +9,6 @@ import com.vincenthuto.hemomancy.common.network.capa.harbinger.PacketBloodStruct
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.PacketBloodStructureOfferingBurst;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.BloodStructureCraftingHelper;
 import com.vincenthuto.hemomancy.common.recipe.BloodStructureRecipe;
-import com.vincenthuto.hemomancy.common.recipe.PuppeteerTrialRecipe;
-import com.vincenthuto.hemomancy.common.summon.PuppeteerSummonDefinitions;
-import com.vincenthuto.hemomancy.common.summon.PuppeteerSummonFactory;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
@@ -157,13 +154,6 @@ public final class BloodStructureFeedManager {
 		PacketDistributor.sendToAllPlayers(new PacketBloodCraftRing(ringCenter, startRadius,
 				centerY, CRAFT_ANIMATION_TICKS));
 
-		if (recipe instanceof PuppeteerTrialRecipe trial) {
-			completeTrial(player, level, trial, match, blockPattern, ringCenter);
-			ACTIVE_FEEDS.remove(key);
-			COMPLETING_FEEDS.put(key, level.getGameTime() + COMPLETION_LOCK_TICKS);
-			return;
-		}
-
 		PendingBloodCraftManager.schedule(new PendingBloodCraftManager.PendingCraft(
 				level, match,
 				blockPattern.getWidth(), blockPattern.getHeight(), blockPattern.getDepth(),
@@ -171,29 +161,6 @@ public final class BloodStructureFeedManager {
 				CRAFT_ANIMATION_TICKS, player));
 		ACTIVE_FEEDS.remove(key);
 		COMPLETING_FEEDS.put(key, level.getGameTime() + COMPLETION_LOCK_TICKS);
-	}
-
-	private static void completeTrial(ServerPlayer player, ServerLevel level, PuppeteerTrialRecipe trial,
-			BlockPattern.BlockPatternMatch match, BlockPattern blockPattern, BlockPos center) {
-		var definition = PuppeteerSummonDefinitions.byName(trial.getSummonName());
-		if (definition.isEmpty()) {
-			player.displayClientMessage(Component.translatable("hemomancy.summon.trial.failed")
-					.withStyle(ChatFormatting.GRAY), false);
-			return;
-		}
-		var trialMob = PuppeteerSummonFactory.createTrial(definition.get(), level, player, center);
-		if (trialMob.isEmpty()) {
-			player.displayClientMessage(Component.translatable("hemomancy.summon.trial.failed")
-					.withStyle(ChatFormatting.GRAY), false);
-			return;
-		}
-		if (trial.shouldConsumePattern()) {
-			BloodStructureCraftingHelper.clearMatchedPattern(level, match, blockPattern);
-		}
-		level.addFreshEntity(trialMob.get());
-		level.playSound(null, center, SoundEvents.WITHER_SPAWN, SoundSource.HOSTILE, 0.8F, 1.35F);
-		player.displayClientMessage(Component.translatable("hemomancy.summon.trial.started",
-				trialMob.get().getDisplayName()).withStyle(ChatFormatting.DARK_RED), false);
 	}
 
 	private static void sendOfferingBurst(ServerLevel level, BlockPos center,

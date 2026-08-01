@@ -162,7 +162,7 @@ public final class SummonsTabView {
 		if (!degreeOk) {
 			gfx.drawCenteredString(ctx.font(), "Rite-shape withheld",
 					x + w / 2, y + h / 2 - 4, 0xFF555555);
-			ScreenDrawUtils.renderScaledItem(gfx, trialCatalyst(definition),
+			ScreenDrawUtils.renderScaledItem(gfx, primaryOffering(definition),
 					x + w / 2, y + h / 2 + 20, 14);
 		} else {
 			renderPreviewEntity(gfx, ctx, state, definition, x + 12, entityTop, x + w - 12, entityBottom);
@@ -190,7 +190,7 @@ public final class SummonsTabView {
 	private static boolean hasTrialRecipe(PuppeteerSummonDefinition definition) {
 		Minecraft mc = Minecraft.getInstance();
 		return mc.player != null && mc.player.getRecipeBook()
-				.contains(Hemomancy.rloc("puppeteer_trial/" + definition.name()));
+				.contains(com.vincenthuto.hemomancy.common.summon.PuppeteerSummonTrialEvents.recipeId(definition));
 	}
 
 	private static void renderPreviewEntity(GuiGraphics gfx, ProgressScreenContext ctx, SummonsTabState state,
@@ -336,9 +336,9 @@ public final class SummonsTabView {
 		int upkeep = PuppeteerSummonRules.adjustedThreadCost(definition.threadUpkeepPerMinute(), economy);
 		drawY = drawStackedDetailLine(gfx, ctx, "Call Charge", callCost + " charge", textX, drawY, textW, lineH);
 		drawY = drawStackedDetailLine(gfx, ctx, "Upkeep", upkeep + " charge/min", textX, drawY, textW, lineH);
-		drawY = drawStackedDetailLine(gfx, ctx, "Trial Catalyst", trialCatalyst(definition).getHoverName().getString(),
+		drawY = drawStackedDetailLine(gfx, ctx, "Primary Offering", primaryOffering(definition).getHoverName().getString(),
 				textX, drawY, textW, lineH);
-		drawY = drawStackedDetailLine(gfx, ctx, "Unlock", "Blood Crafting effigy trial", textX, drawY, textW, lineH);
+		drawY = drawStackedDetailLine(gfx, ctx, "Unlock", "Puppetry Cardinal Ordeal", textX, drawY, textW, lineH);
 		drawY += 4;
 
 		int skein = SkillPointHelper.getPuppetSkeinLevel();
@@ -364,10 +364,14 @@ public final class SummonsTabView {
 		}
 	}
 
-	private static ItemStack trialCatalyst(PuppeteerSummonDefinition definition) {
-		return new ItemStack(PuppeteerSummonDefinitions.MNEMONIST_PUPPET.equals(definition.name())
-				? ItemInit.mnemonic_ambergris.get()
-				: ItemInit.sanguine_quintessence.get());
+	private static ItemStack primaryOffering(PuppeteerSummonDefinition definition) {
+		return new ItemStack(switch (definition.name()) {
+			case PuppeteerSummonDefinitions.VEINWING_VULTURE -> ItemInit.veinwing_harness.get();
+			case PuppeteerSummonDefinitions.MARROW_SPITTER -> ItemInit.marrow_spitter_carriage.get();
+			case PuppeteerSummonDefinitions.GOREBOUND_HULK -> ItemInit.gorebound_yoke.get();
+			case PuppeteerSummonDefinitions.MNEMONIST_PUPPET -> ItemInit.mnemonist_cradle.get();
+			default -> ItemInit.puppeteering_thread.get();
+		});
 	}
 
 	private static int drawStackedDetailLine(GuiGraphics gfx, ProgressScreenContext ctx, String label, String value,

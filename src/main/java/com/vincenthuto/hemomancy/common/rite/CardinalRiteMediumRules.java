@@ -9,6 +9,10 @@ public final class CardinalRiteMediumRules {
 	private CardinalRiteMediumRules() {
 	}
 
+	public static boolean consumeOnSuccessFromNullable(Boolean configured) {
+		return configured == null || configured;
+	}
+
 	public static boolean matches(Ingredient required, ItemStack seated) {
 		boolean requiresMedium = required != null && required != Ingredient.EMPTY && !required.isEmpty();
 		ItemStack actual = seated == null ? ItemStack.EMPTY : seated;
@@ -18,5 +22,10 @@ public final class CardinalRiteMediumRules {
 	public static boolean consume(CardinalFocusBlockEntity focus, Ingredient required) {
 		if (focus == null || !matches(required, focus.getMediumForMatching())) return false;
 		return focus.consumeMedium(required);
+	}
+
+	public static boolean finish(CardinalFocusBlockEntity focus, Ingredient required, boolean consumeOnSuccess) {
+		if (focus == null || !matches(required, focus.getMediumForMatching())) return false;
+		return !consumeOnSuccess || focus.consumeMedium(required);
 	}
 }

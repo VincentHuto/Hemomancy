@@ -258,10 +258,11 @@ Advanced Harbingers can call shaped bodies as temporary extensions of learned bl
 
 **Learning shapes:**
 
-- Degree 3: **Veinwing Vulture** and **Marrow Spitter** trials, each activated with Sanguine Quintessence. The Spitter is a sunlight-immune hovering sentry: when bound it slowly orbits its puppeteer and fires Blood Shots without physically charging targets.
-- Degree 4: **Gorebound Hulk** trial, also activated with Sanguine Quintessence. The Hulk is a sunlight-immune constructed bruiser that pursues assigned targets on foot.
-- Degree 5: **Mnemonist Puppet** trial, activated with Mnemonic Ambergris. The Mnemonist is likewise a constructed, sunlight-immune body; it pursues assigned targets and replays captured damage memories in both trial and bound forms.
-- Defeating an unbound trial form permanently teaches that shape to the recorded caster.
+- Degree 3: the **Veinwing Vulture Ordeal** takes a Veinwing Harness; the **Marrow Spitter Ordeal** takes a Marrow Spitter Carriage.
+- Degree 4: the **Gorebound Hulk Ordeal** takes a Gorebound Yoke and Sanguine Quintessence.
+- Degree 5: the **Mnemonist Puppet Ordeal** takes a Mnemonist Cradle, Mnemonic Ambergris, and Memory Thread.
+- Build the reusable **Dominion Lesser** Cardinal Rite floor, light the listed offerings in its braziers, seat your owner-attuned Marionette Crossbar in the Cardinal Focus, and plant a Living Staff. The Crossbar must control no active bodies.
+- Blood and offerings are committed only when the hostile puppet manifests. Failure after manifestation does not refund them, but the complete Crossbar stack remains untouched. Defeating the one tracked puppet culminates the rite and permanently teaches its shape to the recorded caster.
 
 **Preparing a Crossbar:**
 

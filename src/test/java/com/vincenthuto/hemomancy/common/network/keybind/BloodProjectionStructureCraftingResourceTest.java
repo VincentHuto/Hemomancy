@@ -65,7 +65,7 @@ public final class BloodProjectionStructureCraftingResourceTest {
 				"targetPattern.isUnstained()");
 		assertContains("key packet hints projection use", keyPacket,
 				"use Blood Projection");
-		assertContains("puppeteer trials remain key based", keyPacket,
+		assertNotContains("puppeteer trials are no longer a Blood Crafting key path", keyPacket,
 				"tryActivatePuppeteerTrial");
 		assertContains("blood crafting key is restricted to unstained rite activation", keyPacket,
 				"CardinalRiteActivationRules.Trigger.BLOOD_CRAFTING_KEY");

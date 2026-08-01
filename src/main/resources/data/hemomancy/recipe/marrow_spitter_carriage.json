@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": ["TBT", " S ", " Q "],
+  "key": {
+    "T": { "item": "hemomancy:puppeteering_thread" },
+    "B": { "item": "minecraft:bone_block" },
+    "S": { "item": "hemomancy:calcified_blood_spine" },
+    "Q": { "item": "hemomancy:sanguine_quintessence" }
+  },
+  "result": { "id": "hemomancy:marrow_spitter_carriage", "count": 1 }
+}

@@ -33,9 +33,6 @@ public class RecipeInit {
 	public static final DeferredHolder<RecipeType<?>, RecipeType<CardinalRiteRecipe>> cardinal_rite_recipe_type = RECIPE_TYPES
 			.register("cardinal_rite_recipe", () -> RecipeType.simple(Hemomancy.rloc("cardinal_rite_recipe")));
 
-	public static final DeferredHolder<RecipeType<?>, RecipeType<PuppeteerTrialRecipe>> puppeteer_trial_recipe_type = RECIPE_TYPES
-			.register("puppeteer_trial_recipe", () -> RecipeType.simple(Hemomancy.rloc("puppeteer_trial_recipe")));
-
 	public static final DeferredHolder<RecipeType<?>, RecipeType<IncubatorRecipe>> incubator_recipe_type = RECIPE_TYPES
 			.register("incubator", () -> RecipeType.simple(Hemomancy.rloc("incubator")));
 
@@ -78,9 +75,6 @@ public class RecipeInit {
 
 	public static final DeferredHolder<RecipeSerializer<?>, RecipeSerializer<?>> cardinal_rite_recipe_serializer = SERIALIZERS
 			.register("cardinal_rite_recipe", CardinalRiteRecipeSerializer::new);
-
-	public static final DeferredHolder<RecipeSerializer<?>, RecipeSerializer<?>> puppeteer_trial_recipe_serializer = SERIALIZERS
-			.register("puppeteer_trial_recipe", PuppeteerTrialRecipeSerializer::new);
 
 	public static final DeferredHolder<RecipeSerializer<?>, RecipeSerializer<?>> incubator_serializer = SERIALIZERS
 			.register("incubator", IncubatorRecipeSerializer::new);

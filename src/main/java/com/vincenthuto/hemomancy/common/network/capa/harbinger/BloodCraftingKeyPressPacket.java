@@ -12,7 +12,6 @@ import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.recipe.BloodStructureRecipe;
 import com.vincenthuto.hemomancy.common.recipe.CardinalRiteRecipe;
-import com.vincenthuto.hemomancy.common.recipe.PuppeteerTrialRecipe;
 import com.vincenthuto.hemomancy.common.recipe.RecipeDegreeGates;
 import com.vincenthuto.hemomancy.common.rite.ActiveCardinalRite;
 import com.vincenthuto.hemomancy.common.rite.CardinalRiteSavedData;
@@ -20,8 +19,7 @@ import com.vincenthuto.hemomancy.common.rite.CardinalRiteMediumRules;
 import com.vincenthuto.hemomancy.common.rite.CardinalRiteStationMatcher;
 import com.vincenthuto.hemomancy.common.rite.CardinalRiteStaffEscrow;
 import com.vincenthuto.hemomancy.common.rite.harbinger.CardinalRiteActivationRules;
-import com.vincenthuto.hemomancy.common.summon.PuppeteerSummonDefinitions;
-import com.vincenthuto.hemomancy.common.summon.PuppeteerSummonFactory;
+import com.vincenthuto.hemomancy.common.rite.harbinger.PuppeteerTrialRiteController;
 import com.vincenthuto.hemomancy.common.tile.functional.CardinalFocusBlockEntity;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
@@ -262,90 +260,6 @@ public class BloodCraftingKeyPressPacket implements CustomPacketPayload {
 		});
 	}
 
-	private static boolean tryActivatePuppeteerTrial(Player player, ServerLevel level, BlockPos hitPos) {
-		for (PuppeteerTrialRecipe recipe : BloodCraftingPatternSearchRules.sortedByPatternSearchCost(
-				PuppeteerTrialRecipe.getAllTrialRecipes(player.level()),
-				targetPattern -> targetPattern.getPattern().getPatternArray())) {
-			if (player.getMainHandItem().getItem() != recipe.getHeldItem().getItem()) {
-				continue;
-			}
-			BlockPattern.BlockPatternMatch match = findStructurePatternAtHit(recipe, level, hitPos);
-			if (match == null) {
-				continue;
-			}
-
-			int requiredDegree = RecipeDegreeGates.getRequiredDegree(recipe);
-			if (!RecipeDegreeGates.playerMeets(player, recipe)) {
-				player.displayClientMessage(
-						Component.translatable("hemomancy.summon.trial.degree_locked",
-								RecipeDegreeGates.degreeLabel(requiredDegree)).withStyle(ChatFormatting.RED),
-						false);
-				return true;
-			}
-
-			net.minecraft.network.chat.Component alignError = checkPathAlignment(player, recipe);
-			if (alignError != null) {
-				player.displayClientMessage(alignError, false);
-				return true;
-			}
-
-			if (HemoCapabilityAccess.getKnownSummons(player)
-					.map(known -> known.getKnownSummonNames().contains(recipe.getSummonName()))
-					.orElse(false)) {
-				player.displayClientMessage(Component.translatable("hemomancy.summon.trial.already_known")
-						.withStyle(ChatFormatting.GRAY), true);
-				return true;
-			}
-
-			IBloodVolume bloodVolume = HemoCapabilityAccess.getBloodVolume(player)
-					.orElseThrow(NullPointerException::new);
-			if (bloodVolume.getBloodVolume() < recipe.getBloodCost()) {
-				player.displayClientMessage(Component.translatable("hemomancy.summon.trial.no_blood")
-						.withStyle(ChatFormatting.DARK_RED), true);
-				level.playLocalSound(player.blockPosition().getX(), player.blockPosition().getY(),
-						player.blockPosition().getZ(), SoundEvents.ENDERMAN_SCREAM, null, 1f, 1f, false);
-				return true;
-			}
-
-			BlockPattern blockPattern = recipe.getPattern().getBlockPattern();
-			AABB bounds = getMatchBounds(match, blockPattern);
-			BlockPos center = BlockPos.containing(bounds.getCenter());
-			var definition = PuppeteerSummonDefinitions.byName(recipe.getSummonName());
-			if (definition.isEmpty()) {
-				player.displayClientMessage(Component.translatable("hemomancy.summon.trial.failed")
-						.withStyle(ChatFormatting.GRAY), false);
-				return true;
-			}
-			var trialMob = PuppeteerSummonFactory.createTrial(definition.get(), level, (ServerPlayer) player, center);
-			if (trialMob.isEmpty()) {
-				player.displayClientMessage(Component.translatable("hemomancy.summon.trial.failed")
-						.withStyle(ChatFormatting.GRAY), false);
-				return true;
-			}
-
-			float centerY = (float) bounds.getCenter().y + 0.5f;
-			float startRadius = (float) Math.max(bounds.getXsize(), bounds.getZsize()) / 2.0f + 2.0f;
-			PacketDistributor.sendToAllPlayers(new PacketBloodCraftRing(center, startRadius, centerY, 30));
-
-			if (!player.getAbilities().instabuild) {
-				player.getMainHandItem().shrink(1);
-			}
-			bloodVolume.drain(recipe.getBloodCost());
-			PacketHandler.sendToPlayer((ServerPlayer) player, new BloodVolumeServerPacket(bloodVolume));
-
-			if (recipe.shouldConsumePattern()) {
-				clearMatchedPattern(level, match, blockPattern);
-			}
-
-			level.addFreshEntity(trialMob.get());
-			level.playSound(null, center, SoundEvents.WITHER_SPAWN, SoundSource.HOSTILE, 0.8F, 1.35F);
-			player.displayClientMessage(Component.translatable("hemomancy.summon.trial.started",
-					trialMob.get().getDisplayName()).withStyle(ChatFormatting.DARK_RED), false);
-			return true;
-		}
-		return false;
-	}
-
 	private static void showProjectionHint(Player player) {
 		player.displayClientMessage(
 				Component.literal("To complete this formation, use Blood Projection with its catalyst in your offhand.")
@@ -543,6 +457,14 @@ public class BloodCraftingKeyPressPacket implements CustomPacketPayload {
 							.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC), false);
 					return CardinalRiteActivationRules.ActivationAttempt.HANDLED;
 				}
+				if (recipe.isPuppeteerTrial()) {
+					ItemStack seated = sLevel.getBlockEntity(centerPos) instanceof CardinalFocusBlockEntity focus
+							? focus.getMediumForMatching() : ItemStack.EMPTY;
+					if (!PuppeteerTrialRiteController.canBegin(serverPlayer, seated,
+							recipe.getPuppeteerTrial().summonName(), recipe.getBloodCost(), true)) {
+						return CardinalRiteActivationRules.ActivationAttempt.HANDLED;
+					}
+				}
 
 				// Founding Fane also requires a Consecrated Bloodwell heart.
 				if (FOUNDING_FANE_RITE_ID.equals(recipe.getId())) {
@@ -563,7 +485,10 @@ public class BloodCraftingKeyPressPacket implements CustomPacketPayload {
 						? recipe.getCeremony().targetDurationTicks()
 						: recipe.getRiteType().getCastingDurationTicks();
 				int ceremonyDegree = Math.max(1, recipe.getRequiredDegree());
-				ActiveCardinalRite rite = recipe.hasInteractiveCeremony()
+				ActiveCardinalRite rite = recipe.isPuppeteerTrial()
+						? ActiveCardinalRite.puppeteerTrial(player.getUUID(), centerPos, recipe.getId(),
+								recipe.getRiteType().getSize())
+						: recipe.hasInteractiveCeremony()
 						? ActiveCardinalRite.interactive(
 								player.getUUID(), centerPos, recipe.getId(), castingDuration,
 								recipe.getRiteType().getSize(), ceremonyDegree,
@@ -589,10 +514,12 @@ public class BloodCraftingKeyPressPacket implements CustomPacketPayload {
 				if (stationMatch != null) {
 					rite.setMatchedFloor(stationMatch.floor().id(),
 							stationMatch.floorMatch().getForwards(), stationMatch.floorMatch().getUp());
-					rite.captureOfferingItinerary(stationMatch.braziers().stream()
-							.map(offering -> new ActiveCardinalRite.RiteOffering(
-									offering.pos(), offering.stack(), offering.consumeOnSuccess()))
-							.toList());
+					if (!recipe.isPuppeteerTrial()) {
+						rite.captureOfferingItinerary(stationMatch.braziers().stream()
+								.map(offering -> new ActiveCardinalRite.RiteOffering(
+										offering.pos(), offering.stack(), offering.consumeOnSuccess()))
+								.toList());
+					}
 				}
 				ItemStack plantingStaff = ItemStack.EMPTY;
 				if (!recipe.isUnstained() && recipe.hasInteractiveCeremony()

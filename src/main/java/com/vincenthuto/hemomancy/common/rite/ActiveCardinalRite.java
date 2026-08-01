@@ -28,7 +28,7 @@ import java.util.UUID;
  */
 public class ActiveCardinalRite {
 	private static final String STATE_VERSION = "StateVersion";
-	private static final int CURRENT_STATE_VERSION = 4;
+	private static final int CURRENT_STATE_VERSION = 5;
 
 	private final UUID playerUUID;
 	private final BlockPos centerPos;
@@ -89,6 +89,13 @@ public class ActiveCardinalRite {
 	private Vec3 cancellationRecoveryTargetPos;
 	private float cancellationRecoveryTargetScale;
 	private int staffPlantingTicks = -1;
+	private String puppeteerTrialSummonName = "";
+	private UUID puppeteerTrialEntityId;
+	private UUID puppeteerTrialCrossbarId;
+	private boolean puppeteerTrialManifested;
+	private boolean puppeteerTrialDefeated;
+	private float puppeteerTrialProgress;
+	private int puppeteerTrialMissingTicks;
 
 	public record RiteOffering(BlockPos pos, ItemStack stack, boolean consume) {
 		public RiteOffering {
@@ -128,6 +135,44 @@ public class ActiveCardinalRite {
 		rite.instabilityRepairBloodMl = new int[rite.anchorBloodMl.length];
 		return rite;
 	}
+
+	public static ActiveCardinalRite puppeteerTrial(UUID playerUUID, BlockPos centerPos, ResourceLocation recipeId,
+			int riteSize) {
+		ActiveCardinalRite rite = new ActiveCardinalRite(playerUUID, centerPos, recipeId, 1, riteSize);
+		rite.phase = CardinalRitePhase.PUPPET_TRIAL;
+		rite.anchorBloodMl = new int[0];
+		rite.instabilityRepairBloodMl = new int[0];
+		return rite;
+	}
+
+	public void beginPuppeteerTrial(String summonName, UUID entityId, UUID crossbarId) {
+		if (summonName == null || summonName.isBlank() || entityId == null || crossbarId == null) return;
+		puppeteerTrialSummonName = summonName;
+		puppeteerTrialEntityId = entityId;
+		puppeteerTrialCrossbarId = crossbarId;
+		puppeteerTrialManifested = true;
+		puppeteerTrialDefeated = false;
+		puppeteerTrialProgress = 0.0F;
+		puppeteerTrialMissingTicks = 0;
+		setPhase(CardinalRitePhase.PUPPET_TRIAL);
+	}
+
+	public void updatePuppeteerTrialHealth(float health, float maxHealth) {
+		if (!puppeteerTrialManifested || puppeteerTrialDefeated || maxHealth <= 0.0F) return;
+		puppeteerTrialProgress = Math.clamp(1.0F - Math.max(0.0F, health) / maxHealth, 0.0F, 1.0F);
+	}
+
+	public boolean markPuppeteerTrialDefeated(UUID entityId) {
+		if (phase != CardinalRitePhase.PUPPET_TRIAL || puppeteerTrialDefeated
+				|| entityId == null || !entityId.equals(puppeteerTrialEntityId)) return false;
+		puppeteerTrialDefeated = true;
+		puppeteerTrialProgress = 1.0F;
+		setPhase(CardinalRitePhase.CULMINATION);
+		return true;
+	}
+
+	public int incrementPuppeteerTrialMissingTicks() { return ++puppeteerTrialMissingTicks; }
+	public void resetPuppeteerTrialMissingTicks() { puppeteerTrialMissingTicks = 0; }
 
 	public void tick() {
 		if (phase == CardinalRitePhase.LEGACY) {
@@ -737,6 +782,13 @@ public class ActiveCardinalRite {
 	public ResourceLocation getMatchedFloorId() { return matchedFloorId; }
 	public Direction getFloorForwards() { return floorForwards; }
 	public Direction getFloorUp() { return floorUp; }
+	public String getPuppeteerTrialSummonName() { return puppeteerTrialSummonName; }
+	public UUID getPuppeteerTrialEntityId() { return puppeteerTrialEntityId; }
+	public UUID getPuppeteerTrialCrossbarId() { return puppeteerTrialCrossbarId; }
+	public boolean isPuppeteerTrialManifested() { return puppeteerTrialManifested; }
+	public boolean isPuppeteerTrialDefeated() { return puppeteerTrialDefeated; }
+	public float getPuppeteerTrialProgress() { return puppeteerTrialProgress; }
+	public int getPuppeteerTrialMissingTicks() { return puppeteerTrialMissingTicks; }
 
 	public double getProgress() {
 		return getProgress(CardinalRiteCeremonyRules.stillIntervalTicks(0));
@@ -752,6 +804,7 @@ public class ActiveCardinalRite {
 							/ (anchorBloodMl.length * (double) CardinalRiteCeremonyRules.BLOOD_PER_ANCHOR_ML);
 			case INSCRIPTION -> 0.25D;
 			case ORDEAL -> 0.25D + (totalWaves == 0 ? 0.0D : 0.5D * currentWave / totalWaves);
+			case PUPPET_TRIAL -> puppeteerTrialProgress;
 			case STILL_INTERVAL -> 0.75D + 0.10D * boundedPhaseProgress(stillIntervalTicks);
 			case PROFESSION -> 0.85D;
 			case OFFERING_PROCESSION -> 0.90D;
@@ -835,6 +888,13 @@ public class ActiveCardinalRite {
 		tag.putBoolean("ReturningFromOfferings", returningFromOfferings);
 		tag.putInt("OfferingDwellTicks", offeringDwellTicks);
 		tag.putInt("StaffPlantingTicks", staffPlantingTicks);
+		if (!puppeteerTrialSummonName.isBlank()) tag.putString("PuppeteerTrialSummon", puppeteerTrialSummonName);
+		if (puppeteerTrialEntityId != null) tag.putUUID("PuppeteerTrialEntity", puppeteerTrialEntityId);
+		if (puppeteerTrialCrossbarId != null) tag.putUUID("PuppeteerTrialCrossbar", puppeteerTrialCrossbarId);
+		tag.putBoolean("PuppeteerTrialManifested", puppeteerTrialManifested);
+		tag.putBoolean("PuppeteerTrialDefeated", puppeteerTrialDefeated);
+		tag.putFloat("PuppeteerTrialProgress", puppeteerTrialProgress);
+		tag.putInt("PuppeteerTrialMissingTicks", puppeteerTrialMissingTicks);
 		if (provider != null && !offeringItinerary.isEmpty()) {
 			ListTag offerings = new ListTag();
 			for (RiteOffering offering : offeringItinerary) {
@@ -959,6 +1019,15 @@ public class ActiveCardinalRite {
 		if (rite.floorUp == null) rite.floorUp = Direction.UP;
 		rite.staffPlantingTicks = tag.contains("StaffPlantingTicks")
 				? tag.getInt("StaffPlantingTicks") : -1;
+		rite.puppeteerTrialSummonName = tag.getString("PuppeteerTrialSummon");
+		rite.puppeteerTrialEntityId = tag.hasUUID("PuppeteerTrialEntity")
+				? tag.getUUID("PuppeteerTrialEntity") : null;
+		rite.puppeteerTrialCrossbarId = tag.hasUUID("PuppeteerTrialCrossbar")
+				? tag.getUUID("PuppeteerTrialCrossbar") : null;
+		rite.puppeteerTrialManifested = tag.getBoolean("PuppeteerTrialManifested");
+		rite.puppeteerTrialDefeated = tag.getBoolean("PuppeteerTrialDefeated");
+		rite.puppeteerTrialProgress = tag.getFloat("PuppeteerTrialProgress");
+		rite.puppeteerTrialMissingTicks = tag.getInt("PuppeteerTrialMissingTicks");
 		ListTag offerings = tag.getList("OfferingItinerary", Tag.TAG_COMPOUND);
 		for (int i = 0; i < offerings.size(); i++) {
 			CompoundTag entry = offerings.getCompound(i);

@@ -4,20 +4,18 @@ import net.minecraft.resources.ResourceLocation;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 public final class HarbingerRecipeMapDefinitions {
 	public static final List<String> RITE_FAMILIES = List.of("Order", "Vessel", "Bloodline/Fane",
-			"Body/Will", "Domain/World", "Qliphoth/Forbidden", RecipeMapLayout.MISC_FAMILY);
+			"Body/Will", "Domain/World", "Qliphoth/Forbidden", "Puppetry", RecipeMapLayout.MISC_FAMILY);
 	public static final List<String> CRAFTING_FAMILIES = List.of("Foundations", "Apparatus",
-			"Ritual Infrastructure", "Constructs/Effigies", "Puppetry", RecipeMapLayout.MISC_FAMILY);
+			"Ritual Infrastructure", "Constructs/Effigies", RecipeMapLayout.MISC_FAMILY);
 
 	private static final Map<String, String> RITES = new LinkedHashMap<>();
 	private static final Map<String, String> CRAFTING = new LinkedHashMap<>();
-	private static final Set<String> PUPPETRY = new LinkedHashSet<>();
 	private static final List<RecipeMapLink> RITE_LINKS = new ArrayList<>();
 	private static final List<RecipeMapLink> CRAFTING_LINKS = new ArrayList<>();
 
@@ -39,7 +37,8 @@ public final class HarbingerRecipeMapDefinitions {
 		registerCrafting("Ritual Infrastructure", "runic_chisel_station", "visceral_mirror", "consecrated_bloodwell",
 				"dendritic_distributor", "covenant_throne", "sanguine_monolith");
 		registerCrafting("Constructs/Effigies", "semi_sentient_construct", "mason_effigy", "mind_spike", "vascular_effigy");
-		registerPuppetry("Puppetry", "gorebound_hulk", "marrow_spitter", "mnemonist_puppet", "veinwing_vulture");
+		registerRites("Puppetry", "puppeteer_trial_gorebound_hulk", "puppeteer_trial_marrow_spitter",
+				"puppeteer_trial_mnemonist_puppet", "puppeteer_trial_veinwing_vulture");
 
 		linkRites("cardinal_rite/sanguine_initiation", "cardinal_rite/votary_rite", RecipeMapLink.Kind.PROGRESSION);
 		linkRites("cardinal_rite/votary_rite", "cardinal_rite/initiate_rite", RecipeMapLink.Kind.PROGRESSION);
@@ -98,9 +97,9 @@ public final class HarbingerRecipeMapDefinitions {
 		linkCrafting("blood_structure/semi_sentient_construct", "blood_structure/mason_effigy", RecipeMapLink.Kind.CONCEPTUAL);
 		linkCrafting("blood_structure/semi_sentient_construct", "blood_structure/mind_spike", RecipeMapLink.Kind.CONCEPTUAL);
 		linkCrafting("blood_structure/semi_sentient_construct", "blood_structure/vascular_effigy", RecipeMapLink.Kind.CONCEPTUAL);
-		linkCrafting("puppeteer_trial/gorebound_hulk", "puppeteer_trial/marrow_spitter", RecipeMapLink.Kind.CONCEPTUAL);
-		linkCrafting("puppeteer_trial/gorebound_hulk", "puppeteer_trial/mnemonist_puppet", RecipeMapLink.Kind.CONCEPTUAL);
-		linkCrafting("puppeteer_trial/gorebound_hulk", "puppeteer_trial/veinwing_vulture", RecipeMapLink.Kind.CONCEPTUAL);
+		linkRites("cardinal_rite/puppeteer_trial_gorebound_hulk", "cardinal_rite/puppeteer_trial_marrow_spitter", RecipeMapLink.Kind.CONCEPTUAL);
+		linkRites("cardinal_rite/puppeteer_trial_gorebound_hulk", "cardinal_rite/puppeteer_trial_mnemonist_puppet", RecipeMapLink.Kind.CONCEPTUAL);
+		linkRites("cardinal_rite/puppeteer_trial_gorebound_hulk", "cardinal_rite/puppeteer_trial_veinwing_vulture", RecipeMapLink.Kind.CONCEPTUAL);
 		// </recipe-map-editor>
 	}
 
@@ -110,7 +109,10 @@ public final class HarbingerRecipeMapDefinitions {
 	public static Set<String> craftingPaths() {
 		return CRAFTING.keySet().stream().filter(path -> path.startsWith("blood_structure/")).collect(java.util.stream.Collectors.toUnmodifiableSet());
 	}
-	public static Set<String> puppetryPaths() { return Set.copyOf(PUPPETRY); }
+	public static Set<String> puppetryPaths() {
+		return RITES.entrySet().stream().filter(entry -> "Puppetry".equals(entry.getValue()))
+				.map(Map.Entry::getKey).collect(java.util.stream.Collectors.toUnmodifiableSet());
+	}
 	public static String riteFamily(String path) { return RITES.getOrDefault(path, RecipeMapLayout.MISC_FAMILY); }
 	public static String craftingFamily(String path) { return CRAFTING.getOrDefault(path, RecipeMapLayout.MISC_FAMILY); }
 	public static int riteOrder(String path) { return orderWithinFamily(RITES, path); }
@@ -124,14 +126,6 @@ public final class HarbingerRecipeMapDefinitions {
 
 	private static void registerCrafting(String family, String... paths) {
 		for (String path : paths) CRAFTING.put("blood_structure/" + path, family);
-	}
-
-	private static void registerPuppetry(String family, String... paths) {
-		for (String path : paths) {
-			String fullPath = "puppeteer_trial/" + path;
-			CRAFTING.put(fullPath, family);
-			PUPPETRY.add(fullPath);
-		}
 	}
 
 	private static void linkRites(String from, String to, RecipeMapLink.Kind kind) {

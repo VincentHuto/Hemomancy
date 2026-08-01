@@ -24,6 +24,7 @@ import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodlineDisbandHelper;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodlineSavedData;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.MaxBloodLedger;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.summon.KnownSummonEvents;
 import com.vincenthuto.hemomancy.common.entity.HemoEntityPredicates;
 import com.vincenthuto.hemomancy.common.entity.utility.HumanitySpriteEntity;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.AncestralCommunionDialogueTrees;
@@ -40,6 +41,7 @@ import com.vincenthuto.hemomancy.common.init.EntityInit;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.item.harbinger.QliphothPomeItem;
 import com.vincenthuto.hemomancy.common.item.harbinger.QliphothPomeRules;
+import com.vincenthuto.hemomancy.common.item.harbinger.tool.MarionetteCrossbarItem;
 import com.vincenthuto.hemomancy.common.item.harbinger.bloodline.UnsignedLedgerItem;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.PacketSyncActiveRites;
@@ -68,6 +70,7 @@ import com.vincenthuto.hemomancy.common.rite.sigil.IchorianSigilRoleResolver;
 import com.vincenthuto.hemomancy.common.rite.sigil.IchorianSigilRegistry;
 import com.vincenthuto.hemomancy.common.rite.CardinalRitePhase;
 import com.vincenthuto.hemomancy.common.rite.unstained.UnstainedCardinalRiteEvents;
+import com.vincenthuto.hemomancy.common.summon.PuppeteerSummonDefinitions;
 import com.vincenthuto.hemomancy.common.worldgen.ChamberOfWillManager;
 import com.vincenthuto.hemomancy.common.worldgen.FungalGardenTravelHelper;
 import com.vincenthuto.hemomancy.common.tile.functional.CardinalFocusBlockEntity;
@@ -192,7 +195,7 @@ public class HarbingerCardinalRiteEvents {
 				savedData.setDirty();
 				continue;
 			}
-			if (recipe != null && recipe.hasLayeredStation()
+			if (recipe != null && recipe.hasLayeredStation() && !recipe.isPuppeteerTrial()
 					&& !rite.hasCapturedOfferingItinerary()) {
 				CardinalRiteStationMatcher.StationMatch station =
 						layeredStationMatch(sLevel, rite, recipe);
@@ -290,7 +293,11 @@ public class HarbingerCardinalRiteEvents {
 					toRemove.add(playerUUID);
 					continue;
 				}
-				CardinalRiteOrdealEngine.tick(sLevel, caster, rite, recipe);
+				if (recipe.isPuppeteerTrial() && rite.getPhase() == CardinalRitePhase.PUPPET_TRIAL) {
+					PuppeteerTrialRiteController.tick(sLevel, caster, rite, recipe);
+				} else {
+					CardinalRiteOrdealEngine.tick(sLevel, caster, rite, recipe);
+				}
 			}
 			rite.advanceCancellationRecovery();
 			savedData.setDirty();
@@ -634,7 +641,7 @@ public class HarbingerCardinalRiteEvents {
 
 		BlockPos center = rite.getCenterPos();
 		if (recipe.hasLayeredStation()) {
-			boolean valid = (rite.getOfferingVisitIndex() > 0
+			boolean valid = (rite.getOfferingVisitIndex() > 0 || rite.isPuppeteerTrialManifested()
 					? layeredStructureMatch(sLevel, rite, recipe)
 					: layeredStationMatch(sLevel, rite, recipe)) != null;
 			if (!valid) {
@@ -1238,6 +1245,9 @@ public class HarbingerCardinalRiteEvents {
 		CardinalRiteStationMatcher.StationMatch layeredMatch = recipe.hasLayeredStation()
 				? layeredStructureMatch(sLevel, rite, recipe)
 				: null;
+		if (recipe.isPuppeteerTrial() && !completePuppeteerTrial(sLevel, caster, rite, recipe, layeredMatch)) {
+			return false;
+		}
 		if (!consumeRiteMedium(sLevel, caster, rite, recipe)) return false;
 
 		// Spawn result item
@@ -1564,7 +1574,8 @@ public class HarbingerCardinalRiteEvents {
 			ActiveCardinalRite rite, CardinalRiteRecipe recipe) {
 		if (!recipe.hasLayeredStation()) return true;
 		if (level.getBlockEntity(rite.getCenterPos()) instanceof CardinalFocusBlockEntity focus
-				&& CardinalRiteMediumRules.consume(focus, recipe.getMedium())) {
+				&& CardinalRiteMediumRules.finish(focus, recipe.getMedium(),
+						recipe.shouldConsumeMediumOnSuccess())) {
 			return true;
 		}
 		CardinalRiteOrdealEngine.clearThreats(level, rite);
@@ -1575,6 +1586,30 @@ public class HarbingerCardinalRiteEvents {
 		caster.displayClientMessage(Component.literal(failure)
 				.withStyle(ChatFormatting.DARK_RED, ChatFormatting.BOLD), false);
 		return false;
+	}
+
+	private static boolean completePuppeteerTrial(ServerLevel level, ServerPlayer caster,
+			ActiveCardinalRite rite, CardinalRiteRecipe recipe,
+			CardinalRiteStationMatcher.StationMatch layeredMatch) {
+		if (!rite.isPuppeteerTrialDefeated() || layeredMatch == null
+				|| !(level.getBlockEntity(rite.getCenterPos()) instanceof CardinalFocusBlockEntity focus)) {
+			return false;
+		}
+		ItemStack seated = focus.getMediumForMatching();
+		UUID crossbarId = MarionetteCrossbarItem.getCrossbarId(seated);
+		if (!rite.getPlayerUUID().equals(MarionetteCrossbarItem.getBoundOwner(seated))
+				|| !java.util.Objects.equals(rite.getPuppeteerTrialCrossbarId(), crossbarId)) {
+			caster.displayClientMessage(Component.translatable("hemomancy.summon.trial.crossbar_replaced")
+					.withStyle(ChatFormatting.DARK_RED), false);
+			return false;
+		}
+		var definition = PuppeteerSummonDefinitions.byName(rite.getPuppeteerTrialSummonName()).orElse(null);
+		if (definition == null) return false;
+		if (KnownSummonEvents.grantSummon(caster, definition)) {
+			caster.displayClientMessage(Component.translatable("hemomancy.summon.trial.complete",
+					Component.translatable(definition.translationKey())).withStyle(ChatFormatting.RED), false);
+		}
+		return true;
 	}
 
 	// Gourd Upgrade Helpers

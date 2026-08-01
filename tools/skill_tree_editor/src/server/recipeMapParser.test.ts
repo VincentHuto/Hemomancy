@@ -3,15 +3,15 @@ import { parseRecipeMapDefinitionsJava, renderRecipeMapDefinitionsJava } from '.
 const source = `package example;
 
 public final class HarbingerRecipeMapDefinitions {
-  public static final List<String> RITE_FAMILIES = List.of("Order", "Vessel", RecipeMapLayout.MISC_FAMILY);
-  public static final List<String> CRAFTING_FAMILIES = List.of("Foundations", "Puppetry", RecipeMapLayout.MISC_FAMILY);
+  public static final List<String> RITE_FAMILIES = List.of("Order", "Vessel", "Puppetry", RecipeMapLayout.MISC_FAMILY);
+  public static final List<String> CRAFTING_FAMILIES = List.of("Foundations", RecipeMapLayout.MISC_FAMILY);
 
   static {
     // <recipe-map-editor>
     registerRites("Order", "sanguine_initiation", "votary_rite");
     registerRites("Vessel", "pallid_vessel_rite");
+    registerRites("Puppetry", "puppeteer_trial_gorebound_hulk");
     registerCrafting("Foundations", "living_staff", "iron_brazier");
-    registerPuppetry("Puppetry", "gorebound_hulk");
     linkRites("cardinal_rite/sanguine_initiation", "cardinal_rite/votary_rite", RecipeMapLink.Kind.PROGRESSION);
     linkCrafting("blood_structure/living_staff", "blood_structure/iron_brazier", RecipeMapLink.Kind.CONCEPTUAL);
     // </recipe-map-editor>
@@ -25,11 +25,12 @@ test('parses both recipe map tabs with families entries and typed links', () => 
   expect(parsed.tabs).toEqual([
     {
       key: 'RITES',
-      families: ['Order', 'Vessel', 'Miscellaneous'],
+      families: ['Order', 'Vessel', 'Puppetry', 'Miscellaneous'],
       entries: [
         { id: 'cardinal_rite/sanguine_initiation', family: 'Order', order: 0, column: 0, displayName: 'Sanguine Initiation' },
         { id: 'cardinal_rite/votary_rite', family: 'Order', order: 1, column: 0, displayName: 'Votary Rite' },
-        { id: 'cardinal_rite/pallid_vessel_rite', family: 'Vessel', order: 0, column: 0, displayName: 'Pallid Vessel Rite' }
+        { id: 'cardinal_rite/pallid_vessel_rite', family: 'Vessel', order: 0, column: 0, displayName: 'Pallid Vessel Rite' },
+        { id: 'cardinal_rite/puppeteer_trial_gorebound_hulk', family: 'Puppetry', order: 0, column: 0, displayName: 'Puppeteer Trial Gorebound Hulk' }
       ],
       links: [
         { from: 'cardinal_rite/sanguine_initiation', to: 'cardinal_rite/votary_rite', kind: 'PROGRESSION' }
@@ -37,11 +38,10 @@ test('parses both recipe map tabs with families entries and typed links', () => 
     },
     {
       key: 'CRAFTING',
-      families: ['Foundations', 'Puppetry', 'Miscellaneous'],
+      families: ['Foundations', 'Miscellaneous'],
       entries: [
         { id: 'blood_structure/living_staff', family: 'Foundations', order: 0, column: 0, displayName: 'Living Staff' },
-        { id: 'blood_structure/iron_brazier', family: 'Foundations', order: 1, column: 0, displayName: 'Iron Brazier' },
-        { id: 'puppeteer_trial/gorebound_hulk', family: 'Puppetry', order: 0, column: 0, displayName: 'Gorebound Hulk' }
+        { id: 'blood_structure/iron_brazier', family: 'Foundations', order: 1, column: 0, displayName: 'Iron Brazier' }
       ],
       links: [
         { from: 'blood_structure/living_staff', to: 'blood_structure/iron_brazier', kind: 'CONCEPTUAL' }
@@ -49,6 +49,17 @@ test('parses both recipe map tabs with families entries and typed links', () => 
     }
   ]);
   expect(parsed.diagnostics).toEqual([]);
+});
+
+test('does not parse the retired Blood Crafting puppetry registration method', () => {
+  const legacy = source.replace(
+    'registerCrafting("Foundations", "living_staff", "iron_brazier");',
+    'registerPuppetry("Puppetry", "gorebound_hulk");'
+  );
+
+  const parsed = parseRecipeMapDefinitionsJava('HarbingerRecipeMapDefinitions.java', legacy);
+
+  expect(parsed.tabs.flatMap(tab => tab.entries).some(entry => entry.id.startsWith('puppeteer_trial/'))).toBe(false);
 });
 
 test('renders family ordering and link edits only inside the editor region', () => {

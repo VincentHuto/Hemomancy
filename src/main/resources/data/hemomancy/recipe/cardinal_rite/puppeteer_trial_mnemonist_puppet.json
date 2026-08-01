@@ -1,0 +1,60 @@
+{
+  "type": "hemomancy:cardinal_rite_recipe",
+  "bloodCost": 1400,
+  "riteType": "lesser",
+  "required_degree": 5,
+  "riteName": "Mnemonist Puppet Ordeal",
+  "riteDescription": "Bind the defeated Mnemonist Puppet shape to an attuned Marionette Crossbar.",
+  "floor": "hemomancy:dominion_lesser",
+  "brazier_signature": [
+    {
+      "ingredient": {
+        "item": "hemomancy:mnemonist_cradle"
+      },
+      "count": 1
+    },
+    {
+      "ingredient": {
+        "item": "hemomancy:mnemonic_ambergris"
+      },
+      "count": 1
+    },
+    {
+      "ingredient": {
+        "item": "hemomancy:memory_thread"
+      },
+      "count": 1
+    }
+  ],
+  "medium": {
+    "item": "hemomancy:marionette_crossbar"
+  },
+  "consume_medium_on_success": false,
+  "puppeteer_trial": {
+    "summon": "mnemonist_puppet"
+  },
+  "ceremony": {
+    "profile": "standard",
+    "anchors": [],
+    "support_sockets": [],
+    "waves": [],
+    "guaranteed_waves": [],
+    "signature": "puppeteer_trial",
+    "fragile_offsets": [],
+    "target_duration_ticks": 1200,
+    "focus": "living_staff",
+    "required_helpers": 0,
+    "helper_roles": [
+      "anchor",
+      "attendant",
+      "warden"
+    ],
+    "still_interval_ticks": 0,
+    "atmosphere": {
+      "fog": "storm",
+      "lightning": true,
+      "dome": false
+    },
+    "failure": "safe_retry"
+  }
+}

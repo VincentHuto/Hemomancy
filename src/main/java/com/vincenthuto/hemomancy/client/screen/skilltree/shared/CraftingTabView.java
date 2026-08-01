@@ -7,9 +7,6 @@ import com.vincenthuto.hemomancy.client.screen.skilltree.util.ScreenDrawUtils;
 import com.vincenthuto.hemomancy.common.init.BlockInit;
 import com.vincenthuto.hemomancy.common.recipe.BloodStructureOffering;
 import com.vincenthuto.hemomancy.common.recipe.BloodStructureRecipe;
-import com.vincenthuto.hemomancy.common.recipe.PuppeteerTrialRecipe;
-import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
-import com.vincenthuto.hemomancy.common.summon.PuppeteerSummonDefinitions;
 import com.vincenthuto.hutoslib.client.HLTextUtils;
 import com.vincenthuto.hutoslib.math.BlockPosBlockPair;
 import com.vincenthuto.hutoslib.math.MultiblockPattern;
@@ -435,32 +432,6 @@ public final class CraftingTabView {
 		}
 		y += 6;
 
-		if (recipe instanceof PuppeteerTrialRecipe trial) {
-			Component summonName = PuppeteerSummonDefinitions.byName(trial.getSummonName())
-					.map(definition -> Component.translatable(definition.translationKey()))
-					.orElse(Component.literal(trial.getSummonName()));
-			boolean learned = Minecraft.getInstance().player != null
-					&& HemoCapabilityAccess.getKnownSummons(Minecraft.getInstance().player)
-							.map(known -> PuppeteerSummonDefinitions.byName(trial.getSummonName())
-									.map(known::isKnown).orElse(false)).orElse(false);
-			gfx.drawString(ctx.font(), Component.literal("Trial Reward: ")
-					.withStyle(s -> s.withColor(0x888888))
-					.append(Component.literal("Unlock ").withStyle(s -> s.withColor(0xCC7777)))
-					.append(summonName.copy().withStyle(s -> s.withColor(0xFFAAAA))), panelX, y, 0);
-			y += lineH;
-			gfx.drawString(ctx.font(), Component.literal("Status: ")
-					.withStyle(s -> s.withColor(0x888888))
-					.append(Component.literal(learned ? "Learned" : "Trial Required")
-							.withStyle(s -> s.withColor(learned ? 0x66CC88 : 0xCC7777))), panelX, y, 0);
-			y += lineH + 3;
-			String instruction = "Hold the catalyst in your offhand and project blood into the activation block. Defeat the spawned trial puppet to learn its shape.";
-			for (String line : ScreenDrawUtils.wrapText(ctx.font(), instruction, panelW)) {
-				gfx.drawString(ctx.font(), line, panelX, y, 0xFFAAAAAA, false);
-				y += lineH;
-			}
-			y += 6;
-		}
-
 		// Brazier offerings
 		if (!recipe.getOfferings().isEmpty()) {
 			gfx.drawString(ctx.font(), Component.literal("Brazier Offerings:")
@@ -566,13 +537,6 @@ public final class CraftingTabView {
 					result.getHoverName().getString(), panelW - 20).size() * lineH + 4);
 		}
 		y += 6;
-		if (recipe instanceof PuppeteerTrialRecipe) {
-			y += lineH * 2 + 3;
-			y += ScreenDrawUtils.wrapText(font,
-					"Hold the catalyst in your offhand and project blood into the activation block. Defeat the spawned trial puppet to learn its shape.",
-					panelW).size() * lineH + 6;
-		}
-
 		if (!recipe.getOfferings().isEmpty()) {
 			y += lineH;
 			int offeringWrapW = panelW - 24;

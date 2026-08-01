@@ -227,6 +227,14 @@ public class ItemInit {
             () -> new BloodChumItem(new Item.Properties()));
     public static final DeferredHolder<Item, Item> puppeteering_thread = BASEITEMS.register("puppeteering_thread",
             () -> new Item(new Item.Properties()));
+    public static final DeferredHolder<Item, Item> veinwing_harness = BASEITEMS.register("veinwing_harness",
+            () -> new Item(new Item.Properties().rarity(Rarity.UNCOMMON)));
+    public static final DeferredHolder<Item, Item> marrow_spitter_carriage = BASEITEMS.register("marrow_spitter_carriage",
+            () -> new Item(new Item.Properties().rarity(Rarity.UNCOMMON)));
+    public static final DeferredHolder<Item, Item> gorebound_yoke = BASEITEMS.register("gorebound_yoke",
+            () -> new Item(new Item.Properties().rarity(Rarity.RARE)));
+    public static final DeferredHolder<Item, Item> mnemonist_cradle = BASEITEMS.register("mnemonist_cradle",
+            () -> new Item(new Item.Properties().rarity(Rarity.RARE)));
     public static final DeferredHolder<Item, Item> tendon_line = BASEITEMS.register("tendon_line",
             () -> new TendonLineItem(new Item.Properties()));
     public static final DeferredHolder<Item, Item> hearty_compass = BASEITEMS.register("hearty_compass",

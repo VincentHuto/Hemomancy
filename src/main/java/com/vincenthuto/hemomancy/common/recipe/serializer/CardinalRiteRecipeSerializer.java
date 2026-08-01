@@ -6,13 +6,16 @@ import com.mojang.serialization.*;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.recipe.CardinalRiteRecipe;
 import com.vincenthuto.hemomancy.common.recipe.CardinalRiteType;
+import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.rite.CardinalRiteCeremonyCatalog;
 import com.vincenthuto.hemomancy.common.rite.CardinalRiteCeremonyDefinition;
 import com.vincenthuto.hemomancy.common.rite.CardinalRiteCeremonyProfile;
 import com.vincenthuto.hemomancy.common.rite.CardinalRiteCeremonyRules;
 import com.vincenthuto.hemomancy.common.rite.CardinalRiteRingTuning;
 import com.vincenthuto.hemomancy.common.rite.CardinalRiteOfferingConsumptionRules;
+import com.vincenthuto.hemomancy.common.rite.CardinalRiteMediumRules;
 import com.vincenthuto.hemomancy.common.rite.CardinalRiteProgressionPolicy;
+import com.vincenthuto.hemomancy.common.summon.PuppeteerSummonDefinitions;
 import com.vincenthuto.hutoslib.math.MultiblockPattern;
 import com.vincenthuto.hutoslib.math.MultiblockPatternKey;
 import net.minecraft.core.Holder;
@@ -270,6 +273,9 @@ public class CardinalRiteRecipeSerializer implements RecipeSerializer<CardinalRi
 			recipe.setBrazierSignature(brazierSignatureFromJson(pJson));
 		}
 		recipe.setMedium(mediumFromJson(pJson, pRecipeId));
+		recipe.setConsumeMediumOnSuccess(CardinalRiteMediumRules.consumeOnSuccessFromNullable(
+				pJson.has("consume_medium_on_success")
+						? pJson.get("consume_medium_on_success").getAsBoolean() : null));
 		if (!unstained) {
 			recipe.setCeremony(ceremonyFromJson(pJson, pRecipeId, riteType, requiredDegree));
 			int offeringCount = recipe.getBrazierSignature().stream()
@@ -282,7 +288,30 @@ public class CardinalRiteRecipeSerializer implements RecipeSerializer<CardinalRi
 						+ String.join("; ", violations));
 			}
 		}
+		if (pJson.has("puppeteer_trial")) {
+			JsonObject trial = GsonHelper.getAsJsonObject(pJson, "puppeteer_trial");
+			String summonName = GsonHelper.getAsString(trial, "summon");
+			validatePuppeteerTrial(pRecipeId, recipe, summonName);
+			recipe.setPuppeteerTrial(new CardinalRiteRecipe.PuppeteerTrial(summonName));
+		}
 		return recipe;
+	}
+
+	private static void validatePuppeteerTrial(ResourceLocation recipeId, CardinalRiteRecipe recipe,
+			String summonName) {
+		if (!recipe.hasLayeredStation() || recipe.isUnstained()) {
+			throw new JsonSyntaxException("Puppeteer trial " + recipeId + " must be a layered Harbinger rite");
+		}
+		if (PuppeteerSummonDefinitions.byName(summonName).isEmpty()) {
+			throw new JsonSyntaxException("Unknown puppeteer trial summon '" + summonName + "' in " + recipeId);
+		}
+		if (!recipe.hasMedium()
+				|| !recipe.getMedium().test(new ItemStack(ItemInit.marionette_crossbar.get()))) {
+			throw new JsonSyntaxException("Puppeteer trial " + recipeId + " must require a Marionette Crossbar medium");
+		}
+		if (recipe.getCeremony() == null || !"living_staff".equals(recipe.getCeremony().focusMode())) {
+			throw new JsonSyntaxException("Puppeteer trial " + recipeId + " must use a Living Staff ceremony");
+		}
 	}
 
 	private static Ingredient mediumFromJson(JsonObject json, ResourceLocation recipeId) {
@@ -315,7 +344,8 @@ public class CardinalRiteRecipeSerializer implements RecipeSerializer<CardinalRi
 			return Stream.of("id", "bloodCost", "riteType", "riteName", "riteDescription", "pattern", "key",
 					"result", "required_degree", "required_purity", "required_clarity",
 					"breakBlocksOnCreation", "unstained", "rankup", "ceremony", "floor",
-					"required_structure", "brazier_signature", "medium").map(ops::createString);
+					"required_structure", "brazier_signature", "medium", "consume_medium_on_success",
+					"puppeteer_trial").map(ops::createString);
 		}
 
 		@Override
@@ -350,6 +380,12 @@ public class CardinalRiteRecipeSerializer implements RecipeSerializer<CardinalRi
 			if (recipe.hasMedium()) {
 				Ingredient.CODEC.encodeStart(JsonOps.INSTANCE, recipe.getMedium()).result()
 						.ifPresent(e -> prefix.add("medium", JsonOps.INSTANCE.convertTo(ops, e)));
+			}
+			prefix.add("consume_medium_on_success", ops.createBoolean(recipe.shouldConsumeMediumOnSuccess()));
+			if (recipe.isPuppeteerTrial()) {
+				JsonObject trial = new JsonObject();
+				trial.addProperty("summon", recipe.getPuppeteerTrial().summonName());
+				prefix.add("puppeteer_trial", JsonOps.INSTANCE.convertTo(ops, trial));
 			}
 			return prefix;
 		}
@@ -400,6 +436,10 @@ public class CardinalRiteRecipeSerializer implements RecipeSerializer<CardinalRi
 		}
 		if (pBuffer.readBoolean()) {
 			recipe.setMedium(Ingredient.CONTENTS_STREAM_CODEC.decode(pBuffer));
+		}
+		recipe.setConsumeMediumOnSuccess(pBuffer.readBoolean());
+		if (pBuffer.readBoolean()) {
+			recipe.setPuppeteerTrial(new CardinalRiteRecipe.PuppeteerTrial(pBuffer.readUtf()));
 		}
 		return recipe;
 	}
@@ -479,6 +519,9 @@ public class CardinalRiteRecipeSerializer implements RecipeSerializer<CardinalRi
 		if (pRecipe.hasMedium()) {
 			Ingredient.CONTENTS_STREAM_CODEC.encode(pBuffer, pRecipe.getMedium());
 		}
+		pBuffer.writeBoolean(pRecipe.shouldConsumeMediumOnSuccess());
+		pBuffer.writeBoolean(pRecipe.isPuppeteerTrial());
+		if (pRecipe.isPuppeteerTrial()) pBuffer.writeUtf(pRecipe.getPuppeteerTrial().summonName());
 	}
 
 	private static void writePattern(RegistryFriendlyByteBuf pBuffer, MultiblockPattern pattern) {

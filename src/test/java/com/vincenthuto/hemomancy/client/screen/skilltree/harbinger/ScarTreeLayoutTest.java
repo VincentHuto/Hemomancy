@@ -42,8 +42,28 @@ final class ScarTreeLayoutTest {
 				node("phoenix", EnumBloodTendency.ANIMUS, 3)));
 
 		assertEquals(new ScarTreeLayout.Point(480, 280), result.pointFor("heart"));
-		assertEquals(new ScarTreeLayout.Point(480, 160), result.pointFor("marrow"));
-		assertEquals(new ScarTreeLayout.Point(480, 110), result.pointFor("phoenix"));
+		assertEquals(new ScarTreeLayout.Point(480, 230), result.pointFor("marrow"));
+		assertEquals(new ScarTreeLayout.Point(480, 180), result.pointFor("phoenix"));
+	}
+
+	@Test
+	void builtInAuthoredBranchesUseTheCompactedTierRings() {
+		ScarTreeLayout.Result result = ScarTreeLayout.arrange(List.of(
+				node("hemomancy:scar_pyre", EnumBloodTendency.FLAMMEUS, 1),
+				node("hemomancy:scar_sol", EnumBloodTendency.FLAMMEUS, 2),
+				node("hemomancy:scar_corona", EnumBloodTendency.FLAMMEUS, 3),
+				node("hemomancy:scar_thorn", EnumBloodTendency.FERRIC, 1),
+				node("hemomancy:scar_anvil", EnumBloodTendency.FERRIC, 2),
+				new ScarTreeLayout.Node("hemomancy:scar_blood_honed", EnumBloodTendency.FERRIC, 2, true),
+				node("hemomancy:scar_crucible", EnumBloodTendency.FERRIC, 3)));
+
+		assertEquals(new ScarTreeLayout.Point(621, 339), result.pointFor("hemomancy:scar_pyre"));
+		assertEquals(new ScarTreeLayout.Point(657, 303), result.pointFor("hemomancy:scar_sol"));
+		assertEquals(new ScarTreeLayout.Point(692, 268), result.pointFor("hemomancy:scar_corona"));
+		assertEquals(new ScarTreeLayout.Point(280, 480), result.pointFor("hemomancy:scar_thorn"));
+		assertEquals(new ScarTreeLayout.Point(230, 480), result.pointFor("hemomancy:scar_anvil"));
+		assertEquals(new ScarTreeLayout.Point(230, 440), result.pointFor("hemomancy:scar_blood_honed"));
+		assertEquals(new ScarTreeLayout.Point(180, 480), result.pointFor("hemomancy:scar_crucible"));
 	}
 
 	@Test

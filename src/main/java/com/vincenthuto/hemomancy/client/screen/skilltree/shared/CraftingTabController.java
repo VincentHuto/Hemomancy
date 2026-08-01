@@ -5,7 +5,6 @@ import com.vincenthuto.hemomancy.client.screen.skilltree.util.LayerViewNavigatio
 import com.vincenthuto.hemomancy.client.screen.skilltree.util.PanZoomState;
 import com.vincenthuto.hemomancy.client.screen.skilltree.util.ProgressScreenContext;
 import com.vincenthuto.hemomancy.common.recipe.BloodStructureRecipe;
-import com.vincenthuto.hemomancy.common.recipe.PuppeteerTrialRecipe;
 import com.vincenthuto.hemomancy.common.recipe.RecipeDegreeGates;
 import com.vincenthuto.hutoslib.client.HLTextUtils;
 
@@ -57,8 +56,6 @@ public class CraftingTabController implements IProgressTab {
         if (mc.player != null && mc.level != null)
             for (BloodStructureRecipe r : BloodStructureRecipe.getAllRecipes(mc.level))
                 if (r.isUnstained() == unstained) state.craftingRecipes.add(r);
-		if (!unstained && mc.player != null && mc.level != null)
-			state.craftingRecipes.addAll(PuppeteerTrialRecipe.getAllTrialRecipes(mc.level));
         state.rebuildTierMap();
         if (unstained) {
             state.autoSelectFirstTier(ctx.playerDegree());
@@ -67,9 +64,7 @@ public class CraftingTabController implements IProgressTab {
             for (BloodStructureRecipe recipe : state.craftingRecipes) {
                 mapRecipes.put(recipe.getId(), recipe);
                 String path = recipe.getId().getPath();
-                String name = recipe instanceof PuppeteerTrialRecipe trial
-                        ? HLTextUtils.toProperCase(trial.getSummonName().replace("_", " ")) + " Trial"
-                        : displayName(recipe);
+				String name = displayName(recipe);
                 int degree = RecipeDegreeGates.getRequiredDegree(recipe);
                 entries.add(new RecipeMapEntry(new RecipeMapKey(RecipeMapEntry.Kind.CRAFTING, recipe.getId()),
                         name, degree, HarbingerRecipeMapDefinitions.craftingFamily(path),

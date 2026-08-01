@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": ["TET", " M "],
+  "key": {
+    "T": { "item": "hemomancy:puppeteering_thread" },
+    "E": { "item": "hemomancy:engram_block" },
+    "M": { "item": "hemomancy:hematic_memory" }
+  },
+  "result": { "id": "hemomancy:mnemonist_cradle", "count": 1 }
+}

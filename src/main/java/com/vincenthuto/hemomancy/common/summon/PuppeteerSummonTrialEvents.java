@@ -2,10 +2,11 @@ package com.vincenthuto.hemomancy.common.summon;
 
 import com.google.common.collect.Lists;
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.summon.KnownSummonEvents;
 import com.vincenthuto.hemomancy.common.entity.summon.BoundPuppeteerSummon;
-import net.minecraft.ChatFormatting;
-import net.minecraft.network.chat.Component;
+import com.vincenthuto.hemomancy.common.recipe.CardinalRiteRecipe;
+import com.vincenthuto.hemomancy.common.rite.ActiveCardinalRite;
+import com.vincenthuto.hemomancy.common.rite.CardinalRiteSavedData;
+import com.vincenthuto.hemomancy.common.rite.harbinger.PuppeteerTrialRiteRules;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
@@ -23,10 +24,20 @@ public final class PuppeteerSummonTrialEvents {
 	}
 
 	public static ResourceLocation recipeId(PuppeteerSummonDefinition definition) {
-		return Hemomancy.rloc("puppeteer_trial/" + definition.name());
+		return Hemomancy.rloc("cardinal_rite/puppeteer_trial_" + definition.name());
 	}
 
-	public static void awardTrialRecipes(ServerPlayer player, int degree) {
+	public static ResourceLocation componentRecipeId(PuppeteerSummonDefinition definition) {
+		return Hemomancy.rloc(switch (definition.name()) {
+			case PuppeteerSummonDefinitions.VEINWING_VULTURE -> "veinwing_harness";
+			case PuppeteerSummonDefinitions.MARROW_SPITTER -> "marrow_spitter_carriage";
+			case PuppeteerSummonDefinitions.GOREBOUND_HULK -> "gorebound_yoke";
+			case PuppeteerSummonDefinitions.MNEMONIST_PUPPET -> "mnemonist_cradle";
+			default -> definition.name();
+		});
+	}
+
+	public static void awardOrdealRecipes(ServerPlayer player, int degree) {
 		if (player == null || degree <= 0) {
 			return;
 		}
@@ -34,6 +45,7 @@ public final class PuppeteerSummonTrialEvents {
 		for (PuppeteerSummonDefinition definition : PuppeteerSummonDefinitions.all()) {
 			if (definition.requiredDegree() <= degree) {
 				player.server.getRecipeManager().byKey(recipeId(definition)).ifPresent(recipes::add);
+				player.server.getRecipeManager().byKey(componentRecipeId(definition)).ifPresent(recipes::add);
 			}
 		}
 		if (!recipes.isEmpty()) {
@@ -54,11 +66,16 @@ public final class PuppeteerSummonTrialEvents {
 		if (!(server.getPlayerList().getPlayer(casterId) instanceof ServerPlayer caster)) {
 			return;
 		}
-		PuppeteerSummonDefinitions.byName(summon.hemomancy$getSummonName()).ifPresent(definition -> {
-			if (KnownSummonEvents.grantSummon(caster, definition)) {
-				caster.displayClientMessage(Component.translatable("hemomancy.summon.trial.complete",
-						Component.translatable(definition.translationKey())).withStyle(ChatFormatting.RED), false);
-			}
-		});
+		CardinalRiteSavedData saved = CardinalRiteSavedData.get(caster.serverLevel());
+		ActiveCardinalRite rite = saved.getActiveRites().get(casterId);
+		if (rite == null) return;
+		CardinalRiteRecipe recipe = CardinalRiteRecipe.getRiteByLocation(caster.serverLevel(), rite.getRecipeId());
+		if (recipe == null || !recipe.isPuppeteerTrial()) return;
+		if (PuppeteerTrialRiteRules.matchesDeath(rite.getPlayerUUID(), rite.getPuppeteerTrialEntityId(),
+				rite.getPuppeteerTrialSummonName(), casterId, event.getEntity().getUUID(),
+				summon.hemomancy$getSummonName())
+				&& rite.markPuppeteerTrialDefeated(event.getEntity().getUUID())) {
+			saved.setDirty();
+		}
 	}
 }

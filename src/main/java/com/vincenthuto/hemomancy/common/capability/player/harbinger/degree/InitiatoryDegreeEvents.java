@@ -22,7 +22,7 @@ public class InitiatoryDegreeEvents {
 
 	public static void syncDegree(ServerPlayer player, IInitiatoryDegree degree) {
 		PacketHandler.sendToPlayer(player, new PacketSyncDegree(degree));
-		PuppeteerSummonTrialEvents.awardTrialRecipes(player, degree.getDegreeNumber());
+		PuppeteerSummonTrialEvents.awardOrdealRecipes(player, degree.getDegreeNumber());
 	}
 
 	@SubscribeEvent

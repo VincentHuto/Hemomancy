@@ -739,6 +739,33 @@ public final class RitesTabView {
 			y += Math.max(20, resultLines.size() * lineH + 4);
 		}
 		y += 6;
+		if (rite.hasMedium()) {
+			ItemStack[] media = rite.getMedium().getItems();
+			ItemStack medium = media.length == 0 ? ItemStack.EMPTY
+					: media[(int) (materialCycleIndex() % media.length)];
+			if (!medium.isEmpty()) {
+				gfx.renderItem(medium, panelX + 2, y);
+				String label = rite.shouldConsumeMediumOnSuccess() ? "Medium: " : "Preserved Medium: ";
+				gfx.drawString(ctx.font(), Component.literal(label).withStyle(s -> s.withColor(0x888888))
+						.append(medium.getHoverName().copy().withStyle(s -> s.withColor(0xCC9966))),
+						panelX + 20, y + 4, 0);
+				y += 20;
+			}
+		}
+		if (rite.isPuppeteerTrial()) {
+			String summon = rite.getPuppeteerTrial().summonName().replace('_', ' ');
+			gfx.drawString(ctx.font(), Component.literal("Victory Binding: ")
+					.withStyle(s -> s.withColor(0x888888))
+					.append(Component.literal(HLTextUtils.toProperCase(summon))
+							.withStyle(s -> s.withColor(0xFFAAAA))), panelX, y, 0);
+			y += lineH;
+			for (String line : ScreenDrawUtils.wrapText(ctx.font(),
+					"Defeat the manifested puppet. Failure spends committed blood and offerings, but never the Crossbar.", panelW)) {
+				gfx.drawString(ctx.font(), line, panelX, y, 0xFFAAAAAA, false);
+				y += lineH;
+			}
+			y += 6;
+		}
 
 		// Lit brazier offerings
 		List<OfferingDisplayEntry> offerings = offeringDisplayEntries(rite.getBrazierSignature());
@@ -844,6 +871,13 @@ public final class RitesTabView {
 					result.getHoverName().getString(), panelW - 20).size() * lineH + 4);
 		}
 		y += 6;
+		if (rite.hasMedium()) y += 20;
+		if (rite.isPuppeteerTrial()) {
+			y += lineH;
+			y += ScreenDrawUtils.wrapText(font,
+					"Defeat the manifested puppet. Failure spends committed blood and offerings, but never the Crossbar.",
+					panelW).size() * lineH + 6;
+		}
 
 		List<OfferingDisplayEntry> offerings = offeringDisplayEntries(rite.getBrazierSignature());
 		if (!offerings.isEmpty()) {

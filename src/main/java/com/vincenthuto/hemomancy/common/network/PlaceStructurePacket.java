@@ -6,7 +6,6 @@ import com.vincenthuto.hemomancy.common.init.BlockInit;
 import com.vincenthuto.hemomancy.common.recipe.BloodStructureOfferingPlacement;
 import com.vincenthuto.hemomancy.common.recipe.BloodStructureRecipe;
 import com.vincenthuto.hemomancy.common.recipe.CardinalRiteRecipe;
-import com.vincenthuto.hemomancy.common.recipe.PuppeteerTrialRecipe;
 import com.vincenthuto.hemomancy.common.rite.floor.CardinalRiteFloorDefinition;
 import com.vincenthuto.hemomancy.common.rite.floor.CardinalRiteFloorRegistry;
 import com.vincenthuto.hemomancy.common.tile.IronBrazierBlockEntity;
@@ -36,8 +35,7 @@ public class PlaceStructurePacket implements CustomPacketPayload {
 
 	public enum StructureType {
 		BLOOD_STRUCTURE,
-		CARDINAL_RITE,
-		PUPPETEER_TRIAL
+		CARDINAL_RITE
 	}
 
 	private final ResourceLocation recipeId;
@@ -84,14 +82,6 @@ public class PlaceStructurePacket implements CustomPacketPayload {
 					if (recipe != null) {
 						cardinalRite = recipe;
 						pattern = recipe.getPattern();
-					}
-				} else if (msg.type == StructureType.PUPPETEER_TRIAL) {
-					PuppeteerTrialRecipe recipe = PuppeteerTrialRecipe.getAllTrialRecipes(level).stream()
-							.filter(candidate -> msg.recipeId.equals(candidate.getId()))
-							.findFirst().orElse(null);
-					if (recipe != null) {
-						pattern = recipe.getPattern();
-						bloodStructure = recipe;
 					}
 				}
 

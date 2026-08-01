@@ -1,0 +1,54 @@
+{
+  "type": "hemomancy:cardinal_rite_recipe",
+  "bloodCost": 1100,
+  "riteType": "lesser",
+  "required_degree": 4,
+  "riteName": "Gorebound Hulk Ordeal",
+  "riteDescription": "Bind the defeated Gorebound Hulk shape to an attuned Marionette Crossbar.",
+  "floor": "hemomancy:dominion_lesser",
+  "brazier_signature": [
+    {
+      "ingredient": {
+        "item": "hemomancy:gorebound_yoke"
+      },
+      "count": 1
+    },
+    {
+      "ingredient": {
+        "item": "hemomancy:sanguine_quintessence"
+      },
+      "count": 1
+    }
+  ],
+  "medium": {
+    "item": "hemomancy:marionette_crossbar"
+  },
+  "consume_medium_on_success": false,
+  "puppeteer_trial": {
+    "summon": "gorebound_hulk"
+  },
+  "ceremony": {
+    "profile": "standard",
+    "anchors": [],
+    "support_sockets": [],
+    "waves": [],
+    "guaranteed_waves": [],
+    "signature": "puppeteer_trial",
+    "fragile_offsets": [],
+    "target_duration_ticks": 1200,
+    "focus": "living_staff",
+    "required_helpers": 0,
+    "helper_roles": [
+      "anchor",
+      "attendant",
+      "warden"
+    ],
+    "still_interval_ticks": 0,
+    "atmosphere": {
+      "fog": "dense",
+      "lightning": false,
+      "dome": false
+    },
+    "failure": "safe_retry"
+  }
+}
