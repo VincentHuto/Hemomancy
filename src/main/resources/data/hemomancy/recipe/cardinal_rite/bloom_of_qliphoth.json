@@ -4,8 +4,11 @@
   "riteType": "grand",
   "required_degree": 7,
   "riteName": "Bloom of the Qliphoth",
-  "riteDescription": "A dark rite that calls forth a blooming tree of the Qliphoth, its roots drinking deep from the blood of the earth. A Qliphoth Seed must be planted within the rite. Within its shadow, all blood manipulations are empowered and the flesh knits itself anew.",
+  "riteDescription": "A dark rite that calls forth a blooming tree of the Qliphoth, its roots drinking deep from the blood of the earth. A Qliphoth Seed must be seated in the Cardinal Focus as its medium. Within its shadow, all blood manipulations are empowered and the flesh knits itself anew.",
   "floor": "hemomancy:dominion_grand",
+  "medium": {
+    "item": "hemomancy:qliphoth_seed"
+  },
 
   "brazier_signature": [
     {

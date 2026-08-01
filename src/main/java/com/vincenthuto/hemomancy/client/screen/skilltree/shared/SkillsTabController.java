@@ -22,10 +22,10 @@ public class SkillsTabController implements IProgressTab {
     private static final int NODE_SIZE = 26;
     private static final int NODE_GAP_X = 80;
     private static final int NODE_GAP_Y = 60;
-    private static final int COMPASS_CENTER_X = 480;
-    private static final int COMPASS_CENTER_Y = 480;
-    private static final int[] DEGREE_RING_RADII = {72, 120, 170, 220, 270, 320, 370, 420, 470};
-    private static final int COMPASS_CONTENT_PADDING = 80;
+    private static final int COMPASS_CENTER_X = ConcentricTreeGeometry.CENTER_X;
+    private static final int COMPASS_CENTER_Y = ConcentricTreeGeometry.CENTER_Y;
+    private static final int[] DEGREE_RING_RADII = ConcentricTreeGeometry.degreeRingRadii();
+    private static final int COMPASS_CONTENT_PADDING = ConcentricTreeGeometry.CONTENT_PADDING;
     private static final int DEGREE_LABEL_X = COMPASS_CENTER_X - DEGREE_RING_RADII[DEGREE_RING_RADII.length - 1] + 10;
     private static final int DEGREE_LABEL_TOP_Y = COMPASS_CENTER_Y - DEGREE_RING_RADII[DEGREE_RING_RADII.length - 1] + 28;
     private static final int DEGREE_LABEL_GAP_Y = 34;
@@ -39,6 +39,12 @@ public class SkillsTabController implements IProgressTab {
     private final SkillTreeDiveState diveState = new SkillTreeDiveState();
     private final Map<SkillPoint, int[]> surfaceNodePositions = new HashMap<>();
     private final Map<SkillPoint, int[]> deepNodePositions = new HashMap<>();
+	private final Map<SkillPoint, int[]> filteredSurfaceNodePositions = new HashMap<>();
+	private final Map<SkillPoint, int[]> filteredDeepNodePositions = new HashMap<>();
+	private List<String> families = List.of();
+	private Integer degreeFilter;
+	private String familyFilter;
+	private SkillTreeLayer filterLayer = SkillTreeLayer.SURFACE;
     private int contentW, contentH;
     private int playerDegree;
     private float animTime = 0f;
@@ -48,6 +54,9 @@ public class SkillsTabController implements IProgressTab {
     @Override
     public void onInit(ProgressScreenContext ctx) {
         this.playerDegree = ctx.playerDegree();
+		degreeFilter = null;
+		familyFilter = null;
+		filterLayer = SkillTreeLayer.SURFACE;
         buildLayout();
         surfacePanZoom.centreOn(contentW, contentH, ctx.guiWidth(), ctx.guiHeight());
         deepPanZoom.centreOn(contentW, contentH, ctx.guiWidth(), ctx.guiHeight());
@@ -67,7 +76,28 @@ public class SkillsTabController implements IProgressTab {
             }
         }
         recalculateContentBounds();
+		LinkedHashSet<String> authoredFamilies = new LinkedHashSet<>();
+		for (List<SkillPoint> branch : SkillPointInit.SKILL_TREE) {
+			for (SkillPoint skill : branch) authoredFamilies.add(skill.getBranch());
+		}
+		families = List.copyOf(authoredFamilies);
+		refreshFilteredPositions();
     }
+
+	private void refreshFilteredPositions() {
+		filterPositions(surfaceNodePositions, filteredSurfaceNodePositions, SkillTreeLayer.SURFACE);
+		filterPositions(deepNodePositions, filteredDeepNodePositions, SkillTreeLayer.DEEP);
+	}
+
+	private void filterPositions(Map<SkillPoint, int[]> source, Map<SkillPoint, int[]> target,
+			SkillTreeLayer layer) {
+		target.clear();
+		for (Map.Entry<SkillPoint, int[]> entry : source.entrySet()) {
+			if (SkillTreeFilter.includes(entry.getKey(), layer, degreeFilter, familyFilter)) {
+				target.put(entry.getKey(), entry.getValue());
+			}
+		}
+	}
 
     private void buildAutomaticLayout() {
         for (List<SkillPoint> branch : SkillPointInit.SKILL_TREE) {
@@ -159,8 +189,8 @@ public class SkillsTabController implements IProgressTab {
         float surfaceAlpha = 1.0f - deepFade;
         float deepAlpha = deepFade;
         PanZoomState deepView = deepRenderPanZoom();
-        surfaceTraceCache.rebuildIfNeeded(surfaceNodePositions, contentW, contentH, false, SkillTreeLayer.SURFACE);
-        deepTraceCache.rebuildIfNeeded(deepNodePositions, contentW, contentH, true, SkillTreeLayer.DEEP);
+		surfaceTraceCache.rebuildIfNeeded(filteredSurfaceNodePositions, contentW, contentH, false, SkillTreeLayer.SURFACE);
+		deepTraceCache.rebuildIfNeeded(filteredDeepNodePositions, contentW, contentH, true, SkillTreeLayer.DEEP);
 
         if (surfaceAlpha > 0.01f) surfaceTraceCache.render(gfx, ctx, surfacePanZoom, surfaceAlpha);
         if (deepAlpha > 0.01f) deepTraceCache.render(gfx, ctx, deepView, deepAlpha);
@@ -177,8 +207,9 @@ public class SkillsTabController implements IProgressTab {
         drawDegreeLabels(gfx, ctx, deepView, SkillTreeLayer.DEEP, deepAlpha);
         surfaceTraceCache.renderFlow(gfx, ctx, surfacePanZoom, animTime, surfaceAlpha);
         if (deepAlpha > 0.01f) deepTraceCache.renderFlow(gfx, ctx, deepView, animTime, deepAlpha);
-        drawNodes(gfx, ctx, surfacePanZoom, surfaceNodePositions, surfaceAlpha);
-        drawNodes(gfx, ctx, deepView, deepNodePositions, deepAlpha);
+		drawNodes(gfx, ctx, surfacePanZoom, filteredSurfaceNodePositions, surfaceAlpha);
+		drawNodes(gfx, ctx, deepView, filteredDeepNodePositions, deepAlpha);
+		drawFilterControls(gfx, ctx);
     }
 
     @Override
@@ -202,6 +233,7 @@ public class SkillsTabController implements IProgressTab {
         if (diveState.isDeepActive()) {
             deepFade = 1.0f;
             lockedPortalFade = 0.0f;
+			syncFilterLayer();
             return;
         }
         double centerX = surfacePanZoom.panX + COMPASS_CENTER_X * surfacePanZoom.zoom;
@@ -212,10 +244,12 @@ public class SkillsTabController implements IProgressTab {
             deepPanZoom.centreOn(contentW, contentH, ctx.guiWidth(), ctx.guiHeight());
             deepFade = 1.0f;
             lockedPortalFade = 0.0f;
+			syncFilterLayer();
             return;
         }
         deepFade = diveState.deepFade(surfaceDive);
         lockedPortalFade = SkillTreeLayerRules.lockedPortalProgress(playerDegree, surfacePanZoom.zoom, centerFocus);
+		syncFilterLayer();
     }
 
     private void drawDegreeLabels(GuiGraphics gfx, ProgressScreenContext ctx, PanZoomState view, SkillTreeLayer layer, float alpha) {
@@ -224,10 +258,28 @@ public class SkillsTabController implements IProgressTab {
         for (int degree = 0; degree < DEGREE_RING_RADII.length; degree++) {
             if (SkillTreeLayerRules.layerForDegree(degree) != layer) continue;
             int[] labelPosition = SkillPointInit.getDegreeLabelPosition(degree);
+			boolean degreeVisible = degreeFilter == null
+					|| SkillTreeLayerRules.layerForDegree(degreeFilter) != layer || degreeFilter == degree;
+			int labelAlpha = degreeVisible ? (TRACE_DEGREE_LABEL >>> 24) & 0xFF : 0x30;
             gfx.drawString(ctx.font(), "Degree " + degree, sx(ctx, view, labelPosition[0]), sy(ctx, view, labelPosition[1]),
-                    withAlpha(TRACE_DEGREE_LABEL, Math.round(((TRACE_DEGREE_LABEL >>> 24) & 0xFF) * alpha)), false);
+					withAlpha(TRACE_DEGREE_LABEL, Math.round(labelAlpha * alpha)), false);
         }
     }
+
+	private void drawFilterControls(GuiGraphics gfx, ProgressScreenContext ctx) {
+		RecipeMapInspectorLayout.IntRect viewport = new RecipeMapInspectorLayout.IntRect(
+				ctx.guiLeft(), ctx.guiTop(), ctx.guiWidth(), ctx.guiHeight());
+		RecipeMapControlsLayout.Result controls = RecipeMapControlsLayout.calculate(viewport);
+		gfx.pose().pushPose();
+		gfx.pose().translate(0, 0, 650);
+		ProgressFilterControlsView.draw(gfx, ctx, controls.degree(),
+				degreeFilter == null ? "Degree: All" : "Degree: " + degreeFilter, 0xFFCC3333);
+		ProgressFilterControlsView.draw(gfx, ctx, controls.family(),
+				familyFilter == null ? "Family: All" : prettyFamily(familyFilter), 0xFFCC3333);
+		ProgressFilterControlsView.draw(gfx, ctx, controls.layer(),
+				"Layer: " + (diveState.isDeepActive() ? "5-8" : "0-4"), 0xFFCC3333);
+		gfx.pose().popPose();
+	}
 
     private void drawNodes(GuiGraphics gfx, ProgressScreenContext ctx, PanZoomState view, Map<SkillPoint, int[]> positions, float alpha) {
         if (alpha <= 0.01f) return;
@@ -323,19 +375,19 @@ public class SkillsTabController implements IProgressTab {
                     List<String> lockedParents = lockedParentNames(sp);
                     if (!lockedParents.isEmpty()) {
                         tip.add(Component.literal("Requires: " + String.join(", ", lockedParents)).withStyle(s -> s.withColor(0xAA4444)));
-                    } else {
-                        tip.add(Component.literal("Click to unlock! Cost: " + (int)SkillProgressClientCache.current().getLevelUpCost(sp) + " mL + "
-                                + sp.getSkillPointCost() + " SP").withStyle(s -> s.withColor(0xBB8833)));
                     }
+					tip.add(SkillTooltipDetails.upgradeCost("unlock",
+							(int) SkillProgressClientCache.current().getLevelUpCost(sp), sp.getSkillPointCost()));
                 } else if (state == EnumSkillStates.UNLOCKED) {
                     if (SkillProgressClientCache.current().isMaxed(sp)) {
                         tip.add(Component.literal("MAX LEVEL").withStyle(s -> s.withColor(0x44AA44).withBold(true)));
                     } else {
-                        tip.add(Component.literal("Click to level up! Cost: " + (int)SkillProgressClientCache.current().getLevelUpCost(sp) + " mL + "
-                                + sp.getSkillPointCost() + " SP").withStyle(s -> s.withColor(0xBB8833)));
+						tip.add(SkillTooltipDetails.upgradeCost("level up",
+								(int) SkillProgressClientCache.current().getLevelUpCost(sp), sp.getSkillPointCost()));
                     }
                 }
             }
+			tip.add(SkillTooltipDetails.skillPointBalance(SkillProgressClientCache.current().getSkillPoints()));
             gfx.renderTooltip(ctx.font(), tip, Optional.empty(), mouseX, mouseY);
             break;
         }
@@ -377,7 +429,8 @@ public class SkillsTabController implements IProgressTab {
     }
 
     private Map<SkillPoint, int[]> interactiveNodePositions() {
-        return diveState.isDeepActive() || SkillTreeLayerRules.isDeepUnlocked(playerDegree) && deepFade >= 0.5f ? deepNodePositions : surfaceNodePositions;
+		return diveState.isDeepActive() || SkillTreeLayerRules.isDeepUnlocked(playerDegree) && deepFade >= 0.5f
+				? filteredDeepNodePositions : filteredSurfaceNodePositions;
     }
 
     private void tryUnlock(SkillPoint sp) {
@@ -436,7 +489,21 @@ public class SkillsTabController implements IProgressTab {
 
     @Override
     public boolean mouseClicked(ProgressScreenContext ctx, double mx, double my, int btn) {
-        if (btn != 0) return false;
+		RecipeMapControlsLayout.Result controls = RecipeMapControlsLayout.calculate(
+				new RecipeMapInspectorLayout.IntRect(ctx.guiLeft(), ctx.guiTop(), ctx.guiWidth(), ctx.guiHeight()));
+		if (controls.degree().contains(mx, my)) {
+			cycleDegree(btn == 1 ? -1 : 1);
+			return true;
+		}
+		if (controls.family().contains(mx, my)) {
+			cycleFamily(btn == 1 ? -1 : 1);
+			return true;
+		}
+		if (controls.layer().contains(mx, my)) {
+			toggleLayer(ctx);
+			return true;
+		}
+		if (btn != 0) return false;
         SkillPoint hit = nodeUnder(ctx, mx, my);
         if (hit != null) {
             tryUnlock(hit);
@@ -444,6 +511,58 @@ public class SkillsTabController implements IProgressTab {
         }
         return false;
     }
+
+	private void cycleDegree(int direction) {
+		SkillTreeLayer layer = interactiveLayer();
+		int min = layer == SkillTreeLayer.SURFACE ? 0 : SkillTreeLayerRules.DEEP_MIN_DEGREE;
+		int max = layer == SkillTreeLayer.SURFACE ? SkillTreeLayerRules.SURFACE_MAX_DEGREE : 8;
+		int current = degreeFilter == null ? min - 1 : degreeFilter;
+		current += direction;
+		if (current > max) current = min - 1;
+		if (current < min - 1) current = max;
+		degreeFilter = current < min ? null : current;
+		refreshFilteredPositions();
+	}
+
+	private void cycleFamily(int direction) {
+		List<String> available = new ArrayList<>();
+		available.add(null);
+		available.addAll(families);
+		int index = available.indexOf(familyFilter);
+		familyFilter = available.get(Math.floorMod(index + direction, available.size()));
+		refreshFilteredPositions();
+	}
+
+	private void toggleLayer(ProgressScreenContext ctx) {
+		if (!diveState.toggleLayer(playerDegree)) return;
+		if (diveState.isDeepActive()) {
+			deepPanZoom.centreOn(contentW, contentH, ctx.guiWidth(), ctx.guiHeight());
+			deepFade = 1.0F;
+			lockedPortalFade = 0.0F;
+		} else {
+			surfacePanZoom.centreOn(contentW, contentH, ctx.guiWidth(), ctx.guiHeight());
+			deepFade = 0.0F;
+			lockedPortalFade = 0.0F;
+		}
+		syncFilterLayer();
+	}
+
+	private SkillTreeLayer interactiveLayer() {
+		return diveState.isDeepActive() || SkillTreeLayerRules.isDeepUnlocked(playerDegree) && deepFade >= 0.5f
+				? SkillTreeLayer.DEEP : SkillTreeLayer.SURFACE;
+	}
+
+	private void syncFilterLayer() {
+		SkillTreeLayer current = interactiveLayer();
+		if (current == filterLayer) return;
+		filterLayer = current;
+		degreeFilter = null;
+		refreshFilteredPositions();
+	}
+
+	private static String prettyFamily(String family) {
+		return HLTextUtils.toProperCase(family.replace('_', ' '));
+	}
 
     @Override public boolean mouseReleased(ProgressScreenContext ctx, double mx, double my, int btn) { return false; }
 
@@ -465,6 +584,7 @@ public class SkillsTabController implements IProgressTab {
             if (delta < 0 && diveState.updateDeepZoom(deepPanZoom.zoom)) {
                 surfacePanZoom.centreOn(contentW, contentH, ctx.guiWidth(), ctx.guiHeight());
                 deepFade = 0.0f;
+				syncFilterLayer();
             }
             return true;
         }

@@ -149,7 +149,7 @@ function render(): void {
           <div>
             <h1>Manipulation Tree Editor</h1>
             <p>${escapeHtml(relativeRoot())}</p>
-            <p><a href="/workspace.html">Skills</a> - <b>Manipulations</b></p>
+            <p><a href="/workspace.html">Skills</a> - <b>Manipulations</b> - <a href="/scars.html">Scars</a> - <a href="/materials.html">Materials</a> - <a href="/recipe_maps.html">Craft/Rites</a></p>
           </div>
         </div>
         <div class="toolbar">

@@ -11,17 +11,17 @@ public final class CardinalRiteChecklist {
 	}
 
 	public static List<String> inscription(int optionalSigils, int completedSigils,
-			int allies, boolean catalystReady) {
+			int allies, boolean mediumReady) {
 		List<String> lines = new ArrayList<>();
 		lines.add("Optional sigils: " + completedSigils + "/" + optionalSigils);
 		lines.add("Optional allies: " + allies + " assigned");
-		lines.add(catalystReady ? "Catalyst ready" : "Required catalyst missing");
+		lines.add(mediumReady ? "Medium seated" : "Required medium missing");
 		lines.add("Project into the daemon to begin");
 		return List.copyOf(lines);
 	}
 
-	public static List<String> inscription(int optionalSigils, int allies, boolean catalystReady) {
-		return inscription(optionalSigils, 0, allies, catalystReady);
+	public static List<String> inscription(int optionalSigils, int allies, boolean mediumReady) {
+		return inscription(optionalSigils, 0, allies, mediumReady);
 	}
 
 	public static String ordealObjective(String wave) {

@@ -22,6 +22,7 @@ public class BestiaryTabState {
 
 	final List<Entry> entries = new ArrayList<>();
 	int selectedIndex = -1;
+	boolean detailsDismissed;
 	int listScroll;
 	int infoScroll;
 	int recordedSpecimenCount;
@@ -57,7 +58,7 @@ public class BestiaryTabState {
 		surrenderedSpecimenCount = surrenderedSpecimens.size();
 		recordedMorphlingLayerCount = recordedMorphlingLayers.size();
 		selectedIndex = indexOf(selectedKey);
-		if (selectedIndex < 0 && !entries.isEmpty()) {
+		if (selectedIndex < 0 && !detailsDismissed && !entries.isEmpty()) {
 			selectedIndex = 0;
 		}
 	}
@@ -75,7 +76,17 @@ public class BestiaryTabState {
 			resetPreviewView();
 		}
 		selectedIndex = newIndex;
+		detailsDismissed = false;
 		infoScroll = 0;
+	}
+
+	boolean closeDetails() {
+		if (selectedEntry() == null) return false;
+		selectedIndex = -1;
+		detailsDismissed = true;
+		infoScroll = 0;
+		resetPreviewView();
+		return true;
 	}
 
 	void resetPreviewView() {

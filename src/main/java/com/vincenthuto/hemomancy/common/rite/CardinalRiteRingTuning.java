@@ -6,7 +6,7 @@ public final class CardinalRiteRingTuning {
 			45.0D,90.0D,  135.0D, 180.0D, 225.0D, 270.0D, 315.0D,360.0D
 	};
 	public static final double[] RADIUS_BLOCKS = {
-			0.75D, 3, 4, 3D, 3.75D, 4.5D, 5.25D, 6D
+			0.75D, 3.0D, 4.0D, 4.75D, 5.5D, 6.25D, 7.0D, 7.75D
 	};
 
 	private CardinalRiteRingTuning() {

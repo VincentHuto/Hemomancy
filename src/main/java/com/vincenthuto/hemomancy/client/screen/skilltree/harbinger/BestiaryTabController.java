@@ -112,6 +112,11 @@ public class BestiaryTabController implements IProgressTab {
 		return null;
 	}
 
+	@Override
+	public boolean closeDetails() {
+		return state.closeDetails();
+	}
+
 	static void applyPreviewRotation(BestiaryTabState state, double dx, double dy) {
 		if (state.previewDragMode != BestiaryTabState.PreviewDragMode.ROTATE) {
 			return;

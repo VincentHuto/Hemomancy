@@ -18,6 +18,7 @@ import com.vincenthuto.hemomancy.common.rite.CardinalRiteInstabilityBoundaryRule
 import com.vincenthuto.hemomancy.common.rite.CardinalRitePhase;
 import com.vincenthuto.hemomancy.common.rite.CardinalRiteProfessionFailure;
 import com.vincenthuto.hemomancy.common.rite.CardinalRiteSavedData;
+import com.vincenthuto.hemomancy.common.rite.CardinalRiteStationMatcher;
 import com.vincenthuto.hemomancy.common.rite.sigil.IchorianSigilDefinition;
 import com.vincenthuto.hemomancy.common.rite.sigil.IchorianSigilRegistry;
 import com.vincenthuto.hemomancy.common.rite.sigil.CardinalRiteSigilPlacementRules;
@@ -36,10 +37,7 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.item.ItemEntity;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
@@ -60,8 +58,6 @@ import java.util.function.IntUnaryOperator;
  */
 @EventBusSubscriber(modid = Hemomancy.MOD_ID)
 public final class CardinalRiteInteractionHandler {
-	private static final ResourceLocation BLOOM = Hemomancy.rloc("cardinal_rite/bloom_of_qliphoth");
-	private static final ResourceLocation FOUNDING_FANE = Hemomancy.rloc("cardinal_rite/founding_fane");
 	private static final double HANDLED_WITHOUT_BLOOD = Double.MIN_NORMAL;
 	private static final int FALSE_STROKE_OUTER_BLACK = 0xE806020A;
 	private static final int FALSE_STROKE_INNER_PURPLE = 0xFF5A167D;
@@ -148,7 +144,7 @@ public final class CardinalRiteInteractionHandler {
 				CardinalRiteVirtualTargeting.TARGET_RADIUS,
 				List.of(daemon.position())) < 0) return false;
 		CardinalRiteRecipe recipe = CardinalRiteRecipe.getRiteByLocation(level, rite.getRecipeId());
-		if (recipe == null || !consumeSealCatalyst(level, rite, recipe)) return true;
+		if (recipe == null || !sealMediumReady(level, rite, recipe)) return true;
 		if (!CardinalRiteAllyService.hasRequiredHelpers(level, rite)) {
 			player.displayClientMessage(Component.literal("The rite cannot be sealed until its required bloodline helpers take their stations.")
 					.withStyle(ChatFormatting.DARK_RED, ChatFormatting.BOLD), false);
@@ -826,40 +822,17 @@ public final class CardinalRiteInteractionHandler {
 		}
 	}
 
-	private static boolean consumeSealCatalyst(ServerLevel level, ActiveCardinalRite rite,
-			CardinalRiteRecipe recipe) {
-		Item required = requiredSealCatalyst(recipe);
-		if (required == null) return true;
-		List<ItemEntity> catalysts = sealCatalysts(level, rite, required);
-		if (catalysts.isEmpty()) {
+	static boolean sealMediumReady(ServerLevel level, ActiveCardinalRite rite, CardinalRiteRecipe recipe) {
+		boolean ready = CardinalRiteStationMatcher.mediumMatches(level, rite.getCenterPos(), recipe);
+		if (!ready) {
 			ServerPlayer caster = level.getServer().getPlayerList().getPlayer(rite.getPlayerUUID());
 			if (caster != null) caster.displayClientMessage(
-					Component.literal("The rite's catalyst must remain within the boundary when the altar is sealed.")
+					Component.literal(recipe.hasMedium()
+							? "The rite's medium must remain seated in the Cardinal Focus."
+							: "The Cardinal Focus must be empty before this altar can be sealed.")
 							.withStyle(ChatFormatting.DARK_RED), false);
-			return false;
 		}
-		ItemEntity catalyst = catalysts.get(0);
-		catalyst.getItem().shrink(1);
-		if (catalyst.getItem().isEmpty()) catalyst.discard();
-		return true;
-	}
-
-	static boolean sealCatalystReady(ServerLevel level, ActiveCardinalRite rite, CardinalRiteRecipe recipe) {
-		Item required = requiredSealCatalyst(recipe);
-		return required == null || !sealCatalysts(level, rite, required).isEmpty();
-	}
-
-	private static Item requiredSealCatalyst(CardinalRiteRecipe recipe) {
-		if (recipe == null) return null;
-		if (BLOOM.equals(recipe.getId())) return ItemInit.qliphoth_seed.get();
-		if (FOUNDING_FANE.equals(recipe.getId())) return ItemInit.sanguine_quintessence.get();
-		return null;
-	}
-
-	private static List<ItemEntity> sealCatalysts(ServerLevel level, ActiveCardinalRite rite, Item required) {
-		AABB bounds = new AABB(rite.getCenterPos()).inflate(rite.getRiteSize());
-		return level.getEntitiesOfClass(ItemEntity.class, bounds,
-				entity -> entity.isAlive() && entity.getItem().is(required));
+		return ready;
 	}
 
 	private static void consume(PlayerInteractEvent.RightClickBlock event) {

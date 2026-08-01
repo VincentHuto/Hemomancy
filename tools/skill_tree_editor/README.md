@@ -14,7 +14,11 @@ Open `http://127.0.0.1:5184/workspace.html`.
 
 Manipulation editor: `http://127.0.0.1:5184/manipulations.html`.
 
+Scar tree editor: `http://127.0.0.1:5184/scars.html`.
+
 Material atlas editor: `http://127.0.0.1:5184/materials.html`.
+
+Crafting and Rites map editor: `http://127.0.0.1:5184/recipe_maps.html`.
 
 The API defaults to port `5185`. Set `HEMO_REPO_ROOT` when running the tool outside this folder.
 
@@ -30,4 +34,8 @@ Only declarations between `// <skill-editor branch="...">` and `// </skill-edito
 
 Skill node positions are stored in Java with `.setTreePosition(x, y)`. The in-game skill tab reads those same content-space coordinates, so moving a node in the browser changes the authored game layout after preview/apply.
 
+The Scar editor reads scar metadata from `ScarInit.java` and edits the explicit `authored(...)` layout entries in `ScarTreeLayout.java`. It mirrors the in-game radial tendency-star layout, groups families by tendency and tier, supports node dragging and lineage rewiring, and uses the same preview/apply workflow as the Manipulations editor.
+
 The material atlas editor reads `MaterialAtlasSpec.java` and `MaterialsData.java`. Buckets are cosmetic category metadata only: they provide the atlas color, category anchor, and label plaque, while explicit `parentIds` provide node lineage/vein links. Gates, parent veins, catalogue text, and icon registry fields are previewed back into those Java files. Material nodes keep the existing auto-layout until moved; moved nodes are written as `entryAt(...)` calls with explicit atlas coordinates.
+
+The Crafting and Rites editor reads `HarbingerRecipeMapDefinitions.java` plus recipe JSON metadata. It edits family sectors, order within a family, and progression/conceptual links for both radial maps. Recipe degree remains owned by each recipe JSON and is shown as a read-only ring assignment. All edits use the same preview/apply workflow as the other editors.

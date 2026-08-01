@@ -108,5 +108,15 @@ public class SummonsTabController implements IProgressTab {
 	}
 
 	@Override public PanZoomState getPanZoomState() { return null; }
+	@Override public boolean closeDetails() {
+		if (state.selectedDegree == null) return false;
+		state.selectedDegree = null;
+		state.selectedSummonIndex = 0;
+		state.infoScroll = 0;
+		state.previewDragging = false;
+		state.previewName = null;
+		state.previewEntity = null;
+		return true;
+	}
 	public SummonsTabState getState() { return state; }
 }

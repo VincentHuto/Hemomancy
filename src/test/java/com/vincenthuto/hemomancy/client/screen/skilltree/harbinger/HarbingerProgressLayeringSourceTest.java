@@ -30,16 +30,10 @@ public final class HarbingerProgressLayeringSourceTest {
 				progressScreen, "drawTabsAboveCanvas(gfx, mouseX, mouseY)");
 		assertContains("harbinger tab chrome pushes above item depth",
 				progressScreen, "pose.translate(0.0F, 0.0F, SCREEN_CHROME_Z)");
-		assertContains("harbinger skill points render in screen chrome",
+		assertNotContains("harbinger skill points no longer render as persistent screen chrome",
 				progressScreen, "drawSkillPointsAboveCanvas(gfx)");
-		assertContains("harbinger skill points use styled component width",
-				progressScreen, "int textW = font.width(spComponent)");
-		assertContains("harbinger skill point badge uses compact horizontal padding",
-				progressScreen, "SKILL_POINT_BADGE_X_PAD = 2");
-		assertContains("harbinger skill point badge uses compact vertical padding",
-				progressScreen, "SKILL_POINT_BADGE_Y_PAD = 2");
-		assertContains("harbinger skill point badge uses compact label text",
-				progressScreen, "Component.literal(\"SP:\" + SkillProgressClientCache.current().getSkillPoints())");
+		assertNotContains("harbinger skill point badge is removed",
+				progressScreen, "Component.literal(\"SP:\"");
 		assertNotContains("harbinger skill point badge no longer uses long spaced label",
 				progressScreen, "\"Skill Points: \"");
 		assertNotContains("harbinger skill point badge is no longer bold",
@@ -52,14 +46,6 @@ public final class HarbingerProgressLayeringSourceTest {
 				progressScreen, "int bx = homeButtonX(), by = homeButtonY()");
 		assertContains("harbinger home button draw uses shared bottom-left anchor",
 				progressScreen, "ScreenDrawUtils.drawHomeButton(gfx, font, homeButtonX(), homeButtonY(), HOME_BTN_SIZE");
-		assertContains("harbinger skill points sit in the freed top-left chrome",
-				progressScreen, "int badgeLeft = guiLeft + HOME_BTN_PAD");
-		assertContains("harbinger skill points align with the top-left chrome padding",
-				progressScreen, "int badgeTop = guiTop + HOME_BTN_PAD");
-		assertContains("harbinger skill point text reserves badge padding from the left edge",
-				progressScreen, "int textX = badgeLeft + SKILL_POINT_BADGE_X_PAD");
-		assertContains("harbinger skill point text reserves badge padding from the top edge",
-				progressScreen, "int textY = badgeTop + SKILL_POINT_BADGE_Y_PAD");
 		assertNotContains("harbinger skill points are no longer tied to the bottom-left home button",
 				progressScreen, "int badgeLeft = homeButtonX() + HOME_BTN_SIZE + SKILL_POINT_BADGE_GAP");
 		assertNotContains("harbinger skill points are no longer aligned with the bottom-left home button",

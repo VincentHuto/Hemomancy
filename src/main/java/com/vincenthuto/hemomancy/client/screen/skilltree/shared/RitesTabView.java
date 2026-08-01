@@ -3,6 +3,7 @@ package com.vincenthuto.hemomancy.client.screen.skilltree.shared;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.vincenthuto.hemomancy.client.screen.skilltree.util.ProgressScreenContext;
 import com.vincenthuto.hemomancy.client.screen.skilltree.util.ScreenDrawUtils;
+import com.vincenthuto.hemomancy.client.render.entity.misc.IchorianSigilPreviewRenderer;
 import com.vincenthuto.hemomancy.common.init.BlockInit;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.recipe.CardinalRiteRecipe;
@@ -22,12 +23,15 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -151,20 +155,52 @@ public final class RitesTabView {
 		int infoW   = contentW - modelAreaW - 20;
 
 		// 3D model rendered first (z ≈ 300)
-		drawModel(gfx, state, ctx, modelX + 10, ctx.guiTop() + 30,
-				modelAreaW - 20, ctx.guiHeight() - 60, partial);
+		IchorianSigilDefinition selectedSigil = state.selectedIchorianSigilId == null
+				? null : IchorianSigilRegistry.get(state.selectedIchorianSigilId);
+		if (state.selectedIchorianSigilId != null && selectedSigil == null) {
+			state.selectedIchorianSigilId = null;
+		}
+		if (selectedSigil != null) {
+			long elapsedTicks = Minecraft.getInstance().level == null ? 0L
+					: Math.max(0L, Minecraft.getInstance().level.getGameTime()
+							- state.ichorianSigilPreviewStartTick);
+			int previewX = modelX + 10;
+			int previewY = ctx.guiTop() + 30;
+			int previewW = modelAreaW - 20;
+			int previewH = ctx.guiHeight() - 60;
+			boolean rendered;
+			gfx.enableScissor(previewX, previewY, previewX + previewW, previewY + previewH);
+			try {
+				rendered = IchorianSigilPreviewRenderer.render(gfx, selectedSigil,
+						previewX, previewY, previewW, previewH,
+						state.riteRotationAngle, elapsedTicks, partial);
+			} finally {
+				gfx.disableScissor();
+			}
+			if (!rendered) {
+				gfx.drawCenteredString(ctx.font(), "Preview unavailable",
+						modelX + modelAreaW / 2, ctx.guiTop() + ctx.guiHeight() / 2, 0xFF777777);
+			}
+		} else {
+			drawModel(gfx, state, ctx, modelX + 10, ctx.guiTop() + 30,
+					modelAreaW - 20, ctx.guiHeight() - 60, partial);
+		}
 
 		// All 2D overlays above the model
 		gfx.pose().pushPose();
 		gfx.pose().translate(0, 0, 400);
 
 		drawTierSidebar(gfx, ctx, state, mouseX, mouseY);
-		ScreenDrawUtils.drawLayerButtons(gfx, ctx.font(),
-				ctx.layerBtnX(), ctx.layerBtnCenterY(),
-				state.riteMaxLayer, state.riteVisibleLayer,
-				state.tabColor, mouseX, mouseY);
+		if (selectedSigil == null) {
+			ScreenDrawUtils.drawLayerButtons(gfx, ctx.font(),
+					ctx.layerBtnX(), ctx.layerBtnCenterY(),
+					state.riteMaxLayer, state.riteVisibleLayer,
+					state.tabColor, mouseX, mouseY);
+		}
 		drawInfoPanel(gfx, ctx, state, rite, infoX, ctx.guiTop() + 30, infoW, mouseX, mouseY);
-		gfx.drawCenteredString(ctx.font(), "Drag to rotate",
+		String previewHint = selectedSigil == null ? "Drag to rotate"
+				: selectedSigil.name() + " · Morphing cycle · Drag to rotate";
+		gfx.drawCenteredString(ctx.font(), previewHint,
 				modelX + modelAreaW / 2, ctx.guiTop() + ctx.guiHeight() - 18, 0x44888888);
 
 		gfx.pose().popPose();
@@ -182,7 +218,7 @@ public final class RitesTabView {
 		int rowH = 22;
 
 		if (state.showIchorianSigils) {
-			sy = drawIchorianDropdown(gfx, ctx, state, sx, sy, sw);
+			sy = drawIchorianDropdown(gfx, ctx, state, sx, sy, sw, mouseX, mouseY);
 		}
 		gfx.drawString(ctx.font(), Component.literal("Rite Degrees")
 				.withStyle(s -> s.withColor(state.tabColor).withBold(true)), sx + 2, sy, 0);
@@ -282,8 +318,72 @@ public final class RitesTabView {
 		}
 	}
 
+	public static void drawMapInspector(GuiGraphics gfx, ProgressScreenContext ctx, RitesTabState state,
+			CardinalRiteRecipe rite, IchorianSigilDefinition sigil,
+			RecipeMapInspectorLayout layout, int mouseX, int mouseY, float partial) {
+		gfx.pose().pushPose();
+		gfx.pose().translate(0, 0, 500);
+		RecipeMapInspectorView.drawChrome(gfx, ctx, layout, 0xF20A0308, state.tabColor, mouseX, mouseY);
+		if (!layout.expanded()) {
+			gfx.pose().popPose();
+			return;
+		}
+
+		RecipeMapInspectorLayout.IntRect preview = layout.previewContent();
+		gfx.enableScissor(preview.left(), preview.top(), preview.right(), preview.bottom());
+		if (sigil != null) {
+			long elapsedTicks = Minecraft.getInstance().level == null ? 0L
+					: Math.max(0L, Minecraft.getInstance().level.getGameTime() - state.ichorianSigilPreviewStartTick);
+			boolean rendered = IchorianSigilPreviewRenderer.render(gfx, sigil,
+					preview.left(), preview.top(), preview.width(), preview.height(),
+					state.riteRotationAngle, elapsedTicks, partial);
+			if (!rendered) gfx.drawCenteredString(ctx.font(), "Preview unavailable",
+					preview.left() + preview.width() / 2, preview.top() + preview.height() / 2, 0xFF777777);
+		} else if (rite != null) {
+			drawModelForRite(gfx, state, rite, preview.left(), preview.top(), preview.width(), preview.height());
+		}
+		gfx.disableScissor();
+		RecipeMapInspectorView.drawPreviewControls(gfx, ctx, layout,
+				rite == null ? 0 : state.riteMaxLayer, state.riteVisibleLayer,
+				state.tabColor, mouseX, mouseY);
+
+		RecipeMapInspectorLayout.IntRect info = layout.info().inset(10, 8, 10, 8);
+		if (sigil != null) {
+			drawSigilInfo(gfx, ctx, state, sigil, info);
+		} else if (rite != null) {
+			drawInfoPanel(gfx, ctx, state, rite, info.left(), info.top(), info.width(), mouseX, mouseY);
+		}
+		gfx.pose().popPose();
+	}
+
+	private static void drawSigilInfo(GuiGraphics gfx, ProgressScreenContext ctx, RitesTabState state,
+			IchorianSigilDefinition sigil, RecipeMapInspectorLayout.IntRect info) {
+		gfx.enableScissor(info.left(), info.top(), info.right(), info.bottom());
+		int y = info.top() - state.riteInfoScroll;
+		gfx.drawString(ctx.font(), Component.literal(sigil.name()).withStyle(style -> style.withBold(true)),
+				info.left(), y, 0xFFE8B75A, false);
+		y += 16;
+		for (FormattedCharSequence line : ctx.font().split(Component.literal(sigil.purpose()), info.width())) {
+			gfx.drawString(ctx.font(), line, info.left(), y, 0xFFBBBBBB, false);
+			y += 10;
+		}
+		y += 6;
+		for (String line : List.of("Kind: " + properCase(sigil.kind().name()), "Sigil Tier: " + sigil.tier(),
+				"Stability: " + sigil.stability(), "Capacity: " + sigil.capacityMl() + " mL",
+				"Inscription Cost: " + sigil.bloodCostMl() + " mL")) {
+			gfx.drawString(ctx.font(), line, info.left(), y, 0xFF999999, false);
+			y += 12;
+		}
+		gfx.disableScissor();
+	}
+
+	private static String properCase(String value) {
+		String lower = value.toLowerCase(java.util.Locale.ROOT);
+		return Character.toUpperCase(lower.charAt(0)) + lower.substring(1);
+	}
+
 	private static int drawIchorianDropdown(GuiGraphics gfx, ProgressScreenContext ctx,
-			RitesTabState state, int x, int y, int width) {
+			RitesTabState state, int x, int y, int width, int mouseX, int mouseY) {
 		gfx.fill(x, y, x + width, y + 18, state.rowBgNormal);
 		gfx.drawString(ctx.font(), "Ichorian Sigils " + (state.ichorianSigilsExpanded ? "▲" : "▼"),
 				x + 3, y + 5, 0xFFE8B75A, false);
@@ -292,15 +392,21 @@ public final class RitesTabView {
 		Minecraft minecraft = Minecraft.getInstance();
 		var knowledge = minecraft.player == null ? null
 				: HemoCapabilityAccess.getIchorianKnowledge(minecraft.player).orElse(null);
-		List<IchorianSigilDefinition> definitions = IchorianSigilRegistry.all().stream()
-				.sorted(java.util.Comparator.comparingInt(IchorianSigilDefinition::tier)
-						.thenComparing(definition -> definition.id().toString()))
-				.toList();
+		List<IchorianSigilDefinition> definitions = sortedIchorianSigils();
 		for (IchorianSigilDefinition sigil : definitions) {
 			boolean known = knowledge != null && knowledge.isKnown(sigil.id());
 			int partial = knowledge == null ? 0 : knowledge.discoveredNodeCount(sigil.id());
 			if (!known && partial == 0) continue;
-			gfx.fill(x + 2, y, x + width - 2, y + 14, 0x99100616);
+			boolean selected = known && sigil.id().equals(state.selectedIchorianSigilId);
+			boolean hovered = known && mouseX >= x + 2 && mouseX <= x + width - 2
+					&& mouseY >= y && mouseY <= y + IchorianSigilSidebarLayout.ROW_HEIGHT;
+			int rowBackground = selected ? state.rowBgSelected
+					: hovered ? state.rowBgHovered : 0x99100616;
+			gfx.fill(x + 2, y, x + width - 2, y + 14, rowBackground);
+			if (selected) {
+				gfx.fill(x + 2, y, x + 3, y + 14, 0xFFE8B75A);
+				gfx.fill(x + width - 3, y, x + width - 2, y + 14, 0xFFE8B75A);
+			}
 			int color = 0xFF000000 | sigil.color();
 			gfx.fill(x + 4, y + 3, x + 10, y + 10, color);
 			String label = known ? sigil.name() + " · " + sigil.bloodCostMl() + "ml"
@@ -327,6 +433,32 @@ public final class RitesTabView {
 				knowledge != null && (knowledge.isKnown(sigil.id())
 						|| knowledge.discoveredNodeCount(sigil.id()) > 0)).count();
 		return 24 + (int) visible * 16;
+	}
+
+	private static List<IchorianSigilDefinition> sortedIchorianSigils() {
+		return IchorianSigilRegistry.all().stream()
+				.sorted(java.util.Comparator.comparingInt(IchorianSigilDefinition::tier)
+						.thenComparing(definition -> definition.id().toString()))
+				.toList();
+	}
+
+	public static ResourceLocation knownSigilUnder(ProgressScreenContext ctx, RitesTabState state,
+			double mouseX, double mouseY) {
+		if (!state.showIchorianSigils || !state.ichorianSigilsExpanded) return null;
+		Minecraft minecraft = Minecraft.getInstance();
+		var knowledge = minecraft.player == null ? null
+				: HemoCapabilityAccess.getIchorianKnowledge(minecraft.player).orElse(null);
+		if (knowledge == null) return null;
+		List<IchorianSigilDefinition> listed = sortedIchorianSigils().stream()
+				.filter(sigil -> knowledge.isKnown(sigil.id())
+						|| knowledge.discoveredNodeCount(sigil.id()) > 0)
+				.toList();
+		int index = IchorianSigilSidebarLayout.rowIndexAt(mouseX, mouseY,
+				ctx.guiLeft() + 4, ctx.guiTop() + 24,
+				ProgressScreenContext.TIER_SIDEBAR_W - 8, true, listed.size());
+		if (index < 0) return null;
+		IchorianSigilDefinition sigil = listed.get(index);
+		return knowledge.isKnown(sigil.id()) ? sigil.id() : null;
 	}
 
 	public static boolean isOverIchorianDropdown(ProgressScreenContext ctx, RitesTabState state,
@@ -357,7 +489,7 @@ public final class RitesTabView {
 		drawModelForRite(gfx, state, rite, areaX, areaY, areaW, areaH);
 	}
 
-	private static void drawModelForRite(GuiGraphics gfx, RitesTabState state,
+	static void drawModelForRite(GuiGraphics gfx, RitesTabState state,
 										  CardinalRiteRecipe rite,
 										  int areaX, int areaY, int areaW, int areaH) {
 		if (rite.getPreviewPattern() == null) return;
@@ -462,6 +594,29 @@ public final class RitesTabView {
 		return font.split(Component.literal(text), Math.max(1, width));
 	}
 
+	static record OfferingDisplayEntry(Ingredient ingredient, int count) {
+		ItemStack stack(long cycleIndex) {
+			ItemStack[] accepted = ingredient.getItems();
+			if (accepted.length == 0) return ItemStack.EMPTY;
+			ItemStack stack = accepted[Math.floorMod(cycleIndex, accepted.length)].copy();
+			stack.setCount(1);
+			return stack;
+		}
+	}
+
+	static List<OfferingDisplayEntry> offeringDisplayEntries(
+			List<CardinalRiteRecipe.BrazierRequirement> requirements) {
+		List<OfferingDisplayEntry> entries = new ArrayList<>();
+		for (CardinalRiteRecipe.BrazierRequirement requirement : requirements) {
+			entries.add(new OfferingDisplayEntry(requirement.ingredient(), requirement.count()));
+		}
+		return List.copyOf(entries);
+	}
+
+	static String offeringRowText(int count, String itemName) {
+		return " x" + count + "  " + itemName;
+	}
+
 	public static void drawInfoPanel(GuiGraphics gfx, ProgressScreenContext ctx,
 									 RitesTabState state, CardinalRiteRecipe rite,
 									 int panelX, int panelY, int panelW,
@@ -501,12 +656,6 @@ public final class RitesTabView {
 					.withStyle(s -> s.withColor(0x888888))
 					.append(Component.literal(structure).withStyle(s -> s.withColor(0xAAAAAA))),
 					panelX, y, 0);
-			y += lineH;
-			gfx.drawString(ctx.font(), Component.literal("Lit Brazier Offerings: ")
-					.withStyle(s -> s.withColor(0x888888))
-					.append(Component.literal(String.valueOf(rite.getBrazierSignature().stream()
-							.mapToInt(CardinalRiteRecipe.BrazierRequirement::count).sum()))
-							.withStyle(s -> s.withColor(0xCC9966))), panelX, y, 0);
 			y += lineH;
 		}
 		y += 4;
@@ -572,21 +721,6 @@ public final class RitesTabView {
 				panelX, y, 0);
 		y += lineH + 6;
 
-		if (rite.hasInteractiveCeremony()) {
-			gfx.drawString(ctx.font(), Component.literal("Ceremony:")
-					.withStyle(s -> s.withColor(state.tabColor & 0xFFFFFF).withBold(true)),
-					panelX, y, 0);
-			y += lineH;
-			for (String summary : ceremonySummaryLines(rite)) {
-				for (String line : ScreenDrawUtils.wrapText(ctx.font(), summary, panelW)) {
-					gfx.drawString(ctx.font(), Component.literal(line)
-							.withStyle(s -> s.withColor(0xAAAAAA)), panelX, y, 0);
-					y += lineH;
-				}
-			}
-			y += 6;
-		}
-
 		// Result item
 		ItemStack result = rite.getResult();
 		if (result != null && !result.isEmpty()) {
@@ -605,6 +739,30 @@ public final class RitesTabView {
 			y += Math.max(20, resultLines.size() * lineH + 4);
 		}
 		y += 6;
+
+		// Lit brazier offerings
+		List<OfferingDisplayEntry> offerings = offeringDisplayEntries(rite.getBrazierSignature());
+		if (!offerings.isEmpty()) {
+			gfx.drawString(ctx.font(), Component.literal("Lit Brazier Offerings:")
+					.withStyle(s -> s.withColor(0x888888)), panelX, y, 0);
+			y += lineH;
+			int offeringTextX = panelX + 20;
+			int offeringWrapW = panelW - 24;
+			long cycleIndex = materialCycleIndex();
+			for (OfferingDisplayEntry offering : offerings) {
+				ItemStack offeringStack = offering.stack(cycleIndex);
+				if (offeringStack.isEmpty()) continue;
+				gfx.renderItem(offeringStack, panelX + 2, y);
+				List<FormattedCharSequence> offeringLines = wrappedLines(ctx.font(),
+						offeringRowText(offering.count(), offeringStack.getHoverName().getString()), offeringWrapW);
+				for (int li = 0; li < offeringLines.size(); li++) {
+					gfx.drawString(ctx.font(), offeringLines.get(li),
+							offeringTextX, y + 4 + li * lineH, 0xCC9966);
+				}
+				y += Math.max(18, offeringLines.size() * lineH + 4);
+			}
+			y += 6;
+		}
 
 		// Block materials list
 		if (rite.getPreviewPattern() != null) {
@@ -669,7 +827,7 @@ public final class RitesTabView {
 			y += ScreenDrawUtils.wrapText(font, desc, panelW).size() * lineH + 4;
 
 		y += lineH; // rite form
-		if (rite.hasLayeredStation()) y += lineH * 3;
+		if (rite.hasLayeredStation()) y += lineH * 2;
 		y += lineH; // blood cost
 
 		if (enableDegreeLock) {
@@ -679,14 +837,6 @@ public final class RitesTabView {
 
 		y += lineH + 6; // cast time
 
-		if (rite.hasInteractiveCeremony()) {
-			y += lineH; // ceremony heading
-			for (String summary : ceremonySummaryLines(rite)) {
-				y += ScreenDrawUtils.wrapText(font, summary, panelW).size() * lineH;
-			}
-			y += 6;
-		}
-
 		ItemStack result = rite.getResult();
 		if (result != null && !result.isEmpty()) {
 			y += lineH;
@@ -694,6 +844,20 @@ public final class RitesTabView {
 					result.getHoverName().getString(), panelW - 20).size() * lineH + 4);
 		}
 		y += 6;
+
+		List<OfferingDisplayEntry> offerings = offeringDisplayEntries(rite.getBrazierSignature());
+		if (!offerings.isEmpty()) {
+			y += lineH;
+			int offeringWrapW = panelW - 24;
+			long cycleIndex = materialCycleIndex();
+			for (OfferingDisplayEntry offering : offerings) {
+				ItemStack offeringStack = offering.stack(cycleIndex);
+				if (offeringStack.isEmpty()) continue;
+				y += Math.max(18, wrappedLines(font,
+						offeringRowText(offering.count(), offeringStack.getHoverName().getString()), offeringWrapW).size() * lineH + 4);
+			}
+			y += 6;
+		}
 
 		if (rite.getPreviewPattern() != null) {
 			List<MultiblockPattern.MaterialCount> materials = rite.getPreviewPattern().getMaterialCounts(false);
@@ -715,60 +879,6 @@ public final class RitesTabView {
 			}
 		}
 		return y;
-	}
-
-	private static List<String> ceremonySummaryLines(CardinalRiteRecipe rite) {
-		var ceremony = rite.getCeremony();
-		if (ceremony == null) return List.of();
-		long rings = ceremony.anchors().stream()
-				.mapToInt(com.vincenthuto.hemomancy.common.rite.CardinalRiteCeremonyDefinition.Anchor::ring)
-				.distinct().count();
-		long requiredSigils = ceremony.supportSockets().stream()
-				.filter(com.vincenthuto.hemomancy.common.rite.CardinalRiteCeremonyDefinition.SupportSocket::required)
-				.count();
-		String focus = switch (ceremony.focusMode()) {
-			case "temple_medium" -> "prebuilt temple focus + iron nugget (4 health)";
-			case "hematic_medium" -> "Cardinal Focus + disposable iron nugget";
-			case "living_staff" -> "Living Staff planted in the Cardinal Focus";
-			default -> ceremony.focusMode().isBlank() ? "rite-specific" : ceremony.focusMode();
-		};
-		String boundary = ceremony.anchors().isEmpty()
-				? "Boundary: small visual ring; no anchors to fill"
-				: "Boundary: " + ceremony.anchors().size() + " blood-fed anchors across "
-						+ rings + (rings == 1 ? " ring" : " rings")
-						+ " (" + ceremony.anchorBloodCostMl() + " mL total)";
-		String support = ceremony.supportSockets().isEmpty()
-				? "Inscriptions: none"
-				: "Inscriptions: " + ceremony.supportSockets().size() + " support sigils; "
-						+ requiredSigils + " required";
-		String ordeal = ceremony.waves().isEmpty() && ceremony.guaranteedWaves().isEmpty()
-				? "Ordeal: none"
-				: "Ordeal: enabled; still interval " + ceremony.stillIntervalTicks() + " ticks";
-		String atmosphere = "Atmosphere: " + ceremony.atmosphere().fog() + " fog"
-				+ (ceremony.atmosphere().lightning() ? ", rite lightning" : "")
-				+ (ceremony.atmosphere().dome() ? ", boundary dome" : "");
-		return List.of(
-				"Activation: " + focus,
-				boundary,
-				support,
-				"Helpers: " + ceremony.requiredHelpers() + " required",
-				ordeal,
-				atmosphere,
-				"Failure: " + ceremony.failureProfile().replace('_', ' '),
-				"Progression lesson: " + progressionLesson(rite.getRequiredDegree()));
-	}
-
-	private static String progressionLesson(int degree) {
-		return switch (degree) {
-			case 0 -> "consent and awakening on a prebuilt temple threshold";
-			case 1 -> "build the first floor, seat an iron medium, and feed four anchors";
-			case 2 -> "take up the Living Staff and prepare the first brazier offering";
-			case 3 -> "repeat Lesser practice under the first faint ritual fog";
-			case 4 -> "inscribe the first support sigil and coordinate multiple offerings";
-			case 5 -> "sustain eight anchors through lightning and the first ordeal";
-			case 6 -> "raise a domed Grand boundary and accept required aid and safety sigils";
-			default -> "coordinate a full Grand rite with multiple helpers, sigils, and a lengthy ordeal";
-		};
 	}
 
 	/** @deprecated Use {@link #measureInfoPanelHeight(net.minecraft.client.gui.Font, int, CardinalRiteRecipe, int, boolean)} */
@@ -847,7 +957,7 @@ public final class RitesTabView {
 	/** Returns {@code true} if the mouse is over the layer-up button. */
 	public static boolean isOverLayerUpButton(ProgressScreenContext ctx,
 											   RitesTabState state, double mx, double my) {
-		if (state.riteMaxLayer <= 0) return false;
+		if (state.selectedIchorianSigilId != null || state.riteMaxLayer <= 0) return false;
 		int cy = ctx.layerBtnCenterY();
 		return ScreenDrawUtils.isOverLayerButton(mx, my,
 				ctx.layerBtnX(), cy - LAYER_BTN_SIZE - 14);
@@ -856,7 +966,7 @@ public final class RitesTabView {
 	/** Returns {@code true} if the mouse is over the layer-down button. */
 	public static boolean isOverLayerDownButton(ProgressScreenContext ctx,
 												 RitesTabState state, double mx, double my) {
-		if (state.riteMaxLayer <= 0) return false;
+		if (state.selectedIchorianSigilId != null || state.riteMaxLayer <= 0) return false;
 		int cy = ctx.layerBtnCenterY();
 		return ScreenDrawUtils.isOverLayerButton(mx, my,
 				ctx.layerBtnX(), cy + 14);

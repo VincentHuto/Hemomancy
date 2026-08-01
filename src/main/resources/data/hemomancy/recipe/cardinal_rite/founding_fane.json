@@ -4,8 +4,11 @@
   "riteType": "greater",
   "required_degree": 5,
   "riteName": "Rite of the Founding Fane",
-  "riteDescription": "A grand consecration rite available only to the Illuminatus. The caster binds a Sanguine Quintessence to the earth, establishing a Harbinger Founding Fane whose boundary, recall anchor, and bloodline-tied ground are made real by the rite itself.",
+  "riteDescription": "A grand consecration rite available only to the Illuminatus. The caster seats a Sanguine Quintessence in the Cardinal Focus as the rite's medium, establishing a Harbinger Founding Fane whose boundary, recall anchor, and bloodline-tied ground are made real by the rite itself.",
   "floor": "hemomancy:dominion_grand",
+  "medium": {
+    "item": "hemomancy:sanguine_quintessence"
+  },
   "required_structure": {
     "pattern": [
       [

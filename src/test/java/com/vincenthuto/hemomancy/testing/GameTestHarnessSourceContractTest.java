@@ -34,7 +34,7 @@ class GameTestHarnessSourceContractTest {
 
 		var ids = Pattern.compile("new HemoTestScenario\\(\\s*\"([^\"]+)\"")
 				.matcher(catalog).results().map(match -> match.group(1)).toList();
-		assertEquals(7, ids.size());
+		assertEquals(8, ids.size());
 		assertTrue(ids.contains("blood_structure_locked"));
 		assertTrue(ids.contains("blood_structure_unlocked"));
 		assertTrue(ids.contains("artificer_assignment_ready"));
@@ -42,6 +42,7 @@ class GameTestHarnessSourceContractTest {
 		assertTrue(ids.contains("uninitiated_cannot_pass_bloodcraft_degree_gate"));
 		assertTrue(ids.contains("sanguine_initiation_recipe_loaded"));
 		assertTrue(ids.contains("sanguine_initiation_degree_mapping"));
+		assertTrue(ids.contains("cardinal_rite_media_loaded"));
 		assertTrue(guide.contains("./gradlew.bat alphaCheck"));
 		assertTrue(guide.contains("/hemo test setup"));
 	}

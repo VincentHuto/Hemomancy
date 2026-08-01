@@ -14,6 +14,8 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.item.crafting.Ingredient;
 
 import java.util.List;
 import java.util.Locale;
@@ -24,6 +26,9 @@ public final class HemoTestScenarioCatalog {
 			Hemomancy.rloc("blood_structure/covenant_throne");
 	private static final ResourceLocation SANGUINE_INITIATION_RITE =
 			Hemomancy.rloc("cardinal_rite/sanguine_initiation");
+	private static final ResourceLocation VOTARY_RITE = Hemomancy.rloc("cardinal_rite/votary_rite");
+	private static final ResourceLocation BLOOM_RITE = Hemomancy.rloc("cardinal_rite/bloom_of_qliphoth");
+	private static final ResourceLocation FOUNDING_FANE_RITE = Hemomancy.rloc("cardinal_rite/founding_fane");
 	private static final String ACTIVE_SCENARIO_KEY = "hemomancy.dev_test.active_scenario";
 	private static final String DEGREE_SNAPSHOT_KEY = "hemomancy.dev_test.snapshot.degree";
 	private static final String CLAIM_SNAPSHOT_KEY = "hemomancy.dev_test.snapshot.worn_vow_claim";
@@ -71,6 +76,12 @@ public final class HemoTestScenarioCatalog {
 					"The Sanguine Initiation rite retains its Degree-1 rank-up mapping and conduit reward registration.",
 					player -> { },
 					HemoTestScenarioCatalog::verifySanguineInitiationDegreeMapping,
+					player -> { }),
+			new HemoTestScenario(
+					"cardinal_rite_media_loaded",
+					"Loaded Cardinal Rite recipes expose their authored Focus media.",
+					player -> { },
+					HemoTestScenarioCatalog::verifyCardinalRiteMedia,
 					player -> { }));
 
 	private HemoTestScenarioCatalog() {
@@ -133,6 +144,36 @@ public final class HemoTestScenarioCatalog {
 		return targetDegree != null && targetDegree == 1 && ItemInit.sanguine_conduit.get() != null
 				? HemoTestResult.pass("Sanguine Initiation maps to Degree 1 and its conduit reward is registered")
 				: HemoTestResult.fail("Sanguine Initiation Degree-1 mapping or conduit reward is missing");
+	}
+
+	private static HemoTestResult verifyCardinalRiteMedia(ServerPlayer player) {
+		try {
+			var getter = CardinalRiteRecipe.class.getMethod("getMedium");
+			if (!matchesMedium(player, getter, SANGUINE_INITIATION_RITE, new ItemStack(Items.IRON_NUGGET))) {
+				return HemoTestResult.fail("Sanguine Initiation does not require an iron-nugget medium");
+			}
+			if (!matchesMedium(player, getter, VOTARY_RITE, new ItemStack(Items.IRON_NUGGET))) {
+				return HemoTestResult.fail("Rite of the Votary does not require an iron-nugget medium");
+			}
+			if (!matchesMedium(player, getter, BLOOM_RITE, new ItemStack(ItemInit.qliphoth_seed.get()))) {
+				return HemoTestResult.fail("Bloom of the Qliphoth does not require its seed medium");
+			}
+			if (!matchesMedium(player, getter, FOUNDING_FANE_RITE,
+					new ItemStack(ItemInit.sanguine_quintessence.get()))) {
+				return HemoTestResult.fail("Founding Fane does not require its quintessence medium");
+			}
+			return HemoTestResult.pass("Cardinal Rite media are loaded from recipe data");
+		} catch (ReflectiveOperationException exception) {
+			return HemoTestResult.fail("Cardinal Rite recipes do not expose a medium ingredient: "
+					+ exception.getClass().getSimpleName());
+		}
+	}
+
+	private static boolean matchesMedium(ServerPlayer player, java.lang.reflect.Method getter,
+			ResourceLocation id, ItemStack expected) throws ReflectiveOperationException {
+		CardinalRiteRecipe recipe = CardinalRiteRecipe.getRiteByLocation(player.level(), id);
+		return recipe != null && getter.invoke(recipe) instanceof Ingredient ingredient
+				&& ingredient.test(expected);
 	}
 
 	private static HemoTestResult verifyRecipeGate(ServerPlayer player, boolean expected) {

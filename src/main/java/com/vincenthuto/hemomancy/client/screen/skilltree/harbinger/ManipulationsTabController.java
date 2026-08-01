@@ -12,7 +12,6 @@ import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationRank;
 import com.vincenthuto.hemomancy.common.manipulation.ManipulationRankGates;
 import com.vincenthuto.hutoslib.client.HLTextUtils;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
-import com.vincenthuto.hutoslib.client.screen.HLGuiUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
@@ -26,11 +25,8 @@ public class ManipulationsTabController implements IProgressTab {
 
     private static final int NODE_SIZE = 26;
     private static final int NODE_GAP_X = 80;
-    private static final float TENDENCY_VALUE_DISTANCE_DIVISOR = 1.75f;
-    private static final int TENDENCY_VALUE_VERTICAL_OFFSET = 0;
     private static final int COL_NODE_BG     = 0xCC1A0505;
     private static final int COL_NODE_BORDER_LOCK = 0xFF333333;
-    private static final int ALPHA_OPAQUE_MASK = 0xFF000000;
     private static final float INFO_PANEL_Z = 400.0F;
     private static final float MANIP_TOOLTIP_Z = INFO_PANEL_Z + 500.0F;
     private static final int INFO_PANEL_SHADOW = 0xAA000000;
@@ -48,7 +44,7 @@ public class ManipulationsTabController implements IProgressTab {
 
     private static final int KNOWN_MANIP_REFRESH_TICKS = 60; // ~1s at ~60 FPS
 
-    private final ManipulationTraceLayerCache traceCache = new ManipulationTraceLayerCache();
+    private final TendencyTraceLayerCache traceCache = new TendencyTraceLayerCache();
     private final PanZoomState panZoom = new PanZoomState();
     private int manipRingCenterX, manipRingCenterY;
     private final Map<ManipulationTreeEntry, int[]> manipPositions = new HashMap<>();
@@ -238,47 +234,7 @@ public class ManipulationsTabController implements IProgressTab {
     }
 
     private void drawManipTendencyStar(GuiGraphics gfx, ProgressScreenContext ctx) {
-        Minecraft mc = Minecraft.getInstance();
-        if (mc.player == null) return;
-
-        int screenX = sx(ctx, manipRingCenterX);
-        int screenY = sy(ctx, manipRingCenterY);
-
-        int starRadius = (int)(95 * panZoom.zoom);
-        if (screenX + starRadius < ctx.guiLeft() || screenX - starRadius > ctx.guiLeft() + ctx.guiWidth()
-                || screenY + starRadius < ctx.guiTop() || screenY - starRadius > ctx.guiTop() + ctx.guiHeight()) return;
-
-        HemoCapabilityAccess.getBloodTendency(mc.player).ifPresent(tendency -> {
-            Map<EnumBloodTendency, Float> affs = tendency.getTendency();
-            float rotAngle = -90f;
-            int outerRadius = (int)(210 * panZoom.zoom);
-            int innerRadius = (int)(54 * panZoom.zoom);
-            float spikeBaseWidth = 23.5f;
-            double valueDist = outerRadius / TENDENCY_VALUE_DISTANCE_DIVISOR;
-
-            for (EnumBloodTendency tend : EnumBloodTendency.values()) {
-                float affVal = Mth.clamp(affs.getOrDefault(tend, 0f), 0f, 1f);
-                int cx1 = screenX + (int)(Math.cos(Math.toRadians(rotAngle + spikeBaseWidth)) * innerRadius);
-                int cy1 = screenY + (int)(Math.sin(Math.toRadians(rotAngle + spikeBaseWidth)) * innerRadius);
-                int cx2 = screenX + (int)(Math.cos(Math.toRadians(rotAngle - spikeBaseWidth)) * innerRadius);
-                int cy2 = screenY + (int)(Math.sin(Math.toRadians(rotAngle - spikeBaseWidth)) * innerRadius);
-                double tipDist = (outerRadius - innerRadius) * affVal * 0.5 + innerRadius;
-                int lx = screenX + (int)(Math.cos(Math.toRadians(rotAngle)) * tipDist);
-                int ly = screenY + (int)(Math.sin(Math.toRadians(rotAngle)) * tipDist);
-                int displace = (int)((Math.max(cx1, cx2) - Math.min(cx1, cx2)
-                        + Math.max(cy1, cy2) - Math.min(cy1, cy2)) / 2f);
-                HLGuiUtils.fracLine(gfx.pose(), lx, ly, cx1, cy1, 10, tend.getColor(), displace, 1.1);
-                HLGuiUtils.fracLine(gfx.pose(), lx, ly, cx2, cy2, 10, tend.getColor(), displace, 1.1);
-                HLGuiUtils.fracLine(gfx.pose(), cx1, cy1, lx, ly, 10, tend.getColor(), displace, 0.8);
-                HLGuiUtils.fracLine(gfx.pose(), cx2, cy2, lx, ly, 10, tend.getColor(), displace, 0.8);
-                int valueX = screenX + (int)(Math.cos(Math.toRadians(rotAngle)) * valueDist);
-                int valueY = screenY + (int)(Math.sin(Math.toRadians(rotAngle)) * valueDist);
-                int tendColor = ALPHA_OPAQUE_MASK | tend.getColor().getColor();
-                gfx.drawCenteredString(ctx.font(), String.valueOf(tendency.getAlignmentByTendency(tend)),
-                        valueX, valueY - TENDENCY_VALUE_VERTICAL_OFFSET, tendColor);
-                rotAngle += 45f;
-            }
-        });
+        TendencyStarRenderer.draw(gfx, ctx, panZoom, manipRingCenterX, manipRingCenterY);
     }
 	private float animTime = 0f;
 
@@ -699,6 +655,11 @@ public class ManipulationsTabController implements IProgressTab {
     @Override public boolean mouseScrolled(ProgressScreenContext ctx, double mx, double my, double delta) { return false; }
 
     @Override public PanZoomState getPanZoomState() { return panZoom; }
+    @Override public boolean closeDetails() {
+        if (selectedEntry == null) return false;
+        selectedEntry = null;
+        return true;
+    }
     public int getContentW() { return contentW; }
     public int getContentH() { return contentH; }
 }

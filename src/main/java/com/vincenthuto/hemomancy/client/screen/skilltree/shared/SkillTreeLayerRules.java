@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.client.screen.skilltree.shared;
 
+import com.vincenthuto.hemomancy.client.screen.skilltree.util.ConcentricTreeGeometry;
 import net.minecraft.util.Mth;
 
 public final class SkillTreeLayerRules {
@@ -20,6 +21,17 @@ public final class SkillTreeLayerRules {
 
 	public static boolean isDeepUnlocked(int playerDegree) {
 		return playerDegree >= DIVE_UNLOCK_DEGREE;
+	}
+
+	/** Gives both layers the same compact concentric footprint used by the Skills view. */
+	public static int ringRadiusForDegree(int degree, SkillTreeLayer layer) {
+		int radialDegree = layer == SkillTreeLayer.DEEP ? degree - SURFACE_MAX_DEGREE : degree;
+		return ConcentricTreeGeometry.radiusForDegree(radialDegree);
+	}
+
+	public static int outerRingRadius(SkillTreeLayer layer) {
+		int outerDegree = layer == SkillTreeLayer.DEEP ? 8 : SURFACE_MAX_DEGREE;
+		return ringRadiusForDegree(outerDegree, layer);
 	}
 
 	public static float diveProgress(int playerDegree, float zoom, float centerFocus) {

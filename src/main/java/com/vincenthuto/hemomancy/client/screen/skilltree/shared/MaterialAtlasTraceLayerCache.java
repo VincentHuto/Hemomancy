@@ -1,36 +1,22 @@
 package com.vincenthuto.hemomancy.client.screen.skilltree.shared;
 
 import com.mojang.blaze3d.platform.NativeImage;
-import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.PoseStack;
-import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.client.screen.skilltree.util.PanZoomState;
 import com.vincenthuto.hemomancy.client.screen.skilltree.util.ProgressScreenContext;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.renderer.texture.DynamicTexture;
-import net.minecraft.resources.ResourceLocation;
 
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicInteger;
 
 final class MaterialAtlasTraceLayerCache {
-	private static final AtomicInteger NEXT_ID = new AtomicInteger();
 	private static final int TRACE_NODE_TRIM_RADIUS = 12;
 	private static final double TRACE_ORGANIC_SWAY_MIN = 10.0;
 	private static final double TRACE_ORGANIC_SWAY_MAX = 22.0;
 	private static final double TRACE_ORGANIC_SWAY_FACTOR = 0.09;
 
-	private final int textureId = NEXT_ID.incrementAndGet();
-	private final ResourceLocation textureLocation = Hemomancy.rloc("dynamic/material_atlas_trace_layer_" + textureId);
-
-	private DynamicTexture texture;
-	private String signature = "";
-	private int textureW;
-	private int textureH;
+	private final StaticTraceLayerTexture texture = new StaticTraceLayerTexture("material_atlas_trace_layer");
 
 	void rebuildIfNeeded(List<MaterialAtlasNode> nodes,
 			Map<MaterialAtlasNode, int[]> nodePositions,
@@ -39,14 +25,8 @@ final class MaterialAtlasTraceLayerCache {
 			int hubX,
 			int hubY) {
 		String nextSignature = buildSignature(nodes, nodePositions, contentW, contentH, hubX, hubY);
-		if (nextSignature.equals(signature) && texture != null) {
-			return;
-		}
-
-		signature = nextSignature;
-		textureW = Math.max(1, contentW);
-		textureH = Math.max(1, contentH);
-		NativeImage image = new NativeImage(textureW, textureH, false);
+		if (!texture.needsRebuild(nextSignature, contentW, contentH)) return;
+		NativeImage image = texture.createImage();
 		clearImage(image);
 
 		for (MaterialAtlasNode node : sortedNodes(nodes)) {
@@ -66,43 +46,11 @@ final class MaterialAtlasTraceLayerCache {
 			}
 		}
 
-		upload(image);
+		texture.upload(image);
 	}
 
 	void render(GuiGraphics gfx, ProgressScreenContext ctx, PanZoomState panZoom) {
-		if (texture == null) {
-			return;
-		}
-		RenderSystem.enableBlend();
-		RenderSystem.defaultBlendFunc();
-		RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
-		PoseStack pose = gfx.pose();
-		pose.pushPose();
-		pose.translate(ctx.guiLeft() + panZoom.panX, ctx.guiTop() + panZoom.panY, 0);
-		pose.scale(panZoom.zoom, panZoom.zoom, 1.0F);
-		gfx.blit(textureLocation, 0, 0, 0, 0, textureW, textureH, textureW, textureH);
-		pose.popPose();
-		RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
-		RenderSystem.disableBlend();
-	}
-
-	private void upload(NativeImage image) {
-		if (texture == null || texture.getPixels() == null
-				|| texture.getPixels().getWidth() != textureW
-				|| texture.getPixels().getHeight() != textureH) {
-			texture = new DynamicTexture(image);
-			Minecraft.getInstance().getTextureManager().register(textureLocation, texture);
-			return;
-		}
-
-		NativeImage target = texture.getPixels();
-		for (int y = 0; y < textureH; y++) {
-			for (int x = 0; x < textureW; x++) {
-				target.setPixelRGBA(x, y, image.getPixelRGBA(x, y));
-			}
-		}
-		texture.upload();
-		image.close();
+		texture.render(gfx, ctx, panZoom);
 	}
 
 	private static String buildSignature(List<MaterialAtlasNode> nodes,

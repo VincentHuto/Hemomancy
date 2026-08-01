@@ -15,6 +15,19 @@ public final class CardinalRiteRecipeDataTest {
 		sanguineInitiationHasNoDegreeRequirement();
 		votaryRiteUsesLayeredStation();
 		sanguineInitiationAndVotaryRemainDistinct();
+		cardinalRiteMediaAreAuthoredInRecipes();
+	}
+
+	private static void cardinalRiteMediaAreAuthoredInRecipes() throws IOException {
+		assertContains("sanguine initiation medium",
+				read("hemomancy/recipe/cardinal_rite/sanguine_initiation.json"),
+				"\"medium\":");
+		assertContains("votary medium", read("hemomancy/recipe/cardinal_rite/votary_rite.json"),
+				"\"item\": \"minecraft:iron_nugget\"");
+		assertContains("bloom medium", read("hemomancy/recipe/cardinal_rite/bloom_of_qliphoth.json"),
+				"\"item\": \"hemomancy:qliphoth_seed\"");
+		assertContains("founding fane medium", read("hemomancy/recipe/cardinal_rite/founding_fane.json"),
+				"\"item\": \"hemomancy:sanguine_quintessence\"");
 	}
 
 	private static void sanguineInitiationHasNoDegreeRequirement() throws IOException {

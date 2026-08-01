@@ -385,6 +385,25 @@ public class UnstainedProgressScreen extends Screen {
 		return true;
 	}
 
+	@Override
+	public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
+		IProgressTab detailTab = activeDetailTab();
+		if (detailTab != null) {
+			if (detailTab.keyPressed(makeContext(), keyCode, scanCode, modifiers)) return true;
+			if (ProgressDetailKeyHandler.handle(keyCode, detailTab::closeDetails)) return true;
+		}
+		return super.keyPressed(keyCode, scanCode, modifiers);
+	}
+
+	private IProgressTab activeDetailTab() {
+		return switch (activeTab) {
+			case RITES -> ritesTab;
+			case CRAFTING -> craftingTab;
+			case MATERIALS -> materialsTab;
+			case PROGRESS -> null;
+		};
+	}
+
 	// ────────────────────────────────────────────────────────────
 	//  Render
 	// ────────────────────────────────────────────────────────────

@@ -1,7 +1,7 @@
 import { createServer, type IncomingMessage, type ServerResponse } from 'node:http';
 import { existsSync, readFileSync } from 'node:fs';
 import { extname, join } from 'node:path';
-import type { ManipulationPreviewRequest, MaterialAtlasPreviewRequest, PreviewRequest } from '../shared/types';
+import type { ManipulationPreviewRequest, MaterialAtlasPreviewRequest, PreviewRequest, RecipeMapPreviewRequest, ScarTreePreviewRequest } from '../shared/types';
 import {
   applyPreview,
   defaultRepoRoot,
@@ -11,6 +11,8 @@ import {
 } from './workspace';
 import { loadManipulationWorkspace, previewManipulationWorkspaceChanges } from './manipulationWorkspace';
 import { loadMaterialAtlasWorkspace, previewMaterialAtlasWorkspaceChanges } from './materialAtlasWorkspace';
+import { loadRecipeMapWorkspace, previewRecipeMapWorkspaceChanges } from './recipeMapWorkspace';
+import { loadScarTreeWorkspace, previewScarTreeWorkspaceChanges } from './scarTreeWorkspace';
 
 const repoRoot = process.env.HEMO_REPO_ROOT ?? defaultRepoRoot();
 const port = Number(process.env.SKILL_TREE_API_PORT ?? 5185);
@@ -28,8 +30,16 @@ const server = createServer(async (req, res) => {
       return send(res, 200, await loadManipulationWorkspace(repoRoot));
     }
 
+    if (req.method === 'GET' && url.pathname === '/api/scars') {
+      return send(res, 200, await loadScarTreeWorkspace(repoRoot));
+    }
+
     if (req.method === 'GET' && url.pathname === '/api/materials') {
       return send(res, 200, await loadMaterialAtlasWorkspace(repoRoot));
+    }
+
+    if (req.method === 'GET' && url.pathname === '/api/recipe-maps') {
+      return send(res, 200, await loadRecipeMapWorkspace(repoRoot));
     }
 
     if (req.method === 'POST' && url.pathname === '/api/preview') {
@@ -40,8 +50,16 @@ const server = createServer(async (req, res) => {
       return send(res, 200, await previewManipulationWorkspaceChanges(repoRoot, await readJson(req) as ManipulationPreviewRequest));
     }
 
+    if (req.method === 'POST' && url.pathname === '/api/scars/preview') {
+      return send(res, 200, await previewScarTreeWorkspaceChanges(repoRoot, await readJson(req) as ScarTreePreviewRequest));
+    }
+
     if (req.method === 'POST' && url.pathname === '/api/materials/preview') {
       return send(res, 200, await previewMaterialAtlasWorkspaceChanges(repoRoot, await readJson(req) as MaterialAtlasPreviewRequest));
+    }
+
+    if (req.method === 'POST' && url.pathname === '/api/recipe-maps/preview') {
+      return send(res, 200, await previewRecipeMapWorkspaceChanges(repoRoot, await readJson(req) as RecipeMapPreviewRequest));
     }
 
     if (req.method === 'POST' && url.pathname === '/api/apply') {

@@ -7,6 +7,9 @@
   "riteDescription": "The second rite of the Hematic Order, binding the practitioner deeper into the Covenant.",
   "rankup": true,
   "floor": "hemomancy:threshold_lesser",
+  "medium": {
+    "item": "minecraft:iron_nugget"
+  },
   "required_structure": {
     "pattern": [
       [

@@ -180,6 +180,30 @@ small {
   padding: 0 12px 18px;
 }
 
+.scar-family {
+  margin-bottom: 14px;
+}
+
+.scar-family h3 {
+  margin: 0 0 6px;
+  padding: 0 4px;
+  font-size: 11px;
+  letter-spacing: 0.12em;
+}
+
+.scar-family .skill-button {
+  margin-bottom: 5px;
+}
+
+.scar-tendency-star {
+  pointer-events: none;
+}
+
+.scar-edge {
+  stroke-width: 4px;
+  opacity: 0.86;
+}
+
 .main {
   min-width: 0;
   background: #151312;
@@ -663,6 +687,43 @@ small {
 
 .material-node image {
   pointer-events: none;
+}
+
+.recipe-map-family-heading {
+  padding: 12px 4px 5px;
+  color: #d99d91;
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.recipe-map-node-label {
+  fill: #e8d5cd;
+  font: 10px/1 "Cascadia Code", Consolas, monospace;
+  font-weight: 800;
+  text-anchor: middle;
+  paint-order: stroke;
+  stroke: #090102;
+  stroke-width: 3px;
+  pointer-events: none;
+}
+
+.recipe-map-link {
+  fill: none;
+  stroke-linecap: round;
+  stroke-width: 2.2px;
+  opacity: 0.58;
+}
+
+.recipe-map-link.progression {
+  stroke: #efb14c;
+  stroke-width: 3px;
+}
+
+.recipe-map-link.conceptual {
+  stroke: #b63a36;
+  stroke-dasharray: 7 5;
 }
 
 .badge {

@@ -1,18 +1,30 @@
 package com.vincenthuto.hemomancy.gametest;
 
 import com.mojang.authlib.GameProfile;
+import com.google.gson.JsonParser;
+import com.mojang.serialization.JsonOps;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.init.EntityInit;
+import com.vincenthuto.hemomancy.common.init.BlockInit;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
+import com.vincenthuto.hemomancy.common.init.RecipeInit;
+import com.vincenthuto.hemomancy.common.recipe.CardinalRiteRecipe;
+import com.vincenthuto.hemomancy.common.recipe.serializer.CardinalRiteRecipeSerializer;
 import com.vincenthuto.hemomancy.common.rite.CardinalRiteStaffEscrow;
+import io.netty.buffer.Unpooled;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
+import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ClientInformation;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.resources.RegistryOps;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ContainerListener;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.item.crafting.Ingredient;
 import net.neoforged.neoforge.gametest.GameTestHolder;
 import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 
@@ -60,6 +72,179 @@ public final class HarbingerPilotGameTests {
 	@GameTest(templateNamespace = "minecraft", template = EMPTY_TEMPLATE, timeoutTicks = 40)
 	public static void sanguineInitiationDegreeMapping(GameTestHelper helper) {
 		runScenario(helper, "sanguine_initiation_degree_mapping");
+	}
+
+	@GameTest(templateNamespace = "minecraft", template = EMPTY_TEMPLATE, timeoutTicks = 40)
+	public static void cardinalRiteMediaLoaded(GameTestHelper helper) {
+		runScenario(helper, "cardinal_rite_media_loaded");
+	}
+
+	@GameTest(templateNamespace = "minecraft", template = EMPTY_TEMPLATE, timeoutTicks = 40)
+	public static void cardinalRiteMediumSerializerSupportsTagsAndNetwork(GameTestHelper helper) {
+		CardinalRiteRecipeSerializer serializer = (CardinalRiteRecipeSerializer)
+				RecipeInit.cardinal_rite_recipe_serializer.get();
+		var ops = RegistryOps.create(JsonOps.INSTANCE, helper.getLevel().registryAccess());
+		String base = """
+				{"id":"hemomancy:cardinal_rite/medium_codec_test","bloodCost":0,
+				 "riteType":"minor","riteName":"Medium Test","riteDescription":"",
+				 "required_degree":0,"unstained":true,"floor":"hemomancy:dominion_minor"%s}
+				""";
+		try {
+			CardinalRiteRecipe tagged = serializer.codec().codec().parse(ops,
+					JsonParser.parseString(base.formatted(",\"medium\":{\"tag\":\"minecraft:planks\"}")))
+					.getOrThrow(message -> new IllegalStateException(message));
+			helper.assertTrue(tagged.getMedium().test(new ItemStack(Items.OAK_PLANKS)),
+					"A tag-authored medium must match an item in that tag");
+
+			CardinalRiteRecipe absent = serializer.codec().codec().parse(ops,
+					JsonParser.parseString(base.formatted("")))
+					.getOrThrow(message -> new IllegalStateException(message));
+			helper.assertTrue(!absent.hasMedium(), "The medium field must remain optional");
+
+			var invalid = serializer.codec().codec().parse(ops,
+					JsonParser.parseString(base.formatted(",\"medium\":{}")));
+			helper.assertTrue(invalid.error().isPresent(), "An empty medium definition must be rejected");
+
+			RegistryFriendlyByteBuf buffer = new RegistryFriendlyByteBuf(
+					Unpooled.buffer(), helper.getLevel().registryAccess());
+			serializer.streamCodec().encode(buffer, tagged);
+			CardinalRiteRecipe decoded = serializer.streamCodec().decode(buffer);
+			helper.assertTrue(decoded.getMedium().test(new ItemStack(Items.OAK_PLANKS)),
+					"The recipe stream codec must preserve a tag-authored medium");
+			helper.succeed();
+		} catch (RuntimeException exception) {
+			helper.fail("Cardinal Rite medium serializer contract failed: " + exception);
+		}
+	}
+
+	@GameTest(templateNamespace = "minecraft", template = EMPTY_TEMPLATE, timeoutTicks = 40)
+	public static void cardinalFocusStoresOneMediumItem(GameTestHelper helper) {
+		BlockPos pos = helper.absolutePos(new BlockPos(1, 1, 1));
+		helper.getLevel().setBlock(pos, BlockInit.cardinal_focus.get().defaultBlockState(), 3);
+		Object focus = helper.getLevel().getBlockEntity(pos);
+		ServerPlayer player = detachedTestPlayer(helper);
+		try {
+			var insert = focus.getClass().getMethod("insertMedium", net.minecraft.world.entity.player.Player.class,
+					ItemStack.class);
+			var display = focus.getClass().getMethod("getMediumDisplayStack");
+			var extract = focus.getClass().getMethod("extractMedium");
+
+			ItemStack iron = new ItemStack(Items.IRON_NUGGET, 3);
+			helper.assertTrue((boolean) insert.invoke(focus, player, iron), "The empty Focus must accept a medium");
+			helper.assertTrue(iron.getCount() == 2, "Survival insertion must move exactly one held item");
+			ItemStack seated = (ItemStack) display.invoke(focus);
+			helper.assertTrue(seated.is(Items.IRON_NUGGET) && seated.getCount() == 1,
+					"The Focus must store exactly one medium item");
+
+			ItemStack gold = new ItemStack(Items.GOLD_NUGGET, 2);
+			helper.assertTrue(!(boolean) insert.invoke(focus, player, gold),
+					"An occupied Focus must reject another medium");
+			helper.assertTrue(gold.getCount() == 2, "Rejected insertion must not consume an item");
+			helper.assertTrue(((ItemStack) extract.invoke(focus)).is(Items.IRON_NUGGET),
+					"Extraction must return the seated medium");
+
+			player.getAbilities().instabuild = true;
+			helper.assertTrue((boolean) insert.invoke(focus, player, gold),
+					"The emptied Focus must accept a creative player's medium");
+			helper.assertTrue(gold.getCount() == 2,
+					"Creative insertion must not shrink the held stack");
+			var focusEntity = (com.vincenthuto.hemomancy.common.tile.functional.CardinalFocusBlockEntity) focus;
+			var restored = new com.vincenthuto.hemomancy.common.tile.functional.CardinalFocusBlockEntity(
+					pos, helper.getLevel().getBlockState(pos));
+			restored.handleUpdateTag(focusEntity.getUpdateTag(helper.getLevel().registryAccess()),
+					helper.getLevel().registryAccess());
+			helper.assertTrue(restored.getMediumForMatching().is(Items.GOLD_NUGGET),
+					"The synchronized Focus update tag must preserve its one-item medium");
+			helper.succeed();
+		} catch (ReflectiveOperationException exception) {
+			helper.fail("Cardinal Focus medium storage API is missing: " + exception);
+		} finally {
+			player.discard();
+		}
+	}
+
+	@GameTest(templateNamespace = "minecraft", template = EMPTY_TEMPLATE, timeoutTicks = 40)
+	public static void cardinalRiteMediumMatchingIsExact(GameTestHelper helper) {
+		try {
+			Class<?> rules = Class.forName("com.vincenthuto.hemomancy.common.rite.CardinalRiteMediumRules");
+			var matches = rules.getMethod("matches", Ingredient.class, ItemStack.class);
+			var votary = com.vincenthuto.hemomancy.common.recipe.CardinalRiteRecipe.getRiteByLocation(
+					helper.getLevel(), Hemomancy.rloc("cardinal_rite/votary_rite"));
+			var initiate = com.vincenthuto.hemomancy.common.recipe.CardinalRiteRecipe.getRiteByLocation(
+					helper.getLevel(), Hemomancy.rloc("cardinal_rite/initiate_rite"));
+			helper.assertTrue(votary != null && initiate != null, "Medium-matching fixture recipes must load");
+			helper.assertTrue((boolean) matches.invoke(null, votary.getMedium(), new ItemStack(Items.IRON_NUGGET)),
+					"The authored iron medium must match");
+			helper.assertTrue(!(boolean) matches.invoke(null, votary.getMedium(), new ItemStack(Items.GOLD_NUGGET)),
+					"A different seated item must not match");
+			helper.assertTrue((boolean) matches.invoke(null, initiate.getMedium(), ItemStack.EMPTY),
+					"A recipe without a medium must match an empty Focus");
+			helper.assertTrue(!(boolean) matches.invoke(null, initiate.getMedium(), new ItemStack(Items.IRON_NUGGET)),
+					"A recipe without a medium must reject an occupied Focus");
+			helper.succeed();
+		} catch (ReflectiveOperationException exception) {
+			helper.fail("Cardinal Rite medium matching rules are missing: " + exception);
+		}
+	}
+
+	@GameTest(templateNamespace = "minecraft", template = EMPTY_TEMPLATE, timeoutTicks = 40)
+	public static void cardinalRiteMediumConsumptionIsAtomic(GameTestHelper helper) {
+		BlockPos pos = helper.absolutePos(new BlockPos(1, 1, 1));
+		helper.getLevel().setBlock(pos, BlockInit.cardinal_focus.get().defaultBlockState(), 3);
+		var focus = (com.vincenthuto.hemomancy.common.tile.functional.CardinalFocusBlockEntity)
+				helper.getLevel().getBlockEntity(pos);
+		ServerPlayer player = detachedTestPlayer(helper);
+		try {
+			var recipe = com.vincenthuto.hemomancy.common.recipe.CardinalRiteRecipe.getRiteByLocation(
+					helper.getLevel(), Hemomancy.rloc("cardinal_rite/votary_rite"));
+			var consume = Class.forName("com.vincenthuto.hemomancy.common.rite.CardinalRiteMediumRules")
+					.getMethod("consume",
+							com.vincenthuto.hemomancy.common.tile.functional.CardinalFocusBlockEntity.class,
+							Ingredient.class);
+			helper.assertTrue(recipe != null, "Votary medium fixture recipe must load");
+
+			focus.insertMedium(player, new ItemStack(Items.GOLD_NUGGET));
+			helper.assertTrue(!(boolean) consume.invoke(null, focus, recipe.getMedium()),
+					"A mismatched medium must not be consumed");
+			helper.assertTrue(focus.getMediumForMatching().is(Items.GOLD_NUGGET),
+					"A failed consumption must leave the seated medium intact");
+
+			focus.extractMedium();
+			focus.insertMedium(player, new ItemStack(Items.IRON_NUGGET));
+			helper.assertTrue((boolean) consume.invoke(null, focus, recipe.getMedium()),
+					"The matching medium must be consumed");
+			helper.assertTrue(!focus.hasMedium(), "Successful consumption must empty the Focus");
+
+			focus.insertMedium(player, new ItemStack(Items.GOLD_NUGGET));
+			helper.assertTrue(!(boolean) consume.invoke(null, focus, Ingredient.EMPTY),
+					"A recipe without a medium must fail atomically when the Focus is occupied");
+			helper.assertTrue(focus.getMediumForMatching().is(Items.GOLD_NUGGET),
+					"Unexpected media must remain recoverable after failed completion validation");
+			focus.extractMedium();
+			helper.assertTrue((boolean) consume.invoke(null, focus, Ingredient.EMPTY),
+					"A recipe without a medium must validate an empty Focus");
+			helper.succeed();
+		} catch (ReflectiveOperationException exception) {
+			helper.fail("Atomic Cardinal Rite medium consumption is missing: " + exception);
+		} finally {
+			player.discard();
+		}
+	}
+
+	@GameTest(templateNamespace = "minecraft", template = EMPTY_TEMPLATE, timeoutTicks = 40)
+	public static void cardinalFocusSelectsQliphothRootVisualsOnlyForSeedMedium(GameTestHelper helper) {
+		try {
+			Class<?> rules = Class.forName(
+					"com.vincenthuto.hemomancy.common.rite.CardinalFocusMediumVisualRules");
+			var emitsRoots = rules.getMethod("emitsQliphothRoots", ItemStack.class);
+			helper.assertTrue((boolean) emitsRoots.invoke(null, new ItemStack(ItemInit.qliphoth_seed.get())),
+					"A seated Qliphoth Seed must enable its root tendril visual");
+			helper.assertTrue(!(boolean) emitsRoots.invoke(null, new ItemStack(Items.IRON_NUGGET)),
+					"Other Cardinal Focus media must not emit Qliphoth roots");
+			helper.succeed();
+		} catch (ReflectiveOperationException exception) {
+			helper.fail("Cardinal Focus Qliphoth medium visual selection is missing: " + exception);
+		}
 	}
 
 	@GameTest(templateNamespace = "minecraft", template = EMPTY_TEMPLATE, timeoutTicks = 40)

@@ -45,11 +45,12 @@ public final class BloodlineScreenRegressionSourceTest {
 				"player.server.getAllLevels()");
 		assertContains("founding fane validation rejects an already-active fane", foundingFaneGate,
 				"hasActiveFane(player, bloodline.getLeaderUUID())");
-		assertOrder("founding fane activation gate runs before catalyst validation", bloodCraftPacket,
-				"canStartFoundingFane(serverPlayer, centerPos)",
-				"hasCatalystWithinMatch(sLevel, match, bp, ItemInit.sanguine_quintessence.get())");
-		assertNotContains("interactive catalyst is not consumed until altar sealing", bloodCraftPacket,
-				"consumeCatalystWithinMatch");
+		assertContains("cardinal activation validates the recipe-authored Focus medium", bloodCraftPacket,
+				"focusMediumMatches(sLevel, centerPos, recipe)");
+		assertNotContains("founding fane no longer searches for loose catalysts", bloodCraftPacket,
+				"hasCatalystWithinMatch");
+		assertNotContains("activation does not consume the seated medium", bloodCraftPacket,
+				"consumeMedium(");
 		assertContains("bloodline pool screen defines screen padding", poolScreen, "SCREEN_PADDING");
 		assertContains("bloodline pool screen calculates fit scale", poolScreen, "fitScale");
 		assertContains("bloodline pool screen stores scaled panel width", poolScreen, "currentGuiWidth");

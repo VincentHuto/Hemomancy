@@ -16,11 +16,13 @@ import com.vincenthuto.hemomancy.common.recipe.PuppeteerTrialRecipe;
 import com.vincenthuto.hemomancy.common.recipe.RecipeDegreeGates;
 import com.vincenthuto.hemomancy.common.rite.ActiveCardinalRite;
 import com.vincenthuto.hemomancy.common.rite.CardinalRiteSavedData;
+import com.vincenthuto.hemomancy.common.rite.CardinalRiteMediumRules;
 import com.vincenthuto.hemomancy.common.rite.CardinalRiteStationMatcher;
 import com.vincenthuto.hemomancy.common.rite.CardinalRiteStaffEscrow;
 import com.vincenthuto.hemomancy.common.rite.harbinger.CardinalRiteActivationRules;
 import com.vincenthuto.hemomancy.common.summon.PuppeteerSummonDefinitions;
 import com.vincenthuto.hemomancy.common.summon.PuppeteerSummonFactory;
+import com.vincenthuto.hemomancy.common.tile.functional.CardinalFocusBlockEntity;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -36,9 +38,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.pattern.BlockPattern;
 import net.minecraft.world.phys.AABB;
@@ -54,14 +54,9 @@ public class BloodCraftingKeyPressPacket implements CustomPacketPayload {
 
 	public static final Type<BloodCraftingKeyPressPacket> TYPE = new Type<>(Hemomancy.rloc("blood_crafting_key_press_packet"));
 	public static final StreamCodec<FriendlyByteBuf, BloodCraftingKeyPressPacket> STREAM_CODEC = StreamCodec.of(BloodCraftingKeyPressPacket::encode, BloodCraftingKeyPressPacket::decode);
-	private static final ResourceLocation BLOOM_OF_QLIPHOTH_RITE_ID = Hemomancy.rloc("cardinal_rite/bloom_of_qliphoth");
 	private static final ResourceLocation FOUNDING_FANE_RITE_ID = Hemomancy.rloc("cardinal_rite/founding_fane");
 	private static final ResourceLocation APOTHEOS_RITE_ID = Hemomancy.rloc("cardinal_rite/apotheos_rite");
 	private static final Direction[] SEARCH_DIRECTIONS = Direction.values();
-	private static final double CATALYST_SEARCH_RADIUS_XZ = 0.65;
-	private static final double CATALYST_SEARCH_RADIUS_Y = 1.0;
-	private static final double BLOOM_CATALYST_MATCH_INFLATE_XZ = 0.5;
-	private static final double BLOOM_CATALYST_MATCH_INFLATE_Y = 1.0;
 	public static BloodCraftingKeyPressPacket decode(final FriendlyByteBuf buffer) {
 		buffer.readByte();
 		return new BloodCraftingKeyPressPacket(ItemStack.OPTIONAL_STREAM_CODEC.decode((RegistryFriendlyByteBuf) buffer));
@@ -541,18 +536,15 @@ public class BloodCraftingKeyPressPacket implements CustomPacketPayload {
 					return CardinalRiteActivationRules.ActivationAttempt.HANDLED;
 				}
 
-				// Bloom of the Qliphoth requires a planted Qliphoth Seed catalyst at center
-				if (BLOOM_OF_QLIPHOTH_RITE_ID.equals(recipe.getId())) {
-					if (!hasCatalystWithinMatch(sLevel, match, bp, ItemInit.qliphoth_seed.get())) {
-						player.displayClientMessage(
-								Component.literal("The Bloom of the Qliphoth demands a planted Qliphoth Seed within the rite.")
-										.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC),
-								false);
-						return CardinalRiteActivationRules.ActivationAttempt.HANDLED;
-					}
+				if (recipe.hasLayeredStation() && !focusMediumMatches(sLevel, centerPos, recipe)) {
+					player.displayClientMessage(Component.literal(recipe.hasMedium()
+								? "Seat the rite's required medium in the Cardinal Focus."
+								: "Remove the unexpected medium from the Cardinal Focus.")
+							.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC), false);
+					return CardinalRiteActivationRules.ActivationAttempt.HANDLED;
 				}
 
-				// Founding Fane requires a Consecrated Bloodwell heart and a Sanguine Quintessence catalyst.
+				// Founding Fane also requires a Consecrated Bloodwell heart.
 				if (FOUNDING_FANE_RITE_ID.equals(recipe.getId())) {
 					if (!canStartFoundingFane(serverPlayer, centerPos)) {
 						return CardinalRiteActivationRules.ActivationAttempt.HANDLED;
@@ -564,27 +556,9 @@ public class BloodCraftingKeyPressPacket implements CustomPacketPayload {
 							false);
 						return CardinalRiteActivationRules.ActivationAttempt.HANDLED;
 					}
-					if (!hasCatalystWithinMatch(sLevel, match, bp, ItemInit.sanguine_quintessence.get())) {
-						player.displayClientMessage(
-								Component.literal("The Founding Fane demands a Sanguine Quintessence within the rite.")
-										.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC),
-								false);
-						return CardinalRiteActivationRules.ActivationAttempt.HANDLED;
-					}
 				}
 
 				// Start the rite
-				if (recipe.hasInteractiveCeremony()
-						&& "hematic_medium".equals(recipe.getCeremony().focusMode())) {
-					if (!(sLevel.getBlockEntity(centerPos)
-							instanceof com.vincenthuto.hemomancy.common.tile.functional.CardinalFocusBlockEntity focus)
-							|| !focus.consumeMedium(player.getUUID())) {
-						player.displayClientMessage(Component.literal(
-										"Seat an iron nugget in the Cardinal Focus before beginning this rite.")
-								.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC), false);
-						return CardinalRiteActivationRules.ActivationAttempt.HANDLED;
-					}
-				}
 				int castingDuration = recipe.hasInteractiveCeremony()
 						? recipe.getCeremony().targetDurationTicks()
 						: recipe.getRiteType().getCastingDurationTicks();
@@ -788,31 +762,9 @@ public class BloodCraftingKeyPressPacket implements CustomPacketPayload {
 				thumbNormal.getZ() * heightOffset - palmZ * widthOffset - fingerNormal.getZ() * depthOffset);
 	}
 
-	private static boolean consumeCenterCatalyst(ServerLevel level, BlockPos centerPos, Item requiredItem) {
-		AABB centerBox = new AABB(centerPos).inflate(CATALYST_SEARCH_RADIUS_XZ, CATALYST_SEARCH_RADIUS_Y, CATALYST_SEARCH_RADIUS_XZ);
-		List<ItemEntity> entities = level.getEntitiesOfClass(ItemEntity.class, centerBox,
-				e -> e.isAlive() && e.getItem().is(requiredItem));
-		if (entities.isEmpty()) {
-			return false;
-		}
-		ItemEntity entity = entities.get(0);
-		ItemStack stack = entity.getItem();
-		stack.shrink(1);
-		if (stack.isEmpty()) {
-			entity.discard();
-		} else {
-			entity.setItem(stack);
-		}
-		return true;
-	}
-
-	private static boolean hasCatalystWithinMatch(ServerLevel level, BlockPattern.BlockPatternMatch match,
-			BlockPattern blockPattern, Item requiredItem) {
-		AABB matchBounds = getMatchBounds(match, blockPattern).inflate(
-				BLOOM_CATALYST_MATCH_INFLATE_XZ, BLOOM_CATALYST_MATCH_INFLATE_Y,
-				BLOOM_CATALYST_MATCH_INFLATE_XZ);
-		return !level.getEntitiesOfClass(ItemEntity.class, matchBounds,
-				entity -> entity.isAlive() && entity.getItem().is(requiredItem)).isEmpty();
+	private static boolean focusMediumMatches(ServerLevel level, BlockPos centerPos, CardinalRiteRecipe recipe) {
+		if (!(level.getBlockEntity(centerPos) instanceof CardinalFocusBlockEntity focus)) return false;
+		return CardinalRiteMediumRules.matches(recipe.getMedium(), focus.getMediumForMatching());
 	}
 
 	private static void clearMatchedPattern(ServerLevel level, BlockPattern.BlockPatternMatch match,

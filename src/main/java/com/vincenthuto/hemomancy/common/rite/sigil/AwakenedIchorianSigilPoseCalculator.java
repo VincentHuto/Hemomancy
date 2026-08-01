@@ -18,10 +18,16 @@ public final class AwakenedIchorianSigilPoseCalculator {
 
 	public static AwakenedIchorianSigilPose calculate(
 			IchorianSigilDefinition definition, float ageTicks, float movementSpeed) {
+		return calculate(definition, ageTicks, ageTicks, movementSpeed);
+	}
+
+	public static AwakenedIchorianSigilPose calculate(
+			IchorianSigilDefinition definition, float morphAgeTicks,
+			float animationAgeTicks, float movementSpeed) {
 		IchorianSigilAnatomy anatomy = definition.awakenedForm().orElseThrow();
-		float detachment = stage(ageTicks, 0, 10);
-		float migration = stage(ageTicks, 6, 32);
-		float quickening = stage(ageTicks, 18, 40);
+		float detachment = stage(morphAgeTicks, 0, 10);
+		float migration = stage(morphAgeTicks, 6, 32);
+		float quickening = stage(morphAgeTicks, 18, 40);
 		float extent = tierScale(definition.tier());
 		float radiusScale = radiusScale(definition.tier());
 		List<IchorianSigilAnatomy.Landmark> authored = anatomy.landmarks().stream()
@@ -34,12 +40,12 @@ public final class AwakenedIchorianSigilPoseCalculator {
 			Vec3 ground = normalizedGroundPosition(definition, source);
 			Vec3 target = targetPositions.get(source);
 			Vec3 position = ground.lerp(target, migration);
-			float wave = casteWave(anatomy.animation().style(), landmark, ageTicks);
+			float wave = casteWave(anatomy.animation().style(), landmark, animationAgeTicks);
 			double offset = wave * anatomy.animation().flex() * quickening * 0.08D;
 			position = position.add(offset * ((source & 1) == 0 ? 1 : -1),
 					offset * roleVertical(landmark.role()), offset * 0.45D);
 			position = position.add(flightArticulation(
-					anatomy.animation().style(), landmark, ageTicks,
+					anatomy.animation().style(), landmark, animationAgeTicks,
 					movementSpeed, extent).scale(quickening));
 			float radius = landmark.radius() * radiusScale
 					* (1.0F + wave * anatomy.animation().pulse() * quickening * 0.12F);

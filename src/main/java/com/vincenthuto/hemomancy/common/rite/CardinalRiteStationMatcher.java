@@ -6,6 +6,7 @@ import com.vincenthuto.hemomancy.common.recipe.CardinalRiteRecipe;
 import com.vincenthuto.hemomancy.common.rite.floor.CardinalRiteFloorDefinition;
 import com.vincenthuto.hemomancy.common.rite.floor.CardinalRiteFloorRegistry;
 import com.vincenthuto.hemomancy.common.tile.IronBrazierBlockEntity;
+import com.vincenthuto.hemomancy.common.tile.functional.CardinalFocusBlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
@@ -30,6 +31,7 @@ public final class CardinalRiteStationMatcher {
 		if (!recipe.hasLayeredStation() || !level.getBlockState(focusPos).is(BlockInit.cardinal_focus.get())) {
 			return Optional.empty();
 		}
+		if (!mediumMatches(level, focusPos, recipe)) return Optional.empty();
 		CardinalRiteFloorDefinition required = CardinalRiteFloorRegistry.get(recipe.getFloorId()).orElse(null);
 		if (required == null) return Optional.empty();
 
@@ -65,6 +67,7 @@ public final class CardinalRiteStationMatcher {
 		List<ResolvedRecipe> resolved = new ArrayList<>();
 		for (CardinalRiteRecipe recipe : recipes) {
 			if (!recipe.hasLayeredStation()) continue;
+			if (!mediumMatches(level, focusPos, recipe)) continue;
 			CardinalRiteFloorDefinition required = CardinalRiteFloorRegistry.get(recipe.getFloorId()).orElse(null);
 			if (required == null || !required.requirement().accepts(
 					actual.floor().style(), actual.floor().tier())) continue;
@@ -97,6 +100,7 @@ public final class CardinalRiteStationMatcher {
 	public static Optional<StationMatch> findCapturedStructure(ServerLevel level, BlockPos focusPos,
 			CardinalRiteRecipe recipe, net.minecraft.resources.ResourceLocation floorId,
 			Direction forwards, Direction up) {
+		if (!mediumMatches(level, focusPos, recipe)) return Optional.empty();
 		CardinalRiteFloorDefinition floor = CardinalRiteFloorRegistry.get(floorId).orElse(null);
 		if (floor == null || forwards == null || up == null) return Optional.empty();
 		BlockPos origin = originForCell(focusPos, forwards, up,
@@ -108,6 +112,12 @@ public final class CardinalRiteStationMatcher {
 				matchRequiredStructure(level, focusPos, floorMatch, recipe.getRequiredStructure());
 		if (recipe.getRequiredStructure() != null && structure == null) return Optional.empty();
 		return Optional.of(new StationMatch(floor, floorMatch, structure, List.of()));
+	}
+
+	public static boolean mediumMatches(ServerLevel level, BlockPos focusPos, CardinalRiteRecipe recipe) {
+		ItemStack seated = level.getBlockEntity(focusPos) instanceof CardinalFocusBlockEntity focus
+				? focus.getMediumForMatching() : ItemStack.EMPTY;
+		return CardinalRiteMediumRules.matches(recipe.getMedium(), seated);
 	}
 
 	private static BlockPattern.BlockPatternMatch matchFloorAtFocus(

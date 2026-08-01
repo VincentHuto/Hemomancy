@@ -5,6 +5,7 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.client.screen.skilltree.util.PanZoomState;
+import com.vincenthuto.hemomancy.client.screen.skilltree.util.ConcentricTreeGeometry;
 import com.vincenthuto.hemomancy.client.screen.skilltree.util.ProgressScreenContext;
 import com.vincenthuto.hemomancy.common.capability.player.shared.skill.EnumSkillStates;
 import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillPoint;
@@ -28,9 +29,9 @@ import java.util.concurrent.atomic.AtomicInteger;
 final class SkillTraceLayerCache {
     private static final AtomicInteger NEXT_ID = new AtomicInteger();
 
-    private static final int COMPASS_CENTER_X = 480;
-    private static final int COMPASS_CENTER_Y = 480;
-    private static final int[] DEGREE_RING_RADII = {72, 120, 170, 220, 270, 320, 370, 420, 470};
+    private static final int COMPASS_CENTER_X = ConcentricTreeGeometry.CENTER_X;
+    private static final int COMPASS_CENTER_Y = ConcentricTreeGeometry.CENTER_Y;
+    private static final int[] DEGREE_RING_RADII = ConcentricTreeGeometry.degreeRingRadii();
 
     private static final int TRACE_DEGREE_RING = 0x1858231F;
     private static final int TRACE_NODE_TRIM_RADIUS = 11;
@@ -80,7 +81,8 @@ final class SkillTraceLayerCache {
 
         for (int degree = 0; degree < DEGREE_RING_RADII.length; degree++) {
             if (layer != null && SkillTreeLayerRules.layerForDegree(degree) != layer) continue;
-            int radius = degreeRingRadius(degree, layer);
+            int radius = layer == null ? DEGREE_RING_RADII[degree]
+                    : SkillTreeLayerRules.ringRadiusForDegree(degree, layer);
             bakeDegreeRing(image, COMPASS_CENTER_X, COMPASS_CENTER_Y, radius, TRACE_DEGREE_RING);
             bakeDegreeRing(heartbeatImage, COMPASS_CENTER_X, COMPASS_CENTER_Y, radius, withAlpha(TRACE_DEGREE_RING, 24));
         }
@@ -93,6 +95,7 @@ final class SkillTraceLayerCache {
                 if (childPos == null) continue;
                 if (parentPos == null) {
                     if (!anchorMissingParents) continue;
+					if (layer != null && SkillTreeLayerRules.layerForDegree(parent.getRequiredDegree()) == layer) continue;
                     parentPos = new int[] {COMPASS_CENTER_X, COMPASS_CENTER_Y};
                 }
 
@@ -412,13 +415,6 @@ final class SkillTraceLayerCache {
             prevX = x;
             prevY = y;
         }
-    }
-
-    private static int degreeRingRadius(int degree, SkillTreeLayer layer) {
-        if (layer == SkillTreeLayer.DEEP) {
-            return 120 + Math.max(0, degree - SkillTreeLayerRules.DEEP_MIN_DEGREE) * 50;
-        }
-        return DEGREE_RING_RADII[Math.max(0, Math.min(DEGREE_RING_RADII.length - 1, degree))];
     }
 
     private static void bakeLine(NativeImage image, int x0, int y0, int x1, int y1, int color) {

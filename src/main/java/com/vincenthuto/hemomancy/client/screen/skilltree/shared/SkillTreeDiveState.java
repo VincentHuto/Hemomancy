@@ -48,6 +48,18 @@ public final class SkillTreeDiveState {
 		return true;
 	}
 
+	public boolean toggleLayer(int playerDegree) {
+		if (isDeepActive()) {
+			activeLayer = SkillTreeLayer.SURFACE;
+			startTransitionPulse(false);
+			return true;
+		}
+		if (!SkillTreeLayerRules.isDeepUnlocked(playerDegree)) return false;
+		activeLayer = SkillTreeLayer.DEEP;
+		startTransitionPulse(true);
+		return true;
+	}
+
 	public void resetToSurface() {
 		activeLayer = SkillTreeLayer.SURFACE;
 	}

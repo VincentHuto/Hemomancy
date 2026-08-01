@@ -304,6 +304,29 @@ public final class CraftingTabView {
 		pose.popPose();
 	}
 
+	public static void drawMapInspector(GuiGraphics gfx, ProgressScreenContext ctx, CraftingTabState state,
+			BloodStructureRecipe recipe, RecipeMapInspectorLayout layout, int mouseX, int mouseY) {
+		gfx.pose().pushPose();
+		gfx.pose().translate(0, 0, 500);
+		RecipeMapInspectorView.drawChrome(gfx, ctx, layout, 0xF20A0303, state.tabColor, mouseX, mouseY);
+		if (!layout.expanded()) {
+			gfx.pose().popPose();
+			return;
+		}
+		RecipeMapInspectorLayout.IntRect preview = layout.previewContent();
+		gfx.enableScissor(preview.left(), preview.top(), preview.right(), preview.bottom());
+		if (recipe != null) drawModel(gfx, state, preview.left(), preview.top(), preview.width(), preview.height(), recipe);
+		gfx.disableScissor();
+		RecipeMapInspectorView.drawPreviewControls(gfx, ctx, layout,
+				recipe == null ? 0 : state.craftingMaxLayer, state.craftingVisibleLayer,
+				state.tabColor, mouseX, mouseY);
+		if (recipe != null) {
+			RecipeMapInspectorLayout.IntRect info = layout.info().inset(10, 8, 10, 8);
+			drawInfoPanel(gfx, ctx, state, recipe, info.left(), info.top(), info.width());
+		}
+		gfx.pose().popPose();
+	}
+
 	private static boolean isSurfaceDecorationBlock(Block block) {
 		return block == BlockInit.engram_block.get()
 				|| block == BlockInit.befouling_ash_trail.get()

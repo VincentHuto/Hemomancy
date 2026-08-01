@@ -51,6 +51,7 @@ import com.vincenthuto.hemomancy.common.recipe.CardinalRiteRecipe;
 import com.vincenthuto.hemomancy.common.recipe.RecipeDegreeGates;
 import com.vincenthuto.hemomancy.common.rite.ActiveCardinalRite;
 import com.vincenthuto.hemomancy.common.rite.CardinalRiteSavedData;
+import com.vincenthuto.hemomancy.common.rite.CardinalRiteMediumRules;
 import com.vincenthuto.hemomancy.common.rite.CardinalRiteStationMatcher;
 import com.vincenthuto.hemomancy.common.rite.CardinalRiteStaffEscrow;
 import com.vincenthuto.hemomancy.common.rite.floor.CardinalRiteFloorRegistry;
@@ -69,6 +70,7 @@ import com.vincenthuto.hemomancy.common.rite.CardinalRitePhase;
 import com.vincenthuto.hemomancy.common.rite.unstained.UnstainedCardinalRiteEvents;
 import com.vincenthuto.hemomancy.common.worldgen.ChamberOfWillManager;
 import com.vincenthuto.hemomancy.common.worldgen.FungalGardenTravelHelper;
+import com.vincenthuto.hemomancy.common.tile.functional.CardinalFocusBlockEntity;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import com.vincenthuto.hutoslib.client.particle.factory.DarkGlowParticleFactory;
 import com.vincenthuto.hutoslib.client.particle.data.EmberParticleData;
@@ -307,8 +309,9 @@ public class HarbingerCardinalRiteEvents {
 					toRemove.add(playerUUID);
 					continue;
 				}
-				spawnHumanityDispersal(sLevel, caster);
-				completeRite(sLevel, caster, rite);
+				if (completeRite(sLevel, caster, rite)) {
+					spawnHumanityDispersal(sLevel, caster);
+				}
 				toRemove.add(playerUUID);
 			}
 		}
@@ -886,10 +889,10 @@ public class HarbingerCardinalRiteEvents {
 				if (sigil != null && (rite.isSigilAwakened(placement.progressKey())
 						|| rite.isSigilComplete(placement.progressKey(), sigil.nodes().size()))) complete++;
 			}
-			boolean catalystReady = recipe == null
-					|| CardinalRiteInteractionHandler.sealCatalystReady(level, rite, recipe);
+			boolean mediumReady = recipe == null
+					|| CardinalRiteInteractionHandler.sealMediumReady(level, rite, recipe);
 			return CardinalRiteChecklist.inscription(
-					supports.size(), complete, rite.getAllyRoles().size(), catalystReady);
+					supports.size(), complete, rite.getAllyRoles().size(), mediumReady);
 		}
 		if (rite.getPhase() == CardinalRitePhase.ORDEAL) {
 			String wave = rite.getCurrentWave() < rite.getWaveDeck().size()
@@ -1175,9 +1178,9 @@ public class HarbingerCardinalRiteEvents {
 		DEGREE_RITE_PATHS.put(APOTHEOS_RITE_PATH, 8);                   // Apotheos of the Hematic Order
 	}
 
-	private static void completeRite(ServerLevel sLevel, ServerPlayer caster, ActiveCardinalRite rite) {
+	private static boolean completeRite(ServerLevel sLevel, ServerPlayer caster, ActiveCardinalRite rite) {
 		CardinalRiteRecipe recipe = CardinalRiteRecipe.getRiteByLocation(sLevel, rite.getRecipeId());
-		if (recipe == null) return;
+		if (recipe == null) return false;
 
 		if (!RecipeDegreeGates.playerMeets(caster, recipe)) {
 			String requirement = RecipeDegreeGates.requirementLabel(recipe);
@@ -1187,7 +1190,7 @@ public class HarbingerCardinalRiteEvents {
 							.append(Component.literal(requirement)
 									.withStyle(recipe.isUnstained() ? ChatFormatting.AQUA : ChatFormatting.GOLD, ChatFormatting.BOLD)),
 					false);
-			return;
+			return false;
 		}
 
 		if (isApotheosRite(recipe.getId()) && !hasQliphothCommunion(caster)) {
@@ -1195,7 +1198,7 @@ public class HarbingerCardinalRiteEvents {
 					Component.literal("The Eighth Degree remains sealed. Consume all nine Qliphoth husks from a single bloom.")
 							.withStyle(ChatFormatting.DARK_PURPLE, ChatFormatting.ITALIC),
 					false);
-			return;
+			return false;
 		}
 
 		if (isApotheosRite(recipe.getId()) && HemoCapabilityAccess.getInitiatoryDegree(caster)
@@ -1204,7 +1207,7 @@ public class HarbingerCardinalRiteEvents {
 			caster.displayClientMessage(Component.literal(
 					"Apotheosis has not been chosen. Witness the first projection and answer the truth it leaves behind.")
 					.withStyle(ChatFormatting.DARK_PURPLE, ChatFormatting.ITALIC), false);
-			return;
+			return false;
 		}
 
 		// Qliphoth Pome Corruption: at 9 pomes only the Pruning and Apotheosis rites may be cast
@@ -1218,7 +1221,7 @@ public class HarbingerCardinalRiteEvents {
 					Component.literal("The void has claimed your will \u2014 only one path remains, and one way back.")
 							.withStyle(ChatFormatting.DARK_PURPLE, ChatFormatting.ITALIC),
 					false);
-			return;
+			return false;
 		}
 
 		// Interactive Harbinger ceremonies already paid their base cost node by
@@ -1235,6 +1238,7 @@ public class HarbingerCardinalRiteEvents {
 		CardinalRiteStationMatcher.StationMatch layeredMatch = recipe.hasLayeredStation()
 				? layeredStructureMatch(sLevel, rite, recipe)
 				: null;
+		if (!consumeRiteMedium(sLevel, caster, rite, recipe)) return false;
 
 		// Spawn result item
 		String ritePath = rite.getRecipeId().getPath();
@@ -1553,6 +1557,24 @@ public class HarbingerCardinalRiteEvents {
 			consumeMatchedStructure(sLevel, recipe, center, layeredMatch);
 		}
 		CardinalRiteStaffEscrow.restore(caster, rite);
+		return true;
+	}
+
+	private static boolean consumeRiteMedium(ServerLevel level, ServerPlayer caster,
+			ActiveCardinalRite rite, CardinalRiteRecipe recipe) {
+		if (!recipe.hasLayeredStation()) return true;
+		if (level.getBlockEntity(rite.getCenterPos()) instanceof CardinalFocusBlockEntity focus
+				&& CardinalRiteMediumRules.consume(focus, recipe.getMedium())) {
+			return true;
+		}
+		CardinalRiteOrdealEngine.clearThreats(level, rite);
+		CardinalRiteStaffEscrow.restore(caster, rite);
+		String failure = recipe.hasMedium()
+				? "The rite reaches culmination, but its required medium is no longer seated in the Cardinal Focus."
+				: "The rite reaches culmination, but an unexpected medium occupies the Cardinal Focus.";
+		caster.displayClientMessage(Component.literal(failure)
+				.withStyle(ChatFormatting.DARK_RED, ChatFormatting.BOLD), false);
+		return false;
 	}
 
 	// Gourd Upgrade Helpers

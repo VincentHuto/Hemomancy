@@ -4,7 +4,6 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import com.vincenthuto.hemomancy.client.screen.skilltree.shared.*;
 import com.vincenthuto.hemomancy.client.screen.skilltree.util.*;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
-import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillProgressClientCache;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
@@ -47,9 +46,7 @@ public class HarbingerProgressScreen extends Screen {
     private static final int TAB_PAD = 4;
     private static final int HOME_BTN_SIZE = 16;
     private static final int HOME_BTN_PAD  = 4;
-    private static final int SKILL_POINT_BADGE_X_PAD = 2;
-    private static final int SKILL_POINT_BADGE_Y_PAD = 2;
-    private static final int SKILL_POINT_BADGE_GAP = 5;
+	private static final int ZOOM_LABEL_GAP = 5;
     private static final float SCREEN_CHROME_Z = 400.0F;
 
     private int guiLeft, guiTop, guiWidth, guiHeight;
@@ -130,7 +127,8 @@ public class HarbingerProgressScreen extends Screen {
         if (tab == activeTab) return;
         if (!tab.visibleAtDegree(playerDegree)) return;
         if (view != null && activeController(activeTab).getPanZoomState() != null) {
-            view.clamp(contentWForTab(activeTab), contentHForTab(activeTab), guiWidth, guiHeight);
+            view.clamp(contentWForTab(activeTab), contentHForTab(activeTab),
+                    activeController(activeTab).getNavigationViewportWidth(makeContext()), guiHeight);
         }
         activeTab = tab;
         PanZoomState ps = activeController(tab).getPanZoomState();
@@ -138,21 +136,11 @@ public class HarbingerProgressScreen extends Screen {
     }
 
     private int contentWForTab(Tab tab) {
-        return switch (tab) {
-            case SKILLS        -> skills.getContentW();
-            case MANIPULATIONS -> manips.getContentW();
-            case MATERIALS     -> materials.getContentW();
-            default            -> 0;
-        };
+        return activeController(tab).getContentW();
     }
 
     private int contentHForTab(Tab tab) {
-        return switch (tab) {
-            case SKILLS        -> skills.getContentH();
-            case MANIPULATIONS -> manips.getContentH();
-            case MATERIALS     -> materials.getContentH();
-            default            -> 0;
-        };
+        return activeController(tab).getContentH();
     }
 
     private boolean insideGui(double mx, double my) {
@@ -170,7 +158,7 @@ public class HarbingerProgressScreen extends Screen {
             PanZoomState activeView = activeController().getPanZoomState();
             if (activeView != null && isOverHomeButton(mx, my)) {
                 view = activeView;
-                view.centreOn(contentWForTab(activeTab), contentHForTab(activeTab), guiWidth, guiHeight);
+                activeController().resetView(makeContext());
                 return true;
             }
             Tab clicked = tabUnder(mx, my);
@@ -199,7 +187,8 @@ public class HarbingerProgressScreen extends Screen {
         if (activeController().mouseDragged(makeContext(), mx, my, btn, dx, dy)) return true;
         if (isDragging && btn == 0 && view != null) {
             view.applyDrag(dx, dy);
-            view.clamp(contentWForTab(activeTab), contentHForTab(activeTab), guiWidth, guiHeight);
+            view.clamp(contentWForTab(activeTab), contentHForTab(activeTab),
+                    activeController().getNavigationViewportWidth(makeContext()), guiHeight);
             return true;
         }
         return super.mouseDragged(mx, my, btn, dx, dy);
@@ -213,9 +202,23 @@ public class HarbingerProgressScreen extends Screen {
 
         if (view != null) {
                   view.applyScroll(guiLeft, guiTop, mx, my, scrollY);
-            view.clamp(contentWForTab(activeTab), contentHForTab(activeTab), guiWidth, guiHeight);
+            view.clamp(contentWForTab(activeTab), contentHForTab(activeTab),
+                    activeController().getNavigationViewportWidth(ctx), guiHeight);
         }
         return true;
+    }
+
+    @Override
+    public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
+        if (activeController().keyPressed(makeContext(), keyCode, scanCode, modifiers)) return true;
+        if (ProgressDetailKeyHandler.handle(keyCode, activeController()::closeDetails)) return true;
+        return super.keyPressed(keyCode, scanCode, modifiers);
+    }
+
+    @Override
+    public boolean charTyped(char codePoint, int modifiers) {
+        if (activeController().charTyped(makeContext(), codePoint, modifiers)) return true;
+        return super.charTyped(codePoint, modifiers);
     }
 
     @Override
@@ -239,10 +242,6 @@ public class HarbingerProgressScreen extends Screen {
         if (activeView != null) {
             view = activeView;
             drawHomeButton(gfx, mouseX, mouseY);
-        }
-
-        if (activeTab == Tab.SKILLS) {
-            drawSkillPointsAboveCanvas(gfx);
         }
 
         if (activeController().getPanZoomState() != null) {
@@ -288,32 +287,8 @@ public class HarbingerProgressScreen extends Screen {
         pose.popPose();
     }
 
-    private void drawSkillPointsAboveCanvas(GuiGraphics gfx) {
-        Component spComponent = skillPointBadgeComponent();
-        int textW = font.width(spComponent);
-        int badgeLeft = guiLeft + HOME_BTN_PAD;
-        int badgeTop = guiTop + HOME_BTN_PAD;
-        int badgeW = textW + SKILL_POINT_BADGE_X_PAD * 2;
-        int badgeH = font.lineHeight + SKILL_POINT_BADGE_Y_PAD * 2;
-        int textX = badgeLeft + SKILL_POINT_BADGE_X_PAD;
-        int textY = badgeTop + SKILL_POINT_BADGE_Y_PAD;
-
-        var pose = gfx.pose();
-        pose.pushPose();
-        pose.translate(0.0F, 0.0F, SCREEN_CHROME_Z);
-        gfx.fill(badgeLeft, badgeTop, badgeLeft + badgeW, badgeTop + badgeH, 0xFF120303);
-        ScreenDrawUtils.drawSimpleBorder(gfx, badgeLeft, badgeTop, badgeW, badgeH, 0xFF442222);
-        gfx.drawString(font, spComponent, textX, textY, 0, false);
-        pose.popPose();
-    }
-
-    private Component skillPointBadgeComponent() {
-        return Component.literal("SP:" + SkillProgressClientCache.current().getSkillPoints())
-                .withStyle(s -> s.withColor(0xFFBB8833));
-    }
-
     private void drawZoomPercentage(GuiGraphics gfx) {
-        int x = homeButtonX() + HOME_BTN_SIZE + SKILL_POINT_BADGE_GAP;
+		int x = homeButtonX() + HOME_BTN_SIZE + ZOOM_LABEL_GAP;
         int y = homeButtonY() + (HOME_BTN_SIZE - font.lineHeight) / 2;
         gfx.drawString(font, String.format("%.0f%%", view.zoom * 100), x, y, 0x55888888, false);
     }

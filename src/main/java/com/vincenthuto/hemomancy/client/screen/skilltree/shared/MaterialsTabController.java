@@ -171,6 +171,13 @@ public class MaterialsTabController implements IProgressTab {
 		return panZoom;
 	}
 
+	@Override
+	public boolean closeDetails() {
+		if (selectedEntry == null) return false;
+		selectedEntry = null;
+		return true;
+	}
+
 	public int getContentW() {
 		return contentW;
 	}

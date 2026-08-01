@@ -107,6 +107,34 @@ export interface ManipulationPreviewRequest {
   nodes: ManipulationNodeModel[];
 }
 
+export interface ScarTreeNodeModel {
+  id: string;
+  displayName: string;
+  tendency: string | null;
+  tier: number;
+  color: string;
+  treeX: number;
+  treeY: number;
+  parents: string[];
+}
+
+export interface ScarTreeFile {
+  path: string;
+  source: string;
+  nodes: ScarTreeNodeModel[];
+  diagnostics: Diagnostic[];
+}
+
+export interface ScarTreeWorkspace {
+  repoRoot: string;
+  tree: ScarTreeFile;
+  diagnostics: Diagnostic[];
+}
+
+export interface ScarTreePreviewRequest {
+  nodes: ScarTreeNodeModel[];
+}
+
 export type MaterialAtlasPathKey = 'HARBINGER' | 'UNSTAINED';
 
 export type MaterialGateType = 'ALWAYS' | 'DEGREE' | 'PURITY' | 'CLARITY';
@@ -171,4 +199,38 @@ export interface MaterialAtlasWorkspace {
 export interface MaterialAtlasPreviewRequest {
   paths: MaterialAtlasPathModel[];
   catalogueEntries: MaterialCatalogEntryModel[];
+}
+
+export type RecipeMapTabKey = 'RITES' | 'CRAFTING';
+export type RecipeMapLinkKind = 'PROGRESSION' | 'CONCEPTUAL';
+
+export interface RecipeMapEditorEntry {
+  id: string;
+  family: string;
+  order: number;
+  column: number;
+  displayName: string;
+}
+
+export interface RecipeMapEditorLink {
+  from: string;
+  to: string;
+  kind: RecipeMapLinkKind;
+}
+
+export interface RecipeMapEditorTab {
+  key: RecipeMapTabKey;
+  families: string[];
+  entries: RecipeMapEditorEntry[];
+  links: RecipeMapEditorLink[];
+}
+
+export interface RecipeMapWorkspace {
+  repoRoot: string;
+  tabs: RecipeMapEditorTab[];
+  diagnostics: Diagnostic[];
+}
+
+export interface RecipeMapPreviewRequest {
+  tabs: RecipeMapEditorTab[];
 }

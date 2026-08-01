@@ -2,6 +2,7 @@ package com.vincenthuto.hemomancy.client.screen.skilltree.shared;
 
 import com.vincenthuto.hemomancy.common.recipe.CardinalRiteRecipe;
 import com.vincenthuto.hemomancy.common.recipe.RecipeDegreeGates;
+import net.minecraft.resources.ResourceLocation;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -40,6 +41,8 @@ public class RitesTabState {
 	public int riteInfoScroll = 0;
 	public boolean showIchorianSigils = true;
 	public boolean ichorianSigilsExpanded = false;
+	public ResourceLocation selectedIchorianSigilId;
+	public long ichorianSigilPreviewStartTick;
 
 	// ── Theme / behaviour flags ───────────────────────────────────
 	/** Accent colour used for borders, header text, layer buttons, and accents (default: Harbinger purple). */

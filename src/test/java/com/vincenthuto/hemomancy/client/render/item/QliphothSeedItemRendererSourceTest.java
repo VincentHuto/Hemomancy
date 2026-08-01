@@ -7,6 +7,10 @@ import java.nio.file.Path;
 public final class QliphothSeedItemRendererSourceTest {
 	private static final Path ENTITY_RENDERER = Path.of(
 			"src/main/java/com/vincenthuto/hemomancy/client/render/item/QliphothSeedItemEntityRenderer.java");
+	private static final Path TENDRIL_EFFECTS = Path.of(
+			"src/main/java/com/vincenthuto/hemomancy/client/render/item/QliphothSeedTendrilEffects.java");
+	private static final Path FOCUS_RENDERER = Path.of(
+			"src/main/java/com/vincenthuto/hemomancy/client/render/tile/functional/CardinalFocusRenderer.java");
 	private static final Path ITEM_RENDERER = Path.of(
 			"src/main/java/com/vincenthuto/hemomancy/client/render/item/QliphothSeedItemRenderer.java");
 	private static final Path ITEM_SOURCE = Path.of(
@@ -20,6 +24,8 @@ public final class QliphothSeedItemRendererSourceTest {
 
 	public static void main(String[] args) throws IOException {
 		String entityRenderer = Files.readString(ENTITY_RENDERER);
+		String tendrilEffects = Files.readString(TENDRIL_EFFECTS);
+		String focusRenderer = Files.readString(FOCUS_RENDERER);
 		String itemRenderer = Files.readString(ITEM_RENDERER);
 		String itemSource = Files.readString(ITEM_SOURCE);
 		String itemModel = Files.readString(ITEM_MODEL);
@@ -55,40 +61,44 @@ public final class QliphothSeedItemRendererSourceTest {
 				languageProvider, "item.hemomancy.qliphoth_seed.tooltip.use");
 		assertContains("seed item model should use the builtin entity renderer path",
 				itemModel, "\"parent\": \"builtin/entity\"");
-		assertContains("dropped seed renderer should use HutosLib tendril renderer",
-				entityRenderer, "TendrilRenderer.INSTANCE.add");
+		assertContains("dropped seed renderer should use the shared tendril effect",
+				entityRenderer, "QliphothSeedTendrilEffects.spawnForEntity");
+		assertContains("seated seed should use the same shared tendril effect",
+				focusRenderer, "QliphothSeedTendrilEffects.spawnAt");
+		assertContains("shared seed effect should use HutosLib tendril renderer",
+				tendrilEffects, "TendrilRenderer.INSTANCE.add");
 		assertContains("dropped seed renderer should create HutosLib tendril effect data",
-				entityRenderer, "new TendrilEffectData");
+				tendrilEffects, "new TendrilEffectData");
 		assertContains("dropped seed renderer should use entity anchors so roots follow the item entity",
-				entityRenderer, "new TendrilAnchor.Entity");
+				tendrilEffects, "new TendrilAnchor.Entity");
 		assertContains("dropped seed renderer should configure HutosLib tendril colors",
-				entityRenderer, "TendrilEffectConfig.defaults()");
+				tendrilEffects, "TendrilEffectConfig.defaults()");
 		assertContains("dropped seed renderer should distribute HutosLib roots around a full circle",
-				entityRenderer, "FULL_CIRCLE");
+				tendrilEffects, "FULL_CIRCLE");
 		assertContains("dropped seed renderer should rotate root directions between pulses",
-				entityRenderer, "ROOT_PULSE_SPIN");
+				tendrilEffects, "ROOT_PULSE_SPIN");
 		assertContains("dropped seed renderer should use asymmetric golden-angle root spacing",
-				entityRenderer, "ROOT_GOLDEN_ANGLE");
+				tendrilEffects, "ROOT_GOLDEN_ANGLE");
 		assertContains("dropped seed renderer should emit enough roots to read as radial",
-				entityRenderer, "ROOTS_PER_PULSE = 12");
+				tendrilEffects, "ROOTS_PER_PULSE = 12");
 		assertContains("dropped seed renderer should keep each HutosLib root narrow enough to avoid giant fan planes",
-				entityRenderer, "withShape(16, 1, 0.024F, 0.045F)");
+				tendrilEffects, "withShape(16, 1, 0.024F, 0.045F)");
 		assertContains("dropped seed renderer should keep branch bursts modest around the seed",
-				entityRenderer, "withBranching(1, 1, 0.12F, 0.45F)");
+				tendrilEffects, "withBranching(1, 1, 0.12F, 0.45F)");
 		assertContains("dropped seed roots should spread outward more than downward to avoid HutosLib vertical basis bias",
-				entityRenderer, "return 0.46D + 0.18D");
+				tendrilEffects, "return 0.46D + 0.18D");
 		assertContains("dropped seed roots should use a shallow drop instead of a vertical curtain",
-				entityRenderer, "return 0.08D + 0.08D");
+				tendrilEffects, "return 0.08D + 0.08D");
 		assertContains("dropped seed roots should not use sag because sag bends near-vertical HutosLib roots to one world side",
-				entityRenderer, "withWrithe(0.04F, 0.09F, 0.08F, 0.0F)");
+				tendrilEffects, "withWrithe(0.04F, 0.09F, 0.08F, 0.0F)");
 		assertDoesNotContain("seed roots should not keep the downward-heavy reach that collapsed into a one-direction fan",
-				entityRenderer, "return 0.24D + 0.10D");
+				tendrilEffects, "return 0.24D + 0.10D");
 		assertDoesNotContain("seed roots should not keep the deep drop that triggered the vertical basis fallback",
-				entityRenderer, "return 0.32D + 0.12D");
+				tendrilEffects, "return 0.32D + 0.12D");
 		assertContains("dropped seed renderer should include pulse in root endpoint angles",
-				entityRenderer, "animatedAngle(gameTime, index, pulse)");
+				tendrilEffects, "animatedAngle(gameTime, index, pulse)");
 		assertDoesNotContain("seed renderer should not use a tiny fixed root angle table",
-				entityRenderer, "ROOT_ANGLES");
+				tendrilEffects, "ROOT_ANGLES");
 		assertDoesNotContain("seed renderer should not keep its old local quad tendril count",
 				entityRenderer, "TENDRIL_COUNT");
 		assertDoesNotContain("seed renderer should not keep old local tendril drawing",

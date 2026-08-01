@@ -80,6 +80,7 @@ public class CardinalRiteRecipe extends CustomRecipe {
 	protected MultiblockPattern requiredStructure;
 	protected boolean consumeRequiredStructure;
 	protected List<BrazierRequirement> brazierSignature = List.of();
+	protected Ingredient medium = Ingredient.EMPTY;
 
 	public record BrazierRequirement(Ingredient ingredient, int count, boolean consumeOnSuccess) {
 		public BrazierRequirement {
@@ -208,6 +209,18 @@ public class CardinalRiteRecipe extends CustomRecipe {
 
 	public void setBrazierSignature(List<BrazierRequirement> brazierSignature) {
 		this.brazierSignature = List.copyOf(brazierSignature);
+	}
+
+	public Ingredient getMedium() {
+		return medium;
+	}
+
+	public boolean hasMedium() {
+		return medium != null && medium != Ingredient.EMPTY && !medium.isEmpty();
+	}
+
+	public void setMedium(Ingredient medium) {
+		this.medium = medium == null ? Ingredient.EMPTY : medium;
 	}
 
 	public ItemStack getResult() {

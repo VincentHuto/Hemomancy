@@ -19,6 +19,7 @@ public final class MaterialsAtlasMetadataSourceTest {
 		String spec = read("src/main/java/com/vincenthuto/hemomancy/client/screen/skilltree/shared/MaterialAtlasSpec.java");
 		String atlasEntry = read("src/main/java/com/vincenthuto/hemomancy/client/screen/skilltree/shared/MaterialAtlasEntry.java");
 		String trace = read("src/main/java/com/vincenthuto/hemomancy/client/screen/skilltree/shared/MaterialAtlasTraceLayerCache.java");
+		String sharedTraceTexture = read("src/main/java/com/vincenthuto/hemomancy/client/screen/skilltree/shared/StaticTraceLayerTexture.java");
 		String view = read("src/main/java/com/vincenthuto/hemomancy/client/screen/skilltree/shared/MaterialsTabView.java");
 		String controller = read("src/main/java/com/vincenthuto/hemomancy/client/screen/skilltree/shared/MaterialsTabController.java");
 		String docs = read("docs/HEMOMANCY_REFERENCE.md");
@@ -89,7 +90,10 @@ public final class MaterialsAtlasMetadataSourceTest {
 		assertNotContains("materials view no longer packs rectangular cluster grid columns",
 				view, "GRID_COLS");
 
-		assertContains("atlas trace cache bakes to a dynamic texture", trace, "DynamicTexture");
+		assertContains("atlas trace cache reuses the shared static texture lifecycle",
+				trace, "StaticTraceLayerTexture");
+		assertContains("shared trace cache bakes to a dynamic texture",
+				sharedTraceTexture, "DynamicTexture");
 		assertContains("atlas trace cache bakes pixels through NativeImage", trace, "NativeImage");
 		assertContains("atlas trace cache uses organic cubic traces", trace, "sampleCubic");
 		assertContains("atlas trace cache colors traces by bucket", trace, "bucket.color()");

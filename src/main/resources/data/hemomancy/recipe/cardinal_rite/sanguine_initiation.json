@@ -7,6 +7,9 @@
   "riteDescription": "A basic initiation rite that awakens the hematic potential within the practitioner.",
   "rankup": true,
   "floor": "hemomancy:threshold_minor",
+  "medium": {
+    "item": "minecraft:iron_nugget"
+  },
   "brazier_signature": [],
   "ceremony": {
     "profile": "simple",

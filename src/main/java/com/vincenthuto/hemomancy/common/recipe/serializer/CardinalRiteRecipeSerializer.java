@@ -269,6 +269,7 @@ public class CardinalRiteRecipeSerializer implements RecipeSerializer<CardinalRi
 			}
 			recipe.setBrazierSignature(brazierSignatureFromJson(pJson));
 		}
+		recipe.setMedium(mediumFromJson(pJson, pRecipeId));
 		if (!unstained) {
 			recipe.setCeremony(ceremonyFromJson(pJson, pRecipeId, riteType, requiredDegree));
 			int offeringCount = recipe.getBrazierSignature().stream()
@@ -282,6 +283,13 @@ public class CardinalRiteRecipeSerializer implements RecipeSerializer<CardinalRi
 			}
 		}
 		return recipe;
+	}
+
+	private static Ingredient mediumFromJson(JsonObject json, ResourceLocation recipeId) {
+		if (!json.has("medium")) return Ingredient.EMPTY;
+		return Ingredient.CODEC_NONEMPTY.parse(JsonOps.INSTANCE, json.get("medium"))
+				.getOrThrow(message -> new JsonSyntaxException(
+						"Invalid medium for Cardinal Rite " + recipeId + ": " + message));
 	}
 
 	private static List<CardinalRiteRecipe.BrazierRequirement> brazierSignatureFromJson(JsonObject json) {
@@ -307,7 +315,7 @@ public class CardinalRiteRecipeSerializer implements RecipeSerializer<CardinalRi
 			return Stream.of("id", "bloodCost", "riteType", "riteName", "riteDescription", "pattern", "key",
 					"result", "required_degree", "required_purity", "required_clarity",
 					"breakBlocksOnCreation", "unstained", "rankup", "ceremony", "floor",
-					"required_structure", "brazier_signature").map(ops::createString);
+					"required_structure", "brazier_signature", "medium").map(ops::createString);
 		}
 
 		@Override
@@ -339,6 +347,10 @@ public class CardinalRiteRecipeSerializer implements RecipeSerializer<CardinalRi
 			prefix.add("breakBlocksOnCreation", ops.createBoolean(recipe.shouldBreakBlocksOnCreation()));
 			prefix.add("unstained", ops.createBoolean(recipe.isUnstained()));
 			prefix.add("rankup", ops.createBoolean(recipe.isRankup()));
+			if (recipe.hasMedium()) {
+				Ingredient.CODEC.encodeStart(JsonOps.INSTANCE, recipe.getMedium()).result()
+						.ifPresent(e -> prefix.add("medium", JsonOps.INSTANCE.convertTo(ops, e)));
+			}
 			return prefix;
 		}
 	};
@@ -385,6 +397,9 @@ public class CardinalRiteRecipeSerializer implements RecipeSerializer<CardinalRi
 						Ingredient.CONTENTS_STREAM_CODEC.decode(pBuffer), pBuffer.readVarInt(), pBuffer.readBoolean()));
 			}
 			recipe.setBrazierSignature(requirements);
+		}
+		if (pBuffer.readBoolean()) {
+			recipe.setMedium(Ingredient.CONTENTS_STREAM_CODEC.decode(pBuffer));
 		}
 		return recipe;
 	}
@@ -459,6 +474,10 @@ public class CardinalRiteRecipeSerializer implements RecipeSerializer<CardinalRi
 				pBuffer.writeVarInt(requirement.count());
 				pBuffer.writeBoolean(requirement.consumeOnSuccess());
 			}
+		}
+		pBuffer.writeBoolean(pRecipe.hasMedium());
+		if (pRecipe.hasMedium()) {
+			Ingredient.CONTENTS_STREAM_CODEC.encode(pBuffer, pRecipe.getMedium());
 		}
 	}
 

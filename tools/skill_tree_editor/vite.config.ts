@@ -16,7 +16,9 @@ export default defineConfig({
       input: {
         workspace: 'workspace.html',
         manipulations: 'manipulations.html',
-        materials: 'materials.html'
+        scars: 'scars.html',
+        materials: 'materials.html',
+        recipeMaps: 'recipe_maps.html'
       }
     }
   }

@@ -72,6 +72,21 @@ final class AwakenedIchorianSigilPoseCalculatorTest {
 	}
 
 	@Test
+	void previewCanHoldLivingMorphWhileItsBodyAnimationKeepsMoving() {
+		IchorianSigilDefinition definition = definition(
+				IchorianSigilAnatomy.Style.OPTIC_STALK_VEIL, 4);
+		var early = AwakenedIchorianSigilPoseCalculator.calculate(
+				definition, 40.0F, 40.0F, 0.0F);
+		var later = AwakenedIchorianSigilPoseCalculator.calculate(
+				definition, 40.0F, 70.0F, 0.0F);
+
+		assertEquals(1.0F, early.migration(), 0.0001F);
+		assertEquals(1.0F, later.migration(), 0.0001F);
+		assertNotEquals(early.landmarks().getFirst().position(),
+				later.landmarks().getFirst().position());
+	}
+
+	@Test
 	void livingMotionIsBoundedBetweenAdjacentTicks() {
 		IchorianSigilDefinition definition = definition(
 				IchorianSigilAnatomy.Style.OPTIC_STALK_VEIL, 5);

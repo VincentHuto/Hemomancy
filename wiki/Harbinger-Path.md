@@ -111,6 +111,14 @@ A later-degree utility rite may remain deliberately simple. Degree is a ceiling,
 not a demand that every rite use every mechanic. The Sanguine Conduit's Rites tab
 and each Rite Hint show the exact authored requirements.
 
+Some rites author a **medium** in addition to their brazier offerings. Seat one
+item in the Cardinal Focus; the displayed stack identifies which otherwise
+similar rite the station can answer. A rite with no authored medium requires an
+empty Focus. The medium is locked while its rite is active and consumed only on
+successful completion, so cancellation or failure leaves it available for
+shift-right-click recovery. Bloom of the Qliphoth uses a Qliphoth Seed this way,
+while Founding Fane uses Sanguine Quintessence.
+
 ### Cancelling an Active Rite
 
 The caster can safely recall an active Harbinger Cardinal Rite by holding **Blood Absorption** on its center focus or planted Living Staff for four uninterrupted seconds. The central daemon contracts back into the staff first; the staff then dissolves into blood and flows back to the caster's hand.

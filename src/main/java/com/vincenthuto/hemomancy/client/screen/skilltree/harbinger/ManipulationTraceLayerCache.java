@@ -6,7 +6,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.client.screen.skilltree.util.PanZoomState;
 import com.vincenthuto.hemomancy.client.screen.skilltree.util.ProgressScreenContext;
-import com.vincenthuto.hemomancy.common.init.ManipulationTreeInit;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
 import com.vincenthuto.hemomancy.common.manipulation.ManipulationRankGates;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
@@ -22,12 +22,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
-/**
- * Bakes the manipulation-tree connection traces into a texture so the screen
- * can pan/zoom the result instead of re-rasterizing every connection each
- * frame.
- */
-final class ManipulationTraceLayerCache {
+/** Bakes shared tendency-tree connections into a texture for inexpensive pan/zoom rendering. */
+final class TendencyTraceLayerCache {
 	private static final AtomicInteger NEXT_ID = new AtomicInteger();
 
 	private static final int TRACE_NODE_TRIM_RADIUS = 11;
@@ -36,7 +32,7 @@ final class ManipulationTraceLayerCache {
 	private static final double TRACE_ORGANIC_SWAY_FACTOR = 0.08;
 
 	private final int textureId = NEXT_ID.incrementAndGet();
-	private final ResourceLocation textureLocation = Hemomancy.rloc("dynamic/manip_trace_layer_" + textureId);
+	private final ResourceLocation textureLocation = Hemomancy.rloc("dynamic/tendency_trace_layer_" + textureId);
 
 	private DynamicTexture texture;
 	private String signature = "";
@@ -52,7 +48,21 @@ final class ManipulationTraceLayerCache {
 			int contentH,
 			int centerX,
 			int centerY) {
-		String nextSignature = buildSignature(entries, nodePositions, knownManipNames, playerDegree, contentW, contentH, centerX, centerY);
+		List<TendencyTraceNode> nodes = new ArrayList<>();
+		for (ManipulationTreeEntry entry : sortedEntries(entries)) {
+			int[] pos = nodePositions.get(entry);
+			if (pos == null) continue;
+			BloodManipulation manipulation = entry.resolve();
+			nodes.add(new TendencyTraceNode(entry.getManipName(),
+					manipulation != null ? manipulation.getTend() : null,
+					pos[0], pos[1], entry.getConnectionParentNames(),
+					knownManipNames.contains(entry.getManipName()), isRankLocked(manipulation, playerDegree)));
+		}
+		rebuildIfNeeded(nodes, contentW, contentH, centerX, centerY);
+	}
+
+	void rebuildIfNeeded(List<TendencyTraceNode> nodes, int contentW, int contentH, int centerX, int centerY) {
+		String nextSignature = buildSignature(nodes, contentW, contentH, centerX, centerY);
 		if (nextSignature.equals(signature) && texture != null) {
 			return;
 		}
@@ -63,38 +73,22 @@ final class ManipulationTraceLayerCache {
 		NativeImage image = new NativeImage(textureW, textureH, false);
 		clearImage(image);
 
-		List<ManipulationTreeEntry> sorted = sortedEntries(entries);
-		for (ManipulationTreeEntry entry : sorted) {
-			int[] childPos = nodePositions.get(entry);
-			if (childPos == null) continue;
-			BloodManipulation childManip = entry.resolve();
-			int traceColorBase = tendencyColor(childManip);
-			boolean childKnown = knownManipNames.contains(entry.getManipName());
-			boolean childLocked = isRankLocked(childManip, playerDegree);
-
-			for (String parentName : entry.getConnectionParentNames()) {
-				ManipulationTreeEntry parentEntry = ManipulationTreeInit.getEntry(parentName);
-				if (parentEntry == null) continue;
-				int[] parentPos = nodePositions.get(parentEntry);
-				if (parentPos == null) continue;
-
-				boolean parentKnown = knownManipNames.contains(parentName);
-				BloodManipulation parentManip = parentEntry.resolve();
-				boolean parentLocked = isRankLocked(parentManip, playerDegree);
-
-				int color = traceColorBase;
-				int alpha;
-				if (childLocked || parentLocked) {
-					color = dimTraceColor(traceColorBase);
-					alpha = 78;
-				} else if (childKnown && parentKnown) {
-					alpha = 148;
-				} else {
-					color = dimTraceColor(traceColorBase);
-					alpha = 112;
-				}
-
-				bakeConnection(image, parentPos[0], parentPos[1], childPos[0], childPos[1], withAlpha(color, alpha), centerX, centerY);
+		Map<String, TendencyTraceNode> byId = new java.util.HashMap<>();
+		for (TendencyTraceNode node : nodes) byId.put(node.id(), node);
+		List<TendencyTraceNode> sorted = new ArrayList<>(nodes);
+		sorted.sort(Comparator.comparing(TendencyTraceNode::id));
+		for (TendencyTraceNode child : sorted) {
+			int traceColorBase = tendencyColor(child.tendency());
+			for (String parentId : child.parentIds()) {
+				TendencyTraceNode parent = byId.get(parentId);
+				if (parent == null) continue;
+				TendencyTraceStyle style = TendencyTraceStyle.resolve(
+						parent.known(), parent.locked(), child.known(), child.locked());
+				int color = style == TendencyTraceStyle.KNOWN ? traceColorBase : dimTraceColor(traceColorBase);
+				int alpha = style == TendencyTraceStyle.LOCKED ? 78
+						: style == TendencyTraceStyle.KNOWN ? 148 : 112;
+				bakeConnection(image, parent.x(), parent.y(), child.x(), child.y(),
+						withAlpha(color, alpha), centerX, centerY);
 			}
 		}
 
@@ -148,32 +142,20 @@ final class ManipulationTraceLayerCache {
 		return list;
 	}
 
-	private static String buildSignature(
-			List<ManipulationTreeEntry> entries,
-			Map<ManipulationTreeEntry, int[]> nodePositions,
-			Set<String> knownManipNames,
-			int playerDegree,
-			int contentW,
-			int contentH,
-			int centerX,
-			int centerY) {
+	private static String buildSignature(List<TendencyTraceNode> nodes, int contentW, int contentH,
+	                                     int centerX, int centerY) {
 		StringBuilder out = new StringBuilder();
 		out.append(contentW).append('x').append(contentH)
-				.append(':').append(centerX).append(',').append(centerY)
-				.append(":deg=").append(playerDegree);
-		for (ManipulationTreeEntry entry : sortedEntries(entries)) {
-			int[] pos = nodePositions.get(entry);
-			if (pos == null) continue;
-			String manipName = entry.getManipName();
-			boolean known = knownManipNames.contains(manipName);
-			BloodManipulation manip = entry.resolve();
-			boolean locked = isRankLocked(manip, playerDegree);
-			out.append('|').append(manipName)
-					.append('@').append(pos[0]).append(',').append(pos[1])
-					.append(known ? ":K" : ":U")
-					.append(locked ? ":L" : ":O")
-					.append(":t=").append(manip != null && manip.getTend() != null ? manip.getTend().name() : "null");
-			for (String parent : entry.getConnectionParentNames()) {
+				.append(':').append(centerX).append(',').append(centerY);
+		List<TendencyTraceNode> sorted = new ArrayList<>(nodes);
+		sorted.sort(Comparator.comparing(TendencyTraceNode::id));
+		for (TendencyTraceNode node : sorted) {
+			out.append('|').append(node.id())
+					.append('@').append(node.x()).append(',').append(node.y())
+					.append(node.known() ? ":K" : ":U")
+					.append(node.locked() ? ":L" : ":O")
+					.append(":t=").append(node.tendency() != null ? node.tendency().name() : "null");
+			for (String parent : node.parentIds()) {
 				out.append(">").append(parent);
 			}
 		}
@@ -185,9 +167,9 @@ final class ManipulationTraceLayerCache {
 		return !ManipulationRankGates.playerMeetsRank(playerDegree, manip.getRank());
 	}
 
-	private static int tendencyColor(BloodManipulation manip) {
-		if (manip == null || manip.getTend() == null) return 0xFFAA6600;
-		ParticleColor pc = manip.getTend().getColor();
+	private static int tendencyColor(EnumBloodTendency tendency) {
+		if (tendency == null) return 0xFFAA6600;
+		ParticleColor pc = tendency.getColor();
 		int r = (int) pc.getRed();
 		int g = (int) pc.getGreen();
 		int b = (int) pc.getBlue();
