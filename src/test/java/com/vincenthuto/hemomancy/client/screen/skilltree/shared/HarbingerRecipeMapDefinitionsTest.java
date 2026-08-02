@@ -29,4 +29,12 @@ final class HarbingerRecipeMapDefinitionsTest {
 		assertTrue(HarbingerRecipeMapDefinitions.craftingLinks().stream().anyMatch(link ->
 				link.kind() == RecipeMapLink.Kind.CONCEPTUAL));
 	}
+
+	@Test
+	void missingDisplayOverridesPreserveRecipeResultFallbacks() {
+		assertEquals("recipe result", HarbingerRecipeMapDefinitions.resolveDisplayOverride(
+				null, "recipe result"));
+		assertEquals("authored item", HarbingerRecipeMapDefinitions.resolveDisplayOverride(
+				() -> "authored item", "recipe result"));
+	}
 }

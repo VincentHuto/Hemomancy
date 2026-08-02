@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.function.Function;
 
 public final class RecipeMapCanvas {
@@ -35,6 +36,7 @@ public final class RecipeMapCanvas {
 	private boolean traceDirty = true;
 	private int cachedTraceAccent = Integer.MIN_VALUE;
 	private float deepFade;
+	private RecipeMapEntry hoveredTooltipEntry;
 
 	public RecipeMapCanvas(RecipeMapEntry.Kind primaryKind) {
 		this.primaryKind = primaryKind;
@@ -42,9 +44,15 @@ public final class RecipeMapCanvas {
 
 	public void initialise(ProgressScreenContext ctx, List<RecipeMapEntry> entries, List<String> families,
 			List<RecipeMapLink> links, Function<RecipeMapEntry, ItemStack> iconProvider) {
+		initialise(ctx, entries, families, links, Map.of(), iconProvider);
+	}
+
+	public void initialise(ProgressScreenContext ctx, List<RecipeMapEntry> entries, List<String> families,
+			List<RecipeMapLink> links, Map<RecipeMapKey, RecipeMapLayout.AuthoredPosition> authoredPositions,
+			Function<RecipeMapEntry, ItemStack> iconProvider) {
 		this.families = List.copyOf(families);
 		this.links = List.copyOf(links);
-		this.layout = RecipeMapLayout.build(entries, families);
+		this.layout = RecipeMapLayout.build(entries, families, authoredPositions);
 		this.traceDirty = true;
 		this.icons.clear();
 		for (RecipeMapEntry entry : entries) {
@@ -58,6 +66,7 @@ public final class RecipeMapCanvas {
 	}
 
 	public void render(GuiGraphics gfx, ProgressScreenContext ctx, int mouseX, int mouseY, int accent) {
+		hoveredTooltipEntry = null;
 		RecipeMapInspectorLayout inspector = inspectorLayout(ctx);
 		RecipeMapInspectorLayout.IntRect viewport = inspector.mapViewport();
 		updateDiveProgress(ctx, viewport);
@@ -80,7 +89,37 @@ public final class RecipeMapCanvas {
 		drawLayer(gfx, ctx, mouseX, mouseY, accent, surfacePanZoom, SkillTreeLayer.SURFACE, surfaceAlpha);
 		drawLayer(gfx, ctx, mouseX, mouseY, accent, deepView, SkillTreeLayer.DEEP, deepAlpha);
 		gfx.disableScissor();
+		if (!viewport.contains(mouseX, mouseY)) hoveredTooltipEntry = null;
 		drawControls(gfx, ctx, mouseX, mouseY, accent, viewport);
+	}
+
+	public void renderTooltip(GuiGraphics gfx, ProgressScreenContext ctx, int mouseX, int mouseY, int accent) {
+		RecipeMapEntry entry = hoveredTooltipEntry;
+		if (entry == null) return;
+		RecipeMapTooltip.Content tooltip = RecipeMapTooltip.content(entry);
+		int maxWidth = RecipeMapTooltip.maxWidth(ctx.guiWidth());
+		List<Component> lines = new ArrayList<>();
+		for (String line : ScreenDrawUtils.wrapText(ctx.font(), tooltip.title(), maxWidth)) {
+			lines.add(Component.literal(line).withStyle(style -> style.withColor(accent & 0xFFFFFF).withBold(true)));
+		}
+		lines.add(Component.literal(tooltip.context())
+				.withStyle(style -> style.withColor(0xFF888888).withItalic(true)));
+		if (!tooltip.description().isBlank()) {
+			for (String line : ScreenDrawUtils.wrapText(ctx.font(), tooltip.description(), maxWidth)) {
+				lines.add(Component.literal(line).withStyle(style -> style.withColor(0xFFBBBBBB)));
+			}
+		}
+		if (entry.unlocked()) {
+			lines.add(Component.literal("Click to view details")
+					.withStyle(style -> style.withColor(0xFFAA7777)));
+		} else {
+			lines.add(Component.literal("Requires Degree " + entry.column())
+					.withStyle(style -> style.withColor(0xFFAA5555)));
+		}
+		gfx.pose().pushPose();
+		gfx.pose().translate(0, 0, 900);
+		gfx.renderTooltip(ctx.font(), lines, Optional.empty(), mouseX, mouseY);
+		gfx.pose().popPose();
 	}
 
 	private void drawLayer(GuiGraphics gfx, ProgressScreenContext ctx, int mouseX, int mouseY, int accent,
@@ -151,22 +190,26 @@ public final class RecipeMapCanvas {
 			int border = active ? 0xFFFFD66B : hovered && entry.unlocked() ? withAlpha(accent, 0xFF)
 					: entry.unlocked() ? withAlpha(accent, alpha) : 0xFF3A3A3A;
 			border = fadeColor(border, layerAlpha);
-			gfx.fill(node.x(), node.y(), node.x() + node.width(), node.y() + node.height(), background);
-			ScreenDrawUtils.drawSimpleBorder(gfx, node.x(), node.y(), node.width(), node.height(), border);
+			if (entry.key().kind() == RecipeMapEntry.Kind.FLOOR) {
+				drawDiamondNode(gfx, node, background, border);
+			} else {
+				gfx.fill(node.x(), node.y(), node.x() + node.width(), node.y() + node.height(), background);
+				ScreenDrawUtils.drawSimpleBorder(gfx, node.x(), node.y(), node.width(), node.height(), border);
+			}
 			ItemStack icon = icons.get(entry.key());
 			if (icon != null && !icon.isEmpty()) {
-				ScreenDrawUtils.renderScaledItem(gfx, icon, node.centerX(), node.centerY(), node.width() / 2);
+				ScreenDrawUtils.renderScaledItem(gfx, icon, node.centerX(), node.centerY(),
+						iconHalfSize(entry.key().kind(), node.width()));
 			}
 			else drawKindGlyph(gfx, ctx, entry, node, border);
-			if (hovered || active) {
-				String label = ctx.font().plainSubstrByWidth(entry.displayName(), 116);
-				int labelWidth = ctx.font().width(label) + 6;
-				gfx.fill(node.centerX() - labelWidth / 2, node.y() + node.height() + 2,
-						node.centerX() + (labelWidth + 1) / 2, node.y() + node.height() + 13, 0xD810060B);
-				gfx.drawCenteredString(ctx.font(), label, node.centerX(), node.y() + node.height() + 3,
-						fadeColor(entry.unlocked() ? withAlpha(0xFFFFFFFF, alpha) : 0xFF666666, layerAlpha));
-			}
+			if (hovered && layerAlpha > 0.5F) hoveredTooltipEntry = entry;
 		}
+	}
+
+	static int iconHalfSize(RecipeMapEntry.Kind kind, int nodeWidth) {
+		if (kind != RecipeMapEntry.Kind.FLOOR) return nodeWidth / 2;
+		int nativeItemHalfSize = (16 + ScreenDrawUtils.ITEM_PADDING) / 2;
+		return Math.min(nodeWidth / 2, nativeItemHalfSize);
 	}
 
 	private void drawControls(GuiGraphics gfx, ProgressScreenContext ctx, int mouseX, int mouseY, int accent,
@@ -298,8 +341,12 @@ public final class RecipeMapCanvas {
 					ctx.guiLeft() + ctx.guiWidth(), ctx.guiTop(), 0, 0);
 			return new RecipeMapInspectorLayout(full, empty, empty, empty, false, false);
 		}
-		return RecipeMapInspectorLayout.calculate(ctx.guiLeft(), ctx.guiTop(), ctx.guiWidth(), ctx.guiHeight(),
-				inspectorExpanded);
+		if (primaryKind == RecipeMapEntry.Kind.CRAFTING) {
+			return RecipeMapInspectorLayout.calculateCrafting(
+					ctx.guiLeft(), ctx.guiTop(), ctx.guiWidth(), ctx.guiHeight(), inspectorExpanded);
+		}
+		return RecipeMapInspectorLayout.calculate(
+				ctx.guiLeft(), ctx.guiTop(), ctx.guiWidth(), ctx.guiHeight(), inspectorExpanded);
 	}
 
 	public void toggleInspector() {
@@ -366,8 +413,26 @@ public final class RecipeMapCanvas {
 
 	private static void drawKindGlyph(GuiGraphics gfx, ProgressScreenContext ctx, RecipeMapEntry entry,
 			RecipeMapLayout.NodeBounds node, int color) {
-		String glyph = entry.key().kind() == RecipeMapEntry.Kind.SIGIL ? "◇" : entry.key().kind() == RecipeMapEntry.Kind.RITE ? "R" : "C";
+		String glyph = switch (entry.key().kind()) {
+			case SIGIL -> "◇";
+			case RITE -> "R";
+			case FLOOR -> "F";
+			case CRAFTING -> "C";
+		};
 		gfx.drawCenteredString(ctx.font(), glyph, node.centerX(), node.y() + 9, color);
+	}
+
+	private static void drawDiamondNode(GuiGraphics gfx, RecipeMapLayout.NodeBounds node,
+			int background, int border) {
+		int centerX = node.centerX();
+		int centerY = node.centerY();
+		int half = (Math.min(node.width(), node.height()) - 1) / 2;
+		for (int offsetY = -half; offsetY <= half; offsetY++) {
+			int span = half - Math.abs(offsetY);
+			int y = centerY + offsetY;
+			gfx.fill(centerX - span, y, centerX + span + 1, y + 1, border);
+			if (span > 1) gfx.fill(centerX - span + 1, y, centerX + span, y + 1, background);
+		}
 	}
 
 	private static int withAlpha(int color, int alpha) {

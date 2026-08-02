@@ -20,11 +20,16 @@ public final class RecipeMapLayout {
 	private RecipeMapLayout() {}
 
 	public static Result build(List<RecipeMapEntry> sourceEntries, List<String> authoredFamilies) {
+		return build(sourceEntries, authoredFamilies, Map.of());
+	}
+
+	public static Result build(List<RecipeMapEntry> sourceEntries, List<String> authoredFamilies,
+			Map<RecipeMapKey, AuthoredPosition> authoredPositions) {
 		Set<String> familySet = new LinkedHashSet<>(authoredFamilies);
 		familySet.add(MISC_FAMILY);
 		List<RecipeMapEntry> entries = sourceEntries.stream()
 				.map(entry -> familySet.contains(entry.family()) ? entry
-						: new RecipeMapEntry(entry.key(), entry.displayName(), entry.column(), MISC_FAMILY,
+						: new RecipeMapEntry(entry.key(), entry.displayName(), entry.description(), entry.column(), MISC_FAMILY,
 								entry.order(), entry.visible(), entry.unlocked()))
 				.sorted(Comparator.comparingInt((RecipeMapEntry entry) -> familyIndex(familySet, entry.family()))
 						.thenComparingInt(RecipeMapEntry::column)
@@ -61,20 +66,34 @@ public final class RecipeMapLayout {
 					SkillTreeLayer layer = SkillTreeLayerRules.layerForDegree(column);
 					int radius = SkillTreeLayerRules.ringRadiusForDegree(column, layer);
 					double angle = familyAngle + offset;
-					ConcentricTreeGeometry.Point point = new ConcentricTreeGeometry.Point(
-							ConcentricTreeGeometry.CENTER_X + (int) Math.round(Math.cos(angle) * radius),
-							ConcentricTreeGeometry.CENTER_Y + (int) Math.round(Math.sin(angle) * radius));
+					AuthoredPosition authored = authoredPositions.get(entry.key());
+					ConcentricTreeGeometry.Point point = authored == null
+							? new ConcentricTreeGeometry.Point(
+									ConcentricTreeGeometry.CENTER_X + (int) Math.round(Math.cos(angle) * radius),
+									ConcentricTreeGeometry.CENTER_Y + (int) Math.round(Math.sin(angle) * radius))
+							: new ConcentricTreeGeometry.Point(
+									clampAuthoredCoordinate(authored.x(), contentSize()),
+									clampAuthoredCoordinate(authored.y(), contentSize()));
 					nodes.put(entry.key(), new NodeBounds(entry,
 							point.x() - NODE_SIZE / 2, point.y() - NODE_SIZE / 2, NODE_SIZE, NODE_SIZE));
 				}
 			}
 		}
-		int contentWidth = ConcentricTreeGeometry.CENTER_X
-				+ ConcentricTreeGeometry.radiusForDegree(8) + ConcentricTreeGeometry.CONTENT_PADDING;
-		int contentHeight = ConcentricTreeGeometry.CENTER_Y
-				+ ConcentricTreeGeometry.radiusForDegree(8) + ConcentricTreeGeometry.CONTENT_PADDING;
+		int contentWidth = contentSize();
+		int contentHeight = contentSize();
 		return new Result(List.copyOf(entries), Map.copyOf(nodes), Map.copyOf(familyAngles),
 				ConcentricTreeGeometry.CENTER_X, ConcentricTreeGeometry.CENTER_Y, contentWidth, contentHeight);
+	}
+
+	public record AuthoredPosition(int x, int y) {}
+
+	private static int contentSize() {
+		return ConcentricTreeGeometry.CENTER_X
+				+ ConcentricTreeGeometry.radiusForDegree(8) + ConcentricTreeGeometry.CONTENT_PADDING;
+	}
+
+	private static int clampAuthoredCoordinate(int coordinate, int contentSize) {
+		return Math.max(NODE_SIZE / 2, Math.min(contentSize - NODE_SIZE / 2, coordinate));
 	}
 
 	private static int familyIndex(Set<String> families, String family) {
@@ -90,7 +109,12 @@ public final class RecipeMapLayout {
 		public int centerX() { return x + width / 2; }
 		public int centerY() { return y + height / 2; }
 		public boolean contains(double pointX, double pointY) {
-			return pointX >= x && pointX < x + width && pointY >= y && pointY < y + height;
+			if (pointX < x || pointX >= x + width || pointY < y || pointY >= y + height) return false;
+			if (entry.key().kind() != RecipeMapEntry.Kind.FLOOR) return true;
+			double halfWidth = width / 2.0;
+			double halfHeight = height / 2.0;
+			return Math.abs(pointX - centerX()) / halfWidth
+					+ Math.abs(pointY - centerY()) / halfHeight <= 1.0;
 		}
 	}
 

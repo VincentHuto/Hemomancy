@@ -61,6 +61,30 @@ final class RecipeMapNavigationTest {
 	}
 
 	@Test
+	void craftingInspectorKeepsDetailsBesideACompactTopAlignedPreview() {
+		RecipeMapInspectorLayout layout = RecipeMapInspectorLayout.calculateCrafting(
+				16, 16, 900, 500, true);
+		RecipeMapInspectorLayout ultraWide = RecipeMapInspectorLayout.calculateCrafting(
+				16, 16, 1600, 700, true);
+
+		assertEquals(false, layout.overlay());
+		assertTrue(layout.panel().width() >= 300);
+		assertTrue(layout.panel().width() <= 340);
+		assertEquals(layout.panel().top(), layout.info().top());
+		assertEquals(layout.panel().bottom(), layout.info().bottom());
+		assertEquals(layout.panel().top(), layout.preview().top());
+		assertEquals(layout.info().right(), layout.preview().left());
+		assertTrue(layout.info().width() > layout.preview().width());
+		assertEquals(layout.preview().width(), layout.preview().height());
+		assertTrue(layout.preview().width() <= 160);
+		assertTrue(layout.preview().bottom() < layout.panel().bottom());
+
+		assertEquals(340, ultraWide.panel().width());
+		assertEquals(160, ultraWide.preview().width());
+		assertEquals(180, ultraWide.info().width());
+	}
+
+	@Test
 	void inspectorOwnsSharedPreviewAndControlGeometry() {
 		RecipeMapInspectorLayout layout = RecipeMapInspectorLayout.calculate(16, 16, 900, 500, true);
 		RecipeMapInspectorLayout.IntRect preview = layout.previewContent();

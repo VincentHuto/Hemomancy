@@ -1,12 +1,16 @@
 package com.vincenthuto.hemomancy.client.screen.skilltree.shared;
 
+import com.vincenthuto.hemomancy.common.init.BlockInit;
+import com.vincenthuto.hemomancy.common.init.ItemInit;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.ItemStack;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Supplier;
 
 public final class HarbingerRecipeMapDefinitions {
 	public static final List<String> RITE_FAMILIES = List.of("Order", "Vessel", "Bloodline/Fane",
@@ -18,6 +22,10 @@ public final class HarbingerRecipeMapDefinitions {
 	private static final Map<String, String> CRAFTING = new LinkedHashMap<>();
 	private static final List<RecipeMapLink> RITE_LINKS = new ArrayList<>();
 	private static final List<RecipeMapLink> CRAFTING_LINKS = new ArrayList<>();
+	private static final Map<RecipeMapKey, RecipeMapLayout.AuthoredPosition> RITE_POSITIONS = new LinkedHashMap<>();
+	private static final Map<RecipeMapKey, RecipeMapLayout.AuthoredPosition> CRAFTING_POSITIONS = new LinkedHashMap<>();
+	private static final Map<RecipeMapKey, Supplier<ItemStack>> RITE_ICONS = new LinkedHashMap<>();
+	private static final Map<RecipeMapKey, Supplier<ItemStack>> CRAFTING_ICONS = new LinkedHashMap<>();
 
 	static {
 		// <recipe-map-editor>
@@ -39,6 +47,50 @@ public final class HarbingerRecipeMapDefinitions {
 		registerCrafting("Constructs/Effigies", "semi_sentient_construct", "mason_effigy", "mind_spike", "vascular_effigy");
 		registerRites("Puppetry", "puppeteer_trial_gorebound_hulk", "puppeteer_trial_marrow_spitter",
 				"puppeteer_trial_mnemonist_puppet", "puppeteer_trial_veinwing_vulture");
+
+		iconRites("cardinal_rite/sanguine_initiation", () -> new ItemStack(ItemInit.sanguine_formation.get()));
+		iconRites("cardinal_rite/votary_rite", () -> new ItemStack(ItemInit.rite_hint.get()));
+		iconRites("cardinal_rite/initiate_rite", () -> new ItemStack(ItemInit.liber_sanguinum.get()));
+		iconRites("cardinal_rite/sanguine_brotherhood", () -> new ItemStack(ItemInit.sanguine_conduit.get()));
+		iconRites("cardinal_rite/illuminatus_rite", () -> new ItemStack(ItemInit.crimson_vestment_fitting.get()));
+		iconRites("cardinal_rite/sanctified_rite", () -> new ItemStack(ItemInit.vicars_consecration_kit.get()));
+		iconRites("cardinal_rite/archon_rite", () -> new ItemStack(ItemInit.silent_archon_helm.get()));
+		iconRites("cardinal_rite/apotheos_rite", () -> new ItemStack(ItemInit.sanguine_quintessence.get()));
+
+		iconRites("cardinal_rite/pallid_vessel_rite", () -> new ItemStack(ItemInit.blood_gourd_white.get()));
+		iconRites("cardinal_rite/crimson_vessel_rite", () -> new ItemStack(ItemInit.blood_gourd_red.get()));
+		iconRites("cardinal_rite/ashen_vessel_rite", () -> new ItemStack(ItemInit.blood_gourd_black.get()));
+		iconRites("cardinal_rite/horn_of_culmination_rite", () -> new ItemStack(ItemInit.curved_horn.get()));
+
+		iconRites("cardinal_rite/bloodline_founding", () -> new ItemStack(ItemInit.unsigned_ancestral_ledger.get()));
+		iconRites("cardinal_rite/bloodline_recall", () -> new ItemStack(ItemInit.harbinger_assignment_ledger.get()));
+		iconRites("cardinal_rite/founding_fane", () -> new ItemStack(BlockInit.cardinal_focus.get()));
+		iconRites("cardinal_rite/hematic_unbinding", () -> new ItemStack(ItemInit.hematic_suture_needle.get()));
+		iconRites("cardinal_rite/scarlet_summons", () -> new ItemStack(ItemInit.memory_summon_thrall.get()));
+		iconRites("cardinal_rite/covenant_vigil", () -> new ItemStack(BlockInit.sanguine_vigil.get()));
+		iconRites("cardinal_rite/sanguine_dominion", () -> new ItemStack(BlockInit.covenant_throne.get()));
+
+		iconRites("cardinal_rite/sanguine_attunement", () -> new ItemStack(ItemInit.charm_of_vascularium.get()));
+		iconRites("cardinal_rite/vascular_mending", () -> new ItemStack(ItemInit.vascular_poultice.get()));
+		iconRites("cardinal_rite/hematic_fortification", () -> new ItemStack(ItemInit.hemolytic_plating.get()));
+		iconRites("cardinal_rite/eternal_covenant", () -> new ItemStack(ItemInit.covenant_mantle.get()));
+		iconRites("cardinal_rite/chamber_of_will", () -> new ItemStack(ItemInit.spawn_egg_will.get()));
+		iconRites("cardinal_rite/crimson_beacon", () -> new ItemStack(ItemInit.memory_hematic_beacon.get()));
+
+		iconRites("cardinal_rite/exsanguination", () -> new ItemStack(ItemInit.memory_exsanguinate.get()));
+		iconRites("cardinal_rite/hungering_earth", () -> new ItemStack(BlockInit.earthen_vein.get()));
+		iconRites("cardinal_rite/sanguine_fervor", () -> new ItemStack(ItemInit.blood_lust_helm.get()));
+		iconRites("cardinal_rite/sanguine_eclipse", () -> new ItemStack(ItemInit.memory_blood_eclipse.get()));
+		iconRites("cardinal_rite/pallid_shadow", () -> new ItemStack(ItemInit.pallid_icon.get()));
+
+		iconRites("cardinal_rite/ancestral_communion", () -> new ItemStack(ItemInit.memory_of_vesper.get()));
+		iconRites("cardinal_rite/bloom_of_qliphoth", () -> new ItemStack(BlockInit.qliphoth_bloom.get()));
+		iconRites("cardinal_rite/pruning_of_qliphoth", () -> new ItemStack(ItemInit.qliphoth_pome.get()));
+
+		iconRites("cardinal_rite/puppeteer_trial_gorebound_hulk", () -> new ItemStack(ItemInit.gorebound_yoke.get()));
+		iconRites("cardinal_rite/puppeteer_trial_marrow_spitter", () -> new ItemStack(ItemInit.marrow_spitter_carriage.get()));
+		iconRites("cardinal_rite/puppeteer_trial_mnemonist_puppet", () -> new ItemStack(ItemInit.mnemonist_cradle.get()));
+		iconRites("cardinal_rite/puppeteer_trial_veinwing_vulture", () -> new ItemStack(ItemInit.veinwing_harness.get()));
 
 		linkRites("cardinal_rite/sanguine_initiation", "cardinal_rite/votary_rite", RecipeMapLink.Kind.PROGRESSION);
 		linkRites("cardinal_rite/votary_rite", "cardinal_rite/initiate_rite", RecipeMapLink.Kind.PROGRESSION);
@@ -119,6 +171,10 @@ public final class HarbingerRecipeMapDefinitions {
 	public static int craftingOrder(String path) { return orderWithinFamily(CRAFTING, path); }
 	public static List<RecipeMapLink> riteLinks() { return List.copyOf(RITE_LINKS); }
 	public static List<RecipeMapLink> craftingLinks() { return List.copyOf(CRAFTING_LINKS); }
+	public static Map<RecipeMapKey, RecipeMapLayout.AuthoredPosition> ritePositions() { return Map.copyOf(RITE_POSITIONS); }
+	public static Map<RecipeMapKey, RecipeMapLayout.AuthoredPosition> craftingPositions() { return Map.copyOf(CRAFTING_POSITIONS); }
+	public static ItemStack riteIcon(String path, ItemStack fallback) { return resolveIcon(RITE_ICONS.get(riteKey(path)), fallback); }
+	public static ItemStack craftingIcon(String path, ItemStack fallback) { return resolveIcon(CRAFTING_ICONS.get(craftingKey(path)), fallback); }
 
 	private static void registerRites(String family, String... paths) {
 		for (String path : paths) RITES.put("cardinal_rite/" + path, family);
@@ -134,6 +190,31 @@ public final class HarbingerRecipeMapDefinitions {
 
 	private static void linkCrafting(String from, String to, RecipeMapLink.Kind kind) {
 		CRAFTING_LINKS.add(new RecipeMapLink(craftingKey(from), craftingKey(to), kind));
+	}
+
+	private static void positionRites(String path, int x, int y) {
+		RITE_POSITIONS.put(riteKey(path), new RecipeMapLayout.AuthoredPosition(x, y));
+	}
+
+	private static void positionCrafting(String path, int x, int y) {
+		CRAFTING_POSITIONS.put(craftingKey(path), new RecipeMapLayout.AuthoredPosition(x, y));
+	}
+
+	private static void iconRites(String path, Supplier<ItemStack> icon) {
+		RITE_ICONS.put(riteKey(path), icon);
+	}
+
+	private static void iconCrafting(String path, Supplier<ItemStack> icon) {
+		CRAFTING_ICONS.put(craftingKey(path), icon);
+	}
+
+	private static ItemStack resolveIcon(Supplier<ItemStack> icon, ItemStack fallback) {
+		ItemStack resolved = resolveDisplayOverride(icon, fallback);
+		return resolved == null ? ItemStack.EMPTY : resolved.copy();
+	}
+
+	static <T> T resolveDisplayOverride(Supplier<T> override, T fallback) {
+		return override == null ? fallback : override.get();
 	}
 
 	private static int orderWithinFamily(Map<String, String> definitions, String path) {

@@ -7,6 +7,8 @@ import com.vincenthuto.hemomancy.client.screen.skilltree.util.ProgressScreenCont
 import com.vincenthuto.hemomancy.common.recipe.CardinalRiteRecipe;
 import com.vincenthuto.hemomancy.common.recipe.RecipeDegreeGates;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
+import com.vincenthuto.hemomancy.common.rite.floor.CardinalRiteFloorDefinition;
+import com.vincenthuto.hemomancy.common.rite.floor.CardinalRiteFloorRegistry;
 import com.vincenthuto.hemomancy.common.rite.sigil.IchorianSigilDefinition;
 import com.vincenthuto.hemomancy.common.rite.sigil.IchorianSigilRegistry;
 import com.vincenthuto.hutoslib.client.HLTextUtils;
@@ -21,6 +23,7 @@ import java.util.List;
 import java.util.Map;
 
 public class RitesTabController implements IProgressTab {
+    private static final String FLOOR_FAMILY = "Ritual Floors";
     private final RitesTabState state = new RitesTabState();
     private final boolean unstained;
     private final RecipeMapCanvas mapCanvas = new RecipeMapCanvas(RecipeMapEntry.Kind.RITE);
@@ -67,7 +70,7 @@ public class RitesTabController implements IProgressTab {
                     mapRites.put(r.getId(), r);
                     String path = r.getId().getPath();
                     mapEntries.add(new RecipeMapEntry(new RecipeMapKey(RecipeMapEntry.Kind.RITE, r.getId()),
-                            r.getRiteName(), RecipeDegreeGates.getRequiredDegree(r),
+                            r.getRiteName(), r.getRiteDescription(), RecipeDegreeGates.getRequiredDegree(r),
                             HarbingerRecipeMapDefinitions.riteFamily(path),
                             HarbingerRecipeMapDefinitions.riteOrder(path), discovered,
                             discovered && ctx.playerDegree() >= RecipeDegreeGates.getRequiredDegree(r)));
@@ -78,15 +81,37 @@ public class RitesTabController implements IProgressTab {
         if (unstained) {
             state.autoSelectFirstTier(ctx.playerDegree());
         } else {
+            appendFloorEntries(mapEntries);
             appendSigilEntries(mc, mapEntries);
             List<String> families = new ArrayList<>(HarbingerRecipeMapDefinitions.RITE_FAMILIES);
+            families.add(families.size() - 1, FLOOR_FAMILY);
             families.add(families.size() - 1, "Ichorian Sigils");
-            mapCanvas.initialise(ctx, mapEntries, families, HarbingerRecipeMapDefinitions.riteLinks(), entry -> {
+			mapCanvas.initialise(ctx, mapEntries, families, HarbingerRecipeMapDefinitions.riteLinks(),
+					HarbingerRecipeMapDefinitions.ritePositions(), entry -> {
+				if (entry.key().kind() == RecipeMapEntry.Kind.FLOOR) {
+					return CardinalRiteFloorRegistry.get(entry.id())
+							.map(RitualFloorIcon::resolve).orElse(ItemStack.EMPTY);
+				}
                 CardinalRiteRecipe rite = mapRites.get(entry.id());
-                return rite == null ? ItemStack.EMPTY : rite.getResult();
+				ItemStack fallback = rite == null ? ItemStack.EMPTY : rite.getResult();
+				return HarbingerRecipeMapDefinitions.riteIcon(entry.id().getPath(), fallback);
             });
             state.selectedRiteTier = null;
             state.selectedIchorianSigilId = null;
+        }
+    }
+
+    private void appendFloorEntries(List<RecipeMapEntry> entries) {
+        int order = 0;
+        for (CardinalRiteFloorDefinition floor : CardinalRiteFloorRegistry.all().values().stream()
+                .sorted(java.util.Comparator.comparing(CardinalRiteFloorDefinition::style)
+                        .thenComparingInt(definition -> definition.tier().ordinal())).toList()) {
+            String tier = HLTextUtils.toProperCase(floor.tier().getSerializedName());
+            String style = HLTextUtils.toProperCase(floor.style().replace('_', ' '));
+            entries.add(new RecipeMapEntry(new RecipeMapKey(RecipeMapEntry.Kind.FLOOR, floor.id()),
+                    tier + " " + style + " Floor",
+                    "Focused floor-only construction view for the " + style + " ritual style.",
+                    floor.tier().ordinal(), FLOOR_FAMILY, order++, true, true));
         }
     }
 
@@ -99,7 +124,8 @@ public class RitesTabController implements IProgressTab {
             boolean known = knowledge != null && knowledge.isKnown(sigil.id());
             boolean partial = knowledge != null && knowledge.discoveredNodeCount(sigil.id()) > 0;
             entries.add(new RecipeMapEntry(new RecipeMapKey(RecipeMapEntry.Kind.SIGIL, sigil.id()),
-                    known ? sigil.name() : "Unknown Sigil", sigil.tier(), "Ichorian Sigils", order++,
+                    known ? sigil.name() : "Unknown Sigil", known ? sigil.purpose() : "",
+                    sigil.tier(), "Ichorian Sigils", order++,
                     known || partial, known));
         }
     }
@@ -113,9 +139,11 @@ public class RitesTabController implements IProgressTab {
                     ? mapRites.get(selected.id()) : null;
             IchorianSigilDefinition sigil = selected != null && selected.kind() == RecipeMapEntry.Kind.SIGIL
                     ? IchorianSigilRegistry.get(selected.id()) : null;
+            CardinalRiteFloorDefinition floor = selected != null && selected.kind() == RecipeMapEntry.Kind.FLOOR
+                    ? CardinalRiteFloorRegistry.get(selected.id()).orElse(null) : null;
             if (selected != null) {
                 if (!state.riteDragging) state.riteRotationAngle += partial * 0.4f;
-                RitesTabView.drawMapInspector(gfx, ctx, state, rite, sigil,
+                RitesTabView.drawMapInspector(gfx, ctx, state, rite, sigil, floor,
                         mapCanvas.inspectorLayout(ctx), mx, my, partial);
             }
             return;
@@ -125,7 +153,9 @@ public class RitesTabController implements IProgressTab {
     }
 
     @Override public void renderOverlay(GuiGraphics gfx, ProgressScreenContext ctx, int mx, int my) {}
-    @Override public void renderTooltip(GuiGraphics gfx, ProgressScreenContext ctx, int mx, int my) {}
+    @Override public void renderTooltip(GuiGraphics gfx, ProgressScreenContext ctx, int mx, int my) {
+        if (!unstained) mapCanvas.renderTooltip(gfx, ctx, mx, my, state.tabColor);
+    }
 
     @Override
     public boolean mouseClicked(ProgressScreenContext ctx, double mx, double my, int btn) {

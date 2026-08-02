@@ -10,6 +10,33 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 final class RecipeMapLayoutTest {
+	@Test
+	void authoredCoordinatesOverrideGeneratedRadialPlacement() {
+		RecipeMapEntry entry = new RecipeMapEntry(
+				new RecipeMapKey(RecipeMapEntry.Kind.RITE,
+						ResourceLocation.fromNamespaceAndPath("hemomancy", "cardinal_rite/moved")),
+				"Moved", "", 2, "Order", 0, true, true);
+
+		RecipeMapLayout.NodeBounds node = RecipeMapLayout.build(List.of(entry), List.of("Order"),
+				java.util.Map.of(entry.key(), new RecipeMapLayout.AuthoredPosition(612, 344))).node(entry.key());
+
+		assertEquals(612, node.centerX());
+		assertEquals(344, node.centerY());
+	}
+
+	@Test
+	void authoredCoordinatesAreClampedInsideReachableContentBounds() {
+		RecipeMapEntry entry = new RecipeMapEntry(
+				new RecipeMapKey(RecipeMapEntry.Kind.RITE,
+						ResourceLocation.fromNamespaceAndPath("hemomancy", "cardinal_rite/bounded")),
+				"Bounded", "", 2, "Order", 0, true, true);
+
+		RecipeMapLayout.NodeBounds node = RecipeMapLayout.build(List.of(entry), List.of("Order"),
+				java.util.Map.of(entry.key(), new RecipeMapLayout.AuthoredPosition(-50, 5000))).node(entry.key());
+
+		assertEquals(RecipeMapLayout.NODE_SIZE / 2, node.centerX());
+		assertEquals(1016, node.centerY());
+	}
 	private static final ResourceLocation FIRST = ResourceLocation.fromNamespaceAndPath("hemomancy", "cardinal_rite/first");
 	private static final ResourceLocation HIDDEN = ResourceLocation.fromNamespaceAndPath("hemomancy", "cardinal_rite/hidden");
 	private static final ResourceLocation LAST = ResourceLocation.fromNamespaceAndPath("hemomancy", "cardinal_rite/last");

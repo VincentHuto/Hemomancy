@@ -55,6 +55,10 @@ public final class CraftingTabView {
 		return font.split(Component.literal(text), Math.max(1, width));
 	}
 
+	static String offeringRowText(int count, String itemName) {
+		return " x" + count + "  " + itemName;
+	}
+
 	// ────────────────────────────────────────────────────────────
 	//  Top-level draw call
 	// ────────────────────────────────────────────────────────────
@@ -318,7 +322,7 @@ public final class CraftingTabView {
 				recipe == null ? 0 : state.craftingMaxLayer, state.craftingVisibleLayer,
 				state.tabColor, mouseX, mouseY);
 		if (recipe != null) {
-			RecipeMapInspectorLayout.IntRect info = layout.info().inset(10, 8, 10, 8);
+			RecipeMapInspectorLayout.IntRect info = layout.info().inset(10, 22, 10, 8);
 			drawInfoPanel(gfx, ctx, state, recipe, info.left(), info.top(), info.width());
 		}
 		gfx.pose().popPose();
@@ -446,9 +450,8 @@ public final class CraftingTabView {
 				}
 				ItemStack display = stacks.get((int) (materialCycleIndex() % stacks.size()));
 				gfx.renderItem(display, panelX + 2, y);
-				String prefix = " x" + offering.count() + " braziers  ";
 				List<FormattedCharSequence> offeringLines = wrappedLines(ctx.font(),
-						prefix + display.getHoverName().getString(), offeringWrapW);
+						offeringRowText(offering.count(), display.getHoverName().getString()), offeringWrapW);
 				for (int li = 0; li < offeringLines.size(); li++) {
 					gfx.drawString(ctx.font(), offeringLines.get(li),
 							offeringTextX, y + 4 + li * lineH, 0xAAAAAA);
@@ -546,9 +549,8 @@ public final class CraftingTabView {
 					continue;
 				}
 				ItemStack display = stacks.get((int) (materialCycleIndex() % stacks.size()));
-				String prefix = " x" + offering.count() + " braziers  ";
 				y += Math.max(18, wrappedLines(font,
-						prefix + display.getHoverName().getString(), offeringWrapW).size() * lineH + 4);
+						offeringRowText(offering.count(), display.getHoverName().getString()), offeringWrapW).size() * lineH + 4);
 			}
 			y += 4;
 		}

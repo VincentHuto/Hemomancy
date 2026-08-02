@@ -53,6 +53,40 @@ export function parseRecipeMapDefinitionsJava(path: string, source: string): {
     tab.links.push({ from: match[2], to: match[3], kind: match[4] as RecipeMapEditorLink['kind'] });
   }
 
+  for (const match of body.matchAll(/position(Rites|Crafting)\(\s*"([^"]+)"\s*,\s*(-?\d+)\s*,\s*(-?\d+)\s*\)\s*;/g)) {
+    const tab = match[1] === 'Rites' ? tabs[0] : tabs[1];
+    const entry = tab.entries.find(candidate => candidate.id === match[2]);
+    if (entry) {
+      entry.treeX = Number(match[3]);
+      entry.treeY = Number(match[4]);
+    } else {
+      diagnostics.push({
+        severity: 'error',
+        code: 'recipe_map_unknown_position_entry',
+        message: `Position references an entry outside ${tab.key}.`,
+        file: path,
+        skill: match[2]
+      });
+    }
+  }
+
+  for (const match of body.matchAll(/icon(Rites|Crafting)\(\s*"([^"]+)"\s*,\s*\(\)\s*->\s*new\s+ItemStack\(\s*(ItemInit|BlockInit)\.(\w+)\.get\(\)\s*\)\s*\)\s*;/g)) {
+    const tab = match[1] === 'Rites' ? tabs[0] : tabs[1];
+    const entry = tab.entries.find(candidate => candidate.id === match[2]);
+    if (entry) {
+      entry.iconSource = match[3] === 'BlockInit' ? 'block' : 'item';
+      entry.iconItem = match[4];
+    } else {
+      diagnostics.push({
+        severity: 'error',
+        code: 'recipe_map_unknown_icon_entry',
+        message: `Icon references an entry outside ${tab.key}.`,
+        file: path,
+        skill: match[2]
+      });
+    }
+  }
+
   return { tabs, diagnostics };
 }
 
@@ -76,6 +110,17 @@ export function renderRecipeMapDefinitionsJava(source: string, tabs: RecipeMapEd
         const ids = group.entries.map(entry => `"${entry.id.slice(group.prefix.length)}"`).join(', ');
         lines.push(`\t\t${group.method}("${escapeJava(family)}", ${ids});`);
       }
+    }
+    for (const entry of tab.entries) {
+      if (!Number.isFinite(entry.treeX) || !Number.isFinite(entry.treeY)) continue;
+      const method = tab.key === 'RITES' ? 'positionRites' : 'positionCrafting';
+      lines.push(`\t\t${method}("${escapeJava(entry.id)}", ${Math.round(entry.treeX!)}, ${Math.round(entry.treeY!)});`);
+    }
+    for (const entry of tab.entries) {
+      if (!entry.iconSource || !entry.iconItem) continue;
+      const method = tab.key === 'RITES' ? 'iconRites' : 'iconCrafting';
+      const initClass = entry.iconSource === 'block' ? 'BlockInit' : 'ItemInit';
+      lines.push(`\t\t${method}("${escapeJava(entry.id)}", () -> new ItemStack(${initClass}.${entry.iconItem}.get()));`);
     }
     for (const link of tab.links) {
       const method = tab.key === 'RITES' ? 'linkRites' : 'linkCrafting';
@@ -102,7 +147,15 @@ function sameAuthoredModel(left: RecipeMapEditorTab[], right: RecipeMapEditorTab
   const authored = (models: RecipeMapEditorTab[]) => models.map(tab => ({
     key: tab.key,
     families: tab.families,
-    entries: tab.entries.map(entry => ({ id: entry.id, family: entry.family, order: entry.order })),
+    entries: tab.entries.map(entry => ({
+      id: entry.id,
+      family: entry.family,
+      order: entry.order,
+      treeX: entry.treeX,
+      treeY: entry.treeY,
+      iconSource: entry.iconSource,
+      iconItem: entry.iconItem
+    })),
     links: tab.links
   }));
   return JSON.stringify(authored(left)) === JSON.stringify(authored(right));

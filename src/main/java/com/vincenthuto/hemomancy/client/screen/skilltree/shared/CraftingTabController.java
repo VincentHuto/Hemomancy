@@ -67,13 +67,14 @@ public class CraftingTabController implements IProgressTab {
 				String name = displayName(recipe);
                 int degree = RecipeDegreeGates.getRequiredDegree(recipe);
                 entries.add(new RecipeMapEntry(new RecipeMapKey(RecipeMapEntry.Kind.CRAFTING, recipe.getId()),
-                        name, degree, HarbingerRecipeMapDefinitions.craftingFamily(path),
+                        name, tooltipDescription(recipe), degree, HarbingerRecipeMapDefinitions.craftingFamily(path),
                         HarbingerRecipeMapDefinitions.craftingOrder(path), true, ctx.playerDegree() >= degree));
             }
-            mapCanvas.initialise(ctx, entries, HarbingerRecipeMapDefinitions.CRAFTING_FAMILIES,
-                    HarbingerRecipeMapDefinitions.craftingLinks(), entry -> {
+			mapCanvas.initialise(ctx, entries, HarbingerRecipeMapDefinitions.CRAFTING_FAMILIES,
+					HarbingerRecipeMapDefinitions.craftingLinks(), HarbingerRecipeMapDefinitions.craftingPositions(), entry -> {
                 BloodStructureRecipe recipe = mapRecipes.get(entry.id());
-                return recipe == null ? ItemStack.EMPTY : recipe.getResult();
+				ItemStack fallback = recipe == null ? ItemStack.EMPTY : recipe.getResult();
+				return HarbingerRecipeMapDefinitions.craftingIcon(entry.id().getPath(), fallback);
             });
             state.selectedCraftingTier = null;
         }
@@ -86,6 +87,18 @@ public class CraftingTabController implements IProgressTab {
         if (path.contains("/")) path = path.substring(path.lastIndexOf('/') + 1);
         return HLTextUtils.toProperCase(path.replace("_", " "));
     }
+
+	private static String tooltipDescription(BloodStructureRecipe recipe) {
+		ItemStack held = recipe.getHeldItem();
+		ItemStack hit = recipe.getHitBlock() == null ? ItemStack.EMPTY : new ItemStack(recipe.getHitBlock());
+		return tooltipDescription((int) recipe.getBloodCost(),
+				held == null || held.isEmpty() ? "the required item" : held.getHoverName().getString(),
+				hit.isEmpty() ? "the required structure" : hit.getHoverName().getString());
+	}
+
+	static String tooltipDescription(int bloodCost, String heldItem, String hitBlock) {
+		return "Hold " + heldItem + " and activate " + hitBlock + ". Blood cost: " + bloodCost + " mL.";
+	}
 
     @Override
     public void render(GuiGraphics gfx, ProgressScreenContext ctx, int mx, int my, float partial) {
@@ -104,7 +117,9 @@ public class CraftingTabController implements IProgressTab {
     }
 
     @Override public void renderOverlay(GuiGraphics gfx, ProgressScreenContext ctx, int mx, int my) {}
-    @Override public void renderTooltip(GuiGraphics gfx, ProgressScreenContext ctx, int mx, int my) {}
+    @Override public void renderTooltip(GuiGraphics gfx, ProgressScreenContext ctx, int mx, int my) {
+        if (!unstained) mapCanvas.renderTooltip(gfx, ctx, mx, my, state.tabColor);
+    }
 
     @Override
     public boolean mouseClicked(ProgressScreenContext ctx, double mx, double my, int btn) {

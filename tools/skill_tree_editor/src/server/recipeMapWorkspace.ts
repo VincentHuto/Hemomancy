@@ -4,19 +4,21 @@ import type {
   PreviewResult,
   RecipeMapEditorEntry,
   RecipeMapEditorTab,
+  IconRegistryOptions,
   RecipeMapPreviewRequest,
   RecipeMapWorkspace
 } from '../shared/types';
 import { makeFileDiff } from './diff';
 import { parseRecipeMapDefinitionsJava, renderRecipeMapDefinitionsJava } from './recipeMapParser';
 import { hasBlockingDiagnostics } from './validation';
-import { safeResolve, storePreview } from './workspace';
+import { loadIconRegistryOptions, safeResolve, storePreview } from './workspace';
 
 const definitionsPath = 'src/main/java/com/vincenthuto/hemomancy/client/screen/skilltree/shared/HarbingerRecipeMapDefinitions.java';
 
 export async function loadRecipeMapWorkspace(repoRoot: string): Promise<RecipeMapWorkspace> {
   const source = readFileSync(safeResolve(repoRoot, definitionsPath), 'utf8');
   const parsed = parseRecipeMapDefinitionsJava(definitionsPath, source);
+  const iconOptions = loadIconRegistryOptions(repoRoot);
   const tabs = parsed.tabs.map(tab => ({
     ...tab,
     families: [...tab.families],
@@ -26,14 +28,17 @@ export async function loadRecipeMapWorkspace(repoRoot: string): Promise<RecipeMa
   return {
     repoRoot,
     tabs,
-    diagnostics: [...parsed.diagnostics, ...validateRecipeMaps(tabs)]
+    iconOptions,
+    diagnostics: [...parsed.diagnostics, ...validateRecipeMaps(tabs, iconOptions)]
   };
 }
 
 export async function previewRecipeMapWorkspaceChanges(repoRoot: string, request: RecipeMapPreviewRequest): Promise<PreviewResult> {
   const source = readFileSync(safeResolve(repoRoot, definitionsPath), 'utf8');
   const tabs = cloneTabs(request.tabs ?? []);
-  const diagnostics = validateRecipeMaps(tabs);
+  const iconOptions = loadIconRegistryOptions(repoRoot);
+  const sourceDiagnostics = parseRecipeMapDefinitionsJava(definitionsPath, source).diagnostics;
+  const diagnostics = [...sourceDiagnostics, ...validateRecipeMaps(tabs, iconOptions)];
   const after = renderRecipeMapDefinitionsJava(source, tabs);
   const diffs = source === after ? [] : [makeFileDiff(definitionsPath, source, after)];
   const result: PreviewResult = {
@@ -56,7 +61,12 @@ function attachRecipeMetadata(repoRoot: string, entry: RecipeMapEditorEntry): Re
     const displayName = typeof json.riteName === 'string'
       ? json.riteName
       : resultDisplayName(json.result) ?? entry.displayName;
-    return { ...entry, column: Number.isFinite(column) ? Math.max(0, Math.min(8, Math.round(column))) : 0, displayName };
+    return {
+      ...entry,
+      column: Number.isFinite(column) ? Math.max(0, Math.min(8, Math.round(column))) : 0,
+      displayName,
+      resultIcon: resultIconName(json.result) ?? entry.id.substring(entry.id.lastIndexOf('/') + 1)
+    };
   } catch {
     return entry;
   }
@@ -69,7 +79,13 @@ function resultDisplayName(result: unknown): string | null {
   return labelize(id.substring(id.indexOf(':') + 1));
 }
 
-function validateRecipeMaps(tabs: RecipeMapEditorTab[]): Diagnostic[] {
+function resultIconName(result: unknown): string | null {
+  if (!result || typeof result !== 'object') return null;
+  const id = (result as Record<string, unknown>).id;
+  return typeof id === 'string' ? id.substring(id.indexOf(':') + 1) : null;
+}
+
+function validateRecipeMaps(tabs: RecipeMapEditorTab[], iconOptions: IconRegistryOptions): Diagnostic[] {
   const diagnostics: Diagnostic[] = [];
   for (const tab of tabs) {
     const ids = new Set<string>();
@@ -78,6 +94,11 @@ function validateRecipeMaps(tabs: RecipeMapEditorTab[]): Diagnostic[] {
       if (ids.has(entry.id)) diagnostics.push(issue('error', 'recipe_map_duplicate_entry', `${tab.key} contains duplicate entry ${entry.id}.`, entry.id));
       ids.add(entry.id);
       if (!tab.families.includes(entry.family)) diagnostics.push(issue('error', 'recipe_map_unknown_family', `${entry.id} references unknown family ${entry.family}.`, entry.id));
+      if (entry.iconSource && entry.iconItem) {
+        const options = entry.iconSource === 'block' ? iconOptions.blocks : iconOptions.items;
+        if (!options.includes(entry.iconItem)) diagnostics.push(issue('error', 'recipe_map_missing_icon_field',
+          `${entry.iconSource === 'block' ? 'BlockInit' : 'ItemInit'}.${entry.iconItem} was not found.`, entry.id));
+      }
     }
     for (const link of tab.links) {
       const key = `${link.from}|${link.to}|${link.kind}`;

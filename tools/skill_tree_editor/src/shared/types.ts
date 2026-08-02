@@ -210,6 +210,11 @@ export interface RecipeMapEditorEntry {
   order: number;
   column: number;
   displayName: string;
+  treeX?: number;
+  treeY?: number;
+  iconSource?: IconSource;
+  iconItem?: string | null;
+  resultIcon?: string;
 }
 
 export interface RecipeMapEditorLink {
@@ -228,6 +233,7 @@ export interface RecipeMapEditorTab {
 export interface RecipeMapWorkspace {
   repoRoot: string;
   tabs: RecipeMapEditorTab[];
+  iconOptions: IconRegistryOptions;
   diagnostics: Diagnostic[];
 }
 

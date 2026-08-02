@@ -33,6 +33,29 @@ public record RecipeMapInspectorLayout(IntRect mapViewport, IntRect panel, IntRe
 		return new RecipeMapInspectorLayout(new IntRect(left, top, mapWidth, height), panel, preview, info, overlay, true);
 	}
 
+	public static RecipeMapInspectorLayout calculateCrafting(
+			int left, int top, int width, int height, boolean expanded) {
+		if (!expanded) return calculate(left, top, width, height, false);
+
+		int panelTop = top + TAB_CLEARANCE;
+		int panelHeight = Math.max(1, height - TAB_CLEARANCE);
+		boolean overlay = width < 700;
+		int preferredWidth = Mth.clamp((int) Math.floor(width * (width < 700 ? 0.55 : 0.36)),
+				300, 340);
+		int panelWidth = Math.min(width, preferredWidth);
+		int panelLeft = left + width - panelWidth;
+		IntRect panel = new IntRect(panelLeft, panelTop, panelWidth, panelHeight);
+
+		int previewWidth = Mth.clamp((int) Math.floor(panelWidth * 0.48), 120, 160);
+		int infoWidth = panelWidth - previewWidth;
+		IntRect info = new IntRect(panelLeft, panelTop, infoWidth, panelHeight);
+		IntRect preview = new IntRect(panelLeft + infoWidth, panelTop,
+				previewWidth, Math.min(panelHeight, previewWidth));
+		int mapWidth = overlay ? width : width - panelWidth - GAP;
+		return new RecipeMapInspectorLayout(new IntRect(left, top, mapWidth, height),
+				panel, preview, info, overlay, true);
+	}
+
 	public static int expandedPanelWidth(int width) {
 		return width < 700 ? Math.min(220, Math.max(160, width - 48))
 				: Mth.clamp((int) Math.floor(width * 0.22), 190, 260);

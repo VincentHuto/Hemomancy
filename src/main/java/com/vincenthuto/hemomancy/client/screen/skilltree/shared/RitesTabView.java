@@ -10,6 +10,7 @@ import com.vincenthuto.hemomancy.common.recipe.CardinalRiteRecipe;
 import com.vincenthuto.hemomancy.common.recipe.CardinalRiteType;
 import com.vincenthuto.hemomancy.common.recipe.RecipeDegreeGates;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
+import com.vincenthuto.hemomancy.common.rite.floor.CardinalRiteFloorDefinition;
 import com.vincenthuto.hemomancy.common.rite.sigil.IchorianSigilDefinition;
 import com.vincenthuto.hemomancy.common.rite.sigil.IchorianSigilRegistry;
 import com.vincenthuto.hutoslib.client.HLTextUtils;
@@ -319,7 +320,7 @@ public final class RitesTabView {
 	}
 
 	public static void drawMapInspector(GuiGraphics gfx, ProgressScreenContext ctx, RitesTabState state,
-			CardinalRiteRecipe rite, IchorianSigilDefinition sigil,
+			CardinalRiteRecipe rite, IchorianSigilDefinition sigil, CardinalRiteFloorDefinition floor,
 			RecipeMapInspectorLayout layout, int mouseX, int mouseY, float partial) {
 		gfx.pose().pushPose();
 		gfx.pose().translate(0, 0, 500);
@@ -341,10 +342,13 @@ public final class RitesTabView {
 					preview.left() + preview.width() / 2, preview.top() + preview.height() / 2, 0xFF777777);
 		} else if (rite != null) {
 			drawModelForRite(gfx, state, rite, preview.left(), preview.top(), preview.width(), preview.height());
+		} else if (floor != null) {
+			drawModelForPattern(gfx, state, floor.pattern(), preview.left(), preview.top(),
+					preview.width(), preview.height());
 		}
 		gfx.disableScissor();
 		RecipeMapInspectorView.drawPreviewControls(gfx, ctx, layout,
-				rite == null ? 0 : state.riteMaxLayer, state.riteVisibleLayer,
+				rite == null && floor == null ? 0 : state.riteMaxLayer, state.riteVisibleLayer,
 				state.tabColor, mouseX, mouseY);
 
 		RecipeMapInspectorLayout.IntRect info = layout.info().inset(10, 8, 10, 8);
@@ -352,8 +356,35 @@ public final class RitesTabView {
 			drawSigilInfo(gfx, ctx, state, sigil, info);
 		} else if (rite != null) {
 			drawInfoPanel(gfx, ctx, state, rite, info.left(), info.top(), info.width(), mouseX, mouseY);
+		} else if (floor != null) {
+			drawFloorInfo(gfx, ctx, state, floor, info);
 		}
 		gfx.pose().popPose();
+	}
+
+	private static void drawFloorInfo(GuiGraphics gfx, ProgressScreenContext ctx, RitesTabState state,
+			CardinalRiteFloorDefinition floor, RecipeMapInspectorLayout.IntRect info) {
+		gfx.enableScissor(info.left(), info.top(), info.right(), info.bottom());
+		int y = info.top() - state.riteInfoScroll;
+		String tier = HLTextUtils.toProperCase(floor.tier().getSerializedName());
+		String style = HLTextUtils.toProperCase(floor.style().replace('_', ' '));
+		gfx.drawString(ctx.font(), Component.literal(tier + " " + style + " Floor")
+				.withStyle(text -> text.withBold(true)), info.left(), y, 0xFFE8B75A, false);
+		y += 18;
+		for (FormattedCharSequence line : ctx.font().split(Component.literal(
+				"Focused construction view of this ritual floor. Only the floor pattern is shown."), info.width())) {
+			gfx.drawString(ctx.font(), line, info.left(), y, 0xFFBBBBBB, false);
+			y += 10;
+		}
+		y += 8;
+		for (String line : List.of("Style: " + style, "Rite Form: " + tier,
+				"Floor Size: " + floor.tier().getSize() + "x" + floor.tier().getSize(),
+				"Footprint Radius: " + String.format(java.util.Locale.ROOT, "%.1f", floor.footprintRadius()),
+				"Offering Sockets: " + floor.brazierSockets().size())) {
+			gfx.drawString(ctx.font(), line, info.left(), y, 0xFF999999, false);
+			y += 12;
+		}
+		gfx.disableScissor();
 	}
 
 	private static void drawSigilInfo(GuiGraphics gfx, ProgressScreenContext ctx, RitesTabState state,
@@ -492,8 +523,13 @@ public final class RitesTabView {
 	static void drawModelForRite(GuiGraphics gfx, RitesTabState state,
 										  CardinalRiteRecipe rite,
 										  int areaX, int areaY, int areaW, int areaH) {
-		if (rite.getPreviewPattern() == null) return;
-		List<BlockPosBlockPair> blockPairs = rite.getPreviewPattern().getDisplayBlockPosBlockList(materialCycleIndex());
+		drawModelForPattern(gfx, state, rite.getPreviewPattern(), areaX, areaY, areaW, areaH);
+	}
+
+	static void drawModelForPattern(GuiGraphics gfx, RitesTabState state, MultiblockPattern pattern,
+			int areaX, int areaY, int areaW, int areaH) {
+		if (pattern == null) return;
+		List<BlockPosBlockPair> blockPairs = pattern.getDisplayBlockPosBlockList(materialCycleIndex());
 		if (blockPairs.isEmpty()) return;
 
 		int minX = Integer.MAX_VALUE, maxX = Integer.MIN_VALUE;
