@@ -31,6 +31,8 @@ public final class MnemonicBlueprintMultiplayerGameTests {
 			MnemonicBlueprintTarget.Type.BLOOD_STRUCTURE, Hemomancy.rloc("blood_structure/dried_gourd"));
 	private static final MnemonicBlueprintTarget COVENANT_THRONE = new MnemonicBlueprintTarget(
 			MnemonicBlueprintTarget.Type.BLOOD_STRUCTURE, Hemomancy.rloc("blood_structure/covenant_throne"));
+	private static final MnemonicBlueprintTarget THRESHOLD_MINOR_FLOOR = new MnemonicBlueprintTarget(
+			MnemonicBlueprintTarget.Type.CARDINAL_RITE, Hemomancy.rloc("threshold_minor"));
 
 	private MnemonicBlueprintMultiplayerGameTests() {
 	}
@@ -102,6 +104,28 @@ public final class MnemonicBlueprintMultiplayerGameTests {
 		} finally {
 			sender.discard();
 			observer.discard();
+		}
+	}
+
+	@GameTest(templateNamespace = "minecraft", template = EMPTY_TEMPLATE, timeoutTicks = 40)
+	public static void registeredRitualFloorCanBeImprintedAsARiteBlueprint(GameTestHelper helper) {
+		ServerPlayer sender = testPlayer(helper, "floor-blueprint-sender");
+		try {
+			sender.getInventory().add(new ItemStack(ItemInit.mnemonic_blueprint.get()));
+
+			helper.assertTrue(ImprintMnemonicBlueprintPacket.process(sender, THRESHOLD_MINOR_FLOOR)
+						== ImprintMnemonicBlueprintPacket.Result.IMPRINTED,
+					"A registered ritual floor must be accepted as a rite blueprint target");
+			helper.assertTrue(blankCount(sender) == 0 && filledCount(sender) == 1,
+					"Imprinting a ritual floor must exchange exactly one blank blueprint");
+			ItemStack filled = sender.getInventory().items.stream()
+					.filter(stack -> stack.is(ItemInit.mnemonic_blueprint.get()) && !MnemonicBlueprintItem.isBlank(stack))
+					.findFirst().orElse(ItemStack.EMPTY);
+			helper.assertTrue(THRESHOLD_MINOR_FLOOR.equals(MnemonicBlueprintItem.getTarget(filled)),
+					"The filled blueprint must preserve the selected ritual floor id");
+			helper.succeed();
+		} finally {
+			sender.discard();
 		}
 	}
 

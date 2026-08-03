@@ -10,6 +10,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Predicate;
 
 public final class RecipeMapLayout {
 	public static final String MISC_FAMILY = "Miscellaneous";
@@ -131,9 +132,18 @@ public final class RecipeMapLayout {
 			return nodes.values().stream().filter(node -> node.contains(x, y)).findFirst().orElse(null);
 		}
 
+		public NodeBounds nodeAt(double x, double y, Predicate<RecipeMapEntry> eligible) {
+			return nodes.values().stream()
+					.filter(node -> node.contains(x, y) && eligible.test(node.entry()))
+					.findFirst().orElse(null);
+		}
+
 		public NodeBounds visibleNodeAt(double x, double y) {
-			NodeBounds node = nodeAt(x, y);
-			return node != null && node.entry().visible() ? node : null;
+			return visibleNodeAt(x, y, entry -> true);
+		}
+
+		public NodeBounds visibleNodeAt(double x, double y, Predicate<RecipeMapEntry> eligible) {
+			return nodeAt(x, y, entry -> entry.visible() && eligible.test(entry));
 		}
 	}
 }

@@ -275,7 +275,8 @@ public class SkillsTabController implements IProgressTab {
 		ProgressFilterControlsView.draw(gfx, ctx, controls.degree(),
 				degreeFilter == null ? "Degree: All" : "Degree: " + degreeFilter, 0xFFCC3333, mouseX, mouseY);
 		ProgressFilterControlsView.draw(gfx, ctx, controls.family(),
-				familyFilter == null ? "Family: All" : prettyFamily(familyFilter), 0xFFCC3333, mouseX, mouseY);
+				FamilyFilterLabels.display(FamilyFilterLabels.nickname(familyFilter)),
+				0xFFCC3333, mouseX, mouseY);
 		ProgressFilterControlsView.draw(gfx, ctx, controls.layer(),
 				"Layer: " + (diveState.isDeepActive() ? "5-8" : "0-4"), 0xFFCC3333, mouseX, mouseY);
 		gfx.pose().popPose();
@@ -565,10 +566,6 @@ public class SkillsTabController implements IProgressTab {
 		filterLayer = current;
 		degreeFilter = null;
 		refreshFilteredPositions();
-	}
-
-	private static String prettyFamily(String family) {
-		return HLTextUtils.toProperCase(family.replace('_', ' '));
 	}
 
     @Override public boolean mouseReleased(ProgressScreenContext ctx, double mx, double my, int btn) { return false; }

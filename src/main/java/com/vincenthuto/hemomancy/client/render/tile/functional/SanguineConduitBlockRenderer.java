@@ -26,16 +26,16 @@ public class SanguineConduitBlockRenderer implements BlockEntityRenderer<Sanguin
 	private static final float BASE_RADIUS = 0.15f;
 	private static final float GLOW_EXTRA = 0.04f;
 
-	private static final float A1 = 0.028f;
+	private static final float A1 = 0.08f;
 	private static final double N1 = 3.0;
 	private static final double W1 = 0.06;
 	private static final float A2 = 0.018f;
-	private static final double N2 = 5.0;
-	private static final double W2 = 0.04;
-	private static final float A3 = 0.010f;
-	private static final double W3 = 0.09;
+	private static final double N2 = 7.0;
+	private static final double W2 = 0.3;
+	private static final float A3 = 0.020f;
+	private static final double W3 = 0.3;
 
-	private static final float PULSE_BASE = 0.92f;
+	private static final float PULSE_BASE = 2f;
 	private static final float PULSE_AMP = 0.12f;
 	private static final double PULSE_SPEED = 0.08;
 
@@ -43,11 +43,11 @@ public class SanguineConduitBlockRenderer implements BlockEntityRenderer<Sanguin
 	private static final int RING_SEGMENTS = 72;
 	private static final int RING_COUNT = 3;
 	private static final float RING_START_RADIUS = 0.55f;
-	private static final float RING_MAX_RADIUS = 5.75f;
+	private static final float RING_MAX_RADIUS = -1.5f;
 	private static final float RING_CORE_WIDTH = 0.07f;
 	private static final float RING_GLOW_WIDTH = 0.24f;
 	private static final double RING_PULSE_SPEED = 0.0075;
-	private static final float RING_BASE_Y = 0.002f;
+	private static final float RING_BASE_Y = 0.5f;
 	private static final double RING_ROTATION_SPEED = 1.04; // radians per tick
 
 	private static final int PHASE_SEED_MASK = 0xFFF;

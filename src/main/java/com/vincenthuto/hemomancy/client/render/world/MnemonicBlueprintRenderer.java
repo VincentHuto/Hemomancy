@@ -5,7 +5,7 @@ import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.vincenthuto.hemomancy.common.item.shared.MnemonicBlueprintTarget;
 import com.vincenthuto.hemomancy.common.recipe.BloodStructureRecipe;
 import com.vincenthuto.hemomancy.common.recipe.CardinalRiteRecipe;
-import com.vincenthuto.hutoslib.math.MultiblockPattern;
+import com.vincenthuto.hemomancy.common.rite.floor.CardinalRiteFloorRegistry;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -45,10 +45,10 @@ public final class MnemonicBlueprintRenderer {
 	public static boolean anchor(MnemonicBlueprintTarget selected, BlockPos center, Direction direction) {
 		Minecraft minecraft = Minecraft.getInstance();
 		if (minecraft.level == null || selected == null || center == null) return false;
-		MultiblockPattern resolved = resolvePattern(minecraft.level, selected);
+		MnemonicBlueprintPattern resolved = resolvePattern(minecraft.level, selected);
 		if (resolved == null) return false;
 		target = selected;
-		pattern = MnemonicBlueprintPattern.from(resolved);
+		pattern = resolved;
 		floorCenter = center.immutable();
 		facing = direction == null || direction.getAxis().isVertical() ? Direction.NORTH : direction;
 		SESSION.activate(minecraft.level);
@@ -160,13 +160,15 @@ public final class MnemonicBlueprintRenderer {
 		buffers.endBatch(RenderType.translucentMovingBlock());
 	}
 
-	private static MultiblockPattern resolvePattern(Level level, MnemonicBlueprintTarget selected) {
+	private static MnemonicBlueprintPattern resolvePattern(Level level, MnemonicBlueprintTarget selected) {
 		if (selected.type() == MnemonicBlueprintTarget.Type.CARDINAL_RITE) {
 			CardinalRiteRecipe rite = CardinalRiteRecipe.getRiteByLocation(level, selected.recipeId());
-			return rite == null ? null : rite.getPreviewPattern();
+			if (rite != null) return MnemonicBlueprintPattern.fromRite(rite);
+			return CardinalRiteFloorRegistry.get(selected.recipeId())
+					.map(MnemonicBlueprintPattern::fromFloor).orElse(null);
 		}
 		BloodStructureRecipe structure = BloodStructureRecipe.getStructureByLocation(level, selected.recipeId());
-		return structure == null ? null : structure.getPattern();
+		return structure == null ? null : MnemonicBlueprintPattern.from(structure.getPattern());
 	}
 
 	private record AlphaVertexConsumer(VertexConsumer delegate, float alpha) implements VertexConsumer {

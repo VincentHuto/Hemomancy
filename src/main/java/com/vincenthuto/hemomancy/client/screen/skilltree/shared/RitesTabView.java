@@ -7,6 +7,7 @@ import com.vincenthuto.hemomancy.client.render.entity.misc.IchorianSigilPreviewR
 import com.vincenthuto.hemomancy.common.init.BlockInit;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.recipe.CardinalRiteRecipe;
+import com.vincenthuto.hemomancy.client.render.world.MnemonicBlueprintPattern;
 import com.vincenthuto.hemomancy.common.recipe.CardinalRiteType;
 import com.vincenthuto.hemomancy.common.recipe.RecipeDegreeGates;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
@@ -523,13 +524,20 @@ public final class RitesTabView {
 	static void drawModelForRite(GuiGraphics gfx, RitesTabState state,
 										  CardinalRiteRecipe rite,
 										  int areaX, int areaY, int areaW, int areaH) {
-		drawModelForPattern(gfx, state, rite.getPreviewPattern(), areaX, areaY, areaW, areaH);
+		long cycle = materialCycleIndex();
+		List<BlockPosBlockPair> pairs = MnemonicBlueprintPattern.fromRite(rite).displayBlockPairs(cycle);
+		drawModelForCells(gfx, state, pairs, areaX, areaY, areaW, areaH);
 	}
 
 	static void drawModelForPattern(GuiGraphics gfx, RitesTabState state, MultiblockPattern pattern,
 			int areaX, int areaY, int areaW, int areaH) {
 		if (pattern == null) return;
-		List<BlockPosBlockPair> blockPairs = pattern.getDisplayBlockPosBlockList(materialCycleIndex());
+		drawModelForCells(gfx, state, pattern.getDisplayBlockPosBlockList(materialCycleIndex()),
+				areaX, areaY, areaW, areaH);
+	}
+
+	private static void drawModelForCells(GuiGraphics gfx, RitesTabState state,
+			List<BlockPosBlockPair> blockPairs, int areaX, int areaY, int areaW, int areaH) {
 		if (blockPairs.isEmpty()) return;
 
 		int minX = Integer.MAX_VALUE, maxX = Integer.MIN_VALUE;
@@ -828,8 +836,9 @@ public final class RitesTabView {
 		}
 
 		// Block materials list
-		if (rite.getPreviewPattern() != null) {
-			List<MultiblockPattern.MaterialCount> materials = rite.getPreviewPattern().getMaterialCounts(false);
+		{
+			List<MnemonicBlueprintPattern.MaterialCount> materials =
+					MnemonicBlueprintPattern.fromRite(rite).materialCounts(false);
 			if (!materials.isEmpty()) {
 				gfx.drawString(ctx.font(), Component.literal("Materials:")
 						.withStyle(s -> s.withColor(0x888888)), panelX, y, 0);
@@ -837,7 +846,7 @@ public final class RitesTabView {
 				int materialTextX = panelX + 20;
 				int materialWrapW = panelW - 24;
 				long cycleIndex = materialCycleIndex();
-				for (MultiblockPattern.MaterialCount material : materials) {
+				for (MnemonicBlueprintPattern.MaterialCount material : materials) {
 					MultiblockPatternKey key = material.key();
 					Block block = key.displayBlock(cycleIndex);
 					if (block == null || block == Blocks.AIR) continue;
@@ -929,13 +938,14 @@ public final class RitesTabView {
 			y += 6;
 		}
 
-		if (rite.getPreviewPattern() != null) {
-			List<MultiblockPattern.MaterialCount> materials = rite.getPreviewPattern().getMaterialCounts(false);
+		{
+			List<MnemonicBlueprintPattern.MaterialCount> materials =
+					MnemonicBlueprintPattern.fromRite(rite).materialCounts(false);
 			if (!materials.isEmpty()) {
 				y += lineH;
 				int materialWrapW = panelW - 24;
 				long cycleIndex = materialCycleIndex();
-				for (MultiblockPattern.MaterialCount material : materials) {
+				for (MnemonicBlueprintPattern.MaterialCount material : materials) {
 					MultiblockPatternKey key = material.key();
 					Block block = key.displayBlock(cycleIndex);
 					if (block == null || block == Blocks.AIR) continue;

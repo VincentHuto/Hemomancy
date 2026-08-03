@@ -165,9 +165,9 @@ public class RitesTabController implements IProgressTab {
         if (!unstained) {
 			if (btn == 1 && net.minecraft.client.gui.screens.Screen.hasShiftDown()) {
 				RecipeMapEntry entry = mapCanvas.entryAt(ctx, mx, my);
-				if (entry != null && entry.key().kind() == RecipeMapEntry.Kind.RITE) {
-					PacketHandler.sendToServer(new ImprintMnemonicBlueprintPacket(new MnemonicBlueprintTarget(
-							MnemonicBlueprintTarget.Type.CARDINAL_RITE, entry.id())));
+				MnemonicBlueprintTarget target = RecipeMapBlueprintTarget.from(entry);
+				if (target != null && target.type() == MnemonicBlueprintTarget.Type.CARDINAL_RITE) {
+					PacketHandler.sendToServer(new ImprintMnemonicBlueprintPacket(target));
 					return true;
 				}
 			}

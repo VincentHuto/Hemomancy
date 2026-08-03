@@ -8,6 +8,7 @@ import com.vincenthuto.hemomancy.common.recipe.BloodStructureRecipe;
 import com.vincenthuto.hemomancy.common.recipe.CardinalRiteRecipe;
 import com.vincenthuto.hemomancy.common.recipe.RecipeDegreeGates;
 import com.vincenthuto.hemomancy.common.recipe.RiteDiscoveryRules;
+import com.vincenthuto.hemomancy.common.rite.floor.CardinalRiteFloorRegistry;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
@@ -69,8 +70,11 @@ public record ImprintMnemonicBlueprintPacket(MnemonicBlueprintTarget target) imp
 	private static boolean isKnownAndUnlocked(ServerPlayer player, MnemonicBlueprintTarget target) {
 		if (target.type() == MnemonicBlueprintTarget.Type.CARDINAL_RITE) {
 			CardinalRiteRecipe recipe = CardinalRiteRecipe.getRiteByLocation(player.level(), target.recipeId());
-			return recipe != null && !recipe.isUnstained() && RecipeDegreeGates.playerMeets(player, recipe)
-					&& RiteDiscoveryRules.isDiscovered(player, recipe.getId());
+			if (recipe != null) {
+				return !recipe.isUnstained() && RecipeDegreeGates.playerMeets(player, recipe)
+						&& RiteDiscoveryRules.isDiscovered(player, recipe.getId());
+			}
+			return CardinalRiteFloorRegistry.get(target.recipeId()).isPresent();
 		}
 		BloodStructureRecipe recipe = BloodStructureRecipe.getStructureByLocation(player.level(), target.recipeId());
 		return recipe != null && !recipe.isUnstained() && RecipeDegreeGates.playerMeets(player, recipe);

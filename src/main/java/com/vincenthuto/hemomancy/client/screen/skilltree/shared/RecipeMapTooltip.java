@@ -30,5 +30,18 @@ public final class RecipeMapTooltip {
 		return Mth.clamp(guiWidth / 3, 140, 220);
 	}
 
+	public static String visibleDescription(RecipeMapEntry entry, boolean shiftDown) {
+		if (entry.key().kind() == RecipeMapEntry.Kind.RITE && !shiftDown) return "";
+		return entry.description();
+	}
+
+	public static int blueprintCueSpacerLines() {
+		return 1;
+	}
+
+	public static int blueprintCueReservedWidth() {
+		return 20;
+	}
+
 	public record Content(String title, String description, String context) {}
 }

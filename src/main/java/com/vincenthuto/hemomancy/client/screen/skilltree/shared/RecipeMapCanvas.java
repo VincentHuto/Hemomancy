@@ -4,6 +4,7 @@ import com.vincenthuto.hemomancy.client.screen.skilltree.util.PanZoomState;
 import com.vincenthuto.hemomancy.client.screen.skilltree.util.ProgressScreenContext;
 import com.vincenthuto.hemomancy.client.screen.skilltree.util.HarbingerChromeRenderer;
 import com.vincenthuto.hemomancy.client.screen.skilltree.util.ScreenDrawUtils;
+import com.vincenthuto.hemomancy.client.screen.skilltree.util.FamilyFilterLabels;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;
@@ -13,7 +14,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.function.Function;
 
 public final class RecipeMapCanvas {
@@ -105,10 +105,15 @@ public final class RecipeMapCanvas {
 		}
 		lines.add(Component.literal(tooltip.context())
 				.withStyle(style -> style.withColor(0xFF888888).withItalic(true)));
-		if (!tooltip.description().isBlank()) {
-			for (String line : ScreenDrawUtils.wrapText(ctx.font(), tooltip.description(), maxWidth)) {
+		boolean shiftDown = net.minecraft.client.gui.screens.Screen.hasShiftDown();
+		String visibleDescription = RecipeMapTooltip.visibleDescription(entry, shiftDown);
+		if (!visibleDescription.isBlank()) {
+			for (String line : ScreenDrawUtils.wrapText(ctx.font(), visibleDescription, maxWidth)) {
 				lines.add(Component.literal(line).withStyle(style -> style.withColor(0xFFBBBBBB)));
 			}
+		} else if (entry.key().kind() == RecipeMapEntry.Kind.RITE && !tooltip.description().isBlank()) {
+			lines.add(Component.literal("Hold Shift to read explanation")
+					.withStyle(style -> style.withColor(0xFF777777).withItalic(true)));
 		}
 		if (entry.unlocked()) {
 			lines.add(Component.literal("Click to view details")
@@ -119,31 +124,35 @@ public final class RecipeMapCanvas {
 		}
 		boolean blueprintCue = canImprint(entry);
 		if (blueprintCue) {
+			StringBuilder iconPadding = new StringBuilder(" ");
+			while (ctx.font().width(iconPadding.toString()) < RecipeMapTooltip.blueprintCueReservedWidth()) {
+				iconPadding.append(' ');
+			}
 			lines.add(Component.translatable("item.hemomancy.mnemonic_blueprint.imprint")
-					.withStyle(style -> style.withColor(0xFFC69ACF).withItalic(true)));
-			lines.add(Component.literal("                    "));
+					.withStyle(style -> style.withColor(0xFFC69ACF).withItalic(true))
+					.append(Component.literal(iconPadding.toString())));
+			for (int line = 0; line < RecipeMapTooltip.blueprintCueSpacerLines(); line++) {
+				lines.add(Component.literal("                    "));
+			}
 		}
 		gfx.pose().pushPose();
 		gfx.pose().translate(0, 0, 900);
-		gfx.renderTooltip(ctx.font(), lines, Optional.empty(), mouseX, mouseY);
+		RecipeMapTooltipPositioner tooltipPositioner = new RecipeMapTooltipPositioner();
+		gfx.renderTooltip(ctx.font(), lines.stream().map(Component::getVisualOrderText).toList(),
+				tooltipPositioner, mouseX, mouseY);
 		if (blueprintCue) {
-			int tooltipWidth = lines.stream().mapToInt(ctx.font()::width).max().orElse(0);
-			int tooltipHeight = 8 + Math.max(0, lines.size() - 1) * 10 + 2;
-			int tooltipX = mouseX + 12;
-			if (tooltipX + tooltipWidth + 6 > gfx.guiWidth()) tooltipX = mouseX - 12 - tooltipWidth;
-			int tooltipY = Math.max(4, Math.min(mouseY - 12, gfx.guiHeight() - tooltipHeight - 4));
+			RecipeMapTooltipPositioner.CuePosition cue = tooltipPositioner.cuePosition();
 			gfx.pose().pushPose();
 			gfx.pose().translate(0, 0, 500);
 			gfx.renderItem(new ItemStack(com.vincenthuto.hemomancy.common.init.ItemInit.mnemonic_blueprint.get()),
-					tooltipX + tooltipWidth - 16, tooltipY + tooltipHeight - 18);
+					cue.x(), cue.y());
 			gfx.pose().popPose();
 		}
 		gfx.pose().popPose();
 	}
 
 	private static boolean canImprint(RecipeMapEntry entry) {
-		if (!entry.unlocked() || (entry.key().kind() != RecipeMapEntry.Kind.RITE
-				&& entry.key().kind() != RecipeMapEntry.Kind.CRAFTING)) return false;
+		if (RecipeMapBlueprintTarget.from(entry) == null) return false;
 		net.minecraft.client.Minecraft minecraft = net.minecraft.client.Minecraft.getInstance();
 		return minecraft.player != null && minecraft.player.getInventory().items.stream().anyMatch(stack ->
 				stack.is(com.vincenthuto.hemomancy.common.init.ItemInit.mnemonic_blueprint.get())
@@ -255,7 +264,7 @@ public final class RecipeMapCanvas {
 		ProgressFilterControlsView.draw(gfx, ctx, controls.degree(),
 				degreeFilter == null ? "Degree: All" : "Degree: " + degreeFilter, accent, mouseX, mouseY);
 		ProgressFilterControlsView.draw(gfx, ctx, controls.family(),
-				familyFilter == null ? "Family: All" : familyFilter, accent, mouseX, mouseY);
+				FamilyFilterLabels.display(FamilyFilterLabels.nickname(familyFilter)), accent, mouseX, mouseY);
 		ProgressFilterControlsView.draw(gfx, ctx, controls.layer(),
 				"Layer: " + (diveState.isDeepActive() ? "5-8" : "0-4"), accent, mouseX, mouseY);
 		List<RecipeMapKey> recents = history().entries();
@@ -318,7 +327,8 @@ public final class RecipeMapCanvas {
 		if (!viewport.contains(mouseX, mouseY)) return new ClickResult(false, null);
 		PanZoomState view = activePanZoom();
 		RecipeMapLayout.NodeBounds node = layout.visibleNodeAt(
-				view.cx(ctx.guiLeft(), mouseX), view.cy(ctx.guiTop(), mouseY));
+				view.cx(ctx.guiLeft(), mouseX), view.cy(ctx.guiTop(), mouseY),
+				entry -> passesFilters(entry) && isInteractiveLayer(entry));
 		if (node != null) {
 			if (node.entry().unlocked() && passesFilters(node.entry()) && isInteractiveLayer(node.entry())) {
 				return select(ctx, node.entry().key());
@@ -334,7 +344,8 @@ public final class RecipeMapCanvas {
 		if (!viewport.contains(mouseX, mouseY)) return null;
 		PanZoomState view = activePanZoom();
 		RecipeMapLayout.NodeBounds node = layout.visibleNodeAt(
-				view.cx(ctx.guiLeft(), mouseX), view.cy(ctx.guiTop(), mouseY));
+				view.cx(ctx.guiLeft(), mouseX), view.cy(ctx.guiTop(), mouseY),
+				entry -> passesFilters(entry) && isInteractiveLayer(entry));
 		if (node == null || !node.entry().unlocked() || !passesFilters(node.entry())
 				|| !isInteractiveLayer(node.entry())) return null;
 		return node.entry();

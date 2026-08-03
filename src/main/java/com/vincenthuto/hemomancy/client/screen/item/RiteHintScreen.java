@@ -3,15 +3,17 @@ package com.vincenthuto.hemomancy.client.screen.item;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.vincenthuto.hemomancy.client.screen.skilltree.harbinger.HarbingerProgressScreen;
+import com.vincenthuto.hemomancy.client.render.world.MnemonicBlueprintPattern;
 import com.vincenthuto.hemomancy.client.screen.skilltree.util.ScreenDrawUtils;
 import com.vincenthuto.hemomancy.common.init.BlockInit;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.item.shared.MnemonicBlueprintItem;
 import com.vincenthuto.hemomancy.common.recipe.CardinalRiteRecipe;
 import com.vincenthuto.hemomancy.common.recipe.CardinalRiteType;
+import com.vincenthuto.hemomancy.common.rite.floor.CardinalRiteFloorDefinition;
+import com.vincenthuto.hemomancy.common.rite.floor.CardinalRiteFloorRegistry;
 import com.vincenthuto.hutoslib.client.HLTextUtils;
 import com.vincenthuto.hutoslib.math.BlockPosBlockPair;
-import com.vincenthuto.hutoslib.math.MultiblockPattern;
 import com.vincenthuto.hutoslib.math.MultiblockPatternKey;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
@@ -57,6 +59,7 @@ public class RiteHintScreen extends Screen {
 
 	private final ResourceLocation riteId;
 	private CardinalRiteRecipe rite;
+	private CardinalRiteFloorDefinition floor;
 
 	// 3D model state
 	private float rotationAngle = 45f; // default diagonal view
@@ -93,6 +96,7 @@ public class RiteHintScreen extends Screen {
 		// Look up the rite recipe from the level
 		if (minecraft != null && minecraft.level != null) {
 			this.rite = CardinalRiteRecipe.getRiteByLocation(minecraft.level, riteId);
+			if (this.rite == null) this.floor = CardinalRiteFloorRegistry.get(riteId).orElse(null);
 		}
 	}
 
@@ -122,7 +126,7 @@ public class RiteHintScreen extends Screen {
 		gfx.fill(guiLeft, guiTop, guiLeft + GUI_WIDTH, guiTop + GUI_HEIGHT, BG_COLOR);
 		ScreenDrawUtils.drawBorder(gfx, guiLeft, guiTop, GUI_WIDTH, GUI_HEIGHT, BORDER_OUTER, BORDER_INNER);
 
-		if (rite == null) {
+		if (rite == null && floor == null) {
 			gfx.drawCenteredString(font, Component.literal("Unknown Rite").withStyle(s -> s.withColor(0xFF666666)),
 					guiLeft + GUI_WIDTH / 2, guiTop + GUI_HEIGHT / 2 - 4, 0);
 			super.render(gfx, mouseX, mouseY, partial);
@@ -165,9 +169,7 @@ public class RiteHintScreen extends Screen {
 	// ── 3D Multiblock Preview ──
 
 	private void drawRiteModel(GuiGraphics gfx, int areaX, int areaY, int areaW, int areaH, float partial) {
-		if (rite.getPreviewPattern() == null) return;
-
-		List<BlockPosBlockPair> blockPairs = rite.getPreviewPattern().getDisplayBlockPosBlockList(materialCycleIndex());
+		List<BlockPosBlockPair> blockPairs = previewPattern().displayBlockPairs(materialCycleIndex());
 		if (blockPairs.isEmpty()) return;
 
 		// Determine bounding box
@@ -259,6 +261,10 @@ public class RiteHintScreen extends Screen {
 
 	private void drawInfoPanel(GuiGraphics gfx, int panelX, int panelY, int panelW, int panelH,
 							   int mouseX, int mouseY) {
+		if (floor != null) {
+			drawFloorInfoPanel(gfx, panelX, panelY, panelW, panelH);
+			return;
+		}
 		int clipTop = panelY;
 		int clipBottom = panelY + panelH;
 		int visibleH = clipBottom - clipTop;
@@ -353,14 +359,14 @@ public class RiteHintScreen extends Screen {
 		y += 6;
 
 		// ── Materials list ──
-		if (rite.getPreviewPattern() != null) {
-			List<MultiblockPattern.MaterialCount> materials = rite.getPreviewPattern().getMaterialCounts(false);
+		{
+			List<MnemonicBlueprintPattern.MaterialCount> materials = previewPattern().materialCounts(false);
 			if (!materials.isEmpty()) {
 				gfx.drawString(font, Component.literal("Materials:").withStyle(s -> s.withColor(LABEL_COLOR)), panelX, y, 0);
 				y += lineH;
 
 				long cycleIndex = materialCycleIndex();
-				for (MultiblockPattern.MaterialCount material : materials) {
+				for (MnemonicBlueprintPattern.MaterialCount material : materials) {
 					MultiblockPatternKey key = material.key();
 					Block block = key.displayBlock(cycleIndex);
 					if (block == null || block == Blocks.AIR) continue;
@@ -396,6 +402,7 @@ public class RiteHintScreen extends Screen {
 	}
 
 	private int measureInfoPanelHeight(int panelW) {
+		if (floor != null) return measureFloorInfoPanelHeight(panelW);
 		int y = 0;
 		int lineH = 12;
 
@@ -435,12 +442,12 @@ public class RiteHintScreen extends Screen {
 		y += 6;
 
 		// Materials
-		if (rite.getPreviewPattern() != null) {
-			List<MultiblockPattern.MaterialCount> materials = rite.getPreviewPattern().getMaterialCounts(false);
+		{
+			List<MnemonicBlueprintPattern.MaterialCount> materials = previewPattern().materialCounts(false);
 			if (!materials.isEmpty()) {
 				y += lineH;
 				long cycleIndex = materialCycleIndex();
-				for (MultiblockPattern.MaterialCount material : materials) {
+				for (MnemonicBlueprintPattern.MaterialCount material : materials) {
 					MultiblockPatternKey key = material.key();
 					Block block = key.displayBlock(cycleIndex);
 					if (block == null || block == Blocks.AIR) continue;
@@ -456,6 +463,116 @@ public class RiteHintScreen extends Screen {
 		}
 
 		return y;
+	}
+
+	private MnemonicBlueprintPattern previewPattern() {
+		return floor != null ? MnemonicBlueprintPattern.fromFloor(floor)
+				: MnemonicBlueprintPattern.fromRite(rite);
+	}
+
+	private void drawFloorInfoPanel(GuiGraphics gfx, int panelX, int panelY, int panelW, int panelH) {
+		int totalH = measureFloorInfoPanelHeight(panelW);
+		int maxScroll = Math.max(0, totalH - panelH);
+		infoScroll = Math.min(infoScroll, maxScroll);
+		gfx.enableScissor(panelX - 2, panelY, panelX + panelW + 2, panelY + panelH);
+		int y = panelY - infoScroll;
+		int lineH = 12;
+		String style = HLTextUtils.toProperCase(floor.style().replace('_', ' '));
+		String tier = HLTextUtils.toProperCase(floor.tier().getSerializedName());
+		String title = tier + " " + style + " Ritual Floor";
+		for (String line : ScreenDrawUtils.wrapText(font, title, panelW)) {
+			gfx.drawString(font, Component.literal(line).withStyle(s -> s.withColor(TITLE_COLOR).withBold(true)),
+					panelX, y, 0);
+			y += lineH;
+		}
+		y += 4;
+		gfx.fill(panelX, y, panelX + panelW, y + 1, BORDER_INNER);
+		y += 6;
+		for (String line : ScreenDrawUtils.wrapText(font,
+				"A reusable ritual foundation centered on its Cardinal Focus.", panelW)) {
+			gfx.drawString(font, Component.literal(line).withStyle(s -> s.withColor(DESC_COLOR).withItalic(true)),
+					panelX, y, 0);
+			y += lineH;
+		}
+		y += 4;
+		int width = floor.pattern().getBlockPattern().getWidth();
+		int height = floor.pattern().getBlockPattern().getHeight();
+		int depth = floor.pattern().getBlockPattern().getDepth();
+		y = drawFloorValue(gfx, panelX, y, "Style: ", style);
+		y = drawFloorValue(gfx, panelX, y, "Tier: ", tier);
+		y = drawFloorValue(gfx, panelX, y, "Dimensions: ", width + "x" + height + "x" + depth);
+		y = drawFloorValue(gfx, panelX, y, "Brazier Sockets: ", Integer.toString(floor.brazierSockets().size()));
+		y += 6;
+		gfx.drawString(font, Component.literal("How to Build:").withStyle(s -> s.withColor(TITLE_COLOR)), panelX, y, 0);
+		y += lineH;
+		for (String line : ScreenDrawUtils.wrapText(font,
+				"Build the displayed floor with its Cardinal Focus at the center. Higher-tier floors of the same style can satisfy lower-tier rites.",
+				panelW)) {
+			gfx.drawString(font, Component.literal(line).withStyle(s -> s.withColor(DESC_COLOR)), panelX, y, 0);
+			y += lineH;
+		}
+		y += 6;
+		List<MnemonicBlueprintPattern.MaterialCount> materials = previewPattern().materialCounts(false);
+		if (!materials.isEmpty()) {
+			gfx.drawString(font, Component.literal("Materials:").withStyle(s -> s.withColor(LABEL_COLOR)), panelX, y, 0);
+			y += lineH;
+			long cycleIndex = materialCycleIndex();
+			for (MnemonicBlueprintPattern.MaterialCount material : materials) {
+				Block block = material.key().displayBlock(cycleIndex);
+				if (block == null || block == Blocks.AIR) continue;
+				ItemStack stack = materialStackFor(block);
+				if (stack.isEmpty()) continue;
+				gfx.renderItem(stack, panelX + 2, y);
+				List<String> lines = ScreenDrawUtils.wrapText(font,
+						" x" + material.count() + "  " + materialLabelFor(material.key(), stack), panelW - 20);
+				for (int index = 0; index < lines.size(); index++) {
+					gfx.drawString(font, Component.literal(lines.get(index)).withStyle(s -> s.withColor(VALUE_COLOR)),
+							panelX + 20, y + 4 + index * lineH, 0);
+				}
+				y += Math.max(18, lines.size() * lineH + 4);
+			}
+		}
+		gfx.disableScissor();
+		if (totalH > panelH) {
+			if (infoScroll > 0) gfx.drawCenteredString(font, "\u25B2", panelX + panelW / 2, panelY, 0xAAFFFFFF);
+			if (infoScroll < maxScroll) gfx.drawCenteredString(font, "\u25BC", panelX + panelW / 2,
+					panelY + panelH - 10, 0xAAFFFFFF);
+		}
+	}
+
+	private int drawFloorValue(GuiGraphics gfx, int x, int y, String label, String value) {
+		gfx.drawString(font, Component.literal(label).withStyle(s -> s.withColor(LABEL_COLOR))
+				.append(Component.literal(value).withStyle(s -> s.withColor(ACCENT_COLOR))), x, y, 0);
+		return y + 12;
+	}
+
+	private int measureFloorInfoPanelHeight(int panelW) {
+		String style = HLTextUtils.toProperCase(floor.style().replace('_', ' '));
+		String tier = HLTextUtils.toProperCase(floor.tier().getSerializedName());
+		int height = ScreenDrawUtils.wrapText(font, tier + " " + style + " Ritual Floor", panelW).size() * 12;
+		height += 4 + 1 + 6;
+		height += ScreenDrawUtils.wrapText(font,
+				"A reusable ritual foundation centered on its Cardinal Focus.", panelW).size() * 12 + 4;
+		height += 4 * 12 + 6 + 12;
+		height += ScreenDrawUtils.wrapText(font,
+				"Build the displayed floor with its Cardinal Focus at the center. Higher-tier floors of the same style can satisfy lower-tier rites.",
+				panelW).size() * 12 + 6;
+		List<MnemonicBlueprintPattern.MaterialCount> materials = previewPattern().materialCounts(false);
+		if (!materials.isEmpty()) {
+			height += 12;
+			long cycleIndex = materialCycleIndex();
+			for (MnemonicBlueprintPattern.MaterialCount material : materials) {
+				Block block = material.key().displayBlock(cycleIndex);
+				if (block == null || block == Blocks.AIR) continue;
+				ItemStack stack = materialStackFor(block);
+				if (!stack.isEmpty()) {
+					height += Math.max(18, ScreenDrawUtils.wrapText(font,
+							" x" + material.count() + "  " + materialLabelFor(material.key(), stack), panelW - 20)
+							.size() * 12 + 4);
+				}
+			}
+		}
+		return height;
 	}
 
 	private String performanceInstructions() {

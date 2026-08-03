@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 final class RecipeMapTooltipTest {
 	@Test
@@ -49,5 +50,47 @@ final class RecipeMapTooltipTest {
 
 		assertEquals("Ritual Floor  |  Greater  |  Ritual Floors",
 				RecipeMapTooltip.content(floor).context());
+	}
+
+	@Test
+	void riteExplanationIsHiddenUntilShiftIsHeld() {
+		RecipeMapEntry rite = new RecipeMapEntry(
+				new RecipeMapKey(RecipeMapEntry.Kind.RITE,
+						ResourceLocation.fromNamespaceAndPath("hemomancy", "cardinal_rite/test")),
+				"Test Rite", "A long rite explanation.", 3, "Order", 0, true, true);
+		RecipeMapEntry crafting = new RecipeMapEntry(
+				new RecipeMapKey(RecipeMapEntry.Kind.CRAFTING,
+						ResourceLocation.fromNamespaceAndPath("hemomancy", "blood_structure/test")),
+				"Test Craft", "Crafting directions.", 3, "Apparatus", 0, true, true);
+
+		assertEquals("", RecipeMapTooltip.visibleDescription(rite, false));
+		assertEquals("A long rite explanation.", RecipeMapTooltip.visibleDescription(rite, true));
+		assertEquals("Crafting directions.", RecipeMapTooltip.visibleDescription(crafting, false));
+	}
+
+	@Test
+	void blueprintCueUsesTheExactTooltipRectangleOnEitherSideOfThePointer() {
+		RecipeMapTooltipPositioner right = new RecipeMapTooltipPositioner();
+		right.positionTooltip(320, 180, 20, 20, 100, 40);
+		assertEquals(new RecipeMapTooltipPositioner.CuePosition(116, 28), right.cuePosition());
+
+		RecipeMapTooltipPositioner left = new RecipeMapTooltipPositioner();
+		left.positionTooltip(320, 180, 300, 20, 100, 40);
+		assertEquals(new RecipeMapTooltipPositioner.CuePosition(272, 28), left.cuePosition());
+	}
+
+	@Test
+	void blueprintCueSharesTheInstructionRowWithoutCoveringItsText() {
+		int precedingTextHeight = 60;
+		int instructionWidth = 100;
+		int tooltipWidth = instructionWidth + RecipeMapTooltip.blueprintCueReservedWidth();
+		int tooltipHeight = precedingTextHeight + 10 + RecipeMapTooltip.blueprintCueSpacerLines() * 10;
+		RecipeMapTooltipPositioner positioner = new RecipeMapTooltipPositioner();
+		positioner.positionTooltip(320, 180, 20, 20, tooltipWidth, tooltipHeight);
+
+		assertEquals(8 + precedingTextHeight, positioner.cuePosition().y(),
+				"The icon must start on the imprint instruction row");
+		assertTrue(positioner.cuePosition().x() >= 32 + instructionWidth,
+				"The imprint instruction must reserve horizontal room for the icon");
 	}
 }

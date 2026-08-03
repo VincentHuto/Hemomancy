@@ -8,6 +8,7 @@ import com.vincenthuto.hemomancy.client.screen.skilltree.util.PanZoomState;
 import com.vincenthuto.hemomancy.client.screen.skilltree.util.ProgressScreenContext;
 import com.vincenthuto.hemomancy.client.screen.skilltree.util.ScreenDrawUtils;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;
@@ -29,10 +30,11 @@ final class ScarsTabView {
 	private ScarsTabView() {}
 
 	static void drawNodes(GuiGraphics gfx, ProgressScreenContext ctx, ScarsTabState state,
-	                     PanZoomState panZoom, int playerDegree) {
+	                     PanZoomState panZoom, int playerDegree, EnumBloodTendency family) {
 		animationTime += 0.016f;
 		int halfNode = panZoom.halfNode(ScarsTabController.NODE_SIZE);
 		for (ScarTreeEntry entry : state.entries) {
+			if (family != null && entry.tendency() != family) continue;
 			ScarTreeLayout.Point point = state.positions.get(entry.id().toString());
 			if (point == null) continue;
 			int x = panZoom.sx(ctx.guiLeft(), point.x());
@@ -85,9 +87,10 @@ final class ScarsTabView {
 	}
 
 	static ScarTreeEntry nodeUnder(ProgressScreenContext ctx, ScarsTabState state, PanZoomState panZoom,
-	                              double mouseX, double mouseY) {
+	                              EnumBloodTendency family, double mouseX, double mouseY) {
 		int halfNode = panZoom.halfNode(ScarsTabController.NODE_SIZE);
 		for (ScarTreeEntry entry : state.entries) {
+			if (family != null && entry.tendency() != family) continue;
 			ScarTreeLayout.Point point = state.positions.get(entry.id().toString());
 			if (point == null) continue;
 			int x = panZoom.sx(ctx.guiLeft(), point.x());
@@ -98,10 +101,11 @@ final class ScarsTabView {
 	}
 
 	static void drawTooltip(GuiGraphics gfx, ProgressScreenContext ctx, ScarsTabState state,
-	                        PanZoomState panZoom, int playerDegree, int mouseX, int mouseY) {
+	                        PanZoomState panZoom, int playerDegree, EnumBloodTendency family,
+	                        int mouseX, int mouseY) {
 		if (mouseX < ctx.guiLeft() || mouseX >= ctx.guiLeft() + ctx.guiWidth()
 				|| mouseY < ctx.guiTop() || mouseY >= ctx.guiTop() + ctx.guiHeight()) return;
-		ScarTreeEntry entry = nodeUnder(ctx, state, panZoom, mouseX, mouseY);
+		ScarTreeEntry entry = nodeUnder(ctx, state, panZoom, family, mouseX, mouseY);
 		if (entry == null) return;
 		boolean locked = ScarsTabController.isTierLocked(entry.tier(), playerDegree);
 		boolean known = state.knownScarIds.contains(entry.id());

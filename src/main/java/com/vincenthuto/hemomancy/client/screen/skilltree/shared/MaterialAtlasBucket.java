@@ -4,6 +4,7 @@ public record MaterialAtlasBucket(
 		MaterialAtlasPath path,
 		String id,
 		String label,
+		String nickname,
 		int color,
 		int centerX,
 		int centerY,

@@ -46,6 +46,8 @@ public class ManipulationsTabController implements IProgressTab {
 
     private final TendencyTraceLayerCache traceCache = new TendencyTraceLayerCache();
     private final PanZoomState panZoom = new PanZoomState();
+    private final CyclingFamilyFilter<EnumBloodTendency> familyFilter =
+            new CyclingFamilyFilter<>(List.of(EnumBloodTendency.values()));
     private int manipRingCenterX, manipRingCenterY;
     private final Map<ManipulationTreeEntry, int[]> manipPositions = new HashMap<>();
     private final Set<String> knownManipNames = new HashSet<>();
@@ -208,10 +210,12 @@ public class ManipulationsTabController implements IProgressTab {
     @Override
     public void render(GuiGraphics gfx, ProgressScreenContext ctx, int mouseX, int mouseY, float partial) {
         tickKnownManipCache();
-        traceCache.rebuildIfNeeded(ManipulationTreeInit.ENTRIES, manipPositions, knownManipNames, playerDegree, contentW, contentH, manipRingCenterX, manipRingCenterY);
+        traceCache.rebuildIfNeeded(visibleManipulationEntries(), manipPositions, knownManipNames,
+                playerDegree, contentW, contentH, manipRingCenterX, manipRingCenterY);
         traceCache.render(gfx, ctx, panZoom);
         drawManipTendencyStar(gfx, ctx);
         drawManipNodes(gfx, ctx);
+        FamilyFilterControlView.draw(gfx, ctx, familyLabel(), 0xFFCC8833, mouseX, mouseY);
     }
 
     @Override
@@ -246,6 +250,7 @@ public class ManipulationsTabController implements IProgressTab {
 
         for (var e : manipPositions.entrySet()) {
             ManipulationTreeEntry entry = e.getKey();
+            if (!isVisibleFamily(entry)) continue;
             int[] pos = e.getValue();
             int nx = sx(ctx, pos[0]);
             int ny = sy(ctx, pos[1]);
@@ -351,6 +356,7 @@ public class ManipulationsTabController implements IProgressTab {
 
         for (var e : manipPositions.entrySet()) {
             ManipulationTreeEntry entry = e.getKey();
+            if (!isVisibleFamily(entry)) continue;
             int[] pos = e.getValue();
             int nx = sx(ctx, pos[0]), ny = sy(ctx, pos[1]);
             if (!NodeShapeRenderer.isInside(entry.getNodeShape(), mouseX, mouseY, nx, ny, hn)) continue;
@@ -638,6 +644,7 @@ public class ManipulationsTabController implements IProgressTab {
     private ManipulationTreeEntry manipNodeUnder(ProgressScreenContext ctx, double mx, double my) {
         int h = halfNode();
         for (var e : manipPositions.entrySet()) {
+            if (!isVisibleFamily(e.getKey())) continue;
             int[] p = e.getValue();
             int nx = sx(ctx, p[0]), ny = sy(ctx, p[1]);
             if (NodeShapeRenderer.isInside(e.getKey().getNodeShape(), mx, my, nx, ny, h)) return e.getKey();
@@ -651,6 +658,11 @@ public class ManipulationsTabController implements IProgressTab {
 
     @Override
     public boolean mouseClicked(ProgressScreenContext ctx, double mx, double my, int btn) {
+        if (FamilyFilterControlView.bounds(ctx).contains(mx, my)) {
+            familyFilter.cycle(btn == 1 ? -1 : 1);
+            if (selectedEntry != null && !isVisibleFamily(selectedEntry)) selectedEntry = null;
+            return true;
+        }
         if (btn != 0) return false;
         ManipulationTreeEntry hit = manipNodeUnder(ctx, mx, my);
         if (hit != null) {
@@ -672,4 +684,19 @@ public class ManipulationsTabController implements IProgressTab {
     }
     public int getContentW() { return contentW; }
     public int getContentH() { return contentH; }
+
+    private List<ManipulationTreeEntry> visibleManipulationEntries() {
+        return ManipulationTreeInit.ENTRIES.stream().filter(this::isVisibleFamily).toList();
+    }
+
+    private boolean isVisibleFamily(ManipulationTreeEntry entry) {
+        BloodManipulation manipulation = entry.resolve();
+        return familyFilter.includes(manipulation != null ? manipulation.getTend() : null);
+    }
+
+    private String familyLabel() {
+        EnumBloodTendency selected = familyFilter.selected();
+        return FamilyFilterLabels.display(selected == null ? null
+                : HLTextUtils.toProperCase(selected.name().replace('_', ' ')));
+    }
 }

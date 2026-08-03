@@ -17,12 +17,12 @@ public class HarbingerProgressScreen extends Screen {
     // ── Tabs ──
     private enum Tab {
         SKILLS("Skills", 0xFFCC3333, 0, false),
-        MANIPULATIONS("Manipulations", 0xFFCC8833, 3, false),
-        CRAFTING("Crafting", 0xFFAA2222, 0, false),
-        SCARS("Scars", 0xFF44AACC, 4, false),
-        SUMMONS("Summons", 0xFFBB3355, 2, false),
         RITES("Rites", 0xFF8844CC, 0, false),
+        MANIPULATIONS("Manipulations", 0xFFCC8833, 3, false),
+        SCARS("Scars", 0xFF44AACC, 4, false),
+        CRAFTING("Crafting", 0xFFAA2222, 0, false),
         MATERIALS("Materials", 0xFFCC6644, 0, false),
+        SUMMONS("Summons", 0xFFBB3355, 2, true),
         BESTIARY("Bestiary", 0xFF77AA66, 2, true);
 
         final String label;
@@ -310,11 +310,15 @@ public class HarbingerProgressScreen extends Screen {
     }
 
     private void drawBottomRightTabs(GuiGraphics gfx, int mouseX, int mouseY) {
-        for (Tab tab : bottomRightTabs(playerDegree)) {
-            int tw = font.width(tab.label) + 14;
-            int tx = guiLeft + guiWidth - TAB_PAD - tw;
-            int ty = guiTop + guiHeight - TAB_PAD - TAB_HEIGHT;
-            boolean hovered = mouseX >= tx && mouseX <= tx + tw && mouseY >= ty && mouseY <= ty + TAB_HEIGHT;
+        List<Tab> tabs = bottomRightTabs(playerDegree);
+        List<BottomRightTabLayout.Bounds> bounds = bottomRightTabBounds(tabs);
+        for (int i = 0; i < tabs.size(); i++) {
+            Tab tab = tabs.get(i);
+            BottomRightTabLayout.Bounds tabBounds = bounds.get(i);
+            int tw = tabBounds.width();
+            int tx = tabBounds.x();
+            int ty = tabBounds.y();
+            boolean hovered = tabBounds.contains(mouseX, mouseY);
             boolean active = tab == activeTab;
             gfx.fill(tx, ty, tx + tw, ty + TAB_HEIGHT, active ? 0xFF07120B : (hovered ? 0xFF0A160D : 0xFF050B07));
             ScreenDrawUtils.drawSimpleBorder(gfx, tx, ty, tw, TAB_HEIGHT, active ? tab.color : 0xFF444444);
@@ -330,15 +334,18 @@ public class HarbingerProgressScreen extends Screen {
     }
 
     private Tab bottomRightTabUnder(double mx, double my) {
-        for (Tab tab : bottomRightTabs(playerDegree)) {
-            int tw = font.width(tab.label) + 14;
-            int tx = guiLeft + guiWidth - TAB_PAD - tw;
-            int ty = guiTop + guiHeight - TAB_PAD - TAB_HEIGHT;
-            if (mx >= tx && mx <= tx + tw && my >= ty && my <= ty + TAB_HEIGHT) {
-                return tab;
-            }
+        List<Tab> tabs = bottomRightTabs(playerDegree);
+        List<BottomRightTabLayout.Bounds> bounds = bottomRightTabBounds(tabs);
+        for (int i = 0; i < tabs.size(); i++) {
+            if (bounds.get(i).contains(mx, my)) return tabs.get(i);
         }
         return null;
+    }
+
+    private List<BottomRightTabLayout.Bounds> bottomRightTabBounds(List<Tab> tabs) {
+        List<Integer> widths = tabs.stream().map(tab -> font.width(tab.label) + 14).toList();
+        return BottomRightTabLayout.layout(guiLeft, guiTop, guiWidth, guiHeight,
+                TAB_PAD, TAB_HEIGHT, widths);
     }
 
     private static Tab firstVisibleTab(int degree) {
@@ -363,6 +370,14 @@ public class HarbingerProgressScreen extends Screen {
             }
         }
         return visible;
+    }
+
+    static List<String> topTabLabels(int degree) {
+        return visibleTabs(degree).stream().map(tab -> tab.label).toList();
+    }
+
+    static List<String> bottomRightTabLabels(int degree) {
+        return bottomRightTabs(degree).stream().map(tab -> tab.label).toList();
     }
 
     private boolean isOverHomeButton(double mx, double my) {

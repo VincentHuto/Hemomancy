@@ -2309,7 +2309,7 @@
   "item.hemomancy.mnemonic_blueprint.tooltip.clear": "Shift-right-click to clear the projection",
   "item.hemomancy.mnemonic_blueprint.blank_hint": "Imprint this blank blueprint from an unlocked Sanguine Conduit node",
   "item.hemomancy.mnemonic_blueprint.cleared": "Mnemonic projection cleared",
-  "item.hemomancy.mnemonic_blueprint.imprint": "Shift-right-click to imprint a blank blueprint",
+  "item.hemomancy.mnemonic_blueprint.imprint": "Shift-Rmb to imprint a blueprint",
   "item.hemomancy.mnemonic_blueprint.imprinted": "Imprinted %s",
   "item.hemomancy.mnemonic_blueprint.no_blank": "You need a blank mnemonic blueprint",
   "item.hemomancy.mnemonic_blueprint.invalid_target": "That memory cannot be imprinted",

@@ -88,6 +88,19 @@ final class RecipeMapLayoutTest {
 	}
 
 	@Test
+	void hitTestingCanSelectTheActiveNodeWhenSurfaceAndDeepDegreesOverlap() {
+		ResourceLocation surface = ResourceLocation.fromNamespaceAndPath("hemomancy", "cardinal_rite/votary");
+		ResourceLocation deep = ResourceLocation.fromNamespaceAndPath("hemomancy", "cardinal_rite/covenant");
+		RecipeMapLayout.Result layout = RecipeMapLayout.build(List.of(
+				entry(surface, "Surface", 1, "Order", 0, true),
+				entry(deep, "Deep", 5, "Order", 0, true)), List.of("Order"));
+		RecipeMapLayout.NodeBounds deepNode = layout.node(deep);
+
+		assertEquals(deep, layout.visibleNodeAt(deepNode.centerX(), deepNode.centerY(),
+				candidate -> candidate.column() >= 5).entry().id());
+	}
+
+	@Test
 	void unknownFamiliesFallBackToMiscellaneousWithoutLosingTheEntry() {
 		RecipeMapEntry unknown = entry(FIRST, "Addon Rite", 2, "Addon Family", 0, true);
 		RecipeMapLayout.Result layout = RecipeMapLayout.build(List.of(unknown), List.of("Order", RecipeMapLayout.MISC_FAMILY));
