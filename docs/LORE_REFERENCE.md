@@ -2,7 +2,7 @@
 
 > This document covers **lore only**: world history, cosmic origins, factions, characters, beliefs, mythology, and narrative themes. For mechanics, systems, and code details see [HEMOMANCY_REFERENCE.md](HEMOMANCY_REFERENCE.md).
 >
-> **Last Updated:** 2026-07-11 settled lore standardization. LORE_REFERENCE.md is the authority for canon. `HEMOMANCY_REFERENCE.md` describes the mechanics that implement it. Game code, dialogue, inquiries, item text, advancements, and wiki pages are downstream and must be corrected when they disagree with these documents.
+> **Last Updated:** 2026-08-02 lore/reference synchronization audit. LORE_REFERENCE.md is the authority for canon. `HEMOMANCY_REFERENCE.md` describes the mechanics that implement it. Game code, dialogue, inquiries, item text, advancements, and wiki pages are downstream and must be corrected when they disagree with these documents.
 
 ## Canon Governance
 
@@ -20,7 +20,7 @@ The following settled facts are non-negotiable consistency anchors:
 - Hemorath expresses Ferric and Mortem. Seraphae expresses Animus and Lux.
 - Eight canonical Morphling strains are implemented. Older references to twelve describe superseded prototypes.
 
-> **Current Lore-State Snapshot (2026-06-18 audit):**
+> **Current Lore-State Snapshot (2026-08-02 audit):**
 > - Core narrative pillars remain directly represented in gameplay: Harbinger initiation/degrees (now including the explicit Apotheos gate), Unstained purification path, faction NPC dialogue trees, blood-memory framing, and fungal-whisper escalation.
 > - **Memory Weaving now reads as a physical Somatic Loom rite:** blank Hematic Memories, catalyst patterns, enzyme-dye reservoirs, projected blood, and unruly colored memory-orbs all make refined manipulation learning feel like wrestling dormant biology into a chosen shape rather than selecting a recipe from a menu.
 > - Qliphoth Communion now has a clearer in-game ritual rhythm: the Sanguine Monolith breaks open with a black void-bloom, the Qliphoth Tree drops nine named husks with personal whispers, and only Cult Pruning can remove the bloom by normal progression.
@@ -32,6 +32,9 @@ The following settled facts are non-negotiable consistency anchors:
 > - Covenant social structure gained stricter in-game expression: bloodline leadership can now ritually sever members, reinforcing the Order's "chosen-family covenant" framing over biological lineage.
 > - Harbinger outpost recruitment now reflects covenant restraint: a player's bloodline can draw one pledged voice from an outpost and one of each calling, supporting the Order's doctrine of spreading the cause rather than absorbing an entire lodge.
 > - Cerebral scars now read more like internalized mind-maps than worn trinkets: Scar items are burned into memory, Mason's Effigy prepares known scars into a motif, projected blood writes the motif into a dynamic Scar Pattern, and the Anastomotic Brazier burns that pattern to set the active scar loadout.
+> - **Cardinal Rites now have a shared bodily liturgy:** an authored ritual floor establishes the grammar, a Cardinal Focus holds the rite's medium, lit braziers declare offerings, and a planted Living Staff becomes the temporary vascular axis around which the rite manifests.
+> - **Mnemonic Blueprints replace disposable hint sheets:** an unlocked rite or blood structure can be impressed into a reusable mnemonic plan, examined as an authored diagram, and projected into the world as a construction memory. Mnemonic Folios preserve collections of those plans.
+> - **Puppetry unlocks are now Cardinal Ordeals:** four artificial bodies share the Dominion Lesser floor, preserve the owner's attuned Crossbar as their medium, and become known only after the manifested puppet itself is defeated.
 > - This document remains canonical for worldbuilding. [HEMOMANCY_REFERENCE.md](HEMOMANCY_REFERENCE.md) records how that canon is implemented and must be updated when the implementation changes.
 
 ---
@@ -133,11 +136,13 @@ The rarest and most extreme endpoint — performing small fungal rituals that st
 
 Blood manipulations — the spells and powers of a Hemomancer — are not truly learned. They are **remembered**.
 
-Everyone carries dormant **blood memories** deep in their biology, inherited from the infection's long history in the world. These memories are potential, not active — they cannot be accessed without the infection fully taking hold. Once awakened (via the Mortal Display and Sanguine Initiation), these memories can be drawn out, shaped, and activated through a process called **Memory Weaving**.
+Everyone carries dormant **blood memories** deep in their biology, inherited from the infection's long history in the world. These memories are potential, not active — they cannot be accessed without the infection fully taking hold. Once awakened through the Mortal Display oath followed by Sanguine Initiation, these memories can be drawn out, shaped, and activated through a process called **Memory Weaving**.
 
 Memory Weaving is not ordinary crafting. A blank Hematic Memory is placed into the Somatic Loom as a vessel, while catalyst items act like witnesses, anchors, or symbolic hooks that tell the infection which dormant instruction to expose. Enzymes are no longer just present or absent; the loom stores them as internal, unrecoverable dye-like reservoirs keyed to the eight tendencies. When the correct pattern is present, the player must project blood into the loom before the memory can be physically wrestled into form.
 
 The visible rite externalizes the infection's resistance. A black pulse scatters colored memory-orbs around the loom, each one representing a required enzyme-unit of tendency. The Harbinger draws them home with the Living Staff, pulling unruly strands back into the blank memory until the dormant instruction crystallizes as a usable Hematic Memory item.
+
+The Order uses **Mnemonic Blueprints** for a related but distinct act of memory. A Blueprint does not teach a manipulation and does not contain the rite itself. It fixes the remembered spatial relationships of a known Cardinal Rite or blood structure into a portable plan. Reading it recalls the authored diagram; pressing it against the world projects that memory over real blocks so the practitioner can compare intention with construction. A **Mnemonic Folio** is an archive of these spatial memories, not an additional source of secret knowledge: it can preserve plans the bearer has legitimately received or imprinted, but it cannot make an unknown rite known.
 
 **This is the truth the Harbingers believe**: that blood magic is simply a gift they were born carrying, a sacred inheritance that should not be wasted.
 
@@ -219,6 +224,18 @@ When an advanced Harbinger asks an outpost member to pledge blood into their cov
 
 > *Vicar's Secret (Archon only):* "The Hematic Order never had seven degrees. There have always been eight. The eighth degree is silence."
 
+### 6.3a Cardinal Rites as Bodily Liturgy
+
+Cardinal Rites are not ordinary multiblock recipes enlarged for spectacle. They are the formal grammar by which the Hematic Order persuades an infection, a place, and a practitioner to behave as one body.
+
+- The **ritual floor** is the rite's grammar: a reusable diagram that declares the scale and family of the work.
+- The **Cardinal Focus** is its temporary heart. The seated medium identifies what the rite is acting through or upon; preserving a medium means the rite changes its relationship to the bearer without consuming the object itself. Living Staffs are the common degree-rite medium, but specialized rites may preserve another relationship-bearing object such as an attuned Crossbar, and the temple's simple Sanguine Initiation seats an iron nugget.
+- **Lit braziers** are deliberate mouths around the body of the rite. Their offerings are absorbed only when the manifested work has successfully begun, so a failed attempt before manifestation is not mistaken for a completed sacrifice.
+- When a **Living Staff** is the declared medium, it is planted rather than merely waved. For the duration of the rite it becomes a vascular axis, holding the practitioner's claim, the emerging daemon, and the route by which offerings and power return to the caster.
+- **Anchors, sockets, sigils, boundaries, fog, and ordeal waves** are expressions of the rite becoming anatomically coherent. Breaking the authored station tears that temporary body apart; cancellation is an intentional reabsorption, not a clean refund.
+
+The simpler rites keep this anatomy restrained. Greater and Grand rites make it visible enough to become an ordeal in its own right. The shared form is why one learned ritual floor can support multiple rites without making those rites interchangeable: floor, medium, offerings, ceremony profile, and intended transformation all carry separate meaning.
+
 ### 6.4 Degrees of Initiation
 
 Most Harbingers — most outposts, most individual groups — only ever reach **Degree 5 (Illuminatus)**. To the average practitioner, this is the summit of what blood magic can offer. The existence of Degrees 6 and 7 is known only to those who reach them; the existence of the 8th is known only to Archons who are told, and most keep the secret.
@@ -245,7 +262,7 @@ Each degree carries a **lore theme** — the historical/metaphysical institution
 **Gameplay:** Blood as a living resource. The Vicar teaches Blood Absorption and Blood Projection at this stage: fill the vessel, then spend stored blood into blood-structure recipes. The first Neophyte assignment asks the player to carry 5000 ml, project blood into a Liber Sanguinum, and harden a Hematic Iron Block. The **Vial Centrifuge** is introduced as the first blood-processing station, separating bloody vials into early tendency and iron outputs. First Humilis-rank blood manipulations become unlockable. Core loop: fill blood, spend blood, craft with projection, cast manipulations.
 
 #### VOTARY 2 — *of the Hematic Covenant*
-**Lore:** A Votary has taken a vow — not to the Order as an institution but to the Covenant as a compact between practitioners. The difference between someone who was bitten and someone who *chose to stay bitten*. The Vicar introduces the seven blood tendencies. The Fungal Podium may be encountered as an unreadable Lodge apparatus, but it cannot open the Fungal Gardens until a Degree-7 Archon has received the ninth-pome Fungal Spine.
+**Lore:** A Votary has taken a vow — not to the Order as an institution but to the Covenant as a compact between practitioners. The difference between someone who was bitten and someone who *chose to stay bitten*. The Vicar introduces the eight blood tendencies: Animus/Vivacious, Flammeus/Fervent, Ductilis/Neurotic, Lux/Incandescent, Mortem/Ruinous, Congeatio/Frigid, Ferric, and Tenebris/Umbral. The Fungal Podium may be encountered as an unreadable Lodge apparatus, but it cannot open the Fungal Gardens until a Degree-7 Archon has received the ninth-pome Fungal Spine.
 
 **Gameplay:** The **Ghastly Alembic** and the wider tendency system become available. Players distill organic inputs into concentrated alchemical compounds while continuing the Living Syringe + Vial Rack workflow. The Alchemist's D2 work now runs on two formal tracks: Red Taxonomy field specimens and the Eightfold Centrifuge enzyme record, which asks the player to obtain all eight enzyme expressions without consuming them. A quieter Living Bestiary runs alongside those assignments: specimen jars can bring Hemomancy fauna, including wild Morphling Polyps, to the Alchemist for record-and-return study or surrender. Captured polyps introduce morphling layer families early through wild-bound morphlings, while the Degree 5 Incubator remains the full cultivation path. Tendency alignment scores begin shifting toward chosen affinities. The Blood Tendency UI is fully revealed. Humilis and Mediocritas manipulations from the chosen tendency line become craftable. More involved blood-structure crafting continues to open from here: Basic-tier multiblock patterns are available early, Advanced patterns unlock at Degree 4 (Adept), and Grand-tier patterns requiring sustained Blood Conduit flow unlock at Degree 5 (Illuminatus).
 
@@ -356,6 +373,8 @@ From the Harbinger Vicar's lore branches:
 
 Harbinger puppeteering imitates that visible principle without accepting the hive's claim over the practitioner. A Puppeteer's Spindle fixes a learned blood-memory into a prepared shape and permanently attunes its Marionette Crossbar to one owner; the Spindle does not project the body itself. Puppeteering Thread becomes stored tension in the Crossbar, and the attuned Harbinger spends that tension to call, sustain, recall, or direct the shaped body in the field. A Crossbar can hold a shared behavioral command for its exact skein, while the Degree 5 discipline **Skein Transposition** lets an advanced Harbinger replace the prepared artificial shape without returning to the Spindle. Transposition changes the shaped expression, not the identity of the tether: unrelated shapes and claimed people are not rewritten. The tether is personal and local: another practitioner cannot inherit the Crossbar, starvation unravels only the body whose upkeep failed, and crossing dimensions, death, or the owner's departure severs the projection even when its chunk was asleep. A faltering Broken Will can be Commandeered into the same tether system and obey its commands, but it remains a claimed failed person rather than becoming one of the four learned artificial shapes or a candidate for transposition.
 
+The four canonical artificial shapes are learned through **Puppetry Cardinal Ordeals**, not by assembling and consuming a body as an ordinary craft. Each ordeal uses the shared Dominion Lesser floor because all four test the same claim: whether the practitioner can impose a stable artificial body without surrendering the tether to the hive. The owner's attuned Crossbar is seated intact in the Cardinal Focus and remains unchanged, because it is the enduring relationship under examination rather than fuel. Bespoke lit-brazier offerings declare the body being called. Once manifestation succeeds, the puppet itself is the ordeal and must be defeated; cancellation, abandonment, structural failure, or the caster's loss grants no memory of mastery. Victory teaches the exact shape whose resistance the practitioner overcame.
+
 ---
 
 ## 7. The Unstained
@@ -418,6 +437,8 @@ Abilities that emerge at this stage:
 - Healing touch
 - Passive plant growth in their vicinity
 - Greatly enhanced resistance to blood corruption
+
+**Implementation boundary:** these traits remain canonical consequences of complete purification, but they are not all represented by current runtime effects. The mechanics reference must track coma/bloodlessness, halted normal aging, altered hunger, illness sense, healing touch, and passive plant growth separately as implemented, partial, or planned rather than treating the list as one completed feature.
 
 And critically, the path tends toward **biological immortality**. Across Clarity, ordinary healing potions and Regeneration work progressively less, poison has progressively less purchase, and hunger slows as the preserved body needs less food. At Enlightenment those responses are greatly diminished, not wholly removed. The Unstained can still die through sufficient physical destruction, fire, magic, or fungal means; the release scope does not grant general invulnerability or rewrite drowning and every ordinary damage source.
 
@@ -503,7 +524,7 @@ From the player's perspective:
 - Thirsters and Fargones stir in the dark
 - The moon itself renders red, with fungal-vein sky forms intruding around it
 
-A ritual is still intended to trigger a Blood Moon manually in the future, but it should remain intentionally expensive — a single player triggering a worldwide event that affects everyone on the server is something that should be done sparingly.
+The implemented **Rite of the Sanguine Eclipse** can trigger a Blood Moon manually. It remains intentionally expensive in meaning even where balance values continue to be tuned: a single practitioner is invoking a worldwide fungal surge that affects everyone on the server, so the act should remain deliberate and uncommon rather than routine weather control.
 
 ---
 
