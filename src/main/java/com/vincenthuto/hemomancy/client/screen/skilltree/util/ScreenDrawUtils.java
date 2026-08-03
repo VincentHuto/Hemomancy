@@ -192,6 +192,29 @@ public final class ScreenDrawUtils {
 		}
 	}
 
+	/** Draws the accent-aware ornamental overlay used by the Harbinger tab row. */
+	public static void drawHarbingerTabFrames(GuiGraphics gfx, Font font,
+			List<TabDesc> tabs,
+			int guiLeft, int guiTop, int guiWidth,
+			int tabH, int tabPad,
+			int mouseX, int mouseY) {
+		List<TabLayout> layout = fittedTabLayout(font, tabs, guiWidth, tabPad);
+		int x = guiLeft + guiWidth - tabPad;
+		int y = guiTop + tabPad;
+		for (int i = tabs.size() - 1; i >= 0; i--) {
+			TabDesc tab = tabs.get(i);
+			int tw = layout.get(i).width();
+			int tx = x - tw;
+			boolean hovered = mouseX >= tx && mouseX <= tx + tw
+					&& mouseY >= y && mouseY <= y + tabH;
+			HarbingerChromeRenderer.State state = tab.active()
+					? HarbingerChromeRenderer.State.ACTIVE
+					: hovered ? HarbingerChromeRenderer.State.HOVERED : HarbingerChromeRenderer.State.IDLE;
+			HarbingerChromeRenderer.drawFrame(gfx, tx, y, tw, tabH, tab.accentColor(), state);
+			x = tx - tabPad;
+		}
+	}
+
 	/**
 	 * Returns the index (into {@code tabs}) of the tab the mouse is over,
 	 * or -1 if none.  Must use the same geometry as {@link #drawTabs}.
@@ -441,6 +464,21 @@ public final class ScreenDrawUtils {
 	/** Convenience overload using the default {@link #LAYER_BTN_SIZE}. */
 	public static boolean isOverLayerButton(double mx, double my, int bx, int by) {
 		return isOverLayerButton(mx, my, bx, by, LAYER_BTN_SIZE);
+	}
+
+	/** Adds Harbinger ornamental frames without changing the shared layer-button geometry. */
+	public static void drawHarbingerLayerButtonFrames(GuiGraphics gfx,
+			int bx, int centerY, int maxLayer, int tabColor, int mouseX, int mouseY) {
+		if (maxLayer <= 0) return;
+		int bs = LAYER_BTN_SIZE;
+		int upY = centerY - bs - 14;
+		int downY = centerY + 14;
+		HarbingerChromeRenderer.drawFrame(gfx, bx, upY, bs, bs, tabColor,
+				isOverLayerButton(mouseX, mouseY, bx, upY, bs)
+						? HarbingerChromeRenderer.State.HOVERED : HarbingerChromeRenderer.State.IDLE);
+		HarbingerChromeRenderer.drawFrame(gfx, bx, downY, bs, bs, tabColor,
+				isOverLayerButton(mouseX, mouseY, bx, downY, bs)
+						? HarbingerChromeRenderer.State.HOVERED : HarbingerChromeRenderer.State.IDLE);
 	}
 
 	public static void drawCubicTrace(GuiGraphics gfx,

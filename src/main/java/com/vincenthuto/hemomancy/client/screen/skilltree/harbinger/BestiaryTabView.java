@@ -1,6 +1,7 @@
 package com.vincenthuto.hemomancy.client.screen.skilltree.harbinger;
 
 import com.vincenthuto.hemomancy.client.screen.skilltree.util.ProgressScreenContext;
+import com.vincenthuto.hemomancy.client.screen.skilltree.util.HarbingerChromeRenderer;
 import com.vincenthuto.hemomancy.client.screen.skilltree.util.ScreenDrawUtils;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bestiary.SpecimenBestiaryDefinitions;
 import net.minecraft.client.gui.GuiGraphics;
@@ -111,6 +112,8 @@ public final class BestiaryTabView {
 			int x, int y, int w, int h, int mouseX, int mouseY) {
 		gfx.fill(x, y, x + w, y + h, PANEL_BG);
 		ScreenDrawUtils.drawSimpleBorder(gfx, x, y, w, h, PANEL_BORDER);
+		HarbingerChromeRenderer.drawFrame(gfx, x, y, w, h, TAB_COLOR,
+				HarbingerChromeRenderer.State.ACTIVE);
 		int maxScroll = Math.max(0, contentHeight(state) - h);
 		int contentRight = maxScroll > 0 ? x + w - LIST_SCROLLBAR_W - 3 : x + w - 1;
 		gfx.enableScissor(x + 1, y + 1, contentRight, y + h - 1);
@@ -137,6 +140,11 @@ public final class BestiaryTabView {
 					if (bg != 0) {
 						gfx.fill(x + 3, rowY, x + w - 3, rowY + ROW_H, bg);
 					}
+					HarbingerChromeRenderer.drawFrame(gfx, x + 3, rowY, w - 6, ROW_H, TAB_COLOR,
+							!entry.discovered() ? HarbingerChromeRenderer.State.DISABLED
+									: selected ? HarbingerChromeRenderer.State.ACTIVE
+									: hovered ? HarbingerChromeRenderer.State.HOVERED
+									: HarbingerChromeRenderer.State.IDLE);
 					int dotColor = entry.discovered() ? TAB_COLOR : 0xFF4F574F;
 					gfx.fill(x + 8, rowY + 6, x + 12, rowY + 10, dotColor);
 					Component title = entry.discovered()
@@ -163,6 +171,8 @@ public final class BestiaryTabView {
 		}
 		gfx.fill(x, y, x + w, y + h, 0xAA06100A);
 		ScreenDrawUtils.drawSimpleBorder(gfx, x, y, w, h, 0xFF1F3E2B);
+		HarbingerChromeRenderer.drawFrame(gfx, x, y, w, h, TAB_COLOR,
+				HarbingerChromeRenderer.State.IDLE);
 		int thumbH = Math.max(14, h * h / totalContentH);
 		int travel = Math.max(1, h - thumbH - 2);
 		int clampedScroll = Math.max(0, Math.min(maxScroll, scrollOffset));
@@ -174,6 +184,8 @@ public final class BestiaryTabView {
 			int x, int y, int w, int h, int mouseX, int mouseY) {
 		gfx.fill(x, y, x + w, y + h, PANEL_BG);
 		ScreenDrawUtils.drawSimpleBorder(gfx, x, y, w, h, PANEL_BORDER);
+		HarbingerChromeRenderer.drawFrame(gfx, x, y, w, h, TAB_COLOR,
+				HarbingerChromeRenderer.State.ACTIVE);
 		BestiaryTabState.Entry entry = state.selectedEntry();
 		if (entry == null) {
 			gfx.drawCenteredString(ctx.font(), Component.translatable("bestiary.hemomancy.empty"),
@@ -200,6 +212,8 @@ public final class BestiaryTabView {
 
 		gfx.fill(bounds.x(), bounds.y(), bounds.right(), bounds.bottom(), 0xAA031007);
 		ScreenDrawUtils.drawSimpleBorder(gfx, bounds.x(), bounds.y(), bounds.w(), bounds.h(), 0xFF24442D);
+		HarbingerChromeRenderer.drawFrame(gfx, bounds.x(), bounds.y(), bounds.w(), bounds.h(), TAB_COLOR,
+				HarbingerChromeRenderer.State.ACTIVE);
 		gfx.enableScissor(bounds.x() + 1, bounds.y() + 1, bounds.right() - 1, bounds.bottom() - 1);
 		try {
 			BestiaryEntityPreview.render(gfx, ctx, state, entry, bounds.x() + 1, bounds.y() + 1,

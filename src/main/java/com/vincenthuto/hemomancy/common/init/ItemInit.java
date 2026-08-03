@@ -132,10 +132,10 @@ public class ItemInit {
 //            () -> new FieldNotesItem(new Item.Properties()));
     public static final DeferredHolder<Item, Item> sanguine_blob = BASEITEMS.register("sanguine_blob",
             () -> new SanguineBlobItem(new Item.Properties()));
-    public static final DeferredHolder<Item, Item> rite_hint = BASEITEMS.register("rite_hint",
-            () -> new RiteHintItem(new Item.Properties().fireResistant()));
-    public static final DeferredHolder<Item, Item> blood_structure_hint = BASEITEMS.register("blood_structure_hint",
-            () -> new BloodStructureHintItem(new Item.Properties().fireResistant()));
+    public static final DeferredHolder<Item, Item> mnemonic_blueprint = BASEITEMS.register("mnemonic_blueprint",
+            () -> new MnemonicBlueprintItem(new Item.Properties().fireResistant()));
+    public static final DeferredHolder<Item, Item> mnemonic_folio = BASEITEMS.register("mnemonic_folio",
+            () -> new MnemonicFolioItem(new Item.Properties().fireResistant().rarity(Rarity.UNCOMMON)));
     public static final DeferredHolder<Item, Item> hematic_suture_needle = BASEITEMS.register("hematic_suture_needle",
             () -> new HematicSutureNeedleItem(new Item.Properties().stacksTo(1)));
     public static final DeferredHolder<Item, Item> stained_church_map = BASEITEMS.register("stained_church_map",

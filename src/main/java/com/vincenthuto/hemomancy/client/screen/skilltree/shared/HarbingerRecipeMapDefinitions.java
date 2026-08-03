@@ -49,7 +49,7 @@ public final class HarbingerRecipeMapDefinitions {
 				"puppeteer_trial_mnemonist_puppet", "puppeteer_trial_veinwing_vulture");
 
 		iconRites("cardinal_rite/sanguine_initiation", () -> new ItemStack(ItemInit.sanguine_formation.get()));
-		iconRites("cardinal_rite/votary_rite", () -> new ItemStack(ItemInit.rite_hint.get()));
+		iconRites("cardinal_rite/votary_rite", () -> new ItemStack(ItemInit.mnemonic_blueprint.get()));
 		iconRites("cardinal_rite/initiate_rite", () -> new ItemStack(ItemInit.liber_sanguinum.get()));
 		iconRites("cardinal_rite/sanguine_brotherhood", () -> new ItemStack(ItemInit.sanguine_conduit.get()));
 		iconRites("cardinal_rite/illuminatus_rite", () -> new ItemStack(ItemInit.crimson_vestment_fitting.get()));

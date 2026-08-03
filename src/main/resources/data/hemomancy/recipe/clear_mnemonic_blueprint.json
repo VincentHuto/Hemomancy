@@ -1,0 +1,9 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    { "item": "hemomancy:mnemonic_blueprint" }
+  ],
+  "result": {
+    "id": "hemomancy:mnemonic_blueprint"
+  }
+}

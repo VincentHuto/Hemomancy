@@ -119,7 +119,7 @@ public class MaterialsTabController implements IProgressTab {
 	@Override
 	public void renderOverlay(GuiGraphics gfx, ProgressScreenContext ctx, int mx, int my) {
 		if (selectedEntry != null && selectedEntry.visibility() == MaterialVisibility.UNLOCKED) {
-			MaterialsTabView.drawInfoPanel(gfx, ctx.font(), selectedEntry.entry(),
+			MaterialsTabView.drawInfoPanel(gfx, ctx.font(), path, selectedEntry.entry(),
 					ctx.guiLeft(), ctx.guiTop(), ctx.guiWidth(),
 					tabColor, panelSeparatorColor, panelBgColor, renderer);
 		}

@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "LPL",
+    "PAP",
+    "LPL"
+  ],
+  "key": {
+    "L": { "item": "minecraft:leather" },
+    "P": { "item": "minecraft:paper" },
+    "A": { "item": "hemomancy:mnemonic_ambergris" }
+  },
+  "result": {
+    "id": "hemomancy:mnemonic_folio"
+  }
+}

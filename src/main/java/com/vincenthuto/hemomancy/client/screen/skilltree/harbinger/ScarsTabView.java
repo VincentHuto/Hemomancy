@@ -2,6 +2,7 @@ package com.vincenthuto.hemomancy.client.screen.skilltree.harbinger;
 
 import com.vincenthuto.hemomancy.client.screen.skilltree.shared.RecipeMapInspectorLayout;
 import com.vincenthuto.hemomancy.client.screen.skilltree.util.EnumNodeShape;
+import com.vincenthuto.hemomancy.client.screen.skilltree.util.HarbingerChromeRenderer;
 import com.vincenthuto.hemomancy.client.screen.skilltree.util.NodeShapeRenderer;
 import com.vincenthuto.hemomancy.client.screen.skilltree.util.PanZoomState;
 import com.vincenthuto.hemomancy.client.screen.skilltree.util.ProgressScreenContext;
@@ -137,6 +138,8 @@ final class ScarsTabView {
 		gfx.fill(panelX, panelY, panelX + panelW, panelY + panelH, 0xFF1A0505);
 		ScreenDrawUtils.drawSimpleBorder(gfx, panelX, panelY, panelW, panelH, color);
 		boolean locked = ScarsTabController.isTierLocked(entry.tier(), playerDegree);
+		HarbingerChromeRenderer.drawFrame(gfx, panelX, panelY, panelW, panelH, color,
+				locked ? HarbingerChromeRenderer.State.DISABLED : HarbingerChromeRenderer.State.ACTIVE);
 		if (locked) {
 			gfx.drawString(ctx.font(), Component.literal("???").withStyle(s -> s.withColor(0x555555).withBold(true)),
 					panelX + 8, panelY + 8, 0, false);

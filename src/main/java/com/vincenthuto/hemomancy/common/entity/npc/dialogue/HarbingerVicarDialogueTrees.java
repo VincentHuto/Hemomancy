@@ -455,7 +455,7 @@ public final class HarbingerVicarDialogueTrees {
 						"hemomancy.vicar.illuminatus.monolith_rumor.line1",
 						"hemomancy.vicar.illuminatus.monolith_rumor.line2"
 				), List.of(
-						new DialogueOption("hemomancy.dialogue.vicar.option.take_the_scrap", "scrap_given", "give_blood_structure_hint"),
+						new DialogueOption("hemomancy.dialogue.vicar.option.take_the_scrap", "scrap_given", "give_sanguine_monolith_blueprint"),
 						new DialogueOption("hemomancy.dialogue.vicar.option.leave", null, null)
 				)))
 				.addNode(new DialogueNode("scrap_given", List.of(

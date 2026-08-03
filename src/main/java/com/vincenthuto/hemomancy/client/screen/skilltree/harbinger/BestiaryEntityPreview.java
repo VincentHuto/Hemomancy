@@ -3,6 +3,7 @@ package com.vincenthuto.hemomancy.client.screen.skilltree.harbinger;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.client.screen.skilltree.util.ProgressScreenContext;
 import com.vincenthuto.hemomancy.client.screen.skilltree.util.ScreenDrawUtils;
+import com.vincenthuto.hemomancy.client.screen.skilltree.util.HarbingerChromeRenderer;
 import com.vincenthuto.hemomancy.common.init.EntityInit;
 import com.mojang.blaze3d.platform.Lighting;
 import net.minecraft.client.Minecraft;
@@ -153,6 +154,8 @@ public final class BestiaryEntityPreview {
 		int centerX = (left + right) / 2;
 		int centerY = (top + bottom) / 2;
 		ScreenDrawUtils.drawSimpleBorder(gfx, left, top, right - left, bottom - top, 0xFF24442D);
+		HarbingerChromeRenderer.drawFrame(gfx, left, top, right - left, bottom - top, 0xFF77AA66,
+				HarbingerChromeRenderer.State.ACTIVE);
 		gfx.drawCenteredString(ctx.font(), Component.literal("Preview unavailable"), centerX, centerY - 4, 0xFF777777);
 	}
 

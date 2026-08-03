@@ -192,6 +192,11 @@ public final class MaterialsTabView {
 
 			NodeShapeRenderer.drawFill(gfx, nodeShape, nx, ny, hn, COL_NODE_BG);
 			NodeShapeRenderer.drawOutline(gfx, nodeShape, nx, ny, hn, selected ? accentColor : bucketColor);
+			if (path == MaterialAtlasPath.HARBINGER && nodeShape == EnumNodeShape.SQUARE) {
+				HarbingerChromeRenderer.drawFrame(gfx, nx - hn, ny - hn, hn * 2, hn * 2,
+						selected ? accentColor : bucketColor,
+						selected ? HarbingerChromeRenderer.State.ACTIVE : HarbingerChromeRenderer.State.IDLE);
+			}
 			if (state.zoom >= 0.5F) {
 				ItemStack stack = node.entry().iconStack().get();
 				if (stack != null && !stack.isEmpty()) {
@@ -209,6 +214,10 @@ public final class MaterialsTabView {
 		int bg = (0xCC << 24) | (path.accentColor() & 0x001A1A1A);
 		gfx.fill(cx - half, cy - half, cx + half, cy + half, bg);
 		ScreenDrawUtils.drawSimpleBorder(gfx, cx - half, cy - half, half * 2, half * 2, path.accentColor());
+		if (path == MaterialAtlasPath.HARBINGER) {
+			HarbingerChromeRenderer.drawFrame(gfx, cx - half, cy - half, half * 2, half * 2,
+					path.accentColor(), HarbingerChromeRenderer.State.ACTIVE);
+		}
 		if (state.zoom >= 0.48F) {
 			gfx.drawCenteredString(font, Component.literal(path.hubLabel())
 					.withStyle(s -> s.withColor(path.accentColor()).withBold(true)),
@@ -253,7 +262,7 @@ public final class MaterialsTabView {
 		}
 	}
 
-	public static void drawInfoPanel(GuiGraphics gfx, Font font, MaterialEntry mat,
+	public static void drawInfoPanel(GuiGraphics gfx, Font font, MaterialAtlasPath path, MaterialEntry mat,
 			int guiLeft, int guiTop, int guiWidth,
 			int accentColor, int dividerColor, int bgColor,
 			MiniRecipeRenderer.Theme recipeTheme) {
@@ -279,6 +288,10 @@ public final class MaterialsTabView {
 		gfx.fill(panelX - 2, panelY - 2, panelX + panelW + 2, panelY + panelH + 2, INFO_PANEL_SHADOW);
 		gfx.fill(panelX, panelY, panelX + panelW, panelY + panelH, solidBg);
 		ScreenDrawUtils.drawSimpleBorder(gfx, panelX, panelY, panelW, panelH, accentColor);
+		if (path == MaterialAtlasPath.HARBINGER) {
+			HarbingerChromeRenderer.drawFrame(gfx, panelX, panelY, panelW, panelH, accentColor,
+					HarbingerChromeRenderer.State.ACTIVE);
+		}
 
 		int tx = panelX + 6;
 		int ty = panelY + 6;

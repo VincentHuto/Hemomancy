@@ -3,6 +3,7 @@ package com.vincenthuto.hemomancy.common.init;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.item.component.LivingWeaponGraftData;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.StructureScannerTooltipComponent;
+import com.vincenthuto.hemomancy.common.item.shared.MnemonicBlueprintTarget;
 
 import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.registries.Registries;
@@ -25,6 +26,13 @@ public class DataComponentInit {
 			.register("living_weapon_graft_data", () -> DataComponentType.<LivingWeaponGraftData>builder()
 					.persistent(LivingWeaponGraftData.CODEC)
 					.networkSynchronized(LivingWeaponGraftData.STREAM_CODEC)
+					.cacheEncoding()
+					.build());
+
+	public static final DeferredHolder<DataComponentType<?>, DataComponentType<MnemonicBlueprintTarget>> MNEMONIC_BLUEPRINT_TARGET = COMPONENTS
+			.register("mnemonic_blueprint_target", () -> DataComponentType.<MnemonicBlueprintTarget>builder()
+					.persistent(MnemonicBlueprintTarget.CODEC)
+					.networkSynchronized(MnemonicBlueprintTarget.STREAM_CODEC)
 					.cacheEncoding()
 					.build());
 

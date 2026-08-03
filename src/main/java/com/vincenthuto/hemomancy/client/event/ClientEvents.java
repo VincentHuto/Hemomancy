@@ -63,6 +63,7 @@ import com.vincenthuto.hemomancy.client.render.item.MorphlingPolypItemRenderer;
 import com.vincenthuto.hemomancy.client.render.item.QliphothSeedItemEntityRenderer;
 import com.vincenthuto.hemomancy.client.render.CrimsonFireRenderer;
 import com.vincenthuto.hemomancy.client.render.scar.OculifloraRevealRenderer;
+import com.vincenthuto.hemomancy.client.render.world.MnemonicBlueprintRenderer;
 import com.vincenthuto.hemomancy.client.render.item.ScarPatternBakedModel;
 import com.vincenthuto.hemomancy.client.render.item.ScarPatternItemColor;
 import com.vincenthuto.hemomancy.client.morphling.MorphlingPlayerPartVisibility;
@@ -78,6 +79,7 @@ import com.vincenthuto.hemomancy.client.render.world.chamberofwill.LowtideRuinOb
 import com.vincenthuto.hemomancy.client.screen.item.PuppeteersSpindleScreen;
 import com.vincenthuto.hemomancy.client.screen.item.ScryingDiagnosticsScreen;
 import com.vincenthuto.hemomancy.client.screen.item.StructureSpawnerScreen;
+import com.vincenthuto.hemomancy.client.screen.item.MnemonicFolioScreen;
 import com.vincenthuto.hemomancy.client.screen.item.TendencyViewScreen;
 import com.vincenthuto.hemomancy.client.screen.item.VascularViewScreen;
 import com.vincenthuto.hemomancy.client.screen.item.living.LivingStaffScreen;
@@ -225,6 +227,7 @@ public class ClientEvents {
 
     @SubscribeEvent
     public static void onClientTickPost(ClientTickEvent.Post event) {
+        MnemonicBlueprintRenderer.tick();
         ManipCooldownOverlay.tick();
         StillArtCooldownOverlay.tick();
         ActiveBloodCraftClientData.tick();
@@ -516,6 +519,7 @@ public class ClientEvents {
         FaneBoundaryClientData.clear();
         ActiveRiteClientData.clear();
         CardinalRiteFogRenderer.clear();
+        MnemonicBlueprintRenderer.disconnect();
     }
 
 	private static boolean crossbarRadialOpened;
@@ -569,6 +573,7 @@ public class ClientEvents {
         }
 
         if (event.getStage() == RenderLevelStageEvent.Stage.AFTER_TRANSLUCENT_BLOCKS) {
+            MnemonicBlueprintRenderer.render(event);
             float partialTick = event.getPartialTick().getGameTimeDeltaPartialTick(true);
             CardinalRiteBoundaryRenderer.render(event.getPoseStack(), partialTick);
             UnstainedRiteBoundaryRenderer.render(event.getPoseStack(), partialTick);
@@ -1021,6 +1026,7 @@ public class ClientEvents {
             event.register(ContainerInit.stillwater_condenser.get(), StillwaterCondenserScreen::new);
             event.register(ContainerInit.scar_station.get(), ScarStationScreen::new);
             event.register(ContainerInit.scar_binder.get(), ScarBinderScreen::new);
+            event.register(ContainerInit.mnemonic_folio.get(), MnemonicFolioScreen::new);
             event.register(ContainerInit.vascular_view.get(), VascularViewScreen::new);
             event.register(ContainerInit.tendency_view.get(), TendencyViewScreen::new);
             event.register(ContainerInit.scrying_diagnostics.get(), ScryingDiagnosticsScreen::new);
@@ -1136,6 +1142,9 @@ public class ClientEvents {
         // Overlay
         @SubscribeEvent
         public static void registerGuiOverlays(RegisterGuiLayersEvent event) {
+			event.registerAboveAll(Hemomancy.rloc("mnemonic_blueprint_progress"), (graphics, deltaTracker) ->
+					MnemonicBlueprintProgressOverlay.renderHUD(
+							graphics, graphics.guiWidth(), graphics.guiHeight()));
             event.registerAboveAll(Hemomancy.rloc("cardinal_rite"), (graphics, deltaTracker) -> {
                 if (CardinalRiteOverlay.instance != null) {
                     float partialTicks = deltaTracker.getGameTimeDeltaPartialTick(true);

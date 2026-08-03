@@ -2,6 +2,7 @@ package com.vincenthuto.hemomancy.client.screen.skilltree.harbinger;
 
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.client.screen.skilltree.util.ProgressScreenContext;
+import com.vincenthuto.hemomancy.client.screen.skilltree.util.HarbingerChromeRenderer;
 import com.vincenthuto.hemomancy.client.screen.skilltree.util.ScreenDrawUtils;
 import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillPointHelper;
 import com.vincenthuto.hemomancy.common.init.EntityInit;
@@ -93,6 +94,10 @@ public final class SummonsTabView {
 			gfx.fill(sx, sy, sx + sw, sy + rowH, bg);
 			int bc = locked ? 0xFF333333 : (selected ? TAB_COLOR : 0xFF66404A);
 			ScreenDrawUtils.drawSimpleBorder(gfx, sx, sy, sw, rowH, bc);
+			HarbingerChromeRenderer.drawFrame(gfx, sx, sy, sw, rowH, TAB_COLOR,
+					locked ? HarbingerChromeRenderer.State.DISABLED
+							: selected ? HarbingerChromeRenderer.State.ACTIVE
+							: hovered ? HarbingerChromeRenderer.State.HOVERED : HarbingerChromeRenderer.State.IDLE);
 
 			String label = "Degree " + degree + " (" + definitions.size() + ")";
 			int labelColor = locked ? 0xFF555555 : (selected ? 0xFFFFAAB8 : 0xFFAA8A92);
@@ -145,6 +150,8 @@ public final class SummonsTabView {
 										 int mouseX, int mouseY) {
 		gfx.fill(x, y, x + w, y + h, 0x6610080A);
 		ScreenDrawUtils.drawSimpleBorder(gfx, x, y, w, h, 0x88441A24);
+		HarbingerChromeRenderer.drawFrame(gfx, x, y, w, h, TAB_COLOR,
+				HarbingerChromeRenderer.State.ACTIVE);
 
 		String name = Component.translatable(definition.translationKey()).getString();
 		gfx.drawCenteredString(ctx.font(), Component.literal(name).withStyle(s -> s.withColor(TAB_COLOR).withBold(true)),
@@ -298,6 +305,8 @@ public final class SummonsTabView {
 										PuppeteerSummonDefinition definition, int x, int y, int w, int h) {
 		gfx.fill(x, y, x + w, y + h, 0x5510080A);
 		ScreenDrawUtils.drawSimpleBorder(gfx, x, y, w, h, 0x88441A24);
+		HarbingerChromeRenderer.drawFrame(gfx, x, y, w, h, TAB_COLOR,
+				HarbingerChromeRenderer.State.ACTIVE);
 
 		int lineH = 12;
 		int textX = x + 8;

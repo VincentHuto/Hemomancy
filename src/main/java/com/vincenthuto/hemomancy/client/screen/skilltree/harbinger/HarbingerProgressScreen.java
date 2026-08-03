@@ -154,6 +154,8 @@ public class HarbingerProgressScreen extends Screen {
 
     @Override
     public boolean mouseClicked(double mx, double my, int btn) {
+		if (btn == 1 && hasShiftDown() && insideGui(mx, my)
+				&& activeController().mouseClicked(makeContext(), mx, my, btn)) return true;
         if (btn == 0) {
             PanZoomState activeView = activeController().getPanZoomState();
             if (activeView != null && isOverHomeButton(mx, my)) {
@@ -230,6 +232,8 @@ public class HarbingerProgressScreen extends Screen {
         ProgressScreenContext ctx = makeContext();
         veinBg.render(gfx, guiLeft, guiTop, guiWidth, guiHeight, activeTab == Tab.SKILLS ? skills.updateAndGetDeepFade(ctx) : 0.0f);
         ScreenDrawUtils.drawBorder(gfx, guiLeft, guiTop, guiWidth, guiHeight, 0xFF330808, 0xFF220606);
+        HarbingerChromeRenderer.drawFrame(gfx, guiLeft, guiTop, guiWidth, guiHeight,
+                activeTab.color, HarbingerChromeRenderer.State.ACTIVE);
 
         gfx.enableScissor(guiLeft + 2, guiTop + 2, guiLeft + guiWidth - 2, guiTop + guiHeight - 2);
         activeController().render(gfx, ctx, mouseX, mouseY, partial);
@@ -276,6 +280,8 @@ public class HarbingerProgressScreen extends Screen {
 
     private void drawTabs(GuiGraphics gfx, int mouseX, int mouseY) {
         ScreenDrawUtils.drawTabs(gfx, font, buildTabDescs(), guiLeft, guiTop, guiWidth, TAB_HEIGHT, TAB_PAD, mouseX, mouseY);
+        ScreenDrawUtils.drawHarbingerTabFrames(gfx, font, buildTabDescs(), guiLeft, guiTop, guiWidth,
+                TAB_HEIGHT, TAB_PAD, mouseX, mouseY);
     }
 
     private void drawTabsAboveCanvas(GuiGraphics gfx, int mouseX, int mouseY) {
@@ -312,6 +318,9 @@ public class HarbingerProgressScreen extends Screen {
             boolean active = tab == activeTab;
             gfx.fill(tx, ty, tx + tw, ty + TAB_HEIGHT, active ? 0xFF07120B : (hovered ? 0xFF0A160D : 0xFF050B07));
             ScreenDrawUtils.drawSimpleBorder(gfx, tx, ty, tw, TAB_HEIGHT, active ? tab.color : 0xFF444444);
+            HarbingerChromeRenderer.drawFrame(gfx, tx, ty, tw, TAB_HEIGHT, tab.color,
+                    active ? HarbingerChromeRenderer.State.ACTIVE
+                            : hovered ? HarbingerChromeRenderer.State.HOVERED : HarbingerChromeRenderer.State.IDLE);
             if (active) {
                 gfx.fill(tx + 1, ty + 1, tx + tw - 1, ty + 2, tab.color);
             }
@@ -365,6 +374,8 @@ public class HarbingerProgressScreen extends Screen {
         boolean hovered = isOverHomeButton(mouseX, mouseY);
         ScreenDrawUtils.drawHomeButton(gfx, font, homeButtonX(), homeButtonY(), HOME_BTN_SIZE, hovered,
                 0xDD1A0505, 0x99120303, 0xFFCC3333, 0xFF444444, 0xFFFFAAAA, 0xFF888888);
+        HarbingerChromeRenderer.drawFrame(gfx, homeButtonX(), homeButtonY(), HOME_BTN_SIZE, HOME_BTN_SIZE,
+                activeTab.color, hovered ? HarbingerChromeRenderer.State.HOVERED : HarbingerChromeRenderer.State.IDLE);
         if (hovered) gfx.renderTooltip(font, Component.literal("Return to Center"), mouseX, mouseY);
     }
 

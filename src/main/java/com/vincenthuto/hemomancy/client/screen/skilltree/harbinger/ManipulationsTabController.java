@@ -293,6 +293,12 @@ public class ManipulationsTabController implements IProgressTab {
             int fill = known && !rankLocked ? COL_NODE_BG : 0xCC0D0303;
             NodeShapeRenderer.drawFill(gfx, shape, nx, ny, hn, fill);
             NodeShapeRenderer.drawOutline(gfx, shape, nx, ny, hn, borderColor);
+			if (shape == EnumNodeShape.SQUARE) {
+				HarbingerChromeRenderer.drawFrame(gfx, nx - hn, ny - hn, hn * 2, hn * 2, borderColor,
+						rankLocked ? HarbingerChromeRenderer.State.DISABLED
+								: selectedEntry == entry ? HarbingerChromeRenderer.State.ACTIVE
+								: HarbingerChromeRenderer.State.IDLE);
+			}
 
             if (rankLocked) {
                 NodeShapeRenderer.drawFill(gfx, shape, nx, ny, hn - 1, 0xBB000000);
@@ -473,6 +479,8 @@ public class ManipulationsTabController implements IProgressTab {
         gfx.fill(-2, -2, panelW + 2, panelH + 2, INFO_PANEL_SHADOW);
         gfx.fill(0, 0, panelW, panelH, solidBg);
         ScreenDrawUtils.drawSimpleBorder(gfx, 0, 0, panelW, panelH, tendCol);
+		HarbingerChromeRenderer.drawFrame(gfx, 0, 0, panelW, panelH, tendCol,
+				rankLocked ? HarbingerChromeRenderer.State.DISABLED : HarbingerChromeRenderer.State.ACTIVE);
 
         int tx = 6;
         int ty = 6;
@@ -590,6 +598,8 @@ public class ManipulationsTabController implements IProgressTab {
                                    int x, int y, int width) {
         gfx.fill(x, y, x + width, y + MANIP_STAT_CELL_H, 0x66180505);
         ScreenDrawUtils.drawSimpleBorder(gfx, x, y, width, MANIP_STAT_CELL_H, 0xFF442222);
+		HarbingerChromeRenderer.drawFrame(gfx, x, y, width, MANIP_STAT_CELL_H, 0xFF884444,
+				HarbingerChromeRenderer.State.IDLE);
         gfx.drawString(ctx.font(), cell.label(), x + 4, y + 2, 0xFF888888, false);
         if (cell.mixedTendency()) {
             drawMixedTendencyValue(gfx, ctx, cell.value(), x + 4, y + 10, width - 8, cell.valueColor(), cell.secondaryValueColor());

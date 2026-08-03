@@ -2,6 +2,7 @@ package com.vincenthuto.hemomancy.client.screen.skilltree.shared;
 
 import com.vincenthuto.hemomancy.client.screen.skilltree.util.PanZoomState;
 import com.vincenthuto.hemomancy.client.screen.skilltree.util.ProgressScreenContext;
+import com.vincenthuto.hemomancy.client.screen.skilltree.util.HarbingerChromeRenderer;
 import com.vincenthuto.hemomancy.client.screen.skilltree.util.ScreenDrawUtils;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
@@ -116,10 +117,37 @@ public final class RecipeMapCanvas {
 			lines.add(Component.literal("Requires Degree " + entry.column())
 					.withStyle(style -> style.withColor(0xFFAA5555)));
 		}
+		boolean blueprintCue = canImprint(entry);
+		if (blueprintCue) {
+			lines.add(Component.translatable("item.hemomancy.mnemonic_blueprint.imprint")
+					.withStyle(style -> style.withColor(0xFFC69ACF).withItalic(true)));
+			lines.add(Component.literal("                    "));
+		}
 		gfx.pose().pushPose();
 		gfx.pose().translate(0, 0, 900);
 		gfx.renderTooltip(ctx.font(), lines, Optional.empty(), mouseX, mouseY);
+		if (blueprintCue) {
+			int tooltipWidth = lines.stream().mapToInt(ctx.font()::width).max().orElse(0);
+			int tooltipHeight = 8 + Math.max(0, lines.size() - 1) * 10 + 2;
+			int tooltipX = mouseX + 12;
+			if (tooltipX + tooltipWidth + 6 > gfx.guiWidth()) tooltipX = mouseX - 12 - tooltipWidth;
+			int tooltipY = Math.max(4, Math.min(mouseY - 12, gfx.guiHeight() - tooltipHeight - 4));
+			gfx.pose().pushPose();
+			gfx.pose().translate(0, 0, 500);
+			gfx.renderItem(new ItemStack(com.vincenthuto.hemomancy.common.init.ItemInit.mnemonic_blueprint.get()),
+					tooltipX + tooltipWidth - 16, tooltipY + tooltipHeight - 18);
+			gfx.pose().popPose();
+		}
 		gfx.pose().popPose();
+	}
+
+	private static boolean canImprint(RecipeMapEntry entry) {
+		if (!entry.unlocked() || (entry.key().kind() != RecipeMapEntry.Kind.RITE
+				&& entry.key().kind() != RecipeMapEntry.Kind.CRAFTING)) return false;
+		net.minecraft.client.Minecraft minecraft = net.minecraft.client.Minecraft.getInstance();
+		return minecraft.player != null && minecraft.player.getInventory().items.stream().anyMatch(stack ->
+				stack.is(com.vincenthuto.hemomancy.common.init.ItemInit.mnemonic_blueprint.get())
+						&& com.vincenthuto.hemomancy.common.item.shared.MnemonicBlueprintItem.isBlank(stack));
 	}
 
 	private void drawLayer(GuiGraphics gfx, ProgressScreenContext ctx, int mouseX, int mouseY, int accent,
@@ -152,6 +180,8 @@ public final class RecipeMapCanvas {
 				centerX + hubSize / 2, centerY + hubSize / 2, 0xE018070B);
 		ScreenDrawUtils.drawSimpleBorder(gfx, centerX - hubSize / 2, centerY - hubSize / 2,
 				hubSize, hubSize, fadeColor(withAlpha(accent, 0xCC), alpha));
+		HarbingerChromeRenderer.drawFrame(gfx, centerX - hubSize / 2, centerY - hubSize / 2,
+				hubSize, hubSize, fadeColor(accent, alpha), HarbingerChromeRenderer.State.ACTIVE);
 		gfx.drawCenteredString(ctx.font(), primaryKind == RecipeMapEntry.Kind.RITE ? "Rites" : "Craft",
 				centerX, centerY - 8, fadeColor(withAlpha(accent, 0xEE), alpha));
 		gfx.drawCenteredString(ctx.font(), layer == SkillTreeLayer.SURFACE ? "0-4" : "5-8",
@@ -195,6 +225,11 @@ public final class RecipeMapCanvas {
 			} else {
 				gfx.fill(node.x(), node.y(), node.x() + node.width(), node.y() + node.height(), background);
 				ScreenDrawUtils.drawSimpleBorder(gfx, node.x(), node.y(), node.width(), node.height(), border);
+				HarbingerChromeRenderer.State chromeState = !entry.unlocked()
+						? HarbingerChromeRenderer.State.DISABLED
+						: active ? HarbingerChromeRenderer.State.ACTIVE
+						: hovered ? HarbingerChromeRenderer.State.HOVERED : HarbingerChromeRenderer.State.IDLE;
+				HarbingerChromeRenderer.drawFrame(gfx, node.x(), node.y(), node.width(), node.height(), border, chromeState);
 			}
 			ItemStack icon = icons.get(entry.key());
 			if (icon != null && !icon.isEmpty()) {
@@ -218,11 +253,11 @@ public final class RecipeMapCanvas {
 		gfx.pose().translate(0, 0, 650);
 		RecipeMapControlsLayout.Result controls = RecipeMapControlsLayout.calculate(viewport);
 		ProgressFilterControlsView.draw(gfx, ctx, controls.degree(),
-				degreeFilter == null ? "Degree: All" : "Degree: " + degreeFilter, accent);
+				degreeFilter == null ? "Degree: All" : "Degree: " + degreeFilter, accent, mouseX, mouseY);
 		ProgressFilterControlsView.draw(gfx, ctx, controls.family(),
-				familyFilter == null ? "Family: All" : familyFilter, accent);
+				familyFilter == null ? "Family: All" : familyFilter, accent, mouseX, mouseY);
 		ProgressFilterControlsView.draw(gfx, ctx, controls.layer(),
-				"Layer: " + (diveState.isDeepActive() ? "5-8" : "0-4"), accent);
+				"Layer: " + (diveState.isDeepActive() ? "5-8" : "0-4"), accent, mouseX, mouseY);
 		List<RecipeMapKey> recents = history().entries();
 		if (!recents.isEmpty()) {
 			gfx.drawString(ctx.font(), "Recent", controls.recentLabelX(),
@@ -233,6 +268,11 @@ public final class RecipeMapCanvas {
 				if (node == null || !node.entry().visible() || !isInteractiveLayer(node.entry())) continue;
 				gfx.fill(recentX, controls.firstRecent().top(),
 						recentX + controls.firstRecent().width(), controls.firstRecent().bottom(), 0xCC12070B);
+				boolean recentHovered = inside(mouseX, mouseY, recentX, controls.firstRecent().top(),
+						controls.firstRecent().width(), controls.firstRecent().height());
+				HarbingerChromeRenderer.drawFrame(gfx, recentX, controls.firstRecent().top(),
+						controls.firstRecent().width(), controls.firstRecent().height(), accent,
+						recentHovered ? HarbingerChromeRenderer.State.HOVERED : HarbingerChromeRenderer.State.IDLE);
 				ItemStack icon = icons.get(key);
 				if (icon != null && !icon.isEmpty()) {
 					gfx.pose().pushPose();
@@ -286,6 +326,18 @@ public final class RecipeMapCanvas {
 			return new ClickResult(true, null);
 		}
 		return new ClickResult(false, null);
+	}
+
+	/** Returns an unlocked, currently visible node under the pointer without changing selection. */
+	public RecipeMapEntry entryAt(ProgressScreenContext ctx, double mouseX, double mouseY) {
+		RecipeMapInspectorLayout.IntRect viewport = inspectorLayout(ctx).mapViewport();
+		if (!viewport.contains(mouseX, mouseY)) return null;
+		PanZoomState view = activePanZoom();
+		RecipeMapLayout.NodeBounds node = layout.visibleNodeAt(
+				view.cx(ctx.guiLeft(), mouseX), view.cy(ctx.guiTop(), mouseY));
+		if (node == null || !node.entry().unlocked() || !passesFilters(node.entry())
+				|| !isInteractiveLayer(node.entry())) return null;
+		return node.entry();
 	}
 
 	public ClickResult select(ProgressScreenContext ctx, RecipeMapKey key) {

@@ -6,6 +6,9 @@ import com.vincenthuto.hemomancy.client.screen.skilltree.util.PanZoomState;
 import com.vincenthuto.hemomancy.client.screen.skilltree.util.ProgressScreenContext;
 import com.vincenthuto.hemomancy.common.recipe.CardinalRiteRecipe;
 import com.vincenthuto.hemomancy.common.recipe.RecipeDegreeGates;
+import com.vincenthuto.hemomancy.common.item.shared.MnemonicBlueprintTarget;
+import com.vincenthuto.hemomancy.common.network.PacketHandler;
+import com.vincenthuto.hemomancy.common.network.capa.harbinger.ImprintMnemonicBlueprintPacket;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.rite.floor.CardinalRiteFloorDefinition;
 import com.vincenthuto.hemomancy.common.rite.floor.CardinalRiteFloorRegistry;
@@ -160,6 +163,14 @@ public class RitesTabController implements IProgressTab {
     @Override
     public boolean mouseClicked(ProgressScreenContext ctx, double mx, double my, int btn) {
         if (!unstained) {
+			if (btn == 1 && net.minecraft.client.gui.screens.Screen.hasShiftDown()) {
+				RecipeMapEntry entry = mapCanvas.entryAt(ctx, mx, my);
+				if (entry != null && entry.key().kind() == RecipeMapEntry.Kind.RITE) {
+					PacketHandler.sendToServer(new ImprintMnemonicBlueprintPacket(new MnemonicBlueprintTarget(
+							MnemonicBlueprintTarget.Type.CARDINAL_RITE, entry.id())));
+					return true;
+				}
+			}
             RecipeMapInspectorLayout inspector = mapCanvas.inspectorLayout(ctx);
             if (mapCanvas.selected() != null && inspector.isOverToggle(mx, my)) {
                 mapCanvas.toggleInspector();

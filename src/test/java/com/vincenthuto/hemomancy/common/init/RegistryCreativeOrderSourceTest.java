@@ -19,7 +19,7 @@ public final class RegistryCreativeOrderSourceTest {
 				"heart_pattern = BASEITEMS.register",
 				"gourd_seeds = BASEITEMS.register",
 				"sanguine_formation = BASEITEMS.register",
-				"rite_hint = BASEITEMS.register",
+				"mnemonic_blueprint = BASEITEMS.register",
 				"hematic_iron_scrap = BASEITEMS.register",
 				"enzyme_primer = BASEITEMS.register",
 				"hematic_memory = BASEITEMS.register",

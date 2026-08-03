@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    { "item": "minecraft:paper" },
+    { "item": "hemomancy:sanguine_formation" },
+    { "item": "hemomancy:mnemonic_ambergris" }
+  ],
+  "result": {
+    "id": "hemomancy:mnemonic_blueprint",
+    "count": 4
+  }
+}

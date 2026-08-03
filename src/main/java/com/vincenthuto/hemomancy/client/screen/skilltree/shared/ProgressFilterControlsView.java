@@ -1,6 +1,7 @@
 package com.vincenthuto.hemomancy.client.screen.skilltree.shared;
 
 import com.vincenthuto.hemomancy.client.screen.skilltree.util.ProgressScreenContext;
+import com.vincenthuto.hemomancy.client.screen.skilltree.util.HarbingerChromeRenderer;
 import com.vincenthuto.hemomancy.client.screen.skilltree.util.ScreenDrawUtils;
 import net.minecraft.client.gui.GuiGraphics;
 
@@ -9,10 +10,13 @@ final class ProgressFilterControlsView {
 	private ProgressFilterControlsView() {}
 
 	static void draw(GuiGraphics gfx, ProgressScreenContext ctx,
-			RecipeMapInspectorLayout.IntRect bounds, String text, int accent) {
+			RecipeMapInspectorLayout.IntRect bounds, String text, int accent, int mouseX, int mouseY) {
 		gfx.fill(bounds.left(), bounds.top(), bounds.right(), bounds.bottom(), 0xDD10060B);
 		ScreenDrawUtils.drawSimpleBorder(gfx, bounds.left(), bounds.top(),
 				bounds.width(), bounds.height(), withAlpha(accent, 0x88));
+		HarbingerChromeRenderer.drawFrame(gfx, bounds.left(), bounds.top(), bounds.width(), bounds.height(), accent,
+				bounds.contains(mouseX, mouseY) ? HarbingerChromeRenderer.State.HOVERED
+						: HarbingerChromeRenderer.State.IDLE);
 		gfx.drawCenteredString(ctx.font(), ctx.font().plainSubstrByWidth(text, bounds.width() - 6),
 				bounds.left() + bounds.width() / 2, bounds.top() + 3, 0xFFBBBBBB);
 	}

@@ -10,7 +10,9 @@ import com.vincenthuto.hemomancy.common.item.harbinger.tool.BloodGourdItem;
 import com.vincenthuto.hemomancy.common.item.itemhandler.LivingStaffItemHandler;
 import com.vincenthuto.hemomancy.common.item.itemhandler.LivingSyringeItemHandler;
 import com.vincenthuto.hemomancy.common.item.itemhandler.MorphlingJarItemHandler;
+import com.vincenthuto.hemomancy.common.item.itemhandler.MnemonicFolioItemHandler;
 import com.vincenthuto.hemomancy.common.item.itemhandler.ScarBinderItemHandler;
+import com.vincenthuto.hemomancy.common.item.shared.MnemonicFolioLayout;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.Item;
@@ -111,6 +113,13 @@ public final class HemoCapabilityRegistrar {
                     return handler;
                 },
                 ItemInit.living_staff.get());
+
+		event.registerItem(Capabilities.ItemHandler.ITEM,
+				(stack, ctx) -> {
+					MnemonicFolioItemHandler handler = new MnemonicFolioItemHandler(stack, MnemonicFolioLayout.SLOT_COUNT);
+					handler.loadIfNotLoaded();
+					return handler;
+				}, ItemInit.mnemonic_folio.get());
 
         // ── ItemScarBinder IItemHandler capability ──
 //        event.registerItem(Capabilities.ItemHandler.ITEM,

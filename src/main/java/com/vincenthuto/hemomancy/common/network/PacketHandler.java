@@ -211,6 +211,8 @@ public class PacketHandler {
 
         // ── Skill tree ────────────────────────────────────────────────────────
         net.playToServer(PacketUnlockSkill.TYPE, PacketUnlockSkill.STREAM_CODEC, PacketUnlockSkill::handle);
+        net.playToServer(ImprintMnemonicBlueprintPacket.TYPE, ImprintMnemonicBlueprintPacket.STREAM_CODEC,
+                ImprintMnemonicBlueprintPacket::handle);
         net.playToClient(PacketSyncSkills.TYPE, PacketSyncSkills.STREAM_CODEC, PacketSyncSkills::handle);
 
         // ── Bloodline pool ────────────────────────────────────────────────────

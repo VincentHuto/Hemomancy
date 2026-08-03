@@ -3,7 +3,7 @@ package com.vincenthuto.hemomancy.client.screen.item;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.vincenthuto.hemomancy.client.screen.skilltree.util.ScreenDrawUtils;
-import com.vincenthuto.hemomancy.common.item.harbinger.tool.BloodStructureHintItem;
+import com.vincenthuto.hemomancy.common.item.shared.MnemonicBlueprintItem;
 import com.vincenthuto.hemomancy.common.recipe.BloodStructureOffering;
 import com.vincenthuto.hemomancy.common.recipe.BloodStructureRecipe;
 import com.vincenthuto.hutoslib.client.HLTextUtils;
@@ -27,7 +27,7 @@ import java.util.List;
 
 /**
  * A read-only screen opened from a
- * {@link BloodStructureHintItem} that
+ * {@link MnemonicBlueprintItem} that
  * displays a single blood structure recipe's 3D multiblock layout and info
  * panel — analogous to {@link RiteHintScreen} but for blood structure recipes
  * rather than cardinal rite recipes.
@@ -70,7 +70,7 @@ public class BloodStructureHintScreen extends Screen {
 	private int guiLeft, guiTop;
 
 	private BloodStructureHintScreen(ResourceLocation structureId) {
-		super(Component.translatable("item.hemomancy.blood_structure_hint"));
+		super(Component.translatable("item.hemomancy.mnemonic_blueprint"));
 		this.structureId = structureId;
 	}
 

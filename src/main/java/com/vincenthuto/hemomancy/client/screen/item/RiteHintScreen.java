@@ -6,7 +6,7 @@ import com.vincenthuto.hemomancy.client.screen.skilltree.harbinger.HarbingerProg
 import com.vincenthuto.hemomancy.client.screen.skilltree.util.ScreenDrawUtils;
 import com.vincenthuto.hemomancy.common.init.BlockInit;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
-import com.vincenthuto.hemomancy.common.item.shared.RiteHintItem;
+import com.vincenthuto.hemomancy.common.item.shared.MnemonicBlueprintItem;
 import com.vincenthuto.hemomancy.common.recipe.CardinalRiteRecipe;
 import com.vincenthuto.hemomancy.common.recipe.CardinalRiteType;
 import com.vincenthuto.hutoslib.client.HLTextUtils;
@@ -29,7 +29,7 @@ import net.minecraft.world.level.block.Blocks;
 import java.util.List;
 
 /**
- * A read-only screen opened from a {@link RiteHintItem}
+ * A read-only rite detail screen opened from a filled {@link MnemonicBlueprintItem}.
  * that displays a single cardinal rite's 3D structure and info panel — similar to the
  * RITES tab in {@link HarbingerProgressScreen},
  * but focused on a single rite without the tier sidebar.
@@ -72,7 +72,7 @@ public class RiteHintScreen extends Screen {
 	private int guiLeft, guiTop;
 
 	private RiteHintScreen(ResourceLocation riteId) {
-		super(Component.translatable("item.hemomancy.rite_hint"));
+		super(Component.translatable("item.hemomancy.mnemonic_blueprint"));
 		this.riteId = riteId;
 	}
 

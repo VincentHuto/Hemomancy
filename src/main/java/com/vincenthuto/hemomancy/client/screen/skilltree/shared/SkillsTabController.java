@@ -207,9 +207,9 @@ public class SkillsTabController implements IProgressTab {
         drawDegreeLabels(gfx, ctx, deepView, SkillTreeLayer.DEEP, deepAlpha);
         surfaceTraceCache.renderFlow(gfx, ctx, surfacePanZoom, animTime, surfaceAlpha);
         if (deepAlpha > 0.01f) deepTraceCache.renderFlow(gfx, ctx, deepView, animTime, deepAlpha);
-		drawNodes(gfx, ctx, surfacePanZoom, filteredSurfaceNodePositions, surfaceAlpha);
-		drawNodes(gfx, ctx, deepView, filteredDeepNodePositions, deepAlpha);
-		drawFilterControls(gfx, ctx);
+		drawNodes(gfx, ctx, surfacePanZoom, filteredSurfaceNodePositions, surfaceAlpha, mouseX, mouseY);
+		drawNodes(gfx, ctx, deepView, filteredDeepNodePositions, deepAlpha, mouseX, mouseY);
+		drawFilterControls(gfx, ctx, mouseX, mouseY);
     }
 
     @Override
@@ -266,22 +266,23 @@ public class SkillsTabController implements IProgressTab {
         }
     }
 
-	private void drawFilterControls(GuiGraphics gfx, ProgressScreenContext ctx) {
+	private void drawFilterControls(GuiGraphics gfx, ProgressScreenContext ctx, int mouseX, int mouseY) {
 		RecipeMapInspectorLayout.IntRect viewport = new RecipeMapInspectorLayout.IntRect(
 				ctx.guiLeft(), ctx.guiTop(), ctx.guiWidth(), ctx.guiHeight());
 		RecipeMapControlsLayout.Result controls = RecipeMapControlsLayout.calculate(viewport);
 		gfx.pose().pushPose();
 		gfx.pose().translate(0, 0, 650);
 		ProgressFilterControlsView.draw(gfx, ctx, controls.degree(),
-				degreeFilter == null ? "Degree: All" : "Degree: " + degreeFilter, 0xFFCC3333);
+				degreeFilter == null ? "Degree: All" : "Degree: " + degreeFilter, 0xFFCC3333, mouseX, mouseY);
 		ProgressFilterControlsView.draw(gfx, ctx, controls.family(),
-				familyFilter == null ? "Family: All" : prettyFamily(familyFilter), 0xFFCC3333);
+				familyFilter == null ? "Family: All" : prettyFamily(familyFilter), 0xFFCC3333, mouseX, mouseY);
 		ProgressFilterControlsView.draw(gfx, ctx, controls.layer(),
-				"Layer: " + (diveState.isDeepActive() ? "5-8" : "0-4"), 0xFFCC3333);
+				"Layer: " + (diveState.isDeepActive() ? "5-8" : "0-4"), 0xFFCC3333, mouseX, mouseY);
 		gfx.pose().popPose();
 	}
 
-    private void drawNodes(GuiGraphics gfx, ProgressScreenContext ctx, PanZoomState view, Map<SkillPoint, int[]> positions, float alpha) {
+    private void drawNodes(GuiGraphics gfx, ProgressScreenContext ctx, PanZoomState view,
+            Map<SkillPoint, int[]> positions, float alpha, int mouseX, int mouseY) {
         if (alpha <= 0.01f) return;
         float time = animTime;
         int hn = halfNode(view);
@@ -314,6 +315,12 @@ public class SkillsTabController implements IProgressTab {
             }
             NodeShapeRenderer.drawFill(gfx, shape, nx, ny, hn, fadeColor(COL_NODE_BG, alpha));
             NodeShapeRenderer.drawOutline(gfx, shape, nx, ny, hn, border);
+			if (shape == EnumNodeShape.SQUARE) {
+				boolean hovered = Math.abs(mouseX - nx) <= hn && Math.abs(mouseY - ny) <= hn;
+				HarbingerChromeRenderer.drawFrame(gfx, nx - hn, ny - hn, hn * 2, hn * 2, border,
+						degreeLocked ? HarbingerChromeRenderer.State.DISABLED
+								: hovered ? HarbingerChromeRenderer.State.HOVERED : HarbingerChromeRenderer.State.IDLE);
+			}
             if (degreeLocked) {
                 NodeShapeRenderer.drawFill(gfx, shape, nx, ny, hn - 1, fadeColor(0xBB000000, alpha));
                 if (view.zoom >= 0.5f) gfx.drawCenteredString(ctx.font(), "?", nx, ny - 4, fadeColor(0xFF111111, alpha));

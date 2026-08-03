@@ -249,7 +249,7 @@ public final class OurLadyWhisperDialogueTrees {
 							"hemomancy.lady.purified.v0.rite1",
 							"hemomancy.lady.purified.v0.rite2"
 					), List.of(
-							new DialogueOption("hemomancy.lady.option.dismiss", null, "lady_clarity_rite_hint")
+							new DialogueOption("hemomancy.lady.option.dismiss", null, "lady_clarity_rite_memory")
 					)))
 					.build();
 			case 1 -> DialogueTree.builder(SPEAKER, LADY_ICON, 0)

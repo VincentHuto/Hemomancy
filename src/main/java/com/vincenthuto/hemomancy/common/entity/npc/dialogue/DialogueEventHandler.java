@@ -21,9 +21,9 @@ import com.vincenthuto.hemomancy.common.mission.FirstBloodcraftAssignmentHelper;
 import com.vincenthuto.hemomancy.common.mission.FirstSeparationAssignmentHelper;
 import com.vincenthuto.hemomancy.common.mission.UnstainedObservanceHelper;
 import com.vincenthuto.hemomancy.common.util.SpecimenJarData;
-import com.vincenthuto.hemomancy.common.item.harbinger.tool.BloodStructureHintItem;
 import com.vincenthuto.hemomancy.common.item.shared.PreWrittenMemoItem;
-import com.vincenthuto.hemomancy.common.item.shared.RiteHintItem;
+import com.vincenthuto.hemomancy.common.item.shared.MnemonicBlueprintItem;
+import com.vincenthuto.hemomancy.common.item.shared.MnemonicBlueprintTarget;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.BloodVolumeServerPacket;
 import com.vincenthuto.hemomancy.common.network.particle.SpawnSanguineOmenEffectPacket;
@@ -137,15 +137,16 @@ public class DialogueEventHandler {
 						false);
 			}
 			case "hermit_farewell_die" -> {
-				// Find the hermit entity, drop the rite hint, then end the hermit
+				// Find the hermit entity, drop the mnemonic blueprint, then end the hermit
 				Entity entity = player.level().getEntity(event.getEntityId());
 				if (entity instanceof HarbingerHermitEntity hermit) {
 					Vec3 pos = hermit.position();
-					// Drop the rite hint item — configured for the Sanguine Initiation rite
-					ItemStack riteHint = RiteHintItem.createForRite(
-							ItemInit.rite_hint.get(), ResourceLocation.fromNamespaceAndPath(Hemomancy.MOD_ID,
-									"cardinal_rite/sanguine_initiation"));
-					ItemEntity drop = new ItemEntity(hermit.level(), pos.x, pos.y + 0.5, pos.z, riteHint);
+					// Drop a filled mnemonic blueprint configured for Sanguine Initiation.
+					ItemStack blueprint = MnemonicBlueprintItem.create(ItemInit.mnemonic_blueprint.get(),
+							new MnemonicBlueprintTarget(MnemonicBlueprintTarget.Type.CARDINAL_RITE,
+									ResourceLocation.fromNamespaceAndPath(Hemomancy.MOD_ID,
+											"cardinal_rite/sanguine_initiation")));
+					ItemEntity drop = new ItemEntity(hermit.level(), pos.x, pos.y + 0.5, pos.z, blueprint);
 					hermit.level().addFreshEntity(drop);
 					// Passing text passage — the mortal display was the hermitâ€™s heart
 					player.displayClientMessage(
@@ -327,8 +328,8 @@ public class DialogueEventHandler {
 								.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC),
 						false);
 			}
-			case "give_blood_structure_hint" -> {
-				handleGiveBloodStructureHint(player, event.getEntityId());
+			case "give_sanguine_monolith_blueprint" -> {
+				handleGiveSanguineMonolithBlueprint(player, event.getEntityId());
 			}
 			case "give_stained_church_map" -> {
 				handleGiveStainedChurchMap(player, event.getEntityId());
@@ -1017,16 +1018,16 @@ public class DialogueEventHandler {
 	}
 
 	/**
-	 * Gives the player an ancient scrap of parchment — a {@link BloodStructureHintItem}
-	 * pre-configured for the Sanguine Monolith blood structure. The item is dropped
+	 * Gives the player a mnemonic blueprint pre-configured for the Sanguine Monolith
+	 * blood structure. The item is dropped
 	 * at the NPC entity's position so the player can pick it up naturally.
 	 * If the NPC entity cannot be found, the item is given directly to the player's
 	 * inventory instead.
 	 */
-	private static void handleGiveBloodStructureHint(ServerPlayer player, int entityId) {
-		ItemStack hint = BloodStructureHintItem.createForStructure(
-				ItemInit.blood_structure_hint.get(),
-				 ResourceLocation.tryBuild(Hemomancy.MOD_ID, "blood_structure/sanguine_monolith"));
+	private static void handleGiveSanguineMonolithBlueprint(ServerPlayer player, int entityId) {
+		ItemStack hint = MnemonicBlueprintItem.create(ItemInit.mnemonic_blueprint.get(),
+				new MnemonicBlueprintTarget(MnemonicBlueprintTarget.Type.BLOOD_STRUCTURE,
+						ResourceLocation.tryBuild(Hemomancy.MOD_ID, "blood_structure/sanguine_monolith")));
 
 		Entity entity = player.level().getEntity(entityId);
 		if (entity != null) {
