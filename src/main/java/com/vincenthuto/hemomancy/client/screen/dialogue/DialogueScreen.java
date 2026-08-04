@@ -99,8 +99,14 @@ public final class DialogueScreen extends Screen {
 		resetGuiState();
 		super.render(gfx, mouseX, mouseY, partialTick);
 		if (!hoveredInquiryItem.isEmpty()) {
-			gfx.renderTooltip(font, hoveredInquiryItem.getHoverName(), mouseX, mouseY);
+			gfx.renderTooltip(font, hoveredInquiryItem, mouseX, mouseY);
 		}
+	}
+
+	private static Component resolveDialogueLine(String value) {
+		return value.startsWith(DialogueNode.LITERAL_PREFIX)
+				? Component.literal(value.substring(DialogueNode.LITERAL_PREFIX.length()))
+				: Component.translatable(value);
 	}
 
 	private void renderHeader(GuiGraphics gfx) {
@@ -117,7 +123,7 @@ public final class DialogueScreen extends Screen {
 		DialogueNode headerNode = navigation.view() == DialogueNavigationState.View.NODE ? null : tree.getStartNode();
 		if (headerNode != null) {
 			for (String key : headerNode.lines()) {
-				for (var line : font.split(Component.translatable(key), textWidth)) {
+				for (var line : font.split(resolveDialogueLine(key), textWidth)) {
 					if (y + font.lineHeight > header.bottom()) return;
 					gfx.drawString(font, line, textX, y, style.textColor(), false);
 					y += LINE_HEIGHT;
@@ -269,7 +275,7 @@ public final class DialogueScreen extends Screen {
 		int width = content.width() - CONTENT_PAD * 2;
 		int y = startY + CONTENT_PAD;
 		for (String key : currentNode.lines()) {
-			for (var line : font.split(Component.translatable(key), width)) {
+			for (var line : font.split(resolveDialogueLine(key), width)) {
 				gfx.drawString(font, line, x, y, style.textColor(), false);
 				y += LINE_HEIGHT;
 			}

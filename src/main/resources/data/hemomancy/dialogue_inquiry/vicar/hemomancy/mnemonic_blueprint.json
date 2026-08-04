@@ -1,7 +1,24 @@
 {
-  "degree_variants": [
-    { "max_degree": 1, "lines": ["hemomancy.vicar.item_inquiry.mnemonic_blueprint.low.line1", "hemomancy.vicar.item_inquiry.mnemonic_blueprint.low.line2"] },
-    { "max_degree": 4, "lines": ["hemomancy.vicar.item_inquiry.mnemonic_blueprint.mid.line1", "hemomancy.vicar.item_inquiry.mnemonic_blueprint.mid.line2"] },
-    { "lines": ["hemomancy.vicar.item_inquiry.mnemonic_blueprint.high.line1", "hemomancy.vicar.item_inquiry.mnemonic_blueprint.high.line2"] }
+  "conditions": [
+    {
+      "max_degree": 1,
+      "lines": [
+        "hemomancy.vicar.item_inquiry.mnemonic_blueprint.low.line1",
+        "hemomancy.vicar.item_inquiry.mnemonic_blueprint.low.line2"
+      ]
+    },
+    {
+      "max_degree": 4,
+      "lines": [
+        "hemomancy.vicar.item_inquiry.mnemonic_blueprint.mid.line1",
+        "hemomancy.vicar.item_inquiry.mnemonic_blueprint.mid.line2"
+      ]
+    },
+    {
+      "lines": [
+        "hemomancy.vicar.item_inquiry.mnemonic_blueprint.high.line1",
+        "hemomancy.vicar.item_inquiry.mnemonic_blueprint.high.line2"
+      ]
+    }
   ]
 }

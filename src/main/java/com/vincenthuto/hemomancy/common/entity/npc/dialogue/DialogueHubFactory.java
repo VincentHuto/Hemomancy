@@ -62,10 +62,16 @@ public final class DialogueHubFactory {
 		}
 
 		for (String nodeId : nodes.keySet()) {
+			if (DialogueItemInquiryNodes.isUnknownNode(nodeId)) {
+				topics.add(DialogueTopic.available("inquiries/unknown", DialogueCategory.INQUIRIES,
+						"hemomancy.dialogue.topic.unknown_item",
+						"hemomancy.dialogue.topic.inventory_item.summary", nodeId));
+				continue;
+			}
 			ResourceLocation itemId = DialogueItemInquiryNodes.inventoryItemId(nodeId);
 			if (itemId == null) continue;
 			topics.add(DialogueTopic.available(
-					"inquiries/" + itemId.getNamespace() + "/" + itemId.getPath(),
+					"inquiries/" + nodeId.substring(DialogueItemInquiryNodes.INVENTORY_NODE_PREFIX.length()),
 					DialogueCategory.INQUIRIES, "hemomancy.dialogue.topic.inventory_item",
 					"hemomancy.dialogue.topic.inventory_item.summary", nodeId).withItem(itemId));
 		}

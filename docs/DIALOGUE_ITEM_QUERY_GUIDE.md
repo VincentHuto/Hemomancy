@@ -1,87 +1,47 @@
-# Hemomancy Held-Item NPC Dialogue Query Guide
 
-This guide explains how NPCs decide what held items they can answer questions about when the player right-clicks them with an item in the main hand.
+# Hemomancy Inventory Inquiry Dialogue Guide
 
-## Quick Summary
+Inventory inquiry lets the player ask an NPC to examine objects already carried in the player's inventory. It is a topic-hub system, not a main-hand-only interaction.
 
-Held-item inquiry dialogue is now mostly data-driven.
+## Runtime flow
 
-- Item mappings live as JSON under `src/main/resources/data/hemomancy/dialogue_inquiry/<npc_id>/<item_namespace>/<item_path>.json`.
-- `ItemInquiryLoader` loads those files on server start and resource reload.
-- `ItemInquiryRegistry` resolves the held item's registry ID for a specific NPC.
-- Dialogue text still lives in `src/main/resources/assets/hemomancy/lang/en_us.json`.
-- Normal item IDs should be added with JSON, not new Java branches.
+1. The NPC builds its ordinary progression dialogue.
+2. `DialogueItemInquiryNodes` scans the player's inventory in slot order.
+3. Stateful providers inspect dynamic stacks first.
+4. Ordinary stacks resolve through `ItemInquiryRegistry` by speaker ID and item registry ID.
+5. Refusal policy may suppress inquiry or replace procedure with a terse identification response.
+6. One inquiry topic is added for every distinct supported item state.
+7. If unsupported objects are present, one **Another object** topic reaches the speaker's characterful unknown response.
 
-Java changes are only needed when adding a new NPC inquiry surface, adding custom non-JSON predicates, or handling item families/classes. The Vicar's `HematicMemoryItem` handling is the current example of a class-based exception that remains in Java.
+The main runtime localisation source is:
 
-## Interaction Flow
+```text
+src/main/resources/assets/hemomancy/lang/en_us.json
+```
 
-1. The player right-clicks an NPC.
-2. The NPC's `mobInteract(...)` method runs server-side for `InteractionHand.MAIN_HAND`.
-3. The NPC reads `player.getMainHandItem()`.
-4. If the main-hand item is not empty, most current inquiry NPCs route to item inquiry.
-5. The dialogue tree class gets the held item registry ID with `BuiltInRegistries.ITEM.getKey(item.getItem())`.
-6. The tree class calls `ItemInquiryRegistry.INSTANCE.resolve(npcId, itemId, degree, purity)`.
-7. The registry finds the JSON entry for that NPC and item, then resolves the first matching condition branch.
-8. If no entry or branch matches, the NPC uses its unknown-item fallback line.
+Generated or editor copies must not mask missing keys in that file.
 
-Current NPC IDs with resource folders:
+## Supported speakers
 
 ```text
 alchemist
+artificer
 guardian
 mnemonist
+monolith
 vicar
 votary_wayfarer
 voyager
 zealot
 ```
 
-Current implementation files:
-
-- `src/main/java/com/vincenthuto/hemomancy/common/entity/npc/dialogue/inquiry/ItemInquiryLoader.java`
-- `src/main/java/com/vincenthuto/hemomancy/common/entity/npc/dialogue/inquiry/ItemInquiryRegistry.java`
-- `src/main/java/com/vincenthuto/hemomancy/common/entity/npc/dialogue/inquiry/ItemInquiryEntry.java`
-- `src/main/java/com/vincenthuto/hemomancy/common/entity/npc/dialogue/inquiry/ItemInquiryCondition.java`
-- `src/main/java/com/vincenthuto/hemomancy/common/entity/npc/dialogue/HarbingerVicarDialogueTrees.java`
-- `src/main/java/com/vincenthuto/hemomancy/common/entity/npc/dialogue/HarbingerAlchemistDialogueTrees.java`
-- `src/main/java/com/vincenthuto/hemomancy/common/entity/npc/dialogue/HarbingerMnemonistDialogueTrees.java`
-- `src/main/java/com/vincenthuto/hemomancy/common/entity/npc/dialogue/HarbingerVoyagerDialogueTrees.java`
-- `src/main/java/com/vincenthuto/hemomancy/common/entity/npc/dialogue/HarbingerVotaryWayfarerDialogueTrees.java`
-- `src/main/java/com/vincenthuto/hemomancy/common/entity/npc/dialogue/ZealotDialogueTrees.java`
-- `src/main/java/com/vincenthuto/hemomancy/common/entity/npc/dialogue/GuardianDialogueTrees.java`
-
-## JSON File Location
-
-The loader scans resources with this path shape:
+## Datapack location
 
 ```text
-data/<resource_namespace>/dialogue_inquiry/<npc_id>/<item_namespace>/<item_path>.json
+data/<resource_namespace>/dialogue_inquiry/<speaker_id>/<item_namespace>/<item_path>.json
 ```
 
-In this repo, Hemomancy entries usually live under:
-
-```text
-src/main/resources/data/hemomancy/dialogue_inquiry/<npc_id>/<item_namespace>/<item_path>.json
-```
-
-The item is identified by the path, not by a field inside the JSON. For example:
-
-```text
-hemomancy:blood_crystal_shard
-src/main/resources/data/hemomancy/dialogue_inquiry/alchemist/hemomancy/blood_crystal_shard.json
-
-minecraft:book
-src/main/resources/data/hemomancy/dialogue_inquiry/vicar/minecraft/book.json
-```
-
-The `<item_path>` portion may contain nested folders if an item registry path ever contains slashes.
-
-## JSON Formats
-
-### Simple response
-
-Use `lines` when the NPC should always say the same thing for the item.
+The path determines the held item's registry ID. A simple entry is:
 
 ```json
 {
@@ -92,194 +52,77 @@ Use `lines` when the NPC should always say the same thing for the item.
 }
 ```
 
-### Conditional response
-
-Use `conditions` when text depends on player degree or Unstained purity.
+Conditional branches are evaluated top-to-bottom; the first match wins. The final branch must be unconstrained.
 
 ```json
 {
   "conditions": [
-    { "max_degree": 1, "lines": ["hemomancy.vicar.item_inquiry.rite_hint.low.line1", "hemomancy.vicar.item_inquiry.rite_hint.low.line2"] },
-    { "max_degree": 4, "lines": ["hemomancy.vicar.item_inquiry.rite_hint.mid.line1", "hemomancy.vicar.item_inquiry.rite_hint.mid.line2"] },
-    { "lines": ["hemomancy.vicar.item_inquiry.rite_hint.high.line1", "hemomancy.vicar.item_inquiry.rite_hint.high.line2"] }
+    {
+      "min_degree": 3,
+      "lines": ["hemomancy.mnemonist.item_inquiry.somatic_loom.line1"]
+    },
+    {
+      "lines": ["hemomancy.mnemonist.item_inquiry.somatic_loom.locked"]
+    }
   ]
 }
 ```
 
-Branches are evaluated top-to-bottom. The first branch whose constraints pass is used.
-
-Supported condition fields:
+Supported stable condition fields:
 
 ```text
-min_degree
-max_degree
-min_purity
-max_purity
+min_degree / max_degree
+min_purity / max_purity
+min_clarity / max_clarity
+clarity_unlocked
+requires_active_blood
+requires_purifying
 ```
 
-Rules:
+Use Java stack-aware providers for data components, owner attunement, quest flags, or other highly specific state.
 
-- Every branch must include a non-empty `lines` array.
-- `min_degree` and `max_degree` are inclusive integer bounds.
-- `min_purity` and `max_purity` are inclusive numeric bounds.
-- Missing condition fields are unconstrained.
-- A final branch with only `lines` is the normal catch-all fallback inside that item's JSON.
-- Do not mix root-level `lines` with `conditions`; if `conditions` exists, the loader uses the conditional format.
+## Stateful provider priority
 
-Degree and purity availability depends on the NPC:
+Before exact JSON lookup, the built-in provider registry examines:
 
-```text
-vicar, alchemist, mnemonist, voyager, votary_wayfarer: real degree, purity 0
-zealot: degree 0, real purity
-guardian: degree 0, purity 0
-```
+1. Mnemonic Blueprints — blank, Cardinal Rite, or blood-structure plan.
+2. Dynamic Scar Patterns — blank, single-route template, or prepared multi-scar loadout.
+3. Specimen Jars — contained entity and Morphling layer state.
 
-That means `min_degree` and `max_degree` are useful for Harbinger NPCs, while `min_purity` and `max_purity` are currently useful for Zealot entries.
+Distinct states of the same item ID receive distinct inquiry nodes. Their dynamic details are shown as literal evidence lines beneath the speaker's localised interpretation.
 
-## How to Add a New Item Query
+## Refusal behaviour
 
-### 1. Choose the NPC and item IDs
+- A Clarity-state Alchemist exposes no Harbinger operational inquiries.
+- A purifying Alchemist identifies known work but refuses procedure.
+- A purifying or Clarity-state Artificer identifies known work but refuses procedure.
+- Other speakers follow their own progression and faction rules.
 
-Use the NPC folder name and the held item's registry ID.
+Do not add `item_hint` to a dialogue state that should expose no inquiry at all.
 
-Example target:
+## Expertise ownership
 
-```text
-NPC: alchemist
-Item: hemomancy:some_reagent
-```
+| Speaker | Owns | Defers |
+|---|---|---|
+| Alchemist | processing, reagents, specimens, machine preparation | armour rites, memory ownership, doctrine |
+| Mnemonist | memory learning, loadouts, Loom meaning | material processing, armour construction |
+| Artificer | Armature, armour, Living Staff grafts, fittings | alchemy, general memory metaphysics |
+| Vicar | doctrine, history, degrees, institutions | exact machine operation |
+| Guardian | containment, weapon handling, field safety | sacramental metaphysics and Harbinger machines |
+| Zealot | Purity, Clarity, rites, Our Lady, sacred materials | tactical optimisation |
+| Voyager | established field ecology and survey evidence | universal metaphysical certainty |
+| Wayfarer | junior observation and admitted uncertainty | authoritative conclusions |
+| Monolith | high-degree thresholds and implication | ordinary tutorials |
 
-Create:
+Two speakers may map the same item only when they answer different questions.
 
-```text
-src/main/resources/data/hemomancy/dialogue_inquiry/alchemist/hemomancy/some_reagent.json
-```
+## Required validation
 
-### 2. Add the inquiry JSON
+`ItemInquiryResourceValidationTest` parses every inquiry JSON and fails when:
 
-Simple entry:
+- an entry has neither or both of `lines` and `conditions`;
+- a condition lacks lines;
+- a conditional entry lacks a final catch-all branch;
+- any referenced key is absent from the main runtime language file.
 
-```json
-{
-  "lines": [
-    "hemomancy.alchemist.item_inquiry.some_reagent.line1",
-    "hemomancy.alchemist.item_inquiry.some_reagent.line2"
-  ]
-}
-```
-
-Degree-gated entry:
-
-```json
-{
-  "conditions": [
-    { "min_degree": 3, "lines": ["hemomancy.alchemist.item_inquiry.some_station.line1", "hemomancy.alchemist.item_inquiry.some_station.line2"] },
-    { "lines": ["hemomancy.alchemist.item_inquiry.some_station.locked"] }
-  ]
-}
-```
-
-Purity-gated Zealot entry:
-
-```json
-{
-  "conditions": [
-    { "min_purity": 75, "lines": ["hemomancy.zealot.item_inquiry.some_relic.line1", "hemomancy.zealot.item_inquiry.some_relic.line2"] },
-    { "lines": ["hemomancy.zealot.item_inquiry.some_relic.not_yet"] }
-  ]
-}
-```
-
-### 3. Add language keys
-
-Add matching entries to:
-
-```text
-src/main/resources/assets/hemomancy/lang/en_us.json
-```
-
-Example:
-
-```json
-"hemomancy.alchemist.item_inquiry.some_reagent.line1": "First alchemist response line.",
-"hemomancy.alchemist.item_inquiry.some_reagent.line2": "Second alchemist response line."
-```
-
-Keep the NPC voice consistent:
-
-- Harbinger NPCs use measured, ecclesiastical, scholarly, or covenant language depending on role.
-- Unstained NPCs use cleaner sacramental language: Lethean water, white/silver, oxidized copper, antiseptic ritual, and blunt containment.
-- Harbingers should not read as simple villains, and Unstained NPCs should not read as simple heroes.
-
-## Existing Key Naming Conventions
-
-Item inquiry lines usually follow:
-
-```text
-hemomancy.<npc_id>.item_inquiry.<topic>.line1
-hemomancy.<npc_id>.item_inquiry.<topic>.line2
-```
-
-Locked or not-yet branches usually follow:
-
-```text
-hemomancy.<npc_id>.item_inquiry.<topic>.locked
-hemomancy.<npc_id>.item_inquiry.<topic>.not_yet
-```
-
-Unknown fallback keys:
-
-```text
-hemomancy.<npc_id>.item_inquiry.unknown
-```
-
-Shared item-hint keys:
-
-```text
-hemomancy.<npc_id>.item_hint
-```
-
-Most inquiry trees include an "ask about item" option that points to an `item_hint` node. Guardian item responses are terser and currently only offer a leave option.
-
-## When Java Still Needs to Change
-
-Add or edit Java only when the data-driven registry cannot express the behavior:
-
-- Adding item inquiry to a new NPC type.
-- Adding class-wide or family-wide behavior, such as Vicar handling every `HematicMemoryItem` with one shared response.
-- Adding conditions beyond degree and purity.
-- Changing the options shown after an inquiry response.
-- Changing interaction priority, such as whether held items are checked before clarity or purifying branches.
-
-For normal one-item-to-one-response mappings, add JSON and language keys only.
-
-## Common Gotchas
-
-- Held-item inquiry checks the main hand only.
-- The JSON file path identifies the item. There is no `"item"` field in the file.
-- The loader reconstructs the item ID as `<item_namespace>:<item_path>` from the resource path.
-- Branch order matters. Put narrow conditions before broad catch-all branches.
-- If no condition branch matches, the NPC uses its unknown-item fallback.
-- If an option points to `"item_hint"`, the tree must include an `item_hint` node.
-- Vicar refuses clarity-bearing players before item inquiry and attacks instead.
-- Alchemist, Mnemonist, Voyager, Votary Wayfarer, Zealot, and Guardian currently check non-empty held items before their normal empty-hand dialogue branches.
-- Translation keys in JSON are not validated at load time; missing keys show up to the player as untranslated key text.
-- Malformed JSON paths or invalid condition fields are logged by `ItemInquiryLoader`.
-
-## Testing Checklist
-
-After adding or changing an item query:
-
-1. Confirm the JSON path matches the held item's registry ID.
-2. Confirm every `lines` key exists in `en_us.json`.
-3. Start or reload the server/client resources so `ItemInquiryLoader` runs.
-4. Hold the item in the main hand.
-5. Right-click the intended NPC.
-6. Confirm the custom response appears.
-7. If the tree includes an ask-about-item option, click it and confirm the item-hint response appears.
-8. Test an unrelated item to confirm the unknown fallback still works.
-9. If Java changed, run a compile check:
-
-```powershell
-.\gradlew.bat compileJava
-```
+`DialogueInquiryCanonTest` guards settled high-risk stale claims. Add a focused assertion when a future migration retires another player-facing workflow.

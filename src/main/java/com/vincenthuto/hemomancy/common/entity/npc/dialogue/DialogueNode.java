@@ -14,6 +14,11 @@ import java.util.List;
  * @param options Clickable responses the player can pick.
  */
 public record DialogueNode(String id, List<String> lines, List<DialogueOption> options) {
+	public static final String LITERAL_PREFIX = "@literal:";
+
+	public static String literal(String value) {
+		return LITERAL_PREFIX + value;
+	}
 
 	public void toNetwork(FriendlyByteBuf buf) {
 		buf.writeUtf(id);

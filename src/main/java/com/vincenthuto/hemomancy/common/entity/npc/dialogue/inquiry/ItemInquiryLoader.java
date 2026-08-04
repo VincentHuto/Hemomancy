@@ -167,12 +167,26 @@ public class ItemInquiryLoader
 			return null;
 		}
 
-		int minDegree   = parseIntField(obj, "min_degree", -1, src);
-		int maxDegree   = parseIntField(obj, "max_degree", -1, src);
+		int minDegree = parseIntField(obj, "min_degree", -1, src);
+		int maxDegree = parseIntField(obj, "max_degree", -1, src);
 		float minPurity = parseFloatField(obj, "min_purity", -1f, src);
 		float maxPurity = parseFloatField(obj, "max_purity", -1f, src);
+		float minClarity = parseFloatField(obj, "min_clarity", -1f, src);
+		float maxClarity = parseFloatField(obj, "max_clarity", -1f, src);
+		Boolean clarityUnlocked = parseBooleanField(obj, "clarity_unlocked", src);
+		Boolean requiresActiveBlood = parseBooleanField(obj, "requires_active_blood", src);
+		Boolean requiresPurifying = parseBooleanField(obj, "requires_purifying", src);
 
-		return new ItemInquiryCondition(minDegree, maxDegree, minPurity, maxPurity, lines);
+		if (!validRange(minDegree, maxDegree) || !validRange(minPurity, maxPurity)
+				|| !validRange(minClarity, maxClarity) || !validPercentage(minPurity)
+				|| !validPercentage(maxPurity) || !validPercentage(minClarity)
+				|| !validPercentage(maxClarity)) {
+			LOGGER.warn("[ItemInquiryLoader] Invalid condition range in: {}", src);
+			return null;
+		}
+
+		return new ItemInquiryCondition(minDegree, maxDegree, minPurity, maxPurity, minClarity, maxClarity,
+				clarityUnlocked, requiresActiveBlood, requiresPurifying, lines);
 	}
 
 	private static int parseIntField(JsonObject obj, String field, int def, ResourceLocation src) {
@@ -195,6 +209,24 @@ public class ItemInquiryLoader
 					field, src, def);
 			return def;
 		}
+	}
+
+	private static Boolean parseBooleanField(JsonObject obj, String field, ResourceLocation src) {
+		if (!obj.has(field)) return null;
+		try {
+			return obj.get(field).getAsBoolean();
+		} catch (Exception ex) {
+			LOGGER.warn("[ItemInquiryLoader] Field '{}' is not a boolean in: {}", field, src);
+			return null;
+		}
+	}
+
+	private static boolean validRange(double min, double max) {
+		return min < 0 || max < 0 || min <= max;
+	}
+
+	private static boolean validPercentage(float value) {
+		return value < 0 || value <= 100F;
 	}
 
 	private static List<String> parseLines(JsonArray arr) {
