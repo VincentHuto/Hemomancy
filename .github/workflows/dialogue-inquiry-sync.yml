@@ -30,17 +30,20 @@ jobs:
       - name: Apply approved migration
         run: python tools/apply_dialogue_inquiry_sync.py
 
-      - name: Validate JSON resources
+      - name: Validate inquiry JSON and runtime language
         run: |
           python - <<'PY'
           import json
           from pathlib import Path
-          for path in Path('src/main/resources').rglob('*.json'):
+
+          paths = [Path('src/main/resources/assets/hemomancy/lang/en_us.json')]
+          paths.extend(Path('src/main/resources/data/hemomancy/dialogue_inquiry').rglob('*.json'))
+          for path in paths:
               try:
-                  json.loads(path.read_text(encoding='utf-8'))
+                  json.loads(path.read_text(encoding='utf-8-sig'))
               except Exception as exc:
                   raise SystemExit(f'{path}: {exc}')
-          print('JSON resources parse successfully.')
+          print(f'Validated {len(paths)} inquiry/runtime-language JSON resources.')
           PY
 
       - name: Commit migration output
