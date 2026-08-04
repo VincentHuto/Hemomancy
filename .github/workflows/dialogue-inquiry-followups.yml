@@ -1,0 +1,68 @@
+name: Dialogue Inquiry Follow-up Migration
+
+on:
+  push:
+    branches: [fix/dialogue-inquiry-canon-sync]
+
+permissions:
+  contents: write
+
+jobs:
+  apply-followups:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: fix/dialogue-inquiry-canon-sync
+          fetch-depth: 0
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Apply focused follow-ups
+        run: python tools/patch_dialogue_inquiry_followups.py
+
+      - name: Validate inquiry resources and D1/D2 boundary
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+
+          lang = json.loads(Path('src/main/resources/assets/hemomancy/lang/en_us.json').read_text(encoding='utf-8-sig'))
+          missing = []
+          for path in Path('src/main/resources/data/hemomancy/dialogue_inquiry').rglob('*.json'):
+              root = json.loads(path.read_text(encoding='utf-8-sig'))
+              arrays = [root.get('lines', [])]
+              arrays += [branch.get('lines', []) for branch in root.get('conditions', [])]
+              for key in [key for array in arrays for key in array]:
+                  if key not in lang:
+                      missing.append(f'{path}: {key}')
+          if missing:
+              raise SystemExit('\n'.join(missing))
+
+          source = Path('src/main/java/com/vincenthuto/hemomancy/common/entity/npc/dialogue/HarbingerAlchemistDialogueTrees.java').read_text(encoding='utf-8')
+          start = source.index('public static DialogueTree neophyte')
+          end = source.index('public static DialogueTree votary', start)
+          neophyte = source[start:end]
+          assert 'tell_me_about_centrifuge' in neophyte
+          assert 'neophyte.centrifuge_lore' in neophyte
+          assert 'tell_me_about_alembic' not in neophyte
+          assert 'alembic_leak' not in neophyte
+          assert 'hemomancy.alchemist.votary.alembic_lore' in source[end:]
+          print('Follow-up migration source checks passed.')
+          PY
+
+      - name: Commit follow-up output
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add src/main src/test
+          if git diff --cached --quiet; then
+            echo "No follow-up changes to commit."
+          else
+            git commit -m "fix(dialogue): enforce inquiry progression boundaries"
+            git push origin HEAD:fix/dialogue-inquiry-canon-sync
+          fi
