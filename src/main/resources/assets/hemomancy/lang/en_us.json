@@ -3522,5 +3522,7 @@
   "hemomancy.alchemist.item_inquiry.specimen_jar": "A sealed living specimen. I can identify what is stored without pretending the jar has made it harmless.",
   "hemomancy.voyager.item_inquiry.specimen_jar": "A field specimen with its context partly preserved. Record the place, depth, and behaviour before opening it.",
   "hemomancy.votary_wayfarer.item_inquiry.specimen_jar": "Something in the jar has already taught the glass how to feel too small. I wrote that down before deciding it was foolish.",
-  "hemomancy.alchemist.votary.tendency_lore": "Eight tendencies answer through the enzymes: Vivacious, Fervent, Neurotic, Incandescent, Ruinous, Frigid, Ferric, and Umbral. Neurotic carries impulse and motion; it is not merely softness given a grand name."
+  "hemomancy.alchemist.votary.tendency_lore": "Eight tendencies answer through the enzymes: Vivacious, Fervent, Neurotic, Incandescent, Ruinous, Frigid, Ferric, and Umbral. Neurotic carries impulse and motion; it is not merely softness given a grand name.",
+  "hemomancy.alchemist.neophyte.centrifuge_lore": "Begin with the Vial Centrifuge. Draw a specimen with the Living Syringe, keep the vials in a rack, and set opposing samples in balance before you start the spin.",
+  "hemomancy.alchemist.votary.alembic_lore": "Now the Ghastly Alembic is yours to study. It distils plants, fungi, and creature matter into defined reagents; fire, vessel state, and recipe determine whether the batch answers cleanly."
 }

@@ -232,31 +232,25 @@ public final class HarbingerAlchemistDialogueTrees {
 				.build();
 	}
 
-	/** Degree 1 — Neophyte. Introduces the Ghastly Alembic and basic blood processing. */
+	/** Degree 1 — Neophyte. Introduces the Vial Centrifuge and basic sampling. */
 	public static DialogueTree neophyte(int entityId) {
 		return DialogueTree.builder(SPEAKER, ALCHEMIST_ICON, entityId)
 				.addNode(new DialogueNode("greeting", List.of(
 						"hemomancy.alchemist.neophyte.line1",
 						"hemomancy.alchemist.neophyte.line2"
 				), List.of(
-						new DialogueOption("hemomancy.dialogue.alchemist.option.tell_me_about_alembic", "alembic_lore", null),
+						new DialogueOption("hemomancy.dialogue.alchemist.option.tell_me_about_centrifuge", "centrifuge_lore", null),
 						new DialogueOption("hemomancy.dialogue.alchemist.option.tell_me_about_blood_gourds", "blood_gourd_basics",
 								null),
 						new DialogueOption("hemomancy.dialogue.alchemist.option.tell_me_about_machines", "machines_overview", null),
       new DialogueOption("hemomancy.dialogue.alchemist.option.ask_about_item", "item_hint", null),
 						new DialogueOption("hemomancy.dialogue.alchemist.option.leave", null, null)
 				)))
-				.addNode(new DialogueNode("alembic_lore", List.of(
-						"hemomancy.alchemist.neophyte.alembic_lore"
+				.addNode(new DialogueNode("centrifuge_lore", List.of(
+						"hemomancy.alchemist.neophyte.centrifuge_lore"
 				), List.of(
 						new DialogueOption("hemomancy.dialogue.alchemist.option.tell_me_about_blood_gourds", "blood_gourd_basics",
 								null),
-						new DialogueOption("hemomancy.dialogue.alchemist.option.alembic_leak", "alembic_leak", null),
-						new DialogueOption("hemomancy.dialogue.alchemist.option.leave", null, null)
-				)))
-				.addNode(new DialogueNode("alembic_leak", List.of(
-						"hemomancy.alchemist.neophyte.alembic_leak"
-				), List.of(
 						new DialogueOption("hemomancy.dialogue.alchemist.option.leave", null, null)
 				)))
 				.addNode(new DialogueNode("blood_gourd_basics", List.of(
@@ -268,7 +262,7 @@ public final class HarbingerAlchemistDialogueTrees {
 				.addNode(new DialogueNode("machines_overview", List.of(
 						"hemomancy.alchemist.machines_overview"
 				), List.of(
-						new DialogueOption("hemomancy.dialogue.alchemist.option.tell_me_about_alembic", "alembic_lore", null),
+						new DialogueOption("hemomancy.dialogue.alchemist.option.tell_me_about_centrifuge", "centrifuge_lore", null),
 						new DialogueOption("hemomancy.dialogue.alchemist.option.tell_me_about_blood_gourds", "blood_gourd_basics",
 								null),
 						new DialogueOption("hemomancy.dialogue.alchemist.option.leave", null, null)
@@ -420,7 +414,7 @@ public final class HarbingerAlchemistDialogueTrees {
 						new DialogueOption("hemomancy.dialogue.alchemist.option.leave", null, null)
 				)))
 				.addNode(new DialogueNode("alembic_lore", List.of(
-						"hemomancy.alchemist.neophyte.alembic_lore"
+						"hemomancy.alchemist.votary.alembic_lore"
 				), List.of(
 						new DialogueOption("hemomancy.dialogue.alchemist.option.how_do_i_upgrade_my_gourd",
 								"gourd_upgrades", null),
