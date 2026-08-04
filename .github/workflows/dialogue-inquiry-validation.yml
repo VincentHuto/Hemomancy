@@ -1,0 +1,168 @@
+name: Dialogue Inquiry Validation
+
+on:
+  push:
+    branches: [fix/dialogue-inquiry-canon-sync, neo-1.21.1]
+    paths:
+      - "src/main/resources/data/hemomancy/dialogue_inquiry/**"
+      - "src/main/resources/assets/hemomancy/lang/en_us.json"
+      - "src/main/java/com/vincenthuto/hemomancy/common/entity/npc/dialogue/**"
+      - "docs/DIALOGUE_ITEM_QUERY_GUIDE.md"
+      - ".github/workflows/dialogue-inquiry-validation.yml"
+  pull_request:
+    branches: [neo-1.21.1]
+    paths:
+      - "src/main/resources/data/hemomancy/dialogue_inquiry/**"
+      - "src/main/resources/assets/hemomancy/lang/en_us.json"
+      - "src/main/java/com/vincenthuto/hemomancy/common/entity/npc/dialogue/**"
+      - "docs/DIALOGUE_ITEM_QUERY_GUIDE.md"
+      - ".github/workflows/dialogue-inquiry-validation.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Validate inquiry contract, localisation, and canon guardrails
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+
+          root = Path('.')
+          inquiry_root = root / 'src/main/resources/data/hemomancy/dialogue_inquiry'
+          language_path = root / 'src/main/resources/assets/hemomancy/lang/en_us.json'
+          guide_path = root / 'docs/DIALOGUE_ITEM_QUERY_GUIDE.md'
+          alchemist_path = root / 'src/main/java/com/vincenthuto/hemomancy/common/entity/npc/dialogue/HarbingerAlchemistDialogueTrees.java'
+
+          language = json.loads(language_path.read_text(encoding='utf-8-sig'))
+          errors = []
+          inquiry_keys = set()
+          entry_count = 0
+
+          condition_fields = {
+              'min_degree', 'max_degree',
+              'min_purity', 'max_purity',
+              'min_clarity', 'max_clarity',
+              'clarity_unlocked', 'requires_active_blood', 'requires_purifying'
+          }
+
+          def validate_lines(path, lines, where):
+              if not isinstance(lines, list) or not lines:
+                  errors.append(f'{path}: {where} must contain a non-empty lines array')
+                  return
+              for key in lines:
+                  if not isinstance(key, str) or not key.strip():
+                      errors.append(f'{path}: {where} contains an empty/non-string key')
+                      continue
+                  inquiry_keys.add(key)
+                  if key not in language:
+                      errors.append(f'{path}: missing runtime localisation {key}')
+
+          def validate_range(path, branch, low, high, minimum, maximum):
+              lo = branch.get(low)
+              hi = branch.get(high)
+              for field, value in ((low, lo), (high, hi)):
+                  if value is not None and (not isinstance(value, (int, float)) or value < minimum or value > maximum):
+                      errors.append(f'{path}: {field} must be within {minimum}..{maximum}')
+              if lo is not None and hi is not None and lo > hi:
+                  errors.append(f'{path}: {low} must not exceed {high}')
+
+          for path in sorted(inquiry_root.rglob('*.json')):
+              entry_count += 1
+              try:
+                  data = json.loads(path.read_text(encoding='utf-8-sig'))
+              except Exception as exc:
+                  errors.append(f'{path}: invalid JSON: {exc}')
+                  continue
+
+              has_lines = 'lines' in data
+              has_conditions = 'conditions' in data
+              if has_lines == has_conditions:
+                  errors.append(f'{path}: entry must contain exactly one of lines or conditions')
+                  continue
+
+              if has_lines:
+                  validate_lines(path, data['lines'], 'root')
+                  continue
+
+              conditions = data['conditions']
+              if not isinstance(conditions, list) or not conditions:
+                  errors.append(f'{path}: conditions must be a non-empty array')
+                  continue
+
+              for index, branch in enumerate(conditions):
+                  if not isinstance(branch, dict):
+                      errors.append(f'{path}: condition {index} must be an object')
+                      continue
+                  unknown = set(branch) - condition_fields - {'lines'}
+                  if unknown:
+                      errors.append(f'{path}: condition {index} has unsupported fields {sorted(unknown)}')
+                  validate_lines(path, branch.get('lines'), f'condition {index}')
+                  validate_range(path, branch, 'min_degree', 'max_degree', 0, 8)
+                  validate_range(path, branch, 'min_purity', 'max_purity', 0, 100)
+                  validate_range(path, branch, 'min_clarity', 'max_clarity', 0, 100)
+                  for field in ('clarity_unlocked', 'requires_active_blood', 'requires_purifying'):
+                      if field in branch and not isinstance(branch[field], bool):
+                          errors.append(f'{path}: {field} must be boolean')
+
+              if set(conditions[-1]) != {'lines'}:
+                  errors.append(f'{path}: final condition must be an unconstrained catch-all')
+
+          inquiry_text = '\n'.join(
+              value for key, value in language.items()
+              if '.item_inquiry.' in key and isinstance(value, str)
+          ).lower()
+          forbidden = [
+              'smelt the ore directly',
+              'wear the scar',
+              'integrate it into your bloodline',
+              'a blood key activates',
+              'pallid infusion initiates',
+              'guardians are not expected to walk',
+              'guardian detachments use it',
+              'blood that has been purified to near-transparency',
+              'five points of purity',
+              'five points of clarity',
+          ]
+          for phrase in forbidden:
+              if phrase in inquiry_text:
+                  errors.append(f'Runtime inquiry localisation retains stale phrase: {phrase!r}')
+
+          alchemist = alchemist_path.read_text(encoding='utf-8')
+          start = alchemist.index('public static DialogueTree neophyte')
+          end = alchemist.index('public static DialogueTree votary', start)
+          neophyte = alchemist[start:end]
+          if 'tell_me_about_centrifuge' not in neophyte or 'neophyte.centrifuge_lore' not in neophyte:
+              errors.append('Degree-1 Alchemist no longer exposes the required Centrifuge lesson')
+          if 'tell_me_about_alembic' in neophyte or 'alembic_leak' in neophyte:
+              errors.append('Degree-1 Alchemist still exposes Votary Alembic instruction')
+          if 'hemomancy.alchemist.votary.alembic_lore' not in alchemist[end:]:
+              errors.append('Degree-2 Alchemist lacks the dedicated Alembic lesson')
+
+          guide = guide_path.read_text(encoding='utf-8').lower()
+          for speaker in (
+              'alchemist', 'artificer', 'guardian', 'mnemonist', 'monolith',
+              'vicar', 'votary_wayfarer', 'voyager', 'zealot'
+          ):
+              if speaker not in guide:
+                  errors.append(f'Inquiry guide omits speaker role: {speaker}')
+          if 'inventory inquiry' not in guide:
+              errors.append('Inquiry guide does not describe the inventory inquiry contract')
+
+          if errors:
+              raise SystemExit('\n'.join(f'- {error}' for error in errors))
+
+          print(f'Validated {entry_count} inquiry entries, {len(inquiry_keys)} referenced keys, and canon guardrails.')
+          PY
