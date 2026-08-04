@@ -436,7 +436,7 @@ public final class HarbingerAlchemistDialogueTrees {
 				), List.of(
 						new DialogueOption("hemomancy.dialogue.alchemist.option.tell_me_about_centrifuge", "centrifuge_lore", null),
 						new DialogueOption("hemomancy.dialogue.alchemist.option.how_do_i_upgrade_my_gourd", "gourd_upgrades", null),
-						new DialogueOption("hemomancy.dialogue.alchemist.option.tell_me_about_alembic", "alembic_lore", null),
+						new DialogueOption("hemomancy.dialogue.alchemist.option.tell_me_about_centrifuge", "centrifuge_lore", null),
       new DialogueOption("hemomancy.dialogue.alchemist.option.ask_about_item", "item_hint", null),
 						new DialogueOption("hemomancy.dialogue.alchemist.option.leave", null, null)
 				)))
@@ -452,7 +452,7 @@ public final class HarbingerAlchemistDialogueTrees {
 						new DialogueOption("hemomancy.dialogue.alchemist.option.leave", null, null)
 				)))
 				.addNode(new DialogueNode("alembic_lore", List.of(
-						"hemomancy.alchemist.neophyte.alembic_lore"
+						"hemomancy.alchemist.votary.alembic_lore"
 				), List.of(
 						new DialogueOption("hemomancy.dialogue.alchemist.option.how_do_i_upgrade_my_gourd", "gourd_upgrades", null),
 						new DialogueOption("hemomancy.dialogue.alchemist.option.leave", null, null)
