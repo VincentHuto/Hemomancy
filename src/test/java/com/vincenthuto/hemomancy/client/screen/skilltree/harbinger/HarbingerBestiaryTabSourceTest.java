@@ -23,7 +23,7 @@ public final class HarbingerBestiaryTabSourceTest {
 		assertContains("bestiary maps to controller", screen, "case BESTIARY");
 		assertContains("bestiary maps to controller target", screen, "-> bestiary;");
 		assertContains("bestiary participates in init", screen,
-				"new IProgressTab[]{skills, manips, rites, crafting, scars, summons, materials, bestiary}");
+				"new IProgressTab[]{skills, manips, rites, crafting, summons, materials, bestiary}");
 		assertContains("bottom-right tab is drawn separately", screen, "drawBottomRightTabs");
 		assertContains("bottom-right hit test is checked", screen, "bottomRightTabUnder");
 

@@ -59,7 +59,6 @@ public final class RegistryCreativeOrderSourceTest {
 				"mnemonic_reliquary = SPECIALBLOCKS.register",
 				"scar_station = MODELEDBLOCKS.register",
 				"mason_effigy = MODELEDBLOCKS.register",
-				"anastomotic_brazier = MODELEDBLOCKS.register",
 				"morphling_incubator = MODELEDBLOCKS.register",
 				"consecrated_bloodwell = MODELEDBLOCKS.register",
 				"sanguine_monolith = MODELEDBLOCKS.register",

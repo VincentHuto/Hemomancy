@@ -98,5 +98,5 @@ test('materials frontend exposes graph layers inspector creation and editor navi
   expect(source).toContain('create-entry');
   expect(source).toContain('Unknown material');
   expect(source).toContain('Skills');
-  expect(source).toContain('Manipulations');
+  expect(source).toContain('Tendencies');
 });

@@ -1,4 +1,4 @@
-package com.vincenthuto.hemomancy.common.tile.functional;
+package com.vincenthuto.hemomancy.common.rite;
 
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodVolumeEvents;
@@ -6,7 +6,6 @@ import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.scar.IScars;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.scar.ScarType;
 import com.vincenthuto.hemomancy.common.event.HarbingerAdvancementGranter;
-import com.vincenthuto.hemomancy.common.init.BlockEntityInit;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.init.ScarInit;
 import com.vincenthuto.hemomancy.common.item.harbinger.scar.ItemScar;
@@ -22,22 +21,42 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.Level;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class AnastomoticBrazierBlockEntity extends BlockEntity {
+public final class ScarBrazierRite {
 	public static final int REQUIRED_DEGREE = 4;
 	public static final double LEARN_BLOOD_COST = 100.0D;
 	public static final double LOADOUT_BLOOD_COST = 50.0D;
 
-	public AnastomoticBrazierBlockEntity(BlockPos pos, BlockState state) {
-		super(BlockEntityInit.anastomotic_brazier.get(), pos, state);
+	private ScarBrazierRite() {
 	}
 
-	public boolean tryLearnScar(Player player, ItemStack stack) {
+	public static ScarBrazierInteractionRules.Burn selectBurn(boolean lit, boolean empty, boolean sneaking,
+			ItemStack stack) {
+		return ScarBrazierInteractionRules.select(lit, empty, sneaking,
+				stack.getItem() instanceof ItemScar,
+				stack.getItem() instanceof ItemScarPattern && ItemScarPattern.hasPreparedLoadout(stack),
+				stack.is(ItemInit.runic_motif_paper.get()));
+	}
+
+	public static boolean burn(Level level, BlockPos pos, Player player, ItemStack stack,
+			ScarBrazierInteractionRules.Burn burn) {
+		return switch (burn) {
+			case LEARN -> tryLearnScar(level, pos, player, stack);
+			case COMMIT -> tryCommitLoadout(level, pos, player, stack);
+			case CLEAR -> tryClearLoadout(level, pos, player, stack);
+			case NONE -> false;
+		};
+	}
+
+	public static int getMaxActiveScars(Player player) {
+		return ScarBrazierInteractionRules.maxActiveScars(HemoCapabilityAccess.getPlayerDegreeNumber(player));
+	}
+
+	private static boolean tryLearnScar(Level level, BlockPos pos, Player player, ItemStack stack) {
 		if (!(stack.getItem() instanceof ItemScar scarItem)) {
 			return false;
 		}
@@ -52,7 +71,7 @@ public class AnastomoticBrazierBlockEntity extends BlockEntity {
 			return true;
 		}
 		if (!hasDegree(player)) {
-			message(player, "The Anastomotic Brazier answers only the Fourth Degree and above.", ChatFormatting.RED);
+			message(player, "The Iron Brazier answers this scar rite only at the Fourth Degree and above.", ChatFormatting.RED);
 			return true;
 		}
 
@@ -77,17 +96,17 @@ public class AnastomoticBrazierBlockEntity extends BlockEntity {
 		}
 		stack.shrink(1);
 		syncScarState(player, scars);
-		pulse();
+		pulse(level, pos);
 		message(player, "The scar burns cleanly into your cerebral map.", ChatFormatting.DARK_RED);
 		return true;
 	}
 
-	public boolean tryCommitLoadout(Player player, ItemStack stack) {
+	private static boolean tryCommitLoadout(Level level, BlockPos pos, Player player, ItemStack stack) {
 		if (!(stack.getItem() instanceof ItemScarPattern) || !ItemScarPattern.hasPreparedLoadout(stack)) {
 			return false;
 		}
 		if (!hasDegree(player)) {
-			message(player, "The Anastomotic Brazier answers only the Fourth Degree and above.", ChatFormatting.RED);
+			message(player, "The Iron Brazier answers this scar rite only at the Fourth Degree and above.", ChatFormatting.RED);
 			return true;
 		}
 		List<ResourceLocation> selected = new ArrayList<>(ItemScarPattern.getScarIds(stack));
@@ -133,17 +152,17 @@ public class AnastomoticBrazierBlockEntity extends BlockEntity {
 		}
 		stack.shrink(1);
 		syncScarState(player, scars);
-		pulse();
+		pulse(level, pos);
 		message(player, "The pattern collapses into your active scar loadout.", ChatFormatting.DARK_RED);
 		return true;
 	}
 
-	public boolean tryClearLoadout(Player player, ItemStack stack) {
+	private static boolean tryClearLoadout(Level level, BlockPos pos, Player player, ItemStack stack) {
 		if (!stack.is(ItemInit.runic_motif_paper.get())) {
 			return false;
 		}
 		if (!hasDegree(player)) {
-			message(player, "The Anastomotic Brazier answers only the Fourth Degree and above.", ChatFormatting.RED);
+			message(player, "The Iron Brazier answers this scar rite only at the Fourth Degree and above.", ChatFormatting.RED);
 			return true;
 		}
 		IScars scars = HemoCapabilityAccess.getScarState(player).orElse(null);
@@ -165,27 +184,16 @@ public class AnastomoticBrazierBlockEntity extends BlockEntity {
 		}
 		stack.shrink(1);
 		syncScarState(player, scars);
-		pulse();
+		pulse(level, pos);
 		message(player, "The blank motif burns away your active cerebral scar loadout.", ChatFormatting.DARK_RED);
 		return true;
 	}
 
-	public static int getMaxActiveScars(Player player) {
-		int degree = HemoCapabilityAccess.getPlayerDegreeNumber(player);
-		if (degree >= 6) {
-			return 4;
-		}
-		if (degree >= 5) {
-			return 2;
-		}
-		return degree >= REQUIRED_DEGREE ? 1 : 0;
-	}
-
-	private boolean hasDegree(Player player) {
+	private static boolean hasDegree(Player player) {
 		return HemoCapabilityAccess.getPlayerDegreeNumber(player) >= REQUIRED_DEGREE;
 	}
 
-	private boolean spendBlood(Player player, double cost) {
+	private static boolean spendBlood(Player player, double cost) {
 		IBloodVolume volume = HemoCapabilityAccess.getBloodVolume(player).orElse(null);
 		if (volume == null || !volume.isActive() || volume.getBloodVolume() < cost) {
 			return false;
@@ -198,16 +206,15 @@ public class AnastomoticBrazierBlockEntity extends BlockEntity {
 		return true;
 	}
 
-	private void syncScarState(Player player, IScars scars) {
+	private static void syncScarState(Player player, IScars scars) {
 		if (player instanceof ServerPlayer serverPlayer) {
 			PacketHandler.sendToPlayer(serverPlayer, new PacketSyncScarsState(serverPlayer, scars));
 		}
-		setChanged();
 	}
 
-	private void pulse() {
+	private static void pulse(Level level, BlockPos pos) {
 		if (level instanceof ServerLevel serverLevel) {
-			PacketHandler.sendSanguineOmenEffect(worldPosition.getCenter(), 24.0D, serverLevel, 30, 0.35F);
+			PacketHandler.sendSanguineOmenEffect(pos.getCenter(), 24.0D, serverLevel, 30, 0.35F);
 		}
 	}
 

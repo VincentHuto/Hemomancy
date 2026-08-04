@@ -545,9 +545,6 @@ public class BlockInit {
 	public static final DeferredHolder<Block, Block> mason_effigy = MODELEDBLOCKS.register("mason_effigy",
 			() -> new MasonsEffigyBlock(BlockBehaviour.Properties.of().requiresCorrectToolForDrops()
 					.strength(2.0F, 8.0F).sound(SoundType.STONE).noOcclusion()));
-	public static final DeferredHolder<Block, Block> anastomotic_brazier = MODELEDBLOCKS.register("anastomotic_brazier",
-			() -> new AnastomoticBrazierBlock(BlockBehaviour.Properties.of().requiresCorrectToolForDrops()
-					.strength(1.5F, 6.0F).sound(SoundType.METAL)));
 	public static final DeferredHolder<Block, Block> iron_brazier = MODELEDBLOCKS.register("iron_brazier",
 			() -> new BrazierBlock(BlockBehaviour.Properties.of().requiresCorrectToolForDrops().strength(1.5F, 6.0F)
 					.sound(SoundType.METAL)));

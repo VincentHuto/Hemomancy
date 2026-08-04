@@ -15,8 +15,7 @@ export default defineConfig({
     rollupOptions: {
       input: {
         workspace: 'workspace.html',
-        manipulations: 'manipulations.html',
-        scars: 'scars.html',
+        tendencies: 'tendencies.html',
         materials: 'materials.html',
         recipeMaps: 'recipe_maps.html'
       }

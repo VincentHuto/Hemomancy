@@ -47,6 +47,10 @@ public final class ScarsTabController implements IProgressTab {
 
 	private void loadEntries() {
 		Minecraft mc = Minecraft.getInstance();
+		state.rebuild(loadEntries(mc));
+	}
+
+	static List<ScarTreeEntry> loadEntries(Minecraft mc) {
 		List<ScarTreeEntry> entries = new ArrayList<>();
 		if (mc.player != null && mc.level != null) {
 			for (ScarRecipe recipe : ScarRecipe.getAllRecipes(mc.level)) {
@@ -65,11 +69,15 @@ public final class ScarsTabController implements IProgressTab {
 		entries.sort(Comparator.comparingInt((ScarTreeEntry entry) -> entry.tendency().ordinal())
 				.thenComparingInt(ScarTreeEntry::tier)
 				.thenComparing(entry -> entry.id().toString()));
-		state.rebuild(entries);
+		return entries;
 	}
 
 	private void refreshKnowledge() {
 		Minecraft mc = Minecraft.getInstance();
+		refreshKnowledge(state, mc);
+	}
+
+	static void refreshKnowledge(ScarsTabState state, Minecraft mc) {
 		if (mc.player == null) return;
 		HemoCapabilityAccess.getScarState(mc.player).ifPresent(scars ->
 				state.updateKnowledge(scars.getKnownCerebralScars(), scars.getActiveCerebralScars()));

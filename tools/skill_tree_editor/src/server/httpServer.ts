@@ -1,7 +1,7 @@
 import { createServer, type IncomingMessage, type ServerResponse } from 'node:http';
 import { existsSync, readFileSync } from 'node:fs';
 import { extname, join } from 'node:path';
-import type { ManipulationPreviewRequest, MaterialAtlasPreviewRequest, PreviewRequest, RecipeMapPreviewRequest, ScarTreePreviewRequest } from '../shared/types';
+import type { ManipulationPreviewRequest, MaterialAtlasPreviewRequest, PreviewRequest, RecipeMapPreviewRequest, ScarTreePreviewRequest, TendenciesPreviewRequest } from '../shared/types';
 import {
   applyPreview,
   defaultRepoRoot,
@@ -13,6 +13,7 @@ import { loadManipulationWorkspace, previewManipulationWorkspaceChanges } from '
 import { loadMaterialAtlasWorkspace, previewMaterialAtlasWorkspaceChanges } from './materialAtlasWorkspace';
 import { loadRecipeMapWorkspace, previewRecipeMapWorkspaceChanges } from './recipeMapWorkspace';
 import { loadScarTreeWorkspace, previewScarTreeWorkspaceChanges } from './scarTreeWorkspace';
+import { loadTendenciesWorkspace, previewTendenciesWorkspaceChanges } from './tendenciesWorkspace';
 
 const repoRoot = process.env.HEMO_REPO_ROOT ?? defaultRepoRoot();
 const port = Number(process.env.SKILL_TREE_API_PORT ?? 5185);
@@ -28,6 +29,10 @@ const server = createServer(async (req, res) => {
 
     if (req.method === 'GET' && url.pathname === '/api/manipulations') {
       return send(res, 200, await loadManipulationWorkspace(repoRoot));
+    }
+
+    if (req.method === 'GET' && url.pathname === '/api/tendencies') {
+      return send(res, 200, await loadTendenciesWorkspace(repoRoot));
     }
 
     if (req.method === 'GET' && url.pathname === '/api/scars') {
@@ -48,6 +53,10 @@ const server = createServer(async (req, res) => {
 
     if (req.method === 'POST' && url.pathname === '/api/manipulations/preview') {
       return send(res, 200, await previewManipulationWorkspaceChanges(repoRoot, await readJson(req) as ManipulationPreviewRequest));
+    }
+
+    if (req.method === 'POST' && url.pathname === '/api/tendencies/preview') {
+      return send(res, 200, await previewTendenciesWorkspaceChanges(repoRoot, await readJson(req) as TendenciesPreviewRequest));
     }
 
     if (req.method === 'POST' && url.pathname === '/api/scars/preview') {

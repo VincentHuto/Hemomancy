@@ -49,6 +49,11 @@ export interface ManipulationRingMetricOptions {
   radiusScale?: number;
 }
 
+export interface CompactManipulationRingMetricOptions {
+  padding?: number;
+  innerRadius?: number;
+}
+
 export function beginNodeDrag(start: NodeDragStart): NodeDragState {
   const zoom = start.zoom ?? 1;
   return {
@@ -93,6 +98,27 @@ export function manipulationRingMetricsFromClusterSize(
   const clusterSize = Math.max(maxClusterW, maxClusterH);
   const clusterHalf = clusterSize / 2;
   const branchRadius = Math.max(minRadius, Math.ceil(clusterSize * radiusScale));
+  return {
+    clusterHalf,
+    branchRadius,
+    ringCenterRawX: padding + clusterHalf + branchRadius,
+    ringCenterRawY: padding + clusterHalf + branchRadius
+  };
+}
+
+export function manipulationRingMetricsFromRadialOffsets(
+  maxClusterW: number,
+  maxClusterH: number,
+  localRadialOffsets: number[],
+  options: CompactManipulationRingMetricOptions = {},
+  stableMetrics?: ManipulationRingMetrics
+): ManipulationRingMetrics {
+  if (stableMetrics) return stableMetrics;
+  const padding = options.padding ?? 40;
+  const innerRadius = options.innerRadius ?? 175;
+  const clusterHalf = Math.max(maxClusterW, maxClusterH) / 2;
+  const innermostOffset = localRadialOffsets.length ? Math.min(...localRadialOffsets) : 0;
+  const branchRadius = Math.max(0, Math.ceil(innerRadius - innermostOffset));
   return {
     clusterHalf,
     branchRadius,

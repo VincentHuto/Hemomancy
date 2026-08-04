@@ -36,7 +36,7 @@ final class RecipeMapTraceLayerCache {
 	}
 
 	private static void bakeRing(NativeImage image, RecipeMapTracePlan.Ring ring) {
-		int steps = Math.max(48, (int) Math.ceil(Math.PI * 2.0 * ring.radius() / 4.0));
+		int steps = ConcentricRingStyle.segmentCount(ring.radius());
 		int previousX = ring.centerX() + ring.radius();
 		int previousY = ring.centerY();
 		for (int step = 1; step <= steps; step++) {

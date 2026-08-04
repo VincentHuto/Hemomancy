@@ -178,7 +178,7 @@ function render(): void {
           <div>
             <h1>Material Atlas Editor</h1>
             <p>${escapeHtml(relativeRoot())}</p>
-            <p><a href="/workspace.html">Skills</a> - <a href="/manipulations.html">Manipulations</a> - <a href="/scars.html">Scars</a> - <b>Materials</b> - <a href="/recipe_maps.html">Craft/Rites</a></p>
+            <p><a href="/workspace.html">Skills</a> - <a href="/tendencies.html">Tendencies</a> - <b>Materials</b> - <a href="/recipe_maps.html">Craft/Rites</a></p>
           </div>
         </div>
         <div class="toolbar">

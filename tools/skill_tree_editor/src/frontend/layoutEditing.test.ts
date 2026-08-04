@@ -1,6 +1,7 @@
 import {
   beginNodeDrag,
   manipulationRingMetricsFromClusterSize,
+  manipulationRingMetricsFromRadialOffsets,
   modelPositionFromRenderedPosition,
   updateNodeDrag
 } from './layoutEditing';
@@ -56,4 +57,18 @@ test('can reuse manipulation ring metrics while a dragged node expands cluster b
   const expandedDuringDrag = manipulationRingMetricsFromClusterSize(266, 539, loadedMetrics);
 
   expect(expandedDuringDrag).toEqual(loadedMetrics);
+});
+
+test('matches the runtime compact radius from the innermost authored node projection', () => {
+  const metrics = manipulationRingMetricsFromRadialOffsets(266, 236, [-80.2, 12, 40], {
+    padding: 40,
+    innerRadius: 175
+  });
+
+  expect(metrics).toEqual({
+    clusterHalf: 133,
+    branchRadius: 256,
+    ringCenterRawX: 429,
+    ringCenterRawY: 429
+  });
 });

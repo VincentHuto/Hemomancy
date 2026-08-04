@@ -243,7 +243,6 @@ public final class MaterialAtlasSpec {
 		entryAt("scrying_dish", h, "gourds_vessels", d(3), 402, 525, "bloody_jug");
 		entryAt("vascular_poultice", h, "gourds_vessels", d(3), 294, 585, "sanguine_salve");
 		entryAt("vitality_chalice", h, "gourds_vessels", d(3), 294, 525, "bloody_jug");
-		entryAt("anastomotic_brazier", h, "idols_fixtures", d(4), 498, 275, "iron_brazier", "mason_effigy");
 		entryAt("hematic_armature", h, "idols_fixtures", d(4), 265, 1004, "hematic_iron_chestplate");
 		entryAt("hematic_iron_chain", h, "architecture", d(4), 540, 883, "hematic_iron_block");
 		entryAt("hematic_stake", h, "qliphoth_reagents", d(4), 805, 160);

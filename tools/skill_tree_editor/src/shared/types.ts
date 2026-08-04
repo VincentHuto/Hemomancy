@@ -135,6 +135,18 @@ export interface ScarTreePreviewRequest {
   nodes: ScarTreeNodeModel[];
 }
 
+export interface TendenciesWorkspace {
+  repoRoot: string;
+  manipulations: ManipulationWorkspace;
+  scars: ScarTreeWorkspace;
+  diagnostics: Diagnostic[];
+}
+
+export interface TendenciesPreviewRequest {
+  manipulations: ManipulationNodeModel[];
+  scars: ScarTreeNodeModel[];
+}
+
 export type MaterialAtlasPathKey = 'HARBINGER' | 'UNSTAINED';
 
 export type MaterialGateType = 'ALWAYS' | 'DEGREE' | 'PURITY' | 'CLARITY';

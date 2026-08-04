@@ -17,6 +17,7 @@ import net.minecraft.world.item.crafting.Ingredient;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 
 final class ScarsTabView {
@@ -75,6 +76,10 @@ final class ScarsTabView {
 
 			if (panZoom.zoom >= 0.5f) ScreenDrawUtils.renderScaledItem(gfx, entry.result(), x, y, halfNode);
 			if (panZoom.zoom >= 0.7f) {
+				String deepen = deepenAmountLabel(entry.definition().getDeepenAmount());
+				gfx.drawCenteredString(ctx.font(), deepen, x, y - halfNode - 8, dim(tendencyColor, 0.85f));
+			}
+			if (panZoom.zoom >= 0.7f) {
 				int labelColor = visual == ScarNodeVisualState.UNLEARNED ? dim(tendencyColor, 0.42f) : tendencyColor;
 				int labelY = y + halfNode + 3;
 				for (String line : ScreenDrawUtils.wrapText(ctx.font(), entry.result().getHoverName().getString(),
@@ -122,6 +127,8 @@ final class ScarsTabView {
 					.withStyle(s -> s.withColor(active ? 0x55DD88 : known ? 0x66BB66 : 0xAA6666)));
 			lines.add(Component.literal("Tier " + roman(entry.tier())).withStyle(s -> s.withColor(0xAAAAAA)));
 			lines.add(Component.literal("Tendency: " + proper(entry.tendency().name())).withStyle(s -> s.withColor(color)));
+			lines.add(Component.literal("Deepen: " + deepenAmountLabel(entry.definition().getDeepenAmount()))
+					.withStyle(s -> s.withColor(dim(color, 0.85f))));
 		}
 		gfx.pose().pushPose();
 		gfx.pose().translate(0, 0, TOOLTIP_Z);
@@ -174,6 +181,9 @@ final class ScarsTabView {
 		y += 11;
 		gfx.drawString(ctx.font(), "Tendency: " + proper(entry.tendency().name()), textX, y, color, false);
 		y += 11;
+		gfx.drawString(ctx.font(), "Deepen: " + deepenAmountLabel(entry.definition().getDeepenAmount()),
+				textX, y, dim(color, 0.85f), false);
+		y += 11;
 		gfx.drawString(ctx.font(), "Tier: " + roman(entry.tier()), textX, y, 0xFFBBBBBB, false);
 		y += 14;
 		gfx.drawString(ctx.font(), "Ingredients:", textX, y, 0xFF888888, false);
@@ -195,6 +205,11 @@ final class ScarsTabView {
 
 	static int detailPanelWidth(int guiWidth) {
 		return RecipeMapInspectorLayout.expandedPanelWidth(guiWidth);
+	}
+
+	static String deepenAmountLabel(float amount) {
+		if (amount == Math.rint(amount)) return "+" + (int) amount;
+		return String.format(Locale.ROOT, "+%.1f", amount);
 	}
 
 	private static void drawPatternGrid(GuiGraphics gfx, ScarTreeEntry entry,

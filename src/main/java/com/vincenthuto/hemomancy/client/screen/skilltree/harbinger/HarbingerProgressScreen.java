@@ -18,8 +18,7 @@ public class HarbingerProgressScreen extends Screen {
     private enum Tab {
         SKILLS("Skills", 0xFFCC3333, 0, false),
         RITES("Rites", 0xFF8844CC, 0, false),
-        MANIPULATIONS("Manipulations", 0xFFCC8833, 3, false),
-        SCARS("Scars", 0xFF44AACC, 4, false),
+        TENDENCIES("Tendencies", 0xFFCC8833, 3, false),
         CRAFTING("Crafting", 0xFFAA2222, 0, false),
         MATERIALS("Materials", 0xFFCC6644, 0, false),
         SUMMONS("Summons", 0xFFBB3355, 2, true),
@@ -57,7 +56,6 @@ public class HarbingerProgressScreen extends Screen {
     private final ManipulationsTabController  manips    = new ManipulationsTabController();
     private final RitesTabController rites     = new RitesTabController();
     private final CraftingTabController crafting  = new CraftingTabController();
-    private final ScarsTabController          scars     = new ScarsTabController();
     private final SummonsTabController summons = new SummonsTabController();
     private final MaterialsTabController materials = new MaterialsTabController();
     private final BestiaryTabController bestiary = new BestiaryTabController();
@@ -81,10 +79,9 @@ public class HarbingerProgressScreen extends Screen {
     private IProgressTab activeController(Tab tab) {
         return switch (tab) {
             case SKILLS        -> skills;
-            case MANIPULATIONS -> manips;
+            case TENDENCIES    -> manips;
             case RITES         -> rites;
             case CRAFTING      -> crafting;
-            case SCARS         -> scars;
             case SUMMONS       -> summons;
             case MATERIALS     -> materials;
             case BESTIARY      -> bestiary;
@@ -115,7 +112,7 @@ public class HarbingerProgressScreen extends Screen {
     }
 
     private IProgressTab[] allTabs() {
-        return new IProgressTab[]{skills, manips, rites, crafting, scars, summons, materials, bestiary};
+        return new IProgressTab[]{skills, manips, rites, crafting, summons, materials, bestiary};
     }
 
     private PanZoomState viewForTab(Tab tab) {

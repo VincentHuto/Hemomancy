@@ -117,7 +117,7 @@ public class MasonsEffigyBlock extends Block implements EntityBlock, SimpleWater
 			return InteractionResult.CONSUME;
 		}
 		int max = Math.min(MasonsEffigyMenu.MAX_SELECTED_SCARS,
-				com.vincenthuto.hemomancy.common.tile.functional.AnastomoticBrazierBlockEntity.getMaxActiveScars(player));
+				com.vincenthuto.hemomancy.common.rite.ScarBrazierRite.getMaxActiveScars(player));
 		if (selected.size() > max) {
 			message(player, "That pattern exceeds your current scar capacity.", ChatFormatting.RED);
 			return InteractionResult.CONSUME;

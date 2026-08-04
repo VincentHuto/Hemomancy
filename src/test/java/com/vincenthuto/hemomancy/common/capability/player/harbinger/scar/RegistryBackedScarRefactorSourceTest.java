@@ -16,7 +16,7 @@ public final class RegistryBackedScarRefactorSourceTest {
 		scarsCapabilityStoresCerebralIdsAndFungalItem();
 		scarAndEquipmentTypesStaySeparate();
 		fungalImplantationScreenUsesScarSlotCount();
-		anastomoticBrazierAndMasonsEffigyAreWired();
+		ironBrazierAndMasonsEffigyAreWired();
 		masonsEffigyScreenMatchesConceptLayout();
 		masonEffigyMotifPaperPreparesDynamicPattern();
 		dynamicScarPatternReplacesPerScarPatternItems();
@@ -82,24 +82,26 @@ public final class RegistryBackedScarRefactorSourceTest {
 				"this.menu.slots.get(5)");
 	}
 
-	private static void anastomoticBrazierAndMasonsEffigyAreWired() throws IOException {
+	private static void ironBrazierAndMasonsEffigyAreWired() throws IOException {
 		String blockInit = read("src/main/java/com/vincenthuto/hemomancy/common/init/BlockInit.java");
 		String blockEntityInit = read("src/main/java/com/vincenthuto/hemomancy/common/init/BlockEntityInit.java");
 		String containerInit = read("src/main/java/com/vincenthuto/hemomancy/common/init/ContainerInit.java");
 		String clientEvents = read("src/main/java/com/vincenthuto/hemomancy/client/event/ClientEvents.java");
 		String pattern = read("src/main/java/com/vincenthuto/hemomancy/common/item/harbinger/scar/ItemScarPattern.java");
-		String brazier = read("src/main/java/com/vincenthuto/hemomancy/common/tile/functional/AnastomoticBrazierBlockEntity.java");
+		String brazier = read("src/main/java/com/vincenthuto/hemomancy/common/rite/ScarBrazierRite.java");
+		String brazierBlock = read("src/main/java/com/vincenthuto/hemomancy/common/block/harbinger/BrazierBlock.java");
 		String menu = read("src/main/java/com/vincenthuto/hemomancy/common/menu/tile/functional/MasonsEffigyMenu.java");
 		String screen = read("src/main/java/com/vincenthuto/hemomancy/client/screen/tile/functional/MasonsEffigyScreen.java");
 
 		assertContains("mason effigy block registered", blockInit, "mason_effigy");
-		assertContains("anastomotic brazier block registered", blockInit, "anastomotic_brazier");
+		assertContains("iron brazier block registered", blockInit, "iron_brazier");
 		assertContains("mason effigy block entity registered", blockEntityInit, "MasonsEffigyBlockEntity");
-		assertContains("anastomotic brazier block entity registered", blockEntityInit, "AnastomoticBrazierBlockEntity");
+		assertContains("iron brazier block entity registered", blockEntityInit, "IronBrazierBlockEntity");
 		assertContains("mason effigy menu registered", containerInit, "MenuType<MasonsEffigyMenu>");
 		assertContains("mason effigy screen registered", clientEvents, "MasonsEffigyScreen::new");
 		assertContains("scar pattern stores selected scar ids", pattern, "TAG_SCAR_IDS");
 		assertContains("scar pattern creates prepared loadouts", pattern, "createPreparedPattern");
+		assertContains("iron brazier invokes deliberate scar burns", brazierBlock, "ScarBrazierRite.burn");
 		assertContains("brazier learns from scar items", brazier, "tryLearnScar");
 		assertContains("brazier commits scar pattern loadouts", brazier, "tryCommitLoadout");
 		assertContains("brazier clears loadouts from blank motif paper", brazier, "tryClearLoadout");

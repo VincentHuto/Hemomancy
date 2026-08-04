@@ -102,10 +102,6 @@ public class BlockEntityInit {
 	public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<IronBrazierBlockEntity>> iron_brazier = TILES.register(
 			"iron_brazier",
 			() -> BlockEntityType.Builder.of(IronBrazierBlockEntity::new, BlockInit.iron_brazier.get()).build(null));
-	public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<AnastomoticBrazierBlockEntity>> anastomotic_brazier = TILES.register(
-			"anastomotic_brazier",
-			() -> BlockEntityType.Builder.of(AnastomoticBrazierBlockEntity::new,
-					BlockInit.anastomotic_brazier.get()).build(null));
 	public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<MasonsEffigyBlockEntity>> mason_effigy = TILES.register(
 			"mason_effigy",
 			() -> BlockEntityType.Builder.of(MasonsEffigyBlockEntity::new, BlockInit.mason_effigy.get()).build(null));

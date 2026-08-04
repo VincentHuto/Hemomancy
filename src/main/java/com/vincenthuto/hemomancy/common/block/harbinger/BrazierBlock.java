@@ -10,6 +10,8 @@ import com.vincenthuto.hemomancy.common.item.harbinger.memories.LivingWeaponGraf
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.BloodAbsorptionItem;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.BloodProjectionItem;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.LivingStaffItem;
+import com.vincenthuto.hemomancy.common.rite.ScarBrazierInteractionRules;
+import com.vincenthuto.hemomancy.common.rite.ScarBrazierRite;
 import com.vincenthuto.hemomancy.common.tile.IronBrazierBlockEntity;
 import com.vincenthuto.hutoslib.client.particle.util.HLParticleUtils;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
@@ -200,6 +202,12 @@ public class BrazierBlock extends Block implements EntityBlock, SimpleWaterlogge
 		int phase = state.getValue(RITUAL_PHASE);
 		BlockEntity be = worldIn.getBlockEntity(pos);
 		IronBrazierBlockEntity brazierTE = be instanceof IronBrazierBlockEntity brazier ? brazier : null;
+		ScarBrazierInteractionRules.Burn scarBurn = ScarBrazierRite.selectBurn(phase > 0,
+				brazierTE != null && !brazierTE.hasOffering(), player.isShiftKeyDown(), stack);
+		if (scarBurn != ScarBrazierInteractionRules.Burn.NONE
+				&& ScarBrazierRite.burn(worldIn, pos, player, stack, scarBurn)) {
+			return InteractionResult.SUCCESS;
+		}
 
 		if (player.isShiftKeyDown() && brazierTE != null && brazierTE.hasOffering()) {
 			ItemStack extracted = brazierTE.extractOffering();
@@ -263,6 +271,15 @@ public class BrazierBlock extends Block implements EntityBlock, SimpleWaterlogge
 	@Override
 	public double absorbBloodFromBlock(ServerLevel level, BlockPos pos, BlockState state, ServerPlayer player,
 			double maxAmount) {
+		if (level.getBlockEntity(pos) instanceof IronBrazierBlockEntity brazier
+				&& BrazierBloodInteractionRules.shouldExtinguishOnAbsorption(
+						state.getValue(RITUAL_PHASE) > 0, !brazier.hasOffering(), maxAmount)) {
+			brazier.resetGraftRiteProgress();
+			level.setBlock(pos, state.setValue(RITUAL_PHASE, 0), Block.UPDATE_ALL);
+			HLParticleUtils.spawnPoof(level, pos, ParticleTypes.SMOKE);
+			level.playSound(null, pos, SoundEvents.FIRE_EXTINGUISH, SoundSource.BLOCKS, 0.55F, 1.0F);
+			return maxAmount;
+		}
 		return LivingWeaponGraftRite.tryAbsorb(level, pos, state, player, maxAmount);
 	}
 

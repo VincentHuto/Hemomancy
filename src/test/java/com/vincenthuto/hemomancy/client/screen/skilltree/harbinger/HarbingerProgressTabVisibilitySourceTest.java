@@ -16,10 +16,10 @@ public final class HarbingerProgressTabVisibilitySourceTest {
 
 		assertContains("crafting tab is visible by default",
 				progressScreen, "CRAFTING(\"Crafting\", 0xFFAA2222, 0, false)");
-		assertContains("manipulations tab is hidden until degree 3",
-				progressScreen, "MANIPULATIONS(\"Manipulations\", 0xFFCC8833, 3, false)");
-		assertContains("scars tab is hidden until degree 4",
-				progressScreen, "SCARS(\"Scars\", 0xFF44AACC, 4, false)");
+		assertContains("tendencies tab is hidden until degree 3",
+				progressScreen, "TENDENCIES(\"Tendencies\", 0xFFCC8833, 3, false)");
+		assertNotContains("scars no longer occupy a separate top-level tab",
+				progressScreen, "SCARS(\"Scars\"");
 		assertContains("tab descriptors are built from visible tabs",
 				progressScreen, "for (Tab tab : visibleTabs(playerDegree))");
 		assertContains("hit testing maps visible index back to visible tab list",
@@ -33,6 +33,12 @@ public final class HarbingerProgressTabVisibilitySourceTest {
 	private static void assertContains(String label, String text, String expected) {
 		if (!text.contains(expected)) {
 			throw new AssertionError(label + " (missing '" + expected + "')");
+		}
+	}
+
+	private static void assertNotContains(String label, String text, String unexpected) {
+		if (text.contains(unexpected)) {
+			throw new AssertionError(label + " (unexpected '" + unexpected + "')");
 		}
 	}
 }

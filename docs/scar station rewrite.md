@@ -9,7 +9,7 @@ The new fiction:
 * Scars are not physical items the player equips.
 * Scars are **remembered vessel pathways**.
 * The player uses a ritual object, the **Mason’s Effigy**, to create paper copies of scar routes.
-* Those copied scar patterns are then burned in an **Anastomotic Brazier** to teach, recall, or attune those scars.
+* Those copied scar patterns are then sneak-used on an empty, lit **Iron Brazier** to teach, recall, or attune those scars.
 * At later progression, around Degree 6, the Mason’s Effigy can be converted into the already-existing but currently unobtainable **Fungal Implantation Pylon**, which handles fungal scars.
 
 Core rule:
@@ -129,7 +129,7 @@ A copied route taken from the Mason’s Effigy.
 Burned during Repathing so the vessel may remember its shape.
 ```
 
-Scar Pattern items are consumed by the Anastomotic Brazier.
+Scar Pattern items are consumed by the Iron Brazier scar interaction.
 
 ---
 
@@ -181,9 +181,9 @@ This avoids recipe bloat and keeps the system readable.
 
 ---
 
-## 6. Anastomotic Brazier
+## 6. Iron Brazier Scar Interaction
 
-The Anastomotic Brazier becomes the ritual block that burns Scar Patterns.
+The existing Iron Brazier gains a deliberate scar interaction that burns Scar Patterns.
 
 It handles two major ritual types:
 
@@ -195,7 +195,7 @@ this block does not already exist, implement it as a new ritual block,using the 
 Recommended registry name:
 
 ```text
-anastomotic_brazier
+iron_brazier
 ```
 
 ---
@@ -257,7 +257,7 @@ Instead:
 
 * Player selects active scars from known scars.
 * The system creates or prepares one combined ritual instruction.
-* The Anastomotic Brazier performs one rite to commit the whole scar loadout.
+* The Iron Brazier performs one rite to commit the whole scar loadout.
 
 ### Implementation Options
 
@@ -267,7 +267,7 @@ Instead:
 2. Player selects desired active scars.
 3. UI marks selection as “Prepared Repathing.”
 4.Player performs the steps outlined in the above (Creating Scar Patterns From the Mason’s Effigy) to create a pattern item
-4. Player performs Rite of Reinscription at Anastomotic Brazier.
+4. Player performs Rite of Reinscription at an empty, lit Iron Brazier.
 5. Active scars are updated.
 
 This is mechanically clean.
@@ -397,7 +397,7 @@ Stone cell
 Ash circles
 Hanging vessel diagrams
 Mason’s Effigy
-Anastomotic Brazier
+Iron Brazier
 Scar pattern lore
 ```
 
@@ -409,7 +409,7 @@ Scar pattern lore
 4. Vein-Mason teaches sympathetic scarring.
 5. Player obtains Mason’s Effigy.
 6. Player creates first Scar Pattern.
-7. Player burns it in Anastomotic Brazier.
+7. Player sneak-uses it on an empty, lit Iron Brazier.
 8. Player learns first scar.
 
 ---
@@ -459,7 +459,7 @@ Normal scars and fungal scars should be distinct:
 
 | System       | Block                                | Meaning                       |
 | ------------ | ------------------------------------ | ----------------------------- |
-| Normal scars | Mason’s Effigy + Anastomotic Brazier | Persuade the vessel           |
+| Normal scars | Mason’s Effigy + Iron Brazier         | Persuade the vessel           |
 | Fungal scars | Fungal Implantation Pylon            | Allow controlled colonization |
 | Memories     | Somatic Loom / Mnemonic Reliquary    | Recall inherited blood-memory |
 
@@ -500,7 +500,7 @@ Burned during Repathing so the vessel may remember its shape.
 ```
 
 
-### Anastomotic Brazier
+### Iron Brazier Scar Interaction
 
 ```text
 A ritual brazier used to burn copied routes into blood-memory.
@@ -562,9 +562,9 @@ At first, you copy the scar. Later, the scar copies you.
 * Consume paper and required materials.
 * Output Scar Pattern item.
 
-### Phase 3 — Anastomotic Brazier
+### Phase 3 — Iron Brazier Scar Interaction
 
-* Add Anastomotic Brazier block and block entity if needed.
+* Add the deliberate scar-burning interaction to the existing Iron Brazier.
 * Implement Rite of First Repathing:
 
   * consumes Scar Pattern
@@ -580,7 +580,7 @@ At first, you copy the scar. Later, the scar copies you.
 * Migrate its functionality to:
 
   * Mason’s Effigy for preparation/copying
-  * Anastomotic Brazier for committing changes
+  * Iron Brazier for committing changes
   * player capability for storage
 * If old Scar Binder items exist in worlds, consider converting them to Mason’s Effigy or refunding materials.
 
@@ -625,7 +625,7 @@ The desired final gameplay loop:
 Reach Degree 4
 Obtain Scarring Station,
 Obtain Mason’s Effigy
-Burn Scar Item in Anastomotic Brazier
+Sneak-use Scar Item on an empty, lit Iron Brazier
 Scar is added to known scars
 
 ```
@@ -634,7 +634,7 @@ Scar is added to known scars
 
 ```text
 Use Mason’s Effigy to prepare selected known scars
-Perform Rite of Reinscription at Anastomotic Brazier
+Perform Rite of Reinscription at an empty, lit Iron Brazier
 Active scars update
 ```
 

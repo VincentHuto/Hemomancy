@@ -33,7 +33,7 @@ final class SkillTraceLayerCache {
     private static final int COMPASS_CENTER_Y = ConcentricTreeGeometry.CENTER_Y;
     private static final int[] DEGREE_RING_RADII = ConcentricTreeGeometry.degreeRingRadii();
 
-    private static final int TRACE_DEGREE_RING = 0x1858231F;
+    private static final int TRACE_DEGREE_RING = ConcentricRingStyle.withBaseAlpha(0xFF58231F);
     private static final int TRACE_NODE_TRIM_RADIUS = 11;
     private static final double TRACE_ORGANIC_SWAY_MIN = 8.0;
     private static final double TRACE_ORGANIC_SWAY_MAX = 18.0;
@@ -404,7 +404,7 @@ final class SkillTraceLayerCache {
     }
 
     private static void bakeDegreeRing(NativeImage image, int centerX, int centerY, int radius, int color) {
-        int segments = Math.max(72, radius / 3);
+        int segments = ConcentricRingStyle.segmentCount(radius);
         int prevX = centerX + radius;
         int prevY = centerY;
         for (int i = 1; i <= segments; i++) {

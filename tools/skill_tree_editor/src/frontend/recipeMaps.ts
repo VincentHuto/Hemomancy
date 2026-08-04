@@ -88,7 +88,7 @@ function render(viewport?: GraphViewport): void {
           <div>
             <h1>Crafting &amp; Rites Editor</h1>
             <p>${escapeHtml(relativeRoot())}</p>
-            <p><a href="/workspace.html">Skills</a> - <a href="/manipulations.html">Manipulations</a> - <a href="/scars.html">Scars</a> - <a href="/materials.html">Materials</a> - <b>Craft/Rites</b></p>
+            <p><a href="/workspace.html">Skills</a> - <a href="/tendencies.html">Tendencies</a> - <a href="/materials.html">Materials</a> - <b>Craft/Rites</b></p>
           </div>
         </div>
         <div class="toolbar">

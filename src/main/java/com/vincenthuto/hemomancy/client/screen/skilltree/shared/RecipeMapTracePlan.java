@@ -22,10 +22,10 @@ record RecipeMapTracePlan(List<Ring> rings, List<Line> spokes, List<Connection> 
 		List<Ring> rings = new ArrayList<>();
 		for (int degree = 0; degree <= 8; degree++) {
 			if (layer != null && SkillTreeLayerRules.layerForDegree(degree) != layer) continue;
-			int alpha = degreeFilter == null || degreeFilter == degree ? 0x32 : 0x12;
 			int radius = layer == null ? ConcentricTreeGeometry.radiusForDegree(degree)
 					: SkillTreeLayerRules.ringRadiusForDegree(degree, layer);
-			rings.add(new Ring(layout.centerX(), layout.centerY(), radius, withAlpha(accent, alpha)));
+			rings.add(new Ring(layout.centerX(), layout.centerY(), radius,
+					ConcentricRingStyle.withBaseAlpha(accent)));
 		}
 
 		List<Line> spokes = new ArrayList<>();

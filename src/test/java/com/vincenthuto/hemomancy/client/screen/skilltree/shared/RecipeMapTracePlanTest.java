@@ -27,6 +27,21 @@ final class RecipeMapTracePlanTest {
 	}
 
 	@Test
+	void degreeRingsUseTheSameOpacityAsSkills() {
+		Fixture fixture = fixture();
+
+		RecipeMapTracePlan unfiltered = RecipeMapTracePlan.build(
+				fixture.layout(), fixture.links(), null, null, ACCENT);
+		RecipeMapTracePlan filtered = RecipeMapTracePlan.build(
+				fixture.layout(), fixture.links(), 1, null, ACCENT);
+
+		assertEquals(List.of(0x18), unfiltered.rings().stream()
+				.map(ring -> ring.color() >>> 24).distinct().toList());
+		assertEquals(List.of(0x18), filtered.rings().stream()
+				.map(ring -> ring.color() >>> 24).distinct().toList());
+	}
+
+	@Test
 	void filtersInvalidateThePlanAndRemoveConnectionsWithFilteredEndpoints() {
 		Fixture fixture = fixture();
 		RecipeMapTracePlan unfiltered = RecipeMapTracePlan.build(

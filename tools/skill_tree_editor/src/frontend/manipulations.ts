@@ -1,9 +1,9 @@
-import type { Diagnostic, ManipulationNodeModel, ManipulationWorkspace, PreviewResult } from '../shared/types';
+import type { Diagnostic, ManipulationNodeModel, PreviewResult, ScarTreeNodeModel, TendenciesWorkspace } from '../shared/types';
 import { beginConnectionDrag, type ConnectionDragState, finishConnectionDrag } from './connectionEditing';
 import { beginDragPan, type DragPanState, shouldStartDragPan, updateDragPan } from './dragPan';
 import {
   beginNodeDrag,
-  manipulationRingMetricsFromClusterSize,
+  manipulationRingMetricsFromRadialOffsets,
   modelPositionFromRenderedPosition,
   type ManipulationRingMetrics,
   type NodeDragState,
@@ -50,6 +50,8 @@ interface ManipulationLayout {
   edges: Array<{ from: ManipulationNodeModel; to: ManipulationNodeModel }>;
   positionsByName: Map<string, NodePosition>;
   frameByTendency: Map<string, TendencyFrame>;
+  scarPositionsById: Map<string, NodePosition>;
+  scarShiftById: Map<string, NodePosition>;
 }
 
 const graphMinZoom = 0.55;
@@ -65,8 +67,10 @@ const traceOrganicSwayFactor = 0.08;
 const layoutNodeSize = 26;
 const layoutNodeGapX = 80;
 const layoutPadding = 40;
-const layoutRingMinRadius = 250;
-const layoutRingRadiusScale = 1.35;
+const innerManipulationRadius = 175;
+const scarFamilyClearance = 70;
+const scarAuthoredFirstRadius = 200;
+const scarAuthoredCenter = 480;
 const tendencyColors = new Map<string, string>([
   ['ANIMUS', '#ff0000'],
   ['FLAMMEUS', '#ff6400'],
@@ -78,16 +82,18 @@ const tendencyColors = new Map<string, string>([
   ['TENEBRIS', '#46006e']
 ]);
 
-let workspace: ManipulationWorkspace | null = null;
+let workspace: TendenciesWorkspace | null = null;
 let selectedName = '';
+let selectedScarId = '';
 let currentTab: ViewTab = 'graph';
 let preview: PreviewResult | null = null;
-let statusText = 'Loading manipulation workspace...';
+let statusText = 'Loading tendencies workspace...';
 let isBusy = false;
 let snapToGrid = true;
 let graphZoom = 1;
 let movementHistory = createMovementHistory();
 let draggingNode: NodeDragState | null = null;
+let draggingScar = false;
 let dragOriginBase: { x: number; y: number } | null = null;
 let dragPan: DragPanState | null = null;
 let dragConnection: ConnectionDragState | null = null;
@@ -118,13 +124,14 @@ async function load(): Promise<void> {
   isBusy = true;
   render();
   try {
-    workspace = await api<ManipulationWorkspace>('/api/manipulations');
-    selectedName = workspace.tree.nodes[0]?.name ?? '';
-    stableClusterCenters = computeClusterCenters(workspace.tree.nodes);
+    workspace = await api<TendenciesWorkspace>('/api/tendencies');
+    selectedName = workspace.manipulations.tree.nodes[0]?.name ?? '';
+    selectedScarId = '';
+    stableClusterCenters = computeClusterCenters(workspace.manipulations.tree.nodes);
     stableRingMetrics = null;
     movementHistory = createMovementHistory();
     preview = null;
-    statusText = `Loaded ${workspace.tree.nodes.length} manipulation nodes.`;
+    statusText = `Loaded ${workspace.manipulations.tree.nodes.length} manipulations and ${workspace.scars.tree.nodes.length} scars.`;
   } catch (err) {
     statusText = err instanceof Error ? err.message : String(err);
   } finally {
@@ -147,9 +154,9 @@ function render(): void {
         <div class="brand">
           <span class="brand-mark"></span>
           <div>
-            <h1>Manipulation Tree Editor</h1>
+            <h1>Tendencies Editor</h1>
             <p>${escapeHtml(relativeRoot())}</p>
-            <p><a href="/workspace.html">Skills</a> - <b>Manipulations</b> - <a href="/scars.html">Scars</a> - <a href="/materials.html">Materials</a> - <a href="/recipe_maps.html">Craft/Rites</a></p>
+            <p><a href="/workspace.html">Skills</a> - <b>Tendencies</b> - <a href="/materials.html">Materials</a> - <a href="/recipe_maps.html">Craft/Rites</a></p>
           </div>
         </div>
         <div class="toolbar">
@@ -159,12 +166,13 @@ function render(): void {
         </div>
         <div class="branch-list">
           <div class="form-heading">
-            <h2>Manipulations</h2>
-            <p>${escapeHtml(workspace.tree.path)}</p>
+            <h2>Manipulations & Scars</h2>
+            <p>${escapeHtml(workspace.manipulations.tree.path)}</p>
           </div>
         </div>
         <div class="skill-list">
-          ${workspace.tree.nodes.map(renderNodeButton).join('')}
+          ${workspace.manipulations.tree.nodes.map(renderNodeButton).join('')}
+          ${tendencyOrder.map(renderScarFamily).join('')}
         </div>
       </aside>
       <section class="main">
@@ -231,6 +239,16 @@ function renderNodeButton(node: ManipulationNodeModel): string {
   </button>`;
 }
 
+function renderScarFamily(tendency: string): string {
+  const scars = (workspace?.scars.tree.nodes ?? [])
+    .filter(scar => scar.tendency === tendency)
+    .sort((left, right) => left.tier - right.tier || left.displayName.localeCompare(right.displayName));
+  if (!scars.length) return '';
+  return `<section class="scar-family"><h3 style="color:${escapeAttr(scars[0].color)}">${escapeHtml(tendency)} Scars</h3>
+    ${scars.map(scar => `<button class="skill-button ${scar.id === selectedScarId ? 'selected' : ''}" data-scar-node="${escapeAttr(scar.id)}"><span><b>${escapeHtml(scar.displayName)}</b><br/><small>${scar.treeX}, ${scar.treeY}</small></span><small>Tier ${scar.tier}</small></button>`).join('')}
+  </section>`;
+}
+
 function renderTab(): string {
   if (currentTab === 'validation') return renderValidation();
   if (currentTab === 'diff') return renderDiff();
@@ -238,7 +256,7 @@ function renderTab(): string {
 }
 
 function renderValidation(): string {
-  const diagnostics = workspace?.tree.diagnostics ?? [];
+  const diagnostics = workspace?.diagnostics ?? [];
   if (!diagnostics.length) return `<div class="empty">No diagnostics.</div>`;
   return `<div class="diagnostics">${diagnostics.map(renderDiagnostic).join('')}</div>`;
 }
@@ -263,6 +281,7 @@ function renderDiff(): string {
 }
 
 function renderInspector(): string {
+  if (selectedScarId) return renderScarInspector();
   const node = findNode(selectedName);
   if (!node) return '<div class="empty">No manipulation selected.</div>';
 
@@ -341,11 +360,26 @@ function renderInspector(): string {
   </form>`;
 }
 
+function renderScarInspector(): string {
+  const scar = findScar(selectedScarId);
+  if (!scar) return '<div class="empty">No scar selected.</div>';
+  const candidates = (workspace?.scars.tree.nodes ?? [])
+    .filter(candidate => candidate.id !== scar.id && !scar.parents.includes(candidate.id))
+    .sort((left, right) => left.displayName.localeCompare(right.displayName));
+  const parents = scar.parents.length
+    ? scar.parents.map(parent => `<button type="button" class="parent-pill" data-action="remove-scar-parent" data-parent-name="${escapeAttr(parent)}"><span>${escapeHtml(findScar(parent)?.displayName ?? parent)}</span><b>x</b></button>`).join('')
+    : '<span class="parent-empty">None</span>';
+  return `<form class="editor-form"><div class="form-heading"><div><h2>${escapeHtml(scar.displayName)}</h2><p>${escapeHtml(scar.tendency ?? 'Unaligned')} - Tier ${scar.tier}</p></div></div>
+    <div class="grid2"><label><span>Tree X</span><input type="number" data-scar-edit="treeX" value="${scar.treeX}"/></label><label><span>Tree Y</span><input type="number" data-scar-edit="treeY" value="${scar.treeY}"/></label></div>
+    <div class="parent-editor"><span class="field-label">Lineage parents</span><div class="parent-list">${parents}</div><label>Add<select data-action="add-scar-parent"><option value="">Add parent...</option>${candidates.map(candidate => `<option value="${escapeAttr(candidate.id)}">${escapeHtml(candidate.displayName)}</option>`).join('')}</select></label></div>
+  </form>`;
+}
+
 function renderGraph(): string {
-  const layout = computeLayout(workspace!.tree.nodes);
+  const layout = computeLayout(workspace!.manipulations.tree.nodes, workspace!.scars.tree.nodes);
   renderedLayout = layout;
-  const edges = layout.edges.map(edge => renderEdge(edge.from, edge.to)).join('');
-  const nodes = layout.nodes.map(node => renderNode(node.node, node.x, node.y)).join('');
+  const edges = layout.edges.map(edge => renderEdge(edge.from, edge.to)).join('') + renderScarEdges(layout);
+  const nodes = layout.nodes.map(node => renderNode(node.node, node.x, node.y)).join('') + renderScarNodes(layout);
   const zoomLabel = `${Math.round(graphZoom * 100)}%`;
   const scaledWidth = Math.round(layout.width * graphZoom);
   const scaledHeight = Math.round(layout.height * graphZoom);
@@ -388,7 +422,7 @@ function renderTendencyGuide(tendency: string): string {
 }
 
 function renderEdge(from: ManipulationNodeModel, to: ManipulationNodeModel): string {
-  const layout = renderedLayout ?? computeLayout(workspace!.tree.nodes);
+  const layout = renderedLayout ?? computeLayout(workspace!.manipulations.tree.nodes, workspace!.scars.tree.nodes);
   const fromPos = layout.positionsByName.get(from.name);
   const toPos = layout.positionsByName.get(to.name);
   if (!fromPos || !toPos) return '';
@@ -409,6 +443,30 @@ function renderNode(node: ManipulationNodeModel, x: number, y: number): string {
     <image class="memory-overlay" href="${escapeAttr(memoryOverlayUrl)}" x="-11" y="-11" width="22" height="22" preserveAspectRatio="xMidYMid meet"></image>
     <text x="0" y="5" class="node-fallback">${escapeHtml(initial)}</text>
   </g>`;
+}
+
+function renderScarEdges(layout: ManipulationLayout): string {
+  const scars = workspace?.scars.tree.nodes ?? [];
+  const byId = new Map(scars.map(scar => [scar.id, scar]));
+  return scars.flatMap(scar => scar.parents.map(parent => ({ from: byId.get(parent), to: scar })))
+    .filter((edge): edge is { from: ScarTreeNodeModel; to: ScarTreeNodeModel } => Boolean(edge.from))
+    .map(edge => {
+      const from = layout.scarPositionsById.get(edge.from.id);
+      const to = layout.scarPositionsById.get(edge.to.id);
+      if (!from || !to) return '';
+      return `<path class="edge wire-edge local-edge scar-edge" style="stroke:${escapeAttr(edge.to.color)}" d="${escapeAttr(edgePath(from.x, from.y, to.x, to.y, layout.ringCenterX, layout.ringCenterY))}"/>`;
+    }).join('');
+}
+
+function renderScarNodes(layout: ManipulationLayout): string {
+  return (workspace?.scars.tree.nodes ?? []).map(scar => {
+    const position = layout.scarPositionsById.get(scar.id);
+    if (!position) return '';
+    const texture = scar.id.split(':')[1] ?? scar.id;
+    return `<g class="skill-node scar-node ${scar.id === selectedScarId ? 'selected' : ''}" data-scar-node="${escapeAttr(scar.id)}" transform="translate(${position.x} ${position.y})">
+      <rect class="node-glow" x="-22" y="-22" width="44" height="44" style="stroke:${escapeAttr(scar.color)}"></rect><rect class="node-frame" x="-18" y="-18" width="36" height="36" style="stroke:${escapeAttr(scar.color)}"></rect><rect class="node-core" x="-12" y="-12" width="24" height="24"></rect>
+      <image href="/asset/item/${encodeURIComponent(texture)}.png" x="-11" y="-11" width="22" height="22"></image><text x="0" y="31" class="node-level">T${scar.tier}</text></g>`;
+  }).join('');
 }
 
 function memoryOverlayName(nodeName: string): string {
@@ -432,6 +490,13 @@ function bindEvents(): void {
   for (const button of app.querySelectorAll<HTMLButtonElement>('button[data-node]')) {
     button.addEventListener('click', () => {
       selectedName = button.dataset.node ?? '';
+      selectedScarId = '';
+      render();
+    });
+  }
+  for (const button of app.querySelectorAll<HTMLButtonElement>('button[data-scar-node]')) {
+    button.addEventListener('click', () => {
+      selectedScarId = button.dataset.scarNode ?? '';
       render();
     });
   }
@@ -465,9 +530,10 @@ function bindEvents(): void {
   scroll.addEventListener('pointerdown', event => {
     if (event.button !== 0) return;
     const target = event.target as HTMLElement | null;
+    const scarElement = target?.closest<SVGGElement>('g[data-scar-node]');
     const nodeElement = target?.closest<SVGGElement>('g[data-node]');
     const edgeElement = target?.closest<SVGPathElement>('path[data-edge-from]');
-    const layout = renderedLayout ?? computeLayout(workspace!.tree.nodes);
+    const layout = renderedLayout ?? computeLayout(workspace!.manipulations.tree.nodes, workspace!.scars.tree.nodes);
 
     if (edgeElement && (event.shiftKey || event.ctrlKey || event.metaKey)) {
       event.preventDefault();
@@ -487,6 +553,28 @@ function bindEvents(): void {
       return;
     }
 
+    if (scarElement) {
+      const id = scarElement.dataset.scarNode ?? '';
+      const scar = findScar(id);
+      const scarPosition = layout.scarPositionsById.get(id);
+      if (!scar || !scarPosition) return;
+      selectedScarId = id;
+      draggingScar = true;
+      draggingNode = beginNodeDrag({
+        clientX: event.clientX,
+        clientY: event.clientY,
+        nodeX: scarPosition.x,
+        nodeY: scarPosition.y,
+        scrollLeft: scroll.scrollLeft,
+        scrollTop: scroll.scrollTop,
+        zoom: graphZoom
+      });
+      dragOriginBase = { x: scar.treeX, y: scar.treeY };
+      scroll.setPointerCapture(event.pointerId);
+      scroll.classList.add('dragging-node');
+      return;
+    }
+
     if (nodeElement) {
       const name = nodeElement.dataset.node ?? '';
       const node = findNode(name);
@@ -494,6 +582,7 @@ function bindEvents(): void {
       const nodePos = layout.positionsByName.get(name);
       if (!nodePos) return;
       selectedName = name;
+      selectedScarId = '';
 
       if (event.ctrlKey || event.metaKey) {
         event.preventDefault();
@@ -547,9 +636,25 @@ function bindEvents(): void {
       return;
     }
     if (!draggingNode) return;
+    if (draggingScar) {
+      const scar = findScar(selectedScarId);
+      if (!scar) return;
+      const layout = renderedLayout ?? computeLayout(workspace!.manipulations.tree.nodes, workspace!.scars.tree.nodes);
+      const pos = updateNodeDrag(draggingNode, {
+        clientX: event.clientX, clientY: event.clientY,
+        scrollLeft: scroll.scrollLeft, scrollTop: scroll.scrollTop,
+        snap: snapToGrid ? 10 : 1, zoom: graphZoom
+      });
+      const shift = layout.scarShiftById.get(scar.id) ?? { x: 0, y: 0 };
+      scar.treeX = Math.round(pos.x - layout.offsetX - layout.ringCenterX + layout.offsetX - shift.x + scarAuthoredCenter);
+      scar.treeY = Math.round(pos.y - layout.offsetY - layout.ringCenterY + layout.offsetY - shift.y + scarAuthoredCenter);
+      preview = null;
+      scarElementPosition(scroll, scar.id, pos);
+      return;
+    }
     const node = findNode(selectedName);
     if (!node) return;
-    const layout = renderedLayout ?? computeLayout(workspace!.tree.nodes);
+    const layout = renderedLayout ?? computeLayout(workspace!.manipulations.tree.nodes, workspace!.scars.tree.nodes);
     const pos = updateNodeDrag(draggingNode, {
       clientX: event.clientX,
       clientY: event.clientY,
@@ -591,6 +696,21 @@ function bindEvents(): void {
     }
 
     if (!draggingNode) return;
+    if (draggingScar) {
+      const scar = findScar(selectedScarId);
+      if (scar && dragOriginBase) recordMovement(movementHistory, {
+        field: scar.id,
+        before: dragOriginBase,
+        after: { x: scar.treeX, y: scar.treeY }
+      });
+      draggingScar = false;
+      draggingNode = null;
+      dragOriginBase = null;
+      scroll.classList.remove('dragging-node');
+      statusText = scar ? `Moved ${scar.displayName}.` : statusText;
+      render();
+      return;
+    }
     const node = findNode(selectedName);
     if (node && dragOriginBase) {
       recordMovement(movementHistory, {
@@ -607,6 +727,37 @@ function bindEvents(): void {
 }
 
 function wireInspectorEvents(): void {
+  if (selectedScarId) {
+    const scar = findScar(selectedScarId);
+    if (!scar) return;
+    for (const input of app.querySelectorAll<HTMLInputElement>('input[data-scar-edit]')) {
+      input.addEventListener('change', () => {
+        const value = Math.round(Number(input.value));
+        if (!Number.isFinite(value)) return render();
+        const before = { x: scar.treeX, y: scar.treeY };
+        if (input.dataset.scarEdit === 'treeX') scar.treeX = value;
+        if (input.dataset.scarEdit === 'treeY') scar.treeY = value;
+        recordMovement(movementHistory, { field: scar.id, before, after: { x: scar.treeX, y: scar.treeY } });
+        preview = null;
+        statusText = `Updated ${scar.displayName}.`;
+        render();
+      });
+    }
+    for (const button of app.querySelectorAll<HTMLButtonElement>('button[data-action="remove-scar-parent"]')) {
+      button.addEventListener('click', () => {
+        scar.parents = scar.parents.filter(parent => parent !== button.dataset.parentName);
+        preview = null;
+        render();
+      });
+    }
+    const addParent = app.querySelector<HTMLSelectElement>('select[data-action="add-scar-parent"]');
+    addParent?.addEventListener('change', () => {
+      if (addParent.value && !scar.parents.includes(addParent.value)) scar.parents.push(addParent.value);
+      preview = null;
+      render();
+    });
+    return;
+  }
   const selected = findNode(selectedName);
   if (!selected) return;
 
@@ -795,9 +946,12 @@ async function runPreview(): Promise<void> {
   statusText = 'Generating preview...';
   render();
   try {
-    preview = await api<PreviewResult>('/api/manipulations/preview', {
+    preview = await api<PreviewResult>('/api/tendencies/preview', {
       method: 'POST',
-      body: JSON.stringify({ nodes: workspace.tree.nodes })
+      body: JSON.stringify({
+        manipulations: workspace.manipulations.tree.nodes,
+        scars: workspace.scars.tree.nodes
+      })
     });
     statusText = preview.diffs.length ? `Preview ready (${preview.diffs.length} file(s)).` : 'No changes.';
     currentTab = 'diff';
@@ -847,9 +1001,16 @@ function applyMovementTarget(target: { updates: Array<{ field?: string; position
   for (const update of target.updates) {
     if (!update.field || !update.position) continue;
     const node = findNode(update.field);
-    if (!node) continue;
-    node.treeX = update.position.x;
-    node.treeY = update.position.y;
+    if (node) {
+      node.treeX = update.position.x;
+      node.treeY = update.position.y;
+      continue;
+    }
+    const scar = findScar(update.field);
+    if (scar) {
+      scar.treeX = update.position.x;
+      scar.treeY = update.position.y;
+    }
   }
   render();
 }
@@ -876,21 +1037,10 @@ function shouldIgnoreMovementShortcut(target: EventTarget | null): boolean {
 }
 
 function validationCount(): number {
-  return workspace?.tree.diagnostics.length ?? 0;
+  return workspace?.diagnostics.length ?? 0;
 }
 
-function computeLayout(nodes: ManipulationNodeModel[]): {
-  width: number;
-  height: number;
-  offsetX: number;
-  offsetY: number;
-  ringCenterX: number;
-  ringCenterY: number;
-  nodes: Array<{ node: ManipulationNodeModel; x: number; y: number }>;
-  edges: Array<{ from: ManipulationNodeModel; to: ManipulationNodeModel }>;
-  positionsByName: Map<string, NodePosition>;
-  frameByTendency: Map<string, TendencyFrame>;
-} {
+function computeLayout(nodes: ManipulationNodeModel[], scars: ScarTreeNodeModel[]): ManipulationLayout {
   const groups = new Map<string, ManipulationNodeModel[]>();
   const fallbackNodes: ManipulationNodeModel[] = [];
   for (const node of nodes) {
@@ -905,6 +1055,7 @@ function computeLayout(nodes: ManipulationNodeModel[]): {
 
   let maxClusterW = 0;
   let maxClusterH = 0;
+  const localRadialOffsets: number[] = [];
   const boundsByTendency = new Map<string, { minX: number; maxX: number; minY: number; maxY: number }>();
   for (const tendency of tendencyOrder) {
     const tendencyNodes = groups.get(tendency) ?? [];
@@ -916,13 +1067,21 @@ function computeLayout(nodes: ManipulationNodeModel[]): {
     boundsByTendency.set(tendency, { minX, maxX, minY, maxY });
     maxClusterW = Math.max(maxClusterW, maxX - minX + layoutNodeSize);
     maxClusterH = Math.max(maxClusterH, maxY - minY + layoutNodeSize);
+    const clusterCenterX = (minX + maxX) * 0.5;
+    const clusterCenterY = (minY + maxY) * 0.5;
+    const angle = -Math.PI / 2 + tendencyOrder.indexOf(tendency) * Math.PI / 4;
+    const directionX = Math.cos(angle);
+    const directionY = Math.sin(angle);
+    for (const node of tendencyNodes) {
+      localRadialOffsets.push((node.treeX - clusterCenterX) * directionX
+        + (node.treeY - clusterCenterY) * directionY);
+    }
   }
 
-  const ringMetrics = manipulationRingMetricsFromClusterSize(maxClusterW, maxClusterH, stableRingMetrics ?? undefined, {
+  const ringMetrics = manipulationRingMetricsFromRadialOffsets(maxClusterW, maxClusterH, localRadialOffsets, {
     padding: layoutPadding,
-    minRadius: layoutRingMinRadius,
-    radiusScale: layoutRingRadiusScale
-  });
+    innerRadius: innerManipulationRadius
+  }, stableRingMetrics ?? undefined);
   if (!stableRingMetrics) stableRingMetrics = ringMetrics;
   const { clusterHalf, branchRadius, ringCenterRawX, ringCenterRawY } = ringMetrics;
 
@@ -981,7 +1140,40 @@ function computeLayout(nodes: ManipulationNodeModel[]): {
       });
   }
 
-  const bounds = computeBounds(Array.from(absoluteByName.values()));
+  const outerRadiusByTendency = new Map<string, number>();
+  for (let i = 0; i < tendencyOrder.length; i += 1) {
+    const tendency = tendencyOrder[i];
+    const angle = -Math.PI / 2 + i * Math.PI / 4;
+    const directionX = Math.cos(angle);
+    const directionY = Math.sin(angle);
+    let outerRadius = branchRadius;
+    for (const node of groups.get(tendency) ?? []) {
+      const position = absoluteByName.get(node.name);
+      if (!position) continue;
+      const projection = Math.ceil((position.x - ringCenterRawX) * directionX
+        + (position.y - ringCenterRawY) * directionY) + layoutNodeSize / 2;
+      outerRadius = Math.max(outerRadius, projection);
+    }
+    outerRadiusByTendency.set(tendency, outerRadius);
+  }
+
+  const rawScarPositionsById = new Map<string, NodePosition>();
+  const scarShiftById = new Map<string, NodePosition>();
+  for (const scar of scars) {
+    const tendencyIndex = tendencyOrder.indexOf(scar.tendency as (typeof tendencyOrder)[number]);
+    if (tendencyIndex < 0) continue;
+    const angle = -Math.PI / 2 + tendencyIndex * Math.PI / 4;
+    const shiftAmount = (outerRadiusByTendency.get(scar.tendency!) ?? branchRadius)
+      + scarFamilyClearance - scarAuthoredFirstRadius;
+    const shift = { x: Math.cos(angle) * shiftAmount, y: Math.sin(angle) * shiftAmount };
+    scarShiftById.set(scar.id, shift);
+    rawScarPositionsById.set(scar.id, {
+      x: ringCenterRawX + scar.treeX - scarAuthoredCenter + shift.x,
+      y: ringCenterRawY + scar.treeY - scarAuthoredCenter + shift.y
+    });
+  }
+
+  const bounds = computeBounds([...absoluteByName.values(), ...rawScarPositionsById.values()]);
   const width = bounds.width;
   const height = bounds.height;
 
@@ -1002,6 +1194,11 @@ function computeLayout(nodes: ManipulationNodeModel[]): {
     });
   }
 
+  const scarPositionsById = new Map<string, NodePosition>();
+  for (const [id, position] of rawScarPositionsById.entries()) {
+    scarPositionsById.set(id, { x: position.x + bounds.offsetX, y: position.y + bounds.offsetY });
+  }
+
   return {
     width,
     height,
@@ -1015,7 +1212,9 @@ function computeLayout(nodes: ManipulationNodeModel[]): {
     }),
     edges,
     positionsByName,
-    frameByTendency
+    frameByTendency,
+    scarPositionsById,
+    scarShiftById
   };
 }
 
@@ -1129,11 +1328,21 @@ function organicSwaySign(x1: number, y1: number, x2: number, y2: number): number
 }
 
 function findNode(name: string): ManipulationNodeModel | undefined {
-  return workspace?.tree.nodes.find(node => node.name === name);
+  return workspace?.manipulations.tree.nodes.find(node => node.name === name);
+}
+
+function findScar(id: string): ScarTreeNodeModel | undefined {
+  return workspace?.scars.tree.nodes.find(scar => scar.id === id);
+}
+
+function scarElementPosition(scroller: HTMLElement, id: string, position: NodePosition): void {
+  const escaped = typeof CSS !== 'undefined' && CSS.escape ? CSS.escape(id) : id.replace(/["\\]/g, '\\$&');
+  scroller.querySelector<SVGGElement>(`g[data-scar-node="${escaped}"]`)
+    ?.setAttribute('transform', `translate(${position.x} ${position.y})`);
 }
 
 function allNodes(): ManipulationNodeModel[] {
-  return workspace?.tree.nodes ?? [];
+  return workspace?.manipulations.tree.nodes ?? [];
 }
 
 function graphPointFromPointer(scroller: HTMLElement, event: PointerEvent): NodePosition {

@@ -25,6 +25,7 @@ public class ManipulationsTabController implements IProgressTab {
 
     private static final int NODE_SIZE = 26;
     private static final int NODE_GAP_X = 80;
+    private static final int INNER_MANIPULATION_RADIUS = 175;
     private static final int COL_NODE_BG     = 0xCC1A0505;
     private static final int COL_NODE_BORDER_LOCK = 0xFF333333;
     private static final float INFO_PANEL_Z = 400.0F;
@@ -43,8 +44,11 @@ public class ManipulationsTabController implements IProgressTab {
     private static final int MANIP_STAT_ROW_GAP = 2;
 
     private static final int KNOWN_MANIP_REFRESH_TICKS = 60; // ~1s at ~60 FPS
+    private static final int SCAR_KNOWLEDGE_REFRESH_TICKS = 60;
 
     private final TendencyTraceLayerCache traceCache = new TendencyTraceLayerCache();
+    private final TendencyTraceLayerCache scarTraceCache = new TendencyTraceLayerCache();
+    private final ScarsTabState scarState = new ScarsTabState();
     private final PanZoomState panZoom = new PanZoomState();
     private final CyclingFamilyFilter<EnumBloodTendency> familyFilter =
             new CyclingFamilyFilter<>(List.of(EnumBloodTendency.values()));
@@ -56,13 +60,20 @@ public class ManipulationsTabController implements IProgressTab {
     private ManipulationTreeEntry selectedEntry = null;
     private int playerDegree;
     private int knownManipRefreshCooldown = 0;
+    private int scarKnowledgeRefreshCooldown = 0;
 
     @Override
     public void onInit(ProgressScreenContext ctx) {
         this.playerDegree = ctx.playerDegree();
+        loadScarEntries();
         buildManipLayout();
         cacheKnownManipulations();
+        refreshScarKnowledge();
         panZoom.centreOn(contentW, contentH, ctx.guiWidth(), ctx.guiHeight());
+    }
+
+    private void loadScarEntries() {
+        scarState.rebuild(ScarsTabController.loadEntries(Minecraft.getInstance()));
     }
 
     private void buildManipLayout() {
@@ -120,7 +131,22 @@ public class ManipulationsTabController implements IProgressTab {
             return;
         }
 
-        int radius = Math.max(250, (int)Math.ceil(Math.max(maxClusterW, maxClusterH) * 1.35));
+        List<Double> localRadialOffsets = new ArrayList<>();
+        for (EnumBloodTendency tendency : EnumBloodTendency.values()) {
+            List<ManipulationTreeEntry> group = byTendency.getOrDefault(tendency, List.of());
+            if (group.isEmpty()) continue;
+            int[] bounds = boundsByTendency.get(tendency);
+            float clusterCenterX = (bounds[0] + bounds[1]) * 0.5f;
+            float clusterCenterY = (bounds[2] + bounds[3]) * 0.5f;
+            double angle = Math.toRadians(-90f + tendency.ordinal() * 45f);
+            double directionX = Math.cos(angle);
+            double directionY = Math.sin(angle);
+            for (ManipulationTreeEntry entry : group) {
+                localRadialOffsets.add((entry.getX() - clusterCenterX) * directionX
+                        + (entry.getY() - clusterCenterY) * directionY);
+            }
+        }
+        int radius = ManipulationRingLayout.anchorRadius(INNER_MANIPULATION_RADIUS, localRadialOffsets);
         int clusterHalf = Math.max(maxClusterW, maxClusterH) / 2;
         float centerX = padding + clusterHalf + radius;
         float centerY = padding + clusterHalf + radius;
@@ -149,6 +175,34 @@ public class ManipulationsTabController implements IProgressTab {
             }
         }
 
+        Map<EnumBloodTendency, Integer> outerRadiusByTendency = new EnumMap<>(EnumBloodTendency.class);
+        for (EnumBloodTendency tendency : EnumBloodTendency.values()) {
+            double angle = Math.toRadians(-90f + tendency.ordinal() * 45f);
+            double directionX = Math.cos(angle);
+            double directionY = Math.sin(angle);
+            int outerRadius = radius;
+            for (ManipulationTreeEntry entry : byTendency.getOrDefault(tendency, List.of())) {
+                int[] pos = rawPositions.get(entry);
+                if (pos == null) continue;
+                int projection = (int) Math.ceil((pos[0] - centerX) * directionX
+                        + (pos[1] - centerY) * directionY) + NODE_SIZE / 2;
+                outerRadius = Math.max(outerRadius, projection);
+            }
+            outerRadiusByTendency.put(tendency, outerRadius);
+        }
+
+        List<TendencyScarLayout.Node> scarNodes = scarState.entries.stream()
+                .map(entry -> {
+                    ScarTreeLayout.Point authored = scarState.positions.get(entry.id().toString());
+                    return new TendencyScarLayout.Node(entry.id().toString(), entry.tendency(),
+                            entry.tier(), entry.sideBranch(),
+                            authored != null ? authored.x() : null,
+                            authored != null ? authored.y() : null);
+                })
+                .toList();
+        Map<String, TendencyScarLayout.Point> rawScarPositions = TendencyScarLayout.arrange(
+                Math.round(centerX), Math.round(centerY), outerRadiusByTendency, scarNodes);
+
         int minX = Integer.MAX_VALUE, minY = Integer.MAX_VALUE;
         int maxX = Integer.MIN_VALUE, maxY = Integer.MIN_VALUE;
         for (int[] pos : rawPositions.values()) {
@@ -157,11 +211,23 @@ public class ManipulationsTabController implements IProgressTab {
             maxX = Math.max(maxX, pos[0]);
             maxY = Math.max(maxY, pos[1]);
         }
+        for (TendencyScarLayout.Point point : rawScarPositions.values()) {
+            minX = Math.min(minX, point.x());
+            minY = Math.min(minY, point.y());
+            maxX = Math.max(maxX, point.x());
+            maxY = Math.max(maxY, point.y());
+        }
         int offsetX = padding - minX;
         int offsetY = padding - minY;
         for (var e : rawPositions.entrySet()) {
             int[] p = e.getValue();
             manipPositions.put(e.getKey(), new int[]{p[0] + offsetX, p[1] + offsetY});
+        }
+        scarState.positions.clear();
+        for (var entry : rawScarPositions.entrySet()) {
+            TendencyScarLayout.Point point = entry.getValue();
+            scarState.positions.put(entry.getKey(),
+                    new ScarTreeLayout.Point(point.x() + offsetX, point.y() + offsetY));
         }
         contentW = maxX + offsetX + NODE_SIZE + padding;
         contentH = maxY + offsetY + NODE_SIZE + 24 + padding;
@@ -180,6 +246,10 @@ public class ManipulationsTabController implements IProgressTab {
             });
         }
         buildManipMemoryItemLookup();
+    }
+
+    private void refreshScarKnowledge() {
+        ScarsTabController.refreshKnowledge(scarState, Minecraft.getInstance());
     }
 
     private void buildManipMemoryItemLookup() {
@@ -210,22 +280,31 @@ public class ManipulationsTabController implements IProgressTab {
     @Override
     public void render(GuiGraphics gfx, ProgressScreenContext ctx, int mouseX, int mouseY, float partial) {
         tickKnownManipCache();
+        tickScarKnowledgeCache();
         traceCache.rebuildIfNeeded(visibleManipulationEntries(), manipPositions, knownManipNames,
                 playerDegree, contentW, contentH, manipRingCenterX, manipRingCenterY);
         traceCache.render(gfx, ctx, panZoom);
+        scarTraceCache.rebuildIfNeeded(visibleScarTraceNodes(), contentW, contentH,
+                manipRingCenterX, manipRingCenterY);
+        scarTraceCache.render(gfx, ctx, panZoom);
         drawManipTendencyStar(gfx, ctx);
         drawManipNodes(gfx, ctx);
+        ScarsTabView.drawNodes(gfx, ctx, scarState, panZoom, playerDegree, familyFilter.selected());
         FamilyFilterControlView.draw(gfx, ctx, familyLabel(), 0xFFCC8833, mouseX, mouseY);
     }
 
     @Override
     public void renderOverlay(GuiGraphics gfx, ProgressScreenContext ctx, int mouseX, int mouseY) {
-        if (selectedEntry != null) drawManipInfoPanel(gfx, ctx, selectedEntry);
+        ScarTreeEntry selectedScar = scarState.selectedEntry();
+        if (selectedScar != null) ScarsTabView.drawDetails(gfx, ctx, selectedScar, scarState, playerDegree);
+        else if (selectedEntry != null) drawManipInfoPanel(gfx, ctx, selectedEntry);
     }
 
     @Override
     public void renderTooltip(GuiGraphics gfx, ProgressScreenContext ctx, int mouseX, int mouseY) {
         drawManipTooltip(gfx, ctx, mouseX, mouseY);
+        ScarsTabView.drawTooltip(gfx, ctx, scarState, panZoom, playerDegree,
+                familyFilter.selected(), mouseX, mouseY);
     }
 
     private void tickKnownManipCache() {
@@ -235,6 +314,33 @@ public class ManipulationsTabController implements IProgressTab {
         }
         knownManipRefreshCooldown = KNOWN_MANIP_REFRESH_TICKS;
         cacheKnownManipulations();
+    }
+
+    private void tickScarKnowledgeCache() {
+        if (scarKnowledgeRefreshCooldown > 0) {
+            scarKnowledgeRefreshCooldown--;
+            return;
+        }
+        scarKnowledgeRefreshCooldown = SCAR_KNOWLEDGE_REFRESH_TICKS;
+        refreshScarKnowledge();
+    }
+
+    private List<TendencyTraceNode> visibleScarTraceNodes() {
+        Map<String, List<String>> parents = new HashMap<>();
+        for (ScarTreeLayout.Edge edge : scarState.edges) {
+            parents.computeIfAbsent(edge.toId(), ignored -> new ArrayList<>()).add(edge.fromId());
+        }
+        List<TendencyTraceNode> nodes = new ArrayList<>();
+        for (ScarTreeEntry entry : scarState.entries) {
+            if (!familyFilter.includes(entry.tendency())) continue;
+            ScarTreeLayout.Point point = scarState.positions.get(entry.id().toString());
+            if (point == null) continue;
+            nodes.add(new TendencyTraceNode(entry.id().toString(), entry.tendency(), point.x(), point.y(),
+                    parents.getOrDefault(entry.id().toString(), List.of()),
+                    scarState.knownScarIds.contains(entry.id()),
+                    ScarsTabController.isTierLocked(entry.tier(), playerDegree)));
+        }
+        return nodes;
     }
 
     private void drawManipTendencyStar(GuiGraphics gfx, ProgressScreenContext ctx) {
@@ -661,11 +767,21 @@ public class ManipulationsTabController implements IProgressTab {
         if (FamilyFilterControlView.bounds(ctx).contains(mx, my)) {
             familyFilter.cycle(btn == 1 ? -1 : 1);
             if (selectedEntry != null && !isVisibleFamily(selectedEntry)) selectedEntry = null;
+            ScarTreeEntry selectedScar = scarState.selectedEntry();
+            if (selectedScar != null && !familyFilter.includes(selectedScar.tendency())) scarState.closeDetails();
             return true;
         }
         if (btn != 0) return false;
+        ScarTreeEntry scarHit = ScarsTabView.nodeUnder(ctx, scarState, panZoom,
+                familyFilter.selected(), mx, my);
+        if (scarHit != null) {
+            selectedEntry = null;
+            scarState.toggleSelection(scarHit.id().toString());
+            return true;
+        }
         ManipulationTreeEntry hit = manipNodeUnder(ctx, mx, my);
         if (hit != null) {
+            scarState.closeDetails();
             selectedEntry = (selectedEntry == hit) ? null : hit;
             return true;
         }
@@ -678,9 +794,12 @@ public class ManipulationsTabController implements IProgressTab {
 
     @Override public PanZoomState getPanZoomState() { return panZoom; }
     @Override public boolean closeDetails() {
-        if (selectedEntry == null) return false;
-        selectedEntry = null;
-        return true;
+        boolean closed = scarState.closeDetails();
+        if (selectedEntry != null) {
+            selectedEntry = null;
+            closed = true;
+        }
+        return closed;
     }
     public int getContentW() { return contentW; }
     public int getContentH() { return contentH; }

@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Per-scar flavour text displayed in the Scars tab of the Skill Tree.
+ * Per-scar flavour text displayed for scar nodes in the Tendencies tab.
  * <p>
  * Keys are the trailing segment of the chisel recipe's ResourceLocation path
  * (e.g. {@code "scar_heart"} for {@code hemomancy:chisel/scar_heart}).

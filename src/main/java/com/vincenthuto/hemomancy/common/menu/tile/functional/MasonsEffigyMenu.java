@@ -3,7 +3,7 @@ package com.vincenthuto.hemomancy.common.menu.tile.functional;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.init.BlockInit;
 import com.vincenthuto.hemomancy.common.init.ContainerInit;
-import com.vincenthuto.hemomancy.common.tile.functional.AnastomoticBrazierBlockEntity;
+import com.vincenthuto.hemomancy.common.rite.ScarBrazierRite;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
@@ -73,7 +73,7 @@ public class MasonsEffigyMenu extends AbstractContainerMenu {
 	}
 
 	public int getMaxSelectableScars() {
-		return Math.min(MAX_SELECTED_SCARS, AnastomoticBrazierBlockEntity.getMaxActiveScars(player));
+		return Math.min(MAX_SELECTED_SCARS, ScarBrazierRite.getMaxActiveScars(player));
 	}
 
 	public List<ResourceLocation> getOpeningKnownScarIds() {

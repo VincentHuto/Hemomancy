@@ -1015,11 +1015,6 @@ public final class MaterialsData {
                 "Gourds & Vessels", () -> new ItemStack(ItemInit.vitality_chalice.get()),
                 true, UnlockPredicate.minDegree(3)));
 
-                                                                                                                                                                                                                        list.add(new MaterialEntry("anastomotic_brazier", "Anastomotic Brazier",
-                "A ritual fixture or idol used to anchor advanced bloodcraft structures.",
-                "Idols & Fixtures", () -> new ItemStack(BlockInit.anastomotic_brazier.get()),
-                true, UnlockPredicate.minDegree(4)));
-
                                                                                                                                                                                                                         list.add(new MaterialEntry("hematic_armature", "Hematic Armature",
                 "A ritual fixture or idol used to anchor advanced bloodcraft structures.",
                 "Idols & Fixtures", () -> new ItemStack(BlockInit.hematic_armature.get()),

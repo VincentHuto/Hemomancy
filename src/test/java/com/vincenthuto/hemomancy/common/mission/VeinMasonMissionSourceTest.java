@@ -92,7 +92,7 @@ public final class VeinMasonMissionSourceTest {
 				"advancements.hemomancy.vein_mason_reward_claimed.title");
 		assertContains("anchorite line mentions Vein-Mason title", lang, "Vein-Mason");
 		assertContains("anchorite line coaches cerebral station", lang, "Cerebral Scarring Station");
-		assertContains("anchorite line coaches brazier", lang, "Anastomotic Brazier");
+		assertContains("anchorite line coaches brazier", lang, "empty, lit Iron Brazier");
 	}
 
 	private static void vicarDirectsAdeptPlayersToMasonsRespite() throws IOException {
@@ -153,7 +153,7 @@ public final class VeinMasonMissionSourceTest {
 		assertContains("masons respite map target tag references structure", mapTag, "hemomancy:masons_respite");
 		assertContains("masons respite template has scar station", templateText, "hemomancy:scar_station");
 		assertContains("masons respite template has mason effigy", templateText, "hemomancy:mason_effigy");
-		assertContains("masons respite template has brazier", templateText, "hemomancy:anastomotic_brazier");
+		assertContains("masons respite template has brazier", templateText, "hemomancy:iron_brazier");
 	}
 
 	private static void ledgerTracksVeinMasonAssignment() throws IOException {

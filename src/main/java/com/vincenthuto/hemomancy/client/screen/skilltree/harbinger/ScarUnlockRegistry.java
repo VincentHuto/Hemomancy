@@ -10,7 +10,7 @@ import java.util.Map;
 
 /**
  * Maps Cerebral Scar recipe {@link ResourceLocation}s to their
- * {@link UnlockPredicate}, controlling visibility in the Scars tab of the
+ * {@link UnlockPredicate}, controlling visibility of scars in the Tendencies tab of the
  * Harbinger progress screen.
  * <p>
  * Entries absent from this registry default to {@link UnlockPredicate#always()}

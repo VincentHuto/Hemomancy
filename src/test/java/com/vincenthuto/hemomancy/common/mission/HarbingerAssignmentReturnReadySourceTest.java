@@ -65,7 +65,7 @@ public final class HarbingerAssignmentReturnReadySourceTest {
 		String somaticLoom = read(SOURCE_ROOT.resolve(
 				"com/vincenthuto/hemomancy/common/tile/crafting/SomaticLoomBlockEntity.java"));
 		String brazier = read(SOURCE_ROOT.resolve(
-				"com/vincenthuto/hemomancy/common/tile/functional/AnastomoticBrazierBlockEntity.java"));
+				"com/vincenthuto/hemomancy/common/rite/ScarBrazierRite.java"));
 		String dialogueHandler = read(SOURCE_ROOT.resolve(
 				"com/vincenthuto/hemomancy/common/entity/npc/dialogue/DialogueEventHandler.java"));
 
