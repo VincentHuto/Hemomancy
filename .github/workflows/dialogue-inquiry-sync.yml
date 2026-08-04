@@ -20,6 +20,7 @@ jobs:
           ref: fix/dialogue-inquiry-canon-sync
           path: Hemomancy
           fetch-depth: 0
+          lfs: true
 
       - name: Check out HutosLib composite build
         uses: actions/checkout@v4
@@ -27,6 +28,7 @@ jobs:
           repository: VincentHuto/HutosLib
           ref: neo-1.21.1
           path: HutosLib
+          lfs: true
 
       - uses: actions/setup-java@v4
         with:
