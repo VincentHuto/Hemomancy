@@ -3,6 +3,8 @@ name: Dialogue Inquiry Canon Sync
 on:
   push:
     branches: [fix/dialogue-inquiry-canon-sync]
+  pull_request:
+    branches: [neo-1.21.1]
 
 permissions:
   contents: write
