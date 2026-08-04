@@ -7,30 +7,36 @@ on:
     branches: [neo-1.21.1]
 
 permissions:
-  contents: write
+  contents: read
 
 jobs:
-  apply-migration:
-    if: github.actor != 'github-actions[bot]'
+  verify-inquiries:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 35
     steps:
-      - uses: actions/checkout@v4
+      - name: Check out Hemomancy
+        uses: actions/checkout@v4
         with:
           ref: fix/dialogue-inquiry-canon-sync
+          path: Hemomancy
           fetch-depth: 0
 
-      - uses: actions/setup-python@v5
+      - name: Check out HutosLib composite build
+        uses: actions/checkout@v4
         with:
-          python-version: "3.12"
+          repository: VincentHuto/HutosLib
+          ref: neo-1.21.1
+          path: HutosLib
 
-      - name: Validate migration script
-        run: python -m py_compile tools/apply_dialogue_inquiry_sync.py
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "21"
 
-      - name: Apply approved migration
-        run: python tools/apply_dialogue_inquiry_sync.py
+      - uses: gradle/actions/setup-gradle@v4
 
       - name: Validate inquiry JSON and runtime language
+        working-directory: Hemomancy
         run: |
           python - <<'PY'
           import json
@@ -39,21 +45,14 @@ jobs:
           paths = [Path('src/main/resources/assets/hemomancy/lang/en_us.json')]
           paths.extend(Path('src/main/resources/data/hemomancy/dialogue_inquiry').rglob('*.json'))
           for path in paths:
-              try:
-                  json.loads(path.read_text(encoding='utf-8-sig'))
-              except Exception as exc:
-                  raise SystemExit(f'{path}: {exc}')
+              json.loads(path.read_text(encoding='utf-8-sig'))
           print(f'Validated {len(paths)} inquiry/runtime-language JSON resources.')
           PY
 
-      - name: Commit migration output
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add src/main src/test docs/DIALOGUE_ITEM_QUERY_GUIDE.md
-          if git diff --cached --quiet; then
-            echo "No migration changes to commit."
-          else
-            git commit -m "fix(dialogue): synchronize inquiry canon and runtime"
-            git push origin HEAD:fix/dialogue-inquiry-canon-sync
-          fi
+      - name: Run focused inquiry tests
+        working-directory: Hemomancy
+        run: ./gradlew test --tests "*ItemInquiry*" --tests "*DialogueInquiry*" --tests "*AlchemistDialogueScopeTest" --tests "*PuppeteeringThreadInquiryOwnershipTest" --console=plain
+
+      - name: Run full JVM suite
+        working-directory: Hemomancy
+        run: ./gradlew test --console=plain
