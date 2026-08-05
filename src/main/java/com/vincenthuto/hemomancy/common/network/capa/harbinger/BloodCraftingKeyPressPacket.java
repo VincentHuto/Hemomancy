@@ -649,8 +649,11 @@ public class BloodCraftingKeyPressPacket implements CustomPacketPayload {
 	}
 
 	private static boolean canManifestFoundingFaneHeart(ServerLevel level, BlockPos centerPos) {
-		var state = level.getBlockState(centerPos);
-		return state.is(BlockInit.consecrated_bloodwell.get()) || state.isAir() || state.canBeReplaced();
+		BlockPos heartPos = centerPos.above(3);
+		var state = level.getBlockState(heartPos);
+		return state.is(BlockInit.consecrated_bloodwell.get())
+				|| state.isAir()
+				|| state.canBeReplaced();
 	}
 
 	private static BlockPattern.BlockPatternMatch findStructurePatternAtHit(

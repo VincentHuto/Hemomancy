@@ -136,6 +136,20 @@ public final class HemoRenderTypes {
 
 	public static RenderType loomOrbShell(float gameTime, float orbSeed, float centerX, float centerY, float centerZ,
 			float orbRadius, float writheStrength, float threadScale, boolean glowLayer) {
+		return loomOrbShell(gameTime, orbSeed, centerX, centerY, centerZ,
+				orbRadius, writheStrength, threadScale, glowLayer, true);
+	}
+
+	public static RenderType faneBoundaryShell(float gameTime, float orbSeed,
+			float centerX, float centerY, float centerZ, float orbRadius,
+			float writheStrength, float threadScale, boolean glowLayer) {
+		return loomOrbShell(gameTime, orbSeed, centerX, centerY, centerZ,
+				orbRadius, writheStrength, threadScale, glowLayer, false);
+	}
+
+	private static RenderType loomOrbShell(float gameTime, float orbSeed,
+			float centerX, float centerY, float centerZ, float orbRadius,
+			float writheStrength, float threadScale, boolean glowLayer, boolean writeDepth) {
 		RenderStateShard.TexturingStateShard uniforms = new RenderStateShard.TexturingStateShard(
 				"loom_orb_uniforms",
 				() -> {
@@ -154,6 +168,9 @@ public final class HemoRenderTypes {
 						extended.setUniformDefaults();
 					}
 				});
+		RenderStateShard.WriteMaskStateShard writeMask = writeDepth
+				? (glowLayer ? RenderType.COLOR_WRITE : RenderType.COLOR_DEPTH_WRITE)
+				: RenderType.COLOR_WRITE;
 		return RenderType.create(glowLayer ? "loom_orb_shell_glow" : "loom_orb_shell_core",
 				DefaultVertexFormat.POSITION_COLOR, VertexFormat.Mode.QUADS, 2048, false, true,
 				RenderType.CompositeState.builder()
@@ -161,7 +178,7 @@ public final class HemoRenderTypes {
 						.setTexturingState(uniforms)
 						.setTransparencyState(RenderType.TRANSLUCENT_TRANSPARENCY)
 						.setDepthTestState(RenderType.LEQUAL_DEPTH_TEST)
-						.setWriteMaskState(glowLayer ? RenderType.COLOR_WRITE : RenderType.COLOR_DEPTH_WRITE)
+						.setWriteMaskState(writeMask)
 						.setCullState(RenderType.NO_CULL)
 						.setLightmapState(RenderType.NO_LIGHTMAP)
 						.createCompositeState(false));

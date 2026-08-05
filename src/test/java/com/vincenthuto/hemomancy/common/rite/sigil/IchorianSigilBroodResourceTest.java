@@ -52,6 +52,18 @@ final class IchorianSigilBroodResourceTest {
 		assertEquals(9, seen.size());
 	}
 
+	@Test
+	void everyBuiltInSigilNodeHasItsOwnInteractableGroundCell() throws IOException {
+		for (String path : NODE_COUNTS.keySet()) {
+			IchorianSigilDefinition definition = load(path);
+			Set<String> cells = new HashSet<>();
+			for (IchorianSigilDefinition.Node node : definition.nodes()) {
+				String cell = Math.round(node.x()) + "," + Math.round(node.z());
+				assertTrue(cells.add(cell), path + " overlaps an interactable node at " + cell);
+			}
+		}
+	}
+
 	private static IchorianSigilDefinition load(String path) throws IOException {
 		try (var reader = Files.newBufferedReader(ROOT.resolve(path + ".json"))) {
 			return IchorianSigilLoader.parseDefinition(

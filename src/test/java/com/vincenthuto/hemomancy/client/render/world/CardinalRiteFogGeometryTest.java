@@ -35,10 +35,10 @@ final class CardinalRiteFogGeometryTest {
 	}
 
 	@Test
-	void gameplayFootprintDoesNotPushFogBeyondTheAuthoredFloor() {
-		assertEquals(7.5F,
+	void boundaryEnclosesTheEntireResolvedGameplayFootprint() {
+		assertEquals(11.75F,
 				CardinalRiteFogGeometry.perimeterRadius(11.75F, 9, 0, 7, false));
-		assertEquals(6.75F,
+		assertEquals(9.75F,
 				CardinalRiteFogGeometry.perimeterRadius(9.75F, 7, 0, 5, false));
 	}
 

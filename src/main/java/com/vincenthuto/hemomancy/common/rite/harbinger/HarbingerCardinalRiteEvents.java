@@ -213,6 +213,7 @@ public class HarbingerCardinalRiteEvents {
 								.damagePriority(recipe.getCeremony().anchors()).stream()
 								.mapToInt(Integer::intValue).toArray());
 			}
+			CardinalRiteAllyService.maintainNpcStations(sLevel, rite);
 			double footprintRadius = ritualFootprintRadius(rite, recipe);
 			AABB ritualBounds = new AABB(center).inflate(
 					Math.max(CardinalRiteBoundaryLeashRules.ritualRadius(riteSize), footprintRadius));
@@ -327,6 +328,7 @@ public class HarbingerCardinalRiteEvents {
 		for (UUID uuid : toRemove) {
 			ActiveCardinalRite removedRite = activeRites.get(uuid);
 			if (removedRite != null) {
+				CardinalRiteAllyService.returnNpcAlliesToFane(sLevel, removedRite);
 				discardHumanitySprites(sLevel, uuid, removedRite.getCenterPos());
 			}
 			savedData.removeRite(uuid);
@@ -354,6 +356,7 @@ public class HarbingerCardinalRiteEvents {
 			ActiveCardinalRite broken = savedData.getRite(player.getUUID());
 			if (broken != null) {
 				CardinalRiteOrdealEngine.clearThreats(sLevel, broken);
+				CardinalRiteAllyService.returnNpcAlliesToFane(sLevel, broken);
 				discardHumanitySprites(sLevel, player.getUUID(), broken.getCenterPos());
 				CardinalRiteStaffEscrow.restore(player, broken);
 			}
@@ -2693,8 +2696,11 @@ public class HarbingerCardinalRiteEvents {
 
 
 	private static void completeFoundingFane(ServerLevel sLevel, ServerPlayer caster, BlockPos center) {
-		BlockState centerState = sLevel.getBlockState(center);
-		if (!centerState.is(BlockInit.consecrated_bloodwell.get()) && !centerState.isAir() && !centerState.canBeReplaced()) {
+		BlockPos heartPos = center.above(3);
+		BlockState heartState = sLevel.getBlockState(heartPos);
+		if (!heartState.is(BlockInit.consecrated_bloodwell.get())
+				&& !heartState.isAir()
+				&& !heartState.canBeReplaced()) {
 			caster.displayClientMessage(
 					Component.literal("The rite's heart was obstructed before the Consecrated Bloodwell could be manifested.")
 							.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC),
@@ -2731,15 +2737,15 @@ public class HarbingerCardinalRiteEvents {
 				}
 			}
 		}
-		if (!sLevel.getBlockState(center).is(BlockInit.consecrated_bloodwell.get())
-				&& !sLevel.setBlock(center, BlockInit.consecrated_bloodwell.get().defaultBlockState(), 3)) {
+		if (!sLevel.getBlockState(heartPos).is(BlockInit.consecrated_bloodwell.get())
+				&& !sLevel.setBlock(heartPos, BlockInit.consecrated_bloodwell.get().defaultBlockState(), 3)) {
 			caster.displayClientMessage(
 					Component.literal("The rite falters before the Consecrated Bloodwell can take form.")
 							.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC),
 					false);
 			return;
 		}
-		faneData.consecrateHeart(faneOwner, center);
+		faneData.consecrateHeart(faneOwner, heartPos);
 		if (isReconsecrating) {
 			caster.displayClientMessage(
 					Component.literal("Your Founding Fane has been moved to this location.")
@@ -2760,7 +2766,7 @@ public class HarbingerCardinalRiteEvents {
 					HarbingerAdvancementGranter.ADV_COVENANT_WRITTEN_IN_PLACE);
 		}
 		sLevel.sendParticles(ParticleTypes.CRIMSON_SPORE,
-				center.getX() + 0.5, center.getY() + 1.0, center.getZ() + 0.5,
+				heartPos.getX() + 0.5, heartPos.getY() + 1.0, heartPos.getZ() + 0.5,
 				300, FoundingFaneSavedData.FANE_RADIUS * 0.3, 3.0, FoundingFaneSavedData.FANE_RADIUS * 0.3, 0.01);
 	}
 

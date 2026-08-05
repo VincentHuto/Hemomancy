@@ -9,6 +9,7 @@ import com.vincenthuto.hemomancy.common.recipe.CardinalRiteRecipe;
 import com.vincenthuto.hemomancy.common.rite.floor.CardinalRiteFloorDefinition;
 import com.vincenthuto.hemomancy.common.rite.floor.CardinalRiteFloorRegistry;
 import com.vincenthuto.hemomancy.common.tile.IronBrazierBlockEntity;
+import com.vincenthuto.hemomancy.common.tile.functional.CardinalFocusBlockEntity;
 import com.vincenthuto.hutoslib.math.BlockPosBlockPair;
 import com.vincenthuto.hutoslib.math.MultiblockPattern;
 import net.minecraft.core.BlockPos;
@@ -229,10 +230,23 @@ public class PlaceStructurePacket implements CustomPacketPayload {
 				return -1;
 			}
 		}
+		if (recipe.hasMedium() && recipe.getMedium().getItems().length == 0) {
+			player.sendSystemMessage(Component.literal(
+					"§cRite has a focus medium with no available representative item"));
+			return -1;
+		}
 
 		List<BlockPos> placedPositions = new java.util.ArrayList<>();
 		int placed = placePatternAtCell(level, floor.pattern(), focusPos,
 				floor.focus().getX(), floor.focus().getY(), floor.focus().getZ(), placedPositions);
+		if (recipe.hasMedium()) {
+			ItemStack mediumStack = recipe.getMedium().getItems()[0].copyWithCount(1);
+			if (!(level.getBlockEntity(focusPos) instanceof CardinalFocusBlockEntity focus)
+					|| !focus.insertMedium(null, mediumStack)) {
+				player.sendSystemMessage(Component.literal("§cCould not seat the rite's medium in its Cardinal Focus"));
+				return -1;
+			}
+		}
 
 		MultiblockPattern requiredStructure = recipe.getRequiredStructure();
 		if (requiredStructure != null) {

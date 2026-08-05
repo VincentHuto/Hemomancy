@@ -310,6 +310,10 @@ class GameTestHarnessSourceContractTest {
 				"Cardinal Rite offerings must occupy the selected floor's declared sockets");
 		assertTrue(placement.contains("recipe.getBrazierSignature()"),
 				"Cardinal Rite braziers must be populated from the selected rite signature");
+		assertTrue(placement.contains("recipe.getMedium().getItems()"),
+				"The spawner must resolve a representative item for the rite's focus medium");
+		assertTrue(placement.contains("focus.insertMedium(null, mediumStack)"),
+				"The spawner must seat the declared medium in the newly placed Cardinal Focus");
 	}
 
 	private static String read(String relativePath) throws IOException {

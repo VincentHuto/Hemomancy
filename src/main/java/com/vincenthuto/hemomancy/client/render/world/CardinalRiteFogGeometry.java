@@ -20,9 +20,8 @@ public final class CardinalRiteFogGeometry {
 			int completedRings, int totalRings, boolean legacy) {
 		float completedBoundary = CardinalRiteBoundaryGeometry.exteriorRadius(
 				riteSize, completedRings, legacy);
-		float authoredFloorRadius = riteSize * 0.5F + 3.0F;
 		float radius = footprintRadius > 0.0F
-				? legacy ? footprintRadius : Math.min(footprintRadius, authoredFloorRadius)
+				? footprintRadius
 				: completedBoundary > 0.0F
 				? completedBoundary
 				: (float) (riteSize / 2.0D + 1.0D);

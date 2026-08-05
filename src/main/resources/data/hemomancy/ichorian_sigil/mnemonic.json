@@ -5,7 +5,7 @@
   "name": "Mnemonic",
   "purpose": "Exposes false anchors, counterfeit omens, and puppeteer deceptions.",
   "stability": 12,
-  "nodes": [[-1.4, 0], [-0.7, -0.8], [0, -0.12], [0.7, 0.8], [1.4, 0], [0.7, -0.8], [0, 0.12], [-0.7, 0.8]],
+  "nodes": [[-1.4, 0], [-0.7, -0.8], [0, -0.6], [0.7, 0.8], [1.4, 0], [0.7, -0.8], [0, 0.6], [-0.7, 0.8]],
   "connections": [[0,1], [1,2], [2,3], [3,4], [4,5], [5,6], [6,7], [7,0]],
   "awakened_form": {
     "forward": [-1, 0, 0],

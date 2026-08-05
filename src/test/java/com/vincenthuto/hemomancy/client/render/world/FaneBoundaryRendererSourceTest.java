@@ -13,6 +13,8 @@ public final class FaneBoundaryRendererSourceTest {
 			"src/main/java/com/vincenthuto/hemomancy/config/HemoClientConfig.java");
 	private static final Path CLIENT_DATA = Path.of(
 			"src/main/java/com/vincenthuto/hemomancy/client/data/FaneBoundaryClientData.java");
+	private static final Path RENDER_TYPES = Path.of(
+			"src/main/java/com/vincenthuto/hemomancy/client/render/HemoRenderTypes.java");
 
 	private FaneBoundaryRendererSourceTest() {
 	}
@@ -22,6 +24,7 @@ public final class FaneBoundaryRendererSourceTest {
 		String shaderInit = Files.readString(SHADER_INIT).replace("\r\n", "\n");
 		String clientConfig = Files.readString(CLIENT_CONFIG).replace("\r\n", "\n");
 		String clientData = Files.readString(CLIENT_DATA).replace("\r\n", "\n");
+		String renderTypes = Files.readString(RENDER_TYPES).replace("\r\n", "\n");
 
 		assertContains("renderer respects client toggle", renderer, "faneBoundaryRendererEnabled()");
 		assertContains("renderer respects per-player fane sight mode", renderer, "FaneBoundaryClientData.viewMode()");
@@ -38,7 +41,10 @@ public final class FaneBoundaryRendererSourceTest {
 		assertContains("renderer copies main scene", renderer, "copyMainRenderTarget");
 		assertContains("renderer keeps inside post shader", renderer, "renderFullWorldGrade");
 		assertContains("renderer renders outsider dome in world", renderer, "renderHostileWorldDomes");
-		assertContains("renderer uses existing world shell shader pattern", renderer, "HemoRenderTypes.loomOrbShell");
+		assertContains("renderer uses a non-occluding fane shell pass", renderer,
+				"HemoRenderTypes.faneBoundaryShell");
+		assertContains("fane shell render type does not write depth", renderTypes,
+				"public static RenderType faneBoundaryShell");
 		assertContains("renderer draws hostile world dome mesh", renderer, "drawHostileDomeShell");
 		assertContains("renderer flushes hostile dome shell render type", renderer, "buffer.endBatch(coreType)");
 		assertContains("renderer flushes hostile dome glow render type", renderer, "buffer.endBatch(glowType)");

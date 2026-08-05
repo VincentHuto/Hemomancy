@@ -241,9 +241,9 @@ public final class FaneBoundaryRenderer {
 		poseStack.translate(cx - cam.x, cy - cam.y, cz - cam.z);
 		Matrix4f mat = poseStack.last().pose();
 		Vector3f shaderCenter = mat.transformPosition(0.0F, 0.0F, 0.0F, new Vector3f());
-		RenderType coreType = !glow ? HemoRenderTypes.loomOrbShell(time, seed, shaderCenter.x(), shaderCenter.y(),
+		RenderType coreType = !glow ? HemoRenderTypes.faneBoundaryShell(time, seed, shaderCenter.x(), shaderCenter.y(),
 				shaderCenter.z(), radius, 0.12F, 9.0F, false) : null;
-		RenderType glowType = glow ? HemoRenderTypes.loomOrbShell(time, seed, shaderCenter.x(), shaderCenter.y(),
+		RenderType glowType = glow ? HemoRenderTypes.faneBoundaryShell(time, seed, shaderCenter.x(), shaderCenter.y(),
 				shaderCenter.z(), radius, 0.055F, 6.0F, true) : null;
 		RenderType domeType = glow ? glowType : coreType;
 		VertexConsumer vc = buffer.getBuffer(domeType);

@@ -2,16 +2,22 @@ package com.vincenthuto.hemomancy.common.rite.harbinger;
 
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.Bloodline;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodlineSavedData;
+import com.vincenthuto.hemomancy.common.event.worldevent.FoundingFaneSavedData;
 import com.vincenthuto.hemomancy.common.recipe.CardinalRiteRecipe;
 import com.vincenthuto.hemomancy.common.rite.ActiveCardinalRite;
 import com.vincenthuto.hemomancy.common.rite.CardinalRiteAllyRole;
 import com.vincenthuto.hemomancy.common.rite.CardinalRitePhase;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.Mob;
+import net.minecraft.world.level.portal.DimensionTransition;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.Vec3;
 
 import java.util.Map;
 import java.util.UUID;
@@ -78,7 +84,14 @@ public final class CardinalRiteAllyService {
 			return true;
 		}
 		CardinalRiteAllyRole next = nextRole(rite.getAllyRoles().get(npc.getUUID()));
+		if (!(npc instanceof Mob mob) || !safeStation(level, mob, station(rite, next))) {
+			caster.displayClientMessage(Component.literal(
+					"That rite station has no safe footing for an ally.")
+					.withStyle(ChatFormatting.DARK_RED), true);
+			return true;
+		}
 		rite.assignAlly(npc.getUUID(), next);
+		directToStation(level, rite, mob, next);
 		caster.displayClientMessage(Component.literal("Assigned " + npc.getName().getString() + " as "
 				+ displayName(next) + ".").withStyle(ChatFormatting.RED), false);
 		return true;
@@ -104,9 +117,55 @@ public final class CardinalRiteAllyService {
 	public static boolean isAvailable(ServerLevel level, ActiveCardinalRite rite, UUID ally) {
 		Bloodline line = bloodline(level, rite);
 		if (line == null) return false;
-		if (line.hasNpcMember(ally)) return !line.isNpcBloodspent(ally, level.getGameTime())
-				&& level.getEntity(ally) != null;
+		if (line.hasNpcMember(ally)) {
+			if (line.isNpcBloodspent(ally, level.getGameTime())) return false;
+			Entity entity = level.getEntity(ally);
+			CardinalRiteAllyRole role = rite.getAllyRoles().get(ally);
+			if (!(entity instanceof Mob mob) || role == null) return false;
+			BlockPos station = station(rite, role);
+			boolean safe = safeStation(level, mob, station);
+			return CardinalRiteNpcStationRules.participates(mob.position(), station, safe);
+		}
 		return level.getServer().getPlayerList().getPlayer(ally) != null;
+	}
+
+	public static void maintainNpcStations(ServerLevel level, ActiveCardinalRite rite) {
+		Bloodline line = bloodline(level, rite);
+		if (line == null) return;
+		for (var assignment : rite.getAllyRoles().entrySet()) {
+			if (!line.hasNpcMember(assignment.getKey())) continue;
+			Entity entity = level.getEntity(assignment.getKey());
+			if (entity instanceof Mob mob) {
+				directToStation(level, rite, mob, assignment.getValue());
+			}
+		}
+	}
+
+	public static void returnNpcAlliesToFane(ServerLevel riteLevel, ActiveCardinalRite rite) {
+		Bloodline line = bloodline(riteLevel, rite);
+		if (line == null) return;
+		ServerLevel faneLevel = findFaneLevel(riteLevel, line.getLeaderUUID());
+		if (faneLevel == null) return;
+		BlockPos recallPoint = FoundingFaneSavedData.get(faneLevel).getRecallPoint(line.getLeaderUUID());
+		if (recallPoint == null) return;
+		Vec3 destination = CardinalRiteNpcStationRules.faneReturnPosition(recallPoint);
+		for (UUID npcId : CardinalRiteNpcStationRules.assignedNpcAllies(
+				rite.getAllyRoles(), line::hasNpcMember)) {
+			CardinalRiteAllyRole role = rite.getAllyRoles().get(npcId);
+			if (role != null) riteLevel.getChunkAt(station(rite, role));
+			Mob npc = findLoadedNpc(riteLevel, npcId);
+			if (npc == null) continue;
+			npc.getNavigation().stop();
+			npc.stopRiding();
+			npc.setDeltaMovement(Vec3.ZERO);
+			npc.fallDistance = 0.0F;
+			if (npc.level() == faneLevel) {
+				npc.teleportTo(destination.x, destination.y, destination.z);
+			} else {
+				npc.changeDimension(new DimensionTransition(faneLevel, destination, Vec3.ZERO,
+						npc.getYRot(), npc.getXRot(), DimensionTransition.DO_NOTHING));
+			}
+		}
 	}
 
 	public static boolean hasRequiredHelperCount(int available, int required) {
@@ -138,6 +197,26 @@ public final class CardinalRiteAllyService {
 		return BloodlineSavedData.get(level.getServer().overworld()).getBloodlineForPlayer(rite.getPlayerUUID());
 	}
 
+	private static ServerLevel findFaneLevel(ServerLevel riteLevel, UUID owner) {
+		if (FoundingFaneSavedData.get(riteLevel).hasFane(owner)) return riteLevel;
+		ServerLevel overworld = riteLevel.getServer().overworld();
+		if (FoundingFaneSavedData.get(overworld).hasFane(owner)) return overworld;
+		for (ServerLevel level : riteLevel.getServer().getAllLevels()) {
+			if (FoundingFaneSavedData.get(level).hasFane(owner)) return level;
+		}
+		return null;
+	}
+
+	private static Mob findLoadedNpc(ServerLevel riteLevel, UUID npcId) {
+		Entity local = riteLevel.getEntity(npcId);
+		if (local instanceof Mob mob) return mob;
+		for (ServerLevel level : riteLevel.getServer().getAllLevels()) {
+			Entity entity = level.getEntity(npcId);
+			if (entity instanceof Mob mob) return mob;
+		}
+		return null;
+	}
+
 	private static int helperQuota(ServerLevel level, ActiveCardinalRite rite) {
 		CardinalRiteRecipe recipe = CardinalRiteRecipe.getRiteByLocation(level, rite.getRecipeId());
 		if (recipe == null || recipe.getCeremony() == null) return 0;
@@ -150,6 +229,50 @@ public final class CardinalRiteAllyService {
 			if (clicked.closerThan(pos, 1.5D) || clicked.closerThan(pos.below(), 1.5D)) return marker.getKey();
 		}
 		return null;
+	}
+
+	private static void directToStation(ServerLevel level, ActiveCardinalRite rite,
+			Mob npc, CardinalRiteAllyRole role) {
+		BlockPos station = station(rite, role);
+		boolean safe = safeStation(level, npc, station);
+		switch (CardinalRiteNpcStationRules.correction(npc.position(), station, safe)) {
+			case UNAVAILABLE -> npc.getNavigation().stop();
+			case RECALL -> {
+				npc.getNavigation().stop();
+				npc.teleportTo(station.getX() + 0.5D, station.getY(), station.getZ() + 0.5D);
+				npc.setDeltaMovement(Vec3.ZERO);
+				npc.fallDistance = 0.0F;
+			}
+			case APPROACH -> {
+				if (npc.getNavigation().isDone() || level.getGameTime() % 10L == 0L) {
+					npc.getNavigation().moveTo(
+							station.getX() + 0.5D, station.getY(), station.getZ() + 0.5D, 0.8D);
+				}
+			}
+			case HOLD -> {
+				npc.getNavigation().stop();
+				if (npc.onGround()) {
+					Vec3 motion = npc.getDeltaMovement();
+					npc.setDeltaMovement(0.0D, motion.y, 0.0D);
+				}
+			}
+		}
+	}
+
+	private static BlockPos station(ActiveCardinalRite rite, CardinalRiteAllyRole role) {
+		return rite.getCenterPos().offset(ROLE_MARKERS.get(role));
+	}
+
+	private static boolean safeStation(ServerLevel level, Mob npc, BlockPos station) {
+		boolean loaded = level.hasChunkAt(station);
+		boolean sturdySupport = loaded && level.getBlockState(station.below())
+				.isFaceSturdy(level, station.below(), Direction.UP);
+		AABB targetBounds = npc.getBoundingBox().move(
+				station.getX() + 0.5D - npc.getX(),
+				station.getY() - npc.getY(),
+				station.getZ() + 0.5D - npc.getZ());
+		boolean collisionFree = loaded && level.noCollision(npc, targetBounds);
+		return CardinalRiteNpcStationRules.stationSafe(loaded, sturdySupport, collisionFree);
 	}
 
 	private static CardinalRiteAllyRole nextRole(CardinalRiteAllyRole current) {
