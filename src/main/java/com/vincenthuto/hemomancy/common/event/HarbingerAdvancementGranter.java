@@ -44,10 +44,22 @@ public final class HarbingerAdvancementGranter {
 			Hemomancy.rloc("hemomancy/crimson_lodge_consecrated");
 	public static final ResourceLocation ADV_FOUNDING_FANE_ESTABLISHED =
 			Hemomancy.rloc("hemomancy/founding_fane_established");
+	public static final ResourceLocation ADV_COVENANT_WRITTEN_IN_PLACE =
+			Hemomancy.rloc("hemomancy/covenant_written_in_place");
+	public static final ResourceLocation ADV_CHAMBER_RETURNED =
+			Hemomancy.rloc("hemomancy/chamber_returned");
+	public static final ResourceLocation ADV_COVENANT_THRONE_BOUND =
+			Hemomancy.rloc("hemomancy/covenant_throne_bound");
+	public static final ResourceLocation ADV_COVENANT_VIGIL_COMPLETED =
+			Hemomancy.rloc("hemomancy/covenant_vigil_completed");
+	public static final ResourceLocation ADV_LIVING_COVENANT_COMPLETE =
+			Hemomancy.rloc("hemomancy/living_covenant_complete");
 	public static final ResourceLocation ADV_HERMIT_ROAD_FIRST_REMNANT =
 			Hemomancy.rloc("hemomancy/hermit_road_first_remnant");
 	public static final ResourceLocation ADV_HERMIT_ROAD_LEDGER_GRANTED =
 			Hemomancy.rloc("hemomancy/hermit_road_ledger_granted");
+	public static final ResourceLocation ADV_HERMIT_ROAD_REPORTED =
+			Hemomancy.rloc("hemomancy/hermit_road_reported");
 	public static final ResourceLocation ADV_VESSEL_FILLED =
 			Hemomancy.rloc("hemomancy/vessel_filled");
 	public static final ResourceLocation ADV_FANE_SANGUINIUM =
@@ -168,6 +180,8 @@ public final class HarbingerAdvancementGranter {
 			Hemomancy.rloc("hemomancy/voices_in_the_vein");
 	public static final ResourceLocation ADV_ETERNAL_COVENANT_SEALED =
 			Hemomancy.rloc("hemomancy/eternal_covenant_sealed");
+	public static final ResourceLocation ADV_VESPER_DEFEATED =
+			Hemomancy.rloc("hemomancy/vesper_defeated");
 
 	// ── Mastery side branches ──────────────────────────────────────────────────
 	public static final ResourceLocation ADV_SANGUINE_DOMAIN =

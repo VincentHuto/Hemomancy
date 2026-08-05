@@ -50,6 +50,9 @@ public class HarbingerAssignmentLedgerScreen extends Screen {
 	private static final int CRIMSON_VESTMENT_HEIGHT = 68;
 	private static final int WEIGHT_OF_THE_FRAME_HEIGHT = 68;
 	private static final int THE_ASSUMED_LIMB_HEIGHT = 68;
+	private static final int COVENANT_WRITTEN_HEIGHT = 68;
+	private static final int LIVING_COVENANT_HEIGHT = 68;
+	private static final int BLOOD_BENEATH_BLOOD_HEIGHT = 68;
 	private static final int SCROLLBAR_WIDTH = 6;
 	private static final int SCROLL_STEP = 18;
 	private static final int PANEL = 0xD0140505;
@@ -79,28 +82,41 @@ public class HarbingerAssignmentLedgerScreen extends Screen {
 	private static final ResourceLocation ARTIFICER_PORTRAIT =
 			Hemomancy.rloc("textures/entity/harbinger_artificer/harbinger_artificer_portrait.png");
 
+	private enum AssignmentCategory {
+		MAIN("screen.hemomancy.harbinger_assignment_ledger.assignment_label.main"),
+		SIDE("screen.hemomancy.harbinger_assignment_ledger.assignment_label.side"),
+		VOCATION("screen.hemomancy.harbinger_assignment_ledger.assignment_label.vocation"),
+		CATALOGUE("screen.hemomancy.harbinger_assignment_ledger.assignment_label.catalogue");
+
+		private final String labelKey;
+		AssignmentCategory(String labelKey) { this.labelKey = labelKey; }
+	}
+
 	private enum AssignmentSection {
-		FIRST_BLOODCRAFT(1, "screen.hemomancy.harbinger_assignment_ledger.assignment_label.main", FIRST_BLOODCRAFT_HEIGHT),
-		HERMIT_ROAD(1, "screen.hemomancy.harbinger_assignment_ledger.assignment_label.side", HERMIT_ROAD_HEIGHT),
-		FIRST_SEPARATION(2, "screen.hemomancy.harbinger_assignment_ledger.assignment_label.main", FIRST_SEPARATION_HEIGHT),
-		RED_TAXONOMY(2, "screen.hemomancy.harbinger_assignment_ledger.assignment_label.side", RED_TAXONOMY_HEIGHT),
-		LIVING_BESTIARY(2, "screen.hemomancy.harbinger_assignment_ledger.assignment_label.side", LIVING_BESTIARY_HEIGHT),
-		ENZYME_MASTERY(2, "screen.hemomancy.harbinger_assignment_ledger.assignment_label.side", ENZYME_MASTERY_HEIGHT),
-		THE_WORN_VOW(2, "screen.hemomancy.harbinger_assignment_ledger.assignment_label.main", THE_WORN_VOW_HEIGHT),
-		WOVEN_VESSEL(3, "screen.hemomancy.harbinger_assignment_ledger.assignment_label.main", WOVEN_VESSEL_HEIGHT),
-		THE_THREE_ANSWERS(3, "screen.hemomancy.harbinger_assignment_ledger.assignment_label.main", THE_THREE_ANSWERS_HEIGHT),
-		VEIN_MASON(4, "screen.hemomancy.harbinger_assignment_ledger.assignment_label.main", VEIN_MASON_HEIGHT),
-		CRIMSON_VESTMENT(5, "screen.hemomancy.harbinger_assignment_ledger.assignment_label.main", CRIMSON_VESTMENT_HEIGHT),
-		THE_ASSUMED_LIMB(5, "screen.hemomancy.harbinger_assignment_ledger.assignment_label.side", THE_ASSUMED_LIMB_HEIGHT),
-		WEIGHT_OF_THE_FRAME(7, "screen.hemomancy.harbinger_assignment_ledger.assignment_label.main", WEIGHT_OF_THE_FRAME_HEIGHT);
+		FIRST_BLOODCRAFT(1, AssignmentCategory.MAIN, FIRST_BLOODCRAFT_HEIGHT),
+		HERMIT_ROAD(1, AssignmentCategory.SIDE, HERMIT_ROAD_HEIGHT),
+		FIRST_SEPARATION(2, AssignmentCategory.MAIN, FIRST_SEPARATION_HEIGHT),
+		RED_TAXONOMY(2, AssignmentCategory.CATALOGUE, RED_TAXONOMY_HEIGHT),
+		LIVING_BESTIARY(2, AssignmentCategory.CATALOGUE, LIVING_BESTIARY_HEIGHT),
+		ENZYME_MASTERY(2, AssignmentCategory.CATALOGUE, ENZYME_MASTERY_HEIGHT),
+		THE_WORN_VOW(2, AssignmentCategory.VOCATION, THE_WORN_VOW_HEIGHT),
+		WOVEN_VESSEL(3, AssignmentCategory.MAIN, WOVEN_VESSEL_HEIGHT),
+		THE_THREE_ANSWERS(3, AssignmentCategory.VOCATION, THE_THREE_ANSWERS_HEIGHT),
+		VEIN_MASON(4, AssignmentCategory.MAIN, VEIN_MASON_HEIGHT),
+		COVENANT_WRITTEN(5, AssignmentCategory.MAIN, COVENANT_WRITTEN_HEIGHT),
+		CRIMSON_VESTMENT(5, AssignmentCategory.VOCATION, CRIMSON_VESTMENT_HEIGHT),
+		THE_ASSUMED_LIMB(5, AssignmentCategory.VOCATION, THE_ASSUMED_LIMB_HEIGHT),
+		LIVING_COVENANT(6, AssignmentCategory.MAIN, LIVING_COVENANT_HEIGHT),
+		BLOOD_BENEATH_BLOOD(7, AssignmentCategory.MAIN, BLOOD_BENEATH_BLOOD_HEIGHT),
+		WEIGHT_OF_THE_FRAME(7, AssignmentCategory.VOCATION, WEIGHT_OF_THE_FRAME_HEIGHT);
 
 		private final int assignmentDegree;
-		private final String assignmentLabelKey;
+		private final AssignmentCategory category;
 		private final int expandedHeight;
 
-		AssignmentSection(int assignmentDegree, String assignmentLabelKey, int expandedHeight) {
+		AssignmentSection(int assignmentDegree, AssignmentCategory category, int expandedHeight) {
 			this.assignmentDegree = assignmentDegree;
-			this.assignmentLabelKey = assignmentLabelKey;
+			this.category = category;
 			this.expandedHeight = expandedHeight;
 		}
 	}
@@ -158,6 +174,17 @@ public class HarbingerAssignmentLedgerScreen extends Screen {
 	private final boolean artificerFirstLivingGraft;
 	private final int artificerLivingWeaponFormCount;
 	private final boolean artificerLivingArsenalFitting;
+	private final boolean foundedBloodline;
+	private final boolean foundingFaneEstablished;
+	private final boolean chamberReturned;
+	private final boolean covenantThroneBound;
+	private final boolean covenantVigilCompleted;
+	private final boolean livingCovenantComplete;
+	private final int pomesConsumed;
+	private final boolean qliphothCommunionComplete;
+	private final boolean silentPending;
+	private final boolean severedPortalOpen;
+	private final boolean silentArchon;
 	private final EnumSet<AssignmentSection> collapsedAssignments = EnumSet.noneOf(AssignmentSection.class);
 	private final List<AssignmentHitbox> assignmentHitboxes = new ArrayList<>();
 	private final MilestoneDrawerState milestoneState = new MilestoneDrawerState();
@@ -188,7 +215,11 @@ public class HarbingerAssignmentLedgerScreen extends Screen {
 			boolean artificerFrameConsecrated, boolean artificerFirstBloodLustUpgrade,
 			boolean artificerBloodLustFitting, boolean artificerMonolithicFrame,
 			boolean artificerFirstD7Upgrade, boolean artificerD7Fitting, boolean artificerFirstLivingGraft,
-			int artificerLivingWeaponFormCount, boolean artificerLivingArsenalFitting) {
+			int artificerLivingWeaponFormCount, boolean artificerLivingArsenalFitting,
+			boolean foundedBloodline, boolean foundingFaneEstablished, boolean chamberReturned,
+			boolean covenantThroneBound, boolean covenantVigilCompleted, boolean livingCovenantComplete,
+			int pomesConsumed, boolean qliphothCommunionComplete, boolean silentPending,
+			boolean severedPortalOpen, boolean silentArchon) {
 		super(Component.translatable("screen.hemomancy.harbinger_assignment_ledger.title"));
 		this.degree = degree;
 		this.firstAwakening = firstAwakening;
@@ -232,6 +263,17 @@ public class HarbingerAssignmentLedgerScreen extends Screen {
 		this.artificerFirstLivingGraft = artificerFirstLivingGraft;
 		this.artificerLivingWeaponFormCount = artificerLivingWeaponFormCount;
 		this.artificerLivingArsenalFitting = artificerLivingArsenalFitting;
+		this.foundedBloodline = foundedBloodline;
+		this.foundingFaneEstablished = foundingFaneEstablished;
+		this.chamberReturned = chamberReturned;
+		this.covenantThroneBound = covenantThroneBound;
+		this.covenantVigilCompleted = covenantVigilCompleted;
+		this.livingCovenantComplete = livingCovenantComplete;
+		this.pomesConsumed = pomesConsumed;
+		this.qliphothCommunionComplete = qliphothCommunionComplete;
+		this.silentPending = silentPending;
+		this.severedPortalOpen = severedPortalOpen;
+		this.silentArchon = silentArchon;
 	}
 
 	public static void open(int degree, boolean firstAwakening, boolean degreeOne,
@@ -252,7 +294,11 @@ public class HarbingerAssignmentLedgerScreen extends Screen {
 			boolean artificerFrameConsecrated, boolean artificerFirstBloodLustUpgrade,
 			boolean artificerBloodLustFitting, boolean artificerMonolithicFrame,
 			boolean artificerFirstD7Upgrade, boolean artificerD7Fitting, boolean artificerFirstLivingGraft,
-			int artificerLivingWeaponFormCount, boolean artificerLivingArsenalFitting) {
+			int artificerLivingWeaponFormCount, boolean artificerLivingArsenalFitting,
+			boolean foundedBloodline, boolean foundingFaneEstablished, boolean chamberReturned,
+			boolean covenantThroneBound, boolean covenantVigilCompleted, boolean livingCovenantComplete,
+			int pomesConsumed, boolean qliphothCommunionComplete, boolean silentPending,
+			boolean severedPortalOpen, boolean silentArchon) {
 		Minecraft.getInstance().setScreen(new HarbingerAssignmentLedgerScreen(
 				degree, firstAwakening, degreeOne, vesselFilled, liberSanguinumCrafted, hematicIronBlockCrafted,
 				firstRemnant, ledgerGranted, hasVialCentrifuge, hasSampledBloodVial,
@@ -266,7 +312,10 @@ public class HarbingerAssignmentLedgerScreen extends Screen {
 				artificerFirstForkUpgrade, artificerForkFitting, artificerFrameConsecrated,
 				artificerFirstBloodLustUpgrade, artificerBloodLustFitting, artificerMonolithicFrame,
 				artificerFirstD7Upgrade, artificerD7Fitting, artificerFirstLivingGraft,
-				artificerLivingWeaponFormCount, artificerLivingArsenalFitting));
+				artificerLivingWeaponFormCount, artificerLivingArsenalFitting,
+				foundedBloodline, foundingFaneEstablished, chamberReturned,
+				covenantThroneBound, covenantVigilCompleted, livingCovenantComplete,
+				pomesConsumed, qliphothCommunionComplete, silentPending, severedPortalOpen, silentArchon));
 	}
 
 	@Override
@@ -279,6 +328,9 @@ public class HarbingerAssignmentLedgerScreen extends Screen {
 		this.milestoneState.scrollOffset = 0;
 		this.assignmentScrollOffset = 0;
 		this.assignmentMaxScroll = 0;
+		for (AssignmentSection section : AssignmentSection.values()) {
+			if (section.category != AssignmentCategory.MAIN) collapsedAssignments.add(section);
+		}
 		this.clearWidgets();
 	}
 
@@ -520,8 +572,11 @@ public class HarbingerAssignmentLedgerScreen extends Screen {
 			case WOVEN_VESSEL -> renderWovenVessel(gfx, x, y, w, mouseX, mouseY);
 			case THE_THREE_ANSWERS -> renderTheThreeAnswers(gfx, x, y, w, mouseX, mouseY);
 			case VEIN_MASON -> renderVeinMason(gfx, x, y, w, mouseX, mouseY);
+			case COVENANT_WRITTEN -> renderCovenantWritten(gfx, x, y, w, mouseX, mouseY);
 			case CRIMSON_VESTMENT -> renderCrimsonVestment(gfx, x, y, w, mouseX, mouseY);
 			case THE_ASSUMED_LIMB -> renderTheAssumedLimb(gfx, x, y, w, mouseX, mouseY);
+			case LIVING_COVENANT -> renderLivingCovenant(gfx, x, y, w, mouseX, mouseY);
+			case BLOOD_BENEATH_BLOOD -> renderBloodBeneathBlood(gfx, x, y, w, mouseX, mouseY);
 			case WEIGHT_OF_THE_FRAME -> renderWeightOfTheFrame(gfx, x, y, w, mouseX, mouseY);
 		}
 	}
@@ -794,7 +849,7 @@ public class HarbingerAssignmentLedgerScreen extends Screen {
 		float scale = 0.75F;
 		gfx.pose().pushPose();
 		gfx.pose().scale(scale, scale, 1.0F);
-		gfx.drawString(font, Component.translatable(section.assignmentLabelKey, section.assignmentDegree),
+		gfx.drawString(font, Component.translatable(section.category.labelKey, section.assignmentDegree),
 				(int) (x / scale), (int) (y / scale), color, false);
 		gfx.pose().popPose();
 	}
@@ -854,6 +909,71 @@ public class HarbingerAssignmentLedgerScreen extends Screen {
 		if (veinMasonFirstEffigyPattern) completed++;
 		if (veinMasonFirstEffigyLoadout) completed++;
 		return completed;
+	}
+
+	private void renderCovenantWritten(GuiGraphics gfx, int x, int y, int w, int mouseX, int mouseY) {
+		int progress = (foundedBloodline ? 1 : 0) + (foundingFaneEstablished ? 1 : 0);
+		renderCompactChapter(gfx, AssignmentSection.COVENANT_WRITTEN, x, y, w, VICAR_PORTRAIT,
+				"screen.hemomancy.harbinger_assignment_ledger.covenant_written.title",
+				"screen.hemomancy.harbinger_assignment_ledger.covenant_written.progress",
+				progress, 2, foundingFaneEstablished,
+				foundingFaneEstablished
+						? "screen.hemomancy.harbinger_assignment_ledger.covenant_written.complete"
+						: "screen.hemomancy.harbinger_assignment_ledger.covenant_written.desc",
+				mouseX, mouseY);
+	}
+
+	private void renderLivingCovenant(GuiGraphics gfx, int x, int y, int w, int mouseX, int mouseY) {
+		int progress = (chamberReturned ? 1 : 0) + (covenantThroneBound ? 1 : 0)
+				+ (covenantVigilCompleted ? 1 : 0);
+		renderCompactChapter(gfx, AssignmentSection.LIVING_COVENANT, x, y, w, VICAR_PORTRAIT,
+				"screen.hemomancy.harbinger_assignment_ledger.living_covenant.title",
+				"screen.hemomancy.harbinger_assignment_ledger.living_covenant.progress",
+				progress, 3, livingCovenantComplete,
+				livingCovenantComplete
+						? "screen.hemomancy.harbinger_assignment_ledger.living_covenant.complete"
+						: "screen.hemomancy.harbinger_assignment_ledger.living_covenant.desc",
+				mouseX, mouseY);
+	}
+
+	private void renderBloodBeneathBlood(GuiGraphics gfx, int x, int y, int w, int mouseX, int mouseY) {
+		int progress = silentArchon ? 12 : Math.min(9, pomesConsumed)
+				+ (qliphothCommunionComplete ? 1 : 0) + (silentPending ? 1 : 0)
+				+ (severedPortalOpen ? 1 : 0);
+		String descriptionKey;
+		if (silentArchon) {
+			descriptionKey = "screen.hemomancy.harbinger_assignment_ledger.blood_beneath.complete";
+		} else if (severedPortalOpen) {
+			descriptionKey = "screen.hemomancy.harbinger_assignment_ledger.blood_beneath.ordeal";
+		} else if (silentPending) {
+			descriptionKey = "screen.hemomancy.harbinger_assignment_ledger.blood_beneath.prune";
+		} else if (qliphothCommunionComplete) {
+			descriptionKey = "screen.hemomancy.harbinger_assignment_ledger.blood_beneath.revelation";
+		} else {
+			descriptionKey = "screen.hemomancy.harbinger_assignment_ledger.blood_beneath.pomes";
+		}
+		renderCompactChapter(gfx, AssignmentSection.BLOOD_BENEATH_BLOOD, x, y, w, VICAR_PORTRAIT,
+				"screen.hemomancy.harbinger_assignment_ledger.blood_beneath.title",
+				"screen.hemomancy.harbinger_assignment_ledger.blood_beneath.progress",
+				progress, 12, silentArchon, descriptionKey, mouseX, mouseY);
+	}
+
+	private void renderCompactChapter(GuiGraphics gfx, AssignmentSection section, int x, int y, int w,
+			ResourceLocation portrait, String titleKey, String progressKey, int progress, int total,
+			boolean done, String descriptionKey, int mouseX, int mouseY) {
+		if (renderCollapsedAssignmentIfNeeded(gfx, section, x, y, w, portrait,
+				titleKey, progressKey, progress, total, done)) return;
+		int h = section.expandedHeight;
+		renderAssignerPortrait(gfx, portrait, x, y, h);
+		int cardX = compactCardX(x, h);
+		int cardW = compactCardWidth(w, h);
+		gfx.fill(cardX, y, cardX + cardW, y + h, PANEL_DARK);
+		ScreenDrawUtils.drawBorder(gfx, cardX, y, cardW, h, BORDER, BORDER_MUTED);
+		renderGroupHeader(gfx, section, cardX + 8, y + 6, cardW - 16,
+				titleKey, progressKey, progress, total, done);
+		drawProgressBar(gfx, cardX + 8, y + 31, cardW - 16, 7, progress, total);
+		renderTruncatedDescription(gfx, Component.translatable(descriptionKey),
+				cardX + 8, y + 42, Math.max(20, cardW - 16), done ? TEXT : MUTED, mouseX, mouseY);
 	}
 
 	private void renderTheWornVow(GuiGraphics gfx, int x, int y, int w, int mouseX, int mouseY) {

@@ -11,6 +11,8 @@ import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.
 import com.vincenthuto.hemomancy.common.entity.utility.CovenantThroneSeatEntity;
 import com.vincenthuto.hemomancy.common.init.BlockInit;
 import com.vincenthuto.hemomancy.common.init.EffectInit;
+import com.vincenthuto.hemomancy.common.event.HarbingerAdvancementGranter;
+import com.vincenthuto.hemomancy.common.mission.HarbingerChapterProgression;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.BloodVolumeServerPacket;
 import com.vincenthuto.hemomancy.common.tile.FillerBlockEntity;
@@ -330,6 +332,9 @@ public class CovenantThroneBlock extends BaseEntityBlock implements IMultiBlock,
             throne.setSeatedPlayer(player.getUUID());
         }
         player.startRiding(seat, true);
+        HarbingerAdvancementGranter.grantIfNotDone(player,
+                HarbingerAdvancementGranter.ADV_COVENANT_THRONE_BOUND);
+        HarbingerChapterProgression.tryCompleteLivingCovenant(player);
     }
 
     @Nullable

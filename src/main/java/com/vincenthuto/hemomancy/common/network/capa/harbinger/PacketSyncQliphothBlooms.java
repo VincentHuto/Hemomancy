@@ -32,6 +32,7 @@ public class PacketSyncQliphothBlooms implements CustomPacketPayload {
 			buf.writeBlockPos(entry.getCenter());
 			buf.writeInt(entry.getChunkRadius());
 			buf.writeInt(entry.getPomesDropped());
+			buf.writeByte(entry.getSeveredState());
 		}
 	}
 
@@ -42,7 +43,8 @@ public class PacketSyncQliphothBlooms implements CustomPacketPayload {
 			BlockPos center = buf.readBlockPos();
 			int chunkRadius = buf.readInt();
 			int pomesDropped = buf.readInt();
-			entries.add(new QliphothBloomClientData.BloomEntry(center, chunkRadius, pomesDropped));
+			int severedState = buf.readByte();
+			entries.add(new QliphothBloomClientData.BloomEntry(center, chunkRadius, pomesDropped, severedState));
 		}
 		return new PacketSyncQliphothBlooms(entries);
 	}

@@ -3,9 +3,12 @@ package com.vincenthuto.hemomancy.client.render.world;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.vincenthuto.hemomancy.client.data.QliphothBloomClientData;
+import com.vincenthuto.hemomancy.client.render.HemoRenderTypes;
 import com.vincenthuto.hemomancy.common.init.RenderTypeInit;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.phys.Vec3;
 import org.joml.Matrix4f;
@@ -89,7 +92,9 @@ public class QliphothBloomRenderer {
 
 		for (QliphothBloomClientData.BloomEntry bloom : blooms) {
 			drawQliphothTree(poseStack, buffer, bloom, currentTime, cam);
-			drawPulsingRings(poseStack, buffer, bloom, currentTime, cam);
+			if (!bloom.isPortalOpen() && !bloom.isSealedTrophy()) {
+				drawPulsingRings(poseStack, buffer, bloom, currentTime, cam);
+			}
 		}
 		poseStack.translate(0,1,0);
 		buffer.endBatch(RenderTypeInit.RITE_BOUNDARY_CORE);
@@ -298,6 +303,13 @@ public class QliphothBloomRenderer {
 		double pulse = (Math.sin(time * 0.06) + 1.0) * 0.5;
 
 		int stage      = bloom.getPomesDropped();
+		if (bloom.isPortalOpen() || bloom.isSealedTrophy()) {
+			drawRoots(buffer, mat, time, pulse, 1.0F);
+			float stumpSeed = Math.floorMod(center.asLong(), 10007L) / 10007.0F;
+			drawSeveredStump(buffer, mat, time, pulse, stumpSeed, bloom.isPortalOpen());
+			stack.popPose();
+			return;
+		}
 		float heightFrac = trunkHeightFrac(stage);
 		float rootFrac   = rootLengthFrac(stage);
 		float branchFrac = branchLengthFrac(stage);
@@ -316,6 +328,83 @@ public class QliphothBloomRenderer {
 		}
 
 		stack.popPose();
+	}
+
+	private static void drawSeveredStump(MultiBufferSource buffer, Matrix4f mat, float time,
+			double pulse, float seed, boolean open) {
+		float baseRadius = 0.69F;
+		float waistRadius = 0.55F;
+		float baseY = 0.10F;
+		float waistY = 0.92F;
+		float trunkR = (float) (0.075F + 0.025F * pulse);
+		float veinR = (float) (0.26F + 0.16F * pulse);
+
+		for (int facet = 0; facet < QliphothSeveredGeometry.FACETS; facet++) {
+			int next = (facet + 1) % QliphothSeveredGeometry.FACETS;
+			float a0 = (float) (facet * Math.PI * 2.0 / QliphothSeveredGeometry.FACETS);
+			float a1 = (float) (next * Math.PI * 2.0 / QliphothSeveredGeometry.FACETS);
+			float baseX0 = (float) Math.cos(a0) * baseRadius;
+			float baseZ0 = (float) Math.sin(a0) * baseRadius;
+			float baseX1 = (float) Math.cos(a1) * baseRadius;
+			float baseZ1 = (float) Math.sin(a1) * baseRadius;
+			float waistX0 = (float) Math.cos(a0) * waistRadius;
+			float waistZ0 = (float) Math.sin(a0) * waistRadius;
+			float waistX1 = (float) Math.cos(a1) * waistRadius;
+			float waistZ1 = (float) Math.sin(a1) * waistRadius;
+			QliphothSeveredGeometry.RimPoint rim0 = QliphothSeveredGeometry.rimPoint(facet);
+			QliphothSeveredGeometry.RimPoint rim1 = QliphothSeveredGeometry.rimPoint(next);
+
+			emitCore(buffer, mat,
+					baseX0, baseY, baseZ0, trunkR, 0.018F, 0.018F, 0.96F,
+					baseX1, baseY, baseZ1, trunkR, 0.018F, 0.018F, 0.96F,
+					waistX1, waistY, waistZ1, trunkR, 0.018F, 0.018F, 0.96F,
+					waistX0, waistY, waistZ0, trunkR, 0.018F, 0.018F, 0.96F);
+			emitCore(buffer, mat,
+					waistX0, waistY, waistZ0, trunkR, 0.018F, 0.018F, 0.96F,
+					waistX1, waistY, waistZ1, trunkR, 0.018F, 0.018F, 0.96F,
+					rim1.x(), rim1.y(), rim1.z(), trunkR, 0.018F, 0.018F, 0.96F,
+					rim0.x(), rim0.y(), rim0.z(), trunkR, 0.018F, 0.018F, 0.96F);
+
+			float glowAlpha = open ? 0.12F : 0.055F;
+			emitGlow(buffer, mat,
+					waistX0 * 1.015F, waistY, waistZ0 * 1.015F, veinR, 0.01F, 0.01F, glowAlpha,
+					waistX1 * 1.015F, waistY, waistZ1 * 1.015F, veinR, 0.01F, 0.01F, glowAlpha,
+					rim1.x() * 1.015F, rim1.y(), rim1.z() * 1.015F, veinR, 0.01F, 0.01F, glowAlpha,
+					rim0.x() * 1.015F, rim0.y(), rim0.z() * 1.015F, veinR, 0.01F, 0.01F, glowAlpha);
+		}
+
+		float shaderTime = time / 20.0F;
+		float burden = open ? 0.34F : 0.12F;
+		float attuned = open ? 0.96F : 0.84F;
+		RenderType capType = HemoRenderTypes.monolithFragmentRigid(shaderTime, seed, burden, attuned, 0.0F);
+		VertexConsumer cap = buffer.getBuffer(capType);
+		QliphothSeveredGeometry.RimPoint center = new QliphothSeveredGeometry.RimPoint(
+				0.0F, QliphothSeveredGeometry.cutHeight(0.0F, 0.0F), 0.0F, 0.5F, 0.5F);
+		for (int facet = 0; facet < QliphothSeveredGeometry.FACETS; facet++) {
+			QliphothSeveredGeometry.RimPoint current = QliphothSeveredGeometry.rimPoint(facet);
+			QliphothSeveredGeometry.RimPoint next = QliphothSeveredGeometry.rimPoint(
+					(facet + 1) % QliphothSeveredGeometry.FACETS);
+			emitMonolithTriangle(cap, mat, center, next, current);
+		}
+		if (buffer instanceof MultiBufferSource.BufferSource source) {
+			source.endBatch(capType);
+		}
+	}
+
+	private static void emitMonolithTriangle(VertexConsumer consumer, Matrix4f mat,
+			QliphothSeveredGeometry.RimPoint a, QliphothSeveredGeometry.RimPoint b,
+			QliphothSeveredGeometry.RimPoint c) {
+		emitMonolithVertex(consumer, mat, a);
+		emitMonolithVertex(consumer, mat, b);
+		emitMonolithVertex(consumer, mat, c);
+	}
+
+	private static void emitMonolithVertex(VertexConsumer consumer, Matrix4f mat,
+			QliphothSeveredGeometry.RimPoint point) {
+		consumer.addVertex(mat, point.x(), point.y(), point.z())
+				.setColor(2, 0, 0, 255)
+				.setUv(point.u(), point.v())
+				.setLight(LightTexture.FULL_BRIGHT);
 	}
 
 	/**

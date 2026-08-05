@@ -16,15 +16,21 @@ public class QliphothBloomClientData {
 		private final int chunkRadius;
 		/** Number of Qliphoth Pomes already dropped (0–9). Controls the growth stage. */
 		private final int pomesDropped;
+		private final int severedState;
 
 		public BloomEntry(BlockPos center, int chunkRadius) {
-			this(center, chunkRadius, 0);
+			this(center, chunkRadius, 0, 0);
 		}
 
 		public BloomEntry(BlockPos center, int chunkRadius, int pomesDropped) {
+			this(center, chunkRadius, pomesDropped, 0);
+		}
+
+		public BloomEntry(BlockPos center, int chunkRadius, int pomesDropped, int severedState) {
 			this.center = center;
 			this.chunkRadius = chunkRadius;
 			this.pomesDropped = pomesDropped;
+			this.severedState = severedState;
 		}
 
 		public BlockPos getCenter() {
@@ -39,6 +45,10 @@ public class QliphothBloomClientData {
 		public int getPomesDropped() {
 			return pomesDropped;
 		}
+
+		public int getSeveredState() { return severedState; }
+		public boolean isPortalOpen() { return severedState == 1; }
+		public boolean isSealedTrophy() { return severedState == 2; }
 	}
 
 	private static List<BloomEntry> activeBlooms = Collections.emptyList();

@@ -169,6 +169,16 @@ public final class HemoRenderTypes {
 
 	public static RenderType monolithFragment(float gameTime, float shardSeed, float burden, float attuned,
 			float guiClamp) {
+		return monolithFragment(gameTime, shardSeed, burden, attuned, guiClamp, 1.0F);
+	}
+
+	public static RenderType monolithFragmentRigid(float gameTime, float shardSeed, float burden, float attuned,
+			float guiClamp) {
+		return monolithFragment(gameTime, shardSeed, burden, attuned, guiClamp, 0.0F);
+	}
+
+	private static RenderType monolithFragment(float gameTime, float shardSeed, float burden, float attuned,
+			float guiClamp, float vertexWarp) {
 		RenderStateShard.TexturingStateShard uniforms = new RenderStateShard.TexturingStateShard(
 				"monolith_fragment_uniforms",
 				() -> {
@@ -178,6 +188,7 @@ public final class HemoRenderTypes {
 					setUniform(shader, "Burden", burden);
 					setUniform(shader, "Attuned", attuned);
 					setUniform(shader, "FractalScale", burden > 0.5f ? 13.0f : 8.0f);
+					setUniform(shader, "VertexWarp", vertexWarp);
 				},
 				() -> {
 					ShaderInstance shader = ShaderInit.MONOLITH_FRAGMENT.getInstance().get();

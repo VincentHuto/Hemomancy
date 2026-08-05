@@ -20,6 +20,8 @@ import com.vincenthuto.hemomancy.common.rite.CardinalRiteStationMatcher;
 import com.vincenthuto.hemomancy.common.rite.CardinalRiteStaffEscrow;
 import com.vincenthuto.hemomancy.common.rite.harbinger.CardinalRiteActivationRules;
 import com.vincenthuto.hemomancy.common.rite.harbinger.PuppeteerTrialRiteController;
+import com.vincenthuto.hemomancy.common.mission.HarbingerChapterMilestone;
+import com.vincenthuto.hemomancy.common.mission.HarbingerChapterProgression;
 import com.vincenthuto.hemomancy.common.tile.functional.CardinalFocusBlockEntity;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
@@ -374,6 +376,18 @@ public class BloodCraftingKeyPressPacket implements CustomPacketPayload {
 													.withStyle(ChatFormatting.DARK_RED)),
 									false);
 							return CardinalRiteActivationRules.ActivationAttempt.HANDLED;
+						}
+						if (targetDegree != null) {
+							HarbingerChapterMilestone unmet =
+									HarbingerChapterProgression.unmetChapterForTargetDegree(serverPlayer, targetDegree);
+							if (unmet != null) {
+								player.displayClientMessage(Component.literal("The rank rite remains sealed. Complete ")
+										.withStyle(ChatFormatting.DARK_RED)
+										.append(Component.literal(unmet.chapterName())
+												.withStyle(ChatFormatting.GOLD, ChatFormatting.BOLD))
+										.append(Component.literal(" first.").withStyle(ChatFormatting.DARK_RED)), false);
+								return CardinalRiteActivationRules.ActivationAttempt.HANDLED;
+							}
 						}
 					}
 				} else {

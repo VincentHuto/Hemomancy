@@ -39,6 +39,8 @@ import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodlineDisbandHelper;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodlineSavedData;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
+import com.vincenthuto.hemomancy.common.block.harbinger.functional.QliphothBloomBlock;
+import com.vincenthuto.hemomancy.common.block.shared.IMultiBlock;
 import com.vincenthuto.hemomancy.common.event.LastRiteHelper;
 import com.vincenthuto.hemomancy.common.event.worldevent.BloodMoonSavedData;
 import com.vincenthuto.hemomancy.common.event.worldevent.FoundingFaneEvents;
@@ -47,6 +49,7 @@ import com.vincenthuto.hemomancy.common.entity.mob.monster.will.WillAnchorEntity
 import com.vincenthuto.hemomancy.common.entity.mob.monster.will.WillCompositionRules;
 import com.vincenthuto.hemomancy.common.entity.mob.monster.will.WillEntity;
 import com.vincenthuto.hemomancy.common.entity.mob.monster.will.WillOrigin;
+import com.vincenthuto.hemomancy.common.init.BlockInit;
 import com.vincenthuto.hemomancy.common.init.EntityInit;
 import com.vincenthuto.hemomancy.common.init.ManipulationInit;
 import com.vincenthuto.hemomancy.common.item.harbinger.morphlings.ItemMorphlingJar;
@@ -59,12 +62,16 @@ import com.vincenthuto.hemomancy.common.network.capa.harbinger.PacketSyncPomePro
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.PacketSyncSkills;
 import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
 import com.vincenthuto.hemomancy.common.manipulation.ManipLevel;
+import com.vincenthuto.hemomancy.common.rite.harbinger.HarbingerCardinalRiteEvents;
+import com.vincenthuto.hemomancy.common.rite.harbinger.QliphothBloomSavedData;
 import com.vincenthuto.hemomancy.common.summon.PuppeteerSummonDefinitions;
+import com.vincenthuto.hemomancy.common.tile.functional.QliphothBloomBlockEntity;
 import com.vincenthuto.hemomancy.common.worldgen.ChamberOfWillManager;
 import net.minecraft.ChatFormatting;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.commands.arguments.EntityArgument;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -143,6 +150,9 @@ import java.util.concurrent.CompletableFuture;
  * ── Blood Moon ──
  * /hemo bloodmoon summon
  * /hemo bloodmoon cancel
+ *
+ * Qliphoth Tree Preview:
+ * /hemo qliphoth tree &lt;initial|1-9|fully_grown|pruned|sealed&gt;
  * </pre>
  */
 public class HemoCommand {
@@ -234,6 +244,17 @@ public class HemoCommand {
 												.executes(ctx -> cycleMorphlingStage(ctx.getSource(), EntityArgument.getPlayer(ctx, "player"), -1))))))
 
 				.then(Commands.literal("qliphoth")
+						.then(Commands.literal("tree")
+								.then(Commands.argument("stage", StringArgumentType.word())
+										.suggests((ctx, builder) -> {
+											for (QliphothTreeStage stage : QliphothTreeStage.values()) {
+												builder.suggest(stage.commandName());
+											}
+											return builder.buildFuture();
+										})
+										.executes(ctx -> spawnQliphothTree(ctx.getSource(),
+												ctx.getSource().getPlayerOrException(),
+												StringArgumentType.getString(ctx, "stage")))))
 						.then(Commands.literal("pome")
 								.then(Commands.literal("set")
 										.then(Commands.argument("count", IntegerArgumentType.integer(0, 9))
@@ -1001,6 +1022,70 @@ public class HemoCommand {
 				.append(Component.literal("/9.").withStyle(ChatFormatting.DARK_PURPLE)),
 				true);
 		return 1;
+	}
+
+	private static int spawnQliphothTree(CommandSourceStack source, ServerPlayer player, String rawStage) {
+		QliphothTreeStage stage = QliphothTreeStage.parse(rawStage);
+		if (stage == null) {
+			source.sendFailure(Component.literal("Unknown Qliphoth tree stage. Use initial, 1-9, fully_grown, or pruned."));
+			return 0;
+		}
+
+		ServerLevel level = player.serverLevel();
+		BlockPos center = player.blockPosition();
+		String dimension = level.dimension().location().toString();
+		QliphothBloomSavedData data = QliphothBloomSavedData.get(level.getServer().overworld());
+		QliphothBloomSavedData.BloomEntry overlapping = data.getOverlappingBloom(center, dimension, 3);
+		if (overlapping != null && !overlapping.center().equals(center)) {
+			source.sendFailure(Component.literal("A Qliphoth Bloom already exists within 3 chunks of your position."));
+			return 0;
+		}
+		if (overlapping != null) {
+			removeDebugQliphothTree(level, data, overlapping);
+		}
+
+		QliphothBloomBlock bloomBlock = (QliphothBloomBlock) BlockInit.qliphoth_bloom.get();
+		IMultiBlock multiBlock = bloomBlock;
+		if (!multiBlock.canPlaceMultiBlock(level, center)) {
+			source.sendFailure(Component.literal("There is not enough room for the Qliphoth tree here."));
+			return 0;
+		}
+
+		level.setBlockAndUpdate(center, bloomBlock.defaultBlockState());
+		if (level.getBlockEntity(center) instanceof QliphothBloomBlockEntity bloomEntity) {
+			bloomEntity.setOwnerUUID(player.getUUID());
+			bloomEntity.setChunkRadius(3);
+		}
+		multiBlock.placeFillers(level, center, bloomBlock.defaultBlockState());
+
+		data.addBloom(new QliphothBloomSavedData.BloomEntry(
+				player.getUUID(), center, dimension, 3, level.getGameTime()));
+		for (int i = 0; i < stage.pomesDropped(); i++) {
+			data.incrementPomesDropped(center);
+		}
+		if (stage.severedState().isPortalOpen()) {
+			data.severBloom(center);
+		} else if (stage.severedState().isSealedTrophy()) {
+			data.severBloom(center);
+			data.sealBloom(center);
+		}
+		HarbingerCardinalRiteEvents.syncQliphothBlooms(level.getServer());
+
+		source.sendSuccess(() -> Component.literal("Spawned Qliphoth tree stage ")
+				.append(Component.literal(rawStage).withStyle(ChatFormatting.LIGHT_PURPLE))
+				.append(Component.literal(" at ").withStyle(ChatFormatting.DARK_PURPLE))
+				.append(Component.literal(center.toShortString()).withStyle(ChatFormatting.GOLD)), true);
+		return 1;
+	}
+
+	private static void removeDebugQliphothTree(ServerLevel level, QliphothBloomSavedData data,
+			QliphothBloomSavedData.BloomEntry bloom) {
+		if (level.getBlockState(bloom.center()).getBlock() instanceof IMultiBlock multiBlock) {
+			multiBlock.removeFillers(level, bloom.center());
+			level.removeBlock(bloom.center(), false);
+		} else {
+			data.removeBloomInChunk(bloom.center(), bloom.dimension());
+		}
 	}
 
 	// ═══════════════════ Skill Points ═══════════════════

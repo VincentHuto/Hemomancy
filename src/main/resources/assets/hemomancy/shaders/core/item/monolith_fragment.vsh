@@ -9,6 +9,7 @@ uniform float HemoTime;
 uniform float ShardSeed;
 uniform float Burden;
 uniform float Attuned;
+uniform float VertexWarp;
 
 in vec3 Position;
 in vec4 Color;
@@ -39,7 +40,7 @@ void main() {
             + HemoTime * VERTEX_MORPH_RATE
             + ShardSeed * 6.28318
         );
-        float strength = VERTEX_MORPH_STRENGTH * (1.0 + Burden * 0.45 + Attuned * 0.25);
+        float strength = VERTEX_MORPH_STRENGTH * VertexWarp * (1.0 + Burden * 0.45 + Attuned * 0.25);
         float edgeWeight = smoothstep(0.0, 0.16, centerDistance);
         p.xz += normalize(fromCenter) * morph * strength * edgeWeight;
         p.y += sin((p.x - p.z) * 12.0 + HemoTime * 1.1 + ShardSeed * 4.2) * strength * 0.35 * edgeWeight;

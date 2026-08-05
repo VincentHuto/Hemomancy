@@ -14,6 +14,7 @@ import com.vincenthuto.hemomancy.common.event.HarbingerAdvancementGranter;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.dialogue.OpenDialoguePacket;
 import com.vincenthuto.hemomancy.common.mission.FirstBloodcraftAssignmentHelper;
+import com.vincenthuto.hemomancy.common.init.ItemInit;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -172,6 +173,9 @@ public class HarbingerVicarEntity extends PathfinderMob {
             }
 
             int degree = HemoCapabilityAccess.getPlayerDegreeNumber(player);
+            if (degree >= 1) {
+                grantOrRecoverAssignmentLedger(serverPlayer);
+            }
             DialogueTree tree;
 
             if (isPurifying(player)) {
@@ -184,7 +188,7 @@ public class HarbingerVicarEntity extends PathfinderMob {
                 tree = HarbingerVicarDialogueTrees.forDegree(degree, this.getId(), canShowRecruitment(player, this),
                         isNpcInPlayerBloodline(player, this), hasAbocipherLiteracy(player),
                         hasAdvancement(serverPlayer, HarbingerAdvancementGranter.ADV_HERMIT_ROAD_FIRST_REMNANT),
-                        hasAdvancement(serverPlayer, HarbingerAdvancementGranter.ADV_HERMIT_ROAD_LEDGER_GRANTED),
+                        hasAdvancement(serverPlayer, HarbingerAdvancementGranter.ADV_HERMIT_ROAD_REPORTED),
                         hasAdvancement(serverPlayer, HarbingerAdvancementGranter.ADV_VICAR_MASONS_RESPITE_DIRECTIVE),
                         FirstBloodcraftAssignmentHelper.canClaim(serverPlayer),
                         FirstBloodcraftAssignmentHelper.isClaimed(serverPlayer));
@@ -195,5 +199,21 @@ public class HarbingerVicarEntity extends PathfinderMob {
             PacketHandler.sendToPlayer(serverPlayer, new OpenDialoguePacket(tree));
         }
         return InteractionResult.sidedSuccess(player.level().isClientSide);
+    }
+
+    private void grantOrRecoverAssignmentLedger(ServerPlayer player) {
+        boolean carriesLedger = player.getInventory().contains(
+                new net.minecraft.world.item.ItemStack(ItemInit.harbinger_assignment_ledger.get()));
+        if (carriesLedger) return;
+        net.minecraft.world.item.ItemStack ledger =
+                new net.minecraft.world.item.ItemStack(ItemInit.harbinger_assignment_ledger.get());
+        if (!player.getInventory().add(ledger)) {
+            spawnAtLocation(ledger);
+        }
+        HarbingerAdvancementGranter.grantIfNotDone(player,
+                HarbingerAdvancementGranter.ADV_HERMIT_ROAD_LEDGER_GRANTED);
+        player.displayClientMessage(net.minecraft.network.chat.Component.translatable(
+                "hemomancy.dialogue.event.vicar_assignment_ledger_granted")
+                .withStyle(net.minecraft.ChatFormatting.DARK_RED), false);
     }
 }

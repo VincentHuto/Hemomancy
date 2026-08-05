@@ -25,6 +25,7 @@
     { "name": "ShardSeed", "type": "float", "count": 1, "values": [ 0.0 ] },
     { "name": "Burden", "type": "float", "count": 1, "values": [ 0.0 ] },
     { "name": "Attuned", "type": "float", "count": 1, "values": [ 0.0 ] },
-    { "name": "FractalScale", "type": "float", "count": 1, "values": [ 8.0 ] }
+    { "name": "FractalScale", "type": "float", "count": 1, "values": [ 8.0 ] },
+    { "name": "VertexWarp", "type": "float", "count": 1, "values": [ 1.0 ] }
   ]
 }

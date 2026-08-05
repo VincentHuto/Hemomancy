@@ -10,11 +10,14 @@ public final class ArchonPathRiteSourceTest {
 	public static void main(String[] args) throws IOException {
 		String dialogue = read("src/main/java/com/vincenthuto/hemomancy/common/entity/npc/dialogue/DialogueEventHandler.java");
 		String rites = read("src/main/java/com/vincenthuto/hemomancy/common/rite/harbinger/HarbingerCardinalRiteEvents.java");
+		String ordeal = read("src/main/java/com/vincenthuto/hemomancy/common/worldgen/VesperOrdealManager.java");
 		assertContains(dialogue, "EnumArchonPath.SILENT_PENDING");
 		assertContains(dialogue, "EnumArchonPath.APOTHEOS_PENDING");
-		assertContains(rites, "EnumArchonPath.SILENT_ARCHON");
-		assertContains(rites, "boolean pruned = completePruningOfQliphoth");
-		assertContains(rites, "if (pruned)");
+		assertContains(rites, "EnumArchonPath.SILENT_PENDING");
+		assertContains(rites, "data.severBloom(targetBloom.center())");
+		assertContains(ordeal, "EnumArchonPath.SILENT_ARCHON");
+		assertContains(ordeal, "ADV_VESPER_DEFEATED");
+		assertContains(rites, "completePruningOfQliphoth(sLevel, caster, center)");
 		assertContains(rites, "EnumArchonPath.APOTHEOS");
 		assertContains(rites, "degree.getArchonPath() != EnumArchonPath.APOTHEOS_PENDING");
 		assertNotContains(rites, "popFungalSpineFromBack(level, player)");

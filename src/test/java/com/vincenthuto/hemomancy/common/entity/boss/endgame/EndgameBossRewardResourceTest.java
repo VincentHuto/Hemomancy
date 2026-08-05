@@ -21,6 +21,8 @@ public final class EndgameBossRewardResourceTest {
 				"com/vincenthuto/hemomancy/common/item/harbinger/bloodline/MycophantTendrilItem.java"));
 		String vesper = read(SOURCE_ROOT.resolve(
 				"com/vincenthuto/hemomancy/common/entity/boss/endgame/VesperTheEveningStarEntity.java"));
+		String vesperOrdeal = read(SOURCE_ROOT.resolve(
+				"com/vincenthuto/hemomancy/common/worldgen/VesperOrdealManager.java"));
 		String crownedRefusal = read(SOURCE_ROOT.resolve(
 				"com/vincenthuto/hemomancy/common/entity/boss/endgame/VesperTheCrownedRefusalEntity.java"));
 		String mycophant = read(SOURCE_ROOT.resolve(
@@ -57,7 +59,11 @@ public final class EndgameBossRewardResourceTest {
 				"HemoRenderTypes.monolithFragment");
 		assertContains("Memory renderer draws a pome-like silhouette", memoryRenderer,
 				"drawPomeSilhouette");
-		assertContains("Evening Star reward manually spawns Memory of Vesper exactly once", vesper,
+		assertContains("verified Vesper ordeal grants Memory of Vesper", vesperOrdeal,
+				"ItemInit.memory_of_vesper.get()");
+		assertContains("Vesper ordeal persists interrupted Memory delivery", vesperOrdeal,
+				"PENDING_MEMORY_KEY");
+		assertNotContains("Evening Star entity cannot duplicate the managed ordeal reward", vesper,
 				"ItemInit.memory_of_vesper.get()");
 		assertNotContains("Crowned Refusal still has no final Vesper staff loot", crownedRefusal,
 				"memory_of_vesper");

@@ -49,7 +49,18 @@ public record OpenHarbingerAssignmentLedgerPacket(
 		boolean artificerD7Fitting,
 		boolean artificerFirstLivingGraft,
 		int artificerLivingWeaponFormCount,
-		boolean artificerLivingArsenalFitting) implements CustomPacketPayload {
+		boolean artificerLivingArsenalFitting,
+		boolean foundedBloodline,
+		boolean foundingFaneEstablished,
+		boolean chamberReturned,
+		boolean covenantThroneBound,
+		boolean covenantVigilCompleted,
+		boolean livingCovenantComplete,
+		int pomesConsumed,
+		boolean qliphothCommunionComplete,
+		boolean silentPending,
+		boolean severedPortalOpen,
+		boolean silentArchon) implements CustomPacketPayload {
 	public static final Type<OpenHarbingerAssignmentLedgerPacket> TYPE =
 			new Type<>(Hemomancy.rloc("open_harbinger_assignment_ledger"));
 	public static final StreamCodec<FriendlyByteBuf, OpenHarbingerAssignmentLedgerPacket> STREAM_CODEC =
@@ -98,6 +109,17 @@ public record OpenHarbingerAssignmentLedgerPacket(
 		buf.writeBoolean(msg.artificerFirstLivingGraft);
 		buf.writeVarInt(msg.artificerLivingWeaponFormCount);
 		buf.writeBoolean(msg.artificerLivingArsenalFitting);
+		buf.writeBoolean(msg.foundedBloodline);
+		buf.writeBoolean(msg.foundingFaneEstablished);
+		buf.writeBoolean(msg.chamberReturned);
+		buf.writeBoolean(msg.covenantThroneBound);
+		buf.writeBoolean(msg.covenantVigilCompleted);
+		buf.writeBoolean(msg.livingCovenantComplete);
+		buf.writeVarInt(msg.pomesConsumed);
+		buf.writeBoolean(msg.qliphothCommunionComplete);
+		buf.writeBoolean(msg.silentPending);
+		buf.writeBoolean(msg.severedPortalOpen);
+		buf.writeBoolean(msg.silentArchon);
 	}
 
 	public static OpenHarbingerAssignmentLedgerPacket decode(FriendlyByteBuf buf) {
@@ -143,6 +165,17 @@ public record OpenHarbingerAssignmentLedgerPacket(
 				buf.readBoolean(),
 				buf.readBoolean(),
 				buf.readVarInt(),
+				buf.readBoolean(),
+				buf.readBoolean(),
+				buf.readBoolean(),
+				buf.readBoolean(),
+				buf.readBoolean(),
+				buf.readBoolean(),
+				buf.readBoolean(),
+				buf.readVarInt(),
+				buf.readBoolean(),
+				buf.readBoolean(),
+				buf.readBoolean(),
 				buf.readBoolean());
 	}
 
@@ -166,7 +199,11 @@ public record OpenHarbingerAssignmentLedgerPacket(
 				msg.artificerFrameConsecrated, msg.artificerFirstBloodLustUpgrade,
 				msg.artificerBloodLustFitting, msg.artificerMonolithicFrame,
 				msg.artificerFirstD7Upgrade, msg.artificerD7Fitting, msg.artificerFirstLivingGraft,
-				msg.artificerLivingWeaponFormCount, msg.artificerLivingArsenalFitting));
+				msg.artificerLivingWeaponFormCount, msg.artificerLivingArsenalFitting,
+				msg.foundedBloodline, msg.foundingFaneEstablished, msg.chamberReturned,
+				msg.covenantThroneBound, msg.covenantVigilCompleted, msg.livingCovenantComplete,
+				msg.pomesConsumed, msg.qliphothCommunionComplete, msg.silentPending,
+				msg.severedPortalOpen, msg.silentArchon));
 	}
 
 	@Override

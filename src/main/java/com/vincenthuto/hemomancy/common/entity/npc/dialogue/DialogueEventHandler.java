@@ -16,6 +16,7 @@ import com.vincenthuto.hemomancy.common.entity.npc.harbinger.HarbingerHermitEnti
 import com.vincenthuto.hemomancy.common.event.HarbingerAdvancementGranter;
 import com.vincenthuto.hemomancy.common.entity.npc.unstained.UnstainedScoutEntity;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
+import com.vincenthuto.hemomancy.common.init.BlockInit;
 import com.vincenthuto.hemomancy.common.mission.HarbingerArtificerAssignmentHelper;
 import com.vincenthuto.hemomancy.common.mission.FirstBloodcraftAssignmentHelper;
 import com.vincenthuto.hemomancy.common.mission.FirstSeparationAssignmentHelper;
@@ -379,7 +380,7 @@ public class DialogueEventHandler {
 			return;
 		}
 		if (HarbingerAdvancementGranter.hasAdvancement(player,
-				HarbingerAdvancementGranter.ADV_HERMIT_ROAD_LEDGER_GRANTED)) {
+				HarbingerAdvancementGranter.ADV_HERMIT_ROAD_REPORTED)) {
 			player.displayClientMessage(
 					Component.translatable("hemomancy.dialogue.event.vicar_hermit_road_known")
 							.withStyle(ChatFormatting.GRAY),
@@ -387,11 +388,11 @@ public class DialogueEventHandler {
 			return;
 		}
 
-		giveOrDropAtEntity(player, entityId, new ItemStack(ItemInit.harbinger_assignment_ledger.get()));
 		HarbingerAdvancementGranter.grantIfNotDone(player,
-				HarbingerAdvancementGranter.ADV_HERMIT_ROAD_LEDGER_GRANTED);
+				HarbingerAdvancementGranter.ADV_HERMIT_ROAD_REPORTED);
+		giveOrDropAtEntity(player, entityId, new ItemStack(BlockInit.befouling_ash_trail.get(), 4));
 		player.displayClientMessage(
-				Component.translatable("hemomancy.dialogue.event.vicar_hermit_road_ledger")
+				Component.translatable("hemomancy.dialogue.event.vicar_hermit_road_reported")
 						.withStyle(ChatFormatting.DARK_RED),
 				false);
 	}
@@ -717,14 +718,18 @@ public class DialogueEventHandler {
 			return;
 		}
 
+		boolean taxonomyWasComplete = HarbingerAdvancementGranter.isRedTaxonomyComplete(player);
 		if (!player.isCreative()) {
 			held.shrink(1);
 		}
 		HarbingerAdvancementGranter.grantIfNotDone(player, sample.advancement());
 		int count = HarbingerAdvancementGranter.getRedTaxonomySpecimenCount(player);
-		if (count >= 4) {
+		boolean taxonomyCompletedNow = count >= 4 && !taxonomyWasComplete;
+		if (taxonomyCompletedNow) {
 			HarbingerAdvancementGranter.grantIfNotDone(player,
 					HarbingerAdvancementGranter.ADV_RED_TAXONOMY_COMPLETE);
+			giveOrDropAtEntity(player, player.getId(), new ItemStack(BlockInit.specimen_jar.get(), 4));
+			giveOrDropAtEntity(player, player.getId(), new ItemStack(ItemInit.bloody_vial.get(), 4));
 		}
 
 		player.displayClientMessage(
@@ -732,10 +737,11 @@ public class DialogueEventHandler {
 								held.getHoverName(), count)
 						.withStyle(ChatFormatting.DARK_RED),
 				false);
-		player.displayClientMessage(
-				Component.translatable("hemomancy.dialogue.event.alchemist_red_taxonomy_placeholder_reward")
-						.withStyle(ChatFormatting.DARK_GRAY, ChatFormatting.ITALIC),
-				false);
+		if (taxonomyCompletedNow) {
+			player.displayClientMessage(Component.translatable(
+					"hemomancy.dialogue.event.alchemist_red_taxonomy_reward")
+					.withStyle(ChatFormatting.DARK_RED), false);
+		}
 	}
 
 	private static boolean isAlchemistBestiaryEvent(String eventId) {

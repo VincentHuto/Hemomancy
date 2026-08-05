@@ -1,0 +1,13 @@
+{
+  "display": {
+    "icon": {"id": "hemomancy:memory_of_vesper"},
+    "title": {"translate": "advancements.hemomancy.vesper_defeated.title"},
+    "description": {"translate": "advancements.hemomancy.vesper_defeated.description"},
+    "frame": "challenge",
+    "show_toast": true,
+    "announce_to_chat": true
+  },
+  "parent": "hemomancy:hemomancy/degree_7_archon",
+  "criteria": {"manual": {"trigger": "minecraft:impossible"}},
+  "requirements": [["manual"]]
+}

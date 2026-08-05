@@ -17,7 +17,7 @@ public final class HarbingerHermitRoadMissionSourceTest {
 	public static void main(String[] args) throws IOException {
 		mortalDisplayRequiresAndRecordsTheTempleOath();
 		ledgerIsSeparateFromFieldNotesAndUsesGuideRenderer();
-		vicarGrantsLedgerAfterFirstWildHermitageReport();
+		vicarGrantsLedgerAtFormalContactAndKeepsHermitRoadOptional();
 		alchemistRedTaxonomyAssignmentExists();
 		mnemonistWovenVesselAssignmentExists();
 		firstHermitageRemnantEvidenceExists();
@@ -136,7 +136,7 @@ public final class HarbingerHermitRoadMissionSourceTest {
 				"MilestoneDrawerView.isOverToggle");
 	}
 
-	private static void vicarGrantsLedgerAfterFirstWildHermitageReport() throws IOException {
+	private static void vicarGrantsLedgerAtFormalContactAndKeepsHermitRoadOptional() throws IOException {
 		String vicarEntity = read(SOURCE_ROOT.resolve(
 				"com/vincenthuto/hemomancy/common/entity/npc/harbinger/HarbingerVicarEntity.java"));
 		String vicarTrees = read(SOURCE_ROOT.resolve(
@@ -148,8 +148,12 @@ public final class HarbingerHermitRoadMissionSourceTest {
 
 		assertContains("vicar checks first hermitage remnant advancement", vicarEntity,
 				"ADV_HERMIT_ROAD_FIRST_REMNANT");
-		assertContains("vicar checks ledger claim advancement", vicarEntity,
+		assertContains("vicar keeps the legacy ledger claim advancement for migration", vicarEntity,
 				"ADV_HERMIT_ROAD_LEDGER_GRANTED");
+		assertContains("first formal Vicar contact grants or recovers the ledger", vicarEntity,
+				"grantOrRecoverAssignmentLedger");
+		assertContains("Vicar contact grants the assignment ledger item", vicarEntity,
+				"ItemInit.harbinger_assignment_ledger.get()");
 		assertContains("vicar tree receives hermit road evidence state", vicarTrees,
 				"hasFoundHermitRoadRemnant");
 		assertContains("vicar tree offers report option", vicarTrees,
@@ -162,14 +166,16 @@ public final class HarbingerHermitRoadMissionSourceTest {
 				"hemomancy.vicar.hermit_road.followup.line1");
 		assertContains("vicar neophyte degree hint mentions next assignment opportunity", vicarTrees,
 				"hemomancy.vicar.neophyte.degree_hint.assignment");
-		assertContains("dialogue event grants assignment ledger", eventHandler,
-				"ItemInit.harbinger_assignment_ledger.get()");
-		assertContains("dialogue event grants ledger advancement", eventHandler,
-				"ADV_HERMIT_ROAD_LEDGER_GRANTED");
+		assertContains("Hermit Road dialogue records its own report milestone", eventHandler,
+				"ADV_HERMIT_ROAD_REPORTED");
+		assertContains("Hermit Road rewards exploration supplies", eventHandler,
+				"BlockInit.befouling_ash_trail.get()");
 		assertContains("advancement constant exists for first remnant", advancementGranter,
 				"ADV_HERMIT_ROAD_FIRST_REMNANT");
 		assertContains("advancement constant exists for ledger grant", advancementGranter,
 				"ADV_HERMIT_ROAD_LEDGER_GRANTED");
+		assertContains("advancement constant exists for optional report", advancementGranter,
+				"ADV_HERMIT_ROAD_REPORTED");
 		assertContains("post-ledger followup line is translated", read(RESOURCE_ROOT.resolve(
 				"assets/hemomancy/lang/en_us.json")),
 				"hemomancy.vicar.hermit_road.followup.line1");
@@ -216,8 +222,12 @@ public final class HarbingerHermitRoadMissionSourceTest {
 				"handleAlchemistRedTaxonomy");
 		assertContains("red taxonomy turn-in consumes sample", eventHandler,
 				"held.shrink(1)");
-		assertContains("red taxonomy placeholder reward message exists", eventHandler,
-				"hemomancy.dialogue.event.alchemist_red_taxonomy_placeholder_reward");
+		assertContains("red taxonomy completion reward message exists", eventHandler,
+				"hemomancy.dialogue.event.alchemist_red_taxonomy_reward");
+		assertContains("red taxonomy completion grants specimen jars", eventHandler,
+				"BlockInit.specimen_jar.get()");
+		assertContains("red taxonomy completion grants empty blood vials", eventHandler,
+				"ItemInit.bloody_vial.get()");
 		assertContains("advancement constant exists for assay completion", advancementGranter,
 				"ADV_RED_TAXONOMY_COMPLETE");
 		assertContains("advancement helper counts red taxonomy specimens", advancementGranter,

@@ -47,6 +47,7 @@ public class QliphothBloomEvents {
 	@SubscribeEvent
 	public static void onQliphothBloomBreak(BreakEvent event) {
 		if (!isProtectedQliphothPart(event.getLevel(), event.getPos(), event.getState())) return;
+		if (event.getPlayer().isCreative()) return;
 
 		event.setCanceled(true);
 		if (event.getPlayer() instanceof ServerPlayer player) {
@@ -65,6 +66,7 @@ public class QliphothBloomEvents {
 
 		for (QliphothBloomSavedData.BloomEntry bloom : data.getBlooms()) {
 			if (!bloom.dimension().equals(dimension)) continue;
+			if (data.getState(bloom.center()) != SeveredQliphothState.LIVING) continue;
 
 			int blockRadius = bloom.chunkRadius() * 16;
 			AABB bloomBounds = new AABB(bloom.center()).inflate(blockRadius, 64, blockRadius);

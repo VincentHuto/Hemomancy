@@ -4,6 +4,7 @@ import com.vincenthuto.hemomancy.common.init.EntityInit;
 import com.vincenthuto.hemomancy.common.init.SoundInit;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerBossEvent;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -28,12 +29,17 @@ import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
+import com.vincenthuto.hemomancy.common.worldgen.VesperOrdealManager;
+
+import java.util.UUID;
 
 public class VesperTheCrownedRefusalEntity extends Monster {
     private static final int EVENING_STAR_TRANSITION_TICKS = 120;
 
     private boolean spawnedEveningStar = false;
     private int deathTicks;
+	private UUID ordealOwner;
+	private long bloomOrigin;
 
     private final ServerBossEvent bossEvent = new ServerBossEvent(
             Component.translatable("entity.hemomancy.vesper_crowned_refusal"),
@@ -142,9 +148,32 @@ public class VesperTheCrownedRefusalEntity extends Monster {
         eveningStar.moveTo(this.getX(), this.getY(), this.getZ(), this.getYRot(), this.getXRot());
         eveningStar.setYHeadRot(this.getYHeadRot());
         eveningStar.setTarget(this.getTarget());
+		VesperOrdealManager.copyOrdeal(this, eveningStar);
         eveningStar.finalizeSpawn(server, server.getCurrentDifficultyAt(this.blockPosition()), MobSpawnType.MOB_SUMMONED, null);
         server.addFreshEntity(eveningStar);
     }
+
+	public void setOrdeal(UUID owner, long bloomOrigin) {
+		this.ordealOwner = owner;
+		this.bloomOrigin = bloomOrigin;
+	}
+
+	public UUID getOrdealOwner() { return ordealOwner; }
+	public long getBloomOrigin() { return bloomOrigin; }
+
+	@Override
+	public void addAdditionalSaveData(CompoundTag tag) {
+		super.addAdditionalSaveData(tag);
+		if (ordealOwner != null) tag.putUUID("OrdealOwner", ordealOwner);
+		tag.putLong("BloomOrigin", bloomOrigin);
+	}
+
+	@Override
+	public void readAdditionalSaveData(CompoundTag tag) {
+		super.readAdditionalSaveData(tag);
+		ordealOwner = tag.hasUUID("OrdealOwner") ? tag.getUUID("OrdealOwner") : null;
+		bloomOrigin = tag.getLong("BloomOrigin");
+	}
 
     @Override
     public boolean doHurtTarget(Entity target) {

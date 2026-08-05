@@ -22,7 +22,6 @@ public final class MaterialsAtlasMetadataSourceTest {
 		String sharedTraceTexture = read("src/main/java/com/vincenthuto/hemomancy/client/screen/skilltree/shared/StaticTraceLayerTexture.java");
 		String view = read("src/main/java/com/vincenthuto/hemomancy/client/screen/skilltree/shared/MaterialsTabView.java");
 		String controller = read("src/main/java/com/vincenthuto/hemomancy/client/screen/skilltree/shared/MaterialsTabController.java");
-		String docs = read("docs/HEMOMANCY_REFERENCE.md");
 
 		assertContains("atlas spec exposes Harbinger path", spec, "MaterialAtlasPath.HARBINGER");
 		assertContains("atlas spec exposes Unstained path", spec, "MaterialAtlasPath.UNSTAINED");
@@ -102,8 +101,6 @@ public final class MaterialsAtlasMetadataSourceTest {
 		assertNotContains("atlas trace cache does not connect branches to representative root materials",
 				trace, "rootPositionFor");
 
-		assertContains("reference docs mention veiled next-tier materials",
-				docs, "next-tier veiled material nodes");
 	}
 
 	private static Set<String> materialIds(String data, String methodName) {

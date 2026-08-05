@@ -1,7 +1,8 @@
 package com.vincenthuto.hemomancy.common.entity.boss.endgame;
 
-import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.init.SoundInit;
+import com.vincenthuto.hemomancy.common.worldgen.VesperOrdealManager;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerBossEvent;
@@ -24,16 +25,20 @@ import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
 import net.minecraft.world.entity.ai.goal.WaterAvoidingRandomStrollGoal;
 import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
-import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 
+import java.util.UUID;
+
 public class VesperTheEveningStarEntity extends Monster {
     private static final int FINAL_DEATH_TICKS = 200;
 
     private int deathTicks;
+	private UUID ordealOwner;
+	private long bloomOrigin;
+	private boolean ordealResolved;
 
     private final ServerBossEvent bossEvent = new ServerBossEvent(
             Component.translatable("entity.hemomancy.vesper_evening_star"),
@@ -48,14 +53,17 @@ public class VesperTheEveningStarEntity extends Monster {
 
     @Override
     protected void dropCustomDeathLoot(ServerLevel level, DamageSource damageSource, boolean recentlyHit) {
-        //super.dropCustomDeathLoot(level, damageSource, recentlyHit);
-        ItemEntity itementity = this.spawnAtLocation(ItemInit.memory_of_vesper.get());
-        if (itementity != null) {
-            itementity.setExtendedLifetime();
-            itementity.setInvulnerable(true);
-
-        }
+		// Ordeal victory delivers its owner-bound reward atomically with progression.
     }
+
+	@Override
+	public void die(DamageSource source) {
+		super.die(source);
+		if (!level().isClientSide && !ordealResolved) {
+			ordealResolved = true;
+			VesperOrdealManager.completeVictory(this);
+		}
+	}
 
     public static AttributeSupplier.Builder setAttributes() {
         return Monster.createMonsterAttributes()
@@ -113,6 +121,28 @@ public class VesperTheEveningStarEntity extends Monster {
     public boolean removeWhenFarAway(double distanceToClosestPlayer) {
         return false;
     }
+
+	public void setOrdeal(UUID owner, long bloomOrigin) {
+		this.ordealOwner = owner;
+		this.bloomOrigin = bloomOrigin;
+	}
+
+	public UUID getOrdealOwner() { return ordealOwner; }
+	public long getBloomOrigin() { return bloomOrigin; }
+
+	@Override
+	public void addAdditionalSaveData(CompoundTag tag) {
+		super.addAdditionalSaveData(tag);
+		if (ordealOwner != null) tag.putUUID("OrdealOwner", ordealOwner);
+		tag.putLong("BloomOrigin", bloomOrigin);
+	}
+
+	@Override
+	public void readAdditionalSaveData(CompoundTag tag) {
+		super.readAdditionalSaveData(tag);
+		ordealOwner = tag.hasUUID("OrdealOwner") ? tag.getUUID("OrdealOwner") : null;
+		bloomOrigin = tag.getLong("BloomOrigin");
+	}
 
     @Override
     protected void tickDeath() {

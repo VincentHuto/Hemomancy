@@ -2,11 +2,13 @@ package com.vincenthuto.hemomancy.common.worldgen;
 
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.EnumArchonPath;
 import com.vincenthuto.hemomancy.common.event.HarbingerAdvancementGranter;
 import com.vincenthuto.hemomancy.common.init.BlockInit;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.PacketSyncChamberOfWill;
 import com.vincenthuto.hemomancy.common.rite.harbinger.QliphothBloomSavedData;
+import com.vincenthuto.hemomancy.common.mission.HarbingerChapterProgression;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
@@ -102,9 +104,7 @@ public class ChamberOfWillManager extends SavedData {
             return;
         }
 
-        returnPoints.put(player.getUUID(), new ReturnPoint(
-                player.level().dimension().location(),
-                player.getX(), player.getY(), player.getZ(), player.getYRot()));
+		rememberReturnPoint(player);
         refreshProgressionState(player);
 
         BlockPos cell = cellPos(idFor(player.getUUID()));
@@ -118,8 +118,21 @@ public class ChamberOfWillManager extends SavedData {
         setDirty();
     }
 
+	public void rememberReturnPoint(ServerPlayer player) {
+		returnPoints.put(player.getUUID(), new ReturnPoint(
+				player.level().dimension().location(),
+				player.getX(), player.getY(), player.getZ(), player.getYRot()));
+		setDirty();
+	}
+
     public void exitChamber(ServerPlayer player) {
         MinecraftServer server = player.getServer();
+		VesperOrdealManager.abandonAttempt(player);
+        if (HemoCapabilityAccess.getPlayerDegreeNumber(player) >= 6) {
+            HarbingerAdvancementGranter.grantIfNotDone(player,
+                    HarbingerAdvancementGranter.ADV_CHAMBER_RETURNED);
+            HarbingerChapterProgression.tryCompleteLivingCovenant(player);
+        }
         ReturnPoint rp = returnPoints.get(player.getUUID());
         if (rp != null) {
             ServerLevel dest = server.getLevel(ResourceKey.create(Registries.DIMENSION, rp.dimension));
@@ -229,12 +242,14 @@ public class ChamberOfWillManager extends SavedData {
         boolean qliphothStarted = qliphothDone
                 || qliphothPomeCount(player) > 0
                 || hasActiveQliphothBloom(player);
-        String archonChoice = player.getPersistentData().getString(FungalGardenTravelHelper.ARCHON_CHOICE_KEY);
+        EnumArchonPath archonPath = HemoCapabilityAccess.getInitiatoryDegree(player)
+                .map(deg -> deg.getArchonPath())
+                .orElse(EnumArchonPath.NONE);
 
         if (degree >= 8) {
             return new ChamberState(3, THEME_APOTHEOS);
         }
-        if (FungalGardenTravelHelper.ARCHON_CHOICE_SILENCE.equals(archonChoice) && degree >= 7) {
+        if (archonPath == EnumArchonPath.SILENT_ARCHON && degree >= 7) {
             return new ChamberState(2, THEME_SILENT_ARCHON);
         }
         if (qliphothStarted) {
@@ -322,6 +337,9 @@ public class ChamberOfWillManager extends SavedData {
         MinecraftServer server = serverLevel.getServer();
         ChamberOfWillManager manager = get(server);
         for (ServerPlayer player : serverLevel.players()) {
+			if (VesperOrdealManager.tickArenaPlayer(player, serverLevel)) {
+				continue;
+			}
             manager.refreshProgressionState(player);
             manager.ensureRoom(serverLevel, player.getUUID());
             manager.syncTo(player);

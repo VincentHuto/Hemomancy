@@ -33,12 +33,14 @@ The Hematic Order publicly recognizes seven degrees. Apotheos is the hidden eigh
 - **Rite:** Sanguine Initiation
 - **Theme:** Crimson Veil; blood becomes a deliberate living resource
 - **Core progression:** Blood Absorption, Blood Projection, first structures, early tendency awareness
+- The first Vicar contacted grants or replaces the Assignment Ledger. **First Bloodcraft** is the Main chapter; **The Hermit Road** is an optional Side assignment.
 
 ### Degree 2: Votary
 
 - **Rite:** Votary Rite
 - **Theme:** Hematic Covenant; choosing to remain infected
 - **Core progression:** the seven blood tendencies and deeper vascular practice
+- **The First Separation** is the Main chapter. Red Taxonomy, Living Bestiary, and enzyme mastery are optional Alchemical Fieldwork catalogues; completing Red Taxonomy grants jars and empty vials.
 - A Fungal Podium may be encountered, but it cannot open the Fungal Gardens without the Degree-7 ninth-pome Spine.
 
 ### Degree 3: Initiate
@@ -59,12 +61,14 @@ The Hematic Order publicly recognizes seven degrees. Apotheos is the hidden eigh
 - **Theme:** the Crimson Lodge and its concealed mycelial research
 - **Core progression:** Bloodline Founding, Morphling Incubator, Sanguine Monolith, and Founding Fane eligibility
 - Bloodline Founding creates the covenant. The later Founding Fane rite gives that covenant a Flexible Envelope shaped by a Consecrated Bloodwell and connected Hematic Stakes.
+- Founding a valid bloodline and consecrating its first usable Fane completes **A Covenant Written in Place**, the chapter proof for the Sanctified rite.
 
 ### Degree 6: Sanctified
 
 - **Rite:** Sanctified Rite
 - **Theme:** Bloodline Covenant; individual blood becomes covenant infrastructure
 - **Core progression:** Chamber of Will, Eternal Covenant, expanded shared blood systems, and deeper bloodline authority
+- **The Living Covenant** requires a safe Chamber return, a bound Covenant Throne, and a Covenant Vigil completed with the assigned helper surviving. This Main chapter opens the Archon rite.
 
 ### Degree 7: Archon
 
@@ -72,7 +76,7 @@ The Hematic Order publicly recognizes seven degrees. Apotheos is the hidden eigh
 - **Theme:** Hematic Order; the practitioner approaches the truth the Lodge could not fully state
 - **Core progression:** shatter the Sanguine Monolith, grow the Qliphoth, consume all nine pomes, and receive the Fungal Spine
 - The first Spine use is a two-minute consciousness projection. Forced return presents the endgame response.
-- **Pruning:** remain Degree 7 as a Silent Archon.
+- **Pruning:** sever the owned Bloom, enter its owner-only Chamber wound, and defeat both Vesper phases to remain Degree 7 as a Silent Archon. Failed attempts are retryable; victory seals the severed Bloom as a trophy.
 - **Apotheosis:** unlock the hidden eighth rite.
 
 ### Degree 8: Apotheos
@@ -82,7 +86,7 @@ The Hematic Order publicly recognizes seven degrees. Apotheos is the hidden eigh
 - **Theme:** transcendence and fungal fruiting
 - **Core progression:** Apotheos-scale Chamber state, Primal Morphlings, and the Mycophant consequence
 
-Silent Archon is never Degree 8. It is the flagged Degree-7 refusal state created by successful Pruning after the revelation.
+Silent Archon is never Degree 8. It is the flagged Degree-7 refusal state earned only after successful Pruning and the two-phase Vesper ordeal.
 
 ---
 

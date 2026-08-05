@@ -37,7 +37,7 @@ These are expected rough edges for public alpha:
 - **Drudges are post-alpha WIP.** Their implementation remains available for development, but the Electrode, Submission Device, and Semi-Sentient Construct have been moved to the WIP creative tab and the system is not part of the first-release progression promise.
 - **The entire Saints suite is post-release WIP.** Hemorath now remains behind the same WIP boundary as Seraphae, Putriciel, and Velorum. Saint chambers do not generate naturally, and their encounter components, rewards, and Canon memories are development-facing content for the first major post-release update—not launch blockers or first-release progression.
 - **Fungal Dimension is partial.** Access, safe return, dimension mob population, and the Archon choice fork exist; deeper terrain and broader dimension content remain WIP.
-- **Endgame bosses are partial.** Vesper and the Mycophant have entities, rendering, sound, combat, boss music, and loot, but their summoning rituals still need another pass.
+- **Endgame bosses are split.** Vesper's two-phase encounter is integrated into the Silent Archon path through Pruning and the Severed Qliphoth. The Mycophant has entity, rendering, sound, combat, boss music, and loot support, but its encounter entry still needs another pass.
 - **Annetta is playable but not final.** The Broken Church encounter and two-route structure are wired; animation polish, fuller biological combat identity, and unique thrown-projectile rendering remain WIP.
 - **Some creative/debug tools exist for testing.** Structure Spawner and Debug Showcase are not intended as normal survival progression.
 

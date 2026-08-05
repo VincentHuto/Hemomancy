@@ -2,13 +2,18 @@ package com.vincenthuto.hemomancy.common.item.harbinger;
 
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.Bloodline;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.EnumArchonPath;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bestiary.SpecimenBestiaryDefinitions;
 import com.vincenthuto.hemomancy.common.event.HarbingerAdvancementGranter;
 import com.vincenthuto.hemomancy.common.init.BlockInit;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.mission.HarbingerArtificerAssignmentHelper;
+import com.vincenthuto.hemomancy.common.mission.HarbingerChapterMilestone;
+import com.vincenthuto.hemomancy.common.mission.HarbingerChapterProgression;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.mission.OpenHarbingerAssignmentLedgerPacket;
+import com.vincenthuto.hemomancy.common.rite.harbinger.QliphothBloomSavedData;
 import com.vincenthuto.hutoslib.common.item.ItemGuideBook;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
@@ -32,6 +37,21 @@ public class HarbingerAssignmentLedgerItem extends ItemGuideBook {
 	public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
 		ItemStack stack = player.getItemInHand(hand);
 		if (!level.isClientSide && player instanceof ServerPlayer serverPlayer) {
+			var completedChapters = HarbingerChapterProgression.completedChapters(serverPlayer);
+			var degreeData = HemoCapabilityAccess.getInitiatoryDegree(serverPlayer);
+			int pomesConsumed = degreeData.map(degree -> degree.getTotalPomesConsumed()).orElse(0);
+			boolean qliphothCommunionComplete = degreeData
+					.map(degree -> degree.isQliphothCommunionDone()).orElse(false);
+			EnumArchonPath archonPath = degreeData.map(degree -> degree.getArchonPath())
+					.orElse(EnumArchonPath.NONE);
+			QliphothBloomSavedData blooms = QliphothBloomSavedData.get(serverPlayer.getServer().overworld());
+			boolean severedPortalOpen = blooms.getBlooms().stream()
+					.filter(bloom -> bloom.ownerUUID().equals(serverPlayer.getUUID()))
+					.anyMatch(bloom -> blooms.getState(bloom.center()).isPortalOpen());
+			Bloodline playerBloodline = HemoCapabilityAccess.getBloodVolume(serverPlayer)
+					.map(volume -> volume.getBloodLine()).orElse(Bloodline.NOBLOODLINE);
+			boolean foundedBloodline = playerBloodline.isValid()
+					&& serverPlayer.getUUID().equals(playerBloodline.getLeaderUUID());
 			boolean artificerArmaturePlaced = HarbingerAdvancementGranter.isArtificerArmaturePlaced(serverPlayer);
 			boolean artificerFirstHematicUpgrade =
 					HarbingerAdvancementGranter.isArtificerFirstHematicUpgrade(serverPlayer);
@@ -69,7 +89,7 @@ public class HarbingerAssignmentLedgerItem extends ItemGuideBook {
 					HarbingerAdvancementGranter.hasAdvancement(serverPlayer,
 							HarbingerAdvancementGranter.ADV_HERMIT_ROAD_FIRST_REMNANT),
 					HarbingerAdvancementGranter.hasAdvancement(serverPlayer,
-							HarbingerAdvancementGranter.ADV_HERMIT_ROAD_LEDGER_GRANTED),
+							HarbingerAdvancementGranter.ADV_HERMIT_ROAD_REPORTED),
 					hasVialCentrifuge(serverPlayer),
 					hasSampledBloodVial(serverPlayer),
 					HarbingerAdvancementGranter.isFirstSeparationStarted(serverPlayer),
@@ -96,7 +116,19 @@ public class HarbingerAssignmentLedgerItem extends ItemGuideBook {
 					artificerFirstForkUpgrade, artificerForkFitting, artificerFrameConsecrated,
 					artificerFirstBloodLustUpgrade, artificerBloodLustFitting, artificerMonolithicFrame,
 					artificerFirstD7Upgrade, artificerD7Fitting, artificerFirstLivingGraft,
-					artificerLivingWeaponFormCount, artificerLivingArsenalFitting));
+					artificerLivingWeaponFormCount, artificerLivingArsenalFitting,
+					foundedBloodline,
+					completedChapters.contains(HarbingerChapterMilestone.COVENANT_WRITTEN_IN_PLACE),
+					HarbingerAdvancementGranter.hasAdvancement(serverPlayer,
+							HarbingerAdvancementGranter.ADV_CHAMBER_RETURNED),
+					HarbingerAdvancementGranter.hasAdvancement(serverPlayer,
+							HarbingerAdvancementGranter.ADV_COVENANT_THRONE_BOUND),
+					HarbingerAdvancementGranter.hasAdvancement(serverPlayer,
+							HarbingerAdvancementGranter.ADV_COVENANT_VIGIL_COMPLETED),
+					completedChapters.contains(HarbingerChapterMilestone.LIVING_COVENANT),
+					pomesConsumed, qliphothCommunionComplete,
+					archonPath == EnumArchonPath.SILENT_PENDING, severedPortalOpen,
+					archonPath == EnumArchonPath.SILENT_ARCHON));
 		}
 		return InteractionResultHolder.sidedSuccess(stack, level.isClientSide);
 	}

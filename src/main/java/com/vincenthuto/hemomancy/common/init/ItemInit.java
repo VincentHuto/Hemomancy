@@ -142,6 +142,8 @@ public class ItemInit {
             () -> new StainedChurchMapItem(new Item.Properties().fireResistant()));
     public static final DeferredHolder<Item, Item> masons_respite_map = BASEITEMS.register("masons_respite_map",
             () -> new MasonsRespiteMapItem(new Item.Properties().fireResistant()));
+    public static final DeferredHolder<Item, Item> covenant_waybill = BASEITEMS.register("covenant_waybill",
+            () -> new CovenantWaybillItem(new Item.Properties().fireResistant()));
     public static final DeferredHolder<Item, Item> veins_pattern = BASEITEMS.register("veins_pattern",
             () -> new BannerPatternItem(
                     TagKey.create(Registries.BANNER_PATTERN, Hemomancy.rloc("pattern_item/hemomancy_veins")),

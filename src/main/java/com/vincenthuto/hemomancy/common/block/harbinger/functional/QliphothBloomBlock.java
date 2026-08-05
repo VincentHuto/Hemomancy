@@ -6,6 +6,10 @@ import com.vincenthuto.hemomancy.common.item.harbinger.QliphothPomeItem;
 import com.vincenthuto.hemomancy.common.item.harbinger.QliphothPomeRules;
 import com.vincenthuto.hemomancy.common.rite.harbinger.HarbingerCardinalRiteEvents;
 import com.vincenthuto.hemomancy.common.rite.harbinger.QliphothBloomSavedData;
+import com.vincenthuto.hemomancy.common.rite.harbinger.SeveredQliphothState;
+import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.EnumArchonPath;
+import com.vincenthuto.hemomancy.common.worldgen.VesperOrdealManager;
 import com.vincenthuto.hemomancy.common.tile.functional.QliphothBloomBlockEntity;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
@@ -144,9 +148,30 @@ public class QliphothBloomBlock extends BaseEntityBlock implements IMultiBlock {
 		if (bloom == null || !bloom.center().equals(pos)) {
 			return InteractionResult.PASS;
 		}
+		SeveredQliphothState bloomState = data.getState(pos);
 		if (!bloom.ownerUUID().equals(player.getUUID())) {
-			player.displayClientMessage(Component.literal("The fruit tightens against a covenant that is not yours.")
+			player.displayClientMessage(Component.literal(bloomState == SeveredQliphothState.LIVING
+					? "The fruit tightens against a covenant that is not yours."
+					: "The wound does not remember you.")
 					.withStyle(ChatFormatting.DARK_PURPLE, ChatFormatting.ITALIC), true);
+			return InteractionResult.SUCCESS;
+		}
+		if (bloomState.isSealedTrophy()) {
+			player.displayClientMessage(Component.literal("The severed scar is still. Your refusal is already written here.")
+					.withStyle(ChatFormatting.DARK_PURPLE, ChatFormatting.ITALIC), true);
+			return InteractionResult.SUCCESS;
+		}
+		if (bloomState.isPortalOpen()) {
+			if (!(player instanceof net.minecraft.server.level.ServerPlayer serverPlayer)
+					|| !HemoCapabilityAccess.getInitiatoryDegree(player)
+							.map(degree -> degree.getDegreeNumber() == 7
+									&& degree.getArchonPath() == EnumArchonPath.SILENT_PENDING)
+							.orElse(false)) {
+				player.displayClientMessage(Component.literal("The wound refuses the path you carry.")
+						.withStyle(ChatFormatting.DARK_PURPLE, ChatFormatting.ITALIC), true);
+				return InteractionResult.SUCCESS;
+			}
+			VesperOrdealManager.enter(serverPlayer, bloom);
 			return InteractionResult.SUCCESS;
 		}
 		int huskIndex = data.getPendingPomeHuskIndex(pos);

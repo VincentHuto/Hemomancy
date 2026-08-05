@@ -45,6 +45,7 @@ public class QliphothBloomSavedData extends SavedData {
 	 * pruned or removed.
 	 */
 	private final Map<Long, Integer> pomesDroppedByBloom = new HashMap<>();
+	private final Map<Long, SeveredQliphothState> bloomStates = new HashMap<>();
 
 	/**
 	 * Tracks the currently ripe or claimed-but-unconsumed pome by bloom center.
@@ -83,6 +84,14 @@ public class QliphothBloomSavedData extends SavedData {
 				long centerLong = entry.getLong("Center");
 				int count = entry.getInt("Count");
 				data.pomesDroppedByBloom.put(centerLong, count);
+			}
+		}
+		if (tag.contains("bloomStates", Tag.TAG_LIST)) {
+			ListTag states = tag.getList("bloomStates", Tag.TAG_COMPOUND);
+			for (int i = 0; i < states.size(); i++) {
+				CompoundTag entry = states.getCompound(i);
+				data.bloomStates.put(entry.getLong("Center"),
+						SeveredQliphothState.byName(entry.getString("State")));
 			}
 		}
 		if (tag.contains("pendingPomes", Tag.TAG_LIST)) {
@@ -154,6 +163,14 @@ public class QliphothBloomSavedData extends SavedData {
 			pdList.add(pdTag);
 		}
 		tag.put("pomesDropped", pdList);
+		ListTag stateList = new ListTag();
+		for (Map.Entry<Long, SeveredQliphothState> state : bloomStates.entrySet()) {
+			CompoundTag stateTag = new CompoundTag();
+			stateTag.putLong("Center", state.getKey());
+			stateTag.putString("State", state.getValue().name());
+			stateList.add(stateTag);
+		}
+		tag.put("bloomStates", stateList);
 
 		ListTag pendingList = new ListTag();
 		for (Map.Entry<Long, Integer> pending : pendingPomeByBloom.entrySet()) {
@@ -203,6 +220,7 @@ public class QliphothBloomSavedData extends SavedData {
 
 	public void addBloom(BloomEntry entry) {
 		blooms.add(entry);
+		bloomStates.put(entry.center().asLong(), SeveredQliphothState.LIVING);
 		setDirty();
 	}
 
@@ -228,6 +246,28 @@ public class QliphothBloomSavedData extends SavedData {
 		pomesDroppedByBloom.put(key, next);
 		setDirty();
 		return next;
+	}
+
+	public SeveredQliphothState getState(BlockPos center) {
+		return bloomStates.getOrDefault(center.asLong(), SeveredQliphothState.LIVING);
+	}
+
+	public boolean severBloom(BlockPos center) {
+		long key = center.asLong();
+		if (blooms.stream().noneMatch(bloom -> bloom.center().equals(center))) return false;
+		SeveredQliphothState next = getState(center).sever();
+		bloomStates.put(key, next);
+		pendingPomeByBloom.remove(key);
+		claimedPendingPomes.remove(key);
+		setDirty();
+		return next.isPortalOpen();
+	}
+
+	public boolean sealBloom(BlockPos center) {
+		SeveredQliphothState next = getState(center).seal();
+		bloomStates.put(center.asLong(), next);
+		setDirty();
+		return next.isSealedTrophy();
 	}
 
 	public boolean hasPendingPome(BlockPos center) {
@@ -369,6 +409,7 @@ public class QliphothBloomSavedData extends SavedData {
 			int bloomChunkZ = entry.center().getZ() >> 4;
 			if (bloomChunkX == chunkX && bloomChunkZ == chunkZ) {
 				blooms.remove(i);
+				bloomStates.remove(entry.center().asLong());
 				pomesDroppedByBloom.remove(entry.center().asLong());
 				pendingPomeByBloom.remove(entry.center().asLong());
 				claimedPendingPomes.remove(entry.center().asLong());

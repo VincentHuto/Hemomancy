@@ -72,6 +72,7 @@ import com.vincenthuto.hemomancy.common.rite.CardinalRitePhase;
 import com.vincenthuto.hemomancy.common.rite.unstained.UnstainedCardinalRiteEvents;
 import com.vincenthuto.hemomancy.common.summon.PuppeteerSummonDefinitions;
 import com.vincenthuto.hemomancy.common.worldgen.ChamberOfWillManager;
+import com.vincenthuto.hemomancy.common.mission.HarbingerChapterProgression;
 import com.vincenthuto.hemomancy.common.worldgen.FungalGardenTravelHelper;
 import com.vincenthuto.hemomancy.common.tile.functional.CardinalFocusBlockEntity;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
@@ -1413,18 +1414,7 @@ public class HarbingerCardinalRiteEvents {
 
 		// Pruning of the Qliphoth: remove a bloom tree rooted in the same chunk
 		if (PRUNING_OF_QLIPHOTH_RITE.equals(ritePath)) {
-			boolean pruned = completePruningOfQliphoth(sLevel, caster, center);
-			if (pruned) HemoCapabilityAccess.getInitiatoryDegree(caster).ifPresent(degree -> {
-				if (degree.getDegreeNumber() == 7 && degree.getArchonPath() == EnumArchonPath.SILENT_PENDING) {
-					degree.setArchonPath(EnumArchonPath.SILENT_ARCHON);
-					caster.getPersistentData().putString(FungalGardenTravelHelper.ARCHON_CHOICE_KEY,
-							FungalGardenTravelHelper.ARCHON_CHOICE_SILENCE);
-					InitiatoryDegreeEvents.syncDegree(caster, degree);
-					caster.displayClientMessage(Component.literal(
-							"The final root is cut. You remain an Archon, and carry its truth in silence.")
-							.withStyle(ChatFormatting.DARK_GRAY, ChatFormatting.ITALIC), false);
-				}
-			});
+			completePruningOfQliphoth(sLevel, caster, center);
 		}
 
 		// Rite of Sanguine Fervor: boost mob spawn rates in a 3-chunk radius for 5 minutes
@@ -1541,6 +1531,11 @@ public class HarbingerCardinalRiteEvents {
 			if (!caster.getInventory().add(conduit)) {
 				sLevel.addFreshEntity(new ItemEntity(sLevel,
 						center.getX() + 0.5, center.getY() + 1.5, center.getZ() + 0.5, conduit));
+			}
+			ItemStack waybill = new ItemStack(ItemInit.covenant_waybill.get());
+			if (!caster.getInventory().add(waybill)) {
+				sLevel.addFreshEntity(new ItemEntity(sLevel,
+						center.getX() + 0.5, center.getY() + 1.5, center.getZ() + 0.5, waybill));
 			}
 			caster.displayClientMessage(
 					Component.translatable("hemomancy.rite.sanguine_initiation.conduit_granted")
@@ -2275,13 +2270,30 @@ public class HarbingerCardinalRiteEvents {
 		int chunkZ = center.getZ() >> 4;
 		int pomesAlreadyDropped = 0;
 		BlockPos bloomCenter = null;
+		QliphothBloomSavedData.BloomEntry targetBloom = null;
 		for (QliphothBloomSavedData.BloomEntry b : data.getBlooms()) {
 			if (!b.dimension().equals(dimension)) continue;
 			if ((b.center().getX() >> 4) == chunkX && (b.center().getZ() >> 4) == chunkZ) {
 				bloomCenter = b.center();
+				targetBloom = b;
 				pomesAlreadyDropped = data.getPomesDropped(b.center());
 				break;
 			}
+		}
+		boolean opensFinalRefusal = targetBloom != null
+				&& targetBloom.ownerUUID().equals(caster.getUUID())
+				&& HemoCapabilityAccess.getInitiatoryDegree(caster)
+						.map(degree -> degree.getDegreeNumber() == 7
+								&& degree.getArchonPath() == EnumArchonPath.SILENT_PENDING)
+						.orElse(false);
+		if (opensFinalRefusal && data.severBloom(targetBloom.center())) {
+			syncQliphothBlooms(sLevel.getServer());
+			caster.displayClientMessage(Component.literal(
+					"The trunk parts along a black-red wound. The final refusal waits beyond it.")
+					.withStyle(ChatFormatting.DARK_PURPLE, ChatFormatting.BOLD), false);
+			sLevel.playSound(null, targetBloom.center(), SoundEvents.WITHER_BREAK_BLOCK,
+					SoundSource.BLOCKS, 1.1f, 0.55f);
+			return true;
 		}
 
 		QliphothBloomSavedData.BloomEntry removed = data.removeBloomInChunk(center, dimension);
@@ -2450,6 +2462,9 @@ public class HarbingerCardinalRiteEvents {
 	 */
 	private static void completeCovenantVigil(ServerLevel sLevel, ServerPlayer caster, ActiveCardinalRite rite) {
 		grantCovenantVigilReward(caster);
+		HarbingerAdvancementGranter.grantIfNotDone(caster,
+				HarbingerAdvancementGranter.ADV_COVENANT_VIGIL_COMPLETED);
+		HarbingerChapterProgression.tryCompleteLivingCovenant(caster);
 		for (UUID allyId : rite.getAllyRoles().keySet()) {
 			if (!CardinalRiteAllyService.isAvailable(sLevel, rite, allyId)) continue;
 			Entity entity = sLevel.getEntity(allyId);
@@ -2514,7 +2529,7 @@ public class HarbingerCardinalRiteEvents {
 	 * Each player receives only the blooms in their current dimension, including
 	 * the current pomes-dropped count so the client can render the correct growth stage.
 	 */
-	static void syncQliphothBlooms(net.minecraft.server.MinecraftServer server) {
+	public static void syncQliphothBlooms(net.minecraft.server.MinecraftServer server) {
 		QliphothBloomSavedData data = QliphothBloomSavedData.get(server.overworld());
 		for (ServerPlayer player : server.getPlayerList().getPlayers()) {
 			String dimension = player.level().dimension().location().toString();
@@ -2523,7 +2538,8 @@ public class HarbingerCardinalRiteEvents {
 				if (bloom.dimension().equals(dimension)) {
 					int pomesDropped = data.getPomesDropped(bloom.center());
 					clientEntries.add(new com.vincenthuto.hemomancy.client.data.QliphothBloomClientData.BloomEntry(
-							bloom.center(), bloom.chunkRadius(), pomesDropped));
+							bloom.center(), bloom.chunkRadius(), pomesDropped,
+							data.getState(bloom.center()).ordinal()));
 				}
 			}
 			PacketSyncQliphothBlooms packet =
@@ -2740,6 +2756,8 @@ public class HarbingerCardinalRiteEvents {
 							.withStyle(ChatFormatting.GOLD, ChatFormatting.ITALIC),
 					false);
 			HarbingerAdvancementGranter.grantIfNotDone(caster, HarbingerAdvancementGranter.ADV_FOUNDING_FANE_ESTABLISHED);
+			HarbingerAdvancementGranter.grantIfNotDone(caster,
+					HarbingerAdvancementGranter.ADV_COVENANT_WRITTEN_IN_PLACE);
 		}
 		sLevel.sendParticles(ParticleTypes.CRIMSON_SPORE,
 				center.getX() + 0.5, center.getY() + 1.0, center.getZ() + 0.5,

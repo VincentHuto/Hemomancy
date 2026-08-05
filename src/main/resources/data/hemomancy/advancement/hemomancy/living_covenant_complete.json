@@ -1,0 +1,13 @@
+{
+  "display": {
+    "icon": {"id": "hemomancy:covenant_throne"},
+    "title": {"translate": "advancements.hemomancy.living_covenant_complete.title"},
+    "description": {"translate": "advancements.hemomancy.living_covenant_complete.description"},
+    "frame": "goal",
+    "show_toast": true,
+    "announce_to_chat": true
+  },
+  "parent": "hemomancy:hemomancy/degree_6_sanctified",
+  "criteria": {"manual": {"trigger": "minecraft:impossible"}},
+  "requirements": [["manual"]]
+}

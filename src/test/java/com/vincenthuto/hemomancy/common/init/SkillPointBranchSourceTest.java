@@ -94,7 +94,8 @@ public final class SkillPointBranchSourceTest {
 		assertContains("trace cache colors traces from saved branch color", traceCache, "sp.getBranchColor()");
 		assertContains("trace cache can anchor missing deep parents to the heart", traceCache, "anchorMissingParents");
 		assertContains("trace cache supports alpha-rendered layer fades", traceCache, "float alpha");
-		assertContains("trace cache keeps degree rings visually behind colored traces", traceCache, "TRACE_DEGREE_RING = 0x1858231F");
+		assertContains("trace cache uses the shared low-alpha degree-ring style", traceCache,
+				"TRACE_DEGREE_RING = ConcentricRingStyle.withBaseAlpha(0xFF58231F)");
 		assertNotContains("trace cache no longer uses hardcoded core trace color", traceCache, "TRACE_CORE");
 		assertNotContains("trace cache no longer uses hardcoded scar trace color", traceCache, "TRACE_SCARS");
 		assertNotContains("trace cache no longer uses hardcoded summon trace color", traceCache, "TRACE_SUMMONS");
