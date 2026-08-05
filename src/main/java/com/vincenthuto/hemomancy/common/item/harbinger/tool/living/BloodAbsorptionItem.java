@@ -143,6 +143,12 @@ public class BloodAbsorptionItem extends Item implements IDispellable, ICellHand
 			updateChannelStrain(player, false);
 			return;
 		}
+		IBloodVolume volume = HemoCapabilityAccess.getBloodVolume(player).orElse(null);
+		if (volume == null || !BloodAbsorptionChannelRules.canDrainLivingTarget(
+				volume.isActive(), volume.isFull())) {
+			updateChannelStrain(player, false);
+			return;
+		}
 		int elapsed = getUseDuration(stack, player) - count;
 		int interval = BloodAbsorptionChannelRules.livingTargetPulseInterval(false,
 				player instanceof Player channelingPlayer
@@ -284,15 +290,9 @@ public class BloodAbsorptionItem extends Item implements IDispellable, ICellHand
 				.orElseThrow(NullPointerException::new);
 		IBloodVolume volume = HemoCapabilityAccess.getBloodVolume(playerIn)
 				.orElseThrow(NullPointerException::new);
-		if (volume.isActive()) {
-			boolean canCancelRite = playerIn instanceof ServerPlayer serverPlayer
-					&& CardinalRiteCancellationHandler.canStart(
-							serverPlayer, LivingStaffFocusRules.bareAbsorptionRange());
-			if (worldIn.isClientSide || volume.getBloodVolume() < volume.getMaxBloodVolume()
-					|| canCancelRite) {
-				playerIn.startUsingItem(handIn);
-				return new InteractionResultHolder<>(InteractionResult.SUCCESS, stack);
-			}
+		if (BloodAbsorptionChannelRules.canStartChannel(volume.isActive())) {
+			playerIn.startUsingItem(handIn);
+			return new InteractionResultHolder<>(InteractionResult.SUCCESS, stack);
 		} else {
 			playerIn.displayClientMessage(
 					Component.literal("You lack the skill to manifest this power!").withStyle(ChatFormatting.RED),

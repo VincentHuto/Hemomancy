@@ -35,6 +35,10 @@ public final class IronBrazierOfferingSourceTest {
 		assertContains("normal right-click inserts offering", block, "insertOffering");
 		assertContains("blood tools pass through to projection item use", block, "isBloodTool(stack)");
 		assertContains("brazier is a block blood endpoint", block, "implements EntityBlock, SimpleWaterloggedBlock, BlockBloodEndpoint");
+		assertContains("brazier controls whether absorption particles may draw", block,
+				"canDrawAbsorptionParticles");
+		assertContains("unlit brazier particle gating uses ritual phase only", block,
+				"BrazierBloodInteractionRules.shouldDrawAbsorptionParticles(state.getValue(RITUAL_PHASE) > 0)");
 		assertContains("brazier lights from projected blood", block, "projectBloodIntoBlock");
 		assertContains("brazier lighting costs 50 blood", block, "BLOOD_TO_LIGHT = 50.0D");
 		assertContains("brazier projection spends player blood", block, "volume.subtractBloodVolume(BLOOD_TO_LIGHT)");

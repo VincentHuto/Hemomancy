@@ -3,6 +3,7 @@ package com.vincenthuto.hemomancy.common.block.shared;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 
 /**
@@ -12,6 +13,9 @@ import net.minecraft.world.level.block.state.BlockState;
  * tile blood-volume attachment.
  */
 public interface BlockBloodEndpoint {
+	default boolean canDrawAbsorptionParticles(Level level, BlockPos pos, BlockState state) {
+		return true;
+	}
 
 	double absorbBloodFromBlock(ServerLevel level, BlockPos pos, BlockState state, ServerPlayer player,
 			double maxAmount);

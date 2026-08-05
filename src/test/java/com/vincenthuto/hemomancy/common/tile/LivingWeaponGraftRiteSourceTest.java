@@ -18,30 +18,42 @@ public final class LivingWeaponGraftRiteSourceTest {
 		String packetHandler = read("src/main/java/com/vincenthuto/hemomancy/common/network/PacketHandler.java");
 		String cellHandParticles = read("src/main/java/com/vincenthuto/hemomancy/client/render/item/hematic/CellHandParticleEffects.java");
 
-		assertContains("brazier tracks graft rite player", blockEntity, "graftRitePlayer");
-		assertContains("brazier tracks graft rite form", blockEntity, "graftRiteForm");
-		assertContains("brazier tracks graft rite progress", blockEntity, "graftRiteProgressTicks");
-		assertContains("brazier can advance graft rite", blockEntity, "advanceGraftRite");
-		assertContains("brazier can reset graft rite", blockEntity, "resetGraftRiteProgress");
-		assertContains("brazier clears rite when offering changes", blockEntity, "resetGraftRiteProgress()");
+		assertContains("brazier tracks absorption player", blockEntity, "itemAbsorptionPlayer");
+		assertContains("brazier tracks absorption rite", blockEntity, "itemAbsorptionRiteId");
+		assertContains("brazier tracks absorption progress", blockEntity, "itemAbsorptionProgressTicks");
+		assertContains("brazier can advance absorption", blockEntity, "advanceItemAbsorption");
+		assertContains("brazier can reset absorption", blockEntity, "resetItemAbsorptionProgress");
+		assertContains("brazier clears absorption when offering changes", blockEntity, "resetItemAbsorptionProgress()");
+		assertNotContains("shared brazier state is no longer graft-specific", blockEntity, "graftRiteProgressTicks");
 
 		assertContains("brazier absorb endpoint delegates graft rite", block, "LivingWeaponGraftRite.tryAbsorb");
 		assertContains("brazier still uses block blood endpoint", block, "implements EntityBlock, SimpleWaterloggedBlock, BlockBloodEndpoint");
 
-		assertContains("rite requires channel duration", rite, "REQUIRED_CHANNEL_TICKS = 60");
-		assertContains("rite consumes offering on success", rite, "consumeOffering()");
-		assertContains("rite extinguishes brazier on success", rite, "extinguishBrazier");
-		assertContains("rite resets ritual phase to unlit", rite, "setValue(BrazierBlock.RITUAL_PHASE, 0)");
-		assertContains("rite sends graft pulse packet", rite, "SpawnGraftRiteItemParticlesPacket");
-		assertContains("rite sends matching graft stack as particle", rite, "particleStack.setCount(1)");
-		assertContains("rite anchors graft particles to absorption path", rite, "spawnGraftDrawParticles(level, pos, player, offering)");
-		assertContains("graft particle packet is registered", packetHandler, "SpawnGraftRiteItemParticlesPacket.TYPE");
-		assertContains("graft particles use the first-person fallback outside an item render callback",
+		assertContains("rite shares the standard brazier item absorption duration", rite,
+				"REQUIRED_CHANNEL_TICKS = BrazierItemAbsorptionRite.REQUIRED_CHANNEL_TICKS");
+		assertContains("rite uses shared completion lifecycle", rite, "BrazierItemAbsorptionRite.complete");
+		assertNotContains("rite no longer duplicates offering consumption", rite, "consumeOffering()");
+		assertNotContains("rite no longer duplicates brazier extinguishing", rite, "extinguishBrazier");
+		assertContains("rite uses the shared item particle channel", rite, "BrazierItemAbsorptionRite.advance");
+		assertContains("absorption particle packet is registered", packetHandler, "SpawnBrazierItemAbsorptionParticlesPacket.TYPE");
+		assertContains("absorption particles use the first-person fallback outside an item render callback",
 				cellHandParticles, "fallbackFirstPersonHandOrigin(activeArm)");
-		assertContains("graft particles use item particle option", cellHandParticles, "new ItemParticleOption(ParticleTypes.ITEM, graftStack)");
-		assertContains("graft particles read graft form data", cellHandParticles, "LivingWeaponGraftData.fromStack(graftStack)");
+		assertContains("absorption particles use item particle option", cellHandParticles, "new ItemParticleOption(ParticleTypes.ITEM, offeringStack)");
+		assertContains("absorbed item fragments use a sparse per-tick count", cellHandParticles,
+				"ABSORBED_ITEM_PARTICLES_PER_TICK = 2");
+		assertContains("absorbed item fragments render at a reduced scale", cellHandParticles,
+				"ABSORBED_ITEM_PARTICLE_SCALE = 0.55F");
+		assertContains("absorbed item fragments apply their reduced scale", cellHandParticles,
+				"itemParticle.scale(ABSORBED_ITEM_PARTICLE_SCALE)");
+		assertContains("absorption particles read graft form data when present", cellHandParticles, "LivingWeaponGraftData.fromStack(offeringStack)");
 		assertContains("graft particles use manipulation tendency color", cellHandParticles, "form.manipulationHolder().get().getTend().getColor()");
-		assertContains("graft particles add hutoslib glow", cellHandParticles, "GlowParticleFactory.createData(graftColor)");
+		assertContains("absorption particles add hutoslib glow", cellHandParticles, "GlowParticleFactory.createData(absorptionItemColor)");
+		assertContains("generic client absorption entry point", cellHandParticles, "spawnBrazierItemAbsorptionParticles");
+		assertContains("graft rite requires a lit brazier", rite, "getValue(BrazierBlock.RITUAL_PHASE) > 0");
+		assertBefore("lit check happens before channel progress", rite,
+				"getValue(BrazierBlock.RITUAL_PHASE) > 0", "BrazierItemAbsorptionRite.advance");
+		assertNotContains("graft rite no longer auto-lights the brazier", rite,
+				"setValue(BrazierBlock.RITUAL_PHASE, 2)");
 		assertContains("rite grants through form memory helper", rite, "LivingWeaponMemoryUnlocks.grantFormMemory");
 		assertContains("rite accepts memory of vesper directly", rite, "offering.is(ItemInit.memory_of_vesper.get())");
 		assertContains("rite awakens vesper staff progress", rite, "progress.awakenVesperMemory()");
@@ -77,6 +89,14 @@ public final class LivingWeaponGraftRiteSourceTest {
 	private static void assertNotContains(String label, String text, String unexpected) {
 		if (text.contains(unexpected)) {
 			throw new AssertionError(label + " (found '" + unexpected + "')");
+		}
+	}
+
+	private static void assertBefore(String label, String text, String first, String second) {
+		int firstIndex = text.indexOf(first);
+		int secondIndex = text.indexOf(second);
+		if (firstIndex < 0 || secondIndex < 0 || firstIndex >= secondIndex) {
+			throw new AssertionError(label + " (expected '" + first + "' before '" + second + "')");
 		}
 	}
 }

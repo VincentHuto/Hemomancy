@@ -73,8 +73,9 @@ public final class BlockBloodInteractions {
 	}
 
 	public static boolean isBloodInteractionBlock(Level level, BlockPos pos) {
-		if (level.getBlockState(pos).getBlock() instanceof BlockBloodEndpoint) {
-			return true;
+		BlockState state = level.getBlockState(pos);
+		if (state.getBlock() instanceof BlockBloodEndpoint endpoint) {
+			return endpoint.canDrawAbsorptionParticles(level, pos, state);
 		}
 		return resolveBloodReservoir(level, pos) != null;
 	}

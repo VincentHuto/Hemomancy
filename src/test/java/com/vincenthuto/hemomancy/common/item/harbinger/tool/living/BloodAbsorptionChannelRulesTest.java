@@ -5,12 +5,24 @@ public final class BloodAbsorptionChannelRulesTest {
 	}
 
 	public static void main(String[] args) {
+		fullBloodStillAllowsNonDrainAbsorptionRites();
 		defaultChannelLocksMovementUntilSkillUnlocksSlowMovement();
 		advancedMovementSkillsReduceAndRemoveTheSlowdown();
 		clientInputMultiplierCompensatesForVanillaUseItemSlowdown();
 		livingTargetPulseFrequencyImprovesAtDegreeThreeFourAndFive();
 		strainTierThresholdsDelayWithToleranceSkill();
 		strainDecaysWhenNoLivingTargetWasDrained();
+	}
+
+	private static void fullBloodStillAllowsNonDrainAbsorptionRites() {
+		assertEquals("active blood can channel while full for brazier and Will rites", true,
+				BloodAbsorptionChannelRules.canStartChannel(true));
+		assertEquals("inactive blood cannot channel", false,
+				BloodAbsorptionChannelRules.canStartChannel(false));
+		assertEquals("a full reservoir blocks ordinary living-target drain", false,
+				BloodAbsorptionChannelRules.canDrainLivingTarget(true, true));
+		assertEquals("available capacity permits ordinary living-target drain", true,
+				BloodAbsorptionChannelRules.canDrainLivingTarget(true, false));
 	}
 
 	private static void defaultChannelLocksMovementUntilSkillUnlocksSlowMovement() {

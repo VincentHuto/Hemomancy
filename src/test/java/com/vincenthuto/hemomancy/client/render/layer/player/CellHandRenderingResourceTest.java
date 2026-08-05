@@ -22,6 +22,7 @@ public final class CellHandRenderingResourceTest {
 		String particleInit = read("src/main/java/com/vincenthuto/hemomancy/common/init/ParticleInit.java");
 		String projectionItem = read("src/main/java/com/vincenthuto/hemomancy/common/item/harbinger/tool/living/BloodProjectionItem.java");
 		String absorptionItem = read("src/main/java/com/vincenthuto/hemomancy/common/item/harbinger/tool/living/BloodAbsorptionItem.java");
+		String blockBloodInteractions = read("src/main/java/com/vincenthuto/hemomancy/common/block/shared/BlockBloodInteractions.java");
 
 		assertDoesNotContain("third-person particles do not use a fixed body-yaw approximation", layer,
 				"double bodyYaw = Math.toRadians(living.yBodyRot)");
@@ -80,6 +81,8 @@ public final class CellHandRenderingResourceTest {
 				"particle.setTargetYOffset(0.0D);");
 		assertContains("absorption particles can target blood-bearing blocks", particleEffects,
 				"BlockBloodInteractions.findLookedAtBloodBlockSource");
+		assertContains("block absorption particles respect endpoint visibility", blockBloodInteractions,
+				"endpoint.canDrawAbsorptionParticles(level, pos, state)");
 		assertContains("block absorption particles use blood color", particleEffects,
 				"AbsorbedBloodCellParticleFactory.createData(ParticleColor.BLOOD)");
 		assertContains("block absorption particles share the hand-targeted absorbed particle path", particleEffects,

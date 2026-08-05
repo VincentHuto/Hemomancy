@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.rite;
 
+import com.vincenthuto.hemomancy.common.block.harbinger.BrazierBlock;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodVolumeEvents;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
@@ -11,8 +12,10 @@ import com.vincenthuto.hemomancy.common.init.ScarInit;
 import com.vincenthuto.hemomancy.common.item.harbinger.scar.ItemScar;
 import com.vincenthuto.hemomancy.common.item.harbinger.scar.ItemScarPattern;
 import com.vincenthuto.hemomancy.common.item.harbinger.scar.ScarDefinition;
+import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.BloodAbsorptionItem;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.scars.PacketSyncScarsState;
+import com.vincenthuto.hemomancy.common.tile.IronBrazierBlockEntity;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
@@ -22,6 +25,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.state.BlockState;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,16 +38,64 @@ public final class ScarBrazierRite {
 	private ScarBrazierRite() {
 	}
 
-	public static ScarBrazierInteractionRules.Burn selectBurn(boolean lit, boolean empty, boolean sneaking,
-			ItemStack stack) {
-		return ScarBrazierInteractionRules.select(lit, empty, sneaking,
+	public static ScarBrazierInteractionRules.Burn selectOffering(boolean lit, ItemStack stack) {
+		return ScarBrazierInteractionRules.selectOffering(lit,
 				stack.getItem() instanceof ItemScar,
 				stack.getItem() instanceof ItemScarPattern && ItemScarPattern.hasPreparedLoadout(stack),
 				stack.is(ItemInit.runic_motif_paper.get()));
 	}
 
+	public static double tryAbsorb(ServerLevel level, BlockPos pos, BlockState state, ServerPlayer player,
+			double maxAmount) {
+		if (!(level.getBlockEntity(pos) instanceof IronBrazierBlockEntity brazier)) {
+			return 0.0D;
+		}
+		ItemStack offering = brazier.getOfferingForMatching();
+		ScarBrazierInteractionRules.Burn burn = selectOffering(
+				state.hasProperty(BrazierBlock.RITUAL_PHASE)
+						&& state.getValue(BrazierBlock.RITUAL_PHASE) > 0,
+				offering);
+		if (burn == ScarBrazierInteractionRules.Burn.NONE
+				|| !ScarBrazierInteractionRules.canAbsorb(
+						BloodAbsorptionItem.isChannelingBloodAbsorption(player), maxAmount)) {
+			if (burn != ScarBrazierInteractionRules.Burn.NONE) {
+				brazier.resetItemAbsorptionProgress();
+			}
+			return 0.0D;
+		}
+		Preflight preflight = preflight(player, offering, burn);
+		if (!preflight.allowed()) {
+			brazier.resetItemAbsorptionProgress();
+			messageEverySecond(level, player, preflight);
+			return maxAmount;
+		}
+		int progress = BrazierItemAbsorptionRite.advance(level, pos, player, brazier,
+				"scar:" + burn.name(), offering);
+		if (!BrazierItemAbsorptionRite.isComplete(progress)) {
+			return maxAmount;
+		}
+
+		ItemStack ritualStack = offering.copy();
+		int countBefore = ritualStack.getCount();
+		if (!burn(level, pos, player, ritualStack, burn)) {
+			brazier.resetItemAbsorptionProgress();
+			return 0.0D;
+		}
+		if (ritualStack.getCount() < countBefore) {
+			BrazierItemAbsorptionRite.complete(level, pos, brazier);
+		} else {
+			brazier.resetItemAbsorptionProgress();
+		}
+		return maxAmount;
+	}
+
 	public static boolean burn(Level level, BlockPos pos, Player player, ItemStack stack,
 			ScarBrazierInteractionRules.Burn burn) {
+		Preflight preflight = preflight(player, stack, burn);
+		if (!preflight.allowed()) {
+			message(player, preflight.message(), preflight.color());
+			return burn != ScarBrazierInteractionRules.Burn.NONE;
+		}
 		return switch (burn) {
 			case LEARN -> tryLearnScar(level, pos, player, stack);
 			case COMMIT -> tryCommitLoadout(level, pos, player, stack);
@@ -54,6 +106,93 @@ public final class ScarBrazierRite {
 
 	public static int getMaxActiveScars(Player player) {
 		return ScarBrazierInteractionRules.maxActiveScars(HemoCapabilityAccess.getPlayerDegreeNumber(player));
+	}
+
+	private static Preflight preflight(Player player, ItemStack stack, ScarBrazierInteractionRules.Burn burn) {
+		if (burn == ScarBrazierInteractionRules.Burn.NONE) {
+			return Preflight.denied("The brazier finds no scar rite in this offering.", ChatFormatting.RED);
+		}
+		if (!hasDegree(player)) {
+			return Preflight.denied(
+					"The Iron Brazier answers this scar rite only at the Fourth Degree and above.",
+					ChatFormatting.RED);
+		}
+		IScars scars = HemoCapabilityAccess.getScarState(player).orElse(null);
+		if (scars == null) {
+			return Preflight.denied("Your scar memory is silent.", ChatFormatting.RED);
+		}
+		if (burn == ScarBrazierInteractionRules.Burn.LEARN) {
+			if (!(stack.getItem() instanceof ItemScar scarItem)) {
+				return Preflight.denied("Only scar items can be burned into memory.", ChatFormatting.RED);
+			}
+			ScarDefinition definition = scarItem.getScarDefinition();
+			if (definition == null || definition.getScarType() != ScarType.CEREBRAL) {
+				return Preflight.denied("Only cerebral scar items can be burned into memory.", ChatFormatting.RED);
+			}
+			ResourceLocation scarId = ScarInit.SCARS_TYPE_REGISTRY.getKey(definition);
+			if (scarId == null) {
+				return Preflight.denied("This scar has no registered pattern to remember.", ChatFormatting.RED);
+			}
+			if (scars.knowsCerebralScar(scarId)) {
+				return Preflight.denied("You already know this scar.", ChatFormatting.GOLD);
+			}
+			return hasBlood(player, LEARN_BLOOD_COST)
+					? Preflight.accepted()
+					: Preflight.denied("Not enough blood to sear the scar into memory.", ChatFormatting.RED);
+		}
+		if (burn == ScarBrazierInteractionRules.Burn.COMMIT) {
+			if (!(stack.getItem() instanceof ItemScarPattern) || !ItemScarPattern.hasPreparedLoadout(stack)) {
+				return Preflight.denied("This scar pattern carries no prepared loadout.", ChatFormatting.RED);
+			}
+			List<ResourceLocation> selected = ItemScarPattern.getScarIds(stack);
+			if (selected.isEmpty()) {
+				return Preflight.denied("This scar pattern carries no loadout.", ChatFormatting.RED);
+			}
+			if (selected.size() > getMaxActiveScars(player)) {
+				return Preflight.denied("That pattern exceeds your current scar capacity.", ChatFormatting.RED);
+			}
+			for (ResourceLocation id : selected) {
+				ScarDefinition definition = ScarInit.getByName(id.toString());
+				if (definition == null || definition.getScarType() != ScarType.CEREBRAL
+						|| !scars.knowsCerebralScar(id)) {
+					return Preflight.denied(
+							"The pattern contains a scar you have not learned: " + id.getPath(), ChatFormatting.RED);
+				}
+			}
+			return hasBlood(player, LOADOUT_BLOOD_COST)
+					? Preflight.accepted()
+					: Preflight.denied("Not enough blood to seal the scar loadout.", ChatFormatting.RED);
+		}
+		if (!stack.is(ItemInit.runic_motif_paper.get())) {
+			return Preflight.denied("The brazier requires a blank runic motif to clear scars.", ChatFormatting.RED);
+		}
+		if (scars.getActiveCerebralScars().isEmpty()) {
+			return Preflight.denied("No active cerebral scars answer the flame.", ChatFormatting.GOLD);
+		}
+		return hasBlood(player, LOADOUT_BLOOD_COST)
+				? Preflight.accepted()
+				: Preflight.denied("Not enough blood to scour the active scar loadout.", ChatFormatting.RED);
+	}
+
+	private static boolean hasBlood(Player player, double cost) {
+		IBloodVolume volume = HemoCapabilityAccess.getBloodVolume(player).orElse(null);
+		return volume != null && volume.isActive() && volume.getBloodVolume() >= cost;
+	}
+
+	private static void messageEverySecond(ServerLevel level, Player player, Preflight preflight) {
+		if (level.getGameTime() % 20L == 0L) {
+			message(player, preflight.message(), preflight.color());
+		}
+	}
+
+	private record Preflight(boolean allowed, String message, ChatFormatting color) {
+		private static Preflight accepted() {
+			return new Preflight(true, "", ChatFormatting.WHITE);
+		}
+
+		private static Preflight denied(String message, ChatFormatting color) {
+			return new Preflight(false, message, color);
+		}
 	}
 
 	private static boolean tryLearnScar(Level level, BlockPos pos, Player player, ItemStack stack) {

@@ -1,7 +1,8 @@
 package com.vincenthuto.hemomancy.common.tile;
 
+import com.vincenthuto.hemomancy.common.block.harbinger.BrazierBlock;
+import com.vincenthuto.hemomancy.common.block.harbinger.BrazierSpecialOfferingEffects;
 import com.vincenthuto.hemomancy.common.init.BlockEntityInit;
-import com.vincenthuto.hemomancy.common.item.component.LivingWeaponForm;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
@@ -23,19 +24,25 @@ public class IronBrazierBlockEntity extends BlockEntity {
 	private static final String TAG_OFFERING = "Offering";
 
 	private ItemStack offering = ItemStack.EMPTY;
-	private UUID graftRitePlayer;
-	private String graftRiteForm = "";
-	private int graftRiteProgressTicks;
-	private long graftRiteLastTick;
+	private UUID itemAbsorptionPlayer;
+	private String itemAbsorptionRiteId = "";
+	private int itemAbsorptionProgressTicks;
+	private long itemAbsorptionLastTick;
 
 	public IronBrazierBlockEntity(BlockPos pos, BlockState state) {
 		super(BlockEntityInit.iron_brazier.get(), pos, state);
 	}
 
 	public static void serverTick(Level level, BlockPos pos, BlockState state, IronBrazierBlockEntity te) {
-		if (te.graftRiteProgressTicks > 0
-				&& (te.offering.isEmpty() || level.getGameTime() - te.graftRiteLastTick > 8L)) {
-			te.resetGraftRiteProgress();
+		if (level instanceof net.minecraft.server.level.ServerLevel serverLevel
+				&& state.hasProperty(BrazierBlock.RITUAL_PHASE)
+				&& state.getValue(BrazierBlock.RITUAL_PHASE) > 0
+				&& !te.offering.isEmpty()) {
+			BrazierSpecialOfferingEffects.spawnPersistent(serverLevel, pos, te.offering, level.getGameTime());
+		}
+		if (te.itemAbsorptionProgressTicks > 0
+				&& (te.offering.isEmpty() || level.getGameTime() - te.itemAbsorptionLastTick > 8L)) {
+			te.resetItemAbsorptionProgress();
 		}
 	}
 
@@ -55,7 +62,7 @@ public class IronBrazierBlockEntity extends BlockEntity {
 		if (stack.isEmpty() || !offering.isEmpty()) {
 			return false;
 		}
-		resetGraftRiteProgress();
+		resetItemAbsorptionProgress();
 		offering = stack.copyWithCount(1);
 		if (player == null || !player.getAbilities().instabuild) {
 			stack.shrink(1);
@@ -69,7 +76,7 @@ public class IronBrazierBlockEntity extends BlockEntity {
 			return ItemStack.EMPTY;
 		}
 		ItemStack extracted = offering.copy();
-		resetGraftRiteProgress();
+		resetItemAbsorptionProgress();
 		offering = ItemStack.EMPTY;
 		markDirtyAndSync();
 		return extracted;
@@ -79,32 +86,28 @@ public class IronBrazierBlockEntity extends BlockEntity {
 		return extractOffering();
 	}
 
-	public int advanceGraftRite(ServerPlayer player, LivingWeaponForm form, int requiredTicks) {
-		return form == null ? 0 : advanceGraftRite(player, form.serializedName(), requiredTicks);
-	}
-
-	public int advanceGraftRite(ServerPlayer player, String riteId, int requiredTicks) {
+	public int advanceItemAbsorption(ServerPlayer player, String riteId, int requiredTicks) {
 		if (player == null || riteId == null || riteId.isBlank() || level == null) {
-			resetGraftRiteProgress();
+			resetItemAbsorptionProgress();
 			return 0;
 		}
 		UUID playerId = player.getUUID();
-		if (!playerId.equals(graftRitePlayer) || !riteId.equals(graftRiteForm)) {
-			resetGraftRiteProgress();
-			graftRitePlayer = playerId;
-			graftRiteForm = riteId;
+		if (!playerId.equals(itemAbsorptionPlayer) || !riteId.equals(itemAbsorptionRiteId)) {
+			resetItemAbsorptionProgress();
+			itemAbsorptionPlayer = playerId;
+			itemAbsorptionRiteId = riteId;
 		}
-		graftRiteProgressTicks = Math.min(requiredTicks, graftRiteProgressTicks + 1);
-		graftRiteLastTick = level.getGameTime();
+		itemAbsorptionProgressTicks = Math.min(requiredTicks, itemAbsorptionProgressTicks + 1);
+		itemAbsorptionLastTick = level.getGameTime();
 		setChanged();
-		return graftRiteProgressTicks;
+		return itemAbsorptionProgressTicks;
 	}
 
-	public void resetGraftRiteProgress() {
-		graftRitePlayer = null;
-		graftRiteForm = "";
-		graftRiteProgressTicks = 0;
-		graftRiteLastTick = 0L;
+	public void resetItemAbsorptionProgress() {
+		itemAbsorptionPlayer = null;
+		itemAbsorptionRiteId = "";
+		itemAbsorptionProgressTicks = 0;
+		itemAbsorptionLastTick = 0L;
 		setChanged();
 	}
 

@@ -13,4 +13,10 @@ final class BrazierBloodInteractionRulesTest {
 		assertFalse(BrazierBloodInteractionRules.shouldExtinguishOnAbsorption(true, false, 1.0D));
 		assertFalse(BrazierBloodInteractionRules.shouldExtinguishOnAbsorption(true, true, 0.0D));
 	}
+
+	@Test
+	void absorptionParticlesRequireALitBrazierRegardlessOfOfferingState() {
+		assertFalse(BrazierBloodInteractionRules.shouldDrawAbsorptionParticles(false));
+		assertTrue(BrazierBloodInteractionRules.shouldDrawAbsorptionParticles(true));
+	}
 }

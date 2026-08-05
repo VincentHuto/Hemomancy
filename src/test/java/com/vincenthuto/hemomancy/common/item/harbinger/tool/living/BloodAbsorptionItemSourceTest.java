@@ -15,6 +15,7 @@ public final class BloodAbsorptionItemSourceTest {
 		String clientEvents = read("src/main/java/com/vincenthuto/hemomancy/client/event/ClientEvents.java");
 		String onUseTick = source.substring(source.indexOf("public void onUseTick"),
 				source.indexOf("public static Optional<LivingEntity> findBareAbsorptionTarget"));
+		String use = source.substring(source.indexOf("public InteractionResultHolder<ItemStack> use"));
 		String absorbFromTarget = source.substring(source.indexOf("public static double absorbFromTarget"),
 				source.indexOf("public static boolean isValidAbsorptionTarget"));
 
@@ -30,6 +31,10 @@ public final class BloodAbsorptionItemSourceTest {
 				onUseTick, "BloodAbsorptionChannelRules.livingTargetPulseInterval");
 		assertContains("bare living-target absorption records strain only after mob drain",
 				onUseTick, "updateChannelStrain");
+		assertContains("full blood can still begin non-drain absorption rites",
+				use, "BloodAbsorptionChannelRules.canStartChannel(volume.isActive())");
+		assertBefore("full blood stops ordinary mob drain after block and Will rites get priority",
+				onUseTick, "BloodAbsorptionChannelRules.canDrainLivingTarget", "findBareAbsorptionTarget");
 		assertBefore("absorbing from a target only hurts entities on the server",
 				absorbFromTarget, "if (level.isClientSide)", "target.hurt");
 		assertContains("absorption tracks target health before damage",

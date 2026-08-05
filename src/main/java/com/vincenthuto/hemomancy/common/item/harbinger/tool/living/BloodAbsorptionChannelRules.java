@@ -23,6 +23,14 @@ public final class BloodAbsorptionChannelRules {
 		BLOOD_POISONING
 	}
 
+	public static boolean canStartChannel(boolean activeBlood) {
+		return activeBlood;
+	}
+
+	public static boolean canDrainLivingTarget(boolean activeBlood, boolean bloodFull) {
+		return activeBlood && !bloodFull;
+	}
+
 	public static double movementMultiplier(int movementUnlockLevel, int slowdownReductionLevel,
 			boolean freeMovementUnlocked) {
 		if (freeMovementUnlocked) {

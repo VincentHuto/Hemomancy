@@ -10,31 +10,34 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 
-public record SpawnGraftRiteItemParticlesPacket(Vec3 source, ItemStack stack) implements CustomPacketPayload {
-	public static final Type<SpawnGraftRiteItemParticlesPacket> TYPE =
-			new Type<>(Hemomancy.rloc("spawn_graft_rite_item_particles"));
-	public static final StreamCodec<FriendlyByteBuf, SpawnGraftRiteItemParticlesPacket> STREAM_CODEC =
-			StreamCodec.of(SpawnGraftRiteItemParticlesPacket::encode, SpawnGraftRiteItemParticlesPacket::decode);
+public record SpawnBrazierItemAbsorptionParticlesPacket(Vec3 source, ItemStack stack)
+		implements CustomPacketPayload {
+	public static final Type<SpawnBrazierItemAbsorptionParticlesPacket> TYPE =
+			new Type<>(Hemomancy.rloc("spawn_brazier_item_absorption_particles"));
+	public static final StreamCodec<FriendlyByteBuf, SpawnBrazierItemAbsorptionParticlesPacket> STREAM_CODEC =
+			StreamCodec.of(SpawnBrazierItemAbsorptionParticlesPacket::encode,
+					SpawnBrazierItemAbsorptionParticlesPacket::decode);
 
-	public SpawnGraftRiteItemParticlesPacket {
+	public SpawnBrazierItemAbsorptionParticlesPacket {
 		stack = stack.copy();
 	}
 
-	public static void encode(FriendlyByteBuf buf, SpawnGraftRiteItemParticlesPacket packet) {
+	public static void encode(FriendlyByteBuf buf, SpawnBrazierItemAbsorptionParticlesPacket packet) {
 		buf.writeDouble(packet.source.x);
 		buf.writeDouble(packet.source.y);
 		buf.writeDouble(packet.source.z);
 		ItemStack.OPTIONAL_STREAM_CODEC.encode((RegistryFriendlyByteBuf) buf, packet.stack);
 	}
 
-	public static SpawnGraftRiteItemParticlesPacket decode(FriendlyByteBuf buf) {
+	public static SpawnBrazierItemAbsorptionParticlesPacket decode(FriendlyByteBuf buf) {
 		Vec3 source = new Vec3(buf.readDouble(), buf.readDouble(), buf.readDouble());
 		ItemStack stack = ItemStack.OPTIONAL_STREAM_CODEC.decode((RegistryFriendlyByteBuf) buf);
-		return new SpawnGraftRiteItemParticlesPacket(source, stack);
+		return new SpawnBrazierItemAbsorptionParticlesPacket(source, stack);
 	}
 
-	public static void handle(SpawnGraftRiteItemParticlesPacket packet, IPayloadContext ctx) {
-		ctx.enqueueWork(() -> CellHandParticleEffects.spawnGraftRiteItemParticles(packet.stack, packet.source));
+	public static void handle(SpawnBrazierItemAbsorptionParticlesPacket packet, IPayloadContext ctx) {
+		ctx.enqueueWork(() -> CellHandParticleEffects.spawnBrazierItemAbsorptionParticles(
+				packet.stack, packet.source));
 	}
 
 	@Override

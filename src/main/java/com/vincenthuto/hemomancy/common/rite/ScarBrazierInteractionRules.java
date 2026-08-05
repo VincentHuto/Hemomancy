@@ -11,9 +11,9 @@ public final class ScarBrazierInteractionRules {
 	private ScarBrazierInteractionRules() {
 	}
 
-	public static Burn select(boolean lit, boolean empty, boolean sneaking, boolean scarItem,
-			boolean preparedPattern, boolean blankMotifPaper) {
-		if (!lit || !empty || !sneaking) {
+	public static Burn selectOffering(boolean lit, boolean scarItem, boolean preparedPattern,
+			boolean blankMotifPaper) {
+		if (!lit) {
 			return Burn.NONE;
 		}
 		if (scarItem) {
@@ -23,6 +23,10 @@ public final class ScarBrazierInteractionRules {
 			return Burn.COMMIT;
 		}
 		return blankMotifPaper ? Burn.CLEAR : Burn.NONE;
+	}
+
+	public static boolean canAbsorb(boolean channelingAbsorption, double maxAmount) {
+		return channelingAbsorption && maxAmount > 0.0D;
 	}
 
 	public static int maxActiveScars(int degree) {

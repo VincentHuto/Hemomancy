@@ -52,6 +52,8 @@ import java.util.function.Predicate;
 
 public final class CellHandParticleEffects {
 	private static final int GLOBAL_PARTICLE_COUNT = 20;
+	private static final int ABSORBED_ITEM_PARTICLES_PER_TICK = 2;
+	private static final float ABSORBED_ITEM_PARTICLE_SCALE = 0.55F;
 	private static final ParticleColor WILL_ABSORPTION_GLOW = ParticleColor.BLACK;
 	private static final ProjectionParticleEmissionGate PROJECTION_EMISSION_GATE =
 			new ProjectionParticleEmissionGate();
@@ -198,9 +200,9 @@ public final class CellHandParticleEffects {
 				.map(rite -> Vec3.atCenterOf(rite.getCenter()).add(0.0D, 0.45D, 0.0D));
 	}
 
-	public static void spawnGraftRiteItemParticles(ItemStack graftStack, Vec3 source) {
+	public static void spawnBrazierItemAbsorptionParticles(ItemStack offeringStack, Vec3 source) {
 		Minecraft mc = Minecraft.getInstance();
-		if (mc.isPaused() || graftStack.isEmpty()) {
+		if (mc.isPaused() || offeringStack.isEmpty()) {
 			return;
 		}
 		LocalPlayer player = mc.player;
@@ -218,10 +220,10 @@ public final class CellHandParticleEffects {
 		Vec3 origin = mc.options.getCameraType().isFirstPerson()
 				? fallbackFirstPersonHandOrigin(activeArm)
 				: calculateThirdPersonHandOrigin(player, activeArm);
-		spawnItemParticlesAlongAbsorptionPath(mc, graftStack, origin, source);
+		spawnItemParticlesAlongAbsorptionPath(mc, offeringStack, origin, source);
 	}
 
-	private static void spawnItemParticlesAlongAbsorptionPath(Minecraft mc, ItemStack graftStack, Vec3 origin,
+	private static void spawnItemParticlesAlongAbsorptionPath(Minecraft mc, ItemStack offeringStack, Vec3 origin,
 			Vec3 source) {
 		if (mc.level == null) {
 			return;
@@ -232,8 +234,8 @@ public final class CellHandParticleEffects {
 		}
 		Random rand = new Random();
 		Vec3 inwardVelocity = origin.subtract(source).normalize().scale(0.035D);
-		ParticleColor graftColor = graftTendencyColor(graftStack);
-		for (int i = 0; i < 5; i++) {
+		ParticleColor absorptionItemColor = absorptionItemColor(offeringStack);
+		for (int i = 0; i < ABSORBED_ITEM_PARTICLES_PER_TICK; i++) {
 			double pathOffset = 0.18D + rand.nextDouble() * 0.72D;
 			Vec3 side = path.cross(new Vec3(0.0D, 1.0D, 0.0D));
 			if (side.lengthSqr() < 0.0001D) {
@@ -244,20 +246,24 @@ public final class CellHandParticleEffects {
 			double velocityX = inwardVelocity.x + (rand.nextDouble() - 0.5D) * 0.025D;
 			double velocityY = inwardVelocity.y + (rand.nextDouble() - 0.5D) * 0.025D;
 			double velocityZ = inwardVelocity.z + (rand.nextDouble() - 0.5D) * 0.025D;
-			mc.level.addParticle(new ItemParticleOption(ParticleTypes.ITEM, graftStack),
+			Particle itemParticle = mc.particleEngine.createParticle(
+					new ItemParticleOption(ParticleTypes.ITEM, offeringStack),
 					point.x, point.y, point.z,
 					velocityX, velocityY, velocityZ);
-			mc.level.addParticle(GlowParticleFactory.createData(graftColor),
+			if (itemParticle != null) {
+				itemParticle.scale(ABSORBED_ITEM_PARTICLE_SCALE);
+			}
+			mc.level.addParticle(GlowParticleFactory.createData(absorptionItemColor),
 					point.x + side.x * 0.35D, point.y + side.y * 0.35D, point.z + side.z * 0.35D,
 					velocityX * 0.75D, velocityY * 0.75D, velocityZ * 0.75D);
 		}
 	}
 
-	private static ParticleColor graftTendencyColor(ItemStack graftStack) {
-		if (graftStack.is(ItemInit.memory_of_vesper.get())) {
+	private static ParticleColor absorptionItemColor(ItemStack offeringStack) {
+		if (offeringStack.is(ItemInit.memory_of_vesper.get())) {
 			return new ParticleColor(180, 10, 30);
 		}
-		return LivingWeaponGraftData.fromStack(graftStack)
+		return LivingWeaponGraftData.fromStack(offeringStack)
 				.map(LivingWeaponGraftData::form)
 				.map(form -> form.manipulationHolder().get().getTend().getColor())
 				.orElse(ParticleColor.BLOOD);

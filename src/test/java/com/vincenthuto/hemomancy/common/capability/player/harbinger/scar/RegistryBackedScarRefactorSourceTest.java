@@ -101,7 +101,8 @@ public final class RegistryBackedScarRefactorSourceTest {
 		assertContains("mason effigy screen registered", clientEvents, "MasonsEffigyScreen::new");
 		assertContains("scar pattern stores selected scar ids", pattern, "TAG_SCAR_IDS");
 		assertContains("scar pattern creates prepared loadouts", pattern, "createPreparedPattern");
-		assertContains("iron brazier invokes deliberate scar burns", brazierBlock, "ScarBrazierRite.burn");
+		assertContains("iron brazier routes scar offerings through absorption", brazierBlock,
+				"ScarBrazierRite.tryAbsorb");
 		assertContains("brazier learns from scar items", brazier, "tryLearnScar");
 		assertContains("brazier commits scar pattern loadouts", brazier, "tryCommitLoadout");
 		assertContains("brazier clears loadouts from blank motif paper", brazier, "tryClearLoadout");
