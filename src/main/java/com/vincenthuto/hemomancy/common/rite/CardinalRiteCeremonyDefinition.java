@@ -16,7 +16,6 @@ public record CardinalRiteCeremonyDefinition(
 		List<SupportSocket> supportSockets,
 		List<String> waves,
 		List<String> guaranteedWaves,
-		String signatureHandler,
 		List<BlockPos> fragileOffsets,
 		int targetDurationTicks,
 		String focusMode,
@@ -32,7 +31,6 @@ public record CardinalRiteCeremonyDefinition(
 		supportSockets = List.copyOf(supportSockets == null ? List.of() : supportSockets);
 		waves = List.copyOf(waves == null ? List.of() : waves);
 		guaranteedWaves = List.copyOf(guaranteedWaves == null ? List.of() : guaranteedWaves);
-		signatureHandler = signatureHandler == null ? "" : signatureHandler;
 		fragileOffsets = List.copyOf(fragileOffsets == null ? List.of() : fragileOffsets);
 		targetDurationTicks = Math.max(1, targetDurationTicks);
 		focusMode = focusMode == null ? "" : focusMode;

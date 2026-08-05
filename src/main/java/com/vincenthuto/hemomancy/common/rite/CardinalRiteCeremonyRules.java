@@ -91,13 +91,6 @@ public final class CardinalRiteCeremonyRules {
 		return CardinalRiteInstability.STABLE;
 	}
 
-	public static CardinalRiteProfessionFailure professionFailure(int degree) {
-		if (degree >= 7) return CardinalRiteProfessionFailure.COLLAPSE;
-		if (degree >= 5) return CardinalRiteProfessionFailure.SEVERE_RECOVERY;
-		if (degree >= 4) return CardinalRiteProfessionFailure.RECOVERY_WAVE;
-		return CardinalRiteProfessionFailure.RETRY;
-	}
-
 	public static int anchorDeficitInstability(int[] anchorBloodMl) {
 		if (anchorBloodMl == null) return 0;
 		int pressure = 0;

@@ -168,7 +168,6 @@ public class CardinalRiteRecipeSerializer implements RecipeSerializer<CardinalRi
 		}
 		requireCeremonyField(ceremony, recipeId, "support_sockets");
 		requireCeremonyField(ceremony, recipeId, "waves");
-		requireCeremonyField(ceremony, recipeId, "signature");
 		requireCeremonyField(ceremony, recipeId, "fragile_offsets");
 		List<CardinalRiteCeremonyDefinition.SupportSocket> sockets = new ArrayList<>();
 		for (JsonElement element : ceremony.getAsJsonArray("support_sockets")) {
@@ -181,7 +180,6 @@ public class CardinalRiteRecipeSerializer implements RecipeSerializer<CardinalRi
 		}
 		List<String> waves = stringList(ceremony, "waves");
 		List<String> guaranteed = stringList(ceremony, "guaranteed_waves");
-		String handler = GsonHelper.getAsString(ceremony, "signature");
 		List<BlockPos> fragile = new ArrayList<>();
 		for (JsonElement element : ceremony.getAsJsonArray("fragile_offsets")) {
 			JsonArray offset = element.getAsJsonArray();
@@ -203,7 +201,7 @@ public class CardinalRiteRecipeSerializer implements RecipeSerializer<CardinalRi
 		requireCeremonyField(atmosphere, recipeId, "fog");
 		requireCeremonyField(atmosphere, recipeId, "lightning");
 		requireCeremonyField(atmosphere, recipeId, "dome");
-		return new CardinalRiteCeremonyDefinition(profile, anchors, sockets, waves, guaranteed, handler, fragile,
+		return new CardinalRiteCeremonyDefinition(profile, anchors, sockets, waves, guaranteed, fragile,
 				GsonHelper.getAsInt(ceremony, "target_duration_ticks"),
 				GsonHelper.getAsString(ceremony, "focus"),
 				GsonHelper.getAsInt(ceremony, "required_helpers"),
@@ -556,7 +554,6 @@ public class CardinalRiteRecipeSerializer implements RecipeSerializer<CardinalRi
 		}
 		List<String> waves = readStrings(buffer);
 		List<String> guaranteed = readStrings(buffer);
-		String handler = buffer.readUtf();
 		List<BlockPos> fragile = new ArrayList<>();
 		for (int i = 0, count = buffer.readVarInt(); i < count; i++) fragile.add(buffer.readBlockPos());
 		int targetDurationTicks = buffer.readVarInt();
@@ -568,7 +565,7 @@ public class CardinalRiteRecipeSerializer implements RecipeSerializer<CardinalRi
 				new CardinalRiteCeremonyDefinition.Atmosphere(
 						buffer.readUtf(), buffer.readBoolean(), buffer.readBoolean());
 		String failureProfile = buffer.readUtf();
-		return new CardinalRiteCeremonyDefinition(profile, anchors, sockets, waves, guaranteed, handler, fragile,
+		return new CardinalRiteCeremonyDefinition(profile, anchors, sockets, waves, guaranteed, fragile,
 				targetDurationTicks, focusMode, requiredHelpers, helperRoles, stillIntervalTicks,
 				atmosphere, failureProfile);
 	}
@@ -593,7 +590,6 @@ public class CardinalRiteRecipeSerializer implements RecipeSerializer<CardinalRi
 		}
 		writeStrings(buffer, ceremony.waves());
 		writeStrings(buffer, ceremony.guaranteedWaves());
-		buffer.writeUtf(ceremony.signatureHandler());
 		buffer.writeVarInt(ceremony.fragileOffsets().size());
 		for (BlockPos offset : ceremony.fragileOffsets()) buffer.writeBlockPos(offset);
 		buffer.writeVarInt(ceremony.targetDurationTicks());

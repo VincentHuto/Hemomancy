@@ -14,17 +14,28 @@ import static org.junit.jupiter.api.Assertions.*;
 
 final class ActiveCardinalRiteCeremonyTest {
 	@Test
-	void riteWithoutAuthoredWavesSkipsTheOrdealAndStillInterval() {
+	void riteWithoutAuthoredWavesSkipsTheRemovedProfessionPhase() {
 		ActiveCardinalRite rite = ActiveCardinalRite.interactive(UUID.randomUUID(), BlockPos.ZERO,
 				ResourceLocation.parse("hemomancy:cardinal_rite/lower_tier"), 400, 3, 2,
 				true, 0, 4);
 		for (int i = 0; i < 4; i++) rite.fillAnchor(i, 50);
 		assertTrue(rite.enterInscription());
 
-		assertTrue(rite.sealAltar(true, false));
+		assertTrue(rite.sealAltar(false));
 
-		assertEquals(CardinalRitePhase.PROFESSION, rite.getPhase());
+		assertEquals(CardinalRitePhase.CULMINATION, rite.getPhase());
 		assertEquals(0, rite.getTotalWaves());
+	}
+
+	@Test
+	void savedProfessionPhaseMigratesToCulmination() {
+		ActiveCardinalRite rite = rite(4, false, 0);
+		CompoundTag saved = rite.serialize();
+		saved.putString("Phase", "PROFESSION");
+
+		ActiveCardinalRite copy = ActiveCardinalRite.deserialize(saved);
+
+		assertEquals(CardinalRitePhase.CULMINATION, copy.getPhase());
 	}
 
 	@Test
@@ -34,15 +45,15 @@ final class ActiveCardinalRiteCeremonyTest {
 				false, 3, 12);
 		for (int i = 0; i < 12; i++) rite.fillAnchor(i, 50);
 		assertTrue(rite.enterInscription());
-		assertTrue(rite.sealAltar(false, true));
+		assertTrue(rite.sealAltar(true));
 
 		rite.completeWave();
 		assertEquals(CardinalRitePhase.STILL_INTERVAL, rite.getPhase());
-		rite.finishStillInterval(false);
+		rite.finishStillInterval();
 		assertEquals(CardinalRitePhase.ORDEAL, rite.getPhase());
 		rite.completeWave();
 		assertEquals(CardinalRitePhase.STILL_INTERVAL, rite.getPhase());
-		rite.finishStillInterval(false);
+		rite.finishStillInterval();
 		assertEquals(CardinalRitePhase.ORDEAL, rite.getPhase());
 		rite.completeWave();
 		assertEquals(CardinalRitePhase.CULMINATION, rite.getPhase());
@@ -79,7 +90,7 @@ final class ActiveCardinalRiteCeremonyTest {
 		rite.sealAltar();
 		rite.completeWave();
 		assertEquals(CardinalRitePhase.STILL_INTERVAL, rite.getPhase());
-		rite.finishStillInterval(false);
+		rite.finishStillInterval();
 		assertEquals(CardinalRitePhase.OFFERING_PROCESSION, rite.getPhase());
 		assertEquals(new BlockPos(2, 0, 0), rite.getCurrentOffering().pos());
 		assertTrue(rite.absorbCurrentOffering());
@@ -128,7 +139,7 @@ final class ActiveCardinalRiteCeremonyTest {
 		for (int tick = 0; tick < 50; tick++) rite.tick();
 		assertEquals(0.85D, rite.getProgress(100), 0.0001D, "still interval end");
 
-		rite.finishStillInterval(false);
+		rite.finishStillInterval();
 		assertEquals(0.95D, rite.getProgress(100), 0.0001D, "culmination begins");
 		for (int tick = 0; tick < 20; tick++) rite.tick();
 		assertEquals(0.9625D, rite.getProgress(100), 0.0001D, "growth midpoint");

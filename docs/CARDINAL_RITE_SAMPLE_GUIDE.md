@@ -3,8 +3,8 @@
 The four recipes whose names begin with `[TEST]` are repeatable ceremony
 fixtures. Their old one-shot `bloodCost` is zero and
 `breakBlocksOnCreation` is false, so the structure remains available after a
-success or collapse. The blood paid into anchors, sigils, repairs, allies, and
-profession acts is still real.
+success or collapse. The blood paid into anchors, sigils, repairs, and allies
+is still real.
 
 ## Quick setup
 
@@ -54,13 +54,8 @@ portion visible without revealing any unfinished lines.
 | --- | ---: | ---: | --- |
 | `[TEST] First Circulation` | 0 | 4 / 200ml | Abbreviated model, bare-hand Degree One consecration, one ring, boundary/HUD, Reservoir discovery |
 | `[TEST] Inscription Crucible` | 1+ | 8 / 400ml | Diagonal rings, four optional sockets, discovery and response sigils, Bloodlicker siphoning, repair and still intervals |
-| `[TEST] Bloodline Vigil` | 4+ | 20 / 1000ml | Degree Five ally quota, shared reserve behavior, all three ally roles, Fargone/Rogue Will/false-omen threats, severe profession recovery |
-| `[TEST] Grand Ordeal Gauntlet` | 6+ | 28 / 1400ml | Degree Seven stress test, three allies, all five ordeal types plus discovery, fastest decay, fragile damage, collapse-on-profession-error |
-
-The two upper samples are marked as prototype rank rites only so they enter the
-Profession phase and use degree-scaled ally/failure rules. They are not mapped
-to a real Hematic Order promotion and therefore do not grant a permanent degree
-on completion.
+| `[TEST] Bloodline Vigil` | 4+ | 20 / 1000ml | Degree Five ally quota, shared reserve behavior, all three ally roles, Fargone/Rogue Will/false-omen threats |
+| `[TEST] Grand Ordeal Gauntlet` | 6+ | 28 / 1400ml | Degree Seven stress test, three allies, all five ordeal types plus discovery, fastest decay, fragile damage |
 
 ## Flat build patterns
 

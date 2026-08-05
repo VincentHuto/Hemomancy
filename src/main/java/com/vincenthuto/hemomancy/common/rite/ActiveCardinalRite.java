@@ -47,16 +47,12 @@ public class ActiveCardinalRite {
 	private int instability;
 	private int currentWave;
 	private int totalWaves;
-	private boolean professionAfterOrdeal;
 	private boolean betweenWaveStillIntervals;
 	private boolean finalStillInterval;
 	private int committedBloodMl;
 	private int carriedIchorMl;
 	private int carriedIchorTicks;
 	private int reservoirBloodMl;
-	private int professionStep;
-	private int professionMistakes;
-	private int professionChoice = -1;
 	private int[] anchorBloodMl = new int[0];
 	private int[] instabilityRepairBloodMl = new int[0];
 	private int[] instabilityDamagePriority = new int[0];
@@ -275,15 +271,14 @@ public class ActiveCardinalRite {
 		return true;
 	}
 
-	public boolean sealAltar(boolean professionRite, boolean hasStillInterval) {
+	public boolean sealAltar(boolean hasStillInterval) {
 		if (phase != CardinalRitePhase.INSCRIPTION) return false;
 		altarSealed = true;
-		professionAfterOrdeal = professionRite;
 		betweenWaveStillIntervals = hasStillInterval;
 		finalStillInterval = false;
 		if (totalWaves > 0) setPhase(CardinalRitePhase.ORDEAL);
 		else if (hasStillInterval) setPhase(CardinalRitePhase.STILL_INTERVAL);
-		else setPhase(professionRite ? CardinalRitePhase.PROFESSION : finalePhase());
+		else setPhase(finalePhase());
 		return true;
 	}
 
@@ -292,20 +287,16 @@ public class ActiveCardinalRite {
 		currentWave = Math.min(totalWaves, currentWave + 1);
 		if (currentWave >= totalWaves) {
 			setPhase(finalStillInterval ? CardinalRitePhase.STILL_INTERVAL
-					: professionAfterOrdeal ? CardinalRitePhase.PROFESSION : finalePhase());
+					: finalePhase());
 		} else {
 			setPhase(betweenWaveStillIntervals ? CardinalRitePhase.STILL_INTERVAL : CardinalRitePhase.ORDEAL);
 		}
 	}
 
-	public void finishStillInterval(boolean professionRite) {
+	public void finishStillInterval() {
 		if (phase != CardinalRitePhase.STILL_INTERVAL) return;
 		if (currentWave < totalWaves) setPhase(CardinalRitePhase.ORDEAL);
-		else setPhase(professionRite || professionAfterOrdeal ? CardinalRitePhase.PROFESSION : finalePhase());
-	}
-
-	public void finishProfession() {
-		if (phase == CardinalRitePhase.PROFESSION) setPhase(finalePhase());
+		else setPhase(finalePhase());
 	}
 
 	private CardinalRitePhase finalePhase() {
@@ -380,21 +371,6 @@ public class ActiveCardinalRite {
 		return true;
 	}
 
-	public void advanceProfessionStep() {
-		if (phase == CardinalRitePhase.PROFESSION) professionStep++;
-	}
-
-	public void professionMistake() {
-		professionMistakes++;
-	}
-
-	public void enterRecoveryWave(boolean severe) {
-		if (phase != CardinalRitePhase.PROFESSION) return;
-		totalWaves++;
-		if (severe) addInstability(20);
-		else addInstability(10);
-		if (!isTerminal()) setPhase(CardinalRitePhase.ORDEAL);
-	}
 
 	public int drainAnchor(int anchorIndex, int requestedMl) {
 		if (anchorIndex < 0 || anchorIndex >= anchorBloodMl.length || requestedMl <= 0) return 0;
@@ -745,10 +721,6 @@ public class ActiveCardinalRite {
 	public int getCarriedIchorMl() { return carriedIchorMl; }
 	public int getCarriedIchorTicks() { return carriedIchorTicks; }
 	public int getReservoirBloodMl() { return reservoirBloodMl; }
-	public int getProfessionStep() { return professionStep; }
-	public int getProfessionMistakes() { return professionMistakes; }
-	public int getProfessionChoice() { return professionChoice; }
-	public void setProfessionChoice(int professionChoice) { this.professionChoice = professionChoice; }
 	public int[] getAnchorBloodMl() { return anchorBloodMl.clone(); }
 	public Set<Integer> getBrokenInstabilityAnchors() { return Set.copyOf(brokenInstabilityAnchors); }
 	public Map<String, Integer> getSigilProgress() { return Map.copyOf(sigilProgress); }
@@ -806,7 +778,6 @@ public class ActiveCardinalRite {
 			case ORDEAL -> 0.25D + (totalWaves == 0 ? 0.0D : 0.5D * currentWave / totalWaves);
 			case PUPPET_TRIAL -> puppeteerTrialProgress;
 			case STILL_INTERVAL -> 0.75D + 0.10D * boundedPhaseProgress(stillIntervalTicks);
-			case PROFESSION -> 0.85D;
 			case OFFERING_PROCESSION -> 0.90D;
 			case CULMINATION -> 0.95D + 0.05D * boundedPhaseProgress(
 					com.vincenthuto.hemomancy.common.rite.harbinger.CardinalRiteFinaleTiming.TOTAL_TICKS);
@@ -840,16 +811,12 @@ public class ActiveCardinalRite {
 		tag.putInt("Instability", instability);
 		tag.putInt("CurrentWave", currentWave);
 		tag.putInt("TotalWaves", totalWaves);
-		tag.putBoolean("ProfessionAfterOrdeal", professionAfterOrdeal);
 		tag.putBoolean("BetweenWaveStillIntervals", betweenWaveStillIntervals);
 		tag.putBoolean("FinalStillInterval", finalStillInterval);
 		tag.putInt("CommittedBloodMl", committedBloodMl);
 		tag.putInt("CarriedIchorMl", carriedIchorMl);
 		tag.putInt("CarriedIchorTicks", carriedIchorTicks);
 		tag.putInt("ReservoirBloodMl", reservoirBloodMl);
-		tag.putInt("ProfessionStep", professionStep);
-		tag.putInt("ProfessionMistakes", professionMistakes);
-		tag.putInt("ProfessionChoice", professionChoice);
 		tag.putIntArray("AnchorBloodMl", anchorBloodMl);
 		tag.putIntArray("InstabilityRepairBloodMl", instabilityRepairBloodMl);
 		tag.putIntArray("InstabilityDamagePriority", instabilityDamagePriority);
@@ -966,6 +933,7 @@ public class ActiveCardinalRite {
 		rite.remainingTicks = tag.getInt("RemainingTicks");
 		if (!tag.contains(STATE_VERSION)) return rite;
 
+		boolean removedProfessionPhase = "PROFESSION".equals(tag.getString("Phase"));
 		rite.phase = CardinalRitePhase.byName(tag.getString("Phase"));
 		rite.degree = tag.getInt("Degree");
 		rite.abbreviated = tag.getBoolean("Abbreviated");
@@ -976,16 +944,12 @@ public class ActiveCardinalRite {
 		rite.instability = tag.getInt("Instability");
 		rite.currentWave = tag.getInt("CurrentWave");
 		rite.totalWaves = tag.getInt("TotalWaves");
-		rite.professionAfterOrdeal = tag.getBoolean("ProfessionAfterOrdeal");
 		rite.betweenWaveStillIntervals = tag.getBoolean("BetweenWaveStillIntervals");
 		rite.finalStillInterval = tag.getBoolean("FinalStillInterval");
 		rite.committedBloodMl = tag.getInt("CommittedBloodMl");
 		rite.carriedIchorMl = tag.getInt("CarriedIchorMl");
 		rite.carriedIchorTicks = tag.getInt("CarriedIchorTicks");
 		rite.reservoirBloodMl = tag.getInt("ReservoirBloodMl");
-		rite.professionStep = tag.getInt("ProfessionStep");
-		rite.professionMistakes = tag.getInt("ProfessionMistakes");
-		rite.professionChoice = tag.contains("ProfessionChoice") ? tag.getInt("ProfessionChoice") : -1;
 		rite.anchorBloodMl = tag.getIntArray("AnchorBloodMl");
 		rite.instabilityRepairBloodMl = tag.getIntArray("InstabilityRepairBloodMl");
 		rite.instabilityDamagePriority = tag.getIntArray("InstabilityDamagePriority");
@@ -1044,6 +1008,7 @@ public class ActiveCardinalRite {
 				|| !rite.offeringItinerary.isEmpty();
 		rite.returningFromOfferings = tag.getBoolean("ReturningFromOfferings");
 		rite.offeringDwellTicks = tag.getInt("OfferingDwellTicks");
+		if (removedProfessionPhase) rite.phase = rite.finalePhase();
 		return rite;
 	}
 

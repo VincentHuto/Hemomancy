@@ -33,7 +33,6 @@ final class CardinalRiteExplicitCeremonyResourceTest {
 					path.getFileName() + " is missing anchors/layout");
 			assertTrue(ceremony.has("support_sockets"), path.getFileName() + " is missing support_sockets");
 			assertTrue(ceremony.has("waves"), path.getFileName() + " is missing waves");
-			assertTrue(ceremony.has("signature"), path.getFileName() + " is missing signature");
 			assertTrue(ceremony.has("fragile_offsets"), path.getFileName() + " is missing fragile_offsets");
 			assertTrue(ceremony.has("target_duration_ticks"),
 					path.getFileName() + " is missing target_duration_ticks");

@@ -3,9 +3,8 @@
   "bloodCost": 0,
   "riteType": "greater",
   "required_degree": 4,
-  "rankup": true,
   "riteName": "[TEST] Bloodline Vigil",
-  "riteDescription": "A Degree Five prototype for testing one recruited ally, shared blood reserves, Anchor, Attendant, and Warden duties, anchor decay, recovery waves, and a signature profession.",
+  "riteDescription": "A Degree Five prototype for testing one recruited ally, shared blood reserves, Anchor, Attendant, and Warden duties, anchor decay, and recovery waves.",
   "ceremony": {
     "profile": "full",
     "layout": "crooked",
@@ -44,7 +43,6 @@
     "guaranteed_waves": [
       "discover_mnemonic"
     ],
-    "signature": "simulacrum_wound",
     "fragile_offsets": [
       [
         0,

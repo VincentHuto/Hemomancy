@@ -69,7 +69,7 @@ final class CardinalRiteProgressionPolicyTest {
 				.mapToObj(i -> "wave_" + i).toList();
 		return new CardinalRiteCeremonyDefinition(
 				CardinalRiteCeremonyProfile.STANDARD, anchorList, socketList, waveList, List.of(),
-				"", List.of(BlockPos.ZERO), 200, focus, helpers, List.of(),
+				List.of(BlockPos.ZERO), 200, focus, helpers, List.of(),
 				waves == 0 ? 0 : 100,
 				new CardinalRiteCeremonyDefinition.Atmosphere(fog, lightning, dome), failure);
 	}

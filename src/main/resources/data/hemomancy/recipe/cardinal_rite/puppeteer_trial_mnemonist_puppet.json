@@ -39,7 +39,6 @@
     "support_sockets": [],
     "waves": [],
     "guaranteed_waves": [],
-    "signature": "puppeteer_trial",
     "fragile_offsets": [],
     "target_duration_ticks": 1200,
     "focus": "living_staff",

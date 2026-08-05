@@ -59,7 +59,6 @@
     "support_sockets": [],
     "waves": [],
     "guaranteed_waves": [],
-    "signature": "tendency_response",
     "fragile_offsets": [],
     "target_duration_ticks": 400,
     "focus": "hematic_medium",

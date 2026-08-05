@@ -75,7 +75,6 @@ final class CardinalRiteRecipeSerializerCeremonyValidationTest {
 		ceremony.add("support_sockets", new JsonArray());
 		ceremony.add("waves", new JsonArray());
 		ceremony.add("guaranteed_waves", new JsonArray());
-		ceremony.addProperty("signature", "test");
 		ceremony.add("fragile_offsets", new JsonArray());
 		ceremony.addProperty("target_duration_ticks", 400);
 		ceremony.addProperty("focus", "hematic_medium");

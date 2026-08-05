@@ -80,7 +80,6 @@
     ],
     "waves": [],
     "guaranteed_waves": [],
-    "signature": "fungal_root",
     "fragile_offsets": [],
     "target_duration_ticks": 3600,
     "focus": "living_staff",

@@ -17,7 +17,6 @@
     "support_sockets": [],
     "waves": [],
     "guaranteed_waves": [],
-    "signature": "first_circulation",
     "fragile_offsets": [],
     "target_duration_ticks": 400,
     "focus": "temple_medium",

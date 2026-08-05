@@ -16,7 +16,6 @@ import com.vincenthuto.hemomancy.common.rite.CardinalRiteCeremonyRules;
 import com.vincenthuto.hemomancy.common.rite.CardinalRiteFootprintRules;
 import com.vincenthuto.hemomancy.common.rite.CardinalRiteInstabilityBoundaryRules;
 import com.vincenthuto.hemomancy.common.rite.CardinalRitePhase;
-import com.vincenthuto.hemomancy.common.rite.CardinalRiteProfessionFailure;
 import com.vincenthuto.hemomancy.common.rite.CardinalRiteSavedData;
 import com.vincenthuto.hemomancy.common.rite.CardinalRiteStationMatcher;
 import com.vincenthuto.hemomancy.common.rite.sigil.IchorianSigilDefinition;
@@ -88,12 +87,6 @@ public final class CardinalRiteInteractionHandler {
 				data.setDirty();
 				return CardinalRiteProjectionResult.handled(falseOmen);
 			}
-			double professionHandled = tryProjectProfession(serverLevel, player, rite,
-					target, projectionRate);
-			if (professionHandled > 0.0D) {
-				data.setDirty();
-				return CardinalRiteProjectionResult.handled(professionHandled);
-			}
 			double sigilHandled = tryProjectSigil(serverLevel, player, rite, target, projectionRate);
 			if (sigilHandled > 0.0D) {
 				data.setDirty();
@@ -160,13 +153,14 @@ public final class CardinalRiteInteractionHandler {
 			}
 		}
 		prepareWaveDeck(rite, recipe);
-		rite.sealAltar(!recipe.getCeremony().signatureHandler().isBlank(),
-				recipe.getCeremony().stillIntervalTicks() > 0);
+		rite.sealAltar(recipe.getCeremony().stillIntervalTicks() > 0);
 		level.playSound(null, rite.getCenterPos(), SoundEvents.BEACON_POWER_SELECT,
 				SoundSource.BLOCKS, 1.0F, 0.8F);
 		player.displayClientMessage(Component.literal(rite.getTotalWaves() > 0
 						? "The altar is sealed. Endure the ordeal."
-						: "The altar is sealed. Complete the rite's profession.")
+						: rite.getPhase() == CardinalRitePhase.STILL_INTERVAL
+								? "The altar is sealed. Restore the rite before culmination."
+								: "The altar is sealed. The rite begins its culmination.")
 				.withStyle(ChatFormatting.DARK_RED, ChatFormatting.BOLD), false);
 		return true;
 	}
@@ -215,14 +209,6 @@ public final class CardinalRiteInteractionHandler {
 								node.x(), node.z())));
 			}
 		}
-		if (rite.getPhase() == CardinalRitePhase.PROFESSION && recipe != null
-				&& recipe.getCeremony() != null) {
-			for (BlockPos node : CardinalRiteProfessionActs.forRite(rite, recipe).nodes()) {
-				BlockPos target = rite.getCenterPos().offset(node);
-				targets.add(new ProjectionTarget(target,
-						new Vec3(target.getX() + 0.5D, target.getY() + 0.1D, target.getZ() + 0.5D)));
-			}
-		}
 		if (rite.getPhase() == CardinalRitePhase.ORDEAL
 				&& rite.getCurrentWave() < rite.getWaveDeck().size()
 				&& "false_omens".equals(rite.getWaveDeck().get(rite.getCurrentWave()))) {
@@ -236,33 +222,6 @@ public final class CardinalRiteInteractionHandler {
 			}
 		}
 		return targets;
-	}
-
-	private static double tryProjectProfession(ServerLevel level, ServerPlayer player, ActiveCardinalRite rite,
-			BlockPos target, double projectionRate) {
-		if (rite.getPhase() != CardinalRitePhase.PROFESSION) return 0.0D;
-		CardinalRiteRecipe recipe = CardinalRiteRecipe.getRiteByLocation(level, rite.getRecipeId());
-		if (recipe == null || recipe.getCeremony() == null) return 0.0D;
-		CardinalRiteProfessionActs.Act act = CardinalRiteProfessionActs.forRite(rite, recipe);
-		if (!CardinalRiteProfessionActs.requiresBlood(act)) return 0.0D;
-		int touched = professionNodeAt(rite, act, target);
-		if (touched < 0) return 0.0D;
-		if (!act.accepts(rite.getProfessionStep(), touched)) {
-			applyProfessionFailure(player, rite);
-			return 1.0D;
-		}
-		int spent = spendBlood(player, rite, Math.max(1,
-				Math.min(50, (int) Math.floor(projectionRate))));
-		if (spent <= 0) return 0.0D;
-		int blood = rite.getSigilProgress().getOrDefault("profession_blood", 0) + spent;
-		if (blood >= 50) {
-			rite.setSigilProgress("profession_blood", 0);
-			rite.advanceProfessionStep();
-			if (act.complete(rite.getProfessionStep())) rite.finishProfession();
-		} else {
-			rite.setSigilProgress("profession_blood", blood);
-		}
-		return spent;
 	}
 
 	private static double tryProjectSigil(ServerLevel level, ServerPlayer player, ActiveCardinalRite rite,
@@ -722,28 +681,6 @@ public final class CardinalRiteInteractionHandler {
 			return;
 		}
 
-		if (rite.getPhase() == CardinalRitePhase.PROFESSION) {
-			CardinalRiteRecipe recipe = CardinalRiteRecipe.getRiteByLocation(level, rite.getRecipeId());
-			if (recipe == null || recipe.getCeremony() == null) return;
-			CardinalRiteProfessionActs.Act act = CardinalRiteProfessionActs.forRite(rite, recipe);
-			if (CardinalRiteProfessionActs.requiresBlood(act)) {
-				player.displayClientMessage(Component.literal("This final circulation answers only projected blood.")
-						.withStyle(ChatFormatting.DARK_RED), true);
-				consume(event);
-				return;
-			}
-			int touched = professionNodeAt(rite, act, event.getPos());
-			if (touched < 0) return;
-			if (!act.accepts(rite.getProfessionStep(), touched)) {
-				applyProfessionFailure(player, rite);
-			} else {
-				if ("tendency_response".equals(act.id())) rite.setProfessionChoice(touched);
-				rite.advanceProfessionStep();
-				if (act.complete(rite.getProfessionStep())) rite.finishProfession();
-			}
-			data.setDirty();
-			consume(event);
-		}
 	}
 
 	@SubscribeEvent
@@ -758,39 +695,6 @@ public final class CardinalRiteInteractionHandler {
 			event.setCancellationResult(InteractionResult.SUCCESS);
 			event.setCanceled(true);
 		}
-	}
-
-	private static int professionNodeAt(ActiveCardinalRite rite, CardinalRiteProfessionActs.Act act,
-			BlockPos target) {
-		for (int i = 0; i < act.nodes().size(); i++) {
-			BlockPos node = rite.getCenterPos().offset(act.nodes().get(i));
-			if (target.closerThan(node, 1.4D) || target.closerThan(node.below(), 1.4D)) return i;
-		}
-		return -1;
-	}
-
-	private static void applyProfessionFailure(ServerPlayer player, ActiveCardinalRite rite) {
-		if (CardinalRiteAllyService.tryCorrectMiss(player.serverLevel(), rite)) {
-			player.displayClientMessage(Component.literal(
-					"The Attendant voices the missed response; the profession remains intact.")
-					.withStyle(ChatFormatting.GOLD), false);
-			return;
-		}
-		rite.professionMistake();
-		CardinalRiteProfessionFailure failure =
-				CardinalRiteCeremonyRules.professionFailure(rite.getDegree());
-		switch (failure) {
-			case RETRY -> rite.addInstability(8);
-			case RECOVERY_WAVE -> rite.enterRecoveryWave(false);
-			case SEVERE_RECOVERY -> rite.enterRecoveryWave(true);
-			case COLLAPSE -> rite.markCollapsed();
-		}
-		player.displayClientMessage(Component.literal(switch (failure) {
-			case RETRY -> "The profession rejects the stroke. Correct it.";
-			case RECOVERY_WAVE -> "A ring ruptures; the ordeal returns.";
-			case SEVERE_RECOVERY -> "The covenant tears open into a severe recovery.";
-			case COLLAPSE -> "The final profession permits no second attempt.";
-		}).withStyle(ChatFormatting.DARK_RED, ChatFormatting.BOLD), false);
 	}
 
 	private static boolean mayParticipate(ServerPlayer player, ActiveCardinalRite rite) {

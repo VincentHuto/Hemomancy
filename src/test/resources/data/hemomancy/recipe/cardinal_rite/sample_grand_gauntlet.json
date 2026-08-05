@@ -3,9 +3,8 @@
   "bloodCost": 0,
   "riteType": "grand",
   "required_degree": 6,
-  "rankup": true,
   "riteName": "[TEST] Grand Ordeal Gauntlet",
-  "riteDescription": "A Degree Seven stress test with three ally stations, six fixed ordeal waves, every threat family, sigil discovery, fast decay, fragile structure damage, and a collapse-grade profession.",
+  "riteDescription": "A Degree Seven stress test with three ally stations, six fixed ordeal waves, every threat family, sigil discovery, fast decay, and fragile structure damage.",
   "ceremony": {
     "profile": "full",
     "layout": "serpentine",
@@ -46,7 +45,6 @@
     "guaranteed_waves": [
       "discover_hematic_lattice"
     ],
-    "signature": "trifold_judgment",
     "fragile_offsets": [
       [
         0,

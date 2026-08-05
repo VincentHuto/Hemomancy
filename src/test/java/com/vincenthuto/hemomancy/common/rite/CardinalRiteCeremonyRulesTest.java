@@ -70,15 +70,6 @@ public final class CardinalRiteCeremonyRulesTest {
 	}
 
 	@Test
-	void professionFailureEscalatesByDegree() {
-		assertEquals(CardinalRiteProfessionFailure.RETRY, CardinalRiteCeremonyRules.professionFailure(2), "early");
-		assertEquals(CardinalRiteProfessionFailure.RETRY, CardinalRiteCeremonyRules.professionFailure(3), "early offering");
-		assertEquals(CardinalRiteProfessionFailure.RECOVERY_WAVE, CardinalRiteCeremonyRules.professionFailure(4), "middle");
-		assertEquals(CardinalRiteProfessionFailure.SEVERE_RECOVERY, CardinalRiteCeremonyRules.professionFailure(6), "high");
-		assertEquals(CardinalRiteProfessionFailure.COLLAPSE, CardinalRiteCeremonyRules.professionFailure(7), "archon");
-	}
-
-	@Test
 	void authoredLayoutsAlwaysCreateFourOrderedAnchorsPerRing() {
 		for (CardinalRiteCeremonyCatalog.Layout layout : CardinalRiteCeremonyCatalog.Layout.values()) {
 			var anchors = CardinalRiteCeremonyDefinition.anchorsForLayout(3, 1, layout);

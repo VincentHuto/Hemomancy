@@ -926,15 +926,6 @@ public class HarbingerCardinalRiteEvents {
 					"Repair damaged anchors: " + rite.getBrokenInstabilityAnchors().size(),
 					"Restore every dry cardinal station");
 		}
-		if (rite.getPhase() == CardinalRitePhase.PROFESSION && recipe != null) {
-			CardinalRiteProfessionActs.Act act = CardinalRiteProfessionActs.forRite(rite, recipe);
-			return java.util.List.of(
-					act.prompt(),
-					"Response " + (rite.getProfessionStep() + 1) + "/" + Math.max(1, act.order().size()),
-					CardinalRiteProfessionActs.requiresBlood(act)
-							? "Use projected blood on the highlighted target"
-							: "Interact with the highlighted target");
-		}
 		if (rite.getPhase() == CardinalRitePhase.OFFERING_PROCESSION) {
 			int total = rite.getOfferingItinerary().size();
 			if (rite.isReturningFromOfferings()) {
@@ -1463,17 +1454,6 @@ public class HarbingerCardinalRiteEvents {
 		// Award rite completion milestone (first rite + tiered)
 		SkillPointGainEvents.onRiteCompleted(caster);
 		LiberKnowledgeHelper.unlockForRite(caster, ritePath);
-
-		// The Votary profession is a declaration rather than a pass/fail prompt:
-		// its chosen cardinal answer leaves a small, permanent alignment trace.
-		if ("cardinal_rite/votary_rite".equals(ritePath) && rite.getProfessionChoice() >= 0) {
-			EnumBloodTendency[] tendencies = EnumBloodTendency.values();
-			EnumBloodTendency chosen = tendencies[Math.floorMod(rite.getProfessionChoice(), tendencies.length)];
-			HemoCapabilityAccess.getBloodTendency(caster).ifPresent(tendency -> {
-				tendency.addTendencyAlignment(chosen, 3.0F);
-				BloodTendencyEvents.syncTendency(caster, tendency);
-			});
-		}
 
 		// Check if this rite grants an initiatory degree
 		Integer targetDegree = DEGREE_RITE_PATHS.get(ritePath);

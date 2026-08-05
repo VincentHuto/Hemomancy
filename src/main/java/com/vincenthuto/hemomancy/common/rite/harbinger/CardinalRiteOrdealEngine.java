@@ -61,7 +61,6 @@ public final class CardinalRiteOrdealEngine {
 			}
 			case ORDEAL -> tickOrdeal(level, caster, rite, recipe);
 			case STILL_INTERVAL -> tickStillInterval(caster, rite, recipe);
-			case PROFESSION -> tickProfession(level, caster, rite, recipe);
 			case OFFERING_PROCESSION -> tickOfferingProcession(level, caster, rite);
 			case CULMINATION -> tickCulmination(level, caster, rite);
 			default -> {
@@ -264,11 +263,11 @@ public final class CardinalRiteOrdealEngine {
 		int duration = recipe.getCeremony().stillIntervalTicks();
 		if (rite.getPhaseTicks() >= duration) {
 			if (rite.areAnchorsConsecrated()) {
-				rite.finishStillInterval(recipe.isRankup());
+				rite.finishStillInterval();
 			} else {
 				if (rite.getPhaseTicks() == duration) {
 					caster.displayClientMessage(Component.literal(
-							"The profession waits: restore every cardinal station.")
+							"The rite waits: restore every cardinal station.")
 							.withStyle(ChatFormatting.DARK_RED), false);
 				}
 				if (rite.getPhaseTicks() % 20 == 0) {
@@ -277,16 +276,6 @@ public final class CardinalRiteOrdealEngine {
 				}
 			}
 		}
-	}
-
-	private static void tickProfession(ServerLevel level, ServerPlayer caster, ActiveCardinalRite rite,
-			CardinalRiteRecipe recipe) {
-		CardinalRiteProfessionActs.Act act = CardinalRiteProfessionActs.forRite(rite, recipe);
-		if (rite.getPhaseTicks() == 1) {
-			caster.displayClientMessage(Component.literal(act.prompt())
-					.withStyle(ChatFormatting.GOLD, ChatFormatting.BOLD), false);
-		}
-		drawProfession(level, rite, act);
 	}
 
 	private static void beginWave(ServerLevel level, ServerPlayer caster, ActiveCardinalRite rite) {
@@ -590,26 +579,6 @@ public final class CardinalRiteOrdealEngine {
 			drawInteractionMarker(level, fakeColor,
 					fake.getX() + 0.5D, fake.getY() + 0.12D, fake.getZ() + 0.5D,
 					revealed ? 1 : 3, 0.18D, 0.02D, 0.18D);
-		}
-	}
-
-	private static void drawProfession(ServerLevel level, ActiveCardinalRite rite,
-			CardinalRiteProfessionActs.Act act) {
-		if (level.getGameTime() % 3 != 0) return;
-		for (int i = 0; i < act.nodes().size(); i++) {
-			BlockPos node = rite.getCenterPos().offset(act.nodes().get(i));
-			boolean expected = act.accepts(rite.getProfessionStep(), i);
-			ParticleColor nodeColor = expected
-					? new ParticleColor(255, 210, 90) : new ParticleColor(120, 20, 30);
-			if (expected) {
-				drawInteractionMarker(level, nodeColor,
-						node.getX() + 0.5D, node.getY() + 0.1D, node.getZ() + 0.5D,
-						3, 0.04D, 0.02D, 0.04D);
-			} else {
-				level.sendParticles(BloodCellParticleFactory.createData(nodeColor),
-						node.getX() + 0.5D, node.getY() + 0.1D, node.getZ() + 0.5D,
-						1, 0.04D, 0.02D, 0.04D, 0.0D);
-			}
 		}
 	}
 

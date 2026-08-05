@@ -42,7 +42,6 @@
     "guaranteed_waves": [
       "discover_bastion"
     ],
-    "signature": "tendency_response",
     "fragile_offsets": [
       [
         0,

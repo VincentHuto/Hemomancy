@@ -23,15 +23,8 @@ public final class CardinalRiteSampleRecipesTest {
 
 		assertCeremony(circulation, "abbreviated", "cardinal", 0, false);
 		assertCeremony(inscription, "full", "diagonal", 1, false);
-		assertCeremony(bloodline, "full", "crooked", 4, true);
-		assertCeremony(gauntlet, "full", "serpentine", 6, true);
-
-		assertEquals("simulacrum_wound",
-				bloodline.getAsJsonObject("ceremony").get("signature").getAsString(),
-				"bloodline signature");
-		assertEquals("trifold_judgment",
-				gauntlet.getAsJsonObject("ceremony").get("signature").getAsString(),
-				"grand signature");
+		assertCeremony(bloodline, "full", "crooked", 4, false);
+		assertCeremony(gauntlet, "full", "serpentine", 6, false);
 	}
 
 	@Test
