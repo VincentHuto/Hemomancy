@@ -19,6 +19,13 @@ public final class SanguineOmenOverlayState {
 		}
 	}
 
+	public void clear() {
+		durationTicks = 0;
+		remainingTicks = 0;
+		peakAlpha = 0.0F;
+		seed = 0;
+	}
+
 	public boolean isActive() {
 		return remainingTicks > 0;
 	}

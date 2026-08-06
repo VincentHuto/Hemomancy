@@ -266,7 +266,7 @@ public class CardinalRiteBoundaryRenderer {
 						rite.stainFadeProgress(partialTick));
 		stack.pushPose();
 		stack.translate(cx - cam.x, cy - cam.y, cz - cam.z);
-		Matrix4f mat = stack.last().pose();
+		Matrix4f baseMat = stack.last().pose();
 
 		for (int ring = 0; ring < ringCount; ring++) {
 			final int activeRing = ring;
@@ -309,10 +309,20 @@ public class CardinalRiteBoundaryRenderer {
 								.filter(anchor -> anchor.ring() == activeRing)
 								.toList();
 				drawBoundaryFloorStain(
-						glowVC, mat, ringRadius, backingArcs,
+						glowVC, baseMat, ringRadius, backingArcs,
 						stainAnchors, ring, stainOpacity);
 			}
 			if (visibleArcs.isEmpty()) continue;
+			CardinalRiteCompletionRingTheatrics.RingPose finalePose =
+					CardinalRiteCompletionRingTheatrics.pose(
+						rite.getPhase(), rite.phaseRenderTicks(partialTick),
+						currentTime, ring, ringCount, ringRadius);
+			if (finalePose.opacity() <= 0.001F || finalePose.radialScale() <= 0.001F) continue;
+			stack.pushPose();
+			stack.translate(0.0F, finalePose.verticalOffset(), 0.0F);
+			stack.mulPose(Axis.YP.rotation(finalePose.rotationRadians()));
+			stack.scale(finalePose.radialScale(), 1.0F, finalePose.radialScale());
+			Matrix4f ringMat = stack.last().pose();
 			// Alternate rotation direction: even rings go forward, odd rings reverse
 			float directionSign = (ring % 2 == 0) ? 1.0f : -1.0f;
 			// Outer rings become progressively more transparent
@@ -322,8 +332,10 @@ public class CardinalRiteBoundaryRenderer {
 			float lighten = (ringCount > 1) ? (float) ring / (ringCount - 1) * 0.6f : 0f;
 
 			float heartbeat = IchorianSigilOrganicGeometry.heartbeat(currentTime);
-			float coreAlpha = (0.76F + (heartbeat - 0.92F) * 0.8F) * ringFade;
-			float glowAlpha = (0.12F + (heartbeat - 0.92F) * 0.5F) * ringFade;
+			float coreAlpha = (0.76F + (heartbeat - 0.92F) * 0.8F)
+					* ringFade * finalePose.opacity();
+			float glowAlpha = (0.12F + (heartbeat - 0.92F) * 0.5F)
+					* ringFade * finalePose.opacity();
 
 			float coreR = 0.34F + lighten * 0.10F;
 			float coreG = 0.008F + lighten * 0.018F;
@@ -380,9 +392,9 @@ public class CardinalRiteBoundaryRenderer {
 				float sin2 = (float) Math.sin(a2);
 
 				float integrityCoreWidth = CardinalRiteBoundaryGeometry.integrityWidth(
-						CORE_WIDTH, arcIntegrity);
+						CORE_WIDTH / finalePose.radialScale(), arcIntegrity);
 				float integrityGlowWidth = CardinalRiteBoundaryGeometry.integrityWidth(
-						GLOW_WIDTH, arcIntegrity);
+						GLOW_WIDTH / finalePose.radialScale(), arcIntegrity);
 				float iGlow1 = r1 - integrityGlowWidth - integrityCoreWidth * 0.5f;
 				float iCore1 = r1 - integrityCoreWidth * 0.5f;
 				float oCore1 = r1 + integrityCoreWidth * 0.5f;
@@ -395,14 +407,14 @@ public class CardinalRiteBoundaryRenderer {
 
 				if (glowVC != null) {
 					// Inner glow
-					emitQuad(glowVC, mat,
+					emitQuad(glowVC, ringMat,
 							cos1 * iGlow1, y1, sin1 * iGlow1, glowR, glowG, glowB, 0f,
 							cos1 * iCore1, y1, sin1 * iCore1, glowR, glowG, glowB, segmentGlowAlpha,
 							cos2 * iCore2, y2, sin2 * iCore2, glowR, glowG, glowB, segmentGlowAlpha,
 							cos2 * iGlow2, y2, sin2 * iGlow2, glowR, glowG, glowB, 0f);
 
 					// Outer glow
-					emitQuad(glowVC, mat,
+					emitQuad(glowVC, ringMat,
 							cos1 * oCore1, y1, sin1 * oCore1, glowR, glowG, glowB, segmentGlowAlpha,
 							cos1 * oGlow1, y1, sin1 * oGlow1, glowR, glowG, glowB, 0f,
 							cos2 * oGlow2, y2, sin2 * oGlow2, glowR, glowG, glowB, 0f,
@@ -411,7 +423,7 @@ public class CardinalRiteBoundaryRenderer {
 
 				if (coreVC != null) {
 					// Core
-					emitQuad(coreVC, mat,
+					emitQuad(coreVC, ringMat,
 							cos1 * iCore1, y1, sin1 * iCore1, segmentCoreR, segmentCoreG, segmentCoreB, segmentCoreAlpha,
 							cos1 * oCore1, y1, sin1 * oCore1, segmentCoreR, segmentCoreG, segmentCoreB, segmentCoreAlpha,
 							cos2 * oCore2, y2, sin2 * oCore2, segmentCoreR, segmentCoreG, segmentCoreB, segmentCoreAlpha,
@@ -420,21 +432,35 @@ public class CardinalRiteBoundaryRenderer {
 			}
 
 			// ── Draw vein branches sprouting inward from each ring ──
-			drawVeins(glowVC, coreVC, mat, ringRadius, currentTime, directionSign,
+			drawVeins(glowVC, coreVC, ringMat, ringRadius, currentTime, directionSign,
 					coreR, coreG, coreB, coreAlpha, glowR, glowG, glowB,
 					visibleArcs, legacy);
+			stack.popPose();
 		}
+		drawFinaleCollapseFlash(glowVC, baseMat, rite, partialTick);
 
 		if (!legacy && hasAnchorSockets) {
 			drawBoundaryCompletionEffects(
-					glowVC, coreVC, mat, rite, ceremony, partialTick);
+					glowVC, coreVC, baseMat, rite, ceremony, partialTick);
 		}
 		if (hasAnchorSockets) {
-			drawAnchorSockets(glowVC, coreVC, mat, rite, ceremony,
+			drawAnchorSockets(glowVC, coreVC, baseMat, rite, ceremony,
 					currentTime, partialTick, ringCount, stainOpacity);
 		}
 
 		stack.popPose();
+	}
+
+	private static void drawFinaleCollapseFlash(VertexConsumer glowVC, Matrix4f mat,
+			ActiveRiteClientData.RiteEntry rite, float partialTick) {
+		if (glowVC == null || !"CULMINATION".equals(rite.getPhase())) return;
+		float alpha = CardinalRiteCompletionRingTheatrics.flashAlpha(
+				rite.phaseRenderTicks(partialTick));
+		if (alpha <= 0.001F) return;
+		drawFlatDisc(glowVC, mat, 0.0F, 0.0F, 1.35F,
+				1.25F + alpha * 1.6F, 1.0F, 0.18F, 0.14F, alpha * 0.72F);
+		drawEffectRing(glowVC, mat, 0.0F, 0.0F, 1.38F,
+				0.65F + alpha * 1.8F, 0.28F, 1.0F, 0.55F, 0.48F, alpha);
 	}
 
 	private static void drawBoundaryFloorStain(VertexConsumer consumer, Matrix4f mat,

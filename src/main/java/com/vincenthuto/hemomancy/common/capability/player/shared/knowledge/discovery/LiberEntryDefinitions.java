@@ -126,7 +126,6 @@ public final class LiberEntryDefinitions {
 		registerRite("cardinal_rite/founding_fane",          BLOOD_MEMORIES);
 		registerRite("cardinal_rite/chamber_of_will",        BLOOD_MEMORIES);
 		registerRite("cardinal_rite/horn_of_culmination_rite",  BLOOD_MEMORIES);
-		registerRite("cardinal_rite/pruning_of_qliphoth",       QLIPHOTH);
 		registerRite("cardinal_rite/ancestral_communion",       ENTITY);
 		// Unstained rites
 		registerRite("cardinal_rite/still_waters",              IMMACULATUS_SHE_WHO_LISTENS);

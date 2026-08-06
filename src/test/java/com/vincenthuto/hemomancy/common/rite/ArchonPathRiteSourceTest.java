@@ -13,11 +13,12 @@ public final class ArchonPathRiteSourceTest {
 		String ordeal = read("src/main/java/com/vincenthuto/hemomancy/common/worldgen/VesperOrdealManager.java");
 		assertContains(dialogue, "EnumArchonPath.SILENT_PENDING");
 		assertContains(dialogue, "EnumArchonPath.APOTHEOS_PENDING");
-		assertContains(rites, "EnumArchonPath.SILENT_PENDING");
-		assertContains(rites, "data.severBloom(targetBloom.center())");
+		String pruning = read("src/main/java/com/vincenthuto/hemomancy/common/item/harbinger/tool/living/LivingSicklePruning.java");
+		assertContains(pruning, "EnumArchonPath.SILENT_PENDING");
+		assertContains(pruning, "data.severBloom(pos)");
 		assertContains(ordeal, "EnumArchonPath.SILENT_ARCHON");
 		assertContains(ordeal, "ADV_VESPER_DEFEATED");
-		assertContains(rites, "completePruningOfQliphoth(sLevel, caster, center)");
+		assertNotContains(rites, "completePruningOfQliphoth");
 		assertContains(rites, "EnumArchonPath.APOTHEOS");
 		assertContains(rites, "degree.getArchonPath() != EnumArchonPath.APOTHEOS_PENDING");
 		assertNotContains(rites, "popFungalSpineFromBack(level, player)");

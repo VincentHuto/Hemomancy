@@ -204,6 +204,7 @@ public class PacketHandler {
         net.playToClient(SpawnLivingToolParticlesPacket.TYPE, SpawnLivingToolParticlesPacket.STREAM_CODEC, SpawnLivingToolParticlesPacket::handle);
         net.playToClient(SpawnMonolithShatterBurstPacket.TYPE, SpawnMonolithShatterBurstPacket.STREAM_CODEC, SpawnMonolithShatterBurstPacket::handle);
         net.playToClient(SpawnSanguineOmenEffectPacket.TYPE, SpawnSanguineOmenEffectPacket.STREAM_CODEC, SpawnSanguineOmenEffectPacket::handle);
+        net.playToClient(CardinalRiteImpactPacket.TYPE, CardinalRiteImpactPacket.STREAM_CODEC, CardinalRiteImpactPacket::handle);
         net.playToClient(SpawnBlackVeilPacket.TYPE, SpawnBlackVeilPacket.STREAM_CODEC, SpawnBlackVeilPacket::handle);
         net.playToClient(SpawnPomePulsePacket.TYPE, SpawnPomePulsePacket.STREAM_CODEC, SpawnPomePulsePacket::handle);
         net.playToClient(WillPresenceCuePacket.TYPE, WillPresenceCuePacket.STREAM_CODEC, WillPresenceCuePacket::handle);

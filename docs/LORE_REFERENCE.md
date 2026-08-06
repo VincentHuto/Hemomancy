@@ -23,7 +23,7 @@ The following settled facts are non-negotiable consistency anchors:
 > **Current Lore-State Snapshot (2026-08-02 audit):**
 > - Core narrative pillars remain directly represented in gameplay: Harbinger initiation/degrees (now including the explicit Apotheos gate), Unstained purification path, faction NPC dialogue trees, blood-memory framing, and fungal-whisper escalation.
 > - **Memory Weaving now reads as a physical Somatic Loom rite:** blank Hematic Memories, catalyst patterns, enzyme-dye reservoirs, projected blood, and unruly colored memory-orbs all make refined manipulation learning feel like wrestling dormant biology into a chosen shape rather than selecting a recipe from a menu.
-> - Qliphoth Communion now has a clearer in-game ritual rhythm: the Sanguine Monolith breaks open with a black void-bloom, the Qliphoth Tree drops nine named husks with personal whispers, and only Cult Pruning can remove the bloom by normal progression.
+> - Qliphoth Communion now has a clearer in-game rhythm: the Sanguine Monolith breaks open with a black void-bloom, the Qliphoth Tree drops nine named husks with personal whispers, and a Silent Archon's Living Arsenal must become the sickle that wounds it.
 > - Blood Moons now visibly match their lore state in the sky: the red lunar face and fungal-vein overlay express a fungal surge, while pale effects represent the Lady's containment response.
 > - **The Chamber of Will is now the Degree 6 inward refuge:** not the external Fungal Dimension, but a private blood-memory chamber whose space and sky react to Archon, Qliphoth, Silent Archon, and Apotheos progression.
 > - **Vesper and The Mycophant now have documented endgame roles:** Vesper is the two-phase boss for Archons who refuse fungal dissolution, while The Mycophant is the fruiting-body endpoint for Apotheos-aligned Harbingers. Their entities, rendering, sound hooks, boss music, core combat behavior, and guaranteed final reward loot tables are wired; summoning rituals remain WIP.
@@ -124,7 +124,7 @@ Everything here is hostile, even to an Archon. The player is a babe in the woods
 
 The first visit lasts roughly two minutes. The projection can move and run, but carries no accessible inventory, armor, or physical equipment. An increasingly rapid red vignette is the body's warning; when time expires, consciousness is forced back without item loss. Later visits use the Spine as a normal return-thread after the player has answered the revelation.
 
-Upon forced return, the player faces a choice: perform **Pruning of the Qliphoth** to stay Degree 7 as a **Silent Archon**, or perform the **Rite of Apotheosis** to pursue Degree 8 **Apotheos**. This choice is the mod's deepest opt-in.
+Upon forced return, the player faces a choice: reject the Bloom directly with the Living Sickle and remain Degree 7 as a **Silent Archon**, or perform the **Rite of Apotheosis** to pursue Degree 8 **Apotheos**. This choice is the mod's deepest opt-in.
 
 ### 3.3 Transcendence (Late/DLC Content)
 
@@ -289,7 +289,7 @@ Each degree carries a **lore theme** — the historical/metaphysical institution
 #### ARCHON 7 — *of the Hematic Order*
 **Lore:** The Archon is told what no one below this degree ever hears: *"The Hematic Order never had seven degrees. There have always been eight. The eighth degree is silence."* The Fungal Whispers deliver the complete revelation: the Order was never a human institution. Every degree was a stage of sporulation. The Vicar kneels. And then, quietly: the Sanguine Monolith begins to feel wrong. Hollow. Like something has been waiting inside it.
 
-**Gameplay:** **Qliphoth Communion** — the 5-stage endgame sequence. Shatter the Sanguine Monolith; perform the Bloom of the Qliphoth rite; collect and eat all nine Qliphoth Pomes; prune the bloom via the Cult Pruning rite. The most elaborate multi-step sequence in the mod. Completing Communion unlocks the Apotheos rite choice. **Fungal Scars** are implemented as a fourth scar family through Mycelial Crucible cultivation rather than the older Fungal Gardens harvesting plan; they alter the player's relationship to the mycelial network rather than deepening tendency alignment. Deeper Apotheos-tier fungal scar concepts remain planned design space.
+**Gameplay:** **Qliphoth Communion** — the endgame sequence. Shatter the Sanguine Monolith; perform the Bloom of the Qliphoth rite; collect and eat all nine Qliphoth Pomes; choose Silence; reshape any base Living Weapon into the temporary sickle and cut the Bloom open. Completing Communion also unlocks the Apotheos rite choice. **Fungal Scars** are implemented as a fourth scar family through Mycelial Crucible cultivation rather than the older Fungal Gardens harvesting plan; they alter the player's relationship to the mycelial network rather than deepening tendency alignment. Deeper Apotheos-tier fungal scar concepts remain planned design space.
 
 #### APOTHEOS 8 — *of the Hematic Order*
 **Lore:** Not an ascension to godhood — a *completion of the sporulation cycle*. Apotheosis is chosen only after the ninth Pome has produced the Spine and the first temporary projection has returned the player to their body.
@@ -601,7 +601,7 @@ The Qliphoth Tree:
 - Whispers through those fruits in a personal register — the voice naming the husk feels directed to the current bearer, not to the crowd at large.
 - **Must be summoned through ritual** — placed trees don't work, because you can't cheat god
 - Grows with slight random variation each time (no two trees are identical)
-- Cannot be felled by ordinary hands. It can only be removed cleanly by the **Rite of Cult Pruning**, which can be performed by either Hemomancers or the Unstained. If the Unstained prune a tree that still bears pomes, those pomes are severed from their source incorrectly — tainted pomes that bring weakness rather than power.
+- Cannot be felled by ordinary hands. After Communion and the choice of Silence, any of the seven base Living Weapons can hook inward into a temporary Living Sickle. Its deliberate second cut opens the owned Bloom as Vesper's wound rather than deleting the tree.
 
 ---
 
@@ -650,7 +650,7 @@ Each faction's relationship with materials reflects their worldview.
 | **Crimson Lacquer** | Crimson Lodge | A ritual finish rather than a simple paint: blood-crystal polish, ferric powder, and salve sealing Barbed or Chitinite ancestry into the disciplined hunger of Blood Lust. |
 | **Chalybeate Sclerite** | Harbingers | Iron-sulfide armor scale from deep vent snails; a Ferric ocean expression of the same living-mineral philosophy behind hematic iron. It is best taken by careful knapping from a withdrawn living animal, not by slaughter. |
 | **Monolith Imbued Cloth** | Silent Archons | Cloth threaded with Monolith Fragment burden and puppeteering thread. It belongs to Archons who reject Apotheos: not purity, not victory, but the decision to keep wearing the truth without dissolving into it. |
-| **Memory of Vesper** | Silent Archons | Guaranteed loot-table drop from Vesper's Evening Star phase. It should read as blood-command after refusal: a portable discipline burned directly in the Iron Brazier and drawn into a player's existing Living Staff rather than becoming a separate weapon. |
+| **Memory of Vesper** | Silent Archons | Guaranteed loot-table drop from Vesper's Evening Star phase. It is burned directly in the Iron Brazier and drawn into the existing Living Staff, permanently teaching the inherited `conjure_sickle` form and strengthening Vesper focus. |
 | **Mycophant Tendril** | Apotheos Harbingers | Guaranteed loot-table drop from The Mycophant and Charm of Vascularium rune-slot reward. It symbolizes chosen mycelial embodiment and visibly fungalizes the whole player while equipped. |
 | **Erythrocoral Fragment** | Harbingers | Warm-ocean fungal-coral tissue: a Vivacious expression of hemomancy as ecology rather than conquest. It supports spore craft through careful shearing, not reef-clearing extraction. |
 | **Vivianite** | Harbingers | A blood-adjacent mineral idiom used by the Order for specialist craft and instrument work; treated as part of Harbinger material culture rather than neutral trade stock. |

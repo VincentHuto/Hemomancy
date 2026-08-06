@@ -4,6 +4,7 @@ import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.IKnownManipulations;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.KnownManipulationGrantHelper;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.ManipSlotHelper;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.ManipulationEquipHelper;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.init.ManipulationInit;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
@@ -60,6 +61,20 @@ public final class LivingStaffBondHelper {
 		}
 		PacketHandler.sendToPlayer(player, new KnownManipulationServerPacket(known));
 		return true;
+	}
+
+	public static boolean ensureVesperSickleKnown(ServerPlayer player) {
+		if (player == null || !ManipulationInit.conjure_sickle.isBound()) return false;
+		ILivingStaffProgress progress = HemoCapabilityAccess.getLivingStaffProgress(player).orElse(null);
+		if (progress == null || !progress.hasLivingStaffBond() || !progress.isVesperMemoryAwakened()) return false;
+		IKnownManipulations known = HemoCapabilityAccess.getKnownManipulations(player).orElse(null);
+		if (known == null) return false;
+		boolean changed = KnownManipulationGrantHelper.learnAndEquipIfPossible(known,
+				ManipulationInit.conjure_sickle.get(), ManipSlotHelper.getMaxSlots(player));
+		boolean learned = known.doesListContainName(known.getKnownManips(), ManipulationInit.conjure_sickle.get())
+				&& known.getEquippedManipNames().contains(ManipulationEquipHelper.CONJURE_SICKLE);
+		if (changed) PacketHandler.sendToPlayer(player, new KnownManipulationServerPacket(known));
+		return learned;
 	}
 
 	public static void syncProgress(ServerPlayer player) {

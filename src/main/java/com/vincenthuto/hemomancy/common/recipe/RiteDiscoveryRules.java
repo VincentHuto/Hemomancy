@@ -13,7 +13,6 @@ import java.util.Map;
 public final class RiteDiscoveryRules {
 	private static final Map<ResourceLocation, ResourceLocation> REQUIRED_ENTRIES = Map.of(
 			Hemomancy.rloc("cardinal_rite/bloom_of_qliphoth"), LiberEntryDefinitions.QLIPHOTH,
-			Hemomancy.rloc("cardinal_rite/pruning_of_qliphoth"), LiberEntryDefinitions.QLIPHOTH,
 			Hemomancy.rloc("cardinal_rite/ancestral_communion"), LiberEntryDefinitions.ENTITY,
 			Hemomancy.rloc("cardinal_rite/apotheos_rite"), LiberEntryDefinitions.TRUTH,
 			Hemomancy.rloc("cardinal_rite/eternal_covenant"), LiberEntryDefinitions.TRUTH,

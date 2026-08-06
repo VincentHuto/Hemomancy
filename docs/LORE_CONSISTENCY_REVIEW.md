@@ -218,8 +218,8 @@ These conflicts now have author decisions. The conflict/options/recommendation t
 
 - `LORE_REFERENCE.md` currently says one must reach Archon, complete Qliphoth Communion, and complete the Rite of Apotheos before receiving the Fungal Spine and entering the fungal realm.
 - Later in the same document, Communion unlocks an Apotheos choice, while first exit from the realm triggers the witness dialogue and choice fork.
-- Mechanics text and runtime progression also split the trigger among Cult Pruning, the Fungal Podium, realm travel, and `archon_choice_made`.
-- Cult Pruning is described as the closing step, but its current state changes can reset or conflict with the flag treated elsewhere as completed Communion.
+- Historical mechanics text split the trigger among Cult Pruning, the Fungal Podium, realm travel, and `archon_choice_made`; the implemented route now uses the direct Living Sickle severance.
+- The removed Cult Pruning rite could reset or conflict with completed Communion; the owner-bound sickle cut now preserves Communion and opens Vesper's wound.
 - The Fungal Podium is available much earlier for meditation, but some prose makes it sound like early access to the endgame realm.
 - Both primary references describe a bodyless astral visit to a spherical three-dimensional sliver of the Entity. The mechanics reference also documents `fungal_gardens` as a conventional traversable terrain dimension with biomes, seas, caves, carved stone, and physical-looking travel. Those presentations need one diegetic relationship.
 
@@ -231,14 +231,14 @@ These conflicts now have author decisions. The conflict/options/recommendation t
 2. Shatter the Sanguine Monolith.
 3. Perform Bloom of the Qliphoth.
 4. Eat all nine pomes from that bloom.
-5. Perform Cult Pruning, which seals Communion and expels or awards the Fungal Spine.
+5. Choose Silence and use a base Living Weapon to shape the temporary sickle, then cut the owned Bloom open.
 6. Use the Spine to visit the Flesh Beyond.
 7. The first attempted exit presents the witness choice.
 8. Choosing to continue deeper unlocks the Rite of Apotheos; completing it grants D8. Refusal establishes the Silent Archon route.
 9. D2 Fungal Podium use remains meditation/resonance only. `fungal_gardens` becomes an internal legacy ID for the same Flesh Beyond unless a separate realm is desired.
 10. Preserve the bodyless visit: the traversable biomes, seas, and caves are the player's three-dimensional perception of a locally navigable patch of the Entity, with a temporary body-schema as a gameplay abstraction. They are not a separate fungal planet. If that interpretation is unwanted, split `fungal_gardens` into a separate ecology realm rather than silently rewriting the spherical Entity-surface lore.
 
-**Author decision - settled:** Consuming the ninth and final Qliphoth Pome causes the Fungal Spine to erupt from the Archon. Using it is required once and sends only the player's consciousness into the Fungal Gardens for roughly two minutes. The projection can move and explore but has no carried items, armor, or normal equipment; the physical body retains them. An increasingly rapid red vignette warns that the projection is collapsing, after which consciousness is forcibly returned to the physical body. This first visit presents the revelation and the two endgame responses: perform the Rite of Apotheosis to become the secret D8 Apotheos, or reject the revelation through Cult Pruning and remain D7 as a Silent Archon. The traversable dimension is the temporary three-dimensional experience of the projected consciousness, not the player's physical relocation to a fungal planet.
+**Author decision - settled:** Consuming the ninth and final Qliphoth Pome causes the Fungal Spine to erupt from the Archon. Using it is required once and sends only the player's consciousness into the Fungal Gardens for roughly two minutes. The projection can move and explore but has no carried items, armor, or normal equipment; the physical body retains them. An increasingly rapid red vignette warns that the projection is collapsing, after which consciousness is forcibly returned to the physical body. This first visit presents the revelation and the two endgame responses: perform the Rite of Apotheosis to become the secret D8 Apotheos, or reject the revelation by reshaping a base Living Weapon into the temporary sickle and cutting the owned Bloom open. The traversable dimension is the temporary three-dimensional experience of the projected consciousness, not the player's physical relocation to a fungal planet.
 
 ### S-02 - Universal inherited blood memory versus rare infection
 
@@ -391,7 +391,7 @@ These conflicts now have author decisions. The conflict/options/recommendation t
 
 **Recommendation:** **C**. It preserves both terms and reinforces the claim that the ordinary Order has no public rank beyond Archon.
 
-**Author decision - settled:** Degree 8 is **Apotheos**, reserved solely for a player who performs the Rite of Apotheosis after the revelation. **Silent Archon** is not Degree 8: it is the title and flagged state of a D7 Archon who reached the revelation through Qliphoth Communion and then rejected it through Cult Pruning. That D7 state unlocks its own crafting and powers.
+**Author decision - settled:** Degree 8 is **Apotheos**, reserved solely for a player who performs the Rite of Apotheosis after the revelation. **Silent Archon** is not Degree 8: it is the title and flagged state of a D7 Archon who reached the revelation through Qliphoth Communion and then rejected it through the Living Sickle cut and Vesper ordeal. That D7 state unlocks its own crafting and powers.
 
 ### S-13 - When is a bloodline founded, and what changes at Degree 6?
 

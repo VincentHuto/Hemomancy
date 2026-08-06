@@ -61,7 +61,6 @@ import com.vincenthuto.hemomancy.common.rite.CardinalRiteCeremonyRules;
 import com.vincenthuto.hemomancy.common.rite.CardinalRiteBoundaryProgress;
 import com.vincenthuto.hemomancy.common.rite.CardinalRiteCancellationRules;
 import com.vincenthuto.hemomancy.common.rite.CardinalRiteChecklist;
-import com.vincenthuto.hemomancy.common.rite.CardinalRiteFootprintRules;
 import com.vincenthuto.hemomancy.common.rite.sigil.CardinalRiteSigilProgress;
 import com.vincenthuto.hemomancy.common.rite.sigil.CardinalRiteSigilRules;
 import com.vincenthuto.hemomancy.common.rite.sigil.IchorianSigilDefinition;
@@ -160,6 +159,7 @@ public class HarbingerCardinalRiteEvents {
 		if (activeRites.isEmpty()) return;
 
 		List<UUID> toRemove = new ArrayList<>();
+		boolean phaseChanged = false;
 
 		for (Map.Entry<UUID, ActiveCardinalRite> entry : activeRites.entrySet()) {
 			UUID playerUUID = entry.getKey();
@@ -286,6 +286,7 @@ public class HarbingerCardinalRiteEvents {
 			}
 
 
+			CardinalRitePhase phaseBeforeTick = rite.getPhase();
 			if (rite.getPhase() == CardinalRitePhase.LEGACY || recipe == null
 					|| !recipe.hasInteractiveCeremony()) {
 				rite.tick();
@@ -301,6 +302,7 @@ public class HarbingerCardinalRiteEvents {
 					CardinalRiteOrdealEngine.tick(sLevel, caster, rite, recipe);
 				}
 			}
+			phaseChanged |= rite.getPhase() != phaseBeforeTick;
 			rite.advanceCancellationRecovery();
 			savedData.setDirty();
 
@@ -335,7 +337,7 @@ public class HarbingerCardinalRiteEvents {
 		}
 
 		// Sync active rites to clients for boundary circle rendering
-		if (sLevel.getGameTime() % RITE_SYNC_INTERVAL == 0 || !toRemove.isEmpty()) {
+		if (sLevel.getGameTime() % RITE_SYNC_INTERVAL == 0 || phaseChanged || !toRemove.isEmpty()) {
 			List<ActiveRiteClientData.RiteEntry> entries = new ArrayList<>();
 			for (ActiveCardinalRite rite : activeRites.values()) {
 				entries.add(toClientEntry(sLevel, rite));
@@ -830,47 +832,17 @@ public class HarbingerCardinalRiteEvents {
 				boundarySegments, sigilSegments, sanguineBlobs,
 				rite.hasEscrowedStaff() && rite.isStaffImpactReached(), rite.getPlayerUUID(),
 				rite.getCancellationTicks(), rite.getStaffPlantingTicks(),
-				fogProfile, fogLightning, boundaryDome);
+				fogProfile, fogLightning, boundaryDome, rite.getPhaseTicks());
 	}
 
 	public static float ritualFootprintRadius(ActiveCardinalRite rite, CardinalRiteRecipe recipe) {
-		float fallbackRadius = (float) CardinalRiteBoundaryLeashRules.ritualRadius(rite.getRiteSize());
-		float floorRadius = 0.0F;
+		com.vincenthuto.hemomancy.common.rite.floor.CardinalRiteFloorDefinition floor = null;
 		if (rite.getMatchedFloorId() != null) {
 			var matchedFloor = CardinalRiteFloorRegistry.get(rite.getMatchedFloorId());
-			if (matchedFloor.isPresent()) floorRadius = matchedFloor.get().footprintRadius();
+			if (matchedFloor.isPresent()) floor = matchedFloor.get();
 		}
-		if (recipe == null || recipe.getCeremony() == null) {
-			return CardinalRiteFootprintRules.enclosingRadius(
-					fallbackRadius, floorRadius, java.util.List.of(),
-					java.util.List.of(), java.util.List.of());
-		}
-		java.util.List<BlockPos> anchors = recipe.getCeremony().anchors().stream()
-				.map(com.vincenthuto.hemomancy.common.rite.CardinalRiteCeremonyDefinition.Anchor::offset)
-				.toList();
-		java.util.List<BlockPos> supportSockets = new java.util.ArrayList<>();
-		recipe.getCeremony().supportSockets().stream()
-				.map(com.vincenthuto.hemomancy.common.rite.CardinalRiteCeremonyDefinition.SupportSocket::offset)
-				.forEach(supportSockets::add);
-		java.util.List<BlockPos> sigilPoints = new java.util.ArrayList<>();
-		java.util.List<CardinalRiteInteractionHandler.SigilPlacement> supportPlacements =
-				CardinalRiteInteractionHandler.supportSigils(recipe);
-		for (CardinalRiteInteractionHandler.SigilPlacement placement : supportPlacements) {
-			supportSockets.add(new BlockPos(placement.x(), 0, placement.z()));
-			IchorianSigilDefinition sigil = IchorianSigilRegistry.get(placement.id());
-			if (sigil == null) continue;
-			for (IchorianSigilDefinition.Node node : sigil.nodes()) {
-				sigilPoints.add(new BlockPos(
-						placement.x() + (int) Math.round(node.x()), 0,
-						placement.z() + (int) Math.round(node.z())));
-			}
-		}
-		for (IchorianSigilDefinition sigil : IchorianSigilRegistry.all()) {
-			sigilPoints.addAll(CardinalRiteInteractionHandler.resolvedResponseSigilPoints(
-					recipe.getCeremony().anchors(), supportPlacements, sigil));
-		}
-		return CardinalRiteFootprintRules.enclosingRadius(
-				fallbackRadius, floorRadius, anchors, supportSockets, sigilPoints);
+		return CardinalRiteFootprintResolver.radius(recipe, floor,
+				(float) CardinalRiteBoundaryLeashRules.ritualRadius(rite.getRiteSize()));
 	}
 
 	private static java.util.List<String> buildChecklist(ServerLevel level, ActiveCardinalRite rite,
@@ -1137,7 +1109,6 @@ public class HarbingerCardinalRiteEvents {
 	private static final String HEMATIC_UNBINDING_RITE = "cardinal_rite/hematic_unbinding";
 	private static final String PALLID_SHADOW_RITE = "cardinal_rite/pallid_shadow";
 	private static final String BLOOM_OF_QLIPHOTH_RITE = "cardinal_rite/bloom_of_qliphoth";
-	private static final String PRUNING_OF_QLIPHOTH_RITE = "cardinal_rite/pruning_of_qliphoth";
 	private static final String SANGUINE_ECLIPSE_RITE = "cardinal_rite/sanguine_eclipse";
 	private static final String FOUNDING_FANE_RITE = "cardinal_rite/founding_fane";
 	private static final String SANGUINE_FERVOR_RITE = "cardinal_rite/sanguine_fervor";
@@ -1212,13 +1183,12 @@ public class HarbingerCardinalRiteEvents {
 			return false;
 		}
 
-		// Qliphoth Pome Corruption: at 9 pomes only the Pruning and Apotheosis rites may be cast
+		// Qliphoth Pome Corruption: at 9 pomes Apotheosis is the only remaining Cardinal Rite.
+		// Silent refusal is performed directly at the owned bloom with the Living Arsenal.
 		int pomesConsumed = HemoCapabilityAccess.getInitiatoryDegree(caster)
 				.map(d -> d.getTotalPomesConsumed())
 				.orElse(0);
-		if (pomesConsumed >= 9
-				&& !PRUNING_OF_QLIPHOTH_RITE.equals(recipe.getId().getPath())
-				&& !isApotheosRite(recipe.getId())) {
+		if (pomesConsumed >= 9 && !isApotheosRite(recipe.getId())) {
 			caster.displayClientMessage(
 					Component.literal("The void has claimed your will \u2014 only one path remains, and one way back.")
 							.withStyle(ChatFormatting.DARK_PURPLE, ChatFormatting.ITALIC),
@@ -1404,11 +1374,6 @@ public class HarbingerCardinalRiteEvents {
 		// Bloom of the Qliphoth: summon a persistent bloom tree that buffs nearby players
 		if (BLOOM_OF_QLIPHOTH_RITE.equals(ritePath)) {
 			completeBloomOfQliphoth(sLevel, caster, center);
-		}
-
-		// Pruning of the Qliphoth: remove a bloom tree rooted in the same chunk
-		if (PRUNING_OF_QLIPHOTH_RITE.equals(ritePath)) {
-			completePruningOfQliphoth(sLevel, caster, center);
 		}
 
 		// Rite of Sanguine Fervor: boost mob spawn rates in a 3-chunk radius for 5 minutes
@@ -2224,106 +2189,6 @@ public class HarbingerCardinalRiteEvents {
 		}
 	}
 
-	/**
-	 * Pruning of the Qliphoth (Degree 0, Minor):
-	 * Removes a Qliphoth Bloom tree whose center is in the same chunk as the rite.
-	 * Destroys the physical multi-block and removes the SavedData entry.
-	 * <p>
-	 * If pomes remain in the tree's lifecycle, they are forcibly dropped as items.
-	 * A Harbinger pruner receives normal (live) pomes; an Unstained pruner receives
-	 * tainted pomes â€” the husks were severed before they were ready to ripen.
-	 */
-	private static boolean completePruningOfQliphoth(ServerLevel sLevel, ServerPlayer caster, BlockPos center) {
-		ServerLevel overworld = sLevel.getServer().overworld();
-		QliphothBloomSavedData data = QliphothBloomSavedData.get(overworld);
-		String dimension = sLevel.dimension().location().toString();
-
-		// Determine if the caster is on the Unstained path
-		final boolean[] prunerIsUnstained = { false };
-		HemoCapabilityAccess.getUnstainedProgress(caster)
-				.ifPresent(unstained -> {
-					if (unstained.hasBegunPurification() || unstained.hasClarityUnlocked()) {
-						prunerIsUnstained[0] = true;
-					}
-				});
-
-		// Capture the remaining-pomes count BEFORE removal (removeBloomInChunk clears the counter)
-		// Find the bloom entry to get the center first
-		int chunkX = center.getX() >> 4;
-		int chunkZ = center.getZ() >> 4;
-		int pomesAlreadyDropped = 0;
-		BlockPos bloomCenter = null;
-		QliphothBloomSavedData.BloomEntry targetBloom = null;
-		for (QliphothBloomSavedData.BloomEntry b : data.getBlooms()) {
-			if (!b.dimension().equals(dimension)) continue;
-			if ((b.center().getX() >> 4) == chunkX && (b.center().getZ() >> 4) == chunkZ) {
-				bloomCenter = b.center();
-				targetBloom = b;
-				pomesAlreadyDropped = data.getPomesDropped(b.center());
-				break;
-			}
-		}
-		boolean opensFinalRefusal = targetBloom != null
-				&& targetBloom.ownerUUID().equals(caster.getUUID())
-				&& HemoCapabilityAccess.getInitiatoryDegree(caster)
-						.map(degree -> degree.getDegreeNumber() == 7
-								&& degree.getArchonPath() == EnumArchonPath.SILENT_PENDING)
-						.orElse(false);
-		if (opensFinalRefusal && data.severBloom(targetBloom.center())) {
-			syncQliphothBlooms(sLevel.getServer());
-			caster.displayClientMessage(Component.literal(
-					"The trunk parts along a black-red wound. The final refusal waits beyond it.")
-					.withStyle(ChatFormatting.DARK_PURPLE, ChatFormatting.BOLD), false);
-			sLevel.playSound(null, targetBloom.center(), SoundEvents.WITHER_BREAK_BLOCK,
-					SoundSource.BLOCKS, 1.1f, 0.55f);
-			return true;
-		}
-
-		QliphothBloomSavedData.BloomEntry removed = data.removeBloomInChunk(center, dimension);
-
-		if (removed != null) {
-			// Drop any remaining pomes from the lifecycle as harvested items
-			int remaining = QliphothBloomSavedData.MAX_POMES_PER_BLOOM - pomesAlreadyDropped;
-			if (remaining > 0 && bloomCenter != null) {
-				dropRemainingPomesOnPrune(sLevel, bloomCenter, pomesAlreadyDropped, remaining, prunerIsUnstained[0]);
-			}
-
-			// Destroy the physical bloom block and its fillers
-			BlockPos bloomPos = removed.center();
-			BlockState bloomState = sLevel.getBlockState(bloomPos);
-			if (bloomState.getBlock() instanceof IMultiBlock multiBlock) {
-				multiBlock.removeFillers(sLevel, bloomPos);
-			}
-			sLevel.removeBlock(bloomPos, false);
-
-			// Sync updated bloom list to all clients
-			syncQliphothBlooms(sLevel.getServer());
-
-			boolean casterReset = resetPomeProgressAfterPrune(caster, removed.center().asLong());
-			ServerPlayer bloomOwner = sLevel.getServer().getPlayerList().getPlayer(removed.ownerUUID());
-			if (bloomOwner != null && bloomOwner != caster) {
-				resetPomeProgressAfterPrune(bloomOwner, removed.center().asLong());
-			} else if (bloomOwner == null && !removed.ownerUUID().equals(caster.getUUID())) {
-				data.queuePrunedBloomReset(removed.ownerUUID(), removed.center().asLong());
-			}
-			if (casterReset && !prunerIsUnstained[0]) {
-				grantScarOnPruning(caster);
-			}
-
-			caster.displayClientMessage(
-					Component.literal("The Qliphoth withers... the dark tree has been pruned.")
-							.withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC),
-					false);
-			sLevel.playSound(null, center, SoundEvents.WITHER_BREAK_BLOCK, SoundSource.BLOCKS, 0.6f, 1.2f);
-		} else {
-			caster.displayClientMessage(
-					Component.literal("There is no Qliphoth bloom rooted in this chunk to prune.")
-							.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC),
-			false);
-		}
-		return removed != null;
-	}
-
 	private static void completeHematicFortification(ServerPlayer caster) {
 		HemoCapabilityAccess.getInitiatoryDegree(caster).ifPresent(degree -> {
 			degree.setHematicFortification(true);
@@ -2333,108 +2198,6 @@ public class HarbingerCardinalRiteEvents {
 				Component.literal("Your vascular lattice hardens. Future strain is reduced by fifteen percent.")
 						.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC),
 				false);
-	}
-
-	@SubscribeEvent
-	public static void onPlayerLoggedIn(PlayerEvent.PlayerLoggedInEvent event) {
-		if (!(event.getEntity() instanceof ServerPlayer player)) {
-			return;
-		}
-		QliphothBloomSavedData data = QliphothBloomSavedData.get(player.server.overworld());
-		Set<Long> prunedBloomOrigins = data.takePrunedBloomResetOrigins(player.getUUID());
-		if (prunedBloomOrigins.isEmpty()) {
-			return;
-		}
-		boolean reset = false;
-		for (Long bloomOrigin : prunedBloomOrigins) {
-			reset |= resetPomeProgressAfterPrune(player, bloomOrigin);
-		}
-		if (reset) {
-			player.displayClientMessage(Component.literal("A severed Qliphoth communion unthreads itself from your blood.")
-					.withStyle(ChatFormatting.DARK_PURPLE, ChatFormatting.ITALIC), false);
-		}
-	}
-
-	/**
-	 * Grants a Scar of Transcendence to a Harbinger player who pruned their own bloom.
-	 * Places it in the first empty SCAR slot (1–4); otherwise drops it at the player's feet.
-	 */
-	private static boolean resetPomeProgressAfterPrune(ServerPlayer player, long bloomOrigin) {
-		removeBoundPomesFromBloom(player, bloomOrigin);
-		return HemoCapabilityAccess.getInitiatoryDegree(player).map(degree -> {
-			if (!QliphothPomeRules.shouldResetProgressOnPrune(true, degree.getTotalPomesConsumed())) {
-				return false;
-			}
-			degree.resetPomeCommunion();
-			PacketHandler.sendToPlayer(player, new PacketSyncPomeProgress(0));
-			return true;
-		}).orElse(false);
-	}
-
-	private static void removeBoundPomesFromBloom(ServerPlayer player, long bloomOrigin) {
-		for (int slot = 0; slot < player.getInventory().getContainerSize(); slot++) {
-			ItemStack stack = player.getInventory().getItem(slot);
-			if (QliphothPomeItem.isBoundPomeFromBloom(stack, bloomOrigin)) {
-				player.getInventory().setItem(slot, ItemStack.EMPTY);
-			}
-		}
-		if (QliphothPomeItem.isBoundPomeFromBloom(player.containerMenu.getCarried(), bloomOrigin)) {
-			player.containerMenu.setCarried(ItemStack.EMPTY);
-		}
-		player.getInventory().setChanged();
-		player.containerMenu.broadcastChanges();
-	}
-
-	private static void grantScarOnPruning(ServerPlayer player) {
-		ItemStack scar = new ItemStack(ItemInit.scar_transcendence.get());
-		boolean placed = false;
-		var scarsOpt = HemoCapabilityAccess.getScarState(player);
-		if (scarsOpt.isPresent()) {
-			var scars = scarsOpt.get();
-			for (int slot = 1; slot <= 4; slot++) {
-				if (scars.getStackInSlot(slot).isEmpty()) {
-					scars.setStackInSlot(slot, scar);
-					placed = true;
-					break;
-				}
-			}
-		}
-		if (!placed) {
-			player.drop(scar, false);
-		}
-		player.displayClientMessage(
-				Component.literal("You pull free of the void\u2019s grasp. The communion is undone \u2014 but the Qliphoth does not forget you.")
-						.withStyle(ChatFormatting.DARK_PURPLE, ChatFormatting.ITALIC),
-				false);
-	}
-
-	/**
-	 * Drops the pomes still remaining in a bloom's lifecycle when it is pruned.
-	 * Pomes are tagged with their correct husk index (continuing from
-	 * {@code startHuskIndex}) and optionally as tainted if an Unstained player
-	 * performed the pruning.
-	 */
-	private static void dropRemainingPomesOnPrune(ServerLevel sLevel, BlockPos center,
-			int startHuskIndex, int count, boolean tainted) {
-		for (int i = 0; i < count; i++) {
-			ItemStack pomeStack = new ItemStack(ItemInit.qliphoth_pome.get());
-			net.minecraft.nbt.CompoundTag tag = pomeStack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
-			tag.putLong(QliphothPomeItem.BLOOM_ORIGIN_KEY, center.asLong());
-			tag.putInt(QliphothPomeItem.HUSK_INDEX_KEY, startHuskIndex + i);
-			if (tainted) {
-				tag.putBoolean(QliphothPomeItem.TAINTED_KEY, true);
-			}
-			pomeStack.set(DataComponents.CUSTOM_DATA, CustomData.of(tag));
-			double x = center.getX() + 0.5 + (sLevel.getRandom().nextDouble() - 0.5) * 2.0;
-			double y = center.getY() + 1.0;
-			double z = center.getZ() + 0.5 + (sLevel.getRandom().nextDouble() - 0.5) * 2.0;
-			ItemEntity entity = new ItemEntity(sLevel, x, y, z, pomeStack);
-			entity.setPickUpDelay(10);
-			// Invulnerable and permanent â€” pomes must not be destroyed by the environment
-			entity.setInvulnerable(true);
-			entity.lifespan = Integer.MAX_VALUE;
-			sLevel.addFreshEntity(entity);
-		}
 	}
 
 	/**

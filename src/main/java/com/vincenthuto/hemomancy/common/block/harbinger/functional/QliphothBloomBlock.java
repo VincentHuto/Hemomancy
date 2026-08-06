@@ -4,6 +4,7 @@ import com.mojang.serialization.MapCodec;
 import com.vincenthuto.hemomancy.common.block.shared.IMultiBlock;
 import com.vincenthuto.hemomancy.common.item.harbinger.QliphothPomeItem;
 import com.vincenthuto.hemomancy.common.item.harbinger.QliphothPomeRules;
+import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.LivingSicklePruning;
 import com.vincenthuto.hemomancy.common.rite.harbinger.HarbingerCardinalRiteEvents;
 import com.vincenthuto.hemomancy.common.rite.harbinger.QliphothBloomSavedData;
 import com.vincenthuto.hemomancy.common.rite.harbinger.SeveredQliphothState;
@@ -112,9 +113,18 @@ public class QliphothBloomBlock extends BaseEntityBlock implements IMultiBlock {
 	@Override
 	protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos,
 			Player player, InteractionHand hand, BlockHitResult hit) {
+		if (LivingSicklePruning.interact(level, pos, player, hand)) {
+			return ItemInteractionResult.SUCCESS;
+		}
 		return pickPendingPome(level, pos, player) == InteractionResult.SUCCESS
 				? ItemInteractionResult.SUCCESS
 				: ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+	}
+
+	@Override
+	public void attack(BlockState state, Level level, BlockPos pos, Player player) {
+		LivingSicklePruning.interact(level, pos, player, InteractionHand.MAIN_HAND);
+		super.attack(state, level, pos, player);
 	}
 
 	@Override

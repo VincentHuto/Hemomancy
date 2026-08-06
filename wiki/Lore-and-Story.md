@@ -299,7 +299,7 @@ A massive fungal tree structure summoned at high degree.
 - Whispers intensify dramatically after
 
 **Removal:**
-- Cult Pruning ritual at Cardinal Altar
+- Silent refusal cut made directly with the Living Sickle
 - Closes void-bloom, tree withers
 - Stops whispers from that tree
 - Doesn't undo Communion progress

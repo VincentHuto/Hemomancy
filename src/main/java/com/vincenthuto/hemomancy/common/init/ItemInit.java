@@ -575,6 +575,8 @@ public class ItemInit {
             () -> new LivingTorchItem(25f, 1, EnumModToolTiers.LIVING, new Item.Properties().stacksTo(1).fireResistant()));
     public static final DeferredHolder<Item, Item> living_flail = SPECIALITEMS.register("living_flail",
             () -> new LivingFlailItem(25f, 2, EnumModToolTiers.LIVING, new Item.Properties().stacksTo(1)));
+    public static final DeferredHolder<Item, Item> living_sickle = SPECIALITEMS.register("living_sickle",
+            () -> new LivingSickleItem(25f, 2, EnumModToolTiers.LIVING, new Item.Properties().stacksTo(1)));
     public static final DeferredHolder<Item, Item> blood_bolt = BASEITEMS.register("blood_bolt",
             () -> new BloodBoltItem(new Item.Properties()));
     // Blood Thrall  creature-based blood transport

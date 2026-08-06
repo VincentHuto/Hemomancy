@@ -44,7 +44,6 @@ final class CardinalRiteProgressionResourceTest {
 		assertDegreeAndType("hematic_unbinding", 5, "greater");
 		assertDegreeAndType("founding_fane", 5, "greater");
 		assertDegreeAndType("pallid_shadow", 6, "grand");
-		assertDegreeAndType("pruning_of_qliphoth", 7, "grand");
 	}
 
 	@Test

@@ -140,6 +140,7 @@ public class RadialChooseManipScreen extends Screen {
 
 			addMechanicalManipulation(allManips, ManipulationEquipHelper.BLOOD_ABSORPTION, selectedManipName);
 			addMechanicalManipulation(allManips, ManipulationEquipHelper.BLOOD_PROJECTION, selectedManipName);
+			addMechanicalManipulation(allManips, ManipulationEquipHelper.CONJURE_SICKLE, selectedManipName);
 			addArmorSetAbility();
 
 			for (int i = 0; i < allManips.size(); i++) {
@@ -287,6 +288,7 @@ public class RadialChooseManipScreen extends Screen {
 			case "conjure_spear" -> "memory_living_spear_overlay";
 			case "conjure_staff" -> "memory_living_staff_overlay";
 			case "conjure_torch" -> "memory_living_torch_overlay";
+			case "conjure_sickle" -> "memory_living_sickle_overlay";
 			default -> "memory_" + manipulation.getName() + "_overlay";
 		};
 		return Hemomancy.rloc("textures/item/memories/" + texture + ".png");

@@ -28,7 +28,8 @@ public final class LivingArsenalInventoryGuard {
 				|| item == ItemInit.living_baghnakh.get()
 				|| item == ItemInit.living_crossbow.get()
 				|| item == ItemInit.living_torch.get()
-				|| item == ItemInit.living_flail.get();
+				|| item == ItemInit.living_flail.get()
+				|| item == ItemInit.living_sickle.get();
 	}
 
 	public static boolean summonOrRecoverStaff(Player player, ItemStack heldItemMainhand) {
@@ -59,6 +60,10 @@ public final class LivingArsenalInventoryGuard {
 			}
 			if (slot == keepSlot) {
 				stack.setCount(1);
+				if (slot != inventory.selected && LivingSicklePruning.isTemporarySickle(stack)) {
+					stack = LivingSicklePruning.restoredWeaponStack(stack, player.registryAccess());
+					inventory.setItem(slot, stack);
+				}
 				if (slot != inventory.selected && LivingStaffWeaponFormHelper.isTransformedStaffWeapon(stack)) {
 					inventory.setItem(slot, LivingStaffWeaponFormHelper.restoredStaffStack(stack, player.registryAccess()));
 				}
@@ -158,6 +163,12 @@ public final class LivingArsenalInventoryGuard {
 	}
 
 	private static ItemStack normalizeForPlayerInventory(ItemStack stack, HolderLookup.Provider registryAccess) {
+		if (LivingSicklePruning.isTemporarySickle(stack)) {
+			ItemStack restored = LivingSicklePruning.restoredWeaponStack(stack, registryAccess);
+			return LivingStaffWeaponFormHelper.isTransformedStaffWeapon(restored)
+					? LivingStaffWeaponFormHelper.restoredStaffStack(restored, registryAccess)
+					: restored;
+		}
 		if (LivingStaffWeaponFormHelper.isTransformedStaffWeapon(stack)) {
 			return LivingStaffWeaponFormHelper.restoredStaffStack(stack, registryAccess);
 		}

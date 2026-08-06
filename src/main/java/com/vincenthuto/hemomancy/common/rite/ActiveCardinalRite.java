@@ -379,6 +379,14 @@ public class ActiveCardinalRite {
 		return drained;
 	}
 
+	public int drainOutermostProtectedAnchor(int requestedMl) {
+		if (requestedMl <= 0) return 0;
+		for (int anchorIndex : effectiveInstabilityDamagePriority()) {
+			if (anchorBloodMl[anchorIndex] > 0) return drainAnchor(anchorIndex, requestedMl);
+		}
+		return 0;
+	}
+
 	public void addInstability(int amount) {
 		instability = Math.max(0, Math.min(CardinalRiteCeremonyRules.COLLAPSE_INSTABILITY, instability + amount));
 		reconcileInstabilityDamage();
@@ -389,6 +397,11 @@ public class ActiveCardinalRite {
 
 	public void stabilize(int amount) {
 		addInstability(-Math.max(0, amount));
+	}
+
+	public void applyAnchorDeficitPressure() {
+		int pressure = CardinalRiteCeremonyRules.anchorDeficitInstability(anchorBloodMl);
+		if (pressure > instability) addInstability(pressure - instability);
 	}
 
 	public boolean offerInstabilityRepair(int anchorIndex, int offeredBloodMl) {

@@ -25,6 +25,10 @@ public final class CardinalRiteFinaleTiming {
 		return 1.0D - growthProgress(phaseTicks);
 	}
 
+	public static boolean isImpactTick(int phaseTicks) {
+		return phaseTicks == TOTAL_TICKS;
+	}
+
 	public static double preProcessionHeight(double requestedHeight) {
 		return Math.min(Math.max(0.0D, requestedHeight), PROCESSION_HEIGHT);
 	}

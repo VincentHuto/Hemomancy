@@ -54,6 +54,15 @@ public final class LivingStaffWeaponFormHelper {
 
 	public static boolean restoreMainHand(Player player) {
 		ItemStack held = player.getMainHandItem();
+		if (LivingSicklePruning.isTemporarySickle(held)) {
+			ItemStack restoredWeapon = LivingSicklePruning.restoredWeaponStack(held, player.registryAccess());
+			player.setItemInHand(InteractionHand.MAIN_HAND,
+					isTransformedStaffWeapon(restoredWeapon)
+							? restoredStaffStack(restoredWeapon, player.registryAccess())
+							: restoredWeapon);
+			LivingArsenalInventoryGuard.sanitizePlayerInventory(player);
+			return true;
+		}
 		if (!isTransformedStaffWeapon(held)) {
 			return false;
 		}
@@ -121,6 +130,10 @@ public final class LivingStaffWeaponFormHelper {
 			return false;
 		}
 		ItemStack held = player.getMainHandItem();
+		if (LivingSicklePruning.isTemporarySickle(held)) {
+			held = LivingSicklePruning.restoredWeaponStack(held, player.registryAccess());
+			player.setItemInHand(InteractionHand.MAIN_HAND, held);
+		}
 		String currentForm = currentFormName(held);
 		if (formName.equals(currentForm)) {
 			return true;
@@ -189,6 +202,7 @@ public final class LivingStaffWeaponFormHelper {
 			case LivingStaffWeaponFormRules.CONJURE_CROSSBOW -> ItemInit.living_crossbow.get();
 			case LivingStaffWeaponFormRules.CONJURE_TORCH -> ItemInit.living_torch.get();
 			case LivingStaffWeaponFormRules.CONJURE_FLAIL -> ItemInit.living_flail.get();
+			case LivingStaffWeaponFormRules.CONJURE_SICKLE -> ItemInit.living_sickle.get();
 			case LivingStaffWeaponFormRules.CONJURE_BLADE -> ItemInit.living_blade.get();
 			default -> ItemInit.living_staff.get();
 		};

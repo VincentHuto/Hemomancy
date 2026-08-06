@@ -73,6 +73,22 @@ final class ActiveRiteRoleSyncPacketTest {
 		assertEquals(true, decoded.hasBoundaryDome());
 	}
 
+	@Test
+	void packetRoundTripsAuthoritativePhaseTicks() {
+		var entry = new ActiveRiteClientData.RiteEntry(BlockPos.ZERO, 9, 0.975D,
+				ResourceLocation.parse("hemomancy:finale_sync_test"), false,
+				"CULMINATION", 0, 0, 3, 3, 3, 0, 600, 0, 0, -1, "",
+				9.0F, List.of(), List.of(), List.of(), List.of(),
+				true, UUID.randomUUID(), 0, 40, "storm", true, true, 27);
+		FriendlyByteBuf buffer = new FriendlyByteBuf(Unpooled.buffer());
+
+		PacketSyncActiveRites.encode(buffer, new PacketSyncActiveRites(List.of(entry)));
+		var decoded = PacketSyncActiveRites.decode(buffer).entries().getFirst();
+
+		assertEquals(27, decoded.getPhaseTicks());
+		assertEquals(27.0F, decoded.phaseRenderTicks(0.0F), 0.0001F);
+	}
+
 	private static ActiveRiteClientData.RiteEntry atmosphereEntry(
 			String fogProfile, boolean lightning, boolean dome) {
 		return new ActiveRiteClientData.RiteEntry(BlockPos.ZERO, 9, 0,

@@ -147,10 +147,6 @@ Releasing Blood Absorption, looking away, moving out of range, or leaving the ri
   within ten minutes
 - **Effect:** Frees all members, returns shared blood, and removes owned fanes
 
-### Cult Pruning
-- **Purpose:** Remove Qliphoth void-bloom from the world
-- **Effect:** Removes the bloom in the rite's chunk and resolves its remaining pomes
-
 More utility rites exist — experiment and discover them!
 
 ---
@@ -437,15 +433,14 @@ The **Qliphoth** is a massive fungal structure that grows after performing Qliph
 ### After Communion
 - All nine Pomes eaten = Communion complete
 - Requirement for Rite of Apotheos
-- Void-bloom remains until Cult Pruning performed
+- The owned void-bloom remains until the Silent refusal is cut into it
 - Fungal Whispers intensify dramatically
 
-### Removing the Qliphoth
-- Perform **Cult Pruning** ritual
-- Closes the void-bloom
-- Tree gradually withers
-- Stops whispers from that specific tree
-- Does not undo Communion progress
+### Refusing the Qliphoth
+- Choose Silence after the first Fungal Spine projection
+- Strike the owned Bloom with any base Living Weapon to shape the temporary Living Sickle
+- Cut the Bloom again to open Vesper's retryable wound
+- Defeat Vesper, then absorb his Memory through the Iron Brazier to permanently unlock `conjure_sickle`
 
 ---
 

@@ -3,11 +3,13 @@ package com.vincenthuto.hemomancy.common.item.harbinger.memories;
 import com.vincenthuto.hemomancy.common.block.harbinger.BrazierBlock;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.EnumArchonPath;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.livingstaff.ILivingStaffProgress;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.livingstaff.LivingStaffBondHelper;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.KnownManipulationGrantHelper.MemoryGrantResult;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.KnownManipulationGrantHelper.MemoryGrantStatus;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
+import com.vincenthuto.hemomancy.common.event.HarbingerAdvancementGranter;
 import com.vincenthuto.hemomancy.common.item.component.LivingWeaponForm;
 import com.vincenthuto.hemomancy.common.item.component.LivingWeaponGraftData;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.LivingStaffItem;
@@ -125,6 +127,16 @@ public final class LivingWeaponGraftRite {
 			messageEverySecond(level, player, "Vesper's refusal is already disciplined within your staff-bond.");
 			return false;
 		}
+		boolean earnedRefusal = HemoCapabilityAccess.getInitiatoryDegree(player)
+				.map(degree -> degree.getDegreeNumber() == 7
+						&& degree.getArchonPath() == EnumArchonPath.SILENT_ARCHON)
+				.orElse(false)
+				&& HarbingerAdvancementGranter.hasAdvancement(player,
+						HarbingerAdvancementGranter.ADV_VESPER_DEFEATED);
+		if (!earnedRefusal) {
+			messageEverySecond(level, player, "Vesper's memory answers only the refusal that defeated him.");
+			return false;
+		}
 		return true;
 	}
 
@@ -136,6 +148,11 @@ public final class LivingWeaponGraftRite {
 		}
 		if (!progress.awakenVesperMemory()) {
 			messageEverySecond(level, player, "Vesper's refusal is already disciplined within your staff-bond.");
+			return false;
+		}
+		if (!LivingStaffBondHelper.ensureVesperSickleKnown(player)) {
+			progress.setVesperMemoryAwakened(false);
+			messageEverySecond(level, player, "The refusal cannot find its final shape.");
 			return false;
 		}
 		LivingStaffBondHelper.syncProgress(player);

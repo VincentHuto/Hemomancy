@@ -65,6 +65,7 @@ public class LayerEvents {
 		event.registerLayerDefinition(LivingSpearModel.living_spear, LivingSpearModel::createLayers);
 		event.registerLayerDefinition(LivingTorchModel.LAYER_LOCATION, LivingTorchModel::createBodyLayer);
 		event.registerLayerDefinition(LivingFlailModel.LAYER_LOCATION, LivingFlailModel::createBodyLayer);
+		event.registerLayerDefinition(LivingSickleModel.LAYER_LOCATION, LivingSickleModel::createBodyLayer);
 		event.registerLayerDefinition(FloatingHeartModel.mortal_display, FloatingHeartModel::createBodyLayer);
 		event.registerLayerDefinition(CentrifugeArmsModel.LAYER_LOCATION, CentrifugeArmsModel::createBodyLayer);
 		event.registerLayerDefinition(CentrifugeStandModel.LAYER_LOCATION, CentrifugeStandModel::createBodyLayer);

@@ -20,7 +20,14 @@ public final class LivingStaffWeaponFormEvents {
 	@SubscribeEvent
 	public static void onItemToss(ItemTossEvent event) {
 		ItemStack tossed = event.getEntity().getItem();
-		if (LivingStaffWeaponFormHelper.isTransformedStaffWeapon(tossed)) {
+		if (LivingSicklePruning.isTemporarySickle(tossed)) {
+			Player player = event.getPlayer();
+			ItemStack restored = LivingSicklePruning.restoredWeaponStack(tossed, player.registryAccess());
+			event.getEntity().setItem(LivingStaffWeaponFormHelper.isTransformedStaffWeapon(restored)
+					? LivingStaffWeaponFormHelper.restoredStaffStack(restored, player.registryAccess())
+					: restored);
+			LivingArsenalInventoryGuard.sanitizePlayerInventory(player);
+		} else if (LivingStaffWeaponFormHelper.isTransformedStaffWeapon(tossed)) {
 			Player player = event.getPlayer();
 			event.getEntity().setItem(LivingStaffWeaponFormHelper.restoredStaffStack(tossed, player.registryAccess()));
 			LivingArsenalInventoryGuard.sanitizePlayerInventory(player);

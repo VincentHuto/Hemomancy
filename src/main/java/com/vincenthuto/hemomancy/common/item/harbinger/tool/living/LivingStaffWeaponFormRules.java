@@ -13,6 +13,7 @@ public final class LivingStaffWeaponFormRules {
 	public static final String CONJURE_CROSSBOW = "conjure_crossbow";
 	public static final String CONJURE_TORCH = "conjure_torch";
 	public static final String CONJURE_FLAIL = "conjure_flail";
+	public static final String CONJURE_SICKLE = "conjure_sickle";
 
 	private LivingStaffWeaponFormRules() {
 	}
@@ -20,7 +21,7 @@ public final class LivingStaffWeaponFormRules {
 	public static boolean isStaffWeaponFormManip(String manipName) {
 		return switch (manipName) {
 			case CONJURE_BLADE, CONJURE_AXE, CONJURE_SPEAR, CONJURE_CLAWS, CONJURE_CROSSBOW,
-					CONJURE_TORCH, CONJURE_FLAIL -> true;
+					CONJURE_TORCH, CONJURE_FLAIL, CONJURE_SICKLE -> true;
 			default -> false;
 		};
 	}

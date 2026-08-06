@@ -43,6 +43,10 @@ public class SanguineOmenOverlay {
 		state.tick();
 	}
 
+	public void clear() {
+		state.clear();
+	}
+
 	public void renderHUD(GuiGraphics graphics, int screenWidth, int screenHeight, float partialTicks) {
 		if (!state.isActive() || mode != Mode.SCREEN_OVERLAY) {
 			return;

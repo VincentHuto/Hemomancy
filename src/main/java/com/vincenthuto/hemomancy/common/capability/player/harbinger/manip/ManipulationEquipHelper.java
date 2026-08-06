@@ -7,6 +7,7 @@ import java.util.List;
 public final class ManipulationEquipHelper {
 	public static final String BLOOD_ABSORPTION = "blood_absorption";
 	public static final String BLOOD_PROJECTION = "blood_projection";
+	public static final String CONJURE_SICKLE = "conjure_sickle";
 
 	private ManipulationEquipHelper() {
 	}
@@ -17,6 +18,13 @@ public final class ManipulationEquipHelper {
 		}
 		boolean changed = normalizeEquippedNames(equippedNames);
 		if (ManipulationRetirementRules.isRetiredManipulation(manipName)) {
+			return changed;
+		}
+		if (CONJURE_SICKLE.equals(manipName)) {
+			if (!equippedNames.contains(manipName)) {
+				equippedNames.add(manipName);
+				return true;
+			}
 			return changed;
 		}
 		if (isFixedMechanicalManip(manipName)) {
@@ -48,6 +56,7 @@ public final class ManipulationEquipHelper {
 			return false;
 		}
 		List<String> original = new ArrayList<>(equippedNames);
+		boolean hadSickle = equippedNames.contains(CONJURE_SICKLE);
 		LinkedHashSet<String> normalNames = new LinkedHashSet<>();
 		for (String name : equippedNames) {
 			if (name != null && !name.isEmpty() && !isFixedMechanicalManip(name)
@@ -58,6 +67,7 @@ public final class ManipulationEquipHelper {
 		equippedNames.clear();
 		equippedNames.add(BLOOD_ABSORPTION);
 		equippedNames.add(BLOOD_PROJECTION);
+		if (hadSickle) equippedNames.add(CONJURE_SICKLE);
 		equippedNames.addAll(normalNames);
 		return !original.equals(equippedNames);
 	}
@@ -77,6 +87,7 @@ public final class ManipulationEquipHelper {
 	}
 
 	public static boolean isFixedMechanicalManip(String manipName) {
-		return BLOOD_ABSORPTION.equals(manipName) || BLOOD_PROJECTION.equals(manipName);
+		return BLOOD_ABSORPTION.equals(manipName) || BLOOD_PROJECTION.equals(manipName)
+				|| CONJURE_SICKLE.equals(manipName);
 	}
 }

@@ -6,8 +6,10 @@ import com.vincenthuto.hemomancy.common.init.BlockInit;
 import com.vincenthuto.hemomancy.common.recipe.BloodStructureOfferingPlacement;
 import com.vincenthuto.hemomancy.common.recipe.BloodStructureRecipe;
 import com.vincenthuto.hemomancy.common.recipe.CardinalRiteRecipe;
+import com.vincenthuto.hemomancy.common.rite.CardinalRiteFoundationRules;
 import com.vincenthuto.hemomancy.common.rite.floor.CardinalRiteFloorDefinition;
 import com.vincenthuto.hemomancy.common.rite.floor.CardinalRiteFloorRegistry;
+import com.vincenthuto.hemomancy.common.rite.harbinger.CardinalRiteFootprintResolver;
 import com.vincenthuto.hemomancy.common.tile.IronBrazierBlockEntity;
 import com.vincenthuto.hemomancy.common.tile.functional.CardinalFocusBlockEntity;
 import com.vincenthuto.hutoslib.math.BlockPosBlockPair;
@@ -30,6 +32,8 @@ import net.neoforged.neoforge.network.handling.IPayloadContext;
 import java.util.List;
 
 public class PlaceStructurePacket implements CustomPacketPayload {
+	private static final ResourceLocation FOUNDING_FANE_RITE =
+			Hemomancy.rloc("cardinal_rite/founding_fane");
 
 	public static final Type<PlaceStructurePacket> TYPE = new Type<>(Hemomancy.rloc("place_structure_packet"));
 	public static final StreamCodec<FriendlyByteBuf, PlaceStructurePacket> STREAM_CODEC = StreamCodec.of(PlaceStructurePacket::encode, PlaceStructurePacket::decode);
@@ -127,6 +131,17 @@ public class PlaceStructurePacket implements CustomPacketPayload {
 
 				BlockPos playerPos = player.blockPosition();
 				int placed = 0;
+				List<BlockPos> placedPositions = new java.util.ArrayList<>();
+
+				if (cardinalRite != null) {
+					float footprintRadius = CardinalRiteFootprintResolver.radius(cardinalRite, null);
+					BlockPos floorCenter = playerPos.offset(0, minY, 0);
+					for (BlockPos foundationPos : CardinalRiteFoundationRules.squareBelow(
+							floorCenter, footprintRadius, FOUNDING_FANE_RITE.equals(cardinalRite.getId()))) {
+						level.setBlock(foundationPos, Blocks.STONE.defaultBlockState(), Block.UPDATE_CLIENTS);
+						placed++;
+					}
+				}
 
 				// Sort by Y ascending so support blocks are placed before blocks that
 				// depend on them (e.g. befouling ash trails need a solid block below).
@@ -154,8 +169,6 @@ public class PlaceStructurePacket implements CustomPacketPayload {
 				// Main pass: place all non-air blocks with UPDATE_CLIENTS only
 				// (flag 2) to avoid neighbor-update cascades that can break
 				// canSurvive-dependent blocks like befouling ash trails.
-				List<BlockPos> placedPositions = new java.util.ArrayList<>();
-
 				for (BlockPosBlockPair pair : blockPairs) {
 					Block block = pair.getBlock();
 					if (block == null || block == net.minecraft.world.level.block.Blocks.AIR) continue;
@@ -237,7 +250,14 @@ public class PlaceStructurePacket implements CustomPacketPayload {
 		}
 
 		List<BlockPos> placedPositions = new java.util.ArrayList<>();
-		int placed = placePatternAtCell(level, floor.pattern(), focusPos,
+		int placed = 0;
+		float footprintRadius = CardinalRiteFootprintResolver.radius(recipe, floor);
+		for (BlockPos foundationPos : CardinalRiteFoundationRules.squareBelow(
+				focusPos, footprintRadius, FOUNDING_FANE_RITE.equals(recipe.getId()))) {
+			level.setBlock(foundationPos, Blocks.STONE.defaultBlockState(), Block.UPDATE_CLIENTS);
+			placed++;
+		}
+		placed += placePatternAtCell(level, floor.pattern(), focusPos,
 				floor.focus().getX(), floor.focus().getY(), floor.focus().getZ(), placedPositions);
 		if (recipe.hasMedium()) {
 			ItemStack mediumStack = recipe.getMedium().getItems()[0].copyWithCount(1);

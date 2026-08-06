@@ -42,6 +42,7 @@ public class PacketSyncActiveRites implements CustomPacketPayload {
 			buf.writeResourceLocation(entry.getRecipeId());
 			buf.writeBoolean(entry.isUnstained());
 			buf.writeUtf(entry.getPhase());
+			buf.writeVarInt(entry.getPhaseTicks());
 			buf.writeVarInt(entry.getInstability());
 			buf.writeVarInt(entry.getCurrentWave());
 			buf.writeVarInt(entry.getTotalWaves());
@@ -106,6 +107,7 @@ public class PacketSyncActiveRites implements CustomPacketPayload {
 			ResourceLocation recipeId = buf.readResourceLocation();
 			boolean unstained = buf.readBoolean();
 			String phase = buf.readUtf();
+			int phaseTicks = buf.readVarInt();
 			int instability = buf.readVarInt();
 			int currentWave = buf.readVarInt();
 			int totalWaves = buf.readVarInt();
@@ -158,7 +160,7 @@ public class PacketSyncActiveRites implements CustomPacketPayload {
 					footprintRadius, checklist,
 					boundarySegments, sigilSegments, sanguineBlobs, plantedStaff, owner,
 					cancellationTicks, staffPlantingTicks,
-					fogProfile, fogLightning, boundaryDome));
+					fogProfile, fogLightning, boundaryDome, phaseTicks));
 		}
 		return new PacketSyncActiveRites(entries);
 	}

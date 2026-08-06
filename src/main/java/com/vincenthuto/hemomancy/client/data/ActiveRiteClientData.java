@@ -30,6 +30,7 @@ public class ActiveRiteClientData {
 		private final ResourceLocation recipeId;
 		private final boolean unstained;
 		private final String phase;
+		private final int phaseTicks;
 		private final int instability;
 		private final int currentWave;
 		private final int totalWaves;
@@ -60,6 +61,8 @@ public class ActiveRiteClientData {
 		private float currentCancellationTicks;
 		private float previousStaffPlantingTicks;
 		private float currentStaffPlantingTicks;
+		private float previousPhaseTicks;
+		private float currentPhaseTicks;
 
 		public RiteEntry(BlockPos center, int riteSize, double progress, ResourceLocation recipeId, boolean unstained) {
 			this(center, riteSize, progress, recipeId, unstained, "LEGACY", 0, 0, 0,
@@ -137,12 +140,28 @@ public class ActiveRiteClientData {
 				List<SigilSegment> sigilSegments, List<SanguineBlob> sanguineBlobs, boolean plantedStaff,
 				UUID owner, int cancellationTicks, int staffPlantingTicks,
 				String fogProfile, boolean fogLightning, boolean boundaryDome) {
+			this(center, riteSize, progress, recipeId, unstained, phase, instability, currentWave, totalWaves,
+					completedRings, totalRings, committedBloodMl, upfrontBloodMl, carriedIchorMl, allyCount,
+					sharedBloodMl, cue, footprintRadius, checklist, boundarySegments, sigilSegments,
+					sanguineBlobs, plantedStaff, owner, cancellationTicks, staffPlantingTicks,
+					fogProfile, fogLightning, boundaryDome, 0);
+		}
+
+		public RiteEntry(BlockPos center, int riteSize, double progress, ResourceLocation recipeId, boolean unstained,
+				String phase, int instability, int currentWave, int totalWaves, int completedRings, int totalRings,
+				int committedBloodMl, int upfrontBloodMl, int carriedIchorMl, int allyCount, int sharedBloodMl,
+				String cue, float footprintRadius, List<String> checklist,
+				List<CardinalRiteBoundaryProgress.Segment> boundarySegments,
+				List<SigilSegment> sigilSegments, List<SanguineBlob> sanguineBlobs, boolean plantedStaff,
+				UUID owner, int cancellationTicks, int staffPlantingTicks,
+				String fogProfile, boolean fogLightning, boolean boundaryDome, int phaseTicks) {
 			this.center = center;
 			this.riteSize = riteSize;
 			this.progress = progress;
 			this.recipeId = recipeId;
 			this.unstained = unstained;
 			this.phase = phase;
+			this.phaseTicks = Math.max(0, phaseTicks);
 			this.instability = instability;
 			this.currentWave = currentWave;
 			this.totalWaves = totalWaves;
@@ -166,6 +185,8 @@ public class ActiveRiteClientData {
 			this.currentCancellationTicks = this.cancellationTicks;
 			this.previousStaffPlantingTicks = this.staffPlantingTicks;
 			this.currentStaffPlantingTicks = this.staffPlantingTicks;
+			this.previousPhaseTicks = this.phaseTicks;
+			this.currentPhaseTicks = this.phaseTicks;
 			this.checklist = List.copyOf(checklist);
 			this.boundarySegments = List.copyOf(boundarySegments);
 			this.sigilSegments = List.copyOf(sigilSegments);
@@ -203,6 +224,7 @@ public class ActiveRiteClientData {
 			};
 		}
 		public String getPhase() { return phase; }
+		public int getPhaseTicks() { return phaseTicks; }
 		public int getInstability() { return instability; }
 		public int getCurrentWave() { return currentWave; }
 		public int getTotalWaves() { return totalWaves; }
@@ -256,6 +278,12 @@ public class ActiveRiteClientData {
 					+ (currentStaffPlantingTicks - previousStaffPlantingTicks) * clampedPartialTick;
 		}
 
+		public float phaseRenderTicks(float partialTick) {
+			float clampedPartialTick = Math.max(0.0F, Math.min(1.0F, partialTick));
+			return previousPhaseTicks
+					+ (currentPhaseTicks - previousPhaseTicks) * clampedPartialTick;
+		}
+
 		public boolean consumeBoundaryCompletion(CardinalRiteBoundaryProgress.Segment segment) {
 			BoundaryGrowth growth = boundaryGrowth.get(BoundarySegmentKey.of(segment));
 			return growth != null && growth.consumeCompletion();
@@ -269,6 +297,11 @@ public class ActiveRiteClientData {
 			float continuedPlantingTicks = previous.currentStaffPlantingTicks;
 			previousStaffPlantingTicks = continuedPlantingTicks;
 			currentStaffPlantingTicks = Math.max(continuedPlantingTicks, staffPlantingTicks);
+			if (phase.equals(previous.phase)) {
+				float continuedPhaseTicks = Math.max(previous.currentPhaseTicks, phaseTicks);
+				previousPhaseTicks = continuedPhaseTicks;
+				currentPhaseTicks = continuedPhaseTicks;
+			}
 			for (var entry : boundaryGrowth.entrySet()) {
 				BoundaryGrowth previousGrowth = previous.boundaryGrowth.get(entry.getKey());
 				if (previousGrowth != null) entry.getValue().continueFrom(previousGrowth);
@@ -291,6 +324,8 @@ public class ActiveRiteClientData {
 						CardinalRitePlantingSequence.DURATION_TICKS,
 						currentStaffPlantingTicks + 1.0F);
 			}
+			previousPhaseTicks = currentPhaseTicks;
+			currentPhaseTicks++;
 			for (BoundaryGrowth growth : boundaryGrowth.values()) growth.tick();
 		}
 	}

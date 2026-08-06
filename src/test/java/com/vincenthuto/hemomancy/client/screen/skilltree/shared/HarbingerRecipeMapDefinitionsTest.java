@@ -8,7 +8,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 final class HarbingerRecipeMapDefinitionsTest {
 	@Test
 	void everyBuiltInHarbingerEntryHasAnAuthoredFamily() {
-		assertEquals(37, HarbingerRecipeMapDefinitions.ritePaths().size());
+		assertEquals(36, HarbingerRecipeMapDefinitions.ritePaths().size());
 		assertEquals(22, HarbingerRecipeMapDefinitions.craftingPaths().size());
 		assertEquals(4, HarbingerRecipeMapDefinitions.puppetryPaths().size());
 		assertEquals("Order", HarbingerRecipeMapDefinitions.riteFamily("cardinal_rite/sanguine_initiation"));

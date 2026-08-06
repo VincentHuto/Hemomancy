@@ -7,6 +7,8 @@ import com.vincenthuto.hemomancy.common.entity.mob.animal.BloodlickerEntity;
 import com.vincenthuto.hemomancy.common.init.EntityInit;
 import com.vincenthuto.hemomancy.common.entity.utility.UnsettledIchorEntity;
 import com.vincenthuto.hemomancy.common.entity.utility.HumanitySpriteEntity;
+import com.vincenthuto.hemomancy.common.network.PacketHandler;
+import com.vincenthuto.hemomancy.common.network.particle.CardinalRiteImpactPacket;
 import com.vincenthuto.hemomancy.common.recipe.CardinalRiteRecipe;
 import com.vincenthuto.hemomancy.common.rite.ActiveCardinalRite;
 import com.vincenthuto.hemomancy.common.rite.CardinalRiteCeremonyRules;
@@ -131,6 +133,10 @@ public final class CardinalRiteOrdealEngine {
 		daemon.setSpriteScale((float) lerp(merge, scale, HumanitySpriteEntity.MIN_SCALE));
 		daemon.faceDirection(player.x - center.x, player.z - center.z);
 		daemon.setFlying(merge > 0.0D);
+		if (CardinalRiteFinaleTiming.isImpactTick(rite.getPhaseTicks())) {
+			PacketHandler.sendToPlayer(caster, new CardinalRiteImpactPacket(
+					8, 0.52F, level.random.nextInt()));
+		}
 		if (rite.getPhaseTicks() >= CardinalRiteFinaleTiming.TOTAL_TICKS) {
 			rite.markComplete();
 		}
@@ -247,8 +253,7 @@ public final class CardinalRiteOrdealEngine {
 					.withStyle(ChatFormatting.DARK_RED), false);
 		}
 		if (rite.getPhaseTicks() % 20 == 0) {
-			int deficit = CardinalRiteCeremonyRules.anchorDeficitInstability(rite.getAnchorBloodMl());
-			if (deficit > 0) rite.addInstability(deficit);
+			rite.applyAnchorDeficitPressure();
 		}
 	}
 
@@ -416,8 +421,7 @@ public final class CardinalRiteOrdealEngine {
 		if (decay <= 0.0D) return;
 		int period = Math.max(1, (int) Math.round(20.0D / decay));
 		if (rite.getPhaseTicks() % period == 0) {
-			int anchor = Math.floorMod(rite.getPhaseTicks() / period, rite.getAnchorBloodMl().length);
-			rite.drainAnchor(anchor, 1);
+			rite.drainOutermostProtectedAnchor(1);
 		}
 	}
 

@@ -3,6 +3,8 @@ package com.vincenthuto.hemomancy.common.rite.harbinger;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 final class CardinalRiteFinaleTimingTest {
 	@Test
@@ -27,5 +29,12 @@ final class CardinalRiteFinaleTimingTest {
 	void daemonStaysAtProcessionSizeUntilItReturnsFromTheBraziers() {
 		assertEquals(0.8D, CardinalRiteFinaleTiming.preProcessionHeight(0.8D), 0.0001D);
 		assertEquals(1.4D, CardinalRiteFinaleTiming.preProcessionHeight(4.5D), 0.0001D);
+	}
+
+	@Test
+	void impactCueOccursOnceAtPlayerArrival() {
+		assertFalse(CardinalRiteFinaleTiming.isImpactTick(79));
+		assertTrue(CardinalRiteFinaleTiming.isImpactTick(80));
+		assertFalse(CardinalRiteFinaleTiming.isImpactTick(81));
 	}
 }

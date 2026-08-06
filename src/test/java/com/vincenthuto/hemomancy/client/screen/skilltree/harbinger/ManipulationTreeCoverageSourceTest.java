@@ -56,7 +56,8 @@ public final class ManipulationTreeCoverageSourceTest {
 			"conjure_flail"
 	);
 	private static final Set<String> NON_TREE_MANIPULATIONS = Set.of(
-			"hemosynthesis", "blood_lamp", "crimson_harvest", "sanguine_excavation", "vital_reservoir");
+			"hemosynthesis", "blood_lamp", "crimson_harvest", "sanguine_excavation", "vital_reservoir",
+			"conjure_sickle");
 
 	private ManipulationTreeCoverageSourceTest() {
 	}

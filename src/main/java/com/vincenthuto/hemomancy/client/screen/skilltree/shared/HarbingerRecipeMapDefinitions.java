@@ -37,7 +37,7 @@ public final class HarbingerRecipeMapDefinitions {
 		registerRites("Body/Will", "sanguine_attunement", "vascular_mending", "hematic_fortification", "eternal_covenant",
 				"chamber_of_will", "crimson_beacon");
 		registerRites("Domain/World", "exsanguination", "hungering_earth", "sanguine_fervor", "sanguine_eclipse", "pallid_shadow");
-		registerRites("Qliphoth/Forbidden", "ancestral_communion", "bloom_of_qliphoth", "pruning_of_qliphoth");
+		registerRites("Qliphoth/Forbidden", "ancestral_communion", "bloom_of_qliphoth");
 
 		registerCrafting("Foundations", "dried_gourd", "hematic_iron_block", "iron_brazier", "liber_sanguinum", "living_staff");
 		registerCrafting("Apparatus", "vial_centrifuge", "ghastly_alembic", "mnemonic_reliquary", "somatic_loom",
@@ -85,7 +85,6 @@ public final class HarbingerRecipeMapDefinitions {
 
 		iconRites("cardinal_rite/ancestral_communion", () -> new ItemStack(ItemInit.memory_of_vesper.get()));
 		iconRites("cardinal_rite/bloom_of_qliphoth", () -> new ItemStack(BlockInit.qliphoth_bloom.get()));
-		iconRites("cardinal_rite/pruning_of_qliphoth", () -> new ItemStack(ItemInit.qliphoth_pome.get()));
 
 		iconRites("cardinal_rite/puppeteer_trial_gorebound_hulk", () -> new ItemStack(ItemInit.gorebound_yoke.get()));
 		iconRites("cardinal_rite/puppeteer_trial_marrow_spitter", () -> new ItemStack(ItemInit.marrow_spitter_carriage.get()));
@@ -129,7 +128,6 @@ public final class HarbingerRecipeMapDefinitions {
 		linkRites("cardinal_rite/exsanguination", "cardinal_rite/sanguine_eclipse", RecipeMapLink.Kind.CONCEPTUAL);
 		linkRites("cardinal_rite/exsanguination", "cardinal_rite/pallid_shadow", RecipeMapLink.Kind.CONCEPTUAL);
 		linkRites("cardinal_rite/ancestral_communion", "cardinal_rite/bloom_of_qliphoth", RecipeMapLink.Kind.CONCEPTUAL);
-		linkRites("cardinal_rite/ancestral_communion", "cardinal_rite/pruning_of_qliphoth", RecipeMapLink.Kind.CONCEPTUAL);
 
 		linkCrafting("blood_structure/dried_gourd", "blood_structure/hematic_iron_block", RecipeMapLink.Kind.CONCEPTUAL);
 		linkCrafting("blood_structure/dried_gourd", "blood_structure/iron_brazier", RecipeMapLink.Kind.CONCEPTUAL);

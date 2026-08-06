@@ -212,6 +212,43 @@ final class ActiveCardinalRiteCeremonyTest {
 	}
 
 	@Test
+	void unchangedAnchorDeficitDoesNotRatchetInstabilityPastTheOuterLayer() {
+		ActiveCardinalRite rite = ActiveCardinalRite.interactive(
+				UUID.randomUUID(), BlockPos.ZERO, ResourceLocation.parse("hemomancy:test"),
+				200, 5, 2, false, 1, 8);
+		rite.setInstabilityDamagePriority(new int[] {4, 5, 6, 7, 0, 1, 2, 3});
+		for (int anchor = 0; anchor < 8; anchor++) {
+			rite.fillAnchor(anchor, CardinalRiteCeremonyRules.BLOOD_PER_ANCHOR_ML);
+		}
+		rite.drainAnchor(4, 5);
+
+		rite.applyAnchorDeficitPressure();
+		assertEquals(1, rite.getInstability(), "new outer-ring deficit creates pressure");
+		rite.applyAnchorDeficitPressure();
+		assertEquals(1, rite.getInstability(), "the same deficit is not charged again every second");
+		assertFalse(rite.isInstabilityDamagedAnchor(0), "inner ring remains protected");
+	}
+
+	@Test
+	void ambientOrdealDecayConsumesOuterAnchorsBeforeInnerAnchors() {
+		ActiveCardinalRite rite = ActiveCardinalRite.interactive(
+				UUID.randomUUID(), BlockPos.ZERO, ResourceLocation.parse("hemomancy:test"),
+				200, 5, 2, false, 1, 8);
+		rite.setInstabilityDamagePriority(new int[] {4, 5, 6, 7, 0, 1, 2, 3});
+		for (int anchor = 0; anchor < 8; anchor++) {
+			rite.fillAnchor(anchor, CardinalRiteCeremonyRules.BLOOD_PER_ANCHOR_ML);
+		}
+
+		assertEquals(1, rite.drainOutermostProtectedAnchor(1), "ambient drain");
+		assertEquals(50, rite.getAnchorBloodMl()[0], "inner anchor remains full");
+		assertEquals(49, rite.getAnchorBloodMl()[4], "outer anchor absorbs pressure");
+		for (int lost = 1; lost < 200; lost++) rite.drainOutermostProtectedAnchor(1);
+		assertEquals(50, rite.getAnchorBloodMl()[0], "inner ring survives until the exterior is empty");
+		assertEquals(1, rite.drainOutermostProtectedAnchor(1), "pressure reaches exposed inner ring");
+		assertEquals(49, rite.getAnchorBloodMl()[0], "inner ring drains only after the exterior is gone");
+	}
+
+	@Test
 	void loadingAnOlderActiveRiteCanRehomeDamageToTheAuthoredOuterRing() {
 		ActiveCardinalRite rite = ActiveCardinalRite.interactive(
 				UUID.randomUUID(), BlockPos.ZERO, ResourceLocation.parse("hemomancy:test"),

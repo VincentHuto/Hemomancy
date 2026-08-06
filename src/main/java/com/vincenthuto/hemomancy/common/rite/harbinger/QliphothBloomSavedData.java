@@ -55,7 +55,6 @@ public class QliphothBloomSavedData extends SavedData {
 	private final Map<Long, Integer> pendingPomeByBloom = new HashMap<>();
 	private final Set<Long> claimedPendingPomes = new HashSet<>();
 	private final Map<UUID, List<ItemStack>> pendingBoundPomeReturns = new HashMap<>();
-	private final Map<UUID, Set<Long>> pendingPrunedBloomResets = new HashMap<>();
 
 	public QliphothBloomSavedData() {}
 
@@ -122,21 +121,6 @@ public class QliphothBloomSavedData extends SavedData {
 				}
 			}
 		}
-		if (tag.contains("pendingPrunedBloomResets", Tag.TAG_LIST)) {
-			ListTag owners = tag.getList("pendingPrunedBloomResets", Tag.TAG_COMPOUND);
-			for (int i = 0; i < owners.size(); i++) {
-				CompoundTag ownerTag = owners.getCompound(i);
-				UUID ownerUUID = ownerTag.getUUID("Owner");
-				ListTag origins = ownerTag.getList("Origins", Tag.TAG_LONG);
-				Set<Long> bloomOrigins = new HashSet<>();
-				for (int originIndex = 0; originIndex < origins.size(); originIndex++) {
-					bloomOrigins.add(((net.minecraft.nbt.LongTag) origins.get(originIndex)).getAsLong());
-				}
-				if (!bloomOrigins.isEmpty()) {
-					data.pendingPrunedBloomResets.put(ownerUUID, bloomOrigins);
-				}
-			}
-		}
 		return data;
 	}
 
@@ -199,21 +183,6 @@ public class QliphothBloomSavedData extends SavedData {
 		}
 		tag.put("pendingBoundPomeReturns", pendingReturnList);
 
-		ListTag pendingResetList = new ListTag();
-		for (Map.Entry<UUID, Set<Long>> pendingReset : pendingPrunedBloomResets.entrySet()) {
-			if (pendingReset.getValue().isEmpty()) {
-				continue;
-			}
-			ListTag origins = new ListTag();
-			for (Long origin : pendingReset.getValue()) {
-				origins.add(net.minecraft.nbt.LongTag.valueOf(origin));
-			}
-			CompoundTag ownerTag = new CompoundTag();
-			ownerTag.putUUID("Owner", pendingReset.getKey());
-			ownerTag.put("Origins", origins);
-			pendingResetList.add(ownerTag);
-		}
-		tag.put("pendingPrunedBloomResets", pendingResetList);
 
 		return tag;
 	}
@@ -318,23 +287,6 @@ public class QliphothBloomSavedData extends SavedData {
 			return stacks;
 		}
 		return List.of();
-	}
-
-	public void queuePrunedBloomReset(UUID ownerUUID, long bloomOrigin) {
-		if (ownerUUID == null) {
-			return;
-		}
-		pendingPrunedBloomResets.computeIfAbsent(ownerUUID, ignored -> new HashSet<>()).add(bloomOrigin);
-		setDirty();
-	}
-
-	public Set<Long> takePrunedBloomResetOrigins(UUID ownerUUID) {
-		Set<Long> origins = pendingPrunedBloomResets.remove(ownerUUID);
-		if (origins != null) {
-			setDirty();
-			return origins;
-		}
-		return Set.of();
 	}
 
 	/**

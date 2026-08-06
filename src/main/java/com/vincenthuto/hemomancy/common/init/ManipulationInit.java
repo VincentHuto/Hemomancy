@@ -322,6 +322,12 @@ public class ManipulationInit {
 					.setSecondaryTend(EnumBloodTendency.FERRIC)
 					.setDrudgeAction(DrudgeAction.DRUDGE_UNSUPPORTED, "Not usable by Drudges"));
 
+	public static final DeferredHolder<BloodManipulation, BloodManipulation> conjure_sickle = MANIPS.register("conjure_sickle",
+			() -> new StaffWeaponFormManip("conjure_sickle", ItemInit.living_sickle, 0, 0,
+					EnumManipulationRank.PERFECTUS, EnumBloodTendency.MORTEM, EnumVeinSections.ARMS)
+					.setSecondaryTend(EnumBloodTendency.FERRIC)
+					.setDrudgeAction(DrudgeAction.DRUDGE_UNSUPPORTED, "Not usable by Drudges"));
+
 	public static final DeferredHolder<BloodManipulation, BloodManipulation> conjure_staff = MANIPS.register("conjure_staff",
 			() -> new ConjurationManip("conjure_staff", ItemInit.living_staff, 1000, 0, 0,
 					EnumManipulationRank.MEDIOCRITAS, EnumBloodTendency.FERRIC, EnumVeinSections.ARMS)

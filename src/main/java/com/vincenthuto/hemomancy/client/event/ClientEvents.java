@@ -519,6 +519,8 @@ public class ClientEvents {
         FaneBoundaryClientData.clear();
         ActiveRiteClientData.clear();
         CardinalRiteFogRenderer.clear();
+		CardinalRiteImpactClientEvents.clear();
+		if (SanguineOmenOverlay.instance != null) SanguineOmenOverlay.instance.clear();
         MnemonicBlueprintRenderer.disconnect();
     }
 
