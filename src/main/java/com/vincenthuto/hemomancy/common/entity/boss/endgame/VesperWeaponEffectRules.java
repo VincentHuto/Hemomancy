@@ -5,15 +5,7 @@ public final class VesperWeaponEffectRules {
 	private VesperWeaponEffectRules() { }
 
 	public static String styleName(VesperWeaponAction action) {
-		return switch (action) {
-			case ICHIMONJI, CROSSCUT -> "blood_glow";
-			case LEAPING_CLEAVE, REAPER_SWEEP -> "debris_smoke";
-			case SKY_LANCE, LANCE_FLURRY -> "riptide_spiral";
-			case TWIN_REND, PREDATOR_POUNCE -> "gloam_slash";
-			case BRANDING_THRUSTS, UPDRAFT_IMPALEMENT -> "crimson_fire";
-			case CHAIN_SWEEP, HOOK_AND_CRUSH -> "glacial_arc";
-			default -> "none";
-		};
+		return VesperVisualRules.weaponScene(action);
 	}
 
 	public static boolean shouldEmit(VesperWeaponAction action, int tick) {

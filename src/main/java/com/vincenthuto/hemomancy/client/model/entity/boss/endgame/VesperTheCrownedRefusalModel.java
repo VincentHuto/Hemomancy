@@ -759,14 +759,15 @@ public class VesperTheCrownedRefusalModel  extends EntityModel<VesperTheCrownedR
         this.tail4.yRot = -(float) (Math.sin((frame) * 0.13f) * 0.1325) + 45;
         this.tail5.yRot = -(float) (Math.sin((frame) * 0.13f) * 0.12325) + 45;
 
+		float attackFrame = entity.getAttackTick() + HLClientUtils.getPartialTicks();
 		if (entity.getAttack() == com.vincenthuto.hemomancy.common.entity.boss.endgame.VesperPhaseOneAttack.STINGER_SCRIPT) {
-			float strike = Mth.sin(Math.min(1.0F, entity.getAttackTick() / 28.0F) * Mth.PI);
+			float strike = VesperWeaponAnimationRules.stingerMotion(attackFrame);
 			this.tail.xRot = -0.35F * strike;
 			this.tail2.xRot = -0.45F * strike;
 			this.tail3.xRot = -0.55F * strike;
 		}
 		if (entity.getAttack() == com.vincenthuto.hemomancy.common.entity.boss.endgame.VesperPhaseOneAttack.BROOD_TRAMPLE) {
-			this.lowerBody.xRot = entity.getAttackTick() < 38 ? -0.12F : 0.18F;
+			this.lowerBody.xRot = VesperWeaponAnimationRules.broodTramplePitch(attackFrame);
 		} else {
 			this.lowerBody.xRot = 0.0F;
 		}

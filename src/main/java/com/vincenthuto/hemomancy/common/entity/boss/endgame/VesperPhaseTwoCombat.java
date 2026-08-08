@@ -1,6 +1,5 @@
 package com.vincenthuto.hemomancy.common.entity.boss.endgame;
 
-import com.vincenthuto.hemomancy.client.particle.factory.BloodCellParticleFactory;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.entity.projectile.BloodBoltEntity;
 import com.vincenthuto.hemomancy.common.entity.summon.EntityIronPillar;
@@ -18,7 +17,6 @@ import com.vincenthuto.hemomancy.common.util.CrimsonFireHelper;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.BlockParticleOption;
-import net.minecraft.core.particles.DustParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
@@ -26,12 +24,9 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.LightningBolt;
-import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
-import org.joml.Vector3f;
 
 import java.util.List;
 
@@ -349,12 +344,12 @@ public final class VesperPhaseTwoCombat {
 			VesperWeaponAction action, int tick) {
 		if (!VesperWeaponEffectRules.shouldEmit(action, tick) || !(boss.level() instanceof ServerLevel server)) return;
 		switch (VesperWeaponEffectRules.styleName(action)) {
-			case "blood_glow" -> bloodBladeEffect(server, boss, action);
-			case "debris_smoke" -> axeDebrisEffect(server, boss, action, tick);
-			case "riptide_spiral" -> spearSpiralEffect(server, boss, tick);
-			case "gloam_slash" -> clawAttackEffect(server, boss, action, tick);
-			case "crimson_fire" -> torchFireEffect(server, boss, target);
-			case "glacial_arc" -> flailArcEffect(server, boss, action, tick);
+			case "blood_blade" -> bloodBladeEffect(server, boss, action);
+			case "living_axe" -> axeDebrisEffect(server, boss, action, tick);
+			case "living_spear" -> spearSpiralEffect(server, boss, tick);
+			case "gloam_claw" -> clawAttackEffect(server, boss, action, tick);
+			case "crimson_torch" -> torchFireEffect(server, boss, target);
+			case "glacial_flail" -> flailArcEffect(server, boss, action, tick);
 			default -> { }
 		}
 	}
@@ -363,13 +358,12 @@ public final class VesperPhaseTwoCombat {
 			VesperWeaponAction action) {
 		Vec3 forward = committedDirection(boss);
 		Vec3 center = boss.position().add(0.0D, 1.35D, 0.0D).add(forward.scale(2.8D));
-		server.sendParticles(BloodCellParticleFactory.createData(new ParticleColor(220, 0, 18)),
-				center.x, center.y, center.z, action == VesperWeaponAction.ICHIMONJI ? 24 : 18,
-				1.45D, 1.0D, 1.45D, 0.08D);
-		server.sendParticles(ParticleTypes.END_ROD, center.x, center.y, center.z, 12,
-				1.15D, 0.8D, 1.15D, 0.025D);
-		server.sendParticles(new DustParticleOptions(new Vector3f(1.0F, 0.04F, 0.08F), 1.25F),
-				center.x, center.y, center.z, 14, 1.25D, 0.7D, 1.25D, 0.02D);
+		VesperVisualEffects.bloodCells(server, center, VesperVisualEffects.BLOOD,
+				action == VesperWeaponAction.ICHIMONJI ? 26 : 20, 1.45D, 1.0D, 1.45D, 0.085D);
+		VesperVisualEffects.glow(server, center, VesperVisualEffects.BLOOD,
+				14, 1.2D, 0.75D, 1.2D, 0.035D);
+		VesperVisualEffects.darkGlow(server, center, VesperVisualEffects.BLACK,
+				10, 1.3D, 0.8D, 1.3D, 0.025D);
 	}
 
 	private static void axeDebrisEffect(ServerLevel server, VesperTheEveningStarEntity boss,
@@ -383,10 +377,11 @@ public final class VesperPhaseTwoCombat {
 			server.sendParticles(new BlockParticleOption(ParticleTypes.BLOCK, state),
 					center.x, center.y + 0.35D, center.z, 28, 1.8D, 0.55D, 1.8D, 0.18D);
 		}
-		server.sendParticles(ParticleTypes.POOF, center.x, center.y + 0.5D, center.z,
-				14, 1.7D, 0.45D, 1.7D, 0.08D);
-		server.sendParticles(ParticleTypes.SMOKE, center.x, center.y + 0.65D, center.z,
-				18, 1.5D, 0.65D, 1.5D, 0.045D);
+		Vec3 wake = center.add(0.0D, 0.55D, 0.0D);
+		VesperVisualEffects.darkGlow(server, wake, VesperVisualEffects.BLACK,
+				20, 1.7D, 0.55D, 1.7D, 0.075D);
+		VesperVisualEffects.embers(server, wake, VesperVisualEffects.DEEP_BLOOD,
+				15, 1.5D, 0.65D, 1.5D, 0.055D, 0.24F, 24);
 	}
 
 	private static void spearSpiralEffect(ServerLevel server, VesperTheEveningStarEntity boss, int tick) {
@@ -399,8 +394,14 @@ public final class VesperPhaseTwoCombat {
 			Vec3 point = origin.add(forward.scale(i * 0.28D))
 					.add(right.scale(Math.cos(phase) * radius))
 					.add(0.0D, Math.sin(phase) * radius, 0.0D);
-			server.sendParticles(i % 3 == 0 ? ParticleTypes.END_ROD : ParticleTypes.SPLASH,
-					point.x, point.y, point.z, 1, 0.0D, 0.0D, 0.0D, 0.01D);
+			if (i % 3 == 0) VesperVisualEffects.bloodCells(server, point, VesperVisualEffects.BLOOD,
+					1, 0.0D, 0.0D, 0.0D, 0.0D);
+			else VesperVisualEffects.glow(server, point, VesperVisualEffects.WHITE,
+					1, 0.0D, 0.0D, 0.0D, 0.0D);
+		}
+		if (tick % 6 == 0) {
+			VesperVisualEffects.tendril(server, origin, origin.add(forward.scale(4.4D)), false,
+					boss.getActionVariant() * 257L + tick);
 		}
 		if (tick % 5 == 0) boss.playSound(SoundEvents.TRIDENT_RIPTIDE_1.value(), 0.9F, 0.8F);
 	}
@@ -413,6 +414,9 @@ public final class VesperPhaseTwoCombat {
 		float scale = action == VesperWeaponAction.PREDATOR_POUNCE ? 1.18F : 0.9F;
 		PacketHandler.sendClawSlash(center, forward, new ParticleColor(70, 0, 125), mirrored,
 				scale, 64.0D, server);
+		PacketHandler.sendClawParticles(center, new ParticleColor(88, 0, 138), 64.0D, server);
+		VesperVisualEffects.darkGlow(server, center, VesperVisualEffects.BLACK,
+				12, 1.25D, 0.7D, 1.25D, 0.045D);
 		if (action == VesperWeaponAction.PREDATOR_POUNCE) {
 			PacketHandler.sendClawSlash(center, forward, new ParticleColor(45, 0, 135), true,
 					1.18F, 64.0D, server);
@@ -423,14 +427,12 @@ public final class VesperPhaseTwoCombat {
 		Vec3 forward = committedDirection(boss);
 		Vec3 center = boss.position().add(0.0D, 1.25D, 0.0D).add(forward.scale(
 				Math.min(3.2D, Math.max(1.5D, boss.distanceTo(target) * 0.55D))));
-		server.sendParticles(ParticleTypes.FLAME, center.x, center.y, center.z,
-				28, 1.1D, 0.85D, 1.1D, 0.08D);
-		server.sendParticles(ParticleTypes.SMALL_FLAME, center.x, center.y, center.z,
+		VesperVisualEffects.embers(server, center, VesperVisualEffects.EMBER,
+				34, 1.2D, 0.95D, 1.2D, 0.085D, 0.34F, 34);
+		VesperVisualEffects.glow(server, center, new ParticleColor(255, 82, 12),
 				20, 1.35D, 1.05D, 1.35D, 0.06D);
-		server.sendParticles(ParticleTypes.LAVA, center.x, center.y, center.z,
-				5, 0.75D, 0.5D, 0.75D, 0.02D);
-		server.sendParticles(ParticleTypes.CRIMSON_SPORE, center.x, center.y, center.z,
-				16, 1.35D, 0.9D, 1.35D, 0.045D);
+		VesperVisualEffects.spores(server, center, VesperVisualEffects.DEEP_BLOOD,
+				14, 1.4D, 0.95D, 1.4D, 0.04D);
 	}
 
 	private static void flailArcEffect(ServerLevel server, VesperTheEveningStarEntity boss,
@@ -439,22 +441,23 @@ public final class VesperPhaseTwoCombat {
 		double baseYaw = Math.atan2(committedDirection(boss).z, committedDirection(boss).x);
 		double start = baseYaw - Math.toRadians(arcDegrees) * 0.5D;
 		int points = action == VesperWeaponAction.CHAIN_SWEEP ? 32 : 24;
-		DustParticleOptions blue = new DustParticleOptions(new Vector3f(0.1F, 0.52F, 1.0F), 1.15F);
-		DustParticleOptions white = new DustParticleOptions(new Vector3f(0.9F, 0.97F, 1.0F), 0.95F);
 		for (int i = 0; i < points; i++) {
 			double progress = points == 1 ? 0.0D : (double) i / (points - 1);
 			double angle = start + Math.toRadians(arcDegrees) * progress;
 			double radius = 2.2D + progress * 4.1D;
 			Vec3 point = boss.position().add(Math.cos(angle) * radius,
 					0.75D + Math.sin(progress * Math.PI) * 1.1D, Math.sin(angle) * radius);
-			server.sendParticles((i & 1) == 0 ? blue : white, point.x, point.y, point.z,
+			VesperVisualEffects.glow(server, point, (i & 1) == 0 ? VesperVisualEffects.ICE : VesperVisualEffects.WHITE,
 					1, 0.04D, 0.04D, 0.04D, 0.0D);
-			if (i % 3 == 0) server.sendParticles(ParticleTypes.SNOWFLAKE, point.x, point.y, point.z,
-					1, 0.05D, 0.05D, 0.05D, 0.015D);
+			if (i % 4 == 0) VesperVisualEffects.bloodCells(server, point, VesperVisualEffects.ICE,
+					1, 0.03D, 0.03D, 0.03D, 0.0D);
 		}
 		if (tick == action.lastImpactTick()) {
-			server.sendParticles(ParticleTypes.CLOUD, boss.getX(), boss.getY() + 0.8D, boss.getZ(),
-					18, 3.2D, 0.45D, 3.2D, 0.035D);
+			Vec3 center = boss.position().add(0.0D, 0.8D, 0.0D);
+			VesperVisualEffects.tendril(server, center.add(-3.0D, 0.0D, 0.0D),
+					center.add(3.0D, 0.0D, 0.0D), true, boss.getActionVariant() * 311L + tick);
+			VesperVisualEffects.darkGlow(server, center, VesperVisualEffects.ICE,
+					16, 3.2D, 0.45D, 3.2D, 0.035D);
 		}
 	}
 
@@ -565,19 +568,19 @@ public final class VesperPhaseTwoCombat {
 			boolean centeredOnBoss = action == VesperWeaponAction.CHAIN_SWEEP || action == VesperWeaponAction.IRON_RETORT;
 			ring(server, centeredOnBoss ? boss.position() : boss.getLockedActionAim(),
 					action == VesperWeaponAction.CHAIN_SWEEP ? 6.5D : action == VesperWeaponAction.IRON_RETORT ? 5.5D : 4.5D,
-					new Vector3f(0.9F, 0.08F, 0.05F));
+					new ParticleColor(230, 20, 13));
 		} else if (action == VesperWeaponAction.SICKLE_CYCLONE) {
-			ring(server, boss.position(), 5.2D, new Vector3f(1.0F, 0.0F, 0.04F));
+			ring(server, boss.position(), 5.2D, VesperVisualEffects.BLOOD);
 		} else if (action == VesperWeaponAction.HOOK_AND_CRUSH && tick > 14) {
-			ring(server, boss.position(), 5.0D, new Vector3f(0.25F, 0.55F, 1.0F));
+			ring(server, boss.position(), 5.0D, VesperVisualEffects.ICE);
 		} else if (action == VesperWeaponAction.STORM_LOCK) {
 			for (int strike = 28; strike <= 44; strike += 8) ring(server, stormPoint(boss.getLockedActionAim(), strike),
-					2.2D, new Vector3f(1.0F, 0.9F, 0.05F));
+					2.2D, new ParticleColor(242, 232, 92));
 		} else {
 			Vec3 from = boss.position().add(0.0D, 1.2D, 0.0D);
 			double length = Math.max(8.0D, boss.getLockedActionOrigin().distanceTo(boss.getLockedActionAim()));
 			line(server, from, from.add(committedDirection(boss).scale(length)),
-					new Vector3f(0.95F, 0.08F, 0.08F));
+					VesperVisualEffects.BLOOD);
 		}
 	}
 
@@ -659,13 +662,12 @@ public final class VesperPhaseTwoCombat {
 
 	private static void lightningCircle(VesperTheEveningStarEntity boss, LivingEntity target, Vec3 center, int bit) {
 		if (!(boss.level() instanceof ServerLevel server)) return;
-		ring(server, center, 2.2D, new Vector3f(1.0F, 0.95F, 0.1F));
-		LightningBolt lightning = EntityType.LIGHTNING_BOLT.create(server);
-		if (lightning != null) {
-			lightning.moveTo(center.x, center.y, center.z);
-			lightning.setVisualOnly(true);
-			server.addFreshEntity(lightning);
-		}
+		ring(server, center, 2.2D, new ParticleColor(242, 232, 92));
+		long seed = boss.getActionVariant() * 401L + bit;
+		VesperVisualEffects.lightning(server, center.add(-2.0D, 0.15D, 0.0D),
+				center.add(2.0D, 0.35D, 0.0D), false, seed);
+		VesperVisualEffects.lightning(server, center.add(0.0D, 0.25D, -2.0D),
+				center.add(0.0D, 0.1D, 2.0D), false, seed + 1L);
 		if (target.position().distanceToSqr(center) <= 4.84D
 				&& VesperWeaponCombatRules.canApplyHit(boss.getActionHitMask(), bit)) {
 			boss.setActionHitMask(VesperWeaponCombatRules.recordHit(boss.getActionHitMask(), bit));
@@ -813,37 +815,20 @@ public final class VesperPhaseTwoCombat {
 
 	private static void pulse(VesperTheEveningStarEntity boss, EnumBloodTendency tendency, int count) {
 		if (!(boss.level() instanceof ServerLevel server)) return;
-		Vector3f color = switch (tendency) {
-			case ANIMUS -> new Vector3f(1.0F, 0.0F, 0.0F);
-			case FLAMMEUS -> new Vector3f(1.0F, 0.39F, 0.0F);
-			case DUCTILIS -> new Vector3f(1.0F, 1.0F, 0.0F);
-			case LUX -> new Vector3f(1.0F, 1.0F, 1.0F);
-			case MORTEM -> new Vector3f(0.0F, 0.23F, 0.0F);
-			case CONGEATIO -> new Vector3f(0.0F, 0.39F, 1.0F);
-			case FERRIC -> new Vector3f(0.21F, 0.21F, 0.21F);
-			case TENEBRIS -> new Vector3f(0.27F, 0.0F, 0.43F);
-		};
-		server.sendParticles(new DustParticleOptions(color, 1.1F), boss.getX(), boss.getY() + 2.0D, boss.getZ(),
-				count, 1.15D, 1.6D, 1.15D, 0.02D);
+		ParticleColor color = VesperVisualEffects.tendencyColor(tendency);
+		Vec3 center = boss.position().add(0.0D, 2.0D, 0.0D);
+		VesperVisualEffects.glow(server, center, color, count, 1.15D, 1.6D, 1.15D, 0.025D);
+		VesperVisualEffects.darkGlow(server, center, tendency == EnumBloodTendency.TENEBRIS
+				? VesperVisualEffects.BLACK : color, Math.max(4, count / 2), 1.25D, 1.7D, 1.25D, 0.018D);
+		VesperVisualEffects.bloodCells(server, center, color, Math.max(3, count / 3),
+				0.95D, 1.35D, 0.95D, 0.035D);
 	}
 
-	private static void line(ServerLevel server, Vec3 from, Vec3 to, Vector3f color) {
-		Vec3 delta = to.subtract(from);
-		if (delta.lengthSqr() < 0.01D) return;
-		Vec3 step = delta.normalize().scale(0.65D);
-		DustParticleOptions dust = new DustParticleOptions(color, 0.8F);
-		for (int i = 1; i <= Math.min(28, (int) (delta.length() / 0.65D)); i++) {
-			Vec3 point = from.add(step.scale(i));
-			server.sendParticles(dust, point.x, point.y, point.z, 1, 0.0D, 0.0D, 0.0D, 0.0D);
-		}
+	private static void line(ServerLevel server, Vec3 from, Vec3 to, ParticleColor color) {
+		VesperVisualEffects.telegraphLine(server, from, to, color);
 	}
 
-	private static void ring(ServerLevel server, Vec3 center, double radius, Vector3f color) {
-		DustParticleOptions dust = new DustParticleOptions(color, 0.8F);
-		for (int i = 0; i < 24; i++) {
-			double angle = Mth.TWO_PI * i / 24.0D;
-			server.sendParticles(dust, center.x + Math.cos(angle) * radius, center.y + 0.08D,
-					center.z + Math.sin(angle) * radius, 1, 0.0D, 0.0D, 0.0D, 0.0D);
-		}
+	private static void ring(ServerLevel server, Vec3 center, double radius, ParticleColor color) {
+		VesperVisualEffects.telegraphRing(server, center, radius, color, 24);
 	}
 }

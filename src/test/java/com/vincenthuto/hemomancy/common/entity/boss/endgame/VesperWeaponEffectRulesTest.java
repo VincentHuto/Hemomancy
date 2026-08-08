@@ -13,13 +13,13 @@ final class VesperWeaponEffectRulesTest {
 	@Test
 	void everyAnimatedWeaponActionSelectsItsOwnVisualLanguage() throws Exception {
 		Method style = rules().getMethod("styleName", VesperWeaponAction.class);
-		assertStyle(style, "blood_glow", VesperWeaponAction.ICHIMONJI, VesperWeaponAction.CROSSCUT);
-		assertStyle(style, "debris_smoke", VesperWeaponAction.LEAPING_CLEAVE, VesperWeaponAction.REAPER_SWEEP);
-		assertStyle(style, "riptide_spiral", VesperWeaponAction.SKY_LANCE, VesperWeaponAction.LANCE_FLURRY);
-		assertStyle(style, "gloam_slash", VesperWeaponAction.TWIN_REND, VesperWeaponAction.PREDATOR_POUNCE);
-		assertStyle(style, "crimson_fire", VesperWeaponAction.BRANDING_THRUSTS,
+		assertStyle(style, "blood_blade", VesperWeaponAction.ICHIMONJI, VesperWeaponAction.CROSSCUT);
+		assertStyle(style, "living_axe", VesperWeaponAction.LEAPING_CLEAVE, VesperWeaponAction.REAPER_SWEEP);
+		assertStyle(style, "living_spear", VesperWeaponAction.SKY_LANCE, VesperWeaponAction.LANCE_FLURRY);
+		assertStyle(style, "gloam_claw", VesperWeaponAction.TWIN_REND, VesperWeaponAction.PREDATOR_POUNCE);
+		assertStyle(style, "crimson_torch", VesperWeaponAction.BRANDING_THRUSTS,
 				VesperWeaponAction.UPDRAFT_IMPALEMENT);
-		assertStyle(style, "glacial_arc", VesperWeaponAction.CHAIN_SWEEP, VesperWeaponAction.HOOK_AND_CRUSH);
+		assertStyle(style, "glacial_flail", VesperWeaponAction.CHAIN_SWEEP, VesperWeaponAction.HOOK_AND_CRUSH);
 		assertStyle(style, "none", VesperWeaponAction.CONDUCTIVE_VOLLEY, VesperWeaponAction.STORM_LOCK,
 				VesperWeaponAction.MAGNETIC_AXIS, VesperWeaponAction.IRON_RETORT);
 	}

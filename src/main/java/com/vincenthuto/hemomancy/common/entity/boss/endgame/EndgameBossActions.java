@@ -1,6 +1,7 @@
 package com.vincenthuto.hemomancy.common.entity.boss.endgame;
 
 import com.vincenthuto.hemomancy.client.particle.factory.AbsorbedBloodCellParticleFactory;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.entity.mob.animal.FunglingEntity;
 import com.vincenthuto.hemomancy.common.entity.summon.EntityIronSpike;
 import com.vincenthuto.hemomancy.common.entity.summon.BoundPuppeteerSummon;
@@ -11,7 +12,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.core.particles.DustParticleOptions;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -34,7 +34,6 @@ import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.entity.PartEntity;
 
 import java.util.List;
-import org.joml.Vector3f;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 
 final class EndgameBossActions {
@@ -80,7 +79,14 @@ final class EndgameBossActions {
 				if (attackTick == 22) boss.setDeltaMovement(boss.getDeltaMovement().add(0.0D, 0.75D, 0.0D));
 				if (attackTick == 38) {
 					hurtNearby(boss, 6.0D, 13.0F, 1.15D);
-					if (boss.level() instanceof ServerLevel server) sendParticles(server, ParticleTypes.CRIMSON_SPORE, boss, 90, 5.0D, 0.2D, 5.0D, 0.03D);
+					if (boss.level() instanceof ServerLevel server) {
+						Vec3 impact = boss.position().add(0.0D, 0.2D, 0.0D);
+						VesperVisualEffects.telegraphRing(server, impact, 5.5D, VesperVisualEffects.BLOOD, 48);
+						VesperVisualEffects.bloodCells(server, impact, VesperVisualEffects.BLOOD,
+								48, 4.2D, 0.25D, 4.2D, 0.11D);
+						VesperVisualEffects.darkGlow(server, impact, VesperVisualEffects.BLACK,
+								30, 4.5D, 0.35D, 4.5D, 0.07D);
+					}
 				}
 				return attackTick >= 62;
 			}
@@ -98,38 +104,45 @@ final class EndgameBossActions {
 		if (!(boss.level() instanceof ServerLevel server)) return;
 		if (boss.tickCount % 3 == 0) {
 			PartEntity<?> part = boss.getParts()[anchor];
-			float intensity = 0.7F + 0.6F * damage / VesperCombatRules.ANCHOR_MAX_DAMAGE;
-			server.sendParticles(new DustParticleOptions(new Vector3f(0.85F, 0.02F, 0.03F), intensity),
-					part.getX(), part.getY() + 0.8D, part.getZ(), 8, 0.35D, 0.5D, 0.35D, 0.0D);
-			outlineExposedThroneAnchor(server, part, intensity);
+			Vec3 wound = part.position().add(0.0D, part.getBbHeight() * 0.55D, 0.0D);
+			VesperVisualEffects.bloodCells(server, wound, VesperVisualEffects.BLOOD,
+					5, 0.32D, 0.42D, 0.32D, 0.025D);
+			VesperVisualEffects.darkGlow(server, wound, VesperVisualEffects.BLACK,
+					4, 0.38D, 0.5D, 0.38D, 0.018D);
+			outlineExposedThroneAnchor(server, boss, part, damage);
 		}
 	}
 
-	private static void outlineExposedThroneAnchor(ServerLevel server, PartEntity<?> part, float intensity) {
-		DustParticleOptions outline = new DustParticleOptions(new Vector3f(1.0F, 0.08F, 0.02F), intensity);
+	private static void outlineExposedThroneAnchor(ServerLevel server, VesperTheCrownedRefusalEntity boss,
+			PartEntity<?> part, float damage) {
 		double halfWidth = part.getBbWidth() * 0.5D;
-		double[] levels = { part.getY() + 0.05D, part.getY() + part.getBbHeight() * 0.5D,
-				part.getY() + part.getBbHeight() - 0.05D };
-		double[][] perimeter = {
-				{ -halfWidth, -halfWidth }, { 0.0D, -halfWidth }, { halfWidth, -halfWidth },
-				{ halfWidth, 0.0D }, { halfWidth, halfWidth }, { 0.0D, halfWidth },
-				{ -halfWidth, halfWidth }, { -halfWidth, 0.0D }
-		};
-		for (double y : levels) {
-			for (double[] point : perimeter) {
-				server.sendParticles(outline, part.getX() + point[0], y, part.getZ() + point[1],
-						1, 0.0D, 0.0D, 0.0D, 0.0D);
-			}
+		ParticleColor woundColor = damage >= VesperCombatRules.ANCHOR_MAX_DAMAGE * 0.65F
+				? VesperVisualEffects.BLOOD : VesperVisualEffects.DEEP_BLOOD;
+		for (int level = 0; level < 3; level++) {
+			Vec3 ringCenter = part.position().add(0.0D,
+					0.08D + level * part.getBbHeight() * 0.45D, 0.0D);
+			VesperVisualEffects.telegraphRing(server, ringCenter, halfWidth, woundColor, 12);
 		}
-		server.sendParticles(ParticleTypes.ELECTRIC_SPARK, part.getX(), part.getY() + part.getBbHeight() * 0.5D,
-				part.getZ(), 6, halfWidth * 0.45D, part.getBbHeight() * 0.35D, halfWidth * 0.45D, 0.01D);
+		if (boss.tickCount % 12 == 0) {
+			Vec3 center = part.position().add(0.0D, part.getBbHeight() * 0.5D, 0.0D);
+			double angle = (boss.tickCount + part.getId() * 19L) * 0.21D;
+			Vec3 edge = center.add(Math.cos(angle) * halfWidth, part.getBbHeight() * 0.35D,
+					Math.sin(angle) * halfWidth);
+			VesperVisualEffects.lightning(server, edge, center, false, boss.tickCount * 31L + part.getId());
+		}
 	}
 
 	static void breakThroneAnchor(VesperTheCrownedRefusalEntity boss, int anchor) {
 		if (!(boss.level() instanceof ServerLevel server)) return;
 		PartEntity<?> part = boss.getParts()[anchor];
-		server.sendParticles(ParticleTypes.CRIMSON_SPORE, part.getX(), part.getY(), part.getZ(),
-				70, 0.8D, 0.8D, 0.8D, 0.08D);
+		Vec3 center = part.position().add(0.0D, part.getBbHeight() * 0.5D, 0.0D);
+		VesperVisualEffects.bloodCells(server, center, VesperVisualEffects.BLOOD,
+				42, 0.85D, 0.85D, 0.85D, 0.11D);
+		VesperVisualEffects.darkGlow(server, center, VesperVisualEffects.BLACK,
+				28, 1.0D, 0.9D, 1.0D, 0.07D);
+		Vec3 bossCenter = boss.position().add(0.0D, boss.getBbHeight() * 0.62D, 0.0D);
+		VesperVisualEffects.voidTendril(server, center, bossCenter, boss.tickCount * 37L + anchor);
+		VesperVisualEffects.lightning(server, center, bossCenter, false, boss.tickCount * 53L + anchor);
 		server.playSound(null, part.blockPosition(), SoundEvents.ANVIL_DESTROY, SoundSource.HOSTILE, 1.5F, 0.65F);
 	}
 
@@ -137,13 +150,29 @@ final class EndgameBossActions {
 		if (!(boss.level() instanceof ServerLevel server)) return;
 		float absorption = VesperPhaseTransitionRules.absorptionProgress(tick);
 		int count = tick % 20 == 0 ? 70 : 8;
-		sendParticles(server, ParticleTypes.CRIMSON_SPORE, boss, count, 2.8D, 2.2D, 2.8D, 0.08D);
+		Vec3 center = boss.position().add(0.0D, boss.getBbHeight() * 0.62D, 0.0D);
+		VesperVisualEffects.darkGlow(server, center, VesperVisualEffects.BLACK,
+				Math.max(5, count / 2), 2.8D, 2.2D, 2.8D, 0.07D);
 		if (absorption <= 0.0F) {
-			sendParticles(server, ParticleTypes.ASH, boss, count, 3.2D, 2.5D, 3.2D, 0.04D);
+			VesperVisualEffects.spores(server, center, VesperVisualEffects.DEEP_BLOOD,
+					Math.max(4, count / 3), 3.2D, 2.5D, 3.2D, 0.035D);
 		} else {
 			server.sendParticles(AbsorbedBloodCellParticleFactory.createData(ParticleColor.BLOOD),
 					boss.getX(), boss.getY() + boss.getBbHeight() * 0.68D, boss.getZ(),
 					12, 2.8D * (1.0D - absorption * 0.65D), 1.5D, 2.8D * (1.0D - absorption * 0.65D), 0.12D);
+		}
+		if (tick % 20 == 0) {
+			for (int i = 0; i < 4; i++) {
+				double angle = Mth.TWO_PI * i / 4.0D + tick * 0.035D;
+				Vec3 source = center.add(Math.cos(angle) * 3.2D, -0.6D + (i & 1) * 1.6D,
+						Math.sin(angle) * 3.2D);
+				VesperVisualEffects.voidTendril(server, source, center, tick * 101L + i);
+			}
+		}
+		if (tick % 30 == 0) {
+			Vec3 arcStart = center.add(-2.2D, 1.4D, 0.0D);
+			Vec3 arcEnd = center.add(2.2D, -0.6D, 0.0D);
+			VesperVisualEffects.lightning(server, arcStart, arcEnd, false, tick * 131L);
 		}
 		if (tick % 30 == 0) server.playSound(null, boss.blockPosition(), SoundEvents.SCULK_SHRIEKER_SHRIEK,
 				SoundSource.HOSTILE, 1.2F, 0.55F + tick / 300.0F);
@@ -206,13 +235,10 @@ final class EndgameBossActions {
 			}
 			return;
 		}
-		for (int i = 0; i < 2; i++) {
-			double x = boss.getX() + (random.nextDouble() - 0.5D) * boss.getBbWidth();
-			double y = boss.getY() + random.nextDouble() * boss.getBbHeight();
-			double z = boss.getZ() + (random.nextDouble() - 0.5D) * boss.getBbWidth();
-			boss.level().addParticle(i == 0 ? ParticleTypes.CRIMSON_SPORE : ParticleTypes.ASH,
-					x, y, z, 0.0D, 0.01D, 0.0D);
-		}
+		EnumBloodTendency tendency = boss instanceof VesperTheEveningStarEntity evening
+				? evening.getActiveTendency() : EnumBloodTendency.ANIMUS;
+		VesperVisualEffects.ambient(boss.level(), boss.position(), boss.getBbWidth(), boss.getBbHeight(),
+				boss instanceof VesperTheCrownedRefusalEntity, tendency);
 	}
 
 	static void tickMycophantClientParticles(MycophantEntity boss) {
@@ -234,9 +260,16 @@ final class EndgameBossActions {
 			return;
 		}
 		int count = deathTicks % 20 == 0 ? 80 : 12;
-		sendParticles(server, ParticleTypes.ASH, boss, count, 1.4D, 1.0D, 1.4D, 0.08D);
-		sendParticles(server, ParticleTypes.CRIMSON_SPORE, boss, count / 2, 1.2D, 0.8D, 1.2D, 0.02D);
+		Vec3 center = boss.position().add(0.0D, boss.getBbHeight() * 0.55D, 0.0D);
+		VesperVisualEffects.darkGlow(server, center, VesperVisualEffects.BLACK,
+				count, 1.5D, 1.15D, 1.5D, 0.075D);
+		VesperVisualEffects.bloodCells(server, center, VesperVisualEffects.BLOOD,
+				Math.max(4, count / 2), 1.25D, 0.9D, 1.25D, 0.055D);
+		VesperVisualEffects.embers(server, center, VesperVisualEffects.EMBER,
+				Math.max(3, count / 3), 1.35D, 1.0D, 1.35D, 0.045D, 0.3F, 28);
 		if (deathTicks % 40 == 0) {
+			VesperVisualEffects.lightning(server, center.add(-1.4D, 1.2D, 0.0D),
+					center.add(1.4D, -0.8D, 0.0D), false, deathTicks * 191L + boss.getId());
 			server.playSound(null, boss.getX(), boss.getY(), boss.getZ(),
 					SoundEvents.LIGHTNING_BOLT_THUNDER, SoundSource.HOSTILE, 0.8F, 1.45F);
 		}
@@ -350,6 +383,14 @@ final class EndgameBossActions {
 			puppet.setTarget(target);
 			puppet.setPersistenceRequired();
 			server.addFreshEntity(puppet);
+			Vec3 puppetCenter = puppet.position().add(0.0D, puppet.getBbHeight() * 0.5D, 0.0D);
+			Vec3 throneCenter = boss.position().add(0.0D, boss.getBbHeight() * 0.62D, 0.0D);
+			VesperVisualEffects.darkGlow(server, puppetCenter, VesperVisualEffects.BLACK,
+					18, 0.8D, 0.8D, 0.8D, 0.045D);
+			VesperVisualEffects.bloodCells(server, puppetCenter, VesperVisualEffects.BLOOD,
+					12, 0.65D, 0.7D, 0.65D, 0.06D);
+			VesperVisualEffects.voidTendril(server, throneCenter, puppetCenter,
+					boss.tickCount * 211L + puppet.getId());
 			server.playSound(null, pos, SoundEvents.WARDEN_HEARTBEAT, SoundSource.HOSTILE, 0.9F,
 					1.25F + i * 0.08F);
 		}
@@ -358,24 +399,14 @@ final class EndgameBossActions {
 	private static void telegraphLine(Mob boss, LivingEntity target, float red, float green, float blue) {
 		if (!(boss.level() instanceof ServerLevel server) || boss.tickCount % 2 != 0) return;
 		Vec3 start = boss.position().add(0.0D, 0.1D, 0.0D);
-		Vec3 delta = target.position().subtract(start).multiply(1.0D, 0.0D, 1.0D);
-		if (delta.lengthSqr() < 0.01D) return;
-		Vec3 step = delta.normalize().scale(0.7D);
-		DustParticleOptions dust = new DustParticleOptions(new Vector3f(red, green, blue), 0.8F);
-		for (int i = 1; i <= 18; i++) {
-			Vec3 point = start.add(step.scale(i));
-			server.sendParticles(dust, point.x, point.y, point.z, 1, 0.0D, 0.0D, 0.0D, 0.0D);
-		}
+		VesperVisualEffects.telegraphLine(server, start, target.position(),
+				new ParticleColor((int) (red * 255.0F), (int) (green * 255.0F), (int) (blue * 255.0F)));
 	}
 
 	private static void telegraphRing(Mob boss, double radius, float red, float green, float blue) {
 		if (!(boss.level() instanceof ServerLevel server) || boss.tickCount % 2 != 0) return;
-		DustParticleOptions dust = new DustParticleOptions(new Vector3f(red, green, blue), 0.75F);
-		for (int i = 0; i < 28; i++) {
-			double angle = Mth.TWO_PI * i / 28.0D;
-			server.sendParticles(dust, boss.getX() + Math.cos(angle) * radius, boss.getY() + 0.08D,
-					boss.getZ() + Math.sin(angle) * radius, 1, 0.0D, 0.0D, 0.0D, 0.0D);
-		}
+		VesperVisualEffects.telegraphRing(server, boss.position(), radius,
+				new ParticleColor((int) (red * 255.0F), (int) (green * 255.0F), (int) (blue * 255.0F)), 28);
 	}
 
 	private static void hurtNearby(Mob boss, double radius, float damage, double push) {

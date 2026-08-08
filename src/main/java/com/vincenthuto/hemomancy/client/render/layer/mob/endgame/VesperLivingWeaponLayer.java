@@ -74,11 +74,11 @@ public final class VesperLivingWeaponLayer
 	private static void applyWeaponGrip(PoseStack poseStack, EnumBloodTendency tendency, boolean leftHand) {
 		poseStack.mulPose(Axis.XP.rotationDegrees(switch (tendency) {
 			case DUCTILIS -> -90.0F;
-			case TENEBRIS -> -72.0F;
+			case TENEBRIS -> leftHand?72.0F:-72.0f;
 			case LUX, FLAMMEUS -> -98.0F;
 			default -> -90.0F;
 		}));
-		poseStack.mulPose(Axis.YP.rotationDegrees(leftHand ? 0.0F : 180.0F));
+		poseStack.mulPose(Axis.YP.rotationDegrees(VesperWeaponGripRules.yawDegrees(tendency, leftHand)));
 		if (tendency == EnumBloodTendency.CONGEATIO) poseStack.translate(0.0D, 0.05D, -0.12D);
 	}
 

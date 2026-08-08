@@ -16,6 +16,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.util.Mth;
 import net.minecraft.world.BossEvent;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
@@ -406,8 +407,21 @@ public class VesperTheEveningStarEntity extends Monster {
 		bossEvent.setName(Component.translatable("entity.hemomancy.vesper_evening_star"));
 		playSound(SoundEvents.WITHER_SPAWN, 1.25F, 1.45F);
 		if (level() instanceof ServerLevel server) {
-			server.sendParticles(net.minecraft.core.particles.ParticleTypes.CRIMSON_SPORE,
-					getX(), getY() + 1.4D, getZ(), 48, 1.0D, 1.5D, 1.0D, 0.08D);
+			Vec3 center = position().add(0.0D, 1.4D, 0.0D);
+			VesperVisualEffects.bloodCells(server, center, VesperVisualEffects.BLOOD,
+					36, 1.1D, 1.5D, 1.1D, 0.09D);
+			VesperVisualEffects.darkGlow(server, center, VesperVisualEffects.BLACK,
+					30, 1.35D, 1.7D, 1.35D, 0.065D);
+			VesperVisualEffects.embers(server, center, VesperVisualEffects.EMBER,
+					18, 1.2D, 1.45D, 1.2D, 0.055D, 0.3F, 30);
+			for (int i = 0; i < 4; i++) {
+				double angle = Mth.TWO_PI * i / 4.0D;
+				Vec3 source = center.add(Math.cos(angle) * 3.5D, (i & 1) * 1.2D - 0.4D,
+						Math.sin(angle) * 3.5D);
+				VesperVisualEffects.voidTendril(server, source, center, getId() * 419L + i);
+			}
+			VesperVisualEffects.lightning(server, center.add(-2.5D, 1.2D, 0.0D),
+					center.add(2.5D, -0.7D, 0.0D), false, getId() * 421L);
 		}
 	}
 

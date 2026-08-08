@@ -351,11 +351,15 @@ public class VesperTheEveningStarModel extends EntityModel<VesperTheEveningStarE
         this.cape2.xRot = (float) Math.sin((frame) * 0.7f) * 0.15f + 25.25f;
         this.bone2.xRot = (float) Math.sin((frame) * 0.8f) * 0.25f + 25.5f;
 
-		int stanceTick = entity.getStanceTick();
-		if (!entity.isRaging() && stanceTick < 30) {
-			float morph = stanceTick / 30.0F;
+		float stanceTick = entity.getStanceTick() + HLClientUtils.getPartialTicks();
+		if (!entity.isRaging() && stanceTick < 30.0F) {
+			float morph = VesperWeaponAnimationRules.stanceBlend(stanceTick);
 			this.rightArm.xRot -= morph * 0.8F;
 			this.rightArm.zRot += morph * 0.25F;
+			if (entity.getActiveTendency() == EnumBloodTendency.ANIMUS
+					|| entity.getActiveTendency() == EnumBloodTendency.MORTEM) {
+				applyTwoHandedGrip(entity.getActiveTendency(), 0.0F, morph);
+			}
 		} else applyWeaponActionPose(entity, frame);
     }
 
@@ -380,120 +384,144 @@ public class VesperTheEveningStarModel extends EntityModel<VesperTheEveningStarE
 			else applyWeaponIdle(entity.getActiveTendency(), frame);
 			return;
 		}
-		float windup = Mth.clamp(tick / Math.max(1.0F, action.impactTick()), 0.0F, 1.0F);
-		float release = tick <= action.impactTick() ? windup
-				: 1.0F - Mth.clamp((tick - action.impactTick())
-				/ Math.max(1.0F, action.durationTicks() - action.impactTick()), 0.0F, 1.0F);
-		float contact = contactPulse(action, tick);
-		int contactIndex = nearestContactIndex(action, tick);
+		if (entity.isRaging()) applyRageIdle(frame);
+		else applyWeaponIdle(entity.getActiveTendency(), frame);
+		float blend = VesperWeaponAnimationRules.actionBlend(action, tick);
+		float arc = VesperWeaponAnimationRules.swingArc(action, tick);
+		float contact = VesperWeaponAnimationRules.contactMotion(action, tick);
 		float variantSign = (entity.getActionVariant() & 1) == 0 ? 1.0F : -1.0F;
-			switch (action) {
+		switch (action) {
 			case ICHIMONJI -> {
-				this.rightArm.xRot = tick < action.impactTick()
-						? -0.4F - windup * 2.55F : -0.18F - release * 0.35F;
-				this.rightElbow.xRot = -0.35F;
-				this.body.xRot = tick < action.impactTick() ? -0.12F * windup : 0.28F * release;
+				this.rightArm.xRot = pose(this.rightArm.xRot, -1.2F + arc * 1.28F, blend);
+				this.rightElbow.xRot = pose(this.rightElbow.xRot, -0.52F + Math.max(0.0F, arc) * 0.22F, blend);
+				this.rightArm.zRot = pose(this.rightArm.zRot, -arc * 0.16F * variantSign, blend);
+				this.body.xRot = pose(this.body.xRot, arc * 0.24F, blend);
+				this.body.yRot = pose(this.body.yRot, -arc * 0.1F * variantSign, blend);
+				applyTwoHandedGrip(action, arc, blend);
 			}
 			case CROSSCUT -> {
-				float slash = contact * (contactIndex == 0 ? 1.0F : -1.0F) * variantSign;
-				this.body.yRot = slash * 0.82F;
-				this.rightArm.xRot = -1.35F;
-				this.rightArm.zRot = slash * 1.05F;
+				float slash = contact * variantSign;
+				this.body.yRot = pose(this.body.yRot, slash * 0.78F, blend);
+				this.body.xRot = pose(this.body.xRot, 0.1F + Math.abs(slash) * 0.08F, blend);
+				this.rightArm.xRot = pose(this.rightArm.xRot, -1.32F + Math.abs(slash) * 0.12F, blend);
+				this.rightArm.zRot = pose(this.rightArm.zRot, slash * 1.08F, blend);
+				this.rightElbow.zRot = pose(this.rightElbow.zRot, slash * 0.18F, blend);
+				applyTwoHandedGrip(action, slash, blend);
 			}
-			case LEAPING_CLEAVE, REAPER_SWEEP -> {
-				this.rightArm.xRot = action == VesperWeaponAction.LEAPING_CLEAVE
-						? (tick < action.impactTick() ? -0.45F - windup * 2.15F : -0.12F - release * 0.4F)
-						: -0.45F - release * 2.15F;
-				this.rightArm.zRot = action == VesperWeaponAction.REAPER_SWEEP ? release * 1.15F : 0.25F;
-				this.body.xRot = action == VesperWeaponAction.LEAPING_CLEAVE ? -0.35F * release : 0.0F;
-				this.body.yRot = action == VesperWeaponAction.REAPER_SWEEP ? -release * 0.8F : 0.0F;
+			case LEAPING_CLEAVE -> {
+				this.rightArm.xRot = pose(this.rightArm.xRot, -1.28F + arc * 1.18F, blend);
+				this.rightArm.zRot = pose(this.rightArm.zRot, 0.2F + arc * 0.12F * variantSign, blend);
+				this.rightElbow.xRot = pose(this.rightElbow.xRot, -0.48F + Math.max(0.0F, arc) * 0.2F, blend);
+				this.body.xRot = pose(this.body.xRot, arc * 0.32F, blend);
+				this.body.yRot = pose(this.body.yRot, -arc * 0.1F * variantSign, blend);
+				applyTwoHandedGrip(action, arc, blend);
+			}
+			case REAPER_SWEEP -> {
+				float sweep = arc * variantSign;
+				this.rightArm.xRot = pose(this.rightArm.xRot, -1.38F, blend);
+				this.rightArm.zRot = pose(this.rightArm.zRot, sweep * 1.12F, blend);
+				this.rightElbow.xRot = pose(this.rightElbow.xRot, -0.58F + Math.abs(sweep) * 0.18F, blend);
+				this.body.xRot = pose(this.body.xRot, 0.08F + Math.abs(sweep) * 0.1F, blend);
+				this.body.yRot = pose(this.body.yRot, -sweep * 0.76F, blend);
+				applyTwoHandedGrip(action, sweep, blend);
 			}
 			case SKY_LANCE -> {
-				this.body.xRot = 1.05F * release;
-				this.rightArm.xRot = -1.55F;
-				this.rightElbow.xRot = -0.2F;
-				this.leftArm.xRot = -1.2F;
-				this.rightLeg.xRot = 0.62F;
-				this.leftLeg.xRot = 0.45F;
-				this.cape.xRot = 1.35F;
-				this.cape2.xRot = 0.95F;
+				float drive = Math.max(0.0F, arc);
+				float brace = Math.max(0.0F, -arc);
+				this.body.xRot = pose(this.body.xRot, -brace * 0.22F + drive * 1.02F, blend);
+				this.rightArm.xRot = pose(this.rightArm.xRot, -1.52F - brace * 0.22F + drive * 0.18F, blend);
+				this.rightElbow.xRot = pose(this.rightElbow.xRot, -0.32F + drive * 0.14F, blend);
+				this.leftArm.xRot = pose(this.leftArm.xRot, -1.18F + drive * 0.12F, blend);
+				this.rightLeg.xRot = pose(this.rightLeg.xRot, 0.62F, blend);
+				this.leftLeg.xRot = pose(this.leftLeg.xRot, 0.45F, blend);
+				this.cape.xRot = pose(this.cape.xRot, 1.35F, blend);
+				this.cape2.xRot = pose(this.cape2.xRot, 0.95F, blend);
 			}
 			case LANCE_FLURRY, BRANDING_THRUSTS, UPDRAFT_IMPALEMENT -> {
-				float thrust = contact;
-				this.rightArm.xRot = -1.25F - thrust * 0.65F;
-				this.rightElbow.xRot = -0.25F;
-				this.body.yRot = -0.18F + thrust * 0.28F;
+				float thrust = contact * variantSign;
+				this.rightArm.xRot = pose(this.rightArm.xRot, -1.3F - thrust * 0.58F, blend);
+				this.rightElbow.xRot = pose(this.rightElbow.xRot, -0.42F + Math.max(0.0F, thrust) * 0.2F, blend);
+				this.rightArm.yRot = pose(this.rightArm.yRot, thrust * 0.16F, blend);
+				this.body.yRot = pose(this.body.yRot, thrust * 0.25F, blend);
+				this.body.xRot = pose(this.body.xRot, 0.08F + Math.abs(thrust) * 0.08F, blend);
 			}
 			case TWIN_REND, PREDATOR_POUNCE -> {
-				float slash = contact * (contactIndex % 2 == 0 ? 1.0F : -1.0F) * variantSign;
-				this.body.xRot = 0.48F;
-				this.rightArm.xRot = -1.05F + slash * 0.7F;
-				this.leftArm.xRot = -1.05F - slash * 0.7F;
-				this.rightArm.zRot = 0.72F;
-				this.leftArm.zRot = -0.72F;
+				float slash = contact * variantSign;
+				this.body.xRot = pose(this.body.xRot, 0.34F + Math.abs(slash) * 0.16F, blend);
+				this.body.yRot = pose(this.body.yRot, slash * 0.2F, blend);
+				this.rightArm.xRot = pose(this.rightArm.xRot, -1.08F + slash * 0.72F, blend);
+				this.leftArm.xRot = pose(this.leftArm.xRot, -1.08F - slash * 0.72F, blend);
+				this.rightArm.zRot = pose(this.rightArm.zRot, 0.72F - slash * 0.16F, blend);
+				this.leftArm.zRot = pose(this.leftArm.zRot, -0.72F - slash * 0.16F, blend);
 			}
 			case CONDUCTIVE_VOLLEY, STORM_LOCK -> {
-				this.body.xRot = 0.08F;
-				this.rightArm.xRot = -1.35F;
-				this.leftArm.xRot = -1.35F;
-				this.rightArm.yRot = -0.42F;
-				this.leftArm.yRot = 0.62F;
-				this.rightElbow.xRot = -0.35F;
-				this.leftElbow.xRot = -0.35F;
+				float surge = 0.5F + 0.5F * Mth.sin(tick * 0.28F);
+				this.body.xRot = pose(this.body.xRot, 0.08F + surge * 0.05F, blend);
+				this.rightArm.xRot = pose(this.rightArm.xRot, -1.35F - surge * 0.08F, blend);
+				this.leftArm.xRot = pose(this.leftArm.xRot, -1.35F - surge * 0.08F, blend);
+				this.rightArm.yRot = pose(this.rightArm.yRot, -0.42F, blend);
+				this.leftArm.yRot = pose(this.leftArm.yRot, 0.62F, blend);
+				this.rightElbow.xRot = pose(this.rightElbow.xRot, -0.35F, blend);
+				this.leftElbow.xRot = pose(this.leftElbow.xRot, -0.35F, blend);
 			}
 			case CHAIN_SWEEP, HOOK_AND_CRUSH -> {
-				float swing = contact * (contactIndex % 2 == 0 ? 1.0F : -1.0F) * variantSign;
-				this.body.yRot = swing * 0.95F;
-				this.rightArm.xRot = -1.35F;
-				this.rightArm.zRot = swing * 1.15F;
+				float swing = VesperWeaponAnimationRules.flailArmMotion(action, tick) * variantSign;
+				float follow = VesperWeaponAnimationRules.flailFollowMotion(action, tick) * variantSign;
+				this.body.yRot = pose(this.body.yRot, swing * 0.68F, blend);
+				this.body.xRot = pose(this.body.xRot, 0.12F + Math.abs(swing) * 0.08F, blend);
+				this.rightArm.xRot = pose(this.rightArm.xRot, -1.32F + Math.abs(swing) * 0.1F, blend);
+				this.rightArm.zRot = pose(this.rightArm.zRot, swing * 0.94F, blend);
+				this.rightElbow.yRot = pose(this.rightElbow.yRot, -follow * 0.32F, blend);
+				this.rightElbow.zRot = pose(this.rightElbow.zRot, follow * 0.1F, blend);
 			}
 			case MAGNETIC_AXIS, IRON_RETORT -> {
-				this.rightArm.xRot = -1.65F;
-				this.rightElbow.xRot = -0.28F;
-				this.leftArm.xRot = -0.72F;
-				this.leftElbow.xRot = -0.55F;
-				this.body.xRot = 0.12F;
+				float load = Math.max(0.0F, -arc);
+				this.rightArm.xRot = pose(this.rightArm.xRot, -1.55F - load * 0.18F, blend);
+				this.rightElbow.xRot = pose(this.rightElbow.xRot, -0.34F, blend);
+				this.leftArm.xRot = pose(this.leftArm.xRot, -0.72F - load * 0.12F, blend);
+				this.leftElbow.xRot = pose(this.leftElbow.xRot, -0.55F, blend);
+				this.body.xRot = pose(this.body.xRot, 0.12F + load * 0.08F, blend);
 			}
 			case SICKLE_CYCLONE -> {
-				float spin = tick >= action.impactTick() ? tick * 0.78F * variantSign : windup * 1.25F;
-				this.body.xRot = 0.32F;
+				float spin = VesperWeaponAnimationRules.cycloneSpin(action, tick, variantSign);
+				this.body.xRot = pose(this.body.xRot, 0.32F, blend);
 				this.body.yRot = spin;
-				this.rightArm.xRot = -1.18F;
-				this.leftArm.xRot = -1.18F;
-				this.rightArm.zRot = 1.28F;
-				this.leftArm.zRot = -1.28F;
-				this.rightLeg.xRot = 0.48F;
-				this.leftLeg.xRot = -0.35F;
+				this.rightArm.xRot = pose(this.rightArm.xRot, -1.18F, blend);
+				this.leftArm.xRot = pose(this.leftArm.xRot, -1.18F, blend);
+				this.rightArm.zRot = pose(this.rightArm.zRot, 1.28F, blend);
+				this.leftArm.zRot = pose(this.leftArm.zRot, -1.28F, blend);
+				this.rightLeg.xRot = pose(this.rightLeg.xRot, 0.48F, blend);
+				this.leftLeg.xRot = pose(this.leftLeg.xRot, -0.35F, blend);
 			}
 			case SICKLE_POUNCE -> {
-				float cross = contact * 1.25F;
-				this.body.xRot = tick < action.impactTick() ? 0.58F * windup : 0.9F * release;
-				this.rightArm.xRot = -0.4F - windup * 0.7F - cross;
-				this.leftArm.xRot = -0.4F - windup * 0.7F - cross;
-				this.rightArm.zRot = 1.05F - cross;
-				this.leftArm.zRot = -1.05F + cross;
-				this.rightLeg.xRot = 0.72F;
-				this.leftLeg.xRot = 0.62F;
+				float cross = arc * 1.18F;
+				this.body.xRot = pose(this.body.xRot, 0.48F + Math.max(0.0F, arc) * 0.42F, blend);
+				this.rightArm.xRot = pose(this.rightArm.xRot, -1.08F + cross * 0.58F, blend);
+				this.leftArm.xRot = pose(this.leftArm.xRot, -1.08F + cross * 0.58F, blend);
+				this.rightArm.zRot = pose(this.rightArm.zRot, 1.05F - cross, blend);
+				this.leftArm.zRot = pose(this.leftArm.zRot, -1.05F + cross, blend);
+				this.rightLeg.xRot = pose(this.rightLeg.xRot, 0.72F, blend);
+				this.leftLeg.xRot = pose(this.leftLeg.xRot, 0.62F, blend);
 			}
 			case SICKLE_CROSS_REND -> {
-				float side = (contactIndex % 2 == 0 ? 1.0F : -1.0F) * variantSign;
-				this.body.xRot = 0.28F;
-				this.body.yRot = contact * side * 0.95F;
-				this.rightArm.xRot = -1.0F - contact * 0.65F;
-				this.leftArm.xRot = -1.0F - contact * 0.65F;
-				this.rightArm.zRot = side * (0.9F - contact * 1.4F);
-				this.leftArm.zRot = -side * (0.9F - contact * 1.4F);
+				float rend = contact * variantSign;
+				this.body.xRot = pose(this.body.xRot, 0.28F + Math.abs(rend) * 0.1F, blend);
+				this.body.yRot = pose(this.body.yRot, rend * 0.92F, blend);
+				this.rightArm.xRot = pose(this.rightArm.xRot, -1.0F - Math.abs(rend) * 0.62F, blend);
+				this.leftArm.xRot = pose(this.leftArm.xRot, -1.0F - Math.abs(rend) * 0.62F, blend);
+				this.rightArm.zRot = pose(this.rightArm.zRot, 0.9F - rend * 1.35F, blend);
+				this.leftArm.zRot = pose(this.leftArm.zRot, -0.9F - rend * 1.35F, blend);
 			}
 			case SANGUINE_CRESCENTS -> {
-				float slash = contact * (contactIndex % 2 == 0 ? 1.0F : -1.0F);
-				this.body.xRot = 0.22F;
-				this.body.yRot = slash * 0.52F;
-				this.rightArm.xRot = -1.42F;
-				this.leftArm.xRot = -1.42F;
-				this.rightArm.yRot = -0.42F - slash * 0.45F;
-				this.leftArm.yRot = 0.42F + slash * 0.45F;
-				this.rightArm.zRot = 0.8F - contact * 1.25F;
-				this.leftArm.zRot = -0.8F + contact * 1.25F;
+				float slash = contact * variantSign;
+				this.body.xRot = pose(this.body.xRot, 0.22F + Math.abs(slash) * 0.08F, blend);
+				this.body.yRot = pose(this.body.yRot, slash * 0.52F, blend);
+				this.rightArm.xRot = pose(this.rightArm.xRot, -1.42F, blend);
+				this.leftArm.xRot = pose(this.leftArm.xRot, -1.42F, blend);
+				this.rightArm.yRot = pose(this.rightArm.yRot, -0.42F - slash * 0.45F, blend);
+				this.leftArm.yRot = pose(this.leftArm.yRot, 0.42F + slash * 0.45F, blend);
+				this.rightArm.zRot = pose(this.rightArm.zRot, 0.8F - slash * 1.18F, blend);
+				this.leftArm.zRot = pose(this.leftArm.zRot, -0.8F - slash * 1.18F, blend);
 			}
 			default -> { }
 		}
@@ -511,33 +539,42 @@ public class VesperTheEveningStarModel extends EntityModel<VesperTheEveningStarE
 		this.leftLeg.xRot -= 0.16F;
 	}
 
-	private static float contactPulse(VesperWeaponAction action, float tick) {
-		float strongest = 0.0F;
-		for (int i = 0; i < action.contactCount(); i++) {
-			strongest = Math.max(strongest, 1.0F - Mth.clamp(Math.abs(tick - action.contactTick(i)) / 3.0F,
-					0.0F, 1.0F));
-		}
-		return strongest;
+	private static float pose(float current, float target, float blend) {
+		return Mth.lerp(blend, current, target);
 	}
 
-	private static int nearestContactIndex(VesperWeaponAction action, float tick) {
-		int nearest = 0;
-		float distance = Float.MAX_VALUE;
-		for (int i = 0; i < action.contactCount(); i++) {
-			float candidate = Math.abs(tick - action.contactTick(i));
-			if (candidate < distance) {
-				distance = candidate;
-				nearest = i;
-			}
-		}
-		return nearest;
+	private void applyTwoHandedGrip(EnumBloodTendency tendency, float motion, float blend) {
+		VesperWeaponAnimationRules.OffhandGrip grip = VesperWeaponAnimationRules.twoHandedGrip(tendency, motion);
+		applyTwoHandedGrip(grip, blend);
+	}
+
+	private void applyTwoHandedGrip(VesperWeaponAction action, float motion, float blend) {
+		VesperWeaponAnimationRules.OffhandGrip grip = VesperWeaponAnimationRules.twoHandedGrip(action, motion);
+		applyTwoHandedGrip(grip, blend);
+	}
+
+	private void applyTwoHandedGrip(VesperWeaponAnimationRules.OffhandGrip grip, float blend) {
+		this.leftArm.xRot = pose(this.leftArm.xRot, grip.armX(), blend);
+		this.leftArm.yRot = pose(this.leftArm.yRot, grip.armY(), blend);
+		this.leftArm.zRot = pose(this.leftArm.zRot, grip.armZ(), blend);
+		this.leftElbow.xRot = pose(this.leftElbow.xRot, grip.elbowX(), blend);
+		this.leftElbow.yRot = pose(this.leftElbow.yRot, grip.elbowY(), blend);
+		this.leftElbow.zRot = pose(this.leftElbow.zRot, grip.elbowZ(), blend);
 	}
 
 	private void applyWeaponIdle(EnumBloodTendency tendency, float frame) {
 		float breathe = Mth.sin(frame * 0.12F) * 0.08F;
 		switch (tendency) {
-			case ANIMUS -> { this.rightArm.xRot -= 0.55F; this.body.yRot = breathe; }
-			case MORTEM -> { this.rightArm.xRot -= 0.85F; this.body.xRot = 0.12F; }
+			case ANIMUS -> {
+				this.rightArm.xRot -= 0.55F;
+				this.body.yRot = breathe;
+				applyTwoHandedGrip(tendency, 0.0F, 1.0F);
+			}
+			case MORTEM -> {
+				this.rightArm.xRot -= 0.85F;
+				this.body.xRot = 0.12F;
+				applyTwoHandedGrip(tendency, 0.0F, 1.0F);
+			}
 			case LUX -> { this.rightArm.xRot = -1.12F; this.leftArm.xRot = -0.32F; }
 			case TENEBRIS -> { this.body.xRot = 0.42F; this.rightArm.xRot = -0.8F; this.leftArm.xRot = -0.8F; }
 			case DUCTILIS -> { this.rightArm.xRot = -1.15F; this.leftArm.xRot = -1.05F; }
