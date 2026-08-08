@@ -2,6 +2,7 @@ package com.vincenthuto.hemomancy.client.render.world;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import com.vincenthuto.hemomancy.common.entity.boss.endgame.VesperTheCrownedRefusalEntity;
 import com.vincenthuto.hemomancy.common.entity.mob.monster.BloodDrunkPuppeteerEntity;
 import com.vincenthuto.hemomancy.common.entity.mob.monster.EnthralledDollEntity;
 import com.vincenthuto.hemomancy.common.entity.summon.BoundPuppeteerSummon;
@@ -24,6 +25,7 @@ public final class PuppeteerThreadRenderer {
 	private static final double WILD_PUPPETEER_ANCHOR_SCALE = 0.25;
 	private static final double WILD_DOLL_ANCHOR_SCALE = -0.5;
 	private static final double SUMMON_ANCHOR_SCALE = 0.55;
+	private static final double VESPER_ANCHOR_SCALE = 0.72;
 
 	private PuppeteerThreadRenderer() {
 	}
@@ -40,7 +42,7 @@ public final class PuppeteerThreadRenderer {
 
 		for (Entity entity : level.entitiesForRendering()) {
 			if (entity instanceof LivingEntity summon && entity instanceof BoundPuppeteerSummon bound) {
-				renderThreadToSummon(poseStack, consumer, summon, bound, partialTick, camera);
+				renderThreadToSummon(poseStack, consumer, summon, bound, partialTick, camera, level);
 			} else if (entity instanceof EnthralledDollEntity doll && doll.isSummonedByPuppeteer()) {
 				renderThreadToWildDoll(poseStack, consumer, doll, partialTick, camera, level);
 			}
@@ -63,13 +65,13 @@ public final class PuppeteerThreadRenderer {
 
 	private static void renderThreadToSummon(PoseStack poseStack, VertexConsumer consumer,
 											 LivingEntity summon, BoundPuppeteerSummon bound,
-											 float partialTick, Vec3 camera) {
+											 float partialTick, Vec3 camera, ClientLevel level) {
 		UUID ownerId = bound.hemomancy$getOwnerUUID();
 		if (ownerId == null) {
 			return;
 		}
-		Player owner = summon.level().getPlayerByUUID(ownerId);
-		if (owner == null) {
+		LivingEntity controller = findThreadController(level, ownerId);
+		if (controller == null) {
 			return;
 		}
 		int dismissalTicks = bound.hemomancy$getDismissalTicks();
@@ -81,7 +83,9 @@ public final class PuppeteerThreadRenderer {
 			return;
 		}
 
-		Vec3 start = ownerAnchor(owner, partialTick).subtract(camera);
+		Vec3 start = (controller instanceof Player owner
+				? ownerAnchor(owner, partialTick)
+				: entityAnchor(controller, partialTick, VESPER_ANCHOR_SCALE)).subtract(camera);
 
 		Vec3 end = summonAnchor(summon, partialTick).subtract(camera);
 		renderThread(poseStack, consumer, start, end, summon.tickCount + partialTick, fade);
@@ -132,6 +136,21 @@ public final class PuppeteerThreadRenderer {
 		return null;
 	}
 
+	private static LivingEntity findThreadController(ClientLevel level, UUID ownerId) {
+		Player player = level.getPlayerByUUID(ownerId);
+		if (player != null) {
+			return player;
+		}
+		for (Entity entity : level.entitiesForRendering()) {
+			if (entity instanceof VesperTheCrownedRefusalEntity vesper
+					&& vesper.isAlive()
+					&& ownerId.equals(vesper.getUUID())) {
+				return vesper;
+			}
+		}
+		return null;
+	}
+
 	private static Vec3 ownerAnchor(Player owner, float partialTick) {
 		double x = Mth.lerp(partialTick, owner.xOld, owner.getX());
 		double y = Mth.lerp(partialTick, owner.yOld, owner.getY()) + owner.getBbHeight() * 0.68;
@@ -160,6 +179,5 @@ public final class PuppeteerThreadRenderer {
 		return start.add(delta.x * t + wobbleX, delta.y * t + sag, delta.z * t + wobbleZ);
 	}
 }
-
 
 

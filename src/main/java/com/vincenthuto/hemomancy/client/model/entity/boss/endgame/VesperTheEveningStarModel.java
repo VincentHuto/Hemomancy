@@ -4,6 +4,8 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.entity.boss.endgame.VesperTheEveningStarEntity;
+import com.vincenthuto.hemomancy.common.entity.boss.endgame.VesperWeaponAction;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
 import com.vincenthuto.hutoslib.client.HLClientUtils;
 import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.model.geom.ModelLayerLocation;
@@ -234,10 +236,14 @@ public class VesperTheEveningStarModel extends EntityModel<VesperTheEveningStarE
     }
     private final ModelPart whole;
     private final ModelPart upperBody;
+	private final ModelPart hasturForm;
     private final ModelPart head;
     private final ModelPart body;
     private final ModelPart rightArm;
+	private final ModelPart rightElbow;
+	private final ModelPart bakedStaff;
     private final ModelPart leftArm;
+	private final ModelPart leftElbow;
     private final ModelPart rightLeg;
     private final ModelPart rightLeg2;
     private final ModelPart leftLeg;
@@ -250,11 +256,15 @@ public class VesperTheEveningStarModel extends EntityModel<VesperTheEveningStarE
     public VesperTheEveningStarModel(ModelPart root) {
         this.whole = root.getChild("whole");
         this.upperBody = root.getChild("upperBody");
-        ModelPart hasturForm = this.upperBody.getChild("hasturForm");
-        this.head = hasturForm.getChild("head");
-        this.body = hasturForm.getChild("body");
+		this.hasturForm = this.upperBody.getChild("hasturForm");
+        this.head = this.hasturForm.getChild("head");
+        this.body = this.hasturForm.getChild("body");
         this.rightArm = this.body.getChild("rightArm");
+		this.rightElbow = this.rightArm.getChild("rElbow");
+		this.bakedStaff = this.rightElbow.getChild("staff");
+		this.bakedStaff.visible = false;
         this.leftArm = this.body.getChild("leftArm");
+		this.leftElbow = this.leftArm.getChild("leftElbow");
         this.rightLeg = this.body.getChild("rightLeg");
         this.rightLeg2 = this.rightLeg.getChild("rightLeg2");
         this.leftLeg = this.body.getChild("leftLeg");
@@ -264,6 +274,24 @@ public class VesperTheEveningStarModel extends EntityModel<VesperTheEveningStarE
         this.cape2 = this.bone3.getChild("cape2");
         this.bone2 = this.cape2.getChild("bone2");
     }
+
+	public void translateToWeapon(PoseStack poseStack) {
+		upperBody.translateAndRotate(poseStack);
+		hasturForm.translateAndRotate(poseStack);
+		body.translateAndRotate(poseStack);
+		rightArm.translateAndRotate(poseStack);
+		rightElbow.translateAndRotate(poseStack);
+		poseStack.translate(-0.05D, 0.42D, -0.03D);
+	}
+
+	public void translateToLeftWeapon(PoseStack poseStack) {
+		upperBody.translateAndRotate(poseStack);
+		hasturForm.translateAndRotate(poseStack);
+		body.translateAndRotate(poseStack);
+		leftArm.translateAndRotate(poseStack);
+		leftElbow.translateAndRotate(poseStack);
+		poseStack.translate(0.05D, 0.42D, -0.03D);
+	}
 
     @Override
     public void renderToBuffer(PoseStack poseStack, VertexConsumer vertexConsumer, int packedLight, int packedOverlay,
@@ -277,6 +305,26 @@ public class VesperTheEveningStarModel extends EntityModel<VesperTheEveningStarE
                           float headPitch) {
         netHeadYaw = Mth.wrapDegrees(netHeadYaw);
         float frame = entity.tickCount + HLClientUtils.getPartialTicks();
+		if (entity.isAwaitingAbsorption()) {
+			// One knee planted, torso bowed, and empty hands hanging after the staff dissolves.
+			resetCombatPose();
+			this.upperBody.y = -12.0F;
+			this.head.xRot = 0.48F;
+			this.head.yRot = 0.0F;
+			this.body.xRot = 0.24F;
+			this.body.yRot = 0.0F;
+			this.rightArm.xRot = -0.38F;
+			this.rightArm.zRot = 0.18F;
+			this.leftArm.xRot = -0.18F;
+			this.leftArm.zRot = -0.14F;
+			this.rightLeg.xRot = -1.18F;
+			this.rightLeg2.xRot = 1.82F;
+			this.leftLeg.xRot = 0.18F;
+			this.leftLeg2.xRot = 0.55F;
+			return;
+		}
+		this.upperBody.y = -19.0F;
+		resetCombatPose();
 
         // Head
         this.head.xRot = headPitch * ((float) Math.PI / 180F) * 0.75f;
@@ -302,5 +350,200 @@ public class VesperTheEveningStarModel extends EntityModel<VesperTheEveningStarE
         this.bone3.xRot = (float) Math.sin((frame) * 0.5f) * 0.1f + 25.25f;
         this.cape2.xRot = (float) Math.sin((frame) * 0.7f) * 0.15f + 25.25f;
         this.bone2.xRot = (float) Math.sin((frame) * 0.8f) * 0.25f + 25.5f;
+
+		int stanceTick = entity.getStanceTick();
+		if (!entity.isRaging() && stanceTick < 30) {
+			float morph = stanceTick / 30.0F;
+			this.rightArm.xRot -= morph * 0.8F;
+			this.rightArm.zRot += morph * 0.25F;
+		} else applyWeaponActionPose(entity, frame);
     }
+
+	private void resetCombatPose() {
+		this.body.xRot = 0.0F;
+		this.body.yRot = 0.0F;
+		this.rightArm.yRot = 0.0F;
+		this.leftArm.yRot = 0.0F;
+		this.rightElbow.xRot = -1.0908F;
+		this.rightElbow.yRot = 0.0F;
+		this.rightElbow.zRot = 0.0F;
+		this.leftElbow.xRot = -1.0472F;
+		this.leftElbow.yRot = 0.0F;
+		this.leftElbow.zRot = 0.0F;
+	}
+
+	private void applyWeaponActionPose(VesperTheEveningStarEntity entity, float frame) {
+		VesperWeaponAction action = entity.getWeaponAction();
+		float tick = entity.getActionTick() + HLClientUtils.getPartialTicks();
+		if (action == VesperWeaponAction.NONE) {
+			if (entity.isRaging()) applyRageIdle(frame);
+			else applyWeaponIdle(entity.getActiveTendency(), frame);
+			return;
+		}
+		float windup = Mth.clamp(tick / Math.max(1.0F, action.impactTick()), 0.0F, 1.0F);
+		float release = tick <= action.impactTick() ? windup
+				: 1.0F - Mth.clamp((tick - action.impactTick())
+				/ Math.max(1.0F, action.durationTicks() - action.impactTick()), 0.0F, 1.0F);
+		float contact = contactPulse(action, tick);
+		int contactIndex = nearestContactIndex(action, tick);
+		float variantSign = (entity.getActionVariant() & 1) == 0 ? 1.0F : -1.0F;
+			switch (action) {
+			case ICHIMONJI -> {
+				this.rightArm.xRot = tick < action.impactTick()
+						? -0.4F - windup * 2.55F : -0.18F - release * 0.35F;
+				this.rightElbow.xRot = -0.35F;
+				this.body.xRot = tick < action.impactTick() ? -0.12F * windup : 0.28F * release;
+			}
+			case CROSSCUT -> {
+				float slash = contact * (contactIndex == 0 ? 1.0F : -1.0F) * variantSign;
+				this.body.yRot = slash * 0.82F;
+				this.rightArm.xRot = -1.35F;
+				this.rightArm.zRot = slash * 1.05F;
+			}
+			case LEAPING_CLEAVE, REAPER_SWEEP -> {
+				this.rightArm.xRot = action == VesperWeaponAction.LEAPING_CLEAVE
+						? (tick < action.impactTick() ? -0.45F - windup * 2.15F : -0.12F - release * 0.4F)
+						: -0.45F - release * 2.15F;
+				this.rightArm.zRot = action == VesperWeaponAction.REAPER_SWEEP ? release * 1.15F : 0.25F;
+				this.body.xRot = action == VesperWeaponAction.LEAPING_CLEAVE ? -0.35F * release : 0.0F;
+				this.body.yRot = action == VesperWeaponAction.REAPER_SWEEP ? -release * 0.8F : 0.0F;
+			}
+			case SKY_LANCE -> {
+				this.body.xRot = 1.05F * release;
+				this.rightArm.xRot = -1.55F;
+				this.rightElbow.xRot = -0.2F;
+				this.leftArm.xRot = -1.2F;
+				this.rightLeg.xRot = 0.62F;
+				this.leftLeg.xRot = 0.45F;
+				this.cape.xRot = 1.35F;
+				this.cape2.xRot = 0.95F;
+			}
+			case LANCE_FLURRY, BRANDING_THRUSTS, UPDRAFT_IMPALEMENT -> {
+				float thrust = contact;
+				this.rightArm.xRot = -1.25F - thrust * 0.65F;
+				this.rightElbow.xRot = -0.25F;
+				this.body.yRot = -0.18F + thrust * 0.28F;
+			}
+			case TWIN_REND, PREDATOR_POUNCE -> {
+				float slash = contact * (contactIndex % 2 == 0 ? 1.0F : -1.0F) * variantSign;
+				this.body.xRot = 0.48F;
+				this.rightArm.xRot = -1.05F + slash * 0.7F;
+				this.leftArm.xRot = -1.05F - slash * 0.7F;
+				this.rightArm.zRot = 0.72F;
+				this.leftArm.zRot = -0.72F;
+			}
+			case CONDUCTIVE_VOLLEY, STORM_LOCK -> {
+				this.body.xRot = 0.08F;
+				this.rightArm.xRot = -1.35F;
+				this.leftArm.xRot = -1.35F;
+				this.rightArm.yRot = -0.42F;
+				this.leftArm.yRot = 0.62F;
+				this.rightElbow.xRot = -0.35F;
+				this.leftElbow.xRot = -0.35F;
+			}
+			case CHAIN_SWEEP, HOOK_AND_CRUSH -> {
+				float swing = contact * (contactIndex % 2 == 0 ? 1.0F : -1.0F) * variantSign;
+				this.body.yRot = swing * 0.95F;
+				this.rightArm.xRot = -1.35F;
+				this.rightArm.zRot = swing * 1.15F;
+			}
+			case MAGNETIC_AXIS, IRON_RETORT -> {
+				this.rightArm.xRot = -1.65F;
+				this.rightElbow.xRot = -0.28F;
+				this.leftArm.xRot = -0.72F;
+				this.leftElbow.xRot = -0.55F;
+				this.body.xRot = 0.12F;
+			}
+			case SICKLE_CYCLONE -> {
+				float spin = tick >= action.impactTick() ? tick * 0.78F * variantSign : windup * 1.25F;
+				this.body.xRot = 0.32F;
+				this.body.yRot = spin;
+				this.rightArm.xRot = -1.18F;
+				this.leftArm.xRot = -1.18F;
+				this.rightArm.zRot = 1.28F;
+				this.leftArm.zRot = -1.28F;
+				this.rightLeg.xRot = 0.48F;
+				this.leftLeg.xRot = -0.35F;
+			}
+			case SICKLE_POUNCE -> {
+				float cross = contact * 1.25F;
+				this.body.xRot = tick < action.impactTick() ? 0.58F * windup : 0.9F * release;
+				this.rightArm.xRot = -0.4F - windup * 0.7F - cross;
+				this.leftArm.xRot = -0.4F - windup * 0.7F - cross;
+				this.rightArm.zRot = 1.05F - cross;
+				this.leftArm.zRot = -1.05F + cross;
+				this.rightLeg.xRot = 0.72F;
+				this.leftLeg.xRot = 0.62F;
+			}
+			case SICKLE_CROSS_REND -> {
+				float side = (contactIndex % 2 == 0 ? 1.0F : -1.0F) * variantSign;
+				this.body.xRot = 0.28F;
+				this.body.yRot = contact * side * 0.95F;
+				this.rightArm.xRot = -1.0F - contact * 0.65F;
+				this.leftArm.xRot = -1.0F - contact * 0.65F;
+				this.rightArm.zRot = side * (0.9F - contact * 1.4F);
+				this.leftArm.zRot = -side * (0.9F - contact * 1.4F);
+			}
+			case SANGUINE_CRESCENTS -> {
+				float slash = contact * (contactIndex % 2 == 0 ? 1.0F : -1.0F);
+				this.body.xRot = 0.22F;
+				this.body.yRot = slash * 0.52F;
+				this.rightArm.xRot = -1.42F;
+				this.leftArm.xRot = -1.42F;
+				this.rightArm.yRot = -0.42F - slash * 0.45F;
+				this.leftArm.yRot = 0.42F + slash * 0.45F;
+				this.rightArm.zRot = 0.8F - contact * 1.25F;
+				this.leftArm.zRot = -0.8F + contact * 1.25F;
+			}
+			default -> { }
+		}
+	}
+
+	private void applyRageIdle(float frame) {
+		float twitch = Mth.sin(frame * 0.62F) * 0.14F;
+		this.body.xRot = 0.38F;
+		this.body.yRot = twitch * 0.35F;
+		this.rightArm.xRot = -0.95F + twitch;
+		this.leftArm.xRot = -0.95F - twitch;
+		this.rightArm.zRot = 0.78F;
+		this.leftArm.zRot = -0.78F;
+		this.rightLeg.xRot += 0.22F;
+		this.leftLeg.xRot -= 0.16F;
+	}
+
+	private static float contactPulse(VesperWeaponAction action, float tick) {
+		float strongest = 0.0F;
+		for (int i = 0; i < action.contactCount(); i++) {
+			strongest = Math.max(strongest, 1.0F - Mth.clamp(Math.abs(tick - action.contactTick(i)) / 3.0F,
+					0.0F, 1.0F));
+		}
+		return strongest;
+	}
+
+	private static int nearestContactIndex(VesperWeaponAction action, float tick) {
+		int nearest = 0;
+		float distance = Float.MAX_VALUE;
+		for (int i = 0; i < action.contactCount(); i++) {
+			float candidate = Math.abs(tick - action.contactTick(i));
+			if (candidate < distance) {
+				distance = candidate;
+				nearest = i;
+			}
+		}
+		return nearest;
+	}
+
+	private void applyWeaponIdle(EnumBloodTendency tendency, float frame) {
+		float breathe = Mth.sin(frame * 0.12F) * 0.08F;
+		switch (tendency) {
+			case ANIMUS -> { this.rightArm.xRot -= 0.55F; this.body.yRot = breathe; }
+			case MORTEM -> { this.rightArm.xRot -= 0.85F; this.body.xRot = 0.12F; }
+			case LUX -> { this.rightArm.xRot = -1.12F; this.leftArm.xRot = -0.32F; }
+			case TENEBRIS -> { this.body.xRot = 0.42F; this.rightArm.xRot = -0.8F; this.leftArm.xRot = -0.8F; }
+			case DUCTILIS -> { this.rightArm.xRot = -1.15F; this.leftArm.xRot = -1.05F; }
+			case FLAMMEUS -> { this.rightArm.xRot = -1.05F; this.body.yRot = 0.14F; }
+			case CONGEATIO -> { this.rightArm.xRot = -0.85F; this.body.yRot = breathe * 1.8F; }
+			case FERRIC -> { this.rightArm.xRot = -1.42F; this.leftArm.xRot = -0.55F; }
+		}
+	}
 }

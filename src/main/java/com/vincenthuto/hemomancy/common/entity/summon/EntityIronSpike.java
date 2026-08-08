@@ -11,6 +11,9 @@ import net.minecraft.world.level.Level;
 
 public class EntityIronSpike extends BloodConstructEntity {
 	public float deathTicks = 1;
+	private int lifeTicks = 120;
+	private static final String NO_CONTACT_DAMAGE = "HemomancyNoContactDamage";
+	private static final String TEMPORARY_LIFE = "HemomancyTemporaryLife";
 
 	public EntityIronSpike(EntityType<? extends EntityIronSpike> type, Level worldIn) {
 		super(type, worldIn);
@@ -24,7 +27,7 @@ public class EntityIronSpike extends BloodConstructEntity {
 
 	@Override
 	protected void doPush(Entity entityIn) {
-		if (!(entityIn instanceof EntityIronSpike)) {
+		if (!getPersistentData().getBoolean(NO_CONTACT_DAMAGE) && !(entityIn instanceof EntityIronSpike)) {
 			if (getCreator() != null) {
 				if (entityIn != creator) {
 					entityIn.hurt(this.damageSources().generic(), 3.5f);
@@ -43,6 +46,7 @@ public class EntityIronSpike extends BloodConstructEntity {
 	@Override
 	public void tick() {
 		super.tick();
+		if (getPersistentData().contains(TEMPORARY_LIFE)) lifeTicks = getPersistentData().getInt(TEMPORARY_LIFE);
 		this.setYBodyRot(0);
 
 		// Particle MobEffects
@@ -55,7 +59,7 @@ public class EntityIronSpike extends BloodConstructEntity {
 					this.getZ() + f2, 0.0D, 0.0D, 0.0D);
 		}
 
-		if (this.tickCount > 2 && this.tickCount < 120) {
+		if (this.tickCount > 2 && this.tickCount < lifeTicks) {
 			for (int i = 0; i < 2; i++) {
 				this.level().addParticle(DustParticleOptions.REDSTONE, this.getX() + f * 0.5, this.getY(),
 						this.getZ() + f2 * 0.5, 0.0D, 0.0D, 0.0D);
@@ -63,7 +67,7 @@ public class EntityIronSpike extends BloodConstructEntity {
 						this.getY() + (0.0D + i) + f3, this.getZ() + f2, 0.0D, 0.0D, 0.0D);
 			}
 		}
-		if (this.tickCount == 120) {
+		if (this.tickCount == lifeTicks) {
 			this.level().addParticle(ParticleTypes.SQUID_INK, this.getX() + f, this.getY() + 2.0D + f1,
 					this.getZ() + f2, 0.0D, 0.0D, 0.0D);
 			this.setHealth(0);
@@ -72,6 +76,12 @@ public class EntityIronSpike extends BloodConstructEntity {
 					SoundSource.HOSTILE, 3f, 1.2f, false);
 
 		}
+	}
+
+	public void setTemporaryResponse(int durationTicks, boolean contactDamage) {
+		this.lifeTicks = Math.max(20, durationTicks);
+		getPersistentData().putInt(TEMPORARY_LIFE, this.lifeTicks);
+		getPersistentData().putBoolean(NO_CONTACT_DAMAGE, !contactDamage);
 	}
 
 	@Override

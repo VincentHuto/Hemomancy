@@ -2,6 +2,7 @@ package com.vincenthuto.hemomancy.client.render.world.chamberofwill;
 
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.client.data.ChamberOfWillClientData;
+import com.vincenthuto.hemomancy.client.data.VesperFightClientData;
 import com.vincenthuto.hemomancy.common.worldgen.ChamberOfWillManager;
 import net.minecraft.resources.ResourceLocation;
 
@@ -79,6 +80,16 @@ public final class ChamberSkyThemeRegistry {
 				.toggles(true, false, true, false)
 				.build();
 		register(silentArchon, new SilentArchonChamberEffects(silentArchon));
+		ChamberSkyTheme vesperFight = ChamberSkyTheme.builder(ChamberOfWillManager.THEME_VESPER_FIGHT)
+				.skybox(0xFF000000, 0xFF000000)
+				.nebula(0x000000, 0x000000, 0x000000)
+				.tints(0x000000, 0x000000, 0x000000, 0x000000)
+				.pulse(0.0F)
+				.motion(0.0F)
+				.layers(0, 0, 0, 0)
+				.toggles(true, false, false, false)
+				.build();
+		register(vesperFight, new VesperFightChamberEffects(vesperFight));
 		ChamberSkyTheme apotheos = ChamberSkyTheme.builder(ChamberOfWillManager.THEME_APOTHEOS)
 				.skybox(0xFF000000, 0xFF000000)
 				.nebula(0x000000, 0x000000, 0x000000)
@@ -105,7 +116,9 @@ public final class ChamberSkyThemeRegistry {
 	}
 
 	public static ChamberSkyTheme activeTheme() {
-		return byId(ChamberOfWillClientData.skyTheme());
+		return byId(VesperFightClientData.isActive()
+				? ChamberOfWillManager.THEME_VESPER_FIGHT
+				: ChamberOfWillClientData.skyTheme());
 	}
 
 	public static ChamberThemeEffects effectsById(ResourceLocation id) {
@@ -113,6 +126,6 @@ public final class ChamberSkyThemeRegistry {
 	}
 
 	public static ChamberThemeEffects activeEffects() {
-		return effectsById(ChamberOfWillClientData.skyTheme());
+		return effectsById(activeTheme().id());
 	}
 }

@@ -7,6 +7,8 @@ import java.nio.file.Path;
 public final class SilentArchonMonolithDepthSourceTest {
 	private static final Path SILENT_ARCHON_EFFECTS = Path.of(
 			"src/main/java/com/vincenthuto/hemomancy/client/render/world/chamberofwill/SilentArchonChamberEffects.java");
+	private static final Path VESPER_FLOOR_RENDERER = Path.of(
+			"src/main/java/com/vincenthuto/hemomancy/client/render/world/chamberofwill/VesperFightFloorRenderer.java");
 	private static final Path SHADER_INIT = Path.of(
 			"src/main/java/com/vincenthuto/hemomancy/common/init/ShaderInit.java");
 	private static final Path RENDER_TYPES = Path.of(
@@ -22,6 +24,7 @@ public final class SilentArchonMonolithDepthSourceTest {
 
 	public static void main(String[] args) throws IOException {
 		String silentArchonEffects = read(SILENT_ARCHON_EFFECTS);
+		String vesperFloorRenderer = read(VESPER_FLOOR_RENDERER);
 		String shaderInit = read(SHADER_INIT);
 		String renderTypes = read(RENDER_TYPES);
 		String normalMonolithFragment = read(NORMAL_MONOLITH_FRAGMENT);
@@ -31,6 +34,18 @@ public final class SilentArchonMonolithDepthSourceTest {
 				"HemoRenderTypes.monolithEntitySurface(");
 		assertNotContains("silent archon sky pillars should not use no-fog sky monolith material", silentArchonEffects,
 				"HemoRenderTypes.silentArchonSkyMonolithSurface(");
+		assertContains("vesper boundary rocks use the same monolith shader family", vesperFloorRenderer,
+				"HemoRenderTypes.monolithEntitySurface(");
+		assertContains("vesper boundary rocks render in their own dynamic material pass", vesperFloorRenderer,
+				"renderMonolithRocks(event, center);");
+		assertContains("vesper monolith pass embeds the tested world-anchored arena transform", vesperFloorRenderer,
+				"Matrix4f rockModelView = VesperFightFloorTransform.arenaModelView(");
+		assertContains("vesper monolith pass isolates itself from ambient camera transforms", vesperFloorRenderer,
+				"modelViewStack.identity();");
+		assertNotContains("vesper monolith pass should not depend on an ambient camera-relative pose stack",
+				vesperFloorRenderer, "translateToArena(poseStack, event.getCamera(), center);");
+		assertNotContains("vesper boundary rocks should not remain in the flat cached floor mesh", vesperFloorRenderer,
+				"emitRock(buffer, rock);");
 		assertContains("normal monolith fragment remains fog-aware for sky depth", normalMonolithFragment,
 				"linear_fog(");
 		assertContains("silent archon lower monoliths should draw a base-anchored shadow skirt", silentArchonEffects,

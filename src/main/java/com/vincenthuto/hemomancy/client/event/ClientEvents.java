@@ -15,6 +15,7 @@ import com.vincenthuto.hemomancy.client.data.CrimsonFireClientState;
 import com.vincenthuto.hemomancy.client.data.FaneBoundaryClientData;
 import com.vincenthuto.hemomancy.client.data.MonolithicDislocationClientState;
 import com.vincenthuto.hemomancy.client.data.VeinSpiderCourierClientData;
+import com.vincenthuto.hemomancy.client.data.VesperFightClientData;
 import com.vincenthuto.hemomancy.client.item.HemoClientItemExtensionsProvider;
 import com.vincenthuto.hemomancy.client.render.entity.blood.iron.IronPillarRenderer;
 import com.vincenthuto.hemomancy.client.render.entity.blood.iron.IronSpikeRenderer;
@@ -76,6 +77,7 @@ import com.vincenthuto.hemomancy.client.render.tile.functional.*;
 import com.vincenthuto.hemomancy.client.render.world.*;
 import com.vincenthuto.hemomancy.client.render.world.chamberofwill.ChamberOfWillEffects;
 import com.vincenthuto.hemomancy.client.render.world.chamberofwill.LowtideRuinObjModels;
+import com.vincenthuto.hemomancy.client.render.world.chamberofwill.VesperFightFloorRenderer;
 import com.vincenthuto.hemomancy.client.screen.item.PuppeteersSpindleScreen;
 import com.vincenthuto.hemomancy.client.screen.item.ScryingDiagnosticsScreen;
 import com.vincenthuto.hemomancy.client.screen.item.StructureSpawnerScreen;
@@ -519,6 +521,8 @@ public class ClientEvents {
         FaneBoundaryClientData.clear();
         ActiveRiteClientData.clear();
         CardinalRiteFogRenderer.clear();
+		VesperFightClientData.clear();
+		VesperFightFloorRenderer.clear();
 		CardinalRiteImpactClientEvents.clear();
 		if (SanguineOmenOverlay.instance != null) SanguineOmenOverlay.instance.clear();
         MnemonicBlueprintRenderer.disconnect();
@@ -572,11 +576,17 @@ public class ClientEvents {
     public static void renderLevelLastEvent(RenderLevelStageEvent event) {
         if (event.getStage() == RenderLevelStageEvent.Stage.AFTER_SKY) {
             renderBloodMoonSky(event);
+		}
+
+		if (event.getStage() == RenderLevelStageEvent.Stage.AFTER_SOLID_BLOCKS) {
+			VesperFightFloorRenderer.renderOpaque(event);
         }
 
         if (event.getStage() == RenderLevelStageEvent.Stage.AFTER_TRANSLUCENT_BLOCKS) {
             MnemonicBlueprintRenderer.render(event);
             float partialTick = event.getPartialTick().getGameTimeDeltaPartialTick(true);
+			VesperFightFloorRenderer.renderFadingPerimeter(event);
+			VesperFightFloorRenderer.renderFissures(event.getPoseStack(), partialTick);
             CardinalRiteBoundaryRenderer.render(event.getPoseStack(), partialTick);
             UnstainedRiteBoundaryRenderer.render(event.getPoseStack(), partialTick);
             GourdVineRenderer.render(event.getPoseStack(), partialTick);

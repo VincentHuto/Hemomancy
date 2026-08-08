@@ -94,6 +94,8 @@ public class PacketHandler {
                 PacketSyncFungalProjection.STREAM_CODEC, PacketSyncFungalProjection::handle);
         net.playToClient(PacketSyncChamberOfWill.TYPE,
                 PacketSyncChamberOfWill.STREAM_CODEC, PacketSyncChamberOfWill::handle);
+        net.playToClient(PacketSyncVesperFightScene.TYPE,
+                PacketSyncVesperFightScene.STREAM_CODEC, PacketSyncVesperFightScene::handle);
         net.playToClient(LivingStaffProgressServerPacket.TYPE,
                 LivingStaffProgressServerPacket.STREAM_CODEC, LivingStaffProgressServerPacket::handle);
 

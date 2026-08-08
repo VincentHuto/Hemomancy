@@ -1,4 +1,4 @@
-package com.vincenthuto.hemomancy.client.model.entity.boss.Hemorath;
+package com.vincenthuto.hemomancy.client.model.entity.boss.hemorath;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;

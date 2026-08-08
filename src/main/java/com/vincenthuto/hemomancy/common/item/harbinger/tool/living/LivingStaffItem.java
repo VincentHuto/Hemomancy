@@ -11,6 +11,7 @@ import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.
 import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillPointHelper;
 import com.vincenthuto.hemomancy.common.entity.mob.monster.will.WillAbsorptionRules;
 import com.vincenthuto.hemomancy.common.entity.mob.monster.will.WillBloodUtilityInteractions;
+import com.vincenthuto.hemomancy.common.entity.boss.endgame.VesperBloodAbsorptionInteractions;
 import com.vincenthuto.hemomancy.common.item.harbinger.morphlings.IMorphling;
 import com.vincenthuto.hemomancy.common.item.itemhandler.LivingStaffItemHandler;
 import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
@@ -185,6 +186,13 @@ public class LivingStaffItem extends LivingItem implements IDispellable {
 					&& isSelectedStaffUtility(player, ManipulationEquipHelper.BLOOD_ABSORPTION)) {
 				ILivingStaffProgress progress = HemoCapabilityAccess.getLivingStaffProgress(player).orElse(null);
 				LivingStaffFocusProfile focus = LivingStaffFocusProfile.fromPlayer(player, progress);
+				double vesperHandled = VesperBloodAbsorptionInteractions.tryAbsorb(pLevel, player,
+						LivingStaffFocusRules.absorptionRange(focus),
+						WillAbsorptionRules.staffProgressPerTick(focus));
+				if (vesperHandled > 0.0D) {
+					BloodAbsorptionItem.updateChannelStrain(player, false);
+					return;
+				}
 				if (CardinalRiteCancellationHandler.tryChannel(
 						serverPlayer, LivingStaffFocusRules.absorptionRange(focus))) {
 					BloodAbsorptionItem.updateChannelStrain(player, false);

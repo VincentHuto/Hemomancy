@@ -11,7 +11,10 @@ import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.
 import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillPointHelper;
 import com.vincenthuto.hemomancy.common.entity.HemoEntityPredicates;
 import com.vincenthuto.hemomancy.common.entity.mob.monster.will.WillBloodUtilityInteractions;
+import com.vincenthuto.hemomancy.common.entity.mob.monster.will.WillAbsorptionRules;
 import com.vincenthuto.hemomancy.common.entity.mob.monster.will.WillEntity;
+import com.vincenthuto.hemomancy.common.entity.boss.endgame.VesperBloodAbsorptionInteractions;
+import com.vincenthuto.hemomancy.common.entity.boss.endgame.VesperTheEveningStarEntity;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.BloodVolumeServerPacket;
 import com.vincenthuto.hemomancy.common.rite.harbinger.CardinalRiteCancellationHandler;
@@ -122,6 +125,12 @@ public class BloodAbsorptionItem extends Item implements IDispellable, ICellHand
 			applyChannelMovementPenalty(channelingPlayer);
 		}
 		if (worldIn.isClientSide) {
+			return;
+		}
+		double vesperHandled = VesperBloodAbsorptionInteractions.tryAbsorb(worldIn, player,
+				LivingStaffFocusRules.bareAbsorptionRange(), WillAbsorptionRules.bareProgressPerTick());
+		if (vesperHandled > 0.0D) {
+			updateChannelStrain(player, false);
 			return;
 		}
 		if (player instanceof ServerPlayer serverPlayer
@@ -263,6 +272,9 @@ public class BloodAbsorptionItem extends Item implements IDispellable, ICellHand
 	}
 
 	public static boolean isValidAbsorptionTarget(LivingEntity user, Entity entity) {
+		if (entity instanceof VesperTheEveningStarEntity vesper) {
+			return vesper.canBeAbsorbedBy(user);
+		}
 		return entity instanceof LivingEntity target
 				&& target != user
 				&& target.isAlive()

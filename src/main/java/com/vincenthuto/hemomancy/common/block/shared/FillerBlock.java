@@ -139,7 +139,7 @@ public class FillerBlock extends BaseEntityBlock implements SimpleWaterloggedBlo
 
     @Override
     public void attack(BlockState state, Level level, BlockPos pos, Player player) {
-        destroyMainBlock(level, pos, !player.isCreative());
+        destroyMainBlock(level, pos, !player.isCreative(), player.isCreative());
     }
 
     /**
@@ -165,16 +165,17 @@ public class FillerBlock extends BaseEntityBlock implements SimpleWaterloggedBlo
 
     @Override
     public BlockState playerWillDestroy(Level level, BlockPos pos, BlockState state, Player player) {
-        destroyMainBlock(level, pos, !player.isCreative());
+        destroyMainBlock(level, pos, !player.isCreative(), player.isCreative());
         return super.playerWillDestroy(level, pos, state, player);
     }
 
-    private void destroyMainBlock(Level level, BlockPos pos, boolean dropBlock) {
+    private void destroyMainBlock(Level level, BlockPos pos, boolean dropBlock, boolean creativePlayer) {
         BlockPos mainPos = getMainBlockPos(level, pos);
         if (mainPos != null && !level.isClientSide) {
             BlockState mainState = level.getBlockState(mainPos);
             if (mainState.getBlock() instanceof IMultiBlock) {
-                if (mainState.is(BlockInit.qliphoth_bloom.get())) {
+                if (!MultiBlockBreakRules.shouldDestroyMainFromPlayer(
+                        mainState.is(BlockInit.qliphoth_bloom.get()), creativePlayer)) {
                     return;
                 }
                 level.destroyBlock(mainPos, dropBlock);

@@ -9,6 +9,10 @@ public final class ChamberThemeCommandSourceTest {
 			"src/main/java/com/vincenthuto/hemomancy/common/command/HemoCommand.java");
 	private static final Path MANAGER = Path.of(
 			"src/main/java/com/vincenthuto/hemomancy/common/worldgen/ChamberOfWillManager.java");
+	private static final Path THEME_REGISTRY = Path.of(
+			"src/main/java/com/vincenthuto/hemomancy/client/render/world/chamberofwill/ChamberSkyThemeRegistry.java");
+	private static final Path VESPER_EFFECTS = Path.of(
+			"src/main/java/com/vincenthuto/hemomancy/client/render/world/chamberofwill/VesperFightChamberEffects.java");
 	private static final Path REFERENCE = Path.of("docs/HEMOMANCY_REFERENCE.md");
 
 	private ChamberThemeCommandSourceTest() {
@@ -17,6 +21,8 @@ public final class ChamberThemeCommandSourceTest {
 	public static void main(String[] args) throws IOException {
 		String command = Files.readString(COMMAND).replace("\r\n", "\n");
 		String manager = Files.readString(MANAGER).replace("\r\n", "\n");
+		String registry = Files.readString(THEME_REGISTRY).replace("\r\n", "\n");
+		String vesperEffects = Files.readString(VESPER_EFFECTS).replace("\r\n", "\n");
 		String reference = Files.readString(REFERENCE).replace("\r\n", "\n");
 		String commandCompact = compact(command);
 
@@ -36,10 +42,31 @@ public final class ChamberThemeCommandSourceTest {
 		assertContains("command resets executor theme", commandCompact,
 				"resetChamberTheme(ctx.getSource(), ctx.getSource().getPlayerOrException())");
 		assertContains("command suggests registered themes", command,
-				"ChamberOfWillManager.orderedSkyThemes()");
+				"ChamberOfWillManager.commandSkyThemes()");
 
 		assertContains("manager keeps stable theme order", manager, "ORDERED_SKY_THEMES");
 		assertContains("manager command theme order includes mnemonic lowtide", manager, "mnemonic_lowtide");
+		assertContains("manager declares the Vesper fight preview theme", manager, "THEME_VESPER_FIGHT");
+		assertContains("manager exposes separately settable themes", manager, "commandSkyThemes()");
+		assertContains("manager syncs the Vesper floor preview", manager,
+				"PacketSyncVesperFightScene.activate(cellPos(idFor(player.getUUID())))");
+		String registryCompact = compact(registry);
+		assertContains("registry owns a dedicated Vesper fight theme", registry,
+				"ChamberSkyTheme.builder(ChamberOfWillManager.THEME_VESPER_FIGHT)");
+		assertContains("Vesper fight starts from black", registryCompact,
+				".skybox(0xFF000000, 0xFF000000)");
+		assertContains("Vesper fight inherits no shared chamber layers", registryCompact,
+				".layers(0, 0, 0, 0)");
+		assertContains("Vesper fight inherits no cloud or nebula effects", registryCompact,
+				".toggles(true, false, false, false)");
+		assertContains("active ordeal selects the whole Vesper theme", registry,
+				"VesperFightClientData.isActive()");
+		assertContains("active effects follow the selected whole theme", registry,
+				"effectsById(activeTheme().id())");
+		assertContains("Vesper fight has an independent effects module", vesperEffects,
+				"final class VesperFightChamberEffects extends AbstractChamberThemeEffects");
+		assertContains("Vesper fight draws an untextured black environment", vesperEffects,
+				"ChamberOfWillRenderHelpers.renderSolidBox");
 		assertContains("manager stores testing overrides", manager, "skyThemeOverrides");
 		assertContains("manager sets sky override", manager, "setSkyThemeOverride");
 		assertContains("manager clears sky override", manager, "clearSkyThemeOverride");

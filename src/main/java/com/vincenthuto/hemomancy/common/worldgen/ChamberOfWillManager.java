@@ -7,6 +7,7 @@ import com.vincenthuto.hemomancy.common.event.HarbingerAdvancementGranter;
 import com.vincenthuto.hemomancy.common.init.BlockInit;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.PacketSyncChamberOfWill;
+import com.vincenthuto.hemomancy.common.network.capa.harbinger.PacketSyncVesperFightScene;
 import com.vincenthuto.hemomancy.common.rite.harbinger.QliphothBloomSavedData;
 import com.vincenthuto.hemomancy.common.mission.HarbingerChapterProgression;
 import net.minecraft.core.BlockPos;
@@ -48,6 +49,7 @@ public class ChamberOfWillManager extends SavedData {
     public static final ResourceLocation THEME_QLIPHOTH_COMMUNION = Hemomancy.rloc("qliphoth_communion");
     public static final ResourceLocation THEME_SILENT_ARCHON = Hemomancy.rloc("silent_archon");
     public static final ResourceLocation THEME_APOTHEOS = Hemomancy.rloc("apotheos");
+    public static final ResourceLocation THEME_VESPER_FIGHT = Hemomancy.rloc("vesper_fight");
     private static final List<ResourceLocation> ORDERED_SKY_THEMES = List.of(
             THEME_WILL_DEFAULT,
             THEME_MNEMONIC_LOWTIDE,
@@ -55,6 +57,14 @@ public class ChamberOfWillManager extends SavedData {
             THEME_QLIPHOTH_COMMUNION,
             THEME_SILENT_ARCHON,
             THEME_APOTHEOS);
+    private static final List<ResourceLocation> COMMAND_SKY_THEMES = List.of(
+            THEME_WILL_DEFAULT,
+            THEME_MNEMONIC_LOWTIDE,
+            THEME_ARCHON_REVELATION,
+            THEME_QLIPHOTH_COMMUNION,
+            THEME_SILENT_ARCHON,
+            THEME_APOTHEOS,
+            THEME_VESPER_FIGHT);
 
     public static final int CHAMBER_SPACING = 256;
     public static final int FLOOR_Y = 2;
@@ -183,8 +193,12 @@ public class ChamberOfWillManager extends SavedData {
         return ORDERED_SKY_THEMES;
     }
 
+    public static List<ResourceLocation> commandSkyThemes() {
+        return COMMAND_SKY_THEMES;
+    }
+
     public static boolean isKnownSkyTheme(ResourceLocation theme) {
-        return ORDERED_SKY_THEMES.contains(theme);
+        return COMMAND_SKY_THEMES.contains(theme);
     }
 
     public ResourceLocation setSkyThemeOverride(ServerPlayer player, ResourceLocation skyTheme) {
@@ -362,6 +376,12 @@ public class ChamberOfWillManager extends SavedData {
         ChamberState state = getChamberState(player.getUUID());
         PacketHandler.sendToPlayer(player, new PacketSyncChamberOfWill(
                 state.skyTheme(), state.tier(), radiusFor(player.getUUID()), qliphothPomeCount(player)));
+        if (THEME_VESPER_FIGHT.equals(state.skyTheme())) {
+            PacketHandler.sendToPlayer(player,
+                    PacketSyncVesperFightScene.activate(cellPos(idFor(player.getUUID()))));
+        } else if (!VesperOrdealManager.isActive(player)) {
+            PacketHandler.sendToPlayer(player, PacketSyncVesperFightScene.clearScene());
+        }
     }
 
     public static void syncFor(ServerPlayer player) {

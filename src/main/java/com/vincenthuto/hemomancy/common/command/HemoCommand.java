@@ -11,6 +11,7 @@ import com.mojang.brigadier.suggestion.SuggestionsBuilder;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.PathMutualExclusionHelper;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.EnumArchonPath;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.EnumInitiatoryDegree;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.IInitiatoryDegree;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.InitiatoryDegreeEvents;
@@ -67,6 +68,7 @@ import com.vincenthuto.hemomancy.common.rite.harbinger.QliphothBloomSavedData;
 import com.vincenthuto.hemomancy.common.summon.PuppeteerSummonDefinitions;
 import com.vincenthuto.hemomancy.common.tile.functional.QliphothBloomBlockEntity;
 import com.vincenthuto.hemomancy.common.worldgen.ChamberOfWillManager;
+import com.vincenthuto.hemomancy.common.worldgen.FungalGardenTravelHelper;
 import net.minecraft.ChatFormatting;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
@@ -153,6 +155,7 @@ import java.util.concurrent.CompletableFuture;
  *
  * Qliphoth Tree Preview:
  * /hemo qliphoth tree &lt;initial|1-9|fully_grown|pruned|sealed&gt;
+ * /hemo qliphoth archon &lt;pending|complete|clear&gt; [player]
  * </pre>
  */
 public class HemoCommand {
@@ -255,6 +258,10 @@ public class HemoCommand {
 										.executes(ctx -> spawnQliphothTree(ctx.getSource(),
 												ctx.getSource().getPlayerOrException(),
 												StringArgumentType.getString(ctx, "stage")))))
+						.then(Commands.literal("archon")
+								.then(silentArchonStateCommand("pending"))
+								.then(silentArchonStateCommand("complete"))
+								.then(silentArchonStateCommand("clear")))
 						.then(Commands.literal("pome")
 								.then(Commands.literal("set")
 										.then(Commands.argument("count", IntegerArgumentType.integer(0, 9))
@@ -436,7 +443,7 @@ public class HemoCommand {
 								.then(Commands.literal("set")
 										.then(Commands.argument("theme", StringArgumentType.word())
 												.suggests((ctx, builder) -> {
-													for (ResourceLocation id : ChamberOfWillManager.orderedSkyThemes()) {
+											for (ResourceLocation id : ChamberOfWillManager.commandSkyThemes()) {
 														builder.suggest(id.getPath());
 														builder.suggest(id.toString());
 													}
@@ -1003,6 +1010,39 @@ public class HemoCommand {
 				.append(Component.literal(player.getName().getString()).withStyle(ChatFormatting.GOLD))
 				.append(Component.literal(" Qliphoth pome progress and Communion gate.").withStyle(ChatFormatting.DARK_PURPLE)),
 				true);
+		return 1;
+	}
+
+	private static com.mojang.brigadier.builder.LiteralArgumentBuilder<CommandSourceStack>
+			silentArchonStateCommand(String state) {
+		return Commands.literal(state)
+				.executes(ctx -> setSilentArchonState(ctx.getSource(), ctx.getSource().getPlayerOrException(), state))
+				.then(Commands.argument("player", EntityArgument.player())
+						.executes(ctx -> setSilentArchonState(ctx.getSource(),
+								EntityArgument.getPlayer(ctx, "player"), state)));
+	}
+
+	private static int setSilentArchonState(CommandSourceStack source, ServerPlayer player, String state) {
+		IInitiatoryDegree degree = HemoCapabilityAccess.getInitiatoryDegree(player)
+				.orElseThrow(IllegalStateException::new);
+		SilentArchonCommandRules.Transition transition =
+				SilentArchonCommandRules.transition(state, degree.getDegreeNumber());
+		degree.setDegreeNumber(transition.degreeNumber());
+		degree.setArchonPath(transition.archonPath());
+		if (transition.archonPath() != EnumArchonPath.NONE) {
+			degree.setFungalRevelationWitnessed(true);
+		}
+		if (transition.clearLegacyChoice()) {
+			player.getPersistentData().remove(FungalGardenTravelHelper.ARCHON_CHOICE_KEY);
+		}
+		InitiatoryDegreeEvents.syncDegree(player, degree);
+		ChamberOfWillManager.syncFor(player);
+		source.sendSuccess(() -> Component.literal("Set ")
+				.append(Component.literal(player.getName().getString()).withStyle(ChatFormatting.GOLD))
+				.append(Component.literal(" Silent Archon state to "))
+				.append(Component.literal(state).withStyle(ChatFormatting.DARK_PURPLE))
+				.append(Component.literal(" (degree " + transition.degreeNumber() + ").")
+						.withStyle(ChatFormatting.GRAY)), true);
 		return 1;
 	}
 
@@ -1809,7 +1849,7 @@ public class HemoCommand {
 
 	private static String chamberThemeList() {
 		StringBuilder builder = new StringBuilder();
-		for (ResourceLocation id : ChamberOfWillManager.orderedSkyThemes()) {
+		for (ResourceLocation id : ChamberOfWillManager.commandSkyThemes()) {
 			if (!builder.isEmpty()) {
 				builder.append(", ");
 			}

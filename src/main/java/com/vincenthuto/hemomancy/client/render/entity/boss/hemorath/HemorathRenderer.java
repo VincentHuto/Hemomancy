@@ -1,7 +1,7 @@
 package com.vincenthuto.hemomancy.client.render.entity.boss.hemorath;
 
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.client.model.entity.boss.Hemorath.HemorathModel;
+import com.vincenthuto.hemomancy.client.model.entity.boss.hemorath.HemorathModel;
 import com.vincenthuto.hemomancy.client.render.layer.mob.HemorathOverloadLayer;
 import com.vincenthuto.hemomancy.common.entity.boss.saint.hemorath.HemorathEntity;
 

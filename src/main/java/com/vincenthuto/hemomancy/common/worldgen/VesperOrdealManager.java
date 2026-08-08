@@ -6,9 +6,12 @@ import com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.EnumA
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.InitiatoryDegreeEvents;
 import com.vincenthuto.hemomancy.common.entity.boss.endgame.VesperTheCrownedRefusalEntity;
 import com.vincenthuto.hemomancy.common.entity.boss.endgame.VesperTheEveningStarEntity;
+import com.vincenthuto.hemomancy.common.entity.boss.endgame.VesperPhaseTwoCombat;
 import com.vincenthuto.hemomancy.common.event.HarbingerAdvancementGranter;
 import com.vincenthuto.hemomancy.common.init.EntityInit;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
+import com.vincenthuto.hemomancy.common.network.PacketHandler;
+import com.vincenthuto.hemomancy.common.network.capa.harbinger.PacketSyncVesperFightScene;
 import com.vincenthuto.hemomancy.common.rite.harbinger.HarbingerCardinalRiteEvents;
 import com.vincenthuto.hemomancy.common.rite.harbinger.QliphothBloomSavedData;
 import net.minecraft.ChatFormatting;
@@ -59,6 +62,7 @@ public final class VesperOrdealManager {
 		player.stopRiding();
 		player.changeDimension(new DimensionTransition(arenaLevel, destination, Vec3.ZERO,
 				180.0F, 0.0F, DimensionTransition.DO_NOTHING));
+		PacketHandler.sendToPlayer(player, PacketSyncVesperFightScene.activate(center));
 		spawnCrownedRefusal(arenaLevel, player, bloom.center().asLong(), center);
 		return true;
 	}
@@ -66,13 +70,7 @@ public final class VesperOrdealManager {
 	public static boolean tickArenaPlayer(ServerPlayer player, ServerLevel level) {
 		if (!player.getPersistentData().contains(ACTIVE_BLOOM_KEY)) return false;
 		BlockPos center = arenaCenter(player);
-		int bound = ARENA_HALF - 1;
-		if (Math.abs(player.getX() - center.getX()) > bound
-				|| Math.abs(player.getZ() - center.getZ()) > bound
-				|| player.getY() < center.getY() - 2) {
-			player.teleportTo(center.getX() + 0.5, center.getY() + 1.0, center.getZ() + 12.5);
-			player.resetFallDistance();
-		}
+		reconcileArenaBoss(level, player, center);
 		return true;
 	}
 
@@ -83,6 +81,7 @@ public final class VesperOrdealManager {
 	/** Ends an attempt without changing the severed Bloom, so its owner can retry. */
 	public static void abandonAttempt(ServerPlayer player) {
 		if (!isActive(player)) return;
+		PacketHandler.sendToPlayer(player, PacketSyncVesperFightScene.clearScene());
 		ServerLevel arena = player.getServer().getLevel(ChamberOfWillManager.CHAMBER_OF_WILL);
 		if (arena != null) clearOwnedVespers(arena, player.getUUID(), arenaCenter(player));
 		player.getPersistentData().remove(ACTIVE_BLOOM_KEY);
@@ -119,6 +118,7 @@ public final class VesperOrdealManager {
 		blooms.sealBloom(bloomPos);
 		HarbingerAdvancementGranter.grantIfNotDone(owner, HarbingerAdvancementGranter.ADV_VESPER_DEFEATED);
 		if (firstVictory) owner.getPersistentData().putBoolean(PENDING_MEMORY_KEY, true);
+		PacketHandler.sendToPlayer(owner, PacketSyncVesperFightScene.clearScene());
 		owner.getPersistentData().remove(ACTIVE_BLOOM_KEY);
 		HarbingerCardinalRiteEvents.syncQliphothBlooms(level.getServer());
 		owner.displayClientMessage(Component.literal(
@@ -156,6 +156,39 @@ public final class VesperOrdealManager {
 		level.addFreshEntity(vesper);
 	}
 
+	private static void reconcileArenaBoss(ServerLevel level, ServerPlayer owner, BlockPos center) {
+		Entity ownedVesper = findOwnedVesper(level, owner.getUUID(), center);
+		VesperOrdealRecoveryRules.Action action = VesperOrdealRecoveryRules.reconnectAction(
+				isActive(owner), owner.level().dimension().equals(ChamberOfWillManager.CHAMBER_OF_WILL),
+				ownedVesper != null);
+		switch (action) {
+			case RETARGET -> retargetOwnedVesper(ownedVesper, owner);
+			case RESPAWN -> spawnCrownedRefusal(level, owner,
+					owner.getPersistentData().getLong(ACTIVE_BLOOM_KEY), center);
+			default -> {
+			}
+		}
+	}
+
+	private static Entity findOwnedVesper(ServerLevel level, UUID owner, BlockPos center) {
+		AABB bounds = new AABB(center).inflate(ARENA_HALF + 4, 12, ARENA_HALF + 4);
+		for (Entity entity : level.getEntities(null, bounds)) {
+			if (entity instanceof VesperTheCrownedRefusalEntity crowned
+					&& owner.equals(crowned.getOrdealOwner())) return crowned;
+			if (entity instanceof VesperTheEveningStarEntity evening
+					&& owner.equals(evening.getOrdealOwner())) return evening;
+		}
+		return null;
+	}
+
+	private static void retargetOwnedVesper(Entity entity, ServerPlayer owner) {
+		if (entity instanceof VesperTheCrownedRefusalEntity crowned && crowned.isAlive()) {
+			crowned.setTarget(owner);
+		} else if (entity instanceof VesperTheEveningStarEntity evening && evening.isAlive()) {
+			evening.setTarget(owner);
+		}
+	}
+
 	private static BlockPos arenaCenter(ServerPlayer player) {
 		int id = ChamberOfWillManager.get(player.getServer()).idFor(player.getUUID());
 		return new BlockPos(ARENA_X, ChamberOfWillManager.FLOOR_Y, id * ARENA_SPACING);
@@ -183,26 +216,28 @@ public final class VesperOrdealManager {
 			if (entity instanceof VesperTheCrownedRefusalEntity crowned && owner.equals(crowned.getOrdealOwner())) {
 				crowned.discard();
 			} else if (entity instanceof VesperTheEveningStarEntity evening && owner.equals(evening.getOrdealOwner())) {
+				VesperPhaseTwoCombat.cancel(evening);
 				evening.discard();
+			} else if (entity.getPersistentData().getBoolean("HemomancyVesperEncounterPuppet")) {
+				entity.discard();
 			}
 		}
 	}
 
 	@SubscribeEvent
-	public static void onLogout(PlayerEvent.PlayerLoggedOutEvent event) {
-		if (!(event.getEntity() instanceof ServerPlayer player)
-				|| !player.getPersistentData().contains(ACTIVE_BLOOM_KEY)) return;
-		abandonAttempt(player);
-	}
-
-	@SubscribeEvent
 	public static void onLogin(PlayerEvent.PlayerLoggedInEvent event) {
 		if (!(event.getEntity() instanceof ServerPlayer player)) return;
-		if (isActive(player)) {
+		boolean inChamber = player.level().dimension().equals(ChamberOfWillManager.CHAMBER_OF_WILL);
+		VesperOrdealRecoveryRules.Action action = VesperOrdealRecoveryRules.reconnectAction(
+				isActive(player), inChamber, false);
+		if (action == VesperOrdealRecoveryRules.Action.ABANDON) {
 			abandonAttempt(player);
-			if (player.level().dimension().equals(ChamberOfWillManager.CHAMBER_OF_WILL)) {
-				ChamberOfWillManager.get(player.getServer()).exitChamber(player);
-			}
+		} else if (action == VesperOrdealRecoveryRules.Action.RESPAWN) {
+			ServerLevel arena = (ServerLevel) player.level();
+			BlockPos center = arenaCenter(player);
+			ensureArena(arena, center);
+			PacketHandler.sendToPlayer(player, PacketSyncVesperFightScene.activate(center));
+			reconcileArenaBoss(arena, player, center);
 		}
 		givePendingMemory(player);
 	}
@@ -212,5 +247,13 @@ public final class VesperOrdealManager {
 		if (!(event.getEntity() instanceof ServerPlayer player)
 				|| !player.getPersistentData().contains(ACTIVE_BLOOM_KEY)) return;
 		abandonAttempt(player);
+	}
+
+	@SubscribeEvent
+	public static void onPlayerChangedDimension(PlayerEvent.PlayerChangedDimensionEvent event) {
+		if (!(event.getEntity() instanceof ServerPlayer player) || !isActive(player)) return;
+		if (!event.getTo().equals(ChamberOfWillManager.CHAMBER_OF_WILL)) {
+			abandonAttempt(player);
+		}
 	}
 }

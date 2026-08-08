@@ -19,6 +19,7 @@ public class HemoClientConfig {
 	public static ModConfigSpec.DoubleValue CARDINAL_RITE_FOG_VERTICAL_OFFSET;
 	public static ModConfigSpec.BooleanValue RENDER_OCULIFLORA_REVEAL;
 	public static ModConfigSpec.EnumValue<LowtideRuinStructureQuality> LOWTIDE_RUIN_STRUCTURE_QUALITY;
+	public static ModConfigSpec.BooleanValue USE_LOW_POLY_VESPER_FIGHT_OUTER_RING;
 
 	public enum LowtideRuinStructureQuality {
 		HIGH,
@@ -97,6 +98,10 @@ public class HemoClientConfig {
 				.comment("Controls Mnemonic Lowtide Chamber ruin structure density. HIGH uses the full distant OBJ ruin field, LOW uses fewer OBJ ruin clusters, and OFF disables the ruin structures while keeping the Lowtide sky, lake, and fog.")
 				.defineEnum("lowtideRuinStructureQuality", LowtideRuinStructureQuality.HIGH);
 
+		USE_LOW_POLY_VESPER_FIGHT_OUTER_RING = CLIENT_BUILDER
+				.comment("Use simplified low-poly stone faces for the distant Vesper fight floor. Disable to extend the subdivided high-resolution stone treatment through the full fading outer ring.")
+				.define("useLowPolyVesperFightOuterRing", true);
+
 		CLIENT_BUILDER.pop();
 	}
 
@@ -104,6 +109,11 @@ public class HemoClientConfig {
 		return LOWTIDE_RUIN_STRUCTURE_QUALITY == null
 				? LowtideRuinStructureQuality.HIGH
 				: LOWTIDE_RUIN_STRUCTURE_QUALITY.get();
+	}
+
+	public static boolean useLowPolyVesperFightOuterRing() {
+		return USE_LOW_POLY_VESPER_FIGHT_OUTER_RING == null
+				|| USE_LOW_POLY_VESPER_FIGHT_OUTER_RING.get();
 	}
 
 }

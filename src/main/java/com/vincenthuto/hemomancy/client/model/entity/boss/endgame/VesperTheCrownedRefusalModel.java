@@ -3,6 +3,7 @@ package com.vincenthuto.hemomancy.client.model.entity.boss.endgame;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.vincenthuto.hemomancy.Hemomancy;
+import com.vincenthuto.hemomancy.common.entity.boss.endgame.VesperPhaseTransitionRules;
 import com.vincenthuto.hemomancy.common.entity.boss.endgame.VesperTheCrownedRefusalEntity;
 import com.vincenthuto.hutoslib.client.HLClientUtils;
 import net.minecraft.client.model.EntityModel;
@@ -13,6 +14,12 @@ import net.minecraft.client.model.geom.builders.*;
 import net.minecraft.util.Mth;
 
 public class VesperTheCrownedRefusalModel  extends EntityModel<VesperTheCrownedRefusalEntity> {
+    private static final float DEFAULT_RIDER_Y = -19.0F;
+    private static final float VULNERABLE_RIDER_Y = -12.0F;
+    private static final float VULNERABLE_MOUNT_PITCH = 0.32F;
+    private static final float DEFAULT_MOUNT_Y = -11.0F;
+    private static final float DEFAULT_MOUNT_Z = 2.2F;
+
     // This layer location should be baked with EntityRendererProvider.Context in the entity renderer and passed into this model's constructor
     public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(Hemomancy.rloc("vesper_crowned_refusal"), "main");
     public static LayerDefinition createBodyLayer() {
@@ -589,6 +596,7 @@ public class VesperTheCrownedRefusalModel  extends EntityModel<VesperTheCrownedR
     }
     private final ModelPart whole;
     private final ModelPart upperBody;
+    private final ModelPart hasturForm;
 
     private final ModelPart lowerBody;
     private final ModelPart head;
@@ -611,13 +619,16 @@ public class VesperTheCrownedRefusalModel  extends EntityModel<VesperTheCrownedR
     private final ModelPart tail3;
     private final ModelPart tail4;
     private final ModelPart tail5;
+    private boolean transitioning;
+    private float mountOpacity = 1.0F;
+    private float mountScale = 1.0F;
 
     public VesperTheCrownedRefusalModel(ModelPart root) {
         this.whole = root.getChild("whole");
         this.upperBody = root.getChild("upperBody");
         this.lowerBody = root.getChild("lowerBody");
-        ModelPart hasturForm = this.upperBody.getChild("hasturForm");
-        this.head = hasturForm.getChild("head");
+        this.hasturForm = this.upperBody.getChild("hasturForm");
+        this.head = this.hasturForm.getChild("head");
 
         this.fLLeg = this.lowerBody.getChild("fLLeg");
         ModelPart fLHip = this.fLLeg.getChild("fLHip");
@@ -653,14 +664,68 @@ public class VesperTheCrownedRefusalModel  extends EntityModel<VesperTheCrownedR
     @Override
     public void renderToBuffer(PoseStack poseStack, VertexConsumer vertexConsumer, int packedLight, int packedOverlay, int packedColor) {
         whole.render(poseStack, vertexConsumer, packedLight, packedOverlay, packedColor);
+        if (!transitioning) {
+            upperBody.render(poseStack, vertexConsumer, packedLight, packedOverlay, packedColor);
+            lowerBody.render(poseStack, vertexConsumer, packedLight, packedOverlay, packedColor);
+            return;
+        }
+        renderVesperOnly(poseStack, vertexConsumer, packedLight, packedOverlay, packedColor);
+        if (mountOpacity > 0.01F) {
+            int baseAlpha = packedColor >>> 24;
+            int mountColor = (Mth.clamp(Math.round(baseAlpha * mountOpacity), 0, 255) << 24)
+                    | (packedColor & 0x00FFFFFF);
+            renderMountAssembly(poseStack, vertexConsumer, packedLight, packedOverlay, mountColor);
+        }
+    }
+
+    public void renderVesperOnly(PoseStack poseStack, VertexConsumer vertexConsumer,
+            int packedLight, int packedOverlay, int packedColor) {
+        poseStack.pushPose();
+        upperBody.translateAndRotate(poseStack);
+        hasturForm.render(poseStack, vertexConsumer, packedLight, packedOverlay, packedColor);
+        poseStack.popPose();
+    }
+
+    public void renderMountAssembly(PoseStack poseStack, VertexConsumer vertexConsumer,
+            int packedLight, int packedOverlay, int packedColor) {
+        boolean vesperVisible = hasturForm.visible;
+        float oldXScale = upperBody.xScale;
+        float oldYScale = upperBody.yScale;
+        float oldZScale = upperBody.zScale;
+        hasturForm.visible = false;
+        upperBody.xScale = mountScale;
+        upperBody.yScale = Math.max(0.02F, mountScale * 0.72F);
+        upperBody.zScale = mountScale;
         upperBody.render(poseStack, vertexConsumer, packedLight, packedOverlay, packedColor);
         lowerBody.render(poseStack, vertexConsumer, packedLight, packedOverlay, packedColor);
+        upperBody.xScale = oldXScale;
+        upperBody.yScale = oldYScale;
+        upperBody.zScale = oldZScale;
+        hasturForm.visible = vesperVisible;
     }
 
     @Override
     public void setupAnim(VesperTheCrownedRefusalEntity entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
         netHeadYaw = Mth.wrapDegrees(netHeadYaw);
         float frame = entity.tickCount + HLClientUtils.getPartialTicks();
+		this.upperBody.y = DEFAULT_RIDER_Y;
+		this.upperBody.xRot = 0.0F;
+        this.upperBody.xScale = 1.0F;
+        this.upperBody.yScale = 1.0F;
+        this.upperBody.zScale = 1.0F;
+        this.hasturForm.x = 0.0F;
+        this.hasturForm.y = 0.0F;
+        this.hasturForm.z = 0.0F;
+        this.hasturForm.xRot = 0.0F;
+        this.hasturForm.zRot = 0.0F;
+        this.lowerBody.y = DEFAULT_MOUNT_Y;
+        this.lowerBody.z = DEFAULT_MOUNT_Z;
+        this.lowerBody.xScale = 1.0F;
+        this.lowerBody.yScale = 1.0F;
+        this.lowerBody.zScale = 1.0F;
+        this.transitioning = entity.getTransitionTick() > 0;
+        this.mountOpacity = 1.0F;
+        this.mountScale = 1.0F;
         this.head.xRot = headPitch * ((float) Math.PI / 180F) * 0.5f;
         this.head.yRot = netHeadYaw * ((float) Math.PI / 180F) * 0.5f;
 
@@ -693,5 +758,49 @@ public class VesperTheCrownedRefusalModel  extends EntityModel<VesperTheCrownedR
         this.tail3.yRot = (float) (Math.sin((frame) * 0.13f) * 0.1225);
         this.tail4.yRot = -(float) (Math.sin((frame) * 0.13f) * 0.1325) + 45;
         this.tail5.yRot = -(float) (Math.sin((frame) * 0.13f) * 0.12325) + 45;
+
+		if (entity.getAttack() == com.vincenthuto.hemomancy.common.entity.boss.endgame.VesperPhaseOneAttack.STINGER_SCRIPT) {
+			float strike = Mth.sin(Math.min(1.0F, entity.getAttackTick() / 28.0F) * Mth.PI);
+			this.tail.xRot = -0.35F * strike;
+			this.tail2.xRot = -0.45F * strike;
+			this.tail3.xRot = -0.55F * strike;
+		}
+		if (entity.getAttack() == com.vincenthuto.hemomancy.common.entity.boss.endgame.VesperPhaseOneAttack.BROOD_TRAMPLE) {
+			this.lowerBody.xRot = entity.getAttackTick() < 38 ? -0.12F : 0.18F;
+		} else {
+			this.lowerBody.xRot = 0.0F;
+		}
+		if (entity.getActiveAnchor() >= 0) {
+			this.upperBody.y = VULNERABLE_RIDER_Y;
+			this.upperBody.xRot = 0.18F;
+			this.lowerBody.xRot = VULNERABLE_MOUNT_PITCH;
+			this.upperBody.zRot = Mth.sin(frame * 0.2F) * 0.035F;
+		} else {
+			this.upperBody.zRot = 0.0F;
+		}
+        if (transitioning) {
+            float transitionFrame = entity.getTransitionTick() + HLClientUtils.getPartialTicks();
+            float dismount = smooth(VesperPhaseTransitionRules.dismountProgress(transitionFrame));
+            float absorption = smooth(VesperPhaseTransitionRules.absorptionProgress(transitionFrame));
+            float groundedOffset = dismount * (1.0F - absorption);
+            this.upperBody.xRot = 0.0F;
+            this.upperBody.zRot = 0.0F;
+            this.hasturForm.y = 18.0F * groundedOffset;
+            this.hasturForm.z = -14.0F * groundedOffset;
+            this.hasturForm.xRot = -0.16F * Mth.sin(dismount * Mth.PI)
+                    - 0.18F * Mth.sin(absorption * Mth.PI);
+            this.hasturForm.zRot = 0.08F * Mth.sin(dismount * Mth.PI);
+            this.mountOpacity = 1.0F - absorption;
+            this.mountScale = Math.max(0.03F, 1.0F - absorption * 0.97F);
+            this.lowerBody.y = Mth.lerp(absorption, DEFAULT_MOUNT_Y, DEFAULT_RIDER_Y);
+            this.lowerBody.z = Mth.lerp(absorption, DEFAULT_MOUNT_Z, -19.0F);
+            this.lowerBody.xScale = mountScale;
+            this.lowerBody.yScale = Math.max(0.015F, mountScale * 0.58F);
+            this.lowerBody.zScale = mountScale;
+        }
+    }
+
+    private static float smooth(float progress) {
+        return progress * progress * (3.0F - 2.0F * progress);
     }
 }

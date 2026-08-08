@@ -1,9 +1,9 @@
 package com.vincenthuto.hemomancy.common.entity.boss.endgame;
 
+import com.vincenthuto.hemomancy.client.particle.factory.AbsorbedBloodCellParticleFactory;
 import com.vincenthuto.hemomancy.common.entity.mob.animal.FunglingEntity;
-import com.vincenthuto.hemomancy.common.entity.projectile.TrackingBloodOrbEntity;
 import com.vincenthuto.hemomancy.common.entity.summon.EntityIronSpike;
-import com.vincenthuto.hemomancy.common.entity.summon.MorphlingPolypEntity;
+import com.vincenthuto.hemomancy.common.entity.summon.BoundPuppeteerSummon;
 import com.vincenthuto.hemomancy.common.init.BlockInit;
 import com.vincenthuto.hemomancy.common.init.EntityInit;
 import com.vincenthuto.hemomancy.common.init.SoundInit;
@@ -11,6 +11,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.core.particles.DustParticleOptions;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -30,44 +31,128 @@ import net.minecraft.world.level.Level.ExplosionInteraction;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
+import net.neoforged.neoforge.entity.PartEntity;
 
 import java.util.List;
+import org.joml.Vector3f;
+import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 
 final class EndgameBossActions {
+	private static final String VESPER_PUPPET_TAG = "HemomancyVesperPuppet";
+	private static final int VESPER_PUPPET_MUSTER_SIZE = 3;
+	private static final int VESPER_PUPPET_CAP = 6;
 	private static final double VESPER_ATTACK_RANGE = 64.0D;
 	private static final double MYCOPHANT_ATTACK_RANGE = 64.0D;
 
 	private EndgameBossActions() {
 	}
 
-	static void tickVesperPattern(Monster boss, int addBonus) {
+	static boolean tickVesperPhaseOneAttack(VesperTheCrownedRefusalEntity boss,
+			VesperPhaseOneAttack attack, int attackTick) {
 		LivingEntity target = acquireTarget(boss, VESPER_ATTACK_RANGE);
-		if (target == null) {
-			return;
+		if (target == null) return attackTick > 40;
+		boss.getLookControl().setLookAt(target, 30.0F, 30.0F);
+		switch (attack) {
+			case ROYAL_SCUTTLE -> {
+				boss.getNavigation().stop();
+				if (attackTick < 25) telegraphLine(boss, target, 0.85F, 0.02F, 0.02F);
+				if (attackTick == 25) {
+					Vec3 rush = target.position().subtract(boss.position()).multiply(1.0D, 0.0D, 1.0D);
+					if (rush.lengthSqr() > 0.01D) boss.setDeltaMovement(rush.normalize().scale(1.65D).add(0.0D, 0.08D, 0.0D));
+					boss.playSound(SoundEvents.RAVAGER_ROAR, 1.5F, 0.65F);
+				}
+				if (attackTick >= 25 && attackTick <= 42) hurtNearby(boss, 3.7D, 10.0F, 0.8D);
+				return attackTick >= 62;
+			}
+			case PINCER_VICE -> {
+				boss.getNavigation().stop();
+				if (attackTick < 24) telegraphRing(boss, 4.2D, 0.8F, 0.02F, 0.02F);
+				if (attackTick == 24 || attackTick == 38) hurtNearbyArc(boss, target, 5.2D, 110.0D, 12.0F);
+				return attackTick >= 58;
+			}
+			case STINGER_SCRIPT -> {
+				boss.getNavigation().stop();
+				if (attackTick >= 16 && attackTick <= 52 && attackTick % 12 == 4) summonGripSpikes(boss, target, 3);
+				return attackTick >= 68;
+			}
+			case BROOD_TRAMPLE -> {
+				if (attackTick < 22) telegraphRing(boss, 5.5D, 0.65F, 0.0F, 0.0F);
+				if (attackTick == 22) boss.setDeltaMovement(boss.getDeltaMovement().add(0.0D, 0.75D, 0.0D));
+				if (attackTick == 38) {
+					hurtNearby(boss, 6.0D, 13.0F, 1.15D);
+					if (boss.level() instanceof ServerLevel server) sendParticles(server, ParticleTypes.CRIMSON_SPORE, boss, 90, 5.0D, 0.2D, 5.0D, 0.03D);
+				}
+				return attackTick >= 62;
+			}
+			case PUPPET_MUSTER -> {
+				boss.getNavigation().stop();
+				if (attackTick < 32) telegraphRing(boss, 2.5D, 0.5F, 0.0F, 0.0F);
+				if (attackTick == 32) summonVesperPuppet(boss, target);
+				return attackTick >= 68;
+			}
+			default -> { return true; }
 		}
+	}
 
-		chaseTarget(boss, target, 1.15D, 36.0D);
-		float regen = EndgameBossCombatRules.regenerationPerTick(boss.getHealth(), boss.getMaxHealth());
-		if (regen > 0.0F) {
-			boss.heal(regen);
+	static void tickExposedThroneAnchor(VesperTheCrownedRefusalEntity boss, int anchor, float damage) {
+		if (!(boss.level() instanceof ServerLevel server)) return;
+		if (boss.tickCount % 3 == 0) {
+			PartEntity<?> part = boss.getParts()[anchor];
+			float intensity = 0.7F + 0.6F * damage / VesperCombatRules.ANCHOR_MAX_DAMAGE;
+			server.sendParticles(new DustParticleOptions(new Vector3f(0.85F, 0.02F, 0.03F), intensity),
+					part.getX(), part.getY() + 0.8D, part.getZ(), 8, 0.35D, 0.5D, 0.35D, 0.0D);
+			outlineExposedThroneAnchor(server, part, intensity);
 		}
+	}
 
-		if (EndgameBossCombatRules.shouldTrigger(boss.tickCount, boss.getId() % 5, 50,
-				boss.getHealth(), boss.getMaxHealth())) {
-			spawnTrackingOrb(boss, target);
-		}
-		if (EndgameBossCombatRules.shouldTrigger(boss.tickCount, boss.getId() % 9, 120,
-				boss.getHealth(), boss.getMaxHealth())) {
-			if ((boss.tickCount / 120 + boss.getId()) % 2 == 0) {
-				summonGripSpikes(boss, target, 4 + addBonus);
-			} else {
-				summonPolypAid(boss, target, 2 + addBonus);
+	private static void outlineExposedThroneAnchor(ServerLevel server, PartEntity<?> part, float intensity) {
+		DustParticleOptions outline = new DustParticleOptions(new Vector3f(1.0F, 0.08F, 0.02F), intensity);
+		double halfWidth = part.getBbWidth() * 0.5D;
+		double[] levels = { part.getY() + 0.05D, part.getY() + part.getBbHeight() * 0.5D,
+				part.getY() + part.getBbHeight() - 0.05D };
+		double[][] perimeter = {
+				{ -halfWidth, -halfWidth }, { 0.0D, -halfWidth }, { halfWidth, -halfWidth },
+				{ halfWidth, 0.0D }, { halfWidth, halfWidth }, { 0.0D, halfWidth },
+				{ -halfWidth, halfWidth }, { -halfWidth, 0.0D }
+		};
+		for (double y : levels) {
+			for (double[] point : perimeter) {
+				server.sendParticles(outline, part.getX() + point[0], y, part.getZ() + point[1],
+						1, 0.0D, 0.0D, 0.0D, 0.0D);
 			}
 		}
-		if (boss.onGround() && EndgameBossCombatRules.shouldTrigger(boss.tickCount, boss.getId() % 7, 100,
-				boss.getHealth(), boss.getMaxHealth())) {
-			summonGripSpikes(boss, target, 3 + addBonus);
+		server.sendParticles(ParticleTypes.ELECTRIC_SPARK, part.getX(), part.getY() + part.getBbHeight() * 0.5D,
+				part.getZ(), 6, halfWidth * 0.45D, part.getBbHeight() * 0.35D, halfWidth * 0.45D, 0.01D);
+	}
+
+	static void breakThroneAnchor(VesperTheCrownedRefusalEntity boss, int anchor) {
+		if (!(boss.level() instanceof ServerLevel server)) return;
+		PartEntity<?> part = boss.getParts()[anchor];
+		server.sendParticles(ParticleTypes.CRIMSON_SPORE, part.getX(), part.getY(), part.getZ(),
+				70, 0.8D, 0.8D, 0.8D, 0.08D);
+		server.playSound(null, part.blockPosition(), SoundEvents.ANVIL_DESTROY, SoundSource.HOSTILE, 1.5F, 0.65F);
+	}
+
+	static void tickVesperTransformation(VesperTheCrownedRefusalEntity boss, int tick) {
+		if (!(boss.level() instanceof ServerLevel server)) return;
+		float absorption = VesperPhaseTransitionRules.absorptionProgress(tick);
+		int count = tick % 20 == 0 ? 70 : 8;
+		sendParticles(server, ParticleTypes.CRIMSON_SPORE, boss, count, 2.8D, 2.2D, 2.8D, 0.08D);
+		if (absorption <= 0.0F) {
+			sendParticles(server, ParticleTypes.ASH, boss, count, 3.2D, 2.5D, 3.2D, 0.04D);
+		} else {
+			server.sendParticles(AbsorbedBloodCellParticleFactory.createData(ParticleColor.BLOOD),
+					boss.getX(), boss.getY() + boss.getBbHeight() * 0.68D, boss.getZ(),
+					12, 2.8D * (1.0D - absorption * 0.65D), 1.5D, 2.8D * (1.0D - absorption * 0.65D), 0.12D);
 		}
+		if (tick % 30 == 0) server.playSound(null, boss.blockPosition(), SoundEvents.SCULK_SHRIEKER_SHRIEK,
+				SoundSource.HOSTILE, 1.2F, 0.55F + tick / 300.0F);
+	}
+
+	static void clearVesperPuppets(Mob boss) {
+		if (!(boss.level() instanceof ServerLevel server)) return;
+		server.getEntitiesOfClass(Mob.class, boss.getBoundingBox().inflate(72.0D),
+				mob -> mob.getTags().contains(VESPER_PUPPET_TAG)).forEach(Entity::discard);
 	}
 
 	static void tickMycophantPattern(MycophantEntity boss) {
@@ -105,6 +190,22 @@ final class EndgameBossActions {
 			return;
 		}
 		RandomSource random = boss.level().getRandom();
+		if (boss instanceof VesperTheCrownedRefusalEntity crowned
+				&& VesperPhaseTransitionRules.isAbsorbing(crowned.getTransitionTick())) {
+			Vec3 target = crowned.position().add(0.0D, crowned.getBbHeight() * 0.68D, 0.0D);
+			float progress = VesperPhaseTransitionRules.absorptionProgress(crowned.getTransitionTick());
+			for (int i = 0; i < 5; i++) {
+				double radius = crowned.getBbWidth() * (0.48D - progress * 0.22D);
+				double angle = random.nextDouble() * Mth.TWO_PI;
+				Vec3 source = crowned.position().add(Mth.cos((float) angle) * radius,
+						0.3D + random.nextDouble() * crowned.getBbHeight() * 0.48D,
+						Mth.sin((float) angle) * radius);
+				Vec3 sourceOffset = source.subtract(target);
+				boss.level().addParticle(AbsorbedBloodCellParticleFactory.createData(ParticleColor.BLOOD),
+						target.x, target.y, target.z, sourceOffset.x, sourceOffset.y, sourceOffset.z);
+			}
+			return;
+		}
 		for (int i = 0; i < 2; i++) {
 			double x = boss.getX() + (random.nextDouble() - 0.5D) * boss.getBbWidth();
 			double y = boss.getY() + random.nextDouble() * boss.getBbHeight();
@@ -201,20 +302,6 @@ final class EndgameBossActions {
 		}
 	}
 
-	private static void spawnTrackingOrb(Monster boss, LivingEntity target) {
-		if (!(boss.level() instanceof ServerLevel server)) {
-			return;
-		}
-		TrackingBloodOrbEntity orb = new TrackingBloodOrbEntity(boss, true);
-		Vec3 look = boss.getLookAngle();
-		orb.setPos(boss.getX() + look.x * 1.4D, boss.getY() + boss.getBbHeight() * 0.72D, boss.getZ() + look.z * 1.4D);
-		orb.setTarget(target);
-		if (orb.findTarget()) {
-			server.addFreshEntity(orb);
-			boss.playSound(SoundInit.ENTITY_VESPER_HIT.get(), 1.2F, 0.85F + server.getRandom().nextFloat() * 0.25F);
-		}
-	}
-
 	private static void summonGripSpikes(Monster boss, LivingEntity target, int count) {
 		if (!(boss.level() instanceof ServerLevel server)) {
 			return;
@@ -235,22 +322,87 @@ final class EndgameBossActions {
 				SoundEvents.IRON_GOLEM_REPAIR, SoundSource.HOSTILE, 1.0F, 0.5F);
 	}
 
-	private static void summonPolypAid(Monster boss, LivingEntity target, int count) {
-		if (!(boss.level() instanceof ServerLevel server)) {
-			return;
-		}
-		RandomSource random = server.getRandom();
+	private static void summonVesperPuppet(VesperTheCrownedRefusalEntity boss, LivingEntity target) {
+		if (!(boss.level() instanceof ServerLevel server)) return;
+		long active = server.getEntitiesOfClass(Mob.class, boss.getBoundingBox().inflate(64.0D),
+				mob -> mob.getTags().contains(VESPER_PUPPET_TAG)
+						&& mob.getPersistentData().hasUUID(VesperEncounterPuppetEvents.BOSS_KEY)
+						&& boss.getUUID().equals(mob.getPersistentData().getUUID(VesperEncounterPuppetEvents.BOSS_KEY)))
+				.stream().count();
+		int count = Math.min(VESPER_PUPPET_MUSTER_SIZE, Math.max(0, VESPER_PUPPET_CAP - (int) active));
 		for (int i = 0; i < count; i++) {
-			MorphlingPolypEntity polyp = EntityInit.morphling_polyp.get().create(server);
-			if (polyp == null) {
-				continue;
+			int kind = Math.floorMod(boss.tickCount / 100 + i, 4);
+			Mob puppet = switch (kind) {
+				case 0 -> EntityInit.gorebound_hulk.get().create(server);
+				case 1 -> EntityInit.marrow_spitter.get().create(server);
+				case 2 -> EntityInit.veinwing_vulture.get().create(server);
+				default -> EntityInit.mnemonist_puppet.get().create(server);
+			};
+			if (!(puppet instanceof BoundPuppeteerSummon bound)) continue;
+			BlockPos pos = randomNearbyGround(server, boss.blockPosition(), 6);
+			puppet.moveTo(pos.getX() + 0.5D, pos.getY(), pos.getZ() + 0.5D, boss.getYRot(), 0.0F);
+			bound.hemomancy$setTrialSummon(true);
+			bound.hemomancy$setTrialCasterUUID(boss.getOrdealOwner());
+			bound.hemomancy$setOwnerUUID(boss.getUUID());
+			puppet.addTag(VESPER_PUPPET_TAG);
+			puppet.getPersistentData().putBoolean(VesperEncounterPuppetEvents.PUPPET_KEY, true);
+			puppet.getPersistentData().putUUID(VesperEncounterPuppetEvents.BOSS_KEY, boss.getUUID());
+			puppet.setTarget(target);
+			puppet.setPersistenceRequired();
+			server.addFreshEntity(puppet);
+			server.playSound(null, pos, SoundEvents.WARDEN_HEARTBEAT, SoundSource.HOSTILE, 0.9F,
+					1.25F + i * 0.08F);
+		}
+	}
+
+	private static void telegraphLine(Mob boss, LivingEntity target, float red, float green, float blue) {
+		if (!(boss.level() instanceof ServerLevel server) || boss.tickCount % 2 != 0) return;
+		Vec3 start = boss.position().add(0.0D, 0.1D, 0.0D);
+		Vec3 delta = target.position().subtract(start).multiply(1.0D, 0.0D, 1.0D);
+		if (delta.lengthSqr() < 0.01D) return;
+		Vec3 step = delta.normalize().scale(0.7D);
+		DustParticleOptions dust = new DustParticleOptions(new Vector3f(red, green, blue), 0.8F);
+		for (int i = 1; i <= 18; i++) {
+			Vec3 point = start.add(step.scale(i));
+			server.sendParticles(dust, point.x, point.y, point.z, 1, 0.0D, 0.0D, 0.0D, 0.0D);
+		}
+	}
+
+	private static void telegraphRing(Mob boss, double radius, float red, float green, float blue) {
+		if (!(boss.level() instanceof ServerLevel server) || boss.tickCount % 2 != 0) return;
+		DustParticleOptions dust = new DustParticleOptions(new Vector3f(red, green, blue), 0.75F);
+		for (int i = 0; i < 28; i++) {
+			double angle = Mth.TWO_PI * i / 28.0D;
+			server.sendParticles(dust, boss.getX() + Math.cos(angle) * radius, boss.getY() + 0.08D,
+					boss.getZ() + Math.sin(angle) * radius, 1, 0.0D, 0.0D, 0.0D, 0.0D);
+		}
+	}
+
+	private static void hurtNearby(Mob boss, double radius, float damage, double push) {
+		AABB area = boss.getBoundingBox().inflate(radius, 2.0D, radius);
+		for (LivingEntity living : boss.level().getEntitiesOfClass(LivingEntity.class, area,
+				entity -> entity.isAlive() && entity != boss && !(entity instanceof BoundPuppeteerSummon))) {
+			if (!living.hurt(boss.damageSources().mobAttack(boss), damage)) continue;
+			Vec3 away = living.position().subtract(boss.position()).multiply(1.0D, 0.0D, 1.0D);
+			if (away.lengthSqr() > 0.01D) {
+				away = away.normalize().scale(push);
+				living.push(away.x, 0.28D, away.z);
 			}
-			BlockPos pos = randomNearbyGround(server, boss.blockPosition(), 5);
-			polyp.moveTo(pos.getX() + 0.5D, pos.getY(), pos.getZ() + 0.5D,
-					random.nextFloat() * 360.0F, 0.0F);
-			polyp.finalizeSpawn(server, server.getCurrentDifficultyAt(pos), MobSpawnType.MOB_SUMMONED, null);
-			polyp.setTarget(target);
-			server.addFreshEntity(polyp);
+		}
+	}
+
+	private static void hurtNearbyArc(Mob boss, LivingEntity target, double radius, double degrees, float damage) {
+		Vec3 facing = target.position().subtract(boss.position()).multiply(1.0D, 0.0D, 1.0D);
+		if (facing.lengthSqr() < 0.01D) facing = boss.getLookAngle().multiply(1.0D, 0.0D, 1.0D);
+		facing = facing.normalize();
+		double minimumDot = Math.cos(Math.toRadians(degrees * 0.5D));
+		for (LivingEntity living : boss.level().getEntitiesOfClass(LivingEntity.class,
+				boss.getBoundingBox().inflate(radius), entity -> entity.isAlive() && entity != boss
+						&& !(entity instanceof BoundPuppeteerSummon))) {
+			Vec3 toward = living.position().subtract(boss.position()).multiply(1.0D, 0.0D, 1.0D);
+			if (toward.lengthSqr() > 0.01D && facing.dot(toward.normalize()) >= minimumDot) {
+				living.hurt(boss.damageSources().mobAttack(boss), damage);
+			}
 		}
 	}
 

@@ -3,7 +3,7 @@ package com.vincenthuto.hemomancy.client.event;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.client.model.armor.*;
 import com.vincenthuto.hemomancy.client.model.armor.BloodLustArmorModel.EnumBloodLustMaskTypes;
-import com.vincenthuto.hemomancy.client.model.entity.boss.Hemorath.HemorathModel;
+import com.vincenthuto.hemomancy.client.model.entity.boss.hemorath.HemorathModel;
 import com.vincenthuto.hemomancy.client.model.entity.boss.annetta.AnnettaKnowlesModel;
 import com.vincenthuto.hemomancy.client.model.entity.boss.annetta.LatentAnnettaInfectionModel;
 import com.vincenthuto.hemomancy.client.model.entity.boss.annetta.StainedPriestessModel;

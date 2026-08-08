@@ -517,8 +517,8 @@ public final class EntityManipulationEffects {
 		for (int dLat = -1; dLat <= 1; dLat++) {
 			for (int dUp = 0; dUp < 3; dUp++) {
 				BlockPos pos = base.relative(lateral, dLat).above(dUp);
-				if (TemporaryIceManager.place(serverLevel, pos, Blocks.PACKED_ICE.defaultBlockState(),
-						420 + context.level().random.nextInt(120))) {
+				if (TemporaryIceManager.placeOwned(serverLevel, pos, Blocks.PACKED_ICE.defaultBlockState(),
+						420 + context.level().random.nextInt(120), context.caster().getUUID())) {
 					placed++;
 				}
 			}
