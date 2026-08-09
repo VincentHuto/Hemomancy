@@ -32,7 +32,7 @@ public class MorphlingIncubatorMenu extends AbstractContainerMenu {
 	public static final int BLOOD_SLOT = 6;        // Blood flask / gourd slot
 	public static final int FLASK_OUTPUT_SLOT = 7;  // Empty flask output
 	public static final int SLOT_COUNT = 8;
-	public static final int DATA_COUNT = 3;        // progress, totalTime, mode
+	public static final int DATA_COUNT = 4;        // progress, totalTime, mode, enzyme feed status
 
 	private static MorphlingIncubatorBlockEntity getBlockEntity(final Inventory playerInv, final FriendlyByteBuf data) {
 		Objects.requireNonNull(playerInv, "playerInventory cannot be null");
@@ -128,6 +128,10 @@ public class MorphlingIncubatorMenu extends AbstractContainerMenu {
 	 */
 	public int getMode() {
 		return this.dataAccess.get(2);
+	}
+
+	public int getEnzymeFeedStatus() {
+		return this.dataAccess.get(3);
 	}
 
 	public MorphlingIncubatorBlockEntity getTe() {

@@ -30,6 +30,8 @@ public class BloodShotManip extends BloodManipulation {
 		Vector3 vector3f = new Vector3(vector3d);
 		vector3f.transform(quaternion);
 		BloodShotEntity shot = new BloodShotEntity(world, player, heldItemMainhand);
+		shot.setDamageTendency(getTend());
+		shot.setSecondaryDamageTendency(getSecondaryTend());
 		shot.shoot(vector3f.x, vector3f.y, vector3f.z, 4.5F, 1.0f);
 		world.addFreshEntity(shot);
 	}

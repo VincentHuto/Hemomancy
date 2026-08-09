@@ -17,7 +17,7 @@ public final class MorphlingStage4To8SourceTest {
 		winterShroudUsesCryptobiosisLastRite();
 		bootlaceUsesProximityWebNestInsteadOfHurtCocoon();
 		irontoothHasConservativeShedAndHusbandryHooks();
-		hungerConfigAndStackStateAreDormantByDefault();
+		hungerConfigAndStackStateAreActiveByDefault();
 		wildCradleStaffAndClientPipelinesAreRetargeted();
 		oldAnimalLanguageIsNotLeftInPlayerFacingMorphlingCode();
 	}
@@ -60,6 +60,7 @@ public final class MorphlingStage4To8SourceTest {
 
 	private static void irontoothHasConservativeShedAndHusbandryHooks() throws IOException {
 		String irontooth = read("com/vincenthuto/hemomancy/common/item/harbinger/morphlings/IrontoothMorphlingItem.java");
+		String effects = read("com/vincenthuto/hemomancy/common/init/EffectInit.java");
 		String events = read("com/vincenthuto/hemomancy/common/capability/player/harbinger/morphling/EquippedMorphlingEvents.java");
 		String iface = read("com/vincenthuto/hemomancy/common/item/harbinger/morphlings/IMorphling.java");
 		assertContains("block break hook interface", iface, "onEquippedBlockBreak");
@@ -67,13 +68,17 @@ public final class MorphlingStage4To8SourceTest {
 		assertContains("irontooth block break implementation", irontooth, "onEquippedBlockBreak");
 		assertContains("irontooth shed helper", irontooth, "tryShedUnderground");
 		assertContains("husbandry progress increments", irontooth, "addHusbandryProgress");
+		assertContains("burrower's instinct uses block-break speed", effects,
+				"addAttributeModifier(Attributes.BLOCK_BREAK_SPEED");
+		assertDoesNotContain("burrower's instinct no longer uses attack speed id", effects,
+				"burrowers_instinct_attack_speed");
 	}
 
-	private static void hungerConfigAndStackStateAreDormantByDefault() throws IOException {
+	private static void hungerConfigAndStackStateAreActiveByDefault() throws IOException {
 		String config = read("com/vincenthuto/hemomancy/config/HemoServerConfig.java");
 		String morphling = read("com/vincenthuto/hemomancy/common/item/harbinger/morphlings/MorphlingItem.java");
 		assertContains("hunger config field", config, "MORPHLING_HUNGER_ENABLED");
-		assertContains("hunger default false", config, "define(\"hungerEnabled\", false)");
+		assertContains("hunger default true", config, "define(\"hungerEnabled\", true)");
 		assertContains("husbandry quota config field", config, "MORPHLING_HUSBANDRY_STAGE_QUOTA");
 		assertContains("husbandry default zero", config, "defineInRange(\"husbandryStageQuota\", 0");
 		assertContains("last fed stack data", morphling, "LAST_FED_GAME_TIME_KEY");

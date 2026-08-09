@@ -20,8 +20,10 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.BossEvent;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityDimensions;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.Pose;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.FloatGoal;
@@ -58,6 +60,8 @@ public class VesperTheEveningStarEntity extends Monster {
 			VesperTheEveningStarEntity.class, EntityDataSerializers.INT);
 	private static final EntityDataAccessor<Boolean> DATA_RAGING = SynchedEntityData.defineId(
 			VesperTheEveningStarEntity.class, EntityDataSerializers.BOOLEAN);
+	private static final EntityDataAccessor<Integer> DATA_AWAKENING_TICK = SynchedEntityData.defineId(
+			VesperTheEveningStarEntity.class, EntityDataSerializers.INT);
 
     private int deathTicks;
 	private long tendencySeed;
@@ -94,6 +98,13 @@ public class VesperTheEveningStarEntity extends Monster {
 		builder.define(DATA_ACTION_TICK, 0);
 		builder.define(DATA_ACTION_VARIANT, 0);
 		builder.define(DATA_RAGING, false);
+		builder.define(DATA_AWAKENING_TICK, -1);
+	}
+
+	@Override
+	public void onSyncedDataUpdated(EntityDataAccessor<?> key) {
+		if (DATA_AWAKENING_TICK.equals(key)) refreshDimensions();
+		super.onSyncedDataUpdated(key);
 	}
 
     @Override
@@ -125,8 +136,13 @@ public class VesperTheEveningStarEntity extends Monster {
     public void aiStep() {
         super.aiStep();
         if (!this.level().isClientSide) {
-			if (isAwaitingAbsorption()) {
-				entityData.set(DATA_DOWNED_TICKS, getDownedTicks() + 1);
+			if (isAwakening()) {
+				tickAwakening();
+			} else if (isAwaitingAbsorption()) {
+				int downedTicks = getDownedTicks() + 1;
+				entityData.set(DATA_DOWNED_TICKS, downedTicks);
+				EndgameBossActions.tickVesperDefeat(this, downedTicks);
+				if (downedTicks == VesperCombatRules.DEFEAT_ANIMATION_TICKS) clearWeaponAction();
 				this.bossEvent.setProgress(1.0F - defeatAbsorptionProgress
 						/ VesperCombatRules.DEFEAT_ABSORPTION_REQUIRED);
 				this.setDeltaMovement(0.0D, this.getDeltaMovement().y, 0.0D);
@@ -140,7 +156,7 @@ public class VesperTheEveningStarEntity extends Monster {
     @Override
     public void tick() {
         super.tick();
-		if (!isAwaitingAbsorption()) EndgameBossActions.tickVesperClientParticles(this);
+		if (!isAwaitingAbsorption() && !isAwakening()) EndgameBossActions.tickVesperClientParticles(this);
     }
 
     @Override
@@ -187,6 +203,7 @@ public class VesperTheEveningStarEntity extends Monster {
 		tag.putInt("WeaponActionCooldown", actionCooldown);
 		tag.putInt("WeaponActionHitMask", actionHitMask);
 		tag.putBoolean("Raging", isRaging());
+		tag.putInt("AwakeningTick", getAwakeningTick());
 		tag.putDouble("WeaponAimX", lockedActionAim.x);
 		tag.putDouble("WeaponAimY", lockedActionAim.y);
 		tag.putDouble("WeaponAimZ", lockedActionAim.z);
@@ -215,6 +232,7 @@ public class VesperTheEveningStarEntity extends Monster {
 		actionCooldown = tag.getInt("WeaponActionCooldown");
 		actionHitMask = tag.getInt("WeaponActionHitMask");
 		entityData.set(DATA_RAGING, tag.getBoolean("Raging"));
+		entityData.set(DATA_AWAKENING_TICK, tag.contains("AwakeningTick") ? tag.getInt("AwakeningTick") : -1);
 		lockedActionAim = new Vec3(tag.getDouble("WeaponAimX"), tag.getDouble("WeaponAimY"),
 				tag.getDouble("WeaponAimZ"));
 		lockedActionOrigin = new Vec3(tag.getDouble("WeaponOriginX"), tag.getDouble("WeaponOriginY"),
@@ -222,12 +240,13 @@ public class VesperTheEveningStarEntity extends Monster {
 		if (isAwaitingAbsorption()) {
 			setNoAi(true);
 			ensureSilentArchonShame();
-		}
+		} else if (isAwakening()) setNoAi(true);
+		refreshDimensions();
 	}
 
 	@Override
 	protected void actuallyHurt(DamageSource source, float amount) {
-		if (isAwaitingAbsorption()) return;
+		if (isAwaitingAbsorption() || isAwakening()) return;
 		super.actuallyHurt(source, amount);
 		if (!level().isClientSide && getHealth() <= 0.0F) {
 			setHealth(1.0F);
@@ -237,7 +256,7 @@ public class VesperTheEveningStarEntity extends Monster {
 
 	@Override
 	public boolean hurt(DamageSource source, float amount) {
-		return !isAwaitingAbsorption() && super.hurt(source, amount);
+		return !isAwaitingAbsorption() && !isAwakening() && super.hurt(source, amount);
 	}
 
     @Override
@@ -298,6 +317,43 @@ public class VesperTheEveningStarEntity extends Monster {
 	public int getActionTick() { return entityData.get(DATA_ACTION_TICK); }
 	public int getActionVariant() { return entityData.get(DATA_ACTION_VARIANT); }
 	public boolean isRaging() { return entityData.get(DATA_RAGING); }
+	public boolean isAwakening() { return getAwakeningTick() >= 0; }
+	public int getAwakeningTick() { return entityData.get(DATA_AWAKENING_TICK); }
+	public float getAwakeningFrame(float partialTick) {
+		return isAwakening() ? getAwakeningTick() + partialTick
+				: VesperPhaseTransitionRules.AWAKENING_TOTAL_TICKS;
+	}
+
+	@Override
+	public EntityDimensions getDefaultDimensions(Pose pose) {
+		return super.getDefaultDimensions(pose)
+				.scale(VesperPhaseTransitionRules.awakeningScale(getAwakeningFrame(0.0F)));
+	}
+
+	public void beginAwakening() {
+		if (level().isClientSide) return;
+		entityData.set(DATA_AWAKENING_TICK, 0);
+		setNoAi(true);
+		navigation.stop();
+		setDeltaMovement(Vec3.ZERO);
+		refreshDimensions();
+	}
+
+	private void tickAwakening() {
+		int awakeningTick = getAwakeningTick() + 1;
+		entityData.set(DATA_AWAKENING_TICK, awakeningTick);
+		bossEvent.setProgress(1.0F);
+		navigation.stop();
+		setDeltaMovement(0.0D, getDeltaMovement().y, 0.0D);
+		refreshDimensions();
+		EndgameBossActions.tickVesperAwakening(this, awakeningTick);
+		if (VesperPhaseTransitionRules.isAwakeningComplete(awakeningTick)) {
+			entityData.set(DATA_AWAKENING_TICK, -1);
+			setNoAi(false);
+			refreshDimensions();
+			EndgameBossActions.finishVesperAwakening(this);
+		}
+	}
 	VesperWeaponAction getLastWeaponAction() { return lastWeaponAction; }
 	Vec3 getLockedActionAim() { return lockedActionAim; }
 	Vec3 getLockedActionOrigin() { return lockedActionOrigin; }
@@ -324,9 +380,11 @@ public class VesperTheEveningStarEntity extends Monster {
 	}
 
 	public boolean canBeAbsorbedBy(LivingEntity user) {
-		if (level().isClientSide) return isAwaitingAbsorption();
-		return isAwaitingAbsorption() && !ordealResolved && user instanceof ServerPlayer player
-				&& ordealOwner != null && ordealOwner.equals(player.getUUID());
+		if (level().isClientSide) return isAwaitingAbsorption()
+				&& VesperCombatRules.isDefeatAnimationComplete(getDownedTicks());
+		return user instanceof ServerPlayer player
+				&& VesperAbsorptionEligibilityRules.canAbsorb(isAwaitingAbsorption(), getDownedTicks(), ordealResolved,
+						ordealOwner, player.getUUID());
 	}
 
 	public float absorbWithBlood(ServerPlayer player, float progress) {
@@ -340,7 +398,7 @@ public class VesperTheEveningStarEntity extends Monster {
 	}
 
 	private void enterAwaitingAbsorption() {
-		VesperPhaseTwoCombat.cancel(this);
+		VesperPhaseTwoCombat.cancelForDefeat(this);
 		entityData.set(DATA_AWAITING_ABSORPTION, true);
 		entityData.set(DATA_DOWNED_TICKS, 0);
 		setHealth(1.0F);

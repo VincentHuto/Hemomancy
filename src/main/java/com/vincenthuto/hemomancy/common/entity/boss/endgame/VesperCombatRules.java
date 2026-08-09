@@ -10,7 +10,8 @@ import java.util.Map;
 import java.util.Random;
 
 public final class VesperCombatRules {
-	public static final int SIGIL_DISSOLVE_TICKS = 40;
+	public static final int DEFEAT_ANIMATION_TICKS = 40;
+	public static final int WEAPON_DISSOLVE_TICKS = 28;
 	public static final float DEFEAT_ABSORPTION_REQUIRED = 100.0F;
 	public static final float ANCHOR_MAX_DAMAGE = 40.0F;
 	private static final float[] ANCHOR_THRESHOLDS = { 0.72F, 0.42F, 0.12F };
@@ -72,8 +73,27 @@ public final class VesperCombatRules {
 		return maxHealth > 0.0F && health <= maxHealth * 0.60F;
 	}
 
-	public static float sigilDissolveAlpha(int downedTicks) {
-		return Math.max(0.0F, 1.0F - Math.max(0, downedTicks) / (float) SIGIL_DISSOLVE_TICKS);
+	public static float defeatRecoilProgress(float downedTicks) {
+		float phase = clamp(downedTicks / 6.0F);
+		return 1.0F - Math.abs(phase * 2.0F - 1.0F);
+	}
+
+	public static float defeatKneelProgress(float downedTicks) {
+		return smoothstep(clamp((downedTicks - 6.0F) / 26.0F));
+	}
+
+	public static float weaponDissolveProgress(float downedTicks) {
+		return smoothstep(clamp(downedTicks / WEAPON_DISSOLVE_TICKS));
+	}
+
+	public static float sigilFizzleProgress(float downedTicks, int sigilIndex) {
+		int reverseIndex = 7 - Math.max(0, Math.min(7, sigilIndex));
+		float startTick = 4.0F + reverseIndex * 4.0F;
+		return smoothstep(clamp((downedTicks - startTick) / 8.0F));
+	}
+
+	public static boolean isDefeatAnimationComplete(int downedTicks) {
+		return downedTicks >= DEFEAT_ANIMATION_TICKS;
 	}
 
 	public static float advanceDefeatAbsorption(float progress, float amount) {
@@ -83,6 +103,14 @@ public final class VesperCombatRules {
 
 	public static boolean isDefeatAbsorptionComplete(float progress) {
 		return progress >= DEFEAT_ABSORPTION_REQUIRED;
+	}
+
+	private static float clamp(float value) {
+		return Math.max(0.0F, Math.min(1.0F, value));
+	}
+
+	private static float smoothstep(float value) {
+		return value * value * (3.0F - 2.0F * value);
 	}
 
 	public static VesperPhaseOneAttack phaseOneAttack(int attackStep) {

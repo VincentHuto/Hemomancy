@@ -81,6 +81,7 @@ import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.phys.Vec3;
@@ -827,14 +828,15 @@ public class HemoCommand {
 	}
 
 	private static int getMorphlingStage(CommandSourceStack source, ServerPlayer player) {
-		ItemStack stack = getEquippedMorphlingStack(source, player);
-		if (stack.isEmpty()) {
+		MorphlingCommandTarget target = getMorphlingCommandTarget(source, player);
+		if (target == null) {
 			return 0;
 		}
+		ItemStack stack = target.stack();
 		int stage = MorphlingItem.getMaturityLevel(stack);
 		source.sendSuccess(() -> Component.literal("")
 				.append(Component.literal(player.getName().getString()).withStyle(ChatFormatting.GOLD))
-				.append(Component.literal(" equipped morphling: ").withStyle(ChatFormatting.GRAY))
+				.append(Component.literal(" " + target.description() + ": ").withStyle(ChatFormatting.GRAY))
 				.append(stack.getHoverName().copy().withStyle(ChatFormatting.DARK_GREEN))
 				.append(Component.literal(" stage "))
 				.append(Component.literal(stage + " - " + MorphlingItem.getMaturityName(stage))
@@ -855,62 +857,79 @@ public class HemoCommand {
 
 	private static int setMorphlingStage(CommandSourceStack source, ServerPlayer player, int stage) {
 		stage = Math.max(0, Math.min(stage, PrimalMorphlingRules.PRIMAL_LEVEL));
-		var cap = HemoCapabilityAccess.getEquippedMorphling(player)
-				.orElseThrow(IllegalStateException::new);
-		if (!cap.hasMorphling() || cap.getEquippedMorphling().isEmpty()) {
-			source.sendFailure(Component.literal(player.getName().getString() + " has no equipped morphling."));
+		MorphlingCommandTarget target = getMorphlingCommandTarget(source, player);
+		if (target == null) {
 			return 0;
 		}
-		ItemStack updated = cap.getEquippedMorphling().copy();
-		if (!(updated.getItem() instanceof MorphlingItem)) {
-			source.sendFailure(Component.literal("Equipped stack is not a morphling: ")
-					.append(updated.getHoverName()));
-			return 0;
-		}
-
-		ItemStack original = cap.getEquippedMorphling().copy();
+		ItemStack original = target.stack().copy();
+		ItemStack updated = original.copy();
 		applyMorphlingStage(updated, stage);
-		boolean sourceUpdated = writeBackEquippedMorphlingSource(player, original, updated);
-		cap.setEquippedMorphling(updated);
-		LastRiteHelper.armForMorphling(player, updated);
-		EquippedMorphlingEvents.syncToClient(player);
+		boolean sourceUpdated = false;
+		if (target.source() == MorphlingCommandRules.Source.EQUIPPED) {
+			var cap = HemoCapabilityAccess.getEquippedMorphling(player)
+					.orElseThrow(IllegalStateException::new);
+			sourceUpdated = writeBackEquippedMorphlingSource(player, original, updated);
+			cap.setEquippedMorphling(updated);
+			LastRiteHelper.armForMorphling(player, updated);
+			EquippedMorphlingEvents.syncToClient(player);
+		} else {
+			InteractionHand hand = target.source() == MorphlingCommandRules.Source.MAIN_HAND
+					? InteractionHand.MAIN_HAND : InteractionHand.OFF_HAND;
+			player.setItemInHand(hand, updated);
+			player.getInventory().setChanged();
+			player.containerMenu.broadcastChanges();
+		}
 		int actualStage = MorphlingItem.getMaturityLevel(updated);
+		boolean jarUpdated = sourceUpdated;
 		source.sendSuccess(() -> Component.literal("Set ")
 				.append(Component.literal(player.getName().getString()).withStyle(ChatFormatting.GOLD))
-				.append(Component.literal(" equipped morphling to stage "))
+				.append(Component.literal(" " + target.description() + " to stage "))
 				.append(Component.literal(actualStage + " - " + MorphlingItem.getMaturityName(actualStage))
 						.withStyle(MorphlingItem.MATURITY_COLORS[actualStage]))
-				.append(sourceUpdated
-						? Component.literal(" and updated its jar item.").withStyle(ChatFormatting.GRAY)
-						: Component.literal("; no matching jar item was found.").withStyle(ChatFormatting.YELLOW)),
+				.append(target.source() != MorphlingCommandRules.Source.EQUIPPED
+						? Component.empty()
+						: jarUpdated
+								? Component.literal(" and updated its jar item.").withStyle(ChatFormatting.GRAY)
+								: Component.literal("; no matching jar item was found.").withStyle(ChatFormatting.YELLOW)),
 				true);
 		return 1;
 	}
 
 	private static int cycleMorphlingStage(CommandSourceStack source, ServerPlayer player, int delta) {
-		ItemStack stack = getEquippedMorphlingStack(source, player);
-		if (stack.isEmpty()) {
+		MorphlingCommandTarget target = getMorphlingCommandTarget(source, player);
+		if (target == null) {
 			return 0;
 		}
-		int current = MorphlingItem.getMaturityLevel(stack);
+		int current = MorphlingItem.getMaturityLevel(target.stack());
 		int next = Math.floorMod(current + delta, PrimalMorphlingRules.PRIMAL_LEVEL + 1);
 		return setMorphlingStage(source, player, next);
 	}
 
-	private static ItemStack getEquippedMorphlingStack(CommandSourceStack source, ServerPlayer player) {
-		var cap = HemoCapabilityAccess.getEquippedMorphling(player)
-				.orElseThrow(IllegalStateException::new);
-		if (!cap.hasMorphling() || cap.getEquippedMorphling().isEmpty()) {
-			source.sendFailure(Component.literal(player.getName().getString() + " has no equipped morphling."));
-			return ItemStack.EMPTY;
+	private static MorphlingCommandTarget getMorphlingCommandTarget(CommandSourceStack source, ServerPlayer player) {
+		ItemStack equipped = HemoCapabilityAccess.getEquippedMorphling(player)
+				.filter(cap -> cap.hasMorphling())
+				.map(cap -> cap.getEquippedMorphling())
+				.filter(HemoCommand::isMorphling)
+				.orElse(ItemStack.EMPTY);
+		ItemStack mainHand = player.getMainHandItem();
+		ItemStack offhand = player.getOffhandItem();
+		MorphlingCommandRules.Source selected = MorphlingCommandRules.chooseSource(!equipped.isEmpty(),
+				isMorphling(mainHand), isMorphling(offhand));
+		MorphlingCommandTarget target = switch (selected) {
+			case EQUIPPED -> new MorphlingCommandTarget(equipped, selected, "equipped morphling");
+			case MAIN_HAND -> new MorphlingCommandTarget(mainHand, selected, "main-hand morphling");
+			case OFF_HAND -> new MorphlingCommandTarget(offhand, selected, "offhand morphling");
+			case NONE -> null;
+		};
+		if (target == null) {
+			source.sendFailure(Component.literal(player.getName().getString()
+					+ " has no equipped or held morphling."));
 		}
-		ItemStack stack = cap.getEquippedMorphling();
-		if (!(stack.getItem() instanceof MorphlingItem)) {
-			source.sendFailure(Component.literal("Equipped stack is not a morphling: ")
-					.append(stack.getHoverName()));
-			return ItemStack.EMPTY;
-		}
-		return stack;
+		return target;
+	}
+
+	private static boolean isMorphling(ItemStack stack) {
+		return !stack.isEmpty() && stack.getItem() instanceof MorphlingItem;
 	}
 
 	private static void applyMorphlingStage(ItemStack stack, int stage) {
@@ -923,7 +942,13 @@ public class HemoCommand {
 		} else {
 			tag.remove(MorphlingItem.PRIMALIZED_KEY);
 		}
+		tag.remove(MorphlingItem.WILD_BOUND_KEY);
 		stack.set(DataComponents.CUSTOM_DATA, CustomData.of(tag));
+		MorphlingItem.resetBondingProgress(stack, stage);
+	}
+
+	private record MorphlingCommandTarget(ItemStack stack, MorphlingCommandRules.Source source,
+			String description) {
 	}
 
 	private static boolean writeBackEquippedMorphlingSource(ServerPlayer player, ItemStack original, ItemStack updated) {

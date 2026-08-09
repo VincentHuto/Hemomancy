@@ -3,6 +3,9 @@ package com.vincenthuto.hemomancy.common.event;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.init.FluidInit;
+import com.vincenthuto.hemomancy.common.init.ItemInit;
+import com.vincenthuto.hemomancy.common.init.SoundInit;
+import com.vincenthuto.hemomancy.common.worldgen.MycophantEncounterManager;
 import com.vincenthuto.hemomancy.common.item.MorphicNectarMutationRules;
 import com.vincenthuto.hemomancy.common.item.harbinger.morphlings.MorphlingItem;
 import com.vincenthuto.hemomancy.common.item.harbinger.morphlings.PrimalMorphlingRules;
@@ -22,6 +25,7 @@ import net.minecraft.world.phys.AABB;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.tick.EntityTickEvent;
+import net.neoforged.neoforge.event.entity.item.ItemTossEvent;
 
 import java.util.List;
 
@@ -40,6 +44,14 @@ public class MorphicNectarEvents {
 	private static final String TICKS_KEY = "hemomancy:morphic_nectar_ticks";
 	private static final String PRIMAL_TICKS_KEY = "hemomancy:primal_nectar_ticks";
 	private static final int PRIMAL_TRANSFORM_TIME = 200;
+	private static final String LURE_OWNER_KEY = "hemomancy:fruiting_lure_owner";
+	private static final String LURE_TICKS_KEY = "hemomancy:fruiting_lure_ticks";
+
+	@SubscribeEvent
+	public static void onItemToss(ItemTossEvent event) {
+		if (!event.getEntity().getItem().is(ItemInit.fruiting_lure.get())) return;
+		event.getEntity().getPersistentData().putUUID(LURE_OWNER_KEY, event.getPlayer().getUUID());
+	}
 
 	@SubscribeEvent
 	public static void onEntityTick(EntityTickEvent.Post event) {
@@ -58,10 +70,12 @@ public class MorphicNectarEvents {
 			if (data.contains(TICKS_KEY)) {
 				data.remove(TICKS_KEY);
 			}
+			data.remove(LURE_TICKS_KEY);
 			return;
 		}
 
 		ItemStack stack = itemEntity.getItem();
+		if (stack.is(ItemInit.fruiting_lure.get()) && trySoakFruitingLure(itemEntity)) return;
 		if (stack.getItem() instanceof MorphlingItem) {
 			if (tryPrimalizeMorphling(itemEntity, stack, pos)) {
 				return;
@@ -110,6 +124,25 @@ public class MorphicNectarEvents {
 		resultEntity.setDefaultPickUpDelay();
 		level.addFreshEntity(resultEntity);
 		itemEntity.discard();
+	}
+
+	private static boolean trySoakFruitingLure(ItemEntity itemEntity) {
+		if (!(itemEntity.level() instanceof ServerLevel level)) return true;
+		CompoundTag data = itemEntity.getPersistentData();
+		if (!data.hasUUID(LURE_OWNER_KEY)) return true;
+		int ticks = data.getInt(LURE_TICKS_KEY) + 1;
+		data.putInt(LURE_TICKS_KEY, ticks);
+		if (ticks < 40) return true;
+		data.putInt(LURE_TICKS_KEY, 0);
+		ServerPlayer owner = level.getServer().getPlayerList().getPlayer(data.getUUID(LURE_OWNER_KEY));
+		if (owner == null || !MycophantEncounterManager.tryStartRematch(owner)) return true;
+		ItemStack stack = itemEntity.getItem();
+		stack.shrink(1);
+		if (stack.isEmpty()) itemEntity.discard();
+		else itemEntity.setItem(stack);
+		level.playSound(null, itemEntity.blockPosition(), SoundInit.ENTITY_MYCOPHANT_SUMMON.get(),
+				SoundSource.HOSTILE, 1.0F, 0.7F);
+		return true;
 	}
 
 	private static boolean tryPrimalizeMorphling(ItemEntity itemEntity, ItemStack stack, BlockPos pos) {

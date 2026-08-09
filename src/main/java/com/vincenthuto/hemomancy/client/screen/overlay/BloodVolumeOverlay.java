@@ -117,6 +117,14 @@ public class BloodVolumeOverlay {
                         int posX = getConfiguredBarX(width);
                         int posY = getConfiguredBarY(player, height);
                         renderBloodBar(gfx, posX, posY, bloodCap, player, mc.level, partialTicks, width, height);
+						HemoCapabilityAccess.getEquippedMorphling(player).ifPresent(morphlingCap -> {
+							ItemStack equipped = morphlingCap.getEquippedMorphling();
+							if (EquippedMorphlingOverlay.instance != null) {
+								EquippedMorphlingOverlay.instance.renderForBloodBar(gfx, equipped,
+										isConfiguredOnLeftSide(), posX, posY, getBarWidth(), getBarHeight(),
+										animTime + partialTicks / 20.0f);
+							}
+						});
                     }
                 });
             });

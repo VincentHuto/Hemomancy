@@ -5,6 +5,7 @@ import net.neoforged.neoforge.common.ModConfigSpec;
 public class HemoClientConfig {
 
 	public static ModConfigSpec.IntValue HUD_LOCATION;
+	public static ModConfigSpec.EnumValue<MorphlingHudMode> MORPHLING_HUD_MODE;
 	public static ModConfigSpec.BooleanValue USE_COOLDOWN_VIGNETTE;
 	public static ModConfigSpec.BooleanValue RENDER_CROWN_POMES_AS_ITEMS;
 	public static ModConfigSpec.BooleanValue RENDER_BLOOD_GOURD_LAYER;
@@ -27,12 +28,22 @@ public class HemoClientConfig {
 		OFF
 	}
 
+	public enum MorphlingHudMode {
+		ATTACHED,
+		LEGACY_ICON,
+		OFF
+	}
+
 	public static void registerClientConfig(ModConfigSpec.Builder CLIENT_BUILDER) {
 		CLIENT_BUILDER.comment("Client settings for the power generator").push("powergen");
 
         HUD_LOCATION = CLIENT_BUILDER
                 .comment("Location of Blood Volume Hud(Top Left =0,Top Right =1,Bottom Left =2,Bottom Right =3")
                 .defineInRange("location", 0, 0, 3);
+
+	MORPHLING_HUD_MODE = CLIENT_BUILDER
+		.comment("Equipped morphling display: ATTACHED uses the large siphoning pose, LEGACY_ICON uses the item sprite, and OFF hides it.")
+		.defineEnum("morphlingHudMode", MorphlingHudMode.ATTACHED);
 
 	USE_COOLDOWN_VIGNETTE = CLIENT_BUILDER
 		.comment("Render cooldowns as full-screen vignette overlays. If false, cooldowns render as compact numerical timers beside the relevant HUD gauge.")

@@ -99,10 +99,31 @@ final class VesperCombatRulesTest {
 	}
 
 	@Test
-	void downedSigilsDissolveOverFortyTicksAndAbsorptionRequiresAFullChannel() {
-		assertEquals(1.0F, VesperCombatRules.sigilDissolveAlpha(0), 0.001F);
-		assertEquals(0.5F, VesperCombatRules.sigilDissolveAlpha(20), 0.001F);
-		assertEquals(0.0F, VesperCombatRules.sigilDissolveAlpha(40), 0.001F);
+	void defeatRecoilFlowsIntoAKneelBeforeAbsorptionUnlocks() {
+		assertEquals(0.0F, VesperCombatRules.defeatRecoilProgress(0.0F), 0.001F);
+		assertEquals(1.0F, VesperCombatRules.defeatRecoilProgress(3.0F), 0.001F);
+		assertEquals(0.0F, VesperCombatRules.defeatRecoilProgress(6.0F), 0.001F);
+		assertEquals(0.0F, VesperCombatRules.defeatKneelProgress(6.0F), 0.001F);
+		assertEquals(0.5F, VesperCombatRules.defeatKneelProgress(19.0F), 0.001F);
+		assertEquals(1.0F, VesperCombatRules.defeatKneelProgress(32.0F), 0.001F);
+		assertTrue(!VesperCombatRules.isDefeatAnimationComplete(39));
+		assertTrue(VesperCombatRules.isDefeatAnimationComplete(40));
+	}
+
+	@Test
+	void weaponsDissolveBeforeSigilsFizzleOutInReverseOrder() {
+		assertEquals(0.0F, VesperCombatRules.weaponDissolveProgress(0.0F), 0.001F);
+		assertEquals(0.5F, VesperCombatRules.weaponDissolveProgress(14.0F), 0.001F);
+		assertEquals(1.0F, VesperCombatRules.weaponDissolveProgress(28.0F), 0.001F);
+		assertEquals(0.0F, VesperCombatRules.sigilFizzleProgress(4.0F, 7), 0.001F);
+		assertEquals(1.0F, VesperCombatRules.sigilFizzleProgress(12.0F, 7), 0.001F);
+		assertEquals(0.0F, VesperCombatRules.sigilFizzleProgress(31.0F, 0), 0.001F);
+		assertEquals(0.0F, VesperCombatRules.sigilFizzleProgress(32.0F, 0), 0.001F);
+		assertEquals(1.0F, VesperCombatRules.sigilFizzleProgress(40.0F, 0), 0.001F);
+	}
+
+	@Test
+	void defeatAbsorptionRequiresAFullChannel() {
 		assertEquals(100.0F, VesperCombatRules.advanceDefeatAbsorption(98.5F, 4.0F), 0.001F);
 		assertTrue(VesperCombatRules.isDefeatAbsorptionComplete(100.0F));
 	}

@@ -16,6 +16,7 @@ import com.vincenthuto.hemomancy.client.data.FaneBoundaryClientData;
 import com.vincenthuto.hemomancy.client.data.MonolithicDislocationClientState;
 import com.vincenthuto.hemomancy.client.data.VeinSpiderCourierClientData;
 import com.vincenthuto.hemomancy.client.data.VesperFightClientData;
+import com.vincenthuto.hemomancy.client.data.MycophantFightClientData;
 import com.vincenthuto.hemomancy.client.item.HemoClientItemExtensionsProvider;
 import com.vincenthuto.hemomancy.client.render.entity.blood.iron.IronPillarRenderer;
 import com.vincenthuto.hemomancy.client.render.entity.blood.iron.IronSpikeRenderer;
@@ -522,6 +523,7 @@ public class ClientEvents {
         ActiveRiteClientData.clear();
         CardinalRiteFogRenderer.clear();
 		VesperFightClientData.clear();
+		MycophantFightClientData.clear();
 		VesperFightFloorRenderer.clear();
 		CardinalRiteImpactClientEvents.clear();
 		if (SanguineOmenOverlay.instance != null) SanguineOmenOverlay.instance.clear();
@@ -715,6 +717,7 @@ public class ClientEvents {
             event.registerEntityRenderer(EntityInit.tracking_snake.get(), TrackingSerpentRenderer::new);
             event.registerEntityRenderer(EntityInit.tracking_pests.get(), TrackingPestsRenderer::new);
             event.registerEntityRenderer(EntityInit.blood_bolt.get(), BloodBoltRenderer::new);
+			event.registerEntityRenderer(EntityInit.living_sickle_hook.get(), LivingSickleHookRenderer::new);
             event.registerEntityRenderer(EntityInit.blood_needle.get(), BloodNeedleRenderer::new);
             event.registerEntityRenderer(EntityInit.blood_shot.get(), BloodShotRenderer::new);
             event.registerEntityRenderer(EntityInit.blood_bullet.get(), BloodBulletRenderer::new);
@@ -1167,12 +1170,6 @@ public class ClientEvents {
                 if (BloodVolumeOverlay.instance != null) {
                     float partialTicks = deltaTracker.getGameTimeDeltaPartialTick(true);
                     BloodVolumeOverlay.instance.renderHUD(graphics, graphics.guiWidth(), graphics.guiHeight(), partialTicks);
-                }
-            });
-            event.registerAboveAll(Hemomancy.rloc("equipped_morphling"), (graphics, deltaTracker) -> {
-                if (EquippedMorphlingOverlay.instance != null) {
-                    float partialTicks = deltaTracker.getGameTimeDeltaPartialTick(true);
-                    EquippedMorphlingOverlay.instance.renderHUD(graphics, graphics.guiWidth(), graphics.guiHeight(), partialTicks);
                 }
             });
             event.registerAboveAll(Hemomancy.rloc("manip_cooldown"), (graphics, deltaTracker) -> {

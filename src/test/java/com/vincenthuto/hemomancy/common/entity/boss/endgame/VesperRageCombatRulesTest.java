@@ -25,12 +25,12 @@ final class VesperRageCombatRulesTest {
 		VesperWeaponAction cyclone = action("SICKLE_CYCLONE");
 		VesperWeaponAction crossRend = action("SICKLE_CROSS_REND");
 		VesperWeaponAction pounce = action("SICKLE_POUNCE");
-		VesperWeaponAction crescents = action("SANGUINE_CRESCENTS");
+		VesperWeaponAction hook = action("SICKLE_HOOK");
 
 		assertEquals(cyclone, select.invoke(null, VesperWeaponAction.NONE, 3.0D, 0));
 		assertEquals(crossRend, select.invoke(null, cyclone, 3.0D, 0));
-		assertEquals(pounce, select.invoke(null, VesperWeaponAction.NONE, 14.0D, 0));
-		assertEquals(crescents, select.invoke(null, pounce, 14.0D, 0));
+		assertEquals(hook, select.invoke(null, VesperWeaponAction.NONE, 14.0D, 0));
+		assertEquals(pounce, select.invoke(null, hook, 14.0D, 0));
 
 		VesperWeaponAction previous = crossRend;
 		VesperWeaponAction selected = (VesperWeaponAction) select.invoke(null, previous, 7.0D, 1);
@@ -40,7 +40,7 @@ final class VesperRageCombatRulesTest {
 	@Test
 	void everyRageAttackKeepsAReadableWindupAndShortRecovery() {
 		for (String name : new String[] {
-				"SICKLE_CYCLONE", "SICKLE_POUNCE", "SICKLE_CROSS_REND", "SANGUINE_CRESCENTS" }) {
+				"SICKLE_CYCLONE", "SICKLE_POUNCE", "SICKLE_CROSS_REND", "SICKLE_HOOK" }) {
 			VesperWeaponAction action = action(name);
 			assertTrue(action.impactTick() >= 10, name);
 			assertTrue(action.durationTicks() - action.lastImpactTick() >= 8, name);

@@ -23,6 +23,7 @@ public enum VesperWeaponAction {
 	SICKLE_CYCLONE(null, 12, 24, 34, 12, 18, 24),
 	SICKLE_POUNCE(null, 14, 14, 24, 14),
 	SICKLE_CROSS_REND(null, 10, 18, 28, 10, 14, 18),
+	SICKLE_HOOK(null, 14, 14, 28, 14),
 	SANGUINE_CRESCENTS(null, 12, 22, 32, 12, 17, 22);
 
 	private final EnumBloodTendency tendency;

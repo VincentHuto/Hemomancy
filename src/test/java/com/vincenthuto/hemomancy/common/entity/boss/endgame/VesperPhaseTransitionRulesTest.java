@@ -33,4 +33,31 @@ final class VesperPhaseTransitionRulesTest {
 		assertFalse((boolean) complete.invoke(null, 119));
 		assertTrue((boolean) complete.invoke(null, 120));
 	}
+
+	@Test
+	void mountCollapsesDuringTheLeapAndRemainsCollapsedForAbsorption() {
+		assertEquals(0.0F, VesperPhaseTransitionRules.collapseProgress(0.0F), 0.001F);
+		assertEquals(0.5F, VesperPhaseTransitionRules.collapseProgress(18.0F), 0.001F);
+		assertEquals(1.0F, VesperPhaseTransitionRules.collapseProgress(36.0F), 0.001F);
+		assertEquals(1.0F, VesperPhaseTransitionRules.collapseProgress(90.0F), 0.001F);
+	}
+
+	@Test
+	void awakeningRevealsEightSigilsOneAtATimeBeforeCombat() {
+		assertEquals(0, VesperPhaseTransitionRules.awakeningSigilCount(11.0F));
+		assertEquals(1, VesperPhaseTransitionRules.awakeningSigilCount(12.0F));
+		assertEquals(2, VesperPhaseTransitionRules.awakeningSigilCount(18.0F));
+		assertEquals(8, VesperPhaseTransitionRules.awakeningSigilCount(54.0F));
+		assertFalse(VesperPhaseTransitionRules.isAwakeningComplete(71));
+		assertTrue(VesperPhaseTransitionRules.isAwakeningComplete(72));
+	}
+
+	@Test
+	void awakeningGrowsVesperByTwentyFivePercent() {
+		assertEquals(1.0F, VesperPhaseTransitionRules.awakeningScale(12.0F), 0.001F);
+		float midpoint = VesperPhaseTransitionRules.awakeningScale(36.0F);
+		assertTrue(midpoint > 1.0F && midpoint < 1.25F);
+		assertEquals(1.25F, VesperPhaseTransitionRules.awakeningScale(60.0F), 0.001F);
+		assertEquals(1.25F, VesperPhaseTransitionRules.awakeningScale(72.0F), 0.001F);
+	}
 }

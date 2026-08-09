@@ -14,15 +14,15 @@ public final class VesperRageCombatRules {
 		if (distance <= 5.0D) {
 			primary = VesperWeaponAction.SICKLE_CYCLONE;
 			alternate = VesperWeaponAction.SICKLE_CROSS_REND;
-		} else if (distance >= 10.0D) {
-			primary = VesperWeaponAction.SICKLE_POUNCE;
-			alternate = VesperWeaponAction.SANGUINE_CRESCENTS;
+		} else if (distance > 6.0D) {
+			primary = VesperWeaponAction.SICKLE_HOOK;
+			alternate = VesperWeaponAction.SICKLE_POUNCE;
 		} else if ((variant & 1) == 0) {
 			primary = VesperWeaponAction.SICKLE_CROSS_REND;
 			alternate = VesperWeaponAction.SANGUINE_CRESCENTS;
 		} else {
 			primary = VesperWeaponAction.SANGUINE_CRESCENTS;
-			alternate = VesperWeaponAction.SICKLE_POUNCE;
+			alternate = VesperWeaponAction.SICKLE_HOOK;
 		}
 		return primary == previous ? alternate : primary;
 	}

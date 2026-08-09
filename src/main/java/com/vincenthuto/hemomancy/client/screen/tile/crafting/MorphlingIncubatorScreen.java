@@ -135,9 +135,20 @@ public class MorphlingIncubatorScreen extends AbstractContainerScreen<MorphlingI
 			int tw = font.width(text);
 			gfx.drawString(font, text, this.imageWidth - tw - 4, CRAFT_AREA_HEIGHT - 10, 0xFF9B30FF, false);
 		} else if (mode == 2) {
-			String text = "Feeding...";
+			Component text = Component.translatable("screen.hemomancy.morphling_incubator.feeding");
 			int tw = font.width(text);
 			gfx.drawString(font, text, this.imageWidth - tw - 4, CRAFT_AREA_HEIGHT - 10, 0xFF22AA22, false);
+		} else {
+			Component status = switch (this.menu.getEnzymeFeedStatus()) {
+				case 1 -> Component.translatable("screen.hemomancy.morphling_incubator.needs_blood");
+				case 2 -> Component.translatable("screen.hemomancy.morphling_incubator.needs_enzyme");
+				case 3 -> Component.translatable("screen.hemomancy.morphling_incubator.apex");
+				default -> Component.empty();
+			};
+			if (!status.getString().isEmpty()) {
+				int tw = font.width(status);
+				gfx.drawString(font, status, this.imageWidth - tw - 4, CRAFT_AREA_HEIGHT - 10, 0xFFCC5555, false);
+			}
 		}
 	}
 

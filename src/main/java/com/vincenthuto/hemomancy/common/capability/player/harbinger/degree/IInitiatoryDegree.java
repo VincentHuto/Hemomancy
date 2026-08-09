@@ -112,4 +112,16 @@ public interface IInitiatoryDegree {
 	EnumArchonPath getArchonPath();
 
 	void setArchonPath(EnumArchonPath path);
+
+	int getMycophantExposureTicks();
+
+	void setMycophantExposureTicks(int ticks);
+
+	int getMycophantRetryCooldownTicks();
+
+	void setMycophantRetryCooldownTicks(int ticks);
+
+	boolean isMycophantDefeated();
+
+	void setMycophantDefeated(boolean defeated);
 }

@@ -2,8 +2,10 @@ package com.vincenthuto.hemomancy.common.entity.projectile;
 
 import com.vincenthuto.hemomancy.common.init.EffectInit;
 import com.vincenthuto.hemomancy.common.init.EntityInit;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.entity.summon.BoundPuppeteerSummon;
 import com.vincenthuto.hemomancy.common.entity.summon.BoundSummonBehavior;
+import com.vincenthuto.hemomancy.common.manipulation.TendencyDamageCarrier;
 import com.vincenthuto.hutoslib.client.particle.factory.GlowParticleFactory;
 import com.vincenthuto.hutoslib.client.particle.util.HLParticleUtils;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
@@ -23,8 +25,12 @@ import net.minecraft.world.phys.EntityHitResult;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-public class BloodShotEntity extends AbstractArrow implements CombatWeaponCarrierProjectile {
+public class BloodShotEntity extends AbstractArrow implements CombatWeaponCarrierProjectile, TendencyDamageCarrier {
 	private ItemStack combatWeaponItem = ItemStack.EMPTY;
+	@Nullable
+	private EnumBloodTendency damageTendency;
+	@Nullable
+	private EnumBloodTendency secondaryDamageTendency;
 
 	public BloodShotEntity(EntityType<? extends BloodShotEntity> type, Level worldIn) {
 		super(type, worldIn);
@@ -52,12 +58,36 @@ public class BloodShotEntity extends AbstractArrow implements CombatWeaponCarrie
 		if (!this.combatWeaponItem.isEmpty()) {
 			compound.put("CombatWeapon", this.combatWeaponItem.save(this.registryAccess()));
 		}
+		if (damageTendency != null) compound.putString("DamageTendency", damageTendency.name());
+		if (secondaryDamageTendency != null) {
+			compound.putString("SecondaryDamageTendency", secondaryDamageTendency.name());
+		}
 
 	}
 
 	@Override
 	public ItemStack getCombatWeaponItem() {
 		return this.combatWeaponItem;
+	}
+
+	@Override
+	@Nullable
+	public EnumBloodTendency getDamageTendency() {
+		return damageTendency;
+	}
+
+	public void setDamageTendency(@Nullable EnumBloodTendency damageTendency) {
+		this.damageTendency = damageTendency;
+	}
+
+	@Override
+	@Nullable
+	public EnumBloodTendency getSecondaryDamageTendency() {
+		return secondaryDamageTendency;
+	}
+
+	public void setSecondaryDamageTendency(@Nullable EnumBloodTendency secondaryDamageTendency) {
+		this.secondaryDamageTendency = secondaryDamageTendency;
 	}
 
 
@@ -108,6 +138,8 @@ public class BloodShotEntity extends AbstractArrow implements CombatWeaponCarrie
 		this.combatWeaponItem = compound.contains("CombatWeapon", 10)
 				? ItemStack.parseOptional(this.registryAccess(), compound.getCompound("CombatWeapon"))
 				: ItemStack.EMPTY;
+		this.damageTendency = readDamageTendency(compound);
+		this.secondaryDamageTendency = readTendency(compound, "SecondaryDamageTendency");
 	}
 
 	@Override
@@ -136,6 +168,20 @@ public class BloodShotEntity extends AbstractArrow implements CombatWeaponCarrie
 
 	private static ItemStack copyCombatWeapon(@Nullable ItemStack weaponStack) {
 		return weaponStack != null && !weaponStack.isEmpty() ? weaponStack.copy() : ItemStack.EMPTY;
+	}
+
+	@Nullable
+	private static EnumBloodTendency readDamageTendency(CompoundTag compound) {
+		return readTendency(compound, "DamageTendency");
+	}
+
+	@Nullable
+	private static EnumBloodTendency readTendency(CompoundTag compound, String key) {
+		try {
+			return compound.contains(key) ? EnumBloodTendency.valueOf(compound.getString(key)) : null;
+		} catch (IllegalArgumentException ignored) {
+			return null;
+		}
 	}
 
 }

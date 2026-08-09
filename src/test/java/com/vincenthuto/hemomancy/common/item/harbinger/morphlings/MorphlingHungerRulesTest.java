@@ -8,7 +8,7 @@ public final class MorphlingHungerRulesTest {
 		disabledHungerIsInert();
 		matureWildBoundMorphlingsAreExempt();
 		enabledMatureMorphlingsMoveThroughHungerStates();
-		hungryAndStarvingReducePassiveAmplifier();
+		hungryAndStarvingPreservePassiveAmplifier();
 		husbandryQuotaCapsMaturityOnlyWhenConfigured();
 	}
 
@@ -37,14 +37,14 @@ public final class MorphlingHungerRulesTest {
 				MorphlingHungerRules.state(true, 3, false, 4700L, 1000L, 1200));
 	}
 
-	private static void hungryAndStarvingReducePassiveAmplifier() {
+	private static void hungryAndStarvingPreservePassiveAmplifier() {
 		assertEquals("fed keeps amplifier", 2,
 				MorphlingHungerRules.adjustedAmplifier(2, MorphlingHungerRules.HungerState.FED));
-		assertEquals("hungry reduces amplifier", 1,
+		assertEquals("hungry keeps amplifier", 2,
 				MorphlingHungerRules.adjustedAmplifier(2, MorphlingHungerRules.HungerState.HUNGRY));
-		assertEquals("starving reduces amplifier", 1,
+		assertEquals("starving keeps amplifier", 2,
 				MorphlingHungerRules.adjustedAmplifier(2, MorphlingHungerRules.HungerState.STARVING));
-		assertEquals("reduction floors at zero", 0,
+		assertEquals("zero remains zero", 0,
 				MorphlingHungerRules.adjustedAmplifier(0, MorphlingHungerRules.HungerState.HUNGRY));
 	}
 

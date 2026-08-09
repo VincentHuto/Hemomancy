@@ -597,9 +597,13 @@ public class VesperTheCrownedRefusalModel  extends EntityModel<VesperTheCrownedR
     private final ModelPart whole;
     private final ModelPart upperBody;
     private final ModelPart hasturForm;
+	private final ModelPart body;
+	private final ModelPart leftArm;
+	private final ModelPart rightArm;
 
     private final ModelPart lowerBody;
     private final ModelPart head;
+	private final ModelPart mountHead;
     private final ModelPart fLLeg;
     private final ModelPart fLTibia;
     private final ModelPart bLLeg;
@@ -629,6 +633,9 @@ public class VesperTheCrownedRefusalModel  extends EntityModel<VesperTheCrownedR
         this.lowerBody = root.getChild("lowerBody");
         this.hasturForm = this.upperBody.getChild("hasturForm");
         this.head = this.hasturForm.getChild("head");
+		this.body = this.hasturForm.getChild("body");
+		this.leftArm = this.body.getChild("leftArm");
+		this.rightArm = this.body.getChild("rightArm");
 
         this.fLLeg = this.lowerBody.getChild("fLLeg");
         ModelPart fLHip = this.fLLeg.getChild("fLHip");
@@ -650,9 +657,9 @@ public class VesperTheCrownedRefusalModel  extends EntityModel<VesperTheCrownedR
         this.bRFemur = bRHip.getChild("bRFemur");
         this.bRTibia = this.bRFemur.getChild("bRTibia");
 
-        ModelPart jaw2 = this.lowerBody.getChild("jaw2");
-        this.topJaw = jaw2.getChild("topJaw");
-        this.bottomJaw = jaw2.getChild("bottomJaw");
+		this.mountHead = this.lowerBody.getChild("jaw2");
+		this.topJaw = this.mountHead.getChild("topJaw");
+		this.bottomJaw = this.mountHead.getChild("bottomJaw");
 
         this.tail = this.lowerBody.getChild("tail");
         this.tail2 = this.tail.getChild("tail2");
@@ -782,19 +789,54 @@ public class VesperTheCrownedRefusalModel  extends EntityModel<VesperTheCrownedR
         if (transitioning) {
             float transitionFrame = entity.getTransitionTick() + HLClientUtils.getPartialTicks();
             float dismount = smooth(VesperPhaseTransitionRules.dismountProgress(transitionFrame));
+			float collapse = VesperPhaseTransitionRules.collapseProgress(transitionFrame);
             float absorption = smooth(VesperPhaseTransitionRules.absorptionProgress(transitionFrame));
-            float groundedOffset = dismount * (1.0F - absorption);
             this.upperBody.xRot = 0.0F;
             this.upperBody.zRot = 0.0F;
-            this.hasturForm.y = 18.0F * groundedOffset;
-            this.hasturForm.z = -14.0F * groundedOffset;
-            this.hasturForm.xRot = -0.16F * Mth.sin(dismount * Mth.PI)
-                    - 0.18F * Mth.sin(absorption * Mth.PI);
+			this.hasturForm.y = 18.0F * dismount - 20.0F * VesperPhaseTransitionRules.jumpArc(transitionFrame);
+			this.hasturForm.z = -24.0F * dismount;
+			this.hasturForm.xRot = -0.16F * Mth.sin(dismount * Mth.PI);
             this.hasturForm.zRot = 0.08F * Mth.sin(dismount * Mth.PI);
+			this.body.xRot = 0.12F * absorption;
+			this.leftArm.xRot = -1.05F * absorption;
+			this.leftArm.yRot = 0.28F * absorption;
+			this.leftArm.zRot = Mth.lerp(absorption, -0.3927F, -0.14F);
+			this.rightArm.xRot = -1.05F * absorption;
+			this.rightArm.yRot = -0.28F * absorption;
+			this.rightArm.zRot = Mth.lerp(absorption, 0.3054F, 0.14F);
+			this.head.xRot = Mth.lerp(absorption, this.head.xRot, -0.18F);
+			this.head.yRot *= 1.0F - absorption;
+
+			this.lowerBody.y = DEFAULT_MOUNT_Y + 10.0F * collapse;
+			this.lowerBody.xRot = 0.18F * collapse;
+			this.lowerBody.zRot = 0.10F * collapse;
+			this.fLLeg.yRot = 0.42F * collapse;
+			this.fLLeg.zRot = 0.52F * collapse;
+			this.bLLeg.yRot = -0.28F * collapse;
+			this.bLLeg.zRot = 0.62F * collapse;
+			this.fRLeg.yRot = -0.42F * collapse;
+			this.fRLeg.zRot = -0.52F * collapse;
+			this.bRLeg.yRot = 0.28F * collapse;
+			this.bRLeg.zRot = -0.62F * collapse;
+			this.mountHead.xRot = 0.24F * collapse;
+			this.mountHead.yRot = -0.16F * collapse;
+			this.mountHead.zRot = 0.42F * collapse;
+			this.topJaw.xRot = Mth.lerp(collapse, this.topJaw.xRot, -0.18F);
+			this.bottomJaw.xRot = Mth.lerp(collapse, this.bottomJaw.xRot, 0.34F);
+			this.tail.xRot = 0.34F * collapse;
+			this.tail.yRot = Mth.lerp(collapse, this.tail.yRot, -0.10F);
+			this.tail2.xRot = 0.40F * collapse;
+			this.tail2.yRot = Mth.lerp(collapse, this.tail2.yRot, 0.14F);
+			this.tail3.xRot = 0.46F * collapse;
+			this.tail3.yRot = Mth.lerp(collapse, this.tail3.yRot, 0.08F);
+			this.tail4.xRot = 0.52F * collapse;
+			this.tail4.yRot = Mth.lerp(collapse, this.tail4.yRot, 0.28F);
+			this.tail5.xRot = Mth.lerp(collapse, this.tail5.xRot, 1.12F);
+			this.tail5.yRot *= 1.0F - collapse;
             this.mountOpacity = 1.0F - absorption;
             this.mountScale = Math.max(0.03F, 1.0F - absorption * 0.97F);
-            this.lowerBody.y = Mth.lerp(absorption, DEFAULT_MOUNT_Y, DEFAULT_RIDER_Y);
-            this.lowerBody.z = Mth.lerp(absorption, DEFAULT_MOUNT_Z, -19.0F);
+			this.lowerBody.y = Mth.lerp(absorption, this.lowerBody.y, DEFAULT_RIDER_Y);
+			this.lowerBody.z = Mth.lerp(absorption, DEFAULT_MOUNT_Z, -19.0F);
             this.lowerBody.xScale = mountScale;
             this.lowerBody.yScale = Math.max(0.015F, mountScale * 0.58F);
             this.lowerBody.zScale = mountScale;

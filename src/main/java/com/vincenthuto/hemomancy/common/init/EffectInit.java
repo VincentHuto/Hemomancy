@@ -172,7 +172,7 @@ public class EffectInit {
 
     public static final DeferredHolder<MobEffect, MobEffect> burrowers_instinct = EFFECTS.register("burrowers_instinct",
             () -> new BurrowersInstinctEffect(MobEffectCategory.BENEFICIAL, 0x8B6914)
-                    .addAttributeModifier(Attributes.ATTACK_SPEED, ResourceLocation.fromNamespaceAndPath("hemomancy", "burrowers_instinct_attack_speed"),
+                    .addAttributeModifier(Attributes.BLOCK_BREAK_SPEED, ResourceLocation.fromNamespaceAndPath("hemomancy", "burrowers_instinct_block_break_speed"),
                             0.15F, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL));
     public static final DeferredHolder<Potion, Potion> potion_of_burrowers_instinct = POTION_TYPES.register(
             "potion_of_burrowers_instinct",

@@ -29,6 +29,7 @@ public class BloodCloudManip extends BloodManipulation {
 		if (looking != null) {
 
 			BloodCloudCarrierEntity fireballentity = new BloodCloudCarrierEntity(world, player, 0, 1, 0);
+			fireballentity.setDamageTendencies(getTend(), getSecondaryTend());
 			fireballentity.setDeltaMovement(looking.x * 0.5, looking.y * 0.5, looking.z * 0.5);
 			fireballentity.xPower = fireballentity.getDeltaMovement().x * 0.01D;
 			fireballentity.yPower = fireballentity.getDeltaMovement().y * 0.01D;

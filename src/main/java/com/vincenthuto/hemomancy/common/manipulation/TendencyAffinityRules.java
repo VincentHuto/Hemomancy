@@ -1,6 +1,8 @@
 package com.vincenthuto.hemomancy.common.manipulation;
 
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
+import com.vincenthuto.hemomancy.common.entity.boss.endgame.VesperTendencyDefenseRules;
+import com.vincenthuto.hemomancy.common.entity.boss.endgame.VesperTheEveningStarEntity;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.TendencyWeaponHelper;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
@@ -49,9 +51,14 @@ public final class TendencyAffinityRules {
 	}
 
 	private static float affinityMultiplier(Player player, LivingEntity target, @Nullable EnumBloodTendency tendency) {
-		if (tendency == null || !TendencyWeaponHelper.isOpposingTarget(target, tendency)) {
+		if (tendency == null) {
 			return NEUTRAL_DAMAGE_MULTIPLIER;
 		}
+		if (target instanceof VesperTheEveningStarEntity vesper) {
+			return VesperTendencyDefenseRules.damageMultiplier(vesper.getActiveTendency(), tendency,
+					TendencyWeaponHelper.getDamageMultiplier(player, tendency));
+		}
+		if (!TendencyWeaponHelper.isOpposingTarget(target, tendency)) return NEUTRAL_DAMAGE_MULTIPLIER;
 		return TendencyWeaponHelper.getDamageMultiplier(player, tendency);
 	}
 }

@@ -665,6 +665,12 @@ public class EntityInit {
                     .clientTrackingRange(4).setUpdateInterval(20)
                     .build(Hemomancy.rloc("blood_bolt").toString()));
 
+	public static final DeferredHolder<EntityType<?>, EntityType<LivingSickleHookEntity>> living_sickle_hook =
+			ENTITY_TYPES.register("living_sickle_hook",
+					() -> EntityType.Builder.<LivingSickleHookEntity>of(LivingSickleHookEntity::new, MobCategory.MISC)
+							.sized(0.9F, 0.35F).clientTrackingRange(8).updateInterval(1)
+							.build(Hemomancy.rloc("living_sickle_hook").toString()));
+
     public static final DeferredHolder<EntityType<?>, EntityType<BloodNeedleEntity>> blood_needle = ENTITY_TYPES.register(
             "blood_needle",
             () -> EntityType.Builder.<BloodNeedleEntity>of(BloodNeedleEntity::new, MobCategory.MISC).sized(0.5F, 0.5F)

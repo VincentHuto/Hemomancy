@@ -9,6 +9,7 @@ import com.vincenthuto.hemomancy.common.init.RecipeInit;
 import com.vincenthuto.hemomancy.common.item.harbinger.EnzymeItem;
 import com.vincenthuto.hemomancy.common.item.harbinger.RecycledEnzymeItem;
 import com.vincenthuto.hemomancy.common.item.harbinger.morphlings.IMorphling;
+import com.vincenthuto.hemomancy.common.item.harbinger.morphlings.MorphlingBloodBondingRules;
 import com.vincenthuto.hemomancy.common.item.harbinger.morphlings.MorphlingItem;
 import com.vincenthuto.hemomancy.common.menu.tile.crafting.MorphlingIncubatorMenu;
 import com.vincenthuto.hemomancy.common.recipe.IncubatorRecipe;
@@ -69,6 +70,11 @@ public class MorphlingIncubatorBlockEntity extends BaseContainerBlockEntity impl
 	int craftingProgress;
 	int craftingTotalTime;
 	int mode; // 0 = idle, 1 = polyp crafting, 2 = enzyme feeding
+	int enzymeFeedStatus;
+	int selectedEnzymeMask;
+	float targetEnzymePower;
+	boolean enzymeSnapshotReady;
+	final double[] enzymeContributions = new double[SLOT_CATALYST_END - SLOT_CATALYST_START + 1];
 
 	public final ContainerData dataAccess = new ContainerData() {
 		@Override
@@ -77,13 +83,14 @@ public class MorphlingIncubatorBlockEntity extends BaseContainerBlockEntity impl
 				case 0 -> craftingProgress;
 				case 1 -> craftingTotalTime;
 				case 2 -> mode;
+				case 3 -> enzymeFeedStatus;
 				default -> 0;
 			};
 		}
 
 		@Override
 		public int getCount() {
-			return 3;
+			return 4;
 		}
 
 		@Override
@@ -92,6 +99,7 @@ public class MorphlingIncubatorBlockEntity extends BaseContainerBlockEntity impl
 				case 0 -> craftingProgress = val;
 				case 1 -> craftingTotalTime = val;
 				case 2 -> mode = val;
+				case 3 -> enzymeFeedStatus = val;
 			}
 		}
 	};
@@ -146,6 +154,7 @@ public class MorphlingIncubatorBlockEntity extends BaseContainerBlockEntity impl
 			// Not enough blood — pause (don't reset progress)
 		} else {
 			// Try to start a new craft
+			int previousFeedStatus = te.enzymeFeedStatus;
 			if (te.tryStartPolypCraft()) {
 				changed = true;
 			} else if (te.tryStartEnzymeFeed()) {
@@ -156,6 +165,7 @@ public class MorphlingIncubatorBlockEntity extends BaseContainerBlockEntity impl
 					changed = true;
 				}
 			}
+			if (te.enzymeFeedStatus != previousFeedStatus) changed = true;
 		}
 
 		if (changed) {
@@ -232,25 +242,61 @@ public class MorphlingIncubatorBlockEntity extends BaseContainerBlockEntity impl
 
 	private boolean tryStartEnzymeFeed() {
 		ItemStack center = inventory.get(SLOT_CENTER);
-		if (center.isEmpty() || !(center.getItem() instanceof IMorphling)) {
+		if (center.isEmpty() || !(center.getItem() instanceof IMorphling morphling)) {
+			enzymeFeedStatus = 0;
 			return false;
 		}
-		// Need at least one enzyme in catalyst slots
-		int enzymeCount = 0;
-		for (int i = SLOT_CATALYST_START; i <= SLOT_CATALYST_END; i++) {
-			if (inventory.get(i).getItem() instanceof EnzymeItem || inventory.get(i).getItem() instanceof RecycledEnzymeItem) {
-				enzymeCount++;
-			}
+		int maturity = MorphlingItem.getMaturityLevel(center);
+		targetEnzymePower = MorphlingBloodBondingRules.nextEnzymeTarget(maturity, MorphlingItem.MATURITY_THRESHOLDS);
+		if (targetEnzymePower < 0.0F) {
+			enzymeFeedStatus = 3;
+			return false;
 		}
-		if (enzymeCount == 0) return false;
-		if (!inventory.get(SLOT_OUTPUT).isEmpty()) return false;
+		if (!MorphlingItem.isBondingReady(center)) {
+			enzymeFeedStatus = 1;
+			return false;
+		}
+		if (!inventory.get(SLOT_OUTPUT).isEmpty()) {
+			enzymeFeedStatus = 0;
+			return false;
+		}
 
-		// More enzymes = proportionally longer craft time
+		if (!enzymeSnapshotReady) {
+			snapshotEnzymeContributions(morphling);
+		}
+		CompoundTag tag = center.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
+		double neededPower = Math.max(0.0D, targetEnzymePower - tag.getFloat("EnzymePower"));
+		selectedEnzymeMask = MorphlingBloodBondingRules.selectEnzymeSlots(enzymeContributions, neededPower);
+		if (selectedEnzymeMask == 0) {
+			enzymeFeedStatus = 2;
+			return false;
+		}
+
+		int enzymeCount = Integer.bitCount(selectedEnzymeMask);
 		int totalTime = ENZYME_TIME_BASE + (enzymeCount * ENZYME_TIME_PER_ITEM);
 		craftingProgress = totalTime;
 		craftingTotalTime = totalTime;
 		mode = 2;
+		enzymeFeedStatus = 4;
 		return true;
+	}
+
+	private void snapshotEnzymeContributions(IMorphling morphling) {
+		EnumBloodTendency preferred = morphling.getPreferredTendency();
+		EnumBloodTendency secondary = morphling.getSecondaryTendency();
+		for (int slot = SLOT_CATALYST_START; slot <= SLOT_CATALYST_END; slot++) {
+			ItemStack stack = inventory.get(slot);
+			double contribution = 0.0D;
+			if (stack.getItem() instanceof EnzymeItem enzyme) {
+				contribution = MorphlingItem.calculateEffectivePower(
+						enzyme.getAmount(), enzyme.getTend(), preferred, secondary);
+			} else if (stack.getItem() instanceof RecycledEnzymeItem recycled) {
+				contribution = MorphlingItem.calculateEffectivePower(
+						recycled.getAmount(), recycled.getTend(), preferred, secondary);
+			}
+			enzymeContributions[slot - SLOT_CATALYST_START] = contribution;
+		}
+		enzymeSnapshotReady = true;
 	}
 
 	// ---- Finish crafting ----
@@ -260,6 +306,7 @@ public class MorphlingIncubatorBlockEntity extends BaseContainerBlockEntity impl
 			finishPolypCraft();
 		} else if (mode == 2) {
 			finishEnzymeFeed();
+			clearEnzymeSnapshot();
 		}
 		craftingProgress = 0;
 		craftingTotalTime = 0;
@@ -287,36 +334,20 @@ public class MorphlingIncubatorBlockEntity extends BaseContainerBlockEntity impl
 
 	private void finishEnzymeFeed() {
 		ItemStack center = inventory.get(SLOT_CENTER);
-		if (center.isEmpty() || !(center.getItem() instanceof IMorphling morphling)) return;
+		if (center.isEmpty() || !(center.getItem() instanceof IMorphling) || selectedEnzymeMask == 0) return;
+		int enzymeCount = Integer.bitCount(selectedEnzymeMask);
 
-		// Gather the morphling's enzyme preferences
-		EnumBloodTendency preferred = morphling.getPreferredTendency();
-		EnumBloodTendency secondary = morphling.getSecondaryTendency();
-
-		// Count enzymes and compute total effective strength with preference scaling
-		int enzymeCount = 0;
-		float totalStrength = 0;
 		for (int i = SLOT_CATALYST_START; i <= SLOT_CATALYST_END; i++) {
-			ItemStack stack = inventory.get(i);
-			if (stack.getItem() instanceof EnzymeItem enzyme) {
-				enzymeCount++;
-				totalStrength += MorphlingItem.calculateEffectivePower(
-						enzyme.getAmount(), enzyme.getTend(), preferred, secondary);
-			} else if (stack.getItem() instanceof RecycledEnzymeItem recycled) {
-				enzymeCount++;
-				totalStrength += MorphlingItem.calculateEffectivePower(
-						recycled.getAmount(), recycled.getTend(), preferred, secondary);
+			int bit = 1 << (i - SLOT_CATALYST_START);
+			if ((selectedEnzymeMask & bit) != 0) {
+				ItemStack stack = inventory.get(i);
+				if (!(stack.getItem() instanceof EnzymeItem) && !(stack.getItem() instanceof RecycledEnzymeItem)) {
+					return;
+				}
 			}
 		}
-
-		if (enzymeCount == 0) return;
-
-		// Consume enzymes
 		for (int i = SLOT_CATALYST_START; i <= SLOT_CATALYST_END; i++) {
-			ItemStack stack = inventory.get(i);
-			if (stack.getItem() instanceof EnzymeItem || stack.getItem() instanceof RecycledEnzymeItem) {
-				stack.shrink(1);
-			}
+			if ((selectedEnzymeMask & (1 << (i - SLOT_CATALYST_START))) != 0) inventory.get(i).shrink(1);
 		}
 
 		// Remove center morphling and create enhanced copy in output
@@ -324,12 +355,12 @@ public class MorphlingIncubatorBlockEntity extends BaseContainerBlockEntity impl
 
 		// Store enzyme power as NBT on the morphling
 		CompoundTag tag = result.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
-		float existingPower = tag.getFloat("EnzymePower");
-		tag.putFloat("EnzymePower", existingPower + totalStrength);
+		tag.putFloat("EnzymePower", targetEnzymePower);
 		int existingFeedings = tag.getInt("EnzymeFeedings");
 		tag.putInt("EnzymeFeedings", existingFeedings + enzymeCount);
 		tag.remove(MorphlingItem.WILD_BOUND_KEY);
 		result.set(DataComponents.CUSTOM_DATA, CustomData.of(tag));
+		MorphlingItem.resetBondingProgress(result, MorphlingItem.getMaturityLevel(result));
 		if (level != null) {
 			MorphlingItem.markFedNow(result, level.getGameTime());
 		}
@@ -337,6 +368,14 @@ public class MorphlingIncubatorBlockEntity extends BaseContainerBlockEntity impl
 		// Move center to output
 		inventory.set(SLOT_CENTER, ItemStack.EMPTY);
 		inventory.set(SLOT_OUTPUT, result);
+		clearEnzymeSnapshot();
+	}
+
+	private void clearEnzymeSnapshot() {
+		enzymeSnapshotReady = false;
+		selectedEnzymeMask = 0;
+		targetEnzymePower = 0.0F;
+		for (int i = 0; i < enzymeContributions.length; i++) enzymeContributions[i] = 0.0D;
 	}
 
 	// ---- Inventory helpers (for renderer) ----
@@ -371,12 +410,16 @@ public class MorphlingIncubatorBlockEntity extends BaseContainerBlockEntity impl
 
 	@Override
 	public ItemStack removeItem(int slot, int amount) {
-		return ContainerHelper.removeItem(inventory, slot, amount);
+		ItemStack removed = ContainerHelper.removeItem(inventory, slot, amount);
+		if (!removed.isEmpty()) resetForInputChange(slot);
+		return removed;
 	}
 
 	@Override
 	public ItemStack removeItemNoUpdate(int slot) {
-		return ContainerHelper.takeItem(inventory, slot);
+		ItemStack removed = ContainerHelper.takeItem(inventory, slot);
+		if (!removed.isEmpty()) resetForInputChange(slot);
+		return removed;
 	}
 
 	@Override
@@ -389,13 +432,20 @@ public class MorphlingIncubatorBlockEntity extends BaseContainerBlockEntity impl
 		}
 		// Reset crafting progress when an input slot changes during active crafting
 		if (!isSameItem && (slot == SLOT_CENTER || (slot >= SLOT_CATALYST_START && slot <= SLOT_CATALYST_END))) {
-			if (craftingProgress > 0) {
-				craftingProgress = 0;
-				craftingTotalTime = 0;
-				mode = 0;
-				setChanged();
-			}
+			resetForInputChange(slot);
 		}
+	}
+
+	private void resetForInputChange(int slot) {
+		if (slot != SLOT_CENTER && (slot < SLOT_CATALYST_START || slot > SLOT_CATALYST_END)) return;
+		clearEnzymeSnapshot();
+		enzymeFeedStatus = 0;
+		if (craftingProgress > 0) {
+			craftingProgress = 0;
+			craftingTotalTime = 0;
+			mode = 0;
+		}
+		setChanged();
 	}
 
 	@Override
@@ -441,6 +491,11 @@ public class MorphlingIncubatorBlockEntity extends BaseContainerBlockEntity impl
 		this.craftingProgress = tag.getInt("CraftProgress");
 		this.craftingTotalTime = tag.getInt("CraftTotalTime");
 		this.mode = tag.getInt("Mode");
+		this.enzymeFeedStatus = tag.getInt("EnzymeFeedStatus");
+		this.selectedEnzymeMask = tag.getInt("SelectedEnzymeMask");
+		this.targetEnzymePower = tag.getFloat("TargetEnzymePower");
+		this.enzymeSnapshotReady = tag.getBoolean("EnzymeSnapshotReady");
+		for (int i = 0; i < enzymeContributions.length; i++) enzymeContributions[i] = tag.getDouble("EnzymeContribution" + i);
 		IBloodVolume vol = resolveVolume();
 		if (vol != null && tag.contains(TAG_BLOOD_LEVEL)) {
 			vol.setBloodVolume(tag.getFloat(TAG_BLOOD_LEVEL));
@@ -454,6 +509,7 @@ public class MorphlingIncubatorBlockEntity extends BaseContainerBlockEntity impl
 		tag.putInt("CraftProgress", this.craftingProgress);
 		tag.putInt("CraftTotalTime", this.craftingTotalTime);
 		tag.putInt("Mode", this.mode);
+		saveEnzymeState(tag);
 		IBloodVolume vol = resolveVolume();
 		if (vol != null) {
 			tag.putDouble(TAG_BLOOD_LEVEL, vol.getBloodVolume());
@@ -467,6 +523,7 @@ public class MorphlingIncubatorBlockEntity extends BaseContainerBlockEntity impl
 		tag.putInt("CraftProgress", this.craftingProgress);
 		tag.putInt("CraftTotalTime", this.craftingTotalTime);
 		tag.putInt("Mode", this.mode);
+		saveEnzymeState(tag);
 		IBloodVolume vol = resolveVolume();
 		if (vol != null) {
 			tag.putDouble(TAG_BLOOD_LEVEL, vol.getBloodVolume());
@@ -482,6 +539,15 @@ public class MorphlingIncubatorBlockEntity extends BaseContainerBlockEntity impl
 		this.craftingProgress = tag.getInt("CraftProgress");
 		this.craftingTotalTime = tag.getInt("CraftTotalTime");
 		this.mode = tag.getInt("Mode");
+		this.enzymeFeedStatus = tag.getInt("EnzymeFeedStatus");
+	}
+
+	private void saveEnzymeState(CompoundTag tag) {
+		tag.putInt("EnzymeFeedStatus", enzymeFeedStatus);
+		tag.putInt("SelectedEnzymeMask", selectedEnzymeMask);
+		tag.putFloat("TargetEnzymePower", targetEnzymePower);
+		tag.putBoolean("EnzymeSnapshotReady", enzymeSnapshotReady);
+		for (int i = 0; i < enzymeContributions.length; i++) tag.putDouble("EnzymeContribution" + i, enzymeContributions[i]);
 	}
 
 	@Nullable

@@ -73,6 +73,19 @@ final class VesperCombatImplementationSourceTest {
 	}
 
 	@Test
+	void rageUsesThePlayerFacingSickleHookAndCloseSpinForms() throws Exception {
+		String combat = read("common/entity/boss/endgame/VesperPhaseTwoCombat.java");
+		String model = read("client/model/entity/boss/endgame/VesperTheEveningStarModel.java");
+		String layer = read("client/render/layer/mob/endgame/VesperLivingWeaponLayer.java");
+
+		assertTrue(combat.contains("case SICKLE_HOOK"));
+		assertTrue(combat.contains("fireSickleHook"));
+		assertTrue(combat.contains("LivingSickleHookEntity"));
+		assertTrue(model.contains("case SICKLE_HOOK"));
+		assertTrue(layer.contains("isSickleHookReleased"));
+	}
+
+	@Test
 	void encounterPuppetsHaveBacklashNoRewardsAndAttemptCleanup() throws Exception {
 		String events = read("common/entity/boss/endgame/VesperEncounterPuppetEvents.java");
 		String ordeal = read("common/worldgen/VesperOrdealManager.java");
@@ -109,12 +122,36 @@ final class VesperCombatImplementationSourceTest {
 		String layer = read("client/render/layer/mob/endgame/VesperMountAbsorptionLayer.java");
 
 		assertTrue(crowned.contains("VesperPhaseTransitionRules.isComplete(transition)"));
+		assertTrue(crowned.contains("dismountLandingPosition()"));
 		assertTrue(actions.contains("AbsorbedBloodCellParticleFactory"));
 		assertTrue(model.contains("VesperPhaseTransitionRules.dismountProgress"));
+		assertTrue(model.contains("VesperPhaseTransitionRules.collapseProgress"));
+		assertTrue(model.contains("this.mountHead.zRot"));
+		assertTrue(model.contains("this.leftArm.xRot"));
 		assertTrue(model.contains("renderVesperOnly"));
 		assertTrue(model.contains("renderMountAssembly"));
 		assertTrue(renderer.contains("new VesperMountAbsorptionLayer(this)"));
 		assertTrue(layer.contains("cardinalStaffBloodMelt"));
+	}
+
+	@Test
+	void eveningStarAwakensThroughGlowSigilsAndPhysicalGrowthBeforeCombat() throws Exception {
+		String crowned = read("common/entity/boss/endgame/VesperTheCrownedRefusalEntity.java");
+		String evening = read("common/entity/boss/endgame/VesperTheEveningStarEntity.java");
+		String renderer = read("client/render/entity/boss/endgame/VesperTheEveningStarRenderer.java");
+		String sigils = read("client/render/layer/mob/endgame/VesperTendencySigilLayer.java");
+		Path glowPath = SOURCE.resolve("client/render/layer/mob/endgame/VesperAwakeningGlowLayer.java");
+
+		assertTrue(crowned.contains("beginAwakening()"));
+		assertTrue(evening.contains("DATA_AWAKENING_TICK"));
+		assertTrue(evening.contains("tickAwakening"));
+		assertTrue(evening.contains("getDefaultDimensions(Pose pose)"));
+		assertTrue(evening.contains("refreshDimensions()"));
+		assertTrue(renderer.contains("VesperPhaseTransitionRules.awakeningScale"));
+		assertTrue(sigils.contains("VesperPhaseTransitionRules.awakeningSigilCount"));
+		assertTrue(Files.exists(glowPath), "Evening Star awakening glow layer is missing");
+		assertTrue(read("client/render/layer/mob/endgame/VesperLivingWeaponLayer.java")
+				.contains("entity.isAwakening()"));
 	}
 
 	@Test
@@ -133,8 +170,11 @@ final class VesperCombatImplementationSourceTest {
 		assertTrue(absorption.contains("VesperBloodAbsorptionInteractions.tryAbsorb"));
 		assertTrue(staff.contains("VesperBloodAbsorptionInteractions.tryAbsorb"));
 		assertTrue(model.contains("entity.isAwaitingAbsorption()"));
-		assertTrue(sigils.contains("sigilDissolveAlpha"));
-		assertTrue(weapon.contains("entity.isAwaitingAbsorption()"));
+		assertTrue(model.contains("defeatKneelProgress"));
+		assertTrue(sigils.contains("sigilFizzleProgress"));
+		assertTrue(weapon.contains("weaponDissolveProgress"));
+		assertTrue(weapon.contains("hermitFarewellDissolve"));
+		assertTrue(evening.contains("isDefeatAnimationComplete"));
 	}
 
 	private static String read(String relative) throws Exception {

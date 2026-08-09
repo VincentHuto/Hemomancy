@@ -178,6 +178,62 @@ final class EndgameBossActions {
 				SoundSource.HOSTILE, 1.2F, 0.55F + tick / 300.0F);
 	}
 
+	static void finishVesperMountAbsorption(VesperTheCrownedRefusalEntity boss) {
+		if (!(boss.level() instanceof ServerLevel server)) return;
+		Vec3 center = boss.position().add(0.0D, 1.5D, 0.0D);
+		VesperVisualEffects.bloodCells(server, center, VesperVisualEffects.BLOOD,
+				64, 1.8D, 1.5D, 1.8D, 0.15D);
+		VesperVisualEffects.glow(server, center, VesperVisualEffects.BLOOD,
+				40, 1.2D, 1.4D, 1.2D, 0.09D);
+		server.playSound(null, boss.blockPosition(), SoundEvents.BEACON_ACTIVATE,
+				SoundSource.HOSTILE, 1.5F, 0.58F);
+	}
+
+	static void tickVesperAwakening(VesperTheEveningStarEntity boss, int tick) {
+		if (!(boss.level() instanceof ServerLevel server)) return;
+		Vec3 center = boss.position().add(0.0D, boss.getBbHeight() * 0.55D, 0.0D);
+		float glow = VesperPhaseTransitionRules.awakeningGlow(tick);
+		if (glow > 0.0F) {
+			VesperVisualEffects.glow(server, center, VesperVisualEffects.BLOOD,
+					Math.max(3, Math.round(10.0F * glow)), 0.7D, 1.1D, 0.7D, 0.035D);
+			VesperVisualEffects.darkGlow(server, center, VesperVisualEffects.DEEP_BLOOD,
+					Math.max(2, Math.round(6.0F * glow)), 0.9D, 1.25D, 0.9D, 0.025D);
+		}
+		if (tick >= VesperPhaseTransitionRules.AWAKENING_SIGIL_START_TICK
+				&& (tick - VesperPhaseTransitionRules.AWAKENING_SIGIL_START_TICK)
+						% VesperPhaseTransitionRules.AWAKENING_SIGIL_INTERVAL_TICKS == 0) {
+			server.playSound(null, boss.blockPosition(), SoundEvents.BEACON_POWER_SELECT,
+					SoundSource.HOSTILE, 0.9F, 0.68F + tick * 0.006F);
+			VesperVisualEffects.bloodCells(server, center, VesperVisualEffects.BLOOD,
+					12, 0.75D, 1.0D, 0.75D, 0.045D);
+		}
+	}
+
+	static void tickVesperDefeat(VesperTheEveningStarEntity boss, int tick) {
+		if (!(boss.level() instanceof ServerLevel server)
+				|| tick > VesperCombatRules.WEAPON_DISSOLVE_TICKS || tick % 2 != 0) return;
+		double yaw = Math.toRadians(boss.getYRot());
+		Vec3 side = new Vec3(Math.cos(yaw), 0.0D, Math.sin(yaw)).scale(0.72D);
+		Vec3 hands = boss.position().add(0.0D, 1.25D, 0.0D);
+		for (Vec3 hand : new Vec3[] { hands.add(side), hands.subtract(side) }) {
+			VesperVisualEffects.bloodCells(server, hand, VesperVisualEffects.BLOOD,
+					3, 0.2D, 0.22D, 0.2D, 0.025D);
+			VesperVisualEffects.darkGlow(server, hand, VesperVisualEffects.BLACK,
+					2, 0.16D, 0.18D, 0.16D, 0.018D);
+		}
+	}
+
+	static void finishVesperAwakening(VesperTheEveningStarEntity boss) {
+		if (!(boss.level() instanceof ServerLevel server)) return;
+		Vec3 center = boss.position().add(0.0D, boss.getBbHeight() * 0.55D, 0.0D);
+		VesperVisualEffects.glow(server, center, VesperVisualEffects.BLOOD,
+				48, 1.1D, 1.7D, 1.1D, 0.11D);
+		VesperVisualEffects.lightning(server, center.add(-1.8D, 1.0D, 0.0D),
+				center.add(1.8D, -0.7D, 0.0D), false, boss.getId() * 433L);
+		server.playSound(null, boss.blockPosition(), SoundEvents.WITHER_SPAWN,
+				SoundSource.HOSTILE, 1.2F, 1.35F);
+	}
+
 	static void clearVesperPuppets(Mob boss) {
 		if (!(boss.level() instanceof ServerLevel server)) return;
 		server.getEntitiesOfClass(Mob.class, boss.getBoundingBox().inflate(72.0D),

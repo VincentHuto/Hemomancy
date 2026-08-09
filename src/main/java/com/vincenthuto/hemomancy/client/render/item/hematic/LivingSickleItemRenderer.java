@@ -8,6 +8,7 @@ import com.vincenthuto.hemomancy.common.init.RenderTypeInit;
 import com.vincenthuto.hutoslib.math.Quaternion;
 import com.vincenthuto.hutoslib.math.Vector3;
 import net.minecraft.client.model.geom.EntityModelSet;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderDispatcher;
@@ -39,5 +40,11 @@ public final class LivingSickleItemRenderer extends BlockEntityWithoutLevelRende
 		VertexConsumer glint = buffers.getBuffer(RenderTypeInit.getCrimsonGlint());
 		model.renderToBuffer(poseStack, glint, light, OverlayTexture.NO_OVERLAY, -1);
 		poseStack.popPose();
+	}
+
+	public static void renderModel(ItemStack stack, ItemDisplayContext context, PoseStack poseStack,
+			MultiBufferSource buffers, int light, int seed) {
+		Minecraft.getInstance().getItemRenderer().renderStatic(stack, context, light,
+				OverlayTexture.NO_OVERLAY, poseStack, buffers, Minecraft.getInstance().level, seed);
 	}
 }

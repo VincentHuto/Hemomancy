@@ -3,6 +3,7 @@ package com.vincenthuto.hemomancy.client.render.world.chamberofwill;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.client.data.ChamberOfWillClientData;
 import com.vincenthuto.hemomancy.client.data.VesperFightClientData;
+import com.vincenthuto.hemomancy.client.data.MycophantFightClientData;
 import com.vincenthuto.hemomancy.common.worldgen.ChamberOfWillManager;
 import net.minecraft.resources.ResourceLocation;
 
@@ -90,6 +91,12 @@ public final class ChamberSkyThemeRegistry {
 				.toggles(true, false, false, false)
 				.build();
 		register(vesperFight, new VesperFightChamberEffects(vesperFight));
+		ChamberSkyTheme mycophantNursery = ChamberSkyTheme.builder(ChamberOfWillManager.THEME_MYCOPHANT_NURSERY)
+				.textures(QLIPHOTH_COMMUNION_SKY, QLIPHOTH_COMMUNION_CLOUDS, DEFAULT_WISP, DEFAULT_NOISE)
+				.skybox(0xFF071109, 0xFF172817).nebula(0x102515, 0x24452A, 0x5A272D)
+				.tints(0x6B9365, 0x71383C, 0x95805A, 0x345A42).pulse(0.72F).motion(0.2F)
+				.layers(2, 2, 1, 1).monolithPillars(0).toggles(true, true, true, false).build();
+		register(mycophantNursery, new MycophantNurseryChamberEffects(mycophantNursery));
 		ChamberSkyTheme apotheos = ChamberSkyTheme.builder(ChamberOfWillManager.THEME_APOTHEOS)
 				.skybox(0xFF000000, 0xFF000000)
 				.nebula(0x000000, 0x000000, 0x000000)
@@ -116,8 +123,8 @@ public final class ChamberSkyThemeRegistry {
 	}
 
 	public static ChamberSkyTheme activeTheme() {
-		return byId(VesperFightClientData.isActive()
-				? ChamberOfWillManager.THEME_VESPER_FIGHT
+		return byId(MycophantFightClientData.isActive() ? ChamberOfWillManager.THEME_MYCOPHANT_NURSERY
+				: VesperFightClientData.isActive() ? ChamberOfWillManager.THEME_VESPER_FIGHT
 				: ChamberOfWillClientData.skyTheme());
 	}
 

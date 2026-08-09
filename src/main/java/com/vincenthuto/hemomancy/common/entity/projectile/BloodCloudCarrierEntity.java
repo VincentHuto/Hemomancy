@@ -1,6 +1,7 @@
 package com.vincenthuto.hemomancy.common.entity.projectile;
 
 import com.vincenthuto.hemomancy.client.particle.factory.BloodCellParticleFactory;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.init.EntityInit;
 import com.vincenthuto.hutoslib.client.particle.util.HLParticleUtils;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
@@ -22,6 +23,7 @@ import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 public class BloodCloudCarrierEntity extends AbstractHurtingProjectile {
 
@@ -29,6 +31,10 @@ public class BloodCloudCarrierEntity extends AbstractHurtingProjectile {
 	public double xPower;
 	public double yPower;
 	public double zPower;
+	@Nullable
+	private EnumBloodTendency damageTendency;
+	@Nullable
+	private EnumBloodTendency secondaryDamageTendency;
 
 	/**
 	 * Called to update the entity's position/logic.
@@ -58,6 +64,10 @@ public class BloodCloudCarrierEntity extends AbstractHurtingProjectile {
 	public void addAdditionalSaveData(CompoundTag compound) {
 		super.addAdditionalSaveData(compound);
 		compound.put("power", this.newDoubleList(new double[] { this.xPower, this.yPower, this.zPower }));
+		if (damageTendency != null) compound.putString("DamageTendency", damageTendency.name());
+		if (secondaryDamageTendency != null) {
+			compound.putString("SecondaryDamageTendency", secondaryDamageTendency.name());
+		}
 	}
 
 	@Override
@@ -126,7 +136,7 @@ public class BloodCloudCarrierEntity extends AbstractHurtingProjectile {
 		switch (pos.getType()) {
 		case BLOCK: {
 			if (!level().isClientSide) {
-				CloudEntityBlood cloud = new CloudEntityBlood(EntityInit.blood_cloud.get(), level(), shooter);
+				CloudEntityBlood cloud = createCloud();
 				cloud.setPos(getX(), getY(), getZ());
 				level().addFreshEntity(cloud);
 				this.remove(RemovalReason.KILLED);
@@ -136,7 +146,7 @@ public class BloodCloudCarrierEntity extends AbstractHurtingProjectile {
 		}
 		case ENTITY: {
 			if (!level().isClientSide) {
-				CloudEntityBlood cloud = new CloudEntityBlood(EntityInit.blood_cloud.get(), level(), shooter);
+				CloudEntityBlood cloud = createCloud();
 				cloud.setPos(getX(), getY() + 3, getZ());
 				level().addFreshEntity(cloud);
 				this.remove(RemovalReason.KILLED);
@@ -165,7 +175,32 @@ public class BloodCloudCarrierEntity extends AbstractHurtingProjectile {
 				this.zPower = listnbt.getDouble(2);
 			}
 		}
+		damageTendency = readTendency(compound, "DamageTendency");
+		secondaryDamageTendency = readTendency(compound, "SecondaryDamageTendency");
 
+	}
+
+	public void setDamageTendencies(@Nullable EnumBloodTendency damageTendency,
+			@Nullable EnumBloodTendency secondaryDamageTendency) {
+		this.damageTendency = damageTendency;
+		this.secondaryDamageTendency = secondaryDamageTendency;
+	}
+
+	private CloudEntityBlood createCloud() {
+		LivingEntity source = shooter;
+		if (source == null && getOwner() instanceof LivingEntity living) source = living;
+		CloudEntityBlood cloud = new CloudEntityBlood(EntityInit.blood_cloud.get(), level(), source);
+		cloud.setDamageTendencies(damageTendency, secondaryDamageTendency);
+		return cloud;
+	}
+
+	@Nullable
+	private static EnumBloodTendency readTendency(CompoundTag compound, String key) {
+		try {
+			return compound.contains(key) ? EnumBloodTendency.valueOf(compound.getString(key)) : null;
+		} catch (IllegalArgumentException ignored) {
+			return null;
+		}
 	}
 
 	public void setDirectionMotion(Entity shooter, float x, float y, float z, float velocity, float inaccuracy) {
@@ -225,7 +260,7 @@ public class BloodCloudCarrierEntity extends AbstractHurtingProjectile {
 		if (tickCount > 50) {
 
 			if (!level().isClientSide) {
-				CloudEntityBlood cloud = new CloudEntityBlood(EntityInit.blood_cloud.get(), level(), shooter);
+				CloudEntityBlood cloud = createCloud();
 				cloud.setPos(getX(), getY(), getZ());
 				level().addFreshEntity(cloud);
 				this.remove(RemovalReason.KILLED);

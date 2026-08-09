@@ -50,6 +50,7 @@ public class ChamberOfWillManager extends SavedData {
     public static final ResourceLocation THEME_SILENT_ARCHON = Hemomancy.rloc("silent_archon");
     public static final ResourceLocation THEME_APOTHEOS = Hemomancy.rloc("apotheos");
     public static final ResourceLocation THEME_VESPER_FIGHT = Hemomancy.rloc("vesper_fight");
+    public static final ResourceLocation THEME_MYCOPHANT_NURSERY = Hemomancy.rloc("mycophant_nursery");
     private static final List<ResourceLocation> ORDERED_SKY_THEMES = List.of(
             THEME_WILL_DEFAULT,
             THEME_MNEMONIC_LOWTIDE,
@@ -64,7 +65,8 @@ public class ChamberOfWillManager extends SavedData {
             THEME_QLIPHOTH_COMMUNION,
             THEME_SILENT_ARCHON,
             THEME_APOTHEOS,
-            THEME_VESPER_FIGHT);
+            THEME_VESPER_FIGHT,
+            THEME_MYCOPHANT_NURSERY);
 
     public static final int CHAMBER_SPACING = 256;
     public static final int FLOOR_Y = 2;
@@ -351,6 +353,9 @@ public class ChamberOfWillManager extends SavedData {
         MinecraftServer server = serverLevel.getServer();
         ChamberOfWillManager manager = get(server);
         for (ServerPlayer player : serverLevel.players()) {
+			if (MycophantEncounterManager.tickArenaPlayer(player, serverLevel)) {
+				continue;
+			}
 			if (VesperOrdealManager.tickArenaPlayer(player, serverLevel)) {
 				continue;
 			}

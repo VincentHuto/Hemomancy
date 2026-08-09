@@ -7,6 +7,7 @@ import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.
 import com.vincenthuto.hemomancy.common.event.LastRiteHelper;
 import com.vincenthuto.hemomancy.common.item.harbinger.morphlings.IMorphling;
 import com.vincenthuto.hemomancy.common.item.harbinger.morphlings.MorphlingItem;
+import com.vincenthuto.hemomancy.common.item.harbinger.morphlings.MorphlingUpkeepRules;
 import com.vincenthuto.hemomancy.common.network.morphling.SyncEquippedMorphlingPacket;
 import com.vincenthuto.hemomancy.config.HemoServerConfig;
 import net.minecraft.ChatFormatting;
@@ -58,44 +59,41 @@ public class EquippedMorphlingEvents {
 				MorphlingItem.applyHungerTick(player, stack);
 			}
 		});
-		if (!HemoServerConfig.MORPHLING_PASSIVE_DRAIN_ENABLED.get()) return;
-
 		HemoCapabilityAccess.getEquippedMorphling(player).ifPresent(morphCap -> {
-			if (!morphCap.hasMorphling()) return;
-
 			int drainInterval = HemoServerConfig.MORPHLING_DRAIN_INTERVAL.get();
-			if (player.tickCount % drainInterval != 0) return;
+			boolean intervalElapsed = player.tickCount % drainInterval == 0;
+			if (!MorphlingUpkeepRules.shouldRunEquippedTick(morphCap.hasMorphling(), intervalElapsed)) return;
 
-			HemoCapabilityAccess.getBloodVolume(player).ifPresent(volume -> {
-				if (!volume.isActive()) return;
+			ItemStack equippedStack = morphCap.getEquippedMorphling();
+			if (!(equippedStack.getItem() instanceof IMorphling morphling)) return;
 
-				double drainRate = HemoServerConfig.MORPHLING_DRAIN_RATE.get();
+			double upkeep = MorphlingUpkeepRules.upkeepAmount(
+					HemoServerConfig.MORPHLING_PASSIVE_DRAIN_ENABLED.get(),
+					HemoServerConfig.MORPHLING_DRAIN_RATE.get(), morphling.getBloodCost());
 
-				// Scale drain by morphling blood cost if it implements IMorphling
-				if (morphCap.getEquippedMorphling().getItem() instanceof IMorphling morphling) {
-					int bloodCost = morphling.getBloodCost();
-					if (bloodCost > 0) {
-						drainRate *= (1.0 + bloodCost / 100.0);
+			if (upkeep > 0.0D) {
+				HemoCapabilityAccess.getBloodVolume(player).ifPresent(volume -> {
+					if (!volume.isActive()) return;
+
+					BloodFlowLedger.DrainResult drain = BloodFlowLedger.applyDrain((ServerPlayer) player, volume,
+							"morphling_upkeep", "Morphling Upkeep", Category.MORPHLING, upkeep, drainInterval, true);
+					if (drain.satisfied()) {
+						MorphlingItem.recordBondingBlood(equippedStack, drain.actual());
+						syncToClient((ServerPlayer) player);
+					} else {
+						// Not enough blood: unequip the morphling.
+						morphCap.clearMorphling();
+						LastRiteHelper.clearMorphlingRites(player);
+						syncToClient((ServerPlayer) player);
+						player.displayClientMessage(
+								Component.literal("Your morphling withers from blood starvation...")
+										.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC), true);
 					}
-				}
+				});
+			}
 
-				if (volume.getBloodVolume() > drainRate) {
-					BloodFlowLedger.applyDrain((ServerPlayer) player, volume, "morphling_upkeep",
-							"Morphling Upkeep", Category.MORPHLING, drainRate, drainInterval, true);
-				} else {
-					// Not enough blood â€” unequip the morphling
-					morphCap.clearMorphling();
-					LastRiteHelper.clearMorphlingRites(player);
-					syncToClient((ServerPlayer) player);
-					player.displayClientMessage(
-							Component.literal("Your morphling withers from blood starvation...")
-									.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC), true);
-				}
-			});
-
-			// Delegate morphling-specific passive effects to the item itself
-			if (morphCap.getEquippedMorphling().getItem() instanceof IMorphling morphling) {
-				morphling.onEquippedTick(player, morphCap.getEquippedMorphling());
+			if (morphCap.hasMorphling()) {
+				morphling.onEquippedTick(player, equippedStack);
 			}
 		});
 	}

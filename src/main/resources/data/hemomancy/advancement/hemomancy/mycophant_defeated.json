@@ -1,0 +1,13 @@
+{
+  "display": {
+    "icon": { "id": "hemomancy:mycophant_tendril" },
+    "title": { "translate": "advancements.hemomancy.mycophant_defeated.title" },
+    "description": { "translate": "advancements.hemomancy.mycophant_defeated.description" },
+    "frame": "challenge",
+    "show_toast": true,
+    "announce_to_chat": true
+  },
+  "parent": "hemomancy:hemomancy/degree_8_apotheos",
+  "criteria": { "manual": { "trigger": "minecraft:impossible" } },
+  "requirements": [["manual"]]
+}

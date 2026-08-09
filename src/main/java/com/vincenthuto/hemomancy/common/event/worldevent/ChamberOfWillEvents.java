@@ -3,6 +3,7 @@ package com.vincenthuto.hemomancy.common.event.worldevent;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.worldgen.ChamberOfWillManager;
 import com.vincenthuto.hemomancy.common.worldgen.VesperOrdealManager;
+import com.vincenthuto.hemomancy.common.worldgen.MycophantEncounterManager;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -57,7 +58,8 @@ public final class ChamberOfWillEvents {
         if (player.level().isClientSide) return;
         if (!(player instanceof ServerPlayer serverPlayer)) return;
         if (!player.level().dimension().equals(ChamberOfWillManager.CHAMBER_OF_WILL)) return;
-        if (!ChamberPlayerSafeguardRules.shouldApply(player.isCreative(), player.isSpectator(),
+        if (MycophantEncounterManager.isActive(serverPlayer)
+                || !ChamberPlayerSafeguardRules.shouldApply(player.isCreative(), player.isSpectator(),
                 VesperOrdealManager.isActive(serverPlayer))) return;
 
         ChamberOfWillManager manager = ChamberOfWillManager.get(serverPlayer.getServer());

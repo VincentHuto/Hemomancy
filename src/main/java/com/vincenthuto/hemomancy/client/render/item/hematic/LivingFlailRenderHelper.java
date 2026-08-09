@@ -5,6 +5,7 @@ import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.client.model.item.LivingFlailModel;
+import com.vincenthuto.hemomancy.client.render.HemoRenderTypes;
 import com.vincenthuto.hemomancy.common.init.RenderTypeInit;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
@@ -52,16 +53,38 @@ public final class LivingFlailRenderHelper {
 		renderWithBob(model, poseStack, buffer, packedLight, packedOverlay, bob, tilt);
 	}
 
+	public static void renderHeldDissolving(LivingFlailModel<?> model, LivingEntity holder, HumanoidArm arm,
+			ItemStack stack, PoseStack poseStack, MultiBufferSource buffer, int packedLight, int packedOverlay,
+			float progress, float seed) {
+		Key key = new Key(holder.getUUID(), 0, arm == HumanoidArm.LEFT ? 0 : 1);
+		poseStack.mulPose(Axis.ZP.rotationDegrees(180.0F));
+		poseStack.mulPose(Axis.XN.rotationDegrees(80.0F));
+		poseStack.translate(0.15D, -0.1D, -0.2D);
+		PhysicsState state = STATES.computeIfAbsent(key, ignored -> new PhysicsState(holder));
+		Vec3 bob = state.update(holder, false, 0.64D);
+		float tilt = (float) Mth.clamp(bob.x * 48.0D + bob.z * 28.0D, -30.0D, 30.0D);
+		VertexConsumer dissolve = buffer.getBuffer(HemoRenderTypes.hermitFarewellDissolve(
+				TEXTURE, holder.tickCount, progress, seed));
+		renderWithBob(model, poseStack, buffer, dissolve, packedLight, packedOverlay, bob, tilt, false);
+	}
+
 	private static void renderWithBob(LivingFlailModel<?> model, PoseStack poseStack, MultiBufferSource buffer,
 			int packedLight, int packedOverlay, Vec3 bob, float tiltDegrees) {
 		VertexConsumer base = buffer.getBuffer(RenderType.entityTranslucent(TEXTURE));
+		renderWithBob(model, poseStack, buffer, base, packedLight, packedOverlay, bob, tiltDegrees, true);
+	}
+
+	private static void renderWithBob(LivingFlailModel<?> model, PoseStack poseStack, MultiBufferSource buffer,
+			VertexConsumer base, int packedLight, int packedOverlay, Vec3 bob, float tiltDegrees,
+			boolean renderGlint) {
 		model.renderHandle(poseStack, base, packedLight, packedOverlay, -1);
-		renderDroopingChainAndHead(model, poseStack, buffer, base, packedLight, packedOverlay, bob, tiltDegrees);
+		renderDroopingChainAndHead(model, poseStack, buffer, base, packedLight, packedOverlay, bob, tiltDegrees,
+				renderGlint);
 	}
 
 	private static void renderDroopingChainAndHead(LivingFlailModel<?> model, PoseStack poseStack,
 			MultiBufferSource buffer, VertexConsumer base, int packedLight, int packedOverlay, Vec3 bob,
-			float tiltDegrees) {
+			float tiltDegrees, boolean renderGlint) {
 		poseStack.translate(0.2,0.1,0.2);
 		poseStack.mulPose(Axis.XP.rotationDegrees(-20));
 		poseStack.mulPose(Axis.YP.rotationDegrees(0));
@@ -83,8 +106,10 @@ public final class LivingFlailRenderHelper {
 		poseStack.mulPose(Axis.XP.rotationDegrees((float) Mth.clamp(-bob.z * 36.0, -20.0, 20.0)));
 		poseStack.scale(0.82f, 0.82f, 0.82f);
 		model.renderHead(poseStack, base, packedLight, packedOverlay, -1);
-		VertexConsumer glint = buffer.getBuffer(RenderTypeInit.getCrimsonGlint());
-		model.renderHead(poseStack, glint, packedLight, OverlayTexture.NO_OVERLAY, -1);
+		if (renderGlint) {
+			VertexConsumer glint = buffer.getBuffer(RenderTypeInit.getCrimsonGlint());
+			model.renderHead(poseStack, glint, packedLight, OverlayTexture.NO_OVERLAY, -1);
+		}
 		poseStack.popPose();
 		poseStack.popPose();
 	}

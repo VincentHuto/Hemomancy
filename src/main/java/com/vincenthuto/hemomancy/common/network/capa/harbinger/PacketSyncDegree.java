@@ -22,20 +22,27 @@ public class PacketSyncDegree implements CustomPacketPayload {
 	private final boolean hasFoundedBloodline, founderIntegrationSevered;
 	private final boolean fungalRevelationWitnessed, fungalSpineGranted;
 	private final EnumArchonPath archonPath;
+	private final int mycophantExposureTicks, mycophantRetryCooldownTicks;
+	private final boolean mycophantDefeated;
 
 	public PacketSyncDegree(IInitiatoryDegree degree) {
 		this(degree.getDegreeNumber(), degree.hasFoundedBloodline(), degree.isFounderIntegrationSevered(),
-				degree.hasWitnessedFungalRevelation(), degree.hasFungalSpineGranted(), degree.getArchonPath());
+				degree.hasWitnessedFungalRevelation(), degree.hasFungalSpineGranted(), degree.getArchonPath(),
+				degree.getMycophantExposureTicks(), degree.getMycophantRetryCooldownTicks(), degree.isMycophantDefeated());
 	}
 
 	private PacketSyncDegree(int degreeNumber, boolean hasFoundedBloodline, boolean founderIntegrationSevered,
-			boolean fungalRevelationWitnessed, boolean fungalSpineGranted, EnumArchonPath archonPath) {
+			boolean fungalRevelationWitnessed, boolean fungalSpineGranted, EnumArchonPath archonPath,
+			int mycophantExposureTicks, int mycophantRetryCooldownTicks, boolean mycophantDefeated) {
 		this.degreeNumber = degreeNumber;
 		this.hasFoundedBloodline = hasFoundedBloodline;
 		this.founderIntegrationSevered = founderIntegrationSevered;
 		this.fungalRevelationWitnessed = fungalRevelationWitnessed;
 		this.fungalSpineGranted = fungalSpineGranted;
 		this.archonPath = archonPath;
+		this.mycophantExposureTicks = mycophantExposureTicks;
+		this.mycophantRetryCooldownTicks = mycophantRetryCooldownTicks;
+		this.mycophantDefeated = mycophantDefeated;
 	}
 
 	public static void encode(FriendlyByteBuf buf, PacketSyncDegree msg) {
@@ -45,11 +52,15 @@ public class PacketSyncDegree implements CustomPacketPayload {
 		buf.writeBoolean(msg.fungalRevelationWitnessed);
 		buf.writeBoolean(msg.fungalSpineGranted);
 		buf.writeEnum(msg.archonPath);
+		buf.writeInt(msg.mycophantExposureTicks);
+		buf.writeInt(msg.mycophantRetryCooldownTicks);
+		buf.writeBoolean(msg.mycophantDefeated);
 	}
 
 	public static PacketSyncDegree decode(FriendlyByteBuf buf) {
 		return new PacketSyncDegree(buf.readInt(), buf.readBoolean(), buf.readBoolean(),
-				buf.readBoolean(), buf.readBoolean(), buf.readEnum(EnumArchonPath.class));
+				buf.readBoolean(), buf.readBoolean(), buf.readEnum(EnumArchonPath.class),
+				buf.readInt(), buf.readInt(), buf.readBoolean());
 	}
 
 	public static void handle(final PacketSyncDegree msg, final IPayloadContext ctx) {
@@ -63,6 +74,9 @@ public class PacketSyncDegree implements CustomPacketPayload {
 					degree.setFungalRevelationWitnessed(msg.fungalRevelationWitnessed);
 					degree.setFungalSpineGranted(msg.fungalSpineGranted);
 					degree.setArchonPath(msg.archonPath);
+					degree.setMycophantExposureTicks(msg.mycophantExposureTicks);
+					degree.setMycophantRetryCooldownTicks(msg.mycophantRetryCooldownTicks);
+					degree.setMycophantDefeated(msg.mycophantDefeated);
 				});
 			}
 		});

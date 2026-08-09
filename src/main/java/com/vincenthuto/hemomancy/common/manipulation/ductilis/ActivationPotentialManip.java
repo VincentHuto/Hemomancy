@@ -36,7 +36,7 @@ public class ActivationPotentialManip extends BloodManipulation {
 					DuctilisLightningEffects.activationPotential(player, target, targetIndex++);
 					float damage = (float) (5.0f * SkillPointHelper.getCrimsonMasteryMultiplier(player));
 					float adjusted = TendencyAffinityRules.adjustManipulationDamage(player, target, this, damage);
-					if (target.hurt(player.damageSources().playerAttack(player), adjusted)) {
+					if (target.hurt(player.damageSources().magic(), adjusted)) {
 						SchoolHitHelper.tryTriggerConductiveArc(player, target, EnumBloodTendency.DUCTILIS,
 								getSecondaryTend(), adjusted);
 					}

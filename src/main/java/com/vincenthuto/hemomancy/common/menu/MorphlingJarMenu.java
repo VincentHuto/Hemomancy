@@ -5,6 +5,7 @@ import com.vincenthuto.hemomancy.common.capability.player.harbinger.morphling.Eq
 import com.vincenthuto.hemomancy.common.event.LastRiteHelper;
 import com.vincenthuto.hemomancy.common.init.ContainerInit;
 import com.vincenthuto.hemomancy.common.item.harbinger.morphlings.ItemMorphlingJar;
+import com.vincenthuto.hemomancy.common.item.harbinger.morphlings.MorphlingIdentity;
 import com.vincenthuto.hemomancy.common.item.itemhandler.MorphlingJarItemHandler;
 import com.vincenthuto.hemomancy.common.menu.slot.MorphlingJarSlot;
 
@@ -216,7 +217,7 @@ public class MorphlingJarMenu extends AbstractContainerMenu {
 				return;
 
 			for (int i = 0; i < slotcount; i++) {
-				if (ItemStack.isSameItemSameComponents(equipped, handler.getStackInSlot(i))) {
+				if (MorphlingIdentity.matches(equipped, handler.getStackInSlot(i))) {
 					return;
 				}
 			}

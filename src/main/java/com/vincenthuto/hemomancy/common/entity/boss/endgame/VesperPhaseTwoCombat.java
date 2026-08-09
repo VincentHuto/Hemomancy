@@ -2,6 +2,7 @@ package com.vincenthuto.hemomancy.common.entity.boss.endgame;
 
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.entity.projectile.BloodBoltEntity;
+import com.vincenthuto.hemomancy.common.entity.projectile.LivingSickleHookEntity;
 import com.vincenthuto.hemomancy.common.entity.summon.EntityIronPillar;
 import com.vincenthuto.hemomancy.common.entity.summon.EntityIronSpike;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
@@ -100,7 +101,15 @@ public final class VesperPhaseTwoCombat {
 	}
 
 	public static void cancel(VesperTheEveningStarEntity boss) {
-		boss.clearWeaponAction();
+		cancelInternal(boss, true);
+	}
+
+	public static void cancelForDefeat(VesperTheEveningStarEntity boss) {
+		cancelInternal(boss, false);
+	}
+
+	private static void cancelInternal(VesperTheEveningStarEntity boss, boolean clearWeaponAction) {
+		if (clearWeaponAction) boss.clearWeaponAction();
 		boss.setActionCooldown(0);
 		boss.removeEffect(EffectInit.iron_retort);
 		boss.removeEffect(EffectInit.blood_rush);
@@ -152,6 +161,7 @@ public final class VesperPhaseTwoCombat {
 			case SICKLE_CYCLONE -> sickleCyclone(boss, target, tick);
 			case SICKLE_POUNCE -> sicklePounce(boss, target, tick);
 			case SICKLE_CROSS_REND -> sickleCrossRend(boss, target, tick);
+			case SICKLE_HOOK -> sickleHook(boss, target, tick);
 			case SANGUINE_CRESCENTS -> sanguineCrescents(boss, target, tick);
 			default -> { }
 		}
@@ -329,6 +339,11 @@ public final class VesperPhaseTwoCombat {
 		if (hitArc(boss, target, 4.8D, 155.0D, 6.0F, bit)) {
 			sickleSlashVisual(boss, target, (bit & 1) == 0, 1.2F);
 		}
+	}
+
+	private static void sickleHook(VesperTheEveningStarEntity boss, LivingEntity target, int tick) {
+		stopHorizontal(boss);
+		if (tick == 14) fireSickleHook(boss, target);
 	}
 
 	private static void sanguineCrescents(VesperTheEveningStarEntity boss, LivingEntity target, int tick) {
@@ -546,7 +561,7 @@ public final class VesperPhaseTwoCombat {
 		double lead = switch (action) {
 			case SKY_LANCE, LEAPING_CLEAVE, PREDATOR_POUNCE, SICKLE_POUNCE -> 7.0D;
 			case CONDUCTIVE_VOLLEY, STORM_LOCK -> 5.0D;
-			case SANGUINE_CRESCENTS -> 4.0D;
+			case SANGUINE_CRESCENTS, SICKLE_HOOK -> 4.0D;
 			default -> 2.0D;
 		};
 		return target.position().add(target.getDeltaMovement().multiply(lead, 0.0D, lead));
@@ -658,6 +673,18 @@ public final class VesperPhaseTwoCombat {
 		bolt.setBaseDamage(5.0D);
 		server.addFreshEntity(bolt);
 		boss.playSound(SoundEvents.PLAYER_ATTACK_SWEEP, 1.25F, 0.8F + boss.getRandom().nextFloat() * 0.35F);
+	}
+
+	private static void fireSickleHook(VesperTheEveningStarEntity boss, LivingEntity target) {
+		if (!(boss.level() instanceof ServerLevel server)) return;
+		LivingSickleHookEntity hook = new LivingSickleHookEntity(server, boss);
+		hook.setAttackDamage(7.0F);
+		Vec3 aim = boss.getLockedActionAim().add(0.0D, target.getBbHeight() * 0.55D, 0.0D)
+				.subtract(boss.getEyePosition());
+		hook.shoot(aim.x, aim.y, aim.z, 2.0F, 0.6F);
+		server.addFreshEntity(hook);
+		hook.spawnBloodTendril();
+		boss.playSound(SoundEvents.TRIDENT_THROW.value(), 1.15F, 0.68F);
 	}
 
 	private static void lightningCircle(VesperTheEveningStarEntity boss, LivingEntity target, Vec3 center, int bit) {

@@ -178,13 +178,21 @@ public class VesperTheCrownedRefusalEntity extends Monster {
         if (eveningStar == null) {
             return;
         }
-        eveningStar.moveTo(this.getX(), this.getY(), this.getZ(), this.getYRot(), this.getXRot());
+		Vec3 landing = dismountLandingPosition();
+		eveningStar.moveTo(landing.x, landing.y, landing.z, this.getYRot(), this.getXRot());
         eveningStar.setYHeadRot(this.getYHeadRot());
         eveningStar.setTarget(this.getTarget());
 		VesperOrdealManager.copyOrdeal(this, eveningStar);
         eveningStar.finalizeSpawn(server, server.getCurrentDifficultyAt(this.blockPosition()), MobSpawnType.MOB_SUMMONED, null);
+		eveningStar.beginAwakening();
         server.addFreshEntity(eveningStar);
     }
+
+	private Vec3 dismountLandingPosition() {
+		Vec3 forward = Vec3.directionFromRotation(0.0F, getYRot()).multiply(1.0D, 0.0D, 1.0D);
+		if (forward.lengthSqr() < 0.01D) return position();
+		return position().add(forward.normalize().scale(1.5D));
+	}
 
 	public void setOrdeal(UUID owner, long bloomOrigin) {
 		this.ordealOwner = owner;
@@ -302,7 +310,7 @@ public class VesperTheCrownedRefusalEntity extends Monster {
 			EndgameBossActions.tickVesperTransformation(this, transition);
 			if (VesperPhaseTransitionRules.isComplete(transition) && !spawnedEveningStar) {
 				spawnedEveningStar = true;
-				EndgameBossActions.finishWithExplosion(this, 2.0F);
+				EndgameBossActions.finishVesperMountAbsorption(this);
 				EndgameBossActions.clearVesperPuppets(this);
 				spawnEveningStar();
 				bossEvent.removeAllPlayers();

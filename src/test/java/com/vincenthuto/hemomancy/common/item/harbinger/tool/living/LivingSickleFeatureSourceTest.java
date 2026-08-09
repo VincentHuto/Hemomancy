@@ -41,6 +41,28 @@ final class LivingSickleFeatureSourceTest {
 		assertTrue(json.contains("\"parent\": \"builtin/entity\""));
 	}
 
+	@Test
+	void ordinarySickleHasTwoActiveModesAndARealHookProjectile() throws IOException {
+		String item = read("src/main/java/com/vincenthuto/hemomancy/common/item/harbinger/tool/living/LivingSickleItem.java");
+		String hook = read("src/main/java/com/vincenthuto/hemomancy/common/entity/projectile/LivingSickleHookEntity.java");
+		String renderer = read("src/main/java/com/vincenthuto/hemomancy/client/render/entity/projectile/LivingSickleHookRenderer.java");
+		String entities = read("src/main/java/com/vincenthuto/hemomancy/common/init/EntityInit.java");
+		String client = read("src/main/java/com/vincenthuto/hemomancy/client/event/ClientEvents.java");
+
+		assertTrue(item.contains("player.isShiftKeyDown()"));
+		assertTrue(item.contains("LivingSickleMode.BLOOD_HOOK"));
+		assertTrue(item.contains("performSpin"));
+		assertTrue(item.contains("LivingSickleHookEntity"));
+		assertTrue(item.contains("DataComponents.ATTRIBUTE_MODIFIERS"));
+		assertTrue(hook.contains("TendrilEffectSpawner"));
+		assertTrue(hook.contains("LivingSickleCombatRules.pullStrength"));
+		assertTrue(hook.contains("protected boolean canHitEntity"));
+		assertTrue(hook.contains("discard()"));
+		assertTrue(renderer.contains("LivingSickleItemRenderer.renderModel"));
+		assertTrue(entities.contains("living_sickle_hook"));
+		assertTrue(client.contains("LivingSickleHookRenderer::new"));
+	}
+
 	private static String read(String path) throws IOException {
 		return Files.readString(ROOT.resolve(path));
 	}

@@ -269,6 +269,8 @@ public class ItemInit {
             () -> new VivianiteScalpelItem(new Item.Properties()));
     public static final DeferredHolder<Item, Item> spore_sac = BASEITEMS.register("spore_sac",
             () -> new Item(new Item.Properties()));
+    public static final DeferredHolder<Item, Item> fruiting_lure = BASEITEMS.register("fruiting_lure",
+            () -> new Item(new Item.Properties().rarity(Rarity.UNCOMMON)));
     // Dormant tendency-mob placeholder drops. Keep these here for easy restoration if the mobs return.
 //    public static final DeferredHolder<Item, Item> desiccated_membrane = BASEITEMS.register("desiccated_membrane",
 //            () -> new Item(new Item.Properties()));

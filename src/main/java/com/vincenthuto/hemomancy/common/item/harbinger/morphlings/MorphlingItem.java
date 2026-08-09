@@ -40,6 +40,8 @@ public class MorphlingItem extends Item implements IMorphling {
 	public static final String PRIMAL_ABILITY_PREFIX = "Primal:";
 	public static final String LAST_FED_GAME_TIME_KEY = "LastFedGameTime";
 	public static final String EXPERIENCE_PROGRESS_KEY = "ExperienceProgress";
+	public static final String BONDING_STAGE_KEY = "BondingStage";
+	public static final String BONDING_BLOOD_KEY = "BondingBlood";
 
 	// Maturity thresholds based on effective EnzymePower
 	public static final float[] MATURITY_THRESHOLDS = { 0f, 10f, 30f, 60f, 100f, 100f };
@@ -94,8 +96,6 @@ public class MorphlingItem extends Item implements IMorphling {
 				break;
 			}
 		}
-		maturity = MorphlingHungerRules.capMaturityByHusbandry(maturity,
-				tag.getInt(EXPERIENCE_PROGRESS_KEY), husbandryStageQuota());
 		return WildMorphlingRules.applyMaturityCap(maturity, tag.getBoolean(WILD_BOUND_KEY),
 				tag.getBoolean(PRIMALIZED_KEY));
 	}
@@ -179,6 +179,53 @@ public class MorphlingItem extends Item implements IMorphling {
 		return next;
 	}
 
+	public static double getBondingBlood(ItemStack stack) {
+		if (!stack.has(DataComponents.CUSTOM_DATA)) {
+			return 0.0D;
+		}
+		CompoundTag tag = stack.get(DataComponents.CUSTOM_DATA).copyTag();
+		return tag.getInt(BONDING_STAGE_KEY) == getMaturityLevel(stack)
+				? Math.max(0.0D, tag.getDouble(BONDING_BLOOD_KEY)) : 0.0D;
+	}
+
+	public static double requiredBondingBlood(ItemStack stack) {
+		return requiredBondingBlood(getMaturityLevel(stack));
+	}
+
+	public static double requiredBondingBlood(int maturity) {
+		return MorphlingBloodBondingRules.requiredBlood(maturity,
+				fledglingBondBlood(), developingBondBlood(), matureBondBlood());
+	}
+
+	public static boolean isBondingReady(ItemStack stack) {
+		return MorphlingBloodBondingRules.isReady(getMaturityLevel(stack), getBondingBlood(stack),
+				isPassiveUpkeepEnabled(), fledglingBondBlood(), developingBondBlood(), matureBondBlood());
+	}
+
+	public static void recordBondingBlood(ItemStack stack, double actualDrain) {
+		if (stack.isEmpty() || actualDrain <= 0.0D) {
+			return;
+		}
+		int maturity = getMaturityLevel(stack);
+		CompoundTag tag = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
+		MorphlingBloodBondingRules.Progress progress = MorphlingBloodBondingRules.recordAbsorption(
+				tag.getInt(BONDING_STAGE_KEY), tag.getDouble(BONDING_BLOOD_KEY), maturity, actualDrain,
+				requiredBondingBlood(maturity));
+		tag.putInt(BONDING_STAGE_KEY, progress.stage());
+		tag.putDouble(BONDING_BLOOD_KEY, progress.absorbed());
+		stack.set(DataComponents.CUSTOM_DATA, CustomData.of(tag));
+	}
+
+	public static void resetBondingProgress(ItemStack stack, int maturity) {
+		if (stack.isEmpty()) {
+			return;
+		}
+		CompoundTag tag = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
+		tag.putInt(BONDING_STAGE_KEY, maturity);
+		tag.putDouble(BONDING_BLOOD_KEY, 0.0D);
+		stack.set(DataComponents.CUSTOM_DATA, CustomData.of(tag));
+	}
+
 	public static MorphlingHungerRules.HungerState hungerState(ItemStack stack, long now) {
 		return MorphlingHungerRules.state(isHungerEnabled(), getMaturityLevel(stack), isWildBound(stack),
 				now, getLastFedGameTime(stack), fedDurationTicks());
@@ -259,46 +306,54 @@ public class MorphlingItem extends Item implements IMorphling {
 		tooltip.add(Component.literal("Secondary: " + formatTendencyName(secondary))
 				.withStyle(ChatFormatting.DARK_AQUA));
 
-		if (stack.has(DataComponents.CUSTOM_DATA)) {
-			CompoundTag morphTag = stack.get(DataComponents.CUSTOM_DATA).copyTag();
+		{
+			CompoundTag morphTag = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
 			float power = morphTag.getFloat("EnzymePower");
 			int feedings = morphTag.getInt("EnzymeFeedings");
+			int maturity = getMaturityLevel(stack);
+			tooltip.add(Component.literal("Maturity: " + getMaturityName(maturity))
+					.withStyle(MATURITY_COLORS[maturity]));
 			if (feedings > 0) {
-				int maturity = getMaturityLevel(stack);
-				tooltip.add(Component.literal("Maturity: " + getMaturityName(maturity))
-						.withStyle(MATURITY_COLORS[maturity]));
 				tooltip.add(Component.literal("Enzyme Power: " + String.format("%.1f", power))
 						.withStyle(ChatFormatting.DARK_GREEN));
 				tooltip.add(Component.literal("Feedings: " + feedings)
 						.withStyle(ChatFormatting.GOLD));
-				if (morphTag.getBoolean(WILD_BOUND_KEY)) {
-					tooltip.add(Component.literal("Wild-bound: Incubate to unlock further maturity")
-							.withStyle(ChatFormatting.DARK_AQUA));
-				}
-				if (isHungerEnabled() && maturity >= 3 && !morphTag.getBoolean(WILD_BOUND_KEY)) {
-					long now = context.level() == null ? 0L : context.level().getGameTime();
-					tooltip.add(Component.literal("Hunger: " + formatHungerState(hungerState(stack, now)))
-							.withStyle(ChatFormatting.DARK_RED));
-				}
+			}
+			if (morphTag.getBoolean(WILD_BOUND_KEY)) {
+				tooltip.add(Component.literal("Wild-bound: Bond, then incubate to unlock further maturity")
+						.withStyle(ChatFormatting.DARK_AQUA));
+			}
+			if (isHungerEnabled() && maturity >= 3 && !morphTag.getBoolean(WILD_BOUND_KEY)) {
+				long now = context.level() == null ? 0L : context.level().getGameTime();
+				tooltip.add(Component.literal("Hunger: " + formatHungerState(hungerState(stack, now)))
+						.withStyle(ChatFormatting.DARK_RED));
+			}
 
-				// Show progress to next level
-				if (maturity < PrimalMorphlingRules.APEX_LEVEL) {
-					float nextThreshold = MATURITY_THRESHOLDS[maturity + 1];
-					tooltip.add(Component.literal("Next level at: " + String.format("%.0f", nextThreshold) + " power")
-							.withStyle(ChatFormatting.DARK_GRAY));
-				} else if (maturity == PrimalMorphlingRules.APEX_LEVEL) {
-					tooltip.add(Component.literal("Primalization: Morphic Nectar after Apotheos")
-							.withStyle(ChatFormatting.DARK_PURPLE));
+			if (maturity < PrimalMorphlingRules.APEX_LEVEL) {
+				double required = requiredBondingBlood(stack);
+				if (!isPassiveUpkeepEnabled() || required <= 0.0D || getBondingBlood(stack) >= required) {
+					tooltip.add(Component.translatable("tooltip.hemomancy.morphling.bond_ready")
+							.withStyle(ChatFormatting.GREEN));
+				} else {
+					tooltip.add(Component.translatable("tooltip.hemomancy.morphling.bond_progress",
+							String.format("%.1f", getBondingBlood(stack)), String.format("%.0f", required))
+							.withStyle(ChatFormatting.RED));
 				}
+				float nextThreshold = MATURITY_THRESHOLDS[maturity + 1];
+				tooltip.add(Component.literal("Next incubation at: " + String.format("%.0f", nextThreshold) + " power")
+						.withStyle(ChatFormatting.DARK_GRAY));
+			} else if (maturity == PrimalMorphlingRules.APEX_LEVEL) {
+				tooltip.add(Component.literal("Primalization: Morphic Nectar after Apotheos")
+						.withStyle(ChatFormatting.DARK_PURPLE));
+			}
 
-				// Show maturity bonuses
-				List<Component> bonuses = this.getMaturityBonusDescriptions(maturity);
-				if (!bonuses.isEmpty()) {
-					tooltip.add(Component.empty());
-					tooltip.add(Component.literal("Maturity Bonuses:")
-							.withStyle(ChatFormatting.YELLOW, ChatFormatting.UNDERLINE));
-					tooltip.addAll(bonuses);
-				}
+			// Show maturity bonuses
+			List<Component> bonuses = this.getMaturityBonusDescriptions(maturity);
+			if (!bonuses.isEmpty()) {
+				tooltip.add(Component.empty());
+				tooltip.add(Component.literal("Maturity Bonuses:")
+						.withStyle(ChatFormatting.YELLOW, ChatFormatting.UNDERLINE));
+				tooltip.addAll(bonuses);
 			}
 		}
 	}
@@ -358,6 +413,9 @@ public class MorphlingItem extends Item implements IMorphling {
 						SkillPointHelper.getPrimalMorphogenesisLevel(player)),
 				strainAmplifier);
 		setLastAbilityTick(stack, PRIMAL_ABILITY_PREFIX + abilityKey, now);
+		if (player instanceof ServerPlayer serverPlayer) {
+			com.vincenthuto.hemomancy.common.worldgen.MycophantEncounterManager.ruptureCocoon(serverPlayer, true);
+		}
 		return true;
 	}
 
@@ -426,9 +484,24 @@ public class MorphlingItem extends Item implements IMorphling {
 				? 0.0D : HemoServerConfig.MORPHLING_STARVING_DRAIN_RATE.get();
 	}
 
-	private static int husbandryStageQuota() {
-		return HemoServerConfig.MORPHLING_HUSBANDRY_STAGE_QUOTA == null
-				? 0 : HemoServerConfig.MORPHLING_HUSBANDRY_STAGE_QUOTA.get();
+	public static boolean isPassiveUpkeepEnabled() {
+		return HemoServerConfig.MORPHLING_PASSIVE_DRAIN_ENABLED == null
+				|| HemoServerConfig.MORPHLING_PASSIVE_DRAIN_ENABLED.get();
+	}
+
+	private static double fledglingBondBlood() {
+		return HemoServerConfig.MORPHLING_FLEDGLING_BOND_BLOOD == null
+				? 50.0D : HemoServerConfig.MORPHLING_FLEDGLING_BOND_BLOOD.get();
+	}
+
+	private static double developingBondBlood() {
+		return HemoServerConfig.MORPHLING_DEVELOPING_BOND_BLOOD == null
+				? 100.0D : HemoServerConfig.MORPHLING_DEVELOPING_BOND_BLOOD.get();
+	}
+
+	private static double matureBondBlood() {
+		return HemoServerConfig.MORPHLING_MATURE_BOND_BLOOD == null
+				? 200.0D : HemoServerConfig.MORPHLING_MATURE_BOND_BLOOD.get();
 	}
 
 	private static int drainIntervalTicks() {

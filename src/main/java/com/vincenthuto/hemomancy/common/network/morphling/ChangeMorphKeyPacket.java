@@ -8,6 +8,7 @@ import com.vincenthuto.hemomancy.common.event.LastRiteHelper;
 import com.vincenthuto.hemomancy.common.item.harbinger.morphlings.IMorphling;
 import com.vincenthuto.hemomancy.common.item.harbinger.morphlings.ItemMorphlingJar;
 import com.vincenthuto.hemomancy.common.item.harbinger.morphlings.MorphlingItem;
+import com.vincenthuto.hemomancy.common.item.harbinger.morphlings.MorphlingIdentity;
 import com.vincenthuto.hemomancy.common.item.itemhandler.MorphlingJarItemHandler;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
@@ -62,6 +63,9 @@ public class ChangeMorphKeyPacket implements CustomPacketPayload {
 				Random rand = new Random();
 				int chosen = validSlots.get(rand.nextInt(validSlots.size()));
 				ItemStack selectedStack = jarHandler.getStackInSlot(chosen);
+				MorphlingIdentity.ensureIdentity(selectedStack);
+				jarHandler.setDirty();
+				jarHandler.save();
 				ItemStack equippedMorphling = selectedStack.copy();
 
 				// Equip to player capability

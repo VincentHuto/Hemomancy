@@ -15,7 +15,9 @@ This table reflects the eight canonical Morphling strains currently registered i
 
 Preferred enzymes grant full power, secondary enzymes grant 75% power, and other enzymes grant 50% power. Wild-bound Morphlings cap at Developing until properly incubated.
 
-All Morphlings currently have no passive blood upkeep in code: `getBloodCost()` returns `0`. The meaningful blood costs are on Primal abilities.
+All canonical Morphlings use the configured baseline passive upkeep even though `getBloodCost()` returns `0`: by default they absorb 0.5 blood every 60 ticks. That successful upkeep builds the current stage's blood bond. Fledgling, Developing, and Mature require 50, 100, and 200 absorbed blood before the next one-stage Incubator advancement; disabling passive upkeep bypasses this gate and does not disable equipped powers.
+
+Morphling hunger is enabled by default for Mature+ cultivated strains. Hungry and Starving states do not reduce passive strength; Starving retains its separately configured blood drain and Morphic Strain consequences.
 
 ## Morphlings
 

@@ -145,6 +145,7 @@ public class KnownManipulationEvents {	@SubscribeEvent
 	 * </ul>
 	 */
 	public static void onManipulationUsed(ServerPlayer player, BloodManipulation manip) {
+		com.vincenthuto.hemomancy.common.worldgen.MycophantEncounterManager.ruptureCocoon(player, true);
 		// 1. Vascular strain on the manip's associated vein section
 		VascularSystemEvents.applyManipStrain(player, manip.getSection());
 

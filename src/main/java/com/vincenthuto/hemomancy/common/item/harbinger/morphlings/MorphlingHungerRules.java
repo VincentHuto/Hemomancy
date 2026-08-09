@@ -32,9 +32,6 @@ public final class MorphlingHungerRules {
 	}
 
 	public static int adjustedAmplifier(int baseAmplifier, HungerState state) {
-		if (state == HungerState.HUNGRY || state == HungerState.STARVING) {
-			return Math.max(0, baseAmplifier - 1);
-		}
 		return Math.max(0, baseAmplifier);
 	}
 

@@ -263,6 +263,9 @@ Hemomancy registers active server, client, and common config specs through `Hemo
 | `morphlingPassiveDrainEnabled` | Boolean | `true` | — | Whether equipped morphlings drain blood |
 | `morphlingDrainRate` | Double | `0.5` | 0.01–100.0 | Blood drained per drain tick |
 | `morphlingDrainInterval` | Int | `60` | 1–6000 | Ticks between drain ticks |
+| `fledglingBondBlood` | Double | `50.0` | 0.0–100000.0 | Upkeep blood required before Fledgling → Developing incubation |
+| `developingBondBlood` | Double | `100.0` | 0.0–100000.0 | Upkeep blood required before Developing → Mature incubation |
+| `matureBondBlood` | Double | `200.0` | 0.0–100000.0 | Upkeep blood required before Mature → Apex incubation |
 
 **Rogue Hemomancer Wills** (`wills`):
 
@@ -556,6 +559,17 @@ Completing Qliphoth Communion by eating the ninth pome from a single bloom grant
 **Player Choice After the First Return:**
 - The first visit is a two-minute consciousness projection. The player can move and run, but cannot access or use inventory, armor, attacks, blocks, or containers. The accelerating red vignette warns that forced return is approaching.
 - After consciousness returns to the physical body, the revelation choice opens. Choosing silence creates a pending Silent route. Pruning then severs the owned Bloom and opens its wound; the player becomes Silent Archon only after defeating both Vesper phases inside the owner-only Chamber arena. Choosing the Eighth Degree creates a pending Apotheos route and permits the Rite of Apotheosis when Qliphoth Communion is complete.
+
+### Mycophant Hunt and Morphic Nursery
+
+- Degree-8 players on the `APOTHEOS` path accrue only living, non-Creative, non-Spectator time spent in `hemomancy:the_fungal_gardens`. The default hunt is 18,000 ticks (15 minutes), with cues beginning at 3, 7, and 11 minutes. Exposure pauses outside the dimension and persists in `IInitiatoryDegree`.
+- At the limit, a 100-tick local root claim transfers the solo owner to a 50x50 Morphic Nursery arena at the owner-bound `x=8192` Chamber band. `MycophantEncounterManager` owns arena creation, boss reconciliation, nonlethal failure, return, and rewards.
+- Owned Mycophants retain 720 health, 20 armor, and 16 attack, but do not use the old low-health regeneration. Phase 1 uses 100/280/360-tick sweep/cocoon/surge cadences; Phase 2 begins at 50% health and uses 70/180/240. All three attacks telegraph for 30 ticks, and the phase transition pauses attacks for 60 ticks.
+- Cocoons create three nodes in Phase 1 and four in Phase 2. Each node takes four ordinary hits. Successful blood manipulations or Primal Morphling abilities count as empowered ruptures, remove two nodes, reduce nectar pressure by 20, knock the boss back, and interrupt it for 40 ticks. Ordinary escape reduces pressure by 10. A 200-tick timeout deals 8 damage and adds 15 pressure.
+- Pressure rises by 0.25 per second in Phase 1 and 0.5 in Phase 2 (with a Phase-2 floor of 50), with hazards at 30/60/85 and a cap at 100. A surge adds 10 pressure. Maximum pressure is a sustained hazard, not an automatic loss.
+- First victory grants the Mycophant Tendril, 180 experience points, and `mycophant_defeated`; repeats grant one Sanguine Quintessence, two-to-four Spore Sacs, and 180 experience points. The first-hunt stalking state then remains complete.
+- A shapeless Fruiting Lure costs one Sanguine Quintessence, one Spore Sac, one Hyphal Substrate, and one Infected Fungus. After first victory, soaking it in Morphic Nectar for 40 ticks starts a rematch and consumes exactly one lure. Ineligible attempts consume nothing.
+- Failure expels the player alive to their Gardens return point and starts a 6,000 eligible-Gardens-tick cooldown. A failed first hunt claims again automatically when this reaches zero; a failed rematch requires another lure.
 - Later visits are normal Spine travel and use the stored source dimension and exact return position.
 
 > **Status: Implemented core loop.** The persisted projection timer, interaction suppression, forced return, post-return choice, severed-Bloom Vesper ordeal, Silent Archon victory finalization, and Apotheosis gate are implemented. Terrain population depth and broader dimension content remain WIP.
@@ -655,7 +669,7 @@ The Qliphoth Communion sky uses dedicated dark red-purple-blue sky and mist text
 
 The Silent Archon sky theme is visually distinct from the vascular/neural Chamber baseline: it uses cold gray noise/cloud textures, disables the biological overlay layers, and renders scattered black monolith pillars from the void toward the sky using the fog-aware Monolith surface shader family so distance still softens their depth. A Silent Archon-only depth pass now adds broad tilted storm-cloud strata, simpler distant monolith silhouettes behind the foreground pillars, and a lower stacked cloud deck. The Chamber dimension effects also tint Silent Archon fog toward pale blue-green, while visible pillar-base occlusion is handled by a dedicated procedural foreground storm-cloud bank built from many small layered cells, so nearby monolith bases are swallowed by thick storm masses rather than merely darkened by haze or crossed by flat wisps.
 
-For visual testing, op/debug commands can override a player's chamber sky without changing their progression tier: `/hemo chamber theme cycle [player]`, `/hemo chamber theme next [player]`, `/hemo chamber theme previous [player]`, `/hemo chamber theme set <theme> [player]`, and `/hemo chamber theme reset [player]`. `reset` clears the override and returns the player to the progression-selected theme.
+For visual testing, op/debug commands can override a player's chamber sky without changing their progression tier: `/hemo chamber theme cycle [player]`, `/hemo chamber theme next [player]`, `/hemo chamber theme previous [player]`, `/hemo chamber theme set <theme> [player]`, and `/hemo chamber theme reset [player]`. `reset` clears the override and returns the player to the progression-selected theme. Fight environments are separately command-selectable previews: `vesper_fight` and `mycophant_nursery`; each owns an independent effects module, while an active ordeal takes priority over ordinary chamber overrides.
 
 > **Status: Implemented.** Core rename, dimension ids, SavedData, Degree 6 rite, caster-only enter/return travel, tier-radius room growth, radius-based safety checks, client sync, and dynamic sky-theme registry are implemented. Future work is the owner/guest rite that pulls nearby players and mobs into the caster's chamber, plus deeper chamber-specific recovery, memory, scar, or bloodline features.
 
@@ -797,7 +811,7 @@ The two new endgame bosses represent the fork after Archon revelation:
 - Current fight behavior includes boss bars, hostile targeting, low-health cadence/regen scaling, homing blood-orb missiles, grip/spike hazards, Morphling Polyp add pressure, shield-disabling melee hits, delayed phase transition/death spectacle, copied Vesper reference sounds, and looping client boss music.
 - Current render path: `VesperTheCrownedRefusalRenderer`, `VesperTheEveningStarRenderer`, model layers in `LayerEvents`, red/black textures in `textures/entity/boss/endgame/`, and `VesperEveningStarLinesLayer` for the phase-2 emissive line texture that appears only at half health or lower.
 - Vesper's encounter effects use the authored Hemomancy/HutosLib visual suite: blood cells, glow/dark-glow motes, Sporitic spores, embers, blood-claw slashes, living tendrils, and colored bolt lightning drive telegraphs, throne wounds, transformation, tendency shifts, weapon attacks, rage, and death. Vanilla block debris remains only on physical axe-to-floor impacts so the struck material is legible.
-- Vesper's attack poses are fractional-tick interpolated. Crowned Refusal's repeated stinger strikes and Brood Trample use continuous wind-up, impact, and recovery motion. Evening Star's heavy blade, axe, flail, spear, claw, and sickle attacks use eased entry, anticipation, contact, follow-through, and recovery curves while retaining their server-authored hit timing; combo attacks alternate direction through a continuous spline instead of snapping at contact ticks. The Living Blade and long-hafted Living Axe use two-handed idle and attack grips, with their off-hand poses following the rendered handle throughout each swing and the axe hand spaced farther down the haft. Chain Sweep and Hook and Crush use separate momentum-weighted flail curves, with a delayed elbow/wrist follow-through rather than the faster rigid-weapon contact reversal.
+- Vesper's attack poses are fractional-tick interpolated. Crowned Refusal's repeated stinger strikes and Brood Trample use continuous wind-up, impact, and recovery motion. Evening Star's heavy blade, axe, flail, spear, claw, and sickle attacks use eased entry, anticipation, contact, follow-through, and recovery curves while retaining their server-authored hit timing; combo attacks alternate direction through a continuous spline instead of snapping at contact ticks. The Living Blade and long-hafted Living Axe use two-handed idle and attack grips, with their off-hand poses following the rendered handle throughout each swing and the axe hand spaced farther down the haft. Chain Sweep and Hook and Crush use separate momentum-weighted flail curves, with a delayed elbow/wrist follow-through rather than the faster rigid-weapon contact reversal. During his sub-thirty-percent dual-sickle rage, the Evening Star uses the player-facing modes directly: Blood Hook pulls distant targets into his faster Cyclone/Cross Rend pressure.
 - Implemented reward: `memory_of_vesper`, a rare fire-resistant material rendered as a pome-like memory with the Monolith Fragment shader. It is placed directly in an Iron Brazier and absorbed through Living Staff Blood Absorption; completion awakens Vesper's memory, upgrades the staff focus, and permanently grants the Mortem-aligned `conjure_sickle` form in the radial's interior ring.
 
 **The Mycophant**
@@ -1059,7 +1073,7 @@ Secondary tendencies do not change a manipulation's required alignment, tree clu
 | `conjure_crossbow` | 250 hot-swap | Quick (Living Staff Form) | Mediocritas | Ductilis | Right Arm | — | Reshapes a held Living Staff into a Living Crossbow; cost reduced by Weapons Master |
 | `conjure_torch` | 250 hot-swap | Quick (Living Staff Form) | Mediocritas | Flammeus | Right Arm | — | Reshapes a held Living Staff into a Living Torch; ignites struck targets; cost reduced by Weapons Master |
 | `conjure_flail` | 250 hot-swap | Quick (Living Staff Form) | Mediocritas | Congeatio | Right Arm | — | Reshapes a held Living Staff into a Living Flail; slows struck targets and uses a physics-rendered chain model; cost reduced by Weapons Master |
-| `conjure_sickle` | 250 hot-swap | Quick (Vesper Inheritance) | Perfectus | Mortem | Right Arm | Vesper memory awakened | Reshapes the staff into the sweeping Living Sickle; fixed to the radial interior ring and does not count as one of the seven graft forms |
+| `conjure_sickle` | 250 hot-swap | Quick (Vesper Inheritance) | Perfectus | Mortem | Right Arm | Vesper memory awakened | Reshapes the staff into the two-mode Living Sickle; fixed to the radial interior ring and does not count as one of the seven graft forms |
 | `conjure_staff` | 1000 | Quick (Conjuration) | Mediocritas | Ferric | Right Arm | 40t | Conjures a Living Staff into empty main hand after the first Living Staff blood-structure craft unlocks the staff bond |
 | `blood_absorption` | 1000 | Quick (Conjuration) | Mediocritas | Ferric | Right Arm | 40t | Conjures a Blood Absorption tool into empty main hand |
 | `blood_projection` | 1000 | Quick (Conjuration) | Mediocritas | Ferric | Right Arm | 40t | Conjures a Blood Projection launcher into empty main hand |
@@ -1722,14 +1736,14 @@ Symbiotic parasites derived from the fungal infection. They provide the Living S
 - Start with a **Morphling Polyp** ![Morphling Polyp](../src/main/resources/assets/hemomancy/textures/item/morphling_polyp.png) (base form)
 - Players can obtain their first Morphling Polyp from rare layered wild polyps: black slime-like morphling larva that spawn across the Overworld with up to three biome-shaped appendage layers hinting at the morphling lines they can become.
 - Degree 2+ players can also capture wild Morphling Polyps in **Specimen Jars** and bring them to the Alchemist's Living Bestiary. Recording a captured polyp logs its layer families; surrendering it converts one stored layer into a matching wild-bound morphling item.
-- Wild-bound morphlings are immediately equipable and start at Developing maturity, but their stack carries `WildBound` and cannot mature past Developing until it is fed in a **Morphling Incubator**. The Incubator clears `WildBound`, preserving the Degree 5 Incubator as the full cultivation and Apex/Primal progression path.
+- Wild-bound morphlings are immediately equipable and start at Developing maturity, but their stack carries `WildBound` and cannot mature past Developing. They must first absorb the Developing-stage blood quota while equipped; their next successful **Morphling Incubator** cycle clears `WildBound` and advances them to Mature.
 - Incubate in a **Morphling Incubator** block with enzymes to grow into specific morphling types
 - Store morphlings in a **Morphling Jar** ![Morphling Jar](../src/main/resources/assets/hemomancy/textures/item/morphling_jar.png) (6 slots, Uncommon rarity). The jar now opens one unified container screen: the six real inventory slots sit in two side columns around the animated bouncing morphling display, and clicking a swimming morphling equips or unequips it without leaving the inventory view.
 - The **Living Staff** cycles through equipped morphlings and changes its topper model accordingly
 
 ### 16.3 Maturity System
 
-**Current implementation note:** Morphlings have six code-facing states: the `Unfed` baseline plus five earned maturity levels, `Fledgling -> Developing -> Mature -> Apex -> Primal`. Incubator feeding and enzyme power mature a morphling only up to **Apex**. **Primal** is a nectar-only capstone backed by the stack marker `Primalized`, so it cannot be reached by simply adding more enzyme power.
+**Current implementation note:** Morphlings have six code-facing states: the `Unfed` baseline plus five earned maturity levels, `Fledgling -> Developing -> Mature -> Apex -> Primal`. Every Incubator feeding advances at most one stage. Unfed can enter its first incubation immediately; Fledgling, Developing, and Mature Morphlings must respectively absorb 50, 100, and 200 blood through successful equipped upkeep before the next incubation. Excess enzyme inputs remain in the Incubator. Blood progress resets on advancement and cannot be banked across stages. If passive Morphling upkeep is disabled, the blood-bond gate is bypassed to prevent a progression lock. **Primal** remains a nectar-only capstone backed by `Primalized`.
 
 Each morphling has a **maturity level** (0–5) that determines its power and which reactive abilities it has:
 
@@ -1742,7 +1756,7 @@ Each morphling has a **maturity level** (0–5) that determines its power and wh
 | 4 | Apex | Third reactive ability unlocked (powerful signature ability with longer cooldown) |
 | 5 | Primal | Nectar-transformed Apex form. Unlocks a late-game active or loop-defining capstone power. |
 
-Each morphling type has a **preferred tendency** and **secondary tendency** — feeding the corresponding enzymes during incubation accelerates maturity. The passive effect's amplifier scales with maturity level.
+Each morphling type has a **preferred tendency** and **secondary tendency**. These affinities determine effective enzyme power; the Incubator consumes the smallest sufficient subset for the next single stage and leaves unneeded inputs in place. The passive effect's amplifier scales with maturity level.
 
 ### 16.3.1 Primal Morphlings
 
@@ -2357,7 +2371,7 @@ The Living Staff can inherit living weapons as temporary forms rather than creat
 | `conjure_crossbow` | `living_crossbow` | Ductilis living crossbow form; Blood Bolt firing can recoil to staff if blood runs out |
 | `conjure_torch` | `living_torch` | Flammeus living torch form; ignites struck targets |
 | `conjure_flail` | `living_flail` | Congeatio living flail form; slows struck targets and renders with a damped physics chain patterned after the Sporitic Thurible |
-| `conjure_sickle` | `living_sickle` | Perfectus Mortem inheritance; sweeps nearby targets and reaps enemies at or below thirty percent health |
+| `conjure_sickle` | `living_sickle` | Perfectus Mortem inheritance; Shift + Use switches between fast Short Reap strikes with an 80-tick radial spin and an 18-block Blood Hook throw that wounds and pulls targets on a blood tendril |
 
 Selecting a staff weapon form through manipulation cycling/radial selection applies that form if the Living Staff is held. Selecting a non-staff-weapon manipulation restores a transformed weapon back into the stored staff. Pressing the use-manipulation key while the selected staff weapon form matches the held transformed item toggles back to staff; pressing it again reshapes back into the selected weapon.
 
@@ -3598,11 +3612,11 @@ The `/hemo` command tree (via `HemoCommand`, permission level 2) is the main in-
 - `qliphoth pome reset [player]` — reset Qliphoth pome progress and reseal the Communion gate
 
 **Morphling Debug:**
-- `morphling stage get [player]` — show the equipped morphling's current maturity stage
-- `morphling stage set <0-5|stage_name> [player]` — force the equipped morphling to `unfed`, `fledgling`, `developing`, `mature`, `apex`, or `primal`
-- `morphling stage next [player]` — cycle the equipped morphling to the next visual maturity stage
-- `morphling stage previous [player]` / `morphling stage prev [player]` — cycle to the previous visual maturity stage
-- Stage changes update both the equipped morphling capability and the matching morphling item stored in the player's Morphling Jar when an exact jar-slot match is found.
+- `morphling stage get [player]` — show the active Morphling's current maturity stage
+- `morphling stage set <0-5|stage_name> [player]` — force the active Morphling to `unfed`, `fledgling`, `developing`, `mature`, `apex`, or `primal`
+- `morphling stage next [player]` — cycle the active Morphling to the next maturity stage
+- `morphling stage previous [player]` / `morphling stage prev [player]` — cycle to the previous maturity stage
+- Commands prefer the equipped Morphling capability, then fall back to the player's main hand and offhand. Forced changes clear wild-bound state and reset stage blood bonding. Equipped changes also update the matching Morphling Jar item when an exact jar-slot match is found.
 
 **Skills:**
 - `skills get` — show current skill points and milestone totals

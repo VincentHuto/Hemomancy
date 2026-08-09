@@ -4,6 +4,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.entity.boss.endgame.VesperTheEveningStarEntity;
+import com.vincenthuto.hemomancy.common.entity.boss.endgame.VesperCombatRules;
 import com.vincenthuto.hemomancy.common.entity.boss.endgame.VesperWeaponAction;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
 import com.vincenthuto.hutoslib.client.HLClientUtils;
@@ -305,24 +306,6 @@ public class VesperTheEveningStarModel extends EntityModel<VesperTheEveningStarE
                           float headPitch) {
         netHeadYaw = Mth.wrapDegrees(netHeadYaw);
         float frame = entity.tickCount + HLClientUtils.getPartialTicks();
-		if (entity.isAwaitingAbsorption()) {
-			// One knee planted, torso bowed, and empty hands hanging after the staff dissolves.
-			resetCombatPose();
-			this.upperBody.y = -12.0F;
-			this.head.xRot = 0.48F;
-			this.head.yRot = 0.0F;
-			this.body.xRot = 0.24F;
-			this.body.yRot = 0.0F;
-			this.rightArm.xRot = -0.38F;
-			this.rightArm.zRot = 0.18F;
-			this.leftArm.xRot = -0.18F;
-			this.leftArm.zRot = -0.14F;
-			this.rightLeg.xRot = -1.18F;
-			this.rightLeg2.xRot = 1.82F;
-			this.leftLeg.xRot = 0.18F;
-			this.leftLeg2.xRot = 0.55F;
-			return;
-		}
 		this.upperBody.y = -19.0F;
 		resetCombatPose();
 
@@ -352,7 +335,7 @@ public class VesperTheEveningStarModel extends EntityModel<VesperTheEveningStarE
         this.bone2.xRot = (float) Math.sin((frame) * 0.8f) * 0.25f + 25.5f;
 
 		float stanceTick = entity.getStanceTick() + HLClientUtils.getPartialTicks();
-		if (!entity.isRaging() && stanceTick < 30.0F) {
+		if (!entity.isAwaitingAbsorption() && !entity.isRaging() && stanceTick < 30.0F) {
 			float morph = VesperWeaponAnimationRules.stanceBlend(stanceTick);
 			this.rightArm.xRot -= morph * 0.8F;
 			this.rightArm.zRot += morph * 0.25F;
@@ -361,7 +344,41 @@ public class VesperTheEveningStarModel extends EntityModel<VesperTheEveningStarE
 				applyTwoHandedGrip(entity.getActiveTendency(), 0.0F, morph);
 			}
 		} else applyWeaponActionPose(entity, frame);
+		if (entity.isAwaitingAbsorption()) {
+			applyDefeatPose(entity.getDownedTicks() + HLClientUtils.getPartialTicks());
+		}
     }
+
+	private void applyDefeatPose(float downedFrame) {
+		float recoil = VesperCombatRules.defeatRecoilProgress(downedFrame);
+		float kneel = VesperCombatRules.defeatKneelProgress(downedFrame);
+		this.body.xRot -= recoil * 0.22F;
+		this.head.xRot -= recoil * 0.16F;
+		this.rightArm.xRot += recoil * 0.28F;
+		this.leftArm.xRot += recoil * 0.28F;
+
+		this.upperBody.y = Mth.lerp(kneel, this.upperBody.y, -12.0F);
+		this.head.xRot = pose(this.head.xRot, 0.48F, kneel);
+		this.head.yRot = pose(this.head.yRot, 0.0F, kneel);
+		this.body.xRot = pose(this.body.xRot, 0.24F, kneel);
+		this.body.yRot = pose(this.body.yRot, 0.0F, kneel);
+		this.rightArm.xRot = pose(this.rightArm.xRot, -0.38F, kneel);
+		this.rightArm.yRot = pose(this.rightArm.yRot, 0.0F, kneel);
+		this.rightArm.zRot = pose(this.rightArm.zRot, 0.18F, kneel);
+		this.rightElbow.xRot = pose(this.rightElbow.xRot, -0.72F, kneel);
+		this.leftArm.xRot = pose(this.leftArm.xRot, -0.18F, kneel);
+		this.leftArm.yRot = pose(this.leftArm.yRot, 0.0F, kneel);
+		this.leftArm.zRot = pose(this.leftArm.zRot, -0.14F, kneel);
+		this.leftElbow.xRot = pose(this.leftElbow.xRot, -0.66F, kneel);
+		this.rightLeg.xRot = pose(this.rightLeg.xRot, -1.18F, kneel);
+		this.rightLeg2.xRot = pose(this.rightLeg2.xRot, 1.82F, kneel);
+		this.leftLeg.xRot = pose(this.leftLeg.xRot, 0.18F, kneel);
+		this.leftLeg2.xRot = pose(this.leftLeg2.xRot, 0.55F, kneel);
+		this.cape.xRot = pose(this.cape.xRot, 0.82F, kneel);
+		this.bone3.xRot = pose(this.bone3.xRot, 0.24F, kneel);
+		this.cape2.xRot = pose(this.cape2.xRot, 0.18F, kneel);
+		this.bone2.xRot = pose(this.bone2.xRot, 0.12F, kneel);
+	}
 
 	private void resetCombatPose() {
 		this.body.xRot = 0.0F;
@@ -511,6 +528,17 @@ public class VesperTheEveningStarModel extends EntityModel<VesperTheEveningStarE
 				this.leftArm.xRot = pose(this.leftArm.xRot, -1.0F - Math.abs(rend) * 0.62F, blend);
 				this.rightArm.zRot = pose(this.rightArm.zRot, 0.9F - rend * 1.35F, blend);
 				this.leftArm.zRot = pose(this.leftArm.zRot, -0.9F - rend * 1.35F, blend);
+			}
+			case SICKLE_HOOK -> {
+				float draw = Mth.clamp(tick / 14.0F, 0.0F, 1.0F);
+				float release = Mth.clamp((tick - 14.0F) / 8.0F, 0.0F, 1.0F);
+				this.body.xRot = pose(this.body.xRot, 0.24F - draw * 0.12F, blend);
+				this.body.yRot = pose(this.body.yRot, -0.48F * draw + 0.28F * release, blend);
+				this.rightArm.xRot = pose(this.rightArm.xRot, -1.05F - draw * 0.72F + release * 0.85F, blend);
+				this.rightArm.yRot = pose(this.rightArm.yRot, -0.75F * draw + release * 0.9F, blend);
+				this.rightArm.zRot = pose(this.rightArm.zRot, 0.82F - release * 0.64F, blend);
+				this.leftArm.xRot = pose(this.leftArm.xRot, -1.18F, blend);
+				this.leftArm.zRot = pose(this.leftArm.zRot, -0.88F, blend);
 			}
 			case SANGUINE_CRESCENTS -> {
 				float slash = contact * variantSign;

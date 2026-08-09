@@ -3,6 +3,7 @@ package com.vincenthuto.hemomancy.common.command;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import org.junit.jupiter.api.Test;
 
 public final class ChamberThemeCommandSourceTest {
 	private static final Path COMMAND = Path.of(
@@ -13,9 +14,16 @@ public final class ChamberThemeCommandSourceTest {
 			"src/main/java/com/vincenthuto/hemomancy/client/render/world/chamberofwill/ChamberSkyThemeRegistry.java");
 	private static final Path VESPER_EFFECTS = Path.of(
 			"src/main/java/com/vincenthuto/hemomancy/client/render/world/chamberofwill/VesperFightChamberEffects.java");
+	private static final Path MYCOPHANT_EFFECTS = Path.of(
+			"src/main/java/com/vincenthuto/hemomancy/client/render/world/chamberofwill/MycophantNurseryChamberEffects.java");
 	private static final Path REFERENCE = Path.of("docs/HEMOMANCY_REFERENCE.md");
 
-	private ChamberThemeCommandSourceTest() {
+	ChamberThemeCommandSourceTest() {
+	}
+
+	@Test
+	void chamberThemeRegistrationContract() throws IOException {
+		main(new String[0]);
 	}
 
 	public static void main(String[] args) throws IOException {
@@ -23,6 +31,8 @@ public final class ChamberThemeCommandSourceTest {
 		String manager = Files.readString(MANAGER).replace("\r\n", "\n");
 		String registry = Files.readString(THEME_REGISTRY).replace("\r\n", "\n");
 		String vesperEffects = Files.readString(VESPER_EFFECTS).replace("\r\n", "\n");
+		String mycophantEffects = Files.exists(MYCOPHANT_EFFECTS)
+				? Files.readString(MYCOPHANT_EFFECTS).replace("\r\n", "\n") : "";
 		String reference = Files.readString(REFERENCE).replace("\r\n", "\n");
 		String commandCompact = compact(command);
 
@@ -47,6 +57,8 @@ public final class ChamberThemeCommandSourceTest {
 		assertContains("manager keeps stable theme order", manager, "ORDERED_SKY_THEMES");
 		assertContains("manager command theme order includes mnemonic lowtide", manager, "mnemonic_lowtide");
 		assertContains("manager declares the Vesper fight preview theme", manager, "THEME_VESPER_FIGHT");
+		assertContains("manager exposes the Nursery as a command-selectable environment", compact(manager),
+				"THEME_APOTHEOS, THEME_VESPER_FIGHT, THEME_MYCOPHANT_NURSERY");
 		assertContains("manager exposes separately settable themes", manager, "commandSkyThemes()");
 		assertContains("manager syncs the Vesper floor preview", manager,
 				"PacketSyncVesperFightScene.activate(cellPos(idFor(player.getUUID())))");
@@ -61,12 +73,20 @@ public final class ChamberThemeCommandSourceTest {
 				".toggles(true, false, false, false)");
 		assertContains("active ordeal selects the whole Vesper theme", registry,
 				"VesperFightClientData.isActive()");
+		assertContains("registry owns a dedicated Nursery theme", registry,
+				"ChamberSkyTheme.builder(ChamberOfWillManager.THEME_MYCOPHANT_NURSERY)");
+		assertContains("registry routes Nursery rendering through its own effects module", registry,
+				"new MycophantNurseryChamberEffects(mycophantNursery)");
+		assertContains("active Mycophant ordeal wins environment priority", registry,
+				"MycophantFightClientData.isActive()");
 		assertContains("active effects follow the selected whole theme", registry,
 				"effectsById(activeTheme().id())");
 		assertContains("Vesper fight has an independent effects module", vesperEffects,
 				"final class VesperFightChamberEffects extends AbstractChamberThemeEffects");
 		assertContains("Vesper fight draws an untextured black environment", vesperEffects,
 				"ChamberOfWillRenderHelpers.renderSolidBox");
+		assertContains("Nursery has an independent effects module", mycophantEffects,
+				"final class MycophantNurseryChamberEffects extends AbstractChamberThemeEffects");
 		assertContains("manager stores testing overrides", manager, "skyThemeOverrides");
 		assertContains("manager sets sky override", manager, "setSkyThemeOverride");
 		assertContains("manager clears sky override", manager, "clearSkyThemeOverride");

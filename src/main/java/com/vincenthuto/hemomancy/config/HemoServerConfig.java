@@ -67,6 +67,11 @@ public class HemoServerConfig {
 	public static ModConfigSpec.IntValue MORPHLING_FED_DURATION_TICKS;
 	public static ModConfigSpec.DoubleValue MORPHLING_STARVING_DRAIN_RATE;
 	public static ModConfigSpec.IntValue MORPHLING_HUSBANDRY_STAGE_QUOTA;
+	public static ModConfigSpec.DoubleValue MORPHLING_FLEDGLING_BOND_BLOOD;
+	public static ModConfigSpec.DoubleValue MORPHLING_DEVELOPING_BOND_BLOOD;
+	public static ModConfigSpec.DoubleValue MORPHLING_MATURE_BOND_BLOOD;
+	public static ModConfigSpec.IntValue MYCOPHANT_HUNT_TICKS;
+	public static ModConfigSpec.IntValue MYCOPHANT_RETRY_COOLDOWN_TICKS;
 
 	// ===== Ghastly Alembic Leak =====
 	public static ModConfigSpec.IntValue ALEMBIC_LEAK_INTERVAL_TICKS;
@@ -300,11 +305,11 @@ public class HemoServerConfig {
 		builder.comment("Morphling Settings").push("morphling");
 
 		MORPHLING_PASSIVE_DRAIN_ENABLED = builder
-				.comment("Whether an equipped morphling passively drains blood.")
+				.comment("Whether an equipped morphling with a positive blood cost passively drains blood.")
 				.define("morphlingPassiveDrainEnabled", true);
 
 		MORPHLING_DRAIN_RATE = builder
-				.comment("Blood drained per tick by an equipped morphling.")
+				.comment("Base blood drained per upkeep interval before scaling by a morphling's blood cost.")
 				.defineInRange("morphlingDrainRate", 0.5, 0.01, 100.0);
 
 		MORPHLING_DRAIN_INTERVAL = builder
@@ -315,8 +320,8 @@ public class HemoServerConfig {
 				.define("morphlingCradleLeechTargetPlayers", false);
 
 		MORPHLING_HUNGER_ENABLED = builder
-				.comment("Whether Mature+ non-wild-bound morphlings track Fed, Hungry, and Starving states.")
-				.define("hungerEnabled", false);
+				.comment("Whether Mature+ non-wild-bound morphlings track Fed, Hungry, and Starving states. Hunger does not reduce passive strength.")
+				.define("hungerEnabled", true);
 
 		MORPHLING_FED_DURATION_TICKS = builder
 				.comment("Ticks a fed Mature+ morphling stays Fed before becoming Hungry. 24000 = one Minecraft day.")
@@ -327,9 +332,30 @@ public class HemoServerConfig {
 				.defineInRange("starvingDrainRate", 2.0, 0.0, 100.0);
 
 		MORPHLING_HUSBANDRY_STAGE_QUOTA = builder
-				.comment("Husbandry progress required per post-Fledgling maturity stage. 0 preserves enzyme-only progression.")
+				.comment("Legacy husbandry progress quota. Retained for compatibility; blood bonding now gates maturity.")
 				.defineInRange("husbandryStageQuota", 0, 0, 100000);
 
+		MORPHLING_FLEDGLING_BOND_BLOOD = builder
+				.comment("Blood a Fledgling morphling must absorb through equipped upkeep before its next incubation.")
+				.defineInRange("fledglingBondBlood", 50.0, 0.0, 100000.0);
+
+		MORPHLING_DEVELOPING_BOND_BLOOD = builder
+				.comment("Blood a Developing morphling must absorb through equipped upkeep before its next incubation.")
+				.defineInRange("developingBondBlood", 100.0, 0.0, 100000.0);
+
+		MORPHLING_MATURE_BOND_BLOOD = builder
+				.comment("Blood a Mature morphling must absorb through equipped upkeep before its next incubation.")
+				.defineInRange("matureBondBlood", 200.0, 0.0, 100000.0);
+
+		builder.pop();
+
+		builder.comment("Mycophant Encounter Settings").push("mycophant_encounter");
+		MYCOPHANT_HUNT_TICKS = builder
+				.comment("Eligible Fungal Gardens ticks before the first claim. 18000 = 15 minutes.")
+				.defineInRange("huntTicks", 18000, 1200, 144000);
+		MYCOPHANT_RETRY_COOLDOWN_TICKS = builder
+				.comment("Eligible Fungal Gardens ticks before a failed first hunt claims again. 6000 = 5 minutes.")
+				.defineInRange("retryCooldownTicks", 6000, 0, 72000);
 		builder.pop();
 
 		// ───── Ghastly Alembic Leak ─────

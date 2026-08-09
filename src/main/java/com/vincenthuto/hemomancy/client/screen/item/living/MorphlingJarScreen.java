@@ -9,6 +9,7 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import com.vincenthuto.hemomancy.client.screen.util.InventoryPanelTextures;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.item.harbinger.morphlings.MorphlingItem;
+import com.vincenthuto.hemomancy.common.item.harbinger.morphlings.MorphlingIdentity;
 import com.vincenthuto.hemomancy.common.menu.MorphlingJarMenu;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.morphling.PacketUpdateLivingStaffMorph;
@@ -190,7 +191,7 @@ public class MorphlingJarScreen extends AbstractContainerScreen<MorphlingJarMenu
 				return;
 			}
 			for (int i = 0; i < this.menu.slotcount; i++) {
-				if (ItemStack.isSameItemSameComponents(this.menu.handler.getStackInSlot(i), equipped)) {
+				if (MorphlingIdentity.matches(this.menu.handler.getStackInSlot(i), equipped)) {
 					this.activeIndex = i;
 					break;
 				}

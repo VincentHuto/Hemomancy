@@ -25,6 +25,9 @@ public class InitiatoryDegree implements IInitiatoryDegree, INBTSerializable<Com
 	private boolean hematicFortification = false;
 	private int ancestralCommunions = 0;
 	private EnumArchonPath archonPath = EnumArchonPath.NONE;
+	private int mycophantExposureTicks;
+	private int mycophantRetryCooldownTicks;
+	private boolean mycophantDefeated;
 
 	@Override
 	public int getDegreeNumber() {
@@ -111,6 +114,12 @@ public class InitiatoryDegree implements IInitiatoryDegree, INBTSerializable<Com
 	}
 	@Override public EnumArchonPath getArchonPath() { return archonPath; }
 	@Override public void setArchonPath(EnumArchonPath path) { archonPath = path == null ? EnumArchonPath.NONE : path; }
+	@Override public int getMycophantExposureTicks() { return mycophantExposureTicks; }
+	@Override public void setMycophantExposureTicks(int ticks) { mycophantExposureTicks = Math.max(0, ticks); }
+	@Override public int getMycophantRetryCooldownTicks() { return mycophantRetryCooldownTicks; }
+	@Override public void setMycophantRetryCooldownTicks(int ticks) { mycophantRetryCooldownTicks = Math.max(0, ticks); }
+	@Override public boolean isMycophantDefeated() { return mycophantDefeated; }
+	@Override public void setMycophantDefeated(boolean defeated) { mycophantDefeated = defeated; }
 
 	@Override
 	public CompoundTag serializeNBT(HolderLookup.Provider provider) {
@@ -126,6 +135,9 @@ public class InitiatoryDegree implements IInitiatoryDegree, INBTSerializable<Com
 		tag.putBoolean("hematic_fortification", hematicFortification);
 		tag.putInt("ancestral_communions", ancestralCommunions);
 		tag.putString("archon_path", archonPath.name());
+		tag.putInt("mycophant_exposure_ticks", mycophantExposureTicks);
+		tag.putInt("mycophant_retry_cooldown_ticks", mycophantRetryCooldownTicks);
+		tag.putBoolean("mycophant_defeated", mycophantDefeated);
 		CompoundTag progressTag = new CompoundTag();
 		pomeCommunionProgress.forEach((origin, count) ->
 				progressTag.putInt(String.valueOf(origin), count));
@@ -146,6 +158,9 @@ public class InitiatoryDegree implements IInitiatoryDegree, INBTSerializable<Com
 		hematicFortification = nbt.getBoolean("hematic_fortification");
 		ancestralCommunions = Math.max(0, nbt.getInt("ancestral_communions"));
 		archonPath = EnumArchonPath.byName(nbt.getString("archon_path"));
+		mycophantExposureTicks = Math.max(0, nbt.getInt("mycophant_exposure_ticks"));
+		mycophantRetryCooldownTicks = Math.max(0, nbt.getInt("mycophant_retry_cooldown_ticks"));
+		mycophantDefeated = nbt.getBoolean("mycophant_defeated");
 		pomeCommunionProgress.clear();
 		CompoundTag progressTag = nbt.getCompound("pome_communion_progress");
 		for (String key : progressTag.getAllKeys()) {

@@ -5,6 +5,7 @@ import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.Enu
 import com.vincenthuto.hemomancy.common.entity.projectile.CombatWeaponCarrierProjectile;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.TendencyWeaponHelper;
 import com.vincenthuto.hemomancy.common.manipulation.SchoolHitHelper;
+import com.vincenthuto.hemomancy.common.manipulation.TendencyDamageCarrier;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
@@ -33,20 +34,24 @@ public final class TendencyWeaponCombatEvents {
 			return;
 		}
 
-		ItemStack weaponStack = resolveWeaponStack(event.getSource().getDirectEntity(), player);
-		if (weaponStack.isEmpty()) {
-			return;
+		Entity directEntity = event.getSource().getDirectEntity();
+		ItemStack weaponStack = resolveWeaponStack(directEntity, player);
+		EnumBloodTendency weaponTendency = directEntity instanceof TendencyDamageCarrier carrier
+				? carrier.getDamageTendency() : null;
+		boolean carriedTendency = weaponTendency != null;
+		if (weaponTendency == null) {
+			weaponTendency = TendencyWeaponHelper.getWeaponTendency(weaponStack).orElse(null);
 		}
-
-		EnumBloodTendency weaponTendency = TendencyWeaponHelper.getWeaponTendency(weaponStack).orElse(null);
 		if (weaponTendency == null) {
 			return;
 		}
 
-		EnumBloodTendency secondaryTendency = TendencyWeaponHelper.getWeaponSecondaryTendency(weaponStack).orElse(null);
+		EnumBloodTendency secondaryTendency = carriedTendency && directEntity instanceof TendencyDamageCarrier carrier
+				? carrier.getSecondaryDamageTendency()
+				: TendencyWeaponHelper.getWeaponSecondaryTendency(weaponStack).orElse(null);
 		SchoolHitHelper.tryTriggerConductiveArc(player, target, weaponTendency, secondaryTendency, event.getAmount());
 		float multiplier = TendencyWeaponHelper.getDamageMultiplier(player, target, weaponTendency, secondaryTendency);
-		if (multiplier <= 1.0f) {
+		if (multiplier == 1.0f) {
 			return;
 		}
 

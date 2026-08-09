@@ -182,6 +182,8 @@ public final class HarbingerAdvancementGranter {
 			Hemomancy.rloc("hemomancy/eternal_covenant_sealed");
 	public static final ResourceLocation ADV_VESPER_DEFEATED =
 			Hemomancy.rloc("hemomancy/vesper_defeated");
+	public static final ResourceLocation ADV_MYCOPHANT_DEFEATED =
+			Hemomancy.rloc("hemomancy/mycophant_defeated");
 
 	// ── Mastery side branches ──────────────────────────────────────────────────
 	public static final ResourceLocation ADV_SANGUINE_DOMAIN =
