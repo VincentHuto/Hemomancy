@@ -409,8 +409,10 @@ function parseCubes(builderExpression, parseNumeric = parseNumber) {
         throw new Error(`Expected addBox to have at least 6 arguments, got ${values.length}`);
       }
       const [x, y, z, width, height, depth] = values.slice(0, 6).map(parseNumeric);
-      const inflate = values.length > 6 ? parseCubeDeformation(values[6], parseNumeric) : 0;
-      cubes.push({ x, y, z, width, height, depth, inflate, uv, mirrored });
+      const booleanMirror = values.length > 6 && /^(?:true|false)$/.test(values[6].trim());
+      const inflate = values.length > 6 && !booleanMirror ? parseCubeDeformation(values[6], parseNumeric) : 0;
+      cubes.push({ x, y, z, width, height, depth, inflate, uv,
+        mirrored: booleanMirror ? values[6].trim() === "true" : mirrored });
     }
   }
 

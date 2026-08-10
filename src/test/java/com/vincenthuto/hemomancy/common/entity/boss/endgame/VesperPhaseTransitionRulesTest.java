@@ -1,6 +1,7 @@
 package com.vincenthuto.hemomancy.common.entity.boss.endgame;
 
 import org.junit.jupiter.api.Test;
+import net.minecraft.world.entity.AnimationState;
 
 import java.lang.reflect.Method;
 
@@ -10,6 +11,22 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
 final class VesperPhaseTransitionRulesTest {
+	@Test
+	void transformationAnimationUsesAContinuousPartialTickClientClock() {
+		AnimationState state = new AnimationState();
+		VesperPhaseTransitionRules.syncAnimationState(state, 200, 40);
+		state.updateTime(200.5F, 1.0F);
+		assertEquals(2_025L, state.getAccumulatedTime());
+
+		VesperPhaseTransitionRules.syncAnimationState(state, 201, 41);
+		state.updateTime(201.25F, 1.0F);
+		assertEquals(2_062L, state.getAccumulatedTime(),
+				"new synchronized ticks must not restart or quantize the client animation clock");
+
+		VesperPhaseTransitionRules.syncAnimationState(state, 202, 0);
+		assertFalse(state.isStarted());
+	}
+
 	@Test
 	void dismountFinishesBeforeMountAbsorptionAndPhaseTwoWaitsForBoth() throws Exception {
 		Class<?> rules;

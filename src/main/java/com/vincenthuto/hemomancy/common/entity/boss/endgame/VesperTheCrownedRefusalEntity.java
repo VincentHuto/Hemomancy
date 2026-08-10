@@ -13,11 +13,11 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
-import net.minecraft.util.Mth;
 import net.minecraft.world.BossEvent;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.AnimationState;
 import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
@@ -58,6 +58,7 @@ public class VesperTheCrownedRefusalEntity extends Monster {
 	private float activeAnchorDamage;
 	private UUID ordealOwner;
 	private long bloomOrigin;
+	public final AnimationState transformationAnimationState = new AnimationState();
 
     private final ServerBossEvent bossEvent = new ServerBossEvent(
             Component.translatable("entity.hemomancy.vesper_crowned_refusal"),
@@ -90,6 +91,10 @@ public class VesperTheCrownedRefusalEntity extends Monster {
 	public void onSyncedDataUpdated(EntityDataAccessor<?> key) {
 		super.onSyncedDataUpdated(key);
 		if (DATA_ACTIVE_ANCHOR.equals(key)) refreshAnchorDimensions();
+		if (DATA_TRANSITION_TICK.equals(key) && level().isClientSide()) {
+			VesperPhaseTransitionRules.syncAnimationState(
+					transformationAnimationState, tickCount, getTransitionTick());
+		}
 	}
 
 	@Override
@@ -145,6 +150,10 @@ public class VesperTheCrownedRefusalEntity extends Monster {
     @Override
     public void tick() {
         super.tick();
+		if (level().isClientSide()) {
+			VesperPhaseTransitionRules.syncAnimationState(
+					transformationAnimationState, tickCount, getTransitionTick());
+		}
         EndgameBossActions.tickVesperClientParticles(this);
     }
 
@@ -378,11 +387,8 @@ public class VesperTheCrownedRefusalEntity extends Monster {
 	}
 
 	private void updateAnchorPositions() {
-		double[][] local = { { 0.0D, 3.0D, 0.0D }, { 0.0D, 3.0D, 0.0D }, { 0.0D, 3.0D, 0.0D } };
-		float yaw = -getYRot() * Mth.DEG_TO_RAD;
+		VesperCombatRules.AnchorOffset forward = VesperCombatRules.anchorForwardOffset(getYRot(), 2.0D);
 		for (int i = 0; i < throneAnchors.length; i++) {
-			double x = local[i][0] * Mth.cos(yaw) - local[i][2] * Mth.sin(yaw);
-			double z = local[i][0] * Mth.sin(yaw) + local[i][2] * Mth.cos(yaw);
 			VesperThroneAnchorPart part = throneAnchors[i];
 			part.xo = part.getX();
 			part.yo = part.getY();
@@ -390,7 +396,7 @@ public class VesperTheCrownedRefusalEntity extends Monster {
 			part.xOld = part.getX();
 			part.yOld = part.getY();
 			part.zOld = part.getZ();
-			part.setPos(getX() + x, getY() + local[i][1], getZ() + z);
+			part.setPos(getX() + forward.x(), getY() + 2.0D, getZ() + forward.z());
 		}
 	}
 }

@@ -24,13 +24,12 @@ final class VesperModelAssetContractTest {
 	@Test
 	void crownedRefusalUsesTheAuthoredThroneAndSixLeggedMountHierarchy() {
 		ModelPart whole = VesperTheCrownedRefusalModel.createBodyLayer().bakeRoot().getChild("whole");
-		ModelPart upperBody = whole.getChild("upperBody");
-		ModelPart rider = upperBody.getChild("vesper");
+		ModelPart rider = whole.getChild("vesper");
 		ModelPart mount = whole.getChild("lowerBody");
 
-		assertNotNull(upperBody.getChild("throne"));
-		assertNotNull(upperBody.getChild("head").getChild("upperJaw"));
-		assertNotNull(rider.getChild("head2"));
+		assertNotNull(mount.getChild("throne"));
+		assertNotNull(mount.getChild("head").getChild("upperJaw"));
+		assertNotNull(rider.getChild("head2").getChild("crown"));
 		assertNotNull(rider.getChild("leftArm").getChild("lShoulder").getChild("lElbow"));
 		assertNotNull(mount.getChild("fLeftArm"));
 		assertNotNull(mount.getChild("fRightArm"));
@@ -44,10 +43,11 @@ final class VesperModelAssetContractTest {
 	void eveningStarUsesTheAuthoredClothAndWeaponAttachmentHierarchy() {
 		ModelPart whole = VesperTheEveningStarModel.createBodyLayer().bakeRoot().getChild("whole");
 
-		assertNotNull(whole.getChild("head").getChild("hood1"));
+		assertNotNull(whole.getChild("head").getChild("crown"));
+		assertNotNull(whole.getChild("head").getChild("hood"));
 		assertNotNull(whole.getChild("body").getChild("ClothBack").getChild("ClothBack1")
 				.getChild("ClothBack2"));
-		assertNotNull(whole.getChild("leftArm").getChild("lShoulder").getChild("lElbow"));
+		assertNotNull(whole.getChild("leftArm").getChild("rShoulder2").getChild("rElbow2"));
 		assertNotNull(whole.getChild("rightArm").getChild("rShoulder").getChild("rElbow"));
 		assertNotNull(whole.getChild("leftLeg").getChild("leftLeg2"));
 		assertNotNull(whole.getChild("rightLeg").getChild("rightLeg2"));
@@ -56,14 +56,14 @@ final class VesperModelAssetContractTest {
 	@Test
 	void vesperHeadsRotateAroundTheAuthoredNeckPivots() {
 		ModelPart crownedWhole = VesperTheCrownedRefusalModel.createBodyLayer().bakeRoot().getChild("whole");
-		ModelPart crownedHead = crownedWhole.getChild("upperBody").getChild("vesper").getChild("head2");
-		assertPartPosition(crownedHead, -16.1725F, -4.6424F, -1.3872F);
+		ModelPart crownedHead = crownedWhole.getChild("vesper").getChild("head2");
+		assertPartPosition(crownedHead, -2.0143F, -11.4387F, 0.2109F);
 		assertPartPosition(crownedHead.getChild("hood1"), 22.0F, 3.075F, -0.375F);
 
 		ModelPart eveningWhole = VesperTheEveningStarModel.createBodyLayer().bakeRoot().getChild("whole");
 		ModelPart eveningHead = eveningWhole.getChild("head");
-		assertPartPosition(eveningHead, -14.2975F, -4.8167F, 1.075F);
-		assertPartPosition(eveningHead.getChild("hood1"), 20.125F, 3.075F, -0.375F);
+		assertPartPosition(eveningHead, -0.0219F, -9.942F, 0.9744F);
+		assertPartPosition(eveningHead.getChild("hood"), 20.125F, 3.075F, -0.375F);
 	}
 
 	@Test
@@ -71,11 +71,11 @@ final class VesperModelAssetContractTest {
 		ModelPart whole = VesperTheEveningStarModel.createBodyLayer().bakeRoot().getChild("whole");
 		ModelPart body = whole.getChild("body");
 
-		assertPartPosition(body, -13.6663F, 1.1188F, -0.2716F);
+		assertPartPosition(body, 0.3594F, -4.0066F, -0.3722F);
 		assertPartPosition(body.getChild("ClothBack"), 19.4937F, 15.5896F, 7.5716F);
-		assertPartPosition(body.getChild("SideclothL"), 5.4437F, 15.5146F, 0.9716F);
+		assertPartPosition(body.getChild("SideclothL"), 5.4438F, 15.5146F, 0.9716F);
 		assertPartPosition(body.getChild("SideclothL4"), -6.9562F, 15.5146F, 0.9716F);
-		assertPartPosition(body.getChild("cloak"), -1.5062F, -2.359F, 6.8371F);
+		assertPartPosition(body.getChild("cloak"), -1.5063F, -2.359F, 6.8371F);
 		assertPartPosition(body.getChild("belt"), -0.5062F, 34.3229F, 1.2216F);
 	}
 
@@ -91,18 +91,16 @@ final class VesperModelAssetContractTest {
 
 		PoseStack expected = new PoseStack();
 		ModelPart whole = root.getChild("whole");
-		ModelPart upperBody = whole.getChild("upperBody");
-		ModelPart rider = upperBody.getChild("vesper");
+		ModelPart rider = whole.getChild("vesper");
 		ModelPart rightArm = rider.getChild("rightArm");
 		ModelPart shoulder = rightArm.getChild("rShoulder");
 		ModelPart elbow = shoulder.getChild("rElbow");
 		whole.translateAndRotate(expected);
-		upperBody.translateAndRotate(expected);
 		rider.translateAndRotate(expected);
 		rightArm.translateAndRotate(expected);
 		shoulder.translateAndRotate(expected);
 		elbow.translateAndRotate(expected);
-		expected.translate(-0.05D, 0.42D, -0.03D);
+		expected.translate(0.0D, 0.78D, -0.4D);
 
 		assertMatrixEquals(expected.last().pose(), actual.last().pose());
 	}

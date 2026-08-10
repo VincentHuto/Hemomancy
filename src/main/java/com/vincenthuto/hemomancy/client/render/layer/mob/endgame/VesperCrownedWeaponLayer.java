@@ -14,11 +14,13 @@ import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 
-/** Renders the Crowned Refusal's Living Staff in the rider's right hand. */
+/** Renders the Crowned Refusal's Living Staff and puppeteering crossbar. */
 public final class VesperCrownedWeaponLayer
 		extends RenderLayer<VesperTheCrownedRefusalEntity, VesperTheCrownedRefusalModel> {
 	private static final float STAFF_SCALE = 1.35F;
+	private static final float CROSSBAR_SCALE = 1.7F;
 	private final ItemStack staff = new ItemStack(ItemInit.living_staff.get());
+	private final ItemStack crossbar = new ItemStack(ItemInit.marionette_crossbar.get());
 
 	public VesperCrownedWeaponLayer(
 			RenderLayerParent<VesperTheCrownedRefusalEntity, VesperTheCrownedRefusalModel> parent) {
@@ -39,6 +41,14 @@ public final class VesperCrownedWeaponLayer
 		poseStack.scale(STAFF_SCALE, STAFF_SCALE, STAFF_SCALE);
 		Minecraft.getInstance().getItemRenderer().renderStatic(staff,
 				ItemDisplayContext.THIRD_PERSON_RIGHT_HAND, packedLight, OverlayTexture.NO_OVERLAY,
+				poseStack, buffer, entity.level(), entity.getId());
+		poseStack.popPose();
+
+		poseStack.pushPose();
+		getParentModel().translateToRiderLeftHand(poseStack);
+		poseStack.scale(CROSSBAR_SCALE, CROSSBAR_SCALE, CROSSBAR_SCALE);
+		Minecraft.getInstance().getItemRenderer().renderStatic(crossbar,
+				ItemDisplayContext.THIRD_PERSON_LEFT_HAND, packedLight, OverlayTexture.NO_OVERLAY,
 				poseStack, buffer, entity.level(), entity.getId());
 		poseStack.popPose();
 	}

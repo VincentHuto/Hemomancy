@@ -89,6 +89,14 @@ final class VesperCombatRulesTest {
 	}
 
 	@Test
+	void throneAnchorForwardOffsetFollowsTheBossAtEveryCardinalYaw() {
+		assertAnchorOffset(0.0F, 0.0D, 2.0D);
+		assertAnchorOffset(90.0F, -2.0D, 0.0D);
+		assertAnchorOffset(180.0F, 0.0D, -2.0D);
+		assertAnchorOffset(-90.0F, 2.0D, 0.0D);
+	}
+
+	@Test
 	void phaseTwoUsesAThirtyTickMorphThenPrimaryAndSecondaryBeats() {
 		assertTrue(VesperCombatRules.isMorphTelegraph(0));
 		assertTrue(VesperCombatRules.isMorphTelegraph(29));
@@ -231,5 +239,11 @@ final class VesperCombatRulesTest {
 		assertEquals(weapon, profile.weapon());
 		assertEquals(primary, profile.primaryManipulation());
 		assertEquals(secondary, profile.secondaryManipulation());
+	}
+
+	private static void assertAnchorOffset(float yawDegrees, double expectedX, double expectedZ) {
+		VesperCombatRules.AnchorOffset offset = VesperCombatRules.anchorForwardOffset(yawDegrees, 2.0D);
+		assertEquals(expectedX, offset.x(), 0.0001D, "x offset at yaw " + yawDegrees);
+		assertEquals(expectedZ, offset.z(), 0.0001D, "z offset at yaw " + yawDegrees);
 	}
 }

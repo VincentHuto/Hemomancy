@@ -86,6 +86,22 @@ final class VesperCombatImplementationSourceTest {
 	}
 
 	@Test
+	void eveningStarUsesAFullBodyKeyframedHitReaction() throws Exception {
+		String model = read("client/model/entity/boss/endgame/VesperTheEveningStarModel.java");
+		String animations = read("client/model/entity/boss/endgame/VesperTheEveningStarAnimations.java");
+
+		assertTrue(model.contains("entity.hurtTime > 0"));
+		assertTrue(model.contains("VesperTheEveningStarAnimations.HIT"));
+		assertTrue(animations.contains("AnimationDefinition HIT"));
+		assertTrue(animations.contains(".addAnimation(\"whole\""));
+		assertTrue(animations.contains(".addAnimation(\"body\""));
+		assertTrue(animations.contains(".addAnimation(\"head\""));
+		assertTrue(animations.contains(".addAnimation(\"rightArm\""));
+		assertTrue(animations.contains(".addAnimation(\"leftArm\""));
+		assertTrue(animations.contains(".addAnimation(\"ClothBack\""));
+	}
+
+	@Test
 	void encounterPuppetsHaveBacklashNoRewardsAndAttemptCleanup() throws Exception {
 		String events = read("common/entity/boss/endgame/VesperEncounterPuppetEvents.java");
 		String ordeal = read("common/worldgen/VesperOrdealManager.java");
@@ -102,12 +118,12 @@ final class VesperCombatImplementationSourceTest {
 	}
 
 	@Test
-	void exposedWeakpointStaysCenteredOnLoweredVesper() throws Exception {
-		String crowned = read("common/entity/boss/endgame/VesperTheCrownedRefusalEntity.java");
+	void vulnerablePoseStillLowersVesperTowardTheExposedWeakpoint() throws Exception {
 		String model = read("client/model/entity/boss/endgame/VesperTheCrownedRefusalModel.java");
-		assertTrue(crowned.contains("{ 0.0D, 3.0D, 0.0D }"));
-		assertTrue(model.contains("this.vesper.y += 7.0F"));
-		assertTrue(model.contains("this.lowerBody.xRot += 0.32F"));
+		String animations = read("client/model/entity/boss/endgame/VesperTheCrownedRefusalAnimations.java");
+		assertTrue(model.contains("VesperTheCrownedRefusalAnimations.VULNERABLE"));
+		assertTrue(animations.contains("KeyframeAnimations.posVec(0.0F, -7.0F, 0.0F)"));
+		assertTrue(animations.contains("KeyframeAnimations.degreeVec(18.3346F, 0.0F, 0.0F)"));
 	}
 
 	@Test
@@ -135,7 +151,7 @@ final class VesperCombatImplementationSourceTest {
 	}
 
 	@Test
-	void crownedRefusalRendersALivingStaffInTheRidersRightHand() throws Exception {
+	void crownedRefusalRendersHisStaffAndPuppeteeringCrossbarInOppositeHands() throws Exception {
 		String renderer = read("client/render/entity/boss/endgame/VesperTheCrownedRefusalRenderer.java");
 		Path layerPath = SOURCE.resolve("client/render/layer/mob/endgame/VesperCrownedWeaponLayer.java");
 		assertTrue(Files.exists(layerPath), "Crowned Refusal weapon render layer is missing");
@@ -146,6 +162,9 @@ final class VesperCombatImplementationSourceTest {
 		assertTrue(layer.contains("ItemInit.living_staff"));
 		assertTrue(layer.contains("translateToRiderWeapon"));
 		assertTrue(layer.contains("ItemDisplayContext.THIRD_PERSON_RIGHT_HAND"));
+		assertTrue(layer.contains("ItemInit.marionette_crossbar"));
+		assertTrue(layer.contains("translateToRiderLeftHand"));
+		assertTrue(layer.contains("ItemDisplayContext.THIRD_PERSON_LEFT_HAND"));
 	}
 
 	@Test

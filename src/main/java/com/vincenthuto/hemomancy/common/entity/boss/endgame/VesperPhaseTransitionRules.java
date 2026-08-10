@@ -1,5 +1,7 @@
 package com.vincenthuto.hemomancy.common.entity.boss.endgame;
 
+import net.minecraft.world.entity.AnimationState;
+
 /** Timing shared by the server phase gate and the client dismount/absorption animation. */
 public final class VesperPhaseTransitionRules {
 	public static final int DISMOUNT_TICKS = 36;
@@ -62,6 +64,14 @@ public final class VesperPhaseTransitionRules {
 
 	public static boolean isComplete(int transitionTick) {
 		return transitionTick >= TOTAL_TICKS;
+	}
+
+	public static void syncAnimationState(AnimationState state, int entityTickCount, int transitionTick) {
+		if (transitionTick <= 0) {
+			state.stop();
+		} else if (!state.isStarted()) {
+			state.start(entityTickCount - transitionTick);
+		}
 	}
 
 	private static float clamp(float value) {

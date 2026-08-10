@@ -224,6 +224,33 @@ public class TempDeformationModel {
   }
 }
 
+async function testBooleanAddBoxMirrorOverloadConverts() {
+  const outputDir = await mkdtemp(path.join(tmpdir(), "hemomancy-bbmodel-"));
+  const sourceFile = path.join(outputDir, "TempBooleanMirrorModel.java");
+  const outputFile = path.join(outputDir, "TempBooleanMirrorModel.bbmodel");
+  const javaModel = `
+package temp;
+import net.minecraft.client.model.geom.PartPose;
+import net.minecraft.client.model.geom.builders.*;
+public class TempBooleanMirrorModel {
+  public static LayerDefinition createBodyLayer() {
+    MeshDefinition mesh = new MeshDefinition();
+    mesh.getRoot().addOrReplaceChild("blade", CubeListBuilder.create()
+      .texOffs(0, 0).addBox(-1F, -2F, -3F, 2F, 4F, 6F, true), PartPose.ZERO);
+    return LayerDefinition.create(mesh, 16, 16);
+  }
+}`;
+  try {
+    await writeFile(sourceFile, javaModel, "utf8");
+    await runConverter(["--source", sourceFile, "--texture", "textures/item/sporitic_thurible.png", "--output", outputFile]);
+    const bbmodel = JSON.parse(await readFile(outputFile, "utf8"));
+    assert.equal(bbmodel.elements[0].mirror_uv, true);
+    assert.equal(bbmodel.elements[0].inflate ?? 0, 0);
+  } finally {
+    await rm(outputDir, { recursive: true, force: true });
+  }
+}
+
 async function testAddOrReplaceChildReplacesEarlierSiblingDefinition() {
   const outputDir = await mkdtemp(path.join(tmpdir(), "hemomancy-bbmodel-"));
   const sourceFile = path.join(outputDir, "TempArmorReplacementModel.java");
@@ -783,6 +810,7 @@ const tests = [
   ["drop wrapper writes the bbmodel beside the dropped Java file", testDropWrapperOutputsBesideDroppedFile],
   ["converts PartPose.rotation without an offset", testPartPoseRotationConverts],
   ["keeps CubeDeformation in inflate instead of baking it into position and size", testCubeDeformationDoesNotBakeIntoPositionAndSize],
+  ["converts the boolean addBox mirror overload", testBooleanAddBoxMirrorOverloadConverts],
   ["honors addOrReplaceChild replacement for repeated sibling names", testAddOrReplaceChildReplacesEarlierSiblingDefinition],
   ["keeps same-named leg parts distinct across equipment slot branches", testSlotBranchesKeepSameNamedLegPartsDistinct],
   ["converts ChalybeateSnailModel with explicit sclerite parts", testChalybeateSnailScleritePartsAreExplicit],

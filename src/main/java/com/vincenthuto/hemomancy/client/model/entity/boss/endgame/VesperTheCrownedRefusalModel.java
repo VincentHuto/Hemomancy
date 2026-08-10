@@ -6,7 +6,9 @@ import com.vincenthuto.hemomancy.common.entity.boss.endgame.VesperPhaseOneAttack
 import com.vincenthuto.hemomancy.common.entity.boss.endgame.VesperPhaseTransitionRules;
 import com.vincenthuto.hemomancy.common.entity.boss.endgame.VesperTheCrownedRefusalEntity;
 import com.vincenthuto.hutoslib.client.HLClientUtils;
-import net.minecraft.client.model.EntityModel;
+import net.minecraft.client.animation.AnimationDefinition;
+import net.minecraft.client.animation.KeyframeAnimations;
+import net.minecraft.client.model.HierarchicalModel;
 import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
@@ -17,38 +19,31 @@ import net.minecraft.client.model.geom.builders.MeshDefinition;
 import net.minecraft.client.model.geom.builders.PartDefinition;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
+import org.joml.Vector3f;
 
 // Made with Blockbench 5.1.6
 // Exported for Minecraft version 1.17 or later with Mojang mappings
 // Paste this class into your mod and generate all required imports
 
 
-public class VesperTheCrownedRefusalModel extends EntityModel<VesperTheCrownedRefusalEntity> {
+public class VesperTheCrownedRefusalModel extends HierarchicalModel<VesperTheCrownedRefusalEntity> {
 	// This layer location should be baked with EntityRendererProvider.Context in the entity renderer and passed into this model's constructor
 	public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(
 			ResourceLocation.fromNamespaceAndPath("hemomancy", "vesper_crowned_refusal"), "main");
 	private final ModelPart whole;
-	private final ModelPart upperBody;
-	private final ModelPart head;
-	private final ModelPart upperJaw;
-	private final ModelPart lowerJaw;
-	private final ModelPart lFang;
-	private final ModelPart lFang2;
-	private final ModelPart bone;
-	private final ModelPart cube_r1;
-	private final ModelPart cube_r3;
-	private final ModelPart throne;
-	private final ModelPart gourd;
-	private final ModelPart rope;
-	private final ModelPart bone2;
-	private final ModelPart bone3;
-	private final ModelPart morphJar;
-	private final ModelPart rope2;
-	private final ModelPart bone4;
-	private final ModelPart bone5;
-	private final ModelPart backing;
+	private boolean transitioning;
+	private float mountOpacity = 1.0F;
+	private float mountScale = 1.0F;
+	private final Vector3f animationVectorCache = new Vector3f();
 	private final ModelPart vesper;
 	private final ModelPart head2;
+	private final ModelPart crown;
+	private final ModelPart bone6;
+	private final ModelPart hat3;
+	private final ModelPart hat4;
+	private final ModelPart hat2;
+	private final ModelPart hat5;
+	private final ModelPart hat;
 	private final ModelPart hood1;
 	private final ModelPart hood2;
 	private final ModelPart hood3;
@@ -91,13 +86,6 @@ public class VesperTheCrownedRefusalModel extends EntityModel<VesperTheCrownedRe
 	private final ModelPart rightBoot;
 	private final ModelPart lrhin;
 	private final ModelPart rshin2;
-	private final ModelPart crown;
-	private final ModelPart bone6;
-	private final ModelPart hat3;
-	private final ModelPart hat4;
-	private final ModelPart hat2;
-	private final ModelPart hat5;
-	private final ModelPart hat;
 	private final ModelPart lowerBody;
 	private final ModelPart backAbdomen;
 	private final ModelPart tail;
@@ -174,33 +162,36 @@ public class VesperTheCrownedRefusalModel extends EntityModel<VesperTheCrownedRe
 	private final ModelPart fLTibia12;
 	private final ModelPart fLTibia13;
 	private final ModelPart flFoot7;
-	private boolean transitioning;
-	private float mountOpacity = 1.0F;
-	private float mountScale = 1.0F;
+	private final ModelPart head;
+	private final ModelPart upperJaw;
+	private final ModelPart lowerJaw;
+	private final ModelPart lFang;
+	private final ModelPart lFang2;
+	private final ModelPart bone;
+	private final ModelPart cube_r1;
+	private final ModelPart cube_r3;
+	private final ModelPart throne;
+	private final ModelPart gourd;
+	private final ModelPart rope;
+	private final ModelPart bone2;
+	private final ModelPart bone3;
+	private final ModelPart morphJar;
+	private final ModelPart rope2;
+	private final ModelPart bone4;
+	private final ModelPart bone5;
+	private final ModelPart backing;
 
 	public VesperTheCrownedRefusalModel(ModelPart root) {
 		this.whole = root.getChild("whole");
-		this.upperBody = this.whole.getChild("upperBody");
-		this.head = this.upperBody.getChild("head");
-		this.upperJaw = this.head.getChild("upperJaw");
-		this.lowerJaw = this.head.getChild("lowerJaw");
-		this.lFang = this.lowerJaw.getChild("lFang");
-		this.lFang2 = this.lowerJaw.getChild("lFang2");
-		this.bone = this.upperBody.getChild("bone");
-		this.cube_r1 = this.bone.getChild("cube_r1");
-		this.cube_r3 = this.bone.getChild("cube_r3");
-		this.throne = this.upperBody.getChild("throne");
-		this.gourd = this.throne.getChild("gourd");
-		this.rope = this.gourd.getChild("rope");
-		this.bone2 = this.rope.getChild("bone2");
-		this.bone3 = this.rope.getChild("bone3");
-		this.morphJar = this.throne.getChild("morphJar");
-		this.rope2 = this.morphJar.getChild("rope2");
-		this.bone4 = this.rope2.getChild("bone4");
-		this.bone5 = this.rope2.getChild("bone5");
-		this.backing = this.throne.getChild("backing");
-		this.vesper = this.upperBody.getChild("vesper");
+		this.vesper = this.whole.getChild("vesper");
 		this.head2 = this.vesper.getChild("head2");
+		this.crown = this.head2.getChild("crown");
+		this.bone6 = this.crown.getChild("bone6");
+		this.hat3 = this.crown.getChild("hat3");
+		this.hat4 = this.crown.getChild("hat4");
+		this.hat2 = this.crown.getChild("hat2");
+		this.hat5 = this.crown.getChild("hat5");
+		this.hat = this.crown.getChild("hat");
 		this.hood1 = this.head2.getChild("hood1");
 		this.hood2 = this.hood1.getChild("hood2");
 		this.hood3 = this.hood2.getChild("hood3");
@@ -243,13 +234,6 @@ public class VesperTheCrownedRefusalModel extends EntityModel<VesperTheCrownedRe
 		this.rightBoot = this.rightLeg2.getChild("rightBoot");
 		this.lrhin = this.rightBoot.getChild("lrhin");
 		this.rshin2 = this.rightBoot.getChild("rshin2");
-		this.crown = this.vesper.getChild("crown");
-		this.bone6 = this.crown.getChild("bone6");
-		this.hat3 = this.crown.getChild("hat3");
-		this.hat4 = this.crown.getChild("hat4");
-		this.hat2 = this.crown.getChild("hat2");
-		this.hat5 = this.crown.getChild("hat5");
-		this.hat = this.crown.getChild("hat");
 		this.lowerBody = this.whole.getChild("lowerBody");
 		this.backAbdomen = this.lowerBody.getChild("backAbdomen");
 		this.tail = this.backAbdomen.getChild("tail");
@@ -326,6 +310,24 @@ public class VesperTheCrownedRefusalModel extends EntityModel<VesperTheCrownedRe
 		this.fLTibia12 = this.fLFemur7.getChild("fLTibia12");
 		this.fLTibia13 = this.fLTibia12.getChild("fLTibia13");
 		this.flFoot7 = this.fLTibia13.getChild("flFoot7");
+		this.head = this.lowerBody.getChild("head");
+		this.upperJaw = this.head.getChild("upperJaw");
+		this.lowerJaw = this.head.getChild("lowerJaw");
+		this.lFang = this.lowerJaw.getChild("lFang");
+		this.lFang2 = this.lowerJaw.getChild("lFang2");
+		this.bone = this.lowerBody.getChild("bone");
+		this.cube_r1 = this.bone.getChild("cube_r1");
+		this.cube_r3 = this.bone.getChild("cube_r3");
+		this.throne = this.lowerBody.getChild("throne");
+		this.gourd = this.throne.getChild("gourd");
+		this.rope = this.gourd.getChild("rope");
+		this.bone2 = this.rope.getChild("bone2");
+		this.bone3 = this.rope.getChild("bone3");
+		this.morphJar = this.throne.getChild("morphJar");
+		this.rope2 = this.morphJar.getChild("rope2");
+		this.bone4 = this.rope2.getChild("bone4");
+		this.bone5 = this.rope2.getChild("bone5");
+		this.backing = this.throne.getChild("backing");
 	}
 
 	public static LayerDefinition createBodyLayer() {
@@ -334,111 +336,26 @@ public class VesperTheCrownedRefusalModel extends EntityModel<VesperTheCrownedRe
 
 		PartDefinition whole = partdefinition.addOrReplaceChild("whole", CubeListBuilder.create(), PartPose.offset(-1.25F, -11.0F, -17.95F));
 
-		PartDefinition upperBody = whole.addOrReplaceChild("upperBody", CubeListBuilder.create().texOffs(294, 0).addBox(-9.35F, -12.6271F, 0.2353F, 21.0F, 8.0F, 41.0F, new CubeDeformation(0.0F)), PartPose.offset(0.1F, -4.0F, -4.0F));
+		PartDefinition vesper = whole.addOrReplaceChild("vesper", CubeListBuilder.create(), PartPose.offset(1.5143F, -38.7953F, 10.6518F));
 
-		PartDefinition upperBody_176_103_bcdf491f_r1 = upperBody.addOrReplaceChild("upperBody_176_103_bcdf491f_r1", CubeListBuilder.create().texOffs(408, 125).addBox(-11.0F, -3.0F, -3.5F, 21.0F, 6.0F, 24.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(1.65F, 19.4378F, 44.1259F, 0.1745F, 0.0F, 0.0F));
+		PartDefinition head2 = vesper.addOrReplaceChild("head2", CubeListBuilder.create().texOffs(78, 813).addBox(-4.0F, -9.075F, -5.625F, 12.0F, 12.0F, 12.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(-2.0143F, -11.4387F, 0.2109F, 0.48F, 0.0F, 0.0F));
 
-		PartDefinition upperBody_176_103_bcdf491f_r2 = upperBody.addOrReplaceChild("upperBody_176_103_bcdf491f_r2", CubeListBuilder.create().texOffs(394, 94).addBox(-10.0F, -3.0F, -3.5F, 20.0F, 6.0F, 25.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.65F, -9.065F, 44.1612F, -0.1745F, 0.0F, 0.0F));
+		PartDefinition crown = head2.addOrReplaceChild("crown", CubeListBuilder.create(), PartPose.offset(21.5F, -7.0993F, 0.0873F));
 
-		PartDefinition head = upperBody.addOrReplaceChild("head", CubeListBuilder.create(), PartPose.offsetAndRotation(0.65F, 1.3729F, -5.7647F, 0.3491F, 0.0F, 0.0F));
+		PartDefinition bone6 = crown.addOrReplaceChild("bone6", CubeListBuilder.create().texOffs(78, 792).addBox(-30.25F, 2.625F, -9.75F, 20.0F, 0.0F, 20.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, -13.35F, -0.775F, 0.1745F, 0.0436F, -0.1745F));
 
-		PartDefinition upperJaw = head.addOrReplaceChild("upperJaw", CubeListBuilder.create().texOffs(540, 522).addBox(-7.0F, -2.5767F, -16.6589F, 14.0F, 11.0F, 5.0F, new CubeDeformation(0.0F))
-		.texOffs(580, 431).addBox(-2.0F, -2.4344F, -18.7873F, 4.0F, 11.0F, 7.0F, new CubeDeformation(0.0F))
-		.texOffs(484, 73).addBox(-8.0F, -6.5767F, -11.6589F, 16.0F, 14.0F, 14.0F, new CubeDeformation(0.0F))
-		.texOffs(166, 436).addBox(-6.5F, -6.5767F, -11.6589F, 0.0F, 17.0F, 14.0F, new CubeDeformation(0.0F))
-		.texOffs(574, 217).addBox(-6.5F, -6.5767F, -11.6589F, 13.0F, 17.0F, 0.0F, new CubeDeformation(0.0F))
-		.texOffs(110, 254).addBox(-2.0F, -7.5767F, -12.6589F, 4.0F, 16.0F, 15.0F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, -0.4233F, 0.6589F));
+		PartDefinition hat3 = crown.addOrReplaceChild("hat3", CubeListBuilder.create().texOffs(179, 863).addBox(-27.5242F, -0.2323F, -6.7318F, 0.0F, 5.0F, 14.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, -13.35F, -0.775F, 0.1745F, 0.0436F, -0.1745F));
 
-		PartDefinition upperBody_48_195_64112220_r1 = upperJaw.addOrReplaceChild("upperBody_48_195_64112220_r1", CubeListBuilder.create().texOffs(314, 350).addBox(-2.0F, -6.5F, -3.5F, 4.0F, 6.0F, 8.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 0.2951F, -11.928F, 0.6981F, 0.0F, 0.0F));
+		PartDefinition hat4 = crown.addOrReplaceChild("hat4", CubeListBuilder.create().texOffs(224, 848).addBox(-26.3154F, -0.6148F, -7.5242F, 13.0F, 5.0F, 0.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, -13.35F, -0.775F, 0.1745F, 0.0436F, -0.1745F));
 
-		PartDefinition upperBody_48_195_64112221_r1 = upperJaw.addOrReplaceChild("upperBody_48_195_64112221_r1", CubeListBuilder.create().texOffs(300, 194).addBox(-9.0F, -5.5F, -2.5F, 18.0F, 2.0F, 18.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 8.1475F, -10.9018F, 0.48F, 0.0F, 0.0F));
+		PartDefinition hat2 = crown.addOrReplaceChild("hat2", CubeListBuilder.create().texOffs(187, 810).addBox(-11.7258F, -0.7677F, -6.7682F, 0.0F, 5.0F, 14.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(-0.75F, -13.35F, -0.775F, 0.1745F, 0.0436F, -0.1745F));
 
-		PartDefinition upperBody_48_195_64112220_r2 = upperJaw.addOrReplaceChild("upperBody_48_195_64112220_r2", CubeListBuilder.create().texOffs(458, 474).addBox(-9.0F, -5.5F, -2.5F, 18.0F, 2.0F, 20.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 4.1475F, -11.9018F, 0.48F, 0.0F, 0.0F));
+		PartDefinition hat5 = crown.addOrReplaceChild("hat5", CubeListBuilder.create().texOffs(78, 937).addBox(-27.1846F, -0.7602F, 7.5242F, 14.0F, 5.0F, 0.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, -13.35F, -0.775F, 0.1745F, 0.0436F, -0.1745F));
 
-		PartDefinition upperBody_48_195_64112219_r1 = upperJaw.addOrReplaceChild("upperBody_48_195_64112219_r1", CubeListBuilder.create().texOffs(488, 392).addBox(-7.0F, -5.5F, -2.5F, 14.0F, 5.0F, 7.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 1.1475F, -11.9018F, 0.48F, 0.0F, 0.0F));
-
-		PartDefinition lowerJaw = head.addOrReplaceChild("lowerJaw", CubeListBuilder.create().texOffs(0, 505).addBox(-7.0F, -2.0F, -12.5F, 14.0F, 4.0F, 14.0F, new CubeDeformation(0.0F))
-		.texOffs(166, 149).addBox(-7.0F, -5.0F, -12.5F, 14.0F, 3.0F, 0.0F, new CubeDeformation(0.0F))
-		.texOffs(558, 123).addBox(-6.7F, -5.0F, -12.5F, 0.0F, 3.0F, 14.0F, new CubeDeformation(0.0F))
-		.texOffs(150, 559).addBox(6.8F, -5.0F, -12.5F, 0.0F, 3.0F, 14.0F, new CubeDeformation(0.0F))
-		.texOffs(530, 184).addBox(-3.0F, -0.25F, -12.5F, 6.0F, 4.0F, 14.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 6.0F, -1.5F, 0.6981F, 0.0F, 0.0F));
-
-		PartDefinition upperBody_48_195_64112220_r3 = lowerJaw.addOrReplaceChild("upperBody_48_195_64112220_r3", CubeListBuilder.create().texOffs(540, 142).addBox(-3.0F, -2.0F, -6.5F, 6.0F, 4.0F, 13.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 3.5005F, -5.7038F, -0.2618F, 0.0F, 0.0F));
-
-		PartDefinition upperBody_48_195_64112219_r2 = lowerJaw.addOrReplaceChild("upperBody_48_195_64112219_r2", CubeListBuilder.create().texOffs(506, 317).addBox(-7.0F, -2.0F, -6.5F, 14.0F, 4.0F, 13.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 1.7505F, -5.7038F, -0.2618F, 0.0F, 0.0F));
-
-		PartDefinition upperBody_48_195_64112220_r4 = lowerJaw.addOrReplaceChild("upperBody_48_195_64112220_r4", CubeListBuilder.create().texOffs(194, 593).addBox(-2.0F, -2.0F, -4.0F, 4.0F, 4.0F, 6.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(4.3421F, 0.0F, -13.4674F, 0.0F, 0.4363F, 0.0F));
-
-		PartDefinition upperBody_48_195_64112219_r3 = lowerJaw.addOrReplaceChild("upperBody_48_195_64112219_r3", CubeListBuilder.create().texOffs(560, 61).addBox(-2.0F, -2.0F, -4.0F, 4.0F, 4.0F, 6.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(-4.3421F, 0.0F, -13.4674F, 0.0F, -0.4363F, 0.0F));
-
-		PartDefinition lFang = lowerJaw.addOrReplaceChild("lFang", CubeListBuilder.create(), PartPose.offset(0.0F, 0.0F, 0.0F));
-
-		PartDefinition upperBody_48_195_64112221_r2 = lFang.addOrReplaceChild("upperBody_48_195_64112221_r2", CubeListBuilder.create().texOffs(546, 595).addBox(-7.0F, -2.0F, 0.5F, 2.0F, 4.0F, 6.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(14.0F, 0.4582F, -20.4165F, 0.1745F, 0.0F, 0.0F));
-
-		PartDefinition upperBody_48_195_64112220_r5 = lFang.addOrReplaceChild("upperBody_48_195_64112220_r5", CubeListBuilder.create().texOffs(538, 382).addBox(-7.0F, -2.0F, -9.5F, 2.0F, 4.0F, 16.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(14.0F, 1.7505F, -5.7038F, -0.2618F, 0.0F, 0.0F));
-
-		PartDefinition lFang2 = lowerJaw.addOrReplaceChild("lFang2", CubeListBuilder.create(), PartPose.offset(-16.0F, 0.0F, 0.0F));
-
-		PartDefinition upperBody_48_195_64112222_r1 = lFang2.addOrReplaceChild("upperBody_48_195_64112222_r1", CubeListBuilder.create().texOffs(562, 595).addBox(-7.0F, -2.0F, 0.5F, 2.0F, 4.0F, 6.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(14.0F, 0.4582F, -20.4165F, 0.1745F, 0.0F, 0.0F));
-
-		PartDefinition upperBody_48_195_64112221_r3 = lFang2.addOrReplaceChild("upperBody_48_195_64112221_r3", CubeListBuilder.create().texOffs(146, 539).addBox(-7.0F, -2.0F, -9.5F, 2.0F, 4.0F, 16.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(14.0F, 1.7505F, -5.7038F, -0.2618F, 0.0F, 0.0F));
-
-		PartDefinition bone = upperBody.addOrReplaceChild("bone", CubeListBuilder.create(), PartPose.offsetAndRotation(-0.5F, 17.5F, -3.6F, 0.6109F, 0.0F, 0.0F));
-
-		PartDefinition cube_r1 = bone.addOrReplaceChild("cube_r1", CubeListBuilder.create().texOffs(480, 442).addBox(-8.85F, -5.8834F, -1.0068F, 21.0F, 12.0F, 13.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 2.1015F, 0.3548F, 0.0873F, 0.0F, 0.0F));
-
-		PartDefinition cube_r1_180_130_f47dbc18_r1 = cube_r1.addOrReplaceChild("cube_r1_180_130_f47dbc18_r1", CubeListBuilder.create().texOffs(0, 84).addBox(-14.85F, -16.8834F, 3.9932F, 33.0F, 22.0F, 50.0F, new CubeDeformation(0.0F))
-		.texOffs(406, 442).addBox(-11.5F, -15.8834F, 1.9932F, 27.0F, 22.0F, 10.0F, new CubeDeformation(0.0F))
-		.texOffs(464, 232).addBox(-8.35F, -15.8834F, -1.0068F, 21.0F, 22.0F, 13.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(-0.5F, -9.9218F, 3.6961F, -0.6981F, 0.0F, 0.0F));
-
-		PartDefinition cube_r1_180_130_f47dbc14_r1 = cube_r1.addOrReplaceChild("cube_r1_180_130_f47dbc14_r1", CubeListBuilder.create().texOffs(300, 143).addBox(-5.85F, -5.8834F, -1.0068F, 15.0F, 12.0F, 39.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 2.0782F, 3.6961F, -0.6981F, 0.0F, 0.0F));
-
-		PartDefinition cube_r3 = bone.addOrReplaceChild("cube_r3", CubeListBuilder.create().texOffs(498, 121).addBox(-8.85F, 29.0656F, 8.6007F, 21.0F, 12.0F, 9.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, -49.8985F, 0.3548F, 0.0873F, 0.0F, 0.0F));
-
-		PartDefinition throne = upperBody.addOrReplaceChild("throne", CubeListBuilder.create().texOffs(396, 559).addBox(8.25F, -2.5F, -9.3F, 5.0F, 4.0F, 10.0F, new CubeDeformation(0.0F))
-		.texOffs(68, 476).addBox(-9.5F, -4.5F, -3.3F, 22.0F, 15.0F, 12.0F, new CubeDeformation(0.0F))
-		.texOffs(508, 28).addBox(-6.5F, 0.5F, -8.3F, 15.0F, 10.0F, 6.0F, new CubeDeformation(0.0F))
-		.texOffs(488, 359).addBox(-7.5F, -15.5F, 1.3F, 18.0F, 26.0F, 7.0F, new CubeDeformation(0.0F))
-		.texOffs(380, 511).addBox(8.25F, -4.5F, -6.3F, 5.0F, 2.0F, 7.0F, new CubeDeformation(0.0F))
-		.texOffs(514, 432).addBox(-10.0F, -4.5F, -6.3F, 5.0F, 2.0F, 7.0F, new CubeDeformation(0.0F))
-		.texOffs(560, 47).addBox(-10.0F, -2.5F, -9.3F, 5.0F, 4.0F, 10.0F, new CubeDeformation(0.0F))
-		.texOffs(24, 584).addBox(-9.1F, 1.5F, -8.3F, 4.0F, 3.0F, 9.0F, new CubeDeformation(0.0F))
-		.texOffs(584, 315).addBox(8.35F, 1.5F, -8.3F, 4.0F, 3.0F, 9.0F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, -22.5F, 21.25F));
-
-		PartDefinition gourd = throne.addOrReplaceChild("gourd", CubeListBuilder.create().texOffs(25, 660).addBox(-4.25F, -7.3055F, -3.75F, 8.0F, 3.0F, 8.0F, new CubeDeformation(0.0F))
-		.texOffs(0, 667).addBox(-4.25F, -1.8055F, -3.75F, 8.0F, 10.0F, 8.0F, new CubeDeformation(0.0F))
-		.texOffs(34, 640).addBox(-5.3375F, -1.2431F, -3.1875F, 10.0F, 9.0F, 7.0F, new CubeDeformation(-0.375F))
-		.texOffs(17, 649).addBox(-4.3125F, -1.2431F, -3.1875F, 1.0F, 9.0F, 6.0F, new CubeDeformation(-0.375F))
-		.texOffs(5, 650).addBox(-2.8125F, -1.2431F, 3.3125F, 6.0F, 9.0F, 1.0F, new CubeDeformation(-0.375F))
-		.texOffs(2, 694).addBox(-3.5625F, -1.2431F, -4.7875F, 7.0F, 9.0F, 10.0F, new CubeDeformation(-0.375F))
-		.texOffs(4, 633).addBox(-3.75F, -9.6805F, -3.0F, 7.0F, 4.0F, 6.0F, new CubeDeformation(-0.5F))
-		.texOffs(2, 658).addBox(-3.0F, 5.3195F, -3.0F, 6.0F, 4.0F, 6.0F, new CubeDeformation(-0.5F))
-		.texOffs(26, 633).addBox(-3.0F, -5.3055F, -3.0F, 6.0F, 4.0F, 6.0F, new CubeDeformation(-0.5F)), PartPose.offsetAndRotation(17.4F, -0.9278F, 0.9F, 0.1903F, -0.0247F, -0.2417F));
-
-		PartDefinition rope = gourd.addOrReplaceChild("rope", CubeListBuilder.create().texOffs(28, 621).addBox(3.575F, -1.7583F, -2.6583F, 0.0F, 3.0F, 5.0F, new CubeDeformation(0.05F)), PartPose.offset(-0.25F, -3.0347F, 0.0833F));
-
-		PartDefinition bone2 = rope.addOrReplaceChild("bone2", CubeListBuilder.create().texOffs(32, 631).addBox(-10.6079F, -1.675F, -0.1625F, 11.0F, 3.0F, 0.0F, new CubeDeformation(0.05F)), PartPose.offsetAndRotation(3.25F, -0.0833F, 2.6667F, 0.0F, 0.3927F, 0.0F));
-
-		PartDefinition bone3 = rope.addOrReplaceChild("bone3", CubeListBuilder.create().texOffs(24, 622).addBox(-9.7557F, -1.692F, -0.2386F, 10.0F, 3.0F, 0.0F, new CubeDeformation(0.05F)), PartPose.offsetAndRotation(3.25F, -0.0833F, -2.5833F, 0.0554F, 0.0064F, 0.0646F));
-
-		PartDefinition morphJar = throne.addOrReplaceChild("morphJar", CubeListBuilder.create().texOffs(339, 701).addBox(-6.375F, -11.4583F, -5.625F, 12.0F, 5.0F, 12.0F, new CubeDeformation(0.0F))
-		.texOffs(314, 708).addBox(-6.375F, -2.7083F, -5.625F, 12.0F, 15.0F, 12.0F, new CubeDeformation(0.0F))
-		.texOffs(331, 690).addBox(-6.1563F, -1.5521F, -4.5938F, 1.0F, 13.0F, 9.0F, new CubeDeformation(-0.375F))
-		.texOffs(319, 691).addBox(-4.4063F, -1.5521F, 5.1563F, 9.0F, 13.0F, 1.0F, new CubeDeformation(-0.375F))
-		.texOffs(340, 674).addBox(-4.75F, -8.2083F, -4.25F, 9.0F, 6.0F, 9.0F, new CubeDeformation(-0.5F)), PartPose.offsetAndRotation(3.4F, -8.9278F, 16.9F, -1.783F, -1.453F, 1.5399F));
-
-		PartDefinition rope2 = morphJar.addOrReplaceChild("rope2", CubeListBuilder.create().texOffs(342, 662).addBox(5.3875F, -3.1125F, -4.0125F, 0.0F, 5.0F, 8.0F, new CubeDeformation(0.05F)), PartPose.offset(-0.375F, -4.5521F, 0.125F));
-
-		PartDefinition bone4 = rope2.addOrReplaceChild("bone4", CubeListBuilder.create().texOffs(346, 672).addBox(-16.5447F, -2.9875F, 0.1999F, 17.0F, 5.0F, 0.0F, new CubeDeformation(0.05F)), PartPose.offsetAndRotation(4.875F, -0.125F, 4.0F, 0.0F, 0.3927F, 0.0F));
-
-		PartDefinition bone5 = rope2.addOrReplaceChild("bone5", CubeListBuilder.create().texOffs(338, 663).addBox(-14.6085F, -3.013F, -0.3829F, 15.0F, 5.0F, 0.0F, new CubeDeformation(0.05F)), PartPose.offsetAndRotation(4.875F, -0.125F, -3.875F, 0.0554F, 0.0064F, 0.0646F));
-
-		PartDefinition backing = throne.addOrReplaceChild("backing", CubeListBuilder.create().texOffs(110, 223).addBox(-8.0F, -30.2569F, -4.1284F, 19.0F, 27.0F, 4.0F, new CubeDeformation(0.0F))
-		.texOffs(328, 479).addBox(-8.5F, -26.5F, -0.5F, 20.0F, 36.0F, 6.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 0.0F, 0.0F, -0.1745F, 0.0F, 0.0F));
-
-		PartDefinition vesper = upperBody.addOrReplaceChild("vesper", CubeListBuilder.create(), PartPose.offset(15.5725F, -41.5917F, 16.25F));
-
-		PartDefinition head2 = vesper.addOrReplaceChild("head2", CubeListBuilder.create().texOffs(78, 813).addBox(-4.0F, -9.075F, -5.625F, 12.0F, 12.0F, 12.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(-16.1725F, -4.6424F, -1.3872F, 0.48F, 0.0F, 0.0F));
+		PartDefinition hat = crown.addOrReplaceChild("hat", CubeListBuilder.create().texOffs(99, 889).addBox(-28.7742F, 1.2677F, -6.7318F, 2.0F, 2.0F, 14.0F, new CubeDeformation(0.0F))
+		.texOffs(132, 890).addBox(-13.7258F, 0.7323F, -6.7682F, 2.0F, 2.0F, 14.0F, new CubeDeformation(0.0F))
+		.texOffs(208, 873).addBox(-26.3154F, 1.2602F, -8.2742F, 13.0F, 2.0F, 2.0F, new CubeDeformation(0.0F))
+		.texOffs(208, 868).addBox(-27.1846F, 0.7398F, 6.7742F, 14.0F, 2.0F, 2.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, -13.35F, -0.775F, 0.1745F, 0.0436F, -0.1745F));
 
 		PartDefinition hood1 = head2.addOrReplaceChild("hood1", CubeListBuilder.create().texOffs(129, 840).addBox(-27.25F, -14.0F, -6.9F, 2.0F, 14.0F, 14.0F, new CubeDeformation(0.0F))
 		.texOffs(78, 855).addBox(-15.25F, -14.0F, -6.9F, 2.0F, 14.0F, 14.0F, new CubeDeformation(0.0F))
@@ -460,7 +377,7 @@ public class VesperTheCrownedRefusalModel extends EntityModel<VesperTheCrownedRe
 		.texOffs(207, 935).addBox(-26.15F, -0.75F, -4.875F, 3.0F, 12.0F, 2.0F, new CubeDeformation(0.0F))
 		.texOffs(145, 947).addBox(-16.85F, -0.75F, -4.875F, 3.0F, 12.0F, 2.0F, new CubeDeformation(0.0F))
 		.texOffs(132, 922).addBox(-25.85F, -0.75F, 2.775F, 12.0F, 12.0F, 2.0F, new CubeDeformation(0.0F))
-		.texOffs(162, 840).addBox(-26.15F, -1.25F, 2.1F, 12.0F, 20.0F, 2.0F, new CubeDeformation(0.0F)), PartPose.offset(5.8275F, -1.7417F, -0.3F));
+		.texOffs(162, 840).addBox(-26.15F, -1.25F, 2.1F, 12.0F, 20.0F, 2.0F, new CubeDeformation(0.0F)), PartPose.offset(19.9857F, -8.538F, 1.2982F));
 
 		PartDefinition ClothBack = body.addOrReplaceChild("ClothBack", CubeListBuilder.create(), PartPose.offset(0.0F, 18.45F, 6.6F));
 
@@ -506,7 +423,7 @@ public class VesperTheCrownedRefusalModel extends EntityModel<VesperTheCrownedRe
 
 		PartDefinition SideclothL7 = SideclothL6.addOrReplaceChild("SideclothL7", CubeListBuilder.create().texOffs(225, 792).addBox(12.4319F, -14.7607F, -3.75F, 2.0F, 5.0F, 8.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.789F, 3.6096F, 0.0F, 0.0F, 0.0F, 0.5236F));
 
-		PartDefinition leftArm = vesper.addOrReplaceChild("leftArm", CubeListBuilder.create(), PartPose.offset(-7.6725F, 1.2583F, -0.3F));
+		PartDefinition leftArm = vesper.addOrReplaceChild("leftArm", CubeListBuilder.create(), PartPose.offset(6.4857F, -5.538F, 1.2982F));
 
 		PartDefinition lShoulder = leftArm.addOrReplaceChild("lShoulder", CubeListBuilder.create().texOffs(192, 792).addBox(-3.0887F, 1.7157F, -3.8313F, 8.0F, 6.0F, 8.0F, new CubeDeformation(0.125F)), PartPose.offsetAndRotation(2.175F, 0.0F, 0.0F, -0.1309F, 0.0F, 0.0F));
 
@@ -519,7 +436,7 @@ public class VesperTheCrownedRefusalModel extends EntityModel<VesperTheCrownedRe
 		.texOffs(165, 890).addBox(-2.9375F, 0.0F, -7.5F, 6.0F, 11.0F, 8.0F, new CubeDeformation(0.0F))
 		.texOffs(78, 913).addBox(-2.4375F, 11.0F, -6.5F, 5.0F, 2.0F, 5.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(1.0125F, 7.75F, 3.75F, -0.4363F, 0.0F, 0.0F));
 
-		PartDefinition rightArm = vesper.addOrReplaceChild("rightArm", CubeListBuilder.create(), PartPose.offset(-21.1725F, 1.2583F, -0.3F));
+		PartDefinition rightArm = vesper.addOrReplaceChild("rightArm", CubeListBuilder.create(), PartPose.offset(-7.0143F, -5.538F, 1.2982F));
 
 		PartDefinition rShoulder = rightArm.addOrReplaceChild("rShoulder", CubeListBuilder.create().texOffs(194, 883).addBox(-4.9113F, 1.7157F, -3.8313F, 8.0F, 6.0F, 8.0F, new CubeDeformation(0.125F)), PartPose.offsetAndRotation(-2.175F, 0.0F, 0.0F, -0.1309F, 0.0F, 0.0F));
 
@@ -532,7 +449,7 @@ public class VesperTheCrownedRefusalModel extends EntityModel<VesperTheCrownedRe
 		.texOffs(191, 830).addBox(-3.0625F, 0.0F, -7.5F, 6.0F, 11.0F, 8.0F, new CubeDeformation(0.0F))
 		.texOffs(124, 947).addBox(-2.5625F, 11.0F, -6.5F, 5.0F, 2.0F, 5.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(-1.0125F, 7.75F, 3.75F, -0.829F, 0.0F, 0.0F));
 
-		PartDefinition leftLeg = vesper.addOrReplaceChild("leftLeg", CubeListBuilder.create().texOffs(161, 926).addBox(-5.0125F, 0.2917F, -1.5F, 6.0F, 10.0F, 6.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(-9.31F, 15.9667F, -1.8F, -1.1345F, 0.0F, 0.0F));
+		PartDefinition leftLeg = vesper.addOrReplaceChild("leftLeg", CubeListBuilder.create().texOffs(161, 926).addBox(-5.0125F, 0.2917F, -1.5F, 6.0F, 10.0F, 6.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(4.8482F, 9.1703F, -0.2018F, -1.1345F, 0.0F, 0.0F));
 
 		PartDefinition leftLeg2 = leftLeg.addOrReplaceChild("leftLeg2", CubeListBuilder.create().texOffs(194, 915).addBox(-3.025F, -0.4167F, 0.0F, 6.0F, 13.0F, 6.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(-1.9875F, 10.7083F, -1.5F, 0.9599F, 0.0F, 0.0F));
 
@@ -549,7 +466,7 @@ public class VesperTheCrownedRefusalModel extends EntityModel<VesperTheCrownedRe
 		.texOffs(239, 873).addBox(-21.075F, -3.5F, -1.0F, 3.0F, 6.0F, 2.0F, new CubeDeformation(0.0F))
 		.texOffs(241, 806).addBox(-18.95F, -2.75F, -0.625F, 2.0F, 6.0F, 2.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.025F, 15.125F, 3.025F, 0.0873F, 0.0F, 0.0F));
 
-		PartDefinition rightLeg = vesper.addOrReplaceChild("rightLeg", CubeListBuilder.create().texOffs(216, 807).addBox(-0.9875F, 0.2917F, -1.5F, 6.0F, 10.0F, 6.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(-19.535F, 15.9667F, -1.8F, -1.0472F, 0.0F, 0.0F));
+		PartDefinition rightLeg = vesper.addOrReplaceChild("rightLeg", CubeListBuilder.create().texOffs(216, 807).addBox(-0.9875F, 0.2917F, -1.5F, 6.0F, 10.0F, 6.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(-5.3768F, 9.1703F, -0.2018F, -1.0472F, 0.0F, 0.0F));
 
 		PartDefinition rightLeg2 = rightLeg.addOrReplaceChild("rightLeg2", CubeListBuilder.create().texOffs(107, 921).addBox(-2.975F, -0.4167F, 0.0F, 6.0F, 13.0F, 6.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(1.9875F, 10.7083F, -1.5F, 0.9599F, 0.0F, 0.0F));
 
@@ -566,24 +483,8 @@ public class VesperTheCrownedRefusalModel extends EntityModel<VesperTheCrownedRe
 		.texOffs(240, 924).addBox(18.075F, -3.5F, -1.0F, 3.0F, 6.0F, 2.0F, new CubeDeformation(0.0F))
 		.texOffs(241, 815).addBox(16.95F, -2.75F, -0.625F, 2.0F, 6.0F, 2.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(-0.025F, 15.125F, 3.025F, 0.0873F, 0.0F, 0.0F));
 
-		PartDefinition crown = vesper.addOrReplaceChild("crown", CubeListBuilder.create(), PartPose.offsetAndRotation(5.3275F, -6.7417F, -5.3F, 0.3054F, 0.0F, 0.0F));
-
-		PartDefinition bone6 = crown.addOrReplaceChild("bone6", CubeListBuilder.create().texOffs(78, 792).addBox(-30.25F, 2.625F, -9.75F, 20.0F, 0.0F, 20.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, -13.35F, -0.775F, 0.1745F, 0.0436F, -0.1745F));
-
-		PartDefinition hat3 = crown.addOrReplaceChild("hat3", CubeListBuilder.create().texOffs(179, 863).addBox(-27.5242F, -0.2323F, -6.7318F, 0.0F, 5.0F, 14.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, -13.35F, -0.775F, 0.1745F, 0.0436F, -0.1745F));
-
-		PartDefinition hat4 = crown.addOrReplaceChild("hat4", CubeListBuilder.create().texOffs(224, 848).addBox(-26.3154F, -0.6148F, -7.5242F, 13.0F, 5.0F, 0.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, -13.35F, -0.775F, 0.1745F, 0.0436F, -0.1745F));
-
-		PartDefinition hat2 = crown.addOrReplaceChild("hat2", CubeListBuilder.create().texOffs(187, 810).addBox(-11.7258F, -0.7677F, -6.7682F, 0.0F, 5.0F, 14.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(-0.75F, -13.35F, -0.775F, 0.1745F, 0.0436F, -0.1745F));
-
-		PartDefinition hat5 = crown.addOrReplaceChild("hat5", CubeListBuilder.create().texOffs(78, 937).addBox(-27.1846F, -0.7602F, 7.5242F, 14.0F, 5.0F, 0.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, -13.35F, -0.775F, 0.1745F, 0.0436F, -0.1745F));
-
-		PartDefinition hat = crown.addOrReplaceChild("hat", CubeListBuilder.create().texOffs(99, 889).addBox(-28.7742F, 1.2677F, -6.7318F, 2.0F, 2.0F, 14.0F, new CubeDeformation(0.0F))
-		.texOffs(132, 890).addBox(-13.7258F, 0.7323F, -6.7682F, 2.0F, 2.0F, 14.0F, new CubeDeformation(0.0F))
-		.texOffs(208, 873).addBox(-26.3154F, 1.2602F, -8.2742F, 13.0F, 2.0F, 2.0F, new CubeDeformation(0.0F))
-		.texOffs(208, 868).addBox(-27.1846F, 0.7398F, 6.7742F, 14.0F, 2.0F, 2.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, -13.35F, -0.775F, 0.1745F, 0.0436F, -0.1745F));
-
-		PartDefinition lowerBody = whole.addOrReplaceChild("lowerBody", CubeListBuilder.create().texOffs(166, 84).addBox(-9.25F, -9.0F, -21.0F, 21.0F, 24.0F, 41.0F, new CubeDeformation(0.0F))
+		PartDefinition lowerBody = whole.addOrReplaceChild("lowerBody", CubeListBuilder.create().texOffs(294, 0).addBox(-9.25F, -20.6271F, -20.9647F, 21.0F, 8.0F, 41.0F, new CubeDeformation(0.0F))
+		.texOffs(166, 84).addBox(-9.25F, -9.0F, -21.0F, 21.0F, 24.0F, 41.0F, new CubeDeformation(0.0F))
 		.texOffs(0, 156).addBox(-12.25F, -19.0F, -22.0F, 28.0F, 16.0F, 51.0F, new CubeDeformation(0.0F))
 		.texOffs(158, 156).addBox(-13.25F, -3.0F, -22.0F, 28.0F, 15.0F, 43.0F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, 4.0F, 17.2F));
 
@@ -633,6 +534,10 @@ public class VesperTheCrownedRefusalModel extends EntityModel<VesperTheCrownedRe
 
 		PartDefinition lowerBody_56_151_29420826_r1 = lowerBody.addOrReplaceChild("lowerBody_56_151_29420826_r1", CubeListBuilder.create().texOffs(484, 101).addBox(9.75F, -19.0F, -23.0F, 28.0F, 16.0F, 4.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(-22.0F, -13.1843F, 4.2331F, 0.5672F, 0.0F, 0.0F));
 
+		PartDefinition upperBody_176_103_bcdf491f_r1 = lowerBody.addOrReplaceChild("upperBody_176_103_bcdf491f_r1", CubeListBuilder.create().texOffs(408, 125).addBox(-11.0F, -3.0F, -3.5F, 21.0F, 6.0F, 24.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(1.75F, 11.4378F, 22.9259F, 0.1745F, 0.0F, 0.0F));
+
+		PartDefinition upperBody_176_103_bcdf491f_r2 = lowerBody.addOrReplaceChild("upperBody_176_103_bcdf491f_r2", CubeListBuilder.create().texOffs(394, 94).addBox(-10.0F, -3.0F, -3.5F, 20.0F, 6.0F, 25.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.75F, -17.065F, 22.9611F, -0.1745F, 0.0F, 0.0F));
+
 		PartDefinition backAbdomen = lowerBody.addOrReplaceChild("backAbdomen", CubeListBuilder.create().texOffs(0, 0).addBox(-14.25F, -15.0F, -19.0F, 30.0F, 25.0F, 59.0F, new CubeDeformation(0.0F))
 		.texOffs(484, 405).addBox(-11.25F, -14.0F, 40.0F, 24.0F, 22.0F, 5.0F, new CubeDeformation(0.0F))
 		.texOffs(194, 430).addBox(-13.25F, -18.0F, 21.0F, 28.0F, 30.0F, 9.0F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, 0.0F, 0.0F));
@@ -674,22 +579,22 @@ public class VesperTheCrownedRefusalModel extends EntityModel<VesperTheCrownedRe
 
 		PartDefinition fLShoulder = fLeftArm.addOrReplaceChild("fLShoulder", CubeListBuilder.create(), PartPose.offsetAndRotation(0.0833F, -0.9167F, -1.55F, -0.6109F, -0.829F, 0.8727F));
 
-		PartDefinition fLBicep = fLShoulder.addOrReplaceChild("fLBicep", CubeListBuilder.create().texOffs(118, 529).addBox(-0.4318F, -3.9571F, -4.2077F, 6.0F, 22.0F, 8.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(-1.0398F, 4.0897F, 1.1724F, 0.4486F, 0.5545F, 0.2169F));
+		PartDefinition fLBicep = fLShoulder.addOrReplaceChild("fLBicep", CubeListBuilder.create().texOffs(118, 529).addBox(-0.4318F, -3.9571F, -4.2077F, 6.0F, 22.0F, 8.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(-1.0398F, 4.0897F, 1.1723F, 0.4486F, 0.5545F, 0.2169F));
 
 		PartDefinition cube_r2 = fLBicep.addOrReplaceChild("cube_r2", CubeListBuilder.create().texOffs(132, 579).addBox(-2.0F, -5.0F, -5.0F, 4.0F, 22.0F, 4.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(5.6339F, 1.0429F, 1.1771F, 0.0F, 0.3927F, 0.0F));
 
 		PartDefinition cube_r4 = fLBicep.addOrReplaceChild("cube_r4", CubeListBuilder.create().texOffs(136, 476).addBox(-4.0F, -5.0F, -1.0F, 6.0F, 22.0F, 4.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(4.8685F, 1.0429F, 0.2553F, 0.0F, -0.3927F, 0.0F));
 
-		PartDefinition fLForearm = fLBicep.addOrReplaceChild("fLForearm", CubeListBuilder.create().texOffs(542, 306).addBox(-2.7719F, 3.0947F, -2.0748F, 4.0F, 6.0F, 4.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(4.3401F, 13.9482F, -0.1329F, 0.0F, 0.0F, 0.2618F));
+		PartDefinition fLForearm = fLBicep.addOrReplaceChild("fLForearm", CubeListBuilder.create().texOffs(542, 306).addBox(-2.7719F, 3.0947F, -2.0748F, 4.0F, 6.0F, 4.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(4.34F, 13.9482F, -0.1328F, 0.0F, 0.0F, 0.2618F));
 
-		PartDefinition fLWrist = fLForearm.addOrReplaceChild("fLWrist", CubeListBuilder.create().texOffs(560, 306).addBox(-7.9027F, -2.1621F, -2.8578F, 6.0F, 14.0F, 6.0F, new CubeDeformation(0.0F))
-		.texOffs(548, 438).addBox(-8.9027F, -1.1621F, -3.8578F, 8.0F, 12.0F, 8.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(4.1309F, 9.2568F, -0.217F, -0.48F, 0.0F, 0.0F));
+		PartDefinition fLWrist = fLForearm.addOrReplaceChild("fLWrist", CubeListBuilder.create().texOffs(560, 306).addBox(-7.9027F, -2.1621F, -2.8579F, 6.0F, 14.0F, 6.0F, new CubeDeformation(0.0F))
+		.texOffs(548, 438).addBox(-8.9027F, -1.1621F, -3.8579F, 8.0F, 12.0F, 8.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(4.1308F, 9.2568F, -0.217F, -0.48F, 0.0F, 0.0F));
 
 		PartDefinition cube_r5 = fLWrist.addOrReplaceChild("cube_r5", CubeListBuilder.create().texOffs(522, 557).addBox(-2.0F, 4.0F, -5.0F, 5.0F, 12.0F, 4.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(-0.4923F, -5.1621F, 1.9586F, 0.0F, 0.6109F, 0.0F));
 
 		PartDefinition cube_r6 = fLWrist.addOrReplaceChild("cube_r6", CubeListBuilder.create().texOffs(260, 582).addBox(-5.0F, 4.0F, -1.0F, 8.0F, 12.0F, 4.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(-1.6394F, -5.1621F, -0.036F, 0.0F, -0.6109F, 0.0F));
 
-		PartDefinition flHand = fLWrist.addOrReplaceChild("flHand", CubeListBuilder.create(), PartPose.offset(14.641F, -19.3515F, 10.2918F));
+		PartDefinition flHand = fLWrist.addOrReplaceChild("flHand", CubeListBuilder.create(), PartPose.offset(14.641F, -19.3515F, 10.2917F));
 
 		PartDefinition flThumb = flHand.addOrReplaceChild("flThumb", CubeListBuilder.create().texOffs(394, 125).addBox(-0.75F, -0.5F, -1.0F, 2.0F, 6.0F, 2.0F, new CubeDeformation(0.0F))
 		.texOffs(94, 374).addBox(-1.75F, -0.5F, 0.0F, 3.0F, 7.0F, 0.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(-22.5437F, 30.6894F, -10.1496F, 0.0F, 0.0F, -0.0436F));
@@ -733,22 +638,22 @@ public class VesperTheCrownedRefusalModel extends EntityModel<VesperTheCrownedRe
 
 		PartDefinition fLShoulder2 = fRightArm.addOrReplaceChild("fLShoulder2", CubeListBuilder.create(), PartPose.offsetAndRotation(-0.0833F, -0.9167F, -1.55F, -0.6109F, 0.829F, -0.8727F));
 
-		PartDefinition fLBicep2 = fLShoulder2.addOrReplaceChild("fLBicep2", CubeListBuilder.create().texOffs(538, 352).addBox(-5.5682F, -3.9571F, -4.2077F, 6.0F, 22.0F, 8.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(1.0398F, 4.0897F, 1.1724F, 0.4486F, -0.5545F, -0.2169F));
+		PartDefinition fLBicep2 = fLShoulder2.addOrReplaceChild("fLBicep2", CubeListBuilder.create().texOffs(538, 352).addBox(-5.5682F, -3.9571F, -4.2077F, 6.0F, 22.0F, 8.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(1.0398F, 4.0897F, 1.1723F, 0.4486F, -0.5545F, -0.2169F));
 
 		PartDefinition cube_r16 = fLBicep2.addOrReplaceChild("cube_r16", CubeListBuilder.create().texOffs(580, 61).addBox(-2.0F, -5.0F, -5.0F, 4.0F, 22.0F, 4.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(-5.6339F, 1.0429F, 1.1771F, 0.0F, -0.3927F, 0.0F));
 
 		PartDefinition cube_r17 = fLBicep2.addOrReplaceChild("cube_r17", CubeListBuilder.create().texOffs(32, 558).addBox(-2.0F, -5.0F, -1.0F, 6.0F, 22.0F, 4.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(-4.8685F, 1.0429F, 0.2553F, 0.0F, 0.3927F, 0.0F));
 
-		PartDefinition fLForearm2 = fLBicep2.addOrReplaceChild("fLForearm2", CubeListBuilder.create().texOffs(530, 595).addBox(-1.2281F, 3.0947F, -2.0748F, 4.0F, 6.0F, 4.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(-4.3401F, 13.9482F, -0.1329F, 0.0F, 0.0F, -0.2618F));
+		PartDefinition fLForearm2 = fLBicep2.addOrReplaceChild("fLForearm2", CubeListBuilder.create().texOffs(530, 595).addBox(-1.2281F, 3.0947F, -2.0748F, 4.0F, 6.0F, 4.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(-4.34F, 13.9482F, -0.1328F, 0.0F, 0.0F, -0.2618F));
 
-		PartDefinition fLWrist2 = fLForearm2.addOrReplaceChild("fLWrist2", CubeListBuilder.create().texOffs(572, 556).addBox(1.9027F, -2.1621F, -2.8578F, 6.0F, 14.0F, 6.0F, new CubeDeformation(0.0F))
-		.texOffs(118, 559).addBox(0.9027F, -1.1621F, -3.8578F, 8.0F, 12.0F, 8.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(-4.1309F, 9.2568F, -0.217F, -0.48F, 0.0F, 0.0F));
+		PartDefinition fLWrist2 = fLForearm2.addOrReplaceChild("fLWrist2", CubeListBuilder.create().texOffs(572, 556).addBox(1.9027F, -2.1621F, -2.8579F, 6.0F, 14.0F, 6.0F, new CubeDeformation(0.0F))
+		.texOffs(118, 559).addBox(0.9027F, -1.1621F, -3.8579F, 8.0F, 12.0F, 8.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(-4.1308F, 9.2568F, -0.217F, -0.48F, 0.0F, 0.0F));
 
 		PartDefinition cube_r18 = fLWrist2.addOrReplaceChild("cube_r18", CubeListBuilder.create().texOffs(494, 592).addBox(-3.0F, 4.0F, -5.0F, 5.0F, 12.0F, 4.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.4923F, -5.1621F, 1.9586F, 0.0F, -0.6109F, 0.0F));
 
 		PartDefinition cube_r19 = fLWrist2.addOrReplaceChild("cube_r19", CubeListBuilder.create().texOffs(284, 582).addBox(-3.0F, 4.0F, -1.0F, 8.0F, 12.0F, 4.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(1.6394F, -5.1621F, -0.036F, 0.0F, 0.6109F, 0.0F));
 
-		PartDefinition flHand2 = fLWrist2.addOrReplaceChild("flHand2", CubeListBuilder.create(), PartPose.offset(-14.641F, -19.3515F, 10.2918F));
+		PartDefinition flHand2 = fLWrist2.addOrReplaceChild("flHand2", CubeListBuilder.create(), PartPose.offset(-14.641F, -19.3515F, 10.2917F));
 
 		PartDefinition flThumb2 = flHand2.addOrReplaceChild("flThumb2", CubeListBuilder.create().texOffs(394, 133).addBox(-1.25F, -0.5F, -1.0F, 2.0F, 6.0F, 2.0F, new CubeDeformation(0.0F))
 		.texOffs(94, 381).addBox(-1.25F, -0.5F, 0.0F, 3.0F, 7.0F, 0.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(22.5437F, 30.6894F, -10.1496F, 0.0F, 0.0F, 0.0436F));
@@ -805,7 +710,7 @@ public class VesperTheCrownedRefusalModel extends EntityModel<VesperTheCrownedRe
 		PartDefinition fLFemur2 = fLHip2.addOrReplaceChild("fLFemur2", CubeListBuilder.create().texOffs(540, 159).addBox(-1.4318F, 9.0429F, -5.2077F, 8.0F, 8.0F, 10.0F, new CubeDeformation(0.0F))
 		.texOffs(512, 496).addBox(-1.4318F, -7.9571F, -6.2077F, 9.0F, 14.0F, 12.0F, new CubeDeformation(0.0F))
 		.texOffs(244, 520).addBox(-0.4318F, -8.9571F, -4.2077F, 6.0F, 27.0F, 8.0F, new CubeDeformation(0.0F))
-		.texOffs(244, 555).addBox(0.5682F, -13.9571F, -2.2077F, 4.0F, 32.0F, 4.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(17.9602F, -12.9103F, -7.8276F, 0.0F, 0.0F, -1.1781F));
+		.texOffs(244, 555).addBox(0.5682F, -13.9571F, -2.2077F, 4.0F, 32.0F, 4.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(17.9602F, -12.9103F, -7.8277F, 0.0F, 0.0F, -1.1781F));
 
 		PartDefinition cube_r29 = fLFemur2.addOrReplaceChild("cube_r29", CubeListBuilder.create().texOffs(506, 573).addBox(-3.0F, -3.0F, -7.0F, 7.0F, 14.0F, 5.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(5.4469F, -4.9571F, -1.9858F, 0.0F, -2.3562F, 0.0F));
 
@@ -815,7 +720,7 @@ public class VesperTheCrownedRefusalModel extends EntityModel<VesperTheCrownedRe
 
 		PartDefinition cube_r32 = fLFemur2.addOrReplaceChild("cube_r32", CubeListBuilder.create().texOffs(576, 538).addBox(-5.0F, 8.0F, -6.0F, 8.0F, 8.0F, 6.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(8.6895F, 1.0429F, 1.1563F, 0.0F, 0.7854F, 0.0F));
 
-		PartDefinition fLTibia2 = fLFemur2.addOrReplaceChild("fLTibia2", CubeListBuilder.create().texOffs(372, 592).addBox(-2.7719F, 3.0947F, -2.0748F, 4.0F, 6.0F, 4.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(4.3401F, 13.9482F, -0.1329F, 0.0F, 0.0F, 0.2618F));
+		PartDefinition fLTibia2 = fLFemur2.addOrReplaceChild("fLTibia2", CubeListBuilder.create().texOffs(372, 592).addBox(-2.7719F, 3.0947F, -2.0748F, 4.0F, 6.0F, 4.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(4.34F, 13.9482F, -0.1329F, 0.0F, 0.0F, 0.2618F));
 
 		PartDefinition fLTibia4 = fLTibia2.addOrReplaceChild("fLTibia4", CubeListBuilder.create().texOffs(260, 562).addBox(-22.5437F, 17.1894F, -13.1496F, 6.0F, 14.0F, 6.0F, new CubeDeformation(0.0F))
 		.texOffs(554, 483).addBox(-23.5437F, 18.1894F, -14.1496F, 8.0F, 12.0F, 8.0F, new CubeDeformation(0.0F)), PartPose.offset(18.7719F, -10.0947F, 10.0748F));
@@ -857,14 +762,14 @@ public class VesperTheCrownedRefusalModel extends EntityModel<VesperTheCrownedRe
 
 		PartDefinition cube_r41 = fLFemur3.addOrReplaceChild("cube_r41", CubeListBuilder.create().texOffs(360, 578).addBox(-5.0F, 8.0F, -6.0F, 8.0F, 8.0F, 6.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(8.6895F, 1.0429F, 1.1563F, 0.0F, 0.7854F, 0.0F));
 
-		PartDefinition fLTibia3 = fLFemur3.addOrReplaceChild("fLTibia3", CubeListBuilder.create().texOffs(214, 593).addBox(-2.7719F, 3.0947F, -2.0748F, 4.0F, 6.0F, 4.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(4.3401F, 13.9482F, -0.1329F, 0.0F, 0.0F, 0.2618F));
+		PartDefinition fLTibia3 = fLFemur3.addOrReplaceChild("fLTibia3", CubeListBuilder.create().texOffs(214, 593).addBox(-2.7719F, 3.0947F, -2.0748F, 4.0F, 6.0F, 4.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(4.34F, 13.9482F, -0.1329F, 0.0F, 0.0F, 0.2618F));
 
 		PartDefinition fLTibia5 = fLTibia3.addOrReplaceChild("fLTibia5", CubeListBuilder.create().texOffs(284, 562).addBox(-22.5437F, 17.1894F, -13.1496F, 6.0F, 14.0F, 6.0F, new CubeDeformation(0.0F))
 		.texOffs(556, 266).addBox(-23.5437F, 18.1894F, -14.1496F, 8.0F, 12.0F, 8.0F, new CubeDeformation(0.0F)), PartPose.offset(18.7719F, -10.0947F, 10.0748F));
 
 		PartDefinition cube_r42 = fLTibia5.addOrReplaceChild("cube_r42", CubeListBuilder.create().texOffs(590, 347).addBox(-2.0F, 4.0F, -5.0F, 5.0F, 12.0F, 5.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(-17.665F, 14.1894F, -8.2709F, 0.0F, -0.7854F, 0.0F));
 
-		PartDefinition cube_r43 = fLTibia5.addOrReplaceChild("cube_r43", CubeListBuilder.create().texOffs(474, 588).addBox(-2.0F, 4.0F, -5.0F, 5.0F, 12.0F, 5.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(-14.1295F, 14.1894F, -8.4927F, 0.0F, 0.7854F, 0.0F));
+		PartDefinition cube_r43 = fLTibia5.addOrReplaceChild("cube_r43", CubeListBuilder.create().texOffs(474, 588).addBox(-2.0F, 4.0F, -5.0F, 5.0F, 12.0F, 5.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(-14.1295F, 14.1894F, -8.4928F, 0.0F, 0.7854F, 0.0F));
 
 		PartDefinition flFoot3 = fLTibia5.addOrReplaceChild("flFoot3", CubeListBuilder.create(), PartPose.offset(0.0F, 0.0F, 0.0F));
 
@@ -886,10 +791,10 @@ public class VesperTheCrownedRefusalModel extends EntityModel<VesperTheCrownedRe
 
 		PartDefinition fLHip_178_777_8070e7b7_r2 = fLHip4.addOrReplaceChild("fLHip_178_777_8070e7b7_r2", CubeListBuilder.create().texOffs(484, 184).addBox(12.9167F, -4.1821F, -5.1F, 10.0F, 4.0F, 5.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(-3.1054F, 2.2991F, -5.5366F, 0.7854F, 0.0F, -0.6981F));
 
-		PartDefinition fLFemur4 = fLHip4.addOrReplaceChild("fLFemur4", CubeListBuilder.create().texOffs(542, 402).addBox(-1.4318F, 9.0429F, -5.2077F, 8.0F, 8.0F, 10.0F, new CubeDeformation(0.0F))
-		.texOffs(514, 279).addBox(-1.4318F, -7.9571F, -6.2077F, 9.0F, 14.0F, 12.0F, new CubeDeformation(0.0F))
-		.texOffs(512, 522).addBox(-0.4318F, -8.9571F, -4.2077F, 6.0F, 27.0F, 8.0F, new CubeDeformation(0.0F))
-		.texOffs(78, 546).addBox(-0.4318F, -10.9571F, -2.2077F, 6.0F, 29.0F, 4.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(17.9602F, -12.9103F, -7.8276F, 0.0F, 0.0F, -1.1781F));
+		PartDefinition fLFemur4 = fLHip4.addOrReplaceChild("fLFemur4", CubeListBuilder.create().texOffs(542, 402).addBox(-1.4318F, 9.0429F, -5.2076F, 8.0F, 8.0F, 10.0F, new CubeDeformation(0.0F))
+		.texOffs(514, 279).addBox(-1.4318F, -7.9571F, -6.2076F, 9.0F, 14.0F, 12.0F, new CubeDeformation(0.0F))
+		.texOffs(512, 522).addBox(-0.4318F, -8.9571F, -4.2076F, 6.0F, 27.0F, 8.0F, new CubeDeformation(0.0F))
+		.texOffs(78, 546).addBox(-0.4318F, -10.9571F, -2.2076F, 6.0F, 29.0F, 4.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(17.9602F, -12.9103F, -7.8277F, 0.0F, 0.0F, -1.1781F));
 
 		PartDefinition cube_r47 = fLFemur4.addOrReplaceChild("cube_r47", CubeListBuilder.create().texOffs(576, 458).addBox(-3.0F, -3.0F, -7.0F, 7.0F, 14.0F, 5.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(5.4469F, -4.9571F, -1.9858F, 0.0F, -2.3562F, 0.0F));
 
@@ -899,14 +804,14 @@ public class VesperTheCrownedRefusalModel extends EntityModel<VesperTheCrownedRe
 
 		PartDefinition cube_r50 = fLFemur4.addOrReplaceChild("cube_r50", CubeListBuilder.create().texOffs(578, 403).addBox(-5.0F, 8.0F, -6.0F, 8.0F, 8.0F, 6.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(8.6895F, 1.0429F, 1.1563F, 0.0F, 0.7854F, 0.0F));
 
-		PartDefinition fLTibia6 = fLFemur4.addOrReplaceChild("fLTibia6", CubeListBuilder.create().texOffs(594, 105).addBox(-2.7719F, 3.0947F, -2.0748F, 4.0F, 6.0F, 4.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(4.3401F, 13.9482F, -0.1329F, 0.0F, 0.0F, 0.2618F));
+		PartDefinition fLTibia6 = fLFemur4.addOrReplaceChild("fLTibia6", CubeListBuilder.create().texOffs(594, 105).addBox(-2.7719F, 3.0947F, -2.0748F, 4.0F, 6.0F, 4.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(4.34F, 13.9482F, -0.1328F, 0.0F, 0.0F, 0.2618F));
 
 		PartDefinition fLTibia7 = fLTibia6.addOrReplaceChild("fLTibia7", CubeListBuilder.create().texOffs(566, 350).addBox(-22.5437F, 17.1894F, -13.1496F, 6.0F, 14.0F, 6.0F, new CubeDeformation(0.0F))
 		.texOffs(556, 286).addBox(-23.5437F, 18.1894F, -14.1496F, 8.0F, 12.0F, 8.0F, new CubeDeformation(0.0F)), PartPose.offset(18.7719F, -10.0947F, 10.0748F));
 
 		PartDefinition cube_r51 = fLTibia7.addOrReplaceChild("cube_r51", CubeListBuilder.create().texOffs(578, 590).addBox(-2.0F, 4.0F, -5.0F, 5.0F, 12.0F, 5.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(-17.665F, 14.1894F, -8.2709F, 0.0F, -0.7854F, 0.0F));
 
-		PartDefinition cube_r52 = fLTibia7.addOrReplaceChild("cube_r52", CubeListBuilder.create().texOffs(590, 497).addBox(-2.0F, 4.0F, -5.0F, 5.0F, 12.0F, 5.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(-14.1295F, 14.1894F, -8.4927F, 0.0F, 0.7854F, 0.0F));
+		PartDefinition cube_r52 = fLTibia7.addOrReplaceChild("cube_r52", CubeListBuilder.create().texOffs(590, 497).addBox(-2.0F, 4.0F, -5.0F, 5.0F, 12.0F, 5.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(-14.1295F, 14.1894F, -8.4928F, 0.0F, 0.7854F, 0.0F));
 
 		PartDefinition flFoot4 = fLTibia7.addOrReplaceChild("flFoot4", CubeListBuilder.create(), PartPose.offset(0.0F, 0.0F, 0.0F));
 
@@ -933,7 +838,7 @@ public class VesperTheCrownedRefusalModel extends EntityModel<VesperTheCrownedRe
 		PartDefinition fLFemur5 = fLHip5.addOrReplaceChild("fLFemur5", CubeListBuilder.create().texOffs(542, 420).addBox(-6.5682F, 9.0429F, -5.2077F, 8.0F, 8.0F, 10.0F, new CubeDeformation(0.0F))
 		.texOffs(276, 518).addBox(-7.5682F, -7.9571F, -6.2077F, 9.0F, 14.0F, 12.0F, new CubeDeformation(0.0F))
 		.texOffs(28, 523).addBox(-5.5682F, -8.9571F, -4.2077F, 6.0F, 27.0F, 8.0F, new CubeDeformation(0.0F))
-		.texOffs(430, 555).addBox(-4.5682F, -13.9571F, -2.2077F, 4.0F, 32.0F, 4.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(-17.9602F, -12.9103F, -7.8276F, 0.0F, 0.0F, 1.1781F));
+		.texOffs(430, 555).addBox(-4.5682F, -13.9571F, -2.2077F, 4.0F, 32.0F, 4.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(-17.9602F, -12.9103F, -7.8277F, 0.0F, 0.0F, 1.1781F));
 
 		PartDefinition cube_r56 = fLFemur5.addOrReplaceChild("cube_r56", CubeListBuilder.create().texOffs(554, 576).addBox(-4.0F, -3.0F, -7.0F, 7.0F, 14.0F, 5.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(-5.4469F, -4.9571F, -1.9858F, 0.0F, 2.3562F, 0.0F));
 
@@ -943,7 +848,7 @@ public class VesperTheCrownedRefusalModel extends EntityModel<VesperTheCrownedRe
 
 		PartDefinition cube_r59 = fLFemur5.addOrReplaceChild("cube_r59", CubeListBuilder.create().texOffs(446, 578).addBox(-3.0F, 8.0F, -6.0F, 8.0F, 8.0F, 6.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(-8.6895F, 1.0429F, 1.1563F, 0.0F, -0.7854F, 0.0F));
 
-		PartDefinition fLTibia8 = fLFemur5.addOrReplaceChild("fLTibia8", CubeListBuilder.create().texOffs(594, 173).addBox(-1.2281F, 3.0947F, -2.0748F, 4.0F, 6.0F, 4.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(-4.3401F, 13.9482F, -0.1329F, 0.0F, 0.0F, -0.2618F));
+		PartDefinition fLTibia8 = fLFemur5.addOrReplaceChild("fLTibia8", CubeListBuilder.create().texOffs(594, 173).addBox(-1.2281F, 3.0947F, -2.0748F, 4.0F, 6.0F, 4.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(-4.34F, 13.9482F, -0.1329F, 0.0F, 0.0F, -0.2618F));
 
 		PartDefinition fLTibia9 = fLTibia8.addOrReplaceChild("fLTibia9", CubeListBuilder.create().texOffs(570, 177).addBox(16.5437F, 17.1894F, -13.1496F, 6.0F, 14.0F, 6.0F, new CubeDeformation(0.0F))
 		.texOffs(540, 556).addBox(15.5437F, 18.1894F, -14.1496F, 8.0F, 12.0F, 8.0F, new CubeDeformation(0.0F)), PartPose.offset(-18.7719F, -10.0947F, 10.0748F));
@@ -985,14 +890,14 @@ public class VesperTheCrownedRefusalModel extends EntityModel<VesperTheCrownedRe
 
 		PartDefinition cube_r68 = fLFemur6.addOrReplaceChild("cube_r68", CubeListBuilder.create().texOffs(578, 576).addBox(-3.0F, 8.0F, -6.0F, 8.0F, 8.0F, 6.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(-8.6895F, 1.0429F, 1.1563F, 0.0F, -0.7854F, 0.0F));
 
-		PartDefinition fLTibia10 = fLFemur6.addOrReplaceChild("fLTibia10", CubeListBuilder.create().texOffs(594, 183).addBox(-1.2281F, 3.0947F, -2.0748F, 4.0F, 6.0F, 4.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(-4.3401F, 13.9482F, -0.1329F, 0.0F, 0.0F, -0.2618F));
+		PartDefinition fLTibia10 = fLFemur6.addOrReplaceChild("fLTibia10", CubeListBuilder.create().texOffs(594, 183).addBox(-1.2281F, 3.0947F, -2.0748F, 4.0F, 6.0F, 4.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(-4.34F, 13.9482F, -0.1329F, 0.0F, 0.0F, -0.2618F));
 
 		PartDefinition fLTibia11 = fLTibia10.addOrReplaceChild("fLTibia11", CubeListBuilder.create().texOffs(572, 0).addBox(16.5437F, 17.1894F, -13.1496F, 6.0F, 14.0F, 6.0F, new CubeDeformation(0.0F))
 		.texOffs(0, 558).addBox(15.5437F, 18.1894F, -14.1496F, 8.0F, 12.0F, 8.0F, new CubeDeformation(0.0F)), PartPose.offset(-18.7719F, -10.0947F, 10.0748F));
 
 		PartDefinition cube_r69 = fLTibia11.addOrReplaceChild("cube_r69", CubeListBuilder.create().texOffs(332, 592).addBox(-3.0F, 4.0F, -5.0F, 5.0F, 12.0F, 5.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(17.665F, 14.1894F, -8.2709F, 0.0F, 0.7854F, 0.0F));
 
-		PartDefinition cube_r70 = fLTibia11.addOrReplaceChild("cube_r70", CubeListBuilder.create().texOffs(174, 592).addBox(-3.0F, 4.0F, -5.0F, 5.0F, 12.0F, 5.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(14.1295F, 14.1894F, -8.4927F, 0.0F, -0.7854F, 0.0F));
+		PartDefinition cube_r70 = fLTibia11.addOrReplaceChild("cube_r70", CubeListBuilder.create().texOffs(174, 592).addBox(-3.0F, 4.0F, -5.0F, 5.0F, 12.0F, 5.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(14.1295F, 14.1894F, -8.4928F, 0.0F, -0.7854F, 0.0F));
 
 		PartDefinition flFoot6 = fLTibia11.addOrReplaceChild("flFoot6", CubeListBuilder.create(), PartPose.offset(0.0F, 0.0F, 0.0F));
 
@@ -1014,10 +919,10 @@ public class VesperTheCrownedRefusalModel extends EntityModel<VesperTheCrownedRe
 
 		PartDefinition fLHip_188_888_8080e8b8_r3 = fLHip7.addOrReplaceChild("fLHip_188_888_8080e8b8_r3", CubeListBuilder.create().texOffs(584, 96).addBox(-22.9167F, -4.1821F, -5.1F, 10.0F, 4.0F, 5.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(3.1054F, 2.2991F, -5.5366F, 0.7854F, 0.0F, 0.6981F));
 
-		PartDefinition fLFemur7 = fLHip7.addOrReplaceChild("fLFemur7", CubeListBuilder.create().texOffs(272, 544).addBox(-6.5682F, 9.0429F, -5.2077F, 8.0F, 8.0F, 10.0F, new CubeDeformation(0.0F))
-		.texOffs(318, 521).addBox(-7.5682F, -7.9571F, -6.2077F, 9.0F, 14.0F, 12.0F, new CubeDeformation(0.0F))
-		.texOffs(402, 524).addBox(-5.5682F, -8.9571F, -4.2077F, 6.0F, 27.0F, 8.0F, new CubeDeformation(0.0F))
-		.texOffs(224, 546).addBox(-5.5682F, -10.9571F, -2.2077F, 6.0F, 29.0F, 4.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(-17.9602F, -12.9103F, -7.8276F, 0.0F, 0.0F, 1.1781F));
+		PartDefinition fLFemur7 = fLHip7.addOrReplaceChild("fLFemur7", CubeListBuilder.create().texOffs(272, 544).addBox(-6.5682F, 9.0429F, -5.2076F, 8.0F, 8.0F, 10.0F, new CubeDeformation(0.0F))
+		.texOffs(318, 521).addBox(-7.5682F, -7.9571F, -6.2076F, 9.0F, 14.0F, 12.0F, new CubeDeformation(0.0F))
+		.texOffs(402, 524).addBox(-5.5682F, -8.9571F, -4.2076F, 6.0F, 27.0F, 8.0F, new CubeDeformation(0.0F))
+		.texOffs(224, 546).addBox(-5.5682F, -10.9571F, -2.2076F, 6.0F, 29.0F, 4.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(-17.9602F, -12.9103F, -7.8277F, 0.0F, 0.0F, 1.1781F));
 
 		PartDefinition cube_r74 = fLFemur7.addOrReplaceChild("cube_r74", CubeListBuilder.create().texOffs(308, 578).addBox(-4.0F, -3.0F, -7.0F, 7.0F, 14.0F, 5.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(-5.4469F, -4.9571F, -1.9858F, 0.0F, 2.3562F, 0.0F));
 
@@ -1027,14 +932,14 @@ public class VesperTheCrownedRefusalModel extends EntityModel<VesperTheCrownedRe
 
 		PartDefinition cube_r77 = fLFemur7.addOrReplaceChild("cube_r77", CubeListBuilder.create().texOffs(104, 579).addBox(-3.0F, 8.0F, -6.0F, 8.0F, 8.0F, 6.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(-8.6895F, 1.0429F, 1.1563F, 0.0F, -0.7854F, 0.0F));
 
-		PartDefinition fLTibia12 = fLFemur7.addOrReplaceChild("fLTibia12", CubeListBuilder.create().texOffs(148, 595).addBox(-1.2281F, 3.0947F, -2.0748F, 4.0F, 6.0F, 4.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(-4.3401F, 13.9482F, -0.1329F, 0.0F, 0.0F, -0.2618F));
+		PartDefinition fLTibia12 = fLFemur7.addOrReplaceChild("fLTibia12", CubeListBuilder.create().texOffs(148, 595).addBox(-1.2281F, 3.0947F, -2.0748F, 4.0F, 6.0F, 4.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(-4.34F, 13.9482F, -0.1328F, 0.0F, 0.0F, -0.2618F));
 
 		PartDefinition fLTibia13 = fLTibia12.addOrReplaceChild("fLTibia13", CubeListBuilder.create().texOffs(572, 197).addBox(16.5437F, 17.1894F, -13.1496F, 6.0F, 14.0F, 6.0F, new CubeDeformation(0.0F))
 		.texOffs(446, 558).addBox(15.5437F, 18.1894F, -14.1496F, 8.0F, 12.0F, 8.0F, new CubeDeformation(0.0F)), PartPose.offset(-18.7719F, -10.0947F, 10.0748F));
 
 		PartDefinition cube_r78 = fLTibia13.addOrReplaceChild("cube_r78", CubeListBuilder.create().texOffs(444, 592).addBox(-3.0F, 4.0F, -5.0F, 5.0F, 12.0F, 5.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(17.665F, 14.1894F, -8.2709F, 0.0F, 0.7854F, 0.0F));
 
-		PartDefinition cube_r79 = fLTibia13.addOrReplaceChild("cube_r79", CubeListBuilder.create().texOffs(352, 592).addBox(-3.0F, 4.0F, -5.0F, 5.0F, 12.0F, 5.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(14.1295F, 14.1894F, -8.4927F, 0.0F, -0.7854F, 0.0F));
+		PartDefinition cube_r79 = fLTibia13.addOrReplaceChild("cube_r79", CubeListBuilder.create().texOffs(352, 592).addBox(-3.0F, 4.0F, -5.0F, 5.0F, 12.0F, 5.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(14.1295F, 14.1894F, -8.4928F, 0.0F, -0.7854F, 0.0F));
 
 		PartDefinition flFoot7 = fLTibia13.addOrReplaceChild("flFoot7", CubeListBuilder.create(), PartPose.offset(0.0F, 0.0F, 0.0F));
 
@@ -1043,6 +948,102 @@ public class VesperTheCrownedRefusalModel extends EntityModel<VesperTheCrownedRe
 		PartDefinition cube_r81 = flFoot7.addOrReplaceChild("cube_r81", CubeListBuilder.create().texOffs(406, 588).addBox(-1.5F, -6.5F, -3.0F, 3.0F, 14.0F, 6.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(18.0437F, 31.6894F, -10.1496F, 0.0F, 0.0F, 0.3054F));
 
 		PartDefinition cube_r82 = flFoot7.addOrReplaceChild("cube_r82", CubeListBuilder.create().texOffs(100, 322).addBox(-1.0F, -3.0F, -1.5F, 2.0F, 9.0F, 3.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(24.2937F, 32.1894F, -9.6496F, 0.0F, 0.0F, -0.6109F));
+
+		PartDefinition head = lowerBody.addOrReplaceChild("head", CubeListBuilder.create(), PartPose.offsetAndRotation(0.75F, -6.6271F, -26.9647F, 0.3491F, 0.0F, 0.0F));
+
+		PartDefinition upperJaw = head.addOrReplaceChild("upperJaw", CubeListBuilder.create().texOffs(540, 522).addBox(-7.0F, -2.5767F, -16.6589F, 14.0F, 11.0F, 5.0F, new CubeDeformation(0.0F))
+		.texOffs(580, 431).addBox(-2.0F, -2.4344F, -18.7873F, 4.0F, 11.0F, 7.0F, new CubeDeformation(0.0F))
+		.texOffs(484, 73).addBox(-8.0F, -6.5767F, -11.6589F, 16.0F, 14.0F, 14.0F, new CubeDeformation(0.0F))
+		.texOffs(166, 436).addBox(-6.5F, -6.5767F, -11.6589F, 0.0F, 17.0F, 14.0F, new CubeDeformation(0.0F))
+		.texOffs(574, 217).addBox(-6.5F, -6.5767F, -11.6589F, 13.0F, 17.0F, 0.0F, new CubeDeformation(0.0F))
+		.texOffs(110, 254).addBox(-2.0F, -7.5767F, -12.6589F, 4.0F, 16.0F, 15.0F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, -0.4233F, 0.6589F));
+
+		PartDefinition upperBody_48_195_64112220_r1 = upperJaw.addOrReplaceChild("upperBody_48_195_64112220_r1", CubeListBuilder.create().texOffs(314, 350).addBox(-2.0F, -6.5F, -3.5F, 4.0F, 6.0F, 8.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 0.2951F, -11.928F, 0.6981F, 0.0F, 0.0F));
+
+		PartDefinition upperBody_48_195_64112221_r1 = upperJaw.addOrReplaceChild("upperBody_48_195_64112221_r1", CubeListBuilder.create().texOffs(300, 194).addBox(-9.0F, -5.5F, -2.5F, 18.0F, 2.0F, 18.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 8.1475F, -10.9018F, 0.48F, 0.0F, 0.0F));
+
+		PartDefinition upperBody_48_195_64112220_r2 = upperJaw.addOrReplaceChild("upperBody_48_195_64112220_r2", CubeListBuilder.create().texOffs(458, 474).addBox(-9.0F, -5.5F, -2.5F, 18.0F, 2.0F, 20.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 4.1475F, -11.9018F, 0.48F, 0.0F, 0.0F));
+
+		PartDefinition upperBody_48_195_64112219_r1 = upperJaw.addOrReplaceChild("upperBody_48_195_64112219_r1", CubeListBuilder.create().texOffs(488, 392).addBox(-7.0F, -5.5F, -2.5F, 14.0F, 5.0F, 7.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 1.1475F, -11.9018F, 0.48F, 0.0F, 0.0F));
+
+		PartDefinition lowerJaw = head.addOrReplaceChild("lowerJaw", CubeListBuilder.create().texOffs(0, 505).addBox(-7.0F, -2.0F, -12.5F, 14.0F, 4.0F, 14.0F, new CubeDeformation(0.0F))
+		.texOffs(166, 149).addBox(-7.0F, -5.0F, -12.5F, 14.0F, 3.0F, 0.0F, new CubeDeformation(0.0F))
+		.texOffs(558, 123).addBox(-6.7F, -5.0F, -12.5F, 0.0F, 3.0F, 14.0F, new CubeDeformation(0.0F))
+		.texOffs(150, 559).addBox(6.8F, -5.0F, -12.5F, 0.0F, 3.0F, 14.0F, new CubeDeformation(0.0F))
+		.texOffs(530, 184).addBox(-3.0F, -0.25F, -12.5F, 6.0F, 4.0F, 14.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 6.0F, -1.5F, 0.6981F, 0.0F, 0.0F));
+
+		PartDefinition upperBody_48_195_64112220_r3 = lowerJaw.addOrReplaceChild("upperBody_48_195_64112220_r3", CubeListBuilder.create().texOffs(540, 142).addBox(-3.0F, -2.0F, -6.5F, 6.0F, 4.0F, 13.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 3.5005F, -5.7038F, -0.2618F, 0.0F, 0.0F));
+
+		PartDefinition upperBody_48_195_64112219_r2 = lowerJaw.addOrReplaceChild("upperBody_48_195_64112219_r2", CubeListBuilder.create().texOffs(506, 317).addBox(-7.0F, -2.0F, -6.5F, 14.0F, 4.0F, 13.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 1.7505F, -5.7038F, -0.2618F, 0.0F, 0.0F));
+
+		PartDefinition upperBody_48_195_64112220_r4 = lowerJaw.addOrReplaceChild("upperBody_48_195_64112220_r4", CubeListBuilder.create().texOffs(194, 593).addBox(-2.0F, -2.0F, -4.0F, 4.0F, 4.0F, 6.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(4.3422F, 0.0F, -13.4674F, 0.0F, 0.4363F, 0.0F));
+
+		PartDefinition upperBody_48_195_64112219_r3 = lowerJaw.addOrReplaceChild("upperBody_48_195_64112219_r3", CubeListBuilder.create().texOffs(560, 61).addBox(-2.0F, -2.0F, -4.0F, 4.0F, 4.0F, 6.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(-4.3422F, 0.0F, -13.4674F, 0.0F, -0.4363F, 0.0F));
+
+		PartDefinition lFang = lowerJaw.addOrReplaceChild("lFang", CubeListBuilder.create(), PartPose.offset(0.0F, 0.0F, 0.0F));
+
+		PartDefinition upperBody_48_195_64112221_r2 = lFang.addOrReplaceChild("upperBody_48_195_64112221_r2", CubeListBuilder.create().texOffs(546, 595).addBox(-7.0F, -2.0F, 0.5F, 2.0F, 4.0F, 6.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(14.0F, 0.4582F, -20.4165F, 0.1745F, 0.0F, 0.0F));
+
+		PartDefinition upperBody_48_195_64112220_r5 = lFang.addOrReplaceChild("upperBody_48_195_64112220_r5", CubeListBuilder.create().texOffs(538, 382).addBox(-7.0F, -2.0F, -9.5F, 2.0F, 4.0F, 16.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(14.0F, 1.7505F, -5.7038F, -0.2618F, 0.0F, 0.0F));
+
+		PartDefinition lFang2 = lowerJaw.addOrReplaceChild("lFang2", CubeListBuilder.create(), PartPose.offset(-16.0F, 0.0F, 0.0F));
+
+		PartDefinition upperBody_48_195_64112222_r1 = lFang2.addOrReplaceChild("upperBody_48_195_64112222_r1", CubeListBuilder.create().texOffs(562, 595).addBox(-7.0F, -2.0F, 0.5F, 2.0F, 4.0F, 6.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(14.0F, 0.4582F, -20.4165F, 0.1745F, 0.0F, 0.0F));
+
+		PartDefinition upperBody_48_195_64112221_r3 = lFang2.addOrReplaceChild("upperBody_48_195_64112221_r3", CubeListBuilder.create().texOffs(146, 539).addBox(-7.0F, -2.0F, -9.5F, 2.0F, 4.0F, 16.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(14.0F, 1.7505F, -5.7038F, -0.2618F, 0.0F, 0.0F));
+
+		PartDefinition bone = lowerBody.addOrReplaceChild("bone", CubeListBuilder.create(), PartPose.offsetAndRotation(-0.4F, 9.5F, -24.8F, 0.6109F, 0.0F, 0.0F));
+
+		PartDefinition cube_r1 = bone.addOrReplaceChild("cube_r1", CubeListBuilder.create().texOffs(480, 442).addBox(-8.85F, -5.8834F, -1.0068F, 21.0F, 12.0F, 13.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 2.1015F, 0.3548F, 0.0873F, 0.0F, 0.0F));
+
+		PartDefinition cube_r1_180_130_f47dbc18_r1 = cube_r1.addOrReplaceChild("cube_r1_180_130_f47dbc18_r1", CubeListBuilder.create().texOffs(0, 84).addBox(-14.85F, -16.8834F, 3.9932F, 33.0F, 22.0F, 50.0F, new CubeDeformation(0.0F))
+		.texOffs(406, 442).addBox(-11.5F, -15.8834F, 1.9932F, 27.0F, 22.0F, 10.0F, new CubeDeformation(0.0F))
+		.texOffs(464, 232).addBox(-8.35F, -15.8834F, -1.0068F, 21.0F, 22.0F, 13.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(-0.5F, -9.9218F, 3.6961F, -0.6981F, 0.0F, 0.0F));
+
+		PartDefinition cube_r1_180_130_f47dbc14_r1 = cube_r1.addOrReplaceChild("cube_r1_180_130_f47dbc14_r1", CubeListBuilder.create().texOffs(300, 143).addBox(-5.85F, -5.8834F, -1.0068F, 15.0F, 12.0F, 39.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 2.0782F, 3.6961F, -0.6981F, 0.0F, 0.0F));
+
+		PartDefinition cube_r3 = bone.addOrReplaceChild("cube_r3", CubeListBuilder.create().texOffs(498, 121).addBox(-8.85F, 29.0656F, 8.6007F, 21.0F, 12.0F, 9.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, -49.8985F, 0.3548F, 0.0873F, 0.0F, 0.0F));
+
+		PartDefinition throne = lowerBody.addOrReplaceChild("throne", CubeListBuilder.create().texOffs(396, 559).addBox(8.25F, -2.5F, -9.3F, 5.0F, 4.0F, 10.0F, new CubeDeformation(0.0F))
+		.texOffs(68, 476).addBox(-9.5F, -4.5F, -3.3F, 22.0F, 15.0F, 12.0F, new CubeDeformation(0.0F))
+		.texOffs(508, 28).addBox(-6.5F, 0.5F, -8.3F, 15.0F, 10.0F, 6.0F, new CubeDeformation(0.0F))
+		.texOffs(488, 359).addBox(-7.5F, -15.5F, 1.3F, 18.0F, 26.0F, 7.0F, new CubeDeformation(0.0F))
+		.texOffs(380, 511).addBox(8.25F, -4.5F, -6.3F, 5.0F, 2.0F, 7.0F, new CubeDeformation(0.0F))
+		.texOffs(514, 432).addBox(-10.0F, -4.5F, -6.3F, 5.0F, 2.0F, 7.0F, new CubeDeformation(0.0F))
+		.texOffs(560, 47).addBox(-10.0F, -2.5F, -9.3F, 5.0F, 4.0F, 10.0F, new CubeDeformation(0.0F))
+		.texOffs(24, 584).addBox(-9.1F, 1.5F, -8.3F, 4.0F, 3.0F, 9.0F, new CubeDeformation(0.0F))
+		.texOffs(584, 315).addBox(8.35F, 1.5F, -8.3F, 4.0F, 3.0F, 9.0F, new CubeDeformation(0.0F)), PartPose.offset(0.1F, -30.5F, 0.05F));
+
+		PartDefinition gourd = throne.addOrReplaceChild("gourd", CubeListBuilder.create().texOffs(25, 660).addBox(-4.25F, -7.3055F, -3.75F, 8.0F, 3.0F, 8.0F, new CubeDeformation(0.0F))
+		.texOffs(0, 667).addBox(-4.25F, -1.8055F, -3.75F, 8.0F, 10.0F, 8.0F, new CubeDeformation(0.0F))
+		.texOffs(34, 640).addBox(-5.3375F, -1.2431F, -3.1875F, 10.0F, 9.0F, 7.0F, new CubeDeformation(-0.375F))
+		.texOffs(17, 649).addBox(-4.3125F, -1.2431F, -3.1875F, 1.0F, 9.0F, 6.0F, new CubeDeformation(-0.375F))
+		.texOffs(5, 650).addBox(-2.8125F, -1.2431F, 3.3125F, 6.0F, 9.0F, 1.0F, new CubeDeformation(-0.375F))
+		.texOffs(2, 694).addBox(-3.5625F, -1.2431F, -4.7875F, 7.0F, 9.0F, 10.0F, new CubeDeformation(-0.375F))
+		.texOffs(4, 633).addBox(-3.75F, -9.6805F, -3.0F, 7.0F, 4.0F, 6.0F, new CubeDeformation(-0.5F))
+		.texOffs(2, 658).addBox(-3.0F, 5.3194F, -3.0F, 6.0F, 4.0F, 6.0F, new CubeDeformation(-0.5F))
+		.texOffs(26, 633).addBox(-3.0F, -5.3055F, -3.0F, 6.0F, 4.0F, 6.0F, new CubeDeformation(-0.5F)), PartPose.offsetAndRotation(17.4F, -0.9278F, 0.9F, 0.1903F, -0.0247F, -0.2417F));
+
+		PartDefinition rope = gourd.addOrReplaceChild("rope", CubeListBuilder.create().texOffs(28, 621).addBox(3.575F, -1.7583F, -2.6583F, 0.0F, 3.0F, 5.0F, new CubeDeformation(0.05F)), PartPose.offset(-0.25F, -3.0347F, 0.0833F));
+
+		PartDefinition bone2 = rope.addOrReplaceChild("bone2", CubeListBuilder.create().texOffs(32, 631).addBox(-10.6079F, -1.675F, -0.1625F, 11.0F, 3.0F, 0.0F, new CubeDeformation(0.05F)), PartPose.offsetAndRotation(3.25F, -0.0833F, 2.6667F, 0.0F, 0.3927F, 0.0F));
+
+		PartDefinition bone3 = rope.addOrReplaceChild("bone3", CubeListBuilder.create().texOffs(24, 622).addBox(-9.7557F, -1.692F, -0.2386F, 10.0F, 3.0F, 0.0F, new CubeDeformation(0.05F)), PartPose.offsetAndRotation(3.25F, -0.0833F, -2.5833F, 0.0554F, 0.0064F, 0.0646F));
+
+		PartDefinition morphJar = throne.addOrReplaceChild("morphJar", CubeListBuilder.create().texOffs(339, 701).addBox(-6.375F, -11.4583F, -5.625F, 12.0F, 5.0F, 12.0F, new CubeDeformation(0.0F))
+		.texOffs(314, 708).addBox(-6.375F, -2.7083F, -5.625F, 12.0F, 15.0F, 12.0F, new CubeDeformation(0.0F))
+		.texOffs(331, 690).addBox(-6.1563F, -1.5521F, -4.5938F, 1.0F, 13.0F, 9.0F, new CubeDeformation(-0.375F))
+		.texOffs(319, 691).addBox(-4.4063F, -1.5521F, 5.1563F, 9.0F, 13.0F, 1.0F, new CubeDeformation(-0.375F))
+		.texOffs(340, 674).addBox(-4.75F, -8.2083F, -4.25F, 9.0F, 6.0F, 9.0F, new CubeDeformation(-0.5F)), PartPose.offsetAndRotation(3.4F, -8.9278F, 16.9F, -1.783F, -1.453F, 1.5399F));
+
+		PartDefinition rope2 = morphJar.addOrReplaceChild("rope2", CubeListBuilder.create().texOffs(342, 662).addBox(5.3875F, -3.1125F, -4.0125F, 0.0F, 5.0F, 8.0F, new CubeDeformation(0.05F)), PartPose.offset(-0.375F, -4.5521F, 0.125F));
+
+		PartDefinition bone4 = rope2.addOrReplaceChild("bone4", CubeListBuilder.create().texOffs(346, 672).addBox(-16.5447F, -2.9875F, 0.1999F, 17.0F, 5.0F, 0.0F, new CubeDeformation(0.05F)), PartPose.offsetAndRotation(4.875F, -0.125F, 4.0F, 0.0F, 0.3927F, 0.0F));
+
+		PartDefinition bone5 = rope2.addOrReplaceChild("bone5", CubeListBuilder.create().texOffs(338, 663).addBox(-14.6085F, -3.013F, -0.3829F, 15.0F, 5.0F, 0.0F, new CubeDeformation(0.05F)), PartPose.offsetAndRotation(4.875F, -0.125F, -3.875F, 0.0554F, 0.0064F, 0.0646F));
+
+		PartDefinition backing = throne.addOrReplaceChild("backing", CubeListBuilder.create().texOffs(110, 223).addBox(-8.0F, -30.2569F, -4.1284F, 19.0F, 27.0F, 4.0F, new CubeDeformation(0.0F))
+		.texOffs(328, 479).addBox(-8.5F, -26.5F, -0.5F, 20.0F, 36.0F, 6.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 0.0F, 0.0F, -0.1745F, 0.0F, 0.0F));
 
 		return LayerDefinition.create(meshdefinition, 1024, 1024);
 	}
@@ -1065,7 +1066,6 @@ public class VesperTheCrownedRefusalModel extends EntityModel<VesperTheCrownedRe
 
 	public void translateToRiderWeapon(PoseStack poseStack) {
 		whole.translateAndRotate(poseStack);
-		upperBody.translateAndRotate(poseStack);
 		vesper.translateAndRotate(poseStack);
 		rightArm.translateAndRotate(poseStack);
 		rShoulder.translateAndRotate(poseStack);
@@ -1073,11 +1073,19 @@ public class VesperTheCrownedRefusalModel extends EntityModel<VesperTheCrownedRe
 		poseStack.translate(0.0D, 0.78D, -0.4D);
 	}
 
+	public void translateToRiderLeftHand(PoseStack poseStack) {
+		whole.translateAndRotate(poseStack);
+		vesper.translateAndRotate(poseStack);
+		leftArm.translateAndRotate(poseStack);
+		lShoulder.translateAndRotate(poseStack);
+		lElbow.translateAndRotate(poseStack);
+		poseStack.translate(0.05D, 0.42D, -0.03D);
+	}
+
 	public void renderVesperOnly(PoseStack poseStack, VertexConsumer vertexConsumer,
 			int packedLight, int packedOverlay, int packedColor) {
 		poseStack.pushPose();
 		whole.translateAndRotate(poseStack);
-		upperBody.translateAndRotate(poseStack);
 		vesper.render(poseStack, vertexConsumer, packedLight, packedOverlay, packedColor);
 		poseStack.popPose();
 	}
@@ -1089,7 +1097,6 @@ public class VesperTheCrownedRefusalModel extends EntityModel<VesperTheCrownedRe
 		poseStack.pushPose();
 		whole.translateAndRotate(poseStack);
 		poseStack.scale(mountScale, Math.max(0.02F, mountScale * 0.72F), mountScale);
-		upperBody.render(poseStack, vertexConsumer, packedLight, packedOverlay, packedColor);
 		lowerBody.render(poseStack, vertexConsumer, packedLight, packedOverlay, packedColor);
 		poseStack.popPose();
 		vesper.visible = riderVisible;
@@ -1099,54 +1106,47 @@ public class VesperTheCrownedRefusalModel extends EntityModel<VesperTheCrownedRe
 	public void setupAnim(VesperTheCrownedRefusalEntity entity, float limbSwing, float limbSwingAmount,
 			float ageInTicks, float netHeadYaw, float headPitch) {
 		whole.getAllParts().forEach(ModelPart::resetPose);
-		float frame = entity.tickCount + HLClientUtils.getPartialTicks();
+		float partialTick = HLClientUtils.getPartialTicks();
+		float frame = entity.tickCount + partialTick;
 		this.transitioning = entity.getTransitionTick() > 0;
 		this.mountOpacity = 1.0F;
 		this.mountScale = 1.0F;
 
+		if (transitioning) {
+			this.animate(entity.transformationAnimationState,
+					VesperTheCrownedRefusalAnimations.TRANSFORMATION, ageInTicks);
+			float transitionFrame = entity.transformationAnimationState.getAccumulatedTime() / 50.0F;
+			float absorption = smooth(VesperPhaseTransitionRules.absorptionProgress(transitionFrame));
+			this.mountOpacity = 1.0F - absorption;
+			this.mountScale = Math.max(0.03F, 1.0F - absorption * 0.97F);
+			return;
+		}
+
+		float attackFrame = entity.getAttackTick() + partialTick;
+		AnimationDefinition animation = switch (entity.getAttack()) {
+			case ROYAL_SCUTTLE -> VesperTheCrownedRefusalAnimations.ROYAL_SCUTTLE;
+			case PINCER_VICE -> VesperTheCrownedRefusalAnimations.PINCER_VICE;
+			case STINGER_SCRIPT -> VesperTheCrownedRefusalAnimations.STINGER_SCRIPT;
+			case BROOD_TRAMPLE -> VesperTheCrownedRefusalAnimations.BROOD_TRAMPLE;
+			case PUPPET_MUSTER -> VesperTheCrownedRefusalAnimations.PUPPET_MUSTER;
+			case IDLE -> entity.getActiveAnchor() >= 0
+					? VesperTheCrownedRefusalAnimations.VULNERABLE
+					: limbSwingAmount > 0.02F
+							? VesperTheCrownedRefusalAnimations.WALK
+							: VesperTheCrownedRefusalAnimations.IDLE;
+		};
+		applyAuthoredAnimation(animation, entity.getAttack() == VesperPhaseOneAttack.IDLE ? frame : attackFrame);
 		this.head2.xRot += headPitch * Mth.DEG_TO_RAD * 0.5F;
 		this.head2.yRot += Mth.wrapDegrees(netHeadYaw) * Mth.DEG_TO_RAD * 0.5F;
+	}
 
-		animateLeg(fLeg, fLFemur2, fLTibia2, limbSwing, limbSwingAmount, 0.0F);
-		animateLeg(fLeg2, fLFemur3, fLTibia3, limbSwing, limbSwingAmount, Mth.PI);
-		animateLeg(fLeg3, fLFemur4, fLTibia6, limbSwing, limbSwingAmount, 0.7F);
-		animateLeg(fLeg4, fLFemur5, fLTibia8, limbSwing, limbSwingAmount, Mth.PI);
-		animateLeg(fLeg5, fLFemur6, fLTibia10, limbSwing, limbSwingAmount, 0.0F);
-		animateLeg(fLeg6, fLFemur7, fLTibia12, limbSwing, limbSwingAmount, Mth.PI + 0.7F);
-		this.fLeftArm.xRot += Mth.sin(frame * 0.13F) * 0.035F;
-		this.fRightArm.xRot += Mth.sin(frame * 0.13F + Mth.PI) * 0.035F;
+	@Override
+	public ModelPart root() {
+		return whole;
+	}
 
-		float breathe = Mth.sin(frame * 0.13F);
-		this.upperJaw.xRot += breathe * 0.055F;
-		this.lowerJaw.xRot -= breathe * 0.072F;
-		this.tail.yRot += breathe * 0.035F;
-		this.tail2.yRot -= breathe * 0.10F;
-		this.tail3.yRot += breathe * 0.11F;
-		this.tail4.yRot -= breathe * 0.12F;
-		this.tail5.yRot += breathe * 0.10F;
-		animateRiderCloth(frame);
-
-		float attackFrame = entity.getAttackTick() + HLClientUtils.getPartialTicks();
-		if (entity.getAttack() == VesperPhaseOneAttack.STINGER_SCRIPT) {
-			float strike = VesperWeaponAnimationRules.stingerMotion(attackFrame);
-			this.tail.xRot -= 0.28F * strike;
-			this.tail2.xRot -= 0.38F * strike;
-			this.tail3.xRot -= 0.48F * strike;
-			this.tail4.xRot -= 0.58F * strike;
-			this.tail5.xRot -= 0.68F * strike;
-		}
-		if (entity.getAttack() == VesperPhaseOneAttack.BROOD_TRAMPLE) {
-			this.lowerBody.xRot += VesperWeaponAnimationRules.broodTramplePitch(attackFrame);
-		}
-
-		if (entity.getActiveAnchor() >= 0) {
-			this.vesper.y += 7.0F;
-			this.vesper.xRot += 0.18F;
-			this.lowerBody.xRot += 0.32F;
-			this.vesper.zRot += Mth.sin(frame * 0.2F) * 0.035F;
-		}
-
-		if (transitioning) applyTransitionPose(entity, frame);
+	private void applyAuthoredAnimation(AnimationDefinition animation, float ticks) {
+		KeyframeAnimations.animate(this, animation, (long) (ticks * 50.0F), 1.0F, animationVectorCache);
 	}
 
 	private static void animateLeg(ModelPart leg, ModelPart femur, ModelPart tibia,
@@ -1209,4 +1209,5 @@ public class VesperTheCrownedRefusalModel extends EntityModel<VesperTheCrownedRe
 	private static float smooth(float progress) {
 		return progress * progress * (3.0F - 2.0F * progress);
 	}
+
 }

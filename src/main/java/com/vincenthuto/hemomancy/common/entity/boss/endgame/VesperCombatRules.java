@@ -134,6 +134,11 @@ public final class VesperCombatRules {
 		return anchorIndex == activeAnchorIndex ? 1.0F : 0.0F;
 	}
 
+	public static AnchorOffset anchorForwardOffset(float yawDegrees, double distance) {
+		double yawRadians = Math.toRadians(yawDegrees);
+		return new AnchorOffset(-Math.sin(yawRadians) * distance, Math.cos(yawRadians) * distance);
+	}
+
 	private static Map<EnumBloodTendency, StanceProfile> createStances() {
 		EnumMap<EnumBloodTendency, StanceProfile> result = new EnumMap<>(EnumBloodTendency.class);
 		result.put(EnumBloodTendency.ANIMUS, new StanceProfile("blade", "blood_rush", "blood_aneurysm"));
@@ -151,5 +156,8 @@ public final class VesperCombatRules {
 	}
 
 	public record AnchorHit(float accumulatedDamage, boolean broken) {
+	}
+
+	public record AnchorOffset(double x, double z) {
 	}
 }
