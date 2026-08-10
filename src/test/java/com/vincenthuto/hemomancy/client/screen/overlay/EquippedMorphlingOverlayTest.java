@@ -3,15 +3,28 @@ package com.vincenthuto.hemomancy.client.screen.overlay;
 import java.awt.image.BufferedImage;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import javax.imageio.ImageIO;
 
 public final class EquippedMorphlingOverlayTest {
+	private static final int MAX_VISIBLE_RGB_COLORS = 12;
 	private static final Path TEXTURE_ROOT = Path.of("src/main/resources/assets/hemomancy/textures/gui/morphling_overlay");
 	private static final List<String> STRAINS = List.of(
 			"morphling_deadmans_purse", "morphling_gravecap", "morphling_witchs_ear", "morphling_foxfire",
 			"morphling_bootlace", "morphling_irontooth", "morphling_emberfang", "morphling_winter_shroud");
+	private static final Map<String, List<AnimationRegion>> FEEDING_ANIMATION_REGIONS = Map.ofEntries(
+			Map.entry("bootlace", List.of(region(24, 10, 48, 44))),
+			Map.entry("deadmans_purse", List.of(region(13, 12, 38, 44))),
+			Map.entry("emberfang", List.of(region(17, 4, 48, 32))),
+			Map.entry("foxfire", List.of(region(16, 14, 48, 44))),
+			Map.entry("gravecap", List.of(region(18, 13, 48, 43))),
+			Map.entry("irontooth", List.of(region(17, 6, 48, 30))),
+			Map.entry("winter_shroud", List.of(region(17, 1, 47, 34))),
+			Map.entry("witchs_ear", List.of(region(14, 7, 31, 28))));
 
 	private EquippedMorphlingOverlayTest() {
 	}
@@ -20,7 +33,11 @@ public final class EquippedMorphlingOverlayTest {
 		legacyIconPlacementRemainsAvailable();
 		attachedMorphlingGripsHalfwayAcrossTheBloodBarEdge();
 		mirroredSpriteKeepsFrontFacingGeometryAndReversesUvs();
+		feedingAnimationAdvancesThroughFiveFramesAndLoops();
 		canonicalStrainsHaveCompleteHudVisuals();
+		canonicalStrainsAnimateTheirBodiesInsteadOfTranslatingTheWholeSprite();
+		canonicalStrainsKeepNonAnimatedPixelsByteExact();
+		canonicalStrainsUseOneTwelveColorPaletteAcrossAllFrames();
 	}
 
 	private static void legacyIconPlacementRemainsAvailable() {
@@ -59,6 +76,17 @@ public final class EquippedMorphlingOverlayTest {
 		assertEquals("mirrored u direction is reversed", -48, mirrored.uWidth());
 	}
 
+	private static void feedingAnimationAdvancesThroughFiveFramesAndLoops() {
+		assertEquals("animation starts at frame zero", 0,
+				EquippedMorphlingOverlayPlacement.feedingFrame(0.0f));
+		assertEquals("animation reaches frame one", 1,
+				EquippedMorphlingOverlayPlacement.feedingFrame(0.16f));
+		assertEquals("animation reaches final frame", 4,
+				EquippedMorphlingOverlayPlacement.feedingFrame(0.64f));
+		assertEquals("animation loops", 0,
+				EquippedMorphlingOverlayPlacement.feedingFrame(0.80f));
+	}
+
 	private static void canonicalStrainsHaveCompleteHudVisuals() throws Exception {
 		for (String strain : STRAINS) {
 			MorphlingHudVisuals.Visual visual = MorphlingHudVisuals.forItemPath(strain);
@@ -76,7 +104,7 @@ public final class EquippedMorphlingOverlayTest {
 			}
 			BufferedImage image = ImageIO.read(texture.toFile());
 			assertEquals("texture width for " + strain, 48, image.getWidth());
-			assertEquals("texture height for " + strain, 48, image.getHeight());
+			assertEquals("five-frame texture height for " + strain, 48 * 5, image.getHeight());
 			int transparent = 0;
 			int visible = 0;
 			for (int y = 0; y < image.getHeight(); y++) {
@@ -86,9 +114,111 @@ public final class EquippedMorphlingOverlayTest {
 					if (alpha >= 128) visible++;
 				}
 			}
-			if (transparent < 48 * 48 / 3 || visible < 64) {
+			if (transparent < 48 * 48 * 5 / 3 || visible < 64 * 5) {
 				throw new AssertionError("HUD texture needs transparent space and a readable subject: " + texture);
 			}
+		}
+	}
+
+	private static void canonicalStrainsAnimateTheirBodiesInsteadOfTranslatingTheWholeSprite() throws Exception {
+		for (String strain : STRAINS) {
+			MorphlingHudVisuals.Visual visual = MorphlingHudVisuals.forItemPath(strain);
+			BufferedImage image = ImageIO.read(TEXTURE_ROOT.resolve(visual.textureName() + ".png").toFile());
+			for (int frame = 1; frame < 5; frame++) {
+				if (isRigidTranslationOfFirstFrame(image, frame)) {
+					throw new AssertionError("Morphling frame must deform internally, not translate rigidly: "
+							+ strain + " frame " + frame);
+				}
+			}
+		}
+	}
+
+	private static boolean isRigidTranslationOfFirstFrame(BufferedImage image, int frame) {
+		for (int dy = -3; dy <= 3; dy++) {
+			for (int dx = -3; dx <= 3; dx++) {
+				boolean matches = true;
+				for (int y = 0; y < 48 && matches; y++) {
+					for (int x = 0; x < 48; x++) {
+						int sourceX = x - dx;
+						int sourceY = y - dy;
+						int expected = sourceX >= 0 && sourceX < 48 && sourceY >= 0 && sourceY < 48
+								? image.getRGB(sourceX, sourceY)
+								: 0;
+						if (image.getRGB(x, y + frame * 48) != expected) {
+							matches = false;
+							break;
+						}
+					}
+				}
+				if (matches) return true;
+			}
+		}
+		return false;
+	}
+
+	private static void canonicalStrainsKeepNonAnimatedPixelsByteExact() throws Exception {
+		for (String strain : STRAINS) {
+			MorphlingHudVisuals.Visual visual = MorphlingHudVisuals.forItemPath(strain);
+			BufferedImage image = ImageIO.read(TEXTURE_ROOT.resolve(visual.textureName() + ".png").toFile());
+			List<AnimationRegion> animatedRegions = FEEDING_ANIMATION_REGIONS.get(visual.textureName());
+			if (animatedRegions == null) {
+				throw new AssertionError("Missing feeding animation region for " + strain);
+			}
+			for (int frame = 1; frame < 5; frame++) {
+				int changedInsideRegion = 0;
+				for (int y = 0; y < 48; y++) {
+					for (int x = 0; x < 48; x++) {
+						if (image.getRGB(x, y) == image.getRGB(x, y + frame * 48)) continue;
+						boolean intentionallyAnimated = isIntentionallyAnimated(animatedRegions, x, y);
+						if (!intentionallyAnimated) {
+							throw new AssertionError("Non-animated pixel changed for " + strain + " frame " + frame
+									+ " at (" + x + "," + y + ")");
+						}
+						changedInsideRegion++;
+					}
+				}
+				if (changedInsideRegion < 16) {
+					throw new AssertionError("Feeding frame needs a real localized redraw for " + strain
+							+ " frame " + frame + ": only " + changedInsideRegion + " pixels changed");
+				}
+			}
+		}
+	}
+
+	private static void canonicalStrainsUseOneTwelveColorPaletteAcrossAllFrames() throws Exception {
+		for (String strain : STRAINS) {
+			MorphlingHudVisuals.Visual visual = MorphlingHudVisuals.forItemPath(strain);
+			BufferedImage image = ImageIO.read(TEXTURE_ROOT.resolve(visual.textureName() + ".png").toFile());
+			Set<Integer> visibleRgbColors = new HashSet<>();
+			for (int y = 0; y < image.getHeight(); y++) {
+				for (int x = 0; x < image.getWidth(); x++) {
+					int argb = image.getRGB(x, y);
+					if ((argb >>> 24) != 0) {
+						visibleRgbColors.add(argb & 0x00FFFFFF);
+					}
+				}
+			}
+			if (visibleRgbColors.size() > MAX_VISIBLE_RGB_COLORS) {
+				throw new AssertionError("HUD texture exceeds shared 12-color palette for " + strain + ": "
+						+ visibleRgbColors.size());
+			}
+		}
+	}
+
+	private static AnimationRegion region(int minX, int minY, int maxX, int maxY) {
+		return new AnimationRegion(minX, minY, maxX, maxY);
+	}
+
+	private static boolean isIntentionallyAnimated(List<AnimationRegion> regions, int x, int y) {
+		for (AnimationRegion region : regions) {
+			if (region.contains(x, y)) return true;
+		}
+		return false;
+	}
+
+	private record AnimationRegion(int minX, int minY, int maxX, int maxY) {
+		private boolean contains(int x, int y) {
+			return x >= minX && x < maxX && y >= minY && y < maxY;
 		}
 	}
 

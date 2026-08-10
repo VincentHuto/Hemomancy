@@ -5,6 +5,9 @@ final class EquippedMorphlingOverlayPlacement {
 	static final int ICON_GAP = 8;
 	static final int ATTACHED_SIZE = 48;
 	static final int ATTACHED_OVERLAP = ATTACHED_SIZE / 2;
+	static final int FEEDING_FRAME_COUNT = 5;
+	static final int FEEDING_TEXTURE_HEIGHT = ATTACHED_SIZE * FEEDING_FRAME_COUNT;
+	private static final float FEEDING_FRAME_SECONDS = 0.16f;
 
 	private EquippedMorphlingOverlayPlacement() {
 	}
@@ -29,6 +32,11 @@ final class EquippedMorphlingOverlayPlacement {
 
 	static boolean shouldMirror(boolean barOnLeft) {
 		return !barOnLeft;
+	}
+
+	static int feedingFrame(float timeSeconds) {
+		int elapsedFrames = (int) Math.floor(timeSeconds / FEEDING_FRAME_SECONDS);
+		return Math.floorMod(elapsedFrames, FEEDING_FRAME_COUNT);
 	}
 
 	static SpriteBlit spriteBlit(boolean mirrored) {

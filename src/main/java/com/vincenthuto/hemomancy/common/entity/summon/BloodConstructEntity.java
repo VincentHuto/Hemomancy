@@ -22,6 +22,7 @@ public class BloodConstructEntity extends PathfinderMob implements IBloodConstru
 				.add(Attributes.KNOCKBACK_RESISTANCE, 1000);
 	}
 	public float deathTicks = 1;
+	private final BloodConstructSoundGate soundGate = new BloodConstructSoundGate();
 
 	public LivingEntity creator;
 
@@ -68,7 +69,22 @@ public class BloodConstructEntity extends PathfinderMob implements IBloodConstru
 
 	@Override
 	protected float getSoundVolume() {
-		return 0.3f;
+		return 0.1f;
+	}
+
+	protected final void playConstructExpirationSound() {
+		playConstructLifecycleSound(soundGate.claimExpiration(getSoundVolume()), 1.2F);
+	}
+
+	protected final void playConstructDissolutionSound() {
+		playConstructLifecycleSound(soundGate.claimDissolution(getSoundVolume()), 0.2F);
+	}
+
+	private void playConstructLifecycleSound(BloodConstructSoundGate.CueRequest request, float pitch) {
+		if (request.shouldPlay()) {
+			level().playLocalSound(getX(), getY(), getZ(), SoundEvents.IRON_GOLEM_DAMAGE,
+					SoundSource.HOSTILE, request.volume(), pitch, false);
+		}
 	}
 
 	// Later implement a potion of dispelling that will remove them
@@ -131,8 +147,7 @@ public class BloodConstructEntity extends PathfinderMob implements IBloodConstru
 					0.0D, 0.0D, 0.0D);
 			this.setHealth(0);
 
-			level().playLocalSound(this.getX(), this.getY(), this.getZ(), SoundEvents.IRON_GOLEM_DAMAGE,
-					SoundSource.HOSTILE, 3f, 1.2f, false);
+			playConstructExpirationSound();
 
 		}
 	}
@@ -146,8 +161,7 @@ public class BloodConstructEntity extends PathfinderMob implements IBloodConstru
 		deathTicks -= 0.05;
 		if (this.deathTicks <= 0.1) {
 			if (level().isClientSide) {
-				level().playLocalSound(this.getX(), this.getY(), this.getZ(), SoundEvents.IRON_GOLEM_DAMAGE,
-						SoundSource.HOSTILE, 3f, 0.2f, false);
+				playConstructDissolutionSound();
 				this.level().addParticle(ParticleTypes.SQUID_INK, this.getX() + g, this.getY() + 2.0D + g1,
 						this.getZ() + g2, 0.0D, 0.0D, 0.0D);
 			}

@@ -2,6 +2,7 @@ package com.vincenthuto.hemomancy.client.render.entity.boss.endgame;
 
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.client.model.entity.boss.endgame.VesperTheCrownedRefusalModel;
+import com.vincenthuto.hemomancy.client.render.layer.mob.endgame.VesperCrownedWeaponLayer;
 import com.vincenthuto.hemomancy.client.render.layer.mob.endgame.VesperMountAbsorptionLayer;
 import com.vincenthuto.hemomancy.common.entity.boss.endgame.VesperPhaseTransitionRules;
 import com.vincenthuto.hemomancy.common.entity.boss.endgame.VesperTheCrownedRefusalEntity;
@@ -19,6 +20,7 @@ public class VesperTheCrownedRefusalRenderer
 
     public VesperTheCrownedRefusalRenderer(Context context) {
         super(context, new VesperTheCrownedRefusalModel(context.bakeLayer(VesperTheCrownedRefusalModel.LAYER_LOCATION)), 4.5F);
+        addLayer(new VesperCrownedWeaponLayer(this));
         addLayer(new VesperMountAbsorptionLayer(this));
     }
 

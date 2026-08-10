@@ -106,8 +106,8 @@ final class VesperCombatImplementationSourceTest {
 		String crowned = read("common/entity/boss/endgame/VesperTheCrownedRefusalEntity.java");
 		String model = read("client/model/entity/boss/endgame/VesperTheCrownedRefusalModel.java");
 		assertTrue(crowned.contains("{ 0.0D, 3.0D, 0.0D }"));
-		assertTrue(model.contains("VULNERABLE_MOUNT_PITCH = 0.32F"));
-		assertTrue(model.contains("VULNERABLE_RIDER_Y = -12.0F"));
+		assertTrue(model.contains("this.vesper.y += 7.0F"));
+		assertTrue(model.contains("this.lowerBody.xRot += 0.32F"));
 	}
 
 	@Test
@@ -126,12 +126,26 @@ final class VesperCombatImplementationSourceTest {
 		assertTrue(actions.contains("AbsorbedBloodCellParticleFactory"));
 		assertTrue(model.contains("VesperPhaseTransitionRules.dismountProgress"));
 		assertTrue(model.contains("VesperPhaseTransitionRules.collapseProgress"));
-		assertTrue(model.contains("this.mountHead.zRot"));
+		assertTrue(model.contains("this.head.zRot += 0.42F * collapse"));
 		assertTrue(model.contains("this.leftArm.xRot"));
 		assertTrue(model.contains("renderVesperOnly"));
 		assertTrue(model.contains("renderMountAssembly"));
 		assertTrue(renderer.contains("new VesperMountAbsorptionLayer(this)"));
 		assertTrue(layer.contains("cardinalStaffBloodMelt"));
+	}
+
+	@Test
+	void crownedRefusalRendersALivingStaffInTheRidersRightHand() throws Exception {
+		String renderer = read("client/render/entity/boss/endgame/VesperTheCrownedRefusalRenderer.java");
+		Path layerPath = SOURCE.resolve("client/render/layer/mob/endgame/VesperCrownedWeaponLayer.java");
+		assertTrue(Files.exists(layerPath), "Crowned Refusal weapon render layer is missing");
+		if (!Files.exists(layerPath)) return;
+		String layer = read("client/render/layer/mob/endgame/VesperCrownedWeaponLayer.java");
+
+		assertTrue(renderer.contains("new VesperCrownedWeaponLayer(this)"));
+		assertTrue(layer.contains("ItemInit.living_staff"));
+		assertTrue(layer.contains("translateToRiderWeapon"));
+		assertTrue(layer.contains("ItemDisplayContext.THIRD_PERSON_RIGHT_HAND"));
 	}
 
 	@Test

@@ -47,7 +47,7 @@ public class EquippedMorphlingOverlay {
 
 		RenderSystem.enableBlend();
 		RenderSystem.defaultBlendFunc();
-		renderSprite(gfx, visual, x, y, EquippedMorphlingOverlayPlacement.shouldMirror(barOnLeft));
+		renderSprite(gfx, visual, x, y, EquippedMorphlingOverlayPlacement.shouldMirror(barOnLeft), time);
 		if (primal) {
 			renderPrimalMotes(gfx, x, y, time, visual.accentColor());
 		}
@@ -79,12 +79,16 @@ public class EquippedMorphlingOverlay {
 		gfx.renderItem(equipped, x, y);
 	}
 
-	private void renderSprite(GuiGraphics gfx, MorphlingHudVisuals.Visual visual, int x, int y, boolean mirror) {
+	private void renderSprite(GuiGraphics gfx, MorphlingHudVisuals.Visual visual, int x, int y,
+			boolean mirror, float time) {
 		ResourceLocation texture = Hemomancy.rloc("textures/gui/morphling_overlay/" + visual.textureName() + ".png");
 		EquippedMorphlingOverlayPlacement.SpriteBlit blit = EquippedMorphlingOverlayPlacement.spriteBlit(mirror);
+		int frameV = EquippedMorphlingOverlayPlacement.feedingFrame(time)
+				* EquippedMorphlingOverlayPlacement.ATTACHED_SIZE;
 		gfx.blit(texture, x, y, blit.width(), EquippedMorphlingOverlayPlacement.ATTACHED_SIZE,
-				blit.uOffset(), 0, blit.uWidth(), EquippedMorphlingOverlayPlacement.ATTACHED_SIZE,
-				EquippedMorphlingOverlayPlacement.ATTACHED_SIZE, EquippedMorphlingOverlayPlacement.ATTACHED_SIZE);
+				blit.uOffset(), frameV, blit.uWidth(), EquippedMorphlingOverlayPlacement.ATTACHED_SIZE,
+				EquippedMorphlingOverlayPlacement.ATTACHED_SIZE,
+				EquippedMorphlingOverlayPlacement.FEEDING_TEXTURE_HEIGHT);
 	}
 
 	private void renderPrimalMotes(GuiGraphics gfx, int x, int y, float time, int color) {

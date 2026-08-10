@@ -2,8 +2,6 @@ package com.vincenthuto.hemomancy.common.entity.summon;
 
 import net.minecraft.core.particles.DustParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.sounds.SoundEvents;
-import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
@@ -72,8 +70,7 @@ public class EntityIronWall extends BloodConstructEntity {
 					this.getZ() + f2, 0.0D, 0.0D, 0.0D);
 			this.setHealth(0);
 
-			level().playLocalSound(this.getX(), this.getY(), this.getZ(), SoundEvents.IRON_GOLEM_DAMAGE,
-					SoundSource.HOSTILE, 3f, 1.2f, false);
+			playConstructExpirationSound();
 
 		}
 	}
@@ -87,8 +84,7 @@ public class EntityIronWall extends BloodConstructEntity {
 		deathTicks -= 0.05;
 		if (this.deathTicks <= 0.1) {
 			if (level().isClientSide) {
-				level().playLocalSound(this.getX(), this.getY(), this.getZ(), SoundEvents.IRON_GOLEM_DAMAGE,
-						SoundSource.HOSTILE, 3f, 0.2f, false);
+				playConstructDissolutionSound();
 				this.level().addParticle(ParticleTypes.SQUID_INK, this.getX() + g,
 						this.getY() + 2.0D + g1, this.getZ() + g2, 0.0D, 0.0D, 0.0D);
 			}
