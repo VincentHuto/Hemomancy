@@ -1079,7 +1079,7 @@ public class VesperTheCrownedRefusalModel extends HierarchicalModel<VesperTheCro
 		leftArm.translateAndRotate(poseStack);
 		lShoulder.translateAndRotate(poseStack);
 		lElbow.translateAndRotate(poseStack);
-		poseStack.translate(0.05D, 0.42D, -0.03D);
+		poseStack.translate(0.05D, 0.42D, -0.53D);
 	}
 
 	public void renderVesperOnly(PoseStack poseStack, VertexConsumer vertexConsumer,

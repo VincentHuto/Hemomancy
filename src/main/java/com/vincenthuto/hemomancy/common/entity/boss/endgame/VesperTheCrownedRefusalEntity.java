@@ -193,7 +193,6 @@ public class VesperTheCrownedRefusalEntity extends Monster {
         eveningStar.setTarget(this.getTarget());
 		VesperOrdealManager.copyOrdeal(this, eveningStar);
         eveningStar.finalizeSpawn(server, server.getCurrentDifficultyAt(this.blockPosition()), MobSpawnType.MOB_SUMMONED, null);
-		eveningStar.beginAwakening();
         server.addFreshEntity(eveningStar);
     }
 
@@ -319,7 +318,7 @@ public class VesperTheCrownedRefusalEntity extends Monster {
 			EndgameBossActions.tickVesperTransformation(this, transition);
 			if (VesperPhaseTransitionRules.isComplete(transition) && !spawnedEveningStar) {
 				spawnedEveningStar = true;
-				EndgameBossActions.finishVesperMountAbsorption(this);
+				EndgameBossActions.finishVesperCocoonReveal(this);
 				EndgameBossActions.clearVesperPuppets(this);
 				spawnEveningStar();
 				bossEvent.removeAllPlayers();

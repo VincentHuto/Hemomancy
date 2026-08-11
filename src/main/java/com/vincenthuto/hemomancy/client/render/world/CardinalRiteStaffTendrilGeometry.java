@@ -104,9 +104,9 @@ public final class CardinalRiteStaffTendrilGeometry {
 		return Math.max(0.0F, Math.min(1.0F, value));
 	}
 
-	public record Strand(int index, List<Joint> joints) {
+	public record Strand(int index, List<Joint> joints) implements SanguineTendrilRibbonRenderer.Strand {
 	}
 
-	public record Joint(Vec3 center, float halfWidth, float opacity) {
+	public record Joint(Vec3 center, float halfWidth, float opacity) implements SanguineTendrilRibbonRenderer.Joint {
 	}
 }

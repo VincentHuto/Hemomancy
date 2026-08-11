@@ -168,14 +168,15 @@ final class VesperCombatImplementationSourceTest {
 	}
 
 	@Test
-	void eveningStarAwakensThroughGlowSigilsAndPhysicalGrowthBeforeCombat() throws Exception {
+	void phaseHandoffSpawnsAtTheCompletedEveningStarFrameWhileStandaloneAwakeningRemainsAvailable() throws Exception {
 		String crowned = read("common/entity/boss/endgame/VesperTheCrownedRefusalEntity.java");
 		String evening = read("common/entity/boss/endgame/VesperTheEveningStarEntity.java");
 		String renderer = read("client/render/entity/boss/endgame/VesperTheEveningStarRenderer.java");
 		String sigils = read("client/render/layer/mob/endgame/VesperTendencySigilLayer.java");
 		Path glowPath = SOURCE.resolve("client/render/layer/mob/endgame/VesperAwakeningGlowLayer.java");
 
-		assertTrue(crowned.contains("beginAwakening()"));
+		assertFalse(crowned.contains("eveningStar.beginAwakening()"));
+		assertTrue(evening.contains(": VesperPhaseTransitionRules.AWAKENING_TOTAL_TICKS"));
 		assertTrue(evening.contains("DATA_AWAKENING_TICK"));
 		assertTrue(evening.contains("tickAwakening"));
 		assertTrue(evening.contains("getDefaultDimensions(Pose pose)"));
@@ -185,6 +186,63 @@ final class VesperCombatImplementationSourceTest {
 		assertTrue(Files.exists(glowPath), "Evening Star awakening glow layer is missing");
 		assertTrue(read("client/render/layer/mob/endgame/VesperLivingWeaponLayer.java")
 				.contains("entity.isAwakening()"));
+	}
+
+	@Test
+	void crownedTransitionRendersASharedCardinalTendrilCocoonAndDragonRayStar() throws Exception {
+		String crownedRenderer = read("client/render/entity/boss/endgame/VesperTheCrownedRefusalRenderer.java");
+		String cardinalRenderer = read("client/render/world/CardinalRiteStaffTendrilRenderer.java");
+		Path ribbonPath = SOURCE.resolve("client/render/world/SanguineTendrilRibbonRenderer.java");
+		Path cocoonPath = SOURCE.resolve("client/render/layer/mob/endgame/VesperTransitionCocoonRenderer.java");
+		assertTrue(Files.exists(ribbonPath), "shared Cardinal-style ribbon renderer is missing");
+		assertTrue(Files.exists(cocoonPath), "Vesper cocoon renderer is missing");
+		if (!Files.exists(ribbonPath) || !Files.exists(cocoonPath)) return;
+		String cocoon = read("client/render/layer/mob/endgame/VesperTransitionCocoonRenderer.java");
+
+		assertTrue(cardinalRenderer.contains("SanguineTendrilRibbonRenderer.render"));
+		assertTrue(cocoon.contains("TendrilRenderer.INSTANCE.add"));
+		assertTrue(cocoon.contains("TendrilEffectData"));
+		assertTrue(cocoon.contains("TendrilEffectConfig"));
+		assertTrue(cocoon.contains("COCOON_FORMATION_TICKS"));
+		assertTrue(cocoon.contains("queueCocoonTendrils"));
+		assertTrue(cocoon.contains("COCOON_FORMATION_TICKS"));
+		assertTrue(cocoon.contains("joints().get(0)"));
+		assertTrue(cocoon.contains("joints().size() - 1"));
+		assertTrue(cocoon.contains("COCOON_OUTWARD_SAG = -1.25F"));
+		assertTrue(cocoon.contains("COCOON_OUTWARD_SAG"));
+		assertTrue(cocoon.contains("cocoonOutwardDirection"));
+		assertTrue(cocoon.contains("), 0.0F, cocoonOutwardDirection"));
+		assertFalse(cocoon.contains("queueCocoonTendrilSegments"));
+		assertFalse(cocoon.contains("COCOON_TENDRIL_SEGMENTS"));
+		assertFalse(cocoon.contains("segmentDelay"));
+		assertFalse(cocoon.contains("startJoint"));
+		assertFalse(cocoon.contains("queueCocoonWrapTendrils"));
+		assertFalse(cocoon.contains("SanguineTendrilRibbonRenderer.renderLocal"));
+		assertTrue(cocoon.contains("RenderType.dragonRays()"));
+		assertTrue(cocoon.contains("RenderType.dragonRaysDepth()"));
+		assertTrue(cocoon.contains("renderCentralFlare"));
+		assertTrue(cocoon.contains("VesperPhaseTransitionRules.cocoonBurstProgress"));
+		assertTrue(cocoon.contains("VesperPhaseTransitionRules.isCocoonActive(entity.getTransitionTick())"));
+		assertTrue(cocoon.contains("entity.getUUID()"));
+		assertFalse(cocoon.contains("entity.tickCount"));
+		assertFalse(cocoon.contains("entity.getId()"));
+		assertTrue(crownedRenderer.contains("VesperTransitionCocoonRenderer.render"));
+		assertTrue(crownedRenderer.contains("getBoundingBoxForCulling().inflate(6.0D)"));
+	}
+
+	@Test
+	void cocoonStagesDriveAuthoredServerEffectsAndANearbyPlayerBurstCue() throws Exception {
+		String actions = read("common/entity/boss/endgame/EndgameBossActions.java");
+		String crowned = read("common/entity/boss/endgame/VesperTheCrownedRefusalEntity.java");
+
+		assertTrue(actions.contains("COCOON_BEAM_START_TICK"));
+		assertTrue(actions.contains("COCOON_BURST_START_TICK"));
+		assertTrue(actions.contains("VesperVisualEffects.voidTendril"));
+		assertTrue(actions.contains("VesperVisualEffects.lightning"));
+		assertTrue(actions.contains("CardinalRiteImpactPacket"));
+		assertTrue(actions.contains("PacketDistributor.sendToPlayersNear"));
+		assertTrue(actions.contains("blastVesperCocoon"));
+		assertTrue(crowned.contains("finishVesperCocoonReveal"));
 	}
 
 	@Test

@@ -8,6 +8,7 @@ import com.vincenthuto.hemomancy.common.entity.summon.BoundPuppeteerSummon;
 import com.vincenthuto.hemomancy.common.init.BlockInit;
 import com.vincenthuto.hemomancy.common.init.EntityInit;
 import com.vincenthuto.hemomancy.common.init.SoundInit;
+import com.vincenthuto.hemomancy.common.network.particle.CardinalRiteImpactPacket;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleOptions;
@@ -32,6 +33,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.entity.PartEntity;
+import net.neoforged.neoforge.network.PacketDistributor;
 
 import java.util.List;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
@@ -149,44 +151,99 @@ final class EndgameBossActions {
 	static void tickVesperTransformation(VesperTheCrownedRefusalEntity boss, int tick) {
 		if (!(boss.level() instanceof ServerLevel server)) return;
 		float absorption = VesperPhaseTransitionRules.absorptionProgress(tick);
-		int count = tick % 20 == 0 ? 70 : 8;
-		Vec3 center = boss.position().add(0.0D, boss.getBbHeight() * 0.62D, 0.0D);
+		Vec3 center = vesperCocoonCenter(boss);
 		VesperVisualEffects.darkGlow(server, center, VesperVisualEffects.BLACK,
-				Math.max(5, count / 2), 2.8D, 2.2D, 2.8D, 0.07D);
-		if (absorption <= 0.0F) {
-			VesperVisualEffects.spores(server, center, VesperVisualEffects.DEEP_BLOOD,
-					Math.max(4, count / 3), 3.2D, 2.5D, 3.2D, 0.035D);
-		} else {
+				tick % 4 == 0 ? 4 : 2, 1.35D, 1.65D, 1.35D, 0.025D);
+		if (absorption > 0.0F && absorption < 1.0F) {
 			server.sendParticles(AbsorbedBloodCellParticleFactory.createData(ParticleColor.BLOOD),
-					boss.getX(), boss.getY() + boss.getBbHeight() * 0.68D, boss.getZ(),
-					12, 2.8D * (1.0D - absorption * 0.65D), 1.5D, 2.8D * (1.0D - absorption * 0.65D), 0.12D);
+					center.x, center.y, center.z, 5,
+					1.5D * (1.0D - absorption * 0.55D), 1.35D,
+					1.5D * (1.0D - absorption * 0.55D), 0.055D);
 		}
-		if (tick % 20 == 0) {
-			for (int i = 0; i < 4; i++) {
-				double angle = Mth.TWO_PI * i / 4.0D + tick * 0.035D;
-				Vec3 source = center.add(Math.cos(angle) * 3.2D, -0.6D + (i & 1) * 1.6D,
-						Math.sin(angle) * 3.2D);
-				VesperVisualEffects.voidTendril(server, source, center, tick * 101L + i);
+		if (tick >= VesperPhaseTransitionRules.COCOON_START_TICK
+				&& tick < VesperPhaseTransitionRules.COCOON_BEAM_START_TICK
+				&& (tick - VesperPhaseTransitionRules.COCOON_START_TICK) % 16 == 0) {
+			int cocoonTick = tick - VesperPhaseTransitionRules.COCOON_START_TICK;
+			for (int index = 0; index < 2; index++) {
+				double angle = cocoonTick * 0.071D + index * Math.PI;
+				Vec3 root = center.add(Math.cos(angle) * 1.45D, -1.55D,
+						Math.sin(angle) * 1.45D);
+				Vec3 crown = center.add(Math.cos(angle + 1.3D) * 0.25D, 1.75D,
+						Math.sin(angle + 1.3D) * 0.25D);
+				VesperVisualEffects.voidTendril(server, root, crown, cocoonTick * 101L + index);
 			}
 		}
-		if (tick % 30 == 0) {
-			Vec3 arcStart = center.add(-2.2D, 1.4D, 0.0D);
-			Vec3 arcEnd = center.add(2.2D, -0.6D, 0.0D);
-			VesperVisualEffects.lightning(server, arcStart, arcEnd, false, tick * 131L);
+		if (tick >= VesperPhaseTransitionRules.COCOON_BEAM_START_TICK
+				&& tick < VesperPhaseTransitionRules.COCOON_BURST_START_TICK) {
+			float beam = VesperPhaseTransitionRules.cocoonBeamProgress(tick);
+			if (tick % 2 == 0) {
+				VesperVisualEffects.glow(server, center, VesperVisualEffects.DEEP_BLOOD,
+						Math.max(2, Math.round(5.0F * beam)), 0.35D, 0.55D, 0.35D, 0.018D);
+			}
+			if (tick % 14 == 0) {
+				double angle = tick * 0.19D;
+				Vec3 first = center.add(Math.cos(angle) * 1.35D, 1.1D,
+						Math.sin(angle) * 1.35D);
+				Vec3 second = center.add(-Math.cos(angle) * 1.35D, -1.1D,
+						-Math.sin(angle) * 1.35D);
+				VesperVisualEffects.lightning(server, first, second, false, tick * 131L);
+			}
+			if (tick % 20 == 0) {
+				server.playSound(null, BlockPos.containing(center), SoundEvents.WITHER_AMBIENT,
+						SoundSource.HOSTILE, 1.0F, 0.45F + beam * 0.18F);
+			}
 		}
-		if (tick % 30 == 0) server.playSound(null, boss.blockPosition(), SoundEvents.SCULK_SHRIEKER_SHRIEK,
-				SoundSource.HOSTILE, 1.2F, 0.55F + tick / 300.0F);
+		if (tick == VesperPhaseTransitionRules.DISMOUNT_TICKS
+				+ VesperPhaseTransitionRules.MOUNT_ABSORPTION_TICKS) finishVesperMountAbsorption(boss);
+		if (tick == VesperPhaseTransitionRules.COCOON_BURST_START_TICK) blastVesperCocoon(boss, center);
 	}
 
 	static void finishVesperMountAbsorption(VesperTheCrownedRefusalEntity boss) {
 		if (!(boss.level() instanceof ServerLevel server)) return;
-		Vec3 center = boss.position().add(0.0D, 1.5D, 0.0D);
+		Vec3 center = vesperCocoonCenter(boss);
 		VesperVisualEffects.bloodCells(server, center, VesperVisualEffects.BLOOD,
-				64, 1.8D, 1.5D, 1.8D, 0.15D);
+				28, 0.85D, 1.25D, 0.85D, 0.065D);
+		server.playSound(null, BlockPos.containing(center), SoundEvents.RESPAWN_ANCHOR_CHARGE,
+				SoundSource.HOSTILE, 1.1F, 0.52F);
+	}
+
+	private static void blastVesperCocoon(VesperTheCrownedRefusalEntity boss, Vec3 center) {
+		if (!(boss.level() instanceof ServerLevel server)) return;
+		VesperVisualEffects.bloodCells(server, center, VesperVisualEffects.BLOOD,
+				96, 1.2D, 1.65D, 1.2D, 0.22D);
+		VesperVisualEffects.darkGlow(server, center, VesperVisualEffects.BLACK,
+				72, 1.4D, 1.8D, 1.4D, 0.16D);
+		for (int index = 0; index < 8; index++) {
+			double angle = Mth.TWO_PI * index / 8.0D;
+			Vec3 destination = center.add(Math.cos(angle) * 5.2D,
+					-0.7D + (index % 3) * 0.8D, Math.sin(angle) * 5.2D);
+			VesperVisualEffects.voidTendril(server, center, destination,
+					boss.getId() * 401L + index);
+			if ((index & 1) == 0) {
+				VesperVisualEffects.lightning(server, center, destination, false,
+						boss.getId() * 433L + index);
+			}
+		}
+		PacketDistributor.sendToPlayersNear(server, null, center.x, center.y, center.z, 40.0D,
+				new CardinalRiteImpactPacket(10, 0.10F, boss.getId() * 31 + boss.tickCount));
+		server.playSound(null, BlockPos.containing(center), SoundEvents.GENERIC_EXPLODE.value(),
+				SoundSource.HOSTILE, 1.7F, 0.48F);
+		server.playSound(null, BlockPos.containing(center), SoundEvents.WITHER_SPAWN,
+				SoundSource.HOSTILE, 1.2F, 0.72F);
+	}
+
+	static void finishVesperCocoonReveal(VesperTheCrownedRefusalEntity boss) {
+		if (!(boss.level() instanceof ServerLevel server)) return;
+		Vec3 center = vesperCocoonCenter(boss);
 		VesperVisualEffects.glow(server, center, VesperVisualEffects.BLOOD,
-				40, 1.2D, 1.4D, 1.2D, 0.09D);
-		server.playSound(null, boss.blockPosition(), SoundEvents.BEACON_ACTIVATE,
-				SoundSource.HOSTILE, 1.5F, 0.58F);
+				48, 1.0D, 1.45D, 1.0D, 0.11D);
+		server.playSound(null, BlockPos.containing(center), SoundEvents.BEACON_ACTIVATE,
+				SoundSource.HOSTILE, 1.35F, 0.68F);
+	}
+
+	private static Vec3 vesperCocoonCenter(VesperTheCrownedRefusalEntity boss) {
+		Vec3 forward = Vec3.directionFromRotation(0.0F, boss.getYRot()).multiply(1.5D, 0.0D, 1.5D);
+		return boss.position().add(forward).add(0.0D, 1.58D, 0.0D);
 	}
 
 	static void tickVesperAwakening(VesperTheEveningStarEntity boss, int tick) {

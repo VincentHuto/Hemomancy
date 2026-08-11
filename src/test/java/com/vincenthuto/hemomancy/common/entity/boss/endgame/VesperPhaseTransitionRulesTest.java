@@ -28,7 +28,7 @@ final class VesperPhaseTransitionRulesTest {
 	}
 
 	@Test
-	void dismountFinishesBeforeMountAbsorptionAndPhaseTwoWaitsForBoth() throws Exception {
+	void dismountAndMountAbsorptionFinishBeforeTheCocoonReveal() throws Exception {
 		Class<?> rules;
 		try {
 			rules = Class.forName("com.vincenthuto.hemomancy.common.entity.boss.endgame.VesperPhaseTransitionRules");
@@ -47,8 +47,10 @@ final class VesperPhaseTransitionRulesTest {
 		assertEquals(0.0F, (float) absorption.invoke(null, 36.0F), 0.001F);
 		assertEquals(0.5F, (float) absorption.invoke(null, 78.0F), 0.001F);
 		assertEquals(1.0F, (float) absorption.invoke(null, 120.0F), 0.001F);
-		assertFalse((boolean) complete.invoke(null, 119));
-		assertTrue((boolean) complete.invoke(null, 120));
+		assertTrue(VesperPhaseTransitionRules.isAbsorbing(119.0F));
+		assertFalse(VesperPhaseTransitionRules.isAbsorbing(120.0F));
+		assertFalse((boolean) complete.invoke(null, 259));
+		assertTrue((boolean) complete.invoke(null, 260));
 	}
 
 	@Test
@@ -57,6 +59,32 @@ final class VesperPhaseTransitionRulesTest {
 		assertEquals(0.5F, VesperPhaseTransitionRules.collapseProgress(18.0F), 0.001F);
 		assertEquals(1.0F, VesperPhaseTransitionRules.collapseProgress(36.0F), 0.001F);
 		assertEquals(1.0F, VesperPhaseTransitionRules.collapseProgress(90.0F), 0.001F);
+	}
+
+	@Test
+	void cocoonWaitsFiveSecondsThenRunsFormationBeamsAndBurst() {
+		assertEquals(0.0F, VesperPhaseTransitionRules.cocoonFormationProgress(0.0F), 0.001F);
+		assertEquals(0.0F, VesperPhaseTransitionRules.cocoonFormationProgress(99.99F), 0.001F);
+		assertEquals(0.0F, VesperPhaseTransitionRules.cocoonFormationProgress(100.0F), 0.001F);
+		assertEquals(0.5F, VesperPhaseTransitionRules.cocoonFormationProgress(140.0F), 0.001F);
+		assertEquals(1.0F, VesperPhaseTransitionRules.cocoonFormationProgress(180.0F), 0.001F);
+
+		assertEquals(0.0F, VesperPhaseTransitionRules.cocoonBeamProgress(179.99F), 0.001F);
+		assertEquals(0.5F, VesperPhaseTransitionRules.cocoonBeamProgress(215.0F), 0.001F);
+		assertEquals(1.0F, VesperPhaseTransitionRules.cocoonBeamProgress(250.0F), 0.001F);
+
+		assertEquals(0.0F, VesperPhaseTransitionRules.cocoonBurstProgress(249.99F), 0.001F);
+		assertEquals(0.5F, VesperPhaseTransitionRules.cocoonBurstProgress(255.0F), 0.001F);
+		assertEquals(1.0F, VesperPhaseTransitionRules.cocoonBurstProgress(260.0F), 0.001F);
+		assertEquals(0.0F, VesperPhaseTransitionRules.cocoonVisibility(99.99F), 0.001F);
+		assertEquals(1.0F, VesperPhaseTransitionRules.cocoonVisibility(249.0F), 0.001F);
+		assertEquals(0.5F, VesperPhaseTransitionRules.cocoonVisibility(255.0F), 0.001F);
+		assertEquals(0.0F, VesperPhaseTransitionRules.cocoonVisibility(260.0F), 0.001F);
+		assertFalse(VesperPhaseTransitionRules.isCocoonActive(0));
+		assertFalse(VesperPhaseTransitionRules.isCocoonActive(99));
+		assertTrue(VesperPhaseTransitionRules.isCocoonActive(100));
+		assertFalse(VesperPhaseTransitionRules.isComplete(259));
+		assertTrue(VesperPhaseTransitionRules.isComplete(260));
 	}
 
 	@Test

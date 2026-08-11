@@ -6,7 +6,13 @@ import net.minecraft.world.entity.AnimationState;
 public final class VesperPhaseTransitionRules {
 	public static final int DISMOUNT_TICKS = 36;
 	public static final int MOUNT_ABSORPTION_TICKS = 84;
-	public static final int TOTAL_TICKS = DISMOUNT_TICKS + MOUNT_ABSORPTION_TICKS;
+	public static final int COCOON_START_TICK = 100;
+	public static final int COCOON_FORMATION_TICKS = 80;
+	public static final int COCOON_BEAM_TICKS = 70;
+	public static final int COCOON_BURST_TICKS = 10;
+	public static final int COCOON_BEAM_START_TICK = COCOON_START_TICK + COCOON_FORMATION_TICKS;
+	public static final int COCOON_BURST_START_TICK = COCOON_BEAM_START_TICK + COCOON_BEAM_TICKS;
+	public static final int TOTAL_TICKS = COCOON_BURST_START_TICK + COCOON_BURST_TICKS;
 	public static final int AWAKENING_GLOW_TICKS = 12;
 	public static final int AWAKENING_SIGIL_START_TICK = 12;
 	public static final int AWAKENING_SIGIL_INTERVAL_TICKS = 6;
@@ -35,6 +41,26 @@ public final class VesperPhaseTransitionRules {
 		return 4.0F * progress * (1.0F - progress);
 	}
 
+	public static float cocoonFormationProgress(float transitionTick) {
+		return clamp((transitionTick - COCOON_START_TICK) / COCOON_FORMATION_TICKS);
+	}
+
+	public static float cocoonBeamProgress(float transitionTick) {
+		return clamp((transitionTick - COCOON_BEAM_START_TICK) / COCOON_BEAM_TICKS);
+	}
+
+	public static float cocoonBurstProgress(float transitionTick) {
+		return clamp((transitionTick - COCOON_BURST_START_TICK) / COCOON_BURST_TICKS);
+	}
+
+	public static float cocoonVisibility(float transitionTick) {
+		return cocoonFormationProgress(transitionTick) * (1.0F - cocoonBurstProgress(transitionTick));
+	}
+
+	public static boolean isCocoonActive(int transitionTick) {
+		return transitionTick >= COCOON_START_TICK && transitionTick < TOTAL_TICKS;
+	}
+
 	public static int awakeningSigilCount(float awakeningTick) {
 		if (awakeningTick < AWAKENING_SIGIL_START_TICK) return 0;
 		int revealed = 1 + (int) ((awakeningTick - AWAKENING_SIGIL_START_TICK)
@@ -59,7 +85,8 @@ public final class VesperPhaseTransitionRules {
 	}
 
 	public static boolean isAbsorbing(float transitionTick) {
-		return transitionTick > DISMOUNT_TICKS && transitionTick < TOTAL_TICKS;
+		return transitionTick > DISMOUNT_TICKS
+				&& transitionTick < DISMOUNT_TICKS + MOUNT_ABSORPTION_TICKS;
 	}
 
 	public static boolean isComplete(int transitionTick) {

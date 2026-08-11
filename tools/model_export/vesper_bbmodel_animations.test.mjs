@@ -119,12 +119,21 @@ test("Crowned Refusal Java retains the complete authored transformation ending",
 	assert.ok(start >= 0 && end > start, "missing Crowned Refusal transformation definition");
 	const transformation = source.slice(start, end);
 
-	assert.equal((transformation.match(/new Keyframe\(/g) ?? []).length, 221,
+	assert.equal((transformation.match(/new Keyframe\(/g) ?? []).length, 286,
 		"Java must retain every authored transformation keyframe from the bbmodel");
 	assert.match(transformation,
-		/new Keyframe\(5\.0833F, KeyframeAnimations\.degreeVec\(0\.0F, -180\.0F, 0\.0F\)/,
+		/new Keyframe\(2\.375F, KeyframeAnimations\.degreeVec\(0\.0F, -180\.0F, 0\.0F\)/,
+		"the rider must retain the authored early half-turn settle keyframe");
+	assert.match(transformation,
+		/new Keyframe\(3\.9583F, KeyframeAnimations\.degreeVec\(0\.0F, -180\.0F, 0\.0F\)/,
 		"the rider must hold its half-turn before the final reveal");
 	assert.match(transformation,
-		/new Keyframe\(6\.0F, KeyframeAnimations\.posVec\(0\.0F, -43\.0F, 4\.0F\)/,
-		"the rider must finish at the authored reveal position");
+		/new Keyframe\(2\.5833F, KeyframeAnimations\.degreeVec\(0\.0F, -180\.0F, 0\.0F\)/,
+		"the transformation must retain the authored half-turn settle keyframes");
+	assert.match(transformation,
+		/new Keyframe\(6\.0F, KeyframeAnimations\.posVec\(0\.0F, -43\.0F, -14\.0F\)/,
+		"the updated export must retain the final authored rider position");
+	for (const bone of ["lShoulder", "lElbow", "rShoulder", "rElbow"])
+		assert.match(transformation, new RegExp(`\\.addAnimation\\("${bone}"`),
+			`the transformation must retain the authored ${bone} channel`);
 });
