@@ -32,7 +32,7 @@ public final class VesperWeaponCombatRules {
 			case LUX -> LANCE_FLURRY;
 			case TENEBRIS -> PREDATOR_POUNCE;
 			case DUCTILIS -> STORM_LOCK;
-			case FLAMMEUS -> UPDRAFT_IMPALEMENT;
+			case FLAMMEUS -> FLAMMEUS_CONCENTRATION;
 			case CONGEATIO -> HOOK_AND_CRUSH;
 			case FERRIC -> IRON_RETORT;
 		};

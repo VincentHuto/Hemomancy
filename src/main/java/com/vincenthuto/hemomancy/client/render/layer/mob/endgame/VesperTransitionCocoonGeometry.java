@@ -9,11 +9,11 @@ import java.util.List;
 
 /** Deterministic, entity-local curves for Vesper's phase-transition cocoon. */
 public final class VesperTransitionCocoonGeometry {
-	private static final int STRAND_COUNT = 64;
+	private static final int STRAND_COUNT = 28;
 	private static final int SEGMENTS_PER_STRAND = 24;
-	private static final double BASE_Y_OFFSET = 0.0D;
+	private static final double BASE_Y_OFFSET = -1.0D;
 	private static final double HEIGHT = 5.55D;
-	private static final double RADIAL_EXPANSION = -0.5D;
+	private static final double RADIAL_EXPANSION = 1.0D;
 	private static final double GOLDEN_ANGLE = Math.PI * (3.0D - Math.sqrt(5.0D));
 
 	private VesperTransitionCocoonGeometry() {

@@ -24,7 +24,9 @@ public enum VesperWeaponAction {
 	SICKLE_POUNCE(null, 14, 14, 24, 14),
 	SICKLE_CROSS_REND(null, 10, 18, 28, 10, 14, 18),
 	SICKLE_HOOK(null, 14, 14, 28, 14),
-	SANGUINE_CRESCENTS(null, 12, 22, 32, 12, 17, 22);
+	SANGUINE_CRESCENTS(null, 12, 22, 32, 12, 17, 22),
+	FLAMMEUS_CONCENTRATION(EnumBloodTendency.FLAMMEUS, 12, 48, 60,
+			12, 16, 20, 24, 28, 32, 36, 40, 44, 48);
 
 	private final EnumBloodTendency tendency;
 	private final int impactTick;

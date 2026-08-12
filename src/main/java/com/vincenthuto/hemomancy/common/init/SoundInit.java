@@ -21,6 +21,8 @@ public class SoundInit {
 			"item.qliphoth_pome.eat");
 	public static final DeferredHolder<SoundEvent, SoundEvent> ITEM_QLIPHOPH_POME_COMMUNION= registerSoundEvent(
 			"item.qliphoth_pome.communion");
+	public static final DeferredHolder<SoundEvent, SoundEvent> ITEM_LIVING_TORCH_BREATH_LOOP = registerSoundEvent(
+			"item.living_torch.breath_loop");
 
 	// ===== Abhorent Thought (psychic nightmare) =====
 	public static final DeferredHolder<SoundEvent, SoundEvent> ENTITY_ABHORENT_THOUGHT_AMBIENT = registerSoundEvent(
@@ -296,6 +298,13 @@ public class SoundInit {
 			"entity.vesper.hit");
 	public static final DeferredHolder<SoundEvent, SoundEvent> ENTITY_VESPER_MUSIC = registerSoundEvent(
 			"entity.vesper.music");
+	public static final DeferredHolder<SoundEvent, SoundEvent> ENTITY_VESPER_SCUTE_LAUNCH = registerSoundEvent("entity.vesper.scute_launch");
+	public static final DeferredHolder<SoundEvent, SoundEvent> ENTITY_VESPER_CARAPACE_REFORM = registerSoundEvent("entity.vesper.carapace_reform");
+	public static final DeferredHolder<SoundEvent, SoundEvent> ENTITY_VESPER_GRAB_TELEGRAPH = registerSoundEvent("entity.vesper.grab_telegraph");
+	public static final DeferredHolder<SoundEvent, SoundEvent> ENTITY_VESPER_GRAB_BITE = registerSoundEvent("entity.vesper.grab_bite");
+	public static final DeferredHolder<SoundEvent, SoundEvent> ENTITY_VESPER_GRAB_PIERCE = registerSoundEvent("entity.vesper.grab_pierce");
+	public static final DeferredHolder<SoundEvent, SoundEvent> ENTITY_VESPER_GRAB_RELEASE = registerSoundEvent("entity.vesper.grab_release");
+	public static final DeferredHolder<SoundEvent, SoundEvent> ENTITY_VESPER_HOOD_REMOVE = registerSoundEvent("entity.vesper.hood_remove");
 
 	public static final DeferredHolder<SoundEvent, SoundEvent> ENTITY_MYCOPHANT_AMBIENT = registerSoundEvent(
 			"entity.mycophant.ambient");

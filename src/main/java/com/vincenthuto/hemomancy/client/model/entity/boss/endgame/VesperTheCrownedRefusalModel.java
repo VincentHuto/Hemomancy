@@ -4,6 +4,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.vincenthuto.hemomancy.common.entity.boss.endgame.VesperPhaseOneAttack;
 import com.vincenthuto.hemomancy.common.entity.boss.endgame.VesperPhaseTransitionRules;
+import com.vincenthuto.hemomancy.common.entity.boss.endgame.VesperWingedFlightRules;
 import com.vincenthuto.hemomancy.common.entity.boss.endgame.VesperTheCrownedRefusalEntity;
 import com.vincenthuto.hutoslib.client.HLClientUtils;
 import net.minecraft.client.animation.AnimationDefinition;
@@ -87,6 +88,18 @@ public class VesperTheCrownedRefusalModel extends HierarchicalModel<VesperTheCro
 	private final ModelPart lrhin;
 	private final ModelPart rshin2;
 	private final ModelPart lowerBody;
+	private final ModelPart leftWing;
+	private final ModelPart leftWingTip;
+	private final ModelPart leftWingOuter;
+	private final ModelPart rightWing;
+	private final ModelPart rightWingTip;
+	private final ModelPart rightWingOuter;
+	private final ModelPart scutesFront;
+	private final ModelPart scutesMid;
+	private final ModelPart scutesRear;
+	private final ModelPart grabSocket;
+	private final ModelPart biteSocket;
+	private final ModelPart impaleSocket;
 	private final ModelPart backAbdomen;
 	private final ModelPart tail;
 	private final ModelPart tail2;
@@ -235,12 +248,23 @@ public class VesperTheCrownedRefusalModel extends HierarchicalModel<VesperTheCro
 		this.lrhin = this.rightBoot.getChild("lrhin");
 		this.rshin2 = this.rightBoot.getChild("rshin2");
 		this.lowerBody = this.whole.getChild("lowerBody");
+		this.leftWing = this.lowerBody.getChild("leftWing");
+		this.leftWingTip = this.leftWing.getChild("leftWingTip");
+		this.leftWingOuter = this.leftWingTip.getChild("leftWingOuter");
+		this.rightWing = this.lowerBody.getChild("rightWing");
+		this.rightWingTip = this.rightWing.getChild("rightWingTip");
+		this.rightWingOuter = this.rightWingTip.getChild("rightWingOuter");
+		this.scutesFront = this.lowerBody.getChild("scutes_front");
+		this.scutesMid = this.lowerBody.getChild("scutes_mid");
+		this.scutesRear = this.lowerBody.getChild("scutes_rear");
+		this.grabSocket = this.lowerBody.getChild("grab_socket");
 		this.backAbdomen = this.lowerBody.getChild("backAbdomen");
 		this.tail = this.backAbdomen.getChild("tail");
 		this.tail2 = this.tail.getChild("tail2");
 		this.tail3 = this.tail2.getChild("tail3");
 		this.tail4 = this.tail3.getChild("tail4");
 		this.tail5 = this.tail4.getChild("tail5");
+		this.impaleSocket = this.tail5.getChild("impale_socket");
 		this.stinger = this.tail5.getChild("stinger");
 		this.prongL = this.stinger.getChild("prongL");
 		this.prongR = this.stinger.getChild("prongR");
@@ -311,6 +335,7 @@ public class VesperTheCrownedRefusalModel extends HierarchicalModel<VesperTheCro
 		this.fLTibia13 = this.fLTibia12.getChild("fLTibia13");
 		this.flFoot7 = this.fLTibia13.getChild("flFoot7");
 		this.head = this.lowerBody.getChild("head");
+		this.biteSocket = this.head.getChild("bite_socket");
 		this.upperJaw = this.head.getChild("upperJaw");
 		this.lowerJaw = this.head.getChild("lowerJaw");
 		this.lFang = this.lowerJaw.getChild("lFang");
@@ -488,6 +513,44 @@ public class VesperTheCrownedRefusalModel extends HierarchicalModel<VesperTheCro
 		.texOffs(0, 156).addBox(-12.25F, -19.0F, -22.0F, 28.0F, 16.0F, 51.0F, new CubeDeformation(0.0F))
 		.texOffs(158, 156).addBox(-13.25F, -3.0F, -22.0F, 28.0F, 15.0F, 43.0F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, 4.0F, 17.2F));
 
+		PartDefinition leftWing = lowerBody.addOrReplaceChild("leftWing", CubeListBuilder.create()
+				.texOffs(620, 0).addBox(-34.5F, -1.0F, -1.0F, 35.0F, 2.0F, 2.0F, new CubeDeformation(0.0F))
+				.texOffs(620, 28).addBox(-33.5F, -1.6F, 0.0F, 33.0F, 0.8F, 17.0F, new CubeDeformation(0.0F))
+				.texOffs(620, 62).addBox(-30.5F, -1.7F, 15.0F, 30.0F, 0.8F, 17.0F, new CubeDeformation(0.0F)),
+				PartPose.offsetAndRotation(-9.75F, -7.0F, -0.25F, -0.1396F, 0.2094F, -1.1868F));
+		leftWing.addOrReplaceChild("leftWingTip", CubeListBuilder.create()
+				.texOffs(620, 0).addBox(-28.0F, -1.0F, -1.0F, 28.0F, 1.6F, 2.0F, new CubeDeformation(0.0F))
+				.texOffs(620, 84).addBox(-27.0F, -1.6F, 0.0F, 28.0F, 0.7F, 25.0F, new CubeDeformation(0.0F)),
+				PartPose.offsetAndRotation(-33.5F, 0.0F, 1.0F, 0.0F, -0.2443F, -0.4887F))
+				.addOrReplaceChild("leftWingOuter", CubeListBuilder.create()
+						.texOffs(620, 105).addBox(-21.0F, -0.9F, -1.0F, 21.0F, 1.4F, 2.0F, new CubeDeformation(0.0F))
+						.texOffs(650, 90).addBox(-20.0F, -1.5F, 0.0F, 21.0F, 0.6F, 19.0F, new CubeDeformation(0.0F)),
+						PartPose.offsetAndRotation(-27.0F, 0.0F, 1.0F, 0.0F, -0.1745F, -0.2793F));
+		PartDefinition rightWing = lowerBody.addOrReplaceChild("rightWing", CubeListBuilder.create()
+				.texOffs(620, 0).addBox(0.0F, -1.0F, -1.0F, 35.0F, 2.0F, 2.0F, new CubeDeformation(0.0F))
+				.texOffs(620, 28).addBox(1.0F, -1.6F, 0.0F, 33.0F, 0.8F, 17.0F, new CubeDeformation(0.0F))
+				.texOffs(620, 62).addBox(1.0F, -1.7F, 15.0F, 30.0F, 0.8F, 17.0F, new CubeDeformation(0.0F)),
+				PartPose.offsetAndRotation(9.75F, -7.0F, -0.25F, -0.1396F, -0.2094F, 1.1868F));
+		rightWing.addOrReplaceChild("rightWingTip", CubeListBuilder.create()
+				.texOffs(620, 0).addBox(0.0F, -1.0F, -1.0F, 28.0F, 1.6F, 2.0F, new CubeDeformation(0.0F))
+				.texOffs(620, 84).addBox(-1.0F, -1.6F, 0.0F, 28.0F, 0.7F, 25.0F, new CubeDeformation(0.0F)),
+				PartPose.offsetAndRotation(34.0F, 0.0F, 1.0F, 0.0F, 0.2443F, 0.4887F))
+				.addOrReplaceChild("rightWingOuter", CubeListBuilder.create()
+						.texOffs(620, 105).addBox(0.0F, -0.9F, -1.0F, 21.0F, 1.4F, 2.0F, new CubeDeformation(0.0F))
+						.texOffs(650, 90).addBox(-1.0F, -1.5F, 0.0F, 21.0F, 0.6F, 19.0F, new CubeDeformation(0.0F)),
+						PartPose.offsetAndRotation(27.0F, 0.0F, 1.0F, 0.0F, 0.1745F, 0.2793F));
+
+		PartDefinition scutesFront = lowerBody.addOrReplaceChild("scutes_front", CubeListBuilder.create()
+				.texOffs(464, 232).addBox(-14.0F, -1.5F, -5.5F, 10.0F, 3.0F, 11.0F, new CubeDeformation(0.0F))
+				.texOffs(464, 232).addBox(4.0F, -1.5F, -5.5F, 10.0F, 3.0F, 11.0F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, -15.0F, -16.0F));
+		PartDefinition scutesMid = lowerBody.addOrReplaceChild("scutes_mid", CubeListBuilder.create()
+				.texOffs(464, 232).addBox(-15.0F, -1.5F, -6.0F, 11.0F, 3.0F, 12.0F, new CubeDeformation(0.0F))
+				.texOffs(464, 232).addBox(4.0F, -1.5F, -6.0F, 11.0F, 3.0F, 12.0F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, -17.0F, 0.0F));
+		PartDefinition scutesRear = lowerBody.addOrReplaceChild("scutes_rear", CubeListBuilder.create()
+				.texOffs(464, 232).addBox(-14.0F, -1.5F, -6.0F, 10.0F, 3.0F, 12.0F, new CubeDeformation(0.0F))
+				.texOffs(464, 232).addBox(4.0F, -1.5F, -6.0F, 10.0F, 3.0F, 12.0F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, -15.0F, 17.0F));
+		PartDefinition grabSocket = lowerBody.addOrReplaceChild("grab_socket", CubeListBuilder.create(), PartPose.offset(0.0F, -4.0F, -30.0F));
+
 		PartDefinition lowerBody_56_151_29420832_r1 = lowerBody.addOrReplaceChild("lowerBody_56_151_29420832_r1", CubeListBuilder.create().texOffs(194, 390).addBox(3.75F, -16.0F, 18.0F, 8.0F, 28.0F, 5.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(5.5407F, -5.5901F, 6.5692F, -0.0436F, 0.0F, 0.7418F));
 
 		PartDefinition lowerBody_56_151_29420832_r2 = lowerBody.addOrReplaceChild("lowerBody_56_151_29420832_r2", CubeListBuilder.create().texOffs(100, 357).addBox(-7.75F, -20.0F, -21.0F, 0.0F, 32.0F, 47.0F, new CubeDeformation(0.0F))
@@ -563,6 +626,7 @@ public class VesperTheCrownedRefusalModel extends HierarchicalModel<VesperTheCro
 		.texOffs(494, 0).addBox(-3.25F, -4.0357F, 0.9381F, 8.0F, 9.0F, 19.0F, new CubeDeformation(0.0F))
 		.texOffs(484, 155).addBox(-1.5893F, -3.0357F, -2.0619F, 6.0F, 7.0F, 22.0F, new CubeDeformation(0.0F))
 		.texOffs(498, 142).addBox(-3.25F, -3.0357F, 18.9381F, 8.0F, 7.0F, 6.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 0.0F, 25.5F, 0.5672F, 0.0F, 0.0F));
+		tail5.addOrReplaceChild("impale_socket", CubeListBuilder.create(), PartPose.offset(0.0F, 0.0F, 29.0F));
 
 		PartDefinition stinger = tail5.addOrReplaceChild("stinger", CubeListBuilder.create().texOffs(514, 305).addBox(-3.25F, -2.0357F, 24.9381F, 8.0F, 5.0F, 6.0F, new CubeDeformation(0.0F))
 		.texOffs(576, 159).addBox(-3.25F, -3.0357F, 29.9381F, 8.0F, 8.0F, 6.0F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, 0.0F, 0.0F));
@@ -950,6 +1014,7 @@ public class VesperTheCrownedRefusalModel extends HierarchicalModel<VesperTheCro
 		PartDefinition cube_r82 = flFoot7.addOrReplaceChild("cube_r82", CubeListBuilder.create().texOffs(100, 322).addBox(-1.0F, -3.0F, -1.5F, 2.0F, 9.0F, 3.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(24.2937F, 32.1894F, -9.6496F, 0.0F, 0.0F, -0.6109F));
 
 		PartDefinition head = lowerBody.addOrReplaceChild("head", CubeListBuilder.create(), PartPose.offsetAndRotation(0.75F, -6.6271F, -26.9647F, 0.3491F, 0.0F, 0.0F));
+		head.addOrReplaceChild("bite_socket", CubeListBuilder.create(), PartPose.offset(0.0F, 2.0F, -4.0F));
 
 		PartDefinition upperJaw = head.addOrReplaceChild("upperJaw", CubeListBuilder.create().texOffs(540, 522).addBox(-7.0F, -2.5767F, -16.6589F, 14.0F, 11.0F, 5.0F, new CubeDeformation(0.0F))
 		.texOffs(580, 431).addBox(-2.0F, -2.4344F, -18.7873F, 4.0F, 11.0F, 7.0F, new CubeDeformation(0.0F))
@@ -1106,6 +1171,8 @@ public class VesperTheCrownedRefusalModel extends HierarchicalModel<VesperTheCro
 	public void setupAnim(VesperTheCrownedRefusalEntity entity, float limbSwing, float limbSwingAmount,
 			float ageInTicks, float netHeadYaw, float headPitch) {
 		whole.getAllParts().forEach(ModelPart::resetPose);
+		scutesFront.visible = scutesMid.visible = scutesRear.visible = true;
+		leftWing.visible = rightWing.visible = entity.hasWingsGrown();
 		float partialTick = HLClientUtils.getPartialTicks();
 		float frame = entity.tickCount + partialTick;
 		this.transitioning = entity.getTransitionTick() > 0;
@@ -1123,21 +1190,58 @@ public class VesperTheCrownedRefusalModel extends HierarchicalModel<VesperTheCro
 		}
 
 		float attackFrame = entity.getAttackTick() + partialTick;
-		AnimationDefinition animation = switch (entity.getAttack()) {
+		VesperWingedFlightRules.FlightMode flightMode = entity.getFlightMode();
+		AnimationDefinition animation = switch (flightMode) {
+			case WING_GROWTH -> VesperTheCrownedRefusalAnimations.WING_GROWTH;
+			case TAKEOFF -> VesperTheCrownedRefusalAnimations.TAKEOFF;
+			case CIRCLING -> VesperTheCrownedRefusalAnimations.FLIGHT;
+			case DIVE_TELEGRAPH -> VesperTheCrownedRefusalAnimations.FLIGHT;
+			case DIVING_REND -> VesperTheCrownedRefusalAnimations.DIVE;
+			case TAIL_FUSILLADE -> VesperTheCrownedRefusalAnimations.TAIL_FUSILLADE;
+			case LANDING -> VesperTheCrownedRefusalAnimations.LANDING;
+			case GROUNDED -> switch (entity.getAttack()) {
 			case ROYAL_SCUTTLE -> VesperTheCrownedRefusalAnimations.ROYAL_SCUTTLE;
 			case PINCER_VICE -> VesperTheCrownedRefusalAnimations.PINCER_VICE;
 			case STINGER_SCRIPT -> VesperTheCrownedRefusalAnimations.STINGER_SCRIPT;
 			case BROOD_TRAMPLE -> VesperTheCrownedRefusalAnimations.BROOD_TRAMPLE;
 			case PUPPET_MUSTER -> VesperTheCrownedRefusalAnimations.PUPPET_MUSTER;
+			case CARAPACE_ANEURYSM -> VesperTheCrownedRefusalAnimations.CARAPACE_ANEURYSM;
+			case GRAB_IMPALEMENT -> VesperTheCrownedRefusalAnimations.GRAB_IMPALEMENT;
+			case WING_GROWTH -> VesperTheCrownedRefusalAnimations.WING_GROWTH;
+			case DIVING_REND -> VesperTheCrownedRefusalAnimations.DIVE;
+			case TAIL_NEEDLE_FUSILLADE -> VesperTheCrownedRefusalAnimations.TAIL_FUSILLADE;
 			case IDLE -> entity.getActiveAnchor() >= 0
 					? VesperTheCrownedRefusalAnimations.VULNERABLE
 					: limbSwingAmount > 0.02F
 							? VesperTheCrownedRefusalAnimations.WALK
 							: VesperTheCrownedRefusalAnimations.IDLE;
+			};
 		};
-		applyAuthoredAnimation(animation, entity.getAttack() == VesperPhaseOneAttack.IDLE ? frame : attackFrame);
-		this.head2.xRot += headPitch * Mth.DEG_TO_RAD * 0.5F;
-		this.head2.yRot += Mth.wrapDegrees(netHeadYaw) * Mth.DEG_TO_RAD * 0.5F;
+		float animationFrame = flightMode == VesperWingedFlightRules.FlightMode.GROUNDED
+				? (entity.getAttack() == VesperPhaseOneAttack.IDLE ? frame : attackFrame)
+				: entity.getFlightTick() + partialTick;
+		applyAuthoredAnimation(animation, animationFrame);
+		if (flightMode == VesperWingedFlightRules.FlightMode.GROUNDED && entity.hasWingsGrown()) {
+			applyAuthoredAnimation(limbSwingAmount > 0.02F
+					? VesperTheCrownedRefusalAnimations.FOLDED_WING_WALK
+					: VesperTheCrownedRefusalAnimations.FOLDED_WING_IDLE, frame);
+		}
+		applyCarapaceVisibility(entity);
+		if (entity.getActiveAnchor() < 0) {
+			this.head2.xRot += headPitch * Mth.DEG_TO_RAD * 0.5F;
+			this.head2.yRot += Mth.wrapDegrees(netHeadYaw) * Mth.DEG_TO_RAD * 0.5F;
+		}
+	}
+
+	private void applyCarapaceVisibility(VesperTheCrownedRefusalEntity entity) {
+		if (entity.getAttack() != VesperPhaseOneAttack.CARAPACE_ANEURYSM) {
+			scutesFront.visible = scutesMid.visible = scutesRear.visible = true;
+			return;
+		}
+		int tick = entity.getAttackTick();
+		scutesFront.visible = tick < 25 || tick >= 91;
+		scutesMid.visible = tick < 25 || tick >= 98;
+		scutesRear.visible = tick < 25 || tick >= 105;
 	}
 
 	@Override

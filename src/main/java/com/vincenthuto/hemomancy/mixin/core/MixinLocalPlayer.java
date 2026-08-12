@@ -2,6 +2,9 @@ package com.vincenthuto.hemomancy.mixin.core;
 
 import com.vincenthuto.hemomancy.common.armor.ability.SilentArchonArmorAbilityHandler;
 import com.vincenthuto.hemomancy.mixin.util.ClientMixinHooks;
+import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.LivingTorchBreathRules;
+import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.LivingTorchItem;
+import net.minecraft.client.player.Input;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.ItemStack;
@@ -35,5 +38,18 @@ public class MixinLocalPlayer {
 	  public ItemStack hemomancy$affixEmptyStack(LocalPlayer player, EquipmentSlot slot) {
 		ItemStack stack = player.getItemBySlot(slot);
 		return this.hemomancy$flag ? stack : ItemStack.EMPTY;
+	  }
+
+	  @Redirect(
+			at = @At(value = "INVOKE", target = "Lnet/minecraft/client/player/Input;tick(ZF)V"),
+			method = "aiStep",
+			remap = false)
+	  private void hemomancy$useLivingTorchMovementMultiplier(Input input, boolean slowDown,
+			float slowdownMultiplier) {
+		LocalPlayer player = (LocalPlayer) (Object) this;
+		float effectiveMultiplier = player.isUsingItem()
+				&& player.getUseItem().getItem() instanceof LivingTorchItem
+				? LivingTorchBreathRules.MOVEMENT_MULTIPLIER : slowdownMultiplier;
+		input.tick(slowDown, effectiveMultiplier);
 	  }
 	}

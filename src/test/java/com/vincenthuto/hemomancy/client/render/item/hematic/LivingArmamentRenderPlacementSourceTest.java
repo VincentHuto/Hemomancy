@@ -19,15 +19,21 @@ public final class LivingArmamentRenderPlacementSourceTest {
 				"src/main/java/com/vincenthuto/hemomancy/client/render/layer/player/LivingFlailLayer.java"));
 		String torchRenderer = Files.readString(root.resolve(
 				"src/main/java/com/vincenthuto/hemomancy/client/render/item/hematic/LivingTorchItemRenderer.java"));
+		String torchPlacement = Files.readString(root.resolve(
+				"src/main/java/com/vincenthuto/hemomancy/client/render/item/hematic/LivingTorchRenderPlacement.java"));
 
 		assertContains("torch has positive upright flame placement", torchModel, "TORCH_FLAME_MIN_Y = 20.5F");
 		assertContains("torch shaft overlaps crown instead of separating", torchModel, "TORCH_SHAFT_TOP_Y = 18.0F");
-		assertContains("torch third-person render rolls flame upright", torchRenderer,
-				"THIRD_PERSON_UPRIGHT_ROLL_DEGREES = 180.0F");
-		assertContains("torch third-person render lifts out of ground", torchRenderer,
-				"THIRD_PERSON_TORCH_LIFT =0.62D");
-		assertContains("torch third-person render moves outward from the torso", torchRenderer,
-				"THIRD_PERSON_TORCH_OUTWARD_OFFSET = -0.6D");
+		assertContains("torch renderer shares placement with the visual emitter", torchRenderer,
+				"LivingTorchRenderPlacement.applyCustomModelTransform");
+		assertNotContains("torch item placement does not double-rotate the mouth pose", torchPlacement,
+				"THIRD_PERSON_MOUTH_PITCH_DEGREES");
+		assertNotContains("torch item placement leaves positive Z mouth roll to the arm", torchPlacement,
+				"THIRD_PERSON_MOUTH_ROLL_DEGREES");
+		assertContains("torch third-person render lifts to mouth height", torchPlacement,
+				"THIRD_PERSON_TORCH_LIFT = 0.14D");
+		assertContains("torch third-person render points outward from the torso", torchPlacement,
+				"THIRD_PERSON_TORCH_OUTWARD_OFFSET = 0.18D");
 		assertContains("flail handle places chain end below the grip", flailModel, "CHAIN_COLLAR_MIN_Y = 8.5F");
 		assertContains("flail physics anchor is below handle grip", flailHelper, "CHAIN_ANCHOR = new Vec3(0.0, 0.58, 0.0)");
 		assertContains("flail static bob hangs downward", flailHelper, "new Vec3(0.0, 0.62, 0.0)");

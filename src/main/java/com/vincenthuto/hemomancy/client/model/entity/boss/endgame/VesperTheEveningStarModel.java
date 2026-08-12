@@ -4,6 +4,8 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.entity.boss.endgame.VesperCombatRules;
+import com.vincenthuto.hemomancy.common.entity.boss.endgame.VesperEveningStarPresentationRules;
+import com.vincenthuto.hemomancy.common.entity.boss.endgame.VesperFlammeusBreathRules;
 import com.vincenthuto.hemomancy.common.entity.boss.endgame.VesperTheEveningStarEntity;
 import com.vincenthuto.hemomancy.common.entity.boss.endgame.VesperWeaponAction;
 import com.vincenthuto.hutoslib.client.HLClientUtils;
@@ -44,6 +46,7 @@ public class VesperTheEveningStarModel extends HierarchicalModel<VesperTheEvenin
 	private final ModelPart hood2;
 	private final ModelPart hood3;
 	private final ModelPart hood4;
+	private final ModelPart hair;
 	private final ModelPart body;
 	private final ModelPart ClothBack;
 	private final ModelPart ClothBack1;
@@ -103,6 +106,7 @@ public class VesperTheEveningStarModel extends HierarchicalModel<VesperTheEvenin
 		this.hood2 = this.hood.getChild("hood2");
 		this.hood3 = this.hood2.getChild("hood3");
 		this.hood4 = this.hood3.getChild("hood4");
+		this.hair = this.head.getChild("hair");
 		this.body = this.whole.getChild("body");
 		this.ClothBack = this.body.getChild("ClothBack");
 		this.ClothBack1 = this.ClothBack.getChild("ClothBack1");
@@ -187,6 +191,12 @@ public class VesperTheEveningStarModel extends HierarchicalModel<VesperTheEvenin
 		PartDefinition hood4 = hood3.addOrReplaceChild("hood4", CubeListBuilder.create(), PartPose.offsetAndRotation(0.0F, 0.0F, 0.0F, -0.576F, 0.0F, 0.0F));
 
 		PartDefinition Hood4_53_15_2a9435b8_r1 = hood4.addOrReplaceChild("Hood4_53_15_2a9435b8_r1", CubeListBuilder.create().texOffs(116, 106).addBox(-4.75F, -16.55F, 5.25F, 9.0F, 11.0F, 5.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(-20.0F, 0.0F, 1.0F, 0.6109F, 0.0F, 0.0F));
+
+		PartDefinition hair = head.addOrReplaceChild("hair", CubeListBuilder.create()
+				.texOffs(51, 48).addBox(-6.3F, -9.35F, -5.8F, 12.6F, 2.6F, 12.6F,
+						new CubeDeformation(0.0F))
+				.texOffs(51, 48).addBox(-6.3F, -9.25F, -5.85F, 12.6F, 4.8F, 0.7F,
+						new CubeDeformation(0.0F)), PartPose.ZERO);
 
 		PartDefinition body = whole.addOrReplaceChild("body", CubeListBuilder.create().texOffs(51, 21).addBox(-6.5062F, -4.8604F, -2.0284F, 12.0F, 20.0F, 6.0F, new CubeDeformation(0.0F))
 		.texOffs(88, 18).addBox(4.0184F, -4.3902F, -2.7784F, 2.0F, 20.0F, 8.0F, new CubeDeformation(0.0F))
@@ -338,10 +348,19 @@ public class VesperTheEveningStarModel extends HierarchicalModel<VesperTheEvenin
 		float partialTick = HLClientUtils.getPartialTicks();
         float frame = entity.tickCount + partialTick;
 		resetCombatPose();
+		this.hood.visible = VesperEveningStarPresentationRules.isHoodVisible(
+				entity.isHoodRemoved(), entity.getHoodRemovalTick());
+		this.hair.visible = entity.isHoodRemoved();
 
 		if (entity.isAwaitingAbsorption()) {
 			applyAuthoredAnimation(VesperTheEveningStarAnimations.DEFEAT,
 					entity.getDownedTicks() + partialTick);
+			return;
+		}
+		if (entity.isHoodRemovalActive()) {
+			applyAuthoredAnimation(VesperTheEveningStarAnimations.IDLE, frame);
+			applyAuthoredAnimation(VesperTheEveningStarAnimations.REMOVE_HOOD,
+					entity.getHoodRemovalTick() + partialTick);
 			return;
 		}
 
@@ -352,6 +371,12 @@ public class VesperTheEveningStarModel extends HierarchicalModel<VesperTheEvenin
 		if (!authoredAction && action == VesperWeaponAction.NONE) {
 			if (entity.isRaging()) {
 				applyAuthoredAnimation(VesperTheEveningStarAnimations.RAGE_IDLE, frame);
+			} else if (entity.getActiveTendency() == EnumBloodTendency.TENEBRIS) {
+				float stanceTick = entity.getStanceTick() + partialTick;
+				applyAuthoredAnimation(stanceTick < VesperEveningStarPresentationRules.HOOD_REMOVAL_TICKS
+						? VesperTheEveningStarAnimations.STANCE_TENEBRIS
+						: VesperTheEveningStarAnimations.IDLE_TENEBRIS,
+						stanceTick < VesperEveningStarPresentationRules.HOOD_REMOVAL_TICKS ? stanceTick : frame);
 			} else {
 				applyAuthoredAnimation(limbSwingAmount > 0.02F
 						? VesperTheEveningStarAnimations.WALK
@@ -408,6 +433,10 @@ public class VesperTheEveningStarModel extends HierarchicalModel<VesperTheEvenin
 			case SICKLE_CROSS_REND -> alternate ? VesperTheEveningStarAnimations.SICKLE_CROSS_REND_ALTERNATE
 					: VesperTheEveningStarAnimations.SICKLE_CROSS_REND;
 			case SICKLE_HOOK -> VesperTheEveningStarAnimations.SICKLE_HOOK;
+			case TWIN_REND -> alternate ? VesperTheEveningStarAnimations.TWIN_REND_ALTERNATE
+					: VesperTheEveningStarAnimations.TWIN_REND;
+			case PREDATOR_POUNCE -> alternate ? VesperTheEveningStarAnimations.PREDATOR_POUNCE_ALTERNATE
+					: VesperTheEveningStarAnimations.PREDATOR_POUNCE;
 			case SANGUINE_CRESCENTS -> alternate ? VesperTheEveningStarAnimations.SANGUINE_CRESCENTS_ALTERNATE
 					: VesperTheEveningStarAnimations.SANGUINE_CRESCENTS;
 			default -> null;
@@ -529,6 +558,18 @@ public class VesperTheEveningStarModel extends HierarchicalModel<VesperTheEvenin
 				this.rightArm.yRot = pose(this.rightArm.yRot, thrust * 0.16F, blend);
 				this.body.yRot = pose(this.body.yRot, thrust * 0.25F, blend);
 				this.body.xRot = pose(this.body.xRot, 0.08F + Math.abs(thrust) * 0.08F, blend);
+			}
+			case FLAMMEUS_CONCENTRATION -> {
+				float windup = Mth.clamp(tick / VesperFlammeusBreathRules.WINDUP_TICKS, 0.0F, 1.0F);
+				float breath = tick < VesperFlammeusBreathRules.DURATION_TICKS - 8
+						? windup : Mth.clamp((VesperFlammeusBreathRules.DURATION_TICKS - tick) / 8.0F, 0.0F, 1.0F);
+				this.body.xRot = pose(this.body.xRot, 0.18F * breath, blend);
+				this.head.xRot = pose(this.head.xRot, -0.12F * breath, blend);
+				this.rightArm.xRot = pose(this.rightArm.xRot, -1.78F * breath, blend);
+				this.rightArm.yRot = pose(this.rightArm.yRot, -0.48F * breath, blend);
+				this.rightArm.zRot = pose(this.rightArm.zRot, 0.15F * breath, blend);
+				this.rElbow.xRot = pose(this.rElbow.xRot, -0.52F * breath, blend);
+				this.leftArm.yRot = pose(this.leftArm.yRot, 0.12F * breath, blend);
 			}
 			case TWIN_REND, PREDATOR_POUNCE -> {
 				float slash = contact * variantSign;
@@ -672,7 +713,7 @@ public class VesperTheEveningStarModel extends HierarchicalModel<VesperTheEvenin
 				applyTwoHandedGrip(tendency, 0.0F, 1.0F);
 			}
 			case LUX -> { this.rightArm.xRot = -1.12F; this.leftArm.xRot = -0.32F; }
-			case TENEBRIS -> { this.body.xRot = 0.42F; this.rightArm.xRot = -0.8F; this.leftArm.xRot = -0.8F; }
+			case TENEBRIS -> { this.rightArm.xRot = -0.8F; this.leftArm.xRot = -0.8F; }
 			case DUCTILIS -> { this.rightArm.xRot = -1.15F; this.leftArm.xRot = -1.05F; }
 			case FLAMMEUS -> { this.rightArm.xRot = -1.05F; this.body.yRot = 0.14F; }
 			case CONGEATIO -> { this.rightArm.xRot = -0.85F; this.body.yRot = breathe * 1.8F; }

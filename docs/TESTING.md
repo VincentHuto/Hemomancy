@@ -44,6 +44,14 @@ The controller stores the fixture dimension with its origin. Invoking `next`, `r
 
 ## In-game scenario commands
 
+## Chamber progression and perspective checks
+
+Use `/hemo chamber theme next [player]`, `previous`, and `cycle` to preview normal themes without player-eligibility filtering; use `set <theme>` to select any registered preview, including `vesper_fight` and `mycophant_nursery`, and `reset` to clear it. The Orb of Perspective must never select either encounter theme.
+
+For a live progression pass, enter the Chamber and move through tier radii 4, 6, 8, and 10. Confirm each newly unlocked band appears in the same server tick, the previous Sporitic Crystal corners move outward without replacing blocks substituted by the player, and placement, movement clamp, item rescue, safe return, and client border all follow the same radius. Repeat a progression change outside the Chamber, then enter and confirm heartbeat/login recovery builds the missing band.
+
+Craft the Orb with `MEM / EBE / MEM` (Monolith Fragment, Echo Shard, Blood Crystal Shard). Throw it beyond the platform and below floor Y minus 3. Verify stable progression-filtered cycling, persistence after logout/reload, rejection outside the owner's cell and during both encounters, one activation per toss, inventory-first return, and a beside-owner return with normal pickup delay when inventory is full. Also test two separated player cells and logout immediately after throwing.
+
 Development client/server runs add the following operator-only commands beneath the existing `/hemo` root:
 
 ```text

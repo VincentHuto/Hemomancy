@@ -3,6 +3,8 @@ package com.vincenthuto.hemomancy.mixin.core;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.vincenthuto.hemomancy.client.morphling.MorphlingPlayerPartVisibility;
 import com.vincenthuto.hemomancy.client.rite.CardinalRiteStaffPlantingClientState;
+import com.vincenthuto.hemomancy.client.player.PlayerAnimationClientState;
+import com.vincenthuto.hemomancy.common.network.capa.harbinger.PlayerAnimationKind;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.SporiticThuribleItem;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.LivingFlailItem;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -24,7 +26,12 @@ public class MixinPlayerItemInHandLayer {
     private void hemomancy$hideHeldItemsForMorphlingReplacementParts(LivingEntity livingEntity,
             ItemStack itemStack, ItemDisplayContext displayContext, HumanoidArm arm,
             PoseStack poseStack, MultiBufferSource buffer, int packedLight, CallbackInfo ci) {
+        boolean clearBreathOffhand = PlayerAnimationClientState.isBreathing(livingEntity)
+                && ((PlayerAnimationClientState.hand(livingEntity, PlayerAnimationKind.LIVING_TORCH_BREATH)
+                        == net.minecraft.world.InteractionHand.MAIN_HAND)
+                        == (arm != livingEntity.getMainArm()));
         if (CardinalRiteStaffPlantingClientState.isAnimating(livingEntity)
+                || clearBreathOffhand
                 || MorphlingPlayerPartVisibility.shouldHideHeldItem(arm)
                 || itemStack.is(Items.SPYGLASS) && MorphlingPlayerPartVisibility.isHeadHidden()
                 || itemStack.getItem() instanceof SporiticThuribleItem

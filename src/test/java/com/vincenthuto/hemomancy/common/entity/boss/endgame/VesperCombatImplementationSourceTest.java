@@ -31,6 +31,53 @@ final class VesperCombatImplementationSourceTest {
 	}
 
 	@Test
+	void vulnerableAnchorStateIsSynchronizedLockedRenderedAndOnlyFeedbacksAcceptedHits() throws Exception {
+		String crowned = read("common/entity/boss/endgame/VesperTheCrownedRefusalEntity.java");
+		String anchor = read("common/entity/boss/endgame/VesperThroneAnchorPart.java");
+		String actions = read("common/entity/boss/endgame/EndgameBossActions.java");
+		String model = read("client/model/entity/boss/endgame/VesperTheCrownedRefusalModel.java");
+		String renderer = read("client/render/entity/boss/endgame/VesperTheCrownedRefusalRenderer.java");
+		String layer = read("client/render/layer/mob/endgame/VesperThroneAnchorLayer.java");
+		String conduit = read("client/render/tile/functional/SanguineConduitBlockRenderer.java");
+
+		assertTrue(crowned.contains("DATA_VULNERABLE_YAW"));
+		assertTrue(crowned.contains("DATA_ACTIVE_ANCHOR_DAMAGE"));
+		assertTrue(crowned.contains("DATA_ANCHOR_FLASH_TICKS"));
+		assertTrue(crowned.contains("enforceVulnerableYawLock()"));
+		for (String field : new String[] { "setYRot(yaw)", "yRotO = yaw", "setYBodyRot(yaw)",
+				"yBodyRotO = yaw", "setYHeadRot(yaw)", "yHeadRotO = yaw" }) {
+			assertTrue(crowned.contains(field), "missing vulnerable rotation lock field: " + field);
+		}
+		assertTrue(crowned.contains("goalSelector.disableControlFlag(Goal.Flag.LOOK)"));
+		assertTrue(crowned.contains("getLookControl().setLookAt"));
+		assertTrue(crowned.contains("getNavigation().stop()"));
+		assertTrue(crowned.contains("VulnerableYaw"));
+		assertTrue(crowned.contains("ActiveAnchorDamage"));
+		assertTrue(crowned.contains("VesperCombatRules.anchorCenter"));
+		assertTrue(anchor.contains("ANCHOR_HITBOX_WIDTH"));
+		assertTrue(anchor.contains("ANCHOR_HITBOX_HEIGHT"));
+		assertTrue(actions.contains("hitThroneAnchor"));
+		assertTrue(actions.contains("SoundEvents.IRON_GOLEM_DAMAGE"));
+		assertTrue(actions.contains("VesperVisualEffects.bloodCells"));
+		assertTrue(actions.contains("VesperVisualEffects.darkGlow"));
+		assertTrue(actions.contains("VesperVisualEffects.lightning"));
+		assertTrue(renderer.contains("new VesperThroneAnchorLayer(this)"));
+		assertTrue(layer.contains("SanguineConduitCoreGeometry.render"));
+		assertTrue(conduit.contains("SanguineConduitCoreGeometry.render"));
+		assertTrue(model.contains("if (entity.getActiveAnchor() < 0)"));
+	}
+
+	@Test
+	void allBoundPuppetThreadsUseTheSharedInterpolatedTorsoEndpoint() throws Exception {
+		String threads = read("client/render/world/PuppeteerThreadRenderer.java");
+		assertTrue(threads.contains("PuppeteerThreadEndpointRules.summonEndpoint"));
+		assertTrue(threads.contains("entity instanceof BoundPuppeteerSummon bound"));
+		assertTrue(threads.contains("controller instanceof Player owner"));
+		assertTrue(threads.contains("VesperTheCrownedRefusalEntity"));
+		assertFalse(threads.contains("SUMMON_ANCHOR_SCALE"));
+	}
+
+	@Test
 	void eveningStarRendersEightTendenciesAndRealLivingWeapons() throws Exception {
 		String evening = read("common/entity/boss/endgame/VesperTheEveningStarEntity.java");
 		String renderer = read("client/render/entity/boss/endgame/VesperTheEveningStarRenderer.java");
@@ -123,7 +170,7 @@ final class VesperCombatImplementationSourceTest {
 		String animations = read("client/model/entity/boss/endgame/VesperTheCrownedRefusalAnimations.java");
 		assertTrue(model.contains("VesperTheCrownedRefusalAnimations.VULNERABLE"));
 		assertTrue(animations.contains("KeyframeAnimations.posVec(0.0F, -7.0F, 0.0F)"));
-		assertTrue(animations.contains("KeyframeAnimations.degreeVec(18.3346F, 0.0F, 0.0F)"));
+		assertTrue(animations.contains("KeyframeAnimations.degreeVec(18.33465F, 0.0F, 0.0F)"));
 	}
 
 	@Test

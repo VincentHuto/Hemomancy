@@ -81,8 +81,8 @@ public final class EndgameBossRewardResourceTest {
 				"new VesperEveningStarLinesLayer(this)");
 		assertNotContains("Crowned Refusal phase does not use the Evening Star glow layer", crownedRefusalRenderer,
 				"VesperEveningStarLinesLayer");
-		assertContains("Evening Star glow layer only renders at half health", vesperLinesLayer,
-				"entity.getHealth() > entity.getMaxHealth() * 0.5F");
+		assertContains("Evening Star glow layer delegates its threshold to the shared presentation rules", vesperLinesLayer,
+				"VesperEveningStarPresentationRules.shouldRenderRedLines(");
 		assertContains("Tendril layer is registered for player skins", layerEvents,
 				"new MycophantTendrilFungalizationLayer");
 		assertContains("Charm layer renders the equipped charm stack", charmLayer,

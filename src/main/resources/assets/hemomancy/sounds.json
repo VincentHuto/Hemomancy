@@ -1,4 +1,9 @@
 {
+  "item.living_torch.breath_loop": {
+    "category": "player",
+    "subtitle": "subtitle.hemomancy.item.living_torch.breath_loop",
+    "sounds": [{"name": "hemomancy:entity/vesper/ambient", "pitch": 0.82, "volume": 0.72}]
+  },
   "entity.abhorent_thought.ambient": {
     "category": "entity",
     "subtitle": "subtitle.hemomancy.entity.abhorent_thought.ambient",
@@ -974,6 +979,41 @@
       "hemomancy:entity/vesper/hit"
     ],
     "subtitle": "subtitle.hemomancy.entity.vesper.hit"
+  },
+  "entity.vesper.scute_launch": {
+    "category": "entity",
+    "sounds": [{"name": "hemomancy:entity/vesper/hit", "pitch": 1.45, "volume": 1.15}],
+    "subtitle": "subtitle.hemomancy.entity.vesper.scute_launch"
+  },
+  "entity.vesper.carapace_reform": {
+    "category": "entity",
+    "sounds": [{"name": "hemomancy:entity/vesper/hurt", "pitch": 0.58, "volume": 0.9}],
+    "subtitle": "subtitle.hemomancy.entity.vesper.carapace_reform"
+  },
+  "entity.vesper.grab_telegraph": {
+    "category": "entity",
+    "sounds": [{"name": "hemomancy:entity/vesper/ambient", "pitch": 0.72, "volume": 0.85}],
+    "subtitle": "subtitle.hemomancy.entity.vesper.grab_telegraph"
+  },
+  "entity.vesper.grab_bite": {
+    "category": "entity",
+    "sounds": [{"name": "hemomancy:entity/vesper/hit", "pitch": 0.68, "volume": 1.0}],
+    "subtitle": "subtitle.hemomancy.entity.vesper.grab_bite"
+  },
+  "entity.vesper.grab_pierce": {
+    "category": "entity",
+    "sounds": [{"name": "hemomancy:entity/vesper/hit", "pitch": 1.18, "volume": 1.2}],
+    "subtitle": "subtitle.hemomancy.entity.vesper.grab_pierce"
+  },
+  "entity.vesper.grab_release": {
+    "category": "entity",
+    "sounds": [{"name": "hemomancy:entity/vesper/hurt", "pitch": 1.3, "volume": 0.9}],
+    "subtitle": "subtitle.hemomancy.entity.vesper.grab_release"
+  },
+  "entity.vesper.hood_remove": {
+    "category": "entity",
+    "sounds": [{"name": "hemomancy:entity/vesper/hurt", "pitch": 0.82, "volume": 0.9}],
+    "subtitle": "subtitle.hemomancy.entity.vesper.hood_remove"
   },
   "entity.vesper.music": {
     "category": "record",

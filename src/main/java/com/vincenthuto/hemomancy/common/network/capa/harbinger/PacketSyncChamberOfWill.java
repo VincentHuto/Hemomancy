@@ -42,6 +42,22 @@ public class PacketSyncChamberOfWill implements CustomPacketPayload {
 		ctx.enqueueWork(() -> ChamberOfWillClientData.set(msg.skyTheme, msg.tier, msg.radius, msg.qliphothPomesConsumed));
 	}
 
+	public ResourceLocation skyTheme() {
+		return skyTheme;
+	}
+
+	public int tier() {
+		return tier;
+	}
+
+	public int radius() {
+		return radius;
+	}
+
+	public int qliphothPomesConsumed() {
+		return qliphothPomesConsumed;
+	}
+
 	@Override
 	public Type<? extends CustomPacketPayload> type() {
 		return TYPE;

@@ -1,0 +1,22 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "MEM",
+    "EBE",
+    "MEM"
+  ],
+  "key": {
+    "M": {
+      "item": "hemomancy:monolith_fragment"
+    },
+    "E": {
+      "item": "minecraft:echo_shard"
+    },
+    "B": {
+      "item": "hemomancy:blood_crystal_shard"
+    }
+  },
+  "result": {
+    "id": "hemomancy:orb_of_perspective"
+  }
+}

@@ -2,10 +2,13 @@ package com.vincenthuto.hemomancy.common.entity.boss.endgame;
 
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.entity.projectile.BloodBoltEntity;
+import com.vincenthuto.hemomancy.common.damage.HemoDamageTypes;
 import com.vincenthuto.hemomancy.common.entity.projectile.LivingSickleHookEntity;
 import com.vincenthuto.hemomancy.common.entity.summon.EntityIronPillar;
 import com.vincenthuto.hemomancy.common.entity.summon.EntityIronSpike;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
+import com.vincenthuto.hemomancy.common.init.SoundInit;
+import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.LivingTorchBreathRules;
 import com.vincenthuto.hemomancy.common.init.ManipulationInit;
 import com.vincenthuto.hemomancy.common.init.EffectInit;
 import com.vincenthuto.hemomancy.common.init.EntityInit;
@@ -108,6 +111,10 @@ public final class VesperPhaseTwoCombat {
 		cancelInternal(boss, false);
 	}
 
+	public static void cancelForHoodRemoval(VesperTheEveningStarEntity boss) {
+		cancelInternal(boss, true);
+	}
+
 	private static void cancelInternal(VesperTheEveningStarEntity boss, boolean clearWeaponAction) {
 		if (clearWeaponAction) boss.clearWeaponAction();
 		boss.setActionCooldown(0);
@@ -154,6 +161,7 @@ public final class VesperPhaseTwoCombat {
 			case STORM_LOCK -> stormLock(boss, target, tick);
 			case BRANDING_THRUSTS -> brandingThrusts(boss, target, tick);
 			case UPDRAFT_IMPALEMENT -> updraftImpalement(boss, target, tick);
+			case FLAMMEUS_CONCENTRATION -> flammeusConcentration(boss, target, tick);
 			case CHAIN_SWEEP -> chainSweep(boss, target, tick);
 			case HOOK_AND_CRUSH -> hookAndCrush(boss, target, tick);
 			case MAGNETIC_AXIS -> magneticAxis(boss, target, tick);
@@ -259,6 +267,51 @@ public final class VesperPhaseTwoCombat {
 		}
 		if (tick == 22) boss.setDeltaMovement(0.0D, -0.8D, 0.0D);
 		if (tick == 24) hitLine(boss, target, 4.0D, 1.1D, 5.0F, 1);
+	}
+
+	private static void flammeusConcentration(VesperTheEveningStarEntity boss, LivingEntity target, int tick) {
+		stopHorizontal(boss);
+		if (tick == 1) boss.playSound(SoundEvents.FIRECHARGE_USE, 1.25F, 0.62F);
+		if (tick == VesperFlammeusBreathRules.WINDUP_TICKS) {
+			boss.playSound(SoundInit.ITEM_LIVING_TORCH_BREATH_LOOP.get(), 1.05F, 0.72F);
+		}
+		flammeusBreathEffect(boss, tick);
+		if (!VesperFlammeusBreathRules.isDamagePulse(tick)) return;
+		Vec3 origin = boss.getEyePosition();
+		Vec3 look = boss.getLookAngle().normalize();
+		AABB bounds = new AABB(origin, origin).inflate(LivingTorchBreathRules.RANGE);
+		for (LivingEntity candidate : boss.level().getEntitiesOfClass(LivingEntity.class, bounds,
+				entity -> entity instanceof net.minecraft.world.entity.player.Player player
+						&& !player.isCreative() && !player.isSpectator()
+						&& entity.isAlive() && entity != boss && boss.canAttack(entity)
+						&& !entity.isAlliedTo(boss) && !boss.isAlliedTo(entity))) {
+			Vec3 aim = candidate.getBoundingBox().getCenter();
+			if (!LivingTorchBreathRules.isInsideCone(origin.x, origin.y, origin.z,
+					look.x, look.y, look.z, aim.x, aim.y, aim.z)
+					|| !LivingTorchBreathRules.canHitCandidate(boss.hasLineOfSight(candidate), true, false)) continue;
+			if (candidate.hurt(HemoDamageTypes.livingTorchBreath(boss.level(), boss),
+					LivingTorchBreathRules.DAMAGE_PER_PULSE)) {
+				CrimsonFireHelper.igniteCrimson(candidate, 4);
+			}
+		}
+	}
+
+	private static void flammeusBreathEffect(VesperTheEveningStarEntity boss, int tick) {
+		if (!(boss.level() instanceof ServerLevel server) || tick < VesperFlammeusBreathRules.WINDUP_TICKS
+				|| tick > VesperFlammeusBreathRules.LAST_DAMAGE_TICK) return;
+		Vec3 direction = boss.getLookAngle().normalize();
+		Vec3 origin = boss.getEyePosition().add(direction.scale(0.55D));
+		for (int i = 0; i < 6; i++) {
+			double distance = 0.65D + i * 1.05D;
+			Vec3 point = origin.add(direction.scale(distance));
+			VesperVisualEffects.embers(server, point,
+					i % 2 == 0 ? VesperVisualEffects.BLOOD : VesperVisualEffects.BLACK,
+					2, distance * 0.04D, distance * 0.03D, distance * 0.04D, 0.02D, 0.13F, 8);
+			VesperVisualEffects.darkGlow(server, point, VesperVisualEffects.BLACK,
+					1, distance * 0.025D, distance * 0.02D, distance * 0.025D, 0.0D);
+			if ((i & 1) == 0) VesperVisualEffects.bloodCells(server, point, VesperVisualEffects.BLOOD,
+					1, 0.03D, 0.03D, 0.03D, 0.01D);
+		}
 	}
 
 	private static void chainSweep(VesperTheEveningStarEntity boss, LivingEntity target, int tick) {

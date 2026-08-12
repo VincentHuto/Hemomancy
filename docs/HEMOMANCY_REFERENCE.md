@@ -641,10 +641,12 @@ The Chamber of Will is not the Fungal Dimension. It is a stable psychic/vascular
 - Localized name: `The Chamber of Will`
 
 **Room growth and bounds:**
-- `ChamberOfWillManager` stores per-player chamber ids, return points, tier, and sky theme in overworld SavedData.
+- `ChamberOfWillManager` stores per-player chamber ids, return points, tier, sky theme, theme override, and highest physically built radius in overworld SavedData.
 - Tier 0 starts at a 9x9 floor (`BASE_ROOM_RADIUS = 4`).
-- Each later tier adds 2 blocks of radius, currently capped at tier 3.
-- Room generation, placement bounds, movement clamping, void rescue, dropped-item recovery, and border aura sizing read the owner's current radius rather than a hardcoded room size.
+- Tier 1 is 13x13 (radius 6), tier 2 is 17x17 (radius 8), and tier 3 is 21x21 (radius 10).
+- Progression refresh returns explicit tier/radius/theme changes. A radius increase while the owner is inside grows and synchronizes in that server tick; the 40-tick pass remains recovery for login, reload, missed events, and external edits.
+- Expansion places only previously locked floor bands into air, leaves player blocks and fluids untouched, removes an old corner marker only while it is still the manager's Sporitic Crystal, and relocates the four markers to the expanded boundary. Physical floor growth is monotonic even if progression is later reduced for debugging.
+- Room generation, placement bounds, movement clamping, safe return search, void rescue, dropped-item recovery, packet radius, and border aura sizing read the owner's current authoritative radius rather than separate hardcoded sizes.
 - V1 is caster-only. Future rites that pull nearby players or mobs into the caster's chamber should build on an explicit owner/guest model instead of reusing the caster-only assumptions.
 
 **Dynamic sky themes:**
@@ -653,13 +655,15 @@ The sky renderer now reads a `ChamberSkyTheme` through `ChamberSkyThemeRegistry`
 | Progression State | Theme ID | Room Tier |
 |---|---:|---:|
 | Degree 6 | `hemomancy:will_default` | 0 |
-| First cerebral scar, major Mnemonist quest, or Degree 7 approach | `hemomancy:mnemonic_lowtide` | 1 |
+| Degree 6 plus the Vein-Mason first-effigy loadout | `hemomancy:mnemonic_lowtide` | 1 |
 | Degree 7 before Qliphoth Communion | `hemomancy:archon_revelation` | 1 |
 | Active owned Qliphoth Bloom, Qliphoth pome progress, or Communion complete | `hemomancy:qliphoth_communion` | 2 |
 | Silent Archon path | `hemomancy:silent_archon` | 2 |
 | Degree 8 / Apotheos | `hemomancy:apotheos` | 3 |
 
 The active state syncs to the client through `PacketSyncChamberOfWill`; missing or invalid theme ids fall back to `will_default`.
+
+The reusable **Orb of Perspective** is crafted as `MEM / EBE / MEM`, where `M` is a Monolith Fragment, `E` is an Echo Shard, and `B` is a Blood Crystal Shard. Throwing the owner-bound, nonstacking Orb beyond the platform and below the Chamber floor cycles forward through only the owner's earned normal themes in the table order above. `vesper_fight` and `mycophant_nursery` are never Orb choices. The chosen override persists through reload; an ordinary override that is no longer eligible is cleared back to progression. Active Vesper or Mycophant ordeals reject the change, and every accepted or rejected activation returns the same component-bearing stack to inventory or, if full, beside the owner with normal pickup delay.
 
 The Degree 8 / Apotheos slot now has its dedicated Chamber treatment with an **APOTHEOS floor funnel**, **APOTHEOS wall membrane**, and **APOTHEOS ceiling mass**. It still selects `hemomancy:apotheos` and keeps tier 3 room growth/debug override support, but the theme uses a dedicated `ApotheosChamberEffects` strategy instead of the previous empty renderer. The floor pass is renderer-only: a black/red procedural aperture below the refuge, built from a skybox-space annular funnel mesh and shader-driven concentric bands that expand outward from a dark center, suggesting the player has ascended through the Qliphoth black-hole endpoint. The wall pass is also renderer-only: a cylindrical dark blue-black fibrous membrane just outside the portal rim, with prominent rib/tendril side framing, thin connecting web ribbons, subtle pale pink-blue scratch traces, and a low red glow near the floor transition that fades upward into the ceiling handoff. The ceiling mass is renderer-only too: a rotating red/purple organic dome-bowl above the refuge, with procedural black/white tendril traces, deterministic hanging ribbon tendrils, yellow light-bloom treatment, yellow/green orb billboards, and a continuous glowing red rim anchored to the rendered wall-top handoff rather than physical blocks. The Apotheos treatment intentionally adds no collision, hazard, real dynamic light, packets, block placement, terrain, or reachable chamber structure, and the theme still disables the shared vascular/neural overlay layers, clouds, nebula, and membrane pulse.
 
@@ -669,9 +673,9 @@ The Qliphoth Communion sky uses dedicated dark red-purple-blue sky and mist text
 
 The Silent Archon sky theme is visually distinct from the vascular/neural Chamber baseline: it uses cold gray noise/cloud textures, disables the biological overlay layers, and renders scattered black monolith pillars from the void toward the sky using the fog-aware Monolith surface shader family so distance still softens their depth. A Silent Archon-only depth pass now adds broad tilted storm-cloud strata, simpler distant monolith silhouettes behind the foreground pillars, and a lower stacked cloud deck. The Chamber dimension effects also tint Silent Archon fog toward pale blue-green, while visible pillar-base occlusion is handled by a dedicated procedural foreground storm-cloud bank built from many small layered cells, so nearby monolith bases are swallowed by thick storm masses rather than merely darkened by haze or crossed by flat wisps.
 
-For visual testing, op/debug commands can override a player's chamber sky without changing their progression tier: `/hemo chamber theme cycle [player]`, `/hemo chamber theme next [player]`, `/hemo chamber theme previous [player]`, `/hemo chamber theme set <theme> [player]`, and `/hemo chamber theme reset [player]`. `reset` clears the override and returns the player to the progression-selected theme. Fight environments are separately command-selectable previews: `vesper_fight` and `mycophant_nursery`; each owns an independent effects module, while an active ordeal takes priority over ordinary chamber overrides.
+For visual testing, op/debug commands can override a player's chamber sky without changing their progression tier: `/hemo chamber theme cycle [player]`, `/hemo chamber theme next [player]`, `/hemo chamber theme previous [player]`, `/hemo chamber theme set <theme> [player]`, and `/hemo chamber theme reset [player]`. Command cycling ignores player eligibility across the normal theme list; `set` also exposes the two encounter previews. The Orb is the progression-filtered player path. `reset` clears the override and returns the player to the progression-selected theme. Fight environments are separately command-selectable previews: `vesper_fight` and `mycophant_nursery`; each owns an independent effects module, while an active ordeal takes priority over ordinary chamber overrides.
 
-> **Status: Implemented.** Core rename, dimension ids, SavedData, Degree 6 rite, caster-only enter/return travel, tier-radius room growth, radius-based safety checks, client sync, and dynamic sky-theme registry are implemented. Future work is the owner/guest rite that pulls nearby players and mobs into the caster's chamber, plus deeper chamber-specific recovery, memory, scar, or bloodline features.
+> **Status: Implemented.** Core rename, dimension ids, SavedData, Degree 6 rite, caster-only enter/return travel, reliable same-tick monotonic tier-radius growth, radius-based safety checks, client sync, dynamic sky-theme registry, and the Orb of Perspective are implemented. The owner/guest and later Chamber rites remain deferred; this pass does not implement them.
 
 ### 5.8 The Saints System (Degree 3–4)
 

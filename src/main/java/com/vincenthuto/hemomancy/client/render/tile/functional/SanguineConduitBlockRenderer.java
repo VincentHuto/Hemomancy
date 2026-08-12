@@ -2,6 +2,7 @@ package com.vincenthuto.hemomancy.client.render.tile.functional;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import com.vincenthuto.hemomancy.client.render.geometry.SanguineConduitCoreGeometry;
 import com.vincenthuto.hemomancy.common.init.RenderTypeInit;
 import com.vincenthuto.hemomancy.common.tile.functional.SanguineConduitBlockEntity;
 import net.minecraft.client.Minecraft;
@@ -21,23 +22,11 @@ import org.joml.Matrix4f;
 public class SanguineConduitBlockRenderer implements BlockEntityRenderer<SanguineConduitBlockEntity> {
 
 	// ── Central orb ──
-	private static final int LAT_BANDS = 16;
-	private static final int LON_BANDS = 24;
-	private static final float BASE_RADIUS = 0.15f;
-	private static final float GLOW_EXTRA = 0.04f;
-
-	private static final float A1 = 0.08f;
-	private static final double N1 = 3.0;
-	private static final double W1 = 0.06;
-	private static final float A2 = 0.018f;
-	private static final double N2 = 7.0;
-	private static final double W2 = 0.3;
-	private static final float A3 = 0.020f;
-	private static final double W3 = 0.3;
-
-	private static final float PULSE_BASE = 2f;
-	private static final float PULSE_AMP = 0.12f;
-	private static final double PULSE_SPEED = 0.08;
+	private static final SanguineConduitCoreGeometry.Style CORE_STYLE =
+			new SanguineConduitCoreGeometry.Style(0.15F, 0.04F, 2.0F, 0.12F,
+					0.08F, 1.0F, 0.0F,
+					new SanguineConduitCoreGeometry.Color(0.85F, 0.04F, 0.04F, 0.82F),
+					new SanguineConduitCoreGeometry.Color(0.60F, 0.02F, 0.02F, 0.26F));
 
 	// ── Expanding ring-wave pulses ──
 	private static final int RING_SEGMENTS = 72;
@@ -83,17 +72,7 @@ public class SanguineConduitBlockRenderer implements BlockEntityRenderer<Sanguin
 	private static void renderCentralCore(PoseStack poseStack, MultiBufferSource buffer, double time, float phaseRadians) {
 		poseStack.pushPose();
 		poseStack.translate(0.5, 0.53, 0.5);
-
-		float pulseSin = (float) Math.sin(time * PULSE_SPEED + phaseRadians);
-		float pulse = PULSE_BASE + PULSE_AMP * pulseSin;
-		Matrix4f mat = poseStack.last().pose();
-		VertexConsumer vc = buffer.getBuffer(RenderTypeInit.RITE_BOUNDARY_GLOW);
-
-		renderSphere(vc, mat, BASE_RADIUS * pulse, time, phaseRadians,
-				CORE_R, CORE_G, CORE_B, 0.82f * (0.85f + 0.15f * pulseSin));
-		renderSphere(vc, mat, (BASE_RADIUS + GLOW_EXTRA) * pulse, time, phaseRadians,
-				GLOW_R, GLOW_G, GLOW_B, 0.26f * (0.80f + 0.20f * pulseSin));
-
+		SanguineConduitCoreGeometry.render(poseStack, buffer, time, phaseRadians, CORE_STYLE);
 		poseStack.popPose();
 	}
 
@@ -184,49 +163,6 @@ public class SanguineConduitBlockRenderer implements BlockEntityRenderer<Sanguin
 		double w1 = Math.sin(angle * 6.0 + time * 0.05 + ring * 1.9 + phaseOffset * Math.PI * 2.0) * 0.055;
 		double w2 = Math.sin(angle * 13.0 - time * 0.09 - ring * 0.8 + phaseOffset * 3.0) * 0.020;
 		double w3 = Math.sin(time * 0.04 + ring * 0.7) * 0.012;
-		return (float) (w1 + w2 + w3);
-	}
-
-	private static void renderSphere(VertexConsumer vc, Matrix4f mat,
-			float baseRadius, double time, float phaseRadians,
-			float r, float g, float b, float a) {
-		for (int lat = 0; lat < LAT_BANDS; lat++) {
-			double theta0 = Math.PI * lat / LAT_BANDS;
-			double theta1 = Math.PI * (lat + 1) / LAT_BANDS;
-			double sinT0 = Math.sin(theta0), cosT0 = Math.cos(theta0);
-			double sinT1 = Math.sin(theta1), cosT1 = Math.cos(theta1);
-
-			for (int lon = 0; lon < LON_BANDS; lon++) {
-				double phi0 = 2.0 * Math.PI * lon / LON_BANDS;
-				double phi1 = 2.0 * Math.PI * (lon + 1) / LON_BANDS;
-				double cosP0 = Math.cos(phi0), sinP0 = Math.sin(phi0);
-				double cosP1 = Math.cos(phi1), sinP1 = Math.sin(phi1);
-
-				float r00 = baseRadius + undulation(theta0, phi0, time, phaseRadians);
-				float r10 = baseRadius + undulation(theta1, phi0, time, phaseRadians);
-				float r11 = baseRadius + undulation(theta1, phi1, time, phaseRadians);
-				float r01 = baseRadius + undulation(theta0, phi1, time, phaseRadians);
-
-				vc.addVertex(mat,
-						(float) (sinT0 * cosP0) * r00, (float) cosT0 * r00, (float) (sinT0 * sinP0) * r00)
-						.setColor(r, g, b, a);
-				vc.addVertex(mat,
-						(float) (sinT1 * cosP0) * r10, (float) cosT1 * r10, (float) (sinT1 * sinP0) * r10)
-						.setColor(r, g, b, a);
-				vc.addVertex(mat,
-						(float) (sinT1 * cosP1) * r11, (float) cosT1 * r11, (float) (sinT1 * sinP1) * r11)
-						.setColor(r, g, b, a);
-				vc.addVertex(mat,
-						(float) (sinT0 * cosP1) * r01, (float) cosT0 * r01, (float) (sinT0 * sinP1) * r01)
-						.setColor(r, g, b, a);
-			}
-		}
-	}
-
-	private static float undulation(double theta, double phi, double time, float phaseRadians) {
-		double w1 = A1 * Math.sin(N1 * theta + W1 * time + phaseRadians);
-		double w2 = A2 * Math.cos(N2 * phi + W2 * time);
-		double w3 = A3 * Math.sin(W3 * time);
 		return (float) (w1 + w2 + w3);
 	}
 

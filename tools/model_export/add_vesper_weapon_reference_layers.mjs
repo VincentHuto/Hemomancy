@@ -270,7 +270,7 @@ const animationSnapshot = JSON.stringify(model.animations);
 stripExistingReferences(model);
 
 for (const side of ["RIGHT", "LEFT"]) {
-  const elbowName = side === "RIGHT" ? "rElbow" : "lElbow";
+  const elbowName = side === "RIGHT" ? "rElbow" : "rElbow2";
   const elbow = model.groups.find(group => group.name === elbowName);
   const elbowNode = findOutlinerNode(model.outliner, elbow.uuid);
   if (!elbowNode) throw new Error(`Could not find ${elbowName} in the outliner`);

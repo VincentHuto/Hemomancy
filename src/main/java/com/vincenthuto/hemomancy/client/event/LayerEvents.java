@@ -354,6 +354,7 @@ public class LayerEvents {
 			livingRenderer.addLayer(new BloodGourdLayer<>(livingRenderer));
 			livingRenderer.addLayer(new BloodAvatarLayer(livingRenderer));
 			livingRenderer.addLayer(new CellHandLayer(livingRenderer));
+			livingRenderer.addLayer(new LivingTorchBreathLayer(livingRenderer));
 			livingRenderer.addLayer(new RenderScarsLayer(livingRenderer));
 			livingRenderer.addLayer(new VascCharmLayer(livingRenderer));
 			livingRenderer.addLayer(new FungalElytraLayer(livingRenderer));

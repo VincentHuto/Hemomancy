@@ -62,6 +62,14 @@ public class VesperTheEveningStarEntity extends Monster {
 			VesperTheEveningStarEntity.class, EntityDataSerializers.BOOLEAN);
 	private static final EntityDataAccessor<Integer> DATA_AWAKENING_TICK = SynchedEntityData.defineId(
 			VesperTheEveningStarEntity.class, EntityDataSerializers.INT);
+	private static final EntityDataAccessor<Boolean> DATA_HOOD_REMOVED = SynchedEntityData.defineId(
+			VesperTheEveningStarEntity.class, EntityDataSerializers.BOOLEAN);
+	private static final EntityDataAccessor<Integer> DATA_HOOD_REMOVAL_TICK = SynchedEntityData.defineId(
+			VesperTheEveningStarEntity.class, EntityDataSerializers.INT);
+	private static final EntityDataAccessor<Integer> DATA_DEFEAT_ABSORPTION_PROGRESS = SynchedEntityData.defineId(
+			VesperTheEveningStarEntity.class, EntityDataSerializers.INT);
+	private static final EntityDataAccessor<Integer> DATA_FINAL_COLLAPSE_TICK = SynchedEntityData.defineId(
+			VesperTheEveningStarEntity.class, EntityDataSerializers.INT);
 
     private int deathTicks;
 	private long tendencySeed;
@@ -69,7 +77,6 @@ public class VesperTheEveningStarEntity extends Monster {
 	private UUID ordealOwner;
 	private long bloomOrigin;
 	private boolean ordealResolved;
-	private float defeatAbsorptionProgress;
 	private VesperWeaponAction lastWeaponAction = VesperWeaponAction.NONE;
 	private Vec3 lockedActionAim = Vec3.ZERO;
 	private Vec3 lockedActionOrigin = Vec3.ZERO;
@@ -99,6 +106,10 @@ public class VesperTheEveningStarEntity extends Monster {
 		builder.define(DATA_ACTION_VARIANT, 0);
 		builder.define(DATA_RAGING, false);
 		builder.define(DATA_AWAKENING_TICK, -1);
+		builder.define(DATA_HOOD_REMOVED, false);
+		builder.define(DATA_HOOD_REMOVAL_TICK, -1);
+		builder.define(DATA_DEFEAT_ABSORPTION_PROGRESS, 0);
+		builder.define(DATA_FINAL_COLLAPSE_TICK, 0);
 	}
 
 	@Override
@@ -143,9 +154,25 @@ public class VesperTheEveningStarEntity extends Monster {
 				entityData.set(DATA_DOWNED_TICKS, downedTicks);
 				EndgameBossActions.tickVesperDefeat(this, downedTicks);
 				if (downedTicks == VesperCombatRules.DEFEAT_ANIMATION_TICKS) clearWeaponAction();
-				this.bossEvent.setProgress(1.0F - defeatAbsorptionProgress
+				this.bossEvent.setProgress(1.0F - getDefeatAbsorptionProgress()
 						/ VesperCombatRules.DEFEAT_ABSORPTION_REQUIRED);
 				this.setDeltaMovement(0.0D, this.getDeltaMovement().y, 0.0D);
+				if (VesperCombatRules.isDefeatAbsorptionComplete(getDefeatAbsorptionProgress())) {
+					int collapseTick = getFinalCollapseTick() + 1;
+					entityData.set(DATA_FINAL_COLLAPSE_TICK, collapseTick);
+					EndgameBossActions.tickVesperBloodAbsorption(this, getDefeatAbsorptionProgress(), collapseTick);
+					if (VesperEveningStarPresentationRules.isFinalCollapseComplete(collapseTick)) {
+						completeBloodAbsorption();
+					}
+				} else if (getDefeatAbsorptionProgress() > 0) {
+					EndgameBossActions.tickVesperBloodAbsorption(this, getDefeatAbsorptionProgress(), 0);
+				}
+			} else if (isHoodRemovalActive()) {
+				this.bossEvent.setProgress(this.getHealth() / this.getMaxHealth());
+				tickHoodRemoval();
+			} else if (VesperEveningStarPresentationRules.shouldBeginHoodRemoval(
+					isHoodRemoved(), getHealth(), getMaxHealth())) {
+				beginHoodRemoval();
 			} else {
 				this.bossEvent.setProgress(this.getHealth() / this.getMaxHealth());
 				tickTendencyCombat();
@@ -156,7 +183,7 @@ public class VesperTheEveningStarEntity extends Monster {
     @Override
     public void tick() {
         super.tick();
-		if (!isAwaitingAbsorption() && !isAwakening()) EndgameBossActions.tickVesperClientParticles(this);
+		if (!isAwakening()) EndgameBossActions.tickVesperClientParticles(this);
     }
 
     @Override
@@ -195,7 +222,10 @@ public class VesperTheEveningStarEntity extends Monster {
 		tag.putInt("ActiveTendency", getActiveTendency().ordinal());
 		tag.putBoolean("AwaitingBloodAbsorption", isAwaitingAbsorption());
 		tag.putInt("DownedTicks", getDownedTicks());
-		tag.putFloat("DefeatAbsorptionProgress", defeatAbsorptionProgress);
+		tag.putBoolean("HoodRemoved", isHoodRemoved());
+		tag.putInt("HoodRemovalTick", getHoodRemovalTick());
+		tag.putInt("DefeatAbsorptionProgress", (int) getDefeatAbsorptionProgress());
+		tag.putInt("FinalCollapseTick", getFinalCollapseTick());
 		tag.putInt("WeaponAction", getWeaponAction().ordinal());
 		tag.putInt("WeaponActionTick", getActionTick());
 		tag.putInt("WeaponActionVariant", getActionVariant());
@@ -224,7 +254,12 @@ public class VesperTheEveningStarEntity extends Monster {
 		entityData.set(DATA_TENDENCY, Math.max(0, Math.min(EnumBloodTendency.values().length - 1, tendency)));
 		entityData.set(DATA_AWAITING_ABSORPTION, tag.getBoolean("AwaitingBloodAbsorption"));
 		entityData.set(DATA_DOWNED_TICKS, tag.getInt("DownedTicks"));
-		defeatAbsorptionProgress = tag.getFloat("DefeatAbsorptionProgress");
+		entityData.set(DATA_HOOD_REMOVED, tag.getBoolean("HoodRemoved"));
+		entityData.set(DATA_HOOD_REMOVAL_TICK, tag.contains("HoodRemovalTick")
+				? tag.getInt("HoodRemovalTick") : -1);
+		entityData.set(DATA_DEFEAT_ABSORPTION_PROGRESS, Mth.clamp(
+				tag.getInt("DefeatAbsorptionProgress"), 0, (int) VesperCombatRules.DEFEAT_ABSORPTION_REQUIRED));
+		entityData.set(DATA_FINAL_COLLAPSE_TICK, Math.max(0, tag.getInt("FinalCollapseTick")));
 		entityData.set(DATA_WEAPON_ACTION, safeActionOrdinal(tag.getInt("WeaponAction")));
 		entityData.set(DATA_ACTION_TICK, tag.getInt("WeaponActionTick"));
 		entityData.set(DATA_ACTION_VARIANT, tag.getInt("WeaponActionVariant"));
@@ -248,6 +283,10 @@ public class VesperTheEveningStarEntity extends Monster {
 	protected void actuallyHurt(DamageSource source, float amount) {
 		if (isAwaitingAbsorption() || isAwakening()) return;
 		super.actuallyHurt(source, amount);
+		if (!level().isClientSide && VesperEveningStarPresentationRules.shouldBeginHoodRemoval(
+				isHoodRemoved(), getHealth(), getMaxHealth())) {
+			beginHoodRemoval();
+		}
 		if (!level().isClientSide && getHealth() <= 0.0F) {
 			setHealth(1.0F);
 			enterAwaitingAbsorption();
@@ -319,6 +358,13 @@ public class VesperTheEveningStarEntity extends Monster {
 	public boolean isRaging() { return entityData.get(DATA_RAGING); }
 	public boolean isAwakening() { return getAwakeningTick() >= 0; }
 	public int getAwakeningTick() { return entityData.get(DATA_AWAKENING_TICK); }
+	public boolean isHoodRemoved() { return entityData.get(DATA_HOOD_REMOVED); }
+	public int getHoodRemovalTick() { return entityData.get(DATA_HOOD_REMOVAL_TICK); }
+	public boolean isHoodRemovalActive() {
+		return VesperEveningStarPresentationRules.isHoodRemovalActive(isHoodRemoved(), getHoodRemovalTick());
+	}
+	public float getDefeatAbsorptionProgress() { return entityData.get(DATA_DEFEAT_ABSORPTION_PROGRESS); }
+	public int getFinalCollapseTick() { return entityData.get(DATA_FINAL_COLLAPSE_TICK); }
 	public float getAwakeningFrame(float partialTick) {
 		return isAwakening() ? getAwakeningTick() + partialTick
 				: VesperPhaseTransitionRules.AWAKENING_TOTAL_TICKS;
@@ -380,6 +426,7 @@ public class VesperTheEveningStarEntity extends Monster {
 	}
 
 	public boolean canBeAbsorbedBy(LivingEntity user) {
+		if (VesperCombatRules.isDefeatAbsorptionComplete(getDefeatAbsorptionProgress())) return false;
 		if (level().isClientSide) return isAwaitingAbsorption()
 				&& VesperCombatRules.isDefeatAnimationComplete(getDownedTicks());
 		return user instanceof ServerPlayer player
@@ -389,18 +436,36 @@ public class VesperTheEveningStarEntity extends Monster {
 
 	public float absorbWithBlood(ServerPlayer player, float progress) {
 		if (!canBeAbsorbedBy(player) || progress <= 0.0F) return 0.0F;
-		float before = defeatAbsorptionProgress;
-		defeatAbsorptionProgress = VesperCombatRules.advanceDefeatAbsorption(before, progress);
-		if (VesperCombatRules.isDefeatAbsorptionComplete(defeatAbsorptionProgress)) {
-			completeBloodAbsorption();
-		}
-		return defeatAbsorptionProgress - before;
+		float before = getDefeatAbsorptionProgress();
+		int after = Math.round(VesperCombatRules.advanceDefeatAbsorption(before, progress));
+		entityData.set(DATA_DEFEAT_ABSORPTION_PROGRESS, after);
+		return after - before;
+	}
+
+	private void beginHoodRemoval() {
+		if (level().isClientSide || isHoodRemoved()) return;
+		VesperPhaseTwoCombat.cancelForHoodRemoval(this);
+		entityData.set(DATA_HOOD_REMOVED, true);
+		entityData.set(DATA_HOOD_REMOVAL_TICK, 0);
+		setDeltaMovement(0.0D, getDeltaMovement().y, 0.0D);
+		playSound(SoundInit.ENTITY_VESPER_HOOD_REMOVE.get(), 1.15F, 0.82F);
+		EndgameBossActions.tickVesperHoodRemoval(this, 0);
+	}
+
+	private void tickHoodRemoval() {
+		int tick = getHoodRemovalTick() + 1;
+		entityData.set(DATA_HOOD_REMOVAL_TICK, tick);
+		navigation.stop();
+		setDeltaMovement(0.0D, getDeltaMovement().y, 0.0D);
+		EndgameBossActions.tickVesperHoodRemoval(this, tick);
 	}
 
 	private void enterAwaitingAbsorption() {
 		VesperPhaseTwoCombat.cancelForDefeat(this);
 		entityData.set(DATA_AWAITING_ABSORPTION, true);
 		entityData.set(DATA_DOWNED_TICKS, 0);
+		entityData.set(DATA_DEFEAT_ABSORPTION_PROGRESS, 0);
+		entityData.set(DATA_FINAL_COLLAPSE_TICK, 0);
 		setHealth(1.0F);
 		setNoAi(true);
 		setTarget(null);

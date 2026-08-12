@@ -11,8 +11,8 @@ import net.neoforged.neoforge.event.entity.living.LivingExperienceDropEvent;
 
 @EventBusSubscriber(modid = Hemomancy.MOD_ID)
 public final class VesperEncounterPuppetEvents {
-	static final String PUPPET_KEY = "HemomancyVesperEncounterPuppet";
-	static final String BOSS_KEY = "HemomancyVesperEncounterBoss";
+	public static final String PUPPET_KEY = "HemomancyVesperEncounterPuppet";
+	public static final String BOSS_KEY = "HemomancyVesperEncounterBoss";
 
 	private VesperEncounterPuppetEvents() {
 	}

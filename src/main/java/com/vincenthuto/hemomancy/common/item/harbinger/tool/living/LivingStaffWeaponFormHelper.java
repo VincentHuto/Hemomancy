@@ -54,6 +54,7 @@ public final class LivingStaffWeaponFormHelper {
 
 	public static boolean restoreMainHand(Player player) {
 		ItemStack held = player.getMainHandItem();
+		LivingFlailDeployment.reconcileForRestoration(held, player);
 		if (LivingSicklePruning.isTemporarySickle(held)) {
 			ItemStack restoredWeapon = LivingSicklePruning.restoredWeaponStack(held, player.registryAccess());
 			player.setItemInHand(InteractionHand.MAIN_HAND,
@@ -71,6 +72,13 @@ public final class LivingStaffWeaponFormHelper {
 		return true;
 	}
 
+	public static void removePairedOffhandClaw(Player player, ItemStack mainHandClaw) {
+		if (LivingStaffWeaponFormRules.isPairedClawForm(
+				currentFormName(mainHandClaw), currentFormName(player.getOffhandItem()))) {
+			player.setItemInHand(InteractionHand.OFF_HAND, ItemStack.EMPTY);
+		}
+	}
+
 	public static boolean restoreStaffAfterBloodFailure(ItemStack stack, LivingEntity entity) {
 		return restoreStaffAfterBloodFailure(stack, entity, InteractionHand.MAIN_HAND);
 	}
@@ -79,6 +87,7 @@ public final class LivingStaffWeaponFormHelper {
 		if (!(entity instanceof Player player) || !isTransformedStaffWeapon(stack)) {
 			return false;
 		}
+		LivingFlailDeployment.reconcileForRestoration(stack, player);
 		player.setItemInHand(hand, restoredStaffStack(stack, player.registryAccess()));
 		LivingArsenalInventoryGuard.sanitizePlayerInventory(player);
 		player.displayClientMessage(Component.literal("The Living Staff recoils back into shape.")
@@ -150,7 +159,12 @@ public final class LivingStaffWeaponFormHelper {
 				? restoredStaffStack(held, player.registryAccess())
 				: held.copy();
 		sourceStaff.setCount(1);
-		player.setItemInHand(InteractionHand.MAIN_HAND, createWeaponFormStack(formName, sourceStaff, player.registryAccess()));
+		ItemStack weapon = createWeaponFormStack(formName, sourceStaff, player.registryAccess());
+		player.setItemInHand(InteractionHand.MAIN_HAND, weapon);
+		if (LivingStaffWeaponFormRules.shouldEquipPairedOffhandClaw(formName, player.getOffhandItem().isEmpty())) {
+			player.setItemInHand(InteractionHand.OFF_HAND,
+					createWeaponFormStack(formName, sourceStaff, player.registryAccess()));
+		}
 		LivingArsenalInventoryGuard.sanitizePlayerInventory(player);
 		return true;
 	}

@@ -53,18 +53,23 @@ public final class LivingArsenalInventoryGuard {
 		if (keepSlot < 0) {
 			return;
 		}
+		boolean keepPairedOffhandClaw = LivingStaffWeaponFormRules.isPairedClawForm(
+				LivingStaffWeaponFormHelper.currentFormName(player.getMainHandItem()),
+				LivingStaffWeaponFormHelper.currentFormName(player.getOffhandItem()));
 		for (int slot = 0; slot < inventory.getContainerSize(); slot++) {
 			ItemStack stack = inventory.getItem(slot);
 			if (!isLivingArsenalItem(stack)) {
 				continue;
 			}
-			if (slot == keepSlot) {
+			if (slot == keepSlot || keepPairedOffhandClaw && stack == player.getOffhandItem()) {
 				stack.setCount(1);
-				if (slot != inventory.selected && LivingSicklePruning.isTemporarySickle(stack)) {
+				if (slot != inventory.selected && !keepPairedOffhandClaw
+						&& LivingSicklePruning.isTemporarySickle(stack)) {
 					stack = LivingSicklePruning.restoredWeaponStack(stack, player.registryAccess());
 					inventory.setItem(slot, stack);
 				}
-				if (slot != inventory.selected && LivingStaffWeaponFormHelper.isTransformedStaffWeapon(stack)) {
+				if (slot != inventory.selected && !keepPairedOffhandClaw
+						&& LivingStaffWeaponFormHelper.isTransformedStaffWeapon(stack)) {
 					inventory.setItem(slot, LivingStaffWeaponFormHelper.restoredStaffStack(stack, player.registryAccess()));
 				}
 			} else {

@@ -30,6 +30,14 @@ public final class LivingStaffWeaponFormRules {
 		return isStaffWeaponFormManip(selectedManipName) && selectedManipName.equals(currentFormName);
 	}
 
+	public static boolean shouldEquipPairedOffhandClaw(String formName, boolean offhandEmpty) {
+		return CONJURE_CLAWS.equals(formName) && offhandEmpty;
+	}
+
+	public static boolean isPairedClawForm(String mainHandFormName, String offhandFormName) {
+		return CONJURE_CLAWS.equals(mainHandFormName) && CONJURE_CLAWS.equals(offhandFormName);
+	}
+
 	public static double hotSwapCostForWeaponsMasterLevel(int weaponsMasterLevel) {
 		int level = Math.max(0, Math.min(WEAPONS_MASTER_MAX_LEVEL, weaponsMasterLevel));
 		return Math.max(MIN_HOT_SWAP_COST_ML,

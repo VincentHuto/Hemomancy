@@ -70,6 +70,12 @@ The Hematic Order publicly recognizes seven degrees. Apotheos is the hidden eigh
 - **Core progression:** Chamber of Will, Eternal Covenant, expanded shared blood systems, and deeper bloodline authority
 - **The Living Covenant** requires a safe Chamber return, a bound Covenant Throne, and a Covenant Vigil completed with the assigned helper surviving. This Main chapter opens the Archon rite.
 
+#### Chamber of Will progression
+
+The Chamber remains one private per-player cell and grows through four existing tiers: 9x9 at tier 0, 13x13 after the Vein-Mason Degree-6 milestone or Degree 7, 17x17 once Qliphoth begins or Silence is chosen, and 21x21 at Apotheos. Newly earned edge bands appear immediately when progression changes inside the Chamber. Existing player construction is not overwritten, old floor is never removed if progression is reduced, and the corner lights move outward only when their old manager-placed crystals are still present.
+
+The **Orb of Perspective** is a reusable late-game focus crafted from four Monolith Fragments, four Echo Shards, and one Blood Crystal Shard (`MEM / EBE / MEM`). Throw it beyond the edge of your own Chamber floor. Once it falls three blocks below floor level it cycles to the next normal Chamber background you have legitimately unlocked, persists that choice, and returns to your inventory or beside you if the inventory is full. Vesper and Mycophant encounter environments are excluded and an active ordeal rejects the Orb without consuming it.
+
 ### Degree 7: Archon
 
 - **Rite:** Archon Rite

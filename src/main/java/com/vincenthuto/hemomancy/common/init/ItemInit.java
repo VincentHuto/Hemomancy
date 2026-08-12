@@ -959,6 +959,8 @@ public class ItemInit {
             () -> new MonolithicCornerstoneItem(new Item.Properties().stacksTo(1).rarity(Rarity.RARE).fireResistant()));
     public static final DeferredHolder<Item, Item> memory_of_vesper = BASEITEMS.register("memory_of_vesper",
             () -> new MemoryOfVesperItem(new Item.Properties().stacksTo(1).rarity(Rarity.RARE).fireResistant()));
+    public static final DeferredHolder<Item, Item> orb_of_perspective = BASEITEMS.register("orb_of_perspective",
+            () -> new OrbOfPerspectiveItem(new Item.Properties().stacksTo(1).rarity(Rarity.RARE).fireResistant()));
     public static final DeferredHolder<Item, Item> fungal_spine = BASEITEMS.register("fungal_spine",
             () -> new FungalSpineItem(new Item.Properties().stacksTo(1).rarity(Rarity.UNCOMMON)));
 

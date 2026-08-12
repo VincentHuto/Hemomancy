@@ -33,6 +33,13 @@ final class VesperModelAssetContractTest {
 		assertNotNull(rider.getChild("leftArm").getChild("lShoulder").getChild("lElbow"));
 		assertNotNull(mount.getChild("fLeftArm"));
 		assertNotNull(mount.getChild("fRightArm"));
+		assertNotNull(mount.getChild("scutes_front"));
+		assertNotNull(mount.getChild("scutes_mid"));
+		assertNotNull(mount.getChild("scutes_rear"));
+		assertNotNull(mount.getChild("grab_socket"));
+		assertNotNull(mount.getChild("head").getChild("bite_socket"));
+		assertNotNull(mount.getChild("backAbdomen").getChild("tail").getChild("tail2")
+				.getChild("tail3").getChild("tail4").getChild("tail5").getChild("impale_socket"));
 		assertNotNull(mount.getChild("lLegs").getChild("fLeg3"));
 		assertNotNull(mount.getChild("lLegs2").getChild("fLeg6"));
 		assertNotNull(mount.getChild("backAbdomen").getChild("tail")
@@ -45,6 +52,7 @@ final class VesperModelAssetContractTest {
 
 		assertNotNull(whole.getChild("head").getChild("crown"));
 		assertNotNull(whole.getChild("head").getChild("hood"));
+		assertNotNull(whole.getChild("head").getChild("hair"));
 		assertNotNull(whole.getChild("body").getChild("ClothBack").getChild("ClothBack1")
 				.getChild("ClothBack2"));
 		assertNotNull(whole.getChild("leftArm").getChild("rShoulder2").getChild("rElbow2"));

@@ -27,7 +27,8 @@ function channelSource(bone, channel, keyframes) {
 }
 
 export function generateAnimationClass({ packageName, className, animations }) {
-  const definitions = [];
+	const constants = [];
+	const factories = [];
   for (const animation of animations ?? []) {
     const channels = [];
     for (const animator of Object.values(animation.animators ?? {})) {
@@ -38,11 +39,14 @@ export function generateAnimationClass({ packageName, className, animations }) {
       }
     }
     if (!channels.length) continue;
+		const constant = constantName(animation.name);
+		const factory = constant.toLowerCase();
     const looping = animation.loop === "loop" ? ".looping()" : "";
-    definitions.push(`\tpublic static final AnimationDefinition ${constantName(animation.name)} = AnimationDefinition.Builder.withLength(${number(animation.length)})${looping}${channels.join("")}\n\t\t\t.build();`);
+		constants.push(`\tpublic static final AnimationDefinition ${constant} = ${factory}();`);
+		factories.push(`\tprivate static AnimationDefinition ${factory}() {\n\t\treturn AnimationDefinition.Builder.withLength(${number(animation.length)})${looping}${channels.join("")}\n\t\t\t.build();\n\t}`);
   }
 
-  return `package ${packageName};\n\nimport net.minecraft.client.animation.AnimationChannel;\nimport net.minecraft.client.animation.AnimationDefinition;\nimport net.minecraft.client.animation.Keyframe;\nimport net.minecraft.client.animation.KeyframeAnimations;\n\npublic final class ${className} {\n\tprivate ${className}() { }\n\n${definitions.join("\n\n")}\n}\n`;
+  return `package ${packageName};\n\nimport net.minecraft.client.animation.AnimationChannel;\nimport net.minecraft.client.animation.AnimationDefinition;\nimport net.minecraft.client.animation.Keyframe;\nimport net.minecraft.client.animation.KeyframeAnimations;\n\npublic final class ${className} {\n\tprivate ${className}() { }\n\n${constants.join("\n")}\n\n${factories.join("\n\n")}\n}\n`;
 }
 
 if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {

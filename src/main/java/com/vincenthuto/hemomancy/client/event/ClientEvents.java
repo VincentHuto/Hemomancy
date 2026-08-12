@@ -718,6 +718,8 @@ public class ClientEvents {
             event.registerEntityRenderer(EntityInit.tracking_pests.get(), TrackingPestsRenderer::new);
             event.registerEntityRenderer(EntityInit.blood_bolt.get(), BloodBoltRenderer::new);
 			event.registerEntityRenderer(EntityInit.living_sickle_hook.get(), LivingSickleHookRenderer::new);
+			event.registerEntityRenderer(EntityInit.living_flail_head.get(), LivingFlailHeadProjectileRenderer::new);
+			event.registerEntityRenderer(EntityInit.vesper_scute_projectile.get(), VesperScuteProjectileRenderer::new);
             event.registerEntityRenderer(EntityInit.blood_needle.get(), BloodNeedleRenderer::new);
             event.registerEntityRenderer(EntityInit.blood_shot.get(), BloodShotRenderer::new);
             event.registerEntityRenderer(EntityInit.blood_bullet.get(), BloodBulletRenderer::new);

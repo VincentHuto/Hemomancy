@@ -235,6 +235,11 @@ public class PacketHandler {
         net.playToClient(PacketCardinalRiteStaffPlanting.TYPE,
                 PacketCardinalRiteStaffPlanting.STREAM_CODEC,
                 PacketCardinalRiteStaffPlanting::handle);
+        net.playToClient(PacketSyncPlayerAnimation.TYPE,
+                PacketSyncPlayerAnimation.STREAM_CODEC,
+                PacketSyncPlayerAnimation::handle);
+        net.playToClient(LivingFlailImpactPacket.TYPE,
+                LivingFlailImpactPacket.STREAM_CODEC, LivingFlailImpactPacket::handle);
         net.playToClient(PacketSyncIchorianKnowledge.TYPE, PacketSyncIchorianKnowledge.STREAM_CODEC,
                 PacketSyncIchorianKnowledge::handle);
         net.playToClient(PacketSyncFaneBoundaries.TYPE, PacketSyncFaneBoundaries.STREAM_CODEC, PacketSyncFaneBoundaries::handle);
@@ -364,6 +369,12 @@ public class PacketHandler {
     public static void sendCrimsonFireVisual(LivingEntity target, int durationTicks) {
         PacketDistributor.sendToPlayersTrackingEntityAndSelf(target,
                 new SyncCrimsonFireVisualS2CPacket(target.getId(), durationTicks));
+    }
+
+    public static void syncPlayerAnimation(LivingEntity target, PlayerAnimationKind kind,
+            boolean active, net.minecraft.world.InteractionHand hand) {
+        PacketDistributor.sendToPlayersTrackingEntityAndSelf(target,
+                new PacketSyncPlayerAnimation(target.getId(), kind, active, hand));
     }
 
     public static void sendClientElytraPacket() {

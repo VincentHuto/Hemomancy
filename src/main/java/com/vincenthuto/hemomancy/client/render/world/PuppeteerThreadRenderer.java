@@ -24,7 +24,6 @@ public final class PuppeteerThreadRenderer {
 	private static final int SEGMENTS = 28;
 	private static final double WILD_PUPPETEER_ANCHOR_SCALE = 0.25;
 	private static final double WILD_DOLL_ANCHOR_SCALE = -0.5;
-	private static final double SUMMON_ANCHOR_SCALE = 0.55;
 	private static final double VESPER_ANCHOR_SCALE = 0.72;
 
 	private PuppeteerThreadRenderer() {
@@ -162,7 +161,9 @@ public final class PuppeteerThreadRenderer {
 	}
 
 	private static Vec3 summonAnchor(LivingEntity summon, float partialTick) {
-		return entityAnchor(summon, partialTick, SUMMON_ANCHOR_SCALE);
+		return PuppeteerThreadEndpointRules.summonEndpoint(
+				summon.xOld, summon.yOld, summon.zOld,
+				summon.getX(), summon.getY(), summon.getZ(), summon.getBbHeight(), partialTick);
 	}
 
 	private static Vec3 entityAnchor(LivingEntity entity, float partialTick, double heightScale) {
@@ -179,5 +180,4 @@ public final class PuppeteerThreadRenderer {
 		return start.add(delta.x * t + wobbleX, delta.y * t + sag, delta.z * t + wobbleZ);
 	}
 }
-
 

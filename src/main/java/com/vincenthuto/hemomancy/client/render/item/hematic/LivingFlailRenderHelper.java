@@ -7,6 +7,9 @@ import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.client.model.item.LivingFlailModel;
 import com.vincenthuto.hemomancy.client.render.HemoRenderTypes;
 import com.vincenthuto.hemomancy.common.init.RenderTypeInit;
+import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.LivingFlailDeployment;
+import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.LivingFlailRules;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.texture.OverlayTexture;
@@ -36,7 +39,11 @@ public final class LivingFlailRenderHelper {
 
 	public static void renderStatic(LivingFlailModel<?> model, ItemStack stack, PoseStack poseStack,
 			MultiBufferSource buffer, int packedLight, int packedOverlay) {
-
+		if (LivingFlailDeployment.isDeployed(stack)) {
+			VertexConsumer base = buffer.getBuffer(RenderType.entityTranslucent(TEXTURE));
+			model.renderHandle(poseStack, base, packedLight, packedOverlay, -1);
+			return;
+		}
 		renderWithBob(model, poseStack, buffer, packedLight, packedOverlay, new Vec3(0.0, 0.62, 0.0), 0.0f);
 	}
 
@@ -46,11 +53,52 @@ public final class LivingFlailRenderHelper {
 		poseStack.mulPose(Axis.ZP.rotationDegrees(180f));
 		poseStack.mulPose(Axis.XN.rotationDegrees(80f));
 		poseStack.translate( .15D, -0.1D, -.2);
+		if (LivingFlailDeployment.isDeployed(stack)) {
+			VertexConsumer base = buffer.getBuffer(RenderType.entityTranslucent(TEXTURE));
+			model.renderHandle(poseStack, base, packedLight, packedOverlay, -1);
+			return;
+		}
+		if (holder.isUsingItem() && holder.getUseItem() == stack) {
+			renderChargingOrbit(model, holder, stack, poseStack, buffer, packedLight, packedOverlay, firstPerson);
+			return;
+		}
 		PhysicsState state = STATES.computeIfAbsent(key, ignored -> new PhysicsState(holder));
 		double chainLength = firstPerson ? 0.72 : 0.64;
 		Vec3 bob = state.update(holder, firstPerson, chainLength);
 		float tilt = (float) Mth.clamp(bob.x * 48.0 + bob.z * 28.0, -30.0, 30.0);
 		renderWithBob(model, poseStack, buffer, packedLight, packedOverlay, bob, tilt);
+	}
+
+	private static void renderChargingOrbit(LivingFlailModel<?> model, LivingEntity holder, ItemStack stack,
+			PoseStack poseStack, MultiBufferSource buffer, int packedLight, int packedOverlay, boolean firstPerson) {
+		VertexConsumer base = buffer.getBuffer(RenderType.entityTranslucent(TEXTURE));
+		model.renderHandle(poseStack, base, packedLight, packedOverlay, -1);
+		int usedTicks = holder.getTicksUsingItem();
+		float partialTick = Minecraft.getInstance().getTimer().getGameTimeDeltaPartialTick(false);
+		double phase = LivingFlailRules.orbitAngle(usedTicks, partialTick);
+		double radius = firstPerson ? 0.72D : 0.66D;
+		Vec3 orbit = new Vec3(Math.cos(phase) * radius,
+				0.18D + Math.sin(phase * 2.0D) * 0.08D, Math.sin(phase) * radius);
+		poseStack.pushPose();
+		poseStack.translate(CHAIN_ANCHOR.x, CHAIN_ANCHOR.y, CHAIN_ANCHOR.z);
+		renderChainFromAnchor(model, poseStack, base, packedLight, packedOverlay, orbit);
+		poseStack.pushPose();
+		poseStack.translate(orbit.x, orbit.y, orbit.z);
+		float headScale = LivingFlailRules.visualScale(LivingFlailRules.charge(usedTicks));
+		poseStack.scale(headScale, headScale, headScale);
+		poseStack.mulPose(Axis.XP.rotationDegrees((holder.tickCount + partialTick) * 34.0F));
+		model.renderHead(poseStack, base, packedLight, packedOverlay, -1);
+		VertexConsumer glint = buffer.getBuffer(RenderTypeInit.getCrimsonGlint());
+		model.renderHead(poseStack, glint, packedLight, OverlayTexture.NO_OVERLAY, -1);
+		float maximumChargeFlash = LivingFlailRules.maximumChargeFlash(usedTicks, partialTick);
+		if (maximumChargeFlash > 0.0F) {
+			VertexConsumer glow = buffer.getBuffer(RenderType.entityTranslucentEmissive(TEXTURE));
+			int alpha = Mth.clamp(Math.round(maximumChargeFlash * 180.0F), 0, 255);
+			model.renderHead(poseStack, glow, 0xF000F0, OverlayTexture.NO_OVERLAY,
+					(alpha << 24) | 0x00BFEFFF);
+		}
+		poseStack.popPose();
+		poseStack.popPose();
 	}
 
 	public static void renderHeldDissolving(LivingFlailModel<?> model, LivingEntity holder, HumanoidArm arm,

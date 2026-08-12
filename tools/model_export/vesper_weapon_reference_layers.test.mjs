@@ -86,7 +86,7 @@ test("Evening Star embeds toggleable weapon reference layers beneath both elbows
   assert.ok(leftFolder, "missing left-hand reference folder");
 
   const rightElbow = groups.get("rElbow");
-  const leftElbow = groups.get("lElbow");
+  const leftElbow = groups.get("rElbow2");
   assert.ok(outlinerNode(model.outliner, rightElbow.uuid).children.some(node => node.uuid === rightFolder.uuid));
   assert.ok(outlinerNode(model.outliner, leftElbow.uuid).children.some(node => node.uuid === leftFolder.uuid));
 
@@ -108,7 +108,7 @@ test("Evening Star embeds toggleable weapon reference layers beneath both elbows
 
 test("weapon reference injection preserves every authored Vesper animation", () => {
   const model = readModel();
-  assert.equal(model.animations.length, 57);
+  assert.equal(model.animations.length, 58);
 	assert.ok(model.animations.some(animation =>
 		animation.name === "animation.VesperTheEveningStarModel.hit"));
   assert.ok(model.animations.some(animation =>

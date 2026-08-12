@@ -670,6 +670,17 @@ public class EntityInit {
 					() -> EntityType.Builder.<LivingSickleHookEntity>of(LivingSickleHookEntity::new, MobCategory.MISC)
 							.sized(0.9F, 0.35F).clientTrackingRange(8).updateInterval(1)
 							.build(Hemomancy.rloc("living_sickle_hook").toString()));
+	public static final DeferredHolder<EntityType<?>, EntityType<LivingFlailHeadProjectileEntity>> living_flail_head =
+			ENTITY_TYPES.register("living_flail_head",
+					() -> EntityType.Builder.<LivingFlailHeadProjectileEntity>of(
+								LivingFlailHeadProjectileEntity::new, MobCategory.MISC)
+							.sized(0.85F, 0.85F).clientTrackingRange(12).updateInterval(1)
+							.build(Hemomancy.rloc("living_flail_head").toString()));
+	public static final DeferredHolder<EntityType<?>, EntityType<VesperScuteProjectileEntity>> vesper_scute_projectile =
+			ENTITY_TYPES.register("vesper_scute_projectile",
+					() -> EntityType.Builder.<VesperScuteProjectileEntity>of(VesperScuteProjectileEntity::new, MobCategory.MISC)
+							.sized(0.65F, 0.24F).clientTrackingRange(12).updateInterval(1)
+							.build(Hemomancy.rloc("vesper_scute_projectile").toString()));
 
     public static final DeferredHolder<EntityType<?>, EntityType<BloodNeedleEntity>> blood_needle = ENTITY_TYPES.register(
             "blood_needle",

@@ -7,6 +7,7 @@ import com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.Initi
 import com.vincenthuto.hemomancy.common.entity.boss.endgame.VesperTheCrownedRefusalEntity;
 import com.vincenthuto.hemomancy.common.entity.boss.endgame.VesperTheEveningStarEntity;
 import com.vincenthuto.hemomancy.common.entity.boss.endgame.VesperPhaseTwoCombat;
+import com.vincenthuto.hemomancy.common.entity.boss.endgame.VesperWingedFlightRules;
 import com.vincenthuto.hemomancy.common.event.HarbingerAdvancementGranter;
 import com.vincenthuto.hemomancy.common.init.EntityInit;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
@@ -32,6 +33,7 @@ import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.event.entity.living.LivingDeathEvent;
 
 import java.util.UUID;
+import java.util.Optional;
 
 /** Owns the isolated, retryable 50x50 Vesper refusal arena. */
 @EventBusSubscriber(modid = Hemomancy.MOD_ID)
@@ -130,6 +132,28 @@ public final class VesperOrdealManager {
 
 	public static void copyOrdeal(VesperTheCrownedRefusalEntity from, VesperTheEveningStarEntity to) {
 		to.setOrdeal(from.getOrdealOwner(), from.getBloomOrigin());
+	}
+
+	/** Returns strict ordeal bounds for owned bosses or persisted local bounds for command summons. */
+	public static Optional<FlightArena> flightArena(VesperTheCrownedRefusalEntity vesper) {
+		if (!(vesper.level() instanceof ServerLevel level)) return Optional.empty();
+		if (vesper.getOrdealOwner() == null) {
+			vesper.ensureSummonedFlightArena();
+			Optional<FlightArena> summoned = vesper.summonedFlightArena();
+			return VesperWingedFlightRules.arenaAuthority(false, false, summoned.isPresent())
+					== VesperWingedFlightRules.ArenaAuthority.SUMMONED ? summoned : Optional.empty();
+		}
+		ServerPlayer owner = level.getServer().getPlayerList().getPlayer(vesper.getOrdealOwner());
+		if (owner == null || owner.level() != vesper.level() || !isActive(owner)) return Optional.empty();
+		if (owner.getPersistentData().getLong(ACTIVE_BLOOM_KEY) != vesper.getBloomOrigin()) return Optional.empty();
+		BlockPos center = arenaCenter(owner);
+		if (!new AABB(center).inflate(ARENA_HALF, 12.0D, ARENA_HALF).contains(vesper.position())) {
+			return Optional.empty();
+		}
+		return Optional.of(new FlightArena(center.getX() + 0.5D, center.getY(), center.getZ() + 0.5D));
+	}
+
+	public record FlightArena(double centerX, double floorY, double centerZ) {
 	}
 
 	private static void givePendingMemory(ServerPlayer owner) {

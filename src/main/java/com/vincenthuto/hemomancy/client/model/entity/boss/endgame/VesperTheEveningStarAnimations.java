@@ -8,7 +8,67 @@ import net.minecraft.client.animation.KeyframeAnimations;
 public final class VesperTheEveningStarAnimations {
 	private VesperTheEveningStarAnimations() { }
 
-	public static final AnimationDefinition IDLE = AnimationDefinition.Builder.withLength(3.0F).looping()
+	public static final AnimationDefinition IDLE = idle();
+	public static final AnimationDefinition WALK = walk();
+	public static final AnimationDefinition IDLE_ANIMUS = idle_animus();
+	public static final AnimationDefinition STANCE_ANIMUS = stance_animus();
+	public static final AnimationDefinition IDLE_MORTEM = idle_mortem();
+	public static final AnimationDefinition STANCE_MORTEM = stance_mortem();
+	public static final AnimationDefinition IDLE_LUX = idle_lux();
+	public static final AnimationDefinition STANCE_LUX = stance_lux();
+	public static final AnimationDefinition IDLE_TENEBRIS = idle_tenebris();
+	public static final AnimationDefinition STANCE_TENEBRIS = stance_tenebris();
+	public static final AnimationDefinition IDLE_DUCTILIS = idle_ductilis();
+	public static final AnimationDefinition STANCE_DUCTILIS = stance_ductilis();
+	public static final AnimationDefinition IDLE_FLAMMEUS = idle_flammeus();
+	public static final AnimationDefinition STANCE_FLAMMEUS = stance_flammeus();
+	public static final AnimationDefinition IDLE_CONGEATIO = idle_congeatio();
+	public static final AnimationDefinition STANCE_CONGEATIO = stance_congeatio();
+	public static final AnimationDefinition IDLE_FERRIC = idle_ferric();
+	public static final AnimationDefinition STANCE_FERRIC = stance_ferric();
+	public static final AnimationDefinition RAGE_IDLE = rage_idle();
+	public static final AnimationDefinition ICHIMONJI = ichimonji();
+	public static final AnimationDefinition ICHIMONJI_ALTERNATE = ichimonji_alternate();
+	public static final AnimationDefinition CROSSCUT = crosscut();
+	public static final AnimationDefinition CROSSCUT_ALTERNATE = crosscut_alternate();
+	public static final AnimationDefinition LEAPING_CLEAVE = leaping_cleave();
+	public static final AnimationDefinition LEAPING_CLEAVE_ALTERNATE = leaping_cleave_alternate();
+	public static final AnimationDefinition REAPER_SWEEP = reaper_sweep();
+	public static final AnimationDefinition REAPER_SWEEP_ALTERNATE = reaper_sweep_alternate();
+	public static final AnimationDefinition SKY_LANCE = sky_lance();
+	public static final AnimationDefinition SKY_LANCE_ALTERNATE = sky_lance_alternate();
+	public static final AnimationDefinition LANCE_FLURRY = lance_flurry();
+	public static final AnimationDefinition LANCE_FLURRY_ALTERNATE = lance_flurry_alternate();
+	public static final AnimationDefinition TWIN_REND = twin_rend();
+	public static final AnimationDefinition TWIN_REND_ALTERNATE = twin_rend_alternate();
+	public static final AnimationDefinition PREDATOR_POUNCE = predator_pounce();
+	public static final AnimationDefinition PREDATOR_POUNCE_ALTERNATE = predator_pounce_alternate();
+	public static final AnimationDefinition CONDUCTIVE_VOLLEY = conductive_volley();
+	public static final AnimationDefinition STORM_LOCK = storm_lock();
+	public static final AnimationDefinition BRANDING_THRUSTS = branding_thrusts();
+	public static final AnimationDefinition BRANDING_THRUSTS_ALTERNATE = branding_thrusts_alternate();
+	public static final AnimationDefinition UPDRAFT_IMPALEMENT = updraft_impalement();
+	public static final AnimationDefinition UPDRAFT_IMPALEMENT_ALTERNATE = updraft_impalement_alternate();
+	public static final AnimationDefinition CHAIN_SWEEP = chain_sweep();
+	public static final AnimationDefinition CHAIN_SWEEP_ALTERNATE = chain_sweep_alternate();
+	public static final AnimationDefinition HOOK_AND_CRUSH = hook_and_crush();
+	public static final AnimationDefinition HOOK_AND_CRUSH_ALTERNATE = hook_and_crush_alternate();
+	public static final AnimationDefinition MAGNETIC_AXIS = magnetic_axis();
+	public static final AnimationDefinition IRON_RETORT = iron_retort();
+	public static final AnimationDefinition SICKLE_CYCLONE = sickle_cyclone();
+	public static final AnimationDefinition SICKLE_CYCLONE_ALTERNATE = sickle_cyclone_alternate();
+	public static final AnimationDefinition SICKLE_POUNCE = sickle_pounce();
+	public static final AnimationDefinition SICKLE_CROSS_REND = sickle_cross_rend();
+	public static final AnimationDefinition SICKLE_CROSS_REND_ALTERNATE = sickle_cross_rend_alternate();
+	public static final AnimationDefinition SICKLE_HOOK = sickle_hook();
+	public static final AnimationDefinition SANGUINE_CRESCENTS = sanguine_crescents();
+	public static final AnimationDefinition SANGUINE_CRESCENTS_ALTERNATE = sanguine_crescents_alternate();
+	public static final AnimationDefinition DEFEAT = defeat();
+	public static final AnimationDefinition HIT = hit();
+	public static final AnimationDefinition REMOVE_HOOD = remove_hood();
+
+	private static AnimationDefinition idle() {
+		return AnimationDefinition.Builder.withLength(3.0F).looping()
 			.addAnimation("rightArm", new AnimationChannel(AnimationChannel.Targets.ROTATION,
 					new Keyframe(0.0F, KeyframeAnimations.degreeVec(-64.17127F, 0.0F, 25.50803F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(0.75F, KeyframeAnimations.degreeVec(-64.17127F, 0.0F, 21.81657F), AnimationChannel.Interpolations.CATMULLROM),
@@ -40,8 +100,10 @@ public final class VesperTheEveningStarAnimations {
 					new Keyframe(2.25F, KeyframeAnimations.degreeVec(0.57737F, 0.0F, 0.0F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(3.0F, KeyframeAnimations.degreeVec(0.0F, 0.0F, 0.0F), AnimationChannel.Interpolations.CATMULLROM)))
 			.build();
+	}
 
-	public static final AnimationDefinition WALK = AnimationDefinition.Builder.withLength(1.0F).looping()
+	private static AnimationDefinition walk() {
+		return AnimationDefinition.Builder.withLength(1.0F).looping()
 			.addAnimation("rightArm", new AnimationChannel(AnimationChannel.Targets.ROTATION,
 					new Keyframe(0.0F, KeyframeAnimations.degreeVec(-57.29578F, 0.0F, 22.5F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(0.25F, KeyframeAnimations.degreeVec(0.0F, 0.0F, 22.5F), AnimationChannel.Interpolations.CATMULLROM),
@@ -79,8 +141,10 @@ public final class VesperTheEveningStarAnimations {
 					new Keyframe(0.75F, KeyframeAnimations.degreeVec(40.10705F, 0.0F, 0.0F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(1.0F, KeyframeAnimations.degreeVec(0.0F, 0.0F, 0.0F), AnimationChannel.Interpolations.CATMULLROM)))
 			.build();
+	}
 
-	public static final AnimationDefinition IDLE_ANIMUS = AnimationDefinition.Builder.withLength(2.6F).looping()
+	private static AnimationDefinition idle_animus() {
+		return AnimationDefinition.Builder.withLength(2.6F).looping()
 			.addAnimation("rightArm", new AnimationChannel(AnimationChannel.Targets.ROTATION,
 					new Keyframe(0.0F, KeyframeAnimations.degreeVec(-31.51268F, 0.0F, 25.50803F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(0.65F, KeyframeAnimations.degreeVec(-29.65067F, 0.0F, 22.53248F), AnimationChannel.Interpolations.CATMULLROM),
@@ -100,8 +164,10 @@ public final class VesperTheEveningStarAnimations {
 					new Keyframe(1.95F, KeyframeAnimations.degreeVec(-27.27279F, -3.46639F, 38.02148F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(2.6F, KeyframeAnimations.degreeVec(-27.27279F, -3.46639F, 38.02148F), AnimationChannel.Interpolations.CATMULLROM)))
 			.build();
+	}
 
-	public static final AnimationDefinition STANCE_ANIMUS = AnimationDefinition.Builder.withLength(1.5F)
+	private static AnimationDefinition stance_animus() {
+		return AnimationDefinition.Builder.withLength(1.5F)
 			.addAnimation("rightArm", new AnimationChannel(AnimationChannel.Targets.ROTATION,
 					new Keyframe(0.0F, KeyframeAnimations.degreeVec(-31.51268F, 0.0F, 25.50803F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(0.3F, KeyframeAnimations.degreeVec(-34.16754F, 0.0F, 26.33767F), AnimationChannel.Interpolations.CATMULLROM),
@@ -118,8 +184,10 @@ public final class VesperTheEveningStarAnimations {
 					new Keyframe(0.75F, KeyframeAnimations.degreeVec(-27.27279F, -3.46639F, 38.02148F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(1.5F, KeyframeAnimations.degreeVec(-27.27279F, -3.46639F, 38.02148F), AnimationChannel.Interpolations.CATMULLROM)))
 			.build();
+	}
 
-	public static final AnimationDefinition IDLE_MORTEM = AnimationDefinition.Builder.withLength(2.6F).looping()
+	private static AnimationDefinition idle_mortem() {
+		return AnimationDefinition.Builder.withLength(2.6F).looping()
 			.addAnimation("rightArm", new AnimationChannel(AnimationChannel.Targets.ROTATION,
 					new Keyframe(0.0F, KeyframeAnimations.degreeVec(-48.70141F, 0.0F, 25.50803F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(0.65F, KeyframeAnimations.degreeVec(-46.83941F, 0.0F, 22.53248F), AnimationChannel.Interpolations.CATMULLROM),
@@ -139,8 +207,10 @@ public final class VesperTheEveningStarAnimations {
 					new Keyframe(1.95F, KeyframeAnimations.degreeVec(-35.02491F, -16.31784F, 55.82901F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(2.6F, KeyframeAnimations.degreeVec(-35.02491F, -16.31784F, 55.82901F), AnimationChannel.Interpolations.CATMULLROM)))
 			.build();
+	}
 
-	public static final AnimationDefinition STANCE_MORTEM = AnimationDefinition.Builder.withLength(1.5F)
+	private static AnimationDefinition stance_mortem() {
+		return AnimationDefinition.Builder.withLength(1.5F)
 			.addAnimation("rightArm", new AnimationChannel(AnimationChannel.Targets.ROTATION,
 					new Keyframe(0.0F, KeyframeAnimations.degreeVec(-48.70141F, 0.0F, 25.50803F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(0.3F, KeyframeAnimations.degreeVec(-51.35627F, 0.0F, 26.33767F), AnimationChannel.Interpolations.CATMULLROM),
@@ -157,8 +227,10 @@ public final class VesperTheEveningStarAnimations {
 					new Keyframe(0.75F, KeyframeAnimations.degreeVec(-35.02491F, -16.31784F, 55.82901F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(1.5F, KeyframeAnimations.degreeVec(-35.02491F, -16.31784F, 55.82901F), AnimationChannel.Interpolations.CATMULLROM)))
 			.build();
+	}
 
-	public static final AnimationDefinition IDLE_LUX = AnimationDefinition.Builder.withLength(2.6F).looping()
+	private static AnimationDefinition idle_lux() {
+		return AnimationDefinition.Builder.withLength(2.6F).looping()
 			.addAnimation("rightArm", new AnimationChannel(AnimationChannel.Targets.ROTATION,
 					new Keyframe(0.0F, KeyframeAnimations.degreeVec(-64.17127F, 0.0F, 25.50803F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(0.65F, KeyframeAnimations.degreeVec(-64.17127F, 0.0F, 22.53248F), AnimationChannel.Interpolations.CATMULLROM),
@@ -172,8 +244,10 @@ public final class VesperTheEveningStarAnimations {
 					new Keyframe(1.95F, KeyframeAnimations.degreeVec(-18.33465F, 0.0F, -25.50645F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(2.6F, KeyframeAnimations.degreeVec(-18.33465F, 0.0F, -22.5F), AnimationChannel.Interpolations.CATMULLROM)))
 			.build();
+	}
 
-	public static final AnimationDefinition STANCE_LUX = AnimationDefinition.Builder.withLength(1.5F)
+	private static AnimationDefinition stance_lux() {
+		return AnimationDefinition.Builder.withLength(1.5F)
 			.addAnimation("rightArm", new AnimationChannel(AnimationChannel.Targets.ROTATION,
 					new Keyframe(0.0F, KeyframeAnimations.degreeVec(-64.17127F, 0.0F, 25.50803F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(0.3F, KeyframeAnimations.degreeVec(-66.82613F, 0.0F, 26.33767F), AnimationChannel.Interpolations.CATMULLROM),
@@ -185,8 +259,10 @@ public final class VesperTheEveningStarAnimations {
 					new Keyframe(0.75F, KeyframeAnimations.degreeVec(-18.33465F, 0.0F, -22.5F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(1.5F, KeyframeAnimations.degreeVec(-18.33465F, 0.0F, -22.5F), AnimationChannel.Interpolations.CATMULLROM)))
 			.build();
+	}
 
-	public static final AnimationDefinition IDLE_TENEBRIS = AnimationDefinition.Builder.withLength(2.6F).looping()
+	private static AnimationDefinition idle_tenebris() {
+		return AnimationDefinition.Builder.withLength(2.6F).looping()
 			.addAnimation("rightArm", new AnimationChannel(AnimationChannel.Targets.ROTATION,
 					new Keyframe(0.0F, KeyframeAnimations.degreeVec(-45.83662F, 0.0F, 25.50803F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(0.65F, KeyframeAnimations.degreeVec(-45.83662F, 0.0F, 22.53248F), AnimationChannel.Interpolations.CATMULLROM),
@@ -199,9 +275,65 @@ public final class VesperTheEveningStarAnimations {
 					new Keyframe(1.3F, KeyframeAnimations.degreeVec(-45.83662F, 0.0F, -22.43505F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(1.95F, KeyframeAnimations.degreeVec(-45.83662F, 0.0F, -25.50645F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(2.6F, KeyframeAnimations.degreeVec(-45.83662F, 0.0F, -22.5F), AnimationChannel.Interpolations.CATMULLROM)))
+			.addAnimation("body", new AnimationChannel(AnimationChannel.Targets.ROTATION,
+					new Keyframe(0.0F, KeyframeAnimations.degreeVec(-8.0F, 0.0F, 0.0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.65F, KeyframeAnimations.degreeVec(-9.0F, 1.0F, 0.0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1.3F, KeyframeAnimations.degreeVec(-8.0F, 0.0F, 0.0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1.95F, KeyframeAnimations.degreeVec(-7.0F, -1.0F, 0.0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(2.6F, KeyframeAnimations.degreeVec(-8.0F, 0.0F, 0.0F), AnimationChannel.Interpolations.CATMULLROM)))
+			.addAnimation("leftLeg", new AnimationChannel(AnimationChannel.Targets.ROTATION,
+					new Keyframe(0.0F, KeyframeAnimations.degreeVec(10.0F, 4.0F, -2.0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.65F, KeyframeAnimations.degreeVec(9.0F, 4.0F, -2.0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1.3F, KeyframeAnimations.degreeVec(10.0F, 4.0F, -2.0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1.95F, KeyframeAnimations.degreeVec(11.0F, 4.0F, -2.0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(2.6F, KeyframeAnimations.degreeVec(10.0F, 4.0F, -2.0F), AnimationChannel.Interpolations.CATMULLROM)))
+			.addAnimation("leftLeg2", new AnimationChannel(AnimationChannel.Targets.ROTATION,
+					new Keyframe(0.0F, KeyframeAnimations.degreeVec(-16.0F, 0.0F, 0.0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.65F, KeyframeAnimations.degreeVec(-15.0F, 0.0F, 0.0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1.3F, KeyframeAnimations.degreeVec(-16.0F, 0.0F, 0.0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1.95F, KeyframeAnimations.degreeVec(-17.0F, 0.0F, 0.0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(2.6F, KeyframeAnimations.degreeVec(-16.0F, 0.0F, 0.0F), AnimationChannel.Interpolations.CATMULLROM)))
+			.addAnimation("leftBoot", new AnimationChannel(AnimationChannel.Targets.POSITION,
+					new Keyframe(0.0F, KeyframeAnimations.posVec(0.0F, 0.0F, 0.0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.65F, KeyframeAnimations.posVec(0.0F, 0.0F, 0.0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1.3F, KeyframeAnimations.posVec(0.0F, 0.0F, 0.0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1.95F, KeyframeAnimations.posVec(0.0F, 0.0F, 0.0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(2.6F, KeyframeAnimations.posVec(0.0F, 0.0F, 0.0F), AnimationChannel.Interpolations.CATMULLROM)))
+			.addAnimation("leftBoot", new AnimationChannel(AnimationChannel.Targets.ROTATION,
+					new Keyframe(0.0F, KeyframeAnimations.degreeVec(6.0F, 0.0F, 2.0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.65F, KeyframeAnimations.degreeVec(6.0F, 0.0F, 2.0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1.3F, KeyframeAnimations.degreeVec(6.0F, 0.0F, 2.0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1.95F, KeyframeAnimations.degreeVec(6.0F, 0.0F, 2.0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(2.6F, KeyframeAnimations.degreeVec(6.0F, 0.0F, 2.0F), AnimationChannel.Interpolations.CATMULLROM)))
+			.addAnimation("rightLeg", new AnimationChannel(AnimationChannel.Targets.ROTATION,
+					new Keyframe(0.0F, KeyframeAnimations.degreeVec(14.0F, -4.0F, 2.0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.65F, KeyframeAnimations.degreeVec(15.0F, -4.0F, 2.0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1.3F, KeyframeAnimations.degreeVec(14.0F, -4.0F, 2.0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1.95F, KeyframeAnimations.degreeVec(13.0F, -4.0F, 2.0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(2.6F, KeyframeAnimations.degreeVec(14.0F, -4.0F, 2.0F), AnimationChannel.Interpolations.CATMULLROM)))
+			.addAnimation("rightLeg2", new AnimationChannel(AnimationChannel.Targets.ROTATION,
+					new Keyframe(0.0F, KeyframeAnimations.degreeVec(-20.0F, 0.0F, 0.0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.65F, KeyframeAnimations.degreeVec(-21.0F, 0.0F, 0.0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1.3F, KeyframeAnimations.degreeVec(-20.0F, 0.0F, 0.0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1.95F, KeyframeAnimations.degreeVec(-19.0F, 0.0F, 0.0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(2.6F, KeyframeAnimations.degreeVec(-20.0F, 0.0F, 0.0F), AnimationChannel.Interpolations.CATMULLROM)))
+			.addAnimation("rightBoot", new AnimationChannel(AnimationChannel.Targets.POSITION,
+					new Keyframe(0.0F, KeyframeAnimations.posVec(0.0F, 0.0F, 0.0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.65F, KeyframeAnimations.posVec(0.0F, 0.0F, 0.0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1.3F, KeyframeAnimations.posVec(0.0F, 0.0F, 0.0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1.95F, KeyframeAnimations.posVec(0.0F, 0.0F, 0.0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(2.6F, KeyframeAnimations.posVec(0.0F, 0.0F, 0.0F), AnimationChannel.Interpolations.CATMULLROM)))
+			.addAnimation("rightBoot", new AnimationChannel(AnimationChannel.Targets.ROTATION,
+					new Keyframe(0.0F, KeyframeAnimations.degreeVec(6.0F, 0.0F, -2.0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.65F, KeyframeAnimations.degreeVec(6.0F, 0.0F, -2.0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1.3F, KeyframeAnimations.degreeVec(6.0F, 0.0F, -2.0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1.95F, KeyframeAnimations.degreeVec(6.0F, 0.0F, -2.0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(2.6F, KeyframeAnimations.degreeVec(6.0F, 0.0F, -2.0F), AnimationChannel.Interpolations.CATMULLROM)))
 			.build();
+	}
 
-	public static final AnimationDefinition STANCE_TENEBRIS = AnimationDefinition.Builder.withLength(1.5F)
+	private static AnimationDefinition stance_tenebris() {
+		return AnimationDefinition.Builder.withLength(1.5F)
 			.addAnimation("rightArm", new AnimationChannel(AnimationChannel.Targets.ROTATION,
 					new Keyframe(0.0F, KeyframeAnimations.degreeVec(-45.83662F, 0.0F, 25.50803F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(0.3F, KeyframeAnimations.degreeVec(-48.49148F, 0.0F, 26.33767F), AnimationChannel.Interpolations.CATMULLROM),
@@ -212,9 +344,56 @@ public final class VesperTheEveningStarAnimations {
 					new Keyframe(0.3F, KeyframeAnimations.degreeVec(-45.83662F, 0.0F, -22.5F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(0.75F, KeyframeAnimations.degreeVec(-45.83662F, 0.0F, -22.5F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(1.5F, KeyframeAnimations.degreeVec(-45.83662F, 0.0F, -22.5F), AnimationChannel.Interpolations.CATMULLROM)))
+			.addAnimation("body", new AnimationChannel(AnimationChannel.Targets.ROTATION,
+					new Keyframe(0.0F, KeyframeAnimations.degreeVec(0.0F, 0.0F, 0.0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.3F, KeyframeAnimations.degreeVec(-5.0F, 0.0F, 0.0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.75F, KeyframeAnimations.degreeVec(-10.0F, 0.0F, 0.0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1.5F, KeyframeAnimations.degreeVec(-12.0F, 0.0F, 0.0F), AnimationChannel.Interpolations.CATMULLROM)))
+			.addAnimation("leftLeg", new AnimationChannel(AnimationChannel.Targets.ROTATION,
+					new Keyframe(0.0F, KeyframeAnimations.degreeVec(0.0F, 0.0F, 0.0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.3F, KeyframeAnimations.degreeVec(5.0F, 2.0F, -1.0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.75F, KeyframeAnimations.degreeVec(10.0F, 4.0F, -2.0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1.5F, KeyframeAnimations.degreeVec(12.0F, 5.0F, -2.0F), AnimationChannel.Interpolations.CATMULLROM)))
+			.addAnimation("leftLeg2", new AnimationChannel(AnimationChannel.Targets.ROTATION,
+					new Keyframe(0.0F, KeyframeAnimations.degreeVec(0.0F, 0.0F, 0.0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.3F, KeyframeAnimations.degreeVec(-8.0F, 0.0F, 0.0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.75F, KeyframeAnimations.degreeVec(-16.0F, 0.0F, 0.0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1.5F, KeyframeAnimations.degreeVec(-19.0F, 0.0F, 0.0F), AnimationChannel.Interpolations.CATMULLROM)))
+			.addAnimation("leftBoot", new AnimationChannel(AnimationChannel.Targets.POSITION,
+					new Keyframe(0.0F, KeyframeAnimations.posVec(0.0F, 0.0F, 0.0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.3F, KeyframeAnimations.posVec(0.0F, 0.0F, 0.0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.75F, KeyframeAnimations.posVec(0.0F, 0.0F, 0.0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1.5F, KeyframeAnimations.posVec(0.0F, 0.0F, 0.0F), AnimationChannel.Interpolations.CATMULLROM)))
+			.addAnimation("leftBoot", new AnimationChannel(AnimationChannel.Targets.ROTATION,
+					new Keyframe(0.0F, KeyframeAnimations.degreeVec(0.0F, 0.0F, 0.0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.3F, KeyframeAnimations.degreeVec(3.0F, 0.0F, 1.0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.75F, KeyframeAnimations.degreeVec(6.0F, 0.0F, 2.0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1.5F, KeyframeAnimations.degreeVec(7.0F, 0.0F, 2.0F), AnimationChannel.Interpolations.CATMULLROM)))
+			.addAnimation("rightLeg", new AnimationChannel(AnimationChannel.Targets.ROTATION,
+					new Keyframe(0.0F, KeyframeAnimations.degreeVec(0.0F, 0.0F, 0.0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.3F, KeyframeAnimations.degreeVec(7.0F, -2.0F, 1.0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.75F, KeyframeAnimations.degreeVec(14.0F, -4.0F, 2.0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1.5F, KeyframeAnimations.degreeVec(16.0F, -5.0F, 2.0F), AnimationChannel.Interpolations.CATMULLROM)))
+			.addAnimation("rightLeg2", new AnimationChannel(AnimationChannel.Targets.ROTATION,
+					new Keyframe(0.0F, KeyframeAnimations.degreeVec(0.0F, 0.0F, 0.0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.3F, KeyframeAnimations.degreeVec(-10.0F, 0.0F, 0.0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.75F, KeyframeAnimations.degreeVec(-20.0F, 0.0F, 0.0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1.5F, KeyframeAnimations.degreeVec(-23.0F, 0.0F, 0.0F), AnimationChannel.Interpolations.CATMULLROM)))
+			.addAnimation("rightBoot", new AnimationChannel(AnimationChannel.Targets.POSITION,
+					new Keyframe(0.0F, KeyframeAnimations.posVec(0.0F, 0.0F, 0.0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.3F, KeyframeAnimations.posVec(0.0F, 0.0F, 0.0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.75F, KeyframeAnimations.posVec(0.0F, 0.0F, 0.0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1.5F, KeyframeAnimations.posVec(0.0F, 0.0F, 0.0F), AnimationChannel.Interpolations.CATMULLROM)))
+			.addAnimation("rightBoot", new AnimationChannel(AnimationChannel.Targets.ROTATION,
+					new Keyframe(0.0F, KeyframeAnimations.degreeVec(0.0F, 0.0F, 0.0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.3F, KeyframeAnimations.degreeVec(3.0F, 0.0F, -1.0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.75F, KeyframeAnimations.degreeVec(6.0F, 0.0F, -2.0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1.5F, KeyframeAnimations.degreeVec(7.0F, 0.0F, -2.0F), AnimationChannel.Interpolations.CATMULLROM)))
 			.build();
+	}
 
-	public static final AnimationDefinition IDLE_DUCTILIS = AnimationDefinition.Builder.withLength(2.6F).looping()
+	private static AnimationDefinition idle_ductilis() {
+		return AnimationDefinition.Builder.withLength(2.6F).looping()
 			.addAnimation("rightArm", new AnimationChannel(AnimationChannel.Targets.ROTATION,
 					new Keyframe(0.0F, KeyframeAnimations.degreeVec(-65.89015F, 0.0F, 25.50803F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(0.65F, KeyframeAnimations.degreeVec(-65.89015F, 0.0F, 22.53248F), AnimationChannel.Interpolations.CATMULLROM),
@@ -228,8 +407,10 @@ public final class VesperTheEveningStarAnimations {
 					new Keyframe(1.95F, KeyframeAnimations.degreeVec(-60.16057F, 0.0F, -25.50645F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(2.6F, KeyframeAnimations.degreeVec(-60.16057F, 0.0F, -22.5F), AnimationChannel.Interpolations.CATMULLROM)))
 			.build();
+	}
 
-	public static final AnimationDefinition STANCE_DUCTILIS = AnimationDefinition.Builder.withLength(1.5F)
+	private static AnimationDefinition stance_ductilis() {
+		return AnimationDefinition.Builder.withLength(1.5F)
 			.addAnimation("rightArm", new AnimationChannel(AnimationChannel.Targets.ROTATION,
 					new Keyframe(0.0F, KeyframeAnimations.degreeVec(-65.89015F, 0.0F, 25.50803F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(0.3F, KeyframeAnimations.degreeVec(-68.545F, 0.0F, 26.33767F), AnimationChannel.Interpolations.CATMULLROM),
@@ -241,8 +422,10 @@ public final class VesperTheEveningStarAnimations {
 					new Keyframe(0.75F, KeyframeAnimations.degreeVec(-60.16057F, 0.0F, -22.5F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(1.5F, KeyframeAnimations.degreeVec(-60.16057F, 0.0F, -22.5F), AnimationChannel.Interpolations.CATMULLROM)))
 			.build();
+	}
 
-	public static final AnimationDefinition IDLE_FLAMMEUS = AnimationDefinition.Builder.withLength(2.6F).looping()
+	private static AnimationDefinition idle_flammeus() {
+		return AnimationDefinition.Builder.withLength(2.6F).looping()
 			.addAnimation("rightArm", new AnimationChannel(AnimationChannel.Targets.ROTATION,
 					new Keyframe(0.0F, KeyframeAnimations.degreeVec(-60.16057F, 0.0F, 25.50803F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(0.65F, KeyframeAnimations.degreeVec(-60.16057F, 0.0F, 22.53248F), AnimationChannel.Interpolations.CATMULLROM),
@@ -256,8 +439,10 @@ public final class VesperTheEveningStarAnimations {
 					new Keyframe(1.95F, KeyframeAnimations.degreeVec(0.0F, 0.0F, -25.50645F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(2.6F, KeyframeAnimations.degreeVec(0.0F, 0.0F, -22.5F), AnimationChannel.Interpolations.CATMULLROM)))
 			.build();
+	}
 
-	public static final AnimationDefinition STANCE_FLAMMEUS = AnimationDefinition.Builder.withLength(1.5F)
+	private static AnimationDefinition stance_flammeus() {
+		return AnimationDefinition.Builder.withLength(1.5F)
 			.addAnimation("rightArm", new AnimationChannel(AnimationChannel.Targets.ROTATION,
 					new Keyframe(0.0F, KeyframeAnimations.degreeVec(-60.16057F, 0.0F, 25.50803F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(0.3F, KeyframeAnimations.degreeVec(-62.81543F, 0.0F, 26.33767F), AnimationChannel.Interpolations.CATMULLROM),
@@ -269,8 +454,10 @@ public final class VesperTheEveningStarAnimations {
 					new Keyframe(0.75F, KeyframeAnimations.degreeVec(0.0F, 0.0F, -22.5F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(1.5F, KeyframeAnimations.degreeVec(0.0F, 0.0F, -22.5F), AnimationChannel.Interpolations.CATMULLROM)))
 			.build();
+	}
 
-	public static final AnimationDefinition IDLE_CONGEATIO = AnimationDefinition.Builder.withLength(2.6F).looping()
+	private static AnimationDefinition idle_congeatio() {
+		return AnimationDefinition.Builder.withLength(2.6F).looping()
 			.addAnimation("rightArm", new AnimationChannel(AnimationChannel.Targets.ROTATION,
 					new Keyframe(0.0F, KeyframeAnimations.degreeVec(-48.70141F, 0.0F, 25.50803F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(0.65F, KeyframeAnimations.degreeVec(-48.70141F, 0.0F, 22.53248F), AnimationChannel.Interpolations.CATMULLROM),
@@ -284,8 +471,10 @@ public final class VesperTheEveningStarAnimations {
 					new Keyframe(1.95F, KeyframeAnimations.degreeVec(0.0F, 0.0F, -25.50645F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(2.6F, KeyframeAnimations.degreeVec(0.0F, 0.0F, -22.5F), AnimationChannel.Interpolations.CATMULLROM)))
 			.build();
+	}
 
-	public static final AnimationDefinition STANCE_CONGEATIO = AnimationDefinition.Builder.withLength(1.5F)
+	private static AnimationDefinition stance_congeatio() {
+		return AnimationDefinition.Builder.withLength(1.5F)
 			.addAnimation("rightArm", new AnimationChannel(AnimationChannel.Targets.ROTATION,
 					new Keyframe(0.0F, KeyframeAnimations.degreeVec(-48.70141F, 0.0F, 25.50803F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(0.3F, KeyframeAnimations.degreeVec(-51.35627F, 0.0F, 26.33767F), AnimationChannel.Interpolations.CATMULLROM),
@@ -297,8 +486,10 @@ public final class VesperTheEveningStarAnimations {
 					new Keyframe(0.75F, KeyframeAnimations.degreeVec(0.0F, 0.0F, -22.5F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(1.5F, KeyframeAnimations.degreeVec(0.0F, 0.0F, -22.5F), AnimationChannel.Interpolations.CATMULLROM)))
 			.build();
+	}
 
-	public static final AnimationDefinition IDLE_FERRIC = AnimationDefinition.Builder.withLength(2.6F).looping()
+	private static AnimationDefinition idle_ferric() {
+		return AnimationDefinition.Builder.withLength(2.6F).looping()
 			.addAnimation("rightArm", new AnimationChannel(AnimationChannel.Targets.ROTATION,
 					new Keyframe(0.0F, KeyframeAnimations.degreeVec(-81.36001F, 0.0F, 25.50803F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(0.65F, KeyframeAnimations.degreeVec(-81.36001F, 0.0F, 22.53248F), AnimationChannel.Interpolations.CATMULLROM),
@@ -312,8 +503,10 @@ public final class VesperTheEveningStarAnimations {
 					new Keyframe(1.95F, KeyframeAnimations.degreeVec(-31.51268F, 0.0F, -25.50645F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(2.6F, KeyframeAnimations.degreeVec(-31.51268F, 0.0F, -22.5F), AnimationChannel.Interpolations.CATMULLROM)))
 			.build();
+	}
 
-	public static final AnimationDefinition STANCE_FERRIC = AnimationDefinition.Builder.withLength(1.5F)
+	private static AnimationDefinition stance_ferric() {
+		return AnimationDefinition.Builder.withLength(1.5F)
 			.addAnimation("rightArm", new AnimationChannel(AnimationChannel.Targets.ROTATION,
 					new Keyframe(0.0F, KeyframeAnimations.degreeVec(-81.36001F, 0.0F, 25.50803F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(0.3F, KeyframeAnimations.degreeVec(-84.01486F, 0.0F, 26.33767F), AnimationChannel.Interpolations.CATMULLROM),
@@ -325,8 +518,10 @@ public final class VesperTheEveningStarAnimations {
 					new Keyframe(0.75F, KeyframeAnimations.degreeVec(-31.51268F, 0.0F, -22.5F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(1.5F, KeyframeAnimations.degreeVec(-31.51268F, 0.0F, -22.5F), AnimationChannel.Interpolations.CATMULLROM)))
 			.build();
+	}
 
-	public static final AnimationDefinition RAGE_IDLE = AnimationDefinition.Builder.withLength(0.5F).looping()
+	private static AnimationDefinition rage_idle() {
+		return AnimationDefinition.Builder.withLength(0.5F).looping()
 			.addAnimation("rightArm", new AnimationChannel(AnimationChannel.Targets.ROTATION,
 					new Keyframe(0.0F, KeyframeAnimations.degreeVec(-54.43099F, 0.0F, 44.69071F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(0.15F, KeyframeAnimations.degreeVec(-58.66236F, 0.0F, 44.69071F), AnimationChannel.Interpolations.CATMULLROM),
@@ -352,8 +547,10 @@ public final class VesperTheEveningStarAnimations {
 					new Keyframe(0.4F, KeyframeAnimations.degreeVec(-9.16732F, 0.0F, 0.0F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(0.5F, KeyframeAnimations.degreeVec(-9.16732F, 0.0F, 0.0F), AnimationChannel.Interpolations.CATMULLROM)))
 			.build();
+	}
 
-	public static final AnimationDefinition ICHIMONJI = AnimationDefinition.Builder.withLength(1.5F)
+	private static AnimationDefinition ichimonji() {
+		return AnimationDefinition.Builder.withLength(1.5F)
 			.addAnimation("rightArm", new AnimationChannel(AnimationChannel.Targets.ROTATION,
 					new Keyframe(0.0F, KeyframeAnimations.degreeVec(-31.51268F, 0.0F, 25.50803F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(0.15F, KeyframeAnimations.degreeVec(-52.25769F, 0.0F, 13.0195F), AnimationChannel.Interpolations.CATMULLROM),
@@ -399,8 +596,10 @@ public final class VesperTheEveningStarAnimations {
 					new Keyframe(1.15F, KeyframeAnimations.degreeVec(-20.42463F, 0.0F, 0.0F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(1.5F, KeyframeAnimations.degreeVec(0.0F, 0.0F, 0.0F), AnimationChannel.Interpolations.CATMULLROM)))
 			.build();
+	}
 
-	public static final AnimationDefinition ICHIMONJI_ALTERNATE = AnimationDefinition.Builder.withLength(1.5F)
+	private static AnimationDefinition ichimonji_alternate() {
+		return AnimationDefinition.Builder.withLength(1.5F)
 			.addAnimation("rightArm", new AnimationChannel(AnimationChannel.Targets.ROTATION,
 					new Keyframe(0.0F, KeyframeAnimations.degreeVec(-31.51268F, 0.0F, 25.50803F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(0.15F, KeyframeAnimations.degreeVec(-52.25769F, 0.0F, 12.48853F), AnimationChannel.Interpolations.CATMULLROM),
@@ -446,8 +645,10 @@ public final class VesperTheEveningStarAnimations {
 					new Keyframe(1.15F, KeyframeAnimations.degreeVec(-20.42463F, 0.0F, 0.0F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(1.5F, KeyframeAnimations.degreeVec(0.0F, 0.0F, 0.0F), AnimationChannel.Interpolations.CATMULLROM)))
 			.build();
+	}
 
-	public static final AnimationDefinition CROSSCUT = AnimationDefinition.Builder.withLength(1.9F)
+	private static AnimationDefinition crosscut() {
+		return AnimationDefinition.Builder.withLength(1.9F)
 			.addAnimation("rightArm", new AnimationChannel(AnimationChannel.Targets.ROTATION,
 					new Keyframe(0.0F, KeyframeAnimations.degreeVec(-31.51268F, 0.0F, 25.50803F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(0.15F, KeyframeAnimations.degreeVec(-53.57155F, 0.0F, 12.75401F), AnimationChannel.Interpolations.CATMULLROM),
@@ -513,8 +714,10 @@ public final class VesperTheEveningStarAnimations {
 					new Keyframe(1.55F, KeyframeAnimations.degreeVec(0.0F, 0.0F, -6.73847F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(1.9F, KeyframeAnimations.degreeVec(0.0F, 0.0F, 0.0F), AnimationChannel.Interpolations.CATMULLROM)))
 			.build();
+	}
 
-	public static final AnimationDefinition CROSSCUT_ALTERNATE = AnimationDefinition.Builder.withLength(1.9F)
+	private static AnimationDefinition crosscut_alternate() {
+		return AnimationDefinition.Builder.withLength(1.9F)
 			.addAnimation("rightArm", new AnimationChannel(AnimationChannel.Targets.ROTATION,
 					new Keyframe(0.0F, KeyframeAnimations.degreeVec(-31.51268F, 0.0F, 25.50803F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(0.15F, KeyframeAnimations.degreeVec(-53.57155F, 0.0F, 12.75401F), AnimationChannel.Interpolations.CATMULLROM),
@@ -580,8 +783,10 @@ public final class VesperTheEveningStarAnimations {
 					new Keyframe(1.55F, KeyframeAnimations.degreeVec(0.0F, 0.0F, 6.73847F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(1.9F, KeyframeAnimations.degreeVec(0.0F, 0.0F, 0.0F), AnimationChannel.Interpolations.CATMULLROM)))
 			.build();
+	}
 
-	public static final AnimationDefinition LEAPING_CLEAVE = AnimationDefinition.Builder.withLength(1.7F)
+	private static AnimationDefinition leaping_cleave() {
+		return AnimationDefinition.Builder.withLength(1.7F)
 			.addAnimation("rightArm", new AnimationChannel(AnimationChannel.Targets.ROTATION,
 					new Keyframe(0.0F, KeyframeAnimations.degreeVec(-48.70141F, 0.0F, 25.50803F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(0.15F, KeyframeAnimations.degreeVec(-62.05544F, 0.0F, 18.37829F), AnimationChannel.Interpolations.CATMULLROM),
@@ -627,8 +832,10 @@ public final class VesperTheEveningStarAnimations {
 					new Keyframe(1.35F, KeyframeAnimations.degreeVec(-18.98454F, 0.0F, 0.0F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(1.7F, KeyframeAnimations.degreeVec(0.0F, 0.0F, 0.0F), AnimationChannel.Interpolations.CATMULLROM)))
 			.build();
+	}
 
-	public static final AnimationDefinition LEAPING_CLEAVE_ALTERNATE = AnimationDefinition.Builder.withLength(1.7F)
+	private static AnimationDefinition leaping_cleave_alternate() {
+		return AnimationDefinition.Builder.withLength(1.7F)
 			.addAnimation("rightArm", new AnimationChannel(AnimationChannel.Targets.ROTATION,
 					new Keyframe(0.0F, KeyframeAnimations.degreeVec(-48.70141F, 0.0F, 25.50803F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(0.15F, KeyframeAnimations.degreeVec(-62.05544F, 0.0F, 18.58889F), AnimationChannel.Interpolations.CATMULLROM),
@@ -674,8 +881,10 @@ public final class VesperTheEveningStarAnimations {
 					new Keyframe(1.35F, KeyframeAnimations.degreeVec(-18.98454F, 0.0F, 0.0F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(1.7F, KeyframeAnimations.degreeVec(0.0F, 0.0F, 0.0F), AnimationChannel.Interpolations.CATMULLROM)))
 			.build();
+	}
 
-	public static final AnimationDefinition REAPER_SWEEP = AnimationDefinition.Builder.withLength(1.5F)
+	private static AnimationDefinition reaper_sweep() {
+		return AnimationDefinition.Builder.withLength(1.5F)
 			.addAnimation("rightArm", new AnimationChannel(AnimationChannel.Targets.ROTATION,
 					new Keyframe(0.0F, KeyframeAnimations.degreeVec(-48.70141F, 0.0F, 25.50803F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(0.15F, KeyframeAnimations.degreeVec(-63.88479F, 0.0F, 10.89561F), AnimationChannel.Interpolations.CATMULLROM),
@@ -721,8 +930,10 @@ public final class VesperTheEveningStarAnimations {
 					new Keyframe(1.15F, KeyframeAnimations.degreeVec(-25.56586F, 0.0F, 0.0F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(1.5F, KeyframeAnimations.degreeVec(0.0F, 0.0F, 0.0F), AnimationChannel.Interpolations.CATMULLROM)))
 			.build();
+	}
 
-	public static final AnimationDefinition REAPER_SWEEP_ALTERNATE = AnimationDefinition.Builder.withLength(1.5F)
+	private static AnimationDefinition reaper_sweep_alternate() {
+		return AnimationDefinition.Builder.withLength(1.5F)
 			.addAnimation("rightArm", new AnimationChannel(AnimationChannel.Targets.ROTATION,
 					new Keyframe(0.0F, KeyframeAnimations.degreeVec(-48.70141F, 0.0F, 25.50803F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(0.15F, KeyframeAnimations.degreeVec(-63.88479F, 0.0F, 14.61241F), AnimationChannel.Interpolations.CATMULLROM),
@@ -768,8 +979,10 @@ public final class VesperTheEveningStarAnimations {
 					new Keyframe(1.15F, KeyframeAnimations.degreeVec(-25.56586F, 0.0F, 0.0F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(1.5F, KeyframeAnimations.degreeVec(0.0F, 0.0F, 0.0F), AnimationChannel.Interpolations.CATMULLROM)))
 			.build();
+	}
 
-	public static final AnimationDefinition SKY_LANCE = AnimationDefinition.Builder.withLength(1.85F)
+	private static AnimationDefinition sky_lance() {
+		return AnimationDefinition.Builder.withLength(1.85F)
 			.addAnimation("rightArm", new AnimationChannel(AnimationChannel.Targets.ROTATION,
 					new Keyframe(0.0F, KeyframeAnimations.degreeVec(-64.17127F, 0.0F, 25.50803F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(0.15F, KeyframeAnimations.degreeVec(-76.06833F, 0.0F, 12.75401F), AnimationChannel.Interpolations.CATMULLROM),
@@ -848,8 +1061,10 @@ public final class VesperTheEveningStarAnimations {
 					new Keyframe(1.5F, KeyframeAnimations.degreeVec(54.43099F, 0.0F, 0.0F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(1.85F, KeyframeAnimations.degreeVec(0.0F, 0.0F, 0.0F), AnimationChannel.Interpolations.CATMULLROM)))
 			.build();
+	}
 
-	public static final AnimationDefinition SKY_LANCE_ALTERNATE = AnimationDefinition.Builder.withLength(1.85F)
+	private static AnimationDefinition sky_lance_alternate() {
+		return AnimationDefinition.Builder.withLength(1.85F)
 			.addAnimation("rightArm", new AnimationChannel(AnimationChannel.Targets.ROTATION,
 					new Keyframe(0.0F, KeyframeAnimations.degreeVec(-64.17127F, 0.0F, 25.50803F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(0.15F, KeyframeAnimations.degreeVec(-76.06833F, 0.0F, 12.75401F), AnimationChannel.Interpolations.CATMULLROM),
@@ -928,8 +1143,10 @@ public final class VesperTheEveningStarAnimations {
 					new Keyframe(1.5F, KeyframeAnimations.degreeVec(54.43099F, 0.0F, 0.0F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(1.85F, KeyframeAnimations.degreeVec(0.0F, 0.0F, 0.0F), AnimationChannel.Interpolations.CATMULLROM)))
 			.build();
+	}
 
-	public static final AnimationDefinition LANCE_FLURRY = AnimationDefinition.Builder.withLength(2.0F)
+	private static AnimationDefinition lance_flurry() {
+		return AnimationDefinition.Builder.withLength(2.0F)
 			.addAnimation("rightArm", new AnimationChannel(AnimationChannel.Targets.ROTATION,
 					new Keyframe(0.0F, KeyframeAnimations.degreeVec(-64.17127F, 0.0F, 25.50803F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(0.15F, KeyframeAnimations.degreeVec(-69.32789F, 0.0F, 12.75401F), AnimationChannel.Interpolations.CATMULLROM),
@@ -991,8 +1208,10 @@ public final class VesperTheEveningStarAnimations {
 					new Keyframe(1.65F, KeyframeAnimations.degreeVec(-16.57704F, 0.0F, 0.0F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(2.0F, KeyframeAnimations.degreeVec(0.0F, 0.0F, 0.0F), AnimationChannel.Interpolations.CATMULLROM)))
 			.build();
+	}
 
-	public static final AnimationDefinition LANCE_FLURRY_ALTERNATE = AnimationDefinition.Builder.withLength(2.0F)
+	private static AnimationDefinition lance_flurry_alternate() {
+		return AnimationDefinition.Builder.withLength(2.0F)
 			.addAnimation("rightArm", new AnimationChannel(AnimationChannel.Targets.ROTATION,
 					new Keyframe(0.0F, KeyframeAnimations.degreeVec(-64.17127F, 0.0F, 25.50803F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(0.15F, KeyframeAnimations.degreeVec(-69.32789F, 0.0F, 12.75401F), AnimationChannel.Interpolations.CATMULLROM),
@@ -1054,8 +1273,10 @@ public final class VesperTheEveningStarAnimations {
 					new Keyframe(1.65F, KeyframeAnimations.degreeVec(-24.06423F, 0.0F, 0.0F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(2.0F, KeyframeAnimations.degreeVec(0.0F, 0.0F, 0.0F), AnimationChannel.Interpolations.CATMULLROM)))
 			.build();
+	}
 
-	public static final AnimationDefinition TWIN_REND = AnimationDefinition.Builder.withLength(1.7F)
+	private static AnimationDefinition twin_rend() {
+		return AnimationDefinition.Builder.withLength(1.7F)
 			.addAnimation("rightArm", new AnimationChannel(AnimationChannel.Targets.ROTATION,
 					new Keyframe(0.0F, KeyframeAnimations.degreeVec(-45.83662F, 0.0F, 25.50803F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(0.15F, KeyframeAnimations.degreeVec(-53.85803F, 0.0F, 33.38049F), AnimationChannel.Interpolations.CATMULLROM),
@@ -1086,9 +1307,46 @@ public final class VesperTheEveningStarAnimations {
 					new Keyframe(1.2F, KeyframeAnimations.degreeVec(-26.59585F, 0.0F, -33.41216F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(1.35F, KeyframeAnimations.degreeVec(-41.25296F, 0.0F, -36.6693F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(1.7F, KeyframeAnimations.degreeVec(-45.83662F, 0.0F, -22.5F), AnimationChannel.Interpolations.CATMULLROM)))
+			.addAnimation("body", new AnimationChannel(AnimationChannel.Targets.ROTATION,
+					new Keyframe(0.0F, KeyframeAnimations.degreeVec(0.0F, 0.0F, 0.0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.544F, KeyframeAnimations.degreeVec(-14.0F, -5.0F, 0.0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1.156F, KeyframeAnimations.degreeVec(-18.0F, 4.0F, 0.0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1.7F, KeyframeAnimations.degreeVec(0.0F, 0.0F, 0.0F), AnimationChannel.Interpolations.CATMULLROM)))
+			.addAnimation("leftLeg", new AnimationChannel(AnimationChannel.Targets.ROTATION,
+					new Keyframe(0.0F, KeyframeAnimations.degreeVec(0.0F, 0.0F, 0.0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.544F, KeyframeAnimations.degreeVec(14.0F, 4.0F, -2.0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1.156F, KeyframeAnimations.degreeVec(8.0F, -3.0F, 2.0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1.7F, KeyframeAnimations.degreeVec(0.0F, 0.0F, 0.0F), AnimationChannel.Interpolations.CATMULLROM)))
+			.addAnimation("leftLeg2", new AnimationChannel(AnimationChannel.Targets.ROTATION,
+					new Keyframe(0.0F, KeyframeAnimations.degreeVec(0.0F, 0.0F, 0.0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.544F, KeyframeAnimations.degreeVec(-22.0F, 0.0F, 0.0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1.156F, KeyframeAnimations.degreeVec(-14.0F, 0.0F, 0.0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1.7F, KeyframeAnimations.degreeVec(0.0F, 0.0F, 0.0F), AnimationChannel.Interpolations.CATMULLROM)))
+			.addAnimation("leftBoot", new AnimationChannel(AnimationChannel.Targets.ROTATION,
+					new Keyframe(0.0F, KeyframeAnimations.degreeVec(0.0F, 0.0F, 0.0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.544F, KeyframeAnimations.degreeVec(7.0F, 0.0F, 2.0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1.156F, KeyframeAnimations.degreeVec(4.0F, 0.0F, 1.0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1.7F, KeyframeAnimations.degreeVec(0.0F, 0.0F, 0.0F), AnimationChannel.Interpolations.CATMULLROM)))
+			.addAnimation("rightLeg", new AnimationChannel(AnimationChannel.Targets.ROTATION,
+					new Keyframe(0.0F, KeyframeAnimations.degreeVec(0.0F, 0.0F, 0.0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.544F, KeyframeAnimations.degreeVec(16.0F, -4.0F, 2.0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1.156F, KeyframeAnimations.degreeVec(10.0F, 3.0F, -2.0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1.7F, KeyframeAnimations.degreeVec(0.0F, 0.0F, 0.0F), AnimationChannel.Interpolations.CATMULLROM)))
+			.addAnimation("rightLeg2", new AnimationChannel(AnimationChannel.Targets.ROTATION,
+					new Keyframe(0.0F, KeyframeAnimations.degreeVec(0.0F, 0.0F, 0.0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.544F, KeyframeAnimations.degreeVec(-25.0F, 0.0F, 0.0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1.156F, KeyframeAnimations.degreeVec(-16.0F, 0.0F, 0.0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1.7F, KeyframeAnimations.degreeVec(0.0F, 0.0F, 0.0F), AnimationChannel.Interpolations.CATMULLROM)))
+			.addAnimation("rightBoot", new AnimationChannel(AnimationChannel.Targets.ROTATION,
+					new Keyframe(0.0F, KeyframeAnimations.degreeVec(0.0F, 0.0F, 0.0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.544F, KeyframeAnimations.degreeVec(7.0F, 0.0F, -2.0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1.156F, KeyframeAnimations.degreeVec(4.0F, 0.0F, -1.0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1.7F, KeyframeAnimations.degreeVec(0.0F, 0.0F, 0.0F), AnimationChannel.Interpolations.CATMULLROM)))
 			.build();
+	}
 
-	public static final AnimationDefinition TWIN_REND_ALTERNATE = AnimationDefinition.Builder.withLength(1.7F)
+	private static AnimationDefinition twin_rend_alternate() {
+		return AnimationDefinition.Builder.withLength(1.7F)
 			.addAnimation("rightArm", new AnimationChannel(AnimationChannel.Targets.ROTATION,
 					new Keyframe(0.0F, KeyframeAnimations.degreeVec(-45.83662F, 0.0F, 25.50803F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(0.15F, KeyframeAnimations.degreeVec(-53.85803F, 0.0F, 33.38049F), AnimationChannel.Interpolations.CATMULLROM),
@@ -1119,9 +1377,46 @@ public final class VesperTheEveningStarAnimations {
 					new Keyframe(1.2F, KeyframeAnimations.degreeVec(-97.16303F, 0.0F, -49.09376F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(1.35F, KeyframeAnimations.degreeVec(-82.50592F, 0.0F, -45.83662F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(1.7F, KeyframeAnimations.degreeVec(-45.83662F, 0.0F, -22.5F), AnimationChannel.Interpolations.CATMULLROM)))
+			.addAnimation("body", new AnimationChannel(AnimationChannel.Targets.ROTATION,
+					new Keyframe(0.0F, KeyframeAnimations.degreeVec(0.0F, 0.0F, 0.0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.544F, KeyframeAnimations.degreeVec(-14.0F, 5.0F, 0.0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1.156F, KeyframeAnimations.degreeVec(-18.0F, -4.0F, 0.0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1.7F, KeyframeAnimations.degreeVec(0.0F, 0.0F, 0.0F), AnimationChannel.Interpolations.CATMULLROM)))
+			.addAnimation("leftLeg", new AnimationChannel(AnimationChannel.Targets.ROTATION,
+					new Keyframe(0.0F, KeyframeAnimations.degreeVec(0.0F, 0.0F, 0.0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.544F, KeyframeAnimations.degreeVec(14.0F, -4.0F, -2.0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1.156F, KeyframeAnimations.degreeVec(8.0F, 3.0F, 2.0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1.7F, KeyframeAnimations.degreeVec(0.0F, 0.0F, 0.0F), AnimationChannel.Interpolations.CATMULLROM)))
+			.addAnimation("leftLeg2", new AnimationChannel(AnimationChannel.Targets.ROTATION,
+					new Keyframe(0.0F, KeyframeAnimations.degreeVec(0.0F, 0.0F, 0.0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.544F, KeyframeAnimations.degreeVec(-22.0F, 0.0F, 0.0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1.156F, KeyframeAnimations.degreeVec(-14.0F, 0.0F, 0.0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1.7F, KeyframeAnimations.degreeVec(0.0F, 0.0F, 0.0F), AnimationChannel.Interpolations.CATMULLROM)))
+			.addAnimation("leftBoot", new AnimationChannel(AnimationChannel.Targets.ROTATION,
+					new Keyframe(0.0F, KeyframeAnimations.degreeVec(0.0F, 0.0F, 0.0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.544F, KeyframeAnimations.degreeVec(7.0F, 0.0F, 2.0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1.156F, KeyframeAnimations.degreeVec(4.0F, 0.0F, 1.0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1.7F, KeyframeAnimations.degreeVec(0.0F, 0.0F, 0.0F), AnimationChannel.Interpolations.CATMULLROM)))
+			.addAnimation("rightLeg", new AnimationChannel(AnimationChannel.Targets.ROTATION,
+					new Keyframe(0.0F, KeyframeAnimations.degreeVec(0.0F, 0.0F, 0.0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.544F, KeyframeAnimations.degreeVec(16.0F, 4.0F, 2.0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1.156F, KeyframeAnimations.degreeVec(10.0F, -3.0F, -2.0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1.7F, KeyframeAnimations.degreeVec(0.0F, 0.0F, 0.0F), AnimationChannel.Interpolations.CATMULLROM)))
+			.addAnimation("rightLeg2", new AnimationChannel(AnimationChannel.Targets.ROTATION,
+					new Keyframe(0.0F, KeyframeAnimations.degreeVec(0.0F, 0.0F, 0.0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.544F, KeyframeAnimations.degreeVec(-25.0F, 0.0F, 0.0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1.156F, KeyframeAnimations.degreeVec(-16.0F, 0.0F, 0.0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1.7F, KeyframeAnimations.degreeVec(0.0F, 0.0F, 0.0F), AnimationChannel.Interpolations.CATMULLROM)))
+			.addAnimation("rightBoot", new AnimationChannel(AnimationChannel.Targets.ROTATION,
+					new Keyframe(0.0F, KeyframeAnimations.degreeVec(0.0F, 0.0F, 0.0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.544F, KeyframeAnimations.degreeVec(7.0F, 0.0F, -2.0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1.156F, KeyframeAnimations.degreeVec(4.0F, 0.0F, -1.0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1.7F, KeyframeAnimations.degreeVec(0.0F, 0.0F, 0.0F), AnimationChannel.Interpolations.CATMULLROM)))
 			.build();
+	}
 
-	public static final AnimationDefinition PREDATOR_POUNCE = AnimationDefinition.Builder.withLength(1.6F)
+	private static AnimationDefinition predator_pounce() {
+		return AnimationDefinition.Builder.withLength(1.6F)
 			.addAnimation("rightArm", new AnimationChannel(AnimationChannel.Targets.ROTATION,
 					new Keyframe(0.0F, KeyframeAnimations.degreeVec(-45.83662F, 0.0F, 25.50803F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(0.15F, KeyframeAnimations.degreeVec(-53.85803F, 0.0F, 33.38049F), AnimationChannel.Interpolations.CATMULLROM),
@@ -1144,9 +1439,46 @@ public final class VesperTheEveningStarAnimations {
 					new Keyframe(1.2F, KeyframeAnimations.degreeVec(-94.47437F, 0.0F, -48.49628F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(1.25F, KeyframeAnimations.degreeVec(-88.83333F, 0.0F, -47.24271F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(1.6F, KeyframeAnimations.degreeVec(-45.83662F, 0.0F, -22.5F), AnimationChannel.Interpolations.CATMULLROM)))
+			.addAnimation("body", new AnimationChannel(AnimationChannel.Targets.ROTATION,
+					new Keyframe(0.0F, KeyframeAnimations.degreeVec(0.0F, 0.0F, 0.0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.512F, KeyframeAnimations.degreeVec(-24.0F, -5.0F, 0.0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1.088F, KeyframeAnimations.degreeVec(-32.0F, 4.0F, 0.0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1.6F, KeyframeAnimations.degreeVec(0.0F, 0.0F, 0.0F), AnimationChannel.Interpolations.CATMULLROM)))
+			.addAnimation("leftLeg", new AnimationChannel(AnimationChannel.Targets.ROTATION,
+					new Keyframe(0.0F, KeyframeAnimations.degreeVec(0.0F, 0.0F, 0.0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.512F, KeyframeAnimations.degreeVec(28.0F, 4.0F, -2.0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1.088F, KeyframeAnimations.degreeVec(-18.0F, -3.0F, 2.0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1.6F, KeyframeAnimations.degreeVec(0.0F, 0.0F, 0.0F), AnimationChannel.Interpolations.CATMULLROM)))
+			.addAnimation("leftLeg2", new AnimationChannel(AnimationChannel.Targets.ROTATION,
+					new Keyframe(0.0F, KeyframeAnimations.degreeVec(0.0F, 0.0F, 0.0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.512F, KeyframeAnimations.degreeVec(-42.0F, 0.0F, 0.0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1.088F, KeyframeAnimations.degreeVec(-12.0F, 0.0F, 0.0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1.6F, KeyframeAnimations.degreeVec(0.0F, 0.0F, 0.0F), AnimationChannel.Interpolations.CATMULLROM)))
+			.addAnimation("leftBoot", new AnimationChannel(AnimationChannel.Targets.ROTATION,
+					new Keyframe(0.0F, KeyframeAnimations.degreeVec(0.0F, 0.0F, 0.0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.512F, KeyframeAnimations.degreeVec(14.0F, 0.0F, 2.0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1.088F, KeyframeAnimations.degreeVec(5.0F, 0.0F, 1.0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1.6F, KeyframeAnimations.degreeVec(0.0F, 0.0F, 0.0F), AnimationChannel.Interpolations.CATMULLROM)))
+			.addAnimation("rightLeg", new AnimationChannel(AnimationChannel.Targets.ROTATION,
+					new Keyframe(0.0F, KeyframeAnimations.degreeVec(0.0F, 0.0F, 0.0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.512F, KeyframeAnimations.degreeVec(22.0F, -4.0F, 2.0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1.088F, KeyframeAnimations.degreeVec(-24.0F, 3.0F, -2.0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1.6F, KeyframeAnimations.degreeVec(0.0F, 0.0F, 0.0F), AnimationChannel.Interpolations.CATMULLROM)))
+			.addAnimation("rightLeg2", new AnimationChannel(AnimationChannel.Targets.ROTATION,
+					new Keyframe(0.0F, KeyframeAnimations.degreeVec(0.0F, 0.0F, 0.0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.512F, KeyframeAnimations.degreeVec(-36.0F, 0.0F, 0.0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1.088F, KeyframeAnimations.degreeVec(-10.0F, 0.0F, 0.0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1.6F, KeyframeAnimations.degreeVec(0.0F, 0.0F, 0.0F), AnimationChannel.Interpolations.CATMULLROM)))
+			.addAnimation("rightBoot", new AnimationChannel(AnimationChannel.Targets.ROTATION,
+					new Keyframe(0.0F, KeyframeAnimations.degreeVec(0.0F, 0.0F, 0.0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.512F, KeyframeAnimations.degreeVec(12.0F, 0.0F, -2.0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1.088F, KeyframeAnimations.degreeVec(4.0F, 0.0F, -1.0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1.6F, KeyframeAnimations.degreeVec(0.0F, 0.0F, 0.0F), AnimationChannel.Interpolations.CATMULLROM)))
 			.build();
+	}
 
-	public static final AnimationDefinition PREDATOR_POUNCE_ALTERNATE = AnimationDefinition.Builder.withLength(1.6F)
+	private static AnimationDefinition predator_pounce_alternate() {
+		return AnimationDefinition.Builder.withLength(1.6F)
 			.addAnimation("rightArm", new AnimationChannel(AnimationChannel.Targets.ROTATION,
 					new Keyframe(0.0F, KeyframeAnimations.degreeVec(-45.83662F, 0.0F, 25.50803F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(0.15F, KeyframeAnimations.degreeVec(-53.85803F, 0.0F, 33.38049F), AnimationChannel.Interpolations.CATMULLROM),
@@ -1169,9 +1501,46 @@ public final class VesperTheEveningStarAnimations {
 					new Keyframe(1.2F, KeyframeAnimations.degreeVec(-29.28451F, 0.0F, -34.00964F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(1.25F, KeyframeAnimations.degreeVec(-34.92556F, 0.0F, -35.26321F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(1.6F, KeyframeAnimations.degreeVec(-45.83662F, 0.0F, -22.5F), AnimationChannel.Interpolations.CATMULLROM)))
+			.addAnimation("body", new AnimationChannel(AnimationChannel.Targets.ROTATION,
+					new Keyframe(0.0F, KeyframeAnimations.degreeVec(0.0F, 0.0F, 0.0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.512F, KeyframeAnimations.degreeVec(-24.0F, 5.0F, 0.0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1.088F, KeyframeAnimations.degreeVec(-32.0F, -4.0F, 0.0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1.6F, KeyframeAnimations.degreeVec(0.0F, 0.0F, 0.0F), AnimationChannel.Interpolations.CATMULLROM)))
+			.addAnimation("leftLeg", new AnimationChannel(AnimationChannel.Targets.ROTATION,
+					new Keyframe(0.0F, KeyframeAnimations.degreeVec(0.0F, 0.0F, 0.0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.512F, KeyframeAnimations.degreeVec(28.0F, -4.0F, -2.0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1.088F, KeyframeAnimations.degreeVec(-18.0F, 3.0F, 2.0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1.6F, KeyframeAnimations.degreeVec(0.0F, 0.0F, 0.0F), AnimationChannel.Interpolations.CATMULLROM)))
+			.addAnimation("leftLeg2", new AnimationChannel(AnimationChannel.Targets.ROTATION,
+					new Keyframe(0.0F, KeyframeAnimations.degreeVec(0.0F, 0.0F, 0.0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.512F, KeyframeAnimations.degreeVec(-42.0F, 0.0F, 0.0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1.088F, KeyframeAnimations.degreeVec(-12.0F, 0.0F, 0.0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1.6F, KeyframeAnimations.degreeVec(0.0F, 0.0F, 0.0F), AnimationChannel.Interpolations.CATMULLROM)))
+			.addAnimation("leftBoot", new AnimationChannel(AnimationChannel.Targets.ROTATION,
+					new Keyframe(0.0F, KeyframeAnimations.degreeVec(0.0F, 0.0F, 0.0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.512F, KeyframeAnimations.degreeVec(14.0F, 0.0F, 2.0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1.088F, KeyframeAnimations.degreeVec(5.0F, 0.0F, 1.0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1.6F, KeyframeAnimations.degreeVec(0.0F, 0.0F, 0.0F), AnimationChannel.Interpolations.CATMULLROM)))
+			.addAnimation("rightLeg", new AnimationChannel(AnimationChannel.Targets.ROTATION,
+					new Keyframe(0.0F, KeyframeAnimations.degreeVec(0.0F, 0.0F, 0.0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.512F, KeyframeAnimations.degreeVec(22.0F, 4.0F, 2.0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1.088F, KeyframeAnimations.degreeVec(-24.0F, -3.0F, -2.0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1.6F, KeyframeAnimations.degreeVec(0.0F, 0.0F, 0.0F), AnimationChannel.Interpolations.CATMULLROM)))
+			.addAnimation("rightLeg2", new AnimationChannel(AnimationChannel.Targets.ROTATION,
+					new Keyframe(0.0F, KeyframeAnimations.degreeVec(0.0F, 0.0F, 0.0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.512F, KeyframeAnimations.degreeVec(-36.0F, 0.0F, 0.0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1.088F, KeyframeAnimations.degreeVec(-10.0F, 0.0F, 0.0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1.6F, KeyframeAnimations.degreeVec(0.0F, 0.0F, 0.0F), AnimationChannel.Interpolations.CATMULLROM)))
+			.addAnimation("rightBoot", new AnimationChannel(AnimationChannel.Targets.ROTATION,
+					new Keyframe(0.0F, KeyframeAnimations.degreeVec(0.0F, 0.0F, 0.0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.512F, KeyframeAnimations.degreeVec(12.0F, 0.0F, -2.0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1.088F, KeyframeAnimations.degreeVec(4.0F, 0.0F, -1.0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1.6F, KeyframeAnimations.degreeVec(0.0F, 0.0F, 0.0F), AnimationChannel.Interpolations.CATMULLROM)))
 			.build();
+	}
 
-	public static final AnimationDefinition CONDUCTIVE_VOLLEY = AnimationDefinition.Builder.withLength(1.6F)
+	private static AnimationDefinition conductive_volley() {
+		return AnimationDefinition.Builder.withLength(1.6F)
 			.addAnimation("rightArm", new AnimationChannel(AnimationChannel.Targets.ROTATION,
 					new Keyframe(0.0F, KeyframeAnimations.degreeVec(-65.89015F, 0.0F, 25.50803F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(0.15F, KeyframeAnimations.degreeVec(-73.61894F, 12.03211F, 12.75401F), AnimationChannel.Interpolations.CATMULLROM),
@@ -1217,8 +1586,10 @@ public final class VesperTheEveningStarAnimations {
 					new Keyframe(1.25F, KeyframeAnimations.degreeVec(-20.05352F, 0.0F, 0.0F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(1.6F, KeyframeAnimations.degreeVec(0.0F, 0.0F, 0.0F), AnimationChannel.Interpolations.CATMULLROM)))
 			.build();
+	}
 
-	public static final AnimationDefinition STORM_LOCK = AnimationDefinition.Builder.withLength(2.6F)
+	private static AnimationDefinition storm_lock() {
+		return AnimationDefinition.Builder.withLength(2.6F)
 			.addAnimation("rightArm", new AnimationChannel(AnimationChannel.Targets.ROTATION,
 					new Keyframe(0.0F, KeyframeAnimations.degreeVec(-65.89015F, 0.0F, 25.50803F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(0.15F, KeyframeAnimations.degreeVec(-73.61894F, 12.03211F, 12.75401F), AnimationChannel.Interpolations.CATMULLROM),
@@ -1300,8 +1671,10 @@ public final class VesperTheEveningStarAnimations {
 					new Keyframe(2.4F, KeyframeAnimations.degreeVec(-12.67618F, 0.0F, 0.0F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(2.6F, KeyframeAnimations.degreeVec(0.0F, 0.0F, 0.0F), AnimationChannel.Interpolations.CATMULLROM)))
 			.build();
+	}
 
-	public static final AnimationDefinition BRANDING_THRUSTS = AnimationDefinition.Builder.withLength(1.9F)
+	private static AnimationDefinition branding_thrusts() {
+		return AnimationDefinition.Builder.withLength(1.9F)
 			.addAnimation("rightArm", new AnimationChannel(AnimationChannel.Targets.ROTATION,
 					new Keyframe(0.0F, KeyframeAnimations.degreeVec(-60.16057F, 0.0F, 25.50803F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(0.15F, KeyframeAnimations.degreeVec(-67.32254F, 0.0F, 12.75401F), AnimationChannel.Interpolations.CATMULLROM),
@@ -1351,8 +1724,10 @@ public final class VesperTheEveningStarAnimations {
 					new Keyframe(1.55F, KeyframeAnimations.degreeVec(-16.57704F, 0.0F, 0.0F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(1.9F, KeyframeAnimations.degreeVec(0.0F, 0.0F, 0.0F), AnimationChannel.Interpolations.CATMULLROM)))
 			.build();
+	}
 
-	public static final AnimationDefinition BRANDING_THRUSTS_ALTERNATE = AnimationDefinition.Builder.withLength(1.9F)
+	private static AnimationDefinition branding_thrusts_alternate() {
+		return AnimationDefinition.Builder.withLength(1.9F)
 			.addAnimation("rightArm", new AnimationChannel(AnimationChannel.Targets.ROTATION,
 					new Keyframe(0.0F, KeyframeAnimations.degreeVec(-60.16057F, 0.0F, 25.50803F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(0.15F, KeyframeAnimations.degreeVec(-67.32254F, 0.0F, 12.75401F), AnimationChannel.Interpolations.CATMULLROM),
@@ -1402,8 +1777,10 @@ public final class VesperTheEveningStarAnimations {
 					new Keyframe(1.55F, KeyframeAnimations.degreeVec(-24.06423F, 0.0F, 0.0F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(1.9F, KeyframeAnimations.degreeVec(0.0F, 0.0F, 0.0F), AnimationChannel.Interpolations.CATMULLROM)))
 			.build();
+	}
 
-	public static final AnimationDefinition UPDRAFT_IMPALEMENT = AnimationDefinition.Builder.withLength(1.8F)
+	private static AnimationDefinition updraft_impalement() {
+		return AnimationDefinition.Builder.withLength(1.8F)
 			.addAnimation("rightArm", new AnimationChannel(AnimationChannel.Targets.ROTATION,
 					new Keyframe(0.0F, KeyframeAnimations.degreeVec(-60.16057F, 0.0F, 25.50803F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(0.15F, KeyframeAnimations.degreeVec(-67.32254F, 0.0F, 12.75401F), AnimationChannel.Interpolations.CATMULLROM),
@@ -1453,8 +1830,10 @@ public final class VesperTheEveningStarAnimations {
 					new Keyframe(1.45F, KeyframeAnimations.degreeVec(-24.06423F, 0.0F, 0.0F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(1.8F, KeyframeAnimations.degreeVec(0.0F, 0.0F, 0.0F), AnimationChannel.Interpolations.CATMULLROM)))
 			.build();
+	}
 
-	public static final AnimationDefinition UPDRAFT_IMPALEMENT_ALTERNATE = AnimationDefinition.Builder.withLength(1.8F)
+	private static AnimationDefinition updraft_impalement_alternate() {
+		return AnimationDefinition.Builder.withLength(1.8F)
 			.addAnimation("rightArm", new AnimationChannel(AnimationChannel.Targets.ROTATION,
 					new Keyframe(0.0F, KeyframeAnimations.degreeVec(-60.16057F, 0.0F, 25.50803F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(0.15F, KeyframeAnimations.degreeVec(-67.32254F, 0.0F, 12.75401F), AnimationChannel.Interpolations.CATMULLROM),
@@ -1504,8 +1883,10 @@ public final class VesperTheEveningStarAnimations {
 					new Keyframe(1.45F, KeyframeAnimations.degreeVec(-16.57704F, 0.0F, 0.0F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(1.8F, KeyframeAnimations.degreeVec(0.0F, 0.0F, 0.0F), AnimationChannel.Interpolations.CATMULLROM)))
 			.build();
+	}
 
-	public static final AnimationDefinition CHAIN_SWEEP = AnimationDefinition.Builder.withLength(1.5F)
+	private static AnimationDefinition chain_sweep() {
+		return AnimationDefinition.Builder.withLength(1.5F)
 			.addAnimation("rightArm", new AnimationChannel(AnimationChannel.Targets.ROTATION,
 					new Keyframe(0.0F, KeyframeAnimations.degreeVec(-48.70141F, 0.0F, 25.50803F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(0.15F, KeyframeAnimations.degreeVec(-61.80782F, 0.0F, 9.38789F), AnimationChannel.Interpolations.CATMULLROM),
@@ -1552,8 +1933,10 @@ public final class VesperTheEveningStarAnimations {
 					new Keyframe(1.2F, KeyframeAnimations.degreeVec(0.0F, 15.22189F, 4.75684F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(1.5F, KeyframeAnimations.degreeVec(0.0F, 0.0F, 0.0F), AnimationChannel.Interpolations.CATMULLROM)))
 			.build();
+	}
 
-	public static final AnimationDefinition CHAIN_SWEEP_ALTERNATE = AnimationDefinition.Builder.withLength(1.5F)
+	private static AnimationDefinition chain_sweep_alternate() {
+		return AnimationDefinition.Builder.withLength(1.5F)
 			.addAnimation("rightArm", new AnimationChannel(AnimationChannel.Targets.ROTATION,
 					new Keyframe(0.0F, KeyframeAnimations.degreeVec(-48.70141F, 0.0F, 25.50803F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(0.15F, KeyframeAnimations.degreeVec(-61.80782F, 0.0F, 16.12014F), AnimationChannel.Interpolations.CATMULLROM),
@@ -1600,8 +1983,10 @@ public final class VesperTheEveningStarAnimations {
 					new Keyframe(1.2F, KeyframeAnimations.degreeVec(0.0F, -15.22189F, -4.75684F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(1.5F, KeyframeAnimations.degreeVec(0.0F, 0.0F, 0.0F), AnimationChannel.Interpolations.CATMULLROM)))
 			.build();
+	}
 
-	public static final AnimationDefinition HOOK_AND_CRUSH = AnimationDefinition.Builder.withLength(2.0F)
+	private static AnimationDefinition hook_and_crush() {
+		return AnimationDefinition.Builder.withLength(2.0F)
 			.addAnimation("rightArm", new AnimationChannel(AnimationChannel.Targets.ROTATION,
 					new Keyframe(0.0F, KeyframeAnimations.degreeVec(-48.70141F, 0.0F, 25.50803F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(0.15F, KeyframeAnimations.degreeVec(-61.73229F, 0.0F, 8.67793F), AnimationChannel.Interpolations.CATMULLROM),
@@ -1669,8 +2054,10 @@ public final class VesperTheEveningStarAnimations {
 					new Keyframe(1.75F, KeyframeAnimations.degreeVec(0.0F, -7.8408F, -2.45025F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(2.0F, KeyframeAnimations.degreeVec(0.0F, 0.0F, 0.0F), AnimationChannel.Interpolations.CATMULLROM)))
 			.build();
+	}
 
-	public static final AnimationDefinition HOOK_AND_CRUSH_ALTERNATE = AnimationDefinition.Builder.withLength(2.0F)
+	private static AnimationDefinition hook_and_crush_alternate() {
+		return AnimationDefinition.Builder.withLength(2.0F)
 			.addAnimation("rightArm", new AnimationChannel(AnimationChannel.Targets.ROTATION,
 					new Keyframe(0.0F, KeyframeAnimations.degreeVec(-48.70141F, 0.0F, 25.50803F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(0.15F, KeyframeAnimations.degreeVec(-61.73229F, 0.0F, 16.8301F), AnimationChannel.Interpolations.CATMULLROM),
@@ -1738,8 +2125,10 @@ public final class VesperTheEveningStarAnimations {
 					new Keyframe(1.75F, KeyframeAnimations.degreeVec(0.0F, 7.8408F, 2.45025F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(2.0F, KeyframeAnimations.degreeVec(0.0F, 0.0F, 0.0F), AnimationChannel.Interpolations.CATMULLROM)))
 			.build();
+	}
 
-	public static final AnimationDefinition MAGNETIC_AXIS = AnimationDefinition.Builder.withLength(1.5F)
+	private static AnimationDefinition magnetic_axis() {
+		return AnimationDefinition.Builder.withLength(1.5F)
 			.addAnimation("rightArm", new AnimationChannel(AnimationChannel.Targets.ROTATION,
 					new Keyframe(0.0F, KeyframeAnimations.degreeVec(-81.36001F, 0.0F, 25.50803F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(0.15F, KeyframeAnimations.degreeVec(-85.3829F, 0.0F, 12.75401F), AnimationChannel.Interpolations.CATMULLROM),
@@ -1785,8 +2174,10 @@ public final class VesperTheEveningStarAnimations {
 					new Keyframe(1.15F, KeyframeAnimations.degreeVec(-31.51268F, 0.0F, 0.0F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(1.5F, KeyframeAnimations.degreeVec(0.0F, 0.0F, 0.0F), AnimationChannel.Interpolations.CATMULLROM)))
 			.build();
+	}
 
-	public static final AnimationDefinition IRON_RETORT = AnimationDefinition.Builder.withLength(2.3F)
+	private static AnimationDefinition iron_retort() {
+		return AnimationDefinition.Builder.withLength(2.3F)
 			.addAnimation("rightArm", new AnimationChannel(AnimationChannel.Targets.ROTATION,
 					new Keyframe(0.0F, KeyframeAnimations.degreeVec(-81.36001F, 0.0F, 25.50803F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(0.15F, KeyframeAnimations.degreeVec(-85.51884F, 0.0F, 12.75401F), AnimationChannel.Interpolations.CATMULLROM),
@@ -1832,8 +2223,10 @@ public final class VesperTheEveningStarAnimations {
 					new Keyframe(1.95F, KeyframeAnimations.degreeVec(-31.51268F, 0.0F, 0.0F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(2.3F, KeyframeAnimations.degreeVec(0.0F, 0.0F, 0.0F), AnimationChannel.Interpolations.CATMULLROM)))
 			.build();
+	}
 
-	public static final AnimationDefinition SICKLE_CYCLONE = AnimationDefinition.Builder.withLength(1.7F)
+	private static AnimationDefinition sickle_cyclone() {
+		return AnimationDefinition.Builder.withLength(1.7F)
 			.addAnimation("rightArm", new AnimationChannel(AnimationChannel.Targets.ROTATION,
 					new Keyframe(0.0F, KeyframeAnimations.degreeVec(-54.43099F, 0.0F, 44.69071F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(0.15F, KeyframeAnimations.degreeVec(-61.02001F, 0.0F, 59.01465F), AnimationChannel.Interpolations.CATMULLROM),
@@ -1907,8 +2300,10 @@ public final class VesperTheEveningStarAnimations {
 					new Keyframe(1.4F, KeyframeAnimations.degreeVec(-19.80027F, 0.0F, 0.0F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(1.7F, KeyframeAnimations.degreeVec(-9.16732F, 0.0F, 0.0F), AnimationChannel.Interpolations.CATMULLROM)))
 			.build();
+	}
 
-	public static final AnimationDefinition SICKLE_CYCLONE_ALTERNATE = AnimationDefinition.Builder.withLength(1.7F)
+	private static AnimationDefinition sickle_cyclone_alternate() {
+		return AnimationDefinition.Builder.withLength(1.7F)
 			.addAnimation("rightArm", new AnimationChannel(AnimationChannel.Targets.ROTATION,
 					new Keyframe(0.0F, KeyframeAnimations.degreeVec(-54.43099F, 0.0F, 44.69071F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(0.15F, KeyframeAnimations.degreeVec(-61.02001F, 0.0F, 59.01465F), AnimationChannel.Interpolations.CATMULLROM),
@@ -1982,8 +2377,10 @@ public final class VesperTheEveningStarAnimations {
 					new Keyframe(1.4F, KeyframeAnimations.degreeVec(-19.80027F, 0.0F, 0.0F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(1.7F, KeyframeAnimations.degreeVec(-9.16732F, 0.0F, 0.0F), AnimationChannel.Interpolations.CATMULLROM)))
 			.build();
+	}
 
-	public static final AnimationDefinition SICKLE_POUNCE = AnimationDefinition.Builder.withLength(1.2F)
+	private static AnimationDefinition sickle_pounce() {
+		return AnimationDefinition.Builder.withLength(1.2F)
 			.addAnimation("rightArm", new AnimationChannel(AnimationChannel.Targets.ROTATION,
 					new Keyframe(0.0F, KeyframeAnimations.degreeVec(-54.43099F, 0.0F, 44.69071F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(0.15F, KeyframeAnimations.degreeVec(-60.68294F, 0.0F, 56.78378F), AnimationChannel.Interpolations.CATMULLROM),
@@ -2029,8 +2426,10 @@ public final class VesperTheEveningStarAnimations {
 					new Keyframe(0.9F, KeyframeAnimations.degreeVec(34.48369F, 0.0F, 0.0F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(1.2F, KeyframeAnimations.degreeVec(-9.16732F, 0.0F, 0.0F), AnimationChannel.Interpolations.CATMULLROM)))
 			.build();
+	}
 
-	public static final AnimationDefinition SICKLE_CROSS_REND = AnimationDefinition.Builder.withLength(1.4F)
+	private static AnimationDefinition sickle_cross_rend() {
+		return AnimationDefinition.Builder.withLength(1.4F)
 			.addAnimation("rightArm", new AnimationChannel(AnimationChannel.Targets.ROTATION,
 					new Keyframe(0.0F, KeyframeAnimations.degreeVec(-54.43099F, 0.0F, 44.69071F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(0.15F, KeyframeAnimations.degreeVec(-55.86339F, 0.0F, 48.12845F), AnimationChannel.Interpolations.CATMULLROM),
@@ -2100,8 +2499,10 @@ public final class VesperTheEveningStarAnimations {
 					new Keyframe(1.1F, KeyframeAnimations.degreeVec(-9.16732F, 0.0F, 0.0F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(1.4F, KeyframeAnimations.degreeVec(-9.16732F, 0.0F, 0.0F), AnimationChannel.Interpolations.CATMULLROM)))
 			.build();
+	}
 
-	public static final AnimationDefinition SICKLE_CROSS_REND_ALTERNATE = AnimationDefinition.Builder.withLength(1.4F)
+	private static AnimationDefinition sickle_cross_rend_alternate() {
+		return AnimationDefinition.Builder.withLength(1.4F)
 			.addAnimation("rightArm", new AnimationChannel(AnimationChannel.Targets.ROTATION,
 					new Keyframe(0.0F, KeyframeAnimations.degreeVec(-54.43099F, 0.0F, 44.69071F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(0.15F, KeyframeAnimations.degreeVec(-55.86339F, 0.0F, 48.12845F), AnimationChannel.Interpolations.CATMULLROM),
@@ -2171,8 +2572,10 @@ public final class VesperTheEveningStarAnimations {
 					new Keyframe(1.1F, KeyframeAnimations.degreeVec(-9.16732F, 0.0F, 0.0F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(1.4F, KeyframeAnimations.degreeVec(-9.16732F, 0.0F, 0.0F), AnimationChannel.Interpolations.CATMULLROM)))
 			.build();
+	}
 
-	public static final AnimationDefinition SICKLE_HOOK = AnimationDefinition.Builder.withLength(1.4F)
+	private static AnimationDefinition sickle_hook() {
+		return AnimationDefinition.Builder.withLength(1.4F)
 			.addAnimation("rightArm", new AnimationChannel(AnimationChannel.Targets.ROTATION,
 					new Keyframe(0.0F, KeyframeAnimations.degreeVec(-54.43099F, 0.0F, 44.69071F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(0.15F, KeyframeAnimations.degreeVec(-61.71574F, 4.60413F, 45.83662F), AnimationChannel.Interpolations.CATMULLROM),
@@ -2222,8 +2625,10 @@ public final class VesperTheEveningStarAnimations {
 					new Keyframe(1.1F, KeyframeAnimations.degreeVec(-9.16732F, 0.0F, 0.0F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(1.4F, KeyframeAnimations.degreeVec(-9.16732F, 0.0F, 0.0F), AnimationChannel.Interpolations.CATMULLROM)))
 			.build();
+	}
 
-	public static final AnimationDefinition SANGUINE_CRESCENTS = AnimationDefinition.Builder.withLength(1.6F)
+	private static AnimationDefinition sanguine_crescents() {
+		return AnimationDefinition.Builder.withLength(1.6F)
 			.addAnimation("rightArm", new AnimationChannel(AnimationChannel.Targets.ROTATION,
 					new Keyframe(0.0F, KeyframeAnimations.degreeVec(-54.43099F, 0.0F, 44.69071F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(0.15F, KeyframeAnimations.degreeVec(-67.8955F, 12.03211F, 45.26367F), AnimationChannel.Interpolations.CATMULLROM),
@@ -2301,8 +2706,10 @@ public final class VesperTheEveningStarAnimations {
 					new Keyframe(1.3F, KeyframeAnimations.degreeVec(-9.16732F, 0.0F, 0.0F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(1.6F, KeyframeAnimations.degreeVec(-9.16732F, 0.0F, 0.0F), AnimationChannel.Interpolations.CATMULLROM)))
 			.build();
+	}
 
-	public static final AnimationDefinition SANGUINE_CRESCENTS_ALTERNATE = AnimationDefinition.Builder.withLength(1.6F)
+	private static AnimationDefinition sanguine_crescents_alternate() {
+		return AnimationDefinition.Builder.withLength(1.6F)
 			.addAnimation("rightArm", new AnimationChannel(AnimationChannel.Targets.ROTATION,
 					new Keyframe(0.0F, KeyframeAnimations.degreeVec(-54.43099F, 0.0F, 44.69071F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(0.15F, KeyframeAnimations.degreeVec(-67.8955F, 12.03211F, 45.26367F), AnimationChannel.Interpolations.CATMULLROM),
@@ -2380,8 +2787,10 @@ public final class VesperTheEveningStarAnimations {
 					new Keyframe(1.3F, KeyframeAnimations.degreeVec(-9.16732F, 0.0F, 0.0F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(1.6F, KeyframeAnimations.degreeVec(-9.16732F, 0.0F, 0.0F), AnimationChannel.Interpolations.CATMULLROM)))
 			.build();
+	}
 
-	public static final AnimationDefinition DEFEAT = AnimationDefinition.Builder.withLength(1.6F)
+	private static AnimationDefinition defeat() {
+		return AnimationDefinition.Builder.withLength(1.6F)
 			.addAnimation("rightArm", new AnimationChannel(AnimationChannel.Targets.ROTATION,
 					new Keyframe(0.0F, KeyframeAnimations.degreeVec(-64.17127F, 0.0F, 25.50803F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(0.15F, KeyframeAnimations.degreeVec(-48.12845F, 0.0F, 25.50803F), AnimationChannel.Interpolations.CATMULLROM),
@@ -2481,8 +2890,10 @@ public final class VesperTheEveningStarAnimations {
 					new Keyframe(1.0F, KeyframeAnimations.posVec(0.0F, -3.67539F, 0.0F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(1.6F, KeyframeAnimations.posVec(0.0F, -6.5917F, 0.0F), AnimationChannel.Interpolations.CATMULLROM)))
 			.build();
+	}
 
-	public static final AnimationDefinition HIT = AnimationDefinition.Builder.withLength(0.5F)
+	private static AnimationDefinition hit() {
+		return AnimationDefinition.Builder.withLength(0.5F)
 			.addAnimation("whole", new AnimationChannel(AnimationChannel.Targets.POSITION,
 					new Keyframe(0.0F, KeyframeAnimations.posVec(0.0F, 0.0F, 0.0F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(0.08F, KeyframeAnimations.posVec(0.0F, -0.85F, 0.7F), AnimationChannel.Interpolations.CATMULLROM),
@@ -2535,4 +2946,58 @@ public final class VesperTheEveningStarAnimations {
 					new Keyframe(0.3F, KeyframeAnimations.degreeVec(-9.0F, 0.0F, 0.0F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(0.5F, KeyframeAnimations.degreeVec(0.0F, 0.0F, 0.0F), AnimationChannel.Interpolations.CATMULLROM)))
 			.build();
+	}
+
+	private static AnimationDefinition remove_hood() {
+		return AnimationDefinition.Builder.withLength(1.5F)
+			.addAnimation("hood", new AnimationChannel(AnimationChannel.Targets.POSITION,
+					new Keyframe(0.0F, KeyframeAnimations.posVec(0.0F, 0.0F, 0.0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.25F, KeyframeAnimations.posVec(0.0F, 1.0F, 0.0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.625F, KeyframeAnimations.posVec(0.0F, 4.0F, 2.0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1.0F, KeyframeAnimations.posVec(0.0F, 9.0F, 5.0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1.5F, KeyframeAnimations.posVec(0.0F, 15.0F, 9.0F), AnimationChannel.Interpolations.CATMULLROM)))
+			.addAnimation("hood", new AnimationChannel(AnimationChannel.Targets.ROTATION,
+					new Keyframe(0.0F, KeyframeAnimations.degreeVec(0.0F, 0.0F, 0.0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.25F, KeyframeAnimations.degreeVec(8.0F, 0.0F, 4.0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.625F, KeyframeAnimations.degreeVec(28.0F, 0.0F, 10.0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1.0F, KeyframeAnimations.degreeVec(58.0F, 0.0F, 15.0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1.5F, KeyframeAnimations.degreeVec(82.0F, 0.0F, 18.0F), AnimationChannel.Interpolations.CATMULLROM)))
+			.addAnimation("hood2", new AnimationChannel(AnimationChannel.Targets.ROTATION,
+					new Keyframe(0.0F, KeyframeAnimations.degreeVec(0.0F, 0.0F, 0.0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.25F, KeyframeAnimations.degreeVec(5.0F, 0.0F, 0.0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.625F, KeyframeAnimations.degreeVec(18.0F, 0.0F, 0.0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1.0F, KeyframeAnimations.degreeVec(32.0F, 0.0F, 0.0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1.5F, KeyframeAnimations.degreeVec(45.0F, 0.0F, 0.0F), AnimationChannel.Interpolations.CATMULLROM)))
+			.addAnimation("hood3", new AnimationChannel(AnimationChannel.Targets.ROTATION,
+					new Keyframe(0.0F, KeyframeAnimations.degreeVec(0.0F, 0.0F, 0.0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.25F, KeyframeAnimations.degreeVec(4.0F, 0.0F, 0.0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.625F, KeyframeAnimations.degreeVec(14.0F, 0.0F, 0.0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1.0F, KeyframeAnimations.degreeVec(26.0F, 0.0F, 0.0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1.5F, KeyframeAnimations.degreeVec(36.0F, 0.0F, 0.0F), AnimationChannel.Interpolations.CATMULLROM)))
+			.addAnimation("hood4", new AnimationChannel(AnimationChannel.Targets.ROTATION,
+					new Keyframe(0.0F, KeyframeAnimations.degreeVec(0.0F, 0.0F, 0.0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.25F, KeyframeAnimations.degreeVec(3.0F, 0.0F, 0.0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.625F, KeyframeAnimations.degreeVec(10.0F, 0.0F, 0.0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1.0F, KeyframeAnimations.degreeVec(18.0F, 0.0F, 0.0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1.5F, KeyframeAnimations.degreeVec(28.0F, 0.0F, 0.0F), AnimationChannel.Interpolations.CATMULLROM)))
+			.addAnimation("head", new AnimationChannel(AnimationChannel.Targets.ROTATION,
+					new Keyframe(0.0F, KeyframeAnimations.degreeVec(0.0F, 0.0F, 0.0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.25F, KeyframeAnimations.degreeVec(8.0F, 0.0F, 0.0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.625F, KeyframeAnimations.degreeVec(14.0F, 0.0F, 0.0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1.0F, KeyframeAnimations.degreeVec(-5.0F, 0.0F, 0.0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1.5F, KeyframeAnimations.degreeVec(0.0F, 0.0F, 0.0F), AnimationChannel.Interpolations.CATMULLROM)))
+			.addAnimation("hair", new AnimationChannel(AnimationChannel.Targets.SCALE,
+					new Keyframe(0.0F, KeyframeAnimations.scaleVec(0.98F, 0.98F, 0.98F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.25F, KeyframeAnimations.scaleVec(1.0F, 1.0F, 1.0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.625F, KeyframeAnimations.scaleVec(1.0F, 1.0F, 1.0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1.0F, KeyframeAnimations.scaleVec(1.0F, 1.0F, 1.0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1.5F, KeyframeAnimations.scaleVec(1.0F, 1.0F, 1.0F), AnimationChannel.Interpolations.CATMULLROM)))
+			.addAnimation("ClothBack", new AnimationChannel(AnimationChannel.Targets.ROTATION,
+					new Keyframe(0.0F, KeyframeAnimations.degreeVec(0.0F, 0.0F, 0.0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.25F, KeyframeAnimations.degreeVec(5.0F, 0.0F, 0.0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.625F, KeyframeAnimations.degreeVec(18.0F, 0.0F, 0.0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1.0F, KeyframeAnimations.degreeVec(-9.0F, 0.0F, 0.0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1.5F, KeyframeAnimations.degreeVec(0.0F, 0.0F, 0.0F), AnimationChannel.Interpolations.CATMULLROM)))
+			.build();
+	}
 }

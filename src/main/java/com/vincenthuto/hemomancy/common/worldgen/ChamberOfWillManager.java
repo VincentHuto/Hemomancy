@@ -4,6 +4,8 @@ import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.EnumArchonPath;
 import com.vincenthuto.hemomancy.common.event.HarbingerAdvancementGranter;
+import com.vincenthuto.hemomancy.client.particle.data.BloodCellData;
+import com.vincenthuto.hemomancy.client.particle.data.SerpentParticleData;
 import com.vincenthuto.hemomancy.common.init.BlockInit;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.PacketSyncChamberOfWill;
@@ -22,6 +24,8 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
@@ -30,8 +34,10 @@ import net.minecraft.world.level.saveddata.SavedData;
 import net.minecraft.world.phys.Vec3;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 
 /**
@@ -80,6 +86,8 @@ public class ChamberOfWillManager extends SavedData {
     private final Map<UUID, ReturnPoint> returnPoints = new HashMap<>();
     private final Map<UUID, ChamberState> chamberStates = new HashMap<>();
     private final Map<UUID, ResourceLocation> skyThemeOverrides = new HashMap<>();
+    private final Set<UUID> unrestrictedSkyThemeOverrides = new HashSet<>();
+    private final Map<UUID, Integer> builtRadii = new HashMap<>();
 
     public ChamberOfWillManager() {
     }
@@ -188,7 +196,7 @@ public class ChamberOfWillManager extends SavedData {
     }
 
     public static int radiusForTier(int tier) {
-        return BASE_ROOM_RADIUS + Math.max(0, Math.min(MAX_ROOM_TIER, tier)) * 2;
+        return ChamberProgressionRules.radiusForTier(tier);
     }
 
     public static List<ResourceLocation> orderedSkyThemes() {
@@ -208,6 +216,7 @@ public class ChamberOfWillManager extends SavedData {
             return null;
         }
         skyThemeOverrides.put(player.getUUID(), skyTheme);
+        unrestrictedSkyThemeOverrides.add(player.getUUID());
         refreshProgressionState(player);
         syncTo(player);
         setDirty();
@@ -227,30 +236,47 @@ public class ChamberOfWillManager extends SavedData {
 
     public ResourceLocation clearSkyThemeOverride(ServerPlayer player) {
         skyThemeOverrides.remove(player.getUUID());
+        unrestrictedSkyThemeOverrides.remove(player.getUUID());
         refreshProgressionState(player);
         syncTo(player);
         setDirty();
         return getChamberState(player.getUUID()).skyTheme();
     }
 
-    public void refreshProgressionState(ServerPlayer player) {
+    public ProgressionRefresh refreshProgressionState(ServerPlayer player) {
         ChamberState current = getChamberState(player.getUUID());
         ChamberState next = applySkyThemeOverride(player, progressionState(player));
+        ChamberProgressionRules.Refresh comparison = ChamberProgressionRules.compare(
+                toRuleState(current), toRuleState(next));
         if (!current.equals(next)) {
             chamberStates.put(player.getUUID(), next);
             setDirty();
         }
+        return new ProgressionRefresh(comparison.tierChanged(), comparison.radiusIncreased(),
+                comparison.themeChanged());
     }
 
     private ChamberState applySkyThemeOverride(ServerPlayer player, ChamberState state) {
         ResourceLocation override = skyThemeOverrides.get(player.getUUID());
-        if (override != null && isKnownSkyTheme(override)) {
+        if (override != null && isKnownSkyTheme(override)
+                && (unrestrictedSkyThemeOverrides.contains(player.getUUID())
+                || availableSkyThemes(player).contains(override))) {
             return new ChamberState(state.tier(), override);
+        }
+        if (override != null) {
+            skyThemeOverrides.remove(player.getUUID());
+            unrestrictedSkyThemeOverrides.remove(player.getUUID());
+            setDirty();
         }
         return state;
     }
 
     private static ChamberState progressionState(ServerPlayer player) {
+        ChamberProgressionRules.State state = ChamberProgressionRules.stateFor(progressionFacts(player));
+        return new ChamberState(state.tier(), Hemomancy.rloc(state.theme()));
+    }
+
+    private static ChamberProgressionRules.Facts progressionFacts(ServerPlayer player) {
         int degree = HemoCapabilityAccess.getPlayerDegreeNumber(player);
         boolean qliphothDone = HemoCapabilityAccess.getInitiatoryDegree(player)
                 .map(deg -> deg.isQliphothCommunionDone() || deg.getTotalPomesConsumed() >= 9)
@@ -262,22 +288,34 @@ public class ChamberOfWillManager extends SavedData {
                 .map(deg -> deg.getArchonPath())
                 .orElse(EnumArchonPath.NONE);
 
-        if (degree >= 8) {
-            return new ChamberState(3, THEME_APOTHEOS);
-        }
-        if (archonPath == EnumArchonPath.SILENT_ARCHON && degree >= 7) {
-            return new ChamberState(2, THEME_SILENT_ARCHON);
-        }
-        if (qliphothStarted) {
-            return new ChamberState(2, THEME_QLIPHOTH_COMMUNION);
-        }
-        if (degree >= 7) {
-            return new ChamberState(1, THEME_ARCHON_REVELATION);
-        }
-        if (degree >= 6 && HarbingerAdvancementGranter.isVeinMasonFirstEffigyLoadout(player)) {
-            return new ChamberState(1, THEME_MNEMONIC_LOWTIDE);
-        }
-        return new ChamberState(0, THEME_WILL_DEFAULT);
+        return new ChamberProgressionRules.Facts(degree,
+                HarbingerAdvancementGranter.isVeinMasonFirstEffigyLoadout(player), qliphothStarted,
+                archonPath == EnumArchonPath.SILENT_ARCHON);
+    }
+
+    public List<ResourceLocation> availableSkyThemes(ServerPlayer player) {
+        return ChamberProgressionRules.availableThemes(progressionFacts(player)).stream()
+                .map(Hemomancy::rloc)
+                .toList();
+    }
+
+    public ResourceLocation cycleAvailableSkyTheme(ServerPlayer player) {
+        List<ResourceLocation> available = availableSkyThemes(player);
+        if (available.size() <= 1) return null;
+        ResourceLocation current = getChamberState(player.getUUID()).skyTheme();
+        int nextIndex = com.vincenthuto.hemomancy.common.event.worldevent.OrbOfPerspectiveRules
+                .nextThemeIndex(available.indexOf(current), available.size());
+        ResourceLocation next = available.get(nextIndex);
+        skyThemeOverrides.put(player.getUUID(), next);
+        unrestrictedSkyThemeOverrides.remove(player.getUUID());
+        refreshProgressionState(player);
+        syncTo(player);
+        setDirty();
+        return next;
+    }
+
+    private static ChamberProgressionRules.State toRuleState(ChamberState state) {
+        return new ChamberProgressionRules.State(state.tier(), state.skyTheme().getPath());
     }
 
     private static int qliphothPomeCount(ServerPlayer player) {
@@ -301,40 +339,58 @@ public class ChamberOfWillManager extends SavedData {
         return false;
     }
 
-    public void ensureRoom(ServerLevel level, UUID owner) {
+    public RoomGrowth ensureRoom(ServerLevel level, UUID owner) {
         BlockPos center = cellPos(idFor(owner));
-        int radius = radiusFor(owner);
+        int requestedRadius = radiusFor(owner);
+        int previousRadius = builtRadii.getOrDefault(owner, -1);
+        int radius = ChamberExpansionRules.nextBuiltRadius(previousRadius, requestedRadius);
+
+        if (radius <= previousRadius) {
+            return RoomGrowth.NONE;
+        }
 
         BlockState floor = BlockInit.blood_wood_planks.get().defaultBlockState();
         BlockState light = BlockInit.sporite_crystal.get().defaultBlockState();
 
-        for (int x = -radius; x <= radius; x++) {
-            for (int z = -radius; z <= radius; z++) {
-                BlockPos floorPos = center.offset(x, 0, z);
-                BlockState existing = level.getBlockState(floorPos);
-                if (existing.isAir() || existing.is(Blocks.WATER)) {
-                    level.setBlockAndUpdate(floorPos, floor);
+        if (previousRadius >= BASE_ROOM_RADIUS) {
+            for (ChamberExpansionRules.Offset offset : ChamberExpansionRules.markerOffsets(previousRadius)) {
+                BlockPos marker = center.offset(offset.x(), 0, offset.z());
+                BlockState state = level.getBlockState(marker);
+                if (state.is(BlockInit.sporite_crystal.get())) {
+                    level.setBlockAndUpdate(marker, floor);
                 }
-
-                for (int y = 1; y <= ROOM_HEIGHT; y++) {
-                    BlockPos airPos = center.offset(x, y, z);
-                    if (level.getBlockState(airPos).is(Blocks.WATER)) {
-                        level.setBlockAndUpdate(airPos, Blocks.AIR.defaultBlockState());
+            }
+        } else {
+            for (int migratedRadius = BASE_ROOM_RADIUS; migratedRadius < radius; migratedRadius += 2) {
+                for (ChamberExpansionRules.Offset offset : ChamberExpansionRules.markerOffsets(migratedRadius)) {
+                    BlockPos marker = center.offset(offset.x(), 0, offset.z());
+                    BlockState state = level.getBlockState(marker);
+                    if (state.is(BlockInit.sporite_crystal.get())) {
+                        level.setBlockAndUpdate(marker, floor);
                     }
                 }
             }
         }
 
-        int lit = Math.max(1, radius - 1);
-        setLightIfReplaceable(level, center.offset(lit, 0, lit), light);
-        setLightIfReplaceable(level, center.offset(-lit, 0, lit), light);
-        setLightIfReplaceable(level, center.offset(lit, 0, -lit), light);
-        setLightIfReplaceable(level, center.offset(-lit, 0, -lit), light);
+        for (ChamberExpansionRules.Offset offset : ChamberExpansionRules.floorBand(previousRadius, radius)) {
+            BlockPos floorPos = center.offset(offset.x(), 0, offset.z());
+            BlockState existing = level.getBlockState(floorPos);
+            if (existing.isAir()) {
+                level.setBlockAndUpdate(floorPos, floor);
+            }
+        }
+
+        for (ChamberExpansionRules.Offset offset : ChamberExpansionRules.markerOffsets(radius)) {
+            setLightIfReplaceable(level, center.offset(offset.x(), 0, offset.z()), light);
+        }
+        builtRadii.put(owner, radius);
+        setDirty();
+        return new RoomGrowth(previousRadius, radius);
     }
 
     private static void setLightIfReplaceable(ServerLevel level, BlockPos pos, BlockState light) {
         BlockState state = level.getBlockState(pos);
-        if (state.isAir() || state.is(BlockInit.blood_wood_planks.get()) || state.is(Blocks.WATER)) {
+        if (state.isAir() || state.is(BlockInit.blood_wood_planks.get())) {
             level.setBlockAndUpdate(pos, light);
         }
     }
@@ -359,8 +415,11 @@ public class ChamberOfWillManager extends SavedData {
 			if (VesperOrdealManager.tickArenaPlayer(player, serverLevel)) {
 				continue;
 			}
-            manager.refreshProgressionState(player);
-            manager.ensureRoom(serverLevel, player.getUUID());
+            ProgressionRefresh refresh = manager.refreshProgressionState(player);
+            RoomGrowth growth = manager.ensureRoom(serverLevel, player.getUUID());
+            if (refresh.radiusIncreased() && growth.expandedFromExistingRoom()) {
+                playExpansionEffects(serverLevel, manager.cellPos(manager.idFor(player.getUUID())), growth);
+            }
             manager.syncTo(player);
 
             if (player.isCreative() || player.isSpectator()) {
@@ -392,8 +451,52 @@ public class ChamberOfWillManager extends SavedData {
     public static void syncFor(ServerPlayer player) {
         MinecraftServer server = player.getServer();
         if (server != null) {
-            get(server).syncTo(player);
+            ChamberOfWillManager manager = get(server);
+            ProgressionRefresh refresh = manager.refreshProgressionState(player);
+            if (player.level() instanceof ServerLevel chamberLevel
+                    && chamberLevel.dimension().equals(CHAMBER_OF_WILL)) {
+                RoomGrowth growth = manager.ensureRoom(chamberLevel, player.getUUID());
+                if (refresh.radiusIncreased() && growth.expandedFromExistingRoom()) {
+                    playExpansionEffects(chamberLevel,
+                            manager.cellPos(manager.idFor(player.getUUID())), growth);
+                }
+            }
+            manager.syncTo(player);
         }
+    }
+
+    public static ProgressionRefresh refreshProgressionNow(ServerPlayer player) {
+        MinecraftServer server = player.getServer();
+        if (server == null) return ProgressionRefresh.NONE;
+        ChamberOfWillManager manager = get(server);
+        ProgressionRefresh refresh = manager.refreshProgressionState(player);
+        if (!refresh.changed()) return refresh;
+
+        if (refresh.radiusIncreased() && player.level() instanceof ServerLevel chamberLevel
+                && chamberLevel.dimension().equals(CHAMBER_OF_WILL)) {
+            RoomGrowth growth = manager.ensureRoom(chamberLevel, player.getUUID());
+            if (growth.expandedFromExistingRoom()) {
+                playExpansionEffects(chamberLevel,
+                        manager.cellPos(manager.idFor(player.getUUID())), growth);
+            }
+        }
+        manager.syncTo(player);
+        return refresh;
+    }
+
+    private static void playExpansionEffects(ServerLevel level, BlockPos center, RoomGrowth growth) {
+        int radius = growth.currentRadius();
+        for (int step = -radius; step <= radius; step += 2) {
+            double x = center.getX() + step + 0.5D;
+            double z = center.getZ() + radius + 0.5D;
+            level.sendParticles(new BloodCellData(131, 0, 0),
+                    x, center.getY() + 0.25D, z, 1, 0.08D, 0.06D, 0.08D, 0.01D);
+            level.sendParticles(new SerpentParticleData(70, 0, 12),
+                    center.getX() + radius + 0.5D, center.getY() + 0.2D, center.getZ() + step + 0.5D,
+                    1, 0.05D, 0.03D, 0.05D, 0.005D);
+        }
+        level.playSound(null, center, SoundEvents.WOOD_PLACE, SoundSource.BLOCKS, 0.65F, 0.7F);
+        level.playSound(null, center, SoundEvents.TUFF_PLACE, SoundSource.BLOCKS, 0.45F, 0.8F);
     }
 
     public static void rescuePlayerToCell(ServerPlayer player, ServerLevel level, BlockPos cell, int radius) {
@@ -477,6 +580,23 @@ public class ChamberOfWillManager extends SavedData {
         });
         tag.put("skyThemeOverrides", overrideList);
 
+        ListTag unrestrictedOverrideList = new ListTag();
+        for (UUID uuid : unrestrictedSkyThemeOverrides) {
+            CompoundTag entry = new CompoundTag();
+            entry.putUUID("uuid", uuid);
+            unrestrictedOverrideList.add(entry);
+        }
+        tag.put("unrestrictedSkyThemeOverrides", unrestrictedOverrideList);
+
+        ListTag builtRadiusList = new ListTag();
+        builtRadii.forEach((uuid, radius) -> {
+            CompoundTag entry = new CompoundTag();
+            entry.putUUID("uuid", uuid);
+            entry.putInt("radius", radius);
+            builtRadiusList.add(entry);
+        });
+        tag.put("builtRadii", builtRadiusList);
+
         return tag;
     }
 
@@ -516,6 +636,16 @@ public class ChamberOfWillManager extends SavedData {
             }
         }
 
+        for (Tag t : tag.getList("unrestrictedSkyThemeOverrides", Tag.TAG_COMPOUND)) {
+            manager.unrestrictedSkyThemeOverrides.add(((CompoundTag) t).getUUID("uuid"));
+        }
+
+        for (Tag t : tag.getList("builtRadii", Tag.TAG_COMPOUND)) {
+            CompoundTag entry = (CompoundTag) t;
+            manager.builtRadii.put(entry.getUUID("uuid"),
+                    Math.max(BASE_ROOM_RADIUS, entry.getInt("radius")));
+        }
+
         return manager;
     }
 
@@ -525,6 +655,22 @@ public class ChamberOfWillManager extends SavedData {
             if (skyTheme == null) {
                 skyTheme = THEME_WILL_DEFAULT;
             }
+        }
+    }
+
+    public record ProgressionRefresh(boolean tierChanged, boolean radiusIncreased, boolean themeChanged) {
+        public static final ProgressionRefresh NONE = new ProgressionRefresh(false, false, false);
+
+        public boolean changed() {
+            return tierChanged || themeChanged;
+        }
+    }
+
+    public record RoomGrowth(int previousRadius, int currentRadius) {
+        public static final RoomGrowth NONE = new RoomGrowth(BASE_ROOM_RADIUS, BASE_ROOM_RADIUS);
+
+        public boolean expandedFromExistingRoom() {
+            return previousRadius >= BASE_ROOM_RADIUS && currentRadius > previousRadius;
         }
     }
 

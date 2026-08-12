@@ -13,6 +13,14 @@ import javax.annotation.Nullable;
 public final class HemoDamageTypes {
 	public static final ResourceKey<DamageType> PHANTASMAL_ECHO =
 			ResourceKey.create(Registries.DAMAGE_TYPE, Hemomancy.rloc("phantasmal_echo"));
+	public static final ResourceKey<DamageType> VESPER_IMPALE =
+			ResourceKey.create(Registries.DAMAGE_TYPE, Hemomancy.rloc("vesper_impale"));
+	public static final ResourceKey<DamageType> VESPER_SCUTE =
+			ResourceKey.create(Registries.DAMAGE_TYPE, Hemomancy.rloc("vesper_scute"));
+	public static final ResourceKey<DamageType> LIVING_TORCH_BREATH =
+			ResourceKey.create(Registries.DAMAGE_TYPE, Hemomancy.rloc("living_torch_breath"));
+	public static final ResourceKey<DamageType> LIVING_FLAIL_FREEZE =
+			ResourceKey.create(Registries.DAMAGE_TYPE, Hemomancy.rloc("living_flail_freeze"));
 
 	private HemoDamageTypes() {
 	}
@@ -22,5 +30,25 @@ public final class HemoDamageTypes {
 		return new DamageSource(level.registryAccess()
 				.registryOrThrow(Registries.DAMAGE_TYPE)
 				.getHolderOrThrow(PHANTASMAL_ECHO), directEntity, causingEntity);
+	}
+
+	public static DamageSource vesperImpale(Level level, Entity boss) {
+		return new DamageSource(level.registryAccess().registryOrThrow(Registries.DAMAGE_TYPE)
+				.getHolderOrThrow(VESPER_IMPALE), boss, boss);
+	}
+
+	public static DamageSource vesperScute(Level level, Entity projectile, Entity boss) {
+		return new DamageSource(level.registryAccess().registryOrThrow(Registries.DAMAGE_TYPE)
+				.getHolderOrThrow(VESPER_SCUTE), projectile, boss);
+	}
+
+	public static DamageSource livingTorchBreath(Level level, Entity caster) {
+		return new DamageSource(level.registryAccess().registryOrThrow(Registries.DAMAGE_TYPE)
+				.getHolderOrThrow(LIVING_TORCH_BREATH), caster, caster);
+	}
+
+	public static DamageSource livingFlailFreeze(Level level, Entity projectile, Entity owner) {
+		return new DamageSource(level.registryAccess().registryOrThrow(Registries.DAMAGE_TYPE)
+				.getHolderOrThrow(LIVING_FLAIL_FREEZE), projectile, owner);
 	}
 }

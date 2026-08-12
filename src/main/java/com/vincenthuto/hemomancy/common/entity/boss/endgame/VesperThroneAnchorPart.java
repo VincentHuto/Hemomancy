@@ -10,7 +10,8 @@ import net.neoforged.neoforge.entity.PartEntity;
 
 final class VesperThroneAnchorPart extends PartEntity<VesperTheCrownedRefusalEntity> {
 	private final int anchorIndex;
-	private final EntityDimensions dimensions = EntityDimensions.scalable(1.35F, 1.75F);
+	private final EntityDimensions dimensions = EntityDimensions.scalable(
+			VesperCombatRules.ANCHOR_HITBOX_WIDTH, VesperCombatRules.ANCHOR_HITBOX_HEIGHT);
 
 	VesperThroneAnchorPart(VesperTheCrownedRefusalEntity parent, int anchorIndex) {
 		super(parent);
