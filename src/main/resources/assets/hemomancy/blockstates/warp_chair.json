@@ -1,0 +1,8 @@
+{
+  "variants": {
+    "facing=north": { "model": "hemomancy:block/warp_chair" },
+    "facing=south": { "model": "hemomancy:block/warp_chair", "y": 180 },
+    "facing=east": { "model": "hemomancy:block/warp_chair", "y": 90 },
+    "facing=west": { "model": "hemomancy:block/warp_chair", "y": 270 }
+  }
+}

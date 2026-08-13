@@ -46,7 +46,7 @@ public final class ArborOfWillEntity extends Entity {
         entityData.set(OWNER, Optional.of(owner.getUUID()));
         entityData.set(DEGREE, HemoCapabilityAccess.getPlayerDegreeNumber(owner));
         entityData.set(POMES, Math.max(0, Math.min(9, pomes)));
-        entityData.set(CHAMBER_RADIUS, Math.max(4, chamberRadius));
+        entityData.set(CHAMBER_RADIUS, Math.max(3, chamberRadius));
     }
 
     public Optional<UUID> ownerId() { return entityData.get(OWNER); }
@@ -76,7 +76,7 @@ public final class ArborOfWillEntity extends Entity {
         if (tag.hasUUID("Owner")) entityData.set(OWNER, Optional.of(tag.getUUID("Owner")));
         entityData.set(DEGREE, tag.getInt("Degree"));
         entityData.set(POMES, tag.getInt("Pomes"));
-        entityData.set(CHAMBER_RADIUS, Math.max(4, tag.getInt("ChamberRadius")));
+        entityData.set(CHAMBER_RADIUS, Math.max(3, tag.getInt("ChamberRadius")));
     }
 
     @Override

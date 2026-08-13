@@ -685,6 +685,16 @@ public class BlockInit {
 					BlockBehaviour.Properties.of().requiresCorrectToolForDrops()
 							.strength(3.5F, 9.0F).sound(SoundType.BONE_BLOCK).lightLevel(s -> 4).noOcclusion()));
 
+	public static final DeferredHolder<Block, Block> warp_chair = MODELEDBLOCKS.register("warp_chair",
+			() -> new WarpChairBlock(BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_PURPLE)
+					.strength(2.5F, 6.0F).sound(SoundType.WOOD).lightLevel(s -> 3).noOcclusion()
+					.pushReaction(PushReaction.BLOCK)));
+
+	public static final DeferredHolder<Block, Block> warp_chair_filler = SPECIALBLOCKS.register("warp_chair_filler",
+			() -> new WarpChairFillerBlock(BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_PURPLE)
+					.strength(2.5F, 6.0F).sound(SoundType.WOOD).noOcclusion()
+					.pushReaction(PushReaction.BLOCK)));
+
 	public static final DeferredHolder<Block, Block> hematic_armature = MODELEDBLOCKS.register("hematic_armature",
 			() -> new HematicArmatureBlock(
 					BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_RED)
@@ -875,6 +885,7 @@ public class BlockInit {
 				|| block == BlockInit.active_smouldering_ash_trail.get()
 				|| block == BlockInit.placed_blood_stained_stone.get()
 				|| block == BlockInit.filler_block.get()
+				|| block == BlockInit.warp_chair_filler.get()
 				|| block == BlockInit.abocipher_emitter.get()
 				|| block == BlockInit.qliphoth_bloom.get()
 				|| block == BlockInit.lethean_poppy_wreath.get()

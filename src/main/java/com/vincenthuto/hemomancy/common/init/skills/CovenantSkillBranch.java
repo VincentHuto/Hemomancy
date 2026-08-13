@@ -32,7 +32,7 @@ public final class CovenantSkillBranch {
 							.setIconItem(() -> new ItemStack(ItemInit.covenant_mantle.get())));
 			SkillPointInit.skill_shared_siphon = SkillPointInit.registerSkill(branch,
 					new SkillPoint(55, "skill_shared_siphon", 650, 1, EnumSkillStates.LOCKED, SkillPointInit.skill_fane_suture)
-							.setSkillPointCost(4).setRequiredDegree(5).setTreePosition(712, 314).setBranch("covenant").setBranchColor(0xFFA54569).setToggleable(true).addParents(SkillPointInit.deep_base_skill)
+							.setSkillPointCost(4).setRequiredDegree(5).setTreePosition(536, 378).setBranch("covenant").setBranchColor(0xFFA54569).setToggleable(true).addParents(SkillPointInit.deep_base_skill)
 							.setIconItem(() -> new ItemStack(ItemInit.blood_absorption.get())));
 		// </skill-editor>
 	}

@@ -49,6 +49,10 @@ public final class VesperOrdealManager {
 	}
 
 	public static boolean enter(ServerPlayer player, QliphothBloomSavedData.BloomEntry bloom) {
+		if (ChamberVisitService.isProtected(player)) {
+			player.displayClientMessage(Component.translatable("message.hemomancy.chamber_visit.no_ordeals"), true);
+			return false;
+		}
 		ServerLevel arenaLevel = player.getServer().getLevel(ChamberOfWillManager.CHAMBER_OF_WILL);
 		if (arenaLevel == null) {
 			player.displayClientMessage(Component.literal("The refusal has no place to open. The wound remains.")

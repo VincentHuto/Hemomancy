@@ -1,0 +1,37 @@
+{
+  "type": "hemomancy:blood_structure_recipe",
+  "bloodCost": 250,
+  "required_degree": 3,
+  "heldItem": "hemomancy:sanguine_formation",
+  "hitBlock": "hemomancy:blood_wood_planks",
+  "pattern": [
+    ["   ", "WWW", "H H"],
+    ["W W", "WWW", "H H"],
+    ["WWW", "WWW", "H H"]
+  ],
+  "key": {
+    "W": {
+      "block": "hemomancy:blood_wood_planks"
+    },
+    "H": {
+      "block": "hemomancy:hematic_iron_block"
+    }
+  },
+  "offerings": [
+    {
+      "ingredient": {
+        "item": "hemomancy:blood_crystal"
+      },
+      "count": 2
+    },
+    {
+      "ingredient": {
+        "item": "minecraft:ender_pearl"
+      },
+      "count": 2
+    }
+  ],
+  "result": {
+    "id": "hemomancy:warp_chair"
+  }
+}

@@ -78,7 +78,8 @@ public final class MycophantEncounterManager {
 	}
 
 	public static void beginClaim(ServerPlayer player, boolean rematch) {
-		if (isActive(player) || player.getPersistentData().contains(CLAIM_KEY)) return;
+		if (isActive(player) || player.getPersistentData().contains(CLAIM_KEY)
+				|| ChamberVisitService.isProtected(player)) return;
 		player.getPersistentData().putInt(CLAIM_KEY, 100);
 		player.getPersistentData().putBoolean(REMATCH_KEY, rematch);
 		player.displayClientMessage(Component.translatable("message.hemomancy.mycophant.claim")
@@ -105,6 +106,11 @@ public final class MycophantEncounterManager {
 	}
 
 	public static boolean enterNursery(ServerPlayer player) {
+		if (ChamberVisitService.isProtected(player)) {
+			player.getPersistentData().remove(CLAIM_KEY);
+			player.displayClientMessage(Component.translatable("message.hemomancy.chamber_visit.no_ordeals"), true);
+			return false;
+		}
 		ServerLevel arena = player.getServer().getLevel(ChamberOfWillManager.CHAMBER_OF_WILL);
 		if (arena == null) return false;
 		BlockPos center = arenaCenter(player);

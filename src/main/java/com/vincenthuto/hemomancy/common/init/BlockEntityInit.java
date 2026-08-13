@@ -79,6 +79,14 @@ public class BlockEntityInit {
 					.of(com.vincenthuto.hemomancy.common.tile.functional.CovenantThroneBlockEntity::new,
 							BlockInit.covenant_throne.get()).build(null));
 
+	public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<WarpChairBlockEntity>> warp_chair = TILES
+			.register("warp_chair", () -> BlockEntityType.Builder
+					.of(WarpChairBlockEntity::new, BlockInit.warp_chair.get()).build(null));
+
+	public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<WarpChairFillerBlockEntity>> warp_chair_filler = TILES
+			.register("warp_chair_filler", () -> BlockEntityType.Builder
+					.of(WarpChairFillerBlockEntity::new, BlockInit.warp_chair_filler.get()).build(null));
+
 	public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<HematicArmatureBlockEntity>> hematic_armature = TILES
 			.register("hematic_armature", () -> BlockEntityType.Builder
 					.of(HematicArmatureBlockEntity::new, BlockInit.hematic_armature.get()).build(null));

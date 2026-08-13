@@ -16,14 +16,14 @@ public final class ChamberProgressionRules {
 		if (facts.silentArchon() && facts.degree() >= 7) return new State(2, "silent_archon");
 		if (facts.qliphothStarted()) return new State(2, "qliphoth_communion");
 		if (facts.degree() >= 7) return new State(1, "archon_revelation");
-		if (facts.degree() >= 6 && facts.veinMasonLoadout()) return new State(1, "mnemonic_lowtide");
+		if (facts.firstScarLearned()) return new State(0, "mnemonic_lowtide");
 		return new State(0, "will_default");
 	}
 
 	public static List<String> availableThemes(Facts facts) {
 		List<String> themes = new ArrayList<>();
 		themes.add("will_default");
-		if (facts.degree() >= 6 && facts.veinMasonLoadout()) themes.add("mnemonic_lowtide");
+		if (facts.firstScarLearned()) themes.add("mnemonic_lowtide");
 		if (facts.degree() >= 7) themes.add("archon_revelation");
 		if (facts.qliphothStarted()) themes.add("qliphoth_communion");
 		if (facts.silentArchon() && facts.degree() >= 7) themes.add("silent_archon");
@@ -41,7 +41,7 @@ public final class ChamberProgressionRules {
 		return BASE_RADIUS + Math.max(0, Math.min(MAX_TIER, tier)) * 2;
 	}
 
-	public record Facts(int degree, boolean veinMasonLoadout, boolean qliphothStarted,
+	public record Facts(int degree, boolean firstScarLearned, boolean qliphothStarted,
 			boolean silentArchon) {
 	}
 

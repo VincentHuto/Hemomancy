@@ -48,6 +48,10 @@ public final class HarbingerAdvancementGranter {
 			Hemomancy.rloc("hemomancy/covenant_written_in_place");
 	public static final ResourceLocation ADV_CHAMBER_RETURNED =
 			Hemomancy.rloc("hemomancy/chamber_returned");
+	public static final ResourceLocation ADV_WARP_CHAIR_BOUND =
+			Hemomancy.rloc("hemomancy/warp_chair_bound");
+	public static final ResourceLocation ADV_CHAMBER_RITE_ATTUNED =
+			Hemomancy.rloc("hemomancy/chamber_rite_attuned");
 	public static final ResourceLocation ADV_COVENANT_THRONE_BOUND =
 			Hemomancy.rloc("hemomancy/covenant_throne_bound");
 	public static final ResourceLocation ADV_COVENANT_VIGIL_COMPLETED =

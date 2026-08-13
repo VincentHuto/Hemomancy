@@ -9,6 +9,7 @@ import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 
 import javax.annotation.Nullable;
@@ -18,7 +19,11 @@ public class FillerBlockEntity extends BlockEntity {
     private BlockPos mainBlockPos = null;
 
     public FillerBlockEntity(BlockPos pos, BlockState state) {
-        super(BlockEntityInit.filler_block.get(), pos, state);
+        this(BlockEntityInit.filler_block.get(), pos, state);
+    }
+
+    protected FillerBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) {
+        super(type, pos, state);
     }
 
     public void setMainBlockPos(BlockPos mainPos) {

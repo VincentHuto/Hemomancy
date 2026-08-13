@@ -253,6 +253,7 @@ public class ClientEvents {
         if (FungalWhisperVignetteOverlay.instance != null) {
             FungalWhisperVignetteOverlay.instance.tick();
         }
+		ChamberVisitOverlay.tick();
         if (WillPresenceOverlay.instance != null) {
             WillPresenceOverlay.instance.tick();
         }
@@ -918,6 +919,8 @@ public class ClientEvents {
                     SanguineConduitBlockRenderer::new);
             BlockEntityRenderers.register(BlockEntityInit.covenant_throne.get(),
                     CovenantThroneRenderer::new);
+            BlockEntityRenderers.register(BlockEntityInit.warp_chair.get(),
+                    WarpChairRenderer::new);
             BlockEntityRenderers.register(BlockEntityInit.hematic_armature.get(),
                     HematicArmatureRenderer::new);
         }
@@ -1177,6 +1180,8 @@ public class ClientEvents {
 			event.registerAboveAll(Hemomancy.rloc("mnemonic_blueprint_progress"), (graphics, deltaTracker) ->
 					MnemonicBlueprintProgressOverlay.renderHUD(
 							graphics, graphics.guiWidth(), graphics.guiHeight()));
+			event.registerAboveAll(Hemomancy.rloc("chamber_visit"), (graphics, deltaTracker) ->
+					ChamberVisitOverlay.renderHUD(graphics, graphics.guiWidth(), graphics.guiHeight()));
             event.registerAboveAll(Hemomancy.rloc("cardinal_rite"), (graphics, deltaTracker) -> {
                 if (CardinalRiteOverlay.instance != null) {
                     float partialTicks = deltaTracker.getGameTimeDeltaPartialTick(true);

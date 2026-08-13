@@ -89,6 +89,7 @@ public final class HarbingerMnemonistDialogueTrees {
 				), neophyteOptions(canClaimStarter)))
 				.addNode(crudeMemoriesNode())
 				.addNode(slotsNode())
+				.addNode(chamberNode())
 				.addNode(starterChoiceNode())
 				.addNode(itemHintNode())
 				.build();
@@ -102,6 +103,7 @@ public final class HarbingerMnemonistDialogueTrees {
 				.addNode(crudeMemoriesNode())
 				.addNode(slotsNode())
 				.addNode(reliquaryNode())
+				.addNode(chamberNode())
 				.addNode(starterChoiceNode())
 				.addNode(itemHintNode())
 				.build();
@@ -116,6 +118,7 @@ public final class HarbingerMnemonistDialogueTrees {
 		}
 		options.add(new DialogueOption("hemomancy.dialogue.mnemonist.option.ask_about_loom", "loom", null));
 		options.add(new DialogueOption("hemomancy.dialogue.mnemonist.option.ask_about_reliquary", "reliquary", null));
+		options.add(new DialogueOption("hemomancy.dialogue.mnemonist.option.ask_about_chamber", "chamber", null));
 		options.add(new DialogueOption("hemomancy.dialogue.mnemonist.option.ask_about_crude_memories", "crude_memories", null));
 		if (canClaimStarter) {
 			options.add(new DialogueOption("hemomancy.dialogue.mnemonist.option.choose_starter", "starter_choice", null));
@@ -133,6 +136,7 @@ public final class HarbingerMnemonistDialogueTrees {
 				.addNode(slotsNode())
 				.addNode(reliquaryNode())
 				.addNode(loomNode())
+				.addNode(chamberNode())
 				.addNode(wovenVesselNode())
 				.addNode(starterChoiceNode())
 				.addNode(recruitOfferNode())
@@ -154,6 +158,7 @@ public final class HarbingerMnemonistDialogueTrees {
 		List<DialogueOption> options = new ArrayList<>();
 		options.add(new DialogueOption("hemomancy.dialogue.mnemonist.option.ask_about_crude_memories", "crude_memories", null));
 		options.add(new DialogueOption("hemomancy.dialogue.mnemonist.option.ask_about_slots", "slots", null));
+		options.add(new DialogueOption("hemomancy.dialogue.mnemonist.option.ask_about_chamber", "chamber", null));
 		if (canClaimStarter) {
 			options.add(new DialogueOption("hemomancy.dialogue.mnemonist.option.choose_starter", "starter_choice", null));
 		}
@@ -194,6 +199,14 @@ public final class HarbingerMnemonistDialogueTrees {
 		return new DialogueNode("reliquary", List.of(
 				"hemomancy.mnemonist.reliquary.line1",
 				"hemomancy.mnemonist.reliquary.line2"
+		), List.of(new DialogueOption("hemomancy.dialogue.mnemonist.option.leave", null, null)));
+	}
+
+	private static DialogueNode chamberNode() {
+		return new DialogueNode("chamber", List.of(
+				"hemomancy.mnemonist.chamber.line1",
+				"hemomancy.mnemonist.chamber.line2",
+				"hemomancy.mnemonist.chamber.line3"
 		), List.of(new DialogueOption("hemomancy.dialogue.mnemonist.option.leave", null, null)));
 	}
 

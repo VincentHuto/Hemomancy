@@ -71,6 +71,7 @@ import com.vincenthuto.hemomancy.common.rite.CardinalRitePhase;
 import com.vincenthuto.hemomancy.common.rite.unstained.UnstainedCardinalRiteEvents;
 import com.vincenthuto.hemomancy.common.summon.PuppeteerSummonDefinitions;
 import com.vincenthuto.hemomancy.common.worldgen.ChamberOfWillManager;
+import com.vincenthuto.hemomancy.common.worldgen.ChamberVisitService;
 import com.vincenthuto.hemomancy.common.mission.HarbingerChapterProgression;
 import com.vincenthuto.hemomancy.common.worldgen.FungalGardenTravelHelper;
 import com.vincenthuto.hemomancy.common.tile.functional.CardinalFocusBlockEntity;
@@ -1504,7 +1505,7 @@ public class HarbingerCardinalRiteEvents {
 		}
 
 		if (CHAMBER_OF_WILL_RITE.equals(ritePath)) {
-			ChamberOfWillManager.get(sLevel.getServer()).enterChamber(caster);
+			ChamberVisitService.beginRiteVisit(caster);
 		}
 		if (rite.commitCompletion()) {
 			consumeMatchedStructure(sLevel, recipe, center, layeredMatch);

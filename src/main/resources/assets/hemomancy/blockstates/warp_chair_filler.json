@@ -1,0 +1,12 @@
+{
+  "variants": {
+    "facing=north,waterlogged=false": { "model": "hemomancy:block/warp_chair_filler" },
+    "facing=north,waterlogged=true": { "model": "hemomancy:block/warp_chair_filler" },
+    "facing=south,waterlogged=false": { "model": "hemomancy:block/warp_chair_filler" },
+    "facing=south,waterlogged=true": { "model": "hemomancy:block/warp_chair_filler" },
+    "facing=east,waterlogged=false": { "model": "hemomancy:block/warp_chair_filler" },
+    "facing=east,waterlogged=true": { "model": "hemomancy:block/warp_chair_filler" },
+    "facing=west,waterlogged=false": { "model": "hemomancy:block/warp_chair_filler" },
+    "facing=west,waterlogged=true": { "model": "hemomancy:block/warp_chair_filler" }
+  }
+}

@@ -8,6 +8,8 @@ import com.vincenthuto.hemomancy.client.particle.data.BloodCellData;
 import com.vincenthuto.hemomancy.client.particle.data.SerpentParticleData;
 import com.vincenthuto.hemomancy.common.init.BlockInit;
 import com.vincenthuto.hemomancy.common.init.EntityInit;
+import com.vincenthuto.hemomancy.common.block.harbinger.functional.WarpChairBlock;
+import com.vincenthuto.hemomancy.common.block.harbinger.functional.WarpChairStructureRules;
 import com.vincenthuto.hemomancy.common.entity.utility.ArborOfWillEntity;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.PacketSyncChamberOfWill;
@@ -79,7 +81,7 @@ public class ChamberOfWillManager extends SavedData {
 
     public static final int CHAMBER_SPACING = 256;
     public static final int FLOOR_Y = 2;
-    public static final int BASE_ROOM_RADIUS = 4;
+    public static final int BASE_ROOM_RADIUS = 3;
     public static final int ROOM_HEIGHT = 5;
     public static final int MAX_ROOM_TIER = 3;
 
@@ -108,9 +110,9 @@ public class ChamberOfWillManager extends SavedData {
             return;
         }
         if (player.level().dimension().equals(CHAMBER_OF_WILL)) {
-            get(server).exitChamber(player);
+            ChamberVisitService.returnFromVisit(player);
         } else {
-            get(server).enterChamber(player);
+            ChamberVisitService.beginAdminVisit(player);
         }
     }
 
@@ -151,7 +153,7 @@ public class ChamberOfWillManager extends SavedData {
     public void exitChamber(ServerPlayer player) {
         MinecraftServer server = player.getServer();
 		VesperOrdealManager.abandonAttempt(player);
-        if (HemoCapabilityAccess.getPlayerDegreeNumber(player) >= 6) {
+        if (ChamberVisitService.isAttuned(player)) {
             HarbingerAdvancementGranter.grantIfNotDone(player,
                     HarbingerAdvancementGranter.ADV_CHAMBER_RETURNED);
             HarbingerChapterProgression.tryCompleteLivingCovenant(player);
@@ -291,8 +293,8 @@ public class ChamberOfWillManager extends SavedData {
                 .map(deg -> deg.getArchonPath())
                 .orElse(EnumArchonPath.NONE);
 
-        return new ChamberProgressionRules.Facts(degree,
-                HarbingerAdvancementGranter.isVeinMasonFirstEffigyLoadout(player), qliphothStarted,
+		return new ChamberProgressionRules.Facts(degree,
+				HarbingerAdvancementGranter.isVeinMasonFirstScarLearned(player), qliphothStarted,
                 archonPath == EnumArchonPath.SILENT_ARCHON);
     }
 
@@ -344,12 +346,16 @@ public class ChamberOfWillManager extends SavedData {
 
     public RoomGrowth ensureRoom(ServerLevel level, UUID owner) {
         BlockPos center = cellPos(idFor(owner));
-        int requestedRadius = radiusFor(owner);
+        ServerPlayer onlineOwner = level.getServer().getPlayerList().getPlayer(owner);
+        int requestedRadius = onlineOwner == null
+                ? Math.max(BASE_ROOM_RADIUS, builtRadii.getOrDefault(owner, BASE_ROOM_RADIUS))
+                : ChamberVisitRules.radiusForDegree(HemoCapabilityAccess.getPlayerDegreeNumber(onlineOwner));
         int previousRadius = builtRadii.getOrDefault(owner, -1);
         int radius = ChamberExpansionRules.nextBuiltRadius(previousRadius, requestedRadius);
 
         ensureArborOfWill(level, owner);
         if (radius <= previousRadius) {
+            ensurePairedWarpChair(level, owner, center, onlineOwner);
             return RoomGrowth.NONE;
         }
 
@@ -365,7 +371,7 @@ public class ChamberOfWillManager extends SavedData {
                 }
             }
         } else {
-            for (int migratedRadius = BASE_ROOM_RADIUS; migratedRadius < radius; migratedRadius += 2) {
+            for (int migratedRadius = BASE_ROOM_RADIUS; migratedRadius < radius; migratedRadius++) {
                 for (ChamberExpansionRules.Offset offset : ChamberExpansionRules.markerOffsets(migratedRadius)) {
                     BlockPos marker = center.offset(offset.x(), 0, offset.z());
                     BlockState state = level.getBlockState(marker);
@@ -388,8 +394,26 @@ public class ChamberOfWillManager extends SavedData {
             setLightIfReplaceable(level, center.offset(offset.x(), 0, offset.z()), light);
         }
         builtRadii.put(owner, radius);
+        ensurePairedWarpChair(level, owner, center, onlineOwner);
         setDirty();
         return new RoomGrowth(previousRadius, radius);
+    }
+
+    private static void ensurePairedWarpChair(ServerLevel level, UUID owner, BlockPos center,
+            ServerPlayer onlineOwner) {
+        if (onlineOwner == null || !ChamberVisitService.isChairBound(onlineOwner)) return;
+        removeLegacyPairedWarpChair(level, owner, center);
+        BlockPos chairPos = WarpChairStructureRules.pairedChairPos(center);
+        Direction facing = WarpChairStructureRules.facingAwayFrom(center, chairPos);
+        WarpChairBlock.placePaired(level, chairPos, facing, owner);
+    }
+
+    private static void removeLegacyPairedWarpChair(ServerLevel level, UUID owner, BlockPos center) {
+        BlockPos legacyPos = WarpChairStructureRules.legacyPairedChairPos(center);
+        if (level.getBlockEntity(legacyPos) instanceof com.vincenthuto.hemomancy.common.tile.functional.WarpChairBlockEntity chair
+                && chair.isPaired() && chair.owner().filter(owner::equals).isPresent()) {
+            level.removeBlock(legacyPos, false);
+        }
     }
 
     /** Reconciles the owner's single persistent presentation anchor at the exact cell centre. */
@@ -410,7 +434,9 @@ public class ChamberOfWillManager extends SavedData {
             arbor.teleportTo(position.x, position.y, position.z);
         }
         ServerPlayer player = level.getServer().getPlayerList().getPlayer(owner);
-        if (player != null) arbor.configure(player, radiusFor(owner), qliphothPomeCount(player));
+        if (player != null) arbor.configure(player,
+                ChamberVisitRules.radiusForDegree(HemoCapabilityAccess.getPlayerDegreeNumber(player)),
+                qliphothPomeCount(player));
         return arbor;
     }
 
