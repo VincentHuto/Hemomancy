@@ -162,6 +162,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.packs.resources.ResourceManagerReloadListener;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.entity.LivingEntity;
@@ -526,6 +527,8 @@ public class ClientEvents {
 		VesperFightClientData.clear();
 		MycophantFightClientData.clear();
 		VesperFightFloorRenderer.clear();
+		ArborOfWillRenderer.clearCaches();
+		QliphothBloomRenderer.clearCaches();
 		CardinalRiteImpactClientEvents.clear();
 		if (SanguineOmenOverlay.instance != null) SanguineOmenOverlay.instance.clear();
         MnemonicBlueprintRenderer.disconnect();
@@ -598,7 +601,7 @@ public class ClientEvents {
             FaneBoundaryRenderer.renderWorldMask(event.getPoseStack(), partialTick);
             BlackVeilRenderer.render(event.getPoseStack(), partialTick);
             BloodCraftRingRenderer.render(event.getPoseStack(), partialTick);
-            QliphothBloomRenderer.render(event.getPoseStack(), partialTick);
+            QliphothBloomRenderer.render(event.getPoseStack(), partialTick, event.getFrustum());
             OculifloraRevealRenderer.render(event.getPoseStack(), partialTick);
             BloodBallRenderer.render(event.getPoseStack(), partialTick);
             SanguineMonolithShatterRenderer.render(event.getPoseStack(), partialTick);
@@ -696,6 +699,14 @@ public class ClientEvents {
      public static class ClientModBusEvents {
 
         public static BakedModel bloodAbsorptionModel, bloodProjectionModel;
+
+		@SubscribeEvent
+		public static void registerTreeCacheReloadListener(RegisterClientReloadListenersEvent event) {
+			event.registerReloadListener((ResourceManagerReloadListener) resourceManager -> {
+				ArborOfWillRenderer.clearCaches();
+				QliphothBloomRenderer.clearCaches();
+			});
+		}
 
         @SubscribeEvent
         public static void registerDimEffects(RegisterDimensionSpecialEffectsEvent event) {

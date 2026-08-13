@@ -2,25 +2,39 @@ package com.vincenthuto.hemomancy.client.render.world;
 
 import com.mojang.blaze3d.pipeline.RenderTarget;
 import com.mojang.blaze3d.pipeline.TextureTarget;
+import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.BufferBuilder;
+import com.mojang.blaze3d.vertex.DefaultVertexFormat;
+import com.mojang.blaze3d.vertex.MeshData;
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.Tesselator;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import com.mojang.blaze3d.vertex.VertexBuffer;
+import com.mojang.blaze3d.vertex.VertexFormat;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.client.data.QliphothBloomClientData;
+import com.vincenthuto.hemomancy.client.render.CachedMeshModelView;
 import com.vincenthuto.hemomancy.client.render.HemoRenderTypes;
 import com.vincenthuto.hemomancy.common.init.RenderTypeInit;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.LightTexture;
+import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.ShaderInstance;
+import net.minecraft.client.renderer.culling.Frustum;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.phys.AABB;
 import org.joml.Matrix4f;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL30;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Renders the Qliphoth Bloom — a large, blooming black and red tree-like
@@ -36,6 +50,14 @@ public class QliphothBloomRenderer {
 	private static final ResourceLocation QLIPHOTH_SKY = Hemomancy.rloc("textures/environment/qliphoth_communion_sky.png");
 	private static final RenderType BARK_TYPE = RenderType.entityCutoutNoCull(BARK);
 	private static TextureTarget frameCopyTarget;
+
+	public static void clearCaches() {
+		QliphothBarkCache.clear();
+		if (frameCopyTarget != null) {
+			frameCopyTarget.destroyBuffers();
+			frameCopyTarget = null;
+		}
+	}
 
 	// ── Tree geometry parameters ──
 	/** Total height of the tree in blocks. */
@@ -90,7 +112,7 @@ public class QliphothBloomRenderer {
 	/** How fast rings pulse outward. */
 	private static final double RING_PULSE_SPEED = 0.005;
 
-	public static void render(PoseStack poseStack, float partialTick) {
+	public static void render(PoseStack poseStack, float partialTick, Frustum frustum) {
 		List<QliphothBloomClientData.BloomEntry> blooms = QliphothBloomClientData.getActiveBlooms();
 		if (blooms.isEmpty()) return;
 
@@ -102,6 +124,14 @@ public class QliphothBloomRenderer {
 		Vec3 cam = mc.gameRenderer.getMainCamera().getPosition();
 
 		for (QliphothBloomClientData.BloomEntry bloom : blooms) {
+			BlockPos center = bloom.getCenter();
+			double cx = center.getX() + 0.5;
+			double cy = center.getY() + 4.0;
+			double cz = center.getZ() + 0.5;
+			boolean visible = frustum != null && frustum.isVisible(new AABB(
+					cx - 10.0, center.getY() - 1.0, cz - 10.0,
+					cx + 10.0, center.getY() + 12.0, cz + 10.0));
+			if (!QliphothBloomRenderRules.shouldRender(cam.distanceToSqr(cx, cy, cz), visible)) continue;
 			drawQliphothTree(poseStack, buffer, bloom, currentTime, cam);
 			if (!bloom.isPortalOpen() && !bloom.isSealedTrophy()) {
 				drawPulsingRings(poseStack, buffer, bloom, currentTime, cam);
@@ -175,10 +205,6 @@ public class QliphothBloomRenderer {
 		Matrix4f mat = stack.last().pose();
 
 		double pulse = (Math.sin(time * 0.06) + 1.0) * 0.5;
-
-		float heightFrac = trunkHeightFrac(stage);
-		float rootFrac   = rootLengthFrac(stage);
-		float branchFrac = branchLengthFrac(stage);
 
 		drawFacetedBloom(stack, buffer, time, stage);
 
@@ -305,7 +331,8 @@ public class QliphothBloomRenderer {
 
 		int stage      = bloom.getPomesDropped();
 		if (bloom.isPortalOpen() || bloom.isSealedTrophy()) {
-			drawFacetedRoots(buffer, mat, time, 9);
+			QliphothBarkCache.renderRoots(stack, 9);
+			drawRootVeins(buffer, mat, time, QliphothBloomGeometry.snapshot(9));
 			float stumpSeed = Math.floorMod(center.asLong(), 10007L) / 10007.0F;
 			drawSeveredStump(buffer, mat, time, pulse, stumpSeed, bloom.isPortalOpen());
 			stack.popPose();
@@ -383,17 +410,15 @@ public class QliphothBloomRenderer {
 
 	private static void drawFacetedBloom(PoseStack stack, MultiBufferSource buffer, float time, int stage) {
 		Matrix4f mat = stack.last().pose();
-		QliphothBloomGeometry.Limb trunk = QliphothBloomGeometry.trunk(stage, time);
-		drawTexturedLimb(buffer, mat, trunk, 10, .40f, .52f, .92f, 2.4f);
-		drawVeins(buffer, mat, trunk, time, 3);
-		drawFacetedRoots(buffer, mat, time, stage);
+		QliphothBloomGeometry.StageSnapshot snapshot = QliphothBloomGeometry.snapshot(stage);
+		QliphothBarkCache.renderTree(stack, snapshot.stage());
+		drawVeins(buffer, mat, snapshot.trunk(), time, 3);
+		drawRootVeins(buffer, mat, time, snapshot);
 
-		for (QliphothBloomGeometry.Limb branch : QliphothBloomGeometry.mainBranches(stage, time)) {
-			drawTexturedLimb(buffer, mat, branch, 8, .34f, .44f, .78f, 2.1f);
+		for (QliphothBloomGeometry.Limb branch : snapshot.mainBranches()) {
 			drawVeins(buffer, mat, branch, time, 2);
 		}
-		for (QliphothBloomGeometry.Limb branch : QliphothBloomGeometry.secondaryBranches(stage, time)) {
-			drawTexturedLimb(buffer, mat, branch, 7, .30f, .39f, .70f, 2.1f);
+		for (QliphothBloomGeometry.Limb branch : snapshot.secondaryBranches()) {
 			drawVeins(buffer, mat, branch, time, 1);
 		}
 
@@ -407,16 +432,15 @@ public class QliphothBloomRenderer {
 		if (QliphothBloomGeometry.hasApex(stage)) drawFacetedApex(stack, buffer, mat, time);
 	}
 
-	private static void drawFacetedRoots(MultiBufferSource buffer, Matrix4f mat, float time, int stage) {
-		for (QliphothBloomGeometry.Limb root : QliphothBloomGeometry.roots(stage, time)) {
-			drawTexturedLimb(buffer, mat, root, 8, .35f, .45f, .81f, 2.0f);
+	private static void drawRootVeins(MultiBufferSource buffer, Matrix4f mat, float time,
+			QliphothBloomGeometry.StageSnapshot snapshot) {
+		for (QliphothBloomGeometry.Limb root : snapshot.roots()) {
 			drawVeins(buffer, mat, root, time, 2);
 		}
 	}
 
 	private static void drawFacetedApex(PoseStack stack, MultiBufferSource buffer, Matrix4f mat, float time) {
-		for (QliphothBloomGeometry.Limb prong : QliphothBloomGeometry.crownProngs(time)) {
-			drawTexturedLimb(buffer, mat, prong, 7, .30f, .39f, .70f, 2.1f);
+		for (QliphothBloomGeometry.Limb prong : QliphothBloomGeometry.snapshot(9).crownProngs()) {
 			drawVeins(buffer, mat, prong, time, 1);
 		}
 		for (QliphothBloomGeometry.Limb loop : QliphothBloomGeometry.apexLoops(time)) {
@@ -567,14 +591,13 @@ public class QliphothBloomRenderer {
 		drawTube(buffer.getBuffer(RenderTypeInit.RITE_BOUNDARY_GLOW), mat, limb, sides, red, green, blue, alpha);
 	}
 
-	private static void drawTexturedLimb(MultiBufferSource buffer, Matrix4f mat,
+	private static void drawTexturedLimb(VertexConsumer out, Matrix4f mat,
 			QliphothBloomGeometry.Limb limb, int sides, float red, float green, float blue, float repeatsPerBlock) {
 		List<QliphothBloomGeometry.Point> points = limb.points();
 		if (points.size() < 2) return;
 		QliphothBloomGeometry.Point[][] frames = tubeFrames(points);
 		QliphothBloomGeometry.Point[] normals = frames[0], bins = frames[1];
 		List<Double> textureV = QliphothBloomGeometry.textureV(limb, repeatsPerBlock);
-		VertexConsumer out = buffer.getBuffer(BARK_TYPE);
 		for (int segment = 0; segment < points.size() - 1; segment++) {
 			for (int side = 0; side < sides; side++) {
 				double a0 = side * Math.PI * 2 / sides, a1 = (side + 1) * Math.PI * 2 / sides;
@@ -1760,5 +1783,76 @@ public class QliphothBloomRenderer {
 				x2, y2, z2, r2, g2, b2, a2,
 				x3, y3, z3, r3, g3, b3, a3,
 				x4, y4, z4, r4, g4, b4, a4);
+	}
+
+	private static final class QliphothBarkCache {
+		private static final Map<QliphothBarkMeshKey, VertexBuffer> MESHES = new HashMap<>();
+
+		private QliphothBarkCache() { }
+
+		static void renderTree(PoseStack stack, int stage) {
+			draw(stack, mesh(QliphothBarkMeshKey.create(stage, false)));
+		}
+
+		static void renderRoots(PoseStack stack, int stage) {
+			draw(stack, mesh(QliphothBarkMeshKey.create(stage, true)));
+		}
+
+		static void clear() {
+			MESHES.values().forEach(VertexBuffer::close);
+			MESHES.clear();
+		}
+
+		private static VertexBuffer mesh(QliphothBarkMeshKey key) {
+			VertexBuffer cached = MESHES.get(key);
+			if (cached != null) return cached;
+			QliphothBloomGeometry.StageSnapshot snapshot = QliphothBloomGeometry.snapshot(key.stage());
+			VertexBuffer built = build(snapshot, key.severed());
+			MESHES.put(key, built);
+			return built;
+		}
+
+		private static VertexBuffer build(QliphothBloomGeometry.StageSnapshot snapshot, boolean rootsOnly) {
+			BufferBuilder builder = Tesselator.getInstance().begin(
+					VertexFormat.Mode.QUADS, DefaultVertexFormat.NEW_ENTITY);
+			Matrix4f identity = new Matrix4f();
+			if (!rootsOnly) {
+				drawTexturedLimb(builder, identity, snapshot.trunk(), 10, .40f, .52f, .92f, 2.4f);
+			}
+			for (QliphothBloomGeometry.Limb root : snapshot.roots()) {
+				drawTexturedLimb(builder, identity, root, 8, .35f, .45f, .81f, 2.0f);
+			}
+			if (!rootsOnly) {
+				for (QliphothBloomGeometry.Limb branch : snapshot.mainBranches()) {
+					drawTexturedLimb(builder, identity, branch, 8, .34f, .44f, .78f, 2.1f);
+				}
+				for (QliphothBloomGeometry.Limb branch : snapshot.secondaryBranches()) {
+					drawTexturedLimb(builder, identity, branch, 7, .30f, .39f, .70f, 2.1f);
+				}
+				for (QliphothBloomGeometry.Limb prong : snapshot.crownProngs()) {
+					drawTexturedLimb(builder, identity, prong, 7, .30f, .39f, .70f, 2.1f);
+				}
+			}
+			MeshData mesh = builder.build();
+			if (mesh == null) return null;
+			VertexBuffer result = new VertexBuffer(VertexBuffer.Usage.STATIC);
+			result.bind();
+			result.upload(mesh);
+			VertexBuffer.unbind();
+			return result;
+		}
+
+		private static void draw(PoseStack stack, VertexBuffer buffer) {
+			if (buffer == null) return;
+			ShaderInstance shader = GameRenderer.getRendertypeEntityCutoutNoCullShader();
+			if (shader == null) return;
+			BARK_TYPE.setupRenderState();
+			buffer.bind();
+			Matrix4f modelView = CachedMeshModelView.compose(
+					RenderSystem.getModelViewMatrix(), stack.last().pose());
+			buffer.drawWithShader(modelView, RenderSystem.getProjectionMatrix(), shader);
+			VertexBuffer.unbind();
+			BARK_TYPE.clearRenderState();
+		}
 	}
 }

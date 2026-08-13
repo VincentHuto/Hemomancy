@@ -1,8 +1,16 @@
 package com.vincenthuto.hemomancy.client.render.entity.misc;
 
+import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.BufferBuilder;
+import com.mojang.blaze3d.vertex.DefaultVertexFormat;
+import com.mojang.blaze3d.vertex.MeshData;
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.Tesselator;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import com.mojang.blaze3d.vertex.VertexBuffer;
+import com.mojang.blaze3d.vertex.VertexFormat;
 import com.vincenthuto.hemomancy.Hemomancy;
+import com.vincenthuto.hemomancy.client.render.CachedMeshModelView;
 import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillPoint;
 import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillProgress;
 import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillProgressClientCache;
@@ -15,8 +23,10 @@ import com.vincenthuto.hemomancy.common.worldgen.arbor.ArborOfWillLayout;
 import com.vincenthuto.hemomancy.common.worldgen.arbor.ArborOfWillVisualRules;
 import com.vincenthuto.hemomancy.common.worldgen.arbor.ArborSkillPresentation;
 import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.ShaderInstance;
 import net.minecraft.client.renderer.culling.Frustum;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
@@ -27,8 +37,10 @@ import org.joml.Matrix4f;
 import org.joml.Vector3f;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Supplier;
 
 /**
  * Authored-procedural Arbor presentation. The renderer builds one gnarled organism:
@@ -40,9 +52,10 @@ public final class ArborOfWillRenderer extends EntityRenderer<ArborOfWillEntity>
     // around a procedural tube. This finer grain remains legible after tinting.
     private static final ResourceLocation BARK = Hemomancy.rloc("textures/block/dark_oak_log.png");
     private static final ResourceLocation LEAVES = Hemomancy.rloc("textures/block/mycelium_top.png");
-    private static final ResourceLocation VEIN = Hemomancy.rloc("textures/block/mycelium_top.png");
-    private static final ResourceLocation FRUIT_SKIN = Hemomancy.rloc("textures/block/mycelium_top.png");
     private static final ResourceLocation FUNGUS = Hemomancy.rloc("textures/block/erythrocytic_mycelium_top.png");
+    private static final RenderType BARK_TYPE = RenderType.entityCutoutNoCull(BARK);
+    private static final RenderType MYCELIUM_TYPE = RenderType.entityCutoutNoCull(LEAVES);
+    private static final RenderType FUNGUS_TYPE = RenderType.entityCutoutNoCull(FUNGUS);
     private static final int BARK_TINT = 0xFF9B4E4B;
     private static final int DARK_BARK_TINT = 0xFF572B32;
     private static final Map<String, Integer> FAMILY_COLORS = Map.of(
@@ -79,22 +92,25 @@ public final class ArborOfWillRenderer extends EntityRenderer<ArborOfWillEntity>
         float pomeHealth = 1.0F - ArborOfWillVisualRules.woundCount(arbor.pomesConsumed()) / 9.0F * .92F;
         foliage = Math.max(foliage, whorls / 7.0F * .45F * pomeHealth);
 
-        renderRootsAndHeartwood(pose, buffers, light, height, rootRadius, foliage, time);
-
-        List<List<ArborCanopyGeometry.Point>> limbs = renderBraidedCanopy(
-                pose, buffers, light, height, rootRadius, whorls, foliage, time);
-        renderSkillOrchard(arbor, pose, buffers, light, placements, limbs, progress, whorls, foliage, time, partial);
+        ArborMeshCache.renderStatic(stack, ArborStaticVisualKey.create(
+                arbor.degree(), arbor.chamberRadius(), foliage, light), placements);
+        renderSkillOrchard(arbor, stack, buffers, placements, progress, whorls, time, partial);
+        renderHeartPulse(pose, buffers, height, time);
         renderPomeWounds(arbor, pose, buffers, height);
-        if (arbor.degree() >= 8) renderApotheosisCap(pose, buffers, light, height, time);
+        if (arbor.degree() >= 8) renderApotheosisGlow(pose, buffers, height, time);
 
         stack.popPose();
         super.render(arbor, yaw, partial, stack, buffers, light);
     }
 
-    private static void renderRootsAndHeartwood(PoseStack.Pose pose, MultiBufferSource buffers, int light,
-            float height, float rootRadius, float foliage, float time) {
+    public static void clearCaches() {
+        ArborMeshCache.clear();
+    }
+
+    private static void renderRootsAndHeartwood(PoseStack.Pose pose, MeshConsumers consumers, int light,
+            float height, float rootRadius, float foliage) {
         for (int i = 0; i < 7; i++) {
-            texturedTerminalTube(pose, buffers.getBuffer(RenderType.entityCutoutNoCull(BARK)), light,
+            texturedTerminalTube(pose, consumers.bark(), light,
                     ArborCanopyGeometry.root(i, rootRadius), .34F, .035F, DARK_BARK_TINT, 1.8F,.42F);
         }
 
@@ -106,10 +122,10 @@ public final class ArborOfWillRenderer extends EntityRenderer<ArborOfWillEntity>
                     Math.cos(t * 4.1) * (.05 + .06 * t)));
         }
         float trunkCrownSize=.82F+foliage*.72F;
-        texturedTerminalTube(pose, buffers.getBuffer(RenderType.entityCutoutNoCull(BARK)), light,
+        texturedTerminalTube(pose, consumers.bark(), light,
                 trunk, .61F, .22F, BARK_TINT, 4.0F,trunkCrownSize*.18F);
         if (foliage > .06F) {
-            renderTerminalCrown(pose,buffers,light,trunk,FAMILY_COLORS.get("core"),
+            renderTerminalCrown(pose,consumers.mycelium(),light,trunk,FAMILY_COLORS.get("core"),
                     trunkCrownSize,foliage,90);
         }
 
@@ -123,7 +139,7 @@ public final class ArborOfWillRenderer extends EntityRenderer<ArborOfWillEntity>
                 cord.add(new ArborCanopyGeometry.Point(Math.cos(angle) * radius,
                         .08 + height * t * .77, Math.sin(angle) * radius));
             }
-            texturedTube(pose, buffers.getBuffer(RenderType.entityCutoutNoCull(BARK)), light,
+            texturedTube(pose, consumers.bark(), light,
                     cord, .19F, .070F, strand % 2 == 0 ? BARK_TINT : DARK_BARK_TINT, 3.0F);
         }
 
@@ -136,21 +152,18 @@ public final class ArborOfWillRenderer extends EntityRenderer<ArborOfWillEntity>
                         height * (.57 + .40 * t), .03 + .18 * Math.sin(t * Math.PI)));
             }
             float leaderCrownSize=.68F+foliage*.48F;
-            texturedTerminalTube(pose, buffers.getBuffer(RenderType.entityCutoutNoCull(BARK)), light,
+            texturedTerminalTube(pose, consumers.bark(), light,
                     leader, .22F, .055F, BARK_TINT, 2.2F,leaderCrownSize*.18F);
             if (foliage > .06F) {
-                renderTerminalCrown(pose,buffers,light,leader,FAMILY_COLORS.get("core"),
+                renderTerminalCrown(pose,consumers.mycelium(),light,leader,FAMILY_COLORS.get("core"),
                         leaderCrownSize,foliage,96+side);
             }
         }
-        float beat = .18F + .035F * (float)Math.sin(time * .24F);
-        colorEllipsoid(buffers.getBuffer(RenderTypeInit.RITE_BOUNDARY_GLOW), pose.pose(),
-                0, height * .69F, -.19F, beat * 1.25F, beat, beat * .72F, .96F, .02F, .035F, .78F);
     }
 
     private static List<List<ArborCanopyGeometry.Point>> renderBraidedCanopy(PoseStack.Pose pose,
-            MultiBufferSource buffers, int light, float height, float rootRadius, int whorls,
-            float foliage, float time) {
+            MeshConsumers consumers, int light, float height, float rootRadius, int whorls,
+            float foliage) {
         List<List<ArborCanopyGeometry.Point>> result = new ArrayList<>();
         int visiblePoints = Math.max(4, 4 + Math.round(whorls / 7.0F * 11.0F));
         for (int family = 0; family < 6; family++) {
@@ -162,12 +175,12 @@ public final class ArborOfWillRenderer extends EntityRenderer<ArborOfWillEntity>
             result.add(List.copyOf(limb));
 
             float limbCrownSize=.70F+foliage*.54F;
-            texturedTerminalTube(pose, buffers.getBuffer(RenderType.entityCutoutNoCull(BARK)), light,
+            texturedTerminalTube(pose, consumers.bark(), light,
                     limb, .19F, .045F, mix(BARK_TINT, familyColor, .18F), 3.1F,
                     limbCrownSize*.18F);
             List<ArborCanopyGeometry.Point> cambium = ArborCanopyGeometry.surfaceVein(
                     limb, .19, .045, .027, .010, .004);
-            texturedTube(pose, buffers.getBuffer(RenderType.entityCutoutNoCull(VEIN)),
+            texturedTube(pose, consumers.mycelium(),
                     LightTexture.pack(13, 9), cambium, .027F, .010F,
                     mix(familyColor, 0xFFFFFFFF, .08F), 3.1F);
 
@@ -175,45 +188,57 @@ public final class ArborOfWillRenderer extends EntityRenderer<ArborOfWillEntity>
                 for (int sign : new int[]{-1, 1}) {
                     List<ArborCanopyGeometry.Point> fork = canopyFork(limb, sign, rootRadius * .30);
                     float forkCrownSize=.58F+foliage*.48F;
-                    texturedTerminalTube(pose, buffers.getBuffer(RenderType.entityCutoutNoCull(BARK)), light,
+                    texturedTerminalTube(pose, consumers.bark(), light,
                             fork, .080F, .022F, mix(BARK_TINT, familyColor, .13F), 1.7F,
                             forkCrownSize*.18F);
-                    renderLeavesAlong(pose, buffers, light, fork, familyColor, foliage, family * 7 + sign, time);
+                    renderLeavesAlong(pose, consumers.mycelium(), light, fork, familyColor, foliage, family * 7 + sign);
                     if (foliage > .10F) {
-                        renderTerminalCrown(pose,buffers,light,fork,familyColor,
+                        renderTerminalCrown(pose,consumers.mycelium(),light,fork,familyColor,
                                 forkCrownSize,foliage,family*31+sign);
                     }
                 }
             }
-            renderLeavesAlong(pose, buffers, light, limb, familyColor, foliage, family, time);
+            renderLeavesAlong(pose, consumers.mycelium(), light, limb, familyColor, foliage, family);
             if (foliage > .06F) {
-                renderTerminalCrown(pose,buffers,light,limb,familyColor,
+                renderTerminalCrown(pose,consumers.mycelium(),light,limb,familyColor,
                         limbCrownSize,foliage,family*37);
             }
         }
         return result;
     }
 
-    private static void renderSkillOrchard(ArborOfWillEntity arbor, PoseStack.Pose pose,
-            MultiBufferSource buffers, int light, List<ArborOfWillLayout.FruitPlacement> placements,
-            List<List<ArborCanopyGeometry.Point>> limbs, SkillProgress progress, int whorls,
-            float foliage, float time, float partial) {
-        int index = 0;
+    private static void renderStaticOrchard(PoseStack.Pose pose, MeshConsumers consumers, int light,
+            List<ArborOfWillLayout.FruitPlacement> placements, List<List<ArborCanopyGeometry.Point>> limbs,
+            int whorls, float foliage) {
+        int visibleIndex = 0;
         for (ArborOfWillLayout.FruitPlacement fruit : placements) {
             if (fruit.whorl() > Math.max(1, whorls)) continue;
-            SkillPoint skill = SkillPointInit.getById(fruit.skillId());
-            if (skill == null) continue;
             int familyIndex = Math.max(0, ArborOfWillLayout.orderedFamilies().indexOf(fruit.family()));
             int color = FAMILY_COLORS.getOrDefault(fruit.family(), FAMILY_COLORS.get("core"));
             ArborCanopyGeometry.Point fruitPoint = new ArborCanopyGeometry.Point(fruit.x(), fruit.y(), fruit.z());
             List<ArborCanopyGeometry.Point> limb = limbs.get(Math.min(familyIndex, limbs.size() - 1));
             List<ArborCanopyGeometry.Point> hanging = ArborCanopyGeometry.hangingStem(fruitPoint, .56, .26);
             List<ArborCanopyGeometry.Point> twig = curvedTwig(nearest(limb, hanging.get(0)), hanging.get(0), fruit.skillId());
-            texturedTube(pose, buffers.getBuffer(RenderType.entityCutoutNoCull(BARK)), light,
+            texturedTube(pose, consumers.bark(), light,
                     twig, .045F, .018F, mix(BARK_TINT, color, .14F), 1.0F);
-            texturedTube(pose, buffers.getBuffer(RenderType.entityCutoutNoCull(BARK)), light,
+            texturedTube(pose, consumers.bark(), light,
                     hanging, .025F, .010F, mix(color, 0xFF6B452B, .38F), .75F);
+            if (visibleIndex++ < Math.round(placements.size() * foliage)) {
+                renderLeafCluster(pose, consumers.mycelium(), light,
+                        new ArborCanopyGeometry.Point(fruit.x() - .20, fruit.y() + .42, fruit.z() + .10),
+                        color, .64F, Math.max(.16F, foliage * .72F), fruit.skillId());
+            }
+        }
+    }
 
+    private static void renderSkillOrchard(ArborOfWillEntity arbor, PoseStack stack,
+            MultiBufferSource buffers, List<ArborOfWillLayout.FruitPlacement> placements,
+            SkillProgress progress, int whorls, float time, float partial) {
+        for (ArborOfWillLayout.FruitPlacement fruit : placements) {
+            if (fruit.whorl() > Math.max(1, whorls)) continue;
+            SkillPoint skill = SkillPointInit.getById(fruit.skillId());
+            if (skill == null) continue;
+            int color = FAMILY_COLORS.getOrDefault(fruit.family(), FAMILY_COLORS.get("core"));
             ArborOfWillVisualRules.GrowthState state = ArborOfWillVisualRules.growthState(
                     progress.isUnlocked(skill), progress.isEnabled(skill), skill.getRequiredDegree(), arbor.degree());
             float scale = state == ArborOfWillVisualRules.GrowthState.RIPE_FRUIT
@@ -221,138 +246,149 @@ public final class ArborOfWillRenderer extends EntityRenderer<ArborOfWillEntity>
                     ? (float)ArborOfWillVisualRules.fruitScale(progress.getLevel(skill), skill.getMaxLevels()) : .50F;
             scale *= ArborGrowthAnimations.growthScale(skill, progress, arbor.tickCount, partial);
             scale *= 1.0F + .035F * (float)Math.sin(time * .085F + fruit.skillId());
-            if (state == ArborOfWillVisualRules.GrowthState.DEGREE_SEALED_BUD
-                    || state == ArborOfWillVisualRules.GrowthState.DORMANT_BUD) {
-                renderBud(pose, buffers, light, fruitPoint, color, state, scale);
-            } else if (state == ArborOfWillVisualRules.GrowthState.CLOSED_CALYX) {
-                renderCalyx(pose, buffers, light, fruitPoint, scale);
-            } else {
-                renderFamilyFruit(pose, buffers, light, fruitPoint, fruit.family(), color, scale,
-                        progress.getLevel(skill), skill.getMaxLevels());
-            }
-
-            if (index++ < Math.round(placements.size() * foliage)) {
-                renderLeafCluster(pose, buffers, light,
-                        new ArborCanopyGeometry.Point(fruit.x() - .20, fruit.y() + .42, fruit.z() + .10),
-                        color, .64F, Math.max(.16F,foliage*.72F), fruit.skillId());
-            }
+            ArborFruitMeshKey key = ArborFruitMeshKey.create(fruit.family(), state,
+                    progress.getLevel(skill), skill.getMaxLevels());
+            stack.pushPose();
+            stack.translate(fruit.x(), fruit.y(), fruit.z());
+            stack.scale(scale, scale, scale);
+            ArborMeshCache.renderFruit(stack, key);
+            stack.popPose();
+            renderFruitGlow(buffers, stack.last(), fruit, key, scale, color);
         }
     }
 
-    private static void renderFamilyFruit(PoseStack.Pose pose, MultiBufferSource buffers, int light,
-            ArborCanopyGeometry.Point p, String family, int color, float scale, int level, int maxLevel) {
+    private static void emitFruitBody(PoseStack.Pose pose, MeshConsumers consumers, ArborFruitMeshKey key) {
+        ArborCanopyGeometry.Point p = new ArborCanopyGeometry.Point(0, 0, 0);
+        int color = FAMILY_COLORS.getOrDefault(key.family(), FAMILY_COLORS.get("core"));
+        if (key.state() == ArborOfWillVisualRules.GrowthState.DEGREE_SEALED_BUD
+                || key.state() == ArborOfWillVisualRules.GrowthState.DORMANT_BUD) {
+            emitBudBody(pose, consumers.mycelium(), p, color, key.state());
+        } else if (key.state() == ArborOfWillVisualRules.GrowthState.CLOSED_CALYX) {
+            emitCalyxBody(pose, consumers.mycelium(), p);
+        } else {
+            emitFamilyFruitBody(pose, consumers, p, key.family(), color);
+        }
+    }
+
+    private static void emitFamilyFruitBody(PoseStack.Pose pose, MeshConsumers consumers,
+            ArborCanopyGeometry.Point p, String family, int color) {
         ArborFruitGeometry.Profile profile = ArborFruitGeometry.profile(family);
         int fruitLight = LightTexture.pack(13, 10);
-        float r = .24F * scale;
+        float r = .24F;
         switch (profile.shape()) {
             case HEART_POME -> {
-                texturedEllipsoid(pose, buffers, fruitLight, p.x() - r*.38, p.y()+r*.20, p.z(), r*.72, r*.72, r*.68, color);
-                texturedEllipsoid(pose, buffers, fruitLight, p.x() + r*.38, p.y()+r*.20, p.z(), r*.72, r*.72, r*.68, color);
-                texturedEllipsoid(pose, buffers, fruitLight, p.x(), p.y()-r*.28, p.z(), r*.84, r*.92, r*.76, color);
+                texturedEllipsoid(pose, consumers.mycelium(), fruitLight, p.x() - r*.38, p.y()+r*.20, p.z(), r*.72, r*.72, r*.68, color);
+                texturedEllipsoid(pose, consumers.mycelium(), fruitLight, p.x() + r*.38, p.y()+r*.20, p.z(), r*.72, r*.72, r*.68, color);
+                texturedEllipsoid(pose, consumers.mycelium(), fruitLight, p.x(), p.y()-r*.28, p.z(), r*.84, r*.92, r*.76, color);
             }
             case HOOKED_PEAR -> {
-                texturedEllipsoid(pose, buffers, fruitLight, p.x(), p.y()-r*.24, p.z(), r*.78, r*1.05, r*.72, color);
-                texturedEllipsoid(pose, buffers, fruitLight, p.x(), p.y()+r*.55, p.z(), r*.48, r*.62, r*.46, color);
+                texturedEllipsoid(pose, consumers.mycelium(), fruitLight, p.x(), p.y()-r*.24, p.z(), r*.78, r*1.05, r*.72, color);
+                texturedEllipsoid(pose, consumers.mycelium(), fruitLight, p.x(), p.y()+r*.55, p.z(), r*.48, r*.62, r*.46, color);
                 List<ArborCanopyGeometry.Point> hook = List.of(
                         new ArborCanopyGeometry.Point(p.x(),p.y()+r*1.03,p.z()),
                         new ArborCanopyGeometry.Point(p.x()+r*.18,p.y()+r*1.28,p.z()),
                         new ArborCanopyGeometry.Point(p.x()+r*.42,p.y()+r*1.23,p.z()));
-                texturedTube(pose, buffers.getBuffer(RenderType.entityCutoutNoCull(BARK)), fruitLight,
+                texturedTube(pose, consumers.bark(), fruitLight,
                         hook, .035F, .018F, color, .4F);
             }
             case THREAD_BERRIES -> {
                 double[][] offsets = {{0,0,0},{-.55,.26,.06},{.52,.22,-.08},{-.26,-.46,.10},{.28,-.50,-.06}};
-                for (double[] o : offsets) texturedEllipsoid(pose,buffers,fruitLight,
+                for (double[] o : offsets) texturedEllipsoid(pose,consumers.mycelium(),fruitLight,
                         p.x()+o[0]*r,p.y()+o[1]*r,p.z()+o[2]*r,r*.43,r*.48,r*.43,color);
             }
             case JOINED_FRUIT -> {
-                texturedEllipsoid(pose,buffers,fruitLight,p.x()-r*.42,p.y(),p.z(),r*.67,r*.92,r*.66,color);
-                texturedEllipsoid(pose,buffers,fruitLight,p.x()+r*.42,p.y(),p.z(),r*.67,r*.92,r*.66,color);
-                texturedEllipsoid(pose,buffers,fruitLight,p.x(),p.y()+r*.12,p.z(),r*.28,r*.42,r*.32,mix(color,0xFFFFFFFF,.22F));
+                texturedEllipsoid(pose,consumers.mycelium(),fruitLight,p.x()-r*.42,p.y(),p.z(),r*.67,r*.92,r*.66,color);
+                texturedEllipsoid(pose,consumers.mycelium(),fruitLight,p.x()+r*.42,p.y(),p.z(),r*.67,r*.92,r*.66,color);
+                texturedEllipsoid(pose,consumers.mycelium(),fruitLight,p.x(),p.y()+r*.12,p.z(),r*.28,r*.42,r*.32,mix(color,0xFFFFFFFF,.22F));
             }
-            case FISSURED_NUT -> {
-                texturedEllipsoid(pose,buffers,fruitLight,p.x(),p.y(),p.z(),r*.94,r*.72,r*.82,color);
-                for (int i=0;i<3;i++) {
-                    float dx=(i-1)*r*.27F;
-                    glowScar(buffers,pose,p.x()+dx,p.y()-r*.48,p.z()-r*.72,p.x()-dx*.45,p.y()+r*.46,p.z()-r*.76);
-                }
-            }
+            case FISSURED_NUT -> texturedEllipsoid(pose,consumers.mycelium(),fruitLight,p.x(),p.y(),p.z(),r*.94,r*.72,r*.82,color);
             case GILLED_POD -> {
-                texturedEllipsoid(pose,buffers,fruitLight,p.x(),p.y()-r*.25,p.z(),r*.52,r*.82,r*.50,color);
-                texturedEllipsoid(pose,buffers,fruitLight,p.x(),p.y()+r*.36,p.z(),r*1.12,r*.25,r*1.05,mix(color,0xFFE8D7B0,.26F));
-                for(int i=0;i<6;i++) {
-                    double a=i*Math.PI/3.0;
-                    glowScar(buffers,pose,p.x(),p.y()+r*.27,p.z(),
-                            p.x()+Math.cos(a)*r*.88,p.y()+r*.26,p.z()+Math.sin(a)*r*.88);
-                }
+                texturedEllipsoid(pose,consumers.mycelium(),fruitLight,p.x(),p.y()-r*.25,p.z(),r*.52,r*.82,r*.50,color);
+                texturedEllipsoid(pose,consumers.mycelium(),fruitLight,p.x(),p.y()+r*.36,p.z(),r*1.12,r*.25,r*1.05,mix(color,0xFFE8D7B0,.26F));
             }
         }
-        int chambers = ArborOfWillVisualRules.seedChambers(level, maxLevel);
+    }
+
+    private static void renderFruitGlow(MultiBufferSource buffers, PoseStack.Pose pose,
+            ArborOfWillLayout.FruitPlacement fruit, ArborFruitMeshKey key, float scale, int color) {
+        if (key.state() != ArborOfWillVisualRules.GrowthState.RIPE_FRUIT) return;
+        float r = .24F * scale;
+        if (ArborFruitGeometry.profile(key.family()).shape() == ArborFruitGeometry.Shape.FISSURED_NUT) {
+            for (int i=0;i<3;i++) {
+                float dx=(i-1)*r*.27F;
+                glowScar(buffers,pose,fruit.x()+dx,fruit.y()-r*.48,fruit.z()-r*.72,
+                        fruit.x()-dx*.45,fruit.y()+r*.46,fruit.z()-r*.76);
+            }
+        } else if (ArborFruitGeometry.profile(key.family()).shape() == ArborFruitGeometry.Shape.GILLED_POD) {
+            for(int i=0;i<6;i++) {
+                double a=i*Math.PI/3.0;
+                glowScar(buffers,pose,fruit.x(),fruit.y()+r*.27,fruit.z(),
+                        fruit.x()+Math.cos(a)*r*.88,fruit.y()+r*.26,fruit.z()+Math.sin(a)*r*.88);
+            }
+        }
+        int chambers = ArborOfWillVisualRules.seedChambers(key.level(), key.maxLevel());
         for (int i=0;i<chambers;i++) {
             double angle=i*Math.PI*2.0/chambers;
             colorEllipsoid(buffers.getBuffer(RenderTypeInit.RITE_BOUNDARY_GLOW),pose.pose(),
-                    (float)(p.x()+Math.cos(angle)*r*.48), (float)(p.y()-r*.08), (float)(p.z()+Math.sin(angle)*r*.48),
+                    (float)(fruit.x()+Math.cos(angle)*r*.48), (float)(fruit.y()-r*.08), (float)(fruit.z()+Math.sin(angle)*r*.48),
                     r*.075F,r*.075F,r*.075F, red(color),green(color),blue(color),.80F);
         }
     }
 
-    private static void renderBud(PoseStack.Pose pose, MultiBufferSource buffers, int light,
-            ArborCanopyGeometry.Point p, int familyColor, ArborOfWillVisualRules.GrowthState state, float scale) {
+    private static void emitBudBody(PoseStack.Pose pose, VertexConsumer out,
+            ArborCanopyGeometry.Point p, int familyColor, ArborOfWillVisualRules.GrowthState state) {
         int color = state == ArborOfWillVisualRules.GrowthState.DEGREE_SEALED_BUD ? 0xFFD1C4B2 : 0xFF6A303B;
         int budLight = LightTexture.pack(10, 7);
-        float r=.14F*scale;
-        texturedEllipsoid(pose,buffers,budLight,p.x(),p.y(),p.z(),r*.70,r*1.05,r*.70,mix(color,familyColor,.24F));
+        float r=.14F;
+        texturedEllipsoid(pose,out,budLight,p.x(),p.y(),p.z(),r*.70,r*1.05,r*.70,mix(color,familyColor,.24F));
         for(int i=0;i<3;i++) {
             double a=i*Math.PI*2/3.0;
-            texturedEllipsoid(pose,buffers,budLight,p.x()+Math.cos(a)*r*.46,p.y()-r*.18,p.z()+Math.sin(a)*r*.46,
+            texturedEllipsoid(pose,out,budLight,p.x()+Math.cos(a)*r*.46,p.y()-r*.18,p.z()+Math.sin(a)*r*.46,
                     r*.34,r*.74,r*.24,mix(color,0xFF6E4B37,.25F));
         }
     }
 
-    private static void renderCalyx(PoseStack.Pose pose, MultiBufferSource buffers, int light,
-            ArborCanopyGeometry.Point p, float scale) {
+    private static void emitCalyxBody(PoseStack.Pose pose, VertexConsumer out, ArborCanopyGeometry.Point p) {
         int fruitLight = LightTexture.pack(12, 9);
-        float r=.22F*scale;
+        float r=.22F;
         for(int i=0;i<10;i++) {
             double a=i*Math.PI*2/10.0;
-            texturedEllipsoid(pose,buffers,fruitLight,p.x()+Math.cos(a)*r*.55,p.y()+Math.sin(a*2)*r*.18,
+            texturedEllipsoid(pose,out,fruitLight,p.x()+Math.cos(a)*r*.55,p.y()+Math.sin(a*2)*r*.18,
                     p.z()+Math.sin(a)*r*.55,r*.22,r*.62,r*.16,0xFFAA662B);
         }
-        texturedEllipsoid(pose,buffers,fruitLight,p.x(),p.y(),p.z(),r*.50,r*.52,r*.50,0xFF6A3024);
+        texturedEllipsoid(pose,out,fruitLight,p.x(),p.y(),p.z(),r*.50,r*.52,r*.50,0xFF6A3024);
     }
 
-    private static void renderLeavesAlong(PoseStack.Pose pose, MultiBufferSource buffers, int light,
-            List<ArborCanopyGeometry.Point> path, int color, float foliage, int seed, float time) {
+    private static void renderLeavesAlong(PoseStack.Pose pose, VertexConsumer out, int light,
+            List<ArborCanopyGeometry.Point> path, int color, float foliage, int seed) {
         int sprays=foliage>.68F?2:foliage>.24F?1:0;
         for(int spray=0;spray<sprays;spray++) {
             int i=Math.min(path.size()-2,Math.max(2,(int)(path.size()*(spray==0?.68F:.84F))));
             ArborCanopyGeometry.Point p=path.get(i);
-            float flutter=.04F*(float)Math.sin(time*.07F+i+seed);
-            renderLeafCluster(pose,buffers,light,new ArborCanopyGeometry.Point(p.x(),p.y()+flutter,p.z()),
+            renderLeafCluster(pose,out,light,p,
                     color,.58F+.24F*foliage,foliage,seed+i*13);
         }
     }
 
-    private static void renderLeafCluster(PoseStack.Pose pose, MultiBufferSource buffers, int light,
+    private static void renderLeafCluster(PoseStack.Pose pose, VertexConsumer out, int light,
             ArborCanopyGeometry.Point p, int familyColor, float size, float foliage, int seed) {
         int leafLight=LightTexture.pack(11,8);
         float bud=ArborCanopyGeometry.foliageBudRadius(size,foliage);
         int petalColor=mix(0xFF642638,familyColor,.24F);
         int darkPetalColor=mix(petalColor,0xFF160A12,.30F);
-        texturedEllipsoid(pose,buffers,light,p.x(),p.y(),p.z(),bud,bud*.90F,bud,
-                darkPetalColor,LEAVES);
+        texturedEllipsoid(pose,out,light,p.x(),p.y(),p.z(),bud,bud*.90F,bud,darkPetalColor);
         List<ArborCanopyGeometry.Leaflet> crown=ArborCanopyGeometry.foliageCrown(p,size,foliage,seed);
         for(int i=0;i<crown.size();i++) {
             ArborCanopyGeometry.Leaflet leaf=crown.get(i);
             int tint=mix(i%3==0?0xFF9A2845:i%3==1?0xFF642638:0xFF3F202C,familyColor,.24F);
-            texturedLeafBlade(pose,buffers,leafLight,leaf,tint);
+            texturedLeafBlade(pose,out,leafLight,leaf,tint);
         }
     }
 
-    private static void renderTerminalCrown(PoseStack.Pose pose, MultiBufferSource buffers, int light,
+    private static void renderTerminalCrown(PoseStack.Pose pose, VertexConsumer out, int light,
             List<ArborCanopyGeometry.Point> path, int familyColor, float size, float foliage, int seed) {
         ArborCanopyGeometry.Point center=ArborCanopyGeometry.terminalFoliageCenter(path,size*.18F);
-        renderLeafCluster(pose,buffers,light,center,familyColor,size,foliage,seed);
+        renderLeafCluster(pose,out,light,center,familyColor,size,foliage,seed);
     }
 
     private static void renderPomeWounds(ArborOfWillEntity arbor, PoseStack.Pose pose,
@@ -365,13 +401,23 @@ public final class ArborOfWillRenderer extends EntityRenderer<ArborOfWillEntity>
         }
     }
 
-    private static void renderApotheosisCap(PoseStack.Pose pose, MultiBufferSource buffers, int light,
-            float height, float time) {
+    private static void renderHeartPulse(PoseStack.Pose pose, MultiBufferSource buffers, float height, float time) {
+        float beat = .18F + .035F * (float)Math.sin(time * .24F);
+        colorEllipsoid(buffers.getBuffer(RenderTypeInit.RITE_BOUNDARY_GLOW), pose.pose(),
+                0, height * .69F, -.19F, beat * 1.25F, beat, beat * .72F, .96F, .02F, .035F, .78F);
+    }
+
+    private static void renderApotheosisCapStatic(PoseStack.Pose pose, VertexConsumer fungus, int light,
+            float height) {
         for(int layer=0;layer<5;layer++) {
             float radius=3.2F-layer*.48F;
-            texturedEllipsoid(pose,buffers,light,0,height-.28F+layer*.25F,0,
-                    radius,.16F+layer*.015F,radius*.92F,mix(0xFFB92A40,0xFFE3C99A,layer/8F),FUNGUS);
+            texturedEllipsoid(pose,fungus,light,0,height-.28F+layer*.25F,0,
+                    radius,.16F+layer*.015F,radius*.92F,mix(0xFFB92A40,0xFFE3C99A,layer/8F));
         }
+    }
+
+    private static void renderApotheosisGlow(PoseStack.Pose pose, MultiBufferSource buffers,
+            float height, float time) {
         for(int ring=0;ring<3;ring++) for(int i=0;i<18;i++) {
             double a=i*Math.PI*2/18.0+ring*.17;
             float radius=1.05F+ring*.72F;
@@ -503,14 +549,8 @@ public final class ArborOfWillRenderer extends EntityRenderer<ArborOfWillEntity>
         texturedVertex(pose,out,light,p.x()+nx*radius,p.y()+ny*radius,p.z()+nz*radius,u,v,nx,ny,nz,color);
     }
 
-    private static void texturedEllipsoid(PoseStack.Pose pose, MultiBufferSource buffers, int light,
+    private static void texturedEllipsoid(PoseStack.Pose pose, VertexConsumer out, int light,
             double cx,double cy,double cz,double rx,double ry,double rz,int color) {
-        texturedEllipsoid(pose,buffers,light,cx,cy,cz,rx,ry,rz,color,FRUIT_SKIN);
-    }
-
-    private static void texturedEllipsoid(PoseStack.Pose pose, MultiBufferSource buffers, int light,
-            double cx,double cy,double cz,double rx,double ry,double rz,int color,ResourceLocation texture) {
-        VertexConsumer out=buffers.getBuffer(RenderType.entityCutoutNoCull(texture));
         int latitudes=7,longitudes=12;
         for(int lat=0;lat<latitudes;lat++) {
             double t0=Math.PI*lat/latitudes,t1=Math.PI*(lat+1)/latitudes;
@@ -524,42 +564,41 @@ public final class ArborOfWillRenderer extends EntityRenderer<ArborOfWillEntity>
         }
     }
 
-    private static void texturedLeafBlade(PoseStack.Pose pose,MultiBufferSource buffers,int light,
+    private static void texturedLeafBlade(PoseStack.Pose pose,VertexConsumer out,int light,
             ArborCanopyGeometry.Leaflet leaf,int color) {
-        VertexConsumer out=buffers.getBuffer(RenderType.entityCutoutNoCull(LEAVES));
         ArborCanopyGeometry.Point direction=leaf.direction().normalized();
         ArborCanopyGeometry.Point reference=Math.abs(direction.y())>.88
                 ?new ArborCanopyGeometry.Point(1,0,0):new ArborCanopyGeometry.Point(0,1,0);
         ArborCanopyGeometry.Point side=direction.cross(reference).normalized();
         ArborCanopyGeometry.Point crown=side.cross(direction).normalized();
-        int lengthSegments=7,crossSegments=8;
-        for(int segment=0;segment<lengthSegments;segment++) {
-            double t0=segment/(double)lengthSegments,t1=(segment+1)/(double)lengthSegments;
-            for(int face=0;face<crossSegments;face++) {
-                double a0=Math.PI*2*face/crossSegments,a1=Math.PI*2*(face+1)/crossSegments;
-                leafBladeVertex(pose,out,light,leaf,direction,side,crown,t0,a0,
-                        segment/(float)lengthSegments,face/(float)crossSegments,color);
-                leafBladeVertex(pose,out,light,leaf,direction,side,crown,t1,a0,
-                        (segment+1)/(float)lengthSegments,face/(float)crossSegments,color);
-                leafBladeVertex(pose,out,light,leaf,direction,side,crown,t1,a1,
-                        (segment+1)/(float)lengthSegments,(face+1)/(float)crossSegments,color);
-                leafBladeVertex(pose,out,light,leaf,direction,side,crown,t0,a1,
-                        segment/(float)lengthSegments,(face+1)/(float)crossSegments,color);
+        for(int plane=0;plane<ArborRenderBudget.LEAF_RIBBON_PLANES;plane++) {
+            double angle=plane*Math.PI/2.0;
+            ArborCanopyGeometry.Point lateral=side.scale(Math.cos(angle)).add(crown.scale(Math.sin(angle))).normalized();
+            ArborCanopyGeometry.Point normal=direction.cross(lateral).normalized();
+            for(int segment=0;segment<ArborRenderBudget.LEAF_RIBBON_SEGMENTS;segment++) {
+                double t0=segment/(double)ArborRenderBudget.LEAF_RIBBON_SEGMENTS;
+                double t1=(segment+1)/(double)ArborRenderBudget.LEAF_RIBBON_SEGMENTS;
+                leafRibbonVertex(pose,out,light,leaf,direction,crown,lateral,normal,t0,-1,
+                        (float)t0,0,color);
+                leafRibbonVertex(pose,out,light,leaf,direction,crown,lateral,normal,t1,-1,
+                        (float)t1,0,color);
+                leafRibbonVertex(pose,out,light,leaf,direction,crown,lateral,normal,t1,1,
+                        (float)t1,1,color);
+                leafRibbonVertex(pose,out,light,leaf,direction,crown,lateral,normal,t0,1,
+                        (float)t0,1,color);
             }
         }
     }
 
-    private static void leafBladeVertex(PoseStack.Pose pose,VertexConsumer out,int light,
+    private static void leafRibbonVertex(PoseStack.Pose pose,VertexConsumer out,int light,
             ArborCanopyGeometry.Leaflet leaf,ArborCanopyGeometry.Point direction,
-            ArborCanopyGeometry.Point side,ArborCanopyGeometry.Point crown,double t,double angle,
+            ArborCanopyGeometry.Point crown,ArborCanopyGeometry.Point lateral,
+            ArborCanopyGeometry.Point normal,double t,double sideSign,
             float u,float v,int color) {
         double taper=Math.pow(Math.sin(Math.PI*t),.72);
         double bend=Math.sin(Math.PI*t)*leaf.curl();
         ArborCanopyGeometry.Point center=leaf.center().add(direction.scale(leaf.length()*t)).add(crown.scale(bend));
-        ArborCanopyGeometry.Point normal=side.scale(Math.cos(angle)).add(crown.scale(Math.sin(angle))).normalized();
-        ArborCanopyGeometry.Point point=center
-                .add(side.scale(Math.cos(angle)*leaf.width()*taper))
-                .add(crown.scale(Math.sin(angle)*leaf.thickness()*taper));
+        ArborCanopyGeometry.Point point=center.add(lateral.scale(sideSign*leaf.width()*taper));
         texturedVertex(pose,out,light,point.x(),point.y(),point.z(),u,v,
                 normal.x(),normal.y(),normal.z(),color);
     }
@@ -613,6 +652,134 @@ public final class ArborOfWillRenderer extends EntityRenderer<ArborOfWillEntity>
     private static int argbG(int c){return c>>>8&255;}private static int argbB(int c){return c&255;}
     private static float red(int c){return argbR(c)/255F;}private static float green(int c){return argbG(c)/255F;}
     private static float blue(int c){return argbB(c)/255F;}
+
+    private record MeshConsumers(VertexConsumer bark, VertexConsumer mycelium, VertexConsumer fungus) { }
+
+    private static final class ArborMeshCache {
+        private static final Map<ArborFruitMeshKey, FruitMesh> FRUITS = new HashMap<>();
+        private static ArborStaticVisualKey staticKey;
+        private static CachedLayer staticBark;
+        private static CachedLayer staticMycelium;
+        private static CachedLayer staticFungus;
+
+        private ArborMeshCache() { }
+
+        static void renderStatic(PoseStack stack, ArborStaticVisualKey key,
+                List<ArborOfWillLayout.FruitPlacement> placements) {
+            if (!key.equals(staticKey)) rebuildStatic(key, placements);
+            draw(staticBark, stack);
+            draw(staticMycelium, stack);
+            draw(staticFungus, stack);
+        }
+
+        static void renderFruit(PoseStack stack, ArborFruitMeshKey key) {
+            FruitMesh mesh = FRUITS.computeIfAbsent(key, ArborMeshCache::buildFruit);
+            draw(mesh.bark(), stack);
+            draw(mesh.mycelium(), stack);
+        }
+
+        static void clear() {
+            close(staticBark);
+            close(staticMycelium);
+            close(staticFungus);
+            staticBark = null;
+            staticMycelium = null;
+            staticFungus = null;
+            staticKey = null;
+            FRUITS.values().forEach(FruitMesh::close);
+            FRUITS.clear();
+        }
+
+        private static void rebuildStatic(ArborStaticVisualKey key,
+                List<ArborOfWillLayout.FruitPlacement> placements) {
+            close(staticBark);
+            close(staticMycelium);
+            close(staticFungus);
+            staticBark = buildLayer(BARK_TYPE, consumers -> emitStaticTree(key, placements, consumers));
+            staticMycelium = buildLayer(MYCELIUM_TYPE, consumers -> emitStaticTree(key, placements, consumers));
+            staticFungus = buildLayer(FUNGUS_TYPE, consumers -> emitStaticTree(key, placements, consumers));
+            staticKey = key;
+        }
+
+        private static void emitStaticTree(ArborStaticVisualKey key,
+                List<ArborOfWillLayout.FruitPlacement> placements, MeshConsumers consumers) {
+            PoseStack buildStack = new PoseStack();
+            PoseStack.Pose pose = buildStack.last();
+            float height = (float) ArborOfWillVisualRules.treeHeight(key.degree());
+            float rootRadius = (float) ArborOfWillVisualRules.rootRadius(key.degree(), key.chamberRadius());
+            int whorls = ArborOfWillVisualRules.visibleWhorls(key.degree());
+            float foliage = key.foliage();
+            renderRootsAndHeartwood(pose, consumers, key.packedLight(), height, rootRadius, foliage);
+            List<List<ArborCanopyGeometry.Point>> limbs = renderBraidedCanopy(
+                    pose, consumers, key.packedLight(), height, rootRadius, whorls, foliage);
+            renderStaticOrchard(pose, consumers, key.packedLight(), placements, limbs, whorls, foliage);
+            if (key.degree() >= 8) {
+                renderApotheosisCapStatic(pose, consumers.fungus(), key.packedLight(), height);
+            }
+        }
+
+        private static FruitMesh buildFruit(ArborFruitMeshKey key) {
+            CachedLayer bark = buildLayer(BARK_TYPE, consumers -> emitFruitBody(
+                    new PoseStack().last(), consumers, key));
+            CachedLayer mycelium = buildLayer(MYCELIUM_TYPE, consumers -> emitFruitBody(
+                    new PoseStack().last(), consumers, key));
+            return new FruitMesh(bark, mycelium);
+        }
+
+        private static CachedLayer buildLayer(RenderType target, java.util.function.Consumer<MeshConsumers> emitter) {
+            BufferBuilder builder = Tesselator.getInstance().begin(
+                    VertexFormat.Mode.QUADS, DefaultVertexFormat.NEW_ENTITY);
+            VertexConsumer none = NoOpVertexConsumer.INSTANCE;
+            emitter.accept(new MeshConsumers(
+                    target == BARK_TYPE ? builder : none,
+                    target == MYCELIUM_TYPE ? builder : none,
+                    target == FUNGUS_TYPE ? builder : none));
+            MeshData mesh = builder.build();
+            if (mesh == null) return null;
+            VertexBuffer vertexBuffer = new VertexBuffer(VertexBuffer.Usage.STATIC);
+            vertexBuffer.bind();
+            vertexBuffer.upload(mesh);
+            VertexBuffer.unbind();
+            return new CachedLayer(target, vertexBuffer, GameRenderer::getRendertypeEntityCutoutNoCullShader);
+        }
+
+        private static void draw(CachedLayer layer, PoseStack stack) {
+            if (layer == null) return;
+            ShaderInstance shader = layer.shader().get();
+            if (shader == null) return;
+            layer.renderType().setupRenderState();
+            layer.buffer().bind();
+            Matrix4f modelView = CachedMeshModelView.compose(
+                    RenderSystem.getModelViewMatrix(), stack.last().pose());
+            layer.buffer().drawWithShader(modelView, RenderSystem.getProjectionMatrix(), shader);
+            VertexBuffer.unbind();
+            layer.renderType().clearRenderState();
+        }
+
+        private static void close(CachedLayer layer) {
+            if (layer != null) layer.buffer().close();
+        }
+    }
+
+    private record CachedLayer(RenderType renderType, VertexBuffer buffer, Supplier<ShaderInstance> shader) { }
+
+    private record FruitMesh(CachedLayer bark, CachedLayer mycelium) {
+        void close() {
+            ArborMeshCache.close(bark);
+            ArborMeshCache.close(mycelium);
+        }
+    }
+
+    private enum NoOpVertexConsumer implements VertexConsumer {
+        INSTANCE;
+
+        @Override public VertexConsumer addVertex(float x, float y, float z) { return this; }
+        @Override public VertexConsumer setColor(int red, int green, int blue, int alpha) { return this; }
+        @Override public VertexConsumer setUv(float u, float v) { return this; }
+        @Override public VertexConsumer setUv1(int u, int v) { return this; }
+        @Override public VertexConsumer setUv2(int u, int v) { return this; }
+        @Override public VertexConsumer setNormal(float x, float y, float z) { return this; }
+    }
 
     @Override public ResourceLocation getTextureLocation(ArborOfWillEntity entity) { return BARK; }
 }

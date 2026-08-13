@@ -6,7 +6,19 @@ import java.util.List;
 /** Deterministic authored geometry for the Qliphoth Bloom renderer. */
 public final class QliphothBloomGeometry {
     public static final double HEIGHT = 8.0;
+    private static final StageSnapshot[] SNAPSHOTS = new StageSnapshot[10];
     private QliphothBloomGeometry() {}
+
+    public static StageSnapshot snapshot(int stage) {
+        int clamped = clamp(stage, 0, 9);
+        StageSnapshot cached = SNAPSHOTS[clamped];
+        if (cached != null) return cached;
+        StageSnapshot created = new StageSnapshot(clamped, trunk(clamped, 0.0), roots(clamped, 0.0),
+                mainBranches(clamped, 0.0), secondaryBranches(clamped, 0.0),
+                clamped >= 9 ? crownProngs(0.0) : List.of());
+        SNAPSHOTS[clamped] = created;
+        return created;
+    }
 
     public static double trunkFraction(int stage) {
         return stage >= 6 ? 1 : .25 + clamp(stage, 0, 5) * .15;
@@ -122,7 +134,7 @@ public final class QliphothBloomGeometry {
     public static List<Crystal> crystals(int stage, double time) {
         int count = stage < 7 ? 0 : stage == 7 ? 3 : stage == 8 ? 6 : 9;
         List<Crystal> result = new ArrayList<>();
-        List<Limb> branches = mainBranches(Math.max(8, stage), time);
+        List<Limb> branches = snapshot(Math.max(8, stage)).mainBranches();
         for (int i = 0; i < count; i++) {
             Limb branch = branches.get(i % branches.size());
             Point anchor = branch.points().get(branch.points().size() - 1);
@@ -277,7 +289,21 @@ public final class QliphothBloomGeometry {
     private static int clamp(int v, int min, int max) { return Math.max(min, Math.min(max, v)); }
     private static double hash(int i) { double x = Math.sin(i * 127.1 + 311.7) * 43758.5453; return x - Math.floor(x); }
 
-    public record Limb(List<Point> points, List<Double> radii, int seed) {}
+    public record Limb(List<Point> points, List<Double> radii, int seed) {
+        public Limb {
+            points = List.copyOf(points);
+            radii = List.copyOf(radii);
+        }
+    }
+    public record StageSnapshot(int stage, Limb trunk, List<Limb> roots, List<Limb> mainBranches,
+                                List<Limb> secondaryBranches, List<Limb> crownProngs) {
+        public StageSnapshot {
+            roots = List.copyOf(roots);
+            mainBranches = List.copyOf(mainBranches);
+            secondaryBranches = List.copyOf(secondaryBranches);
+            crownProngs = List.copyOf(crownProngs);
+        }
+    }
     public record Pome(Point center, double radius, double angle, double aspectX, double aspectY,
                        double wispPhase) {}
     public record Crystal(Point anchor, Point center, double size, int seed, int lobes, double skew) {}
