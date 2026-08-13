@@ -2,6 +2,7 @@ package com.vincenthuto.hemomancy.client.render.world;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.client.data.QliphothBloomClientData;
 import com.vincenthuto.hemomancy.client.render.HemoRenderTypes;
 import com.vincenthuto.hemomancy.common.init.RenderTypeInit;
@@ -9,7 +10,9 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.core.BlockPos;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.phys.Vec3;
 import org.joml.Matrix4f;
 
@@ -21,10 +24,12 @@ import java.util.List;
  * red rings similar to the cardinal rite boundary renderer.
  * <p>
  * The tree grows from the ground at the rite center. Its trunk is dark/black,
- * branches spread outward and upward with red-tipped foliage rendered as
- * glowing quad geometry. Pulsing concentric rings radiate outward from the base.
+ * branches spread outward and upward as angular, bark-skinned tubes. Pulsing
+ * concentric rings radiate outward from the base.
  */
 public class QliphothBloomRenderer {
+	private static final ResourceLocation BARK = Hemomancy.rloc("textures/block/dark_oak_log.png");
+	private static final RenderType BARK_TYPE = RenderType.entityCutoutNoCull(BARK);
 
 	// ── Tree geometry parameters ──
 	/** Total height of the tree in blocks. */
@@ -99,6 +104,7 @@ public class QliphothBloomRenderer {
 		poseStack.translate(0,1,0);
 		buffer.endBatch(RenderTypeInit.RITE_BOUNDARY_CORE);
 		buffer.endBatch(RenderTypeInit.RITE_BOUNDARY_GLOW);
+		buffer.endBatch(BARK_TYPE);
 	}
 
 	// ════════════════════════════════════════════════════════════════════════
@@ -168,18 +174,7 @@ public class QliphothBloomRenderer {
 		float rootFrac   = rootLengthFrac(stage);
 		float branchFrac = branchLengthFrac(stage);
 
-		drawTrunk(buffer, mat, time, pulse, heightFrac);
-		drawTrunkOrbs(buffer, mat, time, pulse, heightFrac);
-		drawRoots(buffer, mat, time, pulse, rootFrac);
-		if (branchFrac > 0f) {
-			drawBranches(buffer, mat, time, pulse, branchFrac, stage >= 7);
-		}
-		if (stage >= 8) {
-			drawCanopy(buffer, mat, time, pulse);
-		}
-		if (stage >= 9) {
-			drawApexOrb(buffer, mat, time, pulse);
-		}
+		drawFacetedBloom(buffer, mat, time, stage);
 
 		stack.popPose();
 	}
@@ -304,7 +299,7 @@ public class QliphothBloomRenderer {
 
 		int stage      = bloom.getPomesDropped();
 		if (bloom.isPortalOpen() || bloom.isSealedTrophy()) {
-			drawRoots(buffer, mat, time, pulse, 1.0F);
+			drawFacetedRoots(buffer, mat, time, 9);
 			float stumpSeed = Math.floorMod(center.asLong(), 10007L) / 10007.0F;
 			drawSeveredStump(buffer, mat, time, pulse, stumpSeed, bloom.isPortalOpen());
 			stack.popPose();
@@ -314,18 +309,7 @@ public class QliphothBloomRenderer {
 		float rootFrac   = rootLengthFrac(stage);
 		float branchFrac = branchLengthFrac(stage);
 
-		drawTrunk(buffer, mat, time, pulse, heightFrac);
-		drawTrunkOrbs(buffer, mat, time, pulse, heightFrac);
-		drawRoots(buffer, mat, time, pulse, rootFrac);
-		if (branchFrac > 0f) {
-			drawBranches(buffer, mat, time, pulse, branchFrac, stage >= 7);
-		}
-		if (stage >= 8) {
-			drawCanopy(buffer, mat, time, pulse);
-		}
-		if (stage >= 9) {
-			drawApexOrb(buffer, mat, time, pulse);
-		}
+		drawFacetedBloom(buffer, mat, time, stage);
 
 		stack.popPose();
 	}
@@ -389,6 +373,311 @@ public class QliphothBloomRenderer {
 		if (buffer instanceof MultiBufferSource.BufferSource source) {
 			source.endBatch(capType);
 		}
+	}
+
+	private static void drawFacetedBloom(MultiBufferSource buffer, Matrix4f mat, float time, int stage) {
+		QliphothBloomGeometry.Limb trunk = QliphothBloomGeometry.trunk(stage, time);
+		drawTexturedLimb(buffer, mat, trunk, 10, .40f, .52f, .92f, 2.4f);
+		drawVeins(buffer, mat, trunk, time, 3);
+		drawFacetedRoots(buffer, mat, time, stage);
+
+		for (QliphothBloomGeometry.Limb branch : QliphothBloomGeometry.mainBranches(stage, time)) {
+			drawTexturedLimb(buffer, mat, branch, 8, .34f, .44f, .78f, 2.1f);
+			drawVeins(buffer, mat, branch, time, 2);
+		}
+		for (QliphothBloomGeometry.Limb branch : QliphothBloomGeometry.secondaryBranches(stage, time)) {
+			drawTexturedLimb(buffer, mat, branch, 7, .30f, .39f, .70f, 2.1f);
+			drawVeins(buffer, mat, branch, time, 1);
+		}
+
+		for (QliphothBloomGeometry.Pome pome : QliphothBloomGeometry.pomes(stage, time)) {
+			drawPome(buffer, mat, pome, time);
+		}
+		for (QliphothBloomGeometry.Crystal crystal : QliphothBloomGeometry.crystals(stage, time)) {
+			drawFruitStem(buffer, mat, crystal, time);
+			drawCrystal(buffer, mat, crystal, time);
+		}
+		if (QliphothBloomGeometry.hasApex(stage)) drawFacetedApex(buffer, mat, time);
+	}
+
+	private static void drawFacetedRoots(MultiBufferSource buffer, Matrix4f mat, float time, int stage) {
+		for (QliphothBloomGeometry.Limb root : QliphothBloomGeometry.roots(stage, time)) {
+			drawTexturedLimb(buffer, mat, root, 8, .35f, .45f, .81f, 2.0f);
+			drawVeins(buffer, mat, root, time, 2);
+		}
+	}
+
+	private static void drawFacetedApex(MultiBufferSource buffer, Matrix4f mat, float time) {
+		for (QliphothBloomGeometry.Limb prong : QliphothBloomGeometry.crownProngs(time)) {
+			drawTexturedLimb(buffer, mat, prong, 7, .30f, .39f, .70f, 2.1f);
+			drawVeins(buffer, mat, prong, time, 1);
+		}
+		QliphothBloomGeometry.Point center = QliphothBloomGeometry.apexCenter(time);
+		drawSphere(buffer, mat, center, .72, .002f, .0f, .002f, 1f, 11, 16);
+		drawSphere(buffer, mat, center, .78, .42f, .006f, .012f, .13f, 10, 15);
+		for (QliphothBloomGeometry.Limb loop : QliphothBloomGeometry.apexLoops(time)) {
+			drawLimb(buffer, mat, loop, 6, .72f, .008f, .018f, .88f);
+			QliphothBloomGeometry.Limb glow = new QliphothBloomGeometry.Limb(loop.points(),
+					loop.radii().stream().map(radius -> radius * 1.7).toList(), loop.seed());
+			drawLimbGlow(buffer, mat, glow, 6, .95f, .012f, .022f, .12f);
+		}
+	}
+
+	private static void drawVeins(MultiBufferSource buffer, Matrix4f mat, QliphothBloomGeometry.Limb wood,
+			float time, int count) {
+		for (int index = 0; index < count; index++) {
+			List<QliphothBloomGeometry.Point> path = QliphothBloomGeometry.surfaceVein(wood, index);
+			float traveling = (float) ((Math.sin(time * .11 - index * 1.7 + wood.seed() * .17) + 1) * .5);
+			QliphothBloomGeometry.Limb vein = new QliphothBloomGeometry.Limb(path,
+					path.stream().map(point -> .018 + traveling * .009).toList(), wood.seed() + index);
+			drawLimbGlow(buffer, mat, vein, 5, .60f + traveling * .35f, .006f, .012f, .58f);
+		}
+	}
+
+	private static void drawFruitStem(MultiBufferSource buffer, Matrix4f mat,
+			QliphothBloomGeometry.Crystal fruit, float time) {
+		QliphothBloomGeometry.Limb stem = QliphothBloomGeometry.fruitStem(fruit, time);
+		drawSphere(buffer, mat, fruit.anchor(), .095, .19f, .018f, .020f, .94f, 6, 8);
+		drawLimb(buffer, mat, stem, 7, .20f, .012f, .018f, .97f);
+		drawVeins(buffer, mat, stem, time, 1);
+		drawSphere(buffer, mat, fruit.center().add(new QliphothBloomGeometry.Point(0, fruit.size() * .68, 0)),
+				fruit.size() * .24, .26f, .015f, .024f, .95f, 6, 8);
+	}
+
+	private static void drawCrystal(MultiBufferSource buffer, Matrix4f mat,
+			QliphothBloomGeometry.Crystal crystal, float time) {
+		QliphothBloomGeometry.Point c = crystal.center();
+		double size = crystal.size() * (1 + Math.sin(time * .04 + crystal.seed()) * .035);
+		double rotation = time * .008 + crystal.seed() * 1.7;
+		for (int lobe = 0; lobe < crystal.lobes(); lobe++) {
+			double angle = rotation + lobe * Math.PI * 2 / crystal.lobes();
+			double spread = size * (.30 + .22 * Math.sin(crystal.seed() * 3.1 + lobe));
+			QliphothBloomGeometry.Point center = c.add(new QliphothBloomGeometry.Point(
+					Math.cos(angle) * spread + crystal.skew() * size * .16,
+					(lobe % 2 == 0 ? .16 : -.12) * size,
+					Math.sin(angle) * spread));
+			float shade = .34f + lobe / (float)Math.max(1, crystal.lobes() - 1) * .28f;
+			drawDistortedEllipsoid(buffer, mat, center, size * (.72 + lobe % 3 * .10),
+					size * (1.05 + (lobe + crystal.seed()) % 3 * .14), size * .68,
+					angle, crystal.seed() * 19 + lobe, shade, .008f, .030f, .92f);
+			QliphothBloomGeometry.Point highlight = center.add(new QliphothBloomGeometry.Point(
+					-Math.cos(angle) * size * .38, size * .38, -Math.sin(angle) * size * .38));
+			drawDistortedEllipsoid(buffer, mat, highlight, size * .15, size * .42, size * .10,
+					angle, crystal.seed() * 31 + lobe, .88f, .075f, .095f, .48f);
+		}
+		drawFruitSeams(buffer, mat, c, size, crystal.lobes(), rotation);
+		drawSphere(buffer, mat, c, size * 1.35, .78f, .008f, .032f, .055f, 6, 8);
+		drawFruitWisps(buffer, mat, c, size * 1.7, time, crystal.seed() + 200);
+	}
+
+	private static void drawFruitSeams(MultiBufferSource buffer, Matrix4f mat,
+			QliphothBloomGeometry.Point center, double size, int lobes, double rotation) {
+		for (int seam = 0; seam < lobes; seam++) {
+			double angle = rotation + seam * Math.PI * 2 / lobes;
+			QliphothBloomGeometry.Point side = new QliphothBloomGeometry.Point(Math.cos(angle), 0, Math.sin(angle));
+			List<QliphothBloomGeometry.Point> path = List.of(
+					center.add(side.scale(size * .52)).add(new QliphothBloomGeometry.Point(0, size * .72, 0)),
+					center.add(side.scale(size * .78)),
+					center.add(side.scale(size * .48)).add(new QliphothBloomGeometry.Point(0, -size * .70, 0)));
+			drawLimbGlow(buffer, mat, new QliphothBloomGeometry.Limb(path, List.of(.010, .014, .006), 1400 + seam),
+					5, .82f, .016f, .034f, .38f);
+		}
+	}
+
+	private static void drawPome(MultiBufferSource buffer, Matrix4f mat,
+			QliphothBloomGeometry.Pome pome, float time) {
+		double pulse = 1 + Math.sin(time * .032 + pome.wispPhase()) * .035;
+		drawDistortedEllipsoid(buffer, mat, pome.center(), pome.radius() * pome.aspectX() * pulse,
+				pome.radius() * pome.aspectY() * pulse, pome.radius() * (.80 + .16 * Math.sin(pome.angle())) * pulse,
+				pome.angle(), (int)(pome.wispPhase() * 100), .004f, .002f, .006f, .99f);
+		drawFruitWisps(buffer, mat, pome.center(), pome.radius() * 1.55, time,
+				(int)(pome.wispPhase() * 100));
+	}
+
+	private static void drawFruitWisps(MultiBufferSource buffer, Matrix4f mat, QliphothBloomGeometry.Point center,
+			double radius, float time, int seed) {
+		for (int i = 0; i < 3; i++) {
+			double angle = time * (.018 + i * .004) + seed * .17 + i * 2.1;
+			double orbit = radius * (.82 + i * .17);
+			QliphothBloomGeometry.Point wisp = center.add(new QliphothBloomGeometry.Point(
+					Math.cos(angle) * orbit, Math.sin(angle * 1.7 + i) * radius * .38,
+					Math.sin(angle) * orbit));
+			drawSphere(buffer, mat, wisp, radius * (.13 + i * .025), .58f, .006f, .030f,
+					.055f - i * .010f, 4, 6);
+		}
+	}
+
+	private static void drawLimb(MultiBufferSource buffer, Matrix4f mat, QliphothBloomGeometry.Limb limb,
+			int sides, float red, float green, float blue, float alpha) {
+		drawTube(buffer.getBuffer(RenderTypeInit.RITE_BOUNDARY_CORE), mat, limb, sides, red, green, blue, alpha);
+	}
+
+	private static void drawLimbGlow(MultiBufferSource buffer, Matrix4f mat, QliphothBloomGeometry.Limb limb,
+			int sides, float red, float green, float blue, float alpha) {
+		drawTube(buffer.getBuffer(RenderTypeInit.RITE_BOUNDARY_GLOW), mat, limb, sides, red, green, blue, alpha);
+	}
+
+	private static void drawTexturedLimb(MultiBufferSource buffer, Matrix4f mat,
+			QliphothBloomGeometry.Limb limb, int sides, float red, float green, float blue, float repeatsPerBlock) {
+		List<QliphothBloomGeometry.Point> points = limb.points();
+		if (points.size() < 2) return;
+		QliphothBloomGeometry.Point[][] frames = tubeFrames(points);
+		QliphothBloomGeometry.Point[] normals = frames[0], bins = frames[1];
+		List<Double> textureV = QliphothBloomGeometry.textureV(limb, repeatsPerBlock);
+		VertexConsumer out = buffer.getBuffer(BARK_TYPE);
+		for (int segment = 0; segment < points.size() - 1; segment++) {
+			for (int side = 0; side < sides; side++) {
+				double a0 = side * Math.PI * 2 / sides, a1 = (side + 1) * Math.PI * 2 / sides;
+				QliphothBloomGeometry.Point p00 = ringPoint(points.get(segment), normals[segment], bins[segment], limb.radii().get(segment), a0);
+				QliphothBloomGeometry.Point p01 = ringPoint(points.get(segment), normals[segment], bins[segment], limb.radii().get(segment), a1);
+				QliphothBloomGeometry.Point p10 = ringPoint(points.get(segment + 1), normals[segment + 1], bins[segment + 1], limb.radii().get(segment + 1), a0);
+				QliphothBloomGeometry.Point p11 = ringPoint(points.get(segment + 1), normals[segment + 1], bins[segment + 1], limb.radii().get(segment + 1), a1);
+				QliphothBloomGeometry.Point n00 = normals[segment].scale(Math.cos(a0)).add(bins[segment].scale(Math.sin(a0)));
+				QliphothBloomGeometry.Point n01 = normals[segment].scale(Math.cos(a1)).add(bins[segment].scale(Math.sin(a1)));
+				QliphothBloomGeometry.Point n10 = normals[segment + 1].scale(Math.cos(a0)).add(bins[segment + 1].scale(Math.sin(a0)));
+				QliphothBloomGeometry.Point n11 = normals[segment + 1].scale(Math.cos(a1)).add(bins[segment + 1].scale(Math.sin(a1)));
+				float u0 = side / (float)sides, u1 = (side + 1) / (float)sides;
+				texturedVertex(out, mat, p00, n00, u0, textureV.get(segment).floatValue(), red, green, blue);
+				texturedVertex(out, mat, p10, n10, u0, textureV.get(segment + 1).floatValue(), red, green, blue);
+				texturedVertex(out, mat, p11, n11, u1, textureV.get(segment + 1).floatValue(), red, green, blue);
+				texturedVertex(out, mat, p01, n01, u1, textureV.get(segment).floatValue(), red, green, blue);
+			}
+		}
+	}
+
+	private static void texturedVertex(VertexConsumer out, Matrix4f mat, QliphothBloomGeometry.Point point,
+			QliphothBloomGeometry.Point normal, float u, float v, float red, float green, float blue) {
+		out.addVertex(mat, (float)point.x(), (float)point.y(), (float)point.z())
+				.setColor(red, green, blue, 1f).setUv(u, v).setOverlay(OverlayTexture.NO_OVERLAY)
+				.setLight(LightTexture.FULL_BRIGHT).setNormal((float)normal.x(), (float)normal.y(), (float)normal.z());
+	}
+
+	private static QliphothBloomGeometry.Point[][] tubeFrames(List<QliphothBloomGeometry.Point> points) {
+		QliphothBloomGeometry.Point[] normals = new QliphothBloomGeometry.Point[points.size()];
+		QliphothBloomGeometry.Point[] bins = new QliphothBloomGeometry.Point[points.size()];
+		for (int i = 0; i < points.size(); i++) {
+			QliphothBloomGeometry.Point tangent = points.get(Math.min(i + 1, points.size() - 1))
+					.subtract(points.get(Math.max(0, i - 1))).normalized();
+			if (i == 0) {
+				QliphothBloomGeometry.Point ref = Math.abs(tangent.y()) > .88
+						? new QliphothBloomGeometry.Point(1, 0, 0) : new QliphothBloomGeometry.Point(0, 1, 0);
+				normals[i] = tangent.cross(ref).normalized();
+			} else {
+				QliphothBloomGeometry.Point projected = normals[i - 1].subtract(tangent.scale(dot(normals[i - 1], tangent)));
+				if (projected.length() < 1.0e-5) projected = bins[i - 1].cross(tangent);
+				normals[i] = projected.normalized();
+			}
+			bins[i] = tangent.cross(normals[i]).normalized();
+		}
+		return new QliphothBloomGeometry.Point[][] { normals, bins };
+	}
+
+	private static void drawTube(VertexConsumer out, Matrix4f mat, QliphothBloomGeometry.Limb limb,
+			int sides, float red, float green, float blue, float alpha) {
+		List<QliphothBloomGeometry.Point> points = limb.points();
+		if (points.size() < 2) return;
+		QliphothBloomGeometry.Point[][] frames = tubeFrames(points);
+		QliphothBloomGeometry.Point[] normals = frames[0], bins = frames[1];
+		for (int segment = 0; segment < points.size() - 1; segment++) {
+			for (int side = 0; side < sides; side++) {
+				double a0 = side * Math.PI * 2 / sides, a1 = (side + 1) * Math.PI * 2 / sides;
+				QliphothBloomGeometry.Point p00 = ringPoint(points.get(segment), normals[segment], bins[segment], limb.radii().get(segment), a0);
+				QliphothBloomGeometry.Point p01 = ringPoint(points.get(segment), normals[segment], bins[segment], limb.radii().get(segment), a1);
+				QliphothBloomGeometry.Point p10 = ringPoint(points.get(segment + 1), normals[segment + 1], bins[segment + 1], limb.radii().get(segment + 1), a0);
+				QliphothBloomGeometry.Point p11 = ringPoint(points.get(segment + 1), normals[segment + 1], bins[segment + 1], limb.radii().get(segment + 1), a1);
+				emitPointQuad(out, mat, p00, p10, p11, p01, red, green, blue, alpha);
+			}
+		}
+		if (points.get(0).distanceTo(points.get(points.size() - 1)) > 1.0e-5) {
+			drawTubeCap(out, mat, points.get(0), normals[0], bins[0], limb.radii().get(0), sides,
+					red, green, blue, alpha, true);
+			drawTubeCap(out, mat, points.get(points.size() - 1), normals[points.size() - 1], bins[points.size() - 1],
+					limb.radii().get(limb.radii().size() - 1), sides, red, green, blue, alpha, false);
+		}
+	}
+
+	private static double dot(QliphothBloomGeometry.Point a, QliphothBloomGeometry.Point b) {
+		return a.x() * b.x() + a.y() * b.y() + a.z() * b.z();
+	}
+
+	private static void drawTubeCap(VertexConsumer out, Matrix4f mat, QliphothBloomGeometry.Point center,
+			QliphothBloomGeometry.Point normal, QliphothBloomGeometry.Point binormal, double radius, int sides,
+			float red, float green, float blue, float alpha, boolean reverse) {
+		if (radius <= 1.0e-5) return;
+		for (int side = 0; side < sides; side++) {
+			double a0 = side * Math.PI * 2 / sides, a1 = (side + 1) * Math.PI * 2 / sides;
+			QliphothBloomGeometry.Point p0 = ringPoint(center, normal, binormal, radius, a0);
+			QliphothBloomGeometry.Point p1 = ringPoint(center, normal, binormal, radius, a1);
+			if (reverse) emitTriangleAsQuad(out, mat, center, p1, p0, red, green, blue, alpha);
+			else emitTriangleAsQuad(out, mat, center, p0, p1, red, green, blue, alpha);
+		}
+	}
+
+	private static QliphothBloomGeometry.Point ringPoint(QliphothBloomGeometry.Point center,
+			QliphothBloomGeometry.Point n, QliphothBloomGeometry.Point b, double radius, double angle) {
+		return center.add(n.scale(Math.cos(angle) * radius)).add(b.scale(Math.sin(angle) * radius));
+	}
+
+	private static void drawSphere(MultiBufferSource buffer, Matrix4f mat, QliphothBloomGeometry.Point c,
+			double radius, float red, float green, float blue, float alpha, int latitudes, int longitudes) {
+		VertexConsumer out = alpha < .5f ? buffer.getBuffer(RenderTypeInit.RITE_BOUNDARY_GLOW)
+				: buffer.getBuffer(RenderTypeInit.RITE_BOUNDARY_CORE);
+		for (int lat = 0; lat < latitudes; lat++) for (int lon = 0; lon < longitudes; lon++) {
+			double t0 = lat * Math.PI / latitudes, t1 = (lat + 1) * Math.PI / latitudes;
+			double p0 = lon * Math.PI * 2 / longitudes, p1 = (lon + 1) * Math.PI * 2 / longitudes;
+			QliphothBloomGeometry.Point a = spherePoint(c, radius, t0, p0);
+			QliphothBloomGeometry.Point b = spherePoint(c, radius, t0, p1);
+			QliphothBloomGeometry.Point d = spherePoint(c, radius, t1, p0);
+			QliphothBloomGeometry.Point e = spherePoint(c, radius, t1, p1);
+			emitPointQuad(out, mat, a, b, e, d, red, green, blue, alpha);
+		}
+	}
+
+	private static QliphothBloomGeometry.Point spherePoint(QliphothBloomGeometry.Point c, double r, double theta, double phi) {
+		return c.add(new QliphothBloomGeometry.Point(Math.sin(theta) * Math.cos(phi) * r,
+				Math.cos(theta) * r, Math.sin(theta) * Math.sin(phi) * r));
+	}
+
+	private static void drawDistortedEllipsoid(MultiBufferSource buffer, Matrix4f mat,
+			QliphothBloomGeometry.Point center, double rx, double ry, double rz, double yaw, int seed,
+			float red, float green, float blue, float alpha) {
+		VertexConsumer out = buffer.getBuffer(RenderTypeInit.RITE_BOUNDARY_CORE);
+		int latitudes = 8, longitudes = 12;
+		for (int lat = 0; lat < latitudes; lat++) for (int lon = 0; lon < longitudes; lon++) {
+			double t0 = lat * Math.PI / latitudes, t1 = (lat + 1) * Math.PI / latitudes;
+			double p0 = lon * Math.PI * 2 / longitudes, p1 = (lon + 1) * Math.PI * 2 / longitudes;
+			QliphothBloomGeometry.Point a = distortedPoint(center, rx, ry, rz, yaw, seed, t0, p0);
+			QliphothBloomGeometry.Point b = distortedPoint(center, rx, ry, rz, yaw, seed, t0, p1);
+			QliphothBloomGeometry.Point c = distortedPoint(center, rx, ry, rz, yaw, seed, t1, p1);
+			QliphothBloomGeometry.Point d = distortedPoint(center, rx, ry, rz, yaw, seed, t1, p0);
+			emitPointQuad(out, mat, a, b, c, d, red, green, blue, alpha);
+		}
+	}
+
+	private static QliphothBloomGeometry.Point distortedPoint(QliphothBloomGeometry.Point center,
+			double rx, double ry, double rz, double yaw, int seed, double theta, double phi) {
+		double irregular = 1 + Math.sin(phi * 3 + seed * .73) * .10 * Math.sin(theta)
+				+ Math.cos(phi * 5 - seed * .41) * .055;
+		double x = Math.sin(theta) * Math.cos(phi) * rx * irregular;
+		double y = Math.cos(theta) * ry * (1 + Math.sin(phi * 2 + seed) * .045);
+		double z = Math.sin(theta) * Math.sin(phi) * rz * irregular;
+		return center.add(new QliphothBloomGeometry.Point(x * Math.cos(yaw) - z * Math.sin(yaw), y,
+				x * Math.sin(yaw) + z * Math.cos(yaw)));
+	}
+
+	private static void emitPointQuad(VertexConsumer out, Matrix4f mat, QliphothBloomGeometry.Point a,
+			QliphothBloomGeometry.Point b, QliphothBloomGeometry.Point c, QliphothBloomGeometry.Point d,
+			float red, float green, float blue, float alpha) {
+		emitQuad(out, mat, (float)a.x(), (float)a.y(), (float)a.z(), red, green, blue, alpha,
+				(float)b.x(), (float)b.y(), (float)b.z(), red, green, blue, alpha,
+				(float)c.x(), (float)c.y(), (float)c.z(), red, green, blue, alpha,
+				(float)d.x(), (float)d.y(), (float)d.z(), red, green, blue, alpha);
+	}
+
+	private static void emitTriangleAsQuad(VertexConsumer out, Matrix4f mat, QliphothBloomGeometry.Point a,
+			QliphothBloomGeometry.Point b, QliphothBloomGeometry.Point c,
+			float red, float green, float blue, float alpha) {
+		emitPointQuad(out, mat, a, b, c, c, red, green, blue, alpha);
 	}
 
 	private static void emitMonolithTriangle(VertexConsumer consumer, Matrix4f mat,
