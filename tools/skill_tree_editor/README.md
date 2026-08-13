@@ -1,6 +1,6 @@
 # Hemomancy Skill Tree Editor
 
-Browser-based editor for the Java-owned Hemomancy skill tree. The layout canvas mirrors the in-game skill screen: square item nodes, red orthogonal links, vertical degree tiers, and draggable node positions.
+Browser-based editor for the Java-owned Hemomancy skill tree. The layout canvas mirrors the in-game skill screen, including all six node shapes, toggleable decagon techniques, branch-colored links, degree tiers, and draggable node positions.
 
 ## Run
 
@@ -31,6 +31,8 @@ src/main/java/com/vincenthuto/hemomancy/common/init/skills
 Only declarations between `// <skill-editor branch="...">` and `// </skill-editor>` are rewritten. The tool previews Java and lang-file diffs before applying them.
 
 Skill node positions are stored in Java with `.setTreePosition(x, y)`. The in-game skill tab reads those same content-space coordinates, so moving a node in the browser changes the authored game layout after preview/apply.
+
+The inspector preserves `.setNodeShape(EnumNodeShape...)` and `.setToggleable(true)`. Toggleable techniques are previewed in their unlocked/enabled decagon state with the same bronze border and subtle red glow used by the game.
 
 The Tendencies editor loads manipulation metadata from `ManipulationInit.java` and scar metadata from `ScarInit.java`. It edits both `ManipulationTreeInit.java` and the explicit `authored(...)` entries in `ScarTreeLayout.java`, mirrors the combined in-game radial layout, and previews/applies both kinds of changes as one operation.
 

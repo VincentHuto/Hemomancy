@@ -49,6 +49,7 @@ import com.vincenthuto.hemomancy.client.render.entity.mob.aquatic.HemojellyRende
 import com.vincenthuto.hemomancy.client.render.entity.mob.aquatic.MnemonicWhaleRenderer;
 import com.vincenthuto.hemomancy.client.render.entity.mob.aquatic.PrismCuttleRenderer;
 import com.vincenthuto.hemomancy.client.render.entity.misc.ArmatureRestraintRenderer;
+import com.vincenthuto.hemomancy.client.render.entity.misc.ArborOfWillRenderer;
 import com.vincenthuto.hemomancy.client.render.entity.misc.AwakenedIchorianSigilRenderer;
 import com.vincenthuto.hemomancy.client.render.entity.misc.CovenantThroneSeatRenderer;
 import com.vincenthuto.hemomancy.client.render.entity.misc.HumanitySpriteRenderer;
@@ -731,6 +732,7 @@ public class ClientEvents {
             event.registerEntityRenderer(EntityInit.wretched_will.get(), WretchedWillRenderer::new);
             event.registerEntityRenderer(EntityInit.will.get(), WillRenderer::new);
             event.registerEntityRenderer(EntityInit.will_anchor.get(), WillAnchorRenderer::new);
+            event.registerEntityRenderer(EntityInit.arbor_of_will.get(), ArborOfWillRenderer::new);
             event.registerEntityRenderer(EntityInit.leech.get(), LeechRenderer::new);
             event.registerEntityRenderer(EntityInit.bloodlicker.get(), BloodlickerRenderer::new);
             event.registerEntityRenderer(EntityInit.unsettled_ichor.get(), UnsettledIchorRenderer::new);
@@ -1159,6 +1161,8 @@ public class ClientEvents {
         // Overlay
         @SubscribeEvent
         public static void registerGuiOverlays(RegisterGuiLayersEvent event) {
+			event.registerAboveAll(Hemomancy.rloc("arbor_fruit_name"), (graphics, deltaTracker) ->
+					ArborFruitHudOverlay.renderHUD(graphics, graphics.guiWidth(), graphics.guiHeight()));
 			event.registerAboveAll(Hemomancy.rloc("mnemonic_blueprint_progress"), (graphics, deltaTracker) ->
 					MnemonicBlueprintProgressOverlay.renderHUD(
 							graphics, graphics.guiWidth(), graphics.guiHeight()));

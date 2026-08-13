@@ -26,6 +26,7 @@ public final class NodeShapeRenderer {
 			case CIRCLE   -> drawCircleFill(gfx, cx, cy, hs, color);
 			case TRIANGLE -> drawTriangleFill(gfx, cx, cy, hs, color);
 			case HEXAGON  -> drawHexagonFill(gfx, cx, cy, hs, color);
+			case DECAGON  -> drawDecagonFill(gfx, cx, cy, hs, color);
 		}
 	}
 
@@ -41,6 +42,7 @@ public final class NodeShapeRenderer {
 			case CIRCLE   -> drawCircleOutline(gfx, cx, cy, hs, color);
 			case TRIANGLE -> drawTriangleOutline(gfx, cx, cy, hs, color);
 			case HEXAGON  -> drawHexagonOutline(gfx, cx, cy, hs, color);
+			case DECAGON  -> drawDecagonOutline(gfx, cx, cy, hs, color);
 		}
 	}
 
@@ -56,6 +58,7 @@ public final class NodeShapeRenderer {
 			case CIRCLE   -> isInsideCircle(mx, my, cx, cy, hs);
 			case TRIANGLE -> isInsideTriangle(mx, my, cx, cy, hs);
 			case HEXAGON  -> isInsideHexagon(mx, my, cx, cy, hs);
+			case DECAGON  -> RegularPolygonGeometry.isInside(mx, my, cx, cy, hs, 10);
 		};
 	}
 
@@ -136,6 +139,32 @@ public final class NodeShapeRenderer {
 		double dx = mx - cx;
 		double dy = my - cy;
 		return dx * dx + dy * dy <= (double) hs * hs;
+	}
+
+	private static void drawDecagonFill(GuiGraphics gfx, int cx, int cy, int hs, int color) {
+		for (int row = -hs; row <= hs; row++) {
+			int[] span = RegularPolygonGeometry.horizontalSpan(row, hs, 10);
+			if (span[1] >= span[0]) gfx.fill(cx + span[0], cy + row, cx + span[1] + 1, cy + row + 1, color);
+		}
+	}
+
+	private static void drawDecagonOutline(GuiGraphics gfx, int cx, int cy, int hs, int color) {
+		int[] previous = null;
+		for (int row = -hs; row <= hs; row++) {
+			int[] span = RegularPolygonGeometry.horizontalSpan(row, hs, 10);
+			if (span[1] < span[0]) continue;
+			if (previous == null || row == hs) {
+				gfx.fill(cx + span[0], cy + row, cx + span[1] + 1, cy + row + 1, color);
+			} else {
+				gfx.fill(cx + span[0], cy + row, cx + span[0] + 1, cy + row + 1, color);
+				gfx.fill(cx + span[1], cy + row, cx + span[1] + 1, cy + row + 1, color);
+				if (span[0] != previous[0]) gfx.fill(cx + Math.min(span[0], previous[0]), cy + row,
+						cx + Math.max(span[0], previous[0]) + 1, cy + row + 1, color);
+				if (span[1] != previous[1]) gfx.fill(cx + Math.min(span[1], previous[1]), cy + row,
+						cx + Math.max(span[1], previous[1]) + 1, cy + row + 1, color);
+			}
+			previous = span;
+		}
 	}
 
 	// ================================================================

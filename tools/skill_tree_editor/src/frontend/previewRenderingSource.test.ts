@@ -61,6 +61,18 @@ test('preview exposes item and block icon selectors', () => {
   expect(css).toContain('.icon-editor');
 });
 
+test('preview edits and renders toggleable decagon skill nodes', () => {
+  const main = read('main.ts');
+  const css = read('styles.css');
+
+  expect(main).toContain('data-edit="nodeShape"');
+  expect(main).toContain('data-edit="toggleable"');
+  expect(main).toContain("'DECAGON'");
+  expect(main).toContain('nodeShapeMarkup');
+  expect(main).toContain('toggleable-technique');
+  expect(css).toContain('.skill-node.toggleable-technique');
+});
+
 test('preview exposes draggable degree labels', () => {
   const main = read('main.ts');
   const css = read('styles.css');
@@ -142,8 +154,10 @@ function read(path: string): string {
 
 function rectWidth(source: string, className: string): number {
   const match = new RegExp(`<rect class="${className}"[^>]*width="(\\d+)"`).exec(source);
-  if (!match) throw new Error(`Missing ${className} rect width.`);
-  return Number(match[1]);
+  if (match) return Number(match[1]);
+  const shapeCall = new RegExp(`nodeShapeMarkup\\(effectiveShape, '${className}', (\\d+)\\)`).exec(source);
+  if (!shapeCall) throw new Error(`Missing ${className} shape size.`);
+  return Number(shapeCall[1]) * 2;
 }
 
 function numberAttr(source: string, className: string, attr: string): number {

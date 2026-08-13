@@ -31,6 +31,10 @@ public final class SkillPointHelper {
 		return progress(player).isUnlocked(skill);
 	}
 
+	public static boolean isTechniqueEnabled(@Nullable Player player, SkillPoint skill) {
+		return skill != null && progress(player).isEnabled(skill);
+	}
+
 	public static double getCapacityBonus(Player player) {
 		return getCapacityBonus(progress(player));
 	}
@@ -274,7 +278,10 @@ public final class SkillPointHelper {
 	private static double getScarMasteryDurationMultiplier(SkillProgress progress) {
 		SkillPoint sp = SkillPointInit.skill_scar_mastery;
 		if (sp == null || !progress.isUnlocked(sp)) return 1.0;
-		return 1.0 + progress.getLevel(sp) * 0.20;
+		double multiplier = 1.0 + progress.getLevel(sp) * 0.20;
+		if (SkillPointInit.skill_deep_scar_resonance != null
+				&& progress.isEnabled(SkillPointInit.skill_deep_scar_resonance)) multiplier *= 1.35D;
+		return multiplier;
 	}
 
 	public static int getPuppetSkeinLevel(Player player) {

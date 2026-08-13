@@ -8,7 +8,10 @@ import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.IBloodTendency;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.IKnownManipulations;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodlineSavedData;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.Bloodline;
 import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillPointHelper;
+import com.vincenthuto.hemomancy.common.init.SkillPointInit;
 import com.vincenthuto.hemomancy.common.entity.HemoEntityPredicates;
 import com.vincenthuto.hemomancy.common.entity.mob.monster.will.WillBloodUtilityInteractions;
 import com.vincenthuto.hemomancy.common.entity.mob.monster.will.WillAbsorptionRules;
@@ -242,9 +245,11 @@ public class BloodAbsorptionItem extends Item implements IDispellable, ICellHand
 
 	public static Optional<LivingEntity> findBareAbsorptionTarget(LivingEntity user, double range) {
 		List<LivingEntity> candidates = user.level().getEntitiesOfClass(LivingEntity.class,
-				user.getBoundingBox().inflate(range), target -> isValidAbsorptionTarget(user, target));
+				user.getBoundingBox().inflate(range), target -> isValidAbsorptionTarget(user, target)
+						&& (!(user instanceof Player player) || passesSelectiveHunger(player, target)));
 		return BloodAbsorptionTargetRules.chooseBareTarget(candidates,
-				target -> isValidAbsorptionTarget(user, target),
+				target -> isValidAbsorptionTarget(user, target)
+						&& (!(user instanceof Player player) || passesSelectiveHunger(player, target)),
 				target -> false,
 				user::distanceToSqr);
 	}
@@ -256,6 +261,11 @@ public class BloodAbsorptionItem extends Item implements IDispellable, ICellHand
 		if (level.isClientSide) {
 			return 0.0D;
 		}
+		boolean mercy = user instanceof Player player && SkillPointHelper.isTechniqueEnabled(player,
+				SkillPointInit.skill_vascular_mercy);
+		amount = ToggleableAbsorptionRules.clampDamageForMercy(mercy,
+				target instanceof VesperTheEveningStarEntity, target.getHealth(), amount);
+		if (amount <= 0.0D) return 0.0D;
 		double healthBefore = target.getHealth();
 		boolean hurt = target.hurt(user.damageSources().generic(), (float) amount);
 		double absorbed = Math.min(amount, Math.max(0.0D, healthBefore - target.getHealth()));
@@ -264,7 +274,26 @@ public class BloodAbsorptionItem extends Item implements IDispellable, ICellHand
 		}
 		IBloodVolume volume = HemoCapabilityAccess.getBloodVolume(user)
 				.orElseThrow(NullPointerException::new);
-		volume.fill(absorbed);
+		Bloodline globalLine = null;
+		if (user instanceof ServerPlayer player && SkillPointHelper.isTechniqueEnabled(player,
+				SkillPointInit.skill_shared_siphon)) {
+			var line = volume.getBloodLine();
+			if (line != null && line.isValid()) {
+				globalLine = BloodlineSavedData.get(player.server.overworld()).getBloodline(line.getBloodlineUUID());
+			}
+		}
+		boolean sharing = globalLine != null;
+		double personalBlood = ToggleableAbsorptionRules.personalBlood(sharing, absorbed);
+		double sharedBlood = ToggleableAbsorptionRules.sharedBlood(sharing, absorbed);
+		double room = Math.max(0.0D, volume.getMaxBloodVolume() - volume.getBloodVolume());
+		double overflow = Math.max(0.0D, personalBlood - room);
+		volume.fill(personalBlood);
+		if (overflow > 0.0D && user instanceof Player player
+				&& SkillPointHelper.isTechniqueEnabled(player, SkillPointInit.skill_guarded_feeding)) {
+			int amplifier = Math.min(3, Math.max(0, (int) (overflow / 4.0D)));
+			player.addEffect(new MobEffectInstance(MobEffects.ABSORPTION, 120, amplifier, false, true, true));
+		}
+		if (globalLine != null) globalLine.contributeBlood((float) sharedBlood);
 		if (user instanceof ServerPlayer serverPlayer) {
 			PacketHandler.sendToPlayer(serverPlayer, new BloodVolumeServerPacket(volume));
 		}
@@ -284,6 +313,15 @@ public class BloodAbsorptionItem extends Item implements IDispellable, ICellHand
 				&& !(target instanceof WillEntity)
 				&& !isHemomancyNpc(target)
 				&& !(target instanceof Player);
+	}
+
+	public static boolean passesSelectiveHunger(Player player, LivingEntity target) {
+		if (!SkillPointHelper.isTechniqueEnabled(player, SkillPointInit.skill_selective_hunger)) return true;
+		boolean protectedTarget = target instanceof net.minecraft.world.entity.animal.Animal
+				|| target instanceof net.minecraft.world.entity.TamableAnimal || player.isAlliedTo(target);
+		if (!protectedTarget) return true;
+		var toTarget = target.getEyePosition().subtract(player.getEyePosition()).normalize();
+		return player.getLookAngle().normalize().dot(toTarget) >= 0.985D;
 	}
 
 	private static boolean isHemomancyNpc(LivingEntity target) {

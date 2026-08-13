@@ -63,13 +63,23 @@ public class HarbingerProgressScreen extends Screen {
     private final VeinBackgroundRenderer  veinBg        = new VeinBackgroundRenderer();
 
     private int playerDegree = 0;
+    private final int focusedSkillId;
 
     public HarbingerProgressScreen() {
+        this(-1);
+    }
+
+    private HarbingerProgressScreen(int focusedSkillId) {
         super(Component.translatable("screen.hemomancy.skill_tree"));
+        this.focusedSkillId = focusedSkillId;
     }
 
     public static void openScreen() {
         Minecraft.getInstance().setScreen(new HarbingerProgressScreen());
+    }
+
+    public static void openScreen(int skillId) {
+        Minecraft.getInstance().setScreen(new HarbingerProgressScreen(skillId));
     }
 
     private IProgressTab activeController() {
@@ -108,6 +118,7 @@ public class HarbingerProgressScreen extends Screen {
 
         ProgressScreenContext ctx = makeContext();
         for (IProgressTab tab : allTabs()) tab.onInit(ctx);
+        if (focusedSkillId >= 0) skills.focusSkill(focusedSkillId, ctx);
         view = viewForTab(activeTab);
     }
 

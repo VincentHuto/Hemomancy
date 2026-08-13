@@ -129,6 +129,8 @@ function parseSkillDeclaration(block: string, branch: string): SkillModel | null
     requiredDegree: Number(/\.setRequiredDegree\((\d+)\)/.exec(block)?.[1] ?? '0'),
     treeX: treePosition ? Number(treePosition[1]) : null,
     treeY: treePosition ? Number(treePosition[2]) : null,
+    nodeShape: /\.setNodeShape\(\s*EnumNodeShape\.([A-Z_]+)\s*\)/.exec(block)?.[1] ?? 'SQUARE',
+    toggleable: /\.setToggleable\(\s*true\s*\)/.test(block),
     iconSource: icon.source,
     iconItem: icon.item,
     description: ''
@@ -155,6 +157,12 @@ function renderSkillDeclaration(skill: SkillModel, markerIndent: string, branchC
   }
   metadataChain.push(`setBranch("${escapeJavaString(skill.branch)}")`);
   metadataChain.push(`setBranchColor(${argbLiteralFromHex(branchColor, skill.branch)})`);
+  if ((skill.nodeShape ?? 'SQUARE') !== 'SQUARE') {
+    metadataChain.push(`setNodeShape(EnumNodeShape.${skill.nodeShape})`);
+  }
+  if (skill.toggleable) {
+    metadataChain.push('setToggleable(true)');
+  }
   if (parents.length > 1) {
     metadataChain.push(`addParents(${parents.slice(1).map(parentField => `SkillPointInit.${parentField}`).join(', ')})`);
   }
@@ -188,6 +196,9 @@ function ensureIconImports(source: string): string {
   }
   if (next.includes('BlockInit.') && !next.includes('import com.vincenthuto.hemomancy.common.init.BlockInit;')) {
     next = addImport(next, 'com.vincenthuto.hemomancy.common.init.BlockInit');
+  }
+  if (next.includes('EnumNodeShape.') && !next.includes('import com.vincenthuto.hemomancy.client.screen.skilltree.util.EnumNodeShape;')) {
+    next = addImport(next, 'com.vincenthuto.hemomancy.client.screen.skilltree.util.EnumNodeShape');
   }
   return next;
 }

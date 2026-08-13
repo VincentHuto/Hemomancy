@@ -1,6 +1,6 @@
 import type { NodePosition } from './layoutEditing';
 
-export type SkillEditValue = string | number | null | string[];
+export type SkillEditValue = string | number | boolean | null | string[];
 
 export interface MovementChange {
   type?: 'position';

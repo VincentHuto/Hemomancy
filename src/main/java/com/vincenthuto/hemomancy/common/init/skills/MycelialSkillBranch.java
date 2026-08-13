@@ -30,6 +30,14 @@ public final class MycelialSkillBranch {
 					new SkillPoint(37, "skill_primal_morphogenesis", 1000, 3, EnumSkillStates.LOCKED, SkillPointInit.skill_qliphoth_gestation)
 							.setSkillPointCost(5).setRequiredDegree(8).setTreePosition(289, 671).setBranch("mycelial").setBranchColor(0xFF6E8F3A)
 							.setIconItem(() -> new ItemStack(ItemInit.morphling_gravecap.get())));
+			SkillPointInit.skill_symbiotic_metabolism = SkillPointInit.registerSkill(branch,
+					new SkillPoint(64, "skill_symbiotic_metabolism", 475, 1, EnumSkillStates.LOCKED, SkillPointInit.skill_sporitic_attunement)
+							.setSkillPointCost(3).setRequiredDegree(4).setTreePosition(330, 812).setBranch("mycelial").setBranchColor(0xFF6E8F3A).setToggleable(true)
+							.setIconItem(() -> new ItemStack(ItemInit.morphling_gravecap.get())));
+			SkillPointInit.skill_dormant_symbiote = SkillPointInit.registerSkill(branch,
+					new SkillPoint(65, "skill_dormant_symbiote", 550, 1, EnumSkillStates.LOCKED, SkillPointInit.skill_symbiotic_metabolism)
+							.setSkillPointCost(4).setRequiredDegree(5).setTreePosition(250, 782).setBranch("mycelial").setBranchColor(0xFF6E8F3A).setToggleable(true).addParents(SkillPointInit.deep_base_skill)
+							.setIconItem(() -> new ItemStack(ItemInit.morphling_gravecap.get())));
 		// </skill-editor>
 	}
 }

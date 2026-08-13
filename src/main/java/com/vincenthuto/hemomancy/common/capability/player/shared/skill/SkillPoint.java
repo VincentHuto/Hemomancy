@@ -27,6 +27,7 @@ public class SkillPoint {
 	@Nullable Supplier<ItemStack> iconItem;
 	@Nullable ResourceLocation iconTexture;
 	EnumNodeShape nodeShape = EnumNodeShape.SQUARE;
+	boolean toggleable;
 
 	public SkillPoint(int id, String name, double cost, int maxLevel, EnumSkillStates state,
 			@Nullable SkillPoint parent) {
@@ -143,6 +144,15 @@ public class SkillPoint {
 	/** Returns the node shape for this skill. Defaults to SQUARE. */
 	public EnumNodeShape getNodeShape() {
 		return nodeShape;
+	}
+
+	public SkillPoint setToggleable(boolean toggleable) {
+		this.toggleable = toggleable;
+		return this;
+	}
+
+	public boolean isToggleable() {
+		return toggleable;
 	}
 
 	public boolean hasTreePosition() {

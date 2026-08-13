@@ -6,6 +6,7 @@ import com.vincenthuto.hemomancy.common.capability.player.harbinger.scar.ScarTyp
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.IBloodTendency;
 import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillPointHelper;
+import com.vincenthuto.hemomancy.common.init.SkillPointInit;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.BloodTendencyServerPacket;
 import com.vincenthuto.hemomancy.common.util.CrimsonFireHelper;
@@ -158,9 +159,12 @@ public class ScarDefinition {
 			return;
 		}
 		if (bloodUpkeep > 0) {
+			double effectiveUpkeep = bloodUpkeep * (entity instanceof Player player
+					&& SkillPointHelper.isTechniqueEnabled(player, SkillPointInit.skill_deep_scar_resonance)
+					? 1.5D : 1.0D);
 			HemoCapabilityAccess.getBloodVolume(entity).ifPresent(v -> {
 				if (v.isActive()) {
-					v.drain(bloodUpkeep);
+					v.drain(effectiveUpkeep);
 				}
 			});
 		}

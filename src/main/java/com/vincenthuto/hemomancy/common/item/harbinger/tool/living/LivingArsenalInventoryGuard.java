@@ -1,6 +1,8 @@
 package com.vincenthuto.hemomancy.common.item.harbinger.tool.living;
 
 import com.vincenthuto.hemomancy.common.init.ItemInit;
+import com.vincenthuto.hemomancy.common.init.SkillPointInit;
+import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillPointHelper;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.network.chat.Component;
@@ -49,6 +51,8 @@ public final class LivingArsenalInventoryGuard {
 			return;
 		}
 		Inventory inventory = player.getInventory();
+		boolean persistentArsenal = SkillPointHelper.isTechniqueEnabled(player,
+				SkillPointInit.skill_persistent_arsenal);
 		int keepSlot = findPreferredLivingArsenalSlot(player);
 		if (keepSlot < 0) {
 			return;
@@ -63,12 +67,12 @@ public final class LivingArsenalInventoryGuard {
 			}
 			if (slot == keepSlot || keepPairedOffhandClaw && stack == player.getOffhandItem()) {
 				stack.setCount(1);
-				if (slot != inventory.selected && !keepPairedOffhandClaw
+				if (!persistentArsenal && slot != inventory.selected && !keepPairedOffhandClaw
 						&& LivingSicklePruning.isTemporarySickle(stack)) {
 					stack = LivingSicklePruning.restoredWeaponStack(stack, player.registryAccess());
 					inventory.setItem(slot, stack);
 				}
-				if (slot != inventory.selected && !keepPairedOffhandClaw
+				if (!persistentArsenal && slot != inventory.selected && !keepPairedOffhandClaw
 						&& LivingStaffWeaponFormHelper.isTransformedStaffWeapon(stack)) {
 					inventory.setItem(slot, LivingStaffWeaponFormHelper.restoredStaffStack(stack, player.registryAccess()));
 				}

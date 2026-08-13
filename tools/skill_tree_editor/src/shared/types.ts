@@ -22,6 +22,8 @@ export interface SkillModel {
   requiredDegree: number;
   treeX: number | null;
   treeY: number | null;
+  nodeShape?: string;
+  toggleable?: boolean;
   iconSource: IconSource;
   iconItem: string | null;
   description: string;

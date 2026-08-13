@@ -38,6 +38,14 @@ public final class SummonSkillBranch {
 					new SkillPoint(27, "skill_bound_command", 600, 3, EnumSkillStates.LOCKED, SkillPointInit.skill_thread_economy)
 							.setSkillPointCost(4).setRequiredDegree(6).setTreePosition(650, 528).setBranch("summons").setBranchColor(0xFF2370DB)
 							.setIconItem(() -> new ItemStack(ItemInit.marionette_crossbar.get())));
+			SkillPointInit.skill_autonomous_retaliation = SkillPointInit.registerSkill(branch,
+					new SkillPoint(61, "skill_autonomous_retaliation", 450, 1, EnumSkillStates.LOCKED, SkillPointInit.skill_puppet_skein)
+							.setSkillPointCost(3).setRequiredDegree(3).setTreePosition(706, 594).setBranch("summons").setBranchColor(0xFF2370DB).setToggleable(true)
+							.setIconItem(() -> new ItemStack(ItemInit.marionette_crossbar.get())));
+			SkillPointInit.skill_merciful_command = SkillPointInit.registerSkill(branch,
+					new SkillPoint(62, "skill_merciful_command", 525, 1, EnumSkillStates.LOCKED, SkillPointInit.skill_autonomous_retaliation)
+							.setSkillPointCost(3).setRequiredDegree(4).setTreePosition(790, 642).setBranch("summons").setBranchColor(0xFF2370DB).setToggleable(true)
+							.setIconItem(() -> new ItemStack(ItemInit.marionette_crossbar.get())));
 		// </skill-editor>
 	}
 }

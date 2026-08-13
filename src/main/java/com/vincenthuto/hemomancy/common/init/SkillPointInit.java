@@ -43,7 +43,13 @@ public class SkillPointInit {
 			skill_fane_suture, skill_bloodline_concord, skill_servitor_tender,
 			skill_ancestral_sovereignty,
 			skill_sporitic_attunement, skill_hyphal_cultivation, skill_qliphoth_gestation,
-			skill_primal_morphogenesis;
+			skill_primal_morphogenesis,
+			skill_persistent_arsenal, skill_distributed_siphon, skill_selective_hunger,
+			skill_sanguine_reserve, skill_automatic_coagulation, skill_guarded_feeding,
+			skill_shared_siphon, skill_autonomous_retaliation, skill_merciful_command,
+			skill_deep_scar_resonance, skill_crimson_wake, skill_vascular_mercy,
+			skill_bloodhound_sense, skill_reflexive_coagulation, skill_dormant_symbiote,
+			skill_symbiotic_metabolism;
 
 	public static void init() {
 		initBaseBranch();

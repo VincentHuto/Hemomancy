@@ -8,6 +8,7 @@ import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillProg
 import com.vincenthuto.hemomancy.common.init.SkillPointInit;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.PacketUnlockSkill;
+import com.vincenthuto.hemomancy.common.network.capa.harbinger.PacketToggleSkill;
 import com.vincenthuto.hutoslib.client.HLTextUtils;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
@@ -50,6 +51,26 @@ public class SkillsTabController implements IProgressTab {
     private float animTime = 0f;
     private float deepFade = 0f;
     private float lockedPortalFade = 0f;
+
+    /** Centres the existing authoritative skill map on a fruit-selected skill. */
+    public void focusSkill(int skillId, ProgressScreenContext ctx) {
+        SkillPoint skill = SkillPointInit.getById(skillId);
+        if (skill == null) return;
+        boolean deep = SkillTreeLayerRules.layerForDegree(skill.getRequiredDegree()) == SkillTreeLayer.DEEP;
+        if (deep && !diveState.isDeepActive()) diveState.toggleLayer(playerDegree);
+        if (!deep && diveState.isDeepActive()) diveState.toggleLayer(playerDegree);
+        Map<SkillPoint, int[]> positions = deep ? deepNodePositions : surfaceNodePositions;
+        int[] point = positions.get(skill);
+        if (point == null) return;
+        PanZoomState target = deep ? deepPanZoom : surfacePanZoom;
+        target.zoom = 1.35F;
+        target.panX = ctx.guiWidth() / 2.0D - point[0] * target.zoom;
+        target.panY = ctx.guiHeight() / 2.0D - point[1] * target.zoom;
+        target.clamp(contentW, contentH, ctx.guiWidth(), ctx.guiHeight());
+        degreeFilter = null;
+        familyFilter = null;
+        refreshFilteredPositions();
+    }
 
     @Override
     public void onInit(ProgressScreenContext ctx) {
@@ -293,7 +314,8 @@ public class SkillsTabController implements IProgressTab {
             int nx = sx(ctx, view, pos[0]);
             int ny = sy(ctx, view, pos[1]);
             boolean degreeLocked = sp.isDegreeLocked(playerDegree);
-            EnumNodeShape shape = sp.getNodeShape();
+            EnumNodeShape shape = sp.isToggleable() && SkillProgressClientCache.current().isUnlocked(sp)
+					? EnumNodeShape.DECAGON : sp.getNodeShape();
             int branchColor = sp.getBranchColor();
             int border;
             if (degreeLocked) {
@@ -301,10 +323,13 @@ public class SkillsTabController implements IProgressTab {
             } else {
                 switch (SkillProgressClientCache.current().getState(sp)) {
                     case UNLOCKED -> {
-                        border = fadeColor(branchColor, alpha);
+						boolean techniqueEnabled = !sp.isToggleable() || SkillProgressClientCache.current().isEnabled(sp);
+						border = fadeColor(sp.isToggleable()
+								? (techniqueEnabled ? 0xFFCD7F32 : 0xFF777B80) : branchColor, alpha);
                         float p = 0.7f + 0.3f * Mth.sin(time * 2f + sp.getId());
-                        int ga = (int)(40 * p * alpha);
-                        NodeShapeRenderer.drawFill(gfx, shape, nx, ny, hn + 3, withAlpha(branchColor, ga));
+						int ga = (int)((techniqueEnabled ? 40 : 12) * p * alpha);
+						NodeShapeRenderer.drawFill(gfx, shape, nx, ny, hn + 3,
+								withAlpha(techniqueEnabled && sp.isToggleable() ? 0xFF9E1717 : branchColor, ga));
                     }
                     case LOCKED -> {
                         border = withAlpha(branchColor, Math.round(0xAA * alpha));
@@ -361,7 +386,9 @@ public class SkillsTabController implements IProgressTab {
             SkillPoint sp = e.getKey();
             int[] pos = e.getValue();
             int nx = sx(ctx, view, pos[0]), ny = sy(ctx, view, pos[1]);
-            if (!NodeShapeRenderer.isInside(sp.getNodeShape(), mouseX, mouseY, nx, ny, hn)) continue;
+			EnumNodeShape hitShape = sp.isToggleable() && SkillProgressClientCache.current().isUnlocked(sp)
+					? EnumNodeShape.DECAGON : sp.getNodeShape();
+			if (!NodeShapeRenderer.isInside(hitShape, mouseX, mouseY, nx, ny, hn)) continue;
             List<Component> tip = new ArrayList<>();
             boolean degreeLocked = sp.isDegreeLocked(playerDegree);
             if (degreeLocked) {
@@ -387,6 +414,12 @@ public class SkillsTabController implements IProgressTab {
 					tip.add(SkillTooltipDetails.upgradeCost("unlock",
 							(int) SkillProgressClientCache.current().getLevelUpCost(sp), sp.getSkillPointCost()));
                 } else if (state == EnumSkillStates.UNLOCKED) {
+					if (sp.isToggleable()) {
+						tip.add(Component.literal(SkillProgressClientCache.current().isEnabled(sp)
+								? "ENABLED - click to disable" : "DISABLED - click to enable")
+								.withStyle(s -> s.withColor(SkillProgressClientCache.current().isEnabled(sp)
+										? 0xCD7F32 : 0x777B80).withBold(true)));
+					}
                     if (SkillProgressClientCache.current().isMaxed(sp)) {
                         tip.add(Component.literal("MAX LEVEL").withStyle(s -> s.withColor(0x44AA44).withBold(true)));
                     } else {
@@ -431,7 +464,9 @@ public class SkillsTabController implements IProgressTab {
         for (var e : interactiveNodePositions().entrySet()) {
             int[] p = e.getValue();
             int nx = sx(ctx, view, p[0]), ny = sy(ctx, view, p[1]);
-            if (NodeShapeRenderer.isInside(e.getKey().getNodeShape(), mx, my, nx, ny, h)) return e.getKey();
+			EnumNodeShape shape = e.getKey().isToggleable() && SkillProgressClientCache.current().isUnlocked(e.getKey())
+					? EnumNodeShape.DECAGON : e.getKey().getNodeShape();
+			if (NodeShapeRenderer.isInside(shape, mx, my, nx, ny, h)) return e.getKey();
         }
         return null;
     }
@@ -443,6 +478,10 @@ public class SkillsTabController implements IProgressTab {
 
     private void tryUnlock(SkillPoint sp) {
         if (sp.isDegreeLocked(playerDegree)) return;
+		if (sp.isToggleable() && SkillProgressClientCache.current().isUnlocked(sp)) {
+			PacketHandler.sendToServer(new PacketToggleSkill(sp.getId()));
+			return;
+		}
         PacketHandler.sendToServer(new PacketUnlockSkill(sp.getId()));
     }
 

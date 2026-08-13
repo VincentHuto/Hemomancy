@@ -7,6 +7,8 @@ import com.vincenthuto.hemomancy.common.event.HarbingerAdvancementGranter;
 import com.vincenthuto.hemomancy.client.particle.data.BloodCellData;
 import com.vincenthuto.hemomancy.client.particle.data.SerpentParticleData;
 import com.vincenthuto.hemomancy.common.init.BlockInit;
+import com.vincenthuto.hemomancy.common.init.EntityInit;
+import com.vincenthuto.hemomancy.common.entity.utility.ArborOfWillEntity;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.PacketSyncChamberOfWill;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.PacketSyncVesperFightScene;
@@ -32,6 +34,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.portal.DimensionTransition;
 import net.minecraft.world.level.saveddata.SavedData;
 import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.phys.AABB;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -130,7 +133,7 @@ public class ChamberOfWillManager extends SavedData {
         BlockPos cell = cellPos(idFor(player.getUUID()));
         ensureRoom(chamberLevel, player.getUUID());
 
-        Vec3 dest = new Vec3(cell.getX() + 0.5, cell.getY() + 1, cell.getZ() + 0.5);
+        Vec3 dest = arborEntryDestination(cell);
         player.stopRiding();
         player.changeDimension(new DimensionTransition(chamberLevel, dest, Vec3.ZERO,
                 player.getYRot(), player.getXRot(), DimensionTransition.DO_NOTHING));
@@ -345,6 +348,7 @@ public class ChamberOfWillManager extends SavedData {
         int previousRadius = builtRadii.getOrDefault(owner, -1);
         int radius = ChamberExpansionRules.nextBuiltRadius(previousRadius, requestedRadius);
 
+        ensureArborOfWill(level, owner);
         if (radius <= previousRadius) {
             return RoomGrowth.NONE;
         }
@@ -386,6 +390,32 @@ public class ChamberOfWillManager extends SavedData {
         builtRadii.put(owner, radius);
         setDirty();
         return new RoomGrowth(previousRadius, radius);
+    }
+
+    /** Reconciles the owner's single persistent presentation anchor at the exact cell centre. */
+    public ArborOfWillEntity ensureArborOfWill(ServerLevel level, UUID owner) {
+        BlockPos center = cellPos(idFor(owner));
+        Vec3 position = new Vec3(center.getX() + 0.5D, center.getY() + 1.0D, center.getZ() + 0.5D);
+        AABB search = new AABB(position, position).inflate(3.0D, 2.0D, 3.0D);
+        List<ArborOfWillEntity> owned = level.getEntitiesOfClass(ArborOfWillEntity.class, search,
+                arbor -> arbor.ownerId().filter(owner::equals).isPresent());
+        ArborOfWillEntity arbor = owned.stream().findFirst().orElse(null);
+        for (int i = 1; i < owned.size(); i++) owned.get(i).discard();
+        if (arbor == null) {
+            arbor = EntityInit.arbor_of_will.get().create(level);
+            if (arbor == null) throw new IllegalStateException("Unable to create Arbor of Will anchor");
+            arbor.moveTo(position.x, position.y, position.z, 0.0F, 0.0F);
+            level.addFreshEntity(arbor);
+        } else if (arbor.position().distanceToSqr(position) > 0.01D) {
+            arbor.teleportTo(position.x, position.y, position.z);
+        }
+        ServerPlayer player = level.getServer().getPlayerList().getPlayer(owner);
+        if (player != null) arbor.configure(player, radiusFor(owner), qliphothPomeCount(player));
+        return arbor;
+    }
+
+    private static Vec3 arborEntryDestination(BlockPos cell) {
+        return new Vec3(cell.getX() + 0.5D, cell.getY() + 1.0D, cell.getZ() + 3.0D);
     }
 
     private static void setLightIfReplaceable(ServerLevel level, BlockPos pos, BlockState light) {

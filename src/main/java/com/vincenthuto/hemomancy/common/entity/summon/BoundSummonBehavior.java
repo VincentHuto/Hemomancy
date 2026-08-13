@@ -1,6 +1,8 @@
 package com.vincenthuto.hemomancy.common.entity.summon;
 
 import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillPointHelper;
+import com.vincenthuto.hemomancy.common.capability.player.shared.skill.ToggleablePlayerPowerRules;
+import com.vincenthuto.hemomancy.common.init.SkillPointInit;
 import com.vincenthuto.hemomancy.common.entity.mob.monster.will.WillBendRules;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.MarionetteCrossbarItem;
 import com.vincenthuto.hemomancy.common.summon.PuppeteerSummonDefinition;
@@ -213,6 +215,12 @@ public final class BoundSummonBehavior {
 			mode = PuppeteerCommandMode.FOLLOW;
 		}
 		boolean focused = isFocusedTarget(mob, mob.getTarget());
+		if (mob.getTarget() != null && ToggleablePlayerPowerRules.summonShouldSpare(
+				SkillPointHelper.isTechniqueEnabled(owner, SkillPointInit.skill_merciful_command), focused,
+				mob.getTarget().getHealth(), mob.getTarget().getMaxHealth())) {
+			mob.setTarget(null);
+			mob.getNavigation().stop();
+		}
 		if (mob.getTarget() == null || !mob.getTarget().isAlive() || !canAttack(mob, summon, mob.getTarget())
 				|| !PuppeteerSummonRules.withinTetherRange(owner.distanceToSqr(mob.getTarget()), range)) {
 			mob.setTarget(null);
@@ -228,8 +236,9 @@ public final class BoundSummonBehavior {
 		}
 		if (mob.getTarget() == null) {
 			Optional<LivingEntity> target = switch (mode) {
-				case FOLLOW -> findRetaliationTarget(mob, summon, owner, range)
-						.or(() -> findTarget(mob, summon, owner, Math.min(range, 12.0)));
+				case FOLLOW -> SkillPointHelper.isTechniqueEnabled(owner,
+						SkillPointInit.skill_autonomous_retaliation)
+						? findRetaliationTarget(mob, summon, owner, range) : Optional.empty();
 				case GUARD -> findGuardTarget(mob, summon, owner, equippedCrossbar, range);
 				case HUNT -> findTarget(mob, summon, owner, range);
 				case PASSIVE -> Optional.empty();

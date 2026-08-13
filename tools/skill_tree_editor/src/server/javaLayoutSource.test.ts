@@ -59,6 +59,23 @@ test('authored java skill tree spans all eight harbinger degrees and six branche
   expect(init).toContain('MycelialSkillBranch.register(BASE)');
 });
 
+test('all authored toggleable techniques are visible to the skill editor', () => {
+  const expected = [
+    'skill_persistent_arsenal', 'skill_distributed_siphon', 'skill_selective_hunger',
+    'skill_vascular_mercy', 'skill_guarded_feeding', 'skill_shared_siphon',
+    'skill_sanguine_reserve', 'skill_automatic_coagulation', 'skill_reflexive_coagulation',
+    'skill_crimson_wake', 'skill_bloodhound_sense', 'skill_autonomous_retaliation',
+    'skill_merciful_command', 'skill_deep_scar_resonance', 'skill_symbiotic_metabolism',
+    'skill_dormant_symbiote'
+  ];
+  const techniques = javaBranchSkills()
+    .filter(skill => skill.toggleable)
+    .map(skill => skill.field)
+    .sort();
+
+  expect(techniques).toEqual([...expected].sort());
+});
+
 test('deep skills share a degree-five deep root without losing branch prerequisites', () => {
   const skills = javaBranchSkills();
   const byField = new Map(skills.map(skill => [skill.field, skill]));

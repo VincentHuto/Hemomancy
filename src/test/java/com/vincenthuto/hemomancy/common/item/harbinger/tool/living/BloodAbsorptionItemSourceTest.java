@@ -45,8 +45,10 @@ public final class BloodAbsorptionItemSourceTest {
 				absorbFromTarget, "target.getHealth()", "volume.fill");
 		assertContains("absorption ignores rejected or zero-damage hits",
 				absorbFromTarget, "if (!hurt || absorbed <= 0.0D)");
-		assertContains("absorption credits actual damage instead of requested amount",
-				absorbFromTarget, "volume.fill(absorbed)");
+		assertContains("absorption derives personal credit from actual damage",
+				absorbFromTarget, "personalBlood(sharing, absorbed)");
+		assertContains("shared siphon derives its redirect from actual damage",
+				absorbFromTarget, "sharedBlood(sharing, absorbed)");
 		assertContains("channel movement penalty reads Dragging Siphon",
 				source, "SkillPointHelper.getDraggingSiphonLevel");
 		assertContains("channel movement penalty reads Mobile Conduit",

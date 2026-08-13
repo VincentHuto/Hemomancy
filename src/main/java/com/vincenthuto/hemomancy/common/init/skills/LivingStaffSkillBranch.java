@@ -66,6 +66,26 @@ public final class LivingStaffSkillBranch {
 					new SkillPoint(25, "skill_vespers_refusal", 700, 3, EnumSkillStates.LOCKED, SkillPointInit.skill_hematic_focus)
 							.setSkillPointCost(4).setRequiredDegree(7).setTreePosition(276, 384).setBranch("living_staff").setBranchColor(0xFFD9AD28)
 							.setIconItem(() -> new ItemStack(ItemInit.memory_of_vesper.get())));
+			SkillPointInit.skill_persistent_arsenal = SkillPointInit.registerSkill(branch,
+					new SkillPoint(50, "skill_persistent_arsenal", 350, 1, EnumSkillStates.LOCKED, SkillPointInit.skill_weapons_master)
+							.setSkillPointCost(3).setRequiredDegree(3).setTreePosition(190, 382).setBranch("living_staff").setBranchColor(0xFFD9AD28).setToggleable(true)
+							.setIconItem(() -> new ItemStack(ItemInit.living_staff.get())));
+			SkillPointInit.skill_distributed_siphon = SkillPointInit.registerSkill(branch,
+					new SkillPoint(51, "skill_distributed_siphon", 400, 1, EnumSkillStates.LOCKED, SkillPointInit.skill_vascular_draw)
+							.setSkillPointCost(3).setRequiredDegree(3).setTreePosition(178, 500).setBranch("living_staff").setBranchColor(0xFFD9AD28).setToggleable(true)
+							.setIconItem(() -> new ItemStack(ItemInit.blood_absorption.get())));
+			SkillPointInit.skill_selective_hunger = SkillPointInit.registerSkill(branch,
+					new SkillPoint(52, "skill_selective_hunger", 325, 1, EnumSkillStates.LOCKED, SkillPointInit.skill_vascular_draw)
+							.setSkillPointCost(3).setRequiredDegree(3).setTreePosition(158, 570).setBranch("living_staff").setBranchColor(0xFFD9AD28).setToggleable(true)
+							.setIconItem(() -> new ItemStack(ItemInit.blood_absorption.get())));
+			SkillPointInit.skill_vascular_mercy = SkillPointInit.registerSkill(branch,
+					new SkillPoint(53, "skill_vascular_mercy", 500, 1, EnumSkillStates.LOCKED, SkillPointInit.skill_distributed_siphon)
+							.setSkillPointCost(3).setRequiredDegree(4).setTreePosition(166, 650).setBranch("living_staff").setBranchColor(0xFFD9AD28).setToggleable(true)
+							.setIconItem(() -> new ItemStack(ItemInit.blood_absorption.get())));
+			SkillPointInit.skill_guarded_feeding = SkillPointInit.registerSkill(branch,
+					new SkillPoint(54, "skill_guarded_feeding", 525, 1, EnumSkillStates.LOCKED, SkillPointInit.skill_vascular_mercy)
+							.setSkillPointCost(3).setRequiredDegree(4).setTreePosition(216, 730).setBranch("living_staff").setBranchColor(0xFFD9AD28).setToggleable(true)
+							.setIconItem(() -> new ItemStack(ItemInit.blood_absorption.get())));
 		// </skill-editor>
 	}
 }

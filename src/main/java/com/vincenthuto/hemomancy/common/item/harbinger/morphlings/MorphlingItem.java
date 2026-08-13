@@ -6,6 +6,7 @@ import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodFlowLedger;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodVolumeEvents;
 import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillPointHelper;
+import com.vincenthuto.hemomancy.common.init.SkillPointInit;
 import com.vincenthuto.hemomancy.common.init.EffectInit;
 import com.vincenthuto.hemomancy.config.HemoServerConfig;
 import net.minecraft.ChatFormatting;
@@ -232,12 +233,15 @@ public class MorphlingItem extends Item implements IMorphling {
 	}
 
 	public static int passiveAmplifier(Player player, ItemStack stack, int baseAmplifier) {
+		if (player == null || !SkillPointHelper.isTechniqueEnabled(player,
+				SkillPointInit.skill_symbiotic_metabolism)) return baseAmplifier;
 		long now = player == null ? 0L : player.level().getGameTime();
 		return MorphlingHungerRules.adjustedAmplifier(baseAmplifier, hungerState(stack, now));
 	}
 
 	public static void applyHungerTick(Player player, ItemStack stack) {
-		if (player == null || player.level().isClientSide || !isHungerEnabled()) {
+		if (player == null || player.level().isClientSide || !isHungerEnabled()
+				|| !SkillPointHelper.isTechniqueEnabled(player, SkillPointInit.skill_symbiotic_metabolism)) {
 			return;
 		}
 		MorphlingHungerRules.HungerState state = hungerState(stack, player.level().getGameTime());

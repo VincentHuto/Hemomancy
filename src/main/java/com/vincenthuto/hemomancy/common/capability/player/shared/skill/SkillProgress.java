@@ -58,6 +58,17 @@ public class SkillProgress implements INBTSerializable<CompoundTag> {
 		return getState(skill) == EnumSkillStates.UNLOCKED;
 	}
 
+	public boolean isEnabled(SkillPoint skill) {
+		return skill != null && isUnlocked(skill) && (!skill.isToggleable() || stateFor(skill).enabled());
+	}
+
+	public boolean toggleEnabled(SkillPoint skill) {
+		if (skill == null || !skill.isToggleable() || !isUnlocked(skill)) return false;
+		SkillState current = stateFor(skill);
+		skills.put(skill.getId(), new SkillState(current.state(), current.level(), !current.enabled()));
+		return true;
+	}
+
 	public boolean isMaxed(SkillPoint skill) {
 		return skill != null && getLevel(skill) >= skill.getMaxLevels();
 	}
@@ -68,7 +79,9 @@ public class SkillProgress implements INBTSerializable<CompoundTag> {
 
 	public void setSkill(SkillPoint skill, EnumSkillStates state, int level) {
 		if (skill == null) return;
-		skills.put(skill.getId(), new SkillState(state, clampLevel(skill, level)));
+		SkillState old = skills.get(skill.getId());
+		boolean enabled = old != null ? old.enabled() : state == EnumSkillStates.UNLOCKED;
+		skills.put(skill.getId(), new SkillState(state, clampLevel(skill, level), enabled));
 	}
 
 	public boolean setSkillLevel(SkillPoint skill, int level) {
@@ -159,6 +172,7 @@ public class SkillProgress implements INBTSerializable<CompoundTag> {
 			entry.putString("name", skill.getName());
 			entry.putString("state", getState(skill).name());
 			entry.putInt("level", getLevel(skill));
+			entry.putBoolean("enabled", isEnabled(skill));
 			list.add(entry);
 		}
 
@@ -203,6 +217,9 @@ public class SkillProgress implements INBTSerializable<CompoundTag> {
 			if (skill == null) continue;
 			EnumSkillStates state = parseState(entry.getString("state"), defaultState(skill));
 			setSkill(skill, state, entry.getInt("level"));
+			if (skill.isToggleable() && entry.contains("enabled") && !entry.getBoolean("enabled")) {
+				toggleEnabled(skill);
+			}
 		}
 	}
 
@@ -219,7 +236,8 @@ public class SkillProgress implements INBTSerializable<CompoundTag> {
 	}
 
 	private SkillState stateFor(SkillPoint skill) {
-		return skills.computeIfAbsent(skill.getId(), id -> new SkillState(defaultState(skill), 0));
+		return skills.computeIfAbsent(skill.getId(), id -> new SkillState(defaultState(skill), 0,
+				defaultState(skill) == EnumSkillStates.UNLOCKED));
 	}
 
 	private static EnumSkillStates defaultState(SkillPoint skill) {
@@ -238,5 +256,5 @@ public class SkillProgress implements INBTSerializable<CompoundTag> {
 		return Math.max(0, Math.min(skill.getMaxLevels(), level));
 	}
 
-	private record SkillState(EnumSkillStates state, int level) {}
+	private record SkillState(EnumSkillStates state, int level, boolean enabled) {}
 }

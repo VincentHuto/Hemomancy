@@ -96,6 +96,26 @@ public final class CoreSkillBranch {
 					new SkillPoint(40, "skill_synaptic_memory", 450, 4, EnumSkillStates.LOCKED, SkillPointInit.skill_manip_slots)
 							.setSkillPointCost(3).setRequiredDegree(5).setTreePosition(398, 398).setBranch("core").setBranchColor(0xFFD00000).addParents(SkillPointInit.deep_base_skill)
 							.setIconItem(() -> new ItemStack(BlockInit.dendritic_distributor.get())));
+			SkillPointInit.skill_sanguine_reserve = SkillPointInit.registerSkill(branch,
+					new SkillPoint(56, "skill_sanguine_reserve", 450, 1, EnumSkillStates.LOCKED, SkillPointInit.skill_capacity)
+							.setSkillPointCost(3).setRequiredDegree(3).setTreePosition(510, 470).setBranch("core").setBranchColor(0xFFD00000).setToggleable(true)
+							.setIconItem(() -> new ItemStack(ItemInit.sanguine_formation.get())));
+			SkillPointInit.skill_automatic_coagulation = SkillPointInit.registerSkill(branch,
+					new SkillPoint(57, "skill_automatic_coagulation", 400, 1, EnumSkillStates.LOCKED, SkillPointInit.skill_coagulation)
+							.setSkillPointCost(3).setRequiredDegree(3).setTreePosition(560, 206).setBranch("core").setBranchColor(0xFFD00000).setToggleable(true)
+							.setIconItem(() -> new ItemStack(ItemInit.sanguine_formation.get())));
+			SkillPointInit.skill_reflexive_coagulation = SkillPointInit.registerSkill(branch,
+					new SkillPoint(58, "skill_reflexive_coagulation", 575, 1, EnumSkillStates.LOCKED, SkillPointInit.skill_automatic_coagulation)
+							.setSkillPointCost(4).setRequiredDegree(5).setTreePosition(520, 138).setBranch("core").setBranchColor(0xFFD00000).setToggleable(true).addParents(SkillPointInit.deep_base_skill)
+							.setIconItem(() -> new ItemStack(ItemInit.sanguine_formation.get())));
+			SkillPointInit.skill_crimson_wake = SkillPointInit.registerSkill(branch,
+					new SkillPoint(59, "skill_crimson_wake", 500, 1, EnumSkillStates.LOCKED, SkillPointInit.skill_sanguine_reach)
+							.setSkillPointCost(3).setRequiredDegree(4).setTreePosition(450, 244).setBranch("core").setBranchColor(0xFFD00000).setToggleable(true)
+							.setIconItem(() -> new ItemStack(ItemInit.sanguine_formation.get())));
+			SkillPointInit.skill_bloodhound_sense = SkillPointInit.registerSkill(branch,
+					new SkillPoint(60, "skill_bloodhound_sense", 475, 1, EnumSkillStates.LOCKED, SkillPointInit.skill_sanguine_reach)
+							.setSkillPointCost(3).setRequiredDegree(4).setTreePosition(462, 166).setBranch("core").setBranchColor(0xFFD00000).setToggleable(true)
+							.setIconItem(() -> new ItemStack(ItemInit.blood_absorption.get())));
 		// </skill-editor>
 	}
 }

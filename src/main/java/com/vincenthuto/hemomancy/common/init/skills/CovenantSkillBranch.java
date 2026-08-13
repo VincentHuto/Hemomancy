@@ -30,6 +30,10 @@ public final class CovenantSkillBranch {
 					new SkillPoint(33, "skill_ancestral_sovereignty", 850, 3, EnumSkillStates.LOCKED, SkillPointInit.skill_bloodline_concord)
 							.setSkillPointCost(5).setRequiredDegree(7).setTreePosition(652, 340).setBranch("covenant").setBranchColor(0xFFA54569).addParents(SkillPointInit.skill_servitor_tender)
 							.setIconItem(() -> new ItemStack(ItemInit.covenant_mantle.get())));
+			SkillPointInit.skill_shared_siphon = SkillPointInit.registerSkill(branch,
+					new SkillPoint(55, "skill_shared_siphon", 650, 1, EnumSkillStates.LOCKED, SkillPointInit.skill_fane_suture)
+							.setSkillPointCost(4).setRequiredDegree(5).setTreePosition(712, 314).setBranch("covenant").setBranchColor(0xFFA54569).setToggleable(true).addParents(SkillPointInit.deep_base_skill)
+							.setIconItem(() -> new ItemStack(ItemInit.blood_absorption.get())));
 		// </skill-editor>
 	}
 }

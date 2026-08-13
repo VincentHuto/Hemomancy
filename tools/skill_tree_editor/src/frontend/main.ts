@@ -251,14 +251,33 @@ function renderSkillNode({ skill, x, y }: { skill: SkillModel; x: number; y: num
   const selected = skill.field === selectedField ? 'selected' : '';
   const imageUrl = iconAssetUrl(skill);
   const initial = skill.name.replace(/^skill_/, '').charAt(0).toUpperCase() || '?';
-  return `<g class="skill-node ${selected}" data-skill="${escapeAttr(skill.field)}" transform="translate(${x} ${y})">
-    <rect class="node-glow" x="-22" y="-22" width="44" height="44"></rect>
-    <rect class="node-frame" x="-18" y="-18" width="36" height="36"></rect>
-    <rect class="node-core" x="-12" y="-12" width="24" height="24"></rect>
+  const effectiveShape = skill.toggleable ? 'DECAGON' : (skill.nodeShape ?? 'SQUARE');
+  const techniqueClass = skill.toggleable ? 'toggleable-technique' : '';
+  return `<g class="skill-node ${selected} ${techniqueClass}" data-skill="${escapeAttr(skill.field)}" data-node-shape="${escapeAttr(effectiveShape)}" transform="translate(${x} ${y})">
+    ${nodeShapeMarkup(effectiveShape, 'node-glow', 22)}
+    ${nodeShapeMarkup(effectiveShape, 'node-frame', 18)}
+    ${nodeShapeMarkup(effectiveShape, 'node-core', 12)}
     ${imageUrl ? `<image href="${escapeAttr(imageUrl)}" x="-9" y="-9" width="18" height="18" preserveAspectRatio="xMidYMid meet"></image>` : ''}
     <text x="0" y="5" class="node-fallback">${escapeHtml(initial)}</text>
     <text x="0" y="34" class="node-level">0/${skill.maxLevels}</text>
   </g>`;
+}
+
+function nodeShapeMarkup(shape: string, className: string, radius: number): string {
+  if (shape === 'CIRCLE') return `<circle class="${className}" cx="0" cy="0" r="${radius}"></circle>`;
+  if (shape === 'SQUARE') {
+    return `<rect class="${className}" x="-${radius}" y="-${radius}" width="${radius * 2}" height="${radius * 2}"></rect>`;
+  }
+  const sides = shape === 'TRIANGLE' ? 3
+    : shape === 'DIAMOND' ? 4
+      : shape === 'HEXAGON' ? 6
+        : shape === 'DECAGON' ? 10 : 4;
+  const rotation = shape === 'DIAMOND' ? 0 : -Math.PI / 2;
+  const points = Array.from({ length: sides }, (_, index) => {
+    const angle = rotation + index * Math.PI * 2 / sides;
+    return `${(Math.cos(angle) * radius).toFixed(2)},${(Math.sin(angle) * radius).toFixed(2)}`;
+  }).join(' ');
+  return `<polygon class="${className}" points="${points}"></polygon>`;
 }
 
 function renderDiagnostics(diagnostics: Diagnostic[]): string {
@@ -333,6 +352,8 @@ function renderInspector(): string {
       <label>Max levels<input type="number" data-edit="maxLevels" value="${skill.maxLevels}" /></label>
       <label>Skill points<input type="number" data-edit="skillPointCost" value="${skill.skillPointCost}" /></label>
       <label>Degree<input type="number" data-edit="requiredDegree" value="${skill.requiredDegree}" /></label>
+      <label>Node shape<select data-edit="nodeShape">${nodeShapeOptions(skill.nodeShape ?? 'SQUARE')}</select></label>
+      <label class="toggle-check">Technique<input type="checkbox" data-edit="toggleable" ${skill.toggleable ? 'checked' : ''} /></label>
     </div>
     <div class="parent-editor">
       <span class="field-label">Parents</span>
@@ -359,6 +380,12 @@ function renderInspector(): string {
 function stateOptions(current: string): string {
   return ['UNLOCKED', 'LOCKED'].map(state =>
     `<option value="${state}" ${state === current ? 'selected' : ''}>${state}</option>`
+  ).join('');
+}
+
+function nodeShapeOptions(current: string): string {
+  return ['SQUARE', 'DIAMOND', 'CIRCLE', 'TRIANGLE', 'HEXAGON', 'DECAGON'].map(shape =>
+    `<option value="${shape}" ${shape === current ? 'selected' : ''}>${shape}</option>`
   ).join('');
 }
 
@@ -1081,7 +1108,9 @@ function updateSelectedSkill(input: HTMLInputElement | HTMLSelectElement | HTMLT
   const key = input.dataset.edit as EditableSkillKey;
   const fieldBefore = skill.field;
   const before = skillEditValue(skill, key);
-  const next = coerceSkillEditValue(key, input.value);
+  const rawValue = input instanceof HTMLInputElement && input.type === 'checkbox'
+    ? String(input.checked) : input.value;
+  const next = coerceSkillEditValue(key, rawValue);
   preview = null;
   applySkillEditValue(skill, key, next);
   recordSkillEdit(movementHistory, {
@@ -1165,6 +1194,9 @@ function coerceSkillEditValue(key: EditableSkillKey, value: string): SkillEditVa
   if (key === 'iconItem') {
     return value.trim() || null;
   }
+  if (key === 'toggleable') {
+    return value === 'true';
+  }
   return value;
 }
 
@@ -1186,6 +1218,10 @@ function applySkillEditValue(skill: SkillModel, key: string, value: SkillEditVal
     }
   } else if (key === 'iconItem') {
     skill.iconItem = typeof value === 'string' && value.trim() ? value.trim() : null;
+  } else if (key === 'toggleable') {
+    skill.toggleable = value === true || value === 'true';
+  } else if (key === 'nodeShape') {
+    skill.nodeShape = typeof value === 'string' ? value : 'SQUARE';
   } else if (key === 'branch') {
     if (typeof value === 'string') moveSkillToBranch(skill, value);
   } else if (key === 'field' || key === 'name' || key === 'state' || key === 'description') {
@@ -1211,6 +1247,8 @@ function addSkill(): void {
     requiredDegree: activeWorkspace === 'deep' ? 5 : 0,
     treeX: selectedSkill()?.treeX != null ? selectedSkill()!.treeX! + 64 : null,
     treeY: selectedSkill()?.treeY != null ? selectedSkill()!.treeY! + 64 : null,
+    nodeShape: 'SQUARE',
+    toggleable: false,
     iconSource: null,
     iconItem: null,
     description: ''

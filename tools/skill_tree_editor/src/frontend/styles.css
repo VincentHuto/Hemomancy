@@ -565,6 +565,25 @@ small {
   stroke: #d2a13e;
 }
 
+.skill-node.toggleable-technique .node-glow {
+  fill: rgba(110, 8, 5, 0.72);
+}
+
+.skill-node.toggleable-technique .node-frame {
+  stroke: #cd7f32;
+  filter: drop-shadow(0 0 4px rgba(158, 23, 23, 0.72));
+}
+
+.toggle-check {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.toggle-check input {
+  width: auto;
+}
+
 .skill-node image,
 .skill-node text {
   pointer-events: none;

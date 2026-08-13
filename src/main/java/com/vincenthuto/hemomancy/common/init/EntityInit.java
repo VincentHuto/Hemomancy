@@ -46,6 +46,7 @@ import com.vincenthuto.hemomancy.common.entity.projectile.*;
 import com.vincenthuto.hemomancy.common.entity.summon.*;
 import com.vincenthuto.hemomancy.common.entity.utility.ArmatureRestraintEntity;
 import com.vincenthuto.hemomancy.common.entity.utility.AwakenedIchorianSigilEntity;
+import com.vincenthuto.hemomancy.common.entity.utility.ArborOfWillEntity;
 import com.vincenthuto.hemomancy.common.entity.utility.CovenantThroneSeatEntity;
 import com.vincenthuto.hemomancy.common.entity.utility.HumanitySpriteEntity;
 import com.vincenthuto.hemomancy.common.entity.utility.UnsettledIchorEntity;
@@ -372,6 +373,14 @@ public class EntityInit {
                             .clientTrackingRange(8)
                             .updateInterval(10)
                             .build(Hemomancy.rloc("will_anchor").toString()));
+
+    public static final DeferredHolder<EntityType<?>, EntityType<ArborOfWillEntity>> arbor_of_will = ENTITY_TYPES
+            .register("arbor_of_will", () -> EntityType.Builder
+                    .<ArborOfWillEntity>of(ArborOfWillEntity::new, MobCategory.MISC)
+                    .sized(1.6F, 5.5F)
+                    .clientTrackingRange(64)
+                    .updateInterval(20)
+                    .build(Hemomancy.rloc("arbor_of_will").toString()));
 
     public static final DeferredHolder<EntityType<?>, EntityType<BloodThrallEntity>> blood_thrall = ENTITY_TYPES
             .register("blood_thrall",

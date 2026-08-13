@@ -36,8 +36,10 @@ test('parses editable skill declarations from marked Java branches', () => {
       parentFields: [],
       skillPointCost: 1,
       requiredDegree: 0,
-            treeX: null,
-            treeY: null,
+      treeX: null,
+      treeY: null,
+      nodeShape: 'SQUARE',
+      toggleable: false,
       iconSource: 'item',
       iconItem: 'sanguine_formation',
       description: ''
@@ -56,11 +58,30 @@ test('parses editable skill declarations from marked Java branches', () => {
       requiredDegree: 1,
       treeX: null,
       treeY: null,
+      nodeShape: 'SQUARE',
+      toggleable: false,
       iconSource: 'item',
       iconItem: 'vitality_chalice',
       description: ''
     }
   ]);
+});
+
+test('parses and renders toggleable decagon-capable technique metadata', () => {
+  const source = branchSource.replace(
+    '.setSkillPointCost(2).setRequiredDegree(1)',
+    '.setSkillPointCost(2).setRequiredDegree(1).setNodeShape(EnumNodeShape.DECAGON).setToggleable(true)'
+  );
+  const parsed = parseSkillBranchJava('src/main/java/example/CoreSkillBranch.java', source);
+
+  expect(parsed.skills[1]).toEqual(expect.objectContaining({
+    nodeShape: 'DECAGON',
+    toggleable: true
+  }));
+
+  parsed.skills[1].nodeShape = 'HEXAGON';
+  const rendered = renderSkillBranchJava(source, parsed);
+  expect(rendered).toContain('.setNodeShape(EnumNodeShape.HEXAGON).setToggleable(true)');
 });
 
 test('parses and renders block-backed icon items', () => {

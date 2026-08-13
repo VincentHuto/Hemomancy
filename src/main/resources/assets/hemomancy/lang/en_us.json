@@ -3597,5 +3597,21 @@
   "item.hemomancy.orb_of_perspective.outside_cell": "The Orb answers only within its owner's Chamber.",
   "item.hemomancy.orb_of_perspective.not_beyond_platform": "Cast the Orb beyond the Chamber floor.",
   "hemomancy.mnemonist.item_inquiry.orb_of_perspective.line1": "A fixed eye for a room made from memory. It cannot invent a sky; it can only turn toward one its owner has truly reached.",
-  "hemomancy.mnemonist.item_inquiry.orb_of_perspective.line2": "Cast it beyond the Chamber floor. The fall changes the remembered perspective, and the Orb returns to the hand that owns the cell."
+  "hemomancy.mnemonist.item_inquiry.orb_of_perspective.line2": "Cast it beyond the Chamber floor. The fall changes the remembered perspective, and the Orb returns to the hand that owns the cell.",
+  "skill.hemomancy.skill_persistent_arsenal.desc": "Living Weapon forms remain shaped when you leave their hotbar slot.",
+  "skill.hemomancy.skill_distributed_siphon.desc": "Divide Blood Absorption across several targets without multiplying its total draw.",
+  "skill.hemomancy.skill_selective_hunger.desc": "Ignore passive, allied, and tamed creatures unless you aim directly at them.",
+  "skill.hemomancy.skill_sanguine_reserve.desc": "Protect an emergency floor of blood from passive and automatic spending.",
+  "skill.hemomancy.skill_automatic_coagulation.desc": "Spend blood over time to suppress active bleeding.",
+  "skill.hemomancy.skill_guarded_feeding.desc": "Convert excess absorbed blood into temporary protection at reduced efficiency.",
+  "skill.hemomancy.skill_shared_siphon.desc": "Share part of absorbed blood with bonded allies and bloodline routes.",
+  "skill.hemomancy.skill_autonomous_retaliation.desc": "Allow bound summons to defend you without a direct order.",
+  "skill.hemomancy.skill_merciful_command.desc": "Bound summons stop attacking ordinary targets near defeat.",
+  "skill.hemomancy.skill_deep_scar_resonance.desc": "Permit equipped scars to express stronger secondary effects at greater upkeep.",
+  "skill.hemomancy.skill_crimson_wake.desc": "While badly wounded, sprinting leaves a brief slowing and revealing blood wake.",
+  "skill.hemomancy.skill_vascular_mercy.desc": "Ordinary Blood Absorption stops before killing its target.",
+  "skill.hemomancy.skill_bloodhound_sense.desc": "Sense nearby wounded, bleeding, and blood-rich creatures through cover.",
+  "skill.hemomancy.skill_reflexive_coagulation.desc": "Spend blood at the instant of injury to prevent severe bleeding from worsening.",
+  "skill.hemomancy.skill_dormant_symbiote.desc": "Suspend morphling upkeep while its gifts are idle and it does not need bonding blood.",
+  "skill.hemomancy.skill_symbiotic_metabolism.desc": "A fed morphling can draw half its upkeep from your hunger while preserving a safe food floor."
 }

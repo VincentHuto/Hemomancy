@@ -14,6 +14,7 @@ import com.vincenthuto.hemomancy.common.entity.mob.monster.will.WillBloodUtility
 import com.vincenthuto.hemomancy.common.entity.boss.endgame.VesperBloodAbsorptionInteractions;
 import com.vincenthuto.hemomancy.common.item.harbinger.morphlings.IMorphling;
 import com.vincenthuto.hemomancy.common.item.itemhandler.LivingStaffItemHandler;
+import com.vincenthuto.hemomancy.common.init.SkillPointInit;
 import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
 import com.vincenthuto.hemomancy.common.menu.LivingStaffMenu;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
@@ -365,14 +366,18 @@ public class LivingStaffItem extends LivingItem implements IDispellable {
 		ILivingStaffProgress progress = HemoCapabilityAccess.getLivingStaffProgress(player).orElse(null);
 		LivingStaffFocusProfile focus = LivingStaffFocusProfile.fromPlayer(player, progress);
 		int targetCap = LivingStaffFocusRules.absorptionTargetCap(true, focus);
-		double amountPerTarget = LivingStaffFocusRules.absorptionDamagePerTarget(focus);
+		boolean distributed = SkillPointHelper.isTechniqueEnabled(player, SkillPointInit.skill_distributed_siphon);
+		int availableLimit = distributed ? targetCap : 1;
 		List<LivingEntity> targets = level.getEntitiesOfClass(LivingEntity.class,
 						player.getBoundingBox().inflate(LivingStaffFocusRules.absorptionRange(focus)),
-						target -> BloodAbsorptionItem.isValidAbsorptionTarget(player, target))
+						target -> BloodAbsorptionItem.isValidAbsorptionTarget(player, target)
+								&& BloodAbsorptionItem.passesSelectiveHunger(player, target))
 				.stream()
 				.sorted(Comparator.comparingDouble(player::distanceToSqr))
-				.limit(targetCap)
+				.limit(availableLimit)
 				.toList();
+		double amountPerTarget = ToggleableAbsorptionRules.damagePerTarget(distributed,
+				LivingStaffFocusRules.absorptionDamagePerTarget(focus), targets.size());
 		double handled = 0.0D;
 		for (LivingEntity target : targets) {
 			handled += BloodAbsorptionItem.absorbFromTarget(level, player, target, amountPerTarget);

@@ -6,6 +6,8 @@ import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.ManipulationDiagnosticsSync;
 import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillPointGainEvents;
 import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillPointHelper;
+import com.vincenthuto.hemomancy.common.capability.player.shared.skill.ToggleableSkillRules;
+import com.vincenthuto.hemomancy.common.init.SkillPointInit;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.equipment.IHarbingerEquipmentItemHandler;
 import com.vincenthuto.hemomancy.common.effect.MnemonicCandleRules;
 import com.vincenthuto.hemomancy.common.entity.HemoEntityPredicates;
@@ -268,6 +270,16 @@ public class BloodVolumeEvents {
 
 				double drainAmount = damage * HemoServerConfig.BLOOD_DRAIN_PER_DAMAGE.get()
 						* SkillPointHelper.getHemostasisMultiplier(player);
+				if (SkillPointHelper.isTechniqueEnabled(player, SkillPointInit.skill_automatic_coagulation)) {
+					drainAmount *= 0.65D;
+				}
+				if (damage >= 6.0F && SkillPointHelper.isTechniqueEnabled(player,
+						SkillPointInit.skill_reflexive_coagulation)) {
+					drainAmount *= 0.5D;
+				}
+				drainAmount = ToggleableSkillRules.allowedBloodDrain(
+						SkillPointHelper.isTechniqueEnabled(player, SkillPointInit.skill_sanguine_reserve),
+						volume.getBloodVolume(), volume.getMaxBloodVolume() * 0.15D, drainAmount);
 				volume.drain(drainAmount);
 				volume.addDamage(damage);
 				syncVolume((ServerPlayer) player, volume);

@@ -8,6 +8,9 @@ import com.vincenthuto.hemomancy.common.event.LastRiteHelper;
 import com.vincenthuto.hemomancy.common.item.harbinger.morphlings.IMorphling;
 import com.vincenthuto.hemomancy.common.item.harbinger.morphlings.MorphlingItem;
 import com.vincenthuto.hemomancy.common.item.harbinger.morphlings.MorphlingUpkeepRules;
+import com.vincenthuto.hemomancy.common.item.harbinger.morphlings.MorphlingMetabolismRules;
+import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillPointHelper;
+import com.vincenthuto.hemomancy.common.init.SkillPointInit;
 import com.vincenthuto.hemomancy.common.network.morphling.SyncEquippedMorphlingPacket;
 import com.vincenthuto.hemomancy.config.HemoServerConfig;
 import net.minecraft.ChatFormatting;
@@ -70,13 +73,32 @@ public class EquippedMorphlingEvents {
 			double upkeep = MorphlingUpkeepRules.upkeepAmount(
 					HemoServerConfig.MORPHLING_PASSIVE_DRAIN_ENABLED.get(),
 					HemoServerConfig.MORPHLING_DRAIN_RATE.get(), morphling.getBloodCost());
+			boolean inCombat = player.getLastHurtByMob() != null
+					&& player.tickCount - player.getLastHurtByMobTimestamp() < 200;
+			boolean needsBonding = !MorphlingItem.isBondingReady(equippedStack);
+			if (MorphlingMetabolismRules.suspendUpkeep(SkillPointHelper.isTechniqueEnabled(player,
+					SkillPointInit.skill_dormant_symbiote), inCombat, needsBonding)) {
+				if (morphCap.hasMorphling()) morphling.onEquippedTick(player, equippedStack);
+				return;
+			}
+			boolean symbiotic = SkillPointHelper.isTechniqueEnabled(player,
+					SkillPointInit.skill_symbiotic_metabolism);
+			boolean starving = MorphlingItem.hungerState(equippedStack, player.level().getGameTime())
+					== com.vincenthuto.hemomancy.common.item.harbinger.morphlings.MorphlingHungerRules.HungerState.STARVING;
+			MorphlingMetabolismRules.Upkeep metabolic = MorphlingMetabolismRules.splitUpkeep(symbiotic,
+					starving, player.getFoodData().getFoodLevel(), 20, upkeep);
+			upkeep = metabolic.blood();
+			final double effectiveUpkeep = upkeep;
+			if (metabolic.hungerEquivalent() > 0.0D) {
+				player.getFoodData().addExhaustion((float) (metabolic.hungerEquivalent() * 0.1D));
+			}
 
-			if (upkeep > 0.0D) {
+			if (effectiveUpkeep > 0.0D) {
 				HemoCapabilityAccess.getBloodVolume(player).ifPresent(volume -> {
 					if (!volume.isActive()) return;
 
 					BloodFlowLedger.DrainResult drain = BloodFlowLedger.applyDrain((ServerPlayer) player, volume,
-							"morphling_upkeep", "Morphling Upkeep", Category.MORPHLING, upkeep, drainInterval, true);
+							"morphling_upkeep", "Morphling Upkeep", Category.MORPHLING, effectiveUpkeep, drainInterval, true);
 					if (drain.satisfied()) {
 						MorphlingItem.recordBondingBlood(equippedStack, drain.actual());
 						syncToClient((ServerPlayer) player);
