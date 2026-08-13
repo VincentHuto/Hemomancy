@@ -88,7 +88,7 @@ public class ShaderInit {
 
 	public static ShaderHolder QLIPHOTH_BLACK_HOLE = new ShaderHolder(Hemomancy.rloc("world/qliphoth_black_hole"),
 			DefaultVertexFormat.POSITION_TEX_COLOR, "HemoTime", "HoleSeed", "LensStrength", "RingIntensity",
-			"FinalHole");
+			"FinalHole", "ScreenSize");
 
 	public static ShaderHolder APOTHEOS_FLOOR_FUNNEL = new ShaderHolder(Hemomancy.rloc("world/apotheos_floor_funnel"),
 			DefaultVertexFormat.POSITION_TEX_COLOR, "HemoTime", "FunnelSeed", "RingRise", "RingSpeed",

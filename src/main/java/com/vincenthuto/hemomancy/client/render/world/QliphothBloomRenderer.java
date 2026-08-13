@@ -1,5 +1,7 @@
 package com.vincenthuto.hemomancy.client.render.world;
 
+import com.mojang.blaze3d.pipeline.RenderTarget;
+import com.mojang.blaze3d.pipeline.TextureTarget;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.vincenthuto.hemomancy.Hemomancy;
@@ -15,6 +17,8 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.phys.Vec3;
 import org.joml.Matrix4f;
+import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL30;
 
 import java.util.List;
 
@@ -29,7 +33,9 @@ import java.util.List;
  */
 public class QliphothBloomRenderer {
 	private static final ResourceLocation BARK = Hemomancy.rloc("textures/block/dark_oak_log.png");
+	private static final ResourceLocation QLIPHOTH_SKY = Hemomancy.rloc("textures/environment/qliphoth_communion_sky.png");
 	private static final RenderType BARK_TYPE = RenderType.entityCutoutNoCull(BARK);
+	private static TextureTarget frameCopyTarget;
 
 	// ── Tree geometry parameters ──
 	/** Total height of the tree in blocks. */
@@ -174,7 +180,7 @@ public class QliphothBloomRenderer {
 		float rootFrac   = rootLengthFrac(stage);
 		float branchFrac = branchLengthFrac(stage);
 
-		drawFacetedBloom(buffer, mat, time, stage);
+		drawFacetedBloom(stack, buffer, time, stage);
 
 		stack.popPose();
 	}
@@ -309,7 +315,7 @@ public class QliphothBloomRenderer {
 		float rootFrac   = rootLengthFrac(stage);
 		float branchFrac = branchLengthFrac(stage);
 
-		drawFacetedBloom(buffer, mat, time, stage);
+		drawFacetedBloom(stack, buffer, time, stage);
 
 		stack.popPose();
 	}
@@ -375,7 +381,8 @@ public class QliphothBloomRenderer {
 		}
 	}
 
-	private static void drawFacetedBloom(MultiBufferSource buffer, Matrix4f mat, float time, int stage) {
+	private static void drawFacetedBloom(PoseStack stack, MultiBufferSource buffer, float time, int stage) {
+		Matrix4f mat = stack.last().pose();
 		QliphothBloomGeometry.Limb trunk = QliphothBloomGeometry.trunk(stage, time);
 		drawTexturedLimb(buffer, mat, trunk, 10, .40f, .52f, .92f, 2.4f);
 		drawVeins(buffer, mat, trunk, time, 3);
@@ -397,7 +404,7 @@ public class QliphothBloomRenderer {
 			drawFruitStem(buffer, mat, crystal, time);
 			drawCrystal(buffer, mat, crystal, time);
 		}
-		if (QliphothBloomGeometry.hasApex(stage)) drawFacetedApex(buffer, mat, time);
+		if (QliphothBloomGeometry.hasApex(stage)) drawFacetedApex(stack, buffer, mat, time);
 	}
 
 	private static void drawFacetedRoots(MultiBufferSource buffer, Matrix4f mat, float time, int stage) {
@@ -407,20 +414,63 @@ public class QliphothBloomRenderer {
 		}
 	}
 
-	private static void drawFacetedApex(MultiBufferSource buffer, Matrix4f mat, float time) {
+	private static void drawFacetedApex(PoseStack stack, MultiBufferSource buffer, Matrix4f mat, float time) {
 		for (QliphothBloomGeometry.Limb prong : QliphothBloomGeometry.crownProngs(time)) {
 			drawTexturedLimb(buffer, mat, prong, 7, .30f, .39f, .70f, 2.1f);
 			drawVeins(buffer, mat, prong, time, 1);
 		}
-		QliphothBloomGeometry.Point center = QliphothBloomGeometry.apexCenter(time);
-		drawSphere(buffer, mat, center, .72, .002f, .0f, .002f, 1f, 11, 16);
-		drawSphere(buffer, mat, center, .78, .42f, .006f, .012f, .13f, 10, 15);
 		for (QliphothBloomGeometry.Limb loop : QliphothBloomGeometry.apexLoops(time)) {
 			drawLimb(buffer, mat, loop, 6, .72f, .008f, .018f, .88f);
 			QliphothBloomGeometry.Limb glow = new QliphothBloomGeometry.Limb(loop.points(),
 					loop.radii().stream().map(radius -> radius * 1.7).toList(), loop.seed());
 			drawLimbGlow(buffer, mat, glow, 6, .95f, .012f, .022f, .12f);
 		}
+		renderAccretionBlackHole(stack, buffer, QliphothBloomGeometry.apexCenter(time), time);
+	}
+
+	private static void renderAccretionBlackHole(PoseStack stack, MultiBufferSource buffer,
+			QliphothBloomGeometry.Point center, float time) {
+		if (buffer instanceof MultiBufferSource.BufferSource source) {
+			source.endBatch(BARK_TYPE);
+			source.endBatch(RenderTypeInit.RITE_BOUNDARY_CORE);
+			source.endBatch(RenderTypeInit.RITE_BOUNDARY_GLOW);
+		}
+		copyMainRenderTarget(Minecraft.getInstance());
+		int sceneTexture = frameCopyTarget == null ? -1 : frameCopyTarget.getColorTextureId();
+		RenderType type = HemoRenderTypes.qliphothBlackHole(QLIPHOTH_SKY, sceneTexture, time * .050f,
+				.731f, 1.72f, 1.72f, true);
+		stack.pushPose();
+		stack.translate(center.x(), center.y(), center.z());
+		stack.mulPose(Minecraft.getInstance().getEntityRenderDispatcher().cameraOrientation());
+		Matrix4f matrix = stack.last().pose();
+		VertexConsumer out = buffer.getBuffer(type);
+		float halfSize = 1.72f;
+		out.addVertex(matrix, -halfSize, -halfSize, 0).setUv(0, 1).setColor(255, 255, 255, 255);
+		out.addVertex(matrix, halfSize, -halfSize, 0).setUv(1, 1).setColor(255, 255, 255, 255);
+		out.addVertex(matrix, halfSize, halfSize, 0).setUv(1, 0).setColor(255, 255, 255, 255);
+		out.addVertex(matrix, -halfSize, halfSize, 0).setUv(0, 0).setColor(255, 255, 255, 255);
+		stack.popPose();
+		if (buffer instanceof MultiBufferSource.BufferSource source) source.endBatch(type);
+	}
+
+	private static void copyMainRenderTarget(Minecraft minecraft) {
+		RenderTarget mainTarget = minecraft.getMainRenderTarget();
+		if (mainTarget.width <= 0 || mainTarget.height <= 0) return;
+		ensureFrameCopyTarget(mainTarget);
+		GL30.glBindFramebuffer(GL30.GL_READ_FRAMEBUFFER, mainTarget.frameBufferId);
+		GL30.glBindFramebuffer(GL30.GL_DRAW_FRAMEBUFFER, frameCopyTarget.frameBufferId);
+		GL30.glBlitFramebuffer(0, 0, mainTarget.width, mainTarget.height, 0, 0,
+				frameCopyTarget.width, frameCopyTarget.height, GL11.GL_COLOR_BUFFER_BIT, GL11.GL_NEAREST);
+		GL30.glBindFramebuffer(GL30.GL_READ_FRAMEBUFFER, 0);
+		mainTarget.bindWrite(false);
+	}
+
+	private static void ensureFrameCopyTarget(RenderTarget mainTarget) {
+		if (frameCopyTarget != null && frameCopyTarget.width == mainTarget.width
+				&& frameCopyTarget.height == mainTarget.height) return;
+		if (frameCopyTarget != null) frameCopyTarget.destroyBuffers();
+		frameCopyTarget = new TextureTarget(mainTarget.width, mainTarget.height, false, Minecraft.ON_OSX);
+		frameCopyTarget.setFilterMode(GL11.GL_LINEAR);
 	}
 
 	private static void drawVeins(MultiBufferSource buffer, Matrix4f mat, QliphothBloomGeometry.Limb wood,

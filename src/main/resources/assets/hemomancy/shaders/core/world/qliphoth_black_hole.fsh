@@ -12,6 +12,7 @@ uniform float HoleSeed;
 uniform float LensStrength;
 uniform float RingIntensity;
 uniform float FinalHole;
+uniform vec2 ScreenSize;
 
 in float vertexDistance;
 in vec4 vertexColor;
@@ -71,6 +72,111 @@ void main() {
             texture(Sampler0, fract(lensedUv)).g,
             texture(Sampler0, fract(lensedUv - lensDirection * chromaticOffset)).b
     );
+
+    if (FinalHole > 0.5) {
+        float x = centered.x;
+        float y = centered.y;
+        float absoluteX = abs(x);
+        float shadowRadius = length(vec2(x, y * 0.96));
+        float eventHorizon = smoothstep(0.318, 0.292, shadowRadius);
+
+        // The direct disk and both gravitational images are one surface.  The
+        // rear half rises over and under the shadow, then converges back into
+        // the direct sheet at the left and right edges instead of becoming a
+        // detached circular halo.
+        float diskReach = smoothstep(1.04, 0.91, absoluteX);
+        float diskCenter = -0.040 + x * 0.006;
+        float diskThickness = mix(0.024, 0.060, smoothstep(0.28, 1.0, absoluteX));
+        float directDisk = smoothstep(diskThickness, diskThickness * 0.18,
+                abs(y - diskCenter)) * diskReach;
+        float accretionDisk = directDisk;
+
+        float lensDomain = clamp(absoluteX / 0.86, 0.0, 1.0);
+        float lensArch = sqrt(max(0.0, 1.0 - lensDomain * lensDomain));
+        float upperCenter = diskCenter + 0.565 * pow(lensArch, 0.72);
+        float lowerCenter = diskCenter - 0.365 * pow(lensArch, 0.78);
+        float imageThickness = 0.030 + 0.034 * lensArch;
+        float imageReach = smoothstep(0.91, 0.84, absoluteX);
+        float rearUpperImage = smoothstep(imageThickness, imageThickness * 0.20,
+                abs(y - upperCenter)) * imageReach;
+        float rearLowerImage = smoothstep(imageThickness * 0.82, imageThickness * 0.16,
+                abs(y - lowerCenter)) * imageReach;
+        float upperLens = rearUpperImage;
+        float lowerLens = rearLowerImage;
+
+        float upperDistance = abs(y - upperCenter) / max(imageThickness, 0.001);
+        float radialBand = sin((lensArch * 72.0 - upperDistance * 11.0 - time * 2.4)
+                + fbm(vec2(angle * 3.0, shadowRadius * 9.0 - time * 0.22)) * 8.0);
+        float horizontalBand = sin((absoluteX * 84.0 - time * 3.1)
+                + fbm(vec2(x * 7.0 - time * 0.18, y * 31.0)) * 7.0);
+        float flowBands = 0.48 + 0.30 * radialBand + 0.22 * horizontalBand;
+        float darkStriations = smoothstep(0.40, 0.66,
+                fbm(vec2(angle * 6.0 - time * 0.36, shadowRadius * 18.0 + time * 0.15)));
+        float doppler = mix(0.68, 1.24, smoothstep(-0.92, 0.72, x));
+
+        vec2 sceneUv = gl_FragCoord.xy / ScreenSize;
+        vec2 sceneDirection = normalize(centered + vec2(0.0004, -0.0003));
+        float photonShell = smoothstep(0.88, 0.34, shadowRadius)
+                * smoothstep(0.292, 0.338, shadowRadius);
+        float coronaNoise = fbm(vec2(angle * 2.6 - time * 0.16,
+                shadowRadius * 7.5 + time * 0.11));
+        float primaryPulse = 0.5 + 0.5 * sin(time * 1.18);
+        float secondaryPulse = 0.5 + 0.5 * sin(time * 2.37 + sin(time * 0.41) * 1.4);
+        float alienPulse = 0.66 + primaryPulse * 0.25 + secondaryPulse * 0.09;
+        float alienCorona = smoothstep(0.92, 0.34, shadowRadius)
+                * smoothstep(0.304, 0.348, shadowRadius)
+                * (0.42 + coronaNoise * 0.58);
+        alienCorona *= alienPulse;
+        float horizonRim = smoothstep(0.355, 0.324, shadowRadius)
+                * smoothstep(0.304, 0.322, shadowRadius);
+        horizonRim *= mix(0.76, 1.18, primaryPulse);
+        float sceneLensFalloff = smoothstep(0.91, 0.30, shadowRadius);
+        float inverseRadiusDeflection = LensStrength * photonShell
+                * (0.006 + 0.014 / max(shadowRadius, 0.22));
+        vec2 sceneTangent = vec2(-sceneDirection.y, sceneDirection.x);
+        vec2 lensedSceneUv = sceneUv + sceneDirection * inverseRadiusDeflection
+                + sceneTangent * sin(angle * 3.0 - time * 0.72)
+                * inverseRadiusDeflection * 0.10 * sceneLensFalloff;
+        vec3 lensedScene = texture(Sampler0, clamp(lensedSceneUv, vec2(0.001), vec2(0.999))).rgb;
+
+        float diskFlow = max(directDisk, max(rearUpperImage, rearLowerImage));
+        float redFlow = diskFlow;
+        float horizonContact = (1.0 - smoothstep(0.303, 0.338, shadowRadius))
+                * smoothstep(0.286, 0.302, shadowRadius)
+                * (1.0 - smoothstep(0.045, 0.30, abs(y)));
+        redFlow = max(redFlow, horizonContact);
+        float hotFilaments = redFlow * smoothstep(0.46, 0.93, flowBands) * (1.0 - darkStriations * 0.82);
+        vec3 bloodRed = vec3(0.42, 0.002, 0.006);
+        vec3 arterialRed = vec3(1.0, 0.025, 0.008);
+        vec3 hotRed = vec3(1.0, 0.16, 0.025);
+        vec3 diskColor = mix(bloodRed, arterialRed, clamp(flowBands * doppler, 0.0, 1.0));
+        diskColor = mix(diskColor, hotRed, hotFilaments * 0.72);
+        vec3 alienTint = mix(vec3(0.34, 0.006, 0.090), vec3(0.18, 0.038, 0.70),
+                0.45 + 0.30 * sin(angle * 2.0 + time * 0.31));
+        vec3 coronaGlow = alienTint * alienCorona * (0.52 + RingIntensity * 0.42)
+                + vec3(1.0, 0.025, 0.012) * horizonRim * 0.92;
+
+        float shadow = eventHorizon;
+        float outerLensing = photonShell * (1.0 - redFlow) * 0.48;
+        vec3 color = lensedScene * (0.82 + photonShell * 0.18);
+        color = mix(color, color * vec3(1.08, 0.82, 1.13) + alienTint * 0.24,
+                alienCorona * 0.46);
+        color = mix(color, diskColor, clamp(redFlow * (0.72 + hotFilaments), 0.0, 1.0));
+        color *= 1.0 - shadow;
+        coronaGlow *= 1.0 - eventHorizon;
+        color += coronaGlow;
+
+        float edgeFade = smoothstep(0.0, 0.11,
+                min(min(uv.x, 1.0 - uv.x), min(uv.y, 1.0 - uv.y)));
+        float alpha = edgeFade * vertexColor.a * ColorModulator.a;
+        alpha *= clamp(eventHorizon * 1.24 + redFlow * (0.88 + hotFilaments * RingIntensity)
+                + photonShell * 0.54 + alienCorona * 0.82 + horizonRim
+                + outerLensing, 0.0, 1.0);
+        if (alpha < 0.01) discard;
+        fragColor = linear_fog(vec4(color * ColorModulator.rgb, alpha),
+                vertexDistance, FogStart, FogEnd, FogColor);
+        return;
+    }
 
     float coreRadius = mix(0.162, 0.212, FinalHole);
     float eventHorizon = smoothstep(coreRadius + 0.035, coreRadius - 0.018, radius);

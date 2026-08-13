@@ -1,12 +1,14 @@
 package com.vincenthuto.hemomancy.client.render;
 
 import com.mojang.blaze3d.shaders.Uniform;
+import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.VertexFormat;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.client.render.shader.ExtendedShaderInstance;
 import com.vincenthuto.hemomancy.common.init.ShaderInit;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.ShaderInstance;
 import net.minecraft.client.renderer.RenderStateShard;
@@ -810,15 +812,23 @@ public final class HemoRenderTypes {
 
 	public static RenderType qliphothBlackHole(ResourceLocation texture, float gameTime, float holeSeed,
 			float lensStrength, float ringIntensity, boolean finalHole) {
+		return qliphothBlackHole(texture, -1, gameTime, holeSeed, lensStrength, ringIntensity, finalHole);
+	}
+
+	public static RenderType qliphothBlackHole(ResourceLocation fallbackTexture, int sceneTextureId,
+			float gameTime, float holeSeed, float lensStrength, float ringIntensity, boolean finalHole) {
 		RenderStateShard.TexturingStateShard uniforms = new RenderStateShard.TexturingStateShard(
 				"qliphoth_black_hole_uniforms",
 				() -> {
 					ShaderInstance shader = ShaderInit.QLIPHOTH_BLACK_HOLE.getInstance().get();
+					if (sceneTextureId >= 0) RenderSystem.setShaderTexture(0, sceneTextureId);
 					setUniform(shader, "HemoTime", gameTime);
 					setUniform(shader, "HoleSeed", holeSeed);
 					setUniform(shader, "LensStrength", lensStrength);
 					setUniform(shader, "RingIntensity", ringIntensity);
 					setUniform(shader, "FinalHole", finalHole ? 1.0f : 0.0f);
+					setUniform(shader, "ScreenSize", (float)Minecraft.getInstance().getWindow().getWidth(),
+							(float)Minecraft.getInstance().getWindow().getHeight());
 				},
 				() -> {
 					ShaderInstance shader = ShaderInit.QLIPHOTH_BLACK_HOLE.getInstance().get();
@@ -830,7 +840,7 @@ public final class HemoRenderTypes {
 				DefaultVertexFormat.POSITION_TEX_COLOR, VertexFormat.Mode.QUADS, 2048, false, true,
 				RenderType.CompositeState.builder()
 						.setShaderState(ShaderInit.QLIPHOTH_BLACK_HOLE.getShard())
-						.setTextureState(new RenderStateShard.TextureStateShard(texture, false, false))
+						.setTextureState(new RenderStateShard.TextureStateShard(fallbackTexture, false, false))
 						.setTexturingState(uniforms)
 						.setTransparencyState(RenderType.TRANSLUCENT_TRANSPARENCY)
 						.setDepthTestState(RenderType.NO_DEPTH_TEST)
@@ -944,6 +954,16 @@ public final class HemoRenderTypes {
 		Uniform uniform = shader.getUniform(name);
 		if (uniform != null) {
 			uniform.set(x, y, z);
+		}
+	}
+
+	private static void setUniform(ShaderInstance shader, String name, float x, float y) {
+		if (shader == null) {
+			return;
+		}
+		Uniform uniform = shader.getUniform(name);
+		if (uniform != null) {
+			uniform.set(x, y);
 		}
 	}
 
