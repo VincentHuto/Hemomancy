@@ -69,7 +69,6 @@ public class BloodVolumeOverlay {
     public static BloodVolumeOverlay instance;
 
     private final Minecraft mc = Minecraft.getInstance();
-    private float animTime = 0f;
 
     public static boolean isConfiguredOnLeftSide() {
         int positionLoc = HemoClientConfig.HUD_LOCATION.get();
@@ -116,13 +115,15 @@ public class BloodVolumeOverlay {
 
                         int posX = getConfiguredBarX(width);
                         int posY = getConfiguredBarY(player, height);
-                        renderBloodBar(gfx, posX, posY, bloodCap, player, mc.level, partialTicks, width, height);
+						float animationTime = EquippedMorphlingOverlayPlacement.animationTimeSeconds(
+								mc.level.getGameTime(), partialTicks);
+						renderBloodBar(gfx, posX, posY, bloodCap, player, mc.level, animationTime, width, height);
 						HemoCapabilityAccess.getEquippedMorphling(player).ifPresent(morphlingCap -> {
 							ItemStack equipped = morphlingCap.getEquippedMorphling();
 							if (EquippedMorphlingOverlay.instance != null) {
 								EquippedMorphlingOverlay.instance.renderForBloodBar(gfx, equipped,
 										isConfiguredOnLeftSide(), posX, posY, getBarWidth(), getBarHeight(),
-										animTime + partialTicks / 20.0f);
+										animationTime);
 							}
 						});
                     }
@@ -132,20 +133,19 @@ public class BloodVolumeOverlay {
     }
 
     private void renderBloodBar(GuiGraphics gfx, int posX, int posY, IBloodVolume bloodCap,
-                                Player player, ClientLevel world, float partialTicks, int screenWidth, int screenHeight) {
+                                Player player, ClientLevel world, float animationTime, int screenWidth, int screenHeight) {
         gfx.pose().pushPose();
         gfx.pose().translate(posX, posY, 0);
         gfx.pose().scale(OVERLAY_SCALE, OVERLAY_SCALE, 1.0f);
-        renderBloodBarScaled(gfx, 0, 0, bloodCap, player, world, partialTicks,
+        renderBloodBarScaled(gfx, 0, 0, bloodCap, player, world, animationTime,
                 Math.round(screenWidth / OVERLAY_SCALE), Math.round(screenHeight / OVERLAY_SCALE));
         gfx.pose().popPose();
     }
 
     private void renderBloodBarScaled(GuiGraphics gfx, int posX, int posY, IBloodVolume bloodCap,
-                                      Player player, ClientLevel world, float partialTicks, int screenWidth, int screenHeight) {
+                                      Player player, ClientLevel world, float animationTime, int screenWidth, int screenHeight) {
         Font fr = mc.font;
-        animTime += 0.016f;
-        float time = animTime;
+        float time = animationTime;
 
         double vol = bloodCap.getBloodVolume();
         double maxVol = bloodCap.getMaxBloodVolume();

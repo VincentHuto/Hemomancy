@@ -8,12 +8,16 @@ package com.vincenthuto.hemomancy.common.entity.npc.dialogue;
  *   <li>{@link #BLOOD} – Red/crimson veiny appearance (Harbinger Hermit, default).</li>
  *   <li>{@link #UNSTAINED} – Blue/white with floating hollow rhombuses (Zealots, Unstained faction).</li>
  *   <li>{@link #FUNGAL} – Orange/amber with floating spores and tendrils (Fungal Whispers).</li>
+ *   <li>{@link #STILL} - Abstract silver/cyan treatment for Our Lady of Still Waters.</li>
+ *   <li>{@link #STILL_MATERIAL} - Physical stone, silver, glass, and water treatment for Our Lady.</li>
  * </ul>
  */
 public enum DialogueTheme {
 	BLOOD,
 	UNSTAINED,
-	FUNGAL;
+	FUNGAL,
+	STILL,
+	STILL_MATERIAL;
 
 	private static final DialogueTheme[] VALUES = values();
 

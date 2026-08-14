@@ -5,7 +5,7 @@ final class EquippedMorphlingOverlayPlacement {
 	static final int ICON_GAP = 8;
 	static final int ATTACHED_SIZE = 48;
 	static final int ATTACHED_OVERLAP = ATTACHED_SIZE / 2;
-	static final int FEEDING_FRAME_COUNT = 5;
+	static final int FEEDING_FRAME_COUNT = 3;
 	static final int FEEDING_TEXTURE_HEIGHT = ATTACHED_SIZE * FEEDING_FRAME_COUNT;
 	private static final float FEEDING_FRAME_SECONDS = 0.16f;
 
@@ -37,6 +37,11 @@ final class EquippedMorphlingOverlayPlacement {
 	static int feedingFrame(float timeSeconds) {
 		int elapsedFrames = (int) Math.floor(timeSeconds / FEEDING_FRAME_SECONDS);
 		return Math.floorMod(elapsedFrames, FEEDING_FRAME_COUNT);
+	}
+
+	static float animationTimeSeconds(long gameTime, float partialTicks) {
+		float clampedPartialTicks = Math.max(0.0f, Math.min(1.0f, partialTicks));
+		return (gameTime + clampedPartialTicks) / 20.0f;
 	}
 
 	static SpriteBlit spriteBlit(boolean mirrored) {

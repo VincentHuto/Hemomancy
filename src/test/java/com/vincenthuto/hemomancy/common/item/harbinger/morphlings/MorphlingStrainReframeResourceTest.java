@@ -18,21 +18,21 @@ public final class MorphlingStrainReframeResourceTest {
 
 	private static final String[][] SURVIVING_STRAINS = {
 			{ "leeches", "deadmans_purse", "LeechesMorphlingItem", "DeadmansPurseMorphlingItem",
-					"Deadman's Purse", "Sanguibursa vorax" },
+					"Deadman's Purse Morphling", "Sanguibursa vorax" },
 			{ "fungal", "gravecap", "FungalMorphlingItem", "GravecapMorphlingItem",
-					"Gravecap", "Necrophyta saprovex" },
+					"Gravecap Morphling", "Necrophyta saprovex" },
 			{ "bat", "witchs_ear", "BatMorphlingItem", "WitchsEarMorphlingItem",
-					"Witch's Ear", "Tympanospora susurra" },
+					"Witch's Ear Morphling", "Tympanospora susurra" },
 			{ "cuttlefish", "foxfire", "CuttlefishMorphlingItem", "FoxfireMorphlingItem",
-					"Foxfire", "Ignisfatuus lucens" },
+					"Lumenlace Morphling", "Luminaria nervosa" },
 			{ "spider", "bootlace", "SpiderMorphlingItem", "BootlaceMorphlingItem",
-					"Bootlace", "Rhizomorpha tenebra" },
+					"Bootlace Morphling", "Rhizomorpha tenebra" },
 			{ "mole", "irontooth", "MoleMorphlingItem", "IrontoothMorphlingItem",
-					"Irontooth", "Ferrophyta lithovora" },
+					"Irontooth Morphling", "Ferrophyta lithovora" },
 			{ "serpent", "emberfang", "SerpentMorphlingItem", "EmberfangMorphlingItem",
-					"Emberfang", "Pyrrhiza digestans" },
+					"Emberfang Morphling", "Pyrrhiza digestans" },
 			{ "centipede", "winter_shroud", "CentipedeMorphlingItem", "WinterShroudMorphlingItem",
-					"Winter Shroud", "Sporangia dormiens" }
+					"Winter Shroud Morphling", "Sporangia dormiens" }
 	};
 
 	private static final String[] CUT_STRAINS = {

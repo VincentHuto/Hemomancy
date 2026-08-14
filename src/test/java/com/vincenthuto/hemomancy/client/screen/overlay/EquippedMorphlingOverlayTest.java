@@ -20,8 +20,8 @@ public final class EquippedMorphlingOverlayTest {
 			Map.entry("bootlace", List.of(region(24, 10, 48, 44))),
 			Map.entry("deadmans_purse", List.of(region(13, 12, 38, 44))),
 			Map.entry("emberfang", List.of(region(17, 4, 48, 32))),
-			Map.entry("foxfire", List.of(region(16, 14, 48, 44))),
-			Map.entry("gravecap", List.of(region(18, 13, 48, 43))),
+			Map.entry("lumenlace", List.of(region(13, 0, 48, 48))),
+			Map.entry("gravecap", List.of(region(15, 12, 48, 44))),
 			Map.entry("irontooth", List.of(region(17, 6, 48, 30))),
 			Map.entry("winter_shroud", List.of(region(17, 1, 47, 34))),
 			Map.entry("witchs_ear", List.of(region(14, 7, 31, 28))));
@@ -33,10 +33,16 @@ public final class EquippedMorphlingOverlayTest {
 		legacyIconPlacementRemainsAvailable();
 		attachedMorphlingGripsHalfwayAcrossTheBloodBarEdge();
 		mirroredSpriteKeepsFrontFacingGeometryAndReversesUvs();
-		feedingAnimationAdvancesThroughFiveFramesAndLoops();
+		feedingAnimationAdvancesThroughThreeFramesAndLoops();
+		stableRenderClockAdvancesWithPartialTicks();
+		bloodOverlayUsesStableRenderClock();
+		foxfireItemUsesLumenlaceHudIdentity();
+		foxfireItemModelUsesLumenlaceTexture();
+		lumenlacePaletteCarriesBlueAndGoldNeuralSignals();
+		lumenlaceFramesHangFromAttachmentSide();
 		canonicalStrainsHaveCompleteHudVisuals();
 		canonicalStrainsAnimateTheirBodiesInsteadOfTranslatingTheWholeSprite();
-		canonicalStrainsKeepNonAnimatedPixelsByteExact();
+		canonicalStrainsMoveAnchoredPixelsWithTheirBodies();
 		canonicalStrainsUseOneTwelveColorPaletteAcrossAllFrames();
 	}
 
@@ -76,15 +82,96 @@ public final class EquippedMorphlingOverlayTest {
 		assertEquals("mirrored u direction is reversed", -48, mirrored.uWidth());
 	}
 
-	private static void feedingAnimationAdvancesThroughFiveFramesAndLoops() {
+	private static void feedingAnimationAdvancesThroughThreeFramesAndLoops() {
 		assertEquals("animation starts at frame zero", 0,
 				EquippedMorphlingOverlayPlacement.feedingFrame(0.0f));
 		assertEquals("animation reaches frame one", 1,
 				EquippedMorphlingOverlayPlacement.feedingFrame(0.16f));
-		assertEquals("animation reaches final frame", 4,
-				EquippedMorphlingOverlayPlacement.feedingFrame(0.64f));
+		assertEquals("animation reaches final frame", 2,
+				EquippedMorphlingOverlayPlacement.feedingFrame(0.32f));
 		assertEquals("animation loops", 0,
-				EquippedMorphlingOverlayPlacement.feedingFrame(0.80f));
+				EquippedMorphlingOverlayPlacement.feedingFrame(0.48f));
+	}
+
+	private static void stableRenderClockAdvancesWithPartialTicks() {
+		assertFloatEquals("clock starts at game tick", 5.0f,
+				EquippedMorphlingOverlayPlacement.animationTimeSeconds(100L, 0.0f));
+		assertFloatEquals("clock includes partial tick", 5.025f,
+				EquippedMorphlingOverlayPlacement.animationTimeSeconds(100L, 0.5f));
+		assertFloatEquals("clock advances one tick", 5.05f,
+				EquippedMorphlingOverlayPlacement.animationTimeSeconds(101L, 0.0f));
+	}
+
+	private static void bloodOverlayUsesStableRenderClock() throws Exception {
+		Path sourcePath = Path.of("src/main/java/com/vincenthuto/hemomancy/client/screen/overlay/BloodVolumeOverlay.java");
+		String source = Files.readString(sourcePath);
+		if (source.contains("animTime += 0.016f")) {
+			throw new AssertionError("Blood HUD animation must not advance from a render-call counter");
+		}
+		if (!source.contains("EquippedMorphlingOverlayPlacement.animationTimeSeconds")) {
+			throw new AssertionError("Blood HUD animation must use the shared tick/partial-tick render clock");
+		}
+	}
+
+	private static void foxfireItemUsesLumenlaceHudIdentity() {
+		MorphlingHudVisuals.Visual visual = MorphlingHudVisuals.forItemPath("morphling_foxfire");
+		if (visual == null) throw new AssertionError("Missing replacement HUD visual for morphling_foxfire");
+		if (!"lumenlace".equals(visual.textureName())) {
+			throw new AssertionError("Foxfire slot uses Lumenlace texture: " + visual.textureName());
+		}
+	}
+
+	private static void foxfireItemModelUsesLumenlaceTexture() throws Exception {
+		Path model = Path.of("src/main/resources/assets/hemomancy/models/item/morphling_foxfire.json");
+		String modelJson = Files.readString(model);
+		if (!modelJson.contains("hemomancy:item/morphling_lumenlace")) {
+			throw new AssertionError("Foxfire registry item model must use the Lumenlace icon");
+		}
+		Path texture = Path.of("src/main/resources/assets/hemomancy/textures/item/morphling_lumenlace.png");
+		if (!Files.isRegularFile(texture)) throw new AssertionError("Missing Lumenlace item texture");
+		BufferedImage image = ImageIO.read(texture.toFile());
+		assertEquals("Lumenlace item texture width", 16, image.getWidth());
+		assertEquals("Lumenlace item texture height", 16, image.getHeight());
+	}
+
+	private static void lumenlacePaletteCarriesBlueAndGoldNeuralSignals() throws Exception {
+		MorphlingHudVisuals.Visual visual = MorphlingHudVisuals.forItemPath("morphling_foxfire");
+		BufferedImage image = ImageIO.read(TEXTURE_ROOT.resolve(visual.textureName() + ".png").toFile());
+		boolean blue = false;
+		boolean gold = false;
+		for (int y = 0; y < image.getHeight(); y++) {
+			for (int x = 0; x < image.getWidth(); x++) {
+				int argb = image.getRGB(x, y);
+				int red = (argb >>> 16) & 0xFF;
+				int green = (argb >>> 8) & 0xFF;
+				int blueChannel = argb & 0xFF;
+				if ((argb >>> 24) != 0 && blueChannel > red + 40) blue = true;
+				if ((argb >>> 24) != 0 && red > 150 && green > 120 && blueChannel < 150) gold = true;
+			}
+		}
+		assertTrue("Lumenlace keeps a blue light body", blue);
+		assertTrue("Lumenlace adds gold neural signals", gold);
+	}
+
+	private static void lumenlaceFramesHangFromAttachmentSide() throws Exception {
+		MorphlingHudVisuals.Visual visual = MorphlingHudVisuals.forItemPath("morphling_foxfire");
+		BufferedImage image = ImageIO.read(TEXTURE_ROOT.resolve(visual.textureName() + ".png").toFile());
+		for (int frame = 0; frame < 3; frame++) {
+			int minX = image.getWidth();
+			int maxX = -1;
+			for (int y = 0; y < 48; y++) {
+				for (int x = 0; x < 48; x++) {
+					if ((image.getRGB(x, y + frame * 48) >>> 24) >= 128) {
+						minX = Math.min(minX, x);
+						maxX = Math.max(maxX, x);
+					}
+				}
+			}
+			if (minX < 14 || maxX != 47) {
+				throw new AssertionError("Lumenlace frame must hang from the attachment side: frame " + frame
+						+ " bounds " + minX + ".." + maxX);
+			}
+		}
 	}
 
 	private static void canonicalStrainsHaveCompleteHudVisuals() throws Exception {
@@ -104,7 +191,7 @@ public final class EquippedMorphlingOverlayTest {
 			}
 			BufferedImage image = ImageIO.read(texture.toFile());
 			assertEquals("texture width for " + strain, 48, image.getWidth());
-			assertEquals("five-frame texture height for " + strain, 48 * 5, image.getHeight());
+			assertEquals("three-frame texture height for " + strain, 48 * 3, image.getHeight());
 			int transparent = 0;
 			int visible = 0;
 			for (int y = 0; y < image.getHeight(); y++) {
@@ -114,7 +201,7 @@ public final class EquippedMorphlingOverlayTest {
 					if (alpha >= 128) visible++;
 				}
 			}
-			if (transparent < 48 * 48 * 5 / 3 || visible < 64 * 5) {
+			if (transparent < 48 * 48 * 3 / 3 || visible < 64 * 3) {
 				throw new AssertionError("HUD texture needs transparent space and a readable subject: " + texture);
 			}
 		}
@@ -124,10 +211,33 @@ public final class EquippedMorphlingOverlayTest {
 		for (String strain : STRAINS) {
 			MorphlingHudVisuals.Visual visual = MorphlingHudVisuals.forItemPath(strain);
 			BufferedImage image = ImageIO.read(TEXTURE_ROOT.resolve(visual.textureName() + ".png").toFile());
-			for (int frame = 1; frame < 5; frame++) {
+			for (int frame = 1; frame < 3; frame++) {
 				if (isRigidTranslationOfFirstFrame(image, frame)) {
 					throw new AssertionError("Morphling frame must deform internally, not translate rigidly: "
 							+ strain + " frame " + frame);
+				}
+			}
+		}
+	}
+
+	private static void canonicalStrainsMoveAnchoredPixelsWithTheirBodies() throws Exception {
+		for (String strain : STRAINS) {
+			MorphlingHudVisuals.Visual visual = MorphlingHudVisuals.forItemPath(strain);
+			if ("lumenlace".equals(visual.textureName())) continue;
+			BufferedImage image = ImageIO.read(TEXTURE_ROOT.resolve(visual.textureName() + ".png").toFile());
+			List<AnimationRegion> animatedRegions = FEEDING_ANIMATION_REGIONS.get(visual.textureName());
+			for (int frame = 1; frame < 3; frame++) {
+				int changedOutsideRegion = 0;
+				for (int y = 0; y < 48; y++) {
+					for (int x = 0; x < 48; x++) {
+						if (image.getRGB(x, y) != image.getRGB(x, y + frame * 48)
+								&& !isIntentionallyAnimated(animatedRegions, x, y)) {
+							changedOutsideRegion++;
+						}
+					}
+				}
+				if (changedOutsideRegion < 8) {
+					throw new AssertionError("Anchored pixels must follow the body for " + strain + " frame " + frame);
 				}
 			}
 		}
@@ -154,35 +264,6 @@ public final class EquippedMorphlingOverlayTest {
 			}
 		}
 		return false;
-	}
-
-	private static void canonicalStrainsKeepNonAnimatedPixelsByteExact() throws Exception {
-		for (String strain : STRAINS) {
-			MorphlingHudVisuals.Visual visual = MorphlingHudVisuals.forItemPath(strain);
-			BufferedImage image = ImageIO.read(TEXTURE_ROOT.resolve(visual.textureName() + ".png").toFile());
-			List<AnimationRegion> animatedRegions = FEEDING_ANIMATION_REGIONS.get(visual.textureName());
-			if (animatedRegions == null) {
-				throw new AssertionError("Missing feeding animation region for " + strain);
-			}
-			for (int frame = 1; frame < 5; frame++) {
-				int changedInsideRegion = 0;
-				for (int y = 0; y < 48; y++) {
-					for (int x = 0; x < 48; x++) {
-						if (image.getRGB(x, y) == image.getRGB(x, y + frame * 48)) continue;
-						boolean intentionallyAnimated = isIntentionallyAnimated(animatedRegions, x, y);
-						if (!intentionallyAnimated) {
-							throw new AssertionError("Non-animated pixel changed for " + strain + " frame " + frame
-									+ " at (" + x + "," + y + ")");
-						}
-						changedInsideRegion++;
-					}
-				}
-				if (changedInsideRegion < 16) {
-					throw new AssertionError("Feeding frame needs a real localized redraw for " + strain
-							+ " frame " + frame + ": only " + changedInsideRegion + " pixels changed");
-				}
-			}
-		}
 	}
 
 	private static void canonicalStrainsUseOneTwelveColorPaletteAcrossAllFrames() throws Exception {
@@ -232,6 +313,12 @@ public final class EquippedMorphlingOverlayTest {
 
 	private static void assertEquals(String label, int expected, int actual) {
 		if (expected != actual) {
+			throw new AssertionError(label + ": expected " + expected + " but got " + actual);
+		}
+	}
+
+	private static void assertFloatEquals(String label, float expected, float actual) {
+		if (Math.abs(expected - actual) > 0.0001f) {
 			throw new AssertionError(label + ": expected " + expected + " but got " + actual);
 		}
 	}

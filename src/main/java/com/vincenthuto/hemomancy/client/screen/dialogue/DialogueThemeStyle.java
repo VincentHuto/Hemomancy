@@ -2,6 +2,7 @@ package com.vincenthuto.hemomancy.client.screen.dialogue;
 
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.DialogueCategory;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.DialogueTheme;
+import com.vincenthuto.hemomancy.config.HemoClientConfig;
 
 import net.minecraft.resources.ResourceLocation;
 
@@ -11,12 +12,23 @@ public record DialogueThemeStyle(ResourceLocation frameSprite, ResourceLocation 
 		int speakerColor, int textColor, int optionColor, int disabledColor, int separatorColor,
 		int progressBackColor, int progressColor, int scrollTrackColor, int scrollThumbColor) {
 	public static DialogueThemeStyle forTheme(DialogueTheme theme) {
-		String name = theme.name().toLowerCase();
+		return forTheme(theme, HemoClientConfig.useTexturedDialogueStyle());
+	}
+
+	static DialogueThemeStyle forTheme(DialogueTheme theme, boolean useTexturedStyle) {
+		String name = switch (theme) {
+			case BLOOD -> useTexturedStyle ? "blood_material" : "blood";
+			case UNSTAINED -> useTexturedStyle ? "unstained_material" : "unstained";
+			case FUNGAL -> useTexturedStyle ? "fungal_material" : "fungal";
+			case STILL, STILL_MATERIAL -> useTexturedStyle ? "still_material" : "still";
+		};
 		return switch (theme) {
 			case UNSTAINED -> create(name, 0xFFD9E3F4, 0xFFC4C8D4, 0xFFAABBE0, 0xFF687080,
 					0x665E7098, 0xFF242936, 0xFF8EA9E8, 0x663A435A, 0xFFDDE8FF);
 			case FUNGAL -> create(name, 0xFFE0A95C, 0xFFD0B99E, 0xFFE2A050, 0xFF75624E,
 					0x668D5B28, 0xFF2B1A0E, 0xFFD17B32, 0x66472A15, 0xFFFFC66D);
+			case STILL, STILL_MATERIAL -> create(name, 0xFFD7F2F1, 0xFFC7D9DC, 0xFFB9E2E5, 0xFF65777B,
+					0x66758F94, 0xFF101B20, 0xFF75B9C0, 0x6632474C, 0xFFE2FAF8);
 			default -> create(name, 0xFFE35A68, 0xFFC8B8B8, 0xFFE7A66F, 0xFF765F62,
 					0x668B2735, 0xFF26090D, 0xFFB93447, 0x6643151D, 0xFFFFC07E);
 		};
@@ -36,7 +48,12 @@ public record DialogueThemeStyle(ResourceLocation frameSprite, ResourceLocation 
 	}
 
 	public static ResourceLocation categoryCard(DialogueCategory category, boolean selected) {
-		return sprite("dialogue/categories/" + category.name().toLowerCase()
+		return categoryCard(category, selected, HemoClientConfig.useTexturedDialogueStyle());
+	}
+
+	public static ResourceLocation categoryCard(DialogueCategory category, boolean selected, boolean useTexturedStyle) {
+		String folder = useTexturedStyle ? "categories_material/" : "categories/";
+		return sprite("dialogue/" + folder + category.name().toLowerCase()
 				+ (selected ? "_selected" : ""));
 	}
 

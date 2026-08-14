@@ -621,8 +621,8 @@ public final class MaterialsData {
                 "Morphlings", () -> new ItemStack(ItemInit.morphling_witchs_ear.get()),
                 true, UnlockPredicate.minDegree(3)));
 
-                                                                                                                                                                                                                                                        list.add(new MaterialEntry("morphling_foxfire", "Morphling: Foxfire",
-                "A luminous fungal strain that flashes and blinds like the former cuttlefish form.",
+                                                                                                                                                                                                                                                        list.add(new MaterialEntry("morphling_foxfire", "Morphling: Lumenlace",
+                "A luminous neural-fungal strain that flashes, blinds, and masks a still host in low light.",
                 "Morphlings", () -> new ItemStack(ItemInit.morphling_foxfire.get()),
                 true, UnlockPredicate.minDegree(3)));
 

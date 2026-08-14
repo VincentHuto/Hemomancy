@@ -31,6 +31,10 @@ public final class OurLadyWhisperDialogueTrees {
 
 	private OurLadyWhisperDialogueTrees() {}
 
+	private static DialogueTree.Builder ladyBuilder() {
+		return DialogueTree.builder(SPEAKER, LADY_ICON, 0).theme(OurLadyDialogueThemeRules.theme());
+	}
+
 	public static MemoDefinition memoForPurityStage(int purityLevel, int variant) {
 		return switch (purityLevel) {
 			case 1 -> MemoDefinitions.PALE_LADY_TAINTED;
@@ -102,8 +106,7 @@ public final class OurLadyWhisperDialogueTrees {
 
 	private static DialogueTree taintedWhisper(int variant) {
 		return switch (variant) {
-			case 0 -> DialogueTree.builder(SPEAKER, LADY_ICON, 0)
-					.theme(DialogueTheme.UNSTAINED)
+			case 0 -> ladyBuilder()
 					.addNode(new DialogueNode("root", List.of(
 							"hemomancy.lady.tainted.v0.line1"
 					), List.of(
@@ -116,16 +119,14 @@ public final class OurLadyWhisperDialogueTrees {
 							new DialogueOption("hemomancy.lady.option.dismiss", null, null)
 					)))
 					.build();
-			case 1 -> DialogueTree.builder(SPEAKER, LADY_ICON, 0)
-					.theme(DialogueTheme.UNSTAINED)
+			case 1 -> ladyBuilder()
 					.addNode(new DialogueNode("root", List.of(
 							"hemomancy.lady.tainted.v1.line1"
 					), List.of(
 							new DialogueOption("hemomancy.lady.option.dismiss", null, null)
 					)))
 					.build();
-			default -> DialogueTree.builder(SPEAKER, LADY_ICON, 0)
-					.theme(DialogueTheme.UNSTAINED)
+			default -> ladyBuilder()
 					.addNode(new DialogueNode("root", List.of(
 							"hemomancy.lady.tainted.v2.line1"
 					), List.of(
@@ -145,8 +146,7 @@ public final class OurLadyWhisperDialogueTrees {
 
 	private static DialogueTree cleansingWhisper(int variant) {
 		return switch (variant) {
-			case 0 -> DialogueTree.builder(SPEAKER, LADY_ICON, 0)
-					.theme(DialogueTheme.UNSTAINED)
+			case 0 -> ladyBuilder()
 					.addNode(new DialogueNode("root", List.of(
 							"hemomancy.lady.cleansing.v0.line1",
 							"hemomancy.lady.cleansing.v0.line2"
@@ -160,8 +160,7 @@ public final class OurLadyWhisperDialogueTrees {
 							new DialogueOption("hemomancy.lady.option.dismiss", null, null)
 					)))
 					.build();
-			case 1 -> DialogueTree.builder(SPEAKER, LADY_ICON, 0)
-					.theme(DialogueTheme.UNSTAINED)
+			case 1 -> ladyBuilder()
 					.addNode(new DialogueNode("root", List.of(
 							"hemomancy.lady.cleansing.v1.line1",
 							"hemomancy.lady.cleansing.v1.line2"
@@ -169,8 +168,7 @@ public final class OurLadyWhisperDialogueTrees {
 							new DialogueOption("hemomancy.lady.option.dismiss", null, null)
 					)))
 					.build();
-			default -> DialogueTree.builder(SPEAKER, LADY_ICON, 0)
-					.theme(DialogueTheme.UNSTAINED)
+			default -> ladyBuilder()
 					.addNode(new DialogueNode("root", List.of(
 							"hemomancy.lady.cleansing.v2.line1"
 					), List.of(
@@ -190,8 +188,7 @@ public final class OurLadyWhisperDialogueTrees {
 
 	private static DialogueTree absolvedWhisper(int variant) {
 		return switch (variant) {
-			case 0 -> DialogueTree.builder(SPEAKER, LADY_ICON, 0)
-					.theme(DialogueTheme.UNSTAINED)
+			case 0 -> ladyBuilder()
 					.addNode(new DialogueNode("root", List.of(
 							"hemomancy.lady.absolved.v0.line1",
 							"hemomancy.lady.absolved.v0.line2"
@@ -205,8 +202,7 @@ public final class OurLadyWhisperDialogueTrees {
 							new DialogueOption("hemomancy.lady.option.dismiss", null, null)
 					)))
 					.build();
-			case 1 -> DialogueTree.builder(SPEAKER, LADY_ICON, 0)
-					.theme(DialogueTheme.UNSTAINED)
+			case 1 -> ladyBuilder()
 					.addNode(new DialogueNode("root", List.of(
 							"hemomancy.lady.absolved.v1.line1",
 							"hemomancy.lady.absolved.v1.line2"
@@ -214,8 +210,7 @@ public final class OurLadyWhisperDialogueTrees {
 							new DialogueOption("hemomancy.lady.option.dismiss", null, null)
 					)))
 					.build();
-			default -> DialogueTree.builder(SPEAKER, LADY_ICON, 0)
-					.theme(DialogueTheme.UNSTAINED)
+			default -> ladyBuilder()
 					.addNode(new DialogueNode("root", List.of(
 							"hemomancy.lady.absolved.v2.line1"
 					), List.of(
@@ -236,8 +231,7 @@ public final class OurLadyWhisperDialogueTrees {
 
 	private static DialogueTree purifiedWhisper(int variant) {
 		return switch (variant) {
-			case 0 -> DialogueTree.builder(SPEAKER, LADY_ICON, 0)
-					.theme(DialogueTheme.UNSTAINED)
+			case 0 -> ladyBuilder()
 					.addNode(new DialogueNode("root", List.of(
 							"hemomancy.lady.purified.v0.line1",
 							"hemomancy.lady.purified.v0.line2"
@@ -252,8 +246,7 @@ public final class OurLadyWhisperDialogueTrees {
 							new DialogueOption("hemomancy.lady.option.dismiss", null, "lady_clarity_rite_memory")
 					)))
 					.build();
-			case 1 -> DialogueTree.builder(SPEAKER, LADY_ICON, 0)
-					.theme(DialogueTheme.UNSTAINED)
+			case 1 -> ladyBuilder()
 					.addNode(new DialogueNode("root", List.of(
 							"hemomancy.lady.purified.v1.line1",
 							"hemomancy.lady.purified.v1.line2"
@@ -261,8 +254,7 @@ public final class OurLadyWhisperDialogueTrees {
 							new DialogueOption("hemomancy.lady.option.dismiss", null, null)
 					)))
 					.build();
-			default -> DialogueTree.builder(SPEAKER, LADY_ICON, 0)
-					.theme(DialogueTheme.UNSTAINED)
+			default -> ladyBuilder()
 					.addNode(new DialogueNode("root", List.of(
 							"hemomancy.lady.purified.v2.line1"
 					), List.of(
@@ -303,8 +295,7 @@ public final class OurLadyWhisperDialogueTrees {
 
 	private static DialogueTree discerningWhisper(int variant) {
 		return switch (variant) {
-			case 0 -> DialogueTree.builder(SPEAKER, LADY_ICON, 0)
-					.theme(DialogueTheme.UNSTAINED)
+			case 0 -> ladyBuilder()
 					.addNode(new DialogueNode("root", List.of(
 							"hemomancy.lady.discerning.v0.line1",
 							"hemomancy.lady.discerning.v0.line2"
@@ -318,16 +309,14 @@ public final class OurLadyWhisperDialogueTrees {
 							new DialogueOption("hemomancy.lady.option.dismiss", null, null)
 					)))
 					.build();
-			case 1 -> DialogueTree.builder(SPEAKER, LADY_ICON, 0)
-					.theme(DialogueTheme.UNSTAINED)
+			case 1 -> ladyBuilder()
 					.addNode(new DialogueNode("root", List.of(
 							"hemomancy.lady.discerning.v1.line1"
 					), List.of(
 							new DialogueOption("hemomancy.lady.option.dismiss", null, null)
 					)))
 					.build();
-			default -> DialogueTree.builder(SPEAKER, LADY_ICON, 0)
-					.theme(DialogueTheme.UNSTAINED)
+			default -> ladyBuilder()
 					.addNode(new DialogueNode("root", List.of(
 							"hemomancy.lady.discerning.v2.line1",
 							"hemomancy.lady.discerning.v2.line2"
@@ -348,8 +337,7 @@ public final class OurLadyWhisperDialogueTrees {
 
 	private static DialogueTree vigilantWhisper(int variant) {
 		return switch (variant) {
-			case 0 -> DialogueTree.builder(SPEAKER, LADY_ICON, 0)
-					.theme(DialogueTheme.UNSTAINED)
+			case 0 -> ladyBuilder()
 					.addNode(new DialogueNode("root", List.of(
 							"hemomancy.lady.vigilant.v0.line1",
 							"hemomancy.lady.vigilant.v0.line2"
@@ -364,8 +352,7 @@ public final class OurLadyWhisperDialogueTrees {
 							new DialogueOption("hemomancy.lady.option.dismiss", null, null)
 					)))
 					.build();
-			case 1 -> DialogueTree.builder(SPEAKER, LADY_ICON, 0)
-					.theme(DialogueTheme.UNSTAINED)
+			case 1 -> ladyBuilder()
 					.addNode(new DialogueNode("root", List.of(
 							"hemomancy.lady.vigilant.v1.line1",
 							"hemomancy.lady.vigilant.v1.line2"
@@ -373,8 +360,7 @@ public final class OurLadyWhisperDialogueTrees {
 							new DialogueOption("hemomancy.lady.option.dismiss", null, null)
 					)))
 					.build();
-			default -> DialogueTree.builder(SPEAKER, LADY_ICON, 0)
-					.theme(DialogueTheme.UNSTAINED)
+			default -> ladyBuilder()
 					.addNode(new DialogueNode("root", List.of(
 							"hemomancy.lady.vigilant.v2.line1"
 					), List.of(
@@ -394,8 +380,7 @@ public final class OurLadyWhisperDialogueTrees {
 
 	private static DialogueTree resoluteWhisper(int variant) {
 		return switch (variant) {
-			case 0 -> DialogueTree.builder(SPEAKER, LADY_ICON, 0)
-					.theme(DialogueTheme.UNSTAINED)
+			case 0 -> ladyBuilder()
 					.addNode(new DialogueNode("root", List.of(
 							"hemomancy.lady.resolute.v0.line1",
 							"hemomancy.lady.resolute.v0.line2"
@@ -410,8 +395,7 @@ public final class OurLadyWhisperDialogueTrees {
 							new DialogueOption("hemomancy.lady.option.dismiss", null, null)
 					)))
 					.build();
-			case 1 -> DialogueTree.builder(SPEAKER, LADY_ICON, 0)
-					.theme(DialogueTheme.UNSTAINED)
+			case 1 -> ladyBuilder()
 					.addNode(new DialogueNode("root", List.of(
 							"hemomancy.lady.resolute.v1.line1",
 							"hemomancy.lady.resolute.v1.line2"
@@ -419,8 +403,7 @@ public final class OurLadyWhisperDialogueTrees {
 							new DialogueOption("hemomancy.lady.option.dismiss", null, null)
 					)))
 					.build();
-			default -> DialogueTree.builder(SPEAKER, LADY_ICON, 0)
-					.theme(DialogueTheme.UNSTAINED)
+			default -> ladyBuilder()
 					.addNode(new DialogueNode("root", List.of(
 							"hemomancy.lady.resolute.v2.line1"
 					), List.of(
@@ -441,8 +424,7 @@ public final class OurLadyWhisperDialogueTrees {
 
 	private static DialogueTree enlightenedWhisper(int variant) {
 		return switch (variant) {
-			case 0 -> DialogueTree.builder(SPEAKER, LADY_ICON, 0)
-					.theme(DialogueTheme.UNSTAINED)
+			case 0 -> ladyBuilder()
 					.addNode(new DialogueNode("root", List.of(
 							"hemomancy.lady.enlightened.v0.line1",
 							"hemomancy.lady.enlightened.v0.line2"
@@ -457,8 +439,7 @@ public final class OurLadyWhisperDialogueTrees {
 							new DialogueOption("hemomancy.lady.option.dismiss", null, "lady_enlightened_truth_1")
 					)))
 					.build();
-			case 1 -> DialogueTree.builder(SPEAKER, LADY_ICON, 0)
-					.theme(DialogueTheme.UNSTAINED)
+			case 1 -> ladyBuilder()
 					.addNode(new DialogueNode("root", List.of(
 							"hemomancy.lady.enlightened.v1.line1",
 							"hemomancy.lady.enlightened.v1.line2"
@@ -466,8 +447,7 @@ public final class OurLadyWhisperDialogueTrees {
 							new DialogueOption("hemomancy.lady.option.dismiss", null, null)
 					)))
 					.build();
-			default -> DialogueTree.builder(SPEAKER, LADY_ICON, 0)
-					.theme(DialogueTheme.UNSTAINED)
+			default -> ladyBuilder()
 					.addNode(new DialogueNode("root", List.of(
 							"hemomancy.lady.enlightened.v2.line1"
 					), List.of(

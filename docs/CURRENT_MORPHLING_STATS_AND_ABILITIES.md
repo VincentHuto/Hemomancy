@@ -2,14 +2,14 @@
 
 > Implementation-grounded reference for the eight canonical Morphling strains currently registered in Hemomancy.
 >
-> Last verified against the current source: **August 9, 2026**.
+> Last verified against the current source: **August 14, 2026**.
 
 The former twelve-animal prototype roster is retired. Old morphling IDs and assets may still exist for save migration, but the playable strain roster is:
 
 1. Deadman's Purse
 2. Gravecap
 3. Witch's Ear
-4. Foxfire
+4. Lumenlace
 5. Bootlace
 6. Irontooth
 7. Emberfang
@@ -49,7 +49,7 @@ The stage values in this table are ordered:
 | **Deadman's Purse** | Animus / Congeatio | **Sanguine Siphon:** restores **1 / 1.5 / 2 / 2.5 / 3 / 3.5 mL blood** per two-second effect proc, subject to the passive-income circulation cap. |
 | **Gravecap** | Mortem / Animus | **Mycorrhizal Mending:** heals **0.5 / 0.75 / 1 / 1.25 / 1.5 / 1.75 HP** per two-second effect proc. Two HP equal one heart. |
 | **Witch's Ear** | Ductilis / Tenebris | **Echoic Perception:** reveals living entities in a **16 / 20 / 24 / 28 / 32 / 36-block radius**. This operates from Unfed even though its maturity tooltip lists it at Developing. |
-| **Foxfire** | Lux / Ductilis | **Luminous Dissipation:** adds **10 / 20 / 30 / 40 / 50 / 60 percentage points of knockback resistance**. |
+| **Lumenlace** | Lux / Ductilis | **Luminous Dissipation:** adds **10 / 20 / 30 / 40 / 50 / 60 percentage points of knockback resistance**. |
 | **Bootlace** | Tenebris / Lux | **Arachnid Anastomosis:** repairs **0.5 / 0.75 / 1 / 1.25 / 1.5 / 1.75 vascular health** to every damaged body section per two-second effect proc. |
 | **Irontooth** | Ferric / Mortem | **Burrower's Instinct:** adds **15 / 30 / 45 / 60 / 75 / 90% block-breaking speed**. Below Y=50 it also heals **0.5 / 0.75 / 1 / 1.25 / 1.5 / 1.75 HP** per proc and grants Night Vision. |
 | **Emberfang** | Flammeus / Ductilis | **Serpentine Guile:** movement speed is **+15 / +30 / +45 / +45 / +45 / +45%** and attack speed is **+10 / +20 / +30 / +30 / +30 / +30%**. Its passive amplifier is capped at 2. |
@@ -104,11 +104,11 @@ Hyphal Cultivation increases Gravecap's support radii, healing, and Spore Sac ch
 | **Apex** | **Night-State Pursuit:** below light level 4, grants Strength II and Speed I. Echoic Perception reaches 32 blocks. |
 | **Primal** | **Echothesis:** spend 260 mL; 25-second cooldown; 8 seconds of Morphic Strain. Living entities within 36 blocks glow for 11 seconds. Below light level 5, the wearer gains Strength II and Speed II for 9 seconds while nearby monsters receive Darkness for 5 seconds. |
 
-### Foxfire
+### Lumenlace
 
 **Preferred tendency:** Lux  
 **Secondary tendency:** Ductilis  
-**Role:** Knockback resistance, concealment, disruption, and death prevention
+**Role:** Luminous neural conduction, concealment, disruption, and death prevention
 
 | Stage | Stats and powers granted |
 |---|---|
@@ -204,7 +204,7 @@ Only the following Primal strains are currently accepted by the Morphling Cradle
 - Bootlace
 - Irontooth
 
-Witch's Ear, Foxfire, and Emberfang are not currently accepted by the Cradle.
+Witch's Ear, Lumenlace, and Emberfang are not currently accepted by the Cradle.
 
 ## Primary Implementation Sources
 

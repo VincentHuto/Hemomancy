@@ -17,7 +17,8 @@ class DialogueSpriteResourceTest {
 
 	@Test
 	void themesProvideNineSliceFramesCardsAndButtons() throws IOException {
-		for (String theme : new String[] { "blood", "unstained", "fungal" }) {
+		for (String theme : new String[] { "blood", "blood_material", "unstained", "unstained_material",
+				"fungal", "fungal_material", "still", "still_material" }) {
 			assertSprite(theme + "/frame.png", 128, 128, true);
 			assertSprite(theme + "/portrait_frame.png", 128, 128, true);
 			for (String state : new String[] { "card", "card_selected", "card_disabled" })
@@ -43,12 +44,18 @@ class DialogueSpriteResourceTest {
 			assertSprite("categories/" + category + ".png", 64, 64, true);
 			assertSprite("categories/" + category + "_selected.png", 64, 64, true);
 			assertSolidCenter("categories/" + category + ".png", 8);
+			assertSolidCenter("categories/" + category + "_selected.png", 8);
+			assertSprite("categories_material/" + category + ".png", 64, 64, true);
+			assertSprite("categories_material/" + category + "_selected.png", 64, 64, true);
+			assertSolidCenter("categories_material/" + category + ".png", 8);
+			assertSolidCenter("categories_material/" + category + "_selected.png", 8);
 		}
 	}
 
 	@Test
 	void nineSliceStretchCentersContainNoDecorativeLines() throws IOException {
-		for (String theme : new String[] { "blood", "unstained", "fungal" }) {
+		for (String theme : new String[] { "blood", "blood_material", "unstained", "unstained_material",
+				"fungal", "fungal_material", "still", "still_material" }) {
 			for (String state : new String[] { "card", "card_selected", "card_disabled" })
 				assertSolidCenter(theme + "/" + state + ".png", 8);
 			for (String state : new String[] { "button", "button_selected", "button_disabled" })
