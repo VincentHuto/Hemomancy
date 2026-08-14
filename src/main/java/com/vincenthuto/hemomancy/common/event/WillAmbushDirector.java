@@ -20,6 +20,7 @@ import com.vincenthuto.hemomancy.common.network.will.WillPresenceCuePacket;
 import com.vincenthuto.hemomancy.common.rite.harbinger.QliphothBloomSavedData;
 import com.vincenthuto.hemomancy.common.worldgen.ChamberOfWillManager;
 import com.vincenthuto.hemomancy.config.HemoServerConfig;
+import com.vincenthuto.hemomancy.config.HemoConfigValues;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
@@ -55,27 +56,27 @@ public final class WillAmbushDirector {
 		if (!(event.getEntity() instanceof ServerPlayer player) || !(player.level() instanceof ServerLevel server)) {
 			return;
 		}
-		if (!boolConfig(HemoServerConfig.WILL_ENABLED, true) || player.isCreative() || player.isSpectator()) return;
+		if (!HemoConfigValues.get(HemoServerConfig.WILL_ENABLED, true) || player.isCreative() || player.isSpectator()) return;
 
-		int interval = intConfig(HemoServerConfig.WILL_AMBUSH_CHECK_INTERVAL_TICKS, 200);
+		int interval = HemoConfigValues.get(HemoServerConfig.WILL_AMBUSH_CHECK_INTERVAL_TICKS, 200);
 		int stagger = player.getId() * 31;
 		if ((player.tickCount + stagger) % interval != 0) return;
 
 		int degree = HemoCapabilityAccess.getPlayerDegreeNumber(player);
-		if (degree < intConfig(HemoServerConfig.WILL_MIN_DEGREE, 4)) return;
+		if (degree < HemoConfigValues.get(HemoServerConfig.WILL_MIN_DEGREE, 4)) return;
 		if (!HemoCapabilityAccess.getBloodVolume(player).map(volume -> volume.isActive()).orElse(false)) return;
 		if (isSanctuary(server, player.blockPosition())) return;
 
 		WillAmbushState state = HemoCapabilityAccess.getWillAmbushState(player);
 		long now = server.getGameTime();
-		if (now - state.getLastAmbushGameTime() < intConfig(HemoServerConfig.WILL_AMBUSH_COOLDOWN_TICKS, 24000)) {
+		if (now - state.getLastAmbushGameTime() < HemoConfigValues.get(HemoServerConfig.WILL_AMBUSH_COOLDOWN_TICKS, 24000)) {
 			return;
 		}
 		if (activeNear(server, player.blockPosition(), PLAYER_CAP_RADIUS)
-				>= intConfig(HemoServerConfig.WILL_MAX_ACTIVE_PER_PLAYER, 3)) {
+				>= HemoConfigValues.get(HemoServerConfig.WILL_MAX_ACTIVE_PER_PLAYER, 3)) {
 			return;
 		}
-		if (activeInDimension(server) >= intConfig(HemoServerConfig.WILL_MAX_ACTIVE_PER_DIMENSION, 8)) {
+		if (activeInDimension(server) >= HemoConfigValues.get(HemoServerConfig.WILL_MAX_ACTIVE_PER_DIMENSION, 8)) {
 			return;
 		}
 
@@ -108,7 +109,7 @@ public final class WillAmbushDirector {
 		return server.getEntitiesOfClass(ServerPlayer.class, seed.getBoundingBox().inflate(TARGET_SEARCH_RADIUS),
 						player -> player.isAlive() && !player.isCreative() && !player.isSpectator()
 								&& HemoCapabilityAccess.getPlayerDegreeNumber(player)
-								>= intConfig(HemoServerConfig.WILL_MIN_DEGREE, 4))
+								>= HemoConfigValues.get(HemoServerConfig.WILL_MIN_DEGREE, 4))
 				.stream()
 				.max(Comparator.comparingInt(HemoCapabilityAccess::getPlayerDegreeNumber))
 				.orElse(seed);
@@ -120,20 +121,20 @@ public final class WillAmbushDirector {
 	}
 
 	private static double chanceFor(ServerLevel server, ServerPlayer player, WillAmbushState state) {
-		double chance = doubleConfig(HemoServerConfig.WILL_BASE_CHANCE_PER_CHECK, 0.02D);
+		double chance = HemoConfigValues.get(HemoServerConfig.WILL_BASE_CHANCE_PER_CHECK, 0.02D);
 		if (terrainRipe(server, player.blockPosition())) {
-			chance *= doubleConfig(HemoServerConfig.WILL_TERRAIN_MULTIPLIER, 3.0D);
+			chance *= HemoConfigValues.get(HemoServerConfig.WILL_TERRAIN_MULTIPLIER, 3.0D);
 		}
 		if (BloodMoonEvents.isBloodMoonActive(server)) {
-			chance *= doubleConfig(HemoServerConfig.WILL_BLOOD_MOON_MULTIPLIER, 2.0D);
+			chance *= HemoConfigValues.get(HemoServerConfig.WILL_BLOOD_MOON_MULTIPLIER, 2.0D);
 		}
 		MobEffectInstance drunkenness = player.getEffect(EffectInit.blood_drunkenness);
 		if (drunkenness != null) {
-			chance *= 1.0D + doubleConfig(HemoServerConfig.WILL_BLOOD_DRUNKENNESS_MULTIPLIER_PER_AMPLIFIER, 0.5D)
+			chance *= 1.0D + HemoConfigValues.get(HemoServerConfig.WILL_BLOOD_DRUNKENNESS_MULTIPLIER_PER_AMPLIFIER, 0.5D)
 					* (drunkenness.getAmplifier() + 1);
 		}
 		if (state.getHeraldUntilGameTime() > server.getGameTime()) {
-			chance *= doubleConfig(HemoServerConfig.WILL_HERALD_MULTIPLIER, 4.0D);
+			chance *= HemoConfigValues.get(HemoServerConfig.WILL_HERALD_MULTIPLIER, 4.0D);
 		}
 		if (nearOwnedBloom(server, player)) {
 			chance *= 1.5D;
@@ -215,15 +216,4 @@ public final class WillAmbushDirector {
 				will -> will.isAlive() && will.hemomancy$getOwnerUUID() == null).size();
 	}
 
-	private static boolean boolConfig(net.neoforged.neoforge.common.ModConfigSpec.BooleanValue value, boolean fallback) {
-		return value == null ? fallback : value.get();
-	}
-
-	private static int intConfig(net.neoforged.neoforge.common.ModConfigSpec.IntValue value, int fallback) {
-		return value == null ? fallback : value.get();
-	}
-
-	private static double doubleConfig(net.neoforged.neoforge.common.ModConfigSpec.DoubleValue value, double fallback) {
-		return value == null ? fallback : value.get();
-	}
 }

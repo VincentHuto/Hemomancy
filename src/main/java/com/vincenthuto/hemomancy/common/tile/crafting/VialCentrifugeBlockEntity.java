@@ -51,21 +51,15 @@ public class VialCentrifugeBlockEntity extends BaseContainerBlockEntity
 	int spinningProgress;
 	int spinningTotalTime;
 	int canSpin;
-//	private static final int[] INPUT_SLOTS = new int[] { 2, 3, 4, 5, 6, 7, 8, 9 };
-//	private static final int[] OUTPUT_SLOTS = new int[] { 10, 11, 12, 13, 14, 15, 16, 17 };
-	Map<Integer, Integer> inOutMap = new HashMap<Integer, Integer>() {
-		{
-			put(2, 10);
-			put(3, 11);
-			put(4, 12);
-			put(5, 13);
-			put(6, 14);
-			put(7, 15);
-			put(8, 16);
-			put(9, 17);
-
-		}
-	};
+	Map<Integer, Integer> inOutMap = Map.of(
+			2, 10,
+			3, 11,
+			4, 12,
+			5, 13,
+			6, 14,
+			7, 15,
+			8, 16,
+			9, 17);
 	public final ContainerData dataAccess = new ContainerData() {
 		@Override
 		public int get(int index) {
@@ -348,18 +342,11 @@ public class VialCentrifugeBlockEntity extends BaseContainerBlockEntity
 		// These are the Slots that are across and need to be balanced
 		if (isCentrifugeEmpty() || !hasAtLeastOneProcessableVial()) {
 			return false;
-		} else {
-			if ((checkBalancedSpots(2, 6) && checkBalancedSpots(3, 7) && checkBalancedSpots(4, 8)
-					&& checkBalancedSpots(9, 5))) {
-				if (dataAccess.get(0) <= 0) {
-					dataAccess.set(0, SPIN_TOTAL_TIME);
-					return true;
-				} else {
-					return false;
-				}
-			}
 		}
-		return false;
+		if (!checkBalancedSpots(2, 6) || !checkBalancedSpots(3, 7) || !checkBalancedSpots(4, 8)
+				|| !checkBalancedSpots(9, 5) || dataAccess.get(0) > 0) return false;
+		dataAccess.set(0, SPIN_TOTAL_TIME);
+		return true;
 	}
 
 	private boolean hasAtLeastOneProcessableVial() {
@@ -563,11 +550,6 @@ public class VialCentrifugeBlockEntity extends BaseContainerBlockEntity
 		level.setBlocksDirty(worldPosition, getBlockState(), getBlockState());
 		level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 3);
 		setChanged();
-	}
-
-	@Override
-	public void setChanged() {
-		super.setChanged();
 	}
 
 	@Override

@@ -61,11 +61,7 @@ public class LivingToolItem extends DiggerItem implements IDispellable, ITendenc
 
 	@Override
 	public float getDestroySpeed(ItemStack stack, BlockState state) {
-		if (EFFECTIVE_ON.contains(state.getBlock())) {
-			return speed;
-		} else {
-			return 0.5f;
-		}
+		return EFFECTIVE_ON.contains(state.getBlock()) ? speed : 0.5f;
 	}
 
 	@Override
@@ -136,15 +132,7 @@ public class LivingToolItem extends DiggerItem implements IDispellable, ITendenc
 	}
 
 	public boolean isCorrectToolForDrops(BlockState blockIn) {
-		if (EFFECTIVE_ON.contains(blockIn.getBlock())) {
-			return true;
-		} else {
-			return false;
-		}
+		return EFFECTIVE_ON.contains(blockIn.getBlock());
 	}
 
-	@Override
-	public boolean onEntitySwing(ItemStack stack, LivingEntity entity) {
-		return super.onEntitySwing(stack, entity);
-	}
 }

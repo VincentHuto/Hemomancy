@@ -172,10 +172,6 @@ public class MasonsEffigyModel extends Model {
         this.halo.zRot = rotation;
 
         // reset tablet base rotations then apply gentle sway
-//        this.tablet1.xRot = 0; this.tablet1.yRot = 0; this.tablet1.zRot = 0;
-//        this.tablet2.xRot = 0; this.tablet2.yRot = 0; this.tablet2.zRot = 0;
-//        this.tablet3.xRot = 0; this.tablet3.yRot = 0; this.tablet3.zRot = 0;
-//        this.tablet4.xRot = 0; this.tablet4.yRot = 0; this.tablet4.zRot = 0;
         // sway parameters
         float swaySpeed = 0.12F; // how fast the tablets sway
         float swayAmp = 0.08F;   // angular amplitude in radians (~4.6 degrees)

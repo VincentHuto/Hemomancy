@@ -1,6 +1,5 @@
 package com.vincenthuto.hemomancy.client.model.tile.crafting;// Made with Blockbench 5.1.4
 // Exported for Minecraft version 1.17 or later with Mojang mappings
-// Paste this class into your mod and generate all required imports
 
 
 import com.mojang.blaze3d.vertex.PoseStack;

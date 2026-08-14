@@ -1135,7 +1135,6 @@ public class MycophantModel extends HierarchicalModel<MycophantEntity> {
         lGills.xRot = (float) Math.abs((Math.cos((frame) * 0.5f) * 0.1325));
         rGills.xRot = (float) Math.abs((Math.cos((frame) * 0.5f) * 0.1325));
         // Upper Body
-        // this.upperTorso.rotateAngleX = (float) (Math.sin((frame) * 0.13f) * 0.0325);
 
         // Eyes
         eye.zRot = (float) (Math.sin((frame)) * 0.0325);

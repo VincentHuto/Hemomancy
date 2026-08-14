@@ -5,7 +5,6 @@ import com.vincenthuto.hemomancy.common.rite.CardinalRiteCeremonyDefinition;
 import com.vincenthuto.hemomancy.common.rite.floor.CardinalRiteFloorRegistry;
 import com.vincenthuto.hutoslib.math.MultiblockPattern;
 import net.minecraft.core.HolderLookup;
-import net.minecraft.core.NonNullList;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.*;
@@ -162,11 +161,6 @@ public class CardinalRiteRecipe extends CustomRecipe {
 
 	public CardinalRiteType getRiteType() {
 		return riteType;
-	}
-
-	@Override
-	public NonNullList<Ingredient> getIngredients() {
-		return super.getIngredients();
 	}
 
 	public MultiblockPattern getPattern() {

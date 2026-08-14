@@ -165,7 +165,6 @@ public class HemoCommand {
 		dispatcher.register(Commands.literal("hemo")
 				.requires(src -> src.hasPermission(2))
 
-				// ── Blood Volume ──
 				.then(Commands.literal("blood")
 						.then(Commands.literal("get")
 								.executes(ctx -> getBlood(ctx.getSource(), ctx.getSource().getPlayerOrException()))
@@ -199,7 +198,6 @@ public class HemoCommand {
 								.then(Commands.argument("player", EntityArgument.player())
 										.executes(ctx -> disbandBloodline(ctx.getSource(), EntityArgument.getPlayer(ctx, "player"))))))
 
-				// ── Initiatory Degree ──
 				.then(Commands.literal("degree")
 						.then(Commands.literal("get")
 								.executes(ctx -> getDegree(ctx.getSource(), ctx.getSource().getPlayerOrException()))
@@ -213,7 +211,6 @@ public class HemoCommand {
 												.executes(ctx -> setDegree(ctx.getSource(), EntityArgument.getPlayer(ctx, "player"),
 														IntegerArgumentType.getInteger(ctx, "degree")))))))
 
-				// ── Skill Points (global static state, not per-player) ──
 				.then(Commands.literal("morphling")
 						.then(Commands.literal("stage")
 								.then(Commands.literal("get")
@@ -288,7 +285,6 @@ public class HemoCommand {
 						.then(Commands.literal("reset")
 								.executes(ctx -> resetSkills(ctx.getSource(), ctx.getSource().getPlayerOrException()))))
 
-				// ── Unstained Progression ──
 				.then(Commands.literal("unstained")
 						.then(Commands.literal("get")
 								.executes(ctx -> getUnstainedOverview(ctx.getSource(), ctx.getSource().getPlayerOrException()))
@@ -335,7 +331,6 @@ public class HemoCommand {
 								.then(Commands.argument("player", EntityArgument.player())
 										.executes(ctx -> maxUnstained(ctx.getSource(), EntityArgument.getPlayer(ctx, "player"))))))
 
-				// ── Visceral Organs ──
 				.then(Commands.literal("organs")
 						.then(Commands.literal("get")
 								.executes(ctx -> getOrgans(ctx.getSource(), ctx.getSource().getPlayerOrException()))
@@ -362,7 +357,6 @@ public class HemoCommand {
 								.then(Commands.argument("player", EntityArgument.player())
 										.executes(ctx -> resetOrgans(ctx.getSource(), EntityArgument.getPlayer(ctx, "player"))))))
 
-				// ── Blood Tendency ──
 				.then(Commands.literal("tendency")
 						.then(Commands.literal("get")
 								.executes(ctx -> getTendency(ctx.getSource(), ctx.getSource().getPlayerOrException()))
@@ -393,14 +387,12 @@ public class HemoCommand {
 														FloatArgumentType.getFloat(ctx, "value"))))))
 				)
 
-				// ── Blood Moon ──
 				.then(Commands.literal("bloodmoon")
 						.then(Commands.literal("summon")
 								.executes(ctx -> summonBloodMoon(ctx.getSource())))
 						.then(Commands.literal("cancel")
 								.executes(ctx -> cancelBloodMoon(ctx.getSource()))))
 
-				// ── Manipulation Slots ──
 				.then(Commands.literal("fane")
 						.then(Commands.literal("preview")
 								.then(Commands.literal("member")
@@ -580,8 +572,6 @@ public class HemoCommand {
 		);
 	}
 
-	// ═══════════════════ Blood Volume ═══════════════════
-
 	private static int getBlood(CommandSourceStack source, ServerPlayer player) {
 		IBloodVolume blood = HemoCapabilityAccess.getBloodVolume(player)
 				.orElseThrow(IllegalStateException::new);
@@ -697,8 +687,6 @@ public class HemoCommand {
 		return 1;
 	}
 
-	// ═══════════════════ Initiatory Degree ═══════════════════
-
 	private static int getDegree(CommandSourceStack source, ServerPlayer player) {
 		IInitiatoryDegree degree = HemoCapabilityAccess.getInitiatoryDegree(player)
 				.orElseThrow(IllegalStateException::new);
@@ -731,8 +719,6 @@ public class HemoCommand {
 				true);
 		return 1;
 	}
-
-	// ═══════════════════ Puppeteer Summons ═══════════════════
 
 	private static int listKnownSummons(CommandSourceStack source, ServerPlayer player) {
 		List<String> names = HemoCapabilityAccess.requireKnownSummons(player).getKnownSummonNames();
@@ -1153,8 +1139,6 @@ public class HemoCommand {
 		}
 	}
 
-	// ═══════════════════ Skill Points ═══════════════════
-
 	private static int getSkills(CommandSourceStack source, ServerPlayer player) {
 		SkillProgress progress = HemoCapabilityAccess.requireSkillProgress(player);
 		source.sendSuccess(() -> Component.literal("Skill Points: ")
@@ -1192,8 +1176,6 @@ public class HemoCommand {
 	private static void syncSkills(ServerPlayer player) {
 		PacketHandler.sendToPlayer(player, new PacketSyncSkills(HemoCapabilityAccess.requireSkillProgress(player).toSyncTag()));
 	}
-
-	// ═══════════════════ Unstained Progression ═══════════════════
 
 	private static int getUnstainedOverview(CommandSourceStack source, ServerPlayer player) {
 		IUnstainedProgress cap = HemoCapabilityAccess.getUnstainedProgress(player)
@@ -1360,8 +1342,6 @@ public class HemoCommand {
 		return 1;
 	}
 
-	// ═══════════════════ Visceral Organs ═══════════════════
-
 	private static int getOrgans(CommandSourceStack source, ServerPlayer player) {
 		IVisceralOrgans organs = HemoCapabilityAccess.requireVisceralOrgans(player);
 		source.sendSuccess(() -> {
@@ -1383,7 +1363,6 @@ public class HemoCommand {
 	private static int setOrgan(CommandSourceStack source, ServerPlayer player, String organName, int level) {
 		EnumOrgan organ = EnumOrgan.byName(organName);
 		if (organ == null) {
-			// Try uppercase enum name
 			try {
 				organ = EnumOrgan.valueOf(organName.toUpperCase());
 			} catch (IllegalArgumentException e) {
@@ -1410,8 +1389,6 @@ public class HemoCommand {
 				true);
 		return 1;
 	}
-
-	// ═══════════════════ Blood Tendency ═══════════════════
 
 	private static int getTendency(CommandSourceStack source, ServerPlayer player) {
 		IBloodTendency bloodTendency = HemoCapabilityAccess.requireBloodTendency(player);
@@ -1525,8 +1502,6 @@ public class HemoCommand {
 		}
 		return builder.toString();
 	}
-
-	// ═══════════════════ Known Manipulations ═══════════════════
 
 	private static int listKnownManipulations(CommandSourceStack source, ServerPlayer player) {
 		List<String> names = HemoCapabilityAccess.requireKnownManipulations(player).getKnownManips().keySet().stream()
@@ -1644,8 +1619,6 @@ public class HemoCommand {
 		ManipulationDiagnosticsSync.sync(player);
 	}
 
-	// ═══════════════════ Manipulation Slots ═══════════════════
-
 	private static int getSlots(CommandSourceStack source, ServerPlayer player) {
 		IKnownManipulations known = HemoCapabilityAccess.getKnownManipulations(player)
 				.orElseThrow(IllegalStateException::new);
@@ -1696,8 +1669,6 @@ public class HemoCommand {
 		}
 		return 1;
 	}
-
-	// ═══════════════════ Blood Moon ═══════════════════
 
 	private static int summonWillAmbushAnchor(CommandSourceStack source, ServerPlayer player,
 			EnumBloodTendency school, int tier, int brokenCount, boolean sentPresent) {

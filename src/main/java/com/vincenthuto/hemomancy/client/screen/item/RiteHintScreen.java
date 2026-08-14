@@ -228,7 +228,7 @@ public class RiteHintScreen extends Screen {
 				Minecraft.getInstance().getBlockRenderer().renderSingleBlock(
 						block.defaultBlockState(), pose, bufferSource,
 						dimmed ? 0x60006 : LightTexture.FULL_BRIGHT, OverlayTexture.NO_OVERLAY);
-			} catch (Exception e) {
+			} catch (RuntimeException ignored) {
 				// Silently skip blocks that can't be rendered
 			}
 

@@ -39,7 +39,6 @@ public class BloodBoltRenderer extends EntityRenderer<BloodBoltEntity> {
 	}
 
 	@Override
-	@SuppressWarnings("unused")
 	public void render(BloodBoltEntity entityIn, float entityYaw, float partialTicks, PoseStack matrixStackIn,
 			MultiBufferSource bufferIn, int packedLightIn) {
 		matrixStackIn.pushPose();

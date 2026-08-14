@@ -60,26 +60,8 @@ public class MorphlingIncubatorRenderer implements BlockEntityRenderer<Morphling
 			source.endBatch(RenderTypeInit.INCUBATOR_FLUID);
 		}
 
-		float currentTime = te.getLevel().getGameTime() + partialTicks;
 
 		// ── Blood volume ring ────────────────────────────────────────────────────
-		double bloodVolume = te.getBloodVolume();
-		double maxBloodVolume = te.getMaxBloodVolume();
-		if (maxBloodVolume > 0) {
-			double fillRatio = Mth.clamp(bloodVolume / maxBloodVolume, 0, 1);
-
-			ms.pushPose();
-			ms.scale(0.5f, 0.5f, 0.5f);
-			ms.translate(0.5f, 0.5f, 0.5f);
-
-			Vec3 centerPos = new Vec3(
-					te.getBlockPos().getX() + 1.0,
-					te.getBlockPos().getY() + 1.0,
-					te.getBlockPos().getZ() + 1.0);
-
-			drawBloodVolumeRing(ms, bufferIn, centerPos, fillRatio, currentTime);
-			ms.popPose();
-		}
 
 		// ── Render center item ──────────────────────────────────────────────────
 		ItemStack centerStack = te.getCenterStack();
@@ -205,10 +187,7 @@ public class MorphlingIncubatorRenderer implements BlockEntityRenderer<Morphling
 			Vec3 to = new Vec3(x2, ringY + wave2, z2);
 
 			if (i < filledSegments) {
-				//drawBeamSegment(stack, bufferIn, from, to, 0.8f, 0.08f, 0.08f, 1.0f, 0.03f);
-				//drawBeamSegmentGlow(stack, bufferIn, from, to, 0.9f, 0.15f, 0.1f, 0.5f, 0.06f);
 			} else {
-				//drawBeamSegment(stack, bufferIn, from, to, 0.12f, 0.02f, 0.02f, 0.6f, 0.02f);
 			}
 		}
 	}

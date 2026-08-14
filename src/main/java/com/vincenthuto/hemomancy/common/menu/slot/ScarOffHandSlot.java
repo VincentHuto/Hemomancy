@@ -21,8 +21,4 @@ public class ScarOffHandSlot extends Slot {
 		return Pair.of(InventoryMenu.BLOCK_ATLAS, InventoryMenu.EMPTY_ARMOR_SLOT_SHIELD);
 	}
 
-	@Override
-	public boolean mayPlace(ItemStack stack) {
-		return super.mayPlace(stack);
-	}
 }

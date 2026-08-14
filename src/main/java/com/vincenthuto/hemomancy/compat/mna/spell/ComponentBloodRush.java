@@ -49,7 +49,6 @@ public class ComponentBloodRush extends PotionEffectComponent {
 	public void SpawnParticles(Level world, Vec3 impact_position, Vec3 normal, int age, LivingEntity caster,
 			ISpellDefinition recipe) {
 		if (age <= 10) {
-			float particle_spread = 1.2F;
 			float v = 0.4F;
 			int particleCount = 16;
 

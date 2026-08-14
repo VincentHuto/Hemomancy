@@ -74,7 +74,6 @@ public class BloodAneurysmManip extends BloodManipulation {
 		target.setDeltaMovement(current.x, LAUNCH_FORCE, current.z);
 		target.hurtMarked = true;
 
-		// Secondary burst damages entities around the target
 		Vec3 tPos = target.position().add(0, target.getBbHeight() * 0.5, 0);
 		AABB burstBox = new AABB(target.blockPosition()).inflate(BURST_RADIUS);
 		world.getEntitiesOfClass(LivingEntity.class, burstBox,

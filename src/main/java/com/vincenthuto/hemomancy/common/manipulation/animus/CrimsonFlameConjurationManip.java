@@ -47,7 +47,6 @@ public class CrimsonFlameConjurationManip extends BloodManipulation {
 
 	@Override
 	public void getAction(Player player, Level world, ItemStack heldItemMainhand, BlockPos position) {
-		// Calculate effective range with Sanguine Reach skill bonus
 		double range = BASE_RANGE * SkillPointHelper.getSanguineReachMultiplier(player);
 
 		Vec3 eyePos = player.getEyePosition(1.0F);
@@ -63,11 +62,9 @@ public class CrimsonFlameConjurationManip extends BloodManipulation {
 			return;
 		}
 
-		// Place the fire on the face that was hit (e.g. on top of the block)
 		Direction face = hitResult.getDirection();
 		BlockPos firePos = hitResult.getBlockPos().relative(face);
 
-		// Check that the target position is replaceable (air, tall grass, etc.)
 		BlockState existing = world.getBlockState(firePos);
 		if (!existing.canBeReplaced()) {
 			player.displayClientMessage(
@@ -75,25 +72,21 @@ public class CrimsonFlameConjurationManip extends BloodManipulation {
 			return;
 		}
 
-		// Place the crimson flame block
 		BlockState flameState = BlockInit.crimson_flames.get().defaultBlockState();
 		world.setBlock(firePos, flameState, 3);
 		world.playSound(null, firePos, SoundEvents.FIRECHARGE_USE, SoundSource.PLAYERS, 0.8f, 0.9f);
 
-		// Spawn a flash of particles to sell the conjuration
 		if (world instanceof ServerLevel sLevel) {
 			double cx = firePos.getX() + 0.5;
 			double cy = firePos.getY() + 0.5;
 			double cz = firePos.getZ() + 0.5;
 			RandomSource random = world.random;
 
-			// Bright crimson flash burst — central pop
 			sLevel.sendParticles(
 					HitGlowParticleFactory.createData(new ParticleColor(255, 40, 20)),
 					cx, cy, cz,
 					6, 0.1, 0.1, 0.1, 0.01f);
 
-			// Scattered ember glow particles — crimson/orange spread
 			for (int i = 0; i < 18; i++) {
 				float r = 180 + random.nextFloat() * 75;  // 180-255 red
 				float g = random.nextFloat() * 60;         // 0-60 green (orange tint)
@@ -106,7 +99,6 @@ public class CrimsonFlameConjurationManip extends BloodManipulation {
 						1, 0f, 0.15f, 0f, 0.02f);
 			}
 
-			// Dark blood-red embers rising upward
 			for (int i = 0; i < 8; i++) {
 				sLevel.sendParticles(
 						GlowParticleFactory.createData(new ParticleColor(120, 0, 0)),

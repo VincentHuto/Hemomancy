@@ -27,7 +27,6 @@ import org.joml.Matrix4f;
 
 import javax.annotation.Nonnull;
 import java.util.Arrays;
-import java.util.Map;
 
 /**
  * JEI recipe category for the Somatic Loom.

@@ -32,45 +32,36 @@ public class WhiteHumorVolume implements IWhiteHumorVolume, INBTSerializable<Com
 
 	@Override
 	public boolean drain(double points) {
-		if (!wouldOverstrain(points)) {
-			whiteHumorVolume -= points;
-			return true;
-		} else {
+		if (wouldOverstrain(points)) {
 			whiteHumorVolume = 0;
 			return false;
 		}
+		whiteHumorVolume -= points;
+		return true;
 	}
 
 	@Override
 	public boolean drainFromSource(IWhiteHumorVolume src, double points) {
-		if (src.fill(points) ) {
-			drain(points);
-			return true;
-		} else {
-			return false;
-		}
+		if (!src.fill(points)) return false;
+		drain(points);
+		return true;
 	}
 
 	@Override
 	public boolean fill(double points) {
-		if (!wouldOverflow(points)) {
-			whiteHumorVolume += points;
-			return true;
-		} else {
+		if (wouldOverflow(points)) {
 			whiteHumorVolume = maxWhiteHumorVolume;
 			return false;
 		}
-
+		whiteHumorVolume += points;
+		return true;
 	}
 
 	@Override
 	public boolean fillFromSource(IWhiteHumorVolume src, double points) {
-		if (src.drain(points) && src.getWhiteHumorVolume() > points) {
-			fill(points);
-			return true;
-		} else {
-			return false;
-		}
+		if (!src.drain(points) || src.getWhiteHumorVolume() <= points) return false;
+		fill(points);
+		return true;
 	}
 
 	@Override

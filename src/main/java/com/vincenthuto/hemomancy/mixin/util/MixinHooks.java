@@ -41,7 +41,8 @@ public class MixinHooks {
 
 		if (fallFly == AttributeInit.TriState.DENY) {
 			return false;
-		} else if (fallFly == AttributeInit.TriState.DEFAULT) {
+		}
+		if (fallFly == AttributeInit.TriState.DEFAULT) {
 			return newFlag;
 		}
 		return !livingEntity.onGround() && !livingEntity.isPassenger() && !livingEntity.hasEffect(MobEffects.LEVITATION)

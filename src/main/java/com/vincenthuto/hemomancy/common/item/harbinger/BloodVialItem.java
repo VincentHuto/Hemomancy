@@ -10,8 +10,6 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResult;
-import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
@@ -20,7 +18,6 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.component.CustomData;
-import net.minecraft.world.level.Level;
 
 import java.util.List;
 
@@ -57,12 +54,6 @@ public class BloodVialItem extends Item {
 	}
 
 	@Override
-	public InteractionResult interactLivingEntity(ItemStack stack, Player playerIn, LivingEntity target,
-			InteractionHand hand) {
-		return super.interactLivingEntity(stack, playerIn, target, hand);
-	}
-
-	@Override
 	public boolean onLeftClickEntity(ItemStack stack, Player player, Entity entity) {
 		CompoundTag tag = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
 		if (entity != null) {
@@ -85,15 +76,6 @@ public class BloodVialItem extends Item {
 		}
 		stack.set(DataComponents.CUSTOM_DATA, CustomData.of(tag));
 		return super.onLeftClickEntity(stack, player, entity);
-	}
-
-	@Override
-	public InteractionResultHolder<ItemStack> use(Level pLevel, Player pPlayer, InteractionHand pUsedHand) {
-		ItemStack curr = pPlayer.getItemInHand(pUsedHand);
-		if (curr.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag().get(TAG_ENTITY_TYPE) != null) {
-			System.out.println(getEntityType(curr));
-		}
-		return super.use(pLevel, pPlayer, pUsedHand);
 	}
 
 }

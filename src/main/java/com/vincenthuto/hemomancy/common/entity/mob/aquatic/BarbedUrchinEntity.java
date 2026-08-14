@@ -45,11 +45,8 @@ public class BarbedUrchinEntity extends AbstractFish {
 	int inflateCounter;
 	int deflateTimer;
 	private static final Predicate<LivingEntity> SCARY_MOB = (p_289442_) -> {
-		if (p_289442_ instanceof Player && ((Player) p_289442_).isCreative()) {
-			return false;
-		} else {
-			return p_289442_.getType() == EntityType.AXOLOTL || !p_289442_.getType().is(EntityTypeTags.AQUATIC);
-		}
+		if (p_289442_ instanceof Player && ((Player) p_289442_).isCreative()) return false;
+		return p_289442_.getType() == EntityType.AXOLOTL || !p_289442_.getType().is(EntityTypeTags.AQUATIC);
 	};
 	static final TargetingConditions targetingConditions = TargetingConditions.forNonCombat()
 			.ignoreInvisibilityTesting().ignoreLineOfSight().selector(SCARY_MOB);
@@ -101,7 +98,6 @@ public class BarbedUrchinEntity extends AbstractFish {
 	}
 
 	protected void registerGoals() {
-		// super.registerGoals();
 		this.goalSelector.addGoal(1, new BarbedUrchinEntity.BarbedUrchinEntityPuffGoal(this));
 	}
 
@@ -265,10 +261,6 @@ public class BarbedUrchinEntity extends AbstractFish {
 			this.fish = pFish;
 		}
 
-		/**
-		 * Returns whether execution should begin. You can also read and cache any state
-		 * necessary for execution in this method as well.
-		 */
 		public boolean canUse() {
 			List<LivingEntity> list = this.fish.level().getEntitiesOfClass(LivingEntity.class,
 					this.fish.getBoundingBox().inflate(2.0D), (p_149015_) -> {

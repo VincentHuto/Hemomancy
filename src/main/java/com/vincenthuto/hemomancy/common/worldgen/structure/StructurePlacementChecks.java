@@ -23,17 +23,13 @@ final class StructurePlacementChecks {
 	}
 
 	static boolean isSuitableLandChunk(Structure.GenerationContext context) {
-		if (!canPlaceOverworldHemomancyStructure(context)) {
-			return false;
-		}
-		return isSuitableLandChunk(context, MAX_ALLOWED_WATER_DEPTH);
+		return canPlaceOverworldHemomancyStructure(context)
+				&& isSuitableLandChunk(context, MAX_ALLOWED_WATER_DEPTH);
 	}
 
 	static boolean isSuitableSwampChunk(Structure.GenerationContext context) {
-		if (!canPlaceOverworldHemomancyStructure(context)) {
-			return false;
-		}
-		return isSuitableLandChunk(context, MAX_ALLOWED_SWAMP_WATER_DEPTH);
+		return canPlaceOverworldHemomancyStructure(context)
+				&& isSuitableLandChunk(context, MAX_ALLOWED_SWAMP_WATER_DEPTH);
 	}
 
 	private static boolean isSuitableLandChunk(Structure.GenerationContext context, int maxAllowedWaterDepth) {
@@ -57,9 +53,6 @@ final class StructurePlacementChecks {
 	}
 
 	static boolean isSuitableBuriedMausoleumSite(Structure.GenerationContext context) {
-		if (!canPlaceOverworldHemomancyStructure(context)) {
-			return false;
-		}
 		if (!isSuitableLandChunk(context)) {
 			return false;
 		}

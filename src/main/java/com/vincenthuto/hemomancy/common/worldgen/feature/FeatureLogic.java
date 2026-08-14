@@ -19,8 +19,6 @@ public final class FeatureLogic {
                 || worldReader.isStateAtPosition(pos.east(), IS_REPLACEABLE_AIR);
     }
 
-    // Slight stretch of logic: We check if the block is completely surrounded by air.
-    // If it's not completely surrounded by air, then there's a solid
     public static boolean hasSolidNeighbor(LevelSimulatedReader worldReader, BlockPos pos) {
         return !(worldReader.isStateAtPosition(pos.below(), IS_REPLACEABLE_AIR)
                 && worldReader.isStateAtPosition(pos.north(), IS_REPLACEABLE_AIR)
@@ -40,7 +38,7 @@ public final class FeatureLogic {
     }
 
     public static boolean worldGenReplaceable(BlockState state) {
-        return (state.canBeReplaced() ) && !state.is(BlockTags.FEATURES_CANNOT_REPLACE);
+        return state.canBeReplaced() && !state.is(BlockTags.FEATURES_CANNOT_REPLACE);
     }
 
     /**
@@ -60,18 +58,13 @@ public final class FeatureLogic {
         );
     }
 
-    /**
-     * Gets either cobblestone or mossy cobblestone, randomly.  Used for ruins.
-     */
-    @Deprecated // Determine if we can actually remove this one and delegate to StructureProcessor
+    /** Returns cobblestone or mossy cobblestone for ruins. */
+    @Deprecated
     public static BlockState randStone(RandomSource rand, int howMuch) {
         return rand.nextInt(howMuch) >= 1 ? Blocks.COBBLESTONE.defaultBlockState() : Blocks.MOSSY_COBBLESTONE.defaultBlockState();
     }
 
-    //private static final ImmutableSet<Material> MATERIAL_WHITELIST = ImmutableSet.of(Material.DIRT, Material.GRASS, Material.LEAVES, Material.WOOD, Material.PLANT, Material.STONE);
-
-    //FIXME turn this into a tag list, see MATERIAL_WHITELIST
-    //turn isSolid into said tag
+    // TODO: replace the material whitelist with a block tag.
     public static boolean isAreaClear(BlockGetter world, BlockPos min, BlockPos max) {
         for (BlockPos pos : BlockPos.betweenClosed(min, max)) {
             BlockState state = world.getBlockState(pos);
@@ -87,6 +80,6 @@ public final class FeatureLogic {
     }
 
     public static boolean isBlockNotOk(BlockState state) {
-        return state.liquid() || state.is(Blocks.BEDROCK) ;
+        return state.liquid() || state.is(Blocks.BEDROCK);
     }
 }

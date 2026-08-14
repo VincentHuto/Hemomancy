@@ -2,7 +2,6 @@ package com.vincenthuto.hemomancy.common.entity.mob.monster;
 
 import com.vincenthuto.hemomancy.common.init.SoundInit;
 import net.minecraft.core.BlockPos;
-import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.Difficulty;
@@ -56,11 +55,6 @@ public class FrozenClotEntity extends Monster {
 	}
 
 	@Override
-	protected void defineSynchedData(SynchedEntityData.Builder builder) {
-		super.defineSynchedData(builder);
-	}
-
-	@Override
 	public boolean doHurtTarget(Entity target) {
 		boolean flag = super.doHurtTarget(target);
 		if (flag && target instanceof net.minecraft.world.entity.LivingEntity living) {
@@ -109,8 +103,4 @@ public class FrozenClotEntity extends Monster {
 				&& checkMobSpawnRules(pType, pLevel, pSpawnType, pPos, pRandom);
 	}
 
-	@Override
-	public void tick() {
-		super.tick();
-	}
 }

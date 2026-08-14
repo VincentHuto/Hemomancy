@@ -171,7 +171,7 @@ public class DebugShowcaseItem extends Item {
 			if (currentChest != null) {
 				try {
 					currentChest.setItem(slotIndex % 27, new ItemStack(itemReg.get()));
-				} catch (Exception e) {
+				} catch (RuntimeException ignored) {
 					// Skip items that fail to create stacks
 				}
 			}
@@ -226,7 +226,7 @@ public class DebugShowcaseItem extends Item {
 
 				try {
 					level.setBlock(pos, block.defaultBlockState(), Block.UPDATE_CLIENTS);
-				} catch (Exception e) {
+				} catch (RuntimeException ignored) {
 					// Skip blocks that can't be placed
 				}
 
@@ -291,7 +291,7 @@ public class DebugShowcaseItem extends Item {
 				Entity testEntity = type.create(level);
 				if (testEntity == null) continue;
 				testEntity.discard();
-			} catch (Exception e) {
+			} catch (RuntimeException ignored) {
 				continue;
 			}
 
@@ -312,7 +312,7 @@ public class DebugShowcaseItem extends Item {
 					entity.setCustomNameVisible(true);
 					level.addFreshEntity(entity);
 				}
-			} catch (Exception e) {
+			} catch (RuntimeException ignored) {
 				// Skip entities that fail to create
 			}
 			penIndex++;
@@ -467,7 +467,7 @@ public class DebugShowcaseItem extends Item {
 
 			try {
 				level.setBlock(worldPos, block.defaultBlockState(), Block.UPDATE_CLIENTS);
-			} catch (Exception e) {
+			} catch (RuntimeException ignored) {
 				// Skip blocks that fail
 			}
 		}

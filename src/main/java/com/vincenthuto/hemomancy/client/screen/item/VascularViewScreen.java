@@ -89,10 +89,6 @@ public class VascularViewScreen extends EffectRenderingInventoryScreen<VascularV
         return false;
     }
 
-    @Override
-    public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
-        return super.keyPressed(keyCode, scanCode, modifiers);
-    }
 
     @Override
     public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
@@ -337,11 +333,6 @@ public class VascularViewScreen extends EffectRenderingInventoryScreen<VascularV
     }
 
 
-    @Override
-      public void renderBackground(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
-        super.renderBackground(graphics, mouseX, mouseY, partialTick);
-    }
-
     /**
      * Draws the vascular system content (entity model, vein section labels, etc.)
      * on top of the vein background. Called from render() after the background and border.
@@ -388,10 +379,6 @@ public class VascularViewScreen extends EffectRenderingInventoryScreen<VascularV
         return new Point((int) newX, (int) newY);
     }
 
-    //	public static void openScreenViaItem(int pNum, BookCodeModel pBook, ChapterTemplate pChapterTemplate) {
-//		Minecraft mc = Minecraft.getInstance();
-//		mc.setScreen(new VascularViewScreen());
-//	}
     @Override
     public boolean mouseDragged(double xPos, double yPos, int button, double dragLeftRight, double dragUpDown) {
         this.xDragPos = xPos;

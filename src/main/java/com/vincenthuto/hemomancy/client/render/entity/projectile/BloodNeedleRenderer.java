@@ -39,7 +39,6 @@ public class BloodNeedleRenderer extends EntityRenderer<BloodNeedleEntity> {
 	}
 
 	@Override
-	@SuppressWarnings("unused")
 	public void render(BloodNeedleEntity entityIn, float entityYaw, float partialTicks, PoseStack matrixStackIn,
 			MultiBufferSource bufferIn, int packedLightIn) {
 		matrixStackIn.pushPose();

@@ -87,11 +87,7 @@ public class ActiveSmoulderingAshTrailBlock extends Block {
 
 	protected static boolean canConnectTo(BlockState blockState, BlockGetter world, BlockPos pos,
 			@Nullable Direction side) {
-		if (blockState.getBlock() == BlockInit.active_smouldering_ash_trail.get()) {
-			return true;
-		} else {
-			return false;
-		}
+		return blockState.getBlock() == BlockInit.active_smouldering_ash_trail.get();
 	}
 
 	@OnlyIn(Dist.CLIENT)
@@ -206,10 +202,9 @@ public class ActiveSmoulderingAshTrailBlock extends Block {
 			int i = blockState.getValue(POWER);
 			if (i == 0) {
 				return 0;
-			} else {
-				return side != Direction.UP && !this.getUpdatedState(blockAccess, blockState, pos)
-						.getValue(FACING_PROPERTY_MAP.get(side.getOpposite())).isConnected() ? 0 : i;
-			}
+		}
+		return side != Direction.UP && !this.getUpdatedState(blockAccess, blockState, pos)
+				.getValue(FACING_PROPERTY_MAP.get(side.getOpposite())).isConnected() ? 0 : i;
 		} else {
 			return 0;
 		}
@@ -501,13 +496,6 @@ public class ActiveSmoulderingAshTrailBlock extends Block {
 
 	}
 
-	/**
-	 * Update the provided state given the provided neighbor facing and neighbor
-	 * state, returning a new state. For example, fences make their connections to
-	 * the passed in state if possible, and wet concrete powder immediately returns
-	 * its solidified counterpart. Note that this method should ideally consider
-	 * only the specific face passed in.
-	 */
 	@Override
 	public BlockState updateShape(BlockState stateIn, Direction facing, BlockState facingState, LevelAccessor worldIn,
 			BlockPos currentPos, BlockPos facingPos) {

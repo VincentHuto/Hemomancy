@@ -27,20 +27,6 @@ import java.util.function.Supplier;
  * {@link com.vincenthuto.hemomancy.client.render.layer.player.MorphlingMutationLayer}
  * after the translucent color overlay has been submitted. The pose stack is
  * already reset to the entity root at the time of the call.
- *
- * <p>Usage example:
- * <pre>{@code
- * // In MorphlingMutationRegistry.init():
- * register(ItemInit.morphling_witchs_ear.get(),
- *     MorphlingVisualMutation.builder(0.24f, 0.10f, 0.42f, 0.38f)
- *         .pulse(0.06f).emissive()
- *         .attach(SimpleBodyAttachment.of(
- *             AttachmentPoint.BODY, 0f, 0f, 0f, 1f,
- *             Lazy.of(() -> new BatWingsModel(
- *                 Minecraft.getInstance().getEntityModels().bakeLayer(BatWingsModel.LAYER_LOCATION))),
- *             Hemomancy.rloc("textures/models/morphling/bat_wings.png")))
- *         .build());
- * }</pre>
  */
 @OnlyIn(Dist.CLIENT)
 public abstract class MorphlingModelAttachment {
@@ -202,10 +188,6 @@ public abstract class MorphlingModelAttachment {
         return hiddenPlayerParts();
     }
 
-    // -------------------------------------------------------------------------
-    // Convenience factory
-    // -------------------------------------------------------------------------
-
     /**
      * Creates a simple single-model attachment anchored to one body part.
      * The model is supplied lazily so it is only baked on first render.
@@ -224,26 +206,12 @@ public abstract class MorphlingModelAttachment {
         return new SimpleBodyAttachment(point, offX, offY, offZ, scale, modelSupply, texture);
     }
 
-    // -------------------------------------------------------------------------
-    // SimpleBodyAttachment
-    // -------------------------------------------------------------------------
-
     /**
      * Ready-to-use attachment base for attaching a single {@link EntityModel} to
      * one of the player's body parts with a fixed offset, uniform scale, and a
      * selectable texture render type. Simple attachments render with cutout-no-cull by
      * default so they read as solid extra geometry. Extend this class if you need more control (e.g.
      * per-frame animation, emissive pass, multi-part rendering).
-     *
-     * <pre>{@code
-     * // Instantiate inline using the factory:
-     * MorphlingModelAttachment.of(
-     *     AttachmentPoint.BODY, 0f, -4f, 2f, 0.5f,
-     *     Lazy.of(() -> new MyModel(Minecraft.getInstance()
-     *         .getEntityModels().bakeLayer(MyModel.LAYER_LOCATION))),
-     *     Hemomancy.rloc("textures/models/morphling/my_model.png"))
-     *     .hideAttachedPart()
-     * }</pre>
      */
     public static class SimpleBodyAttachment extends MorphlingModelAttachment {
 

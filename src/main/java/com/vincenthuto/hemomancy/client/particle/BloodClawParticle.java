@@ -57,11 +57,6 @@ public class BloodClawParticle extends TextureSheetParticle {
 		return this.age < this.lifetime;
 	}
 
-//	@Override
-//	public boolean shouldCull() {
-//		return false;
-//	}
-
 	@Override
 	public void tick() {
 		super.tick();

@@ -36,20 +36,16 @@ public class MemoryWeavingRecipe extends CustomRecipe {
 	private final double bloodCost;
 	private final ItemStack result;
 
-	@SuppressWarnings("serial")
 	public static HashMap<EnumBloodTendency, Float> blank() {
-		return new HashMap<>() {
-			{
-				put(EnumBloodTendency.ANIMUS, 0f);
-				put(EnumBloodTendency.MORTEM, 0f);
-				put(EnumBloodTendency.DUCTILIS, 0f);
-				put(EnumBloodTendency.FERRIC, 0f);
-				put(EnumBloodTendency.LUX, 0f);
-				put(EnumBloodTendency.TENEBRIS, 0f);
-				put(EnumBloodTendency.FLAMMEUS, 0f);
-				put(EnumBloodTendency.CONGEATIO, 0f);
-			}
-		};
+		return new HashMap<>(Map.of(
+				EnumBloodTendency.ANIMUS, 0f,
+				EnumBloodTendency.MORTEM, 0f,
+				EnumBloodTendency.DUCTILIS, 0f,
+				EnumBloodTendency.FERRIC, 0f,
+				EnumBloodTendency.LUX, 0f,
+				EnumBloodTendency.TENEBRIS, 0f,
+				EnumBloodTendency.FLAMMEUS, 0f,
+				EnumBloodTendency.CONGEATIO, 0f));
 	}
 
 	public static EnumMap<EnumBloodTendency, Integer> blankEnzymeRequirements() {

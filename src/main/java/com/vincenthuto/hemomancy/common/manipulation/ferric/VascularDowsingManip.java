@@ -31,7 +31,6 @@ public class VascularDowsingManip extends BloodManipulation {
 
 	private static final int SCAN_RADIUS = 8; // blocks in each direction
 
-	// Ore-specific particle colours (RGB 0-1 range)
 	private static final DustParticleOptions ORE_IRON      = new DustParticleOptions(new Vector3f(0.78f, 0.78f, 0.78f), 1.5f);
 	private static final DustParticleOptions ORE_GOLD      = new DustParticleOptions(new Vector3f(1.00f, 0.84f, 0.00f), 1.5f);
 	private static final DustParticleOptions ORE_DIAMOND   = new DustParticleOptions(new Vector3f(0.18f, 0.90f, 0.93f), 1.5f);
@@ -55,7 +54,6 @@ public class VascularDowsingManip extends BloodManipulation {
 		BlockPos origin = player.blockPosition();
 		List<BlockPos> found = new ArrayList<>();
 
-		// Scan cube centered on player
 		for (BlockPos p : BlockPos.betweenClosed(
 				origin.offset(-SCAN_RADIUS, -SCAN_RADIUS, -SCAN_RADIUS),
 				origin.offset(SCAN_RADIUS, SCAN_RADIUS, SCAN_RADIUS))) {
@@ -65,7 +63,6 @@ public class VascularDowsingManip extends BloodManipulation {
 			}
 		}
 
-		// Send coloured particle burst at each ore position, visible only to this player
 		for (BlockPos ore : found) {
 			DustParticleOptions colour = oreColour(world.getBlockState(ore));
 			sLevel.sendParticles(sPlayer, colour, true,

@@ -15,7 +15,6 @@ import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.capabilities.Capabilities;
-import net.neoforged.neoforge.items.IItemHandler;
 
 public class ScarBinderInventoryMenu extends AbstractContainerMenu {
 	public ScarBinderInventoryMenu(final int windowId, final Inventory playerInventory) {
@@ -39,15 +38,13 @@ public class ScarBinderInventoryMenu extends AbstractContainerMenu {
 			return;
 		}
 
-		IItemHandler tmp = stack.getCapability(Capabilities.ItemHandler.ITEM);
-
-		if (tmp instanceof ScarBinderItemHandler) {
-			handler = (ScarBinderItemHandler) tmp;
+		if (stack.getCapability(Capabilities.ItemHandler.ITEM) instanceof ScarBinderItemHandler binderHandler) {
+			handler = binderHandler;
 			handler.load();
-			slotcount = tmp.getSlots();
+			slotcount = handler.getSlots();
 			itemKey = stack.getDescriptionId();
 
-			addMySlots(stack);
+			addMySlots();
 			addPlayerSlots(playerInv);
 		} else
 			playerEntity.closeContainer();
@@ -128,7 +125,7 @@ public class ScarBinderInventoryMenu extends AbstractContainerMenu {
 		}
 	}
 
-	private void addMySlots(ItemStack stack) {
+	private void addMySlots() {
 		if (handler == null)
 			return;
 

@@ -72,11 +72,6 @@ public class BloodCellParticle extends TextureSheetParticle {
 		return this.age < this.lifetime;
 	}
 
-//	@Override
-//	public boolean shouldCull() {
-//		return false;
-//	}
-
 	@Override
 	public void tick() {
 		if (this.firstPersonAnchor != null) {
@@ -99,7 +94,6 @@ public class BloodCellParticle extends TextureSheetParticle {
 		this.quadSize = initScale - initScale * lifeCoeff;
 		this.alpha = initAlpha * (1.0f - lifeCoeff);
 		this.oRoll = roll;
-		// particleAngle += 1.0f;
 	}
 
 	private void setPosFromCameraAnchor() {

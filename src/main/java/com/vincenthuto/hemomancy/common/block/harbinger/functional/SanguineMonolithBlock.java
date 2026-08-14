@@ -174,10 +174,6 @@ public class SanguineMonolithBlock extends Block implements EntityBlock, IMultiB
 	}
 
 	@Override
-	public void onNeighborChange(BlockState state, LevelReader world, BlockPos pos, BlockPos neighbor) {
-	}
-
-	@Override
 	public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
 		return new SanguineMonolithBlockEntity(pos, state);
 	}

@@ -43,7 +43,6 @@ public class VialCentrifugeRenderer implements BlockEntityRenderer<VialCentrifug
 		matrixStackIn.mulPose(new Quaternion(Vector3.XN, 180, true).toMoj());
 		float spinSpeed = (float) mapOneRangeToAnother(te.dataAccess.get(0), 0, 200, 0, 8, 10);
 		float spinMod = spinSpeed < 1 && spinSpeed > 0 ? 0 : spinSpeed;
-	//	System.out.println(spinMod);
 		matrixStackIn.mulPose(Vector3.YP.rotationDegrees((float) ticks * spinMod).toMoj());
 		// Displaying vials in slots
 		arms.vial1.visible = !te.inventory.get(2).isEmpty() && te.inventory.get(2).has(DataComponents.CUSTOM_DATA);

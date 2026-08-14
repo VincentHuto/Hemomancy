@@ -139,7 +139,6 @@ public class SporeImplantScreen extends AbstractContainerScreen<SporeImplantMenu
 		}
 
 		// ───── Pulsing glow ring around center fungal slot ─────
-//		renderFungalSlotGlow(gfx, gx, gy);
 
 		// ───── Outer border around the entire GUI ─────
 	}

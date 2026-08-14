@@ -31,22 +31,11 @@ public class ManipulationTreeInit {
 	/** Quick lookup by name. */
 	public static final Map<String, ManipulationTreeEntry> BY_NAME = new HashMap<>();
 
-	// ────────────────────────────────────────────────────────────
-	//  Init — call during commonSetup or before the screen opens
-	// ────────────────────────────────────────────────────────────
 
 	public static void init() {
 		ENTRIES.clear();
 		BY_NAME.clear();
 
-		// Row spacing constants
-		int ROW_GAP = 70;   // Y gap between tiers
-		int COL_GAP = 80;   // X gap between sibling nodes
-
-		// ═══════════════════════════════════════════
-		//  ANIMUS tendency cluster  (red / aggressive)
-		// ═══════════════════════════════════════════
-		int ax = TREE_OFFSET_X;
 
 		// Row 0 (top) — SUMMA
 		register("blood_aneurysm",370,210, "blood_cloud");
@@ -65,11 +54,6 @@ public class ManipulationTreeInit {
 		register("conjure_blade",465,330, "vital_effusion")
 				.setSoftParents("conjure_staff");
 
-		// ═══════════════════════════════════════════
-		//  FERRIC tendency cluster  (grey / metallic)
-		// ═══════════════════════════════════════════
-		int fx = ax + COL_GAP * 3 + 160;  // gap after ANIMUS
-
 		// Row 0 (top) — SUMMA
 		register("ferric_transmutation",920,50, "blood_absorption", "blood_projection");
 
@@ -86,11 +70,6 @@ public class ManipulationTreeInit {
 		register("sanguine_mending",910,140);
 		register("vascular_dowsing",930,210, "sanguine_mending");
 
-		// ═══════════════════════════════════════════
-		//  DUCTILIS tendency cluster  (yellow / nervous)
-		// ═══════════════════════════════════════════
-		int dx = fx + COL_GAP * 2 + 160;  // gap after FERRIC
-
 		// Row 0 (top) — MEDIOCRITAS
 		register("sanguine_ward",1010,110, "activation_potential");
 
@@ -103,11 +82,6 @@ public class ManipulationTreeInit {
 		register("hemolymphal_pulse",1110,210, "activation_potential", "deadly_gaze");
 		register("conjure_crossbow",1050,250, "hemolymphal_pulse")
 				.setSoftParents("conjure_staff");
-
-		// ═══════════════════════════════════════════
-		//  LUX tendency cluster  (white / light)
-		// ═══════════════════════════════════════════
-		int lx = dx + 160;  // gap after DUCTILIS
 
 		// Row 0 (top) — SUMMA
 		register("unclosing_eye",1350,220, "crimson_sight");
@@ -123,12 +97,6 @@ public class ManipulationTreeInit {
 		register("conjure_spear",1240,260, "crimson_sight")
 				.setSoftParents("conjure_staff");
 
-		// ═══════════════════════════════════════════
-		//  Elemental / Esoteric clusters
-		// ═══════════════════════════════════════════
-		int ex = lx + COL_GAP + 160;  // gap after LUX
-
-		// ── CONGEATIO (blue / cold) ──
 		// Row 0 (top) — SUMMA
 		register("osseous_bloom",1560,70, "glacial_bastion");
 		register("endless_hour",1510,40, "glacial_bastion");
@@ -144,10 +112,6 @@ public class ManipulationTreeInit {
 		register("cryogenic_pulse",1560,170, "glacial_circulation");
 		register("glacial_circulation",1560,120);
 
-		// ── FLAMMEUS (orange / fire) ──
-		int fmx = ex + COL_GAP * 3 + 80;  // gap after CONGEATIO (now wider)
-
-		// Row 0 (top) — SUMMA
 		register("vitric_combustion",1790,50, "pyretic_forge");
 
 		// Row 1 (middle) — MEDIOCRITAS
@@ -161,9 +125,6 @@ public class ManipulationTreeInit {
 		register("sanguine_ignition",1790,180);
 		register("scalding_updraft",1720,180, "sanguine_ignition");
 
-		// ── TENEBRIS (dark purple / shadow) ──
-		int tx = fmx + COL_GAP + 80;  // gap after FLAMMEUS
-
 		// Row 0 (top) — MEDIOCRITAS
 		register("umbral_step",2020,150, "blood_eclipse");
 		register("black_veil_covenant",1930,70, "void_shroud");
@@ -176,9 +137,6 @@ public class ManipulationTreeInit {
 		register("blood_eclipse_mantle",2090,120, "blood_eclipse");
 		register("conjure_claws",1950,150, "void_shroud")
 				.setSoftParents("conjure_staff");
-
-		// ── MORTEM (dark green / death) ──
-		int mx = tx + COL_GAP * 2 + 80;  // gap after TENEBRIS
 
 		// Row 0 (top) — SUMMA
 		register("crimson_tithe",2270,120, "exsanguinate");
@@ -195,9 +153,6 @@ public class ManipulationTreeInit {
 				.setSoftParents("conjure_staff");
 	}
 
-	// ────────────────────────────────────────────────────────────
-	//  Registration helper
-	// ────────────────────────────────────────────────────────────
 
 	private static ManipulationTreeEntry register(String name, int x, int y, String... parents) {
 		ManipulationTreeEntry entry = new ManipulationTreeEntry(name, x, y, parents);

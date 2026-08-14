@@ -120,7 +120,7 @@ public class RadialMenuScreen extends Screen {
 		menu.draw(graphics, partialTicks, mouseX, mouseY);
 	}
 
-	@Override // tick
+	@Override
 	public void tick() {
 		super.tick();
 

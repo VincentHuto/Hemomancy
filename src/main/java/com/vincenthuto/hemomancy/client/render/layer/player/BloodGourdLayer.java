@@ -76,7 +76,6 @@ public class BloodGourdLayer<T extends LivingEntity, M extends HumanoidModel<T>>
                 if (stack.getItem() instanceof BloodGourdItem gourd) {
                     this.translateToBody(matrixStack);
 
-                    // Check if the gourd is open
                     boolean isOpen = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY)
                             .copyTag().getBoolean(BloodGourdItem.TAG_STATE);
 

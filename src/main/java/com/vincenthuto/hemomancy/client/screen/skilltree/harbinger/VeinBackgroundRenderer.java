@@ -37,8 +37,7 @@ public final class VeinBackgroundRenderer {
     }
 
     public void render(GuiGraphics gfx, int gx, int gy, int gw, int gh, float deepFade) {
-        // --- NEW: advance time (frame-based fallback) ---
-        animTime += 0.016f; // ~60 FPS approximation
+		animTime += 0.016f; // ~60 FPS approximation
 
         float time = animTime;
         float fade = Mth.clamp(deepFade, 0.0f, 1.0f);
@@ -89,14 +88,12 @@ public final class VeinBackgroundRenderer {
         int   thickness = (int) p[7];
         float brightness = p[8];
 
-        // --- Slight drift, still deterministic ---
-        float angleDrift = baseAngle + 0.15f * Mth.sin(time * speed * 0.3f + index);
+		float angleDrift = baseAngle + 0.15f * Mth.sin(time * speed * 0.3f + index);
 
         float cosA = Mth.cos(angleDrift);
         float sinA = Mth.sin(angleDrift);
 
-        // --- NEW: seeded phase for consistency ---
-        float timeOffset = time * speed * 2.0f + baseAngle;
+		float timeOffset = time * speed * 2.0f + baseAngle;
 
         int baseRed   = (int)Mth.lerp(deepFade, 40 + 50 * brightness, 34 + 24 * brightness);
         int baseGreen = (int)Mth.lerp(deepFade, 2  + 8  * brightness, 3  + 4  * brightness);

@@ -145,7 +145,6 @@ public class HarbingerAlchemistEntity extends PathfinderMob {
                 .orElse(false);
     }
 
-    /** Returns true if the given player has an established (valid) bloodline. */
     private static boolean hasBloodline(Player player) {
         return HemoCapabilityAccess.getBloodVolume(player)
                 .map(vol -> vol.getBloodLine().isValid())

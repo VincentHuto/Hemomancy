@@ -179,10 +179,7 @@ public class BloodStructureRecipe extends CustomRecipe {
 	}
 
 	public boolean matchRecipe(BloodStructureRecipe checkRecipe) {
-		if (heldItem.equals(checkRecipe.heldItem)) {
-			return true;
-		}
-		return false;
+		return heldItem.equals(checkRecipe.heldItem);
 	}
 
 	public void setBloodCost(double bloodCost) {

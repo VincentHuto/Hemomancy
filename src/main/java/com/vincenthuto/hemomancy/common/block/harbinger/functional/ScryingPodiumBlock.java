@@ -56,18 +56,12 @@ public class ScryingPodiumBlock extends BaseEntityBlock implements SimpleWaterlo
 	}
 
 	@Override
-	public void attack(BlockState state, Level worldIn, BlockPos pos, Player player) {
-		super.attack(state, worldIn, pos, player);
-	}
-
-	@Override
 	protected void createBlockStateDefinition(Builder<Block, BlockState> builder) {
 		builder.add(FACING, WATERLOGGED);
 	}
 
 	@Override
 	public RenderShape getRenderShape(BlockState p_49232_) {
-		// TODO Auto-generated method stub
 		return RenderShape.MODEL;
 	}
 
@@ -106,10 +100,6 @@ public class ScryingPodiumBlock extends BaseEntityBlock implements SimpleWaterlo
 	}
 
 	@Override
-	public void onNeighborChange(BlockState state, LevelReader world, BlockPos pos, BlockPos neighbor) {
-	}
-
-	@Override
 	public BlockState rotate(BlockState state, Rotation rot) {
 		return state.setValue(FACING, rot.rotate(state.getValue(FACING)));
 	}
@@ -139,10 +129,6 @@ public class ScryingPodiumBlock extends BaseEntityBlock implements SimpleWaterlo
 				MachineAccessEvents.awardMachineCrafted(serverPlayer, BlockInit.unstained_podium.get());
 			}
 		}
-//		if (worldIn.getBlockEntity(pos) instanceof BlockEntityScarModStation) {
-//			((BlockEntityScarModStation) worldIn.getBlockEntity(pos)).onActivated(player, player.getMainHandItem());
-//
-//		}
 		return InteractionResult.SUCCESS;
 	}
 

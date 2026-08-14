@@ -279,7 +279,7 @@ public class BloodStructureRecipeCategory implements IRecipeCategory<BloodStruct
 			gfx.pose().popPose();
 			buffers.endBatch();
 			RenderSystem.disableScissor();
-		} catch (Exception ex) {
+		} catch (RuntimeException ex) {
 			Hemomancy.LOGGER.warn("Error rendering blood structure preview", ex);
 		}
 	}

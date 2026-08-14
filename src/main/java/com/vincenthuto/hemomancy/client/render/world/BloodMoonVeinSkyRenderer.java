@@ -41,7 +41,6 @@ public class BloodMoonVeinSkyRenderer {
 	private static final float SQUIGGLE_AMP   = 4.5F;
 	private static final float SQUIGGLE_FREQ  = 0.10F;
 
-	// Per-tendril variation, seeded so the layout is consistent between frames
 	private static final float[] ANGLE_OFFSETS = new float[TENDRIL_COUNT];
 	private static final float[] SPEEDS        = new float[TENDRIL_COUNT];
 	private static final float[] PHASES        = new float[TENDRIL_COUNT];
@@ -57,7 +56,6 @@ public class BloodMoonVeinSkyRenderer {
 		}
 	}
 
-	// Reused per-frame scratch arrays to avoid per-frame allocation
 	private static final float[] PX = new float[STEPS + 1];
 	private static final float[] PZ = new float[STEPS + 1];
 
@@ -100,7 +98,6 @@ public class BloodMoonVeinSkyRenderer {
 			GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE,
 			GlStateManager.SourceFactor.ONE,       GlStateManager.DestFactor.ZERO
 		);
-		// Reset shared state so GUI/text rendering is never affected by this world pass.
 		RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
 		RenderSystem.defaultBlendFunc();
 		RenderSystem.disableBlend();
@@ -150,7 +147,6 @@ public class BloodMoonVeinSkyRenderer {
 		float phase  = PHASES[index];
 		int   length = LENGTHS[index];
 
-		// Compute all positions along the tendril first so ribbon normals are accurate
 		for (int step = 0; step <= length; step++) {
 			float squiggle = SQUIGGLE_AMP * Mth.sin(SQUIGGLE_FREQ * step + time * speed + phase);
 			PX[step] = startX + step * STEP_LEN * cosB - squiggle * sinB;
@@ -159,14 +155,12 @@ public class BloodMoonVeinSkyRenderer {
 
 		float pulse = 0.65f + 0.35f * Mth.sin(time * speed * 1.8f + phase);
 
-		// Draw ribbon quad-strip
 		for (int step = 0; step < length; step++) {
 			float dx = PX[step + 1] - PX[step];
 			float dz = PZ[step + 1] - PZ[step];
 			float len = Mth.sqrt(dx * dx + dz * dz);
 			if (len < 0.001f) continue;
 
-			// Normal perpendicular to the tendril direction in the XZ plane
 			float nx = (-dz / len) * TENDRIL_WIDTH;
 			float nz = ( dx / len) * TENDRIL_WIDTH;
 
@@ -186,13 +180,11 @@ public class BloodMoonVeinSkyRenderer {
 	}
 
 	private static int alpha(float progress, float pulse, float weatherFade) {
-		// Opaque at the root, fade to transparent at the tip
 		float fade = 1.0f - progress;
 		return (int) Mth.clamp(fade * pulse * 180f * weatherFade, 0f, 200f);
 	}
 
 	private static int[] color(float progress, float pulse) {
-		// Dark red at root, dimmer toward the tip
 		float bright = (1.0f - progress * 0.55f) * pulse;
 		return new int[] {
 			(int) Mth.clamp(200 * bright, 0, 255),

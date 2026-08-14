@@ -20,7 +20,6 @@ import net.minecraft.stats.Stats;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
-import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.MoverType;
 import net.minecraft.world.entity.player.Player;
@@ -66,37 +65,12 @@ public class LivingSpearItem extends LivingToolItem implements HemoClientItemExt
 	@Override
 	public boolean hurtEnemy(ItemStack stack, LivingEntity target, LivingEntity attacker) {
 		super.hurtEnemy(stack, target, attacker);
-		/*
-		 * if (stack.getOrCreateTag().getBoolean(TAG_STATE)) {
-		 * attacker.heal(this.getAttackDamage() / 2); if (!attacker.world.isRemote) {
-		 * Player playerIn = (Player) attacker; IBloodVolume playerVolume =
-		 * HemoCapabilityAccess.getBloodVolume(playerIn)
-		 * .orElseThrow(NullPointerException::new); float damageMod =
-		 * this.getAttackDamage() * 75f; if (playerVolume.getBloodVolume() > damageMod)
-		 * { playerVolume.subtractBloodVolume(damageMod);
-		 * PacketHandler.sendToPlayer(* (ServerPlayer) playerIn, new
-		 * PacketBloodVolumeServer(playerVolume.getMaxBloodVolume(),
-		 * playerVolume.getBloodVolume())); } else {
-		 * playerVolume.subtractBloodVolume(damageMod);
-		 * PacketHandler.sendToPlayer(* (ServerPlayer) playerIn, new
-		 * PacketBloodVolumeServer(playerVolume.getMaxBloodVolume(),
-		 * playerVolume.getBloodVolume())); stack.damageItem(getMaxDamage() + 10,
-		 * attacker, (p_220017_1_) -> {
-		 * p_220017_1_.sendBreakAnimation(attacker.getActiveHand()); }); }
-		 *
-		 * } }
-		 */
 		return true;
 	}
 
 	@Override
 	public IClientItemExtensions hemomancy$getClientItemExtensions() {
 		return RenderPropLivingSpear.INSTANCE;
-	}
-
-	@Override
-	public void inventoryTick(ItemStack stack, Level worldIn, Entity entityIn, int itemSlot, boolean isSelected) {
-		super.inventoryTick(stack, worldIn, entityIn, itemSlot, isSelected);
 	}
 
 	@Override
@@ -127,24 +101,6 @@ public class LivingSpearItem extends LivingToolItem implements HemoClientItemExt
 					PacketHandler.sendLivingToolBreakParticles(pos, ParticleColor.BLOOD, 64f, serverLevel);
 				}
 
-				/*
-				 * IBloodVolume playerVolume =
-				 * HemoCapabilityAccess.getBloodVolume(player)
-				 * .orElseThrow(NullPointerException::new); if (playerVolume.getBloodVolume() >
-				 * 50f) { if (!worldIn.isRemote) { playerVolume.subtractBloodVolume(50f);
-				 * PacketHandler.sendToPlayer(* (ServerPlayer) player, new
-				 * PacketBloodVolumeServer(playerVolume.getMaxBloodVolume(),
-				 * playerVolume.getBloodVolume()));
-				 *
-				 * this.summonDirectedOrb(worldIn, player);
-				 *
-				 * }
-				 *
-				 * stack.damageItem(1, player, (p_220009_1_) -> {
-				 * p_220009_1_.sendBreakAnimation(player.getActiveHand()); }); } else {
-				 * player.sendStatusMessage(Component.literal("Not enough blood to be shed"),
-				 * true); }
-				 */
 			}
 
 			if (entityLiving instanceof Player player) {

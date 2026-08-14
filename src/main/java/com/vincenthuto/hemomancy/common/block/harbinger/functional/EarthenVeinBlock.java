@@ -49,7 +49,7 @@ public class EarthenVeinBlock extends Block implements EntityBlock, SimpleWaterl
 	public EarthenVeinBlock(Properties properties) {
 		super(properties);
 		this.registerDefaultState(this.stateDefinition.any().setValue(FACING, Direction.SOUTH).setValue(STENTED, false)
-				.setValue(NAMED, false).setValue(WATERLOGGED, Boolean.valueOf(false)));
+				.setValue(NAMED, false).setValue(WATERLOGGED, false));
 
 	}
 
@@ -74,7 +74,7 @@ public class EarthenVeinBlock extends Block implements EntityBlock, SimpleWaterl
 
 		return this.defaultBlockState().setValue(FACING, context.getHorizontalDirection().getOpposite())
 				.setValue(STENTED, false).setValue(NAMED, false)
-				.setValue(WATERLOGGED, Boolean.valueOf(fluidstate.getType() == Fluids.WATER));
+				.setValue(WATERLOGGED, fluidstate.getType() == Fluids.WATER);
 	}
 
 	@Nullable
@@ -89,20 +89,11 @@ public class EarthenVeinBlock extends Block implements EntityBlock, SimpleWaterl
 		return state.rotate(mirrorIn.getRotation(state.getValue(FACING)));
 	}
 
-	@Override
-	public void neighborChanged(BlockState state, Level worldIn, BlockPos pos, Block blockIn, BlockPos fromPos,
-			boolean isMoving) {
-		super.neighborChanged(state, worldIn, pos, blockIn, fromPos, isMoving);
-	}
+
 
 	@Override
 	public BlockEntity newBlockEntity(BlockPos p_153215_, BlockState p_153216_) {
 		return new EarthenVeinBlockEntity(p_153215_, p_153216_);
-	}
-
-	@Override
-	public void onNeighborChange(BlockState state, LevelReader world, BlockPos pos, BlockPos neighbor) {
-		super.onNeighborChange(state, world, pos, neighbor);
 	}
 
 	@Override
@@ -132,7 +123,6 @@ public class EarthenVeinBlock extends Block implements EntityBlock, SimpleWaterl
 		if (worldIn.getBlockEntity(pos)instanceof EarthenVeinBlockEntity te) {
 			if (!state.getValue(STENTED)) {
 				if (stack.getItem() == Blocks.IRON_BARS.asItem()) {
-					//System.out.println(known.getVeinList());
 
 					// If you already claimed this position
 					if (known.getVeinBlockList().contains(te.getLoc().getPosition())) {

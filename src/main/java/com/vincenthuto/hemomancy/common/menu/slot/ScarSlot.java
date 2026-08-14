@@ -22,12 +22,8 @@ public class ScarSlot extends SlotItemHandler {
 
 	@Override
 	public boolean mayPlace(ItemStack stack) {
-		if (stack.getItem() instanceof IHarbingerEquipment && !(stack.getItem() instanceof ItemFungalScar)
-				&& !(stack.getItem() instanceof VasculariumCharmItem)) {
-			return true;
-		} else {
-			return false;
-		}
+		return stack.getItem() instanceof IHarbingerEquipment && !(stack.getItem() instanceof ItemFungalScar)
+				&& !(stack.getItem() instanceof VasculariumCharmItem);
 	}
 
 	@Override
@@ -38,16 +34,6 @@ public class ScarSlot extends SlotItemHandler {
 
 		IHarbingerEquipment mindscar = HemoCapabilityAccess.getScar(stack).orElseThrow(NullPointerException::new);
 		return mindscar.canUnequip(player);
-	}
-
-	@Override
-	public void onTake(Player playerIn, ItemStack stack) {
-		super.onTake(playerIn, stack);
-	}
-
-	@Override
-	public void set(ItemStack stack) {
-		super.set(stack);
 	}
 
 	@Override

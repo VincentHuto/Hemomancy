@@ -20,7 +20,6 @@ public class FungalImplantationPylonBlockEntity extends BlockEntity implements I
 
 	}
 
-	@SuppressWarnings("unused")
 	public static void clientTick(Level level, BlockPos pos, BlockState state, FungalImplantationPylonBlockEntity ent) {
 		if (level.isClientSide) {
 			int globalPartCount = 128;

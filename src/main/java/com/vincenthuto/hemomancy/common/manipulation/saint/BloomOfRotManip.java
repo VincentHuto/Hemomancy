@@ -43,7 +43,6 @@ public class BloomOfRotManip extends BloodManipulation {
 
 	@Override
 	public void getAction(Player player, Level world, ItemStack heldItemMainhand, BlockPos position) {
-		// Apply wither and poison to all nearby enemies
 		world.getEntitiesOfClass(LivingEntity.class,
 				player.getBoundingBox().inflate(RADIUS), e -> e != player)
 				.forEach(entity -> {
@@ -52,7 +51,6 @@ public class BloomOfRotManip extends BloodManipulation {
 					entity.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, ENEMY_EFFECT_DURATION, 1, false, true));
 				});
 
-		// Self-inflicted minor poison — the rot does not discriminate
 		player.addEffect(new MobEffectInstance(MobEffects.POISON, SELF_POISON_DURATION, 0, false, true));
 
 		player.displayClientMessage(
@@ -63,7 +61,6 @@ public class BloomOfRotManip extends BloodManipulation {
 
 		world.playSound(null, player.blockPosition(), SoundEvents.SCULK_BLOCK_SPREAD, SoundSource.PLAYERS, 1.0f, 0.7f);
 
-		// Spawn fungal particles in a wide radius
 		if (world instanceof ServerLevel sLevel) {
 			for (int i = 0; i < 60; i++) {
 				double offsetX = (world.random.nextDouble() - 0.5) * RADIUS * 2;

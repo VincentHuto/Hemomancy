@@ -63,7 +63,7 @@ public class ErythrocyticMyceliumBlock extends SnowyDirtBlock {
 					if (pLevel.getBlockState(blockpos).is(BlockInit.erythrocytic_dirt.get())
 							&& canPropagate(blockstate, pLevel, blockpos)) {
 						pLevel.setBlockAndUpdate(blockpos, blockstate.setValue(SNOWY,
-								Boolean.valueOf(pLevel.getBlockState(blockpos.above()).is(Blocks.SNOW))));
+								pLevel.getBlockState(blockpos.above()).is(Blocks.SNOW)));
 					}
 				}
 			}
@@ -71,33 +71,4 @@ public class ErythrocyticMyceliumBlock extends SnowyDirtBlock {
 		}
 	}
 
-	/**
-	 * Called periodically clientside on blocks near the player to show effects
-	 * (like furnace fire particles).
-	 */
-	@Override
-	public void animateTick(BlockState state, Level level, BlockPos pos, RandomSource random) {
-		super.animateTick(state, level, pos, random);
-//		if (random.nextInt(10) == 0) {
-//			Vec3 translation = new Vec3(0, .5, 0);
-//			Vec3 target = pos.above().above().getCenter();
-//			Vec3 speedVec = new Vec3(target.x, target.y, target.z);
-//
-//			level.addParticle(EmberParticleFactory.createData(ParticleColor.YELLOW, 1, 0.15f, 125),
-//					(double) pos.getX() + random.nextDouble(), (double) pos.getY() + 1.1D,
-//					(double) pos.getZ() + random.nextDouble(), 0.0D, 0.0D, 0.0D);
-//			level.addParticle(LightningParticleFactory.createData(ParticleColor.YELLOW, 2, 15, 4, 0.6f),
-//					pos.getCenter().add(translation).x, pos.getCenter().add(translation).y,
-//					pos.getCenter().add(translation).z, speedVec.x, speedVec.y, speedVec.z);
-//			if (random.nextInt(3) == 0) {
-//
-//				translation.add(0, 1, 0);
-//				level.addParticle(LightningParticleFactory.createData(ParticleColor.WHITE, 3, 10, 6, 1f),
-//						pos.getCenter().add(translation).x, pos.getCenter().add(translation).y,
-//						pos.getCenter().add(translation).z, speedVec.x, speedVec.y, speedVec.z);
-//			}
-//
-//		}
-
-	}
 }

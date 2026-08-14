@@ -120,7 +120,6 @@ public class SSCScreen extends Screen {
 
     @Override
     protected void renderBlurredBackground(float partialTick) {
-        //super.renderBlurredBackground(partialTick);
     }
 
     // ── Render ───────────────────────────────────────────────────────────────

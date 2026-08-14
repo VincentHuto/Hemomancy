@@ -41,29 +41,26 @@ public abstract class AbstractFungusFeature extends Feature<FungusFeatureConfig>
 	protected boolean isValidPosition(LevelAccessor pLevel, BlockPos pPos, int pMaxHeight,
 			BlockPos.MutableBlockPos pMutablePos, FungusFeatureConfig pConfig) {
 		int i = pPos.getY();
-		if (i >= pLevel.getMinBuildHeight() + 1 && i + pMaxHeight + 1 < pLevel.getMaxBuildHeight()) {
-			BlockState blockstate = pLevel.getBlockState(pPos.below());
-			if (!isDirt(blockstate) && !blockstate.is(BlockTags.MUSHROOM_GROW_BLOCK)) {
-				return false;
-			} else {
-				for (int j = 0; j <= pMaxHeight; ++j) {
-					int k = this.getTreeRadiusForHeight(-1, -1, pConfig.foliageRadius, j);
-
-					for (int l = -k; l <= k; ++l) {
-						for (int i1 = -k; i1 <= k; ++i1) {
-							BlockState blockstate1 = pLevel.getBlockState(pMutablePos.setWithOffset(pPos, l, j, i1));
-							if (!blockstate1.isAir() && !blockstate1.is(BlockTags.LEAVES)) {
-								return false;
-							}
-						}
-					}
-				}
-
-				return true;
-			}
-		} else {
+		if (i < pLevel.getMinBuildHeight() + 1 || i + pMaxHeight + 1 >= pLevel.getMaxBuildHeight()) {
 			return false;
 		}
+		BlockState blockstate = pLevel.getBlockState(pPos.below());
+		if (!isDirt(blockstate) && !blockstate.is(BlockTags.MUSHROOM_GROW_BLOCK)) {
+			return false;
+		}
+		for (int j = 0; j <= pMaxHeight; ++j) {
+			int k = this.getTreeRadiusForHeight(-1, -1, pConfig.foliageRadius, j);
+
+			for (int l = -k; l <= k; ++l) {
+				for (int i1 = -k; i1 <= k; ++i1) {
+					BlockState blockstate1 = pLevel.getBlockState(pMutablePos.setWithOffset(pPos, l, j, i1));
+					if (!blockstate1.isAir() && !blockstate1.is(BlockTags.LEAVES)) {
+						return false;
+					}
+				}
+			}
+		}
+		return true;
 	}
 
 	/**

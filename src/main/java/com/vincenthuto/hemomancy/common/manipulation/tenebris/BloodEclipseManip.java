@@ -74,7 +74,6 @@ public class BloodEclipseManip extends BloodManipulation {
 			double dist = target.distanceTo(player);
 			if (dist > range) continue;
 
-			// Check if the entity falls within the forward cone
 			Vec3 toTarget = target.position().add(0, target.getBbHeight() * 0.5, 0)
 					.subtract(player.getEyePosition(1.0F)).normalize();
 			double dot = look.dot(toTarget);
@@ -96,9 +95,7 @@ public class BloodEclipseManip extends BloodManipulation {
 		world.playSound(null, center, SoundEvents.WITHER_SHOOT, SoundSource.PLAYERS, 0.6f, 2.0f);
 		world.playSound(null, center, SoundEvents.ENDERMAN_AMBIENT, SoundSource.PLAYERS, 0.4f, 0.5f);
 
-		// Dark cone particles radiating forward
 		RandomSource random = world.random;
-		// Build a perpendicular vector to disperse particles within the cone
 		Vec3 perp1 = look.cross(new Vec3(0, 1, 0)).normalize();
 		if (perp1.lengthSqr() < 1e-6) {
 			perp1 = look.cross(new Vec3(1, 0, 0)).normalize();
@@ -106,7 +103,6 @@ public class BloodEclipseManip extends BloodManipulation {
 		Vec3 perp2 = look.cross(perp1).normalize();
 		double halfAngleRad = Math.toRadians(CONE_HALF_ANGLE_DEG);
 		for (int i = 0; i < 30; i++) {
-			// Uniform random direction within the cone
 			double theta = random.nextDouble() * 2 * Math.PI;
 			double phi = random.nextDouble() * halfAngleRad;
 			double sinPhi = Math.sin(phi);

@@ -39,8 +39,6 @@ public class BloodTendencyServerPacket implements CustomPacketPayload {
 		}
 	}
 
-	// This code only runs on the client
-	@SuppressWarnings("unused")
 	public static void handle(final BloodTendencyServerPacket msg, final IPayloadContext ctx) {
 		ctx.enqueueWork(() -> {
 			Player player = ctx.player();

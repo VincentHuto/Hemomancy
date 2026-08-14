@@ -153,11 +153,6 @@ public class ErythromyceliumEruptusEntity extends Monster {
 	}
 
 	@Override
-	public void playerTouch(Player entityIn) {
-		super.playerTouch(entityIn);
-	}
-
-	@Override
 	protected void registerGoals() {
 		this.goalSelector.addGoal(2, new AmbushEruptGoal(this));
 		this.targetSelector.addGoal(1, new NearestAttackableTargetGoal<>(this, Player.class, true));
@@ -203,9 +198,6 @@ public class ErythromyceliumEruptusEntity extends Monster {
 		}
 
 		if (this.isAlive() && this.isErupted()) {
-//			this.disguisedAnimationState.stop();
-//			this.idleAnimationState.stop();
-//			this.walkAnimationState.stop();
 			this.oldErupt = this.erupt;
 
 			this.erupt += 1;
@@ -257,13 +249,6 @@ public class ErythromyceliumEruptusEntity extends Monster {
 		this.eruptAnimationState.startIfStopped(erupt);
 		this.entityData.set(DATA_IS_ERUPTED, true);
 
-//		 if (!this.level().isClientSide) {
-//	         float f = this.isPowered() ? 2.0F : 1.0F;
-//	         this.dead = true;
-//	         this.level().explode(this, this.getX(), this.getY(), this.getZ(), (float)this.explosionRadius * f, Level.ExplosionInteraction.MOB);
-//	         this.discard();
-//	         this.spawnLingeringCloud();
-//	      }		
 	}
 	public static class AmbushEruptGoal extends Goal {
 		private final ErythromyceliumEruptusEntity eruptus;
@@ -275,10 +260,6 @@ public class ErythromyceliumEruptusEntity extends Monster {
 			this.setFlags(EnumSet.of(Goal.Flag.MOVE));
 		}
 
-		/**
-		 * Returns whether execution should begin. You can also read and cache any state
-		 * necessary for execution in this method as well.
-		 */
 		public boolean canUse() {
 			LivingEntity livingentity = this.eruptus.getTarget();
 			return this.eruptus.getSwellDir() > 0
@@ -336,11 +317,7 @@ public class ErythromyceliumEruptusEntity extends Monster {
 
 		@Override
 		public boolean canUse() {
-			if (((ErythromyceliumEruptusEntity) mob).isErupted()) {
-				return super.canUse();
-			} else {
-				return false;
-			}
+			return ((ErythromyceliumEruptusEntity) mob).isErupted() && super.canUse();
 		}
 
 		@Nullable

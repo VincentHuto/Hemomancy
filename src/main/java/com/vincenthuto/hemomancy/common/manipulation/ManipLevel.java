@@ -6,7 +6,6 @@ import net.minecraft.nbt.CompoundTag;
 
 public class ManipLevel {
 
-	// ── Level thresholds: cumulative uses required to reach each level ──
 	/** Uses required to advance from level N-1 to level N (1-indexed). */
 	public static final int[] XP_THRESHOLDS = { 10, 25, 50, 100 };
 
@@ -68,7 +67,6 @@ public class ManipLevel {
 			return false;
 		}
 		int newLevel = currentLevel;
-		// Compute cumulative threshold for each level
 		int cumulative = 0;
 		for (int i = 0; i < XP_THRESHOLDS.length; i++) {
 			cumulative += XP_THRESHOLDS[i];

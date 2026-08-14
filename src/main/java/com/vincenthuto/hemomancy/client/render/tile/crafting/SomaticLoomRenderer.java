@@ -110,26 +110,22 @@ public class SomaticLoomRenderer implements BlockEntityRenderer<SomaticLoomBlock
 
 		// === Flat-color effects ===
 		if (showEffects) {
-			// Seed fractal random per-tick so the lightning crackles each tick
 			FRAC_RAND.setSeed(te.getLevel().getGameTime() * 31L + te.getBlockPos().hashCode());
 
 			stack.pushPose();
 			Matrix4f mat = stack.last().pose();
 			VertexConsumer vc = buffer.getBuffer(RenderTypeInit.LOOM_EFFECT);
 
-			// Fractal tendency star
 			stack.translate(0F, -0.5F, 0F);
 
 			drawFractalStar(vc, mat, te, currentTime);
 
-			// Enzyme indicator rings
 			drawEnzymeRings(vc, mat, te, currentTime);
 
 			if (te.isAwaitingBlood()) {
 				drawAwaitingBloodGlow(vc, mat, te, currentTime);
 			}
 
-			// Blood volume ring
 			double bloodVol = te.getBloodVolume();
 			double maxBloodVol = te.getMaxBloodVolume();
 			if (maxBloodVol > 0) {
@@ -137,7 +133,6 @@ public class SomaticLoomRenderer implements BlockEntityRenderer<SomaticLoomBlock
 						Mth.clamp(bloodVol / maxBloodVol, 0, 1), currentTime);
 			}
 
-			// Crafting progress ring
 			if (te.isCrafting() && te.getCraftingTotalTime() > 0) {
 				double progress = 1.0 - ((double) te.getCraftingProgress() / te.getCraftingTotalTime());
 				drawCraftingProgressRing(vc, mat, progress,
@@ -155,7 +150,6 @@ public class SomaticLoomRenderer implements BlockEntityRenderer<SomaticLoomBlock
 		}
 	}
 
-	//  Item rendering (unchanged)
 
 	public void renderItems(SomaticLoomBlockEntity te, float partialTicks, PoseStack matrixStackIn,
 			MultiBufferSource bufferIn, int combinedLightIn, int combinedOverlayIn) {
@@ -205,14 +199,12 @@ public class SomaticLoomRenderer implements BlockEntityRenderer<SomaticLoomBlock
 		}
 	}
 
-	//  Fractal Tendency Star
 
 	private void drawFractalStar(VertexConsumer vc, Matrix4f mat,
 			SomaticLoomBlockEntity te, float currentTime) {
 		Map<EnumBloodTendency, Float> affs = te.getTendency();
 		float angle = -90f;
 
-		// Global breathing pulse (0..1)
 		double pulse = (Math.sin(currentTime * 0.08) + 1.0) * 0.5;
 
 		for (EnumBloodTendency tend : EnumBloodTendency.values()) {
@@ -222,11 +214,9 @@ public class SomaticLoomRenderer implements BlockEntityRenderer<SomaticLoomBlock
 			float g = color.getGreen() / 255f;
 			float b = color.getBlue() / 255f;
 
-			// Pulse modulation
 			float cAlpha = (float) (SPOKE_CORE_ALPHA * (0.7 + 0.3 * pulse));
 			float gAlpha = (float) (SPOKE_GLOW_ALPHA * (0.5 + 0.5 * pulse));
 
-			// Spoke base corners (two points at BASE_RADIUS)
 			double a1Rad = Math.toRadians(angle + SPIKE_BASE_HALF_ANGLE);
 			double a2Rad = Math.toRadians(angle - SPIKE_BASE_HALF_ANGLE);
 			float bx1 = CX + (float) (Math.cos(a1Rad) * BASE_RADIUS);
@@ -234,18 +224,15 @@ public class SomaticLoomRenderer implements BlockEntityRenderer<SomaticLoomBlock
 			float bx2 = CX + (float) (Math.cos(a2Rad) * BASE_RADIUS);
 			float bz2 = CZ + (float) (Math.sin(a2Rad) * BASE_RADIUS);
 
-			// Spoke tip
 			double tipRad = Math.toRadians(angle);
 			float tipDist = BASE_RADIUS + affinity * AFFINITY_RADIUS_SCALE;
 			float tx = CX + (float) (Math.cos(tipRad) * tipDist);
 			float tz = CZ + (float) (Math.sin(tipRad) * tipDist);
 
-			// Vertical undulation per spoke vertex based on angular position
 			float yBase1 = STAR_Y + yUndulation(a1Rad, currentTime, 1f);
 			float yBase2 = STAR_Y + yUndulation(a2Rad, currentTime, 1f);
 			float yTip   = STAR_Y + yUndulation(tipRad, currentTime, 1f);
 
-			// Fractal displacement magnitude (based on base width)
 			float displace = (float) Math.sqrt(
 					(bx1 - bx2) * (bx1 - bx2) + (bz1 - bz2) * (bz1 - bz2)) * 0.5f;
 
@@ -257,7 +244,6 @@ public class SomaticLoomRenderer implements BlockEntityRenderer<SomaticLoomBlock
 					r, g, b, cAlpha, gAlpha, SPOKE_CORE_WIDTH, SPOKE_GLOW_WIDTH,
 					displace, FRACTAL_DETAIL);
 
-			// Secondary reverse spokes (dimmer, thinner)
 			fracLine(vc, mat, bx1, yBase1, bz1, tx, yTip, tz,
 					r, g, b, cAlpha * 0.6f, gAlpha * 0.5f,
 					SPOKE_CORE_WIDTH * 0.7f, SPOKE_GLOW_WIDTH * 0.6f,
@@ -271,7 +257,6 @@ public class SomaticLoomRenderer implements BlockEntityRenderer<SomaticLoomBlock
 		}
 	}
 
-	//  Enzyme Indicator Rings
 	/**
 	 * Draws concentric dark rings at the fractal star's Y-level. One ring per
 	 * 0.2f enzyme dose reached by any tendency. Radii match spike tip positions.
@@ -299,7 +284,6 @@ public class SomaticLoomRenderer implements BlockEntityRenderer<SomaticLoomBlock
 		}
 	}
 
-	//  Blood Volume Ring
 
 	private void drawBloodVolumeRing(VertexConsumer vc, Matrix4f mat,
 			double fillRatio, float currentTime) {
@@ -337,7 +321,6 @@ public class SomaticLoomRenderer implements BlockEntityRenderer<SomaticLoomBlock
 		}
 	}
 
-	//  Crafting Progress Ring
 
 	private void drawCraftingProgressRing(VertexConsumer vc, Matrix4f mat,
 			double progressRatio, boolean pulsing, float currentTime) {

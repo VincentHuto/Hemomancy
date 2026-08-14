@@ -150,10 +150,7 @@ public class GhastlyAlembicBlockEntity extends BaseContainerBlockEntity
 			return true;
 		}
 		// Mod's own crimson flames
-		if (belowState.is(BlockInit.crimson_flames.get())) {
-			return true;
-		}
-		return false;
+		return belowState.is(BlockInit.crimson_flames.get());
 	}
 
 	// ---- Capability (lazy) ----

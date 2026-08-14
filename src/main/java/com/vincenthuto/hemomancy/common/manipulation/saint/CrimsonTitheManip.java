@@ -45,7 +45,6 @@ public class CrimsonTitheManip extends BloodManipulation {
 
 	@Override
 	public void getAction(Player player, Level world, ItemStack heldItemMainhand, BlockPos position) {
-		// Check if a repayment is already pending
 		long currentTime = world.getGameTime();
 		long titheExpiry = player.getPersistentData().getLong(TITHE_EXPIRY_KEY);
 
@@ -60,15 +59,12 @@ public class CrimsonTitheManip extends BloodManipulation {
 			return;
 		}
 
-		// Store blood from damage dealt
 		double toStore = Math.min(BLOOD_STORE_AMOUNT, volume.getMaxBloodVolume() - volume.getBloodVolume());
 		volume.addBloodVolume(toStore);
 
-		// Set repayment timer
 		player.getPersistentData().putLong(TITHE_EXPIRY_KEY, currentTime + REPAYMENT_WINDOW_TICKS);
 		player.getPersistentData().putDouble(TITHE_STORED_KEY, toStore);
 
-		// Sync blood volume
 		if (player instanceof ServerPlayer serverPlayer) {
 			PacketHandler.sendToPlayer(serverPlayer, new BloodVolumeServerPacket(volume));
 		}
@@ -106,7 +102,6 @@ public class CrimsonTitheManip extends BloodManipulation {
 						.withStyle(net.minecraft.ChatFormatting.DARK_RED, net.minecraft.ChatFormatting.BOLD),
 				false);
 
-		// Clear tithe data
 		player.getPersistentData().remove(TITHE_EXPIRY_KEY);
 		player.getPersistentData().remove(TITHE_STORED_KEY);
 

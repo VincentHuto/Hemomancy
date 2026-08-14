@@ -11,39 +11,30 @@ import java.util.List;
 import java.util.Map;
 
 public class BloodTendency implements IBloodTendency, INBTSerializable<CompoundTag> {
-	@SuppressWarnings("serial")
-	private Map<EnumBloodTendency, Float> tendency = new HashMap<>() {
-		{
-			put(EnumBloodTendency.ANIMUS, 0f);
-			put(EnumBloodTendency.MORTEM, 0f);
-			put(EnumBloodTendency.DUCTILIS, 0f);
-			put(EnumBloodTendency.FERRIC, 0f);
-			put(EnumBloodTendency.LUX, 0f);
-			put(EnumBloodTendency.TENEBRIS, 0f);
-			put(EnumBloodTendency.FLAMMEUS, 0f);
-			put(EnumBloodTendency.CONGEATIO, 0f);
-
-		}
-	};
+	private Map<EnumBloodTendency, Float> tendency = new HashMap<>(Map.of(
+			EnumBloodTendency.ANIMUS, 0f,
+			EnumBloodTendency.MORTEM, 0f,
+			EnumBloodTendency.DUCTILIS, 0f,
+			EnumBloodTendency.FERRIC, 0f,
+			EnumBloodTendency.LUX, 0f,
+			EnumBloodTendency.TENEBRIS, 0f,
+			EnumBloodTendency.FLAMMEUS, 0f,
+			EnumBloodTendency.CONGEATIO, 0f));
 
 	@Override
 	public void addTendencyAlignment(EnumBloodTendency tendencyIn, float value) {
 		if (tendency != null) {
 			if (getOpposingTendency(tendencyIn) != null) {
-				Map<EnumBloodTendency, Float> newDevo = tendency;
-				newDevo.put(tendencyIn, getAlignmentByTendency(tendencyIn) + value);
-				setTendency(newDevo);
+				tendency.put(tendencyIn, getAlignmentByTendency(tendencyIn) + value);
 			}
 		}
 	}
 
 	@Override
 	public float getAlignmentByTendency(EnumBloodTendency tendencyIn) {
-		if (tendency != null && tendency.get(tendencyIn) != null) {
-			return tendency.get(tendencyIn);
-		} else {
-			return 0;
-		}
+		if (tendency == null) return 0;
+		Float alignment = tendency.get(tendencyIn);
+		return alignment == null ? 0 : alignment;
 	}
 
 	@Override
@@ -114,9 +105,7 @@ public class BloodTendency implements IBloodTendency, INBTSerializable<CompoundT
 	public void setTendencyAlignment(EnumBloodTendency tendencyIn, float value) {
 		if (tendency != null) {
 			if (getOpposingTendency(tendencyIn) != null) {
-				Map<EnumBloodTendency, Float> newDevo = tendency;
-				newDevo.put(tendencyIn, value);
-				setTendency(newDevo);
+				tendency.put(tendencyIn, value);
 			}
 		}
 	}

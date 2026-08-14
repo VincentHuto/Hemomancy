@@ -43,18 +43,6 @@ public class LivingStaffScreen extends AbstractContainerScreen<LivingStaffMenu> 
 	}
 
 	@Override
-	protected void init() {
-		super.init();
-	}
-
-	@Override
-	public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
-
-		return super.keyPressed(keyCode, scanCode, modifiers);
-	}
-
-
-	@Override
 	public void render(GuiGraphics graphics, int p_render_1_, int p_render_2_, float p_render_3_) {
 		this.renderBackground(graphics, p_render_1_, p_render_2_, p_render_3_);
 		super.render(graphics, p_render_1_, p_render_2_, p_render_3_);

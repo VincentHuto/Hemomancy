@@ -16,7 +16,6 @@ public class IronWallModel<T extends Entity> extends EntityModel<T> {
 	public static final ModelLayerLocation iron_wall = new ModelLayerLocation(
 			Hemomancy.rloc("iron_wall"), "main");
 
-	@SuppressWarnings("unused")
 	public static LayerDefinition createBodyLayer() {
 		MeshDefinition meshdefinition = new MeshDefinition();
 		PartDefinition partdefinition = meshdefinition.getRoot();

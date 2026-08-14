@@ -7,10 +7,8 @@ import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import com.vincenthuto.hutoslib.math.MathUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.BlockPos.MutableBlockPos;
-import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.tags.FluidTags;
-import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
@@ -29,7 +27,6 @@ import net.minecraft.world.item.TieredItem;
 import net.minecraft.world.item.Tiers;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.phys.AABB;
 
 import javax.annotation.Nullable;
@@ -37,9 +34,6 @@ import java.util.EnumSet;
 import java.util.List;
 
 public class ChthonianQueenEntity extends Spider {
-
-//	private Animation animation = NO_ANIMATION;
-//	public static final Animation ROLLUP_ANIMATION = new Animation(128);
 
 	// Roll Goal
 	private class RollupGoal extends Goal {
@@ -51,18 +45,11 @@ public class ChthonianQueenEntity extends Spider {
 			this.setFlags(EnumSet.of(Goal.Flag.MOVE));
 		}
 
-		/**
-		 * Returns whether an in-progress EntityAIBase should continue executing
-		 */
 		@Override
 		public boolean canContinueToUse() {
 			return !this.creature.getNavigation().isDone();
 		}
 
-		/**
-		 * Returns whether execution should begin. You can also read and cache any state
-		 * necessary for execution in this method as well.
-		 */
 		@Override
 		public boolean canUse() {
 			if (this.creature.getLastHurtByMob() == null && !this.creature.isOnFire()) {
@@ -115,7 +102,6 @@ public class ChthonianQueenEntity extends Spider {
 			return blockpos1;
 		}
 
-		@SuppressWarnings("unused")
 		public boolean isRunning() {
 			return this.running;
 		}
@@ -125,8 +111,6 @@ public class ChthonianQueenEntity extends Spider {
 		 */
 		@Override
 		public void start() {
-			// this.creature.getNavigator().tryMoveToXYZ(this.randPosX, this.randPosY,
-			// this.randPosZ, this.speed);
 			this.running = true;
 		}
 
@@ -142,13 +126,8 @@ public class ChthonianQueenEntity extends Spider {
 		@Override
 		public void tick() {
 			creature.addEffect(new MobEffectInstance(MobEffects.DAMAGE_RESISTANCE, 10, 100, false, false));
-//			if (noActiveAnimation()) {
-//				AnimationPacket.send(EntityChthonianQueen.this, ROLLUP_ANIMATION);
-//			}
 		}
 	}
-
-//	private int animationTick;
 
 	public static AttributeSupplier.Builder setAttributes() {
 		return Mob.createMobAttributes().add(Attributes.MAX_HEALTH, 7.0D).add(Attributes.MOVEMENT_SPEED, 0.3D)
@@ -162,13 +141,9 @@ public class ChthonianQueenEntity extends Spider {
 
 	}
 
-	@SuppressWarnings("unused")
 	@Override
 	public void aiStep() {
 		super.aiStep();
-//		Animation animation = getAnimation();
-//		int animTick = getAnimationTick();
-
 		if (puffCooldown > 0) {
 			--puffCooldown;
 		}
@@ -213,23 +188,6 @@ public class ChthonianQueenEntity extends Spider {
 	}
 
 	@Override
-	protected void defineSynchedData(SynchedEntityData.Builder builder) {
-		super.defineSynchedData(builder);
-
-	}
-
-	@Override
-	protected void doPush(Entity entityIn) {
-		super.doPush(entityIn);
-	}
-
-	@Override
-	public SpawnGroupData finalizeSpawn(ServerLevelAccessor pLevel, DifficultyInstance pDifficulty,
-			MobSpawnType pReason, SpawnGroupData pSpawnData) {
-		return super.finalizeSpawn(pLevel, pDifficulty, pReason, pSpawnData);
-	}
-
-	@Override
 	protected SoundEvent getAmbientSound() {
 		return SoundInit.ENTITY_CHTHONIAN_QUEEN_AMBIENT.get();
 	}
@@ -254,49 +212,13 @@ public class ChthonianQueenEntity extends Spider {
 	}
 
 	@Override
-	public void playerTouch(Player entityIn) {
-		super.playerTouch(entityIn);
-
-	}
-
-	@Override
 	protected void registerGoals() {
 		this.goalSelector.addGoal(1, new ChewWoodGoal(this, 1.2d, 16));
-		//	this.goalSelector.addGoal(2, new RollupGoal(this, 1.0f));
 		this.goalSelector.addGoal(5, new net.minecraft.world.entity.ai.goal.WaterAvoidingRandomStrollGoal(this, 0.8D));
 		this.goalSelector.addGoal(6, new LookAtPlayerGoal(this, Player.class, 6.0F));
 		this.goalSelector.addGoal(7, new RandomLookAroundGoal(this));
 
 	}
-
-//	@Override
-//	public int getAnimationTick() {
-//		return animationTick;
-//	}
-//
-//	@Override
-//	public void setAnimationTick(int tick) {
-//		animationTick = tick;
-//
-//	}
-//
-//	@Override
-//	public Animation getAnimation() {
-//		return animation;
-//	}
-//
-//	@Override
-//	public void setAnimation(Animation animation) {
-//		if (animation == null)
-//			animation = NO_ANIMATION;
-//		setAnimationTick(0);
-//		this.animation = animation;
-//	}
-//
-//	@Override
-//	public Animation[] getAnimations() {
-//		return new Animation[] { ROLLUP_ANIMATION };
-//	}
 
 	public void sporePuff(Level world, AABB effectBounds, double x, double y, double z) {
 		List<Entity> list = world.getEntities(this, effectBounds);
@@ -320,7 +242,6 @@ public class ChthonianQueenEntity extends Spider {
 	@Override
 	public void tick() {
 		super.tick();
-		// updateAnimations();
 		LivingEntity target = getTarget();
 		if (target == null)
 			return;
@@ -333,12 +254,6 @@ public class ChthonianQueenEntity extends Spider {
 		if (isClose) {
 			yBodyRot = (float) MathUtils.getAngle(ChthonianQueenEntity.this, target) + 90f;
 		}
-//		if (noActiveAnimation()) {
-//			if (isClose && Mth.degreesDifferenceAbs((float) MathUtils.getAngle(EntityChthonianQueen.this, target) + 90,
-//					yRot) < 30) {
-//				AnimationPacket.send(EntityChthonianQueen.this, ROLLUP_ANIMATION);
-//			}
-//		}
 	}
 
 }

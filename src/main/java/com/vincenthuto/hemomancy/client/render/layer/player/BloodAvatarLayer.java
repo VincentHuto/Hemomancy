@@ -59,7 +59,6 @@ public class BloodAvatarLayer<T extends LivingEntity, M extends HumanoidModel<T>
 		// Legacy baked-quad tint hook kept dormant; the active 1.21 path delegates to ItemRenderer below.
 	}
 
-	@SuppressWarnings("unused")
 	@Override
 	public void render(PoseStack ms, MultiBufferSource pBuffer, int pPackedLight, T ent, float pLimbSwing,
 			float pLimbSwingAmount, float pPartialTicks, float pAgeInTicks, float pNetHeadYaw, float pHeadPitch) {

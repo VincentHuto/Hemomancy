@@ -30,7 +30,6 @@ public class BloodyFlaskItem extends Item {
 
 	@Override
 	public void appendHoverText(ItemStack stack, Item.TooltipContext context, List<Component> tooltip, TooltipFlag flagIn) {
-		// TODO Auto-generated method stub
 		tooltip.add(Component.literal("Used to Quickly Gain " + amount + "ml of Blood"));
 	}
 

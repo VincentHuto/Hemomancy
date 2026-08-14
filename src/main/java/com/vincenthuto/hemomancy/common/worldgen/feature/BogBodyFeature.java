@@ -33,17 +33,14 @@ public class BogBodyFeature extends Feature<NoneFeatureConfiguration> {
 		BlockPos origin = ctx.origin();
 		RandomSource random = ctx.random();
 
-		// Attempt to place 1–3 bog bodies in a small cluster
 		int count = 1 + random.nextInt(3);
 		boolean placed = false;
 
 		for (int i = 0; i < count; i++) {
-			// Random offset within ~4 blocks of origin
 			int dx = random.nextInt(9) - 4;
 			int dz = random.nextInt(9) - 4;
 			BlockPos candidate = origin.offset(dx, 0, dz);
 
-			// Scan downward up to 8 blocks to find a valid floor
 			BlockPos placePos = findUnderwaterFloor(level, candidate, 8);
 			if (placePos != null) {
 				Direction facing = HORIZONTALS[random.nextInt(HORIZONTALS.length)];
@@ -73,7 +70,6 @@ public class BogBodyFeature extends Feature<NoneFeatureConfiguration> {
 			BlockState currentState = level.getBlockState(mutable);
 			BlockState belowState = level.getBlockState(mutable.below());
 
-			// Check: current position has water, block below is solid
 			if (currentState.getFluidState().is(Fluids.WATER)
 					&& belowState.isFaceSturdy(level, mutable.below(), Direction.UP)) {
 				return mutable.immutable();

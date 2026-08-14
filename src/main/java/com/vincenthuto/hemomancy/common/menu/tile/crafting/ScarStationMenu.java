@@ -66,11 +66,6 @@ public class ScarStationMenu extends AbstractContainerMenu {
 	}
 
 	@Override
-	public void removed(Player playerIn) {
-		super.removed(playerIn);
-	}
-
-	@Override
 	public void broadcastChanges() {
 		te.sendUpdates();
 		super.broadcastChanges();

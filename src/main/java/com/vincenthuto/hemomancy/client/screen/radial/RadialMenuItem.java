@@ -67,7 +67,6 @@ public abstract class RadialMenuItem
 
     public boolean onClick()
     {
-        // to be implemented by users
         return false;
     }
 }

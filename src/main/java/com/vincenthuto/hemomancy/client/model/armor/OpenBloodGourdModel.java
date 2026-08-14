@@ -15,7 +15,6 @@ public class OpenBloodGourdModel<T extends LivingEntity> extends EntityModel<T> 
 	public static final ModelLayerLocation open_blood_gourd = new ModelLayerLocation(
 			Hemomancy.rloc("open_blood_gourd"), "main");
 
-	@SuppressWarnings("unused")
 	public static LayerDefinition createBodyLayer() {
 		MeshDefinition meshdefinition = new MeshDefinition();
 		PartDefinition partdefinition = meshdefinition.getRoot();

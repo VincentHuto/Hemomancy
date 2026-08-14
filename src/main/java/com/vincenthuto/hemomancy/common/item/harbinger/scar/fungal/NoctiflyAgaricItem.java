@@ -20,11 +20,6 @@ public class NoctiflyAgaricItem extends ItemFungalScar {
 	}
 
 	@Override
-	public void onWornTick(LivingEntity player) {
-		super.onWornTick(player);
-	}
-
-	@Override
 	public void onEquipped(LivingEntity player) {
 		super.onEquipped(player);
 		player.addEffect(new MobEffectInstance(EffectInit.fungal_elytra, -1, 0, true, true));

@@ -158,11 +158,6 @@ public class EngramBlock extends WaterloggableBlock {
 		return pState.setValue(FACING, pRotation.rotate(pState.getValue(FACING)));
 	}
 
-	@Override
-	public void onPlace(BlockState p_60566_, Level p_60567_, BlockPos p_60568_, BlockState p_60569_, boolean p_60570_) {
-		super.onPlace(p_60566_, p_60567_, p_60568_, p_60569_, p_60570_);
-	}
-
 	public void neighborChanged(BlockState state, Level worldIn, BlockPos pos, Block blockIn, BlockPos fromPos,
 			boolean isMoving) {
 
@@ -216,15 +211,6 @@ public class EngramBlock extends WaterloggableBlock {
 		// (MnA-compat note: when MnA NeoForge 1.21.1 ships, also return 15 for a
 		// non-empty ChalkRuneTile regardless of the LIT state.)
 		return blockState.getValue(LIT) ? 15 : 0;
-	}
-
-	public boolean canPlaceLiquid(@javax.annotation.Nullable Player player, BlockGetter worldIn, BlockPos pos,
-			BlockState state, Fluid fluidIn) {
-		return super.canPlaceLiquid(player, worldIn, pos, state, fluidIn);
-	}
-
-	public boolean placeLiquid(LevelAccessor worldIn, BlockPos pos, BlockState state, FluidState fluidStateIn) {
-		return super.placeLiquid(worldIn, pos, state, fluidStateIn);
 	}
 
 	public static int randomCharacterIndex() {

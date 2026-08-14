@@ -32,7 +32,6 @@ public class MorphlingJarModel<T extends LivingEntity> extends EntityModel<T> {
         this.bone10 = this.rope3.getChild("bone10");
     }
 
-    @SuppressWarnings("unused")
     public static LayerDefinition createBodyLayer() {
         MeshDefinition meshdefinition = new MeshDefinition();
         PartDefinition partdefinition = meshdefinition.getRoot();

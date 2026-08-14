@@ -10,10 +10,6 @@ import net.minecraft.world.level.levelgen.feature.Feature;
 import net.minecraft.world.level.levelgen.feature.FeaturePlaceContext;
 import org.jetbrains.annotations.NotNull;
 
-/**
- * This Feature is essentially the same as vanilla's
- * {@link net.minecraft.world.level.levelgen.feature.SimpleBlockFeature}
- */
 public class SmallInfectedMushroomFeature extends Feature<SmallInfectedMushroomConfig> {
 	public SmallInfectedMushroomFeature(Codec<SmallInfectedMushroomConfig> codec) {
 		super(codec);
@@ -25,12 +21,8 @@ public class SmallInfectedMushroomFeature extends Feature<SmallInfectedMushroomC
 		WorldGenLevel level = ctx.level();
 		BlockPos pos = ctx.origin();
 		BlockState state = config.getToPlace().getState(ctx.random(), pos);
-		if (state.canSurvive(level, pos)) {
-			level.setBlock(pos, state, Block.UPDATE_CLIENTS);
-
-			return true;
-		} else {
-			return false;
-		}
+		if (!state.canSurvive(level, pos)) return false;
+		level.setBlock(pos, state, Block.UPDATE_CLIENTS);
+		return true;
 	}
 }

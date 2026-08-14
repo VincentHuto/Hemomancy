@@ -125,15 +125,8 @@ public class PallidRetortBlockEntity extends BaseContainerBlockEntity
     public static boolean isHeatSource(Level level, BlockPos alembicPos) {
         BlockPos below = alembicPos.below();
         BlockState belowState = level.getBlockState(below);
-        if (belowState.is(Blocks.SOUL_FIRE)) {
-            return true;
-        } else if (belowState.is(Blocks.SOUL_CAMPFIRE)) {
-            return belowState.getValue(CampfireBlock.LIT);
-        } else if (belowState.is(Blocks.BLUE_ICE)) {
-            return true;
-        } else {
-            return false;
-        }
+		if (belowState.is(Blocks.SOUL_FIRE) || belowState.is(Blocks.BLUE_ICE)) return true;
+		return belowState.is(Blocks.SOUL_CAMPFIRE) && belowState.getValue(CampfireBlock.LIT);
     }
 
     // ---- Capability (lazy) ----
@@ -272,7 +265,6 @@ public class PallidRetortBlockEntity extends BaseContainerBlockEntity
         double amount = flask.getAmount();
         if (vol.getWhiteHumorVolume() + amount > vol.getMaxWhiteHumorVolume()) return;
 
-        // Check if we can output the empty flask
         ItemStack outputStack = te.items.get(SLOT_FLASK_OUTPUT);
         if (outputStack.isEmpty()
                 || (outputStack.getItem() == HLItemInit.cured_clay_flask.get()

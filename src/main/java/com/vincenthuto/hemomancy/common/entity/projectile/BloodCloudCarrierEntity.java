@@ -105,21 +105,17 @@ public class BloodCloudCarrierEntity extends AbstractHurtingProjectile {
 	public boolean hurt(DamageSource source, float amount) {
 		if (this.isInvulnerableTo(source)) {
 			return false;
-		} else {
-			this.markHurt();
-			Entity entity = source.getEntity();
-			if (entity != null) {
-				Vec3 Vec3 = entity.getLookAngle();
-				this.setDeltaMovement(Vec3);
-				this.xPower = Vec3.x * 0.1D;
-				this.yPower = Vec3.y * 0.1D;
-				this.zPower = Vec3.z * 0.1D;
-				this.setOwner(entity);
-				return true;
-			} else {
-				return false;
-			}
 		}
+		this.markHurt();
+		Entity entity = source.getEntity();
+		if (entity == null) return false;
+		Vec3 Vec3 = entity.getLookAngle();
+		this.setDeltaMovement(Vec3);
+		this.xPower = Vec3.x * 0.1D;
+		this.yPower = Vec3.y * 0.1D;
+		this.zPower = Vec3.z * 0.1D;
+		this.setOwner(entity);
+		return true;
 	}
 
 	/**

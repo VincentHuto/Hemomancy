@@ -48,22 +48,18 @@ public class TermiteMoundFeature extends Feature<NoneFeatureConfiguration> {
 		BlockPos origin = ctx.origin();
 		RandomSource random = ctx.random();
 
-		// Single shared mutable positions – reused across all helper methods
 		BlockPos.MutableBlockPos mutable = new BlockPos.MutableBlockPos();
 		BlockPos.MutableBlockPos mutable2 = new BlockPos.MutableBlockPos();
 
-		// Find the ground surface
 		BlockPos groundPos = findGround(level, origin, mutable);
 		if (groundPos == null) {
 			return false;
 		}
 
-		// Validate the ground is solid and mostly flat
 		if (!isValidPlacement(level, groundPos, mutable, mutable2)) {
 			return false;
 		}
 
-		// Cache cutoff info once
 		int writeRadiusCutoff = -1;
 		int centerCX = 0, centerCZ = 0;
 		if (level instanceof WorldGenRegion region) {
@@ -72,18 +68,14 @@ public class TermiteMoundFeature extends Feature<NoneFeatureConfiguration> {
 			centerCZ = cp.z;
 		}
 
-		// Randomize mound dimensions
-		int baseRadius = 4 + random.nextInt(4); // 4-7
-		int height = 10 + random.nextInt(7); // 10-16
-		int chimneyHeight = 2 + random.nextInt(3); // 2-4
+		int baseRadius = 4 + random.nextInt(4);
+		int height = 10 + random.nextInt(7);
+		int chimneyHeight = 2 + random.nextInt(3);
 
-		// Build the mound
 		buildMound(level, groundPos, baseRadius, height, chimneyHeight, random, mutable, writeRadiusCutoff, centerCX, centerCZ);
 
-		// Carve internal tunnels / chambers
 		carveTunnels(level, groundPos, baseRadius, height, random, mutable, writeRadiusCutoff, centerCX, centerCZ);
 
-		// Spawn termites and queen
 		spawnInhabitants(level, groundPos, height, baseRadius, random, mutable);
 
 		return true;
@@ -124,7 +116,6 @@ public class TermiteMoundFeature extends Feature<NoneFeatureConfiguration> {
 				if (!state.isFaceSturdy(level, mutable, Direction.UP) || state.liquid()) {
 					return false;
 				}
-				// Check height variance: ground should be within 2 blocks
 				probe.set(gx + dx, baseY + 4, gz + dz);
 				BlockPos surface = findGround(level, probe, probe);
 				if (surface == null || Math.abs(surface.getY() - baseY) > 2) {
@@ -152,7 +143,6 @@ public class TermiteMoundFeature extends Feature<NoneFeatureConfiguration> {
 
 		int bx = base.getX(), by = base.getY(), bz = base.getZ();
 
-		// Build the main conical body
 		for (int y = 0; y < height; y++) {
 			float progress = (float) y / height;
 			float radius = baseRadius * (1.0f - progress * 0.85f);
@@ -175,7 +165,6 @@ public class TermiteMoundFeature extends Feature<NoneFeatureConfiguration> {
 			}
 		}
 
-		// Build chimney/spire on top
 		for (int y = 0; y < chimneyHeight; y++) {
 			float chimneyRadius = 1.5f - (float) y / chimneyHeight * 1.0f;
 			for (int x = -2; x <= 2; x++) {
@@ -191,7 +180,6 @@ public class TermiteMoundFeature extends Feature<NoneFeatureConfiguration> {
 			}
 		}
 
-		// Add random bumps/buttresses around the base
 		int bumpCount = 3 + random.nextInt(4);
 		for (int i = 0; i < bumpCount; i++) {
 			float angle = random.nextFloat() * Mth.TWO_PI;
@@ -216,7 +204,6 @@ public class TermiteMoundFeature extends Feature<NoneFeatureConfiguration> {
 			}
 		}
 
-		// Fill foundation below the mound to prevent floating
 		for (int x = -baseRadius; x <= baseRadius; x++) {
 			for (int z = -baseRadius; z <= baseRadius; z++) {
 				float dist = Mth.sqrt(x * x + z * z);
@@ -244,14 +231,12 @@ public class TermiteMoundFeature extends Feature<NoneFeatureConfiguration> {
 		float heightProgress = (float) y / totalHeight;
 		int roll = random.nextInt(10);
 
-		// Upper portion: more terracotta
 		if (heightProgress > 0.7f) {
 			if (roll < 5) return TERRACOTTA;
 			if (roll < 8) return PACKED_MUD;
 			return MUD;
 		}
 
-		// Middle: mixed
 		if (heightProgress > 0.3f) {
 			if (roll < 3) return TERRACOTTA;
 			if (roll < 6) return PACKED_MUD;
@@ -259,7 +244,6 @@ public class TermiteMoundFeature extends Feature<NoneFeatureConfiguration> {
 			return DIRT;
 		}
 
-		// Lower portion: more dirt and mud
 		if (roll < 3) return DIRT;
 		if (roll < 6) return MUD;
 		if (roll < 8) return PACKED_MUD;
@@ -275,7 +259,6 @@ public class TermiteMoundFeature extends Feature<NoneFeatureConfiguration> {
 
 		int bx = base.getX(), by = base.getY(), bz = base.getZ();
 
-		// Central chamber at ~1/3 height
 		int chamberY = height / 3;
 		int chamberRadius = Math.max(2, baseRadius / 2);
 		for (int x = -chamberRadius; x <= chamberRadius; x++) {
@@ -292,19 +275,16 @@ public class TermiteMoundFeature extends Feature<NoneFeatureConfiguration> {
 			}
 		}
 
-		// Carve entrance tunnels from exterior into central chamber
 		int tunnelCount = 1 + random.nextInt(3);
 		for (int t = 0; t < tunnelCount; t++) {
 			float angle = random.nextFloat() * Mth.TWO_PI;
 			carveHorizontalTunnel(level, base, chamberY + 1, angle, baseRadius, mutable, cutoff, ccx, ccz);
 		}
 
-		// Vertical shaft from chamber up to chimney area
 		if (!outOfBounds(bx, bz, cutoff, ccx, ccz)) {
 			for (int y = chamberY + 3; y < height - 1; y++) {
 				mutable.set(bx, by + y, bz);
 				setAir(level, mutable);
-				// Occasionally widen the shaft
 				if (random.nextInt(3) == 0) {
 					Direction dir = Direction.Plane.HORIZONTAL.getRandomDirection(random);
 					int nx = bx + dir.getStepX(), nz = bz + dir.getStepZ();
@@ -331,7 +311,6 @@ public class TermiteMoundFeature extends Feature<NoneFeatureConfiguration> {
 			int pz = bz + Mth.floor(Math.sin(angle) * step);
 			if (outOfBounds(px, pz, cutoff, ccx, ccz)) continue;
 
-			// Carve a 2-high, 1-wide tunnel
 			mutable.set(px, by + y, pz);
 			setAir(level, mutable);
 			mutable.set(px, by + y + 1, pz);
@@ -370,7 +349,6 @@ public class TermiteMoundFeature extends Feature<NoneFeatureConfiguration> {
 		int bx = base.getX(), by = base.getY(), bz = base.getZ();
 		int chamberY = height / 3;
 
-		// --- Guarantee at least 1 queen inside the central chamber ---
 		boolean queenSpawned = false;
 		for (int attempt = 0; attempt < 16 && !queenSpawned; attempt++) {
 			int dx = (attempt == 0) ? 0 : random.nextInt(5) - 2;
@@ -382,14 +360,12 @@ public class TermiteMoundFeature extends Feature<NoneFeatureConfiguration> {
 				queenSpawned = true;
 			}
 		}
-		// Last resort: force-clear the center and spawn the queen there
 		if (!queenSpawned) {
 			mutable.set(bx, by + chamberY + 1, bz);
 			level.setBlock(mutable, AIR_STATE, 2);
 			spawnMob(level, EntityInit.chthonian_queen.get(), mutable.immutable());
 		}
 
-		// --- Spawn 3-5 chthonians inside the mound tunnels/chambers ---
 		int innerCount = 3 + random.nextInt(3);
 		for (int i = 0; i < innerCount; i++) {
 			for (int attempt = 0; attempt < 8; attempt++) {
@@ -404,7 +380,6 @@ public class TermiteMoundFeature extends Feature<NoneFeatureConfiguration> {
 			}
 		}
 
-		// --- Spawn 4-7 chthonians around the outside of the mound ---
 		int outerCount = 4 + random.nextInt(4);
 		for (int i = 0; i < outerCount; i++) {
 			float angle = random.nextFloat() * Mth.TWO_PI;

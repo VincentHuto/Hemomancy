@@ -97,10 +97,6 @@ public class BogBodyBlock extends Block implements SimpleWaterloggedBlock {
     }
 
     @Override
-    public void onNeighborChange(BlockState state, LevelReader world, BlockPos pos, BlockPos neighbor) {
-    }
-
-    @Override
     public BlockState rotate(BlockState state, Rotation rot) {
         return state.setValue(FACING, rot.rotate(state.getValue(FACING))).setValue(HARVESTED,
                 false);

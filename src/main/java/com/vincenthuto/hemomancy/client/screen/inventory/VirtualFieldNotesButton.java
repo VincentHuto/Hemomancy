@@ -93,8 +93,6 @@ public class VirtualFieldNotesButton extends Button {
 				.withStyle(ChatFormatting.AQUA));
 		lines.add(Component.translatable("screen.hemomancy.virtual_field_notes.shared", shared)
 				.withStyle(ChatFormatting.GRAY));
-//		lines.add(Component.translatable("screen.hemomancy.virtual_field_notes.hint")
-//				.withStyle(ChatFormatting.DARK_GRAY, ChatFormatting.ITALIC));
 		return lines;
 	}
 

@@ -56,10 +56,7 @@ public class ChewWoodGoal extends MoveToBlockGoal {
 		}
 		// Also accept if the block itself is at ground level (block below is solid)
 		BlockPos belowTarget = pos.below();
-		if (level.getBlockState(belowTarget).isFaceSturdy(level, belowTarget, Direction.UP)) {
-			return true;
-		}
-		return false;
+		return level.getBlockState(belowTarget).isFaceSturdy(level, belowTarget, Direction.UP);
 	}
 
 	@Override

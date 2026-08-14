@@ -544,7 +544,6 @@ public class LivingCrossbowItem extends CrossbowItem implements IDispellable, IT
 
 	@Override
 	public boolean useOnRelease(ItemStack stack) {
-		// TODO Auto-generated method stub
 		return true;
 	}
 

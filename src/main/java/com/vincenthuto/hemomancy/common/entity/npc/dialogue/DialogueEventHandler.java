@@ -351,7 +351,6 @@ public class DialogueEventHandler {
 					handleMnemonistWovenVessel(player, event.getEntityId());
 			default -> {
 				// Unknown event — log for development
-				Hemomancy.LOGGER.debug("Unhandled dialogue event: {}", event.getEventId());
 			}
 		}
 	}
@@ -1130,7 +1129,6 @@ public class DialogueEventHandler {
 			ResourceLocation npcType = BuiltInRegistries.ENTITY_TYPE.getKey(entity.getType());
 			String npcOutpost = HarbingerRecruitmentRules.findOutpostKey(entity);
 
-			// Check if this NPC is already recruited
 			if (bloodline.hasNpcMember(entity.getUUID())) {
 				player.displayClientMessage(
 						Component.translatable("hemomancy.dialogue.recruit.already_member")

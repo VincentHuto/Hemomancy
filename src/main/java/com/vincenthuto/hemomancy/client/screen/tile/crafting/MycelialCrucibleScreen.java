@@ -48,7 +48,6 @@ public class MycelialCrucibleScreen extends AbstractContainerScreen<MycelialCruc
     private float[][] veinParams;
     private float animTime = 0f;
 
-    // Blood bar hover bounds
     private BloodVolumeBarWidget.Bounds bloodBarBounds = BloodVolumeBarWidget.Bounds.EMPTY;
 
     public MycelialCrucibleScreen(MycelialCrucibleMenu menu, Inventory inv, Component title) {
@@ -102,7 +101,6 @@ public class MycelialCrucibleScreen extends AbstractContainerScreen<MycelialCruc
         animTime += 0.016f;
         int gx = leftPos, gy = topPos, gw = imageWidth, gh = imageHeight;
 
-        // Upper craft area
         renderFungalBackground(gfx, gx, gy, gw, CRAFT_AREA_HEIGHT);
         drawBorder(gfx, gx, gy, gw, CRAFT_AREA_HEIGHT);
 

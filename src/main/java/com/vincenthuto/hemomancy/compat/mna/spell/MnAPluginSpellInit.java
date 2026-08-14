@@ -9,12 +9,8 @@ import static com.vincenthuto.hemomancy.compat.mna.HemoSpellIconCompositor.borde
 public class MnAPluginSpellInit {
 
 	public static void registerSpellBits(RegisterEvent event) {
-		//Shapes
 		event.register(Registries.Shape.get().getRegistryKey(), (helper) -> {
-//			helper.register(Hemomancy.rloc("shapes/pork_pulse"),
-//					new ShapePorkPulse(borderedIcon(Hemomancy.rloc("textures/mna/pork_pulse.png"))));
 		});
-		//Components
 		event.register(Registries.SpellEffect.get().getRegistryKey(), (helper) -> {
 			helper.register(Hemomancy.rloc("components/sanguine_fertility"),
 					new ComponentSanguineFertility(borderedIcon(Hemomancy.rloc("textures/mna/sanguine_fertility.png"))));
@@ -22,7 +18,6 @@ public class MnAPluginSpellInit {
 					new ComponentManaToBlood(borderedIcon(Hemomancy.rloc("textures/mna/mana_to_blood.png"))));
 			helper.register(Hemomancy.rloc("components/blood_binding"),
 					new ComponentBloodBinding(borderedIcon(Hemomancy.rloc("textures/mna/blood_binding.png"))));
-			// New spell components
 			helper.register(Hemomancy.rloc("components/blood_loss"),
 					new ComponentBloodLoss(borderedIcon(Hemomancy.rloc("textures/mna/blood_loss.png"))));
 			helper.register(Hemomancy.rloc("components/blood_rush"),

@@ -6,9 +6,7 @@ import com.vincenthuto.hutoslib.client.particle.util.HLParticleUtils;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import com.vincenthuto.hutoslib.math.MathUtils;
 import net.minecraft.core.BlockPos;
-import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.sounds.SoundEvent;
-import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
@@ -24,7 +22,6 @@ import net.minecraft.world.entity.ai.util.RandomPos;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.phys.AABB;
 
 import java.util.EnumSet;
@@ -49,19 +46,12 @@ public class FunglingEntity extends PathfinderMob {
 			this.setFlags(EnumSet.of(Goal.Flag.MOVE));
 		}
 
-		/**
-		 * Returns whether an in-progress EntityAIBase should continue executing
-		 */
 		@Override
 		public boolean canContinueToUse() {
 			return !this.creature.getNavigation().isDone() && this.targetEntity.isAlive()
 					&& this.targetEntity.distanceToSqr(this.creature) < this.maxTargetDistance * this.maxTargetDistance;
 		}
 
-		/**
-		 * Returns whether execution should begin. You can also read and cache any state
-		 * necessary for execution in this method as well.
-		 */
 		@Override
 		public boolean canUse() {
 			this.targetEntity = this.creature.getTarget();
@@ -118,12 +108,6 @@ public class FunglingEntity extends PathfinderMob {
 
 			if (isClose)
 				yBodyRotO = (float) MathUtils.getAngle(FunglingEntity.this, target) + 90f;
-//
-//			if (noActiveAnimation()) {
-//				if (distFromTarget > 40) {
-//					AnimationPacket.send(EntityFungling.this, NO_ANIMATION);
-//				}
-//			}
 		}
 	}
 
@@ -132,50 +116,13 @@ public class FunglingEntity extends PathfinderMob {
 				.add(Attributes.ATTACK_DAMAGE, 1.0D);
 	}
 
-	//	private Animation animation = NO_ANIMATION;
-//	public static final Animation HEADBUTT_ANIMATION = new Animation(17);
-//	public static final Animation SPOREPUFF_ANIMATION = new Animation(17);
 	public int puffCooldown = 0;
-//	private int animationTick;
 
 	public FunglingEntity(EntityType<? extends FunglingEntity> type, Level worldIn) {
 		super(type, worldIn);
 
 	}
 
-	@Override
-	public void aiStep() {
-		super.aiStep();
-//		Animation animation = getAnimation();
-//		int animTick = getAnimationTick();
-//
-//		if (puffCooldown > 0) {
-//			--puffCooldown;
-//		}
-//
-//		if (animation == SPOREPUFF_ANIMATION) {
-//			puffCooldown += 6;
-//			if (animTick == 10)
-////				playSound(SoundHandler.ENTITY_DARK_YOUNG_HIT, .25F, 1f);
-//				if (!level().isClientSide && animTick >= 10) {
-//					LivingEntity target = getTarget();
-//					if (target != null) {
-//						if (animTick % 30 == 0) {
-//							sporePuff(level, new AABB(this.position().add(-3, -3, -3), this.position().add(3, 3, 3)),
-//									this.position().x() + 0.5, this.position().y(), this.position().z() + 0.5);
-//						}
-//					}
-//				}
-//
-//		} else if (animation == HEADBUTT_ANIMATION) {
-//			if (animTick == 0) {
-//				// playSound(SoundHandler.ENTITY_DARK_YOUNG_HIT, .25F, 1f);
-//			} else if (animTick == 6)
-//				attackInBox(getBoundingBox()
-//						.move(Vector3d.directionFromRotation(isInWater() ? xRot : 0, yHeadRot).scale(1f)).inflate(0.85),
-//						40);
-//		}
-	}
 
 	public void attackInBox(AABB box, int disabledShieldTime) {
 		List<LivingEntity> attackables = level().getEntitiesOfClass(LivingEntity.class, box,
@@ -199,23 +146,6 @@ public class FunglingEntity extends PathfinderMob {
 	}
 
 	@Override
-	protected void defineSynchedData(SynchedEntityData.Builder builder) {
-		super.defineSynchedData(builder);
-
-	}
-
-	@Override
-	protected void doPush(Entity entityIn) {
-		super.doPush(entityIn);
-	}
-
-	@Override
-	public SpawnGroupData finalizeSpawn(ServerLevelAccessor pLevel, DifficultyInstance pDifficulty,
-			MobSpawnType pReason, SpawnGroupData pSpawnData) {
-		return super.finalizeSpawn(pLevel, pDifficulty, pReason, pSpawnData);
-	}
-
-	@Override
 	protected SoundEvent getAmbientSound() {
 		return SoundInit.ENTITY_FUNGLING_AMBIENT.get();
 	}
@@ -233,12 +163,6 @@ public class FunglingEntity extends PathfinderMob {
 	@Override
 	protected float getSoundVolume() {
 		return 0.3f;
-	}
-
-	@Override
-	public void playerTouch(Player entityIn) {
-		super.playerTouch(entityIn);
-
 	}
 
 	@Override
@@ -271,75 +195,9 @@ public class FunglingEntity extends PathfinderMob {
 		}
 	}
 
-//	@Override
-//	public int getAnimationTick() {
-//		return animationTick;
-//	}
-//
-//	@Override
-//	public void setAnimationTick(int tick) {
-//		animationTick = tick;
-//
-//	}
-//
-//	@Override
-//	public Animation getAnimation() {
-//		return animation;
-//	}
-//
-//	@Override
-//	public void setAnimation(Animation animation) {
-//		if (animation == null)
-//			animation = NO_ANIMATION;
-//		setAnimationTick(0);
-//		this.animation = animation;
-//	}
-//
-//	@Override
-//	public Animation[] getAnimations() {
-//		return new Animation[] { HEADBUTT_ANIMATION, SPOREPUFF_ANIMATION };
-//	}
-//
-//	// Bite Goal
-//	private class HeadButtGoal extends Goal {
-//		public HeadButtGoal() {
-//			setFlags(EnumSet.of(Flag.MOVE, Flag.LOOK));
-//		}
-//
-//		@Override
-//		public boolean canUse() {
-//			return !isControlledByLocalInstance() && getTarget() != null;
-//		}
-//
-//		@Override
-//		public void tick() {
-//			LivingEntity target = getTarget();
-//			if (target == null)
-//				return;
-//			double distFromTarget = distanceToSqr(target);
-//
-//			getLookControl().setLookAt(target, getMaxHeadYRot(), getMaxHeadXRot());
-//
-//			boolean isClose = distFromTarget < 5;
-//
-//			if (getNavigation().isDone())
-//				getNavigation().moveTo(target, 1);
-//
-//			if (isClose)
-//				yRot = (float) MathUtils.getAngle(EntityFungling.this, target) + 90f;
-//			if (noActiveAnimation()) {
-//				if (isClose && Mth.degreesDifferenceAbs((float) MathUtils.getAngle(EntityFungling.this, target) + 90,
-//						yRot) < 30)
-//					AnimationPacket.send(EntityFungling.this, HEADBUTT_ANIMATION);
-//			}
-//
-//		}
-//	}
-
 	@Override
 	public void tick() {
 		super.tick();
-		// updateAnimations();
 		LivingEntity target = getTarget();
 		if (target == null)
 			return;
@@ -352,22 +210,6 @@ public class FunglingEntity extends PathfinderMob {
 		if (isClose) {
 			yRotO = (float) MathUtils.getAngle(FunglingEntity.this, target) + 90f;
 		}
-//		if (noActiveAnimation()) {
-//			if (distFromTarget > 15 && distFromTarget < 30) {
-//				AnimationPacket.send(EntityFungling.this, SPOREPUFF_ANIMATION);
-//
-//				if (!level().isClientSide) {
-//					HLParticleUtils.spawnPoof((ServerLevel) level, new BlockPos(Vector3.fromEntityCenter(this).x,
-//							Vector3.fromEntityCenter(this).y, Vector3.fromEntityCenter(this).z));
-//					sporePuff(level, new AABB(this.position().add(-2, -2, -2), this.position().add(2, 2, 2)),
-//							this.position().x() + 0.5, this.position().y(), this.position().z() + 0.5);
-//				}
-//
-//			} else if (isClose && Mth.degreesDifferenceAbs((float) MathUtils.getAngle(EntityFungling.this, target) + 90,
-//					yRot) < 30) {
-//				AnimationPacket.send(EntityFungling.this, HEADBUTT_ANIMATION);
-//			}
-//		}
 	}
 
 }

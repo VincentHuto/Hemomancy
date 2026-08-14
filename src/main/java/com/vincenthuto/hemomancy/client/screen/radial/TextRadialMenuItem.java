@@ -56,6 +56,5 @@ public class TextRadialMenuItem extends RadialMenuItem {
 
 	@Override
 	public void drawTooltips(DrawingContext context) {
-		// nothing to do (yet)
 	}
 }

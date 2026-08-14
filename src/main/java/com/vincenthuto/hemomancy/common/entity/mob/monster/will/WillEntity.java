@@ -13,6 +13,7 @@ import com.vincenthuto.hemomancy.common.manipulation.WillManipulationCaster;
 import com.vincenthuto.hemomancy.common.summon.PuppeteerSummonRules;
 import com.vincenthuto.hemomancy.common.worldgen.FungalGardenTravelHelper;
 import com.vincenthuto.hemomancy.config.HemoServerConfig;
+import com.vincenthuto.hemomancy.config.HemoConfigValues;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -373,11 +374,11 @@ public class WillEntity extends Monster implements BoundPuppeteerSummon {
 				|| !player.getUUID().equals(falterBurstAttackerId)) {
 			clearFalterBurst();
 			falterBurstAttackerId = player.getUUID();
-			falterBurstWindowTicks = safeConfig(HemoServerConfig.WILL_FALTER_BURST_WINDOW_TICKS,
+			falterBurstWindowTicks = HemoConfigValues.get(HemoServerConfig.WILL_FALTER_BURST_WINDOW_TICKS,
 					WillCombatRules.falterBurstWindowTicks());
 		}
 		falterBurstDamage += amount;
-		double threshold = getMaxHealth() * safeConfig(HemoServerConfig.WILL_FALTER_BURST_FRACTION,
+		double threshold = getMaxHealth() * HemoConfigValues.get(HemoServerConfig.WILL_FALTER_BURST_FRACTION,
 				WillCombatRules.falterBurstFraction());
 		if (falterBurstDamage >= threshold) {
 			enterFaltering();
@@ -393,7 +394,7 @@ public class WillEntity extends Monster implements BoundPuppeteerSummon {
 	private void enterFaltering() {
 		clearFalterBurst();
 		setPhase(WillPhase.FALTERING);
-		falterTicks = safeConfig(HemoServerConfig.WILL_FALTER_WINDOW_TICKS, WillCombatRules.falterWindowTicks());
+		falterTicks = HemoConfigValues.get(HemoServerConfig.WILL_FALTER_WINDOW_TICKS, WillCombatRules.falterWindowTicks());
 		setNoAi(true);
 		playSound(SoundInit.ENTITY_WILL_FALTER.get(), 0.8F, 1.25F);
 	}
@@ -487,9 +488,9 @@ public class WillEntity extends Monster implements BoundPuppeteerSummon {
 		}
 		absorptionOwnerId = player.getUUID();
 		entityData.set(DATA_ABSORPTION_OWNER_UUID, Optional.of(absorptionOwnerId));
-		absorptionGraceTicks = safeConfig(HemoServerConfig.WILL_ABSORPTION_GRACE_TICKS,
+		absorptionGraceTicks = HemoConfigValues.get(HemoServerConfig.WILL_ABSORPTION_GRACE_TICKS,
 				WillAbsorptionRules.GRACE_TICKS);
-		float required = WillAbsorptionRules.progressRequired(safeConfig(
+		float required = WillAbsorptionRules.progressRequired(HemoConfigValues.get(
 				HemoServerConfig.WILL_ABSORPTION_PROGRESS_REQUIRED,
 				(double) WillAbsorptionRules.DEFAULT_PROGRESS_REQUIRED));
 		float before = absorptionProgress;
@@ -505,7 +506,7 @@ public class WillEntity extends Monster implements BoundPuppeteerSummon {
 	private void startAbsorbing(ServerPlayer player) {
 		clearFalterBurst();
 		absorptionOwnerId = player.getUUID();
-		absorptionGraceTicks = safeConfig(HemoServerConfig.WILL_ABSORPTION_GRACE_TICKS,
+		absorptionGraceTicks = HemoConfigValues.get(HemoServerConfig.WILL_ABSORPTION_GRACE_TICKS,
 				WillAbsorptionRules.GRACE_TICKS);
 		absorptionProgress = 0.0F;
 		entityData.set(DATA_ABSORPTION_OWNER_UUID, Optional.of(absorptionOwnerId));
@@ -535,11 +536,11 @@ public class WillEntity extends Monster implements BoundPuppeteerSummon {
 		clearAbsorptionStruggle();
 		setNoAi(false);
 		setPhase(WillPhase.MATERIALIZED);
-		float floor = WillAbsorptionRules.escapeHealthFloor(getMaxHealth(), safeConfig(
+		float floor = WillAbsorptionRules.escapeHealthFloor(getMaxHealth(), HemoConfigValues.get(
 				HemoServerConfig.WILL_ABSORPTION_ESCAPE_HEALTH_FRACTION,
 				WillAbsorptionRules.ESCAPE_HEALTH_FRACTION));
 		setHealth(Math.max(getHealth(), floor));
-		absorptionRageTicks = safeConfig(HemoServerConfig.WILL_ABSORPTION_RAGE_TICKS,
+		absorptionRageTicks = HemoConfigValues.get(HemoServerConfig.WILL_ABSORPTION_RAGE_TICKS,
 				WillAbsorptionRules.CONTROLLED_RAGE_TICKS);
 		castCooldown = 0;
 		if (ownerId != null && level().getServer() != null) {
@@ -635,7 +636,7 @@ public class WillEntity extends Monster implements BoundPuppeteerSummon {
 		if (!(player instanceof ServerPlayer serverPlayer)) {
 			return InteractionResult.SUCCESS;
 		}
-		if (!safeConfig(HemoServerConfig.WILL_BEND_ENABLED, true)) {
+		if (!HemoConfigValues.get(HemoServerConfig.WILL_BEND_ENABLED, true)) {
 			return InteractionResult.PASS;
 		}
 		ItemStack stack = player.getItemInHand(hand);
@@ -673,7 +674,7 @@ public class WillEntity extends Monster implements BoundPuppeteerSummon {
 			return InteractionResult.CONSUME;
 		}
 		if (outcome.verb() == WillBendRules.BendVerb.COMMANDEER) {
-			if (!safeConfig(HemoServerConfig.WILL_COMMANDEER_ENABLED, true)) return InteractionResult.CONSUME;
+			if (!HemoConfigValues.get(HemoServerConfig.WILL_COMMANDEER_ENABLED, true)) return InteractionResult.CONSUME;
 			if (!MarionetteCrossbarItem.consumeThread(stack, outcome.threadCost())) {
 				serverPlayer.displayClientMessage(Component.translatable("hemomancy.summon.thread.low")
 						.withStyle(net.minecraft.ChatFormatting.GRAY), true);
@@ -692,18 +693,6 @@ public class WillEntity extends Monster implements BoundPuppeteerSummon {
 			return InteractionResult.CONSUME;
 		}
 		return InteractionResult.CONSUME;
-	}
-
-	private static boolean safeConfig(net.neoforged.neoforge.common.ModConfigSpec.BooleanValue value, boolean fallback) {
-		return value == null ? fallback : value.get();
-	}
-
-	private static int safeConfig(net.neoforged.neoforge.common.ModConfigSpec.IntValue value, int fallback) {
-		return value == null ? fallback : value.get();
-	}
-
-	private static double safeConfig(net.neoforged.neoforge.common.ModConfigSpec.DoubleValue value, double fallback) {
-		return value == null ? fallback : value.get();
 	}
 
 	@Override
@@ -791,7 +780,7 @@ public class WillEntity extends Monster implements BoundPuppeteerSummon {
 		absorptionRageTicks = tag.getInt("AbsorptionRageTicks");
 		absorptionOwnerId = tag.hasUUID("AbsorptionOwner") ? tag.getUUID("AbsorptionOwner") : null;
 		entityData.set(DATA_ABSORPTION_OWNER_UUID, Optional.ofNullable(absorptionOwnerId));
-		float required = WillAbsorptionRules.progressRequired(safeConfig(
+		float required = WillAbsorptionRules.progressRequired(HemoConfigValues.get(
 				HemoServerConfig.WILL_ABSORPTION_PROGRESS_REQUIRED,
 				(double) WillAbsorptionRules.DEFAULT_PROGRESS_REQUIRED));
 		setAbsorptionProgress(absorptionProgress, required);

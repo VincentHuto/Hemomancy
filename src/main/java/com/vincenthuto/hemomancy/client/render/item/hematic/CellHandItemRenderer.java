@@ -151,8 +151,6 @@ public class CellHandItemRenderer extends BlockEntityWithoutLevelRenderer {
 						RenderType.solid());
 			} else if (!stack.isEmpty()) {
 				if (this.location.isGui3d()) {
-//					ForgeHooksClient.drawItemLayered(Minecraft.getInstance().getItemRenderer(), this.location, stack,
-//							matrixStack, buffer, combinedLight, combinedOverlay, true);
 					Minecraft.getInstance().getBlockRenderer().getModelRenderer().renderModel(matrixStack.last(),
 							buffers, null, location, 255, 255, 255, 0x000000, combinedOverlay, ModelData.EMPTY,
 							RenderType.solid());
@@ -180,7 +178,6 @@ public class CellHandItemRenderer extends BlockEntityWithoutLevelRenderer {
 		mc.getTextureManager().bindForSetup(mc.player.getSkin().texture());
 		PlayerRenderer playerrenderer = (PlayerRenderer) mc.getEntityRenderDispatcher().getRenderer(mc.player);
 		PlayerModel<AbstractClientPlayer> playermodel = playerrenderer.getModel();
-		// playerrenderer.setModelVisibilities(playerIn);
 		playermodel.attackTime = 0.0F;
 		playermodel.crouching = false;
 		playermodel.swimAmount = 0.0F;

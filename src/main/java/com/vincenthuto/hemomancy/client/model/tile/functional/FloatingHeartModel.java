@@ -30,7 +30,6 @@ public class FloatingHeartModel extends Model {
 		bb_main.render(poseStack, buffer, packedLight, packedOverlay);
 	}
 
-	@SuppressWarnings("unused")
 	public static LayerDefinition createBodyLayer() {
 		MeshDefinition meshdefinition = new MeshDefinition();
 		PartDefinition partdefinition = meshdefinition.getRoot();

@@ -23,7 +23,6 @@ public class FerventChitiniteModel extends HierarchicalModel<FerventChitiniteEnt
 		this.whole = root.getChild("whole");
 	}
 
-	@SuppressWarnings("unused")
 	public static LayerDefinition createCrystalLayer() {
 		MeshDefinition meshdefinition = new MeshDefinition();
 		PartDefinition partdefinition = meshdefinition.getRoot();
@@ -106,7 +105,6 @@ public class FerventChitiniteModel extends HierarchicalModel<FerventChitiniteEnt
 		return LayerDefinition.create(meshdefinition, 64, 64);
 	}
 
-	@SuppressWarnings("unused")
 	public static LayerDefinition createBodyLayer() {
 		MeshDefinition meshdefinition = new MeshDefinition();
 		PartDefinition partdefinition = meshdefinition.getRoot();
@@ -201,7 +199,6 @@ public class FerventChitiniteModel extends HierarchicalModel<FerventChitiniteEnt
 
 	@Override
 	public ModelPart root() {
-		// TODO Auto-generated method stub
 		return this.whole;
 	}
 

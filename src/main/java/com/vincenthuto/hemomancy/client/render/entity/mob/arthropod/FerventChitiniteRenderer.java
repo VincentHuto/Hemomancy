@@ -22,13 +22,6 @@ public class FerventChitiniteRenderer extends MobRenderer<FerventChitiniteEntity
 
 	}
 	
-	@Override
-	public void render(FerventChitiniteEntity pEntity, float pEntityYaw, float pPartialTicks, PoseStack pMatrixStack,
-			MultiBufferSource pBuffer, int pPackedLight) {
-		super.render(pEntity, pEntityYaw, pPartialTicks, pMatrixStack, pBuffer, pPackedLight);
-	
-	}
-
 	
 
 	@Override

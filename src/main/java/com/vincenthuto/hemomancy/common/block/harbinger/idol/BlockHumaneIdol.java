@@ -39,11 +39,6 @@ public class BlockHumaneIdol extends Block implements EntityBlock, SimpleWaterlo
 
 	@SuppressWarnings("deprecation")
 	@Override
-	public void attack(BlockState state, Level worldIn, BlockPos pos, Player player) {
-		super.attack(state, worldIn, pos, player);
-	}
-
-	@Override
 	protected void createBlockStateDefinition(Builder<Block, BlockState> builder) {
 		builder.add(FACING, WATERLOGGED);
 	}
@@ -72,10 +67,6 @@ public class BlockHumaneIdol extends Block implements EntityBlock, SimpleWaterlo
 	@Override
 	public BlockEntity newBlockEntity(BlockPos p_153215_, BlockState p_153216_) {
 		return new HumaneIdolBlockEntity(p_153215_, p_153216_);
-	}
-
-	@Override
-	public void onNeighborChange(BlockState state, LevelReader world, BlockPos pos, BlockPos neighbor) {
 	}
 
 	@Override

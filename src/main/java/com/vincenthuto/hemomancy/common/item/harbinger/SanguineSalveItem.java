@@ -83,7 +83,6 @@ public class SanguineSalveItem extends Item {
 			return InteractionResultHolder.fail(stack);
 		}
 
-		// Check if any section actually needs healing
 		boolean needsHeal = HemoCapabilityAccess.getVascularSystem(player)
 				.map(vasc -> {
 					for (EnumVeinSections s : EnumVeinSections.values()) {

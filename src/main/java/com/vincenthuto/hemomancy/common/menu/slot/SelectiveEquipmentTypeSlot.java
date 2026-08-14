@@ -41,13 +41,4 @@ public class SelectiveEquipmentTypeSlot extends SlotItemHandler {
 		return itemType.isInstance(stack.getItem());
 	}
 
-	@Override
-	public void onTake(Player playerIn, ItemStack stack) {
-		super.onTake(playerIn, stack);
-	}
-
-	@Override
-	public void set(ItemStack stack) {
-		super.set(stack);
-	}
 }

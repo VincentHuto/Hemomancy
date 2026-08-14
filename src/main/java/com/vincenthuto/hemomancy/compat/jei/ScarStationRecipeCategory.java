@@ -131,9 +131,6 @@ public class ScarStationRecipeCategory implements IRecipeCategory<ScarRecipe> {
 		String tierLabel = "Tier: " + recipe.getTier();
 		gfx.drawString(font, tierLabel, 5, BG_H - 14, LABEL_COLOR, false);
 
-		// Scar type label at bottom left
-		String typeLabel = "Type: " + recipe.getScarType().name();
-	//	gfx.drawString(font, typeLabel, 5, BG_H - 24, LABEL_COLOR, false);
 	}
 
 	private void drawPatternGrid(ScarRecipe recipe, GuiGraphics gfx, float time) {

@@ -8,7 +8,6 @@ import com.vincenthuto.hutoslib.client.particle.factory.GlowParticleFactory;
 import com.vincenthuto.hutoslib.client.particle.util.HLParticleUtils;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
@@ -131,11 +130,6 @@ public class BloodNeedleEntity extends AbstractArrow implements CombatWeaponCarr
 
 	public void setBloodburstNeedle(boolean bloodburstNeedle) {
 		this.bloodburstNeedle = bloodburstNeedle;
-	}
-
-	@Override
-	public void setSoundEvent(SoundEvent soundIn) {
-		super.setSoundEvent(soundIn);
 	}
 
 	@Override

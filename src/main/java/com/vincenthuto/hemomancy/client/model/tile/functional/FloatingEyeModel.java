@@ -12,7 +12,6 @@ import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.*;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.util.Mth;
-import net.minecraft.world.entity.AnimationState;
 import net.minecraft.world.level.Level;
 
 public class FloatingEyeModel extends Model implements IAnimatedModel<EarthenVeinAnimContext> {
@@ -56,10 +55,6 @@ public class FloatingEyeModel extends Model implements IAnimatedModel<EarthenVei
 	@Override
 	public void setupAnimation(Level level, float partialTicks, EarthenVeinAnimContext ctx) {
 		this.getRoot().getAllParts().forEach(ModelPart::resetPose);
-        AnimationState state = ctx.state();
-        float time = (float)level.getGameTime() + partialTicks;
-//        AnimationHelper.animate(this, state, EARTHENVEINMODEL_WIGGLE, time, 1F);
-//        float animTime = AnimationHelper.getElapsedSeconds(EARTHENVEINMODEL_WIGGLE,state.getAccumulatedTime());
 	}
 	
 	 public void setupAnim(float pTime, float pRightPageFlipAmount, float pLeftPageFlipAmount, float pBookOpenAmount) {

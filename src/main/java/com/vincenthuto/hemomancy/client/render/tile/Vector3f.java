@@ -50,18 +50,14 @@ public final class Vector3f {
 	public boolean equals(Object pOther) {
 		if (this == pOther) {
 			return true;
-		} else if (pOther != null && this.getClass() == pOther.getClass()) {
-			Vector3f vector3f = (Vector3f) pOther;
-			if (Float.compare(vector3f.x, this.x) != 0) {
-				return false;
-			} else if (Float.compare(vector3f.y, this.y) != 0) {
-				return false;
-			} else {
-				return Float.compare(vector3f.z, this.z) == 0;
-			}
-		} else {
+		}
+		if (pOther == null || this.getClass() != pOther.getClass()) {
 			return false;
 		}
+		Vector3f vector3f = (Vector3f) pOther;
+		return Float.compare(vector3f.x, this.x) == 0
+				&& Float.compare(vector3f.y, this.y) == 0
+				&& Float.compare(vector3f.z, this.z) == 0;
 	}
 
 	public int hashCode() {

@@ -13,23 +13,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Generates animated composite spell icon textures at runtime by overlaying
- * frames from bloody_border.png (a 16×512 sprite sheet with 32 frames of 16×16)
- * on top of each Hemomancy spell icon.
- * <p>
- * The DynamicTexture is updated every client tick with the current animation
- * frame, giving the same animated border effect as MnA's silver spell border.
- * <p>
- * Usage:
- * <ol>
- *   <li>At registration time, call {@link #borderedIcon(ResourceLocation)} to get a
- *       predetermined ResourceLocation. Pass this to your spell component constructor.</li>
- *   <li>During client setup, call {@link #generateAll()} to load and pre-composite
- *       all 32 frames per icon.</li>
- *   <li>Every client tick, call {@link #tick()} to advance the animation frame.</li>
- * </ol>
- */
+/** Builds and animates bordered MnA spell icons. */
 public class HemoSpellIconCompositor {
 
 	private static final ResourceLocation BLOODY_BORDER = Hemomancy.rloc("textures/mna/bloody_border.png");
@@ -40,7 +24,6 @@ public class HemoSpellIconCompositor {
 	private record PendingIcon(ResourceLocation baseIcon, ResourceLocation compositeLoc) {}
 	private static final List<PendingIcon> PENDING = new ArrayList<>();
 
-	/** Holds the per-frame composited data and the dynamic texture handle for one icon. */
 	private static class AnimatedIcon {
 		final NativeImage[] frames;
 		final DynamicTexture texture;
@@ -57,10 +40,7 @@ public class HemoSpellIconCompositor {
 
 	private static final List<AnimatedIcon> ANIMATED = new ArrayList<>();
 
-	/**
-	 * Returns a predetermined ResourceLocation for the composited icon.
-	 * Call during registration — the actual texture is generated later.
-	 */
+	/** Returns the texture location that will be generated for an icon. */
 	public static ResourceLocation borderedIcon(ResourceLocation baseIcon) {
 		String basePath = baseIcon.getPath()
 				.replace("textures/", "")
@@ -70,11 +50,7 @@ public class HemoSpellIconCompositor {
 		return compositeLoc;
 	}
 
-	/**
-	 * Loads the border sprite sheet and base icons, pre-composites all 32 frames
-	 * for each icon, and registers the DynamicTextures. Call during FMLClientSetupEvent
-	 * (enqueued to render thread).
-	 */
+	/** Loads the border and icons, then registers the generated textures. */
 	public static void generateAll() {
 		ResourceManager resourceManager = Minecraft.getInstance().getResourceManager();
 
@@ -96,17 +72,14 @@ public class HemoSpellIconCompositor {
 				int baseW = baseOriginal.getWidth();
 				int baseH = baseOriginal.getHeight();
 
-				// Pre-composite all 32 frames at the base icon's native resolution
 				NativeImage[] frames = new NativeImage[FRAME_COUNT];
 				for (int f = 0; f < FRAME_COUNT; f++) {
-					// Copy base for this frame at native resolution
 					NativeImage frame = new NativeImage(baseW, baseH, false);
 					for (int y = 0; y < baseH; y++) {
 						for (int x = 0; x < baseW; x++) {
 							frame.setPixelRGBA(x, y, baseOriginal.getPixelRGBA(x, y));
 						}
 					}
-					// Overlay the border frame, scaling from borderSheetW x borderFrameH to baseW x baseH
 					int borderYOffset = f * borderFrameH;
 					for (int y = 0; y < baseH; y++) {
 						for (int x = 0; x < baseW; x++) {
@@ -124,7 +97,6 @@ public class HemoSpellIconCompositor {
 
 				baseOriginal.close();
 
-				// Create DynamicTexture from frame 0, register under the predetermined location
 				NativeImage initialPixels = copyImage(frames[0]);
 				DynamicTexture dynamicTexture = new DynamicTexture(initialPixels);
 				Minecraft.getInstance().getTextureManager()
@@ -142,11 +114,7 @@ public class HemoSpellIconCompositor {
 		PENDING.clear();
 	}
 
-	/**
-	 * Advances the animation by copying the current frame's pixel data into each
-	 * DynamicTexture. Call every client tick. Only uploads to the GPU when the
-	 * frame actually changes.
-	 */
+	/** Advances the generated icon animations. */
 	private static int lastFrame = -1;
 
 	public static void tick() {

@@ -40,7 +40,6 @@ public class UseManipKeyPacket implements CustomPacketPayload {
 		buffer.writeFloat(message.parTick);
 	}
 
-	@SuppressWarnings("unused")
 	public static void handle(final UseManipKeyPacket message, final IPayloadContext ctx) {
 		ctx.enqueueWork(() -> {
 			Player player = ctx.player();

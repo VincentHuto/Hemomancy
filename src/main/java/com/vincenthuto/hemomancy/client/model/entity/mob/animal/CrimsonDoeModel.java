@@ -87,13 +87,6 @@ public class CrimsonDoeModel extends HierarchicalModel<CrimsonDoeEntity> {
 
 	@Override
 	public void setupAnim(CrimsonDoeEntity entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
-//		this.root().getChild("neck").yRot = netHeadYaw * ((float) Math.PI / 180F);
-//		this.root().getChild("neck").xRot = headPitch * ((float) Math.PI / 180F);
-//		this.root().getChild("flLeg").xRot = (float) Math.cos(limbSwing * 0.6662F) * 1.4F * limbSwingAmount;
-//		this.root().getChild("frLeg").xRot = (float) Math.cos(limbSwing * 0.6662F + (float) Math.PI) * 1.4F * limbSwingAmount;
-//		this.root().getChild("blLeg").xRot = (float) Math.cos(limbSwing * 0.6662F + (float) Math.PI) * 1.4F * limbSwingAmount;
-//		this.root().getChild("brLeg").xRot = (float) Math.cos(limbSwing * 0.6662F) * 1.4F * limbSwingAmount;
-//		this.root().getChild("tail").yRot = (float) Math.sin(ageInTicks * 0.1F) * 0.15F;
 		this.root().getAllParts().forEach(ModelPart::resetPose);
 	}
 

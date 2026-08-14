@@ -110,7 +110,7 @@ public final class RecipeLookup {
 			}
 		}
 
-		// Vanilla crafting recipes (last — mod-specific recipes take priority)
+		// Vanilla crafting recipes are checked last so mod-specific recipes win.
 		for (var holder : rm.getAllRecipesFor(RecipeType.CRAFTING)) {
 			CraftingRecipe r = holder.value();
 			try {
@@ -118,7 +118,9 @@ public final class RecipeLookup {
 				if (!result.isEmpty()) {
 					CACHE.putIfAbsent(result.getItem(), new FoundRecipe(r, RecipeKind.VANILLA_CRAFTING));
 				}
-			} catch (Exception ignored) {}
+			} catch (RuntimeException ignored) {
+				continue;
+			}
 		}
 	}
 }

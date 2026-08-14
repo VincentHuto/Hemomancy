@@ -36,59 +36,50 @@ public class MorphlingMutationRegistry {
 
     private static final Map<Item, MorphlingVisualMutation> REGISTRY = new HashMap<>();
 
-    // Reuse the existing avatar_glow texture as the energySwirl base pattern
     private static final ResourceLocation SWIRL_TEX =
             Hemomancy.rloc("textures/models/armor/avatar_glow.png");
 
     public static void init() {
-        // Witch's Ear: interim strain silhouette using the old head crest attachment.
         register(ItemInit.morphling_witchs_ear.get(),
                 MorphlingVisualMutation.builder(0.24f, 0.10f, 0.42f, 0.38f)
                         .pulse(0.06f).emissive()
                         .attach(batHeadAttachment())
                         .build());
 
-        // Bootlace: interim strain silhouette using the old torso web attachment.
         register(ItemInit.morphling_bootlace.get(),
                 MorphlingVisualMutation.builder(0.10f, 0.10f, 0.18f, 0.42f)
                         .attach(spiderBodyAttachment())
                         .build());
 
-        // Gravecap: interim strain silhouette using the old fungal head attachment.
         register(ItemInit.morphling_gravecap.get(),
                 MorphlingVisualMutation.builder(0.78f, 0.18f, 0.05f, 0.34f)
                         .swirl(SWIRL_TEX, 0.008f).emissive()
                         .attach(fungalHeadAttachment())
                         .build());
 
-        // Deadman's Purse: interim strain silhouette using the old arm cluster attachment.
         register(ItemInit.morphling_deadmans_purse.get(),
                 MorphlingVisualMutation.builder(0.55f, 0.03f, 0.03f, 0.42f)
                         .pulse(0.04f)
                         .attach(leechArmAttachment())
                         .build());
 
-        // Emberfang: interim strain silhouette using the old paired leg coil attachment.
         register(ItemInit.morphling_emberfang.get(),
                 MorphlingVisualMutation.builder(0.10f, 0.48f, 0.16f, 0.36f)
                         .swirl(SWIRL_TEX, 0.012f)
                         .attach(serpentLegAttachment())
                         .build());
 
-        // Foxfire: interim strain silhouette using the old pearly head attachment.
         register(ItemInit.morphling_foxfire.get(),
                 MorphlingVisualMutation.builder(0.64f, 0.48f, 0.32f, 0.36f)
                         .pulse(0.05f).emissive()
                         .attach(cuttlefishHeadAttachment())
                         .build());
 
-        // Winter Shroud: interim strain silhouette using the old segmented body attachment.
         register(ItemInit.morphling_winter_shroud.get(),
                 MorphlingVisualMutation.builder(0.10f, 0.23f, 0.36f, 0.36f)
                         .attach(centipedeBodyAttachment())
                         .build());
 
-        // Irontooth: interim strain silhouette using the old digging arm attachment.
         register(ItemInit.morphling_irontooth.get(),
                 MorphlingVisualMutation.builder(0.29f, 0.22f, 0.16f, 0.30f)
                         .attach(moleArmAttachment())
@@ -159,16 +150,6 @@ public class MorphlingMutationRegistry {
                 .growthScale(2, 4, 0.40f, 1.0f, 1.14f);
     }
 
-    private static MorphlingModelAttachment chitiniteLegAttachment() {
-        return MorphlingModelAttachment.of(AttachmentPoint.LEGS, 0f, 0f, 0f, 1f,
-                Lazy.of(() -> new MorphlingChitiniteLegAttachmentModel(
-                        Minecraft.getInstance().getEntityModels().bakeLayer(
-                                MorphlingChitiniteLegAttachmentModel.LAYER_LOCATION))),
-                CHITINITE_LEG_ATTACHMENT_TEX)
-                .visibleFrom(2)
-                .growthScale(2, 4, 0.36f, 1.0f, 1.10f);
-    }
-
     private static MorphlingModelAttachment serpentLegAttachment() {
         return MorphlingModelAttachment.of(AttachmentPoint.LEGS, 0f, 0f, 0f, 1f,
                 Lazy.of(() -> new MorphlingSerpentLegAttachmentModel(
@@ -177,6 +158,16 @@ public class MorphlingMutationRegistry {
                 SERPENT_LEG_ATTACHMENT_TEX)
                 .visibleFrom(2)
                 .growthScale(2, 4, 0.36f, 1.0f, 1.16f);
+    }
+
+    private static MorphlingModelAttachment chitiniteLegAttachment() {
+        return MorphlingModelAttachment.of(AttachmentPoint.LEGS, 0f, 0f, 0f, 1f,
+                Lazy.of(() -> new MorphlingChitiniteLegAttachmentModel(
+                        Minecraft.getInstance().getEntityModels().bakeLayer(
+                                MorphlingChitiniteLegAttachmentModel.LAYER_LOCATION))),
+                CHITINITE_LEG_ATTACHMENT_TEX)
+                .visibleFrom(2)
+                .growthScale(2, 4, 0.36f, 1.0f, 1.10f);
     }
 
     private static MorphlingModelAttachment fungalHeadAttachment() {
@@ -190,16 +181,6 @@ public class MorphlingMutationRegistry {
                 .hideAttachedPartAt(5);
     }
 
-    private static MorphlingModelAttachment urchinBodyAttachment() {
-        return MorphlingModelAttachment.of(AttachmentPoint.BODY, 0f, 0f, 0f, 1f,
-                Lazy.of(() -> new MorphlingUrchinBodyAttachmentModel(
-                        Minecraft.getInstance().getEntityModels().bakeLayer(
-                                MorphlingUrchinBodyAttachmentModel.LAYER_LOCATION))),
-                URCHIN_BODY_ATTACHMENT_TEX)
-                .visibleFrom(2)
-                .growthScale(2, 4, 0.34f, 1.0f, 1.15f);
-    }
-
     private static MorphlingModelAttachment cuttlefishHeadAttachment() {
         return MorphlingModelAttachment.of(AttachmentPoint.HEAD, 0f, 0f, 0f, 1f,
                 Lazy.of(() -> new MorphlingCuttlefishHeadAttachmentModel(
@@ -208,6 +189,16 @@ public class MorphlingMutationRegistry {
                 CUTTLEFISH_HEAD_ATTACHMENT_TEX)
                 .visibleFrom(2)
                 .growthScale(2, 4, 0.34f, 1.0f, 1.12f);
+    }
+
+    private static MorphlingModelAttachment urchinBodyAttachment() {
+        return MorphlingModelAttachment.of(AttachmentPoint.BODY, 0f, 0f, 0f, 1f,
+                Lazy.of(() -> new MorphlingUrchinBodyAttachmentModel(
+                        Minecraft.getInstance().getEntityModels().bakeLayer(
+                                MorphlingUrchinBodyAttachmentModel.LAYER_LOCATION))),
+                URCHIN_BODY_ATTACHMENT_TEX)
+                .visibleFrom(2)
+                .growthScale(2, 4, 0.34f, 1.0f, 1.15f);
     }
 
     private static MorphlingModelAttachment centipedeBodyAttachment() {

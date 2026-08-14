@@ -250,11 +250,6 @@ public class LivingStaffItem extends LivingItem implements IDispellable {
 			if (playerVolume.getBloodVolume() > 50f) {
 				if (!worldIn.isClientSide) {
 
-					/*
-					 * if (worldIn.rand.nextInt(10) == 6) { player.sendStatusMessage(new
-					 * TextComponent( ChatFormatting.DARK_PURPLE +
-					 * "Abuse of Power does not come without consequence"), true); }
-					 */
 					if (!player.isCrouching()) {
 						HemoCapabilityAccess.getEquippedMorphling(player).ifPresent(cap -> {
 							ItemStack selectedStack = cap.getEquippedMorphling();

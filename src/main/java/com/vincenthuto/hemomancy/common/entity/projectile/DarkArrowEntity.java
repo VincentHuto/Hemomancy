@@ -7,7 +7,6 @@ import com.vincenthuto.hutoslib.client.particle.factory.DarkGlowParticleFactory;
 import com.vincenthuto.hutoslib.client.particle.util.HLParticleUtils;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
@@ -64,17 +63,6 @@ public class DarkArrowEntity extends AbstractArrow implements CombatWeaponCarrie
 		return this.combatWeaponItem;
 	}
 
-	@Override
-	protected void defineSynchedData(SynchedEntityData.Builder builder) {
-		super.defineSynchedData(builder);
-	}
-
-	@Override
-	protected void doPostHurtEffects(LivingEntity living) {
-		super.doPostHurtEffects(living);
-
-	}
-
 	@Nonnull
 
 	@Override
@@ -87,8 +75,6 @@ public class DarkArrowEntity extends AbstractArrow implements CombatWeaponCarrie
 		super.onHitEntity(p_213868_1_);
 		Entity entity = p_213868_1_.getEntity();
 		if (entity instanceof LivingEntity) {
-			// ((LivingEntity) entity).addPotionEffect(new
-			// MobEffectInstance(PotionInit.blood_loss.get(), 1000, 2));
 
 		}
 
@@ -104,7 +90,6 @@ public class DarkArrowEntity extends AbstractArrow implements CombatWeaponCarrie
 	}
 
 	@Override
-	@SuppressWarnings("unused")
 	public void tick() {
 		super.tick();
 		if (shooter instanceof Player) {

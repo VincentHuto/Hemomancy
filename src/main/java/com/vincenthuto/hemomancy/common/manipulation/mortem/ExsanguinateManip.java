@@ -68,7 +68,6 @@ public class ExsanguinateManip extends BloodManipulation {
 		List<LivingEntity> nearby = world.getEntitiesOfClass(LivingEntity.class, searchBox,
 				e -> e != player && e.isAlive());
 
-		// Find the nearest critically wounded target
 		Optional<LivingEntity> targetOpt = nearby.stream()
 				.filter(e -> e.distanceTo(player) <= RADIUS)
 				.filter(e -> e.getHealth() <= e.getMaxHealth() * HP_THRESHOLD_FRACTION)
@@ -86,7 +85,6 @@ public class ExsanguinateManip extends BloodManipulation {
 				TendencyAffinityRules.adjustManipulationDamage(player, target, this, drainDamage));
 		HemomancyTendrilEffects.exsanguinate(player, target);
 
-		// Restore blood to caster
 		IBloodVolume volume = HemoCapabilityAccess.getBloodVolume(player).orElse(null);
 		if (volume != null && volume.isActive()) {
 			double toRestore = Math.min(BLOOD_RESTORE, volume.getMaxBloodVolume() - volume.getBloodVolume());
@@ -100,7 +98,6 @@ public class ExsanguinateManip extends BloodManipulation {
 		world.playSound(null, center, SoundEvents.BREWING_STAND_BREW, SoundSource.PLAYERS, 0.5f, 0.7f);
 
 		RandomSource random = world.random;
-		// Dark red siphon effect between caster and target
 		for (int i = 0; i < 30; i++) {
 			double t = random.nextDouble();
 			double px = target.getX() + (player.getX() - target.getX()) * t;

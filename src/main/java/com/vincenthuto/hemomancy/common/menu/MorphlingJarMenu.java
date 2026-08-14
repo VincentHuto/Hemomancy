@@ -20,7 +20,6 @@ import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.capabilities.Capabilities;
-import net.neoforged.neoforge.items.IItemHandler;
 
 public class MorphlingJarMenu extends AbstractContainerMenu {
 
@@ -68,14 +67,12 @@ public class MorphlingJarMenu extends AbstractContainerMenu {
 			return;
 		}
 
-		IItemHandler tmp = stack.getCapability(Capabilities.ItemHandler.ITEM);
-
-		if (tmp instanceof MorphlingJarItemHandler mjh) {
+		if (stack.getCapability(Capabilities.ItemHandler.ITEM) instanceof MorphlingJarItemHandler mjh) {
 			handler = mjh;
 			handler.load();
-			slotcount = tmp.getSlots();
+			slotcount = handler.getSlots();
 			itemKey = stack.getDescriptionId();
-			addMySlots(stack);
+			addMySlots();
 			addPlayerSlots(playerInv);
 		} else {
 			playerEntity.closeContainer();
@@ -88,7 +85,7 @@ public class MorphlingJarMenu extends AbstractContainerMenu {
 	 * Places morphling slots in a 3-wide grid, horizontally centred in the jar GUI.
 	 * Slot origin (61, 32) keeps them inside the jar belly graphic.
 	 */
-	private void addMySlots(ItemStack stack) {
+	private void addMySlots() {
 		if (handler == null)
 			return;
 

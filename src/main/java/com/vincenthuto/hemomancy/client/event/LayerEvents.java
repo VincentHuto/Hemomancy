@@ -191,12 +191,6 @@ public class LayerEvents {
 		event.registerLayerDefinition(SeraphaeFragmentModel.LAYER_LOCATION, SeraphaeFragmentModel::createBodyLayer);
 		event.registerLayerDefinition(ContainmentAnchorModel.LAYER_LOCATION, ContainmentAnchorModel::createBodyLayer);
 		event.registerLayerDefinition(DesiccantModel.LAYER_LOCATION, DesiccantModel::createBodyLayer);
-//		event.registerLayerDefinition(CruorFiendModel.LAYER_LOCATION, CruorFiendModel::createBodyLayer);
-//		event.registerLayerDefinition(VoidDrinkerModel.LAYER_LOCATION, VoidDrinkerModel::createBodyLayer);
-//		event.registerLayerDefinition(FrozenClotModel.LAYER_LOCATION, FrozenClotModel::createBodyLayer);
-//		event.registerLayerDefinition(AbyssalSiphonModel.LAYER_LOCATION, AbyssalSiphonModel::createBodyLayer);
-//		event.registerLayerDefinition(SynapseHoundModel.LAYER_LOCATION, SynapseHoundModel::createBodyLayer);
-//		event.registerLayerDefinition(MyelinBorerModel.LAYER_LOCATION, MyelinBorerModel::createBodyLayer);
 		event.registerLayerDefinition(CrimsonDoeModel.LAYER_LOCATION, CrimsonDoeModel::createBodyLayer);
 		event.registerLayerDefinition(VerdigrisMothModel.LAYER_LOCATION, VerdigrisMothModel::createBodyLayer);
 		event.registerLayerDefinition(ScarletSerpentModel.LAYER_LOCATION, ScarletSerpentModel::createBodyLayer);
@@ -310,11 +304,6 @@ public class LayerEvents {
 			EntityRenderersEvent.AddLayers event, EntityType<? extends T> entityType) {
 		R renderer = event.getRenderer(entityType);
 		if (renderer != null) {
-//			renderer.addLayer(new BloodGourdLayer(renderer));
-//			renderer.addLayer(new BloodAvatarLayer(renderer));
-//			renderer.addLayer(new CellHandLayer(renderer));
-//			renderer.addLayer(new RenderScarsLayer(renderer));
-//			renderer.addLayer(new VascCharmLayer<>(renderer));
 			renderer.addLayer(new HemolymphopodaHeadpieceLayer(renderer));
 			renderer.addLayer(new LanternTickHelmetLayer(renderer));
 			renderer.addLayer(new SilentArchonArmorOverlayLayer(renderer));
@@ -389,20 +378,6 @@ public class LayerEvents {
 		addLayerToPlayerSkin(event, PlayerSkin.Model.SLIM);
 
 	}
-
-//	@SuppressWarnings("deprecation")
-//	@SubscribeEvent
-//	public static void onStitch(TextureStitchEvent.Pre event) {
-//		if (event.getAtlas().location().equals(TextureAtlas.LOCATION_BLOCKS)) {
-//			event.addSprite(Hemomancy.rloc("entity/royal_guard_shield_base"));
-//			event.addSprite(Hemomancy.rloc("entity/barbed_shield/model_barbed_shield"));
-//			event.addSprite(Hemomancy.rloc("entity/chitinite_shield/model_chitinite_shield"));
-//
-//		}
-//		if (event.getAtlas().location() == InventoryMenu.BLOCK_ATLAS) {
-//			event.addSprite(BannerSlot.SLOT_BACKGROUND);
-//		}
-//	}
 
 	// For when the horn breaks it shows the custom animation
 	public static void playHornAnimation() {

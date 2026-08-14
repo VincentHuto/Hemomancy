@@ -817,12 +817,6 @@ public class ClientEvents {
             event.registerEntityRenderer(EntityInit.phantasmal_echo.get(), PhantasmalEchoRenderer::new);
             event.registerEntityRenderer(EntityInit.dark_arrow.get(), DarkArrowRenderer::new);
             event.registerEntityRenderer(EntityInit.desiccant.get(), DesiccantRenderer::new);
-//            event.registerEntityRenderer(EntityInit.cruor_fiend.get(), CruorFiendRenderer::new);
-//            event.registerEntityRenderer(EntityInit.void_drinker.get(), VoidDrinkerRenderer::new);
-//            event.registerEntityRenderer(EntityInit.frozen_clot.get(), FrozenClotRenderer::new);
-//            event.registerEntityRenderer(EntityInit.abyssal_siphon.get(), AbyssalSiphonRenderer::new);
-//            event.registerEntityRenderer(EntityInit.synapse_hound.get(), SynapseHoundRenderer::new);
-//            event.registerEntityRenderer(EntityInit.myelin_borer.get(), MyelinBorerRenderer::new);
             event.registerEntityRenderer(EntityInit.crimson_doe.get(), CrimsonDoeRenderer::new);
             event.registerEntityRenderer(EntityInit.verdigris_moth.get(), VerdigrisMothRenderer::new);
             event.registerEntityRenderer(EntityInit.hematic_burrower.get(), HematicBurrowerRenderer::new);
@@ -840,20 +834,6 @@ public class ClientEvents {
             event.enqueueWork(() -> {
                 ItemBlockRenderTypes.setRenderLayer(FluidInit.WHITE_HUMOR.get(), RenderType.translucent());
                 ItemBlockRenderTypes.setRenderLayer(FluidInit.WHITE_HUMOR_FLOWING.get(), RenderType.translucent());
-//                ItemBlockRenderTypes.setRenderLayer(BlockInit.erythrocoral_fan.get(), RenderType.cutout());
-//                ItemBlockRenderTypes.setRenderLayer(BlockInit.erythrocoral_tendril.get(), RenderType.cutout());
-//                ItemBlockRenderTypes.setRenderLayer(BlockInit.gourd_stem.get(), RenderType.cutout());
-//                ItemBlockRenderTypes.setRenderLayer(BlockInit.attached_gourd_stem.get(), RenderType.cutout());
-//                ItemBlockRenderTypes.setRenderLayer(BlockInit.blood_wood_leaves.get(), RenderType.cutout());
-//                ItemBlockRenderTypes.setRenderLayer(BlockInit.gourdvine_tap.get(), RenderType.cutout());
-//                ItemBlockRenderTypes.setRenderLayer(BlockInit.pallid_lantern.get(), RenderType.cutout());
-//                ItemBlockRenderTypes.setRenderLayer(BlockInit.pallid_silver_chain.get(), RenderType.cutout());
-//                ItemBlockRenderTypes.setRenderLayer(BlockInit.hematic_iron_chain.get(), RenderType.cutout());
-//                ItemBlockRenderTypes.setRenderLayer(BlockInit.hematic_iron_bars.get(), RenderType.cutout());
-//                ItemBlockRenderTypes.setRenderLayer(BlockInit.pale_silver_bars.get(), RenderType.cutout());
-//                ItemBlockRenderTypes.setRenderLayer(BlockInit.hematic_iron_door.get(), RenderType.cutout());
-//                ItemBlockRenderTypes.setRenderLayer(BlockInit.hematic_iron_trapdoor.get(), RenderType.cutout());
-//                ItemBlockRenderTypes.setRenderLayer(BlockInit.lethean_poppy_wreath.get(), RenderType.cutout());
             });
             NeoForge.EVENT_BUS.register(RenderBloodLaserEvent.class);
             BloodVolumeOverlay.instance = new BloodVolumeOverlay();

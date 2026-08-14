@@ -111,11 +111,6 @@ public class BrazierBlock extends Block implements EntityBlock, SimpleWaterlogge
 	}
 
 	@Override
-	public void attack(BlockState state, Level worldIn, BlockPos pos, Player player) {
-		super.attack(state, worldIn, pos, player);
-	}
-
-	@Override
 	protected void createBlockStateDefinition(Builder<Block, BlockState> builder) {
 		builder.add(FACING, RITUAL_PHASE, WATERLOGGED);
 	}
@@ -180,10 +175,6 @@ public class BrazierBlock extends Block implements EntityBlock, SimpleWaterlogge
 	}
 
 	@Override
-	public void onNeighborChange(BlockState state, LevelReader world, BlockPos pos, BlockPos neighbor) {
-	}
-
-	@Override
 	public BlockState rotate(BlockState state, Rotation rot) {
 		return state.setValue(FACING, rot.rotate(state.getValue(FACING))).setValue(RITUAL_PHASE, 0);
 	}
@@ -210,7 +201,6 @@ public class BrazierBlock extends Block implements EntityBlock, SimpleWaterlogge
 			return InteractionResult.SUCCESS;
 		}
 
-		// === Phase 0: Unlit — light the brazier ===
 		if (phase == 0) {
 			if (tryInsertOffering(worldIn, pos, player, stack, brazierTE, false)) {
 				return InteractionResult.SUCCESS;
@@ -218,7 +208,6 @@ public class BrazierBlock extends Block implements EntityBlock, SimpleWaterlogge
 			return InteractionResult.PASS;
 		}
 
-		// === Phase 1: Normal lit — accept reagents or extinguish ===
 		if (phase == 1) {
 			if (tryInsertOffering(worldIn, pos, player, stack, brazierTE, true)) {
 				return InteractionResult.SUCCESS;
@@ -227,7 +216,6 @@ public class BrazierBlock extends Block implements EntityBlock, SimpleWaterlogge
 			return InteractionResult.PASS;
 		}
 
-		// === Phase 2: Sanguine flames — accept echo item for upgrade ===
 		if (phase == 2) {
 			if (tryInsertOffering(worldIn, pos, player, stack, brazierTE, true)) {
 				return InteractionResult.SUCCESS;

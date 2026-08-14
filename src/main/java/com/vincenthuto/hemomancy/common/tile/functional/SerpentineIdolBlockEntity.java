@@ -19,7 +19,6 @@ import java.util.List;
 
 public class SerpentineIdolBlockEntity extends BlockEntity {
 
-	@SuppressWarnings("unused")
 	public static <T> void tick(Level level, BlockPos pos, BlockState state, T blockEntity) {
 		if (level.getBlockEntity(pos)instanceof SerpentineIdolBlockEntity te) {
 
@@ -31,14 +30,9 @@ public class SerpentineIdolBlockEntity extends BlockEntity {
 				ents.forEach(e -> {
 					if (!(e instanceof Player)) {
 						Vector3 t = new Vector3(e.getX(), e.getY(), e.getZ());
-						double distance = centerVec.distanceTo(t) + 0.1D;
-						Vector3 r = new Vector3(t.x - centerVec.x, t.y - centerVec.y, t.z - centerVec.z);
-						// e.setDeltaMovement(-r.x / 10.2D / distance * 1.3, -r.y / 10.2D / distance,
-						// -r.z / 10.2D / distance * 1.3);
 
 						e.addEffect(new MobEffectInstance(EffectInit.blood_binding, 5));
 					}
-					// System.out.println(e);
 
 				});
 				if (level.isClientSide) {

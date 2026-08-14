@@ -40,8 +40,6 @@ public class SanguineTransfusionManip extends BloodManipulation {
 
 	@Override
 	public void getAction(Player player, Level world, ItemStack heldItemMainhand, BlockPos position) {
-		System.out.println("Sanguine Transfusion activated: restoring mana based on blood cost.");
-
 		IPlayerMagic magic = player.getCapability(PlayerMagicProvider.MAGIC).orElse(null);
 		if (magic == null) {
 			player.displayClientMessage(
@@ -50,7 +48,6 @@ public class SanguineTransfusionManip extends BloodManipulation {
 					true);
 			return;
 		}
-		System.out.println("Sanguine Transfusion activated: restoring mana based on blood cost.");
 		float manaToRestore = (float) (getCost() * MANA_PER_BLOOD);
 
 		// Cap so we don't exceed the player's max mana

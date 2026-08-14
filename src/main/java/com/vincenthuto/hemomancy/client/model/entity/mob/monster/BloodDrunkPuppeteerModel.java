@@ -53,7 +53,6 @@ public class BloodDrunkPuppeteerModel<T extends BloodDrunkPuppeteerEntity>  exte
 	}
 
 
-	@SuppressWarnings("unused")
 	public static LayerDefinition createBodyLayer() {
 		MeshDefinition meshdefinition = new MeshDefinition();
 		PartDefinition partdefinition = meshdefinition.getRoot();

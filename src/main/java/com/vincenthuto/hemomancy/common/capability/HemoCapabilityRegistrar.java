@@ -122,21 +122,6 @@ public final class HemoCapabilityRegistrar {
 				}, ItemInit.mnemonic_folio.get());
 
         // ── ItemScarBinder IItemHandler capability ──
-//        event.registerItem(Capabilities.ItemHandler.ITEM,
-//                (stack, ctx) -> {
-//                    ScarBinderItemHandler handler = new ScarBinderItemHandler(stack, 18);
-//                    handler.loadIfNotLoaded();
-//                    return handler;
-//                },
-//                ItemInit.scar_binder.get());
-//        event.registerItem(Capabilities.ItemHandler.ITEM,
-//                (stack, ctx) -> {
-//                    ScarBinderItemHandler handler = new ScarBinderItemHandler(stack, 27);
-//                    handler.loadIfNotLoaded();
-//                    return handler;
-//                },
-//                ItemInit.scar_binder_upgraded.get());
-
         // ── LivingSyringe IItemHandler capability ──
         event.registerItem(Capabilities.ItemHandler.ITEM,
                 (stack, ctx) -> {

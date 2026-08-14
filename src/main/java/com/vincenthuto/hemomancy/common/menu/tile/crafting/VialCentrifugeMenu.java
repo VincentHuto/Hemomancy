@@ -174,11 +174,6 @@ public class VialCentrifugeMenu extends AbstractContainerMenu {
 	}
 
 	@Override
-	public void removed(Player playerIn) {
-		super.removed(playerIn);
-	}
-
-	@Override
 	public void setItem(int p_182407_, int p_182408_, ItemStack p_182409_) {
 		super.setItem(p_182407_, p_182408_, p_182409_);
 		te.sendUpdates();

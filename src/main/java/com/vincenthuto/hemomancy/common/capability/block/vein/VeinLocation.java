@@ -65,18 +65,12 @@ public class VeinLocation extends DimensionalPosition {
 
 	private UUID uuid;
 
-	/*
-	 * to get RL Player().level.dimension().location();
-	 */
 	public VeinLocation(String name, ResourceLocation dim, BlockPos pos) {
 		super(dim, pos);
 		this.name = name;
 		this.uuid = UUID.randomUUID();
 	}
 
-	/*
-	 * to get RL Player().level.dimension().location();
-	 */
 	public VeinLocation(UUID uuid, String name, ResourceLocation dim, BlockPos pos) {
 		super(dim, pos);
 		this.name = name;

@@ -46,16 +46,13 @@ public class BloodTitheHandler {
 
 		// ─── Blood Tithe ───
 		if (HemoMnAConfig.BLOOD_TITHE_ENABLED.get()) {
-			// Check if caster is in the Harbinger faction
 			IPlayerProgression progression = player.getCapability(PlayerProgressionProvider.PROGRESSION).orElse(null);
 			if (progression != null && progression.getAlliedFaction() != null
 					&& progression.getAlliedFaction().is(HarbingerEventHandler.FACTION_HARBINGERS_ID)) {
 
-				// Check if the spell has any Blood affinity
 				ISpellDefinition spell = event.getSpell();
 				if (spell.getAffinity() != null && spell.getAffinity().containsKey(Affinity.BLOOD)) {
 
-					// Check if player has blood volume capability
 					IBloodVolume blood = HemoCapabilityAccess.getBloodVolume(player).orElse(null);
 					if (blood != null && blood.isActive()) {
 						float reduction = (float) (currentCost * HemoMnAConfig.BLOOD_TITHE_MANA_REDUCTION.get());
@@ -71,11 +68,10 @@ public class BloodTitheHandler {
 		}
 
 		// ─── Sanguine Clarity (combo system) ───
-		if (HemoMnAConfig.SPELL_MANIP_COMBO_ENABLED.get()) {
-			if (player.hasEffect(com.vincenthuto.hemomancy.common.init.EffectInit.sanguine_clarity)) {
-				float clarityReduction = (float) (currentCost * HemoMnAConfig.SANGUINE_CLARITY_MANA_REDUCTION.get());
-				currentCost -= clarityReduction;
-			}
+		if (HemoMnAConfig.SPELL_MANIP_COMBO_ENABLED.get()
+				&& player.hasEffect(com.vincenthuto.hemomancy.common.init.EffectInit.sanguine_clarity)) {
+			float clarityReduction = (float) (currentCost * HemoMnAConfig.SANGUINE_CLARITY_MANA_REDUCTION.get());
+			currentCost -= clarityReduction;
 		}
 
 		event.setManaCost(Math.max(0, currentCost));
@@ -130,10 +126,9 @@ public class BloodTitheHandler {
 		}
 
 		// ─── Consume Sanguine Clarity if it was active (combo used) ───
-		if (HemoMnAConfig.SPELL_MANIP_COMBO_ENABLED.get()) {
-			if (player.hasEffect(com.vincenthuto.hemomancy.common.init.EffectInit.sanguine_clarity)) {
-				player.removeEffect(com.vincenthuto.hemomancy.common.init.EffectInit.sanguine_clarity);
-			}
+		if (HemoMnAConfig.SPELL_MANIP_COMBO_ENABLED.get()
+				&& player.hasEffect(com.vincenthuto.hemomancy.common.init.EffectInit.sanguine_clarity)) {
+			player.removeEffect(com.vincenthuto.hemomancy.common.init.EffectInit.sanguine_clarity);
 		}
 	}
 }

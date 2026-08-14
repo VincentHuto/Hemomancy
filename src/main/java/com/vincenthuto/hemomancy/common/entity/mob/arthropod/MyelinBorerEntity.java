@@ -3,11 +3,9 @@ package com.vincenthuto.hemomancy.common.entity.mob.arthropod;
 import com.vincenthuto.hemomancy.common.init.EffectInit;
 import com.vincenthuto.hemomancy.common.init.SoundInit;
 import net.minecraft.core.BlockPos;
-import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.Difficulty;
-import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.*;
@@ -55,11 +53,6 @@ public class MyelinBorerEntity extends Monster {
 	}
 
 	@Override
-	protected void defineSynchedData(SynchedEntityData.Builder builder) {
-		super.defineSynchedData(builder);
-	}
-
-	@Override
 	public boolean doHurtTarget(Entity target) {
 		boolean flag = super.doHurtTarget(target);
 		if (flag && target instanceof LivingEntity living) {
@@ -69,12 +62,6 @@ public class MyelinBorerEntity extends Monster {
 			living.addEffect(new MobEffectInstance(EffectInit.neural_overload, 200, newAmp));
 		}
 		return flag;
-	}
-
-	@Override
-	public SpawnGroupData finalizeSpawn(ServerLevelAccessor pLevel, DifficultyInstance pDifficulty,
-			MobSpawnType pReason, SpawnGroupData pSpawnData) {
-		return super.finalizeSpawn(pLevel, pDifficulty, pReason, pSpawnData);
 	}
 
 	@Override
@@ -104,8 +91,4 @@ public class MyelinBorerEntity extends Monster {
 				&& checkMobSpawnRules(pType, pLevel, pSpawnType, pPos, pRandom);
 	}
 
-	@Override
-	public void tick() {
-		super.tick();
-	}
 }

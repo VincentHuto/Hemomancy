@@ -30,22 +30,4 @@ public class WretchedWillRenderer extends MobRenderer<EntityWretchedWill, Wretch
 		return texture;
 	}
 
-	@Override
-	public void render(EntityWretchedWill ent, float p_115456_, float p_115457_, PoseStack ms, MultiBufferSource buffer,
-			int p_115460_) {
-		super.render(ent, p_115456_, p_115457_, ms, buffer, p_115460_);
-	//	System.out.println(ent.creator);
-
-//		if (ent.creator != null) {
-//			ms.pushPose();
-//			EntityRenderer<?> renderer = Minecraft.getInstance().getEntityRenderDispatcher().getRenderer(ent.creator);
-//			EntityModel<?> model = ((RenderLayerParent<?, ?>) renderer).getModel();
-//			if (model instanceof HumanoidModel<?>) {
-//				HumanoidModel<?> biModel = (HumanoidModel<?>) model;
-//				biModel.head.translateAndRotate(ms);
-//			}
-//			ms.popPose();
-//		}
-	}
-
 }

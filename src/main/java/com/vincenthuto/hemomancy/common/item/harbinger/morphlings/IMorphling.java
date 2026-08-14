@@ -15,13 +15,7 @@ import java.util.List;
 
 public interface IMorphling {
 
-//	int getTier();
-
 	int getBloodCost();
-
-//	int getAllegianceChance();
-
-	// public boolean canUseModule(int rarity);
 
 	public void use(Player playerIn, InteractionHand handIn, ItemStack itemStack, Level worldIn);
 

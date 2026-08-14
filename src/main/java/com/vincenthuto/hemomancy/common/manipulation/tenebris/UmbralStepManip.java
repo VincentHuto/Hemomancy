@@ -74,7 +74,6 @@ public class UmbralStepManip extends BloodManipulation {
 
 		BlockPos targetBlock = hitResult.getBlockPos();
 
-		// Find a safe landing position on top of the targeted block
 		BlockPos landingPos = targetBlock.above();
 
 		// Umbral Step requires darkness at the destination
@@ -88,7 +87,6 @@ public class UmbralStepManip extends BloodManipulation {
 		BlockState landingState = world.getBlockState(landingPos);
 		BlockState headState = world.getBlockState(landingPos.above());
 
-		// Ensure there's room for the player (2 blocks of air)
 		if (!landingState.isAir() && !landingState.getCollisionShape(world, landingPos).isEmpty()) {
 			// Try the face that was hit instead
 			landingPos = targetBlock.relative(hitResult.getDirection());
@@ -106,7 +104,6 @@ public class UmbralStepManip extends BloodManipulation {
 			return;
 		}
 
-		// Spawn departure particles at the old position
 		if (world instanceof ServerLevel sLevel) {
 			Vec3 oldPos = player.position();
 			RandomSource random = world.random;
@@ -133,7 +130,6 @@ public class UmbralStepManip extends BloodManipulation {
 
 		world.playSound(null, landingPos, SoundEvents.ENDERMAN_TELEPORT, SoundSource.PLAYERS, 0.8f, 1.2f);
 
-		// Spawn arrival particles
 		if (world instanceof ServerLevel sLevel) {
 			RandomSource random = world.random;
 			for (int i = 0; i < 25; i++) {

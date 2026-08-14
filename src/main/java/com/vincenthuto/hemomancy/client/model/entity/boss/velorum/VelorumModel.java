@@ -276,34 +276,10 @@ public class VelorumModel<T extends VelorumEntity> extends EntityModel<T> {
     public void setupAnim(T entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
         int visualState = entity.getVisualState();
         if (entity.isMartyrdom()) {
-//            this.body.xRot = -0.06F;
-//            this.head.xRot = headPitch * ((float) Math.PI / 180F) - 0.1F;
-//            this.rightArm.xRot = -0.85F;
-//            this.leftArm.xRot = -0.85F;
-//            this.rightArm.zRot = 0.18F;
-//            this.leftArm.zRot = -0.18F;
         }
         if (visualState == VelorumEntity.VISUAL_FROST_NOVA) {
-//            this.body.xRot = 0.08F;
-//            this.rightArm.xRot = -1.1F;
-//            this.leftArm.xRot = -1.1F;
-//            this.rightArm.zRot = 0.55F;
-//            this.leftArm.zRot = -0.55F;
-//            this.head.xRot = headPitch * ((float) Math.PI / 180F) - 0.14F;
         } else if (visualState == VelorumEntity.VISUAL_VEIL) {
-//            this.body.xRot = 0.28F;
-//            this.head.xRot = headPitch * ((float) Math.PI / 180F) + 0.32F;
-//            this.rightArm.xRot = -0.35F;
-//            this.leftArm.xRot = -0.35F;
-//            this.rightArm.zRot = -0.1F;
-//            this.leftArm.zRot = 0.1F;
         } else if (visualState == VelorumEntity.VISUAL_SILENCE_DRAIN) {
-            float pulse = (float) Math.sin(ageInTicks * 0.65F) * 0.09F;
-//            this.body.xRot = -0.12F;
-//            this.rightArm.xRot = -1.35F + pulse;
-//            this.leftArm.xRot = -1.35F - pulse;
-//            this.rightArm.zRot = 0.7F;
-//            this.leftArm.zRot = -0.7F;
         }
     }
 

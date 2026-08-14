@@ -53,29 +53,26 @@ public class FungusFeature extends Feature<NoneFeatureConfiguration> {
 	private boolean isValidPosition(WorldGenLevel pLevel, BlockPos pPos, int pMaxHeight, MutableBlockPos pMutablePos,
 			NoneFeatureConfiguration pConfig) {
 		int i = pPos.getY();
-		if (i >= pLevel.getMinBuildHeight() + 1 && i + pMaxHeight + 1 < pLevel.getMaxBuildHeight()) {
-			BlockState blockstate = pLevel.getBlockState(pPos.below());
-			if (!isDirt(blockstate) && !blockstate.is(BlockInit.erythrocytic_mycelium.get())) {
-				return false;
-			} else {
-				for (int j = 0; j <= pMaxHeight; ++j) {
-					int k = this.getTreeRadiusForHeight(-1, -1, 10, j);
-
-					for (int l = -k; l <= k; ++l) {
-						for (int i1 = -k; i1 <= k; ++i1) {
-							BlockState blockstate1 = pLevel.getBlockState(pMutablePos.setWithOffset(pPos, l, j, i1));
-							if (!blockstate1.isAir() && !blockstate1.is(BlockTags.LEAVES)) {
-								return false;
-							}
-						}
-					}
-				}
-
-				return true;
-			}
-		} else {
+		if (i < pLevel.getMinBuildHeight() + 1 || i + pMaxHeight + 1 >= pLevel.getMaxBuildHeight()) {
 			return false;
 		}
+		BlockState blockstate = pLevel.getBlockState(pPos.below());
+		if (!isDirt(blockstate) && !blockstate.is(BlockInit.erythrocytic_mycelium.get())) {
+			return false;
+		}
+		for (int j = 0; j <= pMaxHeight; ++j) {
+			int k = this.getTreeRadiusForHeight(-1, -1, 10, j);
+
+			for (int l = -k; l <= k; ++l) {
+				for (int i1 = -k; i1 <= k; ++i1) {
+					BlockState blockstate1 = pLevel.getBlockState(pMutablePos.setWithOffset(pPos, l, j, i1));
+					if (!blockstate1.isAir() && !blockstate1.is(BlockTags.LEAVES)) {
+						return false;
+					}
+				}
+			}
+		}
+		return true;
 	}
 
 	private void placeTrunk(WorldGenLevel pLevel, RandomSource randomsource, BlockPos pPos,
@@ -115,11 +112,11 @@ public class FungusFeature extends Feature<NoneFeatureConfiguration> {
 									&& blockstate.hasProperty(HugeMushroomBlock.SOUTH)
 									&& blockstate.hasProperty(HugeMushroomBlock.UP)) {
 								blockstate = blockstate
-										.setValue(HugeMushroomBlock.UP, Boolean.valueOf(i >= capSpread - 1))
-										.setValue(HugeMushroomBlock.WEST, Boolean.valueOf(l < -k))
-										.setValue(HugeMushroomBlock.EAST, Boolean.valueOf(l > k))
-										.setValue(HugeMushroomBlock.NORTH, Boolean.valueOf(i1 < -k))
-										.setValue(HugeMushroomBlock.SOUTH, Boolean.valueOf(i1 > k));
+										.setValue(HugeMushroomBlock.UP, i >= capSpread - 1)
+										.setValue(HugeMushroomBlock.WEST, l < -k)
+										.setValue(HugeMushroomBlock.EAST, l > k)
+										.setValue(HugeMushroomBlock.NORTH, i1 < -k)
+										.setValue(HugeMushroomBlock.SOUTH, i1 > k);
 							}
 
 							this.setBlock(worldgenlevel, blockpos$mutableblockpos, blockstate);

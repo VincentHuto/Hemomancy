@@ -66,7 +66,6 @@ public class EarthenVeinBlockEntity extends BlockEntity {
 						} while (f1 == te.flipT);
 					}
 				} else {
-				//	te.tRot += 0.02F;
 					te.open -= 0.1F;
 				}
 

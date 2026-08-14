@@ -25,21 +25,19 @@ public class MorphlingIncubatorScreen extends AbstractContainerScreen<MorphlingI
 	private static final int BORDER_OUTER = 0xFF330808;
 	private static final int BORDER_INNER = 0xFF220606;
 
-	// Working area is now taller: 96px craft area, then inventory below
 	private static final int CRAFT_AREA_HEIGHT = 96;
 
 	final MorphlingIncubatorBlockEntity te;
 	private float[][] veinParams;
 
-	// Blood bar screen-space bounds for hover detection
 	private BloodVolumeBarWidget.Bounds bloodBarBounds = BloodVolumeBarWidget.Bounds.EMPTY;
 
 	public MorphlingIncubatorScreen(MorphlingIncubatorMenu menu, Inventory inv, Component title) {
 		super(menu, inv, title);
 		this.te = menu.getTe();
 		this.imageWidth = 176;
-		this.imageHeight = 186; // taller to accommodate bigger working area
-		this.inventoryLabelY = CRAFT_AREA_HEIGHT + 7; // push inventory label down
+		this.imageHeight = 186;
+		this.inventoryLabelY = CRAFT_AREA_HEIGHT + 7;
 	}
 
 	@Override
@@ -47,7 +45,6 @@ public class MorphlingIncubatorScreen extends AbstractContainerScreen<MorphlingI
 		super.init();
 		this.titleLabelX = (this.imageWidth - this.font.width(this.title)) / 2;
 
-		// Seed vein parameters for the animated background
 		Random rand = new Random(42L);
 		veinParams = new float[VEIN_COUNT][9];
 		for (int i = 0; i < VEIN_COUNT; i++) {

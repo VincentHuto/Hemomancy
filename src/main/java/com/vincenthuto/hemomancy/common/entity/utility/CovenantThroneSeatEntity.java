@@ -1,6 +1,5 @@
 package com.vincenthuto.hemomancy.common.entity.utility;
 
-import com.vincenthuto.hemomancy.common.block.harbinger.functional.CovenantThroneBlock;
 import com.vincenthuto.hemomancy.common.init.BlockInit;
 import com.vincenthuto.hemomancy.common.init.EntityInit;
 import com.vincenthuto.hemomancy.common.tile.functional.CovenantThroneBlockEntity;

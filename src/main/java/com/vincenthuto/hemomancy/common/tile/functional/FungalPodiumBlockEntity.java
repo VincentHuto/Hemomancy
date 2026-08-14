@@ -14,7 +14,6 @@ import net.minecraft.world.phys.Vec3;
 
 public class FungalPodiumBlockEntity extends BlockEntity {
 
-	@SuppressWarnings("unused")
 	public static void animTick(Level level, BlockPos pos, BlockState state, FungalPodiumBlockEntity ent) {
 		if (level.isClientSide) {
 			int globalPartCount = 128;

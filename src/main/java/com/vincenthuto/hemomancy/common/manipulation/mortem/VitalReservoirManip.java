@@ -62,14 +62,11 @@ public class VitalReservoirManip extends BloodManipulation {
 			return;
 		}
 
-		// Consume XP levels
 		player.giveExperienceLevels(-XP_LEVELS_COST);
 
-		// Restore blood (capped at max)
 		double toRestore = Math.min(BLOOD_RESTORE, volume.getMaxBloodVolume() - volume.getBloodVolume());
 		volume.addBloodVolume(toRestore);
 
-		// Sync blood volume to client
 		if (player instanceof ServerPlayer serverPlayer) {
 			PacketHandler.sendToPlayer(serverPlayer, new BloodVolumeServerPacket(volume));
 		}
@@ -81,9 +78,7 @@ public class VitalReservoirManip extends BloodManipulation {
 			BlockPos pos = player.blockPosition();
 			RandomSource random = world.random;
 
-			// Green XP → dark red blood conversion particles
 			for (int i = 0; i < 20; i++) {
-				// Green particles rising (XP leaving)
 				sLevel.sendParticles(
 						GlowParticleFactory.createData(new ParticleColor(0, 180 + random.nextFloat() * 75, 0)),
 						pos.getX() + 0.5 + (random.nextDouble() - 0.5) * 0.6,
@@ -92,7 +87,6 @@ public class VitalReservoirManip extends BloodManipulation {
 						1, 0f, 0.2f, 0f, 0.02f);
 			}
 			for (int i = 0; i < 15; i++) {
-				// Dark red particles converging (blood gained)
 				sLevel.sendParticles(
 						GlowParticleFactory.createData(new ParticleColor(
 								120 + random.nextFloat() * 80, 0, random.nextFloat() * 30)),

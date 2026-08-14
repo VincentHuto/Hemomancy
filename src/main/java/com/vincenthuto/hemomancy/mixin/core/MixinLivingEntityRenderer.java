@@ -40,7 +40,10 @@ public abstract class MixinLivingEntityRenderer {
 					target = "Lnet/minecraft/world/entity/LivingEntity;hasPose(Lnet/minecraft/world/entity/Pose;)Z"),
 			remap = false)
 	private boolean hemomancy$suppressBedTranslationForWarpChair(LivingEntity entity, Pose pose) {
-		return pose == Pose.SLEEPING && WarpChairPlayerPose.isSeated(entity) ? false : entity.hasPose(pose);
+		if (pose == Pose.SLEEPING && WarpChairPlayerPose.isSeated(entity)) {
+			return false;
+		}
+		return entity.hasPose(pose);
 	}
 
 	@Inject(method = "setupRotations", at = @At("HEAD"), cancellable = true, remap = false)

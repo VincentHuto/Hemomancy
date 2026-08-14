@@ -143,13 +143,12 @@ public final class FoldedHallwayManager {
 		}
 
 		double progress = FoldActivationBounds.realDepthProgress(spec, entrySide,
-				FoldMinecraftAdapter.fromVec3(player.position()));
+				position);
 		TRAVELERS.put(key(player), FoldTravelerState.active(spec, entrySide, progress));
 	}
 
 	private static Optional<MovementEntryCandidate> findEnteringFold(Level level, FoldVector start, FoldVector end) {
-		FoldVector centerVector = end;
-		BlockPos center = BlockPos.containing(centerVector.x, centerVector.y, centerVector.z);
+		BlockPos center = BlockPos.containing(end.x, end.y, end.z);
 		for (BlockPos pos : BlockPos.betweenClosed(
 				center.offset(-SEARCH_RADIUS_XZ, -SEARCH_RADIUS_Y, -SEARCH_RADIUS_XZ),
 				center.offset(SEARCH_RADIUS_XZ, SEARCH_RADIUS_Y, SEARCH_RADIUS_XZ))) {

@@ -28,20 +28,15 @@ public class Vector4f {
    public boolean equals(Object pOther) {
       if (this == pOther) {
          return true;
-      } else if (pOther != null && this.getClass() == pOther.getClass()) {
-         Vector4f vector4f = (Vector4f)pOther;
-         if (Float.compare(vector4f.x, this.x) != 0) {
-            return false;
-         } else if (Float.compare(vector4f.y, this.y) != 0) {
-            return false;
-         } else if (Float.compare(vector4f.z, this.z) != 0) {
-            return false;
-         } else {
-            return Float.compare(vector4f.w, this.w) == 0;
-         }
-      } else {
+      }
+      if (pOther == null || this.getClass() != pOther.getClass()) {
          return false;
       }
+      Vector4f vector4f = (Vector4f)pOther;
+      return Float.compare(vector4f.x, this.x) == 0
+            && Float.compare(vector4f.y, this.y) == 0
+            && Float.compare(vector4f.z, this.z) == 0
+            && Float.compare(vector4f.w, this.w) == 0;
    }
 
    public int hashCode() {

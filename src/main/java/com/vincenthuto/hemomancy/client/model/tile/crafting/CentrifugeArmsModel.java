@@ -12,7 +12,6 @@ import net.minecraft.client.renderer.RenderType;
 
 // Made with Blockbench 4.4.0-beta.1
 // Exported for Minecraft version 1.17 - 1.18 with Mojang mappings
-// Paste this class into your mod and generate all required imports
 
 public class CentrifugeArmsModel extends Model {
 	public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(

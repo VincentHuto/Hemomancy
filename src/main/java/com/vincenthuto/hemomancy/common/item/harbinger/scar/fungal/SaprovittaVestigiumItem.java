@@ -3,7 +3,6 @@ package com.vincenthuto.hemomancy.common.item.harbinger.scar.fungal;
 import com.vincenthuto.hemomancy.common.item.harbinger.scar.ScarDefinition;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
-import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
@@ -27,16 +26,6 @@ public class SaprovittaVestigiumItem extends ItemFungalScar {
 
 	public SaprovittaVestigiumItem(Properties properties, DeferredHolder<ScarDefinition, ScarDefinition> scarDefinition) {
 		super(properties, scarDefinition);
-	}
-
-	@Override
-	public void onEquipped(LivingEntity player) {
-		super.onEquipped(player);
-	}
-
-	@Override
-	public void onUnequipped(LivingEntity player) {
-		super.onUnequipped(player);
 	}
 
 	@Override

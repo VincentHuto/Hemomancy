@@ -15,7 +15,6 @@ public class BloodGourdModel<T extends LivingEntity> extends EntityModel<T> {
 	public static final ModelLayerLocation blood_gourd = new ModelLayerLocation(
 			Hemomancy.rloc("blood_gourd"), "main");
 
-	@SuppressWarnings("unused")
 	public static LayerDefinition createBodyLayer() {
 		MeshDefinition meshdefinition = new MeshDefinition();
 		PartDefinition partdefinition = meshdefinition.getRoot();

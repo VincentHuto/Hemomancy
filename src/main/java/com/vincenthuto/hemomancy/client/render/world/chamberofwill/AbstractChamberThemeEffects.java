@@ -101,7 +101,6 @@ abstract class AbstractChamberThemeEffects implements ChamberThemeEffects {
 		int bloodVesselDepthLayers = theme.bloodVesselLayers();
 		int neuralDepthLayers = theme.neuralLayers();
 
-		//ChamberOfWillRenderHelpers.renderCorticalFolds(poseStack, tesselator, f, skyDistance);
 		ChamberOfWillRenderHelpers.renderCapillaryWeb(poseStack, tesselator, f, skyDistance, capillaryDepthLayers, theme);
 		ChamberOfWillRenderHelpers.renderBlueVeins(poseStack, tesselator, f, skyDistance, blueVeinDepthLayers, theme);
 		ChamberOfWillRenderHelpers.renderBloodVessels(poseStack, tesselator, f, skyDistance, membranePulse, bloodVesselDepthLayers, theme);

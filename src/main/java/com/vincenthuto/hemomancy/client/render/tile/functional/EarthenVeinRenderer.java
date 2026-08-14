@@ -3,7 +3,6 @@ package com.vincenthuto.hemomancy.client.render.tile.functional;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.client.model.tile.functional.EarthenVeinModel;
-import com.vincenthuto.hemomancy.client.model.tile.functional.FloatingEyeModel;
 import com.vincenthuto.hemomancy.common.block.harbinger.functional.EarthenVeinBlock;
 import com.vincenthuto.hemomancy.common.tile.functional.EarthenVeinBlockEntity;
 import com.vincenthuto.hutoslib.math.Quaternion;
@@ -21,16 +20,13 @@ import net.minecraft.world.level.block.state.properties.DirectionProperty;
 public class EarthenVeinRenderer implements BlockEntityRenderer<EarthenVeinBlockEntity> {
 	public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
 	public static ResourceLocation texture = Hemomancy.rloc("textures/entity/earthen_vein/model_earthen_vein.png");
-	public static ResourceLocation eyeTexture = Hemomancy.rloc("textures/entity/floating_eye/model_floating_eye.png");
 
 	private final EarthenVeinModel vein;
-	private final FloatingEyeModel eye;
 
 	private final EarthenVeinAnimContext animCtx = new EarthenVeinAnimContext(new AnimationState());
 
 	public EarthenVeinRenderer(BlockEntityRendererProvider.Context p_173636_) {
 		vein = new EarthenVeinModel(p_173636_.bakeLayer(EarthenVeinModel.LAYER_LOCATION));
-		eye = new FloatingEyeModel(p_173636_.bakeLayer(FloatingEyeModel.LAYER_LOCATION));
 		animCtx.state.start(0);
 
 	}
@@ -52,35 +48,6 @@ public class EarthenVeinRenderer implements BlockEntityRenderer<EarthenVeinBlock
 		vein.renderToBuffer(pPoseStack, bufferIn.getBuffer(vein.renderType(texture)), combinedLightIn,
 				OverlayTexture.NO_OVERLAY, -1);
 		pPoseStack.popPose();
-//
-//		pPoseStack.pushPose();
-//		
-//		pPoseStack.translate(0.75, 0.5, 0.25);
-//		pPoseStack.scale(0.5f, 0.5f, 0.5f);
-//		float f = te.time + partialTicks;
-//		pPoseStack.translate(0.0D, 0.1F + Mth.sin(f * 0.1F) * 0.01F, 0.0D);
-//
-//		float f1;
-//		for (f1 = te.rot - te.oRot; f1 >= (float) Math.PI; f1 -= ((float) Math.PI * 2F)) {
-//		}
-//		
-//
-//
-//		while (f1 < -(float) Math.PI) {
-//			f1 += ((float) Math.PI * 2F);
-//		}
-//		float f2 = te.oRot + f1 * partialTicks;
-//		pPoseStack.mulPose(Vector3.YP.rotation(-f2 + 55).toMoj());
-//
-//		float f3 = Mth.lerp(partialTicks, te.oFlip, te.flip);
-//		float f4 = Mth.frac(f3 + 0.25F) * 1.6F - 0.3F;
-//		float f5 = Mth.frac(f3 + 0.75F) * 1.6F - 0.3F;
-//		float f6 = Mth.lerp(partialTicks, te.oOpen, te.open);
-//		eye.setupAnim(f, Mth.clamp(f4, 0.0F, 1.0F), Mth.clamp(f5, 0.0F, 1.0F), f6);
-//
-//		eye.renderToBuffer(pPoseStack, bufferIn.getBuffer(vein.renderType(eyeTexture)), combinedLightIn,
-//				OverlayTexture.NO_OVERLAY, -1);
-//		pPoseStack.popPose();
 
 
 	}

@@ -147,8 +147,7 @@ public class HarbingerEquipmentContainer extends ItemStackHandler implements IHa
 
 	@Override
 	public void setSize(int size) {
-		if (size != SCAR_SLOTS)
-			System.out.println("Cannot resize equipment container");
+		if (size != SCAR_SLOTS) return;
 	}
 
 	@Override
@@ -176,12 +175,6 @@ public class HarbingerEquipmentContainer extends ItemStackHandler implements IHa
 				}
 			}
 		}
-	}
-
-	@Override
-	public void setStackInSlot(int slot, @Nonnull ItemStack stack) {
-
-		super.setStackInSlot(slot, stack);
 	}
 
 	private void sync() {

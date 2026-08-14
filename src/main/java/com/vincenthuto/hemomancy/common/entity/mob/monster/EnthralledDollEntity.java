@@ -131,18 +131,12 @@ public class EnthralledDollEntity extends Monster implements OwnableEntity {
 	@Override
 	public boolean mayInteract(Level pLevel, BlockPos pPos) {
 		Entity entity = this.getOwner();
-		if (entity instanceof Player) {
-			return entity.mayInteract(pLevel, pPos);
-		} else {
-			return entity == null ;
-		}
+		return entity instanceof Player ? entity.mayInteract(pLevel, pPos) : entity == null;
 	}
 
 	@Override
 	public void playerTouch(Player entityIn) {
 		super.playerTouch(entityIn);
-		// entityIn.attackEntityFrom(DamageSource.causeMobDamage(this), 1.5f);
-
 	}
 
 	@Override

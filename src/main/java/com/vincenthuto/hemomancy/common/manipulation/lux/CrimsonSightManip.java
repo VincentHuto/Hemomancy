@@ -45,10 +45,8 @@ public class CrimsonSightManip extends BloodManipulation {
 
 	@Override
 	public void getAction(Player player, Level world, ItemStack heldItemMainhand, BlockPos position) {
-		// Grant player Night Vision
 		player.addEffect(new MobEffectInstance(MobEffects.NIGHT_VISION, NIGHT_VISION_DURATION, 0, false, false, true));
 
-		// Scan for nearby hostile mobs and apply Glowing
 		List<Entity> entities = world.getEntities(player, player.getBoundingBox().inflate(SCAN_RADIUS));
 		int glowedCount = 0;
 		for (Entity entity : entities) {
@@ -64,7 +62,6 @@ public class CrimsonSightManip extends BloodManipulation {
 			BlockPos pos = player.blockPosition();
 			RandomSource random = world.random;
 
-			// Bright white/gold pulse from player's head
 			for (int i = 0; i < 30; i++) {
 				float r = 220 + random.nextFloat() * 35;
 				float g = 200 + random.nextFloat() * 55;

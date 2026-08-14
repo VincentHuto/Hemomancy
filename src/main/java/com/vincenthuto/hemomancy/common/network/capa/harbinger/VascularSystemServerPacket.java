@@ -39,8 +39,6 @@ public class VascularSystemServerPacket implements CustomPacketPayload {
 		}
 	}
 
-	// This code only runs on the client
-	@SuppressWarnings("unused")
 	public static void handle(final VascularSystemServerPacket msg, final IPayloadContext ctx) {
 		ctx.enqueueWork(() -> {
 			Player player = ctx.player();

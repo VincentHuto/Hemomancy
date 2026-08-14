@@ -35,35 +35,29 @@ public class BloodVolume implements IBloodVolume, INBTSerializable<CompoundTag> 
 
 	@Override
 	public boolean drain(double points) {
-		if (!wouldOverstrain(points)) {
-			bloodVolume -= points;
-			return true;
-		} else {
+		if (wouldOverstrain(points)) {
 			bloodVolume = 0;
 			return false;
 		}
+		bloodVolume -= points;
+		return true;
 	}
 
 	@Override
 	public boolean drainFromSource(IBloodVolume src, double points) {
-		if (src.fill(points) ) {
-			drain(points);
-			return true;
-		} else {
-			return false;
-		}
+		if (!src.fill(points)) return false;
+		drain(points);
+		return true;
 	}
 
 	@Override
 	public boolean fill(double points) {
-		if (!wouldOverflow(points)) {
-			bloodVolume += points;
-			return true;
-		} else {
+		if (wouldOverflow(points)) {
 			bloodVolume = maxBloodVolume;
 			return false;
 		}
-
+		bloodVolume += points;
+		return true;
 	}
 
 	@Override

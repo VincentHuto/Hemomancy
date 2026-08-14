@@ -20,11 +20,7 @@ public class ScarBinderSlot extends SlotItemHandler {
 
 	@Override
 	public boolean mayPlace(@Nonnull ItemStack stack) {
-		if (stack.getItem() instanceof ItemScarPattern) {
-			return true;
-		} else {
-			return false;
-		}
+		return stack.getItem() instanceof ItemScarPattern;
 
 	}
 

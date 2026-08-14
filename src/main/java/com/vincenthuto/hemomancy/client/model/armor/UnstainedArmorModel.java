@@ -34,7 +34,6 @@ public class UnstainedArmorModel<T extends LivingEntity> extends HumanoidModel<T
 	public static final Lazy<UnstainedArmorModel<LivingEntity>> boots = Lazy.of(
 			() -> new UnstainedArmorModel<>(Minecraft.getInstance().getEntityModels().bakeLayer(UNSTAINED_FEET_LAYER)));
 
-	@SuppressWarnings("unused")
 	public static LayerDefinition createBodyLayer(EquipmentSlot slot) {
 		MeshDefinition meshdefinition = HumanoidModel.createMesh(CubeDeformation.NONE, 0);
 		PartDefinition partdefinition = meshdefinition.getRoot();
@@ -160,7 +159,6 @@ public class UnstainedArmorModel<T extends LivingEntity> extends HumanoidModel<T
 
 	}
 
-	@SuppressWarnings("unused")
 	public static LayerDefinition createHeadLayer(EquipmentSlot slot) {
 		MeshDefinition meshdefinition = HumanoidModel.createMesh(CubeDeformation.NONE, 0);
 		PartDefinition partdefinition = meshdefinition.getRoot();
@@ -191,9 +189,4 @@ public class UnstainedArmorModel<T extends LivingEntity> extends HumanoidModel<T
 
 	}
 
-	@Override
-	public void setupAnim(T entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw,
-			float headPitch) {
-		super.setupAnim(entity, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch);
-	}
 }

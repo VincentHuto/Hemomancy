@@ -28,10 +28,4 @@ public class EnthralledDollRenderer
 
 	}
 
-	@Override
-	public void render(EnthralledDollEntity pEntity, float pEntityYaw, float pPartialTicks, PoseStack pMatrixStack,
-			MultiBufferSource pBuffer, int pPackedLight) {
-		super.render(pEntity, pEntityYaw, pPartialTicks, pMatrixStack, pBuffer, pPackedLight);
-	}
-
 }

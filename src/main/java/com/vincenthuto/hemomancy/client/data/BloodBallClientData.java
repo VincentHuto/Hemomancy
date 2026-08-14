@@ -39,7 +39,6 @@ public class BloodBallClientData {
 	/** Gravity acceleration applied per tick when dropped (blocks/tick²). */
 	private static final double GRAVITY = 0.04;
 
-	// ── State ──
 	private static Vec3 position = null;
 	private static Vec3 prevPosition = null;
 	private static Vec3 velocity = Vec3.ZERO;
@@ -55,10 +54,6 @@ public class BloodBallClientData {
 
 	/** Ensures the squish fires exactly once per drop. */
 	private static boolean squishTriggered = false;
-
-	// ─────────────────────────────────────────────────────────────────────
-	//  Public query
-	// ─────────────────────────────────────────────────────────────────────
 
 	/**
 	 * Returns {@code true} when the local player is holding a Sanguine Blob item
@@ -125,10 +120,6 @@ public class BloodBallClientData {
 		return squishTicks;
 	}
 
-	// ─────────────────────────────────────────────────────────────────────
-	//  Tick
-	// ─────────────────────────────────────────────────────────────────────
-
 	/**
 	 * Called once per client tick (END phase) from ClientEvents.
 	 * Drives the follow-lerp and drop-gravity physics.
@@ -137,7 +128,6 @@ public class BloodBallClientData {
 		jigglePhase += 0.08f;
 
 		if (dropped) {
-			// Trigger the squish animation once, after the simulated ground-impact delay
 			if (!squishTriggered && fadeTicks == MAX_FADE_TICKS - SQUISH_DELAY_TICKS) {
 				squishTicks = MAX_SQUISH_TICKS;
 				squishTriggered = true;
@@ -146,7 +136,6 @@ public class BloodBallClientData {
 				squishTicks--;
 			}
 
-			// Apply gravity and step position
 			velocity = velocity.add(0, -GRAVITY, 0);
 			prevPosition = position != null ? position : Vec3.ZERO;
 			position = (position != null ? position : Vec3.ZERO).add(velocity);
@@ -179,10 +168,6 @@ public class BloodBallClientData {
 		}
 	}
 
-	// ─────────────────────────────────────────────────────────────────────
-	//  Actions
-	// ─────────────────────────────────────────────────────────────────────
-
 	/**
 	 * Triggers the drop animation.  The ball stops following the player, inherits
 	 * zero initial velocity, and gravity takes over until it fades away.
@@ -194,10 +179,6 @@ public class BloodBallClientData {
 			velocity = Vec3.ZERO;
 		}
 	}
-
-	// ─────────────────────────────────────────────────────────────────────
-	//  Internal
-	// ─────────────────────────────────────────────────────────────────────
 
 	private static void reset() {
 		position = null;

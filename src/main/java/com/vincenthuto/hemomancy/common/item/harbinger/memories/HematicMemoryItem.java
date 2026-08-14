@@ -38,12 +38,6 @@ public class HematicMemoryItem extends Item {
 
 	@Override
 	public InteractionResultHolder<ItemStack> use(Level worldIn, Player playerIn, InteractionHand handIn) {
-//		IBloodVolume volume = HemoCapabilityAccess.getBloodVolume(playerIn)
-//				.orElseThrow(NullPointerException::new);
-//		if (!worldIn.isClientSide) {
-//			volume.setActive(!volume.isActive());
-//			PacketHandler.sendToPlayer((ServerPlayer) playerIn, //					new PacketBloodVolumeServer(volume));
-//		}
 		return super.use(worldIn, playerIn, handIn);
 	}
 

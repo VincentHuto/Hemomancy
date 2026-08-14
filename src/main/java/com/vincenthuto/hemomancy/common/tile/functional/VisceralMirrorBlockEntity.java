@@ -45,8 +45,6 @@ import net.minecraft.world.level.block.state.BlockState;
  */
 public class VisceralMirrorBlockEntity extends BlockEntity {
 
-	// ========================== CONSTANTS ==========================
-
 	/** Minimum initiatory degree required to use the mirror. */
 	private static final int REQUIRED_DEGREE = 3;
 
@@ -61,8 +59,6 @@ public class VisceralMirrorBlockEntity extends BlockEntity {
 
 	/** Ticks after which the mirror "forgets" its selection if nobody interacts. */
 	private static final int SELECTION_TIMEOUT_TICKS = 200;
-
-	// ========================== STATE ==========================
 
 	public enum RitualPhase { IDLE, CHANNELING, EXTRACTING, COMPLETE }
 
@@ -84,8 +80,6 @@ public class VisceralMirrorBlockEntity extends BlockEntity {
 	public VisceralMirrorBlockEntity(BlockPos pos, BlockState state) {
 		super(BlockEntityInit.visceral_mirror.get(), pos, state);
 	}
-
-	// ========================== TICK ==========================
 
 	public static void serverTick(Level level, BlockPos pos, BlockState state, VisceralMirrorBlockEntity te) {
 		if (te.phase == RitualPhase.IDLE || te.phase == RitualPhase.COMPLETE) return;
@@ -114,10 +108,7 @@ public class VisceralMirrorBlockEntity extends BlockEntity {
 	}
 
 	public static void clientTick(Level level, BlockPos pos, BlockState state, VisceralMirrorBlockEntity te) {
-		// Client-side particle effects could go here in the future
 	}
-
-	// ========================== RITUAL LOGIC ==========================
 
 	/**
 	 * Attempts to begin the organ extraction ritual for the given organ.
@@ -129,7 +120,6 @@ public class VisceralMirrorBlockEntity extends BlockEntity {
 		if (level == null || level.isClientSide) return false;
 		if (phase != RitualPhase.IDLE) return false;
 
-		// Check initiatory degree
 		int degree = HemoCapabilityAccess.getInitiatoryDegree(player)
 				.map(d -> d.getDegreeNumber()).orElse(0);
 		if (degree < REQUIRED_DEGREE) {
@@ -137,7 +127,6 @@ public class VisceralMirrorBlockEntity extends BlockEntity {
 			return false;
 		}
 
-		// Check that the player holds a vivianite scalpel in either hand
 		boolean hasScalpel = player.getItemInHand(InteractionHand.MAIN_HAND).is(ItemInit.vivianite_scalpel.get())
 				|| player.getItemInHand(InteractionHand.OFF_HAND).is(ItemInit.vivianite_scalpel.get());
 		if (!hasScalpel) {
@@ -145,13 +134,11 @@ public class VisceralMirrorBlockEntity extends BlockEntity {
 			return false;
 		}
 
-		// Check tier requirement
 		if (organ.getTier() > degree) {
 			sendStatusToPlayer(player, "Your degree is insufficient for an organ of this tier.");
 			return false;
 		}
 
-		// Check if already at max modification
 		IVisceralOrgans organs = HemoCapabilityAccess.getVisceralOrgans(player)
 				.orElse(null);
 		if (organs != null && organs.getOrganLevel(organ) >= 3) {
@@ -159,7 +146,6 @@ public class VisceralMirrorBlockEntity extends BlockEntity {
 			return false;
 		}
 
-		// Check if player already holds an echo of this organ
 		for (int i = 0; i < player.getInventory().getContainerSize(); i++) {
 			ItemStack invStack = player.getInventory().getItem(i);
 			if (!invStack.isEmpty()
@@ -170,7 +156,6 @@ public class VisceralMirrorBlockEntity extends BlockEntity {
 			}
 		}
 
-		// Check blood cost
 		double cost = organ.getTier() * BLOOD_COST_PER_TIER;
 		IBloodVolume vol = HemoCapabilityAccess.getBloodVolume(player).orElse(null);
 		if (vol == null || vol.getBloodVolume() < cost) {
@@ -210,7 +195,6 @@ public class VisceralMirrorBlockEntity extends BlockEntity {
 	private void tickChanneling(Player player) {
 		ritualTicks++;
 
-		// Drain blood gradually
 		double drainPerTick = (targetOrgan.getTier() * BLOOD_COST_PER_TIER) / totalRitualTicks;
 		HemoCapabilityAccess.getBloodVolume(player).ifPresent(vol -> {
 			if (!vol.drain(drainPerTick)) {
@@ -236,7 +220,6 @@ public class VisceralMirrorBlockEntity extends BlockEntity {
 	private void tickExtracting(Player player) {
 		ritualTicks++;
 
-		// Extraction takes 60 ticks (3 seconds) with damage
 		if (ritualTicks % 20 == 0) {
 			float damage = targetOrgan.getTier() * 2.0f;
 			player.hurt(player.damageSources().magic(), damage);
@@ -253,7 +236,6 @@ public class VisceralMirrorBlockEntity extends BlockEntity {
 			return;
 		}
 
-		// Check the player doesn't already hold an echo of this organ
 		boolean alreadyHasEcho = false;
 		for (int i = 0; i < player.getInventory().getContainerSize(); i++) {
 			ItemStack invStack = player.getInventory().getItem(i);
@@ -315,8 +297,6 @@ public class VisceralMirrorBlockEntity extends BlockEntity {
 		};
 	}
 
-	// ========================== HELPERS ==========================
-
 	private Player findNearestInitiatedPlayer() {
 		if (level == null) return null;
 		return level.getNearestPlayer(
@@ -357,8 +337,6 @@ public class VisceralMirrorBlockEntity extends BlockEntity {
 		}
 	}
 
-	// ========================== ACCESSORS ==========================
-
 	public RitualPhase getPhase() { return phase; }
 	public EnumOrgan getTargetOrgan() { return targetOrgan; }
 	public int getRitualTicks() { return ritualTicks; }
@@ -368,8 +346,6 @@ public class VisceralMirrorBlockEntity extends BlockEntity {
 		if (totalRitualTicks <= 0) return 0;
 		return (float) ritualTicks / totalRitualTicks;
 	}
-
-	// ========================== NBT ==========================
 
 	@Override
 	protected void saveAdditional(CompoundTag tag, HolderLookup.Provider provider) {

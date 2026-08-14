@@ -62,9 +62,7 @@ public final class NodeShapeRenderer {
 		};
 	}
 
-	// ================================================================
 	//  Diamond
-	// ================================================================
 
 	private static void drawDiamondFill(GuiGraphics gfx, int cx, int cy, int hs, int color) {
 		for (int row = -hs; row <= hs; row++) {
@@ -93,9 +91,7 @@ public final class NodeShapeRenderer {
 		return Math.abs(mx - cx) + Math.abs(my - cy) <= hs;
 	}
 
-	// ================================================================
 	//  Square
-	// ================================================================
 
 	private static void drawSquareOutline(GuiGraphics gfx, int cx, int cy, int hs, int color) {
 		gfx.fill(cx - hs, cy - hs, cx + hs, cy - hs + 1, color); // top
@@ -108,9 +104,7 @@ public final class NodeShapeRenderer {
 		return mx >= cx - hs && mx <= cx + hs && my >= cy - hs && my <= cy + hs;
 	}
 
-	// ================================================================
 	//  Circle (pixel-approximated)
-	// ================================================================
 
 	private static void drawCircleFill(GuiGraphics gfx, int cx, int cy, int hs, int color) {
 		int r2 = hs * hs;
@@ -167,9 +161,7 @@ public final class NodeShapeRenderer {
 		}
 	}
 
-	// ================================================================
 	//  Triangle (equilateral, pointing up)
-	// ================================================================
 
 	private static void drawTriangleFill(GuiGraphics gfx, int cx, int cy, int hs, int color) {
 		// Apex at (cx, cy - hs), base from (cx - hs, cy + hs) to (cx + hs, cy + hs).
@@ -212,9 +204,7 @@ public final class NodeShapeRenderer {
 		return Math.abs(mx - cx) <= halfW;
 	}
 
-	// ================================================================
 	//  Hexagon (flat-topped)
-	// ================================================================
 
 	private static void drawHexagonFill(GuiGraphics gfx, int cx, int cy, int hs, int color) {
 		// Flat-topped hex: half-height = hs, half-width at equator = hs,

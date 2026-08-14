@@ -45,7 +45,6 @@ public class EndlessHourManip extends BloodManipulation {
 	public void getAction(Player player, Level world, ItemStack heldItemMainhand, BlockPos position) {
 		long currentTime = world.getGameTime();
 
-		// Check if an Endless Hour is already active
 		long existingExpiry = player.getPersistentData().getLong(EXPIRY_KEY);
 		if (existingExpiry > currentTime) {
 			player.displayClientMessage(
@@ -56,11 +55,9 @@ public class EndlessHourManip extends BloodManipulation {
 			return;
 		}
 
-		// Set the effect: absorption + resistance to simulate "can't die"
 		player.addEffect(new MobEffectInstance(MobEffects.ABSORPTION, DURATION_TICKS, 4, false, true));
 		player.addEffect(new MobEffectInstance(MobEffects.DAMAGE_RESISTANCE, DURATION_TICKS, 3, false, true));
 
-		// Mark the expiry time and reset deferred damage counter
 		player.getPersistentData().putLong(EXPIRY_KEY, currentTime + DURATION_TICKS);
 		player.getPersistentData().putFloat(DEFERRED_DAMAGE_KEY, 0.0f);
 

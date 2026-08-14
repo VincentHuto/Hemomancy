@@ -179,7 +179,6 @@ public class BloodProjectionItem extends Item implements IDispellable, ICellHand
 		return Math.max(0.0D, beforeBlood - playerVolume.getBloodVolume());
 	}
 
-	@SuppressWarnings("unused")
 	@Override
 	public InteractionResultHolder<ItemStack> use(Level worldIn, Player playerIn, InteractionHand handIn) {
 		ItemStack stack = playerIn.getItemInHand(handIn);

@@ -150,11 +150,6 @@ public class ScarStationScreen extends AbstractContainerScreen<ScarStationMenu> 
 	}
 
 	@Override
-	public void renderBackground(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
-		super.renderBackground(graphics, mouseX, mouseY, partialTick);
-	}
-
-	@Override
 	protected void containerTick() {
 		super.containerTick();
 		syncPatternSlotState();
@@ -834,7 +829,6 @@ public class ScarStationScreen extends AbstractContainerScreen<ScarStationMenu> 
 			}
 
 			// ── scar button drag painting ───────────────────────────────
-			// Check if click landed on any scar button
 			for (int i = 0; i < 8; i++) {
 				for (int j = 0; j < 8; j++) {
 					ScarButton cb = scarbuttonArray[i][j];

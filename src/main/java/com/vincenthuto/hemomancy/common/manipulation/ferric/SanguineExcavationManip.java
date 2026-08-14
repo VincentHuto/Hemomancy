@@ -83,19 +83,16 @@ public class SanguineExcavationManip extends BloodManipulation {
 		BlockState targetState = world.getBlockState(center);
 		Block targetBlock = targetState.getBlock();
 
-		// Don't break unbreakable blocks
 		if (targetState.getDestroySpeed(world, center) < 0) {
 			return;
 		}
 
-		// Scale excavation AoE with Sanguine Reach skill
 		double reachMult = SkillPointHelper.getSanguineReachMultiplier(player);
 		int maxBlocks = (int) Math.min(CAP_MAX_BLOCKS,
 				BASE_MAX_BLOCKS * reachMult);
 		double radiusSq = Math.min(CAP_RADIUS_SQ,
 				BASE_RADIUS_SQ * reachMult * reachMult);
 
-		// Flood-fill to find connected blocks of the same type (max maxBlocks)
 		List<BlockPos> toBreak = new ArrayList<>();
 		Queue<BlockPos> queue = new LinkedList<>();
 		queue.add(center);
@@ -116,7 +113,6 @@ public class SanguineExcavationManip extends BloodManipulation {
 			}
 		}
 
-		// Break all found blocks and drop items
 		RandomSource random = world.random;
 		for (BlockPos bp : toBreak) {
 			BlockState state = world.getBlockState(bp);

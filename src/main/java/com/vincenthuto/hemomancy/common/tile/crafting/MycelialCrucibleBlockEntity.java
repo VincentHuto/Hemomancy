@@ -393,7 +393,6 @@ public class MycelialCrucibleBlockEntity extends BaseContainerBlockEntity implem
         int next    = current + (int) totalEnzymePower;
         immatureScar.setMatureProgress(center, next);
 
-        // Check if fully mature
         if (immatureScar.isMature(center)) {
             // Find the matching recipe and produce the finished scar
             finishPhase2Complete(center, immatureScar);

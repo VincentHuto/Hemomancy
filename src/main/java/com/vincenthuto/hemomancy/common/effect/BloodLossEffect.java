@@ -12,7 +12,6 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectCategory;
-import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
@@ -27,8 +26,6 @@ public class BloodLossEffect extends MobEffect {
 
 	@Override
 	public boolean applyEffectTick(LivingEntity entity, int amplifier) {
-		// Entities without blood cant lose any...
-
 		if (entity != null) {
 
 			if (entity instanceof Player) {
@@ -46,10 +43,8 @@ public class BloodLossEffect extends MobEffect {
 
 					IBloodVolume playerVolume = HemoCapabilityAccess.getBloodVolume(playerIn)
 							.orElseThrow(NullPointerException::new);
-					if (playerVolume != null) {
-						BloodFlowLedger.applyDrain((ServerPlayer) playerIn, playerVolume, "blood_loss",
-								"Blood Loss", Category.EFFECT, 0.5f * amplifier, 1, false);
-					}
+					BloodFlowLedger.applyDrain((ServerPlayer) playerIn, playerVolume, "blood_loss",
+							"Blood Loss", Category.EFFECT, 0.5f * amplifier, 1, false);
 
 				}
 			} else if (!HemoEntityPredicates.NOBLOOD.test(entity)) {
@@ -65,12 +60,6 @@ public class BloodLossEffect extends MobEffect {
 		}
 
 		return true;
-	}
-
-	@Override
-	public void applyInstantenousEffect(Entity source, Entity indirectSource, LivingEntity entityLivingBaseIn,
-			int amplifier, double health) {
-		super.applyInstantenousEffect(source, indirectSource, entityLivingBaseIn, amplifier, health);
 	}
 
 	@Override

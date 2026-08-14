@@ -12,14 +12,11 @@ import net.minecraft.world.entity.Entity;
 
 // Made with Blockbench 4.1.3
 // Exported for Minecraft version 1.17 with Mojang mappings
-// Paste this class into your mod and generate all required imports
 
 
 public class LeechModel<T extends Entity> extends EntityModel<T> {
 	// This layer location should be baked with EntityRendererProvider.Context in the entity renderer and passed into this model's constructor
 	public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(Hemomancy.rloc("modelleech"), "main");
-	@SuppressWarnings("unused")
-
 	public static LayerDefinition createBodyLayer() {
 		MeshDefinition meshdefinition = new MeshDefinition();
 		PartDefinition partdefinition = meshdefinition.getRoot();

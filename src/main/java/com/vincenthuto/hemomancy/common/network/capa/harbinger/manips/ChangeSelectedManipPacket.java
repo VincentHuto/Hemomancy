@@ -34,7 +34,6 @@ public class ChangeSelectedManipPacket implements CustomPacketPayload {
 		buffer.writeFloat(message.parTick);
 	}
 
-	@SuppressWarnings("unused")
 	public static void handle(final ChangeSelectedManipPacket message, final IPayloadContext ctx) {
 		ctx.enqueueWork(() -> {
 			Player player = ctx.player();

@@ -50,7 +50,6 @@ public class RitualEffectBloodMote extends RitualEffect {
 				.orElseThrow(NullPointerException::new);
 		if (!volume.wouldOverstrain(1000)) {
 			volume.drain(1000);
-			System.out.println("drained player");
 			this.SpawnItem(context.getCenter(), context.getLevel());
 			return true;
 		} else {
@@ -60,14 +59,11 @@ public class RitualEffectBloodMote extends RitualEffect {
 						.orElseThrow(NullPointerException::new);
 				if (!itemstackCap.wouldOverstrain(1000)) {
 					itemstackCap.drain(1000);
-					System.out.println("drained offhand");
 
 					return true;
 				}
 			}
 		}
-		System.out.println("Couldnt craft");
-
 		return false;
 	}
 
@@ -93,11 +89,7 @@ public class RitualEffectBloodMote extends RitualEffect {
 		BlockPos b = context.getCenter().offset(1, 0, 0);
 		BlockPos c = context.getCenter().offset(0, 0, -1);
 		BlockPos d = context.getCenter().offset(0, 0, 1);
-		if (checkPos(context, a) && checkPos(context, b) && checkPos(context, c) && checkPos(context, d)) {
-			return true;
-		}
-
-		return false;
+		return checkPos(context, a) && checkPos(context, b) && checkPos(context, c) && checkPos(context, d);
 	}
 
 	public boolean checkPos(IRitualContext context, BlockPos pos) {
@@ -132,10 +124,6 @@ public class RitualEffectBloodMote extends RitualEffect {
 					centerVec.x + Math.sin(time + j) + HLParticleUtils.inRange(-0.1, 0.1),
 					centerVec.y + (j * 0.5) + 0.1f + HLParticleUtils.inRange(-0.1, 0.1),
 					centerVec.z + Math.cos(time + j) + HLParticleUtils.inRange(-0.1, 0.1), 0, -0.05, 0);
-			
-			//Collections.reverse(chakraColors);
-
-			
 			
 			world.addParticle(AbsorbedBloodCellParticleFactory.createData(chakraColors.get(j)),
 					centerVec.x + Math.sin(time + j) + HLParticleUtils.inRange(-0.1, 0.1),

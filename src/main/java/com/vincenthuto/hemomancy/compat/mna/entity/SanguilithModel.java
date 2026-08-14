@@ -15,7 +15,6 @@ public class SanguilithModel<T extends Entity> extends EntityModel<SanguilithEnt
 	public static final ModelLayerLocation sanguilith = new ModelLayerLocation(
 			Hemomancy.rloc("sanguilith"), "main");
 
-	@SuppressWarnings("unused")
 	public static LayerDefinition createBodyLayer() {
 		MeshDefinition meshdefinition = new MeshDefinition();
 		PartDefinition partdefinition = meshdefinition.getRoot();

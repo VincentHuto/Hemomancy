@@ -129,13 +129,10 @@ public class VisceralMirrorRenderer implements BlockEntityRenderer<VisceralMirro
         Direction facing = te.getBlockState().getValue(HorizontalDirectionalBlock.FACING);
         Player player = Minecraft.getInstance().player;
 
-        // Render the stand / frame model
         renderStandModel(stack, buffer, facing, light, overlay);
 
-        // Always draw the tinted glass overlay
             renderMirrorGlass(stack, buffer, facing, te, partialTicks);
 
-        // Render the reflection only when a player is close and in front
         if (player != null && isPlayerInFront(te, player, facing)) {
             renderReflection(te, partialTicks, stack, facing, player, light);
         }
@@ -356,7 +353,6 @@ public class VisceralMirrorRenderer implements BlockEntityRenderer<VisceralMirro
                 model.setupAnim(clientPlayer, limbSwing, limbSwingAmount, ageInTicks, headRelYaw, headPitch);
                 model.prepareMobModel(clientPlayer, limbSwing, limbSwingAmount, partialTicks);
 
-                // Hide all optional layers — only render the base skin parts
                 model.hat.visible = false;
                 model.jacket.visible = false;
                 model.leftSleeve.visible = false;

@@ -58,11 +58,6 @@ public class DendriticDistributorBlock extends BaseEntityBlock implements Simple
 
 	@SuppressWarnings("deprecation")
 	@Override
-	public void attack(BlockState state, Level worldIn, BlockPos pos, Player player) {
-		super.attack(state, worldIn, pos, player);
-	}
-
-	@Override
 	protected void createBlockStateDefinition(Builder<Block, BlockState> builder) {
 		builder.add(FACING, WATERLOGGED);
 	}
@@ -92,10 +87,6 @@ public class DendriticDistributorBlock extends BaseEntityBlock implements Simple
 	@Override
 	public BlockEntity newBlockEntity(BlockPos arg0, BlockState arg1) {
 		return new DendriticDistributorBlockEntity(arg0, arg1);
-	}
-
-	@Override
-	public void onNeighborChange(BlockState state, LevelReader world, BlockPos pos, BlockPos neighbor) {
 	}
 
 	@Override

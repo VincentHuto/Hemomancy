@@ -22,123 +22,37 @@ public class HemoEntityPredicates {
 	public static List<Predicate<Entity>> PREDICATES = new ArrayList<>();
 	public static List<Predicate<Entity>> BLOODTYPES = new ArrayList<>();
 
-	public static Predicate<Entity> WARMBLOODED = new Predicate<>() {
-		@Override
-		public boolean test(Entity e) {
-			if (e instanceof Animal || e instanceof AmbientCreature || e instanceof AbstractVillager
-					|| e instanceof Player) {
-//|| e instanceof Player) {
-				return true;
-			} else {
-				return false;
-			}
-		}
-	};
+	public static Predicate<Entity> WARMBLOODED = e -> e instanceof Animal || e instanceof AmbientCreature
+			|| e instanceof AbstractVillager || e instanceof Player;
 
-	public static Predicate<Entity> VORPAL = new Predicate<>() {
-		@Override
-		public boolean test(Entity e) {
-			if (e instanceof Raider || e instanceof Zombie || e instanceof Skeleton || e instanceof WitherSkeleton
-					|| e instanceof Spider || e instanceof WitherBoss || e instanceof Creeper || e instanceof Wolf
-					|| e instanceof AbstractPiglin || e instanceof PolarBear) {
-				return true;
-			} else {
-				return false;
-			}
-		}
-	};
-	public static Predicate<Entity> COLDBLOODED = new Predicate<>() {
-		@Override
-		public boolean test(Entity e) {
-			if (e instanceof Drowned || e instanceof Stray || e instanceof WaterAnimal || e instanceof SnowGolem) {
-				return true;
-			} else {
-				return false;
-			}
-		}
-	};
+	public static Predicate<Entity> VORPAL = e -> e instanceof Raider || e instanceof Zombie || e instanceof Skeleton
+			|| e instanceof WitherSkeleton || e instanceof Spider || e instanceof WitherBoss || e instanceof Creeper
+			|| e instanceof Wolf || e instanceof AbstractPiglin || e instanceof PolarBear;
+	public static Predicate<Entity> COLDBLOODED = e -> e instanceof Drowned || e instanceof Stray
+			|| e instanceof WaterAnimal || e instanceof SnowGolem;
 
-	public static Predicate<Entity> LUMINOUS = new Predicate<>() {
-		@Override
-		public boolean test(Entity e) {
-			if (e instanceof Guardian || e instanceof GlowSquid || e instanceof Witch || e instanceof Allay) {
-				return true;
-			} else {
-				return false;
-			}
-		}
-	};
+	public static Predicate<Entity> LUMINOUS = e -> e instanceof Guardian || e instanceof GlowSquid
+			|| e instanceof Witch || e instanceof Allay;
 
-	public static Predicate<Entity> IRONCLAD = new Predicate<>() {
-		@Override
-		public boolean test(Entity e) {
-			if (e instanceof IronGolem || e instanceof Vindicator || e instanceof Pillager) {
-				return true;
-			} else {
-				return false;
-			}
-		}
-	};
+	public static Predicate<Entity> IRONCLAD = e -> e instanceof IronGolem || e instanceof Vindicator
+			|| e instanceof Pillager;
 
-	public static Predicate<Entity> NOBLOOD = new Predicate<>() {
-		@Override
-		public boolean test(Entity e) {
-			if (e instanceof Skeleton || e instanceof WitherSkeleton || e instanceof IronGolem
-					|| e instanceof WitherBoss || e instanceof SnowGolem || e instanceof Blaze || e instanceof EnderMan
-					|| e instanceof Shulker) {
-				return true;
-			} else {
-				return false;
-			}
-		}
-	};
+	public static Predicate<Entity> NOBLOOD = e -> e instanceof Skeleton || e instanceof WitherSkeleton
+			|| e instanceof IronGolem || e instanceof WitherBoss || e instanceof SnowGolem || e instanceof Blaze
+			|| e instanceof EnderMan || e instanceof Shulker;
 
-	public static Predicate<Entity> UNDEAD = new Predicate<>() {
-		@Override
-		public boolean test(Entity e) {
-			if (e instanceof Skeleton || e instanceof WitherSkeleton || e instanceof Spider
+	public static Predicate<Entity> UNDEAD = e -> e instanceof Skeleton || e instanceof WitherSkeleton
+			|| e instanceof Spider
 			// || e instanceof EntityChitinite || e instanceof EntityChthonian || e
 			// instanceof EntityChthonianQueen
-					|| e instanceof IronGolem || e instanceof Silverfish || e instanceof WitherBoss) {
-				return true;
-			} else {
-				return false;
-			}
-		}
-	};
+			|| e instanceof IronGolem || e instanceof Silverfish || e instanceof WitherBoss;
 
-	public static Predicate<Entity> ENDERBLOOD = new Predicate<>() {
-		@Override
-		public boolean test(Entity e) {
-			if (e instanceof EnderMan || e instanceof Endermite || e instanceof Endermite || e instanceof EnderDragon
-					|| e instanceof Shulker || e instanceof Phantom) {
-				return true;
-			} else {
-				return false;
-			}
-		}
-	};
-	public static Predicate<Entity> INFERNALBLOOD = new Predicate<>() {
-		@Override
-		public boolean test(Entity e) {
-			if (e instanceof Blaze || e instanceof AbstractPiglin || e instanceof MagmaCube || e instanceof Strider
-					|| e instanceof Ghast || e instanceof Hoglin || e instanceof ZombifiedPiglin) {
-				return true;
-			} else {
-				return false;
-			}
-		}
-	};
-	public static Predicate<Entity> PLANTBLOOD = new Predicate<>() {
-		@Override
-		public boolean test(Entity e) {
-			if (e instanceof Creeper || e instanceof Slime) {
-				return true;
-			} else {
-				return false;
-			}
-		}
-	};
+	public static Predicate<Entity> ENDERBLOOD = e -> e instanceof EnderMan || e instanceof Endermite
+			|| e instanceof Endermite || e instanceof EnderDragon || e instanceof Shulker || e instanceof Phantom;
+	public static Predicate<Entity> INFERNALBLOOD = e -> e instanceof Blaze || e instanceof AbstractPiglin
+			|| e instanceof MagmaCube || e instanceof Strider || e instanceof Ghast || e instanceof Hoglin
+			|| e instanceof ZombifiedPiglin;
+	public static Predicate<Entity> PLANTBLOOD = e -> e instanceof Creeper || e instanceof Slime;
 
 	public static void init() {
 		PREDICATES.add(COLDBLOODED);

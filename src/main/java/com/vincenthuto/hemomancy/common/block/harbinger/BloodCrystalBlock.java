@@ -139,14 +139,4 @@ public class BloodCrystalBlock extends Block implements SimpleWaterloggedBlock {
 		return super.updateShape(state, facing, facingState, level, currentPos, facingPos);
 	}
 
-	@Override
-	public BlockState mirror(BlockState pState, Mirror pMirror) {
-		return super.mirror(pState, pMirror);
-	}
-
-	@Override
-	public BlockState rotate(BlockState state, LevelAccessor level, BlockPos pos, Rotation direction) {
-		return super.rotate(state, level, pos, direction);
-	}
-
 }

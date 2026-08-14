@@ -17,7 +17,6 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.stats.Stats;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
-import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.AbstractArrow;
@@ -62,37 +61,12 @@ public class SanguisLanceaItem extends LivingToolItem implements HemoClientItemE
 	@Override
 	public boolean hurtEnemy(ItemStack stack, LivingEntity target, LivingEntity attacker) {
 		super.hurtEnemy(stack, target, attacker);
-		/*
-		 * if (stack.getOrCreateTag().getBoolean(TAG_STATE)) {
-		 * attacker.heal(this.getAttackDamage() / 2); if (!attacker.world.isRemote) {
-		 * Player playerIn = (Player) attacker; IBloodVolume playerVolume =
-		 * HemoCapabilityAccess.getBloodVolume(playerIn)
-		 * .orElseThrow(NullPointerException::new); float damageMod =
-		 * this.getAttackDamage() * 75f; if (playerVolume.getBloodVolume() > damageMod)
-		 * { playerVolume.subtractBloodVolume(damageMod);
-		 * PacketHandler.sendToPlayer(* (ServerPlayer) playerIn, new
-		 * PacketBloodVolumeServer(playerVolume.getMaxBloodVolume(),
-		 * playerVolume.getBloodVolume())); } else {
-		 * playerVolume.subtractBloodVolume(damageMod);
-		 * PacketHandler.sendToPlayer(* (ServerPlayer) playerIn, new
-		 * PacketBloodVolumeServer(playerVolume.getMaxBloodVolume(),
-		 * playerVolume.getBloodVolume())); stack.damageItem(getMaxDamage() + 10,
-		 * attacker, (p_220017_1_) -> {
-		 * p_220017_1_.sendBreakAnimation(attacker.getActiveHand()); }); }
-		 *
-		 * } }
-		 */
 		return super.hurtEnemy(stack, target, attacker);
 	}
 
 	@Override
 	public IClientItemExtensions hemomancy$getClientItemExtensions() {
 		return RenderPropSanguisLancea.INSTANCE;
-	}
-
-	@Override
-	public void inventoryTick(ItemStack stack, Level worldIn, Entity entityIn, int itemSlot, boolean isSelected) {
-		super.inventoryTick(stack, worldIn, entityIn, itemSlot, isSelected);
 	}
 
 	@Override

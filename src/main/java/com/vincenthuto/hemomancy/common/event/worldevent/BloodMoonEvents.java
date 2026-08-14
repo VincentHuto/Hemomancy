@@ -142,7 +142,6 @@ public class BloodMoonEvents {
 
 		BloodMoonSavedData data = BloodMoonSavedData.get(sLevel);
 
-		// Check if a currently-active blood moon has expired naturally
 		if (data.isActive() && gameTime >= data.getEndTick()) {
 			endBloodMoon(sLevel, data, gameTime);
 			return;

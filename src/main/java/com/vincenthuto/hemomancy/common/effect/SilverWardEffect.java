@@ -5,7 +5,6 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectCategory;
-import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 
 /**
@@ -52,12 +51,6 @@ public class SilverWardEffect extends MobEffect {
 	 */
 	public static float getBloodDamageReduction(int amplifier) {
 		return Math.min(0.60f, 0.15f * (amplifier + 1));
-	}
-
-	@Override
-	public void applyInstantenousEffect(Entity source, Entity indirectSource, LivingEntity entityLivingBaseIn,
-			int amplifier, double health) {
-		super.applyInstantenousEffect(source, indirectSource, entityLivingBaseIn, amplifier, health);
 	}
 
 	@Override

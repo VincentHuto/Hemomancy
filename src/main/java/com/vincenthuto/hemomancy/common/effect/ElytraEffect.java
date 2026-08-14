@@ -99,11 +99,6 @@ public class ElytraEffect extends MobEffect {
 	}
 
 	@Override
-	public void removeAttributeModifiers(@NotNull AttributeMap attributeMap) {
-		super.removeAttributeModifiers(attributeMap);
-	}
-
-	@Override
 	public void onMobRemoved(LivingEntity living, int amplifier, net.minecraft.world.entity.Entity.RemovalReason reason) {
 		super.onMobRemoved(living, amplifier, reason);
 		if (living instanceof ServerPlayer serverPlayer) {

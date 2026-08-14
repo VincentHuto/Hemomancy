@@ -17,29 +17,7 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.living.LivingDamageEvent;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 
-/**
- * Handles the tangible rewards and passive bonuses that unlock at each
- * Unstained purity/clarity stage, giving players concrete reasons to progress:
- *
- * <h3>Purity Stage Rewards</h3>
- * <ul>
- *   <li><b>TAINTED (25):</b> Verdigris Aura auto-applied while enabled (amplifier 0)</li>
- *   <li><b>CLEANSING (50):</b> Verdigris Aura amplifier 1 + night vision near Pallid Lanterns</li>
- *   <li><b>ABSOLVED (75):</b> Verdigris Aura amplifier 2 + bonus damage to hemomancy mobs</li>
- *   <li><b>PURIFIED (100):</b> Verdigris Aura amplifier 3 (maximum field radius)</li>
- * </ul>
- *
- * <h3>Clarity Stage Rewards</h3>
- * <ul>
- *   <li><b>DISCERNING (25):</b> Silver Ward auto-applied while enabled (amplifier 0)</li>
- *   <li><b>VIGILANT (50):</b> Silver Ward amplifier 1 + glowing on hemomancy mobs</li>
- *   <li><b>RESOLUTE (75):</b> Silver Ward amplifier 2</li>
- *   <li><b>ENLIGHTENED (100):</b> Silver Ward amplifier 3 (full protection)</li>
- * </ul>
- *
- * <h3>Silver Ward Damage Reduction</h3>
- * Reduces incoming damage from hemomancy-tagged sources when Silver Ward is active.
- */
+/** Applies Unstained stage effects and advancement rewards. */
 @EventBusSubscriber(modid = Hemomancy.MOD_ID)
 public class UnstainedMilestoneHandler {
 
@@ -85,7 +63,6 @@ public class UnstainedMilestoneHandler {
 			// â”€â”€ Verdigris Aura: unlocked at TAINTED (25+), amplifier scales with purity stage â”€â”€
 			if (progress.isVerdigrisAuraEnabled() && purityStage.getLevel() >= EnumPurityStage.TAINTED.getLevel()) {
 				int auraAmplifier = purityStage.getLevel() - 1; // 0 at TAINTED, 1 at CLEANSING, 2 at ABSOLVED, 3 at PURIFIED
-				// Only refresh if no existing effect or existing effect is weaker
 				MobEffectInstance existing = serverPlayer.getEffect(EffectInit.verdigris_aura);
 				if (existing == null || existing.getAmplifier() < auraAmplifier || existing.getDuration() < 40) {
 					serverPlayer.addEffect(new MobEffectInstance(
@@ -147,7 +124,6 @@ public class UnstainedMilestoneHandler {
 	 * Called only after {@code hasClarityUnlocked()} returns {@code true}.
 	 */
 	private static void checkClarityStageAdvancements(ServerPlayer player, EnumClarityStage stage) {
-		// Always grant clarity_awakened once clarity is unlocked (regardless of stage)
 		UnstainedAdvancementGranter.grantIfNotDone(player, UnstainedAdvancementGranter.ADV_CLARITY_AWAKENED);
 		if (stage.getLevel() >= EnumClarityStage.DISCERNING.getLevel()) {
 			UnstainedAdvancementGranter.grantIfNotDone(player, UnstainedAdvancementGranter.ADV_DISCERNING);
@@ -178,7 +154,6 @@ public class UnstainedMilestoneHandler {
 		if (event.getEntity() instanceof Player player && !player.level().isClientSide()) {
 			MobEffectInstance ward = player.getEffect(EffectInit.silver_ward);
 			if (ward != null) {
-				// Check if the damage source entity is a hemomancy mob
 				boolean isBloodDamage = false;
 				if (event.getSource().getEntity() instanceof LivingEntity attacker) {
 					isBloodDamage = attacker.getType().is(EntityInit.HEMOMANCY_MOB);

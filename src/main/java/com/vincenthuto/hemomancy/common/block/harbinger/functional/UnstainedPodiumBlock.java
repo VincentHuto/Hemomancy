@@ -62,11 +62,6 @@ public class UnstainedPodiumBlock extends Block implements EntityBlock, SimpleWa
 	}
 
 	@Override
-	public void attack(BlockState state, Level worldIn, BlockPos pos, Player player) {
-		super.attack(state, worldIn, pos, player);
-	}
-
-	@Override
 	protected void createBlockStateDefinition(Builder<Block, BlockState> builder) {
 		builder.add(FACING, WATERLOGGED);
 	}
@@ -97,10 +92,6 @@ public class UnstainedPodiumBlock extends Block implements EntityBlock, SimpleWa
 	}
 
 	@Override
-	public void onNeighborChange(BlockState state, LevelReader world, BlockPos pos, BlockPos neighbor) {
-	}
-
-	@Override
 	public BlockState rotate(BlockState state, Rotation rot) {
 		return state.setValue(FACING, rot.rotate(state.getValue(FACING)));
 	}
@@ -110,9 +101,7 @@ public class UnstainedPodiumBlock extends Block implements EntityBlock, SimpleWa
 		worldIn.playSound(player, pos, SoundEvents.ZOMBIE_AMBIENT, SoundSource.BLOCKS, 0.25f, 1f);
 		if (!player.isShiftKeyDown()) {
 			if (stack.getItem() == ItemInit.sanguine_conduit.get()) {
-			//	worldIn.destroyBlock(pos, false);
 				stack.shrink(1);
-			//	worldIn.setBlockAndUpdate(pos, BlockInit.scar_mod_station.get().defaultBlockState());
 			}
 
 			if (stack.getItem() == ItemInit.scrying_dish.get()) {

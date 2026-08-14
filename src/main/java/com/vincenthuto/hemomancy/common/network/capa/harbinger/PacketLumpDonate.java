@@ -63,8 +63,7 @@ public class PacketLumpDonate implements CustomPacketPayload {
 				ServerLevel overworld = player.server.overworld();
 				BloodlineSavedData savedData = BloodlineSavedData.get(overworld);
 				Bloodline globalLine = savedData.getBloodline(bloodline.getBloodlineUUID());
-				if (globalLine != null) {
-					if (volume.drain(donateAmount)) {
+				if (globalLine != null && volume.drain(donateAmount)) {
 						globalLine.contributeBlood((float) donateAmount);
 						savedData.setDirty();
 						BloodVolumeEvents.syncVolume(player, volume);
@@ -77,7 +76,6 @@ public class PacketLumpDonate implements CustomPacketPayload {
 						player.displayClientMessage(
 								Component.literal("Donated " + String.format("%.0f", donateAmount) + "ml to the bloodline pool!")
 										.withStyle(ChatFormatting.DARK_RED), true);
-					}
 				}
 			});
 		});

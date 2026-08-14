@@ -39,7 +39,6 @@ import net.minecraft.world.entity.decoration.ArmorStand;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.UseAnim;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
@@ -55,11 +54,6 @@ public class BloodAbsorptionItem extends Item implements IDispellable, ICellHand
 
 	public BloodAbsorptionItem(Properties prop) {
 		super(prop.stacksTo(1));
-	}
-
-	@Override
-	public void appendHoverText(ItemStack stack, Item.TooltipContext context, List<Component> tooltip, TooltipFlag flagIn) {
-		super.appendHoverText(stack, context, tooltip, flagIn);
 	}
 
 	@Override
@@ -81,7 +75,6 @@ public class BloodAbsorptionItem extends Item implements IDispellable, ICellHand
 
 	@Override
 	public BakedModel getBakedModel() {
-		// TODO Auto-generated method stub
 		return ClientModBusEvents.bloodAbsorptionModel;
 	}
 
@@ -330,7 +323,6 @@ public class BloodAbsorptionItem extends Item implements IDispellable, ICellHand
 				&& targetPackage.getName().startsWith("com.vincenthuto.hemomancy.common.entity.npc.");
 	}
 
-	@SuppressWarnings("unused")
 	@Override
 	public InteractionResultHolder<ItemStack> use(Level worldIn, Player playerIn, InteractionHand handIn) {
 		ItemStack stack = playerIn.getItemInHand(handIn);

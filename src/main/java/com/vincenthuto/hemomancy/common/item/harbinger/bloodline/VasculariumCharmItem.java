@@ -52,7 +52,6 @@ public class VasculariumCharmItem extends Item implements IHarbingerEquipment {
 
 	@Override
 	public void appendHoverText(ItemStack stack, Item.TooltipContext context, List<Component> tooltip, TooltipFlag flagIn) {
-		// super.appendHoverText(stack, worldIn, tooltip, flagIn);
 		tooltip.add(Component.literal(ChatFormatting.RED + "So you've chosen the path of blood."));
 		tooltip.add(Component.literal(ChatFormatting.RED + "Representative of your resolve."));
 		tooltip.add(Component.literal(ChatFormatting.RED + "Leads you to a place of solace."));
@@ -103,9 +102,6 @@ public class VasculariumCharmItem extends Item implements IHarbingerEquipment {
 							SoundEvents.ENDER_EYE_LAUNCH, SoundSource.NEUTRAL, 0.5F,
 							0.4F / (pLevel.getRandom().nextFloat() * 0.4F + 0.8F));
 					pLevel.levelEvent((Player) null, 1003, pPlayer.blockPosition(), 0);
-					if (!pPlayer.getAbilities().instabuild) {
-						// itemstack.shrink(1);
-					}
 
 					pPlayer.awardStat(Stats.ITEM_USED.get(this));
 					pPlayer.swing(pHand, true);

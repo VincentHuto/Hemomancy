@@ -21,7 +21,6 @@ public class BloodArmModel<T extends LivingEntity> extends HumanoidModel<T> {
 	public static final ModelLayerLocation blood_arm = new ModelLayerLocation(
 			Hemomancy.rloc("blood_arm"), "main");
 
-	@SuppressWarnings("unused")
 	public static LayerDefinition createHeadLayer() {
 		MeshDefinition meshdefinition = HumanoidModel.createMesh(new CubeDeformation(0.28F), 0);
 
@@ -38,12 +37,6 @@ public class BloodArmModel<T extends LivingEntity> extends HumanoidModel<T> {
 		leftArm.render(poseStack, buffer, packedLight, packedOverlay, packedColor);
 		rightArm.render(poseStack, buffer, packedLight, packedOverlay, packedColor);
 
-	}
-
-	@Override
-	public void setupAnim(T entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw,
-			float headPitch) {
-		super.setupAnim(entity, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch);
 	}
 
 }

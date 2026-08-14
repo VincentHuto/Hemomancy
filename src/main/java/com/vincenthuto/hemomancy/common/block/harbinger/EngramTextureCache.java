@@ -29,7 +29,7 @@ public class EngramTextureCache {
 	 */
 	public static void loadAll() {
 		if (isLoaded()) {
-			return; // Already loaded
+			return;
 		}
 		PIXEL_CACHE.clear();
 		COLOR_CACHE.clear();
@@ -43,8 +43,6 @@ public class EngramTextureCache {
 					extractPixelData(image, pixels, colors);
 					PIXEL_CACHE.put(i, pixels);
 					COLOR_CACHE.put(i, colors);
-					Hemomancy.LOGGER.debug("Loaded engram texture for index {} ({}): {}x{}", i, ENGRAM_NAMES[i],
-							image.getWidth(), image.getHeight());
 				} else {
 					Hemomancy.LOGGER.warn("Engram texture not found on classpath: {}", path);
 				}

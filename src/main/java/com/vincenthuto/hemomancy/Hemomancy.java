@@ -74,7 +74,6 @@ public class Hemomancy {
     public Hemomancy(IEventBus modEventBus) {
         forcesLoaded = ModList.get().isLoaded("forcesofreality");
         instance = this;
-        // NeoForge uses NeoForge.EVENT_BUS instead of NeoForge.EVENT_BUS
         IEventBus forgeBus = NeoForge.EVENT_BUS;
         HemoConfig.register();
         VillagerInit.POINTS_OF_INTEREST.register(modEventBus);
@@ -133,54 +132,11 @@ public class Hemomancy {
         // RegisterPayloadsEvent fires on the mod bus â€“ register here, not in commonSetup.
         PacketHandler.registerChannels(modEventBus);
 
-        @SuppressWarnings("unused")
-        ModList modList = ModList.get();
-        // TODO(MnA-compat): re-enable once Mana and Artifice publishes a NeoForge 1.21.1 build
-        // and the compat/mna/** source exclusion is removed from build.gradle.
-        // if (modList.isLoaded("mna")) {
-        //     LOGGER.info("MNA WAS LOADED");
-        //     ModLoadingContext.get().registerConfig(ModConfig.Type.SERVER, HemoMnAConfig.register(), "hemomancy-mna-server.toml");
-        //     forgeBus.addListener(MnAPlugin::onRegisterGuidebooks);
-        //     MnAPluginItemInit.MNAITEMS.register(modEventBus);
-        //     MnAPluginBlockInit.MNABLOCKS.register(modEventBus);
-        //     MnAPluginBlockEntityInit.MNATILES.register(modEventBus);
-        //     MnAPluginManipulationInit.MNA_MANIPS.register(modEventBus);
-        //     modEventBus.addListener(MnAPluginItemInit::buildMnaCompatItemContents);
-        //     modEventBus.addListener(MnAPluginBlockInit::onRegisterItems);
-        //     modEventBus.addListener(MnAPluginBlockInit::buildMnaCompatBlockContents);
-        //     forgeBus.addListener(MnAPlugin::playerInteractAnvil);
-        //     forgeBus.addListener(MnAPlugin::onRunicAnvil);
-        //     modEventBus.addListener(MnAPluginSpellInit::registerSpellBits);
-        //     modEventBus.addListener(MnAPluginRitualInit::registerRitualEffects);
-        //     MnAPluginEntityInit.MNA_ENTITY_TYPES.register(modEventBus);
-        //     modEventBus.addListener(MnAPluginEntityInit::onAttributeCreate);
-        //     forgeBus.addListener(BloodTitheHandler::onCalculateManaCost);
-        //     forgeBus.addListener(BloodTitheHandler::onSpellCast);
-        //     modEventBus.register(HarbingerEventHandler.class);
-        //     if (FMLEnvironment.dist == Dist.CLIENT) {
-        //         modEventBus.addListener(MnAPluginClientEvents::onRegisterSpecialModels);
-        //         modEventBus.addListener(MnAPluginClientEvents::registerItemColors);
-        //         modEventBus.addListener(MnAPluginClientEvents::registerModelLayers);
-        //         modEventBus.addListener(MnAPluginClientEvents::renderEntities);
-        //         modEventBus.addListener(MnAPluginClientEvents::onClientSetupEvent);
-        //         forgeBus.addListener(MnAPluginClientEvents::onClientTick);
-        //         modEventBus.register(HarbingerEventHandler.HarbingerClientEventHandler.class);
-        //         modEventBus.addListener(MnAPluginBlockInit::registerBlocks);
-        //     }
-        // }
-        // TODO(Curios-compat): re-enable once Curios publishes a NeoForge 1.21.1 build
-        // and the compat/curios/** source exclusion is removed from build.gradle.
-        // if (modList.isLoaded("curios")) {
-        //     LOGGER.info("CURIOS WAS LOADED");
-        //     modEventBus.addListener(CuriosPlugin::initCuriosSlots);
-        //     modEventBus.addListener(CuriosPlugin::clientCurioSetup);
-        // }
     }
     private void onLevelTick(final LevelTickEvent.Post event) {
         ChamberOfWillManager.tick(event.getLevel());
     }
 
-    // Combined a few methods into one more generic one
     public static ItemStack findItemInPlayerInv(Player player, Class<? extends Item> item) {
         if (item.isInstance(player.getMainHandItem().getItem()))
             return player.getMainHandItem();

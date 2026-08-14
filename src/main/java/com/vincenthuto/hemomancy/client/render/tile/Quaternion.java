@@ -140,20 +140,15 @@ public final class Quaternion {
 	public boolean equals(Object pOther) {
 		if (this == pOther) {
 			return true;
-		} else if (pOther != null && this.getClass() == pOther.getClass()) {
-			Quaternion quaternion = (Quaternion) pOther;
-			if (Float.compare(quaternion.i, this.i) != 0) {
-				return false;
-			} else if (Float.compare(quaternion.j, this.j) != 0) {
-				return false;
-			} else if (Float.compare(quaternion.k, this.k) != 0) {
-				return false;
-			} else {
-				return Float.compare(quaternion.r, this.r) == 0;
-			}
-		} else {
+		}
+		if (pOther == null || this.getClass() != pOther.getClass()) {
 			return false;
 		}
+		Quaternion quaternion = (Quaternion) pOther;
+		return Float.compare(quaternion.i, this.i) == 0
+				&& Float.compare(quaternion.j, this.j) == 0
+				&& Float.compare(quaternion.k, this.k) == 0
+				&& Float.compare(quaternion.r, this.r) == 0;
 	}
 
 	public int hashCode() {

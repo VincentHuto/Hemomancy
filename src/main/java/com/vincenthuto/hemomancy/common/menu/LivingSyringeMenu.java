@@ -15,7 +15,6 @@ import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.capabilities.Capabilities;
-import net.neoforged.neoforge.items.IItemHandler;
 
 public class LivingSyringeMenu extends AbstractContainerMenu {
 	public int slotcount = 0;
@@ -50,21 +49,19 @@ public class LivingSyringeMenu extends AbstractContainerMenu {
 			return;
 		}
 
-		IItemHandler tmp = stack.getCapability(Capabilities.ItemHandler.ITEM);
-
-		if (tmp instanceof LivingSyringeItemHandler) {
-			handler = (LivingSyringeItemHandler) tmp;
+		if (stack.getCapability(Capabilities.ItemHandler.ITEM) instanceof LivingSyringeItemHandler syringeHandler) {
+			handler = syringeHandler;
 			handler.load();
-			slotcount = tmp.getSlots();
+			slotcount = handler.getSlots();
 			itemKey = stack.getDescriptionId();
 
-			addMySlots(stack);
+			addMySlots();
 			addPlayerSlots(playerInv);
 		} else
 			playerEntity.closeContainer();
 	}
 
-	private void addMySlots(ItemStack stack) {
+	private void addMySlots() {
 		if (handler == null)
 			return;
 

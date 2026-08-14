@@ -5,7 +5,6 @@ import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectCategory;
-import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.level.Level;
@@ -77,12 +76,6 @@ public class SanguineFertilityEffect extends MobEffect {
 			}
 		}
 		return true;
-	}
-
-	@Override
-	public void applyInstantenousEffect(Entity source, Entity indirectSource, LivingEntity entityLivingBaseIn,
-			int amplifier, double health) {
-		super.applyInstantenousEffect(source, indirectSource, entityLivingBaseIn, amplifier, health);
 	}
 
 	@Override

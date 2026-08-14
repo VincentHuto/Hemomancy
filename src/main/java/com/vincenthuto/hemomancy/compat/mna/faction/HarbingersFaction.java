@@ -20,11 +20,6 @@ public class HarbingersFaction extends BaseFaction {
     }
 
     @Override
-    public boolean is(ResourceLocation factionId) {
-        return super.is(factionId);
-    }
-
-    @Override
     public ItemStack getFactionGrimoire() {
         return new ItemStack(MnAPluginItemInit.harbinger_grimore.get());
     }

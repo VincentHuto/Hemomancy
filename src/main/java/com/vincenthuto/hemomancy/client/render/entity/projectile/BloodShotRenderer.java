@@ -21,9 +21,4 @@ public class BloodShotRenderer extends EntityRenderer<BloodShotEntity> {
 		return TEXTURE;
 	}
 
-	@Override
-	public void render(BloodShotEntity entityIn, float entityYaw, float partialTicks, PoseStack matrixStackIn,
-			MultiBufferSource bufferIn, int packedLightIn) {
-		super.render(entityIn, entityYaw, partialTicks, matrixStackIn, bufferIn, packedLightIn);
-	}
 }

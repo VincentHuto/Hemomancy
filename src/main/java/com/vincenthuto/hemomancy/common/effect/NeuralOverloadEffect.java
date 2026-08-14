@@ -7,7 +7,6 @@ import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectCategory;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
-import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 
 /**
@@ -54,12 +53,6 @@ public class NeuralOverloadEffect extends MobEffect {
 					particleCount, 0.3, 0.4, 0.3, 0.02);
 		}
 		return true;
-	}
-
-	@Override
-	public void applyInstantenousEffect(Entity source, Entity indirectSource, LivingEntity entity,
-			int amplifier, double health) {
-		super.applyInstantenousEffect(source, indirectSource, entity, amplifier, health);
 	}
 
 	@Override

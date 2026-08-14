@@ -88,7 +88,7 @@ public class ScreenScarPattern extends Screen {
 			for (int j = 0; j < scarbuttonArray.length; j++) {
 				buttonList.add(scarbuttonArray[i][j] = new HLButtonTextured(GUI_Chisel, inc,
 						left + guiWidth - (guiWidth - 75 - (j * 8)), top + guiHeight - (163 - (i * 8)), 8, 8, 176, 0,
-						recipe.getPattern()[i][j] == 0 ? false : true, null, null));
+						recipe.getPattern()[i][j] != 0, null, null));
 				inc++;
 			}
 		}

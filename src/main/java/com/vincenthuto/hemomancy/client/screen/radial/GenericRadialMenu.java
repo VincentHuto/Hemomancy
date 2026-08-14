@@ -126,7 +126,6 @@ public class GenericRadialMenu {
 	}
 
 	public void onClickOutside() {
-		// to be implemented by users
 	}
 
 	public boolean isClosed() {
@@ -200,15 +199,12 @@ public class GenericRadialMenu {
 	}
 
 	public void tick() {
-		Screen owner = host.getScreen();
-
 		if (state == State.INITIALIZING) {
 			startAnimation = minecraft.level.getGameTime() + (double) minecraft.getTimer().getGameTimeDeltaPartialTick(false);
 			state = State.OPENING;
 			animProgress = 0;
 		}
 
-		// updateAnimationState(minecraft.getRenderPartialTicks());
 	}
 
 	public void draw(GuiGraphics graphics, float partialTicks, int mouseX, int mouseY) {
@@ -310,7 +306,7 @@ public class GenericRadialMenu {
 			}
 			break;
 		}
-		animProgress = openAnimation; // MathHelper.clamp(openAnimation, 0, 1);
+		animProgress = openAnimation;
 	}
 
 	private void drawTooltips(GuiGraphics graphics, int mouseX, int mouseY) {

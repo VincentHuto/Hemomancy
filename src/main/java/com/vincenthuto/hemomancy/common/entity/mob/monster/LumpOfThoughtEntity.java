@@ -1,7 +1,6 @@
 package com.vincenthuto.hemomancy.common.entity.mob.monster;
 
 import com.vincenthuto.hemomancy.common.init.SoundInit;
-import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.damagesource.DamageSource;
@@ -35,19 +34,8 @@ public class LumpOfThoughtEntity extends Monster {
 	}
 
 	@Override
-	protected void defineSynchedData(SynchedEntityData.Builder builder) {
-		super.defineSynchedData(builder);
-
-	}
-
-	@Override
 	protected void doPush(Entity entityIn) {
 		super.doPush(entityIn);
-		/*
-		 * if (!(entityIn instanceof EntityDerangedBeast || entityIn instanceof
-		 * EntityBeastFromBeyond)) {
-		 * entityIn.attackEntityFrom(DamageSource.causeMobDamage(this), 1.5f); }
-		 */
 	}
 
 	@Override
@@ -80,8 +68,6 @@ public class LumpOfThoughtEntity extends Monster {
 	@Override
 	public void playerTouch(Player entityIn) {
 		super.playerTouch(entityIn);
-		// entityIn.attackEntityFrom(DamageSource.causeMobDamage(this), 1.5f);
-
 	}
 
 	@Override
@@ -93,8 +79,4 @@ public class LumpOfThoughtEntity extends Monster {
 
 	}
 
-	@Override
-	public void tick() {
-		super.tick();
-	}
 }

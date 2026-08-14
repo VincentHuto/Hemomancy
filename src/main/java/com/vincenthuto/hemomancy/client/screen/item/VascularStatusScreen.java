@@ -236,11 +236,9 @@ public class VascularStatusScreen extends Screen {
 		PlayerRenderer playerRenderer = (PlayerRenderer) dispatcher.getRenderer(player);
 		PlayerModel<AbstractClientPlayer> model = playerRenderer.getModel();
 
-		// Drive a looping walk animation independent of the player's actual state.
-		// limbSwing = walk cycle position (continuously increasing), limbSwingAmount = walk intensity (0-1).
-		animationTicks += 0.5f; // Advance at a gentle pace each frame
-		float limbSwing = animationTicks * 0.6f;     // Walk cycle speed
-		float limbSwingAmount = 0.6f;                 // Moderate arm/leg swing
+		animationTicks += 0.5f;
+		float limbSwing = animationTicks * 0.6f;
+		float limbSwingAmount = 0.6f;
 		model.young = false;
 		model.riding = false;
 		model.setupAnim(player, limbSwing, limbSwingAmount, animationTicks, 0, 0);
@@ -260,7 +258,6 @@ public class VascularStatusScreen extends Screen {
 		RenderSystem.enableBlend();
 		RenderSystem.defaultBlendFunc();
 
-		// Render each body part with its vascular health color
 		renderTintedPart(poseStack, bufferSource, model.head, vascular, EnumVeinSections.HEAD);
 		renderTintedPart(poseStack, bufferSource, model.hat, vascular, EnumVeinSections.HEAD);
 		// The torso model part covers both HEART and BODY sections — use their average health

@@ -70,7 +70,6 @@ public class FungalWhisperEvents {
 			default -> ARCHON_INTERVAL;
 		};
 
-		// Check if enough time has passed since the last whisper opportunity
 		// We use tickCount modulo interval, accounting for stagger
 		if ((player.tickCount + stagger) % interval != 0) return;
 

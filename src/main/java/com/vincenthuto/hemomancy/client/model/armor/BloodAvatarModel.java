@@ -16,7 +16,6 @@ public class BloodAvatarModel<T extends LivingEntity> extends HumanoidModel<T> {
 	public static final ModelLayerLocation layer = new ModelLayerLocation(
 			Hemomancy.rloc("blood_avatar"), "main");
 
-	@SuppressWarnings("unused")
 	public static LayerDefinition createLayer() {
 		MeshDefinition meshdefinition = HumanoidModel.createMesh(CubeDeformation.NONE, 0);
 		PartDefinition partdefinition = meshdefinition.getRoot();
@@ -497,10 +496,5 @@ public class BloodAvatarModel<T extends LivingEntity> extends HumanoidModel<T> {
 
 	}
 
-	@Override
-	public void setupAnim(T entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw,
-			float headPitch) {
-		super.setupAnim(entity, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch);
-	}
 
 }

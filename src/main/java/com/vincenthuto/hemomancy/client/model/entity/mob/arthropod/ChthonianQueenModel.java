@@ -2,7 +2,6 @@ package com.vincenthuto.hemomancy.client.model.entity.mob.arthropod;
 // Made with Blockbench 4.1.1
 
 // Exported for Minecraft version 1.17 with Mojang mappings
-// Paste this class into your mod and generate all required imports
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
@@ -19,7 +18,6 @@ public class ChthonianQueenModel<T extends Entity> extends EntityModel<T> {
 	// the entity renderer and passed into this model's constructor
 	public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(
 			Hemomancy.rloc("modelchthonianqueen"), "main");
-	@SuppressWarnings("unused")
 	public static LayerDefinition createBodyLayer() {
 		MeshDefinition meshdefinition = new MeshDefinition();
 		PartDefinition partdefinition = meshdefinition.getRoot();

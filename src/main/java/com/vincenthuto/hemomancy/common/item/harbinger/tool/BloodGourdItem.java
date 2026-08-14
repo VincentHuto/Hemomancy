@@ -157,14 +157,6 @@ public class BloodGourdItem extends Item implements IHarbingerEquipment, HemoCli
 			}
 
 		} else {
-//					// Refill from player
-//					if (bloodVolume.getBloodVolume() < tier.getMaxVolume() / 10) {
-//						RandomSource rand = worldIn.random;
-//						if (rand.nextInt(200) == 20) {
-//							player.hurt(player.damageSources().generic(), 0.5f);
-//							bloodVolume.fill(50f);
-//						}
-//					}
 		}
 	}
 

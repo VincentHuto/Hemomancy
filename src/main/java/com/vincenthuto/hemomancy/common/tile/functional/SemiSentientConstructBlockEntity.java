@@ -6,7 +6,6 @@ import com.vincenthuto.hemomancy.common.entity.npc.DrudgeEntity;
 import com.vincenthuto.hemomancy.common.init.BlockEntityInit;
 import com.vincenthuto.hemomancy.common.tile.IBloodReservoir;
 import net.minecraft.core.BlockPos;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
@@ -39,8 +38,6 @@ public class SemiSentientConstructBlockEntity extends BlockEntity implements IBl
         super(BlockEntityInit.semi_sentient_construct.get(), pos, state);
     }
 
-    // ── IBloodReservoir ────────────────────────────────────────────────────────────
-
     @Override
     public void sendUpdates() {
         if (level == null) return;
@@ -49,24 +46,19 @@ public class SemiSentientConstructBlockEntity extends BlockEntity implements IBl
         setChanged();
     }
 
-    // ── Tick ──────────────────────────────────────────────────────────────────
-
     public void tick() {
         if (level == null || level.isClientSide) return;
 
-        // Ensure the SSC has a sensible max blood volume on first tick
         IBloodVolume vol = HemoCapabilityAccess.getBloodVolume(this).orElse(null);
         if (vol != null && vol.getMaxBloodVolume() < MAX_BLOOD) {
             vol.setMaxBloodVolume(MAX_BLOOD);
         }
 
-        // Throttled drudge refill scan
         if (--scanTimer > 0) return;
         scanTimer = SCAN_INTERVAL;
 
         if (vol == null || vol.isEmpty()) return;
 
-        // Find nearby Drudges whose homePos matches this position
         AABB scanBox = new AABB(worldPosition).inflate(3.0);
         List<DrudgeEntity> nearby = level.getEntitiesOfClass(DrudgeEntity.class, scanBox);
         for (DrudgeEntity drudge : nearby) {
@@ -75,7 +67,6 @@ public class SemiSentientConstructBlockEntity extends BlockEntity implements IBl
             if (drudge.isRogue()) continue;
             if (drudge.getBloodCharge() >= DrudgeEntity.MAX_BLOOD_CHARGE) continue;
 
-            // Transfer up to REFILL_RATE * SCAN_INTERVAL mL per scan window
             float transferAmount = DrudgeEntity.REFILL_RATE * SCAN_INTERVAL;
             float needed = DrudgeEntity.MAX_BLOOD_CHARGE - drudge.getBloodCharge();
             float toTransfer = Math.min(transferAmount, needed);
@@ -88,20 +79,6 @@ public class SemiSentientConstructBlockEntity extends BlockEntity implements IBl
             }
         }
     }
-
-    // ── NBT ───────────────────────────────────────────────────────────────────
-
-    @Override
-    public void loadAdditional(CompoundTag tag, net.minecraft.core.HolderLookup.Provider registries) {
-        super.loadAdditional(tag, registries);
-    }
-
-    @Override
-    protected void saveAdditional(CompoundTag tag, net.minecraft.core.HolderLookup.Provider registries) {
-        super.saveAdditional(tag, registries);
-    }
-
-    // ── Helper: count drudges already bound to this SSC ──────────────────────
 
     /**
      * Returns the number of living (non-rogue) {@link DrudgeEntity} instances

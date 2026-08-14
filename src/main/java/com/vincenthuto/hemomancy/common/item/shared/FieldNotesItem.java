@@ -2,7 +2,6 @@ package com.vincenthuto.hemomancy.common.item.shared;
 
 import com.vincenthuto.hemomancy.common.capability.player.shared.knowledge.discovery.MemoDefinition;
 import com.vincenthuto.hemomancy.common.capability.player.shared.knowledge.discovery.MemoHelper;
-import com.vincenthuto.hemomancy.common.init.ItemInit;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
@@ -84,11 +83,6 @@ public class FieldNotesItem extends Item {
 		if (MemoHelper.isInk(player.getOffhandItem())) {
 			return player.getOffhandItem();
 		}
-//		for (ItemStack stack : player.getInventory().items) {
-//			if (stack.is(ItemInit.hematic_field_ink.get()) || stack.is(ItemInit.pale_field_ink.get())) {
-//				return stack;
-//			}
-//		}
 		return ItemStack.EMPTY;
 	}
 

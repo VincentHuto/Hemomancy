@@ -468,7 +468,7 @@ public class MorphlingJarScreen extends AbstractContainerScreen<MorphlingJarMenu
 					anyOpaque |= opaque;
 				}
 			}
-		} catch (Exception e) {
+		} catch (RuntimeException e) {
 			anyOpaque = false;
 		}
 		if (!anyOpaque) {

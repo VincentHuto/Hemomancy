@@ -74,23 +74,6 @@ public class LeechEntity extends Animal {
 		return SoundInit.ENTITY_LEECH_AMBIENT.get();
 	}
 
-	/*
-	 * public InteractionResult mobInteract(Player p_230254_1_, InteractionHand
-	 * p_230254_2_) { ItemStack itemstack = p_230254_1_.getHeldItem(p_230254_2_); if
-	 * (itemstack.getItem() == Items.BUCKET && !this.isChild()) {
-	 * p_230254_1_.playSound(SoundEvents.ENTITY_COW_MILK, 1.0F, 1.0F); ItemStack
-	 * itemstack1 = DrinkHelper.fill(itemstack, p_230254_1_,
-	 * ItemInit.bucket_leech.get().getDefaultInstance());
-	 * p_230254_1_.setHeldItem(p_230254_2_, itemstack1); this.
-	 * this.remove(RemovalReason.KILLED); float f = (this.rand.nextFloat() - 0.5F) *
-	 * 2.0F; float f1 = -1; float f2 = (this.rand.nextFloat() - 0.5F) * 2.0F;
-	 * this.world.addParticle(ParticleTypes.POOF, this.getPosX() + (double) f,
-	 * this.getPosY() + 2.0D + (double) f1, this.getPosZ() + (double) f2, 0.0D,
-	 * 0.0D, 0.0D);
-	 *
-	 * return InteractionResult.sidedSuccess(this.world.isRemote); } else { return
-	 * super.mobInteract(p_230254_1_, p_230254_2_); } }
-	 */
 	@Override
 	public LeechEntity getBreedOffspring(ServerLevel p_241840_1_, AgeableMob p_241840_2_) {
 		LeechEntity catentity = EntityInit.leech.get().create(p_241840_1_);
@@ -145,11 +128,7 @@ public class LeechEntity extends Animal {
 		this.goalSelector.addGoal(0, new MoveToBlockGoal(this, 1.5f, 10) {
 			@Override
 			protected boolean isValidTarget(LevelReader worldIn, BlockPos pos) {
-				if (worldIn.getBlockState(pos).getBlock() instanceof CropBlock) {
-					return true;
-				} else {
-					return false;
-				}
+				return worldIn.getBlockState(pos).getBlock() instanceof CropBlock;
 			}
 		});
 		this.goalSelector.addGoal(3, new TemptGoal(this, 1.25D, Ingredient.of(Items.SUGAR), false));
@@ -172,10 +151,7 @@ public class LeechEntity extends Animal {
 		super.tick();
 
 		if (!level().isClientSide) {
-			// System.out.println(world.getBlockState(this.getPosition().add(0, 1,
-			// 0)).getBlock());
 			if (level().getBlockState(this.blockPosition().offset(0, 1, 0)).getBlock() instanceof CropBlock) {
-				// Block crop = world.getBlockState(this.getPosition().add(0, 1, 0)).getBlock();
 				if (timer <= 150) {
 					timer++;
 					if (timer % 15 == 0) {

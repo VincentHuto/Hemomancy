@@ -81,7 +81,7 @@ public class ItemScarBinder extends Item {
 	}
 
 	public boolean filterItem(ItemStack item, ItemStack packItem) {
-		return item.getItem() instanceof ItemScarPattern ? true : false;
+		return item.getItem() instanceof ItemScarPattern;
 
 	}
 

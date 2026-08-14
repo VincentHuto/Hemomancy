@@ -94,20 +94,11 @@ public class ChitiniteEntity extends PathfinderMob {
 				&& world.getRawBrightness(pos, 0) <= 7;
 	}
 
-	@Override
-	public boolean checkSpawnRules(LevelAccessor pLevel, MobSpawnType pSpawnReason) {
-		return super.checkSpawnRules(pLevel, pSpawnReason);
-	}
 
 	@Override
 	protected void defineSynchedData(SynchedEntityData.Builder builder) {
 		super.defineSynchedData(builder);
 		builder.define(ROLLED_UP, false);
-	}
-
-	@Override
-	protected void doPush(Entity entityIn) {
-		super.doPush(entityIn);
 	}
 
 	@Override
@@ -137,11 +128,6 @@ public class ChitiniteEntity extends PathfinderMob {
 	@Override
 	protected float getSoundVolume() {
 		return 0.3f;
-	}
-
-	@Override
-	public void playerTouch(Player entityIn) {
-		super.playerTouch(entityIn);
 	}
 
 	@Override

@@ -9,7 +9,6 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectCategory;
-import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;
 
@@ -22,8 +21,7 @@ public class BloodBindingEffect extends MobEffect {
 	@Override
 	public boolean applyEffectTick(LivingEntity entity, int amplifier) {
 		super.applyEffectTick(entity, amplifier);
-		if (entity != null) {
-			if (entity.getEffect(EffectInit.blood_binding) != null) {
+		if (entity.getEffect(EffectInit.blood_binding) != null) {
 				entity.setDeltaMovement(0, 0, 0);
 				Level level = entity.level();
 				Vector3 centerVec = Vector3.fromEntityCenter(entity);
@@ -45,16 +43,9 @@ public class BloodBindingEffect extends MobEffect {
 							centerVec.x + orbitX, centerVec.y + orbitY, centerVec.z + orbitZ,
 							1, 0, 0, 0, 0);
 				}
-			}
 		}
 	
 		return true;
-	}
-
-	@Override
-	public void applyInstantenousEffect(Entity source, Entity indirectSource, LivingEntity entityLivingBaseIn,
-			int amplifier, double health) {
-		super.applyInstantenousEffect(source, indirectSource, entityLivingBaseIn, amplifier, health);
 	}
 
 	@Override

@@ -26,9 +26,7 @@ import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.level.Level;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 public class UnsignedLedgerItem extends Item {
 

@@ -68,7 +68,6 @@ public class BloodGourdItemRenderer extends BlockEntityWithoutLevelRenderer {
         }
 
         if (stack.getItem() instanceof BloodGourdItem) {
-            // Check if the gourd is open
             boolean isOpen = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY)
                     .copyTag().getBoolean(BloodGourdItem.TAG_STATE);
 

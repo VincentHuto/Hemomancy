@@ -2,7 +2,6 @@ package com.vincenthuto.hemomancy.client.render.tile.functional;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.client.model.tile.functional.FloatingEyeModel;
 import com.vincenthuto.hemomancy.client.model.tile.functional.FungalImplantationPylonModel;
 import com.vincenthuto.hemomancy.common.tile.functional.FungalImplantationPylonBlockEntity;
 import com.vincenthuto.hutoslib.math.Quaternion;
@@ -22,16 +21,13 @@ import net.minecraft.world.level.block.state.properties.DirectionProperty;
 public class FungalImplantationPylonRenderer implements BlockEntityRenderer<FungalImplantationPylonBlockEntity> {
 	public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
 	public static ResourceLocation texture = Hemomancy.rloc("textures/entity/fungal_implantation_pylon/fungal_implantation_pylon.png");
-	public static ResourceLocation eyeTexture = Hemomancy.rloc("textures/entity/floating_eye/model_floating_eye.png");
 
 	private final FungalImplantationPylonModel vein;
-	private final FloatingEyeModel eye;
 
 	private final FungalImplantationPylonAnimContext animCtx = new FungalImplantationPylonAnimContext(new AnimationState());
 
 	public FungalImplantationPylonRenderer(BlockEntityRendererProvider.Context p_173636_) {
 		vein = new FungalImplantationPylonModel(p_173636_.bakeLayer(FungalImplantationPylonModel.LAYER_LOCATION));
-		eye = new FloatingEyeModel(p_173636_.bakeLayer(FloatingEyeModel.LAYER_LOCATION));
 		animCtx.state.start(0);
 
 	}
@@ -54,35 +50,6 @@ public class FungalImplantationPylonRenderer implements BlockEntityRenderer<Fung
 		vein.renderToBuffer(pPoseStack, bufferIn.getBuffer(vein.renderType(texture)), light,
 				OverlayTexture.NO_OVERLAY, -1);
 		pPoseStack.popPose();
-//
-//		pPoseStack.pushPose();
-//		
-//		pPoseStack.translate(0.75, 0.5, 0.25);
-//		pPoseStack.scale(0.5f, 0.5f, 0.5f);
-//		float f = te.time + partialTicks;
-//		pPoseStack.translate(0.0D, 0.1F + Mth.sin(f * 0.1F) * 0.01F, 0.0D);
-//
-//		float f1;
-//		for (f1 = te.rot - te.oRot; f1 >= (float) Math.PI; f1 -= ((float) Math.PI * 2F)) {
-//		}
-//		
-//
-//
-//		while (f1 < -(float) Math.PI) {
-//			f1 += ((float) Math.PI * 2F);
-//		}
-//		float f2 = te.oRot + f1 * partialTicks;
-//		pPoseStack.mulPose(Vector3.YP.rotation(-f2 + 55).toMoj());
-//
-//		float f3 = Mth.lerp(partialTicks, te.oFlip, te.flip);
-//		float f4 = Mth.frac(f3 + 0.25F) * 1.6F - 0.3F;
-//		float f5 = Mth.frac(f3 + 0.75F) * 1.6F - 0.3F;
-//		float f6 = Mth.lerp(partialTicks, te.oOpen, te.open);
-//		eye.setupAnim(f, Mth.clamp(f4, 0.0F, 1.0F), Mth.clamp(f5, 0.0F, 1.0F), f6);
-//
-//		eye.renderToBuffer(pPoseStack, bufferIn.getBuffer(vein.renderType(eyeTexture)), combinedLightIn,
-//				OverlayTexture.NO_OVERLAY, -1);
-//		pPoseStack.popPose();
 
 
 	}

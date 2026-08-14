@@ -16,7 +16,6 @@ public class IronPillarModel<T extends Entity> extends EntityModel<EntityIronPil
 	public static final ModelLayerLocation iron_pillar = new ModelLayerLocation(
 			Hemomancy.rloc("iron_pillar"), "main");
 
-	@SuppressWarnings("unused")
 	public static LayerDefinition createBodyLayer() {
 		MeshDefinition meshdefinition = new MeshDefinition();
 		PartDefinition partdefinition = meshdefinition.getRoot();

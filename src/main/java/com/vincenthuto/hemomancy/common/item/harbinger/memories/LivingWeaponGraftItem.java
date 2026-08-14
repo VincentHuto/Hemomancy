@@ -44,9 +44,4 @@ public class LivingWeaponGraftItem extends Item {
 				.orElse(LivingWeaponForm.BLADE);
 	}
 
-	@SuppressWarnings("unused")
-	private static void sourceTestDisplayNames() {
-		String blade = "Blade Graft";
-		String flail = "Flail Graft";
-	}
 }

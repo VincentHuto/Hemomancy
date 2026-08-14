@@ -15,7 +15,6 @@ public class WretchedWillModel<T extends Entity> extends EntityModel<T> {
 	public static final ModelLayerLocation wretched_will = new ModelLayerLocation(
 			Hemomancy.rloc("modelwretchedwill"), "main");
 
-	@SuppressWarnings("unused")
 	public static LayerDefinition createBodyLayer() {
 		MeshDefinition meshdefinition = new MeshDefinition();
 		PartDefinition partdefinition = meshdefinition.getRoot();

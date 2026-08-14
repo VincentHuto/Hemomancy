@@ -137,7 +137,7 @@ public class RadialChooseVeinScreen extends Screen {
 		this.menu.draw(graphics, partialTicks, mouseX, mouseY);
 	}
 
-	@Override // tick
+	@Override
 	public void tick() {
 		super.tick();
 		menu.tick();

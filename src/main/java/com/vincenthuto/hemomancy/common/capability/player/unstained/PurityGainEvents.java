@@ -295,7 +295,6 @@ public class PurityGainEvents {
             return;
         }
 
-        // Case 2: player self-healing without blood magic
         if (entity instanceof ServerPlayer player && event.getAmount() >= 2.0f) {
             HemoCapabilityAccess.getBloodVolume(player).ifPresent(blood -> {
                 if (!blood.isActive() || blood.getBloodVolume() <= 0) {
@@ -322,7 +321,6 @@ public class PurityGainEvents {
         if (player.level().isClientSide) return;
         if (!(player instanceof ServerPlayer serverPlayer)) return;
 
-        // Throttle: only check once per second
         if (player.tickCount % 20 != 0) return;
 
         HemoCapabilityAccess.getUnstainedProgress(serverPlayer).ifPresent(progress -> {
@@ -339,7 +337,6 @@ public class PurityGainEvents {
                 if (!progress.hasReachedAbstinence()) progress.setReachedAbstinence(true);
                 changed = true;
             } else if (lastManip == 0 && progress.hasBegunPurification()) {
-                // Initialize on first check
                 progress.setLastManipulationTick(currentTick);
             }
 

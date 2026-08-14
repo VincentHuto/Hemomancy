@@ -15,7 +15,6 @@ public class ChitiniteShieldModel<T extends Entity> extends EntityModel<T> {
 	public static final ModelLayerLocation chitinite_shield = new ModelLayerLocation(
 			Hemomancy.rloc("chitinite_shield"), "main");
 
-	@SuppressWarnings("unused")
 	public static LayerDefinition createBodyLayer() {
 		MeshDefinition meshdefinition = new MeshDefinition();
 		PartDefinition partdefinition = meshdefinition.getRoot();

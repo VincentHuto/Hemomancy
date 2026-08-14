@@ -27,7 +27,6 @@ public class MarrowCrownModel<T extends LivingEntity> extends HumanoidModel<T> {
 		this.head = root.getChild("head");
 	}
 
-	@SuppressWarnings("unused")
 	public static LayerDefinition createHeadLayer(EquipmentSlot slot) {
 		MeshDefinition meshdefinition = HumanoidModel.createMesh(CubeDeformation.NONE, 0);
 		PartDefinition partdefinition = meshdefinition.getRoot();
@@ -60,9 +59,4 @@ public class MarrowCrownModel<T extends LivingEntity> extends HumanoidModel<T> {
 
 	}
 
-	@Override
-	public void setupAnim(T entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw,
-			float headPitch) {
-		super.setupAnim(entity, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch);
-	}
 }

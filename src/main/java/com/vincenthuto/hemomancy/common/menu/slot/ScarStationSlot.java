@@ -14,11 +14,7 @@ public class ScarStationSlot extends Slot {
 
 	@Override
 	public boolean mayPlace(ItemStack stack) {
-		if (stack.getItem() instanceof ItemKnapper) {
-			return true;
-		} else {
-			return false;
-		}
+		return stack.getItem() instanceof ItemKnapper;
 	}
 
 }

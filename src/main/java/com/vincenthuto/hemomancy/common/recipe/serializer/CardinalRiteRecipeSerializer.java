@@ -10,7 +10,6 @@ import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.rite.CardinalRiteCeremonyCatalog;
 import com.vincenthuto.hemomancy.common.rite.CardinalRiteCeremonyDefinition;
 import com.vincenthuto.hemomancy.common.rite.CardinalRiteCeremonyProfile;
-import com.vincenthuto.hemomancy.common.rite.CardinalRiteCeremonyRules;
 import com.vincenthuto.hemomancy.common.rite.CardinalRiteRingTuning;
 import com.vincenthuto.hemomancy.common.rite.CardinalRiteOfferingConsumptionRules;
 import com.vincenthuto.hemomancy.common.rite.CardinalRiteMediumRules;

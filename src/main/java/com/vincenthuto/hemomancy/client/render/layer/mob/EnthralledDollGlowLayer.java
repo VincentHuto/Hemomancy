@@ -17,15 +17,6 @@ public class EnthralledDollGlowLayer<T extends LivingEntity> extends EyesLayer<T
 
 	public EnthralledDollGlowLayer(RenderLayerParent<T, EnthralledDollModel<T>> p_116981_) {
 		super(p_116981_);
-		// TODO Auto-generated constructor stub
-	}
-
-	@Override
-	public void render(PoseStack pMatrixStack, MultiBufferSource pBuffer, int pPackedLight, T pLivingEntity,
-			float pLimbSwing, float pLimbSwingAmount, float pPartialTicks, float pAgeInTicks, float pNetHeadYaw,
-			float pHeadPitch) {
-		super.render(pMatrixStack, pBuffer, pPackedLight, pLivingEntity, pLimbSwing, pLimbSwingAmount, pPartialTicks,
-				pAgeInTicks, pNetHeadYaw, pHeadPitch);
 	}
 
 	@Override

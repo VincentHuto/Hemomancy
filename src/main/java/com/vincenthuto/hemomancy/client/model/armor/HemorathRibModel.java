@@ -46,7 +46,6 @@ public class HemorathRibModel<T extends LivingEntity> extends EntityModel<T> {
         this.bone4 = this.rope2.getChild("bone4");
     }
 
-    @SuppressWarnings("unused")
     public static LayerDefinition createBodyLayer() {
         MeshDefinition meshdefinition = new MeshDefinition();
         PartDefinition partdefinition = meshdefinition.getRoot();

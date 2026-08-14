@@ -58,7 +58,6 @@ public class GlacialGraspManip extends BloodManipulation {
 
 		for (int dx = -RADIUS; dx <= RADIUS; dx++) {
 			for (int dz = -RADIUS; dz <= RADIUS; dz++) {
-				// Check a circular-ish area
 				if (dx * dx + dz * dz > (RADIUS + 1) * (RADIUS + 1)) {
 					continue;
 				}
@@ -70,7 +69,6 @@ public class GlacialGraspManip extends BloodManipulation {
 							&& state.getFluidState().isSource()
 							&& world.getBlockState(target.above()).isAir()) {
 						world.setBlock(target, Blocks.FROSTED_ICE.defaultBlockState(), 3);
-						// Schedule the ice to start melting via normal tick
 						world.scheduleTick(target, Blocks.FROSTED_ICE, 60 + random.nextInt(40));
 						frozenCount++;
 						frozenTargets.add(target.immutable());

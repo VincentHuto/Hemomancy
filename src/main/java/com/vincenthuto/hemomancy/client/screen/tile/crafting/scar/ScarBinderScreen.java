@@ -38,11 +38,6 @@ public class ScarBinderScreen extends AbstractContainerScreen<ScarBinderInventor
 	private ResourceLocation GUI;
 
 	@Override
-	protected void init() {
-		super.init();
-	}
-
-	@Override
 	protected void renderBg(GuiGraphics graphics, float partialTicks, int x, int y) {
 		RenderSystem.setShader(GameRenderer::getPositionTexShader);
 		RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);

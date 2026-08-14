@@ -90,11 +90,9 @@ public class BloodBallRenderer {
 
 		float currentTime = mc.level.getGameTime() + partialTick;
 
-		// Interpolate between previous and current position for smooth motion
 		Vec3 renderPos = prevPos != null ? prevPos.lerp(pos, partialTick) : pos;
 		Vec3 cam = mc.gameRenderer.getMainCamera().getPosition();
 
-		// Fade alpha when dropped
 		float fadeAlpha = 1.0f;
 		if (BloodBallClientData.isDropped()) {
 			fadeAlpha = (float) BloodBallClientData.getFadeTicks() / BloodBallClientData.MAX_FADE_TICKS;
@@ -109,11 +107,9 @@ public class BloodBallRenderer {
 		float squishYScale = 1f;
 		float squishXZScale = 1f;
 		if (squishTicks > 0) {
-			// t runs 0→1 over the animation; sin(π·t) peaks at the midpoint
 			float t = 1f - (float) squishTicks / BloodBallClientData.MAX_SQUISH_TICKS;
 			float squishAmt = SQUISH_AMP * (float) Math.sin(Math.PI * t);
 			squishYScale = Math.max(0.05f, 1f - squishAmt);
-			// Volume-preserving: XZ expands to compensate Y compression
 			squishXZScale = (float) (1.0 / Math.sqrt(squishYScale));
 		}
 
@@ -121,7 +117,6 @@ public class BloodBallRenderer {
 		Vec3 swingDelta = BloodBallClientData.getSwingDelta();
 		double swingSpeed = swingDelta.length();
 		float stretchFactor = Math.min(STRETCH_MAX, 1f + STRETCH_K * (float) swingSpeed);
-		// Normalised direction; fall back to up-axis if nearly stationary
 		float sdX = 0f, sdY = 1f, sdZ = 0f;
 		if (swingSpeed > 1e-4) {
 			sdX = (float) (swingDelta.x / swingSpeed);
@@ -133,7 +128,6 @@ public class BloodBallRenderer {
 
 		poseStack.pushPose();
 		poseStack.translate(renderPos.x - cam.x, renderPos.y - cam.y-1, renderPos.z - cam.z);
-		// Apply squish scale (always Y-axis, simulates ground impact)
 		if (squishTicks > 0) {
 			poseStack.scale(squishXZScale, squishYScale, squishXZScale);
 		}
@@ -174,7 +168,6 @@ public class BloodBallRenderer {
 			float r, float g, float b, float a,
 			float dX, float dY, float dZ, float stretchFactor) {
 
-		// Perpendicular squeeze to keep volume roughly constant
 		float squeeze = (stretchFactor > 0.01f)
 				? (float) (1.0 / Math.sqrt(stretchFactor))
 				: 1f;
@@ -202,7 +195,6 @@ public class BloodBallRenderer {
 				float r11 = baseRadius + undulation(theta1, phi1, time, jiggle);
 				float r01 = baseRadius + undulation(theta0, phi1, time, jiggle);
 
-				// Raw sphere corners
 				float x00 = (float) (sinT0 * cosP0) * r00;
 				float y00 = (float) cosT0 * r00;
 				float z00 = (float) (sinT0 * sinP0) * r00;
@@ -244,9 +236,7 @@ public class BloodBallRenderer {
 	private static float[] applyStretch(float x, float y, float z,
 			float dX, float dY, float dZ,
 			float stretchFactor, float squeeze) {
-		// Dot product with the (normalised) direction
 		float dot = x * dX + y * dY + z * dZ;
-		// v_along = dot · dir,  v_perp = v - v_along
 		float alX = dot * dX, alY = dot * dY, alZ = dot * dZ;
 		float pX = x - alX,   pY = y - alY,   pZ = z - alZ;
 		return new float[]{

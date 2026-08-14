@@ -20,10 +20,5 @@ public class DarkArrowRenderer extends EntityRenderer<DarkArrowEntity> {
 		return TEXTURE;
 	}
 
-	@Override
-	public void render(DarkArrowEntity entityIn, float entityYaw, float partialTicks, PoseStack matrixStackIn,
-			MultiBufferSource bufferIn, int packedLightIn) {
-		super.render(entityIn, entityYaw, partialTicks, matrixStackIn, bufferIn, packedLightIn);
-	}
 }
 

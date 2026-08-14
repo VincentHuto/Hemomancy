@@ -43,9 +43,6 @@ public final class FoldActivationBounds {
 			return Optional.empty();
 		}
 
-		if (Math.abs(depthDelta) < 1.0E-7D) {
-			return Optional.empty();
-		}
 		double t = -previousDepth / depthDelta;
 		if (t < 0.0D || t > 1.0D) {
 			return Optional.empty();

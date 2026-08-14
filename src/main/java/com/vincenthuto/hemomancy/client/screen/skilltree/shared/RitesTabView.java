@@ -595,7 +595,9 @@ public final class RitesTabView {
 						block.defaultBlockState(), pose, buf,
 						dimmed ? 0x60006 : LightTexture.FULL_BRIGHT,
 						OverlayTexture.NO_OVERLAY);
-			} catch (Exception ignored) {}
+			} catch (RuntimeException ignored) {
+				// A malformed preview block should not interrupt the rest of the map.
+			}
 			pose.popPose();
 		}
 

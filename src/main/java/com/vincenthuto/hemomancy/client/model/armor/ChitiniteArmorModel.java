@@ -34,7 +34,6 @@ public class ChitiniteArmorModel<T extends LivingEntity> extends HumanoidModel<T
 	public static final Lazy<ChitiniteArmorModel<LivingEntity>> boots = Lazy.of(
 			() -> new ChitiniteArmorModel<>(Minecraft.getInstance().getEntityModels().bakeLayer(CHITINITE_FEET_LAYER)));
 
-	@SuppressWarnings("unused")
 	public static LayerDefinition createBodyLayer(EquipmentSlot slot) {
 		MeshDefinition meshdefinition = HumanoidModel.createMesh(CubeDeformation.NONE, 0);
 		PartDefinition partdefinition = meshdefinition.getRoot();
@@ -211,7 +210,6 @@ public class ChitiniteArmorModel<T extends LivingEntity> extends HumanoidModel<T
 
 	}
 
-	@SuppressWarnings("unused")
 	public static LayerDefinition createHeadLayer(EquipmentSlot slot) {
 		MeshDefinition meshdefinition = HumanoidModel.createMesh(CubeDeformation.NONE, 0);
 		PartDefinition partdefinition = meshdefinition.getRoot();
@@ -246,9 +244,4 @@ public class ChitiniteArmorModel<T extends LivingEntity> extends HumanoidModel<T
 
 	}
 
-	@Override
-	public void setupAnim(T entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw,
-			float headPitch) {
-		super.setupAnim(entity, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch);
-	}
 }

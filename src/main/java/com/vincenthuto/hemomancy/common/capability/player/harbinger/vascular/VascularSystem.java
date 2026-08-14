@@ -8,16 +8,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class VascularSystem implements IVascularSystem, INBTSerializable<CompoundTag> {
-	@SuppressWarnings("serial")
-	private Map<EnumVeinSections, Float> vascularSystem = new HashMap<>() {
-		{
-			put(EnumVeinSections.HEAD, 100f);
-			put(EnumVeinSections.HEART, 100f);
-			put(EnumVeinSections.BODY, 100f);
-			put(EnumVeinSections.ARMS, 100f);
-			put(EnumVeinSections.LEGS, 100f);
-		}
-	};
+	private Map<EnumVeinSections, Float> vascularSystem = new HashMap<>(Map.of(
+			EnumVeinSections.HEAD, 100f,
+			EnumVeinSections.HEART, 100f,
+			EnumVeinSections.BODY, 100f,
+			EnumVeinSections.ARMS, 100f,
+			EnumVeinSections.LEGS, 100f));
 
 	@Override
 	public EnumBloodFlow getBloodFlowBySection(EnumVeinSections sectionIn) {
@@ -43,11 +39,9 @@ public class VascularSystem implements IVascularSystem, INBTSerializable<Compoun
 
 	@Override
 	public float getHealthBySection(EnumVeinSections sectionIn) {
-		if (vascularSystem != null && vascularSystem.get(sectionIn) != null) {
-			return vascularSystem.get(sectionIn);
-		} else {
-			return 100;
-		}
+		if (vascularSystem == null) return 100;
+		Float health = vascularSystem.get(sectionIn);
+		return health == null ? 100 : health;
 	}
 
 	@Override
@@ -58,9 +52,7 @@ public class VascularSystem implements IVascularSystem, INBTSerializable<Compoun
 	@Override
 	public void setVascularSectionHealth(EnumVeinSections sectionIn, float value) {
 		if (vascularSystem != null) {
-			Map<EnumVeinSections, Float> newVasc = vascularSystem;
-			newVasc.put(sectionIn, getHealthBySection(sectionIn) + value);
-			setVascularSystem(newVasc);
+			vascularSystem.put(sectionIn, getHealthBySection(sectionIn) + value);
 		}
 	}
 

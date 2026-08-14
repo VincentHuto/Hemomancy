@@ -471,11 +471,6 @@ public class UnstainedProgressScreen extends Screen {
 		// 5b. Tabs
 		drawTabs(gfx, mouseX, mouseY);
 
-		// 5c. Title
-//		gfx.drawCenteredString(font,
-//				Component.literal(activeTab.label),
-//				guiLeft + guiWidth / 2, guiTop + 5, activeTab.color);
-
 		// 6. Zoom indicator (hidden when milestones sidebar is open; not shown for browse tabs)
 		if (activeTab != UTab.RITES && activeTab != UTab.CRAFTING
 				&& (!sidebarVisible || !begunPurification || activeTab == UTab.MATERIALS)) {

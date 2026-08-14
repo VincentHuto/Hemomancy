@@ -20,7 +20,6 @@ public class ChitiniteModel extends HierarchicalModel<ChitiniteEntity> {
 		this.whole = root.getChild("whole");
 	}
 
-	@SuppressWarnings("unused")
 	public static LayerDefinition createBodyLayer() {
 		MeshDefinition meshdefinition = new MeshDefinition();
 		PartDefinition partdefinition = meshdefinition.getRoot();
@@ -177,24 +176,6 @@ public class ChitiniteModel extends HierarchicalModel<ChitiniteEntity> {
 
 	@Override
 	public ModelPart root() {
-		// TODO Auto-generated method stub
 		return this.whole;
 	}
 }
-//	@Override
-//	public void setupAnim(T entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw,
-//			float headPitch) {
-//
-//		this.lLeg.xRot = Mth.cos(limbSwing * 0.6662F) * 1.4F * limbSwingAmount;
-//		this.lLeg2.xRot = Mth.cos(limbSwing * 0.6662F + (float) Math.PI) * 1.4F * limbSwingAmount;
-//		this.lLeg3.xRot = Mth.cos(limbSwing * 0.6662F) * 1.4F * limbSwingAmount;
-//		this.lLeg4.xRot = Mth.cos(limbSwing * 0.6662F + (float) Math.PI) * 1.4F * limbSwingAmount;
-//		this.lLeg5.xRot = Mth.cos(limbSwing * 0.6662F) * 1.4F * limbSwingAmount;
-//
-//		this.rLeg5.xRot = Mth.cos(limbSwing * 0.6662F + (float) Math.PI) * 1.4F * limbSwingAmount;
-//		this.rLeg2.xRot = Mth.cos(limbSwing * 0.6662F) * 1.4F * limbSwingAmount;
-//		this.rLeg3.xRot = Mth.cos(limbSwing * 0.6662F + (float) Math.PI) * 1.4F * limbSwingAmount;
-//		this.rLeg.xRot = Mth.cos(limbSwing * 0.6662F) * 1.4F * limbSwingAmount;
-//		this.rLeg4.xRot = Mth.cos(limbSwing * 0.6662F + (float) Math.PI) * 1.4F * limbSwingAmount;
-//
-//	}

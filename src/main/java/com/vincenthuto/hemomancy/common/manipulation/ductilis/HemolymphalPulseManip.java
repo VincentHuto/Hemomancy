@@ -48,7 +48,6 @@ public class HemolymphalPulseManip extends BloodManipulation {
 			tagged++;
 		}
 
-		// Expanding ring of crimson spore particles to visualise the pulse
 		int steps = 32;
 		for (int i = 0; i < steps; i++) {
 			double angle = i * (Math.PI * 2.0 / steps);

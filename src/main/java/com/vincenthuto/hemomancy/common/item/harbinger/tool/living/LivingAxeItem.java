@@ -90,21 +90,6 @@ public class LivingAxeItem extends LivingToolItem implements HemoClientItemExten
 
 	@Override
 	public void inventoryTick(ItemStack stack, Level worldIn, Entity entityIn, int itemSlot, boolean isSelected) {
-		/*
-		 * Level world = entityIn.world; Vector3 centerVec =
-		 * Vector3.fromEntityCenter(entityIn).add(0, -1, 0); double time =
-		 * world.getGameTime();
-		 *
-		 * if (world.isRemote) { int globalPartCount = 90; for (int i = 0; i < 16; i++)
-		 * { count += 0.002; if (count > 2) { count = 0.5f; } } double cos =
-		 * Math.cos(time) * count; double sin = Math.sin(time) * count;
-		 *
-		 * for (int i = 0; i < globalPartCount; i++) {
-		 * world.addParticle(DarkGlowParticleFactory.createData(ParticleColor.BLACK),
-		 * centerVec.x + cos, centerVec.y + 1, centerVec.z - sin, 0, 0.00, 0);
-		 * world.addParticle(DarkGlowParticleFactory.createData(ParticleColor.RED),
-		 * centerVec.x - cos, centerVec.y + 1, centerVec.z + sin, 0, 0.00, 0); } }
-		 */
 		super.inventoryTick(stack, worldIn, entityIn, itemSlot, isSelected);
 	}
 

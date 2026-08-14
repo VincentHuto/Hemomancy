@@ -136,7 +136,6 @@ public class PallidRetortMenu extends AbstractContainerMenu {
 	// ---- Recipe helpers ----
 
 	protected boolean canSmelt(ItemStack stack) {
-		// Check if any ghastly alembic recipe accepts this item as its main ingredient
 		return DistillationRecipe.getAllRecipes(this.level)
 				.stream()
 				.anyMatch(r -> r.isPallid() && r.getIngredient().test(stack));

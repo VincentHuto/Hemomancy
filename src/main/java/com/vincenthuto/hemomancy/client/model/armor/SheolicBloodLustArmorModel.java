@@ -197,9 +197,4 @@ public class SheolicBloodLustArmorModel<T extends LivingEntity> extends Humanoid
 		leftLeg.render(poseStack, buffer, packedLight, packedOverlay, packedColor);
 	}
 
-	@Override
-	public void setupAnim(T entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw,
-			float headPitch) {
-		super.setupAnim(entity, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch);
-	}
 }

@@ -64,16 +64,9 @@ public class HemoBloodStructureGuidePage extends HLGuiGuidePage {
 					(int) (left - guiWidth + 180), (int) (top + guiHeight - 70) - line * -10, 160, 0xff0000, true);
 
 			for (Block block : pattern.getBlockCount(false).keySet()) {
-//				HLGuiUtils.drawMaxWidthString(font,
-//						Component.literal(
-//								I18n.get(block.getDescriptionId()) + ": " + pattern.getBlockCount(false).get(block)),
-//						(int) (left - guiWidth + 180), (int) (top + guiHeight - 140) - line * -10, 160, 0xffffff, true);
-
 				line++;
 
-				// System.out.println(I18n.get(block.getDescriptionId()) + ": " +
 
-				// pattern.getBlockCount(false).get(block));
 			}
 			graphics.pose().pushPose();
 			graphics.pose().mulPose(Vector3.XN.rotationDegrees(-45 + (float) dragUpDown).toMoj());

@@ -102,7 +102,6 @@ public class VialCentrifugeScreen extends AbstractContainerScreen<VialCentrifuge
 
 	@Override
 	public boolean mouseClicked(double mouseX, double mouseY, int button) {
-		// Check if click is on the start button
 		if (button == 0 && !this.menu.isSpinning()
 				&& mouseX >= btnX1 && mouseX < btnX2 && mouseY >= btnY1 && mouseY < btnY2) {
 			PacketHandler.sendToServer(new StartCentrifugeButtonPacket());

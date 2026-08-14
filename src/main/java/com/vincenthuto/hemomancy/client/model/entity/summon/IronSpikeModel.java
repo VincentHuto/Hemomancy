@@ -17,7 +17,6 @@ public class IronSpikeModel<T extends Entity> extends EntityModel<EntityIronSpik
 	public static final ModelLayerLocation iron_spike = new ModelLayerLocation(
 			Hemomancy.rloc("iron_spike"), "main");
 
-	@SuppressWarnings("unused")
 	public static LayerDefinition createBodyLayer() {
 		MeshDefinition meshdefinition = new MeshDefinition();
 		PartDefinition partdefinition = meshdefinition.getRoot();

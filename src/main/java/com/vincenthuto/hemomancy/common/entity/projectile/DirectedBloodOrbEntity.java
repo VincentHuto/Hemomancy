@@ -6,7 +6,6 @@ import com.vincenthuto.hutoslib.client.particle.util.HLParticleUtils;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import net.minecraft.core.particles.DustParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
@@ -33,11 +32,6 @@ public class DirectedBloodOrbEntity extends ThrowableProjectile {
 
 	public DirectedBloodOrbEntity(LivingEntity thrower, boolean evil) {
 		super(TYPE, thrower, thrower.level());
-	}
-
-	@Override
-	public void addAdditionalSaveData(CompoundTag cmp) {
-		super.addAdditionalSaveData(cmp);
 	}
 
 	@Override
@@ -74,11 +68,6 @@ public class DirectedBloodOrbEntity extends ThrowableProjectile {
 			break;
 		}
 		}
-	}
-
-	@Override
-	public void readAdditionalSaveData(CompoundTag cmp) {
-		super.readAdditionalSaveData(cmp);
 	}
 
 	/**

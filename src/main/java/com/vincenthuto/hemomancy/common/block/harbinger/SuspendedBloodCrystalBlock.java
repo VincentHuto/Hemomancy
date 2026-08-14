@@ -76,12 +76,6 @@ public class SuspendedBloodCrystalBlock extends Block implements EntityBlock, Si
 
 
 	@Override
-	public void neighborChanged(BlockState state, Level worldIn, BlockPos pos, Block blockIn, BlockPos fromPos,
-			boolean isMoving) {
-		super.neighborChanged(state, worldIn, pos, blockIn, fromPos, isMoving);
-	}
-
-	@Override
 	public BlockState updateShape(BlockState state, Direction facing, BlockState facingState, LevelAccessor level,
 			BlockPos currentPos, BlockPos facingPos) {
 		WaterloggedBlockSupport.scheduleWaterTick(state, level, currentPos);

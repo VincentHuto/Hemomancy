@@ -1,6 +1,5 @@
 package com.vincenthuto.hemomancy.common.summon;
 
-import com.google.common.collect.Lists;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.entity.summon.BoundPuppeteerSummon;
 import com.vincenthuto.hemomancy.common.recipe.CardinalRiteRecipe;
@@ -15,6 +14,7 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.living.LivingDeathEvent;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -41,7 +41,7 @@ public final class PuppeteerSummonTrialEvents {
 		if (player == null || degree <= 0) {
 			return;
 		}
-		List<RecipeHolder<?>> recipes = Lists.newArrayList();
+		List<RecipeHolder<?>> recipes = new ArrayList<>();
 		for (PuppeteerSummonDefinition definition : PuppeteerSummonDefinitions.all()) {
 			if (definition.requiredDegree() <= degree) {
 				player.server.getRecipeManager().byKey(recipeId(definition)).ifPresent(recipes::add);

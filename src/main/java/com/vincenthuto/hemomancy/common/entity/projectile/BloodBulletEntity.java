@@ -9,7 +9,6 @@ import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import com.vincenthuto.hutoslib.common.network.HLPacketHandler;
 import com.vincenthuto.hutoslib.math.Vector3;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
@@ -83,11 +82,6 @@ public class BloodBulletEntity extends AbstractArrow implements CombatWeaponCarr
 	protected void onHit(@Nonnull HitResult pos) {
 		switch (pos.getType()) {
 		case BLOCK: {
-//			if (!level().isClientSide) {
-//				this.level().explode(this, this.getX(), this.getY() + this.getBbHeight() / 16.0F, this.getZ(), 1.0F,
-//						ExplosionInteraction.NONE);
-//			}
-			// this.remove(RemovalReason.KILLED);
 			break;
 		}
 		case ENTITY: {
@@ -122,11 +116,6 @@ public class BloodBulletEntity extends AbstractArrow implements CombatWeaponCarr
 		this.combatWeaponItem = compound.contains("CombatWeapon", 10)
 				? ItemStack.parseOptional(this.registryAccess(), compound.getCompound("CombatWeapon"))
 				: ItemStack.EMPTY;
-	}
-
-	@Override
-	public void setSoundEvent(SoundEvent soundIn) {
-		super.setSoundEvent(soundIn);
 	}
 
 	@Override

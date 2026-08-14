@@ -69,32 +69,15 @@ public class VenousStriderModel extends EntityModel<VenousStriderEntity> {
     public void setupAnim(VenousStriderEntity entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
         this.neck2.zRot = netHeadYaw * ((float) Math.PI / 180F);
 
-//		this.head.yRot = netHeadYaw * ((float) Math.PI / 180F);
-//		this.head.xRot = headPitch * ((float) Math.PI / 180F);
-//		this.neck.xRot = 0.2618F + headPitch * ((float) Math.PI / 180F) * 0.5F;
-//
-//		// Slow, deliberate leg movement
-        this.leg1.xRot = (float) Math.cos(limbSwing * 0.6662F) * 0.8F * limbSwingAmount;
-        this.leg2.xRot = (float) Math.cos(limbSwing * 0.6662F + (float) Math.PI) * 0.8F * limbSwingAmount;
-//
-//		// Subtle wing flutter when idle
-        float wingFlutter = (float) Math.sin(ageInTicks * 0.067F) * 0.05F;
-        this.wing1.yRot = -wingFlutter;
-        this.wing2.yRot = wingFlutter;
-//
-//		// Gentle tail sway
-//		this.tailFeathers.yRot = (float) Math.sin(ageInTicks * 0.05F) * 0.1F;
+		this.leg1.xRot = (float) Math.cos(limbSwing * 0.6662F) * 0.8F * limbSwingAmount;
+		this.leg2.xRot = (float) Math.cos(limbSwing * 0.6662F + (float) Math.PI) * 0.8F * limbSwingAmount;
+		float wingFlutter = (float) Math.sin(ageInTicks * 0.067F) * 0.05F;
+		this.wing1.yRot = -wingFlutter;
+		this.wing2.yRot = wingFlutter;
     }
 
     @Override
-    public void renderToBuffer(PoseStack poseStack, VertexConsumer buffer, int packedLight, int packedOverlay, int packedColor) {
-        body.render(poseStack, buffer, packedLight, packedOverlay);
-//		neck.render(poseStack, buffer, packedLight, packedOverlay);
-//		head.render(poseStack, buffer, packedLight, packedOverlay);
-//		leftLeg.render(poseStack, buffer, packedLight, packedOverlay);
-//		rightLeg.render(poseStack, buffer, packedLight, packedOverlay);
-//		leftWing.render(poseStack, buffer, packedLight, packedOverlay);
-//		rightWing.render(poseStack, buffer, packedLight, packedOverlay);
-//		tailFeathers.render(poseStack, buffer, packedLight, packedOverlay);
+	public void renderToBuffer(PoseStack poseStack, VertexConsumer buffer, int packedLight, int packedOverlay, int packedColor) {
+		body.render(poseStack, buffer, packedLight, packedOverlay);
     }
 }

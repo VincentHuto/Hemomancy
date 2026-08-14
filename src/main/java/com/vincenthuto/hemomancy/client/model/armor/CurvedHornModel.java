@@ -16,7 +16,6 @@ public class CurvedHornModel<T extends LivingEntity> extends EntityModel<T> {
 	public static final ModelLayerLocation curved_horn = new ModelLayerLocation(
 			Hemomancy.rloc("curved_horn"), "main");
 
-	@SuppressWarnings("unused")
 	public static LayerDefinition createBodyLayer() {
 		MeshDefinition meshdefinition = new MeshDefinition();
 		PartDefinition partdefinition = meshdefinition.getRoot();

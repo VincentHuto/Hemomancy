@@ -234,9 +234,7 @@ public final class SkillPointHelper {
 	}
 
 	private static int getSanguineCrystallizationLevel(SkillProgress progress) {
-		SkillPoint sp = SkillPointInit.skill_sanguine_crystallization;
-		if (sp == null || !progress.isUnlocked(sp)) return 0;
-		return progress.getLevel(sp);
+		return level(progress, SkillPointInit.skill_sanguine_crystallization);
 	}
 
 	public static double getScarAffinityMultiplier(Player player) {
@@ -262,9 +260,7 @@ public final class SkillPointHelper {
 	}
 
 	private static int getScarResonanceSlots(SkillProgress progress) {
-		SkillPoint sp = SkillPointInit.skill_scar_resonance;
-		if (sp == null || !progress.isUnlocked(sp)) return 0;
-		return progress.getLevel(sp);
+		return level(progress, SkillPointInit.skill_scar_resonance);
 	}
 
 	public static double getScarMasteryDurationMultiplier(Player player) {
@@ -293,9 +289,7 @@ public final class SkillPointHelper {
 	}
 
 	private static int getPuppetSkeinLevel(SkillProgress progress) {
-		SkillPoint sp = SkillPointInit.skill_puppet_skein;
-		if (sp == null || !progress.isUnlocked(sp)) return 0;
-		return progress.getLevel(sp);
+		return level(progress, SkillPointInit.skill_puppet_skein);
 	}
 
 	public static int getLivingSinewLevel(Player player) {
@@ -307,9 +301,7 @@ public final class SkillPointHelper {
 	}
 
 	private static int getLivingSinewLevel(SkillProgress progress) {
-		SkillPoint sp = SkillPointInit.skill_living_sinew;
-		if (sp == null || !progress.isUnlocked(sp)) return 0;
-		return progress.getLevel(sp);
+		return level(progress, SkillPointInit.skill_living_sinew);
 	}
 
 	public static int getFarTetherLevel(Player player) {
@@ -321,9 +313,7 @@ public final class SkillPointHelper {
 	}
 
 	private static int getFarTetherLevel(SkillProgress progress) {
-		SkillPoint sp = SkillPointInit.skill_far_tether;
-		if (sp == null || !progress.isUnlocked(sp)) return 0;
-		return progress.getLevel(sp);
+		return level(progress, SkillPointInit.skill_far_tether);
 	}
 
 	public static int getLivingConduitLevel(Player player) {
@@ -335,9 +325,7 @@ public final class SkillPointHelper {
 	}
 
 	private static int getLivingConduitLevel(SkillProgress progress) {
-		SkillPoint sp = SkillPointInit.skill_living_conduit;
-		if (sp == null || !progress.isUnlocked(sp)) return 0;
-		return progress.getLevel(sp);
+		return level(progress, SkillPointInit.skill_living_conduit);
 	}
 
 	public static int getVascularDrawLevel(Player player) {
@@ -349,9 +337,7 @@ public final class SkillPointHelper {
 	}
 
 	private static int getVascularDrawLevel(SkillProgress progress) {
-		SkillPoint sp = SkillPointInit.skill_vascular_draw;
-		if (sp == null || !progress.isUnlocked(sp)) return 0;
-		return progress.getLevel(sp);
+		return level(progress, SkillPointInit.skill_vascular_draw);
 	}
 
 	public static int getCrimsonProjectionLevel(Player player) {
@@ -363,9 +349,7 @@ public final class SkillPointHelper {
 	}
 
 	private static int getCrimsonProjectionLevel(SkillProgress progress) {
-		SkillPoint sp = SkillPointInit.skill_crimson_projection;
-		if (sp == null || !progress.isUnlocked(sp)) return 0;
-		return progress.getLevel(sp);
+		return level(progress, SkillPointInit.skill_crimson_projection);
 	}
 
 	public static int getHematicFocusLevel(Player player) {
@@ -377,9 +361,7 @@ public final class SkillPointHelper {
 	}
 
 	private static int getHematicFocusLevel(SkillProgress progress) {
-		SkillPoint sp = SkillPointInit.skill_hematic_focus;
-		if (sp == null || !progress.isUnlocked(sp)) return 0;
-		return progress.getLevel(sp);
+		return level(progress, SkillPointInit.skill_hematic_focus);
 	}
 
 	public static int getVespersRefusalLevel(Player player) {
@@ -391,9 +373,7 @@ public final class SkillPointHelper {
 	}
 
 	private static int getVespersRefusalLevel(SkillProgress progress) {
-		SkillPoint sp = SkillPointInit.skill_vespers_refusal;
-		if (sp == null || !progress.isUnlocked(sp)) return 0;
-		return progress.getLevel(sp);
+		return level(progress, SkillPointInit.skill_vespers_refusal);
 	}
 
 	public static int getWeaponsMasterLevel(Player player) {
@@ -405,9 +385,7 @@ public final class SkillPointHelper {
 	}
 
 	private static int getWeaponsMasterLevel(SkillProgress progress) {
-		SkillPoint sp = SkillPointInit.skill_weapons_master;
-		if (sp == null || !progress.isUnlocked(sp)) return 0;
-		return progress.getLevel(sp);
+		return level(progress, SkillPointInit.skill_weapons_master);
 	}
 
 	public static double getLivingStaffHotSwapCost(Player player) {
@@ -427,9 +405,7 @@ public final class SkillPointHelper {
 	}
 
 	private static int getDraggingSiphonLevel(SkillProgress progress) {
-		SkillPoint sp = SkillPointInit.skill_dragging_siphon;
-		if (sp == null || !progress.isUnlocked(sp)) return 0;
-		return progress.getLevel(sp);
+		return level(progress, SkillPointInit.skill_dragging_siphon);
 	}
 
 	public static int getMobileConduitLevel(Player player) {
@@ -441,9 +417,7 @@ public final class SkillPointHelper {
 	}
 
 	private static int getMobileConduitLevel(SkillProgress progress) {
-		SkillPoint sp = SkillPointInit.skill_mobile_conduit;
-		if (sp == null || !progress.isUnlocked(sp)) return 0;
-		return progress.getLevel(sp);
+		return level(progress, SkillPointInit.skill_mobile_conduit);
 	}
 
 	public static int getBloodToleranceLevel(Player player) {
@@ -455,9 +429,7 @@ public final class SkillPointHelper {
 	}
 
 	private static int getBloodToleranceLevel(SkillProgress progress) {
-		SkillPoint sp = SkillPointInit.skill_blood_tolerance;
-		if (sp == null || !progress.isUnlocked(sp)) return 0;
-		return progress.getLevel(sp);
+		return level(progress, SkillPointInit.skill_blood_tolerance);
 	}
 
 	public static boolean hasUnboundSiphon(Player player) {
@@ -501,9 +473,7 @@ public final class SkillPointHelper {
 	}
 
 	private static int getThreadEconomyLevel(SkillProgress progress) {
-		SkillPoint sp = SkillPointInit.skill_thread_economy;
-		if (sp == null || !progress.isUnlocked(sp)) return 0;
-		return progress.getLevel(sp);
+		return level(progress, SkillPointInit.skill_thread_economy);
 	}
 
 	public static int getSkeinTranspositionLevel(Player player) {
@@ -515,9 +485,7 @@ public final class SkillPointHelper {
 	}
 
 	private static int getSkeinTranspositionLevel(SkillProgress progress) {
-		SkillPoint sp = SkillPointInit.skill_skein_transposition;
-		if (sp == null || !progress.isUnlocked(sp)) return 0;
-		return progress.getLevel(sp);
+		return level(progress, SkillPointInit.skill_skein_transposition);
 	}
 
 	public static int getBoundCommandLevel(Player player) {
@@ -529,9 +497,7 @@ public final class SkillPointHelper {
 	}
 
 	private static int getBoundCommandLevel(SkillProgress progress) {
-		SkillPoint sp = SkillPointInit.skill_bound_command;
-		if (sp == null || !progress.isUnlocked(sp)) return 0;
-		return progress.getLevel(sp);
+		return level(progress, SkillPointInit.skill_bound_command);
 	}
 
 	public static boolean hasDeepInscription(Player player) {
@@ -556,9 +522,7 @@ public final class SkillPointHelper {
 	}
 
 	private static int getDeepInscriptionLevel(SkillProgress progress) {
-		SkillPoint sp = SkillPointInit.skill_deep_inscription;
-		if (sp == null || !progress.isUnlocked(sp)) return 0;
-		return progress.getLevel(sp);
+		return level(progress, SkillPointInit.skill_deep_inscription);
 	}
 
 	public static int getFungalSymbiosisLevel(Player player) {
@@ -570,9 +534,7 @@ public final class SkillPointHelper {
 	}
 
 	private static int getFungalSymbiosisLevel(SkillProgress progress) {
-		SkillPoint sp = SkillPointInit.skill_fungal_symbiosis;
-		if (sp == null || !progress.isUnlocked(sp)) return 0;
-		return progress.getLevel(sp);
+		return level(progress, SkillPointInit.skill_fungal_symbiosis);
 	}
 
 	public static int getFaneSutureLevel(Player player) {
@@ -584,9 +546,7 @@ public final class SkillPointHelper {
 	}
 
 	private static int getFaneSutureLevel(SkillProgress progress) {
-		SkillPoint sp = SkillPointInit.skill_fane_suture;
-		if (sp == null || !progress.isUnlocked(sp)) return 0;
-		return progress.getLevel(sp);
+		return level(progress, SkillPointInit.skill_fane_suture);
 	}
 
 	public static int getBloodlineConcordLevel(Player player) {
@@ -598,9 +558,7 @@ public final class SkillPointHelper {
 	}
 
 	private static int getBloodlineConcordLevel(SkillProgress progress) {
-		SkillPoint sp = SkillPointInit.skill_bloodline_concord;
-		if (sp == null || !progress.isUnlocked(sp)) return 0;
-		return progress.getLevel(sp);
+		return level(progress, SkillPointInit.skill_bloodline_concord);
 	}
 
 	public static int getServitorTenderLevel(Player player) {
@@ -612,9 +570,7 @@ public final class SkillPointHelper {
 	}
 
 	private static int getServitorTenderLevel(SkillProgress progress) {
-		SkillPoint sp = SkillPointInit.skill_servitor_tender;
-		if (sp == null || !progress.isUnlocked(sp)) return 0;
-		return progress.getLevel(sp);
+		return level(progress, SkillPointInit.skill_servitor_tender);
 	}
 
 	public static int getAncestralSovereigntyLevel(Player player) {
@@ -626,9 +582,7 @@ public final class SkillPointHelper {
 	}
 
 	private static int getAncestralSovereigntyLevel(SkillProgress progress) {
-		SkillPoint sp = SkillPointInit.skill_ancestral_sovereignty;
-		if (sp == null || !progress.isUnlocked(sp)) return 0;
-		return progress.getLevel(sp);
+		return level(progress, SkillPointInit.skill_ancestral_sovereignty);
 	}
 
 	public static int getSynapticMemoryLevel(Player player) {
@@ -640,9 +594,7 @@ public final class SkillPointHelper {
 	}
 
 	private static int getSynapticMemoryLevel(SkillProgress progress) {
-		SkillPoint sp = SkillPointInit.skill_synaptic_memory;
-		if (sp == null || !progress.isUnlocked(sp)) return 0;
-		return progress.getLevel(sp);
+		return level(progress, SkillPointInit.skill_synaptic_memory);
 	}
 
 	public static int getSporiticAttunementLevel(Player player) {
@@ -654,9 +606,7 @@ public final class SkillPointHelper {
 	}
 
 	private static int getSporiticAttunementLevel(SkillProgress progress) {
-		SkillPoint sp = SkillPointInit.skill_sporitic_attunement;
-		if (sp == null || !progress.isUnlocked(sp)) return 0;
-		return progress.getLevel(sp);
+		return level(progress, SkillPointInit.skill_sporitic_attunement);
 	}
 
 	public static int getHyphalCultivationLevel(Player player) {
@@ -668,9 +618,7 @@ public final class SkillPointHelper {
 	}
 
 	private static int getHyphalCultivationLevel(SkillProgress progress) {
-		SkillPoint sp = SkillPointInit.skill_hyphal_cultivation;
-		if (sp == null || !progress.isUnlocked(sp)) return 0;
-		return progress.getLevel(sp);
+		return level(progress, SkillPointInit.skill_hyphal_cultivation);
 	}
 
 	public static int getQliphothGestationLevel(Player player) {
@@ -682,9 +630,7 @@ public final class SkillPointHelper {
 	}
 
 	private static int getQliphothGestationLevel(SkillProgress progress) {
-		SkillPoint sp = SkillPointInit.skill_qliphoth_gestation;
-		if (sp == null || !progress.isUnlocked(sp)) return 0;
-		return progress.getLevel(sp);
+		return level(progress, SkillPointInit.skill_qliphoth_gestation);
 	}
 
 	public static int getPrimalMorphogenesisLevel(Player player) {
@@ -696,8 +642,10 @@ public final class SkillPointHelper {
 	}
 
 	private static int getPrimalMorphogenesisLevel(SkillProgress progress) {
-		SkillPoint sp = SkillPointInit.skill_primal_morphogenesis;
-		if (sp == null || !progress.isUnlocked(sp)) return 0;
-		return progress.getLevel(sp);
+		return level(progress, SkillPointInit.skill_primal_morphogenesis);
+	}
+
+	private static int level(SkillProgress progress, SkillPoint skill) {
+		return skill == null || !progress.isUnlocked(skill) ? 0 : progress.getLevel(skill);
 	}
 }

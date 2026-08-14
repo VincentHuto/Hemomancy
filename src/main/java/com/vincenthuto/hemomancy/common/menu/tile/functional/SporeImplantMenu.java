@@ -41,19 +41,14 @@ public class SporeImplantMenu extends AbstractContainerMenu {
 		this.scars = HemoCapabilityAccess.requireScarState(this.player);
 		this.equipment = HemoCapabilityAccess.requireEquipment(this.player);
 
-		// Slot layout (scar/fungus slots only):
-		// 0        : fungal scar slot (scar cap slot 0) — center
-		// 1-4      : scar slots       (scar cap slots 1-4) — surrounding
 		this.addSlot(new SelectiveEquipmentTypeSlot(player, ItemFungalScar.class, scars, IScars.FUNGAL_SLOT, 80, 35));
 
-		// Player inventory (27 slots)
 		for (int l = 0; l < 3; ++l) {
 			for (int j1 = 0; j1 < 9; ++j1) {
 				this.addSlot(new Slot(playerInventory, j1 + (l + 1) * 9, 8 + j1 * 18, 84 + l * 18));
 			}
 		}
 
-		// Hotbar (9 slots)
 		for (int i1 = 0; i1 < 9; ++i1) {
 			this.addSlot(new Slot(playerInventory, i1, 8 + i1 * 18, 142));
 		}
@@ -69,22 +64,15 @@ public class SporeImplantMenu extends AbstractContainerMenu {
 		ItemStack stackInSlot = slot.getItem();
 		ItemStack originalStack = stackInSlot.copy();
 
-		// Slot layout:
-		// 0        : fungal scar slot (scar cap slot 0)
-		// 1-4      : scar slots       (scar cap slots 1-4)
-		// 5-31     : player main inventory (27 slots)
-		// 32-40    : hotbar (9 slots)
 		final int containerEnd   = SLOT_COUNT;   // first player-inv slot
 		final int playerInvStart = SLOT_COUNT;
 		final int hotbarStart    = 28;
 		final int hotbarEnd      = 36;  // inclusive
 
 		if (index < containerEnd) {
-			// Moving FROM a scar slot → player inventory
 			// Use explicit slot manipulation so that slot.set(ItemStack.EMPTY)
 			// fires onUnequipped while the slot still has its item.
 			boolean placed = false;
-			// Try hotbar first (prefer hotbar for quick access)
 			for (int i = hotbarStart; i <= hotbarEnd; i++) {
 				Slot target = this.slots.get(i);
 				if (!target.hasItem() && target.mayPlace(stackInSlot)) {
@@ -94,7 +82,6 @@ public class SporeImplantMenu extends AbstractContainerMenu {
 					break;
 				}
 			}
-			// Then try main inventory
 			if (!placed) {
 				for (int i = playerInvStart; i < hotbarStart; i++) {
 					Slot target = this.slots.get(i);
@@ -111,10 +98,8 @@ public class SporeImplantMenu extends AbstractContainerMenu {
 			}
 			return originalStack;
 		} else {
-			// Moving FROM player inventory / hotbar → scar slots
 			boolean moved = false;
 
-			// Fungal scar → fungal slot
 			if (!moved && stackInSlot.getItem() instanceof ItemFungalScar) {
 				Slot fungalSlot = this.slots.get(FUNGAL_SLOT_UI);
 				if (!fungalSlot.hasItem() && fungalSlot.mayPlace(stackInSlot)) {
@@ -122,7 +107,6 @@ public class SporeImplantMenu extends AbstractContainerMenu {
 					moved = true;
 				}
 			}
-// Nothing matched — swap between hotbar and main inventory
 			if (!moved) {
 				if (index >= playerInvStart && index < hotbarStart) {
 					if (!this.moveItemStackTo(stackInSlot, hotbarStart, hotbarEnd + 1, false)) {

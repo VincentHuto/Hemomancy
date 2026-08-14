@@ -2,8 +2,6 @@ package com.vincenthuto.hemomancy.client.render.item;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.mojang.blaze3d.vertex.DefaultVertexFormat;
-import com.mojang.blaze3d.vertex.VertexFormat;
 import com.mojang.math.Axis;
 import com.vincenthuto.hemomancy.client.render.HemoRenderTypes;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
@@ -35,9 +33,6 @@ public class MonolithFragmentItemRenderer extends BlockEntityWithoutLevelRendere
 	private static final float GUI_SHARD_SPREAD_SCALE = 0.25f;
 	private static final float GUI_TILT_DEGREES = 0.0f;
 	private static final float DEFAULT_TILT_DEGREES = 18.0f;
-	@SuppressWarnings("unused")
-	private static final VertexFormat FRAGMENT_VERTEX_FORMAT = DefaultVertexFormat.POSITION_COLOR_TEX_LIGHTMAP;
-
 	public MonolithFragmentItemRenderer(BlockEntityRenderDispatcher dispatcher, EntityModelSet modelSet) {
 		super(dispatcher, modelSet);
 	}

@@ -10,10 +10,6 @@ import net.minecraft.world.level.levelgen.feature.Feature;
 import net.minecraft.world.level.levelgen.feature.FeaturePlaceContext;
 import org.jetbrains.annotations.NotNull;
 
-/**
- * This Feature is essentially the same as vanilla's
- * {@link net.minecraft.world.level.levelgen.feature.SimpleBlockFeature}
- */
 public class HyphaeFeature extends Feature<HyphaeConfig> {
 	public HyphaeFeature(Codec<HyphaeConfig> codec) {
 		super(codec);
@@ -25,12 +21,8 @@ public class HyphaeFeature extends Feature<HyphaeConfig> {
 		WorldGenLevel level = ctx.level();
 		BlockPos pos = ctx.origin();
 		BlockState state = config.getToPlace().getState(ctx.random(), pos);
-		if (state.canSurvive(level, pos)) {
-			level.setBlock(pos, state, Block.UPDATE_CLIENTS);
-
-			return true;
-		} else {
-			return false;
-		}
+		if (!state.canSurvive(level, pos)) return false;
+		level.setBlock(pos, state, Block.UPDATE_CLIENTS);
+		return true;
 	}
 }

@@ -282,13 +282,8 @@ public class MorphlingItem extends Item implements IMorphling {
 	 */
 	public static float calculateEffectivePower(float rawPower, EnumBloodTendency enzymeTendency,
 			EnumBloodTendency preferred, EnumBloodTendency secondary) {
-		if (enzymeTendency == preferred) {
-			return rawPower;
-		} else if (enzymeTendency == secondary) {
-			return rawPower * 0.75f;
-		} else {
-			return rawPower * 0.5f;
-		}
+		if (enzymeTendency == preferred) return rawPower;
+		return enzymeTendency == secondary ? rawPower * 0.75f : rawPower * 0.5f;
 	}
 
 	@Override

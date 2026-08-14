@@ -27,7 +27,6 @@ public class MnemonicReliquaryModel extends Model {
 		this.pillow = root.getChild("pillow");
 	}
 
-	@SuppressWarnings("unused")
 	public static LayerDefinition createBodyLayer() {
 		MeshDefinition meshdefinition = new MeshDefinition();
 		PartDefinition partdefinition = meshdefinition.getRoot();

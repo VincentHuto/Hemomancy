@@ -35,10 +35,7 @@ public final class LastRiteRules {
 		if (!armedSourceId.equals(requestSourceId)) {
 			return false;
 		}
-		if (sharedCooldownUntil > now) {
-			return false;
-		}
-		return true;
+		return sharedCooldownUntil <= now;
 	}
 
 	public static long nextSharedCooldownUntil(long now, int cooldownTicks) {

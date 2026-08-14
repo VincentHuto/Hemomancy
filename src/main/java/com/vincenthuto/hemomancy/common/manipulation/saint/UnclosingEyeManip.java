@@ -48,8 +48,6 @@ public class UnclosingEyeManip extends BloodManipulation {
 
 	@Override
 	public void getAction(Player player, Level world, ItemStack heldItemMainhand, BlockPos position) {
-		// Apply Glowing to ALL living entities in range, including players — and strip
-		// Invisibility from any target that currently has it.
 		List<LivingEntity> targets = world.getEntitiesOfClass(LivingEntity.class,
 				player.getBoundingBox().inflate(SCAN_RADIUS), e -> e != player && e.isAlive());
 
@@ -62,7 +60,6 @@ public class UnclosingEyeManip extends BloodManipulation {
 			}
 		}
 
-		// The caster is also revealed — this is not a tool for hiding
 		player.addEffect(new MobEffectInstance(MobEffects.GLOWING, GLOWING_DURATION, 0, false, true));
 		player.addEffect(new MobEffectInstance(MobEffects.NIGHT_VISION, NIGHT_VISION_DURATION, 0, false, false, true));
 
@@ -74,7 +71,6 @@ public class UnclosingEyeManip extends BloodManipulation {
 		world.playSound(null, player.blockPosition(), SoundEvents.BEACON_ACTIVATE, SoundSource.PLAYERS, 1.0f, 1.5f);
 
 		if (world instanceof ServerLevel sLevel) {
-			// Expanding ring of gold-white light from the caster
 			BlockPos pos = player.blockPosition();
 			for (int i = 0; i < 50; i++) {
 				double angle = (i / 50.0) * Math.PI * 2;

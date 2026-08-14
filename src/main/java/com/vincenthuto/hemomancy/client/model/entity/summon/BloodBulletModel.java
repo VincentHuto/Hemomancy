@@ -15,7 +15,6 @@ public class BloodBulletModel extends EntityModel<BloodBulletEntity> {
 	public static final ModelLayerLocation blood_bullet = new ModelLayerLocation(
 			Hemomancy.rloc("blood_bullet"), "main");
 
-	@SuppressWarnings("unused")
 	public static LayerDefinition createBodyLayer() {
 		MeshDefinition meshdefinition = new MeshDefinition();
 		PartDefinition partdefinition = meshdefinition.getRoot();

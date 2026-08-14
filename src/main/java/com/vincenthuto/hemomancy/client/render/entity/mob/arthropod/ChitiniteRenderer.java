@@ -17,7 +17,6 @@ public class ChitiniteRenderer extends MobRenderer<ChitiniteEntity, ChitiniteMod
 	public ChitiniteRenderer(Context renderManagerIn) {
 		super(renderManagerIn,
 				new ChitiniteModel(renderManagerIn.bakeLayer(ChitiniteModel.LAYER_LOCATION)), 0.5F);
-	//	this.addLayer(new RenderChitiniteLayer(this));
 
 	}
 
@@ -25,12 +24,6 @@ public class ChitiniteRenderer extends MobRenderer<ChitiniteEntity, ChitiniteMod
 	public ResourceLocation getTextureLocation(ChitiniteEntity entity) {
 		return TEXTURE;
 
-	}
-
-	@Override
-	public void render(ChitiniteEntity pEntity, float pEntityYaw, float pPartialTicks, PoseStack pMatrixStack,
-			MultiBufferSource pBuffer, int pPackedLight) {
-		super.render(pEntity, pEntityYaw, pPartialTicks, pMatrixStack, pBuffer, pPackedLight);
 	}
 
 }

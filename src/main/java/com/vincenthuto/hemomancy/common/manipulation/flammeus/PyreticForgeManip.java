@@ -54,7 +54,6 @@ public class PyreticForgeManip extends BloodManipulation {
 			return;
 		}
 
-		// Look up smelting recipe for the held item
 		Optional<RecipeHolder<SmeltingRecipe>> recipe = world.getRecipeManager()
 				.getRecipeFor(RecipeType.SMELTING, new SingleRecipeInput(heldItemMainhand), world);
 
@@ -68,20 +67,16 @@ public class PyreticForgeManip extends BloodManipulation {
 		}
 
 		int held = heldItemMainhand.getCount();
-		// Scale smelt count with Crimson Mastery skill
 		int smeltCount = (int) Math.min(held,
 				Math.ceil(BASE_SMELT_COUNT * SkillPointHelper.getCrimsonMasteryMultiplier(player)));
 
 		ItemStack smeltedStack = result.copy();
 		smeltedStack.setCount(smeltCount);
 
-		// Shrink the original stack and give the smelted result
 		heldItemMainhand.shrink(smeltCount);
 		if (heldItemMainhand.isEmpty()) {
-			// Stack fully consumed — replace in hand
 			player.setItemInHand(net.minecraft.world.InteractionHand.MAIN_HAND, smeltedStack);
 		} else {
-			// Partial smelt — give result; remaining raw items stay in hand
 			if (!player.getInventory().add(smeltedStack)) {
 				player.drop(smeltedStack, false);
 			}
@@ -94,7 +89,6 @@ public class PyreticForgeManip extends BloodManipulation {
 			BlockPos pos = player.blockPosition();
 			RandomSource random = world.random;
 
-			// Hot orange-red particle burst
 			for (int i = 0; i < 20; i++) {
 				float r = 200 + random.nextFloat() * 55;
 				float g = 80 + random.nextFloat() * 100;

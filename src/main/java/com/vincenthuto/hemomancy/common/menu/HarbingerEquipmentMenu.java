@@ -28,7 +28,7 @@ public class HarbingerEquipmentMenu extends AbstractContainerMenu {
             InventoryMenu.EMPTY_ARMOR_SLOT_CHESTPLATE, InventoryMenu.EMPTY_ARMOR_SLOT_HELMET};
     public final static int GOURD_SLOT_INDEX = 6;
     public final static int CHARM_SLOT_INDEX = 5;
-    public final static int JAR_SLOT_INDEX = 7; // Index in the scar capability handler for the Morphling jar slot
+    public final static int JAR_SLOT_INDEX = 7;
     public final static int FITTING_SLOT_INDEX = 8;
     public final static int JAR_MENU_SLOT = 4;
     public final static int CHARM_MENU_SLOT = 5;
@@ -68,10 +68,6 @@ public class HarbingerEquipmentMenu extends AbstractContainerMenu {
             this.addSlot(new EquipmentArmorSlot(playerInventory, 36 + (3 - k), 18, 18 + k * 20, EquipmentSlot, this.player));
         }
 
-//		this.addSlot(new SelectiveEquipmentTypeSlot(player, ItemFungalScar.class, scars, 0, 77, 8));
-//		this.addSlot(new ScarSlot(player, scars, 1, 77 + 1 * 18, 8));
-//		this.addSlot(new ScarSlot(player, scars, 2, 77 + 2 * 18, 8));
-//		this.addSlot(new ScarSlot(player, scars, 3, 77 + 3 * 18, 8));
         this.addSlot(new SelectiveEquipmentTypeSlot(player, ItemMorphlingJar.class, equipment, JAR_SLOT_INDEX, 176, 14));
         this.addSlot(new VasculariumCharmSlot(player, equipment, CHARM_SLOT_INDEX, 176, 38,
                 this.openedFromScarletVanity));
@@ -90,11 +86,6 @@ public class HarbingerEquipmentMenu extends AbstractContainerMenu {
         }
 
         this.addSlot(new ScarOffHandSlot(playerInventory, 40, 52, 78));
-    }
-
-    @Override
-    public boolean canTakeItemForPickAll(ItemStack stack, Slot slot) {
-        return super.canTakeItemForPickAll(stack, slot);
     }
 
     @Override

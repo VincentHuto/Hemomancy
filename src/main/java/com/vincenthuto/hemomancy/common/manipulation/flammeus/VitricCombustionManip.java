@@ -69,7 +69,6 @@ public class VitricCombustionManip extends BloodManipulation {
 
 		Vec3 blastCenter;
 		if (hit.getType() == HitResult.Type.MISS) {
-			// Detonate at max range
 			blastCenter = endPos;
 		} else {
 			blastCenter = Vec3.atCenterOf(hit.getBlockPos().relative(hit.getDirection()));

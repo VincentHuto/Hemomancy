@@ -407,45 +407,10 @@ public final class MaterialsData {
                 "Materials", () -> new ItemStack(ItemInit.sanguine_quintessence.get()),
                 true, UnlockPredicate.minDegree(5)));
 
-//        list.add(new MaterialEntry("hematic_field_ink", "Hematic Field Ink",
-//                "Blood-infused ink used for writing patterns and engrams.",
-//                "Materials", () -> new ItemStack(ItemInit.hematic_field_ink.get()),
-//                true, UnlockPredicate.minDegree(3)));
-
                                                                                                                                                                                                                                                                                 list.add(new MaterialEntry("blood_stained_stone", "Blood-Stained Stone",
                 "Common stone saturated with sanguine residue.",
                 "Materials", () -> new ItemStack(ItemInit.blood_stained_stone.get()),
                 true, UnlockPredicate.always()));
-
-//        list.add(new MaterialEntry("desiccated_membrane", "Desiccated Membrane",
-//                "Dried organic membrane harvested from blood constructs.",
-//                "Materials", () -> new ItemStack(ItemInit.desiccated_membrane.get()),
-//                true, UnlockPredicate.minDegree(3)));
-//
-//        list.add(new MaterialEntry("molten_scab", "Molten Scab",
-//                "Hardened blood residue with a high heat signature.",
-//                "Materials", () -> new ItemStack(ItemInit.molten_scab.get()),
-//                true, UnlockPredicate.minDegree(3)));
-//
-//        list.add(new MaterialEntry("frozen_clot", "Frozen Clot",
-//                "A coagulated mass of blood locked in a cold stasis.",
-//                "Materials", () -> new ItemStack(ItemInit.frozen_clot.get()),
-//                true, UnlockPredicate.minDegree(3)));
-//
-//        list.add(new MaterialEntry("abyssal_ichor", "Abyssal Ichor",
-//                "Dark ichor drawn from deeper blood constructs. Tenebris-aligned.",
-//                "Materials", () -> new ItemStack(ItemInit.abyssal_ichor.get()),
-//                true, UnlockPredicate.minDegree(5)));
-//
-//        list.add(new MaterialEntry("void_ichor", "Void Ichor",
-//                "Ichor from the periphery of blood space. Reacts violently with light.",
-//                "Materials", () -> new ItemStack(ItemInit.void_ichor.get()),
-//                true, UnlockPredicate.minDegree(6)));
-//
-//        list.add(new MaterialEntry("nerve_bundle", "Nerve Bundle",
-//                "Extracted nerve cluster. Carries residual Ductilis tendency.",
-//                "Materials", () -> new ItemStack(ItemInit.nerve_bundle.get()),
-//                true, UnlockPredicate.minDegree(3)));
 
                                                                                                                                                                                                                                                                                 list.add(new MaterialEntry("fungal_spine", "Fungal Spine",
                 "Hardened spine from a fungal blood creature. Used in crafting.",
@@ -686,16 +651,6 @@ public final class MaterialsData {
                 "An uncarved scar tablet. Base material for all scar inscriptions. Requires Adept rank.",
                 "Scars & Patterns", () -> new ItemStack(ItemInit.scar_blank.get()),
                 true, UnlockPredicate.minDegree(4)));
-
-//        list.add(new MaterialEntry("scar_binder", "Scar Binder",
-//                "Leather-bound case that stores Scar Patterns and carved scars.",
-//                "Scars & Patterns", () -> new ItemStack(ItemInit.scar_binder.get()),
-//                true, UnlockPredicate.minDegree(4)));
-//
-//        list.add(new MaterialEntry("scar_binder_upgraded", "Scar Binder (Upgraded)",
-//                "Expanded scar binder with additional storage capacity.",
-//                "Scars & Patterns", () -> new ItemStack(ItemInit.scar_binder_upgraded.get()),
-//                true, UnlockPredicate.minDegree(5)));
 
                                                                                                                                                                                                                                         list.add(new MaterialEntry("scar_transcendence", "Scar of Transcendence",
                 "Lux-aligned scar (Tier III). The light becomes a weight; stillness becomes its price.",
@@ -1681,11 +1636,6 @@ public final class MaterialsData {
                 "A flask of purified pale humor. Restores purity in small measure, or pours into a pool for item purification.",
                 "Materials", () -> new ItemStack(ItemInit.pale_humor_flask.get()),
                 true, UnlockPredicate.minPurity(15.0f)));
-
-//        list.add(new MaterialEntry("pale_field_ink", "Pale Field Ink",
-//                "Unstained writing ink used for consecrated patterns and records.",
-//                "Materials", () -> new ItemStack(ItemInit.pale_field_ink.get()),
-//                true, UnlockPredicate.minPurity(25f)));
 
                                                                                                                                                                                                                                                                                 list.add(new MaterialEntry("draught_of_still_waters", "Draught of Still Waters",
                 "A sacred draught blessed by Our Lady. Soothes blood corruption.",

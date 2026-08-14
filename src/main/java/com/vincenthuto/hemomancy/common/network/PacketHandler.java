@@ -41,19 +41,15 @@ import net.neoforged.neoforge.network.PacketDistributor;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
 
 // ── NeoForge 1.21 networking API ─────────────────────────────────────────────
-// SimpleChannel / NetworkRegistry / PacketDistributor (old pattern) are REMOVED.
-// Registration now happens via RegisterPayloadHandlersEvent on the mod bus.
-// Sending now uses static PacketDistributor methods.
+// NeoForge 1.21 payload registration replaces the old SimpleChannel pattern.
 
 public class PacketHandler {
 
     // ─────────────────────────────────────────────────────────────────────────
-    //  Channel registrar
-    //  Called from Hemomancy#commonSetup, receives the NeoForge event bus.
     // ─────────────────────────────────────────────────────────────────────────
 
     /**
-     * Register all packet payload types.
+     * Registers all packet payload types.
      *
      * <p>NeoForge 1.21 replaces the old {@code SimpleChannel.registerMessage} pattern with
      * {@link RegisterPayloadHandlersEvent}.  Each packet must implement
@@ -66,10 +62,6 @@ public class PacketHandler {
      *   <li>{@code playBidirectional} – bidirectional</li>
      * </ul>
      *
-     * <p>TODO: Every packet class listed here must be converted to implement
-     * {@code CustomPacketPayload} with a static {@code TYPE} and {@code STREAM_CODEC}.
-     * See {@link BloodVolumeClientPacket} and {@link BloodVolumeServerPacket} for
-     * worked examples.
      */
     public static void registerChannels(IEventBus forgeBus) {
         forgeBus.addListener(PacketHandler::onRegisterPayloads);

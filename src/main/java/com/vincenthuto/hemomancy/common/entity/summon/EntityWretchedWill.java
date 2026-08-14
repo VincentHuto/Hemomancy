@@ -1,7 +1,6 @@
 package com.vincenthuto.hemomancy.common.entity.summon;
 
 import com.vincenthuto.hemomancy.common.init.EntityInit;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
@@ -9,8 +8,6 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 
 public class EntityWretchedWill extends BloodConstructEntity {
-	public float deathTicks = 1;
-
 	public EntityWretchedWill(EntityType<? extends EntityWretchedWill> type, Level worldIn) {
 		super(type, worldIn);
 
@@ -22,53 +19,15 @@ public class EntityWretchedWill extends BloodConstructEntity {
 	}
 
 	@Override
-	public void aiStep() {
-		super.aiStep();
-		// Prevents it from falling
-
-	}
-
-
-	@Override
-	public void onAddedToLevel() {
-		super.onAddedToLevel();
-		if (this.creator != null) {
-			if (creator instanceof Player player) {
-			}
-		}
-	}
-
-	@Override
-	public boolean broadcastToPlayer(ServerPlayer p_19937_) {
-		return super.broadcastToPlayer(p_19937_);
-	}
-
-
-	@Override
-	protected void sendDebugPackets() {
-		super.sendDebugPackets();
-	}
-
-	@Override
 	public void tick() {
 		super.tick();
 
-		if (this.creator != null) {
-			if (creator instanceof Player player) {
-				Vec3 playerPos = player.getEyePosition();
-				this.setPos(playerPos.add(0, 1, 0));
-				this.setYBodyRot(player.yHeadRot);
-				this.setXRot(player.getXRot());
-				/*
-				 * if (!player.level().isClientSide) { ServerPlayer sPlay = (ServerPlayer) player;
-				 * player.addEffect(new MobEffectInstance(MobEffects.INVISIBILITY, 100, 60));
-				 * sPlay.setCamera(this); }
-				 */
-			}
+		if (creator instanceof Player player) {
+			Vec3 playerPos = player.getEyePosition();
+			this.setPos(playerPos.add(0, 1, 0));
+			this.setYBodyRot(player.yHeadRot);
+			this.setXRot(player.getXRot());
 		}
-//		if (tickCount > 100) {
-//			this.remove(RemovalReason.KILLED);
-//		}
 	}
 
 }

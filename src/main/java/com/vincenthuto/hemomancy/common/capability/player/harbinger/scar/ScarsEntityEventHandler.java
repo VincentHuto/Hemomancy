@@ -2,7 +2,6 @@ package com.vincenthuto.hemomancy.common.capability.player.harbinger.scar;
 
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.CirculationIncomeHelper;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.scar.fungal.AfflictionDigestHelper;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.scar.fungal.ConserveStateHelper;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.scar.fungal.RootedStateHelper;
@@ -41,10 +40,6 @@ import java.util.List;
 
 @EventBusSubscriber(modid = Hemomancy.MOD_ID)
 public class ScarsEntityEventHandler {
-
-	@SuppressWarnings("unused")
-	private static final CirculationIncomeHelper.IncomeChannel SCAR_INCOME_CHANNEL =
-			CirculationIncomeHelper.IncomeChannel.SCAR;
 
 	private static final EnumMap<EnumBloodTendency, SynergyBonus> SYNERGY_BONUSES = new EnumMap<>(
 			EnumBloodTendency.class);

@@ -75,7 +75,6 @@ public class HemorrhageManip extends BloodManipulation {
 		world.playSound(null, center, SoundEvents.WITHER_HURT, SoundSource.PLAYERS, 0.7f, 1.6f);
 
 		RandomSource random = world.random;
-		// Dark green blood-drain particles between caster and target
 		for (int i = 0; i < 20; i++) {
 			double t = random.nextDouble();
 			double px = player.getX() + (target.getX() - player.getX()) * t;

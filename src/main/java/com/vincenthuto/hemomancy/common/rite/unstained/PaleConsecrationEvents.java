@@ -52,7 +52,6 @@ public class PaleConsecrationEvents {
 			PaleConsecrationSavedData.get(sLevel).removeExpired(tick);
 		}
 
-		// Apply effects
 		if (tick % EFFECT_INTERVAL != 0) return;
 
 		PaleConsecrationSavedData data = PaleConsecrationSavedData.get(sLevel);
@@ -78,7 +77,6 @@ public class PaleConsecrationEvents {
 						SLOWNESS_DURATION, 0, false, true, true));
 			}
 
-			// Spawn a few particles as visual feedback (server-side particle packet)
 			sLevel.sendParticles(
 					net.minecraft.core.particles.ParticleTypes.END_ROD,
 					center.getX() + 0.5, center.getY() + 1.0, center.getZ() + 0.5,
