@@ -97,10 +97,10 @@ public class BloodMemoryItem extends Item {
 						"Memory learned. Use a Mnemonic Reliquary to change equipped memories.")
 				.withStyle(ChatFormatting.DARK_RED), true);
 		case MemoryGrantStatus.ALREADY_KNOWN -> player.displayClientMessage(Component.literal(
-						"Player Already Knowns This Manipulation!")
+						"You already know this manipulation.")
 				.withStyle(ChatFormatting.DARK_RED), true);
 		case MemoryGrantStatus.NO_ACTIVE_BLOOD -> player.displayClientMessage(
-				Component.literal("You lack understanding of what your even holding...")
+				Component.literal("You don't understand what you're holding yet.")
 						.withStyle(ChatFormatting.DARK_RED),
 				true);
 		case MemoryGrantStatus.RANK_TOO_LOW -> player.displayClientMessage(Component.literal("This memory requires Degree "

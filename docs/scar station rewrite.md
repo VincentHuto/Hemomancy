@@ -2,7 +2,7 @@
 
 ## 1. High-Level Design Goal
 
-Overhaul the current Cerebral Scarring / Scar Binder system so scars feel like **sympathetic vascular magic**, not physical brain surgery or simple equipment.
+Overhaul the current Cerebral Scarring / Scar Binder system so scars feel like **sympathetic vascular magic**, not physical brain surgery or ordinary equipment.
 
 The new fiction:
 
@@ -73,7 +73,7 @@ Use **Mason’s Effigy** for player-facing name.
 
 ### Function
 
-The Mason’s Effigy is a placeable block that allows the player to create Scar Pattern items by placing paper/parchment over it and applying blood/tendency materials.
+The Mason’s Effigy is a placeable block where the player creates Scar Pattern items by placing paper or parchment on it and applying blood/tendency materials.
 
 The action is meant to feel like making a carbon copy, rubbing, or ritual tracing from an engraved anatomical icon.
 
@@ -105,9 +105,7 @@ If full visual state implementation is too much initially, start with one block 
 
 ## 4. Scar Pattern Items
 
-Existing Scar Pattern name remains but needs to be made into a single DYNAMIC item that can store 
-knowledge of between 1-4 known scars for the below process, the rendering should change so that
-instead of flashing a smaller version of a SINGLE scar it should be between 1 and 4 in a 2 x2 grid
+Keep the existing Scar Pattern name, but make it one **dynamic** item that stores 1–4 known scars for this process. Change the rendering so it shows 1–4 scars in a 2×2 grid instead of flashing a smaller version of one scar.
 
 They are no longer “the scar itself.”
 
@@ -151,12 +149,12 @@ Player interacts with the Mason’s Effigy using motif paper.
 
 Suggested flow:
 
-1. Player right-clicks Mason’s Effigy with valid motif paper item.
-2. Paper appears visually placed/draped on the effigy if block entity rendering supports it.
-3. Player adds required catalyst/material (Parchment placed on block, right click with befouling paste).
-4. After a short process/channel of blood projection onto the block using our existing bloodprojection on block properties, output becomes a Scar Pattern item.
+1. The player right-clicks the Mason’s Effigy with valid motif paper.
+2. The paper appears on the effigy if block-entity rendering supports the effect.
+3. The player adds the required catalyst/material, such as parchment on the block followed by a right-click with Befouling Paste.
+4. After a short channel using the existing blood-projection-on-block behavior, the output becomes a Scar Pattern item.
 5. The paper is consumed.
-6. Scar Pattern output changes texture and pops off the block onto the ground to be used later.
+6. The Scar Pattern changes texture and pops off the block onto the ground for later use.
 
 ### Required Data
 
@@ -164,10 +162,10 @@ The Mason’s Effigy needs to know which scars the player has already learned.
 
 Possible implementation:
 
-* On interaction, open GUI similar to bloodbornes rune/covnent selection gui.
-* GUI lists known scars from player scar capability.
-* Player selects 1 to 4 known scars DEPENDING ON HOW MANY ARE UNLOCKED AT THE TIME.
-* Effigy creates a Scar Pattern for those scars if requirements are met, by above process.
+* On interaction, open a GUI similar to Bloodborne’s rune/covenant selection screen.
+* The GUI lists the scars stored in the player’s scar capability.
+* The player selects 1–4 known scars, limited by the number unlocked at that point.
+* The Effigy creates a Scar Pattern for the selected scars when the requirements are met.
 
 Preferred implementation:
 
@@ -190,7 +188,7 @@ It handles two major ritual types:
 1. Learning a new scar.
 2. Reattuning active scars.
 
-this block does not already exist, implement it as a new ritual block,using the iron brazier block as a starting point.
+If this block does not already exist, implement it as a new ritual block using the Iron Brazier block as the starting point.
 
 Recommended registry name:
 
@@ -229,6 +227,7 @@ Player must meet degree requirement
 Scar added to known scars capability
 Scar Item consumed
 Short post-rite effect applied(Same as the shift right click on a sanguine omen block/eye bloodshot effect the vicar causes)
+```
 
 ### Important Rule
 Learning a scar should consume the Scar Pattern.
@@ -247,7 +246,7 @@ Rite of Repathing
 
 ### Purpose
 
-Allows the player to change which known scars are currently active.
+Lets the player change which known scars are currently active.
 
 ### Important Design Constraint
 
@@ -266,9 +265,9 @@ Instead:
 1. Player opens Mason’s Effigy.
 2. Player selects desired active scars.
 3. UI marks selection as “Prepared Repathing.”
-4.Player performs the steps outlined in the above (Creating Scar Patterns From the Mason’s Effigy) to create a pattern item
-4. Player performs Rite of Reinscription at an empty, lit Iron Brazier.
-5. Active scars are updated.
+4. The player follows the Mason’s Effigy flow above to create a pattern item.
+5. The player performs the Rite of Reinscription at an empty, lit Iron Brazier.
+6. Active scars are updated.
 
 This is mechanically clean.
 
@@ -301,14 +300,13 @@ The player needs persistent scar data.
 
 Suggested capability/data structure:
 
-CerebralScar(name, tier, effects etc etc based on the existing scar item fields)
-LOOK INTO HOW KNOWNMAIPULATIONS ARE STORED AS A CAPABILITY TO REFACTOR THIS
+CerebralScar(name, tier, effects, and the other fields already present on the scar item)
+Review how known manipulations are stored as a capability before refactoring this data.
 
-The existing ScarType Capability needs to be refacorted into a 'HarbingerEquipment' capability
-since it no longer handles any scar functionality/storage
+Refactor the existing ScarType capability into a `HarbingerEquipment` capability because it no longer handles scar functionality or storage.
 
 
-A NEW SCAR CAPABILITY NEEDS TO BE MADE WITH ATLEAST
+Create a new scar capability with at least:
 ```java
 Set<CerebralScar> knownScars;
 List<CerebralScar> activeScars;
@@ -338,8 +336,7 @@ These are changed through the Rite of Reinscription.
 
 ### Max Active Scars
 
-This system should unlock at Degree 4 and new slots should .
-Should be progression-gated.
+This system should unlock at Degree 4, with new slots gated by progression.
 
 Example:
 
@@ -360,7 +357,7 @@ The Cerebral Scarring Station should no longer feel like direct mental surgery.
 
 Possible handling:
 
-The Cerebral Scarring Station becomes the crafting block used to the INITIAL scar items we already have for the player to unlock them at the brazier, they are then stored permanantly and can be selected at the Mason’s Effigy .
+The Cerebral Scarring Station remains the crafting block for the initial scar items. The player unlocks those scars at the brazier, stores them permanently as known scars, and selects them later at the Mason’s Effigy.
 
 ---
 

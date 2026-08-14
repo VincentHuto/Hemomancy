@@ -24,7 +24,7 @@
 						"color": "black"
 					},
 					{
-						"text": "is a blood magic mod based around the quality of blood manipulation vs just a large quantity of blood, it covers topics of gore, magic, pretty exaggerated biology and much much more.\n\nWhen combined with ",
+						"text": "is a blood magic mod about controlling blood precisely, not just storing more of it. It deals with gore, magic, and deliberately exaggerated biology.\n\nWhen combined with ",
 						"italic": true,
 						"color": "black"
 					},
@@ -63,7 +63,7 @@
 						"color": "dark_red"
 					},
 					{
-						"text": " is a spell component that applies the Sanguine Fertility effect to target entities. Animals under its influence will breed and grow at an accelerated rate, enveloped in green and red glow particles as the blood magic infuses their vitality.\n\n"
+						"text": " is a spell component that applies the Sanguine Fertility effect to target entities. Animals under its influence breed and grow faster. Green and red particles surround them while the blood magic feeds their vitality.\n\n"
 					},
 					{
 						"text": "Attributes:\n",
@@ -117,7 +117,7 @@
 						"color": "dark_red"
 					},
 					{
-						"text": ". The magnitude attribute controls how much mana is consumed per cast, and the blood received is scaled by a conversion ratio of 5 blood per 1 mana spent.\n\nThe spell will fail if the caster lacks sufficient mana or if their blood is already full.\n\n"
+						"text": ". The magnitude attribute controls how much mana each cast consumes. The conversion rate is 5 blood per 1 mana spent.\n\nThe spell fails if the caster lacks enough mana or if their blood is already full.\n\n"
 					},
 					{
 						"text": "Attributes:\n",
@@ -217,7 +217,7 @@
 						"color": "blue"
 					},
 					{
-						"text": ". When activated, 200 blood is consumed and converted at a ratio of 0.2 mana per blood, yielding 40 mana. Blue and purple glow particles rise from the caster as the transfusion completes.\n\nThis manipulation is the inverse of "
+						"text": ". When activated, it consumes 200 blood and converts it at a rate of 0.2 mana per blood, yielding 40 mana. Blue and purple particles rise from the caster as the transfusion completes.\n\nThis manipulation is the inverse of "
 					},
 					{
 						"text": "Sanguine Transmutation",
@@ -262,7 +262,7 @@
 						"color": "dark_purple"
 					},
 					{
-						"text": " is a Hemomantic rite designed to compress raw, carnal energy—pain, suffering, and vitality—into a concentrated "
+						"text": " compresses raw carnal energy—pain, suffering, and vitality—into a concentrated "
 					},
 					{
 						"text": "Mote of Blood",
@@ -270,7 +270,7 @@
 						"color": "dark_red"
 					},
 					{
-						"text": ", a crystalline essence of life force that can be used for powerful Hemomantic spells and enchantments. This ritual is not for the faint-hearted, as it requires the Hemomancer to channel and contain immense suffering within a single, tangible core."
+						"text": ", a crystalline store of life force used for Hemomantic spells and enchantments. The Hemomancer must channel and contain that suffering inside one tangible core."
 					}
 				]
 			}
@@ -304,7 +304,7 @@
 						"color": "dark_red"
 					},
 					{
-						"text": "is a rare, Hemomantic construct—an organic filament woven from the very essence of blood and life force. It is neither fully alive nor entirely inanimate, existing in a state of perpetual vitality, pulsating faintly with the rhythmic thrum of a heartbeat. Created through forbidden Hemomantic practices, these threads are prized for their ability to bind, mend, and control life itself.\n\nA staple among master Hemomancers, "
+						"text": "is a rare Hemomantic construct—an organic filament woven from blood and life force. It is neither fully alive nor entirely inert, and it pulses faintly like a heartbeat. Created through forbidden Hemomantic practices, the thread can bind, mend, and control living tissue.\n\nA staple among master Hemomancers, "
 					},
 					{
 						"text": "Living Infused Thread",
@@ -353,7 +353,7 @@
 						"color": "dark_red"
 					},
 					{
-						"text": ", a Hemomantic material that pulses with faint vitality. The set consists of a Hood, Robes, Leggings, and Boots. Each piece is dyeable, allowing Hemomancers to customize their appearance.\n\n"
+						"text": ", a Hemomantic material that pulses with faint vitality. The set consists of a Hood, Robes, Leggings, and Boots. Each piece can be dyed.\n\n"
 					},
 					{
 						"text": "Set Bonus (3 pieces):\n",
@@ -394,7 +394,7 @@
 						"color": "dark_red"
 					},
 					{
-						"text": "is a rare and immensely powerful Hemomantic artifact—a dense, pulsating sphere of crystallized carnal energy that serves as a near-limitless reservoir of blood magic. Unlike a standard "
+						"text": "is a dense sphere of crystallized carnal energy that stores far more blood magic than a standard "
 					},
 					{
 						"text": "Mote of Blood",
@@ -414,7 +414,7 @@
 						"color": "dark_red"
 					},
 					{
-						"text": " is an apex-tier manifestation of suffering, vitality, and raw Hemocraft, capable of fueling advanced rituals, forging legendary artifacts, and even sustaining a Hemomancer's existence beyond normal mortality."
+						"text": " is a concentrated mass of suffering, vitality, and raw Hemocraft. It can fuel advanced rituals, forge powerful artifacts, and sustain a Hemomancer beyond normal limits."
 					}
 				]
 			},
@@ -536,7 +536,7 @@
 						"color": "dark_red"
 					},
 					{
-						"text": " are corrupted forms of the arcane material Vinteum, tainted by prolonged exposure to Hemomantic energy. While standard Vinteum serves as the backbone of Mana and Artifice's crafting, its befouled counterpart channels blood-infused mana—making it essential for crafting Hemomantic artifacts that require both arcane and carnal components.\n\nThe "
+						"text": " are corrupted forms of Vinteum, tainted by prolonged exposure to Hemomantic energy. Standard Vinteum is a core Mana and Artifice crafting material; these versions channel blood-infused mana for Hemomantic artifacts that need both arcane and carnal components.\n\nThe "
 					},
 					{
 						"text": "Mana Infused Memory Blank",
@@ -544,7 +544,7 @@
 						"color": "dark_red"
 					},
 					{
-						"text": " is crafted from these materials and serves as the vessel for encoding MnA-dependent blood manipulations such as "
+						"text": " is crafted from these materials and holds MnA-dependent blood manipulations such as "
 					},
 					{
 						"text": "Sanguine Transfusion",
@@ -694,7 +694,7 @@
 						"color": "dark_red"
 					},
 					{
-						"text": " is a devastating harmful spell component that applies the "
+						"text": " is a harmful spell component that applies the "
 					},
 					{
 						"text": "Hemolysis",
@@ -702,7 +702,7 @@
 						"color": "dark_purple"
 					},
 					{
-						"text": " effect to the target—a Hemomantic curse that ruptures blood cells from within, dealing sustained damage over time. Chaotic, sharp particles erupt from victims as their very blood destroys itself.\n\nWhen combined with MnA's spell modifier system, the damage-over-time can be extended and amplified far beyond what Hemomancy's potion system allows. Pair with AoE or zone shapes for devastating area denial.\n\n"
+						"text": " effect to the target—a Hemomantic curse that ruptures blood cells from within and deals damage over time. Sharp particles burst from the target as its blood destroys itself.\n\nMnA spell modifiers can extend and amplify the damage beyond what Hemomancy's potion system allows. Pair it with an AoE or zone shape to control an area.\n\n"
 					},
 					{
 						"text": "Attributes:\n",
@@ -810,7 +810,7 @@
 						"color": "dark_purple"
 					},
 					{
-						"text": "—a monstrous entity of coagulated blood and Hemomantic malice—at the target location. The Sanguilith fights alongside its summoner, slashing at nearby enemies with brutal, visceral strikes.\n\nThis component integrates fully with MnA's summon ecosystem. Players can customize it with spell modifiers to extend its duration or increase its power. Higher magnitude levels grant the Sanguilith bonus health, making it a formidable combatant.\n\n"
+						"text": "—an entity of coagulated blood and Hemomantic malice—at the target location. The Sanguilith fights beside its summoner and attacks nearby enemies.\n\nIt works with MnA's summon system. Spell modifiers can extend its duration or increase its power, and higher magnitude levels give it bonus health.\n\n"
 					},
 					{
 						"text": "Requires: ",
@@ -925,7 +925,7 @@
 						"color": "blue"
 					},
 					{
-						"text": "Granted after using a Hemomancy manipulation. While active, the mana cost of your next MnA spell is reduced. The effect is consumed upon casting a spell.\n\nMastering this rhythm—spell, manipulation, spell, manipulation—allows a skilled Hemomancer to drastically reduce the resource cost of both systems, creating a devastating cycle of blood and sorcery."
+						"text": "Granted after using a Hemomancy manipulation. While active, the mana cost of your next MnA spell is reduced. The effect is consumed when you cast that spell.\n\nThe intended loop is simple: cast a spell, use a manipulation, cast another spell, then use another manipulation. Each effect reduces the cost of the next action."
 					}
 				]
 			}
@@ -954,7 +954,7 @@
 						"color": "dark_red"
 					},
 					{
-						"text": " is a portable Hemomantic instrument—a bloodstained lens that allows a mage to quickly view their "
+						"text": " is a portable Hemomantic instrument—a bloodstained lens that lets a mage open their "
 					},
 					{
 						"text": "Occulus",
@@ -962,7 +962,7 @@
 						"color": "blue"
 					},
 					{
-						"text": " interface without needing to seek out a stationary one. Simply right-click with the item in hand to open the Occulus screen, provided you have already unlocked your magical potential.\n\nAn invaluable tool for any Hemomancer on the move, it frees practitioners from being tethered to a fixed location when managing their arcane progression."
+						"text": " interface without finding a stationary one. Right-click with the item in hand to open the Occulus screen after you unlock your magical potential.\n\nIt lets a Hemomancer manage arcane progression without returning to a fixed Occulus."
 					}
 				]
 			}

@@ -1,6 +1,6 @@
 # Getting Started with Hemomancy
 
-This guide will walk you through your first steps into the world of blood magic and fungal horror.
+Install the required mods, find a Blood Temple, and use the Mortal Display to decide whether you are entering Hemomancy's progression.
 
 ---
 
@@ -22,7 +22,7 @@ This guide will walk you through your first steps into the world of blood magic 
 4. Launch Minecraft with the NeoForge profile
 
 ### Optional Mods
-- **Just Enough Items (JEI)** - Adds recipe viewing for custom crafting stations and is the recommended alpha companion mod
+- **Just Enough Items (JEI)**: Adds recipe viewing for custom crafting stations. It is the recommended alpha companion mod.
 - **Mana and Artifice** - Dormant on the NeoForge 1.21.1 branch; integration design/source is preserved but not active
 - **Curios API** - Dormant on the NeoForge 1.21.1 branch; Charm of Vascularium behavior currently uses Hemomancy's own equipment surfaces instead of a Curios slot
 
@@ -33,21 +33,19 @@ See **[[Public Alpha Readiness]]** for the current alpha status and known limita
 ## Your First Steps
 
 ### The Choice
-When you first enter a world with Hemomancy installed, nothing will happen automatically. **The mod is completely opt-in.** You must make a conscious choice to engage with its systems.
+Installing Hemomancy does not start the progression. **The mod is completely opt-in.** You have to choose to engage with its systems.
 
-The world contains fungal biomes, structures, and items, but Harbinger initiation
-begins only when you knowingly swear an oath to a **Harbinger Hermit** in a Blood
-Temple.
+The world still contains fungal biomes, structures, and items. Harbinger initiation begins only after you knowingly swear an oath to a **Harbinger Hermit** in a Blood Temple.
 
 ### Finding a Blood Temple
 Each Blood Temple contains a Mortal Display, a prepared initiation floor, and one
 Hermit bound to that exact temple. The Display cannot be claimed while its Hermit
 still withholds permission. Older Displays elsewhere do not begin this progression:
-- **Harbinger Outposts** — Small structures in the overworld with blood-stained banners
-- **Mausoleums** — Underground crypts containing Harbinger artifacts
+- **Harbinger Outposts**: Small structures in the overworld with blood-stained banners
+- **Mausoleums**: Underground crypts containing Harbinger artifacts
 - Can also be crafted (recipe available via JEI)
 
-The Mortal Display appears as an ornate pedestal with a crimson aura.
+The Mortal Display is an ornate pedestal with a crimson aura.
 
 ### The Moment of Choice
 Speak with the Hermit and follow the dialogue until you deliberately accept the
@@ -76,7 +74,7 @@ The Conduit's Rites tab explains how later ceremonies add each mechanic.
 ## Understanding Blood Basics
 
 ### Blood Volume
-Blood is your magical resource. Most adult humans contain about **5000 mL** of blood, and you'll start with 1000 mL after activating.
+Blood is the resource used by Hemomancy. Most adult humans contain about **5000 mL** of blood, and activation starts you at 1000 mL.
 
 - **Regeneration:** Blood slowly regenerates over time
 - **Cost:** Each manipulation costs blood to use
@@ -84,7 +82,7 @@ Blood is your magical resource. Most adult humans contain about **5000 mL** of b
 - **Monitoring:** Use the HUD display or Field Notes to check your current blood level
 
 ### Blood Tendency
-As you use blood magic, your blood develops **qualities** or **tendencies**. These are not moral alignments — they are physical properties of your blood.
+As you use blood magic, your blood develops **qualities** or **tendencies**. These are not moral alignments: they are physical properties of your blood.
 
 The eight tendencies are:
 - **Animus** (Life/Vitality)
@@ -96,10 +94,10 @@ The eight tendencies are:
 - **Ferric** (Magnetic/Ferrous)
 - **Tenebris** (Shadow/Darkness)
 
-Your tendency alignment affects which manipulations are available and how powerful they are.
+Your tendency alignment controls which manipulations are available and how effective they are.
 
 ### Blood Manipulations
-Manipulations are active or passive abilities powered by blood. They range from simple healing touches to devastating projectile attacks.
+Manipulations are active or passive abilities powered by blood. A manipulation can be a healing touch, a projectile, or something that stays active and drains blood.
 
 **Key Concepts:**
 - **Rank:** Manipulations have ranks (Humilis → Mediocritas → Summa → Perfectus)
@@ -129,7 +127,7 @@ If you wish to walk the path of the Hematic Order:
 - Powerful offensive and utility manipulations
 - Can create morphlings; Drudges are reserved as post-alpha WIP
 - Access to puppeteering and blood constructs
-- Rich progression system with clear milestones
+- Progression is split into clear milestones
 
 **Cons:**
 - Shunned by common folk
@@ -137,7 +135,7 @@ If you wish to walk the path of the Hematic Order:
 - Whispers and strange visions
 - The truth behind the Order is... unsettling
 
-See: **[[Harbinger Path]]** for full details
+Read **[[Harbinger Path]]** for the full progression
 
 ### The Unstained Path
 **Theme:** Purify yourself of blood corruption
@@ -163,12 +161,12 @@ If you view blood magic as infection to be cleansed:
 - Late stages hint at autoimmune consequences
 - Physically changed (glassy-eyed appearance)
 
-See: **[[Unstained Path]]** for full details
+Read **[[Unstained Path]]** for the full progression
 
 ### Can You Change Paths?
-**No.** The paths are mutually exclusive by design. Starting the Unstained purification process will zero out any Harbinger progress, and completing a degree rite will zero out Unstained progress.
+**No.** This is a one-way choice by design. Starting Unstained purification zeros out Harbinger progress, and completing a degree rite zeros out Unstained progress.
 
-Choose carefully. This is not a system you can min-max by switching back and forth.
+Choose before you spend heavily on a path. Switching back and forth is not a supported way to min-max progression.
 
 ---
 
@@ -182,13 +180,13 @@ Choose carefully. This is not a system you can min-max by switching back and for
 - Shows blood volume, tendency, known manipulations, and more
 
 **Vials and Containers**
-- **Blood Vial** — Stores 250 mL of your blood for later use
-- **Vial Rack** — Wall-mounted storage for vials
-- **Hemoclysm** — Portable blood container (holds 1000 mL)
+- **Blood Vial**: Stores 250 mL of your blood for later use
+- **Vial Rack**: Wall-mounted storage for vials
+- **Hemoclysm**: Portable blood container (holds 1000 mL)
 
 **Basic Tools**
-- **Sanguine Chisel** — Used at the Chisel Station to craft scars
-- **Visceral Recaller** — Stores your respawn point in blood
+- **Sanguine Chisel**: Used at the Chisel Station to craft scars
+- **Visceral Recaller**: Stores your respawn point in blood
 
 ### For Harbingers
 
@@ -230,13 +228,13 @@ Choose carefully. This is not a system you can min-max by switching back and for
 ### Biomes to Find
 
 **Overworld Biomes:**
-- **Sporecrown Thicket** — Dense fungal forest with towering mushroom caps
-- **Hyphal Spires** — Tall fungal pillars reaching skyward
-- **Drifting Mycelium** — Ethereal floating islands of mycelium
+- **Sporecrown Thicket**: Dense fungal forest with towering mushroom caps
+- **Hyphal Spires**: Tall fungal pillars reaching skyward
+- **Drifting Mycelium**: Ethereal floating islands of mycelium
 
 **Nether Biomes:**
-- **Fungal Gardens** — Crimson gardens with blood-red fungi
-- **Fungal Isles** — Floating islands of alien vegetation
+- **Fungal Gardens**: Crimson gardens with blood-red fungi
+- **Fungal Isles**: Floating islands of alien vegetation
 
 ### Structures to Explore
 
@@ -278,24 +276,24 @@ Choose carefully. This is not a system you can min-max by switching back and for
 
 ### HUD Elements
 When blood volume is active, you'll see:
-- **Blood Volume Bar** — Current blood amount (configurable position)
-- **Active Manipulation Indicator** — Shows currently selected manipulation
-- **Cooldown Timers** — Visual feedback for manipulation cooldowns
+- **Blood Volume Bar**: Current blood amount (configurable position)
+- **Active Manipulation Indicator**: Shows currently selected manipulation
+- **Cooldown Timers**: Visual feedback for manipulation cooldowns
 
 ### Keybinds (Default)
-- **`B`** — Open Field Notes journal
-- **`V`** — Manipulation selection wheel (hold and move mouse)
-- **`R`** — Use selected manipulation (configurable)
-- **`Left Mouse`** — Quick-cast manipulation (if applicable)
+- **`B`**: Open Field Notes journal
+- **`V`**: Manipulation selection wheel (hold and move mouse)
+- **`R`**: Use selected manipulation (configurable)
+- **`Left Mouse`**: Quick-cast manipulation (if applicable)
 
 Check Options > Controls > Hemomancy for full keybind list.
 
 ### Field Notes Interface
 Your in-game journal with tabs for:
-- **Blood Status** — Current volume, tendency, alignment levels
-- **Manipulations** — Known abilities and their details
-- **Progression** — Degree/purity status, next steps
-- **Discoveries** — Lore entries, item codex, creatures
+- **Blood Status**: Current volume, tendency, alignment levels
+- **Manipulations**: Known abilities and their details
+- **Progression**: Degree/purity status, next steps
+- **Discoveries**: Lore entries, item codex, creatures
 
 ### Alpha Guidebook Note
 The HutosLib JSON book data for the Liber Sanguinum and Liber Immaculatus is present, and Field Notes/Liber knowledge is wired into player state. The Harbinger-side Java progression renderer is still partially wired, so alpha testers should treat guidebook access as a smoke-test priority and report any missing pages, dead tabs, or unclear first steps.
@@ -304,25 +302,25 @@ The HutosLib JSON book data for the Liber Sanguinum and Liber Immaculatus is pre
 
 ## Tips for New Players
 
-1. **Read the Lore** — The mod's story is rich and rewards attention. Item descriptions and journal entries provide context.
+1. **Read the Lore**: Item descriptions and journal entries explain the setting and progression.
 
-2. **Choose Your Path Early** — You can explore both paths in the Field Notes, but commit to one before investing resources.
+2. **Choose Your Path Early**: You can explore both paths in the Field Notes, but commit to one before investing resources.
 
-3. **Blood Management** — Don't drain yourself completely. Always keep a reserve for emergencies.
+3. **Blood Management**: Don't drain yourself completely. Always keep a reserve for emergencies.
 
-4. **Tendency Matters** — Focus on 2-3 tendencies initially. Spreading too thin makes you weaker.
+4. **Tendency Matters**: Focus on 2-3 tendencies initially. Spreading too thin makes you weaker.
 
-5. **Explore Thoroughly** — Fungal biomes contain unique resources you can't get elsewhere.
+5. **Explore Thoroughly**: Fungal biomes contain unique resources you can't get elsewhere.
 
-6. **NPCs Have Stories** — Harbinger Outpost NPCs can be recruited and have unique dialogue. Use items on them to learn more.
+6. **NPCs Have Stories**: Harbinger Outpost NPCs can be recruited and have unique dialogue. Use items on them to learn more.
 
-7. **Death Has Consequences** — Depending on config, death may reset blood volume or progression. Plan accordingly.
+7. **Death Has Consequences**: Depending on config, death may reset blood volume or progression. Plan accordingly.
 
-8. **Rituals Are Serious** — Degree advancement and purification rituals consume resources. Make sure you're ready before starting.
+8. **Prepare for Rituals**: Degree advancement and purification rituals consume resources. Gather what you need before starting.
 
-9. **Moral Ambiguity** — Neither path is "good" or "evil." Choose based on playstyle and philosophy, not morality.
+9. **Moral Ambiguity**: Neither path is "good" or "evil." Choose based on playstyle and philosophy, not morality.
 
-10. **It's Opt-In** — You can play Minecraft normally and ignore blood magic entirely if you wish. The choice is always yours.
+10. **It's Opt-In**: You can play normally without entering blood-magic progression.
 
 ---
 
@@ -353,13 +351,13 @@ The HutosLib JSON book data for the Liber Sanguinum and Liber Immaculatus is pre
 
 ## Next Steps
 
-Ready to commit to a path?
+Choose a path or read more about the underlying systems:
 
-- **[[Harbinger Path]]** — Learn about degrees, rituals, and blood manipulation mastery
-- **[[Unstained Path]]** — Understand purification, clarity, and guardian powers
-- **[[Blood Systems]]** — Deep dive into manipulations, tendencies, and mechanics
-- **[[World Content]]** — Explore biomes, structures, and creatures
-- **[[Lore and Story]]** — Understand the deeper narrative
+- **[[Harbinger Path]]**: Learn about degrees, rituals, and blood manipulation mastery
+- **[[Unstained Path]]**: Understand purification, clarity, and guardian powers
+- **[[Blood Systems]]**: Manipulations, tendencies, and blood mechanics
+- **[[World Content]]**: Explore biomes, structures, and creatures
+- **[[Lore and Story]]**: Read the setting and story
 
 ---
 

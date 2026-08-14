@@ -55,20 +55,20 @@ public class BloodGourdItem extends Item implements IHarbingerEquipment, HemoCli
 		HemoCapabilityAccess.getBloodVolume(stack).ifPresent(bloodVolume -> {
 			CompoundTag data = getCustomData(stack);
 			tooltip.add(Component.literal(tier.getRoleName()).withStyle(ChatFormatting.DARK_RED));
-			tooltip.add(Component.literal("Capacity: " + tier.getMaxVolume() + " ml")
+			tooltip.add(Component.literal("Capacity: " + tier.getMaxVolume() + " mL")
 					.withStyle(ChatFormatting.GOLD));
-			tooltip.add(Component.literal("Flow Rate: " + tier.getTransferRate() + " ml/tick")
+			tooltip.add(Component.literal("Flow rate: " + tier.getTransferRate() + " mL/tick")
 					.withStyle(ChatFormatting.RED));
 			tooltip.add(Component.literal("Kill Siphon: " + Math.round(tier.getKillSiphonMultiplier() * 100) + "%")
 					.withStyle(ChatFormatting.RED));
 			if (tier.getPassiveGenerationRate() > 0) {
-				tooltip.add(Component.literal("Marrow Growth: " + tier.getPassiveGenerationRate() + " ml/tick")
+				tooltip.add(Component.literal("Marrow growth: " + tier.getPassiveGenerationRate() + " mL/tick")
 						.withStyle(ChatFormatting.DARK_RED));
 			}
 			tooltip.add(Component.literal("Proper vessel: no Blood Drunkenness")
 					.withStyle(ChatFormatting.GRAY));
 			if (!data.isEmpty()) {
-				tooltip.add(Component.literal("Blood Volume: " + formatBloodAmount(bloodVolume.getBloodVolume()) + " ml")
+				tooltip.add(Component.literal("Blood volume: " + formatBloodAmount(bloodVolume.getBloodVolume()) + " mL")
 						.withStyle(ChatFormatting.RED));
 				if (data.getBoolean(TAG_STATE)) {
 					tooltip.add(Component.literal("State: Open").withStyle(ChatFormatting.RED));

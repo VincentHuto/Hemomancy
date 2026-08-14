@@ -23,7 +23,7 @@ public class BloodShotOcculusItem extends Item {
 
     @Override
     public void appendHoverText(ItemStack stack, Level worldIn, List<Component> tooltip, TooltipFlag flagIn) {
-        tooltip.add(Component.literal("Used to Quickly View Your Occulus"));
+        tooltip.add(Component.literal("Used to quickly view your Occulus."));
     }
 
     @Override

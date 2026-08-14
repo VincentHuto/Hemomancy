@@ -32,7 +32,7 @@ public class DrudgeElectrodeItem extends Item {
 
 	@Override
 	public void appendHoverText(ItemStack stack, Item.TooltipContext context, List<Component> tooltip, TooltipFlag flagIn) {
-		tooltip.add(Component.literal("Used to give and reflect commands to drudges"));
+		tooltip.add(Component.literal("Used to issue and reflect commands to Drudges."));
 		if (stack.has(DataComponents.CUSTOM_DATA)) {
 			if (stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag().getBoolean(TAG_MODE)) {
 				tooltip.add(Component.literal("State: On").withStyle(ChatFormatting.RED));

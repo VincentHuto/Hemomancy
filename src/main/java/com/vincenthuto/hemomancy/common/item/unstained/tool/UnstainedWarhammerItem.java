@@ -52,7 +52,7 @@ public class UnstainedWarhammerItem extends DiggerItem implements HemoClientItem
 				.withStyle(ChatFormatting.WHITE));
 		tooltip.add(Component.literal("Heavy impact: knocks enemies back, scaling with purity.")
 				.withStyle(ChatFormatting.WHITE));
-		tooltip.add(Component.literal("White Humor coated: applies Hemolysis on hit.")
+		tooltip.add(Component.literal("When coated with White Humor: applies Hemolysis on hit.")
 				.withStyle(ChatFormatting.AQUA));
 	}
 

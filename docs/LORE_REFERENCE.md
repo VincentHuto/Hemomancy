@@ -194,7 +194,7 @@ This is a deeply personal, singular act. Each Blood Temple in the world belongs 
 
 The Hematic Order does not view blood magic as dark, evil, or taboo. To them, it is a **sacred essence that is a part of life itself** — a gift their blood carries, passed down and refined through the centuries. They believe it would be sacrilegious and wasteful not to use and share it.
 
-They do not worship a blood god. There is no deity at the center of the Order's faith. Blood is simply seen as the most profound material in existence — the carrier of life, of memory, of identity. To master it is to master the most fundamental truth of being alive.
+They do not worship a blood god. There is no deity at the center of the Order's faith. Blood is simply seen as the most fundamental material in existence — the carrier of life, memory, and identity. To master it is to master the most basic truth of being alive.
 
 **They are not evil.** They are shunned, taboo, misunderstood — the way anything unfamiliar and vaguely body-horror-adjacent tends to be. There have been incidents: a Harbinger losing control in a fight, blood magic being used in anger or defense, accidents from latent powers awakening under stress. These incidents create fear. The Order lives with that reputation.
 
@@ -279,7 +279,7 @@ Each degree carries a **lore theme** — the historical/metaphysical institution
 #### ILLUMINATUS 5 — *of the Crimson Lodge*
 **Lore:** The Crimson Lodge documented the link between hemomancy and the mycelial network — and kept that knowledge secret, insisting it must be "arrived at independently." Becoming Illuminatus means the Lodge judges the player ready to receive what they recorded. The Vicar reveals it: *"The blood you command… it was not always blood."* Most Harbingers never reach this degree. Fungal Whispers become clearer intrusions.
 
-**Gameplay:** Three major unlocks. (1) **Morphling Incubator** — biological/fungal crafting for organism-derived items. (2) **Blood Structure Grand tier** — the Blood Conduit pipeline network becomes a mandatory crafting input for the most complex structural patterns; sustained flow within range is required, not just a single key strike. (3) **Sanguine Quintessence & Founding Fane** — the Illuminatus rite is the degree-advancement rite into the Crimson Lodge, while the separate **Founding Fane ritual** is the true consecration rite. Sanguine Quintessence serves as the founding medium seated in the Cardinal Focus; the rite establishes a bloodline-owned **Flexible Envelope** shaped by its Consecrated Bloodwell heart and connected Hematic Stakes. The Sanguine Monolith becomes accessible (Degree 5+ gated).
+**Gameplay:** Three major unlocks. (1) **Morphling Incubator** — biological/fungal crafting for organism-derived items. (2) **Blood Structure Grand tier** — the Blood Conduit pipeline network becomes a mandatory crafting input for the most complex structural patterns; sustained flow within range is required, not just a single key strike. (3) **Sanguine Quintessence & Founding Fane** — the Illuminatus rite is the degree-advancement rite into the Crimson Lodge, while the separate **Founding Fane ritual** is the true consecration rite. Sanguine Quintessence is the founding medium seated in the Cardinal Focus; the rite establishes a bloodline-owned **Flexible Envelope** shaped by its Consecrated Bloodwell heart and connected Hematic Stakes. The Sanguine Monolith becomes accessible (Degree 5+ gated).
 
 #### SANCTIFIED 6 — *of the Bloodline Covenant*
 **Lore:** The Sanctified do not belong to the Order — they *are* the Order. The Vicar delivers the degree's doctrine: *"The blood becomes indistinguishable from the blood of the world."* The Bloodline Covenant is revealed — a ritual compact between Harbingers that merges blood pools and capabilities. Fungal Whispers grow direct and revelatory: *"The first Archons did not discover hemomancy. They were infected by it."* Erythromycelium is named as the original organism.
@@ -503,7 +503,7 @@ She is associated with:
 Wherever Our Lady once walked, **Lethean Poppies** bloom. These pale flowers bloom in cold areas and along riverbeds. They secrete a nectar called **Lethean Dew** that:
 - Accelerates purification when used correctly
 - Causes a Hemomancer to **forget one learned blood memory** — literally erasing a manipulation from their knowledge, severing a tie to the infection
-- Serves as a crafting ingredient for Unstained recipes
+- Is a crafting ingredient for Unstained recipes
 
 The **Tears of Silthmere** are Lethean Dew distilled to its purest form — a one-time blessing from the Lady herself, offering a significant burst of purification when offered at an Altar of Cleansing.
 

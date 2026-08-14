@@ -2,13 +2,13 @@
 
 *"The blood is not a curse. It is an inheritance, a covenant, a found family written in scarlet."*
 
-The Harbinger Path is the way of the **Hematic Order** — a secret society that views blood magic as sacred knowledge passed down through generations. This path offers immense power, deep progression, and a community of fellow practitioners... but at a cost few understand until it's too late.
+The Harbinger Path follows the **Hematic Order**, a secret society that treats blood magic as inherited knowledge. You move through a long progression path, build a community of practitioners, and learn what that inheritance costs.
 
 ---
 
 ## Overview
 
-**Philosophy:** Blood magic is a gift, an art, a heritage to be cherished and mastered.
+**Philosophy:** Blood magic is a gift and an inherited art. The path treats mastery as the goal.
 
 **Goal:** Ascend through seven degrees of initiation, mastering blood manipulation and eventually confronting the cosmic truth behind the Order.
 
@@ -20,7 +20,7 @@ The Harbinger Path is the way of the **Hematic Order** — a secret society that
 - Cardinal rites for advancement and utility
 - Founding Fanes with powerful buffs
 - The Chamber of Will, a Degree 6 inner refuge that grows with late Harbinger progression
-- Rich NPC interactions and lore discoveries
+- NPC interactions and lore discoveries
 
 ---
 
@@ -153,13 +153,13 @@ Releasing Blood Absorption, looking away, moving out of range, or leaving the ri
   within ten minutes
 - **Effect:** Frees all members, returns shared blood, and removes owned fanes
 
-More utility rites exist — experiment and discover them!
+More utility rites exist. For the exact authored list, use the Sanguine Conduit's Rites tab.
 
 ---
 
 ## Bloodlines
 
-At Degree 5 (Illuminatus) and higher, you can found and manage a **bloodline** — your chosen covenant family within the Hematic Order.
+At Degree 5 (Illuminatus) and higher, you can found and manage a **bloodline**, your chosen covenant family within the Hematic Order.
 
 ### Creating a Bloodline
 - Reach Degree 5, then perform the **Bloodline Founding** rite; the degree alone creates nothing
@@ -172,17 +172,13 @@ At Degree 5 (Illuminatus) and higher, you can found and manage a **bloodline** �
 - **NPCs:** Recruit from Harbinger Outposts
   - Each bloodline can recruit **one Pledged Voice** (general follower) per outpost
   - Each bloodline can recruit **one of each calling** (Warblood, Fleshwright, Cordwainer, Bloodletter) total across all outposts
-- Recruited NPCs will:
-  - Aid in defense
-  - Provide unique dialogue
-  - Participate in rituals
-  - Offer services based on their calling
+- Recruited NPCs can aid in defense, provide unique dialogue, participate in rituals, and offer services based on their calling.
 
 ### NPC Callings
-- **Warblood** — Combat specialist, guards your Fane
-- **Fleshwright** — Crafter and ritualist, assists with rites
-- **Cordwainer** — Merchant and supplier, trades rare components
-- **Bloodletter** — Healer and physician, manages blood health
+- **Warblood**: Combat specialist, guards your Fane
+- **Fleshwright**: Crafter and ritualist, assists with rites
+- **Cordwainer**: Merchant and supplier, trades rare components
+- **Bloodletter**: Healer and physician, manages blood health
 
 ### Bloodline Benefits
 - Shared Fane buffs
@@ -191,7 +187,7 @@ At Degree 5 (Illuminatus) and higher, you can found and manage a **bloodline** �
 - Practical aid in survival and progression
 
 ### Bloodline Severance
-As Archon, you can ritually sever members who betray the covenant. This is serious — it resets their degree and breaks all blood ties. Use with care.
+As Archon, you can ritually sever members who betray the covenant. Severance resets their degree and breaks all blood ties.
 
 ---
 
@@ -211,12 +207,12 @@ The Somatic Loom is where you craft **Hematic Memories** to learn new manipulati
 
 **Result:** Use the Memory item to permanently learn that manipulation.
 
-**Tip:** Memory weaving feels like taming dormant biology. Each tendency has different patterns and behaviors.
+**Tip:** Memory weaving is closer to taming dormant biology than assembling a static recipe. Each tendency uses different patterns and behaviors.
 
 ### Drudges (Blood Servants)
 > **Post-alpha WIP:** This system is retained for development testing but is not part of the first-release progression promise. Its items and Semi-Sentient Construct are in the WIP creative tab.
 
-Starting at Degree 3, you can create **Drudges** — mindless blood constructs that obey simple commands.
+Starting at Degree 3, you can create **Drudges**, mindless blood constructs that obey simple commands.
 
 **Creation:**
 - Craft a Drudge Heart
@@ -232,7 +228,7 @@ Starting at Degree 3, you can create **Drudges** — mindless blood constructs t
 - Can learn specific manipulations you assign
 
 **Limitations:**
-- Not intelligent — simple commands only
+- Not intelligent: simple commands only
 - Requires blood upkeep periodically
 - Dies permanently if destroyed
 - Maximum number based on degree
@@ -248,9 +244,9 @@ Starting at Degree 3, you can create **Drudges** — mindless blood constructs t
 - Hatch a loyal morphling
 
 **Morphling Types:**
-- **Sanguine Thralls** — Basic combat morphlings
-- **Blood Hounds** — Tracking and hunting specialists
-- **Flesh Brutes** — Heavy combat tanks
+- **Sanguine Thralls**: Basic combat morphlings
+- **Blood Hounds**: Tracking and hunting specialists
+- **Flesh Brutes**: Heavy combat tanks
 - More varieties based on source creature
 
 **Uses:**
@@ -292,12 +288,12 @@ Advanced Harbingers can call shaped bodies as temporary extensions of learned bl
 A faltering Broken Will may also be **Commandeered** with an owner-attuned Crossbar. It counts toward the same cap, costs Crossbar charge to claim, pays a base 16 charge per minute before Thread Economy, and follows the same tether, focus, persistence, and severance rules. Silent Archon's bonus cap slots are claimed-Will-only: claiming a Will first does not consume the ordinary shaped-body slot, and an artificial shape cannot occupy a Will bonus slot. It remains a claimed failed person, not a learned puppet shape.
 
 ### Scars and Spores
-As you progress, your body accumulates **Fungal Scars** — visible marks of corruption.
+As you progress, your body accumulates **Fungal Scars**: visible marks of corruption.
 
 **Scar Types:**
-- **Minor Scars** — Small marks, slight tendency bonus
-- **Major Scars** — Large patterns, significant bonuses
-- **Qliphoth Scars** — From communion, powerful but disturbing
+- **Minor Scars**: Small marks, slight tendency bonus
+- **Major Scars**: Large patterns, significant bonuses
+- **Qliphoth Scars**: From communion, powerful but disturbing
 
 **Crafting Scars:**
 - Use **Sanguine Chisel** at a **Chisel Station**
@@ -306,9 +302,9 @@ As you progress, your body accumulates **Fungal Scars** — visible marks of cor
 - Scars grant passive bonuses to specific tendencies
 
 **Scar Skills:**
-- **Scar Affinity** — Reduces scar application pain
-- **Scar Resonance** — Scars boost related manipulations more
-- **Scar Mastery** — Wear more scars than normal
+- **Scar Affinity**: Reduces scar application pain
+- **Scar Resonance**: Scars boost related manipulations more
+- **Scar Mastery**: Wear more scars than normal
 
 **Spores:**
 - Released during high-degree rituals
@@ -382,16 +378,16 @@ As you progress, your body accumulates **Fungal Scars** — visible marks of cor
 **Harbinger Outposts** are small structures found in the overworld where members of the Order gather.
 
 ### What You'll Find
-- **Mortal Display** — Activation point for new players
-- **NPCs** — Various Harbinger callings
-- **Loot Chests** — Blood-related items and materials
-- **Banners** — Blood-stained Harbinger symbols
-- **Small Library** — Sometimes contains Field Notes pages
+- **Mortal Display**: Activation point for new players
+- **NPCs**: Various Harbinger callings
+- **Loot Chests**: Blood-related items and materials
+- **Banners**: Blood-stained Harbinger symbols
+- **Small Library**: Sometimes contains Field Notes pages
 
 ### Interacting with NPCs
-- **Right-click with empty hand** — Open dialogue tree
-- **Right-click with item** — Item Inquiry (learn lore about items)
-- **Recruitment** — Once you are Illuminatus and have founded a bloodline by rite, recruit eligible outpost NPCs
+- **Right-click with empty hand**: Open dialogue tree
+- **Right-click with item**: Item Inquiry (learn lore about items)
+- **Recruitment**: Once you are Illuminatus and have founded a bloodline by rite, recruit eligible outpost NPCs
 
 ### Item Inquiry System
 Many items in Hemomancy have hidden lore. Hold an item and right-click an NPC to ask about it. They'll share:
@@ -452,7 +448,7 @@ The **Qliphoth** is a massive fungal structure that grows after performing Qliph
 
 ## Fungal Whispers
 
-As you ascend, you'll hear **Fungal Whispers** — messages from the Erythrocytic Mycelium network.
+As you ascend, you'll hear **Fungal Whispers**: messages from the Erythrocytic Mycelium network.
 
 ### Early Degrees (1-3)
 - Rare, subtle whispers
@@ -488,25 +484,25 @@ As you ascend, you'll hear **Fungal Whispers** — messages from the Erythrocyti
 
 ## Tips for Harbingers
 
-1. **Specialize Early** — Focus on 2-3 tendencies for faster progression
+1. **Specialize Early**: Focus on 2-3 tendencies for faster progression
 
-2. **Build Your Fane** — Once you reach Illuminatus, found a bloodline and establish its Flexible Envelope when you are ready to support the territory.
+2. **Build Your Fane**: Once you reach Illuminatus, found a bloodline and establish its Flexible Envelope when you are ready to support the territory.
 
-3. **Recruit Wisely** — You have limited NPC recruitment slots. Choose callings that match your playstyle.
+3. **Recruit Wisely**: You have limited NPC recruitment slots. Choose callings that match your playstyle.
 
-4. **Memory Weaving is Complex** — Study patterns at the Somatic Loom. Each tendency behaves differently.
+4. **Memory Weaving is Complex**: Study patterns at the Somatic Loom. Each tendency behaves differently.
 
-5. **Scars are Worth It** — The pain is temporary, the bonuses are permanent.
+5. **Scars are Worth It**: The pain is temporary, the bonuses are permanent.
 
-6. **Don't Rush Degrees** — Each degree is a major commitment. Make sure you're ready.
+6. **Don't Rush Degrees**: Each degree is a major commitment. Make sure you're ready.
 
-7. **Listen to Whispers** — They're creepy, but they provide context and warnings.
+7. **Listen to Whispers**: They're creepy, but they provide context and warnings.
 
-8. **Qliphoth Communion is Optional** — You can stay at Archon forever if you want. Apotheos is only for those who want the full story.
+8. **Qliphoth Communion is Optional**: You can stay at Archon forever if you want. Apotheos is only for those who want the full story.
 
-9. **Save Before Big Rituals** — Degree advancement consumes resources. Make sure you have everything.
+9. **Save Before Big Rituals**: Degree advancement consumes resources. Make sure you have everything.
 
-10. **The Order is Family** — Engage with other Harbingers (NPCs or players). This path is about community.
+10. **The Order is Family**: Engage with other Harbingers (NPCs or players). This path is about community.
 
 ---
 
@@ -534,13 +530,13 @@ A: No. They're people who've embraced a taboo art. Some are kind, some are dange
 
 ## Next Steps
 
-- **[[Blood Systems]]** — Deep dive into manipulations and tendencies
-- **[[Advanced Mechanics]]** — Master morphlings and puppeteering; review post-alpha Drudge WIP notes
-- **[[Lore and Story]]** — Understand the cosmic truth behind the Order
-- **[[World Content]]** — Find structures, resources, and encounters
+- **[[Blood Systems]]**: Manipulations and tendencies
+- **[[Advanced Mechanics]]**: Master morphlings and puppeteering; review post-alpha Drudge WIP notes
+- **[[Lore and Story]]**: Read the cosmic truth behind the Order
+- **[[World Content]]**: Find structures, resources, and encounters
 
 ---
 
 *"We are not monsters. We are the inheritors of a sacred art, keepers of a secret written in blood. That the world fears us does not make us wicked. That we embrace what others flee does not make us evil. We are Harbingers, and the blood remembers."*
 
-— From the Liber Sanguinum, opening passage
+*From the Liber Sanguinum, opening passage*

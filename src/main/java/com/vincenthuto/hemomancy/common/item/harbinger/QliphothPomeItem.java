@@ -168,16 +168,16 @@ public class QliphothPomeItem extends Item implements HemoClientItemExtensionsPr
 				int huskIdx = tag.getInt(HUSK_INDEX_KEY);
 				if (huskIdx >= 0 && huskIdx < HUSK_NAMES.length) {
 					int ordinal = huskIdx + 1;
-					tooltip.add(Component.literal(ordinalString(ordinal) + " of nine. Sweet in the way that tv static and silence is sweet.")
+					tooltip.add(Component.literal(ordinalString(ordinal) + " of nine. Sweet in the way that TV static and silence are sweet.")
 							.withStyle(ChatFormatting.DARK_PURPLE, ChatFormatting.ITALIC));
 					tooltip.add(Component.literal("[" + HUSK_NAMES[huskIdx] + "]")
 							.withStyle(ChatFormatting.DARK_PURPLE));
 				} else {
-					tooltip.add(Component.literal("One of nine. Sweet in the way that tv static and silence is sweet.")
+					tooltip.add(Component.literal("One of nine. Sweet in the way that TV static and silence are sweet.")
 							.withStyle(ChatFormatting.DARK_PURPLE, ChatFormatting.ITALIC));
 				}
 			} else {
-				tooltip.add(Component.literal("One of nine. Sweet in the way that tv static and silence is sweet.")
+				tooltip.add(Component.literal("One of nine. Sweet in the way that TV static and silence are sweet.")
 						.withStyle(ChatFormatting.DARK_PURPLE, ChatFormatting.ITALIC));
 			}
 			tooltip.add(Component.literal("+300 Blood Volume")

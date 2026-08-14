@@ -1,6 +1,6 @@
 # Developer Reference
 
-This page provides links and guidance for developers, contributors, and those who want to understand Hemomancy's technical implementation.
+Use this page to find the implementation reference, package layout, build commands, contribution rules, and integration notes.
 
 ---
 
@@ -9,7 +9,7 @@ This page provides links and guidance for developers, contributors, and those wh
 ### Primary References
 
 **[HEMOMANCY_REFERENCE.md](https://github.com/VincentHuto/Hemomancy/blob/main/docs/HEMOMANCY_REFERENCE.md)**
-- **Complete technical reference** (~390KB)
+- **Technical reference** (~390KB)
 - Every system, item, block, entity, manipulation documented
 - Implementation status for all features
 - Code structure and architecture
@@ -19,7 +19,7 @@ This page provides links and guidance for developers, contributors, and those wh
 - **This is the source of truth for implementation**
 
 **[LORE_REFERENCE.md](https://github.com/VincentHuto/Hemomancy/blob/main/docs/LORE_REFERENCE.md)**
-- **Complete lore documentation** (~74KB)
+- **Lore documentation** (~74KB)
 - World history, cosmology, factions
 - Character backgrounds and motivations
 - Narrative themes and tone guidelines
@@ -45,9 +45,9 @@ This page provides links and guidance for developers, contributors, and those wh
 - JSON format and examples
 
 **Other Docs:**
-- `docs/alpharoadmap.md` — Roadmap and planning
-- `docs/fungalscar.md` — Scar system design notes
-- `docs/hybrid_progression_matrix.md` — Progression balancing
+- `docs/alpharoadmap.md`: Roadmap and planning
+- `docs/fungalscar.md`: Scar system design notes
+- `docs/hybrid_progression_matrix.md`: Progression balancing
 
 ---
 
@@ -128,14 +128,14 @@ Hemomancy uses NeoForge's attachment system for player state:
 **Access:** `HemoCapabilityAccess` utility methods
 
 **Core Capabilities:**
-- `IBloodVolume` — Blood amount and regeneration
-- `IBloodTendency` — Eight tendency alignment levels
-- `IVascularSystem` — Vein sections and health
-- `IKnownManipulations` — Learned manipulations
-- `IInitiatoryDegree` — Harbinger progression
-- `IUnstainedProgress` — Unstained purification state
-- `IVisceralOrgans` — Organ extraction/effects
-- `IBloodlineData` — Bloodline membership
+- `IBloodVolume`: Blood amount and regeneration
+- `IBloodTendency`: Eight tendency alignment levels
+- `IVascularSystem`: Vein sections and health
+- `IKnownManipulations`: Learned manipulations
+- `IInitiatoryDegree`: Harbinger progression
+- `IUnstainedProgress`: Unstained purification state
+- `IVisceralOrgans`: Organ extraction/effects
+- `IBloodlineData`: Bloodline membership
 - And more...
 
 **Old Pattern (Don't Use):**
@@ -200,17 +200,17 @@ public record MyPacket(int data) implements CustomPacketPayload {
 - `ANIMUS`, `FLAMMEUS`, `DUCTILIS`, `LUX`
 - `MORTEM`, `CONGEATIO`, `FERRIC`, `TENEBRIS`
 
-**Note:** Enzyme items use different vocabulary (Vivacious, Fervent, etc.) — don't "normalize" them.
+**Note:** Enzyme items use different vocabulary (Vivacious, Fervent, etc.): don't "normalize" them.
 
 ### Recipe Types
 
 Custom recipe types in `common/recipe/`:
-- `ScarRecipeType` — Chisel Station scar carving
-- `DistillationRecipeType` — Distillery recipes
-- `RecallerRecipeType` — Visceral Recaller binding
-- `IncubatorRecipeType` — Morphling Incubator mutations
-- `BloodStructureRecipeType` — Multi-block structures
-- `CardinalRiteRecipeType` — Altar rituals
+- `ScarRecipeType`: Chisel Station scar carving
+- `DistillationRecipeType`: Distillery recipes
+- `RecallerRecipeType`: Visceral Recaller binding
+- `IncubatorRecipeType`: Morphling Incubator mutations
+- `BloodStructureRecipeType`: Multi-block structures
+- `CardinalRiteRecipeType`: Altar rituals
 
 All use NeoForge 1.21 recipe system with JSON datapacks.
 
@@ -302,7 +302,7 @@ The generated outputs have been hand-tuned and committed to `src/main/resources/
 ### Code Style
 
 - **Follow existing patterns** in the codebase
-- **NeoForge 1.21 APIs only** — no legacy Forge imports
+- **NeoForge 1.21 APIs only**: no legacy Forge imports
 - **Registry objects** use `DeferredHolder` and `snake_case` IDs
 - **Java classes** use `PascalCase`
 - **Packages** organized by system (manipulation, block, entity, etc.)
@@ -311,7 +311,7 @@ The generated outputs have been hand-tuned and committed to `src/main/resources/
 
 When adding content:
 - **Read LORE_REFERENCE.md** first
-- **Preserve moral ambiguity** — no simple good/evil
+- **Preserve moral ambiguity**: no simple good/evil
 - **Harbinger content** uses Latinate/ecclesiastical language
 - **Unstained content** uses sacramental/Anglo-Saxon language
 - **Internal tendency names** stay as-is (don't change ANIMUS to VIVACIOUS)
@@ -329,7 +329,7 @@ When adding content:
 
 ### What to Contribute
 
-**Welcome:**
+**Good contributions:**
 - Bug fixes
 - New manipulations (with design doc)
 - Texture improvements
@@ -371,8 +371,8 @@ if (volume != null && volume.isActive()) {
 }
 ```
 
-**Future API:**
-A formal API is planned for stable cross-mod integration. Until then, use capabilities carefully.
+**API status:**
+There is no stable API yet. Until then, use capabilities carefully for cross-mod integration.
 
 **Documentation:**
 See HEMOMANCY_REFERENCE.md sections on:
@@ -495,13 +495,13 @@ Location: `tools/skill_tree_editor/`
 
 ## Next Steps
 
-- **[[Home]]** — Return to wiki home
-- **[[Getting Started]]** — Install and play the mod
-- **[[Mod Compatibility]]** — Integration with other mods
-- **[HEMOMANCY_REFERENCE.md](https://github.com/VincentHuto/Hemomancy/blob/main/docs/HEMOMANCY_REFERENCE.md)** — Full technical documentation
+- **[[Home]]**: Return to wiki home
+- **[[Getting Started]]**: Install and play the mod
+- **[[Mod Compatibility]]**: Integration with other mods
+- **[HEMOMANCY_REFERENCE.md](https://github.com/VincentHuto/Hemomancy/blob/main/docs/HEMOMANCY_REFERENCE.md)**: Full technical documentation
 
 ---
 
 *"The code, like the blood, remembers. Study it well, and you'll find the patterns that connect biology to mechanics, lore to implementation, cosmic horror to Minecraft blocks."*
 
-— Developer philosophy
+*Developer philosophy*

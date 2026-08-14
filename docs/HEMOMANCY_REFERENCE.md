@@ -695,7 +695,7 @@ At around **Degree 3–4**, the Harbinger Vicar and/or the player's own research
 - Boss victories yield the matching Hallowed Residuum directly; peaceful samples become Hallowed Residuum through the Vial Centrifuge.
 
 **Reward (two output types):** Each saint yields two things from their blood:
-1. **Hallowed Residuum** (`hallowed_residuum_<saint>`) — extracted by processing a Consecrated Syringe in the Vial Centrifuge. Serves as the catalyst currency for the Somatic Loom's Canon Memory recipes.
+1. **Hallowed Residuum** (`hallowed_residuum_<saint>`) — extracted by processing a Consecrated Syringe in the Vial Centrifuge. It is the catalyst currency for the Somatic Loom's Canon Memory recipes.
 2. **Canon Memory** (via Somatic Loom) — placing a blank Hematic Memory plus the saint's Hallowed Residuum catalyst, storing the paired enzyme requirements in the loom, projecting the recipe blood cost, and drawing the scattered memory-orbs home unlocks that saint's unique SUMMA-rank blood manipulation.
 
 **Saint → Canon Memory → Fungal Scar Family (at-a-glance):**
@@ -847,7 +847,7 @@ Her origins are unknown — some Unstained texts suggest she is a being from bef
 **Connection to the Lethean Poppies:**
 The **Lethean Poppies** that grow across the world are said to bloom wherever Our Lady once walked. The dew they produce — **Lethean Dew** — carries her essence: the power of forgetting. Just as the mythological River Lethe washed away memories, the lethean poppies help players *forget* their blood manipulations, severing the ties that bind them to hemomancy. The Unstained believe that harvesting and refining these poppies is a sacred act of devotion to their patron.
 
-**Tears of Silthmere** are distilled from Lethean Dew at an Altar of Cleansing, concentrating Our Lady's blessing into a single potent draught. When offered at her altar, these tears trigger a powerful purification — a one-time gift from the Lady herself.
+**Tears of Silthmere** are distilled from Lethean Dew at an Altar of Cleansing, concentrating Our Lady's blessing into a single potent draught. When offered at her altar, these tears trigger a one-time purification from the Lady herself.
 
 **The Pallid Icon** began as a historically unique devotional relic recovered from the bottom of a forgotten river. Later Unstained reproduced its posture as consecrated copies, which is why the ordinary item can exist more than once. The game does not distinguish the original with a separate item, tag, or stronger mechanic; the distinction is historical lore only.
 

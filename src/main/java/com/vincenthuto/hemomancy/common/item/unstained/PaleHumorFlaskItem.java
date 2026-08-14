@@ -57,10 +57,10 @@ public class PaleHumorFlaskItem extends Item {
 
     @Override
     public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
-        tooltip.add(Component.literal(String.format("%.0f ml of purified lymph, cold-distilled.", amount))
+        tooltip.add(Component.literal(String.format("%.0f mL of purified lymph, cold-distilled.", amount))
                 .withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC));
         tooltip.add(Component.literal("Drink: replenishes white humor.").withStyle(ChatFormatting.WHITE));
-        tooltip.add(Component.literal("Off-hand Unstained weapon + right-click: coats with hemolytic charge.")
+        tooltip.add(Component.literal("Right-click with an Unstained weapon in the off-hand to coat it with hemolytic charge.")
                 .withStyle(ChatFormatting.AQUA));
     }
 

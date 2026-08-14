@@ -2,22 +2,20 @@
 
 *"The blood remembers what the mind forgets. But what does it remember? And from whom?"*
 
-Welcome to the deeper narrative of Hemomancy — a world where blood magic is fungal infection, ancient cosmic entities reproduce through human bodies, and the line between salvation and dissolution has never been thinner.
+The premise is direct: blood magic is a fungal infection, ancient cosmic entities reproduce through human bodies, and salvation can look a lot like dissolution.
 
-> **For complete lore details**, see the authoritative [LORE_REFERENCE.md](https://github.com/VincentHuto/Hemomancy/blob/main/docs/LORE_REFERENCE.md) in the repository.
+The repository's [LORE_REFERENCE.md](https://github.com/VincentHuto/Hemomancy/blob/main/docs/LORE_REFERENCE.md) is the authority for complete lore details.
 
 ---
 
 ## The Core Premise
 
-Hemomancy presents a morally gray world where:
-- **Blood magic is not evil** — It's a tool, an inheritance, a burden
-- **The Harbingers are not villains** — They're a found family pursuing what they believe is sacred knowledge
-- **The Unstained are not heroes** — Their methods are brutal, their purity may be its own corruption
-- **The Fungal Entity is not Satan** — It's an incomprehensible alien organism with no malice, only biology
-- **Our Lady is not God** — She's a defensive immune response that may be going autoimmune
-
-**No one is simply good or evil. Every choice has consequences.**
+The setting keeps the moral boundary unresolved:
+- **Blood magic is not evil**: It's a tool, an inheritance, a burden
+- **The Harbingers are not villains**: They're a found family pursuing what they believe is sacred knowledge
+- **The Unstained are not heroes**: Their methods are brutal, their purity may be its own corruption
+- **The Fungal Entity is not Satan**: It's an incomprehensible alien organism with no malice, only biology
+- **Our Lady is not God**: She's a defensive immune response that may be going autoimmune
 
 ---
 
@@ -31,12 +29,12 @@ Hemomancy presents a morally gray world where:
 
 ### The State of the World
 The Erythrocytic Mycelium (blood-cell fungus) has been part of this world for centuries, but it's not an apocalypse:
-- **Localized, not global** — Only certain regions show infection
-- **Slow, not aggressive** — It doesn't spread exponentially
-- **Natural, not supernatural** — Common folk see it like vultures: unsettling but not evil
-- **Mysterious, not understood** — Most people don't know the cosmic truth
+- **Localized, not global**: Only certain regions show infection
+- **Slow, not aggressive**: It doesn't spread exponentially
+- **Natural, not supernatural**: Common folk see it like vultures: unsettling but not evil
+- **Mysterious, not understood**: Most people don't know the cosmic truth
 
-**Minecraft's common society** views blood magic with discomfort and taboo, but Harbingers are more shunned outcasts than hunted witches. Think of how people might react to vultures or fungi cleaning nature — eerie, maybe disturbing, but not inherently wicked.
+**Minecraft's common society** treats blood magic as taboo. Harbingers are shunned more often than hunted. The closest comparison is vultures or fungi cleaning nature: eerie, maybe disturbing, but not inherently wicked.
 
 ---
 
@@ -53,13 +51,13 @@ At the heart of Hemomancy is **a fourth-dimensional organism** so vast it exists
 - Think: a sphere passing through a 2D plane appears as a growing/shrinking circle
 
 **What It's Doing:**
-- **Reproducing** — Its life cycle requires hosts
+- **Reproducing**: Its life cycle requires hosts
 - Each Harbinger degree is a stage of **sporulation** (fruiting)
-- The Hematic Order was never human-created — it's a **reproductive strategy**
+- The Hematic Order was never human-created: it's a **reproductive strategy**
 - Harbingers ascending through degrees are unknowingly becoming fruiting bodies
 
 **Its Nature:**
-- Not malicious or benevolent — alien biology
+- Not malicious or benevolent: alien biology
 - Doesn't "think" like humans
 - Patient on geological timescales
 - Powerful but not omnipotent
@@ -107,7 +105,7 @@ The Order is the Entity's reproductive mechanism. Each degree is a fruiting stag
 
 **How Society Sees Them:**
 - Taboo, shunned, sometimes feared
-- "Blood mages" — eerie practitioners
+- "Blood mages": eerie practitioners
 - Not hunted (mostly), but ostracized
 - Some communities tolerate them, others don't
 - Like vultures: discomforting but natural
@@ -120,7 +118,7 @@ The Order is the Entity's reproductive mechanism. Each degree is a fruiting stag
 Blood magic is infection. The Fungal Entity is a disease. Purity can be achieved through pain and purification.
 
 **Biological Truth:**
-Hemolytic Solution is essentially formaldehyde — they're embalming themselves while alive, achieving biological immortality through preservation.
+Hemolytic Solution is essentially formaldehyde: they're embalming themselves while alive, achieving biological immortality through preservation.
 
 **Their Beliefs:**
 - Blood magic is corruption, not heritage
@@ -130,11 +128,11 @@ Hemolytic Solution is essentially formaldehyde — they're embalming themselves 
 - Stillness and preservation over growth
 
 **Their Methods:**
-- **Brutal** — Self-inflicted chemical purification
-- **Antiseptic** — Copper, hemolytic solution, Lethean water
-- **Minimized bloodshed** — favor blunt defense while sanctioning the Silthmere Glaive and universal hemolytic Absolution Dagger
-- **Guardian role** — Protect others from infection
-- **Living preservation** — Become biologically immortal statues
+- **Brutal**: Self-inflicted chemical purification
+- **Antiseptic**: Copper, hemolytic solution, Lethean water
+- **Minimized bloodshed**: favor blunt defense while sanctioning the Silthmere Glaive and universal hemolytic Absolution Dagger
+- **Guardian role**: Protect others from infection
+- **Living preservation**: Become biologically immortal statues
 
 **Their Reality:**
 - Former Harbingers who rejected the infection
@@ -156,7 +154,7 @@ Hemolytic Solution is essentially formaldehyde — they're embalming themselves 
 
 **What She Is:**
 - A **localized force of nature**, not a deity
-- Analogous to a white blood cell — defensive immune response
+- Analogous to a white blood cell: defensive immune response
 - Opposes the Fungal Entity's spread
 - Associated with water, stillness, copper, white/silver
 
@@ -169,7 +167,7 @@ Hemolytic Solution is essentially formaldehyde — they're embalming themselves 
 
 **What She Hides:**
 - Late-stage whispers hint at danger
-- May be becoming **autoimmune** — attacking healthy tissue
+- May be becoming **autoimmune**: attacking healthy tissue
 - Purity taken to extreme may be its own death
 - Stillness can drown as surely as flood
 - Her "protection" may be suffocation
@@ -216,7 +214,7 @@ The **Chamber of Will** is a high-degree Harbinger refuge unlocked at Degree 6 t
 
 ### The Fungal Dimension
 
-The "Flesh Beyond" — first witnessed at Degree 7 when the ninth Qliphoth Pome grants the **Fungal Spine**, before either endgame rite.
+The "Flesh Beyond": first witnessed at Degree 7 when the ninth Qliphoth Pome grants the **Fungal Spine**, before either endgame rite.
 
 **What It Is:**
 - **Astral projection**, not physical teleportation
@@ -235,13 +233,13 @@ The "Flesh Beyond" — first witnessed at Degree 7 when the ninth Qliphoth Pome 
 - Constant Fungal Whispers (harassing frequency)
 - Everything is hostile, even to Archons
 - Sense of being "babe in the woods"
-- Profound existential horror
+- Existential horror
 - The first projection returns automatically after two minutes as a red vignette accelerates
 - No inventory or armor is accessible during that first projection
 
 **Two Possible Bosses:**
-- **The Mycophant** — If you embrace dissolution (fruiting body endpoint)
-- **Vesper** — If you resist (two-phase fight for autonomy)
+- **The Mycophant**: If you embrace dissolution (fruiting body endpoint)
+- **Vesper**: If you resist (two-phase fight for autonomy)
 
 ---
 
@@ -268,7 +266,7 @@ A fungal surge pressing into the world; the Pale Lady's pale effects are its con
 - Costs her immense energy
 - Fungal surge causes the red moon, blood empowerment, and increased fungal activity
 - The Lady's response supplies pale containment and enables Lethean Tide to end the event
-- Neither side "wins" — just escalation
+- Neither side "wins": just escalation
 - World caught in the middle
 
 ---
@@ -309,7 +307,7 @@ A massive fungal tree structure summoned at high degree.
 - Each Pome is a stage of understanding
 - Eating them is accepting the truth
 - Nine represents completeness
-- Qliphoth means "shell" or "husk" — what remains after fruiting
+- Qliphoth means "shell" or "husk": what remains after fruiting
 
 ---
 
@@ -317,7 +315,7 @@ A massive fungal tree structure summoned at high degree.
 
 ### The Saints
 
-Powerful entities associated with specific trials. Currently two are implemented:
+These are powerful entities tied to specific trials. Two are implemented:
 
 **Saint Hemorath**
 - First Saint prototype, retained as WIP for the post-release Saints update
@@ -527,28 +525,28 @@ When engaging with Hemomancy's story, remember:
 - Treat it like typical fantasy
 
 **Tone:**
-- **Gothic body horror** — Visceral, uncomfortable, beautiful
-- **Cosmic horror** — Incomprehensible entities beyond morality
-- **Found family drama** — Covenant bonds and betrayals
-- **Ecclesiastical language** — Ritual, degree, order, communion
-- **Scientific biology** — Infection, sporulation, immune response
+- **Gothic body horror**: Visceral, uncomfortable, beautiful
+- **Cosmic horror**: Incomprehensible entities beyond morality
+- **Found family drama**: Covenant bonds and betrayals
+- **Ecclesiastical language**: Ritual, degree, order, communion
+- **Scientific biology**: Infection, sporulation, immune response
 
 ---
 
 ## Lore Resources
 
 ### In-Game Sources
-- **Field Notes** — Your journal, updates with discoveries
-- **Liber Sanguinum** — Harbinger guidebook (WIP content)
-- **Item Descriptions** — Many items have lore text
-- **NPC Dialogues** — Use Item Inquiry system extensively
-- **Fungal Whispers** — Direct messages from Entity
-- **Lady's Whispers** — Messages from Pale Lady
+- **Field Notes**: Your journal, updates with discoveries
+- **Liber Sanguinum**: Harbinger guidebook (WIP content)
+- **Item Descriptions**: Many items have lore text
+- **NPC Dialogues**: Use Item Inquiry system extensively
+- **Fungal Whispers**: Direct messages from Entity
+- **Lady's Whispers**: Messages from Pale Lady
 
 ### External Sources
-- **[LORE_REFERENCE.md](https://github.com/VincentHuto/Hemomancy/blob/main/docs/LORE_REFERENCE.md)** — Complete lore documentation
-- **[HEMOMANCY_REFERENCE.md](https://github.com/VincentHuto/Hemomancy/blob/main/docs/HEMOMANCY_REFERENCE.md)** — Implementation details and status
-- **Community Discussions** — Players sharing interpretations
+- **[LORE_REFERENCE.md](https://github.com/VincentHuto/Hemomancy/blob/main/docs/LORE_REFERENCE.md)**: Complete lore documentation
+- **[HEMOMANCY_REFERENCE.md](https://github.com/VincentHuto/Hemomancy/blob/main/docs/HEMOMANCY_REFERENCE.md)**: Implementation details and status
+- **Community Discussions**: Players sharing interpretations
 
 ---
 
@@ -579,7 +577,7 @@ A: "Hemo-" (blood) + "-mancy" (divination/magic). The blood "divines" or "rememb
 A: The Entity reproduces successfully. Spores spread to new worlds. The cycle continues elsewhere.
 
 **Q: Can you save the world from the Entity?**
-A: Not really. It's beyond your power. You can only choose your own fate.
+A: Not really. It is beyond your power. You can choose only your own fate.
 
 **Q: Is there a happy ending?**
 A: Define "happy." Both endings offer something, both cost something. It's about what you value.
@@ -588,13 +586,13 @@ A: Define "happy." Both endings offer something, both cost something. It's about
 
 ## Next Steps
 
-- **[[Harbinger Path]]** — Experience the found family and cosmic horror
-- **[[Unstained Path]]** — Pursue purity and question its cost
-- **[[Blood Systems]]** — Understand the mechanics behind the lore
-- **[[World Content]]** — Discover the places and creatures of this world
+- **[[Harbinger Path]]**: Experience the found family and cosmic horror
+- **[[Unstained Path]]**: Pursue purity and question its cost
+- **[[Blood Systems]]**: Understand the mechanics behind the lore
+- **[[World Content]]**: Discover the places and creatures of this world
 
 ---
 
 *"In the end, we are all just biology. The Fungal Entity spreads because it must. The Pale Lady resists because she must. The Harbingers ascend because they must. The Unstained purify because they must. And you? What must you do?"*
 
-— Final whisper before Apotheos choice
+*Final whisper before Apotheos choice*

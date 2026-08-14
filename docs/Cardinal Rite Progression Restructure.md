@@ -2,7 +2,7 @@
 
 ## Status
 
-This document is the design contract for the Harbinger Cardinal Rite progression pass.
+This is the design contract for the Harbinger Cardinal Rite progression pass.
 It covers Degrees 0-7. Apotheos and Degree 8 remain a separate pass because the
 player's relationship to rites changes after Apotheosis.
 

@@ -455,7 +455,7 @@ if (heldStack.is(ItemInit.foul_paste.get())) {
 			int remaining = threshold - vol;
 			worldIn.playSound(null, pos, SoundEvents.AMETHYST_BLOCK_CHIME, SoundSource.BLOCKS, 0.6f, 0.8f);
 			player.displayClientMessage(
-				Component.literal("The bowl accepts your blood... " + remaining + " more offering"
+				Component.literal("The bowl accepts your blood. " + remaining + " more offering"
 					+ (remaining == 1 ? "" : "s") + " required.")
 					.withStyle(ChatFormatting.DARK_PURPLE, ChatFormatting.ITALIC),
 				false);

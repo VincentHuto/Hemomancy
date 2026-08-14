@@ -30,8 +30,8 @@ public class LetheanBrewItem extends Item {
 	public void appendHoverText(ItemStack stack, Item.TooltipContext context, List<Component> tooltip, TooltipFlag flagIn) {
 		super.appendHoverText(stack, context, tooltip, flagIn);
 		tooltip.add(Component.literal("Highly concentrated lethean dew"));
-		tooltip.add(Component.literal("Used to forget ALL your manipulations"));
-		tooltip.add(Component.literal("\"Dont Spill It...\""));
+		tooltip.add(Component.literal("Used to forget all your manipulations."));
+		tooltip.add(Component.literal("\"Don't spill it...\""));
 	}
 
 	@Override

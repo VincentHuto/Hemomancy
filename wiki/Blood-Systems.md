@@ -1,12 +1,12 @@
 # Blood Systems
 
-This page provides a comprehensive overview of Hemomancy's blood mechanics, from basic manipulations to advanced tendency mastery.
+Use this page as the mechanics reference: blood volume, manipulations, tendencies, vascular state, skills, and routing.
 
 ---
 
 ## Blood Volume
 
-**Blood Volume** is your primary resource for using blood magic.
+**Blood Volume** is the resource every blood-magic action spends.
 
 ### Key Stats
 - **Starting Volume:** 1000 mL (after Mortal Display activation)
@@ -41,13 +41,13 @@ Player/body sources such as base regeneration, **Sanguine Surge**, **Last Wind**
 ### Death and Volume
 - Configurable: volume may reset on death
 - Can be set to partial loss or full reset
-- Affects strategic play significantly
+- Death changes how much blood you have available.
 
 ---
 
 ## Blood Manipulations
 
-**Manipulations** are the core abilities of blood magic — active and passive powers fueled by blood.
+**Manipulations** are the abilities you trigger, charge, toggle, or keep active with blood.
 
 ### Manipulation Types
 
@@ -161,7 +161,7 @@ At Degree 5, the **Dendritic Distributor** becomes a Synaptic Loadout station. I
 - Applying and renaming are free
 - Fixed mechanical utilities such as blood absorption and blood projection stay automatic and are not saved inside patterns
 
-Use this for combat, travel, ritual, and fane-work presets without relearning manipulations.
+Use these patterns for combat, travel, rituals, and fane work. You do not need to relearn the manipulations.
 
 ---
 
@@ -182,10 +182,10 @@ The **Scrying Podium** **Tendency** tab shows your dominant and latent tendencie
 **Philosophy:** Blood is life itself. Master Animus to sustain yourself and others.
 
 **Key Manipulations:**
-- **Sanguine Touch** (Humilis) — Heal self or others with touch
-- **Vital Surge** (Mediocritas) — Temporary health and regeneration boost
-- **Life Ward** (Summa) — Create healing aura around you
-- **Phoenix Blood** (Perfectus) — Auto-revive from lethal damage once
+- **Sanguine Touch** (Humilis): Heal self or others with touch
+- **Vital Surge** (Mediocritas): Temporary health and regeneration boost
+- **Life Ward** (Summa): Create healing aura around you
+- **Phoenix Blood** (Perfectus): Auto-revive from lethal damage once
 
 **Playstyle:** Support, sustain, endurance
 
@@ -207,10 +207,10 @@ The **Scrying Podium** **Tendency** tab shows your dominant and latent tendencie
 **Philosophy:** Blood burns hot. Ignite it and unleash destruction.
 
 **Key Manipulations:**
-- **Ember Touch** (Humilis) — Set touch target on fire
-- **Flame Bolt** (Mediocritas) — Projectile that ignites
-- **Conflagration** (Summa) — Area-of-effect explosion
-- **Solar Flare** (Perfectus) — Massive firestorm centered on self
+- **Ember Touch** (Humilis): Set touch target on fire
+- **Flame Bolt** (Mediocritas): Projectile that ignites
+- **Conflagration** (Summa): Area-of-effect explosion
+- **Solar Flare** (Perfectus): Massive firestorm centered on self
 
 **Playstyle:** Offensive, area damage, crowd control
 
@@ -232,10 +232,10 @@ The **Scrying Podium** **Tendency** tab shows your dominant and latent tendencie
 **Philosophy:** Blood contains iron. Control it, shape it, weaponize it.
 
 **Key Manipulations:**
-- **Iron Dart** (Humilis) — Launch iron projectile from blood
-- **Ferrous Shield** (Mediocritas) — Summon iron barrier
-- **Blade Storm** (Summa) — Create whirling iron weapons
-- **Arsenal** (Perfectus) — Summon multiple iron constructs
+- **Iron Dart** (Humilis): Launch iron projectile from blood
+- **Ferrous Shield** (Mediocritas): Summon iron barrier
+- **Blade Storm** (Summa): Create whirling iron weapons
+- **Arsenal** (Perfectus): Summon multiple iron constructs
 
 **Playstyle:** Versatile, offense and defense, tactical
 
@@ -257,10 +257,10 @@ The **Scrying Podium** **Tendency** tab shows your dominant and latent tendencie
 **Philosophy:** Blood can shine. Let it illuminate the darkness.
 
 **Key Manipulations:**
-- **Radiant Pulse** (Humilis) — Flash of light, blind enemies
-- **Beacon** (Mediocritas) — Create floating light source
-- **Purifying Ray** (Summa) — Beam that damages undead/corrupted
-- **Sanctified Blood** (Perfectus) — Temporary immunity to darkness
+- **Radiant Pulse** (Humilis): Flash of light, blind enemies
+- **Beacon** (Mediocritas): Create floating light source
+- **Purifying Ray** (Summa): Beam that damages undead/corrupted
+- **Sanctified Blood** (Perfectus): Temporary immunity to darkness
 
 **Playstyle:** Support, anti-undead, utility
 
@@ -284,10 +284,10 @@ The **Scrying Podium** **Tendency** tab shows your dominant and latent tendencie
 **Philosophy:** Blood knows death intimately. Wield that knowledge.
 
 **Key Manipulations:**
-- **Wither Touch** (Humilis) — Inflict wither effect
-- **Necrotic Bolt** (Mediocritas) — Projectile that decays
-- **Plague Aura** (Summa) — Area debuff, damages and weakens
-- **Death's Embrace** (Perfectus) — Instant kill on low-health target
+- **Wither Touch** (Humilis): Inflict wither effect
+- **Necrotic Bolt** (Mediocritas): Projectile that decays
+- **Plague Aura** (Summa): Area debuff, damages and weakens
+- **Death's Embrace** (Perfectus): Instant kill on low-health target
 
 **Playstyle:** Debuff, damage-over-time, execution
 
@@ -309,10 +309,10 @@ The **Scrying Podium** **Tendency** tab shows your dominant and latent tendencie
 **Philosophy:** Blood can be frozen, preserved, weaponized as ice.
 
 **Key Manipulations:**
-- **Frost Touch** (Humilis) — Slow and damage with cold
-- **Ice Shard** (Mediocritas) — Frozen projectile
-- **Glacial Armor** (Summa) — Temporary ice shell, high defense
-- **Absolute Zero** (Perfectus) — Freeze everything in radius
+- **Frost Touch** (Humilis): Slow and damage with cold
+- **Ice Shard** (Mediocritas): Frozen projectile
+- **Glacial Armor** (Summa): Temporary ice shell, high defense
+- **Absolute Zero** (Perfectus): Freeze everything in radius
 
 **Playstyle:** Control, defense, slow
 
@@ -334,10 +334,10 @@ The **Scrying Podium** **Tendency** tab shows your dominant and latent tendencie
 **Philosophy:** Blood iron responds to magnetic force. Command it.
 
 **Key Manipulations:**
-- **Magnetic Pull** (Humilis) — Draw items/enemies toward you
-- **Repulsion Field** (Mediocritas) — Push enemies away
-- **Ferro-kinesis** (Summa) — Control metal objects at range
-- **Singularity** (Perfectus) — Create magnetic vortex
+- **Magnetic Pull** (Humilis): Draw items/enemies toward you
+- **Repulsion Field** (Mediocritas): Push enemies away
+- **Ferro-kinesis** (Summa): Control metal objects at range
+- **Singularity** (Perfectus): Create magnetic vortex
 
 **Playstyle:** Utility, positioning, environmental control
 
@@ -359,10 +359,10 @@ The **Scrying Podium** **Tendency** tab shows your dominant and latent tendencie
 **Philosophy:** Blood flows in darkness. Embrace the shadow.
 
 **Key Manipulations:**
-- **Shadow Step** (Humilis) — Short-range teleport
-- **Veil of Night** (Mediocritas) — Invisibility for short time
-- **Umbral Chains** (Summa) — Bind enemy in shadow
-- **Eclipse** (Perfectus) — Create area of absolute darkness
+- **Shadow Step** (Humilis): Short-range teleport
+- **Veil of Night** (Mediocritas): Invisibility for short time
+- **Umbral Chains** (Summa): Bind enemy in shadow
+- **Eclipse** (Perfectus): Create area of absolute darkness
 
 **Playstyle:** Stealth, mobility, ambush
 
@@ -404,11 +404,11 @@ The **Scrying Podium** **Tendency** tab shows your dominant and latent tendencie
 
 ### Alignment Levels
 
-- **0-25:** Novice — Basic effectiveness
-- **26-50:** Practiced — Improved effectiveness
-- **51-75:** Aligned — Strong effectiveness
-- **76-99:** Mastered — Very strong effectiveness
-- **100:** Perfected — Maximum effectiveness
+- **0-25:** Novice: Basic effectiveness
+- **26-50:** Practiced: Improved effectiveness
+- **51-75:** Aligned: Strong effectiveness
+- **76-99:** Mastered: Very strong effectiveness
+- **100:** Perfected: Maximum effectiveness
 
 ### Specialization vs Generalization
 
@@ -424,7 +424,7 @@ The **Scrying Podium** **Tendency** tab shows your dominant and latent tendencie
 - Versatile toolkit
 - Less specialized power
 
-**Recommendation:** Start generalist, specialize later as you understand your playstyle.
+**Recommendation:** Start as a generalist. Specialize after you know which tendencies and manipulations you actually use.
 
 ---
 
@@ -434,18 +434,18 @@ The **Vascular System** represents your blood's internal structure and efficienc
 
 ### Vein Sections
 
-Manipulations are organized into **vein sections** — metaphorical regions of your circulatory system:
+Manipulations are organized into **vein sections**: metaphorical regions of your circulatory system:
 
-- **Heart Section** — Core vitality and power (Animus, Mortem)
-- **Artery Section** — Offensive and projection (Flammeus, Lux)
-- **Capillary Section** — Utility and manipulation (Ductilis, Ferric)
-- **Vein Section** — Defensive and control (Congeatio, Tenebris)
+- **Heart Section**: Core vitality and power (Animus, Mortem)
+- **Artery Section**: Offensive and projection (Flammeus, Lux)
+- **Capillary Section**: Utility and manipulation (Ductilis, Ferric)
+- **Vein Section**: Defensive and control (Congeatio, Tenebris)
 
 ### Vascular Health
 
-- **Damaged Vascular System** — Reduces manipulation effectiveness
-- **Healthy Vascular System** — Normal operation
-- **Enhanced Vascular System** — Improved manipulation power
+- **Damaged Vascular System**: Reduces manipulation effectiveness
+- **Healthy Vascular System**: Normal operation
+- **Enhanced Vascular System**: Improved manipulation power
 
 **Maintain health by:**
 - Avoiding overuse of manipulations
@@ -464,7 +464,7 @@ The **Skill Tree** provides passive bonuses and unlocks. See the full tree in Fi
 **Blood Efficiency Branch**
 - Reduce manipulation costs
 - Increase blood regeneration
-- Enhance volume capacity
+- Increase volume capacity
 
 **Tendency Mastery Branch**
 - Boost specific tendency alignments
@@ -477,7 +477,7 @@ The **Skill Tree** provides passive bonuses and unlocks. See the full tree in Fi
 - Improve targeting
 
 **Defense Branch**
-- Enhance blood barriers and shields
+- Strengthen blood barriers and shields
 - Reduce incoming damage
 - Improve healing effectiveness
 
@@ -487,9 +487,9 @@ The **Skill Tree** provides passive bonuses and unlocks. See the full tree in Fi
 - Multi-target capabilities
 
 **Scar Branch**
-- **Scar Affinity** — Reduce scar application pain
-- **Scar Resonance** — Scars boost manipulations more
-- **Scar Mastery** — Extend scar-focused progression and mastery behavior
+- **Scar Affinity**: Reduce scar application pain
+- **Scar Resonance**: Scars boost manipulations more
+- **Scar Mastery**: Extend scar-focused progression and mastery behavior
 
 ### Skill Points
 
@@ -636,25 +636,25 @@ Teach your Drudges specific manipulations:
 
 ## Tips for Blood Management
 
-1. **Monitor Your Volume** — Never drain completely. Keep 500-1000 mL reserve.
+1. **Monitor Your Volume**: Never drain completely. Keep 500-1000 mL reserve.
 
-2. **Carry Vials** — Pre-filled blood vials are emergency refills.
+2. **Carry Vials**: Pre-filled blood vials are emergency refills.
 
-3. **Know Your Costs** — High-rank manipulations can drain you instantly. Plan accordingly.
+3. **Know Your Costs**: High-rank manipulations can drain you instantly. Plan accordingly.
 
-4. **Regeneration Stacking** — Combine multiple regen sources for fast recovery.
+4. **Regeneration Stacking**: Combine multiple regen sources for fast recovery.
 
-5. **Tendency Focus** — Pick 2-3 tendencies and master them. Spreading thin weakens you.
+5. **Tendency Focus**: Pick 2-3 tendencies and master them. Spreading thin weakens you.
 
-6. **Manipulation Loadouts** — Customize which manipulations you have quick access to.
+6. **Manipulation Loadouts**: Customize which manipulations you have quick access to.
 
-7. **Cooldown Awareness** — Don't spam. Cooldowns exist for balance.
+7. **Cooldown Awareness**: Don't spam. Cooldowns exist for balance.
 
-8. **Practice Combos** — Manipulations that synergize are more powerful than standalone.
+8. **Practice Combos**: Some manipulations become stronger when used together.
 
-9. **Environment Matters** — Use terrain and situation to your advantage.
+9. **Environment Matters**: Use terrain and situation to your advantage.
 
-10. **Upgrade Path** — Progress degrees to unlock higher-rank manipulations. Power scales dramatically.
+10. **Upgrade Path**: Progress through degrees to unlock higher-rank manipulations.
 
 ---
 
@@ -672,12 +672,12 @@ Curios compatibility is dormant in the NeoForge 1.21.1 branch. The Charm of Vasc
 
 ## Next Steps
 
-- **[[Harbinger Path]]** — Learn how to progress through degrees
-- **[[Advanced Mechanics]]** — Master morphlings and puppeteering; review post-alpha Drudge WIP notes
-- **[[World Content]]** — Find enzymes, catalysts, and rare materials
+- **[[Harbinger Path]]**: Learn how to progress through degrees
+- **[[Advanced Mechanics]]**: Master morphlings and puppeteering; review post-alpha Drudge WIP notes
+- **[[World Content]]**: Find enzymes, catalysts, and rare materials
 
 ---
 
 *"Blood is not merely a resource. It is memory, identity, power, and price. Master it, and you master yourself. Lose control, and it will consume you."*
 
-— From the Liber Sanguinum, Chapter on Fundamentals
+*From the Liber Sanguinum, Chapter on Fundamentals*

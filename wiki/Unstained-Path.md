@@ -2,7 +2,7 @@
 
 *"The blood remembers. But what if we could make it forget?"*
 
-The Unstained Path is the way of purification — viewing blood magic not as sacred inheritance but as **infection** to be cleansed. Guided by Our Lady of Still Waters, the Unstained pursue biological immortality through brutal antiseptic rituals, becoming something preserved, pure, but perhaps no longer wholly human.
+The Unstained Path treats blood magic as **infection**, not sacred inheritance. Under Our Lady of Still Waters, you use brutal antiseptic rituals to pursue biological immortality and become something preserved, pure, and possibly no longer wholly human.
 
 ---
 
@@ -10,7 +10,7 @@ The Unstained Path is the way of purification — viewing blood magic not as sac
 
 **Philosophy:** Blood magic is corruption. The Fungal Entity is infection. Purity can be achieved through pain.
 
-**Goal:** Purge all hemomantic taint from your body, achieve biological immortality, and serve as a Guardian against blood magic's spread.
+**Goal:** Purge the hemomantic taint, reach biological immortality, and serve as a Guardian against blood magic's spread.
 
 **Key Features:**
 - Progressive purification stages (Clarity system)
@@ -27,7 +27,7 @@ The Unstained Path is the way of purification — viewing blood magic not as sac
 
 Unlike Harbingers with their seven discrete degrees, the Unstained pursue a gradual purification measured in **Clarity** and **Purity** levels.
 
-### Starting the Journey
+### Start here
 
 **Prerequisites:**
 - Activated blood volume (clicked Mortal Display)
@@ -71,7 +71,7 @@ The Unstained path progresses through increasing **Purity** levels, measured by 
 - Blood manipulations you know become weaker
 - Fungal whispers (if you had them) start to fade
 - A sense of cold clarity replaces warm vitality
-- NPCs react differently — some with relief, others with concern
+- NPCs react differently: some with relief, others with concern
 
 **Physical Changes:**
 - Blood-magic signs begin to fade; no unrelated bodily or cosmetic change occurs during Purity
@@ -88,7 +88,7 @@ The Unstained path progresses through increasing **Purity** levels, measured by 
 - Meditation in copper-lined spaces
 
 **What You Gain:**
-- Significant corruption resistance
+- Stronger resistance to corruption
 - Enhanced healing when using Lethean Dew
 - Guardian basic combat stance
 - Ability to sense nearby blood magic
@@ -116,7 +116,7 @@ The Unstained path progresses through increasing **Purity** levels, measured by 
 - Consecrate your body fully
 
 **What You Gain:**
-- **Guardian Status** — Official role in Unstained hierarchy
+- **Guardian Status**: Official role in Unstained hierarchy
 - All blood manipulations lost (cannot learn new ones)
 - Enhanced anti-corruption aura (protects others nearby)
 - Guardian combat abilities
@@ -197,9 +197,9 @@ After Clarity Ascension, bodily processes diminish gradually with Clarity rather
 - Access to Unstained endgame content
 
 **What Changes:**
-Everything. You are preserved perfection, a living shrine to purity.
+The intended result is preserved perfection, a living shrine to purity.
 
-**WARNING:** Late-stage whispers from Our Lady hint at her becoming **autoimmune** — attacking even clean tissue. Ascended Unstained may face a terrible realization: purity taken too far becomes its own corruption.
+**Warning:** Late-stage whispers from Our Lady suggest that she is becoming **autoimmune** and attacking clean tissue. Ascended Unstained may discover that extreme purity creates another form of corruption.
 
 **Physical Changes:**
 - Appear as living statue
@@ -360,10 +360,10 @@ Unstained Guardians minimize bloodshed and specialize in blunt combat, but their
 - Found only in special locations
 - Used in high-level purification
 - Grants temporary Guardian abilities
-- Extremely valuable
+- High healing value
 
 **Effects:**
-- Major healing and cleansing
+- Healing and cleansing
 - Temporary purity spike
 - Enhanced Guardian powers
 - Can revive from near-death
@@ -372,10 +372,10 @@ Unstained Guardians minimize bloodshed and specialize in blunt combat, but their
 
 ## Our Lady of Still Waters
 
-The Pale Lady is the entity that guides the Unstained — a localized force of nature, analogous to a white blood cell defending against infection.
+The Pale Lady is the entity that guides the Unstained: a localized force of nature, analogous to a white blood cell defending against infection.
 
 ### Her Nature
-- **Not a goddess** — She is a force, not a deity
+- **Not a goddess**: She is a force, not a deity
 - Defensive immune response to the Fungal Entity
 - Represents stillness, preservation, clarity
 - Associated with water, copper, white/silver
@@ -417,10 +417,10 @@ Small structures in overworld where Unstained gather.
 - Unstained merchant
 
 **NPCs:**
-- **Guardian Captains** — Combat trainers
-- **Purifiers** — Ritual guides
-- **Lore Keepers** — Teach about Our Lady
-- **Merchants** — Trade copper items and Hemolytic Solution
+- **Guardian Captains**: Combat trainers
+- **Purifiers**: Ritual guides
+- **Lore Keepers**: Teach about Our Lady
+- **Merchants**: Trade copper items and Hemolytic Solution
 
 ### Interaction
 - If you're Unstained, welcomed as family
@@ -493,25 +493,25 @@ A sacred item representing Our Lady of Still Waters.
 
 ## Progression Tips
 
-1. **Start Early** — Begin purification before high Harbinger degrees. Reverting from Archon is traumatic.
+1. **Start Early**: Begin purification before high Harbinger degrees. Reverting from Archon is traumatic.
 
-2. **Stock Hemolytic Solution** — You'll need lots. Brew in batches.
+2. **Stock Hemolytic Solution**: You'll need lots. Brew in batches.
 
-3. **Copper Everywhere** — Build with copper blocks. They provide passive benefits.
+3. **Copper Everywhere**: Build with copper blocks. They provide passive benefits.
 
-4. **Accept the Pain** — Purification hurts. That's the point. Have healing ready.
+4. **Accept the Pain**: Purification hurts. That's the point. Have healing ready.
 
-5. **Carry the Right Tool** — The polearm is the battlefield standard; every initiated Unstained also carries an Absolution Dagger for close infection work.
+5. **Carry the Right Tool**: The polearm is the battlefield standard; every initiated Unstained also carries an Absolution Dagger for close infection work.
 
-6. **Find Lethean Water** — Locate a source and protect it. It's your best healing.
+6. **Find Lethean Water**: Locate a source and protect it. It's your best healing.
 
-7. **Study Our Lady** — Her whispers contain warnings and wisdom. Listen.
+7. **Study Our Lady**: Her whispers contain warnings and wisdom. Listen.
 
-8. **Don't Rush Purity** — Each stage is significant. Understand what you're becoming.
+8. **Don't Rush Purity**: Each stage changes what you can do. Read the stage details before committing.
 
-9. **Guardian Trials** — Practice combat before taking Guardian oaths. You'll need skill.
+9. **Guardian Trials**: Practice before taking Guardian oaths. You will need the combat skill.
 
-10. **Question Everything** — Late-game whispers hint at problems. Stay aware.
+10. **Question Everything**: Late-game whispers hint at problems. Stay aware.
 
 ---
 
@@ -534,7 +534,7 @@ The mod intentionally questions whether the Unstained path is truly superior:
 - Physically changed, perhaps disfigured
 - Late-stage hints at autoimmune disaster
 - "Purity" may be its own form of death
-- Living, but preserved — is that truly living?
+- Living, but preserved: is that truly living?
 
 Neither path is objectively correct. Choose based on your values and playstyle.
 
@@ -619,13 +619,13 @@ The Pale Silver Pickaxe and Verdigris Censer are intentionally not part of the a
 
 ## Next Steps
 
-- **[[Blood Systems]]** — Understand what you're purging
-- **[[World Content]]** — Find Pallid Sanctuaries and Lethean water
-- **[[Lore and Story]]** — Learn about Our Lady and the cosmic conflict
-- **[[Advanced Mechanics]]** — Guardian combat techniques
+- **[[Blood Systems]]**: Understand what you're purging
+- **[[World Content]]**: Find Pallid Sanctuaries and Lethean water
+- **[[Lore and Story]]**: Learn about Our Lady and the cosmic conflict
+- **[[Advanced Mechanics]]**: Guardian combat techniques
 
 ---
 
 *"The blood remembers. But in stillness, in cold clarity, in the preserving embrace of Our Lady's waters... we can make it forget. We can become clean. We can become eternal. The question is: at what cost?"*
 
-— From the Codex of Still Waters
+*From the Codex of Still Waters*

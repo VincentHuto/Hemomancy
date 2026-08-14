@@ -30,7 +30,7 @@ public class BloodyFlaskItem extends Item {
 
 	@Override
 	public void appendHoverText(ItemStack stack, Item.TooltipContext context, List<Component> tooltip, TooltipFlag flagIn) {
-		tooltip.add(Component.literal("Used to Quickly Gain " + amount + "ml of Blood"));
+		tooltip.add(Component.literal("Used to quickly gain " + amount + " mL of blood."));
 	}
 
 	public double getAmount() {
@@ -45,7 +45,7 @@ public class BloodyFlaskItem extends Item {
 					.orElseThrow(NullPointerException::new);
 
 			if (volume.isFull()) {
-				playerIn.displayClientMessage(Component.literal("Blood Volume Full"), true);
+				playerIn.displayClientMessage(Component.literal("Blood volume is full."), true);
 			} else {
 				volume.fill(amount);
 				for (int i = 0; i < 30; i++) {

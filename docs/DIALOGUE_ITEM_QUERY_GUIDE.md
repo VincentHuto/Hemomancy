@@ -13,7 +13,7 @@ Inventory inquiry lets the player ask an NPC to examine objects already carried 
 6. One inquiry topic is added for every distinct supported item state.
 7. If unsupported objects are present, one **Another object** topic reaches the speaker's characterful unknown response.
 
-The main runtime localisation source is:
+The main runtime localization source is:
 
 ```text
 src/main/resources/assets/hemomancy/lang/en_us.json
@@ -89,7 +89,7 @@ Before exact JSON lookup, the built-in provider registry examines:
 2. Dynamic Scar Patterns — blank, single-route template, or prepared multi-scar loadout.
 3. Specimen Jars — contained entity and Morphling layer state.
 
-Distinct states of the same item ID receive distinct inquiry nodes. Their dynamic details are shown as literal evidence lines beneath the speaker's localised interpretation.
+Distinct states of the same item ID receive distinct inquiry nodes. Their dynamic details are shown as literal evidence lines beneath the speaker's localized interpretation.
 
 ## Refusal behaviour
 

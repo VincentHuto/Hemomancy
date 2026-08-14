@@ -77,9 +77,9 @@ public class RitualEffectBloodMote extends RitualEffect {
 	public Component canRitualStart(IRitualContext context) {
 		if (!this.areEngramsPresent(context)) {
 			return Component.literal("This ritual requires")
-					.append(Component.literal(" MORE").withStyle(ChatFormatting.ITALIC).withStyle(ChatFormatting.RED)
+					.append(Component.literal(" more").withStyle(ChatFormatting.ITALIC).withStyle(ChatFormatting.RED)
 							.withStyle(ChatFormatting.UNDERLINE))
-					.withStyle(ChatFormatting.RESET).append(Component.literal(" from you..."));
+					.withStyle(ChatFormatting.RESET).append(Component.literal(" from you."));
 		}
 		return null;
 	}

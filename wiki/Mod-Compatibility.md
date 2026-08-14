@@ -1,6 +1,6 @@
 # Mod Compatibility
 
-Hemomancy works standalone with its required libraries. For the NeoForge 1.21.1 public alpha, **JEI is alpha-ready**, while **Mana and Artifice** and **Curios** compatibility are dormant until compatible upstream dependencies are available.
+Hemomancy works with its required libraries. In the NeoForge 1.21.1 public alpha, **JEI is alpha-ready**. **Mana and Artifice** and **Curios** remain dormant until compatible upstream dependencies are available.
 
 ---
 
@@ -49,7 +49,7 @@ Hemomancy works standalone with its required libraries. For the NeoForge 1.21.1 
 
 Design and source are preserved for a future compatible MnA build, but this integration is not compiled or registered in the current alpha. `build.gradle` excludes the MnA compat package, the dependency is commented out, and `Hemomancy.java` does not register the MnA hooks on this branch.
 
-The intended integration includes:
+The planned MnA integration includes:
 
 #### Harbinger Faction
 - Harbingers become a custom MnA faction
@@ -81,8 +81,8 @@ The intended integration includes:
 - Effective against organic targets
 
 **Mana↔Blood Conversion**
-- `BloodToMana` component — spend blood, gain mana
-- `ManaToBlood` component — spend mana, gain blood
+- `BloodToMana` component: spend blood, gain mana
+- `ManaToBlood` component: spend mana, gain blood
 - Two-way resource exchange
 
 #### Sanguilith Summon
@@ -112,7 +112,7 @@ The dormant `HemoMnAConfig` design covers:
 - Balance combo effects
 
 #### Why This Integration?
-Each MnA feature has specific design justification documented in [MNA_COMPATIBILITY_BRAINSTORM.md](https://github.com/VincentHuto/Hemomancy/blob/main/docs/MNA_COMPATIBILITY_BRAINSTORM.md). The integration aims to create meaningful mechanical and narrative synergy, not just "cross-mod recipes."
+The reasons for each MnA feature are documented in [MNA_COMPATIBILITY_BRAINSTORM.md](https://github.com/VincentHuto/Hemomancy/blob/main/docs/MNA_COMPATIBILITY_BRAINSTORM.md). The design connects the mods through mechanics and story instead of relying only on cross-mod recipes.
 
 **Alpha note:** Installing Mana and Artifice alongside this NeoForge 1.21.1 alpha should not be expected to enable these features.
 
@@ -141,7 +141,7 @@ Curios source is preserved as a future compatibility target, but it is not compi
 - Reward from certain rituals
 
 **Why Curios?**
-Provides a non-armor slot for hemomancy enhancement, freeing up equipment choices while still offering blood-specific benefits.
+The target is a non-armor slot for Hemomancy equipment, leaving the armor slots open while keeping the blood-specific benefits.
 
 **Alpha note:** Installing Curios alongside this NeoForge 1.21.1 alpha should not be expected to add a dedicated Hemomancy slot.
 
@@ -151,7 +151,7 @@ Provides a non-armor slot for hemomancy enhancement, freeing up equipment choice
 
 **Status:** Alpha-ready through a local NeoForge JEI jar
 
-Hemomancy provides JEI integration for custom crafting systems. The development branch currently uses `libs/jei-1.21.1-neoforge-19.27.0.340.jar` rather than Maven dependency lines.
+Hemomancy's JEI integration covers the custom crafting systems. This branch loads `libs/jei-1.21.1-neoforge-19.27.0.340.jar` directly instead of using Maven dependency lines.
 
 #### Recipe Categories
 
@@ -382,12 +382,12 @@ Hemomancy provides extensive config options:
 
 ## Next Steps
 
-- **[[Getting Started]]** — Install and set up Hemomancy
-- **[[Developer Reference]]** — Technical documentation for integration
-- **[[Home]]** — Return to main wiki page
+- **[[Getting Started]]**: Install and set up Hemomancy
+- **[[Developer Reference]]**: Technical documentation for integration
+- **[[Home]]**: Return to main wiki page
 
 ---
 
-*"Magic is not isolated. Blood flows through all things. The connections between systems — be they biological, mechanical, or mystical — reveal deeper truths about the nature of power."*
+*"Magic is not isolated. Blood flows through all things. The connections between biological, mechanical, and mystical systems reveal deeper truths about the nature of power."*
 
-— From cross-mod design philosophy notes
+*From cross-mod design philosophy notes*

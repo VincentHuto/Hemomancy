@@ -82,7 +82,7 @@ public class CrudeMemoryShardItem extends Item {
 				.orElse(null);
 		if (volume == null || !volume.isActive()) {
 			player.displayClientMessage(
-					Component.literal("You lack the understanding of what you're even holding...")
+					Component.literal("You don't understand what you're holding yet.")
 							.withStyle(ChatFormatting.DARK_RED),
 					true);
 			return InteractionResultHolder.fail(stack);

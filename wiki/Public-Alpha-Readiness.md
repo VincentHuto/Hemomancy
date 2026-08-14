@@ -1,8 +1,8 @@
 # Public Alpha Readiness
 
-Hemomancy's public alpha target is **playable and honest**, not content-complete. The mod already has a large implemented surface, but some late-game, guidebook, visual, and optional-compatibility systems are still in development.
+The public alpha target is **playable and honest**, not content-complete. The main loops are implemented, but late-game, guidebook, visual, and optional-compatibility work is still in progress.
 
-Use this page to understand what alpha testers should expect.
+This page lists what alpha testers can expect.
 
 ---
 
@@ -17,7 +17,7 @@ Use this page to understand what alpha testers should expect.
 
 ## Alpha-Ready Systems
 
-The current alpha build is strongest around these loops:
+The current alpha build is strongest in these loops:
 
 - **Opt-in start** - Mortal Display activation, Blood Volume, HUD, and first blood-magic state.
 - **Harbinger core** - degree progression spine, Cardinal Rites, blood manipulations, memories, tendencies, vascular state, scars, morphlings, living staff forms, puppeteer spindle, Blood Moon, direct blood routing, Qliphoth Communion, Chamber of Will, and Founding Fane core.
@@ -29,13 +29,13 @@ The current alpha build is strongest around these loops:
 
 ## Known Alpha Limitations
 
-These are expected rough edges for public alpha:
+These are the rough edges to expect in the public alpha:
 
 - **Guide/Liber surfaces are mixed.** HutosLib JSON book data exists for Harbinger and Unstained books, but the Harbinger Java progression renderer still has partial wiring. Treat Field Notes, Dictation Table, and Liber behavior as a smoke-test priority.
 - **Founding Fane is mechanically present but still being tuned.** The bloodwell/stake footprint system, relation-aware boundary rendering, and blood routing hooks exist; final balance and art polish are still pending.
 - **Chamber of Will V1 is caster-only.** The Degree 6 rite, personal chamber, radius growth, and dynamic sky themes exist; the later rite that pulls nearby players and mobs into the caster's chamber is not part of V1.
 - **Drudges are post-alpha WIP.** Their implementation remains available for development, but the Electrode, Submission Device, and Semi-Sentient Construct have been moved to the WIP creative tab and the system is not part of the first-release progression promise.
-- **The entire Saints suite is post-release WIP.** Hemorath now remains behind the same WIP boundary as Seraphae, Putriciel, and Velorum. Saint chambers do not generate naturally, and their encounter components, rewards, and Canon memories are development-facing content for the first major post-release update—not launch blockers or first-release progression.
+- **The entire Saints suite is post-release WIP.** Hemorath now remains behind the same WIP boundary as Seraphae, Putriciel, and Velorum. Saint chambers do not generate naturally, and their encounter components, rewards, and Canon memories are development-facing content for the first major post-release update, not launch blockers or first-release progression.
 - **Fungal Dimension is partial.** Access, safe return, dimension mob population, and the Archon choice fork exist; deeper terrain and broader dimension content remain WIP.
 - **Endgame bosses are split.** Vesper's two-phase encounter is integrated into the Silent Archon path through Pruning and the Severed Qliphoth. The Mycophant has entity, rendering, sound, combat, boss music, and loot support, but its encounter entry still needs another pass.
 - **Annetta is playable but not final.** The Broken Church encounter and two-route structure are wired; animation polish, fuller biological combat identity, and unique thrown-projectile rendering remain WIP.
@@ -53,7 +53,7 @@ These are expected rough edges for public alpha:
 
 ## Recommended Tester Path
 
-1. Install Hemomancy with HutosLib, GeckoLib, TerraBlender, and JEI.
+1. Install Hemomancy with HutosLib, TerraBlender, and JEI.
 2. Create or load a world and find a Blood Temple, Harbinger Outpost, or another Mortal Display source.
 3. Activate the Mortal Display and confirm Blood Volume appears.
 4. Open Field Notes or book surfaces and confirm the first steps are understandable.
@@ -65,7 +65,7 @@ These are expected rough edges for public alpha:
 
 ## What To Report
 
-Alpha feedback is most useful when it includes:
+For useful alpha feedback, report:
 
 - Whether installation and launch succeeded.
 - Which dependencies and versions were used.

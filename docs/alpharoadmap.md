@@ -2,7 +2,7 @@
 
 ## Context
 
-VincentHuto's Hemomancy is a sophisticated blood-magic + fungal-horror Minecraft NeoForge mod (Minecraft 1.21.1, NeoForge 21.1.x, Java 21) with two mutually exclusive player paths (Harbinger and Unstained). The goal is to assess its current state against "what makes a good Minecraft mod good" and produce a prioritized roadmap for alpha release.
+VincentHuto's Hemomancy is a blood-magic and fungal-horror Minecraft NeoForge mod (Minecraft 1.21.1, NeoForge 21.1.x, Java 21) with two mutually exclusive player paths (Harbinger and Unstained). This roadmap assesses its current state against the requirements for a strong Minecraft mod and sets priorities for the alpha release.
 
 > 2026-05-17 refresh: the current code is ahead of several older audit notes below. Treat `HEMOMANCY_REFERENCE.md` as the canonical status doc. Confirmed cleanup since the original roadmap includes 1.21 singular resource paths, wired skill effects, implemented Hematic Salvage tests/rules, blood crystal growth from alembic leaks, Annetta Broken Church spawning, dedicated Annetta encounter models/textures, JEI registration for Mycelial Lantern enzyme fruiting, and an alpha building fixture pass with vanilla-behavior chains, bars, walls, hematic iron door/trapdoor, recipes, loot tables, and resource coverage tests.
 

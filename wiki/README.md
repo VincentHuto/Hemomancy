@@ -2,20 +2,20 @@
 
 > Canon policy: this wiki is based on the authoritative lore and mechanics documents under `docs/`; it does not override them.
 
-This directory contains the GitHub Wiki pages for the Hemomancy mod.
+These files are the GitHub Wiki pages for Hemomancy.
 
 ## Wiki Structure
 
 ### Core Pages
-- **Home.md** — Main landing page with overview and navigation
+- **Home.md**: Main landing page with overview and navigation
 - **Public-Alpha-Readiness.md** - Alpha status, known limitations, and tester path
-- **Getting-Started.md** — Installation and first steps guide
-- **Harbinger-Path.md** — Complete guide to the blood magic progression path
-- **Unstained-Path.md** — Complete guide to the purification path
-- **Blood-Systems.md** — Deep dive into manipulations, tendencies, and mechanics
-- **Lore-and-Story.md** — Narrative, factions, cosmology, and themes
-- **Mod-Compatibility.md** — Integration with other mods and modpack tips
-- **Developer-Reference.md** — Technical documentation and contribution guide
+- **Getting-Started.md**: Installation and first steps guide
+- **Harbinger-Path.md**: Blood-magic progression path
+- **Unstained-Path.md**: Purification path
+- **Blood-Systems.md**: Manipulations, tendencies, and blood mechanics
+- **Lore-and-Story.md**: Narrative, factions, cosmology, and themes
+- **Mod-Compatibility.md**: Integration with other mods and modpack tips
+- **Developer-Reference.md**: Technical documentation and contribution guide
 
 ## Publishing to GitHub Wiki
 
@@ -39,7 +39,7 @@ To publish these pages to the GitHub wiki:
    git push origin master
    ```
 
-Alternatively, use GitHub's wiki web interface to create/edit pages by copying the content from these files.
+You can also copy these files into the GitHub Wiki editor.
 
 ## Maintaining the Wiki
 
@@ -51,17 +51,17 @@ Alternatively, use GitHub's wiki web interface to create/edit pages by copying t
 - Version updates
 
 ### Style Guidelines
-- Keep player-facing language clear and accessible
+- Keep player-facing language clear and concrete
 - Link between related pages using `[[Page-Name]]` syntax
 - Preserve the moral ambiguity tone (neither path is objectively good/evil)
 - Use the same vocabulary as in-game (don't "normalize" terminology)
-- Include examples and tips for practical gameplay
+- Include examples and tips that help someone play the mod
 
 ### Authoritative Sources
 When updating, always check:
-- **docs/HEMOMANCY_REFERENCE.md** — Implementation details and status
-- **docs/LORE_REFERENCE.md** — Canonical lore and worldbuilding
-- Current code in `src/` — implementation evidence that must be corrected when it conflicts with the docs
+- **docs/HEMOMANCY_REFERENCE.md**: Implementation details and status
+- **docs/LORE_REFERENCE.md**: Canonical lore and worldbuilding
+- Current code in `src/`: implementation evidence that must be corrected when it conflicts with the docs
 
 ## Wiki Pages Overview
 
@@ -69,7 +69,7 @@ When updating, always check:
 Entry point with:
 - Mod overview and philosophy
 - Quick navigation to all sections
-- Key features highlight
+- Feature summary
 - Installation requirements
 - Credits and links
 
@@ -116,7 +116,7 @@ Complete Unstained guide:
 - Philosophical considerations
 
 ### Blood Systems (Blood-Systems.md)
-Mechanics deep dive:
+Mechanics reference:
 - Blood Volume management
 - Eight tendencies explained
 - Manipulation types and ranks
@@ -159,16 +159,16 @@ Technical documentation:
 - Contributing guidelines
 - API for other mod developers
 
-## Future Expansion
+## Pages to add
 
-Pages that could be added:
-- **World-Content.md** — Biomes, structures, mobs in detail
-- **Advanced-Mechanics.md** — Detailed guides for morphlings, puppeteering, blood routing, and retained post-alpha Drudge WIP
-- **Factions.md** — Deep dive into Hematic Order and Unstained beliefs
-- **Items-and-Blocks.md** — Complete item/block reference
-- **Configuration.md** — Detailed config option documentation
-- **FAQ.md** — Common questions and answers
-- **Troubleshooting.md** — Extended problem-solving guide
+Pages still to add:
+- **World-Content.md**: Biomes, structures, mobs in detail
+- **Advanced-Mechanics.md**: Detailed guides for morphlings, puppeteering, blood routing, and retained post-alpha Drudge WIP
+- **Factions.md**: Hematic Order and Unstained beliefs
+- **Items-and-Blocks.md**: Complete item/block reference
+- **Configuration.md**: Detailed config option documentation
+- **FAQ.md**: Common questions and answers
+- **Troubleshooting.md**: Extended problem-solving guide
 
 ## Links
 

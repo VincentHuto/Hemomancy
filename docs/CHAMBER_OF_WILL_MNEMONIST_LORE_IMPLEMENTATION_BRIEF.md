@@ -28,7 +28,7 @@ This gives the Mnemonist a second major function while preserving the importance
 
 ## 2. Existing Canon Anchors
 
-This proposal is intended to extend, not replace, the current progression spine.
+This proposal extends the current progression spine; it does not replace it.
 
 Current reference already establishes the following:
 
@@ -724,4 +724,3 @@ Apotheos lets the hive pass through the wound.
 Silent Archon seals the wound with stone.
 
 Neither ending is clean. Apotheos keeps communion and risks personhood. Silent Archon keeps personhood and risks absolute isolation. The Chamber is where both truths become visible.
-

@@ -148,7 +148,7 @@ These items are created through MnA-specific crafting systems (Manaweaving, Runi
 
 #### 4b. Mote of Mana
 - **Concept:** A crystallized mana essence created via the Ritual of the Weeping Wound's inverse — an MnA ritual that sacrifices massive mana (not blood) to produce a crystal usable in Hemomancy's Visceral Recaller as a special catalyst.
-- **MnA Justification:** Created through MnA's ritual system by consuming MnA's mana resource. The output item serves as a bridge ingredient: it slots into Hemomancy's Visceral Recaller as a catalyst that reduces the blood cost of crafting recipes. This creates a genuine cross-mod crafting loop — MnA players can invest their mana to ease Hemomancy crafting, and vice versa with Mote of Blood.
+- **MnA Justification:** Created through MnA's ritual system by consuming MnA's mana resource. The output item is a bridge ingredient: it slots into Hemomancy's Visceral Recaller as a catalyst that reduces the blood cost of crafting recipes. This creates a cross-mod crafting loop — MnA players can invest their mana to ease Hemomancy crafting, and vice versa with Mote of Blood.
 - **Crafting:** MnA ritual circle, 5000 mana sacrificed, Vinteum block as focus.
 - **Use:** Visceral Recaller catalyst that reduces blood cost by 50% for one recipe.
 

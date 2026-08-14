@@ -36,7 +36,7 @@ public class VerdigrisCenserItem extends Item {
 		super.appendHoverText(stack, context, tooltip, flag);
 		tooltip.add(Component.literal("Oxidized copper smoke, carried in a pale silver cage.")
 				.withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC));
-		tooltip.add(Component.literal("Use: Verdigris Aura and reveals blood-active bodies nearby.")
+		tooltip.add(Component.literal("Use: grants Verdigris Aura and reveals blood-active bodies nearby.")
 				.withStyle(ChatFormatting.WHITE));
 	}
 
@@ -68,7 +68,7 @@ public class VerdigrisCenserItem extends Item {
 				}
 			}
 
-			player.displayClientMessage(Component.literal("Verdigris smoke marks " + marked + " suspect body(s).")
+			player.displayClientMessage(Component.literal("Verdigris smoke marks " + marked + " suspect bodies.")
 					.withStyle(ChatFormatting.AQUA), true);
 			level.playSound(null, player.blockPosition(), SoundEvents.FIRE_EXTINGUISH, SoundSource.PLAYERS, 0.9f, 1.6f);
 			if (level instanceof ServerLevel serverLevel) {
