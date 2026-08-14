@@ -1352,7 +1352,6 @@
   "hemomancy.dialogue.topic.inventory_item": "Inventory Item",
   "hemomancy.dialogue.topic.inventory_item.summary": "Ask about this item.",
   "hemomancy.dialogue.topic.speak_freely": "Speak Freely",
-  "hemomancy.dialogue.topic.unknown_item": "Another object",
   "hemomancy.dialogue.ui.back": "Back",
   "hemomancy.dialogue.ui.leave": "Leave",
   "hemomancy.dialogue.ui.no_topics": "No topics are available right now.",

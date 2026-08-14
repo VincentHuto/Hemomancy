@@ -11,7 +11,7 @@ Inventory inquiry lets the player ask an NPC to examine objects already carried 
 4. Ordinary stacks resolve through `ItemInquiryRegistry` by speaker ID and item registry ID.
 5. Refusal policy may suppress inquiry or replace procedure with a terse identification response.
 6. One inquiry topic is added for every distinct supported item state.
-7. If unsupported objects are present, one **Another object** topic reaches the speaker's characterful unknown response.
+7. Unsupported objects are skipped; only items with a resolved inquiry appear in the topic grid.
 
 The main runtime localization source is:
 

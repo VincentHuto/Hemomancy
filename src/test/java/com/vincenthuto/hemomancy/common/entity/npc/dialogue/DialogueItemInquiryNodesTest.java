@@ -42,7 +42,7 @@ class DialogueItemInquiryNodesTest {
                 new ResolvedInventoryInquiry("blueprint/rite/a", blueprint, List.of("a.line")),
                 new ResolvedInventoryInquiry("blueprint/rite/b", blueprint, List.of("b.line")));
 
-        DialogueItemInquiryNodes.addResolvedInventoryItemInquiries(tree, resolved, false, "vicar");
+        DialogueItemInquiryNodes.addResolvedInventoryItemInquiries(tree, resolved);
 
         List<String> nodes = tree.nodes().keySet().stream()
                 .filter(key -> key.startsWith("item_inquiry/hemomancy/mnemonic_blueprint#"))
@@ -52,13 +52,11 @@ class DialogueItemInquiryNodesTest {
     }
 
     @Test
-    void unsupportedInventoryCreatesOneUnknownTopic() {
+    void unsupportedInventoryDoesNotCreateAnInquiryNode() {
         DialogueTree tree = inquiryTree();
-        DialogueItemInquiryNodes.addResolvedInventoryItemInquiries(tree, List.of(), true, "guardian");
+        DialogueItemInquiryNodes.addResolvedInventoryItemInquiries(tree, List.of());
 
-        assertTrue(tree.nodes().containsKey(DialogueItemInquiryNodes.UNKNOWN_NODE_ID));
-        assertEquals(List.of("hemomancy.guardian.item_inquiry.unknown"),
-                tree.getNode(DialogueItemInquiryNodes.UNKNOWN_NODE_ID).lines());
+        assertFalse(tree.nodes().containsKey("item_inquiry/unknown"));
     }
 
     @Test

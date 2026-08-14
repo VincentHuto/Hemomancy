@@ -51,6 +51,18 @@ class DialogueHubFactoryTest {
 		assertEquals("hemomancy.dialogue.topic.inventory_item.summary", inquiries.getFirst().summaryKey());
 	}
 
+	@Test
+	void unknownInquiryNodesDoNotBecomeInquiryTopics() {
+		DialogueTree base = DialogueTree.builder("speaker", id("portrait"), 42)
+				.addNode(new DialogueNode("greeting", List.of("greeting"), List.of()))
+				.addNode(new DialogueNode("item_hint", List.of("hint"), List.of()))
+				.addNode(new DialogueNode("item_inquiry/unknown", List.of("unknown"), List.of()))
+				.build();
+
+		DialogueTree decorated = DialogueHubFactory.decorate(base, "alchemist", new DialogueKnowledge());
+		assertTrue(decorated.presentation().topics(DialogueCategory.INQUIRIES).isEmpty());
+	}
+
 	private static ResourceLocation id(String path) {
 		return ResourceLocation.fromNamespaceAndPath("hemomancy", path);
 	}

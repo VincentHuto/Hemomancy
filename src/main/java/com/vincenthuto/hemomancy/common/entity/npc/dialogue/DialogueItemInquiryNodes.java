@@ -22,7 +22,6 @@ import java.util.Set;
 
 public final class DialogueItemInquiryNodes {
     static final String INVENTORY_NODE_PREFIX = "item_inquiry/";
-    static final String UNKNOWN_NODE_ID = "item_inquiry/unknown";
 
     private DialogueItemInquiryNodes() {}
 
@@ -48,7 +47,6 @@ public final class DialogueItemInquiryNodes {
 
         Map<String, ResolvedInventoryInquiry> resolved = new LinkedHashMap<>();
         Set<String> seen = new LinkedHashSet<>();
-        boolean unsupported = false;
         for (ItemStack stack : inventory) {
             if (stack == null || stack.isEmpty()) continue;
             Optional<StackAwareInquiryRegistry.ResolvedStackInquiry> dynamic =
@@ -65,7 +63,6 @@ public final class DialogueItemInquiryNodes {
             ResourceLocation itemId = BuiltInRegistries.ITEM.getKey(stack.getItem());
             Optional<List<String>> lines = resolveKnownLines(stack, speakerKey, context);
             if (lines.isEmpty()) {
-                unsupported = true;
                 continue;
             }
             String key = itemId.toString();
@@ -74,7 +71,7 @@ public final class DialogueItemInquiryNodes {
                         restrictedLines(access, speakerKey, lines.get())));
             }
         }
-        return addResolvedInventoryItemInquiries(tree, resolved.values(), unsupported, speakerKey);
+        return addResolvedInventoryItemInquiries(tree, resolved.values());
     }
 
     private static List<String> restrictedLines(InquiryAccessPolicy.Access access, String speakerKey,
@@ -88,21 +85,17 @@ public final class DialogueItemInquiryNodes {
         List<ResolvedInventoryInquiry> converted = resolvedItems.entrySet().stream()
                 .map(entry -> new ResolvedInventoryInquiry(entry.getKey().toString(), entry.getKey(), entry.getValue()))
                 .toList();
-        return addResolvedInventoryItemInquiries(tree, converted, false, "generic");
+        return addResolvedInventoryItemInquiries(tree, converted);
     }
 
     static DialogueTree addResolvedInventoryItemInquiries(DialogueTree tree,
-            Iterable<ResolvedInventoryInquiry> resolvedItems, boolean hasUnsupported, String speakerKey) {
+            Iterable<ResolvedInventoryInquiry> resolvedItems) {
         if (!tree.nodes().containsKey("item_hint")) return tree;
         DialogueNode template = tree.getNode("item_hint");
         List<DialogueOption> inquiryOptions = template.options().stream().filter(option -> !isLegacyLeave(option)).toList();
         for (ResolvedInventoryInquiry entry : resolvedItems) {
             String nodeId = inventoryNodeId(entry.itemId(), entry.presentationKey());
             tree.nodes().put(nodeId, new DialogueNode(nodeId, entry.lines(), inquiryOptions));
-        }
-        if (hasUnsupported) {
-            tree.nodes().put(UNKNOWN_NODE_ID, new DialogueNode(UNKNOWN_NODE_ID,
-                    List.of("hemomancy." + speakerKey + ".item_inquiry.unknown"), inquiryOptions));
         }
         return tree;
     }
@@ -118,17 +111,13 @@ public final class DialogueItemInquiryNodes {
     }
 
     static ResourceLocation inventoryItemId(String nodeId) {
-        if (!nodeId.startsWith(INVENTORY_NODE_PREFIX) || UNKNOWN_NODE_ID.equals(nodeId)) return null;
+        if (!nodeId.startsWith(INVENTORY_NODE_PREFIX)) return null;
         String value = nodeId.substring(INVENTORY_NODE_PREFIX.length());
         int hash = value.indexOf('#');
         if (hash >= 0) value = value.substring(0, hash);
         int separator = value.indexOf('/');
         if (separator <= 0 || separator == value.length() - 1) return null;
         return ResourceLocation.tryBuild(value.substring(0, separator), value.substring(separator + 1));
-    }
-
-    static boolean isUnknownNode(String nodeId) {
-        return UNKNOWN_NODE_ID.equals(nodeId);
     }
 
     private static boolean isLegacyLeave(DialogueOption option) {
