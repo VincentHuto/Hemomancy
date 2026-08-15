@@ -82,6 +82,7 @@ public class ChamberOfWillManager extends SavedData {
     public static final int CHAMBER_SPACING = 256;
     public static final int FLOOR_Y = 2;
     public static final int BASE_ROOM_RADIUS = 3;
+    public static final int MAX_ROOM_RADIUS = 10;
     public static final int ROOM_HEIGHT = 5;
     public static final int MAX_ROOM_TIER = 3;
 
@@ -92,6 +93,7 @@ public class ChamberOfWillManager extends SavedData {
     private final Map<UUID, ChamberState> chamberStates = new HashMap<>();
     private final Map<UUID, ResourceLocation> skyThemeOverrides = new HashMap<>();
     private final Set<UUID> unrestrictedSkyThemeOverrides = new HashSet<>();
+    private final Map<UUID, Integer> chamberRadiusOverrides = new HashMap<>();
     private final Map<UUID, Integer> builtRadii = new HashMap<>();
 
     public ChamberOfWillManager() {
@@ -197,7 +199,7 @@ public class ChamberOfWillManager extends SavedData {
     }
 
     public int radiusFor(UUID owner) {
-        return radiusForTier(getChamberState(owner).tier());
+        return chamberRadiusOverrides.getOrDefault(owner, radiusForTier(getChamberState(owner).tier()));
     }
 
     public static int radiusForTier(int tier) {
@@ -214,6 +216,34 @@ public class ChamberOfWillManager extends SavedData {
 
     public static boolean isKnownSkyTheme(ResourceLocation theme) {
         return COMMAND_SKY_THEMES.contains(theme);
+    }
+
+    public int setChamberRadiusOverride(ServerPlayer player, int radius) {
+        int normalized = Math.max(BASE_ROOM_RADIUS, Math.min(MAX_ROOM_RADIUS, radius));
+        chamberRadiusOverrides.put(player.getUUID(), normalized);
+        setDirty();
+        refreshRoomAfterRadiusChange(player);
+        return normalized;
+    }
+
+    public int clearChamberRadiusOverride(ServerPlayer player) {
+        chamberRadiusOverrides.remove(player.getUUID());
+        refreshProgressionState(player);
+        setDirty();
+        refreshRoomAfterRadiusChange(player);
+        return radiusFor(player.getUUID());
+    }
+
+    private void refreshRoomAfterRadiusChange(ServerPlayer player) {
+        if (player.level() instanceof ServerLevel chamberLevel
+                && chamberLevel.dimension().equals(CHAMBER_OF_WILL)) {
+            RoomGrowth growth = ensureRoom(chamberLevel, player.getUUID());
+            if (growth.expandedFromExistingRoom()) {
+                playExpansionEffects(chamberLevel,
+                        cellPos(idFor(player.getUUID())), growth);
+            }
+        }
+        syncTo(player);
     }
 
     public ResourceLocation setSkyThemeOverride(ServerPlayer player, ResourceLocation skyTheme) {
@@ -349,7 +379,8 @@ public class ChamberOfWillManager extends SavedData {
         ServerPlayer onlineOwner = level.getServer().getPlayerList().getPlayer(owner);
         int requestedRadius = onlineOwner == null
                 ? Math.max(BASE_ROOM_RADIUS, builtRadii.getOrDefault(owner, BASE_ROOM_RADIUS))
-                : ChamberVisitRules.radiusForDegree(HemoCapabilityAccess.getPlayerDegreeNumber(onlineOwner));
+                : chamberRadiusOverrides.getOrDefault(owner,
+                        ChamberVisitRules.radiusForDegree(HemoCapabilityAccess.getPlayerDegreeNumber(onlineOwner)));
         int previousRadius = builtRadii.getOrDefault(owner, -1);
         int radius = ChamberExpansionRules.nextBuiltRadius(previousRadius, requestedRadius);
 
@@ -644,6 +675,15 @@ public class ChamberOfWillManager extends SavedData {
         }
         tag.put("unrestrictedSkyThemeOverrides", unrestrictedOverrideList);
 
+        ListTag radiusOverrideList = new ListTag();
+        chamberRadiusOverrides.forEach((uuid, radius) -> {
+            CompoundTag entry = new CompoundTag();
+            entry.putUUID("uuid", uuid);
+            entry.putInt("radius", radius);
+            radiusOverrideList.add(entry);
+        });
+        tag.put("chamberRadiusOverrides", radiusOverrideList);
+
         ListTag builtRadiusList = new ListTag();
         builtRadii.forEach((uuid, radius) -> {
             CompoundTag entry = new CompoundTag();
@@ -694,6 +734,12 @@ public class ChamberOfWillManager extends SavedData {
 
         for (Tag t : tag.getList("unrestrictedSkyThemeOverrides", Tag.TAG_COMPOUND)) {
             manager.unrestrictedSkyThemeOverrides.add(((CompoundTag) t).getUUID("uuid"));
+        }
+
+        for (Tag t : tag.getList("chamberRadiusOverrides", Tag.TAG_COMPOUND)) {
+            CompoundTag entry = (CompoundTag) t;
+            manager.chamberRadiusOverrides.put(entry.getUUID("uuid"),
+                    Math.max(BASE_ROOM_RADIUS, Math.min(MAX_ROOM_RADIUS, entry.getInt("radius"))));
         }
 
         for (Tag t : tag.getList("builtRadii", Tag.TAG_COMPOUND)) {

@@ -438,7 +438,6 @@ public class HemoCommand {
 												.suggests((ctx, builder) -> {
 											for (ResourceLocation id : ChamberOfWillManager.commandSkyThemes()) {
 														builder.suggest(id.getPath());
-														builder.suggest(id.toString());
 													}
 													return builder.buildFuture();
 												})
@@ -452,9 +451,33 @@ public class HemoCommand {
 								.then(Commands.literal("reset")
 										.executes(ctx -> resetChamberTheme(ctx.getSource(),
 												ctx.getSource().getPlayerOrException()))
+								.then(Commands.argument("player", EntityArgument.player())
+										.executes(ctx -> resetChamberTheme(ctx.getSource(),
+												EntityArgument.getPlayer(ctx, "player"))))))
+						.then(Commands.literal("size")
+								.then(Commands.literal("set")
+										.then(Commands.argument("radius", IntegerArgumentType.integer(
+												ChamberOfWillManager.BASE_ROOM_RADIUS, ChamberOfWillManager.MAX_ROOM_RADIUS))
+												.suggests((ctx, builder) -> {
+													for (int radius = ChamberOfWillManager.BASE_ROOM_RADIUS;
+															radius <= ChamberOfWillManager.MAX_ROOM_RADIUS; radius++) {
+														builder.suggest(radius);
+													}
+													return builder.buildFuture();
+												})
+												.executes(ctx -> setChamberSize(ctx.getSource(),
+														ctx.getSource().getPlayerOrException(),
+														IntegerArgumentType.getInteger(ctx, "radius")))
+												.then(Commands.argument("player", EntityArgument.player())
+														.executes(ctx -> setChamberSize(ctx.getSource(),
+																EntityArgument.getPlayer(ctx, "player"),
+																IntegerArgumentType.getInteger(ctx, "radius"))))))
+								.then(Commands.literal("reset")
+										.executes(ctx -> resetChamberSize(ctx.getSource(),
+												ctx.getSource().getPlayerOrException()))
 										.then(Commands.argument("player", EntityArgument.player())
-												.executes(ctx -> resetChamberTheme(ctx.getSource(),
-														EntityArgument.getPlayer(ctx, "player")))))))
+										.executes(ctx -> resetChamberSize(ctx.getSource(),
+												EntityArgument.getPlayer(ctx, "player")))))))
 
 				.then(Commands.literal("will")
 						.then(Commands.literal("ambush")
@@ -1829,6 +1852,28 @@ public class HemoCommand {
 				.append(Component.literal(player.getName().getString()).withStyle(ChatFormatting.GOLD))
 				.append(Component.literal(" reset to progression theme "))
 				.append(Component.literal(theme.toString()).withStyle(ChatFormatting.DARK_RED))
+				.append(Component.literal(".")),
+				true);
+		return 1;
+	}
+
+	private static int setChamberSize(CommandSourceStack source, ServerPlayer player, int radius) {
+		int size = ChamberOfWillManager.get(source.getServer()).setChamberRadiusOverride(player, radius);
+		source.sendSuccess(() -> Component.literal("Chamber size override for ")
+				.append(Component.literal(player.getName().getString()).withStyle(ChatFormatting.GOLD))
+				.append(Component.literal(" set to radius "))
+				.append(Component.literal(Integer.toString(size)).withStyle(ChatFormatting.DARK_RED))
+				.append(Component.literal(" (" + (size * 2 + 1) + "x" + (size * 2 + 1) + " platform).")),
+				true);
+		return 1;
+	}
+
+	private static int resetChamberSize(CommandSourceStack source, ServerPlayer player) {
+		int radius = ChamberOfWillManager.get(source.getServer()).clearChamberRadiusOverride(player);
+		source.sendSuccess(() -> Component.literal("Chamber size override for ")
+				.append(Component.literal(player.getName().getString()).withStyle(ChatFormatting.GOLD))
+				.append(Component.literal(" reset to progression radius "))
+				.append(Component.literal(Integer.toString(radius)).withStyle(ChatFormatting.DARK_RED))
 				.append(Component.literal(".")),
 				true);
 		return 1;

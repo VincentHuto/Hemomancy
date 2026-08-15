@@ -8,6 +8,7 @@ final class EquippedMorphlingOverlayPlacement {
 	static final int FEEDING_FRAME_COUNT = 6;
 	static final int FEEDING_TEXTURE_HEIGHT = ATTACHED_SIZE * FEEDING_FRAME_COUNT;
 	private static final float FEEDING_FRAME_SECONDS = 0.18f;
+	private static final float FEEDING_PULSE_CYCLE_SECONDS = 0.9f;
 
 	private EquippedMorphlingOverlayPlacement() {
 	}
@@ -35,8 +36,32 @@ final class EquippedMorphlingOverlayPlacement {
 	}
 
 	static int feedingFrame(float timeSeconds) {
+		return feedingFrame(timeSeconds, true);
+	}
+
+	static int feedingFrame(float timeSeconds, boolean animationEnabled) {
+		if (!animationEnabled) {
+			return 0;
+		}
 		int elapsedFrames = (int) Math.floor(timeSeconds / FEEDING_FRAME_SECONDS);
 		return Math.floorMod(elapsedFrames, FEEDING_FRAME_COUNT);
+	}
+
+	static float feedingPulseScale(float timeSeconds) {
+		float phase = timeSeconds
+				- (float) Math.floor(timeSeconds / FEEDING_PULSE_CYCLE_SECONDS) * FEEDING_PULSE_CYCLE_SECONDS;
+		float primaryBeat = heartbeatPulse(phase, 0.08f, 0.032f, 0.045f);
+		float secondaryBeat = heartbeatPulse(phase, 0.21f, 0.018f, 0.035f);
+		return 1.0f + primaryBeat + secondaryBeat;
+	}
+
+	static float morphlingRenderScale(float configuredScale, float timeSeconds) {
+		return configuredScale * feedingPulseScale(timeSeconds);
+	}
+
+	private static float heartbeatPulse(float phase, float center, float amplitude, float width) {
+		float distance = (phase - center) / width;
+		return amplitude * (float) Math.exp(-(distance * distance));
 	}
 
 	static float animationTimeSeconds(long gameTime, float partialTicks) {

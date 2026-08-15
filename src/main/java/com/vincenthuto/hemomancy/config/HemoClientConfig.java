@@ -6,6 +6,8 @@ public class HemoClientConfig {
 
 	public static ModConfigSpec.IntValue HUD_LOCATION;
 	public static ModConfigSpec.EnumValue<MorphlingHudMode> MORPHLING_HUD_MODE;
+	public static ModConfigSpec.BooleanValue RENDER_MORPHLING_FEEDING_ANIMATION;
+	public static ModConfigSpec.DoubleValue MORPHLING_HUD_SCALE;
 	public static ModConfigSpec.BooleanValue USE_COOLDOWN_VIGNETTE;
 	public static ModConfigSpec.BooleanValue RENDER_CROWN_POMES_AS_ITEMS;
 	public static ModConfigSpec.BooleanValue USE_TEXTURED_DIALOGUE_STYLE;
@@ -45,6 +47,14 @@ public class HemoClientConfig {
 	MORPHLING_HUD_MODE = CLIENT_BUILDER
 		.comment("Equipped morphling display: ATTACHED uses the large siphoning pose, LEGACY_ICON uses the item sprite, and OFF hides it.")
 		.defineEnum("morphlingHudMode", MorphlingHudMode.ATTACHED);
+
+	RENDER_MORPHLING_FEEDING_ANIMATION = CLIENT_BUILDER
+		.comment("Animate the equipped morphling feeding pose. Disable to keep the first animation frame displayed.")
+		.define("renderMorphlingFeedingAnimation", false);
+
+	MORPHLING_HUD_SCALE = CLIENT_BUILDER
+		.comment("Scale the attached Morphling render around its current center. 1.0 keeps the default size and placement.")
+		.defineInRange("morphlingHudScale", 1.0D, 0.25D, 4.0D);
 
 	USE_COOLDOWN_VIGNETTE = CLIENT_BUILDER
 		.comment("Render cooldowns as full-screen vignette overlays. If false, cooldowns render as compact numerical timers beside the relevant HUD gauge.")

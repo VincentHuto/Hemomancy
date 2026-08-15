@@ -12,10 +12,6 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemStack;
 
-/**
- * HUD overlay that displays the player's currently equipped morphling
- * beside the blood volume bar.
- */
 public class EquippedMorphlingOverlay {
 
 	public static EquippedMorphlingOverlay instance;
@@ -57,6 +53,8 @@ public class EquippedMorphlingOverlay {
 
 	private void renderBondMeter(GuiGraphics gfx, ItemStack equipped, int x, int y) {
 		double required = MorphlingItem.requiredBondingBlood(equipped);
+		gfx.pose().pushPose();
+		gfx.pose().translate(0,-62,0);
 		if (!MorphlingItem.isPassiveUpkeepEnabled() || required <= 0.0D
 				|| MorphlingItem.getMaturityLevel(equipped) >= 4) {
 			return;
@@ -64,12 +62,13 @@ public class EquippedMorphlingOverlay {
 		double absorbed = Math.min(required, MorphlingItem.getBondingBlood(equipped));
 		int width = 32;
 		int filled = (int) Math.round(width * absorbed / required);
-		gfx.fill(x - 1, y - 1, x + width + 1, y + 4, 0xD0100305);
+		gfx.fill(x - 1, y - 1, x + width + 1, y +4, 0xD0100305);
 		gfx.fill(x, y, x + width, y + 3, 0xC030080C);
 		gfx.fill(x, y, x + filled, y + 3, 0xE0B51E2B);
 		String text = String.format("%.0f/%.0f", absorbed, required);
 		gfx.drawString(Minecraft.getInstance().font, text, x + (width - Minecraft.getInstance().font.width(text)) / 2,
 				y + 5, 0xFFE7B8B8, true);
+		gfx.pose().popPose();
 	}
 
 	private void renderLegacyIcon(GuiGraphics gfx, ItemStack equipped, boolean barOnLeft,
@@ -83,12 +82,26 @@ public class EquippedMorphlingOverlay {
 			boolean mirror, float time) {
 		ResourceLocation texture = Hemomancy.rloc("textures/gui/morphling_overlay/" + visual.textureName() + ".png");
 		EquippedMorphlingOverlayPlacement.SpriteBlit blit = EquippedMorphlingOverlayPlacement.spriteBlit(mirror);
-		int frameV = EquippedMorphlingOverlayPlacement.feedingFrame(time)
+		int frameV = EquippedMorphlingOverlayPlacement.feedingFrame(time,
+				HemoClientConfig.RENDER_MORPHLING_FEEDING_ANIMATION.get())
 				* EquippedMorphlingOverlayPlacement.ATTACHED_SIZE;
+		float centerX = x + EquippedMorphlingOverlayPlacement.ATTACHED_SIZE * 0.5f;
+		float centerY = y + EquippedMorphlingOverlayPlacement.ATTACHED_SIZE * 0.5f;
+		float renderScale = EquippedMorphlingOverlayPlacement.morphlingRenderScale(
+				0.5f, time);
+		gfx.pose().pushPose();
+
+		gfx.pose().translate(centerX, centerY, 0.0f);
+		gfx.pose().scale(renderScale, renderScale, 1.0f);
+		gfx.pose().translate(-centerX, -centerY, 0.0f);
+
 		gfx.blit(texture, x, y, blit.width(), EquippedMorphlingOverlayPlacement.ATTACHED_SIZE,
 				blit.uOffset(), frameV, blit.uWidth(), EquippedMorphlingOverlayPlacement.ATTACHED_SIZE,
 				EquippedMorphlingOverlayPlacement.ATTACHED_SIZE,
 				EquippedMorphlingOverlayPlacement.FEEDING_TEXTURE_HEIGHT);
+
+		gfx.pose().popPose();
+
 	}
 
 	private void renderPrimalMotes(GuiGraphics gfx, int x, int y, float time, int color) {

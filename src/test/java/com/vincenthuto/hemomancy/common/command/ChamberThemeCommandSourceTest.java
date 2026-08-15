@@ -26,6 +26,24 @@ public final class ChamberThemeCommandSourceTest {
 		main(new String[0]);
 	}
 
+	@Test
+	void chamberSizeIsRegisteredBesideTheme() throws IOException {
+		String command = Files.readString(COMMAND).replace("\r\n", "\n");
+		int chamber = command.indexOf("Commands.literal(\"chamber\")");
+		int theme = command.indexOf("Commands.literal(\"theme\")", chamber);
+		int size = command.indexOf("Commands.literal(\"size\")", chamber);
+		if (chamber < 0 || theme < 0 || size < 0) {
+			throw new AssertionError("chamber command branches are missing");
+		}
+
+		int themeDepth = parenthesisDepthAt(command, theme);
+		int sizeDepth = parenthesisDepthAt(command, size);
+		if (sizeDepth != themeDepth) {
+			throw new AssertionError("size must be a direct child of chamber beside theme: theme depth "
+					+ themeDepth + ", size depth " + sizeDepth);
+		}
+	}
+
 	public static void main(String[] args) throws IOException {
 		String command = Files.readString(COMMAND).replace("\r\n", "\n");
 		String manager = Files.readString(MANAGER).replace("\r\n", "\n");
@@ -43,6 +61,9 @@ public final class ChamberThemeCommandSourceTest {
 		assertContains("command exposes theme previous", command, "Commands.literal(\"previous\")");
 		assertContains("command exposes theme set", command, "Commands.literal(\"set\")");
 		assertContains("command exposes theme reset", command, "Commands.literal(\"reset\")");
+		assertContains("command exposes chamber size", command, "Commands.literal(\"size\")");
+		assertContains("command exposes chamber size set", command, "setChamberSize");
+		assertContains("command exposes chamber size reset", command, "resetChamberSize");
 		assertContains("command cycles executor theme", commandCompact,
 				"cycleChamberTheme(ctx.getSource(), ctx.getSource().getPlayerOrException(), 1)");
 		assertContains("command supports explicit target", commandCompact,
@@ -53,6 +74,8 @@ public final class ChamberThemeCommandSourceTest {
 				"resetChamberTheme(ctx.getSource(), ctx.getSource().getPlayerOrException())");
 		assertContains("command suggests registered themes", command,
 				"ChamberOfWillManager.commandSkyThemes()");
+		assertNotContains("command does not suggest namespaced theme IDs", command,
+				"builder.suggest(id.toString())");
 
 		assertContains("manager keeps stable theme order", manager, "ORDERED_SKY_THEMES");
 		assertContains("manager command theme order includes mnemonic lowtide", manager, "mnemonic_lowtide");
@@ -94,9 +117,20 @@ public final class ChamberThemeCommandSourceTest {
 		assertContains("manager applies override during refresh", manager, "applySkyThemeOverride");
 		assertContains("manager persists overrides", manager, "tag.put(\"skyThemeOverrides\", overrideList)");
 		assertContains("manager loads overrides", manager, "tag.getList(\"skyThemeOverrides\", Tag.TAG_COMPOUND)");
+		assertContains("manager stores chamber size overrides", manager, "chamberRadiusOverrides");
+		assertContains("manager sets chamber size overrides", manager, "setChamberRadiusOverride");
+		assertContains("manager clears chamber size overrides", manager, "clearChamberRadiusOverride");
+		assertContains("manager persists chamber size overrides", manager,
+				"tag.put(\"chamberRadiusOverrides\", radiusOverrideList)");
+		assertContains("manager loads chamber size overrides", manager,
+				"tag.getList(\"chamberRadiusOverrides\", Tag.TAG_COMPOUND)");
 
 		assertContains("reference documents testing command", reference, "/hemo chamber theme cycle");
 		assertContains("reference documents reset behavior", reference, "reset` clears the override");
+		assertContains("reference documents chamber size set", reference,
+				"/hemo chamber size set <radius> [player]");
+		assertContains("reference documents chamber size reset", reference,
+				"/hemo chamber size reset [player]");
 	}
 
 	private static void assertContains(String label, String text, String expected) {
@@ -105,7 +139,22 @@ public final class ChamberThemeCommandSourceTest {
 		}
 	}
 
+	private static void assertNotContains(String label, String text, String unexpected) {
+		if (text.contains(unexpected)) {
+			throw new AssertionError(label + ": found " + unexpected);
+		}
+	}
+
 	private static String compact(String text) {
 		return text.replaceAll("\\s+", " ");
+	}
+
+	private static int parenthesisDepthAt(String text, int end) {
+		int depth = 0;
+		for (int i = 0; i < end; i++) {
+			if (text.charAt(i) == '(') depth++;
+			if (text.charAt(i) == ')') depth--;
+		}
+		return depth;
 	}
 }
