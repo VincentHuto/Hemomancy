@@ -33,13 +33,14 @@ public final class EquippedMorphlingOverlayTest {
 		legacyIconPlacementRemainsAvailable();
 		attachedMorphlingGripsHalfwayAcrossTheBloodBarEdge();
 		mirroredSpriteKeepsFrontFacingGeometryAndReversesUvs();
-		feedingAnimationAdvancesThroughThreeFramesAndLoops();
+		feedingAnimationAdvancesThroughSixFramesAndLoops();
 		stableRenderClockAdvancesWithPartialTicks();
 		bloodOverlayUsesStableRenderClock();
 		foxfireItemUsesLumenlaceHudIdentity();
 		foxfireItemModelUsesLumenlaceTexture();
 		lumenlacePaletteCarriesBlueAndGoldNeuralSignals();
 		lumenlaceFramesHangFromAttachmentSide();
+		lumenlaceIntermediateFramesKeepAuthoredCoreIntact();
 		canonicalStrainsHaveCompleteHudVisuals();
 		canonicalStrainsAnimateTheirBodiesInsteadOfTranslatingTheWholeSprite();
 		canonicalStrainsMoveAnchoredPixelsWithTheirBodies();
@@ -82,13 +83,19 @@ public final class EquippedMorphlingOverlayTest {
 		assertEquals("mirrored u direction is reversed", -48, mirrored.uWidth());
 	}
 
-	private static void feedingAnimationAdvancesThroughThreeFramesAndLoops() {
+	private static void feedingAnimationAdvancesThroughSixFramesAndLoops() {
 		assertEquals("animation starts at frame zero", 0,
 				EquippedMorphlingOverlayPlacement.feedingFrame(0.0f));
 		assertEquals("animation reaches frame one", 1,
+				EquippedMorphlingOverlayPlacement.feedingFrame(0.08f));
+		assertEquals("animation reaches frame two", 2,
 				EquippedMorphlingOverlayPlacement.feedingFrame(0.16f));
-		assertEquals("animation reaches final frame", 2,
+		assertEquals("animation reaches frame three", 3,
+				EquippedMorphlingOverlayPlacement.feedingFrame(0.24f));
+		assertEquals("animation reaches frame four", 4,
 				EquippedMorphlingOverlayPlacement.feedingFrame(0.32f));
+		assertEquals("animation reaches frame five", 5,
+				EquippedMorphlingOverlayPlacement.feedingFrame(0.40f));
 		assertEquals("animation loops", 0,
 				EquippedMorphlingOverlayPlacement.feedingFrame(0.48f));
 	}
@@ -156,7 +163,7 @@ public final class EquippedMorphlingOverlayTest {
 	private static void lumenlaceFramesHangFromAttachmentSide() throws Exception {
 		MorphlingHudVisuals.Visual visual = MorphlingHudVisuals.forItemPath("morphling_foxfire");
 		BufferedImage image = ImageIO.read(TEXTURE_ROOT.resolve(visual.textureName() + ".png").toFile());
-		for (int frame = 0; frame < 3; frame++) {
+		for (int frame = 0; frame < 6; frame++) {
 			int minX = image.getWidth();
 			int maxX = -1;
 			for (int y = 0; y < 48; y++) {
@@ -170,6 +177,22 @@ public final class EquippedMorphlingOverlayTest {
 			if (minX < 14 || maxX != 47) {
 				throw new AssertionError("Lumenlace frame must hang from the attachment side: frame " + frame
 						+ " bounds " + minX + ".." + maxX);
+			}
+		}
+	}
+
+	private static void lumenlaceIntermediateFramesKeepAuthoredCoreIntact() throws Exception {
+		MorphlingHudVisuals.Visual visual = MorphlingHudVisuals.forItemPath("morphling_foxfire");
+		BufferedImage image = ImageIO.read(TEXTURE_ROOT.resolve(visual.textureName() + ".png").toFile());
+		for (int authoredFrame = 0; authoredFrame < 6; authoredFrame += 2) {
+			int intermediateFrame = authoredFrame + 1;
+			for (int y = 16; y < 32; y++) {
+				for (int x = 22; x < 36; x++) {
+					if (image.getRGB(x, y + authoredFrame * 48) != image.getRGB(x, y + intermediateFrame * 48)) {
+						throw new AssertionError("Lumenlace in-between frame must keep its authored center pose: "
+								+ intermediateFrame + " at " + x + "," + y);
+					}
+				}
 			}
 		}
 	}
@@ -191,7 +214,7 @@ public final class EquippedMorphlingOverlayTest {
 			}
 			BufferedImage image = ImageIO.read(texture.toFile());
 			assertEquals("texture width for " + strain, 48, image.getWidth());
-			assertEquals("three-frame texture height for " + strain, 48 * 3, image.getHeight());
+			assertEquals("six-frame texture height for " + strain, 48 * 6, image.getHeight());
 			int transparent = 0;
 			int visible = 0;
 			for (int y = 0; y < image.getHeight(); y++) {
@@ -201,7 +224,7 @@ public final class EquippedMorphlingOverlayTest {
 					if (alpha >= 128) visible++;
 				}
 			}
-			if (transparent < 48 * 48 * 3 / 3 || visible < 64 * 3) {
+			if (transparent < 48 * 48 * 6 / 3 || visible < 64 * 6) {
 				throw new AssertionError("HUD texture needs transparent space and a readable subject: " + texture);
 			}
 		}
@@ -210,8 +233,10 @@ public final class EquippedMorphlingOverlayTest {
 	private static void canonicalStrainsAnimateTheirBodiesInsteadOfTranslatingTheWholeSprite() throws Exception {
 		for (String strain : STRAINS) {
 			MorphlingHudVisuals.Visual visual = MorphlingHudVisuals.forItemPath(strain);
+			// Lumenlace holds each authored core pose for its in-between slot to avoid a torn blend.
+			if ("lumenlace".equals(visual.textureName())) continue;
 			BufferedImage image = ImageIO.read(TEXTURE_ROOT.resolve(visual.textureName() + ".png").toFile());
-			for (int frame = 1; frame < 3; frame++) {
+			for (int frame = 1; frame < 6; frame++) {
 				if (isRigidTranslationOfFirstFrame(image, frame)) {
 					throw new AssertionError("Morphling frame must deform internally, not translate rigidly: "
 							+ strain + " frame " + frame);
@@ -226,7 +251,7 @@ public final class EquippedMorphlingOverlayTest {
 			if ("lumenlace".equals(visual.textureName())) continue;
 			BufferedImage image = ImageIO.read(TEXTURE_ROOT.resolve(visual.textureName() + ".png").toFile());
 			List<AnimationRegion> animatedRegions = FEEDING_ANIMATION_REGIONS.get(visual.textureName());
-			for (int frame = 1; frame < 3; frame++) {
+			for (int frame = 1; frame < 6; frame++) {
 				int changedOutsideRegion = 0;
 				for (int y = 0; y < 48; y++) {
 					for (int x = 0; x < 48; x++) {

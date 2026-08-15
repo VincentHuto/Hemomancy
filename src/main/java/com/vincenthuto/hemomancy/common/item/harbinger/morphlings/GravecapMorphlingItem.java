@@ -72,7 +72,7 @@ public class GravecapMorphlingItem extends MorphlingItem {
 		// Base effect: Mycorrhizal Mending (health regen, amplifier = maturity)
 		if (!player.hasEffect(EffectInit.mycorrhizal_mending)) {
 			player.addEffect(new MobEffectInstance(EffectInit.mycorrhizal_mending,
-					100, amplifier, false, true, true));
+					100, amplifier, false, false, true));
 		}
 
 		// Mature (3+): Mycorrhizal Network — heal nearby allied players

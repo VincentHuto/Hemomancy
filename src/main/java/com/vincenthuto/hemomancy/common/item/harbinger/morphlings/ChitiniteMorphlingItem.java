@@ -67,7 +67,7 @@ public class ChitiniteMorphlingItem extends MorphlingItem {
 		tag.putFloat("PrimalCarapaceStored", 0.0f);
 		itemStack.set(DataComponents.CUSTOM_DATA, CustomData.of(tag));
 		playerIn.addEffect(new MobEffectInstance(MobEffects.DAMAGE_RESISTANCE,
-				PRIMAL_CARAPACE_DURATION, 2, true, true, true));
+				PRIMAL_CARAPACE_DURATION, 2, true, false, true));
 		playerIn.setAbsorptionAmount(Math.min(playerIn.getAbsorptionAmount() + 8.0f, 16.0f));
 	}
 
@@ -79,7 +79,7 @@ public class ChitiniteMorphlingItem extends MorphlingItem {
 		int amplifier = Math.min(maturity, 2);
 		if (!player.hasEffect(EffectInit.chitinous_bulwark)) {
 			player.addEffect(new MobEffectInstance(EffectInit.chitinous_bulwark,
-					100, maturity, false, true, true));
+					100, maturity, false, false, true));
 		}
 
 		// Mature (3+): Ablative Plating — periodically grant Absorption hearts

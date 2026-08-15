@@ -56,7 +56,7 @@ public class WinterShroudMorphlingItem extends MorphlingItem {
 
 		if (!player.hasEffect(EffectInit.venomous_resilience)) {
 			player.addEffect(new MobEffectInstance(EffectInit.venomous_resilience,
-					100, amplifier, false, true, true));
+					100, amplifier, false, false, true));
 		}
 
 		boolean still = player.getDeltaMovement().lengthSqr() <= FoxfireCamouflageRules.MAX_STILL_DELTA_SQR
@@ -93,7 +93,7 @@ public class WinterShroudMorphlingItem extends MorphlingItem {
 				player.addEffect(new MobEffectInstance(MobEffects.INVISIBILITY,
 						80, 0, true, false, true));
 				player.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SPEED,
-						100, 1, true, true, true));
+						100, 1, true, false, true));
 				player.addEffect(new MobEffectInstance(MobEffects.DAMAGE_RESISTANCE,
 						60, 1, true, false, true));
 				player.invulnerableTime = Math.max(player.invulnerableTime, 20);
@@ -117,9 +117,9 @@ public class WinterShroudMorphlingItem extends MorphlingItem {
 		player.addEffect(new MobEffectInstance(MobEffects.DAMAGE_RESISTANCE,
 				220, 2, true, false, true));
 		player.addEffect(new MobEffectInstance(MobEffects.REGENERATION,
-				180, 1, true, true, true));
+				180, 1, true, false, true));
 		player.addEffect(new MobEffectInstance(MobEffects.ABSORPTION,
-				260, 2, true, true, true));
+				260, 2, true, false, true));
 		spawnCryptobiosisParticles(player, level);
 		return true;
 	}

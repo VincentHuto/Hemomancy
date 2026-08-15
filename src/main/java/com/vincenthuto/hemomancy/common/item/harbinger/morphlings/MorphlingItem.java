@@ -422,7 +422,7 @@ public class MorphlingItem extends Item implements IMorphling {
 		if (durationTicks <= 0) return;
 		int cappedAmplifier = Math.max(0, Math.min(amplifier, 2));
 		player.addEffect(new MobEffectInstance(EffectInit.morphic_strain,
-				durationTicks, cappedAmplifier, true, true, true));
+				durationTicks, cappedAmplifier, true, false, true));
 	}
 
 	public static LivingEntity findLookTarget(Player player, double range) {

@@ -73,7 +73,7 @@ public class TickMorphlingItem extends MorphlingItem {
 		// Base effect: Hemorrhagic Venom (AoE damage to nearby hostiles)
 		if (!player.hasEffect(EffectInit.hemorrhagic_venom)) {
 			player.addEffect(new MobEffectInstance(EffectInit.hemorrhagic_venom,
-					100, maturity, false, true, true));
+					100, maturity, false, false, true));
 		}
 
 		// Mature (3+): Blood Fever — attack speed near wounded hostiles
@@ -107,7 +107,7 @@ public class TickMorphlingItem extends MorphlingItem {
 			int armorAmplifier = Math.min(maturity - 2, 2); // Resistance I-III
 			// Use Resistance to simulate armor gain from feeding
 			player.addEffect(new MobEffectInstance(MobEffects.DAMAGE_RESISTANCE,
-					armorDuration, armorAmplifier, true, true, true));
+					armorDuration, armorAmplifier, true, false, true));
 		}
 
 		if (MorphlingItem.isPrimal(stack) && !player.level().isClientSide

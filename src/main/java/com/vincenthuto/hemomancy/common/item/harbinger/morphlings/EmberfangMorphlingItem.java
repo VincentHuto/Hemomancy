@@ -90,7 +90,7 @@ public class EmberfangMorphlingItem extends MorphlingItem {
 		int amplifier = Math.min(MorphlingItem.passiveAmplifier(player, stack, maturity), 2);
 		if (!player.hasEffect(EffectInit.serpentine_guile)) {
 			player.addEffect(new MobEffectInstance(EffectInit.serpentine_guile,
-					100, amplifier, false, true, true));
+					100, amplifier, false, false, true));
 		}
 
 		// Track sneak start time for Ambush Predator (Apex 4)

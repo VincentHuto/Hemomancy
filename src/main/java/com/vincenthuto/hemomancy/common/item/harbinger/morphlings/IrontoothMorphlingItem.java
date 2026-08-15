@@ -73,7 +73,7 @@ public class IrontoothMorphlingItem extends MorphlingItem {
 		if (!MorphlingItem.tryBeginPrimalAbility(playerIn, itemStack, "DeepTremorSense",
 				320.0, 600, 180, 0)) return;
 		playerIn.addEffect(new MobEffectInstance(MobEffects.DIG_SPEED,
-				300, 2, true, true, true));
+				300, 2, true, false, true));
 		playerIn.addEffect(new MobEffectInstance(MobEffects.NIGHT_VISION,
 				320, 0, true, false, true));
 		AABB area = playerIn.getBoundingBox().inflate(30.0);
@@ -109,7 +109,7 @@ public class IrontoothMorphlingItem extends MorphlingItem {
 		// Base effect: Burrower's Instinct (mining speed + underground regen)
 		if (!player.hasEffect(EffectInit.burrowers_instinct)) {
 			player.addEffect(new MobEffectInstance(EffectInit.burrowers_instinct,
-					100, amplifier, false, true, true));
+					100, amplifier, false, false, true));
 		}
 
 		boolean isUnderground = player.getY() < UNDERGROUND_THRESHOLD;
@@ -175,7 +175,7 @@ public class IrontoothMorphlingItem extends MorphlingItem {
 				setLastAbilityTick(stack, "EarthenBulwark", now);
 				int resDuration = 60 + (maturity - 3) * 40; // 3s at Mature, 5s at Apex
 				player.addEffect(new MobEffectInstance(MobEffects.DAMAGE_RESISTANCE,
-						resDuration, 0, true, true, true));
+						resDuration, 0, true, false, true));
 				tryShedUnderground(player, stack, 1);
 			}
 		}

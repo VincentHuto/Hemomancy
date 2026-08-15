@@ -63,7 +63,7 @@ public class FoxfireMorphlingItem extends MorphlingItem {
 
 		if (!player.hasEffect(EffectInit.luminous_dissipation)) {
 			player.addEffect(new MobEffectInstance(EffectInit.luminous_dissipation,
-					100, amplifier, false, true, true));
+					100, amplifier, false, false, true));
 		}
 
 		runCamouflage(player, stack, maturity);
@@ -150,9 +150,9 @@ public class FoxfireMorphlingItem extends MorphlingItem {
 		player.setHealth(Math.max(player.getHealth(), 12.0f));
 		player.invulnerableTime = 80;
 		player.addEffect(new MobEffectInstance(MobEffects.REGENERATION,
-				160, 1, true, true, true));
+				160, 1, true, false, true));
 		player.addEffect(new MobEffectInstance(MobEffects.ABSORPTION,
-				240, 2, true, true, true));
+				240, 2, true, false, true));
 		AABB area = player.getBoundingBox().inflate(8.0);
 		for (Monster mob : player.level().getEntitiesOfClass(Monster.class, area, Monster::isAlive)) {
 			mob.addEffect(new MobEffectInstance(MobEffects.BLINDNESS,

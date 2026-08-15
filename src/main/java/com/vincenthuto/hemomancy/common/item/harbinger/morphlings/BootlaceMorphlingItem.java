@@ -74,7 +74,7 @@ public class BootlaceMorphlingItem extends MorphlingItem {
 
 		if (!player.hasEffect(EffectInit.arachnid_anastomosis)) {
 			player.addEffect(new MobEffectInstance(EffectInit.arachnid_anastomosis,
-					100, amplifier, false, true, true));
+					100, amplifier, false, false, true));
 		}
 
 		if (maturity >= 2) {

@@ -70,7 +70,7 @@ public class DeadmansPurseMorphlingItem extends MorphlingItem {
 		// Base effect: Sanguine Siphon (blood fill, amplifier = maturity)
 		if (!player.hasEffect(EffectInit.sanguine_siphon)) {
 			player.addEffect(new MobEffectInstance(EffectInit.sanguine_siphon,
-					100, amplifier, false, true, true));
+					100, amplifier, false, false, true));
 		}
 
 		// Mature (3+): Blood Transfusion — auto-heal by spending blood volume when low

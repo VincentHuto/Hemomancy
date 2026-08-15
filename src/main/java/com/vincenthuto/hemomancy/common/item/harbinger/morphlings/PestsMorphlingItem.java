@@ -88,7 +88,7 @@ public class PestsMorphlingItem extends MorphlingItem {
 		// Base effect: Verminous Aura (AoE damage, amplifier = maturity)
 		if (!player.hasEffect(EffectInit.verminous_aura)) {
 			player.addEffect(new MobEffectInstance(EffectInit.verminous_aura,
-					100, maturity, false, true, true));
+					100, maturity, false, false, true));
 		}
 
 		// Apex (4): Plague Burst — emergency AoE Wither when health is critically low

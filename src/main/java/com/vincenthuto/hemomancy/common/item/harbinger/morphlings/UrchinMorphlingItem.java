@@ -57,11 +57,11 @@ public class UrchinMorphlingItem extends MorphlingItem {
 		if (!MorphlingItem.tryBeginPrimalAbility(playerIn, itemStack, "ReefheartBastion",
 				480.0, 900, 260, 0)) return;
 		playerIn.addEffect(new MobEffectInstance(MobEffects.DAMAGE_RESISTANCE,
-				220, 2, true, true, true));
+				220, 2, true, false, true));
 		playerIn.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN,
-				220, 4, true, true, true));
+				220, 4, true, false, true));
 		playerIn.addEffect(new MobEffectInstance(MobEffects.DAMAGE_BOOST,
-				220, 0, true, true, true));
+				220, 0, true, false, true));
 		AABB area = playerIn.getBoundingBox().inflate(7.0);
 		for (Monster mob : worldIn.getEntitiesOfClass(Monster.class, area, Monster::isAlive)) {
 			mob.hurt(playerIn.damageSources().thorns(playerIn), 6.0f);
@@ -81,7 +81,7 @@ public class UrchinMorphlingItem extends MorphlingItem {
 		// Base effect: Spined Barricade (armor via attribute, amplifier = maturity)
 		if (!player.hasEffect(EffectInit.spined_barricade)) {
 			player.addEffect(new MobEffectInstance(EffectInit.spined_barricade,
-					100, maturity, false, true, true));
+					100, maturity, false, false, true));
 		}
 
 		// Mature (3+): Tidal Anchor — periodically push away nearby hostile mobs
@@ -135,10 +135,10 @@ public class UrchinMorphlingItem extends MorphlingItem {
 				setLastAbilityTick(stack, "CalcareousShell", now);
 				// Resistance II for 3 seconds
 				player.addEffect(new MobEffectInstance(MobEffects.DAMAGE_RESISTANCE,
-						60, 1, true, true, true));
+						60, 1, true, false, true));
 				// Brief Slowness on self (rooted in place)
 				player.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN,
-						40, 2, true, true, true));
+						40, 2, true, false, true));
 			}
 		}
 	}

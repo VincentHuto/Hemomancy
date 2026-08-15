@@ -71,7 +71,7 @@ public class WitchsEarMorphlingItem extends MorphlingItem {
 
 		if (!player.hasEffect(EffectInit.echoic_perception)) {
 			player.addEffect(new MobEffectInstance(EffectInit.echoic_perception,
-					100, amplifier, false, true, true));
+					100, amplifier, false, false, true));
 		}
 
 		if (maturity >= 3 && !player.onGround() && player.isShiftKeyDown()) {
