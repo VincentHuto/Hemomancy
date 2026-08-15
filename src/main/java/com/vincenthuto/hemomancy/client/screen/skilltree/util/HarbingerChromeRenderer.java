@@ -10,18 +10,24 @@ public final class HarbingerChromeRenderer {
 
 	public static void drawFrame(GuiGraphics gfx, int x, int y, int width, int height,
 			int accent, State state) {
+		ColoredRectBatch batch = new ColoredRectBatch(gfx);
+		drawFrame(batch, x, y, width, height, accent, state);
+		batch.flush();
+	}
+
+	public static void drawFrame(ColoredRectBatch batch, int x, int y, int width, int height,
+			int accent, State state) {
 		Palette palette = palette(accent, state);
-		for (HarbingerChromeGeometry.Segment segment :
-				HarbingerChromeGeometry.frameSegments(x, y, width, height)) {
-			int color = switch (segment.tone()) {
+		HarbingerChromeGeometry.emitFrameSegments(x, y, width, height, (left, top, right, bottom, tone) -> {
+			int color = switch (tone) {
 				case OUTER -> palette.outer();
 				case INNER -> palette.inner();
 				case HIGHLIGHT -> palette.highlight();
 				case SHADOW -> palette.shadow();
 				case STITCH -> palette.stitch();
 			};
-			gfx.fill(segment.left(), segment.top(), segment.right(), segment.bottom(), color);
-		}
+			batch.fill(left, top, right, bottom, color);
+		});
 	}
 
 	private static Palette palette(int accent, State state) {

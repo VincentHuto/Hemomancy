@@ -12,7 +12,7 @@ public final class MorphlingStage4To8SourceTest {
 	}
 
 	public static void main(String[] args) throws Exception {
-		foxfireLeavesContactFlashLane();
+		lumenlaceLeavesContactFlashLane();
 		deadmansPurseUsesBorrowedBloodFeedBanking();
 		winterShroudUsesCryptobiosisLastRite();
 		bootlaceUsesProximityWebNestInsteadOfHurtCocoon();
@@ -22,12 +22,12 @@ public final class MorphlingStage4To8SourceTest {
 		oldAnimalLanguageIsNotLeftInPlayerFacingMorphlingCode();
 	}
 
-	private static void foxfireLeavesContactFlashLane() throws IOException {
-		String foxfire = read("com/vincenthuto/hemomancy/common/item/harbinger/morphlings/FoxfireMorphlingItem.java");
-		assertContains("foxfire camouflage helper", foxfire, "FoxfireCamouflageRules");
-		assertContains("foxfire tracks stillness", foxfire, "CamouflageStillSince");
-		assertDoesNotContain("foxfire removed contact flash", foxfire, "ChromatophoreFlash");
-		assertDoesNotContain("foxfire no attacker retaliation", foxfire, "attacker.addEffect");
+	private static void lumenlaceLeavesContactFlashLane() throws IOException {
+		String lumenlace = read("com/vincenthuto/hemomancy/common/item/harbinger/morphlings/LumenlaceMorphlingItem.java");
+		assertContains("Lumenlace camouflage helper", lumenlace, "LumenlaceCamouflageRules");
+		assertContains("Lumenlace tracks stillness", lumenlace, "CamouflageStillSince");
+		assertDoesNotContain("Lumenlace removed contact flash", lumenlace, "ChromatophoreFlash");
+		assertDoesNotContain("Lumenlace no attacker retaliation", lumenlace, "attacker.addEffect");
 	}
 
 	private static void deadmansPurseUsesBorrowedBloodFeedBanking() throws IOException {
@@ -103,7 +103,7 @@ public final class MorphlingStage4To8SourceTest {
 	private static void oldAnimalLanguageIsNotLeftInPlayerFacingMorphlingCode() throws IOException {
 		String combined = read("com/vincenthuto/hemomancy/common/item/harbinger/morphlings/BootlaceMorphlingItem.java")
 				+ read("com/vincenthuto/hemomancy/common/item/harbinger/morphlings/DeadmansPurseMorphlingItem.java")
-				+ read("com/vincenthuto/hemomancy/common/item/harbinger/morphlings/FoxfireMorphlingItem.java")
+				+ read("com/vincenthuto/hemomancy/common/item/harbinger/morphlings/LumenlaceMorphlingItem.java")
 				+ read("com/vincenthuto/hemomancy/common/item/harbinger/morphlings/IrontoothMorphlingItem.java")
 				+ read("com/vincenthuto/hemomancy/common/item/harbinger/morphlings/WinterShroudMorphlingItem.java")
 				+ read("com/vincenthuto/hemomancy/common/item/harbinger/morphlings/WitchsEarMorphlingItem.java");

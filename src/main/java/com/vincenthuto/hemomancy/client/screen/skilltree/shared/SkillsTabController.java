@@ -35,6 +35,7 @@ public class SkillsTabController implements IProgressTab {
 
     private final SkillTraceLayerCache surfaceTraceCache = new SkillTraceLayerCache();
     private final SkillTraceLayerCache deepTraceCache = new SkillTraceLayerCache();
+	private final TraceLayerInvalidation traceInvalidation = new TraceLayerInvalidation();
     private final PanZoomState surfacePanZoom = new PanZoomState();
     private final PanZoomState deepPanZoom = new PanZoomState();
     private final SkillTreeDiveState diveState = new SkillTreeDiveState();
@@ -108,6 +109,7 @@ public class SkillsTabController implements IProgressTab {
 	private void refreshFilteredPositions() {
 		filterPositions(surfaceNodePositions, filteredSurfaceNodePositions, SkillTreeLayer.SURFACE);
 		filterPositions(deepNodePositions, filteredDeepNodePositions, SkillTreeLayer.DEEP);
+		traceInvalidation.markDirty();
 	}
 
 	private void filterPositions(Map<SkillPoint, int[]> source, Map<SkillPoint, int[]> target,
@@ -210,8 +212,10 @@ public class SkillsTabController implements IProgressTab {
         float surfaceAlpha = 1.0f - deepFade;
         float deepAlpha = deepFade;
         PanZoomState deepView = deepRenderPanZoom();
-		surfaceTraceCache.rebuildIfNeeded(filteredSurfaceNodePositions, contentW, contentH, false, SkillTreeLayer.SURFACE);
-		deepTraceCache.rebuildIfNeeded(filteredDeepNodePositions, contentW, contentH, true, SkillTreeLayer.DEEP);
+		if (traceInvalidation.consume(SkillProgressClientCache.revision())) {
+			surfaceTraceCache.rebuildIfNeeded(filteredSurfaceNodePositions, contentW, contentH, false, SkillTreeLayer.SURFACE);
+			deepTraceCache.rebuildIfNeeded(filteredDeepNodePositions, contentW, contentH, true, SkillTreeLayer.DEEP);
+		}
 
         if (surfaceAlpha > 0.01f) surfaceTraceCache.render(gfx, ctx, surfacePanZoom, surfaceAlpha);
         if (deepAlpha > 0.01f) deepTraceCache.render(gfx, ctx, deepView, deepAlpha);
@@ -308,11 +312,13 @@ public class SkillsTabController implements IProgressTab {
         if (alpha <= 0.01f) return;
         float time = animTime;
         int hn = halfNode(view);
+		ColoredRectBatch chromeBatch = new ColoredRectBatch(gfx);
         for (var e : positions.entrySet()) {
             SkillPoint sp = e.getKey();
             int[] pos = e.getValue();
             int nx = sx(ctx, view, pos[0]);
             int ny = sy(ctx, view, pos[1]);
+			if (!isVisible(ctx, nx, ny, hn + 4)) continue;
             boolean degreeLocked = sp.isDegreeLocked(playerDegree);
             EnumNodeShape shape = sp.isToggleable() && SkillProgressClientCache.current().isUnlocked(sp)
 					? EnumNodeShape.DECAGON : sp.getNodeShape();
@@ -328,7 +334,7 @@ public class SkillsTabController implements IProgressTab {
 								? (techniqueEnabled ? 0xFFCD7F32 : 0xFF777B80) : branchColor, alpha);
                         float p = 0.7f + 0.3f * Mth.sin(time * 2f + sp.getId());
 						int ga = (int)((techniqueEnabled ? 40 : 12) * p * alpha);
-						NodeShapeRenderer.drawFill(gfx, shape, nx, ny, hn + 3,
+						drawNodeFill(chromeBatch, shape, nx, ny, hn + 3,
 								withAlpha(techniqueEnabled && sp.isToggleable() ? 0xFF9E1717 : branchColor, ga));
                     }
                     case LOCKED -> {
@@ -339,19 +345,31 @@ public class SkillsTabController implements IProgressTab {
                     default -> border = withAlpha(branchColor, Math.round(0xAA * alpha));
                 }
             }
-            NodeShapeRenderer.drawFill(gfx, shape, nx, ny, hn, fadeColor(COL_NODE_BG, alpha));
-            NodeShapeRenderer.drawOutline(gfx, shape, nx, ny, hn, border);
+            drawNodeFill(chromeBatch, shape, nx, ny, hn, fadeColor(COL_NODE_BG, alpha));
+            drawNodeOutline(chromeBatch, shape, nx, ny, hn, border);
 			if (shape == EnumNodeShape.SQUARE) {
 				boolean hovered = Math.abs(mouseX - nx) <= hn && Math.abs(mouseY - ny) <= hn;
-				HarbingerChromeRenderer.drawFrame(gfx, nx - hn, ny - hn, hn * 2, hn * 2, border,
+				HarbingerChromeRenderer.drawFrame(chromeBatch, nx - hn, ny - hn, hn * 2, hn * 2, border,
 						degreeLocked ? HarbingerChromeRenderer.State.DISABLED
 								: hovered ? HarbingerChromeRenderer.State.HOVERED : HarbingerChromeRenderer.State.IDLE);
 			}
             if (degreeLocked) {
-                NodeShapeRenderer.drawFill(gfx, shape, nx, ny, hn - 1, fadeColor(0xBB000000, alpha));
-                if (view.zoom >= 0.5f) gfx.drawCenteredString(ctx.font(), "?", nx, ny - 4, fadeColor(0xFF111111, alpha));
-                continue;
+				drawNodeFill(chromeBatch, shape, nx, ny, hn - 1, fadeColor(0xBB000000, alpha));
             }
+		}
+		chromeBatch.flush();
+
+		if (view.zoom < 0.5f) return;
+		for (var e : positions.entrySet()) {
+			SkillPoint sp = e.getKey();
+			int[] pos = e.getValue();
+			int nx = sx(ctx, view, pos[0]);
+			int ny = sy(ctx, view, pos[1]);
+			if (!isVisible(ctx, nx, ny, hn + 4)) continue;
+			if (sp.isDegreeLocked(playerDegree)) {
+				gfx.drawCenteredString(ctx.font(), "?", nx, ny - 4, fadeColor(0xFF111111, alpha));
+				continue;
+			}
             if (view.zoom >= 0.5f) {
                 ResourceLocation iconTex = sp.getIconTexture();
                 if (iconTex != null) {
@@ -375,6 +393,27 @@ public class SkillsTabController implements IProgressTab {
             }
         }
     }
+
+	private static boolean isVisible(ProgressScreenContext ctx, int x, int y, int halfExtent) {
+		return ProgressViewportCulling.intersects(x, y, halfExtent,
+				ctx.guiLeft(), ctx.guiTop(), ctx.guiLeft() + ctx.guiWidth(), ctx.guiTop() + ctx.guiHeight());
+	}
+
+	private static void drawNodeFill(ColoredRectBatch batch, EnumNodeShape shape,
+			int cx, int cy, int half, int color) {
+		NodeShapeRenderer.drawFill(batch, shape, cx, cy, half, color);
+	}
+
+	private static void drawNodeOutline(ColoredRectBatch batch, EnumNodeShape shape,
+			int cx, int cy, int half, int color) {
+		NodeShapeRenderer.drawOutline(batch, shape, cx, cy, half, color);
+	}
+
+	@Override
+	public void onClose() {
+		surfaceTraceCache.close();
+		deepTraceCache.close();
+	}
 
     private void drawTooltip(GuiGraphics gfx, ProgressScreenContext ctx, int mouseX, int mouseY) {
         boolean insideGui = mouseX >= ctx.guiLeft() && mouseX < ctx.guiLeft() + ctx.guiWidth()

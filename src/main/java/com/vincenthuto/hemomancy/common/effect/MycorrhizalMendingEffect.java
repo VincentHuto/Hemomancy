@@ -7,13 +7,19 @@ import net.minecraft.world.entity.LivingEntity;
 
 /**
  * A beneficial effect that passively regenerates the player's health over time.
- * Applied by the fungal morphling while it is attached to the player. Each
+ * Applied by the Gravecap Morphling while it is attached to the player. Each
  * tick, the entity heals a small amount that scales with the amplifier.
  */
 public class MycorrhizalMendingEffect extends MobEffect {
+	private final String displayKey;
 
 	public MycorrhizalMendingEffect(MobEffectCategory typeIn, int liquidColorIn) {
+		this(typeIn, liquidColorIn, "effect.hemomancy.mycorrhizal_mending");
+	}
+
+	public MycorrhizalMendingEffect(MobEffectCategory typeIn, int liquidColorIn, String displayKey) {
 		super(typeIn, liquidColorIn);
+		this.displayKey = displayKey;
 	}
 
 	@Override
@@ -27,7 +33,7 @@ public class MycorrhizalMendingEffect extends MobEffect {
 
 	@Override
 	public Component getDisplayName() {
-		return Component.translatable("effect.hemomancy.mycorrhizal_mending");
+		return Component.translatable(displayKey);
 	}
 
 	@Override

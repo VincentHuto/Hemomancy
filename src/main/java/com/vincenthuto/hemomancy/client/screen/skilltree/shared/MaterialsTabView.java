@@ -155,6 +155,7 @@ public final class MaterialsTabView {
 			MaterialAtlasPath path,
 			List<MaterialAtlasNode> nodes,
 			Map<MaterialAtlasNode, int[]> positions,
+			MaterialIconCache iconCache,
 			PanZoomState state,
 			int guiLeft,
 			int guiTop,
@@ -168,6 +169,7 @@ public final class MaterialsTabView {
 		int hn = state.halfNode(nodeSize);
 		drawAtlasHub(gfx, font, path, state, guiLeft, guiTop);
 		drawBucketPlaques(gfx, font, path, nodes, state, guiLeft, guiTop);
+		ColoredRectBatch chromeBatch = new ColoredRectBatch(gfx);
 
 		for (var e : positions.entrySet()) {
 			MaterialAtlasNode node = e.getKey();
@@ -179,31 +181,53 @@ public final class MaterialsTabView {
 			int bucketColor = bucket.color();
 
 			if (node.visibility() == MaterialVisibility.NEXT_PREVIEW) {
-				drawVeiledNode(gfx, font, nodeShape, nx, ny, hn, bucketColor, state.zoom);
+				drawVeiledNode(chromeBatch, nodeShape, nx, ny, hn, bucketColor);
 				continue;
 			}
 
 			if (selected) {
 				float pulse = 0.5F + 0.5F * Mth.sin(time * 2.6F);
 				int ga = (int) (46 * pulse);
-				NodeShapeRenderer.drawFill(gfx, nodeShape, nx, ny, hn + 4,
+				drawNodeFill(chromeBatch, nodeShape, nx, ny, hn + 4,
 						(ga << 24) | (selectedGlow & 0x00FFFFFF));
 			}
 
-			NodeShapeRenderer.drawFill(gfx, nodeShape, nx, ny, hn, COL_NODE_BG);
-			NodeShapeRenderer.drawOutline(gfx, nodeShape, nx, ny, hn, selected ? accentColor : bucketColor);
+			drawNodeFill(chromeBatch, nodeShape, nx, ny, hn, COL_NODE_BG);
+			drawNodeOutline(chromeBatch, nodeShape, nx, ny, hn, selected ? accentColor : bucketColor);
 			if (path == MaterialAtlasPath.HARBINGER && nodeShape == EnumNodeShape.SQUARE) {
-				HarbingerChromeRenderer.drawFrame(gfx, nx - hn, ny - hn, hn * 2, hn * 2,
+				HarbingerChromeRenderer.drawFrame(chromeBatch, nx - hn, ny - hn, hn * 2, hn * 2,
 						selected ? accentColor : bucketColor,
 						selected ? HarbingerChromeRenderer.State.ACTIVE : HarbingerChromeRenderer.State.IDLE);
 			}
-			if (state.zoom >= 0.5F) {
-				ItemStack stack = node.entry().iconStack().get();
+		}
+		chromeBatch.flush();
+
+		if (state.zoom >= 0.5F) {
+			for (var e : positions.entrySet()) {
+				MaterialAtlasNode node = e.getKey();
+				int[] pos = e.getValue();
+				int nx = state.sx(guiLeft, pos[0]);
+				int ny = state.sy(guiTop, pos[1]);
+				if (node.visibility() == MaterialVisibility.NEXT_PREVIEW) {
+					gfx.drawCenteredString(font, "?", nx, ny - 4, 0xFF664444);
+					continue;
+				}
+				ItemStack stack = iconCache.get(node.entry());
 				if (stack != null && !stack.isEmpty()) {
 					ScreenDrawUtils.renderScaledItem(gfx, stack, nx, ny, hn);
 				}
 			}
 		}
+	}
+
+	private static void drawNodeFill(ColoredRectBatch batch, EnumNodeShape shape,
+			int cx, int cy, int half, int color) {
+		NodeShapeRenderer.drawFill(batch, shape, cx, cy, half, color);
+	}
+
+	private static void drawNodeOutline(ColoredRectBatch batch, EnumNodeShape shape,
+			int cx, int cy, int half, int color) {
+		NodeShapeRenderer.drawOutline(batch, shape, cx, cy, half, color);
 	}
 
 	private static void drawAtlasHub(GuiGraphics gfx, Font font, MaterialAtlasPath path,
@@ -251,18 +275,16 @@ public final class MaterialsTabView {
 		}
 	}
 
-	private static void drawVeiledNode(GuiGraphics gfx, Font font, EnumNodeShape nodeShape,
-			int nx, int ny, int hn, int bucketColor, float zoom) {
-		NodeShapeRenderer.drawFill(gfx, nodeShape, nx, ny, hn, COL_PREVIEW_BG);
-		NodeShapeRenderer.drawOutline(gfx, nodeShape, nx, ny, hn,
+	private static void drawVeiledNode(ColoredRectBatch batch, EnumNodeShape nodeShape,
+			int nx, int ny, int hn, int bucketColor) {
+		NodeShapeRenderer.drawFill(batch, nodeShape, nx, ny, hn, COL_PREVIEW_BG);
+		NodeShapeRenderer.drawOutline(batch, nodeShape, nx, ny, hn,
 				(0xDD << 24) | (bucketColor & 0x00FFFFFF));
-		NodeShapeRenderer.drawFill(gfx, nodeShape, nx, ny, Math.max(2, hn - 4), 0x77000000);
-		if (zoom >= 0.5F) {
-			gfx.drawCenteredString(font, "?", nx, ny - 4, 0xFF664444);
-		}
+		NodeShapeRenderer.drawFill(batch, nodeShape, nx, ny, Math.max(2, hn - 4), 0x77000000);
 	}
 
 	public static void drawInfoPanel(GuiGraphics gfx, Font font, MaterialAtlasPath path, MaterialEntry mat,
+			ItemStack stack,
 			int guiLeft, int guiTop, int guiWidth,
 			int accentColor, int dividerColor, int bgColor,
 			MiniRecipeRenderer.Theme recipeTheme) {
@@ -275,8 +297,8 @@ public final class MaterialsTabView {
 		List<String> nameLines = ScreenDrawUtils.wrapText(font, mat.displayName(), maxW - 20);
 		int nameRowH = Math.max(22, nameLines.size() * 10 + 4);
 
-		RecipeLookup.FoundRecipe foundRecipe = mat.hasRecipe()
-				? RecipeLookup.find(mat.iconStack().get()) : null;
+		RecipeLookup.FoundRecipe foundRecipe = mat.hasRecipe() && stack != null && !stack.isEmpty()
+				? RecipeLookup.find(stack) : null;
 		int recipeSection = MiniRecipeRenderer.estimateHeight(foundRecipe) > 0
 				? MiniRecipeRenderer.estimateHeight(foundRecipe) + 8 : 0;
 		int panelH = 6 + nameRowH + 12 + 1 + 5 + descLines.size() * 10 + recipeSection + 8;
@@ -295,7 +317,6 @@ public final class MaterialsTabView {
 
 		int tx = panelX + 6;
 		int ty = panelY + 6;
-		ItemStack stack = mat.iconStack().get();
 		if (stack != null && !stack.isEmpty()) {
 			gfx.renderItem(stack, tx, ty);
 		}

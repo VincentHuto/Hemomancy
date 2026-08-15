@@ -54,12 +54,10 @@ public class WinterShroudMorphlingItem extends MorphlingItem {
 		int maturity = MorphlingItem.getMaturityLevel(stack);
 		int amplifier = MorphlingItem.passiveAmplifier(player, stack, maturity);
 
-		if (!player.hasEffect(EffectInit.venomous_resilience)) {
-			player.addEffect(new MobEffectInstance(EffectInit.venomous_resilience,
-					100, amplifier, false, false, true));
-		}
+		MorphlingItem.applyPassiveEffect(player, stack, EffectInit.morphling_winter_shroud,
+				EffectInit.venomous_resilience, amplifier);
 
-		boolean still = player.getDeltaMovement().lengthSqr() <= FoxfireCamouflageRules.MAX_STILL_DELTA_SQR
+		boolean still = player.getDeltaMovement().lengthSqr() <= LumenlaceCamouflageRules.MAX_STILL_DELTA_SQR
 				&& !player.isSprinting();
 		if (WinterShroudResilienceRules.shouldApplyHide(maturity, still,
 				player.getHealth(), player.getMaxHealth())) {

@@ -10,10 +10,12 @@ import com.vincenthuto.hemomancy.common.init.SkillPointInit;
 import com.vincenthuto.hemomancy.common.init.EffectInit;
 import com.vincenthuto.hemomancy.config.HemoServerConfig;
 import net.minecraft.ChatFormatting;
+import net.minecraft.core.Holder;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -486,6 +488,59 @@ public class MorphlingItem extends Item implements IMorphling {
 	public static boolean isPassiveUpkeepEnabled() {
 		return HemoServerConfig.MORPHLING_PASSIVE_DRAIN_ENABLED == null
 				|| HemoServerConfig.MORPHLING_PASSIVE_DRAIN_ENABLED.get();
+	}
+
+	/**
+	 * Applies one of the eight named Morphling passives without letting its
+	 * status icon expire between upkeep ticks. The effect is intentionally
+	 * hidden from potion particles but keeps its icon and current amplifier.
+	 */
+	public static void applyPassiveEffect(Player player, ItemStack stack, Holder<MobEffect> effect,
+			int amplifier) {
+		applyPassiveEffect(player, stack, effect, null, amplifier);
+	}
+
+	/**
+	 * Applies a strain-named passive and removes the previous generic passive
+	 * from the same strain when a world is upgraded in place.
+	 */
+	public static void applyPassiveEffect(Player player, ItemStack stack, Holder<MobEffect> effect,
+			Holder<MobEffect> legacyEffect, int amplifier) {
+		if (stack.isEmpty()) return;
+		for (Holder<MobEffect> morphlingEffect : morphlingPassiveEffects()) {
+			if (!morphlingEffect.equals(effect)) {
+				player.removeEffect(morphlingEffect);
+			}
+		}
+		if (legacyEffect != null) {
+			player.removeEffect(legacyEffect);
+		}
+		int interval = drainIntervalTicks();
+		MobEffectInstance current = player.getEffect(effect);
+		if (current != null && !MorphlingPassiveEffectRules.shouldRefresh(current.getDuration(),
+				current.getAmplifier(), amplifier, interval)) {
+			return;
+		}
+		player.addEffect(new MobEffectInstance(effect,
+				MorphlingPassiveEffectRules.effectDurationTicks(interval), amplifier, false, false, true));
+	}
+
+	public static void clearMorphlingPassiveEffects(Player player) {
+		for (Holder<MobEffect> morphlingEffect : morphlingPassiveEffects()) {
+			player.removeEffect(morphlingEffect);
+		}
+	}
+
+	private static List<Holder<MobEffect>> morphlingPassiveEffects() {
+		return List.of(
+				EffectInit.morphling_deadmans_purse,
+				EffectInit.morphling_gravecap,
+				EffectInit.morphling_witchs_ear,
+				EffectInit.morphling_lumenlace,
+				EffectInit.morphling_bootlace,
+				EffectInit.morphling_irontooth,
+				EffectInit.morphling_emberfang,
+				EffectInit.morphling_winter_shroud);
 	}
 
 	private static double fledglingBondBlood() {

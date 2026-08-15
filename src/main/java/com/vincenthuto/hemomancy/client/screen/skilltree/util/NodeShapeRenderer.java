@@ -20,13 +20,22 @@ public final class NodeShapeRenderer {
 
 	public static void drawFill(GuiGraphics gfx, EnumNodeShape shape,
 								int cx, int cy, int hs, int color) {
+		drawFill(gfx::fill, shape, cx, cy, hs, color);
+	}
+
+	public static void drawFill(ColoredRectBatch batch, EnumNodeShape shape,
+			int cx, int cy, int hs, int color) {
+		drawFill(batch::fill, shape, cx, cy, hs, color);
+	}
+
+	private static void drawFill(RectSink sink, EnumNodeShape shape, int cx, int cy, int hs, int color) {
 		switch (shape) {
-			case DIAMOND  -> drawDiamondFill(gfx, cx, cy, hs, color);
-			case SQUARE   -> gfx.fill(cx - hs, cy - hs, cx + hs, cy + hs, color);
-			case CIRCLE   -> drawCircleFill(gfx, cx, cy, hs, color);
-			case TRIANGLE -> drawTriangleFill(gfx, cx, cy, hs, color);
-			case HEXAGON  -> drawHexagonFill(gfx, cx, cy, hs, color);
-			case DECAGON  -> drawDecagonFill(gfx, cx, cy, hs, color);
+			case DIAMOND  -> drawDiamondFill(sink, cx, cy, hs, color);
+			case SQUARE   -> sink.fill(cx - hs, cy - hs, cx + hs, cy + hs, color);
+			case CIRCLE   -> drawCircleFill(sink, cx, cy, hs, color);
+			case TRIANGLE -> drawTriangleFill(sink, cx, cy, hs, color);
+			case HEXAGON  -> drawHexagonFill(sink, cx, cy, hs, color);
+			case DECAGON  -> drawDecagonFill(sink, cx, cy, hs, color);
 		}
 	}
 
@@ -36,13 +45,22 @@ public final class NodeShapeRenderer {
 
 	public static void drawOutline(GuiGraphics gfx, EnumNodeShape shape,
 								   int cx, int cy, int hs, int color) {
+		drawOutline(gfx::fill, shape, cx, cy, hs, color);
+	}
+
+	public static void drawOutline(ColoredRectBatch batch, EnumNodeShape shape,
+			int cx, int cy, int hs, int color) {
+		drawOutline(batch::fill, shape, cx, cy, hs, color);
+	}
+
+	private static void drawOutline(RectSink sink, EnumNodeShape shape, int cx, int cy, int hs, int color) {
 		switch (shape) {
-			case DIAMOND  -> drawDiamondOutline(gfx, cx, cy, hs, color);
-			case SQUARE   -> drawSquareOutline(gfx, cx, cy, hs, color);
-			case CIRCLE   -> drawCircleOutline(gfx, cx, cy, hs, color);
-			case TRIANGLE -> drawTriangleOutline(gfx, cx, cy, hs, color);
-			case HEXAGON  -> drawHexagonOutline(gfx, cx, cy, hs, color);
-			case DECAGON  -> drawDecagonOutline(gfx, cx, cy, hs, color);
+			case DIAMOND  -> drawDiamondOutline(sink, cx, cy, hs, color);
+			case SQUARE   -> drawSquareOutline(sink, cx, cy, hs, color);
+			case CIRCLE   -> drawCircleOutline(sink, cx, cy, hs, color);
+			case TRIANGLE -> drawTriangleOutline(sink, cx, cy, hs, color);
+			case HEXAGON  -> drawHexagonOutline(sink, cx, cy, hs, color);
+			case DECAGON  -> drawDecagonOutline(sink, cx, cy, hs, color);
 		}
 	}
 
@@ -64,25 +82,25 @@ public final class NodeShapeRenderer {
 
 	//  Diamond
 
-	private static void drawDiamondFill(GuiGraphics gfx, int cx, int cy, int hs, int color) {
+	private static void drawDiamondFill(RectSink sink, int cx, int cy, int hs, int color) {
 		for (int row = -hs; row <= hs; row++) {
 			int w = hs - Math.abs(row);
 			if (w <= 0) continue;
-			gfx.fill(cx - w, cy + row, cx + w, cy + row + 1, color);
+			sink.fill(cx - w, cy + row, cx + w, cy + row + 1, color);
 		}
 	}
 
-	private static void drawDiamondOutline(GuiGraphics gfx, int cx, int cy, int hs, int color) {
+	private static void drawDiamondOutline(RectSink sink, int cx, int cy, int hs, int color) {
 		for (int row = -hs; row <= hs; row++) {
 			int w = hs - Math.abs(row);
 			if (w <= 0) {
-				gfx.fill(cx, cy + row, cx + 1, cy + row + 1, color);
+				sink.fill(cx, cy + row, cx + 1, cy + row + 1, color);
 				continue;
 			}
-			gfx.fill(cx - w, cy + row, cx - w + 1, cy + row + 1, color);
-			gfx.fill(cx + w - 1, cy + row, cx + w, cy + row + 1, color);
+			sink.fill(cx - w, cy + row, cx - w + 1, cy + row + 1, color);
+			sink.fill(cx + w - 1, cy + row, cx + w, cy + row + 1, color);
 			if (Math.abs(row) >= hs - 1) {
-				gfx.fill(cx - w, cy + row, cx + w, cy + row + 1, color);
+				sink.fill(cx - w, cy + row, cx + w, cy + row + 1, color);
 			}
 		}
 	}
@@ -93,11 +111,11 @@ public final class NodeShapeRenderer {
 
 	//  Square
 
-	private static void drawSquareOutline(GuiGraphics gfx, int cx, int cy, int hs, int color) {
-		gfx.fill(cx - hs, cy - hs, cx + hs, cy - hs + 1, color); // top
-		gfx.fill(cx - hs, cy + hs - 1, cx + hs, cy + hs, color); // bottom
-		gfx.fill(cx - hs, cy - hs, cx - hs + 1, cy + hs, color); // left
-		gfx.fill(cx + hs - 1, cy - hs, cx + hs, cy + hs, color); // right
+	private static void drawSquareOutline(RectSink sink, int cx, int cy, int hs, int color) {
+		sink.fill(cx - hs, cy - hs, cx + hs, cy - hs + 1, color); // top
+		sink.fill(cx - hs, cy + hs - 1, cx + hs, cy + hs, color); // bottom
+		sink.fill(cx - hs, cy - hs, cx - hs + 1, cy + hs, color); // left
+		sink.fill(cx + hs - 1, cy - hs, cx + hs, cy + hs, color); // right
 	}
 
 	private static boolean isInsideSquare(double mx, double my, int cx, int cy, int hs) {
@@ -106,16 +124,16 @@ public final class NodeShapeRenderer {
 
 	//  Circle (pixel-approximated)
 
-	private static void drawCircleFill(GuiGraphics gfx, int cx, int cy, int hs, int color) {
+	private static void drawCircleFill(RectSink sink, int cx, int cy, int hs, int color) {
 		int r2 = hs * hs;
 		for (int row = -hs; row <= hs; row++) {
 			int maxW = (int) Math.sqrt(r2 - row * row);
 			if (maxW <= 0) continue;
-			gfx.fill(cx - maxW, cy + row, cx + maxW, cy + row + 1, color);
+			sink.fill(cx - maxW, cy + row, cx + maxW, cy + row + 1, color);
 		}
 	}
 
-	private static void drawCircleOutline(GuiGraphics gfx, int cx, int cy, int hs, int color) {
+	private static void drawCircleOutline(RectSink sink, int cx, int cy, int hs, int color) {
 		int r2 = hs * hs;
 		int innerR2 = (hs - 1) * (hs - 1);
 		for (int row = -hs; row <= hs; row++) {
@@ -123,9 +141,9 @@ public final class NodeShapeRenderer {
 			int innerW = (int) Math.sqrt(Math.max(0, innerR2 - row * row));
 			if (outerW <= 0) continue;
 			// left edge
-			gfx.fill(cx - outerW, cy + row, cx - innerW, cy + row + 1, color);
+			sink.fill(cx - outerW, cy + row, cx - innerW, cy + row + 1, color);
 			// right edge
-			gfx.fill(cx + innerW, cy + row, cx + outerW, cy + row + 1, color);
+			sink.fill(cx + innerW, cy + row, cx + outerW, cy + row + 1, color);
 		}
 	}
 
@@ -135,26 +153,26 @@ public final class NodeShapeRenderer {
 		return dx * dx + dy * dy <= (double) hs * hs;
 	}
 
-	private static void drawDecagonFill(GuiGraphics gfx, int cx, int cy, int hs, int color) {
+	private static void drawDecagonFill(RectSink sink, int cx, int cy, int hs, int color) {
 		for (int row = -hs; row <= hs; row++) {
 			int[] span = RegularPolygonGeometry.horizontalSpan(row, hs, 10);
-			if (span[1] >= span[0]) gfx.fill(cx + span[0], cy + row, cx + span[1] + 1, cy + row + 1, color);
+			if (span[1] >= span[0]) sink.fill(cx + span[0], cy + row, cx + span[1] + 1, cy + row + 1, color);
 		}
 	}
 
-	private static void drawDecagonOutline(GuiGraphics gfx, int cx, int cy, int hs, int color) {
+	private static void drawDecagonOutline(RectSink sink, int cx, int cy, int hs, int color) {
 		int[] previous = null;
 		for (int row = -hs; row <= hs; row++) {
 			int[] span = RegularPolygonGeometry.horizontalSpan(row, hs, 10);
 			if (span[1] < span[0]) continue;
 			if (previous == null || row == hs) {
-				gfx.fill(cx + span[0], cy + row, cx + span[1] + 1, cy + row + 1, color);
+				sink.fill(cx + span[0], cy + row, cx + span[1] + 1, cy + row + 1, color);
 			} else {
-				gfx.fill(cx + span[0], cy + row, cx + span[0] + 1, cy + row + 1, color);
-				gfx.fill(cx + span[1], cy + row, cx + span[1] + 1, cy + row + 1, color);
-				if (span[0] != previous[0]) gfx.fill(cx + Math.min(span[0], previous[0]), cy + row,
+				sink.fill(cx + span[0], cy + row, cx + span[0] + 1, cy + row + 1, color);
+				sink.fill(cx + span[1], cy + row, cx + span[1] + 1, cy + row + 1, color);
+				if (span[0] != previous[0]) sink.fill(cx + Math.min(span[0], previous[0]), cy + row,
 						cx + Math.max(span[0], previous[0]) + 1, cy + row + 1, color);
-				if (span[1] != previous[1]) gfx.fill(cx + Math.min(span[1], previous[1]), cy + row,
+				if (span[1] != previous[1]) sink.fill(cx + Math.min(span[1], previous[1]), cy + row,
 						cx + Math.max(span[1], previous[1]) + 1, cy + row + 1, color);
 			}
 			previous = span;
@@ -163,7 +181,7 @@ public final class NodeShapeRenderer {
 
 	//  Triangle (equilateral, pointing up)
 
-	private static void drawTriangleFill(GuiGraphics gfx, int cx, int cy, int hs, int color) {
+	private static void drawTriangleFill(RectSink sink, int cx, int cy, int hs, int color) {
 		// Apex at (cx, cy - hs), base from (cx - hs, cy + hs) to (cx + hs, cy + hs).
 		int h = hs * 2; // total height
 		for (int row = 0; row <= h; row++) {
@@ -173,11 +191,11 @@ public final class NodeShapeRenderer {
 			if (halfW <= 0) {
 				halfW = 1;
 			}
-			gfx.fill(cx - halfW, y, cx + halfW, y + 1, color);
+			sink.fill(cx - halfW, y, cx + halfW, y + 1, color);
 		}
 	}
 
-	private static void drawTriangleOutline(GuiGraphics gfx, int cx, int cy, int hs, int color) {
+	private static void drawTriangleOutline(RectSink sink, int cx, int cy, int hs, int color) {
 		int h = hs * 2;
 		for (int row = 0; row <= h; row++) {
 			int y = cy - hs + row;
@@ -185,15 +203,15 @@ public final class NodeShapeRenderer {
 			int halfW = Math.max(1, (int) (hs * progress));
 			if (row == h) {
 				// Bottom edge — full row
-				gfx.fill(cx - halfW, y, cx + halfW, y + 1, color);
+				sink.fill(cx - halfW, y, cx + halfW, y + 1, color);
 			} else {
 				// Left and right edges
-				gfx.fill(cx - halfW, y, cx - halfW + 1, y + 1, color);
-				gfx.fill(cx + halfW - 1, y, cx + halfW, y + 1, color);
+				sink.fill(cx - halfW, y, cx - halfW + 1, y + 1, color);
+				sink.fill(cx + halfW - 1, y, cx + halfW, y + 1, color);
 			}
 		}
 		// Apex pixel
-		gfx.fill(cx, cy - hs, cx + 1, cy - hs + 1, color);
+		sink.fill(cx, cy - hs, cx + 1, cy - hs + 1, color);
 	}
 
 	private static boolean isInsideTriangle(double mx, double my, int cx, int cy, int hs) {
@@ -206,34 +224,34 @@ public final class NodeShapeRenderer {
 
 	//  Hexagon (flat-topped)
 
-	private static void drawHexagonFill(GuiGraphics gfx, int cx, int cy, int hs, int color) {
+	private static void drawHexagonFill(RectSink sink, int cx, int cy, int hs, int color) {
 		// Flat-topped hex: half-height = hs, half-width at equator = hs,
 		// top/bottom flat edges at hs/2 wide.
 		for (int row = -hs; row <= hs; row++) {
 			int halfW = hexHalfWidth(row, hs);
 			if (halfW <= 0) continue;
-			gfx.fill(cx - halfW, cy + row, cx + halfW, cy + row + 1, color);
+			sink.fill(cx - halfW, cy + row, cx + halfW, cy + row + 1, color);
 		}
 	}
 
-	private static void drawHexagonOutline(GuiGraphics gfx, int cx, int cy, int hs, int color) {
+	private static void drawHexagonOutline(RectSink sink, int cx, int cy, int hs, int color) {
 		for (int row = -hs; row <= hs; row++) {
 			int halfW = hexHalfWidth(row, hs);
 			if (halfW <= 0) continue;
 			int nextHalfW = (row < hs) ? hexHalfWidth(row + 1, hs) : 0;
 			// Edge pixels
-			gfx.fill(cx - halfW, cy + row, cx - halfW + 1, cy + row + 1, color);
-			gfx.fill(cx + halfW - 1, cy + row, cx + halfW, cy + row + 1, color);
+			sink.fill(cx - halfW, cy + row, cx - halfW + 1, cy + row + 1, color);
+			sink.fill(cx + halfW - 1, cy + row, cx + halfW, cy + row + 1, color);
 			// Top & bottom flat edges
 			if (row == -hs || row == hs) {
-				gfx.fill(cx - halfW, cy + row, cx + halfW, cy + row + 1, color);
+				sink.fill(cx - halfW, cy + row, cx + halfW, cy + row + 1, color);
 			}
 			// If width changes, fill connecting pixels
 			if (halfW != nextHalfW && row != hs) {
 				int min = Math.min(halfW, nextHalfW);
 				int max = Math.max(halfW, nextHalfW);
-				gfx.fill(cx - max, cy + row, cx - min, cy + row + 1, color);
-				gfx.fill(cx + min, cy + row, cx + max, cy + row + 1, color);
+				sink.fill(cx - max, cy + row, cx - min, cy + row + 1, color);
+				sink.fill(cx + min, cy + row, cx + max, cy + row + 1, color);
 			}
 		}
 	}
@@ -260,5 +278,10 @@ public final class NodeShapeRenderer {
 		// Linear taper from hs → hs/2 over the remaining rows
 		float t = (float)(absRow - hs / 2) / (float)(hs - hs / 2);
 		return Math.max(1, (int)(hs * (1f - 0.5f * t)));
+	}
+
+	@FunctionalInterface
+	private interface RectSink {
+		void fill(int left, int top, int right, int bottom, int color);
 	}
 }

@@ -230,6 +230,17 @@ final class SkillTraceLayerCache {
         image.close();
     }
 
+	void close() {
+		if (texture != null) Minecraft.getInstance().getTextureManager().release(textureLocation);
+		if (heartbeatTexture != null) Minecraft.getInstance().getTextureManager().release(heartbeatTextureLocation);
+		texture = null;
+		heartbeatTexture = null;
+		signature = "";
+		flowTraces = List.of();
+		textureW = 0;
+		textureH = 0;
+	}
+
     private void renderBranchHeartbeatTexture(GuiGraphics gfx, ProgressScreenContext ctx, PanZoomState panZoom, float expansion) {
         renderPulsedTexture(gfx, ctx, panZoom, heartbeatTextureLocation, expansion);
     }

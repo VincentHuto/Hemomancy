@@ -2,7 +2,7 @@ package com.vincenthuto.hemomancy.common.event;
 
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.PowerGuardrailState;
-import com.vincenthuto.hemomancy.common.item.harbinger.morphlings.FoxfireMorphlingItem;
+import com.vincenthuto.hemomancy.common.item.harbinger.morphlings.LumenlaceMorphlingItem;
 import com.vincenthuto.hemomancy.common.item.harbinger.morphlings.MorphlingItem;
 import com.vincenthuto.hemomancy.common.item.harbinger.morphlings.WinterShroudMorphlingItem;
 import com.vincenthuto.hemomancy.config.HemoServerConfig;
@@ -106,7 +106,7 @@ public final class LastRiteHelper {
 		if (stack == null || stack.isEmpty()) {
 			return "";
 		}
-		if (stack.getItem() instanceof FoxfireMorphlingItem) {
+		if (stack.getItem() instanceof LumenlaceMorphlingItem) {
 			if (MorphlingItem.isPrimal(stack)) {
 				return LAST_LIGHT_ID;
 			}

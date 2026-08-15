@@ -23,7 +23,7 @@ public final class MorphlingStrainReframeResourceTest {
 					"Gravecap Morphling", "Necrophyta saprovex" },
 			{ "bat", "witchs_ear", "BatMorphlingItem", "WitchsEarMorphlingItem",
 					"Witch's Ear Morphling", "Tympanospora susurra" },
-			{ "cuttlefish", "foxfire", "CuttlefishMorphlingItem", "FoxfireMorphlingItem",
+			{ "cuttlefish", "lumenlace", "CuttlefishMorphlingItem", "LumenlaceMorphlingItem",
 					"Lumenlace Morphling", "Luminaria nervosa" },
 			{ "spider", "bootlace", "SpiderMorphlingItem", "BootlaceMorphlingItem",
 					"Bootlace Morphling", "Rhizomorpha tenebra" },
@@ -91,8 +91,8 @@ public final class MorphlingStrainReframeResourceTest {
 				"ItemInit.morphling_gravecap.get()");
 		assertFileContains("mycelial skill uses gravecap", "common/init/skills/MycelialSkillBranch.java",
 				"ItemInit.morphling_gravecap.get()");
-		assertFileContains("client staff uses foxfire", "client/event/ClientEvents.java",
-				"selectedStack.getItem() == ItemInit.morphling_foxfire.get()");
+		assertFileContains("client staff uses lumenlace", "client/event/ClientEvents.java",
+				"selectedStack.getItem() == ItemInit.morphling_lumenlace.get()");
 		assertFileContains("mutation registry maps winter shroud", "client/morphling/MorphlingMutationRegistry.java",
 				"register(ItemInit.morphling_winter_shroud.get()");
 		assertFileContains("materials list uses deadman's purse",

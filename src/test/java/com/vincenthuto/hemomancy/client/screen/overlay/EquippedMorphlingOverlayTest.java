@@ -14,7 +14,7 @@ public final class EquippedMorphlingOverlayTest {
 	private static final int MAX_VISIBLE_RGB_COLORS = 12;
 	private static final Path TEXTURE_ROOT = Path.of("src/main/resources/assets/hemomancy/textures/gui/morphling_overlay");
 	private static final List<String> STRAINS = List.of(
-			"morphling_deadmans_purse", "morphling_gravecap", "morphling_witchs_ear", "morphling_foxfire",
+			"morphling_deadmans_purse", "morphling_gravecap", "morphling_witchs_ear", "morphling_lumenlace",
 			"morphling_bootlace", "morphling_irontooth", "morphling_emberfang", "morphling_winter_shroud");
 	private static final Map<String, List<AnimationRegion>> FEEDING_ANIMATION_REGIONS = Map.ofEntries(
 			Map.entry("bootlace", List.of(region(24, 10, 48, 44))),
@@ -36,8 +36,8 @@ public final class EquippedMorphlingOverlayTest {
 		feedingAnimationAdvancesThroughSixFramesAndLoops();
 		stableRenderClockAdvancesWithPartialTicks();
 		bloodOverlayUsesStableRenderClock();
-		foxfireItemUsesLumenlaceHudIdentity();
-		foxfireItemModelUsesLumenlaceTexture();
+		lumenlaceItemUsesLumenlaceHudIdentity();
+		lumenlaceItemModelUsesLumenlaceTexture();
 		lumenlacePaletteCarriesBlueAndGoldNeuralSignals();
 		lumenlaceFramesHangFromAttachmentSide();
 		lumenlaceIntermediateFramesKeepAuthoredCoreIntact();
@@ -120,19 +120,19 @@ public final class EquippedMorphlingOverlayTest {
 		}
 	}
 
-	private static void foxfireItemUsesLumenlaceHudIdentity() {
-		MorphlingHudVisuals.Visual visual = MorphlingHudVisuals.forItemPath("morphling_foxfire");
-		if (visual == null) throw new AssertionError("Missing replacement HUD visual for morphling_foxfire");
+	private static void lumenlaceItemUsesLumenlaceHudIdentity() {
+		MorphlingHudVisuals.Visual visual = MorphlingHudVisuals.forItemPath("morphling_lumenlace");
+		if (visual == null) throw new AssertionError("Missing HUD visual for morphling_lumenlace");
 		if (!"lumenlace".equals(visual.textureName())) {
-			throw new AssertionError("Foxfire slot uses Lumenlace texture: " + visual.textureName());
+			throw new AssertionError("Lumenlace slot uses the wrong texture: " + visual.textureName());
 		}
 	}
 
-	private static void foxfireItemModelUsesLumenlaceTexture() throws Exception {
-		Path model = Path.of("src/main/resources/assets/hemomancy/models/item/morphling_foxfire.json");
+	private static void lumenlaceItemModelUsesLumenlaceTexture() throws Exception {
+		Path model = Path.of("src/main/resources/assets/hemomancy/models/item/morphling_lumenlace.json");
 		String modelJson = Files.readString(model);
 		if (!modelJson.contains("hemomancy:item/morphling_lumenlace")) {
-			throw new AssertionError("Foxfire registry item model must use the Lumenlace icon");
+			throw new AssertionError("Lumenlace item model must use the Lumenlace icon");
 		}
 		Path texture = Path.of("src/main/resources/assets/hemomancy/textures/item/morphling_lumenlace.png");
 		if (!Files.isRegularFile(texture)) throw new AssertionError("Missing Lumenlace item texture");
@@ -142,7 +142,7 @@ public final class EquippedMorphlingOverlayTest {
 	}
 
 	private static void lumenlacePaletteCarriesBlueAndGoldNeuralSignals() throws Exception {
-		MorphlingHudVisuals.Visual visual = MorphlingHudVisuals.forItemPath("morphling_foxfire");
+		MorphlingHudVisuals.Visual visual = MorphlingHudVisuals.forItemPath("morphling_lumenlace");
 		BufferedImage image = ImageIO.read(TEXTURE_ROOT.resolve(visual.textureName() + ".png").toFile());
 		boolean blue = false;
 		boolean gold = false;
@@ -161,7 +161,7 @@ public final class EquippedMorphlingOverlayTest {
 	}
 
 	private static void lumenlaceFramesHangFromAttachmentSide() throws Exception {
-		MorphlingHudVisuals.Visual visual = MorphlingHudVisuals.forItemPath("morphling_foxfire");
+		MorphlingHudVisuals.Visual visual = MorphlingHudVisuals.forItemPath("morphling_lumenlace");
 		BufferedImage image = ImageIO.read(TEXTURE_ROOT.resolve(visual.textureName() + ".png").toFile());
 		for (int frame = 0; frame < 6; frame++) {
 			int minX = image.getWidth();
@@ -182,7 +182,7 @@ public final class EquippedMorphlingOverlayTest {
 	}
 
 	private static void lumenlaceIntermediateFramesKeepAuthoredCoreIntact() throws Exception {
-		MorphlingHudVisuals.Visual visual = MorphlingHudVisuals.forItemPath("morphling_foxfire");
+		MorphlingHudVisuals.Visual visual = MorphlingHudVisuals.forItemPath("morphling_lumenlace");
 		BufferedImage image = ImageIO.read(TEXTURE_ROOT.resolve(visual.textureName() + ".png").toFile());
 		for (int authoredFrame = 0; authoredFrame < 6; authoredFrame += 2) {
 			int intermediateFrame = authoredFrame + 1;

@@ -5,20 +5,20 @@ public final class MorphlingAbilityRulesTest {
 	}
 
 	public static void main(String[] args) {
-		foxfireCamouflageRequiresMaturityAndCover();
+		lumenlaceCamouflageRequiresMaturityAndCover();
 		deadmansPurseFeedBankScalesAndCaps();
 		winterShroudResilienceUsesStillnessOrLowHealth();
 	}
 
-	private static void foxfireCamouflageRequiresMaturityAndCover() {
-		assertFalse("immature no camouflage", FoxfireCamouflageRules.isEligible(2, true, 0));
-		assertTrue("water camouflage", FoxfireCamouflageRules.isEligible(3, true, 15));
-		assertTrue("low light camouflage", FoxfireCamouflageRules.isEligible(3, false, 7));
-		assertFalse("bright dry no camouflage", FoxfireCamouflageRules.isEligible(3, false, 8));
-		assertTrue("small movement counts still", FoxfireCamouflageRules.isStillEnough(0.003D));
-		assertFalse("large movement breaks stillness", FoxfireCamouflageRules.isStillEnough(0.02D));
-		assertTrue("stillness window matures", FoxfireCamouflageRules.shouldCamouflage(100L,
-				100L - FoxfireCamouflageRules.STILLNESS_REQUIRED_TICKS));
+	private static void lumenlaceCamouflageRequiresMaturityAndCover() {
+		assertFalse("immature no camouflage", LumenlaceCamouflageRules.isEligible(2, true, 0));
+		assertTrue("water camouflage", LumenlaceCamouflageRules.isEligible(3, true, 15));
+		assertTrue("low light camouflage", LumenlaceCamouflageRules.isEligible(3, false, 7));
+		assertFalse("bright dry no camouflage", LumenlaceCamouflageRules.isEligible(3, false, 8));
+		assertTrue("small movement counts still", LumenlaceCamouflageRules.isStillEnough(0.003D));
+		assertFalse("large movement breaks stillness", LumenlaceCamouflageRules.isStillEnough(0.02D));
+		assertTrue("stillness window matures", LumenlaceCamouflageRules.shouldCamouflage(100L,
+				100L - LumenlaceCamouflageRules.STILLNESS_REQUIRED_TICKS));
 	}
 
 	private static void deadmansPurseFeedBankScalesAndCaps() {

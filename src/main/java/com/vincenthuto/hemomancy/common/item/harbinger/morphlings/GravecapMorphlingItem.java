@@ -69,11 +69,9 @@ public class GravecapMorphlingItem extends MorphlingItem {
 		int maturity = MorphlingItem.getMaturityLevel(stack);
 		int amplifier = MorphlingItem.passiveAmplifier(player, stack, maturity);
 
-		// Base effect: Mycorrhizal Mending (health regen, amplifier = maturity)
-		if (!player.hasEffect(EffectInit.mycorrhizal_mending)) {
-			player.addEffect(new MobEffectInstance(EffectInit.mycorrhizal_mending,
-					100, amplifier, false, false, true));
-		}
+		// Base effect: Gravecap Morphling (health regen, amplifier = maturity)
+		MorphlingItem.applyPassiveEffect(player, stack, EffectInit.morphling_gravecap,
+				EffectInit.mycorrhizal_mending, amplifier);
 
 		// Mature (3+): Mycorrhizal Network — heal nearby allied players
 		if (maturity >= 3 && !player.level().isClientSide) {

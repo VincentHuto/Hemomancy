@@ -35,6 +35,10 @@ final class RecipeMapTraceLayerCache {
 		texture.render(gfx, ctx, panZoom, alpha);
 	}
 
+	void close() {
+		texture.close();
+	}
+
 	private static void bakeRing(NativeImage image, RecipeMapTracePlan.Ring ring) {
 		int steps = ConcentricRingStyle.segmentCount(ring.radius());
 		int previousX = ring.centerX() + ring.radius();

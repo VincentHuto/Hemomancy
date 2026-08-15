@@ -18,14 +18,13 @@ final class MaterialAtlasTraceLayerCache {
 
 	private final StaticTraceLayerTexture texture = new StaticTraceLayerTexture("material_atlas_trace_layer");
 
-	void rebuildIfNeeded(List<MaterialAtlasNode> nodes,
+	void rebuild(List<MaterialAtlasNode> nodes,
 			Map<MaterialAtlasNode, int[]> nodePositions,
 			int contentW,
 			int contentH,
 			int hubX,
 			int hubY) {
-		String nextSignature = buildSignature(nodes, nodePositions, contentW, contentH, hubX, hubY);
-		if (!texture.needsRebuild(nextSignature, contentW, contentH)) return;
+		texture.prepareForRebuild(contentW, contentH);
 		NativeImage image = texture.createImage();
 		clearImage(image);
 
@@ -53,26 +52,8 @@ final class MaterialAtlasTraceLayerCache {
 		texture.render(gfx, ctx, panZoom);
 	}
 
-	private static String buildSignature(List<MaterialAtlasNode> nodes,
-			Map<MaterialAtlasNode, int[]> nodePositions,
-			int contentW,
-			int contentH,
-			int hubX,
-			int hubY) {
-		StringBuilder out = new StringBuilder();
-		out.append(contentW).append('x').append(contentH).append(':').append(hubX).append(',').append(hubY);
-		for (MaterialAtlasNode node : sortedNodes(nodes)) {
-			int[] pos = nodePositions.get(node);
-			if (pos == null) {
-				continue;
-			}
-			out.append('|').append(node.entry().name())
-					.append('@').append(pos[0]).append(',').append(pos[1])
-					.append(':').append(node.visibility().name())
-					.append(':').append(node.atlasEntry().bucket().id())
-					.append(':').append(String.join(",", node.atlasEntry().parentIds()));
-		}
-		return out.toString();
+	void close() {
+		texture.close();
 	}
 
 	private static int[] positionFor(String materialId, List<MaterialAtlasNode> nodes,

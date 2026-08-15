@@ -40,7 +40,7 @@ public final class SpecimenBestiaryDefinitions {
 			morphling(MorphlingPolypLayer.BAT, ItemInit.morphling_witchs_ear, "witchs_ear"),
 			morphling(MorphlingPolypLayer.CENTIPEDE, ItemInit.morphling_winter_shroud, "winter_shroud"),
 			morphling(MorphlingPolypLayer.CHITINITE, ItemInit.morphling_winter_shroud, "winter_shroud"),
-			morphling(MorphlingPolypLayer.CUTTLEFISH, ItemInit.morphling_foxfire, "foxfire"),
+			morphling(MorphlingPolypLayer.CUTTLEFISH, ItemInit.morphling_lumenlace, "lumenlace"),
 			morphling(MorphlingPolypLayer.FUNGAL, ItemInit.morphling_gravecap, "gravecap"),
 			morphling(MorphlingPolypLayer.LEECHES, ItemInit.morphling_deadmans_purse, "deadmans_purse"),
 			morphling(MorphlingPolypLayer.MOLE, ItemInit.morphling_irontooth, "irontooth"),

@@ -69,7 +69,7 @@ public class MorphlingMutationRegistry {
                         .attach(serpentLegAttachment())
                         .build());
 
-        register(ItemInit.morphling_foxfire.get(),
+        register(ItemInit.morphling_lumenlace.get(),
                 MorphlingVisualMutation.builder(0.64f, 0.48f, 0.32f, 0.36f)
                         .pulse(0.05f).emissive()
                         .attach(cuttlefishHeadAttachment())

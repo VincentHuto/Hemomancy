@@ -7,14 +7,20 @@ import net.minecraft.world.entity.LivingEntity;
 
 /**
  * A beneficial effect that subtly deflects incoming projectiles, granting
- * knockback resistance. Applied by the cuttlefish morphling while it is
+ * knockback resistance. Applied by the Lumenlace Morphling while it is
  * attached to the player. The knockback resistance bonus is applied via
  * attribute modifier in EffectInit.
  */
 public class LuminousDissipationEffect extends MobEffect {
+	private final String displayKey;
 
 	public LuminousDissipationEffect(MobEffectCategory typeIn, int liquidColorIn) {
+		this(typeIn, liquidColorIn, "effect.hemomancy.luminous_dissipation");
+	}
+
+	public LuminousDissipationEffect(MobEffectCategory typeIn, int liquidColorIn, String displayKey) {
 		super(typeIn, liquidColorIn);
+		this.displayKey = displayKey;
 	}
 
 	@Override
@@ -26,7 +32,7 @@ public class LuminousDissipationEffect extends MobEffect {
 
 	@Override
 	public Component getDisplayName() {
-		return Component.translatable("effect.hemomancy.luminous_dissipation");
+		return Component.translatable(displayKey);
 	}
 
 	@Override

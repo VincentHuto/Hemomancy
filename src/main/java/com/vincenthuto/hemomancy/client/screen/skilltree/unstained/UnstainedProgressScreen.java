@@ -1335,4 +1335,12 @@ animTime += 0.016f; // ~60 FPS approximation
 	public boolean isPauseScreen() {
 		return false;
 	}
+
+	@Override
+	public void removed() {
+		ritesTab.onClose();
+		craftingTab.onClose();
+		materialsTab.onClose();
+		super.removed();
+	}
 }

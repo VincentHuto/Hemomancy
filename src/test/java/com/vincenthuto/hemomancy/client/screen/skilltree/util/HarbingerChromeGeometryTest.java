@@ -2,12 +2,26 @@ package com.vincenthuto.hemomancy.client.screen.skilltree.util;
 
 import org.junit.jupiter.api.Test;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 final class HarbingerChromeGeometryTest {
+	@Test
+	void directEmissionMatchesTheExistingMaterializedGeometry() {
+		List<HarbingerChromeGeometry.Segment> expected =
+				HarbingerChromeGeometry.frameSegments(7, 11, 160, 80);
+		List<HarbingerChromeGeometry.Segment> emitted = new ArrayList<>();
+
+		HarbingerChromeGeometry.emitFrameSegments(7, 11, 160, 80,
+				(left, top, right, bottom, tone) -> emitted.add(
+						new HarbingerChromeGeometry.Segment(left, top, right, bottom, tone)));
+
+		assertEquals(expected, emitted);
+	}
+
 	@Test
 	void compactFramesKeepEveryOrnamentInsideTheirExistingHitbox() {
 		List<HarbingerChromeGeometry.Segment> segments =

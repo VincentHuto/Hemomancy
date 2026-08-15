@@ -24,21 +24,21 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Foxfire strain that hides a still host in dim, wet, or drowning light while
+ * Lumenlace strain that hides a still host in dim, wet, or drowning light while
  * preserving sprinting Sepia Wake and the shared Last Rite mantles.
  */
-public class FoxfireMorphlingItem extends MorphlingItem {
+public class LumenlaceMorphlingItem extends MorphlingItem {
 
 	private static final String CAMOUFLAGE_STILL_SINCE_KEY = "CamouflageStillSince";
 	private static final int INK_MANTLE_REPRIEVE_COOLDOWN = 12000;
 
-	public FoxfireMorphlingItem(Properties prop) {
+	public LumenlaceMorphlingItem(Properties prop) {
 		super(prop);
 	}
 
 	@Override
 	protected String binomialKey() {
-		return "morphling.hemomancy.foxfire.binomial";
+		return "morphling.hemomancy.lumenlace.binomial";
 	}
 
 	@Override
@@ -61,10 +61,8 @@ public class FoxfireMorphlingItem extends MorphlingItem {
 		int maturity = MorphlingItem.getMaturityLevel(stack);
 		int amplifier = MorphlingItem.passiveAmplifier(player, stack, maturity);
 
-		if (!player.hasEffect(EffectInit.luminous_dissipation)) {
-			player.addEffect(new MobEffectInstance(EffectInit.luminous_dissipation,
-					100, amplifier, false, false, true));
-		}
+		MorphlingItem.applyPassiveEffect(player, stack, EffectInit.morphling_lumenlace,
+				EffectInit.luminous_dissipation, amplifier);
 
 		runCamouflage(player, stack, maturity);
 
@@ -87,8 +85,8 @@ public class FoxfireMorphlingItem extends MorphlingItem {
 			return;
 		}
 		int lightLevel = player.level().getMaxLocalRawBrightness(player.blockPosition());
-		boolean eligible = FoxfireCamouflageRules.isEligible(maturity, player.isInWaterOrBubble(), lightLevel);
-		boolean still = FoxfireCamouflageRules.isStillEnough(player.getDeltaMovement().lengthSqr())
+		boolean eligible = LumenlaceCamouflageRules.isEligible(maturity, player.isInWaterOrBubble(), lightLevel);
+		boolean still = LumenlaceCamouflageRules.isStillEnough(player.getDeltaMovement().lengthSqr())
 				&& !player.isSprinting();
 		CompoundTag tag = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
 		long now = player.level().getGameTime();
@@ -102,7 +100,7 @@ public class FoxfireMorphlingItem extends MorphlingItem {
 			stack.set(DataComponents.CUSTOM_DATA, CustomData.of(tag));
 			return;
 		}
-		if (FoxfireCamouflageRules.shouldCamouflage(now, tag.getLong(CAMOUFLAGE_STILL_SINCE_KEY))) {
+		if (LumenlaceCamouflageRules.shouldCamouflage(now, tag.getLong(CAMOUFLAGE_STILL_SINCE_KEY))) {
 			player.addEffect(new MobEffectInstance(MobEffects.INVISIBILITY,
 					60, 0, true, false, true));
 		}

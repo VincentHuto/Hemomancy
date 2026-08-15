@@ -12,6 +12,7 @@ public interface IProgressTab {
     boolean mouseDragged(ProgressScreenContext ctx, double mx, double my, int btn, double dx, double dy);
     boolean mouseScrolled(ProgressScreenContext ctx, double mx, double my, double delta);
     PanZoomState getPanZoomState();
+	default void onClose() {}
     default boolean keyPressed(ProgressScreenContext ctx, int keyCode, int scanCode, int modifiers) { return false; }
     default boolean charTyped(ProgressScreenContext ctx, char codePoint, int modifiers) { return false; }
     /** Closes the tab's persistent node-detail window, if one is open. */

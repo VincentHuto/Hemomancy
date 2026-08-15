@@ -61,7 +61,7 @@ Name-blending across systems is a *register* problem, not a per-name problem. As
 | Cerebral scars | "Scar of the [X]" | Mythic / tarot | Scar of the Phoenix |
 | Armor sets | Descriptive vow / material | Martial / craft | Barbed · Silent Archon |
 | **Fungal scars** | **Pseudo-Latin binomial** | Scholarly — the Lodge catalogued them | *Thanomyces resurgens* |
-| **Morphlings** | **Fungal folk-names** | Vernacular — named in the wild before the Order classified them | Foxfire · Bootlace |
+| **Morphlings** | **Fungal folk-names** | Vernacular — named in the wild before the Order classified them | Lumenlace · Bootlace |
 
 **The split is diegetic and load-bearing.** The setting is ~1500 CE, pre-Linnaean. A binomial is the voice of a monk who *catalogued* the thing; a folk name is what a villager called a growth they met in the woods. Morphlings go maximally folk *so that* fungal scars can stay maximally Latin — the contrast becomes the signal: folk name = a strain you raise; Latin = a scar the Order refined. Folk names also reinforce the "best of the environment" theme, because folk names are observational and environmental where binomials abstract the environment away.
 
@@ -76,13 +76,13 @@ Eight tendencies, eight strains — one exemplar each. This makes duplication st
 | Animus | **Deadman's Purse** | *Sanguibursa vorax* | Blood economy / feeding | leech, mosquito |
 | Mortem | **Gravecap** | *Necrophyta saprovex* | Corpse & decay resource engine | cordyceps (the "pure" one) |
 | Ductilis | **Witch's Ear** | *Tympanospora susurra* | Recon / perception / reflex | bat, moth |
-| Lux | **Foxfire** | *Ignisfatuus lucens* | Rescue / concealment / light | cuttlefish, anglerfish |
+| Lux | **Lumenlace** | *Luminaria nervosa* | Rescue / concealment / light | cuttlefish, anglerfish |
 | Tenebris | **Bootlace** | *Rhizomorpha tenebra* | Traversal / cord-traps | spider, velvet worm |
 | Ferric | **Irontooth** | *Ferrophyta lithovora* | Excavation / underground domain | mole, antlion |
 | Flammeus | **Emberfang** | *Pyrrhiza digestans* | Priority-kill venom / attrition | assassin bug, spitting cobra |
 | Congeatio | **Winter Shroud** | *Sporangia dormiens* | Survival / stasis / escape | tardigrade |
 
-Two happy accidents worth keeping: **Foxfire** and **Bootlace** are real folk names for real fungi (bioluminescent foxfire; the black *rhizomorph* bootlace cords of Armillaria), so the register is genuine, not invented.
+Two happy accidents worth keeping: **Lumenlace** and **Bootlace** are real folk names for fungal structures (luminous fungal threads; the black *rhizomorph* bootlace cords of Armillaria), so the register is genuine, not invented.
 
 ## 7. Cut / merge logic (12 → 8)
 
@@ -104,11 +104,11 @@ All contact-reactive (on-hit) abilities removed per the audit; each strain keeps
 - **Deadman's Purse (Animus).** Sanguine Siphon (routed through the circulation cap) → borrowed-blood banking (not flat lifesteal — that is Blood Lust armor's) → Blood Fever near wounded (from Tick) → Sanguine Frenzy execute → **Hemophage Covenant** (bloodline blood-share; the "return" primal).
 - **Gravecap (Mortem).** Mycorrhizal Mending → Sporulation on-hurt field → Mycorrhizal Network ally heal → Cordyceps Burst + fungling spawn (Pests' Infest folded in) → **Primal Mycorrhiza** (elite kills seed communion patches, drop fungal-scar materials). **Owns "resource from kills"** — see §10.
 - **Witch's Ear (Ductilis).** Echoic Perception (ambient passive sense) → Sonar Shriek → Membrane Glide → Nightwing Frenzy → **Echothesis** (active mass reveal through terrain).
-- **Foxfire (Lux).** Luminous Dissipation → Chromatic Camouflage while stationary in water/darkness (replaces the cut on-hit flash) → Sepia Wake vision-denial terrain → Ink Mantle Reprieve (shared Last Rite slot) → **Last-Light Mantle** rescue.
+- **Lumenlace (Lux).** Luminous Dissipation → Chromatic Camouflage while stationary in water/darkness (replaces the cut on-hit flash) → Sepia Wake vision-denial terrain → Ink Mantle Reprieve (shared Last Rite slot) → **Last-Light Mantle** rescue.
 - **Bootlace (Tenebris).** Wall Climbing → Silk Tether → Web Nest slowing terrain (Pests' area denial as webbing) → Web Cocoon → **Web of Red Thread** grapple.
 - **Irontooth (Ferric).** Burrower's Instinct → Burrow Sense → Earthen Bulwark (state-gated to underground, not a contact wall) → Seismic Slam → **Deep Tremor Sense** (ore/cave/nectar-pool mapping) + Urchin's material-harvest on a cooldown.
 - **Emberfang (Flammeus).** Serpentine Guile (speed, cap-grouped) → Venom Strike DoT → Constrict → Ambush Predator → **Sovereign Venom** (mark one target, escalate to paralysis then rupture; anti-elite scalpel).
-- **Winter Shroud (Congeatio).** Cryptobiotic Hide (self-state resistance floor) → Tun Plating rest-Absorption → Anhydrobiosis cleanse → Tun Molt decoy-husk escape (Centipede's molt merged) + Urchin knockback pulse → **Cryptobiosis** stasis-invulnerability revival (shared Last Rite slot with Foxfire).
+- **Winter Shroud (Congeatio).** Cryptobiotic Hide (self-state resistance floor) → Tun Plating rest-Absorption → Anhydrobiosis cleanse → Tun Molt decoy-husk escape (Centipede's molt merged) + Urchin knockback pulse → **Cryptobiosis** stasis-invulnerability revival (shared Last Rite slot with Lumenlace).
 
 ## 9. Mutation-layer silhouettes
 
@@ -119,7 +119,7 @@ Each strain needs a distinct attachment for the existing morphling mutation rend
 | Deadman's Purse | BODY | translucent blood-bladder that swells as you feed |
 | Gravecap | HEAD | mushroom cap + mycelial mantle *(reuse existing fungal-head asset)* |
 | Witch's Ear | HEAD | twitching frilled gill-antennae crest |
-| Foxfire | BODY | emissive color-shifting gills/spots |
+| Lumenlace | BODY | emissive color-shifting gills/spots |
 | Bootlace | BODY | back-node sprouting reaching black rhizomorph cords |
 | Irontooth | ARMS | iron-crusted crystalline digging claws |
 | Emberfang | ARMS | forearm proboscis-lance that glows hot when charged |
@@ -131,7 +131,7 @@ On-kill resource generation currently belongs to *both* a fungal scar (Sanguiflo
 
 ## 11. Scope, migration, and open questions
 
-- **Rename map (planned):** `morphling_serpent` → `morphling_emberfang`, `morphling_cuttlefish` → `morphling_foxfire`, `morphling_mole` → `morphling_irontooth`, `morphling_leeches` → `morphling_deadmans_purse`, `morphling_bat` → `morphling_witchs_ear`, `morphling_spider` → `morphling_bootlace`, `morphling_fungal` → `morphling_gravecap`, `morphling_centipede` → `morphling_winter_shroud`. Removed: `morphling_chitinite`, `morphling_urchin`, `morphling_pests`, `morphling_tick`. Provide data-fixer/alias handling for existing saves.
+- **Rename map (planned):** `morphling_serpent` → `morphling_emberfang`, `morphling_cuttlefish` → `morphling_lumenlace`, `morphling_mole` → `morphling_irontooth`, `morphling_leeches` → `morphling_deadmans_purse`, `morphling_bat` → `morphling_witchs_ear`, `morphling_spider` → `morphling_bootlace`, `morphling_fungal` → `morphling_gravecap`, `morphling_centipede` → `morphling_winter_shroud`. Removed: `morphling_chitinite`, `morphling_urchin`, `morphling_pests`, `morphling_tick`. Provide data-fixer/alias handling for existing saves.
 - **Assets:** audit which existing morphling models/textures can be retinted vs. need new geometry for the new silhouettes.
 - **Hunger/husbandry decision:** the audit's Fed/Hungry/Starving loop and per-strain husbandry stage-ups land alongside this reskin, behind `hungerEnabled=false` by default.
 - **Wild-bound decision:** hunger applies only to Mature+ morphlings when enabled later; wild-bound Developing-capped morphlings remain gentle early.

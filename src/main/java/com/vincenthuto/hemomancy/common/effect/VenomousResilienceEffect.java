@@ -7,15 +7,21 @@ import net.minecraft.world.entity.LivingEntity;
 
 /**
  * A beneficial effect that grants the player poison immunity and a small
- * movement speed bonus, embodying the centipede's venomous resilience.
- * Applied by the centipede morphling while it is attached to the player.
+ * movement speed bonus, embodying Winter Shroud's sealed survival state.
+ * Applied by the Winter Shroud Morphling while it is attached to the player.
  * The speed bonus is applied via attribute modifier in EffectInit.
  * Poison immunity is handled by removing the Poison effect each tick.
  */
 public class VenomousResilienceEffect extends MobEffect {
+	private final String displayKey;
 
 	public VenomousResilienceEffect(MobEffectCategory typeIn, int liquidColorIn) {
+		this(typeIn, liquidColorIn, "effect.hemomancy.venomous_resilience");
+	}
+
+	public VenomousResilienceEffect(MobEffectCategory typeIn, int liquidColorIn, String displayKey) {
 		super(typeIn, liquidColorIn);
+		this.displayKey = displayKey;
 	}
 
 	@Override
@@ -30,7 +36,7 @@ public class VenomousResilienceEffect extends MobEffect {
 
 	@Override
 	public Component getDisplayName() {
-		return Component.translatable("effect.hemomancy.venomous_resilience");
+		return Component.translatable(displayKey);
 	}
 
 	@Override

@@ -69,10 +69,8 @@ public class WitchsEarMorphlingItem extends MorphlingItem {
 		int maturity = MorphlingItem.getMaturityLevel(stack);
 		int amplifier = MorphlingItem.passiveAmplifier(player, stack, maturity);
 
-		if (!player.hasEffect(EffectInit.echoic_perception)) {
-			player.addEffect(new MobEffectInstance(EffectInit.echoic_perception,
-					100, amplifier, false, false, true));
-		}
+		MorphlingItem.applyPassiveEffect(player, stack, EffectInit.morphling_witchs_ear,
+				EffectInit.echoic_perception, amplifier);
 
 		if (maturity >= 3 && !player.onGround() && player.isShiftKeyDown()) {
 			if (!player.hasEffect(MobEffects.SLOW_FALLING)) {

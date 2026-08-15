@@ -136,6 +136,14 @@ final class TendencyTraceLayerCache {
 		image.close();
 	}
 
+	void close() {
+		if (texture != null) Minecraft.getInstance().getTextureManager().release(textureLocation);
+		texture = null;
+		signature = "";
+		textureW = 0;
+		textureH = 0;
+	}
+
 	private static List<ManipulationTreeEntry> sortedEntries(List<ManipulationTreeEntry> entries) {
 		List<ManipulationTreeEntry> list = new ArrayList<>(entries);
 		list.sort(Comparator.comparing(ManipulationTreeEntry::getManipName));

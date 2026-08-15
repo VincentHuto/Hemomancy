@@ -72,10 +72,8 @@ public class BootlaceMorphlingItem extends MorphlingItem {
 		int maturity = MorphlingItem.getMaturityLevel(stack);
 		int amplifier = MorphlingItem.passiveAmplifier(player, stack, maturity);
 
-		if (!player.hasEffect(EffectInit.arachnid_anastomosis)) {
-			player.addEffect(new MobEffectInstance(EffectInit.arachnid_anastomosis,
-					100, amplifier, false, false, true));
-		}
+		MorphlingItem.applyPassiveEffect(player, stack, EffectInit.morphling_bootlace,
+				EffectInit.arachnid_anastomosis, amplifier);
 
 		if (maturity >= 2) {
 			if (!player.getTags().contains(WALL_CLIMB_TAG)) {

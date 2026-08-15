@@ -190,7 +190,7 @@ public final class MaterialAtlasSpec {
 		entryAt("morphling_deadmans_purse", h, "morphlings", d(3), 1202, 1139, "morphling_polyp");
 		entryAt("morphling_gravecap", h, "morphlings", d(3), 1122, 1059, "morphling_polyp");
 		entryAt("morphling_witchs_ear", h, "morphlings", d(3), 1181, 1021, "morphling_polyp");
-		entryAt("morphling_foxfire", h, "morphlings", d(3), 1220, 1036, "morphling_polyp");
+		entryAt("morphling_lumenlace", h, "morphlings", d(3), 1220, 1036, "morphling_polyp");
 		entryAt("morphling_bootlace", h, "morphlings", d(3), 1245, 1139, "morphling_polyp");
 		entryAt("morphling_irontooth", h, "morphlings", d(3), 1261, 1059, "morphling_polyp");
 		entryAt("morphling_emberfang", h, "morphlings", d(3), 1157, 1104, "morphling_polyp");

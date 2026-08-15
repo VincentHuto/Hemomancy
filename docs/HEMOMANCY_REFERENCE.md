@@ -1551,6 +1551,14 @@ Most crafted status effects have a corresponding potion, splash potion, lingerin
 | ![](../src/main/resources/assets/hemomancy/textures/mob_effect/spined_barricade.png) **Spined Barricade** | Beneficial | — | Urchin morphling effect — passive thorns + armor bonus |
 | ![](../src/main/resources/assets/hemomancy/textures/mob_effect/venomous_resilience.png) **Venomous Resilience** | Beneficial | 0x336B87 | Centipede morphling effect — poison immunity + speed. |
 | ![](../src/main/resources/assets/hemomancy/textures/mob_effect/burrowers_instinct.png) **Burrower's Instinct** | Beneficial | — | Mole morphling effect — mining speed + underground regen/night vision |
+| ![](../src/main/resources/assets/hemomancy/textures/mob_effect/morphling_deadmans_purse.png) **Deadman's Purse Morphling** | Beneficial | 0xB21F35 | Current Deadman's Purse strain identity passive. |
+| ![](../src/main/resources/assets/hemomancy/textures/mob_effect/morphling_gravecap.png) **Gravecap Morphling** | Beneficial | 0xB52A64 | Current Gravecap strain identity passive. |
+| ![](../src/main/resources/assets/hemomancy/textures/mob_effect/morphling_witchs_ear.png) **Witch's Ear Morphling** | Beneficial | 0x7F3A9A | Current Witch's Ear strain identity passive. |
+| ![](../src/main/resources/assets/hemomancy/textures/mob_effect/morphling_lumenlace.png) **Lumenlace Morphling** | Beneficial | 0x2F79C7 | Current Lumenlace strain identity passive. |
+| ![](../src/main/resources/assets/hemomancy/textures/mob_effect/morphling_bootlace.png) **Bootlace Morphling** | Beneficial | 0x7E2AC7 | Current Bootlace strain identity passive. |
+| ![](../src/main/resources/assets/hemomancy/textures/mob_effect/morphling_irontooth.png) **Irontooth Morphling** | Beneficial | 0xA57A5A | Current Irontooth strain identity passive. |
+| ![](../src/main/resources/assets/hemomancy/textures/mob_effect/morphling_emberfang.png) **Emberfang Morphling** | Beneficial | 0xE34A2F | Current Emberfang strain identity passive. |
+| ![](../src/main/resources/assets/hemomancy/textures/mob_effect/morphling_winter_shroud.png) **Winter Shroud Morphling** | Beneficial | 0x76C9FF | Current Winter Shroud strain identity passive. |
 | ![](../src/main/resources/assets/hemomancy/textures/mob_effect/arcane_resonance.png) **Arcane Resonance** | Beneficial | 0x8800AA | MnA combo marker — next blood manipulation costs less blood (granted by blood-affinity MnA spells) |
 | ![](../src/main/resources/assets/hemomancy/textures/mob_effect/sanguine_clarity.png) **Sanguine Clarity** | Beneficial | 0xAA0022 | MnA combo marker — next MnA spell costs less mana (granted by using blood manipulations) |
 | ![](../src/main/resources/assets/hemomancy/textures/mob_effect/marked_by_canon.png) **Marked by Canon** | Harmful | 0x8B0000 | Saint sarcophagus rejection mark; lowers extraction odds, slows movement, and can damage high-amplifier trespassers. |
@@ -1726,14 +1734,14 @@ Symbiotic parasites derived from the fungal infection. They provide the Living S
 
 | Morphling | Item Class | Preferred / Secondary Tendency | Signature | Developing → Mature → Apex → Primal |
 |-----------|-----------|-------------------------------|-----------|----------------------------------------|
-| ![](../src/main/resources/assets/hemomancy/textures/item/morphling_deadmans_purse.png) Deadman's Purse | `DeadmansPurseMorphlingItem` | Animus / Congeatio | Sanguine Siphon | Feed Banking → Blood Transfusion → Overkill Banking → Hemophage Covenant |
-| ![](../src/main/resources/assets/hemomancy/textures/item/morphling_gravecap.png) Gravecap | `GravecapMorphlingItem` | Mortem / Animus | Mycorrhizal Mending | Sporulation → Mycorrhizal Network → Cordyceps Burst → Primal Mycorrhiza |
-| ![](../src/main/resources/assets/hemomancy/textures/item/morphling_witchs_ear.png) Witch's Ear | `WitchsEarMorphlingItem` | Ductilis / Tenebris | Echoic Perception | Echoic Perception → Membrane Glide → Night-State Pursuit → Echothesis |
-| ![](../src/main/resources/assets/hemomancy/textures/item/morphling_lumenlace.png) Lumenlace | `FoxfireMorphlingItem` (legacy ID) | Lux / Ductilis | Luminous Dissipation | Sepia Wake → Low-Light Camouflage → Ink Mantle Reprieve → Last-Light Mantle |
-| ![](../src/main/resources/assets/hemomancy/textures/item/morphling_bootlace.png) Bootlace | `BootlaceMorphlingItem` | Tenebris / Lux | Arachnid Anastomosis | Wall Climbing → Silk Tether → Web Nest → Web of Red Thread |
-| ![](../src/main/resources/assets/hemomancy/textures/item/morphling_irontooth.png) Irontooth | `IrontoothMorphlingItem` | Ferric / Mortem | Burrower's Instinct | Burrow Sense → Earthen Bulwark → Seismic Slam → Deep Tremor Sense |
-| ![](../src/main/resources/assets/hemomancy/textures/item/morphling_emberfang.png) Emberfang | `EmberfangMorphlingItem` | Flammeus / Ductilis | Serpentine Guile | Venom Strike → Constrict → Ambush Predator → Sovereign Venom |
-| ![](../src/main/resources/assets/hemomancy/textures/item/morphling_winter_shroud.png) Winter Shroud | `WinterShroudMorphlingItem` | Congeatio / Ferric | Venomous Resilience | Cryptobiotic Hide → Cold Cleanse → Tun Molt → Cryptobiosis |
+| ![](../src/main/resources/assets/hemomancy/textures/item/morphling_deadmans_purse.png) Deadman's Purse | `DeadmansPurseMorphlingItem` | Animus / Congeatio | Deadman's Purse Morphling | Feed Banking → Blood Transfusion → Overkill Banking → Hemophage Covenant |
+| ![](../src/main/resources/assets/hemomancy/textures/item/morphling_gravecap.png) Gravecap | `GravecapMorphlingItem` | Mortem / Animus | Gravecap Morphling | Sporulation → Mycorrhizal Network → Cordyceps Burst → Primal Mycorrhiza |
+| ![](../src/main/resources/assets/hemomancy/textures/item/morphling_witchs_ear.png) Witch's Ear | `WitchsEarMorphlingItem` | Ductilis / Tenebris | Witch's Ear Morphling | Echoic Perception → Membrane Glide → Night-State Pursuit → Echothesis |
+| ![](../src/main/resources/assets/hemomancy/textures/item/morphling_lumenlace.png) Lumenlace | `LumenlaceMorphlingItem` | Lux / Ductilis | Lumenlace Morphling | Sepia Wake → Low-Light Camouflage → Ink Mantle Reprieve → Last-Light Mantle |
+| ![](../src/main/resources/assets/hemomancy/textures/item/morphling_bootlace.png) Bootlace | `BootlaceMorphlingItem` | Tenebris / Lux | Bootlace Morphling | Wall Climbing → Silk Tether → Web Nest → Web of Red Thread |
+| ![](../src/main/resources/assets/hemomancy/textures/item/morphling_irontooth.png) Irontooth | `IrontoothMorphlingItem` | Ferric / Mortem | Irontooth Morphling | Burrow Sense → Earthen Bulwark → Seismic Slam → Deep Tremor Sense |
+| ![](../src/main/resources/assets/hemomancy/textures/item/morphling_emberfang.png) Emberfang | `EmberfangMorphlingItem` | Flammeus / Ductilis | Emberfang Morphling | Venom Strike → Constrict → Ambush Predator → Sovereign Venom |
+| ![](../src/main/resources/assets/hemomancy/textures/item/morphling_winter_shroud.png) Winter Shroud | `WinterShroudMorphlingItem` | Congeatio / Ferric | Winter Shroud Morphling | Cryptobiotic Hide → Cold Cleanse → Tun Molt → Cryptobiosis |
 
 ### 16.2 Cultivation
 
@@ -1824,7 +1832,7 @@ Current registered mutation attachments:
 | Gravecap | `HEAD` | `MorphlingFungalHeadModel` / `textures/models/morphling/fungal_head.png` | Fungal head; grows from Developing and hides the vanilla head at Primal |
 | Deadman's Purse | `ARMS` | `MorphlingLeechArmAttachmentModel` / `textures/models/morphling/leech_arm_attachment.png` | Interim paired arm clusters inherited from Leeches |
 | Emberfang | `LEGS` | `MorphlingSerpentLegAttachmentModel` / `textures/models/morphling/serpent_leg_attachment.png` | Interim paired leg coils inherited from Serpent |
-| Lumenlace | `HEAD` | `MorphlingCuttlefishHeadAttachmentModel` / `textures/models/morphling/cuttlefish_head_attachment.png` | Interim pearly mantle silhouette inherited from Cuttlefish; the registry/class ID remains `foxfire` for save compatibility |
+| Lumenlace | `HEAD` | `MorphlingCuttlefishHeadAttachmentModel` / `textures/models/morphling/cuttlefish_head_attachment.png` | Interim pearly mantle silhouette inherited from Cuttlefish; historical saved strain data migrates to the Lumenlace ID |
 | Winter Shroud | `BODY` | `MorphlingCentipedeBodyAttachmentModel` / `textures/models/morphling/centipede_body_attachment.png` | Interim segmented body silhouette inherited from Centipede |
 | Irontooth | `ARMS` | `MorphlingMoleArmAttachmentModel` / `textures/models/morphling/mole_arm_attachment.png` | Interim digging-arm silhouette inherited from Mole |
 
@@ -3876,7 +3884,7 @@ This section is a maintenance rollup, not a changelog. It uses the status legend
 - **Cleansed Sanguine Glass & Pane** — New glass/pane variants added to the block system with blockstates, models, textures, and loot tables.
 - **Debug Showcase Item** — Creative-mode testing tool (`DebugShowcaseItem`) that generates an organized showcase of all mod content in 4 sections: items in chests, blocks on platforms, mobs in fenced pens, and multiblock structures placed as patterns.
 - **Cardinal Rite Boundary Renderer** — Client-side visual renderer (`CardinalRiteBoundaryRenderer`) for cardinal rite boundaries during active rites.
-- **Morphling Item Textures** — The eight canonical strains have individual item textures and models: Deadman's Purse, Gravecap, Witch's Ear, Lumenlace, Bootlace, Irontooth, Emberfang, and Winter Shroud. The legacy `foxfire` registry texture/ID remains available for save compatibility; the equipped HUD uses the new Lumenlace light-and-nerve strip.
+- **Morphling Item Textures** — The eight canonical strains have individual item textures and models: Deadman's Purse, Gravecap, Witch's Ear, Lumenlace, Bootlace, Irontooth, Emberfang, and Winter Shroud. The active registry, item model, texture, and equipped HUD all use the Lumenlace identity; historical saved strain data migrates to it.
 - **Morphling Attachment Models/Textures** — All eight canonical Morphling strains have Java attachment models, matching Blockbench `.bbmodel` examples, and per-attachment PNG atlases under `textures/models/morphling/`. The Java-to-Blockbench exporter under `tools/model_export/java_model_to_bbmodel.mjs` supports the `morphling` batch and direct Java model conversion.
 - **MnA Compatibility Expansion** — Extensive brainstorming and dormant compat source are documented in `MNA_COMPATIBILITY_BRAINSTORM.md` and `compat/mna/**`. Current NeoForge 1.21.1 branch excludes MnA compat from compilation because no compatible MnA build is available; `Hemomancy.java` registration is commented. Treat spell components, Blood Tithe, Spell ↔ Manipulation combo, and `HemoMnAConfig` as preserved design/port targets rather than active runtime features until compat is re-enabled.
 - **GhastlyAlembic Custom Renderer** — `GhastlyAlembicRenderer` now renders the block as a full 3D entity model (`GhastlyAlembicModel`) with facing-aware rotation. Previously was a static block.

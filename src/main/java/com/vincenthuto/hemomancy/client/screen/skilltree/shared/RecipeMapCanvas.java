@@ -2,6 +2,8 @@ package com.vincenthuto.hemomancy.client.screen.skilltree.shared;
 
 import com.vincenthuto.hemomancy.client.screen.skilltree.util.PanZoomState;
 import com.vincenthuto.hemomancy.client.screen.skilltree.util.ProgressScreenContext;
+import com.vincenthuto.hemomancy.client.screen.skilltree.util.ProgressViewportCulling;
+import com.vincenthuto.hemomancy.client.screen.skilltree.util.ColoredRectBatch;
 import com.vincenthuto.hemomancy.client.screen.skilltree.util.HarbingerChromeRenderer;
 import com.vincenthuto.hemomancy.client.screen.skilltree.util.ScreenDrawUtils;
 import com.vincenthuto.hemomancy.client.screen.skilltree.util.FamilyFilterLabels;
@@ -87,8 +89,8 @@ public final class RecipeMapCanvas {
 		gfx.enableScissor(viewport.left(), viewport.top(), viewport.right(), viewport.bottom());
 		if (surfaceAlpha > 0.01F) surfaceTraceCache.render(gfx, ctx, surfacePanZoom, surfaceAlpha);
 		if (deepAlpha > 0.01F) deepTraceCache.render(gfx, ctx, deepView, deepAlpha);
-		drawLayer(gfx, ctx, mouseX, mouseY, accent, surfacePanZoom, SkillTreeLayer.SURFACE, surfaceAlpha);
-		drawLayer(gfx, ctx, mouseX, mouseY, accent, deepView, SkillTreeLayer.DEEP, deepAlpha);
+		drawLayer(gfx, ctx, mouseX, mouseY, accent, surfacePanZoom, SkillTreeLayer.SURFACE, surfaceAlpha, viewport);
+		drawLayer(gfx, ctx, mouseX, mouseY, accent, deepView, SkillTreeLayer.DEEP, deepAlpha, viewport);
 		gfx.disableScissor();
 		if (!viewport.contains(mouseX, mouseY)) hoveredTooltipEntry = null;
 		drawControls(gfx, ctx, mouseX, mouseY, accent, viewport);
@@ -160,14 +162,14 @@ public final class RecipeMapCanvas {
 	}
 
 	private void drawLayer(GuiGraphics gfx, ProgressScreenContext ctx, int mouseX, int mouseY, int accent,
-			PanZoomState view, SkillTreeLayer layer, float alpha) {
+			PanZoomState view, SkillTreeLayer layer, float alpha, RecipeMapInspectorLayout.IntRect viewport) {
 		if (alpha <= 0.01F) return;
 		gfx.pose().pushPose();
 		gfx.pose().translate(ctx.guiLeft() + view.panX, ctx.guiTop() + view.panY, 0);
 		gfx.pose().scale(view.zoom, view.zoom, 1.0F);
 		drawDegreeLabelsAndHub(gfx, ctx, accent, layer, alpha);
 		drawFamilyLabels(gfx, ctx, accent, layer, alpha);
-		drawNodes(gfx, ctx, mouseX, mouseY, accent, view, layer, alpha);
+		drawNodes(gfx, ctx, mouseX, mouseY, accent, view, layer, alpha, viewport);
 		gfx.pose().popPose();
 	}
 
@@ -215,13 +217,29 @@ public final class RecipeMapCanvas {
 	}
 
 	private void drawNodes(GuiGraphics gfx, ProgressScreenContext ctx, int mouseX, int mouseY, int accent,
-			PanZoomState view, SkillTreeLayer layer, float layerAlpha) {
+			PanZoomState view, SkillTreeLayer layer, float layerAlpha, RecipeMapInspectorLayout.IntRect viewport) {
 		double contentMouseX = view.cx(ctx.guiLeft(), mouseX);
 		double contentMouseY = view.cy(ctx.guiTop(), mouseY);
+		ColoredRectBatch chromeBatch = new ColoredRectBatch(gfx);
+		for (RecipeMapLayout.NodeBounds node : layout.nodes().values()) {
+			RecipeMapEntry entry = node.entry();
+			if (entry.key().kind() != RecipeMapEntry.Kind.FLOOR || !entry.visible() || !passesFilters(entry)
+					|| SkillTreeLayerRules.layerForDegree(entry.column()) != layer
+					|| !intersectsViewport(ctx, view, node, viewport)) continue;
+			boolean hovered = node.contains(contentMouseX, contentMouseY);
+			boolean active = entry.key().equals(selected);
+			int alpha = 0xEE;
+			int background = fadeColor(entry.unlocked() ? ((alpha << 24) | 0x15060A) : 0xAA111111, layerAlpha);
+			int border = active ? 0xFFFFD66B : hovered && entry.unlocked() ? withAlpha(accent, 0xFF)
+					: entry.unlocked() ? withAlpha(accent, alpha) : 0xFF3A3A3A;
+			drawDiamondNode(chromeBatch, node, background, fadeColor(border, layerAlpha));
+		}
 		for (RecipeMapLayout.NodeBounds node : layout.nodes().values()) {
 			RecipeMapEntry entry = node.entry();
 			if (!entry.visible() || !passesFilters(entry)
 					|| SkillTreeLayerRules.layerForDegree(entry.column()) != layer) continue;
+			if (!intersectsViewport(ctx, view, node, viewport)) continue;
+			if (entry.key().kind() == RecipeMapEntry.Kind.FLOOR) continue;
 			boolean hovered = node.contains(contentMouseX, contentMouseY);
 			boolean active = entry.key().equals(selected);
 			int alpha = 0xEE;
@@ -229,17 +247,32 @@ public final class RecipeMapCanvas {
 			int border = active ? 0xFFFFD66B : hovered && entry.unlocked() ? withAlpha(accent, 0xFF)
 					: entry.unlocked() ? withAlpha(accent, alpha) : 0xFF3A3A3A;
 			border = fadeColor(border, layerAlpha);
-			if (entry.key().kind() == RecipeMapEntry.Kind.FLOOR) {
-				drawDiamondNode(gfx, node, background, border);
-			} else {
-				gfx.fill(node.x(), node.y(), node.x() + node.width(), node.y() + node.height(), background);
-				ScreenDrawUtils.drawSimpleBorder(gfx, node.x(), node.y(), node.width(), node.height(), border);
-				HarbingerChromeRenderer.State chromeState = !entry.unlocked()
-						? HarbingerChromeRenderer.State.DISABLED
-						: active ? HarbingerChromeRenderer.State.ACTIVE
-						: hovered ? HarbingerChromeRenderer.State.HOVERED : HarbingerChromeRenderer.State.IDLE;
-				HarbingerChromeRenderer.drawFrame(gfx, node.x(), node.y(), node.width(), node.height(), border, chromeState);
-			}
+			chromeBatch.fill(node.x(), node.y(), node.x() + node.width(), node.y() + node.height(), background);
+			chromeBatch.fill(node.x(), node.y(), node.x() + node.width(), node.y() + 1, border);
+			chromeBatch.fill(node.x(), node.y() + node.height() - 1,
+						node.x() + node.width(), node.y() + node.height(), border);
+			chromeBatch.fill(node.x(), node.y(), node.x() + 1, node.y() + node.height(), border);
+			chromeBatch.fill(node.x() + node.width() - 1, node.y(),
+						node.x() + node.width(), node.y() + node.height(), border);
+			HarbingerChromeRenderer.State chromeState = !entry.unlocked()
+					? HarbingerChromeRenderer.State.DISABLED
+					: active ? HarbingerChromeRenderer.State.ACTIVE
+					: hovered ? HarbingerChromeRenderer.State.HOVERED : HarbingerChromeRenderer.State.IDLE;
+			HarbingerChromeRenderer.drawFrame(chromeBatch, node.x(), node.y(), node.width(), node.height(), border, chromeState);
+		}
+		chromeBatch.flush();
+
+		for (RecipeMapLayout.NodeBounds node : layout.nodes().values()) {
+			RecipeMapEntry entry = node.entry();
+			if (!entry.visible() || !passesFilters(entry)
+					|| SkillTreeLayerRules.layerForDegree(entry.column()) != layer
+					|| !intersectsViewport(ctx, view, node, viewport)) continue;
+			boolean hovered = node.contains(contentMouseX, contentMouseY);
+			boolean active = entry.key().equals(selected);
+			int alpha = 0xEE;
+			int border = active ? 0xFFFFD66B : hovered && entry.unlocked() ? withAlpha(accent, 0xFF)
+					: entry.unlocked() ? withAlpha(accent, alpha) : 0xFF3A3A3A;
+			border = fadeColor(border, layerAlpha);
 			ItemStack icon = icons.get(entry.key());
 			if (icon != null && !icon.isEmpty()) {
 				ScreenDrawUtils.renderScaledItem(gfx, icon, node.centerX(), node.centerY(),
@@ -248,6 +281,20 @@ public final class RecipeMapCanvas {
 			else drawKindGlyph(gfx, ctx, entry, node, border);
 			if (hovered && layerAlpha > 0.5F) hoveredTooltipEntry = entry;
 		}
+	}
+
+	private static boolean intersectsViewport(ProgressScreenContext ctx, PanZoomState view,
+			RecipeMapLayout.NodeBounds node, RecipeMapInspectorLayout.IntRect viewport) {
+		int centerX = view.sx(ctx.guiLeft(), node.centerX());
+		int centerY = view.sy(ctx.guiTop(), node.centerY());
+		int halfExtent = Math.max(2, (int) Math.ceil(Math.max(node.width(), node.height()) * view.zoom / 2.0F));
+		return ProgressViewportCulling.intersects(centerX, centerY, halfExtent,
+				viewport.left(), viewport.top(), viewport.right(), viewport.bottom());
+	}
+
+	public void close() {
+		surfaceTraceCache.close();
+		deepTraceCache.close();
 	}
 
 	static int iconHalfSize(RecipeMapEntry.Kind kind, int nodeWidth) {
@@ -485,7 +532,7 @@ public final class RecipeMapCanvas {
 		gfx.drawCenteredString(ctx.font(), glyph, node.centerX(), node.y() + 9, color);
 	}
 
-	private static void drawDiamondNode(GuiGraphics gfx, RecipeMapLayout.NodeBounds node,
+	private static void drawDiamondNode(ColoredRectBatch batch, RecipeMapLayout.NodeBounds node,
 			int background, int border) {
 		int centerX = node.centerX();
 		int centerY = node.centerY();
@@ -493,8 +540,8 @@ public final class RecipeMapCanvas {
 		for (int offsetY = -half; offsetY <= half; offsetY++) {
 			int span = half - Math.abs(offsetY);
 			int y = centerY + offsetY;
-			gfx.fill(centerX - span, y, centerX + span + 1, y + 1, border);
-			if (span > 1) gfx.fill(centerX - span + 1, y, centerX + span, y + 1, background);
+			batch.fill(centerX - span, y, centerX + span + 1, y + 1, border);
+			if (span > 1) batch.fill(centerX - span + 1, y, centerX + span, y + 1, background);
 		}
 	}
 

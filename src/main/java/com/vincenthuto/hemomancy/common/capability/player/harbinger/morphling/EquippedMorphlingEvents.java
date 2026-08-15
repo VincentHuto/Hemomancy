@@ -60,6 +60,8 @@ public class EquippedMorphlingEvents {
 				ItemStack stack = morphCap.getEquippedMorphling();
 				LastRiteHelper.armForMorphlingIfUnarmed(player, stack);
 				MorphlingItem.applyHungerTick(player, stack);
+			} else {
+				MorphlingItem.clearMorphlingPassiveEffects(player);
 			}
 		});
 		HemoCapabilityAccess.getEquippedMorphling(player).ifPresent(morphCap -> {

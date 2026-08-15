@@ -27,6 +27,11 @@ public class CraftingTabController implements IProgressTab {
     private final RecipeMapCanvas mapCanvas = new RecipeMapCanvas(RecipeMapEntry.Kind.CRAFTING);
     private final Map<ResourceLocation, BloodStructureRecipe> mapRecipes = new HashMap<>();
 
+	@Override
+	public void onClose() {
+		mapCanvas.close();
+	}
+
     /** Harbinger-flavoured controller (no-arg, existing behaviour preserved). */
     public CraftingTabController() { this(false); }
 

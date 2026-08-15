@@ -17,7 +17,8 @@ public final class MorphlingMigrationRulesSourceTest {
 			{ "morphling_leeches", "morphling_deadmans_purse" },
 			{ "morphling_fungal", "morphling_gravecap" },
 			{ "morphling_bat", "morphling_witchs_ear" },
-			{ "morphling_cuttlefish", "morphling_foxfire" },
+			{ "morphling_cuttlefish", "morphling_lumenlace" },
+			{ "morphling_foxfire", "morphling_lumenlace" },
 			{ "morphling_spider", "morphling_bootlace" },
 			{ "morphling_mole", "morphling_irontooth" },
 			{ "morphling_serpent", "morphling_emberfang" },
@@ -45,7 +46,7 @@ public final class MorphlingMigrationRulesSourceTest {
 		for (String[] migration : EXPECTED_ID_MIGRATIONS) {
 			assertEquals("migration for " + migration[0], migration[1], entries.get(migration[0]));
 		}
-		assertEquals("only the twelve legacy morphlings are migration sources",
+		assertEquals("legacy morphling IDs have explicit migration sources",
 				EXPECTED_ID_MIGRATIONS.length, entries.size());
 	}
 

@@ -154,6 +154,7 @@ public final class ScarsTabController implements IProgressTab {
 	@Override public boolean mouseDragged(ProgressScreenContext ctx, double mx, double my, int btn, double dx, double dy) { return false; }
 	@Override public boolean mouseScrolled(ProgressScreenContext ctx, double mx, double my, double delta) { return false; }
 	@Override public PanZoomState getPanZoomState() { return panZoom; }
+	@Override public void onClose() { traceCache.close(); }
 	@Override public boolean closeDetails() { return state.closeDetails(); }
 	@Override public int getContentW() { return ScarTreeLayout.CONTENT_W; }
 	@Override public int getContentH() { return ScarTreeLayout.CONTENT_H; }

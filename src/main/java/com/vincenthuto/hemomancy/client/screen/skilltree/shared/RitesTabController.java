@@ -32,6 +32,11 @@ public class RitesTabController implements IProgressTab {
     private final RecipeMapCanvas mapCanvas = new RecipeMapCanvas(RecipeMapEntry.Kind.RITE);
     private final Map<ResourceLocation, CardinalRiteRecipe> mapRites = new HashMap<>();
 
+	@Override
+	public void onClose() {
+		mapCanvas.close();
+	}
+
     /** Harbinger-flavoured controller (no-arg, existing behaviour preserved). */
     public RitesTabController() { this(false); }
 

@@ -1012,7 +1012,7 @@ public class ClientEvents {
                             return 4.0F;
                         } else if (selectedStack.getItem() == ItemInit.morphling_winter_shroud.get()) {
                             return 5.0F;
-                        } else if (selectedStack.getItem() == ItemInit.morphling_foxfire.get()) {
+                        } else if (selectedStack.getItem() == ItemInit.morphling_lumenlace.get()) {
                             return 6.0F;
                         } else if (selectedStack.getItem() == ItemInit.morphling_witchs_ear.get()) {
                             return 7.0F;

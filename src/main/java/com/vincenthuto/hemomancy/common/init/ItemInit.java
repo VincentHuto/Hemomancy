@@ -561,8 +561,8 @@ public class ItemInit {
             () -> new GravecapMorphlingItem(new Item.Properties().stacksTo(1)));
     public static final DeferredHolder<Item, Item> morphling_witchs_ear = BASEITEMS.register("morphling_witchs_ear",
             () -> new WitchsEarMorphlingItem(new Item.Properties().stacksTo(1)));
-    public static final DeferredHolder<Item, Item> morphling_foxfire = BASEITEMS.register("morphling_foxfire",
-            () -> new FoxfireMorphlingItem(new Item.Properties().stacksTo(1)));
+    public static final DeferredHolder<Item, Item> morphling_lumenlace = BASEITEMS.register("morphling_lumenlace",
+            () -> new LumenlaceMorphlingItem(new Item.Properties().stacksTo(1)));
     public static final DeferredHolder<Item, Item> morphling_bootlace = BASEITEMS.register("morphling_bootlace",
             () -> new BootlaceMorphlingItem(new Item.Properties().stacksTo(1)));
     public static final DeferredHolder<Item, Item> morphling_irontooth = BASEITEMS.register("morphling_irontooth",

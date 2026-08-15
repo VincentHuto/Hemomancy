@@ -13,14 +13,20 @@ import java.util.List;
 
 /**
  * A beneficial effect that grants echolocation-like perception, causing nearby
- * entities to glow visibly (even through walls). Applied by the bat morphling
+ * entities to glow visibly (even through walls). Applied by the Witch's Ear Morphling
  * while it is attached to the player. The detection radius scales with the
  * amplifier.
  */
 public class EchoicPerceptionEffect extends MobEffect {
+	private final String displayKey;
 
 	public EchoicPerceptionEffect(MobEffectCategory typeIn, int liquidColorIn) {
+		this(typeIn, liquidColorIn, "effect.hemomancy.echoic_perception");
+	}
+
+	public EchoicPerceptionEffect(MobEffectCategory typeIn, int liquidColorIn, String displayKey) {
 		super(typeIn, liquidColorIn);
+		this.displayKey = displayKey;
 	}
 
 	@Override
@@ -45,7 +51,7 @@ public class EchoicPerceptionEffect extends MobEffect {
 
 	@Override
 	public Component getDisplayName() {
-		return Component.translatable("effect.hemomancy.echoic_perception");
+		return Component.translatable(displayKey);
 	}
 
 	@Override

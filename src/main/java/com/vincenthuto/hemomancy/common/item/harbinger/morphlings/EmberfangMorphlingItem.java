@@ -86,12 +86,10 @@ public class EmberfangMorphlingItem extends MorphlingItem {
 	public void onEquippedTick(Player player, ItemStack stack) {
 		int maturity = MorphlingItem.getMaturityLevel(stack);
 
-		// Base effect: Serpentine Guile (move/attack speed, amplifier capped at 2)
+		// Base effect: Emberfang Morphling (move/attack speed, amplifier capped at 2)
 		int amplifier = Math.min(MorphlingItem.passiveAmplifier(player, stack, maturity), 2);
-		if (!player.hasEffect(EffectInit.serpentine_guile)) {
-			player.addEffect(new MobEffectInstance(EffectInit.serpentine_guile,
-					100, amplifier, false, false, true));
-		}
+		MorphlingItem.applyPassiveEffect(player, stack, EffectInit.morphling_emberfang,
+				EffectInit.serpentine_guile, amplifier);
 
 		// Track sneak start time for Ambush Predator (Apex 4)
 		if (maturity >= 4 && !player.level().isClientSide) {

@@ -8,6 +8,8 @@ import com.vincenthuto.hemomancy.client.screen.skilltree.util.IProgressTab;
 import com.vincenthuto.hemomancy.client.screen.skilltree.util.MiniRecipeRenderer;
 import com.vincenthuto.hemomancy.client.screen.skilltree.util.PanZoomState;
 import com.vincenthuto.hemomancy.client.screen.skilltree.util.ProgressScreenContext;
+import com.vincenthuto.hemomancy.client.screen.skilltree.util.ProgressViewportCulling;
+import com.vincenthuto.hemomancy.client.screen.skilltree.util.TraceLayerInvalidation;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
@@ -23,12 +25,16 @@ public class MaterialsTabController implements IProgressTab {
 	private final PanZoomState panZoom = new PanZoomState();
 	private final CyclingFamilyFilter<String> familyFilter = new CyclingFamilyFilter<>(List.of());
 	private final LinkedHashMap<MaterialAtlasNode, int[]> positions = new LinkedHashMap<>();
+	private final LinkedHashMap<MaterialAtlasNode, int[]> viewportPositions = new LinkedHashMap<>();
+	private final MaterialIconCache iconCache = new MaterialIconCache();
 	private final MaterialAtlasTraceLayerCache traceCache = new MaterialAtlasTraceLayerCache();
+	private final TraceLayerInvalidation traceInvalidation = new TraceLayerInvalidation();
 
 	/** All entries provided at construction time, before gate filtering. */
 	private final List<MaterialEntry> rawEntries;
 	/** Entries visible to the current player, including next-tier veiled previews. */
 	private List<MaterialAtlasNode> entries = List.of();
+	private MaterialRenderSnapshot renderSnapshot = MaterialRenderSnapshot.empty();
 
 	private final MaterialAtlasPath path;
 	private final EnumNodeShape nodeShape;
@@ -95,6 +101,7 @@ public class MaterialsTabController implements IProgressTab {
 			visibleEntries.add(new MaterialAtlasNode(material, atlasEntry, visibility));
 		}
 		entries = visibleEntries;
+		iconCache.initialize(entries.stream().map(MaterialAtlasNode::entry).toList());
 		familyFilter.setOptions(MaterialAtlasSpec.buckets(path).stream()
 				.filter(bucket -> entries.stream().anyMatch(node -> node.atlasEntry().bucket().id().equals(bucket.id())))
 				.map(MaterialAtlasBucket::id).toList());
@@ -110,18 +117,18 @@ public class MaterialsTabController implements IProgressTab {
 		MaterialsTabView.buildLayout(entries, positions, bounds, NODE_SIZE, path);
 		contentW = bounds[0];
 		contentH = bounds[1];
+		rebuildRenderSnapshot();
 		panZoom.centreOn(contentW, contentH, ctx.guiWidth(), ctx.guiHeight());
 	}
 
 	@Override
 	public void render(GuiGraphics gfx, ProgressScreenContext ctx, int mx, int my, float partial) {
-		List<MaterialAtlasNode> visibleEntries = filteredEntries();
-		LinkedHashMap<MaterialAtlasNode, int[]> visiblePositions = filteredPositions();
-		traceCache.rebuildIfNeeded(visibleEntries, visiblePositions,
+		if (traceInvalidation.consume(0L)) traceCache.rebuild(renderSnapshot.nodes(), renderSnapshot.positions(),
 				contentW, contentH, MaterialAtlasSpec.hubX(path), MaterialAtlasSpec.hubY(path));
+		rebuildViewportSnapshot(ctx);
 		MaterialsTabView.drawAtlasTrace(traceCache, gfx, ctx, panZoom);
 		MaterialsTabView.drawNodes(gfx, ctx.font(), path,
-				visibleEntries, visiblePositions,
+				renderSnapshot.nodes(), viewportPositions, iconCache,
 				panZoom, ctx.guiLeft(), ctx.guiTop(), NODE_SIZE, nodeShape,
 				tabColor, selectedEntry, nodeTransparentColor, nodeAccentColor);
 		FamilyFilterControlView.draw(gfx, ctx, familyLabel(), tabColor, mx, my);
@@ -130,7 +137,7 @@ public class MaterialsTabController implements IProgressTab {
 	@Override
 	public void renderOverlay(GuiGraphics gfx, ProgressScreenContext ctx, int mx, int my) {
 		if (selectedEntry != null && selectedEntry.visibility() == MaterialVisibility.UNLOCKED) {
-			MaterialsTabView.drawInfoPanel(gfx, ctx.font(), path, selectedEntry.entry(),
+			MaterialsTabView.drawInfoPanel(gfx, ctx.font(), path, selectedEntry.entry(), iconCache.get(selectedEntry.entry()),
 					ctx.guiLeft(), ctx.guiTop(), ctx.guiWidth(),
 					tabColor, panelSeparatorColor, panelBgColor, renderer);
 		}
@@ -138,7 +145,7 @@ public class MaterialsTabController implements IProgressTab {
 
 	@Override
 	public void renderTooltip(GuiGraphics gfx, ProgressScreenContext ctx, int mx, int my) {
-		MaterialsTabView.drawTooltip(gfx, ctx.font(), filteredPositions(),
+		MaterialsTabView.drawTooltip(gfx, ctx.font(), viewportPositions,
 				panZoom, ctx.guiLeft(), ctx.guiTop(),
 				ctx.guiWidth(), ctx.guiHeight(), NODE_SIZE,
 				nodeShape, tabColor, nodeAccentColor, mx, my);
@@ -148,6 +155,7 @@ public class MaterialsTabController implements IProgressTab {
 	public boolean mouseClicked(ProgressScreenContext ctx, double mx, double my, int btn) {
 		if (FamilyFilterControlView.bounds(ctx).contains(mx, my)) {
 			familyFilter.cycle(btn == 1 ? -1 : 1);
+			rebuildRenderSnapshot();
 			if (selectedEntry != null
 					&& !familyFilter.includes(selectedEntry.atlasEntry().bucket().id())) selectedEntry = null;
 			return true;
@@ -155,7 +163,7 @@ public class MaterialsTabController implements IProgressTab {
 		if (btn != 0) {
 			return false;
 		}
-		MaterialAtlasNode hit = MaterialsTabView.nodeUnder(filteredPositions(), panZoom,
+		MaterialAtlasNode hit = MaterialsTabView.nodeUnder(viewportPositions, panZoom,
 				ctx.guiLeft(), ctx.guiTop(), NODE_SIZE, nodeShape, mx, my);
 		if (hit == null) {
 			return false;
@@ -203,20 +211,30 @@ public class MaterialsTabController implements IProgressTab {
 		return contentH;
 	}
 
-	private List<MaterialAtlasNode> filteredEntries() {
-		return entries.stream()
-				.filter(node -> familyFilter.includes(node.atlasEntry().bucket().id()))
-				.toList();
+	private void rebuildRenderSnapshot() {
+		renderSnapshot = MaterialRenderSnapshot.filter(entries, positions, familyFilter::includes);
+		traceInvalidation.markDirty();
 	}
 
-	private LinkedHashMap<MaterialAtlasNode, int[]> filteredPositions() {
-		LinkedHashMap<MaterialAtlasNode, int[]> visible = new LinkedHashMap<>();
-		for (var entry : positions.entrySet()) {
-			if (familyFilter.includes(entry.getKey().atlasEntry().bucket().id())) {
-				visible.put(entry.getKey(), entry.getValue());
+	private void rebuildViewportSnapshot(ProgressScreenContext ctx) {
+		viewportPositions.clear();
+		int halfExtent = panZoom.halfNode(NODE_SIZE) + 5;
+		int right = ctx.guiLeft() + ctx.guiWidth();
+		int bottom = ctx.guiTop() + ctx.guiHeight();
+		for (var entry : renderSnapshot.positions().entrySet()) {
+			int[] position = entry.getValue();
+			int x = panZoom.sx(ctx.guiLeft(), position[0]);
+			int y = panZoom.sy(ctx.guiTop(), position[1]);
+			if (ProgressViewportCulling.intersects(x, y, halfExtent,
+					ctx.guiLeft(), ctx.guiTop(), right, bottom)) {
+				viewportPositions.put(entry.getKey(), position);
 			}
 		}
-		return visible;
+	}
+
+	@Override
+	public void onClose() {
+		traceCache.close();
 	}
 
 	private String familyLabel() {

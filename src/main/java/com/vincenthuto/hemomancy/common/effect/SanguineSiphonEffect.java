@@ -14,14 +14,20 @@ import net.minecraft.world.entity.player.Player;
 
 /**
  * A beneficial effect that passively replenishes the player's blood volume.
- * Applied by the leeches morphling while it is attached to the player. Each
+ * Applied by the Deadman's Purse Morphling while it is attached to the player. Each
  * tick, the player's blood volume is filled by a small amount that scales
  * with the amplifier.
  */
 public class SanguineSiphonEffect extends MobEffect {
+	private final String displayKey;
 
 	public SanguineSiphonEffect(MobEffectCategory typeIn, int liquidColorIn) {
+		this(typeIn, liquidColorIn, "effect.hemomancy.sanguine_siphon");
+	}
+
+	public SanguineSiphonEffect(MobEffectCategory typeIn, int liquidColorIn, String displayKey) {
 		super(typeIn, liquidColorIn);
+		this.displayKey = displayKey;
 	}
 
 	@Override
@@ -42,7 +48,7 @@ public class SanguineSiphonEffect extends MobEffect {
 
 	@Override
 	public Component getDisplayName() {
-		return Component.translatable("effect.hemomancy.sanguine_siphon");
+		return Component.translatable(displayKey);
 	}
 
 	@Override

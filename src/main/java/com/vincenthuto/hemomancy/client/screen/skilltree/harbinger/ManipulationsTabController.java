@@ -793,6 +793,10 @@ public class ManipulationsTabController implements IProgressTab {
     @Override public boolean mouseScrolled(ProgressScreenContext ctx, double mx, double my, double delta) { return false; }
 
     @Override public PanZoomState getPanZoomState() { return panZoom; }
+	@Override public void onClose() {
+		traceCache.close();
+		scarTraceCache.close();
+	}
     @Override public boolean closeDetails() {
         boolean closed = scarState.closeDetails();
         if (selectedEntry != null) {

@@ -106,11 +106,9 @@ public class IrontoothMorphlingItem extends MorphlingItem {
 		int maturity = MorphlingItem.getMaturityLevel(stack);
 		int amplifier = MorphlingItem.passiveAmplifier(player, stack, maturity);
 
-		// Base effect: Burrower's Instinct (mining speed + underground regen)
-		if (!player.hasEffect(EffectInit.burrowers_instinct)) {
-			player.addEffect(new MobEffectInstance(EffectInit.burrowers_instinct,
-					100, amplifier, false, false, true));
-		}
+		// Base effect: Irontooth Morphling (mining speed + underground regen)
+		MorphlingItem.applyPassiveEffect(player, stack, EffectInit.morphling_irontooth,
+				EffectInit.burrowers_instinct, amplifier);
 
 		boolean isUnderground = player.getY() < UNDERGROUND_THRESHOLD;
 

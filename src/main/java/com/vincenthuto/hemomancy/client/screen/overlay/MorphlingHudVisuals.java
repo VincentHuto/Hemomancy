@@ -7,7 +7,7 @@ final class MorphlingHudVisuals {
 			"morphling_deadmans_purse", visual("deadmans_purse", 22, 0xFFD34A52),
 			"morphling_gravecap", visual("gravecap", 25, 0xFFB95272),
 			"morphling_witchs_ear", visual("witchs_ear", 20, 0xFF9C63C7),
-			"morphling_foxfire", visual("lumenlace", 23, 0xFFF0D15A),
+			"morphling_lumenlace", visual("lumenlace", 23, 0xFFF0D15A),
 			"morphling_bootlace", visual("bootlace", 24, 0xFF76509D),
 			"morphling_irontooth", visual("irontooth", 26, 0xFFC28A63),
 			"morphling_emberfang", visual("emberfang", 24, 0xFFE03A63),

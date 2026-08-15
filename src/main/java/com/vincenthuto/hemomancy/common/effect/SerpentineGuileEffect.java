@@ -7,14 +7,20 @@ import net.minecraft.world.entity.LivingEntity;
 
 /**
  * A beneficial effect that grants the player increased movement speed and
- * attack speed, embodying serpentine reflexes. Applied by the serpent morphling
+ * attack speed, embodying Emberfang's heated venom reflexes. Applied by the Emberfang Morphling
  * while it is attached to the player. Speed bonuses are applied via attribute
  * modifiers in EffectInit.
  */
 public class SerpentineGuileEffect extends MobEffect {
+	private final String displayKey;
 
 	public SerpentineGuileEffect(MobEffectCategory typeIn, int liquidColorIn) {
+		this(typeIn, liquidColorIn, "effect.hemomancy.serpentine_guile");
+	}
+
+	public SerpentineGuileEffect(MobEffectCategory typeIn, int liquidColorIn, String displayKey) {
 		super(typeIn, liquidColorIn);
+		this.displayKey = displayKey;
 	}
 
 	@Override
@@ -26,7 +32,7 @@ public class SerpentineGuileEffect extends MobEffect {
 
 	@Override
 	public Component getDisplayName() {
-		return Component.translatable("effect.hemomancy.serpentine_guile");
+		return Component.translatable(displayKey);
 	}
 
 	@Override

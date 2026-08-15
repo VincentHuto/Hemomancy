@@ -14,14 +14,20 @@ import java.util.Map;
 
 /**
  * A beneficial effect that slowly repairs vascular damage across all vein
- * sections. Applied by the spider morphling while it is attached to the player.
+ * sections. Applied by the Bootlace Morphling while it is attached to the player.
  * Each tick, every damaged section is healed by a small amount that scales with
  * the amplifier.
  */
 public class ArachnidAnastomosisEffect extends MobEffect {
+	private final String displayKey;
 
 	public ArachnidAnastomosisEffect(MobEffectCategory typeIn, int liquidColorIn) {
+		this(typeIn, liquidColorIn, "effect.hemomancy.arachnid_anastomosis");
+	}
+
+	public ArachnidAnastomosisEffect(MobEffectCategory typeIn, int liquidColorIn, String displayKey) {
 		super(typeIn, liquidColorIn);
+		this.displayKey = displayKey;
 	}
 
 	@Override
@@ -53,7 +59,7 @@ public class ArachnidAnastomosisEffect extends MobEffect {
 
 	@Override
 	public Component getDisplayName() {
-		return Component.translatable("effect.hemomancy.arachnid_anastomosis");
+		return Component.translatable(displayKey);
 	}
 
 	@Override

@@ -46,14 +46,14 @@ The stage values in this table are ordered:
 
 | Morphling | Preferred / secondary tendency | Equipped passive and stage scaling |
 |---|---|---|
-| **Deadman's Purse** | Animus / Congeatio | **Sanguine Siphon:** restores **1 / 1.5 / 2 / 2.5 / 3 / 3.5 mL blood** per two-second effect proc, subject to the passive-income circulation cap. |
-| **Gravecap** | Mortem / Animus | **Mycorrhizal Mending:** heals **0.5 / 0.75 / 1 / 1.25 / 1.5 / 1.75 HP** per two-second effect proc. Two HP equal one heart. |
-| **Witch's Ear** | Ductilis / Tenebris | **Echoic Perception:** reveals living entities in a **16 / 20 / 24 / 28 / 32 / 36-block radius**. This operates from Unfed even though its maturity tooltip lists it at Developing. |
-| **Lumenlace** | Lux / Ductilis | **Luminous Dissipation:** adds **10 / 20 / 30 / 40 / 50 / 60 percentage points of knockback resistance**. |
-| **Bootlace** | Tenebris / Lux | **Arachnid Anastomosis:** repairs **0.5 / 0.75 / 1 / 1.25 / 1.5 / 1.75 vascular health** to every damaged body section per two-second effect proc. |
-| **Irontooth** | Ferric / Mortem | **Burrower's Instinct:** adds **15 / 30 / 45 / 60 / 75 / 90% block-breaking speed**. Below Y=50 it also heals **0.5 / 0.75 / 1 / 1.25 / 1.5 / 1.75 HP** per proc and grants Night Vision. |
-| **Emberfang** | Flammeus / Ductilis | **Serpentine Guile:** movement speed is **+15 / +30 / +45 / +45 / +45 / +45%** and attack speed is **+10 / +20 / +30 / +30 / +30 / +30%**. Its passive amplifier is capped at 2. |
-| **Winter Shroud** | Congeatio / Ferric | **Venomous Resilience:** grants poison immunity and **+5 / +10 / +15 / +20 / +25 / +30% movement speed**. |
+| **Deadman's Purse** | Animus / Congeatio | **Deadman's Purse Morphling:** restores **1 / 1.5 / 2 / 2.5 / 3 / 3.5 mL blood** per two-second effect proc, subject to the passive-income circulation cap. |
+| **Gravecap** | Mortem / Animus | **Gravecap Morphling:** heals **0.5 / 0.75 / 1 / 1.25 / 1.5 / 1.75 HP** per two-second effect proc. Two HP equal one heart. |
+| **Witch's Ear** | Ductilis / Tenebris | **Witch's Ear Morphling:** reveals living entities in a **16 / 20 / 24 / 28 / 32 / 36-block radius**. This operates from Unfed even though its maturity tooltip lists it at Developing. |
+| **Lumenlace** | Lux / Ductilis | **Lumenlace Morphling:** adds **10 / 20 / 30 / 40 / 50 / 60 percentage points of knockback resistance**. |
+| **Bootlace** | Tenebris / Lux | **Bootlace Morphling:** repairs **0.5 / 0.75 / 1 / 1.25 / 1.5 / 1.75 vascular health** to every damaged body section per two-second effect proc. |
+| **Irontooth** | Ferric / Mortem | **Irontooth Morphling:** adds **15 / 30 / 45 / 60 / 75 / 90% block-breaking speed**. Below Y=50 it also heals **0.5 / 0.75 / 1 / 1.25 / 1.5 / 1.75 HP** per proc and grants Night Vision. |
+| **Emberfang** | Flammeus / Ductilis | **Emberfang Morphling:** movement speed is **+15 / +30 / +45 / +45 / +45 / +45%** and attack speed is **+10 / +20 / +30 / +30 / +30 / +30%**. Its passive amplifier is capped at 2. |
+| **Winter Shroud** | Congeatio / Ferric | **Winter Shroud Morphling:** grants poison immunity and **+5 / +10 / +15 / +20 / +25 / +30% movement speed**. |
 
 ## Abilities by Maturity Stage
 
@@ -214,7 +214,7 @@ Witch's Ear, Lumenlace, and Emberfang are not currently accepted by the Cradle.
 - `src/main/java/com/vincenthuto/hemomancy/common/item/harbinger/morphlings/DeadmansPurseMorphlingItem.java`
 - `src/main/java/com/vincenthuto/hemomancy/common/item/harbinger/morphlings/GravecapMorphlingItem.java`
 - `src/main/java/com/vincenthuto/hemomancy/common/item/harbinger/morphlings/WitchsEarMorphlingItem.java`
-- `src/main/java/com/vincenthuto/hemomancy/common/item/harbinger/morphlings/FoxfireMorphlingItem.java`
+- `src/main/java/com/vincenthuto/hemomancy/common/item/harbinger/morphlings/LumenlaceMorphlingItem.java`
 - `src/main/java/com/vincenthuto/hemomancy/common/item/harbinger/morphlings/BootlaceMorphlingItem.java`
 - `src/main/java/com/vincenthuto/hemomancy/common/item/harbinger/morphlings/IrontoothMorphlingItem.java`
 - `src/main/java/com/vincenthuto/hemomancy/common/item/harbinger/morphlings/EmberfangMorphlingItem.java`

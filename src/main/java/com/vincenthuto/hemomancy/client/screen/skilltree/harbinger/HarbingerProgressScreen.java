@@ -52,18 +52,14 @@ public class HarbingerProgressScreen extends Screen {
     private boolean isDragging;
     private PanZoomState view;
 
-    private final SkillsTabController skills    = new SkillsTabController();
-    private final ManipulationsTabController  manips    = new ManipulationsTabController();
-    private final RitesTabController rites     = new RitesTabController();
-    private final CraftingTabController crafting  = new CraftingTabController();
-    private final SummonsTabController summons = new SummonsTabController();
-    private final MaterialsTabController materials = new MaterialsTabController();
-    private final BestiaryTabController bestiary = new BestiaryTabController();
+	private final ProgressTabRegistry<Tab> tabs = new ProgressTabRegistry<>(Tab.class, this::createController);
+	private final PanZoomState fallbackView = new PanZoomState();
 
     private final VeinBackgroundRenderer  veinBg        = new VeinBackgroundRenderer();
 
     private int playerDegree = 0;
     private final int focusedSkillId;
+	private boolean focusedSkillPending;
 
     public HarbingerProgressScreen() {
         this(-1);
@@ -87,14 +83,24 @@ public class HarbingerProgressScreen extends Screen {
     }
 
     private IProgressTab activeController(Tab tab) {
+		ProgressScreenContext ctx = makeContext();
+		IProgressTab controller = tabs.activate(tab, ctx);
+		if (tab == Tab.SKILLS && focusedSkillPending && controller instanceof SkillsTabController skills) {
+			skills.focusSkill(focusedSkillId, ctx);
+			focusedSkillPending = false;
+		}
+		return controller;
+	}
+
+	private IProgressTab createController(Tab tab) {
         return switch (tab) {
-            case SKILLS        -> skills;
-            case TENDENCIES    -> manips;
-            case RITES         -> rites;
-            case CRAFTING      -> crafting;
-            case SUMMONS       -> summons;
-            case MATERIALS     -> materials;
-            case BESTIARY      -> bestiary;
+			case SKILLS -> new SkillsTabController();
+			case TENDENCIES -> new ManipulationsTabController();
+			case RITES -> new RitesTabController();
+			case CRAFTING -> new CraftingTabController();
+			case SUMMONS -> new SummonsTabController();
+			case MATERIALS -> new MaterialsTabController();
+			case BESTIARY -> new BestiaryTabController();
         };
     }
 
@@ -116,19 +122,15 @@ public class HarbingerProgressScreen extends Screen {
             activeTab = firstVisibleTab(playerDegree);
         }
 
-        ProgressScreenContext ctx = makeContext();
-        for (IProgressTab tab : allTabs()) tab.onInit(ctx);
-        if (focusedSkillId >= 0) skills.focusSkill(focusedSkillId, ctx);
+		tabs.invalidateInitializations();
+		focusedSkillPending = focusedSkillId >= 0;
+		activeController(activeTab);
         view = viewForTab(activeTab);
-    }
-
-    private IProgressTab[] allTabs() {
-        return new IProgressTab[]{skills, manips, rites, crafting, summons, materials, bestiary};
     }
 
     private PanZoomState viewForTab(Tab tab) {
         PanZoomState ps = activeController(tab).getPanZoomState();
-        return ps != null ? ps : (view != null ? view : skills.getPanZoomState());
+		return ps != null ? ps : (view != null ? view : fallbackView);
     }
 
     private void switchTab(Tab tab) {
@@ -139,7 +141,8 @@ public class HarbingerProgressScreen extends Screen {
                     activeController(activeTab).getNavigationViewportWidth(makeContext()), guiHeight);
         }
         activeTab = tab;
-        PanZoomState ps = activeController(tab).getPanZoomState();
+		IProgressTab controller = activeController(tab);
+		PanZoomState ps = controller.getPanZoomState();
         if (ps != null) view = ps;
     }
 
@@ -238,29 +241,31 @@ public class HarbingerProgressScreen extends Screen {
         RenderSystem.defaultBlendFunc();
         RenderSystem.disableBlend();
         ProgressScreenContext ctx = makeContext();
-        veinBg.render(gfx, guiLeft, guiTop, guiWidth, guiHeight, activeTab == Tab.SKILLS ? skills.updateAndGetDeepFade(ctx) : 0.0f);
+		IProgressTab active = activeController();
+		float deepFade = active instanceof SkillsTabController skills ? skills.updateAndGetDeepFade(ctx) : 0.0F;
+		veinBg.render(gfx, guiLeft, guiTop, guiWidth, guiHeight, deepFade);
         ScreenDrawUtils.drawBorder(gfx, guiLeft, guiTop, guiWidth, guiHeight, 0xFF330808, 0xFF220606);
         HarbingerChromeRenderer.drawFrame(gfx, guiLeft, guiTop, guiWidth, guiHeight,
                 activeTab.color, HarbingerChromeRenderer.State.ACTIVE);
 
         gfx.enableScissor(guiLeft + 2, guiTop + 2, guiLeft + guiWidth - 2, guiTop + guiHeight - 2);
-        activeController().render(gfx, ctx, mouseX, mouseY, partial);
+		active.render(gfx, ctx, mouseX, mouseY, partial);
         gfx.disableScissor();
 
-        activeController().renderOverlay(gfx, ctx, mouseX, mouseY);
+		active.renderOverlay(gfx, ctx, mouseX, mouseY);
 
         drawTabsAboveCanvas(gfx, mouseX, mouseY);
-        PanZoomState activeView = activeController().getPanZoomState();
+		PanZoomState activeView = active.getPanZoomState();
         if (activeView != null) {
             view = activeView;
             drawHomeButton(gfx, mouseX, mouseY);
         }
 
-        if (activeController().getPanZoomState() != null) {
+		if (active.getPanZoomState() != null) {
             drawZoomPercentage(gfx);
         }
 
-        activeController().renderTooltip(gfx, ctx, mouseX, mouseY);
+		active.renderTooltip(gfx, ctx, mouseX, mouseY);
 
             RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
             RenderSystem.defaultBlendFunc();
@@ -412,4 +417,10 @@ public class HarbingerProgressScreen extends Screen {
 
     @Override
     public boolean isPauseScreen() { return false; }
+
+	@Override
+	public void removed() {
+		tabs.close();
+		super.removed();
+	}
 }

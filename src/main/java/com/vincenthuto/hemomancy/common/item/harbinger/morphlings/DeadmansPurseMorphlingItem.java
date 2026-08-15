@@ -67,11 +67,9 @@ public class DeadmansPurseMorphlingItem extends MorphlingItem {
 		int maturity = MorphlingItem.getMaturityLevel(stack);
 		int amplifier = MorphlingItem.passiveAmplifier(player, stack, maturity);
 
-		// Base effect: Sanguine Siphon (blood fill, amplifier = maturity)
-		if (!player.hasEffect(EffectInit.sanguine_siphon)) {
-			player.addEffect(new MobEffectInstance(EffectInit.sanguine_siphon,
-					100, amplifier, false, false, true));
-		}
+		// Base effect: Deadman's Purse Morphling (blood fill, amplifier = maturity)
+		MorphlingItem.applyPassiveEffect(player, stack, EffectInit.morphling_deadmans_purse,
+				EffectInit.sanguine_siphon, amplifier);
 
 		// Mature (3+): Blood Transfusion — auto-heal by spending blood volume when low
 		if (maturity >= 3 && !player.level().isClientSide) {

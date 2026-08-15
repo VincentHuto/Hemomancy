@@ -1,6 +1,7 @@
 package com.vincenthuto.hemomancy.client.screen.skilltree.harbinger;
 
 import com.mojang.blaze3d.systems.RenderSystem;
+import com.vincenthuto.hemomancy.client.screen.skilltree.util.ColoredRectBatch;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.util.Mth;
 
@@ -45,8 +46,9 @@ public final class VeinBackgroundRenderer {
         gfx.enableScissor(gx, gy, gx + gw, gy + gh);
         RenderSystem.enableBlend();
         RenderSystem.defaultBlendFunc();
+		ColoredRectBatch batch = new ColoredRectBatch(gfx);
 
-        gfx.fill(gx, gy, gx + gw, gy + gh, lerpArgb(0xFF0A0204, 0xFF0E020D, fade));
+        batch.fill(gx, gy, gx + gw, gy + gh, lerpArgb(0xFF0A0204, 0xFF0E020D, fade));
 
         int cx = gx + gw / 2, cy = gy + gh / 2;
         int glowRadius = Math.max(gw, gh) / 2;
@@ -56,11 +58,11 @@ public final class VeinBackgroundRenderer {
             int red = (int)((40 + 7 * fade) * (1f - t));
             int green = (int)((4 + fade) * (1f - t));
             int blue = (int)((3 + 12 * fade) * (1f - t));
-            gfx.fill(cx - ring, cy - ring, cx + ring, cy + ring, (alpha << 24) | (red << 16) | (green << 8) | blue);
+            batch.fill(cx - ring, cy - ring, cx + ring, cy + ring, (alpha << 24) | (red << 16) | (green << 8) | blue);
         }
 
         for (int i = 0; i < VEIN_COUNT; i++) {
-            drawVeinTendril(gfx, i, time, gx, gy, gw, gh, fade);
+            drawVeinTendril(batch, i, time, gx, gy, gw, gh, fade);
         }
 
         Random speckRand = new Random(12345L);
@@ -68,14 +70,15 @@ public final class VeinBackgroundRenderer {
             int spx = gx + speckRand.nextInt(gw), spy = gy + speckRand.nextInt(gh);
             int sr = 10 + speckRand.nextInt(20) + (int)(7 * fade), sg = (int)(speckRand.nextInt(5) * (1f - fade)), sa = 15 + speckRand.nextInt(25);
             int sb = (int)(fade * (6 + speckRand.nextInt(7)));
-            gfx.fill(spx, spy, spx + 1, spy + 1, (sa << 24) | (sr << 16) | (sg << 8) | sb);
+            batch.fill(spx, spy, spx + 1, spy + 1, (sa << 24) | (sr << 16) | (sg << 8) | sb);
         }
+		batch.flush();
 
         RenderSystem.disableBlend();
         gfx.disableScissor();
     }
 
-    private void drawVeinTendril(GuiGraphics gfx, int index, float time, int gx, int gy, int gw, int gh, float deepFade) {
+    private void drawVeinTendril(ColoredRectBatch batch, int index, float time, int gx, int gy, int gw, int gh, float deepFade) {
         float[] p = veinParams[index];
 
         float startX    = gx + p[0] * gw;
@@ -125,7 +128,7 @@ public final class VeinBackgroundRenderer {
             int g = (int)Mth.clamp(baseGreen * pulse * 0.5f, 0, 255);
             int b = (int)Mth.clamp(baseBlue  * pulse * deepBlueScale, 0, 255);
 
-            gfx.fill(ix, iy, ix + thickness, iy + thickness, (a << 24) | (r << 16) | (g << 8) | b);
+            batch.fill(ix, iy, ix + thickness, iy + thickness, (a << 24) | (r << 16) | (g << 8) | b);
         }
     }
 

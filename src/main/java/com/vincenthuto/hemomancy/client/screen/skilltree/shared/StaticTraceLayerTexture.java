@@ -41,6 +41,12 @@ final class StaticTraceLayerTexture {
 		return true;
 	}
 
+	void prepareForRebuild(int contentW, int contentH) {
+		textureW = Math.max(1, contentW);
+		textureH = Math.max(1, contentH);
+		signature = null;
+	}
+
 	NativeImage createImage() {
 		return new NativeImage(textureW, textureH, false);
 	}
@@ -80,5 +86,13 @@ final class StaticTraceLayerTexture {
 		pose.popPose();
 		RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
 		RenderSystem.disableBlend();
+	}
+
+	void close() {
+		if (texture != null) Minecraft.getInstance().getTextureManager().release(textureLocation);
+		texture = null;
+		signature = null;
+		textureW = 0;
+		textureH = 0;
 	}
 }

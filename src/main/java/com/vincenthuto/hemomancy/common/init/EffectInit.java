@@ -179,6 +179,55 @@ public class EffectInit {
             () -> new Potion("potion_of_burrowers_instinct",
                     new MobEffectInstance(burrowers_instinct, 1200, 0)));
 
+    // Morphling strain identity effects. The legacy effects above remain for standalone potions and rites.
+    public static final DeferredHolder<MobEffect, MobEffect> morphling_deadmans_purse = EFFECTS.register(
+            "morphling_deadmans_purse",
+            () -> new SanguineSiphonEffect(MobEffectCategory.BENEFICIAL, 0xB21F35,
+                    "effect.hemomancy.morphling_deadmans_purse"));
+    public static final DeferredHolder<MobEffect, MobEffect> morphling_gravecap = EFFECTS.register(
+            "morphling_gravecap",
+            () -> new MycorrhizalMendingEffect(MobEffectCategory.BENEFICIAL, 0xB52A64,
+                    "effect.hemomancy.morphling_gravecap"));
+    public static final DeferredHolder<MobEffect, MobEffect> morphling_witchs_ear = EFFECTS.register(
+            "morphling_witchs_ear",
+            () -> new EchoicPerceptionEffect(MobEffectCategory.BENEFICIAL, 0x7F3A9A,
+                    "effect.hemomancy.morphling_witchs_ear"));
+    public static final DeferredHolder<MobEffect, MobEffect> morphling_lumenlace = EFFECTS.register(
+            "morphling_lumenlace",
+            () -> new LuminousDissipationEffect(MobEffectCategory.BENEFICIAL, 0x2F79C7,
+                    "effect.hemomancy.morphling_lumenlace")
+                    .addAttributeModifier(Attributes.KNOCKBACK_RESISTANCE,
+                            ResourceLocation.fromNamespaceAndPath("hemomancy", "morphling_lumenlace_knockback_resistance"),
+                            0.1D, AttributeModifier.Operation.ADD_VALUE));
+    public static final DeferredHolder<MobEffect, MobEffect> morphling_bootlace = EFFECTS.register(
+            "morphling_bootlace",
+            () -> new ArachnidAnastomosisEffect(MobEffectCategory.BENEFICIAL, 0x7E2AC7,
+                    "effect.hemomancy.morphling_bootlace"));
+    public static final DeferredHolder<MobEffect, MobEffect> morphling_irontooth = EFFECTS.register(
+            "morphling_irontooth",
+            () -> new BurrowersInstinctEffect(MobEffectCategory.BENEFICIAL, 0xA57A5A,
+                    "effect.hemomancy.morphling_irontooth")
+                    .addAttributeModifier(Attributes.BLOCK_BREAK_SPEED,
+                            ResourceLocation.fromNamespaceAndPath("hemomancy", "morphling_irontooth_block_break_speed"),
+                            0.15F, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL));
+    public static final DeferredHolder<MobEffect, MobEffect> morphling_emberfang = EFFECTS.register(
+            "morphling_emberfang",
+            () -> new SerpentineGuileEffect(MobEffectCategory.BENEFICIAL, 0xE34A2F,
+                    "effect.hemomancy.morphling_emberfang")
+                    .addAttributeModifier(Attributes.MOVEMENT_SPEED,
+                            ResourceLocation.fromNamespaceAndPath("hemomancy", "morphling_emberfang_movement_speed"),
+                            0.15F, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL)
+                    .addAttributeModifier(Attributes.ATTACK_SPEED,
+                            ResourceLocation.fromNamespaceAndPath("hemomancy", "morphling_emberfang_attack_speed"),
+                            0.1F, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL));
+    public static final DeferredHolder<MobEffect, MobEffect> morphling_winter_shroud = EFFECTS.register(
+            "morphling_winter_shroud",
+            () -> new VenomousResilienceEffect(MobEffectCategory.BENEFICIAL, 0x76C9FF,
+                    "effect.hemomancy.morphling_winter_shroud")
+                    .addAttributeModifier(Attributes.MOVEMENT_SPEED,
+                            ResourceLocation.fromNamespaceAndPath("hemomancy", "morphling_winter_shroud_movement_speed"),
+                            0.05F, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL));
+
     // Unstained Path Effects
     public static final DeferredHolder<MobEffect, MobEffect> silver_ward = EFFECTS.register("silver_ward",
             () -> new SilverWardEffect(MobEffectCategory.BENEFICIAL, 0xC0C0C0)
