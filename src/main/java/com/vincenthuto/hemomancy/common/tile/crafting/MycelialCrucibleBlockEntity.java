@@ -437,7 +437,7 @@ public class MycelialCrucibleBlockEntity extends BaseContainerBlockEntity implem
         if (stack.getItem() instanceof EnzymeItem enzyme)
             return enzyme.getTend() == tendency;
         if (stack.getItem() instanceof RecycledEnzymeItem recycled)
-            return recycled.getTend() == tendency;
+            return recycled.getTend(stack) == tendency;
         return false;
     }
 
@@ -445,7 +445,7 @@ public class MycelialCrucibleBlockEntity extends BaseContainerBlockEntity implem
         if (stack.getItem() instanceof EnzymeItem enzyme)
             return enzyme.getAmount();
         if (stack.getItem() instanceof RecycledEnzymeItem recycled)
-            return recycled.getAmount();
+            return recycled.getAmount(stack);
         return DEFAULT_ENZYME_POWER;
     }
 

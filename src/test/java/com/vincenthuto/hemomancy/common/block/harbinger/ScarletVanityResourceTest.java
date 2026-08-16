@@ -129,7 +129,7 @@ public final class ScarletVanityResourceTest {
 		assertContains("scarlet vanity should drop itself", lootTable,
 				"\"name\": \"hemomancy:scarlet_vanity\"");
 		assertContains("scarlet vanity should have a display name", lang,
-				"\"block.hemomancy.scarlet_vanity\": \"Harbinger Vanity\"");
+				"\"block.hemomancy.scarlet_vanity\": \"Scarlet Vanity\"");
 	}
 
 	private static String readSource(String path) throws IOException {

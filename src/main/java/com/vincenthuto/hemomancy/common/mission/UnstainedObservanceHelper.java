@@ -45,6 +45,10 @@ public final class UnstainedObservanceHelper {
 		public int mask() { return 1 << bit; }
 		public String eventId() { return eventId; }
 		public Issuer issuer() { return issuer; }
+		public String translation(String suffix) {
+			return "screen.hemomancy.book_of_observances.observance."
+					+ name().toLowerCase(java.util.Locale.ROOT) + "." + suffix;
+		}
 		public static Observance fromEventId(String id) {
 			for (Observance value : values()) if (value.eventId.equals(id)) return value;
 			return null;

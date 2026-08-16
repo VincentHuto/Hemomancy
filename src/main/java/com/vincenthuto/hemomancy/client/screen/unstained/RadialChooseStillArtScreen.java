@@ -165,7 +165,7 @@ public class RadialChooseStillArtScreen extends Screen {
 		if (!menu.isReady()) {
 			return;
 		}
-		if (!ClientEvents.isKeyDown(ClientEvents.openVascCharmMenu)) {
+		if (!ClientEvents.isKeyDown(ClientEvents.selectStillArt)) {
 			processClick();
 		}
 	}

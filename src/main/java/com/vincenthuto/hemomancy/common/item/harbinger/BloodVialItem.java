@@ -56,8 +56,8 @@ public class BloodVialItem extends Item {
 	@Override
 	public boolean onLeftClickEntity(ItemStack stack, Player player, Entity entity) {
 		CompoundTag tag = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
-		if (entity != null) {
-			if (entity instanceof LivingEntity living) {
+		boolean alreadyFilled = getEntityType(stack) != null || tag.getBoolean(TAG_STATE);
+		if (entity instanceof LivingEntity living && !alreadyFilled) {
 				// Special case: Hemolymphopoda produces Cleansing Hemolymph instead of a standard sample
 				if (living instanceof HemolymphopodaEntity) {
 					if (!player.level().isClientSide) {
@@ -68,14 +68,23 @@ public class BloodVialItem extends Item {
 					// Return true on both sides to cancel the attack; inventory syncs from server
 					return true;
 				}
-				tag.putString(TAG_ENTITY_TYPE, BuiltInRegistries.ENTITY_TYPE.getKey(entity.getType()).toString());
-				tag.putBoolean(TAG_STATE, true);
-			}
-		} else {
-			tag.putBoolean(TAG_STATE, false);
 		}
-		stack.set(DataComponents.CUSTOM_DATA, CustomData.of(tag));
-		return super.onLeftClickEntity(stack, player, entity);
+		ResourceLocation entityTypeId = entity == null ? null : BuiltInRegistries.ENTITY_TYPE.getKey(entity.getType());
+		BloodSamplingResult result = BloodSamplingRules.evaluate(alreadyFilled, entity instanceof LivingEntity,
+				entity instanceof LivingEntity living && living.isAlive(),
+				entity instanceof LivingEntity living && living.isInvulnerable(), entityTypeId != null);
+		if (!player.level().isClientSide) {
+			if (result == BloodSamplingResult.SUCCESS) {
+				tag.putString(TAG_ENTITY_TYPE, entityTypeId.toString());
+				tag.putBoolean(TAG_STATE, true);
+				stack.set(DataComponents.CUSTOM_DATA, CustomData.of(tag));
+				player.playSound(SoundEvents.BOTTLE_FILL, 1.0F, 1.0F);
+			}
+			Component targetName = entity == null ? Component.translatable("message.hemomancy.blood_sampling.unknown")
+					: entity.getDisplayName();
+			player.displayClientMessage(Component.translatable(result.translationKey(), targetName), true);
+		}
+		return true;
 	}
 
 }

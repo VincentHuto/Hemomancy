@@ -11,6 +11,7 @@ import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.mission.HarbingerArtificerAssignmentHelper;
 import com.vincenthuto.hemomancy.common.mission.HarbingerChapterMilestone;
 import com.vincenthuto.hemomancy.common.mission.HarbingerChapterProgression;
+import com.vincenthuto.hemomancy.common.mission.FirstSeparationAssignmentHelper;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.mission.OpenHarbingerAssignmentLedgerPacket;
 import com.vincenthuto.hemomancy.common.rite.harbinger.QliphothBloomSavedData;
@@ -25,6 +26,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
+import net.minecraft.stats.Stats;
 
 import java.util.List;
 
@@ -139,8 +141,12 @@ public class HarbingerAssignmentLedgerItem extends ItemGuideBook {
 	}
 
 	private static boolean hasVialCentrifuge(ServerPlayer player) {
-		return player.getInventory().items.stream()
-				.anyMatch(stack -> stack.is(BlockInit.vial_centrifuge.get().asItem()));
+		boolean acquired = FirstSeparationAssignmentHelper.hasCentrifugeAcquired(player)
+				|| player.getStats().getValue(Stats.ITEM_CRAFTED.get(BlockInit.vial_centrifuge.get().asItem())) > 0
+				|| player.getInventory().items.stream()
+						.anyMatch(stack -> stack.is(BlockInit.vial_centrifuge.get().asItem()));
+		if (acquired) FirstSeparationAssignmentHelper.markCentrifugeAcquired(player);
+		return acquired;
 	}
 
 	private static boolean hasSampledBloodVial(ServerPlayer player) {
@@ -150,18 +156,7 @@ public class HarbingerAssignmentLedgerItem extends ItemGuideBook {
 	}
 
 	private static boolean hasAnyEnzyme(ServerPlayer player) {
-		return player.getInventory().items.stream().anyMatch(HarbingerAssignmentLedgerItem::isEnzyme);
-	}
-
-	private static boolean isEnzyme(ItemStack stack) {
-		return stack.is(ItemInit.vivacious_enzyme.get())
-				|| stack.is(ItemInit.fervent_enzyme.get())
-				|| stack.is(ItemInit.neurotic_enzyme.get())
-				|| stack.is(ItemInit.incandescent_enzyme.get())
-				|| stack.is(ItemInit.ruinous_enzyme.get())
-				|| stack.is(ItemInit.frigid_enzyme.get())
-				|| stack.is(ItemInit.ferric_enzyme.get())
-				|| stack.is(ItemInit.umbral_enzyme.get());
+		return HarbingerAdvancementGranter.isFirstSeparationComplete(player);
 	}
 
 	@Override

@@ -1,0 +1,9 @@
+{
+  "type": "hutoslib:page",
+  "ordinality": 6,
+  "texture": "hemomancy:textures/gui/guide/page.png",
+  "title": "Bloodwork Stations",
+  "subtitle": "Equipment and implantation",
+  "text": "At Degree 3, use Sanguine Formation on the copper heart of the Scarlet Vanity structure. The Vanity equips one active charm, blood gourd, morphling bond, and Living Staff fitting. At Degree 4, use Hyphal Substrate on the Hematic Iron heart of the Fungal Implantation Pylon structure. The Pylon installs, replaces, or removes one cultivated fungal scar; it does not grant extra fungal slots.",
+  "icon": "hemomancy:scarlet_vanity"
+}

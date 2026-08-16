@@ -618,6 +618,8 @@ public class EntityInit {
             () -> EntityType.Builder.<EntityIronPillar>of(EntityIronPillar::new, MobCategory.MISC).sized(0.75F, 2.8F)
                     .build(Hemomancy.rloc("iron_pillar").toString()));
 
+    // Dormant future encounter entity. Keep the registry id for existing-world compatibility;
+    // do not expose or spawn it until its boss-mechanic caller is authored.
     public static final DeferredHolder<EntityType<?>, EntityType<EntityIronWall>> iron_wall = ENTITY_TYPES.register("iron_wall",
             () -> EntityType.Builder.<EntityIronWall>of(EntityIronWall::new, MobCategory.MISC).sized(1.6F, 2.8F)
                     .build(Hemomancy.rloc("iron_wall").toString()));

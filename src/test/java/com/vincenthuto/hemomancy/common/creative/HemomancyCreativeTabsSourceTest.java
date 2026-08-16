@@ -8,6 +8,10 @@ import java.util.List;
 public final class HemomancyCreativeTabsSourceTest {
 	private static final Path ROOT = Path.of("").toAbsolutePath();
 	private static final List<String> WIP_ITEMS = List.of(
+			"CHAMBER_OF_WILL_TELEPORTER",
+			"structure_spawner",
+			"structure_scanner",
+			"debug_showcase",
 			"drudge_electrode",
 			"drudge_submission_device",
 			"hematic_suture_needle",
@@ -70,6 +74,10 @@ public final class HemomancyCreativeTabsSourceTest {
 
 	public static void main(String[] args) throws IOException {
 		String hemomancy = read("src/main/java/com/vincenthuto/hemomancy/Hemomancy.java");
+		String structureSpawner = read(
+				"src/main/java/com/vincenthuto/hemomancy/common/item/shared/StructureSpawnerItem.java");
+		String placeStructurePacket = read(
+				"src/main/java/com/vincenthuto/hemomancy/common/network/PlaceStructurePacket.java");
 		String lang = read("src/main/resources/assets/hemomancy/lang/en_us.json");
 
 		assertContains("main creative tab should use Charm of Vascularium as its icon",
@@ -95,6 +103,12 @@ public final class HemomancyCreativeTabsSourceTest {
 			assertAppearsAtLeastTwice("WIP block should be accepted and excluded from main tab: " + block,
 					hemomancy, "BlockInit." + block + ".get()");
 		}
+		assertContains("Structure Spawner should reject non-creative use before opening its menu",
+				structureSpawner, "if (!player.isCreative())");
+		assertContains("Structure Spawner packet should reject non-creative world mutation",
+				placeStructurePacket, "if (!player.isCreative())");
+		assertContains("legacy Tome of the Unstained alias should stay out of the normal tab",
+				hemomancy, "item != ItemInit.tome_of_the_unstained.get()");
 
 		String reference = read("docs/HEMOMANCY_REFERENCE.md");
 		String readiness = read("wiki/Public-Alpha-Readiness.md");

@@ -3,7 +3,6 @@ package com.vincenthuto.hemomancy.common.item.unstained;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.event.WhiteHumorPoolSavedData;
 import com.vincenthuto.hemomancy.common.init.BlockInit;
-import com.vincenthuto.hemomancy.common.item.unstained.tool.AbsolutionDaggerItem;
 import com.vincenthuto.hemomancy.common.item.unstained.tool.SilthmereGlaiveItem;
 import com.vincenthuto.hemomancy.common.item.unstained.tool.UnstainedWarhammerItem;
 import com.vincenthuto.hutoslib.common.registry.HLItemInit;
@@ -43,6 +42,7 @@ public class PaleHumorFlaskItem extends Item {
 
     /** CustomData key placed on Unstained weapons when coated. */
     public static final String TAG_WHITE_HUMOR_COATED = "white_humor_coated";
+    public static final String TAG_WHITE_HUMOR_CHARGES = "white_humor_charges";
 
     private final double amount;
 
@@ -60,7 +60,7 @@ public class PaleHumorFlaskItem extends Item {
         tooltip.add(Component.literal(String.format("%.0f mL of purified lymph, cold-distilled.", amount))
                 .withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC));
         tooltip.add(Component.literal("Drink: replenishes white humor.").withStyle(ChatFormatting.WHITE));
-        tooltip.add(Component.literal("Right-click with an Unstained weapon in the off-hand to coat it with hemolytic charge.")
+        tooltip.add(Component.literal("Right-click with an Unstained weapon in the off-hand to coat it for 24 hits.")
                 .withStyle(ChatFormatting.AQUA));
     }
 
@@ -77,6 +77,7 @@ public class PaleHumorFlaskItem extends Item {
                 // Coat the weapon
                 CompoundTag weaponTag = offhand.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
                 weaponTag.putBoolean(TAG_WHITE_HUMOR_COATED, true);
+                weaponTag.putInt(TAG_WHITE_HUMOR_CHARGES, WhiteHumorCoatingRules.CHARGES_PER_FLASK);
                 offhand.set(DataComponents.CUSTOM_DATA, CustomData.of(weaponTag));
                 stack.shrink(1);
                 level.playSound(null, player.blockPosition(),
@@ -153,7 +154,23 @@ public class PaleHumorFlaskItem extends Item {
         if (stack.isEmpty()) return false;
         Item item = stack.getItem();
         return item instanceof UnstainedWarhammerItem
-                || item instanceof SilthmereGlaiveItem
-                || item instanceof AbsolutionDaggerItem;
+                || item instanceof SilthmereGlaiveItem;
+    }
+
+    public static boolean consumeCoatingHit(ItemStack stack) {
+        CompoundTag tag = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
+        if (!tag.getBoolean(TAG_WHITE_HUMOR_COATED)) return false;
+        int charges = tag.contains(TAG_WHITE_HUMOR_CHARGES)
+                ? tag.getInt(TAG_WHITE_HUMOR_CHARGES) : WhiteHumorCoatingRules.CHARGES_PER_FLASK;
+        if (!WhiteHumorCoatingRules.isActive(charges)) return false;
+        charges = WhiteHumorCoatingRules.afterHit(charges);
+        if (charges == 0) {
+            tag.remove(TAG_WHITE_HUMOR_COATED);
+            tag.remove(TAG_WHITE_HUMOR_CHARGES);
+        } else {
+            tag.putInt(TAG_WHITE_HUMOR_CHARGES, charges);
+        }
+        stack.set(DataComponents.CUSTOM_DATA, CustomData.of(tag));
+        return true;
     }
 }

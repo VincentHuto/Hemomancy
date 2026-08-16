@@ -2,6 +2,7 @@ package com.vincenthuto.hemomancy.common.block.harbinger.crafting;
 
 import com.vincenthuto.hemomancy.common.init.BlockEntityInit;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.VialRackItem;
+import com.vincenthuto.hemomancy.common.mission.FirstSeparationAssignmentHelper;
 import com.vincenthuto.hemomancy.common.tile.crafting.VialCentrifugeBlockEntity;
 import com.vincenthuto.hutoslib.common.network.VanillaPacketDispatcher;
 import net.minecraft.core.BlockPos;
@@ -13,6 +14,7 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
@@ -76,6 +78,14 @@ public class VialCentrifugeBlock extends Block implements EntityBlock, SimpleWat
 	public BlockState getStateForPlacement(BlockPlaceContext context) {
 		return this.defaultBlockState().setValue(FACING, context.getHorizontalDirection().getOpposite()).setValue(LIT,
 				false).setValue(WATERLOGGED, WaterloggedBlockSupport.waterloggedForPlacement(context));
+	}
+
+	@Override
+	public void setPlacedBy(Level level, BlockPos pos, BlockState state, LivingEntity placer, ItemStack stack) {
+		super.setPlacedBy(level, pos, state, placer, stack);
+		if (!level.isClientSide && placer instanceof ServerPlayer serverPlayer) {
+			FirstSeparationAssignmentHelper.markCentrifugeAcquired(serverPlayer);
+		}
 	}
 
 	@Nullable

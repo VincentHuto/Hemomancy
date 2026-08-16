@@ -3,8 +3,10 @@ package com.vincenthuto.hemomancy.common.menu.tile.crafting;
 import com.vincenthuto.hemomancy.common.init.ContainerInit;
 import com.vincenthuto.hemomancy.common.item.harbinger.BloodyFlaskItem;
 import com.vincenthuto.hemomancy.common.menu.slot.CentrifugeSlot;
+import com.vincenthuto.hemomancy.common.menu.slot.CentrifugeOutputSlot;
 import com.vincenthuto.hemomancy.common.menu.slot.OutputSlot;
 import com.vincenthuto.hemomancy.common.tile.crafting.VialCentrifugeBlockEntity;
+import com.vincenthuto.hemomancy.common.tile.crafting.VialCentrifugeStartupResult;
 import com.vincenthuto.hutoslib.common.container.SlotSelectiveType;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.player.Inventory;
@@ -18,15 +20,14 @@ import java.util.Objects;
 public class VialCentrifugeMenu extends AbstractContainerMenu {
 
 	// Slot indices
-	public static final int INPUT_SLOT = 0;
-	public static final int BLOOD_SLOT = 1;
-	public static final int VIAL_START = 2;
-	public static final int VIAL_END = 9;
-	public static final int OUTPUT_START = 10;
-	public static final int OUTPUT_END = 17;
-	public static final int AUX_OUTPUT_SLOT = 18;
-	public static final int FLASK_OUTPUT_SLOT = 19;
-	public static final int SLOT_COUNT = 20;
+	public static final int BLOOD_SLOT = 0;
+	public static final int VIAL_START = 1;
+	public static final int VIAL_END = 8;
+	public static final int OUTPUT_START = 9;
+	public static final int OUTPUT_END = 16;
+	public static final int AUX_OUTPUT_SLOT = 17;
+	public static final int FLASK_OUTPUT_SLOT = 18;
+	public static final int SLOT_COUNT = 19;
 	public static final int DATA_COUNT = 3;
 
 	private static final int INV_START = SLOT_COUNT;
@@ -62,10 +63,9 @@ public class VialCentrifugeMenu extends AbstractContainerMenu {
 		this.data = containerData;
 
 		// SLOTS — positioned for programmatic UI layout
-		// Input slot (above blood bar, left side)
-		addSlot(new Slot(te, INPUT_SLOT, 8, 14));
 		// Blood flask slot (bottom-left, below blood bar)
-		addSlot(new SlotSelectiveType(te, BloodyFlaskItem.class, BLOOD_SLOT, 16, 8, 90));
+		addSlot(new SlotSelectiveType(te, BloodyFlaskItem.class,
+				VialCentrifugeBlockEntity.SLOT_BLOOD, 16, 8, 90));
 
 		// Vial slots — ring arrangement centered around (77, 50)
 		// Radius 28, 8 slots at 45° increments (clockwise from top)
@@ -80,20 +80,20 @@ public class VialCentrifugeMenu extends AbstractContainerMenu {
 		addSlot(new CentrifugeSlot(te, 9, 49, 22));   // top-left
 
 		// Output slots (2x4 grid on the right, 18px spacing)
-		addSlot(new OutputSlot(te, 10, 128, 14));
-		addSlot(new OutputSlot(te, 11, 146, 14));
-		addSlot(new OutputSlot(te, 12, 128, 32));
-		addSlot(new OutputSlot(te, 13, 146, 32));
-		addSlot(new OutputSlot(te, 14, 128, 50));
-		addSlot(new OutputSlot(te, 15, 146, 50));
-		addSlot(new OutputSlot(te, 16, 128, 68));
-		addSlot(new OutputSlot(te, 17, 146, 68));
+		addSlot(new CentrifugeOutputSlot(te, 10, 128, 14));
+		addSlot(new CentrifugeOutputSlot(te, 11, 146, 14));
+		addSlot(new CentrifugeOutputSlot(te, 12, 128, 32));
+		addSlot(new CentrifugeOutputSlot(te, 13, 146, 32));
+		addSlot(new CentrifugeOutputSlot(te, 14, 128, 50));
+		addSlot(new CentrifugeOutputSlot(te, 15, 146, 50));
+		addSlot(new CentrifugeOutputSlot(te, 16, 128, 68));
+		addSlot(new CentrifugeOutputSlot(te, 17, 146, 68));
 
 		// Aux output (below output grid, within craft area)
-		addSlot(new OutputSlot(te, AUX_OUTPUT_SLOT, 137, 88));
+		addSlot(new OutputSlot(te, 18, 137, 88));
 
 		// Flask output (next to blood input slot — empty flasks from consumed bloody flasks)
-		addSlot(new OutputSlot(te, FLASK_OUTPUT_SLOT, 26, 90));
+		addSlot(new OutputSlot(te, VialCentrifugeBlockEntity.SLOT_FLASK_OUTPUT, 26, 90));
 
 		// INVENTORY
 		for (int y = 0; y < 3; y++) {
@@ -134,6 +134,10 @@ public class VialCentrifugeMenu extends AbstractContainerMenu {
 		return this.data.get(0) > 0;
 	}
 
+	public VialCentrifugeStartupResult getStartupResult() {
+		return VialCentrifugeStartupResult.byId(this.data.get(2));
+	}
+
 	public VialCentrifugeBlockEntity getTe() {
 		return this.te;
 	}
@@ -169,6 +173,7 @@ public class VialCentrifugeMenu extends AbstractContainerMenu {
 			} else {
 				slot.setChanged();
 			}
+			if (index < SLOT_COUNT) slot.onTake(playerIn, stack);
 		}
 		return stack;
 	}

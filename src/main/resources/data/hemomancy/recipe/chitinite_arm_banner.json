@@ -1,0 +1,22 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "HFH",
+    "HHH",
+    " S "
+  ],
+  "key": {
+    "F": {
+      "item": "hemomancy:chitinite_fitting"
+    },
+    "H": {
+      "item": "hemomancy:chitinous_husk"
+    },
+    "S": {
+      "item": "minecraft:stick"
+    }
+  },
+  "result": {
+    "id": "hemomancy:chitinite_arm_banner"
+  }
+}

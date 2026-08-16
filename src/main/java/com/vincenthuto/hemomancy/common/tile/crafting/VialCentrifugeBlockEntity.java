@@ -11,6 +11,7 @@ import com.vincenthuto.hemomancy.common.item.harbinger.BloodVialItem;
 import com.vincenthuto.hemomancy.common.item.harbinger.ConsecratedSyringeItem;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.VialRackItem;
 import com.vincenthuto.hemomancy.common.menu.tile.crafting.VialCentrifugeMenu;
+import com.vincenthuto.hemomancy.common.mission.FirstSeparationAssignmentHelper;
 import com.vincenthuto.hemomancy.common.tile.IBloodContainerSlotAccess;
 import com.vincenthuto.hemomancy.common.tile.IBloodReservoir;
 import net.minecraft.core.BlockPos;
@@ -40,7 +41,6 @@ import java.util.*;
 public class VialCentrifugeBlockEntity extends BaseContainerBlockEntity
 		implements StackedContentsCompatible, IBloodReservoir, IBloodContainerSlotAccess {
 
-	public static final int SLOT_INPUT = 0;
 	public static final int SLOT_BLOOD = 1;
 	public static final int SLOT_FLASK_OUTPUT = 19;
 	public static final int INVENTORY_SIZE = 20;
@@ -50,7 +50,9 @@ public class VialCentrifugeBlockEntity extends BaseContainerBlockEntity
 	public static final int SPIN_TOTAL_TIME = 200;
 	int spinningProgress;
 	int spinningTotalTime;
-	int canSpin;
+	int startupResultId;
+	UUID assignmentSpinId;
+	UUID assignmentPlayerId;
 	Map<Integer, Integer> inOutMap = Map.of(
 			2, 10,
 			3, 11,
@@ -69,7 +71,7 @@ public class VialCentrifugeBlockEntity extends BaseContainerBlockEntity
 			case 1:
 				return spinningTotalTime;
 			case 2:
-				return canSpin;
+				return startupResultId;
 			default:
 				return 0;
 			}
@@ -90,7 +92,7 @@ public class VialCentrifugeBlockEntity extends BaseContainerBlockEntity
 				spinningTotalTime = val;
 				break;
 			case 2:
-				canSpin = val;
+				startupResultId = val;
 			}
 		}
 	};
@@ -152,6 +154,8 @@ public class VialCentrifugeBlockEntity extends BaseContainerBlockEntity
 				if (vialStack.getItem() instanceof BloodVialItem) {
 					EntityType<?> sampledMob = BloodVialItem.getEntityType(vialStack);
 					ItemStack resultStack = getResultFromVial(sampledMob);
+					FirstSeparationAssignmentHelper.markAssignmentOutput(resultStack,
+							assignmentPlayerId, assignmentSpinId);
 					vialStack = new ItemStack(ItemInit.bloody_vial.get(), 1);
 					// Only outputs to slot if it is not already occupied
 					if (inventory.get(inOutMap.get(i + 2)).isEmpty()) {
@@ -193,6 +197,8 @@ public class VialCentrifugeBlockEntity extends BaseContainerBlockEntity
 				}
 			}
 		}
+		assignmentSpinId = null;
+		assignmentPlayerId = null;
 	}
 
 	public List<ItemStack> getVialSlots() {
@@ -334,41 +340,38 @@ public class VialCentrifugeBlockEntity extends BaseContainerBlockEntity
 		}
 	}
 
-	public boolean attemptStartup() {
-		// 2 6
-		// 3 7
-		// 4 8
-		// 9 5
-		// These are the Slots that are across and need to be balanced
-		if (isCentrifugeEmpty() || !hasAtLeastOneProcessableVial()) {
-			return false;
-		}
-		if (!checkBalancedSpots(2, 6) || !checkBalancedSpots(3, 7) || !checkBalancedSpots(4, 8)
-				|| !checkBalancedSpots(9, 5) || dataAccess.get(0) > 0) return false;
-		dataAccess.set(0, SPIN_TOTAL_TIME);
-		return true;
-	}
-
-	private boolean hasAtLeastOneProcessableVial() {
+	public VialCentrifugeStartupResult attemptStartup(@Nullable net.minecraft.server.level.ServerPlayer player) {
+		boolean balanced = checkBalancedSpots(2, 6) && checkBalancedSpots(3, 7)
+				&& checkBalancedSpots(4, 8) && checkBalancedSpots(9, 5);
+		boolean assignmentSpin = player != null && FirstSeparationAssignmentHelper.canBeginAssignmentSpin(player);
+		List<VialCentrifugeStartupRules.SampleState> samples = new ArrayList<>();
 		for (int inputSlot = 2; inputSlot <= 9; inputSlot++) {
 			ItemStack vialStack = inventory.get(inputSlot);
-			if (vialStack.isEmpty() || !(vialStack.getItem() instanceof BloodVialItem)) {
+			if (vialStack.isEmpty()) {
+				samples.add(new VialCentrifugeStartupRules.SampleState(false, false, true, true));
 				continue;
 			}
-			EntityType<?> sampledMob = BloodVialItem.getEntityType(vialStack);
-			if (sampledMob == null) {
-				continue;
-			}
-			ItemStack resultStack = getResultFromVial(sampledMob);
-			if (resultStack.isEmpty()) {
-				continue;
-			}
+			EntityType<?> sampledMob = vialStack.getItem() instanceof BloodVialItem
+					? BloodVialItem.getEntityType(vialStack) : null;
+			ItemStack resultStack = sampledMob == null ? ItemStack.EMPTY : getResultFromVial(sampledMob);
+			boolean processable = sampledMob != null && !resultStack.isEmpty();
 			Integer outputSlot = inOutMap.get(inputSlot);
-			if (outputSlot != null && canFitOutput(outputSlot, resultStack)) {
-				return true;
+			boolean outputFits = !processable || outputSlot != null
+					&& (assignmentSpin ? inventory.get(outputSlot).isEmpty() : canFitOutput(outputSlot, resultStack));
+			boolean vialReturnFits = vialStack.getCount() == 1;
+			samples.add(new VialCentrifugeStartupRules.SampleState(true, processable, outputFits, vialReturnFits));
+		}
+		VialCentrifugeStartupResult result = VialCentrifugeStartupRules.evaluate(isSpinning(), balanced, samples);
+		dataAccess.set(2, result.ordinal());
+		if (result == VialCentrifugeStartupResult.SUCCESS) {
+			dataAccess.set(0, SPIN_TOTAL_TIME);
+			if (player != null) {
+				assignmentSpinId = FirstSeparationAssignmentHelper.beginAssignmentSpin(player);
+				assignmentPlayerId = assignmentSpinId == null ? null : player.getUUID();
 			}
 		}
-		return false;
+		sendUpdates();
+		return result;
 	}
 
 	private boolean canFitOutput(int outputSlot, ItemStack resultStack) {
@@ -459,6 +462,9 @@ public class VialCentrifugeBlockEntity extends BaseContainerBlockEntity
 		CompoundTag tag = new CompoundTag();
 		tag.putInt("SpinTime", this.spinningProgress);
 		tag.putInt("SpinTimeTotal", this.spinningTotalTime);
+		tag.putInt("StartupResult", this.startupResultId);
+		if (assignmentSpinId != null) tag.putUUID("AssignmentSpin", assignmentSpinId);
+		if (assignmentPlayerId != null) tag.putUUID("AssignmentPlayer", assignmentPlayerId);
 		ContainerHelper.saveAllItems(tag, this.inventory, registries);
 		IBloodVolume vol = resolveVolume();
 		if (vol != null) {
@@ -493,6 +499,9 @@ public class VialCentrifugeBlockEntity extends BaseContainerBlockEntity
 		super.loadAdditional(pTag, registries);
 		this.spinningProgress = pTag.getInt("SpinTime");
 		this.spinningTotalTime = pTag.getInt("SpinTimeTotal");
+		this.startupResultId = pTag.getInt("StartupResult");
+		this.assignmentSpinId = pTag.hasUUID("AssignmentSpin") ? pTag.getUUID("AssignmentSpin") : null;
+		this.assignmentPlayerId = pTag.hasUUID("AssignmentPlayer") ? pTag.getUUID("AssignmentPlayer") : null;
 		this.inventory = NonNullList.withSize(this.getContainerSize(), ItemStack.EMPTY);
 		ContainerHelper.loadAllItems(pTag, this.inventory, registries);
 		IBloodVolume vol = resolveVolume();
@@ -539,6 +548,9 @@ public class VialCentrifugeBlockEntity extends BaseContainerBlockEntity
 		super.saveAdditional(pTag, registries);
 		pTag.putInt("SpinTime", this.spinningProgress);
 		pTag.putInt("SpinTimeTotal", this.spinningTotalTime);
+		pTag.putInt("StartupResult", this.startupResultId);
+		if (assignmentSpinId != null) pTag.putUUID("AssignmentSpin", assignmentSpinId);
+		if (assignmentPlayerId != null) pTag.putUUID("AssignmentPlayer", assignmentPlayerId);
 		ContainerHelper.saveAllItems(pTag, this.inventory, registries);
 		IBloodVolume vol = resolveVolume();
 		if (vol != null) {

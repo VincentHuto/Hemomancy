@@ -2,7 +2,7 @@
   "display": {
     "icon": {
       "count": 1,
-      "id": "hemomancy:tome_of_the_unstained"
+      "id": "hemomancy:liber_immaculatus"
     },
     "title": {
       "translate": "advancements.hemomancy.path_of_purity.title"
@@ -21,7 +21,7 @@
       "conditions": {
         "items": [
           {
-            "items": "hemomancy:tome_of_the_unstained"
+            "items": "hemomancy:liber_immaculatus"
           }
         ]
       }

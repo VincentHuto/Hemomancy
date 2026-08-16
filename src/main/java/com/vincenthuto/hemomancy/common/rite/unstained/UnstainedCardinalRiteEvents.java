@@ -4,7 +4,6 @@ import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.PathMutualExclusionHelper;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.UnstainedProgressEvents;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.UnstainedEntryRules;
-import com.vincenthuto.hemomancy.common.capability.player.unstained.stillart.KnownStillArtEvents;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.EnumVeinSections;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.VascularSystemEvents;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.Bloodline;
@@ -15,7 +14,6 @@ import com.vincenthuto.hemomancy.common.event.worldevent.BloodMoonSavedData;
 import com.vincenthuto.hemomancy.common.init.BlockInit;
 import com.vincenthuto.hemomancy.common.init.EffectInit;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
-import com.vincenthuto.hemomancy.common.init.StillArtInit;
 import com.vincenthuto.hemomancy.common.menu.HarbingerEquipmentMenu;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.PacketSyncBloodMoon;
 import net.minecraft.ChatFormatting;
@@ -94,6 +92,11 @@ public class UnstainedCardinalRiteEvents {
 	 * @return true when the supplied rite path belongs to an Unstained rite.
 	 */
 	public static boolean completeRite(ServerLevel sLevel, ServerPlayer caster, BlockPos center, String ritePath) {
+		UnstainedRitePreflight.Result preflight = preflight(caster, ritePath);
+		if (!preflight.success()) {
+			announceFailure(caster, preflight.failure());
+			return false;
+		}
 		if (LETHEAN_BAPTISM_RITE.equals(ritePath)) {
 			completeLetheanBaptism(sLevel, caster);
 			return true;
@@ -165,6 +168,34 @@ public class UnstainedCardinalRiteEvents {
 		return false;
 	}
 
+	public static UnstainedRitePreflight.Result preflight(ServerPlayer caster, String ritePath) {
+		var degree = HemoCapabilityAccess.getInitiatoryDegree(caster).orElse(null);
+		var progress = HemoCapabilityAccess.getUnstainedProgress(caster).orElse(null);
+		boolean maySeekCure = degree == null || UnstainedEntryRules.canBeginCure(
+				degree.hasFoundedBloodline(), degree.isFounderIntegrationSevered());
+		return UnstainedRitePreflight.check(ritePath, new UnstainedRitePreflight.State(
+				maySeekCure,
+				progress != null && progress.isInfectionSuppressed(),
+				progress != null && progress.hasBegunPurification(),
+				progress != null && progress.isPurified(),
+				progress != null && progress.isClarityPrepared(),
+				progress != null && progress.hasClarityUnlocked()));
+	}
+
+	public static void announceFailure(ServerPlayer caster, UnstainedRitePreflight.Failure failure) {
+		String message = switch (failure) {
+			case FOUNDER_CANNOT_ENTER -> "A bloodline founder cannot enter Lethe by the ordinary rite.";
+			case INFECTION_NOT_SUPPRESSED -> "The infection must first be suppressed at an Unstained Podium.";
+			case BAPTISM_ALREADY_COMPLETE -> "Lethean Baptism has already named your path.";
+			case NOT_PURIFIED -> "You must achieve full purity before ascending to clarity.";
+			case CLARITY_ALREADY_UNLOCKED -> "Clarity has already been unlocked within you.";
+			case CLARITY_NOT_PREPARED -> "Consecrated Copper must prepare your clarity at an Unstained Podium first.";
+			case NONE -> "The rite is ready.";
+		};
+		caster.displayClientMessage(Component.literal(message)
+				.withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC), false);
+	}
+
 	private static void completeSeveredCovenant(ServerLevel level, ServerPlayer caster) {
 		var degree = HemoCapabilityAccess.requireInitiatoryDegree(caster);
 		var unstained = HemoCapabilityAccess.getUnstainedProgress(caster).orElse(null);
@@ -203,31 +234,8 @@ public class UnstainedCardinalRiteEvents {
 	 * purity and sets the purification flag.
 	 */
 	private static void completeLetheanBaptism(ServerLevel sLevel, ServerPlayer caster) {
-		boolean maySeekCure = HemoCapabilityAccess.getInitiatoryDegree(caster)
-				.map(degree -> UnstainedEntryRules.canBeginCure(
-						degree.hasFoundedBloodline(), degree.isFounderIntegrationSevered()))
-				.orElse(true);
-		if (!maySeekCure) {
-			caster.displayClientMessage(Component.literal(
-					"A bloodline founder cannot enter Lethe by the ordinary rite.")
-					.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC), false);
-			return;
-		}
-		if (HemoCapabilityAccess.getUnstainedProgress(caster)
-				.map(progress -> !progress.isInfectionSuppressed()).orElse(true)) {
-			caster.displayClientMessage(Component.literal(
-					"The infection must first be suppressed at an Unstained Podium.")
-					.withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC), false);
-			return;
-		}
 		var unstained = HemoCapabilityAccess.getUnstainedProgress(caster).orElse(null);
 		if (unstained == null) return;
-		boolean firstBaptism = !unstained.hasBegunPurification();
-		if (!firstBaptism) {
-			caster.displayClientMessage(Component.literal("Lethean Baptism has already named your path.")
-					.withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC), false);
-			return;
-		}
 		unstained.setBegunPurification(true);
 		unstained.addPurity(5.0f);
 		ItemStack dagger = new ItemStack(ItemInit.absolution_dagger);
@@ -282,27 +290,6 @@ public class UnstainedCardinalRiteEvents {
 	 */
 	private static void completeClarityAscension(ServerLevel sLevel, ServerPlayer caster) {
 		HemoCapabilityAccess.getUnstainedProgress(caster).ifPresent(unstained -> {
-			if (!unstained.isPurified()) {
-				caster.displayClientMessage(
-						Component.literal("You must achieve full purity before ascending to clarity.")
-								.withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC),
-						false);
-				return;
-			}
-			if (unstained.hasClarityUnlocked()) {
-				caster.displayClientMessage(
-						Component.literal("Clarity has already been unlocked within you.")
-								.withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC),
-						false);
-				return;
-			}
-			if (!unstained.isClarityPrepared()) {
-				caster.displayClientMessage(Component.literal(
-						"Consecrated Copper must prepare your clarity at an Unstained Podium first.")
-						.withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC), false);
-				return;
-			}
-
 			unstained.setClarityUnlocked(true);
 			unstained.setClarityPrepared(false);
 			UnstainedProgressEvents.syncProgress(caster, unstained);
@@ -312,13 +299,6 @@ public class UnstainedCardinalRiteEvents {
 								.withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC),
 						false);
 			}
-			if (KnownStillArtEvents.grantArt(caster, StillArtInit.silver_rebuke.get())) {
-				caster.displayClientMessage(
-						Component.literal("A first Still Art settles into you: Silver Rebuke.")
-								.withStyle(ChatFormatting.AQUA, ChatFormatting.ITALIC),
-						false);
-			}
-
 			HemoCapabilityAccess.getEquipment(caster).ifPresent(scars -> {
 				ItemStack charmStack = scars.getStackInSlot(HarbingerEquipmentMenu.CHARM_SLOT_INDEX);
 				if (charmStack.is(ItemInit.charm_of_vascularium.get())) {
@@ -372,14 +352,6 @@ public class UnstainedCardinalRiteEvents {
 			monster.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, 180, 0, false, true, true));
 		}
 
-		if (HemoCapabilityAccess.getUnstainedProgress(caster)
-				.map(progress -> progress.hasClarityUnlocked())
-				.orElse(false)
-				&& KnownStillArtEvents.grantArt(caster, StillArtInit.lethean_mute.get())) {
-			caster.displayClientMessage(Component.literal("A Still Art settles into the closed vessel: Lethean Mute.")
-					.withStyle(ChatFormatting.AQUA, ChatFormatting.ITALIC), false);
-		}
-
 		caster.displayClientMessage(Component.literal("The Rite of the Closed Vein blesses " + blessed[0] + " Unstained soul(s).")
 				.withStyle(ChatFormatting.WHITE, ChatFormatting.ITALIC), false);
 		sLevel.playSound(null, center, SoundEvents.BELL_BLOCK, SoundSource.BLOCKS, 1.2f, 0.8f);
@@ -396,15 +368,6 @@ public class UnstainedCardinalRiteEvents {
 		PaleConsecrationSavedData.ConsecrationEntry entry = new PaleConsecrationSavedData.ConsecrationEntry(
 				caster.getUUID(), center, dimension, ANTISEPTIC_GROUND_RADIUS, expiryTick);
 		data.addEntry(entry);
-
-		if (KnownStillArtEvents.grantArt(caster, StillArtInit.still_pulse.get())) {
-			caster.displayClientMessage(Component.literal("A Still Art beats once, then quiets: Still Pulse.")
-					.withStyle(ChatFormatting.AQUA, ChatFormatting.ITALIC), false);
-		}
-		if (KnownStillArtEvents.grantArt(caster, StillArtInit.pale_diagnosis.get())) {
-			caster.displayClientMessage(Component.literal("A diagnostic stillness opens behind your eyes: Pale Diagnosis.")
-					.withStyle(ChatFormatting.AQUA, ChatFormatting.ITALIC), false);
-		}
 
 		caster.addEffect(new MobEffectInstance(EffectInit.verdigris_aura, 12000, 1, false, true, true));
 		caster.displayClientMessage(Component.literal("Antiseptic ground takes hold for 15 minutes.")
@@ -436,19 +399,6 @@ public class UnstainedCardinalRiteEvents {
 			});
 		}
 
-		if (HemoCapabilityAccess.getUnstainedProgress(caster)
-				.map(progress -> progress.getClarity() >= 50.0f)
-				.orElse(false)) {
-			if (KnownStillArtEvents.grantArt(caster, StillArtInit.memory_shear.get())) {
-				caster.displayClientMessage(Component.literal("A Still Art thins the breath of hostile memory: Memory Shear.")
-						.withStyle(ChatFormatting.AQUA, ChatFormatting.ITALIC), false);
-			}
-			if (KnownStillArtEvents.grantArt(caster, StillArtInit.absolving_step.get())) {
-				caster.displayClientMessage(Component.literal("A Still Art learns the shape of escape: Absolving Step.")
-						.withStyle(ChatFormatting.AQUA, ChatFormatting.ITALIC), false);
-			}
-		}
-
 		caster.displayClientMessage(Component.literal("Glass lungs open in " + blessed[0] + " Unstained body(s).")
 				.withStyle(ChatFormatting.WHITE, ChatFormatting.ITALIC), false);
 		sLevel.playSound(null, center, SoundEvents.GLASS_PLACE, SoundSource.BLOCKS, 1.0f, 1.2f);
@@ -472,18 +422,6 @@ public class UnstainedCardinalRiteEvents {
 				target.addEffect(new MobEffectInstance(EffectInit.silver_ward, MOON_WASHED_COPPER_EFFECT_TICKS, 1, false, true, true));
 				blessed[0]++;
 			});
-		}
-
-		if (KnownStillArtEvents.grantArt(caster, StillArtInit.quietus_bell.get())) {
-			caster.displayClientMessage(Component.literal("A Still Art rings in moon-washed copper: Quietus Bell.")
-					.withStyle(ChatFormatting.AQUA, ChatFormatting.ITALIC), false);
-		}
-		if (HemoCapabilityAccess.getUnstainedProgress(caster)
-				.map(progress -> progress.isEnlightened())
-				.orElse(false)
-				&& KnownStillArtEvents.grantArt(caster, StillArtInit.autoimmune_edge.get())) {
-			caster.displayClientMessage(Component.literal("The immune edge answers. Handle it carefully.")
-					.withStyle(ChatFormatting.AQUA, ChatFormatting.ITALIC), false);
 		}
 
 		String moonText = isNight ? "under the moon" : "without moonlight";

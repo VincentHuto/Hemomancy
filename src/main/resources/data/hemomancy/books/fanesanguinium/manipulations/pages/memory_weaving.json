@@ -1,0 +1,9 @@
+{
+  "type": "hutoslib:page",
+  "ordinality": 9,
+  "texture": "hemomancy:textures/gui/guide/page.png",
+  "title": "Deliberate Memories",
+  "subtitle": "Four reachable branch lessons",
+  "text": "The Somatic Loom can now write every active branch lesson. Vital Effusion uses a Bleeding Bulb and one Vivacious Enzyme. Hemolymphal Pulse uses a Vascular Status Gauge and one Neurotic Enzyme. Vascular Dowsing uses a Compass and one Ferric Enzyme. Ferric Resonance uses an Amethyst Shard and two Ferric Enzymes. Supply the listed blood shown by the Loom recipe, then recover every scattered memory-orb with the Living Staff.",
+  "icon": "hemomancy:hematic_memory"
+}

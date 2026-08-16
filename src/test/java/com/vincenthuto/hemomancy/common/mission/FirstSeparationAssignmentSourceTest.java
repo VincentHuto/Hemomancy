@@ -17,6 +17,10 @@ class FirstSeparationAssignmentSourceTest {
 			"src/main/java/com/vincenthuto/hemomancy/common/entity/npc/dialogue/HarbingerAlchemistDialogueTrees.java");
 	private static final Path HANDLER = Path.of(
 			"src/main/java/com/vincenthuto/hemomancy/common/entity/npc/dialogue/DialogueEventHandler.java");
+	private static final Path BLOOD_EVENTS = Path.of(
+			"src/main/java/com/vincenthuto/hemomancy/common/capability/player/harbinger/bloodvolume/BloodVolumeEvents.java");
+	private static final Path OUTPUT_SLOT = Path.of(
+			"src/main/java/com/vincenthuto/hemomancy/common/menu/slot/CentrifugeOutputSlot.java");
 
 	@Test
 	void firstSeparationOwnsBriefingClaimAndInitializedSamplingKit() throws IOException {
@@ -32,6 +36,8 @@ class FirstSeparationAssignmentSourceTest {
 		assertContains(helper, "VialRackItem.ensureInitialized(rack)");
 		assertContains(helper, "new ItemStack(ItemInit.living_syringe.get())");
 		assertContains(helper, "new ItemStack(ItemInit.vial_rack.get())");
+		assertContains(helper, "briefingStacks()");
+		assertOccurrenceCount(helper, "new ItemStack(ItemInit.bloody_vial.get())", 2);
 		assertContains(helper, "return isBriefed(player);");
 		assertContains(helper, "return isClaimed(player);");
 		assertContains(briefing, "\"trigger\": \"minecraft:impossible\"");
@@ -43,8 +49,11 @@ class FirstSeparationAssignmentSourceTest {
 		assertContains(alchemist, "canBriefFirstSeparation");
 		assertContains(alchemist, "canClaimFirstSeparation");
 		assertContains(handler, "FirstSeparationAssignmentHelper.markClaimed(player)");
+		assertContains(handler, "FirstSeparationAssignmentHelper.giveBriefingSupplies(player)");
 		assertOrdered(handler, "FirstSeparationAssignmentHelper.markClaimed(player)",
 				"FirstSeparationAssignmentHelper.rewardStacks()");
+		assertNotContains(read(BLOOD_EVENTS), "ADV_FIRST_SEPARATION_COMPLETE");
+		assertContains(read(OUTPUT_SLOT), "FirstSeparationAssignmentHelper.tryRecoverAssignmentOutput");
 	}
 
 	private static String read(Path path) throws IOException {
@@ -56,9 +65,19 @@ class FirstSeparationAssignmentSourceTest {
 		if (!text.contains(expected)) throw new AssertionError("missing " + expected);
 	}
 
+	private static void assertNotContains(String text, String unexpected) {
+		if (text.contains(unexpected)) throw new AssertionError("unexpected " + unexpected);
+	}
+
 	private static void assertOrdered(String text, String first, String second) {
 		if (text.indexOf(first) < 0 || text.indexOf(second) < 0 || text.indexOf(first) >= text.indexOf(second)) {
 			throw new AssertionError("expected " + first + " before " + second);
 		}
+	}
+
+	private static void assertOccurrenceCount(String text, String expected, int count) {
+		int found = 0;
+		for (int offset = 0; (offset = text.indexOf(expected, offset)) >= 0; offset += expected.length()) found++;
+		if (found != count) throw new AssertionError("expected " + count + " occurrences of " + expected + ", found " + found);
 	}
 }

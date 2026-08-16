@@ -3,6 +3,7 @@ package com.vincenthuto.hemomancy.common.block.unstained.functional;
 import com.vincenthuto.hemomancy.common.block.shared.IMultiBlock;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.IUnstainedProgress;
+import com.vincenthuto.hemomancy.common.capability.player.unstained.UnstainedPacingRules;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.UnstainedProgressEvents;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.tile.functional.AltarOfCleansingBlockEntity;
@@ -224,9 +225,13 @@ public class AltarOfCleansingBlock extends Block implements EntityBlock, IMultiB
 
 	private void handlePoppyWreath(Level worldIn, BlockPos pos, Player player, ItemStack stack,
 			IUnstainedProgress unstained) {
-		// Offering a wreath grants a small purity boost (repeatable)
+		if (unstained.hasOfferedPoppyWreath()) {
+			player.displayClientMessage(Component.translatable("hemomancy.altar.wreath_already_offered"), false);
+			return;
+		}
 		stack.shrink(1);
 		unstained.addPurity(5.0f);
+		unstained.setOfferedPoppyWreath(true);
 
 		player.displayClientMessage(
 				Component.translatable("hemomancy.altar.wreath_offered"), false);
@@ -246,8 +251,14 @@ public class AltarOfCleansingBlock extends Block implements EntityBlock, IMultiB
 					Component.translatable("hemomancy.altar.clarity_not_unlocked"), false);
 			return;
 		}
+		float reward = UnstainedPacingRules.silverChaliceReward(unstained.hasOfferedSilverChalice());
+		if (reward <= 0.0F) {
+			player.displayClientMessage(Component.translatable("hemomancy.altar.chalice_already_offered"), false);
+			return;
+		}
 		stack.shrink(1);
-		unstained.addClarity(5.0f);
+		unstained.addClarity(reward);
+		unstained.setOfferedSilverChalice(true);
 
 		player.displayClientMessage(
 				Component.translatable("hemomancy.altar.chalice_offered"), false);
@@ -267,15 +278,13 @@ public class AltarOfCleansingBlock extends Block implements EntityBlock, IMultiB
 					Component.translatable("hemomancy.altar.clarity_not_unlocked"), false);
 			return;
 		}
-		// Check one-time use via player persistent data
-		String tag = "hemomancy:pallid_icon_offered";
-		if (player.getPersistentData().getBoolean(tag)) {
+		if (unstained.hasOfferedPallidIcon()) {
 			player.displayClientMessage(
 					Component.translatable("hemomancy.altar.icon_already_offered"), false);
 			return;
 		}
 		stack.shrink(1);
-		player.getPersistentData().putBoolean(tag, true);
+		unstained.setOfferedPallidIcon(true);
 		unstained.addClarity(10.0f);
 
 		player.displayClientMessage(
@@ -292,9 +301,14 @@ public class AltarOfCleansingBlock extends Block implements EntityBlock, IMultiB
 
 	private void handleLetheanBrew(Level worldIn, BlockPos pos, Player player, ItemStack stack,
 			IUnstainedProgress unstained) {
-		// Consuming a brew at the altar grants +15 purity (repeatable, consumes item)
+		float reward = UnstainedPacingRules.letheanBrewReward(unstained.getLetheanBrewOfferings());
+		if (reward <= 0.0F) {
+			player.displayClientMessage(Component.translatable("hemomancy.altar.brew_exhausted"), false);
+			return;
+		}
 		stack.shrink(1);
-		unstained.addPurity(15.0f);
+		unstained.addPurity(reward);
+		unstained.setLetheanBrewOfferings(unstained.getLetheanBrewOfferings() + 1);
 
 		player.displayClientMessage(
 				Component.translatable("hemomancy.altar.brew_offered"), false);

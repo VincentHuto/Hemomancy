@@ -12,6 +12,7 @@ public final class VascularPoulticeRulesTest {
 	public static void main(String[] args) {
 		selectsMostDamagedSection();
 		healsMostDamagedSectionWithoutExceedingMaximum();
+		healsTwoDistinctDamagedSections();
 		refusesAlreadyHealthySystems();
 	}
 
@@ -37,9 +38,25 @@ public final class VascularPoulticeRulesTest {
 	}
 
 	private static void refusesAlreadyHealthySystems() {
-		if (VascularPoulticeRules.healMostDamaged(healthySystem(), 12F).isPresent()) {
+		if (!VascularPoulticeRules.healTwoMostDamaged(healthySystem(), 12F).isEmpty()) {
 			throw new AssertionError("healthy vascular systems should not consume poultices");
 		}
+	}
+
+	private static void healsTwoDistinctDamagedSections() {
+		Map<EnumVeinSections, Float> vascular = healthySystem();
+		vascular.put(EnumVeinSections.LEGS, 20F);
+		vascular.put(EnumVeinSections.ARMS, 40F);
+		vascular.put(EnumVeinSections.HEAD, 50F);
+
+		var results = VascularPoulticeRules.healTwoMostDamaged(vascular, 12F);
+
+		assertEquals("two sections healed", 2, results.size());
+		assertEquals("worst section healed first", EnumVeinSections.LEGS, results.get(0).section());
+		assertEquals("second-worst section also healed", EnumVeinSections.ARMS, results.get(1).section());
+		assertDouble("leg healing", 32.0, vascular.get(EnumVeinSections.LEGS));
+		assertDouble("arm healing", 52.0, vascular.get(EnumVeinSections.ARMS));
+		assertDouble("third section untouched", 50.0, vascular.get(EnumVeinSections.HEAD));
 	}
 
 	private static Map<EnumVeinSections, Float> healthySystem() {

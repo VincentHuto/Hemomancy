@@ -66,6 +66,7 @@ import com.vincenthuto.hemomancy.common.rite.sigil.IchorianSigilRoleResolver;
 import com.vincenthuto.hemomancy.common.rite.sigil.IchorianSigilRegistry;
 import com.vincenthuto.hemomancy.common.rite.CardinalRitePhase;
 import com.vincenthuto.hemomancy.common.rite.unstained.UnstainedCardinalRiteEvents;
+import com.vincenthuto.hemomancy.common.rite.unstained.UnstainedRitePreflight;
 import com.vincenthuto.hemomancy.common.summon.PuppeteerSummonDefinitions;
 import com.vincenthuto.hemomancy.common.worldgen.ChamberVisitService;
 import com.vincenthuto.hemomancy.common.mission.HarbingerChapterProgression;
@@ -1160,6 +1161,14 @@ public class HarbingerCardinalRiteEvents {
 			return false;
 		}
 
+		UnstainedRitePreflight.Result unstainedPreflight = UnstainedCardinalRiteEvents.preflight(
+				caster, rite.getRecipeId().getPath());
+		if (recipe.isUnstained() && !unstainedPreflight.success()) {
+			UnstainedCardinalRiteEvents.announceFailure(caster, unstainedPreflight.failure());
+			CardinalRiteStaffEscrow.restore(caster, rite);
+			return false;
+		}
+
 		if (isApotheosRite(recipe.getId()) && !hasQliphothCommunion(caster)) {
 			caster.displayClientMessage(
 					Component.literal("The Eighth Degree remains sealed. Consume all nine Qliphoth husks from a single bloom.")
@@ -1208,9 +1217,13 @@ public class HarbingerCardinalRiteEvents {
 			return false;
 		}
 		if (!consumeRiteMedium(sLevel, caster, rite, recipe)) return false;
+		String ritePath = rite.getRecipeId().getPath();
+		if (recipe.isUnstained()
+				&& !UnstainedCardinalRiteEvents.completeRite(sLevel, caster, center, ritePath)) {
+			return false;
+		}
 
 		// Spawn result item
-		String ritePath = rite.getRecipeId().getPath();
 		if (!recipe.getResult().isEmpty()) {
 			ItemStack resultStack = recipe.getResult().copy();
 
@@ -1385,10 +1398,6 @@ public class HarbingerCardinalRiteEvents {
 		if (ILLUMINATUS_RITE.equals(ritePath)) {
 			HarbingerAdvancementGranter.grantIfNotDone(caster, HarbingerAdvancementGranter.ADV_CRIMSON_LODGE_CONSECRATED);
 		}
-
-				// ── Unstained rites ──
-		UnstainedCardinalRiteEvents.completeRite(sLevel, caster, center, ritePath);
-
 
 		// Rite of the Sanguine Eclipse: manually invoke a Blood Moon
 		if (SANGUINE_ECLIPSE_RITE.equals(ritePath)) {

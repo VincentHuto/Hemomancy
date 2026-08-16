@@ -181,7 +181,7 @@ public final class MaterialAtlasSpec {
 		entryAt("fungal_spine", h, "fungal_ecology", d(4), 1117, 77);
 		entryAt("fungal_podium", h, "fungal_ecology", d(4), 1052, 824, "infected_fungus");
 		entryAt("mycelial_crucible", h, "fungal_ecology", d(4), 1052, 871, "fungal_podium", "morphling_incubator");
-		entryAt("fungal_implantation_pylon", h, "fungal_ecology", d(5), 1132, 883, "fungal_podium", "conscious_mass");
+		entryAt("fungal_implantation_pylon", h, "fungal_ecology", d(4), 1132, 883, "erythrocytic_mycelium", "hyphae_block");
 		entryAt("fruiting_infected_cap", h, "fungal_ecology", d(5), 1000, 725, "infected_cap");
 		entryAt("morphling_jar", h, "morphlings", d(3), 1082, 1021, "morphling_polyp");
 		entryAt("morphling_cradle", h, "morphlings", d(3), 1157, 968, "morphling_polyp");
@@ -249,7 +249,7 @@ public final class MaterialAtlasSpec {
 		entryAt("humane_idol", h, "idols_fixtures", d(4), 591, 883);
 		entryAt("mason_effigy", h, "idols_fixtures", d(4), 457, 240);
 		entryAt("mnemonic_candle", h, "idols_fixtures", d(4), 659, 838);
-		entryAt("mycelial_lantern", h, "spores_cultures", d(4), 1205, 649, "spore_sac");
+		entryAt("mycelial_lantern", h, "spores_cultures", d(3), 1205, 649, "spore_sac");
 		entryAt("puppeteers_spindle", h, "vascular_craft", d(4), 1052, 391, "puppeteering_thread");
 		entryAt("serpentine_idol", h, "idols_fixtures", d(4), 625, 883);
 		entryAt("specimen_jar", h, "new_category", d(4), 740, 310, "vivianite_glass");
@@ -333,7 +333,6 @@ public final class MaterialAtlasSpec {
 		entry("hemolytic_solution", u, "still_waters_core", a());
 		entry("hemolytic_vial", u, "still_waters_core", a());
 		entry("pallid_icon", u, "still_waters_core", a());
-		entry("tome_of_the_unstained", u, "still_waters_core", a());
 		entry("consecrated_copper_ingot", u, "still_waters_core", p(10.0F));
 		entry("lethean_poppy_wreath", u, "still_waters_core", p(10.0F));
 		entry("pale_humor_flask", u, "still_waters_core", p(15.0F));

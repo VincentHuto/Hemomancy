@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    { "item": "hemomancy:bleeding_bulb" },
+    { "item": "hemomancy:bleeding_bulb" },
+    { "item": "hemomancy:hematic_iron_powder" },
+    { "item": "minecraft:honey_bottle" }
+  ],
+  "result": {
+    "id": "hemomancy:sanguine_salve",
+    "count": 2
+  }
+}

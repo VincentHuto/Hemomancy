@@ -39,7 +39,7 @@ These are the rough edges to expect in the public alpha:
 - **Fungal Dimension is partial.** Access, safe return, dimension mob population, and the Archon choice fork exist; deeper terrain and broader dimension content remain WIP.
 - **Endgame bosses are split.** Vesper's two-phase encounter is integrated into the Silent Archon path through Pruning and the Severed Qliphoth. The Mycophant has entity, rendering, sound, combat, boss music, and loot support, but its encounter entry still needs another pass.
 - **Annetta is playable but not final.** The Broken Church encounter and two-route structure are wired; animation polish, fuller biological combat identity, and unique thrown-projectile rendering remain WIP.
-- **Some creative/debug tools exist for testing.** Structure Spawner and Debug Showcase are not intended as normal survival progression.
+- **Creative/debug tools are isolated in the WIP tab.** Structure Spawner, Structure Scanner, Debug Showcase, and the Chamber of Will Teleporter are not normal survival progression.
 
 ---
 

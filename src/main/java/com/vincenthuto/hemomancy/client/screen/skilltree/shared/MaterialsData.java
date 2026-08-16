@@ -96,7 +96,7 @@ public final class MaterialsData {
                 true, UnlockPredicate.minDegree(3)));
 
                                                                                                                                                                                                                                                                                 list.add(new MaterialEntry("scarlet_vanity", "Scarlet Vanity",
-                "Equips bonded harbinger tools through the scars inventory.",
+                "Degree-3 Blood Structure station for equipping charms, gourds, morphlings, and staff fittings.",
                 "Functional Blocks", () -> new ItemStack(BlockInit.scarlet_vanity.get()),
                 true, UnlockPredicate.minDegree(3)));
 
@@ -106,9 +106,9 @@ public final class MaterialsData {
                 true, UnlockPredicate.minDegree(4)));
 
                                                                                                                                                                                                                                                                                 list.add(new MaterialEntry("fungal_implantation_pylon", "Fungal Implantation Pylon",
-                "Implants fungal growths for symbiotic effects.",
+                "Degree-4 Blood Structure station for installing one cultivated fungal scar.",
                 "Functional Blocks", () -> new ItemStack(BlockInit.fungal_implantation_pylon.get()),
-                true, UnlockPredicate.minDegree(5)));
+                true, UnlockPredicate.minDegree(4)));
 
                                                                                                                                                                                                                                                                                 list.add(new MaterialEntry("mortal_display", "Mortal Display",
                 "Displays and manages visceral organ echoes.",
@@ -941,7 +941,7 @@ public final class MaterialsData {
                 true, UnlockPredicate.minDegree(2)));
 
                                                                                                                                                                                                                         list.add(new MaterialEntry("gourdvine_tap", "Gourdvine Tap",
-                "A bloodcraft vessel or gourd-family component used in sanguine storage, rites, or remedies.",
+                "A living Degree-2 reservoir. It passively grows blood, fills an inserted Blood Gourd, and matures with Foul Paste, Spore Sacs, or enzymes.",
                 "Gourds & Vessels", () -> new ItemStack(BlockInit.gourdvine_tap.get()),
                 true, UnlockPredicate.minDegree(2)));
 
@@ -951,7 +951,7 @@ public final class MaterialsData {
                 true, UnlockPredicate.minDegree(2)));
 
                                                                                                                                                                                                                         list.add(new MaterialEntry("sanguine_salve", "Sanguine Salve",
-                "A bloodcraft vessel or gourd-family component used in sanguine storage, rites, or remedies.",
+                "A concentrated Bleeding Bulb remedy that restores 25 health to the single most damaged vein section.",
                 "Gourds & Vessels", () -> new ItemStack(ItemInit.sanguine_salve.get()),
                 true, UnlockPredicate.minDegree(3)));
 
@@ -961,7 +961,7 @@ public final class MaterialsData {
                 true, UnlockPredicate.minDegree(3)));
 
                                                                                                                                                                                                                         list.add(new MaterialEntry("vascular_poultice", "Vascular Poultice",
-                "A bloodcraft vessel or gourd-family component used in sanguine storage, rites, or remedies.",
+                "An enzyme-set field dressing that restores 12 health to each of the two most damaged vein sections.",
                 "Gourds & Vessels", () -> new ItemStack(ItemInit.vascular_poultice.get()),
                 true, UnlockPredicate.minDegree(3)));
 
@@ -1001,9 +1001,9 @@ public final class MaterialsData {
                 true, UnlockPredicate.minDegree(4)));
 
                                                                                                                                                                                                                         list.add(new MaterialEntry("mycelial_lantern", "Mycelial Lantern",
-                "A ritual fixture or idol used to anchor advanced bloodcraft structures.",
+                "A Degree-3 living workshop. A persistent tendency culture fruits one matching enzyme in 2,400 ticks for 600 blood.",
                 "Idols & Fixtures", () -> new ItemStack(BlockInit.mycelial_lantern.get()),
-                true, UnlockPredicate.minDegree(4)));
+                true, UnlockPredicate.minDegree(3)));
 
                                                                                                                                                                                                                         list.add(new MaterialEntry("puppeteers_spindle", "Puppeteers Spindle",
                 "A ritual fixture or idol used to anchor advanced bloodcraft structures.",
@@ -1611,11 +1611,6 @@ public final class MaterialsData {
                 "A purified blood crystal shard radiating calm energy.",
                 "Materials", () -> new ItemStack(ItemInit.cleansed_blood_crystal_shard.get()),
                 true, UnlockPredicate.minPurity(25.0f)));
-
-                                                                                                                                                                                                                                                                                list.add(new MaterialEntry("tome_of_the_unstained", "Tome of the Unstained",
-                "Sacred text containing the teachings of the Unstained path.",
-                "Materials", () -> new ItemStack(ItemInit.tome_of_the_unstained.get()),
-                true, UnlockPredicate.always()));
 
                                                                                                                                                                                                                                                                                 list.add(new MaterialEntry("pallid_icon", "Pallid Icon",
                 "Holy icon depicting Our Lady of Still Waters.",

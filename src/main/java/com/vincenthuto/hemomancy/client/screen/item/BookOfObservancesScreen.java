@@ -3,6 +3,7 @@ package com.vincenthuto.hemomancy.client.screen.item;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.client.screen.skilltree.util.ScreenDrawUtils;
+import com.vincenthuto.hemomancy.common.mission.UnstainedObservanceHelper.Observance;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
@@ -49,30 +50,6 @@ public final class BookOfObservancesScreen extends Screen {
 		NpcSection(String nameKey, ResourceLocation portrait) {
 			this.nameKey = nameKey;
 			this.portrait = portrait;
-		}
-	}
-
-	private enum ObservanceView {
-		GATHER_GHOST_PIPE(1 << 0, NpcSection.ACOLYTE, "gather_ghost_pipe"),
-		WEAVE_WREATH(1 << 1, NpcSection.ACOLYTE, "weave_wreath"),
-		PREPARE_HEMOLYTIC(1 << 2, NpcSection.ACOLYTE, "prepare_hemolytic"),
-		CONSECRATE_COPPER(1 << 3, NpcSection.ACOLYTE, "consecrate_copper"),
-		OFFER_CHALICE(1 << 4, NpcSection.ACOLYTE, "offer_chalice"),
-		CONDENSE_STILL_WATERS(1 << 5, NpcSection.ZEALOT, "condense_still_waters"),
-		BEAR_PALLID_ICON(1 << 6, NpcSection.ZEALOT, "bear_pallid_icon"),
-		PLATE_THE_WARD(1 << 7, NpcSection.GUARDIAN, "plate_the_ward"),
-		RING_THE_PALE_WATCH(1 << 8, NpcSection.GUARDIAN, "ring_the_pale_watch");
-
-		private final int mask;
-		private final NpcSection issuer;
-		private final String key;
-		ObservanceView(int mask, NpcSection issuer, String key) {
-			this.mask = mask;
-			this.issuer = issuer;
-			this.key = key;
-		}
-		private String translation(String suffix) {
-			return "screen.hemomancy.book_of_observances.observance." + key + "." + suffix;
 		}
 	}
 
@@ -165,7 +142,7 @@ public final class BookOfObservancesScreen extends Screen {
 		graphics.drawString(font, Component.translatable("screen.hemomancy.book_of_observances.header"),
 				x, y + 2, ACTIVE, false);
 		Component progress = Component.translatable("screen.hemomancy.book_of_observances.progress",
-				Integer.bitCount(claimedMask), ObservanceView.values().length);
+				Integer.bitCount(claimedMask), Observance.values().length);
 		graphics.drawString(font, progress, x, y + 15, MUTED, false);
 		Component humors = clarityUnlocked
 				? Component.translatable("screen.hemomancy.book_of_observances.humors", rounded(purity), rounded(clarity))
@@ -180,14 +157,14 @@ public final class BookOfObservancesScreen extends Screen {
 	private void renderSections(GuiGraphics graphics, int x, int y, int width, int mouseX, int mouseY) {
 		int cursorY = y;
 		for (NpcSection section : NpcSection.values()) {
-			List<ObservanceView> observations = observationsFor(section);
+			List<Observance> observations = observationsFor(section);
 			if (observations.isEmpty()) continue;
 			boolean collapsed = collapsedSections.contains(section);
 			renderSectionHeader(graphics, section, observations, x, cursorY, width, collapsed, mouseX, mouseY);
 			sectionHitboxes.add(new SectionHitbox(section, x, cursorY, width, SECTION_HEADER_HEIGHT));
 			cursorY += SECTION_HEADER_HEIGHT + GAP;
 			if (!collapsed) {
-				for (ObservanceView observation : observations) {
+				for (Observance observation : observations) {
 					renderObservanceCard(graphics, observation, x + 12, cursorY, width - 12);
 					cursorY += CARD_HEIGHT + GAP;
 				}
@@ -196,14 +173,14 @@ public final class BookOfObservancesScreen extends Screen {
 		}
 	}
 
-	private void renderSectionHeader(GuiGraphics graphics, NpcSection section, List<ObservanceView> observations,
+	private void renderSectionHeader(GuiGraphics graphics, NpcSection section, List<Observance> observations,
 			int x, int y, int width, boolean collapsed, int mouseX, int mouseY) {
 		boolean hovered = mouseX >= x && mouseX <= x + width && mouseY >= y && mouseY <= y + SECTION_HEADER_HEIGHT;
 		graphics.fill(x, y, x + width, y + SECTION_HEADER_HEIGHT, hovered ? 0xE020373A : PANEL_LIGHT);
 		ScreenDrawUtils.drawBorder(graphics, x, y, width, SECTION_HEADER_HEIGHT, BORDER, BORDER_MUTED);
 		renderPortrait(graphics, section.portrait, x + 3, y + 3, SECTION_HEADER_HEIGHT - 6);
 		int completed = 0;
-		for (ObservanceView observation : observations) if (has(claimedMask, observation)) completed++;
+		for (Observance observation : observations) if (has(claimedMask, observation)) completed++;
 		graphics.drawString(font, Component.translatable(section.nameKey), x + SECTION_HEADER_HEIGHT + 4, y + 10, TITLE, false);
 		graphics.drawString(font, Component.translatable("screen.hemomancy.book_of_observances.directed_by"),
 				x + SECTION_HEADER_HEIGHT + 4, y + 24, MUTED, false);
@@ -212,7 +189,7 @@ public final class BookOfObservancesScreen extends Screen {
 		graphics.drawString(font, Component.literal(collapsed ? "+" : "−"), x + width - 14, y + 7, TEXT, false);
 	}
 
-	private void renderObservanceCard(GuiGraphics graphics, ObservanceView observation, int x, int y, int width) {
+	private void renderObservanceCard(GuiGraphics graphics, Observance observation, int x, int y, int width) {
 		Status status = statusOf(observation);
 		graphics.fill(x, y, x + width, y + CARD_HEIGHT, status == Status.COMPLETE ? PANEL_DONE : PANEL_LIGHT);
 		ScreenDrawUtils.drawBorder(graphics, x, y, width, CARD_HEIGHT,
@@ -234,7 +211,7 @@ public final class BookOfObservancesScreen extends Screen {
 		if (lines.size() > 1) graphics.drawString(font, lines.get(1), x, y + 9, color, false);
 	}
 
-	private Status statusOf(ObservanceView observation) {
+	private Status statusOf(Observance observation) {
 		if (has(claimedMask, observation)) return Status.COMPLETE;
 		if (!has(availableMask, observation)) return Status.LOCKED;
 		if (!has(acceptedMask, observation)) return Status.AVAILABLE;
@@ -321,14 +298,14 @@ public final class BookOfObservancesScreen extends Screen {
 		return height;
 	}
 
-	private static List<ObservanceView> observationsFor(NpcSection section) {
-		List<ObservanceView> result = new ArrayList<>();
-		for (ObservanceView observation : ObservanceView.values()) if (observation.issuer == section) result.add(observation);
+	private static List<Observance> observationsFor(NpcSection section) {
+		List<Observance> result = new ArrayList<>();
+		for (Observance observation : Observance.values()) if (observation.issuer().name().equals(section.name())) result.add(observation);
 		return result;
 	}
 
-	private static boolean has(int mask, ObservanceView observation) {
-		return (mask & observation.mask) != 0;
+	private static boolean has(int mask, Observance observation) {
+		return (mask & observation.mask()) != 0;
 	}
 
 	private static int rounded(float value) {

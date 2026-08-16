@@ -175,9 +175,15 @@ public class PurityGainEvents {
         if (player.level().isClientSide) return;
         if (!(player instanceof ServerPlayer serverPlayer)) return;
 
-        if (hasHemolysis(player)) {
-            tryAddPurity(serverPlayer, PURITY_XP_PICKUP);
-        }
+        if (!hasHemolysis(player)) return;
+        long gameTime = serverPlayer.serverLevel().getGameTime();
+        HemoCapabilityAccess.getUnstainedProgress(serverPlayer).ifPresent(progress -> {
+            if (!isOnUnstainedPath(progress) || !UnstainedPacingRules.cooldownReady(gameTime,
+                    progress.getLastXpRewardGameTime(), UnstainedPacingRules.XP_REWARD_COOLDOWN_TICKS)) return;
+            progress.addPurity(PURITY_XP_PICKUP);
+            progress.setLastXpRewardGameTime(gameTime);
+            UnstainedProgressEvents.syncProgress(serverPlayer, progress);
+        });
     }
 
     // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
@@ -262,7 +268,12 @@ public class PurityGainEvents {
             HemoCapabilityAccess.getUnstainedProgress(player).ifPresent(progress -> {
                 if (!progress.hasBegunPurification() || progress.isPurified()) return;
                 progress.addCropPlanted();
-                progress.addPurity(PURITY_PLANT_CROP);
+                long gameTime = player.serverLevel().getGameTime();
+                if (UnstainedPacingRules.cooldownReady(gameTime, progress.getLastCropRewardGameTime(),
+                        UnstainedPacingRules.CROP_REWARD_COOLDOWN_TICKS)) {
+                    progress.addPurity(PURITY_PLANT_CROP);
+                    progress.setLastCropRewardGameTime(gameTime);
+                }
                 UnstainedProgressEvents.syncProgress(player, progress);
             });
         }
@@ -288,7 +299,12 @@ public class PurityGainEvents {
                 HemoCapabilityAccess.getUnstainedProgress(serverOwner).ifPresent(progress -> {
                     if (!progress.hasBegunPurification() || progress.isPurified()) return;
                     progress.addPetHealed();
-                    progress.addPurity(PURITY_HEAL_TAMED);
+                    long gameTime = serverOwner.serverLevel().getGameTime();
+                    if (UnstainedPacingRules.cooldownReady(gameTime, progress.getLastPetHealRewardGameTime(),
+                            UnstainedPacingRules.PET_HEAL_REWARD_COOLDOWN_TICKS)) {
+                        progress.addPurity(PURITY_HEAL_TAMED);
+                        progress.setLastPetHealRewardGameTime(gameTime);
+                    }
                     UnstainedProgressEvents.syncProgress(serverOwner, progress);
                 });
             }
@@ -326,7 +342,7 @@ public class PurityGainEvents {
         HemoCapabilityAccess.getUnstainedProgress(serverPlayer).ifPresent(progress -> {
             if (!isOnUnstainedPath(progress)) return;
 
-            long currentTick = player.tickCount;
+            long currentTick = serverPlayer.serverLevel().getGameTime();
             boolean changed = false;
 
             // â”€â”€ Abstinence timer â”€â”€
@@ -341,10 +357,12 @@ public class PurityGainEvents {
             }
 
             // â”€â”€ Empty blood renunciation â”€â”€
-            if (currentTick % EMPTY_BLOOD_INTERVAL < 20) {
+            if (UnstainedPacingRules.cooldownReady(currentTick, progress.getLastEmptyBloodRewardGameTime(),
+                    UnstainedPacingRules.EMPTY_BLOOD_REWARD_COOLDOWN_TICKS)) {
                 HemoCapabilityAccess.getBloodVolume(serverPlayer).ifPresent(blood -> {
                     if (!blood.isActive() || blood.getBloodVolume() <= 0) {
                         progress.addPurity(PURITY_EMPTY_BLOOD);
+                        progress.setLastEmptyBloodRewardGameTime(currentTick);
                         if (!progress.hasEmptiedBlood()) progress.setEmptiedBlood(true);
                     }
                 });
@@ -368,7 +386,7 @@ public class PurityGainEvents {
     public static void onBloodManipulationUsed(ServerPlayer player) {
         HemoCapabilityAccess.getUnstainedProgress(player).ifPresent(progress -> {
             if (progress.hasBegunPurification()) {
-                progress.setLastManipulationTick(player.tickCount);
+                progress.setLastManipulationTick(player.serverLevel().getGameTime());
                 UnstainedProgressEvents.syncProgress(player, progress);
             }
         });

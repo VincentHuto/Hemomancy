@@ -29,6 +29,9 @@ public final class ReleaseResourceIntegrityTest {
 		assertModernCompressionRecipes();
 		assertValidEffigyStackSizes();
 		assertModernTagsAndBannerPatterns();
+		assertAuthoredOrphansHaveSources();
+		assertSpecialPlantLootCoverage();
+		assertIronWallIsDormantAndSinglyRendered();
 		assertBannerPatternsAreNotDeferredRegistrations();
 		assertNoInvalidExampleRecipe();
 		assertNoRetiredDiscoveryHooks();
@@ -141,6 +144,43 @@ public final class ReleaseResourceIntegrityTest {
 				"entrypoint does not register the data-driven banner registry");
 	}
 
+	private static void assertAuthoredOrphansHaveSources() throws IOException {
+		assertRecipeUses("veins_pattern.json",
+				"\"id\": \"hemomancy:veins_pattern\"", "\"id\": \"hemomancy:heart_pattern\"");
+		assertRecipeUses("chitinite_arm_banner.json",
+				"\"id\": \"hemomancy:chitinite_arm_banner\"", "\"id\": \"hemomancy:arm_banner\"");
+		String bannerRecipe = Files.readString(DATA.resolve("recipe/chitinite_arm_banner.json"));
+		assertContains(bannerRecipe, "\"item\": \"hemomancy:chitinite_fitting\"",
+				"Chitinite Arm Banner requires its authored progression fitting");
+	}
+
+	private static void assertSpecialPlantLootCoverage() throws IOException {
+		String provider = Files.readString(JAVA.resolve("common/data/gen/HemoBlockLootTableProvider.java"));
+		for (String plant : List.of("ghost_pipe", "sarcodes", "lethean_poppy")) {
+			assertContains(provider, "BlockInit.potted_" + plant + ".get()",
+					"block loot generator covers potted " + plant);
+			Path loot = DATA.resolve("loot_table/blocks/potted_" + plant + ".json");
+			if (!Files.isRegularFile(loot)) {
+				throw new AssertionError("packaged data is missing " + loot);
+			}
+			String text = Files.readString(loot);
+			assertContains(text, "\"name\": \"minecraft:flower_pot\"",
+					loot + " returns its flower pot");
+			assertContains(text, "\"name\": \"hemomancy:" + plant + "\"",
+					loot + " returns its planted content");
+		}
+	}
+
+	private static void assertIronWallIsDormantAndSinglyRendered() throws IOException {
+		String clientEvents = Files.readString(JAVA.resolve("client/event/ClientEvents.java"));
+		assertOccurrenceCount(clientEvents,
+				"event.registerEntityRenderer(EntityInit.iron_wall.get(), IronWallRenderer::new);", 1,
+				"Iron Wall renderer should be registered exactly once");
+		String reference = Files.readString(Path.of("docs/HEMOMANCY_REFERENCE.md"));
+		assertContains(reference, "Dormant future encounter state",
+				"reference marks the callerless Iron Wall as future state");
+	}
+
 	private static void assertAlphaCheckScansRuntimeResourceErrors() throws IOException {
 		String build = Files.readString(BUILD);
 		assertContains(build, "tasks.register('verifyGameTestResourceLog')",
@@ -178,6 +218,16 @@ public final class ReleaseResourceIntegrityTest {
 	private static void assertNotContains(String text, String forbidden, String label) {
 		if (text.contains(forbidden)) {
 			throw new AssertionError(label + ": found " + forbidden);
+		}
+	}
+
+	private static void assertOccurrenceCount(String text, String token, int expected, String label) {
+		int count = 0;
+		for (int index = text.indexOf(token); index >= 0; index = text.indexOf(token, index + token.length())) {
+			count++;
+		}
+		if (count != expected) {
+			throw new AssertionError(label + ": expected " + expected + " but found " + count);
 		}
 	}
 }

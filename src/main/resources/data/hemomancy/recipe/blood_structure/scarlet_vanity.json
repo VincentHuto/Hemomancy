@@ -1,0 +1,27 @@
+{
+  "type": "hemomancy:blood_structure_recipe",
+  "bloodCost": 300,
+  "required_degree": 3,
+  "heldItem": "hemomancy:sanguine_formation",
+  "hitBlock": "minecraft:copper_block",
+  "pattern": [
+    [" G ", "BTB", " C "]
+  ],
+  "key": {
+    "B": {
+      "block": "minecraft:iron_bars"
+    },
+    "C": {
+      "block": "minecraft:copper_block"
+    },
+    "G": {
+      "block": "hemomancy:sanguine_glass"
+    },
+    "T": {
+      "block": "hemomancy:hematic_iron_block"
+    }
+  },
+  "result": {
+    "id": "hemomancy:scarlet_vanity"
+  }
+}

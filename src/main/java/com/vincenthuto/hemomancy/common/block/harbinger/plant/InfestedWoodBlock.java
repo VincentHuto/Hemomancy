@@ -38,16 +38,12 @@ public class InfestedWoodBlock extends Block {
 	public void randomTick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
 		if (random.nextInt(25) == 0) {
 			BlockPos above = pos.above();
-			if (level.isEmptyBlock(above) && level.getMaxLocalRawBrightness(above) <= 7) {
-				int roll = random.nextInt(10);
-				BlockState plant;
-				if (roll < 5) {
-					plant = BlockInit.infected_fungus.get().defaultBlockState();
-				} else if (roll < 8) {
-					plant = BlockInit.hyphae.get().defaultBlockState();
-				} else {
-					plant = BlockInit.stinkhorn_fungus.get().defaultBlockState();
-				}
+			if (InfestedWoodGrowthRules.canGrow(level.isEmptyBlock(above), level.getMaxLocalRawBrightness(above))) {
+				BlockState plant = switch (InfestedWoodGrowthRules.select(random.nextInt(10))) {
+					case INFECTED_FUNGUS -> BlockInit.infected_fungus.get().defaultBlockState();
+					case HYPHAE -> BlockInit.hyphae.get().defaultBlockState();
+					case STINKHORN_FUNGUS -> BlockInit.stinkhorn_fungus.get().defaultBlockState();
+				};
 				level.setBlockAndUpdate(above, plant);
 			}
 		}

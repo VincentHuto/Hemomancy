@@ -3,6 +3,8 @@ package com.vincenthuto.hemomancy.common.item.harbinger.tool.living;
 import com.vincenthuto.hemomancy.client.particle.util.EntityParticleUtils;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.item.harbinger.BloodVialItem;
+import com.vincenthuto.hemomancy.common.item.harbinger.BloodSamplingResult;
+import com.vincenthuto.hemomancy.common.item.harbinger.BloodSamplingRules;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.RegistryAccess;
@@ -104,6 +106,13 @@ public class LivingSyringeItem extends LivingItem {
 	}
 
 	private InteractionResult fillVialFromTarget(Player player, LivingEntity target, ItemStack syringe) {
+		var targetId = BuiltInRegistries.ENTITY_TYPE.getKey(target.getType());
+		BloodSamplingResult samplingResult = BloodSamplingRules.evaluate(false, true, target.isAlive(),
+				target.isInvulnerable(), targetId != null);
+		if (samplingResult != BloodSamplingResult.SUCCESS) {
+			player.displayClientMessage(Component.translatable(samplingResult.translationKey(), target.getDisplayName()), true);
+			return InteractionResult.FAIL;
+		}
 		if (!hasLoadedRack(syringe) && !loadRackFromInventory(player, syringe)) {
 			player.displayClientMessage(Component.translatable("item.hemomancy.living_syringe.no_rack"), true);
 			return InteractionResult.FAIL;
@@ -118,14 +127,15 @@ public class LivingSyringeItem extends LivingItem {
 		NonNullList<ItemStack> vials = VialRackItem.getVials(rack);
 		ItemStack sampledVial = new ItemStack(ItemInit.bloody_vial.get());
 		CompoundTag vialTag = sampledVial.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
-		vialTag.putString(BloodVialItem.TAG_ENTITY_TYPE,
-				BuiltInRegistries.ENTITY_TYPE.getKey(target.getType()).toString());
+		vialTag.putString(BloodVialItem.TAG_ENTITY_TYPE, targetId.toString());
 		vialTag.putBoolean(BloodVialItem.TAG_STATE, true);
 		sampledVial.set(DataComponents.CUSTOM_DATA, CustomData.of(vialTag));
 		vials.set(emptySlot, sampledVial);
 		VialRackItem.setVials(rack, vials);
 		setLoadedRack(syringe, rack);
 		player.playSound(SoundEvents.BOTTLE_FILL, 2.0F, 0.8F);
+		player.displayClientMessage(Component.translatable(BloodSamplingResult.SUCCESS.translationKey(),
+				target.getDisplayName()), true);
 		if (player.level() instanceof ServerLevel serverLevel) {
 			PacketHandler.sendLivingToolBreakParticles(target.position().add(0, target.getBbHeight() * 0.5, 0),
 					EntityParticleUtils.getColorFromPredicate(EntityParticleUtils.getEntityPredicate(target)),

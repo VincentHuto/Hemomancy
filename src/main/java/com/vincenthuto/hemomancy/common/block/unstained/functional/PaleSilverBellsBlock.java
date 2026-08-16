@@ -2,6 +2,7 @@ package com.vincenthuto.hemomancy.common.block.unstained.functional;
 
 import com.vincenthuto.hemomancy.common.block.shared.WaterloggedBlockSupport;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
+import com.vincenthuto.hemomancy.common.capability.player.unstained.UnstainedPacingRules;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.UnstainedProgressEvents;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -217,11 +218,6 @@ public class PaleSilverBellsBlock extends Block implements SimpleWaterloggedBloc
 			return InteractionResult.CONSUME;
 		}
 
-		if (state.getValue(RUNG)) {
-			player.displayClientMessage(Component.translatable("hemomancy.silver_bells.already_rung"), false);
-			return InteractionResult.CONSUME;
-		}
-
 		HemoCapabilityAccess.getUnstainedProgress(serverPlayer).ifPresent(progress -> {
 			if (!progress.hasBegunPurification()) {
 				player.displayClientMessage(Component.translatable("hemomancy.silver_bells.not_on_path"), false);
@@ -231,8 +227,14 @@ public class PaleSilverBellsBlock extends Block implements SimpleWaterloggedBloc
 				player.displayClientMessage(Component.translatable("hemomancy.silver_bells.already_pure"), false);
 				return;
 			}
+			float reward = UnstainedPacingRules.paleSilverBellReward(progress.hasClaimedPaleSilverBellReward());
+			if (reward <= 0.0F) {
+				player.displayClientMessage(Component.translatable("hemomancy.silver_bells.already_rung"), false);
+				return;
+			}
 
-			progress.addPurity(SILVER_BELLS_PURITY_BOOST);
+			progress.addPurity(reward);
+			progress.setClaimedPaleSilverBellReward(true);
 			UnstainedProgressEvents.syncProgress(serverPlayer, progress);
 
 			level.setBlock(pos, state.setValue(RUNG, Boolean.TRUE), 3);

@@ -206,9 +206,13 @@ public class ClientEvents {
             "key.hemomancy.category");
     public static final KeyMapping useManip = new KeyMapping("key.hemomancy.usemanip.desc", GLFW.GLFW_KEY_R,
             "key.hemomancy.category");
+    public static final KeyMapping useStillArt = new KeyMapping("key.hemomancy.usestillart.desc", GLFW.GLFW_KEY_R,
+            "key.hemomancy.category");
+    public static final KeyMapping selectStillArt = new KeyMapping("key.hemomancy.selectstillart.desc", GLFW.GLFW_KEY_Z,
+            "key.hemomancy.category");
     public static final KeyMapping OPEN_CHARM_SLOT_KEYBIND = new KeyMapping("key.charm_slot.slot", GLFW.GLFW_KEY_B,
             "key.hemomancy.category");
-    public static final KeyMapping openVascCharmMenu = new KeyMapping("key.charm_slot.open", 90,
+    public static final KeyMapping openVascCharmMenu = new KeyMapping("key.charm_slot.open", GLFW.GLFW_KEY_X,
             "key.hemomancy.category");
     public static final KeyMapping toggleGourd = new KeyMapping("key.hemomancy.togglegourd.desc", GLFW.GLFW_KEY_H,
             "key.hemomancy.category");
@@ -368,12 +372,6 @@ public class ClientEvents {
         if (useManip.consumeClick()) {
             Minecraft mc = Minecraft.getInstance();
             if (mc.player != null) {
-                if (HemoCapabilityAccess.getUnstainedProgress(mc.player)
-                        .map(progress -> progress.hasClarityUnlocked())
-                        .orElse(false)) {
-                    PacketHandler.sendToServer(new UseStillArtKeyPacket());
-                    return;
-                }
                 HemoCapabilityAccess.getKnownManipulations(mc.player).ifPresent(manip -> {
                     if (manip.getSelectedManip() != null
                             && manip.getSelectedManip().getName().equals("venous_travel")) {
@@ -382,6 +380,13 @@ public class ClientEvents {
                         PacketHandler.sendToServer(new UseManipKeyPacket(HLClientUtils.getPartialTicks()));
                     }
                 });
+            }
+        }
+        if (useStillArt.consumeClick()) {
+            Minecraft mc = Minecraft.getInstance();
+            if (mc.player != null && HemoCapabilityAccess.getUnstainedProgress(mc.player)
+                    .map(progress -> progress.hasClarityUnlocked()).orElse(false)) {
+                PacketHandler.sendToServer(new UseStillArtKeyPacket());
             }
         }
         handleSilentArchonDoubleTapJump();
@@ -414,6 +419,11 @@ public class ClientEvents {
     private static void handleRadialMenuTick() {
         Minecraft mc = Minecraft.getInstance();
 		handleCrossbarRadialTick(mc);
+        if (mc.screen == null && selectStillArt.consumeClick() && mc.player != null
+                && HemoCapabilityAccess.getUnstainedProgress(mc.player)
+                .map(progress -> progress.hasClarityUnlocked()).orElse(false)) {
+            mc.setScreen(new RadialChooseStillArtScreen());
+        }
         if (mc.screen == null) {
             boolean vascCharmKeyIsDown = openVascCharmMenu.isDown();
 
@@ -421,12 +431,6 @@ public class ClientEvents {
 
                 while (openVascCharmMenu.consumeClick()) {
                     if (mc.screen == null && mc.player != null) {
-                        if (HemoCapabilityAccess.getUnstainedProgress(mc.player)
-                                .map(progress -> progress.hasClarityUnlocked())
-                                .orElse(false)) {
-                            mc.setScreen(new RadialChooseStillArtScreen());
-                            continue;
-                        }
                         HemoCapabilityAccess.getEquipment(mc.player).ifPresent(inv -> {
                             if (inv.getStackInSlot(5).getItem() instanceof VasculariumCharmItem charm) {
                                 mc.setScreen(new RadialChooseManipScreen(inv));
@@ -751,9 +755,6 @@ public class ClientEvents {
             event.registerEntityRenderer(EntityInit.awakened_ichorian_sigil.get(),
                     AwakenedIchorianSigilRenderer::new);
             event.registerEntityRenderer(EntityInit.humanity_sprite.get(), HumanitySpriteRenderer::new);
-            event.registerEntityRenderer(EntityInit.iron_pillar.get(), IronPillarRenderer::new);
-            event.registerEntityRenderer(EntityInit.iron_spike.get(), IronSpikeRenderer::new);
-            event.registerEntityRenderer(EntityInit.iron_wall.get(), IronWallRenderer::new);
             event.registerEntityRenderer(EntityInit.bog_revenant.get(), BogRevenantRenderer::new);
             event.registerEntityRenderer(EntityInit.fargone.get(), FargoneRenderer::new);
             event.registerEntityRenderer(EntityInit.thirster.get(), ThirsterRenderer::new);
@@ -1058,6 +1059,8 @@ public class ClientEvents {
             event.register(ClientEvents.bloodDraw);
             event.register(ClientEvents.cycleSelectedManip);
             event.register(ClientEvents.useManip);
+            event.register(ClientEvents.useStillArt);
+            event.register(ClientEvents.selectStillArt);
             event.register(ClientEvents.OPEN_CHARM_SLOT_KEYBIND);
             event.register(ClientEvents.openVascCharmMenu);
             event.register(ClientEvents.toggleGourd);

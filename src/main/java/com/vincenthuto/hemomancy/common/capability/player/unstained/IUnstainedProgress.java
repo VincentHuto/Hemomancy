@@ -25,6 +25,28 @@ public interface IUnstainedProgress {
 
 	void setAnnettaSeveranceUnlocked(boolean unlocked);
 
+	boolean hasClaimedChurchStarterSupply();
+
+	void setClaimedChurchStarterSupply(boolean claimed);
+	boolean hasClaimedPaleSilverBellReward();
+	void setClaimedPaleSilverBellReward(boolean claimed);
+	boolean hasOfferedSilverChalice();
+	void setOfferedSilverChalice(boolean offered);
+	boolean hasOfferedPoppyWreath();
+	void setOfferedPoppyWreath(boolean offered);
+	boolean hasOfferedPallidIcon();
+	void setOfferedPallidIcon(boolean offered);
+	int getLetheanBrewOfferings();
+	void setLetheanBrewOfferings(int offerings);
+	long getLastXpRewardGameTime();
+	void setLastXpRewardGameTime(long gameTime);
+	long getLastCropRewardGameTime();
+	void setLastCropRewardGameTime(long gameTime);
+	long getLastPetHealRewardGameTime();
+	void setLastPetHealRewardGameTime(long gameTime);
+	long getLastEmptyBloodRewardGameTime();
+	void setLastEmptyBloodRewardGameTime(long gameTime);
+
     // --- Purity System (Phase 1) ---
     // Purity ranges from 0.0 (fully corrupted) to 100.0 (fully pure)
 

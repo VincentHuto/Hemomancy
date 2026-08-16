@@ -201,7 +201,7 @@ public final class HemoJourneyController {
 			case DEGREE_2_REACHED -> "You are now a Votary. Run journey next to meet the Alchemist.";
 			case ALCHEMIST_BRIEFING -> "Speak to the marked Alchemist and accept The First Separation.";
 			case CENTRIFUGE_PREPARED -> "Place the supplied Glass Bottle and Copper Ingot into the two Iron Braziers, light both with Blood Projection, then project the centrifuge structure with the Ferric Binder. Pick up and place the crafted Vial Centrifuge at the fixture center, then run journey next.";
-			case SEPARATION_STARTED -> "Wait for the centrifuge to finish spinning, then run journey next.";
+			case SEPARATION_STARTED -> "Use the two loose Blood Vials from the briefing on the two cows without damaging them. Put the sampled vials in opposite centrifuge slots, press Start, then wait for the spin to finish before running journey next.";
 			case ENZYME_RECOVERED -> "Open the centrifuge, take the Vivacious Enzyme from its output, then run journey next.";
 			case ALCHEMIST_REWARD -> "Speak to the marked Alchemist and claim the First Separation sampling kit.";
 			case INITIATE_RITE -> "Invoke the prepared Rite of the Incarnadine Fane and wait until Degree 3 is awarded.";

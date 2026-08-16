@@ -5,6 +5,8 @@ import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.event.HarbingerAdvancementGranter;
 import com.vincenthuto.hemomancy.common.menu.tile.crafting.VialCentrifugeMenu;
 import com.vincenthuto.hemomancy.common.tile.crafting.VialCentrifugeBlockEntity;
+import com.vincenthuto.hemomancy.common.tile.crafting.VialCentrifugeStartupResult;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
@@ -27,9 +29,11 @@ public class StartCentrifugeButtonPacket implements CustomPacketPayload {
 	public static void handle(final StartCentrifugeButtonPacket msg, final IPayloadContext ctx) {
 		ctx.enqueueWork(() -> {
 			AbstractContainerMenu container = ctx.player().containerMenu;
-			if (container instanceof VialCentrifugeMenu) {
+			if (container instanceof VialCentrifugeMenu && ctx.player() instanceof ServerPlayer serverPlayer) {
 				VialCentrifugeBlockEntity station = ((VialCentrifugeMenu) container).getTe();
-				if (station.attemptStartup() && ctx.player() instanceof ServerPlayer serverPlayer
+				VialCentrifugeStartupResult result = station.attemptStartup(serverPlayer);
+				serverPlayer.displayClientMessage(Component.translatable(result.translationKey()), true);
+				if (result == VialCentrifugeStartupResult.SUCCESS
 						&& HemoCapabilityAccess.getPlayerDegreeNumber(serverPlayer) >= 2) {
 					HarbingerAdvancementGranter.grantIfNotDone(serverPlayer,
 							HarbingerAdvancementGranter.ADV_FIRST_SEPARATION_STARTED);

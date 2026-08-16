@@ -1,7 +1,7 @@
 {
   "type": "hemomancy:blood_structure_recipe",
   "bloodCost": 2500,
-  "required_degree": 5,
+  "required_degree": 3,
   "heldItem": "hemomancy:ferric_binder",
   "hitBlock": "hemomancy:hematic_iron_block",
   "pattern": [

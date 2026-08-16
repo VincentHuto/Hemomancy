@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    " F ",
+    "GIG",
+    " C "
+  ],
+  "key": {
+    "F": { "item": "hemomancy:foul_paste" },
+    "G": { "item": "hemomancy:gourd_slice" },
+    "I": { "item": "hemomancy:infested_wood" },
+    "C": { "item": "minecraft:copper_ingot" }
+  },
+  "result": {
+    "id": "hemomancy:gourdvine_tap"
+  }
+}

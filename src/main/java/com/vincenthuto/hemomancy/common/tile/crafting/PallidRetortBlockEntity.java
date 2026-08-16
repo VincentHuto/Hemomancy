@@ -308,33 +308,12 @@ public class PallidRetortBlockEntity extends BaseContainerBlockEntity
         DistillationRecipe recipe = recipeHolder.value();
         ItemStack input = inv.get(SLOT_INPUT);
         ItemStack recipeResult = recipe.getResultItem(registryAccess).copy();
-        ItemStack flaskStack = inv.get(SLOT_FLASK);
         ItemStack resultStack = inv.get(SLOT_RESULT);
 
-        // If a flask is present and result slot can accept a pale humor flask
-        if (!flaskStack.isEmpty() && flaskStack.getItem() == HLItemInit.cured_clay_flask.get()) {
-            if (resultStack.isEmpty()) {
-                inv.set(SLOT_RESULT, new ItemStack(ItemInit.pale_humor_flask.get()));
-                flaskStack.shrink(1);
-            } else if (resultStack.getItem() == ItemInit.pale_humor_flask.get()
-                    && resultStack.getCount() < resultStack.getMaxStackSize()) {
-                resultStack.grow(1);
-                flaskStack.shrink(1);
-            } else {
-                // Result slot has something incompatible or is full — just put recipe result
-                if (resultStack.isEmpty()) {
-                    inv.set(SLOT_RESULT, recipeResult.copy());
-                } else if (ItemStack.isSameItem(resultStack, recipeResult)) {
-                    resultStack.grow(recipeResult.getCount());
-                }
-            }
-        } else {
-            // No flask — output the recipe result directly
-            if (resultStack.isEmpty()) {
-                inv.set(SLOT_RESULT, recipeResult.copy());
-            } else if (ItemStack.isSameItem(resultStack, recipeResult)) {
-                resultStack.grow(recipeResult.getCount());
-            }
+        if (resultStack.isEmpty()) {
+            inv.set(SLOT_RESULT, recipeResult.copy());
+        } else if (ItemStack.isSameItem(resultStack, recipeResult)) {
+            resultStack.grow(recipeResult.getCount());
         }
 
         input.shrink(1);

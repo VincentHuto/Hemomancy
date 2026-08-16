@@ -10,6 +10,8 @@ import com.vincenthuto.hemomancy.client.screen.skilltree.util.*;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.EnumClarityStage;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.EnumPurityStage;
+import com.vincenthuto.hemomancy.common.capability.player.unstained.UnstainedPathGuidance;
+import com.vincenthuto.hemomancy.common.mission.UnstainedObservanceHelper.Observance;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.unstained.PacketToggleUnstainedBonus;
 import net.minecraft.client.Minecraft;
@@ -1018,12 +1020,14 @@ animTime += 0.016f; // ~60 FPS approximation
 
 		gfx.drawString(font, Component.literal("Next rite: " + nextRiteLabel()), x, y, 0xFF80D0C0, false);
 		y += 12;
-		String[] observances = { "Gather Ghost Pipe", "Weave a Poppy Wreath", "Prepare Hemolytic Solution",
-				"Consecrate Copper", "Offer a Lethean Chalice" };
-		for (int i = 0; i < observances.length; i++) {
-			int mask = 1 << i;
-			if ((acceptedObservances & mask) == 0) continue;
-			y = drawCheckItem(gfx, x, y, observances[i], (claimedObservances & mask) != 0);
+		for (Observance observance : Observance.values()) {
+			int mask = observance.mask();
+			boolean claimed = (claimedObservances & mask) != 0;
+			boolean accepted = (acceptedObservances & mask) != 0;
+			String prefix = claimed ? "✓ " : accepted ? "• " : observanceAvailable(observance) ? "+ " : "× ";
+			int color = claimed ? 0xFF70C090 : accepted ? 0xFFB0C0E0 : observanceAvailable(observance) ? 0xFF80D0C0 : 0xFF687080;
+			gfx.drawString(font, Component.literal(prefix).append(Component.translatable(observance.translation("title"))), x, y, color, false);
+			y += 10;
 		}
 		y += 3;
 		gfx.fill(sideX + 8, y, sideX + sideW - 8, y + 1, 0x33607890);
@@ -1048,41 +1052,33 @@ animTime += 0.016f; // ~60 FPS approximation
 		int barH = 6;
 		int barX = sideX + 8;
 
-		y = drawMilestoneBar(gfx, x, barX, y, barW, barH,
-				"Hemo Mobs Slain", mHemoKills, 25, 0xFFB06080);
-		y = drawMilestoneBar(gfx, x, barX, y, barW, barH,
-				"Undead Vanquished", mUndeadKills, 50, 0xFF8090CC);
-		y = drawMilestoneBar(gfx, x, barX, y, barW, barH,
-				"Hostiles Purged", mHostileKills, 100, 0xFF7088A0);
-		y = drawMilestoneBar(gfx, x, barX, y, barW, barH,
-				"Flawless Kills", mFlawlessKills, 20, 0xFFD0D0FF);
-		y = drawMilestoneBar(gfx, x, barX, y, barW, barH,
-				"Animals Bred", mAnimalsBreed, 20, 0xFF80C080);
-		y = drawMilestoneBar(gfx, x, barX, y, barW, barH,
-				"Crops Planted", mCropsPlanted, 50, 0xFF60B060);
-		y = drawMilestoneBar(gfx, x, barX, y, barW, barH,
-				"Advancements", mAdvancementsEarned, 10, 0xFFD0B060);
-		y = drawMilestoneBar(gfx, x, barX, y, barW, barH,
-				"Nights Slept", mNightsSlept, 10, 0xFF6080B0);
-		drawMilestoneBar(gfx, x, barX, y, barW, barH,
-				"Pets Healed", mPetsHealed, 15, 0xFFA0D0B0);
+		gfx.drawString(font, Component.literal("Counters are records only; observances award progression."),
+				x, y, 0xFF687890, false);
 
 		gfx.disableScissor();
 		pose.popPose();
 	}
 
 	private String nextRiteLabel() {
-		if (!begunPurification) return "Rite of Purification";
-		if (purity < 25f) return "Lethean Wreath";
-		if (purity < 50f) return "Pallid Separation";
-		if (purity < 75f) return "Baptism of Absolution";
-		if (purity < 100f) return "Final Purification";
-		if (!clarityUnlocked) return "Rite of Clarity";
-		if (clarity < 25f) return "Still Pulse";
-		if (clarity < 50f) return "Glass Lungs";
-		if (clarity < 75f) return "Moon-Washed Copper";
-		if (clarity < 100f) return "Pale Apotheosis";
-		return "Path complete";
+		return switch (UnstainedPathGuidance.nextRequiredRite(begunPurification, purity >= 100f, clarityUnlocked)) {
+			case "lethean_baptism" -> "Lethean Baptism";
+			case "patient_purification" -> "No rite: complete observances";
+			case "clarity_ascension" -> "Clarity Ascension";
+			default -> "No rite: Still Arts follow Clarity";
+		};
+	}
+
+	private boolean observanceAvailable(Observance observance) {
+		if (!begunPurification) return false;
+		return switch (observance) {
+			case GATHER_GHOST_PIPE -> true;
+			case WEAVE_WREATH, PREPARE_HEMOLYTIC -> purity >= 25f;
+			case CONDENSE_STILL_WATERS, PLATE_THE_WARD -> purity >= 50f;
+			case BEAR_PALLID_ICON -> purity >= 75f;
+			case CONSECRATE_COPPER -> purity >= 100f;
+			case OFFER_CHALICE -> clarityUnlocked;
+			case RING_THE_PALE_WATCH -> clarityUnlocked && clarity >= 50f;
+		};
 	}
 
 	/**

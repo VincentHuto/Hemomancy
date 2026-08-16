@@ -14,8 +14,6 @@ import com.vincenthuto.hemomancy.common.entity.npc.harbinger.HarbingerAlchemistE
 import com.vincenthuto.hemomancy.common.init.BlockInit;
 import com.vincenthuto.hemomancy.common.init.EntityInit;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
-import com.vincenthuto.hemomancy.common.item.harbinger.BloodVialItem;
-import com.vincenthuto.hemomancy.common.tile.crafting.VialCentrifugeBlockEntity;
 import com.vincenthuto.hemomancy.common.event.HarbingerAdvancementGranter;
 import com.vincenthuto.hemomancy.common.mission.FirstBloodcraftAssignmentHelper;
 import com.vincenthuto.hemomancy.common.recipe.BloodStructureOfferingPlacement;
@@ -35,11 +33,10 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.component.CustomData;
-import net.minecraft.core.component.DataComponents;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
@@ -488,10 +485,16 @@ public final class HemoJourneyFixtures {
 
 	private static void prepareCentrifuge(ServerPlayer player, BlockPos origin) {
 		if (!fixtureLevel(player).getBlockState(origin.above(2)).is(BlockInit.vial_centrifuge.get())) return;
-		if (!(fixtureLevel(player).getBlockEntity(origin.above(2)) instanceof VialCentrifugeBlockEntity centrifuge)) return;
-		ItemStack vial = new ItemStack(ItemInit.bloody_vial.get()); CompoundTag tag = new CompoundTag();
-		tag.putString(BloodVialItem.TAG_ENTITY_TYPE, "hemomancy:crimson_doe"); tag.putBoolean(BloodVialItem.TAG_STATE, true);
-		vial.set(DataComponents.CUSTOM_DATA, CustomData.of(tag)); centrifuge.inventory.set(2, vial); centrifuge.inventory.set(6, vial.copy()); centrifuge.setChanged();
+		for (int x : List.of(-2, 2)) {
+			Entity cow = EntityType.COW.create(fixtureLevel(player));
+			if (cow == null) throw new IllegalStateException("Journey sample cow could not be created");
+			BlockPos spawn = origin.offset(x, 1, 1);
+			cow.setPos(spawn.getX() + 0.5D, spawn.getY(), spawn.getZ() + 0.5D);
+			cow.addTag(ENTITY_MARKER);
+			if (!fixtureLevel(player).addFreshEntity(cow)) {
+				throw new IllegalStateException("Journey sample cow could not be spawned");
+			}
+		}
 	}
 
 	private static void prepareCentrifugeCraft(ServerPlayer player, BlockPos origin) {

@@ -1,0 +1,37 @@
+{
+  "type": "hemomancy:blood_structure_recipe",
+  "bloodCost": 1200,
+  "required_degree": 4,
+  "heldItem": "hemomancy:hyphal_substrate",
+  "hitBlock": "hemomancy:hematic_iron_block",
+  "pattern": [
+    [" M ", "ICI", " H "],
+    [" E ", "WTW", " E "]
+  ],
+  "key": {
+    "C": {
+      "block": "minecraft:copper_block"
+    },
+    "E": {
+      "block": "hemomancy:erythrocytic_mycelium"
+    },
+    "H": {
+      "block": "hemomancy:hematic_iron_block"
+    },
+    "I": {
+      "block": "minecraft:iron_bars"
+    },
+    "M": {
+      "block": "minecraft:brown_mushroom_block"
+    },
+    "T": {
+      "block": "hemomancy:hyphae_block"
+    },
+    "W": {
+      "block": "hemomancy:infested_wood"
+    }
+  },
+  "result": {
+    "id": "hemomancy:fungal_implantation_pylon"
+  }
+}

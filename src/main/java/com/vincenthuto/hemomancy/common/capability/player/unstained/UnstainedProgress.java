@@ -10,6 +10,16 @@ public class UnstainedProgress implements IUnstainedProgress, INBTSerializable<C
 	private boolean infectionSuppressed = false;
 	private boolean clarityPrepared = false;
 	private boolean annettaSeveranceUnlocked = false;
+	private boolean claimedChurchStarterSupply = false;
+	private boolean claimedPaleSilverBellReward;
+	private boolean offeredSilverChalice;
+	private boolean offeredPoppyWreath;
+	private boolean offeredPallidIcon;
+	private int letheanBrewOfferings;
+	private long lastXpRewardGameTime;
+	private long lastCropRewardGameTime;
+	private long lastPetHealRewardGameTime;
+	private long lastEmptyBloodRewardGameTime;
     private float purity = 0.0f;
     private boolean clarityUnlocked = false;
     private float clarity = 0.0f;
@@ -56,6 +66,26 @@ public class UnstainedProgress implements IUnstainedProgress, INBTSerializable<C
 	@Override public void setClarityPrepared(boolean prepared) { clarityPrepared = prepared; }
 	@Override public boolean isAnnettaSeveranceUnlocked() { return annettaSeveranceUnlocked; }
 	@Override public void setAnnettaSeveranceUnlocked(boolean unlocked) { annettaSeveranceUnlocked = unlocked; }
+	@Override public boolean hasClaimedChurchStarterSupply() { return claimedChurchStarterSupply; }
+	@Override public void setClaimedChurchStarterSupply(boolean claimed) { claimedChurchStarterSupply = claimed; }
+	@Override public boolean hasClaimedPaleSilverBellReward() { return claimedPaleSilverBellReward; }
+	@Override public void setClaimedPaleSilverBellReward(boolean claimed) { claimedPaleSilverBellReward = claimed; }
+	@Override public boolean hasOfferedSilverChalice() { return offeredSilverChalice; }
+	@Override public void setOfferedSilverChalice(boolean offered) { offeredSilverChalice = offered; }
+	@Override public boolean hasOfferedPoppyWreath() { return offeredPoppyWreath; }
+	@Override public void setOfferedPoppyWreath(boolean offered) { offeredPoppyWreath = offered; }
+	@Override public boolean hasOfferedPallidIcon() { return offeredPallidIcon; }
+	@Override public void setOfferedPallidIcon(boolean offered) { offeredPallidIcon = offered; }
+	@Override public int getLetheanBrewOfferings() { return letheanBrewOfferings; }
+	@Override public void setLetheanBrewOfferings(int offerings) { letheanBrewOfferings = Math.max(0, offerings); }
+	@Override public long getLastXpRewardGameTime() { return lastXpRewardGameTime; }
+	@Override public void setLastXpRewardGameTime(long gameTime) { lastXpRewardGameTime = gameTime; }
+	@Override public long getLastCropRewardGameTime() { return lastCropRewardGameTime; }
+	@Override public void setLastCropRewardGameTime(long gameTime) { lastCropRewardGameTime = gameTime; }
+	@Override public long getLastPetHealRewardGameTime() { return lastPetHealRewardGameTime; }
+	@Override public void setLastPetHealRewardGameTime(long gameTime) { lastPetHealRewardGameTime = gameTime; }
+	@Override public long getLastEmptyBloodRewardGameTime() { return lastEmptyBloodRewardGameTime; }
+	@Override public void setLastEmptyBloodRewardGameTime(long gameTime) { lastEmptyBloodRewardGameTime = gameTime; }
 
     @Override
     public float getPurity() {
@@ -206,7 +236,17 @@ public class UnstainedProgress implements IUnstainedProgress, INBTSerializable<C
         tag.putBoolean("begunPurification", begunPurification);
 		tag.putBoolean("infectionSuppressed", infectionSuppressed);
 		tag.putBoolean("clarityPrepared", clarityPrepared);
-		tag.putBoolean("annettaSeveranceUnlocked", annettaSeveranceUnlocked);
+        tag.putBoolean("annettaSeveranceUnlocked", annettaSeveranceUnlocked);
+		tag.putBoolean("claimedChurchStarterSupply", claimedChurchStarterSupply);
+		tag.putBoolean("claimedPaleSilverBellReward", claimedPaleSilverBellReward);
+		tag.putBoolean("offeredSilverChalice", offeredSilverChalice);
+		tag.putBoolean("offeredPoppyWreath", offeredPoppyWreath);
+		tag.putBoolean("offeredPallidIcon", offeredPallidIcon);
+		tag.putInt("letheanBrewOfferings", letheanBrewOfferings);
+		tag.putLong("lastXpRewardGameTime", lastXpRewardGameTime);
+		tag.putLong("lastCropRewardGameTime", lastCropRewardGameTime);
+		tag.putLong("lastPetHealRewardGameTime", lastPetHealRewardGameTime);
+		tag.putLong("lastEmptyBloodRewardGameTime", lastEmptyBloodRewardGameTime);
         tag.putFloat("purity", purity);
         tag.putBoolean("clarityUnlocked", clarityUnlocked);
         tag.putFloat("clarity", clarity);
@@ -238,7 +278,17 @@ public class UnstainedProgress implements IUnstainedProgress, INBTSerializable<C
         begunPurification = tag.getBoolean("begunPurification");
 		infectionSuppressed = tag.getBoolean("infectionSuppressed");
 		clarityPrepared = tag.getBoolean("clarityPrepared");
-		annettaSeveranceUnlocked = tag.getBoolean("annettaSeveranceUnlocked");
+        annettaSeveranceUnlocked = tag.getBoolean("annettaSeveranceUnlocked");
+		claimedChurchStarterSupply = tag.getBoolean("claimedChurchStarterSupply");
+		claimedPaleSilverBellReward = tag.getBoolean("claimedPaleSilverBellReward");
+		offeredSilverChalice = tag.getBoolean("offeredSilverChalice");
+		offeredPoppyWreath = tag.getBoolean("offeredPoppyWreath");
+		offeredPallidIcon = tag.getBoolean("offeredPallidIcon");
+		letheanBrewOfferings = tag.getInt("letheanBrewOfferings");
+		lastXpRewardGameTime = tag.getLong("lastXpRewardGameTime");
+		lastCropRewardGameTime = tag.getLong("lastCropRewardGameTime");
+		lastPetHealRewardGameTime = tag.getLong("lastPetHealRewardGameTime");
+		lastEmptyBloodRewardGameTime = tag.getLong("lastEmptyBloodRewardGameTime");
         purity = tag.getFloat("purity");
         clarityUnlocked = tag.getBoolean("clarityUnlocked");
         clarity = tag.getFloat("clarity");

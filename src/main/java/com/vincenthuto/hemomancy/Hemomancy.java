@@ -180,6 +180,10 @@ public class Hemomancy {
     }
 
     private static void acceptWipCreativeTabContents(BuildCreativeModeTabContentsEvent populator) {
+        populator.accept(ItemInit.CHAMBER_OF_WILL_TELEPORTER.get());
+        populator.accept(ItemInit.structure_spawner.get());
+        populator.accept(ItemInit.structure_scanner.get());
+        populator.accept(ItemInit.debug_showcase.get());
         populator.accept(ItemInit.drudge_electrode.get());
         populator.accept(ItemInit.drudge_submission_device.get());
         populator.accept(ItemInit.hematic_suture_needle.get());
@@ -220,7 +224,6 @@ public class Hemomancy {
         populator.accept(ItemInit.echo_of_kidneys.get());
         populator.accept(ItemInit.draught_of_still_mercy.get());
         populator.accept(ItemInit.lethean_brew.get());
-        populator.accept(ItemInit.tome_of_the_unstained.get());
         populator.accept(BlockInit.semi_sentient_construct.get());
         populator.accept(BlockInit.humane_idol.get());
         populator.accept(BlockInit.serpentine_idol.get());
@@ -242,7 +245,8 @@ public class Hemomancy {
     }
 
     private static boolean shouldShowItemInCreativeTab(Item item) {
-        return item != ItemInit.active_befouling_ash.get()
+        return item != ItemInit.tome_of_the_unstained.get()
+                && item != ItemInit.active_befouling_ash.get()
                 && item != ItemInit.active_smouldering_ash.get()
                 && item != ItemInit.living_weapon_graft.get()
                 && item != ItemInit.living_sickle.get()
@@ -263,7 +267,11 @@ public class Hemomancy {
     }
 
     private static boolean isWipItem(Item item) {
-        return item == ItemInit.drudge_electrode.get()
+        return item == ItemInit.CHAMBER_OF_WILL_TELEPORTER.get()
+                || item == ItemInit.structure_spawner.get()
+                || item == ItemInit.structure_scanner.get()
+                || item == ItemInit.debug_showcase.get()
+                || item == ItemInit.drudge_electrode.get()
                 || item == ItemInit.drudge_submission_device.get()
                 || item == ItemInit.hematic_suture_needle.get()
                 || item == ItemInit.unsigned_ancestral_ledger.get()
@@ -302,8 +310,7 @@ public class Hemomancy {
                 || item == ItemInit.echo_of_lungs.get()
                 || item == ItemInit.echo_of_kidneys.get()
                 || item == ItemInit.draught_of_still_mercy.get()
-                || item == ItemInit.lethean_brew.get()
-                || item == ItemInit.tome_of_the_unstained.get();
+                || item == ItemInit.lethean_brew.get();
     }
 
     private static boolean shouldShowBlockInCreativeTab(Block block) {

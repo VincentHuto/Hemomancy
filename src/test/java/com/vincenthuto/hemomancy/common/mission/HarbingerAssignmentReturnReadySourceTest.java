@@ -62,6 +62,8 @@ public final class HarbingerAssignmentReturnReadySourceTest {
 				"com/vincenthuto/hemomancy/common/mission/HarbingerArtificerAssignmentHelper.java"));
 		String bloodVolumeEvents = read(SOURCE_ROOT.resolve(
 				"com/vincenthuto/hemomancy/common/capability/player/harbinger/bloodvolume/BloodVolumeEvents.java"));
+		String centrifugeOutput = read(SOURCE_ROOT.resolve(
+				"com/vincenthuto/hemomancy/common/menu/slot/CentrifugeOutputSlot.java"));
 		String somaticLoom = read(SOURCE_ROOT.resolve(
 				"com/vincenthuto/hemomancy/common/tile/crafting/SomaticLoomBlockEntity.java"));
 		String brazier = read(SOURCE_ROOT.resolve(
@@ -91,8 +93,8 @@ public final class HarbingerAssignmentReturnReadySourceTest {
 				"ADV_ARTIFICER_ASSUMED_LIMB_FITTING_READY");
 		assertContains("Blood volume tick invokes Artificer ready sync", bloodVolumeEvents,
 				"HarbingerArtificerAssignmentHelper.syncReadyToClaimAdvancements(serverPlayer)");
-		assertContains("Blood volume tick detects First Separation completion", bloodVolumeEvents,
-				"ADV_FIRST_SEPARATION_COMPLETE");
+		assertContains("Centrifuge extraction detects First Separation completion", centrifugeOutput,
+				"tryRecoverAssignmentOutput");
 		assertContains("Somatic Loom grants Woven Vessel finished prompt", somaticLoom,
 				"ADV_MNEMONIST_WOVEN_VESSEL_FINISHED");
 		assertContains("Somatic Loom requires Mnemonist indexing before final prompt", somaticLoom,

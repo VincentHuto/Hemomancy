@@ -95,6 +95,7 @@ public final class HarbingerArtificerDialogueTrees {
 		}
 		if (degree >= 3) {
 			options.add(new DialogueOption("hemomancy.dialogue.artificer.option.armor_path", "armor_forks", null));
+			options.add(new DialogueOption("hemomancy.dialogue.artificer.option.scarlet_vanity", "scarlet_vanity", null));
 		}
 		if (livingStaffBond) {
 			options.add(new DialogueOption("hemomancy.dialogue.artificer.option.living_grafts", "living_grafts", null));
@@ -121,6 +122,7 @@ public final class HarbingerArtificerDialogueTrees {
 		}
 		if (degree >= 3) {
 			builder.addNode(armorForksNode());
+			builder.addNode(scarletVanityNode());
 		}
 		if (livingStaffBond) {
 			builder.addNode(livingGraftsNode());
@@ -155,6 +157,13 @@ public final class HarbingerArtificerDialogueTrees {
 		return new DialogueNode("armor_forks", List.of(
 				"hemomancy.artificer.forks.line1",
 				"hemomancy.artificer.forks.line2"
+		), List.of(new DialogueOption("hemomancy.dialogue.artificer.option.leave", null, null)));
+	}
+
+	private static DialogueNode scarletVanityNode() {
+		return new DialogueNode("scarlet_vanity", List.of(
+				"hemomancy.artificer.scarlet_vanity.line1",
+				"hemomancy.artificer.scarlet_vanity.line2"
 		), List.of(new DialogueOption("hemomancy.dialogue.artificer.option.leave", null, null)));
 	}
 

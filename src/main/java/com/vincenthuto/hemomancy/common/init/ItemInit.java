@@ -952,6 +952,8 @@ public class ItemInit {
             () -> new BlockItem(BlockInit.lethean_poppy_wreath.get(), new Item.Properties().stacksTo(16)));
     public static final DeferredHolder<Item, Item> silver_chalice = BASEITEMS.register("silver_chalice",
             () -> new Item(new Item.Properties().stacksTo(1)));
+    /** Legacy registry alias retained so existing saves do not lose old stacks. Not exposed or issued. */
+    @Deprecated(forRemoval = false)
     public static final DeferredHolder<Item, Item> tome_of_the_unstained = BASEITEMS.register("tome_of_the_unstained",
             () -> new Item(new Item.Properties().stacksTo(1).rarity(Rarity.UNCOMMON)));
     public static final DeferredHolder<Item, Item> pallid_icon = BASEITEMS.register("pallid_icon",

@@ -292,7 +292,7 @@ public class MorphlingIncubatorBlockEntity extends BaseContainerBlockEntity impl
 						enzyme.getAmount(), enzyme.getTend(), preferred, secondary);
 			} else if (stack.getItem() instanceof RecycledEnzymeItem recycled) {
 				contribution = MorphlingItem.calculateEffectivePower(
-						recycled.getAmount(), recycled.getTend(), preferred, secondary);
+						recycled.getAmount(stack), recycled.getTend(stack), preferred, secondary);
 			}
 			enzymeContributions[slot - SLOT_CATALYST_START] = contribution;
 		}

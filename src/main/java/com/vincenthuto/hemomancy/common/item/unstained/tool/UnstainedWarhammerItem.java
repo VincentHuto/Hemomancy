@@ -76,8 +76,7 @@ public class UnstainedWarhammerItem extends DiggerItem implements HemoClientItem
 			target.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, CRIPPLE_DURATION, CRIPPLE_AMPLIFIER,
 					false, true, true));
 
-			CompoundTag tag = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
-			if (tag.getBoolean(PaleHumorFlaskItem.TAG_WHITE_HUMOR_COATED)) {
+			if (PaleHumorFlaskItem.consumeCoatingHit(stack)) {
 				target.addEffect(new MobEffectInstance(EffectInit.hemolysis, 120, 0, false, true, true));
 			}
 

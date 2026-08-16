@@ -2,12 +2,14 @@ package com.vincenthuto.hemomancy.common.menu.tile.crafting;
 
 import com.vincenthuto.hemomancy.common.init.ContainerInit;
 import com.vincenthuto.hemomancy.common.init.RecipeInit;
+import com.vincenthuto.hemomancy.common.event.HarbingerAdvancementGranter;
 import com.vincenthuto.hemomancy.common.item.harbinger.BloodyFlaskItem;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.BloodGourdItem;
 import com.vincenthuto.hemomancy.common.tile.crafting.MycelialLanternBlockEntity;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.inventory.*;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -61,7 +63,17 @@ public class MycelialLanternMenu extends AbstractContainerMenu {
             }
         });
 
-        this.addSlot(new FurnaceResultSlot(playerInv.player, te, OUTPUT_SLOT, 134, 48));
+        this.addSlot(new FurnaceResultSlot(playerInv.player, te, OUTPUT_SLOT, 134, 48) {
+            @Override
+            public void onTake(Player player, ItemStack stack) {
+                super.onTake(player, stack);
+                if (player instanceof ServerPlayer serverPlayer
+                        && HarbingerAdvancementGranter.hasRecordedEnzyme(serverPlayer, stack)) {
+                    HarbingerAdvancementGranter.grantIfNotDone(serverPlayer,
+                            HarbingerAdvancementGranter.ADV_FIRST_CULTURE_COMPLETE);
+                }
+            }
+        });
 
         this.addSlot(new Slot(te, EMPTY_CONTAINER_SLOT, 30, 84) {
             @Override

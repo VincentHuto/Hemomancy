@@ -13,10 +13,7 @@
                   "to_place": {
                     "type": "minecraft:simple_state_provider",
                     "state": {
-                      "Name": "hemomancy:bleeding_heart",
-                      "Properties": {
-                        "half": "lower"
-                      }
+                      "Name": "hemomancy:bleeding_heart"
                     }
                   }
                 }

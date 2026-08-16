@@ -1,0 +1,9 @@
+{
+  "type": "hutoslib:page",
+  "ordinality": 3,
+  "texture": "hemomancy:textures/gui/guide/page.png",
+  "title": "Using Still Arts",
+  "subtitle": "Selection and casting are separate",
+  "text": "Still Arts unlock automatically when you reach their Clarity stage. Use Select Still Art (Z by default) to choose one, then Use Still Art (R by default) to cast it. The selected Art shows its White Humor cost, cooldown, and effect in the selection wheel. Manipulation controls remain separate: Use Manipulation does not cast a Still Art, and the Vascularium Charm menu does not select one.",
+  "icon": "hemomancy:silver_chalice"
+}

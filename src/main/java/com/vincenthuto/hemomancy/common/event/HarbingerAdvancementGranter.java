@@ -7,6 +7,8 @@ import net.minecraft.advancements.AdvancementHolder;
 import net.minecraft.advancements.AdvancementProgress;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.world.item.ItemStack;
 
 /**
  * Utility class for programmatically granting Hemomancy Harbinger-path
@@ -108,6 +110,8 @@ public final class HarbingerAdvancementGranter {
 			Hemomancy.rloc("hemomancy/enzyme_mastery_umbral");
 	public static final ResourceLocation ADV_ENZYME_MASTERY_COMPLETE =
 			Hemomancy.rloc("hemomancy/enzyme_mastery_complete");
+	public static final ResourceLocation ADV_FIRST_CULTURE_COMPLETE =
+			Hemomancy.rloc("hemomancy/first_culture_complete");
 	public static final ResourceLocation ADV_MNEMONIST_WOVEN_VESSEL_COMPLETE =
 			Hemomancy.rloc("hemomancy/mnemonist_woven_vessel_complete");
 	public static final ResourceLocation ADV_MNEMONIST_FIRST_WEAVE_COMPLETE =
@@ -299,6 +303,23 @@ public final class HarbingerAdvancementGranter {
 
 	public static boolean isEnzymeMasteryComplete(ServerPlayer player) {
 		return hasAdvancement(player, ADV_ENZYME_MASTERY_COMPLETE);
+	}
+
+	public static boolean hasRecordedEnzyme(ServerPlayer player, ItemStack enzyme) {
+		ResourceLocation itemId = BuiltInRegistries.ITEM.getKey(enzyme.getItem());
+		if (!itemId.getNamespace().equals(Hemomancy.MOD_ID)) return false;
+		ResourceLocation record = switch (itemId.getPath()) {
+			case "vivacious_enzyme" -> ADV_ENZYME_MASTERY_VIVACIOUS;
+			case "fervent_enzyme" -> ADV_ENZYME_MASTERY_FERVENT;
+			case "neurotic_enzyme" -> ADV_ENZYME_MASTERY_NEUROTIC;
+			case "incandescent_enzyme" -> ADV_ENZYME_MASTERY_INCANDESCENT;
+			case "ruinous_enzyme" -> ADV_ENZYME_MASTERY_RUINOUS;
+			case "frigid_enzyme" -> ADV_ENZYME_MASTERY_FRIGID;
+			case "ferric_enzyme" -> ADV_ENZYME_MASTERY_FERRIC;
+			case "umbral_enzyme" -> ADV_ENZYME_MASTERY_UMBRAL;
+			default -> null;
+		};
+		return record != null && hasAdvancement(player, record);
 	}
 
 	public static boolean isVesselFilled(ServerPlayer player) {

@@ -35,8 +35,8 @@ public class VascularPoulticeItem extends Item {
 	@Override
 	public void appendHoverText(ItemStack stack, Item.TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
 		super.appendHoverText(stack, context, tooltip, flag);
-		tooltip.add(Component.literal("Repairs the most strained vein section").withStyle(ChatFormatting.GRAY));
-		tooltip.add(Component.literal("Restores +" + (int) healAmount + " vascular health").withStyle(ChatFormatting.DARK_RED));
+		tooltip.add(Component.literal("Repairs the two most strained vein sections").withStyle(ChatFormatting.GRAY));
+		tooltip.add(Component.literal("Restores +" + (int) healAmount + " health to each").withStyle(ChatFormatting.DARK_RED));
 	}
 
 	@Override
@@ -68,18 +68,19 @@ public class VascularPoulticeItem extends Item {
 			return stack;
 		}
 		HemoCapabilityAccess.getVascularSystem(player).ifPresent(vascular -> {
-			VascularPoulticeRules.healMostDamaged(vascular.getVascularSystem(), healAmount).ifPresent(result -> {
+			var results = VascularPoulticeRules.healTwoMostDamaged(vascular.getVascularSystem(), healAmount);
+			if (!results.isEmpty()) {
 				vascular.setVascularSystem(vascular.getVascularSystem());
 				VascularSystemEvents.syncVascular(player, vascular);
-				player.displayClientMessage(Component.literal("Poultice sealed " + result.section().name().toLowerCase()
-						+ ": +" + (int) result.amountHealed()).withStyle(ChatFormatting.DARK_RED), true);
+				player.displayClientMessage(Component.literal("Poultice sealed " + results.size() + " strained sections")
+						.withStyle(ChatFormatting.DARK_RED), true);
 				level.playSound(null, player.getX(), player.getY(), player.getZ(),
 						SoundEvents.HONEY_DRINK, SoundSource.PLAYERS, 0.7F, 0.85F);
 				if (!player.getAbilities().instabuild) {
 					stack.shrink(1);
 				}
 				player.getCooldowns().addCooldown(this, VascularPoulticeRules.COOLDOWN_TICKS);
-			});
+			}
 		});
 		return stack;
 	}

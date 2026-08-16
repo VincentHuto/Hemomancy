@@ -1,0 +1,16 @@
+{
+  "conditions": [
+    {
+      "min_degree": 4,
+      "lines": [
+        "hemomancy.alchemist.item_inquiry.fungal_implantation_pylon.line1",
+        "hemomancy.alchemist.item_inquiry.fungal_implantation_pylon.line2"
+      ]
+    },
+    {
+      "lines": [
+        "hemomancy.alchemist.item_inquiry.fungal_implantation_pylon.locked"
+      ]
+    }
+  ]
+}

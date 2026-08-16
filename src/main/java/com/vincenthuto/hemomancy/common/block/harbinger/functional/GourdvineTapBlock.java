@@ -2,6 +2,8 @@ package com.vincenthuto.hemomancy.common.block.harbinger.functional;
 
 import com.mojang.serialization.MapCodec;
 import com.vincenthuto.hemomancy.common.init.BlockEntityInit;
+import com.vincenthuto.hemomancy.common.init.ItemInit;
+import com.vincenthuto.hemomancy.common.item.harbinger.EnzymeItem;
 import com.vincenthuto.hemomancy.common.tile.functional.GourdvineTapBlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
@@ -10,7 +12,6 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.Containers;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
@@ -92,8 +93,9 @@ public class GourdvineTapBlock extends BaseEntityBlock {
             Player player, InteractionHand hand, BlockHitResult hit) {
         if (level.isClientSide) return ItemInteractionResult.SUCCESS;
 
-        if (stack.is(Items.BONE_MEAL) && state.getValue(STAGE) < MAX_STAGE) {
-            int next = state.getValue(STAGE) + 1;
+        int growthBoost = growthBoost(stack);
+        if (growthBoost > 0 && state.getValue(STAGE) < MAX_STAGE) {
+            int next = GourdvineTapGrowthRules.advance(state.getValue(STAGE), growthBoost);
             level.setBlock(pos, state.setValue(STAGE, next), 3);
             if (!player.getAbilities().instabuild) {
                 stack.shrink(1);
@@ -110,6 +112,12 @@ public class GourdvineTapBlock extends BaseEntityBlock {
         }
 
         return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+    }
+
+    private static int growthBoost(ItemStack stack) {
+        if (stack.getItem() instanceof EnzymeItem) return 2;
+        if (stack.is(ItemInit.foul_paste.get()) || stack.is(ItemInit.spore_sac.get())) return 1;
+        return 0;
     }
 
     @Override

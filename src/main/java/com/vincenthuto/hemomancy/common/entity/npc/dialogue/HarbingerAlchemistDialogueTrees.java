@@ -318,6 +318,8 @@ public final class HarbingerAlchemistDialogueTrees {
 		}
 		greetingOptions.add(new DialogueOption("hemomancy.dialogue.alchemist.option.tell_me_about_centrifuge",
 				"centrifuge_lore", null));
+		greetingOptions.add(new DialogueOption("hemomancy.dialogue.alchemist.option.enzyme_uses",
+				"enzyme_uses", null));
 		greetingOptions.add(new DialogueOption("hemomancy.dialogue.alchemist.option.how_do_i_upgrade_my_gourd",
 				"gourd_upgrades", null));
 		greetingOptions.add(new DialogueOption("hemomancy.dialogue.alchemist.option.tell_me_about_alembic",
@@ -332,7 +334,9 @@ public final class HarbingerAlchemistDialogueTrees {
 				), greetingOptions))
 				.addNode(new DialogueNode("red_taxonomy_intro", List.of(
 						"hemomancy.alchemist.red_taxonomy.intro.line1",
-						"hemomancy.alchemist.red_taxonomy.intro.line2"
+						"hemomancy.alchemist.red_taxonomy.intro.line2",
+						"hemomancy.alchemist.red_taxonomy.intro.line3",
+						"hemomancy.alchemist.red_taxonomy.intro.line4"
 				), List.of(
 						new DialogueOption("hemomancy.dialogue.alchemist.option.tell_me_about_centrifuge",
 								"centrifuge_lore", null),
@@ -406,6 +410,14 @@ public final class HarbingerAlchemistDialogueTrees {
 				), List.of(new DialogueOption("hemomancy.dialogue.alchemist.option.leave", null, null))) )
 				.addNode(new DialogueNode("first_separation_complete", List.of(
 						"hemomancy.alchemist.first_separation.complete"
+				), List.of(
+						new DialogueOption("hemomancy.dialogue.alchemist.option.enzyme_uses", "enzyme_uses", null),
+						new DialogueOption("hemomancy.dialogue.alchemist.option.leave", null, null)
+				)) )
+				.addNode(new DialogueNode("enzyme_uses", List.of(
+						"hemomancy.alchemist.enzyme_uses.brewing",
+						"hemomancy.alchemist.enzyme_uses.culture",
+						"hemomancy.alchemist.enzyme_uses.workshop"
 				), List.of(new DialogueOption("hemomancy.dialogue.alchemist.option.leave", null, null))) )
 				.addNode(new DialogueNode("gourd_upgrades", List.of(
 						"hemomancy.alchemist.votary.gourd_upgrades"
@@ -434,6 +446,7 @@ public final class HarbingerAlchemistDialogueTrees {
 						"hemomancy.alchemist.votary.line1"
 				), List.of(
 						new DialogueOption("hemomancy.dialogue.alchemist.option.tell_me_about_centrifuge", "centrifuge_lore", null),
+						new DialogueOption("hemomancy.dialogue.alchemist.option.enzyme_uses", "enzyme_uses", null),
 						new DialogueOption("hemomancy.dialogue.alchemist.option.how_do_i_upgrade_my_gourd", "gourd_upgrades", null),
 						new DialogueOption("hemomancy.dialogue.alchemist.option.tell_me_about_centrifuge", "centrifuge_lore", null),
       new DialogueOption("hemomancy.dialogue.alchemist.option.ask_about_item", "item_hint", null),
@@ -445,6 +458,11 @@ public final class HarbingerAlchemistDialogueTrees {
 						new DialogueOption("hemomancy.dialogue.alchemist.option.how_do_i_upgrade_my_gourd", "gourd_upgrades", null),
 						new DialogueOption("hemomancy.dialogue.alchemist.option.leave", null, null)
 				)))
+				.addNode(new DialogueNode("enzyme_uses", List.of(
+						"hemomancy.alchemist.enzyme_uses.brewing",
+						"hemomancy.alchemist.enzyme_uses.culture",
+						"hemomancy.alchemist.enzyme_uses.workshop"
+				), List.of(new DialogueOption("hemomancy.dialogue.alchemist.option.leave", null, null))) )
 				.addNode(new DialogueNode("gourd_upgrades", List.of(
 						"hemomancy.alchemist.votary.gourd_upgrades"
 				), List.of(

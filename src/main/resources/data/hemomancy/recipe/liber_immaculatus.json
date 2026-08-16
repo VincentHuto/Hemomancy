@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    { "item": "hemomancy:pale_silver_ingot" },
+    { "item": "minecraft:book" },
+    { "item": "hemomancy:pale_distillate" }
+  ],
+  "result": {
+    "id": "hemomancy:liber_immaculatus",
+    "count": 1
+  }
+}

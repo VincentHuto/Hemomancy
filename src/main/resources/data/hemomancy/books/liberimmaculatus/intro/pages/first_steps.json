@@ -3,7 +3,7 @@
   "ordinality": 1,
   "texture": "hemomancy:textures/gui/guide/page.png",
   "title": "First Steps",
-  "subtitle": "Hemolysis and the choice to begin",
-  "text": "The Hemolytic Solution is the foundation. Brewed from dicentra sap and still water, it does not destroy the infection outright — nothing so direct would work. It creates a hostile environment within the blood, a gentle chemical cold that the mycelium dislikes. Sleep with it active. Work with it in your veins. Let the quiet of the night become a ritual of slow refusal. The blood will resist. It will feel like losing something. That is correct. You are.",
+  "subtitle": "The exact entry sequence",
+  "text": "Take two Hemolytic Solutions from the church supply. At the Unstained Podium, use one solution to suppress the infection. Craft the second solution with stone to make four Cleansed Stone. Use that stone and Lethean Poppies to build Lethean Baptism. Hold the Cardinal Rite Staff and right-click the completed rite to invoke it. The rite begins Purity only after the Podium has suppressed your infection.",
   "icon": "hemomancy:hemolytic_solution"
 }

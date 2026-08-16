@@ -187,11 +187,7 @@ public class BloodVolumeEvents {
 	}
 
 	private static void recordEnzymeMastery(ServerPlayer serverPlayer) {
-		boolean hasAnyEnzyme = false;
 		for (ItemStack stack : serverPlayer.getInventory().items) {
-			if (isEnzyme(stack)) {
-				hasAnyEnzyme = true;
-			}
 			if (stack.is(ItemInit.vivacious_enzyme.get())) {
 				HarbingerAdvancementGranter.grantIfNotDone(serverPlayer,
 						HarbingerAdvancementGranter.ADV_ENZYME_MASTERY_VIVACIOUS);
@@ -222,10 +218,6 @@ public class BloodVolumeEvents {
 			HarbingerAdvancementGranter.grantIfNotDone(serverPlayer,
 					HarbingerAdvancementGranter.ADV_ENZYME_MASTERY_COMPLETE);
 		}
-		if (hasAnyEnzyme && HarbingerAdvancementGranter.isFirstSeparationStarted(serverPlayer)) {
-			HarbingerAdvancementGranter.grantIfNotDone(serverPlayer,
-					HarbingerAdvancementGranter.ADV_FIRST_SEPARATION_COMPLETE);
-		}
 	}
 
 	private static void syncReturnReadyAdvancements(ServerPlayer serverPlayer) {
@@ -235,17 +227,6 @@ public class BloodVolumeEvents {
 			HarbingerAdvancementGranter.grantIfNotDone(serverPlayer,
 					HarbingerAdvancementGranter.ADV_VEIN_MASON_CONTINUATION_READY);
 		}
-	}
-
-	private static boolean isEnzyme(ItemStack stack) {
-		return stack.is(ItemInit.vivacious_enzyme.get())
-				|| stack.is(ItemInit.fervent_enzyme.get())
-				|| stack.is(ItemInit.neurotic_enzyme.get())
-				|| stack.is(ItemInit.incandescent_enzyme.get())
-				|| stack.is(ItemInit.ruinous_enzyme.get())
-				|| stack.is(ItemInit.frigid_enzyme.get())
-				|| stack.is(ItemInit.ferric_enzyme.get())
-				|| stack.is(ItemInit.umbral_enzyme.get());
 	}
 
 	/**

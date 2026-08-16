@@ -7,6 +7,7 @@ import com.vincenthuto.hemomancy.common.menu.tile.crafting.VialCentrifugeMenu;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.manips.StartCentrifugeButtonPacket;
 import com.vincenthuto.hemomancy.common.tile.crafting.VialCentrifugeBlockEntity;
+import com.vincenthuto.hemomancy.common.tile.crafting.VialCentrifugeStartupResult;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.network.chat.Component;
@@ -132,7 +133,7 @@ public class VialCentrifugeScreen extends AbstractContainerScreen<VialCentrifuge
 			Slot slot = this.menu.slots.get(i);
 			int sx = gx + slot.x;
 			int sy = gy + slot.y;
-			drawSlotBackground(gfx, sx, sy, slot.index);
+			drawSlotBackground(gfx, sx, sy, i);
 		}
 
 		// ── Progress ring around the vial slots ──
@@ -152,9 +153,13 @@ public class VialCentrifugeScreen extends AbstractContainerScreen<VialCentrifuge
 
 		// Status text — bottom right of craft area
 		if (this.menu.isSpinning()) {
-			String text = "Centrifuging...";
+			Component text = Component.translatable("message.hemomancy.vial_centrifuge.spinning");
 			int tw = font.width(text);
 			gfx.drawString(font, text, this.imageWidth - tw - 4, CRAFT_AREA_HEIGHT - 10, 0xFFCC2222, false);
+		} else if (this.menu.getStartupResult() != VialCentrifugeStartupResult.IDLE
+				&& this.menu.getStartupResult() != VialCentrifugeStartupResult.SUCCESS) {
+			Component text = Component.translatable(this.menu.getStartupResult().translationKey());
+			gfx.drawString(font, text, 4, CRAFT_AREA_HEIGHT - 10, 0xFFFF7777, false);
 		}
 	}
 
@@ -190,10 +195,6 @@ public class VialCentrifugeScreen extends AbstractContainerScreen<VialCentrifuge
 		// Flask output slot (dark red, like blood slot)
 		if (slotIndex == VialCentrifugeMenu.FLASK_OUTPUT_SLOT) {
 			gfx.fill(sx, sy, sx + 16, sy + 16, 0x20FF4444);
-		}
-		// Input slot (slight highlight)
-		if (slotIndex == VialCentrifugeMenu.INPUT_SLOT) {
-			gfx.fill(sx, sy, sx + 16, sy + 16, 0x15FFAA88);
 		}
 	}
 

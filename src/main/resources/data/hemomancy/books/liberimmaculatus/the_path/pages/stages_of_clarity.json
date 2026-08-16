@@ -4,6 +4,6 @@
   "texture": "hemomancy:textures/gui/guide/page.png",
   "title": "Stages of Clarity",
   "subtitle": "Discerning, Vigilant, Resolute, Enlightened",
-  "text": "Clarity is the second measure. It cannot be sought directly — it grows as Our Lady speaks and you listen. Discerning (25): the Silver Ward activates, reducing harm from blood-touched sources. Vigilant (50): the ward strengthens, and nearby hemomantic creatures glow at the edges of your sight. Resolute (75): the ward grows stronger still. Enlightened (100): full Silver Ward. She speaks less frequently at this stage. The silence has weight. Do not mistake it for absence.",
+  "text": "Clarity is the second measure, unlocked by Clarity Ascension at full Purity. Raise it through Clarity observances, accepted Altar offerings, and the path's rites. Each Clarity stage grants its Still Arts automatically; rites do not teach them. Discerning (25), Vigilant (50), Resolute (75), and Enlightened (100) strengthen the Silver Ward and unlock the stage's listed Arts.",
   "icon": "hemomancy:pale_silver_ingot"
 }

@@ -11,6 +11,8 @@ import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.
 import com.vincenthuto.hemomancy.common.capability.player.shared.knowledge.HemomancyDiscoverySource;
 import com.vincenthuto.hemomancy.common.capability.player.shared.knowledge.discovery.LiberEntryDefinitions;
 import com.vincenthuto.hemomancy.common.capability.player.shared.knowledge.discovery.LiberKnowledgeHelper;
+import com.vincenthuto.hemomancy.common.capability.player.unstained.UnstainedProgressEvents;
+import com.vincenthuto.hemomancy.common.capability.player.unstained.UnstainedStarterSupplyRules;
 import com.vincenthuto.hemomancy.common.entity.summon.MorphlingPolypLayer;
 import com.vincenthuto.hemomancy.common.entity.npc.harbinger.HarbingerHermitEntity;
 import com.vincenthuto.hemomancy.common.event.HarbingerAdvancementGranter;
@@ -20,6 +22,7 @@ import com.vincenthuto.hemomancy.common.init.BlockInit;
 import com.vincenthuto.hemomancy.common.mission.HarbingerArtificerAssignmentHelper;
 import com.vincenthuto.hemomancy.common.mission.FirstBloodcraftAssignmentHelper;
 import com.vincenthuto.hemomancy.common.mission.FirstSeparationAssignmentHelper;
+import com.vincenthuto.hemomancy.common.mission.RedTaxonomyRewardRules;
 import com.vincenthuto.hemomancy.common.mission.UnstainedObservanceHelper;
 import com.vincenthuto.hemomancy.common.util.SpecimenJarData;
 import com.vincenthuto.hemomancy.common.item.shared.PreWrittenMemoItem;
@@ -104,10 +107,7 @@ public class DialogueEventHandler {
 			case "guardian_task_bell" -> UnstainedObservanceHelper.handle(player,
 					UnstainedObservanceHelper.Observance.RING_THE_PALE_WATCH);
 			case "zealot_accept_church" -> {
-				player.displayClientMessage(
-						Component.translatable("hemomancy.dialogue.event.accept_church")
-								.withStyle(ChatFormatting.GREEN),
-						false);
+				grantUnstainedStarterSupply(player);
 			}
 			case "zealot_reject_help" -> {
 				player.displayClientMessage(
@@ -116,10 +116,7 @@ public class DialogueEventHandler {
 						false);
 			}
 			case "zealot_accept_purification" -> {
-				player.displayClientMessage(
-						Component.translatable("hemomancy.dialogue.event.accept_purification")
-								.withStyle(ChatFormatting.AQUA),
-						false);
+				grantUnstainedStarterSupply(player);
 			}
 			case "hermit_accept_guidance" -> {
 				player.displayClientMessage(
@@ -424,7 +421,8 @@ public class DialogueEventHandler {
 
 	private static void handleAlchemistFirstSeparationBrief(ServerPlayer player) {
 		if (!FirstSeparationAssignmentHelper.canBrief(player)) return;
-		FirstSeparationAssignmentHelper.markBriefed(player);
+		if (!FirstSeparationAssignmentHelper.markBriefed(player)) return;
+		FirstSeparationAssignmentHelper.giveBriefingSupplies(player);
 	}
 
 	private static void handleAlchemistFirstSeparationReward(ServerPlayer player, int entityId) {
@@ -718,11 +716,18 @@ public class DialogueEventHandler {
 		}
 
 		boolean taxonomyWasComplete = HarbingerAdvancementGranter.isRedTaxonomyComplete(player);
+		int countBefore = HarbingerAdvancementGranter.getRedTaxonomySpecimenCount(player);
 		if (!player.isCreative()) {
 			held.shrink(1);
 		}
 		HarbingerAdvancementGranter.grantIfNotDone(player, sample.advancement());
 		int count = HarbingerAdvancementGranter.getRedTaxonomySpecimenCount(player);
+		if (RedTaxonomyRewardRules.grantsFirstFieldVial(countBefore, count > countBefore)) {
+			giveOrDropAtEntity(player, player.getId(), new ItemStack(ItemInit.bloody_vial.get()));
+			player.displayClientMessage(Component.translatable(
+					"hemomancy.dialogue.event.alchemist_red_taxonomy_first_vial")
+					.withStyle(ChatFormatting.DARK_RED), false);
+		}
 		boolean taxonomyCompletedNow = count >= 4 && !taxonomyWasComplete;
 		if (taxonomyCompletedNow) {
 			HarbingerAdvancementGranter.grantIfNotDone(player,
@@ -1253,5 +1258,35 @@ public class DialogueEventHandler {
 							.withStyle(ChatFormatting.DARK_RED),
 					false);
 		});
+	}
+
+	private static void grantUnstainedStarterSupply(ServerPlayer player) {
+		HemoCapabilityAccess.getUnstainedProgress(player).ifPresent(progress -> {
+			var grant = UnstainedStarterSupplyRules.grantFor(
+					progress.hasClaimedChurchStarterSupply(),
+					player.getInventory().countItem(ItemInit.hemolytic_solution.get()),
+					player.getInventory().contains(new ItemStack(ItemInit.liber_immaculatus.get())));
+			if (grant == UnstainedStarterSupplyRules.Grant.NONE) {
+				player.displayClientMessage(Component.translatable(
+						"hemomancy.dialogue.event.unstained_starter_already_claimed")
+						.withStyle(ChatFormatting.GRAY), false);
+				return;
+			}
+			if (grant.solutionCount() > 0) {
+				giveOrDrop(player, new ItemStack(ItemInit.hemolytic_solution.get(), grant.solutionCount()));
+			}
+			if (grant.guide()) {
+				giveOrDrop(player, new ItemStack(ItemInit.liber_immaculatus.get()));
+			}
+			progress.setClaimedChurchStarterSupply(true);
+			UnstainedProgressEvents.syncProgress(player, progress);
+			player.displayClientMessage(Component.translatable(
+					"hemomancy.dialogue.event.unstained_starter_granted")
+					.withStyle(ChatFormatting.AQUA), false);
+		});
+	}
+
+	private static void giveOrDrop(ServerPlayer player, ItemStack stack) {
+		if (!player.getInventory().add(stack)) player.drop(stack, false);
 	}
 }

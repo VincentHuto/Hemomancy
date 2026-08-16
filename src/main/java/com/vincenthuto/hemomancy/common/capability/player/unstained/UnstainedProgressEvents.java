@@ -32,7 +32,7 @@ public class UnstainedProgressEvents {
         EnumClarityStage.AWAKENED.setIconItem(() -> new ItemStack(ItemInit.cleansed_blood_crystal_shard.get()));
         EnumClarityStage.DISCERNING.setIconItem(() -> new ItemStack(ItemInit.silver_chalice.get()));
         EnumClarityStage.VIGILANT.setIconItem(() -> new ItemStack(ItemInit.pale_silver_ingot.get()));
-        EnumClarityStage.RESOLUTE.setIconItem(() -> new ItemStack(ItemInit.tome_of_the_unstained.get()));
+        EnumClarityStage.RESOLUTE.setIconItem(() -> new ItemStack(ItemInit.liber_immaculatus.get()));
         EnumClarityStage.ENLIGHTENED.setIconItem(() -> new ItemStack(ItemInit.pallid_icon.get()));
     }
 
