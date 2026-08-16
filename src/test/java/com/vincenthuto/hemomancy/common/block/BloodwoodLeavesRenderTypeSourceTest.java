@@ -5,16 +5,16 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 
 public final class BloodwoodLeavesRenderTypeSourceTest {
-	private static final Path SOURCE_ROOT = Path.of("src/main/java");
+	private static final Path RESOURCE_ROOT = Path.of("src/main/resources");
 
 	private BloodwoodLeavesRenderTypeSourceTest() {
 	}
 
 	public static void main(String[] args) throws IOException {
-		String clientEvents = read(SOURCE_ROOT.resolve("com/vincenthuto/hemomancy/client/event/ClientEvents.java"));
+		String model = read(RESOURCE_ROOT.resolve("assets/hemomancy/models/block/blood_wood_leaves.json"));
 
-		assertContains("bloodwood leaves should render with alpha cutout", clientEvents,
-				"ItemBlockRenderTypes.setRenderLayer(BlockInit.blood_wood_leaves.get(), RenderType.cutout());");
+		assertContains("bloodwood leaves should render with transparent cutout pixels", model,
+				"\"render_type\": \"cutout\"");
 	}
 
 	private static String read(Path path) throws IOException {

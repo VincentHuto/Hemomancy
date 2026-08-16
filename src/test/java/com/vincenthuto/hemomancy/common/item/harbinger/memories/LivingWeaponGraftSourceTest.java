@@ -43,8 +43,7 @@ public final class LivingWeaponGraftSourceTest {
 		assertContains("graft item dynamic name", item, "getName(ItemStack stack)");
 		assertContains("graft item tooltip", item, "appendHoverText");
 		assertContains("graft item exposes creative variants", item, "creativeStacks()");
-		assertContains("blade display is player-facing", item, "Blade Graft");
-		assertContains("flail display is player-facing", item, "Flail Graft");
+		assertContains("form display names produce graft names", form, "return displayName + \" Graft\";");
 		assertNotContains("graft item does not expose Vesper Graft", item, "Vesper Graft");
 
 		assertContains("creative tab expands graft variants", hemomancy, "LivingWeaponGraftItem.creativeStacks()");

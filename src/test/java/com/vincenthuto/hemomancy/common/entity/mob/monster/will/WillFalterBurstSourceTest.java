@@ -25,7 +25,8 @@ public final class WillFalterBurstSourceTest {
 		assertContains("only broken wills falter from burst", source, "getOrigin() != WillOrigin.BROKEN");
 		assertContains("only materialized wills track burst", source, "getPhase() != WillPhase.MATERIALIZED");
 		assertContains("burst damage accumulates dealt damage", source, "falterBurstDamage += amount;");
-		assertContains("burst threshold scales from max health", source, "getMaxHealth() * safeConfig(");
+		assertContains("burst threshold scales from max health", source,
+				"getMaxHealth() * HemoConfigValues.get(HemoServerConfig.WILL_FALTER_BURST_FRACTION,");
 		assertContains("burst threshold uses configured fraction", source, "HemoServerConfig.WILL_FALTER_BURST_FRACTION");
 		assertContains("burst threshold uses fallback fraction", source, "WillCombatRules.falterBurstFraction()");
 		assertContains("burst threshold enters faltering", source, "enterFaltering();");

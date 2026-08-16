@@ -1,5 +1,6 @@
 {
   "parent": "minecraft:block/leaves",
+  "render_type": "cutout",
   "textures": {
     "all": "hemomancy:block/blood_wood_leaves"
   }

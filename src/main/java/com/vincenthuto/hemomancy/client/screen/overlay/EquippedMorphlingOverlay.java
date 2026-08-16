@@ -95,7 +95,7 @@ public class EquippedMorphlingOverlay {
 		gfx.pose().scale(renderScale, renderScale, 1.0f);
 		gfx.pose().translate(-centerX, -centerY, 0.0f);
 
-		gfx.blit(texture, x, y, blit.width(), EquippedMorphlingOverlayPlacement.ATTACHED_SIZE,
+		gfx.blit(texture, x-15, y-15, blit.width(), EquippedMorphlingOverlayPlacement.ATTACHED_SIZE,
 				blit.uOffset(), frameV, blit.uWidth(), EquippedMorphlingOverlayPlacement.ATTACHED_SIZE,
 				EquippedMorphlingOverlayPlacement.ATTACHED_SIZE,
 				EquippedMorphlingOverlayPlacement.FEEDING_TEXTURE_HEIGHT);

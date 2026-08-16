@@ -18,12 +18,10 @@ public final class HarbingerBestiaryTabSourceTest {
 
 		assertContains("bestiary tab is degree 2 gated", screen,
 				"BESTIARY(\"Bestiary\", 0xFF77AA66, 2, true)");
-		assertContains("bestiary controller is owned by screen", screen,
-				"private final BestiaryTabController bestiary = new BestiaryTabController();");
-		assertContains("bestiary maps to controller", screen, "case BESTIARY");
-		assertContains("bestiary maps to controller target", screen, "-> bestiary;");
-		assertContains("bestiary participates in init", screen,
-				"new IProgressTab[]{skills, manips, rites, crafting, summons, materials, bestiary}");
+		assertContains("bestiary controllers are cached by the tab registry", screen,
+				"private final ProgressTabRegistry<Tab> tabs = new ProgressTabRegistry<>(Tab.class, this::createController);");
+		assertContains("bestiary creates its controller through the tab factory", screen,
+				"case BESTIARY -> new BestiaryTabController();");
 		assertContains("bottom-right tab is drawn separately", screen, "drawBottomRightTabs");
 		assertContains("bottom-right hit test is checked", screen, "bottomRightTabUnder");
 

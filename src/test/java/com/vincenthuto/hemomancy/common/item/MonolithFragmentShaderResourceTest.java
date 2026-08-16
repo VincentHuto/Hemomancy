@@ -47,7 +47,7 @@ public final class MonolithFragmentShaderResourceTest {
 				"setUniform(shader, \"HemoTime\", gameTime)");
 		assertNotContains("render type avoids Minecraft's built-in GameTime overwrite", renderTypes,
 				"setUniform(shader, \"GameTime\"");
-		assertContains("renderer emits uv-mapped low-poly triangles", renderer,
+		assertContains("monolith render type emits uv-mapped low-poly triangles", renderTypes,
 				"DefaultVertexFormat.POSITION_COLOR_TEX_LIGHTMAP");
 		assertContains("renderer subdivides shards for shader resolution", renderer,
 				"private static final int SUBDIVISIONS = 8;");

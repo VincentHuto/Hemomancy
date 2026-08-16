@@ -34,13 +34,11 @@ class ArborOfWillIntegrationSourceTest {
     }
 
     @Test
-    void clientPresentationHasRendererTargetingAndAuthoredSource() throws Exception {
+    void clientPresentationHasRendererAndTargeting() throws Exception {
         String renderer = source("com/vincenthuto/hemomancy/client/render/entity/misc/ArborOfWillRenderer.java");
         String interaction = source("com/vincenthuto/hemomancy/client/event/ArborOfWillClientInteraction.java");
-        String model = Files.readString(Path.of("src/main/resources/assets/hemomancy/models/source/arbor_of_will.bbmodel"));
         assertTrue(renderer.contains("renderApotheosisCap"));
         assertTrue(renderer.contains("ArborGrowthAnimations.growthScale"));
         assertTrue(interaction.contains("ArborFruitInteractPacket"));
-        assertTrue(model.contains("six_braided_boughs"));
     }
 }

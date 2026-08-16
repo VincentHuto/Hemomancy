@@ -94,7 +94,8 @@ public final class MorphlingStage4To8SourceTest {
 		assertContains("bestiary sync migrates layer families", bestiaryState, "MorphlingMigrationRules.migrateLayerFamily");
 		assertContains("cradle primal filter exists", cradle, "isCradleSupportedPrimalStrain");
 		assertContains("cradle gravecap support", cradle, "ItemInit.morphling_gravecap");
-		assertContains("client registry marks interim assets", clientRegistry, "interim strain silhouette");
+		assertContains("client registry registers the gravecap strain mutation", clientRegistry,
+				"register(ItemInit.morphling_gravecap.get(),");
 		for (int i = 1; i <= 8; i++) {
 			assertContains("staff predicate " + i, staffModel, "\"hemomancy:staff_visual\": " + i);
 		}

@@ -14,7 +14,8 @@ final class CardinalRiteStructureFailureSourceTest {
 	@Test
 	void periodicStructureFailureStopsTheRiteAndDispersesEveryAnchor() throws IOException {
 		String events = Files.readString(ROOT.resolve(
-				"src/main/java/com/vincenthuto/hemomancy/common/rite/harbinger/HarbingerCardinalRiteEvents.java"));
+				"src/main/java/com/vincenthuto/hemomancy/common/rite/harbinger/HarbingerCardinalRiteEvents.java"))
+				.replace("\r\n", "\n");
 
 		assertTrue(events.contains(
 				"if (sLevel.getGameTime() % 20 == 0 && !verifyRiteStructure(sLevel, rite)) {\n"
@@ -42,7 +43,8 @@ final class CardinalRiteStructureFailureSourceTest {
 	@Test
 	void removedInteractiveRecipeIsRetiredWithoutPunishingThePlayer() throws IOException {
 		String events = Files.readString(ROOT.resolve(
-				"src/main/java/com/vincenthuto/hemomancy/common/rite/harbinger/HarbingerCardinalRiteEvents.java"));
+				"src/main/java/com/vincenthuto/hemomancy/common/rite/harbinger/HarbingerCardinalRiteEvents.java"))
+				.replace("\r\n", "\n");
 
 		assertTrue(events.contains("if (recipe == null && rite.getPhase() != CardinalRitePhase.LEGACY)"),
 				"datapack updates must retire active ceremonies whose recipes no longer exist");

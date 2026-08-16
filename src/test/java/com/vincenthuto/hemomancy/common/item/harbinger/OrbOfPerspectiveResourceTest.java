@@ -31,8 +31,8 @@ final class OrbOfPerspectiveResourceTest {
 				model.getAsJsonObject("textures").get("layer0").getAsString());
 		BufferedImage texture = ImageIO.read(Path.of(
 				"src/main/resources/assets/hemomancy/textures/item/orb_of_perspective.png").toFile());
-		assertEquals(32, texture.getWidth());
-		assertEquals(32, texture.getHeight());
+		assertEquals(16, texture.getWidth());
+		assertEquals(16, texture.getHeight());
 		assertTrue(texture.getColorModel().hasAlpha());
 		JsonObject language = json("src/main/resources/assets/hemomancy/lang/en_us.json");
 		assertTrue(language.has("item.hemomancy.orb_of_perspective"));

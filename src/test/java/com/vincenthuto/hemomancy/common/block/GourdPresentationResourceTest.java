@@ -15,7 +15,6 @@ public final class GourdPresentationResourceTest {
 		String blockModel = read(RESOURCE_ROOT.resolve("assets/hemomancy/models/block/gourd.json"));
 		String gourdBlock = read(SOURCE_ROOT.resolve(
 				"com/vincenthuto/hemomancy/common/block/harbinger/plant/GourdBlock.java"));
-		String clientEvents = read(SOURCE_ROOT.resolve("com/vincenthuto/hemomancy/client/event/ClientEvents.java"));
 		String blockInit = read(SOURCE_ROOT.resolve("com/vincenthuto/hemomancy/common/init/BlockInit.java"));
 
 		assertDoesNotContain("gourd model should not inherit a full cube column", blockModel,
@@ -31,10 +30,14 @@ public final class GourdPresentationResourceTest {
 		assertContains("gourd block overrides getShape", gourdBlock, "protected VoxelShape getShape(");
 		assertContains("gourd block overrides getCollisionShape", gourdBlock,
 				"protected VoxelShape getCollisionShape(");
-		assertContains("gourd stem renders as cutout", clientEvents,
-				"ItemBlockRenderTypes.setRenderLayer(BlockInit.gourd_stem.get(), RenderType.cutout());");
-		assertContains("attached gourd stem renders as cutout", clientEvents,
-				"ItemBlockRenderTypes.setRenderLayer(BlockInit.attached_gourd_stem.get(), RenderType.cutout());");
+		for (int age = 0; age <= 7; age++) {
+			assertContains("gourd stem stage " + age + " renders as transparent cutout",
+					read(RESOURCE_ROOT.resolve("assets/hemomancy/models/block/gourd_stem_stage" + age + ".json")),
+					"\"render_type\": \"cutout\"");
+		}
+		assertContains("attached gourd stem renders as transparent cutout",
+				read(RESOURCE_ROOT.resolve("assets/hemomancy/models/block/attached_gourd_stem.json")),
+				"\"render_type\": \"cutout\"");
 		assertContains("attached gourd stem restores the custom age-7 stem when fruit is removed", blockInit,
 				"new AttachedStemBlock(GOURD_STEM_BLOCK_KEY, GOURD_BLOCK_KEY, GOURD_SEED_ITEM_KEY");
 	}

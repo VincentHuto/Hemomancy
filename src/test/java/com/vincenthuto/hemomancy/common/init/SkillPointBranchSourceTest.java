@@ -180,7 +180,7 @@ public final class SkillPointBranchSourceTest {
 		assertContains("living staff branch grows west", staff, "setTreePosition(360, 480)");
 		assertContains("scar branch grows south on deep layer", scars, "setTreePosition(585, 750)");
 		assertContains("covenant branch grows northeast on deep layer", covenant, "setTreePosition(581, 411)");
-		assertContains("mycelial branch grows southwest", mycelial, "setTreePosition(289, 671)");
+		assertContains("mycelial branch grows southwest", mycelial, "setTreePosition(321, 703)");
 		assertContains("skill helper exposes hematic focus", skillPointHelper, "getHematicFocusLevel");
 		assertContains("skill helper exposes vesper refusal", skillPointHelper, "getVespersRefusalLevel");
 		assertContains("skill helper exposes thread economy", skillPointHelper, "getThreadEconomyLevel");

@@ -87,17 +87,17 @@ public final class EquippedMorphlingOverlayTest {
 		assertEquals("animation starts at frame zero", 0,
 				EquippedMorphlingOverlayPlacement.feedingFrame(0.0f));
 		assertEquals("animation reaches frame one", 1,
-				EquippedMorphlingOverlayPlacement.feedingFrame(0.08f));
+				EquippedMorphlingOverlayPlacement.feedingFrame(0.18f));
 		assertEquals("animation reaches frame two", 2,
-				EquippedMorphlingOverlayPlacement.feedingFrame(0.16f));
+				EquippedMorphlingOverlayPlacement.feedingFrame(0.36f));
 		assertEquals("animation reaches frame three", 3,
-				EquippedMorphlingOverlayPlacement.feedingFrame(0.24f));
+				EquippedMorphlingOverlayPlacement.feedingFrame(0.54f));
 		assertEquals("animation reaches frame four", 4,
-				EquippedMorphlingOverlayPlacement.feedingFrame(0.32f));
+				EquippedMorphlingOverlayPlacement.feedingFrame(0.72f));
 		assertEquals("animation reaches frame five", 5,
-				EquippedMorphlingOverlayPlacement.feedingFrame(0.40f));
+				EquippedMorphlingOverlayPlacement.feedingFrame(0.91f));
 		assertEquals("animation loops", 0,
-				EquippedMorphlingOverlayPlacement.feedingFrame(0.48f));
+				EquippedMorphlingOverlayPlacement.feedingFrame(1.09f));
 	}
 
 	private static void stableRenderClockAdvancesWithPartialTicks() {

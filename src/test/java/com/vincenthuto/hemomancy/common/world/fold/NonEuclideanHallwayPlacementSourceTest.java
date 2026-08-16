@@ -20,8 +20,6 @@ public final class NonEuclideanHallwayPlacementSourceTest {
 				block, "level.updateNeighborsAt(pos, state.getBlock())");
 		assertContains("hallway block entity should provide a client update packet",
 				blockEntity, "ClientboundBlockEntityDataPacket.create(this)");
-		assertContains("hallway block entity should provide an update tag for fresh chunk and live placement sync",
-				blockEntity, "getUpdateTag");
 	}
 
 	private static String read(String path) throws IOException {

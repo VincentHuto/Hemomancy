@@ -29,11 +29,16 @@ public final class FungalScarBehaviorSourceTest {
 		String events = read("src/main/java/com/vincenthuto/hemomancy/common/capability/player/harbinger/scar/ScarsEntityEventHandler.java");
 		String manipulation = read("src/main/java/com/vincenthuto/hemomancy/common/manipulation/BloodManipulation.java");
 		String vascular = read("src/main/java/com/vincenthuto/hemomancy/common/capability/player/harbinger/vascular/VascularSystemEvents.java");
+		String rooted = read("src/main/java/com/vincenthuto/hemomancy/common/capability/player/harbinger/scar/fungal/RootedStateHelper.java");
+		String digest = read("src/main/java/com/vincenthuto/hemomancy/common/capability/player/harbinger/scar/fungal/AfflictionDigestHelper.java");
+		String conserve = read("src/main/java/com/vincenthuto/hemomancy/common/capability/player/harbinger/scar/fungal/ConserveStateHelper.java");
 
 		assertContains("Rhizovitta tick hook", events, "RootedStateHelper.tick");
 		assertContains("Putrivora tick hook", events, "AfflictionDigestHelper.tick");
 		assertContains("Cryostroma tick hook", events, "ConserveStateHelper.tick");
-		assertContains("scar passive income routed through circulation", events, "IncomeChannel.SCAR");
+		assertContains("rooted scar income routed through circulation", rooted, "IncomeChannel.SCAR");
+		assertContains("digest scar income routed through circulation", digest, "IncomeChannel.SCAR");
+		assertContains("conserve scar income routed through circulation", conserve, "IncomeChannel.SCAR");
 		assertContains("Rhizovitta refund post-cast", manipulation, "RootedStateHelper.refundManipulationCost");
 		assertContains("Cryostroma vascular multiplier", vascular, "ConserveStateHelper.vascularHealMultiplier");
 	}

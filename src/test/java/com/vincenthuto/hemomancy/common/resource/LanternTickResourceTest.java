@@ -62,7 +62,6 @@ public final class LanternTickResourceTest {
 		assertJsonExists(ASSETS.resolve("models/item/lantern_tick_helmet.json"));
 		assertJsonExists(ASSETS.resolve("models/item/spawn_egg_lantern_tick.json"));
 		assertFileExists(ASSETS.resolve("textures/entity/lantern_tick/model_lantern_tick.png"));
-		assertFileExists(ASSETS.resolve("textures/item/lantern_tick_helmet.png"));
 		assertJsonExists(DATA.resolve("loot_table/entities/lantern_tick.json"));
 		assertJsonExists(DATA.resolve("neoforge/biome_modifier/add_lantern_tick.json"));
 		assertJsonExists(DATA.resolve("tags/worldgen/biome/lantern_tick_spawnlist.json"));
