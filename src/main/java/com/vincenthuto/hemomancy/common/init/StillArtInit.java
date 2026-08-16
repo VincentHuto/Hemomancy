@@ -4,6 +4,8 @@ import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.EnumClarityStage;
 import com.vincenthuto.hemomancy.common.manipulation.stillarts.StillArt;
+import com.vincenthuto.hemomancy.common.entity.summon.PaleIntercessionRules;
+import com.vincenthuto.hemomancy.common.entity.summon.PaleIntercessionSummonService;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.Registry;
 import net.minecraft.core.particles.ParticleTypes;
@@ -154,6 +156,11 @@ public class StillArtInit {
 						60, 2.2, 1.0, 2.2, 0.04);
 				return true;
 			}));
+
+	public static final DeferredHolder<StillArt, StillArt> pale_intercession = STILL_ARTS.register("pale_intercession",
+			() -> new StillArt("pale_intercession", EnumClarityStage.RESOLUTE,
+					PaleIntercessionRules.COOLDOWN_TICKS,
+					(player, level, heldItem, pos, art) -> PaleIntercessionSummonService.summonOrRecall(player)));
 
 	public static StillArt getByName(String name) {
 		if (name == null || name.isEmpty()) {

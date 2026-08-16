@@ -22,6 +22,7 @@ public final class StillArtRewardTable {
 			new StageReward(EnumClarityStage.VIGILANT, "memory_shear"),
 			new StageReward(EnumClarityStage.VIGILANT, "absolving_step"),
 			new StageReward(EnumClarityStage.RESOLUTE, "quietus_bell"),
+			new StageReward(EnumClarityStage.RESOLUTE, "pale_intercession"),
 			new StageReward(EnumClarityStage.ENLIGHTENED, "autoimmune_edge"));
 
 	private StillArtRewardTable() {

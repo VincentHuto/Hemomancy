@@ -204,7 +204,7 @@ From grepping 23 TODO/FIXME/HACK comments across the codebase:
 ### Confirmed Placeholder Assets
 - `Annetta Knowles` — no longer uses the old `blank.png` placeholder path; dedicated encounter models/textures exist, with animation/final polish still pending.
 - `Putriciel` — placeholder renderer confirmed.
-- `Spectral Companion` — placeholder texture.
+- `Pale Intercession` — complete veiled-sentinel model, translucent and emissive textures, authored animation set, and dedicated sounds; registry ID remains `spectral_companion`.
 - Curved Horn armor + Blood Gourd armor — placeholder models.
 
 ### Balance/Design Issues (from WHATS NEXT developer notes)

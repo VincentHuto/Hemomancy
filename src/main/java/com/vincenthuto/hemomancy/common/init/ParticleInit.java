@@ -5,6 +5,8 @@ import com.vincenthuto.hemomancy.client.particle.LetheanDripParticle;
 import com.vincenthuto.hemomancy.client.particle.data.*;
 import com.vincenthuto.hemomancy.client.particle.factory.*;
 import com.vincenthuto.hemomancy.client.particle.type.*;
+import com.vincenthuto.hemomancy.common.particle.data.HitColorParticleData;
+import com.vincenthuto.hemomancy.common.particle.type.HitGlowParticleType;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.particles.ParticleType;
 import net.minecraft.core.particles.SimpleParticleType;

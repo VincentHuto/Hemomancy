@@ -1,0 +1,9 @@
+{
+  "type": "hutoslib:page",
+  "ordinality": 3,
+  "texture": "hemomancy:textures/gui/guide/page.png",
+  "title": "Pale Intercession",
+  "subtitle": "The world defends its own",
+  "text": "At Resolute Clarity, Our Lady may shed one small veiled manifestation of her attention. It stays beside its Unstained charge and answers only confirmed threats: an attacker, a monster bearing down on its charge, or a monster the charge has just fought. Its silver palm slows what it strikes. Blows against it consume the short time it can remain. Calling again recalls and refreshes the same manifestation. The Pallid Icon calls a communicative apparition; this is a defensive intercession. Neither is Our Lady's complete physical arrival.",
+  "icon": "hemomancy:pallid_icon"
+}

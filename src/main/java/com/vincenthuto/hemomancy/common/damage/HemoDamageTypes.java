@@ -21,6 +21,8 @@ public final class HemoDamageTypes {
 			ResourceKey.create(Registries.DAMAGE_TYPE, Hemomancy.rloc("living_torch_breath"));
 	public static final ResourceKey<DamageType> LIVING_FLAIL_FREEZE =
 			ResourceKey.create(Registries.DAMAGE_TYPE, Hemomancy.rloc("living_flail_freeze"));
+	public static final ResourceKey<DamageType> PALE_INTERCESSION =
+			ResourceKey.create(Registries.DAMAGE_TYPE, Hemomancy.rloc("pale_intercession"));
 
 	private HemoDamageTypes() {
 	}
@@ -50,5 +52,10 @@ public final class HemoDamageTypes {
 	public static DamageSource livingFlailFreeze(Level level, Entity projectile, Entity owner) {
 		return new DamageSource(level.registryAccess().registryOrThrow(Registries.DAMAGE_TYPE)
 				.getHolderOrThrow(LIVING_FLAIL_FREEZE), projectile, owner);
+	}
+
+	public static DamageSource paleIntercession(Level level, Entity manifestation, Entity owner) {
+		return new DamageSource(level.registryAccess().registryOrThrow(Registries.DAMAGE_TYPE)
+				.getHolderOrThrow(PALE_INTERCESSION), manifestation, owner);
 	}
 }

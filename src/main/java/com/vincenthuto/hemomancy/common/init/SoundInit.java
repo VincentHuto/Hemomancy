@@ -14,6 +14,13 @@ public class SoundInit {
 		return SOUNDS.register(name, () -> SoundEvent.createVariableRangeEvent(Hemomancy.rloc(name)));
 	}
 
+	public static final DeferredHolder<SoundEvent, SoundEvent> ENTITY_PALE_INTERCESSION_MANIFEST = registerSoundEvent(
+			"entity.pale_intercession.manifest");
+	public static final DeferredHolder<SoundEvent, SoundEvent> ENTITY_PALE_INTERCESSION_STRIKE = registerSoundEvent(
+			"entity.pale_intercession.strike");
+	public static final DeferredHolder<SoundEvent, SoundEvent> ENTITY_PALE_INTERCESSION_DISSOLVE = registerSoundEvent(
+			"entity.pale_intercession.dissolve");
+
 
 	//Items
 	//Qliphoph

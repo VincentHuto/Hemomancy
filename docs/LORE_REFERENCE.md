@@ -448,7 +448,7 @@ And critically, the path tends toward **biological immortality**. Across Clarity
 
 The Unstained Church does not need many members. High-quality, immortal practitioners who arrive at purity and stay are sufficient. The church grows slowly, surely, and endures.
 
-Once Clarity opens, the purified no longer force power into being the way Harbingers do through Hematic Memories. Instead, they learn **Still Arts**: quiet, defensive acts that settle into the silvery vital humor as gifts from Our Lady or as the fruit of non-breaking rites. These arts are progressive rather than manufactured. A newly clarified Unstained might learn Silver Rebuke, while later clarity allows Lethean Mute, Still Pulse, Pale Diagnosis, Memory Shear, Absolving Step, Quietus Bell, and finally Autoimmune Edge.
+Once Clarity opens, the purified no longer force power into being the way Harbingers do through Hematic Memories. Instead, they learn **Still Arts**: quiet, defensive acts that settle into the silvery vital humor as gifts from Our Lady or as the fruit of non-breaking rites. These arts are progressive rather than manufactured. A newly clarified Unstained might learn Silver Rebuke, while later clarity allows Lethean Mute, Still Pulse, Pale Diagnosis, Memory Shear, Absolving Step, Quietus Bell, Pale Intercession at Resolute, and finally Autoimmune Edge.
 
 The last of these is intentionally troubling. Autoimmune Edge is not evil, but it shows the risk in Our Lady's nature: an immune response can protect the world, and it can also begin to attack anything that resembles infection too eagerly.
 
@@ -507,7 +507,7 @@ Wherever Our Lady once walked, **Lethean Poppies** bloom. These pale flowers blo
 
 The **Tears of Silthmere** are Lethean Dew distilled to its purest form — a one-time blessing from the Lady herself, offering a significant burst of purification when offered at an Altar of Cleansing.
 
-The original **Pallid Icon** is a rare relic carved from pale silver and found at the bottom of a forgotten river. Consecrated copies reproduce its posture and serve as the carried emblems used by Guardians and rites; they do not become the historical river relic merely because they share its item form. The Icon is said to allow an Unstained practitioner to summon a brief apparition of Our Lady and ask her lore questions directly. She does not manifest physically in any other way.
+The original **Pallid Icon** is a rare relic carved from pale silver and found at the bottom of a forgotten river. Consecrated copies reproduce its posture and serve as the carried emblems used by Guardians and rites; they do not become the historical river relic merely because they share its item form. The Icon calls a brief communicative apparition through which an Unstained practitioner can ask lore questions. **Pale Intercession** is different: in immediate danger, Our Lady sheds one small veiled defensive fragment of her attention, the world's immune response coming to the greater aid of an Unstained practitioner. Neither manifestation is her complete physical arrival.
 
 ### 8.6 Her Hidden Nature — A Warning
 

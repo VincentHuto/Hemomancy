@@ -813,7 +813,7 @@ public class ClientEvents {
             event.registerEntityRenderer(EntityInit.seraphae_fragment.get(), SeraphaeFragmentRenderer::new);
             event.registerEntityRenderer(EntityInit.containment_anchor.get(), ContainmentAnchorRenderer::new);
             event.registerEntityRenderer(EntityInit.hematic_construct.get(), HematicConstructRenderer::new);
-            event.registerEntityRenderer(EntityInit.spectral_companion.get(), SpectralCompanionRenderer::new);
+            event.registerEntityRenderer(EntityInit.spectral_companion.get(), PaleIntercessionRenderer::new);
             event.registerEntityRenderer(EntityInit.phantasmal_echo.get(), PhantasmalEchoRenderer::new);
             event.registerEntityRenderer(EntityInit.dark_arrow.get(), DarkArrowRenderer::new);
             event.registerEntityRenderer(EntityInit.desiccant.get(), DesiccantRenderer::new);

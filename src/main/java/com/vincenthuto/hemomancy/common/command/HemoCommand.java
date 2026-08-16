@@ -33,6 +33,7 @@ import com.vincenthuto.hemomancy.common.capability.player.unstained.EnumClarityS
 import com.vincenthuto.hemomancy.common.capability.player.unstained.EnumPurityStage;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.IUnstainedProgress;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.UnstainedProgressEvents;
+import com.vincenthuto.hemomancy.common.capability.player.unstained.stillart.KnownStillArtEvents;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.organs.EnumOrgan;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.organs.IVisceralOrgans;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodVolumeEvents;
@@ -1235,6 +1236,7 @@ public class HemoCommand {
 				.orElseThrow(IllegalStateException::new);
 		cap.setBegunPurification(!cap.hasBegunPurification());
 		UnstainedProgressEvents.syncProgress(player, cap);
+		KnownStillArtEvents.grantEligibleArts(player, cap);
 		source.sendSuccess(() -> Component.literal("Set ")
 				.append(Component.literal(player.getName().getString()).withStyle(ChatFormatting.GOLD))
 				.append(Component.literal(" begunPurification: "))

@@ -1076,5 +1076,20 @@
       }
     ],
     "subtitle": "subtitle.hemomancy.entity.mycophant.music"
+  },
+  "entity.pale_intercession.manifest": {
+    "category": "entity",
+    "sounds": ["hemomancy:entity/pale_intercession/manifest"],
+    "subtitle": "subtitle.hemomancy.entity.pale_intercession.manifest"
+  },
+  "entity.pale_intercession.strike": {
+    "category": "entity",
+    "sounds": ["hemomancy:entity/pale_intercession/strike"],
+    "subtitle": "subtitle.hemomancy.entity.pale_intercession.strike"
+  },
+  "entity.pale_intercession.dissolve": {
+    "category": "entity",
+    "sounds": ["hemomancy:entity/pale_intercession/dissolve"],
+    "subtitle": "subtitle.hemomancy.entity.pale_intercession.dissolve"
   }
 }
