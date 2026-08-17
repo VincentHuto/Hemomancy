@@ -18,6 +18,7 @@ public final class HarbingerMnemonistDialogueTrees {
 			"textures/entity/harbinger_mnemonist/harbinger_mnemonist.png");
 	private static final String SPEAKER = "entity.hemomancy.harbinger_mnemonist";
 	public static final String EVENT_WOVEN_VESSEL_TURN_IN = "mnemonist_woven_vessel_turn_in";
+	public static final String EVENT_RELIQUARY_TAUGHT = "mnemonist_reliquary_taught";
 
 	private HarbingerMnemonistDialogueTrees() {
 	}
@@ -29,11 +30,17 @@ public final class HarbingerMnemonistDialogueTrees {
 
 	public static DialogueTree forDegree(int degree, int entityId, boolean hasBloodline, boolean isNpcRecruited,
 			boolean canClaimStarter, boolean wovenVesselComplete) {
+		return forDegree(degree, entityId, hasBloodline, isNpcRecruited, canClaimStarter,
+				wovenVesselComplete, false);
+	}
+
+	public static DialogueTree forDegree(int degree, int entityId, boolean hasBloodline, boolean isNpcRecruited,
+			boolean canClaimStarter, boolean wovenVesselComplete, boolean morphlingPuppetInterference) {
 		if (degree <= 0) return uninitiated(entityId);
 		if (degree == 1) return neophyte(entityId, canClaimStarter);
 		if (degree == 2) return votary(entityId, canClaimStarter);
-		return woven(entityId, degree >= 5 && hasBloodline, isNpcRecruited, canClaimStarter,
-				!wovenVesselComplete);
+		return woven(entityId, degree, degree >= 5 && hasBloodline, isNpcRecruited, canClaimStarter,
+				!wovenVesselComplete, morphlingPuppetInterference);
 	}
 
 	public static DialogueTree purifying(int entityId) {
@@ -102,15 +109,14 @@ public final class HarbingerMnemonistDialogueTrees {
 				), votaryOptions(canClaimStarter)))
 				.addNode(crudeMemoriesNode())
 				.addNode(slotsNode())
-				.addNode(reliquaryNode())
 				.addNode(chamberNode())
 				.addNode(starterChoiceNode())
 				.addNode(itemHintNode())
 				.build();
 	}
 
-	private static DialogueTree woven(int entityId, boolean hasBloodline, boolean isNpcRecruited,
-			boolean canClaimStarter, boolean canCompleteWovenVessel) {
+	private static DialogueTree woven(int entityId, int degree, boolean hasBloodline, boolean isNpcRecruited,
+			boolean canClaimStarter, boolean canCompleteWovenVessel, boolean morphlingPuppetInterference) {
 		List<DialogueOption> options = new ArrayList<>();
 		if (canCompleteWovenVessel) {
 			options.add(new DialogueOption("hemomancy.dialogue.mnemonist.option.woven_vessel",
@@ -120,6 +126,14 @@ public final class HarbingerMnemonistDialogueTrees {
 		options.add(new DialogueOption("hemomancy.dialogue.mnemonist.option.ask_about_reliquary", "reliquary", null));
 		options.add(new DialogueOption("hemomancy.dialogue.mnemonist.option.ask_about_chamber", "chamber", null));
 		options.add(new DialogueOption("hemomancy.dialogue.mnemonist.option.ask_about_crude_memories", "crude_memories", null));
+		if (morphlingPuppetInterference) {
+			options.add(new DialogueOption("hemomancy.dialogue.mnemonist.option.morphling_puppet_interference",
+					"morphling_puppet_interference", null));
+		}
+		if (degree >= 6) {
+			options.add(new DialogueOption("hemomancy.dialogue.mnemonist.option.ask_about_mnemonic_doctrine",
+					"mnemonic_doctrine", null));
+		}
 		if (canClaimStarter) {
 			options.add(new DialogueOption("hemomancy.dialogue.mnemonist.option.choose_starter", "starter_choice", null));
 		}
@@ -136,6 +150,8 @@ public final class HarbingerMnemonistDialogueTrees {
 				.addNode(slotsNode())
 				.addNode(reliquaryNode())
 				.addNode(loomNode())
+				.addNode(mnemonicDoctrineNode())
+				.addNode(morphlingPuppetInterferenceNode())
 				.addNode(chamberNode())
 				.addNode(wovenVesselNode())
 				.addNode(starterChoiceNode())
@@ -168,15 +184,29 @@ public final class HarbingerMnemonistDialogueTrees {
 	}
 
 	private static List<DialogueOption> votaryOptions(boolean canClaimStarter) {
-		List<DialogueOption> options = neophyteOptions(canClaimStarter);
-		options.add(2, new DialogueOption("hemomancy.dialogue.mnemonist.option.ask_about_reliquary", "reliquary", null));
-		return options;
+		return neophyteOptions(canClaimStarter);
 	}
 
 	private static DialogueNode memoryLoreNode() {
 		return new DialogueNode("memory_lore", List.of(
 				"hemomancy.mnemonist.memory_lore.line1",
 				"hemomancy.mnemonist.memory_lore.line2"
+		), List.of(new DialogueOption("hemomancy.dialogue.mnemonist.option.leave", null, null)));
+	}
+
+	private static DialogueNode mnemonicDoctrineNode() {
+		return new DialogueNode("mnemonic_doctrine", List.of(
+				"hemomancy.mnemonist.mnemonic_doctrine.line1",
+				"hemomancy.mnemonist.mnemonic_doctrine.line2",
+				"hemomancy.mnemonist.mnemonic_doctrine.line3"
+		), List.of(new DialogueOption("hemomancy.dialogue.mnemonist.option.leave", null, null)));
+	}
+
+	private static DialogueNode morphlingPuppetInterferenceNode() {
+		return new DialogueNode("morphling_puppet_interference", List.of(
+				"hemomancy.mnemonist.morphling_puppet_interference.line1",
+				"hemomancy.mnemonist.morphling_puppet_interference.line2",
+				"hemomancy.mnemonist.morphling_puppet_interference.line3"
 		), List.of(new DialogueOption("hemomancy.dialogue.mnemonist.option.leave", null, null)));
 	}
 
@@ -199,7 +229,8 @@ public final class HarbingerMnemonistDialogueTrees {
 		return new DialogueNode("reliquary", List.of(
 				"hemomancy.mnemonist.reliquary.line1",
 				"hemomancy.mnemonist.reliquary.line2"
-		), List.of(new DialogueOption("hemomancy.dialogue.mnemonist.option.leave", null, null)));
+		), List.of(new DialogueOption("hemomancy.dialogue.mnemonist.option.reliquary_understood", null,
+				EVENT_RELIQUARY_TAUGHT)));
 	}
 
 	private static DialogueNode chamberNode() {

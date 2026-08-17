@@ -3,6 +3,8 @@ package com.vincenthuto.hemomancy.common.event;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.init.BlockInit;
 import com.vincenthuto.hemomancy.common.tile.FillerBlockEntity;
+import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
+import com.vincenthuto.hemomancy.common.mission.MnemonicReliquaryProgression;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
@@ -40,6 +42,10 @@ public final class MachineAccessEvents {
 		}
 
 		Block block = resolveGatedBlock(level, event.getPos(), level.getBlockState(event.getPos()));
+		if (block == BlockInit.mnemonic_reliquary.get() && player instanceof ServerPlayer serverPlayer
+				&& HemoCapabilityAccess.getPlayerDegreeNumber(player) >= 3) {
+			MnemonicReliquaryProgression.teach(serverPlayer);
+		}
 		if (!isAccessBlocked(player, block)) {
 			return;
 		}
@@ -104,6 +110,10 @@ public final class MachineAccessEvents {
 	private static boolean hasCrafted(Player player, Block block) {
 		if (!(player instanceof ServerPlayer serverPlayer)) {
 			return false;
+		}
+		if (block == BlockInit.mnemonic_reliquary.get()
+				&& MnemonicReliquaryProgression.isTaught(serverPlayer)) {
+			return true;
 		}
 
 		Item item = block.asItem();

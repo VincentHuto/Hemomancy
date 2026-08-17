@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    { "item": "hutoslib:cured_clay_flask" },
+    { "item": "hutoslib:cured_clay_flask" }
+  ],
+  "result": {
+    "id": "hemomancy:cured_clay_jug",
+    "count": 1
+  }
+}

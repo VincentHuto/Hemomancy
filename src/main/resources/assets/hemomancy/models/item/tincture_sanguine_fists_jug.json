@@ -1,0 +1,5 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": { "layer0": "hemomancy:item/tincture_sanguine_fists" },
+  "display": { "gui": { "scale": [1.18, 1.18, 1.18] } }
+}

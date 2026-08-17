@@ -50,6 +50,9 @@ public final class PuppeteerIntegrationSourceTest {
 		String feedManager = read("src/main/java/com/vincenthuto/hemomancy/common/event/BloodStructureFeedManager.java");
 		String genericRadial = read("src/main/java/com/vincenthuto/hemomancy/client/screen/radial/GenericRadialMenu.java");
 		String textRadialItem = read("src/main/java/com/vincenthuto/hemomancy/client/screen/radial/TextRadialMenuItem.java");
+		String threadRenderer = read("src/main/java/com/vincenthuto/hemomancy/client/render/world/PuppeteerThreadRenderer.java");
+		String mnemonist = read("src/main/java/com/vincenthuto/hemomancy/common/entity/npc/harbinger/HarbingerMnemonistEntity.java");
+		String mnemonistDialogue = read("src/main/java/com/vincenthuto/hemomancy/common/entity/npc/dialogue/HarbingerMnemonistDialogueTrees.java");
 
 		assertContains(crossbar, "TAG_BOUND_OWNER");
 		assertContains(crossbar, "TAG_THREAD_CAPACITY");
@@ -112,6 +115,7 @@ public final class PuppeteerIntegrationSourceTest {
 		assertContains(crossbar, "getThreadCapacity");
 		assertContains(crossbar, "prepareSelectedSummon");
 		assertContains(crossbar, "PuppeteerSummonRules.adjustedThreadCost");
+		assertContains(crossbar, "PuppeteerSummonRules.effectiveCommandRange");
 		assertContains(crossbar, "PuppeteerSummonRules.canRetainBody");
 		assertContains(crossbar, "PuppeteerSummonRules.clampThreadToCapacity(tag.getInt(TAG_THREAD), capacity)");
 		assertContains(crossbar, "if (!player.level().addFreshEntity(mob))");
@@ -130,6 +134,11 @@ public final class PuppeteerIntegrationSourceTest {
 		assertNotContains(packet, "callOrRecallSelectedSummon(crossbar, player)");
 		assertContains(behavior, "PuppeteerSummonRules.upkeepDue");
 		assertContains(behavior, "PuppeteerSummonRules.adjustedThreadCost");
+		assertContains(behavior, "PuppeteerSummonRules.effectiveCommandRange");
+		assertContains(behavior, "PuppeteerSummonRules.interferedThreadUpkeep");
+		assertContains(behavior, "MorphlingItem.markFedNow");
+		assertOrdered(behavior, "if (!MarionetteCrossbarItem.consumeThread", "MorphlingItem.markFedNow");
+		assertContains(behavior, "hasActiveOwnedTether");
 		assertContains(behavior, "hemomancy.summon.dimension.unravel");
 		assertContains(behavior, "target instanceof Enemy");
 		assertContains(behavior, "case PASSIVE -> Optional.empty()");
@@ -220,6 +229,11 @@ public final class PuppeteerIntegrationSourceTest {
 		assertContains(screen, "puppeteers_spindle.thread_slot_short");
 		assertContains(menu, "78 + col * 18");
 		assertContains(summonsTab, "PuppeteerSummonRules.adjustedThreadCost");
+		assertContains(summonsTab, "PuppeteerSummonRules.effectiveCommandRange");
+		assertContains(radialScreen, "crossbar.interference.gnawed");
+		assertContains(threadRenderer, "gnawed");
+		assertContains(mnemonist, "BoundSummonBehavior.hasActiveOwnedTether");
+		assertContains(mnemonistDialogue, "morphling_puppet_interference");
 		assertContains(summonsTab, "primaryOffering(definition)");
 		assertNotContains(craftingController, "PuppeteerTrialRecipe");
 		assertNotContains(craftingView, "PuppeteerTrialRecipe");

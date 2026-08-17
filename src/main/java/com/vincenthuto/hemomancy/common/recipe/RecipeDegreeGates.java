@@ -4,6 +4,8 @@ import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.EnumInitiatoryDegree;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.server.level.ServerPlayer;
+import com.vincenthuto.hemomancy.common.mission.MnemonicReliquaryProgression;
 
 import java.util.Map;
 
@@ -50,7 +52,14 @@ public final class RecipeDegreeGates {
 
 	public static boolean playerMeets(Player player, BloodStructureRecipe recipe) {
 		return getPlayerLevel(player, recipe.isUnstained()) >= getRequiredDegree(recipe)
+				&& (!(player instanceof ServerPlayer serverPlayer) || !isMnemonicReliquary(recipe)
+						|| MnemonicReliquaryProgression.isTaught(serverPlayer))
 				&& meetsUnstainedThresholds(player, recipe.isUnstained(), recipe.getRequiredPurity(), recipe.getRequiredClarity());
+	}
+
+	private static boolean isMnemonicReliquary(BloodStructureRecipe recipe) {
+		return recipe != null && recipe.getId() != null
+				&& "blood_structure/mnemonic_reliquary".equals(recipe.getId().getPath());
 	}
 
 	public static boolean playerMeets(Player player, CardinalRiteRecipe recipe) {
@@ -86,6 +95,9 @@ public final class RecipeDegreeGates {
 	}
 
 	public static String requirementLabel(BloodStructureRecipe recipe) {
+		if (isMnemonicReliquary(recipe)) {
+			return "the Mnemonist's Reliquary lesson at Degree 3";
+		}
 		return requirementLabel(recipe.isUnstained(), recipe.getRequiredDegree(), recipe.getRequiredPurity(),
 				recipe.getRequiredClarity());
 	}

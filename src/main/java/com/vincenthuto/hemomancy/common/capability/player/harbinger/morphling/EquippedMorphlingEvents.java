@@ -5,6 +5,7 @@ import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodFlowContribution.Category;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodFlowLedger;
 import com.vincenthuto.hemomancy.common.event.LastRiteHelper;
+import com.vincenthuto.hemomancy.common.entity.summon.BoundSummonBehavior;
 import com.vincenthuto.hemomancy.common.item.harbinger.morphlings.ItemMorphlingJar;
 import com.vincenthuto.hemomancy.common.item.harbinger.morphlings.IMorphling;
 import com.vincenthuto.hemomancy.common.item.harbinger.morphlings.MorphlingItem;
@@ -97,7 +98,9 @@ public class EquippedMorphlingEvents {
 					== com.vincenthuto.hemomancy.common.item.harbinger.morphlings.MorphlingHungerRules.HungerState.STARVING;
 			MorphlingMetabolismRules.Upkeep metabolic = MorphlingMetabolismRules.splitUpkeep(symbiotic,
 					starving, player.getFoodData().getFoodLevel(), 20, upkeep);
-			upkeep = metabolic.blood();
+			double ordinaryBloodUpkeep = metabolic.blood();
+			upkeep = MorphlingUpkeepRules.withPuppetInterference(ordinaryBloodUpkeep,
+					BoundSummonBehavior.hasActiveOwnedTether((ServerPlayer) player));
 			final double effectiveUpkeep = upkeep;
 			if (metabolic.hungerEquivalent() > 0.0D) {
 				player.getFoodData().addExhaustion((float) (metabolic.hungerEquivalent() * 0.1D));
@@ -110,7 +113,8 @@ public class EquippedMorphlingEvents {
 					BloodFlowLedger.DrainResult drain = BloodFlowLedger.applyDrain((ServerPlayer) player, volume,
 							"morphling_upkeep", "Morphling Upkeep", Category.MORPHLING, effectiveUpkeep, drainInterval, true);
 					if (drain.satisfied()) {
-						MorphlingItem.recordBondingBlood(equippedStack, drain.actual());
+						MorphlingItem.recordBondingBlood(equippedStack,
+								MorphlingUpkeepRules.bondingCredit(drain.actual(), ordinaryBloodUpkeep));
 						syncToClient((ServerPlayer) player);
 					} else {
 						// Not enough blood: unequip the morphling.

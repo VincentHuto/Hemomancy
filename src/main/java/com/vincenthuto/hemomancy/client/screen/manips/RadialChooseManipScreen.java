@@ -14,6 +14,12 @@ import com.vincenthuto.hemomancy.common.armor.ability.ArmorSetAbility;
 import com.vincenthuto.hemomancy.common.armor.ability.ArmorSetAbilityRegistry;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.IKnownManipulations;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.MemoryEntryKind;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.MemorySlotRef;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.musclememory.MuscleMemory;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.musclememory.MuscleMemoryPrimingRules;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.EnumBloodFlow;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.EnumVeinSections;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.ManipulationEquipHelper;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.ManipulationRetirementRules;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.equipment.IHarbingerEquipmentItemHandler;
@@ -22,9 +28,11 @@ import com.vincenthuto.hemomancy.common.item.harbinger.bloodline.VasculariumChar
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.BloodGourdItem;
 import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
 import com.vincenthuto.hemomancy.common.menu.HarbingerEquipmentMenu;
+import com.vincenthuto.hutoslib.client.HLTextUtils;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.ActivateArmorSetAbilityC2SPacket;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.manips.UpdateCurrentManipPacket;
+import com.vincenthuto.hemomancy.common.network.capa.harbinger.manips.UpdateCurrentMemoryPacket;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
@@ -42,6 +50,7 @@ import net.neoforged.neoforge.client.gui.VanillaGuiLayers;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.EnumSet;
 
 @EventBusSubscriber(Dist.CLIENT)
 public class RadialChooseManipScreen extends Screen {
@@ -135,8 +144,10 @@ public class RadialChooseManipScreen extends Screen {
 			// Only show manipulations that are currently memorized (equipped) at the Mnemonic Reliquary
 			List<BloodManipulation> allManips = manips.getManipList();
 			List<String> equippedNames = manips.getEquippedManipNames();
+			MemorySlotRef selectedMemory = manips.getSelectedMemoryRef();
 			BloodManipulation selectedManip = allManips.isEmpty() ? null : manips.getSelectedManip();
-			String selectedManipName = selectedManip != null ? selectedManip.getName() : "";
+			String selectedManipName = selectedMemory.kind() == MemoryEntryKind.MANIPULATION
+					&& selectedManip != null ? selectedManip.getName() : "";
 
 			addMechanicalManipulation(allManips, ManipulationEquipHelper.BLOOD_ABSORPTION, selectedManipName);
 			addMechanicalManipulation(allManips, ManipulationEquipHelper.BLOOD_PROJECTION, selectedManipName);
@@ -152,6 +163,13 @@ public class RadialChooseManipScreen extends Screen {
 				}
 				this.cachedMenuItems.add(createManipulationItem(c, i, selectedManipName));
 			}
+			var memoryState = mc.player.getData(com.vincenthuto.hemomancy.common.capability.HemoAttachmentTypes.MUSCLE_MEMORY);
+			EnumSet<EnumVeinSections> shownSections = EnumSet.noneOf(EnumVeinSections.class);
+			for (String key : equippedNames) {
+				MemorySlotRef ref = MemorySlotRef.fromStorageKey(key);
+				ref.muscleMemory().filter(memoryState::knows).filter(memory -> shownSections.add(memory.section()))
+						.ifPresent(memory -> this.cachedMenuItems.add(createMuscleMemoryItem(memory, ref, selectedMemory)));
+			}
 			this.menu.clear();
 			this.menu.addAllInner(this.cachedMechanicalItems);
 			this.menu.addAll(this.cachedMenuItems);
@@ -159,7 +177,7 @@ public class RadialChooseManipScreen extends Screen {
 		}
 		if (this.cachedMenuItems.stream().noneMatch(RadialMenuItem::isVisible)
 				&& this.cachedMechanicalItems.stream().noneMatch(RadialMenuItem::isVisible)) {
-			this.menu.setCentralText(Component.literal("No Memorized Manipulations"));
+			this.menu.setCentralText(Component.literal("No Memorized Memories"));
 		} else if (gourdEquipped != null) {
 
 			MutableComponent textComponents = Component.empty().copy();
@@ -292,5 +310,46 @@ public class RadialChooseManipScreen extends Screen {
 			default -> "memory_" + manipulation.getName() + "_overlay";
 		};
 		return Hemomancy.rloc("textures/item/memories/" + texture + ".png");
+	}
+
+	private MuscleMemoryRadialMenuItem createMuscleMemoryItem(MuscleMemory memory, MemorySlotRef ref,
+			MemorySlotRef selected) {
+		var state = mc.player.getData(com.vincenthuto.hemomancy.common.capability.HemoAttachmentTypes.MUSCLE_MEMORY);
+		java.util.function.Supplier<EnumBloodFlow> flow = () -> HemoCapabilityAccess.getVascularSystem(mc.player)
+				.map(vascular -> vascular.getBloodFlowBySection(memory.section())).orElse(EnumBloodFlow.STABLE);
+		java.util.function.Supplier<MuscleMemoryRadialPresentation.State> presentation = () -> {
+			long now = mc.level != null ? mc.level.getGameTime() : 0L;
+			return MuscleMemoryRadialPresentation.resolve(state.reserveTicks(memory), state.isEnabled(memory),
+					state.isOverexertionArmed(memory, now), flow.get(), now);
+		};
+		long seconds = (state.reserveTicks(memory) + 19L) / 20L;
+		EnumBloodFlow currentFlow = flow.get();
+		String reserve = String.format(java.util.Locale.ROOT, "%d:%02d", seconds / 60L, seconds % 60L);
+		String status = currentFlow == EnumBloodFlow.DEAD ? "Blocked: dead vascular section"
+				: state.reserveTicks(memory) <= 0 ? "Blocked: reserve empty"
+				: state.isEnabled(memory) ? "Active" : "Prepared; activate to use";
+		List<Component> tooltip = List.of(
+				Component.literal(HLTextUtils.convertInitToLang(memory.section().name()) + " Vascular Section").withStyle(ChatFormatting.RED),
+				Component.translatable("muscle_memory.hemomancy." + memory.id()),
+				Component.literal("Thelemic Memory"),
+				Component.literal("Reserve " + reserve + " • " + trimNumber(memory.bloodCost())
+						+ " blood • " + trimNumber(memory.vascularStrain()) + " strain"),
+				Component.literal(status));
+		MuscleMemoryRadialMenuItem item = new MuscleMemoryRadialMenuItem(this.menu,
+				Hemomancy.rloc("textures/item/vascular_status_gauge.png"), tooltip, presentation,
+				() -> state.reserveTicks(memory) / (double) MuscleMemoryPrimingRules.TICKS_PER_DOSE,
+				memory.section().name().substring(0, 1), () -> {
+					PacketHandler.sendToServer(new UpdateCurrentMemoryPacket(ref.storageKey()));
+					RadialChooseManipScreen.this.menu.close();
+				});
+		if (ref.equals(selected)) item.setCentralText(Component.translatable(
+				"muscle_memory.hemomancy." + memory.id()).append(Component.literal("\nSelected")));
+		item.setVisible(true);
+		return item;
+	}
+
+	private static String trimNumber(double value) {
+		return value == Math.rint(value) ? Integer.toString((int) value)
+				: String.format(java.util.Locale.ROOT, "%.2f", value).replaceAll("0+$", "").replaceAll("\\.$", "");
 	}
 }

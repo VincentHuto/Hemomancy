@@ -84,6 +84,14 @@ public class GhastlyAlembicScreen extends AbstractContainerScreen<GhastlyAlembic
                     Component.literal("\u00A77Place a blood gourd here to fill it from the alembic.")
             ), java.util.Optional.empty(), mouseX, mouseY);
         }
+        if (this.hoveredSlot != null
+                && this.hoveredSlot.index == GhastlyAlembicMenu.TINCTURE_BLOOD_SLOT
+                && !this.hoveredSlot.hasItem()) {
+            graphics.renderTooltip(font, List.of(
+                    Component.literal("\u00A74Tincture Blood"),
+                    Component.literal("\u00A77Bloody Flask consumed by three-input recipes.")
+            ), java.util.Optional.empty(), mouseX, mouseY);
+        }
 
         BloodVolumeBarWidget.renderTooltip(graphics, font, bloodBarBounds,
                 te.getBloodVolume(), te.getMaxBloodVolume(), mouseX, mouseY);
@@ -158,6 +166,9 @@ public class GhastlyAlembicScreen extends AbstractContainerScreen<GhastlyAlembic
         // Special tint for flask slot (dark red)
         if (slotIndex == GhastlyAlembicMenu.FLASK_SLOT) {
             gfx.fill(sx, sy, sx + 16, sy + 16, 0x20AA0000);
+        }
+        if (slotIndex == GhastlyAlembicMenu.TINCTURE_BLOOD_SLOT) {
+            gfx.fill(sx, sy, sx + 16, sy + 16, 0x35CC1010);
         }
         // Special tint for flask output slot
         if (slotIndex == GhastlyAlembicMenu.FLASK_OUTPUT_SLOT) {

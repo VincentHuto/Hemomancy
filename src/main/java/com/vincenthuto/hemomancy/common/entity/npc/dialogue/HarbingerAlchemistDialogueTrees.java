@@ -30,6 +30,7 @@ public final class HarbingerAlchemistDialogueTrees {
 	public static final String EVENT_BESTIARY_SURRENDER_MORPHLING_PREFIX = "alchemist_bestiary_surrender_morphling_";
 	public static final String EVENT_FIRST_SEPARATION_BRIEF = "alchemist_first_separation_brief";
 	public static final String EVENT_FIRST_SEPARATION_CLAIM = "alchemist_first_separation_claim";
+	public static final String EVENT_BODY_ANSWERS_BRIEF = "alchemist_body_answers_brief";
 
 	private HarbingerAlchemistDialogueTrees() {}
 
@@ -53,19 +54,22 @@ public final class HarbingerAlchemistDialogueTrees {
 	public static DialogueTree forDegree(int degree, int entityId, boolean hasBloodline, boolean isNpcRecruited,
 			RedTaxonomySample heldRedTaxonomySample, HeldSpecimenJar heldSpecimenJar) {
 		return forDegree(degree, entityId, hasBloodline, isNpcRecruited, heldRedTaxonomySample, heldSpecimenJar,
-				false, false);
+				false, false, false, false);
 	}
 
 	public static DialogueTree forDegree(int degree, int entityId, boolean hasBloodline, boolean isNpcRecruited,
 			RedTaxonomySample heldRedTaxonomySample, HeldSpecimenJar heldSpecimenJar,
-			boolean canBriefFirstSeparation, boolean canClaimFirstSeparation) {
+			boolean canBriefFirstSeparation, boolean canClaimFirstSeparation, boolean canBriefBodyAnswers,
+			boolean canDiscussMuscleMemories) {
 		if (degree >= 2 && (heldRedTaxonomySample != null || heldSpecimenJar != null)) {
-			return votary(entityId, heldRedTaxonomySample, heldSpecimenJar, canBriefFirstSeparation, canClaimFirstSeparation);
+			return votary(entityId, heldRedTaxonomySample, heldSpecimenJar, canBriefFirstSeparation,
+					canClaimFirstSeparation, canBriefBodyAnswers, canDiscussMuscleMemories);
 		}
 		return switch (degree) {
 			case 0 -> uninitiated(entityId);
 			case 1 -> neophyte(entityId);
-			case 2 -> votary(entityId, heldRedTaxonomySample, heldSpecimenJar, canBriefFirstSeparation, canClaimFirstSeparation);
+			case 2 -> votary(entityId, heldRedTaxonomySample, heldSpecimenJar, canBriefFirstSeparation,
+					canClaimFirstSeparation, canBriefBodyAnswers, canDiscussMuscleMemories);
 			case 3 -> initiate(entityId);
 			case 4 -> adept(entityId);
 			case 5 -> illuminatus(entityId, hasBloodline, isNpcRecruited);
@@ -280,11 +284,19 @@ public final class HarbingerAlchemistDialogueTrees {
 
 	public static DialogueTree votary(int entityId, RedTaxonomySample heldRedTaxonomySample,
 			HeldSpecimenJar heldSpecimenJar) {
-		return votary(entityId, heldRedTaxonomySample, heldSpecimenJar, false, false);
+		return votary(entityId, heldRedTaxonomySample, heldSpecimenJar, false, false, false);
 	}
 
 	public static DialogueTree votary(int entityId, RedTaxonomySample heldRedTaxonomySample,
-			HeldSpecimenJar heldSpecimenJar, boolean canBriefFirstSeparation, boolean canClaimFirstSeparation) {
+			HeldSpecimenJar heldSpecimenJar, boolean canBriefFirstSeparation, boolean canClaimFirstSeparation,
+			boolean canBriefBodyAnswers) {
+		return votary(entityId, heldRedTaxonomySample, heldSpecimenJar, canBriefFirstSeparation,
+				canClaimFirstSeparation, canBriefBodyAnswers, false);
+	}
+
+	public static DialogueTree votary(int entityId, RedTaxonomySample heldRedTaxonomySample,
+			HeldSpecimenJar heldSpecimenJar, boolean canBriefFirstSeparation, boolean canClaimFirstSeparation,
+			boolean canBriefBodyAnswers, boolean canDiscussMuscleMemories) {
 		List<DialogueOption> greetingOptions = new ArrayList<>();
 		if (heldSpecimenJar != null && heldSpecimenJar.isResearchSpecimen()) {
 			greetingOptions.add(new DialogueOption("hemomancy.dialogue.alchemist.option.record_living_specimen",
@@ -315,6 +327,14 @@ public final class HarbingerAlchemistDialogueTrees {
 		if (canClaimFirstSeparation) {
 			greetingOptions.add(new DialogueOption("hemomancy.dialogue.alchemist.option.complete_first_separation",
 					"first_separation_complete", EVENT_FIRST_SEPARATION_CLAIM));
+		}
+		if (canBriefBodyAnswers) {
+			greetingOptions.add(new DialogueOption("hemomancy.dialogue.alchemist.option.accept_body_answers",
+					"body_answers_briefing", EVENT_BODY_ANSWERS_BRIEF));
+		}
+		if (canDiscussMuscleMemories) {
+			greetingOptions.add(new DialogueOption("hemomancy.dialogue.alchemist.option.muscle_memory_catalogue",
+					"muscle_memory_catalogue", null));
 		}
 		greetingOptions.add(new DialogueOption("hemomancy.dialogue.alchemist.option.tell_me_about_centrifuge",
 				"centrifuge_lore", null));
@@ -414,6 +434,16 @@ public final class HarbingerAlchemistDialogueTrees {
 						new DialogueOption("hemomancy.dialogue.alchemist.option.enzyme_uses", "enzyme_uses", null),
 						new DialogueOption("hemomancy.dialogue.alchemist.option.leave", null, null)
 				)) )
+				.addNode(new DialogueNode("body_answers_briefing", List.of(
+						"hemomancy.alchemist.body_answers.line1",
+						"hemomancy.alchemist.body_answers.line2",
+						"hemomancy.alchemist.body_answers.line3"
+				), List.of(new DialogueOption("hemomancy.dialogue.alchemist.option.leave", null, null))))
+				.addNode(new DialogueNode("muscle_memory_catalogue", List.of(
+						"hemomancy.alchemist.muscle_memory_catalogue.line1",
+						"hemomancy.alchemist.muscle_memory_catalogue.line2",
+						"hemomancy.alchemist.muscle_memory_catalogue.line3"
+				), List.of(new DialogueOption("hemomancy.dialogue.alchemist.option.leave", null, null))))
 				.addNode(new DialogueNode("enzyme_uses", List.of(
 						"hemomancy.alchemist.enzyme_uses.brewing",
 						"hemomancy.alchemist.enzyme_uses.culture",

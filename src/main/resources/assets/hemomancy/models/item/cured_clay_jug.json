@@ -1,0 +1,5 @@
+{
+  "parent": "minecraft:item/generated",
+	"textures": { "layer0": "hutoslib:item/cured_clay_flask" },
+  "display": { "gui": { "scale": [1.18, 1.18, 1.18] } }
+}

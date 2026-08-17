@@ -5,8 +5,10 @@ import com.vincenthuto.hemomancy.client.screen.skilltree.util.ProgressScreenCont
 import com.vincenthuto.hemomancy.client.screen.skilltree.util.HarbingerChromeRenderer;
 import com.vincenthuto.hemomancy.client.screen.skilltree.util.ScreenDrawUtils;
 import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillPointHelper;
+import com.vincenthuto.hemomancy.common.entity.summon.BoundSummonBehavior;
 import com.vincenthuto.hemomancy.common.init.EntityInit;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
+import com.vincenthuto.hemomancy.common.item.harbinger.tool.MarionetteCrossbarItem;
 import com.vincenthuto.hemomancy.common.summon.PuppeteerSummonDefinition;
 import com.vincenthuto.hemomancy.common.summon.PuppeteerSummonDefinitions;
 import com.vincenthuto.hemomancy.common.summon.PuppeteerSummonRules;
@@ -341,8 +343,12 @@ public final class SummonsTabView {
 		drawY += 4;
 
 		int economy = SkillPointHelper.getThreadEconomyLevel();
+		boolean interference = Minecraft.getInstance().player != null
+				&& BoundSummonBehavior.hasEquippedMorphling(Minecraft.getInstance().player)
+				&& !MarionetteCrossbarItem.activeSummonsForOwner(Minecraft.getInstance().player).isEmpty();
 		int callCost = PuppeteerSummonRules.adjustedThreadCost(definition.threadSummonCost(), economy);
 		int upkeep = PuppeteerSummonRules.adjustedThreadCost(definition.threadUpkeepPerMinute(), economy);
+		upkeep = PuppeteerSummonRules.interferedThreadUpkeep(upkeep, interference);
 		drawY = drawStackedDetailLine(gfx, ctx, "Call Charge", callCost + " charge", textX, drawY, textW, lineH);
 		drawY = drawStackedDetailLine(gfx, ctx, "Upkeep", upkeep + " charge/min", textX, drawY, textW, lineH);
 		drawY = drawStackedDetailLine(gfx, ctx, "Primary Offering", primaryOffering(definition).getHoverName().getString(),
@@ -355,7 +361,7 @@ public final class SummonsTabView {
 		int boundCommand = SkillPointHelper.getBoundCommandLevel();
 		drawY = drawStackedDetailLine(gfx, ctx, "Active Cap", String.valueOf(PuppeteerSummonRules.activeSummonCap(skein)),
 				textX, drawY, textW, lineH);
-		drawY = drawStackedDetailLine(gfx, ctx, "Tether Range", String.format("%.0f blocks", PuppeteerSummonRules.commandRange(tether, boundCommand)),
+		drawY = drawStackedDetailLine(gfx, ctx, "Tether Range", String.format("%.0f blocks", PuppeteerSummonRules.effectiveCommandRange(tether, boundCommand, interference)),
 				textX, drawY, textW, lineH);
 		drawY = drawStackedDetailLine(gfx, ctx, "Crossbar Capacity", PuppeteerSummonRules.threadCapacity(boundCommand) + " charge",
 				textX, drawY, textW, lineH);

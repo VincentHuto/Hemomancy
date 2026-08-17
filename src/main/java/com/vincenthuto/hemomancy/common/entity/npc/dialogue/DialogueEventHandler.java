@@ -22,6 +22,9 @@ import com.vincenthuto.hemomancy.common.init.BlockInit;
 import com.vincenthuto.hemomancy.common.mission.HarbingerArtificerAssignmentHelper;
 import com.vincenthuto.hemomancy.common.mission.FirstBloodcraftAssignmentHelper;
 import com.vincenthuto.hemomancy.common.mission.FirstSeparationAssignmentHelper;
+import com.vincenthuto.hemomancy.common.mission.BodyAnswersAssignmentHelper;
+import com.vincenthuto.hemomancy.common.mission.MnemonicReliquaryProgression;
+import com.vincenthuto.hemomancy.common.mission.MnemonicRecipeKnowledge;
 import com.vincenthuto.hemomancy.common.mission.RedTaxonomyRewardRules;
 import com.vincenthuto.hemomancy.common.mission.UnstainedObservanceHelper;
 import com.vincenthuto.hemomancy.common.util.SpecimenJarData;
@@ -88,6 +91,8 @@ public class DialogueEventHandler {
 			return;
 		}
 		switch (event.getEventId()) {
+			case HarbingerMnemonistDialogueTrees.EVENT_RELIQUARY_TAUGHT ->
+					MnemonicReliquaryProgression.teach(player);
 			case "acolyte_task_gather_ghost_pipe" -> UnstainedObservanceHelper.handle(player,
 					UnstainedObservanceHelper.Observance.GATHER_GHOST_PIPE);
 			case "acolyte_task_wreath" -> UnstainedObservanceHelper.handle(player,
@@ -194,6 +199,9 @@ public class DialogueEventHandler {
 			}
 			case HarbingerAlchemistDialogueTrees.EVENT_FIRST_SEPARATION_CLAIM -> {
 				handleAlchemistFirstSeparationReward(player, event.getEntityId());
+			}
+			case HarbingerAlchemistDialogueTrees.EVENT_BODY_ANSWERS_BRIEF -> {
+				handleAlchemistBodyAnswersBrief(player);
 			}
 			case HarbingerVicarDialogueTrees.EVENT_MASONS_RESPITE_DIRECTIVE -> {
 				handleVicarMasonsRespiteDirective(player, event.getEntityId());
@@ -938,6 +946,7 @@ public class DialogueEventHandler {
 			return;
 		}
 		if (HarbingerAdvancementGranter.isMnemonistWovenVesselComplete(player)) {
+			MnemonicRecipeKnowledge.awardCatalogue(player);
 			player.displayClientMessage(
 					Component.translatable("hemomancy.dialogue.event.mnemonist_woven_vessel_known")
 							.withStyle(ChatFormatting.GRAY),
@@ -970,6 +979,8 @@ public class DialogueEventHandler {
 		giveOrDropAtEntity(player, entityId, new ItemStack(ItemInit.vivacious_enzyme.get()));
 		HarbingerAdvancementGranter.grantIfNotDone(player,
 				HarbingerAdvancementGranter.ADV_MNEMONIST_WOVEN_VESSEL_COMPLETE);
+		MnemonicReliquaryProgression.teach(player);
+		MnemonicRecipeKnowledge.awardCatalogue(player);
 		if (HarbingerAdvancementGranter.isMnemonistFirstWeaveComplete(player)) {
 			HarbingerAdvancementGranter.grantIfNotDone(player,
 					HarbingerAdvancementGranter.ADV_MNEMONIST_WOVEN_VESSEL_FINISHED);
@@ -1258,6 +1269,13 @@ public class DialogueEventHandler {
 							.withStyle(ChatFormatting.DARK_RED),
 					false);
 		});
+	}
+
+	private static void handleAlchemistBodyAnswersBrief(ServerPlayer player) {
+		if (!BodyAnswersAssignmentHelper.canBrief(player)) return;
+		if (!BodyAnswersAssignmentHelper.markBriefed(player)) return;
+		BodyAnswersAssignmentHelper.giveBriefingSupplies(player);
+		MnemonicRecipeKnowledge.awardStarter(player);
 	}
 
 	private static void grantUnstainedStarterSupply(ServerPlayer player) {

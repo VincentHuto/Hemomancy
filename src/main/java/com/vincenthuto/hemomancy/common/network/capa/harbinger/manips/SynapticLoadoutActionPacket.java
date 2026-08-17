@@ -2,6 +2,7 @@ package com.vincenthuto.hemomancy.common.network.capa.harbinger.manips;
 
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
+import com.vincenthuto.hemomancy.common.capability.HemoAttachmentTypes;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodVolumeEvents;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.IKnownManipulations;
@@ -10,6 +11,8 @@ import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.Manipu
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.ManipulationEquipHelper;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.ManipulationLoadout;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.ManipulationRetirementRules;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.MemoryEntryKind;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.MemorySlotRef;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.SynapticLoadoutSlotHelper;
 import com.vincenthuto.hemomancy.common.init.BlockEntityInit;
 import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
@@ -155,20 +158,25 @@ public class SynapticLoadoutActionPacket implements CustomPacketPayload {
 			fail(player, "That pattern exceeds your current manipulation capacity.");
 			return;
 		}
-		for (String manipName : loadout.manipNames()) {
-			if (findKnownManipulation(known, manipName) == null) {
-				fail(player, "A saved manipulation has atrophied: " + manipName);
+		for (String memoryName : loadout.manipNames()) {
+			if (!isKnownMemory(player, known, memoryName)) {
+				fail(player, "A saved memory has atrophied: " + memoryName);
 				return;
 			}
 		}
 		known.setEquippedManipNames(loadout.manipNames());
-		BloodManipulation selected = findKnownManipulation(known, loadout.selectedManipName());
-		if (selected == null && !loadout.manipNames().isEmpty()) {
-			selected = findKnownManipulation(known, loadout.manipNames().getFirst());
+		var muscleState = player.getData(HemoAttachmentTypes.MUSCLE_MEMORY);
+		for (var memory : com.vincenthuto.hemomancy.common.capability.player.harbinger.musclememory.MuscleMemory.values()) {
+			if (muscleState.isEnabled(memory)
+					&& !loadout.manipNames().contains(MemorySlotRef.muscleMemory(memory).storageKey())) {
+				muscleState.deactivate(memory);
+			}
 		}
-		if (selected != null) {
-			known.setSelectedManip(selected);
+		MemorySlotRef selected = MemorySlotRef.fromStorageKey(loadout.selectedManipName());
+		if (!isKnownMemory(player, known, selected.storageKey()) && !loadout.manipNames().isEmpty()) {
+			selected = MemorySlotRef.fromStorageKey(loadout.manipNames().getFirst());
 		}
+		known.setSelectedMemoryRef(selected);
 		syncKnown(player, known);
 		player.displayClientMessage(Component.literal("Synaptic pattern applied: " + loadout.name())
 				.withStyle(ChatFormatting.DARK_RED), true);
@@ -186,7 +194,7 @@ public class SynapticLoadoutActionPacket implements CustomPacketPayload {
 	private static List<String> memorizedEquippedNames(IKnownManipulations known) {
 		List<String> names = new ArrayList<>();
 		for (String name : known.getEquippedManipNames()) {
-			if (findKnownManipulation(known, name) != null) {
+			if (isKnownMemory(null, known, name)) {
 				names.add(name);
 			}
 		}
@@ -194,9 +202,9 @@ public class SynapticLoadoutActionPacket implements CustomPacketPayload {
 	}
 
 	private static String selectedNameForLoadout(IKnownManipulations known, List<String> memorizedNames) {
-		BloodManipulation selected = known.getSelectedManip();
-		if (selected != null && memorizedNames.contains(selected.getName())) {
-			return selected.getName();
+		String selected = known.getSelectedMemoryRef().storageKey();
+		if (memorizedNames.contains(selected)) {
+			return selected;
 		}
 		return memorizedNames.getFirst();
 	}
@@ -214,6 +222,15 @@ public class SynapticLoadoutActionPacket implements CustomPacketPayload {
 			}
 		}
 		return null;
+	}
+
+	private static boolean isKnownMemory(ServerPlayer player, IKnownManipulations known, String storageKey) {
+		MemorySlotRef ref = MemorySlotRef.fromStorageKey(storageKey);
+		if (ref.kind() == MemoryEntryKind.MANIPULATION) {
+			return findKnownManipulation(known, ref.id()) != null;
+		}
+		return ref.muscleMemory().filter(memory -> player == null
+				|| player.getData(HemoAttachmentTypes.MUSCLE_MEMORY).knows(memory)).isPresent();
 	}
 
 	private static int currentRawExperience(Player player) {

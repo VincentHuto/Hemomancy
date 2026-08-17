@@ -1,0 +1,1 @@
+{"type":"hemomancy:distillation_recipe","ingredient":{"item":"hemomancy:sanguine_formation"},"catalyst":{"item":"hemomancy:umbral_enzyme"},"blood_input":{"item":"hemomancy:bloody_flask"},"consume_catalyst":true,"result":"hemomancy:tincture_hushed_gait","count":1,"experience":0.5,"cookingtime":200,"id":"hemomancy:distillation/tincture_hushed_gait"}

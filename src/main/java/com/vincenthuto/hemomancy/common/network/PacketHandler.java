@@ -106,6 +106,8 @@ public class PacketHandler {
                 VascularSystemClientPacket.STREAM_CODEC, VascularSystemClientPacket::handle);
         net.playToClient(VascularSystemServerPacket.TYPE,
                 VascularSystemServerPacket.STREAM_CODEC, VascularSystemServerPacket::handle);
+        net.playToClient(PacketSyncMuscleMemory.TYPE,
+                PacketSyncMuscleMemory.STREAM_CODEC, PacketSyncMuscleMemory::handle);
 
         // ── Scar system ───────────────────────────────────────────────────────
         net.playBidirectional(PacketEquipmentSync.TYPE, PacketEquipmentSync.STREAM_CODEC, PacketEquipmentSync::handle);
@@ -142,6 +144,7 @@ public class PacketHandler {
         net.playBidirectional(UseManipKeyPacket.TYPE, UseManipKeyPacket.STREAM_CODEC, UseManipKeyPacket::handle);
         net.playBidirectional(ManipCooldownPacket.TYPE, ManipCooldownPacket.STREAM_CODEC, ManipCooldownPacket::handle);
         net.playBidirectional(UpdateCurrentManipPacket.TYPE, UpdateCurrentManipPacket.STREAM_CODEC, UpdateCurrentManipPacket::handle);
+        net.playToServer(UpdateCurrentMemoryPacket.TYPE, UpdateCurrentMemoryPacket.STREAM_CODEC, UpdateCurrentMemoryPacket::handle);
         net.playBidirectional(TeleportToVeinPacket.TYPE, TeleportToVeinPacket.STREAM_CODEC, TeleportToVeinPacket::handle);
         net.playBidirectional(SyncTrackingAvatarPacket.TYPE, SyncTrackingAvatarPacket.STREAM_CODEC, SyncTrackingAvatarPacket::handle);
         net.playBidirectional(UpdateCurrentVeinPacket.TYPE, UpdateCurrentVeinPacket.STREAM_CODEC, UpdateCurrentVeinPacket::handle);

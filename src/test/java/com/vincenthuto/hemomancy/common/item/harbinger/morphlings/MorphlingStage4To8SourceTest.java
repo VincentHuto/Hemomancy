@@ -20,6 +20,7 @@ public final class MorphlingStage4To8SourceTest {
 		hungerConfigAndStackStateAreActiveByDefault();
 		wildCradleStaffAndClientPipelinesAreRetargeted();
 		oldAnimalLanguageIsNotLeftInPlayerFacingMorphlingCode();
+		puppetInterferenceUsesExistingUpkeepAndHudPipelines();
 	}
 
 	private static void lumenlaceLeavesContactFlashLane() throws IOException {
@@ -113,6 +114,15 @@ public final class MorphlingStage4To8SourceTest {
 		assertDoesNotContain("no mole comments", combined, "Mole morphling");
 		assertDoesNotContain("no centipede comments", combined, "Centipede morphling");
 		assertDoesNotContain("no leech comments", combined, "Leeches morphling");
+	}
+
+	private static void puppetInterferenceUsesExistingUpkeepAndHudPipelines() throws IOException {
+		String events = read("com/vincenthuto/hemomancy/common/capability/player/harbinger/morphling/EquippedMorphlingEvents.java");
+		String overlay = read("com/vincenthuto/hemomancy/client/screen/overlay/EquippedMorphlingOverlay.java");
+		assertContains("active tether detection", events, "BoundSummonBehavior.hasActiveOwnedTether");
+		assertContains("final blood surcharge", events, "MorphlingUpkeepRules.withPuppetInterference");
+		assertContains("surcharge does not add bonding", events, "MorphlingUpkeepRules.bondingCredit");
+		assertContains("distracted HUD status", overlay, "morphling.interference.distracted");
 	}
 
 	private static String read(String relative) throws IOException {

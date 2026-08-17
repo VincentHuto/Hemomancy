@@ -61,6 +61,10 @@ public final class PuppeteerSummonRulesTest {
 		assertDouble("living sinew damage scale", 1.30, PuppeteerSummonRules.damageMultiplier(3));
 		assertDouble("far tether range", 40.0, PuppeteerSummonRules.commandRange(3));
 		assertDouble("bound command extends range after far tether", 52.0, PuppeteerSummonRules.commandRange(3, 3));
+		assertDouble("morphling gnawing reduces effective tether range", 39.0,
+				PuppeteerSummonRules.effectiveCommandRange(3, 3, true));
+		assertDouble("ordinary tether range is unchanged without a morphling", 52.0,
+				PuppeteerSummonRules.effectiveCommandRange(3, 3, false));
 
 		assertEquals("thread refill respects capacity", 256, PuppeteerSummonRules.refilledThread(240, 40));
 		assertEquals("one physical thread supplies eight charge", 8, PuppeteerSummonRules.THREAD_PER_ITEM);
@@ -79,6 +83,10 @@ public final class PuppeteerSummonRulesTest {
 				PuppeteerSummonRules.adjustedThreadCost(28, 3));
 		assertEquals("thread economy rounds upkeep up to whole charge", 16,
 				PuppeteerSummonRules.adjustedThreadCost(18, 3));
+		assertEquals("morphling gnawing rounds modified upkeep up", 24,
+				PuppeteerSummonRules.interferedThreadUpkeep(16, true));
+		assertEquals("ordinary upkeep is unchanged without a morphling", 16,
+				PuppeteerSummonRules.interferedThreadUpkeep(16, false));
 		assertEquals("thread economy never reduces a positive payment below one", 1,
 				PuppeteerSummonRules.adjustedThreadCost(1, 99));
 		assertEquals("thread refill ignores negative input", 120, PuppeteerSummonRules.refilledThread(120, -5));
@@ -106,6 +114,22 @@ public final class PuppeteerSummonRulesTest {
 				PuppeteerSummonRules.shouldUnravelForDimension(false));
 		assertFalse("remaining in the owner's dimension preserves a summon",
 				PuppeteerSummonRules.shouldUnravelForDimension(true));
+		assertTrue("loaded owned shaped body qualifies for interference",
+				PuppeteerSummonRules.qualifiesForMorphlingInterference(true, true, true, false, true, true));
+		assertTrue("commandeered Will qualifies through the same owned tether rule",
+				PuppeteerSummonRules.qualifiesForMorphlingInterference(true, true, true, false, true, true));
+		assertFalse("trial body never qualifies for interference",
+				PuppeteerSummonRules.qualifiesForMorphlingInterference(true, true, true, true, true, true));
+		assertFalse("foreign body never qualifies for interference",
+				PuppeteerSummonRules.qualifiesForMorphlingInterference(true, true, false, false, true, true));
+		assertFalse("stale owner session never qualifies for interference",
+				PuppeteerSummonRules.qualifiesForMorphlingInterference(true, true, true, false, true, false));
+		assertFalse("cross-dimension body never qualifies for interference",
+				PuppeteerSummonRules.qualifiesForMorphlingInterference(true, true, true, false, false, true));
+		assertFalse("dead body never qualifies for interference",
+				PuppeteerSummonRules.qualifiesForMorphlingInterference(false, true, true, false, true, true));
+		assertFalse("unloaded body never qualifies for interference",
+				PuppeteerSummonRules.qualifiesForMorphlingInterference(true, false, true, false, true, true));
 		assertFalse("a player-owned body survives Peaceful difficulty",
 				PuppeteerSummonRules.shouldDespawnInPeaceful(false, owner));
 		assertTrue("an unbound trial retains hostile Peaceful despawn semantics",

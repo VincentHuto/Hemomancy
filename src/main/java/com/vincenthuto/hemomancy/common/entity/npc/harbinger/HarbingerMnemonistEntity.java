@@ -8,7 +8,9 @@ import com.vincenthuto.hemomancy.common.entity.npc.dialogue.DialogueTree;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.HarbingerMnemonistDialogueTrees;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.HarbingerRecruitmentRules;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.MnemonistStarterMemoryChoice;
+import com.vincenthuto.hemomancy.common.entity.summon.BoundSummonBehavior;
 import com.vincenthuto.hemomancy.common.event.HarbingerAdvancementGranter;
+import com.vincenthuto.hemomancy.common.mission.NoeticDiscoveryProgression;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.dialogue.OpenDialoguePacket;
 import net.minecraft.server.level.ServerPlayer;
@@ -83,6 +85,10 @@ public class HarbingerMnemonistEntity extends PathfinderMob {
 	protected InteractionResult mobInteract(Player player, InteractionHand hand) {
 		if (!player.level().isClientSide && hand == InteractionHand.MAIN_HAND && player instanceof ServerPlayer serverPlayer) {
 			int degree = HemoCapabilityAccess.getPlayerDegreeNumber(player);
+			if (NoeticDiscoveryProgression.recognizeFromMnemonist(serverPlayer)) {
+				serverPlayer.displayClientMessage(net.minecraft.network.chat.Component.translatable(
+						"hemomancy.dialogue.mnemonist.conductive_mark_recognized"), false);
+			}
 			DialogueTree tree;
 
 			boolean purifying = isPurifying(player);
@@ -96,7 +102,9 @@ public class HarbingerMnemonistEntity extends PathfinderMob {
 			} else {
 				tree = HarbingerMnemonistDialogueTrees.forDegree(degree, this.getId(), canShowRecruitment(player, this),
 						isNpcInPlayerBloodline(player, this), canClaimStarter,
-						HarbingerAdvancementGranter.isMnemonistWovenVesselComplete(serverPlayer));
+						HarbingerAdvancementGranter.isMnemonistWovenVesselComplete(serverPlayer),
+						BoundSummonBehavior.hasEquippedMorphling(serverPlayer)
+								&& BoundSummonBehavior.hasActiveOwnedTether(serverPlayer));
 			}
 			tree = DialogueItemInquiryNodes.withInventoryItemInquiries(tree, serverPlayer, "mnemonist", degree, 0f);
 			tree = DialogueHubFactory.decorate(tree, "mnemonist", serverPlayer);

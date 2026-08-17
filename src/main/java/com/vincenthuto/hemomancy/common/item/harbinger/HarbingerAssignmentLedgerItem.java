@@ -12,6 +12,7 @@ import com.vincenthuto.hemomancy.common.mission.HarbingerArtificerAssignmentHelp
 import com.vincenthuto.hemomancy.common.mission.HarbingerChapterMilestone;
 import com.vincenthuto.hemomancy.common.mission.HarbingerChapterProgression;
 import com.vincenthuto.hemomancy.common.mission.FirstSeparationAssignmentHelper;
+import com.vincenthuto.hemomancy.common.mission.BodyAnswersAssignmentHelper;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.mission.OpenHarbingerAssignmentLedgerPacket;
 import com.vincenthuto.hemomancy.common.rite.harbinger.QliphothBloomSavedData;
@@ -96,6 +97,11 @@ public class HarbingerAssignmentLedgerItem extends ItemGuideBook {
 					hasSampledBloodVial(serverPlayer),
 					HarbingerAdvancementGranter.isFirstSeparationStarted(serverPlayer),
 					hasAnyEnzyme(serverPlayer),
+					HarbingerAdvancementGranter.hasAdvancement(serverPlayer,
+							BodyAnswersAssignmentHelper.ADV_BRIEFED),
+					HarbingerAdvancementGranter.hasAdvancement(serverPlayer,
+							BodyAnswersAssignmentHelper.ADV_COMPLETE),
+					serverPlayer.getData(com.vincenthuto.hemomancy.common.capability.HemoAttachmentTypes.MUSCLE_MEMORY).knownCount(),
 					HarbingerAdvancementGranter.getRedTaxonomySpecimenCount(serverPlayer),
 					HarbingerAdvancementGranter.isRedTaxonomyComplete(serverPlayer),
 					HarbingerAdvancementGranter.getEnzymeMasteryCount(serverPlayer),

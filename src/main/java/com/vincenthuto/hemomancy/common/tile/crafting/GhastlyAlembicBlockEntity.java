@@ -35,6 +35,7 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ContainerData;
 import net.minecraft.world.inventory.RecipeCraftingHolder;
 import net.minecraft.world.inventory.StackedContentsCompatible;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.level.Level;
@@ -72,7 +73,8 @@ public class GhastlyAlembicBlockEntity extends BaseContainerBlockEntity
 	public static final int SLOT_RESULT   = 2;
 	public static final int SLOT_CATALYST = 3;
 	public static final int SLOT_FLASK_OUTPUT = 4;
-	public static final int NUM_SLOTS     = 5;
+	public static final int SLOT_TINCTURE_BLOOD = 5;
+	public static final int NUM_SLOTS     = 6;
 
 	// Container data indices
 	public static final int DATA_HEATED = 0;
@@ -85,7 +87,7 @@ public class GhastlyAlembicBlockEntity extends BaseContainerBlockEntity
 	// Hopper / sided access
 	private static final int[] SLOTS_FOR_UP    = new int[]{SLOT_INPUT};
 	private static final int[] SLOTS_FOR_DOWN  = new int[]{SLOT_RESULT, SLOT_FLASK_OUTPUT};
-	private static final int[] SLOTS_FOR_SIDES = new int[]{SLOT_FLASK, SLOT_CATALYST};
+	private static final int[] SLOTS_FOR_SIDES = new int[]{SLOT_FLASK, SLOT_CATALYST, SLOT_TINCTURE_BLOOD};
 
 	// ---- Fields ----
 
@@ -166,7 +168,8 @@ public class GhastlyAlembicBlockEntity extends BaseContainerBlockEntity
 		return level.getRecipeManager()
 				.getAllRecipesFor(RecipeInit.distillation_recipe_type.get())
 				.stream()
-				.filter(h -> !h.value().isPallid() && h.value().matchesItems(te.items.get(SLOT_INPUT), te.items.get(SLOT_CATALYST)))
+				.filter(h -> !h.value().isPallid() && h.value().matchesItems(te.items.get(SLOT_INPUT),
+						te.items.get(SLOT_CATALYST), te.items.get(SLOT_TINCTURE_BLOOD)))
 				.mapToInt(h -> h.value().getCookingTime())
 				.findFirst()
 				.orElse(200);
@@ -177,7 +180,8 @@ public class GhastlyAlembicBlockEntity extends BaseContainerBlockEntity
 		return level.getRecipeManager()
 				.getAllRecipesFor(RecipeInit.distillation_recipe_type.get())
 				.stream()
-				.filter(h -> !h.value().isPallid() && h.value().matchesItems(te.items.get(SLOT_INPUT), te.items.get(SLOT_CATALYST)))
+				.filter(h -> !h.value().isPallid() && h.value().matchesItems(te.items.get(SLOT_INPUT),
+						te.items.get(SLOT_CATALYST), te.items.get(SLOT_TINCTURE_BLOOD)))
 				.findFirst()
 				.orElse(null);
 	}
@@ -199,9 +203,10 @@ public class GhastlyAlembicBlockEntity extends BaseContainerBlockEntity
 		IBloodVolume vol = te.resolveVolume();
 		if (vol == null) return;
 
-		if (vol.getBloodVolume() < vol.getMaxBloodVolume() - 99) {
-			if (te.heated && !te.items.get(SLOT_INPUT).isEmpty()) {
-				RecipeHolder<DistillationRecipe> recipe = findMatchingRecipe(level, te);
+		if (te.heated && !te.items.get(SLOT_INPUT).isEmpty()) {
+			RecipeHolder<DistillationRecipe> recipe = findMatchingRecipe(level, te);
+			boolean canStoreByproduct = vol.getBloodVolume() < vol.getMaxBloodVolume() - 99;
+			if (recipe != null && (canStoreByproduct || recipe.value().requiresBloodInput())) {
 				int maxStack = te.getMaxStackSize();
 
 				if (te.canBurn(level.registryAccess(), recipe, te.items, maxStack)) {
@@ -211,7 +216,9 @@ public class GhastlyAlembicBlockEntity extends BaseContainerBlockEntity
 						te.cookingTotalTime = getTotalCookTime(level, te);
 						if (te.burn(level.registryAccess(), recipe, te.items, maxStack)) {
 							te.setRecipeUsed(recipe);
-							vol.fill(100);
+							if (!recipe.value().requiresBloodInput()) {
+								vol.fill(100);
+							}
 							te.sendUpdates();
 						}
 						dirty = true;
@@ -219,12 +226,13 @@ public class GhastlyAlembicBlockEntity extends BaseContainerBlockEntity
 				} else {
 					te.cookingProgress = 0;
 				}
-			} else if (!te.heated && te.cookingProgress > 0) {
-				// Cool down when no heat
-				te.cookingProgress = Mth.clamp(te.cookingProgress - 2, 0, te.cookingTotalTime);
+			} else {
+				te.cookingProgress = 0;
 			}
-		} else {
-			// Blood tank full — stop processing
+		} else if (!te.heated && te.cookingProgress > 0) {
+			// Cool down when no heat
+			te.cookingProgress = Mth.clamp(te.cookingProgress - 2, 0, te.cookingTotalTime);
+		} else if (vol.getBloodVolume() >= vol.getMaxBloodVolume() - 99) {
 			te.cookingProgress = 0;
 		}
 
@@ -302,7 +310,11 @@ public class GhastlyAlembicBlockEntity extends BaseContainerBlockEntity
 			}
 		}
 
-		input.shrink(1);
+		DistillationConsumptionRules.Consumption consumption = DistillationConsumptionRules.forRecipe(
+				recipe.consumesCatalyst(), recipe.requiresBloodInput());
+		input.shrink(consumption.mainInput());
+		inv.get(SLOT_CATALYST).shrink(consumption.catalyst());
+		inv.get(SLOT_TINCTURE_BLOOD).shrink(consumption.bloodInput());
 		return true;
 	}
 
@@ -317,7 +329,7 @@ public class GhastlyAlembicBlockEntity extends BaseContainerBlockEntity
 			stack.setCount(this.getMaxStackSize());
 		}
 		// Reset cooking progress when input changes
-		if (slot == SLOT_INPUT && !sameItem) {
+		if ((slot == SLOT_INPUT || slot == SLOT_CATALYST || slot == SLOT_TINCTURE_BLOOD) && !sameItem) {
 			this.cookingTotalTime = (this.level != null) ? getTotalCookTime(this.level, this) : BURN_TIME_STANDARD;
 			this.cookingProgress = 0;
 			this.setChanged();
@@ -330,22 +342,27 @@ public class GhastlyAlembicBlockEntity extends BaseContainerBlockEntity
 	 */
 	private static void tryDrainBloodIntoFlask(GhastlyAlembicBlockEntity te) {
 		ItemStack flaskStack = te.items.get(SLOT_FLASK);
-		if (flaskStack.isEmpty() || flaskStack.getItem() != HLItemInit.cured_clay_flask.get()) return;
+		if (flaskStack.isEmpty()) return;
+		boolean jug = flaskStack.getItem() == ItemInit.cured_clay_jug.get();
+		if (!jug && flaskStack.getItem() != HLItemInit.cured_clay_flask.get()) return;
+		int requiredBlood = AlembicVesselRules.requiredBlood(jug
+				? AlembicVesselRules.Vessel.JUG : AlembicVesselRules.Vessel.FLASK);
+		Item outputItem = jug ? ItemInit.bloody_jug.get() : ItemInit.bloody_flask.get();
 
 		IBloodVolume vol = te.resolveVolume();
-		if (vol == null || vol.getBloodVolume() < 100) return;
+		if (vol == null || vol.getBloodVolume() < requiredBlood) return;
 
 		ItemStack resultStack = te.items.get(SLOT_FLASK_OUTPUT);
 		if (resultStack.isEmpty()) {
 			flaskStack.shrink(1);
-			te.items.set(SLOT_FLASK_OUTPUT, new ItemStack(ItemInit.bloody_flask.get()));
-			vol.drain(100);
+			te.items.set(SLOT_FLASK_OUTPUT, new ItemStack(outputItem));
+			vol.drain(requiredBlood);
 			te.sendUpdates();
-		} else if (resultStack.getItem() == ItemInit.bloody_flask.get()
+		} else if (resultStack.getItem() == outputItem
 				&& resultStack.getCount() < resultStack.getMaxStackSize()) {
 			flaskStack.shrink(1);
 			resultStack.grow(1);
-			vol.drain(100);
+			vol.drain(requiredBlood);
 			te.sendUpdates();
 		}
 	}
@@ -525,9 +542,12 @@ public class GhastlyAlembicBlockEntity extends BaseContainerBlockEntity
 		if (slot == SLOT_FLASK_OUTPUT) return BloodContainerTransfer.isBloodGourd(stack);
 		if (slot == SLOT_FLASK) {
 			return stack.getItem() == HLItemInit.cured_clay_flask.get()
+					|| stack.getItem() == ItemInit.cured_clay_jug.get()
 					|| BloodContainerTransfer.isFilledBloodContainer(stack);
 		}
 		if (slot == SLOT_CATALYST) return true; // any item allowed as catalyst
+		if (slot == SLOT_TINCTURE_BLOOD) return stack.getItem() == ItemInit.bloody_flask.get()
+				|| stack.getItem() == ItemInit.bloody_jug.get();
 		return true; // SLOT_INPUT
 	}
 

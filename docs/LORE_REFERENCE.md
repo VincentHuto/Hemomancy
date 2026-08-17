@@ -207,6 +207,21 @@ Harbingers favor:
 
 They do not view themselves as recluses by choice. The Hematic Order is, at its best, a community — a found family. Joining the Order typically means leaving behind one's biological family, not because it's required, but because the lifestyle of a Harbinger makes it impractical to maintain typical family relationships. The Order provides a new family.
 
+### 6.2a Hematic Memory: Mneme, Nous, and Thelema
+
+**Hematic Memory** is the Order's broad name for repeatable instruction preserved in blood. It has two expressions, which describe how a remembered pattern becomes action rather than what tendency, rank, body section, or moral path it belongs to.
+
+- A **Noetic Memory** is apprehended as an intelligible pattern and enacted through a blood manipulation. It is the Mnemonist's usual field: a remembered form which the practitioner understands well enough to project.
+- A **Thelemic Memory** is enacted as embodied will. The body learns a repeatable answer through tincture preparation, holds a finite reserve of that preparation, and answers through a vascular section when the learned action becomes useful.
+
+The specialist mnemonic is: **Mneme keeps. Nous knows. Thelēma acts.** Memory preserves; intellect apprehends; will enacts. This quietly echoes the older `memoria–intelligentia–voluntas` structure and its Greek vocabulary, but the Order claims no historical founder or secret lineage for it. Routine controls use the simple Noetic/Thelemic terms and do not lecture the player about later philosophical descendants.
+
+Blood tendencies remain recurring Harbinger classifications: maps which often predict materials, tissues, Morphling resonance, and mnemonic behavior. They are not eight cosmic elements. Expression, tendency, rank, vascular section, and acquisition route are independent axes.
+
+The Alchemist reaches Thelemic teaching through reproducible reaction, tissue, enzymes, and physiological correlation. The Mnemonist reaches Noetic teaching through apprehension, interpretation, and Loom practice. They respect each other's successful predictions while remaining professionally irritated by each other's language. Conductive Mark is the clearest shared example: a Ductilis tissue record and a successful weave disclose one existing Noetic Memory by different routes.
+
+The fungal revelation does not make Harbinger scholarship worthless. Its maps remain predictively useful even after their alien provenance is known. Early embodied and later projected powers remain complementary; true opposition is reserved for the endgame. **Voluntas Sola** names the Silent Archon's inversion of embodied will into sovereign separation and belongs only to that late material.
+
 ### 6.3 The Harbinger Outpost and Its NPCs
 
 Once players advance past the Blood Temple, they are directed to **Harbinger Outposts** — multi-story structures that serve as the Order's visible presence in the world.
@@ -376,6 +391,8 @@ From the Harbinger Vicar's lore branches:
 **Blood Drunk Puppeteers are Broken Wills commandeered by the hive's strings.** Their visible control and their susceptibility to player commandeering are literal extensions of that origin. These categories describe implemented origins, not competing NPC theories: Broken/Faded are failed people, Sent/Proctor are made assessors, and Blood Drunk Puppeteers are failed people being actively pulled.
 
 Harbinger puppeteering imitates that visible principle without accepting the hive's claim over the practitioner. A Puppeteer's Spindle fixes a learned blood-memory into a prepared shape and permanently attunes its Marionette Crossbar to one owner; the Spindle does not project the body itself. Puppeteering Thread becomes stored tension in the Crossbar, and the attuned Harbinger spends that tension to call, sustain, recall, or direct the shaped body in the field. A Crossbar can hold a shared behavioral command for its exact skein, while the Degree 5 discipline **Skein Transposition** lets an advanced Harbinger replace the prepared artificial shape without returning to the Spindle. Transposition changes the shaped expression, not the identity of the tether: unrelated shapes and claimed people are not rewritten. The tether is personal and local: another practitioner cannot inherit the Crossbar, starvation unravels only the body whose upkeep failed, and crossing dimensions, death, or the owner's departure severs the projection even when its chunk was asleep. A faltering Broken Will can be Commandeered into the same tether system and obey its commands, but it remains a claimed failed person rather than becoming one of the four learned artificial shapes or a candidate for transposition.
+
+An equipped Morphling and an owned puppet tether can coexist, but they pull against one another. The incorporated organism reads projected will as foreign, edible tension and gnaws at the thread; the puppet's imposed will repeatedly scatters and frustrates the Morphling's attention. This is reciprocal inefficiency rather than doctrinal exclusion: the tether shortens and costs more thread to sustain, while the distracted Morphling consumes more blood. The Mnemonist can identify the conflict at Degree 3 while both are active, but records no permanent choice or prohibition.
 
 The four canonical artificial shapes are learned through **Puppetry Cardinal Ordeals**, not by assembling and consuming a body as an ordinary craft. Each ordeal uses the shared Dominion Lesser floor because all four test the same claim: whether the practitioner can impose a stable artificial body without surrendering the tether to the hive. The owner's attuned Crossbar is seated intact in the Cardinal Focus and remains unchanged, because it is the enduring relationship under examination rather than fuel. Bespoke lit-brazier offerings declare the body being called. Once manifestation succeeds, the puppet itself is the ordeal and must be defeated; cancellation, abandonment, structural failure, or the caster's loss grants no memory of mastery. Victory teaches the exact shape whose resistance the practitioner overcame.
 

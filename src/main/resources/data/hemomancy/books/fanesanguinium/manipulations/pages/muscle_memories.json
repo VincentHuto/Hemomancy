@@ -1,0 +1,9 @@
+{
+  "type": "hutoslib:page",
+  "ordinality": 11,
+  "texture": "hemomancy:textures/gui/guide/page.png",
+  "title": "Thelemic Memories",
+  "subtitle": "The body remembers first",
+  "text": "Not every Hematic Memory is an image or an idea. A Thelemic Memory is written into embodied will, then prepared by a tincture whose reserve lets the relevant section answer on its own. The eight known forms are Sanguine Fists, Laboring Arms, Coursing Legs, Hushed Gait, Predatory Eyes, Second Pulse, Enduring Viscera, and Carrion Metabolism. Each trigger spends blood and strains its vascular section. A Morphling whose tendencies agree with a memory eases both costs; particular strains also teach a specialized response. Drinking another tincture adds reserve without erasing what the body learned. These are Harbinger correlations, not vows or cosmic elements, and no Thelemic Memory decides Ascension or Severance for its bearer.",
+  "icon": "hemomancy:tincture_sanguine_fists"
+}

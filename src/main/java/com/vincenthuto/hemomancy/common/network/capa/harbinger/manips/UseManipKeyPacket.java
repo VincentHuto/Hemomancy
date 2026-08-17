@@ -2,6 +2,11 @@ package com.vincenthuto.hemomancy.common.network.capa.harbinger.manips;
 
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
+import com.vincenthuto.hemomancy.common.capability.HemoAttachmentTypes;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.MemoryEntryKind;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.musclememory.MuscleMemory;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.musclememory.MuscleMemoryEvents;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.EnumBloodFlow;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.IKnownManipulations;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.ManipulationRetirementRules;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
@@ -51,6 +56,10 @@ public class UseManipKeyPacket implements CustomPacketPayload {
 				// Allow SummonThrallManip through cooldown when selecting a destination
 				boolean bypassCooldown = false;
 				IKnownManipulations knownCheck = HemoCapabilityAccess.getKnownManipulations(player).orElse(null);
+				if (knownCheck != null && knownCheck.getSelectedMemoryRef().kind() == MemoryEntryKind.MUSCLE_MEMORY) {
+					handleMuscleMemoryUse(player, knownCheck);
+					return;
+				}
 				if (knownCheck != null && knownCheck.getSelectedManip() != null) {
 					BloodManipulation selManip = ManipulationInit.getByName(knownCheck.getSelectedManip().getName());
 					if (selManip instanceof SummonThrallManip && SummonThrallManip.hasPendingThrall(player.getUUID())) {
@@ -132,6 +141,38 @@ public class UseManipKeyPacket implements CustomPacketPayload {
 				}
 			}
 		});
+	}
+
+	private static void handleMuscleMemoryUse(Player player, IKnownManipulations known) {
+		if (!(player instanceof net.minecraft.server.level.ServerPlayer serverPlayer)) return;
+		var selected = known.getSelectedMemoryRef();
+		MuscleMemory memory = selected.muscleMemory().orElse(null);
+		if (memory == null || !known.isMemoryEquipped(selected)) return;
+		var state = player.getData(HemoAttachmentTypes.MUSCLE_MEMORY);
+		if (player.isShiftKeyDown()) {
+			if (state.isEnabled(memory)) {
+				state.armOverexertion(memory, player.level().getGameTime());
+				MuscleMemoryEvents.sync(serverPlayer);
+				player.displayClientMessage(Component.translatable(
+						"message.hemomancy.muscle_memory.overexertion_armed").withStyle(ChatFormatting.RED), true);
+			}
+			return;
+		}
+		if (state.isEnabled(memory)) {
+			state.deactivate(memory);
+			MuscleMemoryEvents.sync(serverPlayer);
+			return;
+		}
+		IBloodVolume volume = HemoCapabilityAccess.getBloodVolume(player).orElse(null);
+		boolean dead = HemoCapabilityAccess.getVascularSystem(player)
+				.map(vascular -> vascular.getBloodFlowBySection(memory.section()) == EnumBloodFlow.DEAD)
+				.orElse(false);
+		if (volume == null || !volume.isActive() || dead || !state.activate(memory)) {
+			player.displayClientMessage(Component.translatable(
+					"message.hemomancy.muscle_memory.activation_failed").withStyle(ChatFormatting.RED), true);
+			return;
+		}
+		MuscleMemoryEvents.sync(serverPlayer);
 	}
 
 	float parTick;

@@ -526,8 +526,9 @@ public class MarionetteCrossbarItem extends Item {
 			return 0;
 		}
 		UUID crossbarId = ensureCrossbarId(crossbar);
-		double tetherRange = PuppeteerSummonRules.commandRange(SkillPointHelper.getFarTetherLevel(player),
-				SkillPointHelper.getBoundCommandLevel(player));
+		double tetherRange = PuppeteerSummonRules.effectiveCommandRange(SkillPointHelper.getFarTetherLevel(player),
+				SkillPointHelper.getBoundCommandLevel(player), BoundSummonBehavior.hasEquippedMorphling(player)
+						&& BoundSummonBehavior.hasActiveOwnedTether(player));
 		if (!PuppeteerSummonRules.withinTetherRange(player.distanceToSqr(target), tetherRange)) {
 			player.displayClientMessage(Component.translatable("hemomancy.summon.focus.out_of_range")
 					.withStyle(ChatFormatting.GRAY), true);

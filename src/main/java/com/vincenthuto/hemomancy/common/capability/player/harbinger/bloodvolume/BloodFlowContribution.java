@@ -13,6 +13,7 @@ public record BloodFlowContribution(String sourceId, String label, Category cate
 		WORLD,
 		ORGAN,
 		TOOL,
+		MUSCLE_MEMORY,
 		VESSEL,
 		OTHER
 	}

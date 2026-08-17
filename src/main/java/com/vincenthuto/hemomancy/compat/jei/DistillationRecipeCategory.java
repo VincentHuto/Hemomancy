@@ -90,6 +90,9 @@ public class DistillationRecipeCategory implements IRecipeCategory<DistillationR
 			Font font = Minecraft.getInstance().font;
 			gfx.drawString(font, Component.literal("Catalyst"), 20, 3, pallid ? 0xFF7B8DAA : 0xFF886644, false);
 		}
+		if (recipe.requiresBloodInput()) {
+			drawSlot(gfx, 1, 25);
+		}
 
 		// ── Fire indicator (campfire catalyst) ──
 		drawSlot(gfx, 20, 50);   // Campfire hint slot
@@ -203,6 +206,10 @@ public class DistillationRecipeCategory implements IRecipeCategory<DistillationR
 					.addIngredients(VanillaTypes.ITEM_STACK, Arrays.asList(recipe.getCatalyst().getItems()));
 		} else {
 			builder.addSlot(RecipeIngredientRole.CATALYST, 2, 2);
+		}
+		if (recipe.requiresBloodInput()) {
+			builder.addSlot(RecipeIngredientRole.INPUT, 2, 26)
+					.addIngredients(VanillaTypes.ITEM_STACK, Arrays.asList(recipe.getBloodInput().getItems()));
 		}
 
 		// Campfire as heat hint — shows that fire below is needed

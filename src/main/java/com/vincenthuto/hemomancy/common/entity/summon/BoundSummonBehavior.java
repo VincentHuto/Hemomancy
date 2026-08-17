@@ -1,10 +1,13 @@
 package com.vincenthuto.hemomancy.common.entity.summon;
 
+import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.morphling.EquippedMorphlingEvents;
 import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillPointHelper;
 import com.vincenthuto.hemomancy.common.capability.player.shared.skill.ToggleablePlayerPowerRules;
 import com.vincenthuto.hemomancy.common.init.SkillPointInit;
 import com.vincenthuto.hemomancy.common.entity.mob.monster.will.WillBendRules;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.MarionetteCrossbarItem;
+import com.vincenthuto.hemomancy.common.item.harbinger.morphlings.MorphlingItem;
 import com.vincenthuto.hemomancy.common.summon.PuppeteerSummonDefinition;
 import com.vincenthuto.hemomancy.common.summon.PuppeteerSummonDefinitions;
 import com.vincenthuto.hemomancy.common.summon.PuppeteerSummonRules;
@@ -191,19 +194,21 @@ public final class BoundSummonBehavior {
 			mob.setNoAi(false);
 		}
 		long gameTime = mob.level().getGameTime();
+		boolean morphlingInterference = hasEquippedMorphling(owner)
+				&& qualifiesForMorphlingInterference(mob, summon, owner);
 		CompoundTag persistentData = mob.getPersistentData();
 		long nextUpkeep = persistentData.getLong(TAG_NEXT_UPKEEP);
 		if (nextUpkeep <= 0L) {
 			persistentData.putLong(TAG_NEXT_UPKEEP, PuppeteerSummonRules.nextUpkeepGameTime(gameTime));
 		} else if (PuppeteerSummonRules.upkeepDue(gameTime, nextUpkeep)) {
-			if (!payUpkeep(summon, owner, crossbar.get())) {
+			if (!payUpkeep(summon, owner, crossbar.get(), morphlingInterference, gameTime)) {
 				unravel(mob, owner, "hemomancy.summon.upkeep.failed");
 				return false;
 			}
 			persistentData.putLong(TAG_NEXT_UPKEEP, PuppeteerSummonRules.nextUpkeepGameTime(gameTime));
 		}
-		double range = PuppeteerSummonRules.commandRange(SkillPointHelper.getFarTetherLevel(owner),
-				SkillPointHelper.getBoundCommandLevel(owner));
+		double range = PuppeteerSummonRules.effectiveCommandRange(SkillPointHelper.getFarTetherLevel(owner),
+				SkillPointHelper.getBoundCommandLevel(owner), morphlingInterference);
 		if (mob.distanceToSqr(owner) > range * range * 9.0) {
 			mob.teleportTo(owner.getX(), owner.getY(), owner.getZ());
 		}
@@ -367,6 +372,28 @@ public final class BoundSummonBehavior {
 				&& "claimed_will".equals(bound.hemomancy$getSummonName());
 	}
 
+	public static boolean hasEquippedMorphling(Player owner) {
+		return owner != null && HemoCapabilityAccess.getEquippedMorphling(owner)
+				.map(cap -> cap.hasMorphling()).orElse(false);
+	}
+
+	public static boolean hasActiveOwnedTether(ServerPlayer owner) {
+		return owner != null && MarionetteCrossbarItem.activeSummonsForOwner(owner).stream()
+				.anyMatch(mob -> mob instanceof BoundPuppeteerSummon summon
+						&& qualifiesForMorphlingInterference(mob, summon, owner));
+	}
+
+	public static boolean qualifiesForMorphlingInterference(Mob mob, BoundPuppeteerSummon summon,
+			ServerPlayer owner) {
+		return mob != null && summon != null && owner != null
+				&& PuppeteerSummonRules.qualifiesForMorphlingInterference(
+						mob.isAlive(), !mob.isRemoved(),
+						owner.getUUID().equals(summon.hemomancy$getOwnerUUID())
+								&& summon.hemomancy$getCrossbarUUID() != null,
+						summon.hemomancy$isTrialSummon(), owner.level() == mob.level(),
+						ownerSessionMatches(mob, owner));
+	}
+
 	private static boolean reconcileLoadedActiveCap(Mob candidate, ServerPlayer owner) {
 		int baseCap = PuppeteerSummonRules.activeSummonCap(SkillPointHelper.getPuppetSkeinLevel(owner));
 		int claimedBonusCap = claimedWillBonusCap(owner);
@@ -416,8 +443,8 @@ public final class BoundSummonBehavior {
 		return Optional.ofNullable(mob.level().getServer().getPlayerList().getPlayer(ownerId));
 	}
 
-	private static boolean payUpkeep(BoundPuppeteerSummon summon, Player owner,
-			net.minecraft.world.item.ItemStack crossbar) {
+	private static boolean payUpkeep(BoundPuppeteerSummon summon, ServerPlayer owner,
+			net.minecraft.world.item.ItemStack crossbar, boolean morphlingInterference, long gameTime) {
 		int fallbackUpkeep = "claimed_will".equals(summon.hemomancy$getSummonName())
 				? PuppeteerSummonRules.CLAIMED_WILL_UPKEEP_PER_MINUTE
 				: 1;
@@ -426,7 +453,17 @@ public final class BoundSummonBehavior {
 				.orElse(fallbackUpkeep);
 		int upkeep = PuppeteerSummonRules.adjustedThreadCost(baseUpkeep,
 				SkillPointHelper.getThreadEconomyLevel(owner));
-		return MarionetteCrossbarItem.consumeThread(crossbar, upkeep);
+		upkeep = PuppeteerSummonRules.interferedThreadUpkeep(upkeep, morphlingInterference);
+		if (!MarionetteCrossbarItem.consumeThread(crossbar, upkeep)) {
+			return false;
+		}
+		if (morphlingInterference) {
+			HemoCapabilityAccess.getEquippedMorphling(owner).filter(cap -> cap.hasMorphling()).ifPresent(cap -> {
+				MorphlingItem.markFedNow(cap.getEquippedMorphling(), gameTime);
+				EquippedMorphlingEvents.syncToClient(owner);
+			});
+		}
+		return true;
 	}
 
 	private static void unravel(Mob mob, ServerPlayer owner, String messageKey) {

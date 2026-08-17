@@ -1,0 +1,17 @@
+{
+  "replace": false,
+  "values": [
+    "hemomancy:hematic_iron_ore",
+    "hemomancy:hematic_iron_block",
+    "hemomancy:hematic_iron_pillar",
+    "hemomancy:chiseled_hematic_iron_block",
+    "hemomancy:hematic_iron_bars",
+    "hemomancy:hematic_iron_door",
+    "hemomancy:hematic_iron_trapdoor",
+    "hemomancy:hematic_iron_chain",
+    "hemomancy:blood_crystal",
+    "hemomancy:suspended_blood_crystal",
+    "hemomancy:sporite_crystal",
+    "hemomancy:ghastly_alembic"
+  ]
+}

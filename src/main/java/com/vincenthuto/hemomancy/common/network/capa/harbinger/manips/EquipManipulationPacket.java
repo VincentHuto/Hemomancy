@@ -2,12 +2,16 @@ package com.vincenthuto.hemomancy.common.network.capa.harbinger.manips;
 
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
+import com.vincenthuto.hemomancy.common.capability.HemoAttachmentTypes;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.IKnownManipulations;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.MemoryEntryKind;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.MemorySlotRef;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.ManipulationDiagnosticsSync;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.ManipulationEquipHelper;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.ManipulationRetirementRules;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.ManipSlotHelper;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
+import com.vincenthuto.hemomancy.common.mission.MnemonicReliquaryProgression;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
@@ -46,13 +50,28 @@ public class EquipManipulationPacket implements CustomPacketPayload {
 	public static void handle(final EquipManipulationPacket msg, final IPayloadContext ctx) {
 		ctx.enqueueWork(() -> {
 			Player player = ctx.player();
-			if (player == null) return;
+			if (!(player instanceof ServerPlayer serverPlayer)) return;
 
 			IKnownManipulations known = HemoCapabilityAccess.getKnownManipulations(player)
 					.orElse(null);
 			if (known == null) return;
 
-			if (msg.equip) {
+			MemorySlotRef ref = MemorySlotRef.fromStorageKey(msg.manipName);
+			if (ref.kind() == MemoryEntryKind.MUSCLE_MEMORY) {
+				var memory = ref.muscleMemory().orElse(null);
+				if (memory == null || !player.getData(HemoAttachmentTypes.MUSCLE_MEMORY).knows(memory)) {
+					player.displayClientMessage(Component.literal("That Thelemic Memory has not been learned.")
+							.withStyle(ChatFormatting.RED), true);
+					return;
+				}
+				int maxSlots = ManipSlotHelper.getMaxSlots(player);
+				boolean changed = msg.equip ? known.equipMemory(ref, maxSlots) : known.unequipMemory(ref);
+				if (!changed && msg.equip) {
+					player.displayClientMessage(Component.literal("Cannot equip — no free shared memory slots! ("
+							+ ManipulationEquipHelper.countNormalEquippedNames(known.getEquippedManipNames())
+							+ "/" + maxSlots + ")").withStyle(ChatFormatting.RED), true);
+				}
+			} else if (msg.equip) {
 				if (ManipulationRetirementRules.isRetiredManipulation(msg.manipName)) {
 					player.displayClientMessage(
 							Component.literal("That manipulation has gone dormant.")
@@ -80,10 +99,11 @@ public class EquipManipulationPacket implements CustomPacketPayload {
 									.withStyle(ChatFormatting.YELLOW), true);
 				}
 			}
+			MnemonicReliquaryProgression.onCapacityChanged(serverPlayer, known);
 
 			// Sync updated state back to client
-			PacketHandler.sendToPlayer((ServerPlayer) player, new KnownManipulationServerPacket(known));
-			ManipulationDiagnosticsSync.sync((ServerPlayer) player);
+			PacketHandler.sendToPlayer(serverPlayer, new KnownManipulationServerPacket(known));
+			ManipulationDiagnosticsSync.sync(serverPlayer);
 		});
 	}
 

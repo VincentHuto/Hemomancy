@@ -68,22 +68,24 @@ public class CellHandItemRenderer extends BlockEntityWithoutLevelRenderer {
 		mc.getTextureManager().bindForSetup(mc.player.getSkin().texture());
 		matrixStackIn.pushPose();
 		applyCastingArmTransform(matrixStackIn, side);
-		if (side == HumanoidArm.RIGHT) {
-			matrixStackIn.mulPose(Vector3.YP.rotationDegrees(12.0f).toMoj());
-			matrixStackIn.mulPose(Vector3.XP.rotationDegrees(-35.0f).toMoj());
-			matrixStackIn.mulPose(Vector3.ZP.rotationDegrees(5.0f).toMoj());
-			matrixStackIn.translate(1.0, -0.4, 0.8);
-			renderArm(matrixStackIn, bufferIn, combinedLightIn, mc.player, side, stack);
-
-		} else {
-			matrixStackIn.mulPose(Vector3.YP.rotationDegrees(-12.0f).toMoj());
-			matrixStackIn.mulPose(Vector3.XP.rotationDegrees(-35.0f).toMoj());
-			matrixStackIn.mulPose(Vector3.ZP.rotationDegrees(5.0f).toMoj());
-			matrixStackIn.translate(0.0, -0.3, 0.6);
-			renderArm(matrixStackIn, bufferIn, combinedLightIn, mc.player, side, stack);
-		}
+		applyFirstPersonArmTransform(matrixStackIn, side);
+		renderArm(matrixStackIn, bufferIn, combinedLightIn, mc.player, side, stack);
 		spawnFirstPersonParticlesForStack(stack, side, matrixStackIn);
 		matrixStackIn.popPose();
+	}
+
+	public static void applyFirstPersonArmTransform(PoseStack matrixStackIn, HumanoidArm side) {
+		if (side == HumanoidArm.RIGHT) {
+			matrixStackIn.mulPose(Vector3.YP.rotationDegrees(12.0F).toMoj());
+			matrixStackIn.mulPose(Vector3.XP.rotationDegrees(-35.0F).toMoj());
+			matrixStackIn.mulPose(Vector3.ZP.rotationDegrees(5.0F).toMoj());
+			matrixStackIn.translate(1.0, -0.4, 0.8);
+		} else {
+			matrixStackIn.mulPose(Vector3.YP.rotationDegrees(-12.0F).toMoj());
+			matrixStackIn.mulPose(Vector3.XP.rotationDegrees(-35.0F).toMoj());
+			matrixStackIn.mulPose(Vector3.ZP.rotationDegrees(5.0F).toMoj());
+			matrixStackIn.translate(0.0, -0.3, 0.6);
+		}
 	}
 
 	private void applyCastingArmTransform(PoseStack matrixStackIn, HumanoidArm side) {

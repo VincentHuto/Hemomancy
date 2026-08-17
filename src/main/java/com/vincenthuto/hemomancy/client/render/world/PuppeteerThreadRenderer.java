@@ -6,6 +6,7 @@ import com.vincenthuto.hemomancy.common.entity.boss.endgame.VesperTheCrownedRefu
 import com.vincenthuto.hemomancy.common.entity.mob.monster.BloodDrunkPuppeteerEntity;
 import com.vincenthuto.hemomancy.common.entity.mob.monster.EnthralledDollEntity;
 import com.vincenthuto.hemomancy.common.entity.summon.BoundPuppeteerSummon;
+import com.vincenthuto.hemomancy.common.entity.summon.BoundSummonBehavior;
 import com.vincenthuto.hemomancy.common.summon.PuppeteerSummonRules;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
@@ -59,7 +60,7 @@ public final class PuppeteerThreadRenderer {
 		}
 		Vec3 start = entityAnchor(puppeteer, partialTick, WILD_PUPPETEER_ANCHOR_SCALE).subtract(camera);
 		Vec3 end = entityAnchor(doll, partialTick, WILD_DOLL_ANCHOR_SCALE).subtract(camera);
-		renderThread(poseStack, consumer, start, end, doll.tickCount + partialTick, 1.0F);
+		renderThread(poseStack, consumer, start, end, doll.tickCount + partialTick, 1.0F, false);
 	}
 
 	private static void renderThreadToSummon(PoseStack poseStack, VertexConsumer consumer,
@@ -87,16 +88,21 @@ public final class PuppeteerThreadRenderer {
 				: entityAnchor(controller, partialTick, VESPER_ANCHOR_SCALE)).subtract(camera);
 
 		Vec3 end = summonAnchor(summon, partialTick).subtract(camera);
-		renderThread(poseStack, consumer, start, end, summon.tickCount + partialTick, fade);
+		boolean gnawed = controller instanceof Player owner
+				&& bound.hemomancy$getCrossbarUUID() != null
+				&& !bound.hemomancy$isTrialSummon()
+				&& BoundSummonBehavior.hasEquippedMorphling(owner);
+		renderThread(poseStack, consumer, start, end, summon.tickCount + partialTick, fade, gnawed);
 	}
 
 	private static void renderThread(PoseStack poseStack, VertexConsumer consumer,
-									 Vec3 start, Vec3 end, float time, float fade) {
+									 Vec3 start, Vec3 end, float time, float fade, boolean gnawed) {
 		Vec3 delta = end.subtract(start);
 
 		poseStack.pushPose();
 		PoseStack.Pose pose = poseStack.last();
 		for (int i = 0; i < SEGMENTS; i++) {
+			if (gnawed && (i + (int) (time / 12.0F)) % 9 == 4) continue;
 			float t = (float) i / SEGMENTS;
 			float nextT = (float) (i + 1) / SEGMENTS;
 			Vec3 point = threadPoint(start, delta, t, time);
@@ -110,6 +116,11 @@ public final class PuppeteerThreadRenderer {
 			int red = (int) (150 + pulse * 85);
 			int green = (int) (8 + pulse * 20);
 			int blue = (int) (12 + pulse * 18);
+			if (gnawed && i % 4 != 0) {
+				red = (int) (red * 0.55F);
+				green = (int) (green * 0.4F);
+				blue = (int) (blue * 0.4F);
+			}
 			int alpha = (int) ((170 + 55 * Math.sin(t * Math.PI)) * fade);
 			consumer.addVertex(pose.pose(), (float) point.x, (float) point.y, (float) point.z)
 					.setColor(red, green, blue, alpha)
@@ -180,4 +191,3 @@ public final class PuppeteerThreadRenderer {
 		return start.add(delta.x * t + wobbleX, delta.y * t + sag, delta.z * t + wobbleZ);
 	}
 }
-

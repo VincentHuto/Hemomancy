@@ -1,0 +1,12 @@
+{
+  "type": "hemomancy:distillation_recipe",
+  "ingredient": { "item": "hemomancy:sanguine_formation" },
+  "catalyst": { "item": "hemomancy:ferric_enzyme" },
+  "blood_input": { "item": "hemomancy:bloody_jug" },
+  "consume_catalyst": true,
+  "result": "hemomancy:tincture_laboring_arms_jug",
+  "count": 1,
+  "experience": 1.0,
+  "cookingtime": 300,
+  "id": "hemomancy:distillation/tincture_laboring_arms_jug"
+}

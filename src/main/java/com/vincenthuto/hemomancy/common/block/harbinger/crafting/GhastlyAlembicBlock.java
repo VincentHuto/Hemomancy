@@ -56,6 +56,7 @@ public class GhastlyAlembicBlock extends BaseEntityBlock implements EntityBlock,
 	private static final BlockPos[] FILLER_OFFSETS = new BlockPos[] {
 			//new BlockPos(0, 1, 0)
 	};
+	private static final VoxelShape SHAPE = Block.box(0.0D, 0.0D, 0.0D, 16.0D, 32.0D, 16.0D);
 
 	public GhastlyAlembicBlock(BlockBehaviour.Properties props) {
 		super(props);
@@ -85,8 +86,12 @@ public class GhastlyAlembicBlock extends BaseEntityBlock implements EntityBlock,
 
 	@Override
 	public VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext ctx) {
-		// Full 1×1×1 collision box — model rendering is handled by entity renderer
-		return Shapes.block();
+		return SHAPE;
+	}
+
+	@Override
+	protected VoxelShape getCollisionShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext ctx) {
+		return SHAPE;
 	}
 
 	@Override

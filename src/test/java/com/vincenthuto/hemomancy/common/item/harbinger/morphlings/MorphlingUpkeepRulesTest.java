@@ -8,6 +8,8 @@ public final class MorphlingUpkeepRulesTest {
 		zeroCostMorphlingsUseConfiguredBaselineDrain();
 		disabledUpkeepDoesNotDrainPaidMorphlings();
 		positiveCostsScaleConfiguredUpkeep();
+		activePuppetWillIncreasesMorphlingUpkeepOnce();
+		interferenceBloodDoesNotAccelerateBonding();
 		equippedPowersRemainScheduledWithoutUpkeep();
 		bloodBondingUsesEscalatingStageQuotas();
 		bloodBondingResetsProgressWhenTheStageChanges();
@@ -30,6 +32,22 @@ public final class MorphlingUpkeepRulesTest {
 	private static void positiveCostsScaleConfiguredUpkeep() {
 		assertClose("positive cost scales upkeep", 1.0D,
 				MorphlingUpkeepRules.upkeepAmount(true, 0.5D, 100));
+	}
+
+	private static void activePuppetWillIncreasesMorphlingUpkeepOnce() {
+		assertClose("active puppet will raises morphling upkeep", 1.25D,
+				MorphlingUpkeepRules.withPuppetInterference(1.0D, true));
+		assertClose("no puppet leaves morphling upkeep unchanged", 1.0D,
+				MorphlingUpkeepRules.withPuppetInterference(1.0D, false));
+		assertClose("zero upkeep remains zero", 0.0D,
+				MorphlingUpkeepRules.withPuppetInterference(0.0D, true));
+	}
+
+	private static void interferenceBloodDoesNotAccelerateBonding() {
+		assertClose("bonding receives only ordinary upkeep", 1.0D,
+				MorphlingUpkeepRules.bondingCredit(1.25D, 1.0D));
+		assertClose("partial payment cannot create bonding credit", 0.5D,
+				MorphlingUpkeepRules.bondingCredit(0.5D, 1.0D));
 	}
 
 	private static void equippedPowersRemainScheduledWithoutUpkeep() {

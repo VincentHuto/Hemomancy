@@ -3,6 +3,8 @@ package com.vincenthuto.hemomancy.client.screen.overlay;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.item.harbinger.morphlings.MorphlingItem;
+import com.vincenthuto.hemomancy.common.entity.summon.BoundSummonBehavior;
+import com.vincenthuto.hemomancy.common.item.harbinger.tool.MarionetteCrossbarItem;
 import com.vincenthuto.hemomancy.config.HemoClientConfig;
 
 import net.minecraft.client.gui.GuiGraphics;
@@ -27,6 +29,7 @@ public class EquippedMorphlingOverlay {
 			renderBondMeter(gfx, equipped,
 					EquippedMorphlingOverlayPlacement.iconXForBloodBar(barOnLeft, barX, barWidth),
 					EquippedMorphlingOverlayPlacement.iconYForBloodBar(barY, barHeight) + 18);
+			renderDistractedStatus(gfx, barOnLeft, barX, barY, barWidth);
 			return;
 		}
 
@@ -34,6 +37,7 @@ public class EquippedMorphlingOverlay {
 		MorphlingHudVisuals.Visual visual = MorphlingHudVisuals.forItemPath(itemPath);
 		if (visual == null) {
 			renderLegacyIcon(gfx, equipped, barOnLeft, barX, barY, barWidth, barHeight);
+			renderDistractedStatus(gfx, barOnLeft, barX, barY, barWidth);
 			return;
 		}
 		int xOffset = barOnLeft  ? -25 :25;
@@ -48,7 +52,17 @@ public class EquippedMorphlingOverlay {
 			renderPrimalMotes(gfx, x, y, time, visual.accentColor());
 		}
 		renderBondMeter(gfx, equipped, x + 8, y + EquippedMorphlingOverlayPlacement.ATTACHED_SIZE - 5);
+		renderDistractedStatus(gfx, barOnLeft, barX, barY, barWidth);
 		RenderSystem.disableBlend();
+	}
+
+	private void renderDistractedStatus(GuiGraphics gfx, boolean barOnLeft, int barX, int barY, int barWidth) {
+		Minecraft mc = Minecraft.getInstance();
+		if (mc.player == null || !BoundSummonBehavior.hasEquippedMorphling(mc.player)
+				|| MarionetteCrossbarItem.activeSummonsForOwner(mc.player).isEmpty()) return;
+		String text = net.minecraft.network.chat.Component.translatable("morphling.interference.distracted").getString();
+		int x = barOnLeft ? barX : barX + barWidth - mc.font.width(text);
+		gfx.drawString(mc.font, text, x, barY - 12, 0xFFD88A96, true);
 	}
 
 	private void renderBondMeter(GuiGraphics gfx, ItemStack equipped, int x, int y) {

@@ -40,6 +40,7 @@ public class HarbingerAssignmentLedgerScreen extends Screen {
 	private static final int FIRST_BLOODCRAFT_HEIGHT = 145;
 	private static final int HERMIT_ROAD_HEIGHT = 110;
 	private static final int FIRST_SEPARATION_HEIGHT = 180;
+	private static final int BODY_ANSWERS_HEIGHT = 143;
 	private static final int RED_TAXONOMY_HEIGHT = 56;
 	private static final int ENZYME_MASTERY_HEIGHT = 56;
 	private static final int LIVING_BESTIARY_HEIGHT = 68;
@@ -96,6 +97,7 @@ public class HarbingerAssignmentLedgerScreen extends Screen {
 		FIRST_BLOODCRAFT(1, AssignmentCategory.MAIN, FIRST_BLOODCRAFT_HEIGHT),
 		HERMIT_ROAD(1, AssignmentCategory.SIDE, HERMIT_ROAD_HEIGHT),
 		FIRST_SEPARATION(2, AssignmentCategory.MAIN, FIRST_SEPARATION_HEIGHT),
+		BODY_ANSWERS(2, AssignmentCategory.SIDE, BODY_ANSWERS_HEIGHT),
 		RED_TAXONOMY(2, AssignmentCategory.CATALOGUE, RED_TAXONOMY_HEIGHT),
 		LIVING_BESTIARY(2, AssignmentCategory.CATALOGUE, LIVING_BESTIARY_HEIGHT),
 		ENZYME_MASTERY(2, AssignmentCategory.CATALOGUE, ENZYME_MASTERY_HEIGHT),
@@ -144,6 +146,9 @@ public class HarbingerAssignmentLedgerScreen extends Screen {
 	private final boolean hasSampledBloodVial;
 	private final boolean firstSeparationStarted;
 	private final boolean hasAnyEnzyme;
+	private final boolean bodyAnswersBriefed;
+	private final boolean bodyAnswersComplete;
+	private final int muscleMemoryCount;
 	private final int redTaxonomyCount;
 	private final boolean redTaxonomyComplete;
 	private final int enzymeMasteryCount;
@@ -202,6 +207,7 @@ public class HarbingerAssignmentLedgerScreen extends Screen {
 			boolean firstRemnant, boolean ledgerGranted,
 			boolean hasVialCentrifuge, boolean hasSampledBloodVial,
 			boolean firstSeparationStarted, boolean hasAnyEnzyme,
+			boolean bodyAnswersBriefed, boolean bodyAnswersComplete, int muscleMemoryCount,
 			int redTaxonomyCount, boolean redTaxonomyComplete,
 			int enzymeMasteryCount, boolean enzymeMasteryComplete,
 			int livingBestiaryCount, int livingBestiaryTotal, int morphlingLayerCount,
@@ -233,6 +239,9 @@ public class HarbingerAssignmentLedgerScreen extends Screen {
 		this.hasSampledBloodVial = hasSampledBloodVial;
 		this.firstSeparationStarted = firstSeparationStarted;
 		this.hasAnyEnzyme = hasAnyEnzyme;
+		this.bodyAnswersBriefed = bodyAnswersBriefed;
+		this.bodyAnswersComplete = bodyAnswersComplete;
+		this.muscleMemoryCount = muscleMemoryCount;
 		this.redTaxonomyCount = redTaxonomyCount;
 		this.redTaxonomyComplete = redTaxonomyComplete;
 		this.enzymeMasteryCount = enzymeMasteryCount;
@@ -281,6 +290,7 @@ public class HarbingerAssignmentLedgerScreen extends Screen {
 			boolean firstRemnant, boolean ledgerGranted,
 			boolean hasVialCentrifuge, boolean hasSampledBloodVial,
 			boolean firstSeparationStarted, boolean hasAnyEnzyme,
+			boolean bodyAnswersBriefed, boolean bodyAnswersComplete, int muscleMemoryCount,
 			int redTaxonomyCount, boolean redTaxonomyComplete,
 			int enzymeMasteryCount, boolean enzymeMasteryComplete,
 			int livingBestiaryCount, int livingBestiaryTotal, int morphlingLayerCount,
@@ -303,6 +313,7 @@ public class HarbingerAssignmentLedgerScreen extends Screen {
 				degree, firstAwakening, degreeOne, vesselFilled, liberSanguinumCrafted, hematicIronBlockCrafted,
 				firstRemnant, ledgerGranted, hasVialCentrifuge, hasSampledBloodVial,
 				firstSeparationStarted, hasAnyEnzyme,
+				bodyAnswersBriefed, bodyAnswersComplete, muscleMemoryCount,
 				redTaxonomyCount, redTaxonomyComplete, enzymeMasteryCount, enzymeMasteryComplete,
 				livingBestiaryCount, livingBestiaryTotal, morphlingLayerCount, hasBlankHematicMemory,
 				mnemonistWovenVesselComplete, mnemonistFirstWeaveComplete, vicarMasonsRespiteDirective,
@@ -565,6 +576,7 @@ public class HarbingerAssignmentLedgerScreen extends Screen {
 			case FIRST_BLOODCRAFT -> renderFirstBloodcraft(gfx, x, y, w, mouseX, mouseY);
 			case HERMIT_ROAD -> renderHermitRoad(gfx, x, y, w, mouseX, mouseY);
 			case FIRST_SEPARATION -> renderFirstSeparation(gfx, x, y, w, mouseX, mouseY);
+			case BODY_ANSWERS -> renderBodyAnswers(gfx, x, y, w, mouseX, mouseY);
 			case RED_TAXONOMY -> renderRedTaxonomy(gfx, x, y, w, mouseX, mouseY);
 			case LIVING_BESTIARY -> renderLivingBestiary(gfx, x, y, w, mouseX, mouseY);
 			case ENZYME_MASTERY -> renderEnzymeMastery(gfx, x, y, w, mouseX, mouseY);
@@ -615,7 +627,7 @@ public class HarbingerAssignmentLedgerScreen extends Screen {
 		if (renderCollapsedAssignmentIfNeeded(gfx, AssignmentSection.HERMIT_ROAD, x, y, w, VICAR_PORTRAIT,
 				"screen.hemomancy.harbinger_assignment_ledger.hermit_road.side_title",
 				"screen.hemomancy.harbinger_assignment_ledger.hermit_road.progress",
-				progress, 2, progress >= 2)) {
+				progress, 3, progress >= 3)) {
 			return;
 		}
 		gfx.fill(x, y, x + w, y + HERMIT_ROAD_HEIGHT, PANEL_DARK);
@@ -623,8 +635,8 @@ public class HarbingerAssignmentLedgerScreen extends Screen {
 		renderGroupHeader(gfx, AssignmentSection.HERMIT_ROAD, x + 8, y + 6, w - 16,
 				"screen.hemomancy.harbinger_assignment_ledger.hermit_road.side_title",
 				"screen.hemomancy.harbinger_assignment_ledger.hermit_road.progress",
-				progress, 2, progress >= 2);
-		drawProgressBar(gfx, x + 8, y + 31, w - 16, 7, progress, 2);
+				progress, 3, progress >= 3);
+		drawProgressBar(gfx, x + 8, y + 31, w - 16, 7, progress, 3);
 		int rowY = y + 42;
 		renderAssignmentCard(gfx, x + 8, rowY, w - 16, ASSIGNMENT_CARD_HEIGHT, firstRemnant, VICAR_PORTRAIT,
 				"screen.hemomancy.harbinger_assignment_ledger.step.remnant",
@@ -666,6 +678,38 @@ public class HarbingerAssignmentLedgerScreen extends Screen {
 		renderAssignmentCard(gfx, x + 8, rowY, w - 16, ASSIGNMENT_CARD_HEIGHT, hasAnyEnzyme, ALCHEMIST_PORTRAIT,
 				"screen.hemomancy.harbinger_assignment_ledger.step.obtain_enzyme",
 				"screen.hemomancy.harbinger_assignment_ledger.step.obtain_enzyme.desc", mouseX, mouseY);
+	}
+
+	private void renderBodyAnswers(GuiGraphics gfx, int x, int y, int w, int mouseX, int mouseY) {
+		int progress = bodyAnswersProgress();
+		if (renderCollapsedAssignmentIfNeeded(gfx, AssignmentSection.BODY_ANSWERS, x, y, w, ALCHEMIST_PORTRAIT,
+				"screen.hemomancy.harbinger_assignment_ledger.body_answers.side_title",
+				"screen.hemomancy.harbinger_assignment_ledger.body_answers.progress",
+				progress, 2, progress >= 2)) {
+			return;
+		}
+		gfx.fill(x, y, x + w, y + BODY_ANSWERS_HEIGHT, PANEL_DARK);
+		ScreenDrawUtils.drawBorder(gfx, x, y, w, BODY_ANSWERS_HEIGHT, BORDER, BORDER_MUTED);
+		renderGroupHeader(gfx, AssignmentSection.BODY_ANSWERS, x + 8, y + 6, w - 16,
+				"screen.hemomancy.harbinger_assignment_ledger.body_answers.side_title",
+				"screen.hemomancy.harbinger_assignment_ledger.body_answers.progress",
+				progress, 2, progress >= 2);
+		drawProgressBar(gfx, x + 8, y + 31, w - 16, 7, progress, 2);
+		int rowY = y + 42;
+		renderAssignmentCard(gfx, x + 8, rowY, w - 16, ASSIGNMENT_CARD_HEIGHT, bodyAnswersBriefed,
+				ALCHEMIST_PORTRAIT,
+				"screen.hemomancy.harbinger_assignment_ledger.step.body_answers_briefed",
+				"screen.hemomancy.harbinger_assignment_ledger.step.body_answers_briefed.desc", mouseX, mouseY);
+		rowY += ASSIGNMENT_CARD_HEIGHT + CARD_GAP;
+		renderAssignmentCard(gfx, x + 8, rowY, w - 16, ASSIGNMENT_CARD_HEIGHT, bodyAnswersComplete,
+				ALCHEMIST_PORTRAIT,
+				"screen.hemomancy.harbinger_assignment_ledger.step.body_answers_complete",
+				"screen.hemomancy.harbinger_assignment_ledger.step.body_answers_complete.desc", mouseX, mouseY);
+		rowY += ASSIGNMENT_CARD_HEIGHT + CARD_GAP;
+		renderAssignmentCard(gfx, x + 8, rowY, w - 16, ASSIGNMENT_CARD_HEIGHT, muscleMemoryCount >= 8,
+				ALCHEMIST_PORTRAIT,
+				"screen.hemomancy.harbinger_assignment_ledger.step.muscle_memory_catalogue",
+				"screen.hemomancy.harbinger_assignment_ledger.step.muscle_memory_catalogue.desc", mouseX, mouseY);
 	}
 
 	private void renderAssignmentCard(GuiGraphics gfx, int x, int y, int w, int h, boolean done,
@@ -1328,6 +1372,14 @@ public class HarbingerAssignmentLedgerScreen extends Screen {
 		if (hasSampledBloodVial) completed++;
 		if (firstSeparationStarted) completed++;
 		if (hasAnyEnzyme) completed++;
+		return completed;
+	}
+
+	private int bodyAnswersProgress() {
+		int completed = 0;
+		if (bodyAnswersBriefed) completed++;
+		if (bodyAnswersComplete) completed++;
+		if (muscleMemoryCount >= 8) completed++;
 		return completed;
 	}
 

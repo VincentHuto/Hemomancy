@@ -56,9 +56,9 @@ public final class MaterialsData {
                 true, UnlockPredicate.minDegree(2)));
 
                                                                                                                                                                                                                                                                                 list.add(new MaterialEntry("mnemonic_reliquary", "Mnemonic Reliquary",
-                "Loadout block for equipping and managing blood manipulations.",
+				"Loadout block for equipping and managing Muscle and manipulation memories.",
                 "Functional Blocks", () -> new ItemStack(BlockInit.mnemonic_reliquary.get()),
-                true, UnlockPredicate.minDegree(2)));
+				true, UnlockPredicate.minDegree(3)));
 
                                                                                                                                                                                                                                                                                 list.add(new MaterialEntry("ghastly_alembic", "Ghastly Alembic",
                 "Processes organic materials into useful blood-craft reagents.",

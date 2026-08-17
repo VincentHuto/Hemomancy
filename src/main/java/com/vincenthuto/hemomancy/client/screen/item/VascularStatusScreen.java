@@ -5,6 +5,7 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
+import com.vincenthuto.hemomancy.common.capability.HemoAttachmentTypes;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.EnumBloodFlow;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.EnumVeinSections;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.IVascularSystem;
@@ -416,6 +417,18 @@ public class VascularStatusScreen extends Screen {
 					.withStyle(s -> s.withColor(0xAAAAAA)));
 			tooltip.add(Component.literal("Flow: " + flowName)
 					.withStyle(s -> s.withColor(flowColor)));
+			LocalPlayer player = Minecraft.getInstance().player;
+			if (player != null) {
+				EnumVeinSections selectedSection = hoveredSection;
+				var memoryState = player.getData(HemoAttachmentTypes.MUSCLE_MEMORY);
+				memoryState.getPrimed(selectedSection, player.level().getGameTime()).ifPresent(memory -> {
+					long seconds = (memoryState.remainingTicks(selectedSection,
+							player.level().getGameTime()) + 19L) / 20L;
+					tooltip.add(Component.translatable("muscle_memory.hemomancy." + memory.id())
+							.append(Component.literal(" • " + seconds + "s"))
+							.withStyle(s -> s.withColor(0xCC3344)));
+				});
+			}
 			graphics.renderTooltip(this.font, tooltip, java.util.Optional.empty(), mouseX, mouseY);
 		}
 	}

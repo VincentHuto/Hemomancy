@@ -118,6 +118,8 @@ public final class HarbingerAdvancementGranter {
 			Hemomancy.rloc("hemomancy/mnemonist_first_weave_complete");
 	public static final ResourceLocation ADV_MNEMONIST_WOVEN_VESSEL_FINISHED =
 			Hemomancy.rloc("hemomancy/mnemonist_woven_vessel_finished");
+	public static final ResourceLocation ADV_NOETIC_CONDUCTIVE_MARK_RECOGNIZED =
+			Hemomancy.rloc("hemomancy/noetic_conductive_mark_recognized");
 	public static final ResourceLocation ADV_VICAR_MASONS_RESPITE_DIRECTIVE =
 			Hemomancy.rloc("hemomancy/vicar_masons_respite_directive");
 	public static final ResourceLocation ADV_VEIN_MASON_FIRST_LESSON =

@@ -2,6 +2,7 @@ package com.vincenthuto.hemomancy.common.init;
 
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.item.component.LivingWeaponGraftData;
+import com.vincenthuto.hemomancy.common.item.component.TinctureDoseData;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.StructureScannerTooltipComponent;
 import com.vincenthuto.hemomancy.common.item.shared.MnemonicBlueprintTarget;
 
@@ -33,6 +34,13 @@ public class DataComponentInit {
 			.register("mnemonic_blueprint_target", () -> DataComponentType.<MnemonicBlueprintTarget>builder()
 					.persistent(MnemonicBlueprintTarget.CODEC)
 					.networkSynchronized(MnemonicBlueprintTarget.STREAM_CODEC)
+					.cacheEncoding()
+					.build());
+
+	public static final DeferredHolder<DataComponentType<?>, DataComponentType<TinctureDoseData>> TINCTURE_DOSES = COMPONENTS
+			.register("tincture_doses", () -> DataComponentType.<TinctureDoseData>builder()
+					.persistent(TinctureDoseData.CODEC)
+					.networkSynchronized(TinctureDoseData.STREAM_CODEC)
 					.cacheEncoding()
 					.build());
 

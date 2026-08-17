@@ -34,8 +34,12 @@ public class BloodArmModel<T extends LivingEntity> extends HumanoidModel<T> {
 
 	@Override
 	public void renderToBuffer(PoseStack poseStack, VertexConsumer buffer, int packedLight, int packedOverlay, int packedColor) {
+		head.render(poseStack, buffer, packedLight, packedOverlay, packedColor);
+		body.render(poseStack, buffer, packedLight, packedOverlay, packedColor);
 		leftArm.render(poseStack, buffer, packedLight, packedOverlay, packedColor);
 		rightArm.render(poseStack, buffer, packedLight, packedOverlay, packedColor);
+		leftLeg.render(poseStack, buffer, packedLight, packedOverlay, packedColor);
+		rightLeg.render(poseStack, buffer, packedLight, packedOverlay, packedColor);
 
 	}
 

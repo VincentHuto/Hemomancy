@@ -142,7 +142,8 @@ public final class BloodFlowLedger {
 
 	private static boolean reserveProtectedCategory(Category category) {
 		return category == Category.ARMOR || category == Category.MORPHLING || category == Category.SCAR
-				|| category == Category.BLOODLINE || category == Category.ORGAN || category == Category.TOOL;
+				|| category == Category.BLOODLINE || category == Category.ORGAN || category == Category.TOOL
+				|| category == Category.MUSCLE_MEMORY;
 	}
 
 	public static double transferFromVessel(ServerPlayer player, IBloodVolume playerVolume, IBloodVolume vesselVolume,

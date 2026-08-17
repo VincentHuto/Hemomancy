@@ -23,6 +23,7 @@ public class KnownManipulations implements IKnownManipulations, INBTSerializable
 	boolean avatarActive = false;
 	List<String> equippedManipNames = new ArrayList<>();
 	List<ManipulationLoadout> loadouts = new ArrayList<>();
+	String selectedMemoryKey = "";
 
 	@Override
 	public BlockPos getLastVeinMineStart() {
@@ -145,6 +146,9 @@ public class KnownManipulations implements IKnownManipulations, INBTSerializable
 	@Override
 	public void setSelectedManip(BloodManipulation selectedManip) {
 		this.selectedManip = selectedManip;
+		if (selectedManip != null && selectedManip != BloodManipulation.BLANK) {
+			this.selectedMemoryKey = MemorySlotRef.manipulation(selectedManip.getName()).storageKey();
+		}
 	}
 
 	@Override
@@ -171,6 +175,7 @@ public class KnownManipulations implements IKnownManipulations, INBTSerializable
 		this.avatarActive = old.isAvatarActive();
 		this.equippedManipNames = new ArrayList<>(old.getEquippedManipNames());
 		this.loadouts = new ArrayList<>(old.getLoadouts());
+		this.selectedMemoryKey = old.getSelectedMemoryRef().storageKey();
 	}
 
 	// ── Equipped manipulation slots ──
@@ -185,6 +190,62 @@ public class KnownManipulations implements IKnownManipulations, INBTSerializable
 	public void setEquippedManipNames(List<String> names) {
 		this.equippedManipNames = names != null ? new ArrayList<>(names) : new ArrayList<>();
 		ManipulationEquipHelper.normalizeEquippedNames(this.equippedManipNames);
+	}
+
+	@Override
+	public List<MemorySlotRef> getEquippedMemoryRefs() {
+		return getEquippedManipNames().stream().map(MemorySlotRef::fromStorageKey).toList();
+	}
+
+	@Override
+	public void setEquippedMemoryRefs(List<MemorySlotRef> refs) {
+		setEquippedManipNames(refs == null ? List.of()
+				: refs.stream().filter(java.util.Objects::nonNull).map(MemorySlotRef::storageKey).toList());
+	}
+
+	@Override
+	public MemorySlotRef getSelectedMemoryRef() {
+		if (selectedMemoryKey != null && !selectedMemoryKey.isBlank()) {
+			return MemorySlotRef.fromStorageKey(selectedMemoryKey);
+		}
+		BloodManipulation selected = getSelectedManip();
+		return MemorySlotRef.manipulation(selected != null ? selected.getName() : "");
+	}
+
+	@Override
+	public void setSelectedMemoryRef(MemorySlotRef ref) {
+		selectedMemoryKey = ref == null ? "" : ref.storageKey();
+		if (ref != null && ref.kind() == MemoryEntryKind.MANIPULATION) {
+			for (BloodManipulation manipulation : getManipList()) {
+				if (manipulation != null && ref.id().equals(manipulation.getName())) {
+					selectedManip = manipulation;
+					break;
+				}
+			}
+		}
+	}
+
+	@Override
+	public boolean isMemoryEquipped(MemorySlotRef ref) {
+		return ref != null && getEquippedManipNames().contains(ref.storageKey());
+	}
+
+	@Override
+	public boolean equipMemory(MemorySlotRef ref, int maxSlots) {
+		if (ref == null) return false;
+		if (ref.muscleMemory().isPresent()) {
+			MemoryEquipRules.AutoEquipResult result = MemoryEquipRules.autoEquipMuscleMemory(
+					equippedManipNames, ref.muscleMemory().orElseThrow(), maxSlots);
+			return result == MemoryEquipRules.AutoEquipResult.ADDED
+					|| result == MemoryEquipRules.AutoEquipResult.REPLACED_SECTION;
+		}
+		return ManipulationEquipHelper.equipNameIfPossible(equippedManipNames, ref.storageKey(), maxSlots);
+	}
+
+	@Override
+	public boolean unequipMemory(MemorySlotRef ref) {
+		return ref != null && ManipulationEquipHelper.unequipNameIfAllowed(
+				equippedManipNames, ref.storageKey());
 	}
 
 	@Override
@@ -239,6 +300,7 @@ public class KnownManipulations implements IKnownManipulations, INBTSerializable
 		CompoundTag selectedManip = new CompoundTag();
 		selectedManip.put("Selected", getSelectedManip().serialize());
 		selectedManip.put("SelectedVein", getSelectedVein().serializeNBT());
+		selectedManip.putString("SelectedMemory", getSelectedMemoryRef().storageKey());
 		list.add(selectedManip);
 
 		for (int i = 0; i < getKnownManips().size(); i++) {
@@ -333,6 +395,9 @@ public class KnownManipulations implements IKnownManipulations, INBTSerializable
 						equipped.add(equippedTag.getString(j));
 					}
 					setEquippedManipNames(equipped);
+				}
+				if (parsedNbt.contains("SelectedMemory", Tag.TAG_STRING)) {
+					setSelectedMemoryRef(MemorySlotRef.fromStorageKey(parsedNbt.getString("SelectedMemory")));
 				}
 				if (parsedNbt.contains("synapticLoadouts")) {
 					ListTag loadoutsTag = parsedNbt.getList("synapticLoadouts", Tag.TAG_COMPOUND);

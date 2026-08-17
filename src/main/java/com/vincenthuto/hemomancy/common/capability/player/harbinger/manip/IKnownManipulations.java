@@ -62,6 +62,20 @@ public interface IKnownManipulations {
 	/** Overwrites the equipped manipulation name list. */
 	public void setEquippedManipNames(List<String> names);
 
+	public List<MemorySlotRef> getEquippedMemoryRefs();
+
+	public void setEquippedMemoryRefs(List<MemorySlotRef> refs);
+
+	public MemorySlotRef getSelectedMemoryRef();
+
+	public void setSelectedMemoryRef(MemorySlotRef ref);
+
+	public boolean isMemoryEquipped(MemorySlotRef ref);
+
+	public boolean equipMemory(MemorySlotRef ref, int maxSlots);
+
+	public boolean unequipMemory(MemorySlotRef ref);
+
 	/** Returns {@code true} if the given manipulation is currently equipped. */
 	public boolean isManipEquipped(BloodManipulation manip);
 

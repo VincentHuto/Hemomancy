@@ -5,6 +5,8 @@ import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.IKnownManipulations;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.ManipulationLoadout;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.MemoryEntryKind;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.MemorySlotRef;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.SynapticLoadoutSlotHelper;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.manips.KnownManipulationClientPacket;
@@ -312,7 +314,9 @@ public class SynapticLoadoutScreen extends Screen {
 			double angle = start + i * (Math.PI * 2.0D / names.size());
 			int ix = cx + (int) Math.round(Math.cos(angle) * radius) - 8;
 			int iy = cy + (int) Math.round(Math.sin(angle) * radius) - 8;
-			gfx.blit(MEMORY_BASE, ix, iy, 0, 0, 16, 16, 16, 16);
+			if (MemorySlotRef.fromStorageKey(names.get(i)).kind() == MemoryEntryKind.MANIPULATION) {
+				gfx.blit(MEMORY_BASE, ix, iy, 0, 0, 16, 16, 16, 16);
+			}
 			gfx.blit(memoryOverlayTexture(names.get(i)), ix, iy, 0, 0, 16, 16, 16, 16);
 		}
 	}
@@ -332,7 +336,7 @@ public class SynapticLoadoutScreen extends Screen {
 			lines.add(Component.literal("Cost: " + COST_BLOOD + " blood, " + COST_XP + " XP")
 					.withStyle(ChatFormatting.GOLD));
 		} else {
-			lines.add(Component.literal(loadout.manipNames().size() + " remembered manipulations")
+			lines.add(Component.literal(loadout.manipNames().size() + " remembered powers")
 					.withStyle(ChatFormatting.GRAY));
 			lines.add(Component.literal("Apply and rename are free. Overwrite costs "
 					+ COST_BLOOD + " blood, " + COST_XP + " XP.").withStyle(ChatFormatting.GOLD));
@@ -508,6 +512,10 @@ public class SynapticLoadoutScreen extends Screen {
 	}
 
 	private ResourceLocation memoryOverlayTexture(String manipName) {
+		MemorySlotRef ref = MemorySlotRef.fromStorageKey(manipName);
+		if (ref.kind() == MemoryEntryKind.MUSCLE_MEMORY) {
+			return Hemomancy.rloc("textures/item/tincture_" + ref.id() + ".png");
+		}
 		String texture = switch (manipName) {
 			case "conjure_axe" -> "memory_living_axe_overlay";
 			case "conjure_blade" -> "memory_living_blade_overlay";
@@ -628,7 +636,7 @@ public class SynapticLoadoutScreen extends Screen {
 					.withStyle(ChatFormatting.GOLD));
 		} else {
 			tooltip.add(Component.literal(loadout.name()));
-			tooltip.add(Component.literal(loadout.manipNames().size() + " remembered manipulations")
+			tooltip.add(Component.literal(loadout.manipNames().size() + " remembered powers")
 					.withStyle(ChatFormatting.GRAY));
 		}
 		gfx.renderTooltip(font, tooltip, Optional.empty(), mouseX, mouseY);

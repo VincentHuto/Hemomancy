@@ -8,6 +8,7 @@ import com.vincenthuto.hemomancy.common.manipulation.ManipLevel;
 import com.vincenthuto.hemomancy.common.manipulation.ManipulationRankGates;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.manips.KnownManipulationServerPacket;
+import com.vincenthuto.hemomancy.common.mission.MnemonicReliquaryProgression;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.Item;
 import net.neoforged.neoforge.registries.DeferredHolder;
@@ -83,6 +84,7 @@ public final class KnownManipulationGrantHelper {
 		known.getKnownManips().put(manipulation, ManipLevel.BLANK);
 		boolean equipped = ManipulationEquipHelper.equipNameIfPossible(known.getEquippedManipNames(),
 				manipulation.getName(), ManipSlotHelper.getMaxSlots(player));
+		MnemonicReliquaryProgression.onCapacityChanged(player, known);
 		PacketHandler.sendToPlayer(player, new KnownManipulationServerPacket(known));
 		return new MemoryGrantResult(equipped ? MemoryGrantStatus.GRANTED_EQUIPPED : MemoryGrantStatus.GRANTED,
 				manipulation, checked.requiredDegree());

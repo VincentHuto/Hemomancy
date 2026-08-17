@@ -121,8 +121,40 @@ public class ItemInit {
                             .usingConvertsTo(Items.BOWL).build())));
     public static final DeferredHolder<Item, Item> sanguine_formation = BASEITEMS.register("sanguine_formation",
             () -> new SanguineFormationItem(new Item.Properties()));
+    public static final DeferredHolder<Item, Item> cured_clay_jug = BASEITEMS.register("cured_clay_jug",
+            () -> new Item(new Item.Properties().stacksTo(16)));
+    public static final DeferredHolder<Item, Item> tincture_sanguine_fists = BASEITEMS.register("tincture_sanguine_fists",
+            () -> new TinctureSanguineFistsItem(new Item.Properties().rarity(Rarity.UNCOMMON)));
+    public static final DeferredHolder<Item, Item> tincture_laboring_arms = tincture("laboring_arms", com.vincenthuto.hemomancy.common.capability.player.harbinger.musclememory.MuscleMemory.LABORING_ARMS);
+    public static final DeferredHolder<Item, Item> tincture_coursing_legs = tincture("coursing_legs", com.vincenthuto.hemomancy.common.capability.player.harbinger.musclememory.MuscleMemory.COURSING_LEGS);
+    public static final DeferredHolder<Item, Item> tincture_hushed_gait = tincture("hushed_gait", com.vincenthuto.hemomancy.common.capability.player.harbinger.musclememory.MuscleMemory.HUSHED_GAIT);
+    public static final DeferredHolder<Item, Item> tincture_predatory_eyes = tincture("predatory_eyes", com.vincenthuto.hemomancy.common.capability.player.harbinger.musclememory.MuscleMemory.PREDATORY_EYES);
+    public static final DeferredHolder<Item, Item> tincture_second_pulse = tincture("second_pulse", com.vincenthuto.hemomancy.common.capability.player.harbinger.musclememory.MuscleMemory.SECOND_PULSE);
+    public static final DeferredHolder<Item, Item> tincture_enduring_viscera = tincture("enduring_viscera", com.vincenthuto.hemomancy.common.capability.player.harbinger.musclememory.MuscleMemory.ENDURING_VISCERA);
+    public static final DeferredHolder<Item, Item> tincture_carrion_metabolism = tincture("carrion_metabolism", com.vincenthuto.hemomancy.common.capability.player.harbinger.musclememory.MuscleMemory.CARRION_METABOLISM);
+    public static final DeferredHolder<Item, Item> tincture_sanguine_fists_jug = tinctureJug("sanguine_fists", com.vincenthuto.hemomancy.common.capability.player.harbinger.musclememory.MuscleMemory.SANGUINE_FISTS);
+    public static final DeferredHolder<Item, Item> tincture_laboring_arms_jug = tinctureJug("laboring_arms", com.vincenthuto.hemomancy.common.capability.player.harbinger.musclememory.MuscleMemory.LABORING_ARMS);
+    public static final DeferredHolder<Item, Item> tincture_coursing_legs_jug = tinctureJug("coursing_legs", com.vincenthuto.hemomancy.common.capability.player.harbinger.musclememory.MuscleMemory.COURSING_LEGS);
+    public static final DeferredHolder<Item, Item> tincture_hushed_gait_jug = tinctureJug("hushed_gait", com.vincenthuto.hemomancy.common.capability.player.harbinger.musclememory.MuscleMemory.HUSHED_GAIT);
+    public static final DeferredHolder<Item, Item> tincture_predatory_eyes_jug = tinctureJug("predatory_eyes", com.vincenthuto.hemomancy.common.capability.player.harbinger.musclememory.MuscleMemory.PREDATORY_EYES);
+    public static final DeferredHolder<Item, Item> tincture_second_pulse_jug = tinctureJug("second_pulse", com.vincenthuto.hemomancy.common.capability.player.harbinger.musclememory.MuscleMemory.SECOND_PULSE);
+    public static final DeferredHolder<Item, Item> tincture_enduring_viscera_jug = tinctureJug("enduring_viscera", com.vincenthuto.hemomancy.common.capability.player.harbinger.musclememory.MuscleMemory.ENDURING_VISCERA);
+    public static final DeferredHolder<Item, Item> tincture_carrion_metabolism_jug = tinctureJug("carrion_metabolism", com.vincenthuto.hemomancy.common.capability.player.harbinger.musclememory.MuscleMemory.CARRION_METABOLISM);
     public static final DeferredHolder<Item, Item> sanguine_blob = BASEITEMS.register("sanguine_blob",
             () -> new SanguineBlobItem(new Item.Properties()));
+
+    private static DeferredHolder<Item, Item> tincture(String id, com.vincenthuto.hemomancy.common.capability.player.harbinger.musclememory.MuscleMemory memory) {
+        return BASEITEMS.register("tincture_" + id,
+                () -> new MuscleMemoryTinctureItem(new Item.Properties().rarity(Rarity.UNCOMMON), memory,
+                        com.vincenthuto.hemomancy.common.capability.player.harbinger.musclememory.MuscleMemoryPrimingRules.FLASK_DOSES,
+                        () -> com.vincenthuto.hutoslib.common.registry.HLItemInit.cured_clay_flask.get()));
+    }
+    private static DeferredHolder<Item, Item> tinctureJug(String id, com.vincenthuto.hemomancy.common.capability.player.harbinger.musclememory.MuscleMemory memory) {
+        return BASEITEMS.register("tincture_" + id + "_jug",
+                () -> new MuscleMemoryTinctureItem(new Item.Properties().rarity(Rarity.UNCOMMON), memory,
+                        com.vincenthuto.hemomancy.common.capability.player.harbinger.musclememory.MuscleMemoryPrimingRules.JUG_DOSES,
+                        () -> cured_clay_jug.get()));
+    }
     public static final DeferredHolder<Item, Item> mnemonic_blueprint = BASEITEMS.register("mnemonic_blueprint",
             () -> new MnemonicBlueprintItem(new Item.Properties().fireResistant()));
     public static final DeferredHolder<Item, Item> mnemonic_folio = BASEITEMS.register("mnemonic_folio",

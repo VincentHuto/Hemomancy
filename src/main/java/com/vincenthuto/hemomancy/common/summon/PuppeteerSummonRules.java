@@ -11,6 +11,8 @@ public final class PuppeteerSummonRules {
 	public static final int CROSSBAR_DISMISSAL_TICKS = 100;
 	public static final int DISMISSAL_GRACE_PER_BOUND_COMMAND_LEVEL = 20;
 	public static final int CLAIMED_WILL_UPKEEP_PER_MINUTE = 16;
+	public static final double MORPHLING_TETHER_RANGE_MULTIPLIER = 0.75;
+	public static final double MORPHLING_THREAD_UPKEEP_MULTIPLIER = 1.5;
 
 	private PuppeteerSummonRules() {
 	}
@@ -51,6 +53,12 @@ public final class PuppeteerSummonRules {
 		return commandRange(farTetherLevel) + Math.max(0, boundCommandLevel) * 4.0;
 	}
 
+	public static double effectiveCommandRange(int farTetherLevel, int boundCommandLevel,
+			boolean morphlingEquipped) {
+		double range = commandRange(farTetherLevel, boundCommandLevel);
+		return morphlingEquipped ? range * MORPHLING_TETHER_RANGE_MULTIPLIER : range;
+	}
+
 	public static int threadCapacity(int boundCommandLevel) {
 		return THREAD_CAPACITY + Math.max(0, boundCommandLevel) * THREAD_CAPACITY_PER_BOUND_COMMAND_LEVEL;
 	}
@@ -81,6 +89,13 @@ public final class PuppeteerSummonRules {
 
 	public static int adjustedThreadCost(int baseCost, int threadEconomyLevel) {
 		return Math.max(1, (int) Math.ceil(Math.max(0, baseCost) * threadCostMultiplier(threadEconomyLevel)));
+	}
+
+	public static int interferedThreadUpkeep(int adjustedUpkeep, boolean morphlingEquipped) {
+		if (!morphlingEquipped) {
+			return Math.max(0, adjustedUpkeep);
+		}
+		return (int) Math.ceil(Math.max(0, adjustedUpkeep) * MORPHLING_THREAD_UPKEEP_MULTIPLIER);
 	}
 
 	public static int dismissalGraceTicks(int boundCommandLevel) {
@@ -119,6 +134,11 @@ public final class PuppeteerSummonRules {
 
 	public static boolean shouldUnravelForDimension(boolean ownerInSameDimension) {
 		return !ownerInSameDimension;
+	}
+
+	public static boolean qualifiesForMorphlingInterference(boolean alive, boolean loaded,
+			boolean ownerBound, boolean trialSummon, boolean sameDimension, boolean ownerSessionMatches) {
+		return alive && loaded && ownerBound && !trialSummon && sameDimension && ownerSessionMatches;
 	}
 
 	public static boolean shouldDespawnInPeaceful(boolean trialSummon, UUID ownerUuid) {

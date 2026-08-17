@@ -3,6 +3,7 @@ package com.vincenthuto.hemomancy.common.block.harbinger.functional;
 import com.vincenthuto.hemomancy.common.init.BlockEntityInit;
 import com.vincenthuto.hemomancy.common.menu.tile.functional.MnemonicReliquaryMenu;
 import com.vincenthuto.hemomancy.common.tile.functional.MnemonicReliquaryBlockEntity;
+import com.vincenthuto.hemomancy.common.mission.MnemonicReliquaryProgression;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
@@ -106,6 +107,7 @@ public class MnemonicReliquaryBlock extends Block implements EntityBlock, Simple
 
 	private InteractionResult handleInteraction(Level level, BlockPos pos, Player player) {
 		if (!level.isClientSide) {
+			MnemonicReliquaryProgression.teach((ServerPlayer) player);
 			BlockEntity be = level.getBlockEntity(pos);
 			if (be instanceof MnemonicReliquaryBlockEntity reliquary) {
 				reliquary.startOpen();

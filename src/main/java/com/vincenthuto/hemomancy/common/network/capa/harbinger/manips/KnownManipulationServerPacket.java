@@ -29,6 +29,7 @@ public class KnownManipulationServerPacket implements CustomPacketPayload {
 	private LinkedHashMap<BloodManipulation, ManipLevel> known = new LinkedHashMap<>();
 
 	private BloodManipulation selected;
+	private String selectedMemoryKey = "";
 
 	private VeinLocation selectedVein;
 	BlockPos lastVeinMineStart;
@@ -42,6 +43,7 @@ public class KnownManipulationServerPacket implements CustomPacketPayload {
 		ManipulationRetirementRules.sanitizeKnownManipulations(known);
 		this.known = known.getKnownManips();
 		this.selected = known.getSelectedManip();
+		this.selectedMemoryKey = known.getSelectedMemoryRef().storageKey();
 		this.veinList = known.getVeinList();
 		this.selectedVein = known.getSelectedVein();
 		this.avatarActive = known.isAvatarActive();
@@ -53,6 +55,13 @@ public class KnownManipulationServerPacket implements CustomPacketPayload {
 	public KnownManipulationServerPacket(LinkedHashMap<BloodManipulation, ManipLevel> list, BloodManipulation selected,
 			List<VeinLocation> veinList, VeinLocation selectedVein, boolean avatarActive, BlockPos lastVeinMineStart,
 			List<String> equippedManipNames, List<ManipulationLoadout> loadouts) {
+		this(list, selected, veinList, selectedVein, avatarActive, lastVeinMineStart, equippedManipNames, loadouts,
+				selected != null ? selected.getName() : "");
+	}
+
+	public KnownManipulationServerPacket(LinkedHashMap<BloodManipulation, ManipLevel> list, BloodManipulation selected,
+			List<VeinLocation> veinList, VeinLocation selectedVein, boolean avatarActive, BlockPos lastVeinMineStart,
+			List<String> equippedManipNames, List<ManipulationLoadout> loadouts, String selectedMemoryKey) {
 
 		this.known = list;
 		this.selected = selected;
@@ -62,6 +71,7 @@ public class KnownManipulationServerPacket implements CustomPacketPayload {
 		this.lastVeinMineStart = lastVeinMineStart;
 		this.equippedManipNames = equippedManipNames != null ? equippedManipNames : new ArrayList<>();
 		this.loadouts = loadouts != null ? loadouts : new ArrayList<>();
+		this.selectedMemoryKey = selectedMemoryKey != null ? selectedMemoryKey : "";
 	}
 	
 	
@@ -91,8 +101,9 @@ public class KnownManipulationServerPacket implements CustomPacketPayload {
 		for (int i = 0; i < loadoutCount; ++i) {
 			loadouts.add(ManipulationLoadout.readFromBuf(buf, i));
 		}
+		String selectedMemoryKey = buf.readUtf();
 		return new KnownManipulationServerPacket(manips, sel, veinList, selvein, avatarActive, lastveinstart,
-				equippedManipNames, loadouts);
+				equippedManipNames, loadouts, selectedMemoryKey);
 	}
 	public static void encode(final FriendlyByteBuf buf, final KnownManipulationServerPacket msg) {
 		if (msg.selected != null) {
@@ -125,6 +136,7 @@ public class KnownManipulationServerPacket implements CustomPacketPayload {
 		for (ManipulationLoadout loadout : msg.loadouts) {
 			loadout.writeToBuf(buf);
 		}
+		buf.writeUtf(msg.selectedMemoryKey);
 
 	}
 	public static void handle(final KnownManipulationServerPacket msg, final IPayloadContext ctx) {
@@ -142,6 +154,8 @@ public class KnownManipulationServerPacket implements CustomPacketPayload {
 			known.setLastVeinMineStart(msg.lastVeinMineStart);
 			known.setEquippedManipNames(msg.equippedManipNames);
 			known.setLoadouts(msg.loadouts);
+			known.setSelectedMemoryRef(com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.MemorySlotRef
+					.fromStorageKey(msg.selectedMemoryKey));
 			ManipulationRetirementRules.sanitizeKnownManipulations(known);
 
 	

@@ -149,11 +149,17 @@ public final class CrossbarRadialScreen extends Screen {
 	@Override
 	public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
 		super.render(graphics, mouseX, mouseY, partialTick);
-		menu.setCentralText(Component.translatable("screen.hemomancy.crossbar_radial.center",
+		var center = Component.translatable("screen.hemomancy.crossbar_radial.center",
 				MarionetteCrossbarItem.getThread(crossbar), MarionetteCrossbarItem.getThreadCapacity(crossbar),
 				Component.translatable("entity.hemomancy." + MarionetteCrossbarItem.getSelectedSummonName(crossbar)),
 				Component.translatable("screen.hemomancy.crossbar_radial.mode."
-						+ MarionetteCrossbarItem.getCommandMode(crossbar).serializedName())));
+						+ MarionetteCrossbarItem.getCommandMode(crossbar).serializedName()));
+		if (minecraft != null && minecraft.player != null
+				&& BoundSummonBehavior.hasEquippedMorphling(minecraft.player)
+				&& !MarionetteCrossbarItem.activeSummonsForOwner(minecraft.player).isEmpty()) {
+			center = center.copy().append("\n").append(Component.translatable("crossbar.interference.gnawed"));
+		}
+		menu.setCentralText(center);
 		menu.draw(graphics, partialTick, mouseX, mouseY);
 	}
 

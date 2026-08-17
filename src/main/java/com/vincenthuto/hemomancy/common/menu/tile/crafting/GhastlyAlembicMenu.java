@@ -1,6 +1,7 @@
 package com.vincenthuto.hemomancy.common.menu.tile.crafting;
 
 import com.vincenthuto.hemomancy.common.init.ContainerInit;
+import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.item.harbinger.BloodyFlaskItem;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.BloodGourdItem;
 import com.vincenthuto.hemomancy.common.menu.slot.GhastlyAlembicFlaskSlot;
@@ -34,7 +35,8 @@ public class GhastlyAlembicMenu extends AbstractContainerMenu {
 	public static final int RESULT_SLOT     = 2;
 	public static final int CATALYST_SLOT   = 3;
 	public static final int FLASK_OUTPUT_SLOT = 4;
-	public static final int SLOT_COUNT      = 5;
+	public static final int TINCTURE_BLOOD_SLOT = 5;
+	public static final int SLOT_COUNT      = 6;
 	public static final int DATA_COUNT      = 3;
 
 	// Crafting area height — matches the screen's layout
@@ -104,6 +106,14 @@ public class GhastlyAlembicMenu extends AbstractContainerMenu {
 				return stack.getItem() instanceof BloodGourdItem ? 1 : super.getMaxStackSize(stack);
 			}
 		});
+		// Dedicated recipe blood input; unlike FLASK_SLOT this is never drained into the reservoir.
+		this.addSlot(new Slot(container, TINCTURE_BLOOD_SLOT, 8, 32) {
+			@Override
+			public boolean mayPlace(ItemStack stack) {
+				return stack.getItem() == ItemInit.bloody_flask.get()
+						|| stack.getItem() == ItemInit.bloody_jug.get();
+			}
+		});
 
 		// Player inventory (3 rows) — pushed down below crafting area
 		int invY = CRAFT_AREA_HEIGHT + 14;
@@ -160,6 +170,14 @@ public class GhastlyAlembicMenu extends AbstractContainerMenu {
 		return stack.getItem() instanceof BloodGourdItem;
 	}
 
+	private boolean isNeededBloodInput(ItemStack stack) {
+		return DistillationRecipe.getAllRecipes(this.level).stream()
+				.anyMatch(recipe -> !recipe.isPallid() && recipe.requiresBloodInput()
+						&& recipe.getIngredient().test(container.getItem(INGREDIENT_SLOT))
+						&& (!recipe.requiresCatalyst() || recipe.getCatalyst().test(container.getItem(CATALYST_SLOT)))
+						&& recipe.getBloodInput().test(stack));
+	}
+
 	// ---- Shift-click logic ----
 
 	@Override
@@ -175,13 +193,16 @@ public class GhastlyAlembicMenu extends AbstractContainerMenu {
 		if (index == RESULT_SLOT || index == FLASK_OUTPUT_SLOT) {
 			if (!this.moveItemStackTo(slotStack, INV_START, HOTBAR_END, true)) return ItemStack.EMPTY;
 			slot.onQuickCraft(slotStack, copy);
-		} else if (index == INGREDIENT_SLOT || index == FLASK_SLOT || index == CATALYST_SLOT) {
+		} else if (index == INGREDIENT_SLOT || index == FLASK_SLOT || index == CATALYST_SLOT
+				|| index == TINCTURE_BLOOD_SLOT) {
 			if (!this.moveItemStackTo(slotStack, INV_START, HOTBAR_END, false)) return ItemStack.EMPTY;
 		}
 		// Moving FROM player inventory to container
 		else {
 			if (this.canSmelt(slotStack)) {
 				if (!this.moveItemStackTo(slotStack, INGREDIENT_SLOT, INGREDIENT_SLOT + 1, false)) return ItemStack.EMPTY;
+			} else if (this.isNeededBloodInput(slotStack)) {
+				if (!this.moveItemStackTo(slotStack, TINCTURE_BLOOD_SLOT, TINCTURE_BLOOD_SLOT + 1, false)) return ItemStack.EMPTY;
 			} else if (this.isBloodGourd(slotStack)) {
 				if (!this.moveItemStackTo(slotStack, FLASK_OUTPUT_SLOT, FLASK_OUTPUT_SLOT + 1, false)) return ItemStack.EMPTY;
 			} else if (this.isFlask(slotStack)) {
@@ -226,7 +247,8 @@ public class GhastlyAlembicMenu extends AbstractContainerMenu {
 	public boolean recipeMatches(DistillationRecipe recipe) {
 		return recipe.matchesItems(
 				this.container.getItem(GhastlyAlembicBlockEntity.SLOT_INPUT),
-				this.container.getItem(GhastlyAlembicBlockEntity.SLOT_CATALYST));
+				this.container.getItem(GhastlyAlembicBlockEntity.SLOT_CATALYST),
+				this.container.getItem(GhastlyAlembicBlockEntity.SLOT_TINCTURE_BLOOD));
 	}
 
 	public boolean shouldMoveToInventory(int slotIndex) {

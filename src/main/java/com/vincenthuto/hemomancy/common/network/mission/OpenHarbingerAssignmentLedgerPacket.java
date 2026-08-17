@@ -20,6 +20,9 @@ public record OpenHarbingerAssignmentLedgerPacket(
 		boolean hasSampledBloodVial,
 		boolean firstSeparationStarted,
 		boolean hasAnyEnzyme,
+		boolean bodyAnswersBriefed,
+		boolean bodyAnswersComplete,
+		int muscleMemoryCount,
 		int redTaxonomyCount,
 		boolean redTaxonomyComplete,
 		int enzymeMasteryCount,
@@ -79,6 +82,9 @@ public record OpenHarbingerAssignmentLedgerPacket(
 		buf.writeBoolean(msg.hasSampledBloodVial);
 		buf.writeBoolean(msg.firstSeparationStarted);
 		buf.writeBoolean(msg.hasAnyEnzyme);
+		buf.writeBoolean(msg.bodyAnswersBriefed);
+		buf.writeBoolean(msg.bodyAnswersComplete);
+		buf.writeVarInt(msg.muscleMemoryCount);
 		buf.writeVarInt(msg.redTaxonomyCount);
 		buf.writeBoolean(msg.redTaxonomyComplete);
 		buf.writeVarInt(msg.enzymeMasteryCount);
@@ -136,6 +142,9 @@ public record OpenHarbingerAssignmentLedgerPacket(
 				buf.readBoolean(),
 				buf.readBoolean(),
 				buf.readBoolean(),
+				buf.readBoolean(),
+				buf.readBoolean(),
+				buf.readVarInt(),
 				buf.readVarInt(),
 				buf.readBoolean(),
 				buf.readVarInt(),
@@ -186,6 +195,7 @@ public record OpenHarbingerAssignmentLedgerPacket(
 				msg.firstRemnant, msg.ledgerGranted,
 				msg.hasVialCentrifuge, msg.hasSampledBloodVial,
 				msg.firstSeparationStarted, msg.hasAnyEnzyme,
+				msg.bodyAnswersBriefed, msg.bodyAnswersComplete, msg.muscleMemoryCount,
 				msg.redTaxonomyCount, msg.redTaxonomyComplete,
 				msg.enzymeMasteryCount, msg.enzymeMasteryComplete,
 				msg.livingBestiaryCount, msg.livingBestiaryTotal, msg.morphlingLayerCount,
