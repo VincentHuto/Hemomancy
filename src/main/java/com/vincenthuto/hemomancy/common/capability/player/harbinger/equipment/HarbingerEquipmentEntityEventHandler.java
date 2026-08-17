@@ -8,7 +8,6 @@ import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillPoin
 import com.vincenthuto.hemomancy.common.init.AttributeInit;
 import com.vincenthuto.hemomancy.common.init.EffectInit;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
-import com.vincenthuto.hemomancy.common.item.harbinger.bloodline.VasculariumCharmRules;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.BloodGourdItem;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.PacketCurvedHornAnimation;
@@ -25,16 +24,13 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
-import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.GameRules;
 import net.neoforged.bus.api.EventPriority;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.EntityJoinLevelEvent;
 import net.neoforged.neoforge.event.entity.living.LivingDeathEvent;
-import net.neoforged.neoforge.event.entity.living.LivingDropsEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 import net.neoforged.neoforge.network.PacketDistributor;
@@ -106,21 +102,6 @@ public class HarbingerEquipmentEntityEventHandler {
             syncLayerVisibilityToPlayer(trackedPlayer, tracker);
         }
     }
-    private static void dropItemsAt(Player player, Collection<ItemEntity> drops) {
-        HemoCapabilityAccess.getEquipment(player).ifPresent(equipment -> {
-            for (int i = 0; i < equipment.getSlots(); ++i) {
-                ItemStack stack = equipment.getStackInSlot(i);
-                if (!stack.isEmpty() && VasculariumCharmRules.shouldDropEquippedSlot(stack.is(ItemInit.charm_of_vascularium.get()))) {
-                    ItemEntity ei = new ItemEntity(player.level(), player.getX(), player.getY() + player.getEyeHeight(), player.getZ(), stack.copy());
-                    ei.setPickUpDelay(40);
-                    drops.add(ei);
-                    equipment.setStackInSlot(i, ItemStack.EMPTY);
-                }
-            }
-        });
-    }
-
-
     @SubscribeEvent
     public static void playerJoin(EntityJoinLevelEvent event) {
         Entity entity = event.getEntity();
@@ -150,17 +131,6 @@ public class HarbingerEquipmentEntityEventHandler {
             syncLayerVisibilityToClient(player);
         }
     }
-    // --- Capability lifecycle ---
-
-    @SubscribeEvent
-    public static void playerDeath(LivingDropsEvent event) {
-        if (event.getEntity() instanceof Player && !event.getEntity().level().isClientSide && !event.getEntity().level().getGameRules().getBoolean(GameRules.RULE_KEEPINVENTORY)) {
-            dropItemsAt((Player) event.getEntity(), event.getDrops());
-        }
-    }
-
-
-
     // --- Network sync ---
 
     public static void syncSlot(Player player, byte slot, ItemStack stack, Collection<? extends Player> receivers) {

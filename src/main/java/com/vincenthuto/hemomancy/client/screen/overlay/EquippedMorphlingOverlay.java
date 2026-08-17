@@ -53,12 +53,12 @@ public class EquippedMorphlingOverlay {
 
 	private void renderBondMeter(GuiGraphics gfx, ItemStack equipped, int x, int y) {
 		double required = MorphlingItem.requiredBondingBlood(equipped);
-		gfx.pose().pushPose();
-		gfx.pose().translate(0,-62,0);
 		if (!MorphlingItem.isPassiveUpkeepEnabled() || required <= 0.0D
 				|| MorphlingItem.getMaturityLevel(equipped) >= 4) {
 			return;
 		}
+		gfx.pose().pushPose();
+		gfx.pose().translate(0,-62,0);
 		double absorbed = Math.min(required, MorphlingItem.getBondingBlood(equipped));
 		int width = 32;
 		int filled = (int) Math.round(width * absorbed / required);

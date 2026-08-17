@@ -9,7 +9,6 @@ import com.vincenthuto.hemomancy.common.capability.player.harbinger.scar.fungal.
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillPointHelper;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
-import com.vincenthuto.hemomancy.common.item.harbinger.bloodline.VasculariumCharmRules;
 import com.vincenthuto.hemomancy.common.item.harbinger.scar.fungal.SaprovittaVestigiumItem;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
@@ -20,7 +19,6 @@ import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
-import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -34,7 +32,6 @@ import net.neoforged.neoforge.event.entity.living.LivingDeathEvent;
 import net.neoforged.neoforge.event.level.BlockEvent.BreakEvent;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 
-import java.util.Collection;
 import java.util.EnumMap;
 import java.util.List;
 
@@ -61,22 +58,6 @@ public class ScarsEntityEventHandler {
 				Hemomancy.rloc("synergy_ferric"), 1.0, AttributeModifier.Operation.ADD_VALUE));
 		SYNERGY_BONUSES.put(EnumBloodTendency.TENEBRIS, new SynergyBonus(Attributes.MOVEMENT_SPEED,
 				Hemomancy.rloc("synergy_tenebris"), 0.05, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL));
-	}
-
-	private static void dropItemsAt(Player player, Collection<ItemEntity> drops) {
-		HemoCapabilityAccess.getEquipment(player).ifPresent(equipment -> {
-			for (int i = 0; i < equipment.getSlots(); ++i) {
-				ItemStack stack = equipment.getStackInSlot(i);
-				if (!stack.isEmpty() && VasculariumCharmRules.shouldDropEquippedSlot(
-						stack.is(ItemInit.charm_of_vascularium.get()))) {
-					ItemEntity ei = new ItemEntity(player.level(), player.getX(), player.getY() + player.getEyeHeight(),
-							player.getZ(), stack.copy());
-					ei.setPickUpDelay(40);
-					drops.add(ei);
-					equipment.setStackInSlot(i, ItemStack.EMPTY);
-				}
-			}
-		});
 	}
 
 	@SubscribeEvent(priority = EventPriority.LOWEST)

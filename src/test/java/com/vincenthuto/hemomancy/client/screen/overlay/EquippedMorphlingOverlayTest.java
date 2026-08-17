@@ -36,6 +36,7 @@ public final class EquippedMorphlingOverlayTest {
 		feedingAnimationAdvancesThroughSixFramesAndLoops();
 		stableRenderClockAdvancesWithPartialTicks();
 		bloodOverlayUsesStableRenderClock();
+		bondMeterChecksVisibilityBeforeMutatingTheSharedPose();
 		lumenlaceItemUsesLumenlaceHudIdentity();
 		lumenlaceItemModelUsesLumenlaceTexture();
 		lumenlacePaletteCarriesBlueAndGoldNeuralSignals();
@@ -118,6 +119,25 @@ public final class EquippedMorphlingOverlayTest {
 		if (!source.contains("EquippedMorphlingOverlayPlacement.animationTimeSeconds")) {
 			throw new AssertionError("Blood HUD animation must use the shared tick/partial-tick render clock");
 		}
+	}
+
+	private static void bondMeterChecksVisibilityBeforeMutatingTheSharedPose() throws Exception {
+		Path sourcePath = Path.of("src/main/java/com/vincenthuto/hemomancy/client/screen/overlay/EquippedMorphlingOverlay.java");
+		String source = Files.readString(sourcePath);
+		int methodStart = source.indexOf("private void renderBondMeter");
+		int methodEnd = source.indexOf("\n\tprivate void renderLegacyIcon", methodStart);
+		if (methodStart < 0 || methodEnd < 0) {
+			throw new AssertionError("Could not locate renderBondMeter source");
+		}
+		String method = source.substring(methodStart, methodEnd);
+		int guard = method.indexOf("if (!MorphlingItem.isPassiveUpkeepEnabled()");
+		int push = method.indexOf("gfx.pose().pushPose()");
+		int translate = method.indexOf("gfx.pose().translate(0,-62,0)");
+		int pop = method.indexOf("gfx.pose().popPose()");
+		assertTrue("bond meter visibility guard exists", guard >= 0);
+		assertTrue("bond meter pushes a pose after its visibility guard", guard < push);
+		assertTrue("bond meter translates only after pushing its pose", push < translate);
+		assertTrue("bond meter restores its pose", pop > translate);
 	}
 
 	private static void lumenlaceItemUsesLumenlaceHudIdentity() {

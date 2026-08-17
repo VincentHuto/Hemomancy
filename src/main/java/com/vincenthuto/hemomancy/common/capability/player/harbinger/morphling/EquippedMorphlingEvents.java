@@ -5,10 +5,12 @@ import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodFlowContribution.Category;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodFlowLedger;
 import com.vincenthuto.hemomancy.common.event.LastRiteHelper;
+import com.vincenthuto.hemomancy.common.item.harbinger.morphlings.ItemMorphlingJar;
 import com.vincenthuto.hemomancy.common.item.harbinger.morphlings.IMorphling;
 import com.vincenthuto.hemomancy.common.item.harbinger.morphlings.MorphlingItem;
 import com.vincenthuto.hemomancy.common.item.harbinger.morphlings.MorphlingUpkeepRules;
 import com.vincenthuto.hemomancy.common.item.harbinger.morphlings.MorphlingMetabolismRules;
+import com.vincenthuto.hemomancy.common.item.itemhandler.MorphlingJarItemHandler;
 import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillPointHelper;
 import com.vincenthuto.hemomancy.common.init.SkillPointInit;
 import com.vincenthuto.hemomancy.common.network.morphling.SyncEquippedMorphlingPacket;
@@ -18,11 +20,13 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
+import net.neoforged.bus.api.EventPriority;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.living.LivingDamageEvent;
@@ -35,8 +39,12 @@ import net.neoforged.neoforge.event.level.BlockEvent;
 import net.neoforged.neoforge.event.tick.LevelTickEvent;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 import net.neoforged.neoforge.network.PacketDistributor;
+import net.neoforged.neoforge.capabilities.Capabilities;
+import net.neoforged.neoforge.items.IItemHandler;
 
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -202,6 +210,58 @@ public class EquippedMorphlingEvents {
 				}
 			}
 		});
+	}
+
+	@SubscribeEvent(priority = EventPriority.LOWEST)
+	public static void onPlayerDeath(LivingDeathEvent event) {
+		if (event.isCanceled() || !(event.getEntity() instanceof Player player) || player.level().isClientSide) {
+			return;
+		}
+
+		IEquippedMorphling morphling = HemoCapabilityAccess.getEquippedMorphling(player).orElse(null);
+		if (morphling == null || !morphling.hasMorphling()) {
+			return;
+		}
+
+		ItemStack equipped = morphling.getEquippedMorphling().copy();
+		boolean returnedToJar = MorphlingDeathRecovery.returnToJar(findMorphlingJars(player), equipped);
+
+		morphling.clearMorphling();
+		MorphlingItem.clearMorphlingPassiveEffects(player);
+		LastRiteHelper.clearMorphlingRites(player);
+
+		if (!returnedToJar) {
+			ItemEntity drop = new ItemEntity(player.level(), player.getX(), player.getY() + player.getEyeHeight(),
+					player.getZ(), equipped);
+			drop.setPickUpDelay(40);
+			player.level().addFreshEntity(drop);
+		}
+
+		if (player instanceof ServerPlayer serverPlayer) {
+			syncToClient(serverPlayer);
+		}
+	}
+
+	private static List<MorphlingJarItemHandler> findMorphlingJars(Player player) {
+		List<MorphlingJarItemHandler> jars = new ArrayList<>();
+		for (int slot = 0; slot < 36; slot++) {
+			addJarHandler(player.getInventory().getItem(slot), jars);
+		}
+		addJarHandler(player.getOffhandItem(), jars);
+		HemoCapabilityAccess.getEquipment(player)
+				.map(equipment -> equipment.getStackInSlot(com.vincenthuto.hemomancy.common.menu.HarbingerEquipmentMenu.JAR_SLOT_INDEX))
+				.ifPresent(jar -> addJarHandler(jar, jars));
+		return jars;
+	}
+
+	private static void addJarHandler(ItemStack jar, List<MorphlingJarItemHandler> jars) {
+		if (!(jar.getItem() instanceof ItemMorphlingJar)) {
+			return;
+		}
+		IItemHandler handler = jar.getCapability(Capabilities.ItemHandler.ITEM);
+		if (handler instanceof MorphlingJarItemHandler morphlingJar) {
+			jars.add(morphlingJar);
+		}
 	}
 
 	@SubscribeEvent

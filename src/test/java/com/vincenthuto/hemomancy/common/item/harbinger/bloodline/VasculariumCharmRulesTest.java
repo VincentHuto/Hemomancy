@@ -5,9 +5,9 @@ public final class VasculariumCharmRulesTest {
 	}
 
 	public static void main(String[] args) {
-		assertFalse("equipped vascularium charms are not emitted from scar death drops",
+		assertFalse("equipped vascularium charms stay in Scarlet Vanity through death",
 				VasculariumCharmRules.shouldDropEquippedSlot(true));
-		assertTrue("non-vascularium equipped equipment  still follow normal death drops",
+		assertFalse("all other Scarlet Vanity equipment stays through death",
 				VasculariumCharmRules.shouldDropEquippedSlot(false));
 
 		assertFalse("the charm cannot be removed from an unvalidated equipment menu",
