@@ -8,6 +8,8 @@ public interface IBloodTendency {
 
 	void addTendencyAlignment(EnumBloodTendency tendencyIn, float value);
 
+	void addTransientAlignment(EnumBloodTendency tendencyIn, float value);
+
 	public float getAlignmentByTendency(EnumBloodTendency tendencyIn);
 
 	ParticleColor getAvgBloodColor();

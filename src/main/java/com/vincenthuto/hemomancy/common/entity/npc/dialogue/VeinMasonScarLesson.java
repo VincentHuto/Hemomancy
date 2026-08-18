@@ -16,17 +16,19 @@ import java.util.EnumMap;
 import java.util.Map;
 
 public final class VeinMasonScarLesson {
-	private static final Map<EnumBloodTendency, Lesson> LESSONS = new EnumMap<>(EnumBloodTendency.class);
+	private static final Map<EnumBloodTendency, Lesson> TIER_ONE = new EnumMap<>(EnumBloodTendency.class);
+	private static final Map<EnumBloodTendency, Lesson> TIER_TWO = new EnumMap<>(EnumBloodTendency.class);
+	private static final Map<EnumBloodTendency, Lesson> TIER_THREE = new EnumMap<>(EnumBloodTendency.class);
 
 	static {
-		LESSONS.put(EnumBloodTendency.ANIMUS, lesson("scar_heart", Items.GOLDEN_APPLE, ItemInit.scar_heart));
-		LESSONS.put(EnumBloodTendency.FLAMMEUS, lesson("scar_pyre", Items.BLAZE_POWDER, ItemInit.scar_pyre));
-		LESSONS.put(EnumBloodTendency.DUCTILIS, lesson("scar_feral", Items.LEATHER, ItemInit.scar_feral));
-		LESSONS.put(EnumBloodTendency.LUX, lesson("scar_halo", Items.END_ROD, ItemInit.scar_halo));
-		LESSONS.put(EnumBloodTendency.MORTEM, lesson("scar_blight", Items.FERMENTED_SPIDER_EYE, ItemInit.scar_blight));
-		LESSONS.put(EnumBloodTendency.CONGEATIO, lesson("scar_rime", Items.PACKED_ICE, ItemInit.scar_rime));
-		LESSONS.put(EnumBloodTendency.FERRIC, lesson("scar_thorn", Items.IRON_INGOT, ItemInit.scar_thorn));
-		LESSONS.put(EnumBloodTendency.TENEBRIS, lesson("scar_shade", Items.COAL, ItemInit.scar_shade));
+		put(EnumBloodTendency.ANIMUS, Items.GOLDEN_APPLE, "heart", ItemInit.scar_heart, "marrow", ItemInit.scar_marrow, "phoenix", ItemInit.scar_phoenix);
+		put(EnumBloodTendency.FLAMMEUS, Items.BLAZE_POWDER, "pyre", ItemInit.scar_pyre, "sol", ItemInit.scar_sol, "corona", ItemInit.scar_corona);
+		put(EnumBloodTendency.DUCTILIS, Items.LEATHER, "feral", ItemInit.scar_feral, "flux", ItemInit.scar_flux, "chimera", ItemInit.scar_chimera);
+		put(EnumBloodTendency.LUX, Items.END_ROD, "halo", ItemInit.scar_halo, "veil", ItemInit.scar_veil, "transcendence", ItemInit.scar_transcendence);
+		put(EnumBloodTendency.MORTEM, Items.FERMENTED_SPIDER_EYE, "blight", ItemInit.scar_blight, "wither", ItemInit.scar_wither, "oblivion", ItemInit.scar_oblivion);
+		put(EnumBloodTendency.CONGEATIO, Items.PACKED_ICE, "rime", ItemInit.scar_rime, "glacier", ItemInit.scar_glacier, "descendence", ItemInit.scar_descendence);
+		put(EnumBloodTendency.FERRIC, Items.IRON_INGOT, "thorn", ItemInit.scar_thorn, "anvil", ItemInit.scar_anvil, "crucible", ItemInit.scar_crucible);
+		put(EnumBloodTendency.TENEBRIS, Items.COAL, "shade", ItemInit.scar_shade, "moon", ItemInit.scar_moon, "eye", ItemInit.scar_eye);
 	}
 
 	private VeinMasonScarLesson() {
@@ -40,7 +42,25 @@ public final class VeinMasonScarLesson {
 		return rankedForPlayer(player, 1);
 	}
 
+	public static Lesson strongestForPlayer(Player player, int tier) {
+		return rankedForPlayer(player, 0, tier);
+	}
+
+	public static boolean needsReplacement(Player player, Lesson lesson) {
+		boolean known = HemoCapabilityAccess.getScarState(player)
+				.map(scars -> scars.knowsCerebralScar(lesson.patternScarId())).orElse(false);
+		if (known) return false;
+		for (ItemStack stack : player.getInventory().items) {
+			if (ItemScarPattern.getScarIds(stack).contains(lesson.patternScarId())) return false;
+		}
+		return true;
+	}
+
 	private static Lesson rankedForPlayer(Player player, int rank) {
+		return rankedForPlayer(player, rank, 1);
+	}
+
+	private static Lesson rankedForPlayer(Player player, int rank, int tier) {
 		EnumBloodTendency best = EnumBloodTendency.ANIMUS;
 		EnumBloodTendency second = EnumBloodTendency.FLAMMEUS;
 		float bestValue = Float.NEGATIVE_INFINITY;
@@ -59,7 +79,16 @@ public final class VeinMasonScarLesson {
 				secondValue = value;
 			}
 		}
-		return LESSONS.get(rank <= 0 ? best : second);
+		Map<EnumBloodTendency, Lesson> lessons = tier >= 3 ? TIER_THREE : tier == 2 ? TIER_TWO : TIER_ONE;
+		return lessons.get(rank <= 0 ? best : second);
+	}
+
+	private static void put(EnumBloodTendency tendency, Item catalyst,
+			String one, DeferredHolder<Item, Item> oneItem, String two, DeferredHolder<Item, Item> twoItem,
+			String three, DeferredHolder<Item, Item> threeItem) {
+		TIER_ONE.put(tendency, lesson("scar_" + one, catalyst, oneItem));
+		TIER_TWO.put(tendency, lesson("scar_" + two, catalyst, twoItem));
+		TIER_THREE.put(tendency, lesson("scar_" + three, catalyst, threeItem));
 	}
 
 	private static Lesson lesson(String patternScarId, Item catalyst,

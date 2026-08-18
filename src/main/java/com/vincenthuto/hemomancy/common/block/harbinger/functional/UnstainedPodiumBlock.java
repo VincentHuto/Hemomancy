@@ -247,7 +247,7 @@ public class UnstainedPodiumBlock extends Block implements EntityBlock, SimpleWa
 	private void showUnstainedProgress(Player player, IUnstainedProgress unstained) {
 		if (!unstained.hasBegunPurification()) {
 			player.displayClientMessage(
-					Component.literal("The podium hums faintly. You have not yet begun the Unstained path.")
+					Component.literal("The podium hums faintly. Begin the Unstained path first.")
 							.withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC),
 					false);
 			return;

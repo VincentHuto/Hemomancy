@@ -13,6 +13,8 @@ import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.item.harbinger.armor.BloodLustArmorItem;
 import com.vincenthuto.hemomancy.common.item.harbinger.armor.MarrowCrownArmorItem;
 import com.vincenthuto.hemomancy.common.item.shared.armor.EnumModArmorTiers;
+import com.vincenthuto.hemomancy.common.mission.ArtificerProgressionRules.ForkFamily;
+import com.vincenthuto.hemomancy.common.mission.HarbingerArtificerAssignmentHelper;
 import com.vincenthuto.hemomancy.common.worldgen.FungalGardenTravelHelper;
 import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.server.level.ServerPlayer;
@@ -187,6 +189,9 @@ public class ArmorSetBonusHandler {
 				}
 			}
 			applyBloodLustMaskBonus(player, event.getEntity());
+			if (event.getNewDamage() > 0 && player instanceof ServerPlayer serverPlayer) {
+				HarbingerArtificerAssignmentHelper.onBloodLustDemonstrated(serverPlayer);
+			}
 		}
 	}
 
@@ -211,6 +216,9 @@ public class ArmorSetBonusHandler {
 		if (hasFullSet(player, EnumModArmorTiers.CHITINITE)) {
 			if (!event.getSource().isDirect() || event.getSource().is(DamageTypeTags.IS_PROJECTILE)) {
 				event.setNewDamage(event.getNewDamage() * (1.0f - CHITINITE_PROJECTILE_REDUCTION));
+				if (player instanceof ServerPlayer serverPlayer) {
+					HarbingerArtificerAssignmentHelper.onForkDemonstrated(serverPlayer, ForkFamily.CHITINITE);
+				}
 			}
 		}
 
@@ -222,7 +230,7 @@ public class ArmorSetBonusHandler {
 
 		if (hasFullSet(player, EnumModArmorTiers.BARBED)) {
 			// Thorns damage
-			attacker.hurt(player.damageSources().thorns(player), BARBED_THORNS_DAMAGE);
+			boolean retaliated = attacker.hurt(player.damageSources().thorns(player), BARBED_THORNS_DAMAGE);
 
 			// Apply Blood Loss and venom to attacker.
 			attacker.addEffect(new MobEffectInstance(
@@ -230,6 +238,9 @@ public class ArmorSetBonusHandler {
 					BARBED_BLOOD_LOSS_DURATION,
 					BARBED_BLOOD_LOSS_AMPLIFIER));
 			attacker.addEffect(new MobEffectInstance(MobEffects.POISON, BARBED_POISON_DURATION, 0, false, true, true));
+			if (retaliated && player instanceof ServerPlayer serverPlayer) {
+				HarbingerArtificerAssignmentHelper.onForkDemonstrated(serverPlayer, ForkFamily.BARBED);
+			}
 		}
 
 		if (hasFullSet(player, EnumModArmorTiers.PRISMATIC)) {
@@ -249,6 +260,9 @@ public class ArmorSetBonusHandler {
 		player.level().getEntitiesOfClass(LivingEntity.class, player.getBoundingBox().inflate(PRISMATIC_FLASH_RANGE),
 				target -> target.isAlive() && target != player && (target == attacker || target instanceof Monster))
 				.forEach(ArmorSetBonusHandler::applyPrismaticFlashEffects);
+		if (player instanceof ServerPlayer serverPlayer) {
+			HarbingerArtificerAssignmentHelper.onForkDemonstrated(serverPlayer, ForkFamily.PRISMATIC);
+		}
 	}
 
 	private static void syncSilentArchonLastRite(Player player) {

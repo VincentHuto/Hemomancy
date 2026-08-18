@@ -519,7 +519,7 @@ public class UnstainedProgressScreen extends Screen {
 		int centerY = guiTop + guiHeight / 2;
 
 		gfx.drawCenteredString(font,
-				Component.literal("The Unstained Path Has Not Yet Begun"),
+				Component.literal("The Unstained Path Awaits"),
 				centerX, centerY - 16, 0xFF8098C0);
 		gfx.drawCenteredString(font,
 				Component.literal("Seek purification to awaken this mirror's vision."),

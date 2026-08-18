@@ -13,16 +13,24 @@ import com.vincenthuto.hemomancy.common.capability.player.shared.knowledge.disco
 import com.vincenthuto.hemomancy.common.capability.player.shared.knowledge.discovery.LiberKnowledgeHelper;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.UnstainedProgressEvents;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.UnstainedStarterSupplyRules;
+import com.vincenthuto.hemomancy.common.armor.ArmorSetHelper;
 import com.vincenthuto.hemomancy.common.entity.summon.MorphlingPolypLayer;
 import com.vincenthuto.hemomancy.common.entity.npc.harbinger.HarbingerHermitEntity;
+import com.vincenthuto.hemomancy.common.entity.npc.harbinger.HarbingerAlchemistEntity;
+import com.vincenthuto.hemomancy.common.entity.npc.harbinger.HarbingerArtificerEntity;
 import com.vincenthuto.hemomancy.common.event.HarbingerAdvancementGranter;
 import com.vincenthuto.hemomancy.common.entity.npc.unstained.UnstainedScoutEntity;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.init.BlockInit;
 import com.vincenthuto.hemomancy.common.mission.HarbingerArtificerAssignmentHelper;
+import com.vincenthuto.hemomancy.common.mission.ArtificerProgressionRules.D7Lineage;
+import com.vincenthuto.hemomancy.common.mission.ArtificerProgressionRules.ForkFamily;
 import com.vincenthuto.hemomancy.common.mission.FirstBloodcraftAssignmentHelper;
 import com.vincenthuto.hemomancy.common.mission.FirstSeparationAssignmentHelper;
 import com.vincenthuto.hemomancy.common.mission.BodyAnswersAssignmentHelper;
+import com.vincenthuto.hemomancy.common.mission.AnchoriteAssignmentProgression;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.VascularDiagnosisRules;
+import com.vincenthuto.hemomancy.common.menu.VascularViewMenuProvider;
 import com.vincenthuto.hemomancy.common.mission.MnemonicReliquaryProgression;
 import com.vincenthuto.hemomancy.common.mission.MnemonicRecipeKnowledge;
 import com.vincenthuto.hemomancy.common.mission.RedTaxonomyRewardRules;
@@ -90,9 +98,21 @@ public class DialogueEventHandler {
 			handleAlchemistBestiary(player, event.getEntityId(), event.getEventId());
 			return;
 		}
+		if (event.getEventId().startsWith("artificer_") && !isValidArtificerDialogueSource(event)) return;
+		if (handleArtificerLegacyBranchChoice(player, event.getEventId())) return;
 		switch (event.getEventId()) {
 			case HarbingerMnemonistDialogueTrees.EVENT_RELIQUARY_TAUGHT ->
 					MnemonicReliquaryProgression.teach(player);
+			case HarbingerCicatrixAnchoriteDialogueTrees.EVENT_DIAGNOSIS -> handleAnchoriteDiagnosis(player);
+			case HarbingerCicatrixAnchoriteDialogueTrees.EVENT_D5_REWARD -> handleAnchoriteReward(player, event.getEntityId(), 2);
+			case HarbingerCicatrixAnchoriteDialogueTrees.EVENT_D6_REFERRAL ->
+					AnchoriteAssignmentProgression.onReferral(player);
+			case HarbingerCicatrixAnchoriteDialogueTrees.EVENT_D6_REWARD -> handleAnchoriteReward(player, event.getEntityId(), 3);
+			case HarbingerCicatrixAnchoriteDialogueTrees.EVENT_REPLACE_D4 -> replaceAnchoritePattern(player, event.getEntityId(), 1);
+			case HarbingerCicatrixAnchoriteDialogueTrees.EVENT_REPLACE_D5 -> replaceAnchoritePattern(player, event.getEntityId(), 2);
+			case HarbingerCicatrixAnchoriteDialogueTrees.EVENT_REPLACE_D6 -> replaceAnchoritePattern(player, event.getEntityId(), 3);
+			case HarbingerMnemonistDialogueTrees.EVENT_ANCHORITE_COUNSEL ->
+					AnchoriteAssignmentProgression.onCounsel(player);
 			case "acolyte_task_gather_ghost_pipe" -> UnstainedObservanceHelper.handle(player,
 					UnstainedObservanceHelper.Observance.GATHER_GHOST_PIPE);
 			case "acolyte_task_wreath" -> UnstainedObservanceHelper.handle(player,
@@ -212,40 +232,49 @@ public class DialogueEventHandler {
 			case SanguineMonolithDialogueTrees.EVENT_CORNERSTONE -> {
 				handleMonolithCornerstone(player, event.getEntityId());
 			}
+			case HarbingerArtificerDialogueTrees.EVENT_BRIEF_WORN_VOW ->
+					handleArtificerBrief(player, 2, HarbingerArtificerAssignmentHelper.WORN_VOW_BRIEFED, false);
+			case HarbingerArtificerDialogueTrees.EVENT_BRIEF_THREE_ANSWERS ->
+					handleArtificerBrief(player, 3, HarbingerArtificerAssignmentHelper.THREE_ANSWERS_BRIEFED, false);
+			case HarbingerArtificerDialogueTrees.EVENT_BRIEF_CRIMSON_VESTMENT ->
+					handleArtificerBrief(player, 5, HarbingerArtificerAssignmentHelper.CRIMSON_VESTMENT_BRIEFED, false);
+			case HarbingerArtificerDialogueTrees.EVENT_BRIEF_ASSUMED_LIMB ->
+					handleArtificerBrief(player, 5, HarbingerArtificerAssignmentHelper.ASSUMED_LIMB_BRIEFED, true);
+			case HarbingerArtificerDialogueTrees.EVENT_BRIEF_WEIGHT_OF_FRAME ->
+					handleArtificerBrief(player, 7, HarbingerArtificerAssignmentHelper.WEIGHT_OF_FRAME_BRIEFED, false);
+			case HarbingerArtificerDialogueTrees.EVENT_INSPECT_THREE_ANSWERS ->
+					handleArtificerInspection(player, HarbingerArtificerAssignmentHelper.inspectThreeAnswers(player),
+						"hemomancy.dialogue.event.artificer_three_answers_inspected",
+						HarbingerArtificerAssignmentHelper.hasFullForkFamily(player,
+								HarbingerArtificerAssignmentHelper.firstForkFamily(player)));
+			case HarbingerArtificerDialogueTrees.EVENT_INSPECT_CRIMSON_VESTMENT ->
+					handleArtificerInspection(player, HarbingerArtificerAssignmentHelper.inspectCrimsonVestment(player),
+						"hemomancy.dialogue.event.artificer_crimson_vestment_inspected",
+						ArmorSetHelper.hasFullBloodLustSet(player));
+			case HarbingerArtificerDialogueTrees.EVENT_INSPECT_WEIGHT_OF_FRAME ->
+					handleArtificerD7Inspection(player, event.getEntityId());
+			case HarbingerArtificerDialogueTrees.EVENT_CLAIM_D7_REWARD ->
+					handleArtificerMaterial(player, event.getEntityId(),
+						HarbingerArtificerAssignmentHelper.claimD7Material(player),
+						"hemomancy.dialogue.event.artificer_d7_reward_granted");
 			case HarbingerArtificerDialogueTrees.EVENT_CLAIM_WORN_VOW_REWARD -> {
-				handleArtificerLessonReward(player, event.getEntityId(),
-						HarbingerArtificerAssignmentHelper.WORN_VOW_REWARD_CLAIM_KEY,
-						HarbingerAdvancementGranter.ADV_ARTIFICER_FIRST_HEMATIC_UPGRADE,
-						new ItemStack(ItemInit.hematic_iron_scrap.get(), 4),
-						"hemomancy.dialogue.event.artificer_worn_vow_reward_unready",
-						"hemomancy.dialogue.event.artificer_worn_vow_reward_known",
+				handleArtificerMaterial(player, event.getEntityId(),
+						HarbingerArtificerAssignmentHelper.claimWornVowInspection(player),
 						"hemomancy.dialogue.event.artificer_worn_vow_reward_granted");
 			}
 			case HarbingerArtificerDialogueTrees.EVENT_CLAIM_THREE_ANSWERS_REWARD -> {
-				handleArtificerLessonReward(player, event.getEntityId(),
-						HarbingerArtificerAssignmentHelper.THREE_ANSWERS_REWARD_CLAIM_KEY,
-						HarbingerAdvancementGranter.ADV_ARTIFICER_FIRST_FORK_UPGRADE,
-						matchingForkReagentReward(player),
-						"hemomancy.dialogue.event.artificer_three_answers_reward_unready",
-						"hemomancy.dialogue.event.artificer_three_answers_reward_known",
+				handleArtificerMaterial(player, event.getEntityId(),
+						HarbingerArtificerAssignmentHelper.counselThreeAnswers(player),
 						"hemomancy.dialogue.event.artificer_three_answers_reward_granted");
 			}
 			case HarbingerArtificerDialogueTrees.EVENT_CLAIM_CRIMSON_VESTMENT_REWARD -> {
-				handleArtificerLessonReward(player, event.getEntityId(),
-						HarbingerArtificerAssignmentHelper.CRIMSON_VESTMENT_REWARD_CLAIM_KEY,
-						HarbingerAdvancementGranter.ADV_ARTIFICER_FIRST_BLOOD_LUST_UPGRADE,
-						new ItemStack(ItemInit.crimson_lacquer.get(), 1),
-						"hemomancy.dialogue.event.artificer_crimson_vestment_reward_unready",
-						"hemomancy.dialogue.event.artificer_crimson_vestment_reward_known",
+				handleArtificerMaterial(player, event.getEntityId(),
+						HarbingerArtificerAssignmentHelper.counselCrimsonVestment(player),
 						"hemomancy.dialogue.event.artificer_crimson_vestment_reward_granted");
 			}
 			case HarbingerArtificerDialogueTrees.EVENT_CLAIM_ASSUMED_LIMB_REWARD -> {
-				handleArtificerLessonReward(player, event.getEntityId(),
-						HarbingerArtificerAssignmentHelper.ASSUMED_LIMB_REWARD_CLAIM_KEY,
-						HarbingerAdvancementGranter.ADV_ARTIFICER_FIRST_LIVING_GRAFT,
-						new ItemStack(ItemInit.hematic_memory.get(), 1),
-						"hemomancy.dialogue.event.artificer_assumed_limb_reward_unready",
-						"hemomancy.dialogue.event.artificer_assumed_limb_reward_known",
+				handleArtificerMaterial(player, event.getEntityId(),
+						HarbingerArtificerAssignmentHelper.claimAssumedLimbInspection(player),
 						"hemomancy.dialogue.event.artificer_assumed_limb_reward_granted");
 			}
 			case HarbingerArtificerDialogueTrees.EVENT_CLAIM_HEMATIC_IRON_FITTING -> {
@@ -511,26 +540,80 @@ public class DialogueEventHandler {
 				false);
 	}
 
-	private static void handleArtificerLessonReward(ServerPlayer player, int entityId, String claimKey,
-			ResourceLocation prerequisite, ItemStack reward, String unreadyKey, String knownKey, String grantedKey) {
-		if (!HarbingerAdvancementGranter.hasAdvancement(player, prerequisite)) {
-			player.displayClientMessage(
-					Component.translatable(unreadyKey).withStyle(ChatFormatting.GRAY),
-					false);
-			return;
-		}
-		if (HarbingerArtificerAssignmentHelper.isArtificerLessonRewardClaimed(player, claimKey)) {
-			player.displayClientMessage(
-					Component.translatable(knownKey).withStyle(ChatFormatting.GRAY),
-					false);
-			return;
-		}
+	private static void handleArtificerBrief(ServerPlayer player, int minimumDegree, ResourceLocation briefing,
+			boolean requiresLivingStaff) {
+		ArtificerProgressSnapshot progress = ArtificerProgressSnapshot.from(player);
+		if (!progress.activeBlood() || progress.purifying() || progress.clarity()
+				|| progress.degree() < minimumDegree || requiresLivingStaff && !progress.livingStaffBond()) return;
+		HarbingerArtificerAssignmentHelper.brief(player, briefing);
+	}
 
+	private static void handleArtificerInspection(ServerPlayer player, boolean inspected, String messageKey,
+			boolean fullSetEquipped) {
+		if (!inspected) {
+			player.displayClientMessage(Component.translatable("hemomancy.dialogue.event.artificer_inspection_unready")
+					.withStyle(ChatFormatting.GRAY), false);
+			return;
+		}
+		ArtificerProgressSnapshot progress = ArtificerProgressSnapshot.from(player);
+		player.displayClientMessage(Component.translatable(messageKey,
+				progress.forkFamily().serializedName(), progress.d7Lineage().serializedName(),
+				Component.translatable(fullSetEquipped
+						? "hemomancy.dialogue.event.artificer_equipment_full"
+						: "hemomancy.dialogue.event.artificer_equipment_incomplete"))
+				.withStyle(ChatFormatting.DARK_RED), false);
+	}
+
+	private static void handleArtificerD7Inspection(ServerPlayer player, int entityId) {
+		ItemStack reward = HarbingerArtificerAssignmentHelper.inspectWeightOfFrame(player);
+		if (reward.isEmpty()) {
+			player.displayClientMessage(Component.translatable("hemomancy.dialogue.event.artificer_inspection_unready")
+					.withStyle(ChatFormatting.GRAY), false);
+			return;
+		}
 		giveOrDropAtEntity(player, entityId, reward);
-		HarbingerArtificerAssignmentHelper.markArtificerLessonRewardClaimed(player, claimKey);
-		player.displayClientMessage(
-				Component.translatable(grantedKey).withStyle(ChatFormatting.DARK_RED),
-				false);
+		ArtificerProgressSnapshot progress = ArtificerProgressSnapshot.from(player);
+		player.displayClientMessage(Component.translatable("hemomancy.dialogue.event.artificer_weight_of_frame_inspected",
+				progress.forkFamily().serializedName(), progress.d7Lineage().serializedName(),
+				Component.translatable(HarbingerArtificerAssignmentHelper.hasFullD7Lineage(player, progress.d7Lineage())
+						? "hemomancy.dialogue.event.artificer_equipment_full"
+						: "hemomancy.dialogue.event.artificer_equipment_incomplete"))
+				.withStyle(ChatFormatting.DARK_RED), false);
+	}
+
+	private static void handleArtificerMaterial(ServerPlayer player, int entityId, ItemStack reward, String messageKey) {
+		if (reward.isEmpty()) {
+			player.displayClientMessage(Component.translatable("hemomancy.dialogue.event.artificer_reward_unready")
+					.withStyle(ChatFormatting.GRAY), false);
+			return;
+		}
+		giveOrDropAtEntity(player, entityId, reward);
+		player.displayClientMessage(Component.translatable(messageKey).withStyle(ChatFormatting.DARK_RED), false);
+	}
+
+	private static boolean handleArtificerLegacyBranchChoice(ServerPlayer player, String eventId) {
+		if (eventId.startsWith(HarbingerArtificerDialogueTrees.EVENT_RECOVER_FORK_PREFIX)) {
+			if (!ArtificerProgressSnapshot.from(player).needsForkRecovery()) return true;
+			ForkFamily family = ForkFamily.fromSerializedName(
+					eventId.substring(HarbingerArtificerDialogueTrees.EVENT_RECOVER_FORK_PREFIX.length()));
+			HarbingerArtificerAssignmentHelper.recordForkFamily(player, family);
+			return true;
+		}
+		if (eventId.startsWith(HarbingerArtificerDialogueTrees.EVENT_RECOVER_D7_PREFIX)) {
+			if (!ArtificerProgressSnapshot.from(player).needsD7Recovery()) return true;
+			D7Lineage lineage = D7Lineage.fromSerializedName(
+					eventId.substring(HarbingerArtificerDialogueTrees.EVENT_RECOVER_D7_PREFIX.length()));
+			HarbingerArtificerAssignmentHelper.recordD7Lineage(player, lineage);
+			return true;
+		}
+		return false;
+	}
+
+	private static boolean isValidArtificerDialogueSource(DialogueEvent event) {
+		Entity entity = event.getPlayer().level().getEntity(event.getEntityId());
+		boolean correspondence = event.getEventId().equals(HarbingerArtificerDialogueTrees.EVENT_CLAIM_THREE_ANSWERS_REWARD)
+				|| event.getEventId().equals(HarbingerArtificerDialogueTrees.EVENT_CLAIM_CRIMSON_VESTMENT_REWARD);
+		return correspondence ? entity instanceof HarbingerAlchemistEntity : entity instanceof HarbingerArtificerEntity;
 	}
 
 	private static void handleArtificerFittingClaim(ServerPlayer player, int entityId,
@@ -593,31 +676,6 @@ public class DialogueEventHandler {
 					return false;
 				})
 				.orElse(false);
-	}
-
-	private static ItemStack matchingForkReagentReward(ServerPlayer player) {
-		if (wearsAny(player, ItemInit.chitinite_helm.get(), ItemInit.chitinite_chestplate.get(),
-				ItemInit.chitinite_leggings.get(), ItemInit.chitinite_boots.get())) {
-			return new ItemStack(ItemInit.sclerotic_oleum.get());
-		}
-		if (wearsAny(player, ItemInit.prismatic_helm.get(), ItemInit.prismatic_chestplate.get(),
-				ItemInit.prismatic_leggings.get(), ItemInit.prismatic_boots.get())) {
-			return new ItemStack(ItemInit.chromatic_sublimate.get());
-		}
-		return new ItemStack(ItemInit.aculeate_vitriol.get());
-	}
-
-	private static boolean wearsAny(ServerPlayer player, Item... items) {
-		for (EquipmentSlot slot : List.of(EquipmentSlot.HEAD, EquipmentSlot.CHEST,
-				EquipmentSlot.LEGS, EquipmentSlot.FEET)) {
-			ItemStack worn = player.getItemBySlot(slot);
-			for (Item item : items) {
-				if (worn.is(item)) {
-					return true;
-				}
-			}
-		}
-		return false;
 	}
 
 	@FunctionalInterface
@@ -1269,6 +1327,40 @@ public class DialogueEventHandler {
 							.withStyle(ChatFormatting.DARK_RED),
 					false);
 		});
+	}
+
+	private static void handleAnchoriteDiagnosis(ServerPlayer player) {
+		var diagnosis = VascularDiagnosisRules.diagnosePlayer(player);
+		AnchoriteAssignmentProgression.onDiagnosis(player);
+		player.displayClientMessage(Component.translatable("hemomancy.dialogue.event.anchorite_diagnosis",
+				diagnosis.worstSection().name(), diagnosis.flow().name(), Math.round(diagnosis.health()),
+				diagnosis.treatment().name()).withStyle(ChatFormatting.DARK_RED), false);
+		player.openMenu(new VascularViewMenuProvider());
+	}
+
+	private static void handleAnchoriteReward(ServerPlayer player, int entityId, int tier) {
+		ResourceLocation ready = tier == 2 ? AnchoriteAssignmentProgression.D5_READY : AnchoriteAssignmentProgression.D6_READY;
+		ResourceLocation claimed = tier == 2 ? AnchoriteAssignmentProgression.D5_REWARD : AnchoriteAssignmentProgression.D6_REWARD;
+		if (!AnchoriteAssignmentProgression.has(player, ready) || AnchoriteAssignmentProgression.has(player, claimed)) return;
+		VeinMasonScarLesson.Lesson lesson = VeinMasonScarLesson.strongestForPlayer(player, tier);
+		giveOrDropAtEntity(player, entityId, lesson.patternStack());
+		giveOrDropAtEntity(player, entityId, new ItemStack(ItemInit.scar_blank.get()));
+		giveOrDropAtEntity(player, entityId, new ItemStack(lesson.catalyst()));
+		giveOrDropAtEntity(player, entityId, new ItemStack(ItemInit.runic_motif_paper.get(), tier == 2 ? 4 : 8));
+		AnchoriteAssignmentProgression.grant(player, claimed);
+		player.displayClientMessage(Component.translatable(tier == 2
+				? "hemomancy.dialogue.event.anchorite_d5_reward" : "hemomancy.dialogue.event.anchorite_d6_reward")
+				.withStyle(ChatFormatting.DARK_RED), false);
+	}
+
+	private static void replaceAnchoritePattern(ServerPlayer player, int entityId, int tier) {
+		VeinMasonScarLesson.Lesson lesson = tier == 1
+				? (HarbingerAdvancementGranter.isVeinMasonRewardClaimed(player)
+						? VeinMasonScarLesson.continuationForPlayer(player) : VeinMasonScarLesson.forPlayer(player))
+				: VeinMasonScarLesson.strongestForPlayer(player, tier);
+		if (VeinMasonScarLesson.needsReplacement(player, lesson)) {
+			giveOrDropAtEntity(player, entityId, lesson.patternStack());
+		}
 	}
 
 	private static void handleAlchemistBodyAnswersBrief(ServerPlayer player) {

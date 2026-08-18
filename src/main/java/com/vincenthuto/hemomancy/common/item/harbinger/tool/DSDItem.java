@@ -50,7 +50,7 @@ public class DSDItem extends Item {
 					dissolve(player, drudge);
 					return InteractionResult.SUCCESS;
 				} else {
-					player.displayClientMessage(Component.literal("§cThis is not your construct."), true);
+					player.displayClientMessage(Component.literal("§cThis construct answers to another hand."), true);
 					return InteractionResult.FAIL;
 				}
 			}

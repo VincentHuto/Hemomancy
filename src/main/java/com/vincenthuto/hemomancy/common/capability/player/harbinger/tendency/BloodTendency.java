@@ -20,13 +20,22 @@ public class BloodTendency implements IBloodTendency, INBTSerializable<CompoundT
 			EnumBloodTendency.TENEBRIS, 0f,
 			EnumBloodTendency.FLAMMEUS, 0f,
 			EnumBloodTendency.CONGEATIO, 0f));
+	private final Map<EnumBloodTendency, Float> transientAlignment = new HashMap<>();
 
 	@Override
 	public void addTendencyAlignment(EnumBloodTendency tendencyIn, float value) {
 		if (tendency != null) {
 			if (getOpposingTendency(tendencyIn) != null) {
-				tendency.put(tendencyIn, getAlignmentByTendency(tendencyIn) + value);
+				tendency.put(tendencyIn, tendency.getOrDefault(tendencyIn, 0F) + value);
 			}
+		}
+	}
+
+	@Override
+	public void addTransientAlignment(EnumBloodTendency tendencyIn, float value) {
+		transientAlignment.merge(tendencyIn, value, Float::sum);
+		if (Math.abs(transientAlignment.get(tendencyIn)) < 0.0001F) {
+			transientAlignment.remove(tendencyIn);
 		}
 	}
 
@@ -34,7 +43,7 @@ public class BloodTendency implements IBloodTendency, INBTSerializable<CompoundT
 	public float getAlignmentByTendency(EnumBloodTendency tendencyIn) {
 		if (tendency == null) return 0;
 		Float alignment = tendency.get(tendencyIn);
-		return alignment == null ? 0 : alignment;
+		return (alignment == null ? 0 : alignment) + transientAlignment.getOrDefault(tendencyIn, 0F);
 	}
 
 	@Override
@@ -83,14 +92,18 @@ public class BloodTendency implements IBloodTendency, INBTSerializable<CompoundT
 
 	@Override
 	public Map<EnumBloodTendency, Float> getTendency() {
-		return tendency;
+		Map<EnumBloodTendency, Float> effective = new HashMap<>();
+		for (EnumBloodTendency value : EnumBloodTendency.values()) {
+			effective.put(value, getAlignmentByTendency(value));
+		}
+		return effective;
 	}
 
 	@Override
 	public float getTotalAlignment() {
 		float runningTotal = 0;
 		for (EnumBloodTendency key : EnumBloodTendency.values()) {
-			runningTotal += tendency.get(key);
+			runningTotal += getAlignmentByTendency(key);
 		}
 		return runningTotal;
 

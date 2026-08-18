@@ -230,7 +230,7 @@ Each outpost contains:
 - A **Harbinger Vicar** — the outpost's lore-keeper and rank-progression guide. The Vicar guides players from Degree 1 through Degree 5, then steps back as an equal once the player reaches the Crimson Lodge. He delivers faction history, doctrinal lore, and the secret of the 8th Degree at Archon.
 - A **Harbinger Alchemist** — found at the crafting stations, teaches how to use the mod's machines (Alembic, Centrifuge, Somatic Loom, etc.).
 - A **Harbinger Mnemonist** - teaches crude memories, manipulation slots, Mnemonic Reliquary practice, and the Somatic Loom as memory work rather than living equipment.
-- A **Hematic Artificer / Redwright** - a maker-priest of living gear. He teaches Hematic Armature use, armor fork identity, Blood Lust and Cornerstone frame work, and Living Staff grafts as staff-limb practice. His staff fittings mark worn vows, chosen shells, and assumed limbs as witnessed obligations rather than new powers. He is part of ordinary outpost craft, not a hidden ascetic calling.
+- A **Hematic Artificer / Redwright** - a maker-priest of living gear. He briefs and inspects five optional equipment assignments, permanently records the first fork and Archon armor lineages, and demands field proof that the finished work actually answers before granting a fitting. The Alchemist supplies the chemical materials after two formal referrals; the Artificer remains responsible for frame, fit, and external reinforcement. His staff fittings mark witnessed obligations rather than new powers. He is part of ordinary outpost craft, not a hidden ascetic calling.
 - Generic **chests and loot** from the Order's stores.
 
 The **Cicatrix Anchorite**, commonly called the **Vein-Mason**, is deliberately not part of these outposts. They keep a remote hermitage at Masons Respite: stone cell, ash circles, vessel diagrams, scar-pattern lore, Mason's Effigy, and Iron Brazier arranged as a teaching place rather than a lodge. A Vicar sends Adepts there when ordinary outpost instruction is no longer enough. The Anchorite's teaching is ascetic and practical: the player is handed an existing low-tier scar pattern that matches their strongest blood tendency, then coached through carving the scar, burning it into memory, preparing an Effigy motif, and committing a first scar loadout. Only after that full cycle does the Anchorite offer a second pattern, teaching continuation rather than hoarding.
@@ -751,3 +751,7 @@ This is a world of **gray**, of bodies and blood and fungus and old powers that 
 ---
 
 *For mechanics, systems, blocks, items, mobs, and code details, see [HEMOMANCY_REFERENCE.md](HEMOMANCY_REFERENCE.md).*
+
+## The Vein-Mason's division of work
+
+The Alchemist treats injury and prepares medicine. The Artificer reinforces armor, weapons, and the body's external frame. The Cicatrix Anchorite conditions scars and vasculature so the internal body can bear repeated instruction. The Mnemonist interprets what a memory means; the Anchorite determines how its tendency is routed through living tissue. Their cooperation is correspondence rather than companionship: the Anchorite remains cloistered at Mason's Respite, refuses purification, and cannot be recruited.

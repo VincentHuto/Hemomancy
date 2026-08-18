@@ -93,7 +93,7 @@ public class CardinalFocusBlock extends Block implements EntityBlock {
 		CardinalRiteRecipe initiation = CardinalRiteRecipe.getRiteByLocation(level,
 				Hemomancy.rloc("cardinal_rite/sanguine_initiation"));
 		if (initiation == null || !initiation.getMedium().test(focus.getMediumForMatching())) {
-			player.displayClientMessage(Component.literal("This medium does not answer the temple's initiation rite.")
+			player.displayClientMessage(Component.literal("This medium has no place in the temple's initiation rite.")
 					.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC), false);
 			return ItemInteractionResult.SUCCESS;
 		}

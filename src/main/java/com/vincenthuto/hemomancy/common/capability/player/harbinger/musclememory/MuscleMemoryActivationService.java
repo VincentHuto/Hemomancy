@@ -7,7 +7,10 @@ import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BorrowedBloodReserve;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.BloodTendencyEvents;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.VascularSystemEvents;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.HematicFortificationRules;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.EnumBloodFlow;
+import com.vincenthuto.hemomancy.common.mission.AnchoriteAssignmentProgression;
+import com.vincenthuto.hemomancy.config.HemoServerConfig;
 import com.vincenthuto.hemomancy.common.item.harbinger.morphlings.IMorphling;
 import com.vincenthuto.hemomancy.common.item.harbinger.morphlings.*;
 import net.minecraft.server.level.ServerPlayer;
@@ -72,9 +75,15 @@ public final class MuscleMemoryActivationService {
             state.consumeOverexertion(memory, now);
         }
 
-        HemoCapabilityAccess.getVascularSystem(player).ifPresent(vascular -> {
-            vascular.setVascularSectionHealth(memory.section(), -payment.strain());
+        if (HemoServerConfig.VASCULAR_DEGRADATION_ON_MANIP_ENABLED.get()) HemoCapabilityAccess.getVascularSystem(player).ifPresent(vascular -> {
+            EnumBloodFlow before = vascular.getBloodFlowBySection(memory.section());
+            boolean fortified = HemoCapabilityAccess.getInitiatoryDegree(player)
+                    .map(degree -> degree.hasHematicFortification()).orElse(false);
+            vascular.setVascularSectionHealth(memory.section(),
+                    -HematicFortificationRules.adjustedStrain(payment.strain(), fortified));
             VascularSystemEvents.syncVascular(player, vascular);
+            AnchoriteAssignmentProgression.onThelemicStrain(player, before,
+                    vascular.getBloodFlowBySection(memory.section()));
         });
         HemoCapabilityAccess.getBloodTendency(player).ifPresent(tendency -> {
             tendency.addTendencyAlignment(memory.primaryTendency(), .075F);

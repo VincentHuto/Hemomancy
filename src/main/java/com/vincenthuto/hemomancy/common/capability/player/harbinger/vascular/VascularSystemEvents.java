@@ -3,6 +3,10 @@ package com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.scar.fungal.ConserveStateHelper;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.scar.ScarNoeticRoutingRules;
+import com.vincenthuto.hemomancy.common.item.harbinger.scar.ScarDefinition;
+import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
+import com.vincenthuto.hemomancy.common.mission.AnchoriteAssignmentProgression;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.VascularSystemServerPacket;
 import com.vincenthuto.hemomancy.config.HemoServerConfig;
@@ -20,6 +24,7 @@ import net.neoforged.neoforge.event.entity.player.PlayerEvent.PlayerRespawnEvent
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 
 import java.util.Map;
+import java.util.ArrayList;
 
 @EventBusSubscriber(modid = Hemomancy.MOD_ID)
 public class VascularSystemEvents {	/**
@@ -130,6 +135,28 @@ public class VascularSystemEvents {	/**
 
 			syncVascular(player, vascular);
 		});
+	}
+
+	public static void applyManipStrain(ServerPlayer player, BloodManipulation manipulation) {
+		ArrayList<ScarDefinition> active = new ArrayList<>();
+		HemoCapabilityAccess.getScarState(player).ifPresent(scars -> scars.forEachActiveCerebralScar(active::add));
+		int tier = ScarNoeticRoutingRules.qualifies(manipulation.getName())
+				? ScarNoeticRoutingRules.bestMatchingTier(manipulation.getTend(), active) : 0;
+		if (HemoServerConfig.VASCULAR_DEGRADATION_ON_MANIP_ENABLED.get()) HemoCapabilityAccess.getVascularSystem(player).ifPresent(vascular -> {
+			boolean fortified = HemoCapabilityAccess.getInitiatoryDegree(player)
+					.map(degree -> degree.hasHematicFortification()).orElse(false);
+			float strain = HematicFortificationRules.adjustedStrain(
+					HemoServerConfig.VASCULAR_MANIP_STRAIN.get().floatValue(), fortified);
+			vascular.setVascularSectionHealth(manipulation.getSection(),
+					-ScarNoeticRoutingRules.adjustedStrain(strain, tier));
+			if (vascular.getHealthBySection(manipulation.getSection()) < 0) {
+				Map<EnumVeinSections, Float> system = vascular.getVascularSystem();
+				system.put(manipulation.getSection(), 0F);
+				vascular.setVascularSystem(system);
+			}
+			syncVascular(player, vascular);
+		});
+		if (tier > 0) AnchoriteAssignmentProgression.onMatchingNoeticCast(player);
 	}
 
 	/**

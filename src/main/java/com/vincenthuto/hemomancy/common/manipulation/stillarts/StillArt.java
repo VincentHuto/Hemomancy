@@ -105,12 +105,12 @@ public class StillArt {
 		if (!HemoCapabilityAccess.getKnownStillArts(serverPlayer)
 				.map(known -> known.isKnown(this))
 				.orElse(false)) {
-			serverPlayer.displayClientMessage(Component.literal("The Lady has not given you this Still Art.")
+			serverPlayer.displayClientMessage(Component.literal("The Lady has not granted you this Still Art.")
 					.withStyle(ChatFormatting.GRAY), true);
 			return;
 		}
 		if (!isUnlockedFor(serverPlayer)) {
-			serverPlayer.displayClientMessage(Component.literal("Your clarity cannot hold that stillness yet.")
+			serverPlayer.displayClientMessage(Component.literal("Your clarity is too weak for that stillness yet.")
 					.withStyle(ChatFormatting.GRAY), true);
 			return;
 		}

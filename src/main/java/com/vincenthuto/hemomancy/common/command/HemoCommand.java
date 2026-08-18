@@ -1122,7 +1122,7 @@ public class HemoCommand {
 		QliphothBloomBlock bloomBlock = (QliphothBloomBlock) BlockInit.qliphoth_bloom.get();
 		IMultiBlock multiBlock = bloomBlock;
 		if (!multiBlock.canPlaceMultiBlock(level, center)) {
-			source.sendFailure(Component.literal("There is not enough room for the Qliphoth tree here."));
+			source.sendFailure(Component.literal("The Qliphoth tree needs more room here."));
 			return 0;
 		}
 

@@ -15,6 +15,7 @@ import com.vincenthuto.hemomancy.common.item.harbinger.scar.ScarDefinition;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.BloodAbsorptionItem;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.scars.PacketSyncScarsState;
+import com.vincenthuto.hemomancy.common.mission.AnchoriteAssignmentProgression;
 import com.vincenthuto.hemomancy.common.tile.IronBrazierBlockEntity;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
@@ -274,6 +275,7 @@ public final class ScarBrazierRite {
 			message(player, "Not enough blood to seal the scar loadout.", ChatFormatting.RED);
 			return true;
 		}
+		List<ResourceLocation> previous = List.copyOf(scars.getActiveCerebralScars());
 
 		for (ResourceLocation active : List.copyOf(scars.getActiveCerebralScars())) {
 			scars.deactivateCerebralScar(active);
@@ -288,6 +290,7 @@ public final class ScarBrazierRite {
 				HarbingerAdvancementGranter.grantIfNotDone(serverPlayer,
 						HarbingerAdvancementGranter.ADV_VEIN_MASON_CONTINUATION_READY);
 			}
+			AnchoriteAssignmentProgression.onChangedLoadout(serverPlayer, previous, selected);
 		}
 		stack.shrink(1);
 		syncScarState(player, scars);

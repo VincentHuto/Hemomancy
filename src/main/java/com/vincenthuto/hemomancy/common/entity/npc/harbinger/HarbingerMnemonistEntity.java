@@ -104,7 +104,11 @@ public class HarbingerMnemonistEntity extends PathfinderMob {
 						isNpcInPlayerBloodline(player, this), canClaimStarter,
 						HarbingerAdvancementGranter.isMnemonistWovenVesselComplete(serverPlayer),
 						BoundSummonBehavior.hasEquippedMorphling(serverPlayer)
-								&& BoundSummonBehavior.hasActiveOwnedTether(serverPlayer));
+								&& BoundSummonBehavior.hasActiveOwnedTether(serverPlayer),
+						com.vincenthuto.hemomancy.common.mission.AnchoriteAssignmentProgression.has(serverPlayer,
+								com.vincenthuto.hemomancy.common.mission.AnchoriteAssignmentProgression.D6_REFERRAL),
+						com.vincenthuto.hemomancy.common.mission.AnchoriteAssignmentProgression.has(serverPlayer,
+								com.vincenthuto.hemomancy.common.mission.AnchoriteAssignmentProgression.D6_COUNSEL));
 			}
 			tree = DialogueItemInquiryNodes.withInventoryItemInquiries(tree, serverPlayer, "mnemonist", degree, 0f);
 			tree = DialogueHubFactory.decorate(tree, "mnemonist", serverPlayer);

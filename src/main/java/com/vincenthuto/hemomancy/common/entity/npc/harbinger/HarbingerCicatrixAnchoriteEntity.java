@@ -6,6 +6,7 @@ import com.vincenthuto.hemomancy.common.entity.npc.dialogue.DialogueItemInquiryN
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.DialogueHubFactory;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.DialogueTree;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.HarbingerCicatrixAnchoriteDialogueTrees;
+import com.vincenthuto.hemomancy.common.entity.npc.dialogue.AnchoriteProgressSnapshot;
 import com.vincenthuto.hemomancy.common.event.HarbingerAdvancementGranter;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.dialogue.OpenDialoguePacket;
@@ -75,20 +76,10 @@ public class HarbingerCicatrixAnchoriteEntity extends PathfinderMob {
 	@Override
 	protected InteractionResult mobInteract(Player player, InteractionHand hand) {
 		if (!player.level().isClientSide && hand == InteractionHand.MAIN_HAND && player instanceof ServerPlayer serverPlayer) {
+			com.vincenthuto.hemomancy.common.mission.AnchoriteAssignmentProgression.refreshD5(serverPlayer);
 			int degree = HemoCapabilityAccess.getPlayerDegreeNumber(player);
-			boolean activeBlood = HemoCapabilityAccess.getBloodVolume(player)
-					.map(volume -> volume.isActive())
-					.orElse(false);
-			boolean purifying = isPurifying(player);
-			boolean clarity = hasClarityUnlocked(player);
-			boolean veinMasonFirstLesson = HarbingerAdvancementGranter.isVeinMasonFirstLesson(serverPlayer);
-			boolean veinMasonFirstScarLearned = HarbingerAdvancementGranter.isVeinMasonFirstScarLearned(serverPlayer);
-			boolean veinMasonFirstEffigyPattern = HarbingerAdvancementGranter.isVeinMasonFirstEffigyPattern(serverPlayer);
-			boolean veinMasonFirstEffigyLoadout = HarbingerAdvancementGranter.isVeinMasonFirstEffigyLoadout(serverPlayer);
-			boolean veinMasonRewardClaimed = HarbingerAdvancementGranter.isVeinMasonRewardClaimed(serverPlayer);
-			DialogueTree tree = HarbingerCicatrixAnchoriteDialogueTrees.forState(this.getId(), degree, activeBlood,
-					purifying, clarity, veinMasonFirstLesson, veinMasonFirstScarLearned,
-					veinMasonFirstEffigyPattern, veinMasonFirstEffigyLoadout, veinMasonRewardClaimed);
+			DialogueTree tree = HarbingerCicatrixAnchoriteDialogueTrees.forState(this.getId(),
+					AnchoriteProgressSnapshot.from(serverPlayer));
 			tree = DialogueItemInquiryNodes.withInventoryItemInquiries(tree, serverPlayer,
 					"cicatrix_anchorite", degree, 0f);
 			tree = DialogueHubFactory.decorate(tree, "cicatrix_anchorite", serverPlayer);

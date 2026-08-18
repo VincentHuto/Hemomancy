@@ -272,11 +272,11 @@ public final class BloodStructureCraftingHelper {
 		boolean playerIsUnstained = HemoCapabilityAccess.getUnstainedProgress(player)
 				.map(u -> u.hasBegunPurification()).orElse(false);
 		if (recipe.isUnstained() && playerIsInitiated) {
-			return Component.literal("Those who have sworn blood to the Hematic Order cannot walk the Unstained path.")
+			return Component.literal("The Hematic Order and Unstained path are incompatible.")
 					.withStyle(ChatFormatting.DARK_GRAY, ChatFormatting.ITALIC);
 		}
 		if (!recipe.isUnstained() && playerIsUnstained) {
-			return Component.literal("One who has begun the purification cannot invoke the formations of the Hematic Order.")
+			return Component.literal("Purification bars access to the Hematic Order formations.")
 					.withStyle(ChatFormatting.DARK_GRAY, ChatFormatting.ITALIC);
 		}
 		return null;

@@ -48,19 +48,19 @@ public final class HarbingerArtificerNpcSourceTest {
 		String lore = read("docs/LORE_REFERENCE.md");
 
 		assertContains("entity opens Artificer dialogue", entity, "HarbingerArtificerDialogueTrees.forState");
-		assertContains("entity gates graft branch by living staff bond", entity, "ILivingStaffProgress::hasLivingStaffBond");
+		assertContains("entity builds immutable progress snapshot", entity, "ArtificerProgressSnapshot.from(serverPlayer)");
 		assertContains("entity exposes inventory inquiry items", entity, "DialogueItemInquiryNodes.withInventoryItemInquiries");
 		assertContains("entity uses Artificer inquiry speaker id", entity, "\"artificer\"");
 		assertNotContains("entity does not expose unsupported inventory items through a fallback", entity,
 				"hemomancy.artificer.item_inquiry.unknown");
 		assertNotContains("entity must not subclass or delegate to Alchemist", entity, "HarbingerAlchemist");
 
-		assertContains("dialogue has unawakened blood gate", dialogue, "!activeBlood || degree <= 0");
-		assertContains("dialogue has purifying and clarity refusal", dialogue, "purifying || clarity");
-		assertContains("dialogue offers D1 armature hint", dialogue, "degree == 1");
+		assertContains("dialogue has unawakened blood gate", dialogue, "!progress.activeBlood() || progress.degree() <= 0");
+		assertContains("dialogue has purifying and clarity refusal", dialogue, "progress.purifying() || progress.clarity()");
+		assertContains("dialogue offers D1 armature hint", dialogue, "progress.degree() == 1");
 		assertContains("dialogue offers D2 armature tutorial", dialogue, "degree >= 2");
 		assertContains("dialogue offers D3 armor forks", dialogue, "degree >= 3");
-		assertContains("dialogue offers living grafts only with staff bond", dialogue, "livingStaffBond");
+		assertContains("dialogue offers living grafts only with staff bond", dialogue, "progress.livingStaffBond()");
 		assertContains("dialogue offers D5 late armature", dialogue, "degree >= 5");
 		assertContains("dialogue offers D7 monolithic armature", dialogue, "degree >= 7");
 		assertContains("dialogue has held item hint node", dialogue, "\"item_hint\"");

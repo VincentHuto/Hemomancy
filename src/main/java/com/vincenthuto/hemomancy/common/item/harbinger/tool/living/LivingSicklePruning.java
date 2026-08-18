@@ -47,7 +47,7 @@ public final class LivingSicklePruning {
 
 		if (isTemporarySickle(held)) {
 			if (!isBoundTo(held, bloom, dimension) || !eligible(serverPlayer, bloom, data)) {
-				serverPlayer.displayClientMessage(Component.literal("The sickle refuses a wound it was not shaped to make.")
+				serverPlayer.displayClientMessage(Component.literal("The sickle refuses a wound outside its making.")
 						.withStyle(ChatFormatting.DARK_PURPLE, ChatFormatting.ITALIC), true);
 				return true;
 			}
@@ -66,7 +66,7 @@ public final class LivingSicklePruning {
 		}
 
 		if (!eligible(serverPlayer, bloom, data)) {
-			serverPlayer.displayClientMessage(Component.literal("The tree does not yet accept your refusal.")
+			serverPlayer.displayClientMessage(Component.literal("The tree waits for a valid refusal.")
 					.withStyle(ChatFormatting.DARK_PURPLE, ChatFormatting.ITALIC), true);
 			return true;
 		}

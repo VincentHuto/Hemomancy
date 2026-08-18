@@ -4,6 +4,9 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.EnumVeinSections;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.scar.ScarNoeticRoutingRules;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.HematicMemoryExpression;
+import com.vincenthuto.hemomancy.common.item.harbinger.scar.ScarDefinition;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.menu.VascularViewMenu;
 import com.vincenthuto.hutoslib.client.HLTextUtils;
@@ -29,6 +32,7 @@ import net.neoforged.neoforge.client.extensions.common.IClientMobEffectExtension
 
 import java.awt.*;
 import java.util.Collection;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Random;
@@ -108,7 +112,7 @@ public class VascularViewScreen extends EffectRenderingInventoryScreen<VascularV
         drawBorder(graphics, centerX, centerY, this.guiWidth, this.guiHeight);
 
         // Draw content on top of vein background
-        drawContent(graphics, centerX, centerY);
+        drawContent(graphics, centerX, centerY, mouseX, mouseY);
     }
     // ───── Programmatic Dark-Red Border ─────
 
@@ -337,29 +341,54 @@ public class VascularViewScreen extends EffectRenderingInventoryScreen<VascularV
      * Draws the vascular system content (entity model, vein section labels, etc.)
      * on top of the vein background. Called from render() after the background and border.
      */
-    private void drawContent(GuiGraphics graphics, int centerX, int centerY) {
+    private void drawContent(GuiGraphics graphics, int centerX, int centerY, int mouseX, int mouseY) {
         this.left = this.width / 2 - this.guiWidth / 2;
         this.top = this.height / 2 - this.guiHeight / 2;
         int k = this.leftPos;
         int l = this.topPos;
 
         LocalPlayer player = this.minecraft.player;
+        List<Component> hoveredTooltip = new ArrayList<>();
         HemoCapabilityAccess.getVascularSystem(player).ifPresent(vascularSystem -> {
             ItemStack stack = player.getMainHandItem();
             Item item = stack.getItem();
             Item renderItem = ItemInit.dried_leech.get();
             double angleBetweenEach = 360.0 / EnumVeinSections.values().length;
             Point point = new Point(centerX - 45, centerY - 36), center = new Point(centerX, centerY);
-            for (int i = 0; i < vascularSystem.getVascularSystem().keySet().size(); i++) {
-                EnumVeinSections selectedSection = (EnumVeinSections) vascularSystem.getVascularSystem().keySet()
-                        .toArray()[i];
+            for (EnumVeinSections selectedSection : EnumVeinSections.values()) {
                 graphics.drawCenteredString(font,
                         HLTextUtils.toProperCase(selectedSection.toString()), point.x + guiWidth / 2, point.y -20 + guiHeight / 2,
                         new Color(255, 0, 0, 255).getRGB());
                 graphics.drawCenteredString(font,
-                        String.valueOf(vascularSystem.getBloodFlowBySection(selectedSection)), point.x + guiWidth / 2, point.y -30  + guiHeight / 2,
+                        vascularSystem.getBloodFlowBySection(selectedSection) + " "
+                                + String.format("%.1f/100", vascularSystem.getHealthBySection(selectedSection)),
+                        point.x + guiWidth / 2, point.y -30  + guiHeight / 2,
                         new Color(255, 0, 0, 255).getRGB());
-                graphics.renderItem(new ItemStack(renderItem),  point.x-8 + guiWidth / 2, point.y -10 + guiHeight / 2);
+                int iconX = point.x - 8 + guiWidth / 2;
+                int iconY = point.y - 10 + guiHeight / 2;
+                graphics.renderItem(new ItemStack(renderItem), iconX, iconY);
+
+                if (mouseX >= iconX && mouseX < iconX + 16 && mouseY >= iconY && mouseY < iconY + 16) {
+                    hoveredTooltip.add(Component.literal(HLTextUtils.toProperCase(selectedSection.name())));
+                    List<ScarDefinition> active = new ArrayList<>();
+                    HemoCapabilityAccess.getScarState(player).ifPresent(scars -> scars.forEachActiveCerebralScar(active::add));
+                    HemoCapabilityAccess.getKnownManipulations(player).ifPresent(known -> {
+                        known.getEquippedMemoryRefs().forEach(ref -> {
+                            if (ref.expression() == HematicMemoryExpression.THELEMIC) {
+                                ref.muscleMemory().filter(memory -> memory.section() == selectedSection).ifPresent(memory ->
+                                        hoveredTooltip.add(Component.literal("Thelemic: " + HLTextUtils.toProperCase(memory.id()))));
+                            } else {
+                                known.getKnownManips().keySet().stream()
+                                        .filter(manip -> manip.getName().equals(ref.id()) && manip.getSection() == selectedSection)
+                                        .findFirst().ifPresent(manip -> {
+                                            int tier = ScarNoeticRoutingRules.bestMatchingTier(manip.getTend(), active);
+                                            String reduction = tier > 0 ? " (Scar T" + tier + ": -" + tier * 5 + "% strain)" : "";
+                                            hoveredTooltip.add(Component.literal("Noetic: " + manip.getProperName() + reduction));
+                                        });
+                            }
+                        });
+                    });
+                }
 
                 point = rotatePointAbout(point, center, angleBetweenEach);
             }
@@ -371,6 +400,9 @@ public class VascularViewScreen extends EffectRenderingInventoryScreen<VascularV
             InventoryScreen.renderEntityInInventoryFollowsMouse(graphics, entityCenterX - 25, entityCenterY - 35,
                 entityCenterX + 25, entityCenterY + 35, 30, 0.0625F,
                 this.oldMouseX, this.oldMouseY, player);
+            if (!hoveredTooltip.isEmpty()) {
+                graphics.renderTooltip(font, hoveredTooltip, Optional.empty(), mouseX, mouseY);
+            }
     }
     private static Point rotatePointAbout(Point in, Point about, double degrees) {
         double rad = degrees * Math.PI / 180.0;

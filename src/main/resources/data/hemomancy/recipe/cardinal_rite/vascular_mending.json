@@ -4,7 +4,7 @@
   "riteType": "lesser",
   "required_degree": 1,
   "riteName": "Rite of Vascular Mending",
-  "riteDescription": "A restorative rite that floods the caster's vascular system with purified blood, fully healing all seven vein sections from strain and damage.",
+  "riteDescription": "A restorative rite that floods the caster's vascular system with purified blood, fully healing all five vein sections from strain and damage.",
   "floor": "hemomancy:working_lesser",
   "brazier_signature": [],
   "ceremony": {

@@ -131,7 +131,7 @@ public class PacketUnlockSkill implements CustomPacketPayload {
 	private static boolean tryDrainBlood(ServerPlayer player, double cost) {
 		IBloodVolume volume = HemoCapabilityAccess.getBloodVolume(player).orElse(null);
 		if (volume == null || !volume.isActive()) {
-			player.displayClientMessage(Component.literal("Blood system is not active!")
+			player.displayClientMessage(Component.literal("Blood system inactive!")
 					.withStyle(ChatFormatting.RED), true);
 			return false;
 		}

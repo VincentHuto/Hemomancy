@@ -280,7 +280,7 @@ public class ConsecratedBloodwellBlock extends BaseEntityBlock implements BlockB
 	}
 
 	private static Component invalidBloodwellMessage() {
-		return Component.literal("This bloodwell is not bound to an active Founding Fane.")
+		return Component.literal("This bloodwell answers to no active Founding Fane.")
 				.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC);
 	}
 

@@ -60,14 +60,14 @@ public class EquipManipulationPacket implements CustomPacketPayload {
 			if (ref.kind() == MemoryEntryKind.MUSCLE_MEMORY) {
 				var memory = ref.muscleMemory().orElse(null);
 				if (memory == null || !player.getData(HemoAttachmentTypes.MUSCLE_MEMORY).knows(memory)) {
-					player.displayClientMessage(Component.literal("That Thelemic Memory has not been learned.")
+					player.displayClientMessage(Component.literal("That Thelemic Memory is still unknown.")
 							.withStyle(ChatFormatting.RED), true);
 					return;
 				}
 				int maxSlots = ManipSlotHelper.getMaxSlots(player);
 				boolean changed = msg.equip ? known.equipMemory(ref, maxSlots) : known.unequipMemory(ref);
 				if (!changed && msg.equip) {
-					player.displayClientMessage(Component.literal("Cannot equip — no free shared memory slots! ("
+					player.displayClientMessage(Component.literal("No free shared memory slots for this equip ("
 							+ ManipulationEquipHelper.countNormalEquippedNames(known.getEquippedManipNames())
 							+ "/" + maxSlots + ")").withStyle(ChatFormatting.RED), true);
 				}
@@ -87,7 +87,7 @@ public class EquipManipulationPacket implements CustomPacketPayload {
 									.withStyle(ChatFormatting.GREEN), true);
 				} else {
 					player.displayClientMessage(
-							Component.literal("Cannot equip — no free slots! (" +
+							Component.literal("No free slots for this equip (" +
 									ManipulationEquipHelper.countNormalEquippedNames(known.getEquippedManipNames())
 											+ "/" + maxSlots + ")")
 									.withStyle(ChatFormatting.RED), true);

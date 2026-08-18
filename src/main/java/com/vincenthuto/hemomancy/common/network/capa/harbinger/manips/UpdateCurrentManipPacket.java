@@ -50,7 +50,7 @@ public class UpdateCurrentManipPacket implements CustomPacketPayload {
 						// Only allow selecting equipped manipulations
 						if (!known.isManipEquipped(target)) {
 							player.displayClientMessage(
-									Component.literal("That manipulation is not equipped!")
+									Component.literal("That manipulation is unequipped!")
 											.withStyle(net.minecraft.ChatFormatting.RED), true);
 							return;
 						}

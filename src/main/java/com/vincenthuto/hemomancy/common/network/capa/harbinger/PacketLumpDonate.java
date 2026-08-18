@@ -49,7 +49,7 @@ public class PacketLumpDonate implements CustomPacketPayload {
 				Bloodline bloodline = volume.getBloodLine();
 				if (!bloodline.isValid()) {
 					player.displayClientMessage(
-							Component.literal("You are not in a bloodline!").withStyle(ChatFormatting.RED), true);
+							Component.literal("No bloodline claims you!").withStyle(ChatFormatting.RED), true);
 					return;
 				}
 

@@ -13,6 +13,7 @@ import com.vincenthuto.hemomancy.common.mission.HarbingerChapterMilestone;
 import com.vincenthuto.hemomancy.common.mission.HarbingerChapterProgression;
 import com.vincenthuto.hemomancy.common.mission.FirstSeparationAssignmentHelper;
 import com.vincenthuto.hemomancy.common.mission.BodyAnswersAssignmentHelper;
+import com.vincenthuto.hemomancy.common.mission.AnchoriteAssignmentProgression;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.mission.OpenHarbingerAssignmentLedgerPacket;
 import com.vincenthuto.hemomancy.common.rite.harbinger.QliphothBloomSavedData;
@@ -80,6 +81,10 @@ public class HarbingerAssignmentLedgerItem extends ItemGuideBook {
 					HarbingerArtificerAssignmentHelper.knownLivingWeaponFormCount(serverPlayer);
 			boolean artificerLivingArsenalFitting =
 					HarbingerAdvancementGranter.isArtificerLivingArsenalFitting(serverPlayer);
+			var artificerProgress = com.vincenthuto.hemomancy.common.entity.npc.dialogue.ArtificerProgressSnapshot.from(serverPlayer);
+			int artificerProgressSteps = com.vincenthuto.hemomancy.common.mission.ArtificerProgressionRules.packSteps(
+					artificerProgress.wornVow(), artificerProgress.threeAnswers(), artificerProgress.crimsonVestment(),
+					artificerProgress.assumedLimb(), artificerProgress.weightOfFrame());
 			PacketHandler.sendToPlayer(serverPlayer, new OpenHarbingerAssignmentLedgerPacket(
 					HemoCapabilityAccess.getPlayerDegreeNumber(serverPlayer),
 					HarbingerAdvancementGranter.hasAdvancement(serverPlayer,
@@ -120,11 +125,13 @@ public class HarbingerAssignmentLedgerItem extends ItemGuideBook {
 					HarbingerAdvancementGranter.isVeinMasonFirstScarLearned(serverPlayer),
 					HarbingerAdvancementGranter.isVeinMasonFirstEffigyPattern(serverPlayer),
 					HarbingerAdvancementGranter.isVeinMasonFirstEffigyLoadout(serverPlayer),
+					anchoriteD5Progress(serverPlayer), anchoriteD6Progress(serverPlayer),
 					artificerArmaturePlaced, artificerFirstHematicUpgrade, artificerHematicIronFitting,
 					artificerFirstForkUpgrade, artificerForkFitting, artificerFrameConsecrated,
 					artificerFirstBloodLustUpgrade, artificerBloodLustFitting, artificerMonolithicFrame,
 					artificerFirstD7Upgrade, artificerD7Fitting, artificerFirstLivingGraft,
 					artificerLivingWeaponFormCount, artificerLivingArsenalFitting,
+					artificerProgressSteps,
 					foundedBloodline,
 					completedChapters.contains(HarbingerChapterMilestone.COVENANT_WRITTEN_IN_PLACE),
 					HarbingerAdvancementGranter.hasAdvancement(serverPlayer,
@@ -139,6 +146,22 @@ public class HarbingerAssignmentLedgerItem extends ItemGuideBook {
 					archonPath == EnumArchonPath.SILENT_ARCHON));
 		}
 		return InteractionResultHolder.sidedSuccess(stack, level.isClientSide);
+	}
+
+	private static int anchoriteD5Progress(ServerPlayer player) {
+		int progress = AnchoriteAssignmentProgression.has(player, AnchoriteAssignmentProgression.D5_VARICOSE) ? 1 : 0;
+		if (AnchoriteAssignmentProgression.has(player, AnchoriteAssignmentProgression.D5_DIAGNOSED)) progress++;
+		if (AnchoriteAssignmentProgression.has(player, AnchoriteAssignmentProgression.D5_TREATED)) progress++;
+		if (HemoCapabilityAccess.getInitiatoryDegree(player).map(degree -> degree.hasHematicFortification()).orElse(false)) progress++;
+		return progress;
+	}
+
+	private static int anchoriteD6Progress(ServerPlayer player) {
+		int progress = AnchoriteAssignmentProgression.has(player, AnchoriteAssignmentProgression.D6_COUNSEL) ? 1 : 0;
+		if (AnchoriteAssignmentProgression.has(player, AnchoriteAssignmentProgression.D6_FIRST_ROUTE)) progress++;
+		if (AnchoriteAssignmentProgression.has(player, AnchoriteAssignmentProgression.D6_LOADOUT)) progress++;
+		if (AnchoriteAssignmentProgression.has(player, AnchoriteAssignmentProgression.D6_SECOND_ROUTE)) progress++;
+		return progress;
 	}
 
 	private static boolean hasBlankHematicMemory(ServerPlayer player) {

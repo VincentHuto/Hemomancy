@@ -6,6 +6,7 @@ import com.vincenthuto.hemomancy.common.capability.player.unstained.IUnstainedPr
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.DialogueItemInquiryNodes;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.DialogueHubFactory;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.DialogueTree;
+import com.vincenthuto.hemomancy.common.entity.npc.dialogue.ArtificerProgressSnapshot;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.HarbingerArtificerDialogueTrees;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.dialogue.OpenDialoguePacket;
@@ -75,18 +76,9 @@ public class HarbingerArtificerEntity extends PathfinderMob {
 	@Override
 	protected InteractionResult mobInteract(Player player, InteractionHand hand) {
 		if (!player.level().isClientSide && hand == InteractionHand.MAIN_HAND && player instanceof ServerPlayer serverPlayer) {
-			int degree = HemoCapabilityAccess.getPlayerDegreeNumber(player);
-			boolean activeBlood = HemoCapabilityAccess.getBloodVolume(player)
-					.map(volume -> volume.isActive())
-					.orElse(false);
-			boolean purifying = isPurifying(player);
-			boolean clarity = hasClarityUnlocked(player);
-			boolean livingStaffBond = HemoCapabilityAccess.getLivingStaffProgress(player)
-					.map(ILivingStaffProgress::hasLivingStaffBond)
-					.orElse(false);
-			DialogueTree tree = HarbingerArtificerDialogueTrees.forState(this.getId(), degree, activeBlood,
-					purifying, clarity, livingStaffBond);
-			tree = DialogueItemInquiryNodes.withInventoryItemInquiries(tree, serverPlayer, "artificer", degree, 0f);
+			ArtificerProgressSnapshot progress = ArtificerProgressSnapshot.from(serverPlayer);
+			DialogueTree tree = HarbingerArtificerDialogueTrees.forState(this.getId(), progress);
+			tree = DialogueItemInquiryNodes.withInventoryItemInquiries(tree, serverPlayer, "artificer", progress.degree(), 0f);
 			tree = DialogueHubFactory.decorate(tree, "artificer", serverPlayer);
 
 			PacketHandler.sendToPlayer(serverPlayer, new OpenDialoguePacket(tree));

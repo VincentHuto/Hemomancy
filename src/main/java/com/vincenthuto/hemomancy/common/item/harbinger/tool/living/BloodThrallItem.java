@@ -76,7 +76,7 @@ public class BloodThrallItem extends Item {
                 if (src.equals(pos)) {
                     if (!level.isClientSide) {
                         player.displayClientMessage(
-                                Component.literal("§cSource and destination cannot be the same!"), true);
+                                Component.literal("§cChoose different source and destination blocks!"), true);
                     }
                     return InteractionResult.FAIL;
                 }

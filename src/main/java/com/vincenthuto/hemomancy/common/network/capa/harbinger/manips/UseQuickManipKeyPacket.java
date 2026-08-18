@@ -63,7 +63,7 @@ public class UseQuickManipKeyPacket implements CustomPacketPayload {
 							// Check manipulation is equipped
 							if (!known.isManipEquipped(selectedManip)) {
 								player.displayClientMessage(
-										Component.literal("That manipulation is not equipped!")
+										Component.literal("That manipulation is unequipped!")
 												.withStyle(ChatFormatting.RED), true);
 								return;
 							}
@@ -104,7 +104,7 @@ public class UseQuickManipKeyPacket implements CustomPacketPayload {
 								}
 							} else {
 								player.displayClientMessage(
-										Component.literal("Selected Manipulation is not a Quick or Passive MobEffect")
+										Component.literal("The selected Manipulation needs a Quick or Passive MobEffect")
 												.withStyle(ChatFormatting.RED),
 										true);
 							}

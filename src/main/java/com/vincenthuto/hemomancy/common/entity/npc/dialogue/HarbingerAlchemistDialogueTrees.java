@@ -12,7 +12,11 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
+
+import static com.vincenthuto.hemomancy.common.mission.ArtificerProgressionRules.Step;
 
 /**
  * Static factory that produces {@link DialogueTree} variants for the Harbinger
@@ -33,6 +37,27 @@ public final class HarbingerAlchemistDialogueTrees {
 	public static final String EVENT_BODY_ANSWERS_BRIEF = "alchemist_body_answers_brief";
 
 	private HarbingerAlchemistDialogueTrees() {}
+
+	public static DialogueTree withArtificerCorrespondence(DialogueTree tree, ArtificerProgressSnapshot progress) {
+		if (progress.purifying() || progress.clarity()) return tree;
+		List<DialogueOption> correspondence = new ArrayList<>();
+		if (progress.threeAnswers() == Step.CORRESPONDENCE) {
+			correspondence.add(new DialogueOption("hemomancy.dialogue.alchemist.option.artificer_three_answers",
+					null, HarbingerArtificerDialogueTrees.EVENT_CLAIM_THREE_ANSWERS_REWARD));
+		}
+		if (progress.crimsonVestment() == Step.CORRESPONDENCE) {
+			correspondence.add(new DialogueOption("hemomancy.dialogue.alchemist.option.artificer_crimson_vestment",
+					null, HarbingerArtificerDialogueTrees.EVENT_CLAIM_CRIMSON_VESTMENT_REWARD));
+		}
+		if (correspondence.isEmpty()) return tree;
+		Map<String, DialogueNode> nodes = new LinkedHashMap<>(tree.nodes());
+		DialogueNode start = tree.getStartNode();
+		List<DialogueOption> options = new ArrayList<>(start.options());
+		options.addAll(Math.max(0, options.size() - 1), correspondence);
+		nodes.put(start.id(), new DialogueNode(start.id(), start.lines(), List.copyOf(options)));
+		return new DialogueTree(tree.speakerName(), tree.speakerIcon(), tree.startNodeId(), nodes,
+				tree.entityId(), tree.theme(), tree.presentation());
+	}
 
 	/**
 	 * Returns the appropriate dialogue tree for the player's progression state.

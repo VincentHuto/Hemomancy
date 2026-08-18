@@ -198,17 +198,17 @@ public final class HarbingerArtificerAssignmentSourceTest {
 					"advancements.hemomancy." + advancement + ".title");
 		}
 
-		assertContains("reference docs describe The Worn Vow", docs, "Main D2 Artificer assignment, **The Worn Vow**");
+		assertContains("reference docs describe The Worn Vow", docs, "**The Worn Vow** (D2)");
 		assertContains("reference docs describe The Three Answers", docs,
-				"Main D3 Artificer assignment, **The Three Answers**");
+				"**The Three Answers** (D3)");
 		assertContains("reference docs describe Crimson Vestment", docs,
-				"Main D5 Artificer assignment, **Crimson Vestment**");
+				"**Crimson Vestment** (D5)");
 		assertContains("reference docs describe Weight of the Frame", docs,
-				"Main D7 Artificer assignment, **Weight of the Frame**");
+				"**Weight of the Frame** (D7)");
 		assertContains("reference docs describe The Assumed Limb", docs,
-				"Side Artificer assignment, **The Assumed Limb**");
+				"**The Assumed Limb** (D5)");
 		assertContains("lore docs preserve Artificer rite tone", lore,
-				"staff fittings mark worn vows, chosen shells, and assumed limbs");
+				"staff fittings mark witnessed obligations rather than new powers");
 	}
 
 	private static String read(Path path) throws IOException {

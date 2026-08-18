@@ -104,7 +104,7 @@ public class SummonThrallManip extends BloodManipulation {
 				// Don't allow source and dest to be the same
 				if (hitBlock.equals(thrall.getSourcePos())) {
 					player.displayClientMessage(
-							Component.literal("§cSource and destination cannot be the same block!"), true);
+							Component.literal("§cChoose different source and destination blocks!"), true);
 					return;
 				}
 

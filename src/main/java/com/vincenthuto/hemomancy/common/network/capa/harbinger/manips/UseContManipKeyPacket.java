@@ -56,7 +56,7 @@ public class UseContManipKeyPacket implements CustomPacketPayload {
 							// Check manipulation is equipped
 							if (!known.isManipEquipped(selectedManip)) {
 								player.displayClientMessage(
-										Component.literal("That manipulation is not equipped!")
+										Component.literal("That manipulation is unequipped!")
 												.withStyle(ChatFormatting.RED), true);
 								return;
 							}

@@ -413,14 +413,14 @@ public class BloodCraftingKeyPressPacket implements CustomPacketPayload {
 						.map(u -> u.hasBegunPurification()).orElse(false);
 				if (recipe.isUnstained() && playerIsInitiated) {
 					player.displayClientMessage(
-							Component.literal("Those who have sworn blood to the Hematic Order cannot walk the Unstained path.")
+							Component.literal("The Hematic Order and Unstained path are incompatible.")
 									.withStyle(ChatFormatting.DARK_GRAY, ChatFormatting.ITALIC),
 							false);
 					return CardinalRiteActivationRules.ActivationAttempt.HANDLED;
 				}
 				if (!recipe.isUnstained() && playerIsUnstained) {
 					player.displayClientMessage(
-							Component.literal("One who has begun the purification cannot invoke the rites of the Hematic Order.")
+							Component.literal("Purification bars access to the Hematic Order rites.")
 									.withStyle(ChatFormatting.DARK_GRAY, ChatFormatting.ITALIC),
 							false);
 					return CardinalRiteActivationRules.ActivationAttempt.HANDLED;
@@ -570,7 +570,7 @@ public class BloodCraftingKeyPressPacket implements CustomPacketPayload {
 								.withStyle(ChatFormatting.DARK_RED, ChatFormatting.BOLD),
 						false);
 				player.displayClientMessage(
-						Component.literal("Do not leave the ritual circle!")
+						Component.literal("Stay inside the ritual circle!")
 								.withStyle(ChatFormatting.RED, ChatFormatting.ITALIC),
 						false);
 				return CardinalRiteActivationRules.ActivationAttempt.STARTED;
@@ -760,11 +760,11 @@ public class BloodCraftingKeyPressPacket implements CustomPacketPayload {
 		boolean playerIsUnstained = HemoCapabilityAccess.getUnstainedProgress(player)
 				.map(u -> u.hasBegunPurification()).orElse(false);
 		if (recipe.isUnstained() && playerIsInitiated) {
-			return Component.literal("Those who have sworn blood to the Hematic Order cannot walk the Unstained path.")
+			return Component.literal("The Hematic Order and Unstained path are incompatible.")
 					.withStyle(ChatFormatting.DARK_GRAY, ChatFormatting.ITALIC);
 		}
 		if (!recipe.isUnstained() && playerIsUnstained) {
-			return Component.literal("One who has begun the purification cannot invoke the formations of the Hematic Order.")
+			return Component.literal("Purification bars access to the Hematic Order formations.")
 					.withStyle(ChatFormatting.DARK_GRAY, ChatFormatting.ITALIC);
 		}
 		return null;

@@ -262,7 +262,7 @@ public class UnstainedCardinalRiteEvents {
 		HemoCapabilityAccess.getUnstainedProgress(caster).ifPresent(unstained -> {
 			if (unstained.getPurity() < 25.0f) {
 				caster.displayClientMessage(
-						Component.literal("Your soul is not yet pure enough to bear the Silver Veil.")
+						Component.literal("Your soul needs more Purity to bear the Silver Veil.")
 								.withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC),
 						false);
 				return;
@@ -733,7 +733,7 @@ public class UnstainedCardinalRiteEvents {
 						.withStyle(ChatFormatting.AQUA, ChatFormatting.BOLD),
 				false);
 		caster.displayClientMessage(
-				Component.literal("Spawns are halved. Bleed cannot touch those warded in silver. Purity grows.")
+				Component.literal("Spawns are halved. Silver wards keep Bleed away. Purity grows.")
 						.withStyle(ChatFormatting.WHITE, ChatFormatting.ITALIC),
 				false);
 

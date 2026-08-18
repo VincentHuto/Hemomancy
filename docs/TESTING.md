@@ -81,7 +81,8 @@ The initial catalog is:
 
 - `blood_structure_locked` — degree 5 must not satisfy the degree-6 Covenant Throne recipe.
 - `blood_structure_unlocked` — degree 6 must satisfy the same recipe.
-- `artificer_assignment_ready` — a complete Hematic Iron set makes the Worn Vow fitting available.
+- `artificer_assignment_ready` — a briefed player wearing complete Hematic Iron makes the Worn Vow fitting available.
+- `ArtificerProgressionGameTests` covers ordered D2 inspection, all three recorded fork reagents and real set responses, Blood Lust and Living Arsenal gameplay hooks, and all four D7 material/registered-ability routes against loaded registries.
 - `artificer_reward_claimed` — repeated reward-claim marking remains idempotent.
 
 - `uninitiated_cannot_pass_bloodcraft_degree_gate` — a Degree-0 player is rejected by the loaded degree-6 Covenant Throne bloodcraft gate.
@@ -109,3 +110,12 @@ Avoid sharing mutable fixture state between tests. Prefer throwaway players and 
 5. Place a Stillwater Condenser beside source water and within four blocks of Ghost Pipe. Below 50 Purity its menu must remain locked. At 50, open its two-slot screen, insert glass bottles, and verify the water/Ghost Pipe indicators and progress channel produce Lethean Dew. A Verdigris Lattice within five blocks must light the lattice indicator, halve processing time, and double output.
 6. Stand near a Verdigris Lattice as an Unstained player and verify Resistance. Spawn a tagged Hemomancy creature and verify Weakness and Slowness after a random tick.
 7. Confirm no active recipe, dialogue inquiry, or registered item references `pale_silver_pickaxe` or `verdigris_censer`.
+
+## Cicatrix Anchorite D4-D6 smoke test
+
+1. Complete the existing D4 scar lesson, lose an unlearned issued pattern, and verify replacement is offered once no matching template remains in inventory.
+2. At D5, use a Thelemic Memory to enter Varicose and confirm physical damage and Noetic casting do not satisfy the milestone. Receive diagnosis, inspect exact health and routed-memory tooltips, then use Salve or Poultice and complete Hematic Fortification.
+3. Claim the tier-two reward twice and verify only one reward is granted. Confirm a previously completed Fortification receives automatic credit.
+4. At D6, receive the referral, obtain Mnemonist counsel, cast a non-mechanical Noetic Memory matching an active cerebral scar, commit a different Effigy set, and cast another matching Noetic Memory.
+5. Relog with active scars and verify effective alignment is unchanged before and after the relog. Remove and re-equip scars and verify saved base alignment never drifts.
+6. Inspect the separate collapsible D5 and D6 ledger cards and both return-ready toasts. Confirm the tier-three reward warns that Deep Inscription remains required.

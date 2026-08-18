@@ -82,7 +82,7 @@ public class ScarDefinition {
 			IBloodTendency coven = HemoCapabilityAccess.getBloodTendency(player)
 					.orElseThrow(IllegalArgumentException::new);
 			if (coven != null) {
-				coven.setTendencyAlignment(getAssignedTendency(), getDeepenAmount());
+				coven.addTransientAlignment(getAssignedTendency(), getDeepenAmount());
 				PacketHandler.sendToPlayer((ServerPlayer) player, new BloodTendencyServerPacket(coven.getTendency()));
 			}
 
@@ -105,7 +105,7 @@ public class ScarDefinition {
 			IBloodTendency coven = HemoCapabilityAccess.getBloodTendency(player)
 					.orElseThrow(IllegalArgumentException::new);
 			if (coven != null) {
-				coven.setTendencyAlignment(getAssignedTendency(), -getDeepenAmount());
+				coven.addTransientAlignment(getAssignedTendency(), -getDeepenAmount());
 				PacketHandler.sendToPlayer((ServerPlayer) player, new BloodTendencyServerPacket(coven.getTendency()));
 			}
 

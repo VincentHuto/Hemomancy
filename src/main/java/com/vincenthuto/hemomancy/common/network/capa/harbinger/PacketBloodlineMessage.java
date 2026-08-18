@@ -51,7 +51,7 @@ public class PacketBloodlineMessage implements CustomPacketPayload {
 				Bloodline bloodline = volume.getBloodLine();
 				if (!bloodline.isValid()) {
 					sender.sendSystemMessage(
-							Component.literal("You are not in a bloodline!").withStyle(ChatFormatting.RED));
+							Component.literal("No bloodline claims you!").withStyle(ChatFormatting.RED));
 					return;
 				}
 

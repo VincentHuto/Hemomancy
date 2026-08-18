@@ -4,6 +4,7 @@ import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.EnumVeinSections;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.IVascularSystem;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.VascularSystemEvents;
+import com.vincenthuto.hemomancy.common.mission.AnchoriteAssignmentProgression;
 import com.vincenthuto.hutoslib.client.HLTextUtils;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
@@ -21,7 +22,6 @@ import net.minecraft.world.item.UseAnim;
 import net.minecraft.world.level.Level;
 
 import java.util.List;
-import java.util.Map;
 
 /**
  * A consumable salve that repairs the player's most-damaged vascular section.
@@ -107,20 +107,16 @@ public class SanguineSalveItem extends Item {
 		if (level.isClientSide) return stack;
 
 		HemoCapabilityAccess.getVascularSystem(player).ifPresent(vascular -> {
-			// Find the most damaged section
-			EnumVeinSections worst = findMostDamagedSection(vascular);
-			if (worst == null) return; // all at 100
-
-			float before = vascular.getHealthBySection(worst);
-			float after = Math.min(100f, before + healAmount);
-
-			// Apply the heal
-			Map<EnumVeinSections, Float> sys = vascular.getVascularSystem();
-			sys.put(worst, after);
-			vascular.setVascularSystem(sys);
+			var result = VascularPoulticeRules.healMostDamaged(vascular.getVascularSystem(), healAmount).orElse(null);
+			if (result == null) return;
+			EnumVeinSections worst = result.section();
+			float before = result.before();
+			float after = result.after();
+			vascular.setVascularSystem(vascular.getVascularSystem());
 
 			// Sync to client
 			VascularSystemEvents.syncVascular((ServerPlayer) player, vascular);
+			AnchoriteAssignmentProgression.onTreatment((ServerPlayer) player);
 
 			// Feedback
 			String sectionName = HLTextUtils.toProperCase(worst.name());
@@ -140,24 +136,6 @@ public class SanguineSalveItem extends Item {
 		player.getCooldowns().addCooldown(this, 40); // 2-second cooldown
 
 		return stack;
-	}
-
-	/**
-	 * Returns the section with the lowest health, or null if all sections are at 100.
-	 */
-	private EnumVeinSections findMostDamagedSection(IVascularSystem vascular) {
-		EnumVeinSections worst = null;
-		float worstHealth = 100f;
-
-		for (EnumVeinSections section : EnumVeinSections.values()) {
-			float h = vascular.getHealthBySection(section);
-			if (h < worstHealth) {
-				worstHealth = h;
-				worst = section;
-			}
-		}
-
-		return (worstHealth >= 100f) ? null : worst;
 	}
 
 	public float getHealAmount() {

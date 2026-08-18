@@ -76,14 +76,14 @@ public final class FungalGardenTravelHelper {
 			int degree = HemoCapabilityAccess.getPlayerDegreeNumber(player);
 			if (degree < MIN_DEGREE) {
 				player.displayClientMessage(
-						Component.literal("The spine has not yet learned the shape of your mind.")
+						Component.literal("The spine still needs the shape of your mind.")
 								.withStyle(ChatFormatting.DARK_GRAY, ChatFormatting.ITALIC),
 						true);
 				return InteractionResult.SUCCESS;
 			}
 			var degreeState = HemoCapabilityAccess.requireInitiatoryDegree(player);
 			if (!degreeState.hasFungalSpineGranted()) {
-				player.displayClientMessage(Component.literal("This is not the Spine the ninth husk made yours.")
+				player.displayClientMessage(Component.literal("You have found the wrong Spine. The ninth husk made another one yours.")
 						.withStyle(ChatFormatting.DARK_GRAY, ChatFormatting.ITALIC), true);
 				return InteractionResult.SUCCESS;
 			}

@@ -1918,7 +1918,7 @@ public class HarbingerCardinalRiteEvents {
 		CompoundTag persistentData = caster.getPersistentData();
 		if (persistentData.getBoolean(MaxBloodLedger.ETERNAL_COVENANT_TAG)) {
 			caster.displayClientMessage(
-					Component.literal("The covenant has already been sealed. Its boon cannot be granted twice.")
+					Component.literal("The covenant is already sealed. Its boon has already been granted.")
 							.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC),
 					false);
 			return;
@@ -2002,7 +2002,7 @@ public class HarbingerCardinalRiteEvents {
 			playerData.putLong(pendingUntilKey,
 					sLevel.getGameTime() + HematicUnbindingRules.CONFIRMATION_TICKS);
 			caster.displayClientMessage(
-					Component.literal("The covenant loosens but does not break. Performing Hematic Unbinding again "
+					Component.literal("The covenant loosens but holds. Performing Hematic Unbinding again "
 									+ "within ten minutes will permanently dissolve " + bloodline.getName()
 									+ ", remove its fanes, and free every member.")
 							.withStyle(ChatFormatting.RED, ChatFormatting.BOLD),
@@ -2154,7 +2154,7 @@ public class HarbingerCardinalRiteEvents {
 				(IMultiBlock) bloomBlock;
 		if (!multiBlock.canPlaceMultiBlock(sLevel, center.above(2))) {
 			caster.displayClientMessage(
-					Component.literal("There is not enough room for the Qliphoth to bloom here.")
+					Component.literal("The Qliphoth needs more room to bloom here.")
 							.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC),
 					false);
 			return;
@@ -2194,6 +2194,7 @@ public class HarbingerCardinalRiteEvents {
 	private static void completeHematicFortification(ServerPlayer caster) {
 		HemoCapabilityAccess.getInitiatoryDegree(caster).ifPresent(degree -> {
 			degree.setHematicFortification(true);
+			com.vincenthuto.hemomancy.common.mission.AnchoriteAssignmentProgression.onFortification(caster);
 			InitiatoryDegreeEvents.syncDegree(caster, degree);
 		});
 		caster.displayClientMessage(

@@ -68,8 +68,6 @@ public final class HarbingerAssignmentReturnReadySourceTest {
 				"com/vincenthuto/hemomancy/common/tile/crafting/SomaticLoomBlockEntity.java"));
 		String brazier = read(SOURCE_ROOT.resolve(
 				"com/vincenthuto/hemomancy/common/rite/ScarBrazierRite.java"));
-		String dialogueHandler = read(SOURCE_ROOT.resolve(
-				"com/vincenthuto/hemomancy/common/entity/npc/dialogue/DialogueEventHandler.java"));
 
 		assertContains("Artificer helper syncs ready-to-claim advancements", helper,
 				"syncReadyToClaimAdvancements");
@@ -101,9 +99,9 @@ public final class HarbingerAssignmentReturnReadySourceTest {
 				"isMnemonistWovenVesselComplete(serverPlayer)");
 		assertContains("Brazier grants Vein-Mason continuation prompt", brazier,
 				"ADV_VEIN_MASON_CONTINUATION_READY");
-		assertContains("Artificer material rewards check shared claim helper", dialogueHandler,
+		assertContains("Artificer material rewards check shared claim helper", helper,
 				"isArtificerLessonRewardClaimed");
-		assertContains("Artificer material rewards record shared claim helper", dialogueHandler,
+		assertContains("Artificer material rewards record shared claim helper", helper,
 				"markArtificerLessonRewardClaimed");
 	}
 

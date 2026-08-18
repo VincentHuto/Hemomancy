@@ -19,6 +19,7 @@ public final class HarbingerMnemonistDialogueTrees {
 	private static final String SPEAKER = "entity.hemomancy.harbinger_mnemonist";
 	public static final String EVENT_WOVEN_VESSEL_TURN_IN = "mnemonist_woven_vessel_turn_in";
 	public static final String EVENT_RELIQUARY_TAUGHT = "mnemonist_reliquary_taught";
+	public static final String EVENT_ANCHORITE_COUNSEL = "mnemonist_anchorite_counsel";
 
 	private HarbingerMnemonistDialogueTrees() {
 	}
@@ -36,11 +37,18 @@ public final class HarbingerMnemonistDialogueTrees {
 
 	public static DialogueTree forDegree(int degree, int entityId, boolean hasBloodline, boolean isNpcRecruited,
 			boolean canClaimStarter, boolean wovenVesselComplete, boolean morphlingPuppetInterference) {
+		return forDegree(degree, entityId, hasBloodline, isNpcRecruited, canClaimStarter, wovenVesselComplete,
+				morphlingPuppetInterference, false, false);
+	}
+
+	public static DialogueTree forDegree(int degree, int entityId, boolean hasBloodline, boolean isNpcRecruited,
+			boolean canClaimStarter, boolean wovenVesselComplete, boolean morphlingPuppetInterference,
+			boolean anchoriteReferral, boolean anchoriteCounsel) {
 		if (degree <= 0) return uninitiated(entityId);
 		if (degree == 1) return neophyte(entityId, canClaimStarter);
 		if (degree == 2) return votary(entityId, canClaimStarter);
 		return woven(entityId, degree, degree >= 5 && hasBloodline, isNpcRecruited, canClaimStarter,
-				!wovenVesselComplete, morphlingPuppetInterference);
+				!wovenVesselComplete, morphlingPuppetInterference, anchoriteReferral, anchoriteCounsel);
 	}
 
 	public static DialogueTree purifying(int entityId) {
@@ -116,7 +124,8 @@ public final class HarbingerMnemonistDialogueTrees {
 	}
 
 	private static DialogueTree woven(int entityId, int degree, boolean hasBloodline, boolean isNpcRecruited,
-			boolean canClaimStarter, boolean canCompleteWovenVessel, boolean morphlingPuppetInterference) {
+			boolean canClaimStarter, boolean canCompleteWovenVessel, boolean morphlingPuppetInterference,
+			boolean anchoriteReferral, boolean anchoriteCounsel) {
 		List<DialogueOption> options = new ArrayList<>();
 		if (canCompleteWovenVessel) {
 			options.add(new DialogueOption("hemomancy.dialogue.mnemonist.option.woven_vessel",
@@ -133,6 +142,10 @@ public final class HarbingerMnemonistDialogueTrees {
 		if (degree >= 6) {
 			options.add(new DialogueOption("hemomancy.dialogue.mnemonist.option.ask_about_mnemonic_doctrine",
 					"mnemonic_doctrine", null));
+		}
+		if (anchoriteReferral && !anchoriteCounsel) {
+			options.add(new DialogueOption("hemomancy.dialogue.mnemonist.option.anchorite_counsel",
+					"anchorite_counsel", EVENT_ANCHORITE_COUNSEL));
 		}
 		if (canClaimStarter) {
 			options.add(new DialogueOption("hemomancy.dialogue.mnemonist.option.choose_starter", "starter_choice", null));
@@ -151,6 +164,10 @@ public final class HarbingerMnemonistDialogueTrees {
 				.addNode(reliquaryNode())
 				.addNode(loomNode())
 				.addNode(mnemonicDoctrineNode())
+				.addNode(new DialogueNode("anchorite_counsel", List.of(
+						"hemomancy.mnemonist.anchorite_counsel.line1",
+						"hemomancy.mnemonist.anchorite_counsel.line2"), List.of(
+						new DialogueOption("hemomancy.dialogue.mnemonist.option.leave", null, null))))
 				.addNode(morphlingPuppetInterferenceNode())
 				.addNode(chamberNode())
 				.addNode(wovenVesselNode())

@@ -337,12 +337,12 @@ public class DrudgeEntity extends PathfinderMob implements OwnableEntity {
         // Only owner can interact (or creative)
         UUID ownerUUID = getOwnerUUID();
         if (ownerUUID != null && !ownerUUID.equals(player.getUUID()) && !player.getAbilities().instabuild) {
-            player.displayClientMessage(Component.literal("§cThis construct does not answer to you."), true);
+            player.displayClientMessage(Component.literal("§cThis construct answers to another hand."), true);
             return InteractionResult.FAIL;
         }
 
         if (isRogue()) {
-            player.displayClientMessage(Component.literal("§4It no longer recognizes you."), true);
+            player.displayClientMessage(Component.literal("§4The construct has turned rogue."), true);
             return InteractionResult.FAIL;
         }
 

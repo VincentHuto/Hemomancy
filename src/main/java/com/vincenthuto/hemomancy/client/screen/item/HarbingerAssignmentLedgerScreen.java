@@ -7,6 +7,8 @@ import com.vincenthuto.hemomancy.client.screen.skilltree.shared.MilestoneDrawerS
 import com.vincenthuto.hemomancy.client.screen.skilltree.shared.MilestoneDrawerView;
 import com.vincenthuto.hemomancy.client.screen.skilltree.util.ProgressScreenContext;
 import com.vincenthuto.hemomancy.client.screen.skilltree.util.ScreenDrawUtils;
+import com.vincenthuto.hemomancy.common.mission.ArtificerProgressionRules;
+import com.vincenthuto.hemomancy.common.mission.ArtificerProgressionRules.Step;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
@@ -46,6 +48,8 @@ public class HarbingerAssignmentLedgerScreen extends Screen {
 	private static final int LIVING_BESTIARY_HEIGHT = 68;
 	private static final int WOVEN_VESSEL_HEIGHT = 68;
 	private static final int VEIN_MASON_HEIGHT = 68;
+	private static final int ANCHORITE_D5_HEIGHT = 68;
+	private static final int ANCHORITE_D6_HEIGHT = 68;
 	private static final int THE_WORN_VOW_HEIGHT = 68;
 	private static final int THE_THREE_ANSWERS_HEIGHT = 68;
 	private static final int CRIMSON_VESTMENT_HEIGHT = 68;
@@ -105,10 +109,12 @@ public class HarbingerAssignmentLedgerScreen extends Screen {
 		WOVEN_VESSEL(3, AssignmentCategory.MAIN, WOVEN_VESSEL_HEIGHT),
 		THE_THREE_ANSWERS(3, AssignmentCategory.VOCATION, THE_THREE_ANSWERS_HEIGHT),
 		VEIN_MASON(4, AssignmentCategory.MAIN, VEIN_MASON_HEIGHT),
+		ANCHORITE_D5(5, AssignmentCategory.SIDE, ANCHORITE_D5_HEIGHT),
 		COVENANT_WRITTEN(5, AssignmentCategory.MAIN, COVENANT_WRITTEN_HEIGHT),
 		CRIMSON_VESTMENT(5, AssignmentCategory.VOCATION, CRIMSON_VESTMENT_HEIGHT),
 		THE_ASSUMED_LIMB(5, AssignmentCategory.VOCATION, THE_ASSUMED_LIMB_HEIGHT),
 		LIVING_COVENANT(6, AssignmentCategory.MAIN, LIVING_COVENANT_HEIGHT),
+		ANCHORITE_D6(6, AssignmentCategory.SIDE, ANCHORITE_D6_HEIGHT),
 		BLOOD_BENEATH_BLOOD(7, AssignmentCategory.MAIN, BLOOD_BENEATH_BLOOD_HEIGHT),
 		WEIGHT_OF_THE_FRAME(7, AssignmentCategory.VOCATION, WEIGHT_OF_THE_FRAME_HEIGHT);
 
@@ -165,6 +171,8 @@ public class HarbingerAssignmentLedgerScreen extends Screen {
 	private final boolean veinMasonFirstScarLearned;
 	private final boolean veinMasonFirstEffigyPattern;
 	private final boolean veinMasonFirstEffigyLoadout;
+	private final int anchoriteD5Progress;
+	private final int anchoriteD6Progress;
 	private final boolean artificerArmaturePlaced;
 	private final boolean artificerFirstHematicUpgrade;
 	private final boolean artificerHematicIronFitting;
@@ -179,6 +187,7 @@ public class HarbingerAssignmentLedgerScreen extends Screen {
 	private final boolean artificerFirstLivingGraft;
 	private final int artificerLivingWeaponFormCount;
 	private final boolean artificerLivingArsenalFitting;
+	private final int artificerProgressSteps;
 	private final boolean foundedBloodline;
 	private final boolean foundingFaneEstablished;
 	private final boolean chamberReturned;
@@ -216,12 +225,14 @@ public class HarbingerAssignmentLedgerScreen extends Screen {
 			boolean vicarMasonsRespiteDirective, boolean veinMasonFirstLesson,
 			boolean veinMasonFirstScarCarved, boolean veinMasonFirstScarLearned,
 			boolean veinMasonFirstEffigyPattern, boolean veinMasonFirstEffigyLoadout,
+			int anchoriteD5Progress, int anchoriteD6Progress,
 			boolean artificerArmaturePlaced, boolean artificerFirstHematicUpgrade,
 			boolean artificerHematicIronFitting, boolean artificerFirstForkUpgrade, boolean artificerForkFitting,
 			boolean artificerFrameConsecrated, boolean artificerFirstBloodLustUpgrade,
 			boolean artificerBloodLustFitting, boolean artificerMonolithicFrame,
 			boolean artificerFirstD7Upgrade, boolean artificerD7Fitting, boolean artificerFirstLivingGraft,
 			int artificerLivingWeaponFormCount, boolean artificerLivingArsenalFitting,
+			int artificerProgressSteps,
 			boolean foundedBloodline, boolean foundingFaneEstablished, boolean chamberReturned,
 			boolean covenantThroneBound, boolean covenantVigilCompleted, boolean livingCovenantComplete,
 			int pomesConsumed, boolean qliphothCommunionComplete, boolean silentPending,
@@ -258,6 +269,8 @@ public class HarbingerAssignmentLedgerScreen extends Screen {
 		this.veinMasonFirstScarLearned = veinMasonFirstScarLearned;
 		this.veinMasonFirstEffigyPattern = veinMasonFirstEffigyPattern;
 		this.veinMasonFirstEffigyLoadout = veinMasonFirstEffigyLoadout;
+		this.anchoriteD5Progress = anchoriteD5Progress;
+		this.anchoriteD6Progress = anchoriteD6Progress;
 		this.artificerArmaturePlaced = artificerArmaturePlaced;
 		this.artificerFirstHematicUpgrade = artificerFirstHematicUpgrade;
 		this.artificerHematicIronFitting = artificerHematicIronFitting;
@@ -272,6 +285,7 @@ public class HarbingerAssignmentLedgerScreen extends Screen {
 		this.artificerFirstLivingGraft = artificerFirstLivingGraft;
 		this.artificerLivingWeaponFormCount = artificerLivingWeaponFormCount;
 		this.artificerLivingArsenalFitting = artificerLivingArsenalFitting;
+		this.artificerProgressSteps = artificerProgressSteps;
 		this.foundedBloodline = foundedBloodline;
 		this.foundingFaneEstablished = foundingFaneEstablished;
 		this.chamberReturned = chamberReturned;
@@ -299,12 +313,14 @@ public class HarbingerAssignmentLedgerScreen extends Screen {
 			boolean vicarMasonsRespiteDirective, boolean veinMasonFirstLesson,
 			boolean veinMasonFirstScarCarved, boolean veinMasonFirstScarLearned,
 			boolean veinMasonFirstEffigyPattern, boolean veinMasonFirstEffigyLoadout,
+			int anchoriteD5Progress, int anchoriteD6Progress,
 			boolean artificerArmaturePlaced, boolean artificerFirstHematicUpgrade,
 			boolean artificerHematicIronFitting, boolean artificerFirstForkUpgrade, boolean artificerForkFitting,
 			boolean artificerFrameConsecrated, boolean artificerFirstBloodLustUpgrade,
 			boolean artificerBloodLustFitting, boolean artificerMonolithicFrame,
 			boolean artificerFirstD7Upgrade, boolean artificerD7Fitting, boolean artificerFirstLivingGraft,
 			int artificerLivingWeaponFormCount, boolean artificerLivingArsenalFitting,
+			int artificerProgressSteps,
 			boolean foundedBloodline, boolean foundingFaneEstablished, boolean chamberReturned,
 			boolean covenantThroneBound, boolean covenantVigilCompleted, boolean livingCovenantComplete,
 			int pomesConsumed, boolean qliphothCommunionComplete, boolean silentPending,
@@ -319,11 +335,13 @@ public class HarbingerAssignmentLedgerScreen extends Screen {
 				mnemonistWovenVesselComplete, mnemonistFirstWeaveComplete, vicarMasonsRespiteDirective,
 				veinMasonFirstLesson, veinMasonFirstScarCarved, veinMasonFirstScarLearned,
 				veinMasonFirstEffigyPattern, veinMasonFirstEffigyLoadout,
+				anchoriteD5Progress, anchoriteD6Progress,
 				artificerArmaturePlaced, artificerFirstHematicUpgrade, artificerHematicIronFitting,
 				artificerFirstForkUpgrade, artificerForkFitting, artificerFrameConsecrated,
 				artificerFirstBloodLustUpgrade, artificerBloodLustFitting, artificerMonolithicFrame,
 				artificerFirstD7Upgrade, artificerD7Fitting, artificerFirstLivingGraft,
 				artificerLivingWeaponFormCount, artificerLivingArsenalFitting,
+				artificerProgressSteps,
 				foundedBloodline, foundingFaneEstablished, chamberReturned,
 				covenantThroneBound, covenantVigilCompleted, livingCovenantComplete,
 				pomesConsumed, qliphothCommunionComplete, silentPending, severedPortalOpen, silentArchon));
@@ -584,6 +602,10 @@ public class HarbingerAssignmentLedgerScreen extends Screen {
 			case WOVEN_VESSEL -> renderWovenVessel(gfx, x, y, w, mouseX, mouseY);
 			case THE_THREE_ANSWERS -> renderTheThreeAnswers(gfx, x, y, w, mouseX, mouseY);
 			case VEIN_MASON -> renderVeinMason(gfx, x, y, w, mouseX, mouseY);
+			case ANCHORITE_D5 -> renderAnchoriteChapter(gfx, AssignmentSection.ANCHORITE_D5, x, y, w,
+					anchoriteD5Progress, "d5", mouseX, mouseY);
+			case ANCHORITE_D6 -> renderAnchoriteChapter(gfx, AssignmentSection.ANCHORITE_D6, x, y, w,
+					anchoriteD6Progress, "d6", mouseX, mouseY);
 			case COVENANT_WRITTEN -> renderCovenantWritten(gfx, x, y, w, mouseX, mouseY);
 			case CRIMSON_VESTMENT -> renderCrimsonVestment(gfx, x, y, w, mouseX, mouseY);
 			case THE_ASSUMED_LIMB -> renderTheAssumedLimb(gfx, x, y, w, mouseX, mouseY);
@@ -955,6 +977,14 @@ public class HarbingerAssignmentLedgerScreen extends Screen {
 		return completed;
 	}
 
+	private void renderAnchoriteChapter(GuiGraphics gfx, AssignmentSection section, int x, int y, int w,
+			int progress, String chapter, int mouseX, int mouseY) {
+		String base = "screen.hemomancy.harbinger_assignment_ledger.anchorite_" + chapter;
+		renderCompactChapter(gfx, section, x, y, w, VEIN_MASON_PORTRAIT, base + ".title",
+				base + ".progress", progress, 4, progress >= 4,
+				base + (progress >= 4 ? ".reward" : ".desc"), mouseX, mouseY);
+	}
+
 	private void renderCovenantWritten(GuiGraphics gfx, int x, int y, int w, int mouseX, int mouseY) {
 		int progress = (foundedBloodline ? 1 : 0) + (foundingFaneEstablished ? 1 : 0);
 		renderCompactChapter(gfx, AssignmentSection.COVENANT_WRITTEN, x, y, w, VICAR_PORTRAIT,
@@ -1025,14 +1055,14 @@ public class HarbingerAssignmentLedgerScreen extends Screen {
 		if (renderCollapsedAssignmentIfNeeded(gfx, AssignmentSection.THE_WORN_VOW, x, y, w, ARTIFICER_PORTRAIT,
 				"screen.hemomancy.harbinger_assignment_ledger.the_worn_vow.title",
 				"screen.hemomancy.harbinger_assignment_ledger.the_worn_vow.progress",
-				progress, 3, artificerHematicIronFitting)) {
+				progress, 5, artificerHematicIronFitting)) {
 			return;
 		}
 		renderCompactArtificerAssignment(gfx, AssignmentSection.THE_WORN_VOW, x, y, w,
 				ARTIFICER_PORTRAIT,
 				"screen.hemomancy.harbinger_assignment_ledger.the_worn_vow.title",
 				"screen.hemomancy.harbinger_assignment_ledger.the_worn_vow.progress",
-				progress, 3, artificerHematicIronFitting,
+				progress, 5, artificerHematicIronFitting,
 				theWornVowDescriptionKey(), mouseX, mouseY);
 	}
 
@@ -1041,14 +1071,14 @@ public class HarbingerAssignmentLedgerScreen extends Screen {
 		if (renderCollapsedAssignmentIfNeeded(gfx, AssignmentSection.THE_THREE_ANSWERS, x, y, w, ARTIFICER_PORTRAIT,
 				"screen.hemomancy.harbinger_assignment_ledger.the_three_answers.title",
 				"screen.hemomancy.harbinger_assignment_ledger.the_three_answers.progress",
-				progress, 2, artificerForkFitting)) {
+				progress, 7, artificerForkFitting)) {
 			return;
 		}
 		renderCompactArtificerAssignment(gfx, AssignmentSection.THE_THREE_ANSWERS, x, y, w,
 				ARTIFICER_PORTRAIT,
 				"screen.hemomancy.harbinger_assignment_ledger.the_three_answers.title",
 				"screen.hemomancy.harbinger_assignment_ledger.the_three_answers.progress",
-				progress, 2, artificerForkFitting,
+				progress, 7, artificerForkFitting,
 				theThreeAnswersDescriptionKey(), mouseX, mouseY);
 	}
 
@@ -1057,14 +1087,14 @@ public class HarbingerAssignmentLedgerScreen extends Screen {
 		if (renderCollapsedAssignmentIfNeeded(gfx, AssignmentSection.CRIMSON_VESTMENT, x, y, w, ARTIFICER_PORTRAIT,
 				"screen.hemomancy.harbinger_assignment_ledger.crimson_vestment.title",
 				"screen.hemomancy.harbinger_assignment_ledger.crimson_vestment.progress",
-				progress, 3, artificerBloodLustFitting)) {
+				progress, 7, artificerBloodLustFitting)) {
 			return;
 		}
 		renderCompactArtificerAssignment(gfx, AssignmentSection.CRIMSON_VESTMENT, x, y, w,
 				ARTIFICER_PORTRAIT,
 				"screen.hemomancy.harbinger_assignment_ledger.crimson_vestment.title",
 				"screen.hemomancy.harbinger_assignment_ledger.crimson_vestment.progress",
-				progress, 3, artificerBloodLustFitting,
+				progress, 7, artificerBloodLustFitting,
 				crimsonVestmentDescriptionKey(), mouseX, mouseY);
 	}
 
@@ -1073,14 +1103,14 @@ public class HarbingerAssignmentLedgerScreen extends Screen {
 		if (renderCollapsedAssignmentIfNeeded(gfx, AssignmentSection.WEIGHT_OF_THE_FRAME, x, y, w, ARTIFICER_PORTRAIT,
 				"screen.hemomancy.harbinger_assignment_ledger.weight_of_the_frame.title",
 				"screen.hemomancy.harbinger_assignment_ledger.weight_of_the_frame.progress",
-				progress, 3, artificerD7Fitting)) {
+				progress, 7, artificerD7Fitting)) {
 			return;
 		}
 		renderCompactArtificerAssignment(gfx, AssignmentSection.WEIGHT_OF_THE_FRAME, x, y, w,
 				ARTIFICER_PORTRAIT,
 				"screen.hemomancy.harbinger_assignment_ledger.weight_of_the_frame.title",
 				"screen.hemomancy.harbinger_assignment_ledger.weight_of_the_frame.progress",
-				progress, 3, artificerD7Fitting,
+				progress, 7, artificerD7Fitting,
 				weightOfTheFrameDescriptionKey(), mouseX, mouseY);
 	}
 
@@ -1089,14 +1119,14 @@ public class HarbingerAssignmentLedgerScreen extends Screen {
 		if (renderCollapsedAssignmentIfNeeded(gfx, AssignmentSection.THE_ASSUMED_LIMB, x, y, w, ARTIFICER_PORTRAIT,
 				"screen.hemomancy.harbinger_assignment_ledger.the_assumed_limb.side_title",
 				"screen.hemomancy.harbinger_assignment_ledger.the_assumed_limb.progress",
-				progress, 3, artificerLivingArsenalFitting)) {
+				progress, 6, artificerLivingArsenalFitting)) {
 			return;
 		}
 		renderCompactArtificerAssignment(gfx, AssignmentSection.THE_ASSUMED_LIMB, x, y, w,
 				ARTIFICER_PORTRAIT,
 				"screen.hemomancy.harbinger_assignment_ledger.the_assumed_limb.side_title",
 				"screen.hemomancy.harbinger_assignment_ledger.the_assumed_limb.progress",
-				progress, 3, artificerLivingArsenalFitting,
+				progress, 6, artificerLivingArsenalFitting,
 				theAssumedLimbDescriptionKey(), mouseX, mouseY);
 	}
 
@@ -1118,104 +1148,71 @@ public class HarbingerAssignmentLedgerScreen extends Screen {
 	}
 
 	private int theWornVowProgress() {
-		int completed = 0;
-		if (artificerArmaturePlaced) completed++;
-		if (artificerFirstHematicUpgrade) completed++;
-		if (artificerHematicIronFitting) completed++;
-		return completed;
+		return switch (artificerStep(0)) {
+			case LOCKED, BRIEFING -> 0; case PLACE_ARMATURE -> 1; case FIRST_UPGRADE -> 2;
+			case INSPECTION -> 3; case FULL_SET -> 4; case FITTING -> 4; case COMPLETE -> 5; default -> 0;
+		};
 	}
 
 	private int theThreeAnswersProgress() {
-		int completed = 0;
-		if (artificerFirstForkUpgrade) completed++;
-		if (artificerForkFitting) completed++;
-		return completed;
+		return switch (artificerStep(1)) {
+			case LOCKED, BRIEFING -> 0; case FIRST_UPGRADE -> 1; case INSPECTION -> 2;
+			case CORRESPONDENCE -> 3; case FULL_SET -> 4; case DEMONSTRATION -> 5;
+			case FITTING -> 6; case COMPLETE -> 7; default -> 0;
+		};
 	}
 
 	private int crimsonVestmentProgress() {
-		int completed = 0;
-		if (artificerFrameConsecrated) completed++;
-		if (artificerFirstBloodLustUpgrade) completed++;
-		if (artificerBloodLustFitting) completed++;
-		return completed;
+		return switch (artificerStep(2)) {
+			case LOCKED, BRIEFING -> 0; case CONSECRATE -> 1; case INSPECTION -> 2;
+			case CORRESPONDENCE -> 3; case FIRST_UPGRADE -> 4; case FULL_SET, DEMONSTRATION -> 5;
+			case FITTING -> 6; case COMPLETE -> 7; default -> 0;
+		};
 	}
 
 	private int weightOfTheFrameProgress() {
-		int completed = 0;
-		if (artificerMonolithicFrame) completed++;
-		if (artificerFirstD7Upgrade) completed++;
-		if (artificerD7Fitting) completed++;
-		return completed;
+		return switch (artificerStep(4)) {
+			case LOCKED, BRIEFING -> 0; case CORNERSTONE -> 1; case FIRST_UPGRADE -> 2;
+			case INSPECTION -> 3; case MATERIAL_REWARD -> 4; case FULL_SET, DEMONSTRATION -> 5;
+			case FITTING -> 6; case COMPLETE -> 7; default -> 0;
+		};
 	}
 
 	private int theAssumedLimbProgress() {
-		int completed = 0;
-		if (artificerFirstLivingGraft) completed++;
-		if (artificerLivingWeaponFormCount >= 7) completed++;
-		if (artificerLivingArsenalFitting) completed++;
-		return completed;
+		return switch (artificerStep(3)) {
+			case LOCKED, BRIEFING -> 0; case FIRST_UPGRADE -> 1; case INSPECTION -> 2;
+			case DEMONSTRATION -> 3; case LEARN_FORMS -> 4; case FITTING -> 5;
+			case COMPLETE -> 6; default -> 0;
+		};
+	}
+
+	private Step artificerStep(int index) {
+		return ArtificerProgressionRules.unpackStep(artificerProgressSteps, index);
 	}
 
 	private String theWornVowDescriptionKey() {
-		if (artificerHematicIronFitting) {
-			return "screen.hemomancy.harbinger_assignment_ledger.the_worn_vow.complete";
-		}
-		if (!artificerArmaturePlaced) {
-			return "screen.hemomancy.harbinger_assignment_ledger.the_worn_vow.place";
-		}
-		if (!artificerFirstHematicUpgrade) {
-			return "screen.hemomancy.harbinger_assignment_ledger.the_worn_vow.upgrade";
-		}
-		return "screen.hemomancy.harbinger_assignment_ledger.the_worn_vow.return";
+		return artificerDescription("the_worn_vow", 0);
 	}
 
 	private String theThreeAnswersDescriptionKey() {
-		if (artificerForkFitting) {
-			return "screen.hemomancy.harbinger_assignment_ledger.the_three_answers.complete";
-		}
-		if (!artificerFirstForkUpgrade) {
-			return "screen.hemomancy.harbinger_assignment_ledger.the_three_answers.upgrade";
-		}
-		return "screen.hemomancy.harbinger_assignment_ledger.the_three_answers.return";
+		return artificerDescription("the_three_answers", 1);
 	}
 
 	private String crimsonVestmentDescriptionKey() {
-		if (artificerBloodLustFitting) {
-			return "screen.hemomancy.harbinger_assignment_ledger.crimson_vestment.complete";
-		}
-		if (!artificerFrameConsecrated) {
-			return "screen.hemomancy.harbinger_assignment_ledger.crimson_vestment.consecrate";
-		}
-		if (!artificerFirstBloodLustUpgrade) {
-			return "screen.hemomancy.harbinger_assignment_ledger.crimson_vestment.upgrade";
-		}
-		return "screen.hemomancy.harbinger_assignment_ledger.crimson_vestment.return";
+		return artificerDescription("crimson_vestment", 2);
 	}
 
 	private String weightOfTheFrameDescriptionKey() {
-		if (artificerD7Fitting) {
-			return "screen.hemomancy.harbinger_assignment_ledger.weight_of_the_frame.complete";
-		}
-		if (!artificerMonolithicFrame) {
-			return "screen.hemomancy.harbinger_assignment_ledger.weight_of_the_frame.cornerstone";
-		}
-		if (!artificerFirstD7Upgrade) {
-			return "screen.hemomancy.harbinger_assignment_ledger.weight_of_the_frame.upgrade";
-		}
-		return "screen.hemomancy.harbinger_assignment_ledger.weight_of_the_frame.return";
+		return artificerDescription("weight_of_the_frame", 4);
 	}
 
 	private String theAssumedLimbDescriptionKey() {
-		if (artificerLivingArsenalFitting) {
-			return "screen.hemomancy.harbinger_assignment_ledger.the_assumed_limb.complete";
-		}
-		if (!artificerFirstLivingGraft) {
-			return "screen.hemomancy.harbinger_assignment_ledger.the_assumed_limb.first";
-		}
-		if (artificerLivingWeaponFormCount < 7) {
-			return "screen.hemomancy.harbinger_assignment_ledger.the_assumed_limb.forms";
-		}
-		return "screen.hemomancy.harbinger_assignment_ledger.the_assumed_limb.return";
+		return artificerDescription("the_assumed_limb", 3);
+	}
+
+	private String artificerDescription(String assignment, int index) {
+		return "screen.hemomancy.harbinger_assignment_ledger." + assignment + "."
+				+ artificerStep(index).name().toLowerCase(java.util.Locale.ROOT);
 	}
 
 	private void drawAssignmentScrollbar(GuiGraphics gfx, int x, int y, int w, int h, int totalH) {

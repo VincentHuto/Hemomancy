@@ -33,7 +33,7 @@ public final class BloodwoodGrowthHandler {
 			return 0.0D;
 		}
 		if (!hasClearance(level, deadBushPos)) {
-			player.displayClientMessage(Component.literal("The dead bush cannot open enough space for bloodwood.")
+			player.displayClientMessage(Component.literal("The dead bush needs more space to become bloodwood.")
 					.withStyle(ChatFormatting.DARK_RED), true);
 			return 0.0D;
 		}

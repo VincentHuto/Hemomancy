@@ -9,7 +9,6 @@ import net.minecraft.server.level.ServerPlayer;
 
 import java.util.EnumSet;
 
-/** Resolves chapter proofs from authored milestones and migrates established saves. */
 public final class HarbingerChapterProgression {
 	private HarbingerChapterProgression() {
 	}

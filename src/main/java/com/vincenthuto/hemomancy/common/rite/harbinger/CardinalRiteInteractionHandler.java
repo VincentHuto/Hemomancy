@@ -137,7 +137,7 @@ public final class CardinalRiteInteractionHandler {
 		CardinalRiteRecipe recipe = CardinalRiteRecipe.getRiteByLocation(level, rite.getRecipeId());
 		if (recipe == null || !sealMediumReady(level, rite, recipe)) return true;
 		if (!CardinalRiteAllyService.hasRequiredHelpers(level, rite)) {
-			player.displayClientMessage(Component.literal("The rite cannot be sealed until its required bloodline helpers take their stations.")
+			player.displayClientMessage(Component.literal("Required bloodline helpers must take their stations before the rite can seal.")
 					.withStyle(ChatFormatting.DARK_RED, ChatFormatting.BOLD), false);
 			return true;
 		}

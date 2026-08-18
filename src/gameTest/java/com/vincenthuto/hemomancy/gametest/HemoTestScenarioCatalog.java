@@ -192,6 +192,9 @@ public final class HemoTestScenarioCatalog {
 	}
 
 	private static void equipHematicIron(ServerPlayer player) {
+		HarbingerArtificerAssignmentHelper.brief(player, HarbingerArtificerAssignmentHelper.WORN_VOW_BRIEFED);
+		HarbingerArtificerAssignmentHelper.markArtificerLessonRewardClaimed(player,
+				HarbingerArtificerAssignmentHelper.WORN_VOW_REWARD_CLAIM_KEY);
 		snapshotArmor(player, EquipmentSlot.HEAD);
 		snapshotArmor(player, EquipmentSlot.CHEST);
 		snapshotArmor(player, EquipmentSlot.LEGS);

@@ -2,9 +2,9 @@
   "type": "hemomancy:cardinal_rite_recipe",
   "bloodCost": 0,
   "riteType": "lesser",
-  "required_degree": 2,
+  "required_degree": 4,
   "riteName": "Rite of Hematic Fortification",
-  "riteDescription": "A lesser rite that strengthens the caster's connection to the blood arts.",
+  "riteDescription": "Permanently reduces vascular and manipulation strain by 15%.",
   "floor": "hemomancy:dominion_lesser",
   "brazier_signature": [
     {

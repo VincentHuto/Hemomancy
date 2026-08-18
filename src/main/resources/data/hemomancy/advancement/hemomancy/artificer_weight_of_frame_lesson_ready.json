@@ -1,0 +1,12 @@
+{
+  "display": {
+    "icon": {"id": "hemomancy:monolithic_cornerstone"},
+    "title": {"translate": "advancements.hemomancy.artificer_weight_of_frame_lesson_ready.title"},
+    "description": {"translate": "advancements.hemomancy.artificer_weight_of_frame_lesson_ready.description"},
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": false,
+    "hidden": true
+  },
+  "criteria": {"completed": {"trigger": "minecraft:impossible"}}
+}

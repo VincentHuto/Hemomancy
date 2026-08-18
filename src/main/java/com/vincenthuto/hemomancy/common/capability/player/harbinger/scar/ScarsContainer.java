@@ -192,13 +192,15 @@ public class ScarsContainer extends ItemStackHandler implements IScars, INBTSeri
 
 	@Override
 	public void deserializeNBT(HolderLookup.Provider provider, CompoundTag nbt) {
+		if (holder != null && effectsBound) {
+			unbindStoredEffects(holder);
+		}
 		super.deserializeNBT(provider, nbt);
 		fungalScar = getStackInSlot(FUNGAL_SLOT).copy();
 		knownCerebralScars.clear();
 		activeCerebralScars.clear();
 		readIds(nbt.getList(TAG_KNOWN, Tag.TAG_STRING), knownCerebralScars);
 		readIds(nbt.getList(TAG_ACTIVE, Tag.TAG_STRING), activeCerebralScars);
-		effectsBound = false;
 		if (holder != null) {
 			bindStoredEffects();
 		}

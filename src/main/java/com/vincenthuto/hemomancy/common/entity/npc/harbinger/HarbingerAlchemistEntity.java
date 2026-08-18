@@ -5,6 +5,7 @@ import com.vincenthuto.hemomancy.common.capability.player.unstained.IUnstainedPr
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.DialogueItemInquiryNodes;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.DialogueHubFactory;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.DialogueTree;
+import com.vincenthuto.hemomancy.common.entity.npc.dialogue.ArtificerProgressSnapshot;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.HarbingerAlchemistDialogueTrees;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.HarbingerAlchemistDialogueTrees.HeldSpecimenJar;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.HarbingerAlchemistDialogueTrees.RedTaxonomySample;
@@ -125,6 +126,8 @@ public class HarbingerAlchemistEntity extends PathfinderMob {
                         com.vincenthuto.hemomancy.common.event.HarbingerAdvancementGranter.hasAdvancement(
                                 serverPlayer, BodyAnswersAssignmentHelper.ADV_COMPLETE));
             }
+            tree = HarbingerAlchemistDialogueTrees.withArtificerCorrespondence(tree,
+                    ArtificerProgressSnapshot.from(serverPlayer));
             tree = DialogueItemInquiryNodes.withInventoryItemInquiries(tree, serverPlayer, "alchemist", degree, 0f);
             tree = DialogueHubFactory.decorate(tree, "alchemist", serverPlayer);
 

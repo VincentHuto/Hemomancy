@@ -39,6 +39,8 @@ public record OpenHarbingerAssignmentLedgerPacket(
 		boolean veinMasonFirstScarLearned,
 		boolean veinMasonFirstEffigyPattern,
 		boolean veinMasonFirstEffigyLoadout,
+		int anchoriteD5Progress,
+		int anchoriteD6Progress,
 		boolean artificerArmaturePlaced,
 		boolean artificerFirstHematicUpgrade,
 		boolean artificerHematicIronFitting,
@@ -53,6 +55,7 @@ public record OpenHarbingerAssignmentLedgerPacket(
 		boolean artificerFirstLivingGraft,
 		int artificerLivingWeaponFormCount,
 		boolean artificerLivingArsenalFitting,
+		int artificerProgressSteps,
 		boolean foundedBloodline,
 		boolean foundingFaneEstablished,
 		boolean chamberReturned,
@@ -101,6 +104,8 @@ public record OpenHarbingerAssignmentLedgerPacket(
 		buf.writeBoolean(msg.veinMasonFirstScarLearned);
 		buf.writeBoolean(msg.veinMasonFirstEffigyPattern);
 		buf.writeBoolean(msg.veinMasonFirstEffigyLoadout);
+		buf.writeVarInt(msg.anchoriteD5Progress);
+		buf.writeVarInt(msg.anchoriteD6Progress);
 		buf.writeBoolean(msg.artificerArmaturePlaced);
 		buf.writeBoolean(msg.artificerFirstHematicUpgrade);
 		buf.writeBoolean(msg.artificerHematicIronFitting);
@@ -115,6 +120,7 @@ public record OpenHarbingerAssignmentLedgerPacket(
 		buf.writeBoolean(msg.artificerFirstLivingGraft);
 		buf.writeVarInt(msg.artificerLivingWeaponFormCount);
 		buf.writeBoolean(msg.artificerLivingArsenalFitting);
+		buf.writeVarInt(msg.artificerProgressSteps);
 		buf.writeBoolean(msg.foundedBloodline);
 		buf.writeBoolean(msg.foundingFaneEstablished);
 		buf.writeBoolean(msg.chamberReturned);
@@ -161,6 +167,8 @@ public record OpenHarbingerAssignmentLedgerPacket(
 				buf.readBoolean(),
 				buf.readBoolean(),
 				buf.readBoolean(),
+				buf.readVarInt(),
+				buf.readVarInt(),
 				buf.readBoolean(),
 				buf.readBoolean(),
 				buf.readBoolean(),
@@ -175,6 +183,7 @@ public record OpenHarbingerAssignmentLedgerPacket(
 				buf.readBoolean(),
 				buf.readVarInt(),
 				buf.readBoolean(),
+				buf.readVarInt(),
 				buf.readBoolean(),
 				buf.readBoolean(),
 				buf.readBoolean(),
@@ -204,12 +213,14 @@ public record OpenHarbingerAssignmentLedgerPacket(
 				msg.veinMasonFirstLesson, msg.veinMasonFirstScarCarved,
 				msg.veinMasonFirstScarLearned, msg.veinMasonFirstEffigyPattern,
 				msg.veinMasonFirstEffigyLoadout,
+				msg.anchoriteD5Progress, msg.anchoriteD6Progress,
 				msg.artificerArmaturePlaced, msg.artificerFirstHematicUpgrade,
 				msg.artificerHematicIronFitting, msg.artificerFirstForkUpgrade, msg.artificerForkFitting,
 				msg.artificerFrameConsecrated, msg.artificerFirstBloodLustUpgrade,
 				msg.artificerBloodLustFitting, msg.artificerMonolithicFrame,
 				msg.artificerFirstD7Upgrade, msg.artificerD7Fitting, msg.artificerFirstLivingGraft,
 				msg.artificerLivingWeaponFormCount, msg.artificerLivingArsenalFitting,
+				msg.artificerProgressSteps,
 				msg.foundedBloodline, msg.foundingFaneEstablished, msg.chamberReturned,
 				msg.covenantThroneBound, msg.covenantVigilCompleted, msg.livingCovenantComplete,
 				msg.pomesConsumed, msg.qliphothCommunionComplete, msg.silentPending,

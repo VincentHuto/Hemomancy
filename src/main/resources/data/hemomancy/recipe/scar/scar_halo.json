@@ -1,6 +1,6 @@
 {
 	"type": "hemomancy:scar_recipe",
-	"tier": 2,
+	"tier": 1,
 	"scartype": "SCAR",
 	"ingredient1": {
 		"item": "hemomancy:scar_blank"

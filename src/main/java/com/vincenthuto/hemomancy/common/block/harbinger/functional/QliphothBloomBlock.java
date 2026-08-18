@@ -161,8 +161,8 @@ public class QliphothBloomBlock extends BaseEntityBlock implements IMultiBlock {
 		SeveredQliphothState bloomState = data.getState(pos);
 		if (!bloom.ownerUUID().equals(player.getUUID())) {
 			player.displayClientMessage(Component.literal(bloomState == SeveredQliphothState.LIVING
-					? "The fruit tightens against a covenant that is not yours."
-					: "The wound does not remember you.")
+					? "The fruit tightens against another covenant."
+					: "The wound has no memory of you.")
 					.withStyle(ChatFormatting.DARK_PURPLE, ChatFormatting.ITALIC), true);
 			return InteractionResult.SUCCESS;
 		}
@@ -177,7 +177,7 @@ public class QliphothBloomBlock extends BaseEntityBlock implements IMultiBlock {
 							.map(degree -> degree.getDegreeNumber() == 7
 									&& degree.getArchonPath() == EnumArchonPath.SILENT_PENDING)
 							.orElse(false)) {
-				player.displayClientMessage(Component.literal("The wound refuses the path you carry.")
+				player.displayClientMessage(Component.literal("The wound rejects the path you carry.")
 						.withStyle(ChatFormatting.DARK_PURPLE, ChatFormatting.ITALIC), true);
 				return InteractionResult.SUCCESS;
 			}
