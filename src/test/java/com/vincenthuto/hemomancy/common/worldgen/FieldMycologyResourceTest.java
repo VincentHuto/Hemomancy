@@ -71,6 +71,46 @@ class FieldMycologyResourceTest {
 	}
 
 	@Test
+	void rareFieldFungiAlwaysAttemptPlacementAfterPassingTheirRarityFilter() throws IOException {
+		for (String feature : new String[] { "small_infected_fungus", "stink_horns", "sarcodes" }) {
+			JsonArray placement = resourceJson("data/hemomancy/worldgen/placed_feature/" + feature + ".json")
+					.getAsJsonArray("placement");
+			JsonObject count = placement.get(3).getAsJsonObject();
+			assertEquals("minecraft:count", count.get("type").getAsString());
+			assertTrue(count.get("count").isJsonPrimitive(), feature + " must always attempt placement");
+			assertEquals(1, count.get("count").getAsInt(), feature + " must not add a second zero-attempt roll");
+		}
+	}
+
+	@Test
+	void rafflesiaIsRareButFindable() throws IOException {
+		JsonArray placement = resourceJson("data/hemomancy/worldgen/placed_feature/rafflesia.json")
+				.getAsJsonArray("placement");
+		assertEquals(24, placement.get(0).getAsJsonObject().get("chance").getAsInt());
+	}
+
+	@Test
+	void rafflesiaWorldgenUsesItsLogAttachmentFeature() throws IOException {
+		JsonObject configured = resourceJson("data/hemomancy/worldgen/configured_feature/rafflesia.json");
+		assertEquals("hemomancy:rafflesia", configured.get("type").getAsString());
+	}
+
+	@Test
+	void rafflesiaWallRotationsPutItsStemAgainstTheSupportingLog() throws IOException {
+		JsonObject variants = resourceJson("assets/hemomancy/blockstates/rafflesia.json")
+				.getAsJsonObject("variants");
+		for (String facing : new String[] { "up", "north", "south", "east", "west" }) {
+			assertTrue(variants.has("facing=" + facing), "missing Rafflesia model for " + facing);
+		}
+		assertEquals(270, variants.getAsJsonObject("facing=north").get("x").getAsInt());
+		assertEquals(90, variants.getAsJsonObject("facing=south").get("x").getAsInt());
+		assertEquals(270, variants.getAsJsonObject("facing=east").get("x").getAsInt());
+		assertEquals(90, variants.getAsJsonObject("facing=east").get("y").getAsInt());
+		assertEquals(270, variants.getAsJsonObject("facing=west").get("x").getAsInt());
+		assertEquals(270, variants.getAsJsonObject("facing=west").get("y").getAsInt());
+	}
+
+	@Test
 	void plantLanesHaveRepeatableInfrastructureRecipes() throws IOException {
 		JsonObject infestedWood = resourceJson("data/hemomancy/recipe/infested_wood.json");
 		assertTrue(infestedWood.getAsJsonArray("ingredients").toString().contains("hemomancy:foul_paste"));

@@ -14,6 +14,7 @@ public final class HarbingerAssignmentLedgerCollapseSourceTest {
 		ledgerDefinesCollapsibleAssignmentSections();
 		ledgerUsesDynamicAssignmentHeights();
 		ledgerOrdersAssignmentsByDegree();
+		ledgerHidesAssignmentsAboveCurrentDegree();
 		ledgerSeparatesAssignmentLabelsFromTitles();
 		ledgerTogglesAssignmentsFromClickHitboxes();
 		ledgerProvidesGlobalCollapseControls();
@@ -81,6 +82,13 @@ public final class HarbingerAssignmentLedgerCollapseSourceTest {
 				"THE_THREE_ANSWERS(3, AssignmentCategory.VOCATION");
 		assertContains("D7 Artificer assignment sits with D7 entries", ledger,
 				"WEIGHT_OF_THE_FRAME(7, AssignmentCategory.VOCATION");
+	}
+
+	private static void ledgerHidesAssignmentsAboveCurrentDegree() throws IOException {
+		String ledger = readLedger();
+
+		assertOccurrences("rendering and scroll height both filter future assignments", ledger,
+				"if (section.assignmentDegree > degree) continue;", 2);
 	}
 
 	private static void ledgerSeparatesAssignmentLabelsFromTitles() throws IOException {
@@ -151,6 +159,13 @@ public final class HarbingerAssignmentLedgerCollapseSourceTest {
 	private static void assertContains(String label, String text, String expected) {
 		if (!text.contains(expected)) {
 			throw new AssertionError(label + " missing: " + expected);
+		}
+	}
+
+	private static void assertOccurrences(String label, String text, String expected, int count) {
+		int actual = (text.length() - text.replace(expected, "").length()) / expected.length();
+		if (actual != count) {
+			throw new AssertionError(label + " expected " + count + " occurrences of " + expected + ", got " + actual);
 		}
 	}
 }

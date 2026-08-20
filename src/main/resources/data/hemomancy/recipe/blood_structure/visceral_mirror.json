@@ -6,7 +6,7 @@
   "hitBlock": "hemomancy:sanguine_glass",
   "pattern": [
     [" T ", " P ", " T "],
-    ["TGT", "PGP", "TGT"],
+    ["TGT", "PHP", "TGT"],
     [" T ", " P ", " T "]
   ],
   "key": {
@@ -18,6 +18,9 @@
     },
     "G": {
       "block": "minecraft:tinted_glass"
+    },
+    "H": {
+      "block": "hemomancy:sanguine_glass"
     }
   },
   "result": {

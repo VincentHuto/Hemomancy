@@ -49,6 +49,10 @@ public class ManipCooldownOverlay {
 		progress = Math.max(0.0f, Math.min(1.0f, progress));
 
 		float alpha = progress * 0.6f;
+		renderRedVignette(gfx, screenWidth, screenHeight, alpha);
+	}
+
+	static void renderRedVignette(GuiGraphics gfx, int screenWidth, int screenHeight, float alpha) {
 		int edgeSize = (int) (Math.min(screenWidth, screenHeight) * 0.35f);
 
 		int ri = 153; // 0.6 * 255

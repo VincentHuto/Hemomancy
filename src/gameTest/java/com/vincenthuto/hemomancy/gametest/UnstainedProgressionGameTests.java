@@ -8,7 +8,7 @@ import com.vincenthuto.hemomancy.common.init.BlockEntityInit;
 import com.vincenthuto.hemomancy.common.init.ContainerInit;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.init.StillArtInit;
-import com.vincenthuto.hemomancy.common.mission.UnstainedObservanceHelper;
+import com.vincenthuto.hemomancy.common.mission.unstained.UnstainedObservances;
 import com.vincenthuto.hemomancy.common.recipe.CardinalRiteRecipe;
 import com.vincenthuto.hemomancy.common.rite.unstained.UnstainedCardinalRiteEvents;
 import com.vincenthuto.hemomancy.common.tile.crafting.StillwaterCondenserBlockEntity;
@@ -112,22 +112,22 @@ public final class UnstainedProgressionGameTests {
 			helper.assertTrue(player.getInventory().countItem(ItemInit.absolution_dagger.get()) == 1,
 					"Lethean Baptism must grant the Absolution Dagger");
 
-			fulfill(player, UnstainedObservanceHelper.Observance.GATHER_GHOST_PIPE,
+			fulfill(player, UnstainedObservances.Observance.GATHER_GHOST_PIPE,
 					new ItemStack(BlockInit.ghost_pipe.get(), 4));
 			progress.setPurity(25f);
-			fulfill(player, UnstainedObservanceHelper.Observance.WEAVE_WREATH,
+			fulfill(player, UnstainedObservances.Observance.WEAVE_WREATH,
 					new ItemStack(BlockInit.lethean_poppy_wreath.get()));
-			fulfill(player, UnstainedObservanceHelper.Observance.PREPARE_HEMOLYTIC,
+			fulfill(player, UnstainedObservances.Observance.PREPARE_HEMOLYTIC,
 					new ItemStack(ItemInit.hemolytic_solution.get(), 2));
 
 			progress.setPurity(100f);
-			fulfill(player, UnstainedObservanceHelper.Observance.CONSECRATE_COPPER,
+			fulfill(player, UnstainedObservances.Observance.CONSECRATE_COPPER,
 					new ItemStack(ItemInit.consecrated_copper_ingot.get(), 4));
-			fulfill(player, UnstainedObservanceHelper.Observance.CONDENSE_STILL_WATERS,
+			fulfill(player, UnstainedObservances.Observance.CONDENSE_STILL_WATERS,
 					new ItemStack(ItemInit.lethean_dew.get(), 4));
-			fulfill(player, UnstainedObservanceHelper.Observance.BEAR_PALLID_ICON,
+			fulfill(player, UnstainedObservances.Observance.BEAR_PALLID_ICON,
 					new ItemStack(ItemInit.pallid_icon.get()));
-			fulfill(player, UnstainedObservanceHelper.Observance.PLATE_THE_WARD,
+			fulfill(player, UnstainedObservances.Observance.PLATE_THE_WARD,
 					new ItemStack(ItemInit.hemolytic_plating.get(), 4));
 			UnstainedCardinalRiteEvents.completeRite(helper.getLevel(), player, player.blockPosition(),
 					"cardinal_rite/clarity_ascension");
@@ -145,12 +145,12 @@ public final class UnstainedProgressionGameTests {
 			helper.assertTrue(HemoCapabilityAccess.requireKnownStillArts(player).isKnown(StillArtInit.silver_rebuke.get()),
 					"Clarity Ascension must teach Silver Rebuke");
 
-			fulfill(player, UnstainedObservanceHelper.Observance.OFFER_CHALICE,
+			fulfill(player, UnstainedObservances.Observance.OFFER_CHALICE,
 					new ItemStack(ItemInit.lethean_chalice.get()));
 			progress.setClarity(50f);
-			fulfill(player, UnstainedObservanceHelper.Observance.RING_THE_PALE_WATCH,
+			fulfill(player, UnstainedObservances.Observance.RING_THE_PALE_WATCH,
 					new ItemStack(ItemInit.pale_silver_bell.get()));
-			int allObservances = (1 << UnstainedObservanceHelper.Observance.values().length) - 1;
+			int allObservances = (1 << UnstainedObservances.Observance.values().length) - 1;
 			helper.assertTrue(progress.getAcceptedObservances() == allObservances
 							&& progress.getClaimedObservances() == allObservances,
 					"The critical Unstained journey must accept and fulfill every current Observance");
@@ -178,11 +178,11 @@ public final class UnstainedProgressionGameTests {
 		}
 	}
 
-	private static void fulfill(ServerPlayer player, UnstainedObservanceHelper.Observance observance,
+	private static void fulfill(ServerPlayer player, UnstainedObservances.Observance observance,
 			ItemStack offering) {
-		UnstainedObservanceHelper.handle(player, observance);
+		UnstainedObservances.handle(player, observance);
 		player.getInventory().add(offering);
-		UnstainedObservanceHelper.handle(player, observance);
+		UnstainedObservances.handle(player, observance);
 	}
 
 	private static ServerPlayer testPlayer(GameTestHelper helper) {

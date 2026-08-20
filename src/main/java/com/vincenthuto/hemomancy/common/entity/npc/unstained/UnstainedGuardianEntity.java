@@ -5,7 +5,7 @@ import com.vincenthuto.hemomancy.common.entity.npc.dialogue.DialogueHubFactory;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.DialogueTree;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.GuardianDialogueTrees;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.UnstainedObservanceDialogueDecorator;
-import com.vincenthuto.hemomancy.common.mission.UnstainedObservanceHelper;
+import com.vincenthuto.hemomancy.common.mission.unstained.UnstainedObservances;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.dialogue.OpenDialoguePacket;
 
@@ -89,7 +89,7 @@ public class UnstainedGuardianEntity extends PathfinderMob {
                     GuardianDialogueTrees.ambient(this.getId()), serverPlayer, "guardian",
                     0, 0f);
             tree = UnstainedObservanceDialogueDecorator.decorate(tree, serverPlayer,
-                    UnstainedObservanceHelper.Issuer.GUARDIAN);
+                    UnstainedObservances.Issuer.GUARDIAN);
             tree = DialogueHubFactory.decorate(tree, "guardian", serverPlayer);
             PacketHandler.sendToPlayer(serverPlayer, new OpenDialoguePacket(tree));
         }

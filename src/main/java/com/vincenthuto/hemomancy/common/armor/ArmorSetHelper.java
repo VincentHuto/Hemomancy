@@ -1,10 +1,14 @@
 package com.vincenthuto.hemomancy.common.armor;
 
 import com.vincenthuto.hemomancy.common.init.ItemInit;
+import com.vincenthuto.hemomancy.common.item.harbinger.armor.BloodLustArmorItem;
+import com.vincenthuto.hemomancy.common.item.harbinger.armor.BloodLustLineageRules;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+
+import java.util.List;
 
 public final class ArmorSetHelper {
 	private ArmorSetHelper() {
@@ -57,6 +61,15 @@ public final class ArmorSetHelper {
 				&& wears(player, EquipmentSlot.CHEST, ItemInit.blood_lust_chest.get())
 				&& wears(player, EquipmentSlot.LEGS, ItemInit.blood_lust_legs.get())
 				&& wears(player, EquipmentSlot.FEET, ItemInit.blood_lust_boots.get());
+	}
+
+	public static String bloodLustLineage(Player player) {
+		if (!hasFullBloodLustSet(player)) return "";
+		return BloodLustLineageRules.uniformLineage(List.of(
+				BloodLustArmorItem.getLineage(player.getItemBySlot(EquipmentSlot.HEAD)),
+				BloodLustArmorItem.getLineage(player.getItemBySlot(EquipmentSlot.CHEST)),
+				BloodLustArmorItem.getLineage(player.getItemBySlot(EquipmentSlot.LEGS)),
+				BloodLustArmorItem.getLineage(player.getItemBySlot(EquipmentSlot.FEET))));
 	}
 
 	public static boolean hasFullD7Set(Player player) {

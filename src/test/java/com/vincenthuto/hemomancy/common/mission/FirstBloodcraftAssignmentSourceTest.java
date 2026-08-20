@@ -8,7 +8,7 @@ import org.junit.jupiter.api.Test;
 
 public final class FirstBloodcraftAssignmentSourceTest {
 	private static final Path HELPER = Path.of(
-			"src/main/java/com/vincenthuto/hemomancy/common/mission/FirstBloodcraftAssignmentHelper.java");
+			"src/main/java/com/vincenthuto/hemomancy/common/mission/vicar/FirstBloodcraftAssignment.java");
 	private static final Path CLAIM_ADVANCEMENT = Path.of(
 			"src/main/resources/data/hemomancy/advancement/hemomancy/first_bloodcraft_reward_claimed.json");
 	private static final Path VICAR_ENTITY = Path.of(
@@ -75,29 +75,29 @@ public final class FirstBloodcraftAssignmentSourceTest {
 				"hemomancy.vicar.neophyte.first_bloodcraft_reward.unready");
 
 		assertContains("Vicar computes fresh claim readiness", entity,
-				"FirstBloodcraftAssignmentHelper.canClaim(serverPlayer)");
+				"FirstBloodcraftAssignment.canClaim(serverPlayer)");
 		assertContains("Vicar computes claimed state", entity,
-				"FirstBloodcraftAssignmentHelper.isClaimed(serverPlayer)");
+				"FirstBloodcraftAssignment.isClaimed(serverPlayer)");
 
 		assertContains("handler routes the published event", handler,
 				"case HarbingerVicarDialogueTrees.EVENT_CLAIM_FIRST_BLOODCRAFT_REWARD");
 		assertContains("handler re-checks eligibility", handler,
-				"if (!FirstBloodcraftAssignmentHelper.canClaim(player))");
+				"if (!FirstBloodcraftAssignment.canClaim(player))");
 		assertContains("handler obtains rewards solely from the helper", handler,
-				"for (ItemStack stack : FirstBloodcraftAssignmentHelper.rewardStacks())");
+				"for (ItemStack stack : FirstBloodcraftAssignment.rewardStacks())");
 		assertContains("handler gives or drops every reward stack", handler,
 				"giveOrDropAtEntity(player, entityId, stack);");
 		assertContains("handler persists the one-time claim before mutation", handler,
-				"if (!FirstBloodcraftAssignmentHelper.markClaimed(player))");
+				"if (!FirstBloodcraftAssignment.markClaimed(player))");
 		assertContains("handler explains persistence failure", handler,
 				"hemomancy.dialogue.event.vicar_first_bloodcraft_reward_claim_failed");
 
 		assertOrdered("eligibility is checked before inventory mutation", handler,
-				"if (!FirstBloodcraftAssignmentHelper.canClaim(player))",
-				"for (ItemStack stack : FirstBloodcraftAssignmentHelper.rewardStacks())");
+				"if (!FirstBloodcraftAssignment.canClaim(player))",
+				"for (ItemStack stack : FirstBloodcraftAssignment.rewardStacks())");
 		assertOrdered("claim is persisted before any reward stack is granted", handler,
-				"if (!FirstBloodcraftAssignmentHelper.markClaimed(player))",
-				"for (ItemStack stack : FirstBloodcraftAssignmentHelper.rewardStacks())");
+				"if (!FirstBloodcraftAssignment.markClaimed(player))",
+				"for (ItemStack stack : FirstBloodcraftAssignment.rewardStacks())");
 	}
 
 	private static String read(Path path) throws IOException {

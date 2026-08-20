@@ -1055,8 +1055,8 @@ final class QliphothCommunionChamberEffects extends AbstractChamberThemeEffects 
                                                                ResourceLocation texture, float time, float skyDistance,
                                                                float halfSize, int alpha, float seed,
                                                                float lensStrength, float ringIntensity) {
-        RenderType renderType = HemoRenderTypes.qliphothBlackHole(texture, time * 0.050F, seed, lensStrength,
-                ringIntensity, true);
+        RenderType renderType = HemoRenderTypes.qliphothBlackHole(texture, -1, time * 0.050F, seed, lensStrength,
+                ringIntensity, true, false);
         VertexConsumer consumer = bufferSource.getBuffer(renderType);
         Vector3f zenith = qliphothSkyPoint(0.0F, -88.0F, skyDistance * 0.82F);
         Camera camera = Minecraft.getInstance().gameRenderer.getMainCamera();

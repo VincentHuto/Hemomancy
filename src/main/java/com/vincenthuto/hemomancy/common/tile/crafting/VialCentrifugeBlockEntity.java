@@ -11,7 +11,7 @@ import com.vincenthuto.hemomancy.common.item.harbinger.BloodVialItem;
 import com.vincenthuto.hemomancy.common.item.harbinger.ConsecratedSyringeItem;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.VialRackItem;
 import com.vincenthuto.hemomancy.common.menu.tile.crafting.VialCentrifugeMenu;
-import com.vincenthuto.hemomancy.common.mission.FirstSeparationAssignmentHelper;
+import com.vincenthuto.hemomancy.common.mission.alchemist.FirstSeparationAssignment;
 import com.vincenthuto.hemomancy.common.tile.IBloodContainerSlotAccess;
 import com.vincenthuto.hemomancy.common.tile.IBloodReservoir;
 import net.minecraft.core.BlockPos;
@@ -154,7 +154,7 @@ public class VialCentrifugeBlockEntity extends BaseContainerBlockEntity
 				if (vialStack.getItem() instanceof BloodVialItem) {
 					EntityType<?> sampledMob = BloodVialItem.getEntityType(vialStack);
 					ItemStack resultStack = getResultFromVial(sampledMob);
-					FirstSeparationAssignmentHelper.markAssignmentOutput(resultStack,
+					FirstSeparationAssignment.markAssignmentOutput(resultStack,
 							assignmentPlayerId, assignmentSpinId);
 					vialStack = new ItemStack(ItemInit.bloody_vial.get(), 1);
 					// Only outputs to slot if it is not already occupied
@@ -172,9 +172,9 @@ public class VialCentrifugeBlockEntity extends BaseContainerBlockEntity
 					// Auxillary output chance 
 					if (level.random.nextInt(1, 5) %2 == 0) {
 						if (inventory.get(18).isEmpty()) {
-							inventory.set(18, new ItemStack(BlockInit.befouling_ash_trail.get()));
+							inventory.set(18, new ItemStack(ItemInit.hematic_iron_powder.get()));
 						} else if (inventory.get(18).getCount() < 64
-								&& inventory.get(18).getItem() == BlockInit.befouling_ash_trail.get().asItem()) {
+								&& inventory.get(18).getItem() == ItemInit.hematic_iron_powder.get()) {
 							inventory.get(18).grow(1);
 						}
 					}
@@ -343,7 +343,7 @@ public class VialCentrifugeBlockEntity extends BaseContainerBlockEntity
 	public VialCentrifugeStartupResult attemptStartup(@Nullable net.minecraft.server.level.ServerPlayer player) {
 		boolean balanced = checkBalancedSpots(2, 6) && checkBalancedSpots(3, 7)
 				&& checkBalancedSpots(4, 8) && checkBalancedSpots(9, 5);
-		boolean assignmentSpin = player != null && FirstSeparationAssignmentHelper.canBeginAssignmentSpin(player);
+		boolean assignmentSpin = player != null && FirstSeparationAssignment.canBeginAssignmentSpin(player);
 		List<VialCentrifugeStartupRules.SampleState> samples = new ArrayList<>();
 		for (int inputSlot = 2; inputSlot <= 9; inputSlot++) {
 			ItemStack vialStack = inventory.get(inputSlot);
@@ -366,7 +366,7 @@ public class VialCentrifugeBlockEntity extends BaseContainerBlockEntity
 		if (result == VialCentrifugeStartupResult.SUCCESS) {
 			dataAccess.set(0, SPIN_TOTAL_TIME);
 			if (player != null) {
-				assignmentSpinId = FirstSeparationAssignmentHelper.beginAssignmentSpin(player);
+				assignmentSpinId = FirstSeparationAssignment.beginAssignmentSpin(player);
 				assignmentPlayerId = assignmentSpinId == null ? null : player.getUUID();
 			}
 		}

@@ -3,7 +3,7 @@ package com.vincenthuto.hemomancy.client.screen.item;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.client.screen.skilltree.util.ScreenDrawUtils;
-import com.vincenthuto.hemomancy.common.mission.UnstainedObservanceHelper.Observance;
+import com.vincenthuto.hemomancy.common.mission.unstained.UnstainedObservances.Observance;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;

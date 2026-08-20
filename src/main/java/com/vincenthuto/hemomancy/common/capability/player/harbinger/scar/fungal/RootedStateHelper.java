@@ -36,6 +36,10 @@ public final class RootedStateHelper {
 	private RootedStateHelper() {
 	}
 
+	public static void clearSessionState() {
+		ROOTED_CACHE.clear();
+	}
+
 	public static double refundAmount(double cost, boolean rooted) {
 		return rooted ? Math.max(0.0D, cost) * ROOTED_REFUND_FRACTION : 0.0D;
 	}

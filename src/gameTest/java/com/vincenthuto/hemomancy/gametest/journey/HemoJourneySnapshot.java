@@ -12,8 +12,8 @@ import com.vincenthuto.hemomancy.common.capability.player.shared.knowledge.Liber
 import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillPointGainEvents;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.KnownManipulations;
 import com.vincenthuto.hemomancy.common.event.HarbingerAdvancementGranter;
-import com.vincenthuto.hemomancy.common.mission.FirstBloodcraftAssignmentHelper;
-import com.vincenthuto.hemomancy.common.mission.FirstSeparationAssignmentHelper;
+import com.vincenthuto.hemomancy.common.mission.vicar.FirstBloodcraftAssignment;
+import com.vincenthuto.hemomancy.common.mission.alchemist.FirstSeparationAssignment;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.manips.KnownManipulationServerPacket;
 
@@ -62,12 +62,12 @@ public final class HemoJourneySnapshot {
 			Hemomancy.rloc("hemomancy/vessel_filled"),
 			Hemomancy.rloc("hemomancy/fane_sanguinium"),
 			Hemomancy.rloc("hemomancy/iron_in_the_blood"),
-			FirstBloodcraftAssignmentHelper.ADV_REWARD_CLAIMED,
+			FirstBloodcraftAssignment.ADV_REWARD_CLAIMED,
 			HarbingerAdvancementGranter.ADV_DEGREE_2_VOTARY,
-			FirstSeparationAssignmentHelper.ADV_BRIEFED,
+			FirstSeparationAssignment.ADV_BRIEFED,
 			HarbingerAdvancementGranter.ADV_FIRST_SEPARATION_STARTED,
 			HarbingerAdvancementGranter.ADV_FIRST_SEPARATION_COMPLETE,
-			FirstSeparationAssignmentHelper.ADV_REWARD_CLAIMED);
+			FirstSeparationAssignment.ADV_REWARD_CLAIMED);
 
 	private HemoJourneySnapshot() {
 	}

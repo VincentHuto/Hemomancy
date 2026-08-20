@@ -12,6 +12,7 @@ uniform float HoleSeed;
 uniform float LensStrength;
 uniform float RingIntensity;
 uniform float FinalHole;
+uniform float TreeApex;
 uniform vec2 ScreenSize;
 
 in float vertexDistance;
@@ -73,7 +74,7 @@ void main() {
             texture(Sampler0, fract(lensedUv - lensDirection * chromaticOffset)).b
     );
 
-    if (FinalHole > 0.5) {
+    if (TreeApex > 0.5) {
         float x = centered.x;
         float y = centered.y;
         float absoluteX = abs(x);

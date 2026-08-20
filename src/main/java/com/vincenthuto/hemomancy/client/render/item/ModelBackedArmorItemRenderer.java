@@ -4,11 +4,13 @@ import com.mojang.blaze3d.platform.Lighting;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.vincenthuto.hemomancy.client.model.armor.EdaciousBloodLustArmorModel;
+import com.vincenthuto.hemomancy.client.model.armor.BloodLustArmorModel;
 import com.vincenthuto.hemomancy.client.render.armor.ArmorItemDisplayTransformHelper;
 import com.vincenthuto.hemomancy.client.render.armor.ArmorItemModelPoseHelper;
 import com.vincenthuto.hemomancy.client.render.armor.ModelBackedArmorItemRenderHelper;
 import com.vincenthuto.hemomancy.client.render.armor.ModelBackedArmorItemRenderHelper.ArmorItemRenderDefinition;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
+import com.vincenthuto.hemomancy.common.item.harbinger.armor.BloodLustArmorItem;
 
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.model.geom.EntityModelSet;
@@ -45,6 +47,9 @@ public class ModelBackedArmorItemRenderer extends BlockEntityWithoutLevelRendere
 		applyManualGuiTransforms(stack, displayContext, poseStack);
 		HumanoidModel<LivingEntity> model = definition.model().get();
 		ArmorItemModelPoseHelper.reset(model);
+		if (model instanceof BloodLustArmorModel<?> bloodLustModel) {
+			bloodLustModel.setLineage(BloodLustArmorItem.getLineage(stack));
+		}
 		applySlotVisibility(model, definition.slot());
 
 		VertexConsumer consumer = buffer.getBuffer(RenderType.entityTranslucent(definition.texture()));

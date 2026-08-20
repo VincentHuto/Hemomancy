@@ -7,7 +7,7 @@ import net.minecraft.resources.ResourceLocation;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.vincenthuto.hemomancy.common.mission.ArtificerProgressionRules.Step;
+import static com.vincenthuto.hemomancy.common.mission.artificer.ArtificerProgressionRules.Step;
 
 public final class HarbingerArtificerDialogueTrees {
 	private static final ResourceLocation ARTIFICER_ICON = Hemomancy.rloc(

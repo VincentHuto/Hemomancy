@@ -2498,11 +2498,12 @@ The Hematic Artificer / Redwright is the in-world teacher for this progression. 
 | D3 | Hematic Iron | Sclerotic Oleum | 500 | Chitinite |
 | D3 | Hematic Iron | Chromatic Sublimate | 500 | Prismatic |
 | D5 | Barbed, Chitinite, or Prismatic | Crimson Lacquer | 1,200 | Blood Lust, with cosmetic lineage stack data (`barbed`, `chitinite`, or `prismatic`) |
-| D5-D6 | Blood Lust helmet | Tengu Mask / Grinning Mask / Lodestone Faceplate / Velorum Mask | 350-500 | Blood Lust mask variants |
-| D7 Monolithic Armature | Barbed | Tengu Mask / Fargone Proboscis | 1,800 | Edacious Bloodlust |
-| D7 Monolithic Armature | Chitinite | Lodestone Faceplate / Fervent Husk | 1,800 | Sheolic Bloodlust |
-| D7 Monolithic Armature | Prismatic | Grinning Mask / Mnemonic Ambergris | 1,800 | Phantasmal Bloodlust |
-| D7 Silent Archon | Blood Lust | Monolith Imbued Cloth | 2,000 | Silent Archon Vestments; available only after Pruning and victory over both Vesper phases finalize the Silent route |
+| D5-D6 | Matching Blood Lust helmet lineage | Tengu Mask (Barbed) / Lodestone Faceplate (Chitinite) / Grinning Mask (Prismatic) | 350-500 | Specialized Blood Lust mask variant |
+| Post-release | Any Blood Lust helmet lineage | Velorum Mask | 500 | Universal Blood Lust mask variant |
+| D7 Monolithic Armature | Blood Lust | Fargone Proboscis | 1,800 | Edacious Bloodlust |
+| D7 Monolithic Armature | Blood Lust | Fervent Husk | 1,800 | Sheolic Bloodlust |
+| D7 Monolithic Armature | Blood Lust | Mnemonic Ambergris | 1,800 | Phantasmal Bloodlust |
+| D7 Silent Archon | Blood Lust, Edacious, Sheolic, or Phantasmal Bloodlust | Monolith Imbued Cloth | 2,000 | Silent Archon Vestments; available only after Pruning and victory over both Vesper phases finalize the Silent route |
 
 Direct shaped recipes for Hematic Iron, Barbed, Chitinite, and Prismatic armor are intentionally removed; weapons, shields, and reagent components remain regular crafting where present.
 
@@ -2518,13 +2519,13 @@ Standard blood-infused iron armor set (fire resistant):
 
 ### 22.2 Blood Lust Armor
 
-Crimson Lodge combat vestment upgraded from either D3 armor fork:
+Crimson Lodge combat vestment upgraded from any D3 armor fork:
 - ![](../src/main/resources/assets/hemomancy/textures/item/blood_lust_helm.png) Helm (no mask), ![](../src/main/resources/assets/hemomancy/textures/item/blood_lust_helm_tengu.png) Helm (Tengu mask), ![](../src/main/resources/assets/hemomancy/textures/item/blood_lust_helm_grinning.png) Helm (Grinning mask), ![](../src/main/resources/assets/hemomancy/textures/item/blood_lust_helm_lodestone.png) Helm (Lodestone faceplate), ![](../src/main/resources/assets/hemomancy/textures/item/blood_lust_helm_velorum.png) Helm (Velorum mask)
 - ![](../src/main/resources/assets/hemomancy/textures/item/blood_lust_chest.png) Chestplate, ![](../src/main/resources/assets/hemomancy/textures/item/blood_lust_legs.png) Leggings, ![](../src/main/resources/assets/hemomancy/textures/item/blood_lust_boots.png) Boots
 - Mask items: ![](../src/main/resources/assets/hemomancy/textures/item/tengu_mask.png) Tengu Mask, ![](../src/main/resources/assets/hemomancy/textures/item/grinning_mask.png) Grinning Mask, ![](../src/main/resources/assets/hemomancy/textures/item/lodestone_faceplate.png) Lodestone Faceplate, ![](../src/main/resources/assets/hemomancy/textures/item/velorum_mask.png) Velorum Mask. These are Armature helmet upgrades, not separate set identities.
-- **Lineage:** Blood Lust pieces store `hemomancy:lineage = "barbed"`, `"chitinite"`, or `"prismatic"` when upgraded. Current lineage is aesthetic/model data only; stats and set bonus are identical.
-- **Mask modifiers:** Tengu grants brief Speed after direct melee hits; Grinning applies Blood Loss to the target; Lodestone trickles small blood recovery while active; Velorum grants brief Absorption.
-- **Final lineage ascensions:** A Hematic Armature with the Monolithic Cornerstone installed can upgrade Barbed armor into Edacious Bloodlust, Chitinite armor into Sheolic Bloodlust, and Prismatic armor into Phantasmal Bloodlust. The Cornerstone is a permanent Armature upgrade, not a consumed recipe reagent.
+- **Lineage:** Blood Lust pieces preserve `hemomancy:lineage = "barbed"`, `"chitinite"`, or `"prismatic"`. A matching four-piece set keeps a half-strength version of its fork trait; mixed and legacy untagged sets keep only Blood Lust lifesteal. The model also carries that lineage through full Chitinite plating, half Barbed plating, or bare Prismatic plating over the same living red base.
+- **Mask modifiers:** Tengu fits only Barbed-lineage helms and applies Blood Loss on hit; Lodestone fits only Chitinite-lineage helms and grants brief Absorption; Grinning fits only Prismatic-lineage helms and grants brief Speed. Velorum is a universal Saint-drop mask reserved for post-release expansion and keeps its small blood-income bonus.
+- **Final ascensions:** A Monolithic Armature can upgrade any Blood Lust lineage into Edacious, Sheolic, or Phantasmal Bloodlust. Each final set uses one material across all four slots: Fargone Proboscis, Fervent Husk, or Mnemonic Ambergris respectively. Silent Archon remains a separate, story-gated route using Monolith Imbued Cloth, and it can reforge ordinary Blood Lust or any piece from those three final sets.
 - **Armor-born active abilities:** Full final Bloodlust sets register armor set abilities that appear as a third inner wedge in the manipulation radial menu beside Blood Absorption and Blood Projection. The wedge is hidden unless the complete four-piece set is worn, displays the set helmet as its icon, shows an ability-specific tooltip instead of the helmet item tooltip, tints red with a live tooltip countdown while recharging, and sends only the ability id to the server. Server activation rechecks the full set, cooldown, blood cost, and ability-specific validation before applying any effect.
 - **Edacious Bloodburst:** Full Edacious Bloodlust grants slow creative-style hematic flight and unlocks `hemomancy:edacious_bloodburst`, a blood-cost radial burst that fires barbed blood needles outward and applies Blood Loss, Hunger, and Wither.
 - **Sheolic Bastion Stance:** Full Sheolic Bloodlust grants fall, fire, and lava damage immunity with persistent Fire Resistance. Attackers suffer Crimson Retribution through magic fire-themed damage, crimson spore particles, and Crimson Flames placement when possible. Its radial ability `hemomancy:sheolic_bastion_stance` roots the player, suppresses movement/flying, and negates incoming damage for a short duration; selecting it again cancels the stance.

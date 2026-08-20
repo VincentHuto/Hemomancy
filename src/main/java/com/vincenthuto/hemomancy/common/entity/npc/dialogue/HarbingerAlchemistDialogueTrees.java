@@ -16,7 +16,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import static com.vincenthuto.hemomancy.common.mission.ArtificerProgressionRules.Step;
+import static com.vincenthuto.hemomancy.common.mission.artificer.ArtificerProgressionRules.Step;
+import static com.vincenthuto.hemomancy.common.mission.artificer.ArtificerProgressionRules.ForkFamily;
 
 /**
  * Static factory that produces {@link DialogueTree} variants for the Harbinger
@@ -35,10 +36,12 @@ public final class HarbingerAlchemistDialogueTrees {
 	public static final String EVENT_FIRST_SEPARATION_BRIEF = "alchemist_first_separation_brief";
 	public static final String EVENT_FIRST_SEPARATION_CLAIM = "alchemist_first_separation_claim";
 	public static final String EVENT_BODY_ANSWERS_BRIEF = "alchemist_body_answers_brief";
+	public static final String EVENT_CLAIM_ARMOR_RESEARCH_REWARD = "alchemist_claim_armor_research_reward";
 
 	private HarbingerAlchemistDialogueTrees() {}
 
-	public static DialogueTree withArtificerCorrespondence(DialogueTree tree, ArtificerProgressSnapshot progress) {
+	public static DialogueTree withArtificerCorrespondence(DialogueTree tree, ArtificerProgressSnapshot progress,
+			int forkResearchRecorded, boolean forkResearchClaimed) {
 		if (progress.purifying() || progress.clarity()) return tree;
 		List<DialogueOption> correspondence = new ArrayList<>();
 		if (progress.threeAnswers() == Step.CORRESPONDENCE) {
@@ -49,14 +52,38 @@ public final class HarbingerAlchemistDialogueTrees {
 			correspondence.add(new DialogueOption("hemomancy.dialogue.alchemist.option.artificer_crimson_vestment",
 					null, HarbingerArtificerDialogueTrees.EVENT_CLAIM_CRIMSON_VESTMENT_REWARD));
 		}
+		String researchNodeId = null;
+		if (hasCompletedForkCorrespondence(progress.threeAnswers())
+				&& progress.forkFamily() != ForkFamily.NONE
+				&& !forkResearchClaimed) {
+			if (forkResearchRecorded >= 3) {
+				correspondence.add(new DialogueOption("hemomancy.dialogue.alchemist.option.claim_armor_research",
+						null, EVENT_CLAIM_ARMOR_RESEARCH_REWARD));
+			} else {
+				researchNodeId = "armor_research_" + progress.forkFamily().serializedName();
+				correspondence.add(new DialogueOption("hemomancy.dialogue.alchemist.option.ask_armor_research",
+						researchNodeId, null));
+			}
+		}
 		if (correspondence.isEmpty()) return tree;
 		Map<String, DialogueNode> nodes = new LinkedHashMap<>(tree.nodes());
+		if (researchNodeId != null) {
+			String family = progress.forkFamily().serializedName();
+			nodes.put(researchNodeId, new DialogueNode(researchNodeId, List.of(
+					"hemomancy.alchemist.armor_research." + family + ".line1",
+					"hemomancy.alchemist.armor_research." + family + ".line2"
+			), List.of(new DialogueOption("hemomancy.dialogue.alchemist.option.leave", null, null))));
+		}
 		DialogueNode start = tree.getStartNode();
 		List<DialogueOption> options = new ArrayList<>(start.options());
 		options.addAll(Math.max(0, options.size() - 1), correspondence);
 		nodes.put(start.id(), new DialogueNode(start.id(), start.lines(), List.copyOf(options)));
 		return new DialogueTree(tree.speakerName(), tree.speakerIcon(), tree.startNodeId(), nodes,
 				tree.entityId(), tree.theme(), tree.presentation());
+	}
+
+	private static boolean hasCompletedForkCorrespondence(Step step) {
+		return step == Step.FULL_SET || step == Step.DEMONSTRATION || step == Step.FITTING || step == Step.COMPLETE;
 	}
 
 	/**

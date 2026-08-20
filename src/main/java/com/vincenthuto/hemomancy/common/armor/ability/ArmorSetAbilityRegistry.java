@@ -5,7 +5,7 @@ import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodVolumeEvents;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
-import com.vincenthuto.hemomancy.common.mission.HarbingerArtificerAssignmentHelper;
+import com.vincenthuto.hemomancy.common.mission.artificer.ArtificerAssignments;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.SyncArmorSetAbilityCooldownS2CPacket;
 import net.minecraft.ChatFormatting;
@@ -125,7 +125,7 @@ public final class ArmorSetAbilityRegistry {
 		if (SHEOLIC_BASTION_STANCE.equals(ability.id())
 				&& SheolicBastionBloodlustArmorAbilityHandler.isBastionActive(player)) {
 			ability.activate(player);
-			HarbingerArtificerAssignmentHelper.onD7AbilityActivated(player);
+			ArtificerAssignments.onD7AbilityActivated(player);
 			return true;
 		}
 		long now = player.level().getGameTime();
@@ -151,7 +151,7 @@ public final class ArmorSetAbilityRegistry {
 			setCooldownUntil(player, ability, now + ability.cooldownTicks());
 		}
 		ability.activate(player);
-		HarbingerArtificerAssignmentHelper.onD7AbilityActivated(player);
+		ArtificerAssignments.onD7AbilityActivated(player);
 		return true;
 	}
 

@@ -4,7 +4,7 @@ import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.armor.ArmorSetHelper;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
-import com.vincenthuto.hemomancy.common.mission.HarbingerArtificerAssignmentHelper;
+import com.vincenthuto.hemomancy.common.mission.artificer.ArtificerAssignments;
 import com.vincenthuto.hemomancy.common.recipe.BloodStructureRecipe;
 import com.vincenthuto.hemomancy.common.recipe.CardinalRiteRecipe;
 import com.vincenthuto.hemomancy.common.recipe.RecipeDegreeGates;
@@ -192,9 +192,9 @@ public final class HemoTestScenarioCatalog {
 	}
 
 	private static void equipHematicIron(ServerPlayer player) {
-		HarbingerArtificerAssignmentHelper.brief(player, HarbingerArtificerAssignmentHelper.WORN_VOW_BRIEFED);
-		HarbingerArtificerAssignmentHelper.markArtificerLessonRewardClaimed(player,
-				HarbingerArtificerAssignmentHelper.WORN_VOW_REWARD_CLAIM_KEY);
+		ArtificerAssignments.brief(player, ArtificerAssignments.WORN_VOW_BRIEFED);
+		ArtificerAssignments.markArtificerLessonRewardClaimed(player,
+				ArtificerAssignments.WORN_VOW_REWARD_CLAIM_KEY);
 		snapshotArmor(player, EquipmentSlot.HEAD);
 		snapshotArmor(player, EquipmentSlot.CHEST);
 		snapshotArmor(player, EquipmentSlot.LEGS);
@@ -209,7 +209,7 @@ public final class HemoTestScenarioCatalog {
 		if (!ArmorSetHelper.hasFullHematicIronSet(player)) {
 			return HemoTestResult.fail("Player is not wearing the complete Hematic Iron set");
 		}
-		return HarbingerArtificerAssignmentHelper.canGrantHematicIronFitting(player)
+		return ArtificerAssignments.canGrantHematicIronFitting(player)
 				? HemoTestResult.pass("Worn Vow fitting reward is ready")
 				: HemoTestResult.fail("Expected the Worn Vow fitting reward");
 	}
@@ -239,15 +239,15 @@ public final class HemoTestScenarioCatalog {
 
 	private static void prepareRewardClaim(ServerPlayer player) {
 		player.getPersistentData().putBoolean(CLAIM_SNAPSHOT_KEY,
-				player.getPersistentData().getBoolean(HarbingerArtificerAssignmentHelper.WORN_VOW_REWARD_CLAIM_KEY));
-		player.getPersistentData().remove(HarbingerArtificerAssignmentHelper.WORN_VOW_REWARD_CLAIM_KEY);
+				player.getPersistentData().getBoolean(ArtificerAssignments.WORN_VOW_REWARD_CLAIM_KEY));
+		player.getPersistentData().remove(ArtificerAssignments.WORN_VOW_REWARD_CLAIM_KEY);
 	}
 
 	private static void restoreRewardClaim(ServerPlayer player) {
 		if (!player.getPersistentData().contains(CLAIM_SNAPSHOT_KEY)) {
 			return;
 		}
-		String claimKey = HarbingerArtificerAssignmentHelper.WORN_VOW_REWARD_CLAIM_KEY;
+		String claimKey = ArtificerAssignments.WORN_VOW_REWARD_CLAIM_KEY;
 		if (player.getPersistentData().getBoolean(CLAIM_SNAPSHOT_KEY)) {
 			player.getPersistentData().putBoolean(claimKey, true);
 		} else {
@@ -257,10 +257,10 @@ public final class HemoTestScenarioCatalog {
 	}
 
 	private static HemoTestResult verifyRewardClaim(ServerPlayer player) {
-		String key = HarbingerArtificerAssignmentHelper.WORN_VOW_REWARD_CLAIM_KEY;
-		HarbingerArtificerAssignmentHelper.markArtificerLessonRewardClaimed(player, key);
-		HarbingerArtificerAssignmentHelper.markArtificerLessonRewardClaimed(player, key);
-		return HarbingerArtificerAssignmentHelper.isArtificerLessonRewardClaimed(player, key)
+		String key = ArtificerAssignments.WORN_VOW_REWARD_CLAIM_KEY;
+		ArtificerAssignments.markArtificerLessonRewardClaimed(player, key);
+		ArtificerAssignments.markArtificerLessonRewardClaimed(player, key);
+		return ArtificerAssignments.isArtificerLessonRewardClaimed(player, key)
 				? HemoTestResult.pass("Worn Vow lesson reward remains claimed after a repeated mark")
 				: HemoTestResult.fail("Worn Vow lesson reward claim was not persisted");
 	}

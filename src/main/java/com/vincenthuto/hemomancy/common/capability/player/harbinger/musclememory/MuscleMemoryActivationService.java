@@ -9,7 +9,7 @@ import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.Blo
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.VascularSystemEvents;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.HematicFortificationRules;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.EnumBloodFlow;
-import com.vincenthuto.hemomancy.common.mission.AnchoriteAssignmentProgression;
+import com.vincenthuto.hemomancy.common.mission.cicatrix_anchorite.VeinMasonAssignments;
 import com.vincenthuto.hemomancy.config.HemoServerConfig;
 import com.vincenthuto.hemomancy.common.item.harbinger.morphlings.IMorphling;
 import com.vincenthuto.hemomancy.common.item.harbinger.morphlings.*;
@@ -82,7 +82,7 @@ public final class MuscleMemoryActivationService {
             vascular.setVascularSectionHealth(memory.section(),
                     -HematicFortificationRules.adjustedStrain(payment.strain(), fortified));
             VascularSystemEvents.syncVascular(player, vascular);
-            AnchoriteAssignmentProgression.onThelemicStrain(player, before,
+            VeinMasonAssignments.onThelemicStrain(player, before,
                     vascular.getBloodFlowBySection(memory.section()));
         });
         HemoCapabilityAccess.getBloodTendency(player).ifPresent(tendency -> {

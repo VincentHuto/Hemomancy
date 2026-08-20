@@ -25,6 +25,10 @@ public final class ChummedWatersAreaManager {
 	private ChummedWatersAreaManager() {
 	}
 
+	public static void clearSessionState() {
+		AREAS.clear();
+	}
+
 	public static void addArea(ServerLevel level, Vec3 center) {
 		prune(level);
 		AREAS.add(new ChummedArea(level.dimension(), center, level.getGameTime() + ChummedWatersRules.DURATION_TICKS));

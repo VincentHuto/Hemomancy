@@ -22,7 +22,7 @@ class QliphothBloomBlackHoleResourceTest {
     }
 
     @Test
-    void finalBlackHoleShaderBuildsDiskShadowAndBothLensedImages() throws Exception {
+    void treeApexShaderBuildsDiskShadowAndBothLensedImages() throws Exception {
         String shader = Files.readString(Path.of(
                 "src/main/resources/assets/hemomancy/shaders/core/world/qliphoth_black_hole.fsh"));
 
@@ -31,7 +31,9 @@ class QliphothBloomBlackHoleResourceTest {
         assertTrue(shader.contains("float lowerLens"));
         assertTrue(shader.contains("float directDisk"));
         assertTrue(shader.contains("float doppler"));
-        assertTrue(shader.contains("if (FinalHole > 0.5)"));
+        assertTrue(shader.contains("uniform float TreeApex;"));
+        assertTrue(shader.contains("if (TreeApex > 0.5)"));
+        assertFalse(shader.contains("if (FinalHole > 0.5)"));
     }
 
     @Test
@@ -59,11 +61,14 @@ class QliphothBloomBlackHoleResourceTest {
 
         assertTrue(renderer.contains("copyMainRenderTarget("));
         assertTrue(renderer.contains("frameCopyTarget.getColorTextureId()"));
+        assertTrue(renderer.contains("1.72f, 1.72f, true, true"));
         assertTrue(renderTypes.contains("RenderSystem.setShaderTexture(0, sceneTextureId)"));
+        assertTrue(renderTypes.contains("setUniform(shader, \"TreeApex\", treeApex ? 1.0f : 0.0f);"));
         assertTrue(shader.contains("uniform vec2 ScreenSize;"));
         assertTrue(shader.contains("gl_FragCoord.xy / ScreenSize"));
         assertTrue(shader.contains("texture(Sampler0, clamp(lensedSceneUv"));
         assertTrue(shaderJson.contains("\"name\": \"ScreenSize\""));
+        assertTrue(shaderJson.contains("\"name\": \"TreeApex\""));
     }
 
     @Test

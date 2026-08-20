@@ -99,7 +99,7 @@ public final class HarbingerArtificerFittingSourceTest {
 
 	private static void artificerRewardsGrantPhysicalFittings() throws IOException {
 		String helper = read(SOURCE_ROOT.resolve(
-				"com/vincenthuto/hemomancy/common/mission/HarbingerArtificerAssignmentHelper.java"));
+				"com/vincenthuto/hemomancy/common/mission/artificer/ArtificerAssignments.java"));
 		String eventHandler = read(SOURCE_ROOT.resolve(
 				"com/vincenthuto/hemomancy/common/entity/npc/dialogue/DialogueEventHandler.java"));
 
@@ -176,7 +176,7 @@ public final class HarbingerArtificerFittingSourceTest {
 				SOURCE_ROOT.resolve("com/vincenthuto/hemomancy/common/event/HarbingerAdvancementGranter.java"),
 				SOURCE_ROOT.resolve("com/vincenthuto/hemomancy/common/entity/npc/dialogue/DialogueEventHandler.java"),
 				SOURCE_ROOT.resolve("com/vincenthuto/hemomancy/common/entity/npc/dialogue/HarbingerArtificerDialogueTrees.java"),
-				SOURCE_ROOT.resolve("com/vincenthuto/hemomancy/common/mission/HarbingerArtificerAssignmentHelper.java"),
+				SOURCE_ROOT.resolve("com/vincenthuto/hemomancy/common/mission/artificer/ArtificerAssignments.java"),
 				SOURCE_ROOT.resolve("com/vincenthuto/hemomancy/common/item/harbinger/HarbingerAssignmentLedgerItem.java"),
 				SOURCE_ROOT.resolve("com/vincenthuto/hemomancy/common/network/mission/OpenHarbingerAssignmentLedgerPacket.java"),
 				SOURCE_ROOT.resolve("com/vincenthuto/hemomancy/client/screen/item/HarbingerAssignmentLedgerScreen.java"),

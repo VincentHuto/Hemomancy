@@ -27,8 +27,9 @@ public final class BloodAbsorptionChannelRules {
 		return activeBlood;
 	}
 
-	public static boolean canDrainLivingTarget(boolean activeBlood, boolean bloodFull) {
-		return activeBlood && !bloodFull;
+	public static boolean canDrainLivingTarget(boolean activeBlood, boolean bloodFull,
+			boolean satedSiphon) {
+		return activeBlood && (!bloodFull || satedSiphon);
 	}
 
 	public static double movementMultiplier(int movementUnlockLevel, int slowdownReductionLevel,

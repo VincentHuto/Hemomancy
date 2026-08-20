@@ -596,7 +596,7 @@ public class BloodVolumeOverlay {
             int iconH = curvedHorn ? HORN_H : GOURD_H;
             int centerX = posX + OVERLAY_W / 2;
             int gourdX = centerX - iconW / 2;
-            int gourdY = posY + VESSEL_BOTTOM + 6;
+            int gourdY = posY + VESSEL_BOTTOM + 30;
 
             if (gourdY + iconH + 10 > screenHeight) {
                 gourdY = Math.max(2, posY - iconH - 8);

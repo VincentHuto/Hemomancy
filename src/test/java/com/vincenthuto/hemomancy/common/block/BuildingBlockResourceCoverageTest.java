@@ -23,7 +23,7 @@ public final class BuildingBlockResourceCoverageTest {
 
 	public static void main(String[] args) throws IOException {
 		String lang = read(RESOURCE_ROOT.resolve("assets/hemomancy/lang/en_us.json"));
-		String pickaxeMineable = read(RESOURCE_ROOT.resolve("data/minecraft/tags/blocks/mineable/pickaxe.json"));
+		String pickaxeMineable = read(RESOURCE_ROOT.resolve("data/minecraft/tags/block/mineable/pickaxe.json"));
 
 		for (String block : BUILDING_BLOCKS) {
 			assertExists("blockstate for " + block,

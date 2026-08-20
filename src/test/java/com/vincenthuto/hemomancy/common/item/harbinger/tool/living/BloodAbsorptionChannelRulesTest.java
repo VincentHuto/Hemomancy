@@ -20,9 +20,11 @@ public final class BloodAbsorptionChannelRulesTest {
 		assertEquals("inactive blood cannot channel", false,
 				BloodAbsorptionChannelRules.canStartChannel(false));
 		assertEquals("a full reservoir blocks ordinary living-target drain", false,
-				BloodAbsorptionChannelRules.canDrainLivingTarget(true, true));
+				BloodAbsorptionChannelRules.canDrainLivingTarget(true, true, false));
+		assertEquals("sated siphon permits living-target drain while full", true,
+				BloodAbsorptionChannelRules.canDrainLivingTarget(true, true, true));
 		assertEquals("available capacity permits ordinary living-target drain", true,
-				BloodAbsorptionChannelRules.canDrainLivingTarget(true, false));
+				BloodAbsorptionChannelRules.canDrainLivingTarget(true, false, false));
 	}
 
 	private static void defaultChannelLocksMovementUntilSkillUnlocksSlowMovement() {

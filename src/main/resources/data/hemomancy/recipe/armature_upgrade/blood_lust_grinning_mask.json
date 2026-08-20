@@ -2,8 +2,17 @@
   "type": "hemomancy:armature_upgrade",
   "required_degree": 5,
   "armor_slot": "head",
-  "base": { "item": "hemomancy:blood_lust_helm" },
-  "reagent": { "item": "hemomancy:grinning_mask" },
+  "base": {
+    "item": "hemomancy:blood_lust_helm"
+  },
+  "reagent": {
+    "item": "hemomancy:grinning_mask"
+  },
   "blood_cost": 350,
-  "result": { "id": "hemomancy:blood_lust_helm_grinning" }
+  "result": {
+    "id": "hemomancy:blood_lust_helm_grinning"
+  },
+  "required_base_data": {
+    "hemomancy:lineage": "prismatic"
+  }
 }

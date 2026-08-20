@@ -186,8 +186,10 @@ public class RadialChooseManipScreen extends Screen {
 						.orElseThrow(NullPointerException::new);
 				IBloodVolume volCap = HemoCapabilityAccess.getBloodVolume(mc.player)
 						.orElseThrow(NullPointerException::new);
-				textComponents.append(Component.literal("Self: " + volCap.getBloodVolume() + "ml"));
-				textComponents.append(Component.literal("Gourd: " + bloodVolume.getBloodVolume() + "ml"));
+				textComponents.append(Component.literal("Self: "
+						+ BloodGourdItem.formatBloodAmount(volCap.getBloodVolume()) + " mL\n"));
+				textComponents.append(Component.literal("Gourd: "
+						+ BloodGourdItem.formatBloodAmount(bloodVolume.getBloodVolume()) + " mL"));
 
 			}
 			this.menu.setCentralText(textComponents);

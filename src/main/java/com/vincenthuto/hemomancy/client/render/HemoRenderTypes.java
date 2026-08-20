@@ -817,6 +817,13 @@ public final class HemoRenderTypes {
 
 	public static RenderType qliphothBlackHole(ResourceLocation fallbackTexture, int sceneTextureId,
 			float gameTime, float holeSeed, float lensStrength, float ringIntensity, boolean finalHole) {
+		return qliphothBlackHole(fallbackTexture, sceneTextureId, gameTime, holeSeed, lensStrength, ringIntensity,
+				finalHole, finalHole);
+	}
+
+	public static RenderType qliphothBlackHole(ResourceLocation fallbackTexture, int sceneTextureId,
+			float gameTime, float holeSeed, float lensStrength, float ringIntensity, boolean finalHole,
+			boolean treeApex) {
 		RenderStateShard.TexturingStateShard uniforms = new RenderStateShard.TexturingStateShard(
 				"qliphoth_black_hole_uniforms",
 				() -> {
@@ -827,6 +834,7 @@ public final class HemoRenderTypes {
 					setUniform(shader, "LensStrength", lensStrength);
 					setUniform(shader, "RingIntensity", ringIntensity);
 					setUniform(shader, "FinalHole", finalHole ? 1.0f : 0.0f);
+					setUniform(shader, "TreeApex", treeApex ? 1.0f : 0.0f);
 					setUniform(shader, "ScreenSize", (float)Minecraft.getInstance().getWindow().getWidth(),
 							(float)Minecraft.getInstance().getWindow().getHeight());
 				},

@@ -462,7 +462,7 @@ public class QliphothBloomRenderer {
 		copyMainRenderTarget(Minecraft.getInstance());
 		int sceneTexture = frameCopyTarget == null ? -1 : frameCopyTarget.getColorTextureId();
 		RenderType type = HemoRenderTypes.qliphothBlackHole(QLIPHOTH_SKY, sceneTexture, time * .050f,
-				.731f, 1.72f, 1.72f, true);
+				.731f, 1.72f, 1.72f, true, true);
 		stack.pushPose();
 		stack.translate(center.x(), center.y(), center.z());
 		stack.mulPose(Minecraft.getInstance().getEntityRenderDispatcher().cameraOrientation());

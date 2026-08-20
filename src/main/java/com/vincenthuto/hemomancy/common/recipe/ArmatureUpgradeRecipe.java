@@ -38,6 +38,8 @@ public class ArmatureUpgradeRecipe extends CustomRecipe {
 	private final ItemStack result;
 	private final ArmatureUpgradeRules.ArmatureTier requiredArmatureTier;
 	@Nullable
+	private final CompoundTag requiredBaseData;
+	@Nullable
 	private final CompoundTag resultData;
 	@Nullable
 	private final PersistentDataGate persistentDataGate;
@@ -56,13 +58,14 @@ public class ArmatureUpgradeRecipe extends CustomRecipe {
 			double bloodCost, ItemStack result, @Nullable CompoundTag resultData,
 			@Nullable PersistentDataGate persistentDataGate) {
 		this(id, requiredDegree, armorSlot, validBase, reagent, bloodCost, result,
-				ArmatureUpgradeRules.requiredTierForDegree(requiredDegree), resultData, persistentDataGate);
+				ArmatureUpgradeRules.requiredTierForDegree(requiredDegree), null, resultData, persistentDataGate);
 	}
 
 	public ArmatureUpgradeRecipe(ResourceLocation id, int requiredDegree,
 			ArmatureUpgradeRules.ArmatureSlot armorSlot, Ingredient validBase, Ingredient reagent,
 			double bloodCost, ItemStack result, ArmatureUpgradeRules.ArmatureTier requiredArmatureTier,
-			@Nullable CompoundTag resultData, @Nullable PersistentDataGate persistentDataGate) {
+			@Nullable CompoundTag requiredBaseData, @Nullable CompoundTag resultData,
+			@Nullable PersistentDataGate persistentDataGate) {
 		super(CraftingBookCategory.EQUIPMENT);
 		this.id = id;
 		this.requiredDegree = Math.max(0, requiredDegree);
@@ -74,6 +77,7 @@ public class ArmatureUpgradeRecipe extends CustomRecipe {
 		this.requiredArmatureTier = requiredArmatureTier == null
 				? ArmatureUpgradeRules.requiredTierForDegree(this.requiredDegree)
 				: requiredArmatureTier;
+		this.requiredBaseData = requiredBaseData == null ? null : requiredBaseData.copy();
 		this.resultData = resultData == null ? null : resultData.copy();
 		this.persistentDataGate = persistentDataGate;
 	}
@@ -116,6 +120,11 @@ public class ArmatureUpgradeRecipe extends CustomRecipe {
 	}
 
 	@Nullable
+	public CompoundTag getRequiredBaseData() {
+		return requiredBaseData == null ? null : requiredBaseData.copy();
+	}
+
+	@Nullable
 	public PersistentDataGate getPersistentDataGate() {
 		return persistentDataGate;
 	}
@@ -130,7 +139,7 @@ public class ArmatureUpgradeRecipe extends CustomRecipe {
 		if (armorSlot != slot || wornBase.isEmpty() || bowlReagent.isEmpty()) {
 			return false;
 		}
-		if (!validBase.test(wornBase) || !reagent.test(bowlReagent)) {
+		if (!validBase.test(wornBase) || !reagent.test(bowlReagent) || !matchesRequiredBaseData(wornBase)) {
 			return false;
 		}
 		if (HemoCapabilityAccess.getPlayerDegreeNumber(player) < requiredDegree) {
@@ -140,6 +149,13 @@ public class ArmatureUpgradeRecipe extends CustomRecipe {
 			return false;
 		}
 		return persistentDataGate == null || persistentDataGate.matches(player);
+	}
+
+	private boolean matchesRequiredBaseData(ItemStack wornBase) {
+		if (requiredBaseData == null || requiredBaseData.isEmpty()) return true;
+		CompoundTag actual = wornBase.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
+		return requiredBaseData.getAllKeys().stream()
+				.allMatch(key -> requiredBaseData.get(key).equals(actual.get(key)));
 	}
 
 	public ItemStack createResult(HolderLookup.Provider registries) {

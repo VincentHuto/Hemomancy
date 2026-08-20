@@ -40,6 +40,9 @@ public final class LivingStaffSkillSourceTest {
 		assertContains("quickened draw id", staffBranch, "new SkillPoint(45, \"skill_quickened_draw\"");
 		assertContains("hungry pulse id", staffBranch, "new SkillPoint(46, \"skill_hungry_pulse\"");
 		assertContains("arterial cadence id", staffBranch, "new SkillPoint(47, \"skill_arterial_cadence\"");
+		assertContains("sated siphon id", staffBranch, "new SkillPoint(66, \"skill_sated_siphon\"");
+		assertContains("sated siphon is a degree three technique", staffBranch,
+				"setRequiredDegree(3).setTreePosition(224, 556).setBranch(\"living_staff\").setBranchColor(0xFFD9AD28).setToggleable(true)");
 		assertContains("living conduit degree gate", staffBranch, "setRequiredDegree(1)");
 		assertContains("vascular draw degree gate", staffBranch, "setRequiredDegree(2)");
 		assertContains("crimson projection degree gate", staffBranch, "setRequiredDegree(3)");

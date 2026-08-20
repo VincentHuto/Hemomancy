@@ -15,6 +15,10 @@ public final class SporiticThuribleResonanceState {
 	private SporiticThuribleResonanceState() {
 	}
 
+	public static void clearSessionState() {
+		ACTIVE.clear();
+	}
+
 	public static void grant(Player player, EnumBloodTendency tendency, long expiresAtTick) {
 		if (player != null && tendency != null) {
 			ACTIVE.put(player.getUUID(), new Entry(tendency, expiresAtTick));

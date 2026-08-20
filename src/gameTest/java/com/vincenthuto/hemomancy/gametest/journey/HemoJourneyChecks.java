@@ -7,8 +7,8 @@ import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.event.HarbingerAdvancementGranter;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
-import com.vincenthuto.hemomancy.common.mission.FirstBloodcraftAssignmentHelper;
-import com.vincenthuto.hemomancy.common.mission.FirstSeparationAssignmentHelper;
+import com.vincenthuto.hemomancy.common.mission.vicar.FirstBloodcraftAssignment;
+import com.vincenthuto.hemomancy.common.mission.alchemist.FirstSeparationAssignment;
 import com.vincenthuto.hemomancy.common.tile.crafting.VialCentrifugeBlockEntity;
 
 import net.minecraft.core.BlockPos;
@@ -48,13 +48,13 @@ public final class HemoJourneyChecks {
 			case VOTARY_RITE -> require(unmet, HemoCapabilityAccess.requireInitiatoryDegree(player).getDegreeNumber() == 2
 					&& HarbingerAdvancementGranter.hasAdvancement(player, HarbingerAdvancementGranter.ADV_DEGREE_2_VOTARY), "Rite of the Votary is incomplete.");
 			case DEGREE_2_REACHED -> require(unmet, HemoCapabilityAccess.requireInitiatoryDegree(player).getDegreeNumber() == 2, "Initiatory degree is not exactly 2.");
-			case ALCHEMIST_BRIEFING -> require(unmet, FirstSeparationAssignmentHelper.isBriefed(player), "The First Separation briefing was not accepted.");
+			case ALCHEMIST_BRIEFING -> require(unmet, FirstSeparationAssignment.isBriefed(player), "The First Separation briefing was not accepted.");
 			case CENTRIFUGE_PREPARED -> require(unmet, player.getStats().getValue(Stats.ITEM_CRAFTED.get(BlockInit.vial_centrifuge.get().asItem())) > 0
 					&& centrifuge(player, origin) != null, "Craft and place your own Vial Centrifuge at the fixture center.");
 			case SEPARATION_STARTED -> require(unmet, centrifuge(player, origin) != null && centrifuge(player, origin).isSpinning()
 					&& HarbingerAdvancementGranter.isFirstSeparationStarted(player), "Vial Centrifuge separation has not started.");
 			case ENZYME_RECOVERED -> require(unmet, HarbingerAdvancementGranter.isFirstSeparationComplete(player), "Recover the enzyme from the centrifuge output.");
-			case ALCHEMIST_REWARD -> require(unmet, FirstSeparationAssignmentHelper.isClaimed(player), "First Separation reward has not been claimed.");
+			case ALCHEMIST_REWARD -> require(unmet, FirstSeparationAssignment.isClaimed(player), "First Separation reward has not been claimed.");
 			case INITIATE_RITE -> verifyRankup(player, 3, HarbingerAdvancementGranter.ADV_DEGREE_3_INITIATE,
 					"Rite of the Incarnadine Fane", unmet);
 			case ADEPT_RITE -> verifyRankup(player, 4, HarbingerAdvancementGranter.ADV_DEGREE_4_ADEPT,
@@ -121,7 +121,7 @@ public final class HemoJourneyChecks {
 		require(unmet, HarbingerAdvancementGranter.isHematicIronBlockCrafted(player), "Iron in the Blood milestone no longer holds.");
 		boolean outputs = outputPresent(player, HemoJourneyStage.VICAR_REWARD, origin, claimOutputs);
 		require(unmet, HemoJourneyCheckpointRules.rewardPassed(outputs,
-				HemoJourneyFixtures.baselineAdvancementIncomplete(player), FirstBloodcraftAssignmentHelper.isClaimed(player)),
+				HemoJourneyFixtures.baselineAdvancementIncomplete(player), FirstBloodcraftAssignment.isClaimed(player)),
 				"First Bloodcraft reward has not been newly claimed with its exact kit.");
 	}
 

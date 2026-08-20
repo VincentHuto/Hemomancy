@@ -6,7 +6,7 @@
   "hitBlock": "hemomancy:venous_stone",
   "pattern": [
     ["VTV"],
-    ["TVT"],
+    ["THT"],
     ["VTV"]
   ],
   "key": {
@@ -15,6 +15,9 @@
     },
     "T": {
       "block": "hemomancy:hematic_iron_block"
+    },
+    "H": {
+      "block": "hemomancy:venous_stone"
     }
   },
   "result": {

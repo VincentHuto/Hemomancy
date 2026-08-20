@@ -76,7 +76,7 @@ public class HarbingerCicatrixAnchoriteEntity extends PathfinderMob {
 	@Override
 	protected InteractionResult mobInteract(Player player, InteractionHand hand) {
 		if (!player.level().isClientSide && hand == InteractionHand.MAIN_HAND && player instanceof ServerPlayer serverPlayer) {
-			com.vincenthuto.hemomancy.common.mission.AnchoriteAssignmentProgression.refreshD5(serverPlayer);
+			com.vincenthuto.hemomancy.common.mission.cicatrix_anchorite.VeinMasonAssignments.refreshD5(serverPlayer);
 			int degree = HemoCapabilityAccess.getPlayerDegreeNumber(player);
 			DialogueTree tree = HarbingerCicatrixAnchoriteDialogueTrees.forState(this.getId(),
 					AnchoriteProgressSnapshot.from(serverPlayer));

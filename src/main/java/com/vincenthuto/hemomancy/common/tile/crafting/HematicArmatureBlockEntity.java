@@ -8,7 +8,7 @@ import com.vincenthuto.hemomancy.common.init.BlockEntityInit;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.item.harbinger.BloodyFlaskItem;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.BloodGourdItem;
-import com.vincenthuto.hemomancy.common.mission.HarbingerArtificerAssignmentHelper;
+import com.vincenthuto.hemomancy.common.mission.artificer.ArtificerAssignments;
 import com.vincenthuto.hemomancy.common.recipe.ArmatureUpgradeRecipe;
 import com.vincenthuto.hemomancy.common.recipe.ArmatureUpgradeRules;
 import com.vincenthuto.hemomancy.common.tile.BloodContainerTransfer;
@@ -154,7 +154,7 @@ public class HematicArmatureBlockEntity extends BaseContainerBlockEntity impleme
 			mergeCustomData(worn, upgraded);
 			copyDamage(worn, upgraded);
 			player.setItemSlot(equipmentSlot, upgraded);
-			HarbingerArtificerAssignmentHelper.onArmatureUpgrade(player, upgraded, recipe.getRequiredDegree());
+			ArtificerAssignments.onArmatureUpgrade(player, upgraded, recipe.getRequiredDegree());
 			ItemStack reagent = match.reagent();
 			reagent.shrink(1);
 			if (reagent.isEmpty()) {
@@ -257,8 +257,8 @@ public class HematicArmatureBlockEntity extends BaseContainerBlockEntity impleme
 	private static Vec3 rotateBowlOffset(double x, double z, Direction facing) {
 		return switch (facing) {
 			case NORTH -> new Vec3(-x, 0.0D, -z);
-			case EAST -> new Vec3(-z, 0.0D, x);
-			case WEST -> new Vec3(z, 0.0D, -x);
+			case EAST -> new Vec3(z, 0.0D, -x);
+			case WEST -> new Vec3(-z, 0.0D, x);
 			default -> new Vec3(x, 0.0D, z);
 		};
 	}
@@ -444,7 +444,7 @@ public class HematicArmatureBlockEntity extends BaseContainerBlockEntity impleme
 		if (!player.getAbilities().instabuild) {
 			held.shrink(1);
 		}
-		HarbingerArtificerAssignmentHelper.onArmatureTierApplied(player, targetTier);
+		ArtificerAssignments.onArmatureTierApplied(player, targetTier);
 		sendUpdates();
 		player.sendSystemMessage(Component.translatable(
 				"block.hemomancy.hematic_armature.upgrade_tier_applied",

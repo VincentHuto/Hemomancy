@@ -3,6 +3,7 @@ package com.vincenthuto.hemomancy.client.model.armor;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.vincenthuto.hemomancy.Hemomancy;
+import com.vincenthuto.hemomancy.common.item.harbinger.armor.BloodLustLineageRules;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.model.geom.ModelLayerLocation;
@@ -614,6 +615,26 @@ public class BloodLustArmorModel<T extends LivingEntity> extends HumanoidModel<T
 	public BloodLustArmorModel(ModelPart root) {
 		super(root, RenderType::entityTranslucent);
 
+	}
+
+	public void setLineage(String lineage) {
+		int level = BloodLustLineageRules.platingLevel(lineage);
+		setChildVisible(body, "rIronSide", level >= 2);
+		setChildVisible(body, "lIronSide", level >= 2);
+		setChildVisible(rightArm, "rArm", level >= 3);
+		setChildVisible(leftArm, "right_arm2", level >= 3);
+		setChildVisible(rightLeg, "rBackShingle", level >= 2);
+		setChildVisible(leftLeg, "lBackShingle", level >= 2);
+		setChildVisible(rightLeg, "rLegShingle", level >= 3);
+		setChildVisible(leftLeg, "lLegShingle", level >= 3);
+		setChildVisible(rightLeg, "rShin", level >= 2);
+		setChildVisible(leftLeg, "lShin", level >= 2);
+		setChildVisible(rightLeg, "rShin2", level >= 3);
+		setChildVisible(leftLeg, "lShin2", level >= 3);
+	}
+
+	private static void setChildVisible(ModelPart parent, String name, boolean visible) {
+		if (parent.hasChild(name)) parent.getChild(name).visible = visible;
 	}
 
 	@Override

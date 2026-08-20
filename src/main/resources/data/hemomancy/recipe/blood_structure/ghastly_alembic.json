@@ -6,7 +6,7 @@
   "hitBlock": "hemomancy:venous_stone",
   "pattern": [
     ["VGV"],
-    ["GVG"],
+    ["GHG"],
     ["VGV"]
   ],
   "key": {
@@ -15,6 +15,9 @@
     },
     "G": {
       "block": "hemomancy:sanguine_glass"
+    },
+    "H": {
+      "block": "hemomancy:venous_stone"
     }
   },
   "result": {

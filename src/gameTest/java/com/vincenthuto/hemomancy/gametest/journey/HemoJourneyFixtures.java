@@ -15,7 +15,7 @@ import com.vincenthuto.hemomancy.common.init.BlockInit;
 import com.vincenthuto.hemomancy.common.init.EntityInit;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.event.HarbingerAdvancementGranter;
-import com.vincenthuto.hemomancy.common.mission.FirstBloodcraftAssignmentHelper;
+import com.vincenthuto.hemomancy.common.mission.vicar.FirstBloodcraftAssignment;
 import com.vincenthuto.hemomancy.common.recipe.BloodStructureOfferingPlacement;
 import com.vincenthuto.hemomancy.common.recipe.BloodStructureRecipe;
 import com.vincenthuto.hemomancy.common.recipe.CardinalRiteRecipe;
@@ -291,7 +291,7 @@ public final class HemoJourneyFixtures {
 		baseline.putBoolean(BASELINE_ADVANCEMENT, switch (stage) {
 			case LIBER_CRAFTED -> HarbingerAdvancementGranter.isLiberSanguinumCrafted(player);
 			case HEMATIC_IRON_CRAFTED -> HarbingerAdvancementGranter.isHematicIronBlockCrafted(player);
-			case VICAR_REWARD -> FirstBloodcraftAssignmentHelper.isClaimed(player);
+			case VICAR_REWARD -> FirstBloodcraftAssignment.isClaimed(player);
 			default -> false;
 		});
 		player.getPersistentData().put(BASELINE_KEY, baseline);
@@ -312,7 +312,7 @@ public final class HemoJourneyFixtures {
 			case FORMATION_PROJECTED -> List.of(new ItemStack(ItemInit.sanguine_formation.get()));
 			case LIBER_CRAFTED -> List.of(new ItemStack(ItemInit.liber_sanguinum.get()));
 			case HEMATIC_IRON_CRAFTED -> List.of(new ItemStack(BlockInit.hematic_iron_block.get()));
-			case VICAR_REWARD -> FirstBloodcraftAssignmentHelper.rewardStacks();
+			case VICAR_REWARD -> FirstBloodcraftAssignment.rewardStacks();
 			default -> List.of();
 		};
 	}

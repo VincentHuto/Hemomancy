@@ -8,12 +8,12 @@ import com.vincenthuto.hemomancy.common.capability.player.harbinger.bestiary.Spe
 import com.vincenthuto.hemomancy.common.event.HarbingerAdvancementGranter;
 import com.vincenthuto.hemomancy.common.init.BlockInit;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
-import com.vincenthuto.hemomancy.common.mission.HarbingerArtificerAssignmentHelper;
-import com.vincenthuto.hemomancy.common.mission.HarbingerChapterMilestone;
-import com.vincenthuto.hemomancy.common.mission.HarbingerChapterProgression;
-import com.vincenthuto.hemomancy.common.mission.FirstSeparationAssignmentHelper;
-import com.vincenthuto.hemomancy.common.mission.BodyAnswersAssignmentHelper;
-import com.vincenthuto.hemomancy.common.mission.AnchoriteAssignmentProgression;
+import com.vincenthuto.hemomancy.common.mission.artificer.ArtificerAssignments;
+import com.vincenthuto.hemomancy.common.mission.shared.HarbingerChapterMilestone;
+import com.vincenthuto.hemomancy.common.mission.shared.HarbingerChapterProgression;
+import com.vincenthuto.hemomancy.common.mission.alchemist.FirstSeparationAssignment;
+import com.vincenthuto.hemomancy.common.mission.alchemist.BodyAnswersAssignment;
+import com.vincenthuto.hemomancy.common.mission.cicatrix_anchorite.VeinMasonAssignments;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.mission.OpenHarbingerAssignmentLedgerPacket;
 import com.vincenthuto.hemomancy.common.rite.harbinger.QliphothBloomSavedData;
@@ -78,11 +78,11 @@ public class HarbingerAssignmentLedgerItem extends ItemGuideBook {
 			boolean artificerFirstLivingGraft =
 					HarbingerAdvancementGranter.isArtificerFirstLivingGraft(serverPlayer);
 			int artificerLivingWeaponFormCount =
-					HarbingerArtificerAssignmentHelper.knownLivingWeaponFormCount(serverPlayer);
+					ArtificerAssignments.knownLivingWeaponFormCount(serverPlayer);
 			boolean artificerLivingArsenalFitting =
 					HarbingerAdvancementGranter.isArtificerLivingArsenalFitting(serverPlayer);
 			var artificerProgress = com.vincenthuto.hemomancy.common.entity.npc.dialogue.ArtificerProgressSnapshot.from(serverPlayer);
-			int artificerProgressSteps = com.vincenthuto.hemomancy.common.mission.ArtificerProgressionRules.packSteps(
+			int artificerProgressSteps = com.vincenthuto.hemomancy.common.mission.artificer.ArtificerProgressionRules.packSteps(
 					artificerProgress.wornVow(), artificerProgress.threeAnswers(), artificerProgress.crimsonVestment(),
 					artificerProgress.assumedLimb(), artificerProgress.weightOfFrame());
 			PacketHandler.sendToPlayer(serverPlayer, new OpenHarbingerAssignmentLedgerPacket(
@@ -103,9 +103,9 @@ public class HarbingerAssignmentLedgerItem extends ItemGuideBook {
 					HarbingerAdvancementGranter.isFirstSeparationStarted(serverPlayer),
 					hasAnyEnzyme(serverPlayer),
 					HarbingerAdvancementGranter.hasAdvancement(serverPlayer,
-							BodyAnswersAssignmentHelper.ADV_BRIEFED),
+							BodyAnswersAssignment.ADV_BRIEFED),
 					HarbingerAdvancementGranter.hasAdvancement(serverPlayer,
-							BodyAnswersAssignmentHelper.ADV_COMPLETE),
+							BodyAnswersAssignment.ADV_COMPLETE),
 					serverPlayer.getData(com.vincenthuto.hemomancy.common.capability.HemoAttachmentTypes.MUSCLE_MEMORY).knownCount(),
 					HarbingerAdvancementGranter.getRedTaxonomySpecimenCount(serverPlayer),
 					HarbingerAdvancementGranter.isRedTaxonomyComplete(serverPlayer),
@@ -149,18 +149,18 @@ public class HarbingerAssignmentLedgerItem extends ItemGuideBook {
 	}
 
 	private static int anchoriteD5Progress(ServerPlayer player) {
-		int progress = AnchoriteAssignmentProgression.has(player, AnchoriteAssignmentProgression.D5_VARICOSE) ? 1 : 0;
-		if (AnchoriteAssignmentProgression.has(player, AnchoriteAssignmentProgression.D5_DIAGNOSED)) progress++;
-		if (AnchoriteAssignmentProgression.has(player, AnchoriteAssignmentProgression.D5_TREATED)) progress++;
+		int progress = VeinMasonAssignments.has(player, VeinMasonAssignments.D5_VARICOSE) ? 1 : 0;
+		if (VeinMasonAssignments.has(player, VeinMasonAssignments.D5_DIAGNOSED)) progress++;
+		if (VeinMasonAssignments.has(player, VeinMasonAssignments.D5_TREATED)) progress++;
 		if (HemoCapabilityAccess.getInitiatoryDegree(player).map(degree -> degree.hasHematicFortification()).orElse(false)) progress++;
 		return progress;
 	}
 
 	private static int anchoriteD6Progress(ServerPlayer player) {
-		int progress = AnchoriteAssignmentProgression.has(player, AnchoriteAssignmentProgression.D6_COUNSEL) ? 1 : 0;
-		if (AnchoriteAssignmentProgression.has(player, AnchoriteAssignmentProgression.D6_FIRST_ROUTE)) progress++;
-		if (AnchoriteAssignmentProgression.has(player, AnchoriteAssignmentProgression.D6_LOADOUT)) progress++;
-		if (AnchoriteAssignmentProgression.has(player, AnchoriteAssignmentProgression.D6_SECOND_ROUTE)) progress++;
+		int progress = VeinMasonAssignments.has(player, VeinMasonAssignments.D6_COUNSEL) ? 1 : 0;
+		if (VeinMasonAssignments.has(player, VeinMasonAssignments.D6_FIRST_ROUTE)) progress++;
+		if (VeinMasonAssignments.has(player, VeinMasonAssignments.D6_LOADOUT)) progress++;
+		if (VeinMasonAssignments.has(player, VeinMasonAssignments.D6_SECOND_ROUTE)) progress++;
 		return progress;
 	}
 
@@ -170,11 +170,11 @@ public class HarbingerAssignmentLedgerItem extends ItemGuideBook {
 	}
 
 	private static boolean hasVialCentrifuge(ServerPlayer player) {
-		boolean acquired = FirstSeparationAssignmentHelper.hasCentrifugeAcquired(player)
+		boolean acquired = FirstSeparationAssignment.hasCentrifugeAcquired(player)
 				|| player.getStats().getValue(Stats.ITEM_CRAFTED.get(BlockInit.vial_centrifuge.get().asItem())) > 0
 				|| player.getInventory().items.stream()
 						.anyMatch(stack -> stack.is(BlockInit.vial_centrifuge.get().asItem()));
-		if (acquired) FirstSeparationAssignmentHelper.markCentrifugeAcquired(player);
+		if (acquired) FirstSeparationAssignment.markCentrifugeAcquired(player);
 		return acquired;
 	}
 

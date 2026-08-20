@@ -8,7 +8,7 @@ import com.vincenthuto.hemomancy.common.block.shared.WaterloggedBlockSupport;
 import com.vincenthuto.hemomancy.common.entity.utility.ArmatureRestraintEntity;
 import com.vincenthuto.hemomancy.common.init.BlockEntityInit;
 import com.vincenthuto.hemomancy.common.init.BlockInit;
-import com.vincenthuto.hemomancy.common.mission.HarbingerArtificerAssignmentHelper;
+import com.vincenthuto.hemomancy.common.mission.artificer.ArtificerAssignments;
 import com.vincenthuto.hemomancy.common.tile.FillerBlockEntity;
 import com.vincenthuto.hemomancy.common.tile.crafting.HematicArmatureBlockEntity;
 import net.minecraft.core.BlockPos;
@@ -146,7 +146,7 @@ public class HematicArmatureBlock extends BaseEntityBlock implements IMultiBlock
 		if (!level.isClientSide) {
 			placeFillers(level, pos, state);
 			if (placer instanceof ServerPlayer serverPlayer) {
-				HarbingerArtificerAssignmentHelper.onArmaturePlaced(serverPlayer);
+				ArtificerAssignments.onArmaturePlaced(serverPlayer);
 			}
 		}
 	}

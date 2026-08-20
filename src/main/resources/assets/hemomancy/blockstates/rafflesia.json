@@ -1,7 +1,29 @@
 {
   "variants": {
-    "": {
+    "facing=up": {
       "model": "hemomancy:block/rafflesia"
+    },
+    "facing=north": {
+      "model": "hemomancy:block/rafflesia",
+      "x": 90,
+      "uvlock": true
+    },
+    "facing=east": {
+      "model": "hemomancy:block/rafflesia",
+      "x": 270,
+      "y": 90,
+      "uvlock": true
+    },
+    "facing=south": {
+      "model": "hemomancy:block/rafflesia",
+      "x": 270,
+      "uvlock": true
+    },
+    "facing=west": {
+      "model": "hemomancy:block/rafflesia",
+      "x": 270,
+      "y": 270,
+      "uvlock": true
     }
   }
 }

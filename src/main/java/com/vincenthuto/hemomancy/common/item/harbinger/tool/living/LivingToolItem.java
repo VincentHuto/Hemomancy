@@ -38,7 +38,7 @@ import java.util.List;
 public class LivingToolItem extends DiggerItem implements IDispellable, ITendencyAlignedWeapon {
 	private static final HashSet<Block> EFFECTIVE_ON = Sets.newHashSet(Blocks.COBWEB);
 	private final float attackDamage;
-	private final float speed;
+	protected final float speed;
 	@Nullable
 	private final EnumBloodTendency weaponTendency;
 

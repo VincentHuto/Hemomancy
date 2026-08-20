@@ -1,7 +1,7 @@
 package com.vincenthuto.hemomancy.common.entity.npc.dialogue;
 
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
-import com.vincenthuto.hemomancy.common.mission.UnstainedObservanceHelper;
+import com.vincenthuto.hemomancy.common.mission.unstained.UnstainedObservances;
 import net.minecraft.server.level.ServerPlayer;
 
 import java.util.ArrayList;
@@ -16,16 +16,16 @@ public final class UnstainedObservanceDialogueDecorator {
 	}
 
 	public static DialogueTree decorate(DialogueTree tree, ServerPlayer player,
-			UnstainedObservanceHelper.Issuer issuer) {
+			UnstainedObservances.Issuer issuer) {
 		var progress = HemoCapabilityAccess.getUnstainedProgress(player).orElse(null);
 		if (progress == null || !progress.hasBegunPurification()) {
 			return tree;
 		}
 
-		List<UnstainedObservanceHelper.Observance> visible = new ArrayList<>();
-		for (UnstainedObservanceHelper.Observance observance : UnstainedObservanceHelper.Observance.values()) {
+		List<UnstainedObservances.Observance> visible = new ArrayList<>();
+		for (UnstainedObservances.Observance observance : UnstainedObservances.Observance.values()) {
 			if (observance.issuer() == issuer
-					&& UnstainedObservanceHelper.isAvailable(progress, observance)
+					&& UnstainedObservances.isAvailable(progress, observance)
 					&& (progress.getClaimedObservances() & observance.mask()) == 0) {
 				visible.add(observance);
 			}
@@ -40,7 +40,7 @@ public final class UnstainedObservanceDialogueDecorator {
 				new DialogueOption("hemomancy.dialogue.unstained.option.observances", NODE_ID, null));
 
 		List<DialogueOption> taskOptions = new ArrayList<>();
-		for (UnstainedObservanceHelper.Observance observance : visible) {
+		for (UnstainedObservances.Observance observance : visible) {
 			taskOptions.add(new DialogueOption(optionKey(observance), null, observance.eventId()));
 		}
 		taskOptions.add(new DialogueOption("hemomancy.dialogue.zealot.option.leave", null, null));
@@ -53,7 +53,7 @@ public final class UnstainedObservanceDialogueDecorator {
 				tree.entityId(), tree.theme(), tree.presentation());
 	}
 
-	private static String optionKey(UnstainedObservanceHelper.Observance observance) {
+	private static String optionKey(UnstainedObservances.Observance observance) {
 		return switch (observance) {
 			case CONDENSE_STILL_WATERS -> "hemomancy.dialogue.zealot.option.task_still_waters";
 			case BEAR_PALLID_ICON -> "hemomancy.dialogue.zealot.option.task_pallid_icon";

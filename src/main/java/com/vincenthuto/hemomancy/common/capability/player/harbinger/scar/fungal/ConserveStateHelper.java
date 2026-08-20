@@ -28,6 +28,10 @@ public final class ConserveStateHelper {
 	private ConserveStateHelper() {
 	}
 
+	public static void clearSessionState() {
+		STATES.clear();
+	}
+
 	public static int nextStillTicks(int current, boolean physicallyStill, boolean castInWindow) {
 		return physicallyStill && !castInWindow ? current + 1 : 0;
 	}

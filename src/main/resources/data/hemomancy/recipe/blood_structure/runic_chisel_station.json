@@ -6,7 +6,7 @@
   "hitBlock": "hemomancy:polished_venous_stone",
   "pattern": [
     ["T T", "TST"],
-    ["   ", "SSS"],
+    ["   ", "SHS"],
     ["T T", "TST"]
   ],
   "key": {
@@ -15,6 +15,9 @@
     },
     "S": {
       "block": "minecraft:polished_deepslate"
+    },
+    "H": {
+      "block": "hemomancy:polished_venous_stone"
     }
   },
   "result": {

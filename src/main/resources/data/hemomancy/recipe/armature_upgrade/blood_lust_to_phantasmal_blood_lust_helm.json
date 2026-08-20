@@ -1,0 +1,30 @@
+{
+  "type": "hemomancy:armature_upgrade",
+  "required_degree": 7,
+  "armor_slot": "head",
+  "base": [
+    {
+      "item": "hemomancy:blood_lust_helm"
+    },
+    {
+      "item": "hemomancy:blood_lust_helm_tengu"
+    },
+    {
+      "item": "hemomancy:blood_lust_helm_grinning"
+    },
+    {
+      "item": "hemomancy:blood_lust_helm_lodestone"
+    },
+    {
+      "item": "hemomancy:blood_lust_helm_velorum"
+    }
+  ],
+  "reagent": {
+    "item": "hemomancy:mnemonic_ambergris"
+  },
+  "blood_cost": 1800,
+  "required_armature_tier": "monolithic",
+  "result": {
+    "id": "hemomancy:phantasmal_blood_lust_helm"
+  }
+}

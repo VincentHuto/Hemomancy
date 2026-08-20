@@ -23,7 +23,7 @@ public final class HarbingerArtificerAssignmentSourceTest {
 		String advancementGranter = read(SOURCE_ROOT.resolve(
 				"com/vincenthuto/hemomancy/common/event/HarbingerAdvancementGranter.java"));
 		String helper = read(SOURCE_ROOT.resolve(
-				"com/vincenthuto/hemomancy/common/mission/HarbingerArtificerAssignmentHelper.java"));
+				"com/vincenthuto/hemomancy/common/mission/artificer/ArtificerAssignments.java"));
 		String armorSets = read(SOURCE_ROOT.resolve(
 				"com/vincenthuto/hemomancy/common/armor/ArmorSetHelper.java"));
 
@@ -82,13 +82,13 @@ public final class HarbingerArtificerAssignmentSourceTest {
 				"com/vincenthuto/hemomancy/common/item/harbinger/memories/LivingWeaponGraftRite.java"));
 
 		assertContains("Armature placement grants Artificer placement milestone", block,
-				"HarbingerArtificerAssignmentHelper.onArmaturePlaced");
+				"ArtificerAssignments.onArmaturePlaced");
 		assertContains("Armature upgrade success grants Artificer upgrade milestones", blockEntity,
-				"HarbingerArtificerAssignmentHelper.onArmatureUpgrade");
+				"ArtificerAssignments.onArmatureUpgrade");
 		assertContains("Armature tier item success grants Artificer tier milestones", blockEntity,
-				"HarbingerArtificerAssignmentHelper.onArmatureTierApplied");
+				"ArtificerAssignments.onArmatureTierApplied");
 		assertContains("Graft rite success grants Artificer graft milestone", graftRite,
-				"HarbingerArtificerAssignmentHelper.onLivingWeaponGraftComplete");
+				"ArtificerAssignments.onLivingWeaponGraftComplete");
 	}
 
 	private static void assignmentLedgerCarriesArtificerProgress() throws IOException {
@@ -161,7 +161,7 @@ public final class HarbingerArtificerAssignmentSourceTest {
 
 		assertContains("Artificer dialogue has assignment branch", dialogue, "\"assignments\"");
 		assertContains("full set fittings check worn armor through helper", eventHandler,
-				"HarbingerArtificerAssignmentHelper.tryGrant");
+				"ArtificerAssignments.tryGrant");
 		assertContains("Artificer fitting claims can reissue physical fittings", eventHandler,
 				"handleArtificerFittingClaim");
 		assertContains("Artificer fitting claims check for inventory/equipment copies", eventHandler,

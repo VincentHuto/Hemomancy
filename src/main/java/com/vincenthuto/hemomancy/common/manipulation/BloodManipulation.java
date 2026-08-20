@@ -87,6 +87,10 @@ public class BloodManipulation implements EntityCastableManipulation {
 
 	private static final Map<UUID, Long> UNIVERSAL_COOLDOWN_MAP = new ConcurrentHashMap<>();
 
+	public static void clearSessionState() {
+		UNIVERSAL_COOLDOWN_MAP.clear();
+	}
+
 	int cooldownTicks;
 
 	/**

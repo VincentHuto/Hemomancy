@@ -20,6 +20,10 @@ public final class BlackVeilCovenantManager {
 	private BlackVeilCovenantManager() {
 	}
 
+	public static void clearSessionState() {
+		VEILS.clear();
+	}
+
 	public static void addVeil(ServerLevel level, BlockPos center, double radius, int durationTicks) {
 		VEILS.add(new Entry(level.dimension(), center.immutable(), radius, level.getGameTime() + durationTicks));
 	}

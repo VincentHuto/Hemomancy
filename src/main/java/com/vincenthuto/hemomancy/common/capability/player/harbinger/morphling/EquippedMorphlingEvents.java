@@ -339,6 +339,10 @@ public class EquippedMorphlingEvents {
 		TEMPORARY_WEBS.put(key, expiryTick);
 	}
 
+	public static void clearSessionState() {
+		TEMPORARY_WEBS.clear();
+	}
+
 	@SubscribeEvent
 	public static void playerLoggedIn(PlayerEvent.PlayerLoggedInEvent event) {
 		syncToClient((ServerPlayer) event.getEntity());

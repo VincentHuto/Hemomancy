@@ -69,7 +69,7 @@ import com.vincenthuto.hemomancy.common.rite.unstained.UnstainedCardinalRiteEven
 import com.vincenthuto.hemomancy.common.rite.unstained.UnstainedRitePreflight;
 import com.vincenthuto.hemomancy.common.summon.PuppeteerSummonDefinitions;
 import com.vincenthuto.hemomancy.common.worldgen.ChamberVisitService;
-import com.vincenthuto.hemomancy.common.mission.HarbingerChapterProgression;
+import com.vincenthuto.hemomancy.common.mission.shared.HarbingerChapterProgression;
 import com.vincenthuto.hemomancy.common.tile.functional.CardinalFocusBlockEntity;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import com.vincenthuto.hutoslib.client.particle.factory.DarkGlowParticleFactory;
@@ -1471,10 +1471,7 @@ public class HarbingerCardinalRiteEvents {
 				volume.setActive(true);
 				BloodVolumeEvents.syncVolume(caster, volume);
 			});
-			if (sLevel.getBlockState(center).is(BlockInit.cardinal_focus.get())) {
-				sLevel.setBlockAndUpdate(center,
-						BlockInit.placed_blood_stained_stone.get().defaultBlockState());
-			}
+			replaceLinkedTempleDisplay(sLevel, center);
 			HarbingerAdvancementGranter.grantIfNotDone(caster,
 					Hemomancy.rloc("hemomancy/the_first_awakening"));
 			ItemStack conduit = new ItemStack(ItemInit.sanguine_conduit.get());
@@ -1513,6 +1510,15 @@ public class HarbingerCardinalRiteEvents {
 		}
 		CardinalRiteStaffEscrow.restore(caster, rite);
 		return true;
+	}
+
+	private static void replaceLinkedTempleDisplay(ServerLevel level, BlockPos focusPos) {
+		if (!(level.getBlockEntity(focusPos) instanceof CardinalFocusBlockEntity focus)) return;
+		BlockPos displayPos = focus.getTempleDisplay();
+		if (displayPos != null && level.getBlockState(displayPos).is(BlockInit.mortal_display.get())) {
+			level.setBlockAndUpdate(displayPos,
+					BlockInit.placed_blood_stained_stone.get().defaultBlockState());
+		}
 	}
 
 	private static boolean consumeRiteMedium(ServerLevel level, ServerPlayer caster,
@@ -2194,7 +2200,7 @@ public class HarbingerCardinalRiteEvents {
 	private static void completeHematicFortification(ServerPlayer caster) {
 		HemoCapabilityAccess.getInitiatoryDegree(caster).ifPresent(degree -> {
 			degree.setHematicFortification(true);
-			com.vincenthuto.hemomancy.common.mission.AnchoriteAssignmentProgression.onFortification(caster);
+			com.vincenthuto.hemomancy.common.mission.cicatrix_anchorite.VeinMasonAssignments.onFortification(caster);
 			InitiatoryDegreeEvents.syncDegree(caster, degree);
 		});
 		caster.displayClientMessage(

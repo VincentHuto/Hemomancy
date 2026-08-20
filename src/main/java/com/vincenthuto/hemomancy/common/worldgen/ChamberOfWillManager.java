@@ -15,7 +15,7 @@ import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.PacketSyncChamberOfWill;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.PacketSyncVesperFightScene;
 import com.vincenthuto.hemomancy.common.rite.harbinger.QliphothBloomSavedData;
-import com.vincenthuto.hemomancy.common.mission.HarbingerChapterProgression;
+import com.vincenthuto.hemomancy.common.mission.shared.HarbingerChapterProgression;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;

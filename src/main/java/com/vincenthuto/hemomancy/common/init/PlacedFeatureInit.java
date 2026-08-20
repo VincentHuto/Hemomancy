@@ -101,7 +101,7 @@ public class PlacedFeatureInit {
 
 		register(context, PlacedFeatureInit.STINK_HORNS, STINK_HORNS, RarityFilter.onAverageOnceEvery(7),
 				InSquarePlacement.spread(), PlacementUtils.HEIGHTMAP,
-				CountPlacement.of(ClampedInt.of(UniformInt.of(-3, 1), 0, 1)), BiomeFilter.biome());
+				CountPlacement.of(1), BiomeFilter.biome());
 
 		final Holder<ConfiguredFeature<?, ?>> LETHEAN_POPPIES = configuredFeatureGetter
 				.getOrThrow(ConfiguredFeatureInit.LETHEAN_POPPIES);
@@ -122,12 +122,12 @@ public class PlacedFeatureInit {
 
 		register(context, PlacedFeatureInit.SARCODES, SARCODES, RarityFilter.onAverageOnceEvery(12),
 				InSquarePlacement.spread(), PlacementUtils.HEIGHTMAP,
-				CountPlacement.of(ClampedInt.of(UniformInt.of(-3, 1), 0, 1)), BiomeFilter.biome());
+				CountPlacement.of(1), BiomeFilter.biome());
 
 		final Holder<ConfiguredFeature<?, ?>> RAFFLESIA = configuredFeatureGetter
 				.getOrThrow(ConfiguredFeatureInit.RAFFLESIA);
 
-		register(context, PlacedFeatureInit.RAFFLESIA, RAFFLESIA, RarityFilter.onAverageOnceEvery(50),
+		register(context, PlacedFeatureInit.RAFFLESIA, RAFFLESIA, RarityFilter.onAverageOnceEvery(24),
 				InSquarePlacement.spread(), PlacementUtils.HEIGHTMAP, BiomeFilter.biome());
 
 		// Bog body — underwater on the ocean floor, rare
@@ -199,7 +199,7 @@ public class PlacedFeatureInit {
 
 		register(context, PlacedFeatureInit.SMALL_INFECTED_FUNGUS, SMALL_INFECTED_FUNGUS,
 				RarityFilter.onAverageOnceEvery(7), InSquarePlacement.spread(), PlacementUtils.HEIGHTMAP,
-				CountPlacement.of(ClampedInt.of(UniformInt.of(-3, 1), 0, 1)), BiomeFilter.biome());
+				CountPlacement.of(1), BiomeFilter.biome());
 
 		register(context, PlacedFeatureInit.PATCH_HYPHAE, SMALL_INFECTED_FUNGUS, RarityFilter.onAverageOnceEvery(7),
 				InSquarePlacement.spread(), PlacementUtils.HEIGHTMAP,

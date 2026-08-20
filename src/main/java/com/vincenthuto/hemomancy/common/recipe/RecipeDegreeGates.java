@@ -5,7 +5,7 @@ import com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.EnumI
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.server.level.ServerPlayer;
-import com.vincenthuto.hemomancy.common.mission.MnemonicReliquaryProgression;
+import com.vincenthuto.hemomancy.common.mission.mnemonist.MnemonicReliquaryProgression;
 
 import java.util.Map;
 

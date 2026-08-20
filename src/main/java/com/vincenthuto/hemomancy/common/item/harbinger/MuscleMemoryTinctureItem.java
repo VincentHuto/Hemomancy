@@ -9,9 +9,9 @@ import com.vincenthuto.hemomancy.common.capability.player.harbinger.musclememory
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.musclememory.MuscleMemoryPrimingRules;
 import com.vincenthuto.hemomancy.common.init.DataComponentInit;
 import com.vincenthuto.hemomancy.common.item.component.TinctureDoseData;
-import com.vincenthuto.hemomancy.common.mission.BodyAnswersAssignmentHelper;
-import com.vincenthuto.hemomancy.common.mission.MnemonicReliquaryProgression;
-import com.vincenthuto.hemomancy.common.mission.MnemonicRecipeKnowledge;
+import com.vincenthuto.hemomancy.common.mission.alchemist.BodyAnswersAssignment;
+import com.vincenthuto.hemomancy.common.mission.mnemonist.MnemonicReliquaryProgression;
+import com.vincenthuto.hemomancy.common.mission.shared.MnemonicRecipeKnowledge;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.manips.KnownManipulationServerPacket;
 import net.minecraft.ChatFormatting;
@@ -76,7 +76,7 @@ public class MuscleMemoryTinctureItem extends Item {
             });
             MuscleMemoryEvents.sync(player);
             if (memory == MuscleMemory.SANGUINE_FISTS) {
-                BodyAnswersAssignmentHelper.markComplete(player);
+                BodyAnswersAssignment.markComplete(player);
                 MnemonicRecipeKnowledge.awardCatalogue(player);
             }
             player.awardStat(Stats.ITEM_USED.get(this));
@@ -103,7 +103,8 @@ public class MuscleMemoryTinctureItem extends Item {
     }
 
     private static String trimCost(double cost) {
-        return cost == Math.rint(cost) ? Integer.toString((int) cost) : Double.toString(cost);
+		return String.format(java.util.Locale.ROOT, "%.2f", cost)
+				.replaceAll("0+$", "").replaceAll("\\.$", "");
     }
 
     @Override public UseAnim getUseAnimation(ItemStack stack) { return UseAnim.DRINK; }

@@ -8,15 +8,18 @@ import com.vincenthuto.hemomancy.common.event.ArmorSetBonusHandler;
 import com.vincenthuto.hemomancy.common.event.HarbingerAdvancementGranter;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.ArtificerProgressSnapshot;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.DialogueNode;
+import com.vincenthuto.hemomancy.common.entity.npc.dialogue.DialogueOption;
+import com.vincenthuto.hemomancy.common.entity.npc.dialogue.DialogueTree;
+import com.vincenthuto.hemomancy.common.entity.npc.dialogue.HarbingerAlchemistDialogueTrees;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.HarbingerArtificerDialogueTrees;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.item.component.LivingWeaponForm;
 import com.vincenthuto.hemomancy.common.item.harbinger.memories.LivingWeaponGraftRecipeUnlockEvents;
 import com.vincenthuto.hemomancy.common.item.harbinger.memories.LivingWeaponMemoryUnlocks;
-import com.vincenthuto.hemomancy.common.mission.ArtificerProgressionRules.D7Lineage;
-import com.vincenthuto.hemomancy.common.mission.ArtificerProgressionRules.ForkFamily;
-import com.vincenthuto.hemomancy.common.mission.ArtificerProgressionRules.Step;
-import com.vincenthuto.hemomancy.common.mission.HarbingerArtificerAssignmentHelper;
+import com.vincenthuto.hemomancy.common.mission.artificer.ArtificerProgressionRules.D7Lineage;
+import com.vincenthuto.hemomancy.common.mission.artificer.ArtificerProgressionRules.ForkFamily;
+import com.vincenthuto.hemomancy.common.mission.artificer.ArtificerProgressionRules.Step;
+import com.vincenthuto.hemomancy.common.mission.artificer.ArtificerAssignments;
 import com.vincenthuto.hemomancy.common.recipe.ArmatureUpgradeRules.ArmatureTier;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
@@ -39,6 +42,7 @@ import net.neoforged.neoforge.event.entity.living.LivingDeathEvent;
 import net.neoforged.neoforge.gametest.GameTestHolder;
 import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 
+import java.util.List;
 import java.util.UUID;
 import io.netty.channel.embedded.EmbeddedChannel;
 
@@ -52,19 +56,19 @@ public final class ArtificerProgressionGameTests {
 	@GameTest(templateNamespace = "minecraft", template = EMPTY_TEMPLATE, timeoutTicks = 40)
 	public static void wornVowRequiresBriefingAndInspection(GameTestHelper helper) {
 		ServerPlayer player = player(helper, "worn-vow");
-		HarbingerArtificerAssignmentHelper.onArmaturePlaced(player);
-		HarbingerArtificerAssignmentHelper.onArmatureUpgrade(player, new ItemStack(ItemInit.hematic_iron_helm.get()), 2);
-		helper.assertTrue(HarbingerArtificerAssignmentHelper.claimWornVowInspection(player).isEmpty(),
+		ArtificerAssignments.onArmaturePlaced(player);
+		ArtificerAssignments.onArmatureUpgrade(player, new ItemStack(ItemInit.hematic_iron_helm.get()), 2);
+		helper.assertTrue(ArtificerAssignments.claimWornVowInspection(player).isEmpty(),
 				"pre-briefing inspection should fail");
-		HarbingerArtificerAssignmentHelper.brief(player, HarbingerArtificerAssignmentHelper.WORN_VOW_BRIEFED);
-		ItemStack reward = HarbingerArtificerAssignmentHelper.claimWornVowInspection(player);
+		ArtificerAssignments.brief(player, ArtificerAssignments.WORN_VOW_BRIEFED);
+		ItemStack reward = ArtificerAssignments.claimWornVowInspection(player);
 		helper.assertTrue(reward.is(ItemInit.hematic_iron_scrap.get()) && reward.getCount() == 4,
 				"inspection did not issue four Hematic Iron Scrap");
-		helper.assertTrue(HarbingerArtificerAssignmentHelper.claimWornVowInspection(player).isEmpty(),
+		helper.assertTrue(ArtificerAssignments.claimWornVowInspection(player).isEmpty(),
 				"Worn Vow inspection reward repeated");
 		equip(player, ItemInit.hematic_iron_helm.get(), ItemInit.hematic_iron_chestplate.get(),
 				ItemInit.hematic_iron_leggings.get(), ItemInit.hematic_iron_boots.get());
-		helper.assertTrue(HarbingerArtificerAssignmentHelper.tryGrantHematicIronFitting(player)
+		helper.assertTrue(ArtificerAssignments.tryGrantHematicIronFitting(player)
 				.is(ItemInit.worn_vow_fitting.get()), "Worn Vow fitting was not granted");
 		player.discard();
 		helper.succeed();
@@ -73,7 +77,7 @@ public final class ArtificerProgressionGameTests {
 	@GameTest(templateNamespace = "minecraft", template = EMPTY_TEMPLATE, timeoutTicks = 40)
 	public static void milestonesDoNotToastBeforeBriefingOrAcceptNonD7Armor(GameTestHelper helper) {
 		ServerPlayer player = player(helper, "artificer-gates");
-		HarbingerArtificerAssignmentHelper.onArmatureUpgrade(player,
+		ArtificerAssignments.onArmatureUpgrade(player,
 				new ItemStack(ItemInit.hematic_iron_helm.get()), 7);
 		helper.assertTrue(!HarbingerAdvancementGranter.hasAdvancement(player,
 				HarbingerAdvancementGranter.ADV_ARTIFICER_WORN_VOW_LESSON_READY),
@@ -105,6 +109,34 @@ public final class ArtificerProgressionGameTests {
 		helper.succeed();
 	}
 
+	@GameTest(templateNamespace = "minecraft", template = EMPTY_TEMPLATE, timeoutTicks = 40)
+	public static void alchemistDialogueTracksForkResearchState(GameTestHelper helper) {
+		DialogueTree base = DialogueTree.builder("speaker", Hemomancy.rloc("portrait"), 4)
+				.addNode(new DialogueNode("greeting", List.of("greeting"),
+						List.of(new DialogueOption("leave", null, null))))
+				.build();
+		ArtificerProgressSnapshot barbed = completedForkProgress(ForkFamily.BARBED);
+		DialogueTree incomplete = HarbingerAlchemistDialogueTrees.withArtificerCorrespondence(
+				base, barbed, 2, false);
+		helper.assertTrue(incomplete.getNode("armor_research_barbed") != null,
+				"incomplete research did not expose the Barbed notes");
+		helper.assertTrue(!hasEvent(incomplete.getStartNode(),
+				HarbingerAlchemistDialogueTrees.EVENT_CLAIM_ARMOR_RESEARCH_REWARD),
+				"incomplete research exposed its reward");
+
+		DialogueTree ready = HarbingerAlchemistDialogueTrees.withArtificerCorrespondence(
+				base, completedForkProgress(ForkFamily.PRISMATIC), 3, false);
+		helper.assertTrue(hasEvent(ready.getStartNode(),
+				HarbingerAlchemistDialogueTrees.EVENT_CLAIM_ARMOR_RESEARCH_REWARD),
+				"completed research did not expose its reward");
+		DialogueTree claimed = HarbingerAlchemistDialogueTrees.withArtificerCorrespondence(
+				base, completedForkProgress(ForkFamily.PRISMATIC), 3, true);
+		helper.assertTrue(!hasEvent(claimed.getStartNode(),
+				HarbingerAlchemistDialogueTrees.EVENT_CLAIM_ARMOR_RESEARCH_REWARD),
+				"claimed research continued exposing its reward");
+		helper.succeed();
+	}
+
 	@GameTest(templateNamespace = "minecraft", template = EMPTY_TEMPLATE, timeoutTicks = 60)
 	public static void eachForkUsesRecordedReagentAndRealSetResponse(GameTestHelper helper) {
 		testFork(helper, ForkFamily.BARBED, ItemInit.barbed_helm.get(), ItemInit.aculeate_vitriol.get());
@@ -114,39 +146,65 @@ public final class ArtificerProgressionGameTests {
 	}
 
 	@GameTest(templateNamespace = "minecraft", template = EMPTY_TEMPLATE, timeoutTicks = 40)
+	public static void forkBestiaryResearchAwardsOneOptionalReagentOnce(GameTestHelper helper) {
+		ServerPlayer player = player(helper, "fork-bestiary");
+		ArtificerAssignments.brief(player, ArtificerAssignments.THREE_ANSWERS_BRIEFED);
+		ArtificerAssignments.onArmatureUpgrade(player, new ItemStack(ItemInit.barbed_helm.get()), 3);
+		helper.assertTrue(ArtificerAssignments.inspectThreeAnswers(player), "fork inspection failed");
+		helper.assertTrue(ArtificerAssignments.counselThreeAnswers(player).is(ItemInit.aculeate_vitriol.get()),
+				"normal Alchemist correspondence reward failed");
+
+		var bestiary = HemoCapabilityAccess.requireSpecimenBestiary(player);
+		bestiary.recordSpecimen(Hemomancy.rloc("barbed_urchin"));
+		bestiary.recordSpecimen(Hemomancy.rloc("desiccant"));
+		helper.assertTrue(ArtificerAssignments.claimForkResearchReward(player).isEmpty(),
+				"partial Bestiary research issued a reward");
+		bestiary.recordSpecimen(Hemomancy.rloc("venom_rib_centipede"));
+		int recordedBeforeClaim = bestiary.recordedSpecimenCount();
+		helper.assertTrue(ArtificerAssignments.claimForkResearchReward(player).is(ItemInit.aculeate_vitriol.get()),
+				"completed Barbed research did not issue Aculeate Vitriol");
+		helper.assertTrue(ArtificerAssignments.claimForkResearchReward(player).isEmpty(),
+				"Bestiary research reward repeated");
+		helper.assertTrue(bestiary.recordedSpecimenCount() == recordedBeforeClaim,
+				"claiming the reward consumed Bestiary records");
+		player.discard();
+		helper.succeed();
+	}
+
+	@GameTest(templateNamespace = "minecraft", template = EMPTY_TEMPLATE, timeoutTicks = 40)
 	public static void bloodLustAndLivingArsenalUseSuccessfulGameplayHooks(GameTestHelper helper) {
 		ServerPlayer player = player(helper, "vestment");
-		HarbingerArtificerAssignmentHelper.brief(player, HarbingerArtificerAssignmentHelper.CRIMSON_VESTMENT_BRIEFED);
-		HarbingerArtificerAssignmentHelper.onArmatureTierApplied(player, ArmatureTier.VICAR_CONSECRATED);
-		helper.assertTrue(HarbingerArtificerAssignmentHelper.inspectCrimsonVestment(player), "consecrated frame inspection failed");
-		helper.assertTrue(HarbingerArtificerAssignmentHelper.counselCrimsonVestment(player).is(ItemInit.crimson_lacquer.get()),
+		ArtificerAssignments.brief(player, ArtificerAssignments.CRIMSON_VESTMENT_BRIEFED);
+		ArtificerAssignments.onArmatureTierApplied(player, ArmatureTier.VICAR_CONSECRATED);
+		helper.assertTrue(ArtificerAssignments.inspectCrimsonVestment(player), "consecrated frame inspection failed");
+		helper.assertTrue(ArtificerAssignments.counselCrimsonVestment(player).is(ItemInit.crimson_lacquer.get()),
 				"Alchemist did not issue Crimson Lacquer");
-		HarbingerArtificerAssignmentHelper.onArmatureUpgrade(player, new ItemStack(ItemInit.blood_lust_helm.get()), 5);
+		ArtificerAssignments.onArmatureUpgrade(player, new ItemStack(ItemInit.blood_lust_helm.get()), 5);
 		equip(player, ItemInit.blood_lust_helm.get(), ItemInit.blood_lust_chest.get(),
 				ItemInit.blood_lust_legs.get(), ItemInit.blood_lust_boots.get());
 		Zombie target = EntityType.ZOMBIE.create(helper.getLevel());
 		DamageContainer damage = new DamageContainer(target.damageSources().playerAttack(player), 8.0F);
 		ArmorSetBonusHandler.onLivingDamage(new LivingDamageEvent.Post(target, damage));
-		helper.assertTrue(HarbingerArtificerAssignmentHelper.has(player,
-				HarbingerArtificerAssignmentHelper.CRIMSON_VESTMENT_DEMONSTRATED), "Blood Lust hit was not recorded");
+		helper.assertTrue(ArtificerAssignments.has(player,
+				ArtificerAssignments.CRIMSON_VESTMENT_DEMONSTRATED), "Blood Lust hit was not recorded");
 
-		HarbingerArtificerAssignmentHelper.brief(player, HarbingerArtificerAssignmentHelper.ASSUMED_LIMB_BRIEFED);
-		HarbingerArtificerAssignmentHelper.onLivingWeaponGraftComplete(player);
-		helper.assertTrue(HarbingerArtificerAssignmentHelper.claimAssumedLimbInspection(player).is(ItemInit.hematic_memory.get()),
+		ArtificerAssignments.brief(player, ArtificerAssignments.ASSUMED_LIMB_BRIEFED);
+		ArtificerAssignments.onLivingWeaponGraftComplete(player);
+		helper.assertTrue(ArtificerAssignments.claimAssumedLimbInspection(player).is(ItemInit.hematic_memory.get()),
 				"graft inspection did not issue a Blank Hematic Memory");
 		player.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(ItemInit.living_blade.get()));
 		LivingWeaponGraftRecipeUnlockEvents.onLivingDeath(new LivingDeathEvent(target,
 				target.damageSources().playerAttack(player)));
-		helper.assertTrue(HarbingerArtificerAssignmentHelper.has(player,
-				HarbingerArtificerAssignmentHelper.ASSUMED_LIMB_DEMONSTRATED), "Living Arsenal kill was not recorded");
+		helper.assertTrue(ArtificerAssignments.has(player,
+				ArtificerAssignments.ASSUMED_LIMB_DEMONSTRATED), "Living Arsenal kill was not recorded");
 		HemoCapabilityAccess.requireBloodVolume(player).setActive(true);
 		HemoCapabilityAccess.requireInitiatoryDegree(player).setDegreeNumber(7);
 		for (LivingWeaponForm form : LivingWeaponForm.values()) {
 			LivingWeaponMemoryUnlocks.grantFormMemory(player, form);
 		}
-		helper.assertTrue(HarbingerArtificerAssignmentHelper.tryGrantLivingArsenalFitting(player)
+		helper.assertTrue(ArtificerAssignments.tryGrantLivingArsenalFitting(player)
 				.is(ItemInit.assumed_limb_fitting.get()), "Assumed Limb fitting was not granted after seven forms");
-		helper.assertTrue(HarbingerArtificerAssignmentHelper.tryGrantBloodLustFitting(player)
+		helper.assertTrue(ArtificerAssignments.tryGrantBloodLustFitting(player)
 				.is(ItemInit.crimson_vestment_fitting.get()), "Crimson Vestment fitting was not granted");
 		player.discard();
 		helper.succeed();
@@ -167,20 +225,20 @@ public final class ArtificerProgressionGameTests {
 
 	private static void testFork(GameTestHelper helper, ForkFamily family, Item firstPiece, Item reagent) {
 		ServerPlayer player = player(helper, "fork-" + family.serializedName());
-		HarbingerArtificerAssignmentHelper.brief(player, HarbingerArtificerAssignmentHelper.THREE_ANSWERS_BRIEFED);
-		HarbingerArtificerAssignmentHelper.onArmatureUpgrade(player, new ItemStack(firstPiece), 3);
-		HarbingerArtificerAssignmentHelper.onArmatureUpgrade(player, new ItemStack(ItemInit.prismatic_boots.get()), 3);
-		helper.assertTrue(HarbingerArtificerAssignmentHelper.firstForkFamily(player) == family,
+		ArtificerAssignments.brief(player, ArtificerAssignments.THREE_ANSWERS_BRIEFED);
+		ArtificerAssignments.onArmatureUpgrade(player, new ItemStack(firstPiece), 3);
+		ArtificerAssignments.onArmatureUpgrade(player, new ItemStack(ItemInit.prismatic_boots.get()), 3);
+		helper.assertTrue(ArtificerAssignments.firstForkFamily(player) == family,
 				"later fork upgrade changed the recorded family");
-		helper.assertTrue(HarbingerArtificerAssignmentHelper.inspectThreeAnswers(player), "fork inspection failed");
-		ItemStack reward = HarbingerArtificerAssignmentHelper.counselThreeAnswers(player);
+		helper.assertTrue(ArtificerAssignments.inspectThreeAnswers(player), "fork inspection failed");
+		ItemStack reward = ArtificerAssignments.counselThreeAnswers(player);
 		helper.assertTrue(reward.is(reagent), "recorded fork returned the wrong reagent");
 		equipFork(player, family == ForkFamily.PRISMATIC ? ForkFamily.BARBED : ForkFamily.PRISMATIC);
 		Zombie wrongAttacker = EntityType.ZOMBIE.create(helper.getLevel());
 		ArmorSetBonusHandler.onPlayerHurt(new LivingDamageEvent.Pre(player,
 				new DamageContainer(player.damageSources().mobAttack(wrongAttacker), 8.0F)));
-		helper.assertTrue(!HarbingerArtificerAssignmentHelper.has(player,
-				HarbingerArtificerAssignmentHelper.THREE_ANSWERS_DEMONSTRATED),
+		helper.assertTrue(!ArtificerAssignments.has(player,
+				ArtificerAssignments.THREE_ANSWERS_DEMONSTRATED),
 				"an unrelated armor family satisfied the recorded demonstration");
 		equipFork(player, family);
 		Zombie attacker = EntityType.ZOMBIE.create(helper.getLevel());
@@ -192,10 +250,10 @@ public final class ArtificerProgressionGameTests {
 			damage = new DamageContainer(player.damageSources().mobAttack(attacker), 8.0F);
 		}
 		ArmorSetBonusHandler.onPlayerHurt(new LivingDamageEvent.Pre(player, damage));
-		helper.assertTrue(HarbingerArtificerAssignmentHelper.has(player,
-				HarbingerArtificerAssignmentHelper.THREE_ANSWERS_DEMONSTRATED),
+		helper.assertTrue(ArtificerAssignments.has(player,
+				ArtificerAssignments.THREE_ANSWERS_DEMONSTRATED),
 				"real " + family.serializedName() + " set response did not record its demonstration");
-		helper.assertTrue(HarbingerArtificerAssignmentHelper.tryGrantForkFitting(player).is(fittingFor(family)),
+		helper.assertTrue(ArtificerAssignments.tryGrantForkFitting(player).is(fittingFor(family)),
 				"recorded fork fitting was not granted");
 		player.discard();
 	}
@@ -207,18 +265,18 @@ public final class ArtificerProgressionGameTests {
 			blood.setActive(true);
 			blood.setBloodVolume(5000.0D);
 		});
-		HarbingerArtificerAssignmentHelper.brief(player, HarbingerArtificerAssignmentHelper.WEIGHT_OF_FRAME_BRIEFED);
-		HarbingerArtificerAssignmentHelper.onArmatureTierApplied(player, ArmatureTier.MONOLITHIC);
-		HarbingerArtificerAssignmentHelper.onArmatureUpgrade(player, new ItemStack(firstPiece), 7);
-		helper.assertTrue(HarbingerArtificerAssignmentHelper.inspectWeightOfFrame(player).is(reagent),
+		ArtificerAssignments.brief(player, ArtificerAssignments.WEIGHT_OF_FRAME_BRIEFED);
+		ArtificerAssignments.onArmatureTierApplied(player, ArmatureTier.MONOLITHIC);
+		ArtificerAssignments.onArmatureUpgrade(player, new ItemStack(firstPiece), 7);
+		helper.assertTrue(ArtificerAssignments.inspectWeightOfFrame(player).is(reagent),
 				"D7 inspection did not issue the recorded lineage material");
-		helper.assertTrue(HarbingerArtificerAssignmentHelper.claimD7Material(player).isEmpty(),
+		helper.assertTrue(ArtificerAssignments.claimD7Material(player).isEmpty(),
 				"D7 inspection material was issued twice");
 		equipD7(player, lineage);
 		helper.assertTrue(ArmorSetAbilityRegistry.tryActivate(player, ability), "registered D7 ability did not activate");
-		helper.assertTrue(HarbingerArtificerAssignmentHelper.has(player,
-				HarbingerArtificerAssignmentHelper.WEIGHT_OF_FRAME_DEMONSTRATED), "D7 ability was not recorded");
-		helper.assertTrue(HarbingerArtificerAssignmentHelper.tryGrantD7Fitting(player)
+		helper.assertTrue(ArtificerAssignments.has(player,
+				ArtificerAssignments.WEIGHT_OF_FRAME_DEMONSTRATED), "D7 ability was not recorded");
+		helper.assertTrue(ArtificerAssignments.tryGrantD7Fitting(player)
 				.is(ItemInit.monolithic_frame_fitting.get()), "D7 fitting was not granted");
 		player.discard();
 	}
@@ -268,6 +326,12 @@ public final class ArtificerProgressionGameTests {
 		player.setItemSlot(EquipmentSlot.CHEST, new ItemStack(chest));
 		player.setItemSlot(EquipmentSlot.LEGS, new ItemStack(legs));
 		player.setItemSlot(EquipmentSlot.FEET, new ItemStack(feet));
+	}
+
+	private static ArtificerProgressSnapshot completedForkProgress(ForkFamily family) {
+		return new ArtificerProgressSnapshot(3, true, false, false, false, family, D7Lineage.NONE,
+				Step.COMPLETE, Step.FULL_SET, Step.LOCKED, Step.LOCKED, Step.LOCKED,
+				false, false, false, false, false);
 	}
 
 	private static boolean hasEvent(DialogueNode node, String event) {

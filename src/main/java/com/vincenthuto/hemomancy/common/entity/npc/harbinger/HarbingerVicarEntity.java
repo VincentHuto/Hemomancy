@@ -13,7 +13,7 @@ import com.vincenthuto.hemomancy.common.entity.npc.dialogue.HarbingerVicarDialog
 import com.vincenthuto.hemomancy.common.event.HarbingerAdvancementGranter;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.dialogue.OpenDialoguePacket;
-import com.vincenthuto.hemomancy.common.mission.FirstBloodcraftAssignmentHelper;
+import com.vincenthuto.hemomancy.common.mission.vicar.FirstBloodcraftAssignment;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
@@ -190,8 +190,8 @@ public class HarbingerVicarEntity extends PathfinderMob {
                         hasAdvancement(serverPlayer, HarbingerAdvancementGranter.ADV_HERMIT_ROAD_FIRST_REMNANT),
                         hasAdvancement(serverPlayer, HarbingerAdvancementGranter.ADV_HERMIT_ROAD_REPORTED),
                         hasAdvancement(serverPlayer, HarbingerAdvancementGranter.ADV_VICAR_MASONS_RESPITE_DIRECTIVE),
-                        FirstBloodcraftAssignmentHelper.canClaim(serverPlayer),
-                        FirstBloodcraftAssignmentHelper.isClaimed(serverPlayer));
+                        FirstBloodcraftAssignment.canClaim(serverPlayer),
+                        FirstBloodcraftAssignment.isClaimed(serverPlayer));
             }
             tree = DialogueItemInquiryNodes.withInventoryItemInquiries(tree, serverPlayer, "vicar", degree, 0f);
             tree = DialogueHubFactory.decorate(tree, "vicar", serverPlayer);

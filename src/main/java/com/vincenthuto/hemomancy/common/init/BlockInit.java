@@ -389,9 +389,11 @@ public class BlockInit {
 	// Plants
 
 	public static final DeferredHolder<Block, Block> blood_wood_log = COLUMNBLOCKS.register("blood_wood_log",
-			() -> new RotatedPillarBlock(BlockBehaviour.Properties.of().strength(2.0F, 3.0F).sound(SoundType.WOOD)));
+			() -> new RotatedPillarBlock(BlockBehaviour.Properties.of().requiresCorrectToolForDrops()
+					.strength(2.0F, 3.0F).sound(SoundType.WOOD)));
 	public static final DeferredHolder<Block, Block> blood_wood_planks = BASEBLOCKS.register("blood_wood_planks",
-			() -> new Block(BlockBehaviour.Properties.of().strength(2.0F, 3.0F).sound(SoundType.WOOD)));
+			() -> new Block(BlockBehaviour.Properties.of().requiresCorrectToolForDrops()
+					.strength(2.0F, 3.0F).sound(SoundType.WOOD)));
 	public static final DeferredHolder<Block, Block> blood_wood_leaves = BASEBLOCKS.register("blood_wood_leaves",
 			() -> new LeavesBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.ACACIA_LEAVES)
 					.mapColor(MapColor.COLOR_RED)));
@@ -579,10 +581,10 @@ public class BlockInit {
 			() -> new PallidRetortBlock(BlockBehaviour.Properties.of().requiresCorrectToolForDrops().strength(1.5F, 6.0F)
 					.sound(SoundType.METAL)));
 	public static final DeferredHolder<Block, Block> stillwater_condenser = MODELEDBLOCKS.register("stillwater_condenser",
-			() -> new StillwaterCondenserBlock(BlockBehaviour.Properties.of()
+			() -> new StillwaterCondenserBlock(BlockBehaviour.Properties.of().requiresCorrectToolForDrops()
 					.strength(2.0F, 6.0F).sound(SoundType.COPPER).noOcclusion()));
 	public static final DeferredHolder<Block, Block> verdigris_lattice = MODELEDBLOCKS.register("verdigris_lattice",
-			() -> new VerdigrisLatticeBlock(BlockBehaviour.Properties.of()
+			() -> new VerdigrisLatticeBlock(BlockBehaviour.Properties.of().requiresCorrectToolForDrops()
 					.strength(2.5F, 8.0F).sound(SoundType.COPPER).noOcclusion().lightLevel(state -> 3)));
 
 	// Idols / late utility fixtures

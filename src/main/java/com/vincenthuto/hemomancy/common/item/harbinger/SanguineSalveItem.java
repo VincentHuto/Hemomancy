@@ -4,7 +4,7 @@ import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.EnumVeinSections;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.IVascularSystem;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.VascularSystemEvents;
-import com.vincenthuto.hemomancy.common.mission.AnchoriteAssignmentProgression;
+import com.vincenthuto.hemomancy.common.mission.cicatrix_anchorite.VeinMasonAssignments;
 import com.vincenthuto.hutoslib.client.HLTextUtils;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
@@ -116,7 +116,7 @@ public class SanguineSalveItem extends Item {
 
 			// Sync to client
 			VascularSystemEvents.syncVascular((ServerPlayer) player, vascular);
-			AnchoriteAssignmentProgression.onTreatment((ServerPlayer) player);
+			VeinMasonAssignments.onTreatment((ServerPlayer) player);
 
 			// Feedback
 			String sectionName = HLTextUtils.toProperCase(worst.name());

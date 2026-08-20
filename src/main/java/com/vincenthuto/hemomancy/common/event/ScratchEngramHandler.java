@@ -47,6 +47,7 @@ import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
  *
  * <h3>Conditions</h3>
  * <ul>
+	*   <li>The player must crouch to distinguish engraving from block use.</li>
  *   <li>The clicked block must have a sturdy top face.</li>
  *   <li>The space one block above must be empty.</li>
  *   <li>The player must use their main hand (prevents offhand ghost-clicks).</li>
@@ -79,6 +80,7 @@ public class ScratchEngramHandler {
         if (!(event.getEntity() instanceof ServerPlayer player)) return;
         // Only trigger from the main hand to avoid duplicate calls.
         if (event.getHand() != net.minecraft.world.InteractionHand.MAIN_HAND) return;
+		if (!player.isShiftKeyDown()) return;
 
         ItemStack held = event.getItemStack();
         if (!isEtchingTool(held)) return;

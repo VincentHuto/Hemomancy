@@ -1,7 +1,7 @@
 package com.vincenthuto.hemomancy.common.unstained;
 
 import com.vincenthuto.hemomancy.common.capability.player.unstained.UnstainedProgress;
-import com.vincenthuto.hemomancy.common.mission.UnstainedObservanceHelper;
+import com.vincenthuto.hemomancy.common.mission.unstained.UnstainedObservances;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -46,7 +46,7 @@ public final class UnstainedProgressionRepairSourceTest {
 		String progress = read("src/main/java/com/vincenthuto/hemomancy/common/capability/player/unstained/UnstainedProgress.java");
 		assertContains(progress, "acceptedObservances");
 		assertContains(progress, "claimedObservances");
-		String observances = read("src/main/java/com/vincenthuto/hemomancy/common/mission/UnstainedObservanceHelper.java");
+		String observances = read("src/main/java/com/vincenthuto/hemomancy/common/mission/unstained/UnstainedObservances.java");
 		assertContains(observances, "GATHER_GHOST_PIPE");
 		assertContains(observances, "OFFER_CHALICE");
 		assertContains(observances, "enum Issuer");
@@ -104,12 +104,12 @@ public final class UnstainedProgressionRepairSourceTest {
 		original.setPurity(50f);
 		original.setAcceptedObservances(0b00111);
 		original.setClaimedObservances(0b00011);
-		if (!UnstainedObservanceHelper.isAvailable(original,
-				UnstainedObservanceHelper.Observance.PREPARE_HEMOLYTIC)) {
+		if (!UnstainedObservances.isAvailable(original,
+				UnstainedObservances.Observance.PREPARE_HEMOLYTIC)) {
 			throw new AssertionError("50 Purity should unlock the hemolytic observance");
 		}
-		if (UnstainedObservanceHelper.isAvailable(original,
-				UnstainedObservanceHelper.Observance.CONSECRATE_COPPER)) {
+		if (UnstainedObservances.isAvailable(original,
+				UnstainedObservances.Observance.CONSECRATE_COPPER)) {
 			throw new AssertionError("consecration should remain locked before full Purity");
 		}
 		UnstainedProgress restored = new UnstainedProgress();

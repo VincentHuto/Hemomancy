@@ -7,7 +7,10 @@
     { "item": "hemomancy:blood_lust_helm_tengu" },
     { "item": "hemomancy:blood_lust_helm_grinning" },
     { "item": "hemomancy:blood_lust_helm_lodestone" },
-    { "item": "hemomancy:blood_lust_helm_velorum" }
+    { "item": "hemomancy:blood_lust_helm_velorum" },
+    { "item": "hemomancy:edacious_blood_lust_helm" },
+    { "item": "hemomancy:sheolic_blood_lust_helm" },
+    { "item": "hemomancy:phantasmal_blood_lust_helm" }
   ],
   "reagent": { "item": "hemomancy:monolith_imbued_cloth" },
   "blood_cost": 2000,

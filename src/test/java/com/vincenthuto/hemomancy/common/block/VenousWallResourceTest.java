@@ -23,7 +23,7 @@ public final class VenousWallResourceTest {
 		assertContains("custom wall behavior should connect to wall blocks directly",
 				hemoWallBlock, "block instanceof WallBlock");
 
-		String wallTag = readResource("data/minecraft/tags/blocks/walls.json");
+		String wallTag = readResource("data/minecraft/tags/block/walls.json");
 		for (String id : WALL_IDS) {
 			assertContains(id + " should be in minecraft:walls for WallBlock neighbor connections",
 					wallTag, "\"hemomancy:" + id + "\"");

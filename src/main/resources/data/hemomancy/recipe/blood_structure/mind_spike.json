@@ -6,7 +6,7 @@
   "hitBlock": "hemomancy:polished_venous_stone",
   "pattern": [
     [" T ", "TST", " T "],
-    [" S ", "SPS", " S "],
+    [" S ", "SHS", " S "],
     [" T ", "TST", " T "]
   ],
   "key": {
@@ -19,6 +19,9 @@
     },
     "P": {
       "block": "minecraft:iron_bars"
+    },
+    "H": {
+      "block": "hemomancy:polished_venous_stone"
     }
   },
   "result": {

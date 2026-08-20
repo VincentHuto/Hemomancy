@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.mission;
 
+import com.vincenthuto.hemomancy.common.mission.shared.MnemonicRecipeKnowledgeRules;
 import org.junit.jupiter.api.Test;
 
 import java.nio.file.Files;

@@ -90,9 +90,9 @@ public class BiomeInit {
 		addFeature(biomeBuilder, GenerationStep.Decoration.UNDERGROUND_DECORATION,
 				PlacedFeatureInit.PLACED_CANOPY_MUSHROOMS_SPARSE);
 		// Sparse vegetation
+		addFeature(biomeBuilder, GenerationStep.Decoration.VEGETAL_DECORATION, PlacedFeatureInit.PATCH_HYPHAE);
 		addFeature(biomeBuilder, GenerationStep.Decoration.VEGETAL_DECORATION,
 				PlacedFeatureInit.SMALL_INFECTED_FUNGUS);
-		addFeature(biomeBuilder, GenerationStep.Decoration.VEGETAL_DECORATION, PlacedFeatureInit.PATCH_HYPHAE);
 		addFeature(biomeBuilder, GenerationStep.Decoration.VEGETAL_DECORATION, PlacedFeatureInit.STINK_HORNS);
 		// Ore generation
 		addFeature(biomeBuilder, GenerationStep.Decoration.UNDERGROUND_ORES, PlacedFeatureInit.ORE_HEMATIC_IRON);
@@ -202,10 +202,10 @@ public class BiomeInit {
 				PlacedFeatureInit.PLACED_CONSCIOUS_MASS_BLOB);
 		addFeature(biomeBuilder, GenerationStep.Decoration.UNDERGROUND_DECORATION,
 				PlacedFeatureInit.PLACED_CANOPY_MUSHROOMS_DENSE);
+		addFeature(biomeBuilder, GenerationStep.Decoration.VEGETAL_DECORATION, PlacedFeatureInit.BLEEDING_HEARTS);
+		addFeature(biomeBuilder, GenerationStep.Decoration.VEGETAL_DECORATION, PlacedFeatureInit.PATCH_HYPHAE);
 		addFeature(biomeBuilder, GenerationStep.Decoration.VEGETAL_DECORATION,
 				PlacedFeatureInit.SMALL_INFECTED_FUNGUS);
-		addFeature(biomeBuilder, GenerationStep.Decoration.VEGETAL_DECORATION, PlacedFeatureInit.PATCH_HYPHAE);
-		addFeature(biomeBuilder, GenerationStep.Decoration.VEGETAL_DECORATION, PlacedFeatureInit.BLEEDING_HEARTS);
 		addFeature(biomeBuilder, GenerationStep.Decoration.VEGETAL_DECORATION, PlacedFeatureInit.STINK_HORNS);
 		// Ore generation
 		addFeature(biomeBuilder, GenerationStep.Decoration.UNDERGROUND_ORES, PlacedFeatureInit.ORE_HEMATIC_IRON);

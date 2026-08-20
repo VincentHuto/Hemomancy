@@ -10,7 +10,7 @@ import com.vincenthuto.hemomancy.common.entity.npc.dialogue.HarbingerRecruitment
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.MnemonistStarterMemoryChoice;
 import com.vincenthuto.hemomancy.common.entity.summon.BoundSummonBehavior;
 import com.vincenthuto.hemomancy.common.event.HarbingerAdvancementGranter;
-import com.vincenthuto.hemomancy.common.mission.NoeticDiscoveryProgression;
+import com.vincenthuto.hemomancy.common.mission.shared.NoeticDiscoveryProgression;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.dialogue.OpenDialoguePacket;
 import net.minecraft.server.level.ServerPlayer;
@@ -105,10 +105,10 @@ public class HarbingerMnemonistEntity extends PathfinderMob {
 						HarbingerAdvancementGranter.isMnemonistWovenVesselComplete(serverPlayer),
 						BoundSummonBehavior.hasEquippedMorphling(serverPlayer)
 								&& BoundSummonBehavior.hasActiveOwnedTether(serverPlayer),
-						com.vincenthuto.hemomancy.common.mission.AnchoriteAssignmentProgression.has(serverPlayer,
-								com.vincenthuto.hemomancy.common.mission.AnchoriteAssignmentProgression.D6_REFERRAL),
-						com.vincenthuto.hemomancy.common.mission.AnchoriteAssignmentProgression.has(serverPlayer,
-								com.vincenthuto.hemomancy.common.mission.AnchoriteAssignmentProgression.D6_COUNSEL));
+						com.vincenthuto.hemomancy.common.mission.cicatrix_anchorite.VeinMasonAssignments.has(serverPlayer,
+								com.vincenthuto.hemomancy.common.mission.cicatrix_anchorite.VeinMasonAssignments.D6_REFERRAL),
+						com.vincenthuto.hemomancy.common.mission.cicatrix_anchorite.VeinMasonAssignments.has(serverPlayer,
+								com.vincenthuto.hemomancy.common.mission.cicatrix_anchorite.VeinMasonAssignments.D6_COUNSEL));
 			}
 			tree = DialogueItemInquiryNodes.withInventoryItemInquiries(tree, serverPlayer, "mnemonist", degree, 0f);
 			tree = DialogueHubFactory.decorate(tree, "mnemonist", serverPlayer);

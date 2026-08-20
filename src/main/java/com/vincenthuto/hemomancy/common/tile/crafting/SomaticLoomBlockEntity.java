@@ -209,6 +209,7 @@ public class SomaticLoomBlockEntity extends BlockEntity implements IBloodReservo
 		consumeItem(player, stack, hand);
 		resetEditableRitualProgress();
 		refreshRecipe();
+		provideMissingEnzymeFeedback(player);
 		markDirtyAndSync();
 	}
 
@@ -219,6 +220,7 @@ public class SomaticLoomBlockEntity extends BlockEntity implements IBloodReservo
 		consumeItem(player, stack, hand);
 		resetEditableRitualProgress();
 		refreshRecipe();
+		provideMissingEnzymeFeedback(player);
 		markDirtyAndSync();
 	}
 
@@ -795,15 +797,28 @@ public class SomaticLoomBlockEntity extends BlockEntity implements IBloodReservo
 			msg(player, "No recipe accepts this catalyst pattern.", ChatFormatting.YELLOW, true);
 			return;
 		}
+		provideMissingEnzymeFeedback(player);
+	}
+
+	private boolean provideMissingEnzymeFeedback(@Nullable Player player) {
+		MemoryWeavingRecipe recipe = findCatalystMatchedRecipe();
+		if (recipe == null) return false;
 		for (EnumBloodTendency tend : EnumBloodTendency.values()) {
-			int needed = catalystMatch.getEnzymeRequirement(tend);
+			int needed = recipe.getEnzymeRequirement(tend);
 			int stored = storedEnzymes.getOrDefault(tend, 0);
 			if (stored < needed) {
-				msg(player, "Stored " + tend.name() + " enzymes: " + stored + "/" + needed,
+				msg(player, missingEnzymeMessage(EnumBloodTendency.getRepEnzyme(tend).getDescription(), stored, needed),
 						ChatFormatting.YELLOW, true);
-				return;
+				return true;
 			}
 		}
+		return false;
+	}
+
+	private static Component missingEnzymeMessage(Component enzymeName, int stored, int needed) {
+		return Component.literal("Missing " + (needed - stored) + " × ")
+				.append(enzymeName)
+				.append(Component.literal(" (" + stored + "/" + needed + " stored)."));
 	}
 
 	@Nullable
@@ -841,8 +856,12 @@ public class SomaticLoomBlockEntity extends BlockEntity implements IBloodReservo
 	}
 
 	private void msg(@Nullable Player player, String text, ChatFormatting color, boolean actionBar) {
+		msg(player, Component.literal(text), color, actionBar);
+	}
+
+	private void msg(@Nullable Player player, Component text, ChatFormatting color, boolean actionBar) {
 		if (player != null) {
-			player.displayClientMessage(Component.literal(text).withStyle(color), actionBar);
+			player.displayClientMessage(text.copy().withStyle(color), actionBar);
 		}
 	}
 

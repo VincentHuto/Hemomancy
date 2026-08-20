@@ -13,7 +13,7 @@ import com.vincenthuto.hemomancy.common.event.HarbingerAdvancementGranter;
 import com.vincenthuto.hemomancy.common.item.component.LivingWeaponForm;
 import com.vincenthuto.hemomancy.common.item.component.LivingWeaponGraftData;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.LivingStaffItem;
-import com.vincenthuto.hemomancy.common.mission.HarbingerArtificerAssignmentHelper;
+import com.vincenthuto.hemomancy.common.mission.artificer.ArtificerAssignments;
 import com.vincenthuto.hemomancy.common.rite.BrazierItemAbsorptionRite;
 import com.vincenthuto.hemomancy.common.tile.IronBrazierBlockEntity;
 import com.vincenthuto.hutoslib.client.particle.factory.GlowParticleFactory;
@@ -96,7 +96,7 @@ public final class LivingWeaponGraftRite {
 				reportFailure(level, player, result);
 				return 0.0D;
 			}
-			HarbingerArtificerAssignmentHelper.onLivingWeaponGraftComplete(player);
+			ArtificerAssignments.onLivingWeaponGraftComplete(player);
 		}
 		BrazierItemAbsorptionRite.complete(level, pos, brazier);
 		if (vesperMemoryOffering) {

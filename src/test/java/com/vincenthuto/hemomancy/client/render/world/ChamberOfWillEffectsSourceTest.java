@@ -268,12 +268,12 @@ public final class ChamberOfWillEffectsSourceTest {
 				"renderQliphothZenithBlackHole(");
 		assertContains("qliphoth final black hole should be anchored above the player, not below the world", source,
 				"renderQliphothZenithBlackHoleBillboard(");
-		assertContains("qliphoth final black hole should render as a screen-facing disk instead of a side-on sky tangent",
-				source,
+		assertContains("qliphoth final black hole should render as a flat screen-facing disk", source,
 				"Vec3 right = new Vec3(camera.getLeftVector()).scale(-halfSize);");
-		assertContains("qliphoth final black hole should use camera up vector for a flat billboard",
-				source,
+		assertContains("qliphoth final black hole should use camera up vector for a head-on billboard", source,
 				"Vec3 up = new Vec3(camera.getUpVector()).scale(halfSize);");
+		assertContains("qliphoth chamber zenith should use the legacy final portal without the tree-apex branch", source,
+				"ringIntensity, true, false);");
 		assertContains("qliphoth final black hole half size should retain the massive zenith scale", source,
 				"return skyDistance * 0.435F * pulse;");
 		assertNotContains("qliphoth sky renderer should not use the retired custom tendril mesh pass", source,
@@ -326,8 +326,9 @@ public final class ChamberOfWillEffectsSourceTest {
 		assertContains("qliphoth hutoslib tendrils should be emitted as 3D tube quads in sky coordinates",
 				source,
 				"TendrilGeometry.createTubeQuads(strand, 1.0F)");
-		assertContains("qliphoth hutoslib tendrils should keep final black-hole strand count higher",
-				source,
+		assertContains("qliphoth final tendrils should use the large flowing final profile", source,
+				"qliphothZenithBlackHoleHalfSize(time, skyDistance), 9, true);");
+		assertContains("qliphoth hutoslib tendrils should keep final black-hole strand count higher", source,
 				"int tendrilCount = finalHole ? 9 : 2;");
 		assertContains("qliphoth final tendril tubes should be singular wide strands, not paired rails",
 				source,

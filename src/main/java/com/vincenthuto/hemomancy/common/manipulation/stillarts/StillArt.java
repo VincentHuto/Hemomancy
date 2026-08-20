@@ -25,6 +25,10 @@ public class StillArt {
 	private static final double TICKS_PER_SECOND = 20.0;
 	private static final Map<UUID, Long> UNIVERSAL_COOLDOWN_MAP = new ConcurrentHashMap<>();
 
+	public static void clearSessionState() {
+		UNIVERSAL_COOLDOWN_MAP.clear();
+	}
+
 	private final String name;
 	private final EnumClarityStage requiredStage;
 	private final int cooldownTicks;

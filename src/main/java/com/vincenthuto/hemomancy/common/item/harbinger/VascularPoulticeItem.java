@@ -3,7 +3,7 @@ package com.vincenthuto.hemomancy.common.item.harbinger;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.IVascularSystem;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.VascularSystemEvents;
-import com.vincenthuto.hemomancy.common.mission.AnchoriteAssignmentProgression;
+import com.vincenthuto.hemomancy.common.mission.cicatrix_anchorite.VeinMasonAssignments;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
@@ -73,7 +73,7 @@ public class VascularPoulticeItem extends Item {
 			if (!results.isEmpty()) {
 				vascular.setVascularSystem(vascular.getVascularSystem());
 				VascularSystemEvents.syncVascular(player, vascular);
-				AnchoriteAssignmentProgression.onTreatment(player);
+				VeinMasonAssignments.onTreatment(player);
 				player.displayClientMessage(Component.literal("Poultice sealed " + results.size() + " strained sections")
 						.withStyle(ChatFormatting.DARK_RED), true);
 				level.playSound(null, player.getX(), player.getY(), player.getZ(),

@@ -50,6 +50,8 @@ public class BaseFeatureInit {
 
 	public static final Feature<NoneFeatureConfiguration> TERMITE_MOUND = register("termite_mound",
 			new TermiteMoundFeature(NoneFeatureConfiguration.CODEC));
+	public static final Feature<NoneFeatureConfiguration> RAFFLESIA = register("rafflesia",
+			new RafflesiaFeature(NoneFeatureConfiguration.CODEC));
 
 	public static final Feature<NoneFeatureConfiguration> DEEP_OCEAN_VENT = register("deep_ocean_vent",
 			new DeepOceanVentFeature(NoneFeatureConfiguration.CODEC));

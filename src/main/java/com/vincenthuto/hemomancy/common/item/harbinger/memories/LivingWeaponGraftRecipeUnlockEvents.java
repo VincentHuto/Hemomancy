@@ -5,7 +5,7 @@ import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.item.component.LivingWeaponForm;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.LivingArsenalInventoryGuard;
-import com.vincenthuto.hemomancy.common.mission.HarbingerArtificerAssignmentHelper;
+import com.vincenthuto.hemomancy.common.mission.artificer.ArtificerAssignments;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.LivingEntity;
@@ -24,7 +24,7 @@ public final class LivingWeaponGraftRecipeUnlockEvents {
 			return;
 		}
 		LivingEntity victim = event.getEntity();
-		HarbingerArtificerAssignmentHelper.onLivingArsenalKill(player);
+		ArtificerAssignments.onLivingArsenalKill(player);
 		if (bloodFraction(player) >= 0.75D) {
 			LivingWeaponGraftRecipeUnlocks.awardRecipeUnlock(player, LivingWeaponForm.BLADE);
 		}

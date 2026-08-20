@@ -59,7 +59,7 @@ public final class HarbingerAssignmentReturnReadySourceTest {
 
 	private static void returnReadyHooksAreWired() throws IOException {
 		String helper = read(SOURCE_ROOT.resolve(
-				"com/vincenthuto/hemomancy/common/mission/HarbingerArtificerAssignmentHelper.java"));
+				"com/vincenthuto/hemomancy/common/mission/artificer/ArtificerAssignments.java"));
 		String bloodVolumeEvents = read(SOURCE_ROOT.resolve(
 				"com/vincenthuto/hemomancy/common/capability/player/harbinger/bloodvolume/BloodVolumeEvents.java"));
 		String centrifugeOutput = read(SOURCE_ROOT.resolve(
@@ -90,7 +90,7 @@ public final class HarbingerAssignmentReturnReadySourceTest {
 		assertContains("Full living arsenal grants fitting-ready prompt", helper,
 				"ADV_ARTIFICER_ASSUMED_LIMB_FITTING_READY");
 		assertContains("Blood volume tick invokes Artificer ready sync", bloodVolumeEvents,
-				"HarbingerArtificerAssignmentHelper.syncReadyToClaimAdvancements(serverPlayer)");
+				"ArtificerAssignments.syncReadyToClaimAdvancements(serverPlayer)");
 		assertContains("Centrifuge extraction detects First Separation completion", centrifugeOutput,
 				"tryRecoverAssignmentOutput");
 		assertContains("Somatic Loom grants Woven Vessel finished prompt", somaticLoom,

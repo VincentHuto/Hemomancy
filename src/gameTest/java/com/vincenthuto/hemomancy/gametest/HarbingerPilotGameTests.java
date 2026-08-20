@@ -164,6 +164,34 @@ public final class HarbingerPilotGameTests {
 	}
 
 	@GameTest(templateNamespace = "minecraft", template = EMPTY_TEMPLATE, timeoutTicks = 40)
+	public static void sanguineInitiationReplacesLinkedMortalDisplay(GameTestHelper helper) {
+		BlockPos focusPos = helper.absolutePos(new BlockPos(1, 1, 1));
+		BlockPos displayPos = focusPos.offset(2, 0, 0);
+		helper.getLevel().setBlock(focusPos, BlockInit.cardinal_focus.get().defaultBlockState(), 3);
+		helper.getLevel().setBlock(displayPos, BlockInit.mortal_display.get().defaultBlockState(), 3);
+		var focus = (com.vincenthuto.hemomancy.common.tile.functional.CardinalFocusBlockEntity)
+				helper.getLevel().getBlockEntity(focusPos);
+		focus.linkTempleDisplay(displayPos);
+
+		try {
+			var replace = Class.forName(
+					"com.vincenthuto.hemomancy.common.rite.harbinger.HarbingerCardinalRiteEvents")
+					.getDeclaredMethod("replaceLinkedTempleDisplay", net.minecraft.server.level.ServerLevel.class,
+							BlockPos.class);
+			replace.setAccessible(true);
+			replace.invoke(null, helper.getLevel(), focusPos);
+			helper.assertTrue(helper.getLevel().getBlockState(focusPos).is(BlockInit.cardinal_focus.get()),
+					"Sanguine Initiation must leave the Cardinal Focus in place");
+			helper.assertTrue(helper.getLevel().getBlockState(displayPos)
+					.is(BlockInit.placed_blood_stained_stone.get()),
+					"Sanguine Initiation must replace the linked Mortal Display");
+			helper.succeed();
+		} catch (ReflectiveOperationException exception) {
+			helper.fail("Sanguine Initiation temple-display replacement failed: " + exception);
+		}
+	}
+
+	@GameTest(templateNamespace = "minecraft", template = EMPTY_TEMPLATE, timeoutTicks = 40)
 	public static void cardinalRiteMediumMatchingIsExact(GameTestHelper helper) {
 		try {
 			Class<?> rules = Class.forName("com.vincenthuto.hemomancy.common.rite.CardinalRiteMediumRules");

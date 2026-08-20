@@ -16,7 +16,7 @@ import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.KnownManipulations;
 import com.vincenthuto.hemomancy.common.init.ManipulationInit;
 import com.vincenthuto.hemomancy.common.manipulation.ManipLevel;
-import com.vincenthuto.hemomancy.common.mission.FirstBloodcraftAssignmentHelper;
+import com.vincenthuto.hemomancy.common.mission.vicar.FirstBloodcraftAssignment;
 import com.vincenthuto.hemomancy.common.recipe.BloodStructureOffering;
 import com.vincenthuto.hemomancy.common.recipe.BloodStructureOfferingPlacement;
 import com.vincenthuto.hemomancy.common.tile.IronBrazierBlockEntity;
@@ -420,7 +420,7 @@ public final class HarbingerJourneyFixtureGameTests {
 		BlockPos origin = helper.absolutePos(new BlockPos(4, 3, 4));
 		try {
 			HemoJourneyFixtures.prepare(player, HemoJourneyStage.VICAR_REWARD, origin);
-			for (ItemStack reward : FirstBloodcraftAssignmentHelper.rewardStacks()) {
+			for (ItemStack reward : FirstBloodcraftAssignment.rewardStacks()) {
 				spawn(helper, origin.getX() + 0.5D, origin.getY() + 1.5D, origin.getZ() + 0.5D, reward.copy());
 			}
 			boolean captured = invokeBooleanFixture("captureExpectedOutputs", player,

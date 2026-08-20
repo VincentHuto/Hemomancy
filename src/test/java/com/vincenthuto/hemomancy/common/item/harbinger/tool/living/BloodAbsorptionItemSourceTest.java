@@ -13,6 +13,7 @@ public final class BloodAbsorptionItemSourceTest {
 	public static void main(String[] args) throws IOException {
 		String source = read("src/main/java/com/vincenthuto/hemomancy/common/item/harbinger/tool/living/BloodAbsorptionItem.java");
 		String clientEvents = read("src/main/java/com/vincenthuto/hemomancy/client/event/ClientEvents.java");
+		String livingStaff = read("src/main/java/com/vincenthuto/hemomancy/common/item/harbinger/tool/living/LivingStaffItem.java");
 		String onUseTick = source.substring(source.indexOf("public void onUseTick"),
 				source.indexOf("public static Optional<LivingEntity> findBareAbsorptionTarget"));
 		String use = source.substring(source.indexOf("public InteractionResultHolder<ItemStack> use"));
@@ -35,6 +36,10 @@ public final class BloodAbsorptionItemSourceTest {
 				use, "BloodAbsorptionChannelRules.canStartChannel(volume.isActive())");
 		assertBefore("full blood stops ordinary mob drain after block and Will rites get priority",
 				onUseTick, "BloodAbsorptionChannelRules.canDrainLivingTarget", "findBareAbsorptionTarget");
+		assertContains("bare absorption reads Sated Siphon before full-volume drain",
+				onUseTick, "SkillPointInit.skill_sated_siphon");
+		assertContains("Living Staff absorption reads Sated Siphon before full-volume drain",
+				livingStaff, "SkillPointInit.skill_sated_siphon");
 		assertBefore("absorbing from a target only hurts entities on the server",
 				absorbFromTarget, "if (level.isClientSide)", "target.hurt");
 		assertContains("absorption tracks target health before damage",

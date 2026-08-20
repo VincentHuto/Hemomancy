@@ -1,7 +1,7 @@
 package com.vincenthuto.hemomancy.common.item.unstained;
 
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
-import com.vincenthuto.hemomancy.common.mission.UnstainedObservanceHelper;
+import com.vincenthuto.hemomancy.common.mission.unstained.UnstainedObservances;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.mission.OpenBookOfObservancesPacket;
 import net.minecraft.ChatFormatting;
@@ -29,13 +29,13 @@ public class BookOfObservancesItem extends ItemGuideBook {
 			HemoCapabilityAccess.getUnstainedProgress(serverPlayer).ifPresent(progress -> {
 				int availableMask = 0;
 				int readyMask = 0;
-				for (UnstainedObservanceHelper.Observance observance : UnstainedObservanceHelper.Observance.values()) {
-					if (UnstainedObservanceHelper.isAvailable(progress, observance)) {
+				for (UnstainedObservances.Observance observance : UnstainedObservances.Observance.values()) {
+					if (UnstainedObservances.isAvailable(progress, observance)) {
 						availableMask |= observance.mask();
 					}
 					if ((progress.getAcceptedObservances() & observance.mask()) != 0
 							&& (progress.getClaimedObservances() & observance.mask()) == 0
-							&& UnstainedObservanceHelper.isReady(serverPlayer, observance)) {
+							&& UnstainedObservances.isReady(serverPlayer, observance)) {
 						readyMask |= observance.mask();
 					}
 				}

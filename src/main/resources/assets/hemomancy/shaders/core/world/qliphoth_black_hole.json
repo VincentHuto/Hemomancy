@@ -26,7 +26,8 @@
     { "name": "HoleSeed", "type": "float", "count": 1, "values": [ 0.0 ] },
     { "name": "LensStrength", "type": "float", "count": 1, "values": [ 1.0 ] },
     { "name": "RingIntensity", "type": "float", "count": 1, "values": [ 1.0 ] },
-    { "name": "FinalHole", "type": "float", "count": 1, "values": [ 0.0 ] }
-    ,{ "name": "ScreenSize", "type": "float", "count": 2, "values": [ 1.0, 1.0 ] }
+    { "name": "FinalHole", "type": "float", "count": 1, "values": [ 0.0 ] },
+    { "name": "TreeApex", "type": "float", "count": 1, "values": [ 0.0 ] },
+    { "name": "ScreenSize", "type": "float", "count": 2, "values": [ 1.0, 1.0 ] }
   ]
 }

@@ -1,0 +1,22 @@
+{
+  "replace": false,
+  "values": [
+    "hemomancy:blood_wood_log",
+    "hemomancy:blood_wood_planks",
+    "hemomancy:infected_stem",
+    "hemomancy:hyphae_block",
+    "hemomancy:infected_cap",
+    "hemomancy:fruiting_infected_cap",
+    "hemomancy:infested_wood",
+    "hemomancy:gourd",
+    "hemomancy:gourd_stem",
+    "hemomancy:attached_gourd_stem",
+    "hemomancy:gourdvine_tap",
+    "hemomancy:dictation_table",
+    "hemomancy:scarlet_vanity",
+    "hemomancy:warp_chair",
+    "hemomancy:warp_chair_filler",
+    "hemomancy:puppeteers_spindle",
+    "hemomancy:witness_organ"
+  ]
+}

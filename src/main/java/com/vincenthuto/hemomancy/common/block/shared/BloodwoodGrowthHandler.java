@@ -27,6 +27,10 @@ public final class BloodwoodGrowthHandler {
 	private BloodwoodGrowthHandler() {
 	}
 
+	public static void clearSessionState() {
+		PROGRESS.clear();
+	}
+
 	public static double tryGrowFromProjection(ServerLevel level, BlockPos deadBushPos, ServerPlayer player,
 			double maxAmount) {
 		if (maxAmount <= 0.0D || !level.getBlockState(deadBushPos).is(Blocks.DEAD_BUSH)) {

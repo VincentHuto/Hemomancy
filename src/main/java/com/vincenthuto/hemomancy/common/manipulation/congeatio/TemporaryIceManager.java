@@ -30,6 +30,12 @@ public final class TemporaryIceManager {
 	private TemporaryIceManager() {
 	}
 
+	public static void clearSessionState() {
+		TEMPORARY_ICE.clear();
+		ICE_OWNERS.clear();
+		RECOVERY_CLEARED.clear();
+	}
+
 	public static boolean place(ServerLevel level, BlockPos pos, BlockState state, int lifetimeTicks) {
 		return placeOwned(level, pos, state, lifetimeTicks, null);
 	}

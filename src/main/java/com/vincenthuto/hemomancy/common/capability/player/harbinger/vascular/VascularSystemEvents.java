@@ -6,7 +6,7 @@ import com.vincenthuto.hemomancy.common.capability.player.harbinger.scar.fungal.
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.scar.ScarNoeticRoutingRules;
 import com.vincenthuto.hemomancy.common.item.harbinger.scar.ScarDefinition;
 import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
-import com.vincenthuto.hemomancy.common.mission.AnchoriteAssignmentProgression;
+import com.vincenthuto.hemomancy.common.mission.cicatrix_anchorite.VeinMasonAssignments;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.VascularSystemServerPacket;
 import com.vincenthuto.hemomancy.config.HemoServerConfig;
@@ -156,7 +156,7 @@ public class VascularSystemEvents {	/**
 			}
 			syncVascular(player, vascular);
 		});
-		if (tier > 0) AnchoriteAssignmentProgression.onMatchingNoeticCast(player);
+		if (tier > 0) VeinMasonAssignments.onMatchingNoeticCast(player);
 	}
 
 	/**

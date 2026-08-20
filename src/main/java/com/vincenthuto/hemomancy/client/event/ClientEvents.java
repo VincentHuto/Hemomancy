@@ -17,6 +17,7 @@ import com.vincenthuto.hemomancy.client.data.MonolithicDislocationClientState;
 import com.vincenthuto.hemomancy.client.data.VeinSpiderCourierClientData;
 import com.vincenthuto.hemomancy.client.data.VesperFightClientData;
 import com.vincenthuto.hemomancy.client.data.MycophantFightClientData;
+import com.vincenthuto.hemomancy.client.data.QliphothBloomClientData;
 import com.vincenthuto.hemomancy.client.item.HemoClientItemExtensionsProvider;
 import com.vincenthuto.hemomancy.client.render.entity.blood.iron.IronPillarRenderer;
 import com.vincenthuto.hemomancy.client.render.entity.blood.iron.IronSpikeRenderer;
@@ -524,6 +525,11 @@ public class ClientEvents {
     }
 
     @SubscribeEvent
+    public static void onClientPlayerLogin(net.neoforged.neoforge.client.event.ClientPlayerNetworkEvent.LoggingIn event) {
+        QliphothBloomClientData.clear();
+    }
+
+    @SubscribeEvent
     public static void onClientPlayerLogout(net.neoforged.neoforge.client.event.ClientPlayerNetworkEvent.LoggingOut event) {
         // HutosLib now retains read tracker state across disconnect/reload.
         FaneBoundaryClientData.clear();
@@ -534,6 +540,7 @@ public class ClientEvents {
 		VesperFightFloorRenderer.clear();
 		ArborOfWillRenderer.clearCaches();
 		QliphothBloomRenderer.clearCaches();
+		QliphothBloomClientData.clear();
 		CardinalRiteImpactClientEvents.clear();
 		if (SanguineOmenOverlay.instance != null) SanguineOmenOverlay.instance.clear();
         MnemonicBlueprintRenderer.disconnect();
@@ -840,6 +847,7 @@ public class ClientEvents {
             BloodVolumeOverlay.instance = new BloodVolumeOverlay();
             EquippedMorphlingOverlay.instance = new EquippedMorphlingOverlay();
             ManipCooldownOverlay.instance = new ManipCooldownOverlay();
+            HarbingerLodestoneOverlay.instance = new HarbingerLodestoneOverlay();
             StillArtCooldownOverlay.instance = new StillArtCooldownOverlay();
             UnstainedGaugeOverlay.instance = new UnstainedGaugeOverlay();
             FungalWhisperVignetteOverlay.instance = new FungalWhisperVignetteOverlay();
@@ -1181,6 +1189,13 @@ public class ClientEvents {
                 if (ManipCooldownOverlay.instance != null) {
                     float partialTicks = deltaTracker.getGameTimeDeltaPartialTick(true);
                     ManipCooldownOverlay.instance.renderHUD(graphics, graphics.guiWidth(), graphics.guiHeight(), partialTicks);
+                }
+            });
+            event.registerAboveAll(Hemomancy.rloc("harbinger_lodestone"), (graphics, deltaTracker) -> {
+                if (HarbingerLodestoneOverlay.instance != null) {
+                    float partialTicks = deltaTracker.getGameTimeDeltaPartialTick(true);
+                    HarbingerLodestoneOverlay.instance.renderHUD(
+                            graphics, graphics.guiWidth(), graphics.guiHeight(), partialTicks);
                 }
             });
             event.registerAboveAll(Hemomancy.rloc("still_art_cooldown"), (graphics, deltaTracker) -> {

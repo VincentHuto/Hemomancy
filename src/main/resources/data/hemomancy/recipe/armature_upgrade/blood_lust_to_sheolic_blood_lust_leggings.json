@@ -1,0 +1,16 @@
+{
+  "type": "hemomancy:armature_upgrade",
+  "required_degree": 7,
+  "armor_slot": "legs",
+  "base": {
+    "item": "hemomancy:blood_lust_legs"
+  },
+  "reagent": {
+    "item": "hemomancy:fervent_husk"
+  },
+  "blood_cost": 1800,
+  "required_armature_tier": "monolithic",
+  "result": {
+    "id": "hemomancy:sheolic_blood_lust_legs"
+  }
+}

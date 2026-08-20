@@ -8,7 +8,7 @@ import org.junit.jupiter.api.Test;
 
 class FirstSeparationAssignmentSourceTest {
 	private static final Path HELPER = Path.of(
-			"src/main/java/com/vincenthuto/hemomancy/common/mission/FirstSeparationAssignmentHelper.java");
+			"src/main/java/com/vincenthuto/hemomancy/common/mission/alchemist/FirstSeparationAssignment.java");
 	private static final Path BRIEFING = Path.of(
 			"src/main/resources/data/hemomancy/advancement/hemomancy/first_separation_briefed.json");
 	private static final Path CLAIM = Path.of(
@@ -48,12 +48,12 @@ class FirstSeparationAssignmentSourceTest {
 		assertContains(alchemist, "EVENT_FIRST_SEPARATION_CLAIM");
 		assertContains(alchemist, "canBriefFirstSeparation");
 		assertContains(alchemist, "canClaimFirstSeparation");
-		assertContains(handler, "FirstSeparationAssignmentHelper.markClaimed(player)");
-		assertContains(handler, "FirstSeparationAssignmentHelper.giveBriefingSupplies(player)");
-		assertOrdered(handler, "FirstSeparationAssignmentHelper.markClaimed(player)",
-				"FirstSeparationAssignmentHelper.rewardStacks()");
+		assertContains(handler, "FirstSeparationAssignment.markClaimed(player)");
+		assertContains(handler, "FirstSeparationAssignment.giveBriefingSupplies(player)");
+		assertOrdered(handler, "FirstSeparationAssignment.markClaimed(player)",
+				"FirstSeparationAssignment.rewardStacks()");
 		assertNotContains(read(BLOOD_EVENTS), "ADV_FIRST_SEPARATION_COMPLETE");
-		assertContains(read(OUTPUT_SLOT), "FirstSeparationAssignmentHelper.tryRecoverAssignmentOutput");
+		assertContains(read(OUTPUT_SLOT), "FirstSeparationAssignment.tryRecoverAssignmentOutput");
 	}
 
 	private static String read(Path path) throws IOException {

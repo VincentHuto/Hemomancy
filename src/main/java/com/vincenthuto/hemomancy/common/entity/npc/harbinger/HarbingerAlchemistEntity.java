@@ -10,9 +10,10 @@ import com.vincenthuto.hemomancy.common.entity.npc.dialogue.HarbingerAlchemistDi
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.HarbingerAlchemistDialogueTrees.HeldSpecimenJar;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.HarbingerAlchemistDialogueTrees.RedTaxonomySample;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.HarbingerRecruitmentRules;
-import com.vincenthuto.hemomancy.common.mission.FirstSeparationAssignmentHelper;
-import com.vincenthuto.hemomancy.common.mission.BodyAnswersAssignmentHelper;
-import com.vincenthuto.hemomancy.common.mission.NoeticDiscoveryProgression;
+import com.vincenthuto.hemomancy.common.mission.alchemist.FirstSeparationAssignment;
+import com.vincenthuto.hemomancy.common.mission.alchemist.BodyAnswersAssignment;
+import com.vincenthuto.hemomancy.common.mission.artificer.ArtificerAssignments;
+import com.vincenthuto.hemomancy.common.mission.shared.NoeticDiscoveryProgression;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.dialogue.OpenDialoguePacket;
 import com.vincenthuto.hemomancy.common.util.SpecimenJarData;
@@ -120,14 +121,16 @@ public class HarbingerAlchemistEntity extends PathfinderMob {
                 HeldSpecimenJar heldSpecimenJar = degree >= 2 ? findHeldSpecimenJar(held) : null;
                 tree = HarbingerAlchemistDialogueTrees.forDegree(degree, this.getId(), canShowRecruitment(player, this),
                         isNpcInPlayerBloodline(player, this), heldRedTaxonomySample, heldSpecimenJar,
-                        FirstSeparationAssignmentHelper.canBrief(serverPlayer),
-                        FirstSeparationAssignmentHelper.canClaim(serverPlayer),
-                        BodyAnswersAssignmentHelper.canBrief(serverPlayer),
+                        FirstSeparationAssignment.canBrief(serverPlayer),
+                        FirstSeparationAssignment.canClaim(serverPlayer),
+                        BodyAnswersAssignment.canBrief(serverPlayer),
                         com.vincenthuto.hemomancy.common.event.HarbingerAdvancementGranter.hasAdvancement(
-                                serverPlayer, BodyAnswersAssignmentHelper.ADV_COMPLETE));
+                                serverPlayer, BodyAnswersAssignment.ADV_COMPLETE));
             }
             tree = HarbingerAlchemistDialogueTrees.withArtificerCorrespondence(tree,
-                    ArtificerProgressSnapshot.from(serverPlayer));
+                    ArtificerProgressSnapshot.from(serverPlayer),
+                    ArtificerAssignments.forkResearchRecordedCount(serverPlayer),
+                    ArtificerAssignments.isForkResearchRewardClaimed(serverPlayer));
             tree = DialogueItemInquiryNodes.withInventoryItemInquiries(tree, serverPlayer, "alchemist", degree, 0f);
             tree = DialogueHubFactory.decorate(tree, "alchemist", serverPlayer);
 

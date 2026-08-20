@@ -2,7 +2,7 @@ package com.vincenthuto.hemomancy.common.block.harbinger.crafting;
 
 import com.vincenthuto.hemomancy.common.init.BlockEntityInit;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.VialRackItem;
-import com.vincenthuto.hemomancy.common.mission.FirstSeparationAssignmentHelper;
+import com.vincenthuto.hemomancy.common.mission.alchemist.FirstSeparationAssignment;
 import com.vincenthuto.hemomancy.common.tile.crafting.VialCentrifugeBlockEntity;
 import com.vincenthuto.hutoslib.common.network.VanillaPacketDispatcher;
 import net.minecraft.core.BlockPos;
@@ -84,7 +84,7 @@ public class VialCentrifugeBlock extends Block implements EntityBlock, SimpleWat
 	public void setPlacedBy(Level level, BlockPos pos, BlockState state, LivingEntity placer, ItemStack stack) {
 		super.setPlacedBy(level, pos, state, placer, stack);
 		if (!level.isClientSide && placer instanceof ServerPlayer serverPlayer) {
-			FirstSeparationAssignmentHelper.markCentrifugeAcquired(serverPlayer);
+			FirstSeparationAssignment.markCentrifugeAcquired(serverPlayer);
 		}
 	}
 

@@ -2,7 +2,12 @@
   "type": "hemomancy:armature_upgrade",
   "required_degree": 7,
   "armor_slot": "chest",
-  "base": { "item": "hemomancy:blood_lust_chest" },
+  "base": [
+    { "item": "hemomancy:blood_lust_chest" },
+    { "item": "hemomancy:edacious_blood_lust_chest" },
+    { "item": "hemomancy:sheolic_blood_lust_chest" },
+    { "item": "hemomancy:phantasmal_blood_lust_chest" }
+  ],
   "reagent": { "item": "hemomancy:monolith_imbued_cloth" },
   "blood_cost": 2000,
   "result": { "id": "hemomancy:silent_archon_chestplate" },

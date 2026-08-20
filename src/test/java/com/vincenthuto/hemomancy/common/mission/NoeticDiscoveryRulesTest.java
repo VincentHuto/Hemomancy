@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.mission;
 
+import com.vincenthuto.hemomancy.common.mission.shared.NoeticDiscoveryRules;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;

@@ -1020,8 +1020,8 @@
   "hemomancy.artificer.item_inquiry.chromatic_sublimate.line2": "This is armor taught to lie convincingly under pressure. Decoration has nothing to do with it.",
   "hemomancy.artificer.item_inquiry.crimson_lacquer.line1": "Crimson Lacquer. Lodge-grade coating for armor that has already chosen a fork.",
   "hemomancy.artificer.item_inquiry.crimson_lacquer.line2": "With the frame consecrated, it carries Barbed, Chitinite, or Prismatic work into Blood Lust.",
-  "hemomancy.artificer.item_inquiry.grinning_mask.line1": "The Grinning Mask. Blood Lust gives the helm a face that can keep lying under pressure.",
-  "hemomancy.artificer.item_inquiry.grinning_mask.line2": "The face you bolt on teaches the vow how it should be feared.",
+  "hemomancy.artificer.item_inquiry.grinning_mask.line1": "The Grinning Mask belongs to Blood Lust that still remembers Prismatic work.",
+  "hemomancy.artificer.item_inquiry.grinning_mask.line2": "Fit it there, and a clean hit teaches the wearer to move before the answer arrives.",
   "hemomancy.artificer.item_inquiry.hematic_armature.line1": "The Hematic Armature is a ritual frame for transforming worn armor. Call it a forge and you will miss what it is doing.",
   "hemomancy.artificer.item_inquiry.hematic_armature.line2": "Feed its bowls, fill its blood reservoir, wear the target piece, and stand in the rack. If the bargain is valid, the metal learns.",
   "hemomancy.artificer.item_inquiry.hematic_iron_scrap.line1": "Hematic Iron Scrap. The metal has started to listen. Armor comes later, after it has learned obedience.",
@@ -1034,28 +1034,28 @@
   "hemomancy.artificer.item_inquiry.living_staff.line2": "The graft rite teaches the staff to answer with existing living weapon manipulations. You still choose the form through your normal loadout and radial.",
   "hemomancy.artificer.item_inquiry.living_weapon_graft.line1": "A Living Weapon Graft. A prepared limb-pattern, earned by behaving like the form it carries.",
   "hemomancy.artificer.item_inquiry.living_weapon_graft.line2": "Burn it in the Iron Brazier and draw through a Living Staff. If the blood has earned the shape, the old conjure lesson settles where it belongs.",
-  "hemomancy.artificer.item_inquiry.lodestone_faceplate.line1": "The Lodestone Faceplate. A mask for Blood Lust helms that want weight, pull, and ferric command in the face.",
-  "hemomancy.artificer.item_inquiry.lodestone_faceplate.line2": "It teaches the helm to declare a direction instead of merely covering the skull.",
+  "hemomancy.artificer.item_inquiry.lodestone_faceplate.line1": "The Lodestone Faceplate belongs to Blood Lust that still remembers Chitinite shelter.",
+  "hemomancy.artificer.item_inquiry.lodestone_faceplate.line2": "Fit it there, and a clean hit hardens into a brief second skin.",
   "hemomancy.artificer.item_inquiry.memory_of_vesper.line1": "Memory of Vesper. I know a staff-bearing inheritance when I see one. The sermon is not mine.",
   "hemomancy.artificer.item_inquiry.memory_of_vesper.line2": "It no longer answers to a hand by itself. Place it in an Iron Brazier and draw the refusal through a Living Staff.",
   "hemomancy.artificer.item_inquiry.monolith_imbued_cloth.line1": "Monolith Imbued Cloth. Soft material taught to carry weight no cloth should remember.",
   "hemomancy.artificer.item_inquiry.monolith_imbued_cloth.line2": "It belongs in Silent Archon vestment work, after the frame has accepted the Cornerstone.",
   "hemomancy.artificer.item_inquiry.monolithic_cornerstone.line1": "The Monolithic Cornerstone teaches the frame to remember weight no ordinary blood should carry. The added strength is only a side effect.",
-  "hemomancy.artificer.item_inquiry.monolithic_cornerstone.line2": "A consecrated Armature can accept it for Archon-grade and Silent Archon work.",
+  "hemomancy.artificer.item_inquiry.monolithic_cornerstone.line2": "A consecrated Armature can accept it for the three final Blood Lust forms or the separate Silent Archon work.",
   "hemomancy.artificer.item_inquiry.refusal": "I know the work. Your blood has refused my frame, so the procedure ends there.",
   "hemomancy.artificer.item_inquiry.sclerotic_oleum.line1": "Sclerotic Oleum. Chitinite work. Shell, endurance, ferric shelter.",
   "hemomancy.artificer.item_inquiry.sclerotic_oleum.line2": "Use it when you want armor that holds the line instead of answering every bite.",
-  "hemomancy.artificer.item_inquiry.tengu_mask.line1": "The Tengu Mask. A Blood Lust face cut for cruel reach and hungry motion.",
-  "hemomancy.artificer.item_inquiry.tengu_mask.line2": "A mask can be ornament. This helm learns through the face you give it.",
+  "hemomancy.artificer.item_inquiry.tengu_mask.line1": "The Tengu Mask belongs to Blood Lust that still remembers Barbed spite.",
+  "hemomancy.artificer.item_inquiry.tengu_mask.line2": "Fit it there, and every clean hit leaves the target bleeding after the blade is gone.",
   "hemomancy.artificer.item_inquiry.unknown": "That work came from another hand. Ask its maker.",
   "hemomancy.artificer.item_inquiry.velorum_mask.line1": "The Velorum Mask. Cold witness, hard silence, and the weight of martyr-metal.",
-  "hemomancy.artificer.item_inquiry.velorum_mask.line2": "If you fit it to Blood Lust, understand what kind of face you are teaching the armor to wear.",
+  "hemomancy.artificer.item_inquiry.velorum_mask.line2": "Saint-metal does not care which path the Blood Lust took. Its witness returns a little blood on a clean hit.",
   "hemomancy.artificer.item_inquiry.vicars_consecration_kit.line1": "The Vicar's Consecration Kit lets the rack witness armor as ceremony.",
   "hemomancy.artificer.item_inquiry.vicars_consecration_kit.line2": "Once applied, the Armature can witness Lodge-grade Blood Lust work instead of merely performing craft.",
   "hemomancy.artificer.late_armature.line1": "The rack was a machine. With the Vicar's kit, it becomes a witness.",
   "hemomancy.artificer.late_armature.line2": "That is when armor-work stops being craft and starts being vestment. Crimson Lacquer and Blood Lust belong after that threshold.",
   "hemomancy.artificer.monolithic_armature.line1": "The Cornerstone teaches the frame to remember weight no ordinary blood should carry. The added strength is only a side effect.",
-  "hemomancy.artificer.monolithic_armature.line2": "Monolith Imbued Cloth and Silent Archon vestments require that kind of memory. Bring less, and the frame will reject you cleanly if you are fortunate.",
+  "hemomancy.artificer.monolithic_armature.line2": "Blood Lust can leave the common form here: Proboscis for Edacious, Fervent Husk for Sheolic, Ambergris for Phantasmal. Silent Archon cloth remains a separate vow.",
   "hemomancy.artificer.neophyte.line1": "You can stand near the rack now. The rack still belongs to the work, not to you.",
   "hemomancy.artificer.neophyte.line2": "Stable blood and proper iron come before armature work.",
   "hemomancy.artificer.refusal.line1": "You have set your blood against my tools. I will not teach a frame to answer an unwilling vessel.",
@@ -1256,7 +1256,7 @@
   "hemomancy.dialogue.event.artificer_living_arsenal_fitting_known": "The Artificer smiles without softness. 'Your arsenal is already fitted.'",
   "hemomancy.dialogue.event.artificer_living_arsenal_fitting_reissued": "The Artificer replaces your Assumed Limb Fitting. 'The staff remembers what your pockets do not.'",
   "hemomancy.dialogue.event.artificer_living_arsenal_fitting_unready": "The Artificer listens to your staff. 'The staff still lacks some of the seven forms.'",
-  "hemomancy.dialogue.event.artificer_three_answers_reward_granted": "The Artificer returns a fork reagent. 'The answer you choose should be practiced, not merely admired.'",
+  "hemomancy.dialogue.event.artificer_three_answers_reward_granted": "The Alchemist gives you the reagent for your recorded armor family. 'Catalog its living examples and I may refine another measure.'",
   "hemomancy.dialogue.event.artificer_three_answers_reward_known": "The Artificer gestures to the bowls. 'You already claimed that reagent.'",
   "hemomancy.dialogue.event.artificer_three_answers_reward_unready": "The Artificer waits. 'Make one forked armor piece first. Then we discuss answers.'",
   "hemomancy.dialogue.event.artificer_worn_vow_reward_granted": "The Artificer gives you Hematic Iron Scrap. 'One piece learned. Teach the others.'",
@@ -2537,11 +2537,11 @@
   "item.hemomancy.consecrated_syringe": "Consecrated Syringe",
   "item.hemomancy.constrictor_cord": "Constrictor Cord",
   "item.hemomancy.covenant_mantle": "Covenant Mantle",
-  "item.hemomancy.covenant_waybill": "Covenant Waybill",
-  "item.hemomancy.covenant_waybill.not_found": "The blood-script cannot find an Outpost within its reach.",
-  "item.hemomancy.covenant_waybill.points": "The nearest Harbinger Outpost lies %s, about %s blocks away (%s, %s).",
-  "item.hemomancy.covenant_waybill.tooltip": "A blood-scripted route issued at Sanguine Initiation.",
-  "item.hemomancy.covenant_waybill.tooltip.use": "Use to read the way toward the nearest Harbinger Outpost.",
+  "item.hemomancy.covenant_waybill": "Harbinger Lodestone",
+  "item.hemomancy.covenant_waybill.not_found": "The lodestone finds no Harbinger Outpost within its reach.",
+  "item.hemomancy.covenant_waybill.attuned": "The lodestone catches the pulse of a Harbinger Outpost.",
+  "item.hemomancy.covenant_waybill.tooltip": "Its blood-red pressure strengthens when you face the nearest Harbinger Outpost.",
+  "item.hemomancy.covenant_waybill.tooltip.use": "Hold to follow its pull. Use to seek the nearest Outpost again.",
   "item.hemomancy.crimson_lacquer": "Crimson Lacquer",
   "item.hemomancy.crimson_vestment_fitting": "Crimson Vestment Fitting",
   "item.hemomancy.crucible_of_nether_ichor": "Crucible of Nether Ichor",
@@ -3495,6 +3495,7 @@
   "skill.hemomancy.skill_sanguine_reach.desc": "The blood extends beyond you — tendrils of intent stretching further than any arm. +15% range for ranged blood manipulations. Per level.",
   "skill.hemomancy.skill_sanguine_reserve.desc": "Protect an emergency floor of blood from passive and automatic spending.",
   "skill.hemomancy.skill_sanguine_surge.desc": "Passive blood regen of +1 per tick per level.",
+  "skill.hemomancy.skill_sated_siphon.desc": "Keep drawing blood from living targets at full blood volume, preserving Blood Absorption's damage pulse.",
   "skill.hemomancy.skill_scar_affinity.desc": "Opens the mind to cerebral scarring — or perhaps the scars open pathways that were always there, waiting. +10% scar effect potency per level.",
   "skill.hemomancy.skill_scar_mastery.desc": "The scarred pathways are fully colonised. Effects linger as if they have taken root. Scar effects last 20% longer per level.",
   "skill.hemomancy.skill_scar_resonance.desc": "The bond between scar and blood deepens. The inscriptions almost seem to breathe. +1 equippable scar slot per level.",
@@ -3632,6 +3633,9 @@
   "subtitle.hemomancy.item.qliphoth_pome.eat": "Qliphoth pome opens",
   "tooltip.hemomancy.barbed_set_bonus": "Set Bonus (4): Barbed venom — attackers take damage, Blood Loss, and Poison",
   "tooltip.hemomancy.bloodlust_set_bonus": "Set Bonus (4): Lifesteal — 10% of melee damage heals you",
+  "tooltip.hemomancy.bloodlust_lineage.barbed": "Matching lineage: lesser thorns, Blood Loss, and poison",
+  "tooltip.hemomancy.bloodlust_lineage.chitinite": "Matching lineage: +1 toughness and 12.5% projectile defense",
+  "tooltip.hemomancy.bloodlust_lineage.prismatic": "Matching lineage: lesser retaliatory prismatic flash",
   "tooltip.hemomancy.chitinite_set_bonus": "Set Bonus (4): Ferric bastion — +2 Armor Toughness, 25% projectile reduction",
   "tooltip.hemomancy.covenant_mantle": "One-off chestpiece: spends blood to brace nearby initiated allies. Breaks full set bonuses.",
   "tooltip.hemomancy.hematic_iron_set_bonus": "Set Bonus (4): Passive blood regeneration (+2/sec)",
@@ -3836,11 +3840,20 @@
 	,"hemomancy.dialogue.artificer.option.recover.phantasmal": "My first lineage was Phantasmal."
 	,"hemomancy.dialogue.alchemist.option.artificer_three_answers": "The Artificer sent me about my first armor answer."
 	,"hemomancy.dialogue.alchemist.option.artificer_crimson_vestment": "The Artificer sent me for Crimson Lacquer."
+	,"hemomancy.dialogue.alchemist.option.ask_armor_research": "Which specimens should I study for this armor?"
+	,"hemomancy.dialogue.alchemist.option.claim_armor_research": "I cataloged the armor specimens."
+	,"hemomancy.alchemist.armor_research.barbed.line1": "Catalog a Barbed Urchin, a Desiccant, and a Venom Rib Centipede."
+	,"hemomancy.alchemist.armor_research.barbed.line2": "Keep the records. Their spines and venom explain the Barbed answer better than another surrendered carcass."
+	,"hemomancy.alchemist.armor_research.chitinite.line1": "Catalog a Chalybeate Snail, a Chitinite, and a Fervent Chitinite."
+	,"hemomancy.alchemist.armor_research.chitinite.line2": "Keep the records. Their shells show the Artificer where Chitinite armor can yield without breaking."
+	,"hemomancy.alchemist.armor_research.prismatic.line1": "Catalog a Prism Cuttle, a Scarlet Serpent, and a Verdigris Moth."
+	,"hemomancy.alchemist.armor_research.prismatic.line2": "Keep the records. Their changing pigments explain what the Prismatic answer is imitating."
+	,"hemomancy.dialogue.event.alchemist_armor_research_reward_granted": "The Alchemist compares your Bestiary notes with the Artificer's work and gives you another matching reagent."
 	,"hemomancy.artificer.assignment.worn_vow.place_armature": "Place a Hematic Armature. Return after the frame has existed in your own workshop."
 	,"hemomancy.artificer.assignment.worn_vow.first_upgrade": "Use that Armature to complete one Hematic Iron upgrade."
 	,"hemomancy.artificer.assignment.worn_vow.full_set": "Complete and wear the full Hematic Iron set before the final fitting."
 	,"hemomancy.artificer.assignment.three_answers.first_upgrade": "Make your first Barbed, Chitinite, or Prismatic armor piece. The first family is the answer I will record."
-	,"hemomancy.artificer.assignment.three_answers.correspondence": "Take my recorded answer to an Alchemist. Medicine supplies what armor-work consumes."
+	,"hemomancy.artificer.assignment.three_answers.correspondence": "Take my recorded answer to an Alchemist. They can match its reagent and identify useful Bestiary specimens."
 	,"hemomancy.artificer.assignment.three_answers.full_set": "Complete and wear the full set from your recorded family."
 	,"hemomancy.artificer.assignment.three_answers.demonstration": "Prove the set answers in the field: retaliation, projectile reduction, or prismatic flash."
 	,"hemomancy.artificer.assignment.crimson_vestment.consecrate": "Apply the Vicar's Consecration Kit to the Armature."
@@ -3859,7 +3872,7 @@
 	,"hemomancy.dialogue.event.artificer_reward_unready": "That material has not been earned, or was already issued."
 	,"hemomancy.dialogue.event.artificer_equipment_full": "the full recorded set is equipped"
 	,"hemomancy.dialogue.event.artificer_equipment_incomplete": "equip the full recorded set first"
-	,"hemomancy.dialogue.event.artificer_three_answers_inspected": "Recorded fork: %1$s. %3$s. Take the inspection to an Alchemist."
+	,"hemomancy.dialogue.event.artificer_three_answers_inspected": "Recorded fork: %1$s. %3$s. Take the inspection to an Alchemist; they can compare it with your Bestiary records."
 	,"hemomancy.dialogue.event.artificer_crimson_vestment_inspected": "The consecrated frame holds. %3$s. Take my referral to an Alchemist."
 	,"hemomancy.dialogue.event.artificer_weight_of_frame_inspected": "Recorded D7 lineage: %2$s. %3$s. Its matching material has been issued."
 	,"hemomancy.dialogue.artificer.option.reminder": "What remains?"
@@ -3877,7 +3890,7 @@
 	,"screen.hemomancy.harbinger_assignment_ledger.the_three_answers.briefing": "Receive the armor-fork briefing."
 	,"screen.hemomancy.harbinger_assignment_ledger.the_three_answers.first_upgrade": "Complete the first fork upgrade."
 	,"screen.hemomancy.harbinger_assignment_ledger.the_three_answers.inspection": "Return so the first family can be recorded."
-	,"screen.hemomancy.harbinger_assignment_ledger.the_three_answers.correspondence": "Take the referral to an Alchemist."
+	,"screen.hemomancy.harbinger_assignment_ledger.the_three_answers.correspondence": "Take the referral to an Alchemist for a reagent and specimen study."
 	,"screen.hemomancy.harbinger_assignment_ledger.the_three_answers.full_set": "Complete the recorded family set."
 	,"screen.hemomancy.harbinger_assignment_ledger.the_three_answers.demonstration": "Trigger that set's real defensive response."
 	,"screen.hemomancy.harbinger_assignment_ledger.the_three_answers.fitting": "Return wearing the recorded family."

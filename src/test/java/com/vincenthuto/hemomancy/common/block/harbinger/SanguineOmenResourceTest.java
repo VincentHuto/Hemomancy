@@ -33,7 +33,7 @@ public final class SanguineOmenResourceTest {
 		String screenShader = read(RESOURCE_ROOT.resolve(
 				"assets/hemomancy/shaders/core/screen/sanguine_omen_screen_overlay.fsh"));
 		String lang = read(RESOURCE_ROOT.resolve("assets/hemomancy/lang/en_us.json"));
-		String pickaxeMineable = read(RESOURCE_ROOT.resolve("data/minecraft/tags/blocks/mineable/pickaxe.json"));
+		String pickaxeMineable = read(RESOURCE_ROOT.resolve("data/minecraft/tags/block/mineable/pickaxe.json"));
 
 		assertContains("block registry includes sanguine omen", blockInit,
 				"sanguine_omen = BASEBLOCKS.register(\"sanguine_omen\"");

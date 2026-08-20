@@ -8,13 +8,15 @@ import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BorrowedBloodReserve;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.CirculationIncomeHelper;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
+import com.vincenthuto.hemomancy.common.armor.ArmorSetHelper;
 import com.vincenthuto.hemomancy.common.init.EffectInit;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.item.harbinger.armor.BloodLustArmorItem;
+import com.vincenthuto.hemomancy.common.item.harbinger.armor.BloodLustLineageRules;
 import com.vincenthuto.hemomancy.common.item.harbinger.armor.MarrowCrownArmorItem;
 import com.vincenthuto.hemomancy.common.item.shared.armor.EnumModArmorTiers;
-import com.vincenthuto.hemomancy.common.mission.ArtificerProgressionRules.ForkFamily;
-import com.vincenthuto.hemomancy.common.mission.HarbingerArtificerAssignmentHelper;
+import com.vincenthuto.hemomancy.common.mission.artificer.ArtificerProgressionRules.ForkFamily;
+import com.vincenthuto.hemomancy.common.mission.artificer.ArtificerAssignments;
 import com.vincenthuto.hemomancy.common.worldgen.FungalGardenTravelHelper;
 import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.server.level.ServerPlayer;
@@ -190,7 +192,7 @@ public class ArmorSetBonusHandler {
 			}
 			applyBloodLustMaskBonus(player, event.getEntity());
 			if (event.getNewDamage() > 0 && player instanceof ServerPlayer serverPlayer) {
-				HarbingerArtificerAssignmentHelper.onBloodLustDemonstrated(serverPlayer);
+				ArtificerAssignments.onBloodLustDemonstrated(serverPlayer);
 			}
 		}
 	}
@@ -212,12 +214,16 @@ public class ArmorSetBonusHandler {
 			event.setNewDamage(event.getNewDamage() * (1.0F - VENOUS_STRIDER_SABATONS_DAMAGE_REDUCTION));
 		}
 
-		// Chitinite set bonus: projectile damage reduction
-		if (hasFullSet(player, EnumModArmorTiers.CHITINITE)) {
+		String bloodLustLineage = ArmorSetHelper.bloodLustLineage(player);
+		BloodLustLineageRules.InheritedTrait inherited = BloodLustLineageRules.inheritedTrait(bloodLustLineage);
+
+		float projectileReduction = hasFullSet(player, EnumModArmorTiers.CHITINITE)
+				? CHITINITE_PROJECTILE_REDUCTION : inherited.projectileReduction();
+		if (projectileReduction > 0) {
 			if (!event.getSource().isDirect() || event.getSource().is(DamageTypeTags.IS_PROJECTILE)) {
-				event.setNewDamage(event.getNewDamage() * (1.0f - CHITINITE_PROJECTILE_REDUCTION));
-				if (player instanceof ServerPlayer serverPlayer) {
-					HarbingerArtificerAssignmentHelper.onForkDemonstrated(serverPlayer, ForkFamily.CHITINITE);
+				event.setNewDamage(event.getNewDamage() * (1.0f - projectileReduction));
+				if (hasFullSet(player, EnumModArmorTiers.CHITINITE) && player instanceof ServerPlayer serverPlayer) {
+					ArtificerAssignments.onForkDemonstrated(serverPlayer, ForkFamily.CHITINITE);
 				}
 			}
 		}
@@ -228,40 +234,49 @@ public class ArmorSetBonusHandler {
 		}
 		if (attacker == null) return;
 
-		if (hasFullSet(player, EnumModArmorTiers.BARBED)) {
+		boolean fullBarbed = hasFullSet(player, EnumModArmorTiers.BARBED);
+		float thornsDamage = fullBarbed ? BARBED_THORNS_DAMAGE : inherited.thornsDamage();
+		if (thornsDamage > 0) {
 			// Thorns damage
-			boolean retaliated = attacker.hurt(player.damageSources().thorns(player), BARBED_THORNS_DAMAGE);
+			boolean retaliated = attacker.hurt(player.damageSources().thorns(player), thornsDamage);
 
 			// Apply Blood Loss and venom to attacker.
 			attacker.addEffect(new MobEffectInstance(
 					EffectInit.blood_loss,
-					BARBED_BLOOD_LOSS_DURATION,
+					fullBarbed ? BARBED_BLOOD_LOSS_DURATION : inherited.bloodLossTicks(),
 					BARBED_BLOOD_LOSS_AMPLIFIER));
-			attacker.addEffect(new MobEffectInstance(MobEffects.POISON, BARBED_POISON_DURATION, 0, false, true, true));
-			if (retaliated && player instanceof ServerPlayer serverPlayer) {
-				HarbingerArtificerAssignmentHelper.onForkDemonstrated(serverPlayer, ForkFamily.BARBED);
+			attacker.addEffect(new MobEffectInstance(MobEffects.POISON,
+					fullBarbed ? BARBED_POISON_DURATION : inherited.poisonTicks(), 0, false, true, true));
+			if (fullBarbed && retaliated && player instanceof ServerPlayer serverPlayer) {
+				ArtificerAssignments.onForkDemonstrated(serverPlayer, ForkFamily.BARBED);
 			}
 		}
 
-		if (hasFullSet(player, EnumModArmorTiers.PRISMATIC)) {
-			triggerPrismaticFlash(player, attacker);
+		boolean fullPrismatic = hasFullSet(player, EnumModArmorTiers.PRISMATIC);
+		if (fullPrismatic || inherited.speedTicks() > 0) {
+			triggerPrismaticFlash(player, attacker,
+					fullPrismatic ? PRISMATIC_FLASH_SPEED_TICKS : inherited.speedTicks(),
+					fullPrismatic ? PRISMATIC_FLASH_BLINDNESS_TICKS : inherited.blindnessTicks(),
+					fullPrismatic ? PRISMATIC_FLASH_CONFUSION_TICKS : inherited.confusionTicks(),
+					fullPrismatic);
 		}
 	}
 
-	private static void triggerPrismaticFlash(Player player, LivingEntity attacker) {
+	private static void triggerPrismaticFlash(Player player, LivingEntity attacker,
+			int speedTicks, int blindnessTicks, int confusionTicks, boolean recordForkAssignment) {
 		long now = player.level().getGameTime();
 		if (player.getPersistentData().getLong(PRISMATIC_FLASH_COOLDOWN_TAG) > now) {
 			return;
 		}
 
 		player.getPersistentData().putLong(PRISMATIC_FLASH_COOLDOWN_TAG, now + PRISMATIC_FLASH_COOLDOWN_TICKS);
-		player.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SPEED, PRISMATIC_FLASH_SPEED_TICKS, 0, false, true, true));
+		player.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SPEED, speedTicks, 0, false, true, true));
 
 		player.level().getEntitiesOfClass(LivingEntity.class, player.getBoundingBox().inflate(PRISMATIC_FLASH_RANGE),
 				target -> target.isAlive() && target != player && (target == attacker || target instanceof Monster))
-				.forEach(ArmorSetBonusHandler::applyPrismaticFlashEffects);
-		if (player instanceof ServerPlayer serverPlayer) {
-			HarbingerArtificerAssignmentHelper.onForkDemonstrated(serverPlayer, ForkFamily.PRISMATIC);
+				.forEach(target -> applyPrismaticFlashEffects(target, blindnessTicks, confusionTicks));
+		if (recordForkAssignment && player instanceof ServerPlayer serverPlayer) {
+			ArtificerAssignments.onForkDemonstrated(serverPlayer, ForkFamily.PRISMATIC);
 		}
 	}
 
@@ -284,10 +299,10 @@ public class ArmorSetBonusHandler {
 		}
 	}
 
-	private static void applyPrismaticFlashEffects(LivingEntity target) {
-		target.addEffect(new MobEffectInstance(MobEffects.BLINDNESS, PRISMATIC_FLASH_BLINDNESS_TICKS, 0, false, true, true));
-		target.addEffect(new MobEffectInstance(MobEffects.CONFUSION, PRISMATIC_FLASH_CONFUSION_TICKS, 0, false, true, true));
-		target.addEffect(new MobEffectInstance(MobEffects.GLOWING, PRISMATIC_FLASH_CONFUSION_TICKS, 0, false, true, true));
+	private static void applyPrismaticFlashEffects(LivingEntity target, int blindnessTicks, int confusionTicks) {
+		target.addEffect(new MobEffectInstance(MobEffects.BLINDNESS, blindnessTicks, 0, false, true, true));
+		target.addEffect(new MobEffectInstance(MobEffects.CONFUSION, confusionTicks, 0, false, true, true));
+		target.addEffect(new MobEffectInstance(MobEffects.GLOWING, confusionTicks, 0, false, true, true));
 	}
 
 	private static boolean trySilentArchonDeathRefusal(Player player, LivingDamageEvent.Pre event) {
@@ -340,9 +355,10 @@ public class ArmorSetBonusHandler {
 			return;
 		}
 		switch (maskType) {
-			case TENGU -> player.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SPEED, 60, 0, false, true, true));
-			case GRINNING -> target.addEffect(new MobEffectInstance(EffectInit.blood_loss, 40, 0, false, true, true));
-			case LODESTONE -> HemoCapabilityAccess.getBloodVolume(player).ifPresent(volume -> {
+			case TENGU -> target.addEffect(new MobEffectInstance(EffectInit.blood_loss, 40, 0, false, true, true));
+			case GRINNING -> player.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SPEED, 60, 0, false, true, true));
+			case LODESTONE -> player.addEffect(new MobEffectInstance(MobEffects.ABSORPTION, 80, 0, false, true, true));
+			case VELORUM -> HemoCapabilityAccess.getBloodVolume(player).ifPresent(volume -> {
 				if (volume.isActive() && !volume.isFull()) {
 					CirculationIncomeHelper.grant(player, volume, 4.0D,
 							CirculationIncomeHelper.IncomeChannel.ARMOR);
@@ -351,7 +367,6 @@ public class ArmorSetBonusHandler {
 					}
 				}
 			});
-			case VELORUM -> player.addEffect(new MobEffectInstance(MobEffects.ABSORPTION, 80, 0, false, true, true));
 			default -> {
 			}
 		}
@@ -392,18 +407,22 @@ public class ArmorSetBonusHandler {
 		AttributeInstance toughness = player.getAttribute(Attributes.ARMOR_TOUGHNESS);
 		if (toughness == null) return;
 
-		boolean hasSet = hasFullSet(player, EnumModArmorTiers.CHITINITE);
+		double bonus = hasFullSet(player, EnumModArmorTiers.CHITINITE)
+				? CHITINITE_TOUGHNESS_BONUS
+				: BloodLustLineageRules.inheritedTrait(ArmorSetHelper.bloodLustLineage(player)).toughness();
 		AttributeModifier existing = toughness.getModifier(CHITINITE_TOUGHNESS_ID);
 
-		if (hasSet && existing == null) {
+		if (existing != null && (bonus <= 0 || existing.amount() != bonus)) {
+			toughness.removeModifier(CHITINITE_TOUGHNESS_ID);
+			existing = null;
+		}
+		if (bonus > 0 && existing == null) {
 			// Pre-clamped against the triad toughness budget; morphling and
 			// scar layers join this accounting on the dev-machine pass.
 			toughness.addTransientModifier(new AttributeModifier(
 					CHITINITE_TOUGHNESS_ID,
-					TriadAttributeCaps.clampToughness(0.0D, CHITINITE_TOUGHNESS_BONUS),
+					TriadAttributeCaps.clampToughness(0.0D, bonus),
 					AttributeModifier.Operation.ADD_VALUE));
-		} else if (!hasSet && existing != null) {
-			toughness.removeModifier(CHITINITE_TOUGHNESS_ID);
 		}
 	}
 

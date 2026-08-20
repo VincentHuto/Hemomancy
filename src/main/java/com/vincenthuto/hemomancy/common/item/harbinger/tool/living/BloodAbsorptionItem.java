@@ -150,7 +150,8 @@ public class BloodAbsorptionItem extends Item implements IDispellable, ICellHand
 		}
 		IBloodVolume volume = HemoCapabilityAccess.getBloodVolume(player).orElse(null);
 		if (volume == null || !BloodAbsorptionChannelRules.canDrainLivingTarget(
-				volume.isActive(), volume.isFull())) {
+				volume.isActive(), volume.isFull(), player instanceof Player channelingPlayer
+						&& SkillPointHelper.isTechniqueEnabled(channelingPlayer, SkillPointInit.skill_sated_siphon))) {
 			updateChannelStrain(player, false);
 			return;
 		}

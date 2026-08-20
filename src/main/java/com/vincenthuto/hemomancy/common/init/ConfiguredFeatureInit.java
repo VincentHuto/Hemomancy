@@ -227,8 +227,7 @@ public class ConfiguredFeatureInit {
 						FeatureUtils.simplePatchConfiguration(Feature.SIMPLE_BLOCK, new SimpleBlockConfiguration(
 								BlockStateProvider.simple(BlockInit.sarcodes.get())))))));
 
-		register(context, RAFFLESIA, Feature.FLOWER,
-				grassPatch(BlockStateProvider.simple(BlockInit.rafflesia.get()), 1));
+		register(context, RAFFLESIA, BaseFeatureInit.RAFFLESIA, NoneFeatureConfiguration.INSTANCE);
 
 		register(context, BOG_BODY, BaseFeatureInit.BOG_BODY, NoneFeatureConfiguration.INSTANCE);
 

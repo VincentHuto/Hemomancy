@@ -11,7 +11,7 @@ import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.EnumClarityStage;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.EnumPurityStage;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.UnstainedPathGuidance;
-import com.vincenthuto.hemomancy.common.mission.UnstainedObservanceHelper.Observance;
+import com.vincenthuto.hemomancy.common.mission.unstained.UnstainedObservances.Observance;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.unstained.PacketToggleUnstainedBonus;
 import net.minecraft.client.Minecraft;

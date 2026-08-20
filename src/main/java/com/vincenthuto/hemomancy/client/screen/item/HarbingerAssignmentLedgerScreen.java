@@ -7,8 +7,8 @@ import com.vincenthuto.hemomancy.client.screen.skilltree.shared.MilestoneDrawerS
 import com.vincenthuto.hemomancy.client.screen.skilltree.shared.MilestoneDrawerView;
 import com.vincenthuto.hemomancy.client.screen.skilltree.util.ProgressScreenContext;
 import com.vincenthuto.hemomancy.client.screen.skilltree.util.ScreenDrawUtils;
-import com.vincenthuto.hemomancy.common.mission.ArtificerProgressionRules;
-import com.vincenthuto.hemomancy.common.mission.ArtificerProgressionRules.Step;
+import com.vincenthuto.hemomancy.common.mission.artificer.ArtificerProgressionRules;
+import com.vincenthuto.hemomancy.common.mission.artificer.ArtificerProgressionRules.Step;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
@@ -582,6 +582,7 @@ public class HarbingerAssignmentLedgerScreen extends Screen {
 
 	private int renderAssignmentList(GuiGraphics gfx, int x, int cardY, int w, int mouseX, int mouseY) {
 		for (AssignmentSection section : ORDERED_ASSIGNMENT_SECTIONS) {
+			if (section.assignmentDegree > degree) continue;
 			renderAssignmentSection(gfx, section, x, cardY, w, mouseX, mouseY);
 			cardY += assignmentHeight(section) + SECTION_GAP;
 		}
@@ -1340,6 +1341,7 @@ public class HarbingerAssignmentLedgerScreen extends Screen {
 	private int totalAssignmentContentHeight() {
 		int total = 0;
 		for (AssignmentSection section : ORDERED_ASSIGNMENT_SECTIONS) {
+			if (section.assignmentDegree > degree) continue;
 			if (total > 0) {
 				total += SECTION_GAP;
 			}

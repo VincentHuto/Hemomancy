@@ -33,6 +33,10 @@ public final class HematicSalvageEvents {
 	private HematicSalvageEvents() {
 	}
 
+	public static void clearSessionState() {
+		LAST_DROP_TICK.clear();
+	}
+
 	@SubscribeEvent
 	public static void onPlayerDamaged(LivingDamageEvent.Post event) {
 		if (!(event.getEntity() instanceof ServerPlayer player)) return;

@@ -8,7 +8,7 @@ import com.vincenthuto.hemomancy.common.entity.npc.dialogue.DialogueHubFactory;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.DialogueTree;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.UnstainedObservanceDialogueDecorator;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.ZealotDialogueTrees;
-import com.vincenthuto.hemomancy.common.mission.UnstainedObservanceHelper;
+import com.vincenthuto.hemomancy.common.mission.unstained.UnstainedObservances;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.dialogue.OpenDialoguePacket;
 
@@ -109,7 +109,7 @@ public class UnstainedZealotEntity extends PathfinderMob {
                 tree = ZealotDialogueTrees.tooDeep(this.getId());
             }
             tree = UnstainedObservanceDialogueDecorator.decorate(tree, serverPlayer,
-                    UnstainedObservanceHelper.Issuer.ZEALOT);
+                    UnstainedObservances.Issuer.ZEALOT);
             tree = DialogueItemInquiryNodes.withInventoryItemInquiries(tree, serverPlayer, "zealot", 0, purity);
             tree = DialogueHubFactory.decorate(tree, "zealot", serverPlayer);
 

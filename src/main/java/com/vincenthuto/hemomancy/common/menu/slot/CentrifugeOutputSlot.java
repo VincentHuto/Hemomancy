@@ -1,6 +1,6 @@
 package com.vincenthuto.hemomancy.common.menu.slot;
 
-import com.vincenthuto.hemomancy.common.mission.FirstSeparationAssignmentHelper;
+import com.vincenthuto.hemomancy.common.mission.alchemist.FirstSeparationAssignment;
 
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.Container;
@@ -15,7 +15,7 @@ public class CentrifugeOutputSlot extends OutputSlot {
 	@Override
 	public void onTake(Player player, ItemStack stack) {
 		if (player instanceof ServerPlayer serverPlayer) {
-			FirstSeparationAssignmentHelper.tryRecoverAssignmentOutput(serverPlayer, stack);
+			FirstSeparationAssignment.tryRecoverAssignmentOutput(serverPlayer, stack);
 		}
 		super.onTake(player, stack);
 	}

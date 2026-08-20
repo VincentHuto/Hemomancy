@@ -43,7 +43,7 @@ public class BloodGourdItem extends Item implements IHarbingerEquipment, HemoCli
 		return stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
 	}
 
-	private static String formatBloodAmount(double amount) {
+	public static String formatBloodAmount(double amount) {
 		double rounded = Math.round(amount * 10.0D) / 10.0D;
 		long whole = Math.round(rounded);
 		return Math.abs(rounded - whole) < 1.0E-6D ? Long.toString(whole) : Double.toString(rounded);

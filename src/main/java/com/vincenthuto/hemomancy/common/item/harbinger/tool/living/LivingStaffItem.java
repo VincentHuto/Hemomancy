@@ -355,7 +355,8 @@ public class LivingStaffItem extends LivingItem implements IDispellable {
 	private static double absorbWithStaff(Level level, Player player, ItemStack stack) {
 		IBloodVolume volume = HemoCapabilityAccess.getBloodVolume(player)
 				.orElseThrow(NullPointerException::new);
-		if (!volume.isActive() || volume.isFull()) {
+		if (!BloodAbsorptionChannelRules.canDrainLivingTarget(volume.isActive(), volume.isFull(),
+				SkillPointHelper.isTechniqueEnabled(player, SkillPointInit.skill_sated_siphon))) {
 			return 0.0D;
 		}
 		ILivingStaffProgress progress = HemoCapabilityAccess.getLivingStaffProgress(player).orElse(null);

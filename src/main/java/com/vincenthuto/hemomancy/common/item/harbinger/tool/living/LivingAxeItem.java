@@ -28,6 +28,8 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Tier;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.component.CustomData;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.tags.BlockTags;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.client.extensions.common.IClientItemExtensions;
@@ -40,6 +42,16 @@ public class LivingAxeItem extends LivingToolItem implements HemoClientItemExten
 
 	public LivingAxeItem(float speedIn, float attackDamageIn, Tier tier, Properties builderIn) {
 		super(speedIn, attackDamageIn, -2.3f, EnumBloodTendency.MORTEM, tier, builderIn);
+	}
+
+	@Override
+	public float getDestroySpeed(ItemStack stack, BlockState state) {
+		return state.is(BlockTags.MINEABLE_WITH_AXE) ? speed : 0.5f;
+	}
+
+	@Override
+	public boolean isCorrectToolForDrops(BlockState state) {
+		return state.is(BlockTags.MINEABLE_WITH_AXE);
 	}
 
 	@Override

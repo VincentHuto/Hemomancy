@@ -28,6 +28,11 @@ public final class MuscleMemoryEvents {
     private MuscleMemoryEvents() {
     }
 
+	public static void clearSessionState() {
+		PRIMARY_ATTACKS.clear();
+		LAST_TARGET_TRIGGER.clear();
+	}
+
     @SubscribeEvent
     public static void rememberPrimaryAttack(AttackEntityEvent event) {
         Player player = event.getEntity();

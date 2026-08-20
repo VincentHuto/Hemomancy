@@ -45,6 +45,13 @@ public final class MuscleMemoryWorldEvents {
 
     private MuscleMemoryWorldEvents() {}
 
+	public static void clearSessionState() {
+		SNAPSHOTS.clear();
+		SPRINT_DISTANCE.clear();
+		CARRION.clear();
+		EMBERFANG_MOMENTUM.clear();
+	}
+
     @SubscribeEvent
     public static void onBreak(BlockEvent.BreakEvent event) {
         if (!(event.getPlayer() instanceof ServerPlayer player) || event.isCanceled()) return;

@@ -55,6 +55,11 @@ public class BloodLustArmorItem extends ArmorItem implements HemoClientItemExten
 	@Override
 	public void appendHoverText(ItemStack stack, Item.TooltipContext context, List<Component> tooltip, TooltipFlag flagIn) {
 		tooltip.add(Component.translatable("tooltip.hemomancy.bloodlust_set_bonus").withStyle(ChatFormatting.DARK_RED));
+		String lineage = getLineage(stack);
+		if (!lineage.isEmpty()) {
+			tooltip.add(Component.translatable("tooltip.hemomancy.bloodlust_lineage." + lineage)
+					.withStyle(ChatFormatting.GRAY));
+		}
 	}
 
 	@Override
@@ -66,24 +71,28 @@ public class BloodLustArmorItem extends ArmorItem implements HemoClientItemExten
 			@Override
 			public HumanoidModel<?> getHumanoidArmorModel(LivingEntity entityLiving, ItemStack itemStack,
 					EquipmentSlot armorSlot, HumanoidModel<?> _default) {
+				BloodLustArmorModel<?> model;
 				if (itemStack.getItem() == ItemInit.blood_lust_helm.get()) {
-					return BloodLustArmorModel.helmet.get();
+					model = BloodLustArmorModel.helmet.get();
 				} else if (itemStack.getItem() == ItemInit.blood_lust_helm_grinning.get()) {
-					return BloodLustArmorModel.grinning.get();
+					model = BloodLustArmorModel.grinning.get();
 				} else if (itemStack.getItem() == ItemInit.blood_lust_helm_tengu.get()) {
-					return BloodLustArmorModel.tengu.get();
+					model = BloodLustArmorModel.tengu.get();
 				} else if (itemStack.getItem() == ItemInit.blood_lust_helm_lodestone.get()) {
-					return BloodLustArmorModel.helmet.get();
+					model = BloodLustArmorModel.helmet.get();
 				} else if (itemStack.getItem() == ItemInit.blood_lust_helm_velorum.get()) {
-					return BloodLustArmorModel.tengu.get();
+					model = BloodLustArmorModel.tengu.get();
 				} else if (itemStack.getItem() == ItemInit.blood_lust_chest.get()) {
-					return BloodLustArmorModel.chest.get();
+					model = BloodLustArmorModel.chest.get();
 				} else if (itemStack.getItem() == ItemInit.blood_lust_legs.get()) {
-					return BloodLustArmorModel.legs.get();
+					model = BloodLustArmorModel.legs.get();
 				} else if (itemStack.getItem() == ItemInit.blood_lust_boots.get()) {
-					return BloodLustArmorModel.boots.get();
+					model = BloodLustArmorModel.boots.get();
+				} else {
+					return IClientItemExtensions.super.getHumanoidArmorModel(entityLiving, itemStack, armorSlot, _default);
 				}
-				return IClientItemExtensions.super.getHumanoidArmorModel(entityLiving, itemStack, armorSlot, _default);
+				model.setLineage(getLineage(itemStack));
+				return model;
 			}
 
 			@Override

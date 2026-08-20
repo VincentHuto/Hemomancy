@@ -18,7 +18,7 @@ public final class GrinningMaskRenameResourceTest {
 		String armatureRecipe = read(RESOURCE_ROOT.resolve(
 				"data/hemomancy/recipe/armature_upgrade/blood_lust_grinning_mask.json"));
 		String phantasmalRecipe = read(RESOURCE_ROOT.resolve(
-				"data/hemomancy/recipe/armature_upgrade/prismatic_to_phantasmal_blood_lust_helm.json"));
+				"data/hemomancy/recipe/armature_upgrade/blood_lust_to_phantasmal_blood_lust_helm.json"));
 		String silentArchonRecipe = read(RESOURCE_ROOT.resolve(
 				"data/hemomancy/recipe/armature_upgrade/blood_lust_to_silent_archon_helm.json"));
 
@@ -36,8 +36,8 @@ public final class GrinningMaskRenameResourceTest {
 				"\"item\": \"hemomancy:grinning_mask\"");
 		assertContains("Armature mask recipe should output renamed helm", armatureRecipe,
 				"\"id\": \"hemomancy:blood_lust_helm_grinning\"");
-		assertContains("Phantasmal helmet should consume renamed mask", phantasmalRecipe,
-				"\"item\": \"hemomancy:grinning_mask\"");
+		assertContains("Phantasmal helmet accepts renamed Blood Lust mask variant", phantasmalRecipe,
+				"\"item\": \"hemomancy:blood_lust_helm_grinning\"");
 		assertContains("Silent Archon helmet accepts renamed mask variant", silentArchonRecipe,
 				"\"item\": \"hemomancy:blood_lust_helm_grinning\"");
 

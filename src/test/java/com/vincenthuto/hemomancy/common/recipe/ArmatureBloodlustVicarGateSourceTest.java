@@ -8,18 +8,18 @@ public final class ArmatureBloodlustVicarGateSourceTest {
 	private static final Path JAVA_ROOT = Path.of("src/main/java");
 	private static final Path RECIPE_ROOT = Path.of("src/main/resources/data/hemomancy/recipe/armature_upgrade");
 	private static final String[] BLOODLUST_VARIANT_RECIPES = {
-			"barbed_to_edacious_blood_lust_helm.json",
-			"barbed_to_edacious_blood_lust_chestplate.json",
-			"barbed_to_edacious_blood_lust_leggings.json",
-			"barbed_to_edacious_blood_lust_boots.json",
-			"chitinite_to_sheolic_blood_lust_helm.json",
-			"chitinite_to_sheolic_blood_lust_chestplate.json",
-			"chitinite_to_sheolic_blood_lust_leggings.json",
-			"chitinite_to_sheolic_blood_lust_boots.json",
-			"prismatic_to_phantasmal_blood_lust_helm.json",
-			"prismatic_to_phantasmal_blood_lust_chestplate.json",
-			"prismatic_to_phantasmal_blood_lust_leggings.json",
-			"prismatic_to_phantasmal_blood_lust_boots.json"
+			"blood_lust_to_edacious_blood_lust_helm.json",
+			"blood_lust_to_edacious_blood_lust_chestplate.json",
+			"blood_lust_to_edacious_blood_lust_leggings.json",
+			"blood_lust_to_edacious_blood_lust_boots.json",
+			"blood_lust_to_sheolic_blood_lust_helm.json",
+			"blood_lust_to_sheolic_blood_lust_chestplate.json",
+			"blood_lust_to_sheolic_blood_lust_leggings.json",
+			"blood_lust_to_sheolic_blood_lust_boots.json",
+			"blood_lust_to_phantasmal_blood_lust_helm.json",
+			"blood_lust_to_phantasmal_blood_lust_chestplate.json",
+			"blood_lust_to_phantasmal_blood_lust_leggings.json",
+			"blood_lust_to_phantasmal_blood_lust_boots.json"
 	};
 
 	private ArmatureBloodlustVicarGateSourceTest() {
@@ -36,6 +36,8 @@ public final class ArmatureBloodlustVicarGateSourceTest {
 				"armatureTier.id() < requiredArmatureTier.id()");
 		assertContains("serializer reads required armature tier", serializer,
 				"required_armature_tier");
+		assertContains("serializer supports lineage-gated base data", serializer,
+				"required_base_data");
 		assertContains("serializer defaults to degree-derived tier", serializer,
 				"ArmatureUpgradeRules.requiredTierForDegree(requiredDegree)");
 		assertContains("JEI renders explicit required armature tier", jei,
@@ -43,8 +45,8 @@ public final class ArmatureBloodlustVicarGateSourceTest {
 
 		for (String recipeFile : BLOODLUST_VARIANT_RECIPES) {
 			String json = readRecipe(recipeFile);
-			assertContains(recipeFile + " requires Vicar-consecrated Armature", json,
-					"\"required_armature_tier\": \"vicar_consecrated\"");
+			assertContains(recipeFile + " requires Monolithic Armature", json,
+					"\"required_armature_tier\": \"monolithic\"");
 		}
 	}
 

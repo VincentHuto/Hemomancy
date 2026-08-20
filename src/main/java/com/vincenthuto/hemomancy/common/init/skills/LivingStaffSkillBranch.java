@@ -78,6 +78,10 @@ public final class LivingStaffSkillBranch {
 					new SkillPoint(52, "skill_selective_hunger", 325, 1, EnumSkillStates.LOCKED, SkillPointInit.skill_vascular_draw)
 							.setSkillPointCost(3).setRequiredDegree(3).setTreePosition(254, 506).setBranch("living_staff").setBranchColor(0xFFD9AD28).setToggleable(true)
 							.setIconItem(() -> new ItemStack(ItemInit.blood_absorption.get())));
+			SkillPointInit.skill_sated_siphon = SkillPointInit.registerSkill(branch,
+					new SkillPoint(66, "skill_sated_siphon", 375, 1, EnumSkillStates.LOCKED, SkillPointInit.skill_vascular_draw)
+							.setSkillPointCost(3).setRequiredDegree(3).setTreePosition(224, 556).setBranch("living_staff").setBranchColor(0xFFD9AD28).setToggleable(true)
+							.setIconItem(() -> new ItemStack(ItemInit.blood_absorption.get())));
 			SkillPointInit.skill_vascular_mercy = SkillPointInit.registerSkill(branch,
 					new SkillPoint(53, "skill_vascular_mercy", 500, 1, EnumSkillStates.LOCKED, SkillPointInit.skill_distributed_siphon)
 							.setSkillPointCost(3).setRequiredDegree(4).setTreePosition(214, 506).setBranch("living_staff").setBranchColor(0xFFD9AD28).setToggleable(true)

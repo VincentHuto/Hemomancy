@@ -12,7 +12,7 @@ import com.vincenthuto.hemomancy.common.entity.utility.CovenantThroneSeatEntity;
 import com.vincenthuto.hemomancy.common.init.BlockInit;
 import com.vincenthuto.hemomancy.common.init.EffectInit;
 import com.vincenthuto.hemomancy.common.event.HarbingerAdvancementGranter;
-import com.vincenthuto.hemomancy.common.mission.HarbingerChapterProgression;
+import com.vincenthuto.hemomancy.common.mission.shared.HarbingerChapterProgression;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.BloodVolumeServerPacket;
 import com.vincenthuto.hemomancy.common.tile.FillerBlockEntity;

@@ -11,7 +11,7 @@ import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.Manipu
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.ManipulationRetirementRules;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.ManipSlotHelper;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
-import com.vincenthuto.hemomancy.common.mission.MnemonicReliquaryProgression;
+import com.vincenthuto.hemomancy.common.mission.mnemonist.MnemonicReliquaryProgression;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;

@@ -2,7 +2,7 @@ package com.vincenthuto.hemomancy.common.entity.npc.dialogue;
 
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.event.HarbingerAdvancementGranter;
-import com.vincenthuto.hemomancy.common.mission.AnchoriteAssignmentProgression;
+import com.vincenthuto.hemomancy.common.mission.cicatrix_anchorite.VeinMasonAssignments;
 import net.minecraft.server.level.ServerPlayer;
 
 public record AnchoriteProgressSnapshot(int degree, boolean activeBlood, boolean purifying, boolean clarity,
@@ -20,20 +20,20 @@ public record AnchoriteProgressSnapshot(int degree, boolean activeBlood, boolean
                 HarbingerAdvancementGranter.isVeinMasonFirstEffigyPattern(player),
                 HarbingerAdvancementGranter.isVeinMasonFirstEffigyLoadout(player),
                 HarbingerAdvancementGranter.isVeinMasonRewardClaimed(player),
-                has(player, AnchoriteAssignmentProgression.D5_VARICOSE), has(player, AnchoriteAssignmentProgression.D5_DIAGNOSED),
-                has(player, AnchoriteAssignmentProgression.D5_TREATED),
+                has(player, VeinMasonAssignments.D5_VARICOSE), has(player, VeinMasonAssignments.D5_DIAGNOSED),
+                has(player, VeinMasonAssignments.D5_TREATED),
                 HemoCapabilityAccess.getInitiatoryDegree(player).map(degree -> degree.hasHematicFortification()).orElse(false),
-                has(player, AnchoriteAssignmentProgression.D5_READY), has(player, AnchoriteAssignmentProgression.D5_REWARD),
-                has(player, AnchoriteAssignmentProgression.D6_REFERRAL), has(player, AnchoriteAssignmentProgression.D6_COUNSEL),
-                has(player, AnchoriteAssignmentProgression.D6_FIRST_ROUTE), has(player, AnchoriteAssignmentProgression.D6_LOADOUT),
-                has(player, AnchoriteAssignmentProgression.D6_SECOND_ROUTE), has(player, AnchoriteAssignmentProgression.D6_READY),
-                has(player, AnchoriteAssignmentProgression.D6_REWARD), replacementTier(player));
+                has(player, VeinMasonAssignments.D5_READY), has(player, VeinMasonAssignments.D5_REWARD),
+                has(player, VeinMasonAssignments.D6_REFERRAL), has(player, VeinMasonAssignments.D6_COUNSEL),
+                has(player, VeinMasonAssignments.D6_FIRST_ROUTE), has(player, VeinMasonAssignments.D6_LOADOUT),
+                has(player, VeinMasonAssignments.D6_SECOND_ROUTE), has(player, VeinMasonAssignments.D6_READY),
+                has(player, VeinMasonAssignments.D6_REWARD), replacementTier(player));
     }
 
 	private static int replacementTier(ServerPlayer player) {
-		if (has(player, AnchoriteAssignmentProgression.D6_REWARD)
+		if (has(player, VeinMasonAssignments.D6_REWARD)
 				&& VeinMasonScarLesson.needsReplacement(player, VeinMasonScarLesson.strongestForPlayer(player, 3))) return 3;
-		if (has(player, AnchoriteAssignmentProgression.D5_REWARD)
+		if (has(player, VeinMasonAssignments.D5_REWARD)
 				&& VeinMasonScarLesson.needsReplacement(player, VeinMasonScarLesson.strongestForPlayer(player, 2))) return 2;
 		if (HarbingerAdvancementGranter.isVeinMasonRewardClaimed(player)
 				&& VeinMasonScarLesson.needsReplacement(player, VeinMasonScarLesson.continuationForPlayer(player))) return 1;

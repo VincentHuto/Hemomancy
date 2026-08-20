@@ -1,12 +1,60 @@
 package com.vincenthuto.hemomancy.common.mission;
 
+import com.vincenthuto.hemomancy.common.mission.artificer.ArtificerProgressionRules;
 import org.junit.jupiter.api.Test;
+
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class ArtificerProgressionRulesTest {
+	@Test
+	void forkResearchUsesTheChosenArmorFamilySpecimens() {
+		assertEquals(Set.of("hemomancy:barbed_urchin", "hemomancy:desiccant", "hemomancy:venom_rib_centipede"),
+				ArtificerProgressionRules.forkResearchSpecimens(ArtificerProgressionRules.ForkFamily.BARBED));
+		assertEquals(Set.of("hemomancy:chalybeate_snail", "hemomancy:chitinite", "hemomancy:fervent_chitinite"),
+				ArtificerProgressionRules.forkResearchSpecimens(ArtificerProgressionRules.ForkFamily.CHITINITE));
+		assertEquals(Set.of("hemomancy:prism_cuttle", "hemomancy:scarlet_serpent", "hemomancy:verdigris_moth"),
+				ArtificerProgressionRules.forkResearchSpecimens(ArtificerProgressionRules.ForkFamily.PRISMATIC));
+		assertEquals(Set.of(),
+				ArtificerProgressionRules.forkResearchSpecimens(ArtificerProgressionRules.ForkFamily.NONE));
+	}
+
+	@Test
+	void forkResearchRequiresAllThreeMatchingRecords() {
+		Set<String> partial = Set.of("hemomancy:barbed_urchin", "hemomancy:desiccant", "hemomancy:prism_cuttle");
+		assertEquals(2, ArtificerProgressionRules.recordedForkResearchCount(
+				ArtificerProgressionRules.ForkFamily.BARBED, partial));
+		assertFalse(ArtificerProgressionRules.hasCompletedForkResearch(
+				ArtificerProgressionRules.ForkFamily.BARBED, partial));
+
+		Set<String> complete = Set.of(
+				"hemomancy:barbed_urchin", "hemomancy:desiccant", "hemomancy:venom_rib_centipede");
+		assertTrue(ArtificerProgressionRules.hasCompletedForkResearch(
+				ArtificerProgressionRules.ForkFamily.BARBED, complete));
+		assertFalse(ArtificerProgressionRules.hasCompletedForkResearch(
+				ArtificerProgressionRules.ForkFamily.NONE, complete));
+	}
+
+	@Test
+	void forkResearchRewardRequiresCorrespondenceCompletionAndAnUnclaimedStudy() {
+		Set<String> complete = Set.of(
+				"hemomancy:prism_cuttle", "hemomancy:scarlet_serpent", "hemomancy:verdigris_moth");
+		assertFalse(ArtificerProgressionRules.canClaimForkResearchReward(
+				ArtificerProgressionRules.ForkFamily.PRISMATIC, complete, false, false));
+		assertFalse(ArtificerProgressionRules.canClaimForkResearchReward(
+				ArtificerProgressionRules.ForkFamily.PRISMATIC,
+				Set.of("hemomancy:prism_cuttle", "hemomancy:scarlet_serpent"), true, false));
+		assertFalse(ArtificerProgressionRules.canClaimForkResearchReward(
+				ArtificerProgressionRules.ForkFamily.PRISMATIC, complete, true, true));
+		assertFalse(ArtificerProgressionRules.canClaimForkResearchReward(
+				ArtificerProgressionRules.ForkFamily.NONE, complete, true, false));
+		assertTrue(ArtificerProgressionRules.canClaimForkResearchReward(
+				ArtificerProgressionRules.ForkFamily.PRISMATIC, complete, true, false));
+	}
+
 	@Test
 	void demonstrationsRequireTheirOrderedBriefingAndCorrespondence() {
 		assertFalse(ArtificerProgressionRules.canDemonstrate(false, true, true, true));
