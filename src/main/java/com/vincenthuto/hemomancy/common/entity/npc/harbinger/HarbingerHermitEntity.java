@@ -3,6 +3,8 @@ package com.vincenthuto.hemomancy.common.entity.npc.harbinger;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.DialogueTree;
+import com.vincenthuto.hemomancy.common.entity.npc.dialogue.DialogueAttention;
+import com.vincenthuto.hemomancy.common.entity.npc.dialogue.ProgressionDialogueNpc;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.DialogueHubFactory;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.HarbingerHermitDialogueTrees;
 import com.vincenthuto.hemomancy.common.rite.TempleOathRules;
@@ -41,7 +43,7 @@ import net.minecraft.world.phys.Vec3;
  * Unlike the Unstained Zealot who guides players away from blood magic,
  * the Harbinger Hermit encourages deeper exploration of hemomancy.
  */
-public class HarbingerHermitEntity extends PathfinderMob {
+public class HarbingerHermitEntity extends PathfinderMob implements ProgressionDialogueNpc {
 
     public static final int FAREWELL_DEATH_DURATION = 250;
     private static final String TAG_FAREWELL_DEATH_TICKS = "FarewellDeathTicks";
@@ -378,17 +380,30 @@ public class HarbingerHermitEntity extends PathfinderMob {
             return InteractionResult.sidedSuccess(player.level().isClientSide);
         }
         if (!player.level().isClientSide && hand == InteractionHand.MAIN_HAND && player instanceof ServerPlayer serverPlayer) {
-            int degree = HemoCapabilityAccess.getPlayerDegreeNumber(player);
-            IBloodVolume volume = HemoCapabilityAccess.getBloodVolume(player).orElse(null);
-            boolean hasActiveBlood = volume != null && volume.isActive();
-
-            boolean hasClaimedThisHeart = TempleOathRules.hasClaimedHeartFrom(player, this.getUUID());
-            DialogueTree tree = HarbingerHermitDialogueTrees.forDegree(
-                    degree, hasActiveBlood, hasClaimedThisHeart, this.getId());
+            DialogueTree tree = progressionDialogue(serverPlayer);
             tree = DialogueHubFactory.decorate(tree, "hermit", serverPlayer);
 
             PacketHandler.sendToPlayer(serverPlayer, new OpenDialoguePacket(tree));
         }
         return InteractionResult.sidedSuccess(player.level().isClientSide);
+    }
+
+    @Override
+    public DialogueTree progressionDialogue(ServerPlayer player) {
+        IBloodVolume volume = HemoCapabilityAccess.getBloodVolume(player).orElse(null);
+        return HarbingerHermitDialogueTrees.forDegree(HemoCapabilityAccess.getPlayerDegreeNumber(player),
+                volume != null && volume.isActive(), TempleOathRules.hasClaimedHeartFrom(player, this.getUUID()),
+                this.getId());
+    }
+
+    @Override
+    public String progressionDialogueId() {
+        return "hermit";
+    }
+
+    @Override
+    public DialogueAttention progressionAttention(ServerPlayer player) {
+        return isFarewellDying() ? DialogueAttention.NONE
+                : ProgressionDialogueNpc.super.progressionAttention(player);
     }
 }

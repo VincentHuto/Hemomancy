@@ -4,6 +4,7 @@ import com.vincenthuto.hemomancy.common.entity.npc.dialogue.DialogueItemInquiryN
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.DialogueHubFactory;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.DialogueTree;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.GuardianDialogueTrees;
+import com.vincenthuto.hemomancy.common.entity.npc.dialogue.ProgressionDialogueNpc;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.UnstainedObservanceDialogueDecorator;
 import com.vincenthuto.hemomancy.common.mission.unstained.UnstainedObservances;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
@@ -33,7 +34,7 @@ import net.minecraft.world.level.Level;
  * <p>
  * Two guardians spawn per church structure.
  */
-public class UnstainedGuardianEntity extends PathfinderMob {
+public class UnstainedGuardianEntity extends PathfinderMob implements ProgressionDialogueNpc {
 
     public final AnimationState idleAnimationState = new AnimationState();
 
@@ -86,13 +87,22 @@ public class UnstainedGuardianEntity extends PathfinderMob {
     protected InteractionResult mobInteract(Player player, InteractionHand hand) {
         if (!player.level().isClientSide && hand == InteractionHand.MAIN_HAND && player instanceof ServerPlayer serverPlayer) {
             DialogueTree tree = DialogueItemInquiryNodes.withInventoryItemInquiries(
-                    GuardianDialogueTrees.ambient(this.getId()), serverPlayer, "guardian",
+                    progressionDialogue(serverPlayer), serverPlayer, "guardian",
                     0, 0f);
-            tree = UnstainedObservanceDialogueDecorator.decorate(tree, serverPlayer,
-                    UnstainedObservances.Issuer.GUARDIAN);
             tree = DialogueHubFactory.decorate(tree, "guardian", serverPlayer);
             PacketHandler.sendToPlayer(serverPlayer, new OpenDialoguePacket(tree));
         }
         return InteractionResult.sidedSuccess(player.level().isClientSide);
+    }
+
+    @Override
+    public DialogueTree progressionDialogue(ServerPlayer player) {
+        return UnstainedObservanceDialogueDecorator.decorate(GuardianDialogueTrees.ambient(this.getId()), player,
+                UnstainedObservances.Issuer.GUARDIAN);
+    }
+
+    @Override
+    public String progressionDialogueId() {
+        return "guardian";
     }
 }

@@ -87,47 +87,49 @@ public class PlacedFeatureInit {
 
 		final Holder<ConfiguredFeature<?, ?>> SMALL_INFECTED_FUNGUS = configuredFeatureGetter
 				.getOrThrow(ConfiguredFeatureInit.SMALL_INFECTED_FUNGUS);
+		final Holder<ConfiguredFeature<?, ?>> PATCH_HYPHAE = configuredFeatureGetter
+				.getOrThrow(ConfiguredFeatureInit.PATCH_HYPHAE);
 
 		//Plants
 		final Holder<ConfiguredFeature<?, ?>> BLEEDING_HEARTS = configuredFeatureGetter
 				.getOrThrow(ConfiguredFeatureInit.BLEEDING_HEARTS);
 
-		register(context, PlacedFeatureInit.BLEEDING_HEARTS, BLEEDING_HEARTS, RarityFilter.onAverageOnceEvery(7),
+		register(context, PlacedFeatureInit.BLEEDING_HEARTS, BLEEDING_HEARTS, RarityFilter.onAverageOnceEvery(7), CountPlacement.of(3),
 				InSquarePlacement.spread(), PlacementUtils.HEIGHTMAP,
 				CountPlacement.of(ClampedInt.of(UniformInt.of(-3, 1), 0, 1)), BiomeFilter.biome());
 
 		final Holder<ConfiguredFeature<?, ?>> STINK_HORNS = configuredFeatureGetter
 				.getOrThrow(ConfiguredFeatureInit.STINK_HORNS);
 
-		register(context, PlacedFeatureInit.STINK_HORNS, STINK_HORNS, RarityFilter.onAverageOnceEvery(7),
+		register(context, PlacedFeatureInit.STINK_HORNS, STINK_HORNS, RarityFilter.onAverageOnceEvery(7), CountPlacement.of(3),
 				InSquarePlacement.spread(), PlacementUtils.HEIGHTMAP,
 				CountPlacement.of(1), BiomeFilter.biome());
 
 		final Holder<ConfiguredFeature<?, ?>> LETHEAN_POPPIES = configuredFeatureGetter
 				.getOrThrow(ConfiguredFeatureInit.LETHEAN_POPPIES);
 
-		register(context, PlacedFeatureInit.LETHEAN_POPPIES, LETHEAN_POPPIES, RarityFilter.onAverageOnceEvery(8),
+		register(context, PlacedFeatureInit.LETHEAN_POPPIES, LETHEAN_POPPIES, RarityFilter.onAverageOnceEvery(8), CountPlacement.of(3),
 				InSquarePlacement.spread(), PlacementUtils.HEIGHTMAP, CountPlacement.of(3), BiomeFilter.biome());
 
 		// Myco-heterotrophic plants — spawn under trees / in the dark
 		final Holder<ConfiguredFeature<?, ?>> GHOST_PIPES = configuredFeatureGetter
 				.getOrThrow(ConfiguredFeatureInit.GHOST_PIPES);
 
-		register(context, PlacedFeatureInit.GHOST_PIPES, GHOST_PIPES, RarityFilter.onAverageOnceEvery(10),
+		register(context, PlacedFeatureInit.GHOST_PIPES, GHOST_PIPES, RarityFilter.onAverageOnceEvery(10), CountPlacement.of(3),
 				InSquarePlacement.spread(), PlacementUtils.HEIGHTMAP,
 				CountPlacement.of(ClampedInt.of(UniformInt.of(-3, 1), 0, 1)), BiomeFilter.biome());
 
 		final Holder<ConfiguredFeature<?, ?>> SARCODES = configuredFeatureGetter
 				.getOrThrow(ConfiguredFeatureInit.SARCODES);
 
-		register(context, PlacedFeatureInit.SARCODES, SARCODES, RarityFilter.onAverageOnceEvery(12),
+		register(context, PlacedFeatureInit.SARCODES, SARCODES, RarityFilter.onAverageOnceEvery(12), CountPlacement.of(3),
 				InSquarePlacement.spread(), PlacementUtils.HEIGHTMAP,
 				CountPlacement.of(1), BiomeFilter.biome());
 
 		final Holder<ConfiguredFeature<?, ?>> RAFFLESIA = configuredFeatureGetter
 				.getOrThrow(ConfiguredFeatureInit.RAFFLESIA);
 
-		register(context, PlacedFeatureInit.RAFFLESIA, RAFFLESIA, RarityFilter.onAverageOnceEvery(24),
+		register(context, PlacedFeatureInit.RAFFLESIA, RAFFLESIA, RarityFilter.onAverageOnceEvery(24), CountPlacement.of(3),
 				InSquarePlacement.spread(), PlacementUtils.HEIGHTMAP, BiomeFilter.biome());
 
 		// Bog body — underwater on the ocean floor, rare
@@ -162,7 +164,7 @@ public class PlacedFeatureInit {
 		final Holder<ConfiguredFeature<?, ?>> ERYTHROCORAL_REEF = configuredFeatureGetter
 				.getOrThrow(ConfiguredFeatureInit.ERYTHROCORAL_REEF);
 
-		register(context, PlacedFeatureInit.ERYTHROCORAL_REEF, ERYTHROCORAL_REEF, CountPlacement.of(4),
+		register(context, PlacedFeatureInit.ERYTHROCORAL_REEF, ERYTHROCORAL_REEF, CountPlacement.of(18),
 				InSquarePlacement.spread(), PlacementUtils.HEIGHTMAP_OCEAN_FLOOR, BiomeFilter.biome());
 
 		// Tooth Geode - underground, rare, roughly once per 48 chunks
@@ -180,7 +182,7 @@ public class PlacedFeatureInit {
 		//Blobs
 		context.register(PLACED_MYCELIUM_BLOB,
 				new PlacedFeature(configuredFeatureGetter.getOrThrow(ConfiguredFeatureInit.MYCELIUM_BLOB),
-						ImmutableList.<PlacementModifier>builder().add(RarityFilter.onAverageOnceEvery(3),
+						ImmutableList.<PlacementModifier>builder().add(RarityFilter.onAverageOnceEvery(3), CountPlacement.of(3),
 								InSquarePlacement.spread(), PlacementUtils.HEIGHTMAP_OCEAN_FLOOR, BiomeFilter.biome())
 								.build()));
 
@@ -190,29 +192,29 @@ public class PlacedFeatureInit {
 								InSquarePlacement.spread(), PlacementUtils.HEIGHTMAP_OCEAN_FLOOR, BiomeFilter.biome())
 								.build()));
 
-		register(context, PlacedFeatureInit.HYPHAE_TENDRIL, HYPHAE_TENDRIL, List.of(CountPlacement.of(12),
+		register(context, PlacedFeatureInit.HYPHAE_TENDRIL, HYPHAE_TENDRIL, List.of(CountPlacement.of(96),
 				InSquarePlacement.spread(), PlacementUtils.FULL_RANGE, BiomeFilter.biome()));
 		register(context, PlacedFeatureInit.VENOUS_RIDGE, VENOUS_RIDGE, List.of(CountPlacement.of(3),
 				InSquarePlacement.spread(), PlacementUtils.HEIGHTMAP_OCEAN_FLOOR, BiomeFilter.biome()));
-		register(context, PlacedFeatureInit.HUGE_FUNGUS, HUGE_FUNGUS, List.of(CountPlacement.of(50),
+		register(context, PlacedFeatureInit.HUGE_FUNGUS, HUGE_FUNGUS, List.of(CountPlacement.of(12),
 				InSquarePlacement.spread(), PlacementUtils.FULL_RANGE, BiomeFilter.biome()));
 
 		register(context, PlacedFeatureInit.SMALL_INFECTED_FUNGUS, SMALL_INFECTED_FUNGUS,
-				RarityFilter.onAverageOnceEvery(7), InSquarePlacement.spread(), PlacementUtils.HEIGHTMAP,
+				RarityFilter.onAverageOnceEvery(7), CountPlacement.of(3), InSquarePlacement.spread(), PlacementUtils.HEIGHTMAP,
 				CountPlacement.of(1), BiomeFilter.biome());
 
-		register(context, PlacedFeatureInit.PATCH_HYPHAE, SMALL_INFECTED_FUNGUS, RarityFilter.onAverageOnceEvery(7),
-				InSquarePlacement.spread(), PlacementUtils.HEIGHTMAP,
-				CountPlacement.of(ClampedInt.of(UniformInt.of(-3, 1), 0, 1)), BiomeFilter.biome());
+		register(context, PlacedFeatureInit.PATCH_HYPHAE, PATCH_HYPHAE,
+				NoiseThresholdCountPlacement.of(-0.8D, 15, 30), InSquarePlacement.spread(), PlacementUtils.HEIGHTMAP,
+				BiomeFilter.biome());
 
 		context.register(PLACED_CANOPY_MUSHROOMS_SPARSE,
 				new PlacedFeature(configuredFeatureGetter.getOrThrow(ConfiguredFeatureInit.CANOPY_MUSHROOMS_SPARSE),
-						tfTreeCheckArea(PlacementUtils.countExtra(3, 0.1F, 1),
+						tfTreeCheckArea(PlacementUtils.countExtra(9, 0.1F, 3),
 								BlockInit.infected_fungus.get().defaultBlockState())));
 
 		context.register(PLACED_CANOPY_MUSHROOMS_DENSE,
 				new PlacedFeature(configuredFeatureGetter.getOrThrow(ConfiguredFeatureInit.CANOPY_MUSHROOMS_DENSE),
-						tfTreeCheckArea(PlacementUtils.countExtra(5, 0.1F, 1),
+						tfTreeCheckArea(PlacementUtils.countExtra(15, 0.1F, 3),
 								BlockInit.infected_fungus.get().defaultBlockState())));
 
 		// Conscious mass blob - surface decoration for fungal dimension

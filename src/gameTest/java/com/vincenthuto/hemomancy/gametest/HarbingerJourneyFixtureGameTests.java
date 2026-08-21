@@ -237,8 +237,9 @@ public final class HarbingerJourneyFixtureGameTests {
 			List<HarbingerVicarEntity> vicars = helper.getLevel().getEntitiesOfClass(HarbingerVicarEntity.class,
 					new AABB(origin.getX() - 3, origin.getY(), origin.getZ() - 3,
 							origin.getX() + 4, origin.getY() + 5, origin.getZ() + 4),
-					entity -> entity.getTags().contains("hemomancy.dev_test.journey"));
-			helper.assertTrue(vicars.size() == 1, "Expected exactly one journey-marked Harbinger Vicar");
+					entity -> entity.getTags().contains(HemoJourneyFixtures.entityMarker(origin)));
+			helper.assertTrue(vicars.size() == 1,
+					"Expected exactly one journey-marked Harbinger Vicar, found " + vicars.size());
 			HarbingerVicarEntity vicar = vicars.getFirst();
 			helper.assertTrue(vicar.isInvulnerable(), "Expected journey Vicar to be invulnerable");
 			helper.assertTrue(vicar.isNoAi(), "Expected journey Vicar to have no AI");

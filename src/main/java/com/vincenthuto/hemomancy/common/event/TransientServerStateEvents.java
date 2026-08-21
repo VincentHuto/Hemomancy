@@ -45,6 +45,7 @@ public final class TransientServerStateEvents {
 		TemporaryIceManager.clearSessionState();
 		SanguineFormationProjectionHandler.clear();
 		BloodStructureFeedManager.clear();
+		BloodInfusionManager.clear();
 		HematicSalvageEvents.clearSessionState();
 		RootedStateHelper.clearSessionState();
 		ConserveStateHelper.clearSessionState();

@@ -17,6 +17,7 @@ import com.vincenthuto.hemomancy.client.data.MonolithicDislocationClientState;
 import com.vincenthuto.hemomancy.client.data.VeinSpiderCourierClientData;
 import com.vincenthuto.hemomancy.client.data.VesperFightClientData;
 import com.vincenthuto.hemomancy.client.data.MycophantFightClientData;
+import com.vincenthuto.hemomancy.client.data.NpcProgressionMarkerClientState;
 import com.vincenthuto.hemomancy.client.data.QliphothBloomClientData;
 import com.vincenthuto.hemomancy.client.item.HemoClientItemExtensionsProvider;
 import com.vincenthuto.hemomancy.client.render.entity.blood.iron.IronPillarRenderer;
@@ -527,6 +528,7 @@ public class ClientEvents {
     @SubscribeEvent
     public static void onClientPlayerLogin(net.neoforged.neoforge.client.event.ClientPlayerNetworkEvent.LoggingIn event) {
         QliphothBloomClientData.clear();
+        NpcProgressionMarkerClientState.clear();
     }
 
     @SubscribeEvent
@@ -540,7 +542,8 @@ public class ClientEvents {
 		VesperFightFloorRenderer.clear();
 		ArborOfWillRenderer.clearCaches();
 		QliphothBloomRenderer.clearCaches();
-		QliphothBloomClientData.clear();
+        QliphothBloomClientData.clear();
+		NpcProgressionMarkerClientState.clear();
 		CardinalRiteImpactClientEvents.clear();
 		if (SanguineOmenOverlay.instance != null) SanguineOmenOverlay.instance.clear();
         MnemonicBlueprintRenderer.disconnect();

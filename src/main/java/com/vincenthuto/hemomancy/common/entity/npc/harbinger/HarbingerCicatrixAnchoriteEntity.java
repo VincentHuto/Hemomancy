@@ -5,6 +5,7 @@ import com.vincenthuto.hemomancy.common.capability.player.unstained.IUnstainedPr
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.DialogueItemInquiryNodes;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.DialogueHubFactory;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.DialogueTree;
+import com.vincenthuto.hemomancy.common.entity.npc.dialogue.ProgressionDialogueNpc;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.HarbingerCicatrixAnchoriteDialogueTrees;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.AnchoriteProgressSnapshot;
 import com.vincenthuto.hemomancy.common.event.HarbingerAdvancementGranter;
@@ -27,7 +28,7 @@ import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 
-public class HarbingerCicatrixAnchoriteEntity extends PathfinderMob {
+public class HarbingerCicatrixAnchoriteEntity extends PathfinderMob implements ProgressionDialogueNpc {
 	public final AnimationState idleAnimationState = new AnimationState();
 
 	public HarbingerCicatrixAnchoriteEntity(EntityType<? extends HarbingerCicatrixAnchoriteEntity> type,
@@ -78,8 +79,7 @@ public class HarbingerCicatrixAnchoriteEntity extends PathfinderMob {
 		if (!player.level().isClientSide && hand == InteractionHand.MAIN_HAND && player instanceof ServerPlayer serverPlayer) {
 			com.vincenthuto.hemomancy.common.mission.cicatrix_anchorite.VeinMasonAssignments.refreshD5(serverPlayer);
 			int degree = HemoCapabilityAccess.getPlayerDegreeNumber(player);
-			DialogueTree tree = HarbingerCicatrixAnchoriteDialogueTrees.forState(this.getId(),
-					AnchoriteProgressSnapshot.from(serverPlayer));
+			DialogueTree tree = progressionDialogue(serverPlayer);
 			tree = DialogueItemInquiryNodes.withInventoryItemInquiries(tree, serverPlayer,
 					"cicatrix_anchorite", degree, 0f);
 			tree = DialogueHubFactory.decorate(tree, "cicatrix_anchorite", serverPlayer);
@@ -87,6 +87,16 @@ public class HarbingerCicatrixAnchoriteEntity extends PathfinderMob {
 			PacketHandler.sendToPlayer(serverPlayer, new OpenDialoguePacket(tree));
 		}
 		return InteractionResult.sidedSuccess(player.level().isClientSide);
+	}
+
+	@Override
+	public DialogueTree progressionDialogue(ServerPlayer player) {
+		return HarbingerCicatrixAnchoriteDialogueTrees.forState(this.getId(), AnchoriteProgressSnapshot.from(player));
+	}
+
+	@Override
+	public String progressionDialogueId() {
+		return "cicatrix_anchorite";
 	}
 
 	private static boolean hasClarityUnlocked(Player player) {

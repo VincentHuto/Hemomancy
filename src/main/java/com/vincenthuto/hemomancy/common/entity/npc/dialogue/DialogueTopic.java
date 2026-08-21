@@ -5,21 +5,32 @@ import net.minecraft.resources.ResourceLocation;
 
 public record DialogueTopic(String id, DialogueCategory category, String titleKey, String summaryKey,
 		String targetNodeId, ResourceLocation icon, DialogueTopicState state, String groupKey,
-		DialogueProgress progress, ResourceLocation displayItemId, boolean unread) {
+		DialogueProgress progress, ResourceLocation displayItemId, boolean unread, DialogueAttention attention) {
+	public DialogueTopic(String id, DialogueCategory category, String titleKey, String summaryKey,
+			String targetNodeId, ResourceLocation icon, DialogueTopicState state, String groupKey,
+			DialogueProgress progress, ResourceLocation displayItemId, boolean unread) {
+		this(id, category, titleKey, summaryKey, targetNodeId, icon, state, groupKey, progress,
+				displayItemId, unread, DialogueAttention.NONE);
+	}
+
+	public DialogueTopic {
+		if (attention == null) attention = DialogueAttention.NONE;
+	}
+
 	public static DialogueTopic available(String id, DialogueCategory category, String titleKey,
 			String summaryKey, String targetNodeId) {
 		return new DialogueTopic(id, category, titleKey, summaryKey, targetNodeId, null,
-				DialogueTopicState.AVAILABLE, null, null, null, false);
+				DialogueTopicState.AVAILABLE, null, null, null, false, DialogueAttention.NONE);
 	}
 
 	public DialogueTopic withUnread(boolean value) {
 		return new DialogueTopic(id, category, titleKey, summaryKey, targetNodeId, icon, state,
-				groupKey, progress, displayItemId, value);
+				groupKey, progress, displayItemId, value, attention);
 	}
 
 	public DialogueTopic withItem(ResourceLocation itemId) {
 		return new DialogueTopic(id, category, titleKey, summaryKey, targetNodeId, icon, state,
-				groupKey, progress, itemId, unread);
+				groupKey, progress, itemId, unread, attention);
 	}
 
 	void toNetwork(FriendlyByteBuf buf) {
@@ -38,6 +49,7 @@ public record DialogueTopic(String id, DialogueCategory category, String titleKe
 		buf.writeBoolean(displayItemId != null);
 		if (displayItemId != null) buf.writeResourceLocation(displayItemId);
 		buf.writeBoolean(unread);
+		buf.writeVarInt(attention.ordinal());
 	}
 
 	static DialogueTopic fromNetwork(FriendlyByteBuf buf) {
@@ -52,6 +64,8 @@ public record DialogueTopic(String id, DialogueCategory category, String titleKe
 		DialogueProgress progress = buf.readBoolean() ? DialogueProgress.fromNetwork(buf) : null;
 		ResourceLocation item = buf.readBoolean() ? buf.readResourceLocation() : null;
 		boolean unread = buf.readBoolean();
-		return new DialogueTopic(id, category, titleKey, summaryKey, target, icon, state, group, progress, item, unread);
+		DialogueAttention attention = DialogueAttention.fromOrdinal(buf.readVarInt());
+		return new DialogueTopic(id, category, titleKey, summaryKey, target, icon, state, group, progress, item,
+				unread, attention);
 	}
 }

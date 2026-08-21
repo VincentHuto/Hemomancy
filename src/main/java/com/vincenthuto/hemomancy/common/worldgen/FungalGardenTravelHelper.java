@@ -52,7 +52,10 @@ public final class FungalGardenTravelHelper {
 	public static InteractionResult handleTravelUse(ServerPlayer player, Item cooldownItem) {
 		boolean inFungalGardens = player.level().dimension().equals(FUNGAL_GARDENS);
 
-		if (inFungalGardens) {
+		if (!inFungalGardens && player.isCreative()) {
+			storeReturnPosition(player);
+			performFungalGardensTravel(player);
+		} else if (inFungalGardens) {
 			if (isProjectionActive(player)) {
 				player.displayClientMessage(Component.literal(
 						"You have no hands here. The red pulse is your only road home.")

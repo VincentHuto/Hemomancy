@@ -1,0 +1,6 @@
+{
+  "type": "hemomancy:blood_infusion",
+  "input": "minecraft:stone",
+  "blood_cost": 50,
+  "result": "hemomancy:venous_stone"
+}

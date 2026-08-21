@@ -32,6 +32,7 @@ import com.vincenthuto.hemomancy.common.entity.npc.dialogue.DialogueTree;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.FungalWhisperDialogueTrees;
 import com.vincenthuto.hemomancy.common.event.HarbingerAdvancementGranter;
 import com.vincenthuto.hemomancy.common.event.BloodStructureFeedManager;
+import com.vincenthuto.hemomancy.common.event.BloodInfusionManager;
 import com.vincenthuto.hemomancy.common.event.PendingBloodCraftManager;
 import com.vincenthuto.hemomancy.common.event.SanguineFormationProjectionHandler;
 import com.vincenthuto.hemomancy.common.event.worldevent.BloodMoonSavedData;
@@ -139,6 +140,7 @@ public class HarbingerCardinalRiteEvents {
 		// Tick pending blood structure crafts (delayed block breaking)
 		PendingBloodCraftManager.tick();
 		BloodStructureFeedManager.tick(sLevel);
+		BloodInfusionManager.tick(sLevel);
 		SanguineFormationProjectionHandler.tick(sLevel);
 
 		// Periodically sync Qliphoth Bloom data to clients for tree rendering

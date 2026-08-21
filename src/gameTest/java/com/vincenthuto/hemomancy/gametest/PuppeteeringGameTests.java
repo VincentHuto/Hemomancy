@@ -6,6 +6,7 @@ import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.shared.skill.EnumSkillStates;
 import com.vincenthuto.hemomancy.common.entity.summon.BoundPuppeteerSummon;
 import com.vincenthuto.hemomancy.common.entity.summon.BoundSummonBehavior;
+import com.vincenthuto.hemomancy.common.entity.projectile.BloodNeedleEntity;
 import com.vincenthuto.hemomancy.common.entity.projectile.BloodShotEntity;
 import com.vincenthuto.hemomancy.common.init.BlockInit;
 import com.vincenthuto.hemomancy.common.init.EntityInit;
@@ -22,6 +23,7 @@ import com.vincenthuto.hemomancy.common.worldgen.FungalGardenTravelHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ClientInformation;
 import net.minecraft.server.level.ServerLevel;
@@ -30,9 +32,12 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.monster.Zombie;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.ItemCooldowns;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.GameType;
+import net.minecraft.world.level.block.Blocks;
 import net.neoforged.neoforge.gametest.GameTestHolder;
 import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 
@@ -170,7 +175,7 @@ public final class PuppeteeringGameTests {
 	}
 
 	@GameTest(templateNamespace = "minecraft", template = EMPTY_TEMPLATE, timeoutTicks = 40)
-	public static void defaultFollowModeAcquiresNearbyHostiles(GameTestHelper helper) {
+	public static void autonomousRetaliationAllowsFollowModeToAcquireNearbyHostiles(GameTestHelper helper) {
 		ServerPlayer owner = testPlayer(helper);
 		Mob summon = null;
 		Zombie target = null;
@@ -178,12 +183,15 @@ public final class PuppeteeringGameTests {
 			PuppeteerSummonDefinition definition = learnVulture(owner);
 			ItemStack crossbar = attunedCrossbar(owner, 100);
 			owner.setItemInHand(InteractionHand.MAIN_HAND, crossbar);
+			HemoCapabilityAccess.requireSkillProgress(owner).setSkill(
+					SkillPointInit.skill_autonomous_retaliation, EnumSkillStates.UNLOCKED, 1);
 			summon = PuppeteerSummonFactory.create(definition, helper.getLevel(), owner,
 					MarionetteCrossbarItem.ensureCrossbarId(crossbar), 0).orElseThrow();
 			helper.getLevel().addFreshEntity(summon);
 			target = EntityType.ZOMBIE.create(helper.getLevel());
 			target.setPos(owner.getX() + 3.0, owner.getY(), owner.getZ());
 			helper.getLevel().addFreshEntity(target);
+			owner.setLastHurtByMob(target);
 
 			helper.assertTrue(BoundSummonBehavior.commonServerTick(summon,
 					(BoundPuppeteerSummon) summon, owner), "Bound summon must remain active");
@@ -195,6 +203,13 @@ public final class PuppeteeringGameTests {
 			if (target != null) target.discard();
 			removePlayer(owner);
 		}
+	}
+
+	@GameTest(templateNamespace = "minecraft", template = EMPTY_TEMPLATE, timeoutTicks = 40)
+	public static void bloodNeedlePersistsWithoutAnEmptyPickupStack(GameTestHelper helper) {
+		BloodNeedleEntity needle = new BloodNeedleEntity(helper.getLevel(), 1.0, 2.0, 1.0);
+		needle.addAdditionalSaveData(new CompoundTag());
+		helper.succeed();
 	}
 
 	@GameTest(templateNamespace = "minecraft", template = EMPTY_TEMPLATE, timeoutTicks = 80)
@@ -269,29 +284,40 @@ public final class PuppeteeringGameTests {
 	}
 
 	private static void assertGroundPuppetPursuesTarget(GameTestHelper helper, String summonName, String displayName) {
-		ServerPlayer target = testPlayer(helper);
+		for (int x = 0; x <= 2; x++) for (int z = 0; z <= 6; z++) {
+			helper.getLevel().setBlockAndUpdate(helper.absolutePos(new BlockPos(x, 0, z)), Blocks.STONE.defaultBlockState());
+		}
+		ServerPlayer caster = testPlayer(helper);
+		Player target = helper.makeMockPlayer(GameType.SURVIVAL);
+		target.setPos(net.minecraft.world.phys.Vec3.atBottomCenterOf(helper.absolutePos(new BlockPos(1, 1, 1))));
+		helper.assertTrue(helper.getLevel().addFreshEntity(target), displayName + " trial target must spawn");
 		PuppeteerSummonDefinition definition = PuppeteerSummonDefinitions.byName(summonName).orElseThrow();
-		Mob puppet = PuppeteerSummonFactory.createTrial(definition, helper.getLevel(), target,
+		Mob puppet = PuppeteerSummonFactory.createTrial(definition, helper.getLevel(), caster,
 				helper.absolutePos(new BlockPos(1, 1, 5))).orElseThrow();
 		puppet.setTarget(target);
 		double startingDistance = puppet.distanceTo(target);
-		helper.getLevel().addFreshEntity(puppet);
-
-		helper.runAfterDelay(60, () -> {
-			try {
-				helper.assertTrue(puppet.isAlive(), displayName + " must remain alive during combat");
-				helper.assertTrue(!puppet.isOnFire(), displayName + " must not ignite in sunlight");
-				helper.assertTrue(puppet.getTarget() == target,
-						displayName + " must retain its assigned hostile target");
-				helper.assertTrue(puppet.distanceTo(target) < startingDistance - 0.75,
-						displayName + " must navigate toward its target; startDistance=" + startingDistance
-								+ ", finalDistance=" + puppet.distanceTo(target) + ", pos=" + puppet.position());
-				helper.succeed();
-			} finally {
-				puppet.discard();
-				removePlayer(target);
+		helper.assertTrue(helper.getLevel().addFreshEntity(puppet), displayName + " fixture entity must spawn");
+		try {
+			for (int i = 0; i < 5; i++) helper.getLevel().tickNonPassenger(puppet);
+			helper.assertTrue(puppet.getNavigation().moveTo(target, 1.0),
+					displayName + " must have a walkable path to its trial target");
+			for (int i = 5; i < 60; i++) helper.getLevel().tickNonPassenger(puppet);
+			helper.assertTrue(puppet.isAlive(), displayName + " must remain alive during combat");
+			helper.assertTrue(!puppet.isOnFire(), displayName + " must not ignite in sunlight");
+			helper.assertTrue(puppet.getTarget() == target,
+					displayName + " must retain its assigned hostile target");
+			helper.assertTrue(puppet.distanceTo(target) < startingDistance - 0.75,
+					displayName + " must navigate toward its target; startDistance=" + startingDistance
+							+ ", finalDistance=" + puppet.distanceTo(target) + ", pos=" + puppet.position());
+			helper.succeed();
+		} finally {
+			puppet.discard();
+			target.discard();
+			removePlayer(caster);
+			for (int x = 0; x <= 2; x++) for (int z = 0; z <= 6; z++) {
+				helper.getLevel().setBlockAndUpdate(helper.absolutePos(new BlockPos(x, 0, z)), Blocks.AIR.defaultBlockState());
 			}
-		});
+		}
 	}
 
 	@GameTest(templateNamespace = "minecraft", template = EMPTY_TEMPLATE, timeoutTicks = 40)

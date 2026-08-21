@@ -4,7 +4,10 @@ import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.EnumPurityStage;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.AcolyteDialogueTrees;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.DialogueTree;
+import com.vincenthuto.hemomancy.common.entity.npc.dialogue.ProgressionDialogueNpc;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.DialogueHubFactory;
+import com.vincenthuto.hemomancy.common.entity.npc.dialogue.UnstainedObservanceDialogueDecorator;
+import com.vincenthuto.hemomancy.common.mission.unstained.UnstainedObservances;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.dialogue.OpenDialoguePacket;
 
@@ -34,7 +37,7 @@ import net.minecraft.world.level.Level;
  * <p>
  * Between three and five acolytes spawn per church structure.
  */
-public class UnstainedAcolyteEntity extends PathfinderMob {
+public class UnstainedAcolyteEntity extends PathfinderMob implements ProgressionDialogueNpc {
 
     public final AnimationState idleAnimationState = new AnimationState();
 
@@ -84,7 +87,7 @@ public class UnstainedAcolyteEntity extends PathfinderMob {
     @Override
     protected InteractionResult mobInteract(Player player, InteractionHand hand) {
         if (!player.level().isClientSide && hand == InteractionHand.MAIN_HAND && player instanceof ServerPlayer serverPlayer) {
-            DialogueTree tree = selectDialogue(serverPlayer);
+            DialogueTree tree = progressionDialogue(serverPlayer);
             tree = DialogueHubFactory.decorate(tree, "acolyte", serverPlayer);
 
             PacketHandler.sendToPlayer(serverPlayer, new OpenDialoguePacket(tree));
@@ -97,8 +100,9 @@ public class UnstainedAcolyteEntity extends PathfinderMob {
      * Unstained progression state. Returns increasingly detailed lore and
      * task suggestions as the player advances.
      */
-    private DialogueTree selectDialogue(ServerPlayer player) {
-        return HemoCapabilityAccess.getUnstainedProgress(player).map(progress -> {
+    @Override
+    public DialogueTree progressionDialogue(ServerPlayer player) {
+        DialogueTree tree = HemoCapabilityAccess.getUnstainedProgress(player).map(progress -> {
             if (!progress.hasBegunPurification()) {
                 return AcolyteDialogueTrees.notOnPath(this.getId());
             }
@@ -123,5 +127,11 @@ public class UnstainedAcolyteEntity extends PathfinderMob {
                 default -> AcolyteDialogueTrees.corruptedStage(this.getId());
             };
         }).orElse(AcolyteDialogueTrees.notOnPath(this.getId()));
+        return UnstainedObservanceDialogueDecorator.decorate(tree, player, UnstainedObservances.Issuer.ACOLYTE);
+    }
+
+    @Override
+    public String progressionDialogueId() {
+        return "acolyte";
     }
 }

@@ -6,6 +6,7 @@ import com.vincenthuto.hemomancy.common.capability.player.unstained.IUnstainedPr
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.DialogueItemInquiryNodes;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.DialogueHubFactory;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.DialogueTree;
+import com.vincenthuto.hemomancy.common.entity.npc.dialogue.ProgressionDialogueNpc;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.ArtificerProgressSnapshot;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.HarbingerArtificerDialogueTrees;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
@@ -28,7 +29,7 @@ import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 
-public class HarbingerArtificerEntity extends PathfinderMob {
+public class HarbingerArtificerEntity extends PathfinderMob implements ProgressionDialogueNpc {
 	public final AnimationState idleAnimationState = new AnimationState();
 
 	public HarbingerArtificerEntity(EntityType<? extends HarbingerArtificerEntity> type, Level level) {
@@ -77,13 +78,23 @@ public class HarbingerArtificerEntity extends PathfinderMob {
 	protected InteractionResult mobInteract(Player player, InteractionHand hand) {
 		if (!player.level().isClientSide && hand == InteractionHand.MAIN_HAND && player instanceof ServerPlayer serverPlayer) {
 			ArtificerProgressSnapshot progress = ArtificerProgressSnapshot.from(serverPlayer);
-			DialogueTree tree = HarbingerArtificerDialogueTrees.forState(this.getId(), progress);
+			DialogueTree tree = progressionDialogue(serverPlayer);
 			tree = DialogueItemInquiryNodes.withInventoryItemInquiries(tree, serverPlayer, "artificer", progress.degree(), 0f);
 			tree = DialogueHubFactory.decorate(tree, "artificer", serverPlayer);
 
 			PacketHandler.sendToPlayer(serverPlayer, new OpenDialoguePacket(tree));
 		}
 		return InteractionResult.sidedSuccess(player.level().isClientSide);
+	}
+
+	@Override
+	public DialogueTree progressionDialogue(ServerPlayer player) {
+		return HarbingerArtificerDialogueTrees.forState(this.getId(), ArtificerProgressSnapshot.from(player));
+	}
+
+	@Override
+	public String progressionDialogueId() {
+		return "artificer";
 	}
 
 	private static boolean hasClarityUnlocked(Player player) {

@@ -29,6 +29,8 @@ public class RecipeInit {
 
 	public static final DeferredHolder<RecipeType<?>, RecipeType<BloodStructureRecipe>> blood_structure_recipe_type = RECIPE_TYPES
 			.register("blood_structure_recipe", () -> RecipeType.simple(Hemomancy.rloc("blood_structure_recipe")));
+	public static final DeferredHolder<RecipeType<?>, RecipeType<BloodInfusionRecipe>> blood_infusion_type = RECIPE_TYPES
+			.register("blood_infusion", () -> RecipeType.simple(Hemomancy.rloc("blood_infusion")));
 
 	public static final DeferredHolder<RecipeType<?>, RecipeType<CardinalRiteRecipe>> cardinal_rite_recipe_type = RECIPE_TYPES
 			.register("cardinal_rite_recipe", () -> RecipeType.simple(Hemomancy.rloc("cardinal_rite_recipe")));
@@ -69,6 +71,8 @@ public class RecipeInit {
 
 	public static final DeferredHolder<RecipeSerializer<?>, RecipeSerializer<?>> blood_structure_recipe_serializer = SERIALIZERS
 			.register("blood_structure_recipe", BloodStructureRecipeSerializer::new);
+	public static final DeferredHolder<RecipeSerializer<?>, RecipeSerializer<?>> blood_infusion_serializer = SERIALIZERS
+			.register("blood_infusion", BloodInfusionRecipeSerializer::new);
 
 	public static final DeferredHolder<RecipeSerializer<?>, RecipeSerializer<?>> chisel_recipe_serializer = SERIALIZERS
 			.register("scar_recipe", ScarRecipeSerializer::new);

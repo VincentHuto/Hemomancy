@@ -1,6 +1,8 @@
 package com.vincenthuto.hemomancy.common.entity.npc.unstained;
 
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.DialogueTree;
+import com.vincenthuto.hemomancy.common.entity.npc.dialogue.DialogueAttention;
+import com.vincenthuto.hemomancy.common.entity.npc.dialogue.ProgressionDialogueNpc;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.UnstainedScoutDialogueTrees;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.dialogue.OpenDialoguePacket;
@@ -31,7 +33,7 @@ import net.minecraft.world.level.Level;
  * geode cannot kill her before the player arrives. She only dies after handing
  * over her notes via the {@code scout_give_notes} dialogue event.</p>
  */
-public class UnstainedScoutEntity extends PathfinderMob {
+public class UnstainedScoutEntity extends PathfinderMob implements ProgressionDialogueNpc {
 
     public final AnimationState idleAnimationState = new AnimationState();
 
@@ -85,9 +87,24 @@ public class UnstainedScoutEntity extends PathfinderMob {
     protected InteractionResult mobInteract(Player player, InteractionHand hand) {
         if (!player.level().isClientSide && hand == InteractionHand.MAIN_HAND
                 && player instanceof ServerPlayer serverPlayer) {
-            DialogueTree tree = UnstainedScoutDialogueTrees.dyingScout(this.getId());
+            DialogueTree tree = progressionDialogue(serverPlayer);
             PacketHandler.sendToPlayer(serverPlayer, new OpenDialoguePacket(tree));
         }
         return InteractionResult.sidedSuccess(player.level().isClientSide);
+    }
+
+    @Override
+    public DialogueTree progressionDialogue(ServerPlayer player) {
+        return UnstainedScoutDialogueTrees.dyingScout(this.getId());
+    }
+
+    @Override
+    public String progressionDialogueId() {
+        return "scout";
+    }
+
+    @Override
+    public DialogueAttention progressionAttention(ServerPlayer player) {
+        return DialogueAttention.URGENT;
     }
 }

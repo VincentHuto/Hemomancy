@@ -4,6 +4,7 @@ import com.mojang.authlib.GameProfile;
 import com.google.gson.JsonParser;
 import com.mojang.serialization.JsonOps;
 import com.vincenthuto.hemomancy.Hemomancy;
+import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.init.EntityInit;
 import com.vincenthuto.hemomancy.common.init.BlockInit;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
@@ -11,15 +12,23 @@ import com.vincenthuto.hemomancy.common.init.RecipeInit;
 import com.vincenthuto.hemomancy.common.recipe.CardinalRiteRecipe;
 import com.vincenthuto.hemomancy.common.recipe.serializer.CardinalRiteRecipeSerializer;
 import com.vincenthuto.hemomancy.common.rite.CardinalRiteStaffEscrow;
+import com.vincenthuto.hemomancy.common.worldgen.FungalGardenTravelHelper;
 import io.netty.buffer.Unpooled;
+import io.netty.channel.embedded.EmbeddedChannel;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.core.BlockPos;
+import net.minecraft.network.Connection;
+import net.minecraft.network.protocol.PacketFlow;
 import net.minecraft.server.level.ClientInformation;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.server.network.CommonListenerCookie;
+import net.minecraft.server.network.ServerGamePacketListenerImpl;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.resources.RegistryOps;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Mob;
+import net.minecraft.world.level.GameType;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ContainerListener;
 import net.minecraft.world.item.ItemStack;
@@ -328,6 +337,36 @@ public final class HarbingerPilotGameTests {
 		}
 	}
 
+	@GameTest(templateNamespace = "minecraft", template = EMPTY_TEMPLATE, timeoutTicks = 40)
+	public static void creativeFungalSpineBypassesProgression(GameTestHelper helper) {
+		ServerPlayer player = connectedTestPlayer(helper);
+		try {
+			player.setGameMode(GameType.CREATIVE);
+			player.getPersistentData().putBoolean(FungalGardenTravelHelper.REVELATION_CHOICE_PENDING, true);
+			var degree = HemoCapabilityAccess.requireInitiatoryDegree(player);
+			degree.setDegreeNumber(0);
+			degree.setFungalSpineGranted(false);
+			var blood = HemoCapabilityAccess.requireBloodVolume(player);
+			blood.setActive(false);
+			blood.setBloodVolume(0.0D);
+			player.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(ItemInit.fungal_spine.get()));
+
+			ItemInit.fungal_spine.get().use(helper.getLevel(), player, InteractionHand.MAIN_HAND);
+
+			helper.assertTrue(player.getPersistentData().contains(FungalGardenTravelHelper.RETURN_X),
+					"Creative use must pass the progression gates and retain a return point");
+			helper.assertTrue(player.getPersistentData().getBoolean(FungalGardenTravelHelper.REVELATION_CHOICE_PENDING)
+					&& degree.getDegreeNumber() == 0 && !degree.hasFungalSpineGranted()
+					&& !blood.isActive() && blood.getBloodVolume() == 0.0D,
+					"Creative use must not mutate progression or blood state");
+			helper.assertTrue(!FungalGardenTravelHelper.isProjectionActive(player),
+					"Creative travel must not start the progression projection");
+			helper.succeed();
+		} finally {
+			player.discard();
+		}
+	}
+
 	private static void runScenario(GameTestHelper helper, String id) {
 		HemoTestScenario scenario = HemoTestScenarioCatalog.find(id)
 				.orElseThrow(() -> new IllegalArgumentException("Unknown scenario " + id));
@@ -349,6 +388,21 @@ public final class HarbingerPilotGameTests {
 				helper.getLevel(),
 				new GameProfile(UUID.randomUUID(), "hemomancy-test-player"),
 				ClientInformation.createDefault());
+	}
+
+	private static ServerPlayer connectedTestPlayer(GameTestHelper helper) {
+		CommonListenerCookie cookie = CommonListenerCookie.createInitial(
+				new GameProfile(UUID.randomUUID(), "fungal-spine-test-player"), false);
+		ServerPlayer player = new ServerPlayer(helper.getLevel().getServer(), helper.getLevel(),
+				cookie.gameProfile(), cookie.clientInformation());
+		Connection connection = new Connection(PacketFlow.SERVERBOUND);
+		new EmbeddedChannel(connection);
+		new ServerGamePacketListenerImpl(helper.getLevel().getServer(), connection, player, cookie) {
+			@Override
+			public void send(net.minecraft.network.protocol.Packet<?> packet) {
+			}
+		};
+		return player;
 	}
 
 	private static final class StaffRemovalListener implements ContainerListener {

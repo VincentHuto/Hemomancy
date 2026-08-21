@@ -147,7 +147,7 @@ public final class HemoJourneyFixtures {
 	public static void cleanup(ServerPlayer player, BlockPos origin) {
 		ServerLevel level = fixtureLevel(player);
 		for (Entity entity : level.getEntitiesOfClass(Entity.class, bounds(origin),
-				entity -> entity.getTags().contains(ENTITY_MARKER))) entity.discard();
+				entity -> entity.getTags().contains(entityMarker(origin)))) entity.discard();
 		ListTag owned = player.getPersistentData().getList(OWNED_BLOCKS_KEY, Tag.TAG_LONG);
 		for (Tag value : owned) {
 			BlockPos pos = BlockPos.of(((LongTag) value).getAsLong());
@@ -156,6 +156,10 @@ public final class HemoJourneyFixtures {
 			}
 		}
 		player.getPersistentData().remove(OWNED_BLOCKS_KEY);
+	}
+
+	public static String entityMarker(BlockPos origin) {
+		return ENTITY_MARKER + "." + origin.asLong();
 	}
 
 	public static boolean captureExpectedOutputs(ServerPlayer player, HemoJourneyStage stage, BlockPos origin) {
@@ -425,7 +429,7 @@ public final class HemoJourneyFixtures {
 		vicar.setPos(origin.getX() + 0.5D, origin.getY() + 1.0D, origin.getZ() + 0.5D);
 		vicar.setNoAi(true);
 		vicar.setInvulnerable(true);
-		vicar.addTag(ENTITY_MARKER);
+		vicar.addTag(entityMarker(origin));
 		if (!level.addFreshEntity(vicar)) throw new IllegalStateException("Harbinger Vicar could not be spawned");
 	}
 
@@ -433,7 +437,7 @@ public final class HemoJourneyFixtures {
 		HarbingerAlchemistEntity alchemist = EntityInit.harbinger_alchemist.get().create(level);
 		if (alchemist == null) throw new IllegalStateException("Harbinger Alchemist entity creation returned null");
 		alchemist.setPos(origin.getX() + 0.5D, origin.getY() + 1.0D, origin.getZ() + 0.5D);
-		alchemist.setNoAi(true); alchemist.setInvulnerable(true); alchemist.addTag(ENTITY_MARKER);
+		alchemist.setNoAi(true); alchemist.setInvulnerable(true); alchemist.addTag(entityMarker(origin));
 		if (!level.addFreshEntity(alchemist)) throw new IllegalStateException("Harbinger Alchemist could not be spawned");
 	}
 
@@ -490,7 +494,7 @@ public final class HemoJourneyFixtures {
 			if (cow == null) throw new IllegalStateException("Journey sample cow could not be created");
 			BlockPos spawn = origin.offset(x, 1, 1);
 			cow.setPos(spawn.getX() + 0.5D, spawn.getY(), spawn.getZ() + 0.5D);
-			cow.addTag(ENTITY_MARKER);
+			cow.addTag(entityMarker(origin));
 			if (!fixtureLevel(player).addFreshEntity(cow)) {
 				throw new IllegalStateException("Journey sample cow could not be spawned");
 			}

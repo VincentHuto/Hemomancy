@@ -6,6 +6,7 @@ import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.DialogueItemInquiryNodes;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.DialogueHubFactory;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.DialogueTree;
+import com.vincenthuto.hemomancy.common.entity.npc.dialogue.ProgressionDialogueNpc;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.UnstainedObservanceDialogueDecorator;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.ZealotDialogueTrees;
 import com.vincenthuto.hemomancy.common.mission.unstained.UnstainedObservances;
@@ -30,7 +31,7 @@ import net.minecraft.world.entity.ai.goal.WaterAvoidingRandomStrollGoal;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 
-public class UnstainedZealotEntity extends PathfinderMob {
+public class UnstainedZealotEntity extends PathfinderMob implements ProgressionDialogueNpc {
 
     public final AnimationState idleAnimationState = new AnimationState();
 
@@ -80,41 +81,38 @@ public class UnstainedZealotEntity extends PathfinderMob {
     @Override
     protected InteractionResult mobInteract(Player player, InteractionHand hand) {
         if (!player.level().isClientSide && hand == InteractionHand.MAIN_HAND && player instanceof ServerPlayer serverPlayer) {
-            int degree = HemoCapabilityAccess.getPlayerDegreeNumber(player);
-            IBloodVolume volume = HemoCapabilityAccess.getBloodVolume(player).orElse(null);
-
-            // Read Unstained progress directly now that the capability is always present
-            boolean hasBegunPurification = false;
-            float purity = 0f;
-            boolean clarityUnlocked = false;
-            boolean enlightened = false;
-
-            var unstainedOpt = HemoCapabilityAccess.getUnstainedProgress(player);
-            if (unstainedOpt.isPresent()) {
-                var progress = unstainedOpt.get();
-                hasBegunPurification = progress.hasBegunPurification();
-                purity = progress.getPurity();
-                clarityUnlocked = progress.hasClarityUnlocked();
-                enlightened = progress.isEnlightened();
-            }
-
-            DialogueTree tree;
-            if (hasBegunPurification) {
-                tree = ZealotDialogueTrees.alreadyOnPath(this.getId(), purity, clarityUnlocked, enlightened);
-            } else if (volume == null || !volume.isActive()) {
-                tree = ZealotDialogueTrees.noBlood(this.getId());
-            } else if (degree <= EnumInitiatoryDegree.ILLUMINATUS.getNumber()) {
-                tree = ZealotDialogueTrees.pleaDialogue(this.getId(), degree);
-            } else {
-                tree = ZealotDialogueTrees.tooDeep(this.getId());
-            }
-            tree = UnstainedObservanceDialogueDecorator.decorate(tree, serverPlayer,
-                    UnstainedObservances.Issuer.ZEALOT);
+			float purity = HemoCapabilityAccess.getUnstainedProgress(player)
+					.map(progress -> progress.getPurity()).orElse(0f);
+			DialogueTree tree = progressionDialogue(serverPlayer);
             tree = DialogueItemInquiryNodes.withInventoryItemInquiries(tree, serverPlayer, "zealot", 0, purity);
             tree = DialogueHubFactory.decorate(tree, "zealot", serverPlayer);
 
             PacketHandler.sendToPlayer(serverPlayer, new OpenDialoguePacket(tree));
         }
         return InteractionResult.sidedSuccess(player.level().isClientSide);
+    }
+
+    @Override
+    public DialogueTree progressionDialogue(ServerPlayer player) {
+        int degree = HemoCapabilityAccess.getPlayerDegreeNumber(player);
+        IBloodVolume volume = HemoCapabilityAccess.getBloodVolume(player).orElse(null);
+        var progress = HemoCapabilityAccess.getUnstainedProgress(player).orElse(null);
+        DialogueTree tree;
+        if (progress != null && progress.hasBegunPurification()) {
+            tree = ZealotDialogueTrees.alreadyOnPath(this.getId(), progress.getPurity(),
+                    progress.hasClarityUnlocked(), progress.isEnlightened());
+        } else if (volume == null || !volume.isActive()) {
+            tree = ZealotDialogueTrees.noBlood(this.getId());
+        } else if (degree <= EnumInitiatoryDegree.ILLUMINATUS.getNumber()) {
+            tree = ZealotDialogueTrees.pleaDialogue(this.getId(), degree);
+        } else {
+            tree = ZealotDialogueTrees.tooDeep(this.getId());
+        }
+        return UnstainedObservanceDialogueDecorator.decorate(tree, player, UnstainedObservances.Issuer.ZEALOT);
+    }
+
+    @Override
+    public String progressionDialogueId() {
+        return "zealot";
     }
 }

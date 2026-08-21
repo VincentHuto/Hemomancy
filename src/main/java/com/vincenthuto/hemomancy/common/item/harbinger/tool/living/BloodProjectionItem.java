@@ -10,6 +10,7 @@ import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.IKnown
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.entity.mob.monster.will.WillBloodUtilityInteractions;
 import com.vincenthuto.hemomancy.common.event.BloodStructureFeedManager;
+import com.vincenthuto.hemomancy.common.event.BloodInfusionManager;
 import com.vincenthuto.hemomancy.common.event.SanguineFormationProjectionHandler;
 import com.vincenthuto.hemomancy.common.event.SanguineProjectionTargeting;
 import com.vincenthuto.hemomancy.common.rite.harbinger.CardinalRiteInteractionHandler;
@@ -130,6 +131,11 @@ public class BloodProjectionItem extends Item implements IDispellable, ICellHand
 					&& worldIn instanceof ServerLevel serverLevel
 					&& BloodStructureFeedManager.feedStructure(serverPlayer, serverLevel, targetPos,
 							player.getOffhandItem(), structureFeedRate)) {
+				return Math.max(0.0D, beforeBlood - playerVolume.getBloodVolume());
+			}
+			if (player instanceof ServerPlayer serverPlayer
+					&& worldIn instanceof ServerLevel serverLevel
+					&& BloodInfusionManager.feedBlock(serverPlayer, serverLevel, targetPos, structureFeedRate)) {
 				return Math.max(0.0D, beforeBlood - playerVolume.getBloodVolume());
 			}
 

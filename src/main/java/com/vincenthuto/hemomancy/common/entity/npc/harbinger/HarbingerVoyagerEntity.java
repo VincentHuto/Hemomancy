@@ -5,6 +5,7 @@ import com.vincenthuto.hemomancy.common.capability.player.unstained.IUnstainedPr
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.DialogueItemInquiryNodes;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.DialogueHubFactory;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.DialogueTree;
+import com.vincenthuto.hemomancy.common.entity.npc.dialogue.ProgressionDialogueNpc;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.HarbingerVoyagerDialogueTrees;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.dialogue.OpenDialoguePacket;
@@ -25,7 +26,7 @@ import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 
-public class HarbingerVoyagerEntity extends PathfinderMob {
+public class HarbingerVoyagerEntity extends PathfinderMob implements ProgressionDialogueNpc {
 	public final AnimationState idleAnimationState = new AnimationState();
 
 	public HarbingerVoyagerEntity(EntityType<? extends HarbingerVoyagerEntity> type, Level level) {
@@ -75,21 +76,25 @@ public class HarbingerVoyagerEntity extends PathfinderMob {
 	protected InteractionResult mobInteract(Player player, InteractionHand hand) {
 		if (!player.level().isClientSide && hand == InteractionHand.MAIN_HAND && player instanceof ServerPlayer serverPlayer) {
 			int degree = HemoCapabilityAccess.getPlayerDegreeNumber(player);
-			DialogueTree tree;
-
-			if (hasClarityUnlocked(player)) {
-				tree = HarbingerVoyagerDialogueTrees.clarity(this.getId());
-			} else if (isPurifying(player)) {
-				tree = HarbingerVoyagerDialogueTrees.purifying(this.getId());
-			} else {
-				tree = HarbingerVoyagerDialogueTrees.forDegree(degree, this.getId());
-			}
+			DialogueTree tree = progressionDialogue(serverPlayer);
 			tree = DialogueItemInquiryNodes.withInventoryItemInquiries(tree, serverPlayer, "voyager", degree, 0f);
 			tree = DialogueHubFactory.decorate(tree, "voyager", serverPlayer);
 
 			PacketHandler.sendToPlayer(serverPlayer, new OpenDialoguePacket(tree));
 		}
 		return InteractionResult.sidedSuccess(player.level().isClientSide);
+	}
+
+	@Override
+	public DialogueTree progressionDialogue(ServerPlayer player) {
+		if (hasClarityUnlocked(player)) return HarbingerVoyagerDialogueTrees.clarity(this.getId());
+		if (isPurifying(player)) return HarbingerVoyagerDialogueTrees.purifying(this.getId());
+		return HarbingerVoyagerDialogueTrees.forDegree(HemoCapabilityAccess.getPlayerDegreeNumber(player), this.getId());
+	}
+
+	@Override
+	public String progressionDialogueId() {
+		return "voyager";
 	}
 
 	private static boolean hasClarityUnlocked(Player player) {

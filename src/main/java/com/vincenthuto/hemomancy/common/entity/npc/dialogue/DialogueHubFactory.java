@@ -8,6 +8,7 @@ import java.util.Map;
 
 import com.vincenthuto.hemomancy.common.capability.player.shared.knowledge.DialogueKnowledge;
 import com.vincenthuto.hemomancy.common.capability.HemoAttachmentTypes;
+import com.vincenthuto.hemomancy.common.mission.unstained.UnstainedObservances;
 
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
@@ -48,10 +49,14 @@ public final class DialogueHubFactory {
 			String topicId = category.name().toLowerCase(Locale.ROOT) + "/" + slug;
 			boolean unread = category == DialogueCategory.LORE
 					&& (knowledge == null || !knowledge.hasRead(readId(npcId, topicId)));
+			DialogueAttention attention = unread ? DialogueAttention.NOTICE : option.presentation().attention();
+			if (attention == DialogueAttention.NONE && category == DialogueCategory.QUESTS) {
+				attention = missionAttention(option.eventId());
+			}
 			DialogueTopicState state = category == DialogueCategory.QUESTS
 					? questState(option) : DialogueTopicState.AVAILABLE;
 			topics.add(new DialogueTopic(topicId, category, option.text(), summaryKey(category), target,
-					null, state, null, null, null, unread));
+					null, state, null, null, null, unread, attention));
 		}
 
 		if (!conversationOptions.isEmpty()) {
@@ -80,7 +85,7 @@ public final class DialogueHubFactory {
 		String value = (option.text() + " " + nullToEmpty(option.nextNodeId()) + " "
 				+ nullToEmpty(option.eventId())).toLowerCase(Locale.ROOT);
 		if (containsAny(value, "quest", "assignment", "reward", "claim", "brief", "task", "report",
-				"lesson", "directive", "taxonomy", "bestiary")) {
+				"lesson", "directive", "diagnosis", "observance", "taxonomy", "bestiary")) {
 			return DialogueCategory.QUESTS;
 		}
 		if (containsAny(value, "about", "lore", "history", "order", "rite", "ritual", "machine",
@@ -101,6 +106,19 @@ public final class DialogueHubFactory {
 		if (containsAny(value, "claim", "turn_in", "reward")) return DialogueTopicState.TURN_IN;
 		if (containsAny(value, "complete", "completed")) return DialogueTopicState.COMPLETE;
 		return DialogueTopicState.ACTIVE;
+	}
+
+	private static DialogueAttention missionAttention(String eventId) {
+		String event = nullToEmpty(eventId).toLowerCase(Locale.ROOT);
+		if (UnstainedObservances.Observance.fromEventId(event) != null) return DialogueAttention.NONE;
+		if (containsAny(event, "claim", "reward", "complete", "inspect", "turn_in", "report")) {
+			return DialogueAttention.URGENT;
+		}
+		if (containsAny(event, "brief", "accept", "lesson", "referral", "task", "diagnosis", "directive",
+				"starter")) {
+			return DialogueAttention.NOTICE;
+		}
+		return DialogueAttention.NONE;
 	}
 
 	private static boolean isLeave(DialogueOption option) {

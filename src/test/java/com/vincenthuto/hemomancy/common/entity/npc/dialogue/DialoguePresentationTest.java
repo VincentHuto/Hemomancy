@@ -49,13 +49,14 @@ class DialoguePresentationTest {
 	void treePresentationRoundTripsAcrossNetwork() {
 		DialogueTopic topic = new DialogueTopic("quests/sample", DialogueCategory.QUESTS,
 				"title", "summary", "quest", id("icons/quest"), DialogueTopicState.TURN_IN,
-				"assignments", new DialogueProgress(3, 3, "reward"), id("sample_item"), true);
+				"assignments", new DialogueProgress(3, 3, "reward"), id("sample_item"), true,
+				DialogueAttention.URGENT);
 		DialogueTree original = DialogueTree.builder("speaker", id("portrait"), 7)
 				.presentation(DialoguePresentation.hub(id("alchemist"), id("alchemist"), List.of(topic)))
 				.addNode(new DialogueNode("root", List.of("line"), List.of(
 						new DialogueOption("claim", null, "event",
 								new DialogueOptionPresentation(id("icons/reward"), "detail", true,
-										DialogueOptionStyle.EMPHASIZED)))))
+										DialogueOptionStyle.EMPHASIZED, DialogueAttention.URGENT)))))
 				.build();
 		FriendlyByteBuf buffer = new FriendlyByteBuf(Unpooled.buffer());
 		original.toNetwork(buffer);

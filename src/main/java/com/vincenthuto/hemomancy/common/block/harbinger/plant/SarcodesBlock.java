@@ -6,7 +6,6 @@ import com.vincenthuto.hemomancy.common.init.BlockInit;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
 import net.minecraft.core.Holder;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.effect.MobEffect;
@@ -14,7 +13,6 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.FlowerBlock;
 import net.minecraft.world.level.block.state.BlockState;
-import net.neoforged.neoforge.common.util.TriState;
 
 /**
  * Sarcodes (Sarcodes sanguinea) — a striking, bright-red myco-heterotroph.
@@ -33,15 +31,10 @@ public class SarcodesBlock extends FlowerBlock {
 	public boolean canSurvive(BlockState state, LevelReader level, BlockPos pos) {
 		BlockPos below = pos.below();
 		BlockState belowState = level.getBlockState(below);
-		if (state.getBlock() == this) {
-			boolean supportsPlant = belowState.canSustainPlant(level, below, Direction.UP,
-					this.defaultBlockState()) == TriState.TRUE;
-			return supportsPlant
-					|| belowState.getBlock() == BlockInit.erythrocytic_mycelium.get()
-					|| belowState.getBlock() == BlockInit.infested_wood.get()
-					|| belowState.is(net.minecraft.world.level.block.Blocks.MYCELIUM);
-		}
-		return this.mayPlaceOn(belowState, level, below);
+		return super.canSurvive(state, level, pos)
+				|| belowState.getBlock() == BlockInit.erythrocytic_mycelium.get()
+				|| belowState.getBlock() == BlockInit.infested_wood.get()
+				|| belowState.is(net.minecraft.world.level.block.Blocks.MYCELIUM);
 	}
 
 	@Override

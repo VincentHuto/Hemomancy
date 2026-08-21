@@ -10,8 +10,6 @@ import java.util.List;
 
 /** Adds stage-appropriate Observance work to an Unstained NPC's normal dialogue. */
 public final class UnstainedObservanceDialogueDecorator {
-	private static final String NODE_ID = "directed_observances";
-
 	private UnstainedObservanceDialogueDecorator() {
 	}
 
@@ -33,33 +31,42 @@ public final class UnstainedObservanceDialogueDecorator {
 		if (visible.isEmpty()) {
 			return tree;
 		}
-
 		DialogueNode start = tree.getStartNode();
-		List<DialogueOption> startOptions = new ArrayList<>(start.options());
-		startOptions.add(startOptions.size() > 0 ? startOptions.size() - 1 : 0,
-				new DialogueOption("hemomancy.dialogue.unstained.option.observances", NODE_ID, null));
-
-		List<DialogueOption> taskOptions = new ArrayList<>();
-		for (UnstainedObservances.Observance observance : visible) {
-			taskOptions.add(new DialogueOption(optionKey(observance), null, observance.eventId()));
+		List<DialogueOption> startOptions = new ArrayList<>();
+		for (DialogueOption option : start.options()) {
+			if (UnstainedObservances.Observance.fromEventId(option.eventId()) == null) startOptions.add(option);
 		}
-		taskOptions.add(new DialogueOption("hemomancy.dialogue.zealot.option.leave", null, null));
+		int insertIndex = startOptions.size() > 0 ? startOptions.size() - 1 : 0;
+		for (UnstainedObservances.Observance observance : visible) {
+			boolean accepted = (progress.getAcceptedObservances() & observance.mask()) != 0;
+			DialogueAttention attention = observanceAttention(accepted,
+					accepted && UnstainedObservances.isReady(player, observance));
+			startOptions.add(insertIndex++, new DialogueOption(optionKey(observance), null, observance.eventId(),
+					attention == DialogueAttention.NONE ? DialogueOptionPresentation.normal()
+							: DialogueOptionPresentation.attention(attention)));
+		}
 
 		var nodes = new LinkedHashMap<>(tree.nodes());
 		nodes.put(start.id(), new DialogueNode(start.id(), start.lines(), List.copyOf(startOptions)));
-		nodes.put(NODE_ID, new DialogueNode(NODE_ID,
-				List.of("hemomancy.dialogue.unstained.observances.line1"), List.copyOf(taskOptions)));
 		return new DialogueTree(tree.speakerName(), tree.speakerIcon(), tree.startNodeId(), nodes,
 				tree.entityId(), tree.theme(), tree.presentation());
 	}
 
+	static DialogueAttention observanceAttention(boolean accepted, boolean ready) {
+		return ready ? DialogueAttention.URGENT : accepted ? DialogueAttention.NONE : DialogueAttention.NOTICE;
+	}
+
 	private static String optionKey(UnstainedObservances.Observance observance) {
 		return switch (observance) {
+			case GATHER_GHOST_PIPE -> "hemomancy.dialogue.acolyte.option.task_gather";
+			case WEAVE_WREATH -> "hemomancy.dialogue.acolyte.option.task_wreath";
+			case PREPARE_HEMOLYTIC -> "hemomancy.dialogue.acolyte.option.task_hemolytic";
+			case CONSECRATE_COPPER -> "hemomancy.dialogue.acolyte.option.task_consecrate";
+			case OFFER_CHALICE -> "hemomancy.dialogue.acolyte.option.task_chalice";
 			case CONDENSE_STILL_WATERS -> "hemomancy.dialogue.zealot.option.task_still_waters";
 			case BEAR_PALLID_ICON -> "hemomancy.dialogue.zealot.option.task_pallid_icon";
 			case PLATE_THE_WARD -> "hemomancy.dialogue.guardian.option.task_plating";
 			case RING_THE_PALE_WATCH -> "hemomancy.dialogue.guardian.option.task_bell";
-			default -> throw new IllegalArgumentException("Unsupported non-NPC observance " + observance);
 		};
 	}
 }

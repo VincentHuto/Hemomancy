@@ -1540,6 +1540,8 @@
   "hemomancy.item.sanguine_conduit.tooltip.unlocked": "Drive it into the ground — an oath-post for your covenant.",
   "hemomancy.item.sanguine_conduit.tooltip.unlocked_hint": "Right-click a surface to plant. Breaking it recovers the conduit.",
   "hemomancy.jei.blood_crafting": "Blood Structure Crafting",
+  "hemomancy.jei.blood_infusion": "Blood Infusion",
+  "hemomancy.jei.blood_infusion.cost": "%s Blood",
   "hemomancy.jei.enzyme_fruiting": "Enzyme Fruiting",
   "hemomancy.jei.hematic_armature": "Hematic Armature",
   "hemomancy.jei.living_weapon_graft": "Living Weapon Grafts",

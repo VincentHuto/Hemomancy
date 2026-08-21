@@ -9,6 +9,7 @@ import org.lwjgl.glfw.GLFW;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.DialogueCategory;
+import com.vincenthuto.hemomancy.common.entity.npc.dialogue.DialogueAttentionResolver;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.DialogueNode;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.DialogueOption;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.DialogueScreenMode;
@@ -63,6 +64,11 @@ public final class DialogueScreen extends Screen {
 		this.navigation = tree.presentation().mode() == DialogueScreenMode.TOPIC_HUB
 				? DialogueNavigationState.hub()
 				: DialogueNavigationState.focused(tree.startNodeId());
+		DialogueTopic attentionTopic = DialogueAttentionResolver.topic(tree.presentation());
+		if (attentionTopic != null && tree.getNode(attentionTopic.targetNodeId()) != null) {
+			navigation.openCategory(attentionTopic.category());
+			openTopic(attentionTopic);
+		}
 	}
 
 	public static void open(DialogueTree tree) {

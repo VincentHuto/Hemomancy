@@ -8,6 +8,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 import org.junit.jupiter.api.Test;
 
@@ -63,6 +65,13 @@ class FieldMycologyResourceTest {
 	}
 
 	@Test
+	void sarcodesRetainsVanillaGrassSurvival() throws IOException {
+		String source = Files.readString(Path.of("src/main/java/com/vincenthuto/hemomancy/common/block/harbinger/plant/SarcodesBlock.java"));
+		assertTrue(source.contains("super.canSurvive(state, level, pos)"),
+				"Sarcodes must retain FlowerBlock survival for grass and other dirt-tag soils");
+	}
+
+	@Test
 	void overworldBiomeModifierMakesFieldFungiReachable() throws IOException {
 		JsonObject modifier = resourceJson("data/hemomancy/neoforge/biome_modifier/add_field_fungi.json");
 		assertEquals("#minecraft:is_overworld", modifier.get("biomes").getAsString());
@@ -75,11 +84,33 @@ class FieldMycologyResourceTest {
 		for (String feature : new String[] { "small_infected_fungus", "stink_horns", "sarcodes" }) {
 			JsonArray placement = resourceJson("data/hemomancy/worldgen/placed_feature/" + feature + ".json")
 					.getAsJsonArray("placement");
-			JsonObject count = placement.get(3).getAsJsonObject();
-			assertEquals("minecraft:count", count.get("type").getAsString());
-			assertTrue(count.get("count").isJsonPrimitive(), feature + " must always attempt placement");
-			assertEquals(1, count.get("count").getAsInt(), feature + " must not add a second zero-attempt roll");
+			boolean hasUnitCount = false;
+			for (var modifier : placement) {
+				JsonObject object = modifier.getAsJsonObject();
+				if ("minecraft:count".equals(object.get("type").getAsString())
+						&& object.get("count").isJsonPrimitive() && object.get("count").getAsInt() == 1) {
+					hasUnitCount = true;
+				}
+			}
+			assertTrue(hasUnitCount, feature + " must not add a second zero-attempt roll");
 		}
+	}
+
+	@Test
+	void allHemomancyFloraPlacementDensityIsTripled() throws IOException {
+		for (String feature : new String[] { "bleeding_hearts", "small_infected_fungus", "stink_horns",
+				"lethean_poppies", "ghost_pipes", "sarcodes", "rafflesia", "devils_tooth", "mycelium_blob" }) {
+			assertLiteralCount(feature, 1, 3);
+		}
+
+		JsonObject hyphaeCount = placement("patch_hyphae").get(0).getAsJsonObject();
+		assertEquals(15, hyphaeCount.get("below_noise").getAsInt());
+		assertEquals(30, hyphaeCount.get("above_noise").getAsInt());
+		assertLiteralCount("huge_fungus", 0, 12);
+		assertLiteralCount("hyphae_tendril", 0, 96);
+		assertWeightedCounts("mushroom/canopy_mushrooms_sparse", 9, 12);
+		assertWeightedCounts("mushroom/canopy_mushrooms_dense", 15, 18);
+		assertLiteralCount("erythrocoral_reef", 0, 18);
 	}
 
 	@Test
@@ -140,6 +171,24 @@ class FieldMycologyResourceTest {
 
 	private static JsonObject resourceJson(String path) throws IOException {
 		return JsonParser.parseString(resourceText(path)).getAsJsonObject();
+	}
+
+	private static JsonArray placement(String feature) throws IOException {
+		return resourceJson("data/hemomancy/worldgen/placed_feature/" + feature + ".json")
+				.getAsJsonArray("placement");
+	}
+
+	private static void assertLiteralCount(String feature, int index, int expected) throws IOException {
+		JsonObject count = placement(feature).get(index).getAsJsonObject();
+		assertEquals("minecraft:count", count.get("type").getAsString(), feature);
+		assertEquals(expected, count.get("count").getAsInt(), feature);
+	}
+
+	private static void assertWeightedCounts(String feature, int first, int second) throws IOException {
+		JsonArray distribution = placement(feature).get(0).getAsJsonObject().getAsJsonObject("count")
+				.getAsJsonArray("distribution");
+		assertEquals(first, distribution.get(0).getAsJsonObject().get("data").getAsInt(), feature);
+		assertEquals(second, distribution.get(1).getAsJsonObject().get("data").getAsInt(), feature);
 	}
 
 	private static String resourceText(String path) throws IOException {

@@ -216,7 +216,9 @@ dependencies {
     implementation files ("libs/dummmmmmy-1.21-2.0.12-neoforge.jar")
 
     implementation files ("libs/theoneprobe-1.21_neo-12.0.8.jar")
-    implementation files ("libs/mna-3.1.11-neoforge.1.21.1.0.jar")
+    // implementation files ("libs/mna-3.1.11-neoforge.1.21.1.0.jar")
+    //implementation "software.bernie.geckolib:geckolib-neoforge-${minecraft_version}:${geckolib_version}"
+    //  implementation "top.theillusivec4.curios:curios-neoforge:${curios_version}"
 
 
     // Optional client-side LOD testing mod. Disabled for alpha smoke tests because
@@ -227,8 +229,6 @@ dependencies {
     // ── HutosLib – use the local workspace build when available ─────────────────
     implementation "com.vincenthuto.hutoslib:hutoslib:${hutoslib_version}"
 
-    implementation "software.bernie.geckolib:geckolib-neoforge-${minecraft_version}:${geckolib_version}"
-    implementation "top.theillusivec4.curios:curios-neoforge:${curios_version}"
     implementation files("libs/jei-1.21.1-neoforge-19.27.0.340.jar")
 
 

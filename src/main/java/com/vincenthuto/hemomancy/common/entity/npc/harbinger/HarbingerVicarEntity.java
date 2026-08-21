@@ -6,10 +6,12 @@ import com.vincenthuto.hemomancy.common.capability.player.shared.knowledge.disco
 import com.vincenthuto.hemomancy.common.capability.player.shared.knowledge.discovery.LiberKnowledgeHelper;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.IUnstainedProgress;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.DialogueItemInquiryNodes;
+import com.vincenthuto.hemomancy.common.entity.npc.dialogue.DialogueAttention;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.DialogueHubFactory;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.DialogueTree;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.HarbingerRecruitmentRules;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.HarbingerVicarDialogueTrees;
+import com.vincenthuto.hemomancy.common.entity.npc.dialogue.ProgressionDialogueNpc;
 import com.vincenthuto.hemomancy.common.event.HarbingerAdvancementGranter;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.dialogue.OpenDialoguePacket;
@@ -45,7 +47,7 @@ import net.minecraft.world.level.Level;
  *       is offered to an enemy of the Covenant.</li>
  * </ul>
  */
-public class HarbingerVicarEntity extends PathfinderMob {
+public class HarbingerVicarEntity extends PathfinderMob implements ProgressionDialogueNpc {
 
     public final AnimationState idleAnimationState = new AnimationState();
 
@@ -176,29 +178,40 @@ public class HarbingerVicarEntity extends PathfinderMob {
             if (degree >= 1) {
                 grantOrRecoverAssignmentLedger(serverPlayer);
             }
-            DialogueTree tree;
-
-            if (isPurifying(player)) {
-                // Purifying players receive a stern Harbinger warning
-                tree = HarbingerVicarDialogueTrees.purifying(this.getId());
-            } else if (degree >= 7 && hasPomeEmpowerment(player)) {
-                // Archon players with active pome empowerment receive the unsettled reaction
-                tree = HarbingerVicarDialogueTrees.archonPomeEmpowered(this.getId());
-            } else {
-                tree = HarbingerVicarDialogueTrees.forDegree(degree, this.getId(), canShowRecruitment(player, this),
-                        isNpcInPlayerBloodline(player, this), hasAbocipherLiteracy(player),
-                        hasAdvancement(serverPlayer, HarbingerAdvancementGranter.ADV_HERMIT_ROAD_FIRST_REMNANT),
-                        hasAdvancement(serverPlayer, HarbingerAdvancementGranter.ADV_HERMIT_ROAD_REPORTED),
-                        hasAdvancement(serverPlayer, HarbingerAdvancementGranter.ADV_VICAR_MASONS_RESPITE_DIRECTIVE),
-                        FirstBloodcraftAssignment.canClaim(serverPlayer),
-                        FirstBloodcraftAssignment.isClaimed(serverPlayer));
-            }
+            DialogueTree tree = progressionDialogue(serverPlayer);
             tree = DialogueItemInquiryNodes.withInventoryItemInquiries(tree, serverPlayer, "vicar", degree, 0f);
             tree = DialogueHubFactory.decorate(tree, "vicar", serverPlayer);
 
             PacketHandler.sendToPlayer(serverPlayer, new OpenDialoguePacket(tree));
         }
         return InteractionResult.sidedSuccess(player.level().isClientSide);
+    }
+
+    @Override
+    public DialogueTree progressionDialogue(ServerPlayer serverPlayer) {
+        Player player = serverPlayer;
+        int degree = HemoCapabilityAccess.getPlayerDegreeNumber(serverPlayer);
+        if (isPurifying(serverPlayer)) return HarbingerVicarDialogueTrees.purifying(this.getId());
+        if (degree >= 7 && hasPomeEmpowerment(serverPlayer)) {
+            return HarbingerVicarDialogueTrees.archonPomeEmpowered(this.getId());
+        }
+        return HarbingerVicarDialogueTrees.forDegree(degree, this.getId(), canShowRecruitment(player, this),
+                isNpcInPlayerBloodline(player, this), hasAbocipherLiteracy(serverPlayer),
+                hasAdvancement(serverPlayer, HarbingerAdvancementGranter.ADV_HERMIT_ROAD_FIRST_REMNANT),
+                hasAdvancement(serverPlayer, HarbingerAdvancementGranter.ADV_HERMIT_ROAD_REPORTED),
+                hasAdvancement(serverPlayer, HarbingerAdvancementGranter.ADV_VICAR_MASONS_RESPITE_DIRECTIVE),
+                FirstBloodcraftAssignment.canClaim(serverPlayer), FirstBloodcraftAssignment.isClaimed(serverPlayer));
+    }
+
+    @Override
+    public String progressionDialogueId() {
+        return "vicar";
+    }
+
+    @Override
+    public DialogueAttention progressionAttention(ServerPlayer player) {
+        return hasClarityUnlocked(player) ? DialogueAttention.NONE
+                : ProgressionDialogueNpc.super.progressionAttention(player);
     }
 
     private void grantOrRecoverAssignmentLedger(ServerPlayer player) {

@@ -6,6 +6,7 @@ import com.vincenthuto.hemomancy.common.entity.npc.dialogue.DialogueItemInquiryN
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.DialogueHubFactory;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.DialogueTree;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.HarbingerMnemonistDialogueTrees;
+import com.vincenthuto.hemomancy.common.entity.npc.dialogue.ProgressionDialogueNpc;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.HarbingerRecruitmentRules;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.MnemonistStarterMemoryChoice;
 import com.vincenthuto.hemomancy.common.entity.summon.BoundSummonBehavior;
@@ -36,7 +37,7 @@ import net.minecraft.world.level.Level;
  * The Mnemonist teaches crude memories, active manipulation slots, and the later
  * tools used to order and weave refined memories.
  */
-public class HarbingerMnemonistEntity extends PathfinderMob {
+public class HarbingerMnemonistEntity extends PathfinderMob implements ProgressionDialogueNpc {
 	public final AnimationState idleAnimationState = new AnimationState();
 
 	public HarbingerMnemonistEntity(EntityType<? extends HarbingerMnemonistEntity> type, Level level) {
@@ -89,33 +90,38 @@ public class HarbingerMnemonistEntity extends PathfinderMob {
 				serverPlayer.displayClientMessage(net.minecraft.network.chat.Component.translatable(
 						"hemomancy.dialogue.mnemonist.conductive_mark_recognized"), false);
 			}
-			DialogueTree tree;
-
-			boolean purifying = isPurifying(player);
-			boolean clarity = hasClarityUnlocked(player);
-			boolean claimed = player.getPersistentData().getBoolean(MnemonistStarterMemoryChoice.CLAIM_KEY);
-			boolean canClaimStarter = MnemonistStarterMemoryChoice.canClaim(degree, purifying, clarity, claimed);
-			if (clarity) {
-				tree = HarbingerMnemonistDialogueTrees.clarity(this.getId());
-			} else if (purifying) {
-				tree = HarbingerMnemonistDialogueTrees.purifying(this.getId());
-			} else {
-				tree = HarbingerMnemonistDialogueTrees.forDegree(degree, this.getId(), canShowRecruitment(player, this),
-						isNpcInPlayerBloodline(player, this), canClaimStarter,
-						HarbingerAdvancementGranter.isMnemonistWovenVesselComplete(serverPlayer),
-						BoundSummonBehavior.hasEquippedMorphling(serverPlayer)
-								&& BoundSummonBehavior.hasActiveOwnedTether(serverPlayer),
-						com.vincenthuto.hemomancy.common.mission.cicatrix_anchorite.VeinMasonAssignments.has(serverPlayer,
-								com.vincenthuto.hemomancy.common.mission.cicatrix_anchorite.VeinMasonAssignments.D6_REFERRAL),
-						com.vincenthuto.hemomancy.common.mission.cicatrix_anchorite.VeinMasonAssignments.has(serverPlayer,
-								com.vincenthuto.hemomancy.common.mission.cicatrix_anchorite.VeinMasonAssignments.D6_COUNSEL));
-			}
+			DialogueTree tree = progressionDialogue(serverPlayer);
 			tree = DialogueItemInquiryNodes.withInventoryItemInquiries(tree, serverPlayer, "mnemonist", degree, 0f);
 			tree = DialogueHubFactory.decorate(tree, "mnemonist", serverPlayer);
 
 			PacketHandler.sendToPlayer(serverPlayer, new OpenDialoguePacket(tree));
 		}
 		return InteractionResult.sidedSuccess(player.level().isClientSide);
+	}
+
+	@Override
+	public DialogueTree progressionDialogue(ServerPlayer serverPlayer) {
+		Player player = serverPlayer;
+		int degree = HemoCapabilityAccess.getPlayerDegreeNumber(serverPlayer);
+		boolean purifying = isPurifying(serverPlayer);
+		boolean clarity = hasClarityUnlocked(serverPlayer);
+		boolean claimed = serverPlayer.getPersistentData().getBoolean(MnemonistStarterMemoryChoice.CLAIM_KEY);
+		if (clarity) return HarbingerMnemonistDialogueTrees.clarity(this.getId());
+		if (purifying) return HarbingerMnemonistDialogueTrees.purifying(this.getId());
+		return HarbingerMnemonistDialogueTrees.forDegree(degree, this.getId(), canShowRecruitment(player, this),
+				isNpcInPlayerBloodline(player, this),
+				MnemonistStarterMemoryChoice.canClaim(degree, false, false, claimed),
+				HarbingerAdvancementGranter.isMnemonistWovenVesselComplete(serverPlayer),
+				BoundSummonBehavior.hasEquippedMorphling(serverPlayer) && BoundSummonBehavior.hasActiveOwnedTether(serverPlayer),
+				com.vincenthuto.hemomancy.common.mission.cicatrix_anchorite.VeinMasonAssignments.has(serverPlayer,
+						com.vincenthuto.hemomancy.common.mission.cicatrix_anchorite.VeinMasonAssignments.D6_REFERRAL),
+				com.vincenthuto.hemomancy.common.mission.cicatrix_anchorite.VeinMasonAssignments.has(serverPlayer,
+						com.vincenthuto.hemomancy.common.mission.cicatrix_anchorite.VeinMasonAssignments.D6_COUNSEL));
+	}
+
+	@Override
+	public String progressionDialogueId() {
+		return "mnemonist";
 	}
 
 	private static boolean hasClarityUnlocked(Player player) {

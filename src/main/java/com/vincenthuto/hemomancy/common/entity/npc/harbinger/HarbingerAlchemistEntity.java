@@ -8,6 +8,7 @@ import com.vincenthuto.hemomancy.common.entity.npc.dialogue.DialogueTree;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.ArtificerProgressSnapshot;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.HarbingerAlchemistDialogueTrees;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.HarbingerAlchemistDialogueTrees.HeldSpecimenJar;
+import com.vincenthuto.hemomancy.common.entity.npc.dialogue.ProgressionDialogueNpc;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.HarbingerAlchemistDialogueTrees.RedTaxonomySample;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.HarbingerRecruitmentRules;
 import com.vincenthuto.hemomancy.common.mission.alchemist.FirstSeparationAssignment;
@@ -55,7 +56,7 @@ import net.minecraft.world.level.Level;
  *       and no further engagement.</li>
  * </ul>
  */
-public class HarbingerAlchemistEntity extends PathfinderMob {
+public class HarbingerAlchemistEntity extends PathfinderMob implements ProgressionDialogueNpc {
 
     public final AnimationState idleAnimationState = new AnimationState();
 
@@ -109,34 +110,42 @@ public class HarbingerAlchemistEntity extends PathfinderMob {
                 serverPlayer.displayClientMessage(net.minecraft.network.chat.Component.translatable(
                         "hemomancy.dialogue.alchemist.conductive_mark_recognized"), false);
             }
-            ItemStack held = player.getMainHandItem();
-            DialogueTree tree;
-
-            if (hasClarityUnlocked(player)) {
-                tree = HarbingerAlchemistDialogueTrees.clarity(this.getId());
-            } else if (isPurifying(player)) {
-                tree = HarbingerAlchemistDialogueTrees.purifying(this.getId());
-            } else {
-                RedTaxonomySample heldRedTaxonomySample = degree >= 2 ? findHeldRedTaxonomySample(held) : null;
-                HeldSpecimenJar heldSpecimenJar = degree >= 2 ? findHeldSpecimenJar(held) : null;
-                tree = HarbingerAlchemistDialogueTrees.forDegree(degree, this.getId(), canShowRecruitment(player, this),
-                        isNpcInPlayerBloodline(player, this), heldRedTaxonomySample, heldSpecimenJar,
-                        FirstSeparationAssignment.canBrief(serverPlayer),
-                        FirstSeparationAssignment.canClaim(serverPlayer),
-                        BodyAnswersAssignment.canBrief(serverPlayer),
-                        com.vincenthuto.hemomancy.common.event.HarbingerAdvancementGranter.hasAdvancement(
-                                serverPlayer, BodyAnswersAssignment.ADV_COMPLETE));
-            }
-            tree = HarbingerAlchemistDialogueTrees.withArtificerCorrespondence(tree,
-                    ArtificerProgressSnapshot.from(serverPlayer),
-                    ArtificerAssignments.forkResearchRecordedCount(serverPlayer),
-                    ArtificerAssignments.isForkResearchRewardClaimed(serverPlayer));
+            DialogueTree tree = progressionDialogue(serverPlayer);
             tree = DialogueItemInquiryNodes.withInventoryItemInquiries(tree, serverPlayer, "alchemist", degree, 0f);
             tree = DialogueHubFactory.decorate(tree, "alchemist", serverPlayer);
 
             PacketHandler.sendToPlayer(serverPlayer, new OpenDialoguePacket(tree));
         }
         return InteractionResult.sidedSuccess(player.level().isClientSide);
+    }
+
+    @Override
+    public DialogueTree progressionDialogue(ServerPlayer serverPlayer) {
+        Player player = serverPlayer;
+        int degree = HemoCapabilityAccess.getPlayerDegreeNumber(serverPlayer);
+        DialogueTree tree;
+        if (hasClarityUnlocked(serverPlayer)) {
+            tree = HarbingerAlchemistDialogueTrees.clarity(this.getId());
+        } else if (isPurifying(serverPlayer)) {
+            tree = HarbingerAlchemistDialogueTrees.purifying(this.getId());
+        } else {
+            ItemStack held = serverPlayer.getMainHandItem();
+            RedTaxonomySample heldRedTaxonomySample = degree >= 2 ? findHeldRedTaxonomySample(held) : null;
+            tree = HarbingerAlchemistDialogueTrees.forDegree(degree, this.getId(), canShowRecruitment(player, this),
+                    isNpcInPlayerBloodline(player, this), heldRedTaxonomySample,
+                    degree >= 2 ? findHeldSpecimenJar(held) : null, FirstSeparationAssignment.canBrief(serverPlayer),
+                    FirstSeparationAssignment.canClaim(serverPlayer), BodyAnswersAssignment.canBrief(serverPlayer),
+                    com.vincenthuto.hemomancy.common.event.HarbingerAdvancementGranter.hasAdvancement(
+                            serverPlayer, BodyAnswersAssignment.ADV_COMPLETE));
+        }
+        return HarbingerAlchemistDialogueTrees.withArtificerCorrespondence(tree,
+                ArtificerProgressSnapshot.from(serverPlayer), ArtificerAssignments.forkResearchRecordedCount(serverPlayer),
+                ArtificerAssignments.isForkResearchRewardClaimed(serverPlayer));
+    }
+
+    @Override
+    public String progressionDialogueId() {
+        return "alchemist";
     }
 
     private static RedTaxonomySample findHeldRedTaxonomySample(ItemStack stack) {

@@ -17,6 +17,7 @@ import com.vincenthuto.hemomancy.common.network.capa.harbinger.visceral.Visceral
 import com.vincenthuto.hemomancy.common.network.dialogue.DialogueOptionPacket;
 import com.vincenthuto.hemomancy.common.network.dialogue.DialogueTopicOpenedPacket;
 import com.vincenthuto.hemomancy.common.network.dialogue.OpenDialoguePacket;
+import com.vincenthuto.hemomancy.common.network.dialogue.PacketSyncNpcProgressionMarkers;
 import com.vincenthuto.hemomancy.common.network.discovery.OpenInscriptionPacket;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.BloodCraftingKeyPressPacket;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.BloodFormationKeyPressPacket;
@@ -271,6 +272,8 @@ public class PacketHandler {
 
         // ── Dialogue system ───────────────────────────────────────────────────
         net.playToClient(OpenDialoguePacket.TYPE, OpenDialoguePacket.STREAM_CODEC, OpenDialoguePacket::handle);
+        net.playToClient(PacketSyncNpcProgressionMarkers.TYPE, PacketSyncNpcProgressionMarkers.STREAM_CODEC,
+                PacketSyncNpcProgressionMarkers::handle);
         net.playToServer(DialogueOptionPacket.TYPE, DialogueOptionPacket.STREAM_CODEC, DialogueOptionPacket::handle);
         net.playToServer(DialogueTopicOpenedPacket.TYPE, DialogueTopicOpenedPacket.STREAM_CODEC,
                 DialogueTopicOpenedPacket::handle);

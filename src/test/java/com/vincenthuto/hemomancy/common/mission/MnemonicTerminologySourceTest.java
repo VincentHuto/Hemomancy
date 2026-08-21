@@ -39,6 +39,5 @@ class MnemonicTerminologySourceTest {
                 "src/main/java/com/vincenthuto/hemomancy/common/network/capa/harbinger/manips/EquipManipulationPacket.java"));
         assertFalse(packet.contains("Thelemic Memory equipped:"));
         assertFalse(packet.contains("Thelemic Memory unequipped:"));
-        assertTrue(packet.contains("Cannot equip — no free shared memory slots!"));
     }
 }

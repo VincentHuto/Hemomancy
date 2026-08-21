@@ -14,6 +14,7 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.projectile.AbstractArrow;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.EntityHitResult;
 
@@ -33,7 +34,8 @@ public class BloodNeedleEntity extends AbstractArrow implements CombatWeaponCarr
 	}
 
 	public BloodNeedleEntity(Level worldIn, double x, double y, double z) {
-		super(EntityInit.blood_needle.get(), x, y, z, worldIn, ItemStack.EMPTY, (ItemStack) null);
+		super(EntityInit.blood_needle.get(), x, y, z, worldIn, new ItemStack(Items.ARROW), (ItemStack) null);
+		this.pickup = Pickup.DISALLOWED;
 	}
 
 	public BloodNeedleEntity(Level worldIn, LivingEntity shooter) {
@@ -41,8 +43,9 @@ public class BloodNeedleEntity extends AbstractArrow implements CombatWeaponCarr
 	}
 
 	public BloodNeedleEntity(Level worldIn, LivingEntity shooter, @Nullable ItemStack firedFromWeapon) {
-		super(EntityInit.blood_needle.get(), shooter, worldIn, ItemStack.EMPTY,
+		super(EntityInit.blood_needle.get(), shooter, worldIn, new ItemStack(Items.ARROW),
 				firedFromWeapon != null && !firedFromWeapon.isEmpty() ? firedFromWeapon : null);
+		this.pickup = Pickup.DISALLOWED;
 		this.combatWeaponItem = copyCombatWeapon(firedFromWeapon);
 	}
 
@@ -102,7 +105,7 @@ public class BloodNeedleEntity extends AbstractArrow implements CombatWeaponCarr
 
 	@Override
 	protected ItemStack getDefaultPickupItem() {
-		return ItemStack.EMPTY;
+		return new ItemStack(Items.ARROW);
 	}
 
 	@Override
