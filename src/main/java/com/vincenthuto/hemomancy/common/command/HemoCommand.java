@@ -33,6 +33,7 @@ import com.vincenthuto.hemomancy.common.capability.player.unstained.EnumClarityS
 import com.vincenthuto.hemomancy.common.capability.player.unstained.EnumPurityStage;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.IUnstainedProgress;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.UnstainedProgressEvents;
+import com.vincenthuto.hemomancy.common.capability.player.unstained.UnstainedAccessRules;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.stillart.KnownStillArtEvents;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.organs.EnumOrgan;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.organs.IVisceralOrgans;
@@ -1210,6 +1211,11 @@ public class HemoCommand {
 		source.sendSuccess(() -> Component.literal("")
 				.append(Component.literal(player.getName().getString()).withStyle(ChatFormatting.GOLD))
 				.append(Component.literal(" Unstained Progress:").withStyle(ChatFormatting.WHITE)), false);
+		source.sendSuccess(() -> Component.literal("  Phase: ")
+				.append(Component.literal(UnstainedAccessRules.phase(cap).name()).withStyle(ChatFormatting.AQUA)), false);
+		source.sendSuccess(() -> Component.literal("  Novitiate vows: ")
+				.append(Component.literal(UnstainedAccessRules.completedNovitiateVows(cap.getClaimedObservances()) + "/5")
+						.withStyle(ChatFormatting.WHITE)), false);
 		source.sendSuccess(() -> Component.literal("  Begun: ")
 				.append(Component.literal(String.valueOf(cap.hasBegunPurification()))
 						.withStyle(cap.hasBegunPurification() ? ChatFormatting.GREEN : ChatFormatting.RED)), false);
@@ -1332,15 +1338,7 @@ public class HemoCommand {
 	}
 
 	private static int resetUnstained(CommandSourceStack source, ServerPlayer player) {
-		IUnstainedProgress cap = HemoCapabilityAccess.getUnstainedProgress(player)
-				.orElseThrow(IllegalStateException::new);
-		cap.setBegunPurification(false);
-		cap.setPurity(0);
-		cap.setClarityUnlocked(false);
-		cap.setClarity(0);
-		cap.setAcceptedObservances(0);
-		cap.setClaimedObservances(0);
-		UnstainedProgressEvents.syncProgress(player, cap);
+		PathMutualExclusionHelper.resetUnstainedProgress(player);
 		source.sendSuccess(() -> Component.literal("Reset ")
 				.append(Component.literal(player.getName().getString()).withStyle(ChatFormatting.GOLD))
 				.append(Component.literal(" unstained progress to zero").withStyle(ChatFormatting.YELLOW)),
@@ -1351,10 +1349,19 @@ public class HemoCommand {
 	private static int maxUnstained(CommandSourceStack source, ServerPlayer player) {
 		IUnstainedProgress cap = HemoCapabilityAccess.getUnstainedProgress(player)
 				.orElseThrow(IllegalStateException::new);
-		cap.setBegunPurification(true);
+		cap.setBegunPurification(false);
 		cap.setPurity(100);
+		cap.setBaselineRestored(true);
 		cap.setClarityUnlocked(true);
 		cap.setClarity(100);
+		cap.setInfectionSuppressed(false);
+		cap.setClarityPrepared(false);
+		cap.setAcceptedObservances(UnstainedAccessRules.NOVITIATE_MASK);
+		cap.setClaimedObservances(UnstainedAccessRules.NOVITIATE_MASK);
+		cap.setNovitiateRetortComplete(true);
+		cap.setNovitiateDewProduced(4);
+		cap.setNovitiateBlocksConsecrated(8);
+		cap.setNovitiateProtectionComplete(true);
 		boolean resetHarbinger = PathMutualExclusionHelper.enforceHarbingerResetOnClarity(player, cap);
 		UnstainedProgressEvents.syncProgress(player, cap);
 		source.sendSuccess(() -> Component.literal("Maxed ")

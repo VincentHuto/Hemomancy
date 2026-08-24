@@ -1,0 +1,13 @@
+{
+  "display": {
+    "icon": { "count": 1, "id": "hemomancy:absolution_dagger" },
+    "title": { "translate": "advancements.hemomancy.pledged_unstained.title" },
+    "description": { "translate": "advancements.hemomancy.pledged_unstained.description" },
+    "frame": "goal",
+    "show_toast": true,
+    "announce_to_chat": true
+  },
+  "parent": "hemomancy:hemomancy/path_of_purity",
+  "criteria": { "grant": { "trigger": "minecraft:impossible" } },
+  "requirements": [["grant"]]
+}

@@ -6,6 +6,7 @@ import com.vincenthuto.hemomancy.common.init.BlockInit;
 import com.vincenthuto.hemomancy.common.recipe.BloodStructureOffering;
 import com.vincenthuto.hemomancy.common.recipe.BloodStructureRecipe;
 import com.vincenthuto.hemomancy.common.recipe.RecipeDegreeGates;
+import com.vincenthuto.hemomancy.common.capability.player.unstained.UnstainedAccessRules;
 import com.vincenthuto.hemomancy.common.tile.IronBrazierBlockEntity;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
@@ -55,7 +56,10 @@ public final class BloodStructureCraftingHelper {
 			}
 
 			int requiredDegree = RecipeDegreeGates.getRequiredDegree(recipe);
-			if (!RecipeDegreeGates.playerMeets(player, recipe)) {
+			if (!RecipeDegreeGates.playerMeets(player, recipe)
+					&& !HemoCapabilityAccess.getUnstainedProgress(player)
+							.map(progress -> UnstainedAccessRules.bypassesUnstainedLevelGate(
+									recipe.getId().getPath(), progress)).orElse(false)) {
 				return Optional.of(ProjectionCraftMatch.invalid(recipe, match, missingDegreeMessage(recipe, requiredDegree)));
 			}
 
@@ -268,14 +272,9 @@ public final class BloodStructureCraftingHelper {
 	}
 
 	public static Component checkPathAlignment(Player player, BloodStructureRecipe recipe) {
-		boolean playerIsInitiated = HemoCapabilityAccess.getPlayerDegreeNumber(player) >= 1;
-		boolean playerIsUnstained = HemoCapabilityAccess.getUnstainedProgress(player)
-				.map(u -> u.hasBegunPurification()).orElse(false);
-		if (recipe.isUnstained() && playerIsInitiated) {
-			return Component.literal("The Hematic Order and Unstained path are incompatible.")
-					.withStyle(ChatFormatting.DARK_GRAY, ChatFormatting.ITALIC);
-		}
-		if (!recipe.isUnstained() && playerIsUnstained) {
+		boolean harbingerProgressBlocked = HemoCapabilityAccess.getUnstainedProgress(player)
+				.map(UnstainedAccessRules::blocksHarbingerProgress).orElse(false);
+		if (!recipe.isUnstained() && harbingerProgressBlocked) {
 			return Component.literal("Purification bars access to the Hematic Order formations.")
 					.withStyle(ChatFormatting.DARK_GRAY, ChatFormatting.ITALIC);
 		}

@@ -1,0 +1,35 @@
+{
+  "type": "minecraft:add",
+  "argument1": {
+    "type": "minecraft:y_clamped_gradient",
+    "from_y": -64,
+    "to_y": 200,
+    "from_value": 1.5,
+    "to_value": -1.5
+  },
+  "argument2": {
+    "type": "minecraft:add",
+    "argument1": "hemomancy:continental_shape",
+    "argument2": {
+      "type": "minecraft:add",
+      "argument1": "hemomancy:erosion_shape",
+      "argument2": {
+        "type": "minecraft:mul",
+        "argument1": 1.35,
+        "argument2": {
+          "type": "minecraft:add",
+          "argument1": -0.7,
+          "argument2": {
+            "type": "minecraft:add",
+            "argument1": "hemomancy:colby",
+            "argument2": {
+              "type": "minecraft:mul",
+              "argument1": "hemomancy:colby2",
+              "argument2": "hemomancy:colby3"
+            }
+          }
+        }
+      }
+    }
+  }
+}

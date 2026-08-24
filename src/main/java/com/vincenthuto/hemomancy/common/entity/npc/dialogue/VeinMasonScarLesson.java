@@ -21,14 +21,14 @@ public final class VeinMasonScarLesson {
 	private static final Map<EnumBloodTendency, Lesson> TIER_THREE = new EnumMap<>(EnumBloodTendency.class);
 
 	static {
-		put(EnumBloodTendency.ANIMUS, Items.GOLDEN_APPLE, "heart", ItemInit.scar_heart, "marrow", ItemInit.scar_marrow, "phoenix", ItemInit.scar_phoenix);
-		put(EnumBloodTendency.FLAMMEUS, Items.BLAZE_POWDER, "pyre", ItemInit.scar_pyre, "sol", ItemInit.scar_sol, "corona", ItemInit.scar_corona);
-		put(EnumBloodTendency.DUCTILIS, Items.LEATHER, "feral", ItemInit.scar_feral, "flux", ItemInit.scar_flux, "chimera", ItemInit.scar_chimera);
-		put(EnumBloodTendency.LUX, Items.END_ROD, "halo", ItemInit.scar_halo, "veil", ItemInit.scar_veil, "transcendence", ItemInit.scar_transcendence);
-		put(EnumBloodTendency.MORTEM, Items.FERMENTED_SPIDER_EYE, "blight", ItemInit.scar_blight, "wither", ItemInit.scar_wither, "oblivion", ItemInit.scar_oblivion);
-		put(EnumBloodTendency.CONGEATIO, Items.PACKED_ICE, "rime", ItemInit.scar_rime, "glacier", ItemInit.scar_glacier, "descendence", ItemInit.scar_descendence);
-		put(EnumBloodTendency.FERRIC, Items.IRON_INGOT, "thorn", ItemInit.scar_thorn, "anvil", ItemInit.scar_anvil, "crucible", ItemInit.scar_crucible);
-		put(EnumBloodTendency.TENEBRIS, Items.COAL, "shade", ItemInit.scar_shade, "moon", ItemInit.scar_moon, "eye", ItemInit.scar_eye);
+		put(EnumBloodTendency.ANIMUS, Items.GOLDEN_APPLE, Items.BONE, "heart", ItemInit.scar_heart, "marrow", ItemInit.scar_marrow, "phoenix", ItemInit.scar_phoenix);
+		put(EnumBloodTendency.FLAMMEUS, Items.BLAZE_POWDER, Items.GLOWSTONE_DUST, "pyre", ItemInit.scar_pyre, "sol", ItemInit.scar_sol, "corona", ItemInit.scar_corona);
+		put(EnumBloodTendency.DUCTILIS, Items.LEATHER, Items.SLIME_BALL, "feral", ItemInit.scar_feral, "flux", ItemInit.scar_flux, "chimera", ItemInit.scar_chimera);
+		put(EnumBloodTendency.LUX, Items.END_ROD, Items.ENDER_PEARL, "halo", ItemInit.scar_halo, "veil", ItemInit.scar_veil, "transcendence", ItemInit.scar_transcendence);
+		put(EnumBloodTendency.MORTEM, Items.FERMENTED_SPIDER_EYE, Items.WITHER_ROSE, "blight", ItemInit.scar_blight, "wither", ItemInit.scar_wither, "oblivion", ItemInit.scar_oblivion);
+		put(EnumBloodTendency.CONGEATIO, Items.PACKED_ICE, Items.BLUE_ICE, "rime", ItemInit.scar_rime, "glacier", ItemInit.scar_glacier, "descendence", ItemInit.scar_descendence);
+		put(EnumBloodTendency.FERRIC, Items.IRON_INGOT, Items.IRON_BLOCK, "thorn", ItemInit.scar_thorn, "anvil", ItemInit.scar_anvil, "crucible", ItemInit.scar_crucible);
+		put(EnumBloodTendency.TENEBRIS, Items.COAL, Items.SMOOTH_QUARTZ, "shade", ItemInit.scar_shade, "moon", ItemInit.scar_moon, "eye", ItemInit.scar_eye);
 	}
 
 	private VeinMasonScarLesson() {
@@ -83,11 +83,11 @@ public final class VeinMasonScarLesson {
 		return lessons.get(rank <= 0 ? best : second);
 	}
 
-	private static void put(EnumBloodTendency tendency, Item catalyst,
+	private static void put(EnumBloodTendency tendency, Item catalyst, Item tierTwoCatalyst,
 			String one, DeferredHolder<Item, Item> oneItem, String two, DeferredHolder<Item, Item> twoItem,
 			String three, DeferredHolder<Item, Item> threeItem) {
 		TIER_ONE.put(tendency, lesson("scar_" + one, catalyst, oneItem));
-		TIER_TWO.put(tendency, lesson("scar_" + two, catalyst, twoItem));
+		TIER_TWO.put(tendency, lesson("scar_" + two, tierTwoCatalyst, twoItem));
 		TIER_THREE.put(tendency, lesson("scar_" + three, catalyst, threeItem));
 	}
 

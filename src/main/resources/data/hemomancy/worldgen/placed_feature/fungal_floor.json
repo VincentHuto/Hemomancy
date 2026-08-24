@@ -1,0 +1,8 @@
+{
+  "feature": "hemomancy:fungal_floor",
+  "placement": [
+    {
+      "type": "minecraft:biome"
+    }
+  ]
+}

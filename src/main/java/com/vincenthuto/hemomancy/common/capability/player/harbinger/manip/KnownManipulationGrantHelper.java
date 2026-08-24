@@ -2,6 +2,7 @@ package com.vincenthuto.hemomancy.common.capability.player.harbinger.manip;
 
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
+import com.vincenthuto.hemomancy.common.capability.player.unstained.UnstainedAccessRules;
 import com.vincenthuto.hemomancy.common.init.ManipulationInit;
 import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
 import com.vincenthuto.hemomancy.common.manipulation.ManipLevel;
@@ -44,6 +45,10 @@ public final class KnownManipulationGrantHelper {
 			Item memoryItem) {
 		if (player == null || manipulation == null || manipulation == BloodManipulation.BLANK) {
 			return new MemoryGrantResult(MemoryGrantStatus.INVALID, manipulation, 0);
+		}
+		if (HemoCapabilityAccess.getUnstainedProgress(player)
+				.map(UnstainedAccessRules::blocksHarbingerProgress).orElse(false)) {
+			return new MemoryGrantResult(MemoryGrantStatus.NO_ACTIVE_BLOOD, manipulation, 0);
 		}
 		if (ManipulationRetirementRules.isRetiredManipulation(manipulation)
 				|| (memoryItem != null && ManipulationRetirementRules.isRetiredMemoryItem(memoryItem, manipulation))) {
@@ -119,6 +124,8 @@ public final class KnownManipulationGrantHelper {
 
 	public static boolean grantDegreeOneUtilities(ServerPlayer player) {
 		if (player == null || HemoCapabilityAccess.getPlayerDegreeNumber(player) < 1) return false;
+		if (HemoCapabilityAccess.getUnstainedProgress(player)
+				.map(UnstainedAccessRules::blocksHarbingerProgress).orElse(false)) return false;
 		return HemoCapabilityAccess.getKnownManipulations(player)
 				.map(known -> {
 					int maxSlots = ManipSlotHelper.getMaxSlots(player);

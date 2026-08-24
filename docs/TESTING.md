@@ -29,18 +29,42 @@ This profile stores its world and client settings under `run-alpha-journey`, sep
 Run the checkpoint journey as an operator:
 
 ```text
-/hemo test journey start
-/hemo test journey status
-/hemo test journey next
-/hemo test journey reset
+/hemo test journey harbinger start
+/hemo test journey harbinger status
+/hemo test journey harbinger next
+/hemo test journey harbinger reset
 /hemo test clear
 ```
 
-`journey start` captures the player's pre-journey state, resets the player to the starting conditions, and prepares the first checkpoint. At each checkpoint, perform the requested gameplay action, use `journey status` to inspect the current requirements, then use `journey next` to verify them and advance. The current journey continues through the Rite of the Votary and First Separation: accept the Alchemist briefing and its two empty Blood Vials; load the supplied Glass Bottle and Copper Ingot into the two empty Iron Braziers; light both with Blood Projection; craft and place the Vial Centrifuge; sample the two fixture cows without damaging them; load the two sampled vials in opposing slots; start and wait for the normal spin; extract that spin's Vivacious Enzyme; then claim the Living Syringe and initialized eight-vial rack. If verification fails, remain at that checkpoint, correct the unmet requirement, and run `journey next` again. After all checkpoints pass and the journey reports `complete`, run `journey next` once more to remove the fixtures and restore the captured state automatically.
+`journey harbinger start` captures the player's pre-journey state, resets the player to the starting conditions, and prepares the first checkpoint. At each checkpoint, perform the requested gameplay action, use `journey harbinger status` to inspect the current requirements, then use `journey harbinger next` to verify them and advance. The route runs from Sanguine Initiation through Degree 8 Apotheos. It includes the First Remnant and Vicar report, every rank-up rite, First Separation, The Body Answers, Red Taxonomy, Living Bestiary, Hyphae discovery, Enzyme Mastery, First Culture, Woven Vessel, first Noetic mark recognition, all five Artificer assignments, the Vein-Mason D4-D6 route, Founding Fane, Living Covenant, and Qliphoth Communion. Fixtures supply the exact machine, ingredients, entities, or loadout needed for the next real gameplay trigger; they do not directly award the checkpoint outcome.
 
-`journey reset` removes journey-owned fixture output, clears active potion effects acquired during the run (including Blood Drunkenness), and restarts at the first checkpoint while retaining the original snapshot. `/hemo test clear` exits the journey, removes its fixtures, and restores the snapshot captured by `journey start`. Run it before returning to other manual testing. `alphaCheck` remains the automated JVM and dedicated GameTest gate; this isolated client workflow is the operator-driven complement, not a replacement.
+The Three Answers also includes its optional Barbed research correspondence. Capture the supplied Barbed Urchin, Desiccant, and Venom-Rib Centipede in separate hotbar jars, ask the marked Alchemist to record each filled jar, then claim the research reward. Weight of the Frame continues after the Archon rite through a real Monolithic Armature upgrade, Edacious inspection, Bloodburst activation, and fitting. After that, consume the nine supplied same-bloom Qliphoth pomes, choose the Eighth Degree in the opened fungal revelation, and invoke the prepared Apotheos grand station. Grand ceremonies are accelerated only after their real station match and activation succeeds.
+
+After the Sanctified rite, run `journey harbinger next` once to enter the Chamber of Will through the real Degree-6 rite visit and again to return. Right-click the supplied Covenant Throne once, then advance to the Covenant Vigil. Invoke the prepared real Vigil with the Living Staff, run `journey harbinger next` to fill its owned anchors, enter inscription, assign the marked Vicar through the bloodline ally service, and fast-complete the ordeal, then run `journey harbinger next` once more to verify both the Vigil and Living Covenant milestones. This deliberately skips the 60-second combat ordeal while retaining station matching, rite activation, helper eligibility, completion rewards, and chapter closure. The dedicated GameTest server does not load the Chamber dimension, so its transition remains a live-client check; throne binding, Vigil activation/completion, helper rewards, and exact restoration of respawn and Chamber flags are automated. Any original bloodline, per-dimension Fane records, respawn binding, Chamber attunement flags, Muscle Memory state, recipe-book knowledge, Living Bestiary catalogue, Artificer persistent assignment keys, full initiatory-degree state, and base blood tendency are restored on reset/clear. If verification fails, remain at that checkpoint, correct the unmet requirement, and run `journey harbinger next` again. After all checkpoints pass and the journey reports `complete`, run `journey harbinger next` once more to remove the fixtures and restore the captured state automatically.
+
+The route performs the real Living Staff blood-structure craft and all Artificer, Mnemonist, Alchemist, Vicar, and Vein-Mason progression used by the chosen Barbed/Edacious path. Discovery coverage includes a loaded blood-echo inscription, item-pickup discovery, dialogue, rite, degree, and advancement-backed Liber unlocks exercised naturally by the route. It does not enumerate all 30 authored inscriptions or alternate armor forks; those share the tested loaders and trigger paths. The current dedicated server gate passes all 119 required GameTests. The remaining completion gate is the live-client smoke pass, especially dialogue screens, keybind-driven actions, the Chamber transition, rendering, and the full command-to-command operator flow.
+
+`journey harbinger reset` removes journey-owned fixture output, clears active potion effects acquired during the run (including Blood Drunkenness), and restarts at the first checkpoint while retaining the original snapshot. `/hemo test clear` exits either journey, removes its fixtures, and restores the snapshot captured by its `start` command. Run it before returning to other manual testing. `alphaCheck` remains the automated JVM and dedicated GameTest gate; this isolated client workflow is the operator-driven complement, not a replacement.
 
 The controller stores the fixture dimension with its origin. Invoking `next`, `reset`, or `clear` after traveling to another dimension still operates on the original fixture level; stage transitions and resets return the player there safely. `status` inspects that stored level without moving the player. If the saved dimension is unavailable, the command reports its exact resource key instead of touching the current dimension.
+
+## Manual UNSTAINED journey
+
+Use the same isolated client and an operator account:
+
+```text
+/hemo test journey unstained cure start
+/hemo test journey unstained novitiate start
+/hemo test journey unstained start
+/hemo test journey unstained status
+/hemo test journey unstained next
+/hemo test journey unstained reset
+/hemo test clear
+```
+
+The cure route proceeds from genuine blood suppression through degree-scaled Lethean Baptism, treatment Observances, full Purity, irreversible Closed Vein cleansing, Clarity preparation, and the Clarity Ascension pledge. The novitiate route exercises all five healthy service vows with the real Retort, Condenser, consecration, protective rite, Podium, and pledge actions. Both routes retain snapshot restoration; the original `journey unstained start` remains a cure-route alias. Post-pledge checkpoints continue through Glass Lungs, the Pale Vigil, Moon-Washed Copper, the Pale Watch, Resolute Still Arts, Enlightenment, and Lethean Font.
+
+The fixtures shorten passive Purity and Clarity accumulation by positioning the player immediately before the next proof. They do not claim the proof: the player must still use the real Podium, complete the real rite, work the real Condenser, interact with the correct NPC dialogue, surrender the required offering, and receive the real milestone reward. Failed verification stays on the current checkpoint. A failed fixture transition latches the completed checkpoint so retrying `journey unstained next` does not consume or perform it twice.
 
 ## Field mycology smoke test
 

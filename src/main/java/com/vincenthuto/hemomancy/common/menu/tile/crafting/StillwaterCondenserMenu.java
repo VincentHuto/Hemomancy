@@ -13,6 +13,8 @@ import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.server.level.ServerPlayer;
+import com.vincenthuto.hemomancy.common.mission.unstained.UnstainedObservances;
 
 import java.util.Objects;
 
@@ -48,7 +50,14 @@ public class StillwaterCondenserMenu extends AbstractContainerMenu {
 		addSlot(new Slot(be, StillwaterCondenserBlockEntity.SLOT_BOTTLES, 46, 35) {
 			@Override public boolean mayPlace(ItemStack stack) { return stack.is(Items.GLASS_BOTTLE); }
 		});
-		addSlot(new FurnaceResultSlot(inventory.player, be, StillwaterCondenserBlockEntity.SLOT_DEW, 116, 35));
+		addSlot(new FurnaceResultSlot(inventory.player, be, StillwaterCondenserBlockEntity.SLOT_DEW, 116, 35) {
+			@Override public void onTake(Player player, ItemStack stack) {
+				if (player instanceof ServerPlayer serverPlayer && stack.getCount() > 0) {
+					UnstainedObservances.recordDewProduced(serverPlayer, stack.getCount());
+				}
+				super.onTake(player, stack);
+			}
+		});
 		for (int row = 0; row < 3; row++) for (int col = 0; col < 9; col++)
 			addSlot(new Slot(inventory, col + row * 9 + 9, 8 + col * 18, 84 + row * 18));
 		for (int col = 0; col < 9; col++) addSlot(new Slot(inventory, col, 8 + col * 18, 142));

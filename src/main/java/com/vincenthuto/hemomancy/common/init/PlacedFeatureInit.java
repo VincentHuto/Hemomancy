@@ -22,6 +22,7 @@ import java.util.List;
 public class PlacedFeatureInit {
 	public static final ResourceKey<PlacedFeature> HYPHAE_TENDRIL = createKey("hyphae_tendril");
 	public static final ResourceKey<PlacedFeature> VENOUS_RIDGE = createKey("venous_ridge");
+	public static final ResourceKey<PlacedFeature> FUNGAL_FLOOR = createKey("fungal_floor");
 	public static final ResourceKey<PlacedFeature> HUGE_FUNGUS = createKey("huge_fungus");
 	public static final ResourceKey<PlacedFeature> SMALL_INFECTED_FUNGUS = createKey("small_infected_fungus");
 	public static final ResourceKey<PlacedFeature> PATCH_HYPHAE = createKey("patch_hyphae");
@@ -81,6 +82,8 @@ public class PlacedFeatureInit {
 
 		final Holder<ConfiguredFeature<?, ?>> VENOUS_RIDGE = configuredFeatureGetter
 				.getOrThrow(ConfiguredFeatureInit.VENOUS_RIDGE);
+		final Holder<ConfiguredFeature<?, ?>> FUNGAL_FLOOR = configuredFeatureGetter
+				.getOrThrow(ConfiguredFeatureInit.FUNGAL_FLOOR);
 
 		final Holder<ConfiguredFeature<?, ?>> HUGE_FUNGUS = configuredFeatureGetter
 				.getOrThrow(ConfiguredFeatureInit.HUGE_FUNGUS);
@@ -194,6 +197,7 @@ public class PlacedFeatureInit {
 
 		register(context, PlacedFeatureInit.HYPHAE_TENDRIL, HYPHAE_TENDRIL, List.of(CountPlacement.of(96),
 				InSquarePlacement.spread(), PlacementUtils.FULL_RANGE, BiomeFilter.biome()));
+		register(context, PlacedFeatureInit.FUNGAL_FLOOR, FUNGAL_FLOOR, BiomeFilter.biome());
 		register(context, PlacedFeatureInit.VENOUS_RIDGE, VENOUS_RIDGE, List.of(CountPlacement.of(3),
 				InSquarePlacement.spread(), PlacementUtils.HEIGHTMAP_OCEAN_FLOOR, BiomeFilter.biome()));
 		register(context, PlacedFeatureInit.HUGE_FUNGUS, HUGE_FUNGUS, List.of(CountPlacement.of(12),

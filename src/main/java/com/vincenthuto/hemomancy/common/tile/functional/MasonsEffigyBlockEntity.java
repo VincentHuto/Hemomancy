@@ -1,6 +1,6 @@
 package com.vincenthuto.hemomancy.common.tile.functional;
 
-import com.vincenthuto.hemomancy.client.particle.factory.BloodCellParticleFactory;
+import com.vincenthuto.hemomancy.client.particle.data.BloodCellData;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.event.HarbingerAdvancementGranter;
@@ -177,7 +177,7 @@ public class MasonsEffigyBlockEntity extends BlockEntity implements MenuProvider
 			patternEntity.setDefaultPickUpDelay();
 			level.addFreshEntity(patternEntity);
 			HLParticleUtils.spawnPoof(serverLevel, worldPosition.above(),
-					BloodCellParticleFactory.createData(ParticleColor.BLOOD));
+					new BloodCellData(com.vincenthuto.hemomancy.common.init.ParticleInit.blood_cell.get(), ParticleColor.BLOOD));
 			PacketHandler.sendSanguineOmenEffect(Vec3.atCenterOf(worldPosition).add(0.0D, 0.25D, 0.0D), 18.0D,
 					serverLevel, 24, 0.35F);
 			level.playSound(null, worldPosition, SoundEvents.RESPAWN_ANCHOR_CHARGE, SoundSource.BLOCKS, 0.8F, 0.65F);

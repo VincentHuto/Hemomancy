@@ -21,6 +21,26 @@ public interface IUnstainedProgress {
 
 	void setClarityPrepared(boolean prepared);
 
+	boolean isBaselineRestored();
+
+	void setBaselineRestored(boolean restored);
+
+	boolean isNovitiateRetortComplete();
+
+	void setNovitiateRetortComplete(boolean complete);
+
+	int getNovitiateDewProduced();
+
+	void setNovitiateDewProduced(int amount);
+
+	int getNovitiateBlocksConsecrated();
+
+	void setNovitiateBlocksConsecrated(int amount);
+
+	boolean isNovitiateProtectionComplete();
+
+	void setNovitiateProtectionComplete(boolean complete);
+
 	boolean isAnnettaSeveranceUnlocked();
 
 	void setAnnettaSeveranceUnlocked(boolean unlocked);

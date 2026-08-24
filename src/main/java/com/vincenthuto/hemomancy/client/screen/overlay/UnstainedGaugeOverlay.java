@@ -7,6 +7,8 @@ import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.EnumClarityStage;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.EnumPurityStage;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.IUnstainedProgress;
+import com.vincenthuto.hemomancy.common.capability.player.unstained.UnstainedAccessRules;
+import com.vincenthuto.hemomancy.common.capability.player.unstained.UnstainedPhase;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
@@ -89,7 +91,7 @@ public class UnstainedGaugeOverlay {
 		float animationTime = getAnimationTime(partialTicks);
 
 		HemoCapabilityAccess.getUnstainedProgress(player).ifPresent(cap -> {
-			if (!cap.hasBegunPurification()) return;
+			if (UnstainedAccessRules.phase(cap) == UnstainedPhase.OUTSIDER) return;
 			renderGauge(gfx, screenWidth, screenHeight, player, cap, animationTime);
 		});
 	}
@@ -105,8 +107,21 @@ public class UnstainedGaugeOverlay {
 		EnumPurityStage purityStage = EnumPurityStage.byPurity(purity);
 		EnumClarityStage clarityStage = EnumClarityStage.byClarity(clarity);
 
-		String title = clarityUnlocked ? clarityStage.getTitle() : purityStage.getTitle();
-		String percent = clarityUnlocked ? String.format("Clarity %.0f%%", clarity) : String.format("Purity %.0f%%", purity);
+		UnstainedPhase phase = UnstainedAccessRules.phase(cap);
+		String title = switch (phase) {
+			case NOVITIATE -> "Novitiate";
+			case CURE_READY -> "Cure Ready";
+			case CLEANSED_UNPLEDGED -> "Cleansed";
+			case PLEDGED -> clarityStage.getTitle();
+			default -> purityStage.getTitle();
+		};
+		String percent = switch (phase) {
+			case NOVITIATE -> "Vows " + UnstainedAccessRules.completedNovitiateVows(cap.getClaimedObservances()) + "/5";
+			case CURE_READY -> "Perform Closed Vein";
+			case CLEANSED_UNPLEDGED -> "Prepare the pledge";
+			case PLEDGED -> String.format("Clarity %.0f%%", clarity);
+			default -> String.format("Purity %.0f%%", purity);
+		};
 		int titleColor = clarityUnlocked ? VERDIGRIS : lerpColor(0xFFCC4A4A, 0xFFE6EEF8, purity / 100f);
 		int percentColor = clarityUnlocked ? 0xFF9EDACC : TEXT_DIM;
 

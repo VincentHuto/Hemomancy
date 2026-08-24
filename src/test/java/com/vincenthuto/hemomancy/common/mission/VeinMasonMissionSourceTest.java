@@ -56,14 +56,14 @@ public final class VeinMasonMissionSourceTest {
 				"com/vincenthuto/hemomancy/common/event/HarbingerAdvancementGranter.java"));
 		String lang = read(RESOURCE_ROOT.resolve("assets/hemomancy/lang/en_us.json"));
 
-		assertContains("lesson maps ANIMUS", lesson, "EnumBloodTendency.ANIMUS, Items.GOLDEN_APPLE, \"heart\"");
-		assertContains("lesson maps FLAMMEUS", lesson, "EnumBloodTendency.FLAMMEUS, Items.BLAZE_POWDER, \"pyre\"");
-		assertContains("lesson maps DUCTILIS", lesson, "EnumBloodTendency.DUCTILIS, Items.LEATHER, \"feral\"");
-		assertContains("lesson maps LUX", lesson, "EnumBloodTendency.LUX, Items.END_ROD, \"halo\"");
-		assertContains("lesson maps MORTEM", lesson, "EnumBloodTendency.MORTEM, Items.FERMENTED_SPIDER_EYE, \"blight\"");
-		assertContains("lesson maps CONGEATIO", lesson, "EnumBloodTendency.CONGEATIO, Items.PACKED_ICE, \"rime\"");
-		assertContains("lesson maps FERRIC", lesson, "EnumBloodTendency.FERRIC, Items.IRON_INGOT, \"thorn\"");
-		assertContains("lesson maps TENEBRIS", lesson, "EnumBloodTendency.TENEBRIS, Items.COAL, \"shade\"");
+		assertContains("lesson maps ANIMUS", lesson, "EnumBloodTendency.ANIMUS, Items.GOLDEN_APPLE, Items.BONE");
+		assertContains("lesson maps FLAMMEUS", lesson, "EnumBloodTendency.FLAMMEUS, Items.BLAZE_POWDER, Items.GLOWSTONE_DUST");
+		assertContains("lesson maps DUCTILIS", lesson, "EnumBloodTendency.DUCTILIS, Items.LEATHER, Items.SLIME_BALL");
+		assertContains("lesson maps LUX", lesson, "EnumBloodTendency.LUX, Items.END_ROD, Items.ENDER_PEARL");
+		assertContains("lesson maps MORTEM", lesson, "EnumBloodTendency.MORTEM, Items.FERMENTED_SPIDER_EYE, Items.WITHER_ROSE");
+		assertContains("lesson maps CONGEATIO", lesson, "EnumBloodTendency.CONGEATIO, Items.PACKED_ICE, Items.BLUE_ICE");
+		assertContains("lesson maps FERRIC", lesson, "EnumBloodTendency.FERRIC, Items.IRON_INGOT, Items.IRON_BLOCK");
+		assertContains("lesson maps TENEBRIS", lesson, "EnumBloodTendency.TENEBRIS, Items.COAL, Items.SMOOTH_QUARTZ");
 		assertContains("lesson creates dynamic pattern stack", lesson, "ItemScarPattern.createTemplatePattern(patternScarId)");
 		assertContains("event handler grants blank scar", eventHandler, "ItemInit.scar_blank.get()");
 		assertContains("event handler grants dynamic scar pattern", eventHandler, "lesson.patternStack()");

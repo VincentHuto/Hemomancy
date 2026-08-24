@@ -24,6 +24,7 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 
 import java.util.Map;
+import com.vincenthuto.hemomancy.common.mission.unstained.UnstainedObservances;
 
 /**
  * Consecration mechanic: Unstained players at CLEANSING+ purity (50+) can
@@ -81,7 +82,9 @@ public class ConsecrationHandler {
 
 		// Check purity requirement
 		boolean allowed = HemoCapabilityAccess.getUnstainedProgress(serverPlayer).map(progress -> {
-			if (!progress.hasBegunPurification()) return false;
+			boolean novitiate = (progress.getAcceptedObservances()
+					& UnstainedObservances.Observance.NOVITIATE_CLEAN_LABOR.mask()) != 0;
+			if (!progress.hasBegunPurification()) return novitiate;
 			EnumPurityStage stage = EnumPurityStage.byPurity(progress.getPurity());
 			return stage.getLevel() >= EnumPurityStage.CLEANSING.getLevel();
 		}).orElse(false);
@@ -102,7 +105,8 @@ public class ConsecrationHandler {
 
 		// Grant purity
 		HemoCapabilityAccess.getUnstainedProgress(serverPlayer).ifPresent(progress -> {
-			progress.addPurity(PURITY_PER_CONSECRATION);
+			if (progress.hasBegunPurification()) progress.addPurity(PURITY_PER_CONSECRATION);
+			else UnstainedObservances.recordConsecratedBlock(serverPlayer);
 			com.vincenthuto.hemomancy.common.capability.player.unstained.UnstainedProgressEvents.syncProgress(serverPlayer, progress);
 		});
 

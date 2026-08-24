@@ -2,6 +2,7 @@ package com.vincenthuto.hemomancy.common.capability.player.harbinger.summon;
 
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
+import com.vincenthuto.hemomancy.common.capability.player.unstained.UnstainedAccessRules;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.summon.KnownSummonsServerPacket;
 import com.vincenthuto.hemomancy.common.summon.PuppeteerSummonDefinition;
@@ -22,6 +23,8 @@ public class KnownSummonEvents {
 	}
 
 	public static boolean grantSummon(ServerPlayer player, PuppeteerSummonDefinition definition) {
+		if (HemoCapabilityAccess.getUnstainedProgress(player)
+				.map(UnstainedAccessRules::blocksHarbingerProgress).orElse(false)) return false;
 		return HemoCapabilityAccess.getKnownSummons(player)
 				.map(known -> {
 					boolean learned = known.learn(definition);

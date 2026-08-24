@@ -6,4 +6,9 @@ public final class UnstainedEntryRules {
 	public static boolean canBeginCure(boolean hasFoundedBloodline, boolean founderIntegrationSevered) {
 		return !hasFoundedBloodline || founderIntegrationSevered;
 	}
+
+	public static boolean canSuppressForCure(boolean activeBlood, int degree,
+			boolean hasFoundedBloodline, boolean founderIntegrationSevered) {
+		return activeBlood && (hasFoundedBloodline ? founderIntegrationSevered : degree <= 5);
+	}
 }

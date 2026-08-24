@@ -4,6 +4,6 @@
   "texture": "hemomancy:textures/gui/guide/page.png",
   "title": "First Steps",
   "subtitle": "The exact entry sequence",
-  "text": "Take two Hemolytic Solutions from the church supply. At the Unstained Podium, use one solution to suppress the infection. Craft the second solution with stone to make four Cleansed Stone. Use that stone and Lethean Poppies to build Lethean Baptism. Hold the Cardinal Rite Staff and right-click the completed rite to invoke it. The rite begins Purity only after the Podium has suppressed your infection.",
+  "text": "If your blood is active, use Hemolytic Solution at the Unstained Podium to suppress it. Then build Lethean Baptism from Cleansed Stone and Lethean Poppies and invoke it with the Blood Crafting key. Baptism begins treatment; it does not make you a Church member. If your blood is healthy, speak with a Zealot and take the five service vows instead.",
   "icon": "hemomancy:hemolytic_solution"
 }

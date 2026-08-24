@@ -4,6 +4,6 @@
   "texture": "hemomancy:textures/gui/guide/page.png",
   "title": "Hemolytic Solution",
   "subtitle": "The foundation of purification",
-  "text": "Hemolytic Solution is an early rite material, not a drink. Use the first church bottle at an Unstained Podium to suppress the infection. Craft the second with stone to make the Cleansed Stone required by Lethean Baptism. Later supplies come from the Pallid Retort after purification has begun.",
+  "text": "Hemolytic Solution is an early rite material, not a drink. An actively blooded candidate uses it at an Unstained Podium to suppress the infection before Lethean Baptism. Healthy novitiates learn to distill it in the Pallid Retort during the Gentle Separation. It can also be crafted with stone to make Cleansed Stone.",
   "icon": "hemomancy:hemolytic_solution"
 }

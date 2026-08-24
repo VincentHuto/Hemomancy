@@ -59,32 +59,87 @@ class GameTestHarnessSourceContractTest {
 				"src/gameTest/java/com/vincenthuto/hemomancy/gametest/journey/HemoJourneyController.java");
 		String result = read(
 				"src/gameTest/java/com/vincenthuto/hemomancy/gametest/journey/HemoJourneyResult.java");
+		String unstainedStage = read(
+				"src/gameTest/java/com/vincenthuto/hemomancy/gametest/journey/UnstainedJourneyStage.java");
 
 		var stageIds = Pattern.compile("[A-Z_]+\\(\"([^\"]+)\"\\)")
 				.matcher(stage).results().map(match -> match.group(1)).toList();
 		assertEquals(java.util.List.of(
 				"mortal_display",
 				"sanguine_initiation",
+				"first_remnant_discovered",
+				"vicar_hermit_road_report",
 				"vessel_filled",
 				"formation_projected",
 				"liber_crafted",
 				"hematic_iron_crafted",
+				"living_staff_crafted",
 				"vicar_reward", "votary_rite", "degree_2_reached", "alchemist_briefing",
 				"centrifuge_prepared", "separation_started", "enzyme_recovered", "alchemist_reward",
-				"initiate_rite", "adept_rite", "illuminatus_rite", "sanctified_rite", "archon_rite",
+				"body_answers_briefing", "body_answers_tincture", "red_taxonomy",
+				"living_bestiary_record", "living_bestiary_surrender", "hyphae_discovered",
+				"artificer_worn_vow_briefing", "artificer_armature_placed", "artificer_hematic_upgrade",
+				"artificer_worn_vow_reward", "artificer_worn_vow_fitting", "enzyme_mastery",
+				"initiate_rite", "first_culture", "woven_vessel_turn_in", "first_memory_woven",
+				"noetic_mark_recognized",
+				"artificer_three_answers_briefing", "artificer_fork_upgrade",
+				"artificer_three_answers_inspection", "artificer_three_answers_counsel",
+				"artificer_barbed_research", "artificer_barbed_research_reward",
+				"artificer_fork_demonstration", "artificer_fork_fitting", "adept_rite",
+				"vein_mason_lesson", "first_scar_carved", "first_scar_learned",
+				"first_effigy_pattern", "first_effigy_loadout", "vein_mason_reward",
+				"illuminatus_rite", "vein_mason_d5_strain", "vein_mason_d5_diagnosis",
+				"vein_mason_d5_treatment", "vein_mason_d5_fortification", "vein_mason_d5_reward",
+				"artificer_assumed_limb_briefing", "artificer_first_living_graft",
+				"artificer_assumed_limb_reward", "artificer_living_arsenal_demonstration",
+				"artificer_full_living_arsenal", "artificer_living_arsenal_fitting",
+				"artificer_crimson_vestment_briefing", "vicar_consecration_kit",
+				"artificer_frame_consecrated", "artificer_crimson_vestment_inspection",
+				"artificer_crimson_vestment_counsel", "artificer_blood_lust_upgrade",
+				"artificer_blood_lust_demonstration", "artificer_blood_lust_fitting",
+				"founding_fane", "sanctified_rite", "vein_mason_d6_referral", "vein_mason_d6_counsel",
+				"vein_mason_d6_first_route", "vein_mason_d6_scar_carved", "vein_mason_d6_scar_learned",
+				"vein_mason_d6_loadout", "vein_mason_d6_second_route", "vein_mason_d6_reward", "chamber_returned",
+				"covenant_throne_bound", "covenant_vigil", "archon_rite",
+				"artificer_weight_of_frame_briefing", "artificer_monolithic_frame",
+				"artificer_d7_upgrade", "artificer_weight_of_frame_inspection",
+				"artificer_d7_demonstration", "artificer_d7_fitting",
+				"qliphoth_communion", "apotheos_choice", "apotheos_rite",
 				"complete"), stageIds);
+
+		var unstainedStageIds = Pattern.compile("[A-Z_]+\\(\"([^\"]+)\"\\)")
+				.matcher(unstainedStage).results().map(match -> match.group(1)).toList();
+		assertEquals(java.util.List.of(
+				"novitiate_gather_remedies", "novitiate_gentle_separation",
+				"novitiate_stillwater_labor", "novitiate_clean_labor", "novitiate_shelter_afflicted",
+				"podium_suppression", "lethean_baptism", "ghost_pipe_observance",
+				"tainted_acolyte_observances", "silver_veil", "cleansing_observances",
+				"pallid_icon_observance", "silthmere_remembrance", "closed_vein",
+				"consecrated_copper_observance", "clarity_prepared", "clarity_ascension",
+				"glass_lungs", "chalice_observance", "discerning", "pale_vigil",
+				"moon_washed_copper", "pale_watch_observance", "resolute",
+				"enlightened", "lethean_font", "complete"), unstainedStageIds);
 
 		int journeyStart = commands.indexOf("literal(\"journey\")");
 		assertTrue(journeyStart >= 0);
 		String journeyCommands = commands.substring(journeyStart, commands.indexOf(")));", journeyStart));
-		assertTrue(journeyCommands.contains("literal(\"start\")"));
-		assertTrue(journeyCommands.contains("literal(\"next\")"));
-		assertTrue(journeyCommands.contains("literal(\"status\")"));
-		assertTrue(journeyCommands.contains("literal(\"reset\")"));
+		assertTrue(journeyCommands.contains("literal(\"harbinger\")"));
+		assertTrue(journeyCommands.contains("literal(\"unstained\")"));
+		assertTrue(journeyCommands.contains("literal(\"cure\")"));
+		assertTrue(journeyCommands.contains("literal(\"novitiate\")"));
+		assertEquals(4, journeyCommands.split("literal\\(\"start\"\\)", -1).length - 1);
+		assertEquals(2, journeyCommands.split("literal\\(\"next\"\\)", -1).length - 1);
+		assertEquals(2, journeyCommands.split("literal\\(\"status\"\\)", -1).length - 1);
+		assertEquals(2, journeyCommands.split("literal\\(\"reset\"\\)", -1).length - 1);
 		assertTrue(commands.contains("HemoJourneyController.start(player)"));
 		assertTrue(commands.contains("HemoJourneyController.next(player)"));
 		assertTrue(commands.contains("HemoJourneyController.status(player)"));
 		assertTrue(commands.contains("HemoJourneyController.reset(player)"));
+		assertTrue(commands.contains("UnstainedJourneyController.start(player)"));
+		assertTrue(commands.contains("UnstainedJourneyController.next(player)"));
+		assertTrue(commands.contains("UnstainedJourneyController.status(player)"));
+		assertTrue(commands.contains("UnstainedJourneyController.reset(player)"));
+		assertTrue(commands.contains("UnstainedJourneyController.clear(player)"));
 		assertTrue(commands.contains("HemoJourneyController.clear(player)"));
 		assertTrue(commands.indexOf("HemoJourneyController.clear(player)")
 				< commands.indexOf("HemoTestScenarioCatalog.clearActive(player)", commands.indexOf("private static int clear(")));
@@ -128,6 +183,8 @@ class GameTestHarnessSourceContractTest {
 		assertTrue(snapshot.contains("skill_progress"));
 		assertTrue(snapshot.contains("liber_knowledge"));
 		assertTrue(snapshot.contains("known_manipulations"));
+		assertTrue(snapshot.contains("muscle_memory"));
+		assertTrue(snapshot.contains("recipe_book"));
 		assertTrue(snapshot.contains("vasc_equipment"));
 		assertTrue(snapshot.contains("getContainerSize()"));
 		assertTrue(snapshot.contains("saveOptional(player.registryAccess())"));
@@ -145,6 +202,8 @@ class GameTestHarnessSourceContractTest {
 		assertTrue(snapshot.contains("HemoJourneyManipulationState.matches(manipulations"));
 		assertTrue(snapshot.contains("new KnownManipulations()"));
 		assertTrue(snapshot.contains("new KnownManipulationServerPacket"));
+		assertTrue(snapshot.contains("MuscleMemoryEvents.sync(player)"));
+		assertTrue(snapshot.contains("sendInitialRecipeBook(player)"));
 		assertTrue(snapshot.contains("validateAdvancementOperations"));
 		assertTrue(snapshot.contains("captureLiveState(player)"));
 		assertTrue(snapshot.contains("rollbackLiveState"));
@@ -168,7 +227,14 @@ class GameTestHarnessSourceContractTest {
 				"hemomancy/degree_1_neophyte",
 				"hemomancy/vessel_filled",
 				"hemomancy/fane_sanguinium",
-				"hemomancy/iron_in_the_blood"), advancementIds);
+				"hemomancy/iron_in_the_blood",
+				"recipe/hemomancy/living_weapon_graft/blade",
+				"recipe/hemomancy/living_weapon_graft/axe",
+				"recipe/hemomancy/living_weapon_graft/spear",
+				"recipe/hemomancy/living_weapon_graft/claws",
+				"recipe/hemomancy/living_weapon_graft/crossbow",
+				"recipe/hemomancy/living_weapon_graft/torch",
+				"recipe/hemomancy/living_weapon_graft/flail"), advancementIds);
 		assertTrue(snapshot.contains("if (data.contains(SNAPSHOT_KEY))"));
 		assertTrue(controller.contains("HemoJourneySnapshot.capture(player)"));
 		assertTrue(controller.contains("HemoJourneySnapshot.resetForJourney(player)"));
@@ -215,10 +281,10 @@ class GameTestHarnessSourceContractTest {
 
 		assertTrue(guide.contains("./gradlew.bat runAlphaJourneyClient"));
 		assertTrue(guide.contains("create or open a world"));
-		assertTrue(guide.contains("/hemo test journey start"));
-		assertTrue(guide.contains("/hemo test journey next"));
-		assertTrue(guide.contains("/hemo test journey status"));
-		assertTrue(guide.contains("/hemo test journey reset"));
+		assertTrue(guide.contains("/hemo test journey harbinger start"));
+		assertTrue(guide.contains("/hemo test journey harbinger next"));
+		assertTrue(guide.contains("/hemo test journey unstained start"));
+		assertTrue(guide.contains("/hemo test journey unstained next"));
 		assertTrue(guide.contains("/hemo test clear"));
 		assertTrue(guide.contains("restores the snapshot"));
 		assertTrue(guide.contains("`alphaCheck` remains the automated"));

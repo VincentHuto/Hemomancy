@@ -4,6 +4,7 @@ import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.PathMutualExclusionHelper;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.UnstainedProgressEvents;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.UnstainedEntryRules;
+import com.vincenthuto.hemomancy.common.capability.player.unstained.UnstainedAccessRules;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.EnumVeinSections;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.VascularSystemEvents;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.Bloodline;
@@ -15,6 +16,10 @@ import com.vincenthuto.hemomancy.common.init.BlockInit;
 import com.vincenthuto.hemomancy.common.init.EffectInit;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.menu.HarbingerEquipmentMenu;
+import com.vincenthuto.hemomancy.common.mission.unstained.UnstainedObservances;
+import com.vincenthuto.hemomancy.common.entity.npc.unstained.UnstainedAcolyteEntity;
+import com.vincenthuto.hemomancy.common.entity.npc.unstained.UnstainedGuardianEntity;
+import com.vincenthuto.hemomancy.common.entity.npc.unstained.UnstainedZealotEntity;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.PacketSyncBloodMoon;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
@@ -171,15 +176,26 @@ public class UnstainedCardinalRiteEvents {
 	public static UnstainedRitePreflight.Result preflight(ServerPlayer caster, String ritePath) {
 		var degree = HemoCapabilityAccess.getInitiatoryDegree(caster).orElse(null);
 		var progress = HemoCapabilityAccess.getUnstainedProgress(caster).orElse(null);
-		boolean maySeekCure = degree == null || UnstainedEntryRules.canBeginCure(
-				degree.hasFoundedBloodline(), degree.isFounderIntegrationSevered());
+		boolean founder = degree != null && degree.hasFoundedBloodline();
+		boolean severedFounder = founder && degree.isFounderIntegrationSevered();
+		boolean maySeekCure = degree == null || severedFounder || degree.getDegreeNumber() <= 5
+				&& UnstainedEntryRules.canBeginCure(founder, false);
+		var blood = HemoCapabilityAccess.getBloodVolume(caster).orElse(null);
+		boolean cleanBlood = blood == null || !blood.isActive() && blood.getBloodVolume() <= 0
+				&& (blood.getBloodLine() == null || !blood.getBloodLine().isValid());
+		boolean severanceEligible = founder && !degree.isFounderIntegrationSevered()
+				&& progress != null && progress.isAnnettaSeveranceUnlocked();
 		return UnstainedRitePreflight.check(ritePath, new UnstainedRitePreflight.State(
 				maySeekCure,
 				progress != null && progress.isInfectionSuppressed(),
 				progress != null && progress.hasBegunPurification(),
 				progress != null && progress.isPurified(),
+				progress != null && progress.isBaselineRestored(),
+				progress != null && UnstainedAccessRules.hasCompletedNovitiateVows(progress.getClaimedObservances()),
 				progress != null && progress.isClarityPrepared(),
-				progress != null && progress.hasClarityUnlocked()));
+				progress != null && progress.hasClarityUnlocked(),
+				cleanBlood,
+				severanceEligible));
 	}
 
 	public static void announceFailure(ServerPlayer caster, UnstainedRitePreflight.Failure failure) {
@@ -187,9 +203,13 @@ public class UnstainedCardinalRiteEvents {
 			case FOUNDER_CANNOT_ENTER -> "A bloodline founder cannot enter Lethe by the ordinary rite.";
 			case INFECTION_NOT_SUPPRESSED -> "The infection must first be suppressed at an Unstained Podium.";
 			case BAPTISM_ALREADY_COMPLETE -> "Lethean Baptism has already named your path.";
-			case NOT_PURIFIED -> "You must achieve full purity before ascending to clarity.";
+			case NOT_READY_TO_PLEDGE -> "Complete the cleansing or all five service vows before pledging.";
+			case BLOOD_STILL_ACTIVE -> "Active blood must be fully relinquished before the pledge.";
 			case CLARITY_ALREADY_UNLOCKED -> "Clarity has already been unlocked within you.";
 			case CLARITY_NOT_PREPARED -> "Consecrated Copper must prepare your clarity at an Unstained Podium first.";
+			case CURE_NOT_READY -> "Closed Vein can restore your baseline only at full Purity.";
+			case CLOSED_VEIN_MEMBER_ONLY -> "Only a pledged Unstained may repeat the Closed Vein.";
+			case SEVERANCE_NOT_READY -> "The exceptional severance has not been earned through Annetta.";
 			case NONE -> "The rite is ready.";
 		};
 		caster.displayClientMessage(Component.literal(message)
@@ -230,18 +250,17 @@ public class UnstainedCardinalRiteEvents {
 
 	/**
 	 * Rite of Lethean Baptism (Minor, 0 blood):
-	 * Entry rite that formally begins the Unstained path. Grants starting
-	 * purity and sets the purification flag.
+	 * Treatment rite that begins purification without granting Church membership.
 	 */
 	private static void completeLetheanBaptism(ServerLevel sLevel, ServerPlayer caster) {
 		var unstained = HemoCapabilityAccess.getUnstainedProgress(caster).orElse(null);
 		if (unstained == null) return;
+		var degree = HemoCapabilityAccess.getInitiatoryDegree(caster).orElse(null);
+		int degreeNumber = degree != null ? degree.getDegreeNumber() : 0;
+		boolean severedFounder = degree != null && degree.hasFoundedBloodline()
+				&& degree.isFounderIntegrationSevered();
 		unstained.setBegunPurification(true);
-		unstained.addPurity(5.0f);
-		ItemStack dagger = new ItemStack(ItemInit.absolution_dagger);
-		if (!caster.getInventory().add(dagger)) {
-			caster.drop(dagger, false);
-		}
+		unstained.setPurity(UnstainedAccessRules.baptismStartingPurity(degreeNumber, severedFounder));
 		UnstainedProgressEvents.syncProgress(caster, unstained);
 
 		caster.displayClientMessage(
@@ -290,15 +309,13 @@ public class UnstainedCardinalRiteEvents {
 	 */
 	private static void completeClarityAscension(ServerLevel sLevel, ServerPlayer caster) {
 		HemoCapabilityAccess.getUnstainedProgress(caster).ifPresent(unstained -> {
+			unstained.setPurity(100f);
+			unstained.setBaselineRestored(true);
 			unstained.setClarityUnlocked(true);
+			unstained.setClarity(0f);
 			unstained.setClarityPrepared(false);
 			UnstainedProgressEvents.syncProgress(caster, unstained);
-			if (PathMutualExclusionHelper.enforceHarbingerResetOnClarity(caster, unstained)) {
-				caster.displayClientMessage(
-						Component.literal("The Hematic Order falls silent within you. Your former rank is washed away.")
-								.withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC),
-						false);
-			}
+			PathMutualExclusionHelper.resetHarbingerProgress(caster);
 			HemoCapabilityAccess.getEquipment(caster).ifPresent(scars -> {
 				ItemStack charmStack = scars.getStackInSlot(HarbingerEquipmentMenu.CHARM_SLOT_INDEX);
 				if (charmStack.is(ItemInit.charm_of_vascularium.get())) {
@@ -309,6 +326,10 @@ public class UnstainedCardinalRiteEvents {
 							false);
 				}
 			});
+			if (caster.getInventory().countItem(ItemInit.absolution_dagger.get()) == 0) {
+				ItemStack dagger = new ItemStack(ItemInit.absolution_dagger.get());
+				if (!caster.addItem(dagger)) caster.drop(dagger, false);
+			}
 
 			caster.displayClientMessage(
 					Component.literal("The veil parts. True sight is yours â€” clarity has been unlocked.")
@@ -323,11 +344,18 @@ public class UnstainedCardinalRiteEvents {
 					80, 1.5, 2.0, 1.5, 0.03);
 
 			com.vincenthuto.hemomancy.common.event.UnstainedAdvancementGranter.grantIfNotDone(
-					caster, com.vincenthuto.hemomancy.common.event.UnstainedAdvancementGranter.ADV_CLARITY_AWAKENED);
+					caster, com.vincenthuto.hemomancy.common.event.UnstainedAdvancementGranter.ADV_PLEDGED_UNSTAINED);
 		});
 	}
 
 	private static void completeClosedVein(ServerLevel sLevel, ServerPlayer caster, BlockPos center) {
+		var casterProgress = HemoCapabilityAccess.getUnstainedProgress(caster).orElse(null);
+		if (casterProgress != null && !casterProgress.isBaselineRestored()) {
+			PathMutualExclusionHelper.completeUnstainedCure(caster, casterProgress);
+			caster.displayClientMessage(Component.literal("The last current stills. Your blood returns to a mortal baseline.")
+					.withStyle(ChatFormatting.AQUA, ChatFormatting.BOLD), false);
+			return;
+		}
 		AABB area = new AABB(center).inflate(CLOSED_VEIN_RADIUS);
 		List<ServerPlayer> nearbyPlayers = sLevel.getEntitiesOfClass(ServerPlayer.class, area, ServerPlayer::isAlive);
 		int[] blessed = { 0 };
@@ -595,6 +623,7 @@ public class UnstainedCardinalRiteEvents {
 		StillWatersSavedData.StillWatersEntry entry = new StillWatersSavedData.StillWatersEntry(
 				caster.getUUID(), center, dimension, STILL_WATERS_RADIUS, expiryTick);
 		data.addEntry(entry);
+		recordNovitiateProtection(sLevel, caster, center, STILL_WATERS_RADIUS);
 
 		long durationMinutes = STILL_WATERS_DURATION_TICKS / 1200;
 		caster.displayClientMessage(
@@ -631,6 +660,7 @@ public class UnstainedCardinalRiteEvents {
 		PaleConsecrationSavedData.ConsecrationEntry entry = new PaleConsecrationSavedData.ConsecrationEntry(
 				caster.getUUID(), center, dimension, PALE_CONSECRATION_RADIUS, expiryTick);
 		data.addEntry(entry);
+		recordNovitiateProtection(sLevel, caster, center, PALE_CONSECRATION_RADIUS);
 
 		long durationMinutes = PALE_CONSECRATION_DURATION_TICKS / 1200;
 		caster.displayClientMessage(
@@ -663,6 +693,16 @@ public class UnstainedCardinalRiteEvents {
 	 * A one-time burst. All Unstained players within 32 blocks immediately gain
 	 * +5 purity and have their early Verdigris Aura refreshed or applied (amplifier 1).
 	 */
+	private static void recordNovitiateProtection(ServerLevel level, ServerPlayer caster, BlockPos center, int radius) {
+		AABB area = new AABB(center).inflate(radius);
+		boolean playerPresent = !level.getEntitiesOfClass(ServerPlayer.class, area,
+				player -> player.isAlive() && player != caster).isEmpty();
+		boolean churchNpcPresent = !level.getEntitiesOfClass(net.minecraft.world.entity.LivingEntity.class, area,
+				entity -> entity.isAlive() && (entity instanceof UnstainedAcolyteEntity
+						|| entity instanceof UnstainedZealotEntity || entity instanceof UnstainedGuardianEntity)).isEmpty();
+		if (playerPresent || churchNpcPresent) UnstainedObservances.recordProtection(caster);
+	}
+
 	private static void completeSilthmereRemembrance(ServerLevel sLevel, ServerPlayer caster, BlockPos center) {
 		AABB area = new AABB(center).inflate(REMEMBRANCE_RADIUS);
 		List<ServerPlayer> nearby = sLevel.getEntitiesOfClass(

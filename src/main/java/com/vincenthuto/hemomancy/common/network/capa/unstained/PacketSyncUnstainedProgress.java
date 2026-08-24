@@ -31,6 +31,8 @@ public class PacketSyncUnstainedProgress implements CustomPacketPayload {
     private final boolean usedAltarOfCleansing;
 	private final boolean infectionSuppressed, clarityPrepared, annettaSeveranceUnlocked;
 	private final int acceptedObservances, claimedObservances;
+	private final boolean baselineRestored, novitiateRetortComplete, novitiateProtectionComplete;
+	private final int novitiateDewProduced, novitiateBlocksConsecrated;
 
     public PacketSyncUnstainedProgress(IUnstainedProgress p) {
         this.begunPurification = p.hasBegunPurification();
@@ -59,6 +61,11 @@ public class PacketSyncUnstainedProgress implements CustomPacketPayload {
 		this.annettaSeveranceUnlocked = p.isAnnettaSeveranceUnlocked();
 		this.acceptedObservances = p.getAcceptedObservances();
 		this.claimedObservances = p.getClaimedObservances();
+		this.baselineRestored = p.isBaselineRestored();
+		this.novitiateRetortComplete = p.isNovitiateRetortComplete();
+		this.novitiateDewProduced = p.getNovitiateDewProduced();
+		this.novitiateBlocksConsecrated = p.getNovitiateBlocksConsecrated();
+		this.novitiateProtectionComplete = p.isNovitiateProtectionComplete();
     }
 
     private PacketSyncUnstainedProgress(FriendlyByteBuf buf) {
@@ -88,6 +95,11 @@ public class PacketSyncUnstainedProgress implements CustomPacketPayload {
 		this.annettaSeveranceUnlocked = buf.readBoolean();
 		this.acceptedObservances = buf.readVarInt();
 		this.claimedObservances = buf.readVarInt();
+		this.baselineRestored = buf.readBoolean();
+		this.novitiateRetortComplete = buf.readBoolean();
+		this.novitiateDewProduced = buf.readVarInt();
+		this.novitiateBlocksConsecrated = buf.readVarInt();
+		this.novitiateProtectionComplete = buf.readBoolean();
     }
 
     public static void encode(FriendlyByteBuf buf, PacketSyncUnstainedProgress msg) {
@@ -117,6 +129,11 @@ public class PacketSyncUnstainedProgress implements CustomPacketPayload {
 		buf.writeBoolean(msg.annettaSeveranceUnlocked);
 		buf.writeVarInt(msg.acceptedObservances);
 		buf.writeVarInt(msg.claimedObservances);
+		buf.writeBoolean(msg.baselineRestored);
+		buf.writeBoolean(msg.novitiateRetortComplete);
+		buf.writeVarInt(msg.novitiateDewProduced);
+		buf.writeVarInt(msg.novitiateBlocksConsecrated);
+		buf.writeBoolean(msg.novitiateProtectionComplete);
     }
 
     public static PacketSyncUnstainedProgress decode(FriendlyByteBuf buf) {
@@ -156,6 +173,11 @@ public class PacketSyncUnstainedProgress implements CustomPacketPayload {
 							progress.setAnnettaSeveranceUnlocked(msg.annettaSeveranceUnlocked);
 							progress.setAcceptedObservances(msg.acceptedObservances);
 							progress.setClaimedObservances(msg.claimedObservances);
+							progress.setBaselineRestored(msg.baselineRestored);
+							progress.setNovitiateRetortComplete(msg.novitiateRetortComplete);
+							progress.setNovitiateDewProduced(msg.novitiateDewProduced);
+							progress.setNovitiateBlocksConsecrated(msg.novitiateBlocksConsecrated);
+							progress.setNovitiateProtectionComplete(msg.novitiateProtectionComplete);
                         });
             }
         });

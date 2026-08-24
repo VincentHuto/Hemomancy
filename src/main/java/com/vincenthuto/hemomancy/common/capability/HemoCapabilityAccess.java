@@ -289,7 +289,14 @@ public static int getPlayerDegreeNumber(Player player) {
  */
 public static int getPlayerUnstainedLevel(Player player) {
     return getUnstainedProgress(player).map(up -> {
-        if (!up.hasBegunPurification()) return 0;
+		if (up.hasClarityUnlocked()) {
+			float clarity = up.getClarity();
+			if (clarity >= 100f) return 8;
+			if (clarity >= 50f) return 7;
+			if (clarity >= 25f) return 6;
+			return 5;
+		}
+		if (!up.hasBegunPurification()) return 0;
         if (!up.isPurified()) {
             float purity = up.getPurity();
             if (purity < 25f) return 1;
@@ -297,11 +304,7 @@ public static int getPlayerUnstainedLevel(Player player) {
             if (purity < 75f) return 3;
             return 4;  // Absolved: >= 75 but < 100
         }
-        float clarity = up.getClarity();
-        if (clarity >= 100f) return 8;
-        if (clarity >= 50f)  return 7;
-        if (clarity >= 25f)  return 6;
-        return 5;  // Purified, clarity not yet past 25
+		return 5;
     }).orElse(0);
 }
 

@@ -2,6 +2,7 @@ package com.vincenthuto.hemomancy.common.entity.npc.dialogue;
 
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
+import com.vincenthuto.hemomancy.common.capability.player.unstained.UnstainedAccessRules;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bestiary.SpecimenBestiaryDefinitions;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bestiary.SpecimenBestiaryEvents;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bestiary.SpecimenBestiaryProgress;
@@ -35,6 +36,7 @@ import com.vincenthuto.hemomancy.common.mission.mnemonist.MnemonicReliquaryProgr
 import com.vincenthuto.hemomancy.common.mission.shared.MnemonicRecipeKnowledge;
 import com.vincenthuto.hemomancy.common.mission.alchemist.RedTaxonomyRewardRules;
 import com.vincenthuto.hemomancy.common.mission.unstained.UnstainedObservances;
+import com.vincenthuto.hemomancy.common.mission.unstained.UnstainedDaggerReplacementRules;
 import com.vincenthuto.hemomancy.common.util.SpecimenJarData;
 import com.vincenthuto.hemomancy.common.item.shared.PreWrittenMemoItem;
 import com.vincenthuto.hemomancy.common.item.shared.MnemonicBlueprintItem;
@@ -139,6 +141,18 @@ public class DialogueEventHandler {
 					UnstainedObservances.Observance.PLATE_THE_WARD);
 			case "guardian_task_bell" -> UnstainedObservances.handle(player,
 					UnstainedObservances.Observance.RING_THE_PALE_WATCH);
+			case "zealot_begin_novitiate" -> UnstainedObservances.beginNovitiate(player);
+			case "novitiate_gather_remedies" -> UnstainedObservances.handle(player,
+					UnstainedObservances.Observance.NOVITIATE_GATHER_REMEDIES);
+			case "novitiate_gentle_separation" -> UnstainedObservances.handle(player,
+					UnstainedObservances.Observance.NOVITIATE_GENTLE_SEPARATION);
+			case "novitiate_stillwater_labor" -> UnstainedObservances.handle(player,
+					UnstainedObservances.Observance.NOVITIATE_STILLWATER_LABOR);
+			case "novitiate_clean_labor" -> UnstainedObservances.handle(player,
+					UnstainedObservances.Observance.NOVITIATE_CLEAN_LABOR);
+			case "novitiate_shelter_afflicted" -> UnstainedObservances.handle(player,
+					UnstainedObservances.Observance.NOVITIATE_SHELTER_AFFLICTED);
+			case "guardian_replace_absolution_dagger" -> replaceAbsolutionDagger(player);
 			case "zealot_accept_church" -> {
 				grantUnstainedStarterSupply(player);
 			}
@@ -1192,6 +1206,8 @@ public class DialogueEventHandler {
 	}
 
 	private static void handleRecruitHarbinger(ServerPlayer player, int entityId) {
+		if (HemoCapabilityAccess.getUnstainedProgress(player)
+				.map(UnstainedAccessRules::blocksHarbingerProgress).orElse(false)) return;
 		HemoCapabilityAccess.getBloodVolume(player).ifPresent(volume -> {
 			Bloodline bloodline = volume.getBloodLine();
 
@@ -1406,5 +1422,34 @@ public class DialogueEventHandler {
 
 	private static void giveOrDrop(ServerPlayer player, ItemStack stack) {
 		if (!player.getInventory().add(stack)) player.drop(stack, false);
+	}
+
+	private static void replaceAbsolutionDagger(ServerPlayer player) {
+		var progress = HemoCapabilityAccess.getUnstainedProgress(player).orElse(null);
+		if (progress == null) return;
+		boolean hasDagger = player.getInventory().contains(stack -> stack.is(ItemInit.absolution_dagger.get()));
+		if (!UnstainedDaggerReplacementRules.canExchange(progress.hasClarityUnlocked(), hasDagger,
+				player.getInventory().countItem(ItemInit.pale_silver_ingot.get()),
+				player.getInventory().countItem(ItemInit.cleansed_blood_crystal_shard.get()))) {
+			player.displayClientMessage(Component.literal(
+					hasDagger ? "The Guardian will not replace a dagger you still carry."
+							: "The Guardian requires two Pale Silver Ingots and one Cleansed Blood Crystal Shard.")
+					.withStyle(ChatFormatting.GRAY), false);
+			return;
+		}
+		consumeInventory(player, ItemInit.pale_silver_ingot.get(), 2);
+		consumeInventory(player, ItemInit.cleansed_blood_crystal_shard.get(), 1);
+		giveOrDrop(player, new ItemStack(ItemInit.absolution_dagger.get()));
+	}
+
+	private static void consumeInventory(ServerPlayer player, net.minecraft.world.item.Item item, int count) {
+		for (ItemStack stack : player.getInventory().items) {
+			if (!stack.is(item)) continue;
+			int removed = Math.min(count, stack.getCount());
+			stack.shrink(removed);
+			count -= removed;
+			if (count == 0) break;
+		}
+		player.getInventory().setChanged();
 	}
 }

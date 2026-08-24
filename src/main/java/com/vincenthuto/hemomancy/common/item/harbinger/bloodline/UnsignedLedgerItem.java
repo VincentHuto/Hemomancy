@@ -2,6 +2,7 @@ package com.vincenthuto.hemomancy.common.item.harbinger.bloodline;
 
 import com.vincenthuto.hemomancy.client.screen.item.LedgerScreen;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
+import com.vincenthuto.hemomancy.common.capability.player.unstained.UnstainedAccessRules;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodlineDisbandHelper;
 import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillPointGainEvents;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.Bloodline;
@@ -73,6 +74,12 @@ public class UnsignedLedgerItem extends Item {
 	@Override
 	public InteractionResultHolder<ItemStack> use(Level worldIn, Player playerIn, InteractionHand handIn) {
 		ItemStack stack = playerIn.getItemInHand(handIn);
+		if (!worldIn.isClientSide && HemoCapabilityAccess.getUnstainedProgress(playerIn)
+				.map(UnstainedAccessRules::blocksHarbingerProgress).orElse(false)) {
+			playerIn.displayClientMessage(Component.literal("Purification bars new bloodline bonds.")
+					.withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC), true);
+			return InteractionResultHolder.fail(stack);
+		}
 		if (stack.getItem() instanceof UnsignedLedgerItem) {
 			CompoundTag compound = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
 			IBloodVolume volume = HemoCapabilityAccess.getBloodVolume(playerIn)

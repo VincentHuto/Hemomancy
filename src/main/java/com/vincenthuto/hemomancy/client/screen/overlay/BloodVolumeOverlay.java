@@ -4,6 +4,7 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
+import com.vincenthuto.hemomancy.common.capability.player.unstained.UnstainedAccessRules;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.item.harbinger.bloodline.VasculariumCharmItem;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.BloodGourdItem;
@@ -105,7 +106,7 @@ public class BloodVolumeOverlay {
         if (player == null) return;
 
         HemoCapabilityAccess.getUnstainedProgress(player).ifPresent(cap -> {
-            if (cap.hasBegunPurification()) return;
+            if (UnstainedAccessRules.blocksKnownBloodPowerUse(cap)) return;
 
             HemoCapabilityAccess.getBloodVolume(player).ifPresent(bloodCap -> {
                 if (bloodCap == null || !bloodCap.isActive()) return;

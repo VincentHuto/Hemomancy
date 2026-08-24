@@ -4,6 +4,6 @@
   "texture": "hemomancy:textures/gui/guide/page.png",
   "title": "Stillwater Condensation",
   "subtitle": "Dew without dawn",
-  "text": "A Stillwater Condenser gives the initiated a dependable source of Lethean Dew. Place it directly above a source block of water and keep Ghost Pipe within four blocks. At 50 Purity the vessel may be opened; supply glass bottles and allow the still water to complete its cycle. A Verdigris Lattice within five blocks makes the sympathetic field visible, halves the cycle, and yields two measures of Dew instead of one. Flowing water, rain, and ordinary flowers cannot substitute for the still source and Ghost Pipe.",
+  "text": "A Stillwater Condenser gives purifying candidates and novitiates performing Stillwater Labor a dependable source of Lethean Dew. Place it directly above a source block of water and keep Ghost Pipe within four blocks. Supply glass bottles and allow the still water to complete its cycle. A Verdigris Lattice within five blocks makes the sympathetic field visible, halves the cycle, and yields two measures of Dew instead of one. Flowing water, rain, and ordinary flowers cannot substitute for the still source and Ghost Pipe.",
   "icon": "hemomancy:stillwater_condenser"
 }

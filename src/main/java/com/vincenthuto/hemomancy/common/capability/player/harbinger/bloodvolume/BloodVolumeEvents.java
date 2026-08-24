@@ -4,6 +4,7 @@ import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodFlowContribution.Category;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.ManipulationDiagnosticsSync;
+import com.vincenthuto.hemomancy.common.capability.player.unstained.UnstainedAccessRules;
 import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillPointGainEvents;
 import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillPointHelper;
 import com.vincenthuto.hemomancy.common.capability.player.shared.skill.ToggleableSkillRules;
@@ -48,6 +49,19 @@ public class BloodVolumeEvents {
 		if (player.level().isClientSide) return;
 
 		HemoCapabilityAccess.getBloodVolume(player).ifPresent(volume -> {
+			boolean cleanBaseline = HemoCapabilityAccess.getUnstainedProgress(player)
+					.map(UnstainedAccessRules::blocksKnownBloodPowerUse).orElse(false);
+			if (cleanBaseline) {
+				boolean changed = volume.isActive() || volume.getBloodVolume() != 0
+						|| (volume.getBloodLine() != null && volume.getBloodLine().isValid());
+				if (changed) {
+					volume.setActive(false);
+					volume.setBloodVolume(0);
+					volume.setBloodLine(Bloodline.NOBLOODLINE);
+					if (player instanceof ServerPlayer serverPlayer) syncVolume(serverPlayer, volume);
+				}
+				return;
+			}
 			if (!volume.isActive()) return;
 			if (player instanceof ServerPlayer serverPlayer
 					&& HemoCapabilityAccess.getPlayerDegreeNumber(player) >= 1

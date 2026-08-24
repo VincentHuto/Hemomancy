@@ -4,6 +4,7 @@ import com.mojang.serialization.MapCodec;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.init.BlockEntityInit;
 import com.vincenthuto.hemomancy.common.tile.crafting.StillwaterCondenserBlockEntity;
+import com.vincenthuto.hemomancy.common.mission.unstained.UnstainedObservances;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
@@ -42,7 +43,10 @@ public class StillwaterCondenserBlock extends BaseEntityBlock {
 
 	private InteractionResult open(Level level, BlockPos pos, Player player) {
 		boolean eligible = HemoCapabilityAccess.getUnstainedProgress(player)
-				.map(progress -> progress.hasBegunPurification() && progress.getPurity() >= 50f).orElse(false);
+				.map(progress -> progress.hasBegunPurification() && progress.getPurity() >= 50f
+						|| (progress.getClaimedObservances()
+								& UnstainedObservances.Observance.NOVITIATE_GENTLE_SEPARATION.mask()) != 0)
+				.orElse(false);
 		if (!eligible) {
 			player.displayClientMessage(Component.literal("The condenser remains still until Purity reaches 50.")
 					.withStyle(ChatFormatting.GRAY), true);

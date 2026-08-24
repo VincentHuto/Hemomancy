@@ -3,6 +3,7 @@ package com.vincenthuto.hemomancy.common.network.capa.harbinger;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
+import com.vincenthuto.hemomancy.common.capability.player.unstained.UnstainedAccessRules;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hutoslib.client.particle.factory.GlowParticleFactory;
@@ -38,6 +39,8 @@ public class BloodFormationKeyPressPacket implements CustomPacketPayload {
 			Player player = ctx.player();
 			if (player == null)
 				return;
+			if (HemoCapabilityAccess.getUnstainedProgress(player)
+					.map(UnstainedAccessRules::blocksHarbingerProgress).orElse(false)) return;
 			IBloodVolume bloodVolume = HemoCapabilityAccess.getBloodVolume(player)
 					.orElseThrow(NullPointerException::new);
 			ServerLevel sLevel = (ServerLevel) ctx.player().level();

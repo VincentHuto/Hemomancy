@@ -41,6 +41,7 @@ import net.minecraft.world.level.block.CampfireBlock;
 import net.minecraft.world.level.block.entity.BaseContainerBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
+import com.vincenthuto.hemomancy.common.mission.unstained.UnstainedObservances;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -379,6 +380,9 @@ public class PallidRetortBlockEntity extends BaseContainerBlockEntity
                 holders.add(holder);
                 if (holder.value() instanceof DistillationRecipe gar) {
                     createExperience(player.serverLevel(), player.position(), entry.getIntValue(), gar.getExperience());
+					if (gar.getResultItem(player.registryAccess()).is(ItemInit.hemolytic_solution.get())) {
+						UnstainedObservances.recordRetortSolution(player);
+					}
                 }
             });
         }

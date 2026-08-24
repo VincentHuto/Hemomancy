@@ -16,7 +16,7 @@ import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.LivingStaffIt
 import com.vincenthuto.hemomancy.common.mission.artificer.ArtificerAssignments;
 import com.vincenthuto.hemomancy.common.rite.BrazierItemAbsorptionRite;
 import com.vincenthuto.hemomancy.common.tile.IronBrazierBlockEntity;
-import com.vincenthuto.hutoslib.client.particle.factory.GlowParticleFactory;
+import com.vincenthuto.hutoslib.client.particle.data.ColorParticleData;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
@@ -183,7 +183,7 @@ public final class LivingWeaponGraftRite {
 
 	private static void spawnCompletionParticles(ServerLevel level, BlockPos pos) {
 		Vec3 center = Vec3.atCenterOf(pos).add(0.0D, 0.75D, 0.0D);
-		level.sendParticles(GlowParticleFactory.createData(new ParticleColor(180, 10, 30)),
+		level.sendParticles(new ColorParticleData(new ParticleColor(180, 10, 30)),
 				center.x, center.y, center.z, 36, 0.55D, 0.35D, 0.55D, 0.02D);
 	}
 }

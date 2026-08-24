@@ -35,8 +35,8 @@ final class UnstainedChurchEntryResourceTest {
 		String solution = Files.readString(RESOURCES.resolve(
 				"data/hemomancy/books/liberimmaculatus/sacred_tools/pages/hemolytic_solution.json"));
 
-		for (String instruction : new String[] { "two Hemolytic Solutions", "Unstained Podium",
-				"Cleansed Stone", "Lethean Baptism", "right-click" }) {
+		for (String instruction : new String[] { "Unstained Podium", "Lethean Baptism",
+				"Blood Crafting key", "does not make you a Church member", "five service vows" }) {
 			assertTrue(firstSteps.contains(instruction), "missing entry instruction: " + instruction);
 		}
 		assertFalse(solution.contains("Drinking it applies the Hemolysis effect"));

@@ -1,6 +1,7 @@
 package com.vincenthuto.hemomancy.gametest;
 
 import com.mojang.authlib.GameProfile;
+import com.mojang.brigadier.CommandDispatcher;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.init.BlockInit;
@@ -12,6 +13,10 @@ import com.vincenthuto.hemomancy.common.mission.unstained.UnstainedObservances;
 import com.vincenthuto.hemomancy.common.recipe.CardinalRiteRecipe;
 import com.vincenthuto.hemomancy.common.rite.unstained.UnstainedCardinalRiteEvents;
 import com.vincenthuto.hemomancy.common.tile.crafting.StillwaterCondenserBlockEntity;
+import com.vincenthuto.hemomancy.gametest.journey.HemoJourneyFixtures;
+import com.vincenthuto.hemomancy.gametest.journey.UnstainedJourneyFixtures;
+import com.vincenthuto.hemomancy.gametest.journey.UnstainedJourneyStage;
+import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.core.BlockPos;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
@@ -26,12 +31,53 @@ import net.neoforged.neoforge.gametest.GameTestHolder;
 import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 
 import java.util.UUID;
+import java.util.Arrays;
 
 @GameTestHolder(Hemomancy.MOD_ID)
 @PrefixGameTestTemplate(false)
 public final class UnstainedProgressionGameTests {
 	private static final String EMPTY_TEMPLATE = "bastion/mobs/empty";
 	private UnstainedProgressionGameTests() {}
+
+	@GameTest(templateNamespace = "minecraft", template = EMPTY_TEMPLATE, timeoutTicks = 40)
+	public static void journeyCommandsAreSplitByPath(GameTestHelper helper) {
+		CommandDispatcher<CommandSourceStack> dispatcher = new CommandDispatcher<>();
+		HemoTestCommands.register(dispatcher);
+		var journey = dispatcher.getRoot().getChild("hemo").getChild("test").getChild("journey");
+		helper.assertTrue(journey.getChild("start") == null,
+				"The old ambiguous journey start command must be removed");
+		for (String route : new String[] { "harbinger", "unstained" }) {
+			var branch = journey.getChild(route);
+			helper.assertTrue(branch != null, "Missing journey branch: " + route);
+			for (String action : new String[] { "start", "next", "status", "reset" }) {
+				helper.assertTrue(branch.getChild(action) != null, "Missing " + route + " journey action: " + action);
+			}
+		}
+		var unstained = journey.getChild("unstained");
+		helper.assertTrue(unstained.getChild("cure") != null && unstained.getChild("novitiate") != null,
+				"Unstained journey tooling must expose separate cure and novitiate routes");
+		helper.succeed();
+	}
+
+	@GameTest(templateNamespace = "minecraft", template = EMPTY_TEMPLATE, timeoutTicks = 40)
+	public static void unstainedJourneyFixturesCoverEveryCheckpoint(GameTestHelper helper) {
+		ServerPlayer player = testPlayer(helper);
+		BlockPos origin = helper.absolutePos(new BlockPos(6, 3, 6));
+		player.getPersistentData().putString(HemoJourneyFixtures.DIMENSION_KEY,
+				helper.getLevel().dimension().location().toString());
+		try {
+			for (UnstainedJourneyStage stage : Arrays.stream(UnstainedJourneyStage.values())
+					.filter(value -> value != UnstainedJourneyStage.COMPLETE).toList()) {
+				UnstainedJourneyFixtures.prepare(player, stage, origin);
+				helper.assertTrue(!helper.getLevel().getBlockState(origin).isAir(),
+						"Checkpoint fixture did not create its owned platform: " + stage.id());
+			}
+		} finally {
+			HemoJourneyFixtures.cleanup(player, origin);
+			player.discard();
+		}
+		helper.succeed();
+	}
 
 	@GameTest(templateNamespace = "minecraft", template = EMPTY_TEMPLATE, timeoutTicks = 40)
 	public static void exactClarityRiteGatesLoad(GameTestHelper helper) {
@@ -107,10 +153,10 @@ public final class UnstainedProgressionGameTests {
 			progress.setInfectionSuppressed(true);
 			UnstainedCardinalRiteEvents.completeRite(helper.getLevel(), player, player.blockPosition(),
 					"cardinal_rite/lethean_baptism");
-			helper.assertTrue(progress.hasBegunPurification() && progress.getPurity() == 5f,
-					"Suppressed infection must allow Lethean Baptism to begin Purity at five");
-			helper.assertTrue(player.getInventory().countItem(ItemInit.absolution_dagger.get()) == 1,
-					"Lethean Baptism must grant the Absolution Dagger");
+			helper.assertTrue(progress.hasBegunPurification() && progress.getPurity() == 50f,
+					"Suppressed D0 infection must allow Lethean Baptism to begin Purity at fifty");
+			helper.assertTrue(player.getInventory().countItem(ItemInit.absolution_dagger.get()) == 0,
+					"Lethean Baptism must not grant the pledge dagger");
 
 			fulfill(player, UnstainedObservances.Observance.GATHER_GHOST_PIPE,
 					new ItemStack(BlockInit.ghost_pipe.get(), 4));
@@ -121,6 +167,11 @@ public final class UnstainedProgressionGameTests {
 					new ItemStack(ItemInit.hemolytic_solution.get(), 2));
 
 			progress.setPurity(100f);
+			HemoCapabilityAccess.requireInitiatoryDegree(player).setDegreeNumber(2);
+			UnstainedCardinalRiteEvents.completeRite(helper.getLevel(), player, player.blockPosition(),
+					"cardinal_rite/closed_vein");
+			helper.assertTrue(progress.isBaselineRestored() && !progress.hasClarityUnlocked(),
+					"Closed Vein must restore the baseline without granting Church membership");
 			fulfill(player, UnstainedObservances.Observance.CONSECRATE_COPPER,
 					new ItemStack(ItemInit.consecrated_copper_ingot.get(), 4));
 			fulfill(player, UnstainedObservances.Observance.CONDENSE_STILL_WATERS,
@@ -135,7 +186,6 @@ public final class UnstainedProgressionGameTests {
 					"Clarity Ascension must still require Consecrated Copper preparation");
 
 			progress.setClarityPrepared(true);
-			HemoCapabilityAccess.requireInitiatoryDegree(player).setDegreeNumber(2);
 			UnstainedCardinalRiteEvents.completeRite(helper.getLevel(), player, player.blockPosition(),
 					"cardinal_rite/clarity_ascension");
 			helper.assertTrue(progress.hasClarityUnlocked() && !progress.isClarityPrepared(),
@@ -144,13 +194,15 @@ public final class UnstainedProgressionGameTests {
 					"Clarity must remove remaining Harbinger degree state");
 			helper.assertTrue(HemoCapabilityAccess.requireKnownStillArts(player).isKnown(StillArtInit.silver_rebuke.get()),
 					"Clarity Ascension must teach Silver Rebuke");
+			helper.assertTrue(player.getInventory().countItem(ItemInit.absolution_dagger.get()) == 1,
+					"Clarity Ascension must grant exactly one pledge dagger");
 
 			fulfill(player, UnstainedObservances.Observance.OFFER_CHALICE,
 					new ItemStack(ItemInit.lethean_chalice.get()));
 			progress.setClarity(50f);
 			fulfill(player, UnstainedObservances.Observance.RING_THE_PALE_WATCH,
 					new ItemStack(ItemInit.pale_silver_bell.get()));
-			int allObservances = (1 << UnstainedObservances.Observance.values().length) - 1;
+			int allObservances = (1 << 9) - 1;
 			helper.assertTrue(progress.getAcceptedObservances() == allObservances
 							&& progress.getClaimedObservances() == allObservances,
 					"The critical Unstained journey must accept and fulfill every current Observance");

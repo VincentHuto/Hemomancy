@@ -10,6 +10,8 @@ import com.vincenthuto.hemomancy.client.screen.skilltree.util.*;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.EnumClarityStage;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.EnumPurityStage;
+import com.vincenthuto.hemomancy.common.capability.player.unstained.UnstainedAccessRules;
+import com.vincenthuto.hemomancy.common.capability.player.unstained.UnstainedPhase;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.UnstainedPathGuidance;
 import com.vincenthuto.hemomancy.common.mission.unstained.UnstainedObservances.Observance;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
@@ -131,6 +133,7 @@ public class UnstainedProgressScreen extends Screen {
 	private float verdigrisAura;
 	private EnumPurityStage currentPurityStage;
 	private EnumClarityStage currentClarityStage;
+	private UnstainedPhase phase = UnstainedPhase.OUTSIDER;
 
 	// ── Cached bonus toggle state ──
 	private boolean silverWardEnabled;
@@ -187,6 +190,7 @@ public class UnstainedProgressScreen extends Screen {
 	private void cachePlayerData() {
 		if (Minecraft.getInstance().player != null) {
 			HemoCapabilityAccess.getUnstainedProgress(Minecraft.getInstance().player).ifPresent(cap -> {
+				phase                = UnstainedAccessRules.phase(cap);
 				begunPurification    = cap.hasBegunPurification();
 				purity               = cap.getPurity();
 				clarityUnlocked      = cap.hasClarityUnlocked();
@@ -431,8 +435,10 @@ public class UnstainedProgressScreen extends Screen {
 				guiLeft + guiWidth - 2, guiTop + guiHeight - 2);
 
 		if (activeTab == UTab.PROGRESS) {
-			if (!begunPurification) {
+			if (phase == UnstainedPhase.OUTSIDER) {
 				drawNotBegunMessage(gfx);
+			} else if (phase == UnstainedPhase.NOVITIATE || phase == UnstainedPhase.CLEANSED_UNPLEDGED) {
+				drawRouteMessage(gfx);
 			} else {
 				drawPurityColumn(gfx);
 				if (clarityUnlocked) {
@@ -522,11 +528,24 @@ public class UnstainedProgressScreen extends Screen {
 				Component.literal("The Unstained Path Awaits"),
 				centerX, centerY - 16, 0xFF8098C0);
 		gfx.drawCenteredString(font,
-				Component.literal("Seek purification to awaken this mirror's vision."),
+				Component.literal("Seek treatment for active blood, or take the five service vows."),
 				centerX, centerY, 0xFF506080);
 		gfx.drawCenteredString(font,
-				Component.literal("Perform a Rite of Purification to begin."),
+				Component.literal("Speak with an Unstained Zealot to begin."),
 				centerX, centerY + 16, 0xFF384860);
+	}
+
+	private void drawRouteMessage(GuiGraphics gfx) {
+		int centerX = guiLeft + guiWidth / 2;
+		int centerY = guiTop + guiHeight / 2;
+		if (phase == UnstainedPhase.NOVITIATE) {
+			int vows = UnstainedAccessRules.completedNovitiateVows(claimedObservances);
+			gfx.drawCenteredString(font, Component.literal("Novitiate Service"), centerX, centerY - 12, 0xFF80D0C0);
+			gfx.drawCenteredString(font, Component.literal("Vows fulfilled: " + vows + "/5"), centerX, centerY + 4, 0xFFB0C8E8);
+		} else {
+			gfx.drawCenteredString(font, Component.literal("Baseline Restored"), centerX, centerY - 12, 0xFF80D0C0);
+			gfx.drawCenteredString(font, Component.literal("Offer Consecrated Copper, then complete Clarity Ascension."), centerX, centerY + 4, 0xFFB0C8E8);
+		}
 	}
 
 	// ────────────────────────────────────────────────────────────
@@ -1060,6 +1079,9 @@ animTime += 0.016f; // ~60 FPS approximation
 	}
 
 	private String nextRiteLabel() {
+		if (phase == UnstainedPhase.NOVITIATE) return "Complete the five service vows";
+		if (phase == UnstainedPhase.CURE_READY) return "Closed Vein";
+		if (phase == UnstainedPhase.CLEANSED_UNPLEDGED) return "Clarity Ascension pledge";
 		return switch (UnstainedPathGuidance.nextRequiredRite(begunPurification, purity >= 100f, clarityUnlocked)) {
 			case "lethean_baptism" -> "Lethean Baptism";
 			case "patient_purification" -> "No rite: complete observances";
@@ -1078,6 +1100,7 @@ animTime += 0.016f; // ~60 FPS approximation
 			case CONSECRATE_COPPER -> purity >= 100f;
 			case OFFER_CHALICE -> clarityUnlocked;
 			case RING_THE_PALE_WATCH -> clarityUnlocked && clarity >= 50f;
+			default -> false;
 		};
 	}
 

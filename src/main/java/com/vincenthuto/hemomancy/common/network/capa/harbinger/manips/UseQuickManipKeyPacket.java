@@ -2,6 +2,7 @@ package com.vincenthuto.hemomancy.common.network.capa.harbinger.manips;
 
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
+import com.vincenthuto.hemomancy.common.capability.player.unstained.UnstainedAccessRules;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.IKnownManipulations;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.ManipulationRetirementRules;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
@@ -42,6 +43,8 @@ public class UseQuickManipKeyPacket implements CustomPacketPayload {
 			if (player == null)
 				return;
 			if (!player.level().isClientSide) {
+				if (HemoCapabilityAccess.getUnstainedProgress(player)
+						.map(UnstainedAccessRules::blocksKnownBloodPowerUse).orElse(false)) return;
 				float pTic = message.parTick;
 				IBloodVolume volume = HemoCapabilityAccess.getBloodVolume(player)
 						.orElseThrow(NullPointerException::new);

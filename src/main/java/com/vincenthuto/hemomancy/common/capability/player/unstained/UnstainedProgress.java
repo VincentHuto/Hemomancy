@@ -9,6 +9,11 @@ public class UnstainedProgress implements IUnstainedProgress, INBTSerializable<C
     private boolean begunPurification = false;
 	private boolean infectionSuppressed = false;
 	private boolean clarityPrepared = false;
+	private boolean baselineRestored = false;
+	private boolean novitiateRetortComplete;
+	private int novitiateDewProduced;
+	private int novitiateBlocksConsecrated;
+	private boolean novitiateProtectionComplete;
 	private boolean annettaSeveranceUnlocked = false;
 	private boolean claimedChurchStarterSupply = false;
 	private boolean claimedPaleSilverBellReward;
@@ -64,6 +69,16 @@ public class UnstainedProgress implements IUnstainedProgress, INBTSerializable<C
 	@Override public void setInfectionSuppressed(boolean suppressed) { infectionSuppressed = suppressed; }
 	@Override public boolean isClarityPrepared() { return clarityPrepared; }
 	@Override public void setClarityPrepared(boolean prepared) { clarityPrepared = prepared; }
+	@Override public boolean isBaselineRestored() { return baselineRestored; }
+	@Override public void setBaselineRestored(boolean restored) { baselineRestored = restored; }
+	@Override public boolean isNovitiateRetortComplete() { return novitiateRetortComplete; }
+	@Override public void setNovitiateRetortComplete(boolean complete) { novitiateRetortComplete = complete; }
+	@Override public int getNovitiateDewProduced() { return novitiateDewProduced; }
+	@Override public void setNovitiateDewProduced(int amount) { novitiateDewProduced = Math.max(0, amount); }
+	@Override public int getNovitiateBlocksConsecrated() { return novitiateBlocksConsecrated; }
+	@Override public void setNovitiateBlocksConsecrated(int amount) { novitiateBlocksConsecrated = Math.max(0, amount); }
+	@Override public boolean isNovitiateProtectionComplete() { return novitiateProtectionComplete; }
+	@Override public void setNovitiateProtectionComplete(boolean complete) { novitiateProtectionComplete = complete; }
 	@Override public boolean isAnnettaSeveranceUnlocked() { return annettaSeveranceUnlocked; }
 	@Override public void setAnnettaSeveranceUnlocked(boolean unlocked) { annettaSeveranceUnlocked = unlocked; }
 	@Override public boolean hasClaimedChurchStarterSupply() { return claimedChurchStarterSupply; }
@@ -236,6 +251,11 @@ public class UnstainedProgress implements IUnstainedProgress, INBTSerializable<C
         tag.putBoolean("begunPurification", begunPurification);
 		tag.putBoolean("infectionSuppressed", infectionSuppressed);
 		tag.putBoolean("clarityPrepared", clarityPrepared);
+		tag.putBoolean("baselineRestored", baselineRestored);
+		tag.putBoolean("novitiateRetortComplete", novitiateRetortComplete);
+		tag.putInt("novitiateDewProduced", novitiateDewProduced);
+		tag.putInt("novitiateBlocksConsecrated", novitiateBlocksConsecrated);
+		tag.putBoolean("novitiateProtectionComplete", novitiateProtectionComplete);
         tag.putBoolean("annettaSeveranceUnlocked", annettaSeveranceUnlocked);
 		tag.putBoolean("claimedChurchStarterSupply", claimedChurchStarterSupply);
 		tag.putBoolean("claimedPaleSilverBellReward", claimedPaleSilverBellReward);
@@ -278,6 +298,11 @@ public class UnstainedProgress implements IUnstainedProgress, INBTSerializable<C
         begunPurification = tag.getBoolean("begunPurification");
 		infectionSuppressed = tag.getBoolean("infectionSuppressed");
 		clarityPrepared = tag.getBoolean("clarityPrepared");
+		baselineRestored = tag.getBoolean("baselineRestored");
+		novitiateRetortComplete = tag.getBoolean("novitiateRetortComplete");
+		novitiateDewProduced = Math.max(0, tag.getInt("novitiateDewProduced"));
+		novitiateBlocksConsecrated = Math.max(0, tag.getInt("novitiateBlocksConsecrated"));
+		novitiateProtectionComplete = tag.getBoolean("novitiateProtectionComplete");
         annettaSeveranceUnlocked = tag.getBoolean("annettaSeveranceUnlocked");
 		claimedChurchStarterSupply = tag.getBoolean("claimedChurchStarterSupply");
 		claimedPaleSilverBellReward = tag.getBoolean("claimedPaleSilverBellReward");
@@ -290,18 +315,22 @@ public class UnstainedProgress implements IUnstainedProgress, INBTSerializable<C
 		lastPetHealRewardGameTime = tag.getLong("lastPetHealRewardGameTime");
 		lastEmptyBloodRewardGameTime = tag.getLong("lastEmptyBloodRewardGameTime");
         purity = tag.getFloat("purity");
-        clarityUnlocked = tag.getBoolean("clarityUnlocked");
+		clarityUnlocked = tag.getBoolean("clarityUnlocked");
+		if (clarityUnlocked && !tag.contains("baselineRestored")) {
+			baselineRestored = true;
+			purity = 100f;
+		}
         clarity = tag.getFloat("clarity");
         lastManipulationTick = tag.getLong("lastManipulationTick");
-        for (int i = 0; i < tag.getInt("hemoMobKills"); i++) addHemoMobKill();
-        for (int i = 0; i < tag.getInt("undeadKills"); i++) addUndeadKill();
-        for (int i = 0; i < tag.getInt("hostileKills"); i++) addHostileKill();
-        for (int i = 0; i < tag.getInt("flawlessKills"); i++) addFlawlessKill();
-        for (int i = 0; i < tag.getInt("animalsBreed"); i++) addAnimalBreed();
-        for (int i = 0; i < tag.getInt("cropsPlanted"); i++) addCropPlanted();
-        for (int i = 0; i < tag.getInt("advancementsEarned"); i++) addAdvancementEarned();
-        for (int i = 0; i < tag.getInt("nightsSlept"); i++) addNightSlept();
-        for (int i = 0; i < tag.getInt("petsHealed"); i++) addPetHealed();
+        hemoMobKills = tag.getInt("hemoMobKills");
+        undeadKills = tag.getInt("undeadKills");
+        hostileKills = tag.getInt("hostileKills");
+        flawlessKills = tag.getInt("flawlessKills");
+        animalsBreed = tag.getInt("animalsBreed");
+        cropsPlanted = tag.getInt("cropsPlanted");
+        advancementsEarned = tag.getInt("advancementsEarned");
+        nightsSlept = tag.getInt("nightsSlept");
+        petsHealed = tag.getInt("petsHealed");
         sleptWithHemolysis = tag.getBoolean("sleptWithHemolysis");
         killedFirstHemoMob = tag.getBoolean("killedFirstHemoMob");
         reachedAbstinence = tag.getBoolean("reachedAbstinence");

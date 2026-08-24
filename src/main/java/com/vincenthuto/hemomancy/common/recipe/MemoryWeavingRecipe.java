@@ -150,6 +150,11 @@ public class MemoryWeavingRecipe extends CustomRecipe {
 		return false;
 	}
 
+	@Override
+	public boolean isSpecial() {
+		return false;
+	}
+
 	/**
 	 * Legacy single-catalyst accessor used by older UI code. New code should use
 	 * {@link #getCatalysts()}.

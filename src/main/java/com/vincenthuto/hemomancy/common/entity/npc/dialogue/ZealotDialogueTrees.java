@@ -39,7 +39,6 @@ public final class ZealotDialogueTrees {
                 ), List.of(
                         new DialogueOption("hemomancy.dialogue.zealot.option.how_craft_hemolytic", "craft_hemolytic", null),
                         new DialogueOption("hemomancy.dialogue.zealot.option.accept_purification", null, "zealot_accept_purification"),
-                        new DialogueOption("hemomancy.dialogue.zealot.option.accept_church", null, "zealot_accept_church"),
                         new DialogueOption("hemomancy.dialogue.zealot.option.ask_about_item", "item_hint", null),
                         new DialogueOption("hemomancy.dialogue.zealot.option.leave", null, null)
                 )))
@@ -215,6 +214,8 @@ public final class ZealotDialogueTrees {
                 .addNode(new DialogueNode("root", List.of(
                         "hemomancy.zealot.already_on_path"
                 ), List.of(
+						new DialogueOption("hemomancy.dialogue.zealot.option.take_vows", null, "zealot_begin_novitiate",
+								DialogueOptionPresentation.attention(DialogueAttention.NOTICE)),
                         new DialogueOption("hemomancy.dialogue.zealot.option.ask_about_item", "item_hint", null),
                         new DialogueOption("hemomancy.dialogue.zealot.option.leave", null, null)
                 )))
@@ -246,6 +247,8 @@ public final class ZealotDialogueTrees {
                 .addNode(new DialogueNode("root", List.of(
                         "hemomancy.zealot.no_blood"
                 ), List.of(
+						new DialogueOption("hemomancy.dialogue.zealot.option.take_vows", null, "zealot_begin_novitiate",
+								DialogueOptionPresentation.attention(DialogueAttention.NOTICE)),
                         new DialogueOption("hemomancy.dialogue.zealot.option.ask_about_item", "item_hint", null),
                         new DialogueOption("hemomancy.dialogue.zealot.option.leave", null, null)
                 )))

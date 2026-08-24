@@ -11,6 +11,7 @@ import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ClientInformation;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.item.Items;
 import net.neoforged.neoforge.gametest.GameTestHolder;
 import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 
@@ -47,6 +48,8 @@ public final class AnchoriteGameTests {
         ResourceLocation tierThree = Hemomancy.rloc("scar_transcendence");
         helper.assertTrue(ItemScarPattern.getScarIds(VeinMasonScarLesson.strongestForPlayer(player, 2).patternStack())
                 .equals(java.util.List.of(tierTwo)), "tier-two reward did not select Veil");
+        helper.assertTrue(VeinMasonScarLesson.strongestForPlayer(player, 2).catalyst() == Items.ENDER_PEARL,
+                "tier-two reward did not include Veil's authored catalyst");
         helper.assertTrue(ItemScarPattern.getScarIds(VeinMasonScarLesson.strongestForPlayer(player, 3).patternStack())
                 .equals(java.util.List.of(tierThree)), "tier-three reward did not select Transcendence");
         player.discard();

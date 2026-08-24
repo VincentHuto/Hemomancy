@@ -13,6 +13,7 @@ import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.recipe.BloodStructureRecipe;
 import com.vincenthuto.hemomancy.common.recipe.CardinalRiteRecipe;
 import com.vincenthuto.hemomancy.common.recipe.RecipeDegreeGates;
+import com.vincenthuto.hemomancy.common.capability.player.unstained.UnstainedAccessRules;
 import com.vincenthuto.hemomancy.common.rite.ActiveCardinalRite;
 import com.vincenthuto.hemomancy.common.rite.CardinalRiteSavedData;
 import com.vincenthuto.hemomancy.common.rite.CardinalRiteMediumRules;
@@ -20,6 +21,7 @@ import com.vincenthuto.hemomancy.common.rite.CardinalRiteStationMatcher;
 import com.vincenthuto.hemomancy.common.rite.CardinalRiteStaffEscrow;
 import com.vincenthuto.hemomancy.common.rite.harbinger.CardinalRiteActivationRules;
 import com.vincenthuto.hemomancy.common.rite.harbinger.PuppeteerTrialRiteController;
+import com.vincenthuto.hemomancy.common.rite.unstained.UnstainedCardinalRiteEvents;
 import com.vincenthuto.hemomancy.common.mission.shared.HarbingerChapterMilestone;
 import com.vincenthuto.hemomancy.common.mission.shared.HarbingerChapterProgression;
 import com.vincenthuto.hemomancy.common.tile.functional.CardinalFocusBlockEntity;
@@ -115,7 +117,8 @@ public class BloodCraftingKeyPressPacket implements CustomPacketPayload {
 
 					// Explicit recipe degree / stage check.
 					int requiredDegree = RecipeDegreeGates.getRequiredDegree(targetPattern);
-					if (!RecipeDegreeGates.playerMeets(player, targetPattern)) {
+					if (!RecipeDegreeGates.playerMeets(player, targetPattern)
+							&& !bypassesUnstainedLevelGate(player, targetPattern.getId().getPath())) {
 						String requiredName = RecipeDegreeGates.requirementLabel(targetPattern);
 						player.displayClientMessage(
 								Component.literal("This formation requires " + targetPattern.getId().getPath() + " to be held, and demands ")
@@ -135,7 +138,7 @@ public class BloodCraftingKeyPressPacket implements CustomPacketPayload {
 						handled = true;
 						break;
 					}
-					if (bloodVolume.getBloodVolume() > targetPattern.getBloodCost()) {
+					if (bloodVolume.getBloodVolume() >= targetPattern.getBloodCost()) {
 						// ── Compute structure bounding box ──
 						int patW = blockPat.getWidth();
 						int patH = blockPat.getHeight();
@@ -221,7 +224,8 @@ public class BloodCraftingKeyPressPacket implements CustomPacketPayload {
 						if (match != null && player.getMainHandItem().getItem() != recipe.getHeldItem().getItem()) {
 							// Check progression first, so locked recipes explain the missing degree/stage.
 							int requiredDegree = RecipeDegreeGates.getRequiredDegree(recipe);
-							if (!RecipeDegreeGates.playerMeets(player, recipe)) {
+							if (!RecipeDegreeGates.playerMeets(player, recipe)
+									&& !bypassesUnstainedLevelGate(player, recipe.getId().getPath())) {
 								String requiredName = RecipeDegreeGates.requirementLabel(recipe);
 								player.displayClientMessage(
 										Component.literal("This formation requires " + recipe.getId().getPath() + " to be held, and demands ")
@@ -393,7 +397,8 @@ public class BloodCraftingKeyPressPacket implements CustomPacketPayload {
 				} else {
 					// Unstained: check purity/clarity progression level (0â€“8)
 					int requiredLevel = RecipeDegreeGates.getRequiredDegree(recipe);
-					if (!RecipeDegreeGates.playerMeets(player, recipe)) {
+					if (!RecipeDegreeGates.playerMeets(player, recipe)
+							&& !bypassesUnstainedLevelGate(player, recipe.getId().getPath())) {
 						String stageName = RecipeDegreeGates.requirementLabel(recipe);
 						player.displayClientMessage(
 								Component.literal("This rite demands ")
@@ -407,18 +412,18 @@ public class BloodCraftingKeyPressPacket implements CustomPacketPayload {
 					}
 				}
 
-				// â”€â”€ Path alignment gate â”€â”€
-				boolean playerIsInitiated = HemoCapabilityAccess.getPlayerDegreeNumber(player) >= 1;
-				boolean playerIsUnstained = HemoCapabilityAccess.getUnstainedProgress(player)
-						.map(u -> u.hasBegunPurification()).orElse(false);
-				if (recipe.isUnstained() && playerIsInitiated) {
-					player.displayClientMessage(
-							Component.literal("The Hematic Order and Unstained path are incompatible.")
-									.withStyle(ChatFormatting.DARK_GRAY, ChatFormatting.ITALIC),
-							false);
-					return CardinalRiteActivationRules.ActivationAttempt.HANDLED;
+				if (recipe.isUnstained()) {
+					var preflight = UnstainedCardinalRiteEvents.preflight(serverPlayer, recipe.getId().getPath());
+					if (!preflight.success()) {
+						UnstainedCardinalRiteEvents.announceFailure(serverPlayer, preflight.failure());
+						return CardinalRiteActivationRules.ActivationAttempt.HANDLED;
+					}
 				}
-				if (!recipe.isUnstained() && playerIsUnstained) {
+
+				// â”€â”€ Path alignment gate â”€â”€
+				boolean harbingerProgressBlocked = HemoCapabilityAccess.getUnstainedProgress(player)
+						.map(UnstainedAccessRules::blocksHarbingerProgress).orElse(false);
+				if (!recipe.isUnstained() && harbingerProgressBlocked) {
 					player.displayClientMessage(
 							Component.literal("Purification bars access to the Hematic Order rites.")
 									.withStyle(ChatFormatting.DARK_GRAY, ChatFormatting.ITALIC),
@@ -756,18 +761,19 @@ public class BloodCraftingKeyPressPacket implements CustomPacketPayload {
 	 * {@code null} if the recipe is accessible.
 	 */
 	private static net.minecraft.network.chat.Component checkPathAlignment(Player player, BloodStructureRecipe recipe) {
-		boolean playerIsInitiated = HemoCapabilityAccess.getPlayerDegreeNumber(player) >= 1;
-		boolean playerIsUnstained = HemoCapabilityAccess.getUnstainedProgress(player)
-				.map(u -> u.hasBegunPurification()).orElse(false);
-		if (recipe.isUnstained() && playerIsInitiated) {
-			return Component.literal("The Hematic Order and Unstained path are incompatible.")
-					.withStyle(ChatFormatting.DARK_GRAY, ChatFormatting.ITALIC);
-		}
-		if (!recipe.isUnstained() && playerIsUnstained) {
+		boolean harbingerProgressBlocked = HemoCapabilityAccess.getUnstainedProgress(player)
+				.map(UnstainedAccessRules::blocksHarbingerProgress).orElse(false);
+		if (!recipe.isUnstained() && harbingerProgressBlocked) {
 			return Component.literal("Purification bars access to the Hematic Order formations.")
 					.withStyle(ChatFormatting.DARK_GRAY, ChatFormatting.ITALIC);
 		}
 		return null;
+	}
+
+	private static boolean bypassesUnstainedLevelGate(Player player, String recipePath) {
+		return HemoCapabilityAccess.getUnstainedProgress(player)
+				.map(progress -> UnstainedAccessRules.bypassesUnstainedLevelGate(recipePath, progress))
+				.orElse(false);
 	}
 
 	public ItemStack heldStack;

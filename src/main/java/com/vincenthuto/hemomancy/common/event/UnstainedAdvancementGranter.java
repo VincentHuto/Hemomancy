@@ -34,6 +34,8 @@ public final class UnstainedAdvancementGranter {
 	// ── Clarity advancements ────────────────────────────────────────────────────
 	public static final ResourceLocation ADV_CLARITY_AWAKENED =
 			Hemomancy.rloc("hemomancy/clarity_awakened");
+	public static final ResourceLocation ADV_PLEDGED_UNSTAINED =
+			Hemomancy.rloc("hemomancy/pledged_unstained");
 	public static final ResourceLocation ADV_DISCERNING =
 			Hemomancy.rloc("hemomancy/discerning");
 	public static final ResourceLocation ADV_VIGILANT =

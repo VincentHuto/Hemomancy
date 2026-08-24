@@ -9,6 +9,8 @@ import com.vincenthuto.hemomancy.common.capability.player.unstained.EnumPuritySt
 import com.vincenthuto.hemomancy.common.capability.player.unstained.IUnstainedProgress;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.UnstainedProgressEvents;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.UnstainedEntryRules;
+import com.vincenthuto.hemomancy.common.capability.player.unstained.UnstainedAccessRules;
+import com.vincenthuto.hemomancy.common.capability.player.unstained.UnstainedPhase;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.stillart.KnownStillArtEvents;
 import com.vincenthuto.hemomancy.common.event.MachineAccessEvents;
 import com.vincenthuto.hemomancy.common.init.BlockInit;
@@ -165,6 +167,18 @@ public class UnstainedPodiumBlock extends Block implements EntityBlock, SimpleWa
 
 	private void handleHemolyticSolution(Level worldIn, BlockPos pos, Player player, ItemStack stack,
 			IUnstainedProgress unstained) {
+		var degree = HemoCapabilityAccess.getInitiatoryDegree(player).orElse(null);
+		var blood = HemoCapabilityAccess.getBloodVolume(player).orElse(null);
+		boolean eligible = degree != null && blood != null && UnstainedEntryRules.canSuppressForCure(
+				blood.isActive(), degree.getDegreeNumber(), degree.hasFoundedBloodline(),
+				degree.isFounderIntegrationSevered());
+		if (!eligible) {
+			player.displayClientMessage(Component.literal(blood == null || !blood.isActive()
+					? "You carry no active infection. Speak with a Zealot and take the vows."
+					: "Your infection lies beyond ordinary suppression.")
+					.withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC), false);
+			return;
+		}
 		if (!unstained.isInfectionSuppressed()) {
 			stack.shrink(1);
 			unstained.setInfectionSuppressed(true);
@@ -182,7 +196,10 @@ public class UnstainedPodiumBlock extends Block implements EntityBlock, SimpleWa
 
 	private void handleConsecratedCopper(Level worldIn, BlockPos pos, Player player, ItemStack stack,
 			IUnstainedProgress unstained) {
-		if (!unstained.isPurified()) return;
+		boolean vowsComplete = UnstainedAccessRules.hasCompletedNovitiateVows(unstained.getClaimedObservances());
+		boolean cleanBlood = HemoCapabilityAccess.getBloodVolume(player)
+				.map(volume -> !volume.isActive() && volume.getBloodVolume() <= 0).orElse(true);
+		if (!(unstained.isBaselineRestored() || vowsComplete) || !cleanBlood) return;
 		if (unstained.isClarityPrepared() || unstained.hasClarityUnlocked()) return;
 		stack.shrink(1);
 		unstained.setClarityPrepared(true);
@@ -245,11 +262,24 @@ public class UnstainedPodiumBlock extends Block implements EntityBlock, SimpleWa
 	}
 
 	private void showUnstainedProgress(Player player, IUnstainedProgress unstained) {
-		if (!unstained.hasBegunPurification()) {
+		UnstainedPhase phase = UnstainedAccessRules.phase(unstained);
+		if (phase == UnstainedPhase.OUTSIDER) {
 			player.displayClientMessage(
-					Component.literal("The podium hums faintly. Begin the Unstained path first.")
+					Component.literal("The podium hums faintly. Speak with a Zealot to seek treatment or take the vows.")
 							.withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC),
 					false);
+			return;
+		}
+
+		if (phase == UnstainedPhase.NOVITIATE) {
+			player.displayClientMessage(Component.literal("Novitiate vows: "
+					+ UnstainedAccessRules.completedNovitiateVows(unstained.getClaimedObservances()) + "/5")
+					.withStyle(ChatFormatting.AQUA), false);
+			return;
+		}
+		if (phase == UnstainedPhase.CLEANSED_UNPLEDGED) {
+			player.displayClientMessage(Component.literal("Your baseline is restored. Offer Consecrated Copper here, then perform Clarity Ascension to pledge.")
+					.withStyle(ChatFormatting.AQUA), false);
 			return;
 		}
 
@@ -267,9 +297,9 @@ public class UnstainedPodiumBlock extends Block implements EntityBlock, SimpleWa
 							+ "/100 — " + clarityStage.getTitle())
 							.withStyle(ChatFormatting.WHITE),
 					false);
-		} else if (unstained.isPurified()) {
+		} else if (phase == UnstainedPhase.CURE_READY) {
 			player.displayClientMessage(
-					Component.literal("You are fully purified. Seek the Rite of Clarity Ascension to unlock clarity.")
+					Component.literal("Purity is complete. Perform Closed Vein to make the cleansing irreversible.")
 							.withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC),
 					false);
 		}

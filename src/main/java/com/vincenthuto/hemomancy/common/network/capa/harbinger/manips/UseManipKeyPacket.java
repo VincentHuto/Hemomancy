@@ -3,6 +3,7 @@ package com.vincenthuto.hemomancy.common.network.capa.harbinger.manips;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.HemoAttachmentTypes;
+import com.vincenthuto.hemomancy.common.capability.player.unstained.UnstainedAccessRules;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.MemoryEntryKind;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.musclememory.MuscleMemory;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.musclememory.MuscleMemoryEvents;
@@ -51,6 +52,8 @@ public class UseManipKeyPacket implements CustomPacketPayload {
 			if (player == null)
 				return;
 			if (!player.level().isClientSide) {
+				if (HemoCapabilityAccess.getUnstainedProgress(player)
+						.map(UnstainedAccessRules::blocksKnownBloodPowerUse).orElse(false)) return;
 				float pTic = message.parTick;
 
 				// Allow SummonThrallManip through cooldown when selecting a destination

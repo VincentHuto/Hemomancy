@@ -25,6 +25,7 @@ import java.util.List;
 public class ConfiguredFeatureInit {
 	public static final ResourceKey<ConfiguredFeature<?, ?>> HYPHAE_TENDRIL = createKey("hyphae_tendril");
 	public static final ResourceKey<ConfiguredFeature<?, ?>> VENOUS_RIDGE = createKey("venous_ridge");
+	public static final ResourceKey<ConfiguredFeature<?, ?>> FUNGAL_FLOOR = createKey("fungal_floor");
 	public static final ResourceKey<ConfiguredFeature<?, ?>> HUGE_FUNGUS = createKey("huge_fungus");
 	public static final ResourceKey<ConfiguredFeature<?, ?>> SMALL_INFECTED_FUNGUS = FeatureUtils
 			.createKey("small_infected_fungus");
@@ -183,6 +184,7 @@ public class ConfiguredFeatureInit {
 
 		register(context, HYPHAE_TENDRIL, BaseFeatureInit.HYPHAE_TENDRIL, NoneFeatureConfiguration.INSTANCE);
 		register(context, VENOUS_RIDGE, BaseFeatureInit.VENOUS_RIDGE, NoneFeatureConfiguration.INSTANCE);
+		register(context, FUNGAL_FLOOR, BaseFeatureInit.FUNGAL_FLOOR, NoneFeatureConfiguration.INSTANCE);
 		register(context, HUGE_FUNGUS, BaseFeatureInit.HUGE_FUNGUS, NoneFeatureConfiguration.INSTANCE);
 
 		register(context, SMALL_INFECTED_FUNGUS, Feature.SIMPLE_RANDOM_SELECTOR,

@@ -2,6 +2,7 @@ package com.vincenthuto.hemomancy.common.entity.npc.dialogue;
 
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.mission.unstained.UnstainedObservances;
+import com.vincenthuto.hemomancy.common.capability.player.unstained.UnstainedAccessRules;
 import net.minecraft.server.level.ServerPlayer;
 
 import java.util.ArrayList;
@@ -16,7 +17,9 @@ public final class UnstainedObservanceDialogueDecorator {
 	public static DialogueTree decorate(DialogueTree tree, ServerPlayer player,
 			UnstainedObservances.Issuer issuer) {
 		var progress = HemoCapabilityAccess.getUnstainedProgress(player).orElse(null);
-		if (progress == null || !progress.hasBegunPurification()) {
+		if (progress == null || !progress.hasBegunPurification()
+				&& ((progress.getAcceptedObservances() | progress.getClaimedObservances())
+						& UnstainedAccessRules.NOVITIATE_MASK) == 0) {
 			return tree;
 		}
 
@@ -28,7 +31,8 @@ public final class UnstainedObservanceDialogueDecorator {
 				visible.add(observance);
 			}
 		}
-		if (visible.isEmpty()) {
+		boolean daggerReplacement = issuer == UnstainedObservances.Issuer.GUARDIAN && progress.hasClarityUnlocked();
+		if (visible.isEmpty() && !daggerReplacement) {
 			return tree;
 		}
 		DialogueNode start = tree.getStartNode();
@@ -44,6 +48,11 @@ public final class UnstainedObservanceDialogueDecorator {
 			startOptions.add(insertIndex++, new DialogueOption(optionKey(observance), null, observance.eventId(),
 					attention == DialogueAttention.NONE ? DialogueOptionPresentation.normal()
 							: DialogueOptionPresentation.attention(attention)));
+		}
+		if (daggerReplacement) {
+			startOptions.add(insertIndex, new DialogueOption(
+					"hemomancy.dialogue.guardian.option.replace_absolution_dagger", null,
+					"guardian_replace_absolution_dagger"));
 		}
 
 		var nodes = new LinkedHashMap<>(tree.nodes());
@@ -67,6 +76,11 @@ public final class UnstainedObservanceDialogueDecorator {
 			case BEAR_PALLID_ICON -> "hemomancy.dialogue.zealot.option.task_pallid_icon";
 			case PLATE_THE_WARD -> "hemomancy.dialogue.guardian.option.task_plating";
 			case RING_THE_PALE_WATCH -> "hemomancy.dialogue.guardian.option.task_bell";
+			case NOVITIATE_GATHER_REMEDIES -> "hemomancy.dialogue.acolyte.option.vow_gather_remedies";
+			case NOVITIATE_GENTLE_SEPARATION -> "hemomancy.dialogue.acolyte.option.vow_gentle_separation";
+			case NOVITIATE_STILLWATER_LABOR -> "hemomancy.dialogue.zealot.option.vow_stillwater_labor";
+			case NOVITIATE_CLEAN_LABOR -> "hemomancy.dialogue.zealot.option.vow_clean_labor";
+			case NOVITIATE_SHELTER_AFFLICTED -> "hemomancy.dialogue.guardian.option.vow_shelter_afflicted";
 		};
 	}
 }

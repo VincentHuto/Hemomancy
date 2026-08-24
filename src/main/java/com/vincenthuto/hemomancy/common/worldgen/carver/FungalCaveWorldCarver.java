@@ -20,8 +20,6 @@ import org.apache.commons.lang3.mutable.MutableBoolean;
 import java.util.function.Function;
 
 public class FungalCaveWorldCarver extends CaveWorldCarver {
-	private static final int SEA_PROTECTION_Y = 38;
-
 	public FungalCaveWorldCarver(Codec<CaveCarverConfiguration> codec) {
 		super(codec);
 	}
@@ -54,11 +52,10 @@ public class FungalCaveWorldCarver extends CaveWorldCarver {
 			Function<BlockPos, Holder<Biome>> biomeGetter, CarvingMask carvingMask, BlockPos.MutableBlockPos pos,
 			BlockPos.MutableBlockPos checkPos, Aquifer aquifer, MutableBoolean reachedSurface) {
 		BlockState state = chunk.getBlockState(pos);
-		if (!this.canReplaceBlock(config, state) || !state.getFluidState().isEmpty()) {
-			return false;
-		}
-
-		if (pos.getY() >= SEA_PROTECTION_Y && touchesLiquid(chunk, pos, checkPos)) {
+		boolean replaceable = this.canReplaceBlock(config, state);
+		boolean containsLiquid = !state.getFluidState().isEmpty();
+		boolean adjacentLiquid = replaceable && !containsLiquid && touchesLiquid(chunk, pos, checkPos);
+		if (!DryFungalCarving.isCandidate(replaceable, containsLiquid, adjacentLiquid)) {
 			return false;
 		}
 
@@ -76,4 +73,12 @@ public class FungalCaveWorldCarver extends CaveWorldCarver {
 		return false;
 	}
 
+}
+
+final class DryFungalCarving {
+	private DryFungalCarving() {}
+
+	static boolean isCandidate(boolean replaceable, boolean containsLiquid, boolean adjacentLiquid) {
+		return replaceable && !containsLiquid && !adjacentLiquid;
+	}
 }

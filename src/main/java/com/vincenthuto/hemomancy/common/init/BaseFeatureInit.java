@@ -32,6 +32,8 @@ public class BaseFeatureInit {
 
 	public static final Feature<NoneFeatureConfiguration> VENOUS_RIDGE = register("venous_ridge",
 			new VenousRidgeFeature(NoneFeatureConfiguration.CODEC));
+	public static final Feature<NoneFeatureConfiguration> FUNGAL_FLOOR = register("fungal_floor",
+			new FungalFloorFeature(NoneFeatureConfiguration.CODEC));
 
 	public static final Feature<NoneFeatureConfiguration> HUGE_FUNGUS = register("huge_fungus",
 			new FungusFeature(NoneFeatureConfiguration.CODEC));

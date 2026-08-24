@@ -25,6 +25,7 @@ import com.google.gson.JsonParser;
 
 class FungalGardensFeatureOrderTest {
 	private static final String BLEEDING_HEARTS = "hemomancy:bleeding_hearts";
+	private static final String FUNGAL_FLOOR = "hemomancy:fungal_floor";
 	private static final String PATCH_HYPHAE = "hemomancy:patch_hyphae";
 	private static final String SMALL_FUNGUS = "hemomancy:small_infected_fungus";
 
@@ -42,8 +43,10 @@ class FungalGardensFeatureOrderTest {
 			String path = "data/" + biome.replace(':', '/') + ".json";
 			path = path.replace("/hemomancy/", "/hemomancy/worldgen/biome/");
 			JsonArray steps = resourceJson(path).getAsJsonArray("features");
+			boolean hasFungalFloor = false;
 			for (int step = 0; step < steps.size(); step++) {
 				JsonArray features = steps.get(step).getAsJsonArray();
+				hasFungalFloor |= indexOf(features, FUNGAL_FLOOR) >= 0;
 				assertCanonicalRelativeOrder(biome, features);
 				Map<String, Set<String>> edges = edgesByStep.computeIfAbsent(step, ignored -> new HashMap<>());
 				for (int before = 0; before < features.size(); before++) {
@@ -54,6 +57,7 @@ class FungalGardensFeatureOrderTest {
 					}
 				}
 			}
+			assertTrue(hasFungalFloor, biome + " is missing the continuous fungal floor feature");
 		}
 
 		for (var entry : edgesByStep.entrySet()) {
