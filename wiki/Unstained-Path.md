@@ -43,7 +43,7 @@ Unlike Harbingers with their seven discrete degrees, the Unstained pursue a grad
 **What Happens:**
 - Lethean Baptism begins Purity; the Podium alone does not
 - Clarity remains locked until Consecrated Copper preparation and Clarity Ascension
-- Founding a bloodline closes ordinary cure; curing Annetta can unlock an exceptional founder-severance rite
+- Founding a bloodline closes ordinary cure; defeating the infection unleashed by Annetta's fatal Harbinger encounter can unlock an exceptional founder-severance rite
 - You officially begin purging the infection
 
 ---

@@ -1113,10 +1113,6 @@ public class HarbingerCardinalRiteEvents {
 	private static final String ILLUMINATUS_RITE = "cardinal_rite/illuminatus_rite";
 
 	// â”€â”€ Gourd upgrade rite paths â”€â”€
-	private static final String PALLID_VESSEL_RITE = "cardinal_rite/pallid_vessel_rite";
-	private static final String CRIMSON_VESSEL_RITE = "cardinal_rite/crimson_vessel_rite";
-	private static final String ASHEN_VESSEL_RITE = "cardinal_rite/ashen_vessel_rite";
-	private static final String HORN_OF_CULMINATION_RITE = "cardinal_rite/horn_of_culmination_rite";
 
 
 	/** Radius (in blocks) for Hungering Earth terrain corruption. */
@@ -1229,67 +1225,6 @@ public class HarbingerCardinalRiteEvents {
 		if (!recipe.getResult().isEmpty()) {
 			ItemStack resultStack = recipe.getResult().copy();
 
-			// === Gourd upgrade rites: consume the prerequisite gourd from player ===
-			if (PALLID_VESSEL_RITE.equals(ritePath)) {
-				if (!consumeGourdPrerequisite(caster, ItemInit.dried_gourd.get())) {
-					caster.displayClientMessage(
-							Component.literal("You carry no dried gourd to consecrate. The rite yields nothing.")
-									.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC),
-							false);
-					resultStack = ItemStack.EMPTY;
-				} else {
-					caster.displayClientMessage(
-							Component.literal("The dried gourd awakens, its pallid shell now a vessel for living blood.")
-									.withStyle(ChatFormatting.GOLD, ChatFormatting.ITALIC),
-							false);
-				}
-			}
-
-			if (CRIMSON_VESSEL_RITE.equals(ritePath)) {
-				if (!consumeGourdPrerequisite(caster, ItemInit.blood_gourd_white.get())) {
-					caster.displayClientMessage(
-							Component.literal("You carry no pallid vessel to steep. The rite yields nothing.")
-									.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC),
-							false);
-					resultStack = ItemStack.EMPTY;
-				} else {
-					caster.displayClientMessage(
-							Component.literal("The pallid vessel flushes crimson â€” reborn in the deepest scarlet.")
-									.withStyle(ChatFormatting.RED, ChatFormatting.ITALIC),
-							false);
-				}
-			}
-
-			if (ASHEN_VESSEL_RITE.equals(ritePath)) {
-				if (!consumeGourdPrerequisite(caster, ItemInit.blood_gourd_red.get())) {
-					caster.displayClientMessage(
-							Component.literal("You carry no crimson vessel to temper. The rite yields nothing.")
-									.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC),
-							false);
-					resultStack = ItemStack.EMPTY;
-				} else {
-					caster.displayClientMessage(
-							Component.literal("Through fire and ash the vessel is reborn â€” blackened, hardened, and hungry.")
-									.withStyle(ChatFormatting.DARK_GRAY, ChatFormatting.ITALIC),
-							false);
-				}
-			}
-
-			if (HORN_OF_CULMINATION_RITE.equals(ritePath)) {
-				if (!consumeGourdPrerequisite(caster, ItemInit.blood_gourd_black.get())) {
-					caster.displayClientMessage(
-							Component.literal("You carry no ashen vessel to transcend. The rite yields nothing.")
-									.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC),
-							false);
-					resultStack = ItemStack.EMPTY;
-				} else {
-					caster.displayClientMessage(
-							Component.literal("The final vessel transcends flesh and gourd alike â€” the Curved Horn is born.")
-									.withStyle(ChatFormatting.DARK_PURPLE, ChatFormatting.ITALIC),
-							false);
-				}
-			}
-
 			// Bloodline founding rite: pre-sign the ledger with the caster's new bloodline
 			if (BLOODLINE_FOUNDING_RITE.equals(ritePath) && resultStack.getItem() instanceof UnsignedLedgerItem) {
 				presignBloodlineLedger(sLevel, caster, resultStack);
@@ -1318,9 +1253,10 @@ public class HarbingerCardinalRiteEvents {
 			}
 
 			if (!resultStack.isEmpty()) {
-				sLevel.addFreshEntity(new ItemEntity(sLevel,
+				ItemEntity resultDrop = new ItemEntity(sLevel,
 						center.getX() + 0.5, center.getY() + 1.5, center.getZ() + 0.5,
-						resultStack));
+						resultStack);
+				if (!sLevel.addFreshEntity(resultDrop)) caster.drop(resultStack, false);
 			}
 		}
 
@@ -1477,15 +1413,9 @@ public class HarbingerCardinalRiteEvents {
 			HarbingerAdvancementGranter.grantIfNotDone(caster,
 					Hemomancy.rloc("hemomancy/the_first_awakening"));
 			ItemStack conduit = new ItemStack(ItemInit.sanguine_conduit.get());
-			if (!caster.getInventory().add(conduit)) {
-				sLevel.addFreshEntity(new ItemEntity(sLevel,
-						center.getX() + 0.5, center.getY() + 1.5, center.getZ() + 0.5, conduit));
-			}
+			giveOrDropAtRite(sLevel, caster, center, conduit);
 			ItemStack waybill = new ItemStack(ItemInit.covenant_waybill.get());
-			if (!caster.getInventory().add(waybill)) {
-				sLevel.addFreshEntity(new ItemEntity(sLevel,
-						center.getX() + 0.5, center.getY() + 1.5, center.getZ() + 0.5, waybill));
-			}
+			giveOrDropAtRite(sLevel, caster, center, waybill);
 			caster.displayClientMessage(
 					Component.translatable("hemomancy.rite.sanguine_initiation.conduit_granted")
 							.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC),
@@ -1494,10 +1424,7 @@ public class HarbingerCardinalRiteEvents {
 
 		if ("cardinal_rite/initiate_rite".equals(ritePath)) {
 			ItemStack blob = new ItemStack(ItemInit.sanguine_blob.get());
-			if (!caster.getInventory().add(blob)) {
-				sLevel.addFreshEntity(new ItemEntity(sLevel,
-						center.getX() + 0.5, center.getY() + 1.5, center.getZ() + 0.5, blob));
-			}
+			giveOrDropAtRite(sLevel, caster, center, blob);
 			caster.displayClientMessage(
 					Component.translatable("hemomancy.rite.initiate_rite.blob_granted")
 					.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC),
@@ -1512,6 +1439,13 @@ public class HarbingerCardinalRiteEvents {
 		}
 		CardinalRiteStaffEscrow.restore(caster, rite);
 		return true;
+	}
+
+	private static void giveOrDropAtRite(ServerLevel level, ServerPlayer player, BlockPos center, ItemStack stack) {
+		if (player.addItem(stack)) return;
+		ItemEntity drop = new ItemEntity(level,
+				center.getX() + 0.5, center.getY() + 1.5, center.getZ() + 0.5, stack);
+		if (!level.addFreshEntity(drop)) player.drop(stack, false);
 	}
 
 	private static void replaceLinkedTempleDisplay(ServerLevel level, BlockPos focusPos) {
@@ -1565,13 +1499,6 @@ public class HarbingerCardinalRiteEvents {
 		return true;
 	}
 
-	// Gourd Upgrade Helpers
-
-	/**
-	 * Searches the player's main hand, off hand, and inventory for an item matching
-	 * the given prerequisite. If found, one stack entry is consumed and true is returned.
-	 * Prefers the main hand, then off hand, then the first matching inventory slot.
-	 */
 	private static CardinalRiteStationMatcher.StationMatch layeredStationMatch(
 			ServerLevel level, ActiveCardinalRite rite, CardinalRiteRecipe recipe) {
 		if (rite.getMatchedFloorId() != null) {
@@ -1618,33 +1545,6 @@ public class HarbingerCardinalRiteEvents {
 				}
 			}
 		}
-	}
-
-	private static boolean consumeGourdPrerequisite(ServerPlayer caster, net.minecraft.world.item.Item prerequisite) {
-		// Check main hand first
-		ItemStack mainHand = caster.getMainHandItem();
-		if (mainHand.getItem() == prerequisite) {
-			mainHand.shrink(1);
-			return true;
-		}
-
-		// Check off hand
-		ItemStack offHand = caster.getOffhandItem();
-		if (offHand.getItem() == prerequisite) {
-			offHand.shrink(1);
-			return true;
-		}
-
-		// Search entire inventory
-		for (int i = 0; i < caster.getInventory().getContainerSize(); i++) {
-			ItemStack stack = caster.getInventory().getItem(i);
-			if (stack.getItem() == prerequisite) {
-				stack.shrink(1);
-				return true;
-			}
-		}
-
-		return false;
 	}
 
 	// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
@@ -2415,7 +2315,7 @@ public class HarbingerCardinalRiteEvents {
 		ItemEntity drop = new ItemEntity(level, x, y, z, spine);
 		drop.setDeltaMovement(-look.x * 0.18, 0.18, -look.z * 0.18);
 		drop.setPickUpDelay(10);
-		level.addFreshEntity(drop);
+		if (!level.addFreshEntity(drop) && !player.addItem(spine)) player.drop(spine, false);
 	}
 
 	private static boolean hasQliphothCommunion(ServerPlayer player) {

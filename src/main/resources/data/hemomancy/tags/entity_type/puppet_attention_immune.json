@@ -1,0 +1,17 @@
+{
+  "replace": false,
+  "values": [
+    "minecraft:ender_dragon",
+    "minecraft:wither",
+    "minecraft:warden",
+    "hemomancy:hemorath",
+    "hemomancy:seraphae",
+    "hemomancy:annetta_knowles",
+    "hemomancy:stained_priestess",
+    "hemomancy:putriciel",
+    "hemomancy:velorum",
+    "hemomancy:vesper_crowned_refusal",
+    "hemomancy:vesper_evening_star",
+    "hemomancy:mycophant"
+  ]
+}

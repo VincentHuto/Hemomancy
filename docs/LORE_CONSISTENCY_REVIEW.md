@@ -67,12 +67,12 @@ These are no longer open questions.
 
 ### R-02 - Annetta's canonical creature is the Tooth Peck
 
-**Canonical ruling:** A **Tooth Peck** seeks Annetta because Tooth Pecks seek out infection. Its interest in her causes Annetta's horrifying realization that she herself is infected.
+**Canonical ruling:** A **Tooth Peck** seeks Annetta because Tooth Pecks seek out infection. Annetta never realizes that she herself is infected.
 
 **Consequences:**
 
 - Replace the Chthonian in [`LORE_REFERENCE.md`](LORE_REFERENCE.md) section 11 and any matching downstream retellings with a Tooth Peck.
-- State clearly that the creature's infection-seeking behavior, not merely the bite itself, exposes the truth to Annetta.
+- State clearly that the creature's infection-seeking behavior exposes the truth to the player, not to Annetta.
 - Keep Chthonians as a separate species: iron-mandible termite creatures associated with wood-chewing, termite mounds, biological hematic iron, and their Queen.
 - Do not transfer Tooth Peck infection-detection behavior to Chthonians.
 - Correct the implementation-status sentence that currently calls the Tooth Peck in the jar a "termite."
@@ -266,7 +266,7 @@ These conflicts now have author decisions. The conflict/options/recommendation t
 
 **Recommendation:** **B**. It preserves mechanical gating and the lore promise that the Unstained would help a willing defector, while making such a cure appropriately consequential.
 
-**Author decision - settled:** Use the exceptional-cure route, but the hard line is **founding a bloodline**, not merely reaching D5 or joining an existing bloodline. Before founding, ordinary Unstained treatment remains possible. After founding, ordinary rites cannot sever the integration. The player must spare and cure Annetta so she can lead a special cure capable of breaking a founder's Covenant integration.
+**Author decision - superseded 2026-08-24:** The hard line remains **founding a bloodline**, not merely reaching D5 or joining an existing bloodline. A founder cannot take Annetta's survival route. They unleash her infection through the Harbinger encounter, Annetta dies, and defeating the Stained Priestess teaches the exceptional Severed Covenant rite. Only the Unstained Clarity route purifies Annetta and leaves her alive.
 
 ### S-04 - Saint tendency identities
 

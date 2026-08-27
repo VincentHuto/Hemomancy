@@ -69,7 +69,6 @@ public class AnnettaKnowlesEntity extends Monster {
             Component.translatable("entity.hemomancy.annetta_knowles"),
             BossEvent.BossBarColor.PURPLE,
             BossEvent.BossBarOverlay.NOTCHED_10);
-
     public AnnettaKnowlesEntity(EntityType<? extends AnnettaKnowlesEntity> type, Level level) {
         super(type, level);
         this.setPersistenceRequired();
@@ -175,7 +174,7 @@ public class AnnettaKnowlesEntity extends Monster {
                 startHarbingerRoute(serverPlayer, held);
                 return InteractionResult.CONSUME;
             }
-            if (held.is(ItemInit.draught_of_still_mercy.get()) && canCure(player)) {
+            if (held.is(ItemInit.draught_of_still_mercy.get()) && canPurify(player)) {
                 startCureRoute(serverPlayer, held);
                 return InteractionResult.CONSUME;
             }
@@ -195,7 +194,7 @@ public class AnnettaKnowlesEntity extends Monster {
     }
 
     private DialogueTree chooseCoweringDialogue(Player player) {
-        if (canCure(player)) {
+        if (canPurify(player)) {
             return AnnettaDialogueTrees.coweringUnstainedHint(this.getId());
         }
         if (isHarbinger(player)) {
@@ -213,8 +212,9 @@ public class AnnettaKnowlesEntity extends Monster {
             return;
         }
         CompoundTag specimen = SpecimenJarData.getSpecimen(jarStack);
+        if (SpecimenJarData.releaseSpecimen(server,
+                this.blockPosition().relative(player.getDirection().getOpposite()), specimen).isEmpty()) return;
         SpecimenJarData.clearSpecimen(jarStack);
-        SpecimenJarData.releaseSpecimen(server, this.blockPosition().relative(player.getDirection().getOpposite()), specimen);
 
         this.setEncounterState(EncounterState.PHASE_ONE);
         this.setHealth(this.getMaxHealth());
@@ -233,6 +233,14 @@ public class AnnettaKnowlesEntity extends Monster {
         if (!(this.level() instanceof ServerLevel server)) {
             return;
         }
+        LatentAnnettaInfectionEntity infection = EntityInit.latent_annetta_infection.get().create(server);
+        if (infection == null) return;
+        infection.setCuredAnnetta(this.getUUID());
+        infection.moveTo(this.getX() + 2.0D, this.getY(), this.getZ() + 2.0D, this.getYRot(), 0.0F);
+        infection.setTarget(player);
+        infection.setPersistenceRequired();
+        if (!server.addFreshEntity(infection)) return;
+
         if (!player.getAbilities().instabuild) {
             brewStack.shrink(1);
         }
@@ -240,15 +248,6 @@ public class AnnettaKnowlesEntity extends Monster {
         this.setHealth(this.getMaxHealth());
         this.setTarget(null);
         this.getNavigation().stop();
-
-        LatentAnnettaInfectionEntity infection = EntityInit.latent_annetta_infection.get().create(server);
-        if (infection != null) {
-			infection.setCuringPlayer(player.getUUID());
-            infection.moveTo(this.getX() + 2.0D, this.getY(), this.getZ() + 2.0D, this.getYRot(), 0.0F);
-            infection.setTarget(player);
-            infection.setPersistenceRequired();
-            server.addFreshEntity(infection);
-        }
 
         server.playSound(null, this.blockPosition(), SoundEvents.BEACON_ACTIVATE, SoundSource.NEUTRAL, 1.2F, 1.4F);
         server.sendParticles(ParticleTypes.END_ROD, this.getX(), this.getY() + 1.0D, this.getZ(),
@@ -407,14 +406,13 @@ public class AnnettaKnowlesEntity extends Monster {
         }
 
         StainedPriestessEntity priestess = EntityInit.stained_priestess.get().create(server);
-        if (priestess != null) {
-            priestess.moveTo(this.getX(), this.getY(), this.getZ(), this.getYRot(), this.getXRot());
-            if (source.getEntity() instanceof LivingEntity living) {
-                priestess.setTarget(living);
-            }
-            priestess.setPersistenceRequired();
-            server.addFreshEntity(priestess);
+        if (priestess == null) return;
+        priestess.moveTo(this.getX(), this.getY(), this.getZ(), this.getYRot(), this.getXRot());
+        if (source.getEntity() instanceof LivingEntity living) {
+            priestess.setTarget(living);
         }
+        priestess.setPersistenceRequired();
+        if (!server.addFreshEntity(priestess)) return;
 
         server.sendParticles(ParticleTypes.FALLING_LAVA, this.getX(), this.getY() + 1.0D, this.getZ(),
                 80, 0.6D, 1.0D, 0.6D, 0.08D);
@@ -445,14 +443,10 @@ public class AnnettaKnowlesEntity extends Monster {
         return activeBlood && HemoCapabilityAccess.getPlayerDegreeNumber(player) > 0;
     }
 
-    private boolean canCure(Player player) {
-        boolean clarityRoute = HemoCapabilityAccess.getUnstainedProgress(player)
+    private boolean canPurify(Player player) {
+        return HemoCapabilityAccess.getUnstainedProgress(player)
                 .map(progress -> progress.hasClarityUnlocked())
-                .orElse(false);
-        boolean founderException = HemoCapabilityAccess.getInitiatoryDegree(player)
-                .map(degree -> degree.hasFoundedBloodline())
-                .orElse(false);
-        return clarityRoute || founderException;
+                .orElse(false) && !isHarbinger(player);
     }
 
     private boolean isToothPecksJar(ItemStack stack) {

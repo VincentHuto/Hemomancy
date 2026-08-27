@@ -1,0 +1,21 @@
+{
+  "type": "hemomancy:memory_weaving",
+  "catalysts": [
+    {
+      "item": "minecraft:iron_block"
+    }
+  ],
+  "enzymes": {
+    "animus": 1,
+    "flammeus": 0,
+    "ductilis": 0,
+    "lux": 0,
+    "mortem": 0,
+    "congeatio": 0,
+    "ferric": 2,
+    "tenebris": 0
+  },
+  "blood": 300,
+  "result": "hemomancy:memory_ironhearted",
+  "count": 1
+}

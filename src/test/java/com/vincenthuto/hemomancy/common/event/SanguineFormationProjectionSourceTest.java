@@ -39,7 +39,7 @@ public final class SanguineFormationProjectionSourceTest {
 		assertContains("successful formation crafts emit a glow particle burst", handler,
 				"spawnSuccessBurst(level, spawnPos)");
 		assertContains("success burst uses HutosLib glow particles", handler,
-				"GlowParticleFactory.createData");
+				"new ColorParticleData");
 		assertContains("success burst uses Harbinger blood-red glow colors", handler,
 				"new ParticleColor(185, 0, 0)");
 		assertNotContains("success burst should not use vanilla glow particles", handler,

@@ -34,6 +34,10 @@ public final class SummonsPreviewSourceTest {
 				view, "int centerY = top + Math.round((bottom - top) * 0.56F)");
 		assertContains("summons preview should leave bottom room for tall mobs",
 				view, "private static int previewEntityScale(LivingEntity entity, int availableH)");
+		assertContains("scarlet mummer should have a preview entity",
+				view, "case PuppeteerSummonDefinitions.SCARLET_MUMMER -> EntityInit.scarlet_mummer.get().create(mc.level)");
+		assertContains("sanguine hound should have a preview entity",
+				view, "case PuppeteerSummonDefinitions.SANGUINE_HOUND -> EntityInit.sanguine_hound.get().create(mc.level)");
 		assertContains("summons auto spin should be half the prior speed",
 				controller, "PREVIEW_AUTO_ROTATION_SPEED = 0.175f");
 		assertContains("summons drag spin should be half the prior sensitivity",

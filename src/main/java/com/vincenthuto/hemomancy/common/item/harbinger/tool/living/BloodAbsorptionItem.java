@@ -5,6 +5,8 @@ import com.vincenthuto.hemomancy.client.item.HemoClientItemExtensionsProvider;
 import com.vincenthuto.hemomancy.client.render.item.hematic.CellHandItemRenderer;
 import com.vincenthuto.hemomancy.common.block.shared.BlockBloodInteractions;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.HematicAcclimationRules;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.PowerGuardrailState;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.IBloodTendency;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.IKnownManipulations;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
@@ -24,6 +26,7 @@ import com.vincenthuto.hemomancy.common.rite.harbinger.CardinalRiteCancellationH
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.client.resources.model.BakedModel;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
@@ -255,7 +258,16 @@ public class BloodAbsorptionItem extends Item implements IDispellable, ICellHand
 		if (level.isClientSide) {
 			return 0.0D;
 		}
-		boolean mercy = user instanceof Player player && SkillPointHelper.isTechniqueEnabled(player,
+		Player absorbingPlayer = user instanceof Player player ? player : null;
+		PowerGuardrailState acclimation = null;
+		String entityTypeId = null;
+		if (absorbingPlayer != null && !(target instanceof VesperTheEveningStarEntity)) {
+			acclimation = HemoCapabilityAccess.getPowerGuardrails(absorbingPlayer);
+			entityTypeId = BuiltInRegistries.ENTITY_TYPE.getKey(target.getType()).toString();
+			amount *= HematicAcclimationRules.multiplier(
+					acclimation.hematicExposure(entityTypeId, level.getGameTime()));
+		}
+		boolean mercy = absorbingPlayer != null && SkillPointHelper.isTechniqueEnabled(absorbingPlayer,
 				SkillPointInit.skill_vascular_mercy);
 		amount = ToggleableAbsorptionRules.clampDamageForMercy(mercy,
 				target instanceof VesperTheEveningStarEntity, target.getHealth(), amount);
@@ -265,6 +277,9 @@ public class BloodAbsorptionItem extends Item implements IDispellable, ICellHand
 		double absorbed = Math.min(amount, Math.max(0.0D, healthBefore - target.getHealth()));
 		if (!hurt || absorbed <= 0.0D) {
 			return 0.0D;
+		}
+		if (acclimation != null) {
+			acclimation.recordHematicExposure(entityTypeId, absorbed, level.getGameTime());
 		}
 		IBloodVolume volume = HemoCapabilityAccess.getBloodVolume(user)
 				.orElseThrow(NullPointerException::new);

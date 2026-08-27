@@ -15,6 +15,7 @@ public final class SpecimenJarDataRulesTest {
 		specimenEntityIdIsReadFromStoredEntityTag();
 		morphlingLayerMaskIsReadFromStoredPolypTag();
 		morphlingLayersAreIgnoredForNonPolypSpecimens();
+		releaseOnlyReportsSuccessAfterTheEntityIsAdded();
 	}
 
 	private static void specimenEntityIdIsReadFromStoredEntityTag() throws IOException {
@@ -33,6 +34,16 @@ public final class SpecimenJarDataRulesTest {
 	private static void morphlingLayersAreIgnoredForNonPolypSpecimens() throws IOException {
 		String source = readSource();
 		assertContains("morphling layer helper gates on polyp id", source, "hemomancy:morphling_polyp");
+	}
+
+	private static void releaseOnlyReportsSuccessAfterTheEntityIsAdded() throws IOException {
+		String source = readSource();
+		assertContains("release checks world insertion", source, "if (!level.addFreshEntity(released)) return Optional.empty();");
+		assertContains("release returns the inserted entity", source, "return Optional.of(released);");
+		String block = Files.readString(Path.of(
+				"src/main/java/com/vincenthuto/hemomancy/common/block/harbinger/functional/SpecimenJarBlock.java"));
+		assertContains("failed release preserves the filled jar", block,
+				"Block.popResource(level, pos, SpecimenJarData.createStackWithSpecimen(specimen));");
 	}
 
 	private static String readSource() throws IOException {

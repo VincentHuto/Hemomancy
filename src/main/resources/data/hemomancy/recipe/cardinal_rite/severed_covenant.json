@@ -4,7 +4,7 @@
   "riteType": "greater",
   "required_degree": 0,
   "riteName": "Rite of the Severed Covenant",
-  "riteDescription": "An exceptional founder's renunciation learned by curing Annetta Knowles. It disbands the founder's bloodline and cuts its integration from their infection.",
+  "riteDescription": "An exceptional founder's renunciation learned from the collapse of an unleashed infection. It disbands the founder's bloodline and cuts its integration from their infection.",
   "pattern": [
     ["PCP"],
     ["CDC"],

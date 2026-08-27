@@ -107,6 +107,7 @@ import com.vincenthuto.hemomancy.client.screen.tile.functional.SporeImplantScree
 import com.vincenthuto.hemomancy.client.screen.unstained.RadialChooseStillArtScreen;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.RenderBloodLaserEvent;
+import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillPointHelper;
 import com.vincenthuto.hemomancy.common.armor.ability.SilentArchonArmorAbilityHandler;
 import com.vincenthuto.hemomancy.common.entity.utility.ArmatureRestraintEntity;
 import com.vincenthuto.hemomancy.common.event.worldevent.BloodMoonClientState;
@@ -126,6 +127,7 @@ import com.vincenthuto.hemomancy.common.item.shared.StructureScannerItem;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.manips.ChangeSelectedManipPacket;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.manips.UseManipKeyPacket;
+import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationType;
 import com.vincenthuto.hemomancy.common.network.capa.unstained.UseStillArtKeyPacket;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.BloodCraftingKeyPressPacket;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.BloodFormationKeyPressPacket;
@@ -208,6 +210,8 @@ public class ClientEvents {
             "key.hemomancy.category");
     public static final KeyMapping useManip = new KeyMapping("key.hemomancy.usemanip.desc", GLFW.GLFW_KEY_R,
             "key.hemomancy.category");
+	private static int manipulationChargeTicks;
+	private static boolean wasChargingManipulation;
     public static final KeyMapping useStillArt = new KeyMapping("key.hemomancy.usestillart.desc", GLFW.GLFW_KEY_R,
             "key.hemomancy.category");
     public static final KeyMapping selectStillArt = new KeyMapping("key.hemomancy.selectstillart.desc", GLFW.GLFW_KEY_Z,
@@ -371,19 +375,7 @@ public class ClientEvents {
         if (cycleSelectedManip.consumeClick()) {
             PacketHandler.sendToServer(new ChangeSelectedManipPacket(HLClientUtils.getPartialTicks()));
         }
-        if (useManip.consumeClick()) {
-            Minecraft mc = Minecraft.getInstance();
-            if (mc.player != null) {
-                HemoCapabilityAccess.getKnownManipulations(mc.player).ifPresent(manip -> {
-                    if (manip.getSelectedManip() != null
-                            && manip.getSelectedManip().getName().equals("venous_travel")) {
-                        mc.setScreen(new RadialChooseVeinScreen(manip));
-                    } else {
-                        PacketHandler.sendToServer(new UseManipKeyPacket(HLClientUtils.getPartialTicks()));
-                    }
-                });
-            }
-        }
+		handleManipulationInput();
         if (useStillArt.consumeClick()) {
             Minecraft mc = Minecraft.getInstance();
             if (mc.player != null && HemoCapabilityAccess.getUnstainedProgress(mc.player)
@@ -393,6 +385,45 @@ public class ClientEvents {
         }
         handleSilentArchonDoubleTapJump();
     }
+
+	private static void handleManipulationInput() {
+		Minecraft mc = Minecraft.getInstance();
+		if (mc.player == null) {
+			manipulationChargeTicks = 0;
+			wasChargingManipulation = false;
+			return;
+		}
+		HemoCapabilityAccess.getKnownManipulations(mc.player).ifPresent(known -> {
+			var selected = known.getSelectedManip();
+			boolean charged = selected != null && selected.getType() == EnumManipulationType.CHARGED;
+			if (charged) {
+				useManip.consumeClick();
+				if (useManip.isDown()) {
+					if (mc.player.hurtTime == mc.player.hurtDuration && manipulationChargeTicks > 0) {
+						manipulationChargeTicks = com.vincenthuto.hemomancy.common.capability.player.shared.skill.BodyRefinementSkillRules
+								.retainedChargeTicks(manipulationChargeTicks,
+										SkillPointHelper.getNervesOfSteelLevel(mc.player));
+					}
+					manipulationChargeTicks++;
+					wasChargingManipulation = true;
+				} else if (wasChargingManipulation) {
+					PacketHandler.sendToServer(new UseManipKeyPacket(manipulationChargeTicks));
+					manipulationChargeTicks = 0;
+					wasChargingManipulation = false;
+				}
+				return;
+			}
+			manipulationChargeTicks = 0;
+			wasChargingManipulation = false;
+			if (!useManip.consumeClick() || selected == null) return;
+			if (selected.getName().equals("venous_travel")) mc.setScreen(new RadialChooseVeinScreen(known));
+			else PacketHandler.sendToServer(new UseManipKeyPacket(HLClientUtils.getPartialTicks()));
+		});
+	}
+
+	public static int getManipulationChargeTicks() {
+		return manipulationChargeTicks;
+	}
 
     private static void handleSilentArchonDoubleTapJump() {
         Minecraft mc = Minecraft.getInstance();
@@ -780,6 +811,8 @@ public class ClientEvents {
             event.registerEntityRenderer(EntityInit.marrow_spitter.get(), MarrowSpitterRenderer::new);
             event.registerEntityRenderer(EntityInit.gorebound_hulk.get(), GoreboundHulkRenderer::new);
             event.registerEntityRenderer(EntityInit.mnemonist_puppet.get(), MnemonistPuppetRenderer::new);
+            event.registerEntityRenderer(EntityInit.scarlet_mummer.get(), ScarletMummerRenderer::new);
+			event.registerEntityRenderer(EntityInit.sanguine_hound.get(), SanguineHoundRenderer::new);
             event.registerEntityRenderer(EntityInit.lump_of_thought.get(), LumpOfThoughtRenderer::new);
             event.registerEntityRenderer(EntityInit.chthonian_queen.get(), ChthonianQueenRenderer::new);
             event.registerEntityRenderer(EntityInit.abhorent_thought.get(), AbhorentThoughtRenderer::new);
@@ -1169,6 +1202,8 @@ public class ClientEvents {
         // Overlay
         @SubscribeEvent
         public static void registerGuiOverlays(RegisterGuiLayersEvent event) {
+			event.registerAboveAll(Hemomancy.rloc("body_idioms"), (graphics, deltaTracker) ->
+					BodyIdiomOverlay.renderHUD(graphics, graphics.guiWidth(), graphics.guiHeight()));
 			event.registerAboveAll(Hemomancy.rloc("arbor_fruit_name"), (graphics, deltaTracker) ->
 					ArborFruitHudOverlay.renderHUD(graphics, graphics.guiWidth(), graphics.guiHeight()));
 			event.registerAboveAll(Hemomancy.rloc("mnemonic_blueprint_progress"), (graphics, deltaTracker) ->

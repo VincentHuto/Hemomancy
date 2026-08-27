@@ -15,16 +15,32 @@ public final class PuppeteerSummonVisualResourceTest {
 		assertSummonVisuals("veinwing_vulture", "VeinwingVulture", "VexRenderer");
 		assertSummonVisuals("marrow_spitter", "MarrowSpitter", "SkeletonRenderer");
 		assertSummonVisuals("gorebound_hulk", "GoreboundHulk", "ZombieRenderer");
+		assertSummonVisuals("scarlet_mummer", "ScarletMummer", "ZombieRenderer");
 
 		String layerEvents = readSource("com/vincenthuto/hemomancy/client/event/LayerEvents.java");
 		assertContains("veinwing layer registration", layerEvents, "VeinwingVultureModel.LAYER_LOCATION");
 		assertContains("marrow layer registration", layerEvents, "MarrowSpitterModel.LAYER_LOCATION");
 		assertContains("gorebound layer registration", layerEvents, "GoreboundHulkModel.LAYER_LOCATION");
+		assertContains("scarlet mummer layer registration", layerEvents, "ScarletMummerModel.LAYER_LOCATION");
 
 		String clientEvents = readSource("com/vincenthuto/hemomancy/client/event/ClientEvents.java");
 		assertContains("veinwing renderer registration", clientEvents, "VeinwingVultureRenderer::new");
 		assertContains("marrow renderer registration", clientEvents, "MarrowSpitterRenderer::new");
 		assertContains("gorebound renderer registration", clientEvents, "GoreboundHulkRenderer::new");
+		assertContains("scarlet mummer renderer registration", clientEvents, "ScarletMummerRenderer::new");
+
+		String houndRenderer = readSource(
+				"com/vincenthuto/hemomancy/client/render/entity/summon/SanguineHoundRenderer.java");
+		assertContains("sanguine hound uses wolf tail angle", houndRenderer, "return entity.getTailAngle();");
+
+		String threadRenderer = readSource(
+				"com/vincenthuto/hemomancy/client/render/world/PuppeteerThreadRenderer.java");
+		assertContains("sanguine hound thread anchor is lowered", threadRenderer,
+				"summon instanceof SanguineHoundEntity ? SANGUINE_HOUND_ANCHOR_SCALE");
+		assertContains("player thread starts from the held-hand anchor", threadRenderer,
+				"PuppeteerThreadEndpointRules.playerHandEndpoint");
+		assertContains("player thread follows an offhand crossbar", threadRenderer,
+				"MarionetteCrossbarItem.getCrossbarId(owner.getOffhandItem())");
 	}
 
 	private static void assertSummonVisuals(String id, String className, String forbiddenRenderer) throws IOException {

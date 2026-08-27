@@ -16,6 +16,24 @@ From the project root on Windows:
 - `runGameTestServer` starts a headless NeoForge server, runs the registered progression scenarios, and exits non-zero if a required scenario fails.
 - `alphaCheck` runs both layers in order. Use this before an alpha build or whenever progression, crafting, quests, or rewards change.
 
+## Automatic Harbinger and Unstained journeys
+
+Launch the isolated client below, create or open a disposable world, grant yourself operator permission, and run one of these development-only commands:
+
+```text
+/hemo test journey harbinger run
+/hemo test journey unstained run
+/hemo test journey unstained cure run
+/hemo test journey unstained novitiate run
+/hemo test journey run_all
+```
+
+`unstained run` is the cure alias. `run_all` executes Harbinger, Unstained cure, then Unstained novitiate. A server-tick runner prepares each existing fixture, invokes the same server gameplay hooks exercised by the fixture GameTests, and advances only after the authoritative journey check passes. It restores the captured player snapshot and removes journey-owned blocks, entities, drops, and temporary world state after each successful route.
+
+`/hemo test journey harbinger status` or `/hemo test journey unstained status` reports the route, checkpoint, automation state, and any latched failure. Reissuing the matching `run` resumes the current checkpoint. Exceptions and timeouts stop the runner without advancing; the snapshot and current fixture remain available for inspection. `/hemo test clear` cancels the runner, removes its fixtures, and restores the snapshot. Manual `start`, `next`, and `reset` commands stop automation before taking control.
+
+This automation validates server-side progression, stations, rites, dialogue events, observances, assignments, travel, ceremonies, item use, and pickup hooks. It does not validate mouse/key handling, dialogue or HUD rendering, animations, particles, sound, or other client visuals. Use the manual journey commands for those checks.
+
 ## Manual Harbinger journey
 
 Launch the isolated journey client from the project root:
@@ -42,7 +60,7 @@ The Three Answers also includes its optional Barbed research correspondence. Cap
 
 After the Sanctified rite, run `journey harbinger next` once to enter the Chamber of Will through the real Degree-6 rite visit and again to return. Right-click the supplied Covenant Throne once, then advance to the Covenant Vigil. Invoke the prepared real Vigil with the Living Staff, run `journey harbinger next` to fill its owned anchors, enter inscription, assign the marked Vicar through the bloodline ally service, and fast-complete the ordeal, then run `journey harbinger next` once more to verify both the Vigil and Living Covenant milestones. This deliberately skips the 60-second combat ordeal while retaining station matching, rite activation, helper eligibility, completion rewards, and chapter closure. The dedicated GameTest server does not load the Chamber dimension, so its transition remains a live-client check; throne binding, Vigil activation/completion, helper rewards, and exact restoration of respawn and Chamber flags are automated. Any original bloodline, per-dimension Fane records, respawn binding, Chamber attunement flags, Muscle Memory state, recipe-book knowledge, Living Bestiary catalogue, Artificer persistent assignment keys, full initiatory-degree state, and base blood tendency are restored on reset/clear. If verification fails, remain at that checkpoint, correct the unmet requirement, and run `journey harbinger next` again. After all checkpoints pass and the journey reports `complete`, run `journey harbinger next` once more to remove the fixtures and restore the captured state automatically.
 
-The route performs the real Living Staff blood-structure craft and all Artificer, Mnemonist, Alchemist, Vicar, and Vein-Mason progression used by the chosen Barbed/Edacious path. Discovery coverage includes a loaded blood-echo inscription, item-pickup discovery, dialogue, rite, degree, and advancement-backed Liber unlocks exercised naturally by the route. It does not enumerate all 30 authored inscriptions or alternate armor forks; those share the tested loaders and trigger paths. The current dedicated server gate passes all 119 required GameTests. The remaining completion gate is the live-client smoke pass, especially dialogue screens, keybind-driven actions, the Chamber transition, rendering, and the full command-to-command operator flow.
+The route performs the real Living Staff blood-structure craft and all Artificer, Mnemonist, Alchemist, Vicar, and Vein-Mason progression used by the chosen Barbed/Edacious path. Discovery coverage includes a loaded blood-echo inscription, item-pickup discovery, dialogue, rite, degree, and advancement-backed Liber unlocks exercised naturally by the route. It does not enumerate all 30 authored inscriptions or alternate armor forks; those share the tested loaders and trigger paths. The current dedicated server suite registers 146 required GameTests. The remaining completion gate is the live-client smoke pass, especially dialogue screens, keybind-driven actions, the Chamber transition, rendering, and the full command-to-command operator flow.
 
 `journey harbinger reset` removes journey-owned fixture output, clears active potion effects acquired during the run (including Blood Drunkenness), and restarts at the first checkpoint while retaining the original snapshot. `/hemo test clear` exits either journey, removes its fixtures, and restores the snapshot captured by its `start` command. Run it before returning to other manual testing. `alphaCheck` remains the automated JVM and dedicated GameTest gate; this isolated client workflow is the operator-driven complement, not a replacement.
 

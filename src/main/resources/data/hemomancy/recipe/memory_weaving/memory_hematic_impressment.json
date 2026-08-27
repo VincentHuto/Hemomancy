@@ -1,0 +1,21 @@
+{
+  "type": "hemomancy:memory_weaving",
+  "catalysts": [
+    {
+      "item": "minecraft:lead"
+    }
+  ],
+  "enzymes": {
+    "animus": 2,
+    "flammeus": 0,
+    "ductilis": 1,
+    "lux": 0,
+    "mortem": 0,
+    "congeatio": 0,
+    "ferric": 0,
+    "tenebris": 0
+  },
+  "blood": 250,
+  "result": "hemomancy:memory_hematic_impressment",
+  "count": 1
+}

@@ -3,6 +3,7 @@ package com.vincenthuto.hemomancy.common.manipulation.lux;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.EnumVeinSections;
 import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillPointHelper;
+import com.vincenthuto.hemomancy.common.capability.player.shared.skill.BodyRefinementSkillRules;
 import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
 import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationRank;
 import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationType;
@@ -43,7 +44,9 @@ public class HematicFlareManip extends BloodManipulation {
 	public void getAction(Player player, Level world, ItemStack heldItemMainhand, BlockPos position) {
 		if (!(world instanceof ServerLevel sLevel)) return;
 
-		double range = BASE_RANGE * SkillPointHelper.getSanguineReachMultiplier(player);
+		int brightEyed = SkillPointHelper.getBrightEyedLevel(player);
+		double range = BASE_RANGE * SkillPointHelper.getSanguineReachMultiplier(player)
+				* BodyRefinementSkillRules.perceptionRangeMultiplier(brightEyed);
 		LivingEntity target = findTarget(player, world, range);
 		Vec3 eye = player.getEyePosition();
 		Vec3 look = player.getLookAngle().normalize();
@@ -53,7 +56,8 @@ public class HematicFlareManip extends BloodManipulation {
 			if (concealed) {
 				target.removeEffect(MobEffects.INVISIBILITY);
 			}
-			target.addEffect(new MobEffectInstance(MobEffects.GLOWING, GLOWING_TICKS, 0, false, true));
+			target.addEffect(new MobEffectInstance(MobEffects.GLOWING,
+					BodyRefinementSkillRules.revealTicks(GLOWING_TICKS, brightEyed), 0, false, true));
 			float damage = (float) ((BASE_DAMAGE + (concealed ? CONCEALED_BONUS : 0.0F))
 					* SkillPointHelper.getCrimsonMasteryMultiplier(player));
 			float adjusted = TendencyAffinityRules.adjustManipulationDamage(player, target, this, damage);

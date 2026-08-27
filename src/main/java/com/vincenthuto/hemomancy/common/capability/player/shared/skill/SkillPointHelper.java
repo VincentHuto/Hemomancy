@@ -35,6 +35,27 @@ public final class SkillPointHelper {
 		return skill != null && progress(player).isEnabled(skill);
 	}
 
+	public static int getNervesOfSteelLevel(@Nullable Player player) {
+		return getSkillLevel(player, SkillPointInit.skill_nerves_of_steel);
+	}
+
+	public static int getIronHandedLevel(@Nullable Player player) {
+		return getSkillLevel(player, SkillPointInit.skill_iron_handed);
+	}
+
+	public static int getBrightEyedLevel(@Nullable Player player) {
+		return getSkillLevel(player, SkillPointInit.skill_bright_eyed);
+	}
+
+	public static int getLightFootedLevel(@Nullable Player player) {
+		return getSkillLevel(player, SkillPointInit.skill_light_footed);
+	}
+
+	public static int getHighStrungLevel(@Nullable Player player) {
+		return isTechniqueEnabled(player, SkillPointInit.skill_high_strung)
+				? getSkillLevel(player, SkillPointInit.skill_high_strung) : 0;
+	}
+
 	public static double getCapacityBonus(Player player) {
 		return getCapacityBonus(progress(player));
 	}

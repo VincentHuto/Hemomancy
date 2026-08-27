@@ -27,4 +27,30 @@ public final class WinterShroudResilienceRules {
 		}
 		return health / maxHealth <= 0.40F;
 	}
+
+	public static int coldBloodedTier(int maturity) {
+		return Math.max(0, Math.min(3, maturity - 1));
+	}
+
+	public static int retainedEnvironmentalFreezeTicks(int maturity, int frozenTicks, int tickCount) {
+		return switch (coldBloodedTier(maturity)) {
+			case 1 -> Math.max(0, frozenTicks - (tickCount % 2 == 0 ? 1 : 0));
+			case 2, 3 -> 0;
+			default -> frozenTicks;
+		};
+	}
+
+	public static boolean canTraversePowderSnow(int maturity) {
+		return coldBloodedTier(maturity) >= 2;
+	}
+
+	public static float coldDamageMultiplier(int maturity, boolean ordinaryEnvironmental, boolean freezingDamage) {
+		if (!freezingDamage) return 1.0F;
+		return switch (coldBloodedTier(maturity)) {
+			case 1 -> ordinaryEnvironmental ? 0.75F : 1.0F;
+			case 2 -> ordinaryEnvironmental ? 0.50F : 1.0F;
+			case 3 -> ordinaryEnvironmental ? 0.0F : 0.25F;
+			default -> 1.0F;
+		};
+	}
 }

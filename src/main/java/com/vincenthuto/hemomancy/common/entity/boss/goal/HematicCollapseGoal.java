@@ -1,6 +1,7 @@
 package com.vincenthuto.hemomancy.common.entity.boss.goal;
 
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.entity.boss.saint.hemorath.HemorathEntity;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.particles.ParticleTypes;
@@ -32,6 +33,7 @@ public class HematicCollapseGoal extends Goal {
 	private static final int PHASE_2_COOLDOWN_TICKS = 120;
 	private static final float DAMAGE_FLOOR = 2.0F;
 	private static final double DAMAGE_MULTIPLIER = 0.5D;
+	private static final double MAX_RANGE_SQR = 32.0D * 32.0D;
 
 	private final HemorathEntity boss;
 	private int telegraphTicks;
@@ -50,13 +52,14 @@ public class HematicCollapseGoal extends Goal {
 			return false;
 		}
 		LivingEntity target = boss.getTarget();
-		return target != null && target.isAlive() && boss.distanceToSqr(target) < 32.0 * 32.0;
+		return target != null && target.isAlive() && boss.distanceToSqr(target) < MAX_RANGE_SQR;
 	}
 
 	@Override
 	public boolean canContinueToUse() {
 		LivingEntity target = boss.getTarget();
-		return firing && target != null && target.isAlive();
+		return firing && target != null && target.isAlive() && target.level() == boss.level()
+				&& boss.distanceToSqr(target) < MAX_RANGE_SQR;
 	}
 
 	@Override
@@ -117,15 +120,14 @@ public class HematicCollapseGoal extends Goal {
 	private void fire(LivingEntity target) {
 		if (!(boss.level() instanceof ServerLevel server)) return;
 
-		double debt = 0.0;
-		if (target instanceof Player player) {
-			debt = HemoCapabilityAccess.getBloodVolume(player)
-					.map(v -> v.consumeDebt())
-					.orElse(0.0);
-		}
-
+		IBloodVolume blood = target instanceof Player player
+				? HemoCapabilityAccess.getBloodVolume(player).orElse(null)
+				: null;
+		double debt = blood == null ? 0.0 : blood.getBloodDebt();
 		float damage = (float) Math.max(DAMAGE_FLOOR, debt * DAMAGE_MULTIPLIER);
-		target.hurt(boss.damageSources().mobAttack(boss), damage);
+		if (target.hurt(boss.damageSources().mobAttack(boss), damage) && blood != null) {
+			blood.consumeDebt();
+		}
 
 		server.playSound(null, target.getX(), target.getY(), target.getZ(),
 				SoundEvents.WITHER_BREAK_BLOCK, SoundSource.HOSTILE, 2.0F, 0.5F);

@@ -11,6 +11,7 @@ import com.vincenthuto.hemomancy.common.summon.PuppeteerSummonDefinitions;
 import com.vincenthuto.hemomancy.common.summon.PuppeteerSummonFactory;
 import com.vincenthuto.hemomancy.common.tile.IronBrazierBlockEntity;
 import com.vincenthuto.hemomancy.common.tile.functional.CardinalFocusBlockEntity;
+import net.minecraft.ChatFormatting;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
@@ -42,6 +43,14 @@ public final class PuppeteerTrialRiteController {
 
 	public static boolean canBegin(ServerPlayer caster, ItemStack crossbar, String summonName, double bloodCost,
 			boolean notify) {
+		int pomesConsumed = HemoCapabilityAccess.getInitiatoryDegree(caster)
+				.map(degree -> degree.getTotalPomesConsumed()).orElse(0);
+		if (pomesConsumed >= 9) {
+			if (notify) caster.displayClientMessage(
+					Component.literal("The void has claimed your will — only one path remains, and one way back.")
+							.withStyle(ChatFormatting.DARK_PURPLE, ChatFormatting.ITALIC), false);
+			return false;
+		}
 		PuppeteerTrialRiteRules.MediumStatus status = mediumStatus(caster, crossbar);
 		if (status != PuppeteerTrialRiteRules.MediumStatus.READY) {
 			if (notify) caster.displayClientMessage(Component.translatable(switch (status) {

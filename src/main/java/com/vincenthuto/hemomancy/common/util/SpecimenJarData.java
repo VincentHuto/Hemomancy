@@ -85,13 +85,12 @@ public final class SpecimenJarData {
 
 		CompoundTag releaseTag = specimen.copy();
 		prepareReleaseTag(releaseTag, pos);
-		Optional<Entity> entity = EntityType.create(releaseTag, level);
-		entity.ifPresent(released -> {
-			released.moveTo(pos.getX() + 0.5D, pos.getY() + 0.05D, pos.getZ() + 0.5D,
-					released.getYRot(), released.getXRot());
-			level.addFreshEntity(released);
-		});
-		return entity;
+		Entity released = EntityType.create(releaseTag, level).orElse(null);
+		if (released == null) return Optional.empty();
+		released.moveTo(pos.getX() + 0.5D, pos.getY() + 0.05D, pos.getZ() + 0.5D,
+				released.getYRot(), released.getXRot());
+		if (!level.addFreshEntity(released)) return Optional.empty();
+		return Optional.of(released);
 	}
 
 	public static Component getSpecimenName(CompoundTag specimen) {

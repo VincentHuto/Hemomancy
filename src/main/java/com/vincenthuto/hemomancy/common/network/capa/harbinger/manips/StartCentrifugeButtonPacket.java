@@ -30,16 +30,20 @@ public class StartCentrifugeButtonPacket implements CustomPacketPayload {
 		ctx.enqueueWork(() -> {
 			AbstractContainerMenu container = ctx.player().containerMenu;
 			if (container instanceof VialCentrifugeMenu && ctx.player() instanceof ServerPlayer serverPlayer) {
-				VialCentrifugeBlockEntity station = ((VialCentrifugeMenu) container).getTe();
-				VialCentrifugeStartupResult result = station.attemptStartup(serverPlayer);
-				serverPlayer.displayClientMessage(Component.translatable(result.translationKey()), true);
-				if (result == VialCentrifugeStartupResult.SUCCESS
-						&& HemoCapabilityAccess.getPlayerDegreeNumber(serverPlayer) >= 2) {
-					HarbingerAdvancementGranter.grantIfNotDone(serverPlayer,
-							HarbingerAdvancementGranter.ADV_FIRST_SEPARATION_STARTED);
-				}
+				start(serverPlayer, ((VialCentrifugeMenu) container).getTe());
 			}
 		});
+	}
+
+	public static VialCentrifugeStartupResult start(ServerPlayer player, VialCentrifugeBlockEntity station) {
+		VialCentrifugeStartupResult result = station.attemptStartup(player);
+		player.displayClientMessage(Component.translatable(result.translationKey()), true);
+		if (result == VialCentrifugeStartupResult.SUCCESS
+				&& HemoCapabilityAccess.getPlayerDegreeNumber(player) >= 2) {
+			HarbingerAdvancementGranter.grantIfNotDone(player,
+					HarbingerAdvancementGranter.ADV_FIRST_SEPARATION_STARTED);
+		}
+		return result;
 	}
 
 	public StartCentrifugeButtonPacket() {

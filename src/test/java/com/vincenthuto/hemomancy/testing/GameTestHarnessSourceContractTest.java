@@ -252,6 +252,48 @@ class GameTestHarnessSourceContractTest {
 	}
 
 	@Test
+	void journeyAutomationCommandsAndEveryStageRemainCovered() throws IOException {
+		String commands = read(
+				"src/gameTest/java/com/vincenthuto/hemomancy/gametest/HemoTestCommands.java");
+		String runner = read(
+				"src/gameTest/java/com/vincenthuto/hemomancy/gametest/journey/JourneyAutoRunner.java");
+		String harbinger = read(
+				"src/gameTest/java/com/vincenthuto/hemomancy/gametest/journey/HarbingerJourneyAutomation.java");
+		String unstained = read(
+				"src/gameTest/java/com/vincenthuto/hemomancy/gametest/journey/UnstainedJourneyAutomation.java");
+		String harbingerStages = read(
+				"src/gameTest/java/com/vincenthuto/hemomancy/gametest/journey/HemoJourneyStage.java");
+		String unstainedStages = read(
+				"src/gameTest/java/com/vincenthuto/hemomancy/gametest/journey/UnstainedJourneyStage.java");
+
+		assertTrue(commands.contains("JourneyAutoRunner.register()"));
+		assertTrue(commands.contains("literal(\"run_all\")"));
+		assertEquals(5, commands.split("literal\\(\"run\"\\)", -1).length - 1,
+				"The existing scenario run plus Harbinger, Unstained alias, cure, and novitiate runs must remain");
+		assertTrue(commands.contains("JourneyAutoRunner.runHarbinger(player)"));
+		assertTrue(commands.contains("unstainedJourneyRun(context.getSource(), \"cure\")"));
+		assertTrue(commands.contains("unstainedJourneyRun(context.getSource(), \"novitiate\")"));
+		assertTrue(commands.contains("JourneyAutoRunner.runUnstained(player, mode)"));
+		assertTrue(commands.contains("JourneyAutoRunner.runAll(player)"));
+		assertTrue(commands.contains("JourneyAutoRunner.cancel(player)"));
+		assertTrue(commands.contains("JourneyAutoRunner.describe(player)"));
+		assertTrue(runner.contains("ServerTickEvent.Post"));
+		assertTrue(runner.contains("HemoJourneyController.next(player)"));
+		assertTrue(runner.contains("UnstainedJourneyController.next(player)"));
+		assertTrue(runner.contains("HemoJourneySnapshot.SNAPSHOT_KEY"));
+		assertTrue(!harbinger.contains(".interact(player, InteractionHand.MAIN_HAND)"),
+				"Server-side automation must not open NPC dialogue screens");
+		assertTrue(!harbinger.contains("case FIRST_REMNANT_DISCOVERED -> useBlock"),
+				"Server-side automation must not open the First Remnant inscription screen");
+		assertTrue(read("src/gameTest/java/com/vincenthuto/hemomancy/gametest/journey/HemoJourneyFixtures.java")
+				.contains("if (!JourneyAutoRunner.activeForTest(player))"),
+				"Automatic Apotheos setup must suppress its optional client dialogue");
+
+		assertEveryStageCovered(harbingerStages, harbinger);
+		assertEveryStageCovered(unstainedStages, unstained);
+	}
+
+	@Test
 	void isolatedJourneyClientRunAndOperatorGuideRemainAvailable() throws IOException {
 		String build = read("build.gradle");
 		String guide = read("docs/TESTING.md");
@@ -384,5 +426,16 @@ class GameTestHarnessSourceContractTest {
 
 	private static String read(String relativePath) throws IOException {
 		return Files.readString(ROOT.resolve(relativePath)).replace("\r\n", "\n");
+	}
+
+	private static void assertEveryStageCovered(String enumSource, String automationSource) {
+		var ids = Pattern.compile("^\\s*([A-Z][A-Z0-9_]*)\\(\"", Pattern.MULTILINE)
+				.matcher(enumSource).results().map(match -> match.group(1)).toList();
+		for (String id : ids) {
+			if (!id.equals("COMPLETE")) {
+				assertTrue(Pattern.compile("\\b" + Pattern.quote(id) + "\\b").matcher(automationSource).find(),
+						"Missing automation action for " + id);
+			}
+		}
 	}
 }

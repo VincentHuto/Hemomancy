@@ -104,7 +104,7 @@ public class EmptyPulseGoal extends Goal {
 
 		for (LivingEntity victim : server.getEntitiesOfClass(LivingEntity.class,
 				boss.getBoundingBox().inflate(RADIUS))) {
-			if (victim == boss) continue;
+			if (victim == boss || victim.distanceToSqr(boss) > RADIUS * RADIUS) continue;
 			Vec3 push = victim.position().subtract(origin).normalize().scale(KNOCKBACK_STRENGTH);
 			victim.push(push.x, 0.4, push.z);
 			victim.hurtMarked = true;

@@ -81,6 +81,7 @@ public class EntityInit {
     public static final TagKey<EntityType<?>> HEMOMANCY_MOB = createTag("hemomancy_mob");
     public static final TagKey<EntityType<?>> SPECIMEN_JAR_CAPTURABLE = createTag("specimen_jar_capturable");
     public static final TagKey<EntityType<?>> WILLS = createTag("wills");
+    public static final TagKey<EntityType<?>> PUPPET_ATTENTION_IMMUNE = createTag("puppet_attention_immune");
 
     public static final DeferredHolder<EntityType<?>, EntityType<CovenantThroneSeatEntity>> covenant_throne_seat =
             ENTITY_TYPES.register("covenant_throne_seat",
@@ -415,6 +416,20 @@ public class EntityInit {
                             .sized(0.6F, 1.8F)
                             .clientTrackingRange(8)
                             .build(Hemomancy.rloc("mnemonist_puppet").toString()));
+
+    public static final DeferredHolder<EntityType<?>, EntityType<ScarletMummerEntity>> scarlet_mummer = ENTITY_TYPES
+            .register("scarlet_mummer",
+                    () -> EntityType.Builder.<ScarletMummerEntity>of(ScarletMummerEntity::new, MobCategory.CREATURE)
+                            .sized(0.6F, 1.9F)
+                            .clientTrackingRange(8)
+                            .build(Hemomancy.rloc("scarlet_mummer").toString()));
+
+	public static final DeferredHolder<EntityType<?>, EntityType<SanguineHoundEntity>> sanguine_hound = ENTITY_TYPES
+			.register("sanguine_hound",
+					() -> EntityType.Builder.<SanguineHoundEntity>of(SanguineHoundEntity::new, MobCategory.CREATURE)
+							.sized(0.65F, 0.85F)
+							.clientTrackingRange(10)
+							.build(Hemomancy.rloc("sanguine_hound").toString()));
 
     public static final DeferredHolder<EntityType<?>, EntityType<DrudgeEntity>> drudge = ENTITY_TYPES
             .register("drudge",
@@ -829,6 +844,8 @@ public class EntityInit {
         event.put(EntityInit.marrow_spitter.get(), MarrowSpitterEntity.setAttributes().build());
         event.put(EntityInit.gorebound_hulk.get(), GoreboundHulkEntity.setAttributes().build());
         event.put(EntityInit.mnemonist_puppet.get(), MnemonistPuppetEntity.setAttributes().build());
+        event.put(EntityInit.scarlet_mummer.get(), ScarletMummerEntity.setAttributes().build());
+		event.put(EntityInit.sanguine_hound.get(), SanguineHoundEntity.setAttributes().build());
         event.put(EntityInit.drudge.get(), DrudgeEntity.setAttributes().build());
         event.put(EntityInit.unstained_zealot.get(), UnstainedZealotEntity.setAttributes().build());
         event.put(EntityInit.unstained_guardian.get(), UnstainedGuardianEntity.setAttributes().build());

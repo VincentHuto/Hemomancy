@@ -14,6 +14,7 @@ import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.init.SkillPointInit;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.MarionetteCrossbarItem;
 import com.vincenthuto.hemomancy.common.menu.PuppeteersSpindleMenu;
+import com.vincenthuto.hemomancy.common.rite.harbinger.PuppeteerTrialRiteController;
 import com.vincenthuto.hemomancy.common.summon.PuppeteerSummonDefinition;
 import com.vincenthuto.hemomancy.common.summon.PuppeteerSummonDefinitions;
 import com.vincenthuto.hemomancy.common.summon.PuppeteerSummonFactory;
@@ -175,6 +176,26 @@ public final class PuppeteeringGameTests {
 	}
 
 	@GameTest(templateNamespace = "minecraft", template = EMPTY_TEMPLATE, timeoutTicks = 40)
+	public static void ninePomesPreventPuppeteerTrialBeforeManifestation(GameTestHelper helper) {
+		ServerPlayer caster = testPlayer(helper);
+		try {
+			ItemStack crossbar = attunedCrossbar(caster, 0);
+			var degree = HemoCapabilityAccess.requireInitiatoryDegree(caster);
+			degree.syncTotalPomesConsumed(8);
+			helper.assertTrue(PuppeteerTrialRiteController.canBegin(caster, crossbar,
+					PuppeteerSummonDefinitions.SCARLET_MUMMER, 0.0D, false),
+					"Eight pomes must not block the ordeal preflight");
+			degree.syncTotalPomesConsumed(9);
+			helper.assertTrue(!PuppeteerTrialRiteController.canBegin(caster, crossbar,
+					PuppeteerSummonDefinitions.SCARLET_MUMMER, 0.0D, false),
+					"Nine pomes must reject the ordeal before its puppet manifests");
+			helper.succeed();
+		} finally {
+			removePlayer(caster);
+		}
+	}
+
+	@GameTest(templateNamespace = "minecraft", template = EMPTY_TEMPLATE, timeoutTicks = 40)
 	public static void autonomousRetaliationAllowsFollowModeToAcquireNearbyHostiles(GameTestHelper helper) {
 		ServerPlayer owner = testPlayer(helper);
 		Mob summon = null;
@@ -250,25 +271,25 @@ public final class PuppeteeringGameTests {
 		helper.getLevel().addFreshEntity(target);
 		spitter.setTarget(target);
 		net.minecraft.world.phys.Vec3 startingPosition = spitter.position();
-		helper.getLevel().addFreshEntity(spitter);
+		helper.assertTrue(helper.getLevel().addFreshEntity(spitter),
+				"Marrow Spitter fixture entity must spawn");
 		((net.minecraft.world.entity.monster.RangedAttackMob) spitter).performRangedAttack(target, 1.0F);
 		boolean firedBloodShot = !helper.getLevel().getEntitiesOfClass(BloodShotEntity.class,
 				spitter.getBoundingBox().inflate(32.0),
 				shot -> shot.getOwner() == spitter).isEmpty();
 
-		helper.runAfterDelay(50, () -> {
-			try {
-				helper.assertTrue(firedBloodShot, "Marrow Spitter must fire BloodShot projectiles");
-				helper.assertTrue(spitter.position().distanceTo(startingPosition) > 0.5,
-						"Marrow Spitter must hover around its player anchor instead of remaining ground-locked");
-				helper.assertTrue(!spitter.isOnFire(), "Marrow Spitter must not ignite in sunlight");
-				helper.succeed();
-			} finally {
-				spitter.discard();
-				target.discard();
-				removePlayer(owner);
-			}
-		});
+		try {
+			for (int i = 0; i < 50; i++) helper.getLevel().tickNonPassenger(spitter);
+			helper.assertTrue(firedBloodShot, "Marrow Spitter must fire BloodShot projectiles");
+			helper.assertTrue(spitter.position().distanceTo(startingPosition) > 0.5,
+					"Marrow Spitter must hover around its player anchor instead of remaining ground-locked");
+			helper.assertTrue(!spitter.isOnFire(), "Marrow Spitter must not ignite in sunlight");
+			helper.succeed();
+		} finally {
+			spitter.discard();
+			target.discard();
+			removePlayer(owner);
+		}
 	}
 
 	@GameTest(templateNamespace = "minecraft", template = EMPTY_TEMPLATE, timeoutTicks = 100)

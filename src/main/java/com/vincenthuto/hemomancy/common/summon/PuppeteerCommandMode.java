@@ -22,6 +22,10 @@ public enum PuppeteerCommandMode {
 		return this == FOLLOW || this == GUARD || this == HUNT;
 	}
 
+	public boolean automaticallyDefendsOwner() {
+		return this == FOLLOW;
+	}
+
 	public static PuppeteerCommandMode fromSerializedName(String value) {
 		return tryParse(value).orElse(FOLLOW);
 	}

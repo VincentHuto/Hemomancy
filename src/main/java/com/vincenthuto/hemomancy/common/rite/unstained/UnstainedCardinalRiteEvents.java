@@ -209,7 +209,7 @@ public class UnstainedCardinalRiteEvents {
 			case CLARITY_NOT_PREPARED -> "Consecrated Copper must prepare your clarity at an Unstained Podium first.";
 			case CURE_NOT_READY -> "Closed Vein can restore your baseline only at full Purity.";
 			case CLOSED_VEIN_MEMBER_ONLY -> "Only a pledged Unstained may repeat the Closed Vein.";
-			case SEVERANCE_NOT_READY -> "The exceptional severance has not been earned through Annetta.";
+			case SEVERANCE_NOT_READY -> "The exceptional severance has not been earned from the unleashed infection.";
 			case NONE -> "The rite is ready.";
 		};
 		caster.displayClientMessage(Component.literal(message)
@@ -222,7 +222,7 @@ public class UnstainedCardinalRiteEvents {
 		if (!degree.hasFoundedBloodline() || degree.isFounderIntegrationSevered()
 				|| unstained == null || !unstained.isAnnettaSeveranceUnlocked()) {
 			caster.displayClientMessage(Component.literal(
-					"The exceptional cut is not yours to make. Only a founder who cured Annetta knows its shape.")
+					"The exceptional cut is not yours to make. Only a founder who survived an unleashed infection knows its shape.")
 					.withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC), false);
 			return;
 		}
@@ -241,7 +241,7 @@ public class UnstainedCardinalRiteEvents {
 		degree.setFounderIntegrationSevered(true);
 		InitiatoryDegreeEvents.syncDegree(caster, degree);
 		caster.displayClientMessage(Component.literal(
-				"The bloodline is gone. What Annetta survived has taught your own infection how to release you.")
+				"The bloodline is gone. The infection's collapse taught your own infection how to release you.")
 				.withStyle(ChatFormatting.AQUA, ChatFormatting.ITALIC), false);
 	}
 	// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€

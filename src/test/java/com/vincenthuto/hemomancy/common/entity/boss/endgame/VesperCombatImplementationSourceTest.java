@@ -25,6 +25,8 @@ final class VesperCombatImplementationSourceTest {
 		assertTrue(crowned.contains("part.xOld = part.getX()"));
 		assertTrue(crowned.contains("part.yOld = part.getY()"));
 		assertTrue(crowned.contains("part.zOld = part.getZ()"));
+		assertTrue(crowned.contains("if (!spawnEveningStar()) return;"));
+		assertTrue(crowned.contains("return server.addFreshEntity(eveningStar);"));
 		assertTrue(anchor.contains("anchorHitboxScale"));
 		assertTrue(actions.contains("outlineExposedThroneAnchor"));
 		assertFalse(crowned.contains("tickVesperPattern"));

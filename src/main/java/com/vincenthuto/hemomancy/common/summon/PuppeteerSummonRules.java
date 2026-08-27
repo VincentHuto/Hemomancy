@@ -45,6 +45,30 @@ public final class PuppeteerSummonRules {
 		return 1.0 + Math.max(0, livingSinewLevel) * 0.10;
 	}
 
+	public static double highStrungSpeedMultiplier(int level) {
+		return 1.0D + Math.max(0, level) * 0.10D;
+	}
+
+	public static int highStrungAttackInterval(int level) {
+		return Math.max(14, 20 - Math.max(0, level) * 2);
+	}
+
+	public static double highStrungCommandRange(double range, int level) {
+		return Math.max(0.0D, range) + Math.max(0, level) * 4.0D;
+	}
+
+	public static int highStrungThreadUpkeep(int upkeep, int level) {
+		return (int) Math.ceil(Math.max(0, upkeep) * (1.0D + Math.max(0, level) * 0.25D));
+	}
+
+	public static double highStrungBloodUpkeep(int level) {
+		return Math.max(0, level) * 10.0D;
+	}
+
+	public static float highStrungRecoilDamage(int level) {
+		return Math.max(0, level) * 1.5F;
+	}
+
 	public static double commandRange(int farTetherLevel) {
 		return BASE_COMMAND_RANGE + Math.max(0, farTetherLevel) * COMMAND_RANGE_PER_TETHER_LEVEL;
 	}

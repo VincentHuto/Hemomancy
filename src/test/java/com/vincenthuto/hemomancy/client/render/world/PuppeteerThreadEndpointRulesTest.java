@@ -24,4 +24,21 @@ final class PuppeteerThreadEndpointRulesTest {
 		assertEquals(new Vec3(3.0D, 7.45D, 11.0D), shortBody);
 		assertEquals(new Vec3(3.0D, 8.8D, 11.0D), tallBody);
 	}
+
+	@Test
+	void customHeightScaleLowersAHorizontalBodyAnchor() {
+		Vec3 endpoint = PuppeteerThreadEndpointRules.summonEndpoint(
+				3.0D, 7.0D, 11.0D, 3.0D, 7.0D, 11.0D, 0.8D, 0.25D, 0.5F);
+		assertEquals(new Vec3(3.0D, 7.2D, 11.0D), endpoint);
+	}
+
+	@Test
+	void playerHandEndpointIsLowerAndLateralInBothCameraModes() {
+		Vec3 eye = new Vec3(10.0D, 20.0D, 30.0D);
+		Vec3 view = new Vec3(0.0D, 0.0D, 1.0D);
+		assertEquals(new Vec3(9.38D, 18.95D, 30.42D),
+				PuppeteerThreadEndpointRules.playerHandEndpoint(eye, view, 0.0F, -1.0D, true));
+		assertEquals(new Vec3(9.38D, 18.55D, 30.42D),
+				PuppeteerThreadEndpointRules.playerHandEndpoint(eye, view, 0.0F, -1.0D, false));
+	}
 }

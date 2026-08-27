@@ -1,6 +1,9 @@
 package com.vincenthuto.hemomancy.common.entity.summon;
 
+import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodVolumeEvents;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.morphling.EquippedMorphlingEvents;
 import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillPointHelper;
 import com.vincenthuto.hemomancy.common.capability.player.shared.skill.ToggleablePlayerPowerRules;
@@ -16,11 +19,14 @@ import com.vincenthuto.hemomancy.common.worldgen.FungalGardenTravelHelper;
 import com.vincenthuto.hemomancy.config.HemoServerConfig;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.ai.attributes.AttributeInstance;
+import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.monster.Enemy;
 import net.minecraft.world.entity.player.Player;
@@ -45,6 +51,8 @@ public final class BoundSummonBehavior {
 	private static final String TAG_BOUND_AT = "HemomancyBoundAtGameTime";
 	private static final String TAG_FOCUS_TARGET = "HemomancyFocusTarget";
 	private static final String PLAYER_TAG_OWNER_SESSION = "HemomancyPuppeteerSession";
+	private static final ResourceLocation HIGH_STRUNG_SPEED = Hemomancy.rloc("high_strung_speed");
+	private static final ResourceLocation HIGH_STRUNG_FLIGHT = Hemomancy.rloc("high_strung_flight");
 
 	private BoundSummonBehavior() {
 	}
@@ -194,6 +202,8 @@ public final class BoundSummonBehavior {
 			mob.setNoAi(false);
 		}
 		long gameTime = mob.level().getGameTime();
+		int highStrungLevel = SkillPointHelper.getHighStrungLevel(owner);
+		updateHighStrungSpeed(mob, highStrungLevel);
 		boolean morphlingInterference = hasEquippedMorphling(owner)
 				&& qualifiesForMorphlingInterference(mob, summon, owner);
 		CompoundTag persistentData = mob.getPersistentData();
@@ -209,6 +219,7 @@ public final class BoundSummonBehavior {
 		}
 		double range = PuppeteerSummonRules.effectiveCommandRange(SkillPointHelper.getFarTetherLevel(owner),
 				SkillPointHelper.getBoundCommandLevel(owner), morphlingInterference);
+		range = PuppeteerSummonRules.highStrungCommandRange(range, highStrungLevel);
 		if (mob.distanceToSqr(owner) > range * range * 9.0) {
 			mob.teleportTo(owner.getX(), owner.getY(), owner.getZ());
 		}
@@ -241,8 +252,7 @@ public final class BoundSummonBehavior {
 		}
 		if (mob.getTarget() == null) {
 			Optional<LivingEntity> target = switch (mode) {
-				case FOLLOW -> SkillPointHelper.isTechniqueEnabled(owner,
-						SkillPointInit.skill_autonomous_retaliation)
+				case FOLLOW -> mode.automaticallyDefendsOwner()
 						? findRetaliationTarget(mob, summon, owner, range) : Optional.empty();
 				case GUARD -> findGuardTarget(mob, summon, owner, equippedCrossbar, range);
 				case HUNT -> findTarget(mob, summon, owner, range);
@@ -293,9 +303,11 @@ public final class BoundSummonBehavior {
 			ServerPlayer owner, double range) {
 		List<LivingEntity> candidates = new ArrayList<>();
 		if (owner.getLastHurtByMob() != null) candidates.add(owner.getLastHurtByMob());
-		for (Mob body : MarionetteCrossbarItem.activeSummonsForCrossbar(owner,
-				summon.hemomancy$getCrossbarUUID(), null)) {
-			if (body.getLastHurtByMob() != null) candidates.add(body.getLastHurtByMob());
+		if (SkillPointHelper.isTechniqueEnabled(owner, SkillPointInit.skill_autonomous_retaliation)) {
+			for (Mob body : MarionetteCrossbarItem.activeSummonsForCrossbar(owner,
+					summon.hemomancy$getCrossbarUUID(), null)) {
+				if (body.getLastHurtByMob() != null) candidates.add(body.getLastHurtByMob());
+			}
 		}
 		return candidates.stream().filter(target -> canAttack(mob, summon, target))
 				.filter(target -> PuppeteerSummonRules.withinTetherRange(owner.distanceToSqr(target), range))
@@ -454,8 +466,21 @@ public final class BoundSummonBehavior {
 		int upkeep = PuppeteerSummonRules.adjustedThreadCost(baseUpkeep,
 				SkillPointHelper.getThreadEconomyLevel(owner));
 		upkeep = PuppeteerSummonRules.interferedThreadUpkeep(upkeep, morphlingInterference);
+		int highStrungLevel = SkillPointHelper.getHighStrungLevel(owner);
+		upkeep = PuppeteerSummonRules.highStrungThreadUpkeep(upkeep, highStrungLevel);
+		double bloodUpkeep = PuppeteerSummonRules.highStrungBloodUpkeep(highStrungLevel);
+		IBloodVolume volume = bloodUpkeep > 0.0D ? HemoCapabilityAccess.getBloodVolume(owner).orElse(null) : null;
+		if (MarionetteCrossbarItem.getThread(crossbar) < upkeep
+				|| bloodUpkeep > 0.0D && (volume == null || !volume.isActive()
+				|| volume.getBloodVolume() < bloodUpkeep)) {
+			return false;
+		}
 		if (!MarionetteCrossbarItem.consumeThread(crossbar, upkeep)) {
 			return false;
+		}
+		if (bloodUpkeep > 0.0D) {
+			volume.drain(bloodUpkeep);
+			BloodVolumeEvents.syncVolume(owner, volume);
 		}
 		if (morphlingInterference) {
 			HemoCapabilityAccess.getEquippedMorphling(owner).filter(cap -> cap.hasMorphling()).ifPresent(cap -> {
@@ -464,6 +489,25 @@ public final class BoundSummonBehavior {
 			});
 		}
 		return true;
+	}
+
+	private static void updateHighStrungSpeed(Mob mob, int level) {
+		double amount = PuppeteerSummonRules.highStrungSpeedMultiplier(level) - 1.0D;
+		updateModifier(mob.getAttribute(Attributes.MOVEMENT_SPEED), HIGH_STRUNG_SPEED, amount);
+		updateModifier(mob.getAttribute(Attributes.FLYING_SPEED), HIGH_STRUNG_FLIGHT, amount);
+	}
+
+	private static void updateModifier(AttributeInstance attribute, ResourceLocation id, double amount) {
+		if (attribute == null) return;
+		AttributeModifier current = attribute.getModifier(id);
+		if (current != null && (amount == 0.0D || current.amount() != amount)) {
+			attribute.removeModifier(id);
+			current = null;
+		}
+		if (amount > 0.0D && current == null) {
+			attribute.addTransientModifier(new AttributeModifier(id, amount,
+					AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL));
+		}
 	}
 
 	private static void unravel(Mob mob, ServerPlayer owner, String messageKey) {

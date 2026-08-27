@@ -122,6 +122,10 @@ public final class ArmorSetAbilityRegistry {
 			message(player, Component.literal("The armor refuses.").withStyle(ChatFormatting.RED));
 			return false;
 		}
+		if (SHEOLIC_BASTION_STANCE.equals(ability.id()) && player.isShiftKeyDown()) {
+			ability.activate(player);
+			return true;
+		}
 		if (SHEOLIC_BASTION_STANCE.equals(ability.id())
 				&& SheolicBastionBloodlustArmorAbilityHandler.isBastionActive(player)) {
 			ability.activate(player);

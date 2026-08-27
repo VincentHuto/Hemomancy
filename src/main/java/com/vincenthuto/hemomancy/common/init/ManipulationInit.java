@@ -23,6 +23,7 @@ import com.vincenthuto.hemomancy.common.manipulation.ferric.*;
 import com.vincenthuto.hemomancy.common.manipulation.flammeus.*;
 import com.vincenthuto.hemomancy.common.manipulation.lux.*;
 import com.vincenthuto.hemomancy.common.manipulation.mortem.ExsanguinateManip;
+import com.vincenthuto.hemomancy.common.manipulation.mortem.BlackheartedManip;
 import com.vincenthuto.hemomancy.common.manipulation.mortem.GraveDebtManip;
 import com.vincenthuto.hemomancy.common.manipulation.mortem.HemorrhageManip;
 import com.vincenthuto.hemomancy.common.manipulation.mortem.InsatiableHungerManip;
@@ -106,6 +107,20 @@ public class ManipulationInit {
 								(float) drudge.getAttributeValue(Attributes.ATTACK_DAMAGE) * 2.0f);
 						return true;
 					}, "Knockback and heavy strike vs nearest hostile"));
+
+	public static final DeferredHolder<BloodManipulation, BloodManipulation> hematic_rebuke = MANIPS.register("hematic_rebuke",
+			() -> new HematicCommandManip("hematic_rebuke", 225, 10, 0, EnumManipulationType.QUICK,
+					EnumManipulationRank.MEDIOCRITAS, EnumBloodTendency.ANIMUS, EnumVeinSections.HEAD, false)
+					.setSecondaryTend(EnumBloodTendency.DUCTILIS)
+					.setCooldownTicks(100)
+					.setDrudgeAction(DrudgeAction.DRUDGE_UNSUPPORTED, "Not usable by Drudges"));
+
+	public static final DeferredHolder<BloodManipulation, BloodManipulation> hematic_impressment = MANIPS.register("hematic_impressment",
+			() -> new HematicCommandManip("hematic_impressment", 500, 25, 0, EnumManipulationType.QUICK,
+					EnumManipulationRank.SUMMA, EnumBloodTendency.ANIMUS, EnumVeinSections.HEAD, true)
+					.setSecondaryTend(EnumBloodTendency.DUCTILIS)
+					.setCooldownTicks(200)
+					.setDrudgeAction(DrudgeAction.DRUDGE_UNSUPPORTED, "Not usable by Drudges"));
 
 	public static final DeferredHolder<BloodManipulation, BloodManipulation> summon_avatar = MANIPS.register("summon_avatar",
 			() -> new SummonAvatarManip("summon_avatar", 500, 50, 0, EnumManipulationType.QUICK,
@@ -534,6 +549,13 @@ public class ManipulationInit {
 						return true;
 					}, "Brief retaliatory iron guard"));
 
+	public static final DeferredHolder<BloodManipulation, BloodManipulation> ironhearted = MANIPS.register("ironhearted",
+			() -> new IronheartedManip("ironhearted", 300, 45, 0, EnumManipulationType.CHARGED,
+					EnumManipulationRank.MAGISTER, EnumBloodTendency.FERRIC, EnumVeinSections.HEART)
+					.setSecondaryTend(EnumBloodTendency.ANIMUS)
+					.setCooldownTicks(40)
+					.setDrudgeAction(DrudgeAction.DRUDGE_UNSUPPORTED, "Not usable by Drudges"));
+
 	public static final DeferredHolder<BloodManipulation, BloodManipulation> sanguine_magnetism = MANIPS.register("sanguine_magnetism",
 			() -> new SanguineMagnetismManip("sanguine_magnetism", 450, 20, 0, EnumManipulationType.QUICK,
 					EnumManipulationRank.SUMMA, EnumBloodTendency.FERRIC, EnumVeinSections.BODY)
@@ -937,6 +959,12 @@ public class ManipulationInit {
 								ManipulationStatusRules.GRAVE_DEBT_TICKS);
 						return true;
 					}, "Marks nearest hostile to burst at low health"));
+
+	public static final DeferredHolder<BloodManipulation, BloodManipulation> blackhearted = MANIPS.register("blackhearted",
+			() -> new BlackheartedManip("blackhearted", 0, 35, 0, EnumManipulationType.PASSIVE,
+					EnumManipulationRank.MAGISTER, EnumBloodTendency.MORTEM, EnumVeinSections.HEART)
+					.setSecondaryTend(EnumBloodTendency.ANIMUS)
+					.setDrudgeAction(DrudgeAction.DRUDGE_UNSUPPORTED, "Not usable by Drudges"));
 
 	// ── SAINT — Canon Memories (imprinted from Sainted Mausoleums) ──
 

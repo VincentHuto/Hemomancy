@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": ["WCW", "THT"],
+  "key": {
+    "W": { "item": "hemomancy:puppeteers_wool" },
+    "C": { "item": "hemomancy:chromatic_sublimate" },
+    "T": { "item": "hemomancy:puppeteering_thread" },
+    "H": { "item": "hemomancy:hematic_iron_scrap" }
+  },
+  "result": { "id": "hemomancy:scarlet_gorget", "count": 1 }
+}

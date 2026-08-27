@@ -320,12 +320,18 @@ public class BloodManipulation implements EntityCastableManipulation {
 	}
 
 	public void performAction(Player player, Level world, ItemStack heldItemMainhand, BlockPos position) {
+		performAction(player, world, heldItemMainhand, position, 0.0F);
+	}
+
+	public void performAction(Player player, Level world, ItemStack heldItemMainhand, BlockPos position,
+			float chargeTicks) {
 		IBloodVolume volume = HemoCapabilityAccess.getBloodVolume(player)
 				.orElseThrow(NullPointerException::new);
 		IBloodTendency tendency = HemoCapabilityAccess.getBloodTendency(player)
 				.orElseThrow(NullPointerException::new);
 
 		if (!player.level().isClientSide) {
+			if (!canPerformAction(player, chargeTicks)) return;
 			if (ManipulationRetirementRules.isRetiredManipulation(this)) {
 				player.displayClientMessage(Component.literal("That manipulation has gone dormant.")
 						.withStyle(ChatFormatting.DARK_GRAY), true);
@@ -418,6 +424,10 @@ public class BloodManipulation implements EntityCastableManipulation {
 						.withStyle(ChatFormatting.RED), true);
 			}
 		}
+	}
+
+	protected boolean canPerformAction(Player player, float chargeTicks) {
+		return true;
 	}
 
 	/*

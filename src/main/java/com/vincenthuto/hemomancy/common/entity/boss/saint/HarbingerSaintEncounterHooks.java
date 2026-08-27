@@ -20,10 +20,6 @@ public final class HarbingerSaintEncounterHooks {
 	}
 
 	public static boolean spawnSaintBoss(ServerLevel level, BlockPos pos, Player sourcePlayer, EnumSaintType saintType) {
-		// Reset blood debt at encounter start so pre-fight damage doesn't carry over.
-		HemoCapabilityAccess.getBloodVolume(sourcePlayer)
-				.ifPresent(v -> v.resetBloodDebt());
-
 		Mob boss = createBoss(level, saintType);
 		if (boss == null) return false;
 
@@ -37,7 +33,11 @@ public final class HarbingerSaintEncounterHooks {
 			boss.setTarget(serverPlayer);
 		}
 
-		return level.addFreshEntity(boss);
+		if (!level.addFreshEntity(boss)) return false;
+		// Reset blood debt only after the encounter exists so a failed spawn cannot erase player state.
+		HemoCapabilityAccess.getBloodVolume(sourcePlayer)
+				.ifPresent(v -> v.resetBloodDebt());
+		return true;
 	}
 
 	private static Mob createBoss(ServerLevel level, EnumSaintType saintType) {

@@ -50,7 +50,8 @@ public class SkillPointInit {
 			skill_shared_siphon, skill_autonomous_retaliation, skill_merciful_command,
 			skill_deep_scar_resonance, skill_crimson_wake, skill_vascular_mercy,
 			skill_bloodhound_sense, skill_reflexive_coagulation, skill_dormant_symbiote,
-			skill_symbiotic_metabolism;
+			skill_symbiotic_metabolism, skill_nerves_of_steel, skill_iron_handed,
+			skill_bright_eyed, skill_light_footed, skill_high_strung;
 
 	public static void init() {
 		initBaseBranch();

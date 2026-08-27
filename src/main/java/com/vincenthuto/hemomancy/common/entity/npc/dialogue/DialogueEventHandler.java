@@ -191,8 +191,7 @@ public class DialogueEventHandler {
 							new MnemonicBlueprintTarget(MnemonicBlueprintTarget.Type.CARDINAL_RITE,
 									ResourceLocation.fromNamespaceAndPath(Hemomancy.MOD_ID,
 											"cardinal_rite/sanguine_initiation")));
-					ItemEntity drop = new ItemEntity(hermit.level(), pos.x, pos.y + 0.5, pos.z, blueprint);
-					hermit.level().addFreshEntity(drop);
+					giveOrDropAtEntity(player, event.getEntityId(), blueprint);
 					// Passing text passage — the mortal display was the hermitâ€™s heart
 					player.displayClientMessage(
 							Component.translatable("hemomancy.dialogue.event.hermit_farewell_die")
@@ -1112,8 +1111,9 @@ public class DialogueEventHandler {
 		if (entity != null) {
 			Vec3 pos = entity.position();
 			ItemEntity drop = new ItemEntity(entity.level(), pos.x, pos.y + 0.5, pos.z, stack);
-			entity.level().addFreshEntity(drop);
-		} else if (!player.getInventory().add(stack)) {
+			if (entity.level().addFreshEntity(drop)) return;
+		}
+		if (!player.getInventory().add(stack)) {
 			player.drop(stack, false);
 		}
 	}
@@ -1130,17 +1130,7 @@ public class DialogueEventHandler {
 				new MnemonicBlueprintTarget(MnemonicBlueprintTarget.Type.BLOOD_STRUCTURE,
 						ResourceLocation.tryBuild(Hemomancy.MOD_ID, "blood_structure/sanguine_monolith")));
 
-		Entity entity = player.level().getEntity(entityId);
-		if (entity != null) {
-			Vec3 pos = entity.position();
-			ItemEntity drop = new ItemEntity(entity.level(), pos.x, pos.y + 0.5, pos.z, hint);
-			entity.level().addFreshEntity(drop);
-		} else {
-			// Fallback: give directly to inventory, drop if full
-			if (!player.getInventory().add(hint)) {
-				player.drop(hint, false);
-			}
-		}
+		giveOrDropAtEntity(player, entityId, hint);
 
 		player.displayClientMessage(
 				Component.translatable("hemomancy.dialogue.event.vicar_gives_scrap")
@@ -1150,14 +1140,7 @@ public class DialogueEventHandler {
 
 	private static void handleGiveStainedChurchMap(ServerPlayer player, int entityId) {
 		ItemStack map = new ItemStack(ItemInit.stained_church_map.get());
-		Entity entity = player.level().getEntity(entityId);
-		if (entity != null) {
-			Vec3 pos = entity.position();
-			ItemEntity drop = new ItemEntity(entity.level(), pos.x, pos.y + 0.5, pos.z, map);
-			entity.level().addFreshEntity(drop);
-		} else if (!player.getInventory().add(map)) {
-			player.drop(map, false);
-		}
+		giveOrDropAtEntity(player, entityId, map);
 
 		player.displayClientMessage(
 				Component.translatable("hemomancy.dialogue.event.gives_stained_church_map")
@@ -1185,18 +1168,10 @@ public class DialogueEventHandler {
 				ResourceLocation.tryBuild(Hemomancy.MOD_ID, "annetta_insect_observation_immaculatus"));
 
 		Entity entity = player.level().getEntity(entityId);
-		if (entity != null) {
-			Vec3 pos = entity.position();
-			ItemEntity drop = new ItemEntity(entity.level(), pos.x, pos.y + 0.5, pos.z, notes);
-			entity.level().addFreshEntity(drop);
-			if (entity instanceof UnstainedScoutEntity scout) {
-				scout.setInvulnerable(false);
-				scout.kill();
-			}
-		} else {
-			if (!player.getInventory().add(notes)) {
-				player.drop(notes, false);
-			}
+		giveOrDropAtEntity(player, entityId, notes);
+		if (entity instanceof UnstainedScoutEntity scout) {
+			scout.setInvulnerable(false);
+			scout.kill();
 		}
 
 		player.displayClientMessage(

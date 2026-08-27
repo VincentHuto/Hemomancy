@@ -8,6 +8,8 @@ public final class PuppeteerSummonDefinitions {
 	public static final String VEINWING_VULTURE = "veinwing_vulture";
 	public static final String MARROW_SPITTER = "marrow_spitter";
 	public static final String GOREBOUND_HULK = "gorebound_hulk";
+	public static final String SCARLET_MUMMER = "scarlet_mummer";
+	public static final String SANGUINE_HOUND = "sanguine_hound";
 	public static final String MNEMONIST_PUPPET = "mnemonist_puppet";
 
 	private static final List<PuppeteerSummonDefinition> DEFINITIONS = List.of(
@@ -20,6 +22,12 @@ public final class PuppeteerSummonDefinitions {
 			new PuppeteerSummonDefinition(GOREBOUND_HULK, "Heavy Bruiser", 4,
 					55.0, 9.0, 0.18, 56, 8,
 					"hemomancy.summon.gorebound_hulk.lore"),
+			new PuppeteerSummonDefinition(SCARLET_MUMMER, "Attention Controller", 4,
+					24.0, 3.0, 0.30, 48, 14,
+					"hemomancy.summon.scarlet_mummer.lore"),
+			new PuppeteerSummonDefinition(SANGUINE_HOUND, "Pursuit Harrier", 4,
+					30.0, 6.0, 0.36, 44, 15,
+					"hemomancy.summon.sanguine_hound.lore"),
 			new PuppeteerSummonDefinition(MNEMONIST_PUPPET, "Memory Echo", 5,
 					26.0, 3.0, 0.26, 64, 16,
 					"hemomancy.summon.mnemonist_puppet.lore")

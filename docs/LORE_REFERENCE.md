@@ -10,11 +10,11 @@ This file and the settled decisions incorporated into it are the canonical narra
 
 The following settled facts are non-negotiable consistency anchors:
 
-- Annetta's canonical creature is the Tooth Peck. Tooth Pecks seek active infection, and their interest causes Annetta's horrifying realization that she is infected. Chthonians remain a separate termite ecology and have no role in that revelation.
+- Annetta's canonical creature is the Tooth Peck. Tooth Pecks seek active infection, but Annetta never understands what they detect in her. Chthonians remain a separate termite ecology and have no role in the encounter.
 - Verdigris Aura is the early Purity defense; Silver Ward is its advanced Clarity form.
 - The ninth and final Qliphoth Pome grants the Fungal Spine. The first Fungal Spine visit is a two-minute consciousness projection: the player can move and run but has no accessible items or armor, and an accelerating red vignette warns of forced return to the physical body.
 - After that forced return, the Rite of Pruning leaves the player at Degree 7 as a Silent Archon, while the Rite of Apotheosis alone advances the player to Degree 8 Apotheos.
-- The ordinary Unstained cure closes when a Harbinger founds a bloodline. Reaching Degree 5 or joining another bloodline does not close it. Curing Annetta unlocks an exceptional severance route for a founder.
+- The ordinary Unstained cure closes when a Harbinger founds a bloodline. Reaching Degree 5 or joining another bloodline does not close it. Defeating the infection unleashed by Annetta's fatal Harbinger encounter unlocks an exceptional severance route for a founder.
 - A bloodline is founded only by the Degree-5 Bloodline Founding rite. An Unsigned Ledger records or joins a covenant; it does not create one by itself.
 - Pale Silver is refined only from Consecrated Copper. It is never a natural metal and is never refined directly from iron.
 - Hemorath expresses Ferric and Mortem. Seraphae expresses Animus and Lux.
@@ -404,7 +404,7 @@ The four canonical artificial shapes are learned through **Puppetry Cardinal Ord
 
 The Unstained are not a wholly separate tradition. Their **original members were Harbingers who left** — practitioners who had experienced blood magic firsthand and then chose to reject it. This is why they are so effective at combating it: the founders knew it from the inside. Their methods of purification, their understanding of what hemolytic solution does to blood-infused veins — this was all discovered and refined by people who had once been what they now oppose.
 
-This also explains why the Unstained welcome Harbingers who sincerely seek a cure. The ordinary hard cutoff is not a degree and not membership in someone else's covenant: it is **founding a bloodline**, the act that roots the infection through a covenant created by the practitioner. A founder may still use the Draught of Still Mercy to spare and cure Annetta even though ordinary Unstained initiation is closed; defeating her separated infection teaches the exceptional founder-severance rite that can reopen the path.
+This also explains why the Unstained welcome Harbingers who sincerely seek a cure. The ordinary hard cutoff is not a degree and not membership in someone else's covenant: it is **founding a bloodline**, the act that roots the infection through a covenant created by the practitioner. A founder cannot use Annetta's Unstained purification route. Defeating the infection unleashed by her fatal Harbinger encounter teaches the exceptional founder-severance rite that can reopen the path.
 
 ### 7.2 What They Believe
 
@@ -418,7 +418,7 @@ They are devout, but not fanatical in the way of those who seek to convert or co
 - Degree 1-2: careful welcome; help is offered plainly, though the Unstained warn that every rite makes the blood harder to shed
 - Degree 3-4: wary help; Zealots and Acolytes still offer cure, but ask whether the player seeks healing or merely another power
 - Degree 5+: caution rises with experience, but degree alone never closes ordinary cure
-- Bloodline founder: ordinary cure is refused until the exceptional Annetta-derived severance has cut the founder's integration
+- Bloodline founder: ordinary cure is refused until the exceptional severance learned from the unleashed infection has cut the founder's integration
 - Guardians use blunt force to escort hostile or deceptive visitors out when necessary; they do not spill blood near the church
 
 ### 7.3 Appearance and Equipment
@@ -585,24 +585,24 @@ Players are directed to seek the Saints around **Degree 3–4**, when they are s
 
 Annetta Knowles is a boss character and one of the more tragic figures in the mod's lore. She was one of the **highest-ranking members of the Unstained**, a cleric who had given her life to purification and the service of Our Lady.
 
-Her downfall came from a single, impossible fact: **Tooth Pecks sought her out** inside the church and would not leave her alone. Tooth Pecks seek active infection rather than the mundane residue carried by most people. Their fixation should have been impossible for someone of Annetta's standing, and she understood what they had detected before anyone else would admit it.
+Her downfall came from a fact she never understood: **Tooth Pecks sought her out** inside the church and would not leave her alone. Tooth Pecks seek active infection rather than the mundane residue carried by most people, but Annetta never knew she was infected.
 
 This one small fact — an insect bite that should not have been possible — **shattered everything she had built herself on**. If she could be bitten, she was infected. If she was infected, had she ever truly been clean? Had any of her purification been real? Had she been walking the Lady's path, or had she been deluding herself while the infection marinated inside her all along?
 
 Her sanity broke under the weight of this question. And in that fracture, the latent blood power she had been suppressing for her entire life — through years of purity work, through complete devotion — came flooding out all at once, released by the psychological collapse of her defenses.
 
-**What she has become:** A being caught between both paths — still carrying the silver of the Unstained (her eyes are that teal patina-blue, the color of verdigris copper) but also bursting with awakened hemomantic power. She wields a spear that appears to be made of hyper-solidified blood — her blood, long-latent, finally crystallized. In her second phase, she extracts this from herself as her primary weapon. Annetta's Sanguis Lancea should read as a personal relapse given shape, not an ordinary Hematic Order weapon.
+**What is buried in her:** An infection hidden beneath the silver of the Unstained. On the Harbinger route it erupts, kills Annetta, and continues through her remains as the Stained Priestess. Its spear is hyper-solidified blood, not an ordinary Hematic Order weapon.
 
 **Her thematic domain:** Teeth, nails, hair — the biological materials that are *not* blood-connected (calcium, keratin) but are undeniably biological. These fall into neither the Harbinger (blood, iron, bone) nor the fully Unstained (copper, silver) domain. They are hers.
 
-**Draught of Still Mercy** — a specialized Unstained-crafted tincture that can suppress the latent infection in a host who has not yet fully converted. An Unstained practitioner with sufficient Clarity can bring it to her through the ordinary pale route. A bloodline founder may also bring it despite being barred from ordinary Unstained initiation; curing Annetta is the exceptional act that later teaches the founder how to sever their covenant integration. The draught externalizes Annetta's infection so it can be fought separately rather than burning through her. This is not a gentle cure, but it leaves the host alive and, eventually, at peace.
+**Draught of Still Mercy** — a specialized Unstained-crafted tincture that can suppress the latent infection in a host who has not yet fully converted. Only an Unstained practitioner with sufficient Clarity can use it to externalize Annetta's infection so it can be fought separately rather than burning through her. This is not a gentle cure, but it leaves her alive and, eventually, purified.
 
-> *She is not the Pale Lady.* Our Lady of Still Waters is a force of nature, non-physical and non-corporeal. Annetta is a person — a broken person with enormous and terrible power.
+> *She is not the Pale Lady.* Our Lady of Still Waters is a force of nature, non-physical and non-corporeal. Annetta is an Unstained woman unknowingly carrying an enormous and terrible infection.
 
 **Implementation status:** Partial. Annetta's encounter is wired and playable. She spawns in COWERING state inside a `BrokenChurchStructure` with contextual scene dressing (a ToothPecks Specimen Jar placed beside her, Devil's Tooth decorations). Two routes are implemented:
 
-- **Harbinger route**: Approach holding a ToothPecks Specimen Jar. The jar shatters, the Tooth Pecks swarm toward the infection they sensed in her, and the boss fight begins (silver aura, hemolytic vials, hair-and-nails slash). If the fight proceeds to near-death she mutates into the Stained Priestess — a more powerful blood-spear phase. The Harbinger route drops `Annetta's Sanguis Lancea`.
-- **Mercy route**: Approach holding a Draught of Still Mercy while Clarity is unlocked **or** while carrying the founder integration that makes Annetta's exception necessary. She drinks it, transitions to a cured ally state, and the **Latent Infection** — the suppressed blood magic given physical form — tears itself free as a separate boss. Cured Annetta fights alongside the player until the infection is destroyed. The route drops `Annetta's Absolution Dagger` and Pale Silver Ingots and unlocks Severed Covenant knowledge for a founder.
+- **Harbinger route**: Approach holding a ToothPecks Specimen Jar. The jar shatters and the released creatures provoke the infection Annetta never knew she carried. At near-death Annetta dies and the infection continues as the Stained Priestess, a more powerful blood-spear phase. Defeating it unlocks Severed Covenant knowledge for a founder and drops `Annetta's Sanguis Lancea`.
+- **Unstained route**: Approach holding a Draught of Still Mercy after unlocking Clarity. She drinks it, transitions to a purified ally state, and the **Latent Infection** tears itself free as a separate boss. Annetta fights alongside the player until the infection is destroyed, then survives in the RESOLVED state. The route drops `Annetta's Absolution Dagger` and Pale Silver Ingots.
 
 After either route concludes she either lies broken (Harbinger) or stands resolved and at peace (Unstained).
 

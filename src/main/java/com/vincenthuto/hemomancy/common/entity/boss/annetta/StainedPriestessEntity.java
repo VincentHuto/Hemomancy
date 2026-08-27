@@ -1,6 +1,7 @@
 package com.vincenthuto.hemomancy.common.entity.boss.annetta;
 
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
+import com.vincenthuto.hemomancy.common.capability.player.unstained.UnstainedProgressEvents;
 import com.vincenthuto.hemomancy.common.entity.projectile.SanguisLanceaEntity;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 import net.minecraft.core.particles.ParticleTypes;
@@ -224,6 +225,22 @@ public class StainedPriestessEntity extends Monster {
             });
         }
         return result;
+    }
+
+    @Override
+    public void die(DamageSource source) {
+        if (!this.level().isClientSide && source.getEntity() instanceof ServerPlayer player
+                && HemoCapabilityAccess.getInitiatoryDegree(player)
+                .map(degree -> degree.hasFoundedBloodline())
+                .orElse(false)) {
+            HemoCapabilityAccess.getUnstainedProgress(player).ifPresent(progress -> {
+                progress.setAnnettaSeveranceUnlocked(true);
+                UnstainedProgressEvents.syncProgress(player, progress);
+            });
+            player.displayClientMessage(Component.literal(
+                    "The infection's collapse reveals where a founder's covenant-root can be cut."), false);
+        }
+        super.die(source);
     }
 
     @Override

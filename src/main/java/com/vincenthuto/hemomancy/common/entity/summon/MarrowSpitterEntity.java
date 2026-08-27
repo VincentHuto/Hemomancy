@@ -11,6 +11,7 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.MobSpawnType;
+import net.minecraft.world.entity.MoverType;
 import net.minecraft.world.entity.SpawnGroupData;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
@@ -123,6 +124,12 @@ public class MarrowSpitterEntity extends Skeleton implements BoundPuppeteerSummo
 		if (speed > 0.18) velocity = velocity.scale(0.18 / speed);
 		setDeltaMovement(velocity);
 		hurtMarked = true;
+	}
+
+	@Override
+	public void travel(Vec3 travelVector) {
+		if (isAlive()) move(MoverType.SELF, getDeltaMovement());
+		else super.travel(travelVector);
 	}
 
 	private void tickSentryFire() {

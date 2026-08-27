@@ -61,6 +61,8 @@ public final class UnstainedJourneyFixtures {
 				rite(player, origin, "still_waters");
 			}
 			case PODIUM_SUPPRESSION -> {
+				HemoCapabilityAccess.requireBloodVolume(player).setActive(true);
+				HemoCapabilityAccess.requireInitiatoryDegree(player).setDegreeNumber(1);
 				HemoJourneyFixtures.set(player, origin.above(), BlockInit.unstained_podium.get());
 				player.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(ItemInit.hemolytic_solution.get()));
 			}

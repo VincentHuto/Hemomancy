@@ -2,7 +2,6 @@ package com.vincenthuto.hemomancy.common.worldgen.feature;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.tags.BlockTags;
-import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.LevelSimulatedReader;
 import net.minecraft.world.level.block.Blocks;
@@ -58,13 +57,6 @@ public final class FeatureLogic {
         );
     }
 
-    /** Returns cobblestone or mossy cobblestone for ruins. */
-    @Deprecated
-    public static BlockState randStone(RandomSource rand, int howMuch) {
-        return rand.nextInt(howMuch) >= 1 ? Blocks.COBBLESTONE.defaultBlockState() : Blocks.MOSSY_COBBLESTONE.defaultBlockState();
-    }
-
-    // TODO: replace the material whitelist with a block tag.
     public static boolean isAreaClear(BlockGetter world, BlockPos min, BlockPos max) {
         for (BlockPos pos : BlockPos.betweenClosed(min, max)) {
             BlockState state = world.getBlockState(pos);

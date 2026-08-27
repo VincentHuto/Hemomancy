@@ -280,6 +280,8 @@ public final class SummonsTabView {
 			case PuppeteerSummonDefinitions.VEINWING_VULTURE -> EntityInit.veinwing_vulture.get().create(mc.level);
 			case PuppeteerSummonDefinitions.MARROW_SPITTER -> EntityInit.marrow_spitter.get().create(mc.level);
 			case PuppeteerSummonDefinitions.GOREBOUND_HULK -> EntityInit.gorebound_hulk.get().create(mc.level);
+			case PuppeteerSummonDefinitions.SCARLET_MUMMER -> EntityInit.scarlet_mummer.get().create(mc.level);
+			case PuppeteerSummonDefinitions.SANGUINE_HOUND -> EntityInit.sanguine_hound.get().create(mc.level);
 			case PuppeteerSummonDefinitions.MNEMONIST_PUPPET -> EntityInit.mnemonist_puppet.get().create(mc.level);
 			default -> null;
 		};
@@ -384,6 +386,7 @@ public final class SummonsTabView {
 			case PuppeteerSummonDefinitions.VEINWING_VULTURE -> ItemInit.veinwing_harness.get();
 			case PuppeteerSummonDefinitions.MARROW_SPITTER -> ItemInit.marrow_spitter_carriage.get();
 			case PuppeteerSummonDefinitions.GOREBOUND_HULK -> ItemInit.gorebound_yoke.get();
+			case PuppeteerSummonDefinitions.SCARLET_MUMMER -> ItemInit.scarlet_gorget.get();
 			case PuppeteerSummonDefinitions.MNEMONIST_PUPPET -> ItemInit.mnemonist_cradle.get();
 			default -> ItemInit.puppeteering_thread.get();
 		});

@@ -104,7 +104,7 @@ public class WitchsEarMorphlingItem extends MorphlingItem {
 	public List<Component> getMaturityBonusDescriptions(int currentMaturity) {
 		List<Component> list = new ArrayList<>();
 		list.add(MorphlingItem.maturityBonusLine("Echoic Perception (Reveal nearby signals)", 2, currentMaturity));
-		list.add(MorphlingItem.maturityBonusLine("Membrane Glide (Slow falling and reduced fall damage)", 3, currentMaturity));
+		list.add(MorphlingItem.maturityBonusLine("Lighthearted - Membrane Glide (Slow falling and reduced fall damage)", 3, currentMaturity));
 		list.add(MorphlingItem.maturityBonusLine("Night-State Pursuit (Strength in darkness)", 4, currentMaturity));
 		list.add(MorphlingItem.maturityBonusLine("Echothesis (Staff active reveals blood signatures and empowers night raids)", 5, currentMaturity));
 		return list;

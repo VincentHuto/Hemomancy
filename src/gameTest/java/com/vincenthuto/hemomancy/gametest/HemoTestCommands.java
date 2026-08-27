@@ -5,6 +5,7 @@ import com.mojang.brigadier.arguments.StringArgumentType;
 import com.vincenthuto.hemomancy.gametest.journey.HemoJourneyController;
 import com.vincenthuto.hemomancy.gametest.journey.HemoJourneyResult;
 import com.vincenthuto.hemomancy.gametest.journey.JourneyRoute;
+import com.vincenthuto.hemomancy.gametest.journey.JourneyAutoRunner;
 import com.vincenthuto.hemomancy.gametest.journey.UnstainedJourneyController;
 import com.vincenthuto.hemomancy.gametest.journey.UnstainedJourneyResult;
 import net.minecraft.ChatFormatting;
@@ -18,6 +19,7 @@ public final class HemoTestCommands {
 	}
 
 	public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
+		JourneyAutoRunner.register();
 		dispatcher.register(Commands.literal("hemo")
 				.requires(source -> source.hasPermission(2))
 				.then(Commands.literal("test")
@@ -31,17 +33,22 @@ public final class HemoTestCommands {
 						.then(Commands.literal("run_all").executes(context -> runAll(context.getSource())))
 						.then(Commands.literal("status").executes(context -> status(context.getSource())))
 						.then(Commands.literal("journey")
+								.then(Commands.literal("run_all").executes(context -> journeyRunAll(context.getSource())))
 								.then(Commands.literal("harbinger")
 										.then(Commands.literal("start").executes(context -> journeyStart(context.getSource())))
+										.then(Commands.literal("run").executes(context -> journeyRun(context.getSource())))
 										.then(Commands.literal("next").executes(context -> journeyNext(context.getSource())))
 										.then(Commands.literal("status").executes(context -> journeyStatus(context.getSource())))
 										.then(Commands.literal("reset").executes(context -> journeyReset(context.getSource()))))
 								.then(Commands.literal("unstained")
 										.then(Commands.literal("start").executes(context -> unstainedJourneyStart(context.getSource())))
+										.then(Commands.literal("run").executes(context -> unstainedJourneyRun(context.getSource(), "cure")))
 										.then(Commands.literal("cure")
-												.then(Commands.literal("start").executes(context -> unstainedJourneyStart(context.getSource(), "cure"))))
+												.then(Commands.literal("start").executes(context -> unstainedJourneyStart(context.getSource(), "cure")))
+												.then(Commands.literal("run").executes(context -> unstainedJourneyRun(context.getSource(), "cure"))))
 										.then(Commands.literal("novitiate")
-												.then(Commands.literal("start").executes(context -> unstainedJourneyStart(context.getSource(), "novitiate"))))
+												.then(Commands.literal("start").executes(context -> unstainedJourneyStart(context.getSource(), "novitiate")))
+												.then(Commands.literal("run").executes(context -> unstainedJourneyRun(context.getSource(), "novitiate"))))
 										.then(Commands.literal("next").executes(context -> unstainedJourneyNext(context.getSource())))
 										.then(Commands.literal("status").executes(context -> unstainedJourneyStatus(context.getSource())))
 										.then(Commands.literal("reset").executes(context -> unstainedJourneyReset(context.getSource())))))
@@ -149,6 +156,7 @@ public final class HemoTestCommands {
 
 	private static int clear(CommandSourceStack source) throws com.mojang.brigadier.exceptions.CommandSyntaxException {
 		ServerPlayer player = source.getPlayerOrException();
+		JourneyAutoRunner.cancel(player);
 		if (JourneyRoute.is(player, JourneyRoute.UNSTAINED)) {
 			UnstainedJourneyResult journeyClear = UnstainedJourneyController.clear(player);
 			if (!journeyClear.passed()) {
@@ -170,53 +178,87 @@ public final class HemoTestCommands {
 	private static int journeyStart(CommandSourceStack source)
 			throws com.mojang.brigadier.exceptions.CommandSyntaxException {
 		ServerPlayer player = source.getPlayerOrException();
+		JourneyAutoRunner.cancel(player);
 		return reportJourney(source, HemoJourneyController.start(player));
+	}
+
+	private static int journeyRun(CommandSourceStack source)
+			throws com.mojang.brigadier.exceptions.CommandSyntaxException {
+		ServerPlayer player = source.getPlayerOrException();
+		return JourneyAutoRunner.runHarbinger(player) ? 1 : 0;
+	}
+
+	private static int journeyRunAll(CommandSourceStack source)
+			throws com.mojang.brigadier.exceptions.CommandSyntaxException {
+		ServerPlayer player = source.getPlayerOrException();
+		return JourneyAutoRunner.runAll(player) ? 1 : 0;
 	}
 
 	private static int journeyNext(CommandSourceStack source)
 			throws com.mojang.brigadier.exceptions.CommandSyntaxException {
 		ServerPlayer player = source.getPlayerOrException();
+		JourneyAutoRunner.cancel(player);
 		return reportJourney(source, HemoJourneyController.next(player));
 	}
 
 	private static int journeyStatus(CommandSourceStack source)
 			throws com.mojang.brigadier.exceptions.CommandSyntaxException {
 		ServerPlayer player = source.getPlayerOrException();
-		return reportJourney(source, HemoJourneyController.status(player));
+		HemoJourneyResult result = HemoJourneyController.status(player);
+		int reported = reportJourney(source, result);
+		String automation = JourneyAutoRunner.describe(player);
+		if (!automation.isEmpty()) source.sendSuccess(() -> Component.literal(automation), false);
+		return reported;
 	}
 
 	private static int journeyReset(CommandSourceStack source)
 			throws com.mojang.brigadier.exceptions.CommandSyntaxException {
 		ServerPlayer player = source.getPlayerOrException();
+		JourneyAutoRunner.cancel(player);
 		return reportJourney(source, HemoJourneyController.reset(player));
 	}
 
 	private static int unstainedJourneyStart(CommandSourceStack source)
 			throws com.mojang.brigadier.exceptions.CommandSyntaxException {
 		ServerPlayer player = source.getPlayerOrException();
+		JourneyAutoRunner.cancel(player);
 		return reportJourney(source, UnstainedJourneyController.start(player));
 	}
 
 	private static int unstainedJourneyStart(CommandSourceStack source, String mode)
 			throws com.mojang.brigadier.exceptions.CommandSyntaxException {
-		return reportJourney(source, UnstainedJourneyController.start(source.getPlayerOrException(), mode));
+		ServerPlayer player = source.getPlayerOrException();
+		JourneyAutoRunner.cancel(player);
+		return reportJourney(source, UnstainedJourneyController.start(player, mode));
+	}
+
+	private static int unstainedJourneyRun(CommandSourceStack source, String mode)
+			throws com.mojang.brigadier.exceptions.CommandSyntaxException {
+		ServerPlayer player = source.getPlayerOrException();
+		return JourneyAutoRunner.runUnstained(player, mode) ? 1 : 0;
 	}
 
 	private static int unstainedJourneyNext(CommandSourceStack source)
 			throws com.mojang.brigadier.exceptions.CommandSyntaxException {
 		ServerPlayer player = source.getPlayerOrException();
+		JourneyAutoRunner.cancel(player);
 		return reportJourney(source, UnstainedJourneyController.next(player));
 	}
 
 	private static int unstainedJourneyStatus(CommandSourceStack source)
 			throws com.mojang.brigadier.exceptions.CommandSyntaxException {
 		ServerPlayer player = source.getPlayerOrException();
-		return reportJourney(source, UnstainedJourneyController.status(player));
+		UnstainedJourneyResult result = UnstainedJourneyController.status(player);
+		int reported = reportJourney(source, result);
+		String automation = JourneyAutoRunner.describe(player);
+		if (!automation.isEmpty()) source.sendSuccess(() -> Component.literal(automation), false);
+		return reported;
 	}
 
 	private static int unstainedJourneyReset(CommandSourceStack source)
 			throws com.mojang.brigadier.exceptions.CommandSyntaxException {
 		ServerPlayer player = source.getPlayerOrException();
+		JourneyAutoRunner.cancel(player);
 		return reportJourney(source, UnstainedJourneyController.reset(player));
 	}
 

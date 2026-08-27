@@ -1,14 +1,20 @@
 package com.vincenthuto.hemomancy.common.item.harbinger.morphlings;
 
+import com.vincenthuto.hemomancy.Hemomancy;
+import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.init.EffectInit;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.ai.attributes.AttributeInstance;
+import net.minecraft.world.entity.ai.attributes.AttributeModifier;
+import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.CustomData;
@@ -45,6 +51,8 @@ public class EmberfangMorphlingItem extends MorphlingItem {
 	/** Cooldown for Ambush Predator in ticks (8 seconds). */
 	private static final int AMBUSH_COOLDOWN = 160;
 	private static final int SOVEREIGN_VENOM_WINDOW = 400;
+	private static final ResourceLocation HOTHEADED_SPEED_ID = Hemomancy.rloc("hotheaded_movement_speed");
+	private static final ResourceLocation HOTHEADED_DAMAGE_ID = Hemomancy.rloc("hotheaded_attack_damage");
 
 	public EmberfangMorphlingItem(Properties prop) {
 		super(prop);
@@ -86,7 +94,7 @@ public class EmberfangMorphlingItem extends MorphlingItem {
 	public void onEquippedTick(Player player, ItemStack stack) {
 		int maturity = MorphlingItem.getMaturityLevel(stack);
 
-		// Base effect: Emberfang Morphling (move/attack speed, amplifier capped at 2)
+		// The named passive remains visible; Hotheaded owns its contextual attributes.
 		int amplifier = Math.min(MorphlingItem.passiveAmplifier(player, stack, maturity), 2);
 		MorphlingItem.applyPassiveEffect(player, stack, EffectInit.morphling_emberfang,
 				EffectInit.serpentine_guile, amplifier);
@@ -102,6 +110,58 @@ public class EmberfangMorphlingItem extends MorphlingItem {
 				tag.remove("SneakStart");
 			}
 			stack.set(DataComponents.CUSTOM_DATA, CustomData.of(tag));
+		}
+	}
+
+	public static void applyHotheadedTick(Player player, ItemStack stack) {
+		double benefit = MorphlingItem.getMaturityLevel(stack) >= 2
+				? EmberfangHeatRules.benefit(environmentLevel(player)) : 0.0D;
+		updateModifier(player.getAttribute(Attributes.MOVEMENT_SPEED), HOTHEADED_SPEED_ID, benefit);
+		updateModifier(player.getAttribute(Attributes.ATTACK_DAMAGE), HOTHEADED_DAMAGE_ID, benefit);
+	}
+
+	public static float scaleExhaustion(Player player, float amount) {
+		return equippedStack(player)
+				.filter(stack -> MorphlingItem.getMaturityLevel(stack) >= 2)
+				.map(stack -> amount * EmberfangHeatRules.exhaustionMultiplier(environmentLevel(player)))
+				.orElse(amount);
+	}
+
+	public static float adjustIncomingDamage(Player player, ItemStack stack, float damage) {
+		if (MorphlingItem.getMaturityLevel(stack) < 2) return damage;
+		return damage * EmberfangHeatRules.incomingDamageMultiplier(environmentLevel(player));
+	}
+
+	public static void clearHeatModifiers(Player player) {
+		updateModifier(player.getAttribute(Attributes.MOVEMENT_SPEED), HOTHEADED_SPEED_ID, 0.0D);
+		updateModifier(player.getAttribute(Attributes.ATTACK_DAMAGE), HOTHEADED_DAMAGE_ID, 0.0D);
+	}
+
+	private static int environmentLevel(Player player) {
+		float temperature = player.level().getBiome(player.blockPosition()).value().getBaseTemperature();
+		return EmberfangHeatRules.environmentLevel(temperature, player.level().dimensionType().ultraWarm(),
+				player.isOnFire(), player.isInLava());
+	}
+
+	private static java.util.Optional<ItemStack> equippedStack(Player player) {
+		return HemoCapabilityAccess.getEquippedMorphling(player)
+				.filter(cap -> cap.hasMorphling()
+						&& cap.getEquippedMorphling().getItem() instanceof EmberfangMorphlingItem)
+				.map(cap -> cap.getEquippedMorphling());
+	}
+
+	private static void updateModifier(AttributeInstance attribute, ResourceLocation id, double amount) {
+		if (attribute == null) return;
+		AttributeModifier existing = attribute.getModifier(id);
+		if (existing != null && Math.abs(existing.amount() - amount) > 0.000001D) {
+			attribute.removeModifier(id);
+			existing = null;
+		}
+		if (amount > 0.0D && existing == null) {
+			attribute.addTransientModifier(new AttributeModifier(id, amount,
+					AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL));
+		} else if (amount <= 0.0D && existing != null) {
+			attribute.removeModifier(id);
 		}
 	}
 
@@ -208,7 +268,7 @@ public class EmberfangMorphlingItem extends MorphlingItem {
 	@Override
 	public List<Component> getMaturityBonusDescriptions(int currentMaturity) {
 		List<Component> list = new ArrayList<>();
-		list.add(MorphlingItem.maturityBonusLine("Venom Strike (Poison on melee hit)", 2, currentMaturity));
+		list.add(MorphlingItem.maturityBonusLine("Hotheaded + Venom Strike (Heat drives speed, damage, hunger, and risk)", 2, currentMaturity));
 		list.add(MorphlingItem.maturityBonusLine("Constrict (3 hits roots & crushes target)", 3, currentMaturity));
 		list.add(MorphlingItem.maturityBonusLine("Ambush Predator (Sneak 3s for lethal first strike)", 4, currentMaturity));
 		list.add(MorphlingItem.maturityBonusLine("Sovereign Venom (Staff active marks one target for escalating venom)", 5, currentMaturity));

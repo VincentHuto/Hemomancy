@@ -87,6 +87,10 @@ public final class FirstBloodcraftAssignmentSourceTest {
 				"for (ItemStack stack : FirstBloodcraftAssignment.rewardStacks())");
 		assertContains("handler gives or drops every reward stack", handler,
 				"giveOrDropAtEntity(player, entityId, stack);");
+		assertContains("failed world drops fall back to the player", handler,
+				"if (entity.level().addFreshEntity(drop)) return;");
+		assertContains("Hermit farewell blueprint uses checked reward delivery", handler,
+				"giveOrDropAtEntity(player, event.getEntityId(), blueprint);");
 		assertContains("handler persists the one-time claim before mutation", handler,
 				"if (!FirstBloodcraftAssignment.markClaimed(player))");
 		assertContains("handler explains persistence failure", handler,

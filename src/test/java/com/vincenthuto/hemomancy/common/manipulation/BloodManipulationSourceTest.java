@@ -17,7 +17,9 @@ public final class BloodManipulationSourceTest {
 
 	private static void borrowedBloodCoverHappensAfterAlignmentGate() throws IOException {
 		String source = Files.readString(BLOOD_MANIPULATION).replace("\r\n", "\n");
-		String body = methodBody(source, "public void performAction(Player player, Level world, ItemStack heldItemMainhand, BlockPos position)");
+		String body = methodBody(source,
+				"public void performAction(Player player, Level world, ItemStack heldItemMainhand, BlockPos position,\n"
+						+ "\t\t\tfloat chargeTicks)");
 		int alignmentGate = body.indexOf("tendency.getAlignmentByTendency(tend) >= alignLevel");
 		int borrowedCover = body.indexOf("BorrowedBloodReserve.drainToCover");
 

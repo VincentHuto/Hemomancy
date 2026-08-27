@@ -42,6 +42,7 @@ import com.vincenthuto.hemomancy.common.tile.crafting.MycelialLanternBlockEntity
 import com.vincenthuto.hemomancy.common.tile.crafting.HematicArmatureBlockEntity;
 import com.vincenthuto.hemomancy.common.tile.functional.MasonsEffigyBlockEntity;
 import com.vincenthuto.hemomancy.common.tile.functional.CardinalFocusBlockEntity;
+import com.vincenthuto.hemomancy.common.tile.functional.MortalDisplayBlockEntity;
 import com.vincenthuto.hemomancy.common.tile.IronBrazierBlockEntity;
 import com.vincenthuto.hemomancy.common.tile.DiscoveryInscriptionBlockEntity;
 import com.vincenthuto.hemomancy.common.item.harbinger.scar.ItemScarPattern;
@@ -56,8 +57,10 @@ import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.dialogue.OpenDialoguePacket;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.FungalWhisperDialogueTrees;
 import com.vincenthuto.hemomancy.common.worldgen.FungalGardenTravelHelper;
+import com.vincenthuto.hemomancy.common.rite.TempleOathRules;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
@@ -141,15 +144,9 @@ public final class HemoJourneyFixtures {
 			buildPlatform(player, origin);
 			player.setItemSlot(EquipmentSlot.OFFHAND, ItemStack.EMPTY);
 			switch (stage) {
-				case MORTAL_DISPLAY -> set(player, origin.above(), BlockInit.mortal_display.get());
+				case MORTAL_DISPLAY -> prepareMortalDisplay(player, level, origin);
 				case SANGUINE_INITIATION -> {
-					buildFloor(player, origin, new Block[][] {
-							{ Blocks.STONE_BRICKS, BlockInit.engram_block.get(), Blocks.STONE_BRICKS },
-							{ BlockInit.engram_block.get(), BlockInit.hematic_iron_block.get(), BlockInit.engram_block.get() },
-							{ Blocks.STONE_BRICKS, BlockInit.engram_block.get(), Blocks.STONE_BRICKS }
-					});
-					var blood = HemoCapabilityAccess.requireBloodVolume(player);
-					blood.setBloodVolume(Math.max(blood.getBloodVolume(), 100.0D));
+					prepareSanguineInitiation(player, origin);
 				}
 				case FIRST_REMNANT_DISCOVERED -> prepareFirstRemnant(player, origin);
 				case VICAR_HERMIT_ROAD_REPORT -> spawnVicar(level, origin);
@@ -171,7 +168,7 @@ public final class HemoJourneyFixtures {
 				}
 				case LIVING_STAFF_CRAFTED -> prepareLivingStaffCraft(player, origin);
 				case VICAR_REWARD -> spawnVicar(level, origin);
-				case VOTARY_RITE -> buildVotaryRite(player, origin);
+				case VOTARY_RITE -> buildRankupRite(player, origin, "votary_rite");
 				case DEGREE_2_REACHED, ALCHEMIST_BRIEFING, ALCHEMIST_REWARD, BODY_ANSWERS_BRIEFING ->
 					spawnAlchemist(level, origin);
 				case BODY_ANSWERS_TINCTURE -> prepareBodyAnswersAlembic(player, origin);
@@ -612,8 +609,13 @@ public final class HemoJourneyFixtures {
 		} else if (stage == HemoJourneyStage.CENTRIFUGE_PREPARED || stage == HemoJourneyStage.SEPARATION_STARTED || stage == HemoJourneyStage.ENZYME_RECOVERED) {
 			for (int x = -1; x <= 1; x++) for (int z = -1; z <= 1; z++) positions.add(origin.offset(x, 2, z));
 			if (stage == HemoJourneyStage.CENTRIFUGE_PREPARED) {
-				positions.add(origin.offset(-2, 1, 0));
-				positions.add(origin.offset(2, 1, 0));
+				for (int x = -1; x <= 1; x++) for (int y = 1; y <= 3; y++) {
+					for (int z = 0; z <= 1; z++) positions.add(origin.offset(x, y, z));
+				}
+				for (int x : List.of(-2, 2)) {
+					positions.add(origin.offset(x, 1, 0));
+					positions.add(origin.offset(x, 2, 0));
+				}
 			}
 		} else if (stage == HemoJourneyStage.FOUNDING_FANE || isRankupStage(stage)) {
 			for (int x = -RADIUS; x <= RADIUS; x++) {
@@ -667,6 +669,45 @@ public final class HemoJourneyFixtures {
 		vicar.setInvulnerable(true);
 		vicar.addTag(entityMarker(origin));
 		if (!level.addFreshEntity(vicar)) throw new IllegalStateException("Harbinger Vicar could not be spawned");
+	}
+
+	private static void prepareMortalDisplay(ServerPlayer player, ServerLevel level, BlockPos origin) {
+		spawnVicar(level, origin);
+		HarbingerVicarEntity vicar = level.getEntitiesOfClass(HarbingerVicarEntity.class, bounds(origin),
+				entity -> entity.getTags().contains(entityMarker(origin))).getFirst();
+		BlockPos displayPos = origin.above();
+		set(player, displayPos, BlockInit.mortal_display.get());
+		if (!(level.getBlockEntity(displayPos) instanceof MortalDisplayBlockEntity display)) {
+			throw new IllegalStateException("Mortal Display block entity was not created");
+		}
+		display.linkHermit(vicar.getUUID());
+		TempleOathRules.bless(player, vicar.getUUID());
+	}
+
+	private static void prepareSanguineInitiation(ServerPlayer player, BlockPos origin) {
+		CardinalRiteRecipe recipe = CardinalRiteRecipe.getRiteByLocation(fixtureLevel(player),
+				Hemomancy.rloc("cardinal_rite/sanguine_initiation"));
+		if (recipe == null || !recipe.hasLayeredStation()) {
+			throw new IllegalStateException("Sanguine Initiation rite recipe is unavailable");
+		}
+		prepareLayeredRankupRite(player, origin, recipe);
+		BlockPos focusPos = origin.above();
+		CardinalFocusBlockEntity focus = (CardinalFocusBlockEntity) fixtureLevel(player).getBlockEntity(focusPos);
+		focus.extractMedium();
+		BlockPos displayPos = origin.above(4);
+		set(player, displayPos, BlockInit.mortal_display.get());
+		UUID hermit = TempleOathRules.blessedHermit(player);
+		if (hermit == null) {
+			hermit = UUID.randomUUID();
+			TempleOathRules.bless(player, hermit);
+		}
+		if (!(fixtureLevel(player).getBlockEntity(displayPos) instanceof MortalDisplayBlockEntity display)) {
+			throw new IllegalStateException("Claimed temple oath is unavailable for Sanguine Initiation");
+		}
+		display.linkHermit(hermit);
+		display.claim(player.getUUID());
+		focus.linkTempleDisplay(displayPos);
+		player.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(Items.IRON_NUGGET));
 	}
 
 	private static void prepareFirstRemnant(ServerPlayer player, BlockPos origin) {
@@ -856,7 +897,9 @@ public final class HemoJourneyFixtures {
 	private static void prepareApotheosChoice(ServerPlayer player) {
 		player.getPersistentData().putBoolean(FungalGardenTravelHelper.REVELATION_CHOICE_PENDING, true);
 		HemoCapabilityAccess.requireInitiatoryDegree(player).setFungalRevelationWitnessed(true);
-		PacketHandler.sendToPlayer(player, new OpenDialoguePacket(FungalWhisperDialogueTrees.coreWitnessDialogue()));
+		if (!JourneyAutoRunner.activeForTest(player)) {
+			PacketHandler.sendToPlayer(player, new OpenDialoguePacket(FungalWhisperDialogueTrees.coreWitnessDialogue()));
+		}
 	}
 
 	private static void prepareBodyAnswersAlembic(ServerPlayer player, BlockPos origin) {
@@ -1339,12 +1382,24 @@ public final class HemoJourneyFixtures {
 	private static void placePattern(ServerPlayer player, com.vincenthuto.hutoslib.math.MultiblockPattern pattern,
 			BlockPos targetCell, int cellX, int cellY, int cellZ) {
 		int physicalCellY = pattern.getBlockPattern().getHeight() - cellY - 1;
-		for (var pair : pattern.getBlockPosBlockList()) {
+		List<BlockPos> placed = new ArrayList<>();
+		var pairs = pattern.getBlockPosBlockList();
+		pairs.sort(java.util.Comparator.comparingInt(pair -> pair.getPos().getY()));
+		for (var pair : pairs) {
 			Block block = pair.getBlock();
 			if (block == null || block == Blocks.AIR) continue;
 			BlockPos relative = pair.getPos();
-			set(player, targetCell.offset(relative.getX() - cellX,
-					relative.getY() - physicalCellY, cellZ - relative.getZ()), block);
+			BlockPos worldPos = targetCell.offset(relative.getX() - cellX,
+					relative.getY() - physicalCellY, cellZ - relative.getZ());
+			if (!fixtureLevel(player).setBlock(worldPos, block.defaultBlockState(), Block.UPDATE_CLIENTS)) {
+				throw new IllegalStateException("Could not place " + block + " at " + worldPos);
+			}
+			ownExistingBlock(player, worldPos);
+			placed.add(worldPos);
+		}
+		for (BlockPos pos : placed) {
+			fixtureLevel(player).blockUpdated(pos, fixtureLevel(player).getBlockState(pos).getBlock());
+			fixtureLevel(player).updateNeighborsAt(pos, fixtureLevel(player).getBlockState(pos).getBlock());
 		}
 	}
 
@@ -1367,7 +1422,9 @@ public final class HemoJourneyFixtures {
 	}
 
 	private static void prepareCentrifuge(ServerPlayer player, BlockPos origin) {
-		if (!fixtureLevel(player).getBlockState(origin.above(2)).is(BlockInit.vial_centrifuge.get())) return;
+		if (!fixtureLevel(player).getBlockState(origin.above(2)).is(BlockInit.vial_centrifuge.get())) {
+			set(player, origin.above(2), BlockInit.vial_centrifuge.get());
+		}
 		for (int x : List.of(-2, 2)) {
 			Entity cow = EntityType.COW.create(fixtureLevel(player));
 			if (cow == null) throw new IllegalStateException("Journey sample cow could not be created");
@@ -1381,24 +1438,30 @@ public final class HemoJourneyFixtures {
 	}
 
 	private static void prepareCentrifugeCraft(ServerPlayer player, BlockPos origin) {
-		buildFloorAt(player, origin, structureBaseHeight(2), new Block[][] {
-				{ BlockInit.hematic_iron_block.get(), Blocks.GLASS, BlockInit.hematic_iron_block.get() },
-				{ Blocks.GLASS, BlockInit.hematic_iron_block.get(), Blocks.GLASS },
-				{ BlockInit.hematic_iron_block.get(), Blocks.GLASS, BlockInit.hematic_iron_block.get() }
-		});
-		player.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(ItemInit.blood_projection.get()));
-		player.setItemSlot(EquipmentSlot.OFFHAND, new ItemStack(ItemInit.ferric_binder.get()));
 		BloodStructureRecipe recipe = BloodStructureRecipe.getStructureByLocation(fixtureLevel(player),
 				Hemomancy.rloc("blood_structure/vial_centrifuge"));
 		if (recipe == null) throw new IllegalStateException("Vial Centrifuge blood structure recipe is unavailable");
-		var offeringSlots = BloodStructureOfferingPlacement.plan(origin.above(), 1, 1, 1, recipe.getOfferings());
+		BlockPos hit = origin.above(2);
+		set(player, origin.above(), Blocks.SMOOTH_STONE);
+		placePattern(player, recipe.getPattern(), hit, 1, 1, 1);
+		player.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(ItemInit.blood_projection.get()));
+		player.setItemSlot(EquipmentSlot.OFFHAND, new ItemStack(ItemInit.ferric_binder.get()));
+		var offeringSlots = BloodStructureOfferingPlacement.plan(hit, 1, 1, 1, recipe.getOfferings());
 		for (var slot : offeringSlots) {
+			BlockPos support = slot.pos().below();
+			if (!fixtureLevel(player).getBlockState(support).isFaceSturdy(fixtureLevel(player), support, Direction.UP)) {
+				set(player, support, Blocks.SMOOTH_STONE);
+			}
 			set(player, slot.pos(), BlockInit.iron_brazier.get());
-			player.getInventory().add(slot.representativeStack().copy());
+			fixtureLevel(player).setBlock(slot.pos(), fixtureLevel(player).getBlockState(slot.pos())
+					.setValue(BrazierBlock.RITUAL_PHASE, 1), Block.UPDATE_ALL);
+			if (!(fixtureLevel(player).getBlockEntity(slot.pos()) instanceof IronBrazierBlockEntity brazier)
+					|| !brazier.insertOffering(null, slot.representativeStack().copy())) {
+				throw new IllegalStateException("Vial Centrifuge offering brazier could not be prepared");
+			}
 		}
 		var blood = HemoCapabilityAccess.requireBloodVolume(player);
-		double requiredBlood = recipe.getBloodCost() + offeringSlots.size() * BrazierBlock.BLOOD_TO_LIGHT;
-		blood.setBloodVolume(Math.max(blood.getBloodVolume(), requiredBlood));
+		blood.setBloodVolume(Math.max(blood.getBloodVolume(), recipe.getBloodCost()));
 	}
 
 	private static void prepareLivingStaffCraft(ServerPlayer player, BlockPos origin) {

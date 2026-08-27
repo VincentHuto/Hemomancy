@@ -8,7 +8,9 @@
     "MixinFishingHook",
     "MixinHealOrHarmMobEffect",
     "MixinLivingEntity",
+	"MobEffectInstanceAccessor",
     "MixinPlayer",
+    "MixinPowderSnowBlock",
     "MixinPoisonMobEffect",
     "MixinRegenerationMobEffect"
   ],

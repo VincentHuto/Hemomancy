@@ -7,7 +7,7 @@
     },
     {
       "condition": "block_state_property",
-      "block": "minecraft:tall_grass"
+      "block": "minecraft:short_grass"
     }
   ],
   "item": "hemomancy:gourd_seeds"

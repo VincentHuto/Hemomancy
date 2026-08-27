@@ -10,6 +10,7 @@ import com.vincenthuto.hemomancy.common.capability.player.harbinger.scar.fungal.
 import com.vincenthuto.hemomancy.common.effect.ChummedWatersAreaManager;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.SporiticThuribleResonanceState;
 import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
+import com.vincenthuto.hemomancy.common.manipulation.HematicCommandManager;
 import com.vincenthuto.hemomancy.common.manipulation.congeatio.TemporaryIceManager;
 import com.vincenthuto.hemomancy.common.manipulation.stillarts.StillArt;
 import com.vincenthuto.hemomancy.common.manipulation.tenebris.BlackVeilCovenantManager;
@@ -36,6 +37,7 @@ public final class TransientServerStateEvents {
 
 	private static void clearTransientState() {
 		BloodManipulation.clearSessionState();
+		HematicCommandManager.clearSessionState();
 		StillArt.clearSessionState();
 		SporiticThuribleResonanceState.clearSessionState();
 		BloodwoodGrowthHandler.clearSessionState();

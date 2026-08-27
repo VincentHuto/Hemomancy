@@ -9,7 +9,7 @@ import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.BloodVolumeServerPacket;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.PacketSanguineFormationProjection;
-import com.vincenthuto.hutoslib.client.particle.factory.GlowParticleFactory;
+import com.vincenthuto.hutoslib.client.particle.data.ColorParticleData;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -170,16 +170,16 @@ public final class SanguineFormationProjectionHandler {
 	}
 
 	private static void spawnSuccessBurst(ServerLevel level, Vec3 center) {
-		level.sendParticles(GlowParticleFactory.createData(new ParticleColor(185, 0, 0)),
+		level.sendParticles(new ColorParticleData(new ParticleColor(185, 0, 0)),
 				center.x, center.y, center.z, 18, 0.18D, 0.18D, 0.18D, 0.08D);
-		level.sendParticles(GlowParticleFactory.createData(new ParticleColor(95, 0, 0)),
+		level.sendParticles(new ColorParticleData(new ParticleColor(95, 0, 0)),
 				center.x, center.y, center.z, 8, 0.10D, 0.10D, 0.10D, 0.04D);
 	}
 
 	private static void spawnFailureFizz(ServerLevel level, Vec3 center) {
-		level.sendParticles(GlowParticleFactory.createData(new ParticleColor(70, 0, 0)),
+		level.sendParticles(new ColorParticleData(new ParticleColor(70, 0, 0)),
 				center.x, center.y, center.z, 14, 0.16D, 0.16D, 0.16D, 0.018D);
-		level.sendParticles(GlowParticleFactory.createData(new ParticleColor(24, 0, 0)),
+		level.sendParticles(new ColorParticleData(new ParticleColor(24, 0, 0)),
 				center.x, center.y, center.z, 6, 0.08D, 0.08D, 0.08D, 0.010D);
 	}
 

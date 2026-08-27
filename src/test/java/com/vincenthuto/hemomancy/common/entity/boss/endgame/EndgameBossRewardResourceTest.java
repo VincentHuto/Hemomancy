@@ -27,6 +27,8 @@ public final class EndgameBossRewardResourceTest {
 				"com/vincenthuto/hemomancy/common/entity/boss/endgame/VesperTheCrownedRefusalEntity.java"));
 		String mycophant = read(SOURCE_ROOT.resolve(
 				"com/vincenthuto/hemomancy/common/entity/boss/endgame/MycophantEntity.java"));
+		String mycophantEncounter = read(SOURCE_ROOT.resolve(
+				"com/vincenthuto/hemomancy/common/worldgen/MycophantEncounterManager.java"));
 		String tendrilLayer = read(SOURCE_ROOT.resolve(
 				"com/vincenthuto/hemomancy/client/render/layer/player/MycophantTendrilFungalizationLayer.java"));
 		String vesperLinesLayer = read(SOURCE_ROOT.resolve(
@@ -69,6 +71,16 @@ public final class EndgameBossRewardResourceTest {
 				"memory_of_vesper");
 		assertNotContains("Mycophant reward is not manually spawned outside its loot table", mycophant,
 				"mycophant_tendril");
+		assertBefore("managed Mycophant rewards are delivered after leaving the disposable arena",
+				mycophantEncounter,
+				"ChamberOfWillManager.get(level.getServer()).exitChamber(owner);",
+				"if (first) give(owner, new ItemStack(ItemInit.mycophant_tendril.get()));");
+		assertBefore("Mycophant victory clears the active encounter before dimension-change callbacks",
+				mycophantEncounter,
+				"clear(owner);",
+				"ChamberOfWillManager.get(level.getServer()).exitChamber(owner);");
+		assertContains("Mycophant rewards use player drop fallback", mycophantEncounter,
+				"if (!player.addItem(stack)) player.drop(stack, false);");
 		assertGuaranteedEntityDrop("Evening Star loot table documents Memory of Vesper", vesperLoot,
 				"hemomancy:memory_of_vesper");
 		assertGuaranteedEntityDrop("Mycophant loot table guarantees Tendril", mycophantLoot,
@@ -140,6 +152,14 @@ public final class EndgameBossRewardResourceTest {
 	private static void assertNotContains(String label, String text, String unexpected) {
 		if (text.contains(unexpected)) {
 			throw new AssertionError(label + ": found " + unexpected);
+		}
+	}
+
+	private static void assertBefore(String label, String text, String first, String second) {
+		int firstIndex = text.indexOf(first);
+		int secondIndex = text.indexOf(second);
+		if (firstIndex < 0 || secondIndex < 0 || firstIndex >= secondIndex) {
+			throw new AssertionError(label);
 		}
 	}
 

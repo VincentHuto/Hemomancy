@@ -225,6 +225,10 @@ public final class PuppeteerIntegrationSourceTest {
 		assertContains(screen, "drawSpoolEndCaps");
 		assertContains(screen, "shadeColor(threadColor, 0.55f)");
 		assertContains(screen, "shadeColor(threadColor, 0.78f)");
+		assertContains(screen, "private int summonScroll;");
+		assertContains(screen, "int definitionIndex = summonScroll + visibleRow;");
+		assertContains(screen, "graphics.enableScissor(listX, listY, listX + listWidth, listY + listHeight);");
+		assertContains(screen, "public boolean mouseScrolled(double mouseX, double mouseY, double scrollX, double scrollY)");
 		assertNotContains(screen, "private void drawMeter(");
 		assertContains(screen, "puppeteers_spindle.thread_slot_short");
 		assertContains(menu, "78 + col * 18");

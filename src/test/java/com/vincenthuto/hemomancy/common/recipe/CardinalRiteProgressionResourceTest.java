@@ -53,6 +53,27 @@ final class CardinalRiteProgressionResourceTest {
 	}
 
 	@Test
+	void gourdUpgradesConsumeTheirPreviousVesselAsAVisibleStationOffering() throws IOException {
+		assertUpgrade("pallid_vessel_rite", "hemomancy:dried_gourd", "hemomancy:blood_gourd_white");
+		assertUpgrade("crimson_vessel_rite", "hemomancy:blood_gourd_white", "hemomancy:blood_gourd_red");
+		assertUpgrade("ashen_vessel_rite", "hemomancy:blood_gourd_red", "hemomancy:blood_gourd_black");
+		assertUpgrade("horn_of_culmination_rite", "hemomancy:blood_gourd_black", "hemomancy:curved_horn");
+		String completion = Files.readString(Path.of(
+				"src/main/java/com/vincenthuto/hemomancy/common/rite/harbinger/HarbingerCardinalRiteEvents.java"));
+		assertFalse(completion.contains("consumeGourdPrerequisite"),
+				"gourd upgrades must not charge a second hidden inventory copy");
+	}
+
+	@Test
+	void riteRewardsHaveCheckedWorldDropFallbacks() throws IOException {
+		String completion = Files.readString(Path.of(
+				"src/main/java/com/vincenthuto/hemomancy/common/rite/harbinger/HarbingerCardinalRiteEvents.java"));
+		assertTrue(completion.contains("giveOrDropAtRite(sLevel, caster, center, conduit)"));
+		assertTrue(completion.contains("if (!sLevel.addFreshEntity(resultDrop)) caster.drop(resultStack, false);"));
+		assertTrue(completion.contains("if (!level.addFreshEntity(drop) && !player.addItem(spine)) player.drop(spine, false);"));
+	}
+
+	@Test
 	void harbingerRitesDoNotChargeAHiddenLumpBloodCost() throws IOException {
 		try (var paths = Files.list(ROOT)) {
 			for (Path path : paths.filter(p -> p.toString().endsWith(".json")).toList()) {
@@ -153,6 +174,14 @@ final class CardinalRiteProgressionResourceTest {
 		JsonObject json = rite(id);
 		assertTrue(json.has("result"), id + " must declare its material result");
 		assertEquals(resultId, json.getAsJsonObject("result").get("id").getAsString(), id);
+	}
+
+	private static void assertUpgrade(String id, String inputId, String resultId) throws IOException {
+		JsonObject json = rite(id);
+		assertEquals(resultId, json.getAsJsonObject("result").get("id").getAsString(), id);
+		assertTrue(json.getAsJsonArray("brazier_signature").asList().stream()
+				.map(element -> element.getAsJsonObject().getAsJsonObject("ingredient").get("item").getAsString())
+				.anyMatch(inputId::equals), id + " must visibly consume " + inputId);
 	}
 
 	private static JsonObject rite(String id) throws IOException {

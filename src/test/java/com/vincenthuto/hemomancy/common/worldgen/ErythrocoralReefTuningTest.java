@@ -7,7 +7,7 @@ import java.util.regex.Pattern;
 
 final class ErythrocoralReefTuningTest {
 	public static void main(String[] args) throws IOException {
-		makesReefPatchesLargerButRarer();
+		keepsTripledReefDensityInSync();
 		prioritizesCustomReefLifeOverVanillaFiller();
 		keepsAquaticSpawnDepthsVisibleInDeepReefs();
 		keepsDataPackSpawnTablesInSync();
@@ -15,11 +15,9 @@ final class ErythrocoralReefTuningTest {
 		keepsHydrothermalVentsAvailableInReefs();
 	}
 
-	private static void makesReefPatchesLargerButRarer() throws IOException {
-		assertTrue(ErythrocoralReefTuning.PLACED_FEATURE_COUNT < 9,
-				"reef attempts should be rarer than the original nine attempts per chunk");
-		assertTrue(ErythrocoralReefTuning.PLACED_FEATURE_COUNT >= 5,
-				"reef attempts should not become so rare that located reef biomes look empty");
+	private static void keepsTripledReefDensityInSync() throws IOException {
+		assertTrue(ErythrocoralReefTuning.PLACED_FEATURE_COUNT == 18,
+				"reef attempts should retain the tripled placement density");
 		assertTrue(ErythrocoralReefTuning.MIN_CLUSTER_RADIUS >= 3,
 				"reef clusters should start larger than the old radius-2 clusters");
 		assertTrue(ErythrocoralReefTuning.maxClusterRadius() >= 4,

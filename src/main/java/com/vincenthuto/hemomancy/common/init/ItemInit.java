@@ -254,6 +254,10 @@ public class ItemInit {
             () -> new Item(new Item.Properties().rarity(Rarity.RARE)));
     public static final DeferredHolder<Item, Item> mnemonist_cradle = BASEITEMS.register("mnemonist_cradle",
             () -> new Item(new Item.Properties().rarity(Rarity.RARE)));
+    public static final DeferredHolder<Item, Item> scarlet_gorget = BASEITEMS.register("scarlet_gorget",
+            () -> new Item(new Item.Properties().rarity(Rarity.RARE)));
+	public static final DeferredHolder<Item, Item> sanguine_hound_bridle = BASEITEMS.register("sanguine_hound_bridle",
+			() -> new Item(new Item.Properties().rarity(Rarity.RARE)));
     public static final DeferredHolder<Item, Item> tendon_line = BASEITEMS.register("tendon_line",
             () -> new TendonLineItem(new Item.Properties()));
     public static final DeferredHolder<Item, Item> hearty_compass = BASEITEMS.register("hearty_compass",
@@ -483,6 +487,8 @@ public class ItemInit {
             () -> new BloodMemoryItem(new Item.Properties(), ManipulationInit.ferric_resonance));
     public static final DeferredHolder<Item, Item> memory_iron_retort = BASEITEMS.register("memory_iron_retort",
             () -> new BloodMemoryItem(new Item.Properties(), ManipulationInit.iron_retort));
+	public static final DeferredHolder<Item, Item> memory_ironhearted = BASEITEMS.register("memory_ironhearted",
+			() -> new BloodMemoryItem(new Item.Properties(), ManipulationInit.ironhearted));
     public static final DeferredHolder<Item, Item> memory_sanguine_magnetism = BASEITEMS.register("memory_sanguine_magnetism",
             () -> new BloodMemoryItem(new Item.Properties(), ManipulationInit.sanguine_magnetism));
     public static final DeferredHolder<Item, Item> memory_pyretic_forge = BASEITEMS.register("memory_pyretic_forge",
@@ -493,6 +499,10 @@ public class ItemInit {
             () -> new BloodMemoryItem(new Item.Properties(), ManipulationInit.crimson_sight));
     public static final DeferredHolder<Item, Item> memory_vital_reservoir = BASEITEMS.register("memory_vital_reservoir",
             () -> new BloodMemoryItem(new Item.Properties(), ManipulationInit.vital_reservoir));
+    public static final DeferredHolder<Item, Item> memory_hematic_rebuke = BASEITEMS.register("memory_hematic_rebuke",
+            () -> new BloodMemoryItem(new Item.Properties(), ManipulationInit.hematic_rebuke));
+    public static final DeferredHolder<Item, Item> memory_hematic_impressment = BASEITEMS.register("memory_hematic_impressment",
+            () -> new BloodMemoryItem(new Item.Properties(), ManipulationInit.hematic_impressment));
     // â"€â"€ Expanded tendency memories â"€â"€
     public static final DeferredHolder<Item, Item> memory_cryogenic_pulse = BASEITEMS.register("memory_cryogenic_pulse",
             () -> new BloodMemoryItem(new Item.Properties(), ManipulationInit.cryogenic_pulse));
@@ -538,6 +548,8 @@ public class ItemInit {
             () -> new BloodMemoryItem(new Item.Properties(), ManipulationInit.insatiable_hunger));
     public static final DeferredHolder<Item, Item> memory_grave_debt = BASEITEMS.register("memory_grave_debt",
             () -> new BloodMemoryItem(new Item.Properties(), ManipulationInit.grave_debt));
+	public static final DeferredHolder<Item, Item> memory_blackhearted = BASEITEMS.register("memory_blackhearted",
+			() -> new BloodMemoryItem(new Item.Properties(), ManipulationInit.blackhearted));
     // Saint Canon Memories  imprinted from Sainted Mausoleums via Hallowed Residuum
     public static final DeferredHolder<Item, Item> memory_crimson_tithe = BASEITEMS.register("memory_crimson_tithe",
             () -> new BloodMemoryItem(new Item.Properties(), ManipulationInit.crimson_tithe));
@@ -1055,6 +1067,12 @@ public class ItemInit {
     public static final DeferredHolder<Item, DeferredSpawnEggItem> spawn_egg_mnemonist_puppet = SPAWNEGGS.register(
             "spawn_egg_mnemonist_puppet",
             () -> new DeferredSpawnEggItem(EntityInit.mnemonist_puppet, 0x2B2028, 0xA64C5C, new Item.Properties()));
+    public static final DeferredHolder<Item, DeferredSpawnEggItem> spawn_egg_scarlet_mummer = SPAWNEGGS.register(
+            "spawn_egg_scarlet_mummer",
+            () -> new DeferredSpawnEggItem(EntityInit.scarlet_mummer, 0x550916, 0xE9B51D, new Item.Properties()));
+	public static final DeferredHolder<Item, DeferredSpawnEggItem> spawn_egg_sanguine_hound = SPAWNEGGS.register(
+			"spawn_egg_sanguine_hound",
+			() -> new DeferredSpawnEggItem(EntityInit.sanguine_hound, 0x5A0712, 0xD74A50, new Item.Properties()));
     public static final DeferredHolder<Item, DeferredSpawnEggItem> spawn_egg_hemolymphopoda = SPAWNEGGS.register(
             "spawn_egg_hemolymphopoda",
             () -> new DeferredSpawnEggItem(EntityInit.hemolymphopoda, 6579558, 4875998, new Item.Properties()));

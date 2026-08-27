@@ -1,7 +1,7 @@
 package com.vincenthuto.hemomancy.common.worldgen;
 
 public final class ErythrocoralReefTuning {
-	public static final int PLACED_FEATURE_COUNT = 6;
+	public static final int PLACED_FEATURE_COUNT = 18;
 
 	public static final int MIN_CLUSTERS_PER_PASS = 1;
 	public static final int CLUSTER_VARIANCE = 2;

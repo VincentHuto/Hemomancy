@@ -32,6 +32,7 @@ public final class PuppeteerSummonTrialEvents {
 			case PuppeteerSummonDefinitions.VEINWING_VULTURE -> "veinwing_harness";
 			case PuppeteerSummonDefinitions.MARROW_SPITTER -> "marrow_spitter_carriage";
 			case PuppeteerSummonDefinitions.GOREBOUND_HULK -> "gorebound_yoke";
+			case PuppeteerSummonDefinitions.SCARLET_MUMMER -> "scarlet_gorget";
 			case PuppeteerSummonDefinitions.MNEMONIST_PUPPET -> "mnemonist_cradle";
 			default -> definition.name();
 		});

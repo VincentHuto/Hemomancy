@@ -3,6 +3,7 @@ package com.vincenthuto.hemomancy.common.manipulation.lux;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.EnumVeinSections;
 import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillPointHelper;
+import com.vincenthuto.hemomancy.common.capability.player.shared.skill.BodyRefinementSkillRules;
 import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
 import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationRank;
 import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationType;
@@ -40,19 +41,23 @@ public class HematicBeaconManip extends BloodManipulation {
 	public void getAction(Player player, Level world, ItemStack heldItemMainhand, BlockPos position) {
 		if (!(world instanceof ServerLevel sLevel)) return;
 
-		double range = BASE_RANGE * SkillPointHelper.getSanguineReachMultiplier(player);
+		int brightEyed = SkillPointHelper.getBrightEyedLevel(player);
+		double range = BASE_RANGE * SkillPointHelper.getSanguineReachMultiplier(player)
+				* BodyRefinementSkillRules.perceptionRangeMultiplier(brightEyed);
 		Vec3 eye = player.getEyePosition();
 		Vec3 end = eye.add(player.getLookAngle().scale(range));
 		BlockHitResult hit = world.clip(new ClipContext(eye, end, ClipContext.Block.OUTLINE, ClipContext.Fluid.NONE, player));
 		Vec3 center = hit.getType() == HitResult.Type.MISS ? end : hit.getLocation();
 
-		AABB area = new AABB(BlockPos.containing(center)).inflate(RADIUS);
+		AABB area = new AABB(BlockPos.containing(center)).inflate(
+				RADIUS * BodyRefinementSkillRules.perceptionRangeMultiplier(brightEyed));
 		for (Player ally : world.getEntitiesOfClass(Player.class, area, LivingEntity::isAlive)) {
 			ally.addEffect(new MobEffectInstance(MobEffects.REGENERATION, 160, 0, false, true));
 			ally.addEffect(new MobEffectInstance(MobEffects.DAMAGE_RESISTANCE, 160, 0, false, true));
 		}
 		for (Mob mob : world.getEntitiesOfClass(Mob.class, area, LivingEntity::isAlive)) {
-			mob.addEffect(new MobEffectInstance(MobEffects.GLOWING, 240, 0, false, true));
+			mob.addEffect(new MobEffectInstance(MobEffects.GLOWING,
+					BodyRefinementSkillRules.revealTicks(240, brightEyed), 0, false, true));
 		}
 
 		world.playSound(null, BlockPos.containing(center), SoundEvents.BEACON_ACTIVATE, SoundSource.PLAYERS, 0.7F, 1.5F);

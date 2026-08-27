@@ -11,6 +11,8 @@ import com.vincenthuto.hemomancy.common.item.harbinger.morphlings.IMorphling;
 import com.vincenthuto.hemomancy.common.item.harbinger.morphlings.MorphlingItem;
 import com.vincenthuto.hemomancy.common.item.harbinger.morphlings.MorphlingUpkeepRules;
 import com.vincenthuto.hemomancy.common.item.harbinger.morphlings.MorphlingMetabolismRules;
+import com.vincenthuto.hemomancy.common.item.harbinger.morphlings.EmberfangMorphlingItem;
+import com.vincenthuto.hemomancy.common.item.harbinger.morphlings.WinterShroudMorphlingItem;
 import com.vincenthuto.hemomancy.common.item.itemhandler.MorphlingJarItemHandler;
 import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillPointHelper;
 import com.vincenthuto.hemomancy.common.init.SkillPointInit;
@@ -69,6 +71,14 @@ public class EquippedMorphlingEvents {
 				ItemStack stack = morphCap.getEquippedMorphling();
 				LastRiteHelper.armForMorphlingIfUnarmed(player, stack);
 				MorphlingItem.applyHungerTick(player, stack);
+				if (stack.getItem() instanceof WinterShroudMorphlingItem) {
+					WinterShroudMorphlingItem.applyColdBloodedTick(player, stack);
+				}
+				if (stack.getItem() instanceof EmberfangMorphlingItem) {
+					EmberfangMorphlingItem.applyHotheadedTick(player, stack);
+				} else {
+					EmberfangMorphlingItem.clearHeatModifiers(player);
+				}
 			} else {
 				MorphlingItem.clearMorphlingPassiveEffects(player);
 			}
@@ -103,7 +113,8 @@ public class EquippedMorphlingEvents {
 					BoundSummonBehavior.hasActiveOwnedTether((ServerPlayer) player));
 			final double effectiveUpkeep = upkeep;
 			if (metabolic.hungerEquivalent() > 0.0D) {
-				player.getFoodData().addExhaustion((float) (metabolic.hungerEquivalent() * 0.1D));
+				player.getFoodData().addExhaustion(EmberfangMorphlingItem.scaleExhaustion(player,
+						(float) (metabolic.hungerEquivalent() * 0.1D)));
 			}
 
 			if (effectiveUpkeep > 0.0D) {
@@ -148,7 +159,15 @@ public class EquippedMorphlingEvents {
 			if (!morphCap.hasMorphling()) return;
 			ItemStack morphStack = morphCap.getEquippedMorphling();
 			if (morphStack.getItem() instanceof IMorphling morphling) {
-				morphling.onEquippedHurt(player, morphStack, event.getSource(), event.getNewDamage());
+				float damage = event.getNewDamage();
+				if (morphStack.getItem() instanceof WinterShroudMorphlingItem) {
+					damage = WinterShroudMorphlingItem.adjustIncomingColdDamage(
+							player, morphStack, event.getSource(), damage);
+				} else if (morphStack.getItem() instanceof EmberfangMorphlingItem) {
+					damage = EmberfangMorphlingItem.adjustIncomingDamage(player, morphStack, damage);
+				}
+				event.setNewDamage(damage);
+				morphling.onEquippedHurt(player, morphStack, event.getSource(), damage);
 			}
 		});
 	}

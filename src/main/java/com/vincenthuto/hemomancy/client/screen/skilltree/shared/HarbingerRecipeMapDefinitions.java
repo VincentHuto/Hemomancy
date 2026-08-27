@@ -89,6 +89,7 @@ public final class HarbingerRecipeMapDefinitions {
 		iconRites("cardinal_rite/puppeteer_trial_gorebound_hulk", () -> new ItemStack(ItemInit.gorebound_yoke.get()));
 		iconRites("cardinal_rite/puppeteer_trial_marrow_spitter", () -> new ItemStack(ItemInit.marrow_spitter_carriage.get()));
 		iconRites("cardinal_rite/puppeteer_trial_mnemonist_puppet", () -> new ItemStack(ItemInit.mnemonist_cradle.get()));
+		iconRites("cardinal_rite/puppeteer_trial_scarlet_mummer", () -> new ItemStack(ItemInit.scarlet_gorget.get()));
 		iconRites("cardinal_rite/puppeteer_trial_veinwing_vulture", () -> new ItemStack(ItemInit.veinwing_harness.get()));
 
 		linkRites("cardinal_rite/sanguine_initiation", "cardinal_rite/votary_rite", RecipeMapLink.Kind.PROGRESSION);

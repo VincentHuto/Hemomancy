@@ -213,13 +213,7 @@ public class EffectInit {
     public static final DeferredHolder<MobEffect, MobEffect> morphling_emberfang = EFFECTS.register(
             "morphling_emberfang",
             () -> new SerpentineGuileEffect(MobEffectCategory.BENEFICIAL, 0xE34A2F,
-                    "effect.hemomancy.morphling_emberfang")
-                    .addAttributeModifier(Attributes.MOVEMENT_SPEED,
-                            ResourceLocation.fromNamespaceAndPath("hemomancy", "morphling_emberfang_movement_speed"),
-                            0.15F, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL)
-                    .addAttributeModifier(Attributes.ATTACK_SPEED,
-                            ResourceLocation.fromNamespaceAndPath("hemomancy", "morphling_emberfang_attack_speed"),
-                            0.1F, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL));
+                    "effect.hemomancy.morphling_emberfang"));
     public static final DeferredHolder<MobEffect, MobEffect> morphling_winter_shroud = EFFECTS.register(
             "morphling_winter_shroud",
             () -> new VenomousResilienceEffect(MobEffectCategory.BENEFICIAL, 0x76C9FF,

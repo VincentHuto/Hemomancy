@@ -47,6 +47,12 @@
   "brazier_signature": [
     {
       "ingredient": {
+        "item": "hemomancy:blood_gourd_black"
+      },
+      "count": 1
+    },
+    {
+      "ingredient": {
         "item": "minecraft:dragon_breath"
       },
       "count": 1

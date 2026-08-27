@@ -16,12 +16,12 @@ import static org.junit.jupiter.api.Assertions.*;
 final class PuppeteerCardinalOrdealResourceTest {
 	private static final Path RECIPES = Path.of("src/main/resources/data/hemomancy/recipe");
 	private static final List<String> RITES = List.of("veinwing_vulture", "marrow_spitter",
-			"gorebound_hulk", "mnemonist_puppet");
+			"gorebound_hulk", "scarlet_mummer", "sanguine_hound", "mnemonist_puppet");
 	private static final List<String> COMPONENTS = List.of("veinwing_harness", "marrow_spitter_carriage",
-			"gorebound_yoke", "mnemonist_cradle");
+			"gorebound_yoke", "scarlet_gorget", "mnemonist_cradle");
 
 	@Test
-	void fourUniqueSignaturesShareDominionLesserAndPreserveCrossbar() throws Exception {
+	void sixUniqueSignaturesShareDominionLesserAndPreserveCrossbar() throws Exception {
 		Set<String> signatures = new HashSet<>();
 		for (String summon : RITES) {
 			JsonObject json = json(RECIPES.resolve("cardinal_rite/puppeteer_trial_" + summon + ".json"));

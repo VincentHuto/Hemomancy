@@ -153,6 +153,10 @@ public final class UnstainedJourneyController {
 		return new UnstainedJourneyResult(restored.passed(), currentStage(player), restored.message());
 	}
 
+	public static String mode(ServerPlayer player) {
+		return NOVITIATE.equals(player.getPersistentData().getString(MODE_KEY)) ? NOVITIATE : CURE;
+	}
+
 	private static void prepare(ServerPlayer player, UnstainedJourneyStage stage, BlockPos origin) {
 		UnstainedJourneyFixtures.prepare(player, stage, origin);
 		player.getPersistentData().putString(HemoJourneySnapshot.STAGE_KEY, stage.id());

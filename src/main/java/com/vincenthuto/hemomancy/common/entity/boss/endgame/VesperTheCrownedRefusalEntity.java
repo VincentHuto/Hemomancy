@@ -242,13 +242,13 @@ public class VesperTheCrownedRefusalEntity extends Monster {
         return false;
     }
 
-    private void spawnEveningStar() {
+    private boolean spawnEveningStar() {
         if (!(this.level() instanceof ServerLevel server)) {
-            return;
+            return false;
         }
         VesperTheEveningStarEntity eveningStar = EntityInit.vesper_evening_star.get().create(server);
         if (eveningStar == null) {
-            return;
+            return false;
         }
 		Vec3 landing = dismountLandingPosition();
 		eveningStar.moveTo(landing.x, landing.y, landing.z, this.getYRot(), this.getXRot());
@@ -256,7 +256,7 @@ public class VesperTheCrownedRefusalEntity extends Monster {
         eveningStar.setTarget(this.getTarget());
 		VesperOrdealManager.copyOrdeal(this, eveningStar);
         eveningStar.finalizeSpawn(server, server.getCurrentDifficultyAt(this.blockPosition()), MobSpawnType.MOB_SUMMONED, null);
-        server.addFreshEntity(eveningStar);
+        return server.addFreshEntity(eveningStar);
     }
 
 	private Vec3 dismountLandingPosition() {
@@ -505,10 +505,10 @@ public class VesperTheCrownedRefusalEntity extends Monster {
 			getNavigation().stop();
 			EndgameBossActions.tickVesperTransformation(this, transition);
 			if (VesperPhaseTransitionRules.isComplete(transition) && !spawnedEveningStar) {
+				if (!spawnEveningStar()) return;
 				spawnedEveningStar = true;
 				EndgameBossActions.finishVesperCocoonReveal(this);
 				EndgameBossActions.clearVesperPuppets(this);
-				spawnEveningStar();
 				bossEvent.removeAllPlayers();
 				discard();
 			}

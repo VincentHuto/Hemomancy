@@ -116,6 +116,22 @@ public final class CoreSkillBranch {
 					new SkillPoint(60, "skill_bloodhound_sense", 475, 1, EnumSkillStates.LOCKED, SkillPointInit.skill_sanguine_reach)
 							.setSkillPointCost(3).setRequiredDegree(6).setTreePosition(446, 310).setBranch("core").setBranchColor(0xFFD00000).setToggleable(true)
 							.setIconItem(() -> new ItemStack(ItemInit.blood_absorption.get())));
+			SkillPointInit.skill_nerves_of_steel = SkillPointInit.registerSkill(branch,
+					new SkillPoint(67, "skill_nerves_of_steel", 450, 3, EnumSkillStates.LOCKED, SkillPointInit.skill_iron_will)
+							.setSkillPointCost(3).setRequiredDegree(4).setTreePosition(278, 270).setBranch("core").setBranchColor(0xFF8E99A8)
+							.setIconItem(() -> new ItemStack(ItemInit.hematic_iron_scrap.get())));
+			SkillPointInit.skill_iron_handed = SkillPointInit.registerSkill(branch,
+					new SkillPoint(68, "skill_iron_handed", 550, 3, EnumSkillStates.LOCKED, SkillPointInit.skill_nerves_of_steel)
+							.setSkillPointCost(3).setRequiredDegree(5).setTreePosition(244, 218).setBranch("core").setBranchColor(0xFF8E99A8)
+							.setIconItem(() -> new ItemStack(ItemInit.hematic_iron_scrap.get())));
+			SkillPointInit.skill_bright_eyed = SkillPointInit.registerSkill(branch,
+					new SkillPoint(69, "skill_bright_eyed", 500, 3, EnumSkillStates.LOCKED, SkillPointInit.skill_sanguine_reach)
+							.setSkillPointCost(3).setRequiredDegree(5).setTreePosition(534, 264).setBranch("core").setBranchColor(0xFFFFD66B)
+							.setIconItem(() -> new ItemStack(ItemInit.memory_crimson_sight.get())));
+			SkillPointInit.skill_light_footed = SkillPointInit.registerSkill(branch,
+					new SkillPoint(70, "skill_light_footed", 550, 3, EnumSkillStates.LOCKED, SkillPointInit.skill_bright_eyed)
+							.setSkillPointCost(3).setRequiredDegree(6).setTreePosition(572, 214).setBranch("core").setBranchColor(0xFFFFD66B)
+							.setIconItem(() -> new ItemStack(ItemInit.memory_crimson_sight.get())));
 		// </skill-editor>
 	}
 }

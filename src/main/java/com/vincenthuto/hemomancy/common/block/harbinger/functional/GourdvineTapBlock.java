@@ -83,7 +83,7 @@ public class GourdvineTapBlock extends BaseEntityBlock {
         if (!(level.getBlockEntity(pos) instanceof GourdvineTapBlockEntity be)) return InteractionResult.SUCCESS;
         ItemStack extracted = be.extractGourd();
         if (!extracted.isEmpty()) {
-            player.addItem(extracted);
+            if (!player.addItem(extracted)) player.drop(extracted, false);
         }
         return InteractionResult.SUCCESS;
     }

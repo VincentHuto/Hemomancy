@@ -150,7 +150,10 @@ public class SpecimenJarBlock extends BaseEntityBlock implements SimpleWaterlogg
 				&& level.getBlockEntity(pos) instanceof SpecimenJarBlockEntity jar) {
 			boolean suppressed = jar.consumeSuppressNextRelease();
 			if (!suppressed && jar.hasSpecimen() && level instanceof ServerLevel serverLevel) {
-				SpecimenJarData.releaseSpecimen(serverLevel, pos, jar.getSpecimenCopy());
+				var specimen = jar.getSpecimenCopy();
+				if (SpecimenJarData.releaseSpecimen(serverLevel, pos, specimen).isEmpty()) {
+					Block.popResource(level, pos, SpecimenJarData.createStackWithSpecimen(specimen));
+				}
 				jar.clearSpecimen();
 			}
 		}

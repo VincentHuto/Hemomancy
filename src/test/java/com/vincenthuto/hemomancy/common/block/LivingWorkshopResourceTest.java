@@ -21,6 +21,8 @@ public final class LivingWorkshopResourceTest {
 				"com/vincenthuto/hemomancy/client/screen/skilltree/shared/MaterialAtlasSpec.java"));
 		String lanternMenu = Files.readString(SOURCES.resolve(
 				"com/vincenthuto/hemomancy/common/menu/tile/crafting/MycelialLanternMenu.java"));
+		String tapBlock = Files.readString(SOURCES.resolve(
+				"com/vincenthuto/hemomancy/common/block/harbinger/functional/GourdvineTapBlock.java"));
 
 		assertContains("Lantern authoritative Degree-3 gate", lantern, "\"required_degree\": 3");
 		assertContains("Atlas Degree-3 gate", atlas, "entryAt(\"mycelial_lantern\", h, \"spores_cultures\", d(3)");
@@ -31,6 +33,8 @@ public final class LivingWorkshopResourceTest {
 		assertContains("all brewing outcomes are taught", language, "Umbral turns Night Vision into Invisibility");
 		assertContains("First Culture guidance names cost", language, "600 blood over 2,400 ticks");
 		assertContains("First Culture requires a recorded tendency", lanternMenu, "hasRecordedEnzyme(serverPlayer, stack)");
+		assertContains("Tap harvest drops output when inventory is full", tapBlock,
+				"if (!player.addItem(extracted)) player.drop(extracted, false);");
 	}
 
 	private static String readResource(String relative) throws IOException {

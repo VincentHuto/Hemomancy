@@ -7,6 +7,8 @@ import com.vincenthuto.hemomancy.common.entity.mob.monster.BloodDrunkPuppeteerEn
 import com.vincenthuto.hemomancy.common.entity.mob.monster.EnthralledDollEntity;
 import com.vincenthuto.hemomancy.common.entity.summon.BoundPuppeteerSummon;
 import com.vincenthuto.hemomancy.common.entity.summon.BoundSummonBehavior;
+import com.vincenthuto.hemomancy.common.entity.summon.SanguineHoundEntity;
+import com.vincenthuto.hemomancy.common.item.harbinger.tool.MarionetteCrossbarItem;
 import com.vincenthuto.hemomancy.common.summon.PuppeteerSummonRules;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
@@ -26,6 +28,7 @@ public final class PuppeteerThreadRenderer {
 	private static final double WILD_PUPPETEER_ANCHOR_SCALE = 0.25;
 	private static final double WILD_DOLL_ANCHOR_SCALE = -0.5;
 	private static final double VESPER_ANCHOR_SCALE = 0.72;
+	private static final double SANGUINE_HOUND_ANCHOR_SCALE = -0.25;
 
 	private PuppeteerThreadRenderer() {
 	}
@@ -84,7 +87,7 @@ public final class PuppeteerThreadRenderer {
 		}
 
 		Vec3 start = (controller instanceof Player owner
-				? ownerAnchor(owner, partialTick)
+				? ownerAnchor(owner, bound.hemomancy$getCrossbarUUID(), partialTick)
 				: entityAnchor(controller, partialTick, VESPER_ANCHOR_SCALE)).subtract(camera);
 
 		Vec3 end = summonAnchor(summon, partialTick).subtract(camera);
@@ -161,20 +164,27 @@ public final class PuppeteerThreadRenderer {
 		return null;
 	}
 
-	private static Vec3 ownerAnchor(Player owner, float partialTick) {
+	private static Vec3 ownerAnchor(Player owner, UUID crossbarId, float partialTick) {
+		Minecraft mc = Minecraft.getInstance();
 		double x = Mth.lerp(partialTick, owner.xOld, owner.getX());
-		double y = Mth.lerp(partialTick, owner.yOld, owner.getY()) + owner.getBbHeight() * 0.68;
+		double y = Mth.lerp(partialTick, owner.yOld, owner.getY()) + owner.getEyeHeight();
 		double z = Mth.lerp(partialTick, owner.zOld, owner.getZ());
-		if (owner.isCrouching()) {
-			y -= 0.18;
-		}
-		return new Vec3(x, y, z);
+		float yaw = Mth.lerp(partialTick, owner.yRotO, owner.getYRot()) * Mth.DEG_TO_RAD;
+		boolean offhand = crossbarId != null && crossbarId.equals(
+				MarionetteCrossbarItem.getCrossbarId(owner.getOffhandItem()));
+		double side = offhand ? 1.0D : -1.0D;
+		if (owner.getMainArm() == net.minecraft.world.entity.HumanoidArm.LEFT) side *= -1.0D;
+		boolean firstPerson = owner == mc.player && mc.options.getCameraType().isFirstPerson();
+		return PuppeteerThreadEndpointRules.playerHandEndpoint(new Vec3(x, y, z),
+				owner.getViewVector(partialTick), yaw, side, firstPerson);
 	}
 
 	private static Vec3 summonAnchor(LivingEntity summon, float partialTick) {
+		double heightScale = summon instanceof SanguineHoundEntity ? SANGUINE_HOUND_ANCHOR_SCALE
+				: PuppeteerThreadEndpointRules.SUMMON_HEIGHT_SCALE;
 		return PuppeteerThreadEndpointRules.summonEndpoint(
 				summon.xOld, summon.yOld, summon.zOld,
-				summon.getX(), summon.getY(), summon.getZ(), summon.getBbHeight(), partialTick);
+				summon.getX(), summon.getY(), summon.getZ(), summon.getBbHeight(), heightScale, partialTick);
 	}
 
 	private static Vec3 entityAnchor(LivingEntity entity, float partialTick, double heightScale) {

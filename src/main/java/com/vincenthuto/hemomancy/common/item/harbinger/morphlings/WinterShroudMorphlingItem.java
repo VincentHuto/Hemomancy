@@ -8,11 +8,13 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.minecraft.tags.DamageTypeTags;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -70,6 +72,21 @@ public class WinterShroudMorphlingItem extends MorphlingItem {
 		if (maturity >= 3 && !player.level().isClientSide && player.tickCount % 60 == 0) {
 			cleanse(player);
 		}
+	}
+
+	public static void applyColdBloodedTick(Player player, ItemStack stack) {
+		if (player.isFreezing()) {
+			player.setTicksFrozen(WinterShroudResilienceRules.retainedEnvironmentalFreezeTicks(
+					MorphlingItem.getMaturityLevel(stack), player.getTicksFrozen(), player.tickCount));
+		}
+	}
+
+	public static float adjustIncomingColdDamage(Player player, ItemStack stack, DamageSource source, float damage) {
+		boolean freezing = source.is(DamageTypeTags.IS_FREEZING);
+		boolean environmental = source.is(DamageTypes.FREEZE)
+				&& (player.isInPowderSnow || player.wasInPowderSnow);
+		return damage * WinterShroudResilienceRules.coldDamageMultiplier(
+				MorphlingItem.getMaturityLevel(stack), environmental, freezing);
 	}
 
 	@Override
@@ -148,9 +165,9 @@ public class WinterShroudMorphlingItem extends MorphlingItem {
 	@Override
 	public List<Component> getMaturityBonusDescriptions(int currentMaturity) {
 		List<Component> list = new ArrayList<>();
-		list.add(MorphlingItem.maturityBonusLine("Cryptobiotic Hide (Stillness or low health grants resilience)", 2, currentMaturity));
-		list.add(MorphlingItem.maturityBonusLine("Cold Cleanse (Sheds poison, wither, weakness, and slow)", 3, currentMaturity));
-		list.add(MorphlingItem.maturityBonusLine("Tun Molt (Low-health escape burst)", 4, currentMaturity));
+		list.add(MorphlingItem.maturityBonusLine("Cold-Blooded I + Cryptobiotic Hide (Slower freezing, environmental cold resistance)", 2, currentMaturity));
+		list.add(MorphlingItem.maturityBonusLine("Cold-Blooded II + Cold Cleanse (Powder-snow traversal and cleansing)", 3, currentMaturity));
+		list.add(MorphlingItem.maturityBonusLine("Cold-Blooded III + Tun Molt (Environmental freeze immunity, magical cold resistance)", 4, currentMaturity));
 		list.add(MorphlingItem.maturityBonusLine("Cryptobiosis (Primal Last Rite survival state)", 5, currentMaturity));
 		return list;
 	}

@@ -34,6 +34,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.stats.Stats;
 import com.vincenthuto.hemomancy.common.init.BlockInit;
+import com.vincenthuto.hemomancy.common.tile.functional.MortalDisplayBlockEntity;
 
 /** Reads server-authoritative outcomes and optionally attributes exact output UUIDs. */
 public final class HemoJourneyChecks {
@@ -456,12 +457,9 @@ public final class HemoJourneyChecks {
 	}
 
 	private static void verifyMortalDisplay(ServerPlayer player, BlockPos origin, List<String> unmet) {
-		require(unmet, HemoCapabilityAccess.requireBloodVolume(player).isActive(), "Blood magic is not active.");
-		require(unmet, HarbingerAdvancementGranter.hasAdvancement(player,
-				Hemomancy.rloc("hemomancy/the_first_awakening")), "The First Awakening advancement is incomplete.");
-		require(unmet, HemoJourneyFixtures.fixtureLevel(player).getBlockState(origin.above())
-				.is(com.vincenthuto.hemomancy.common.init.BlockInit.placed_blood_stained_stone.get()),
-				"The Mortal Display has not transformed.");
+		require(unmet, HemoJourneyFixtures.fixtureLevel(player).getBlockEntity(origin.above())
+				instanceof MortalDisplayBlockEntity display && display.isClaimedBy(player.getUUID()),
+				"The Mortal Display has not been claimed.");
 		boolean equipped = HemoCapabilityAccess.requireEquipment(player).getStackInSlot(5)
 				.is(ItemInit.charm_of_vascularium.get());
 		require(unmet, equipped || fixtureHasItem(player, origin, ItemInit.charm_of_vascularium.get()),
@@ -469,6 +467,11 @@ public final class HemoJourneyChecks {
 	}
 
 	private static void verifyInitiation(ServerPlayer player, BlockPos origin, List<String> unmet) {
+		require(unmet, HemoCapabilityAccess.requireBloodVolume(player).isActive(), "Blood magic is not active.");
+		require(unmet, HarbingerAdvancementGranter.hasAdvancement(player,
+				Hemomancy.rloc("hemomancy/the_first_awakening")), "The First Awakening advancement is incomplete.");
+		require(unmet, HemoJourneyFixtures.fixtureLevel(player).getBlockState(origin.above(4))
+				.is(BlockInit.placed_blood_stained_stone.get()), "The Mortal Display has not transformed.");
 		require(unmet, HemoCapabilityAccess.requireInitiatoryDegree(player).getDegreeNumber() == 1,
 				"Initiatory degree is not exactly 1.");
 		require(unmet, HarbingerAdvancementGranter.hasAdvancement(player,

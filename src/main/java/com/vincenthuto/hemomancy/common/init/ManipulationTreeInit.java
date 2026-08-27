@@ -40,11 +40,13 @@ public class ManipulationTreeInit {
 		// Row 0 (top) — SUMMA
 		register("blood_aneurysm",370,210, "blood_cloud");
 		register("summon_avatar",520,160, "blood_cloud", "blood_rush");
+		register("hematic_impressment",690,120, "hematic_rebuke");
 
 		// Row 1 (middle) — MEDIOCRITAS
 		register("deadly_gaze",1130,150, "activation_potential");
 		register("blood_cloud",410,160, "blood_needle", "blood_shot");
 		register("summon_thrall",560,210, "blood_rush");
+		register("hematic_rebuke",640,190, "blood_rush");
 
 		// Row 2 (bottom) — HUMILIS
 		register("blood_shot",410,280);
@@ -63,6 +65,7 @@ public class ManipulationTreeInit {
 		register("ferric_resonance",850,140, "sanguine_mending");
 		register("iron_retort",790,140, "sanguine_mending");
 		register("sanguine_magnetism",790,60, "iron_retort");
+		register("ironhearted",850,30, "iron_retort", "ferric_resonance");
 
 		// Row 2 (bottom) — HUMILIS / MEDIOCRITAS roots
 		register("venous_travel",1067,60, "activation_potential");
@@ -144,6 +147,7 @@ public class ManipulationTreeInit {
 
 		// Row 1 (middle) — MEDIOCRITAS
 		register("grave_debt",2180,70, "hemorrhage", "exsanguinate");
+		register("blackhearted",2240,10, "grave_debt");
 		register("insatiable_hunger",2320,70, "hemorrhage");
 
 		// Row 2 (bottom) — HUMILIS / MEDIOCRITAS

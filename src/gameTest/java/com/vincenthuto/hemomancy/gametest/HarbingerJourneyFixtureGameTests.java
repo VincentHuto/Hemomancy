@@ -46,6 +46,7 @@ import com.vincenthuto.hemomancy.common.entity.npc.dialogue.HarbingerMnemonistDi
 import com.vincenthuto.hemomancy.common.entity.npc.harbinger.HarbingerCicatrixAnchoriteEntity;
 import com.vincenthuto.hemomancy.common.recipe.BloodStructureOffering;
 import com.vincenthuto.hemomancy.common.recipe.BloodStructureOfferingPlacement;
+import com.vincenthuto.hemomancy.common.recipe.BloodStructureRecipe;
 import com.vincenthuto.hemomancy.common.tile.IronBrazierBlockEntity;
 import com.vincenthuto.hemomancy.common.tile.crafting.SomaticLoomBlockEntity;
 import com.vincenthuto.hemomancy.common.tile.crafting.GhastlyAlembicBlockEntity;
@@ -1531,11 +1532,12 @@ public final class HarbingerJourneyFixtureGameTests {
 	public static void sanguineInitiationPattern(GameTestHelper helper) {
 		withFixture(helper, HemoJourneyStage.SANGUINE_INITIATION, (origin, player) -> {
 			Block[][] rows = {
-					{ Blocks.STONE_BRICKS, BlockInit.engram_block.get(), Blocks.STONE_BRICKS },
-					{ BlockInit.engram_block.get(), BlockInit.hematic_iron_block.get(), BlockInit.engram_block.get() },
-					{ Blocks.STONE_BRICKS, BlockInit.engram_block.get(), Blocks.STONE_BRICKS }
+					{ Blocks.STONE_BRICKS, BlockInit.hematic_iron_block.get(), Blocks.STONE_BRICKS },
+					{ BlockInit.hematic_iron_block.get(), BlockInit.cardinal_focus.get(), BlockInit.hematic_iron_block.get() },
+					{ Blocks.STONE_BRICKS, BlockInit.hematic_iron_block.get(), Blocks.STONE_BRICKS }
 			};
 			assertFloor(helper, origin, rows);
+			assertBlock(helper, origin.above(4), BlockInit.mortal_display.get());
 		});
 	}
 
@@ -1589,22 +1591,27 @@ public final class HarbingerJourneyFixtureGameTests {
 	}
 
 	@GameTest(templateNamespace = "minecraft", template = EMPTY_TEMPLATE, timeoutTicks = 40)
-	public static void centrifugeJourneySuppliesEmptyUnlitOfferingBraziers(GameTestHelper helper) {
+	public static void centrifugeJourneySpawnsCompleteReadyStructure(GameTestHelper helper) {
 		withFixture(helper, HemoJourneyStage.CENTRIFUGE_PREPARED, (origin, player) -> {
-			for (BlockPos brazierPos : List.of(origin.offset(-2, 1, 0), origin.offset(2, 1, 0))) {
-				assertBlock(helper, brazierPos, BlockInit.iron_brazier.get());
-				helper.assertTrue(helper.getLevel().getBlockState(brazierPos).getValue(BrazierBlock.RITUAL_PHASE) == 0,
-						"Journey offering braziers must begin unlit");
-				helper.assertTrue(helper.getLevel().getBlockEntity(brazierPos) instanceof IronBrazierBlockEntity brazier
-						&& !brazier.hasOffering(), "Journey offering braziers must begin empty");
+			BloodStructureRecipe recipe = BloodStructureRecipe.getStructureByLocation(helper.getLevel(),
+					Hemomancy.rloc("blood_structure/vial_centrifuge"));
+			helper.assertTrue(recipe != null, "Vial Centrifuge recipe must load");
+			int physicalCellY = recipe.getPattern().getBlockPattern().getHeight() - 2;
+			for (var pair : recipe.getPattern().getBlockPosBlockList()) {
+				if (pair.getBlock() != null && pair.getBlock() != Blocks.AIR) {
+					assertBlock(helper, origin.above(2).offset(pair.getPos().getX() - 1,
+							pair.getPos().getY() - physicalCellY, 1 - pair.getPos().getZ()), pair.getBlock());
+				}
 			}
-			helper.assertTrue(player.getInventory().countItem(Items.GLASS_BOTTLE) == 1,
-					"Journey must supply the bottle offering");
-			helper.assertTrue(player.getInventory().countItem(Items.COPPER_INGOT) == 1,
-					"Journey must supply the copper offering");
+			for (BlockPos brazierPos : List.of(origin.offset(-2, 2, 0), origin.offset(2, 2, 0))) {
+				assertBlock(helper, brazierPos, BlockInit.iron_brazier.get());
+				helper.assertTrue(helper.getLevel().getBlockState(brazierPos).getValue(BrazierBlock.RITUAL_PHASE) == 1,
+						"Journey offering braziers must begin lit");
+				helper.assertTrue(helper.getLevel().getBlockEntity(brazierPos) instanceof IronBrazierBlockEntity brazier
+						&& brazier.hasOffering(), "Journey offering braziers must begin filled");
+			}
 			helper.assertTrue(HemoCapabilityAccess.requireBloodVolume(player).getBloodVolume()
-					>= 150.0D + 2.0D * BrazierBlock.BLOOD_TO_LIGHT,
-					"Journey blood budget must cover both braziers and the structure craft");
+					>= 150.0D, "Journey blood budget must cover the structure craft");
 		});
 	}
 

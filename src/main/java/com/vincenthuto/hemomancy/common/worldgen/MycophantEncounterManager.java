@@ -22,7 +22,6 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
-import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.portal.DimensionTransition;
@@ -170,6 +169,8 @@ public final class MycophantEncounterManager {
 			degree.setMycophantRetryCooldownTicks(0);
 			InitiatoryDegreeEvents.syncDegree(owner, degree);
 		});
+		clear(owner);
+		ChamberOfWillManager.get(level.getServer()).exitChamber(owner);
 		if (first) give(owner, new ItemStack(ItemInit.mycophant_tendril.get()));
 		else {
 			give(owner, new ItemStack(ItemInit.sanguine_quintessence.get()));
@@ -177,10 +178,8 @@ public final class MycophantEncounterManager {
 		}
 		owner.giveExperiencePoints(180);
 		HarbingerAdvancementGranter.grantIfNotDone(owner, HarbingerAdvancementGranter.ADV_MYCOPHANT_DEFEATED);
-		clear(owner);
 		owner.displayClientMessage(Component.translatable("message.hemomancy.mycophant.victory")
 				.withStyle(ChatFormatting.DARK_GREEN, ChatFormatting.BOLD), false);
-		ChamberOfWillManager.get(level.getServer()).exitChamber(owner);
 	}
 
 	public static void ruptureCocoon(ServerPlayer player, boolean empowered) {
@@ -264,8 +263,7 @@ public final class MycophantEncounterManager {
 	}
 
 	private static void give(ServerPlayer player, ItemStack stack) {
-		if (player.getInventory().add(stack)) return;
-		player.level().addFreshEntity(new ItemEntity(player.level(), player.getX(), player.getY() + .5, player.getZ(), stack));
+		if (!player.addItem(stack)) player.drop(stack, false);
 	}
 
 	private static void clear(ServerPlayer player) {

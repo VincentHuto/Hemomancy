@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": ["LQL", "T T"],
+  "key": {
+    "L": { "item": "minecraft:leather" },
+    "Q": { "item": "hemomancy:sanguine_quintessence" },
+    "T": { "item": "hemomancy:puppeteering_thread" }
+  },
+  "result": { "id": "hemomancy:sanguine_hound_bridle", "count": 1 }
+}

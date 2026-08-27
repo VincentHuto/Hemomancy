@@ -9,6 +9,7 @@ import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.CirculationIncomeHelper;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.armor.ArmorSetHelper;
+import com.vincenthuto.hemomancy.common.armor.BodyIdiomArmorRules;
 import com.vincenthuto.hemomancy.common.init.EffectInit;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.item.harbinger.armor.BloodLustArmorItem;
@@ -37,6 +38,7 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.living.LivingDamageEvent;
 import net.neoforged.neoforge.event.entity.living.LivingEquipmentChangeEvent;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
+import net.neoforged.neoforge.common.NeoForgeMod;
 
 /**
  * Handles armor set bonuses for all Hemomancy armor sets.
@@ -56,6 +58,7 @@ public class ArmorSetBonusHandler {
 
 	private static final net.minecraft.resources.ResourceLocation CHITINITE_TOUGHNESS_ID = net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("hemomancy", "chitinite_toughness");
 	private static final net.minecraft.resources.ResourceLocation MARROW_CROWN_DAMAGE_ID = net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("hemomancy", "marrow_crown_damage");
+	private static final net.minecraft.resources.ResourceLocation PELAGIC_MOTION_ID = net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("hemomancy", "pelagic_motion");
 	private static final String SILENT_ARCHON_COOLDOWN_TAG = "hemomancy:silent_archon_refusal_until";
 	private static final String PRISMATIC_FLASH_COOLDOWN_TAG = "hemomancy:prismatic_flash_until";
 
@@ -117,6 +120,7 @@ public class ArmorSetBonusHandler {
 
 		// Marrow Crown artifact: damage bonus attribute modifier
 		updateMarrowCrownDamage(player);
+		updatePelagicMotion(player);
 
 		syncSilentArchonLastRite(player);
 	}
@@ -146,6 +150,7 @@ public class ArmorSetBonusHandler {
 		// Marrow Crown: re-check blood threshold periodically (blood level can change without equipment change)
 		if (player.tickCount % HEMATIC_IRON_REGEN_INTERVAL == 0) {
 			updateMarrowCrownDamage(player);
+			updatePelagicMotion(player);
 		}
 
 		// Unstained set bonus: remove blood-related debuffs (check every UNSTAINED_CHECK_INTERVAL ticks)
@@ -423,6 +428,22 @@ public class ArmorSetBonusHandler {
 					CHITINITE_TOUGHNESS_ID,
 					TriadAttributeCaps.clampToughness(0.0D, bonus),
 					AttributeModifier.Operation.ADD_VALUE));
+		}
+	}
+
+	private static void updatePelagicMotion(Player player) {
+		AttributeInstance swimSpeed = player.getAttribute(NeoForgeMod.SWIM_SPEED);
+		if (swimSpeed == null) return;
+		double amount = BodyIdiomArmorRules.pelagicSwimMultiplier(
+				ArmorSetHelper.hasFullPrismaticSet(player), ArmorSetHelper.hasFullPhantasmalBloodlust(player)) - 1.0D;
+		AttributeModifier current = swimSpeed.getModifier(PELAGIC_MOTION_ID);
+		if (current != null && (amount == 0.0D || current.amount() != amount)) {
+			swimSpeed.removeModifier(PELAGIC_MOTION_ID);
+			current = null;
+		}
+		if (amount > 0.0D && current == null) {
+			swimSpeed.addTransientModifier(new AttributeModifier(PELAGIC_MOTION_ID, amount,
+					AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL));
 		}
 	}
 

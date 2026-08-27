@@ -38,6 +38,9 @@ public class PuppeteersSpindleScreen extends AbstractContainerScreen<PuppeteersS
 	private static final int INPUT_W = 116;
 	private static final int PATTERN_W = 140;
 	private static final int PANEL_H = 102;
+	private static final int SUMMON_LIST_Y = 48;
+	private static final int SUMMON_ROW_HEIGHT = 18;
+	private static final int VISIBLE_SUMMON_ROWS = 4;
 	private static final int SLOT_BG = 0xFF1A0808;
 	private static final int SLOT_BORDER_DARK = 0xFF0D0303;
 	private static final int SLOT_BORDER_LIGHT = 0xFF4A151B;
@@ -51,6 +54,7 @@ public class PuppeteersSpindleScreen extends AbstractContainerScreen<PuppeteersS
 
 	private final List<String> knownSummons = new ArrayList<>();
 	private int selectedIndex;
+	private int summonScroll;
 	private float animTime;
 	private float[][] veinParams;
 
@@ -101,6 +105,7 @@ public class PuppeteersSpindleScreen extends AbstractContainerScreen<PuppeteersS
 				break;
 			}
 		}
+		summonScroll = Mth.clamp(selectedIndex - VISIBLE_SUMMON_ROWS + 1, 0, maxSummonScroll());
 	}
 
 	private void sendPrepare(String summon) {
@@ -250,28 +255,44 @@ public class PuppeteersSpindleScreen extends AbstractContainerScreen<PuppeteersS
 
 	private void renderSummonRows(GuiGraphics graphics, int gx, int gy, int mouseX, int mouseY) {
 		List<PuppeteerSummonDefinition> definitions = PuppeteerSummonDefinitions.all();
-		int x = gx + PATTERN_X + 6;
-		int y = gy + 48;
-		int w = PATTERN_W - 12;
-		for (int i = 0; i < definitions.size(); i++) {
-			PuppeteerSummonDefinition definition = definitions.get(i);
+		int listX = gx + PATTERN_X + 6;
+		int listY = gy + SUMMON_LIST_Y;
+		int listWidth = PATTERN_W - 18;
+		int listHeight = VISIBLE_SUMMON_ROWS * SUMMON_ROW_HEIGHT;
+		summonScroll = Mth.clamp(summonScroll, 0, maxSummonScroll());
+		graphics.enableScissor(listX, listY, listX + listWidth, listY + listHeight);
+		for (int visibleRow = 0; visibleRow < VISIBLE_SUMMON_ROWS; visibleRow++) {
+			int definitionIndex = summonScroll + visibleRow;
+			if (definitionIndex >= definitions.size()) break;
+			PuppeteerSummonDefinition definition = definitions.get(definitionIndex);
 			boolean known = knownSummons.contains(definition.name());
-			boolean selected = i == selectedIndex;
-			boolean hovered = summonRowAt(mouseX, mouseY) == i;
-			int rowY = y + i * 18;
+			boolean selected = definitionIndex == selectedIndex;
+			boolean hovered = summonRowAt(mouseX, mouseY) == definitionIndex;
+			int rowY = listY + visibleRow * SUMMON_ROW_HEIGHT;
 			int bg = selected ? 0xDD240A12 : (hovered ? 0xBB1B080E : 0xAA0E0407);
-			graphics.fill(x, rowY, x + w, rowY + 16, bg);
-			graphics.fill(x, rowY, x + w, rowY + 1, selected ? 0xFFB93645 : 0xFF43131A);
-			graphics.fill(x, rowY + 15, x + w, rowY + 16, 0xFF170407);
+			graphics.fill(listX, rowY, listX + listWidth, rowY + 16, bg);
+			graphics.fill(listX, rowY, listX + listWidth, rowY + 1, selected ? 0xFFB93645 : 0xFF43131A);
+			graphics.fill(listX, rowY + 15, listX + listWidth, rowY + 16, 0xFF170407);
 			if (selected) {
-				graphics.fill(x, rowY, x + 2, rowY + 16, 0xFFFF6A70);
+				graphics.fill(listX, rowY, listX + 2, rowY + 16, 0xFFFF6A70);
 			}
 
 			Component name = Component.translatable(definition.translationKey());
 			int color = known ? TEXT_RED : TEXT_LOCKED;
-			String label = trimToWidth(name.getString(), w - 10);
-			graphics.drawString(font, label, x + 5, rowY + 4, color, false);
+			String label = trimToWidth(name.getString(), listWidth - 10);
+			graphics.drawString(font, label, listX + 5, rowY + 4, color, false);
 		}
+		graphics.disableScissor();
+		renderSummonScrollbar(graphics, listX + listWidth + 2, listY, 3, listHeight, definitions.size());
+	}
+
+	private void renderSummonScrollbar(GuiGraphics graphics, int x, int y, int width, int height, int definitionCount) {
+		int maxScroll = maxSummonScroll();
+		if (maxScroll == 0) return;
+		graphics.fill(x, y, x + width, y + height, 0xAA170407);
+		int thumbHeight = Math.max(12, height * VISIBLE_SUMMON_ROWS / definitionCount);
+		int thumbY = y + (height - thumbHeight) * summonScroll / maxScroll;
+		graphics.fill(x, thumbY, x + width, thumbY + thumbHeight, 0xFFB93645);
 	}
 
 	private int playerDegree() {
@@ -289,16 +310,32 @@ public class PuppeteersSpindleScreen extends AbstractContainerScreen<PuppeteersS
 
 	private int summonRowAt(double mouseX, double mouseY) {
 		int x = leftPos + PATTERN_X + 6;
-		int y = topPos + 48;
-		int w = PATTERN_W - 12;
+		int y = topPos + SUMMON_LIST_Y;
+		int w = PATTERN_W - 18;
+		int h = VISIBLE_SUMMON_ROWS * SUMMON_ROW_HEIGHT;
+		if (mouseX < x || mouseX > x + w || mouseY < y || mouseY >= y + h) return -1;
+		int visibleRow = (int) ((mouseY - y) / SUMMON_ROW_HEIGHT);
+		if (mouseY > y + visibleRow * SUMMON_ROW_HEIGHT + 16) return -1;
+		int definitionIndex = summonScroll + visibleRow;
 		List<PuppeteerSummonDefinition> definitions = PuppeteerSummonDefinitions.all();
-		for (int i = 0; i < definitions.size(); i++) {
-			int rowY = y + i * 18;
-			if (mouseX >= x && mouseX <= x + w && mouseY >= rowY && mouseY <= rowY + 16) {
-				return i;
-			}
+		return definitionIndex < definitions.size() ? definitionIndex : -1;
+	}
+
+	private int maxSummonScroll() {
+		return Math.max(0, PuppeteerSummonDefinitions.all().size() - VISIBLE_SUMMON_ROWS);
+	}
+
+	@Override
+	public boolean mouseScrolled(double mouseX, double mouseY, double scrollX, double scrollY) {
+		int x = leftPos + PATTERN_X + 6;
+		int y = topPos + SUMMON_LIST_Y;
+		int width = PATTERN_W - 12;
+		int height = VISIBLE_SUMMON_ROWS * SUMMON_ROW_HEIGHT;
+		if (mouseX >= x && mouseX <= x + width && mouseY >= y && mouseY < y + height) {
+			summonScroll = Mth.clamp(summonScroll - (int) Math.signum(scrollY), 0, maxSummonScroll());
+			return true;
 		}
-		return -1;
+		return super.mouseScrolled(mouseX, mouseY, scrollX, scrollY);
 	}
 
 	private String selectedSummonName() {

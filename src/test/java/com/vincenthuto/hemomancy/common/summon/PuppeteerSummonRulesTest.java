@@ -15,13 +15,17 @@ public final class PuppeteerSummonRulesTest {
 				PuppeteerCommandMode.tryParse("old_or_bad").isPresent());
 		assertTrue("follow retains a nearby defensive target",
 				PuppeteerCommandMode.FOLLOW.retainsAutomaticTarget());
+		assertTrue("follow automatically defends its owner",
+				PuppeteerCommandMode.FOLLOW.automaticallyDefendsOwner());
 		assertFalse("passive does not retain an automatic target",
 				PuppeteerCommandMode.PASSIVE.retainsAutomaticTarget());
+		assertFalse("passive never automatically defends its owner",
+				PuppeteerCommandMode.PASSIVE.automaticallyDefendsOwner());
 		assertTrue("guard retains a valid anchor-area target",
 				PuppeteerCommandMode.GUARD.retainsAutomaticTarget());
 		assertTrue("hunt retains an automatic hostile target",
 				PuppeteerCommandMode.HUNT.retainsAutomaticTarget());
-		assertEquals("four v1 summons", 4, PuppeteerSummonDefinitions.all().size());
+		assertEquals("six summon shapes", 6, PuppeteerSummonDefinitions.all().size());
 
 		PuppeteerSummonDefinition vulture = PuppeteerSummonDefinitions.byName("veinwing_vulture")
 				.orElseThrow(() -> new AssertionError("missing veinwing vulture"));
@@ -31,15 +35,32 @@ public final class PuppeteerSummonRulesTest {
 				.orElseThrow(() -> new AssertionError("missing gorebound hulk"));
 		PuppeteerSummonDefinition puppet = PuppeteerSummonDefinitions.byName("mnemonist_puppet")
 				.orElseThrow(() -> new AssertionError("missing mnemonist puppet"));
+		PuppeteerSummonDefinition mummer = PuppeteerSummonDefinitions.byName("scarlet_mummer")
+				.orElseThrow(() -> new AssertionError("missing scarlet mummer"));
+		PuppeteerSummonDefinition hound = PuppeteerSummonDefinitions.byName("sanguine_hound")
+				.orElseThrow(() -> new AssertionError("missing sanguine hound"));
 
 		assertEquals("vulture degree", 3, vulture.requiredDegree());
 		assertEquals("spitter degree", 3, spitter.requiredDegree());
 		assertEquals("hulk degree", 4, hulk.requiredDegree());
 		assertEquals("mnemonist puppet degree", 5, puppet.requiredDegree());
+		assertEquals("scarlet mummer degree", 4, mummer.requiredDegree());
+		assertEquals("scarlet mummer call cost", 48, mummer.threadSummonCost());
+		assertEquals("scarlet mummer upkeep", 14, mummer.threadUpkeepPerMinute());
+		assertDouble("scarlet mummer health", 24.0, mummer.baseHealth());
+		assertDouble("scarlet mummer damage", 3.0, mummer.baseDamage());
+		assertDouble("scarlet mummer speed", 0.30, mummer.movementSpeed());
+		assertEquals("sanguine hound degree", 4, hound.requiredDegree());
+		assertEquals("sanguine hound call cost", 44, hound.threadSummonCost());
+		assertEquals("sanguine hound upkeep", 15, hound.threadUpkeepPerMinute());
+		assertDouble("sanguine hound health", 30.0, hound.baseHealth());
+		assertDouble("sanguine hound damage", 6.0, hound.baseDamage());
 		assertFalse("degree 2 only foreshadows puppeteering", PuppeteerSummonRules.canUnlockAtDegree(vulture, 2));
 		assertTrue("degree 3 can unlock vulture", PuppeteerSummonRules.canUnlockAtDegree(vulture, 3));
 		assertFalse("degree 2 cannot unlock spitter", PuppeteerSummonRules.canUnlockAtDegree(spitter, 2));
 		assertTrue("degree 4 can unlock hulk", PuppeteerSummonRules.canUnlockAtDegree(hulk, 4));
+		assertTrue("degree 4 can unlock scarlet mummer", PuppeteerSummonRules.canUnlockAtDegree(mummer, 4));
+		assertTrue("degree 4 can unlock sanguine hound", PuppeteerSummonRules.canUnlockAtDegree(hound, 4));
 		assertFalse("degree 4 cannot unlock mnemonist puppet", PuppeteerSummonRules.canUnlockAtDegree(puppet, 4));
 		assertTrue("degree 5 can unlock mnemonist puppet", PuppeteerSummonRules.canUnlockAtDegree(puppet, 5));
 

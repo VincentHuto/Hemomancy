@@ -129,12 +129,12 @@ public class UseManipKeyPacket implements CustomPacketPayload {
 									}
 								} else {
 									selectedManip.performAction(player, player.level(), mainStack,
-											player.blockPosition());
+									player.blockPosition(), pTic);
 								}
 							} else {
 								// All other manipulation types — just perform
 								selectedManip.performAction(player, player.level(), mainStack,
-										player.blockPosition());
+										player.blockPosition(), pTic);
 							}
 						}
 					}

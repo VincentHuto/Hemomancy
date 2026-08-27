@@ -11,18 +11,21 @@ public final class BloodEconomyLootDataTest {
 	}
 
 	public static void main(String[] args) throws IOException {
-		String globalModifiers = read(DATA_ROOT.resolve("forge/loot_modifiers/global_loot_modifiers.json"));
+		String globalModifiers = read(DATA_ROOT.resolve("neoforge/loot_modifiers/global_loot_modifiers.json"));
 		assertContains("global modifiers include venous stone blood rocks", globalModifiers,
 				"hemomancy:blood_rocks_from_venous_stone");
 		assertContains("global modifiers include blood mob bloody jugs", globalModifiers,
 				"hemomancy:bloody_jugs_from_blood_mobs");
+		String grassModifier = read(DATA_ROOT.resolve("hemomancy/loot_modifiers/gourd_seeds_from_grass.json"));
+		assertContains("gourd seeds use the 1.21 short grass block id", grassModifier,
+				"\"block\": \"minecraft:short_grass\"");
 
-		String bloodRockModifier = read(DATA_ROOT.resolve("hemomancy/loot_modifier/blood_rocks_from_venous_stone.json"));
+		String bloodRockModifier = read(DATA_ROOT.resolve("hemomancy/loot_modifiers/blood_rocks_from_venous_stone.json"));
 		assertContains("blood rocks come from venous stone", bloodRockModifier, "\"block\": \"hemomancy:venous_stone\"");
 		assertContains("blood rock modifier drops blood rocks", bloodRockModifier, "\"item\": \"hemomancy:blood_rock\"");
 		assertContains("blood rock drop chance is rare", bloodRockModifier, "\"chance\": 0.025");
 
-		String jugModifier = read(DATA_ROOT.resolve("hemomancy/loot_modifier/bloody_jugs_from_blood_mobs.json"));
+		String jugModifier = read(DATA_ROOT.resolve("hemomancy/loot_modifiers/bloody_jugs_from_blood_mobs.json"));
 		assertContains("bloody jug drops require player kills", jugModifier, "\"condition\": \"minecraft:killed_by_player\"");
 		assertContains("bloody jug modifier uses blood mob tag", jugModifier, "\"type\": \"#hemomancy:bloody_jug_drop_candidates\"");
 		assertContains("bloody jug modifier drops bloody jugs", jugModifier, "\"item\": \"hemomancy:bloody_jug\"");

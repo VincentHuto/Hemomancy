@@ -97,6 +97,8 @@ public final class HemoJourneySnapshot {
 			ArtificerAssignments.FIRST_D7_LINEAGE_KEY,
 			FungalGardenTravelHelper.ARCHON_CHOICE_KEY,
 			FungalGardenTravelHelper.REVELATION_CHOICE_PENDING,
+			"hemomancy.blessed_hermit",
+			"hemomancy.claimed_heart_hermit",
 			"hemomancy.vicar_consecration_kit_claimed");
 
 	/** Exact advancement ownership for every checkpoint currently driven by the journey. */

@@ -529,6 +529,7 @@ public class MorphlingItem extends Item implements IMorphling {
 		for (Holder<MobEffect> morphlingEffect : morphlingPassiveEffects()) {
 			player.removeEffect(morphlingEffect);
 		}
+		EmberfangMorphlingItem.clearHeatModifiers(player);
 	}
 
 	private static List<Holder<MobEffect>> morphlingPassiveEffects() {

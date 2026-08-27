@@ -2,6 +2,8 @@ package com.vincenthuto.hemomancy.common.manipulation.lux;
 
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.EnumVeinSections;
+import com.vincenthuto.hemomancy.common.capability.player.shared.skill.BodyRefinementSkillRules;
+import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillPointHelper;
 import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
 import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationRank;
 import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationType;
@@ -45,13 +47,16 @@ public class CrimsonSightManip extends BloodManipulation {
 
 	@Override
 	public void getAction(Player player, Level world, ItemStack heldItemMainhand, BlockPos position) {
+		int brightEyed = SkillPointHelper.getBrightEyedLevel(player);
 		player.addEffect(new MobEffectInstance(MobEffects.NIGHT_VISION, NIGHT_VISION_DURATION, 0, false, false, true));
 
-		List<Entity> entities = world.getEntities(player, player.getBoundingBox().inflate(SCAN_RADIUS));
+		List<Entity> entities = world.getEntities(player, player.getBoundingBox().inflate(
+				SCAN_RADIUS * BodyRefinementSkillRules.perceptionRangeMultiplier(brightEyed)));
 		int glowedCount = 0;
 		for (Entity entity : entities) {
 			if (entity instanceof Mob mob && mob.isAlive()) {
-				mob.addEffect(new MobEffectInstance(MobEffects.GLOWING, GLOWING_DURATION, 0, false, false, true));
+				mob.addEffect(new MobEffectInstance(MobEffects.GLOWING,
+						BodyRefinementSkillRules.revealTicks(GLOWING_DURATION, brightEyed), 0, false, false, true));
 				glowedCount++;
 			}
 		}
