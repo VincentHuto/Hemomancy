@@ -11,7 +11,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 final class ToggleableSkillIntegrationSourceTest {
 	private static final Path ROOT = Path.of("").toAbsolutePath();
 	private static final String[] SKILLS = {
-			"persistent_arsenal", "distributed_siphon", "selective_hunger", "sanguine_reserve",
+			"persistent_arsenal", "distributed_siphon", "selective_hunger", "sanguine_reserve", "sanguine_spinning",
 			"automatic_coagulation", "guarded_feeding", "shared_siphon", "autonomous_retaliation",
 			"merciful_command", "deep_scar_resonance", "crimson_wake", "vascular_mercy",
 			"bloodhound_sense", "reflexive_coagulation", "dormant_symbiote", "symbiotic_metabolism"
@@ -43,6 +43,7 @@ final class ToggleableSkillIntegrationSourceTest {
 		assertTrue(handler.contains("PacketToggleSkill.TYPE"));
 		assertTrue(screen.contains("new PacketToggleSkill"));
 		assertTrue(screen.contains("isEnabled(sp)"));
+		assertTrue(screen.contains("EnumNodeShape.HEXAGON"));
 		assertTrue(shapes.contains("DECAGON"));
 	}
 

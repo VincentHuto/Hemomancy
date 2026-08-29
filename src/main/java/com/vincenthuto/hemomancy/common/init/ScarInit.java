@@ -123,15 +123,18 @@ public class ScarInit {
 
 	public static final DeferredHolder<ScarDefinition, ScarDefinition> scar_thorn = reg("scar_thorn",
 			() -> cerebral(EnumBloodTendency.FERRIC, 1, 1)
+					.withIronHeartCapacityBonus(2)
 					.withModifier(Attributes.ARMOR, "scar_thorn_armor", 1.0, AttributeModifier.Operation.ADD_VALUE)
 					.withModifier(Attributes.MOVEMENT_SPEED, "scar_thorn_ms", -0.05, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL));
 	public static final DeferredHolder<ScarDefinition, ScarDefinition> scar_anvil = reg("scar_anvil",
 			() -> cerebral(EnumBloodTendency.FERRIC, 2, 2)
+					.withIronHeartCapacityBonus(4)
 					.withModifier(Attributes.ARMOR, "scar_anvil_armor", 2.0, AttributeModifier.Operation.ADD_VALUE)
 					.withModifier(Attributes.ARMOR_TOUGHNESS, "scar_anvil_at", 1.0, AttributeModifier.Operation.ADD_VALUE)
 					.withModifier(Attributes.MOVEMENT_SPEED, "scar_anvil_ms", -0.10, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL));
 	public static final DeferredHolder<ScarDefinition, ScarDefinition> scar_crucible = reg("scar_crucible",
 			() -> cerebral(EnumBloodTendency.FERRIC, 3, 3)
+					.withIronHeartCapacityBonus(6)
 					.withModifier(Attributes.ARMOR, "scar_crucible_armor", 3.0, AttributeModifier.Operation.ADD_VALUE)
 					.withModifier(Attributes.ARMOR_TOUGHNESS, "scar_crucible_at", 2.0, AttributeModifier.Operation.ADD_VALUE)
 					.withModifier(Attributes.MOVEMENT_SPEED, "scar_crucible_ms", -0.15, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL)

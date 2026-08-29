@@ -5,6 +5,9 @@ import java.util.UUID;
 public final class PuppeteerSummonRules {
 	public static final int THREAD_CAPACITY = 256;
 	public static final int THREAD_PER_ITEM = 8;
+	public static final int SANGUINE_SPINNING_INTERVAL_TICKS = 20;
+	public static final double SANGUINE_SPINNING_BLOOD_COST = 10.0D;
+	public static final int SANGUINE_SPINNING_THREAD_CHARGE = 1;
 	public static final double BASE_COMMAND_RANGE = 16.0;
 	public static final double COMMAND_RANGE_PER_TETHER_LEVEL = 8.0;
 	public static final int THREAD_CAPACITY_PER_BOUND_COMMAND_LEVEL = 32;

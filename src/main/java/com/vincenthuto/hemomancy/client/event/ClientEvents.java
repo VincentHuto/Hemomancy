@@ -128,6 +128,7 @@ import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.manips.ChangeSelectedManipPacket;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.manips.UseManipKeyPacket;
 import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationType;
+import com.vincenthuto.hemomancy.common.manipulation.BodyIdiomRules;
 import com.vincenthuto.hemomancy.common.network.capa.unstained.UseStillArtKeyPacket;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.BloodCraftingKeyPressPacket;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.BloodFormationKeyPressPacket;
@@ -211,7 +212,7 @@ public class ClientEvents {
     public static final KeyMapping useManip = new KeyMapping("key.hemomancy.usemanip.desc", GLFW.GLFW_KEY_R,
             "key.hemomancy.category");
 	private static int manipulationChargeTicks;
-	private static boolean wasChargingManipulation;
+	private static boolean manipulationChargeSent;
     public static final KeyMapping useStillArt = new KeyMapping("key.hemomancy.usestillart.desc", GLFW.GLFW_KEY_R,
             "key.hemomancy.category");
     public static final KeyMapping selectStillArt = new KeyMapping("key.hemomancy.selectstillart.desc", GLFW.GLFW_KEY_Z,
@@ -236,7 +237,6 @@ public class ClientEvents {
 
     @SubscribeEvent
     public static void onClientTickPre(ClientTickEvent.Pre event) {
-        handleCommonClientTickInput();
         handleRadialMenuTick();
     }
 
@@ -390,7 +390,7 @@ public class ClientEvents {
 		Minecraft mc = Minecraft.getInstance();
 		if (mc.player == null) {
 			manipulationChargeTicks = 0;
-			wasChargingManipulation = false;
+			manipulationChargeSent = false;
 			return;
 		}
 		HemoCapabilityAccess.getKnownManipulations(mc.player).ifPresent(known -> {
@@ -399,22 +399,27 @@ public class ClientEvents {
 			if (charged) {
 				useManip.consumeClick();
 				if (useManip.isDown()) {
-					if (mc.player.hurtTime == mc.player.hurtDuration && manipulationChargeTicks > 0) {
+					if (manipulationChargeSent) return;
+					if (mc.player.hurtTime > 0 && mc.player.hurtTime == mc.player.hurtDuration
+							&& manipulationChargeTicks > 0) {
 						manipulationChargeTicks = com.vincenthuto.hemomancy.common.capability.player.shared.skill.BodyRefinementSkillRules
 								.retainedChargeTicks(manipulationChargeTicks,
 										SkillPointHelper.getNervesOfSteelLevel(mc.player));
 					}
 					manipulationChargeTicks++;
-					wasChargingManipulation = true;
-				} else if (wasChargingManipulation) {
-					PacketHandler.sendToServer(new UseManipKeyPacket(manipulationChargeTicks));
+					if (manipulationChargeTicks >= BodyIdiomRules.IRON_HEART_CHARGE_TICKS) {
+						PacketHandler.sendToServer(new UseManipKeyPacket(manipulationChargeTicks));
+						manipulationChargeSent = true;
+						manipulationChargeTicks = 0;
+					}
+				} else {
 					manipulationChargeTicks = 0;
-					wasChargingManipulation = false;
+					manipulationChargeSent = false;
 				}
 				return;
 			}
 			manipulationChargeTicks = 0;
-			wasChargingManipulation = false;
+			manipulationChargeSent = false;
 			if (!useManip.consumeClick() || selected == null) return;
 			if (selected.getName().equals("venous_travel")) mc.setScreen(new RadialChooseVeinScreen(known));
 			else PacketHandler.sendToServer(new UseManipKeyPacket(HLClientUtils.getPartialTicks()));
@@ -778,6 +783,7 @@ public class ClientEvents {
 			event.registerEntityRenderer(EntityInit.living_sickle_hook.get(), LivingSickleHookRenderer::new);
 			event.registerEntityRenderer(EntityInit.living_flail_head.get(), LivingFlailHeadProjectileRenderer::new);
 			event.registerEntityRenderer(EntityInit.vesper_scute_projectile.get(), VesperScuteProjectileRenderer::new);
+			event.registerEntityRenderer(EntityInit.veinwing_feather.get(), VeinwingFeatherRenderer::new);
             event.registerEntityRenderer(EntityInit.blood_needle.get(), BloodNeedleRenderer::new);
             event.registerEntityRenderer(EntityInit.blood_shot.get(), BloodShotRenderer::new);
             event.registerEntityRenderer(EntityInit.blood_bullet.get(), BloodBulletRenderer::new);

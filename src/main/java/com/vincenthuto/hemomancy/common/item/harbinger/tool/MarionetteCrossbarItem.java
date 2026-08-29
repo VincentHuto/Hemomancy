@@ -138,6 +138,11 @@ public class MarionetteCrossbarItem extends Item {
 	}
 
 	@Override
+	public boolean shouldCauseReequipAnimation(ItemStack oldStack, ItemStack newStack, boolean slotChanged) {
+		return slotChanged || !ItemStack.isSameItem(oldStack, newStack);
+	}
+
+	@Override
 	public void releaseUsing(ItemStack stack, Level level, LivingEntity entity, int timeLeft) {
 		int elapsed = getUseDuration(stack, entity) - timeLeft;
 		if (!level.isClientSide && entity instanceof ServerPlayer player && elapsed < RADIAL_HOLD_TICKS) {

@@ -56,7 +56,7 @@ public final class BodyIdiomEvents {
 
 		if (state.getIronHeartHealth() > 0.0F) {
 			BodyIdiomRules.IronHeartAbsorption result = BodyIdiomRules.absorbWithIronHearts(
-					state.getIronHeartHealth(), damage);
+					state.getIronHeartHealth(), damage, BodyIdiomRules.maxIronHeartHealth(player));
 			state.setIronHeartHealth(result.ironHeartHealth());
 			damage = result.remainingDamage();
 			if (state.getIronHeartHealth() == 0.0F) state.setIronHeartExpiryTick(0L);
@@ -70,12 +70,21 @@ public final class BodyIdiomEvents {
 	@SubscribeEvent
 	public static void onPlayerTick(PlayerTickEvent.Post event) {
 		if (!(event.getEntity() instanceof ServerPlayer player)) return;
+		reconcileIronHeartCapacity(player);
 		PowerGuardrailState state = HemoCapabilityAccess.getPowerGuardrails(player);
 		if (state.getIronHeartHealth() > 0.0F
 				&& player.level().getGameTime() >= state.getIronHeartExpiryTick()) {
 			state.clearIronHearts();
 			sync(player);
 		}
+	}
+
+	public static void reconcileIronHeartCapacity(ServerPlayer player) {
+		PowerGuardrailState state = HemoCapabilityAccess.getPowerGuardrails(player);
+		float maxIronHeartHealth = BodyIdiomRules.maxIronHeartHealth(player);
+		if (state.getIronHeartHealth() <= maxIronHeartHealth) return;
+		state.setIronHeartHealth(maxIronHeartHealth);
+		sync(player);
 	}
 
 	@SubscribeEvent

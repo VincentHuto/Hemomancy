@@ -19,6 +19,7 @@ import com.vincenthuto.hemomancy.common.testing.DevTestHooks;
 import com.vincenthuto.hemomancy.common.worldgen.ChamberOfWillManager;
 import com.vincenthuto.hemomancy.config.HemoConfig;
 import com.vincenthuto.hutoslib.common.data.book.BookPlaceboReloadListener;
+import com.vincenthuto.hutoslib.common.effectsource.EffectSourceInference;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -72,6 +73,7 @@ public class Hemomancy {
      * NeoForge 1.21: the mod-event bus is injected into the constructor automatically.
      */
     public Hemomancy(IEventBus modEventBus) {
+        EffectSourceInference.registerPackageOwner("com.vincenthuto.hemomancy.", MOD_ID);
         forcesLoaded = ModList.get().isLoaded("forcesofreality");
         instance = this;
         IEventBus forgeBus = NeoForge.EVENT_BUS;

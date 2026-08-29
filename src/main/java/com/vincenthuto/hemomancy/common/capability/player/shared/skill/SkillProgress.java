@@ -80,7 +80,8 @@ public class SkillProgress implements INBTSerializable<CompoundTag> {
 	public void setSkill(SkillPoint skill, EnumSkillStates state, int level) {
 		if (skill == null) return;
 		SkillState old = skills.get(skill.getId());
-		boolean enabled = old != null ? old.enabled() : state == EnumSkillStates.UNLOCKED;
+		boolean enabled = old != null && old.state() == EnumSkillStates.UNLOCKED
+				? old.enabled() : state == EnumSkillStates.UNLOCKED;
 		skills.put(skill.getId(), new SkillState(state, clampLevel(skill, level), enabled));
 	}
 

@@ -5,6 +5,7 @@ import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.init.ManipulationInit;
 import com.vincenthuto.hemomancy.common.manipulation.BodyIdiomEvents;
+import com.vincenthuto.hemomancy.common.manipulation.BodyIdiomRules;
 import io.netty.channel.embedded.EmbeddedChannel;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
@@ -43,6 +44,41 @@ public final class BodyIdiomGameTests {
 			helper.assertTrue(Math.abs(event.getAmount() - 1.0F) < 0.001F,
 					"Iron Heart did not absorb damage before health: " + event.getAmount());
 			helper.assertTrue(state.getIronHeartHealth() == 0.0F, "Spent Iron Heart remained on the body");
+			helper.succeed();
+		} finally {
+			player.discard();
+		}
+	}
+
+	@GameTest(templateNamespace = "minecraft", template = EMPTY_TEMPLATE, timeoutTicks = 40)
+	public static void standardFerricScarsStackIronHeartCapacity(GameTestHelper helper) {
+		ServerPlayer player = player(helper);
+		try {
+			var scars = HemoCapabilityAccess.requireScarState(player);
+			scars.activateCerebralScar(Hemomancy.rloc("scar_thorn"));
+			scars.activateCerebralScar(Hemomancy.rloc("scar_crucible"));
+			scars.activateCerebralScar(Hemomancy.rloc("scar_blood_honed"));
+			helper.assertTrue(BodyIdiomRules.maxIronHeartHealth(player) == 26.0F,
+					"Tier I and III Ferric scars did not add eight hearts without Blood-Honed");
+			helper.succeed();
+		} finally {
+			player.discard();
+		}
+	}
+
+	@GameTest(templateNamespace = "minecraft", template = EMPTY_TEMPLATE, timeoutTicks = 40)
+	public static void removingFerricScarTrimsIronHeartsToNewCapacity(GameTestHelper helper) {
+		ServerPlayer player = player(helper);
+		try {
+			var scars = HemoCapabilityAccess.requireScarState(player);
+			scars.activateCerebralScar(Hemomancy.rloc("scar_thorn"));
+			scars.activateCerebralScar(Hemomancy.rloc("scar_crucible"));
+			var state = HemoCapabilityAccess.getPowerGuardrails(player);
+			state.setIronHeartHealth(26.0F);
+			scars.deactivateCerebralScar(Hemomancy.rloc("scar_crucible"));
+			BodyIdiomEvents.reconcileIronHeartCapacity(player);
+			helper.assertTrue(state.getIronHeartHealth() == 14.0F,
+					"Removing the Tier III Ferric scar did not trim Iron Hearts to the Tier I cap");
 			helper.succeed();
 		} finally {
 			player.discard();

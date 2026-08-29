@@ -35,8 +35,9 @@ public class IronheartedManip extends BloodManipulation {
 					.withStyle(ChatFormatting.GRAY), true);
 			return false;
 		}
+		float maxIronHeartHealth = BodyIdiomRules.maxIronHeartHealth(player);
 		if (HemoCapabilityAccess.getPowerGuardrails(player).getIronHeartHealth()
-				>= BodyIdiomRules.MAX_IRON_HEART_HEALTH) {
+				>= maxIronHeartHealth) {
 			player.displayClientMessage(Component.translatable("message.hemomancy.ironhearted.full")
 					.withStyle(ChatFormatting.DARK_GRAY), true);
 			return false;
@@ -48,7 +49,8 @@ public class IronheartedManip extends BloodManipulation {
 	public void getAction(Player player, Level world, ItemStack heldItemMainhand, BlockPos position) {
 		if (!(player instanceof ServerPlayer serverPlayer) || !(world instanceof ServerLevel level)) return;
 		PowerGuardrailState state = HemoCapabilityAccess.getPowerGuardrails(player);
-		state.setIronHeartHealth(BodyIdiomRules.addIronHeartHealth(state.getIronHeartHealth()));
+		state.setIronHeartHealth(BodyIdiomRules.addIronHeartHealth(state.getIronHeartHealth(),
+				BodyIdiomRules.maxIronHeartHealth(player)));
 		state.setIronHeartExpiryTick(world.getGameTime() + BodyIdiomRules.IRON_HEART_DURATION_TICKS);
 		BodyIdiomEvents.sync(serverPlayer);
 		level.sendParticles(ParticleTypes.CRIMSON_SPORE, player.getX(), player.getY() + 1.0D, player.getZ(),

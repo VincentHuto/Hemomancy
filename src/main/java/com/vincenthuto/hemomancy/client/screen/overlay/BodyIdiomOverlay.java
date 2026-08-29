@@ -1,21 +1,23 @@
 package com.vincenthuto.hemomancy.client.screen.overlay;
 
+import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.client.event.ClientEvents;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.manipulation.BodyIdiomRules;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
+import net.minecraft.world.effect.MobEffects;
 
 public final class BodyIdiomOverlay {
-	private static final String[] HEART = {
-			" ## ## ",
-			"#######",
-			"#######",
-			" ##### ",
-			"  ###  ",
-			"   #   "
-	};
+	private static final ResourceLocation IRON_HEART_EMPTY =
+			Hemomancy.rloc("body_idiom/iron_heart_empty");
+	private static final ResourceLocation IRON_HEART_FULL =
+			Hemomancy.rloc("textures/gui/body_idiom/iron_heart_full.png");
+	private static final ResourceLocation IRON_HEART_PULSE =
+			Hemomancy.rloc("textures/gui/body_idiom/iron_heart_pulse.png");
 
 	private BodyIdiomOverlay() {
 	}
@@ -24,15 +26,25 @@ public final class BodyIdiomOverlay {
 		Minecraft minecraft = Minecraft.getInstance();
 		if (minecraft.player == null || minecraft.options.hideGui) return;
 		var state = HemoCapabilityAccess.getPowerGuardrails(minecraft.player);
+		float maxIronHeartHealth = BodyIdiomRules.maxIronHeartHealth(minecraft.player);
 		float charge = Mth.clamp(ClientEvents.getManipulationChargeTicks()
 				/ (float) BodyIdiomRules.IRON_HEART_CHARGE_TICKS, 0.0F, 1.0F);
-		float shownIron = state.getIronHeartHealth() + charge * BodyIdiomRules.IRON_HEART_HEALTH_PER_CAST;
+		float storedIron = state.getIronHeartHealth();
+		float shownIron = Mth.clamp(storedIron
+				+ charge * BodyIdiomRules.IRON_HEART_HEALTH_PER_CAST, 0.0F, maxIronHeartHealth);
 		int x = width / 2 - 91;
-		int y = height - 50;
+		int y = height - 39;
 		if (shownIron > 0.0F) {
-			for (int heart = 0; heart < 5; heart++) {
-				float fill = Mth.clamp((shownIron - heart * 2.0F) / 2.0F, 0.0F, 1.0F);
-				drawIronHeart(graphics, x + heart * 9, y, fill,
+			TextureAtlasSprite emptyHeart = minecraft.getGuiSprites().getSprite(IRON_HEART_EMPTY);
+			for (int heart = 0; heart < BodyIdiomRules.ironHeartSlots(shownIron); heart++) {
+				float shownFill = Mth.clamp((shownIron - heart * BodyIdiomRules.HEALTH_PER_HEART)
+						/ BodyIdiomRules.HEALTH_PER_HEART, 0.0F, 1.0F);
+				float storedFill = Mth.clamp((storedIron - heart * BodyIdiomRules.HEALTH_PER_HEART)
+						/ BodyIdiomRules.HEALTH_PER_HEART, 0.0F, 1.0F);
+				var formation = BodyIdiomRules.ironHeartFormation(storedFill, shownFill);
+				int heartY = BodyIdiomRules.ironHeartY(y, heart, minecraft.player.hasEffect(MobEffects.REGENERATION),
+						minecraft.gui.getGuiTicks(), Math.max(minecraft.player.getMaxHealth(), minecraft.player.getHealth()));
+				drawIronHeart(graphics, emptyHeart, x + heart * 8, heartY, formation.emptyAlpha(), formation.fill(),
 						minecraft.level == null ? 0L : minecraft.level.getGameTime());
 			}
 		}
@@ -52,22 +64,13 @@ public final class BodyIdiomOverlay {
 		}
 	}
 
-	private static void drawIronHeart(GuiGraphics graphics, int x, int y, float fill, long gameTime) {
-		int filledColumns = Math.round(fill * 7.0F);
-		boolean pulse = gameTime / 5L % 2L == 0L;
-		for (int row = 0; row < HEART.length; row++) {
-			for (int column = 0; column < HEART[row].length(); column++) {
-				if (HEART[row].charAt(column) != '#') continue;
-				boolean edge = row == 0 || row == HEART.length - 1 || column == 0
-						|| column == HEART[row].length() - 1
-						|| HEART[Math.max(0, row - 1)].charAt(column) != '#'
-						|| HEART[Math.min(HEART.length - 1, row + 1)].charAt(column) != '#';
-				int color = edge ? 0xFF28262D : column < filledColumns ? 0xFFA7A3A8 : 0xFF4C4850;
-				if (fill > 0.0F && column == 3 && row >= 1 && row <= 4) {
-					color = pulse ? 0xFFD3444F : 0xFFA32934;
-				}
-				graphics.fill(x + column, y + row, x + column + 1, y + row + 1, color);
-			}
-		}
+	private static void drawIronHeart(GuiGraphics graphics, TextureAtlasSprite emptyHeart, int x, int y,
+			float emptyAlpha, float fill, long gameTime) {
+		graphics.blit(x, y, 0, 9, 9, emptyHeart, 1.0F, 1.0F, 1.0F, emptyAlpha);
+		int filledWidth = Mth.clamp(Math.round(fill * 9.0F), 0, 9);
+		if (filledWidth == 0) return;
+		boolean pulse = BodyIdiomRules.ironHeartPulse(gameTime);
+		graphics.blit(pulse ? IRON_HEART_PULSE : IRON_HEART_FULL,
+				x, y, 0, 0, filledWidth, 9, 9, 9);
 	}
 }

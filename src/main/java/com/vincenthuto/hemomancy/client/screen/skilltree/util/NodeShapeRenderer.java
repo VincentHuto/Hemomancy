@@ -225,9 +225,8 @@ public final class NodeShapeRenderer {
 	//  Hexagon (flat-topped)
 
 	private static void drawHexagonFill(RectSink sink, int cx, int cy, int hs, int color) {
-		// Flat-topped hex: half-height = hs, half-width at equator = hs,
-		// top/bottom flat edges at hs/2 wide.
-		for (int row = -hs; row <= hs; row++) {
+		int halfHeight = hexHalfHeight(hs);
+		for (int row = -halfHeight; row <= halfHeight; row++) {
 			int halfW = hexHalfWidth(row, hs);
 			if (halfW <= 0) continue;
 			sink.fill(cx - halfW, cy + row, cx + halfW, cy + row + 1, color);
@@ -235,49 +234,41 @@ public final class NodeShapeRenderer {
 	}
 
 	private static void drawHexagonOutline(RectSink sink, int cx, int cy, int hs, int color) {
-		for (int row = -hs; row <= hs; row++) {
+		int halfHeight = hexHalfHeight(hs);
+		for (int row = -halfHeight; row <= halfHeight; row++) {
 			int halfW = hexHalfWidth(row, hs);
 			if (halfW <= 0) continue;
-			int nextHalfW = (row < hs) ? hexHalfWidth(row + 1, hs) : 0;
+			int connectedHalfW = row == 0 ? halfW : hexHalfWidth(row - Integer.signum(row), hs);
 			// Edge pixels
-			sink.fill(cx - halfW, cy + row, cx - halfW + 1, cy + row + 1, color);
-			sink.fill(cx + halfW - 1, cy + row, cx + halfW, cy + row + 1, color);
+			sink.fill(cx - connectedHalfW, cy + row, cx - halfW + 1, cy + row + 1, color);
+			sink.fill(cx + halfW - 1, cy + row, cx + connectedHalfW, cy + row + 1, color);
 			// Top & bottom flat edges
-			if (row == -hs || row == hs) {
-				sink.fill(cx - halfW, cy + row, cx + halfW, cy + row + 1, color);
-			}
-			// If width changes, fill connecting pixels
-			if (halfW != nextHalfW && row != hs) {
-				int min = Math.min(halfW, nextHalfW);
-				int max = Math.max(halfW, nextHalfW);
-				sink.fill(cx - max, cy + row, cx - min, cy + row + 1, color);
-				sink.fill(cx + min, cy + row, cx + max, cy + row + 1, color);
+			if (row == -halfHeight || row == halfHeight) {
+				sink.fill(cx - connectedHalfW, cy + row, cx + connectedHalfW, cy + row + 1, color);
 			}
 		}
 	}
 
 	private static boolean isInsideHexagon(double mx, double my, int cx, int cy, int hs) {
 		int row = (int) Math.round(my - cy);
-		if (Math.abs(row) > hs) return false;
+		if (Math.abs(row) > hexHalfHeight(hs)) return false;
 		int halfW = hexHalfWidth(row, hs);
 		return Math.abs(mx - cx) <= halfW;
 	}
 
 	/**
 	 * Flat-topped hexagon half-width at a given row offset from centre.
-	 * Full width ({@code hs}) at equator (|row| &lt;= hs/2), then linearly
-	 * tapers to approximately {@code hs/2} at the top/bottom tips.
+	 * Tapers continuously from {@code hs} at the equator to approximately
+	 * {@code hs / 2} at the flat top and bottom edges.
 	 */
 	private static int hexHalfWidth(int row, int hs) {
-		int absRow = Math.abs(row);
-		// The flat equator zone spans the middle third (absRow <= hs/2),
-		// then tapers linearly to ~hs/2 at the top/bottom.
-		if (absRow <= hs / 2) {
-			return hs;
-		}
-		// Linear taper from hs → hs/2 over the remaining rows
-		float t = (float)(absRow - hs / 2) / (float)(hs - hs / 2);
-		return Math.max(1, (int)(hs * (1f - 0.5f * t)));
+		int halfHeight = hexHalfHeight(hs);
+		if (Math.abs(row) > halfHeight) return 0;
+		return Math.max(1, hs - Math.abs(row) * hs / (2 * halfHeight));
+	}
+
+	private static int hexHalfHeight(int hs) {
+		return Math.max(1, Math.round(hs * 0.8660254F));
 	}
 
 	@FunctionalInterface

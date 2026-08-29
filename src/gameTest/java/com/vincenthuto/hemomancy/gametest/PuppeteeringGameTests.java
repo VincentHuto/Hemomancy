@@ -8,6 +8,8 @@ import com.vincenthuto.hemomancy.common.entity.summon.BoundPuppeteerSummon;
 import com.vincenthuto.hemomancy.common.entity.summon.BoundSummonBehavior;
 import com.vincenthuto.hemomancy.common.entity.projectile.BloodNeedleEntity;
 import com.vincenthuto.hemomancy.common.entity.projectile.BloodShotEntity;
+import com.vincenthuto.hemomancy.common.entity.projectile.VeinwingFeatherEntity;
+import com.vincenthuto.hemomancy.common.event.ToggleableSkillEvents;
 import com.vincenthuto.hemomancy.common.init.BlockInit;
 import com.vincenthuto.hemomancy.common.init.EntityInit;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
@@ -30,17 +32,20 @@ import net.minecraft.server.level.ClientInformation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.monster.Zombie;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.ItemCooldowns;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.GameType;
 import net.minecraft.world.level.block.Blocks;
 import net.neoforged.neoforge.gametest.GameTestHolder;
 import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
+import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 
 import java.util.UUID;
 
@@ -68,6 +73,124 @@ public final class PuppeteeringGameTests {
 		helper.assertTrue(spindle.getItem(PuppeteersSpindleBlockEntity.SLOT_THREAD).isEmpty(),
 				"Accepted Thread item must be consumed");
 		helper.succeed();
+	}
+
+	@GameTest(templateNamespace = "minecraft", template = EMPTY_TEMPLATE, timeoutTicks = 40)
+	public static void sanguineSpinningConvertsBloodIntoHeldCrossbarCharge(GameTestHelper helper) {
+		ServerPlayer owner = testPlayer(helper);
+		try {
+			HemoCapabilityAccess.requireSkillProgress(owner).setSkill(
+					SkillPointInit.skill_sanguine_spinning, EnumSkillStates.UNLOCKED, 1);
+			var blood = HemoCapabilityAccess.requireBloodVolume(owner);
+			blood.setActive(true);
+			blood.setBloodVolume(100.0D);
+			ItemStack crossbar = attunedCrossbar(owner, 0);
+			ItemStack offhandCrossbar = attunedCrossbar(owner, 0);
+			owner.setItemInHand(InteractionHand.MAIN_HAND, crossbar);
+			owner.setItemInHand(InteractionHand.OFF_HAND, offhandCrossbar);
+
+			owner.tickCount = 19;
+			ToggleableSkillEvents.playerTick(new PlayerTickEvent.Post(owner));
+			helper.assertTrue(MarionetteCrossbarItem.getThread(crossbar) == 0,
+					"Sanguine Spinning must wait for its twenty-tick interval");
+			owner.tickCount = 20;
+			ToggleableSkillEvents.playerTick(new PlayerTickEvent.Post(owner));
+			helper.assertTrue(MarionetteCrossbarItem.getThread(crossbar) == 1,
+					"Twenty server ticks must add exactly one Crossbar charge");
+			helper.assertTrue(MarionetteCrossbarItem.getThread(offhandCrossbar) == 0,
+					"Sanguine Spinning must prefer an eligible main-hand Crossbar");
+			helper.assertTrue(Math.abs(blood.getBloodVolume() - 90.0D) < 0.001D,
+					"One winding pulse must spend exactly ten blood");
+			helper.succeed();
+		} finally {
+			removePlayer(owner);
+		}
+	}
+
+	@GameTest(templateNamespace = "minecraft", template = EMPTY_TEMPLATE, timeoutTicks = 40)
+	public static void crossbarChargeSyncDoesNotCauseReequipAnimation(GameTestHelper helper) {
+		ItemStack before = new ItemStack(ItemInit.marionette_crossbar.get());
+		ItemStack after = before.copy();
+		MarionetteCrossbarItem.addThread(after, 1);
+
+		helper.assertTrue(!before.getItem().shouldCauseReequipAnimation(before, after, false),
+				"A same-slot Crossbar charge update must not trigger re-equip animation");
+		helper.assertTrue(before.getItem().shouldCauseReequipAnimation(before, after, true),
+				"Actually changing the equipped slot must retain the re-equip animation");
+		helper.assertTrue(before.getItem().shouldCauseReequipAnimation(before, new ItemStack(Items.STICK), false),
+				"Replacing the Crossbar with another item must retain the re-equip animation");
+		helper.succeed();
+	}
+
+	@GameTest(templateNamespace = "minecraft", template = EMPTY_TEMPLATE, timeoutTicks = 40)
+	public static void sanguineSpinningRequiresAnEnabledOwnedHeldCrossbarWithSpace(GameTestHelper helper) {
+		ServerPlayer owner = testPlayer(helper);
+		ServerPlayer stranger = testPlayer(helper);
+		try {
+			var progress = HemoCapabilityAccess.requireSkillProgress(owner);
+			progress.setSkill(SkillPointInit.skill_sanguine_spinning, EnumSkillStates.UNLOCKED, 1);
+			var blood = HemoCapabilityAccess.requireBloodVolume(owner);
+			blood.setActive(true);
+			blood.setBloodVolume(100.0D);
+			ItemStack crossbar = attunedCrossbar(owner, 0);
+			owner.getInventory().setItem(9, crossbar);
+
+			helper.assertTrue(!ToggleableSkillEvents.trySanguineSpinning(owner),
+					"A carried but unheld Crossbar must not be wound");
+			owner.getInventory().setItem(9, ItemStack.EMPTY);
+			owner.setItemInHand(InteractionHand.MAIN_HAND, crossbar);
+			progress.toggleEnabled(SkillPointInit.skill_sanguine_spinning);
+			helper.assertTrue(!ToggleableSkillEvents.trySanguineSpinning(owner),
+					"A disabled Sanguine Spinning skill must not wind");
+			progress.toggleEnabled(SkillPointInit.skill_sanguine_spinning);
+			MarionetteCrossbarItem.addThread(crossbar, MarionetteCrossbarItem.getThreadCapacity(crossbar));
+			helper.assertTrue(!ToggleableSkillEvents.trySanguineSpinning(owner),
+					"A full Crossbar must not consume blood");
+			owner.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(ItemInit.marionette_crossbar.get()));
+			helper.assertTrue(!ToggleableSkillEvents.trySanguineSpinning(owner),
+					"An unattuned Crossbar must not be wound or bound");
+			ItemStack foreign = attunedCrossbar(stranger, 0);
+			owner.setItemInHand(InteractionHand.MAIN_HAND, foreign);
+			helper.assertTrue(!ToggleableSkillEvents.trySanguineSpinning(owner),
+					"A foreign Crossbar must not be wound");
+			helper.assertTrue(Math.abs(blood.getBloodVolume() - 100.0D) < 0.001D,
+					"Rejected winding attempts must not spend blood");
+			helper.succeed();
+		} finally {
+			removePlayer(owner);
+			removePlayer(stranger);
+		}
+	}
+
+	@GameTest(templateNamespace = "minecraft", template = EMPTY_TEMPLATE, timeoutTicks = 40)
+	public static void sanguineSpinningRespectsBloodAvailabilityAndSanguineReserve(GameTestHelper helper) {
+		ServerPlayer owner = testPlayer(helper);
+		try {
+			var progress = HemoCapabilityAccess.requireSkillProgress(owner);
+			progress.setSkill(SkillPointInit.skill_sanguine_spinning, EnumSkillStates.UNLOCKED, 1);
+			var blood = HemoCapabilityAccess.requireBloodVolume(owner);
+			blood.setActive(true);
+			ItemStack crossbar = attunedCrossbar(owner, 0);
+			owner.setItemInHand(InteractionHand.MAIN_HAND, crossbar);
+
+			blood.setBloodVolume(100.0D);
+			blood.setActive(false);
+			helper.assertTrue(!ToggleableSkillEvents.trySanguineSpinning(owner),
+					"Inactive blood must not wind the Crossbar");
+			blood.setActive(true);
+			blood.setBloodVolume(9.0D);
+			helper.assertTrue(!ToggleableSkillEvents.trySanguineSpinning(owner),
+					"Less than ten blood must not produce partial charge");
+			progress.setSkill(SkillPointInit.skill_sanguine_reserve, EnumSkillStates.UNLOCKED, 1);
+			blood.setBloodVolume(blood.getMaxBloodVolume() * 0.15D);
+			helper.assertTrue(!ToggleableSkillEvents.trySanguineSpinning(owner),
+					"Sanguine Reserve must protect its fifteen-percent floor");
+			helper.assertTrue(MarionetteCrossbarItem.getThread(crossbar) == 0,
+					"Rejected blood payments must not add Crossbar charge");
+			helper.succeed();
+		} finally {
+			removePlayer(owner);
+		}
 	}
 
 	@GameTest(templateNamespace = "minecraft", template = EMPTY_TEMPLATE, timeoutTicks = 40)
@@ -253,6 +376,70 @@ public final class PuppeteeringGameTests {
 			} finally {
 				summon.discard();
 				removePlayer(owner);
+			}
+		});
+	}
+
+	@GameTest(templateNamespace = "minecraft", template = EMPTY_TEMPLATE, timeoutTicks = 40)
+	public static void veinwingVultureFiresAFeatherVolleyBeforeClosingToMelee(GameTestHelper helper) {
+		ServerPlayer caster = testPlayer(helper);
+		caster.setPos(net.minecraft.world.phys.Vec3.atCenterOf(helper.absolutePos(new BlockPos(12, 2, 2))));
+		Mob vulture = PuppeteerSummonFactory.createTrial(learnVulture(caster), helper.getLevel(), caster,
+				helper.absolutePos(new BlockPos(1, 3, 2))).orElseThrow();
+		vulture.setTarget(caster);
+		helper.getLevel().addFreshEntity(vulture);
+
+		helper.runAfterDelay(5, () -> {
+			try {
+				int volleySize = helper.getLevel().getEntitiesOfClass(VeinwingFeatherEntity.class,
+						vulture.getBoundingBox().inflate(24.0), projectile -> projectile.getOwner() == vulture).size();
+				helper.assertTrue(volleySize >= 4 && volleySize <= 6,
+						"Veinwing Vulture must fire one 4-6 feather volley at range; found " + volleySize);
+				helper.succeed();
+			} finally {
+				vulture.discard();
+				removePlayer(caster);
+			}
+		});
+	}
+
+	@GameTest(templateNamespace = "minecraft", template = EMPTY_TEMPLATE, timeoutTicks = 140)
+	public static void veinwingFeathersEmbedStackAndRestoreMaxHealthWhenTheyExpire(GameTestHelper helper) {
+		Mob vulture = EntityInit.veinwing_vulture.get().create(helper.getLevel());
+		Zombie target = EntityType.ZOMBIE.create(helper.getLevel());
+		helper.assertTrue(vulture != null && target != null, "Veinwing embed fixtures must spawn");
+		vulture.setPos(net.minecraft.world.phys.Vec3.atCenterOf(helper.absolutePos(new BlockPos(1, 2, 2))));
+		target.setPos(net.minecraft.world.phys.Vec3.atCenterOf(helper.absolutePos(new BlockPos(4, 2, 2))));
+		target.setNoAi(true);
+		helper.getLevel().addFreshEntity(target);
+		for (int i = 0; i < 2; i++) {
+			VeinwingFeatherEntity feather = new VeinwingFeatherEntity(helper.getLevel(), vulture);
+			feather.setPos(target.getX() - 1.0D, target.getY(0.45D + i * 0.1D), target.getZ());
+			feather.shoot(1.0D, 0.0D, 0.0D, 1.0F, 0.0F);
+			helper.getLevel().addFreshEntity(feather);
+		}
+
+		helper.runAfterDelay(4, () -> {
+			int embedded = helper.getLevel().getEntitiesOfClass(VeinwingFeatherEntity.class,
+					target.getBoundingBox().inflate(2.0D), Entity::isAlive).size();
+			helper.assertTrue(embedded == 2, "Both hit feathers must remain visibly embedded; found " + embedded);
+			helper.assertTrue(Math.abs(target.getMaxHealth() - 18.0F) < 0.001F,
+					"Two embedded feathers must remove two max health; found " + target.getMaxHealth());
+			target.setPos(target.getX() + 2.0D, target.getY(), target.getZ());
+		});
+		helper.runAfterDelay(6, () -> {
+			int attached = helper.getLevel().getEntitiesOfClass(VeinwingFeatherEntity.class,
+					target.getBoundingBox().inflate(2.0D), Entity::isAlive).size();
+			helper.assertTrue(attached == 2, "Embedded feathers must follow the struck mob");
+		});
+		helper.runAfterDelay(110, () -> {
+			try {
+				helper.assertTrue(Math.abs(target.getMaxHealth() - 20.0F) < 0.001F,
+						"Expired feathers must restore the mob's original max health");
+				helper.succeed();
+			} finally {
+				vulture.discard();
+				target.discard();
 			}
 		});
 	}

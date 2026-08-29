@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.entity.summon;
 
+import com.vincenthuto.hemomancy.common.entity.projectile.VeinwingFeatherEntity;
 import com.vincenthuto.hemomancy.common.summon.PuppeteerSummonRules;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -11,6 +12,8 @@ import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.monster.Vex;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
@@ -21,6 +24,9 @@ import java.util.UUID;
 
 public class VeinwingVultureEntity extends Vex implements BoundPuppeteerSummon {
 	private static final int ATTACK_COOLDOWN_TICKS = 15;
+	private static final int VOLLEY_COOLDOWN_TICKS = 50;
+	private static final double VOLLEY_MIN_RANGE = 3.5;
+	private static final double VOLLEY_MAX_RANGE = 14.0;
 	private static final EntityDataAccessor<Optional<UUID>> DATA_OWNER_UUID =
 			SynchedEntityData.defineId(VeinwingVultureEntity.class, EntityDataSerializers.OPTIONAL_UUID);
 	private static final EntityDataAccessor<Optional<UUID>> DATA_CROSSBAR_UUID =
@@ -34,6 +40,7 @@ public class VeinwingVultureEntity extends Vex implements BoundPuppeteerSummon {
 	private static final EntityDataAccessor<Optional<UUID>> DATA_TRIAL_CASTER_UUID =
 			SynchedEntityData.defineId(VeinwingVultureEntity.class, EntityDataSerializers.OPTIONAL_UUID);
 	private int attackCooldown;
+	private int volleyCooldown;
 
 	public VeinwingVultureEntity(EntityType<? extends Vex> type, Level level) {
 		super(type, level);
@@ -87,6 +94,7 @@ public class VeinwingVultureEntity extends Vex implements BoundPuppeteerSummon {
 
 	private void tickVultureCombat() {
 		if (attackCooldown > 0) attackCooldown--;
+		if (volleyCooldown > 0) volleyCooldown--;
 		LivingEntity target = getTarget();
 		if (target == null || !target.isAlive() || !canAttack(target)) {
 			return;
@@ -98,11 +106,31 @@ public class VeinwingVultureEntity extends Vex implements BoundPuppeteerSummon {
 			setDeltaMovement(getDeltaMovement().scale(0.82).add(delta.normalize().scale(0.11)));
 		}
 		double attackReach = getBbWidth() * 2.0 + target.getBbWidth() + 0.75;
-		if (attackCooldown == 0 && distanceToSqr(target) <= attackReach * attackReach) {
+		double distanceSquared = distanceToSqr(target);
+		if (volleyCooldown == 0 && distanceSquared >= VOLLEY_MIN_RANGE * VOLLEY_MIN_RANGE
+				&& distanceSquared <= VOLLEY_MAX_RANGE * VOLLEY_MAX_RANGE && hasLineOfSight(target)) {
+			fireFeatherVolley(target);
+			volleyCooldown = VOLLEY_COOLDOWN_TICKS;
+		}
+		if (attackCooldown == 0 && distanceSquared <= attackReach * attackReach) {
 			swing(InteractionHand.MAIN_HAND);
 			doHurtTarget(target);
 			attackCooldown = ATTACK_COOLDOWN_TICKS;
 		}
+	}
+
+	private void fireFeatherVolley(LivingEntity target) {
+		int count = 4 + random.nextInt(3);
+		for (int i = 0; i < count; i++) {
+			VeinwingFeatherEntity feather = new VeinwingFeatherEntity(level(), this);
+			double dx = target.getX() - getX();
+			double dz = target.getZ() - getZ();
+			double horizontal = Math.sqrt(dx * dx + dz * dz);
+			double dy = target.getY(0.55) - feather.getY() + horizontal * 0.02;
+			feather.shoot(dx, dy, dz, 1.45F, 7.0F);
+			level().addFreshEntity(feather);
+		}
+		level().playSound(null, blockPosition(), SoundEvents.ARROW_SHOOT, SoundSource.HOSTILE, 0.7F, 1.35F);
 	}
 
 	@Override

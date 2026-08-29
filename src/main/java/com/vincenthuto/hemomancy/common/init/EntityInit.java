@@ -674,6 +674,11 @@ public class EntityInit {
 					() -> EntityType.Builder.<VesperScuteProjectileEntity>of(VesperScuteProjectileEntity::new, MobCategory.MISC)
 							.sized(0.65F, 0.24F).clientTrackingRange(12).updateInterval(1)
 							.build(Hemomancy.rloc("vesper_scute_projectile").toString()));
+	public static final DeferredHolder<EntityType<?>, EntityType<VeinwingFeatherEntity>> veinwing_feather =
+			ENTITY_TYPES.register("veinwing_feather",
+					() -> EntityType.Builder.<VeinwingFeatherEntity>of(VeinwingFeatherEntity::new, MobCategory.MISC)
+							.sized(0.25F, 0.25F).clientTrackingRange(8).updateInterval(1)
+							.build(Hemomancy.rloc("veinwing_feather").toString()));
 
     public static final DeferredHolder<EntityType<?>, EntityType<BloodNeedleEntity>> blood_needle = ENTITY_TYPES.register(
             "blood_needle",

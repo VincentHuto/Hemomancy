@@ -1,17 +1,16 @@
 package com.vincenthuto.hemomancy.client.render.entity.summon;
 
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.vincenthuto.hemomancy.client.model.entity.summon.SanguineHoundModel;
 import com.vincenthuto.hemomancy.common.entity.summon.SanguineHoundEntity;
-import net.minecraft.client.model.WolfModel;
-import net.minecraft.client.model.geom.ModelLayers;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.MobRenderer;
 import net.minecraft.resources.ResourceLocation;
 
-public class SanguineHoundRenderer extends MobRenderer<SanguineHoundEntity, WolfModel<SanguineHoundEntity>> {
+public class SanguineHoundRenderer extends MobRenderer<SanguineHoundEntity, SanguineHoundModel> {
 	public SanguineHoundRenderer(EntityRendererProvider.Context context) {
-		super(context, new WolfModel<>(context.bakeLayer(ModelLayers.WOLF)), 0.45F);
+		super(context, new SanguineHoundModel(context.bakeLayer(SanguineHoundModel.LAYER_LOCATION)), 0.55F);
 	}
 
 	@Override

@@ -525,6 +525,7 @@ public class SynapticLoadoutScreen extends Screen {
 			case "conjure_spear" -> "memory_living_spear_overlay";
 			case "conjure_staff" -> "memory_living_staff_overlay";
 			case "conjure_torch" -> "memory_living_torch_overlay";
+			case "ironhearted" -> "memory_iron_retort_overlay";
 			default -> "memory_" + manipName + "_overlay";
 		};
 		return Hemomancy.rloc("textures/item/memories/" + texture + ".png");

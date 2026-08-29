@@ -129,6 +129,7 @@ public class LayerEvents {
 		event.registerLayerDefinition(GoreboundHulkModel.LAYER_LOCATION, GoreboundHulkModel::createBodyLayer);
 		event.registerLayerDefinition(MnemonistPuppetModel.LAYER_LOCATION, MnemonistPuppetModel::createBodyLayer);
 		event.registerLayerDefinition(ScarletMummerModel.LAYER_LOCATION, ScarletMummerModel::createBodyLayer);
+		event.registerLayerDefinition(SanguineHoundModel.LAYER_LOCATION, SanguineHoundModel::createBodyLayer);
 		event.registerLayerDefinition(MorphlingPolypModel.LAYER_LOCATION, MorphlingPolypModel::createBodyLayer);
 		event.registerLayerDefinition(MorphlingPolypLayerModel.LAYER_LOCATION, MorphlingPolypLayerModel::createBodyLayer);
 		event.registerLayerDefinition(MorphlingAttachmentExampleModel.HEAD_LAYER, MorphlingAttachmentExampleModel::createBodyLayer);

@@ -28,9 +28,12 @@ public final class ToggleableSkillRulesTest {
 	}
 
 	private static void toggleableSkillsAreEnabledWhenFirstUnlocked() {
+		SkillPoint parent = new SkillPoint(899, "test_parent", 0, 1,
+				EnumSkillStates.UNLOCKED, null);
 		SkillPoint technique = new SkillPoint(900, "test_technique", 0, 1,
-				EnumSkillStates.LOCKED, null).setToggleable(true);
+				EnumSkillStates.LOCKED, parent).setToggleable(true);
 		SkillProgress progress = new SkillProgress();
+		assertFalse("locked technique is disabled", progress.isEnabled(technique));
 		progress.setSkill(technique, EnumSkillStates.UNLOCKED, 1);
 		assertTrue("newly unlocked technique defaults on", progress.isEnabled(technique));
 		assertTrue("toggle changes enabled state", progress.toggleEnabled(technique));

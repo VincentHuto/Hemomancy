@@ -321,7 +321,7 @@ public class SkillsTabController implements IProgressTab {
 			if (!isVisible(ctx, nx, ny, hn + 4)) continue;
             boolean degreeLocked = sp.isDegreeLocked(playerDegree);
             EnumNodeShape shape = sp.isToggleable() && SkillProgressClientCache.current().isUnlocked(sp)
-					? EnumNodeShape.DECAGON : sp.getNodeShape();
+					? EnumNodeShape.HEXAGON : sp.getNodeShape();
             int branchColor = sp.getBranchColor();
             int border;
             if (degreeLocked) {
@@ -345,14 +345,11 @@ public class SkillsTabController implements IProgressTab {
                     default -> border = withAlpha(branchColor, Math.round(0xAA * alpha));
                 }
             }
-            drawNodeFill(chromeBatch, shape, nx, ny, hn, fadeColor(COL_NODE_BG, alpha));
-            drawNodeOutline(chromeBatch, shape, nx, ny, hn, border);
-			if (shape == EnumNodeShape.SQUARE) {
-				boolean hovered = Math.abs(mouseX - nx) <= hn && Math.abs(mouseY - ny) <= hn;
-				HarbingerChromeRenderer.drawFrame(chromeBatch, nx - hn, ny - hn, hn * 2, hn * 2, border,
-						degreeLocked ? HarbingerChromeRenderer.State.DISABLED
-								: hovered ? HarbingerChromeRenderer.State.HOVERED : HarbingerChromeRenderer.State.IDLE);
-			}
+			int fill = fadeColor(COL_NODE_BG, alpha);
+			boolean hovered = NodeShapeRenderer.isInside(shape, mouseX, mouseY, nx, ny, hn);
+			HarbingerChromeRenderer.drawNodeFrame(chromeBatch, shape, nx, ny, hn, fill, border,
+					degreeLocked ? HarbingerChromeRenderer.State.DISABLED
+							: hovered ? HarbingerChromeRenderer.State.HOVERED : HarbingerChromeRenderer.State.IDLE);
             if (degreeLocked) {
 				drawNodeFill(chromeBatch, shape, nx, ny, hn - 1, fadeColor(0xBB000000, alpha));
             }
@@ -404,11 +401,6 @@ public class SkillsTabController implements IProgressTab {
 		NodeShapeRenderer.drawFill(batch, shape, cx, cy, half, color);
 	}
 
-	private static void drawNodeOutline(ColoredRectBatch batch, EnumNodeShape shape,
-			int cx, int cy, int half, int color) {
-		NodeShapeRenderer.drawOutline(batch, shape, cx, cy, half, color);
-	}
-
 	@Override
 	public void onClose() {
 		surfaceTraceCache.close();
@@ -426,7 +418,7 @@ public class SkillsTabController implements IProgressTab {
             int[] pos = e.getValue();
             int nx = sx(ctx, view, pos[0]), ny = sy(ctx, view, pos[1]);
 			EnumNodeShape hitShape = sp.isToggleable() && SkillProgressClientCache.current().isUnlocked(sp)
-					? EnumNodeShape.DECAGON : sp.getNodeShape();
+					? EnumNodeShape.HEXAGON : sp.getNodeShape();
 			if (!NodeShapeRenderer.isInside(hitShape, mouseX, mouseY, nx, ny, hn)) continue;
             List<Component> tip = new ArrayList<>();
             boolean degreeLocked = sp.isDegreeLocked(playerDegree);
@@ -504,7 +496,7 @@ public class SkillsTabController implements IProgressTab {
             int[] p = e.getValue();
             int nx = sx(ctx, view, p[0]), ny = sy(ctx, view, p[1]);
 			EnumNodeShape shape = e.getKey().isToggleable() && SkillProgressClientCache.current().isUnlocked(e.getKey())
-					? EnumNodeShape.DECAGON : e.getKey().getNodeShape();
+					? EnumNodeShape.HEXAGON : e.getKey().getNodeShape();
 			if (NodeShapeRenderer.isInside(shape, mx, my, nx, ny, h)) return e.getKey();
         }
         return null;

@@ -30,6 +30,27 @@ public final class HarbingerChromeRenderer {
 		});
 	}
 
+	public static void drawNodeFrame(GuiGraphics gfx, EnumNodeShape shape, int cx, int cy, int half,
+			int fill, int accent, State state) {
+		ColoredRectBatch batch = new ColoredRectBatch(gfx);
+		drawNodeFrame(batch, shape, cx, cy, half, fill, accent, state);
+		batch.flush();
+	}
+
+	public static void drawNodeFrame(ColoredRectBatch batch, EnumNodeShape shape, int cx, int cy, int half,
+			int fill, int accent, State state) {
+		if (shape == EnumNodeShape.SQUARE) {
+			NodeShapeRenderer.drawFill(batch, shape, cx, cy, half, fill);
+			drawFrame(batch, cx - half, cy - half, half * 2, half * 2, accent, state);
+			return;
+		}
+		Palette palette = palette(accent, state);
+		NodeShapeRenderer.drawFill(batch, shape, cx, cy, half + 1, palette.shadow());
+		NodeShapeRenderer.drawFill(batch, shape, cx, cy, half, palette.outer());
+		NodeShapeRenderer.drawFill(batch, shape, cx, cy, half - 1, palette.highlight());
+		NodeShapeRenderer.drawFill(batch, shape, cx, cy, Math.max(1, half - 2), fill);
+	}
+
 	private static Palette palette(int accent, State state) {
 		int base = state == State.DISABLED ? 0xFF555055 : accent;
 		float strength = switch (state) {

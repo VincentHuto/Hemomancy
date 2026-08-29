@@ -309,6 +309,7 @@ public class RadialChooseManipScreen extends Screen {
 			case "conjure_staff" -> "memory_living_staff_overlay";
 			case "conjure_torch" -> "memory_living_torch_overlay";
 			case "conjure_sickle" -> "memory_living_sickle_overlay";
+			case "ironhearted" -> "memory_iron_retort_overlay";
 			default -> "memory_" + manipulation.getName() + "_overlay";
 		};
 		return Hemomancy.rloc("textures/item/memories/" + texture + ".png");

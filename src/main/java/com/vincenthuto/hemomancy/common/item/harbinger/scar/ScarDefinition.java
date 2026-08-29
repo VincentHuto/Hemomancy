@@ -41,6 +41,7 @@ public class ScarDefinition {
 	private final List<ScarEffectEntry> passiveEffects = new ArrayList<>();
 	private double bloodUpkeep = 0.0;
 	private double maxBloodModifier = 0.0;
+	private int ironHeartCapacityBonus;
 
 	public record ScarModifier(Holder<Attribute> attribute, ResourceLocation id, double amount,
 			AttributeModifier.Operation operation) {
@@ -74,6 +75,11 @@ public class ScarDefinition {
 
 	public ScarDefinition withMaxBloodModifier(double delta) {
 		this.maxBloodModifier = delta;
+		return this;
+	}
+
+	public ScarDefinition withIronHeartCapacityBonus(int hearts) {
+		this.ironHeartCapacityBonus = Math.max(0, hearts);
 		return this;
 	}
 
@@ -324,6 +330,10 @@ public class ScarDefinition {
 	}
 
 	private void addBehaviorTooltip(List<Component> tooltip) {
+		if (ironHeartCapacityBonus > 0) {
+			tooltip.add(Component.literal("* +" + ironHeartCapacityBonus + " Iron Heart capacity")
+					.withStyle(ChatFormatting.DARK_GREEN));
+		}
 		if (assignedTendency == EnumBloodTendency.ANIMUS && tier >= 2) {
 			tooltip.add(Component.literal("* Heals " + tier + " on kill").withStyle(ChatFormatting.DARK_GREEN));
 		}
@@ -402,6 +412,10 @@ public class ScarDefinition {
 
 	public double getMaxBloodModifier() {
 		return maxBloodModifier;
+	}
+
+	public int getIronHeartCapacityBonus() {
+		return ironHeartCapacityBonus;
 	}
 
 	public List<ScarModifier> getPassiveModifiers() {

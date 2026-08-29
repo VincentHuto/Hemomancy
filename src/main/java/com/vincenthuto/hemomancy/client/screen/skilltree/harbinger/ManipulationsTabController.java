@@ -402,14 +402,10 @@ public class ManipulationsTabController implements IProgressTab {
             }
 
             int fill = known && !rankLocked ? COL_NODE_BG : 0xCC0D0303;
-            NodeShapeRenderer.drawFill(gfx, shape, nx, ny, hn, fill);
-            NodeShapeRenderer.drawOutline(gfx, shape, nx, ny, hn, borderColor);
-			if (shape == EnumNodeShape.SQUARE) {
-				HarbingerChromeRenderer.drawFrame(gfx, nx - hn, ny - hn, hn * 2, hn * 2, borderColor,
-						rankLocked ? HarbingerChromeRenderer.State.DISABLED
-								: selectedEntry == entry ? HarbingerChromeRenderer.State.ACTIVE
-								: HarbingerChromeRenderer.State.IDLE);
-			}
+			HarbingerChromeRenderer.drawNodeFrame(gfx, shape, nx, ny, hn, fill, borderColor,
+					rankLocked ? HarbingerChromeRenderer.State.DISABLED
+							: selectedEntry == entry ? HarbingerChromeRenderer.State.ACTIVE
+							: HarbingerChromeRenderer.State.IDLE);
 
             if (rankLocked) {
                 NodeShapeRenderer.drawFill(gfx, shape, nx, ny, hn - 1, 0xBB000000);
