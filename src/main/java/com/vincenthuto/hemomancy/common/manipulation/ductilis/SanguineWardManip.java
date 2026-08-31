@@ -5,6 +5,7 @@ import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.Enu
 import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
 import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationRank;
 import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationType;
+import com.vincenthuto.hemomancy.common.manipulation.ManipulationReactiveEvents;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.player.Player;
@@ -20,6 +21,7 @@ public class SanguineWardManip extends BloodManipulation {
 
 	@Override
 	public void getAction(Player player, Level world, ItemStack heldItemMainhand, BlockPos position) {
+		ManipulationReactiveEvents.refreshSanguineWard(player);
 		DuctilisLightningEffects.sanguineWard(player);
 	}
 

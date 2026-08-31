@@ -56,4 +56,10 @@ class MemoryEquipRulesTest {
         assertFalse(known.getEquippedManipNames().contains("muscle_memory:sanguine_fists"));
         assertTrue(known.getEquippedManipNames().contains("muscle_memory:laboring_arms"));
     }
+
+    @Test
+    void cyclingAnExpiredMemoryWithNoPreparedReplacementRemovesIt() {
+        assertNull(MemoryEquipRules.nextPreparedInSection(
+                List.of(), MuscleMemory.SANGUINE_FISTS, MuscleMemory.SANGUINE_FISTS.section()));
+    }
 }

@@ -53,7 +53,7 @@ public class LivingBladeItemRenderer extends BlockEntityWithoutLevelRenderer {
 			model = (stack.has(DataComponents.CUSTOM_DATA) && stack.get(DataComponents.CUSTOM_DATA).copyTag().getBoolean("state")) ? unleashed : tame;
 			VertexConsumer baseBuffer = buffers.getBuffer(model.renderType(living_blade));
 			model.renderToBuffer(ms, baseBuffer, light, OverlayTexture.NO_OVERLAY, -1);
-			if (model == unleashed) {
+			if (model == unleashed && !LivingStaffMorphRenderer.isMorphBuffer(buffers)) {
 				VertexConsumer glint = buffers.getBuffer(RenderTypeInit.getCrimsonGlint());
 				model.renderToBuffer(ms, glint, light, OverlayTexture.NO_OVERLAY, -1);
 			}

@@ -51,7 +51,7 @@ public class LivingAxeItemRenderer extends BlockEntityWithoutLevelRenderer {
 			model = unleashed;
 			VertexConsumer baseBuffer = buffers.getBuffer(model.renderType(living_blade));
 			model.renderToBuffer(ms, baseBuffer, light, OverlayTexture.NO_OVERLAY, -1);
-			if (model == unleashed) {
+			if (model == unleashed && !LivingStaffMorphRenderer.isMorphBuffer(buffers)) {
 				VertexConsumer glint = buffers.getBuffer(RenderTypeInit.getCrimsonGlint());
 				model.renderToBuffer(ms, glint, light, OverlayTexture.NO_OVERLAY, -1);
 			}

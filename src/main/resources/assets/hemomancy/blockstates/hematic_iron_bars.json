@@ -1,77 +1,33 @@
 {
   "multipart": [
-    {
-      "apply": {
-        "model": "hemomancy:block/hematic_iron_bars_post"
-      }
-    },
-    {
-      "when": {
-        "north": "true"
-      },
-      "apply": {
-        "model": "hemomancy:block/hematic_iron_bars_side"
-      }
-    },
-    {
-      "when": {
-        "north": "false"
-      },
-      "apply": {
-        "model": "hemomancy:block/hematic_iron_bars_noside"
-      }
-    },
-    {
-      "when": {
-        "south": "true"
-      },
-      "apply": {
-        "model": "hemomancy:block/hematic_iron_bars_side_alt"
-      }
-    },
-    {
-      "when": {
-        "south": "false"
-      },
-      "apply": {
-        "model": "hemomancy:block/hematic_iron_bars_noside_alt",
-        "y": 90
-      }
-    },
-    {
-      "when": {
-        "west": "true"
-      },
-      "apply": {
-        "model": "hemomancy:block/hematic_iron_bars_side_alt",
-        "y": 90
-      }
-    },
-    {
-      "when": {
-        "west": "false"
-      },
-      "apply": {
-        "model": "hemomancy:block/hematic_iron_bars_noside",
-        "y": 270
-      }
-    },
-    {
-      "when": {
-        "east": "true"
-      },
-      "apply": {
-        "model": "hemomancy:block/hematic_iron_bars_side",
-        "y": 90
-      }
-    },
-    {
-      "when": {
-        "east": "false"
-      },
-      "apply": {
-        "model": "hemomancy:block/hematic_iron_bars_noside_alt"
-      }
-    }
+    { "when": { "axis": "y" }, "apply": { "model": "hemomancy:block/hematic_iron_bars_post" } },
+    { "when": { "axis": "y", "north": "true" }, "apply": { "model": "hemomancy:block/hematic_iron_bars_side" } },
+    { "when": { "axis": "y", "north": "false" }, "apply": { "model": "hemomancy:block/hematic_iron_bars_noside" } },
+    { "when": { "axis": "y", "south": "true" }, "apply": { "model": "hemomancy:block/hematic_iron_bars_side_alt" } },
+    { "when": { "axis": "y", "south": "false" }, "apply": { "model": "hemomancy:block/hematic_iron_bars_noside_alt_y90" } },
+    { "when": { "axis": "y", "west": "true" }, "apply": { "model": "hemomancy:block/hematic_iron_bars_side_alt_y90" } },
+    { "when": { "axis": "y", "west": "false" }, "apply": { "model": "hemomancy:block/hematic_iron_bars_noside_y270" } },
+    { "when": { "axis": "y", "east": "true" }, "apply": { "model": "hemomancy:block/hematic_iron_bars_side_y90" } },
+    { "when": { "axis": "y", "east": "false" }, "apply": { "model": "hemomancy:block/hematic_iron_bars_noside_alt" } },
+
+    { "when": { "axis": "z" }, "apply": { "model": "hemomancy:block/hematic_iron_bars_post", "x": 90 } },
+    { "when": { "axis": "z", "down": "true" }, "apply": { "model": "hemomancy:block/hematic_iron_bars_side", "x": 90 } },
+    { "when": { "axis": "z", "down": "false" }, "apply": { "model": "hemomancy:block/hematic_iron_bars_noside", "x": 90 } },
+    { "when": { "axis": "z", "up": "true" }, "apply": { "model": "hemomancy:block/hematic_iron_bars_side_alt", "x": 90 } },
+    { "when": { "axis": "z", "up": "false" }, "apply": { "model": "hemomancy:block/hematic_iron_bars_noside_alt_y90", "x": 90 } },
+    { "when": { "axis": "z", "west": "true" }, "apply": { "model": "hemomancy:block/hematic_iron_bars_side_alt_y90", "x": 90 } },
+    { "when": { "axis": "z", "west": "false" }, "apply": { "model": "hemomancy:block/hematic_iron_bars_noside_y270", "x": 90 } },
+    { "when": { "axis": "z", "east": "true" }, "apply": { "model": "hemomancy:block/hematic_iron_bars_side_y90", "x": 90 } },
+    { "when": { "axis": "z", "east": "false" }, "apply": { "model": "hemomancy:block/hematic_iron_bars_noside_alt", "x": 90 } },
+
+    { "when": { "axis": "x" }, "apply": { "model": "hemomancy:block/hematic_iron_bars_post", "x": 90, "y": 90 } },
+    { "when": { "axis": "x", "down": "true" }, "apply": { "model": "hemomancy:block/hematic_iron_bars_side", "x": 90, "y": 90 } },
+    { "when": { "axis": "x", "down": "false" }, "apply": { "model": "hemomancy:block/hematic_iron_bars_noside", "x": 90, "y": 90 } },
+    { "when": { "axis": "x", "up": "true" }, "apply": { "model": "hemomancy:block/hematic_iron_bars_side_alt", "x": 90, "y": 90 } },
+    { "when": { "axis": "x", "up": "false" }, "apply": { "model": "hemomancy:block/hematic_iron_bars_noside_alt_y90", "x": 90, "y": 90 } },
+    { "when": { "axis": "x", "north": "true" }, "apply": { "model": "hemomancy:block/hematic_iron_bars_side_alt_y90", "x": 90, "y": 90 } },
+    { "when": { "axis": "x", "north": "false" }, "apply": { "model": "hemomancy:block/hematic_iron_bars_noside_y270", "x": 90, "y": 90 } },
+    { "when": { "axis": "x", "south": "true" }, "apply": { "model": "hemomancy:block/hematic_iron_bars_side_y90", "x": 90, "y": 90 } },
+    { "when": { "axis": "x", "south": "false" }, "apply": { "model": "hemomancy:block/hematic_iron_bars_noside_alt", "x": 90, "y": 90 } }
   ]
 }

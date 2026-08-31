@@ -36,7 +36,7 @@ public final class BodyIdiomGameTests {
 		ServerPlayer player = player(helper);
 		try {
 			ManipulationInit.ironhearted.get().getAction(player, helper.getLevel(), ItemStack.EMPTY,
-					player.blockPosition());
+					player.blockPosition(), BodyIdiomRules.IRON_HEART_CHARGE_TICKS);
 			var state = HemoCapabilityAccess.getPowerGuardrails(player);
 			helper.assertTrue(state.getIronHeartHealth() == 2.0F, "Charged action did not form one Iron Heart");
 			LivingIncomingDamageEvent event = damage(player, helper.getLevel().damageSources().generic(), 3.0F);
@@ -86,11 +86,12 @@ public final class BodyIdiomGameTests {
 	}
 
 	@GameTest(templateNamespace = "minecraft", template = EMPTY_TEMPLATE, timeoutTicks = 40)
-	public static void equippedBlackheartedConvertsWitherDamage(GameTestHelper helper) {
+	public static void activeBlackheartedConvertsWitherDamage(GameTestHelper helper) {
 		ServerPlayer player = player(helper);
 		try {
-			HemoCapabilityAccess.getKnownManipulations(player).orElseThrow()
-					.setEquippedManipNames(List.of("blackhearted"));
+			var known = HemoCapabilityAccess.getKnownManipulations(player).orElseThrow();
+			known.setEquippedManipNames(List.of("blackhearted"));
+			known.togglePassive("blackhearted");
 			player.setHealth(10.0F);
 			LivingIncomingDamageEvent event = damage(player, helper.getLevel().damageSources().wither(), 4.0F);
 			BodyIdiomEvents.onIncomingDamage(event);
@@ -101,6 +102,24 @@ public final class BodyIdiomGameTests {
 					"Blackhearted did not heal from prevented Wither: " + player.getHealth());
 			helper.assertTrue(Math.abs(state.getNecroticSaturation() - 2.6F) < 0.001F,
 					"Prevented Wither did not fill necrotic saturation");
+			helper.succeed();
+		} finally {
+			player.discard();
+		}
+	}
+
+	@GameTest(templateNamespace = "minecraft", template = EMPTY_TEMPLATE, timeoutTicks = 40)
+	public static void inactiveBlackheartedDoesNotConvertWitherDamage(GameTestHelper helper) {
+		ServerPlayer player = player(helper);
+		try {
+			HemoCapabilityAccess.getKnownManipulations(player).orElseThrow()
+					.setEquippedManipNames(List.of("blackhearted"));
+			LivingIncomingDamageEvent event = damage(player, helper.getLevel().damageSources().wither(), 4.0F);
+
+			BodyIdiomEvents.onIncomingDamage(event);
+
+			helper.assertTrue(Math.abs(event.getAmount() - 4.0F) < 0.001F,
+					"Inactive Blackhearted still altered Wither damage");
 			helper.succeed();
 		} finally {
 			player.discard();

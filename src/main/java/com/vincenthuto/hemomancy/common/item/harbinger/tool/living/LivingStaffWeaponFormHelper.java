@@ -9,6 +9,7 @@ import com.vincenthuto.hemomancy.common.init.ManipulationInit;
 import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.BloodVolumeServerPacket;
+import com.vincenthuto.hemomancy.common.network.capa.harbinger.PacketLivingStaffMorph;
 import com.vincenthuto.hemomancy.common.rite.CardinalRiteStaffEscrow;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.HolderLookup;
@@ -17,12 +18,15 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.CustomData;
+import net.neoforged.neoforge.network.PacketDistributor;
 
 public final class LivingStaffWeaponFormHelper {
 	public static final String STORED_STAFF_KEY = "HemomancyStoredLivingStaff";
@@ -33,26 +37,46 @@ public final class LivingStaffWeaponFormHelper {
 	}
 
 	public static boolean applySelection(Player player, BloodManipulation selectedManip) {
+		ItemStack beforeMain = player.getMainHandItem().copy();
+		ItemStack beforeOff = player.getOffhandItem().copy();
 		String selectedName = selectedManip == null ? "" : selectedManip.getName();
+		boolean applied;
 		if (!LivingStaffWeaponFormRules.isStaffWeaponFormManip(selectedName)) {
-			restoreMainHand(player);
-			return true;
+			restoreMainHandNow(player);
+			applied = true;
+		} else {
+			applied = applyWeaponForm(player, selectedName);
 		}
-		return applyWeaponForm(player, selectedName);
+		syncMorph(player, beforeMain, beforeOff);
+		return applied;
 	}
 
 	public static boolean toggleSelectedForm(Player player, BloodManipulation selectedManip) {
+		ItemStack beforeMain = player.getMainHandItem().copy();
+		ItemStack beforeOff = player.getOffhandItem().copy();
 		String selectedName = selectedManip == null ? "" : selectedManip.getName();
 		if (!LivingStaffWeaponFormRules.isStaffWeaponFormManip(selectedName)) {
 			return false;
 		}
+		boolean applied;
 		if (LivingStaffWeaponFormRules.shouldToggleOffSelectedForm(selectedName, currentFormName(player.getMainHandItem()))) {
-			return restoreMainHand(player);
+			applied = restoreMainHandNow(player);
+		} else {
+			applied = applyWeaponForm(player, selectedName);
 		}
-		return applyWeaponForm(player, selectedName);
+		syncMorph(player, beforeMain, beforeOff);
+		return applied;
 	}
 
 	public static boolean restoreMainHand(Player player) {
+		ItemStack beforeMain = player.getMainHandItem().copy();
+		ItemStack beforeOff = player.getOffhandItem().copy();
+		boolean restored = restoreMainHandNow(player);
+		syncMorph(player, beforeMain, beforeOff);
+		return restored;
+	}
+
+	private static boolean restoreMainHandNow(Player player) {
 		ItemStack held = player.getMainHandItem();
 		LivingFlailDeployment.reconcileForRestoration(held, player);
 		if (LivingSicklePruning.isTemporarySickle(held)) {
@@ -87,9 +111,12 @@ public final class LivingStaffWeaponFormHelper {
 		if (!(entity instanceof Player player) || !isTransformedStaffWeapon(stack)) {
 			return false;
 		}
+		ItemStack beforeMain = player.getMainHandItem().copy();
+		ItemStack beforeOff = player.getOffhandItem().copy();
 		LivingFlailDeployment.reconcileForRestoration(stack, player);
 		player.setItemInHand(hand, restoredStaffStack(stack, player.registryAccess()));
 		LivingArsenalInventoryGuard.sanitizePlayerInventory(player);
+		syncMorph(player, beforeMain, beforeOff);
 		player.displayClientMessage(Component.literal("The Living Staff recoils back into shape.")
 				.withStyle(ChatFormatting.DARK_RED), true);
 		return true;
@@ -220,5 +247,26 @@ public final class LivingStaffWeaponFormHelper {
 			case LivingStaffWeaponFormRules.CONJURE_BLADE -> ItemInit.living_blade.get();
 			default -> ItemInit.living_staff.get();
 		};
+	}
+
+	public static void syncMorph(Player player, ItemStack beforeMain, ItemStack beforeOff) {
+		if (!(player instanceof ServerPlayer serverPlayer)) return;
+		ItemStack afterMain = player.getMainHandItem().copy();
+		ItemStack afterOff = player.getOffhandItem().copy();
+		boolean mainChanged = !ItemStack.isSameItemSameComponents(beforeMain, afterMain);
+		boolean offChanged = !ItemStack.isSameItemSameComponents(beforeOff, afterOff);
+		boolean mainIsLiving = isLivingArsenalStack(beforeMain) || isLivingArsenalStack(afterMain);
+		boolean offIsLiving = isLivingArsenalStack(beforeOff) || isLivingArsenalStack(afterOff);
+		if (!LivingStaffMorphSequence.hasChangedStack(mainChanged, mainIsLiving, offChanged, offIsLiving)) return;
+
+		PacketDistributor.sendToPlayersTrackingEntityAndSelf(serverPlayer,
+				new PacketLivingStaffMorph(serverPlayer.getId(), beforeMain, afterMain, beforeOff, afterOff));
+		serverPlayer.level().playSound(null, serverPlayer.getX(), serverPlayer.getY(), serverPlayer.getZ(),
+				SoundEvents.HOGLIN_CONVERTED_TO_ZOMBIFIED, SoundSource.PLAYERS, 0.2F,
+				0.9F + serverPlayer.getRandom().nextFloat() * 0.1F);
+	}
+
+	private static boolean isLivingArsenalStack(ItemStack stack) {
+		return stack.getItem() instanceof LivingStaffItem || isTransformedStaffWeapon(stack);
 	}
 }

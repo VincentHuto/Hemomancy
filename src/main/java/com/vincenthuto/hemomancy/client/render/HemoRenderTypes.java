@@ -851,7 +851,7 @@ public final class HemoRenderTypes {
 						.setTextureState(new RenderStateShard.TextureStateShard(fallbackTexture, false, false))
 						.setTexturingState(uniforms)
 						.setTransparencyState(RenderType.TRANSLUCENT_TRANSPARENCY)
-						.setDepthTestState(RenderType.NO_DEPTH_TEST)
+						.setDepthTestState(treeApex ? RenderType.LEQUAL_DEPTH_TEST : RenderType.NO_DEPTH_TEST)
 						.setWriteMaskState(RenderType.COLOR_WRITE)
 						.setCullState(RenderType.NO_CULL)
 						.setLightmapState(RenderType.NO_LIGHTMAP)

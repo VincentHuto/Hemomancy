@@ -103,17 +103,34 @@ public final class LivingFlailRenderHelper {
 
 	public static void renderHeldDissolving(LivingFlailModel<?> model, LivingEntity holder, HumanoidArm arm,
 			ItemStack stack, PoseStack poseStack, MultiBufferSource buffer, int packedLight, int packedOverlay,
-			float progress, float seed) {
-		Key key = new Key(holder.getUUID(), 0, arm == HumanoidArm.LEFT ? 0 : 1);
+			float progress, float seed, boolean firstPerson) {
+		renderHeldDissolving(model, holder, arm, stack, poseStack, buffer, packedLight, packedOverlay,
+				progress, seed, firstPerson,
+				Minecraft.getInstance().getTimer().getGameTimeDeltaPartialTick(false));
+	}
+
+	public static void renderHeldDissolving(LivingFlailModel<?> model, LivingEntity holder, HumanoidArm arm,
+			ItemStack stack, PoseStack poseStack, MultiBufferSource buffer, int packedLight, int packedOverlay,
+			float progress, float seed, boolean firstPerson, float partialTick) {
+		Key key = new Key(holder.getUUID(), firstPerson ? 1 : 0, arm == HumanoidArm.LEFT ? 0 : 1);
 		poseStack.mulPose(Axis.ZP.rotationDegrees(180.0F));
 		poseStack.mulPose(Axis.XN.rotationDegrees(80.0F));
 		poseStack.translate(0.15D, -0.1D, -0.2D);
 		PhysicsState state = STATES.computeIfAbsent(key, ignored -> new PhysicsState(holder));
-		Vec3 bob = state.update(holder, false, 0.64D);
+		Vec3 bob = state.update(holder, firstPerson, firstPerson ? 0.72D : 0.64D);
 		float tilt = (float) Mth.clamp(bob.x * 48.0D + bob.z * 28.0D, -30.0D, 30.0D);
-		VertexConsumer dissolve = buffer.getBuffer(HemoRenderTypes.hermitFarewellDissolve(
-				TEXTURE, holder.tickCount, progress, seed));
-		renderWithBob(model, poseStack, buffer, dissolve, packedLight, packedOverlay, bob, tilt, false);
+		poseStack.pushPose();
+		renderWithBob(model, poseStack, buffer,
+				buffer.getBuffer(HemoRenderTypes.hermitFarewellDissolve(
+						TEXTURE, holder.tickCount + partialTick, progress, seed)),
+				packedLight, packedOverlay, bob, tilt, false);
+		poseStack.popPose();
+		poseStack.pushPose();
+		renderWithBob(model, poseStack, buffer,
+				buffer.getBuffer(LivingStaffMorphRenderer.bloodMelt(
+						holder, arm, poseStack, progress, partialTick)),
+				packedLight, packedOverlay, bob, tilt, false);
+		poseStack.popPose();
 	}
 
 	private static void renderWithBob(LivingFlailModel<?> model, PoseStack poseStack, MultiBufferSource buffer,

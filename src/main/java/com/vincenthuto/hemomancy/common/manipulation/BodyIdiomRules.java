@@ -50,6 +50,15 @@ public final class BodyIdiomRules {
 				Mth.clamp(fill * 2.0F - 1.0F, 0.0F, 1.0F));
 	}
 
+	public static int removedIronHeartSlots(float previousHealth, float currentHealth) {
+		return Math.max(0, ironHeartSlots(previousHealth) - ironHeartSlots(currentHealth));
+	}
+
+	public static int ironHeartCrackFrame(long startTick, long gameTime) {
+		long elapsed = gameTime - startTick;
+		return elapsed < 0L || elapsed >= 12L ? -1 : (int) (elapsed / 4L);
+	}
+
 	public static float addIronHeartHealth(float current, float maxIronHeartHealth) {
 		return Mth.clamp(current + IRON_HEART_HEALTH_PER_CAST, 0.0F, Math.max(0.0F, maxIronHeartHealth));
 	}

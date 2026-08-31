@@ -5,6 +5,8 @@ import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.Enu
 import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
 import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationRank;
 import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationType;
+import com.vincenthuto.hemomancy.common.manipulation.ManipulationCastingRules;
+import com.vincenthuto.hemomancy.common.manipulation.ManipulationReactiveEvents;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hutoslib.HutosLib;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
@@ -13,6 +15,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -26,6 +29,7 @@ import java.util.Optional;
 import java.util.function.Predicate;
 
 public class DeadlyGazeManip extends BloodManipulation {
+	private static final int CHARGE_TICKS = 40;
 
 	@Nullable
 	public static EntityHitResult rayTraceEntities(Entity shooter, double range, @Nullable Predicate<Entity> filter) {
@@ -55,12 +59,27 @@ public class DeadlyGazeManip extends BloodManipulation {
 
 	@Override
 	public void getAction(Player player, Level world, ItemStack heldItemMainhand, BlockPos position) {
-		HitResult pick = rayTraceEntities(player, 100, (e) -> e instanceof LivingEntity);
+		getAction(player, world, heldItemMainhand, position, CHARGE_TICKS);
+	}
+
+	@Override
+	public int getRequiredChargeTicks() {
+		return CHARGE_TICKS;
+	}
+
+	@Override
+	public void getAction(Player player, Level world, ItemStack heldItemMainhand, BlockPos position, float heldTicks) {
+		float charge = ManipulationCastingRules.chargeFraction(heldTicks, CHARGE_TICKS);
+		HitResult pick = rayTraceEntities(player, 12 + 20 * charge, e -> e instanceof LivingEntity && e != player);
 		if (pick != null) {
 			if (pick.getType() == Type.ENTITY) {
 				EntityHitResult entResult = (EntityHitResult) pick;
 				LivingEntity hitEntity = (LivingEntity) entResult.getEntity();
-				hitEntity.push(0, 1, 0);
+				if (hitEntity instanceof Mob mob) mob.getNavigation().stop();
+				hitEntity.push(0, .25D + .75D * charge, 0);
+				if (charge >= 1.0F && world instanceof ServerLevel serverLevel) {
+					ManipulationReactiveEvents.scheduleDeadlyGazeSlam(serverLevel, player, hitEntity, 12, 6.0F);
+				}
 				RandomSource rand = world.random;
 				for (int i = 0; i < 10; i++) {
 					Vec3 entVec = hitEntity.position().add(rand.nextDouble() - rand.nextDouble(), 0,

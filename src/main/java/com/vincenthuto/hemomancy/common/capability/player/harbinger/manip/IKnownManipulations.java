@@ -89,6 +89,11 @@ public interface IKnownManipulations {
 	/** Removes a manipulation from the equipped slots. */
 	public boolean unequipManip(String manipName);
 
+	public boolean isPassiveActive(String manipName);
+
+	/** Toggles an equipped passive and returns its new active state. */
+	public boolean togglePassive(String manipName);
+
 	// Synaptic memory loadouts
 
 	public List<ManipulationLoadout> getLoadouts();

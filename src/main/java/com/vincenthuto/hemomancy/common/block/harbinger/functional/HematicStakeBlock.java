@@ -5,6 +5,8 @@ import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.
 import com.vincenthuto.hemomancy.common.event.worldevent.FoundingFaneSavedData;
 import com.vincenthuto.hemomancy.common.event.worldevent.FaneFootprint;
 import com.vincenthuto.hemomancy.common.init.BlockInit;
+import com.vincenthuto.hemomancy.common.block.harbinger.BloodCrystalBlock;
+import com.vincenthuto.hemomancy.common.block.shared.HematicIronBarsBlock;
 import com.vincenthuto.hemomancy.common.tile.functional.HematicStakeBlockEntity;
 import com.vincenthuto.hemomancy.config.HemoServerConfig;
 import net.minecraft.ChatFormatting;
@@ -167,25 +169,57 @@ public class HematicStakeBlock extends Block implements EntityBlock {
 		return FoundingFaneSavedData.get(level).canAddStake(owner, pos, budget);
 	}
 
-	public static boolean manifestStake(ServerLevel level, ServerPlayer player, BlockPos pos) {
-		return manifestStake(level, player, pos, Direction.UP, player.getDirection().getOpposite());
+	@Nullable
+	public static Formation findFormation(ServerLevel level, ServerPlayer player, BlockPos barPos, BlockPos crystalPos) {
+		BlockState bar = level.getBlockState(barPos);
+		BlockState crystal = level.getBlockState(crystalPos);
+		Direction direction = Direction.fromDelta(
+				crystalPos.getX() - barPos.getX(),
+				crystalPos.getY() - barPos.getY(),
+				crystalPos.getZ() - barPos.getZ());
+		if (direction == null
+				|| !(bar.getBlock() instanceof HematicIronBarsBlock)
+				|| !crystal.is(BlockInit.blood_crystal.get())
+				|| bar.getValue(HematicIronBarsBlock.AXIS) != direction.getAxis()
+				|| crystal.getValue(BloodCrystalBlock.FACING) != direction) {
+			return null;
+		}
+
+		BlockState stake = stateForAttachment(direction, Direction.NORTH);
+		Bloodline bloodline = HemoCapabilityAccess.getBloodVolume(player)
+				.map(volume -> volume.getBloodLine())
+				.orElse(Bloodline.NOBLOODLINE);
+		int budget = configuredStakeBudget(bloodline.getPlayerUUIDS().size(), bloodline.getNpcMemberCount());
+		if (!isProgenitor(player)
+				|| !stake.canSurvive(level, barPos)
+				|| !FoundingFaneSavedData.get(level).canAddStake(bloodline.getLeaderUUID(), barPos, budget)) {
+			return null;
+		}
+		return new Formation(barPos.immutable(), crystalPos.immutable(), stake, bloodline.getLeaderUUID(), budget);
 	}
 
-	public static boolean manifestStake(ServerLevel level, ServerPlayer player, BlockPos pos, Direction clickedFace) {
-		return manifestStake(level, player, pos, clickedFace, player.getDirection().getOpposite());
-	}
-
-	private static boolean manifestStake(ServerLevel level, ServerPlayer player, BlockPos pos, Direction clickedFace,
-			Direction horizontalFallback) {
-		BlockState state = stateForAttachment(clickedFace, horizontalFallback);
-		if (!canPlaceStake(level, player, pos, state)) {
+	public static boolean placeFormation(ServerLevel level, Formation formation) {
+		FoundingFaneSavedData data = FoundingFaneSavedData.get(level);
+		BlockState bar = level.getBlockState(formation.pos());
+		BlockState crystal = level.getBlockState(formation.crystalPos());
+		Direction direction = Direction.fromDelta(
+				formation.crystalPos().getX() - formation.pos().getX(),
+				formation.crystalPos().getY() - formation.pos().getY(),
+				formation.crystalPos().getZ() - formation.pos().getZ());
+		if (direction == null
+				|| !(bar.getBlock() instanceof HematicIronBarsBlock)
+				|| !crystal.is(BlockInit.blood_crystal.get())
+				|| bar.getValue(HematicIronBarsBlock.AXIS) != direction.getAxis()
+				|| crystal.getValue(BloodCrystalBlock.FACING) != direction
+				|| !formation.state().canSurvive(level, formation.pos())
+				|| !data.addStake(formation.owner(), formation.pos(), formation.budget())) {
 			return false;
 		}
-		if (!level.setBlock(pos, state, Block.UPDATE_ALL)) {
-			return false;
+		if (level.setBlock(formation.pos(), formation.state(), Block.UPDATE_ALL)) {
+			return true;
 		}
-		registerStake(level, player, pos);
-		return true;
+		data.removeStake(formation.owner(), formation.pos());
+		return false;
 	}
 
 	public static boolean isProgenitor(ServerPlayer player) {
@@ -254,5 +288,8 @@ public class HematicStakeBlock extends Block implements EntityBlock {
 		if (owner != null) {
 			data.removeStake(owner, pos);
 		}
+	}
+
+	public record Formation(BlockPos pos, BlockPos crystalPos, BlockState state, UUID owner, int budget) {
 	}
 }

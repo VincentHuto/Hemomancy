@@ -11,6 +11,7 @@ import com.vincenthuto.hemomancy.client.data.ActiveBloodStructureOfferingBurstCl
 import com.vincenthuto.hemomancy.client.data.ActiveSanguineFormationProjectionClientData;
 import com.vincenthuto.hemomancy.client.data.ActiveRiteClientData;
 import com.vincenthuto.hemomancy.client.data.BloodBallClientData;
+import com.vincenthuto.hemomancy.client.data.BloodBindingTendrilClientState;
 import com.vincenthuto.hemomancy.client.data.CrimsonFireClientState;
 import com.vincenthuto.hemomancy.client.data.FaneBoundaryClientData;
 import com.vincenthuto.hemomancy.client.data.MonolithicDislocationClientState;
@@ -127,8 +128,8 @@ import com.vincenthuto.hemomancy.common.item.shared.StructureScannerItem;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.manips.ChangeSelectedManipPacket;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.manips.UseManipKeyPacket;
+import com.vincenthuto.hemomancy.common.init.ManipulationInit;
 import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationType;
-import com.vincenthuto.hemomancy.common.manipulation.BodyIdiomRules;
 import com.vincenthuto.hemomancy.common.network.capa.unstained.UseStillArtKeyPacket;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.BloodCraftingKeyPressPacket;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.BloodFormationKeyPressPacket;
@@ -212,7 +213,9 @@ public class ClientEvents {
     public static final KeyMapping useManip = new KeyMapping("key.hemomancy.usemanip.desc", GLFW.GLFW_KEY_R,
             "key.hemomancy.category");
 	private static int manipulationChargeTicks;
-	private static boolean manipulationChargeSent;
+	private static String lastManipulationName = "";
+	private static EnumManipulationType lastManipulationType;
+	private static boolean suppressManipulationUntilRelease;
     public static final KeyMapping useStillArt = new KeyMapping("key.hemomancy.usestillart.desc", GLFW.GLFW_KEY_R,
             "key.hemomancy.category");
     public static final KeyMapping selectStillArt = new KeyMapping("key.hemomancy.selectstillart.desc", GLFW.GLFW_KEY_Z,
@@ -257,6 +260,7 @@ public class ClientEvents {
         ClawSlashRenderer.tick();
         MonolithicDislocationClientState.tick();
         CrimsonFireClientState.tick();
+        BloodBindingTendrilClientState.tick();
         if (SanguineOmenOverlay.instance != null) {
             SanguineOmenOverlay.instance.tick();
         }
@@ -390,44 +394,83 @@ public class ClientEvents {
 		Minecraft mc = Minecraft.getInstance();
 		if (mc.player == null) {
 			manipulationChargeTicks = 0;
-			manipulationChargeSent = false;
+			lastManipulationName = "";
+			lastManipulationType = null;
+			suppressManipulationUntilRelease = false;
 			return;
 		}
 		HemoCapabilityAccess.getKnownManipulations(mc.player).ifPresent(known -> {
-			var selected = known.getSelectedManip();
-			boolean charged = selected != null && selected.getType() == EnumManipulationType.CHARGED;
-			if (charged) {
-				useManip.consumeClick();
-				if (useManip.isDown()) {
-					if (manipulationChargeSent) return;
-					if (mc.player.hurtTime > 0 && mc.player.hurtTime == mc.player.hurtDuration
-							&& manipulationChargeTicks > 0) {
-						manipulationChargeTicks = com.vincenthuto.hemomancy.common.capability.player.shared.skill.BodyRefinementSkillRules
-								.retainedChargeTicks(manipulationChargeTicks,
-										SkillPointHelper.getNervesOfSteelLevel(mc.player));
-					}
-					manipulationChargeTicks++;
-					if (manipulationChargeTicks >= BodyIdiomRules.IRON_HEART_CHARGE_TICKS) {
-						PacketHandler.sendToServer(new UseManipKeyPacket(manipulationChargeTicks));
-						manipulationChargeSent = true;
-						manipulationChargeTicks = 0;
-					}
-				} else {
-					manipulationChargeTicks = 0;
-					manipulationChargeSent = false;
+			var selected = known.getSelectedManip() == null ? null
+					: ManipulationInit.getByName(known.getSelectedManip().getName());
+			if (selected == null) {
+				if (lastManipulationType == EnumManipulationType.CONTINUOUS && manipulationChargeTicks > 0) {
+					PacketHandler.sendToServer(UseManipKeyPacket.stopContinuous());
 				}
+				manipulationChargeTicks = 0;
+				lastManipulationName = "";
+				lastManipulationType = null;
 				return;
 			}
-			manipulationChargeTicks = 0;
-			manipulationChargeSent = false;
-			if (!useManip.consumeClick() || selected == null) return;
-			if (selected.getName().equals("venous_travel")) mc.setScreen(new RadialChooseVeinScreen(known));
-			else PacketHandler.sendToServer(new UseManipKeyPacket(HLClientUtils.getPartialTicks()));
+			boolean down = useManip.isDown();
+			boolean clicked = useManip.consumeClick();
+			if (!selected.getName().equals(lastManipulationName)) {
+				if (lastManipulationType == EnumManipulationType.CONTINUOUS && manipulationChargeTicks > 0) {
+					PacketHandler.sendToServer(UseManipKeyPacket.stopContinuous());
+				}
+				manipulationChargeTicks = 0;
+				lastManipulationName = selected.getName();
+				lastManipulationType = selected.getType();
+				suppressManipulationUntilRelease = down && !clicked;
+			}
+			if (suppressManipulationUntilRelease) {
+				if (down) return;
+				suppressManipulationUntilRelease = false;
+			}
+			if (selected.getType() == EnumManipulationType.CHARGED && down
+					&& mc.player.hurtTime > 0 && mc.player.hurtTime == mc.player.hurtDuration
+					&& manipulationChargeTicks > 0) {
+				manipulationChargeTicks = com.vincenthuto.hemomancy.common.capability.player.shared.skill.BodyRefinementSkillRules
+						.retainedChargeTicks(manipulationChargeTicks,
+								SkillPointHelper.getNervesOfSteelLevel(mc.player));
+			}
+			var input = ManipulationInputRules.tick(selected.getType(), down, clicked,
+					manipulationChargeTicks, selected.getRequiredChargeTicks());
+			manipulationChargeTicks = input.nextHeldTicks();
+			switch (input.action()) {
+				case NONE -> {
+				}
+				case START_CONTINUOUS -> PacketHandler.sendToServer(UseManipKeyPacket.startContinuous());
+				case STOP_CONTINUOUS -> PacketHandler.sendToServer(UseManipKeyPacket.stopContinuous());
+				case CAST -> {
+					if (selected.getName().equals("venous_travel")) mc.setScreen(new RadialChooseVeinScreen(known));
+					else PacketHandler.sendToServer(new UseManipKeyPacket(input.castTicks()));
+				}
+			}
 		});
 	}
 
 	public static int getManipulationChargeTicks() {
 		return manipulationChargeTicks;
+	}
+
+	public static void manipulationCastAccepted() {
+		var manipulation = ManipulationInit.getByName(lastManipulationName);
+		if (lastManipulationType == EnumManipulationType.CHARGED && manipulation != null
+				&& manipulationChargeTicks >= manipulation.getRequiredChargeTicks()) {
+			manipulationChargeTicks = 0;
+		}
+	}
+
+	public static String getChargingManipulationName() {
+		return lastManipulationType == EnumManipulationType.CHARGED && manipulationChargeTicks > 0
+				? lastManipulationName : "";
+	}
+
+	public static float getManipulationChargeProgress() {
+		var manipulation = ManipulationInit.getByName(getChargingManipulationName());
+		return manipulation == null ? 0.0F
+				: com.vincenthuto.hemomancy.common.manipulation.ManipulationCastingRules.chargeFraction(
+						manipulationChargeTicks, manipulation.getRequiredChargeTicks());
 	}
 
     private static void handleSilentArchonDoubleTapJump() {
@@ -655,6 +698,7 @@ public class ClientEvents {
             QliphothBloomRenderer.render(event.getPoseStack(), partialTick, event.getFrustum());
             OculifloraRevealRenderer.render(event.getPoseStack(), partialTick);
             BloodBallRenderer.render(event.getPoseStack(), partialTick);
+            BloodBindingTendrilRenderer.render(event.getPoseStack(), partialTick);
             SanguineMonolithShatterRenderer.render(event.getPoseStack(), partialTick);
             ClawSlashRenderer.render(event.getPoseStack(), partialTick);
             PuppeteerThreadRenderer.render(event.getPoseStack(), partialTick);

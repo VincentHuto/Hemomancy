@@ -38,8 +38,10 @@ public class LivingTorchItemRenderer extends BlockEntityWithoutLevelRenderer {
 		LivingTorchRenderPlacement.applyCustomModelTransform(poseStack, displayContext);
 		VertexConsumer base = buffer.getBuffer(model.renderType(TEXTURE));
 		model.renderToBuffer(poseStack, base, packedLight, OverlayTexture.NO_OVERLAY, -1);
-		VertexConsumer glint = buffer.getBuffer(RenderTypeInit.getCrimsonGlint());
-		model.renderToBuffer(poseStack, glint, packedLight, OverlayTexture.NO_OVERLAY, -1);
+		if (!LivingStaffMorphRenderer.isMorphBuffer(buffer)) {
+			VertexConsumer glint = buffer.getBuffer(RenderTypeInit.getCrimsonGlint());
+			model.renderToBuffer(poseStack, glint, packedLight, OverlayTexture.NO_OVERLAY, -1);
+		}
 		poseStack.popPose();
 	}
 

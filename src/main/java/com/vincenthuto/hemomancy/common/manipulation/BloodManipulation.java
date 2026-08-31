@@ -89,6 +89,8 @@ public class BloodManipulation implements EntityCastableManipulation {
 
 	public static void clearSessionState() {
 		UNIVERSAL_COOLDOWN_MAP.clear();
+		ManipulationChannelManager.clearSessionState();
+		ManipulationReactiveEvents.clearSessionState();
 	}
 
 	int cooldownTicks;
@@ -114,6 +116,11 @@ public class BloodManipulation implements EntityCastableManipulation {
 
 	public void getAction(Player player, Level world, ItemStack heldItemMainhand, BlockPos position) {
 
+	}
+
+	public void getAction(Player player, Level world, ItemStack heldItemMainhand, BlockPos position,
+			float chargeTicks) {
+		getAction(player, world, heldItemMainhand, position);
 	}
 
 	@Override
@@ -167,6 +174,10 @@ public class BloodManipulation implements EntityCastableManipulation {
 
 	public int getCooldownTicks() {
 		return cooldownTicks;
+	}
+
+	public int getRequiredChargeTicks() {
+		return type == EnumManipulationType.CHARGED ? 20 : 0;
 	}
 
 	public BloodManipulation setCooldownTicks(int cooldownTicks) {
@@ -325,33 +336,82 @@ public class BloodManipulation implements EntityCastableManipulation {
 
 	public void performAction(Player player, Level world, ItemStack heldItemMainhand, BlockPos position,
 			float chargeTicks) {
+		tryPerformAction(player, world, heldItemMainhand, position, chargeTicks);
+	}
+
+	public boolean tryPerformAction(Player player, Level world, ItemStack heldItemMainhand, BlockPos position,
+			float chargeTicks) {
+		return tryPerformAction(player, world, heldItemMainhand, position, chargeTicks, true);
+	}
+
+	public boolean tryPerformContinuousPulse(Player player, Level world, ItemStack heldItemMainhand,
+			BlockPos position) {
+		return type == EnumManipulationType.CONTINUOUS
+				&& tryPerformAction(player, world, heldItemMainhand, position, 0.0F, false);
+	}
+
+	public boolean tryPerformPassiveTrigger(ServerPlayer player) {
+		return type == EnumManipulationType.PASSIVE
+				&& tryPerformAction(player, player.level(), ItemStack.EMPTY, player.blockPosition(), 0.0F,
+						false, false);
+	}
+
+	public boolean canContinueChannel(Player player, Level world) {
+		return true;
+	}
+
+	public void tickContinuousAction(Player player, Level world) {
+	}
+
+	public void clearContinuousSession(UUID playerId) {
+	}
+
+	public void finishContinuousAction(Player player) {
+		if (type != EnumManipulationType.CONTINUOUS || ignoresCooldown(player)) return;
+		long appliedCooldown = startCooldown(player);
+		if (player instanceof ServerPlayer serverPlayer) {
+			PacketHandler.sendToPlayer(serverPlayer, new ManipCooldownPacket((int) appliedCooldown));
+		}
+	}
+
+	public void finishContinuousAction(Player player, boolean released) {
+		finishContinuousAction(player);
+	}
+
+	private boolean tryPerformAction(Player player, Level world, ItemStack heldItemMainhand, BlockPos position,
+			float chargeTicks, boolean applyCooldown) {
+		return tryPerformAction(player, world, heldItemMainhand, position, chargeTicks, applyCooldown, true);
+	}
+
+	private boolean tryPerformAction(Player player, Level world, ItemStack heldItemMainhand, BlockPos position,
+			float chargeTicks, boolean applyCooldown, boolean enforceCooldown) {
 		IBloodVolume volume = HemoCapabilityAccess.getBloodVolume(player)
 				.orElseThrow(NullPointerException::new);
 		IBloodTendency tendency = HemoCapabilityAccess.getBloodTendency(player)
 				.orElseThrow(NullPointerException::new);
 
 		if (!player.level().isClientSide) {
-			if (!canPerformAction(player, chargeTicks)) return;
+			if (!canPerformAction(player, heldItemMainhand, chargeTicks)) return false;
 			if (ManipulationRetirementRules.isRetiredManipulation(this)) {
 				player.displayClientMessage(Component.literal("That manipulation has gone dormant.")
 						.withStyle(ChatFormatting.DARK_GRAY), true);
-				return;
+				return false;
 			}
-			if (!ignoresCooldown(player) && isAnyManipOnCooldown(player)) {
+			if (enforceCooldown && !ignoresCooldown(player) && isAnyManipOnCooldown(player)) {
 				long remaining = getRemainingCooldownTicks(player);
 				double seconds = remaining / TICKS_PER_SECOND;
 				player.displayClientMessage(
 						Component.literal(String.format("Manipulation on cooldown! (%.1fs)", seconds))
 								.withStyle(ChatFormatting.RED),
 						true);
-				return;
+				return false;
 			}
 
 			// Check Unstained purity penalty — must happen before isActive check
 			// so that purified players are fully blocked even if volume is still active
 			double costMultiplier = getPurityCostMultiplier(player);
 			if (costMultiplier < 0) {
-				return;
+				return false;
 			}
 
 			// Qliphoth Pome Corruption: at 9 pomes manipulations are disabled until Apotheos.
@@ -368,19 +428,23 @@ public class BloodManipulation implements EntityCastableManipulation {
 						Component.literal("Your blood no longer answers to you. It belongs to the void now.")
 								.withStyle(ChatFormatting.DARK_PURPLE, ChatFormatting.ITALIC),
 						true);
-				return;
+				return false;
 			}
 
 			if (volume.isActive()) {
 				// Unified manipulation cost ledger covers skill, rites, effects, world, and tool modifiers.
 				ManipulationCostSnapshot costSnapshot = ManipulationCostLedger.collect(player, this, costMultiplier);
 				double effectiveCost = costSnapshot.effectiveCost();
+				if (type == EnumManipulationType.CHARGED) {
+					effectiveCost = ManipulationCastingRules.chargedCost(effectiveCost, chargeTicks,
+							getRequiredChargeTicks());
+				}
 
 				boolean hasRequiredAlignment = tendency.getAlignmentByTendency(tend) >= alignLevel;
 				if (!hasRequiredAlignment) {
 					player.displayClientMessage(Component.translatable("Not Enough Alignment for Manipulation!")
 							.withStyle(ChatFormatting.RED), true);
-					return;
+					return false;
 				}
 
 				// Emergency cover: when a valid cast would fail for lack of blood,
@@ -398,10 +462,13 @@ public class BloodManipulation implements EntityCastableManipulation {
 					RootedStateHelper.refundManipulationCost(player, effectiveCost);
 					ConserveStateHelper.markManipulationCast(player);
 					PacketHandler.sendToPlayer((ServerPlayer) player, new BloodVolumeServerPacket(volume));
-					getAction(player, world, heldItemMainhand, position);
+					getAction(player, world, heldItemMainhand, position, chargeTicks);
+					if (type != EnumManipulationType.CONTINUOUS) {
+						ManipulationCastSounds.play(world, player, this);
+					}
 
 					// Crawling Choir: chance to echo-cast at no additional blood cost
-					CrawlingChoirHandler.tryEchoCast(player, world, heldItemMainhand, position, this);
+					CrawlingChoirHandler.tryEchoCast(player, world, heldItemMainhand, position, this, chargeTicks);
 
 					// Apply cross-system consequences: vascular strain, tendency shift, XP
 					KnownManipulationEvents.onManipulationUsed((ServerPlayer) player, this);
@@ -413,8 +480,9 @@ public class BloodManipulation implements EntityCastableManipulation {
 						invokeMnAComboHelper(player);
 					}
 
-					long appliedCooldown = ignoresCooldown(player) ? 0L : startCooldown(player);
+					long appliedCooldown = !applyCooldown || ignoresCooldown(player) ? 0L : startCooldown(player);
 					PacketHandler.sendToPlayer((ServerPlayer) player, new ManipCooldownPacket((int) appliedCooldown));
+					return true;
 				} else {
 					player.displayClientMessage(
 							Component.translatable("Not Enough Blood to be Shed!").withStyle(ChatFormatting.RED), true);
@@ -424,10 +492,15 @@ public class BloodManipulation implements EntityCastableManipulation {
 						.withStyle(ChatFormatting.RED), true);
 			}
 		}
+		return false;
 	}
 
 	protected boolean canPerformAction(Player player, float chargeTicks) {
-		return true;
+		return type != EnumManipulationType.CHARGED || chargeTicks > 0.0F;
+	}
+
+	protected boolean canPerformAction(Player player, ItemStack heldItemMainhand, float chargeTicks) {
+		return canPerformAction(player, chargeTicks);
 	}
 
 	/*

@@ -7,10 +7,10 @@ import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
 import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationRank;
 import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationType;
 import com.vincenthuto.hemomancy.common.manipulation.TendencyAffinityRules;
+import com.vincenthuto.hemomancy.common.manipulation.ManipulationCastingRules;
 import com.vincenthuto.hemomancy.common.util.CrimsonFireHelper;
-import com.vincenthuto.hutoslib.client.particle.factory.GlowParticleFactory;
-import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.particles.DustParticleOptions;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -24,11 +24,12 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
+import org.joml.Vector3f;
 
 import java.util.List;
 
 /**
- * Vitric Combustion — a T3 (SUMMA) FLAMMEUS quick manipulation that ignites
+ * Vitric Combustion — a T3 (SUMMA) FLAMMEUS charged manipulation that ignites
  * the caster's blood and triggers a concentrated eruption at the targeted
  * surface, dealing heavy fire damage and setting all nearby entities ablaze.
  *
@@ -42,12 +43,15 @@ import java.util.List;
  * </ul>
  */
 public class VitricCombustionManip extends BloodManipulation {
+	private static final int CHARGE_TICKS = 60;
 
 	private static final double BASE_RANGE = 22.0;
 	private static final double BASE_BLAST_RADIUS = 4.0;
 	private static final float BLAST_DAMAGE = 8.0f; // 4 hearts
 	private static final int FIRE_SECONDS = 8;
 	private static final double KNOCKBACK_STRENGTH = 1.2;
+	private static final DustParticleOptions COMBUSTION_DUST =
+			new DustParticleOptions(new Vector3f(1.0F, 0.35F, 0.05F), 1.0F);
 
 	public VitricCombustionManip(String name, double cost, double alignLevel, double xpCost,
 			EnumManipulationType type, EnumManipulationRank rank, EnumBloodTendency tendency,
@@ -57,7 +61,19 @@ public class VitricCombustionManip extends BloodManipulation {
 
 	@Override
 	public void getAction(Player player, Level world, ItemStack heldItemMainhand, BlockPos position) {
+		getAction(player, world, heldItemMainhand, position, CHARGE_TICKS);
+	}
+
+	@Override
+	public int getRequiredChargeTicks() {
+		return CHARGE_TICKS;
+	}
+
+	@Override
+	public void getAction(Player player, Level world, ItemStack heldItemMainhand, BlockPos position,
+			float chargeTicks) {
 		if (!(world instanceof ServerLevel sLevel)) return;
+		float strength = ManipulationCastingRules.chargeFraction(chargeTicks, CHARGE_TICKS);
 
 		double range = BASE_RANGE * SkillPointHelper.getSanguineReachMultiplier(player);
 		Vec3 eyePos = player.getEyePosition(1.0F);
@@ -74,7 +90,8 @@ public class VitricCombustionManip extends BloodManipulation {
 			blastCenter = Vec3.atCenterOf(hit.getBlockPos().relative(hit.getDirection()));
 		}
 
-		double blastRadius = BASE_BLAST_RADIUS * SkillPointHelper.getCrimsonMasteryMultiplier(player);
+		double blastRadius = Math.max(1.0D,
+				BASE_BLAST_RADIUS * SkillPointHelper.getCrimsonMasteryMultiplier(player) * strength);
 
 		BlockPos blastPos = BlockPos.containing(blastCenter);
 		AABB searchBox = new AABB(blastPos).inflate(blastRadius);
@@ -84,13 +101,13 @@ public class VitricCombustionManip extends BloodManipulation {
 		for (LivingEntity target : targets) {
 			if (target.position().distanceTo(blastCenter) > blastRadius) continue;
 			Vec3 toTarget = target.position().subtract(blastCenter).normalize();
-			CrimsonFireHelper.igniteCrimson(target, FIRE_SECONDS);
-			float damage = (float) (BLAST_DAMAGE * SkillPointHelper.getCrimsonMasteryMultiplier(player));
+			CrimsonFireHelper.igniteCrimson(target, Math.max(1, (int) Math.ceil(FIRE_SECONDS * strength)));
+			float damage = (float) (BLAST_DAMAGE * strength * SkillPointHelper.getCrimsonMasteryMultiplier(player));
 			target.hurt(world.damageSources().explosion(null, player),
 					TendencyAffinityRules.adjustManipulationDamage(player, target, this, damage));
-			target.push(toTarget.x * KNOCKBACK_STRENGTH,
-					0.4 * KNOCKBACK_STRENGTH,
-					toTarget.z * KNOCKBACK_STRENGTH);
+			target.push(toTarget.x * KNOCKBACK_STRENGTH * strength,
+					0.4 * KNOCKBACK_STRENGTH * strength,
+					toTarget.z * KNOCKBACK_STRENGTH * strength);
 		}
 
 		world.playSound(null, blastPos, SoundEvents.GENERIC_EXPLODE.value(), SoundSource.PLAYERS, 1.2f, 0.7f);
@@ -98,11 +115,8 @@ public class VitricCombustionManip extends BloodManipulation {
 
 		RandomSource random = world.random;
 		for (int i = 0; i < 60; i++) {
-			float r = 200 + random.nextFloat() * 55;
-			float g = 50 + random.nextFloat() * 120;
-			float b = random.nextFloat() * 15;
 			sLevel.sendParticles(
-					GlowParticleFactory.createData(new ParticleColor(r, g, b)),
+					COMBUSTION_DUST,
 					blastCenter.x + (random.nextDouble() - 0.5) * blastRadius * 2,
 					blastCenter.y + random.nextDouble() * blastRadius,
 					blastCenter.z + (random.nextDouble() - 0.5) * blastRadius * 2,

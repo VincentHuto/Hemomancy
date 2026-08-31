@@ -12,6 +12,7 @@ public final class RadialChooseManipScreenSourceTest {
 
 	public static void main(String[] args) throws IOException {
 		String screen = read("src/main/java/com/vincenthuto/hemomancy/client/screen/manips/RadialChooseManipScreen.java");
+		String loadout = read("src/main/java/com/vincenthuto/hemomancy/client/screen/tile/functional/SynapticLoadoutScreen.java");
 		String menu = read("src/main/java/com/vincenthuto/hemomancy/client/screen/radial/GenericRadialMenu.java");
 		String itemStackRadial = read("src/main/java/com/vincenthuto/hemomancy/client/screen/radial/ItemStackRadialMenuItem.java");
 		String reliquary = read("src/main/java/com/vincenthuto/hemomancy/client/screen/tile/functional/MnemonicReliquaryScreen.java");
@@ -32,6 +33,10 @@ public final class RadialChooseManipScreenSourceTest {
 				"case \"conjure_blade\" -> \"memory_living_blade_overlay\"");
 		assertContains("radial conjure staff uses the living staff memory overlay", screen,
 				"case \"conjure_staff\" -> \"memory_living_staff_overlay\"");
+		assertContains("radial Lignum Mortis uses its item model overlay", screen,
+				"case \"lignum_mortis\" -> \"memory_hemorrhage_overlay\"");
+		assertContains("saved loadouts use the same Lignum Mortis overlay", loadout,
+				"case \"lignum_mortis\" -> \"memory_hemorrhage_overlay\"");
 		assertContains("radial item construction uses the memory overlay helper", screen,
 				"memoryOverlayTexture(manipulation)");
 		assertContains("generic radial reads per-item background colors", menu,

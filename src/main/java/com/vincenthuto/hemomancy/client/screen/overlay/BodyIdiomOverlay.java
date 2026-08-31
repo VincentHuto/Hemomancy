@@ -18,6 +18,16 @@ public final class BodyIdiomOverlay {
 			Hemomancy.rloc("textures/gui/body_idiom/iron_heart_full.png");
 	private static final ResourceLocation IRON_HEART_PULSE =
 			Hemomancy.rloc("textures/gui/body_idiom/iron_heart_pulse.png");
+	private static final ResourceLocation[] IRON_HEART_CRACK_FRAMES = {
+			Hemomancy.rloc("textures/gui/body_idiom/iron_heart_crack_0.png"),
+			Hemomancy.rloc("textures/gui/body_idiom/iron_heart_crack_1.png"),
+			Hemomancy.rloc("textures/gui/body_idiom/iron_heart_crack_2.png")
+	};
+	private static Object trackedPlayer;
+	private static float previousIronHeartHealth;
+	private static int crackedFirstSlot;
+	private static int crackedSlotCount;
+	private static long crackStartTick = Long.MIN_VALUE;
 
 	private BodyIdiomOverlay() {
 	}
@@ -27,9 +37,24 @@ public final class BodyIdiomOverlay {
 		if (minecraft.player == null || minecraft.options.hideGui) return;
 		var state = HemoCapabilityAccess.getPowerGuardrails(minecraft.player);
 		float maxIronHeartHealth = BodyIdiomRules.maxIronHeartHealth(minecraft.player);
-		float charge = Mth.clamp(ClientEvents.getManipulationChargeTicks()
-				/ (float) BodyIdiomRules.IRON_HEART_CHARGE_TICKS, 0.0F, 1.0F);
+		String chargingManipulation = ClientEvents.getChargingManipulationName();
+		float chargeProgress = ClientEvents.getManipulationChargeProgress();
+		float charge = chargingManipulation.equals("ironhearted") ? chargeProgress : 0.0F;
 		float storedIron = state.getIronHeartHealth();
+		long now = minecraft.level == null ? 0L : minecraft.level.getGameTime();
+		if (trackedPlayer != minecraft.player) {
+			trackedPlayer = minecraft.player;
+			previousIronHeartHealth = storedIron;
+			crackStartTick = Long.MIN_VALUE;
+		} else {
+			int removed = BodyIdiomRules.removedIronHeartSlots(previousIronHeartHealth, storedIron);
+			if (removed > 0) {
+				crackedFirstSlot = BodyIdiomRules.ironHeartSlots(storedIron);
+				crackedSlotCount = removed;
+				crackStartTick = now;
+			}
+			previousIronHeartHealth = storedIron;
+		}
 		float shownIron = Mth.clamp(storedIron
 				+ charge * BodyIdiomRules.IRON_HEART_HEALTH_PER_CAST, 0.0F, maxIronHeartHealth);
 		int x = width / 2 - 91;
@@ -48,8 +73,18 @@ public final class BodyIdiomOverlay {
 						minecraft.level == null ? 0L : minecraft.level.getGameTime());
 			}
 		}
+		int crackFrame = BodyIdiomRules.ironHeartCrackFrame(crackStartTick, now);
+		if (crackFrame >= 0) {
+			for (int heart = crackedFirstSlot; heart < crackedFirstSlot + crackedSlotCount; heart++) {
+				int heartY = BodyIdiomRules.ironHeartY(y, heart, minecraft.player.hasEffect(MobEffects.REGENERATION),
+						minecraft.gui.getGuiTicks(), Math.max(minecraft.player.getMaxHealth(), minecraft.player.getHealth()));
+				graphics.blit(IRON_HEART_CRACK_FRAMES[crackFrame], x + heart * 8, heartY, 0, 0, 9, 9, 9, 9);
+			}
+		}
+		if (!chargingManipulation.isEmpty() && !chargingManipulation.equals("ironhearted")) {
+			drawChargeBar(graphics, width, height, chargeProgress);
+		}
 
-		long now = minecraft.level == null ? 0L : minecraft.level.getGameTime();
 		boolean refractory = now < state.getBlackheartedCooldownUntil();
 		if (state.getNecroticSaturation() > 0.0F || refractory) {
 			int barWidth = 43;
@@ -62,6 +97,14 @@ public final class BodyIdiomOverlay {
 			graphics.drawString(minecraft.font, refractory ? "REFRACTORY" : "NECROSIS",
 					x + barWidth + 5, barY - 2, refractory ? 0xFF8E788A : 0xFFB85B78, true);
 		}
+	}
+
+	private static void drawChargeBar(GuiGraphics graphics, int width, int height, float progress) {
+		int barWidth = 52;
+		int x = width / 2 - barWidth / 2;
+		int y = height - 51;
+		graphics.fill(x - 1, y - 1, x + barWidth + 1, y + 5, 0xDD130D17);
+		graphics.fill(x, y, x + Math.round(barWidth * progress), y + 4, 0xFF9E1B32);
 	}
 
 	private static void drawIronHeart(GuiGraphics graphics, TextureAtlasSprite emptyHeart, int x, int y,

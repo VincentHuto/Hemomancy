@@ -1,6 +1,7 @@
 package com.vincenthuto.hemomancy.common.manipulation.saint;
 
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BorrowedBloodReserve;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.EnumVeinSections;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
@@ -9,8 +10,10 @@ import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationRank;
 import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationType;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.BloodVolumeServerPacket;
-import com.vincenthuto.hutoslib.client.particle.factory.GlowParticleFactory;
+import com.vincenthuto.hemomancy.config.HemoServerConfig;
+import com.vincenthuto.hutoslib.client.particle.data.ColorParticleData;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
+import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
@@ -25,8 +28,8 @@ import net.minecraft.world.level.Level;
  * Crimson Tithe — Canon Memory of Saint Hemorath.
  * Doctrine: Judgment / Silence
  *
- * Damage dealt is stored as blood volume. However, a periodic repayment
- * is demanded — miss it and suffer internal hemorrhage.
+ * Issues blood through the shared borrowed reserve. Unspent blood is reclaimed
+ * at the deadline; spent blood is collected at twice its value.
  *
  * Imprinted, not learned. The player uses it uncomfortably.
  */
@@ -44,67 +47,71 @@ public class CrimsonTitheManip extends BloodManipulation {
 	}
 
 	@Override
+	protected boolean canPerformAction(Player player, float chargeTicks) {
+		if (!super.canPerformAction(player, chargeTicks)) return false;
+		if (player instanceof ServerPlayer serverPlayer) tickDebt(serverPlayer);
+		if (player.getPersistentData().contains(TITHE_EXPIRY_KEY)) {
+			player.displayClientMessage(Component.literal("The current tithe has not come due.")
+					.withStyle(ChatFormatting.DARK_RED), true);
+			return false;
+		}
+		if (!HemoServerConfig.BORROWED_BLOOD_ENABLED.get()
+				|| BorrowedBloodReserve.get(player) >= HemoServerConfig.BORROWED_BLOOD_CAP.get()) {
+			player.displayClientMessage(Component.literal("There is no room for borrowed blood.")
+					.withStyle(ChatFormatting.DARK_RED), true);
+			return false;
+		}
+		return true;
+	}
+
+	@Override
 	public void getAction(Player player, Level world, ItemStack heldItemMainhand, BlockPos position) {
-		long currentTime = world.getGameTime();
-		long titheExpiry = player.getPersistentData().getLong(TITHE_EXPIRY_KEY);
+		double borrowed = BorrowedBloodReserve.deposit(player, BLOOD_STORE_AMOUNT);
+		if (borrowed <= 0.0D) return;
 
-		if (titheExpiry > 0 && currentTime > titheExpiry) {
-			// Missed repayment — internal hemorrhage
-			applyHemorrhage(player, world);
-			return;
-		}
-
-		IBloodVolume volume = HemoCapabilityAccess.getBloodVolume(player).orElse(null);
-		if (volume == null || !volume.isActive()) {
-			return;
-		}
-
-		double toStore = Math.min(BLOOD_STORE_AMOUNT, volume.getMaxBloodVolume() - volume.getBloodVolume());
-		volume.addBloodVolume(toStore);
-
-		player.getPersistentData().putLong(TITHE_EXPIRY_KEY, currentTime + REPAYMENT_WINDOW_TICKS);
-		player.getPersistentData().putDouble(TITHE_STORED_KEY, toStore);
-
-		if (player instanceof ServerPlayer serverPlayer) {
-			PacketHandler.sendToPlayer(serverPlayer, new BloodVolumeServerPacket(volume));
-		}
+		player.getPersistentData().putLong(TITHE_EXPIRY_KEY, world.getGameTime() + REPAYMENT_WINDOW_TICKS);
+		player.getPersistentData().putDouble(TITHE_STORED_KEY, borrowed);
 
 		player.displayClientMessage(
-				Component.literal("Blood stored. The tithe will be collected in 30 seconds.")
-						.withStyle(net.minecraft.ChatFormatting.DARK_RED, net.minecraft.ChatFormatting.ITALIC),
+				Component.literal((int) borrowed + " borrowed blood granted. The tithe comes due in 30 seconds.")
+						.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC),
 				true);
 
 		world.playSound(null, player.blockPosition(), SoundEvents.WARDEN_HEARTBEAT, SoundSource.PLAYERS, 0.8f, 1.2f);
 
 		if (world instanceof ServerLevel sLevel) {
 			sLevel.sendParticles(
-					GlowParticleFactory.createData(new ParticleColor(180, 0, 0)),
+					new ColorParticleData(new ParticleColor(180, 0, 0)),
 					player.getX(), player.getY() + 1.0, player.getZ(),
 					20, 0.3, 0.5, 0.3, 0.02);
 		}
 	}
 
-	private void applyHemorrhage(Player player, Level world) {
-		double storedAmount = player.getPersistentData().getDouble(TITHE_STORED_KEY);
+	public static void tickDebt(ServerPlayer player) {
+		long expiry = player.getPersistentData().getLong(TITHE_EXPIRY_KEY);
+		if (expiry <= 0L || player.level().getGameTime() < expiry) return;
 
-		IBloodVolume volume = HemoCapabilityAccess.getBloodVolume(player).orElse(null);
-		if (volume != null) {
-			// Drain double what was stored as punishment
-			volume.drain(storedAmount * 2.0);
-			if (player instanceof ServerPlayer serverPlayer) {
-				PacketHandler.sendToPlayer(serverPlayer, new BloodVolumeServerPacket(volume));
-			}
-		}
-
-		player.hurt(player.damageSources().magic(), 6.0f);
-		player.displayClientMessage(
-				Component.literal("The tithe was not repaid. Hemorath collects with interest.")
-						.withStyle(net.minecraft.ChatFormatting.DARK_RED, net.minecraft.ChatFormatting.BOLD),
-				false);
-
+		double issued = Math.max(0.0D, player.getPersistentData().getDouble(TITHE_STORED_KEY));
 		player.getPersistentData().remove(TITHE_EXPIRY_KEY);
 		player.getPersistentData().remove(TITHE_STORED_KEY);
+		double returned = BorrowedBloodReserve.drainToCover(player, issued);
+		double spent = Math.max(0.0D, issued - returned);
+		double due = spent * 2.0D;
+		IBloodVolume volume = HemoCapabilityAccess.getBloodVolume(player).orElse(null);
+		if (volume != null && due > 0.0D) {
+			volume.drain(Math.min(due, Math.max(0.0D, volume.getBloodVolume())));
+			PacketHandler.sendToPlayer(player, new BloodVolumeServerPacket(volume));
+		}
 
-		world.playSound(null, player.blockPosition(), SoundEvents.WARDEN_ROAR, SoundSource.PLAYERS, 0.5f, 0.5f);
+		if (spent > 0.0D) {
+			player.hurt(player.damageSources().magic(), 6.0F);
+			player.displayClientMessage(Component.literal("The tithe was spent. Hemorath collects double.")
+					.withStyle(ChatFormatting.DARK_RED, ChatFormatting.BOLD), false);
+			player.level().playSound(null, player.blockPosition(), SoundEvents.WARDEN_ROAR,
+					SoundSource.PLAYERS, 0.5F, 0.5F);
+		} else {
+			player.displayClientMessage(Component.literal("The unused tithe returns to Hemorath.")
+					.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC), true);
+		}
 	}
 }

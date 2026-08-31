@@ -1,6 +1,7 @@
 package com.vincenthuto.hemomancy.common.event;
 
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.livingstaff.LivingStaffBondHelper;
+import com.vincenthuto.hemomancy.common.block.harbinger.functional.HematicStakeBlock;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -36,11 +37,19 @@ public class PendingBloodCraftManager {
 		private final BlockPos hitPos;
 		private final ItemStack result;
 		private final UUID crafterId;
+		private final HematicStakeBlock.Formation stakeFormation;
 		private int remainingTicks;
 
 		public PendingCraft(ServerLevel level, BlockPattern.BlockPatternMatch patternMatch,
 				int patternWidth, int patternHeight, int patternDepth,
 				BlockPos hitPos, ItemStack result, int delayTicks, ServerPlayer crafter) {
+			this(level, patternMatch, patternWidth, patternHeight, patternDepth, hitPos, result, delayTicks, crafter, null);
+		}
+
+		public PendingCraft(ServerLevel level, BlockPattern.BlockPatternMatch patternMatch,
+				int patternWidth, int patternHeight, int patternDepth,
+				BlockPos hitPos, ItemStack result, int delayTicks, ServerPlayer crafter,
+				HematicStakeBlock.Formation stakeFormation) {
 			this.level = level;
 			this.patternMatch = patternMatch;
 			this.patternWidth = patternWidth;
@@ -49,6 +58,7 @@ public class PendingBloodCraftManager {
 			this.hitPos = hitPos;
 			this.result = result;
 			this.crafterId = crafter.getUUID();
+			this.stakeFormation = stakeFormation;
 			this.remainingTicks = delayTicks;
 		}
 
@@ -62,11 +72,15 @@ public class PendingBloodCraftManager {
 		}
 
 		private void execute() {
+			boolean stakePlaced = stakeFormation != null && HematicStakeBlock.placeFormation(level, stakeFormation);
 			// Clear the structure blocks
 			for (int i = 0; i < patternWidth; ++i) {
 				for (int j = 0; j < patternHeight; ++j) {
 					for (int k = 0; k < patternDepth; ++k) {
 						BlockInWorld cachedBlockInfo = patternMatch.getBlock(i, j, k);
+						if (stakePlaced && cachedBlockInfo.getPos().equals(stakeFormation.pos())) {
+							continue;
+						}
 						level.setBlock(cachedBlockInfo.getPos(),
 								Blocks.AIR.defaultBlockState(), 2);
 						level.levelEvent(2001, cachedBlockInfo.getPos(),
@@ -75,10 +89,12 @@ public class PendingBloodCraftManager {
 				}
 			}
 
-			// Sound & result drop
+			// Sound & result
 			level.playSound(null, hitPos, SoundEvents.ENDERMAN_SCREAM, SoundSource.BLOCKS, 1, 1);
-			level.addFreshEntity(new ItemEntity(level,
-					hitPos.getX() + 0.5, hitPos.getY() + 0.5, hitPos.getZ() + 0.5, result));
+			if (!stakePlaced) {
+				level.addFreshEntity(new ItemEntity(level,
+						hitPos.getX() + 0.5, hitPos.getY() + 0.5, hitPos.getZ() + 0.5, result));
+			}
 			ServerPlayer crafter = level.getServer().getPlayerList().getPlayer(crafterId);
 			if (crafter != null) {
 				MachineAccessEvents.awardMachineCrafted(crafter, result);

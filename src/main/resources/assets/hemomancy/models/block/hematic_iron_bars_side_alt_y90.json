@@ -1,0 +1,7 @@
+{
+  "parent": "hemomancy:block/hematic_iron_bars_side_alt",
+  "transform": {
+    "rotation": { "y": 270 },
+    "origin": "center"
+  }
+}

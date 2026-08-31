@@ -13,8 +13,7 @@ public final class ActiveManipulationMemorySourceTest {
 	private static final Map<String, String> REQUIRED_SOURCES = Map.of(
 			"vital_effusion", "animus",
 			"hemolymphal_pulse", "ductilis",
-			"vascular_dowsing", "ferric",
-			"ferric_resonance", "ferric");
+			"vascular_dowsing", "ferric");
 
 	private ActiveManipulationMemorySourceTest() {
 	}

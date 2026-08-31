@@ -32,6 +32,7 @@ import com.vincenthuto.hemomancy.common.item.unstained.tool.*;
 import com.vincenthuto.hemomancy.common.item.unstained.armor.UnstainedArmorItem;
 import com.vincenthuto.hemomancy.common.item.unstained.armor.UnstainedShieldItem;
 import com.vincenthuto.hemomancy.common.item.unstained.armor.VestmentOfTheFinalMoltArmorItem;
+import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
 import com.vincenthuto.hutoslib.common.item.ItemArmBanner;
 import com.vincenthuto.hutoslib.common.item.ItemKnapper;
 import net.minecraft.ChatFormatting;
@@ -149,6 +150,11 @@ public class ItemInit {
                         com.vincenthuto.hemomancy.common.capability.player.harbinger.musclememory.MuscleMemoryPrimingRules.FLASK_DOSES,
                         () -> com.vincenthuto.hutoslib.common.registry.HLItemInit.cured_clay_flask.get()));
     }
+	private static DeferredHolder<Item, Item> memory(String id,
+			DeferredHolder<BloodManipulation, BloodManipulation> manipulation) {
+		return BASEITEMS.register("memory_" + id,
+				() -> new BloodMemoryItem(new Item.Properties(), manipulation));
+	}
     private static DeferredHolder<Item, Item> tinctureJug(String id, com.vincenthuto.hemomancy.common.capability.player.harbinger.musclememory.MuscleMemory memory) {
         return BASEITEMS.register("tincture_" + id + "_jug",
                 () -> new MuscleMemoryTinctureItem(new Item.Properties().rarity(Rarity.UNCOMMON), memory,
@@ -356,6 +362,8 @@ public class ItemInit {
             () -> new BloodMemoryItem(new Item.Properties(), ManipulationInit.venous_travel));
     public static final DeferredHolder<Item, Item> memory_blood_shot = BASEITEMS.register("memory_blood_shot",
             () -> new BloodMemoryItem(new Item.Properties(), ManipulationInit.blood_shot));
+    public static final DeferredHolder<Item, Item> memory_blood_binding = BASEITEMS.register("memory_blood_binding",
+            () -> new BloodMemoryItem(new Item.Properties(), ManipulationInit.blood_binding));
     public static final DeferredHolder<Item, Item> memory_blood_aneurysm = BASEITEMS.register("memory_blood_aneurysm",
             () -> new BloodMemoryItem(new Item.Properties(), ManipulationInit.blood_aneurysm));
     public static final DeferredHolder<Item, Item> memory_blood_rush = BASEITEMS.register("memory_blood_rush",
@@ -542,6 +550,8 @@ public class ItemInit {
             () -> new BloodMemoryItem(new Item.Properties(), ManipulationInit.lumen_suture));
     public static final DeferredHolder<Item, Item> memory_hemorrhage = BASEITEMS.register("memory_hemorrhage",
             () -> new BloodMemoryItem(new Item.Properties(), ManipulationInit.hemorrhage));
+    public static final DeferredHolder<Item, Item> memory_lignum_mortis = BASEITEMS.register("memory_lignum_mortis",
+            () -> new BloodMemoryItem(new Item.Properties(), ManipulationInit.lignum_mortis));
     public static final DeferredHolder<Item, Item> memory_exsanguinate = BASEITEMS.register("memory_exsanguinate",
             () -> new BloodMemoryItem(new Item.Properties(), ManipulationInit.exsanguinate));
     public static final DeferredHolder<Item, Item> memory_insatiable_hunger = BASEITEMS.register("memory_insatiable_hunger",
@@ -559,6 +569,39 @@ public class ItemInit {
             () -> new BloodMemoryItem(new Item.Properties(), ManipulationInit.bloom_of_rot));
     public static final DeferredHolder<Item, Item> memory_endless_hour = BASEITEMS.register("memory_endless_hour",
             () -> new BloodMemoryItem(new Item.Properties(), ManipulationInit.endless_hour));
+
+	public static final DeferredHolder<Item, Item> memory_crimson_coronation = memory("crimson_coronation",
+			ManipulationInit.crimson_coronation);
+	public static final DeferredHolder<Item, Item> memory_sovereign_instinct = memory("sovereign_instinct",
+			ManipulationInit.sovereign_instinct);
+	public static final DeferredHolder<Item, Item> memory_synaptic_storm = memory("synaptic_storm",
+			ManipulationInit.synaptic_storm);
+	public static final DeferredHolder<Item, Item> memory_living_circuit = memory("living_circuit",
+			ManipulationInit.living_circuit);
+	public static final DeferredHolder<Item, Item> memory_white_verdict = memory("white_verdict",
+			ManipulationInit.white_verdict);
+	public static final DeferredHolder<Item, Item> memory_vigil_of_glass = memory("vigil_of_glass",
+			ManipulationInit.vigil_of_glass);
+	public static final DeferredHolder<Item, Item> memory_furnace_veins = memory("furnace_veins",
+			ManipulationInit.furnace_veins);
+	public static final DeferredHolder<Item, Item> memory_phoenix_debt = memory("phoenix_debt",
+			ManipulationInit.phoenix_debt);
+	public static final DeferredHolder<Item, Item> memory_absolute_stillness = memory("absolute_stillness",
+			ManipulationInit.absolute_stillness);
+	public static final DeferredHolder<Item, Item> memory_rimebound_sentence = memory("rimebound_sentence",
+			ManipulationInit.rimebound_sentence);
+	public static final DeferredHolder<Item, Item> memory_hematic_ballast = memory("hematic_ballast",
+			ManipulationInit.hematic_ballast);
+	public static final DeferredHolder<Item, Item> memory_iron_choir = memory("iron_choir",
+			ManipulationInit.iron_choir);
+	public static final DeferredHolder<Item, Item> memory_funeral_bell = memory("funeral_bell",
+			ManipulationInit.funeral_bell);
+	public static final DeferredHolder<Item, Item> memory_carrion_communion = memory("carrion_communion",
+			ManipulationInit.carrion_communion);
+	public static final DeferredHolder<Item, Item> memory_penumbral_drift = memory("penumbral_drift",
+			ManipulationInit.penumbral_drift);
+	public static final DeferredHolder<Item, Item> memory_eclipse_well = memory("eclipse_well",
+			ManipulationInit.eclipse_well);
     // Living
     public static final DeferredHolder<Item, Item> blood_absorption = SPECIALITEMS.register("blood_absorption",
             () -> new BloodAbsorptionItem(new Item.Properties()));

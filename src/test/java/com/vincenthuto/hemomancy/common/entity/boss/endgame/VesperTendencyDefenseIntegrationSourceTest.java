@@ -40,7 +40,7 @@ final class VesperTendencyDefenseIntegrationSourceTest {
 
 		assertTrue(eventSource.contains("directEntity instanceof TendencyDamageCarrier carrier"));
 		assertTrue(shotSource.contains("shot.setDamageTendency(getTend())"));
-		assertTrue(needleSource.contains("needles[i].setDamageTendency(getTend())"));
+		assertTrue(needleSource.contains("needle.setDamageTendency(getTend())"));
 		assertTrue(cloudSource.contains("TendencyAffinityRules.damageMultiplier(player, ent,"));
 	}
 
@@ -55,7 +55,7 @@ final class VesperTendencyDefenseIntegrationSourceTest {
 
 		assertTrue(carrierSource.contains("getSecondaryDamageTendency()"));
 		assertTrue(eventSource.contains("carrier.getSecondaryDamageTendency()"));
-		assertTrue(needleSource.contains("needles[i].setSecondaryDamageTendency(getSecondaryTend())"));
+		assertTrue(needleSource.contains("needle.setSecondaryDamageTendency(getSecondaryTend())"));
 	}
 
 	@Test

@@ -16,6 +16,8 @@ import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.IDispellable;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.LivingStaffWeaponFormHelper;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.LivingStaffWeaponFormRules;
 import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
+import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationType;
+import com.vincenthuto.hemomancy.common.manipulation.ManipulationChannelManager;
 import com.vincenthuto.hemomancy.common.manipulation.animus.SummonThrallManip;
 import com.vincenthuto.hemomancy.common.manipulation.ferric.ConjurationManip;
 import net.minecraft.ChatFormatting;
@@ -37,12 +39,12 @@ public class UseManipKeyPacket implements CustomPacketPayload {
 	public static final StreamCodec<FriendlyByteBuf, UseManipKeyPacket> STREAM_CODEC = StreamCodec.of(UseManipKeyPacket::encode, UseManipKeyPacket::decode);
 
 	public static UseManipKeyPacket decode(final FriendlyByteBuf buffer) {
-		buffer.readByte();
-		return new UseManipKeyPacket(buffer.readFloat());
+		Action action = Action.byId(buffer.readUnsignedByte());
+		return new UseManipKeyPacket(action, buffer.readFloat());
 	}
 
 	public static void encode(final FriendlyByteBuf buffer, final UseManipKeyPacket message) {
-		buffer.writeByte(0);
+		buffer.writeByte(message.action.ordinal());
 		buffer.writeFloat(message.parTick);
 	}
 
@@ -52,17 +54,42 @@ public class UseManipKeyPacket implements CustomPacketPayload {
 			if (player == null)
 				return;
 			if (!player.level().isClientSide) {
-				if (HemoCapabilityAccess.getUnstainedProgress(player)
-						.map(UnstainedAccessRules::blocksKnownBloodPowerUse).orElse(false)) return;
+				boolean bloodPowersBlocked = HemoCapabilityAccess.getUnstainedProgress(player)
+						.map(UnstainedAccessRules::blocksKnownBloodPowerUse).orElse(false);
+				if (message.action == Action.STOP_CONTINUOUS) {
+					ManipulationChannelManager.stop((net.minecraft.server.level.ServerPlayer) player, true);
+					return;
+				}
+				if (message.action == Action.START_CONTINUOUS) {
+					if (!bloodPowersBlocked) {
+						ManipulationChannelManager.start((net.minecraft.server.level.ServerPlayer) player);
+					}
+					return;
+				}
 				float pTic = message.parTick;
 
 				// Allow SummonThrallManip through cooldown when selecting a destination
 				boolean bypassCooldown = false;
 				IKnownManipulations knownCheck = HemoCapabilityAccess.getKnownManipulations(player).orElse(null);
 				if (knownCheck != null && knownCheck.getSelectedMemoryRef().kind() == MemoryEntryKind.MUSCLE_MEMORY) {
+					if (bloodPowersBlocked) return;
 					handleMuscleMemoryUse(player, knownCheck);
 					return;
 				}
+				if (knownCheck != null && knownCheck.getSelectedManip() != null) {
+					BloodManipulation passive = ManipulationInit.getByName(knownCheck.getSelectedManip().getName());
+					if (passive != null && passive.getType() == EnumManipulationType.PASSIVE) {
+						if (ManipulationRetirementRules.isRetiredManipulation(passive)
+								|| !knownCheck.isManipEquipped(passive)) return;
+						if (bloodPowersBlocked && !knownCheck.isPassiveActive(passive.getName())) return;
+						boolean active = knownCheck.togglePassive(passive.getName());
+						player.displayClientMessage(Component.literal(passive.getName().replace('_', ' ')
+								+ (active ? " enabled" : " disabled"))
+								.withStyle(active ? ChatFormatting.GREEN : ChatFormatting.GRAY), true);
+						return;
+					}
+				}
+				if (bloodPowersBlocked) return;
 				if (knownCheck != null && knownCheck.getSelectedManip() != null) {
 					BloodManipulation selManip = ManipulationInit.getByName(knownCheck.getSelectedManip().getName());
 					if (selManip instanceof SummonThrallManip && SummonThrallManip.hasPendingThrall(player.getUUID())) {
@@ -102,12 +129,15 @@ public class UseManipKeyPacket implements CustomPacketPayload {
 												.withStyle(ChatFormatting.RED), true);
 								return;
 							}
+							if (selectedManip.getType() == EnumManipulationType.CONTINUOUS) return;
 							if (LivingStaffWeaponFormRules.isStaffWeaponFormManip(selectedManip.getName())) {
 								LivingStaffWeaponFormHelper.toggleSelectedForm(player, selectedManip);
 								return;
 							}
 							// Handle conjuration dispel logic
 							if (selectedManip instanceof ConjurationManip conjure) {
+								ItemStack beforeMain = mainStack.copy();
+								ItemStack beforeOff = player.getOffhandItem().copy();
 								if (!mainStack.isEmpty()) {
 									if (mainStack.getItem() instanceof IDispellable dispel) {
 										mainStack.shrink(1);
@@ -131,6 +161,7 @@ public class UseManipKeyPacket implements CustomPacketPayload {
 									selectedManip.performAction(player, player.level(), mainStack,
 									player.blockPosition(), pTic);
 								}
+								LivingStaffWeaponFormHelper.syncMorph(player, beforeMain, beforeOff);
 							} else {
 								// All other manipulation types — just perform
 								selectedManip.performAction(player, player.level(), mainStack,
@@ -178,13 +209,38 @@ public class UseManipKeyPacket implements CustomPacketPayload {
 		MuscleMemoryEvents.sync(serverPlayer);
 	}
 
-	float parTick;
+	private final Action action;
+	private final float parTick;
 
 	public UseManipKeyPacket() {
+		this(Action.CAST, 0.0F);
 	}
 
 	public UseManipKeyPacket(float par) {
+		this(Action.CAST, par);
+	}
+
+	private UseManipKeyPacket(Action action, float par) {
+		this.action = action;
 		this.parTick = par;
+	}
+
+	public static UseManipKeyPacket startContinuous() {
+		return new UseManipKeyPacket(Action.START_CONTINUOUS, 0.0F);
+	}
+
+	public static UseManipKeyPacket stopContinuous() {
+		return new UseManipKeyPacket(Action.STOP_CONTINUOUS, 0.0F);
+	}
+
+	public enum Action {
+		CAST,
+		START_CONTINUOUS,
+		STOP_CONTINUOUS;
+
+		private static Action byId(int id) {
+			return id >= 0 && id < values().length ? values()[id] : CAST;
+		}
 	}
 
 	@Override

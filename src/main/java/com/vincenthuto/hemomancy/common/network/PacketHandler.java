@@ -193,6 +193,9 @@ public class PacketHandler {
         net.playToClient(SyncCrimsonFireVisualS2CPacket.TYPE,
                 SyncCrimsonFireVisualS2CPacket.STREAM_CODEC,
                 SyncCrimsonFireVisualS2CPacket::handle);
+        net.playToClient(SyncBloodBindingTendrilS2CPacket.TYPE,
+                SyncBloodBindingTendrilS2CPacket.STREAM_CODEC,
+                SyncBloodBindingTendrilS2CPacket::handle);
 
         // ── Particles ─────────────────────────────────────────────────────────
         net.playToServer(GroundBloodDrawPacket.TYPE, GroundBloodDrawPacket.STREAM_CODEC, GroundBloodDrawPacket::handle);
@@ -240,6 +243,9 @@ public class PacketHandler {
         net.playToClient(PacketCardinalRiteStaffPlanting.TYPE,
                 PacketCardinalRiteStaffPlanting.STREAM_CODEC,
                 PacketCardinalRiteStaffPlanting::handle);
+		net.playToClient(PacketLivingStaffMorph.TYPE,
+				PacketLivingStaffMorph.STREAM_CODEC,
+				PacketLivingStaffMorph::handle);
         net.playToClient(PacketSyncPlayerAnimation.TYPE,
                 PacketSyncPlayerAnimation.STREAM_CODEC,
                 PacketSyncPlayerAnimation::handle);
@@ -376,6 +382,13 @@ public class PacketHandler {
     public static void sendCrimsonFireVisual(LivingEntity target, int durationTicks) {
         PacketDistributor.sendToPlayersTrackingEntityAndSelf(target,
                 new SyncCrimsonFireVisualS2CPacket(target.getId(), durationTicks));
+    }
+
+    public static void sendBloodBindingTendril(LivingEntity caster, LivingEntity target,
+            int durationTicks, long seed) {
+        if (!(caster.level() instanceof ServerLevel level)) return;
+        PacketDistributor.sendToPlayersNear(level, null, caster.getX(), caster.getY(), caster.getZ(), 64.0D,
+                new SyncBloodBindingTendrilS2CPacket(caster.getId(), target.getId(), durationTicks, seed));
     }
 
     public static void syncPlayerAnimation(LivingEntity target, PlayerAnimationKind kind,

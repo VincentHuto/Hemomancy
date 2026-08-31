@@ -1,6 +1,7 @@
 package com.vincenthuto.hemomancy.common.capability.player.harbinger.manip;
 
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.musclememory.MuscleMemory;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.EnumVeinSections;
 
 import java.util.List;
 
@@ -13,6 +14,13 @@ public final class MemoryEquipRules {
     }
 
     private MemoryEquipRules() {}
+
+    public static MuscleMemory nextPreparedInSection(List<MuscleMemory> prepared, MuscleMemory current,
+            EnumVeinSections section) {
+        List<MuscleMemory> choices = prepared.stream().filter(memory -> memory.section() == section).toList();
+        int nextIndex = current == null ? 0 : choices.indexOf(current) + 1;
+        return nextIndex < choices.size() ? choices.get(nextIndex) : null;
+    }
 
     public static AutoEquipResult autoEquipMuscleMemory(List<String> equippedKeys, MuscleMemory memory,
             int maxSlots) {

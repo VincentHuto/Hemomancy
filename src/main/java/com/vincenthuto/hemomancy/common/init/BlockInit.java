@@ -15,6 +15,7 @@ import com.vincenthuto.hemomancy.common.block.harbinger.puzzle.OfferingGateBlock
 import com.vincenthuto.hemomancy.common.block.inscription.DiscoveryInscriptionBlock;
 import com.vincenthuto.hemomancy.common.block.inscription.DictationTableBlock;
 import com.vincenthuto.hemomancy.common.block.shared.FillerBlock;
+import com.vincenthuto.hemomancy.common.block.shared.HematicIronBarsBlock;
 import com.vincenthuto.hemomancy.common.block.shared.HemoWallBlock;
 import com.vincenthuto.hemomancy.common.block.shared.HumoralBarometerBlock;
 import com.vincenthuto.hemomancy.common.block.shared.MnemonicCandleBlock;
@@ -370,7 +371,7 @@ public class BlockInit {
 					.requiresCorrectToolForDrops().strength(5.0F, 6.0F).sound(SoundType.METAL)));
 
 	public static final DeferredHolder<Block, Block> hematic_iron_bars = BASEBLOCKS.register("hematic_iron_bars",
-			() -> new IronBarsBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.IRON_BARS)));
+			() -> new HematicIronBarsBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.IRON_BARS)));
 
 	public static final DeferredHolder<Block, Block> hematic_iron_door = BASEBLOCKS.register("hematic_iron_door",
 			() -> new WaterloggedDoorBlock(BlockSetType.IRON, BlockBehaviour.Properties.ofFullCopy(Blocks.IRON_DOOR)));

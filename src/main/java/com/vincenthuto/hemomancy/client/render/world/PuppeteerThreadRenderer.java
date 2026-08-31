@@ -188,10 +188,9 @@ public final class PuppeteerThreadRenderer {
 	}
 
 	private static Vec3 entityAnchor(LivingEntity entity, float partialTick, double heightScale) {
-		double x = Mth.lerp(partialTick, entity.xOld, entity.getX());
-		double y = Mth.lerp(partialTick, entity.yOld, entity.getY()) + entity.getBbHeight() * heightScale;
-		double z = Mth.lerp(partialTick, entity.zOld, entity.getZ());
-		return new Vec3(x, y, z);
+		return PuppeteerThreadEndpointRules.summonEndpoint(
+				entity.xOld, entity.yOld, entity.zOld,
+				entity.getX(), entity.getY(), entity.getZ(), entity.getBbHeight(), heightScale, partialTick);
 	}
 
 	private static Vec3 threadPoint(Vec3 start, Vec3 delta, float t, float time) {

@@ -18,7 +18,16 @@ public final class ManipulationRetirementRules {
 			"crimson_harvest",
 			"hemosynthesis",
 			"vital_reservoir",
-			"sanguine_excavation");
+			"sanguine_excavation",
+			"ferric_resonance",
+			"glacial_bastion",
+			"blood_eclipse_mantle",
+			"crimson_sight",
+			"glacial_circulation",
+			"ferric_transmutation",
+			"vigil_of_glass",
+			"hematic_ballast",
+			"summon_thrall");
 
 	private static final Set<String> RETIRED_MEMORY_ITEM_IDS = Set.of(
 			"memory_conjure_living_staff",
@@ -30,7 +39,16 @@ public final class ManipulationRetirementRules {
 			"crude_memory_crimson_harvest",
 			"memory_hemosynthesis",
 			"memory_vital_reservoir",
-			"memory_sanguine_excavation");
+			"memory_sanguine_excavation",
+			"memory_ferric_resonance",
+			"memory_glacial_bastion",
+			"memory_blood_eclipse_mantle",
+			"memory_crimson_sight",
+			"memory_glacial_circulation",
+			"memory_ferric_transmutation",
+			"memory_vigil_of_glass",
+			"memory_hematic_ballast",
+			"memory_summon_thrall");
 
 	private ManipulationRetirementRules() {
 	}

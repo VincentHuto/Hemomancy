@@ -2,9 +2,12 @@ package com.vincenthuto.hemomancy.common.manipulation.ductilis;
 
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.EnumVeinSections;
+import com.vincenthuto.hemomancy.common.entity.HemoEntityPredicates;
+import com.vincenthuto.hemomancy.common.init.EffectInit;
 import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
 import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationRank;
 import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationType;
+import com.vincenthuto.hemomancy.common.manipulation.SchoolHitHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
@@ -43,8 +46,12 @@ public class HemolymphalPulseManip extends BloodManipulation {
 
 		int tagged = 0;
 		for (LivingEntity entity : nearby) {
-			if (entity == player) continue;
+			if (entity == player || HemoEntityPredicates.NOBLOOD.test(entity)) continue;
 			entity.addEffect(new MobEffectInstance(MobEffects.GLOWING, GLOW_DURATION, 0, false, false));
+			if (entity.getHealth() <= entity.getMaxHealth() * .5F) {
+				entity.addEffect(new MobEffectInstance(EffectInit.conductive_mark, 200, 0, false, true));
+				SchoolHitHelper.markConductive(entity, 200);
+			}
 			tagged++;
 		}
 

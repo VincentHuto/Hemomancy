@@ -193,8 +193,8 @@ final class ScarsTabView {
 		y += 3;
 		gfx.fill(textX, y, panelX + panelW - 7, y + 1, dim(color, 0.5f));
 		y += 5;
-		String lore = ScarLoreData.getLore(ScarsTabView.scarRecipeKey(entry.recipe()));
-		for (String line : ScreenDrawUtils.wrapText(ctx.font(), lore, textW)) {
+		Component lore = ScarLoreData.getLore(ScarsTabView.scarRecipeKey(entry.recipe()));
+		for (String line : ScreenDrawUtils.wrapText(ctx.font(), lore.getString(), textW)) {
 			if (y + 10 > panelY + panelH - 5) break;
 			gfx.drawString(ctx.font(), Component.literal(line).withStyle(s -> s.withColor(0xFF7799AA).withItalic(true)),
 					textX, y, 0, false);

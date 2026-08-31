@@ -1,6 +1,7 @@
 package com.vincenthuto.hemomancy.common.event;
 
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
+import com.vincenthuto.hemomancy.common.block.harbinger.functional.HematicStakeBlock;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.BloodVolumeServerPacket;
@@ -106,7 +107,7 @@ public final class BloodStructureFeedManager {
 
 		if (BloodStructureFeedRules.isComplete(progress.bloodFed, recipe.getBloodCost())) {
 			completeFeed(player, level, hitPos, offhandCatalyst, match.match(), blockPattern, recipe, positions,
-					match.offerings(), key);
+					match.offerings(), match.stakeFormation(), key);
 		}
 		return true;
 	}
@@ -137,7 +138,9 @@ public final class BloodStructureFeedManager {
 
 	private static void completeFeed(ServerPlayer player, ServerLevel level, BlockPos hitPos, ItemStack offhandCatalyst,
 			BlockPattern.BlockPatternMatch match, BlockPattern blockPattern, BloodStructureRecipe recipe,
-			List<BlockPos> positions, List<BlockPos> offerings, FeedKey key) {
+			List<BlockPos> positions, List<BlockPos> offerings,
+			HematicStakeBlock.Formation stakeFormation,
+			FeedKey key) {
 		if (!player.getAbilities().instabuild) {
 			offhandCatalyst.shrink(1);
 		}
@@ -158,7 +161,7 @@ public final class BloodStructureFeedManager {
 				level, match,
 				blockPattern.getWidth(), blockPattern.getHeight(), blockPattern.getDepth(),
 				hitPos, recipe.getResult().copy(),
-				CRAFT_ANIMATION_TICKS, player));
+				CRAFT_ANIMATION_TICKS, player, stakeFormation));
 		ACTIVE_FEEDS.remove(key);
 		COMPLETING_FEEDS.put(key, level.getGameTime() + COMPLETION_LOCK_TICKS);
 	}

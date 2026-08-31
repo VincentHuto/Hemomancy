@@ -46,12 +46,11 @@ public final class EntityManipulationEffects {
 			"blood_shot", "blood_needle", "blood_aneurysm", "blood_cloud",
 			"crimson_flame_conjuration", "sanguine_ignition", "scalding_updraft", "vitric_combustion",
 			"deadly_gaze", "hemolymphal_pulse", "activation_potential", "synaptic_jolt", "conductive_mark",
-			"hematic_flare", "crimson_sight", "prismatic_reproof", "unclosing_eye",
+			"hematic_flare", "hematic_beacon", "prismatic_reproof", "unclosing_eye",
 			"hemorrhage", "exsanguinate", "insatiable_hunger", "grave_debt", "bloom_of_rot",
-			"cryogenic_pulse", "glacial_grasp", "glacial_bastion", "glacial_rampart",
+			"cryogenic_pulse", "glacial_grasp", "glacial_rampart",
 			"pyretic_forge", "iron_retort", "sanguine_magnetism",
-			"void_shroud", "gloam_laceration", "umbral_step", "blood_eclipse",
-			"blood_eclipse_mantle");
+			"void_shroud", "gloam_laceration", "umbral_step", "blood_eclipse");
 
 	private EntityManipulationEffects() {
 	}
@@ -77,7 +76,7 @@ public final class EntityManipulationEffects {
 		case "synaptic_jolt" -> synapticJolt(context);
 		case "conductive_mark" -> conductiveMark(context);
 		case "hematic_flare" -> hematicFlare(context);
-		case "crimson_sight" -> crimsonSight(context);
+		case "hematic_beacon" -> crimsonSight(context);
 		case "prismatic_reproof" -> prismaticReproof(context);
 		case "unclosing_eye" -> unclosingEye(context);
 		case "hemorrhage" -> hemorrhage(context);

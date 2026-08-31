@@ -209,8 +209,8 @@ public final class BloodProjectionStructureCraftingResourceTest {
 				"wiggleOffset");
 		assertContains("vertex shader lifts geometry outward to avoid clipping", vertexShader,
 				"surfaceLift");
-		assertContains("vertex shader keeps shared cube edges coherent", vertexShader,
-				"coherentWarpDirection");
+		assertContains("vertex shader keeps surface warp outside each face", vertexShader,
+				"normalize(Normal");
 		assertContains("vertex shader melts completed overlay downward", vertexShader,
 				"liquidMelt");
 		assertContains("vertex shader uses the melt ground plane", vertexShader,
@@ -233,8 +233,6 @@ public final class BloodProjectionStructureCraftingResourceTest {
 				"mix(p.y, targetY, bottomOutMelt)");
 		assertNotContains("vertex shader should not collapse every height uniformly", vertexShader,
 				"mix(p.y, targetY, liquidMelt)");
-		assertNotContains("vertex shader should not split shared vertices by face normal", vertexShader,
-				"normalize(Normal");
 		assertContains("fragment shader glows red", fragmentShader,
 				"bloodGlow");
 		assertContains("fragment shader uses non-directional mottle instead of slash streaks", fragmentShader,

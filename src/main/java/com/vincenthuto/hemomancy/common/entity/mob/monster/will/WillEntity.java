@@ -291,8 +291,8 @@ public class WillEntity extends Monster implements BoundPuppeteerSummon {
 		if (kit.isEmpty()) return null;
 		double distanceSqr = distanceToSqr(target);
 		if (getHealth() < getMaxHealth() * 0.45F) {
-			ResourceLocation defensive = firstInKit(kit, "blood_eclipse_mantle", "glacial_bastion", "void_shroud",
-					"scalding_updraft", "crimson_sight");
+			ResourceLocation defensive = firstInKit(kit, "iron_retort", "glacial_rampart", "void_shroud",
+					"scalding_updraft", "hematic_beacon");
 			if (defensive != null) return defensive;
 		}
 		if (distanceSqr > 12.0D * 12.0D) {

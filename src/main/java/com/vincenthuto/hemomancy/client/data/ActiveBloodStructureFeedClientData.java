@@ -17,14 +17,29 @@ public final class ActiveBloodStructureFeedClientData {
 	}
 
 	public static void upsert(List<BlockPos> positions, float progress, int visibleTicks) {
+		upsert(0L, positions, progress, visibleTicks);
+	}
+
+	public static void upsert(long channelId, List<BlockPos> positions, float progress, int visibleTicks) {
 		if (positions.isEmpty()) {
 			return;
 		}
-		ACTIVE_FEEDS.put(key(positions), new FeedEntry(List.copyOf(sorted(positions)),
-				Math.max(0.0f, Math.min(1.0f, progress)), visibleTicks));
+		String key = key(channelId, positions);
+		FeedEntry previous = ACTIVE_FEEDS.get(key);
+		ACTIVE_FEEDS.put(key, new FeedEntry(channelId, List.copyOf(sorted(positions)),
+				Math.max(0.0f, Math.min(1.0f, progress)), visibleTicks,
+				previous == null ? 0 : previous.engulfmentTicks));
 	}
 
 	public static void clear(List<BlockPos> positions) {
+		clear(0L, positions);
+	}
+
+	public static void clear(long channelId, List<BlockPos> positions) {
+		if (channelId != 0L) {
+			ACTIVE_FEEDS.remove(channelKey(channelId));
+			return;
+		}
 		if (positions.isEmpty()) {
 			ACTIVE_FEEDS.clear();
 			return;
@@ -62,26 +77,48 @@ public final class ActiveBloodStructureFeedClientData {
 		return builder.toString();
 	}
 
+	private static String key(long channelId, List<BlockPos> positions) {
+		return channelId == 0L ? key(positions) : channelKey(channelId);
+	}
+
+	private static String channelKey(long channelId) {
+		return "channel:" + channelId;
+	}
+
 	public static final class FeedEntry {
 		private static final int COMPLETION_LINGER_VISIBLE_TICKS = 20;
+		private static final int ENGULFMENT_TICKS = 20;
+		private final long channelId;
 		private final List<BlockPos> positions;
 		private final float progress;
 		private final int initialVisibleTicks;
 		private int remainingTicks;
+		private int engulfmentTicks;
 
-		private FeedEntry(List<BlockPos> positions, float progress, int visibleTicks) {
+		private FeedEntry(long channelId, List<BlockPos> positions, float progress, int visibleTicks,
+				int engulfmentTicks) {
+			this.channelId = channelId;
 			this.positions = positions;
 			this.progress = progress;
 			this.initialVisibleTicks = Math.max(1, visibleTicks);
 			this.remainingTicks = this.initialVisibleTicks;
+			this.engulfmentTicks = engulfmentTicks;
 		}
 
 		public List<BlockPos> getPositions() {
 			return positions;
 		}
 
+		public long getChannelId() {
+			return channelId;
+		}
+
 		public float getProgress() {
 			return progress;
+		}
+
+		public float getEngulfmentProgress(float partialTick) {
+			return Math.min(1.0F, (engulfmentTicks + partialTick) / ENGULFMENT_TICKS);
 		}
 
 		public float getFinalizeProgress() {
@@ -103,6 +140,7 @@ public final class ActiveBloodStructureFeedClientData {
 		}
 
 		private boolean tick() {
+			engulfmentTicks++;
 			return --remainingTicks <= 0;
 		}
 	}

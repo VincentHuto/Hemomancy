@@ -1,6 +1,7 @@
 package com.vincenthuto.hemomancy.common.network.capa.harbinger.manips;
 
 import com.vincenthuto.hemomancy.Hemomancy;
+import com.vincenthuto.hemomancy.client.event.ClientEvents;
 import com.vincenthuto.hemomancy.client.screen.overlay.ManipCooldownOverlay;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
@@ -32,6 +33,7 @@ public class ManipCooldownPacket implements CustomPacketPayload {
 
 	public static void handle(final ManipCooldownPacket message, final IPayloadContext ctx) {
 		ctx.enqueueWork(() -> {
+			if (message.cooldownTicks > 0) ClientEvents.manipulationCastAccepted();
 			ManipCooldownOverlay.startCooldown(message.cooldownTicks);
 		});
 	}

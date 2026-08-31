@@ -35,7 +35,10 @@ void main() {
 
     vec3 darkRed = vec3(0.28, 0.0, 0.0);
     vec3 hotRed = vec3(1.0, 0.035, 0.018);
-    vec3 color = mix(darkRed, hotRed, bloodGlow) * ColorModulator.rgb;
+    vec3 color = mix(darkRed, hotRed, bloodGlow);
+    float useVertexTint = 1.0 - step(0.999, min(vertexColor.r, min(vertexColor.g, vertexColor.b)));
+    vec3 tintedColor = vertexColor.rgb * mix(0.52, 1.08, bloodGlow);
+    color = mix(color, tintedColor, useVertexTint) * ColorModulator.rgb;
     float finalizeFade = 1.0 - smoothstep(0.84, 1.0, FinalizeProgress);
     float alpha = clamp((0.20 + Progress * 0.28 + bloodMottle * 0.08 + rim * 0.08) * vertexColor.a * ColorModulator.a,
             0.0, 0.72);

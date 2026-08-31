@@ -86,7 +86,7 @@ public final class VesperLivingWeaponLayer
 		if (dissolve > 0.0F) {
 			LivingFlailRenderHelper.renderHeldDissolving(flailModel, entity,
 					leftHand ? HumanoidArm.LEFT : HumanoidArm.RIGHT, weapon, poseStack, buffer,
-					packedLight, OverlayTexture.NO_OVERLAY, dissolve, entity.getId() * 0.173F);
+					packedLight, OverlayTexture.NO_OVERLAY, dissolve, entity.getId() * 0.173F, false);
 		} else {
 			LivingFlailRenderHelper.renderHeld(flailModel, entity,
 					leftHand ? HumanoidArm.LEFT : HumanoidArm.RIGHT, weapon, poseStack, buffer,

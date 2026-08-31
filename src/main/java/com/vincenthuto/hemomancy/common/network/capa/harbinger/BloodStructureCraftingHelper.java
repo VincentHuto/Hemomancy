@@ -1,6 +1,7 @@
 package com.vincenthuto.hemomancy.common.network.capa.harbinger;
 
 import com.vincenthuto.hemomancy.common.block.harbinger.BrazierBlock;
+import com.vincenthuto.hemomancy.common.block.harbinger.functional.HematicStakeBlock;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.init.BlockInit;
 import com.vincenthuto.hemomancy.common.recipe.BloodStructureOffering;
@@ -13,6 +14,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
@@ -73,9 +75,40 @@ public final class BloodStructureCraftingHelper {
 				return Optional.of(ProjectionCraftMatch.invalid(recipe, match, offeringMatch.error()));
 			}
 
-			return Optional.of(ProjectionCraftMatch.valid(recipe, match, offeringMatch.positions()));
+			HematicStakeBlock.Formation stakeFormation = null;
+			if (recipe.getResult().is(BlockInit.hematic_stake.get().asItem())) {
+				stakeFormation = findStakeFormation(level, player, match, recipe.getPattern().getBlockPattern());
+				if (stakeFormation == null) {
+					return Optional.of(ProjectionCraftMatch.invalid(recipe, match,
+							Component.translatable("block.hemomancy.hematic_stake.invalid")
+									.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC)));
+				}
+			}
+
+			return Optional.of(ProjectionCraftMatch.valid(recipe, match, offeringMatch.positions(), stakeFormation));
 		}
 		return Optional.empty();
+	}
+
+	private static HematicStakeBlock.Formation findStakeFormation(ServerLevel level, Player player,
+			BlockPattern.BlockPatternMatch match, BlockPattern pattern) {
+		if (!(player instanceof ServerPlayer serverPlayer)) {
+			return null;
+		}
+		BlockPos barPos = null;
+		BlockPos crystalPos = null;
+		for (int i = 0; i < pattern.getWidth(); ++i) {
+			for (int j = 0; j < pattern.getHeight(); ++j) {
+				for (int k = 0; k < pattern.getDepth(); ++k) {
+					BlockInWorld block = match.getBlock(i, j, k);
+					if (block.getState().is(BlockInit.hematic_iron_bars.get())) barPos = block.getPos();
+					else if (block.getState().is(BlockInit.blood_crystal.get())) crystalPos = block.getPos();
+				}
+			}
+		}
+		return barPos != null && crystalPos != null
+				? HematicStakeBlock.findFormation(level, serverPlayer, barPos, crystalPos)
+				: null;
 	}
 
 	public static BlockPattern.BlockPatternMatch findStructurePatternAtHit(
@@ -317,19 +350,19 @@ public final class BloodStructureCraftingHelper {
 	}
 
 	public record ProjectionCraftMatch(BloodStructureRecipe recipe, BlockPattern.BlockPatternMatch match,
-			List<BlockPos> offerings, Component error) {
+			List<BlockPos> offerings, HematicStakeBlock.Formation stakeFormation, Component error) {
 		public ProjectionCraftMatch {
 			offerings = List.copyOf(offerings == null ? List.of() : offerings);
 		}
 
 		static ProjectionCraftMatch valid(BloodStructureRecipe recipe, BlockPattern.BlockPatternMatch match,
-				List<BlockPos> offerings) {
-			return new ProjectionCraftMatch(recipe, match, offerings, null);
+				List<BlockPos> offerings, HematicStakeBlock.Formation stakeFormation) {
+			return new ProjectionCraftMatch(recipe, match, offerings, stakeFormation, null);
 		}
 
 		static ProjectionCraftMatch invalid(BloodStructureRecipe recipe, BlockPattern.BlockPatternMatch match,
 				Component error) {
-			return new ProjectionCraftMatch(recipe, match, List.of(), error);
+			return new ProjectionCraftMatch(recipe, match, List.of(), null, error);
 		}
 
 		public boolean valid() {

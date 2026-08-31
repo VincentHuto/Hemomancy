@@ -127,11 +127,11 @@ public final class CoreSkillBranch {
 			SkillPointInit.skill_bright_eyed = SkillPointInit.registerSkill(branch,
 					new SkillPoint(69, "skill_bright_eyed", 500, 3, EnumSkillStates.LOCKED, SkillPointInit.skill_sanguine_reach)
 							.setSkillPointCost(3).setRequiredDegree(5).setTreePosition(534, 264).setBranch("core").setBranchColor(0xFFFFD66B)
-							.setIconItem(() -> new ItemStack(ItemInit.memory_crimson_sight.get())));
+							.setIconItem(() -> new ItemStack(ItemInit.memory_hematic_flare.get())));
 			SkillPointInit.skill_light_footed = SkillPointInit.registerSkill(branch,
 					new SkillPoint(70, "skill_light_footed", 550, 3, EnumSkillStates.LOCKED, SkillPointInit.skill_bright_eyed)
 							.setSkillPointCost(3).setRequiredDegree(6).setTreePosition(572, 214).setBranch("core").setBranchColor(0xFFFFD66B)
-							.setIconItem(() -> new ItemStack(ItemInit.memory_crimson_sight.get())));
+							.setIconItem(() -> new ItemStack(ItemInit.memory_hematic_flare.get())));
 		// </skill-editor>
 	}
 }

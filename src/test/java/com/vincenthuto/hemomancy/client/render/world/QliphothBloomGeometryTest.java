@@ -75,6 +75,17 @@ class QliphothBloomGeometryTest {
     }
 
     @Test
+    void matureTrunkTapersIntoTheBottomOfTheEventHorizon() {
+        QliphothBloomGeometry.Limb trunk = QliphothBloomGeometry.trunk(9, 0);
+        int tip = trunk.points().size() - 1;
+        double gapBelowCenter = QliphothBloomGeometry.apexCenter(0).y() - trunk.points().get(tip).y();
+
+        assertEquals(0, trunk.radii().get(tip), 1.0e-9);
+        assertTrue(gapBelowCenter >= .50 && gapBelowCenter <= .65,
+                "trunk tip should meet the lower event horizon instead of crossing its face");
+    }
+
+    @Test
     void angularLimbsUseShortBevelsInsteadOfIntersectingElbowRings() {
         QliphothBloomGeometry.Limb branch = QliphothBloomGeometry.mainBranches(9, 0).get(0);
         assertTrue(branch.points().size() >= 8, "authored corners need approach and exit rings");

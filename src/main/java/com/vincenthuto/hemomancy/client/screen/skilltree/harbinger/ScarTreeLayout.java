@@ -18,21 +18,21 @@ final class ScarTreeLayout {
 	private static final int[] TIER_RADII = {200, 250, 300};
 	private static final int SIDE_BRANCH_OFFSET = 40;
 	private static final List<AuthoredNode> AUTHORED_NODES = List.of(
-			authored("hemomancy:scar_heart", 480, 280),
-			authored("hemomancy:scar_marrow", 480, 230, "hemomancy:scar_heart"),
-			authored("hemomancy:scar_phoenix", 480, 180, "hemomancy:scar_marrow"),
-			authored("hemomancy:scar_pyre", 621, 339),
-			authored("hemomancy:scar_sol", 657, 303, "hemomancy:scar_pyre"),
+			authored("hemomancy:scar_heart", 480, 290),
+			authored("hemomancy:scar_marrow", 480, 240, "hemomancy:scar_heart"),
+			authored("hemomancy:scar_phoenix", 480, 190, "hemomancy:scar_marrow"),
+			authored("hemomancy:scar_pyre", 601, 359),
+			authored("hemomancy:scar_sol", 647, 313, "hemomancy:scar_pyre"),
 			authored("hemomancy:scar_corona", 692, 268, "hemomancy:scar_sol"),
-			authored("hemomancy:scar_feral", 680, 480),
-			authored("hemomancy:scar_flux", 730, 480, "hemomancy:scar_feral"),
-			authored("hemomancy:scar_chimera", 780, 480, "hemomancy:scar_flux"),
+			authored("hemomancy:scar_feral", 670, 470),
+			authored("hemomancy:scar_flux", 720, 470, "hemomancy:scar_feral"),
+			authored("hemomancy:scar_chimera", 770, 470, "hemomancy:scar_flux"),
 			authored("hemomancy:scar_halo", 621, 621),
 			authored("hemomancy:scar_veil", 657, 657, "hemomancy:scar_halo"),
 			authored("hemomancy:scar_transcendence", 692, 692, "hemomancy:scar_veil"),
-			authored("hemomancy:scar_blight", 480, 680),
-			authored("hemomancy:scar_wither", 480, 730, "hemomancy:scar_blight"),
-			authored("hemomancy:scar_oblivion", 480, 780, "hemomancy:scar_wither"),
+			authored("hemomancy:scar_blight", 480, 640),
+			authored("hemomancy:scar_wither", 480, 690, "hemomancy:scar_blight"),
+			authored("hemomancy:scar_oblivion", 480, 740, "hemomancy:scar_wither"),
 			authored("hemomancy:scar_rime", 339, 621),
 			authored("hemomancy:scar_glacier", 303, 657, "hemomancy:scar_rime"),
 			authored("hemomancy:scar_descendence", 268, 692, "hemomancy:scar_glacier"),
@@ -40,9 +40,9 @@ final class ScarTreeLayout {
 			authored("hemomancy:scar_anvil", 230, 480, "hemomancy:scar_thorn"),
 			authored("hemomancy:scar_blood_honed", 230, 440, "hemomancy:scar_thorn"),
 			authored("hemomancy:scar_crucible", 180, 480, "hemomancy:scar_anvil"),
-			authored("hemomancy:scar_shade", 339, 339),
-			authored("hemomancy:scar_moon", 303, 303, "hemomancy:scar_shade"),
-			authored("hemomancy:scar_eye", 268, 268, "hemomancy:scar_moon")
+			authored("hemomancy:scar_shade", 359, 359),
+			authored("hemomancy:scar_moon", 313, 313, "hemomancy:scar_shade"),
+			authored("hemomancy:scar_eye", 278, 278, "hemomancy:scar_moon")
 	);
 
 	private ScarTreeLayout() {}

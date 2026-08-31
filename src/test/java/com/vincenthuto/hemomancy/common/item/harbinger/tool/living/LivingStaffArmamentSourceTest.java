@@ -51,7 +51,7 @@ public final class LivingStaffArmamentSourceTest {
 		assertContains("torch branches from flame conjuration", treeInit, "\"crimson_flame_conjuration\")\n"
 				+ "\t\t\t\t.setSoftParents(\"conjure_staff\")");
 		assertContains("flail tree entry", treeInit, "register(\"conjure_flail\"");
-		assertContains("flail branches from glacial bastion", treeInit, "\"glacial_bastion\", \"glacial_rampart\")\n"
+		assertContains("flail branches from glacial rampart", treeInit, "\"glacial_rampart\")\n"
 				+ "\t\t\t\t.setSoftParents(\"conjure_staff\")");
 
 		assertContains("torch lang", lang, "\"item.hemomancy.living_torch\": \"Living Torch\"");

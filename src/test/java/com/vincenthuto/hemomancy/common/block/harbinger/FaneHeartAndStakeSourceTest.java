@@ -133,7 +133,7 @@ public final class FaneHeartAndStakeSourceTest {
 		assertContains("stake registers into fane", stake, "addStake");
 		assertContains("stake unregisters on removal", stake, "removeStake");
 		assertContains("stake validates progenitor authority", stake, "isProgenitor");
-		assertContains("stake manifests from authority action", stake, "manifestStake");
+		assertContains("stake resolves blood structure formations", stake, "findFormation");
 		assertContains("stake is entity rendered", stake, "RenderShape.ENTITYBLOCK_ANIMATED");
 		assertContains("stake creates block entity", stake, "new HematicStakeBlockEntity");
 		assertContains("registers hematic stake block", blockInit, "hematic_stake");
@@ -143,15 +143,8 @@ public final class FaneHeartAndStakeSourceTest {
 		assertContains("stake is instant to mine", blockInit, ".instabreak()");
 		assertContains("registers hematic stake block entity", blockEntityInit, "HematicStakeBlockEntity");
 		assertContains("stake block item uses custom renderer", blockInit, "new HematicStakeBlockItem");
-		assertContains("stake authority event handles empty-hand placement", stakeAuthorityEvents,
+		assertNotContains("stake authority no longer handles empty-hand placement", stakeAuthorityEvents,
 				"PlayerInteractEvent.RightClickBlock");
-		assertContains("stake authority respects block entity interactions before manifesting", stakeAuthorityEvents,
-				"shouldRespectClickedBlockInteraction(level, event.getPos())");
-		assertContains("stake authority yields to interactive block entity surfaces", stakeAuthorityEvents,
-				"state.hasBlockEntity()");
-		assertBefore("stake authority checks clicked block interaction before manifesting stake", stakeAuthorityEvents,
-				"shouldRespectClickedBlockInteraction(level, event.getPos())",
-				"HematicStakeBlock.manifestStake");
 		assertContains("stake authority event handles break protection", stakeAuthorityEvents,
 				"BlockEvent.BreakEvent");
 		assertContains("stake authority cancels non-owner breaks", stakeAuthorityEvents, "event.setCanceled(true)");

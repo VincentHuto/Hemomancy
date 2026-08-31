@@ -57,8 +57,8 @@ final class ScarTreeLayoutTest {
 				new ScarTreeLayout.Node("hemomancy:scar_blood_honed", EnumBloodTendency.FERRIC, 2, true),
 				node("hemomancy:scar_crucible", EnumBloodTendency.FERRIC, 3)));
 
-		assertEquals(new ScarTreeLayout.Point(621, 339), result.pointFor("hemomancy:scar_pyre"));
-		assertEquals(new ScarTreeLayout.Point(657, 303), result.pointFor("hemomancy:scar_sol"));
+		assertEquals(new ScarTreeLayout.Point(601, 359), result.pointFor("hemomancy:scar_pyre"));
+		assertEquals(new ScarTreeLayout.Point(647, 313), result.pointFor("hemomancy:scar_sol"));
 		assertEquals(new ScarTreeLayout.Point(692, 268), result.pointFor("hemomancy:scar_corona"));
 		assertEquals(new ScarTreeLayout.Point(280, 480), result.pointFor("hemomancy:scar_thorn"));
 		assertEquals(new ScarTreeLayout.Point(230, 480), result.pointFor("hemomancy:scar_anvil"));

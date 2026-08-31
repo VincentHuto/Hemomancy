@@ -37,8 +37,10 @@ public final class LivingSickleItemRenderer extends BlockEntityWithoutLevelRende
 		if (context == ItemDisplayContext.GUI) poseStack.translate(-0.2D, 0.2D, 0.0D);
 		VertexConsumer base = buffers.getBuffer(model.renderType(TEXTURE));
 		model.renderToBuffer(poseStack, base, light, OverlayTexture.NO_OVERLAY, -1);
-		VertexConsumer glint = buffers.getBuffer(RenderTypeInit.getCrimsonGlint());
-		model.renderToBuffer(poseStack, glint, light, OverlayTexture.NO_OVERLAY, -1);
+		if (!LivingStaffMorphRenderer.isMorphBuffer(buffers)) {
+			VertexConsumer glint = buffers.getBuffer(RenderTypeInit.getCrimsonGlint());
+			model.renderToBuffer(poseStack, glint, light, OverlayTexture.NO_OVERLAY, -1);
+		}
 		poseStack.popPose();
 	}
 

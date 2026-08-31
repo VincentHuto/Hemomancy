@@ -38,10 +38,11 @@ public final class QliphothBloomGeometry {
         double fraction = trunkFraction(stage);
         List<Point> rest = List.of(new Point(0, -.08, 0), new Point(.05, 1.15, -.04),
                 new Point(-.09, 2.45, .06), new Point(.12, 3.85, .02),
-                new Point(-.08, 5.25, -.08), new Point(.07, 6.55, .05), new Point(0, 8, 0));
+                new Point(-.08, 5.25, -.08), new Point(.07, 6.55, .05), new Point(0, stage >= 9 ? 7.5 : 8, 0));
         List<Point> path = truncate(rest, fraction);
         path = bevel(animate(path, 91, time, .075, false), .16);
         List<Double> radii = profile(path.size(), .62, stage >= 6 ? .28 : .12, false);
+        if (stage >= 9) radii.set(radii.size() - 1, 0.0);
         return new Limb(path, radii, 91);
     }
 

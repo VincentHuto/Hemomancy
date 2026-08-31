@@ -1059,28 +1059,30 @@ Shared degree gates for manipulation ranks are centralized in `ManipulationRankG
 
 Secondary tendencies do not change a manipulation's required alignment, tree cluster, primary color, Dynamic Use match, or Sporitic Thurible cost/cooldown affinity. On cast, the primary tendency gains the configured manipulation-use amount and the secondary tendency, when present, gains half that amount. For direct manipulation damage and Living Staff weapon-form combat, mixed-tendency damage is composition-based rather than additive: pure manipulations use the full primary affinity multiplier, while mixed manipulations use 75% primary affinity plus 25% secondary affinity.
 
+Manipulation types are input contracts: **Quick** fires once on key press; **Charged** gains strength while held, fires each time it fills, and fires its partial charge on release with proportional blood cost; **Passive** toggles criteria-driven effects on or off; **Continuous** starts on press, pays its registered blood cost for an immediate pulse and each subsequent one-second pulse, and starts its cooldown when released or interrupted.
+
 ### 8.2 Registered Manipulations
 
-`ManipulationInit` currently registers 73 blood manipulations. The catalog below tracks active registry entries and their developer-facing gameplay role. The Tendency column lists the primary tendency; secondary tendencies are assigned in code and surfaced in the Manipulations tab detail panel.
+`ManipulationInit` currently registers 90 blood manipulations: 64 Quick entries (52 active plus 12 retired compatibility IDs), 12 Charged, 5 Passive entries (3 active plus 2 retired compatibility IDs), and 9 Continuous. The catalog below tracks the 76 active registry entries and their developer-facing gameplay role. The Tendency column lists the primary tendency; secondary tendencies are assigned in code and surfaced in the Manipulations tab detail panel.
 
 | Name | Cost | Type | Rank | Tendency | Vein Section | Cooldown | Description |
 |------|------|------|------|----------|-------------|----------|-------------|
-| `venous_travel` | 1000 | Continuous | Mediocritas | Ferric | Right Arm | 20t | Teleport to saved Earthen Vein locations (vein network fast travel) |
+| `venous_travel` | 1000 | Quick | Mediocritas | Ductilis / Animus | Right Arm | 20t | Tap to choose a saved Earthen Vein; a validated destination spends through the shared manipulation economy before teleporting |
 | `blood_shot` | 100 | Quick | Humilis | Animus | Head | 10t | Fires a single tracking blood shot projectile in the look direction |
-| `deadly_gaze` | 100 | Quick | Humilis | Animus | Head | 20t | Raycasts 100 blocks; launches the targeted entity upward with blood claw FX |
+| `blood_binding` | 125 | Quick | Humilis | Animus / Ductilis | Legs | 60t | Roots an aimed non-allied target within 8 blocks for 6 seconds; bosses are bound for half duration, and solid blood tendrils tether the target to the caster before retracting on release or death |
+| `deadly_gaze` | 100 | Charged (40t) | Humilis | Animus | Head | 20t | Charge extends its aimed reach and lift; a full charge interrupts the target before a delayed bloodborne slam |
 | `hematic_rebuke` | 225 | Quick | Mediocritas | Animus / Ductilis | Head | 100t | Commands a blood-bearing mob to drop its target and flee for 8 seconds; players, bosses, bloodless constructs, and mobs above 80 max health are immune |
 | `hematic_impressment` | 500 | Quick | Summa | Animus / Ductilis | Head | 200t | Impresses one eligible mob into defending the caster and allies for 15–30 seconds; stronger bodies shed the command sooner and replacing it releases the prior mob |
-| `blood_needle` | 100 | Quick | Humilis | Animus | Head | 10t | Fires a spread of 10–20 blood needle projectiles with random scatter |
-| `blood_rush` | 100 | Passive | Humilis | Animus | Body | 60t | Summons a Wretched Will and grants Blood Rush effect (+20% move/attack speed) |
+| `blood_needle` | 100 | Charged (20t) | Humilis | Animus | Head | 10t | Charge scales the volley from 1 needle to the existing randomized 10–20 projectile spread |
+| `blood_rush` | 100 | Quick | Humilis | Animus / Flammeus | Body | 60t | Surges the caster forward and grants Blood Rush (+20% move/attack speed); no longer summons a Wretched Will |
 | `blood_cloud` | 300 | Quick | Summa | Animus | Head | 40t | Launches a Blood Cloud Carrier projectile that deploys an AoE blood cloud |
-| `blood_aneurysm` | 400 | Quick | Summa | Animus | Body | 40t | Targets nearest enemy in 10 blocks: deals 8 magic damage + launches target upward, then bursts for 3 splash damage to all entities within 4 blocks of the target. Both values scale with Crimson Mastery. |
+| `blood_aneurysm` | 400 | Charged (40t) | Summa | Animus | Body | 40t | Targets the nearest enemy in 10 blocks; charge scales its 8 direct damage, 3 splash damage, and launch force while retaining the 4-block burst radius |
 | `vital_effusion` | 350 | Quick | Humilis | Animus | Body | 20t | Bonemeal-accelerates growable blocks near the targeted surface in a small area |
-| `activation_potential` | 200 | Quick | Mediocritas | Ductilis | Body | 30t | AoE lightning bolt to all entities within 5 blocks, dealing 5 damage each |
-| `sanguine_ward` | 10 | Continuous | Mediocritas | Ductilis | Body | 20t | Passive damage reduction shield (logic handled in ManipEvents on hurt) |
-| `hemolymphal_pulse` | 400 | Quick | Humilis | Ductilis | Head | 20t | Blood-sense pulse that applies Glowing to nearby living entities for 15 seconds |
+| `activation_potential` | 200 | Charged (30t) | Mediocritas | Ductilis | Body | 30t | Charge scales up to 5 damage against every valid entity within the fixed 5-block lightning field |
+| `sanguine_ward` | 10/s | Continuous | Mediocritas | Ductilis / Ferric | Body | 20t on stop | Forms a six-point damage ward; later channel pulses restore two points up to eight, and the pool expires if the channel stops refreshing it |
+| `hemolymphal_pulse` | 400 | Quick | Humilis | Ductilis | Head | 20t | Reveals nearby blood-bearing bodies and primes wounded targets with Conductive Mark; bloodless bodies are ignored |
 | `synaptic_jolt` | 150 | Quick | Humilis | Ductilis | Head | 25t | Short-range lightning nerve shock: small magic damage, movement/navigation stagger, Slowness, Weakness, and HutosLib lightning visuals |
 | `conductive_mark` | 225 | Quick | Mediocritas | Ductilis | Head | 50t | Marks a target for 160t; later Ductilis, Lux, Ferric, or living-weapon hits from any player arc to up to 3 nearby enemies with a short per-target throttle |
-| `ferric_transmutation` | 1000 | Quick | Summa | Ferric | Body | 20t | **Sanguine Alloy** — saturates the caster's blood with ferrous compounds for 90s: grants Strength II (iron-enriched blood hits harder) + Sanguine Siphon II (accelerated blood regeneration). Memory item display name: "Memory Sanguine Alloy". |
 | `conjure_blade` | 250 hot-swap | Quick (Living Staff Form) | Mediocritas | Animus | Right Arm | — | Reshapes a held Living Staff into a Living Blade; cost reduced by Weapons Master |
 | `conjure_axe` | 250 hot-swap | Quick (Living Staff Form) | Mediocritas | Mortem | Right Arm | — | Reshapes a held Living Staff into a Living Axe; cost reduced by Weapons Master |
 | `conjure_spear` | 250 hot-swap | Quick (Living Staff Form) | Mediocritas | Lux | Right Arm | — | Reshapes a held Living Staff into a Living Spear; cost reduced by Weapons Master |
@@ -1093,52 +1095,60 @@ Secondary tendencies do not change a manipulation's required alignment, tree clu
 | `blood_absorption` | 1000 | Quick (Conjuration) | Mediocritas | Ferric | Right Arm | 40t | Conjures a Blood Absorption tool into empty main hand |
 | `blood_projection` | 1000 | Quick (Conjuration) | Mediocritas | Ferric | Right Arm | 40t | Conjures a Blood Projection launcher into empty main hand |
 | `summon_avatar` | 500 | Quick | Summa | Animus | Body | 100t | Toggles the Blood Avatar form (visual transformation synced to all players) |
-| `summon_thrall` | 500 | Quick | Mediocritas | Animus | Body | 60t | Two-step: (1) raycast to spawn a Blood Thrall at source block, (2) raycast again to set its destination — thrall then works autonomously |
 | `crimson_flame_conjuration` | 150 | Quick | Humilis | Animus | Right Arm | 15t | Places Crimson Flames on the targeted block face (range 16, scales with Sanguine Reach) |
 | `hematic_flare` | 125 | Quick | Humilis | Lux | Head | 30t | Short Lux ray: deals 3 magic damage, applies Glowing, strips Invisibility, and deals +2 damage to concealed targets |
-| `crimson_sight` | 250 | Quick | Mediocritas | Lux | Head | 60t | Grants Night Vision (60s) and applies Glowing to all mobs within 32 blocks (30s) |
 | `prismatic_reproof` | 325 | Quick | Mediocritas | Lux | Head | 80t | Cone of refracted Lux: blinds and weakens targets; deals 2 magic damage, or 4 against marked/glowing targets |
-| `hematic_beacon` | 350 | Quick | Mediocritas | Lux | Body | 160t | Aimed blood-light rally point: grants brief Regeneration/Resistance to players and Glowing to mobs in an 8-block radius |
+| `hematic_beacon` | 350 | Quick | Mediocritas | Lux | Body | 160t | Creates an aimed 8-second rally zone that immediately pulses and refreshes Regeneration/Resistance on allied players while revealing hostile mobs once per second |
 | `lumen_suture` | 250 | Quick | Mediocritas | Lux | Right Arm | 120t | Supports the nearest wounded player: heals 1 heart, grants Absorption II, clears Blindness and Wither |
 | `pyretic_forge` | 350 | Quick | Mediocritas | Flammeus | Body | 30t | Smelts held items in-hand using blood heat (base 8 items, scales with Crimson Mastery) |
 | `sanguine_ignition` | 125 | Quick | Humilis | Flammeus | Body | 25t | AoE fire pulse in 5-block radius: sets targets alight for 4s and deals 1 heart ignition damage |
 | `scalding_updraft` | 225 | Quick | Humilis | Flammeus | Left Leg | 80t | Superheats air underfoot to launch the caster upward/forward, grants brief Slow Falling, and scorches nearby enemies |
-| `cauterizing_rebuke` | 275 | Quick | Mediocritas | Flammeus | Body | 90t | Clears Poison and Wither from the caster, then burns and damages nearby living enemies |
-| `vitric_combustion` | 500 | Quick | Summa | Flammeus | Body | 60t | Long-range (22 blocks) targeted blood explosion (8 hearts damage, 8s fire, knockback) — range scales with Sanguine Reach |
-| `glacial_grasp` | 125 | Quick | Humilis | Congeatio | Left Arm | 20t | Freezes water in a 7×7 area into Frosted Ice (on-demand Frost Walker) |
+| `cauterizing_rebuke` | 275 | Quick | Mediocritas | Flammeus | Body | 90t | Purges Poison, Wither, and Blood Loss; each removed ailment burns the caster for 2 damage before granting brief Absorption |
+| `vitric_combustion` | 500 | Charged (60t) | Summa | Flammeus | Body | 60t | Long-range targeted blood explosion; charge scales its damage, 1–4 block base radius, fire duration, and knockback |
+| `glacial_grasp` | 125 | Quick | Humilis | Congeatio | Left Arm | 20t | Projects an aimed freezing route: wet targets in its path freeze and receive Slowness II while nearby source water becomes temporary Frosted Ice |
 | `cryogenic_pulse` | 150 | Quick | Humilis | Congeatio | Body | 30t | AoE cryo burst in 5-block radius: 1.5 hearts damage + Slowness III (3s) + Mining Fatigue I (4s) |
-| `glacial_bastion` | 350 | Quick | Mediocritas | Congeatio | Left Arm | 50t | Raises a compact temporary iceberg shell around the caster while leaving the caster's own space open |
-| `glacial_rampart` | 350 | Quick | Mediocritas | Congeatio | Left Arm | 50t | Projects a temporary 3-wide x 3-high ice wall at the targeted location (range 20, scales with Sanguine Reach) |
-| `glacial_circulation` | 175 | Quick | Humilis | Congeatio | Body | 100t | Chills blood for 90s: grants Fire Resistance + Slowness I. Works everywhere (unlike GlacialGrasp's water dependency). The tradeoff: fire immunity at the cost of movement speed. |
+| `glacial_rampart` | 350 | Quick | Mediocritas | Congeatio | Left Arm | 50t | Projects a temporary 3-wide x 3-high aimed ice wall; crouch-casting instead raises the former Bastion shell around the caster |
 | `osseous_bloom` | 600 | Quick | Summa | Congeatio | Body | 60t | Crystallisation burst in 6-block radius: deals 25% of each target's **current** HP as freeze damage (punishes full-health targets hardest) + Slowness IV for 4s. Scales with Crimson Mastery. Best as an opener, not a finisher. |
-| `sanguine_mending` | 150 | Quick | Humilis | Ferric | Right Arm | 30t | Repairs the held item by 50 durability using blood |
-| `hemorrhage` | 100 | Quick | Humilis | Mortem | Right Arm | 20t | Targets the closest living entity within 8 blocks and applies Wither II (6s) |
+| `sanguine_mending` | 150/s | Continuous | Humilis | Ferric | Right Arm | 30t on stop | Repairs the damaged held item by 50 durability immediately and per held second |
+| `hemorrhage` | 100 | Quick | Humilis | Mortem | Right Arm | 20t | Ruptures the closest living entity within 8 blocks with Blood Loss II for 8 seconds, priming Carrion Communion and Funeral Bell |
 | `insatiable_hunger` | 225 | Quick | Mediocritas | Mortem | Body | 70t | Debuffs a target for 220t: healing is reduced to 25%, and affected players who finish food gain Hunger II plus exhaustion |
 | `grave_debt` | 325 | Quick | Mediocritas | Mortem | Heart | 75t | Marks a target for 180t; crossing 25% health causes one damaging burst, while death refunds blood to the original caster |
-| `blackhearted` | 0 | Passive | Magister | Mortem / Animus | Heart | — | While equipped, converts 65% of Wither damage into half as much healing and equal Necrotic Saturation. At 12 saturation it ruptures for 6 magic damage and enters a 70-second refractory period. |
+| `blackhearted` | 0 | Passive | Magister | Mortem / Animus | Heart | — | While toggled active, converts 65% of Wither damage into half as much healing and equal Necrotic Saturation. At 12 saturation it ruptures for 6 magic damage and enters a 70-second refractory period. |
 | `exsanguinate` | 300 | Quick | Mediocritas | Mortem | Right Arm | 50t | Executes a weakened target (≤30% HP) within 10 blocks: deals 1.5× their current HP as damage and restores 600 blood to the caster |
 | `void_shroud` | 100 | Quick | Humilis | Tenebris | Body | 20t | **Dash-stealth** — grants Invisibility + Speed II + Night Vision for 5 seconds. Designed as a repositioning tool; pairs with `umbral_step` (shroud first, then teleport through shadow). |
 | `gloam_laceration` | 175 | Quick | Humilis | Tenebris | Right Arm | 35t | Short ambush slash: deals 3.5 magic damage, applies Blood Loss + Weakness, deals +2.5 from Invisibility or darkness, and renders a three-stroke claw ribbon rather than generic glow motes |
 | `blood_eclipse` | 300 | Quick | Mediocritas | Tenebris | Head | 45t | Forward cone attack (18 blocks, 30° half-angle): applies Blindness II (5s) + Weakness I (6s) + 1.5 hearts shadow damage |
-| `black_veil_covenant` | 425 | Quick | Mediocritas | Tenebris | Body | 220t | Raises a temporary black-veined sphere around the caster; the zone counts as synthetic darkness for `umbral_step` and other darkness checks |
+| `black_veil_covenant` | 425 | Quick | Mediocritas | Tenebris | Body | 220t | Raises synthetic darkness; while the caster stands inside their own veil they gain Resistance II and Fire Resistance at the cost of Weakness |
 | `umbral_reversal` | 375 | Quick | Mediocritas | Tenebris | Left Leg | 100t | Slips backward into a nearby safe dark space (natural or Black Veil darkness) and blinds pursuers left near the origin |
-| `blood_eclipse_mantle` | 325 | Quick | Mediocritas | Tenebris | Body | 180t | Defensive eclipse stance: Resistance II + Fire Resistance with Weakness as the tradeoff |
-| `vascular_dowsing` | 500 | Quick | Humilis | Ferric | Right Arm | 20t | Scans nearby ore blocks and reveals them to the caster with ore-colored dust particles |
-| `ferric_resonance` | 600 | Quick | Mediocritas | Ferric | Right Arm | 200t | Ferric self-buff for 30s: grants Haste II, Strength I, and Resistance I |
+| `vascular_dowsing` | 500/s | Continuous | Humilis | Ferric | Right Arm | 400t on stop | Scans nearby ore blocks immediately and per held second, revealing them with ore-colored dust particles |
 | `iron_retort` | 250 | Quick | Mediocritas | Ferric | Body | 80t | Brief 60t guard: the first direct living attacker has damage halved and takes thorns-style metal retaliation |
-| `ironhearted` | 300 | Charged | Magister | Ferric / Animus | Heart | 40t | A 40-tick charge forms one temporary Iron Heart (2 damage capacity), up to five. Iron Hearts absorb incoming damage before health and expire after 10 minutes without naturally regenerating. |
+| `ironhearted` | 300 | Charged (40t) | Magister | Ferric / Animus | Heart | 40t | Release early to form a proportional temporary Iron Heart at proportional blood cost; every completed charge forms a full 2-damage Iron Heart and begins the next while held |
 | `sanguine_magnetism` | 450 | Quick | Summa | Ferric | Body | 140t | Summons a magnetic iron pillar for 120t; hostile mobs in range are pulled inward and pinned near the pillar |
 | `umbral_step` | 300 | Quick | Mediocritas | Tenebris | Left Leg | 40t | Teleports to the targeted block (range 24, scales with Sanguine Reach) — destination must be dark (light ≤ 7) |
-| `crimson_tithe` | 400 | Quick | Summa | Mortem | Heart | 100t | **Canon Memory (Hemorath)** — stores 500 blood as a debt; if not repaid within 30s, the caster is charged double and takes 6 magic damage. Gambling mechanic: high-risk short-term power. |
-| `unclosing_eye` | 350 | Quick | Summa | Lux | Head | 120t | **Canon Memory (Seraphae)** — applies Glowing to ALL living entities in 32 blocks (including the caster), strips Invisibility from any target that has it, grants Night Vision 30s. Anti-stealth weapon; total mutual exposure. Feedback reports concealments dissolved. |
+| `crimson_tithe` | 400 | Quick | Summa | Mortem | Heart | 100t | **Canon Memory (Hemorath)** — issues up to 500 blood into the shared Borrowed Blood reserve for 30 seconds; unused blood is reclaimed, while spent blood is collected automatically at double value and deals 6 magic damage |
+| `unclosing_eye` | 350 | Quick | Summa | Lux | Head | 120t | **Canon Memory (Seraphae)** — for 30 seconds repeatedly strips Invisibility and refreshes Glowing within 32 blocks while exposing the caster and granting Night Vision |
 | `bloom_of_rot` | 500 | Quick | Summa | Mortem | Body | 80t | **Canon Memory (Putriciel)** — 8-block AoE: applies Wither II (10s) + Poison I (10s) + Slowness III (10s) to all entities; caster also receives Poison I (5s). |
 | `endless_hour` | 600 | Quick | Summa | Congeatio | Body | 200t | **Canon Memory (Velorum)** — absorbs all incoming damage for 10s (Absorption V + Resistance IV), then repays the full accumulated damage when the effect expires. |
+| `crimson_coronation` | 1000 | Charged (80t) | Perfectus | Animus | Head | 120t | Forms 1–8 retaliatory Blood Needle lances for 20 seconds; each incoming living attacker consumes one lance |
+| `sovereign_instinct` | 450/trigger | Passive | Magister | Animus | Head | 600t internal | When struck while targeted by at least four blood-bearing mobs, turns them against each other; bosses instead lose target and receive Weakness II |
+| `synaptic_storm` | 900 | Charged (60t) | Perfectus | Ductilis | Head | 100t | Chains through 1–8 nearby enemies; charge scales damage and 10–60t paralysis, with bosses receiving capped Slowness II |
+| `living_circuit` | 180/s | Continuous | Magister | Ductilis | Body | 80t on stop | Grants Speed II and Haste II to the nearest three allied players and arms their next melee hit with Conductive Mark |
+| `white_verdict` | 800 | Charged (60t) | Perfectus | Lux | Head | 100t | Piercing 8–24 block beam whose width and damage scale with charge; strips Invisibility, applies Glowing, and deals bonus damage to concealed targets |
+| `furnace_veins` | 250/s | Continuous | Magister | Flammeus | Body | 100t on stop | Five-block heat field damages and ignites enemies, clears allied fire/freezing, and melts only Frosted Ice |
+| `phoenix_debt` | 2000/trigger | Passive | Perfectus | Flammeus | Heart | 6000t internal + shared Last Rite | Arms `hemomancy:phoenix_debt` in the shared Last Rite system; on a valid lethal hit it pays once, leaves 1 health, cleanses harmful effects, and erupts nearby |
+| `absolute_stillness` | 300/s | Continuous | Perfectus | Congeatio | Body | 160t on stop | Six-block stillness field slows hostile projectiles, extinguishes fire, freezes enemies, and applies Slowness IV |
+| `rimebound_sentence` | 750 | Charged (70t) | Magister | Congeatio | Arms | 120t | Charge scales freeze damage and 20–120t confinement; ordinary targets receive a temporary packed-ice cage while bosses receive slowing only |
+| `iron_choir` | 250/s | Continuous | Magister | Ferric | Body | 100t on stop | Refreshes Resistance I and intercepts the nearest hostile projectile each pulse, returning 4 magic damage to its living owner |
+| `funeral_bell` | 1000 | Charged (80t) | Perfectus | Mortem | Heart | 160t | Sounds an expanding damage pulse; Wither, Poison, Blood Loss, and Grave Debt on each target add detonation damage instead of enabling an execution |
+| `carrion_communion` | 220/s | Continuous | Magister | Mortem | Body | 120t on stop | Drains up to four enemies bearing Wither, Poison, Blood Loss, or Grave Debt and heals half the damage; stops when no eligible target remains |
+| `penumbral_drift` | 175/s | Continuous | Magister | Tenebris | Legs | 60t on stop | Refreshes Invisibility and Speed II, clears nearby mob detection, and ends when the caster attacks |
+| `eclipse_well` | 900 | Charged (80t) | Perfectus | Tenebris | Head | 140t | Creates a 2–7 block darkness well for 40–200t that blinds, darkens, pulls, and breaks mob target locks |
 
 The current combat-gap additions are **Synaptic Jolt**, **Conductive Mark**, **Insatiable Hunger**, **Grave Debt**, **Iron Retort**, and **Sanguine Magnetism**. `ManipulationStatusEvents` owns their cross-cutting status behavior: Conductive Mark arcs can be triggered by any player's valid Ductilis/Lux/Ferric manipulation or living-weapon hit, Insatiable Hunger modifies healing and food completion, Grave Debt tracks low-health burst and death refund state, Iron Retort consumes itself on the first direct living attacker, and Sanguine Magnetism reuses the existing iron pillar entity with hostile-only pull logic. `BodyIdiomEvents` separately owns the persistent Ironhearted health pool, Blackhearted Wither conversion/saturation, expiration, death reset, and client HUD synchronization.
 
 #### Retired Manipulations
 
-These registry IDs remain for old save compatibility, but their memories are hidden, inert, non-lootable, non-recipeable, absent from the manipulation tree, and scrubbed out of equipped slots/loadouts during sync. `blood_lamp` is covered by the Lantern Tick helmet, `vital_reservoir` is a future rite candidate, and `hemosynthesis` plus `sanguine_excavation` are future morphling ability candidates.
+These registry IDs remain for old save compatibility, but their memories are hidden, inert, non-lootable, non-recipeable, absent from the manipulation tree, and scrubbed out of equipped slots/loadouts during sync. `blood_lamp` is covered by the Lantern Tick helmet, `vital_reservoir` is a future rite candidate, and `hemosynthesis` plus `sanguine_excavation` are future morphling ability candidates. Glacial Rampart and Black Veil Covenant absorb the useful parts of the earlier retired defensive casts. Blood Thralls remain available through the Blood Thrall Effigy, which inherits the old manipulation memory-weaving ingredients without teaching a manipulation.
 
 | Retired ID | Previous role | Replacement direction |
 |------------|---------------|-----------------------|
@@ -1147,6 +1157,15 @@ These registry IDs remain for old save compatibility, but their memories are hid
 | `hemosynthesis` | Blood-to-food conversion | Future morphling ability |
 | `vital_reservoir` | XP-to-blood conversion | Future rite candidate |
 | `sanguine_excavation` | Flood-fill mining | Future morphling ability |
+| `ferric_resonance` | Short generic Haste/Strength/Resistance buff | Ferric equipment, enzymes, and authored status sources |
+| `glacial_bastion` | Ice shell around the caster | Crouch-cast `glacial_rampart` |
+| `blood_eclipse_mantle` | Resistance and Fire Resistance with Weakness | Standing inside the caster's own `black_veil_covenant` |
+| `crimson_sight` | Long Night Vision plus broad Glowing sweep | `hematic_flare` for immediate reveal and `unclosing_eye` for sustained concealment suppression |
+| `glacial_circulation` | Long generic Fire Resistance with Slowness | Potions, armor, scars, Black Veil Covenant, and Phoenix Debt already own fire survival |
+| `ferric_transmutation` | Long Strength II plus Sanguine Siphon II bundle | Ferric enzymes and equipment own Strength; Sanguine Siphon and Deadman's Purse own blood feeding |
+| `vigil_of_glass` | Automatic distant-projectile reduction and reveal | `iron_choir`, projectile-resistant equipment, and Lux scar/skill defenses |
+| `hematic_ballast` | Automatic knockback suppression | Nerves of Steel, equipment attributes, scars, and morphling knockback resistance |
+| `summon_thrall` | Two-step manipulation for a blood-routing worker | Blood Thrall Effigy, now directly woven from the retired manipulation's recipe inputs |
 
 #### 8.2.1 Living Staff Rework Summary
 
@@ -1226,7 +1245,7 @@ Conductive Mark is the first dual-recognition Noetic formula. Degree 3 plus the 
 
 Somatic Loom memory weaving is now an in-world ritual rather than a passive slot check. A valid recipe begins with one blank `hematic_memory`, one or more catalyst candidates, stored enzyme reservoirs inside the loom, and a recipe-specific `blood` cost. Blank Hematic Memories are prepared from `sanguine_formation`, `blood_stained_stone`, and `neurotic_enzyme`: a piece of the practitioner, a piece of recorded history, and a piece of living nervous tissue. Once the exact recipe is ready, the loom glows in its awaiting-blood phase; the player projects blood into it, then uses a Living Staff to drag scattered tendency-colored memory-orbs back into the block. Only the orb-weaving phase locks the inputs. See §25.7 for the recipe schema and ritual flow.
 
-Four formerly unreachable active branches now have direct Loom sources: Vital Effusion uses a Bleeding Bulb, one Animus enzyme, and 100 blood; Hemolymphal Pulse uses a Vascular Status Gauge, one Ductilis enzyme, and 125 blood; Vascular Dowsing uses a Compass, one Ferric enzyme, and 150 blood; Ferric Resonance uses an Amethyst Shard, two Ferric enzymes, and 250 blood. These remain normal active manipulation memories rather than hidden or retired content.
+Three formerly unreachable active branches have direct Loom sources: Vital Effusion uses a Bleeding Bulb, one Animus enzyme, and 100 blood; Hemolymphal Pulse uses a Vascular Status Gauge, one Ductilis enzyme, and 125 blood; Vascular Dowsing uses a Compass, one Ferric enzyme, and 150 blood. Ferric Resonance is now retired and its Loom source has been removed.
 
 ### 8.4 Manipulation Tree
 
@@ -1931,7 +1950,7 @@ Rogue Hemomancer Wills are late-Harbinger ambushers keyed to the player's blood 
 
 Broken Wills cycle through their kit with occasional stutters, selling incomplete former-Harbinger muscle memory. Sent Wills use a small priority controller instead: they prefer mobility at range, defensive casts when injured, close-range pressure when the target is inside melee space, and finishers or burst casts when the target is vulnerable.
 
-Lux and Tenebris Will kits now mirror the player's improved combat style verbs. Lux Wills open with `hematic_flare`, then escalate into `prismatic_reproof`, `crimson_sight`, and `unclosing_eye`; Tenebris Wills keep `void_shroud` and `umbral_step`, but add `gloam_laceration` before the wider `blood_eclipse` cone. Tendency weapon/manipulation counter checks special-case Wills by their synced school, so Lux attacks dynamically oppose Tenebris-school Wills and Tenebris attacks dynamically oppose Lux-school Wills instead of relying only on static entity-type tags.
+Lux and Tenebris Will kits now mirror the player's improved combat style verbs. Lux Wills open with `hematic_flare`, then escalate into `prismatic_reproof`, `hematic_beacon`, and `unclosing_eye`; Tenebris Wills keep `void_shroud` and `umbral_step`, but add `gloam_laceration` before the wider `blood_eclipse` cone. Tendency weapon/manipulation counter checks special-case Wills by their synced school, so Lux attacks dynamically oppose Tenebris-school Wills and Tenebris attacks dynamically oppose Lux-school Wills instead of relying only on static entity-type tags.
 
 Wills also spawn with visible, non-drop living weapons through `WillEquipmentRules`. Tier-I Broken Wills carry a `living_staff`; Tier-II+ Broken Wills and all Sent Wills carry tendency weapons: Animus blade, Flammeus torch, Ductilis crossbow, Lux spear, Mortem axe, Congeatio flail, Ferric staff, and Tenebris baghnakh. `WillWeaponController` supplies mob-safe weapon pressure without invoking player inventory or blood-volume hooks: torches burn, flails slow, crossbows fire blood bolts, claws/bladework bleed, staffs guard or knock back, and school weapons reinforce the Will's combat identity.
 
@@ -2002,7 +2021,6 @@ The Drudge is a persistent, player-owned semi-organic construct that holds a sin
 | `blood_rush` | Grants Speed II to the Drudge and nearby player allies for 10 seconds |
 | `blood_aneurysm` | Damages nearby hostiles and applies Nausea |
 | `vital_effusion` | Bonemeal-accelerates nearby growable blocks around the Drudge |
-| `ferric_transmutation` | Spawns one iron ingot at the Drudge's position |
 | `activation_potential` | Grants Regeneration II to nearby player allies for 5 seconds |
 | `sanguine_ward` | Grants Resistance I to nearby player allies for 10 seconds |
 | `hemolymphal_pulse` | Applies short-duration Glowing to nearby living entities |
@@ -2019,7 +2037,6 @@ The Drudge is a persistent, player-owned semi-organic construct that holds a sin
 | `conjure_staff` | Unsupported; cannot be used by Drudges |
 | `blood_absorption` | Unsupported; cannot be used by Drudges |
 | `blood_projection` | Unsupported; cannot be used by Drudges |
-| `summon_thrall` | Unsupported; cannot be used by Drudges |
 | `crimson_flame_conjuration` | Ignites the nearest hostile for 6 seconds |
 | `sanguine_mending` | Repairs up to 100 durability on the most-damaged armor piece of the nearest player ally |
 | `hematic_flare` | Marks, reveals, and magic-damages the nearest hidden hostile |
@@ -2030,9 +2047,7 @@ The Drudge is a persistent, player-owned semi-organic construct that holds a sin
 | `sanguine_magnetism` | Spawns a magnetic iron pillar near the nearest hostile, pulling hostile mobs only |
 | `pyretic_forge` | Utility smelting for held items |
 | `umbral_step` | Teleports the Drudge to a random dark valid spot within the work radius |
-| `crimson_sight` | Applies Glowing to nearby hostiles |
 | `cryogenic_pulse` | Slows all hostiles in the work radius |
-| `glacial_circulation` | No registered Drudge action; currently does not fire |
 | `glacial_bastion` | Raises a temporary ring of packed ice around the Drudge |
 | `osseous_bloom` | No registered Drudge action; currently does not fire |
 | `sanguine_ignition` | Ignites and damages the nearest hostile |

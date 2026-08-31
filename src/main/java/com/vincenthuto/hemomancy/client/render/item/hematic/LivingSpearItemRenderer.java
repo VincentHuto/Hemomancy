@@ -87,7 +87,7 @@ public class LivingSpearItemRenderer extends BlockEntityWithoutLevelRenderer {
 
 					}
 				}
-				if (player.getUseItem() == stack) {
+				if (player.getUseItem() == stack && !LivingStaffMorphRenderer.isMorphBuffer(buffers)) {
 					VertexConsumer baseBuffer = buffers.getBuffer(spearModel.renderType(living_spear));
 					spearModel.renderToBuffer(ms, baseBuffer, light, OverlayTexture.NO_OVERLAY, -1);
 					VertexConsumer glint = buffers.getBuffer(RenderTypeInit.getCrimsonGlint());

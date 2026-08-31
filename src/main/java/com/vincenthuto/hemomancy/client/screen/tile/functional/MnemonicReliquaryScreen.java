@@ -10,6 +10,7 @@ import com.vincenthuto.hemomancy.common.capability.player.harbinger.musclememory
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.EnumVeinSections;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.ManipulationEquipHelper;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.MemoryEquipRules;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.ManipulationRetirementRules;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.ManipSlotHelper;
 import com.vincenthuto.hemomancy.common.item.harbinger.memories.BloodMemoryItem;
@@ -684,12 +685,10 @@ public class MnemonicReliquaryScreen extends AbstractContainerScreen<MnemonicRel
 	}
 
 	private void cycleVascularSection(EnumVeinSections section) {
-		List<MuscleMemory> choices = preparedMuscleMemories.stream()
-				.filter(memory -> memory.section() == section).toList();
-		if (choices.isEmpty()) return;
 		MuscleMemory current = equippedMuscleMemories.stream()
 				.filter(memory -> memory.section() == section).findFirst().orElse(null);
-		int nextIndex = current == null ? 0 : choices.indexOf(current) + 1;
+		MuscleMemory next = MemoryEquipRules.nextPreparedInSection(preparedMuscleMemories, current, section);
+		if (current == null && next == null) return;
 		if (current == null && ManipulationEquipHelper.countNormalEquippedNames(new ArrayList<>(equippedNames)) >= maxSlots) return;
 		if (current != null) {
 			String currentKey = MemorySlotRef.muscleMemory(current).storageKey();
@@ -697,8 +696,7 @@ public class MnemonicReliquaryScreen extends AbstractContainerScreen<MnemonicRel
 			equippedNames.remove(currentKey);
 			equippedMuscleMemories.remove(current);
 		}
-		if (nextIndex < choices.size()) {
-			MuscleMemory next = choices.get(nextIndex);
+		if (next != null) {
 			String nextKey = MemorySlotRef.muscleMemory(next).storageKey();
 			PacketHandler.sendToServer(new EquipManipulationPacket(nextKey, true));
 			equippedNames.add(nextKey);

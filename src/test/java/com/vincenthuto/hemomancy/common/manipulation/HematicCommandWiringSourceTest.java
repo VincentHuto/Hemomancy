@@ -22,7 +22,7 @@ final class HematicCommandWiringSourceTest {
 		assertTrue(manipulations.contains("MANIPS.register(\"hematic_impressment\""));
 		assertTrue(items.contains("BASEITEMS.register(\"memory_hematic_rebuke\""));
 		assertTrue(items.contains("BASEITEMS.register(\"memory_hematic_impressment\""));
-		assertTrue(tree.contains("register(\"hematic_impressment\",690,120, \"hematic_rebuke\")"));
+		assertTrue(tree.contains("register(\"hematic_impressment\",640,122, \"hematic_rebuke\")"));
 		assertTrue(manager.contains("IMPRESSED_BY_CASTER"));
 		assertTrue(manager.contains("HemoEntityPredicates.NOBLOOD.test(target)"));
 		for (String id : new String[] {"hematic_rebuke", "hematic_impressment"}) {

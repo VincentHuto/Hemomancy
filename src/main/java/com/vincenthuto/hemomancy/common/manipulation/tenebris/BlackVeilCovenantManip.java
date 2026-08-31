@@ -7,9 +7,8 @@ import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationRank;
 import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationType;
 import com.vincenthuto.hemomancy.common.manipulation.HemomancyTendrilEffects;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
-import com.vincenthuto.hutoslib.client.particle.factory.GlowParticleFactory;
-import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -38,7 +37,7 @@ public class BlackVeilCovenantManip extends BloodManipulation {
 		if (!(world instanceof ServerLevel sLevel)) return;
 
 		BlockPos center = player.blockPosition();
-		BlackVeilCovenantManager.addVeil(sLevel, center, RADIUS, DURATION_TICKS);
+		BlackVeilCovenantManager.addVeil(sLevel, center, RADIUS, DURATION_TICKS, player.getUUID());
 		PacketHandler.sendBlackVeil(Vec3.atCenterOf(center), RADIUS, sLevel, DURATION_TICKS);
 		HemomancyTendrilEffects.blackVeil(sLevel, player, center, RADIUS);
 
@@ -53,8 +52,7 @@ public class BlackVeilCovenantManip extends BloodManipulation {
 		for (int i = 0; i < 90; i++) {
 			double angle = random.nextDouble() * Math.PI * 2.0;
 			double radius = random.nextDouble() * RADIUS;
-			sLevel.sendParticles(GlowParticleFactory.createData(new ParticleColor(
-							20 + random.nextFloat() * 35, 0, 35 + random.nextFloat() * 70)),
+			sLevel.sendParticles(ParticleTypes.SQUID_INK,
 					center.getX() + 0.5 + Math.cos(angle) * radius,
 					center.getY() + 0.2 + random.nextDouble() * 5.0,
 					center.getZ() + 0.5 + Math.sin(angle) * radius,

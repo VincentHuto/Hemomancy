@@ -5,6 +5,7 @@ import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.block.vein.VeinLocation;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.IKnownManipulations;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
+import com.vincenthuto.hemomancy.common.init.ManipulationInit;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.BloodVolumeServerPacket;
 import com.vincenthuto.hemomancy.common.tile.functional.EarthenVeinBlockEntity;
@@ -24,6 +25,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.level.TicketType;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
@@ -49,6 +51,12 @@ public class TeleportToVeinPacket implements CustomPacketPayload {
 						IBloodVolume volume = HemoCapabilityAccess.getBloodVolume(player)
 								.orElseThrow(NullPointerException::new);
 						ServerPlayer serverPlayer = (ServerPlayer) player;
+						var venousTravel = ManipulationInit.venous_travel.get();
+						if (known.getSelectedManip() == null
+								|| !venousTravel.getName().equals(known.getSelectedManip().getName())
+								|| !known.isManipEquipped(venousTravel)) {
+							return;
+						}
 						VeinLocation selected = msg.selected;
 						if (selected != null && selected != VeinLocation.BLANK) {
 							DimensionalPosition p = selected;
@@ -78,6 +86,10 @@ public class TeleportToVeinPacket implements CustomPacketPayload {
 									known.setSelectedVein(VeinLocation.BLANK);
 									PacketHandler.sendToPlayer((ServerPlayer) player, new KnownManipulationServerPacket(known));
 								} else {
+									if (!venousTravel.tryPerformAction(player, player.level(), ItemStack.EMPTY,
+											player.blockPosition(), 0.0F)) {
+										return;
+									}
 									ChunkPos chunkpos = new ChunkPos(bp);
 									((ServerLevel) player.level()).getChunkSource().addRegionTicket(
 											TicketType.POST_TELEPORT, chunkpos, 1, ((ServerPlayer) player).getId());

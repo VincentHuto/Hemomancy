@@ -48,13 +48,27 @@ class IronheartedClientRegressionSourceTest {
 	}
 
 	@Test
-	void chargedManipulationFiresOnceAtFullCharge() throws IOException {
+	void removedIronHeartsPlayThreeCrackFrames() {
+		assertEquals(2, BodyIdiomRules.removedIronHeartSlots(6.0F, 2.0F));
+		assertEquals(0, BodyIdiomRules.removedIronHeartSlots(6.0F, 5.0F));
+		assertEquals(0, BodyIdiomRules.removedIronHeartSlots(2.0F, 4.0F));
+
+		assertEquals(0, BodyIdiomRules.ironHeartCrackFrame(100L, 100L));
+		assertEquals(1, BodyIdiomRules.ironHeartCrackFrame(100L, 104L));
+		assertEquals(2, BodyIdiomRules.ironHeartCrackFrame(100L, 108L));
+		assertEquals(-1, BodyIdiomRules.ironHeartCrackFrame(100L, 112L));
+	}
+
+	@Test
+	void chargedManipulationUsesTheSharedReleaseInputRules() throws IOException {
 		String source = read("src/main/java/com/vincenthuto/hemomancy/client/event/ClientEvents.java");
 
 		assertEquals(1, occurrences(source, "handleCommonClientTickInput();"));
 		assertTrue(source.contains("mc.player.hurtTime > 0 && mc.player.hurtTime == mc.player.hurtDuration"));
-		assertTrue(source.contains("manipulationChargeTicks >= BodyIdiomRules.IRON_HEART_CHARGE_TICKS"));
-		assertTrue(source.contains("manipulationChargeSent = true;"));
+		assertTrue(source.contains("ManipulationInit.getByName(known.getSelectedManip().getName())"));
+		assertTrue(source.contains("ManipulationInputRules.tick(selected.getType(), down, clicked"));
+		assertFalse(source.contains("manipulationChargeTicks >= BodyIdiomRules.IRON_HEART_CHARGE_TICKS"));
+		assertFalse(source.contains("manipulationChargeSent"));
 	}
 
 	@Test
@@ -93,6 +107,25 @@ class IronheartedClientRegressionSourceTest {
 			assertEquals(9, image.getWidth());
 			assertEquals(9, image.getHeight());
 			assertEquals(vanillaHeartMask, alphaMask(image));
+		}
+	}
+
+	@Test
+	void removedIronHeartUsesEditableCrackFrames() throws IOException {
+		String source = read("src/main/java/com/vincenthuto/hemomancy/client/screen/overlay/BodyIdiomOverlay.java");
+		assertTrue(source.contains("IRON_HEART_CRACK_FRAMES"));
+		assertTrue(source.contains("BodyIdiomRules.ironHeartCrackFrame"));
+
+		var full = ImageIO.read(Path.of(
+				"src/main/resources/assets/hemomancy/textures/gui/body_idiom/iron_heart_full.png").toFile());
+		for (int frame = 0; frame < 3; frame++) {
+			var cracked = ImageIO.read(Path.of("src/main/resources/assets/hemomancy/textures/gui/body_idiom/"
+					+ "iron_heart_crack_" + frame + ".png").toFile());
+			assertNotNull(cracked);
+			assertEquals(9, cracked.getWidth());
+			assertEquals(9, cracked.getHeight());
+			assertFalse(java.util.Arrays.equals(full.getRGB(0, 0, 9, 9, null, 0, 9),
+					cracked.getRGB(0, 0, 9, 9, null, 0, 9)));
 		}
 	}
 

@@ -72,6 +72,16 @@ class QliphothBloomBlackHoleResourceTest {
     }
 
     @Test
+    void treeApexIsDepthTestedWhileChamberBlackHolesRemainInTheSkyPass() throws Exception {
+        String renderTypes = Files.readString(Path.of(
+                "src/main/java/com/vincenthuto/hemomancy/client/render/HemoRenderTypes.java"));
+        String blackHoleRenderType = renderTypes.substring(renderTypes.indexOf("public static RenderType qliphothBlackHole("),
+                renderTypes.indexOf("public static RenderType silentArchonStormCloud("));
+
+        assertTrue(blackHoleRenderType.contains("treeApex ? RenderType.LEQUAL_DEPTH_TEST : RenderType.NO_DEPTH_TEST"));
+    }
+
+    @Test
     void veinOrbitsEnterTheSceneCaptureInsteadOfDrawingAcrossTheEventHorizon() throws Exception {
         String renderer = Files.readString(Path.of(
                 "src/main/java/com/vincenthuto/hemomancy/client/render/world/QliphothBloomRenderer.java"));

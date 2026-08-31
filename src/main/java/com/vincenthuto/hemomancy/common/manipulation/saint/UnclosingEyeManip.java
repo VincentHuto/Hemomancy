@@ -5,10 +5,10 @@ import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.Enu
 import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
 import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationRank;
 import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationType;
-import com.vincenthuto.hutoslib.client.particle.factory.GlowParticleFactory;
-import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
+import com.vincenthuto.hemomancy.common.manipulation.ManipulationReactiveEvents;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
@@ -48,6 +48,7 @@ public class UnclosingEyeManip extends BloodManipulation {
 
 	@Override
 	public void getAction(Player player, Level world, ItemStack heldItemMainhand, BlockPos position) {
+		ManipulationReactiveEvents.armUnclosingEye(player, GLOWING_DURATION);
 		List<LivingEntity> targets = world.getEntitiesOfClass(LivingEntity.class,
 				player.getBoundingBox().inflate(SCAN_RADIUS), e -> e != player && e.isAlive());
 
@@ -76,7 +77,7 @@ public class UnclosingEyeManip extends BloodManipulation {
 				double angle = (i / 50.0) * Math.PI * 2;
 				double dist = 1.5 + (i % 3) * 0.4;
 				sLevel.sendParticles(
-						GlowParticleFactory.createData(new ParticleColor(255, 240, 180)),
+						ParticleTypes.END_ROD,
 						pos.getX() + 0.5 + Math.cos(angle) * dist,
 						pos.getY() + 1.8,
 						pos.getZ() + 0.5 + Math.sin(angle) * dist,

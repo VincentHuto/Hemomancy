@@ -9,6 +9,7 @@ import com.vincenthuto.hemomancy.common.manipulation.BodyIdiomEvents;
 import com.vincenthuto.hemomancy.common.manipulation.BodyIdiomRules;
 import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationRank;
 import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationType;
+import com.vincenthuto.hemomancy.common.manipulation.ManipulationCastingRules;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
@@ -46,11 +47,19 @@ public class IronheartedManip extends BloodManipulation {
 	}
 
 	@Override
-	public void getAction(Player player, Level world, ItemStack heldItemMainhand, BlockPos position) {
+	public int getRequiredChargeTicks() {
+		return BodyIdiomRules.IRON_HEART_CHARGE_TICKS;
+	}
+
+	@Override
+	public void getAction(Player player, Level world, ItemStack heldItemMainhand, BlockPos position,
+			float chargeTicks) {
 		if (!(player instanceof ServerPlayer serverPlayer) || !(world instanceof ServerLevel level)) return;
 		PowerGuardrailState state = HemoCapabilityAccess.getPowerGuardrails(player);
-		state.setIronHeartHealth(BodyIdiomRules.addIronHeartHealth(state.getIronHeartHealth(),
-				BodyIdiomRules.maxIronHeartHealth(player)));
+		float strength = ManipulationCastingRules.chargeFraction(chargeTicks, getRequiredChargeTicks());
+		state.setIronHeartHealth(net.minecraft.util.Mth.clamp(state.getIronHeartHealth()
+				+ BodyIdiomRules.IRON_HEART_HEALTH_PER_CAST * strength,
+				0.0F, BodyIdiomRules.maxIronHeartHealth(player)));
 		state.setIronHeartExpiryTick(world.getGameTime() + BodyIdiomRules.IRON_HEART_DURATION_TICKS);
 		BodyIdiomEvents.sync(serverPlayer);
 		level.sendParticles(ParticleTypes.CRIMSON_SPORE, player.getX(), player.getY() + 1.0D, player.getZ(),

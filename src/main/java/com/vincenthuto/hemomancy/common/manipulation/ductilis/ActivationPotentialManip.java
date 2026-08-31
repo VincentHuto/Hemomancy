@@ -7,6 +7,7 @@ import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
 import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationRank;
 import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationType;
 import com.vincenthuto.hemomancy.common.manipulation.SchoolHitHelper;
+import com.vincenthuto.hemomancy.common.manipulation.ManipulationCastingRules;
 import com.vincenthuto.hemomancy.common.manipulation.TendencyAffinityRules;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.Entity;
@@ -18,6 +19,7 @@ import net.minecraft.world.level.Level;
 import java.util.List;
 
 public class ActivationPotentialManip extends BloodManipulation {
+	private static final int CHARGE_TICKS = 30;
 
 	public ActivationPotentialManip(String name, double cost, double alignLevel, double xpCost,
 			EnumManipulationType type, EnumManipulationRank rank, EnumBloodTendency tendency,
@@ -27,6 +29,18 @@ public class ActivationPotentialManip extends BloodManipulation {
 
 	@Override
 	public void getAction(Player player, Level world, ItemStack heldItemMainhand, BlockPos position) {
+		getAction(player, world, heldItemMainhand, position, CHARGE_TICKS);
+	}
+
+	@Override
+	public int getRequiredChargeTicks() {
+		return CHARGE_TICKS;
+	}
+
+	@Override
+	public void getAction(Player player, Level world, ItemStack heldItemMainhand, BlockPos position,
+			float chargeTicks) {
+		float strength = ManipulationCastingRules.chargeFraction(chargeTicks, CHARGE_TICKS);
 		List<Entity> targets = player.level().getEntities(player, player.getBoundingBox().inflate(5.0));
 		if (targets.size() > 0) {
 			int targetIndex = 0;
@@ -34,7 +48,7 @@ public class ActivationPotentialManip extends BloodManipulation {
 				if (target2 instanceof LivingEntity) {
 					LivingEntity target = (LivingEntity) target2;
 					DuctilisLightningEffects.activationPotential(player, target, targetIndex++);
-					float damage = (float) (5.0f * SkillPointHelper.getCrimsonMasteryMultiplier(player));
+					float damage = (float) (5.0f * strength * SkillPointHelper.getCrimsonMasteryMultiplier(player));
 					float adjusted = TendencyAffinityRules.adjustManipulationDamage(player, target, this, damage);
 					if (target.hurt(player.damageSources().magic(), adjusted)) {
 						SchoolHitHelper.tryTriggerConductiveArc(player, target, EnumBloodTendency.DUCTILIS,

@@ -23,7 +23,7 @@ public final class CrawlingChoirHandler {
 	 * at no additional blood cost. Recursion is prevented via IS_ECHO_CAST.
 	 */
 	public static void tryEchoCast(Player player, Level world, ItemStack heldItem, BlockPos position,
-			BloodManipulation manip) {
+			BloodManipulation manip, float chargeTicks) {
 		if (AntiphonomycesResonansItem.IS_ECHO_CAST) {
 			return;
 		}
@@ -37,7 +37,7 @@ public final class CrawlingChoirHandler {
 			if (world.random.nextFloat() < AntiphonomycesResonansItem.ECHO_CHANCE) {
 				AntiphonomycesResonansItem.IS_ECHO_CAST = true;
 				try {
-					manip.getAction(player, world, heldItem, position);
+					manip.getAction(player, world, heldItem, position, chargeTicks);
 				} finally {
 					AntiphonomycesResonansItem.IS_ECHO_CAST = false;
 				}

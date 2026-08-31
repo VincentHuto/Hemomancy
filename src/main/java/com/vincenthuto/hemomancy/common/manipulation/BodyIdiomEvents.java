@@ -3,6 +3,7 @@ package com.vincenthuto.hemomancy.common.manipulation;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.PowerGuardrailState;
+import com.vincenthuto.hemomancy.common.capability.player.unstained.UnstainedAccessRules;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.PacketSyncBodyIdiomState;
 import net.minecraft.core.particles.ParticleTypes;
@@ -37,7 +38,7 @@ public final class BodyIdiomEvents {
 		float damage = event.getAmount();
 		boolean changed = false;
 
-		if (event.getSource().is(DamageTypes.WITHER) && hasBlackheartedEquipped(player)) {
+		if (event.getSource().is(DamageTypes.WITHER) && isBlackheartedActive(player)) {
 			long now = player.level().getGameTime();
 			BodyIdiomRules.BlackheartedResult result = BodyIdiomRules.metabolizeWither(damage,
 					state.getNecroticSaturation(), now < state.getBlackheartedCooldownUntil());
@@ -112,9 +113,11 @@ public final class BodyIdiomEvents {
 				new PacketSyncBodyIdiomState(HemoCapabilityAccess.getPowerGuardrails(player)));
 	}
 
-	private static boolean hasBlackheartedEquipped(ServerPlayer player) {
+	private static boolean isBlackheartedActive(ServerPlayer player) {
+		if (HemoCapabilityAccess.getUnstainedProgress(player)
+				.map(UnstainedAccessRules::blocksKnownBloodPowerUse).orElse(false)) return false;
 		return HemoCapabilityAccess.getKnownManipulations(player)
-				.map(known -> known.getEquippedManipNames().contains("blackhearted"))
+				.map(known -> known.isPassiveActive("blackhearted"))
 				.orElse(false);
 	}
 

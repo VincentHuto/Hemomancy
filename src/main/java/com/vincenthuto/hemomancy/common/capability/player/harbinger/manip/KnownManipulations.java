@@ -22,6 +22,7 @@ public class KnownManipulations implements IKnownManipulations, INBTSerializable
 	VeinLocation selectedVein = VeinLocation.BLANK;
 	boolean avatarActive = false;
 	List<String> equippedManipNames = new ArrayList<>();
+	List<String> activePassiveNames = new ArrayList<>();
 	List<ManipulationLoadout> loadouts = new ArrayList<>();
 	String selectedMemoryKey = "";
 
@@ -174,6 +175,8 @@ public class KnownManipulations implements IKnownManipulations, INBTSerializable
 		this.veinList = old.getVeinList();
 		this.avatarActive = old.isAvatarActive();
 		this.equippedManipNames = new ArrayList<>(old.getEquippedManipNames());
+		this.activePassiveNames = new ArrayList<>(old.getEquippedManipNames().stream()
+				.filter(old::isPassiveActive).toList());
 		this.loadouts = new ArrayList<>(old.getLoadouts());
 		this.selectedMemoryKey = old.getSelectedMemoryRef().storageKey();
 	}
@@ -190,6 +193,7 @@ public class KnownManipulations implements IKnownManipulations, INBTSerializable
 	public void setEquippedManipNames(List<String> names) {
 		this.equippedManipNames = names != null ? new ArrayList<>(names) : new ArrayList<>();
 		ManipulationEquipHelper.normalizeEquippedNames(this.equippedManipNames);
+		activePassiveNames.retainAll(this.equippedManipNames);
 	}
 
 	@Override
@@ -244,8 +248,10 @@ public class KnownManipulations implements IKnownManipulations, INBTSerializable
 
 	@Override
 	public boolean unequipMemory(MemorySlotRef ref) {
-		return ref != null && ManipulationEquipHelper.unequipNameIfAllowed(
-				equippedManipNames, ref.storageKey());
+		if (ref == null) return false;
+		boolean removed = ManipulationEquipHelper.unequipNameIfAllowed(equippedManipNames, ref.storageKey());
+		if (removed) activePassiveNames.remove(ref.storageKey());
+		return removed;
 	}
 
 	@Override
@@ -262,7 +268,22 @@ public class KnownManipulations implements IKnownManipulations, INBTSerializable
 
 	@Override
 	public boolean unequipManip(String manipName) {
-		return ManipulationEquipHelper.unequipNameIfAllowed(equippedManipNames, manipName);
+		boolean removed = ManipulationEquipHelper.unequipNameIfAllowed(equippedManipNames, manipName);
+		if (removed) activePassiveNames.remove(manipName);
+		return removed;
+	}
+
+	@Override
+	public boolean isPassiveActive(String manipName) {
+		return manipName != null && equippedManipNames.contains(manipName) && activePassiveNames.contains(manipName);
+	}
+
+	@Override
+	public boolean togglePassive(String manipName) {
+		if (manipName == null || !equippedManipNames.contains(manipName)) return false;
+		if (activePassiveNames.remove(manipName)) return false;
+		activePassiveNames.add(manipName);
+		return true;
 	}
 
 	@Override
@@ -337,6 +358,9 @@ public class KnownManipulations implements IKnownManipulations, INBTSerializable
 			equippedTag.add(StringTag.valueOf(name));
 		}
 		equippedEntry.put("equippedManips", equippedTag);
+		ListTag activePassives = new ListTag();
+		for (String name : activePassiveNames) activePassives.add(StringTag.valueOf(name));
+		equippedEntry.put("activePassives", activePassives);
 		list.add(equippedEntry);
 
 		CompoundTag loadoutsEntry = new CompoundTag();
@@ -395,6 +419,14 @@ public class KnownManipulations implements IKnownManipulations, INBTSerializable
 						equipped.add(equippedTag.getString(j));
 					}
 					setEquippedManipNames(equipped);
+				}
+				if (parsedNbt.contains("activePassives")) {
+					ListTag activeTag = parsedNbt.getList("activePassives", Tag.TAG_STRING);
+					activePassiveNames.clear();
+					for (int j = 0; j < activeTag.size(); j++) {
+						String name = activeTag.getString(j);
+						if (equippedManipNames.contains(name)) activePassiveNames.add(name);
+					}
 				}
 				if (parsedNbt.contains("SelectedMemory", Tag.TAG_STRING)) {
 					setSelectedMemoryRef(MemorySlotRef.fromStorageKey(parsedNbt.getString("SelectedMemory")));

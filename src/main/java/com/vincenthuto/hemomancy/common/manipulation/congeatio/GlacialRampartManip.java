@@ -45,6 +45,10 @@ public class GlacialRampartManip extends BloodManipulation {
 	@Override
 	public void getAction(Player player, Level world, ItemStack heldItemMainhand, BlockPos position) {
 		if (!(world instanceof ServerLevel sLevel)) return;
+		if (player.isShiftKeyDown()) {
+			raiseBastion(player, sLevel);
+			return;
+		}
 
 		double range = BASE_RANGE * SkillPointHelper.getSanguineReachMultiplier(player);
 		Vec3 eyePos = player.getEyePosition(1.0F);
@@ -90,5 +94,25 @@ public class GlacialRampartManip extends BloodManipulation {
 						1, 0f, 0.05f, 0f, 0.01f);
 			}
 		}
+	}
+
+	private static void raiseBastion(Player player, ServerLevel level) {
+		RandomSource random = level.random;
+		BlockPos base = player.blockPosition();
+		int placed = 0;
+		for (int dx = -2; dx <= 2; dx++) for (int dz = -2; dz <= 2; dz++) {
+			int distance = Math.abs(dx) + Math.abs(dz);
+			if (distance < 2 || distance > 3) continue;
+			for (int dy = 0; dy < HEIGHT; dy++) {
+				if (dy == HEIGHT - 1 && distance == 3 && random.nextBoolean()) continue;
+				BlockPos target = base.offset(dx, dy, dz);
+				if (!target.equals(base) && !target.equals(base.above()) && TemporaryIceManager.place(level, target,
+						Blocks.PACKED_ICE.defaultBlockState(), BASE_LIFETIME_TICKS + random.nextInt(LIFETIME_VARIANCE))) placed++;
+			}
+		}
+		if (placed > 0) {
+			level.playSound(null, base, SoundEvents.GLASS_PLACE, SoundSource.PLAYERS, 1.0F, .5F);
+			level.playSound(null, base, SoundEvents.POWDER_SNOW_BREAK, SoundSource.PLAYERS, .6F, .8F);
+		} else player.displayClientMessage(Component.literal("No space for the bastion to rise."), true);
 	}
 }

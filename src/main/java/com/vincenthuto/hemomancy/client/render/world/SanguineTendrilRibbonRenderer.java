@@ -43,7 +43,7 @@ public final class SanguineTendrilRibbonRenderer {
 				Vec3 firstRight = first.center().subtract(firstSide.scale(firstWidth)).subtract(origin);
 				Vec3 secondLeft = second.center().add(secondSide.scale(secondWidth)).subtract(origin);
 				Vec3 secondRight = second.center().subtract(secondSide.scale(secondWidth)).subtract(origin);
-				Color color = color(strand.index(), glowPass);
+				Color color = color(strand, glowPass);
 				emitQuad(consumer, matrix, firstLeft, firstRight, secondRight, secondLeft,
 						color.red(), color.green(), color.blue(),
 						first.opacity() * color.alpha(), second.opacity() * color.alpha());
@@ -58,13 +58,28 @@ public final class SanguineTendrilRibbonRenderer {
 		Vec3 next = joints.get(nextIndex).center();
 		Vec3 center = joints.get(index).center();
 		Vec3 tangent = next.subtract(previous);
+		if (joints.get(index).groundAligned()) {
+			Vec3 flatSide = new Vec3(-tangent.z, 0.0D, tangent.x);
+			return flatSide.lengthSqr() < 1.0E-7D
+					? new Vec3(1.0D, 0.0D, 0.0D) : flatSide.normalize();
+		}
 		Vec3 side = tangent.cross(camera.subtract(center));
 		if (side.lengthSqr() < 1.0E-7D) side = new Vec3(-tangent.z, 0.0D, tangent.x);
 		return side.lengthSqr() < 1.0E-7D ? new Vec3(1.0D, 0.0D, 0.0D) : side.normalize();
 	}
 
-	private static Color color(int strandIndex, boolean glowPass) {
-		boolean crimsonCore = (strandIndex & 1) == 0;
+	private static Color color(Strand strand, boolean glowPass) {
+		boolean crimsonCore = (strand.index() & 1) == 0;
+		if (strand.crimsonVeins()) {
+			if (glowPass) {
+				return crimsonCore
+						? new Color(0.36F, 0.012F, 0.025F, 0.24F)
+						: new Color(0.14F, 0.004F, 0.012F, 0.22F);
+			}
+			return crimsonCore
+					? new Color(0.60F, 0.012F, 0.025F, 0.78F)
+					: new Color(0.24F, 0.004F, 0.012F, 0.82F);
+		}
 		if (glowPass) {
 			return crimsonCore
 					? new Color(0.008F, 0.0F, 0.006F, 0.26F)
@@ -91,12 +106,14 @@ public final class SanguineTendrilRibbonRenderer {
 	public interface Strand {
 		int index();
 		List<? extends Joint> joints();
+		default boolean crimsonVeins() { return false; }
 	}
 
 	public interface Joint {
 		Vec3 center();
 		float halfWidth();
 		float opacity();
+		default boolean groundAligned() { return false; }
 	}
 
 	private record Color(float red, float green, float blue, float alpha) {

@@ -66,7 +66,7 @@ public final class HarbingerRecipeMapDefinitions {
 		iconRites("cardinal_rite/bloodline_recall", () -> new ItemStack(ItemInit.harbinger_assignment_ledger.get()));
 		iconRites("cardinal_rite/founding_fane", () -> new ItemStack(BlockInit.cardinal_focus.get()));
 		iconRites("cardinal_rite/hematic_unbinding", () -> new ItemStack(ItemInit.hematic_suture_needle.get()));
-		iconRites("cardinal_rite/scarlet_summons", () -> new ItemStack(ItemInit.memory_summon_thrall.get()));
+		iconRites("cardinal_rite/scarlet_summons", () -> new ItemStack(ItemInit.blood_thrall_effigy.get()));
 		iconRites("cardinal_rite/covenant_vigil", () -> new ItemStack(BlockInit.sanguine_vigil.get()));
 		iconRites("cardinal_rite/sanguine_dominion", () -> new ItemStack(BlockInit.covenant_throne.get()));
 

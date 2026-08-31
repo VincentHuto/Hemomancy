@@ -13,7 +13,7 @@ public final class LivingTorchRenderPlacement {
 	public static final float BASE_MODEL_SCALE = 0.68F;
 	public static final float GUI_MODEL_SCALE = 0.78F;
 	public static final float TIP_LOCAL_Y = 27.5F / 16.0F;
-	public static final double THIRD_PERSON_TORCH_LIFT = 0.14D;
+	public static final double THIRD_PERSON_TORCH_LIFT = 0.24D;
 	public static final double THIRD_PERSON_TORCH_OUTWARD_OFFSET = 0.18D;
 
 	private LivingTorchRenderPlacement() { }
@@ -34,9 +34,9 @@ public final class LivingTorchRenderPlacement {
 			poseStack.translate(1.0D, 0.5D, -0.22D);
 		} else if (displayContext == ItemDisplayContext.THIRD_PERSON_LEFT_HAND
 				|| displayContext == ItemDisplayContext.THIRD_PERSON_RIGHT_HAND) {
-				double side = displayContext == ItemDisplayContext.THIRD_PERSON_LEFT_HAND ? -1.0D : 1.0D;
+				double side = displayContext == ItemDisplayContext.THIRD_PERSON_LEFT_HAND ? 3D :3.5D;
 			poseStack.mulPose(Axis.ZP.rotationDegrees(180.0F));
-			poseStack.translate(side * THIRD_PERSON_TORCH_OUTWARD_OFFSET, THIRD_PERSON_TORCH_LIFT, 0.34D);
+			poseStack.translate(side * THIRD_PERSON_TORCH_OUTWARD_OFFSET, THIRD_PERSON_TORCH_LIFT, 0.5D);
 		}
 	}
 

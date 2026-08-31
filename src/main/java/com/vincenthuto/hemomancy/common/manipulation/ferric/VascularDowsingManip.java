@@ -22,7 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Vascular Dowsing — a FERRIC HUMILIS quick manipulation that senses nearby ore veins
+ * Vascular Dowsing — a FERRIC HUMILIS continuous manipulation that senses nearby ore veins
  * through stone, emitting coloured dust particles at each ore block's location.
  *
  * Every vein of iron bleeds. The Ferric-tended can feel it pulse.

@@ -29,24 +29,20 @@ float hash1(float n) {
     return fract(sin(n) * 43758.5453123);
 }
 
-vec3 coherentWarpDirection(vec3 p) {
-    return normalize(p - WarpCenter + vec3(0.001));
-}
-
-vec3 wiggleOffset(vec3 p) {
-    vec3 warpDirection = coherentWarpDirection(p);
+vec3 wiggleOffset(vec3 p, vec3 faceNormal) {
     vec3 local = p - WarpCenter;
     float phase = HemoTime * (0.18 + Progress * 0.14) + BlockSeed * 23.0;
     float surfaceWave = sin(dot(local, vec3(9.1, 6.7, 11.3)) + phase * 6.28318);
     float snap = hash1(floor(phase * 6.0) + dot(local, vec3(17.0, 31.0, 47.0)));
     float surfaceLift = 0.026 + Progress * 0.016;
     float surfaceWiggle = (surfaceWave * 0.35 + (snap - 0.5) * 0.35) * WiggleAmp;
-    return warpDirection * (surfaceLift + surfaceWiggle);
+    return faceNormal * (surfaceLift + surfaceWiggle);
 }
 
 void main() {
-    vec3 p = Position + wiggleOffset(Position);
-    p += coherentWarpDirection(Position) * Progress * 0.012;
+    vec3 faceNormal = normalize(Normal);
+    vec3 p = Position + wiggleOffset(Position, faceNormal);
+    p += faceNormal * Progress * 0.012;
     float heightAboveGround = max(Position.y - MeltGroundY, 0.0);
     float heightRatio = clamp(heightAboveGround / max(MeltHeight, 0.001), 0.0, 1.0);
     float heightDelay = heightRatio * 0.46;

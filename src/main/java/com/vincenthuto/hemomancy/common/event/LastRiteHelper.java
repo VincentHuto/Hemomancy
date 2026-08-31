@@ -22,6 +22,7 @@ public final class LastRiteHelper {
 	public static final String LAST_LIGHT_ID = "hemomancy:last_light";
 	public static final String SILENT_REFUSAL_ID = "hemomancy:silent_refusal";
 	public static final String CRYPTOBIOSIS_ID = "hemomancy:cryptobiosis";
+	public static final String PHOENIX_DEBT_ID = "hemomancy:phoenix_debt";
 
 	private LastRiteHelper() {
 	}

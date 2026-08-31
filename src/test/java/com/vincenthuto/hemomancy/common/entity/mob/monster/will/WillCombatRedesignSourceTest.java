@@ -9,9 +9,9 @@ public final class WillCombatRedesignSourceTest {
 			"blood_shot", "blood_needle", "blood_aneurysm", "blood_cloud",
 			"crimson_flame_conjuration", "sanguine_ignition", "scalding_updraft", "vitric_combustion",
 			"deadly_gaze", "hemolymphal_pulse", "activation_potential",
-			"hematic_flare", "crimson_sight", "prismatic_reproof", "unclosing_eye",
+			"hematic_flare", "hematic_beacon", "prismatic_reproof", "unclosing_eye",
 			"hemorrhage", "exsanguinate", "bloom_of_rot",
-			"cryogenic_pulse", "glacial_grasp", "glacial_bastion", "glacial_rampart",
+			"cryogenic_pulse", "glacial_grasp", "glacial_rampart", "iron_retort",
 			"pyretic_forge", "void_shroud", "gloam_laceration", "umbral_step", "blood_eclipse"
 	};
 

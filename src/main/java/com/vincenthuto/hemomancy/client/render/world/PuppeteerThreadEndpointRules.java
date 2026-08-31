@@ -5,6 +5,7 @@ import net.minecraft.world.phys.Vec3;
 
 public final class PuppeteerThreadEndpointRules {
 	static final double SUMMON_HEIGHT_SCALE = 0.45D;
+	private static final double WORLD_Y_OFFSET = 1.0D;
 	private static final double HAND_SIDE_OFFSET = 0.32D;
 	private static final double HAND_FORWARD_OFFSET = 0.42D;
 	private static final double HAND_DOWN_OFFSET = 1.05D;
@@ -24,7 +25,7 @@ public final class PuppeteerThreadEndpointRules {
 			double heightScale, float partialTick) {
 		return new Vec3(
 				Mth.lerp(partialTick, oldX, x),
-				Mth.lerp(partialTick, oldY, y) + boundingBoxHeight * heightScale,
+				Mth.lerp(partialTick, oldY, y) + boundingBoxHeight * heightScale + WORLD_Y_OFFSET,
 				Mth.lerp(partialTick, oldZ, z));
 	}
 
@@ -34,6 +35,6 @@ public final class PuppeteerThreadEndpointRules {
 		double drop = HAND_DOWN_OFFSET + (firstPerson ? 0.0D : THIRD_PERSON_HAND_EXTRA_DROP);
 		return eyePosition.add(right.scale(HAND_SIDE_OFFSET * side))
 				.add(viewVector.normalize().scale(HAND_FORWARD_OFFSET))
-				.add(0.0D, -drop, 0.0D);
+				.add(0.0D, WORLD_Y_OFFSET - drop, 0.0D);
 	}
 }

@@ -4,6 +4,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import com.vincenthuto.hemomancy.client.model.item.LivingFlailModel;
 import com.vincenthuto.hemomancy.client.render.item.hematic.LivingFlailRenderHelper;
+import com.vincenthuto.hemomancy.client.player.LivingStaffMorphClientState;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.LivingFlailItem;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.HumanoidModel;
@@ -40,7 +41,8 @@ public class LivingFlailLayer<T extends LivingEntity, M extends HumanoidModel<T>
 
 	private void renderHand(Player player, HumanoidArm arm, ItemStack stack, PoseStack poseStack,
 			MultiBufferSource buffer, int packedLight) {
-		if (!(stack.getItem() instanceof LivingFlailItem)) {
+		if (LivingStaffMorphClientState.affectsArm(player, arm)
+				|| !(stack.getItem() instanceof LivingFlailItem)) {
 			return;
 		}
 

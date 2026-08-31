@@ -27,7 +27,7 @@ public final class MuscleMemoryUiIntegrationSourceTest {
         require(reliquary.contains("cycleVascularSection"), "vascular section targets must select Thelemic memories");
         require(reliquary.contains("preparedMuscleIcons"), "Reliquary must show prepared tinctures in tendency groups");
         require(reliquary.contains("reserveTicks(memory) > 0"), "Reliquary must hide tinctures without reserve");
-        require(reliquary.contains("List<MuscleMemory> choices = preparedMuscleMemories.stream()"),
+        require(reliquary.contains("MemoryEquipRules.nextPreparedInSection(preparedMuscleMemories, current, section)"),
                 "vascular sections must cycle only prepared tinctures");
         require(reliquary.contains("tinctureStackFor(assigned)"),
                 "vascular sections must display the selected tincture icon");

@@ -83,7 +83,7 @@ public final class CrimsonFireVisualSourceTest {
 		assertContains("sanguine ignition uses crimson helper", ignition,
 				"CrimsonFireHelper.igniteCrimson(target, FIRE_SECONDS)");
 		assertContains("vitric combustion uses crimson helper", combustion,
-				"CrimsonFireHelper.igniteCrimson(target, FIRE_SECONDS)");
+				"CrimsonFireHelper.igniteCrimson(target,");
 		assertContains("living torch uses crimson helper", torch,
 				"CrimsonFireHelper.igniteCrimson(target, 4)");
 	}

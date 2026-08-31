@@ -17,8 +17,8 @@ public class HarbingerProgressScreen extends Screen {
     // ── Tabs ──
     private enum Tab {
         SKILLS("Skills", 0xFFCC3333, 0, false),
-        RITES("Rites", 0xFF8844CC, 0, false),
         TENDENCIES("Tendencies", 0xFFCC8833, 3, false),
+        RITES("Rites", 0xFF8844CC, 0, false),
         CRAFTING("Crafting", 0xFFAA2222, 0, false),
         MATERIALS("Materials", 0xFFCC6644, 0, false),
         SUMMONS("Summons", 0xFFBB3355, 2, true),

@@ -20,6 +20,16 @@ public final class ManipulationRetirementRulesTest {
 		assertTrue("hemosynthesis retired", ManipulationRetirementRules.isRetiredManipulation("hemosynthesis"));
 		assertTrue("vital reservoir retired", ManipulationRetirementRules.isRetiredManipulation("vital_reservoir"));
 		assertTrue("sanguine excavation retired", ManipulationRetirementRules.isRetiredManipulation("sanguine_excavation"));
+		assertTrue("ferric resonance retired", ManipulationRetirementRules.isRetiredManipulation("ferric_resonance"));
+		assertTrue("glacial bastion retired", ManipulationRetirementRules.isRetiredManipulation("glacial_bastion"));
+		assertTrue("blood eclipse mantle retired", ManipulationRetirementRules.isRetiredManipulation("blood_eclipse_mantle"));
+		assertTrue("crimson sight retired", ManipulationRetirementRules.isRetiredManipulation("crimson_sight"));
+		assertTrue("glacial circulation retired", ManipulationRetirementRules.isRetiredManipulation("glacial_circulation"));
+		assertTrue("ferric transmutation retired", ManipulationRetirementRules.isRetiredManipulation("ferric_transmutation"));
+		assertTrue("vigil of glass retired", ManipulationRetirementRules.isRetiredManipulation("vigil_of_glass"));
+		assertTrue("hematic ballast retired", ManipulationRetirementRules.isRetiredManipulation("hematic_ballast"));
+		assertTrue("summon thrall manipulation retired", ManipulationRetirementRules.isRetiredManipulation("summon_thrall"));
+		assertFalse("summon avatar remains active", ManipulationRetirementRules.isRetiredManipulation("summon_avatar"));
 		assertFalse("blood absorption remains functional",
 				ManipulationRetirementRules.isRetiredManipulation(ManipulationEquipHelper.BLOOD_ABSORPTION));
 		assertFalse("blood projection remains functional",
@@ -53,6 +63,24 @@ public final class ManipulationRetirementRulesTest {
 				ManipulationRetirementRules.isRetiredMemoryItemId("memory_vital_reservoir"));
 		assertTrue("sanguine excavation memory retired",
 				ManipulationRetirementRules.isRetiredMemoryItemId("memory_sanguine_excavation"));
+		assertTrue("ferric resonance memory retired",
+				ManipulationRetirementRules.isRetiredMemoryItemId("memory_ferric_resonance"));
+		assertTrue("glacial bastion memory retired",
+				ManipulationRetirementRules.isRetiredMemoryItemId("memory_glacial_bastion"));
+		assertTrue("blood eclipse mantle memory retired",
+				ManipulationRetirementRules.isRetiredMemoryItemId("memory_blood_eclipse_mantle"));
+		assertTrue("crimson sight memory retired",
+				ManipulationRetirementRules.isRetiredMemoryItemId("memory_crimson_sight"));
+		assertTrue("glacial circulation memory retired",
+				ManipulationRetirementRules.isRetiredMemoryItemId("memory_glacial_circulation"));
+		assertTrue("ferric transmutation memory retired",
+				ManipulationRetirementRules.isRetiredMemoryItemId("memory_ferric_transmutation"));
+		assertTrue("vigil of glass memory retired",
+				ManipulationRetirementRules.isRetiredMemoryItemId("memory_vigil_of_glass"));
+		assertTrue("hematic ballast memory retired",
+				ManipulationRetirementRules.isRetiredMemoryItemId("memory_hematic_ballast"));
+		assertTrue("summon thrall memory retired",
+				ManipulationRetirementRules.isRetiredMemoryItemId("memory_summon_thrall"));
 		assertFalse("sanguine mending memory remains active",
 				ManipulationRetirementRules.isRetiredMemoryItemId("memory_sanguine_mending"));
 		assertFalse("pyretic forge memory remains active",

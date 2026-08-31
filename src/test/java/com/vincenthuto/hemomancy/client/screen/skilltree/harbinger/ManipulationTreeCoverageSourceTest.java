@@ -40,11 +40,11 @@ public final class ManipulationTreeCoverageSourceTest {
 	private static final Map<String, List<String>> LIVING_WEAPON_TREE_PARENTS = Map.of(
 			"conjure_blade", List.of("vital_effusion"),
 			"conjure_axe", List.of("exsanguinate"),
-			"conjure_spear", List.of("crimson_sight"),
+			"conjure_spear", List.of("hematic_flare"),
 			"conjure_claws", List.of("void_shroud"),
 			"conjure_crossbow", List.of("hemolymphal_pulse"),
 			"conjure_torch", List.of("crimson_flame_conjuration"),
-			"conjure_flail", List.of("glacial_bastion", "glacial_rampart")
+			"conjure_flail", List.of("glacial_rampart")
 	);
 	private static final List<String> LIVING_WEAPON_FORMS = List.of(
 			"conjure_blade",
@@ -57,7 +57,9 @@ public final class ManipulationTreeCoverageSourceTest {
 	);
 	private static final Set<String> NON_TREE_MANIPULATIONS = Set.of(
 			"hemosynthesis", "blood_lamp", "crimson_harvest", "sanguine_excavation", "vital_reservoir",
-			"conjure_sickle");
+			"conjure_sickle", "ferric_resonance", "glacial_bastion", "blood_eclipse_mantle",
+			"crimson_sight", "glacial_circulation", "ferric_transmutation", "vigil_of_glass",
+			"hematic_ballast", "summon_thrall");
 
 	private ManipulationTreeCoverageSourceTest() {
 	}

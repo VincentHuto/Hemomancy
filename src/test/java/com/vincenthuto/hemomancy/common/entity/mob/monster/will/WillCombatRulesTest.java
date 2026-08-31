@@ -13,9 +13,9 @@ public final class WillCombatRulesTest {
 			"blood_shot", "blood_needle", "blood_aneurysm", "blood_cloud",
 			"crimson_flame_conjuration", "sanguine_ignition", "scalding_updraft", "vitric_combustion",
 			"deadly_gaze", "hemolymphal_pulse", "activation_potential",
-			"hematic_flare", "crimson_sight", "prismatic_reproof", "unclosing_eye",
+			"hematic_flare", "hematic_beacon", "prismatic_reproof", "unclosing_eye",
 			"hemorrhage", "exsanguinate", "bloom_of_rot",
-			"cryogenic_pulse", "glacial_grasp", "glacial_bastion", "glacial_rampart",
+			"cryogenic_pulse", "glacial_grasp", "glacial_rampart", "iron_retort",
 			"pyretic_forge", "void_shroud", "gloam_laceration", "umbral_step", "blood_eclipse"
 	};
 
@@ -58,7 +58,7 @@ public final class WillCombatRulesTest {
 
 	private static void luxAndTenebrisKitsCarryParityOffense(String source) {
 		assertContains("lux kit starts with a Humilis attack", source,
-				"EnumBloodTendency.LUX, ids(\"hematic_flare\", \"prismatic_reproof\", \"crimson_sight\", \"unclosing_eye\")");
+				"EnumBloodTendency.LUX, ids(\"hematic_flare\", \"prismatic_reproof\", \"hematic_beacon\", \"unclosing_eye\")");
 		assertContains("tenebris kit keeps stealth but gains an ambush slash", source,
 				"EnumBloodTendency.TENEBRIS, ids(\"void_shroud\", \"gloam_laceration\", \"umbral_step\", \"blood_eclipse\")");
 	}

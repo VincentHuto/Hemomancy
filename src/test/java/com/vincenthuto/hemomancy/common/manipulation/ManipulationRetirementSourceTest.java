@@ -11,7 +11,16 @@ public final class ManipulationRetirementSourceTest {
 			"crimson_harvest",
 			"hemosynthesis",
 			"vital_reservoir",
-			"sanguine_excavation"
+			"sanguine_excavation",
+			"ferric_resonance",
+			"glacial_bastion",
+			"blood_eclipse_mantle",
+			"crimson_sight",
+			"glacial_circulation",
+			"ferric_transmutation",
+			"vigil_of_glass",
+			"hematic_ballast",
+			"summon_thrall"
 	};
 	private static final String[] RETIRED_MEMORY_ITEMS = {
 			"memory_conjure_living_staff",
@@ -23,7 +32,16 @@ public final class ManipulationRetirementSourceTest {
 			"crude_memory_crimson_harvest",
 			"memory_hemosynthesis",
 			"memory_vital_reservoir",
-			"memory_sanguine_excavation"
+			"memory_sanguine_excavation",
+			"memory_ferric_resonance",
+			"memory_glacial_bastion",
+			"memory_blood_eclipse_mantle",
+			"memory_crimson_sight",
+			"memory_glacial_circulation",
+			"memory_ferric_transmutation",
+			"memory_vigil_of_glass",
+			"memory_hematic_ballast",
+			"memory_summon_thrall"
 	};
 
 	private ManipulationRetirementSourceTest() {
@@ -73,13 +91,19 @@ public final class ManipulationRetirementSourceTest {
 			assertNotContains(id + " absent as tree parent", tree, "\"" + id + "\"");
 		}
 		assertContains("ductilis reroutes activation potential through synaptic jolt", tree,
-				"register(\"activation_potential\",1060,160, \"synaptic_jolt\")");
-		assertContains("lux reroutes crimson sight through hematic flare", tree,
-				"register(\"crimson_sight\",1270,160, \"hematic_flare\")");
+				"register(\"activation_potential\",1030,160, \"synaptic_jolt\")");
+		assertContains("lux reroutes unclosing eye through hematic flare", tree,
+				"register(\"unclosing_eye\",1340,180, \"hematic_flare\")");
+		assertContains("lux capstone bypasses vigil of glass", tree,
+				"register(\"white_verdict\",1300,300, \"unclosing_eye\", \"prismatic_reproof\")");
+		assertContains("congeatio reroutes cryogenic pulse through glacial grasp", tree,
+				"register(\"cryogenic_pulse\",1560,170, \"glacial_grasp\")");
+		assertContains("ferric capstone bypasses hematic ballast", tree,
+				"register(\"iron_choir\",820,20, \"iron_retort\", \"ironhearted\")");
 		assertContains("mortem reroutes grave debt away from vital reservoir", tree,
-				"register(\"grave_debt\",2180,70, \"hemorrhage\", \"exsanguinate\")");
+				"register(\"grave_debt\",2170,81, \"hemorrhage\", \"exsanguinate\")");
 		assertContains("ferric magnetism no longer depends on excavation", tree,
-				"register(\"sanguine_magnetism\",790,60, \"iron_retort\")");
+				"register(\"sanguine_magnetism\",790,200, \"iron_retort\")");
 	}
 
 	private static void retiredAcquisitionResourcesAreRemoved() throws IOException {
@@ -95,6 +119,10 @@ public final class ManipulationRetirementSourceTest {
 			assertMissing(itemId + " Mnemonist inquiry",
 					"src/main/resources/data/hemomancy/dialogue_inquiry/mnemonist/hemomancy/" + itemId + ".json");
 		}
+		String effigyRecipe = read(
+				"src/main/resources/data/hemomancy/recipe/memory_weaving/blood_thrall_effigy.json");
+		assertContains("blood thrall effigy inherits the retired manipulation route", effigyRecipe,
+				"hemomancy:blood_thrall_effigy");
 	}
 
 	private static void documentationMarksRetiredContentInactive() throws IOException {
