@@ -1,15 +1,13 @@
 package com.vincenthuto.hemomancy.common.network.dialogue;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import com.vincenthuto.hemomancy.common.entity.npc.dialogue.DialogueAttention;
+import io.netty.buffer.Unpooled;
+import net.minecraft.network.FriendlyByteBuf;
+import org.junit.jupiter.api.Test;
 
 import java.util.Map;
 
-import org.junit.jupiter.api.Test;
-
-import com.vincenthuto.hemomancy.common.entity.npc.dialogue.DialogueAttention;
-
-import io.netty.buffer.Unpooled;
-import net.minecraft.network.FriendlyByteBuf;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class PacketSyncNpcProgressionMarkersTest {
 	@Test

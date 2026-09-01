@@ -1,17 +1,8 @@
 package com.vincenthuto.hemomancy.client.render.world.chamberofwill;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.BufferBuilder;
-import com.mojang.blaze3d.vertex.BufferUploader;
-import com.mojang.blaze3d.vertex.DefaultVertexFormat;
-import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.Tesselator;
-import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.mojang.blaze3d.vertex.VertexFormat;
+import com.mojang.blaze3d.vertex.*;
 import com.mojang.math.Axis;
 import com.vincenthuto.hemomancy.client.render.HemoRenderTypes;
 import com.vincenthuto.hutoslib.client.particle.data.TendrilGeometry;
@@ -23,6 +14,9 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.util.Mth;
 import net.minecraft.world.phys.Vec3;
 import org.joml.Matrix4f;
+
+import java.util.ArrayList;
+import java.util.List;
 
 final class ApotheosChamberEffects extends AbstractChamberThemeEffects {
 	private static final int APOTHEOS_FLOOR_RING_SEGMENTS = 64;

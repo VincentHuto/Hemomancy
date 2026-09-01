@@ -1,17 +1,16 @@
 package com.vincenthuto.hemomancy.gametest.journey;
 
 import com.vincenthuto.hemomancy.Hemomancy;
-
-import net.minecraft.core.BlockPos;
-import net.minecraft.nbt.Tag;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.chat.Component;
-import net.minecraft.commands.arguments.EntityAnchorArgument;
-import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.phys.Vec3;
 import com.vincenthuto.hemomancy.common.event.HarbingerAdvancementGranter;
 import com.vincenthuto.hemomancy.common.worldgen.ChamberOfWillManager;
 import com.vincenthuto.hemomancy.common.worldgen.ChamberVisitService;
+import net.minecraft.commands.arguments.EntityAnchorArgument;
+import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.Tag;
+import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.phys.Vec3;
 
 public final class HemoJourneyController {
 	public static final String VERIFIED_STAGE_KEY = "hemomancy.dev_test.journey.verified_stage";

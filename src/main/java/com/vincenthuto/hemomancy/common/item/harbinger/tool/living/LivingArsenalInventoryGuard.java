@@ -1,8 +1,8 @@
 package com.vincenthuto.hemomancy.common.item.harbinger.tool.living;
 
+import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillPointHelper;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.init.SkillPointInit;
-import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillPointHelper;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.network.chat.Component;

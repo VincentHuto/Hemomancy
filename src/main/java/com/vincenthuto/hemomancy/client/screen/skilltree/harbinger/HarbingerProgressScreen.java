@@ -1,7 +1,10 @@
 package com.vincenthuto.hemomancy.client.screen.skilltree.harbinger;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.vincenthuto.hemomancy.client.screen.skilltree.shared.*;
+import com.vincenthuto.hemomancy.client.screen.skilltree.shared.CraftingTabController;
+import com.vincenthuto.hemomancy.client.screen.skilltree.shared.MaterialsTabController;
+import com.vincenthuto.hemomancy.client.screen.skilltree.shared.RitesTabController;
+import com.vincenthuto.hemomancy.client.screen.skilltree.shared.SkillsTabController;
 import com.vincenthuto.hemomancy.client.screen.skilltree.util.*;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import net.minecraft.client.Minecraft;
@@ -46,7 +49,7 @@ public class HarbingerProgressScreen extends Screen {
     private static final int HOME_BTN_SIZE = 16;
     private static final int HOME_BTN_PAD  = 4;
 	private static final int ZOOM_LABEL_GAP = 5;
-    private static final float SCREEN_CHROME_Z = 400.0F;
+    private static final float SCREEN_CHROME_Z = 200.0F;
 
     private int guiLeft, guiTop, guiWidth, guiHeight;
     private boolean isDragging;

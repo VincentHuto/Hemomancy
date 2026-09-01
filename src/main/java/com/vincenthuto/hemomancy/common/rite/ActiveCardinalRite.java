@@ -1,8 +1,9 @@
 package com.vincenthuto.hemomancy.common.rite;
 
-import com.vincenthuto.hemomancy.common.rite.harbinger.CardinalRitePlantingSequence;
 import com.vincenthuto.hemomancy.common.rite.harbinger.CardinalRiteCancellationGeometry;
+import com.vincenthuto.hemomancy.common.rite.harbinger.CardinalRitePlantingSequence;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
@@ -10,16 +11,8 @@ import net.minecraft.nbt.Tag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.Vec3;
-import net.minecraft.core.Direction;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.LinkedHashSet;
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * Persisted server-authoritative state for both legacy countdown rites and the

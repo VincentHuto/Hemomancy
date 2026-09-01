@@ -7,8 +7,8 @@ import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillPoin
 import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillProgressClientCache;
 import com.vincenthuto.hemomancy.common.init.SkillPointInit;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
-import com.vincenthuto.hemomancy.common.network.capa.harbinger.PacketUnlockSkill;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.PacketToggleSkill;
+import com.vincenthuto.hemomancy.common.network.capa.harbinger.PacketUnlockSkill;
 import com.vincenthuto.hutoslib.client.HLTextUtils;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
@@ -32,6 +32,7 @@ public class SkillsTabController implements IProgressTab {
     private static final int DEGREE_LABEL_GAP_Y = 34;
     private static final int TRACE_DEGREE_LABEL = 0x88D66458;
     private static final int COL_NODE_BG           = 0xCC1A0505;
+    private static final float SKILL_TOOLTIP_Z = 900.0F;
 
     private final SkillTraceLayerCache surfaceTraceCache = new SkillTraceLayerCache();
     private final SkillTraceLayerCache deepTraceCache = new SkillTraceLayerCache();
@@ -242,7 +243,11 @@ public class SkillsTabController implements IProgressTab {
 
     @Override
     public void renderTooltip(GuiGraphics gfx, ProgressScreenContext ctx, int mouseX, int mouseY) {
+        var pose = gfx.pose();
+        pose.pushPose();
+        pose.translate(0.0F, 0.0F, SKILL_TOOLTIP_Z);
         drawTooltip(gfx, ctx, mouseX, mouseY);
+        pose.popPose();
     }
 
     public float getDeepFade() {

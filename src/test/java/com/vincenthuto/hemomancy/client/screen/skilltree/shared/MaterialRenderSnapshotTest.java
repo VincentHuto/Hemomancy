@@ -1,12 +1,13 @@
 package com.vincenthuto.hemomancy.client.screen.skilltree.shared;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import net.minecraft.world.item.ItemStack;
+import org.junit.jupiter.api.Test;
 
 import java.util.LinkedHashMap;
 import java.util.List;
-import net.minecraft.world.item.ItemStack;
-import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class MaterialRenderSnapshotTest {
 

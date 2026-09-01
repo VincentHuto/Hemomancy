@@ -5,6 +5,7 @@ import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.EnumPurityStage;
 import com.vincenthuto.hemomancy.common.init.BlockInit;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
+import com.vincenthuto.hemomancy.common.mission.unstained.UnstainedObservances;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
@@ -24,7 +25,6 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 
 import java.util.Map;
-import com.vincenthuto.hemomancy.common.mission.unstained.UnstainedObservances;
 
 /**
  * Consecration mechanic: Unstained players at CLEANSING+ purity (50+) can

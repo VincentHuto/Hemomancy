@@ -1,7 +1,7 @@
 package com.vincenthuto.hemomancy.common.network.capa.harbinger.visceral;
 
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.common.tile.functional.VisceralMirrorBlockEntity;
+import com.vincenthuto.hemomancy.common.tile.harbinger.functional.VisceralMirrorBlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;

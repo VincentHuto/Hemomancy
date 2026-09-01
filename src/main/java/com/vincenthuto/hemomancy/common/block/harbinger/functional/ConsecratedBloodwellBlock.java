@@ -1,7 +1,7 @@
 package com.vincenthuto.hemomancy.common.block.harbinger.functional;
 
 import com.mojang.serialization.MapCodec;
-import com.vincenthuto.hemomancy.common.block.shared.BlockBloodEndpoint;
+import com.vincenthuto.hemomancy.common.block.harbinger.BlockBloodEndpoint;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodVolumeEvents;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.Bloodline;
@@ -16,7 +16,7 @@ import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.LivingStaffIt
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.PacketOpenBloodlinePoolScreen;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.PacketSyncBloodlinePool;
-import com.vincenthuto.hemomancy.common.tile.functional.ConsecratedBloodwellBlockEntity;
+import com.vincenthuto.hemomancy.common.tile.harbinger.functional.ConsecratedBloodwellBlockEntity;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;

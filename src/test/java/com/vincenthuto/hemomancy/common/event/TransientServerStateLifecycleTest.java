@@ -1,6 +1,6 @@
 package com.vincenthuto.hemomancy.common.event;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.lang.reflect.Field;
@@ -10,7 +10,7 @@ import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
 
-import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class TransientServerStateLifecycleTest {
 	private static final List<String> REQUIRED_RESETS = List.of(

@@ -1,27 +1,11 @@
 package com.vincenthuto.hemomancy.client.screen.dialogue;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
-import org.lwjgl.glfw.GLFW;
-
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.vincenthuto.hemomancy.common.entity.npc.dialogue.DialogueCategory;
-import com.vincenthuto.hemomancy.common.entity.npc.dialogue.DialogueAttentionResolver;
-import com.vincenthuto.hemomancy.common.entity.npc.dialogue.DialogueNode;
-import com.vincenthuto.hemomancy.common.entity.npc.dialogue.DialogueOption;
-import com.vincenthuto.hemomancy.common.entity.npc.dialogue.DialogueScreenMode;
-import com.vincenthuto.hemomancy.common.entity.npc.dialogue.DialogueTopic;
-import com.vincenthuto.hemomancy.common.entity.npc.dialogue.DialogueTopicState;
-import com.vincenthuto.hemomancy.common.entity.npc.dialogue.DialogueTree;
+import com.vincenthuto.hemomancy.common.entity.npc.dialogue.*;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.dialogue.DialogueOptionPacket;
 import com.vincenthuto.hemomancy.common.network.dialogue.DialogueTopicOpenedPacket;
-
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.renderer.GameRenderer;
@@ -33,6 +17,12 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
+import org.lwjgl.glfw.GLFW;
+
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 @OnlyIn(Dist.CLIENT)
 public final class DialogueScreen extends Screen {

@@ -1,24 +1,24 @@
 package com.vincenthuto.hemomancy.common.manipulation;
 
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
-import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillPointHelper;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.ManipulationRetirementRules;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.IBloodTendency;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BorrowedBloodReserve;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.KnownManipulationEvents;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.ManipulationCostLedger;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.ManipulationCostSnapshot;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.ManipulationRetirementRules;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.scar.fungal.ConserveStateHelper;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.scar.fungal.CrawlingChoirHandler;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.scar.fungal.RootedStateHelper;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.IBloodTendency;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.EnumVeinSections;
+import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillPointHelper;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.EnumPurityStage;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.PurityGainEvents;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.EnumVeinSections;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BorrowedBloodReserve;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
-import com.vincenthuto.hemomancy.common.entity.boss.saint.hemorath.HemorathEntity;
 import com.vincenthuto.hemomancy.common.effect.MnemonicCandleRules;
 import com.vincenthuto.hemomancy.common.effect.MnemonicPotionRules;
+import com.vincenthuto.hemomancy.common.entity.boss.saint.hemorath.HemorathEntity;
 import com.vincenthuto.hemomancy.common.event.BorrowedBloodRules;
 import com.vincenthuto.hemomancy.common.init.EffectInit;
 import com.vincenthuto.hemomancy.common.item.harbinger.CheapBloodInfusionHelper;
@@ -37,12 +37,12 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.neoforged.fml.ModList;
 
+import javax.annotation.Nullable;
 import java.lang.reflect.Method;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
-import javax.annotation.Nullable;
 
 public class BloodManipulation implements EntityCastableManipulation {
 	public static BloodManipulation BLANK = new BloodManipulation("No Selected", 0, 0, 0, EnumManipulationType.QUICK,
@@ -347,7 +347,13 @@ public class BloodManipulation implements EntityCastableManipulation {
 	public boolean tryPerformContinuousPulse(Player player, Level world, ItemStack heldItemMainhand,
 			BlockPos position) {
 		return type == EnumManipulationType.CONTINUOUS
-				&& tryPerformAction(player, world, heldItemMainhand, position, 0.0F, false);
+				&& tryPerformAction(player, world, heldItemMainhand, position, 0.0F, false, false, false);
+	}
+
+	public boolean tryPerformSustainedPassivePulse(ServerPlayer player) {
+		return type == EnumManipulationType.PASSIVE
+				&& tryPerformAction(player, player.level(), ItemStack.EMPTY, player.blockPosition(), 0.0F,
+						false, false, false);
 	}
 
 	public boolean tryPerformPassiveTrigger(ServerPlayer player) {
@@ -385,6 +391,12 @@ public class BloodManipulation implements EntityCastableManipulation {
 
 	private boolean tryPerformAction(Player player, Level world, ItemStack heldItemMainhand, BlockPos position,
 			float chargeTicks, boolean applyCooldown, boolean enforceCooldown) {
+		return tryPerformAction(player, world, heldItemMainhand, position, chargeTicks, applyCooldown,
+				enforceCooldown, true);
+	}
+
+	private boolean tryPerformAction(Player player, Level world, ItemStack heldItemMainhand, BlockPos position,
+			float chargeTicks, boolean applyCooldown, boolean enforceCooldown, boolean creditUse) {
 		IBloodVolume volume = HemoCapabilityAccess.getBloodVolume(player)
 				.orElseThrow(NullPointerException::new);
 		IBloodTendency tendency = HemoCapabilityAccess.getBloodTendency(player)
@@ -471,15 +483,10 @@ public class BloodManipulation implements EntityCastableManipulation {
 					CrawlingChoirHandler.tryEchoCast(player, world, heldItemMainhand, position, this, chargeTicks);
 
 					// Apply cross-system consequences: vascular strain, tendency shift, XP
-					KnownManipulationEvents.onManipulationUsed((ServerPlayer) player, this);
-					PurityGainEvents.onBloodManipulationUsed((ServerPlayer) player);
+					if (creditUse) recordSuccessfulUse((ServerPlayer) player);
 
 					// MnA Combo System: Grant Sanguine Clarity (reduces next spell mana cost)
 					// and consume Arcane Resonance if present (it already reduced this manipulation's cost)
-					if (ModList.get().isLoaded("mna")) {
-						invokeMnAComboHelper(player);
-					}
-
 					long appliedCooldown = !applyCooldown || ignoresCooldown(player) ? 0L : startCooldown(player);
 					PacketHandler.sendToPlayer((ServerPlayer) player, new ManipCooldownPacket((int) appliedCooldown));
 					return true;
@@ -493,6 +500,12 @@ public class BloodManipulation implements EntityCastableManipulation {
 			}
 		}
 		return false;
+	}
+
+	public void recordSuccessfulUse(ServerPlayer player) {
+		KnownManipulationEvents.onManipulationUsed(player, this);
+		PurityGainEvents.onBloodManipulationUsed(player);
+		if (ModList.get().isLoaded("mna")) invokeMnAComboHelper(player);
 	}
 
 	protected boolean canPerformAction(Player player, float chargeTicks) {

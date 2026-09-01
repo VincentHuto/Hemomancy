@@ -1,7 +1,7 @@
 package com.vincenthuto.hemomancy.common.menu.slot;
 
 import com.vincenthuto.hemomancy.common.init.ItemInit;
-import com.vincenthuto.hemomancy.common.tile.crafting.VialCentrifugeBlockEntity;
+import com.vincenthuto.hemomancy.common.tile.harbinger.crafting.VialCentrifugeBlockEntity;
 
 import net.minecraft.world.Container;
 import net.minecraft.world.inventory.Slot;

@@ -1,17 +1,13 @@
 package com.vincenthuto.hemomancy.common.entity.npc.dialogue;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import io.netty.buffer.Unpooled;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.resources.ResourceLocation;
+import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
-import org.junit.jupiter.api.Test;
-
-import io.netty.buffer.Unpooled;
-import net.minecraft.network.FriendlyByteBuf;
-
-import net.minecraft.resources.ResourceLocation;
+import static org.junit.jupiter.api.Assertions.*;
 
 class DialoguePresentationTest {
 	@Test

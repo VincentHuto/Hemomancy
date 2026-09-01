@@ -3,7 +3,6 @@ package com.vincenthuto.hemomancy.client.model.tile.functional;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hutoslib.client.HLClientUtils;
 import net.minecraft.client.model.Model;
 import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.model.geom.ModelPart;

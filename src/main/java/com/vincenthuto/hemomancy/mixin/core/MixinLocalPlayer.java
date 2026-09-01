@@ -1,9 +1,9 @@
 package com.vincenthuto.hemomancy.mixin.core;
 
 import com.vincenthuto.hemomancy.common.armor.ability.SilentArchonArmorAbilityHandler;
-import com.vincenthuto.hemomancy.mixin.util.ClientMixinHooks;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.LivingTorchBreathRules;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.LivingTorchItem;
+import com.vincenthuto.hemomancy.mixin.util.ClientMixinHooks;
 import net.minecraft.client.player.Input;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.world.entity.EquipmentSlot;

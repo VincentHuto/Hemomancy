@@ -1,8 +1,8 @@
 package com.vincenthuto.hemomancy.common.item.harbinger.morphlings;
 
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
-import com.vincenthuto.hemomancy.common.init.FluidInit;
 import com.vincenthuto.hemomancy.common.init.EffectInit;
+import com.vincenthuto.hemomancy.common.init.FluidInit;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;

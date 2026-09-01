@@ -1,11 +1,11 @@
 package com.vincenthuto.hemomancy.common.item.harbinger.morphlings;
 
-import java.util.UUID;
-
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.CustomData;
+
+import java.util.UUID;
 
 /** Stable identity shared by a jar Morphling and its mutable equipped copy. */
 public final class MorphlingIdentity {

@@ -6,7 +6,7 @@ import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.visceral.VisceralMirrorCancelPacket;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.visceral.VisceralMirrorExtractPacket;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.visceral.VisceralMirrorUpdatePacket;
-import com.vincenthuto.hemomancy.common.tile.functional.VisceralMirrorBlockEntity;
+import com.vincenthuto.hemomancy.common.tile.harbinger.functional.VisceralMirrorBlockEntity;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;

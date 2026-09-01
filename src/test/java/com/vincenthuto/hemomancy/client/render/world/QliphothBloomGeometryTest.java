@@ -86,6 +86,17 @@ class QliphothBloomGeometryTest {
     }
 
     @Test
+    void matureCrownProngsStopBelowTheEventHorizon() {
+        double centerY = QliphothBloomGeometry.apexCenter(0).y();
+        for (QliphothBloomGeometry.Limb prong : QliphothBloomGeometry.crownProngs(0)) {
+            int tip = prong.points().size() - 1;
+            assertTrue(centerY - prong.points().get(tip).y() >= .50,
+                    "crown prongs must not pierce the event horizon");
+            assertEquals(0, prong.radii().get(tip), 1.0e-9);
+        }
+    }
+
+    @Test
     void angularLimbsUseShortBevelsInsteadOfIntersectingElbowRings() {
         QliphothBloomGeometry.Limb branch = QliphothBloomGeometry.mainBranches(9, 0).get(0);
         assertTrue(branch.points().size() >= 8, "authored corners need approach and exit rings");

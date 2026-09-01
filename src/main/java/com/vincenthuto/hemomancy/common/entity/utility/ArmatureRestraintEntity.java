@@ -1,9 +1,9 @@
 package com.vincenthuto.hemomancy.common.entity.utility;
 
+import com.vincenthuto.hemomancy.common.block.harbinger.crafting.HematicArmatureBlock;
 import com.vincenthuto.hemomancy.common.init.BlockInit;
 import com.vincenthuto.hemomancy.common.init.EntityInit;
-import com.vincenthuto.hemomancy.common.block.harbinger.crafting.HematicArmatureBlock;
-import com.vincenthuto.hemomancy.common.tile.crafting.HematicArmatureBlockEntity;
+import com.vincenthuto.hemomancy.common.tile.harbinger.crafting.HematicArmatureBlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;

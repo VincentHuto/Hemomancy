@@ -1,8 +1,8 @@
 package com.vincenthuto.hemomancy.common.network.particle;
 
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.common.block.harbinger.EngramBlock;
-import com.vincenthuto.hemomancy.common.block.harbinger.EngramTextureCache;
+import com.vincenthuto.hemomancy.common.block.harbinger.rite.EngramBlock;
+import com.vincenthuto.hemomancy.common.block.harbinger.rite.EngramTextureCache;
 import com.vincenthuto.hemomancy.common.block.inscription.DiscoveryInscriptionVisuals;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;

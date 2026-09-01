@@ -5,13 +5,13 @@ import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.vincenthuto.hemomancy.client.data.MonolithicDislocationClientState;
 import com.vincenthuto.hemomancy.client.render.HemoRenderTypes;
 import com.vincenthuto.hemomancy.client.render.armor.SilentArchonArmorRenderHelper;
+import com.vincenthuto.hemomancy.common.entity.boss.endgame.VesperTheEveningStarEntity;
 import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.LivingEntityRenderer;
 import net.minecraft.client.renderer.entity.layers.RenderLayer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.world.entity.LivingEntity;
-import com.vincenthuto.hemomancy.common.entity.boss.endgame.VesperTheEveningStarEntity;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 

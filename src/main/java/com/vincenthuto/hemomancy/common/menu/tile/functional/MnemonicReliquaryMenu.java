@@ -2,7 +2,7 @@ package com.vincenthuto.hemomancy.common.menu.tile.functional;
 
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.livingstaff.LivingStaffBondHelper;
 import com.vincenthuto.hemomancy.common.init.ContainerInit;
-import com.vincenthuto.hemomancy.common.tile.functional.MnemonicReliquaryBlockEntity;
+import com.vincenthuto.hemomancy.common.tile.harbinger.functional.MnemonicReliquaryBlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;

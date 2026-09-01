@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.client.screen.overlay;
 
+import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -7,8 +8,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
-import javax.imageio.ImageIO;
 
 public final class EquippedMorphlingOverlayTest {
 	private static final int MAX_VISIBLE_RGB_COLORS = 12;

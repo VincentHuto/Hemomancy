@@ -3,12 +3,7 @@ package com.vincenthuto.hemomancy.client.render.world;
 import com.vincenthuto.hemomancy.client.data.ActiveRiteClientData;
 import net.minecraft.core.BlockPos;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 public final class CardinalRiteFogLightningSchedule {
 	private static final int MIN_INITIAL_DELAY = 6;

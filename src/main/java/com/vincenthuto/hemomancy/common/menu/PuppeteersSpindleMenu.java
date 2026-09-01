@@ -4,15 +4,15 @@ import com.vincenthuto.hemomancy.common.init.ContainerInit;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.MarionetteCrossbarItem;
 import com.vincenthuto.hemomancy.common.summon.PuppeteerSummonRules;
-import com.vincenthuto.hemomancy.common.tile.crafting.PuppeteersSpindleBlockEntity;
+import com.vincenthuto.hemomancy.common.tile.harbinger.crafting.PuppeteersSpindleBlockEntity;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ContainerData;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 

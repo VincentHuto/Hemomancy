@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.entity.mob.animal;
 
+import com.vincenthuto.hemomancy.common.rite.harbinger.CardinalRiteThreatRules;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
@@ -12,7 +13,6 @@ import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import com.vincenthuto.hemomancy.common.rite.harbinger.CardinalRiteThreatRules;
 
 /**
  * Rite-only blood feeder. It exists to siphon consecrated anchors and cannot

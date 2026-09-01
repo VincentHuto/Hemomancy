@@ -1,15 +1,11 @@
 package com.vincenthuto.hemomancy.common.manipulation.mortem;
 
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
-import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillPointHelper;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.EnumVeinSections;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
-import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
-import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationRank;
-import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationType;
-import com.vincenthuto.hemomancy.common.manipulation.HemomancyTendrilEffects;
-import com.vincenthuto.hemomancy.common.manipulation.TendencyAffinityRules;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.EnumVeinSections;
+import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillPointHelper;
+import com.vincenthuto.hemomancy.common.manipulation.*;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.BloodVolumeServerPacket;
 import com.vincenthuto.hutoslib.client.particle.factory.GlowParticleFactory;

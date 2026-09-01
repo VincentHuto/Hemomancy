@@ -35,6 +35,9 @@ public class BloodCloudCarrierEntity extends AbstractHurtingProjectile {
 	private EnumBloodTendency damageTendency;
 	@Nullable
 	private EnumBloodTendency secondaryDamageTendency;
+	private double cloudRadius = 1.25D;
+	private int cloudDuration = 100;
+	private CloudEntityBlood.Mode cloudMode = CloudEntityBlood.Mode.STATIC;
 
 	/**
 	 * Called to update the entity's position/logic.
@@ -68,6 +71,9 @@ public class BloodCloudCarrierEntity extends AbstractHurtingProjectile {
 		if (secondaryDamageTendency != null) {
 			compound.putString("SecondaryDamageTendency", secondaryDamageTendency.name());
 		}
+		compound.putDouble("CloudRadius", cloudRadius);
+		compound.putInt("CloudDuration", cloudDuration);
+		compound.putString("CloudMode", cloudMode.name());
 	}
 
 	@Override
@@ -173,6 +179,15 @@ public class BloodCloudCarrierEntity extends AbstractHurtingProjectile {
 		}
 		damageTendency = readTendency(compound, "DamageTendency");
 		secondaryDamageTendency = readTendency(compound, "SecondaryDamageTendency");
+		if (compound.contains("CloudRadius")) cloudRadius = compound.getDouble("CloudRadius");
+		if (compound.contains("CloudDuration")) cloudDuration = compound.getInt("CloudDuration");
+		if (compound.contains("CloudMode")) {
+			try {
+				cloudMode = CloudEntityBlood.Mode.valueOf(compound.getString("CloudMode"));
+			} catch (IllegalArgumentException ignored) {
+				cloudMode = CloudEntityBlood.Mode.STATIC;
+			}
+		}
 
 	}
 
@@ -182,11 +197,18 @@ public class BloodCloudCarrierEntity extends AbstractHurtingProjectile {
 		this.secondaryDamageTendency = secondaryDamageTendency;
 	}
 
+	public void configureCloud(double radius, int duration, CloudEntityBlood.Mode mode) {
+		this.cloudRadius = radius;
+		this.cloudDuration = duration;
+		this.cloudMode = mode;
+	}
+
 	private CloudEntityBlood createCloud() {
 		LivingEntity source = shooter;
 		if (source == null && getOwner() instanceof LivingEntity living) source = living;
 		CloudEntityBlood cloud = new CloudEntityBlood(EntityInit.blood_cloud.get(), level(), source);
 		cloud.setDamageTendencies(damageTendency, secondaryDamageTendency);
+		cloud.configure(cloudRadius, cloudDuration, cloudMode);
 		return cloud;
 	}
 

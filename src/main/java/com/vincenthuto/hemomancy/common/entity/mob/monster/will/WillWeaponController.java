@@ -1,8 +1,8 @@
 package com.vincenthuto.hemomancy.common.entity.mob.monster.will;
 
+import com.vincenthuto.hemomancy.common.block.harbinger.CrimsonFireHelper;
 import com.vincenthuto.hemomancy.common.entity.projectile.BloodBoltEntity;
 import com.vincenthuto.hemomancy.common.init.EffectInit;
-import com.vincenthuto.hemomancy.common.util.CrimsonFireHelper;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.effect.MobEffectInstance;

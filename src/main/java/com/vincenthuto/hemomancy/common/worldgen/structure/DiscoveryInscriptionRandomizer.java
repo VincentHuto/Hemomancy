@@ -1,7 +1,7 @@
 package com.vincenthuto.hemomancy.common.worldgen.structure;
 
 import com.vincenthuto.hemomancy.common.init.BlockInit;
-import com.vincenthuto.hemomancy.common.tile.DiscoveryInscriptionBlockEntity;
+import com.vincenthuto.hemomancy.common.tile.inscription.DiscoveryInscriptionBlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.RandomSource;

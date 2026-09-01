@@ -1,21 +1,17 @@
 package com.vincenthuto.hemomancy.common.entity.npc.dialogue;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import com.vincenthuto.hemomancy.common.entity.npc.dialogue.DialogueItemInquiryNodes.ResolvedInventoryInquiry;
+import com.vincenthuto.hemomancy.common.entity.npc.dialogue.inquiry.ItemInquiryCondition;
+import com.vincenthuto.hemomancy.common.entity.npc.dialogue.inquiry.ItemInquiryEntry;
+import com.vincenthuto.hemomancy.common.entity.npc.dialogue.inquiry.ItemInquiryRegistry;
+import net.minecraft.resources.ResourceLocation;
+import org.junit.jupiter.api.Test;
 
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.junit.jupiter.api.Test;
-
-import com.vincenthuto.hemomancy.common.entity.npc.dialogue.DialogueItemInquiryNodes.ResolvedInventoryInquiry;
-import com.vincenthuto.hemomancy.common.entity.npc.dialogue.inquiry.ItemInquiryCondition;
-import com.vincenthuto.hemomancy.common.entity.npc.dialogue.inquiry.ItemInquiryEntry;
-import com.vincenthuto.hemomancy.common.entity.npc.dialogue.inquiry.ItemInquiryRegistry;
-
-import net.minecraft.resources.ResourceLocation;
+import static org.junit.jupiter.api.Assertions.*;
 
 class DialogueItemInquiryNodesTest {
     @Test

@@ -3,12 +3,10 @@ package com.vincenthuto.hemomancy.client.render.entity.misc;
 import com.vincenthuto.hemomancy.common.worldgen.arbor.ArborOfWillVisualRules;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 import java.util.HashSet;
 import java.util.Set;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 class ArborFruitMeshKeyTest {
     @Test

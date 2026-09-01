@@ -1,7 +1,7 @@
 package com.vincenthuto.hemomancy.common.item.harbinger.tool.living;
 
 import com.vincenthuto.hemomancy.client.item.HemoClientItemExtensionsProvider;
-import com.vincenthuto.hemomancy.client.render.item.hematic.LivingSpearItemRenderer;
+import com.vincenthuto.hemomancy.client.render.item.harbinger.LivingSpearItemRenderer;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.entity.projectile.DirectedBloodOrbEntity;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;

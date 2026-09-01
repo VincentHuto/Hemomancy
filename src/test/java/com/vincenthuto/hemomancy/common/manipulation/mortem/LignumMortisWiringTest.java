@@ -1,11 +1,11 @@
 package com.vincenthuto.hemomancy.common.manipulation.mortem;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import org.junit.jupiter.api.Test;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class LignumMortisWiringTest {
 	private static final Path JAVA = Path.of("src/main/java/com/vincenthuto/hemomancy");

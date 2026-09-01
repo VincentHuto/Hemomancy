@@ -1,18 +1,7 @@
 package com.vincenthuto.hemomancy.client.morphling;
 
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.client.model.entity.summon.MorphlingBatHeadAttachmentModel;
-import com.vincenthuto.hemomancy.client.model.entity.summon.MorphlingCentipedeBodyAttachmentModel;
-import com.vincenthuto.hemomancy.client.model.entity.summon.MorphlingChitiniteLegAttachmentModel;
-import com.vincenthuto.hemomancy.client.model.entity.summon.MorphlingFungalHeadModel;
-import com.vincenthuto.hemomancy.client.model.entity.summon.MorphlingLeechArmAttachmentModel;
-import com.vincenthuto.hemomancy.client.model.entity.summon.MorphlingMoleArmAttachmentModel;
-import com.vincenthuto.hemomancy.client.model.entity.summon.MorphlingCuttlefishHeadAttachmentModel;
-import com.vincenthuto.hemomancy.client.model.entity.summon.MorphlingPestsBodyAttachmentModel;
-import com.vincenthuto.hemomancy.client.model.entity.summon.MorphlingSerpentLegAttachmentModel;
-import com.vincenthuto.hemomancy.client.model.entity.summon.MorphlingSpiderBodyAttachmentModel;
-import com.vincenthuto.hemomancy.client.model.entity.summon.MorphlingTickBodyAttachmentModel;
-import com.vincenthuto.hemomancy.client.model.entity.summon.MorphlingUrchinBodyAttachmentModel;
+import com.vincenthuto.hemomancy.client.model.entity.summon.*;
 import com.vincenthuto.hemomancy.client.morphling.MorphlingModelAttachment.AttachmentPoint;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 import net.minecraft.client.Minecraft;

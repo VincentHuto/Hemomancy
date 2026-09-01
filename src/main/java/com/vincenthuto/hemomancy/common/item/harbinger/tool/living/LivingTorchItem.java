@@ -1,7 +1,8 @@
 package com.vincenthuto.hemomancy.common.item.harbinger.tool.living;
 
 import com.vincenthuto.hemomancy.client.item.HemoClientItemExtensionsProvider;
-import com.vincenthuto.hemomancy.client.render.item.hematic.LivingTorchItemRenderer;
+import com.vincenthuto.hemomancy.client.render.item.harbinger.LivingTorchItemRenderer;
+import com.vincenthuto.hemomancy.common.block.harbinger.CrimsonFireHelper;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodVolumeEvents;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
@@ -11,7 +12,6 @@ import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.PlayerAnimationKind;
 import com.vincenthuto.hemomancy.common.rite.ActiveCardinalRite;
 import com.vincenthuto.hemomancy.common.rite.CardinalRiteSavedData;
-import com.vincenthuto.hemomancy.common.util.CrimsonFireHelper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.server.level.ServerLevel;

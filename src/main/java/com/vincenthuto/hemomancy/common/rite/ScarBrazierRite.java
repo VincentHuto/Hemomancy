@@ -1,6 +1,6 @@
 package com.vincenthuto.hemomancy.common.rite;
 
-import com.vincenthuto.hemomancy.common.block.harbinger.BrazierBlock;
+import com.vincenthuto.hemomancy.common.block.harbinger.rite.BrazierBlock;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodVolumeEvents;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
@@ -13,10 +13,10 @@ import com.vincenthuto.hemomancy.common.item.harbinger.scar.ItemScar;
 import com.vincenthuto.hemomancy.common.item.harbinger.scar.ItemScarPattern;
 import com.vincenthuto.hemomancy.common.item.harbinger.scar.ScarDefinition;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.BloodAbsorptionItem;
+import com.vincenthuto.hemomancy.common.mission.cicatrix_anchorite.VeinMasonAssignments;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.scars.PacketSyncScarsState;
-import com.vincenthuto.hemomancy.common.mission.cicatrix_anchorite.VeinMasonAssignments;
-import com.vincenthuto.hemomancy.common.tile.IronBrazierBlockEntity;
+import com.vincenthuto.hemomancy.common.tile.harbinger.rite.IronBrazierBlockEntity;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;

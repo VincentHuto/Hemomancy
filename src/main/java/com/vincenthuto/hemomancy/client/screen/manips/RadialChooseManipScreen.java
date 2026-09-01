@@ -3,36 +3,28 @@ package com.vincenthuto.hemomancy.client.screen.manips;
 import com.google.common.collect.Lists;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.client.data.ActiveRiteClientData;
-import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.LivingStaffWeaponFormRules;
 import com.vincenthuto.hemomancy.client.event.ClientEvents;
-import com.vincenthuto.hemomancy.client.screen.radial.BlitRadialMenuItem;
-import com.vincenthuto.hemomancy.client.screen.radial.GenericRadialMenu;
-import com.vincenthuto.hemomancy.client.screen.radial.IRadialMenuHost;
-import com.vincenthuto.hemomancy.client.screen.radial.ItemStackRadialMenuItem;
-import com.vincenthuto.hemomancy.client.screen.radial.RadialMenuItem;
+import com.vincenthuto.hemomancy.client.screen.radial.*;
 import com.vincenthuto.hemomancy.common.armor.ability.ArmorSetAbility;
 import com.vincenthuto.hemomancy.common.armor.ability.ArmorSetAbilityRegistry;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.IKnownManipulations;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.MemoryEntryKind;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.MemorySlotRef;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.equipment.IHarbingerEquipmentItemHandler;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.*;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.musclememory.MuscleMemory;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.musclememory.MuscleMemoryPrimingRules;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.EnumBloodFlow;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.EnumVeinSections;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.ManipulationEquipHelper;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.ManipulationRetirementRules;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.equipment.IHarbingerEquipmentItemHandler;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.item.harbinger.bloodline.VasculariumCharmItem;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.BloodGourdItem;
+import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.LivingStaffWeaponFormRules;
 import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
 import com.vincenthuto.hemomancy.common.menu.HarbingerEquipmentMenu;
-import com.vincenthuto.hutoslib.client.HLTextUtils;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.ActivateArmorSetAbilityC2SPacket;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.manips.UpdateCurrentManipPacket;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.manips.UpdateCurrentMemoryPacket;
+import com.vincenthuto.hutoslib.client.HLTextUtils;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
@@ -40,7 +32,6 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -49,8 +40,8 @@ import net.neoforged.neoforge.client.event.RenderGuiLayerEvent;
 import net.neoforged.neoforge.client.gui.VanillaGuiLayers;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.EnumSet;
+import java.util.List;
 
 @EventBusSubscriber(Dist.CLIENT)
 public class RadialChooseManipScreen extends Screen {
@@ -277,7 +268,7 @@ public class RadialChooseManipScreen extends Screen {
 				&& ("conjure_staff".equals(manipulation.getName())
 						|| LivingStaffWeaponFormRules.isStaffWeaponFormManip(manipulation.getName()));
 		BlitRadialMenuItem item = new BlitRadialMenuItem(this.menu, slot,
-				memoryOverlayTexture(manipulation),
+				ManipulationIconResolver.overlay(manipulation.getName()),
 				Hemomancy.rloc("textures/item/memories/memory_blank.png"),
 				0, 0, 16, 16, 16, 16,
 				Component.literal(manipulation.getProperName()
@@ -296,40 +287,6 @@ public class RadialChooseManipScreen extends Screen {
 		}
 		item.setVisible(true);
 		return item;
-	}
-
-	private ResourceLocation memoryOverlayTexture(BloodManipulation manipulation) {
-		String texture = switch (manipulation.getName()) {
-			case "conjure_axe" -> "memory_living_axe_overlay";
-			case "conjure_blade" -> "memory_living_blade_overlay";
-			case "conjure_claws" -> "memory_living_claws_overlay";
-			case "conjure_crossbow" -> "memory_living_crossbow_overlay";
-			case "conjure_flail" -> "memory_living_flail_overlay";
-			case "conjure_spear" -> "memory_living_spear_overlay";
-			case "conjure_staff" -> "memory_living_staff_overlay";
-			case "conjure_torch" -> "memory_living_torch_overlay";
-			case "conjure_sickle" -> "memory_living_sickle_overlay";
-			case "ironhearted" -> "memory_iron_retort_overlay";
-			case "crimson_coronation" -> "memory_blood_aneurysm_overlay";
-			case "sovereign_instinct" -> "memory_summon_avatar_overlay";
-			case "synaptic_storm" -> "memory_activation_potential_overlay";
-			case "living_circuit" -> "memory_conductive_mark_overlay";
-			case "white_verdict" -> "memory_prismatic_reproof_overlay";
-			case "vigil_of_glass" -> "memory_unclosing_eye_overlay";
-			case "furnace_veins" -> "memory_vitric_combustion_overlay";
-			case "phoenix_debt" -> "memory_sanguine_ignition_overlay";
-			case "absolute_stillness" -> "memory_endless_hour_overlay";
-			case "rimebound_sentence" -> "memory_glacial_bastion_overlay";
-			case "hematic_ballast" -> "memory_iron_retort_overlay";
-			case "iron_choir" -> "memory_sanguine_magnetism_overlay";
-			case "funeral_bell" -> "memory_grave_debt_overlay";
-			case "carrion_communion" -> "memory_bloom_of_rot_overlay";
-			case "lignum_mortis" -> "memory_hemorrhage_overlay";
-			case "penumbral_drift" -> "memory_void_shroud_overlay";
-			case "eclipse_well" -> "memory_black_veil_covenant_overlay";
-			default -> "memory_" + manipulation.getName() + "_overlay";
-		};
-		return Hemomancy.rloc("textures/item/memories/" + texture + ".png");
 	}
 
 	private MuscleMemoryRadialMenuItem createMuscleMemoryItem(MuscleMemory memory, MemorySlotRef ref,

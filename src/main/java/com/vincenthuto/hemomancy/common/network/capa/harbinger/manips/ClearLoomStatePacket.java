@@ -1,7 +1,7 @@
 package com.vincenthuto.hemomancy.common.network.capa.harbinger.manips;
 
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.common.tile.crafting.SomaticLoomBlockEntity;
+import com.vincenthuto.hemomancy.common.tile.harbinger.crafting.SomaticLoomBlockEntity;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;

@@ -1,9 +1,9 @@
 package com.vincenthuto.hemomancy.common.rite;
 
+import com.vincenthuto.hemomancy.common.block.harbinger.rite.BrazierBlock;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.particle.SpawnBrazierItemAbsorptionParticlesPacket;
-import com.vincenthuto.hemomancy.common.block.harbinger.BrazierBlock;
-import com.vincenthuto.hemomancy.common.tile.IronBrazierBlockEntity;
+import com.vincenthuto.hemomancy.common.tile.harbinger.rite.IronBrazierBlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;

@@ -1,9 +1,9 @@
 package com.vincenthuto.hemomancy.common.capability.player.unstained;
 
+import org.junit.jupiter.api.Test;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-
-import org.junit.jupiter.api.Test;
 
 final class UnstainedPathGuidanceTest {
 	@Test

@@ -1,8 +1,8 @@
 package com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 final class HematicAcclimationRulesTest {
 	private static final double EPSILON = 0.000001D;

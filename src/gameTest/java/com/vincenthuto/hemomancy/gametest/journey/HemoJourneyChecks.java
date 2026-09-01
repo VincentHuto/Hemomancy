@@ -1,40 +1,39 @@
 package com.vincenthuto.hemomancy.gametest.journey;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.HemoAttachmentTypes;
+import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.EnumArchonPath;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.musclememory.MuscleMemory;
+import com.vincenthuto.hemomancy.common.capability.player.shared.knowledge.discovery.LiberEntryDefinitions;
+import com.vincenthuto.hemomancy.common.entity.npc.dialogue.VeinMasonScarLesson;
 import com.vincenthuto.hemomancy.common.event.HarbingerAdvancementGranter;
+import com.vincenthuto.hemomancy.common.event.worldevent.FoundingFaneSavedData;
+import com.vincenthuto.hemomancy.common.init.BlockInit;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
-import com.vincenthuto.hemomancy.common.mission.vicar.FirstBloodcraftAssignment;
-import com.vincenthuto.hemomancy.common.mission.alchemist.FirstSeparationAssignment;
+import com.vincenthuto.hemomancy.common.item.harbinger.scar.ItemScarPattern;
+import com.vincenthuto.hemomancy.common.item.harbinger.tile.functional.SpecimenJarData;
 import com.vincenthuto.hemomancy.common.mission.alchemist.BodyAnswersAssignment;
+import com.vincenthuto.hemomancy.common.mission.alchemist.FirstSeparationAssignment;
 import com.vincenthuto.hemomancy.common.mission.artificer.ArtificerAssignments;
 import com.vincenthuto.hemomancy.common.mission.artificer.ArtificerProgressionRules.D7Lineage;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.EnumArchonPath;
-import com.vincenthuto.hemomancy.common.worldgen.FungalGardenTravelHelper;
 import com.vincenthuto.hemomancy.common.mission.cicatrix_anchorite.VeinMasonAssignments;
-import com.vincenthuto.hemomancy.common.tile.crafting.VialCentrifugeBlockEntity;
-import com.vincenthuto.hemomancy.common.tile.crafting.ScarStationBlockEntity;
-import com.vincenthuto.hemomancy.common.entity.npc.dialogue.VeinMasonScarLesson;
-import com.vincenthuto.hemomancy.common.item.harbinger.scar.ItemScarPattern;
-import com.vincenthuto.hemomancy.common.event.worldevent.FoundingFaneSavedData;
-import com.vincenthuto.hemomancy.common.util.SpecimenJarData;
-import com.vincenthuto.hemomancy.common.capability.player.shared.knowledge.discovery.LiberEntryDefinitions;
+import com.vincenthuto.hemomancy.common.mission.vicar.FirstBloodcraftAssignment;
+import com.vincenthuto.hemomancy.common.tile.harbinger.crafting.ScarStationBlockEntity;
+import com.vincenthuto.hemomancy.common.tile.harbinger.crafting.VialCentrifugeBlockEntity;
+import com.vincenthuto.hemomancy.common.tile.harbinger.functional.MortalDisplayBlockEntity;
+import com.vincenthuto.hemomancy.common.worldgen.FungalGardenTravelHelper;
 import com.vincenthuto.hutoslib.common.book.knowledge.CommonDiscoverySource;
-
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.stats.Stats;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.stats.Stats;
-import com.vincenthuto.hemomancy.common.init.BlockInit;
-import com.vincenthuto.hemomancy.common.tile.functional.MortalDisplayBlockEntity;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /** Reads server-authoritative outcomes and optionally attributes exact output UUIDs. */
 public final class HemoJourneyChecks {

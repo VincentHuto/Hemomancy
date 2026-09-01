@@ -1,5 +1,8 @@
 package com.vincenthuto.hemomancy.testing;
 
+import org.junit.jupiter.api.DynamicTest;
+import org.junit.jupiter.api.TestFactory;
+
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -8,9 +11,6 @@ import java.nio.file.Path;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Stream;
-
-import org.junit.jupiter.api.DynamicTest;
-import org.junit.jupiter.api.TestFactory;
 
 final class LegacyMainTestAdapterTest {
 	private static final Path TEST_SOURCE_ROOT = Path.of("src", "test", "java");

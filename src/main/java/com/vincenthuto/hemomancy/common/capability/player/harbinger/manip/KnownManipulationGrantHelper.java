@@ -7,9 +7,10 @@ import com.vincenthuto.hemomancy.common.init.ManipulationInit;
 import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
 import com.vincenthuto.hemomancy.common.manipulation.ManipLevel;
 import com.vincenthuto.hemomancy.common.manipulation.ManipulationRankGates;
+import com.vincenthuto.hemomancy.common.manipulation.family.ManipulationFamilyRegistry;
+import com.vincenthuto.hemomancy.common.mission.mnemonist.MnemonicReliquaryProgression;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.manips.KnownManipulationServerPacket;
-import com.vincenthuto.hemomancy.common.mission.mnemonist.MnemonicReliquaryProgression;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.Item;
 import net.neoforged.neoforge.registries.DeferredHolder;
@@ -86,7 +87,8 @@ public final class KnownManipulationGrantHelper {
 		if (known == null) {
 			return new MemoryGrantResult(MemoryGrantStatus.INVALID, manipulation, checked.requiredDegree());
 		}
-		known.getKnownManips().put(manipulation, ManipLevel.BLANK);
+		known.getKnownManips().put(manipulation, new ManipLevel(0, 0));
+		ManipulationFamilyRegistry.unlockEligibleForms(known.getKnownManips());
 		boolean equipped = ManipulationEquipHelper.equipNameIfPossible(known.getEquippedManipNames(),
 				manipulation.getName(), ManipSlotHelper.getMaxSlots(player));
 		MnemonicReliquaryProgression.onCapacityChanged(player, known);
@@ -112,7 +114,8 @@ public final class KnownManipulationGrantHelper {
 
 		boolean changed = false;
 		if (!containsManipName(knownManips, manipulation)) {
-			knownManips.put(manipulation, ManipLevel.BLANK);
+			knownManips.put(manipulation, new ManipLevel(0, 0));
+			ManipulationFamilyRegistry.normalizeKnown(knownManips);
 			changed = true;
 		}
 

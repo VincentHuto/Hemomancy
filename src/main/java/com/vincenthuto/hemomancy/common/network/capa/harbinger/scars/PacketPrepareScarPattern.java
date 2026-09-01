@@ -7,7 +7,7 @@ import com.vincenthuto.hemomancy.common.init.BlockEntityInit;
 import com.vincenthuto.hemomancy.common.init.ScarInit;
 import com.vincenthuto.hemomancy.common.item.harbinger.scar.ScarDefinition;
 import com.vincenthuto.hemomancy.common.menu.tile.functional.MasonsEffigyMenu;
-import com.vincenthuto.hemomancy.common.tile.functional.MasonsEffigyBlockEntity;
+import com.vincenthuto.hemomancy.common.tile.harbinger.functional.MasonsEffigyBlockEntity;
 import com.vincenthuto.hutoslib.common.network.VanillaPacketDispatcher;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;

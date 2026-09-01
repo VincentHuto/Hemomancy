@@ -3,6 +3,7 @@ package com.vincenthuto.hemomancy.common.capability.player.harbinger.manip;
 import com.vincenthuto.hemomancy.common.capability.block.vein.VeinLocation;
 import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
 import com.vincenthuto.hemomancy.common.manipulation.ManipLevel;
+import com.vincenthuto.hemomancy.common.manipulation.family.ManipulationFamilyRegistry;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.*;
@@ -16,11 +17,10 @@ public class KnownManipulations implements IKnownManipulations, INBTSerializable
 
 	BlockPos lastVeinMineStart = BlockPos.ZERO;
 	BloodManipulation selectedManip = BloodManipulation.BLANK;
-	ManipLevel manipLevel = ManipLevel.BLANK;
 	LinkedHashMap<BloodManipulation, ManipLevel> knownManips = new LinkedHashMap<>();
 	List<VeinLocation> veinList = new ArrayList<>();
 	VeinLocation selectedVein = VeinLocation.BLANK;
-	boolean avatarActive = false;
+	String activeAvatarForm = "";
 	List<String> equippedManipNames = new ArrayList<>();
 	List<String> activePassiveNames = new ArrayList<>();
 	List<ManipulationLoadout> loadouts = new ArrayList<>();
@@ -63,11 +63,19 @@ public class KnownManipulations implements IKnownManipulations, INBTSerializable
 
 	@Override
 	public ManipLevel getManipLevel(BloodManipulation manip) {
-		if (knownManips.get(manip) != null) {
-			return knownManips.get(manip);
+		if (manip == null) return null;
+		ManipulationFamilyRegistry.normalizeKnown(knownManips);
+		ManipLevel direct = knownManips.get(manip);
+		if (direct != null) return direct;
+		String baseline = ManipulationFamilyRegistry.baselineId(manip.getName());
+		for (var entry : knownManips.entrySet()) {
+			BloodManipulation known = entry.getKey();
+			if (known != null && (manip.getName().equals(known.getName())
+					|| baseline.equals(ManipulationFamilyRegistry.baselineId(known.getName())))) {
+				return entry.getValue();
+			}
 		}
-		return ManipLevel.BLANK;
-
+		return null;
 	}
 
 	@Override
@@ -124,24 +132,27 @@ public class KnownManipulations implements IKnownManipulations, INBTSerializable
 	@Override
 	public void incrSelectedManipLevel(int incr) {
 		ManipLevel sel = getManipLevel(selectedManip);
+		if (sel == null) return;
 		int currLevel = sel.getCurrentLevel();
-		sel.setCurrentLevel(currLevel += incr);
+		sel.setCurrentLevel(currLevel + incr);
+		ManipulationFamilyRegistry.unlockEligibleForms(knownManips);
 
 	}
 
 	@Override
-	public boolean isAvatarActive() {
-		return avatarActive;
+	public String getActiveAvatarForm() {
+		return activeAvatarForm;
 	}
 
 	@Override
-	public void setAvatarActive(boolean avatarActive) {
-		this.avatarActive = avatarActive;
+	public void setActiveAvatarForm(String manipulationId) {
+		this.activeAvatarForm = manipulationId != null ? manipulationId : "";
 	}
 
 	@Override
 	public void setKnownManips(LinkedHashMap<BloodManipulation, ManipLevel> knownManips) {
-		this.knownManips = knownManips;
+		this.knownManips = knownManips != null ? knownManips : new LinkedHashMap<>();
+		ManipulationFamilyRegistry.unlockEligibleForms(this.knownManips);
 	}
 
 	@Override
@@ -154,7 +165,11 @@ public class KnownManipulations implements IKnownManipulations, INBTSerializable
 
 	@Override
 	public void setSelectedManipLevel(int level) {
-		knownManips.get(selectedManip).setCurrentLevel(level);
+		ManipLevel selectedLevel = getManipLevel(selectedManip);
+		if (selectedLevel != null) {
+			selectedLevel.setCurrentLevel(level);
+			ManipulationFamilyRegistry.unlockEligibleForms(knownManips);
+		}
 	}
 
 	@Override
@@ -173,7 +188,7 @@ public class KnownManipulations implements IKnownManipulations, INBTSerializable
 		this.knownManips = old.getKnownManips();
 		this.selectedManip = old.getSelectedManip();
 		this.veinList = old.getVeinList();
-		this.avatarActive = old.isAvatarActive();
+		this.activeAvatarForm = old.getActiveAvatarForm();
 		this.equippedManipNames = new ArrayList<>(old.getEquippedManipNames());
 		this.activePassiveNames = new ArrayList<>(old.getEquippedManipNames().stream()
 				.filter(old::isPassiveActive).toList());
@@ -347,10 +362,10 @@ public class KnownManipulations implements IKnownManipulations, INBTSerializable
 			}
 		}
 
-		CompoundTag avatarActive = new CompoundTag();
-		avatarActive.putBoolean("avatarActive", isAvatarActive());
-		avatarActive.put("lastVeinMineStart", NbtUtils.writeBlockPos(getLastVeinMineStart()));
-		list.add(avatarActive);
+		CompoundTag avatarState = new CompoundTag();
+		avatarState.putString("avatarForm", getActiveAvatarForm());
+		avatarState.put("lastVeinMineStart", NbtUtils.writeBlockPos(getLastVeinMineStart()));
+		list.add(avatarState);
 
 		CompoundTag equippedEntry = new CompoundTag();
 		ListTag equippedTag = new ListTag();
@@ -379,6 +394,8 @@ public class KnownManipulations implements IKnownManipulations, INBTSerializable
 		LinkedHashMap<BloodManipulation, ManipLevel> map = new LinkedHashMap<>();
 		List<VeinLocation> veinList = new ArrayList<>();
 		int veinCount = 0;
+		boolean legacyAvatarActive = false;
+		String savedAvatarForm = "";
 		for (int i = 0; i < listNbt.size(); i++) {
 			CompoundTag parsedNbt = (CompoundTag) listNbt.get(i);
 			if (parsedNbt != null && !parsedNbt.isEmpty()) {
@@ -407,7 +424,10 @@ public class KnownManipulations implements IKnownManipulations, INBTSerializable
 					}
 				}
 				if (parsedNbt.contains("avatarActive")) {
-					setAvatarActive(parsedNbt.getBoolean("avatarActive"));
+					legacyAvatarActive = parsedNbt.getBoolean("avatarActive");
+				}
+				if (parsedNbt.contains("avatarForm", Tag.TAG_STRING)) {
+					savedAvatarForm = parsedNbt.getString("avatarForm");
 				}
 				if (parsedNbt.contains("lastVeinMineStart")) {
 					setLastVeinMineStart(NbtUtils.readBlockPos(parsedNbt, "lastVeinMineStart").orElse(BlockPos.ZERO));
@@ -443,5 +463,15 @@ public class KnownManipulations implements IKnownManipulations, INBTSerializable
 		}
 		setKnownManips(map);
 		setVeinList(veinList);
+		String restoredAvatar = !savedAvatarForm.isBlank() ? savedAvatarForm
+				: legacyAvatarActive ? "summon_avatar" : "";
+		setActiveAvatarForm(canRestoreAvatarForm(restoredAvatar) ? restoredAvatar : "");
+	}
+
+	private boolean canRestoreAvatarForm(String manipulationId) {
+		if (manipulationId == null || manipulationId.isBlank()
+				|| !equippedManipNames.contains(manipulationId)) return false;
+		return knownManips.keySet().stream().anyMatch(manipulation -> manipulation != null
+				&& manipulationId.equals(manipulation.getName()));
 	}
 }

@@ -16,12 +16,7 @@ import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.function.Supplier;
 
 public final class ArmorSetAbilityRegistry {

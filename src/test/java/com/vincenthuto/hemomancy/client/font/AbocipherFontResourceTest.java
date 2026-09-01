@@ -1,10 +1,10 @@
 package com.vincenthuto.hemomancy.client.font;
 
+import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import javax.imageio.ImageIO;
 
 public final class AbocipherFontResourceTest {
 	private static final Path RESOURCE_ROOT = Path.of("src/main/resources");

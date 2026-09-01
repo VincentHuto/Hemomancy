@@ -4,6 +4,7 @@ import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.mission.unstained.UnstainedObservances;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.mission.OpenBookOfObservancesPacket;
+import com.vincenthuto.hutoslib.common.item.ItemGuideBook;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -14,7 +15,6 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
-import com.vincenthuto.hutoslib.common.item.ItemGuideBook;
 
 import java.util.List;
 

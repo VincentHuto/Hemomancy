@@ -1,14 +1,14 @@
 package com.vincenthuto.hemomancy.common.network.capa.harbinger;
 
-import com.vincenthuto.hemomancy.common.block.harbinger.BrazierBlock;
 import com.vincenthuto.hemomancy.common.block.harbinger.functional.HematicStakeBlock;
+import com.vincenthuto.hemomancy.common.block.harbinger.rite.BrazierBlock;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
+import com.vincenthuto.hemomancy.common.capability.player.unstained.UnstainedAccessRules;
 import com.vincenthuto.hemomancy.common.init.BlockInit;
 import com.vincenthuto.hemomancy.common.recipe.BloodStructureOffering;
 import com.vincenthuto.hemomancy.common.recipe.BloodStructureRecipe;
 import com.vincenthuto.hemomancy.common.recipe.RecipeDegreeGates;
-import com.vincenthuto.hemomancy.common.capability.player.unstained.UnstainedAccessRules;
-import com.vincenthuto.hemomancy.common.tile.IronBrazierBlockEntity;
+import com.vincenthuto.hemomancy.common.tile.harbinger.rite.IronBrazierBlockEntity;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -24,12 +24,7 @@ import net.minecraft.world.level.block.state.pattern.BlockInWorld;
 import net.minecraft.world.level.block.state.pattern.BlockPattern;
 import net.minecraft.world.phys.AABB;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 public final class BloodStructureCraftingHelper {
 	private BloodStructureCraftingHelper() {

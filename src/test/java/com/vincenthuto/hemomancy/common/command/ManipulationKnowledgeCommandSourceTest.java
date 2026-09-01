@@ -18,6 +18,13 @@ final class ManipulationKnowledgeCommandSourceTest {
 		assertContains(command, "Commands.literal(\"add\")");
 		assertContains(command, "Commands.literal(\"remove\")");
 		assertContains(command, "Commands.literal(\"clear\")");
+		assertContains(command, "Commands.literal(\"level\")");
+		assertContains(command, "Commands.literal(\"xp\")");
+		assertContains(command, "setSelectedManipulationLevel");
+		assertContains(command, "setSelectedManipulationXp");
+		assertContains(command, "IntegerArgumentType.integer(0, ManipLevel.MAX_LEVEL)");
+		assertContains(command, "DoubleArgumentType.doubleArg(0.0D)");
+		assertContains(command, "selectedEquippedManipulationLevel");
 		assertContains(command, "suggestManipulations");
 		assertContains(command, "ManipulationInit.getAllEntries()");
 		assertContains(command, "ManipulationInit.getByName(manipulationName)");

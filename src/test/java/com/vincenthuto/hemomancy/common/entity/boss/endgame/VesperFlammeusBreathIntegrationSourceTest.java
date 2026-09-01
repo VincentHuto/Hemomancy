@@ -1,11 +1,12 @@
 package com.vincenthuto.hemomancy.common.entity.boss.endgame;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 final class VesperFlammeusBreathIntegrationSourceTest {
 	@Test

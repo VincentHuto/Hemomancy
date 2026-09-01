@@ -1,11 +1,10 @@
 package com.vincenthuto.hemomancy.client.screen.dialogue;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
-import org.junit.jupiter.api.Test;
-
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.DialogueCategory;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.DialogueTheme;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class DialogueThemeStyleConfigTest {
 	@Test

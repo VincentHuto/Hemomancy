@@ -1,12 +1,12 @@
 package com.vincenthuto.hemomancy.gametest;
 
-import com.mojang.authlib.GameProfile;
 import com.google.gson.JsonParser;
+import com.mojang.authlib.GameProfile;
 import com.mojang.serialization.JsonOps;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
-import com.vincenthuto.hemomancy.common.init.EntityInit;
 import com.vincenthuto.hemomancy.common.init.BlockInit;
+import com.vincenthuto.hemomancy.common.init.EntityInit;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.init.RecipeInit;
 import com.vincenthuto.hemomancy.common.recipe.CardinalRiteRecipe;
@@ -15,25 +15,25 @@ import com.vincenthuto.hemomancy.common.rite.CardinalRiteStaffEscrow;
 import com.vincenthuto.hemomancy.common.worldgen.FungalGardenTravelHelper;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.embedded.EmbeddedChannel;
+import net.minecraft.core.BlockPos;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
-import net.minecraft.core.BlockPos;
 import net.minecraft.network.Connection;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.protocol.PacketFlow;
+import net.minecraft.resources.RegistryOps;
 import net.minecraft.server.level.ClientInformation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.network.CommonListenerCookie;
 import net.minecraft.server.network.ServerGamePacketListenerImpl;
-import net.minecraft.network.RegistryFriendlyByteBuf;
-import net.minecraft.resources.RegistryOps;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Mob;
-import net.minecraft.world.level.GameType;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ContainerListener;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.world.level.GameType;
 import net.neoforged.neoforge.gametest.GameTestHolder;
 import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 
@@ -157,8 +157,8 @@ public final class HarbingerPilotGameTests {
 					"The emptied Focus must accept a creative player's medium");
 			helper.assertTrue(gold.getCount() == 2,
 					"Creative insertion must not shrink the held stack");
-			var focusEntity = (com.vincenthuto.hemomancy.common.tile.functional.CardinalFocusBlockEntity) focus;
-			var restored = new com.vincenthuto.hemomancy.common.tile.functional.CardinalFocusBlockEntity(
+			var focusEntity = (com.vincenthuto.hemomancy.common.tile.harbinger.functional.CardinalFocusBlockEntity) focus;
+			var restored = new com.vincenthuto.hemomancy.common.tile.harbinger.functional.CardinalFocusBlockEntity(
 					pos, helper.getLevel().getBlockState(pos));
 			restored.handleUpdateTag(focusEntity.getUpdateTag(helper.getLevel().registryAccess()),
 					helper.getLevel().registryAccess());
@@ -178,7 +178,7 @@ public final class HarbingerPilotGameTests {
 		BlockPos displayPos = focusPos.offset(2, 0, 0);
 		helper.getLevel().setBlock(focusPos, BlockInit.cardinal_focus.get().defaultBlockState(), 3);
 		helper.getLevel().setBlock(displayPos, BlockInit.mortal_display.get().defaultBlockState(), 3);
-		var focus = (com.vincenthuto.hemomancy.common.tile.functional.CardinalFocusBlockEntity)
+		var focus = (com.vincenthuto.hemomancy.common.tile.harbinger.functional.CardinalFocusBlockEntity)
 				helper.getLevel().getBlockEntity(focusPos);
 		focus.linkTempleDisplay(displayPos);
 
@@ -228,7 +228,7 @@ public final class HarbingerPilotGameTests {
 	public static void cardinalRiteMediumConsumptionIsAtomic(GameTestHelper helper) {
 		BlockPos pos = helper.absolutePos(new BlockPos(1, 1, 1));
 		helper.getLevel().setBlock(pos, BlockInit.cardinal_focus.get().defaultBlockState(), 3);
-		var focus = (com.vincenthuto.hemomancy.common.tile.functional.CardinalFocusBlockEntity)
+		var focus = (com.vincenthuto.hemomancy.common.tile.harbinger.functional.CardinalFocusBlockEntity)
 				helper.getLevel().getBlockEntity(pos);
 		ServerPlayer player = detachedTestPlayer(helper);
 		try {
@@ -236,7 +236,7 @@ public final class HarbingerPilotGameTests {
 					helper.getLevel(), Hemomancy.rloc("cardinal_rite/votary_rite"));
 			var consume = Class.forName("com.vincenthuto.hemomancy.common.rite.CardinalRiteMediumRules")
 					.getMethod("consume",
-							com.vincenthuto.hemomancy.common.tile.functional.CardinalFocusBlockEntity.class,
+							com.vincenthuto.hemomancy.common.tile.harbinger.functional.CardinalFocusBlockEntity.class,
 							Ingredient.class);
 			helper.assertTrue(recipe != null, "Votary medium fixture recipe must load");
 

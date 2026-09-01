@@ -1,12 +1,12 @@
 package com.vincenthuto.hemomancy.common.rite;
 
-import com.vincenthuto.hemomancy.common.block.harbinger.BrazierBlock;
+import com.vincenthuto.hemomancy.common.block.harbinger.rite.BrazierBlock;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.KnownManipulationGrantHelper;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.KnownManipulationGrantHelper.MemoryGrantResult;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.KnownManipulationGrantHelper.MemoryGrantStatus;
 import com.vincenthuto.hemomancy.common.item.harbinger.memories.BloodMemoryItem;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.BloodAbsorptionItem;
-import com.vincenthuto.hemomancy.common.tile.IronBrazierBlockEntity;
+import com.vincenthuto.hemomancy.common.tile.harbinger.rite.IronBrazierBlockEntity;
 import com.vincenthuto.hutoslib.client.particle.factory.GlowParticleFactory;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 

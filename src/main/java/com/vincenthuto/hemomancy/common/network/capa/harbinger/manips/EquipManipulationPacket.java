@@ -1,17 +1,11 @@
 package com.vincenthuto.hemomancy.common.network.capa.harbinger.manips;
 
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.HemoAttachmentTypes;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.IKnownManipulations;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.MemoryEntryKind;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.MemorySlotRef;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.ManipulationDiagnosticsSync;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.ManipulationEquipHelper;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.ManipulationRetirementRules;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.ManipSlotHelper;
-import com.vincenthuto.hemomancy.common.network.PacketHandler;
+import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.*;
 import com.vincenthuto.hemomancy.common.mission.mnemonist.MnemonicReliquaryProgression;
+import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
@@ -78,6 +72,13 @@ public class EquipManipulationPacket implements CustomPacketPayload {
 									.withStyle(ChatFormatting.DARK_GRAY), true);
 					ManipulationRetirementRules.sanitizeKnownManipulations(known);
 					PacketHandler.sendToPlayer((ServerPlayer) player, new KnownManipulationServerPacket(known));
+					return;
+				}
+				boolean knownExact = known.getManipList().stream().anyMatch(manipulation -> manipulation != null
+						&& msg.manipName.equals(manipulation.getName()));
+				if (!knownExact) {
+					player.displayClientMessage(Component.literal("That manipulation is still unknown.")
+							.withStyle(ChatFormatting.RED), true);
 					return;
 				}
 				int maxSlots = ManipSlotHelper.getMaxSlots(player);

@@ -1,10 +1,10 @@
 package com.vincenthuto.hemomancy.client.render.world;
 
+import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import javax.imageio.ImageIO;
 
 public final class ChamberOfWillEffectsSourceTest {
 	private static final Path WRAPPER = Path.of(

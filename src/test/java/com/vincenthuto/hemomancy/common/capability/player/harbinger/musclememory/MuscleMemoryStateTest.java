@@ -1,7 +1,6 @@
 package com.vincenthuto.hemomancy.common.capability.player.harbinger.musclememory;
 
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
-import net.minecraft.nbt.CompoundTag;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;

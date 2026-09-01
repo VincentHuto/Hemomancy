@@ -2,14 +2,16 @@ package com.vincenthuto.hemomancy.common.capability.player.harbinger.manip;
 
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
-import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillPointHelper;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.BloodTendencyEvents;
-import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillPointGainEvents;
-import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillProgress;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.VascularSystemEvents;
+import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillPointGainEvents;
+import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillPointHelper;
+import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillProgress;
 import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
 import com.vincenthuto.hemomancy.common.manipulation.ManipLevel;
+import com.vincenthuto.hemomancy.common.manipulation.animus.AvatarManifestationRules;
 import com.vincenthuto.hemomancy.common.manipulation.animus.SummonThrallManip;
+import com.vincenthuto.hemomancy.common.manipulation.family.ManipulationFamilyRegistry;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.manips.KnownManipulationServerPacket;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.manips.SyncTrackingAvatarPacket;
@@ -54,15 +56,14 @@ public class KnownManipulationEvents {	@SubscribeEvent
 			Player player = (Player) e.getEntity();
 			IKnownManipulations known = HemoCapabilityAccess.getKnownManipulations(player)
 					.orElseThrow(NullPointerException::new);
-			if (known.isAvatarActive()) {
+			AvatarManifestationRules.stats(known.getActiveAvatarForm()).ifPresent(stats -> {
 				double dist = e.getEntity().distanceToSqr(player);
 				HitResult trace = e.getEntity().pick(dist, 0, false);
 				if (e.getEntity().level() instanceof ServerLevel serverLevel) {
 					PacketHandler.sendAvatarHitParticles(trace.getLocation(), ParticleColor.WHITE, 16f, serverLevel);
 				}
-				e.setNewDamage(0);
-
-			}
+				e.setNewDamage((float) (e.getNewDamage() * (1.0D - stats.damageReduction())));
+			});
 		}
 
 	}
@@ -120,16 +121,20 @@ public class KnownManipulationEvents {	@SubscribeEvent
 		SummonThrallManip.clearPendingThrall(event.getEntity().getUUID());
 	}
 
-	public static void syncAvatar(Player player, Collection<? extends Player> receivers, boolean isAvatarActive) {
-		SyncTrackingAvatarPacket pkt = new SyncTrackingAvatarPacket(player.getId(), isAvatarActive);
+	public static void syncAvatar(Player player, Collection<? extends Player> receivers, String avatarForm) {
+		SyncTrackingAvatarPacket pkt = new SyncTrackingAvatarPacket(player.getId(), avatarForm);
 		for (Player receiver : receivers) {
 			PacketHandler.sendToPlayer((ServerPlayer) receiver, pkt);
 		}
 	}
 
+	public static void syncAvatar(Player player, Collection<? extends Player> receivers, boolean active) {
+		syncAvatar(player, receivers, active ? "summon_avatar" : "");
+	}
+
 	private static void syncAvatars(Player player, Collection<? extends Player> receivers) {
 		HemoCapabilityAccess.getKnownManipulations(player).ifPresent(manips -> {
-			syncAvatar(player, receivers, manips.isAvatarActive());
+			syncAvatar(player, receivers, manips.getActiveAvatarForm());
 		});
 	}
 
@@ -161,7 +166,7 @@ public class KnownManipulationEvents {	@SubscribeEvent
 		// 4. Grant XP to the manipulation's level and check for rank-up
 		HemoCapabilityAccess.getKnownManipulations(player).ifPresent(known -> {
 			ManipLevel level = known.getManipLevel(manip);
-			if (level != null && level != ManipLevel.BLANK) {
+			if (level != null) {
 				level.setXp(level.getXp() + 1.0);
 				if (level.tryLevelUp()) {
 					player.displayClientMessage(
@@ -171,6 +176,7 @@ public class KnownManipulationEvents {	@SubscribeEvent
 									level.getCurrentLevel()),
 							false);
 				}
+				ManipulationFamilyRegistry.unlockEligibleForms(known.getKnownManips());
 			}
 			PacketHandler.sendToPlayer(player, new KnownManipulationServerPacket(known));
 		});

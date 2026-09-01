@@ -40,13 +40,13 @@ public record RecipeMapInspectorLayout(IntRect mapViewport, IntRect panel, IntRe
 		int panelTop = top + TAB_CLEARANCE;
 		int panelHeight = Math.max(1, height - TAB_CLEARANCE);
 		boolean overlay = width < 700;
-		int preferredWidth = Mth.clamp((int) Math.floor(width * (width < 700 ? 0.55 : 0.36)),
-				300, 340);
+		int preferredWidth = Mth.clamp((int) Math.floor(width * (width < 700 ? 0.46 : 0.30)),
+				220, 280);
 		int panelWidth = Math.min(width, preferredWidth);
 		int panelLeft = left + width - panelWidth;
 		IntRect panel = new IntRect(panelLeft, panelTop, panelWidth, panelHeight);
 
-		int previewWidth = Mth.clamp((int) Math.floor(panelWidth * 0.48), 120, 160);
+		int previewWidth = Mth.clamp((int) Math.floor(panelWidth * 0.42), 96, 128);
 		int infoWidth = panelWidth - previewWidth;
 		IntRect info = new IntRect(panelLeft, panelTop, infoWidth, panelHeight);
 		IntRect preview = new IntRect(panelLeft + infoWidth, panelTop,

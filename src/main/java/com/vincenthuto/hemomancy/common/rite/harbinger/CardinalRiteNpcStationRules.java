@@ -1,9 +1,8 @@
 package com.vincenthuto.hemomancy.common.rite.harbinger;
 
+import com.vincenthuto.hemomancy.common.rite.CardinalRiteAllyRole;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.phys.Vec3;
-
-import com.vincenthuto.hemomancy.common.rite.CardinalRiteAllyRole;
 
 import java.util.List;
 import java.util.Map;

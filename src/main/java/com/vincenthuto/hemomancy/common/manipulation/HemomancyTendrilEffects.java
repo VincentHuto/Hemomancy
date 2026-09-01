@@ -1,19 +1,17 @@
 package com.vincenthuto.hemomancy.common.manipulation;
 
-import java.util.List;
-
-import javax.annotation.Nullable;
-
 import com.vincenthuto.hutoslib.common.tendril.TendrilAnchor;
 import com.vincenthuto.hutoslib.common.tendril.TendrilEffectConfig;
 import com.vincenthuto.hutoslib.common.tendril.TendrilEffectSpawner;
-
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.Vec3;
+
+import javax.annotation.Nullable;
+import java.util.List;
 
 public final class HemomancyTendrilEffects {
 	private static final int SUTURE_CORE = 0xF8FFF1C8;

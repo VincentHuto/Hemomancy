@@ -2,8 +2,8 @@ package com.vincenthuto.hemomancy.common.item.harbinger;
 
 import com.vincenthuto.hemomancy.common.capability.HemoAttachmentTypes;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.MemoryEquipRules;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.ManipSlotHelper;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.MemoryEquipRules;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.musclememory.MuscleMemory;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.musclememory.MuscleMemoryEvents;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.musclememory.MuscleMemoryPrimingRules;

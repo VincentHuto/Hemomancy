@@ -2,10 +2,10 @@ package com.vincenthuto.hemomancy.common.recipe;
 
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.EnumInitiatoryDegree;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.server.level.ServerPlayer;
 import com.vincenthuto.hemomancy.common.mission.mnemonist.MnemonicReliquaryProgression;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.player.Player;
 
 import java.util.Map;
 

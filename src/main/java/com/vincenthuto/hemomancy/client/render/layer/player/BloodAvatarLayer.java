@@ -4,10 +4,10 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.client.model.armor.BloodAvatarModel;
+import com.vincenthuto.hemomancy.client.render.HemoRenderTypes;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
-import com.vincenthuto.hutoslib.math.Vector3;
+import com.vincenthuto.hemomancy.common.manipulation.animus.AvatarManifestationRules;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -31,11 +31,14 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
+import org.joml.Vector3f;
 
 import javax.annotation.Nullable;
 import java.util.List;
 
 public class BloodAvatarLayer<T extends LivingEntity, M extends HumanoidModel<T>> extends RenderLayer<T, M> {
+	static final int BLOOD_TRANSITION_COLOR = 0x80B02018;
+	static final int FIRST_PERSON_BLOOD_TRANSITION_COLOR = 0x408A1812;
 	private final BloodAvatarModel<T> modelBloodAvatar;
 	ResourceLocation glowTexture = Hemomancy.rloc("textures/models/armor/avatar_glow.png");
 
@@ -62,60 +65,81 @@ public class BloodAvatarLayer<T extends LivingEntity, M extends HumanoidModel<T>
 	@Override
 	public void render(PoseStack ms, MultiBufferSource pBuffer, int pPackedLight, T ent, float pLimbSwing,
 			float pLimbSwingAmount, float pPartialTicks, float pAgeInTicks, float pNetHeadYaw, float pHeadPitch) {
-		if (ent instanceof Player player) {
-			HemoCapabilityAccess.getKnownManipulations(player).ifPresent(manip -> {
+		if (!(ent instanceof Player player)) return;
+		String activeForm = HemoCapabilityAccess.getKnownManipulations(player)
+				.map(known -> known.getActiveAvatarForm()).orElse("");
+		AvatarManifestationTransition.Sample transition = AvatarManifestationTransition.sample(
+				player.getUUID(), activeForm, player.tickCount, pPartialTicks);
+		if (!transition.renders()) return;
+		var stats = AvatarManifestationRules.stats(transition.form()).orElse(null);
+		if (stats == null) return;
 
-				if (manip.isAvatarActive()) {
-					float f = ent.tickCount + pPartialTicks;
-					EntityModel<T> originalModel = this.getParentModel();
-					modelBloodAvatar.prepareMobModel(ent, pLimbSwing, pLimbSwingAmount, pPartialTicks);
-					this.getParentModel().copyPropertiesTo(modelBloodAvatar);
-					ms.pushPose();
-					ms.scale(2.75f, 2.75f, 2.75f);
-					VertexConsumer swirlConsumer = pBuffer
-							.getBuffer(RenderType.energySwirl(glowTexture, this.xOffset(f) % 4.0F, f * .01F % 2.0F));
-					modelBloodAvatar.setupAnim(ent, pLimbSwing, pLimbSwingAmount, pAgeInTicks, pNetHeadYaw, pHeadPitch);
-					modelBloodAvatar.renderToBuffer(ms, swirlConsumer, pPackedLight, OverlayTexture.NO_OVERLAY,
-							packColor(0.5F, 0.5F, 0.5F, 0.3F));
-					ms.popPose();
+		float age = ent.tickCount + pPartialTicks;
+		modelBloodAvatar.prepareMobModel(ent, pLimbSwing, pLimbSwingAmount, pPartialTicks);
+		this.getParentModel().copyPropertiesTo(modelBloodAvatar);
+		modelBloodAvatar.setStage(stats.stage());
+		modelBloodAvatar.setupAnim(ent, pLimbSwing, pLimbSwingAmount, pAgeInTicks, pNetHeadYaw, pHeadPitch);
+		ms.pushPose();
+		ms.translate(0.0F, stats.playerChestLift() * transition.presence(), 0.0F);
+		ms.translate(0.0F, 1.501F, 0.0F);
+		float avatarScale = stats.avatarVisualScale();
+		ms.scale(avatarScale, avatarScale, avatarScale);
+		ms.translate(0.0F, -1.501F, 0.0F);
+		applyEmergencePose(ms, transition, avatarScale);
+		RenderType renderType = transition.warping()
+				? bloodTransitionType(player, ms, age, transition)
+				: RenderType.energySwirl(glowTexture, this.xOffset(age) % 4.0F, age * .01F % 2.0F);
+		VertexConsumer consumer = pBuffer.getBuffer(renderType);
+		modelBloodAvatar.renderToBuffer(ms, consumer, pPackedLight, OverlayTexture.NO_OVERLAY,
+				transition.warping() ? BLOOD_TRANSITION_COLOR : packColor(0.5F, 0.5F, 0.5F, 0.3F));
 
-					if (!player.getItemInHand(InteractionHand.MAIN_HAND).isEmpty()) {
-						renderArmWithItemPlayer(player, swirlConsumer, player.getItemInHand(InteractionHand.MAIN_HAND),
-								ItemDisplayContext.FIRST_PERSON_RIGHT_HAND, HumanoidArm.RIGHT, ms, pBuffer, pPackedLight);
-					}
-					if (!player.getItemInHand(InteractionHand.OFF_HAND).isEmpty()) {
-						renderArmWithItemPlayer(player, swirlConsumer, player.getItemInHand(InteractionHand.OFF_HAND),
-								ItemDisplayContext.FIRST_PERSON_LEFT_HAND, HumanoidArm.LEFT, ms, pBuffer, pPackedLight);
-					}
-
-				}
-			});
+		if (transition.phase() == AvatarManifestationTransition.Phase.ACTIVE && stats.stage() >= 1) {
+			renderArmWithItemPlayer(player, consumer, player.getItemInHand(InteractionHand.MAIN_HAND),
+					player.getMainArm(), ms, pBuffer, pPackedLight);
+			renderArmWithItemPlayer(player, consumer, player.getItemInHand(InteractionHand.OFF_HAND),
+					player.getMainArm().getOpposite(), ms, pBuffer, pPackedLight);
 		}
+		ms.popPose();
+	}
+
+	static void applyEmergencePose(PoseStack poseStack, AvatarManifestationTransition.Sample transition,
+			float avatarScale) {
+		if (transition.phase() != AvatarManifestationTransition.Phase.SUMMONING) return;
+		float scale = transition.emergenceScale(avatarScale);
+		poseStack.translate(transition.swimOffset(), 1.8F, -transition.swimOffset() * 0.35F);
+		poseStack.scale(scale, scale, scale);
+		poseStack.translate(0.0F, -1.8F, 0.0F);
+	}
+
+	static RenderType bloodTransitionType(Player player, PoseStack poseStack, float age,
+			AvatarManifestationTransition.Sample transition) {
+		Vector3f top = poseStack.last().pose().transformPosition(new Vector3f(0.0F, 0.0F, 0.0F));
+		Vector3f ground = poseStack.last().pose().transformPosition(new Vector3f(0.0F, 1.5F, 0.0F));
+		return HemoRenderTypes.cardinalStaffBloodMelt(age, player.getId() * 0.137F,
+				0.05F + (1.0F - transition.progress()) * 0.09F,
+				(top.x + ground.x) * 0.5F, (top.y + ground.y) * 0.5F, (top.z + ground.z) * 0.5F,
+				transition.meltProgress(), ground.y, Math.max(0.1F, Math.abs(top.y - ground.y)));
 	}
 
 	protected void renderArmWithItem(LivingEntity entity, VertexConsumer swirlConsumer, ItemStack stack,
-			ItemDisplayContext transform, HumanoidArm arm, PoseStack poseStack, MultiBufferSource buffer,
-			int pCombinedLight) {
+			HumanoidArm arm, PoseStack poseStack, MultiBufferSource buffer, int pCombinedLight) {
 		if (!stack.isEmpty()) {
 			poseStack.pushPose();
-			this.getParentModel().translateToHand(arm, poseStack);
-			poseStack.mulPose(Vector3.XP.rotationDegrees(-90.0F).toMoj());
-			poseStack.mulPose(Vector3.YP.rotationDegrees(180.0F).toMoj());
-			poseStack.scale(2, 2, 2);
+			modelBloodAvatar.translateToHand(arm, poseStack);
+			AvatarHeldItemTransform.apply(poseStack, arm);
 			boolean flag = arm == HumanoidArm.LEFT;
-			poseStack.translate((flag ? -1 : 1) / 4.0F, 0.125D, 1.5 * -0.625D);
-			renderItem(entity, swirlConsumer, stack, transform, flag, poseStack, buffer, pCombinedLight);
+			renderItem(entity, swirlConsumer, stack, AvatarHeldItemTransform.displayContext(arm), flag,
+					poseStack, buffer, pCombinedLight);
 			poseStack.popPose();
 		}
 	}
 
 	protected void renderArmWithItemPlayer(LivingEntity entity, VertexConsumer swirlConsumer, ItemStack stack,
-			ItemDisplayContext transform, HumanoidArm arm, PoseStack poseStack, MultiBufferSource buffer,
-			int pCombinedLight) {
+			HumanoidArm arm, PoseStack poseStack, MultiBufferSource buffer, int pCombinedLight) {
 		if (stack.is(Items.SPYGLASS) && entity.getUseItem() == stack && entity.swingTime == 0) {
 			this.renderArmWithSpyglass(entity, swirlConsumer, stack, arm, poseStack, buffer, pCombinedLight);
 		} else {
-			renderArmWithItem(entity, swirlConsumer, stack, transform, arm, poseStack, buffer, pCombinedLight);
+			renderArmWithItem(entity, swirlConsumer, stack, arm, poseStack, buffer, pCombinedLight);
 		}
 
 	}

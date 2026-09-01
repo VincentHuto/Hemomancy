@@ -40,9 +40,17 @@ public interface IKnownManipulations {
 
 	public void incrSelectedManipLevel(int incr);
 
-	public boolean isAvatarActive();
+	public String getActiveAvatarForm();
 
-	public void setAvatarActive(boolean avatarActive);
+	public void setActiveAvatarForm(String manipulationId);
+
+	default boolean isAvatarActive() {
+		return !getActiveAvatarForm().isBlank();
+	}
+
+	default void setAvatarActive(boolean avatarActive) {
+		setActiveAvatarForm(avatarActive ? "summon_avatar" : "");
+	}
 
 	public void setKnownManips(LinkedHashMap<BloodManipulation, ManipLevel> knownManips);
 

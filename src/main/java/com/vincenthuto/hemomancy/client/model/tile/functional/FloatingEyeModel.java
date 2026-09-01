@@ -4,7 +4,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.client.model.IAnimatedModel;
-import com.vincenthuto.hemomancy.client.render.tile.functional.EarthenVeinRenderer.EarthenVeinAnimContext;
+import com.vincenthuto.hemomancy.client.render.tile.harbinger.functional.EarthenVeinRenderer.EarthenVeinAnimContext;
 import net.minecraft.client.model.Model;
 import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.model.geom.ModelPart;

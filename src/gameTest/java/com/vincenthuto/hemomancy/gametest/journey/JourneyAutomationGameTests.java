@@ -1,10 +1,5 @@
 package com.vincenthuto.hemomancy.gametest.journey;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
-import java.util.function.Consumer;
-
 import com.mojang.authlib.GameProfile;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
@@ -14,7 +9,6 @@ import com.vincenthuto.hemomancy.common.mission.alchemist.FirstSeparationAssignm
 import com.vincenthuto.hemomancy.common.network.dialogue.OpenDialoguePacket;
 import com.vincenthuto.hemomancy.common.network.discovery.OpenInscriptionPacket;
 import com.vincenthuto.hemomancy.common.rite.CardinalRiteSavedData;
-
 import io.netty.channel.embedded.EmbeddedChannel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.gametest.framework.GameTest;
@@ -31,6 +25,11 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Blocks;
 import net.neoforged.neoforge.gametest.GameTestHolder;
 import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
+import java.util.function.Consumer;
 
 @GameTestHolder(Hemomancy.MOD_ID)
 @PrefixGameTestTemplate(false)

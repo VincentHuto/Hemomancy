@@ -11,9 +11,7 @@ import java.nio.file.Path;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 final class CardinalRitePlantedStaffModelTest {
 	private static final Path MODEL_ROOT = Path.of(

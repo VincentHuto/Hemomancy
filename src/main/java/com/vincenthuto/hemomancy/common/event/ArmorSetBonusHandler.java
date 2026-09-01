@@ -1,27 +1,23 @@
 package com.vincenthuto.hemomancy.common.event;
 
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodFlowContribution.Category;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodFlowLedger;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodVolumeEvents;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BorrowedBloodReserve;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.CirculationIncomeHelper;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.armor.ArmorSetHelper;
 import com.vincenthuto.hemomancy.common.armor.BodyIdiomArmorRules;
+import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodFlowContribution.Category;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.*;
 import com.vincenthuto.hemomancy.common.init.EffectInit;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.item.harbinger.armor.BloodLustArmorItem;
 import com.vincenthuto.hemomancy.common.item.harbinger.armor.BloodLustLineageRules;
 import com.vincenthuto.hemomancy.common.item.harbinger.armor.MarrowCrownArmorItem;
 import com.vincenthuto.hemomancy.common.item.shared.armor.EnumModArmorTiers;
-import com.vincenthuto.hemomancy.common.mission.artificer.ArtificerProgressionRules.ForkFamily;
 import com.vincenthuto.hemomancy.common.mission.artificer.ArtificerAssignments;
+import com.vincenthuto.hemomancy.common.mission.artificer.ArtificerProgressionRules.ForkFamily;
 import com.vincenthuto.hemomancy.common.worldgen.FungalGardenTravelHelper;
-import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.tags.DamageTypeTags;
+import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.EquipmentSlot;
@@ -35,10 +31,10 @@ import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.common.NeoForgeMod;
 import net.neoforged.neoforge.event.entity.living.LivingDamageEvent;
 import net.neoforged.neoforge.event.entity.living.LivingEquipmentChangeEvent;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
-import net.neoforged.neoforge.common.NeoForgeMod;
 
 /**
  * Handles armor set bonuses for all Hemomancy armor sets.

@@ -4,30 +4,25 @@ import com.mojang.authlib.GameProfile;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.armor.ability.ArmorSetAbilityRegistry;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
+import com.vincenthuto.hemomancy.common.entity.npc.dialogue.*;
 import com.vincenthuto.hemomancy.common.event.ArmorSetBonusHandler;
 import com.vincenthuto.hemomancy.common.event.HarbingerAdvancementGranter;
-import com.vincenthuto.hemomancy.common.entity.npc.dialogue.ArtificerProgressSnapshot;
-import com.vincenthuto.hemomancy.common.entity.npc.dialogue.DialogueNode;
-import com.vincenthuto.hemomancy.common.entity.npc.dialogue.DialogueOption;
-import com.vincenthuto.hemomancy.common.entity.npc.dialogue.DialogueTree;
-import com.vincenthuto.hemomancy.common.entity.npc.dialogue.HarbingerAlchemistDialogueTrees;
-import com.vincenthuto.hemomancy.common.entity.npc.dialogue.HarbingerArtificerDialogueTrees;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.item.component.LivingWeaponForm;
 import com.vincenthuto.hemomancy.common.item.harbinger.memories.LivingWeaponGraftRecipeUnlockEvents;
 import com.vincenthuto.hemomancy.common.item.harbinger.memories.LivingWeaponMemoryUnlocks;
+import com.vincenthuto.hemomancy.common.mission.artificer.ArtificerAssignments;
 import com.vincenthuto.hemomancy.common.mission.artificer.ArtificerProgressionRules.D7Lineage;
 import com.vincenthuto.hemomancy.common.mission.artificer.ArtificerProgressionRules.ForkFamily;
 import com.vincenthuto.hemomancy.common.mission.artificer.ArtificerProgressionRules.Step;
-import com.vincenthuto.hemomancy.common.mission.artificer.ArtificerAssignments;
 import com.vincenthuto.hemomancy.common.recipe.ArmatureUpgradeRules.ArmatureTier;
+import io.netty.channel.embedded.EmbeddedChannel;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
-import net.minecraft.server.level.ClientInformation;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.network.Connection;
-import net.minecraft.network.protocol.PacketFlow;
 import net.minecraft.network.protocol.Packet;
+import net.minecraft.network.protocol.PacketFlow;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.network.CommonListenerCookie;
 import net.minecraft.server.network.ServerGamePacketListenerImpl;
 import net.minecraft.world.entity.EntityType;
@@ -44,7 +39,6 @@ import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 
 import java.util.List;
 import java.util.UUID;
-import io.netty.channel.embedded.EmbeddedChannel;
 
 @GameTestHolder(Hemomancy.MOD_ID)
 @PrefixGameTestTemplate(false)

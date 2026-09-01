@@ -1,6 +1,6 @@
 package com.vincenthuto.hemomancy.common.item.harbinger.memories;
 
-import com.vincenthuto.hemomancy.common.block.harbinger.BrazierBlock;
+import com.vincenthuto.hemomancy.common.block.harbinger.rite.BrazierBlock;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.EnumArchonPath;
@@ -8,14 +8,14 @@ import com.vincenthuto.hemomancy.common.capability.player.harbinger.livingstaff.
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.livingstaff.LivingStaffBondHelper;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.KnownManipulationGrantHelper.MemoryGrantResult;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.KnownManipulationGrantHelper.MemoryGrantStatus;
-import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.event.HarbingerAdvancementGranter;
+import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.item.component.LivingWeaponForm;
 import com.vincenthuto.hemomancy.common.item.component.LivingWeaponGraftData;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.LivingStaffItem;
 import com.vincenthuto.hemomancy.common.mission.artificer.ArtificerAssignments;
 import com.vincenthuto.hemomancy.common.rite.BrazierItemAbsorptionRite;
-import com.vincenthuto.hemomancy.common.tile.IronBrazierBlockEntity;
+import com.vincenthuto.hemomancy.common.tile.harbinger.rite.IronBrazierBlockEntity;
 import com.vincenthuto.hutoslib.client.particle.data.ColorParticleData;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import net.minecraft.ChatFormatting;

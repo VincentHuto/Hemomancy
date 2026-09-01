@@ -2,10 +2,10 @@ package com.vincenthuto.hemomancy.client.screen.item;
 
 import com.vincenthuto.hemomancy.common.item.shared.MnemonicFolioLayout;
 import com.vincenthuto.hemomancy.common.menu.MnemonicFolioMenu;
+import net.minecraft.Util;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.network.chat.Component;
-import net.minecraft.Util;
 import net.minecraft.world.entity.player.Inventory;
 
 public final class MnemonicFolioScreen extends AbstractContainerScreen<MnemonicFolioMenu> {

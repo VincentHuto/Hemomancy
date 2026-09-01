@@ -1,7 +1,7 @@
 package com.vincenthuto.hemomancy.common.menu.tile.crafting;
 
 import com.vincenthuto.hemomancy.common.init.ContainerInit;
-import com.vincenthuto.hemomancy.common.tile.crafting.StillwaterCondenserBlockEntity;
+import com.vincenthuto.hemomancy.common.tile.unstained.crafting.StillwaterCondenserBlockEntity;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;

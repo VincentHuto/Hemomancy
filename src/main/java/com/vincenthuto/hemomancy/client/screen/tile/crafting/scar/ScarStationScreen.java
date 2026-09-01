@@ -11,7 +11,7 @@ import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.scars.PacketScarCraftingEvent;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.scars.PacketUpdateScarPattern;
 import com.vincenthuto.hemomancy.common.recipe.ScarRecipe;
-import com.vincenthuto.hemomancy.common.tile.crafting.ScarStationBlockEntity;
+import com.vincenthuto.hemomancy.common.tile.harbinger.crafting.ScarStationBlockEntity;
 import com.vincenthuto.hutoslib.common.item.ItemKnapper;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.GuiGraphics;

@@ -3,16 +3,13 @@ package com.vincenthuto.hemomancy.client.model.entity.npc;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.common.entity.npc.harbinger.HarbingerVicarEntity;
 import com.vincenthuto.hemomancy.common.entity.npc.unstained.UnstainedAcolyteEntity;
 import com.vincenthuto.hutoslib.client.HLClientUtils;
 import net.minecraft.client.model.EntityModel;
-import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.*;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 
 public class UnstainedAcolyteModel<T extends UnstainedAcolyteEntity> extends EntityModel<T> {

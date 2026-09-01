@@ -2,8 +2,8 @@ package com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular;
 
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.scar.fungal.ConserveStateHelper;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.scar.ScarNoeticRoutingRules;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.scar.fungal.ConserveStateHelper;
 import com.vincenthuto.hemomancy.common.item.harbinger.scar.ScarDefinition;
 import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
 import com.vincenthuto.hemomancy.common.mission.cicatrix_anchorite.VeinMasonAssignments;
@@ -23,8 +23,8 @@ import net.neoforged.neoforge.event.entity.player.PlayerEvent.PlayerChangedDimen
 import net.neoforged.neoforge.event.entity.player.PlayerEvent.PlayerRespawnEvent;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 
-import java.util.Map;
 import java.util.ArrayList;
+import java.util.Map;
 
 @EventBusSubscriber(modid = Hemomancy.MOD_ID)
 public class VascularSystemEvents {	/**

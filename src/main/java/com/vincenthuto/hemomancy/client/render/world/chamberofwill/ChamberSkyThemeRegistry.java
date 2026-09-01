@@ -2,8 +2,8 @@ package com.vincenthuto.hemomancy.client.render.world.chamberofwill;
 
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.client.data.ChamberOfWillClientData;
-import com.vincenthuto.hemomancy.client.data.VesperFightClientData;
 import com.vincenthuto.hemomancy.client.data.MycophantFightClientData;
+import com.vincenthuto.hemomancy.client.data.VesperFightClientData;
 import com.vincenthuto.hemomancy.common.worldgen.ChamberOfWillManager;
 import net.minecraft.resources.ResourceLocation;
 

@@ -1,7 +1,5 @@
 package com.vincenthuto.hemomancy.common.entity.projectile;
 
-import java.util.UUID;
-
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.entity.summon.BoundPuppeteerSummon;
 import com.vincenthuto.hemomancy.common.entity.summon.BoundSummonBehavior;
@@ -24,6 +22,8 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.Vec3;
+
+import java.util.UUID;
 
 public final class VeinwingFeatherEntity extends ThrowableProjectile {
 	private static final float DAMAGE = 1.25F;

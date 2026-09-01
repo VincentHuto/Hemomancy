@@ -1,19 +1,12 @@
 package com.vincenthuto.hemomancy.client.render.world.chamberofwill;
 
-import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.platform.GlStateManager;
-import com.mojang.blaze3d.vertex.BufferBuilder;
-import com.mojang.blaze3d.vertex.DefaultVertexFormat;
-import com.mojang.blaze3d.vertex.MeshData;
-import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.Tesselator;
-import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.mojang.blaze3d.vertex.VertexBuffer;
-import com.mojang.blaze3d.vertex.VertexFormat;
+import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.*;
 import com.vincenthuto.hemomancy.client.data.VesperFightClientData;
 import com.vincenthuto.hemomancy.client.render.HemoRenderTypes;
-import com.vincenthuto.hemomancy.config.HemoClientConfig;
 import com.vincenthuto.hemomancy.common.worldgen.ChamberOfWillManager;
+import com.vincenthuto.hemomancy.config.HemoClientConfig;
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GameRenderer;

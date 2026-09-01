@@ -6,10 +6,10 @@ import com.vincenthuto.hemomancy.client.screen.radial.GenericRadialMenu;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 
-import java.util.function.DoubleSupplier;
-import java.util.function.Supplier;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.DoubleSupplier;
+import java.util.function.Supplier;
 
 public class MuscleMemoryRadialMenuItem extends BlitRadialMenuItem {
     private final Supplier<MuscleMemoryRadialPresentation.State> presentation;

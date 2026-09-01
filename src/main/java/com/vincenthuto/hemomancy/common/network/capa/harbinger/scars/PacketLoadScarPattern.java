@@ -2,7 +2,7 @@ package com.vincenthuto.hemomancy.common.network.capa.harbinger.scars;
 
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.menu.tile.crafting.ScarStationMenu;
-import com.vincenthuto.hemomancy.common.tile.crafting.ScarStationBlockEntity;
+import com.vincenthuto.hemomancy.common.tile.harbinger.crafting.ScarStationBlockEntity;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;

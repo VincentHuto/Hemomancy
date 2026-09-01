@@ -18,6 +18,7 @@ import java.util.concurrent.ConcurrentHashMap;
 @EventBusSubscriber(modid = Hemomancy.MOD_ID)
 public final class ManipulationChannelManager {
 	private static final int PULSE_TICKS = 20;
+	private static final int MASTERY_TICKS = 100;
 	private static final Map<UUID, ChannelState> CHANNELS = new ConcurrentHashMap<>();
 
 	private ManipulationChannelManager() {
@@ -30,7 +31,8 @@ public final class ManipulationChannelManager {
 		if (!manipulation.canContinueChannel(player, player.level())) return;
 		if (manipulation.tryPerformContinuousPulse(player, player.level(), player.getMainHandItem(),
 				player.blockPosition())) {
-			CHANNELS.put(player.getUUID(), new ChannelState(manipulation.getName(), player.level().getGameTime()));
+			long now = player.level().getGameTime();
+			CHANNELS.put(player.getUUID(), new ChannelState(manipulation.getName(), now, now));
 			ManipulationCastSounds.play(player.level(), player, manipulation);
 		}
 	}
@@ -81,7 +83,12 @@ public final class ManipulationChannelManager {
 			stop(player, false);
 			return;
 		}
-		CHANNELS.put(player.getUUID(), new ChannelState(state.manipulationName(), now));
+		long lastMasteryTick = state.lastMasteryTick();
+		if (now - lastMasteryTick >= MASTERY_TICKS) {
+			manipulation.recordSuccessfulUse(player);
+			lastMasteryTick = now;
+		}
+		CHANNELS.put(player.getUUID(), new ChannelState(state.manipulationName(), now, lastMasteryTick));
 	}
 
 	@SubscribeEvent
@@ -106,6 +113,6 @@ public final class ManipulationChannelManager {
 		return selected;
 	}
 
-	private record ChannelState(String manipulationName, long lastPulseTick) {
+	private record ChannelState(String manipulationName, long lastPulseTick, long lastMasteryTick) {
 	}
 }

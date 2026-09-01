@@ -1,7 +1,7 @@
 package com.vincenthuto.hemomancy.client.screen.skilltree.harbinger;
 
-import com.vincenthuto.hemomancy.client.screen.skilltree.util.ProgressScreenContext;
 import com.vincenthuto.hemomancy.client.screen.skilltree.util.HarbingerChromeRenderer;
+import com.vincenthuto.hemomancy.client.screen.skilltree.util.ProgressScreenContext;
 import com.vincenthuto.hemomancy.client.screen.skilltree.util.ScreenDrawUtils;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bestiary.SpecimenBestiaryDefinitions;
 import net.minecraft.client.gui.GuiGraphics;

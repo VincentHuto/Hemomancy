@@ -1,7 +1,7 @@
 package com.vincenthuto.hemomancy.common.block.harbinger.puzzle;
 
 import com.mojang.serialization.MapCodec;
-import com.vincenthuto.hemomancy.common.tile.puzzle.BloodBasinBlockEntity;
+import com.vincenthuto.hemomancy.common.tile.harbinger.puzzle.BloodBasinBlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;

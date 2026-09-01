@@ -1,9 +1,9 @@
 package com.vincenthuto.hemomancy.client.player;
 
+import com.vincenthuto.hemomancy.client.rite.CardinalRiteStaffPlantingClientState;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.LivingTorchBreathRules;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.LivingTorchItem;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.PlayerAnimationKind;
-import com.vincenthuto.hemomancy.client.rite.CardinalRiteStaffPlantingClientState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.model.PlayerModel;

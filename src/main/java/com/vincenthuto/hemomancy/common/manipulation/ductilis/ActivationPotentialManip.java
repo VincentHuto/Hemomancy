@@ -1,14 +1,9 @@
 package com.vincenthuto.hemomancy.common.manipulation.ductilis;
 
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
-import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillPointHelper;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.EnumVeinSections;
-import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
-import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationRank;
-import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationType;
-import com.vincenthuto.hemomancy.common.manipulation.SchoolHitHelper;
-import com.vincenthuto.hemomancy.common.manipulation.ManipulationCastingRules;
-import com.vincenthuto.hemomancy.common.manipulation.TendencyAffinityRules;
+import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillPointHelper;
+import com.vincenthuto.hemomancy.common.manipulation.*;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;

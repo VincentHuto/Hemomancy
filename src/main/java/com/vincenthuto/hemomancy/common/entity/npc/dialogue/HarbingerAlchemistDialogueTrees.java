@@ -2,8 +2,8 @@ package com.vincenthuto.hemomancy.common.entity.npc.dialogue;
 
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bestiary.SpecimenBestiaryDefinitions;
-import com.vincenthuto.hemomancy.common.entity.summon.MorphlingPolypLayer;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.inquiry.ItemInquiryRegistry;
+import com.vincenthuto.hemomancy.common.entity.summon.MorphlingPolypLayer;
 import com.vincenthuto.hemomancy.common.event.HarbingerAdvancementGranter;
 import com.vincenthuto.hemomancy.common.init.BlockInit;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -16,8 +16,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import static com.vincenthuto.hemomancy.common.mission.artificer.ArtificerProgressionRules.Step;
 import static com.vincenthuto.hemomancy.common.mission.artificer.ArtificerProgressionRules.ForkFamily;
+import static com.vincenthuto.hemomancy.common.mission.artificer.ArtificerProgressionRules.Step;
 
 /**
  * Static factory that produces {@link DialogueTree} variants for the Harbinger

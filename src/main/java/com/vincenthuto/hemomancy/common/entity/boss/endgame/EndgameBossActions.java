@@ -4,13 +4,14 @@ import com.vincenthuto.hemomancy.client.particle.factory.AbsorbedBloodCellPartic
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.entity.mob.animal.FunglingEntity;
 import com.vincenthuto.hemomancy.common.entity.projectile.VesperScuteProjectileEntity;
-import com.vincenthuto.hemomancy.common.entity.summon.EntityIronSpike;
 import com.vincenthuto.hemomancy.common.entity.summon.BoundPuppeteerSummon;
+import com.vincenthuto.hemomancy.common.entity.summon.EntityIronSpike;
 import com.vincenthuto.hemomancy.common.init.BlockInit;
 import com.vincenthuto.hemomancy.common.init.EntityInit;
 import com.vincenthuto.hemomancy.common.init.SoundInit;
-import com.vincenthuto.hemomancy.common.network.particle.CardinalRiteImpactPacket;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
+import com.vincenthuto.hemomancy.common.network.particle.CardinalRiteImpactPacket;
+import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleOptions;
@@ -38,7 +39,6 @@ import net.neoforged.neoforge.entity.PartEntity;
 import net.neoforged.neoforge.network.PacketDistributor;
 
 import java.util.List;
-import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 
 final class EndgameBossActions {
 	private static final String VESPER_PUPPET_TAG = "HemomancyVesperPuppet";

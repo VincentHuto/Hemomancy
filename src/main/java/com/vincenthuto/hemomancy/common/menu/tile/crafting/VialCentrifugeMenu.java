@@ -2,11 +2,11 @@ package com.vincenthuto.hemomancy.common.menu.tile.crafting;
 
 import com.vincenthuto.hemomancy.common.init.ContainerInit;
 import com.vincenthuto.hemomancy.common.item.harbinger.BloodyFlaskItem;
-import com.vincenthuto.hemomancy.common.menu.slot.CentrifugeSlot;
 import com.vincenthuto.hemomancy.common.menu.slot.CentrifugeOutputSlot;
+import com.vincenthuto.hemomancy.common.menu.slot.CentrifugeSlot;
 import com.vincenthuto.hemomancy.common.menu.slot.OutputSlot;
-import com.vincenthuto.hemomancy.common.tile.crafting.VialCentrifugeBlockEntity;
-import com.vincenthuto.hemomancy.common.tile.crafting.VialCentrifugeStartupResult;
+import com.vincenthuto.hemomancy.common.tile.harbinger.crafting.VialCentrifugeBlockEntity;
+import com.vincenthuto.hemomancy.common.tile.harbinger.crafting.VialCentrifugeStartupResult;
 import com.vincenthuto.hutoslib.common.container.SlotSelectiveType;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.player.Inventory;

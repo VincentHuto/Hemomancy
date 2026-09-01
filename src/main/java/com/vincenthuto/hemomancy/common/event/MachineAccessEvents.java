@@ -1,10 +1,10 @@
 package com.vincenthuto.hemomancy.common.event;
 
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.common.init.BlockInit;
-import com.vincenthuto.hemomancy.common.tile.FillerBlockEntity;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
+import com.vincenthuto.hemomancy.common.init.BlockInit;
 import com.vincenthuto.hemomancy.common.mission.mnemonist.MnemonicReliquaryProgression;
+import com.vincenthuto.hemomancy.common.tile.shared.FillerBlockEntity;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;

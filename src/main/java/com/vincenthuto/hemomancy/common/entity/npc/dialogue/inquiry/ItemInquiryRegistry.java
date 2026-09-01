@@ -3,11 +3,7 @@ package com.vincenthuto.hemomancy.common.entity.npc.dialogue.inquiry;
 
 import net.minecraft.resources.ResourceLocation;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 /** Runtime store for datapack-backed inventory inquiry mappings. */
 public final class ItemInquiryRegistry {

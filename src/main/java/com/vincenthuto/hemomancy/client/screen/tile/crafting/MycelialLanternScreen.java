@@ -11,7 +11,6 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.Slot;
 
-import java.util.List;
 import java.util.Random;
 
 public class MycelialLanternScreen extends AbstractContainerScreen<MycelialLanternMenu> {

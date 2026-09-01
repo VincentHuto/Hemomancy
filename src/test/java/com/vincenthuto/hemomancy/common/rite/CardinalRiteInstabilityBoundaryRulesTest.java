@@ -1,8 +1,8 @@
 package com.vincenthuto.hemomancy.common.rite;
 
-import java.util.List;
-
 import org.junit.jupiter.api.Test;
+
+import java.util.List;
 
 public final class CardinalRiteInstabilityBoundaryRulesTest {
 	@Test

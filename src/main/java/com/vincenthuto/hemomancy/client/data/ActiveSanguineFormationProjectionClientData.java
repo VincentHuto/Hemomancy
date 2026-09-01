@@ -4,11 +4,7 @@ import com.vincenthuto.hemomancy.common.network.capa.harbinger.PacketSanguineFor
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public final class ActiveSanguineFormationProjectionClientData {
 	private static final Map<String, ProjectionEntry> ACTIVE_PROJECTIONS = new LinkedHashMap<>();

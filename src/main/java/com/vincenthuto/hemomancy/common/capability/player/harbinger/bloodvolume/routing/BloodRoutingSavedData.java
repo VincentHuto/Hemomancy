@@ -10,11 +10,7 @@ import net.minecraft.world.level.saveddata.SavedData;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 public final class BloodRoutingSavedData extends SavedData {
     private static final String DATA_NAME = "hemomancy_direct_blood_routes";

@@ -1,8 +1,9 @@
 package com.vincenthuto.hemomancy.common.block.harbinger.functional;
 
 import com.mojang.serialization.MapCodec;
+import com.vincenthuto.hemomancy.common.block.shared.WaterloggedBlockSupport;
 import com.vincenthuto.hemomancy.common.init.BlockEntityInit;
-import com.vincenthuto.hemomancy.common.tile.functional.FungalPodiumBlockEntity;
+import com.vincenthuto.hemomancy.common.tile.harbinger.functional.FungalPodiumBlockEntity;
 import com.vincenthuto.hemomancy.common.worldgen.FungalGardenTravelHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -17,14 +18,17 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.LevelReader;
+import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition.Builder;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.block.state.properties.DirectionProperty;
+import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.BooleanOp;
 import net.minecraft.world.phys.shapes.CollisionContext;
@@ -32,11 +36,6 @@ import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
 import java.util.stream.Stream;
-import com.vincenthuto.hemomancy.common.block.shared.WaterloggedBlockSupport;
-import net.minecraft.world.level.LevelAccessor;
-import net.minecraft.world.level.block.state.properties.BlockStateProperties;
-import net.minecraft.world.level.block.state.properties.BooleanProperty;
-import net.minecraft.world.level.material.FluidState;
 
 public class FungalPodiumBlock extends BaseEntityBlock implements SimpleWaterloggedBlock {
 	public static final MapCodec<FungalPodiumBlock> CODEC = simpleCodec(FungalPodiumBlock::new);

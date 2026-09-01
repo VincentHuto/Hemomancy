@@ -5,19 +5,18 @@ import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BorrowedBloodReserve;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.ManipulationRetirementRules;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.EnumVeinSections;
+import com.vincenthuto.hemomancy.common.entity.projectile.BloodNeedleEntity;
 import com.vincenthuto.hemomancy.common.entity.summon.EntityWretchedWill;
 import com.vincenthuto.hemomancy.common.event.LastRiteHelper;
 import com.vincenthuto.hemomancy.common.init.EffectInit;
+import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.init.ManipulationInit;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.EnumVeinSections;
-import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
-import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationRank;
-import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationType;
-import com.vincenthuto.hemomancy.common.manipulation.ManipLevel;
-import com.vincenthuto.hemomancy.common.manipulation.ManipulationChannelManager;
-import com.vincenthuto.hemomancy.common.manipulation.ManipulationReactiveEvents;
-import com.vincenthuto.hemomancy.common.entity.projectile.BloodNeedleEntity;
+import com.vincenthuto.hemomancy.common.manipulation.*;
+import com.vincenthuto.hemomancy.common.manipulation.animus.AvatarManifestationManager;
+import com.vincenthuto.hemomancy.common.manipulation.animus.SummonAvatarManip;
+import com.vincenthuto.hemomancy.common.manipulation.family.ManipulationFamilyRegistry;
 import io.netty.channel.embedded.EmbeddedChannel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.gametest.framework.GameTest;
@@ -27,6 +26,7 @@ import net.minecraft.network.protocol.PacketFlow;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.network.CommonListenerCookie;
 import net.minecraft.server.network.ServerGamePacketListenerImpl;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.EntityType;
@@ -37,13 +37,13 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.neoforge.gametest.GameTestHolder;
-import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 import net.neoforged.neoforge.common.NeoForge;
-import net.neoforged.neoforge.event.tick.PlayerTickEvent;
-import net.neoforged.neoforge.event.tick.LevelTickEvent;
 import net.neoforged.neoforge.common.damagesource.DamageContainer;
 import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent;
+import net.neoforged.neoforge.event.tick.LevelTickEvent;
+import net.neoforged.neoforge.event.tick.PlayerTickEvent;
+import net.neoforged.neoforge.gametest.GameTestHolder;
+import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 
 import java.util.Set;
 import java.util.UUID;
@@ -109,22 +109,52 @@ public final class ManipulationCastFixGameTests {
 	@GameTest(templateNamespace = "minecraft", template = EMPTY_TEMPLATE, timeoutTicks = 40)
 	public static void registryTypesMatchUnifiedInputSemantics(GameTestHelper helper) {
 		var manipulations = ManipulationInit.MANIPS.getEntries().stream().map(holder -> holder.get()).toList();
-		helper.assertTrue(manipulations.size() == 91, "Expected 91 registered manipulations, got " + manipulations.size());
-		helper.assertTrue(manipulations.stream().filter(m -> m.getType() == EnumManipulationType.QUICK).count() == 64,
+		helper.assertTrue(manipulations.size() == 111, "Expected 111 registered manipulations, got " + manipulations.size());
+		helper.assertTrue(manipulations.stream().filter(m -> m.getType() == EnumManipulationType.QUICK).count() == 74,
 				"Quick manipulation count changed");
 		helper.assertTrue(names(manipulations, EnumManipulationType.CHARGED).equals(Set.of(
 				"blood_needle", "activation_potential", "blood_aneurysm", "ironhearted", "vitric_combustion",
 				"deadly_gaze", "crimson_coronation", "synaptic_storm", "white_verdict", "rimebound_sentence",
-				"funeral_bell", "eclipse_well")),
+				"funeral_bell", "eclipse_well", "blood_needle_fan", "blood_needle_lance", "hematic_mortar")),
 				"Charged manipulation set is incorrect");
 		helper.assertTrue(names(manipulations, EnumManipulationType.CONTINUOUS).equals(Set.of(
 				"sanguine_ward", "sanguine_mending", "vascular_dowsing", "living_circuit",
 				"furnace_veins", "absolute_stillness", "iron_choir", "carrion_communion",
-				"penumbral_drift", "lignum_mortis")),
+				"penumbral_drift", "lignum_mortis", "canopy_mortis", "worked_lignum")),
 				"Continuous manipulation set is incorrect");
 		helper.assertTrue(names(manipulations, EnumManipulationType.PASSIVE).equals(Set.of(
-				"blackhearted", "sovereign_instinct", "vigil_of_glass", "phoenix_debt", "hematic_ballast")),
+				"blackhearted", "sovereign_instinct", "vigil_of_glass", "phoenix_debt", "hematic_ballast",
+				"summon_avatar", "summon_avatar_arms", "summon_avatar_armor", "summon_avatar_legs",
+				"summon_avatar_complete")),
 				"Passive manipulation set is incorrect");
+		helper.succeed();
+	}
+
+	@GameTest(templateNamespace = "minecraft", template = EMPTY_TEMPLATE, timeoutTicks = 40)
+	public static void familyFormsUnlockFromSharedMasteryWithoutReplacingTheBaseline(GameTestHelper helper) {
+		var baseline = ManipulationInit.blood_shot.get();
+		var mastery = new ManipLevel(0, 9);
+		var known = new java.util.LinkedHashMap<BloodManipulation, ManipLevel>();
+		known.put(baseline, mastery);
+
+		ManipulationFamilyRegistry.unlockEligibleForms(known);
+		helper.assertTrue(known.size() == 1, "A Blood Shot form unlocked before mastery level one");
+		mastery.setXp(10);
+		mastery.tryLevelUp();
+		ManipulationFamilyRegistry.unlockEligibleForms(known);
+		helper.assertTrue(known.keySet().stream().anyMatch(manip -> "guided_blood_shot".equals(manip.getName())),
+				"Guided Blood Shot did not unlock at mastery level one");
+		helper.assertTrue(known.keySet().stream().noneMatch(manip -> "hematic_mortar".equals(manip.getName())
+				|| "sanguine_halo".equals(manip.getName())),
+				"A higher Blood Shot form unlocked too early");
+
+		mastery.setXp(185);
+		mastery.tryLevelUp();
+		ManipulationFamilyRegistry.unlockEligibleForms(known);
+		helper.assertTrue(known.size() == 4, "Blood Shot family did not retain all four selectable forms");
+		helper.assertTrue(known.values().stream().allMatch(level -> level == mastery),
+				"Blood Shot family forms do not share one mastery state");
+		helper.assertTrue(known.containsKey(baseline), "Blood Shot baseline was replaced by its stronger forms");
 		helper.succeed();
 	}
 
@@ -142,7 +172,7 @@ public final class ManipulationCastFixGameTests {
 		}
 		long active = ManipulationInit.MANIPS.getEntries().stream().map(holder -> holder.get())
 				.filter(manipulation -> !ManipulationRetirementRules.isRetiredManipulation(manipulation)).count();
-		helper.assertTrue(active == 77, "Expected 77 active manipulations after pruning, got " + active);
+		helper.assertTrue(active == 97, "Expected 97 active manipulations after pruning, got " + active);
 		helper.assertTrue(!ManipulationRetirementRules.isRetiredManipulation("summon_avatar"),
 				"Summon Avatar was retired");
 		helper.assertTrue(ManipulationInit.deadly_gaze.get().getType() == EnumManipulationType.CHARGED
@@ -702,7 +732,7 @@ public final class ManipulationCastFixGameTests {
 		}
 	}
 
-	@GameTest(templateNamespace = "minecraft", template = EMPTY_TEMPLATE, timeoutTicks = 60,
+	@GameTest(templateNamespace = "minecraft", template = EMPTY_TEMPLATE, timeoutTicks = 130,
 			batch = "manipulationChannelWard")
 	public static void continuousWardPaysUpkeepAndCoolsDownOnStop(GameTestHelper helper) {
 		ServerPlayer player = player(helper, "continuous-ward-test");
@@ -713,7 +743,8 @@ public final class ManipulationCastFixGameTests {
 		HemoCapabilityAccess.requireBloodTendency(player)
 				.setTendencyAlignment(ManipulationInit.sanguine_ward.get().getTend(), 10.0F);
 		var known = HemoCapabilityAccess.requireKnownManipulations(player);
-		known.getKnownManips().put(ManipulationInit.sanguine_ward.get(), new ManipLevel(0, 0));
+		ManipLevel mastery = new ManipLevel(0, 0);
+		known.getKnownManips().put(ManipulationInit.sanguine_ward.get(), mastery);
 		known.setEquippedManipNames(java.util.List.of("sanguine_ward"));
 		known.setSelectedManip(ManipulationInit.sanguine_ward.get());
 
@@ -722,12 +753,23 @@ public final class ManipulationCastFixGameTests {
 				"Continuous ward did not start");
 		helper.assertTrue(Math.abs(blood.getBloodVolume() - 90.0D) < 0.001D,
 				"Continuous ward did not pay its immediate pulse");
+		helper.assertTrue(mastery.getXp() == 0.0D,
+				"Continuous ward awarded mastery when the channel began");
 
-		helper.runAtTickTime(21, () -> {
+		for (int tick : new int[] { 20, 40, 60, 80 }) {
+			helper.runAtTickTime(tick, () -> {
+				ManipulationChannelManager.onPlayerTick(new PlayerTickEvent.Post(player));
+				helper.assertTrue(mastery.getXp() == 0.0D,
+						"Continuous ward awarded mastery before five uninterrupted seconds");
+			});
+		}
+		helper.runAtTickTime(99, () -> helper.assertTrue(mastery.getXp() == 0.0D,
+				"Continuous ward awarded mastery before tick 100"));
+		helper.runAtTickTime(100, () -> {
 			try {
 				ManipulationChannelManager.onPlayerTick(new PlayerTickEvent.Post(player));
-				helper.assertTrue(Math.abs(blood.getBloodVolume() - 80.0D) < 0.001D,
-						"Continuous ward did not pay its one-second upkeep");
+				helper.assertTrue(mastery.getXp() == 1.0D,
+						"Continuous ward did not award mastery after five uninterrupted seconds");
 				ManipulationChannelManager.stop(player);
 				helper.assertTrue(!ManipulationChannelManager.isChanneling(player.getUUID()),
 						"Continuous ward remained active after stop");
@@ -739,6 +781,78 @@ public final class ManipulationCastFixGameTests {
 				player.discard();
 			}
 		});
+	}
+
+	@GameTest(templateNamespace = "minecraft", template = EMPTY_TEMPLATE, timeoutTicks = 130,
+			batch = "avatarManifestationMastery")
+	public static void avatarPaysUpkeepAndAwardsMasteryEveryFiveSeconds(GameTestHelper helper) {
+		ServerPlayer player = player(helper, "avatar-mastery-test");
+		var avatar = (SummonAvatarManip) ManipulationInit.summon_avatar.get();
+		var blood = HemoCapabilityAccess.requireBloodVolume(player);
+		blood.setActive(true);
+		blood.setBloodVolume(525.0D);
+		HemoCapabilityAccess.requireBloodTendency(player)
+				.setTendencyAlignment(avatar.getTend(), 50.0F);
+		var known = HemoCapabilityAccess.requireKnownManipulations(player);
+		ManipLevel mastery = new ManipLevel(0, 0);
+		known.getKnownManips().put(avatar, mastery);
+		known.setEquippedManipNames(java.util.List.of(avatar.getName()));
+
+		helper.assertTrue(AvatarManifestationManager.toggle(player, avatar),
+				"Avatar did not manifest");
+		helper.assertTrue(avatar.getName().equals(known.getActiveAvatarForm()),
+				"Avatar form was not recorded");
+		helper.assertTrue(mastery.getXp() == 0.0D,
+				"Avatar awarded mastery when first manifested");
+
+		for (int tick : new int[] { 20, 40, 60, 80 }) {
+			helper.runAtTickTime(tick, () -> {
+				AvatarManifestationManager.onPlayerTick(new PlayerTickEvent.Post(player));
+				helper.assertTrue(mastery.getXp() == 0.0D,
+						"Avatar awarded mastery before five uninterrupted seconds");
+			});
+		}
+		helper.runAtTickTime(100, () -> {
+			try {
+				AvatarManifestationManager.onPlayerTick(new PlayerTickEvent.Post(player));
+				helper.assertTrue(mastery.getXp() == 1.0D,
+						"Avatar did not award mastery after five uninterrupted seconds");
+				helper.assertTrue(Math.abs(blood.getBloodVolume() - 75.0D) < 0.001D,
+						"Avatar did not pay its initial cost and five upkeep pulses");
+				AvatarManifestationManager.dismiss(player);
+				helper.assertTrue(known.getActiveAvatarForm().isBlank(),
+						"Avatar remained active after dismissal");
+				helper.succeed();
+			} finally {
+				AvatarManifestationManager.dismiss(player);
+				player.discard();
+			}
+		});
+	}
+
+	@GameTest(templateNamespace = "minecraft", template = EMPTY_TEMPLATE, timeoutTicks = 40)
+	public static void ferventHuskHasNoRightClickMasteryEffect(GameTestHelper helper) {
+		ServerPlayer player = player(helper, "fervent-husk-mastery-test");
+		try {
+			var known = HemoCapabilityAccess.requireKnownManipulations(player);
+			BloodManipulation manipulation = ManipulationInit.blood_shot.get();
+			ManipLevel mastery = new ManipLevel(1, 10);
+			known.getKnownManips().put(manipulation, mastery);
+			known.setSelectedManip(manipulation);
+			player.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(ItemInit.fervent_husk.get()));
+
+			ItemInit.fervent_husk.get().use(helper.getLevel(), player, InteractionHand.MAIN_HAND);
+
+			helper.assertTrue(mastery.getCurrentLevel() == 1,
+					"Fervent Husk changed the selected manipulation's mastery level");
+			helper.assertTrue(mastery.getXp() == 10.0D,
+					"Fervent Husk changed the selected manipulation's mastery XP");
+			helper.assertTrue(player.getMainHandItem().getCount() == 1,
+					"Fervent Husk was consumed by its obsolete right-click behavior");
+			helper.succeed();
+		} finally {
+			player.discard();
+		}
 	}
 
 	@GameTest(templateNamespace = "minecraft", template = EMPTY_TEMPLATE, timeoutTicks = 60,

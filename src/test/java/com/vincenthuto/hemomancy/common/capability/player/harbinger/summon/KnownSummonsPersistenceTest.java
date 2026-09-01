@@ -1,12 +1,11 @@
 package com.vincenthuto.hemomancy.common.capability.player.harbinger.summon;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
-import org.junit.jupiter.api.Test;
-
 import com.vincenthuto.hemomancy.common.summon.PuppeteerSummonDefinition;
 import com.vincenthuto.hemomancy.common.summon.PuppeteerSummonDefinitions;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class KnownSummonsPersistenceTest {
 	@Test

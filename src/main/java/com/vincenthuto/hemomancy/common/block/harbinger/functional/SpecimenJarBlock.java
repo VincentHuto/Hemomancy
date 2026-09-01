@@ -2,8 +2,8 @@ package com.vincenthuto.hemomancy.common.block.harbinger.functional;
 
 import com.mojang.serialization.MapCodec;
 import com.vincenthuto.hemomancy.common.block.shared.WaterloggedBlockSupport;
-import com.vincenthuto.hemomancy.common.tile.functional.SpecimenJarBlockEntity;
-import com.vincenthuto.hemomancy.common.util.SpecimenJarData;
+import com.vincenthuto.hemomancy.common.item.harbinger.tile.functional.SpecimenJarData;
+import com.vincenthuto.hemomancy.common.tile.harbinger.functional.SpecimenJarBlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;

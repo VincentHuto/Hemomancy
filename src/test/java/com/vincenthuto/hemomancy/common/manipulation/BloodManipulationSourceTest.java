@@ -19,7 +19,7 @@ public final class BloodManipulationSourceTest {
 		String source = Files.readString(BLOOD_MANIPULATION).replace("\r\n", "\n");
 		String body = methodBody(source,
 				"private boolean tryPerformAction(Player player, Level world, ItemStack heldItemMainhand, BlockPos position,\n"
-						+ "\t\t\tfloat chargeTicks, boolean applyCooldown, boolean enforceCooldown)");
+						+ "\t\t\tfloat chargeTicks, boolean applyCooldown, boolean enforceCooldown, boolean creditUse)");
 		int alignmentGate = body.indexOf("tendency.getAlignmentByTendency(tend) >= alignLevel");
 		int borrowedCover = body.indexOf("BorrowedBloodReserve.drainToCover");
 

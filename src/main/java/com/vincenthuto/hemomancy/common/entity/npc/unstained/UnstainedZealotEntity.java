@@ -1,18 +1,12 @@
 package com.vincenthuto.hemomancy.common.entity.npc.unstained;
 
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.EnumInitiatoryDegree;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
-import com.vincenthuto.hemomancy.common.entity.npc.dialogue.DialogueItemInquiryNodes;
-import com.vincenthuto.hemomancy.common.entity.npc.dialogue.DialogueHubFactory;
-import com.vincenthuto.hemomancy.common.entity.npc.dialogue.DialogueTree;
-import com.vincenthuto.hemomancy.common.entity.npc.dialogue.ProgressionDialogueNpc;
-import com.vincenthuto.hemomancy.common.entity.npc.dialogue.UnstainedObservanceDialogueDecorator;
-import com.vincenthuto.hemomancy.common.entity.npc.dialogue.ZealotDialogueTrees;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.EnumInitiatoryDegree;
+import com.vincenthuto.hemomancy.common.entity.npc.dialogue.*;
 import com.vincenthuto.hemomancy.common.mission.unstained.UnstainedObservances;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.dialogue.OpenDialoguePacket;
-
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;

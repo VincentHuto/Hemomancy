@@ -1,17 +1,18 @@
 package com.vincenthuto.hemomancy.common.entity.boss.endgame;
 
-import com.vincenthuto.hemomancy.common.init.EntityInit;
-import com.vincenthuto.hemomancy.common.init.EffectInit;
-import com.vincenthuto.hemomancy.common.init.SoundInit;
 import com.vincenthuto.hemomancy.common.damage.HemoDamageTypes;
-import com.vincenthuto.hemomancy.common.entity.summon.BoundPuppeteerSummon;
 import com.vincenthuto.hemomancy.common.entity.projectile.BloodNeedleEntity;
+import com.vincenthuto.hemomancy.common.entity.summon.BoundPuppeteerSummon;
+import com.vincenthuto.hemomancy.common.init.EffectInit;
+import com.vincenthuto.hemomancy.common.init.EntityInit;
+import com.vincenthuto.hemomancy.common.init.SoundInit;
+import com.vincenthuto.hemomancy.common.worldgen.VesperOrdealManager;
 import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerBossEvent;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -20,35 +21,24 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.Mth;
 import net.minecraft.world.BossEvent;
 import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.AnimationState;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.MobSpawnType;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
-import net.minecraft.world.entity.ai.goal.FloatGoal;
-import net.minecraft.world.entity.ai.goal.Goal;
-import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
-import net.minecraft.world.entity.ai.goal.MeleeAttackGoal;
-import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
-import net.minecraft.world.entity.ai.goal.MoveTowardsTargetGoal;
-import net.minecraft.world.entity.ai.goal.WaterAvoidingRandomStrollGoal;
+import net.minecraft.world.entity.ai.goal.*;
 import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.effect.MobEffectInstance;
-import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.AABB;
-import com.vincenthuto.hemomancy.common.worldgen.VesperOrdealManager;
+import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.entity.PartEntity;
 
-import java.util.UUID;
 import java.util.Optional;
+import java.util.UUID;
 
 public class VesperTheCrownedRefusalEntity extends Monster {
 	private static final EntityDataAccessor<Integer> DATA_ATTACK = SynchedEntityData.defineId(

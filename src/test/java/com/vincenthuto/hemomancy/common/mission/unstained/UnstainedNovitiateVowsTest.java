@@ -1,12 +1,11 @@
 package com.vincenthuto.hemomancy.common.mission.unstained;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
-import org.junit.jupiter.api.Test;
-
 import com.vincenthuto.hemomancy.common.capability.player.unstained.UnstainedProgress;
 import com.vincenthuto.hemomancy.common.mission.unstained.UnstainedObservances.Observance;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 final class UnstainedNovitiateVowsTest {
 	@Test

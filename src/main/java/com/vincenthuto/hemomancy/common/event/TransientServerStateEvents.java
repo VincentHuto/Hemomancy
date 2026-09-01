@@ -1,7 +1,7 @@
 package com.vincenthuto.hemomancy.common.event;
 
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.common.block.shared.BloodwoodGrowthHandler;
+import com.vincenthuto.hemomancy.common.block.harbinger.plant.BloodwoodGrowthHandler;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.morphling.EquippedMorphlingEvents;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.musclememory.MuscleMemoryEvents;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.musclememory.MuscleMemoryWorldEvents;

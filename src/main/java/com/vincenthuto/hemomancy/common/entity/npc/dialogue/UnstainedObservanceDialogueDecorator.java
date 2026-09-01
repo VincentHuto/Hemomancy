@@ -1,8 +1,8 @@
 package com.vincenthuto.hemomancy.common.entity.npc.dialogue;
 
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
-import com.vincenthuto.hemomancy.common.mission.unstained.UnstainedObservances;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.UnstainedAccessRules;
+import com.vincenthuto.hemomancy.common.mission.unstained.UnstainedObservances;
 import net.minecraft.server.level.ServerPlayer;
 
 import java.util.ArrayList;

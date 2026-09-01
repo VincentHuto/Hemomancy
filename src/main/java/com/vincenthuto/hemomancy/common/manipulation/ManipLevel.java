@@ -24,8 +24,6 @@ public class ManipLevel {
 	 */
 	public static final double COOLDOWN_REDUCTION_PER_LEVEL = 0.05;
 
-	public static ManipLevel BLANK = new ManipLevel(0, 0);
-
 	public static ManipLevel deserialize(CompoundTag nbt) {
 		if (nbt != null && !nbt.isEmpty()) {
 			if (nbt.contains("level") && nbt.contains("xpcost")) {
@@ -40,8 +38,8 @@ public class ManipLevel {
 	double xp;
 
 	public ManipLevel(int currentLevel, double xp) {
-		this.currentLevel = currentLevel;
-		this.xp = xp;
+		this.currentLevel = Math.max(0, Math.min(currentLevel, MAX_LEVEL));
+		this.xp = Math.max(0, xp);
 	}
 
 	public int getCurrentLevel() {
@@ -119,11 +117,11 @@ public class ManipLevel {
 	}
 
 	public void setCurrentLevel(int currentLevel) {
-		this.currentLevel = currentLevel;
+		this.currentLevel = Math.max(0, Math.min(currentLevel, MAX_LEVEL));
 	}
 
 	public void setXp(double xp) {
-		this.xp = xp;
+		this.xp = Math.max(0, xp);
 	}
 
 	@Override

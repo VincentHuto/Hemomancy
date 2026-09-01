@@ -12,8 +12,8 @@ import net.minecraft.world.level.GameRules;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.living.LivingDeathEvent;
-import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.event.entity.player.ItemTooltipEvent;
+import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 
 import java.util.ArrayList;
 import java.util.List;

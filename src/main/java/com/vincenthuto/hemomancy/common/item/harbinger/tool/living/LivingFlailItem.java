@@ -1,7 +1,7 @@
 package com.vincenthuto.hemomancy.common.item.harbinger.tool.living;
 
 import com.vincenthuto.hemomancy.client.item.HemoClientItemExtensionsProvider;
-import com.vincenthuto.hemomancy.client.render.item.hematic.LivingFlailItemRenderer;
+import com.vincenthuto.hemomancy.client.render.item.harbinger.LivingFlailItemRenderer;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.entity.projectile.LivingFlailHeadProjectileEntity;
 import com.vincenthuto.hutoslib.client.particle.factory.GlowParticleFactory;
@@ -19,11 +19,7 @@ import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Tier;
-import net.minecraft.world.item.TooltipFlag;
-import net.minecraft.world.item.UseAnim;
+import net.minecraft.world.item.*;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.client.extensions.common.IClientItemExtensions;

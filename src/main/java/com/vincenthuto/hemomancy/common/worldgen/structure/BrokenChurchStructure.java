@@ -8,7 +8,7 @@ import com.vincenthuto.hemomancy.common.entity.boss.annetta.AnnettaKnowlesEntity
 import com.vincenthuto.hemomancy.common.init.BlockInit;
 import com.vincenthuto.hemomancy.common.init.EntityInit;
 import com.vincenthuto.hemomancy.common.init.StructureInit;
-import com.vincenthuto.hemomancy.common.tile.functional.SpecimenJarBlockEntity;
+import com.vincenthuto.hemomancy.common.tile.harbinger.functional.SpecimenJarBlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Holder;

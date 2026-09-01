@@ -1,19 +1,16 @@
 package com.vincenthuto.hemomancy.common.rite.harbinger;
 
+import com.vincenthuto.hemomancy.common.rite.CardinalRiteAllyRole;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.phys.Vec3;
 import org.junit.jupiter.api.Test;
-
-import com.vincenthuto.hemomancy.common.rite.CardinalRiteAllyRole;
 
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 final class CardinalRiteNpcStationRulesTest {
 	private static final BlockPos STATION = new BlockPos(10, 64, -4);

@@ -1,11 +1,11 @@
 package com.vincenthuto.hemomancy.client.screen.skilltree.harbinger;
 
+import com.mojang.blaze3d.platform.Lighting;
 import com.vincenthuto.hemomancy.Hemomancy;
+import com.vincenthuto.hemomancy.client.screen.skilltree.util.HarbingerChromeRenderer;
 import com.vincenthuto.hemomancy.client.screen.skilltree.util.ProgressScreenContext;
 import com.vincenthuto.hemomancy.client.screen.skilltree.util.ScreenDrawUtils;
-import com.vincenthuto.hemomancy.client.screen.skilltree.util.HarbingerChromeRenderer;
 import com.vincenthuto.hemomancy.common.init.EntityInit;
-import com.mojang.blaze3d.platform.Lighting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.entity.EntityRenderDispatcher;

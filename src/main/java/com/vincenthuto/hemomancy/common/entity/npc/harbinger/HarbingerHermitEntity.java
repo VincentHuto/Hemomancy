@@ -1,18 +1,13 @@
 package com.vincenthuto.hemomancy.common.entity.npc.harbinger;
 
+import com.vincenthuto.hemomancy.client.particle.factory.HermitEdgeGlowParticleFactory;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
-import com.vincenthuto.hemomancy.common.entity.npc.dialogue.DialogueTree;
-import com.vincenthuto.hemomancy.common.entity.npc.dialogue.DialogueAttention;
-import com.vincenthuto.hemomancy.common.entity.npc.dialogue.ProgressionDialogueNpc;
-import com.vincenthuto.hemomancy.common.entity.npc.dialogue.DialogueHubFactory;
-import com.vincenthuto.hemomancy.common.entity.npc.dialogue.HarbingerHermitDialogueTrees;
-import com.vincenthuto.hemomancy.common.rite.TempleOathRules;
+import com.vincenthuto.hemomancy.common.entity.npc.dialogue.*;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.dialogue.OpenDialoguePacket;
-import com.vincenthuto.hemomancy.client.particle.factory.HermitEdgeGlowParticleFactory;
+import com.vincenthuto.hemomancy.common.rite.TempleOathRules;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
-
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;

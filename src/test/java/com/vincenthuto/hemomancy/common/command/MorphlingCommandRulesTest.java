@@ -1,8 +1,8 @@
 package com.vincenthuto.hemomancy.common.command;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class MorphlingCommandRulesTest {
 	@Test

@@ -6,12 +6,7 @@ import com.vincenthuto.hemomancy.common.rite.sigil.IchorianSigilAnatomy;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * Client-side cache for active cardinal rite boundaries.

@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test;
 public final class ToggleableSkillRulesTest {
 	@Test
 	void agreedTechniqueRules() {
+		parentlessLockedSkillsStillRequireUnlocking();
 		toggleableSkillsAreEnabledWhenFirstUnlocked();
 		distributedSiphonChangesTargetCountWithoutMultiplyingThroughput();
 		sharedSiphonRedirectsRatherThanDuplicatesBlood();
@@ -14,6 +15,19 @@ public final class ToggleableSkillRulesTest {
 		bloodReserveProtectsItsFloorFromPassiveSpending();
 		symbioticMetabolismSplitsUpkeepAndProtectsLowHunger();
 		dormantSymbioteSuspendsUpkeepOutsideUsefulActivity();
+	}
+
+	private static void parentlessLockedSkillsStillRequireUnlocking() {
+		SkillPoint technique = new SkillPoint(901, "test_parentless_technique", 500, 1,
+				EnumSkillStates.LOCKED, null).setToggleable(true);
+		SkillProgress progress = new SkillProgress();
+		assertFalse("parentless locked technique is not unlocked", progress.isUnlocked(technique));
+		assertFalse("parentless locked technique cannot toggle", progress.toggleEnabled(technique));
+
+		progress.setSkill(technique, EnumSkillStates.UNLOCKED, 0);
+		assertFalse("legacy unlocked level zero state is repaired", progress.isUnlocked(technique));
+		progress.setSkill(technique, EnumSkillStates.UNLOCKED, 1);
+		assertTrue("paid unlock enables technique", progress.isEnabled(technique));
 	}
 
 	private static void sharedSiphonRedirectsRatherThanDuplicatesBlood() {

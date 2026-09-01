@@ -4,7 +4,7 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import com.vincenthuto.hemomancy.client.screen.util.InventoryPanelTextures;
 import com.vincenthuto.hemomancy.client.screen.widget.BloodVolumeBarWidget;
 import com.vincenthuto.hemomancy.common.menu.tile.crafting.MycelialCrucibleMenu;
-import com.vincenthuto.hemomancy.common.tile.crafting.MycelialCrucibleBlockEntity;
+import com.vincenthuto.hemomancy.common.tile.harbinger.crafting.MycelialCrucibleBlockEntity;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.network.chat.Component;

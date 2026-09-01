@@ -8,9 +8,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 final class RecipeMapNavigationTest {
 	@Test
@@ -64,24 +62,28 @@ final class RecipeMapNavigationTest {
 	void craftingInspectorKeepsDetailsBesideACompactTopAlignedPreview() {
 		RecipeMapInspectorLayout layout = RecipeMapInspectorLayout.calculateCrafting(
 				16, 16, 900, 500, true);
+		RecipeMapInspectorLayout narrow = RecipeMapInspectorLayout.calculateCrafting(
+				16, 16, 400, 500, true);
 		RecipeMapInspectorLayout ultraWide = RecipeMapInspectorLayout.calculateCrafting(
 				16, 16, 1600, 700, true);
 
 		assertEquals(false, layout.overlay());
-		assertTrue(layout.panel().width() >= 300);
-		assertTrue(layout.panel().width() <= 340);
+		assertTrue(layout.panel().width() >= 220);
+		assertTrue(layout.panel().width() <= 280);
 		assertEquals(layout.panel().top(), layout.info().top());
 		assertEquals(layout.panel().bottom(), layout.info().bottom());
 		assertEquals(layout.panel().top(), layout.preview().top());
 		assertEquals(layout.info().right(), layout.preview().left());
 		assertTrue(layout.info().width() > layout.preview().width());
 		assertEquals(layout.preview().width(), layout.preview().height());
-		assertTrue(layout.preview().width() <= 160);
+		assertTrue(layout.preview().width() <= 128);
 		assertTrue(layout.preview().bottom() < layout.panel().bottom());
 
-		assertEquals(340, ultraWide.panel().width());
-		assertEquals(160, ultraWide.preview().width());
-		assertEquals(180, ultraWide.info().width());
+		assertEquals(220, narrow.panel().width());
+		assertEquals(400, narrow.mapViewport().width());
+		assertEquals(280, ultraWide.panel().width());
+		assertEquals(117, ultraWide.preview().width());
+		assertEquals(163, ultraWide.info().width());
 	}
 
 	@Test
@@ -113,6 +115,21 @@ final class RecipeMapNavigationTest {
 
 		assertFalse(selectMethod.contains("centreOnNode"),
 				"Selecting a recipe-map node must not rewrite the player's pan/zoom position");
+	}
+
+	@Test
+	void craftingPreviewLeavesRoomForControlsAndWrapsItsHint() throws IOException {
+		String craftingView = Files.readString(Path.of(
+				"src/main/java/com/vincenthuto/hemomancy/client/screen/skilltree/shared/CraftingTabView.java"));
+		String inspectorView = Files.readString(Path.of(
+				"src/main/java/com/vincenthuto/hemomancy/client/screen/skilltree/shared/RecipeMapInspectorView.java"));
+
+		assertTrue(craftingView.contains("preview.width() - 18"),
+				"The structure model should leave the right-side layer controls their own lane");
+		assertTrue(inspectorView.contains("ctx.font().split(Component.literal(PREVIEW_HINT), preview.width())"),
+				"The preview hint should wrap to the available preview width");
+		assertTrue(inspectorView.contains("int hintY = layout.preview().bottom() + 4"),
+				"The preview hint should sit below the down-layer control");
 	}
 
 	private static List<String> paths(List<RecipeMapEntry> entries) {

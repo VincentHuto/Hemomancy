@@ -1,10 +1,6 @@
 package com.vincenthuto.hemomancy.common.entity.mob.monster.will;
 
-import java.util.Comparator;
-import java.util.List;
-import java.util.Optional;
-import java.util.Random;
-import java.util.UUID;
+import java.util.*;
 
 public final class WillCompositionRules {
 	private WillCompositionRules() {

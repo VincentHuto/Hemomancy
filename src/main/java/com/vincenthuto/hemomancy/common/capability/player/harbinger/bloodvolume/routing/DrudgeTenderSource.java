@@ -1,6 +1,6 @@
 package com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.routing;
 
-import com.vincenthuto.hemomancy.common.tile.functional.HematicSutureNodeBlockEntity;
+import com.vincenthuto.hemomancy.common.tile.harbinger.functional.HematicSutureNodeBlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 

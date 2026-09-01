@@ -3,6 +3,7 @@ package com.vincenthuto.hemomancy.common.item.harbinger.armor;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.client.item.HemoClientItemExtensionsProvider;
 import com.vincenthuto.hemomancy.client.item.SpecialBloodLustClientExtensions;
+import com.vincenthuto.hemomancy.common.item.shared.armor.PlayerLayerHidingArmor;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.Holder;
 import net.minecraft.core.particles.DustParticleOptions;
@@ -11,18 +12,13 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ArmorItem;
-import net.minecraft.world.item.ArmorItem.Type;
-import net.minecraft.world.item.ArmorMaterial;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.*;
 import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.client.extensions.common.IClientItemExtensions;
 
 import java.util.List;
 
-public abstract class AbstractSpecialBloodLustArmorItem extends ArmorItem implements HemoClientItemExtensionsProvider {
+public abstract class AbstractSpecialBloodLustArmorItem extends ArmorItem implements HemoClientItemExtensionsProvider, PlayerLayerHidingArmor {
 	private final String texturePrefix;
 
 	protected AbstractSpecialBloodLustArmorItem(Holder<ArmorMaterial> materialIn, Type slot, String texturePrefix) {

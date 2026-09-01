@@ -1,10 +1,6 @@
 package com.vincenthuto.hemomancy.common.block.inscription;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
+import com.google.gson.*;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.server.packs.resources.ResourceManager;
@@ -16,11 +12,7 @@ import org.apache.logging.log4j.Logger;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
+import java.util.*;
 
 public class DiscoveryInscriptionLoader
 		extends SimplePreparableReloadListener<Map<ResourceLocation, DiscoveryInscriptionDefinition>> {

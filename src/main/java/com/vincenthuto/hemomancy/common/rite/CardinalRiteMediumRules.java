@@ -1,6 +1,6 @@
 package com.vincenthuto.hemomancy.common.rite;
 
-import com.vincenthuto.hemomancy.common.tile.functional.CardinalFocusBlockEntity;
+import com.vincenthuto.hemomancy.common.tile.harbinger.functional.CardinalFocusBlockEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 

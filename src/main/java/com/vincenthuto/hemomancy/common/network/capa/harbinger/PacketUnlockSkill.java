@@ -2,12 +2,12 @@ package com.vincenthuto.hemomancy.common.network.capa.harbinger;
 
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodVolumeEvents;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.EnumInitiatoryDegree;
 import com.vincenthuto.hemomancy.common.capability.player.shared.skill.EnumSkillStates;
 import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillPoint;
 import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillProgress;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodVolumeEvents;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.init.SkillPointInit;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import net.minecraft.ChatFormatting;

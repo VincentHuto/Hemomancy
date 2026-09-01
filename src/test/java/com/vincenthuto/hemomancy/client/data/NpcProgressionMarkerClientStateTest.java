@@ -1,13 +1,12 @@
 package com.vincenthuto.hemomancy.client.data;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
-import java.util.Map;
-
+import com.vincenthuto.hemomancy.common.entity.npc.dialogue.DialogueAttention;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
-import com.vincenthuto.hemomancy.common.entity.npc.dialogue.DialogueAttention;
+import java.util.Map;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class NpcProgressionMarkerClientStateTest {
 	@AfterEach

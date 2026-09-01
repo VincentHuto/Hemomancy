@@ -1,10 +1,8 @@
 package com.vincenthuto.hemomancy.client.particle.factory;
 
 import com.vincenthuto.hemomancy.common.particle.data.HitColorParticleData;
-import com.vincenthuto.hemomancy.common.init.ParticleInit;
 import com.vincenthuto.hutoslib.client.particle.ParticleGlow;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
-
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.particle.Particle;
 import net.minecraft.client.particle.ParticleProvider;

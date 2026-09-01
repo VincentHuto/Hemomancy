@@ -5,7 +5,6 @@ import com.vincenthuto.hemomancy.common.rite.sigil.CardinalRiteSigilRules;
 import net.minecraft.core.BlockPos;
 import org.junit.jupiter.api.Test;
 
-import java.util.List;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;

@@ -1,11 +1,6 @@
 package com.vincenthuto.hemomancy.client.screen.skilltree.shared;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.EnumMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public final class MaterialAtlasSpec {
 	private static final int HARBINGER_HUB_X = 686;

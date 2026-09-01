@@ -8,7 +8,7 @@ import com.vincenthuto.hemomancy.common.item.harbinger.RecycledEnzymeItem;
 import com.vincenthuto.hemomancy.common.item.harbinger.scar.fungal.ItemImmatureFungalScar;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.BloodGourdItem;
 import com.vincenthuto.hemomancy.common.menu.slot.IncubatorCatalystSlot;
-import com.vincenthuto.hemomancy.common.tile.crafting.MycelialCrucibleBlockEntity;
+import com.vincenthuto.hemomancy.common.tile.harbinger.crafting.MycelialCrucibleBlockEntity;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;

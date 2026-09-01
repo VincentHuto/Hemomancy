@@ -237,12 +237,18 @@ public class SkillProgress implements INBTSerializable<CompoundTag> {
 	}
 
 	private SkillState stateFor(SkillPoint skill) {
-		return skills.computeIfAbsent(skill.getId(), id -> new SkillState(defaultState(skill), 0,
+		SkillState current = skills.computeIfAbsent(skill.getId(), id -> new SkillState(defaultState(skill), 0,
 				defaultState(skill) == EnumSkillStates.UNLOCKED));
+		if (current.state() == EnumSkillStates.UNLOCKED && current.level() == 0
+				&& skill.getState() == EnumSkillStates.LOCKED) {
+			current = new SkillState(EnumSkillStates.LOCKED, 0, false);
+			skills.put(skill.getId(), current);
+		}
+		return current;
 	}
 
 	private static EnumSkillStates defaultState(SkillPoint skill) {
-		return skill.getParents().isEmpty() ? EnumSkillStates.UNLOCKED : EnumSkillStates.LOCKED;
+		return skill.getState();
 	}
 
 	private static EnumSkillStates parseState(String state, EnumSkillStates fallback) {

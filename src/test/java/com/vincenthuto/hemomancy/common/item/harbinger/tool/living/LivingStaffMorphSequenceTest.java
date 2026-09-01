@@ -1,8 +1,8 @@
 package com.vincenthuto.hemomancy.common.item.harbinger.tool.living;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 final class LivingStaffMorphSequenceTest {
 

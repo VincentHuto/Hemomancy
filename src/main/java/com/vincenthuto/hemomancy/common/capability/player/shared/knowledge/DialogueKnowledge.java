@@ -1,15 +1,15 @@
 package com.vincenthuto.hemomancy.common.capability.player.shared.knowledge;
 
-import java.util.Collections;
-import java.util.LinkedHashSet;
-import java.util.Set;
-
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.StringTag;
 import net.minecraft.resources.ResourceLocation;
 import net.neoforged.neoforge.common.util.INBTSerializable;
+
+import java.util.Collections;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 public class DialogueKnowledge implements INBTSerializable<CompoundTag> {
 	private static final String TAG_READ_TOPICS = "ReadTopics";

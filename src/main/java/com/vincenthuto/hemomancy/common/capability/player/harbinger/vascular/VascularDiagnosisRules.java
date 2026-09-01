@@ -1,7 +1,7 @@
 package com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular;
 
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.HematicMemoryExpression;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.HematicMemoryExpression;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.scar.ScarNoeticRoutingRules;
 import com.vincenthuto.hemomancy.common.item.harbinger.scar.ScarDefinition;
 import net.minecraft.world.entity.player.Player;

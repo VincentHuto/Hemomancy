@@ -1,16 +1,7 @@
 package com.vincenthuto.hemomancy.client.screen.item;
 
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodFlowContribution;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodFlowSnapshot;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.MaxBloodContribution;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.MaxBloodRules;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.MaxBloodSnapshot;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.ManipulationCostContribution;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.ManipulationCostRules;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.ManipulationCostSnapshot;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.ManipulationSlotContribution;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.ManipulationSlotRules;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.ManipulationSlotSnapshot;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.*;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.*;
 
 import java.util.List;
 

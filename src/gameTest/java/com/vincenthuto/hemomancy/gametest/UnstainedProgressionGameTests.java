@@ -4,15 +4,11 @@ import com.mojang.authlib.GameProfile;
 import com.mojang.brigadier.CommandDispatcher;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
-import com.vincenthuto.hemomancy.common.init.BlockInit;
-import com.vincenthuto.hemomancy.common.init.BlockEntityInit;
-import com.vincenthuto.hemomancy.common.init.ContainerInit;
-import com.vincenthuto.hemomancy.common.init.ItemInit;
-import com.vincenthuto.hemomancy.common.init.StillArtInit;
+import com.vincenthuto.hemomancy.common.init.*;
 import com.vincenthuto.hemomancy.common.mission.unstained.UnstainedObservances;
 import com.vincenthuto.hemomancy.common.recipe.CardinalRiteRecipe;
 import com.vincenthuto.hemomancy.common.rite.unstained.UnstainedCardinalRiteEvents;
-import com.vincenthuto.hemomancy.common.tile.crafting.StillwaterCondenserBlockEntity;
+import com.vincenthuto.hemomancy.common.tile.unstained.crafting.StillwaterCondenserBlockEntity;
 import com.vincenthuto.hemomancy.gametest.journey.HemoJourneyFixtures;
 import com.vincenthuto.hemomancy.gametest.journey.UnstainedJourneyFixtures;
 import com.vincenthuto.hemomancy.gametest.journey.UnstainedJourneyStage;
@@ -23,15 +19,15 @@ import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ClientInformation;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.ItemCooldowns;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Blocks;
 import net.neoforged.neoforge.gametest.GameTestHolder;
 import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 
-import java.util.UUID;
 import java.util.Arrays;
+import java.util.UUID;
 
 @GameTestHolder(Hemomancy.MOD_ID)
 @PrefixGameTestTemplate(false)

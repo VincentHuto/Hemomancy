@@ -1,9 +1,10 @@
 package com.vincenthuto.hemomancy.common.manipulation;
 
+import com.vincenthuto.hemomancy.common.block.harbinger.CrimsonFireHelper;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.entity.projectile.BloodCloudCarrierEntity;
 import com.vincenthuto.hemomancy.common.entity.projectile.BloodNeedleEntity;
 import com.vincenthuto.hemomancy.common.entity.projectile.BloodShotEntity;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.init.BlockInit;
 import com.vincenthuto.hemomancy.common.init.EffectInit;
 import com.vincenthuto.hemomancy.common.item.harbinger.memories.LivingWeaponGraftRecipeUnlockEvents;
@@ -13,7 +14,6 @@ import com.vincenthuto.hemomancy.common.manipulation.ductilis.SynapticJoltManip;
 import com.vincenthuto.hemomancy.common.manipulation.ferric.SanguineMagnetismManip;
 import com.vincenthuto.hemomancy.common.manipulation.tenebris.BlackVeilCovenantManager;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
-import com.vincenthuto.hemomancy.common.util.CrimsonFireHelper;
 import com.vincenthuto.hutoslib.client.particle.factory.GlowParticleFactory;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import net.minecraft.core.BlockPos;

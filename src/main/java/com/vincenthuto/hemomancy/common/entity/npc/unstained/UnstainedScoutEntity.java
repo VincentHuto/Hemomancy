@@ -1,12 +1,11 @@
 package com.vincenthuto.hemomancy.common.entity.npc.unstained;
 
-import com.vincenthuto.hemomancy.common.entity.npc.dialogue.DialogueTree;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.DialogueAttention;
+import com.vincenthuto.hemomancy.common.entity.npc.dialogue.DialogueTree;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.ProgressionDialogueNpc;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.UnstainedScoutDialogueTrees;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.dialogue.OpenDialoguePacket;
-
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;

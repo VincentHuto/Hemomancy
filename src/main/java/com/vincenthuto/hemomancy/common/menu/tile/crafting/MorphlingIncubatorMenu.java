@@ -9,7 +9,7 @@ import com.vincenthuto.hemomancy.common.item.harbinger.morphlings.ItemMorphlingP
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.BloodGourdItem;
 import com.vincenthuto.hemomancy.common.menu.slot.IncubatorCatalystSlot;
 import com.vincenthuto.hemomancy.common.menu.slot.IncubatorCenterSlot;
-import com.vincenthuto.hemomancy.common.tile.crafting.MorphlingIncubatorBlockEntity;
+import com.vincenthuto.hemomancy.common.tile.harbinger.crafting.MorphlingIncubatorBlockEntity;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;

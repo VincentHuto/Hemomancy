@@ -2,18 +2,14 @@
 package com.vincenthuto.hemomancy.common.entity.npc.dialogue.inquiry;
 
 import com.vincenthuto.hemomancy.common.item.harbinger.scar.ItemScarPattern;
+import com.vincenthuto.hemomancy.common.item.harbinger.tile.functional.SpecimenJarData;
 import com.vincenthuto.hemomancy.common.item.shared.MnemonicBlueprintItem;
 import com.vincenthuto.hemomancy.common.item.shared.MnemonicBlueprintTarget;
-import com.vincenthuto.hemomancy.common.util.SpecimenJarData;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Locale;
-import java.util.Optional;
+import java.util.*;
 
 /** Ordered built-in providers for stateful inquiry items. */
 public final class StackAwareInquiryRegistry {

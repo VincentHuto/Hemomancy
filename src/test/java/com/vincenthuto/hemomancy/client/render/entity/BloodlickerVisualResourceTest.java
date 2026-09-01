@@ -1,16 +1,15 @@
 package com.vincenthuto.hemomancy.client.render.entity;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import org.junit.jupiter.api.Test;
 
+import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-import javax.imageio.ImageIO;
-
-import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class BloodlickerVisualResourceTest {
 	private static final Path SOURCE_ROOT = Path.of("src/main/java/com/vincenthuto/hemomancy");

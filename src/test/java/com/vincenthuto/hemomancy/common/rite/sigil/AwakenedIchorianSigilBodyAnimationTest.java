@@ -1,10 +1,10 @@
 package com.vincenthuto.hemomancy.common.rite.sigil;
 
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 import net.minecraft.resources.ResourceLocation;
 import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 final class AwakenedIchorianSigilBodyAnimationTest {
 	@Test

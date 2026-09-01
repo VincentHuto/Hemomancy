@@ -7,8 +7,8 @@ import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.mission.unstained.UnstainedObservances;
 import com.vincenthuto.hemomancy.common.mission.unstained.UnstainedObservances.Observance;
 import com.vincenthuto.hemomancy.common.rite.unstained.UnstainedCardinalRiteEvents;
-import com.vincenthuto.hemomancy.common.tile.crafting.PallidRetortBlockEntity;
-import com.vincenthuto.hemomancy.common.tile.crafting.StillwaterCondenserBlockEntity;
+import com.vincenthuto.hemomancy.common.tile.unstained.crafting.PallidRetortBlockEntity;
+import com.vincenthuto.hemomancy.common.tile.unstained.crafting.StillwaterCondenserBlockEntity;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;

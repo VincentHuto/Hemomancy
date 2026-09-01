@@ -1,9 +1,9 @@
 package com.vincenthuto.hemomancy.common.entity.projectile;
 
+import com.vincenthuto.hemomancy.common.damage.HemoDamageTypes;
 import com.vincenthuto.hemomancy.common.entity.boss.endgame.VesperEncounterPuppetEvents;
 import com.vincenthuto.hemomancy.common.entity.boss.endgame.VesperTheCrownedRefusalEntity;
 import com.vincenthuto.hemomancy.common.entity.boss.endgame.VesperTheEveningStarEntity;
-import com.vincenthuto.hemomancy.common.damage.HemoDamageTypes;
 import com.vincenthuto.hemomancy.common.init.EntityInit;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.SynchedEntityData;

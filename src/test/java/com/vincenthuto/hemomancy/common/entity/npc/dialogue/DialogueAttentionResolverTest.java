@@ -1,12 +1,11 @@
 package com.vincenthuto.hemomancy.common.entity.npc.dialogue;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import net.minecraft.resources.ResourceLocation;
+import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
-import org.junit.jupiter.api.Test;
-
-import net.minecraft.resources.ResourceLocation;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class DialogueAttentionResolverTest {
 	@Test

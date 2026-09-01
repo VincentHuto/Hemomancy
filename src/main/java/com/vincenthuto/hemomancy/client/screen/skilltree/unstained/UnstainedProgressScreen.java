@@ -1,18 +1,10 @@
 package com.vincenthuto.hemomancy.client.screen.skilltree.unstained;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.vincenthuto.hemomancy.client.screen.skilltree.shared.CraftingTabController;
-import com.vincenthuto.hemomancy.client.screen.skilltree.shared.MaterialAtlasPath;
-import com.vincenthuto.hemomancy.client.screen.skilltree.shared.MaterialsData;
-import com.vincenthuto.hemomancy.client.screen.skilltree.shared.MaterialsTabController;
-import com.vincenthuto.hemomancy.client.screen.skilltree.shared.RitesTabController;
+import com.vincenthuto.hemomancy.client.screen.skilltree.shared.*;
 import com.vincenthuto.hemomancy.client.screen.skilltree.util.*;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
-import com.vincenthuto.hemomancy.common.capability.player.unstained.EnumClarityStage;
-import com.vincenthuto.hemomancy.common.capability.player.unstained.EnumPurityStage;
-import com.vincenthuto.hemomancy.common.capability.player.unstained.UnstainedAccessRules;
-import com.vincenthuto.hemomancy.common.capability.player.unstained.UnstainedPhase;
-import com.vincenthuto.hemomancy.common.capability.player.unstained.UnstainedPathGuidance;
+import com.vincenthuto.hemomancy.common.capability.player.unstained.*;
 import com.vincenthuto.hemomancy.common.mission.unstained.UnstainedObservances.Observance;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.unstained.PacketToggleUnstainedBonus;

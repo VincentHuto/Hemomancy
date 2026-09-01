@@ -17,7 +17,7 @@ import net.neoforged.neoforge.client.extensions.common.IClientItemExtensions;
 
 import java.util.List;
 
-public class ChitiniteArmorItem extends ArmorItem implements HemoClientItemExtensionsProvider {
+public class ChitiniteArmorItem extends ArmorItem implements HemoClientItemExtensionsProvider, PlayerLayerHidingArmor {
 
 	public ChitiniteArmorItem(Holder<ArmorMaterial> materialIn, Type slot) {
 		super(materialIn, slot, new Item.Properties().fireResistant().stacksTo(1));

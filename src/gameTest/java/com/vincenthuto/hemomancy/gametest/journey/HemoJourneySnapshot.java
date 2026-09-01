@@ -1,47 +1,41 @@
 package com.vincenthuto.hemomancy.gametest.journey;
 
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.HemoAttachmentTypes;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.musclememory.MuscleMemoryEvents;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.musclememory.MuscleMemoryState;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.InitiatoryDegree;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.InitiatoryDegreeEvents;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.BloodTendency;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.BloodTendencyEvents;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.livingstaff.LivingStaffProgress;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.livingstaff.LivingStaffBondHelper;
+import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bestiary.SpecimenBestiaryEvents;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bestiary.SpecimenBestiaryProgress;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.InitiatoryDegree;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.InitiatoryDegreeEvents;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.livingstaff.LivingStaffBondHelper;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.livingstaff.LivingStaffProgress;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.KnownManipulations;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.musclememory.MuscleMemoryEvents;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.musclememory.MuscleMemoryState;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.scar.ScarsContainer;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.BloodTendency;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.BloodTendencyEvents;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.VascularSystem;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.VascularSystemEvents;
 import com.vincenthuto.hemomancy.common.capability.player.shared.knowledge.LiberKnowledge;
 import com.vincenthuto.hemomancy.common.capability.player.shared.knowledge.LiberKnowledgeEvents;
 import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillPointGainEvents;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.KnownManipulations;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.scar.ScarsContainer;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.VascularSystem;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.VascularSystemEvents;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.UnstainedProgress;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.UnstainedProgressEvents;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.stillart.KnownStillArtEvents;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.stillart.KnownStillArts;
 import com.vincenthuto.hemomancy.common.event.HarbingerAdvancementGranter;
 import com.vincenthuto.hemomancy.common.event.UnstainedAdvancementGranter;
-import com.vincenthuto.hemomancy.common.mission.vicar.FirstBloodcraftAssignment;
-import com.vincenthuto.hemomancy.common.mission.alchemist.FirstSeparationAssignment;
 import com.vincenthuto.hemomancy.common.mission.alchemist.BodyAnswersAssignment;
+import com.vincenthuto.hemomancy.common.mission.alchemist.FirstSeparationAssignment;
 import com.vincenthuto.hemomancy.common.mission.artificer.ArtificerAssignments;
 import com.vincenthuto.hemomancy.common.mission.cicatrix_anchorite.VeinMasonAssignments;
-import com.vincenthuto.hemomancy.common.worldgen.FungalGardenTravelHelper;
 import com.vincenthuto.hemomancy.common.mission.mnemonist.MnemonicReliquaryProgression;
+import com.vincenthuto.hemomancy.common.mission.vicar.FirstBloodcraftAssignment;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.manips.KnownManipulationServerPacket;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.scars.PacketSyncScarsState;
-
+import com.vincenthuto.hemomancy.common.worldgen.FungalGardenTravelHelper;
 import net.minecraft.advancements.AdvancementHolder;
 import net.minecraft.advancements.AdvancementProgress;
 import net.minecraft.core.BlockPos;
@@ -55,6 +49,11 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.stats.ServerRecipeBook;
 import net.minecraft.world.item.ItemStack;
+
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 /** Development-only ownership boundary for player state changed by the journey. */
 public final class HemoJourneySnapshot {
@@ -566,7 +565,7 @@ public final class HemoJourneySnapshot {
 		LiberKnowledgeEvents.sync(player);
 		PacketHandler.sendToPlayer(player, new KnownManipulationServerPacket(
 				manipulations.getKnownManips(), manipulations.getSelectedManip(), manipulations.getVeinList(),
-				manipulations.getSelectedVein(), manipulations.isAvatarActive(), manipulations.getLastVeinMineStart(),
+				manipulations.getSelectedVein(), manipulations.getActiveAvatarForm(), manipulations.getLastVeinMineStart(),
 				new ArrayList<>(manipulations.getEquippedManipNames()), new ArrayList<>(manipulations.getLoadouts())));
 		PacketHandler.sendToPlayer(player, new PacketSyncScarsState(player, scars));
 		UnstainedProgressEvents.syncProgress(player, unstained);

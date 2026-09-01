@@ -2,12 +2,7 @@ package com.vincenthuto.hemomancy.client.screen.skilltree.harbinger;
 
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /** Pure layout and lineage rules for the radial cerebral-scar families. */
 final class ScarTreeLayout {

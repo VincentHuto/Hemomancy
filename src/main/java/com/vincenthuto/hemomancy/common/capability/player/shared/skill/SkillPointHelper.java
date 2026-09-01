@@ -1,8 +1,8 @@
 package com.vincenthuto.hemomancy.common.capability.player.shared.skill;
 
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
-import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.LivingStaffWeaponFormRules;
 import com.vincenthuto.hemomancy.common.init.SkillPointInit;
+import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.LivingStaffWeaponFormRules;
 import net.minecraft.world.entity.player.Player;
 
 import javax.annotation.Nullable;

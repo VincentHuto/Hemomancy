@@ -1,19 +1,17 @@
 package com.vincenthuto.hemomancy.common.rite.harbinger;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import org.junit.jupiter.api.Test;
-
 import com.vincenthuto.hemomancy.common.rite.CardinalRiteCeremonyDefinition;
 import com.vincenthuto.hemomancy.common.rite.CardinalRiteFootprintRules;
 import com.vincenthuto.hemomancy.common.rite.sigil.CardinalRiteSigilPlacementRules;
 import com.vincenthuto.hemomancy.common.rite.sigil.IchorianSigilDefinition;
-
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
+import org.junit.jupiter.api.Test;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 final class CardinalRiteResponseFootprintTest {
 	@Test

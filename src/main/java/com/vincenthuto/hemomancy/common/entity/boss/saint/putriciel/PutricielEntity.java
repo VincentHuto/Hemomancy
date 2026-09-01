@@ -1,7 +1,7 @@
 package com.vincenthuto.hemomancy.common.entity.boss.saint.putriciel;
 
+import com.vincenthuto.hemomancy.common.block.harbinger.CrimsonFireHelper;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
-import com.vincenthuto.hemomancy.common.util.CrimsonFireHelper;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;

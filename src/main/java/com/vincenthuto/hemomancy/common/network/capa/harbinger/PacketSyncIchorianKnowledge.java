@@ -2,11 +2,7 @@ package com.vincenthuto.hemomancy.common.network.capa.harbinger;
 
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.rite.IchorianKnowledge;
-import com.vincenthuto.hemomancy.common.rite.sigil.IchorianSigilAnatomy;
-import com.vincenthuto.hemomancy.common.rite.sigil.IchorianSigilAnatomyValidator;
-import com.vincenthuto.hemomancy.common.rite.sigil.IchorianSigilDefinition;
-import com.vincenthuto.hemomancy.common.rite.sigil.IchorianSigilRegistry;
-import com.vincenthuto.hemomancy.common.rite.sigil.IchorianSigilSyncData;
+import com.vincenthuto.hemomancy.common.rite.sigil.*;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
@@ -14,14 +10,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 
-import java.util.BitSet;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 public record PacketSyncIchorianKnowledge(Map<ResourceLocation, BitSet> partial, Set<ResourceLocation> known,
 		Map<ResourceLocation, IchorianSigilDefinition> definitions)

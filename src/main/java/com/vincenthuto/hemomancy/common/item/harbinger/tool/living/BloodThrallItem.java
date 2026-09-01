@@ -4,7 +4,7 @@ import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.entity.summon.BloodThrallEntity;
 import com.vincenthuto.hemomancy.common.tile.IBloodReservoir;
-import com.vincenthuto.hemomancy.common.tile.functional.HematicSutureNodeBlockEntity;
+import com.vincenthuto.hemomancy.common.tile.harbinger.functional.HematicSutureNodeBlockEntity;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.component.DataComponents;

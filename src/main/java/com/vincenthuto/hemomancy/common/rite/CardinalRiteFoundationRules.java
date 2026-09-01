@@ -1,11 +1,10 @@
 package com.vincenthuto.hemomancy.common.rite;
 
+import com.vincenthuto.hemomancy.common.event.worldevent.FaneFootprint;
+import net.minecraft.core.BlockPos;
+
 import java.util.ArrayList;
 import java.util.List;
-
-import com.vincenthuto.hemomancy.common.event.worldevent.FaneFootprint;
-
-import net.minecraft.core.BlockPos;
 
 public final class CardinalRiteFoundationRules {
 	private CardinalRiteFoundationRules() {

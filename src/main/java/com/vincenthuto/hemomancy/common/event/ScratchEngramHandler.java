@@ -2,7 +2,7 @@ package com.vincenthuto.hemomancy.common.event;
 
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.client.particle.factory.BloodCellParticleFactory;
-import com.vincenthuto.hemomancy.common.block.harbinger.EngramBlock;
+import com.vincenthuto.hemomancy.common.block.harbinger.rite.EngramBlock;
 import com.vincenthuto.hemomancy.common.init.BlockInit;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 

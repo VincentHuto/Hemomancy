@@ -1,13 +1,11 @@
 package com.vincenthuto.hemomancy.common.command;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
-
 import com.mojang.brigadier.CommandDispatcher;
-import net.minecraft.commands.CommandSourceStack;
 import com.vincenthuto.hemomancy.common.rite.harbinger.SeveredQliphothState;
+import net.minecraft.commands.CommandSourceStack;
 import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 class QliphothTreeStageTest {
 

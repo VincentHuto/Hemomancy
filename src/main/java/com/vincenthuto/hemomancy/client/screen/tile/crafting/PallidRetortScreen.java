@@ -4,7 +4,7 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import com.vincenthuto.hemomancy.client.screen.util.InventoryPanelTextures;
 import com.vincenthuto.hemomancy.client.screen.widget.WhiteHumorBarWidget;
 import com.vincenthuto.hemomancy.common.menu.tile.crafting.PallidRetortMenu;
-import com.vincenthuto.hemomancy.common.tile.crafting.PallidRetortBlockEntity;
+import com.vincenthuto.hemomancy.common.tile.unstained.crafting.PallidRetortBlockEntity;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.network.chat.Component;

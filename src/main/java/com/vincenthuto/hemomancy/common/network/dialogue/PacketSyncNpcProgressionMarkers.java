@@ -1,16 +1,15 @@
 package com.vincenthuto.hemomancy.common.network.dialogue;
 
-import java.util.LinkedHashMap;
-import java.util.Map;
-
 import com.vincenthuto.hemomancy.client.data.NpcProgressionMarkerClientState;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.DialogueAttention;
-
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceLocation;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
+
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 public record PacketSyncNpcProgressionMarkers(Map<Integer, DialogueAttention> markers)
 		implements CustomPacketPayload {

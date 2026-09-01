@@ -1,15 +1,14 @@
 package com.vincenthuto.hemomancy.common.rite.harbinger;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.vincenthuto.hemomancy.common.recipe.CardinalRiteRecipe;
 import com.vincenthuto.hemomancy.common.rite.CardinalRiteFootprintRules;
 import com.vincenthuto.hemomancy.common.rite.floor.CardinalRiteFloorDefinition;
 import com.vincenthuto.hemomancy.common.rite.sigil.IchorianSigilDefinition;
 import com.vincenthuto.hemomancy.common.rite.sigil.IchorianSigilRegistry;
-
 import net.minecraft.core.BlockPos;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public final class CardinalRiteFootprintResolver {
 	private CardinalRiteFootprintResolver() {

@@ -19,22 +19,18 @@ import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.Enu
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.IBloodTendency;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.EnumVeinSections;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.IVascularSystem;
-import com.vincenthuto.hemomancy.common.menu.ScryingDiagnosticsMenu;
 import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
+import com.vincenthuto.hemomancy.common.menu.ScryingDiagnosticsMenu;
+import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.network.chat.Component;
-import net.minecraft.Util;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Inventory;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
-import java.util.Optional;
-import java.util.Random;
+import java.util.*;
 
 public class ScryingDiagnosticsScreen extends AbstractContainerScreen<ScryingDiagnosticsMenu> {
 	private static final int PANEL_WIDTH = 322;

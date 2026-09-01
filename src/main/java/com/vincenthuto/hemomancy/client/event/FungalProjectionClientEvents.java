@@ -2,14 +2,14 @@ package com.vincenthuto.hemomancy.client.event;
 
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.client.screen.overlay.FungalWhisperVignetteOverlay;
+import net.minecraft.client.gui.screens.inventory.InventoryScreen;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.client.event.RenderGuiLayerEvent;
 import net.neoforged.neoforge.client.event.RenderHandEvent;
 import net.neoforged.neoforge.client.event.RenderPlayerEvent;
 import net.neoforged.neoforge.client.event.ScreenEvent;
-import net.minecraft.client.gui.screens.inventory.InventoryScreen;
-import net.neoforged.neoforge.client.event.RenderGuiLayerEvent;
 import net.neoforged.neoforge.client.gui.VanillaGuiLayers;
 
 @EventBusSubscriber(modid = Hemomancy.MOD_ID, value = Dist.CLIENT)

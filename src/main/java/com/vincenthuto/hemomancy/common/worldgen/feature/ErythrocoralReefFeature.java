@@ -1,7 +1,7 @@
 package com.vincenthuto.hemomancy.common.worldgen.feature;
 
 import com.mojang.serialization.Codec;
-import com.vincenthuto.hemomancy.common.block.harbinger.ErythrocoralGrowthBlock;
+import com.vincenthuto.hemomancy.common.block.harbinger.plant.ErythrocoralGrowthBlock;
 import com.vincenthuto.hemomancy.common.init.BlockInit;
 import com.vincenthuto.hemomancy.common.worldgen.ErythrocoralReefTuning;
 import net.minecraft.core.BlockPos;

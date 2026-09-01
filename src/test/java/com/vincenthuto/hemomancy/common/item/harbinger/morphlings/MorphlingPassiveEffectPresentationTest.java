@@ -1,21 +1,17 @@
 package com.vincenthuto.hemomancy.common.item.harbinger.morphlings;
 
+import net.minecraft.world.effect.MobEffectInstance;
 import org.junit.jupiter.api.Test;
 
-import java.io.IOException;
+import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Map;
 import java.util.regex.Pattern;
 
-import javax.imageio.ImageIO;
-
-import net.minecraft.world.effect.MobEffectInstance;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 final class MorphlingPassiveEffectPresentationTest {
 	private static final Path MORPHLING_SOURCE = Path.of(

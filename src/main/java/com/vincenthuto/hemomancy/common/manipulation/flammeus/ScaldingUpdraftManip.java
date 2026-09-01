@@ -1,12 +1,12 @@
 package com.vincenthuto.hemomancy.common.manipulation.flammeus;
 
+import com.vincenthuto.hemomancy.common.block.harbinger.CrimsonFireHelper;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.EnumVeinSections;
 import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
 import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationRank;
 import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationType;
 import com.vincenthuto.hemomancy.common.manipulation.TendencyAffinityRules;
-import com.vincenthuto.hemomancy.common.util.CrimsonFireHelper;
 import com.vincenthuto.hutoslib.client.particle.factory.GlowParticleFactory;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import net.minecraft.core.BlockPos;
@@ -24,11 +24,19 @@ import net.minecraft.world.phys.Vec3;
 
 public class ScaldingUpdraftManip extends BloodManipulation {
 	private static final double RADIUS = 4.0;
+	private final Mode mode;
 
 	public ScaldingUpdraftManip(String name, double cost, double alignLevel, double xpCost,
 			EnumManipulationType type, EnumManipulationRank rank, EnumBloodTendency tendency,
 			EnumVeinSections section) {
+		this(name, cost, alignLevel, xpCost, type, rank, tendency, section, Mode.BASELINE);
+	}
+
+	public ScaldingUpdraftManip(String name, double cost, double alignLevel, double xpCost,
+			EnumManipulationType type, EnumManipulationRank rank, EnumBloodTendency tendency,
+			EnumVeinSections section, Mode mode) {
 		super(name, cost, alignLevel, xpCost, type, rank, tendency, section);
+		this.mode = mode;
 	}
 
 	@Override
@@ -36,18 +44,38 @@ public class ScaldingUpdraftManip extends BloodManipulation {
 		if (!(world instanceof ServerLevel sLevel)) return;
 
 		Vec3 look = new Vec3(player.getLookAngle().x, 0.0, player.getLookAngle().z);
-		if (look.lengthSqr() > 0.01) look = look.normalize().scale(0.45);
-		player.push(look.x, 1.1, look.z);
+		double horizontal = mode == Mode.SOARING ? 0.65D : 0.45D;
+		double vertical = switch (mode) {
+			case SOARING -> 1.6D;
+			case SUSPENDED -> 1.2D;
+			default -> 1.1D;
+		};
+		if (look.lengthSqr() > 0.01) look = look.normalize().scale(horizontal);
+		player.push(look.x, vertical, look.z);
 		player.hurtMarked = true;
 		player.fallDistance = 0;
 		player.resetFallDistance();
-		player.addEffect(new MobEffectInstance(MobEffects.SLOW_FALLING, 100, 0, false, true));
+		int slowFalling = switch (mode) {
+			case SOARING -> 120;
+			case SUSPENDED -> 160;
+			default -> 100;
+		};
+		if (mode == Mode.SUSPENDED) {
+			player.addEffect(new MobEffectInstance(MobEffects.LEVITATION, 20, 0, false, true));
+		}
+		player.addEffect(new MobEffectInstance(MobEffects.SLOW_FALLING, slowFalling, 0, false, true));
 
 		for (LivingEntity target : world.getEntitiesOfClass(LivingEntity.class, new AABB(player.blockPosition()).inflate(RADIUS),
 				e -> e != player && e.isAlive())) {
 			CrimsonFireHelper.igniteCrimson(target, 3);
 			target.hurt(world.damageSources().onFire(),
 					TendencyAffinityRules.adjustManipulationDamage(player, target, this, 1.5F));
+			if (mode == Mode.EXPULSIVE && !player.isAlliedTo(target)) {
+				Vec3 outward = new Vec3(target.getX() - player.getX(), 0, target.getZ() - player.getZ());
+				if (outward.lengthSqr() > 0.001D) outward = outward.normalize().scale(0.8D);
+				target.push(outward.x, 1.0D, outward.z);
+				target.hurtMarked = true;
+			}
 		}
 		world.playSound(null, player.blockPosition(), SoundEvents.FIRECHARGE_USE, SoundSource.PLAYERS, 0.9F, 0.6F);
 		for (int i = 0; i < 60; i++) {
@@ -57,5 +85,12 @@ public class ScaldingUpdraftManip extends BloodManipulation {
 					player.getZ() + (world.random.nextDouble() - 0.5) * 2.0,
 					1, 0, 0.3, 0, 0.03);
 		}
+	}
+
+	public enum Mode {
+		BASELINE,
+		SOARING,
+		SUSPENDED,
+		EXPULSIVE
 	}
 }

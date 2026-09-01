@@ -1,15 +1,14 @@
 package com.vincenthuto.hemomancy.common.mission.vicar;
 
-import java.util.List;
-
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.event.HarbingerAdvancementGranter;
 import com.vincenthuto.hemomancy.common.init.BlockInit;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
-
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
+
+import java.util.List;
 
 public final class FirstBloodcraftAssignment {
 	public static final ResourceLocation ADV_REWARD_CLAIMED =

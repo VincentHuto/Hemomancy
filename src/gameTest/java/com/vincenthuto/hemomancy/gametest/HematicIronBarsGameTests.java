@@ -1,7 +1,7 @@
 package com.vincenthuto.hemomancy.gametest;
 
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.common.block.shared.HematicIronBarsBlock;
+import com.vincenthuto.hemomancy.common.block.harbinger.decoration.HematicIronBarsBlock;
 import com.vincenthuto.hemomancy.common.init.BlockInit;
 
 import net.minecraft.core.BlockPos;

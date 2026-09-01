@@ -1,8 +1,8 @@
 package com.vincenthuto.hemomancy.common.manipulation;
 
-import java.util.Map;
-
 import org.junit.jupiter.api.Test;
+
+import java.util.Map;
 
 class ManipulationCastSoundsTest {
 	@Test

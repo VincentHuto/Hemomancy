@@ -1,18 +1,17 @@
 package com.vincenthuto.hemomancy.gametest.journey;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.init.EffectInit;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.init.StillArtInit;
 import com.vincenthuto.hemomancy.common.mission.unstained.UnstainedObservances;
-
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.Item;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public final class UnstainedJourneyChecks {
 	private UnstainedJourneyChecks() { }

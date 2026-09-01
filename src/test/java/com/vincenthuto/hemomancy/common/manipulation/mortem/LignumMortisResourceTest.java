@@ -1,11 +1,11 @@
 package com.vincenthuto.hemomancy.common.manipulation.mortem;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import org.junit.jupiter.api.Test;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class LignumMortisResourceTest {
 	private static final Path ROOT = Path.of("src/main/resources");

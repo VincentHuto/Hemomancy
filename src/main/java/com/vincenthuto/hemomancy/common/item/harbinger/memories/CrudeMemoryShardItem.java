@@ -1,17 +1,16 @@
 package com.vincenthuto.hemomancy.common.item.harbinger.memories;
 
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.KnownManipulationGrantHelper;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.IKnownManipulations;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.ManipulationRetirementRules;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.ManipSlotHelper;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.IKnownManipulations;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.KnownManipulationGrantHelper;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.ManipSlotHelper;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.ManipulationRetirementRules;
 import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
 import com.vincenthuto.hemomancy.common.manipulation.ManipulationRankGates;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.BloodVolumeServerPacket;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.manips.KnownManipulationServerPacket;
-
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;

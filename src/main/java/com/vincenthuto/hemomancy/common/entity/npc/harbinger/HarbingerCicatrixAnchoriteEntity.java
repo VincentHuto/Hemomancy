@@ -2,13 +2,7 @@ package com.vincenthuto.hemomancy.common.entity.npc.harbinger;
 
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.IUnstainedProgress;
-import com.vincenthuto.hemomancy.common.entity.npc.dialogue.DialogueItemInquiryNodes;
-import com.vincenthuto.hemomancy.common.entity.npc.dialogue.DialogueHubFactory;
-import com.vincenthuto.hemomancy.common.entity.npc.dialogue.DialogueTree;
-import com.vincenthuto.hemomancy.common.entity.npc.dialogue.ProgressionDialogueNpc;
-import com.vincenthuto.hemomancy.common.entity.npc.dialogue.HarbingerCicatrixAnchoriteDialogueTrees;
-import com.vincenthuto.hemomancy.common.entity.npc.dialogue.AnchoriteProgressSnapshot;
-import com.vincenthuto.hemomancy.common.event.HarbingerAdvancementGranter;
+import com.vincenthuto.hemomancy.common.entity.npc.dialogue.*;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.dialogue.OpenDialoguePacket;
 import net.minecraft.server.level.ServerPlayer;

@@ -1,6 +1,10 @@
 package com.vincenthuto.hemomancy.common.recipe;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -8,12 +12,7 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.junit.jupiter.api.Test;
-
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class BloodStructureHitBlockTest {
 	private static final Path RECIPES = Path.of(

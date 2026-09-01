@@ -1,15 +1,19 @@
 package com.vincenthuto.hemomancy.client.screen.skilltree.harbinger;
 
+import com.vincenthuto.hemomancy.client.screen.manips.ManipulationIconResolver;
 import com.vincenthuto.hemomancy.client.screen.skilltree.util.*;
 import com.vincenthuto.hemomancy.client.screen.util.AbocipherText;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.EnumInitiatoryDegree;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
+import com.vincenthuto.hemomancy.common.init.ManipulationInit;
 import com.vincenthuto.hemomancy.common.init.ManipulationTreeInit;
 import com.vincenthuto.hemomancy.common.item.harbinger.memories.BloodMemoryItem;
 import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
 import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationRank;
 import com.vincenthuto.hemomancy.common.manipulation.ManipulationRankGates;
+import com.vincenthuto.hemomancy.common.manipulation.family.ManipulationFamilyRegistry;
+import com.vincenthuto.hemomancy.common.manipulation.family.ManipulationFormDefinition;
 import com.vincenthuto.hutoslib.client.HLTextUtils;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import net.minecraft.client.Minecraft;
@@ -29,7 +33,10 @@ public class ManipulationsTabController implements IProgressTab {
     private static final int COL_NODE_BG     = 0xCC1A0505;
     private static final int COL_NODE_BORDER_LOCK = 0xFF333333;
     private static final float INFO_PANEL_Z = 400.0F;
+    private static final float FAMILY_MENU_Z = INFO_PANEL_Z - 100.0F;
     private static final float MANIP_TOOLTIP_Z = INFO_PANEL_Z + 500.0F;
+    private static final int FAMILY_MENU_BG = 0xFF100306;
+    private static final int FAMILY_MENU_BORDER = 0xFF4A1018;
     private static final int INFO_PANEL_SHADOW = 0xAA000000;
     private static final int INFO_PANEL_MARGIN = 8;
     private static final int MANIP_PANEL_TOP_CLEARANCE = 24;
@@ -55,9 +62,12 @@ public class ManipulationsTabController implements IProgressTab {
     private int manipRingCenterX, manipRingCenterY;
     private final Map<ManipulationTreeEntry, int[]> manipPositions = new HashMap<>();
     private final Set<String> knownManipNames = new HashSet<>();
+	private final Map<String, Integer> masteryLevels = new HashMap<>();
     private final Map<String, ItemStack> manipMemoryItems = new HashMap<>();
     private int contentW, contentH;
     private ManipulationTreeEntry selectedEntry = null;
+	private String selectedFormName = "";
+	private ManipulationTreeEntry hoveredFamilyEntry;
     private int playerDegree;
     private int knownManipRefreshCooldown = 0;
     private int scarKnowledgeRefreshCooldown = 0;
@@ -237,11 +247,18 @@ public class ManipulationsTabController implements IProgressTab {
 
     private void cacheKnownManipulations() {
         knownManipNames.clear();
+		masteryLevels.clear();
         Minecraft mc = Minecraft.getInstance();
         if (mc.player != null) {
             HemoCapabilityAccess.getKnownManipulations(mc.player).ifPresent(cap -> {
-                for (BloodManipulation m : cap.getManipList()) {
-                    if (m != null && m.getName() != null) knownManipNames.add(m.getName());
+				for (var entry : cap.getKnownManips().entrySet()) {
+					BloodManipulation m = entry.getKey();
+					if (m == null || m.getName() == null) continue;
+					knownManipNames.add(m.getName());
+					if (entry.getValue() != null) {
+						String baseline = ManipulationFamilyRegistry.baselineId(m.getName());
+						masteryLevels.merge(baseline, entry.getValue().getCurrentLevel(), Math::max);
+					}
                 }
             });
         }
@@ -288,13 +305,20 @@ public class ManipulationsTabController implements IProgressTab {
                 manipRingCenterX, manipRingCenterY);
         scarTraceCache.render(gfx, ctx, panZoom);
         drawManipTendencyStar(gfx, ctx);
-        drawManipNodes(gfx, ctx);
+		drawManipNodes(gfx, ctx, mouseX, mouseY);
         ScarsTabView.drawNodes(gfx, ctx, scarState, panZoom, playerDegree, familyFilter.selected());
         FamilyFilterControlView.draw(gfx, ctx, familyLabel(), 0xFFCC8833, mouseX, mouseY);
     }
 
     @Override
     public void renderOverlay(GuiGraphics gfx, ProgressScreenContext ctx, int mouseX, int mouseY) {
+		ManipulationTreeEntry familyEntry = activeFamilyEntry();
+		if (familyEntry != null) {
+			gfx.enableScissor(ctx.guiLeft() + 2, ctx.guiTop() + 2,
+					ctx.guiLeft() + ctx.guiWidth() - 2, ctx.guiTop() + ctx.guiHeight() - 2);
+			drawFamilyRadialMenu(gfx, ctx, familyEntry, mouseX, mouseY);
+			gfx.disableScissor();
+		}
         ScarTreeEntry selectedScar = scarState.selectedEntry();
         if (selectedScar != null) ScarsTabView.drawDetails(gfx, ctx, selectedScar, scarState, playerDegree);
         else if (selectedEntry != null) drawManipInfoPanel(gfx, ctx, selectedEntry);
@@ -302,6 +326,7 @@ public class ManipulationsTabController implements IProgressTab {
 
     @Override
     public void renderTooltip(GuiGraphics gfx, ProgressScreenContext ctx, int mouseX, int mouseY) {
+		if (drawFamilySatelliteTooltip(gfx, ctx, mouseX, mouseY)) return;
         drawManipTooltip(gfx, ctx, mouseX, mouseY);
         ScarsTabView.drawTooltip(gfx, ctx, scarState, panZoom, playerDegree,
                 familyFilter.selected(), mouseX, mouseY);
@@ -348,7 +373,7 @@ public class ManipulationsTabController implements IProgressTab {
     }
 	private float animTime = 0f;
 
-    private void drawManipNodes(GuiGraphics gfx, ProgressScreenContext ctx) {
+    private void drawManipNodes(GuiGraphics gfx, ProgressScreenContext ctx, int mouseX, int mouseY) {
         animTime += 0.016f; // ~60 FPS approximation
 
 		float time = animTime;
@@ -364,7 +389,6 @@ public class ManipulationsTabController implements IProgressTab {
             BloodManipulation manip = entry.resolve();
             boolean known = knownManipNames.contains(entry.getManipName());
             boolean rankLocked = isManipRankLocked(manip);
-            boolean veilUnknown = shouldVeilUnknown(known, rankLocked);
             EnumNodeShape shape = entry.getNodeShape();
 
             int tendR = 128, tendG = 128, tendB = 128;
@@ -434,21 +458,184 @@ public class ManipulationsTabController implements IProgressTab {
                     gfx.drawCenteredString(ctx.font(), sym, nx, ny - 4, textCol);
                 }
 
-                if (manip != null && panZoom.zoom >= 0.7f) {
-                    String label = HLTextUtils.toProperCase(manip.getName().replace("_", " "));
-                    int labelCol = known ? (0xFF000000 | (tendR << 16) | (tendG << 8) | tendB) : 0xFF444444;
-                    int maxLabelW = Math.max(20, (int)(NODE_GAP_X * panZoom.zoom) - 4);
-                    List<String> lines = ScreenDrawUtils.wrapText(ctx.font(), label, maxLabelW);
-                    int ly = ny + hn + 3;
-                    for (String line : lines) {
-                        Component labelText = veilUnknown ? AbocipherText.veil(line) : Component.literal(line);
-                        gfx.drawCenteredString(ctx.font(), labelText, nx, ly, labelCol);
-                        ly += ctx.font().lineHeight;
-                    }
-                }
+				if (known) drawMasteryPips(gfx, nx, ny, hn, masteryLevel(entry.getManipName()), borderColor);
             }
         }
+		updateHoveredFamily(ctx, mouseX, mouseY);
     }
+
+	private int masteryLevel(String manipulationId) {
+		return masteryLevels.getOrDefault(ManipulationFamilyRegistry.baselineId(manipulationId), 0);
+	}
+
+	private void drawMasteryPips(GuiGraphics gfx, int centerX, int centerY, int halfNode,
+			int level, int activeColor) {
+		if (panZoom.zoom < 0.55F) return;
+		int pipSize = Math.max(2, Math.round(3 * panZoom.zoom));
+		int gap = Math.max(1, Math.round(panZoom.zoom));
+		int width = pipSize * 4 + gap * 3;
+		int x = centerX - width / 2;
+		int y = centerY - halfNode - pipSize - 3;
+		for (int i = 0; i < 4; i++) {
+			gfx.fill(x, y, x + pipSize, y + pipSize, i < level ? activeColor : 0xFF351515);
+			x += pipSize + gap;
+		}
+	}
+
+	private void updateHoveredFamily(ProgressScreenContext ctx, double mouseX, double mouseY) {
+		ManipulationTreeEntry node = manipNodeUnder(ctx, mouseX, mouseY);
+		if (node != null && knownManipNames.contains(node.getManipName())
+				&& ManipulationFamilyRegistry.family(node.getManipName()).isPresent()) {
+			hoveredFamilyEntry = node;
+			return;
+		}
+		if (hoveredFamilyEntry != null && !insideFamilyFan(ctx, hoveredFamilyEntry, mouseX, mouseY)) {
+			hoveredFamilyEntry = null;
+		}
+	}
+
+	private boolean insideFamilyFan(ProgressScreenContext ctx, ManipulationTreeEntry entry,
+			double mouseX, double mouseY) {
+		int[] position = manipPositions.get(entry);
+		if (position == null) return false;
+		int dx = (int) mouseX - sx(ctx, position[0]);
+		int dy = (int) mouseY - sy(ctx, position[1]);
+		int reach = familySatelliteRadius() + familySatelliteSize();
+		return dx * dx + dy * dy <= reach * reach;
+	}
+
+	private int familySatelliteRadius() {
+		return Math.max(28, Math.round(36 * panZoom.zoom));
+	}
+
+	private int familySatelliteSize() {
+		return Math.max(12, Math.round(16 * panZoom.zoom));
+	}
+
+	private List<FormSatellite> familySatellites(ProgressScreenContext ctx, ManipulationTreeEntry entry) {
+		if (!knownManipNames.contains(entry.getManipName())) return List.of();
+		var family = ManipulationFamilyRegistry.family(entry.getManipName()).orElse(null);
+		int[] position = manipPositions.get(entry);
+		if (family == null || position == null || family.forms().isEmpty()) return List.of();
+
+		int centerX = sx(ctx, position[0]);
+		int centerY = sy(ctx, position[1]);
+		int radius = familySatelliteRadius();
+		int size = familySatelliteSize();
+		int level = masteryLevel(entry.getManipName());
+		List<FormSatellite> satellites = new ArrayList<>(family.forms().size());
+		for (int i = 0; i < family.forms().size(); i++) {
+			ManipulationFormDefinition form = family.forms().get(i);
+			double angle = -Math.PI / 2 + Math.PI * 2 * i / family.forms().size();
+			int x = centerX + (int) Math.round(Math.cos(angle) * radius);
+			int y = centerY + (int) Math.round(Math.sin(angle) * radius);
+			satellites.add(new FormSatellite(entry, form, x, y, size, level >= form.requiredLevel()));
+		}
+		return satellites;
+	}
+
+	private FormSatellite familySatelliteUnder(ProgressScreenContext ctx, ManipulationTreeEntry entry,
+			double mouseX, double mouseY) {
+		for (FormSatellite satellite : familySatellites(ctx, entry)) {
+			int half = satellite.size() / 2;
+			if (mouseX >= satellite.x() - half && mouseX < satellite.x() + half
+					&& mouseY >= satellite.y() - half && mouseY < satellite.y() + half) return satellite;
+		}
+		return null;
+	}
+
+	private void drawFamilySatellites(GuiGraphics gfx, ProgressScreenContext ctx,
+			ManipulationTreeEntry entry, int mouseX, int mouseY) {
+		for (FormSatellite satellite : familySatellites(ctx, entry)) {
+			int half = satellite.size() / 2;
+			boolean hovered = mouseX >= satellite.x() - half && mouseX < satellite.x() + half
+					&& mouseY >= satellite.y() - half && mouseY < satellite.y() + half;
+			int border = hovered || satellite.form().id().equals(selectedFormName) ? 0xFFFFAA44 : 0xFF772222;
+			gfx.fill(satellite.x() - half - 2, satellite.y() - half - 2,
+					satellite.x() + half + 2, satellite.y() + half + 2, border);
+			gfx.fill(satellite.x() - half - 1, satellite.y() - half - 1,
+					satellite.x() + half + 1, satellite.y() + half + 1, 0xEE180505);
+			drawResolvedIcon(gfx, satellite.form().id(), satellite.x(), satellite.y(), satellite.size());
+			if (!satellite.unlocked()) {
+				gfx.fill(satellite.x() - half, satellite.y() - half,
+						satellite.x() + half, satellite.y() + half, 0xCC000000);
+				gfx.drawCenteredString(ctx.font(), Integer.toString(satellite.form().requiredLevel()),
+						satellite.x(), satellite.y() - 4, 0xFFAA4444);
+			}
+		}
+	}
+
+	private void drawFamilyRadialMenu(GuiGraphics gfx, ProgressScreenContext ctx,
+			ManipulationTreeEntry entry, int mouseX, int mouseY) {
+		int[] position = manipPositions.get(entry);
+		if (position == null) return;
+		int centerX = sx(ctx, position[0]);
+		int centerY = sy(ctx, position[1]);
+		int menuRadius = familySatelliteRadius() + familySatelliteSize() / 2 + 7;
+		var pose = gfx.pose();
+		pose.pushPose();
+		pose.translate(0, 0, FAMILY_MENU_Z);
+		NodeShapeRenderer.drawFill(gfx, EnumNodeShape.CIRCLE, centerX, centerY,
+				menuRadius + 2, FAMILY_MENU_BORDER);
+		NodeShapeRenderer.drawFill(gfx, EnumNodeShape.CIRCLE, centerX, centerY, menuRadius, FAMILY_MENU_BG);
+		int centerHalf = halfNode();
+		HarbingerChromeRenderer.drawNodeFrame(gfx, entry.getNodeShape(), centerX, centerY, centerHalf,
+				COL_NODE_BG, 0xFFFFAA44, HarbingerChromeRenderer.State.ACTIVE);
+		drawResolvedIcon(gfx, entry.getManipName(), centerX, centerY, Math.max(12, centerHalf * 2 - 4));
+		drawMasteryPips(gfx, centerX, centerY, centerHalf,
+				masteryLevel(entry.getManipName()), 0xFFFFAA44);
+		drawFamilySatellites(gfx, ctx, entry, mouseX, mouseY);
+		pose.popPose();
+	}
+
+	private static void drawResolvedIcon(GuiGraphics gfx, String manipulationId,
+			int centerX, int centerY, int size) {
+		int x = centerX - size / 2;
+		int y = centerY - size / 2;
+		gfx.blit(ManipulationIconResolver.MEMORY_BASE, x, y, size, size, 0F, 0F, 16, 16, 16, 16);
+		gfx.blit(ManipulationIconResolver.overlay(manipulationId), x, y, size, size, 0F, 0F, 16, 16, 16, 16);
+	}
+
+	private ManipulationTreeEntry activeFamilyEntry() {
+		if (selectedEntry != null && ManipulationFamilyRegistry.family(selectedEntry.getManipName()).isPresent()) {
+			return selectedEntry;
+		}
+		return hoveredFamilyEntry;
+	}
+
+	private boolean drawFamilySatelliteTooltip(GuiGraphics gfx, ProgressScreenContext ctx,
+			int mouseX, int mouseY) {
+		ManipulationTreeEntry entry = activeFamilyEntry();
+		if (entry == null) return false;
+		FormSatellite satellite = familySatelliteUnder(ctx, entry, mouseX, mouseY);
+		if (satellite == null) return false;
+
+		List<Component> tip = new ArrayList<>();
+		if (!satellite.unlocked()) {
+			tip.add(Component.literal("Requires mastery level " + satellite.form().requiredLevel())
+					.withStyle(s -> s.withColor(0xAA4444)));
+		} else {
+			BloodManipulation manipulation = ManipulationInit.getByName(satellite.form().id());
+			String name = manipulation != null ? manipulation.getName() : satellite.form().id();
+			tip.add(Component.literal(HLTextUtils.toProperCase(name.replace('_', ' ')))
+					.withStyle(s -> s.withColor(0xFFAA44).withBold(true)));
+			if (manipulation != null) {
+				tip.add(Component.literal(HLTextUtils.toProperCase(manipulation.getType().name())
+						+ " · " + (int) manipulation.getCost() + " mL · "
+						+ cooldownText(manipulation.getCooldownTicks())).withStyle(s -> s.withColor(0xAAAAAA)));
+			}
+		}
+		var pose = gfx.pose();
+		pose.pushPose();
+		pose.translate(0, 0, MANIP_TOOLTIP_Z);
+		gfx.renderTooltip(ctx.font(), tip, Optional.empty(), mouseX, mouseY);
+		pose.popPose();
+		return true;
+	}
+
+	private record FormSatellite(ManipulationTreeEntry entry, ManipulationFormDefinition form,
+			int x, int y, int size, boolean unlocked) {
+	}
 
     private void drawManipTooltip(GuiGraphics gfx, ProgressScreenContext ctx, int mouseX, int mouseY) {
         boolean insideGui = mouseX >= ctx.guiLeft() && mouseX < ctx.guiLeft() + ctx.guiWidth()
@@ -528,10 +715,10 @@ public class ManipulationsTabController implements IProgressTab {
     }
 
     private void drawManipInfoPanel(GuiGraphics gfx, ProgressScreenContext ctx, ManipulationTreeEntry entry) {
-        BloodManipulation manip = entry.resolve();
+		BloodManipulation manip = selectedManipulation(entry);
         if (manip == null) return;
 
-        boolean known = knownManipNames.contains(entry.getManipName());
+		boolean known = knownManipNames.contains(manip.getName());
         boolean rankLocked = isManipRankLocked(manip);
         boolean veilUnknown = shouldVeilUnknown(known, rankLocked);
 
@@ -557,7 +744,7 @@ public class ManipulationsTabController implements IProgressTab {
                 : manipDescriptionLines(ctx, manip, maxW - 8);
         int descriptionH = descriptionHeight(descriptionLines);
 
-        ItemStack memoryStack = manipMemoryItems.get(entry.getManipName());
+		ItemStack memoryStack = manipMemoryItems.get(manip.getName());
         RecipeLookup.FoundRecipe foundRecipe = (!rankLocked && memoryStack != null && !memoryStack.isEmpty())
                 ? RecipeLookup.find(memoryStack) : null;
         int recipeH = MiniRecipeRenderer.estimateHeight(foundRecipe);
@@ -593,7 +780,11 @@ public class ManipulationsTabController implements IProgressTab {
         int tx = 6;
         int ty = 6;
 
-        if (!rankLocked && memoryStack != null && !memoryStack.isEmpty()) gfx.renderItem(memoryStack, tx, ty);
+		if (!rankLocked && memoryStack != null && !memoryStack.isEmpty()) {
+			gfx.renderItem(memoryStack, tx, ty);
+		} else if (!rankLocked && !selectedFormName.isEmpty()) {
+			drawResolvedIcon(gfx, manip.getName(), tx + 8, ty + 8, 16);
+		}
         int nameCol = rankLocked ? 0xFF555555 : tendCol;
         for (int li = 0; li < nameLines.size(); li++) {
             int nx = li == 0 ? tx + 20 : tx + 4;
@@ -635,6 +826,16 @@ public class ManipulationsTabController implements IProgressTab {
         }
         pose.popPose();
     }
+
+	private BloodManipulation selectedManipulation(ManipulationTreeEntry entry) {
+		if (!selectedFormName.isEmpty()
+				&& ManipulationFamilyRegistry.baselineId(selectedFormName)
+				.equals(ManipulationFamilyRegistry.baselineId(entry.getManipName()))) {
+			BloodManipulation form = ManipulationInit.getByName(selectedFormName);
+			if (form != null) return form;
+		}
+		return entry.resolve();
+	}
 
     private List<String> manipDescriptionLines(ProgressScreenContext ctx, BloodManipulation manip, int maxW) {
         Component description = Component.translatable(manipDescriptionKey(manip));
@@ -762,23 +963,41 @@ public class ManipulationsTabController implements IProgressTab {
     public boolean mouseClicked(ProgressScreenContext ctx, double mx, double my, int btn) {
         if (FamilyFilterControlView.bounds(ctx).contains(mx, my)) {
             familyFilter.cycle(btn == 1 ? -1 : 1);
-            if (selectedEntry != null && !isVisibleFamily(selectedEntry)) selectedEntry = null;
+			if (selectedEntry != null && !isVisibleFamily(selectedEntry)) {
+				selectedEntry = null;
+				selectedFormName = "";
+			}
             ScarTreeEntry selectedScar = scarState.selectedEntry();
             if (selectedScar != null && !familyFilter.includes(selectedScar.tendency())) scarState.closeDetails();
             return true;
         }
         if (btn != 0) return false;
+		ManipulationTreeEntry familyEntry = activeFamilyEntry();
+		if (familyEntry != null) {
+			FormSatellite satellite = familySatelliteUnder(ctx, familyEntry, mx, my);
+			if (satellite != null) {
+				if (satellite.unlocked()) {
+					scarState.closeDetails();
+					selectedEntry = satellite.entry();
+					selectedFormName = satellite.form().id();
+				}
+				return true;
+			}
+		}
         ScarTreeEntry scarHit = ScarsTabView.nodeUnder(ctx, scarState, panZoom,
                 familyFilter.selected(), mx, my);
         if (scarHit != null) {
             selectedEntry = null;
+			selectedFormName = "";
             scarState.toggleSelection(scarHit.id().toString());
             return true;
         }
         ManipulationTreeEntry hit = manipNodeUnder(ctx, mx, my);
         if (hit != null) {
             scarState.closeDetails();
-            selectedEntry = (selectedEntry == hit) ? null : hit;
+			if (selectedEntry == hit && selectedFormName.isEmpty()) selectedEntry = null;
+			else selectedEntry = hit;
+			selectedFormName = "";
             return true;
         }
         return false;
@@ -797,6 +1016,7 @@ public class ManipulationsTabController implements IProgressTab {
         boolean closed = scarState.closeDetails();
         if (selectedEntry != null) {
             selectedEntry = null;
+			selectedFormName = "";
             closed = true;
         }
         return closed;

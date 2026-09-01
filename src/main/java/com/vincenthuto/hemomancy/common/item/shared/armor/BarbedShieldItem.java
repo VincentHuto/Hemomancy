@@ -1,7 +1,7 @@
 package com.vincenthuto.hemomancy.common.item.shared.armor;
 
 import com.vincenthuto.hemomancy.client.item.HemoClientItemExtensionsProvider;
-import com.vincenthuto.hemomancy.client.render.item.hematic.BarbedShieldItemRenderer;
+import com.vincenthuto.hemomancy.client.render.item.harbinger.BarbedShieldItemRenderer;
 import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;

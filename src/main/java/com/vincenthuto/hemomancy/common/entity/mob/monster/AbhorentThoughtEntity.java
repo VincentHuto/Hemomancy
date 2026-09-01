@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.entity.mob.monster;
 
+import com.vincenthuto.hemomancy.common.entity.animation.AnimationCycleManager;
 import com.vincenthuto.hemomancy.common.init.SoundInit;
 import net.minecraft.core.BlockPos;
 import net.minecraft.sounds.SoundEvent;
@@ -23,7 +24,6 @@ import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.dimension.DimensionType;
 
 import javax.annotation.Nullable;
-import com.vincenthuto.hemomancy.common.entity.animation.AnimationCycleManager;
 
 public class AbhorentThoughtEntity extends Monster {
 

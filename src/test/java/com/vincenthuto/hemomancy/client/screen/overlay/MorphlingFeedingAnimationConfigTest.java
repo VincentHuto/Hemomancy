@@ -1,13 +1,11 @@
 package com.vincenthuto.hemomancy.client.screen.overlay;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
+import com.vincenthuto.hemomancy.config.HemoClientConfig;
+import net.neoforged.neoforge.common.ModConfigSpec;
 import org.junit.jupiter.api.Test;
 
-import com.vincenthuto.hemomancy.config.HemoClientConfig;
-
-import net.neoforged.neoforge.common.ModConfigSpec;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 final class MorphlingFeedingAnimationConfigTest {
     @Test

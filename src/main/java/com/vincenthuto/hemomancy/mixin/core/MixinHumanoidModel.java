@@ -1,8 +1,8 @@
 package com.vincenthuto.hemomancy.mixin.core;
 
-import com.vincenthuto.hemomancy.client.rite.CardinalRiteStaffPlantingClientState;
 import com.vincenthuto.hemomancy.client.player.PlayerAnimationClientState;
 import com.vincenthuto.hemomancy.client.player.WarpChairPlayerPose;
+import com.vincenthuto.hemomancy.client.rite.CardinalRiteStaffPlantingClientState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.world.entity.LivingEntity;

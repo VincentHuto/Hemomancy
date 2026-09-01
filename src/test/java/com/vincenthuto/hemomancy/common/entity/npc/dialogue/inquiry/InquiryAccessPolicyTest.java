@@ -1,8 +1,8 @@
 package com.vincenthuto.hemomancy.common.entity.npc.dialogue.inquiry;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class InquiryAccessPolicyTest {
     @Test

@@ -1,6 +1,6 @@
 package com.vincenthuto.hemomancy.common.item.harbinger.tool;
 
-import com.vincenthuto.hemomancy.common.block.harbinger.EngramBlock;
+import com.vincenthuto.hemomancy.common.block.harbinger.rite.EngramBlock;
 import com.vincenthuto.hemomancy.common.init.BlockInit;
 
 import net.minecraft.core.BlockPos;

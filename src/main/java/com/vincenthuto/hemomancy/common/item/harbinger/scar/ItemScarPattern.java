@@ -1,15 +1,12 @@
 package com.vincenthuto.hemomancy.common.item.harbinger.scar;
 
-import com.vincenthuto.hemomancy.client.item.HemoClientItemExtensionsProvider;
-
-
 import com.vincenthuto.hemomancy.Hemomancy;
+import com.vincenthuto.hemomancy.client.item.HemoClientItemExtensionsProvider;
 import com.vincenthuto.hemomancy.client.render.item.ScarPatternItemRenderer;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.init.RecipeInit;
 import com.vincenthuto.hemomancy.common.recipe.ScarRecipe;
 import com.vincenthuto.hemomancy.common.recipe.serializer.ScarRecipeSerializer;
-
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.core.component.DataComponents;

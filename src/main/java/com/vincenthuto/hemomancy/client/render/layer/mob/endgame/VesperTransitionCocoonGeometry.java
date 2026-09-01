@@ -1,8 +1,8 @@
 package com.vincenthuto.hemomancy.client.render.layer.mob.endgame;
 
+import com.vincenthuto.hemomancy.client.render.world.SanguineTendrilRibbonRenderer;
 import net.minecraft.util.Mth;
 import net.minecraft.world.phys.Vec3;
-import com.vincenthuto.hemomancy.client.render.world.SanguineTendrilRibbonRenderer;
 
 import java.util.ArrayList;
 import java.util.List;

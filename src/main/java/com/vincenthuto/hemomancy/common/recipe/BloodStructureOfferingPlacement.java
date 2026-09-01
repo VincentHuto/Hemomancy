@@ -1,10 +1,10 @@
 package com.vincenthuto.hemomancy.common.recipe;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.item.ItemStack;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /** Shared deterministic perimeter layout for recipe-defined offering braziers. */
 public final class BloodStructureOfferingPlacement {

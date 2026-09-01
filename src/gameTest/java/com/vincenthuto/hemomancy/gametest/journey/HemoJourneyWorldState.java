@@ -1,8 +1,5 @@
 package com.vincenthuto.hemomancy.gametest.journey;
 
-import java.util.ArrayList;
-import java.util.UUID;
-
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodVolumeEvents;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.Bloodline;
@@ -14,7 +11,6 @@ import com.vincenthuto.hemomancy.common.rite.CardinalRiteSavedData;
 import com.vincenthuto.hemomancy.common.rite.harbinger.CardinalRiteAllyService;
 import com.vincenthuto.hemomancy.common.worldgen.ChamberOfWillManager;
 import com.vincenthuto.hemomancy.common.worldgen.ChamberVisitService;
-
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
@@ -24,10 +20,13 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.Mob;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Blocks;
+
+import java.util.ArrayList;
+import java.util.UUID;
 
 /** Protects global bloodline and per-dimension Fane data touched by the journey. */
 final class HemoJourneyWorldState {

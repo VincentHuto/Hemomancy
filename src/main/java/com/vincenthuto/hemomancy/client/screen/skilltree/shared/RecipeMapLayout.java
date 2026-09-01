@@ -3,13 +3,7 @@ package com.vincenthuto.hemomancy.client.screen.skilltree.shared;
 import com.vincenthuto.hemomancy.client.screen.skilltree.util.ConcentricTreeGeometry;
 import net.minecraft.resources.ResourceLocation;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Predicate;
 
 public final class RecipeMapLayout {

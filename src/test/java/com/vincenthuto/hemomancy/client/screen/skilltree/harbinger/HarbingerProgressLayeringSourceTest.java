@@ -13,6 +13,7 @@ public final class HarbingerProgressLayeringSourceTest {
 	public static void main(String[] args) throws IOException {
 		String progressScreen = read("src/main/java/com/vincenthuto/hemomancy/client/screen/skilltree/harbinger/HarbingerProgressScreen.java");
 		String manipTab = read("src/main/java/com/vincenthuto/hemomancy/client/screen/skilltree/harbinger/ManipulationsTabController.java");
+		String skillsTab = read("src/main/java/com/vincenthuto/hemomancy/client/screen/skilltree/shared/SkillsTabController.java");
 		String materialsView = read("src/main/java/com/vincenthuto/hemomancy/client/screen/skilltree/shared/MaterialsTabView.java");
 		String screenDrawUtils = read("src/main/java/com/vincenthuto/hemomancy/client/screen/skilltree/util/ScreenDrawUtils.java");
 
@@ -25,7 +26,7 @@ public final class HarbingerProgressLayeringSourceTest {
 		assertContains("materials tooltip renders above selected material details",
 				materialsView, "pose.translate(0.0F, 0.0F, MATERIAL_TOOLTIP_Z)");
 		assertContains("harbinger screen defines a high-z chrome layer",
-				progressScreen, "SCREEN_CHROME_Z = 400.0F");
+				progressScreen, "SCREEN_CHROME_Z = 200.0F");
 		assertContains("harbinger tabs render above node item stacks",
 				progressScreen, "drawTabsAboveCanvas(gfx, mouseX, mouseY)");
 		assertContains("harbinger tab chrome pushes above item depth",
@@ -66,6 +67,10 @@ public final class HarbingerProgressLayeringSourceTest {
 				manipTab, "pose.translate(panelX, panelY, INFO_PANEL_Z)");
 		assertContains("manipulation detail panel renders its recipe while elevated",
 				manipTab, "MiniRecipeRenderer.draw(gfx, ctx.font(), foundRecipe, tx, ty, maxW, tendCol, MiniRecipeRenderer.BLOOD)");
+		assertContains("skills tooltip defines a layer above filter controls",
+				skillsTab, "SKILL_TOOLTIP_Z = 900.0F");
+		assertContains("skills tooltip renders on its named layer",
+				skillsTab, "pose.translate(0.0F, 0.0F, SKILL_TOOLTIP_Z)");
 		assertContains("tab helper uses opaque active backgrounds",
 				screenDrawUtils, "tab.active() ? 0xFF1A0505");
 		assertContains("tab helper uses opaque hovered backgrounds",

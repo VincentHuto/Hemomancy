@@ -1,20 +1,20 @@
 package com.vincenthuto.hemomancy;
 
-import com.vincenthuto.hemomancy.common.block.harbinger.EngramTextureCache;
+import com.vincenthuto.hemomancy.common.block.harbinger.rite.EngramTextureCache;
+import com.vincenthuto.hemomancy.common.block.inscription.DiscoveryInscriptionLoader;
 import com.vincenthuto.hemomancy.common.capability.HemoAttachmentTypes;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityRegistrar;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.ManipulationRetirementRules;
 import com.vincenthuto.hemomancy.common.capability.player.shared.knowledge.discovery.LiberDiscoveryEvents;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.UnstainedProgressEvents;
 import com.vincenthuto.hemomancy.common.data.book.BloodStructurePageTemplate;
-import com.vincenthuto.hemomancy.common.block.inscription.DiscoveryInscriptionLoader;
-import com.vincenthuto.hemomancy.common.rite.sigil.IchorianSigilLoader;
-import com.vincenthuto.hemomancy.common.rite.floor.CardinalRiteFloorLoader;
 import com.vincenthuto.hemomancy.common.entity.HemoEntityPredicates;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.inquiry.ItemInquiryLoader;
 import com.vincenthuto.hemomancy.common.init.*;
 import com.vincenthuto.hemomancy.common.item.harbinger.memories.LivingWeaponGraftItem;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
+import com.vincenthuto.hemomancy.common.rite.floor.CardinalRiteFloorLoader;
+import com.vincenthuto.hemomancy.common.rite.sigil.IchorianSigilLoader;
 import com.vincenthuto.hemomancy.common.testing.DevTestHooks;
 import com.vincenthuto.hemomancy.common.worldgen.ChamberOfWillManager;
 import com.vincenthuto.hemomancy.config.HemoConfig;

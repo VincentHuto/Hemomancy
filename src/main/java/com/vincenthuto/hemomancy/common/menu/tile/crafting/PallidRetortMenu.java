@@ -4,7 +4,7 @@ import com.vincenthuto.hemomancy.common.init.ContainerInit;
 import com.vincenthuto.hemomancy.common.item.harbinger.BloodyFlaskItem;
 import com.vincenthuto.hemomancy.common.menu.slot.PallidRetortFlaskSlot;
 import com.vincenthuto.hemomancy.common.recipe.DistillationRecipe;
-import com.vincenthuto.hemomancy.common.tile.crafting.PallidRetortBlockEntity;
+import com.vincenthuto.hemomancy.common.tile.unstained.crafting.PallidRetortBlockEntity;
 import com.vincenthuto.hutoslib.common.registry.HLItemInit;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.player.Inventory;

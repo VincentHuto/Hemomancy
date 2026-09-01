@@ -1,21 +1,16 @@
 package com.vincenthuto.hemomancy.client.model.entity.boss.endgame;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.model.geom.ModelPart;
+import org.joml.Matrix4f;
+import org.junit.jupiter.api.Test;
 
+import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.lang.reflect.Method;
 import java.nio.file.Path;
 
-import javax.imageio.ImageIO;
-
-import org.junit.jupiter.api.Test;
-import org.joml.Matrix4f;
-
-import com.mojang.blaze3d.vertex.PoseStack;
-import net.minecraft.client.model.geom.ModelPart;
+import static org.junit.jupiter.api.Assertions.*;
 
 final class VesperModelAssetContractTest {
 	private static final Path TEXTURE_ROOT = Path.of(

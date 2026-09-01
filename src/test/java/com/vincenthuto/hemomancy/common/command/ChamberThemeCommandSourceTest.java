@@ -1,9 +1,10 @@
 package com.vincenthuto.hemomancy.common.command;
 
+import org.junit.jupiter.api.Test;
+
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import org.junit.jupiter.api.Test;
 
 public final class ChamberThemeCommandSourceTest {
 	private static final Path COMMAND = Path.of(

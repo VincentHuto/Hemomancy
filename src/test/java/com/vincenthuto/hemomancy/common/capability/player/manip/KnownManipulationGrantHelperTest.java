@@ -1,8 +1,16 @@
 package com.vincenthuto.hemomancy.common.capability.player.manip;
 
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.KnownManipulationGrantHelper;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.ManipulationEquipHelper;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.EnumVeinSections;
+import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
+import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationRank;
+import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationType;
+import com.vincenthuto.hemomancy.common.manipulation.ManipLevel;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 
 public final class KnownManipulationGrantHelperTest {
@@ -15,6 +23,7 @@ public final class KnownManipulationGrantHelperTest {
 		duplicateEquipDoesNotAddAgain();
 		mechanicalManipulationsAreRestoredAndLocked();
 		mechanicalManipulationsDoNotConsumeNormalSlots();
+		newlyLearnedManipulationsHaveIndependentMastery();
 	}
 
 	private static void autoEquipUsesFreeSlotsOnly() {
@@ -88,6 +97,27 @@ public final class KnownManipulationGrantHelperTest {
 		assertEquals("total count includes two fixed mechanics", 5, equipped.size());
 		assertEquals("normal count respects memorized slots", 3,
 				ManipulationEquipHelper.countNormalEquippedNames(equipped));
+	}
+
+	private static void newlyLearnedManipulationsHaveIndependentMastery() {
+		var known = new LinkedHashMap<BloodManipulation, ManipLevel>();
+		var equipped = new ArrayList<String>();
+		BloodManipulation first = manipulation("mastery_test_first");
+		BloodManipulation second = manipulation("mastery_test_second");
+
+		KnownManipulationGrantHelper.learnAndEquipIfPossible(known, equipped, first, 2);
+		KnownManipulationGrantHelper.learnAndEquipIfPossible(known, equipped, second, 2);
+
+		ManipLevel firstLevel = known.get(first);
+		ManipLevel secondLevel = known.get(second);
+		assertTrue("first learned manipulation has mastery state", firstLevel != null);
+		assertTrue("second learned manipulation has mastery state", secondLevel != null);
+		assertFalse("learned manipulations do not share mastery state", firstLevel == secondLevel);
+	}
+
+	private static BloodManipulation manipulation(String name) {
+		return new BloodManipulation(name, 10, 0, 0, EnumManipulationType.QUICK,
+				EnumManipulationRank.HUMILIS, EnumBloodTendency.ANIMUS, EnumVeinSections.HEAD);
 	}
 
 	private static void assertEquals(String label, Object expected, Object actual) {

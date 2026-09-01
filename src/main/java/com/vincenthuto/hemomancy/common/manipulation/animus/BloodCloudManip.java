@@ -3,6 +3,7 @@ package com.vincenthuto.hemomancy.common.manipulation.animus;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.EnumVeinSections;
 import com.vincenthuto.hemomancy.common.entity.projectile.BloodCloudCarrierEntity;
+import com.vincenthuto.hemomancy.common.entity.projectile.CloudEntityBlood;
 import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
 import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationRank;
 import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationType;
@@ -14,10 +15,17 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 
 public class BloodCloudManip extends BloodManipulation {
+	private final Mode mode;
 
 	public BloodCloudManip(String name, double cost, double alignLevel,double xpCost, EnumManipulationType type,
 			EnumManipulationRank rank, EnumBloodTendency tendency, EnumVeinSections section) {
+		this(name, cost, alignLevel, xpCost, type, rank, tendency, section, Mode.BASELINE);
+	}
+
+	public BloodCloudManip(String name, double cost, double alignLevel, double xpCost, EnumManipulationType type,
+			EnumManipulationRank rank, EnumBloodTendency tendency, EnumVeinSections section, Mode mode) {
 		super(name, cost, alignLevel, xpCost, type, rank, tendency, section);
+		this.mode = mode;
 	}
 
 	@Override
@@ -30,6 +38,12 @@ public class BloodCloudManip extends BloodManipulation {
 
 			BloodCloudCarrierEntity fireballentity = new BloodCloudCarrierEntity(world, player, 0, 1, 0);
 			fireballentity.setDamageTendencies(getTend(), getSecondaryTend());
+			switch (mode) {
+				case EXPANSIVE -> fireballentity.configureCloud(3.0D, 120, CloudEntityBlood.Mode.STATIC);
+				case PURSUING -> fireballentity.configureCloud(2.0D, 160, CloudEntityBlood.Mode.PURSUING);
+				case TEMPEST -> fireballentity.configureCloud(3.0D, 160, CloudEntityBlood.Mode.TEMPEST);
+				default -> fireballentity.configureCloud(1.25D, 100, CloudEntityBlood.Mode.STATIC);
+			}
 			fireballentity.setDeltaMovement(looking.x * 0.5, looking.y * 0.5, looking.z * 0.5);
 			fireballentity.xPower = fireballentity.getDeltaMovement().x * 0.01D;
 			fireballentity.yPower = fireballentity.getDeltaMovement().y * 0.01D;
@@ -38,6 +52,13 @@ public class BloodCloudManip extends BloodManipulation {
 			fireballentity.setPos(player.getX(), player.getY(0.75D), fireballentity.getZ());
 			world.addFreshEntity(fireballentity);
 		}
+	}
+
+	public enum Mode {
+		BASELINE,
+		EXPANSIVE,
+		PURSUING,
+		TEMPEST
 	}
 
 }

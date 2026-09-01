@@ -2,7 +2,6 @@ package com.vincenthuto.hemomancy.common.capability.player.harbinger.musclememor
 
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.HemoAttachmentTypes;
-import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.item.harbinger.morphlings.EmberfangMorphlingItem;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.PacketSyncMuscleMemory;
 import net.minecraft.server.level.ServerPlayer;

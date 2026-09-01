@@ -7,11 +7,7 @@ import net.minecraft.nbt.Tag;
 import net.minecraft.resources.ResourceLocation;
 import net.neoforged.neoforge.common.util.INBTSerializable;
 
-import java.util.BitSet;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeMap;
-import java.util.TreeSet;
+import java.util.*;
 
 /**
  * Personal, copy-on-death notebook of correctly traced Ichorian Sigil nodes.

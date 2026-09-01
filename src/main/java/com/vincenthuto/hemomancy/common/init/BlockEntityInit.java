@@ -1,12 +1,24 @@
 package com.vincenthuto.hemomancy.common.init;
 
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.common.tile.*;
-import com.vincenthuto.hemomancy.common.tile.crafting.*;
-import com.vincenthuto.hemomancy.common.tile.functional.*;
-import com.vincenthuto.hemomancy.common.tile.puzzle.BloodBasinBlockEntity;
-import com.vincenthuto.hemomancy.common.tile.puzzle.BloodPylonBlockEntity;
-import com.vincenthuto.hemomancy.common.tile.puzzle.BloodTrialAltarBlockEntity;
+import com.vincenthuto.hemomancy.common.tile.harbinger.crafting.*;
+import com.vincenthuto.hemomancy.common.tile.harbinger.decoration.*;
+import com.vincenthuto.hemomancy.common.tile.harbinger.functional.*;
+import com.vincenthuto.hemomancy.common.tile.harbinger.plant.GourdvineTapBlockEntity;
+import com.vincenthuto.hemomancy.common.tile.harbinger.puzzle.BloodBasinBlockEntity;
+import com.vincenthuto.hemomancy.common.tile.harbinger.puzzle.BloodPylonBlockEntity;
+import com.vincenthuto.hemomancy.common.tile.harbinger.puzzle.BloodTrialAltarBlockEntity;
+import com.vincenthuto.hemomancy.common.tile.harbinger.puzzle.SaintSarcophagusBlockEntity;
+import com.vincenthuto.hemomancy.common.tile.harbinger.rite.IronBrazierBlockEntity;
+import com.vincenthuto.hemomancy.common.tile.harbinger.rite.SuspendedBloodCrystalBlockEntity;
+import com.vincenthuto.hemomancy.common.tile.harbinger.rite.SuspendedVivianiteBlockEntity;
+import com.vincenthuto.hemomancy.common.tile.inscription.DictationTableBlockEntity;
+import com.vincenthuto.hemomancy.common.tile.inscription.DiscoveryInscriptionBlockEntity;
+import com.vincenthuto.hemomancy.common.tile.shared.FillerBlockEntity;
+import com.vincenthuto.hemomancy.common.tile.unstained.SuspendedCleansedBloodCrystalBlockEntity;
+import com.vincenthuto.hemomancy.common.tile.unstained.crafting.PallidRetortBlockEntity;
+import com.vincenthuto.hemomancy.common.tile.unstained.crafting.StillwaterCondenserBlockEntity;
+import com.vincenthuto.hemomancy.common.tile.unstained.functional.AltarOfCleansingBlockEntity;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.neoforged.neoforge.registries.DeferredHolder;
@@ -61,9 +73,9 @@ public class BlockEntityInit {
 			.register("dendritic_distributor", () -> BlockEntityType.Builder
 					.of(DendriticDistributorBlockEntity::new, BlockInit.dendritic_distributor.get()).build(null));
 
-	public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<com.vincenthuto.hemomancy.common.tile.functional.ConsecratedBloodwellBlockEntity>> consecrated_bloodwell = TILES
+	public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<com.vincenthuto.hemomancy.common.tile.harbinger.functional.ConsecratedBloodwellBlockEntity>> consecrated_bloodwell = TILES
 			.register("consecrated_bloodwell", () -> BlockEntityType.Builder
-					.of(com.vincenthuto.hemomancy.common.tile.functional.ConsecratedBloodwellBlockEntity::new,
+					.of(com.vincenthuto.hemomancy.common.tile.harbinger.functional.ConsecratedBloodwellBlockEntity::new,
 							BlockInit.consecrated_bloodwell.get()).build(null));
 
 	public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<HematicStakeBlockEntity>> hematic_stake = TILES
@@ -74,9 +86,9 @@ public class BlockEntityInit {
 			.register("gourdvine_tap", () -> BlockEntityType.Builder
 					.of(GourdvineTapBlockEntity::new, BlockInit.gourdvine_tap.get()).build(null));
 
-	public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<com.vincenthuto.hemomancy.common.tile.functional.CovenantThroneBlockEntity>> covenant_throne = TILES
+	public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<com.vincenthuto.hemomancy.common.tile.harbinger.functional.CovenantThroneBlockEntity>> covenant_throne = TILES
 			.register("covenant_throne", () -> BlockEntityType.Builder
-					.of(com.vincenthuto.hemomancy.common.tile.functional.CovenantThroneBlockEntity::new,
+					.of(com.vincenthuto.hemomancy.common.tile.harbinger.functional.CovenantThroneBlockEntity::new,
 							BlockInit.covenant_throne.get()).build(null));
 
 	public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<WarpChairBlockEntity>> warp_chair = TILES
@@ -91,9 +103,9 @@ public class BlockEntityInit {
 			.register("hematic_armature", () -> BlockEntityType.Builder
 					.of(HematicArmatureBlockEntity::new, BlockInit.hematic_armature.get()).build(null));
 
-	public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<com.vincenthuto.hemomancy.common.tile.functional.SanguineVigilBlockEntity>> sanguine_vigil = TILES
+	public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<com.vincenthuto.hemomancy.common.tile.harbinger.functional.SanguineVigilBlockEntity>> sanguine_vigil = TILES
 			.register("sanguine_vigil", () -> BlockEntityType.Builder
-					.of(com.vincenthuto.hemomancy.common.tile.functional.SanguineVigilBlockEntity::new,
+					.of(com.vincenthuto.hemomancy.common.tile.harbinger.functional.SanguineVigilBlockEntity::new,
 							BlockInit.sanguine_vigil.get()).build(null));
 
 	public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<SerpentineIdolBlockEntity>> serpentine_idol = TILES

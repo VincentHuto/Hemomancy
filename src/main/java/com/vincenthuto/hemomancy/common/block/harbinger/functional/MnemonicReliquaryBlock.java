@@ -1,9 +1,10 @@
 package com.vincenthuto.hemomancy.common.block.harbinger.functional;
 
+import com.vincenthuto.hemomancy.common.block.shared.WaterloggedBlockSupport;
 import com.vincenthuto.hemomancy.common.init.BlockEntityInit;
 import com.vincenthuto.hemomancy.common.menu.tile.functional.MnemonicReliquaryMenu;
-import com.vincenthuto.hemomancy.common.tile.functional.MnemonicReliquaryBlockEntity;
 import com.vincenthuto.hemomancy.common.mission.mnemonist.MnemonicReliquaryProgression;
+import com.vincenthuto.hemomancy.common.tile.harbinger.functional.MnemonicReliquaryBlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
@@ -17,6 +18,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityTicker;
@@ -24,15 +26,13 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.block.state.properties.DirectionProperty;
+import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.phys.BlockHitResult;
 
 import javax.annotation.Nullable;
-import com.vincenthuto.hemomancy.common.block.shared.WaterloggedBlockSupport;
-import net.minecraft.world.level.LevelAccessor;
-import net.minecraft.world.level.material.FluidState;
-import net.minecraft.world.level.block.state.properties.BlockStateProperties;
-import net.minecraft.world.level.block.state.properties.BooleanProperty;
 
 public class MnemonicReliquaryBlock extends Block implements EntityBlock, SimpleWaterloggedBlock {
 

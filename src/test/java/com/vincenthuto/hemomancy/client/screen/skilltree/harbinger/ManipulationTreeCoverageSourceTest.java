@@ -3,11 +3,7 @@ package com.vincenthuto.hemomancy.client.screen.skilltree.harbinger;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -17,6 +13,8 @@ public final class ManipulationTreeCoverageSourceTest {
 			Pattern.compile("MANIPS\\.register\\(\"([^\"]+)\"");
 	private static final Pattern TREE_REGISTER =
 			Pattern.compile("\\bregister\\(\"([^\"]+)\"");
+	private static final Pattern FAMILY_FORM =
+			Pattern.compile("\\bform\\(\"([^\"]+)\"");
 	private static final Pattern TREE_REGISTER_LINE =
 			Pattern.compile("\\bregister\\(\"([^\"]+)\",\\s*([^,]+),\\s*([^,\\)]+)"
 					+ "(?:,\\s*((?:\"[^\"]+\"\\s*,?\\s*)*))?\\)(.*?);", Pattern.DOTALL);
@@ -67,13 +65,16 @@ public final class ManipulationTreeCoverageSourceTest {
 	public static void main(String[] args) throws IOException {
 		String manipInit = read("src/main/java/com/vincenthuto/hemomancy/common/init/ManipulationInit.java");
 		String treeInit = read("src/main/java/com/vincenthuto/hemomancy/common/init/ManipulationTreeInit.java");
+		String familyRegistry = read("src/main/java/com/vincenthuto/hemomancy/common/manipulation/family/ManipulationFamilyRegistry.java");
 
 		Set<String> registeredManips = extract(MANIP_REGISTER, manipInit);
 		Set<String> treeNodes = extract(TREE_REGISTER, treeInit);
+		Set<String> familyForms = extract(FAMILY_FORM, familyRegistry);
 
 		List<String> missingNodes = new ArrayList<>();
 		for (String manip : registeredManips) {
-			if (!treeNodes.contains(manip) && !NON_TREE_MANIPULATIONS.contains(manip)) {
+			if (!treeNodes.contains(manip) && !NON_TREE_MANIPULATIONS.contains(manip)
+					&& !familyForms.contains(manip)) {
 				missingNodes.add(manip);
 			}
 		}

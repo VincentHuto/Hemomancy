@@ -6,7 +6,7 @@ import com.vincenthuto.hemomancy.common.item.harbinger.BloodyFlaskItem;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.BloodGourdItem;
 import com.vincenthuto.hemomancy.common.menu.slot.GhastlyAlembicFlaskSlot;
 import com.vincenthuto.hemomancy.common.recipe.DistillationRecipe;
-import com.vincenthuto.hemomancy.common.tile.crafting.GhastlyAlembicBlockEntity;
+import com.vincenthuto.hemomancy.common.tile.harbinger.crafting.GhastlyAlembicBlockEntity;
 import com.vincenthuto.hutoslib.common.registry.HLItemInit;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.player.Inventory;

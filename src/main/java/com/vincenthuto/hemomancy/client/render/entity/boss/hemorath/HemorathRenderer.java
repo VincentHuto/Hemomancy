@@ -1,11 +1,10 @@
 package com.vincenthuto.hemomancy.client.render.entity.boss.hemorath;
 
+import com.mojang.blaze3d.vertex.PoseStack;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.client.model.entity.boss.hemorath.HemorathModel;
 import com.vincenthuto.hemomancy.client.render.layer.mob.HemorathOverloadLayer;
 import com.vincenthuto.hemomancy.common.entity.boss.saint.hemorath.HemorathEntity;
-
-import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.renderer.entity.EntityRendererProvider.Context;
 import net.minecraft.client.renderer.entity.MobRenderer;
 import net.minecraft.resources.ResourceLocation;

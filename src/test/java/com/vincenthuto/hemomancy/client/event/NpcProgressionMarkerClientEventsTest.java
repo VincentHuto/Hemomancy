@@ -1,14 +1,10 @@
 package com.vincenthuto.hemomancy.client.event;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
-import com.mojang.blaze3d.vertex.BufferBuilder;
-import com.mojang.blaze3d.vertex.ByteBufferBuilder;
-import com.mojang.blaze3d.vertex.DefaultVertexFormat;
-import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.VertexFormat;
+import com.mojang.blaze3d.vertex.*;
 import net.minecraft.resources.ResourceLocation;
 import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 final class NpcProgressionMarkerClientEventsTest {
 	@Test

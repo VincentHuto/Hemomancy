@@ -12,11 +12,7 @@ import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.StringTag;
 import net.minecraft.resources.ResourceLocation;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.LinkedHashSet;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Hemomancy's book-knowledge implementation. Extends {@link BookKnowledge} for

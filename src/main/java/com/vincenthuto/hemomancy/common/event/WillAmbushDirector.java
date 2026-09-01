@@ -5,11 +5,7 @@ import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.IInitiatoryDegree;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.will.WillAmbushState;
-import com.vincenthuto.hemomancy.common.entity.mob.monster.will.WillAnchorEntity;
-import com.vincenthuto.hemomancy.common.entity.mob.monster.will.WillCombatRules;
-import com.vincenthuto.hemomancy.common.entity.mob.monster.will.WillCompositionRules;
-import com.vincenthuto.hemomancy.common.entity.mob.monster.will.WillEntity;
-import com.vincenthuto.hemomancy.common.entity.mob.monster.will.WillSanctuaryRules;
+import com.vincenthuto.hemomancy.common.entity.mob.monster.will.*;
 import com.vincenthuto.hemomancy.common.event.worldevent.BloodMoonEvents;
 import com.vincenthuto.hemomancy.common.event.worldevent.FoundingFaneSavedData;
 import com.vincenthuto.hemomancy.common.init.BlockInit;
@@ -19,8 +15,8 @@ import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.will.WillPresenceCuePacket;
 import com.vincenthuto.hemomancy.common.rite.harbinger.QliphothBloomSavedData;
 import com.vincenthuto.hemomancy.common.worldgen.ChamberOfWillManager;
-import com.vincenthuto.hemomancy.config.HemoServerConfig;
 import com.vincenthuto.hemomancy.config.HemoConfigValues;
+import com.vincenthuto.hemomancy.config.HemoServerConfig;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
@@ -28,7 +24,6 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.effect.MobEffectInstance;
-import net.minecraft.world.level.Level;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.level.levelgen.structure.Structure;
 import net.minecraft.world.level.levelgen.structure.StructureStart;
@@ -38,7 +33,6 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 
 import java.util.Comparator;
-import java.util.List;
 import java.util.Map;
 
 @EventBusSubscriber(modid = Hemomancy.MOD_ID)

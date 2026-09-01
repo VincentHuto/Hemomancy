@@ -318,7 +318,7 @@ public final class CraftingTabView {
 		}
 		RecipeMapInspectorLayout.IntRect preview = layout.previewContent();
 		gfx.enableScissor(preview.left(), preview.top(), preview.right(), preview.bottom());
-		if (recipe != null) drawModel(gfx, state, preview.left(), preview.top(), preview.width(), preview.height(), recipe);
+		if (recipe != null) drawModel(gfx, state, preview.left(), preview.top(), preview.width() - 18, preview.height(), recipe);
 		gfx.disableScissor();
 		RecipeMapInspectorView.drawPreviewControls(gfx, ctx, layout,
 				recipe == null ? 0 : state.craftingMaxLayer, state.craftingVisibleLayer,

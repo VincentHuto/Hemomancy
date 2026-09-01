@@ -1,20 +1,20 @@
 package com.vincenthuto.hemomancy.client.render.world;
 
-import com.vincenthuto.hutoslib.math.MultiblockPattern;
-import com.vincenthuto.hutoslib.math.MultiblockPatternKey;
 import com.vincenthuto.hemomancy.common.recipe.CardinalRiteRecipe;
 import com.vincenthuto.hemomancy.common.rite.floor.CardinalRiteFloorDefinition;
+import com.vincenthuto.hutoslib.math.MultiblockPattern;
+import com.vincenthuto.hutoslib.math.MultiblockPatternKey;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.registries.Registries;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.LinkedHashMap;
 import java.util.function.Predicate;
 
 public record MnemonicBlueprintPattern(List<Cell> cells, MnemonicBlueprintPlacement.Bounds bounds) {

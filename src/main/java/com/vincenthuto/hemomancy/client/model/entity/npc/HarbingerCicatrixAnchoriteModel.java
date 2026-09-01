@@ -3,7 +3,6 @@ package com.vincenthuto.hemomancy.client.model.entity.npc;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.common.entity.npc.harbinger.HarbingerVicarEntity;
 import com.vincenthuto.hutoslib.client.HLClientUtils;
 import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.model.geom.ModelLayerLocation;

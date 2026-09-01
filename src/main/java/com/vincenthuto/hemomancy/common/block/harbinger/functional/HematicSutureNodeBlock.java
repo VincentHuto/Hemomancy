@@ -2,7 +2,7 @@ package com.vincenthuto.hemomancy.common.block.harbinger.functional;
 
 import com.mojang.serialization.MapCodec;
 import com.vincenthuto.hemomancy.common.init.BlockEntityInit;
-import com.vincenthuto.hemomancy.common.tile.functional.HematicSutureNodeBlockEntity;
+import com.vincenthuto.hemomancy.common.tile.harbinger.functional.HematicSutureNodeBlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.DustParticleOptions;
 import net.minecraft.util.RandomSource;

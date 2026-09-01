@@ -1,11 +1,10 @@
 package com.vincenthuto.hemomancy.common.item.harbinger;
 
+import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-
-import javax.imageio.ImageIO;
 
 public final class HarbingerArmor3dModelResourceTest {
 	private static final Path SOURCE_ROOT = Path.of("src/main/java");
@@ -113,6 +112,8 @@ public final class HarbingerArmor3dModelResourceTest {
 				"ArmorItemDisplayTransformHelper.apply(displayContext, slot, poseStack)");
 		assertContains("silent archon renderer neutral item pose", silentArchonRenderer,
 				"ArmorItemModelPoseHelper.reset(model);");
+		assertContains("silent archon leggings gui pose moves up inside the inventory slot", silentArchonRenderer,
+				"if (slot == EquipmentSlot.LEGS) {\n\t\t\t\tposeStack.translate(0.0D, 0.2D, 0.0D);");
 		assertNotContains("silent archon renderer front-facing transform", silentArchonRenderer,
 				"Axis.YP.rotationDegrees(180.0F)");
 

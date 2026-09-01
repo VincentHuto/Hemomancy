@@ -1,10 +1,10 @@
 package com.vincenthuto.hemomancy.common.entity.npc.dialogue;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public record DialoguePresentation(ResourceLocation dialogueId, ResourceLocation styleId,
 		DialogueScreenMode mode, List<DialogueTopic> topics) {

@@ -6,16 +6,15 @@ import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodFlowLedger;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BorrowedBloodReserve;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.BloodTendencyEvents;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.VascularSystemEvents;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.HematicFortificationRules;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.EnumBloodFlow;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.HematicFortificationRules;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.VascularSystemEvents;
+import com.vincenthuto.hemomancy.common.item.harbinger.morphlings.*;
 import com.vincenthuto.hemomancy.common.mission.cicatrix_anchorite.VeinMasonAssignments;
 import com.vincenthuto.hemomancy.config.HemoServerConfig;
-import com.vincenthuto.hemomancy.common.item.harbinger.morphlings.IMorphling;
-import com.vincenthuto.hemomancy.common.item.harbinger.morphlings.*;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
 
 public final class MuscleMemoryActivationService {

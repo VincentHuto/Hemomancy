@@ -1,17 +1,16 @@
 package com.vincenthuto.hemomancy.common.item.harbinger;
 
-import static org.junit.jupiter.api.Assertions.assertArrayEquals;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import org.junit.jupiter.api.Test;
+
+import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import javax.imageio.ImageIO;
-import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 final class OrbOfPerspectiveResourceTest {
 	@Test

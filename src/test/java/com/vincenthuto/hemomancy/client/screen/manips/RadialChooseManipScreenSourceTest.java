@@ -16,6 +16,7 @@ public final class RadialChooseManipScreenSourceTest {
 		String menu = read("src/main/java/com/vincenthuto/hemomancy/client/screen/radial/GenericRadialMenu.java");
 		String itemStackRadial = read("src/main/java/com/vincenthuto/hemomancy/client/screen/radial/ItemStackRadialMenuItem.java");
 		String reliquary = read("src/main/java/com/vincenthuto/hemomancy/client/screen/tile/functional/MnemonicReliquaryScreen.java");
+		String iconResolver = read("src/main/java/com/vincenthuto/hemomancy/client/screen/manips/ManipulationIconResolver.java");
 
 		assertContains("radial screen imports fixed mechanical helper", screen,
 				"ManipulationEquipHelper");
@@ -29,16 +30,16 @@ public final class RadialChooseManipScreenSourceTest {
 				"manipulation.getName().equals(selectedManipName)");
 		assertContains("selected radial item applies the tint to the whole slice", screen,
 				"item.setBackgroundColor(SELECTED_MANIP_SLICE_TINT);");
-		assertContains("radial conjure blade uses the living blade memory overlay", screen,
+		assertContains("shared resolver maps conjure blade to the living blade memory overlay", iconResolver,
 				"case \"conjure_blade\" -> \"memory_living_blade_overlay\"");
-		assertContains("radial conjure staff uses the living staff memory overlay", screen,
+		assertContains("shared resolver maps conjure staff to the living staff memory overlay", iconResolver,
 				"case \"conjure_staff\" -> \"memory_living_staff_overlay\"");
-		assertContains("radial Lignum Mortis uses its item model overlay", screen,
+		assertContains("shared resolver maps Lignum Mortis to its item model overlay", iconResolver,
 				"case \"lignum_mortis\" -> \"memory_hemorrhage_overlay\"");
-		assertContains("saved loadouts use the same Lignum Mortis overlay", loadout,
-				"case \"lignum_mortis\" -> \"memory_hemorrhage_overlay\"");
-		assertContains("radial item construction uses the memory overlay helper", screen,
-				"memoryOverlayTexture(manipulation)");
+		assertContains("radial item construction uses the shared memory overlay resolver", screen,
+				"ManipulationIconResolver.overlay(manipulation.getName())");
+		assertContains("saved loadouts use the shared memory overlay resolver", loadout,
+				"ManipulationIconResolver.overlay(ref.id())");
 		assertContains("generic radial reads per-item background colors", menu,
 				"item.getBackgroundColor");
 		assertContains("absorption is added before projection for the top inner half", screen,

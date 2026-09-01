@@ -1,6 +1,5 @@
 package com.vincenthuto.hemomancy.common.network.capa.harbinger;
 
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.rite.IchorianKnowledge;
 import com.vincenthuto.hemomancy.common.rite.sigil.IchorianSigilAnatomy;
 import com.vincenthuto.hemomancy.common.rite.sigil.IchorianSigilDefinition;
 import com.vincenthuto.hemomancy.common.rite.sigil.IchorianSigilRegistry;

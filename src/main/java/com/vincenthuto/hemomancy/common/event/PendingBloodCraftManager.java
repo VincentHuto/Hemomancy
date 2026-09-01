@@ -1,7 +1,7 @@
 package com.vincenthuto.hemomancy.common.event;
 
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.livingstaff.LivingStaffBondHelper;
 import com.vincenthuto.hemomancy.common.block.harbinger.functional.HematicStakeBlock;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.livingstaff.LivingStaffBondHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;

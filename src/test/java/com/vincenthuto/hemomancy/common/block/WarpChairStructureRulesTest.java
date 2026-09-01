@@ -1,15 +1,14 @@
 package com.vincenthuto.hemomancy.common.block;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
+import com.vincenthuto.hemomancy.common.block.harbinger.functional.WarpChairShapeRules;
+import com.vincenthuto.hemomancy.common.block.harbinger.functional.WarpChairStructureRules;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.junit.jupiter.api.Test;
 
-import com.vincenthuto.hemomancy.common.block.harbinger.functional.WarpChairShapeRules;
-import com.vincenthuto.hemomancy.common.block.harbinger.functional.WarpChairStructureRules;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 final class WarpChairStructureRulesTest {
 	@Test

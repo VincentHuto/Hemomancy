@@ -1,17 +1,12 @@
 package com.vincenthuto.hemomancy.common.entity.npc.dialogue;
 
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-
-import com.vincenthuto.hemomancy.common.capability.player.shared.knowledge.DialogueKnowledge;
 import com.vincenthuto.hemomancy.common.capability.HemoAttachmentTypes;
+import com.vincenthuto.hemomancy.common.capability.player.shared.knowledge.DialogueKnowledge;
 import com.vincenthuto.hemomancy.common.mission.unstained.UnstainedObservances;
-
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
+
+import java.util.*;
 
 /** Builds presentation metadata around existing dialogue nodes without changing event semantics. */
 public final class DialogueHubFactory {

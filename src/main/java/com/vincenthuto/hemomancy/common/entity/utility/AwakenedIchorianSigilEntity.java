@@ -1,20 +1,20 @@
 package com.vincenthuto.hemomancy.common.entity.utility;
 
-import com.vincenthuto.hemomancy.common.rite.ActiveCardinalRite;
 import com.vincenthuto.hemomancy.common.recipe.CardinalRiteRecipe;
+import com.vincenthuto.hemomancy.common.rite.ActiveCardinalRite;
 import com.vincenthuto.hemomancy.common.rite.CardinalRiteFootprintRules;
 import com.vincenthuto.hemomancy.common.rite.CardinalRiteSavedData;
 import com.vincenthuto.hemomancy.common.rite.harbinger.HarbingerCardinalRiteEvents;
-import com.vincenthuto.hemomancy.common.rite.sigil.AwakenedIchorianSigilMotion;
 import com.vincenthuto.hemomancy.common.rite.sigil.AwakenedIchorianSigilFacing;
+import com.vincenthuto.hemomancy.common.rite.sigil.AwakenedIchorianSigilMotion;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.Mth;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.level.Level;

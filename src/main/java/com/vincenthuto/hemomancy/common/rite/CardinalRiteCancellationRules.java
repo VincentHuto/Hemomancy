@@ -1,10 +1,10 @@
 package com.vincenthuto.hemomancy.common.rite;
 
-import java.util.UUID;
-
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
+
+import java.util.UUID;
 
 /** Pure validation and timing rules for deliberately absorbing an active rite. */
 public final class CardinalRiteCancellationRules {

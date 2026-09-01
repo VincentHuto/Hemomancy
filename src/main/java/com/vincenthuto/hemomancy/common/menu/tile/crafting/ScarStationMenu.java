@@ -6,7 +6,7 @@ import com.vincenthuto.hemomancy.common.menu.slot.OutputSlot;
 import com.vincenthuto.hemomancy.common.menu.slot.ScarPatternSlot;
 import com.vincenthuto.hemomancy.common.menu.slot.ScarStationSlot;
 import com.vincenthuto.hemomancy.common.recipe.ScarRecipe;
-import com.vincenthuto.hemomancy.common.tile.crafting.ScarStationBlockEntity;
+import com.vincenthuto.hemomancy.common.tile.harbinger.crafting.ScarStationBlockEntity;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;

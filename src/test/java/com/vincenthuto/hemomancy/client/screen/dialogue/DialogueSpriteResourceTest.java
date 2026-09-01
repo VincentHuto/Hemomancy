@@ -1,16 +1,15 @@
 package com.vincenthuto.hemomancy.client.screen.dialogue;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import org.junit.jupiter.api.Test;
 
+import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-import javax.imageio.ImageIO;
-
-import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class DialogueSpriteResourceTest {
 	private static final Path ROOT = Path.of("src/main/resources/assets/hemomancy/textures/gui/sprites/dialogue");

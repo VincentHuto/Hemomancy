@@ -1,19 +1,14 @@
 package com.vincenthuto.hemomancy.client.screen.item.living;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Random;
-
 import com.mojang.blaze3d.platform.InputConstants;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.vincenthuto.hemomancy.client.screen.util.InventoryPanelTextures;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
-import com.vincenthuto.hemomancy.common.item.harbinger.morphlings.MorphlingItem;
 import com.vincenthuto.hemomancy.common.item.harbinger.morphlings.MorphlingIdentity;
+import com.vincenthuto.hemomancy.common.item.harbinger.morphlings.MorphlingItem;
 import com.vincenthuto.hemomancy.common.menu.MorphlingJarMenu;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.morphling.PacketUpdateLivingStaffMorph;
-
 import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
@@ -28,6 +23,10 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Random;
 
 public class MorphlingJarScreen extends AbstractContainerScreen<MorphlingJarMenu> {
 

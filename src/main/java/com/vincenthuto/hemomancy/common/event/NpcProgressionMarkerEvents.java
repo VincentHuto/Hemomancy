@@ -1,22 +1,21 @@
 package com.vincenthuto.hemomancy.common.event;
 
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.UUID;
-
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.DialogueAttention;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.ProgressionDialogueNpc;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.dialogue.PacketSyncNpcProgressionMarkers;
-
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.LivingEntity;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
+
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.UUID;
 
 @EventBusSubscriber(modid = Hemomancy.MOD_ID)
 public final class NpcProgressionMarkerEvents {

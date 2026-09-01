@@ -1,14 +1,16 @@
 package com.vincenthuto.hemomancy.client.screen.skilltree.shared;
 
-import com.vincenthuto.hemomancy.client.screen.skilltree.util.ProgressScreenContext;
 import com.vincenthuto.hemomancy.client.screen.skilltree.util.HarbingerChromeRenderer;
+import com.vincenthuto.hemomancy.client.screen.skilltree.util.ProgressScreenContext;
 import com.vincenthuto.hemomancy.client.screen.skilltree.util.ScreenDrawUtils;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.network.chat.Component;
 
 /** Common visual chrome for the Rites and Crafting recipe-map inspectors. */
 public final class RecipeMapInspectorView {
 	private static final int TOGGLE_WIDTH = 18;
 	private static final int TOGGLE_HEIGHT = 20;
+	private static final String PREVIEW_HINT = "Drag preview to rotate";
 
 	private RecipeMapInspectorView() {}
 
@@ -37,7 +39,11 @@ public final class RecipeMapInspectorView {
 				accentColor, mouseX, mouseY);
 		ScreenDrawUtils.drawHarbingerLayerButtonFrames(gfx, preview.right() - 18,
 				preview.top() + preview.height() / 2, maxLayer, accentColor, mouseX, mouseY);
-		gfx.drawCenteredString(ctx.font(), "Drag preview to rotate",
-				preview.left() + preview.width() / 2, layout.preview().bottom() - 11, 0x66888888);
+		var hintLines = ctx.font().split(Component.literal(PREVIEW_HINT), preview.width());
+		int hintY = layout.preview().bottom() + 4;
+		for (var line : hintLines) {
+			gfx.drawCenteredString(ctx.font(), line, preview.left() + preview.width() / 2, hintY, 0x66888888);
+			hintY += 9;
+		}
 	}
 }

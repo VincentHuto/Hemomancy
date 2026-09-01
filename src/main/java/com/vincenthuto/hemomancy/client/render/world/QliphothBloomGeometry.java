@@ -177,7 +177,7 @@ public final class QliphothBloomGeometry {
             double a = i * Math.PI * 2 / 5;
             List<Point> path = List.of(new Point(Math.cos(a) * .20, 6.25, Math.sin(a) * .20),
                     new Point(Math.cos(a) * .52, 7.15, Math.sin(a) * .52),
-                    new Point(Math.cos(a) * .76, 8.35, Math.sin(a) * .76));
+                    new Point(Math.cos(a) * .76, 7.5, Math.sin(a) * .76));
             path = bevel(animate(path, 600 + i, time, .07, false), .16);
             result.add(new Limb(path, profile(path.size(), .19, 0, true), 600 + i));
         }

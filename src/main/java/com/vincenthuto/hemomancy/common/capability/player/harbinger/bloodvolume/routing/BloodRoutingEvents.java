@@ -2,7 +2,7 @@ package com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume
 
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.HematicSutureNeedleItem;
-import com.vincenthuto.hemomancy.common.tile.functional.HematicSutureNodeBlockEntity;
+import com.vincenthuto.hemomancy.common.tile.harbinger.functional.HematicSutureNodeBlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionResult;

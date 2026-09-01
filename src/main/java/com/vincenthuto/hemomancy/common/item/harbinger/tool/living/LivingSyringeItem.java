@@ -2,9 +2,9 @@ package com.vincenthuto.hemomancy.common.item.harbinger.tool.living;
 
 import com.vincenthuto.hemomancy.client.particle.util.EntityParticleUtils;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
-import com.vincenthuto.hemomancy.common.item.harbinger.BloodVialItem;
 import com.vincenthuto.hemomancy.common.item.harbinger.BloodSamplingResult;
 import com.vincenthuto.hemomancy.common.item.harbinger.BloodSamplingRules;
+import com.vincenthuto.hemomancy.common.item.harbinger.BloodVialItem;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.RegistryAccess;

@@ -234,6 +234,16 @@ public class RenderTypeInit extends RenderType {
 						.setOverlayState(OVERLAY).createCompositeState(false));
 	}
 
+	public static RenderType firstPersonEnergySwirl(ResourceLocation location, float u, float v) {
+		return create("first_person_energy_swirl", DefaultVertexFormat.NEW_ENTITY, VertexFormat.Mode.QUADS, 256,
+				false, true,
+				RenderType.CompositeState.builder().setShaderState(RENDERTYPE_ENERGY_SWIRL_SHADER)
+						.setTextureState(new RenderStateShard.TextureStateShard(location, false, false))
+						.setTexturingState(new RenderStateShard.OffsetTexturingStateShard(u, v))
+						.setTransparencyState(ADDITIVE_TRANSPARENCY).setCullState(NO_CULL).setLightmapState(LIGHTMAP)
+						.setOverlayState(OVERLAY).setWriteMaskState(COLOR_WRITE).createCompositeState(false));
+	}
+
 	public static RenderType getCrimsonGlint() {
 		return CRIMSON_GLINT;
 	}

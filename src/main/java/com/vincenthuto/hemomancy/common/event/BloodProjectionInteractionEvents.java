@@ -1,13 +1,13 @@
 package com.vincenthuto.hemomancy.common.event;
 
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.common.block.shared.BlockBloodEndpoint;
+import com.vincenthuto.hemomancy.common.block.harbinger.BlockBloodEndpoint;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.ManipulationEquipHelper;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.BloodAbsorptionItem;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.BloodProjectionItem;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.LivingStaffItem;
-import com.vincenthuto.hemomancy.common.tile.FillerBlockEntity;
+import com.vincenthuto.hemomancy.common.tile.shared.FillerBlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;

@@ -1,23 +1,19 @@
 package com.vincenthuto.hemomancy.common.entity.boss.endgame;
 
+import com.vincenthuto.hemomancy.common.block.harbinger.CrimsonFireHelper;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
-import com.vincenthuto.hemomancy.common.entity.projectile.BloodBoltEntity;
 import com.vincenthuto.hemomancy.common.damage.HemoDamageTypes;
+import com.vincenthuto.hemomancy.common.entity.projectile.BloodBoltEntity;
 import com.vincenthuto.hemomancy.common.entity.projectile.LivingSickleHookEntity;
 import com.vincenthuto.hemomancy.common.entity.summon.EntityIronPillar;
 import com.vincenthuto.hemomancy.common.entity.summon.EntityIronSpike;
-import com.vincenthuto.hemomancy.common.init.ItemInit;
-import com.vincenthuto.hemomancy.common.init.SoundInit;
+import com.vincenthuto.hemomancy.common.init.*;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.LivingTorchBreathRules;
-import com.vincenthuto.hemomancy.common.init.ManipulationInit;
-import com.vincenthuto.hemomancy.common.init.EffectInit;
-import com.vincenthuto.hemomancy.common.init.EntityInit;
 import com.vincenthuto.hemomancy.common.manipulation.EntityManipulationEffects;
 import com.vincenthuto.hemomancy.common.manipulation.ManipulationCastContext;
 import com.vincenthuto.hemomancy.common.manipulation.congeatio.TemporaryIceManager;
 import com.vincenthuto.hemomancy.common.manipulation.ductilis.DuctilisLightningEffects;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
-import com.vincenthuto.hemomancy.common.util.CrimsonFireHelper;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.BlockParticleOption;

@@ -1,15 +1,14 @@
 package com.vincenthuto.hemomancy.common.init;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
-import java.util.ArrayList;
-
-import org.junit.jupiter.api.Test;
-
 import com.vincenthuto.hemomancy.client.screen.skilltree.shared.SkillTreeLayer;
 import com.vincenthuto.hemomancy.client.screen.skilltree.shared.SkillTreeLayerRules;
 import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillPoint;
 import com.vincenthuto.hemomancy.common.init.skills.CoreSkillBranch;
+import org.junit.jupiter.api.Test;
+
+import java.util.ArrayList;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class CoreSkillBranchLayerTest {
 	@Test

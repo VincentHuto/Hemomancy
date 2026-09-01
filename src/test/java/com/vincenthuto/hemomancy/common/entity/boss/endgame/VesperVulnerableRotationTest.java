@@ -3,9 +3,7 @@ package com.vincenthuto.hemomancy.common.entity.boss.endgame;
 import net.minecraft.nbt.CompoundTag;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 final class VesperVulnerableRotationTest {
 	@Test

@@ -1,26 +1,15 @@
 package com.vincenthuto.hemomancy.client.render.armor;
 
-import java.util.function.Supplier;
-
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.client.model.armor.BarbedArmorModel;
-import com.vincenthuto.hemomancy.client.model.armor.BloodLustArmorModel;
-import com.vincenthuto.hemomancy.client.model.armor.ChalybeateFortressArmorModel;
-import com.vincenthuto.hemomancy.client.model.armor.ChitiniteArmorModel;
-import com.vincenthuto.hemomancy.client.model.armor.CovenantLeaderArmorModel;
-import com.vincenthuto.hemomancy.client.model.armor.EdaciousBloodLustArmorModel;
-import com.vincenthuto.hemomancy.client.model.armor.PhantasmalBloodLustArmorModel;
-import com.vincenthuto.hemomancy.client.model.armor.PrismaticArmorModel;
-import com.vincenthuto.hemomancy.client.model.armor.SheolicBloodLustArmorModel;
-import com.vincenthuto.hemomancy.client.model.armor.UnstainedArmorModel;
-import com.vincenthuto.hemomancy.client.model.armor.VestmentOfTheFinalMoltArmorModel;
+import com.vincenthuto.hemomancy.client.model.armor.*;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
-
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
+
+import java.util.function.Supplier;
 
 public final class ModelBackedArmorItemRenderHelper {
 	public static final ResourceLocation BLOOD_LUST_LAYER_1 = armorTexture("blood_lust_layer_1");

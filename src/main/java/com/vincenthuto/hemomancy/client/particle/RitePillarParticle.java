@@ -1,8 +1,8 @@
 package com.vincenthuto.hemomancy.client.particle;
 
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.vincenthuto.hutoslib.client.HLRenderTypeInit;
 import com.vincenthuto.hemomancy.common.rite.harbinger.CardinalRitePillarTiming;
+import com.vincenthuto.hutoslib.client.HLRenderTypeInit;
 import net.minecraft.client.Camera;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.particle.ParticleRenderType;

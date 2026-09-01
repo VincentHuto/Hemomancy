@@ -34,7 +34,7 @@ public class KnownManipulationServerPacket implements CustomPacketPayload {
 	private VeinLocation selectedVein;
 	BlockPos lastVeinMineStart;
 
-	private boolean avatarActive;
+	private String avatarForm = "";
 
 	private List<String> equippedManipNames = new ArrayList<>();
 	private List<ManipulationLoadout> loadouts = new ArrayList<>();
@@ -46,7 +46,7 @@ public class KnownManipulationServerPacket implements CustomPacketPayload {
 		this.selectedMemoryKey = known.getSelectedMemoryRef().storageKey();
 		this.veinList = known.getVeinList();
 		this.selectedVein = known.getSelectedVein();
-		this.avatarActive = known.isAvatarActive();
+		this.avatarForm = known.getActiveAvatarForm();
 		this.lastVeinMineStart = known.getLastVeinMineStart();
 		this.equippedManipNames = new ArrayList<>(known.getEquippedManipNames());
 		this.loadouts = new ArrayList<>(known.getLoadouts());
@@ -55,19 +55,34 @@ public class KnownManipulationServerPacket implements CustomPacketPayload {
 	public KnownManipulationServerPacket(LinkedHashMap<BloodManipulation, ManipLevel> list, BloodManipulation selected,
 			List<VeinLocation> veinList, VeinLocation selectedVein, boolean avatarActive, BlockPos lastVeinMineStart,
 			List<String> equippedManipNames, List<ManipulationLoadout> loadouts) {
-		this(list, selected, veinList, selectedVein, avatarActive, lastVeinMineStart, equippedManipNames, loadouts,
+		this(list, selected, veinList, selectedVein, avatarActive ? "summon_avatar" : "", lastVeinMineStart,
+				equippedManipNames, loadouts,
 				selected != null ? selected.getName() : "");
 	}
 
 	public KnownManipulationServerPacket(LinkedHashMap<BloodManipulation, ManipLevel> list, BloodManipulation selected,
 			List<VeinLocation> veinList, VeinLocation selectedVein, boolean avatarActive, BlockPos lastVeinMineStart,
 			List<String> equippedManipNames, List<ManipulationLoadout> loadouts, String selectedMemoryKey) {
+		this(list, selected, veinList, selectedVein, avatarActive ? "summon_avatar" : "", lastVeinMineStart,
+				equippedManipNames, loadouts, selectedMemoryKey);
+	}
+
+	public KnownManipulationServerPacket(LinkedHashMap<BloodManipulation, ManipLevel> list, BloodManipulation selected,
+			List<VeinLocation> veinList, VeinLocation selectedVein, String avatarForm, BlockPos lastVeinMineStart,
+			List<String> equippedManipNames, List<ManipulationLoadout> loadouts) {
+		this(list, selected, veinList, selectedVein, avatarForm, lastVeinMineStart, equippedManipNames, loadouts,
+				selected != null ? selected.getName() : "");
+	}
+
+	public KnownManipulationServerPacket(LinkedHashMap<BloodManipulation, ManipLevel> list, BloodManipulation selected,
+			List<VeinLocation> veinList, VeinLocation selectedVein, String avatarForm, BlockPos lastVeinMineStart,
+			List<String> equippedManipNames, List<ManipulationLoadout> loadouts, String selectedMemoryKey) {
 
 		this.known = list;
 		this.selected = selected;
 		this.veinList = veinList;
 		this.selectedVein = selectedVein;
-		this.avatarActive = avatarActive;
+		this.avatarForm = avatarForm != null ? avatarForm : "";
 		this.lastVeinMineStart = lastVeinMineStart;
 		this.equippedManipNames = equippedManipNames != null ? equippedManipNames : new ArrayList<>();
 		this.loadouts = loadouts != null ? loadouts : new ArrayList<>();
@@ -89,7 +104,7 @@ public class KnownManipulationServerPacket implements CustomPacketPayload {
 		for (int i = 0; i < veincount; ++i) {
 			veinList.add(VeinLocation.deserializeFromBuf(buf));
 		}
-		boolean avatarActive = buf.readBoolean();
+		String avatarForm = buf.readUtf();
 		BlockPos lastveinstart = buf.readBlockPos();
 		int equippedCount = buf.readInt();
 		List<String> equippedManipNames = new ArrayList<>();
@@ -102,7 +117,7 @@ public class KnownManipulationServerPacket implements CustomPacketPayload {
 			loadouts.add(ManipulationLoadout.readFromBuf(buf, i));
 		}
 		String selectedMemoryKey = buf.readUtf();
-		return new KnownManipulationServerPacket(manips, sel, veinList, selvein, avatarActive, lastveinstart,
+		return new KnownManipulationServerPacket(manips, sel, veinList, selvein, avatarForm, lastveinstart,
 				equippedManipNames, loadouts, selectedMemoryKey);
 	}
 	public static void encode(final FriendlyByteBuf buf, final KnownManipulationServerPacket msg) {
@@ -126,7 +141,7 @@ public class KnownManipulationServerPacket implements CustomPacketPayload {
 				element.serializeToBuf(buf);
 			}
 		}
-		buf.writeBoolean(msg.avatarActive);
+		buf.writeUtf(msg.avatarForm);
 		buf.writeBlockPos(msg.lastVeinMineStart);
 		buf.writeInt(msg.equippedManipNames.size());
 		for (String name : msg.equippedManipNames) {
@@ -150,7 +165,7 @@ public class KnownManipulationServerPacket implements CustomPacketPayload {
 			known.setSelectedManip(msg.selected);
 			known.setVeinList(msg.veinList);
 			known.setSelectedVein(msg.selectedVein);
-			known.setAvatarActive(msg.avatarActive);
+			known.setActiveAvatarForm(msg.avatarForm);
 			known.setLastVeinMineStart(msg.lastVeinMineStart);
 			known.setEquippedManipNames(msg.equippedManipNames);
 			known.setLoadouts(msg.loadouts);

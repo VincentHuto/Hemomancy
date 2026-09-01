@@ -23,8 +23,8 @@ import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent.PlayerChangedDimensionEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent.PlayerRespawnEvent;
 
-import java.util.Map;
 import javax.annotation.Nullable;
+import java.util.Map;
 
 @EventBusSubscriber(modid = Hemomancy.MOD_ID)
 public class BloodTendencyEvents {

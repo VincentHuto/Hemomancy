@@ -8,17 +8,16 @@ import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.LivingArsenal
 import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
 import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationRank;
 import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationType;
-
+import com.vincenthuto.hemomancy.common.rite.CardinalRiteStaffEscrow;
+import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.network.chat.Component;
-import net.minecraft.ChatFormatting;
-import com.vincenthuto.hemomancy.common.rite.CardinalRiteStaffEscrow;
 import net.neoforged.neoforge.registries.DeferredHolder;
 
 public class ConjurationManip extends BloodManipulation {

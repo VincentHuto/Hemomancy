@@ -1,8 +1,8 @@
 package com.vincenthuto.hemomancy.common.resource;
 
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.io.IOException;
 
 public final class PhaseThreeSerpentUtilityResourceTest {
 	private static final Path ROOT = Path.of("src/main/resources");

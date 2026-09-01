@@ -3,7 +3,8 @@ package com.vincenthuto.hemomancy.common.capability.player.harbinger.musclememor
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class MuscleMemoryResonanceRulesTest {
     @Test

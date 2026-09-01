@@ -1,13 +1,12 @@
 package com.vincenthuto.hemomancy.client.screen.skilltree.util;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import net.minecraft.client.gui.GuiGraphics;
+import org.junit.jupiter.api.Test;
 
 import java.util.EnumMap;
 import java.util.concurrent.atomic.AtomicInteger;
-import net.minecraft.client.gui.GuiGraphics;
-import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 class ProgressTabRegistryTest {
 	private enum Tab { SKILLS, MATERIALS }

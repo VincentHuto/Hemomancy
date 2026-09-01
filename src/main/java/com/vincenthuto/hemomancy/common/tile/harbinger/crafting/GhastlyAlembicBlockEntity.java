@@ -1,0 +1,742 @@
+package com.vincenthuto.hemomancy.common.tile.harbinger.crafting;
+
+import com.google.common.collect.Lists;
+import com.vincenthuto.hemomancy.common.block.harbinger.rite.BloodCrystalBlock;
+import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
+import com.vincenthuto.hemomancy.common.init.BlockEntityInit;
+import com.vincenthuto.hemomancy.common.init.BlockInit;
+import com.vincenthuto.hemomancy.common.init.ItemInit;
+import com.vincenthuto.hemomancy.common.init.RecipeInit;
+import com.vincenthuto.hemomancy.common.menu.tile.crafting.GhastlyAlembicMenu;
+import com.vincenthuto.hemomancy.common.recipe.DistillationRecipe;
+import com.vincenthuto.hemomancy.common.tile.BloodContainerTransfer;
+import com.vincenthuto.hemomancy.common.tile.IBloodContainerSlotAccess;
+import com.vincenthuto.hemomancy.common.tile.IBloodReservoir;
+import com.vincenthuto.hutoslib.common.registry.HLItemInit;
+import it.unimi.dsi.fastutil.objects.Object2IntMap.Entry;
+import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
+import net.minecraft.core.*;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.Connection;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.util.Mth;
+import net.minecraft.world.ContainerHelper;
+import net.minecraft.world.WorldlyContainer;
+import net.minecraft.world.entity.ExperienceOrb;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.player.StackedContents;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.inventory.ContainerData;
+import net.minecraft.world.inventory.RecipeCraftingHolder;
+import net.minecraft.world.inventory.StackedContentsCompatible;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.RecipeHolder;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.AbstractFurnaceBlock;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.CampfireBlock;
+import net.minecraft.world.level.block.entity.BaseContainerBlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.Vec3;
+
+import javax.annotation.Nullable;
+import java.util.List;
+
+/**
+ * Ghastly Alembic Block Entity — a blood distillery powered by fire below.
+ * <p>
+ * Slots:
+ * <ul>
+ *   <li>0 = Input ingredient (meat, blood items, etc.)</li>
+ *   <li>1 = Flask slot (cured clay flasks to bottle blood)</li>
+ *   <li>2 = Result output</li>
+ * </ul>
+ * Heat source: checks the block directly below for fire, soul fire, lit campfire,
+ * lit soul campfire, lava, magma, or crimson flames.
+ */
+public class GhastlyAlembicBlockEntity extends BaseContainerBlockEntity
+		implements WorldlyContainer, RecipeCraftingHolder, StackedContentsCompatible, IBloodReservoir, IBloodContainerSlotAccess {
+
+	static final String TAG_BLOOD_LEVEL = "bloodLevel";
+
+	// Slot indices
+	public static final int SLOT_INPUT    = 0;
+	public static final int SLOT_FLASK    = 1;
+	public static final int SLOT_RESULT   = 2;
+	public static final int SLOT_CATALYST = 3;
+	public static final int SLOT_FLASK_OUTPUT = 4;
+	public static final int SLOT_TINCTURE_BLOOD = 5;
+	public static final int NUM_SLOTS     = 6;
+
+	// Container data indices
+	public static final int DATA_HEATED = 0;
+	public static final int DATA_COOKING_PROGRESS = 1;
+	public static final int DATA_COOKING_TOTAL_TIME = 2;
+	public static final int NUM_DATA_VALUES = 3;
+
+	public static final int BURN_TIME_STANDARD = 200;
+
+	// Hopper / sided access
+	private static final int[] SLOTS_FOR_UP    = new int[]{SLOT_INPUT};
+	private static final int[] SLOTS_FOR_DOWN  = new int[]{SLOT_RESULT, SLOT_FLASK_OUTPUT};
+	private static final int[] SLOTS_FOR_SIDES = new int[]{SLOT_FLASK, SLOT_CATALYST, SLOT_TINCTURE_BLOOD};
+
+	// ---- Fields ----
+
+	public NonNullList<ItemStack> items = NonNullList.withSize(NUM_SLOTS, ItemStack.EMPTY);
+	private boolean heated;
+	int cookingProgress;
+	int cookingTotalTime;
+
+	private final Object2IntOpenHashMap<ResourceLocation> recipesUsed = new Object2IntOpenHashMap<>();
+
+	protected final ContainerData dataAccess = new ContainerData() {
+		@Override
+		public int get(int index) {
+			return switch (index) {
+				case DATA_HEATED -> heated ? 1 : 0;
+				case DATA_COOKING_PROGRESS -> cookingProgress;
+				case DATA_COOKING_TOTAL_TIME -> cookingTotalTime;
+				default -> 0;
+			};
+		}
+
+		@Override
+		public void set(int index, int value) {
+			switch (index) {
+				case DATA_HEATED -> heated = value != 0;
+				case DATA_COOKING_PROGRESS -> cookingProgress = value;
+				case DATA_COOKING_TOTAL_TIME -> cookingTotalTime = value;
+			}
+		}
+
+		@Override
+		public int getCount() {
+			return NUM_DATA_VALUES;
+		}
+	};
+
+	// ---- Constructor ----
+
+	public GhastlyAlembicBlockEntity(BlockPos pos, BlockState state) {
+		super(BlockEntityInit.ghastly_alembic.get(), pos, state);
+	}
+
+	// ---- Heat source detection ----
+
+	/**
+	 * Returns true if the block directly below is a valid heat source.
+	 */
+	public static boolean isHeatSource(Level level, BlockPos alembicPos) {
+		BlockPos below = alembicPos.below();
+		BlockState belowState = level.getBlockState(below);
+
+		// Vanilla fire blocks
+		if (belowState.is(Blocks.FIRE) || belowState.is(Blocks.SOUL_FIRE)) {
+			return true;
+		}
+		// Campfires (only when lit)
+		if (belowState.is(Blocks.CAMPFIRE) || belowState.is(Blocks.SOUL_CAMPFIRE)) {
+			return belowState.getValue(CampfireBlock.LIT);
+		}
+		// Lava & magma
+		if (belowState.is(Blocks.LAVA) || belowState.is(Blocks.MAGMA_BLOCK)) {
+			return true;
+		}
+		// Mod's own crimson flames
+		return belowState.is(BlockInit.crimson_flames.get());
+	}
+
+	// ---- Capability (lazy) ----
+
+	@Nullable
+	private IBloodVolume resolveVolume() {
+		return HemoCapabilityAccess.getBloodVolume(this).orElse(null);
+	}
+
+	// ---- Ticking ----
+
+	private static int getTotalCookTime(Level level, GhastlyAlembicBlockEntity te) {
+		return level.getRecipeManager()
+				.getAllRecipesFor(RecipeInit.distillation_recipe_type.get())
+				.stream()
+				.filter(h -> !h.value().isPallid() && h.value().matchesItems(te.items.get(SLOT_INPUT),
+						te.items.get(SLOT_CATALYST), te.items.get(SLOT_TINCTURE_BLOOD)))
+				.mapToInt(h -> h.value().getCookingTime())
+				.findFirst()
+				.orElse(200);
+	}
+
+	@Nullable
+	private static RecipeHolder<DistillationRecipe> findMatchingRecipe(Level level, GhastlyAlembicBlockEntity te) {
+		return level.getRecipeManager()
+				.getAllRecipesFor(RecipeInit.distillation_recipe_type.get())
+				.stream()
+				.filter(h -> !h.value().isPallid() && h.value().matchesItems(te.items.get(SLOT_INPUT),
+						te.items.get(SLOT_CATALYST), te.items.get(SLOT_TINCTURE_BLOOD)))
+				.findFirst()
+				.orElse(null);
+	}
+
+	private static void createExperience(ServerLevel level, Vec3 pos, int count, float xpPerItem) {
+		int i = Mth.floor(count * xpPerItem);
+		float f = Mth.frac(count * xpPerItem);
+		if (f != 0.0F && Math.random() < f) {
+			++i;
+		}
+		ExperienceOrb.award(level, pos, i);
+	}
+
+	public static void serverTick(Level level, BlockPos pos, BlockState state, GhastlyAlembicBlockEntity te) {
+		boolean wasHeated = te.heated;
+		te.heated = isHeatSource(level, pos);
+		boolean dirty = false;
+
+		IBloodVolume vol = te.resolveVolume();
+		if (vol == null) return;
+
+		if (te.heated && !te.items.get(SLOT_INPUT).isEmpty()) {
+			RecipeHolder<DistillationRecipe> recipe = findMatchingRecipe(level, te);
+			boolean canStoreByproduct = vol.getBloodVolume() < vol.getMaxBloodVolume() - 99;
+			if (recipe != null && (canStoreByproduct || recipe.value().requiresBloodInput())) {
+				int maxStack = te.getMaxStackSize();
+
+				if (te.canBurn(level.registryAccess(), recipe, te.items, maxStack)) {
+					++te.cookingProgress;
+					if (te.cookingProgress >= te.cookingTotalTime) {
+						te.cookingProgress = 0;
+						te.cookingTotalTime = getTotalCookTime(level, te);
+						if (te.burn(level.registryAccess(), recipe, te.items, maxStack)) {
+							te.setRecipeUsed(recipe);
+							if (!recipe.value().requiresBloodInput()) {
+								vol.fill(100);
+							}
+							te.sendUpdates();
+						}
+						dirty = true;
+					}
+				} else {
+					te.cookingProgress = 0;
+				}
+			} else {
+				te.cookingProgress = 0;
+			}
+		} else if (!te.heated && te.cookingProgress > 0) {
+			// Cool down when no heat
+			te.cookingProgress = Mth.clamp(te.cookingProgress - 2, 0, te.cookingTotalTime);
+		} else if (vol.getBloodVolume() >= vol.getMaxBloodVolume() - 99) {
+			te.cookingProgress = 0;
+		}
+
+		// Update LIT blockstate
+		if (wasHeated != te.heated) {
+			dirty = true;
+			state = state.setValue(AbstractFurnaceBlock.LIT, te.heated);
+			level.setBlock(pos, state, 3);
+		}
+
+		// Drain stored blood into a gourd placed in the blood output slot
+		tryDrainBloodIntoGourd(te);
+
+		// Drain stored blood into flasks (independent of cooking)
+		tryDrainBloodIntoFlask(te);
+
+		// Fill blood from bloody flasks (independent of cooking)
+		tryFillBloodFromFlask(te);
+
+		// Alembic leak — drip blood onto nearby substrate blocks, grow blood crystals
+		tryLeakBloodOntoBlock(level, pos, te, vol);
+
+		if (dirty) {
+			setChanged(level, pos, state);
+		}
+	}
+
+	// ---- Recipe logic ----
+
+	private boolean canBurn(RegistryAccess registryAccess, @Nullable RecipeHolder<DistillationRecipe> recipeHolder, NonNullList<ItemStack> inv, int maxStack) {
+		if (inv.get(SLOT_INPUT).isEmpty() || recipeHolder == null) return false;
+
+		ItemStack result = recipeHolder.value().getResultItem(registryAccess).copy();
+		if (result.isEmpty()) return false;
+
+		ItemStack currentResult = inv.get(SLOT_RESULT);
+		if (currentResult.isEmpty()) return true;
+		if (!ItemStack.isSameItem(currentResult, result)) return false;
+		int totalCount = currentResult.getCount() + result.getCount();
+		return totalCount <= maxStack && totalCount <= currentResult.getMaxStackSize();
+	}
+
+	private boolean burn(RegistryAccess registryAccess, @Nullable RecipeHolder<DistillationRecipe> recipeHolder, NonNullList<ItemStack> inv, int maxStack) {
+		if (recipeHolder == null || !canBurn(registryAccess, recipeHolder, inv, maxStack)) return false;
+
+		DistillationRecipe recipe = recipeHolder.value();
+		ItemStack input = inv.get(SLOT_INPUT);
+		ItemStack recipeResult = recipe.getResultItem(registryAccess).copy();
+		ItemStack flaskStack = inv.get(SLOT_FLASK);
+		ItemStack resultStack = inv.get(SLOT_RESULT);
+
+		// If a flask is present and result slot can accept a bloody flask
+		if (!flaskStack.isEmpty() && flaskStack.getItem() == HLItemInit.cured_clay_flask.get()) {
+			if (resultStack.isEmpty()) {
+				inv.set(SLOT_RESULT, new ItemStack(ItemInit.bloody_flask.get()));
+				flaskStack.shrink(1);
+			} else if (resultStack.getItem() == ItemInit.bloody_flask.get()
+					&& resultStack.getCount() < resultStack.getMaxStackSize()) {
+				resultStack.grow(1);
+				flaskStack.shrink(1);
+			} else {
+				// Result slot has something incompatible or is full — just put recipe result
+				if (resultStack.isEmpty()) {
+					inv.set(SLOT_RESULT, recipeResult.copy());
+				} else if (ItemStack.isSameItem(resultStack, recipeResult)) {
+					resultStack.grow(recipeResult.getCount());
+				}
+			}
+		} else {
+			// No flask — output the recipe result directly
+			if (resultStack.isEmpty()) {
+				inv.set(SLOT_RESULT, recipeResult.copy());
+			} else if (ItemStack.isSameItem(resultStack, recipeResult)) {
+				resultStack.grow(recipeResult.getCount());
+			}
+		}
+
+		DistillationConsumptionRules.Consumption consumption = DistillationConsumptionRules.forRecipe(
+				recipe.consumesCatalyst(), recipe.requiresBloodInput());
+		input.shrink(consumption.mainInput());
+		inv.get(SLOT_CATALYST).shrink(consumption.catalyst());
+		inv.get(SLOT_TINCTURE_BLOOD).shrink(consumption.bloodInput());
+		return true;
+	}
+
+	// ---- Flask filling from stored blood ----
+
+	@Override
+	public void setItem(int slot, ItemStack stack) {
+		ItemStack existing = this.items.get(slot);
+		boolean sameItem = !stack.isEmpty() && ItemStack.isSameItemSameComponents(existing, stack);
+		this.items.set(slot, stack);
+		if (stack.getCount() > this.getMaxStackSize()) {
+			stack.setCount(this.getMaxStackSize());
+		}
+		// Reset cooking progress when input changes
+		if ((slot == SLOT_INPUT || slot == SLOT_CATALYST || slot == SLOT_TINCTURE_BLOOD) && !sameItem) {
+			this.cookingTotalTime = (this.level != null) ? getTotalCookTime(this.level, this) : BURN_TIME_STANDARD;
+			this.cookingProgress = 0;
+			this.setChanged();
+		}
+	}
+
+	/**
+	 * Called from serverTick — drains stored blood into flasks in the flask slot,
+	 * one flask per tick if conditions are met.
+	 */
+	private static void tryDrainBloodIntoFlask(GhastlyAlembicBlockEntity te) {
+		ItemStack flaskStack = te.items.get(SLOT_FLASK);
+		if (flaskStack.isEmpty()) return;
+		boolean jug = flaskStack.getItem() == ItemInit.cured_clay_jug.get();
+		if (!jug && flaskStack.getItem() != HLItemInit.cured_clay_flask.get()) return;
+		int requiredBlood = AlembicVesselRules.requiredBlood(jug
+				? AlembicVesselRules.Vessel.JUG : AlembicVesselRules.Vessel.FLASK);
+		Item outputItem = jug ? ItemInit.bloody_jug.get() : ItemInit.bloody_flask.get();
+
+		IBloodVolume vol = te.resolveVolume();
+		if (vol == null || vol.getBloodVolume() < requiredBlood) return;
+
+		ItemStack resultStack = te.items.get(SLOT_FLASK_OUTPUT);
+		if (resultStack.isEmpty()) {
+			flaskStack.shrink(1);
+			te.items.set(SLOT_FLASK_OUTPUT, new ItemStack(outputItem));
+			vol.drain(requiredBlood);
+			te.sendUpdates();
+		} else if (resultStack.getItem() == outputItem
+				&& resultStack.getCount() < resultStack.getMaxStackSize()) {
+			flaskStack.shrink(1);
+			resultStack.grow(1);
+			vol.drain(requiredBlood);
+			te.sendUpdates();
+		}
+	}
+
+	/**
+	 * Called from serverTick — consumes bloody flasks in the flask slot to fill
+	 * the blood reservoir, outputting empty clay flasks to the flask output slot.
+	 */
+	private static void tryDrainBloodIntoGourd(GhastlyAlembicBlockEntity te) {
+		if (BloodContainerTransfer.drainReservoirIntoGourdSlot(te, te, SLOT_FLASK_OUTPUT, 100D)) {
+			te.sendUpdates();
+		}
+	}
+
+	private static void tryFillBloodFromFlask(GhastlyAlembicBlockEntity te) {
+		if (te.processBloodContainerInputSlot(te, te)) {
+			te.sendUpdates();
+		}
+	}
+
+	// ---- Menu creation ----
+
+	@Override
+	protected AbstractContainerMenu createMenu(int windowId, Inventory playerInv) {
+		return new GhastlyAlembicMenu(windowId, playerInv, this, this.dataAccess);
+	}
+
+	@Override
+	protected Component getDefaultName() {
+		return Component.translatable("container.hemomancy.ghastly_alembic");
+	}
+
+	// ---- Blood helpers ----
+
+	@Nullable
+	public IBloodVolume getBloodCapability() {
+		return resolveVolume();
+	}
+
+	@Override
+	public int getBloodContainerInputSlot() {
+		return SLOT_FLASK;
+	}
+
+	@Override
+	public int getEmptyBloodContainerOutputSlot() {
+		return SLOT_FLASK_OUTPUT;
+	}
+
+	public double getBloodVolume() {
+		IBloodVolume vol = resolveVolume();
+		return vol != null ? vol.getBloodVolume() : 0;
+	}
+
+	public double getMaxBloodVolume() {
+		IBloodVolume vol = resolveVolume();
+		return vol != null ? vol.getMaxBloodVolume() : 0;
+	}
+
+	public boolean isHeated() {
+		return heated;
+	}
+
+	// ---- Experience / Recipe used ----
+
+	public void awardUsedRecipesAndPopExperience(ServerPlayer player) {
+		List<RecipeHolder<?>> holders = Lists.newArrayList();
+		for (Entry<ResourceLocation> entry : this.recipesUsed.object2IntEntrySet()) {
+			player.serverLevel().getRecipeManager().byKey(entry.getKey()).ifPresent(holder -> {
+				holders.add(holder);
+				if (holder.value() instanceof DistillationRecipe gar) {
+					createExperience(player.serverLevel(), player.position(), entry.getIntValue(), gar.getExperience());
+				}
+			});
+		}
+		player.awardRecipes(holders);
+		this.recipesUsed.clear();
+	}
+
+	public void getRecipesToAwardAndPopExperience(ServerLevel level, Vec3 pos) {
+		for (Entry<ResourceLocation> entry : this.recipesUsed.object2IntEntrySet()) {
+			level.getRecipeManager().byKey(entry.getKey()).ifPresent(holder -> {
+				if (holder.value() instanceof DistillationRecipe recipe) {
+					createExperience(level, pos, entry.getIntValue(), recipe.getExperience());
+				}
+			});
+		}
+		this.recipesUsed.clear();
+	}
+
+	@Override
+	@Nullable
+	public RecipeHolder<?> getRecipeUsed() {
+		return null;
+	}
+
+	@Override
+	public void setRecipeUsed(@Nullable RecipeHolder<?> recipe) {
+		if (recipe != null) {
+			this.recipesUsed.addTo(recipe.id(), 1);
+		}
+	}
+
+	// ---- Container impl ----
+
+	@Override
+	public int getContainerSize() {
+		return this.items.size();
+	}
+
+	@Override
+	public boolean isEmpty() {
+		for (ItemStack stack : this.items) {
+			if (!stack.isEmpty()) return false;
+		}
+		return true;
+	}
+
+	@Override
+	public ItemStack getItem(int slot) {
+		return this.items.get(slot);
+	}
+
+	@Override
+	protected NonNullList<ItemStack> getItems() {
+		return this.items;
+	}
+
+	@Override
+	protected void setItems(NonNullList<ItemStack> items) {
+		this.items = items;
+	}
+
+	@Override
+	public ItemStack removeItem(int slot, int amount) {
+		return ContainerHelper.removeItem(this.items, slot, amount);
+	}
+
+	@Override
+	public ItemStack removeItemNoUpdate(int slot) {
+		return ContainerHelper.takeItem(this.items, slot);
+	}
+
+	@Override
+	public void clearContent() {
+		this.items.clear();
+	}
+
+	@Override
+	public boolean stillValid(Player player) {
+		return (this.level.getBlockEntity(this.worldPosition) == this)
+				&& player.distanceToSqr(this.worldPosition.getX() + 0.5, this.worldPosition.getY() + 0.5,
+				this.worldPosition.getZ() + 0.5) <= 64.0;
+	}
+
+	@Override
+	public void fillStackedContents(StackedContents contents) {
+		for (ItemStack stack : this.items) {
+			contents.accountStack(stack);
+		}
+	}
+
+	// ---- WorldlyContainer ----
+
+	@Override
+	public int[] getSlotsForFace(Direction direction) {
+		return switch (direction) {
+			case UP -> SLOTS_FOR_UP;
+			case DOWN -> SLOTS_FOR_DOWN;
+			default -> SLOTS_FOR_SIDES;
+		};
+	}
+
+	@Override
+	public boolean canPlaceItem(int slot, ItemStack stack) {
+		if (slot == SLOT_RESULT) return false;
+		if (slot == SLOT_FLASK_OUTPUT) return BloodContainerTransfer.isBloodGourd(stack);
+		if (slot == SLOT_FLASK) {
+			return stack.getItem() == HLItemInit.cured_clay_flask.get()
+					|| stack.getItem() == ItemInit.cured_clay_jug.get()
+					|| BloodContainerTransfer.isFilledBloodContainer(stack);
+		}
+		if (slot == SLOT_CATALYST) return true; // any item allowed as catalyst
+		if (slot == SLOT_TINCTURE_BLOOD) return stack.getItem() == ItemInit.bloody_flask.get()
+				|| stack.getItem() == ItemInit.bloody_jug.get();
+		return true; // SLOT_INPUT
+	}
+
+	@Override
+	public boolean canPlaceItemThroughFace(int slot, ItemStack stack, @Nullable Direction direction) {
+		return this.canPlaceItem(slot, stack);
+	}
+
+	@Override
+	public boolean canTakeItemThroughFace(int slot, ItemStack stack, Direction direction) {
+		return slot == SLOT_RESULT || slot == SLOT_FLASK_OUTPUT;
+	}
+
+	// ---- Load / Save ----
+
+	@Override
+	public void onLoad() {
+		IBloodVolume vol = resolveVolume();
+		if (vol != null) {
+			vol.setActive(true);
+			vol.setMaxBloodVolume(2000f);
+		}
+	}
+
+	@Override
+	protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
+		super.loadAdditional(tag, registries);
+		this.items = NonNullList.withSize(this.getContainerSize(), ItemStack.EMPTY);
+		ContainerHelper.loadAllItems(tag, this.items, registries);
+		this.heated = tag.getBoolean("Heated");
+		this.cookingProgress = tag.getInt("CookTime");
+		this.cookingTotalTime = tag.getInt("CookTimeTotal");
+		CompoundTag recipesTag = tag.getCompound("RecipesUsed");
+		for (String s : recipesTag.getAllKeys()) {
+			this.recipesUsed.put(ResourceLocation.parse(s), recipesTag.getInt(s));
+		}
+		IBloodVolume vol = resolveVolume();
+		if (vol != null) {
+			vol.setBloodVolume(tag.getFloat(TAG_BLOOD_LEVEL));
+		}
+	}
+
+	@Override
+	protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
+		super.saveAdditional(tag, registries);
+		tag.putBoolean("Heated", this.heated);
+		tag.putInt("CookTime", this.cookingProgress);
+		tag.putInt("CookTimeTotal", this.cookingTotalTime);
+		ContainerHelper.saveAllItems(tag, this.items, registries);
+		CompoundTag recipesTag = new CompoundTag();
+		this.recipesUsed.forEach((key, val) -> recipesTag.putInt(key.toString(), val));
+		tag.put("RecipesUsed", recipesTag);
+		IBloodVolume vol = resolveVolume();
+		if (vol != null) {
+			tag.putDouble(TAG_BLOOD_LEVEL, vol.getBloodVolume());
+		}
+	}
+
+	// ---- Sync ----
+
+	@Override
+	public ClientboundBlockEntityDataPacket getUpdatePacket() {
+		return ClientboundBlockEntityDataPacket.create(this);
+	}
+
+	@Override
+	public CompoundTag getUpdateTag(HolderLookup.Provider registries) {
+		CompoundTag tag = new CompoundTag();
+		tag.putBoolean("Heated", this.heated);
+		tag.putInt("CookTime", this.cookingProgress);
+		tag.putInt("CookTimeTotal", this.cookingTotalTime);
+		ContainerHelper.saveAllItems(tag, this.items, registries);
+		CompoundTag recipesTag = new CompoundTag();
+		this.recipesUsed.forEach((key, val) -> recipesTag.putInt(key.toString(), val));
+		tag.put("RecipesUsed", recipesTag);
+		IBloodVolume vol = resolveVolume();
+		if (vol != null) {
+			tag.putDouble(TAG_BLOOD_LEVEL, vol.getBloodVolume());
+		}
+		return tag;
+	}
+
+	@Override
+	public void handleUpdateTag(CompoundTag tag, HolderLookup.Provider registries) {
+		super.handleUpdateTag(tag, registries);
+		if (tag != null) {
+			IBloodVolume vol = resolveVolume();
+			if (vol != null) {
+				vol.setBloodVolume(tag.getFloat(TAG_BLOOD_LEVEL));
+			}
+		}
+	}
+
+	@Override
+	public void onDataPacket(Connection net, ClientboundBlockEntityDataPacket pkt, HolderLookup.Provider registries) {
+		super.onDataPacket(net, pkt, registries);
+		if (pkt.getTag() != null) {
+			IBloodVolume vol = resolveVolume();
+			if (vol != null) {
+				vol.setBloodVolume(pkt.getTag().getFloat(TAG_BLOOD_LEVEL));
+			}
+		}
+	}
+
+	@Override
+	public void sendUpdates() {
+		level.setBlocksDirty(worldPosition, getBlockState(), getBlockState());
+		level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 3);
+		setChanged();
+	}
+
+	// ---- Alembic Leak ----
+
+	/**
+	 * Scans the 3x3 floor area one block below the alembic for a venous stone
+	 * (any variant) or a {@link net.minecraft.world.level.block.Blocks#BONE_BLOCK}.
+	 * When found, blood seeps onto that block and grows a {@link BloodCrystalBlock}
+	 * in the open space immediately above it.
+	 * <p>
+	 * The wider scan avoids the fire / magma block that is typically placed directly
+	 * under the alembic for heating. Each leak interval first tries to place a fresh
+	 * crystal under any valid open trigger tile; only when no placement is possible does
+	 * it search again for existing crystals to grow. If neither succeeds, no blood is
+	 * spent and the next interval begins a fresh search.
+	 * <p>
+	 * Layout per trigger tile:
+	 * {@code [blood_crystal at alembic Y] / [venous_stone or bone_block at alembic Y-1]}
+	 */
+	private static void tryLeakBloodOntoBlock(Level level, BlockPos pos,
+			GhastlyAlembicBlockEntity te, IBloodVolume vol) {
+		if (level.isClientSide) return;
+
+		int interval = com.vincenthuto.hemomancy.config.HemoServerConfig.ALEMBIC_LEAK_INTERVAL_TICKS.get();
+		if (level.getGameTime() % interval != 0) return;
+
+		double leakRate = com.vincenthuto.hemomancy.config.HemoServerConfig.ALEMBIC_LEAK_RATE_PER_TICK.get();
+		if (vol.getBloodVolume() < leakRate) return;
+
+		// Scan the 3x3 ring at Y-1 (the floor row directly below the alembic).
+		// The centre is skipped because the crystal position above it is occupied by the alembic.
+		int[][] offsets = new int[][]{
+				{-1, -1}, {0, -1}, {1, -1},
+				{-1, 0},           {1, 0},
+				{-1, 1},  {0, 1},  {1, 1}
+		};
+		List<BlockPos> triggerPositions = Lists.newArrayList();
+		for (int[] offset : offsets) {
+			BlockPos basePos = pos.offset(offset[0], -1, offset[1]);
+			BlockState baseState = level.getBlockState(basePos);
+			boolean isVenous = baseState.is(BlockInit.venous_stone.get())
+					|| baseState.is(BlockInit.polished_venous_stone.get())
+					|| baseState.is(BlockInit.gilded_venous_stone.get());
+			boolean isBoneBlock = baseState.is(net.minecraft.world.level.block.Blocks.BONE_BLOCK);
+			if (isVenous || isBoneBlock) {
+				triggerPositions.add(basePos);
+			}
+		}
+
+		BlockState freshCrystalState = BlockInit.blood_crystal.get().defaultBlockState()
+				.setValue(BloodCrystalBlock.FACING, Direction.UP)
+				.setValue(BloodCrystalBlock.AGE, 0);
+
+		// Pass 1: place a fresh crystal on top of the first valid open trigger tile.
+		for (BlockPos basePos : triggerPositions) {
+			BlockPos crystalPos = basePos.above();
+			BlockState existingState = level.getBlockState(crystalPos);
+			if (!existingState.canBeReplaced()) continue;
+			if (!freshCrystalState.canSurvive(level, crystalPos)) continue;
+
+			level.setBlock(crystalPos, freshCrystalState, Block.UPDATE_ALL);
+			vol.drain(leakRate);
+			te.sendUpdates();
+			return;
+		}
+
+		// Pass 2: only when no fresh placement is possible, grow an existing crystal.
+		for (BlockPos basePos : triggerPositions) {
+			BlockPos crystalPos = basePos.above();
+			BlockState existingState = level.getBlockState(crystalPos);
+			if (!existingState.is(BlockInit.blood_crystal.get())) continue;
+			if (existingState.getValue(BloodCrystalBlock.FACING) != Direction.UP) continue;
+
+			if (BlockInit.blood_crystal.get() instanceof BloodCrystalBlock crystal
+					&& crystal.tryGrow(level, crystalPos, existingState, level.getRandom())) {
+				vol.drain(leakRate);
+				te.sendUpdates();
+				return;
+			}
+		}
+	}
+
+}

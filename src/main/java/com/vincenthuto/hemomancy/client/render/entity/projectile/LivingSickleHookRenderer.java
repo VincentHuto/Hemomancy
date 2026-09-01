@@ -3,7 +3,7 @@ package com.vincenthuto.hemomancy.client.render.entity.projectile;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.client.render.item.hematic.LivingSickleItemRenderer;
+import com.vincenthuto.hemomancy.client.render.item.harbinger.LivingSickleItemRenderer;
 import com.vincenthuto.hemomancy.common.entity.projectile.LivingSickleHookEntity;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 import net.minecraft.client.renderer.MultiBufferSource;

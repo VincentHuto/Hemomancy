@@ -2,7 +2,7 @@ package com.vincenthuto.hemomancy.common.entity.utility;
 
 import com.vincenthuto.hemomancy.common.init.BlockInit;
 import com.vincenthuto.hemomancy.common.init.EntityInit;
-import com.vincenthuto.hemomancy.common.tile.functional.CovenantThroneBlockEntity;
+import com.vincenthuto.hemomancy.common.tile.harbinger.functional.CovenantThroneBlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.SynchedEntityData;

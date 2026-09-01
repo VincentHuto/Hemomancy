@@ -1,10 +1,10 @@
 package com.vincenthuto.hemomancy.common.mission;
 
+import org.junit.jupiter.api.Test;
+
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-
-import org.junit.jupiter.api.Test;
 
 public final class FirstBloodcraftAssignmentSourceTest {
 	private static final Path HELPER = Path.of(

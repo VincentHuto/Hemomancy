@@ -8,7 +8,7 @@ import com.vincenthuto.hemomancy.common.init.SkillPointInit;
 import com.vincenthuto.hemomancy.common.item.harbinger.scar.ItemScar;
 import com.vincenthuto.hemomancy.common.menu.tile.crafting.ScarStationMenu;
 import com.vincenthuto.hemomancy.common.recipe.ScarRecipe;
-import com.vincenthuto.hemomancy.common.tile.crafting.ScarStationBlockEntity;
+import com.vincenthuto.hemomancy.common.tile.harbinger.crafting.ScarStationBlockEntity;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;

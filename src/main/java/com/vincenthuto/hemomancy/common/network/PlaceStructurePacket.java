@@ -1,7 +1,7 @@
 package com.vincenthuto.hemomancy.common.network;
 
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.common.block.harbinger.BrazierBlock;
+import com.vincenthuto.hemomancy.common.block.harbinger.rite.BrazierBlock;
 import com.vincenthuto.hemomancy.common.init.BlockInit;
 import com.vincenthuto.hemomancy.common.recipe.BloodStructureOfferingPlacement;
 import com.vincenthuto.hemomancy.common.recipe.BloodStructureRecipe;
@@ -10,8 +10,8 @@ import com.vincenthuto.hemomancy.common.rite.CardinalRiteFoundationRules;
 import com.vincenthuto.hemomancy.common.rite.floor.CardinalRiteFloorDefinition;
 import com.vincenthuto.hemomancy.common.rite.floor.CardinalRiteFloorRegistry;
 import com.vincenthuto.hemomancy.common.rite.harbinger.CardinalRiteFootprintResolver;
-import com.vincenthuto.hemomancy.common.tile.IronBrazierBlockEntity;
-import com.vincenthuto.hemomancy.common.tile.functional.CardinalFocusBlockEntity;
+import com.vincenthuto.hemomancy.common.tile.harbinger.rite.IronBrazierBlockEntity;
+import com.vincenthuto.hemomancy.common.tile.harbinger.functional.CardinalFocusBlockEntity;
 import com.vincenthuto.hutoslib.math.BlockPosBlockPair;
 import com.vincenthuto.hutoslib.math.MultiblockPattern;
 import net.minecraft.core.BlockPos;

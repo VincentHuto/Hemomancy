@@ -4,13 +4,11 @@ import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.livingstaff.ILivingStaffProgress;
 import com.vincenthuto.hemomancy.common.event.HarbingerAdvancementGranter;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
-import com.vincenthuto.hemomancy.common.mission.artificer.ArtificerProgressionRules;
 import com.vincenthuto.hemomancy.common.mission.artificer.ArtificerAssignments;
+import com.vincenthuto.hemomancy.common.mission.artificer.ArtificerProgressionRules;
 import net.minecraft.server.level.ServerPlayer;
 
-import static com.vincenthuto.hemomancy.common.mission.artificer.ArtificerProgressionRules.D7Lineage;
-import static com.vincenthuto.hemomancy.common.mission.artificer.ArtificerProgressionRules.ForkFamily;
-import static com.vincenthuto.hemomancy.common.mission.artificer.ArtificerProgressionRules.Step;
+import static com.vincenthuto.hemomancy.common.mission.artificer.ArtificerProgressionRules.*;
 
 public record ArtificerProgressSnapshot(int degree, boolean activeBlood, boolean purifying, boolean clarity,
 		boolean livingStaffBond, ForkFamily forkFamily, D7Lineage d7Lineage,

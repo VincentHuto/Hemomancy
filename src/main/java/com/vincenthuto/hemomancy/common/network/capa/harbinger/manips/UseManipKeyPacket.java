@@ -1,16 +1,16 @@
 package com.vincenthuto.hemomancy.common.network.capa.harbinger.manips;
 
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.HemoAttachmentTypes;
-import com.vincenthuto.hemomancy.common.capability.player.unstained.UnstainedAccessRules;
+import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.IKnownManipulations;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.ManipulationRetirementRules;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.MemoryEntryKind;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.musclememory.MuscleMemory;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.musclememory.MuscleMemoryEvents;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.EnumBloodFlow;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.IKnownManipulations;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.ManipulationRetirementRules;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
+import com.vincenthuto.hemomancy.common.capability.player.unstained.UnstainedAccessRules;
 import com.vincenthuto.hemomancy.common.init.ManipulationInit;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.IDispellable;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.LivingStaffWeaponFormHelper;
@@ -18,6 +18,8 @@ import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.LivingStaffWe
 import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
 import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationType;
 import com.vincenthuto.hemomancy.common.manipulation.ManipulationChannelManager;
+import com.vincenthuto.hemomancy.common.manipulation.animus.AvatarManifestationManager;
+import com.vincenthuto.hemomancy.common.manipulation.animus.SummonAvatarManip;
 import com.vincenthuto.hemomancy.common.manipulation.animus.SummonThrallManip;
 import com.vincenthuto.hemomancy.common.manipulation.ferric.ConjurationManip;
 import net.minecraft.ChatFormatting;
@@ -81,6 +83,18 @@ public class UseManipKeyPacket implements CustomPacketPayload {
 					if (passive != null && passive.getType() == EnumManipulationType.PASSIVE) {
 						if (ManipulationRetirementRules.isRetiredManipulation(passive)
 								|| !knownCheck.isManipEquipped(passive)) return;
+						if (passive instanceof SummonAvatarManip avatar) {
+							if (bloodPowersBlocked && !passive.getName().equals(knownCheck.getActiveAvatarForm())) return;
+							boolean wasSelected = passive.getName().equals(knownCheck.getActiveAvatarForm());
+							boolean active = AvatarManifestationManager.toggle(
+									(net.minecraft.server.level.ServerPlayer) player, avatar);
+							if (active || wasSelected) {
+								player.displayClientMessage(Component.literal(passive.getName().replace('_', ' ')
+										+ (active ? " manifested" : " dismissed"))
+										.withStyle(active ? ChatFormatting.GREEN : ChatFormatting.GRAY), true);
+							}
+							return;
+						}
 						if (bloodPowersBlocked && !knownCheck.isPassiveActive(passive.getName())) return;
 						boolean active = knownCheck.togglePassive(passive.getName());
 						player.displayClientMessage(Component.literal(passive.getName().replace('_', ' ')

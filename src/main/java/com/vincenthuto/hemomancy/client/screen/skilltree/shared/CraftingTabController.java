@@ -4,13 +4,12 @@ import com.vincenthuto.hemomancy.client.screen.skilltree.util.IProgressTab;
 import com.vincenthuto.hemomancy.client.screen.skilltree.util.LayerViewNavigation;
 import com.vincenthuto.hemomancy.client.screen.skilltree.util.PanZoomState;
 import com.vincenthuto.hemomancy.client.screen.skilltree.util.ProgressScreenContext;
-import com.vincenthuto.hemomancy.common.recipe.BloodStructureRecipe;
-import com.vincenthuto.hemomancy.common.recipe.RecipeDegreeGates;
 import com.vincenthuto.hemomancy.common.item.shared.MnemonicBlueprintTarget;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.ImprintMnemonicBlueprintPacket;
+import com.vincenthuto.hemomancy.common.recipe.BloodStructureRecipe;
+import com.vincenthuto.hemomancy.common.recipe.RecipeDegreeGates;
 import com.vincenthuto.hutoslib.client.HLTextUtils;
-
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.resources.ResourceLocation;

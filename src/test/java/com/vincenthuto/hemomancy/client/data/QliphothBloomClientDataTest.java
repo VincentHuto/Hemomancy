@@ -1,14 +1,13 @@
 package com.vincenthuto.hemomancy.client.data;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import net.minecraft.core.BlockPos;
+import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-import org.junit.jupiter.api.Test;
-
-import net.minecraft.core.BlockPos;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class QliphothBloomClientDataTest {
 	@Test

@@ -1,7 +1,7 @@
 package com.vincenthuto.hemomancy.common.item.unstained.tool;
 
 import com.vincenthuto.hemomancy.client.item.HemoClientItemExtensionsProvider;
-import com.vincenthuto.hemomancy.client.render.item.hematic.AnnettasSanguisLanceaItemRenderer;
+import com.vincenthuto.hemomancy.client.render.item.harbinger.AnnettasSanguisLanceaItemRenderer;
 import com.vincenthuto.hemomancy.common.entity.projectile.SanguisLanceaEntity;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.LivingToolItem;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.SanguisLanceaItem;

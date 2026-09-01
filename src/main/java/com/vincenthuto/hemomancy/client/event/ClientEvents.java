@@ -5,58 +5,28 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.client.data.ActiveBloodCraftClientData;
-import com.vincenthuto.hemomancy.client.data.ActiveBloodStructureFeedClientData;
-import com.vincenthuto.hemomancy.client.data.ActiveBloodStructureOfferingBurstClientData;
-import com.vincenthuto.hemomancy.client.data.ActiveSanguineFormationProjectionClientData;
-import com.vincenthuto.hemomancy.client.data.ActiveRiteClientData;
-import com.vincenthuto.hemomancy.client.data.BloodBallClientData;
-import com.vincenthuto.hemomancy.client.data.BloodBindingTendrilClientState;
-import com.vincenthuto.hemomancy.client.data.CrimsonFireClientState;
-import com.vincenthuto.hemomancy.client.data.FaneBoundaryClientData;
-import com.vincenthuto.hemomancy.client.data.MonolithicDislocationClientState;
-import com.vincenthuto.hemomancy.client.data.VeinSpiderCourierClientData;
-import com.vincenthuto.hemomancy.client.data.VesperFightClientData;
-import com.vincenthuto.hemomancy.client.data.MycophantFightClientData;
-import com.vincenthuto.hemomancy.client.data.NpcProgressionMarkerClientState;
-import com.vincenthuto.hemomancy.client.data.QliphothBloomClientData;
+import com.vincenthuto.hemomancy.client.data.*;
 import com.vincenthuto.hemomancy.client.item.HemoClientItemExtensionsProvider;
+import com.vincenthuto.hemomancy.client.morphling.MorphlingPlayerPartVisibility;
+import com.vincenthuto.hemomancy.client.render.CrimsonFireRenderer;
 import com.vincenthuto.hemomancy.client.render.entity.blood.iron.IronPillarRenderer;
 import com.vincenthuto.hemomancy.client.render.entity.blood.iron.IronSpikeRenderer;
 import com.vincenthuto.hemomancy.client.render.entity.blood.iron.IronWallRenderer;
-import com.vincenthuto.hemomancy.client.render.entity.boss.hemorath.HemorathRenderer;
 import com.vincenthuto.hemomancy.client.render.entity.boss.annetta.AnnettaKnowlesRenderer;
 import com.vincenthuto.hemomancy.client.render.entity.boss.annetta.LatentAnnettaInfectionRenderer;
 import com.vincenthuto.hemomancy.client.render.entity.boss.annetta.StainedPriestessRenderer;
 import com.vincenthuto.hemomancy.client.render.entity.boss.endgame.MycophantRenderer;
 import com.vincenthuto.hemomancy.client.render.entity.boss.endgame.VesperTheCrownedRefusalRenderer;
 import com.vincenthuto.hemomancy.client.render.entity.boss.endgame.VesperTheEveningStarRenderer;
+import com.vincenthuto.hemomancy.client.render.entity.boss.hemorath.HemorathRenderer;
 import com.vincenthuto.hemomancy.client.render.entity.boss.putriciel.PutricielRenderer;
 import com.vincenthuto.hemomancy.client.render.entity.boss.seraphae.ContainmentAnchorRenderer;
 import com.vincenthuto.hemomancy.client.render.entity.boss.seraphae.SeraphaeFragmentRenderer;
 import com.vincenthuto.hemomancy.client.render.entity.boss.seraphae.SeraphaeRenderer;
 import com.vincenthuto.hemomancy.client.render.entity.boss.velorum.VelorumRenderer;
-import com.vincenthuto.hemomancy.client.render.entity.mob.animal.CrimsonDoeRenderer;
-import com.vincenthuto.hemomancy.client.render.entity.mob.animal.FunglingRenderer;
-import com.vincenthuto.hemomancy.client.render.entity.mob.animal.HematicBurrowerRenderer;
-import com.vincenthuto.hemomancy.client.render.entity.mob.animal.LeechRenderer;
-import com.vincenthuto.hemomancy.client.render.entity.mob.animal.BloodlickerRenderer;
-import com.vincenthuto.hemomancy.client.render.entity.mob.animal.ScarletSerpentRenderer;
-import com.vincenthuto.hemomancy.client.render.entity.mob.animal.VenousStriderRenderer;
-import com.vincenthuto.hemomancy.client.render.entity.mob.animal.VerdigrisMothRenderer;
-import com.vincenthuto.hemomancy.client.render.entity.mob.aquatic.BarbedUrchinRenderer;
-import com.vincenthuto.hemomancy.client.render.entity.mob.aquatic.BloodLanternJellyRenderer;
-import com.vincenthuto.hemomancy.client.render.entity.mob.aquatic.BrinedVotaryRenderer;
-import com.vincenthuto.hemomancy.client.render.entity.mob.aquatic.ChalybeateSnailRenderer;
-import com.vincenthuto.hemomancy.client.render.entity.mob.aquatic.HemojellyRenderer;
-import com.vincenthuto.hemomancy.client.render.entity.mob.aquatic.MnemonicWhaleRenderer;
-import com.vincenthuto.hemomancy.client.render.entity.mob.aquatic.PrismCuttleRenderer;
-import com.vincenthuto.hemomancy.client.render.entity.misc.ArmatureRestraintRenderer;
-import com.vincenthuto.hemomancy.client.render.entity.misc.ArborOfWillRenderer;
-import com.vincenthuto.hemomancy.client.render.entity.misc.AwakenedIchorianSigilRenderer;
-import com.vincenthuto.hemomancy.client.render.entity.misc.CovenantThroneSeatRenderer;
-import com.vincenthuto.hemomancy.client.render.entity.misc.HumanitySpriteRenderer;
-import com.vincenthuto.hemomancy.client.render.entity.misc.UnsettledIchorRenderer;
+import com.vincenthuto.hemomancy.client.render.entity.misc.*;
+import com.vincenthuto.hemomancy.client.render.entity.mob.animal.*;
+import com.vincenthuto.hemomancy.client.render.entity.mob.aquatic.*;
 import com.vincenthuto.hemomancy.client.render.entity.mob.arthropod.*;
 import com.vincenthuto.hemomancy.client.render.entity.mob.monster.*;
 import com.vincenthuto.hemomancy.client.render.entity.mob.will.WillAnchorRenderer;
@@ -64,40 +34,33 @@ import com.vincenthuto.hemomancy.client.render.entity.mob.will.WillRenderer;
 import com.vincenthuto.hemomancy.client.render.entity.npc.*;
 import com.vincenthuto.hemomancy.client.render.entity.projectile.*;
 import com.vincenthuto.hemomancy.client.render.entity.summon.*;
-import com.vincenthuto.hemomancy.client.render.item.MorphicNectarItemDecorator;
-import com.vincenthuto.hemomancy.client.render.item.MorphlingPolypItemRenderer;
-import com.vincenthuto.hemomancy.client.render.item.QliphothSeedItemEntityRenderer;
-import com.vincenthuto.hemomancy.client.render.CrimsonFireRenderer;
+import com.vincenthuto.hemomancy.client.render.item.*;
 import com.vincenthuto.hemomancy.client.render.scar.OculifloraRevealRenderer;
-import com.vincenthuto.hemomancy.client.render.world.MnemonicBlueprintRenderer;
-import com.vincenthuto.hemomancy.client.render.item.ScarPatternBakedModel;
-import com.vincenthuto.hemomancy.client.render.item.ScarPatternItemColor;
-import com.vincenthuto.hemomancy.client.morphling.MorphlingPlayerPartVisibility;
-import com.vincenthuto.hemomancy.client.render.tile.DiscoveryInscriptionBlockRenderer;
-import com.vincenthuto.hemomancy.client.render.tile.SuspendedBloodCrystalRenderer;
-import com.vincenthuto.hemomancy.client.render.tile.SuspendedCleansedBloodCrystalRenderer;
-import com.vincenthuto.hemomancy.client.render.tile.SuspendedVivaniteRenderer;
-import com.vincenthuto.hemomancy.client.render.tile.crafting.*;
-import com.vincenthuto.hemomancy.client.render.tile.functional.*;
+import com.vincenthuto.hemomancy.client.render.tile.harbinger.crafting.*;
+import com.vincenthuto.hemomancy.client.render.tile.harbinger.decoration.NonEuclideanHallwayRenderer;
+import com.vincenthuto.hemomancy.client.render.tile.harbinger.functional.*;
+import com.vincenthuto.hemomancy.client.render.tile.harbinger.plant.GourdvineTapRenderer;
+import com.vincenthuto.hemomancy.client.render.tile.harbinger.puzzle.SaintSarcophagusRenderer;
+import com.vincenthuto.hemomancy.client.render.tile.harbinger.rite.IronBrazierRenderer;
+import com.vincenthuto.hemomancy.client.render.tile.harbinger.rite.SuspendedBloodCrystalRenderer;
+import com.vincenthuto.hemomancy.client.render.tile.harbinger.rite.SuspendedVivaniteRenderer;
+import com.vincenthuto.hemomancy.client.render.tile.inscription.DictationTableRenderer;
+import com.vincenthuto.hemomancy.client.render.tile.inscription.DiscoveryInscriptionBlockRenderer;
+import com.vincenthuto.hemomancy.client.render.tile.unstained.SuspendedCleansedBloodCrystalRenderer;
+import com.vincenthuto.hemomancy.client.render.tile.unstained.crafting.PallidRetortRenderer;
+import com.vincenthuto.hemomancy.client.render.tile.unstained.functional.AltarOfCleansingRenderer;
 import com.vincenthuto.hemomancy.client.render.world.*;
 import com.vincenthuto.hemomancy.client.render.world.chamberofwill.ChamberOfWillEffects;
 import com.vincenthuto.hemomancy.client.render.world.chamberofwill.LowtideRuinObjModels;
 import com.vincenthuto.hemomancy.client.render.world.chamberofwill.VesperFightFloorRenderer;
-import com.vincenthuto.hemomancy.client.screen.item.PuppeteersSpindleScreen;
-import com.vincenthuto.hemomancy.client.screen.item.ScryingDiagnosticsScreen;
-import com.vincenthuto.hemomancy.client.screen.item.StructureSpawnerScreen;
-import com.vincenthuto.hemomancy.client.screen.item.MnemonicFolioScreen;
-import com.vincenthuto.hemomancy.client.screen.item.TendencyViewScreen;
-import com.vincenthuto.hemomancy.client.screen.item.VascularViewScreen;
+import com.vincenthuto.hemomancy.client.screen.item.*;
 import com.vincenthuto.hemomancy.client.screen.item.living.LivingStaffScreen;
 import com.vincenthuto.hemomancy.client.screen.item.living.LivingSyringeScreen;
 import com.vincenthuto.hemomancy.client.screen.item.living.MorphlingJarScreen;
 import com.vincenthuto.hemomancy.client.screen.manips.RadialChooseManipScreen;
 import com.vincenthuto.hemomancy.client.screen.manips.RadialChooseVeinScreen;
-import com.vincenthuto.hemomancy.client.screen.summon.CrossbarRadialScreen;
-import com.vincenthuto.hemomancy.common.item.harbinger.tool.MarionetteCrossbarItem;
 import com.vincenthuto.hemomancy.client.screen.overlay.*;
-import com.vincenthuto.hemomancy.client.sound.EndgameBossMusicHandler;
+import com.vincenthuto.hemomancy.client.screen.summon.CrossbarRadialScreen;
 import com.vincenthuto.hemomancy.client.screen.tile.crafting.*;
 import com.vincenthuto.hemomancy.client.screen.tile.crafting.scar.ScarBinderScreen;
 import com.vincenthuto.hemomancy.client.screen.tile.crafting.scar.ScarStationScreen;
@@ -106,10 +69,11 @@ import com.vincenthuto.hemomancy.client.screen.tile.functional.MasonsEffigyScree
 import com.vincenthuto.hemomancy.client.screen.tile.functional.MnemonicReliquaryScreen;
 import com.vincenthuto.hemomancy.client.screen.tile.functional.SporeImplantScreen;
 import com.vincenthuto.hemomancy.client.screen.unstained.RadialChooseStillArtScreen;
+import com.vincenthuto.hemomancy.client.sound.EndgameBossMusicHandler;
+import com.vincenthuto.hemomancy.common.armor.ability.SilentArchonArmorAbilityHandler;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.RenderBloodLaserEvent;
 import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillPointHelper;
-import com.vincenthuto.hemomancy.common.armor.ability.SilentArchonArmorAbilityHandler;
 import com.vincenthuto.hemomancy.common.entity.utility.ArmatureRestraintEntity;
 import com.vincenthuto.hemomancy.common.event.worldevent.BloodMoonClientState;
 import com.vincenthuto.hemomancy.common.init.*;
@@ -119,22 +83,22 @@ import com.vincenthuto.hemomancy.common.item.harbinger.bloodline.VasculariumChar
 import com.vincenthuto.hemomancy.common.item.harbinger.morphlings.MorphlingItem;
 import com.vincenthuto.hemomancy.common.item.harbinger.scar.ItemScarPattern;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.DrudgeElectrodeItem;
+import com.vincenthuto.hemomancy.common.item.harbinger.tool.MarionetteCrossbarItem;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.BloodAbsorptionItem;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.LivingCrossbowItem;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.LivingStaffFittingHelper;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.VialRackItem;
 import com.vincenthuto.hemomancy.common.item.shared.HemoItemProperties;
 import com.vincenthuto.hemomancy.common.item.shared.StructureScannerItem;
-import com.vincenthuto.hemomancy.common.network.PacketHandler;
-import com.vincenthuto.hemomancy.common.network.capa.harbinger.manips.ChangeSelectedManipPacket;
-import com.vincenthuto.hemomancy.common.network.capa.harbinger.manips.UseManipKeyPacket;
-import com.vincenthuto.hemomancy.common.init.ManipulationInit;
 import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationType;
-import com.vincenthuto.hemomancy.common.network.capa.unstained.UseStillArtKeyPacket;
+import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.BloodCraftingKeyPressPacket;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.BloodFormationKeyPressPacket;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.ToggleGourdKeyPacket;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.ToggleSilentSlippingC2SPacket;
+import com.vincenthuto.hemomancy.common.network.capa.harbinger.manips.ChangeSelectedManipPacket;
+import com.vincenthuto.hemomancy.common.network.capa.harbinger.manips.UseManipKeyPacket;
+import com.vincenthuto.hemomancy.common.network.capa.unstained.UseStillArtKeyPacket;
 import com.vincenthuto.hemomancy.common.network.morphling.OpenMorphlingJarPacket;
 import com.vincenthuto.hemomancy.common.network.particle.GroundBloodDrawPacket;
 import com.vincenthuto.hutoslib.client.HLClientUtils;
@@ -149,11 +113,7 @@ import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.player.AbstractClientPlayer;
-import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
-import net.minecraft.client.renderer.DimensionSpecialEffects;
-import net.minecraft.client.renderer.ItemBlockRenderTypes;
-import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.*;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderers;
 import net.minecraft.client.renderer.entity.ThrownItemRenderer;
 import net.minecraft.client.renderer.entity.player.PlayerRenderer;
@@ -170,11 +130,10 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.ResourceManagerReloadListener;
 import net.minecraft.util.Mth;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.Pose;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.InteractionHand;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -190,7 +149,6 @@ import net.neoforged.neoforge.client.event.ModelEvent.BakingCompleted;
 import net.neoforged.neoforge.client.extensions.common.IClientItemExtensions;
 import net.neoforged.neoforge.client.extensions.common.RegisterClientExtensionsEvent;
 import net.neoforged.neoforge.common.NeoForge;
-import net.neoforged.neoforge.event.entity.EntityEvent;
 import net.neoforged.neoforge.event.entity.player.ItemTooltipEvent;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import org.lwjgl.glfw.GLFW;
@@ -726,22 +684,6 @@ public class ClientEvents {
         BloodMoonVeinSkyRenderer.renderInSky(moonPose, mc.level, partialTick);
     }
 
-    @SuppressWarnings("deprecation")
-    @SubscribeEvent
-    public static void cameraView(EntityEvent.Size event) {
-        if (event.getEntity() instanceof Player player) {
-            HemoCapabilityAccess.getKnownManipulations(player).ifPresent((manip) -> {
-                if (manip.isAvatarActive()) {
-                    event.setNewSize(player.getDimensions(Pose.STANDING).scale(2));
-                } else if (player.isCrouching()) {
-                    event.setNewSize(player.getDimensions(Pose.CROUCHING));
-                } else {
-                    event.setNewSize(player.getDimensions(Pose.STANDING));
-                }
-            });
-        }
-    }
-
     public static void renderPlayerArm(PoseStack pMatrixStack, MultiBufferSource pBuffer, int pCombinedLight,
                                        float pEquippedProgress, float pSwingProgress, HumanoidArm pSide) {
         Minecraft minecraft = Minecraft.getInstance();
@@ -778,11 +720,6 @@ public class ClientEvents {
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public static void renderPlayerSize(RenderPlayerEvent.Pre event) {
         MorphlingPlayerPartVisibility.apply(event.getEntity(), event.getRenderer());
-        HemoCapabilityAccess.getKnownManipulations(event.getEntity()).ifPresent((manip) -> {
-            if (manip.isAvatarActive()) {
-                event.getPoseStack().translate(0, 2, 0);
-            }
-        });
     }
 
      @SubscribeEvent

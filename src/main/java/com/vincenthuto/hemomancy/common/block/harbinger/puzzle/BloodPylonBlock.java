@@ -2,7 +2,7 @@ package com.vincenthuto.hemomancy.common.block.harbinger.puzzle;
 
 import com.mojang.serialization.MapCodec;
 import com.vincenthuto.hemomancy.common.init.BlockEntityInit;
-import com.vincenthuto.hemomancy.common.tile.puzzle.BloodPylonBlockEntity;
+import com.vincenthuto.hemomancy.common.tile.harbinger.puzzle.BloodPylonBlockEntity;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;

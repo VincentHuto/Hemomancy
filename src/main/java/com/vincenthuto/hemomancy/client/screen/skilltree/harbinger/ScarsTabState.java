@@ -2,12 +2,7 @@ package com.vincenthuto.hemomancy.client.screen.skilltree.harbinger;
 
 import net.minecraft.resources.ResourceLocation;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /** Mutable selection and player-knowledge state for the radial cerebral-scar tree. */
 public final class ScarsTabState {

@@ -2,18 +2,18 @@ package com.vincenthuto.hemomancy.common.item.harbinger;
 
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bestiary.SpecimenBestiaryDefinitions;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.Bloodline;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.EnumArchonPath;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.bestiary.SpecimenBestiaryDefinitions;
 import com.vincenthuto.hemomancy.common.event.HarbingerAdvancementGranter;
 import com.vincenthuto.hemomancy.common.init.BlockInit;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
+import com.vincenthuto.hemomancy.common.mission.alchemist.BodyAnswersAssignment;
+import com.vincenthuto.hemomancy.common.mission.alchemist.FirstSeparationAssignment;
 import com.vincenthuto.hemomancy.common.mission.artificer.ArtificerAssignments;
+import com.vincenthuto.hemomancy.common.mission.cicatrix_anchorite.VeinMasonAssignments;
 import com.vincenthuto.hemomancy.common.mission.shared.HarbingerChapterMilestone;
 import com.vincenthuto.hemomancy.common.mission.shared.HarbingerChapterProgression;
-import com.vincenthuto.hemomancy.common.mission.alchemist.FirstSeparationAssignment;
-import com.vincenthuto.hemomancy.common.mission.alchemist.BodyAnswersAssignment;
-import com.vincenthuto.hemomancy.common.mission.cicatrix_anchorite.VeinMasonAssignments;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.mission.OpenHarbingerAssignmentLedgerPacket;
 import com.vincenthuto.hemomancy.common.rite.harbinger.QliphothBloomSavedData;
@@ -22,13 +22,13 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.stats.Stats;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
-import net.minecraft.stats.Stats;
 
 import java.util.List;
 

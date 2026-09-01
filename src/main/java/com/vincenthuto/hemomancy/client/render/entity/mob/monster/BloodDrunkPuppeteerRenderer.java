@@ -1,12 +1,9 @@
 package com.vincenthuto.hemomancy.client.render.entity.mob.monster;
 
-import com.mojang.blaze3d.vertex.PoseStack;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.client.model.entity.mob.monster.BloodDrunkPuppeteerModel;
 import com.vincenthuto.hemomancy.client.render.layer.mob.PuppteerGlowLayer;
 import com.vincenthuto.hemomancy.common.entity.mob.monster.BloodDrunkPuppeteerEntity;
-
-import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.EntityRendererProvider.Context;
 import net.minecraft.client.renderer.entity.MobRenderer;
 import net.minecraft.resources.ResourceLocation;

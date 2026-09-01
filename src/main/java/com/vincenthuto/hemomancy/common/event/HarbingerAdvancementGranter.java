@@ -5,9 +5,9 @@ import com.vincenthuto.hemomancy.common.capability.player.shared.knowledge.disco
 import com.vincenthuto.hemomancy.common.summon.PuppeteerSummonTrialEvents;
 import net.minecraft.advancements.AdvancementHolder;
 import net.minecraft.advancements.AdvancementProgress;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.item.ItemStack;
 
 /**

@@ -2,10 +2,10 @@ package com.vincenthuto.hemomancy.client.event;
 
 import com.mojang.math.Axis;
 import com.vincenthuto.hemomancy.Hemomancy;
+import com.vincenthuto.hemomancy.client.player.LivingTorchBreathEffects;
 import com.vincenthuto.hemomancy.client.player.LivingTorchPlayerPose;
 import com.vincenthuto.hemomancy.client.player.PlayerAnimationClientState;
-import com.vincenthuto.hemomancy.client.player.LivingTorchBreathEffects;
-import com.vincenthuto.hemomancy.client.render.item.hematic.LivingTorchRenderPlacement;
+import com.vincenthuto.hemomancy.client.render.item.harbinger.LivingTorchRenderPlacement;
 import com.vincenthuto.hemomancy.client.sound.LivingTorchBreathSound;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.LivingTorchBreathRules;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.LivingTorchItem;

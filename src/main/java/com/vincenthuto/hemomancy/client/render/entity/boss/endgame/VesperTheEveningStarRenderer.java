@@ -1,20 +1,16 @@
 package com.vincenthuto.hemomancy.client.render.entity.boss.endgame;
 
+import com.mojang.blaze3d.vertex.PoseStack;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.client.model.entity.boss.endgame.VesperTheEveningStarModel;
-import com.vincenthuto.hemomancy.client.render.layer.mob.endgame.VesperEveningStarLinesLayer;
-import com.vincenthuto.hemomancy.client.render.layer.mob.endgame.VesperAwakeningGlowLayer;
-import com.vincenthuto.hemomancy.client.render.layer.mob.endgame.VesperLivingWeaponLayer;
-import com.vincenthuto.hemomancy.client.render.layer.mob.endgame.VesperTendencySigilLayer;
-import com.vincenthuto.hemomancy.client.render.layer.mob.endgame.VesperShamedDissolutionLayer;
 import com.vincenthuto.hemomancy.client.render.HemoRenderTypes;
+import com.vincenthuto.hemomancy.client.render.layer.mob.endgame.*;
 import com.vincenthuto.hemomancy.common.entity.boss.endgame.VesperEveningStarPresentationRules;
-import com.vincenthuto.hemomancy.common.entity.boss.endgame.VesperTheEveningStarEntity;
 import com.vincenthuto.hemomancy.common.entity.boss.endgame.VesperPhaseTransitionRules;
-import com.mojang.blaze3d.vertex.PoseStack;
+import com.vincenthuto.hemomancy.common.entity.boss.endgame.VesperTheEveningStarEntity;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.EntityRendererProvider.Context;
 import net.minecraft.client.renderer.entity.MobRenderer;
-import net.minecraft.client.renderer.RenderType;
 import net.minecraft.resources.ResourceLocation;
 
 import javax.annotation.Nullable;

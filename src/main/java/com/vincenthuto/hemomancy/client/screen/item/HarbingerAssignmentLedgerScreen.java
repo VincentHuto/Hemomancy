@@ -17,11 +17,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.FormattedCharSequence;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.EnumSet;
-import java.util.List;
+import java.util.*;
 
 public class HarbingerAssignmentLedgerScreen extends Screen {
 	private static final int SCREEN_MARGIN = 16;

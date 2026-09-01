@@ -2,11 +2,7 @@ package com.vincenthuto.hemomancy.common.manipulation.animus;
 
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.EnumVeinSections;
-import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
-import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationRank;
-import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationType;
-import com.vincenthuto.hemomancy.common.manipulation.ManipulationCastingRules;
-import com.vincenthuto.hemomancy.common.manipulation.ManipulationReactiveEvents;
+import com.vincenthuto.hemomancy.common.manipulation.*;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hutoslib.HutosLib;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;

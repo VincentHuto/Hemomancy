@@ -11,7 +11,7 @@ import com.vincenthuto.hemomancy.common.init.BlockInit;
 import com.vincenthuto.hemomancy.common.item.harbinger.QliphothPomeRules;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.dialogue.OpenDialoguePacket;
-import com.vincenthuto.hemomancy.common.tile.FillerBlockEntity;
+import com.vincenthuto.hemomancy.common.tile.shared.FillerBlockEntity;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;

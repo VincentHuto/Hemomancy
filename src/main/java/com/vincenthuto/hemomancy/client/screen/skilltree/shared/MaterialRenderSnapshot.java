@@ -1,9 +1,9 @@
 package com.vincenthuto.hemomancy.client.screen.skilltree.shared;
 
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Collections;
 import java.util.function.Predicate;
 
 record MaterialRenderSnapshot(List<MaterialAtlasNode> nodes, Map<MaterialAtlasNode, int[]> positions) {

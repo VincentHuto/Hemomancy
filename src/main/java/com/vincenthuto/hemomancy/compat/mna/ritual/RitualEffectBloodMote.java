@@ -7,7 +7,7 @@ import com.mna.api.rituals.RitualEffect;
 import com.mna.api.sound.SFX;
 import com.mna.entities.utility.PresentItem;
 import com.vincenthuto.hemomancy.client.particle.factory.AbsorbedBloodCellParticleFactory;
-import com.vincenthuto.hemomancy.common.block.harbinger.EngramBlock;
+import com.vincenthuto.hemomancy.common.block.harbinger.rite.EngramBlock;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.BloodGourdItem;

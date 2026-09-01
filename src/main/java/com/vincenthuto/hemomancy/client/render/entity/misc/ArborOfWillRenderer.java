@@ -1,14 +1,7 @@
 package com.vincenthuto.hemomancy.client.render.entity.misc;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.BufferBuilder;
-import com.mojang.blaze3d.vertex.DefaultVertexFormat;
-import com.mojang.blaze3d.vertex.MeshData;
-import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.Tesselator;
-import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.mojang.blaze3d.vertex.VertexBuffer;
-import com.mojang.blaze3d.vertex.VertexFormat;
+import com.mojang.blaze3d.vertex.*;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.client.render.CachedMeshModelView;
 import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillPoint;
@@ -17,16 +10,8 @@ import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillProg
 import com.vincenthuto.hemomancy.common.entity.utility.ArborOfWillEntity;
 import com.vincenthuto.hemomancy.common.init.RenderTypeInit;
 import com.vincenthuto.hemomancy.common.init.SkillPointInit;
-import com.vincenthuto.hemomancy.common.worldgen.arbor.ArborCanopyGeometry;
-import com.vincenthuto.hemomancy.common.worldgen.arbor.ArborFruitGeometry;
-import com.vincenthuto.hemomancy.common.worldgen.arbor.ArborOfWillLayout;
-import com.vincenthuto.hemomancy.common.worldgen.arbor.ArborOfWillVisualRules;
-import com.vincenthuto.hemomancy.common.worldgen.arbor.ArborSkillPresentation;
-import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.GameRenderer;
-import net.minecraft.client.renderer.LightTexture;
-import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.ShaderInstance;
+import com.vincenthuto.hemomancy.common.worldgen.arbor.*;
+import net.minecraft.client.renderer.*;
 import net.minecraft.client.renderer.culling.Frustum;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;

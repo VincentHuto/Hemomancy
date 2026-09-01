@@ -2,7 +2,6 @@ package com.vincenthuto.hemomancy.client.render.item;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.vincenthuto.hutoslib.math.Vector3;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider.Context;

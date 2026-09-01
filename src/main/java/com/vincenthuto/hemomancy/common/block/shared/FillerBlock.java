@@ -2,7 +2,7 @@ package com.vincenthuto.hemomancy.common.block.shared;
 
 import com.mojang.serialization.MapCodec;
 import com.vincenthuto.hemomancy.common.init.BlockInit;
-import com.vincenthuto.hemomancy.common.tile.FillerBlockEntity;
+import com.vincenthuto.hemomancy.common.tile.shared.FillerBlockEntity;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;

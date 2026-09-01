@@ -1,7 +1,7 @@
 package com.vincenthuto.hemomancy.common.network.particle;
 
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.client.render.item.hematic.CellHandParticleEffects;
+import com.vincenthuto.hemomancy.client.render.item.harbinger.CellHandParticleEffects;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;

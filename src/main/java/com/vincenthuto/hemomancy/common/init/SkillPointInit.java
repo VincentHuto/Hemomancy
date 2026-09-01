@@ -1,12 +1,7 @@
 package com.vincenthuto.hemomancy.common.init;
 
 import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillPoint;
-import com.vincenthuto.hemomancy.common.init.skills.CoreSkillBranch;
-import com.vincenthuto.hemomancy.common.init.skills.CovenantSkillBranch;
-import com.vincenthuto.hemomancy.common.init.skills.LivingStaffSkillBranch;
-import com.vincenthuto.hemomancy.common.init.skills.MycelialSkillBranch;
-import com.vincenthuto.hemomancy.common.init.skills.ScarSkillBranch;
-import com.vincenthuto.hemomancy.common.init.skills.SummonSkillBranch;
+import com.vincenthuto.hemomancy.common.init.skills.*;
 
 import java.util.ArrayList;
 import java.util.List;

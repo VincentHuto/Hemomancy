@@ -1,9 +1,9 @@
 package com.vincenthuto.hemomancy.common.capability.player.shared.skill;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 import net.minecraft.nbt.ListTag;
 import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class SkillProgressClientCacheTest {
 

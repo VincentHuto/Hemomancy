@@ -1,14 +1,10 @@
 package com.vincenthuto.hemomancy.common.event;
 
-import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.block.harbinger.functional.HematicStakeBlock;
+import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
-import com.vincenthuto.hemomancy.common.network.capa.harbinger.BloodVolumeServerPacket;
-import com.vincenthuto.hemomancy.common.network.capa.harbinger.PacketBloodCraftRing;
-import com.vincenthuto.hemomancy.common.network.capa.harbinger.PacketBloodStructureFeed;
-import com.vincenthuto.hemomancy.common.network.capa.harbinger.PacketBloodStructureOfferingBurst;
-import com.vincenthuto.hemomancy.common.network.capa.harbinger.BloodStructureCraftingHelper;
+import com.vincenthuto.hemomancy.common.network.capa.harbinger.*;
 import com.vincenthuto.hemomancy.common.recipe.BloodStructureRecipe;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
@@ -18,18 +14,13 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
-import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.pattern.BlockPattern;
 import net.minecraft.world.phys.AABB;
 import net.neoforged.neoforge.network.PacketDistributor;
 
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 public final class BloodStructureFeedManager {
 	private static final Map<FeedKey, FeedProgress> ACTIVE_FEEDS = new HashMap<>();

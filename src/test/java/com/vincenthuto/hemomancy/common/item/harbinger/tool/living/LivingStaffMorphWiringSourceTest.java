@@ -1,13 +1,13 @@
 package com.vincenthuto.hemomancy.common.item.harbinger.tool.living;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.assertFalse;
+import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 final class LivingStaffMorphWiringSourceTest {
 	private static final Path ROOT = Path.of("").toAbsolutePath();

@@ -4,9 +4,9 @@ import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.EnumArchonPath;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.InitiatoryDegreeEvents;
+import com.vincenthuto.hemomancy.common.entity.boss.endgame.VesperPhaseTwoCombat;
 import com.vincenthuto.hemomancy.common.entity.boss.endgame.VesperTheCrownedRefusalEntity;
 import com.vincenthuto.hemomancy.common.entity.boss.endgame.VesperTheEveningStarEntity;
-import com.vincenthuto.hemomancy.common.entity.boss.endgame.VesperPhaseTwoCombat;
 import com.vincenthuto.hemomancy.common.entity.boss.endgame.VesperWingedFlightRules;
 import com.vincenthuto.hemomancy.common.event.HarbingerAdvancementGranter;
 import com.vincenthuto.hemomancy.common.init.EntityInit;
@@ -29,11 +29,11 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
-import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.event.entity.living.LivingDeathEvent;
+import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 
-import java.util.UUID;
 import java.util.Optional;
+import java.util.UUID;
 
 /** Owns the isolated, retryable 50x50 Vesper refusal arena. */
 @EventBusSubscriber(modid = Hemomancy.MOD_ID)

@@ -1,7 +1,5 @@
 package com.vincenthuto.hemomancy.client.player;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.builders.CubeDeformation;
@@ -9,6 +7,8 @@ import net.minecraft.client.model.geom.builders.LayerDefinition;
 import net.minecraft.core.Direction;
 import net.minecraft.world.entity.LivingEntity;
 import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 final class WarpChairPlayerPoseTest {
 	@Test

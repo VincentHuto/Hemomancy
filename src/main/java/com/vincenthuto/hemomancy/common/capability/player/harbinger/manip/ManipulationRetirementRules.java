@@ -5,12 +5,7 @@ import com.vincenthuto.hemomancy.common.manipulation.ManipLevel;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.item.Item;
 
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 public final class ManipulationRetirementRules {
 	private static final Set<String> RETIRED_MANIPULATION_IDS = Set.of(

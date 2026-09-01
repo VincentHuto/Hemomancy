@@ -1,24 +1,20 @@
 package com.vincenthuto.hemomancy.gametest;
 
-import java.util.ArrayList;
-import java.util.UUID;
-
 import com.mojang.authlib.GameProfile;
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.common.block.harbinger.BloodCrystalBlock;
+import com.vincenthuto.hemomancy.common.block.harbinger.decoration.HematicIronBarsBlock;
 import com.vincenthuto.hemomancy.common.block.harbinger.functional.HematicStakeBlock;
-import com.vincenthuto.hemomancy.common.block.shared.HematicIronBarsBlock;
+import com.vincenthuto.hemomancy.common.block.harbinger.rite.BloodCrystalBlock;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.Bloodline;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodlineSavedData;
 import com.vincenthuto.hemomancy.common.event.BloodStructureFeedManager;
 import com.vincenthuto.hemomancy.common.event.PendingBloodCraftManager;
-import com.vincenthuto.hemomancy.common.event.worldevent.FoundingFaneSavedData;
 import com.vincenthuto.hemomancy.common.event.worldevent.FaneFootprint;
+import com.vincenthuto.hemomancy.common.event.worldevent.FoundingFaneSavedData;
 import com.vincenthuto.hemomancy.common.init.BlockInit;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.BloodStructureCraftingHelper;
-
 import io.netty.channel.embedded.EmbeddedChannel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -30,13 +26,16 @@ import net.minecraft.server.level.ClientInformation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.network.CommonListenerCookie;
 import net.minecraft.server.network.ServerGamePacketListenerImpl;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.properties.AttachFace;
 import net.minecraft.world.phys.AABB;
 import net.neoforged.neoforge.gametest.GameTestHolder;
 import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
+
+import java.util.ArrayList;
+import java.util.UUID;
 
 @GameTestHolder(Hemomancy.MOD_ID)
 @PrefixGameTestTemplate(false)

@@ -1,17 +1,16 @@
 package com.vincenthuto.hemomancy.common.block.shared;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 
-import org.junit.jupiter.api.Test;
-
-import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class HematicIronBarsResourceTest {
 	private static final Path BLOCKSTATE = Path.of(

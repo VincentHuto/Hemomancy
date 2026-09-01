@@ -6,9 +6,9 @@ import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.Enu
 import com.vincenthuto.hemomancy.common.capability.player.unstained.UnstainedAccessRules;
 import com.vincenthuto.hemomancy.common.entity.HemoEntityPredicates;
 import com.vincenthuto.hemomancy.common.entity.projectile.BloodNeedleEntity;
+import com.vincenthuto.hemomancy.common.event.LastRiteHelper;
 import com.vincenthuto.hemomancy.common.init.EffectInit;
 import com.vincenthuto.hemomancy.common.init.ManipulationInit;
-import com.vincenthuto.hemomancy.common.event.LastRiteHelper;
 import com.vincenthuto.hemomancy.common.manipulation.saint.CrimsonTitheManip;
 import net.minecraft.core.particles.DustParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
@@ -36,12 +36,7 @@ import net.neoforged.neoforge.event.tick.LevelTickEvent;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 import org.joml.Vector3f;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 @EventBusSubscriber(modid = Hemomancy.MOD_ID)
 public final class ManipulationReactiveEvents {

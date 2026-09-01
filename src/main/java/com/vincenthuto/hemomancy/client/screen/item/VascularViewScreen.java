@@ -3,11 +3,11 @@ package com.vincenthuto.hemomancy.client.screen.item;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.EnumVeinSections;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.scar.ScarNoeticRoutingRules;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.HematicMemoryExpression;
-import com.vincenthuto.hemomancy.common.item.harbinger.scar.ScarDefinition;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.scar.ScarNoeticRoutingRules;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.EnumVeinSections;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
+import com.vincenthuto.hemomancy.common.item.harbinger.scar.ScarDefinition;
 import com.vincenthuto.hemomancy.common.menu.VascularViewMenu;
 import com.vincenthuto.hutoslib.client.HLTextUtils;
 import net.minecraft.Util;
@@ -31,11 +31,8 @@ import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.client.extensions.common.IClientMobEffectExtensions;
 
 import java.awt.*;
-import java.util.Collection;
-import java.util.ArrayList;
+import java.util.*;
 import java.util.List;
-import java.util.Optional;
-import java.util.Random;
 import java.util.stream.Collectors;
 
 public class VascularViewScreen extends EffectRenderingInventoryScreen<VascularViewMenu> {

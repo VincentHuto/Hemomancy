@@ -1,15 +1,17 @@
-package com.vincenthuto.hemomancy.common.entity.summon;
+package com.vincenthuto.hemomancy.gametest;
 
 import com.mojang.authlib.GameProfile;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
+import com.vincenthuto.hemomancy.common.entity.summon.PaleIntercessionEntity;
+import com.vincenthuto.hemomancy.common.entity.summon.PaleIntercessionRules;
+import com.vincenthuto.hemomancy.common.entity.summon.PaleIntercessionSummonService;
 import com.vincenthuto.hemomancy.common.init.EntityInit;
 import com.vincenthuto.hemomancy.common.init.StillArtInit;
 import net.minecraft.core.BlockPos;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ClientInformation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;

@@ -24,25 +24,28 @@ public class SyncTrackingAvatarPacket implements CustomPacketPayload {
 	public static final StreamCodec<FriendlyByteBuf, SyncTrackingAvatarPacket> STREAM_CODEC = StreamCodec.of(SyncTrackingAvatarPacket::encode, SyncTrackingAvatarPacket::decode);
 
 	public int playerId;
-	public boolean isActive;
+	public String avatarForm;
 
 	public SyncTrackingAvatarPacket(FriendlyByteBuf buf) {
 		this.playerId = buf.readInt();
-		this.isActive = buf.readBoolean();
+		this.avatarForm = buf.readUtf();
+	}
+
+	public SyncTrackingAvatarPacket(int playerId, String avatarForm) {
+		this.playerId = playerId;
+		this.avatarForm = avatarForm != null ? avatarForm : "";
 	}
 
 	public SyncTrackingAvatarPacket(int playerId, boolean isActive) {
-		this.playerId = playerId;
-		this.isActive = isActive;
+		this(playerId, isActive ? "summon_avatar" : "");
 	}
-
 
 	public static void handle(final SyncTrackingAvatarPacket msg, final IPayloadContext ctx) {
 		ctx.enqueueWork(() -> {
 			Entity p = Minecraft.getInstance().level.getEntity(msg.playerId);
 			if (p instanceof Player) {
 				HemoCapabilityAccess.getKnownManipulations(p).ifPresent(b -> {
-					b.setAvatarActive(msg.isActive);
+					b.setActiveAvatarForm(msg.avatarForm);
 				});
 			}
 		});
@@ -50,7 +53,7 @@ public class SyncTrackingAvatarPacket implements CustomPacketPayload {
 
 	public void toBytes(FriendlyByteBuf buf) {
 		buf.writeInt(this.playerId);
-		buf.writeBoolean(this.isActive);
+		buf.writeUtf(this.avatarForm);
 	}
 
 	@Override

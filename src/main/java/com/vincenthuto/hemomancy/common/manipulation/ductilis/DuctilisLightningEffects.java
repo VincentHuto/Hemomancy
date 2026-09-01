@@ -2,9 +2,6 @@ package com.vincenthuto.hemomancy.common.manipulation.ductilis;
 
 import com.vincenthuto.hutoslib.common.lightning.LightningTestConfig;
 import com.vincenthuto.hutoslib.common.lightning.LightningTesterSpawner;
-
-import javax.annotation.Nullable;
-
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -12,6 +9,8 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.Vec3;
+
+import javax.annotation.Nullable;
 
 public final class DuctilisLightningEffects {
 	private static final int OUTER_YELLOW = 0xE8FFE84A;

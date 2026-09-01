@@ -1,9 +1,9 @@
 package com.vincenthuto.hemomancy.client.render.entity.summon;
 
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.common.entity.summon.PaleIntercessionEntity;
 import com.vincenthuto.hemomancy.client.model.entity.summon.PaleIntercessionModel;
 import com.vincenthuto.hemomancy.client.render.layer.mob.PaleIntercessionGlowLayer;
+import com.vincenthuto.hemomancy.common.entity.summon.PaleIntercessionEntity;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.MobRenderer;

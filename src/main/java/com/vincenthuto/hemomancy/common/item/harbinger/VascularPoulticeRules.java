@@ -2,9 +2,9 @@ package com.vincenthuto.hemomancy.common.item.harbinger;
 
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.EnumVeinSections;
 
-import java.util.Map;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 public final class VascularPoulticeRules {

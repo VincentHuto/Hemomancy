@@ -1,12 +1,12 @@
 package com.vincenthuto.hemomancy.common.block.harbinger.crafting;
 
-import com.vincenthuto.hemomancy.common.block.shared.IMultiBlock;
 import com.vincenthuto.hemomancy.common.block.shared.HorizontalFacingRotationHelper;
+import com.vincenthuto.hemomancy.common.block.shared.IMultiBlock;
 import com.vincenthuto.hemomancy.common.block.shared.WaterloggedBlockSupport;
 import com.vincenthuto.hemomancy.common.init.BlockEntityInit;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.BloodProjectionItem;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.LivingStaffItem;
-import com.vincenthuto.hemomancy.common.tile.crafting.SomaticLoomBlockEntity;
+import com.vincenthuto.hemomancy.common.tile.harbinger.crafting.SomaticLoomBlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.InteractionHand;
@@ -18,13 +18,7 @@ import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.EntityBlock;
-import net.minecraft.world.level.block.HorizontalDirectionalBlock;
-import net.minecraft.world.level.block.Mirror;
-import net.minecraft.world.level.block.RenderShape;
-import net.minecraft.world.level.block.Rotation;
-import net.minecraft.world.level.block.SimpleWaterloggedBlock;
+import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -91,7 +85,7 @@ public class SomaticLoomBlock extends Block implements EntityBlock, IMultiBlock,
 							.setValue(com.vincenthuto.hemomancy.common.block.shared.FillerBlock.WATERLOGGED,
 									level.getFluidState(fillerPos).is(net.minecraft.tags.FluidTags.WATER)));
 			BlockEntity be = level.getBlockEntity(fillerPos);
-			if (be instanceof com.vincenthuto.hemomancy.common.tile.FillerBlockEntity filler) {
+			if (be instanceof com.vincenthuto.hemomancy.common.tile.shared.FillerBlockEntity filler) {
 				filler.setMainBlockPos(mainPos);
 			}
 		}

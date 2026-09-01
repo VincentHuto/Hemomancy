@@ -1,12 +1,12 @@
 package com.vincenthuto.hemomancy.common.block.harbinger.functional;
 
-import java.util.Map;
-import java.util.stream.Stream;
-
 import net.minecraft.core.Direction;
 import net.minecraft.world.phys.shapes.BooleanOp;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
+
+import java.util.Map;
+import java.util.stream.Stream;
 
 public final class WarpChairShapeRules {
 	private static final VoxelShape SHAPE = Stream.of(

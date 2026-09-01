@@ -4,14 +4,15 @@ import com.vincenthuto.hemomancy.client.item.HemoClientItemExtensionsProvider;
 import com.vincenthuto.hemomancy.client.model.armor.BloodLustArmorModel;
 import com.vincenthuto.hemomancy.client.render.item.ModelBackedArmorItemRenderer;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
+import com.vincenthuto.hemomancy.common.item.shared.armor.PlayerLayerHidingArmor;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.core.Holder;
 import net.minecraft.core.component.DataComponents;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.core.particles.DustParticleOptions;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
@@ -24,7 +25,7 @@ import net.neoforged.neoforge.client.extensions.common.IClientItemExtensions;
 
 import java.util.List;
 
-public class BloodLustArmorItem extends ArmorItem implements HemoClientItemExtensionsProvider {
+public class BloodLustArmorItem extends ArmorItem implements HemoClientItemExtensionsProvider, PlayerLayerHidingArmor {
 	public static final String TAG_LINEAGE = "hemomancy:lineage";
 
 	public enum MaskType {

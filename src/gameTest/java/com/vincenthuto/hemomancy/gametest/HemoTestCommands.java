@@ -2,12 +2,7 @@ package com.vincenthuto.hemomancy.gametest;
 
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.StringArgumentType;
-import com.vincenthuto.hemomancy.gametest.journey.HemoJourneyController;
-import com.vincenthuto.hemomancy.gametest.journey.HemoJourneyResult;
-import com.vincenthuto.hemomancy.gametest.journey.JourneyRoute;
-import com.vincenthuto.hemomancy.gametest.journey.JourneyAutoRunner;
-import com.vincenthuto.hemomancy.gametest.journey.UnstainedJourneyController;
-import com.vincenthuto.hemomancy.gametest.journey.UnstainedJourneyResult;
+import com.vincenthuto.hemomancy.gametest.journey.*;
 import net.minecraft.ChatFormatting;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;

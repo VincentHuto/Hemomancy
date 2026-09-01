@@ -12,6 +12,9 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.world.entity.LivingEntity;
 
 public class BloodAvatarModel<T extends LivingEntity> extends HumanoidModel<T> {
+	private int stage;
+	private final ModelPart rightFoot;
+	private final ModelPart leftFoot;
 
 	public static final ModelLayerLocation layer = new ModelLayerLocation(
 			Hemomancy.rloc("blood_avatar"), "main");
@@ -482,17 +485,33 @@ public class BloodAvatarModel<T extends LivingEntity> extends HumanoidModel<T> {
 
 	public BloodAvatarModel(ModelPart root) {
 		super(root, RenderType::entityTranslucent);
+		rightFoot = root.getChild("right_foot");
+		leftFoot = root.getChild("left_foot");
+	}
 
+	public void setStage(int stage) {
+		this.stage = Math.max(0, Math.min(4, stage));
+		body.getChild("belt").visible = stage >= 2;
+		body.getChild("rIronSide").visible = stage >= 2;
+		body.getChild("lIronSide").visible = stage >= 2;
 	}
 
 	@Override
 	public void renderToBuffer(PoseStack poseStack, VertexConsumer buffer, int packedLight, int packedOverlay, int packedColor) {
-		head.render(poseStack, buffer, packedLight, packedOverlay);
-		body.render(poseStack, buffer, packedLight, packedOverlay);
-		leftArm.render(poseStack, buffer, packedLight, packedOverlay);
-		rightLeg.render(poseStack, buffer, packedLight, packedOverlay);
-		leftLeg.render(poseStack, buffer, packedLight, packedOverlay);
-		rightArm.render(poseStack, buffer, packedLight, packedOverlay);
+		body.render(poseStack, buffer, packedLight, packedOverlay, packedColor);
+		if (stage >= 1) {
+			leftArm.render(poseStack, buffer, packedLight, packedOverlay, packedColor);
+			rightArm.render(poseStack, buffer, packedLight, packedOverlay, packedColor);
+		}
+		if (stage >= 3) {
+			rightLeg.render(poseStack, buffer, packedLight, packedOverlay, packedColor);
+			leftLeg.render(poseStack, buffer, packedLight, packedOverlay, packedColor);
+			rightFoot.copyFrom(rightLeg);
+			leftFoot.copyFrom(leftLeg);
+			rightFoot.render(poseStack, buffer, packedLight, packedOverlay, packedColor);
+			leftFoot.render(poseStack, buffer, packedLight, packedOverlay, packedColor);
+		}
+		if (stage >= 4) head.render(poseStack, buffer, packedLight, packedOverlay, packedColor);
 
 	}
 

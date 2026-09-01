@@ -2,12 +2,12 @@ package com.vincenthuto.hemomancy.common.block.harbinger.functional;
 
 import com.mojang.serialization.MapCodec;
 import com.vincenthuto.hemomancy.common.block.shared.FillerBlock;
-import com.vincenthuto.hemomancy.common.tile.WarpChairFillerBlockEntity;
+import com.vincenthuto.hemomancy.common.tile.harbinger.functional.WarpChairFillerBlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.block.HorizontalDirectionalBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.DirectionProperty;

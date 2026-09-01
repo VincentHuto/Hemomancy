@@ -3,7 +3,7 @@ package com.vincenthuto.hemomancy.common.event;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.init.BlockInit;
 import com.vincenthuto.hemomancy.common.item.harbinger.EnzymeItem;
-import com.vincenthuto.hemomancy.common.tile.FillerBlockEntity;
+import com.vincenthuto.hemomancy.common.tile.shared.FillerBlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
 import net.neoforged.bus.api.SubscribeEvent;

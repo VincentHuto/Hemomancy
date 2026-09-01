@@ -2,12 +2,7 @@ package com.vincenthuto.hemomancy.common.entity.boss.endgame;
 
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.EnumMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
 
 public final class VesperCombatRules {
 	public static final int DEFEAT_ANIMATION_TICKS = 40;

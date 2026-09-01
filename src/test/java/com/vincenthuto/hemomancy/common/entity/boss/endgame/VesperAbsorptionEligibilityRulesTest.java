@@ -1,11 +1,11 @@
 package com.vincenthuto.hemomancy.common.entity.boss.endgame;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import org.junit.jupiter.api.Test;
 
 import java.util.UUID;
 
-import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 final class VesperAbsorptionEligibilityRulesTest {
 	private static final UUID OWNER = UUID.fromString("11111111-1111-1111-1111-111111111111");

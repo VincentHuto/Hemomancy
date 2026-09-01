@@ -1,7 +1,6 @@
 package com.vincenthuto.hemomancy.common.manipulation.congeatio;
 
 import com.vincenthuto.hemomancy.Hemomancy;
-
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
@@ -13,12 +12,7 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.tick.LevelTickEvent;
 
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 @EventBusSubscriber(modid = Hemomancy.MOD_ID)
 public final class TemporaryIceManager {

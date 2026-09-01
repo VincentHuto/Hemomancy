@@ -2,9 +2,7 @@ package com.vincenthuto.hemomancy.common.capability.player.harbinger.degree;
 
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 final class InitiatoryDegreeRiteRewardTest {
 	@Test

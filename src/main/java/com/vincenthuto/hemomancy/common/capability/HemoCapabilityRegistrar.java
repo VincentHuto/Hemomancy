@@ -1,17 +1,16 @@
 package com.vincenthuto.hemomancy.common.capability;
 
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.equipment.IHarbingerEquipment;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodVolume;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.ItemStackBloodVolume;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.equipment.IHarbingerEquipment;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.scar.IScarItem;
 import com.vincenthuto.hemomancy.common.init.BlockEntityInit;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.BloodGourdItem;
 import com.vincenthuto.hemomancy.common.item.itemhandler.LivingStaffItemHandler;
 import com.vincenthuto.hemomancy.common.item.itemhandler.LivingSyringeItemHandler;
-import com.vincenthuto.hemomancy.common.item.itemhandler.MorphlingJarItemHandler;
 import com.vincenthuto.hemomancy.common.item.itemhandler.MnemonicFolioItemHandler;
-import com.vincenthuto.hemomancy.common.item.itemhandler.ScarBinderItemHandler;
+import com.vincenthuto.hemomancy.common.item.itemhandler.MorphlingJarItemHandler;
 import com.vincenthuto.hemomancy.common.item.shared.MnemonicFolioLayout;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.entity.EntityType;

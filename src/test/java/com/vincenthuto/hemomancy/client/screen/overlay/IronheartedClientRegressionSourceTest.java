@@ -10,10 +10,7 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 class IronheartedClientRegressionSourceTest {
 	@Test
@@ -133,9 +130,11 @@ class IronheartedClientRegressionSourceTest {
 	void ironheartedUsesItsExistingFerricMemoryArtwork() throws IOException {
 		String radial = read("src/main/java/com/vincenthuto/hemomancy/client/screen/manips/RadialChooseManipScreen.java");
 		String loadout = read("src/main/java/com/vincenthuto/hemomancy/client/screen/tile/functional/SynapticLoadoutScreen.java");
+		String resolver = read("src/main/java/com/vincenthuto/hemomancy/client/screen/manips/ManipulationIconResolver.java");
 
-		assertTrue(radial.contains("case \"ironhearted\" -> \"memory_iron_retort_overlay\";"));
-		assertTrue(loadout.contains("case \"ironhearted\" -> \"memory_iron_retort_overlay\";"));
+		assertTrue(resolver.contains("case \"ironhearted\" -> \"memory_iron_retort_overlay\";"));
+		assertTrue(radial.contains("ManipulationIconResolver.overlay(manipulation.getName())"));
+		assertTrue(loadout.contains("ManipulationIconResolver.overlay(ref.id())"));
 	}
 
 	private static String read(String path) throws IOException {

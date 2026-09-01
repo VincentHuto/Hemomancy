@@ -26,6 +26,10 @@ public final class MnemonicReliquaryScreenScalingResourceTest {
 				"this.imageHeight = currentGuiHeight;");
 		assertContains("mnemonic reliquary screen should scale item icons with the panel", screen,
 				"renderScaledItem");
+		assertContains("mnemonic reliquary counter should stay in the top-left corner", screen,
+				"int x = guiLeft + scaled(6);");
+		assertContains("mnemonic reliquary counter should render from its left edge", screen,
+				"graphics.drawString(font, text, x, y, 0xFFDD2222);");
 		assertDoesNotContain("mnemonic reliquary screen should not center against the fixed width", screen,
 				"guiLeft = (this.width - GUI_WIDTH) / 2;");
 		assertDoesNotContain("mnemonic reliquary screen should not center against the fixed height", screen,

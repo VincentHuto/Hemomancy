@@ -1,10 +1,9 @@
 package com.vincenthuto.hemomancy.common.item.armor;
 
+import javax.imageio.ImageIO;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-
-import javax.imageio.ImageIO;
 
 public final class FinalBloodLustArmorModelResourceTest {
 	private static final Path SOURCE_ROOT = Path.of("src/main/java");

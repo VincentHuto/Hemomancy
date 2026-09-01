@@ -1,13 +1,12 @@
 package com.vincenthuto.hemomancy.common.block;
 
+import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import javax.imageio.ImageIO;
 
 public final class ModelFirstTileRendererResourceTest {
 	private static final Path RESOURCE_ROOT = Path.of("src/main/resources");

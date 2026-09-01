@@ -1,10 +1,6 @@
 package com.vincenthuto.hemomancy.common.entity.summon;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.EnumSet;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 public final class MorphlingPolypLayerRules {
 	public static final int MAX_NATURAL_LAYERS = 3;

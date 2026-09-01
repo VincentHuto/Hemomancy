@@ -1,27 +1,23 @@
 package com.vincenthuto.hemomancy.common.command;
 
 import com.mojang.brigadier.CommandDispatcher;
-import com.mojang.brigadier.arguments.BoolArgumentType;
-import com.mojang.brigadier.arguments.DoubleArgumentType;
-import com.mojang.brigadier.arguments.FloatArgumentType;
-import com.mojang.brigadier.arguments.IntegerArgumentType;
-import com.mojang.brigadier.arguments.StringArgumentType;
+import com.mojang.brigadier.arguments.*;
 import com.mojang.brigadier.suggestion.Suggestions;
 import com.mojang.brigadier.suggestion.SuggestionsBuilder;
 import com.vincenthuto.hemomancy.Hemomancy;
+import com.vincenthuto.hemomancy.common.block.harbinger.functional.QliphothBloomBlock;
+import com.vincenthuto.hemomancy.common.block.shared.IMultiBlock;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.PathMutualExclusionHelper;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.*;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.EnumArchonPath;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.EnumInitiatoryDegree;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.IInitiatoryDegree;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.InitiatoryDegreeEvents;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.IKnownManipulations;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.KnownManipulationEvents;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.ManipulationDiagnosticsSync;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.ManipulationEquipHelper;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.ManipulationRetirementRules;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.ManipSlotHelper;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.*;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.morphling.EquippedMorphlingEvents;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.organs.EnumOrgan;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.organs.IVisceralOrgans;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.summon.IKnownSummons;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.summon.KnownSummonEvents;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.BloodTendencyEvents;
@@ -29,29 +25,16 @@ import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.Enu
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.IBloodTendency;
 import com.vincenthuto.hemomancy.common.capability.player.shared.skill.HemoMilestone;
 import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillProgress;
-import com.vincenthuto.hemomancy.common.capability.player.unstained.EnumClarityStage;
-import com.vincenthuto.hemomancy.common.capability.player.unstained.EnumPurityStage;
-import com.vincenthuto.hemomancy.common.capability.player.unstained.IUnstainedProgress;
-import com.vincenthuto.hemomancy.common.capability.player.unstained.UnstainedProgressEvents;
-import com.vincenthuto.hemomancy.common.capability.player.unstained.UnstainedAccessRules;
+import com.vincenthuto.hemomancy.common.capability.player.unstained.*;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.stillart.KnownStillArtEvents;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.organs.EnumOrgan;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.organs.IVisceralOrgans;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodVolumeEvents;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.Bloodline;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodlineDisbandHelper;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodlineSavedData;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
-import com.vincenthuto.hemomancy.common.block.harbinger.functional.QliphothBloomBlock;
-import com.vincenthuto.hemomancy.common.block.shared.IMultiBlock;
-import com.vincenthuto.hemomancy.common.event.LastRiteHelper;
-import com.vincenthuto.hemomancy.common.event.worldevent.BloodMoonSavedData;
-import com.vincenthuto.hemomancy.common.event.worldevent.FoundingFaneEvents;
-import com.vincenthuto.hemomancy.common.event.worldevent.FaneBoundaryRelation;
 import com.vincenthuto.hemomancy.common.entity.mob.monster.will.WillAnchorEntity;
 import com.vincenthuto.hemomancy.common.entity.mob.monster.will.WillCompositionRules;
 import com.vincenthuto.hemomancy.common.entity.mob.monster.will.WillEntity;
 import com.vincenthuto.hemomancy.common.entity.mob.monster.will.WillOrigin;
+import com.vincenthuto.hemomancy.common.event.LastRiteHelper;
+import com.vincenthuto.hemomancy.common.event.worldevent.BloodMoonSavedData;
+import com.vincenthuto.hemomancy.common.event.worldevent.FaneBoundaryRelation;
+import com.vincenthuto.hemomancy.common.event.worldevent.FoundingFaneEvents;
 import com.vincenthuto.hemomancy.common.init.BlockInit;
 import com.vincenthuto.hemomancy.common.init.EntityInit;
 import com.vincenthuto.hemomancy.common.init.ManipulationInit;
@@ -59,16 +42,16 @@ import com.vincenthuto.hemomancy.common.item.harbinger.morphlings.ItemMorphlingJ
 import com.vincenthuto.hemomancy.common.item.harbinger.morphlings.MorphlingItem;
 import com.vincenthuto.hemomancy.common.item.harbinger.morphlings.PrimalMorphlingRules;
 import com.vincenthuto.hemomancy.common.item.itemhandler.MorphlingJarItemHandler;
+import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
+import com.vincenthuto.hemomancy.common.manipulation.ManipLevel;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.PacketSyncBloodMoon;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.PacketSyncPomeProgress;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.PacketSyncSkills;
-import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
-import com.vincenthuto.hemomancy.common.manipulation.ManipLevel;
 import com.vincenthuto.hemomancy.common.rite.harbinger.HarbingerCardinalRiteEvents;
 import com.vincenthuto.hemomancy.common.rite.harbinger.QliphothBloomSavedData;
 import com.vincenthuto.hemomancy.common.summon.PuppeteerSummonDefinitions;
-import com.vincenthuto.hemomancy.common.tile.functional.QliphothBloomBlockEntity;
+import com.vincenthuto.hemomancy.common.tile.harbinger.functional.QliphothBloomBlockEntity;
 import com.vincenthuto.hemomancy.common.worldgen.ChamberOfWillManager;
 import com.vincenthuto.hemomancy.common.worldgen.FungalGardenTravelHelper;
 import net.minecraft.ChatFormatting;
@@ -90,11 +73,7 @@ import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.network.PacketDistributor;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Locale;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 
 /**
@@ -579,7 +558,21 @@ public class HemoCommand {
 						.then(Commands.literal("clear")
 								.executes(ctx -> clearKnownManipulations(ctx.getSource(), ctx.getSource().getPlayerOrException()))
 								.then(Commands.argument("player", EntityArgument.player())
-										.executes(ctx -> clearKnownManipulations(ctx.getSource(), EntityArgument.getPlayer(ctx, "player"))))))
+										.executes(ctx -> clearKnownManipulations(ctx.getSource(), EntityArgument.getPlayer(ctx, "player")))))
+						.then(Commands.literal("level")
+								.then(Commands.argument("level", IntegerArgumentType.integer(0, ManipLevel.MAX_LEVEL))
+										.executes(ctx -> setSelectedManipulationLevel(ctx.getSource(),
+												ctx.getSource().getPlayerOrException(), IntegerArgumentType.getInteger(ctx, "level")))
+										.then(Commands.argument("player", EntityArgument.player())
+												.executes(ctx -> setSelectedManipulationLevel(ctx.getSource(),
+														EntityArgument.getPlayer(ctx, "player"), IntegerArgumentType.getInteger(ctx, "level"))))))
+						.then(Commands.literal("xp")
+								.then(Commands.argument("xp", DoubleArgumentType.doubleArg(0.0D))
+										.executes(ctx -> setSelectedManipulationXp(ctx.getSource(),
+												ctx.getSource().getPlayerOrException(), DoubleArgumentType.getDouble(ctx, "xp")))
+										.then(Commands.argument("player", EntityArgument.player())
+												.executes(ctx -> setSelectedManipulationXp(ctx.getSource(),
+														EntityArgument.getPlayer(ctx, "player"), DoubleArgumentType.getDouble(ctx, "xp")))))))
 
 				.then(Commands.literal("slots")
 						.then(Commands.literal("get")
@@ -1626,6 +1619,44 @@ public class HemoCommand {
 				+ (removed == 1 ? "" : "s") + " from ")
 				.append(Component.literal(player.getName().getString()).withStyle(ChatFormatting.GOLD)), true);
 		return Math.max(1, removed);
+	}
+
+	private static int setSelectedManipulationLevel(CommandSourceStack source, ServerPlayer player, int level) {
+		IKnownManipulations known = HemoCapabilityAccess.requireKnownManipulations(player);
+		ManipLevel mastery = selectedEquippedManipulationLevel(known);
+		if (mastery == null) {
+			source.sendFailure(Component.literal(player.getName().getString()
+					+ " does not have a selected equipped manipulation."));
+			return 0;
+		}
+		BloodManipulation selected = known.getSelectedManip();
+		known.setSelectedManipLevel(level);
+		syncKnownManipulations(player);
+		source.sendSuccess(() -> Component.literal("Set " + player.getName().getString() + "'s "
+				+ selected.getName() + " mastery level to " + mastery.getCurrentLevel() + "."), true);
+		return 1;
+	}
+
+	private static int setSelectedManipulationXp(CommandSourceStack source, ServerPlayer player, double xp) {
+		IKnownManipulations known = HemoCapabilityAccess.requireKnownManipulations(player);
+		ManipLevel mastery = selectedEquippedManipulationLevel(known);
+		if (mastery == null) {
+			source.sendFailure(Component.literal(player.getName().getString()
+					+ " does not have a selected equipped manipulation."));
+			return 0;
+		}
+		BloodManipulation selected = known.getSelectedManip();
+		mastery.setXp(xp);
+		syncKnownManipulations(player);
+		source.sendSuccess(() -> Component.literal("Set " + player.getName().getString() + "'s "
+				+ selected.getName() + " raw mastery XP to " + mastery.getXp() + "."), true);
+		return 1;
+	}
+
+	private static ManipLevel selectedEquippedManipulationLevel(IKnownManipulations known) {
+		if (known.getKnownManips().isEmpty()) return null;
+		BloodManipulation selected = known.getSelectedManip();
+		return selected != null && known.isManipEquipped(selected) ? known.getManipLevel(selected) : null;
 	}
 
 	private static List<BloodManipulation> availableManipulations() {

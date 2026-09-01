@@ -1,12 +1,9 @@
 package com.vincenthuto.hemomancy.client.screen.dialogue;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
+import com.vincenthuto.hemomancy.common.entity.npc.dialogue.DialogueCategory;
 import org.junit.jupiter.api.Test;
 
-import com.vincenthuto.hemomancy.common.entity.npc.dialogue.DialogueCategory;
+import static org.junit.jupiter.api.Assertions.*;
 
 class DialogueNavigationStateTest {
 	@Test

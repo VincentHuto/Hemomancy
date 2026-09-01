@@ -21,11 +21,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.neoforged.neoforge.network.PacketDistributor;
 
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public final class BloodInfusionManager {
 	private static final double SYNC_RANGE = 64.0D;

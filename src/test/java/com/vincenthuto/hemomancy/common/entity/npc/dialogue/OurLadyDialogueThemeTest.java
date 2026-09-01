@@ -1,8 +1,8 @@
 package com.vincenthuto.hemomancy.common.entity.npc.dialogue;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class OurLadyDialogueThemeTest {
 	@Test

@@ -1,14 +1,14 @@
 package com.vincenthuto.hemomancy.testing;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.regex.Pattern;
 
-import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class GameTestHarnessSourceContractTest {
 	private static final Path ROOT = Path.of("").toAbsolutePath();

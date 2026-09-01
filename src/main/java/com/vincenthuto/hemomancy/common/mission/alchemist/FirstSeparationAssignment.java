@@ -1,20 +1,19 @@
 package com.vincenthuto.hemomancy.common.mission.alchemist;
 
-import java.util.List;
-import java.util.UUID;
-
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.event.HarbingerAdvancementGranter;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.VialRackItem;
-
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.CustomData;
+
+import java.util.List;
+import java.util.UUID;
 
 /** Server-authoritative state and rewards for the Degree-2 First Separation assignment. */
 public final class FirstSeparationAssignment {

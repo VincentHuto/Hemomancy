@@ -1,11 +1,10 @@
 package com.vincenthuto.hemomancy.common.network.dialogue;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
+import net.minecraft.resources.ResourceLocation;
 import org.junit.jupiter.api.Test;
 
-import net.minecraft.resources.ResourceLocation;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class DialogueTopicOpenedPacketTest {
 	@Test

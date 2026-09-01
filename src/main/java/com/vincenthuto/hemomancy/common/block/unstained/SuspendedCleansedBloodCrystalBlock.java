@@ -2,7 +2,7 @@ package com.vincenthuto.hemomancy.common.block.unstained;
 
 import com.vincenthuto.hemomancy.common.block.shared.WaterloggedBlockSupport;
 import com.vincenthuto.hemomancy.common.init.BlockEntityInit;
-import com.vincenthuto.hemomancy.common.tile.SuspendedCleansedBloodCrystalBlockEntity;
+import com.vincenthuto.hemomancy.common.tile.unstained.SuspendedCleansedBloodCrystalBlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.InteractionHand;

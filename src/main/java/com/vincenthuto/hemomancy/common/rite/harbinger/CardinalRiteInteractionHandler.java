@@ -9,17 +9,11 @@ import com.vincenthuto.hemomancy.common.entity.utility.HumanitySpriteEntity;
 import com.vincenthuto.hemomancy.common.event.SanguineProjectionTargeting;
 import com.vincenthuto.hemomancy.common.init.EntityInit;
 import com.vincenthuto.hemomancy.common.recipe.CardinalRiteRecipe;
-import com.vincenthuto.hemomancy.common.rite.ActiveCardinalRite;
-import com.vincenthuto.hemomancy.common.rite.CardinalRiteCeremonyDefinition;
-import com.vincenthuto.hemomancy.common.rite.CardinalRiteFootprintRules;
-import com.vincenthuto.hemomancy.common.rite.CardinalRiteInstabilityBoundaryRules;
-import com.vincenthuto.hemomancy.common.rite.CardinalRitePhase;
-import com.vincenthuto.hemomancy.common.rite.CardinalRiteSavedData;
-import com.vincenthuto.hemomancy.common.rite.CardinalRiteStationMatcher;
-import com.vincenthuto.hemomancy.common.rite.sigil.IchorianSigilDefinition;
-import com.vincenthuto.hemomancy.common.rite.sigil.IchorianSigilRegistry;
+import com.vincenthuto.hemomancy.common.rite.*;
 import com.vincenthuto.hemomancy.common.rite.sigil.CardinalRiteSigilPlacementRules;
 import com.vincenthuto.hemomancy.common.rite.sigil.CardinalRiteSigilRules;
+import com.vincenthuto.hemomancy.common.rite.sigil.IchorianSigilDefinition;
+import com.vincenthuto.hemomancy.common.rite.sigil.IchorianSigilRegistry;
 import com.vincenthuto.hutoslib.client.particle.data.EmberParticleData;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import com.vincenthuto.hutoslib.common.lightning.LightningTestConfig;
@@ -42,11 +36,7 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.function.IntUnaryOperator;
 
 /**

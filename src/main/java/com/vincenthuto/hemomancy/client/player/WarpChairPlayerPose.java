@@ -1,18 +1,17 @@
 package com.vincenthuto.hemomancy.client.player;
 
-import java.util.Optional;
-
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import com.vincenthuto.hemomancy.common.block.harbinger.functional.WarpChairBlock;
 import com.vincenthuto.hemomancy.common.init.BlockInit;
-
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.core.Direction;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Pose;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.block.state.BlockState;
+
+import java.util.Optional;
 
 /** Client-only presentation for players using a Warp Chair's vanilla sleep state. */
 public final class WarpChairPlayerPose {

@@ -1,13 +1,13 @@
 package com.vincenthuto.hemomancy.client.render.entity.misc;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class AwakenedIchorianSigilRenderBufferSourceTest {
 	private static final Path SOURCE = Path.of(

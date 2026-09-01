@@ -5,7 +5,6 @@ import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.client.model.entity.boss.velorum.VelorumModel;
 import com.vincenthuto.hemomancy.common.entity.boss.saint.velorum.VelorumEntity;
 import net.minecraft.client.renderer.entity.EntityRendererProvider.Context;
-import net.minecraft.client.renderer.entity.HumanoidMobRenderer;
 import net.minecraft.client.renderer.entity.MobRenderer;
 import net.minecraft.resources.ResourceLocation;
 

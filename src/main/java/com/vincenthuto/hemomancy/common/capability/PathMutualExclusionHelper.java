@@ -1,25 +1,24 @@
 package com.vincenthuto.hemomancy.common.capability;
 
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.IInitiatoryDegree;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.InitiatoryDegreeEvents;
-import com.vincenthuto.hemomancy.common.capability.player.unstained.IUnstainedProgress;
-import com.vincenthuto.hemomancy.common.capability.player.unstained.UnstainedProgressEvents;
-import com.vincenthuto.hemomancy.common.capability.player.unstained.stillart.KnownStillArtEvents;
-import com.vincenthuto.hemomancy.common.network.PacketHandler;
-import com.vincenthuto.hemomancy.common.network.capa.harbinger.PacketSyncPomeProgress;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodVolumeEvents;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.Bloodline;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodlineSavedData;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.IInitiatoryDegree;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.InitiatoryDegreeEvents;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.KnownManipulationEvents;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.ManipulationLoadout;
-import com.vincenthuto.hemomancy.common.entity.summon.BoundPuppeteerSummon;
-import com.vincenthuto.hemomancy.common.entity.summon.BloodThrallEntity;
-import com.vincenthuto.hemomancy.common.entity.summon.PhantasmalEchoEntity;
+import com.vincenthuto.hemomancy.common.capability.player.unstained.IUnstainedProgress;
+import com.vincenthuto.hemomancy.common.capability.player.unstained.UnstainedProgressEvents;
+import com.vincenthuto.hemomancy.common.capability.player.unstained.stillart.KnownStillArtEvents;
 import com.vincenthuto.hemomancy.common.entity.mob.monster.EnthralledDollEntity;
-import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
+import com.vincenthuto.hemomancy.common.entity.summon.BloodThrallEntity;
+import com.vincenthuto.hemomancy.common.entity.summon.BoundPuppeteerSummon;
+import com.vincenthuto.hemomancy.common.entity.summon.PhantasmalEchoEntity;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
+import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
 import com.vincenthuto.hemomancy.common.menu.HarbingerEquipmentMenu;
-
+import com.vincenthuto.hemomancy.common.network.PacketHandler;
+import com.vincenthuto.hemomancy.common.network.capa.harbinger.PacketSyncPomeProgress;
 import net.minecraft.server.level.ServerPlayer;
 
 import java.util.List;

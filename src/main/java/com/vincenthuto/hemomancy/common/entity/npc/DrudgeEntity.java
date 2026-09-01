@@ -1,10 +1,10 @@
 package com.vincenthuto.hemomancy.common.entity.npc;
 
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.routing.DrudgeTenderSource;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.ManipulationRetirementRules;
 import com.vincenthuto.hemomancy.common.item.harbinger.memories.BloodMemoryItem;
 import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
 import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationType;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.routing.DrudgeTenderSource;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.ManipulationRetirementRules;
 import com.vincenthuto.hemomancy.config.HemoServerConfig;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
@@ -14,9 +14,9 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;

@@ -1,9 +1,10 @@
 package com.vincenthuto.hemomancy.client.screen.skilltree.shared;
 
+import net.minecraft.world.item.ItemStack;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import net.minecraft.world.item.ItemStack;
 
 final class MaterialIconCache {
 	private final Map<MaterialEntry, ItemStack> icons = new HashMap<>();

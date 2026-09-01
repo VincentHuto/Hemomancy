@@ -1,10 +1,9 @@
 package com.vincenthuto.hemomancy.config;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
+import net.neoforged.neoforge.common.ModConfigSpec;
 import org.junit.jupiter.api.Test;
 
-import net.neoforged.neoforge.common.ModConfigSpec;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class DialogueStyleClientConfigTest {
 	@Test

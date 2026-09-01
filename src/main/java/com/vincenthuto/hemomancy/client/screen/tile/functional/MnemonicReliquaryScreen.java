@@ -2,24 +2,24 @@ package com.vincenthuto.hemomancy.client.screen.tile.functional;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.vincenthuto.hemomancy.Hemomancy;
+import com.vincenthuto.hemomancy.client.screen.manips.ManipulationIconResolver;
 import com.vincenthuto.hemomancy.common.capability.HemoAttachmentTypes;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.MemoryEntryKind;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.MemorySlotRef;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.*;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.musclememory.MuscleMemory;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.EnumVeinSections;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.ManipulationEquipHelper;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.MemoryEquipRules;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.ManipulationRetirementRules;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.ManipSlotHelper;
+import com.vincenthuto.hemomancy.common.init.ManipulationInit;
 import com.vincenthuto.hemomancy.common.item.harbinger.memories.BloodMemoryItem;
 import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
+import com.vincenthuto.hemomancy.common.manipulation.family.ManipulationFamilyRegistry;
 import com.vincenthuto.hemomancy.common.manipulation.ferric.ConjurationManip;
 import com.vincenthuto.hemomancy.common.menu.tile.functional.MnemonicReliquaryMenu;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.manips.EquipManipulationPacket;
 import com.vincenthuto.hutoslib.client.HLTextUtils;
+import net.minecraft.ChatFormatting;
+import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
@@ -41,6 +41,8 @@ public class MnemonicReliquaryScreen extends AbstractContainerScreen<MnemonicRel
 	private static final int VEIN_COUNT = 28;
 	private static final int ICON_SIZE = 16;
 	private static final int SCREEN_PADDING = 8;
+	private static final long FAMILY_HOLD_MILLIS = 600L;
+	private static final int FAMILY_DROPDOWN_BACKGROUND = 0xFF2A080D;
 
 	private float[][] veinParams;
 	private int guiLeft;
@@ -58,10 +60,17 @@ public class MnemonicReliquaryScreen extends AbstractContainerScreen<MnemonicRel
 	private List<MuscleMemory> preparedMuscleMemories = new ArrayList<>();
 	private List<MuscleMemory> equippedMuscleMemories = new ArrayList<>();
 	private Set<String> equippedNames = new HashSet<>();
+	private final Set<String> knownManipNames = new HashSet<>();
 	private int maxSlots;
 
 	private BloodManipulation draggingManip;
 	private MuscleMemory draggingMuscleMemory;
+	private ManipIcon heldFamilyIcon;
+	private long familyHoldStarted;
+	private double familyHoldX;
+	private double familyHoldY;
+	private boolean familyFanOpen;
+	private final List<ManipIcon> familyFanIcons = new ArrayList<>();
 
 	private final List<ManipIcon> knownIcons = new ArrayList<>();
 	private final List<ManipIcon> equippedIcons = new ArrayList<>();
@@ -146,6 +155,7 @@ public class MnemonicReliquaryScreen extends AbstractContainerScreen<MnemonicRel
 		preparedMuscleMemories.clear();
 		equippedMuscleMemories.clear();
 		equippedNames.clear();
+		knownManipNames.clear();
 		tendencyGroups.clear();
 
 		for (EnumBloodTendency tend : EnumBloodTendency.values()) {
@@ -155,15 +165,22 @@ public class MnemonicReliquaryScreen extends AbstractContainerScreen<MnemonicRel
 		HemoCapabilityAccess.getKnownManipulations(player).ifPresent(known -> {
 			List<String> equipped = known.getEquippedManipNames();
 			equippedNames.addAll(equipped);
+			known.getKnownManips().keySet().stream().filter(Objects::nonNull)
+					.map(BloodManipulation::getName).forEach(knownManipNames::add);
 
+			Set<String> listedFamilies = new HashSet<>();
 			for (BloodManipulation manip : known.getKnownManips().keySet()) {
 				if (ManipulationEquipHelper.isFixedMechanicalManip(manip.getName())
 						|| ManipulationRetirementRules.isRetiredManipulation(manip)) {
 					continue;
 				}
-				EnumBloodTendency tend = manip.getTend();
+				String displayId = ManipulationFamilyRegistry.baselineId(manip.getName());
+				if (!listedFamilies.add(displayId)) continue;
+				BloodManipulation displayManip = ManipulationInit.getByName(displayId);
+				if (displayManip == null) displayManip = manip;
+				EnumBloodTendency tend = displayManip.getTend();
 				if (tend != null && tendencyGroups.containsKey(tend)) {
-					tendencyGroups.get(tend).add(manip);
+					tendencyGroups.get(tend).add(displayManip);
 				}
 			}
 
@@ -285,6 +302,7 @@ public class MnemonicReliquaryScreen extends AbstractContainerScreen<MnemonicRel
 
 	@Override
 	public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
+		updateFamilyHold(mouseX, mouseY);
 		this.renderBg(graphics, partialTicks, mouseX, mouseY);
 
 		int gx = guiLeft;
@@ -298,13 +316,12 @@ public class MnemonicReliquaryScreen extends AbstractContainerScreen<MnemonicRel
 		drawKnownManips(graphics, mouseX, mouseY);
 		drawPreparedTinctures(graphics);
 		drawEquippedManips(graphics, mouseX, mouseY);
+		drawFamilyFan(graphics, mouseX, mouseY);
 		drawCounter(graphics);
 
 		if (draggingManip != null) {
-			ItemStack stack = iconStackFor(draggingManip);
-			if (stack != null) {
-				renderScaledItem(graphics, stack, mouseX - currentIconSize / 2, mouseY - currentIconSize / 2);
-			}
+			renderManipulationIcon(graphics, draggingManip,
+					mouseX - currentIconSize / 2, mouseY - currentIconSize / 2);
 		}
 		if (draggingMuscleMemory != null) {
 			renderScaledItem(graphics, tinctureStackFor(draggingMuscleMemory),
@@ -463,11 +480,8 @@ public class MnemonicReliquaryScreen extends AbstractContainerScreen<MnemonicRel
 
 	private void drawKnownManips(GuiGraphics graphics, int mouseX, int mouseY) {
 		for (ManipIcon icon : knownIcons) {
-			ItemStack stack = iconStackFor(icon.manip);
-			if (stack == null) continue;
-
 			boolean equipped = equippedNames.contains(icon.manip.getName());
-			renderScaledItem(graphics, stack, icon.x, icon.y);
+			renderManipulationIcon(graphics, icon.manip, icon.x, icon.y);
 
 			if (equipped) {
 				RenderSystem.enableBlend();
@@ -480,10 +494,31 @@ public class MnemonicReliquaryScreen extends AbstractContainerScreen<MnemonicRel
 
 	private void drawEquippedManips(GuiGraphics graphics, int mouseX, int mouseY) {
 		for (ManipIcon icon : equippedIcons) {
-			ItemStack stack = iconStackFor(icon.manip);
-			if (stack == null) continue;
-			renderScaledItem(graphics, stack, icon.x, icon.y);
+			renderManipulationIcon(graphics, icon.manip, icon.x, icon.y);
 		}
+	}
+
+	private void drawFamilyFan(GuiGraphics graphics, int mouseX, int mouseY) {
+		if (!familyFanOpen || familyFanIcons.isEmpty()) return;
+		graphics.pose().pushPose();
+		graphics.pose().translate(0.0F, 0.0F, 300.0F);
+		int padding = scaled(4);
+		int minX = familyFanIcons.stream().mapToInt(ManipIcon::x).min().orElse(0);
+		int minY = familyFanIcons.stream().mapToInt(ManipIcon::y).min().orElse(0);
+		int maxX = familyFanIcons.stream().mapToInt(icon -> icon.x() + currentIconSize).max().orElse(0);
+		int maxY = familyFanIcons.stream().mapToInt(icon -> icon.y() + currentIconSize).max().orElse(0);
+		graphics.fill(minX - padding, minY - padding, maxX + padding, maxY + padding,
+				FAMILY_DROPDOWN_BACKGROUND);
+		for (ManipIcon icon : familyFanIcons) {
+			boolean hovered = contains(icon, mouseX, mouseY);
+			graphics.fill(icon.x - 2, icon.y - 2, icon.x + currentIconSize + 2,
+					icon.y + currentIconSize + 2, hovered ? 0xFFAA3333 : 0xFF441111);
+			renderManipulationIcon(graphics, icon.manip, icon.x, icon.y);
+			if (equippedNames.contains(icon.manip.getName())) {
+				graphics.fill(icon.x, icon.y, icon.x + currentIconSize, icon.y + currentIconSize, 0x5000CC00);
+			}
+		}
+		graphics.pose().popPose();
 	}
 
 	private void drawPreparedTinctures(GuiGraphics graphics) {
@@ -557,11 +592,11 @@ public class MnemonicReliquaryScreen extends AbstractContainerScreen<MnemonicRel
 	}
 
 	private void drawCounter(GuiGraphics graphics) {
-		int cx = guiLeft + currentGuiWidth / 2;
+		int x = guiLeft + scaled(6);
 		int y = guiTop + scaled(6);
 		String text = "Memorized: "
 				+ ManipulationEquipHelper.countNormalEquippedNames(new ArrayList<>(equippedNames)) + " / " + maxSlots;
-		graphics.drawCenteredString(font, text, cx, y, 0xFFDD2222);
+		graphics.drawString(font, text, x, y, 0xFFDD2222);
 	}
 
 	private void drawTendencyLabels(GuiGraphics graphics) {
@@ -602,6 +637,11 @@ public class MnemonicReliquaryScreen extends AbstractContainerScreen<MnemonicRel
 
 	private void drawTooltips(GuiGraphics graphics, int mouseX, int mouseY) {
 		if (draggingManip != null || draggingMuscleMemory != null) return;
+		if (familyFanOpen) {
+			BloodManipulation hovered = getHoveredFamilyFanManip(mouseX, mouseY);
+			if (hovered != null) drawManipTooltip(graphics, mouseX, mouseY, hovered);
+			return;
+		}
 		PreparedMuscleIcon prepared = getHoveredPreparedMuscle(mouseX, mouseY);
 		if (prepared != null) {
 			MuscleMemory memory = prepared.memory;
@@ -634,6 +674,10 @@ public class MnemonicReliquaryScreen extends AbstractContainerScreen<MnemonicRel
 		BloodManipulation hovered = getHoveredManip(mouseX, mouseY);
 		if (hovered == null) return;
 
+		drawManipTooltip(graphics, mouseX, mouseY, hovered);
+	}
+
+	private void drawManipTooltip(GuiGraphics graphics, int mouseX, int mouseY, BloodManipulation hovered) {
 		List<Component> tooltip = new ArrayList<>();
 		tooltip.add(Component.literal(hovered.getProperName()).withStyle(s -> s.withBold(true)));
 		tooltip.add(Component.literal("Noetic Memory"));
@@ -652,6 +696,8 @@ public class MnemonicReliquaryScreen extends AbstractContainerScreen<MnemonicRel
 	}
 
 	private BloodManipulation getHoveredManip(int mouseX, int mouseY) {
+		BloodManipulation familyFanManip = getHoveredFamilyFanManip(mouseX, mouseY);
+		if (familyFanManip != null) return familyFanManip;
 		for (ManipIcon icon : equippedIcons) {
 			if (mouseX >= icon.x && mouseX < icon.x + currentIconSize
 					&& mouseY >= icon.y && mouseY < icon.y + currentIconSize) {
@@ -674,6 +720,28 @@ public class MnemonicReliquaryScreen extends AbstractContainerScreen<MnemonicRel
 					&& mouseY >= position[1] && mouseY < position[1] + currentIconSize) return section;
 		}
 		return null;
+	}
+
+	private BloodManipulation getHoveredFamilyFanManip(int mouseX, int mouseY) {
+		for (ManipIcon icon : familyFanIcons) {
+			if (familyFanOpen && contains(icon, mouseX, mouseY)) return icon.manip;
+		}
+		return null;
+	}
+
+	private void renderManipulationIcon(GuiGraphics graphics, BloodManipulation manip, int x, int y) {
+		ItemStack stack = iconStackFor(manip);
+		if (stack != null) {
+			renderScaledItem(graphics, stack, x, y);
+			return;
+		}
+		float scale = currentIconSize / 16.0F;
+		graphics.pose().pushPose();
+		graphics.pose().translate(x, y, 0.0F);
+		graphics.pose().scale(scale, scale, 1.0F);
+		graphics.blit(ManipulationIconResolver.MEMORY_BASE, 0, 0, 0, 0, 16, 16, 16, 16);
+		graphics.blit(ManipulationIconResolver.overlay(manip.getName()), 0, 0, 0, 0, 16, 16, 16, 16);
+		graphics.pose().popPose();
 	}
 
 	private PreparedMuscleIcon getHoveredPreparedMuscle(int mouseX, int mouseY) {
@@ -713,12 +781,90 @@ public class MnemonicReliquaryScreen extends AbstractContainerScreen<MnemonicRel
 		return (dx * dx + dy * dy) <= (currentBrainRadius * currentBrainRadius);
 	}
 
+	private void updateFamilyHold(double mouseX, double mouseY) {
+		if (heldFamilyIcon == null || familyFanOpen) return;
+		double slop = scaled(4);
+		double dx = mouseX - familyHoldX;
+		double dy = mouseY - familyHoldY;
+		if (dx * dx + dy * dy > slop * slop) {
+			draggingManip = heldFamilyIcon.manip;
+			heldFamilyIcon = null;
+			return;
+		}
+		if (Util.getMillis() - familyHoldStarted >= FAMILY_HOLD_MILLIS) openFamilyFan();
+	}
+
+	private void openFamilyFan() {
+		List<BloodManipulation> forms = new ArrayList<>(unmemorizedFamilyForms(heldFamilyIcon.manip));
+		if (forms.isEmpty()) {
+			draggingManip = heldFamilyIcon.manip;
+			heldFamilyIcon = null;
+			return;
+		}
+		if (!equippedNames.contains(heldFamilyIcon.manip.getName())) forms.add(0, heldFamilyIcon.manip);
+		familyFanIcons.clear();
+		int gap = scaled(4);
+		int cols = Math.min(2, forms.size());
+		for (int i = 0; i < forms.size(); i++) {
+			int x = heldFamilyIcon.x + (i % cols) * (currentIconSize + gap);
+			int y = heldFamilyIcon.y + (i / cols + 1) * (currentIconSize + gap);
+			BloodManipulation form = forms.get(i);
+			familyFanIcons.add(new ManipIcon(form, x, y, form.getTend()));
+		}
+		familyFanOpen = true;
+	}
+
+	private List<BloodManipulation> unlockedFamilyForms(BloodManipulation baseline) {
+		return ManipulationFamilyRegistry.family(baseline.getName()).stream()
+				.flatMap(family -> family.forms().stream())
+				.map(form -> ManipulationInit.getByName(form.id()))
+				.filter(Objects::nonNull)
+				.filter(form -> knownManipNames.contains(form.getName()))
+				.toList();
+	}
+
+	private List<BloodManipulation> unmemorizedFamilyForms(BloodManipulation baseline) {
+		return unlockedFamilyForms(baseline).stream()
+				.filter(form -> !equippedNames.contains(form.getName()))
+				.toList();
+	}
+
+	private boolean contains(ManipIcon icon, double mouseX, double mouseY) {
+		return mouseX >= icon.x && mouseX < icon.x + currentIconSize
+				&& mouseY >= icon.y && mouseY < icon.y + currentIconSize;
+	}
+
+	private void clearFamilyHold() {
+		heldFamilyIcon = null;
+		familyFanOpen = false;
+		familyFanIcons.clear();
+	}
+
+	private void tryEquipManip(BloodManipulation manipulation) {
+		LocalPlayer player = Minecraft.getInstance().player;
+		if (equippedNames.contains(manipulation.getName())) {
+			if (player != null) player.displayClientMessage(Component.literal("Already memorized")
+					.withStyle(ChatFormatting.YELLOW), true);
+			return;
+		}
+		if (ManipulationEquipHelper.countNormalEquippedNames(new ArrayList<>(equippedNames)) >= maxSlots) {
+			if (player != null) player.displayClientMessage(Component.literal("No free memory slots")
+					.withStyle(ChatFormatting.RED), true);
+			return;
+		}
+		PacketHandler.sendToServer(new EquipManipulationPacket(manipulation.getName(), true));
+		equippedNames.add(manipulation.getName());
+		equippedManips.add(manipulation);
+		buildLayout();
+	}
+
 	@Override
 	public boolean mouseClicked(double mouseX, double mouseY, int button) {
 		if (button != 0) return super.mouseClicked(mouseX, mouseY, button);
 
 		int mx = (int) mouseX;
 		int my = (int) mouseY;
+		if (familyFanOpen) return true;
 		EnumVeinSections section = getHoveredSection(mx, my);
 		if (section != null) {
 			cycleVascularSection(section);
@@ -740,7 +886,12 @@ public class MnemonicReliquaryScreen extends AbstractContainerScreen<MnemonicRel
 		for (ManipIcon icon : knownIcons) {
 			if (mx >= icon.x && mx < icon.x + currentIconSize
 					&& my >= icon.y && my < icon.y + currentIconSize) {
-				if (!equippedNames.contains(icon.manip.getName())) {
+				if (!unlockedFamilyForms(icon.manip).isEmpty()) {
+					heldFamilyIcon = icon;
+					familyHoldStarted = Util.getMillis();
+					familyHoldX = mouseX;
+					familyHoldY = mouseY;
+				} else if (!equippedNames.contains(icon.manip.getName())) {
 					draggingManip = icon.manip;
 				}
 				return true;
@@ -760,6 +911,19 @@ public class MnemonicReliquaryScreen extends AbstractContainerScreen<MnemonicRel
 
 	@Override
 	public boolean mouseReleased(double mouseX, double mouseY, int button) {
+		if (button == 0 && heldFamilyIcon != null) {
+			updateFamilyHold(mouseX, mouseY);
+			if (familyFanOpen) {
+				familyFanIcons.stream().filter(icon -> contains(icon, mouseX, mouseY)).findFirst()
+						.ifPresent(icon -> tryEquipManip(icon.manip));
+				clearFamilyHold();
+				return true;
+			}
+			if (heldFamilyIcon != null) {
+				draggingManip = heldFamilyIcon.manip;
+				heldFamilyIcon = null;
+			}
+		}
 		if (draggingMuscleMemory != null) {
 			MuscleMemory replaced = equippedMuscleMemories.stream()
 					.filter(memory -> memory.section() == draggingMuscleMemory.section())
@@ -784,18 +948,20 @@ public class MnemonicReliquaryScreen extends AbstractContainerScreen<MnemonicRel
 			int mx = (int) mouseX;
 			int my = (int) mouseY;
 
-			if (isInsideBrain(mx, my) && equippedManips.size() < maxSlots
-					&& !equippedNames.contains(draggingManip.getName())) {
-				PacketHandler.sendToServer(
-						new EquipManipulationPacket(draggingManip.getName(), true));
-				equippedNames.add(draggingManip.getName());
-				equippedManips.add(draggingManip);
-				buildLayout();
-			}
+			if (isInsideBrain(mx, my)) tryEquipManip(draggingManip);
 			draggingManip = null;
 			return true;
 		}
 		return super.mouseReleased(mouseX, mouseY, button);
+	}
+
+	@Override
+	public boolean mouseDragged(double mouseX, double mouseY, int button, double dragX, double dragY) {
+		if (button == 0 && heldFamilyIcon != null) {
+			updateFamilyHold(mouseX, mouseY);
+			return true;
+		}
+		return super.mouseDragged(mouseX, mouseY, button, dragX, dragY);
 	}
 
 	@Override

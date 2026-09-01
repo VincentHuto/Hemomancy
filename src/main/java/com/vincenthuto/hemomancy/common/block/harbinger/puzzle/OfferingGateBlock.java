@@ -1,6 +1,6 @@
 package com.vincenthuto.hemomancy.common.block.harbinger.puzzle;
 
-import com.vincenthuto.hemomancy.common.tile.puzzle.BloodTrialAltarBlockEntity;
+import com.vincenthuto.hemomancy.common.tile.harbinger.puzzle.BloodTrialAltarBlockEntity;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;

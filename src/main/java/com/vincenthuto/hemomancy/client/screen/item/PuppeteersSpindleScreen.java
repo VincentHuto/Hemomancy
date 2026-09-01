@@ -11,7 +11,7 @@ import com.vincenthuto.hemomancy.common.network.summon.PacketPuppeteersSpindleAc
 import com.vincenthuto.hemomancy.common.summon.PuppeteerSummonDefinition;
 import com.vincenthuto.hemomancy.common.summon.PuppeteerSummonDefinitions;
 import com.vincenthuto.hemomancy.common.summon.PuppeteerSummonRules;
-import com.vincenthuto.hemomancy.common.tile.crafting.PuppeteersSpindleBlockEntity;
+import com.vincenthuto.hemomancy.common.tile.harbinger.crafting.PuppeteersSpindleBlockEntity;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;

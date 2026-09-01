@@ -1,21 +1,21 @@
 package com.vincenthuto.hemomancy.common.worldgen;
 
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.EnumArchonPath;
-import com.vincenthuto.hemomancy.common.event.HarbingerAdvancementGranter;
 import com.vincenthuto.hemomancy.client.particle.data.BloodCellData;
 import com.vincenthuto.hemomancy.client.particle.data.SerpentParticleData;
-import com.vincenthuto.hemomancy.common.init.BlockInit;
-import com.vincenthuto.hemomancy.common.init.EntityInit;
 import com.vincenthuto.hemomancy.common.block.harbinger.functional.WarpChairBlock;
 import com.vincenthuto.hemomancy.common.block.harbinger.functional.WarpChairStructureRules;
+import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.EnumArchonPath;
 import com.vincenthuto.hemomancy.common.entity.utility.ArborOfWillEntity;
+import com.vincenthuto.hemomancy.common.event.HarbingerAdvancementGranter;
+import com.vincenthuto.hemomancy.common.init.BlockInit;
+import com.vincenthuto.hemomancy.common.init.EntityInit;
+import com.vincenthuto.hemomancy.common.mission.shared.HarbingerChapterProgression;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.PacketSyncChamberOfWill;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.PacketSyncVesperFightScene;
 import com.vincenthuto.hemomancy.common.rite.harbinger.QliphothBloomSavedData;
-import com.vincenthuto.hemomancy.common.mission.shared.HarbingerChapterProgression;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
@@ -35,15 +35,10 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.portal.DimensionTransition;
 import net.minecraft.world.level.saveddata.SavedData;
-import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.Vec3;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * Manages The Chamber of Will as one shared void dimension sliced into far-apart
@@ -441,7 +436,7 @@ public class ChamberOfWillManager extends SavedData {
 
     private static void removeLegacyPairedWarpChair(ServerLevel level, UUID owner, BlockPos center) {
         BlockPos legacyPos = WarpChairStructureRules.legacyPairedChairPos(center);
-        if (level.getBlockEntity(legacyPos) instanceof com.vincenthuto.hemomancy.common.tile.functional.WarpChairBlockEntity chair
+        if (level.getBlockEntity(legacyPos) instanceof com.vincenthuto.hemomancy.common.tile.harbinger.functional.WarpChairBlockEntity chair
                 && chair.isPaired() && chair.owner().filter(owner::equals).isPresent()) {
             level.removeBlock(legacyPos, false);
         }

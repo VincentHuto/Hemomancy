@@ -1,8 +1,8 @@
 package com.vincenthuto.hemomancy.common.entity.projectile;
 
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.init.EffectInit;
 import com.vincenthuto.hemomancy.common.init.EntityInit;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.manipulation.TendencyDamageCarrier;
 import com.vincenthuto.hutoslib.client.particle.factory.GlowParticleFactory;
 import com.vincenthuto.hutoslib.client.particle.util.HLParticleUtils;
@@ -24,6 +24,7 @@ import javax.annotation.Nullable;
 public class BloodNeedleEntity extends AbstractArrow implements CombatWeaponCarrierProjectile, TendencyDamageCarrier {
 	private ItemStack combatWeaponItem = ItemStack.EMPTY;
 	private boolean bloodburstNeedle = false;
+	private byte configuredPierceLevel;
 	@Nullable
 	private EnumBloodTendency damageTendency;
 	@Nullable
@@ -56,6 +57,7 @@ public class BloodNeedleEntity extends AbstractArrow implements CombatWeaponCarr
 			compound.put("CombatWeapon", this.combatWeaponItem.save(this.registryAccess()));
 		}
 		compound.putBoolean("BloodburstNeedle", this.bloodburstNeedle);
+		compound.putByte("ConfiguredPierceLevel", configuredPierceLevel);
 		if (damageTendency != null) compound.putString("DamageTendency", damageTendency.name());
 		if (secondaryDamageTendency != null) {
 			compound.putString("SecondaryDamageTendency", secondaryDamageTendency.name());
@@ -127,12 +129,22 @@ public class BloodNeedleEntity extends AbstractArrow implements CombatWeaponCarr
 				? ItemStack.parseOptional(this.registryAccess(), compound.getCompound("CombatWeapon"))
 				: ItemStack.EMPTY;
 		this.bloodburstNeedle = compound.getBoolean("BloodburstNeedle");
+		this.configuredPierceLevel = compound.getByte("ConfiguredPierceLevel");
 		this.damageTendency = readDamageTendency(compound);
 		this.secondaryDamageTendency = readTendency(compound, "SecondaryDamageTendency");
 	}
 
 	public void setBloodburstNeedle(boolean bloodburstNeedle) {
 		this.bloodburstNeedle = bloodburstNeedle;
+	}
+
+	public void configurePiercing(byte pierceLevel) {
+		this.configuredPierceLevel = pierceLevel;
+	}
+
+	@Override
+	public byte getPierceLevel() {
+		return (byte) Math.max(super.getPierceLevel(), configuredPierceLevel);
 	}
 
 	@Override

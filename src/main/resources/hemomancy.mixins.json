@@ -8,20 +8,22 @@
     "MixinFishingHook",
     "MixinHealOrHarmMobEffect",
     "MixinLivingEntity",
-	"MobEffectInstanceAccessor",
     "MixinPlayer",
-    "MixinPowderSnowBlock",
     "MixinPoisonMobEffect",
-    "MixinRegenerationMobEffect"
+    "MixinPowderSnowBlock",
+    "MixinRegenerationMobEffect",
+    "MobEffectInstanceAccessor"
   ],
   "client": [
+    "MixinCapeLayer",
     "MixinEntityRenderDispatcher",
     "MixinGameRenderer",
     "MixinHumanoidArmorLayer",
     "MixinHumanoidModel",
     "MixinLivingEntityRenderer",
     "MixinLocalPlayer",
-    "MixinPlayerItemInHandLayer"
+    "MixinPlayerItemInHandLayer",
+    "MixinPlayerRenderer"
   ],
   "injectors": {
     "defaultRequire": 1

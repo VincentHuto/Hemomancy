@@ -2,10 +2,10 @@ package com.vincenthuto.hemomancy.common.manipulation.mortem;
 
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
-import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillPointHelper;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.EnumVeinSections;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.scar.fungal.VeinMinerHelper;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.EnumVeinSections;
+import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillPointHelper;
 import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
 import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationRank;
 import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationType;
@@ -20,6 +20,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.entity.player.Player;
@@ -33,18 +34,14 @@ import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.network.PacketDistributor;
 
-import java.util.ArrayDeque;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class LignumMortisManip extends BloodManipulation {
 	public static final TagKey<Block> ORGANIC_STRUCTURE_BLOCKS = TagKey.create(Registries.BLOCK,
 			Hemomancy.rloc("organic_structure_blocks"));
+	public static final TagKey<Block> WORKED_LIGNUM_BLOCKS = TagKey.create(Registries.BLOCK,
+			Hemomancy.rloc("worked_lignum_blocks"));
 
 	private static final double BASE_TARGET_RANGE = 12.0D;
 	private static final double MOVEMENT_GRACE = 4.0D;
@@ -54,11 +51,19 @@ public class LignumMortisManip extends BloodManipulation {
 	private static final int OUTER_BLOOD = 0x58A40020;
 	private static final int INNER_BLOOD = 0x98FF4058;
 	private static final Map<UUID, Session> SESSIONS = new ConcurrentHashMap<>();
+	private final Mode mode;
 
 	public LignumMortisManip(String name, double cost, double alignLevel, double xpCost,
 			EnumManipulationType type, EnumManipulationRank rank, EnumBloodTendency tendency,
 			EnumVeinSections section) {
+		this(name, cost, alignLevel, xpCost, type, rank, tendency, section, Mode.STANDARD);
+	}
+
+	public LignumMortisManip(String name, double cost, double alignLevel, double xpCost,
+			EnumManipulationType type, EnumManipulationRank rank, EnumBloodTendency tendency,
+			EnumVeinSections section, Mode mode) {
 		super(name, cost, alignLevel, xpCost, type, rank, tendency, section);
+		this.mode = mode;
 	}
 
 	@Override
@@ -67,7 +72,7 @@ public class LignumMortisManip extends BloodManipulation {
 		if (session == null) return findOrigin(player, world) != null;
 		if (!session.dimension.equals(world.dimension())) return false;
 		double allowedDistance = targetRange(player) + MOVEMENT_GRACE;
-		return isEligible(world, session.origin)
+		return isSelectable(world, session.origin, session.mode)
 				&& player.distanceToSqr(Vec3.atCenterOf(session.origin)) <= allowedDistance * allowedDistance;
 	}
 
@@ -83,7 +88,7 @@ public class LignumMortisManip extends BloodManipulation {
 		BlockPos origin = findOrigin(player, world);
 		if (origin == null) return;
 		int radius = maxRadius(player);
-		Session session = new Session(world.dimension(), origin, radius);
+		Session session = new Session(world.dimension(), origin, radius, mode);
 		session.claim(origin);
 		SESSIONS.put(player.getUUID(), session);
 		world.playSound(null, player.blockPosition(), SoundEvents.ILLUSIONER_CAST_SPELL,
@@ -145,12 +150,13 @@ public class LignumMortisManip extends BloodManipulation {
 				ClipContext.Fluid.NONE, player));
 		if (hit.getType() != HitResult.Type.BLOCK) return null;
 		BlockPos pos = hit.getBlockPos();
-		return isEligible(world, pos) ? pos.immutable() : null;
+		return isSelectable(world, pos, mode) ? pos.immutable() : null;
 	}
 
 	private int maxRadius(Player player) {
 		int mastery = HemoCapabilityAccess.getKnownManipulations(player)
-				.map(known -> known.getManipLevel(this).getCurrentLevel()).orElse(0);
+				.map(known -> known.getManipLevel(this))
+				.map(level -> level.getCurrentLevel()).orElse(0);
 		double mortem = HemoCapabilityAccess.getBloodTendency(player)
 				.map(tendency -> (double) tendency.getAlignmentByTendency(EnumBloodTendency.MORTEM)).orElse(0.0D);
 		double animus = HemoCapabilityAccess.getBloodTendency(player)
@@ -163,17 +169,17 @@ public class LignumMortisManip extends BloodManipulation {
 		return BASE_TARGET_RANGE * SkillPointHelper.getSanguineReachMultiplier(player);
 	}
 
-	private static boolean isEligible(Level level, BlockPos pos) {
+	private static boolean isSelectable(Level level, BlockPos pos, Mode mode) {
 		if (!level.hasChunkAt(pos) || level.getBlockEntity(pos) != null) return false;
 		BlockState state = level.getBlockState(pos);
-		return state.is(ORGANIC_STRUCTURE_BLOCKS) && state.getDestroySpeed(level, pos) >= 0.0F;
+		TagKey<Block> tag = mode == Mode.WORKED ? WORKED_LIGNUM_BLOCKS : ORGANIC_STRUCTURE_BLOCKS;
+		return state.is(tag) && state.getDestroySpeed(level, pos) >= 0.0F;
 	}
 
 	private static void dismantle(ServerLevel level, ServerPlayer player, Session session) {
 		for (BlockPos pos : session.selected) {
-			if (!isEligible(level, pos) || pos.distSqr(session.origin) > session.radius * session.radius
+			if (!isSelectable(level, pos, session.mode) || pos.distSqr(session.origin) > session.radius * session.radius
 					|| !VeinMinerHelper.hasBreakPermission(player, pos)) continue;
-			if (!isEligible(level, pos)) continue;
 			BlockState state = level.getBlockState(pos);
 			Block.dropResources(state, level, pos, null, player, ItemStack.EMPTY);
 			level.destroyBlock(pos, false, player);
@@ -233,6 +239,7 @@ public class LignumMortisManip extends BloodManipulation {
 		private final ResourceKey<Level> dimension;
 		private final BlockPos origin;
 		private final int radius;
+		private final Mode mode;
 		private final List<BlockPos> selected = new ArrayList<>();
 		private final Set<BlockPos> selectedSet = new HashSet<>();
 		private final Set<BlockPos> queued = new HashSet<>();
@@ -242,10 +249,11 @@ public class LignumMortisManip extends BloodManipulation {
 		private BlockPos latest;
 		private int ticksSinceArc;
 
-		private Session(ResourceKey<Level> dimension, BlockPos origin, int radius) {
+		private Session(ResourceKey<Level> dimension, BlockPos origin, int radius, Mode mode) {
 			this.dimension = dimension;
 			this.origin = origin;
 			this.radius = radius;
+			this.mode = mode;
 		}
 
 		private void claim(BlockPos pos) {
@@ -260,7 +268,12 @@ public class LignumMortisManip extends BloodManipulation {
 		private BlockPos nextEligible(ServerLevel level) {
 			while (!frontier.isEmpty()) {
 				BlockPos candidate = frontier.removeFirst();
-				if (candidate.distSqr(origin) > radius * radius || !isEligible(level, candidate)) continue;
+				if (candidate.distSqr(origin) > radius * radius) continue;
+				if (mode == Mode.CANOPY && level.getBlockState(candidate).is(BlockTags.LEAVES)) {
+					enqueueNeighbors(candidate);
+					continue;
+				}
+				if (!isSelectable(level, candidate, mode)) continue;
 				claim(candidate);
 				return candidate;
 			}
@@ -286,5 +299,11 @@ public class LignumMortisManip extends BloodManipulation {
 		private List<BlockPos> positionsInBand(int band) {
 			return selected.stream().filter(pos -> band(pos) == band).toList();
 		}
+	}
+
+	public enum Mode {
+		STANDARD,
+		CANOPY,
+		WORKED
 	}
 }

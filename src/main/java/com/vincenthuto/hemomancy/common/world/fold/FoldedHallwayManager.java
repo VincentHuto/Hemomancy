@@ -1,6 +1,6 @@
 package com.vincenthuto.hemomancy.common.world.fold;
 
-import com.vincenthuto.hemomancy.common.block.harbinger.functional.NonEuclideanHallwayBlock;
+import com.vincenthuto.hemomancy.common.block.harbinger.decoration.NonEuclideanHallwayBlock;
 import com.vincenthuto.hemomancy.common.init.BlockInit;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.player.Player;

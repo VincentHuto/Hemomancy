@@ -1,18 +1,18 @@
 package com.vincenthuto.hemomancy.common.entity.utility;
 
+import com.vincenthuto.hemomancy.client.particle.factory.DaemonDiffuseGlowParticleFactory;
 import com.vincenthuto.hemomancy.common.init.EntityInit;
 import com.vincenthuto.hemomancy.common.rite.ActiveCardinalRite;
 import com.vincenthuto.hemomancy.common.rite.CardinalRiteSavedData;
-import com.vincenthuto.hemomancy.common.rite.harbinger.CardinalRiteHumanityGeometry;
 import com.vincenthuto.hemomancy.common.rite.harbinger.CardinalRiteFinaleTiming;
-import com.vincenthuto.hemomancy.client.particle.factory.DaemonDiffuseGlowParticleFactory;
+import com.vincenthuto.hemomancy.common.rite.harbinger.CardinalRiteHumanityGeometry;
 import com.vincenthuto.hutoslib.client.particle.data.EmberParticleData;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ItemParticleOption;
+import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
@@ -23,8 +23,8 @@ import net.minecraft.world.entity.EntityDimensions;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.Pose;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.Vec3;
 
 import java.util.Optional;
 import java.util.UUID;

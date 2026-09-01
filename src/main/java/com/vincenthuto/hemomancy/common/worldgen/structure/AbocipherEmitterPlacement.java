@@ -1,7 +1,7 @@
 package com.vincenthuto.hemomancy.common.worldgen.structure;
 
 import com.vincenthuto.hemomancy.common.init.BlockInit;
-import com.vincenthuto.hemomancy.common.tile.functional.AbocipherEmitterBlockEntity;
+import com.vincenthuto.hemomancy.common.tile.harbinger.decoration.AbocipherEmitterBlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.WorldGenLevel;

@@ -1,8 +1,8 @@
 package com.vincenthuto.hemomancy.client.data;
 
-import java.util.Map;
-
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.DialogueAttention;
+
+import java.util.Map;
 
 public final class NpcProgressionMarkerClientState {
 	private static Map<Integer, DialogueAttention> markers = Map.of();

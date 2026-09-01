@@ -1,10 +1,6 @@
 package com.vincenthuto.hemomancy.client.render.world;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /** Compact, stable aggregation of the unfulfilled positions in a projection. */
 public final class MnemonicBlueprintProgress {

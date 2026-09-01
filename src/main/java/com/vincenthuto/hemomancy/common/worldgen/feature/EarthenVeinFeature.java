@@ -16,7 +16,7 @@ import net.minecraft.world.level.levelgen.feature.configurations.NoneFeatureConf
 /**
  * World-gen feature that places a single earthen vein block on solid ground.
  * The vein gets a randomly generated anatomical name on its first tick via
- * {@link com.vincenthuto.hemomancy.common.tile.functional.EarthenVeinBlockEntity}.
+ * {@link com.vincenthuto.hemomancy.common.tile.harbinger.functional.EarthenVeinBlockEntity}.
  */
 public class EarthenVeinFeature extends Feature<NoneFeatureConfiguration> {
 

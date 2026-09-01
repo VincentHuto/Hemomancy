@@ -3,11 +3,7 @@ package com.vincenthuto.hemomancy.client.render.world;
 import com.vincenthuto.hemomancy.client.data.ActiveRiteClientData;
 import net.minecraft.core.BlockPos;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public final class CardinalRiteFogState {
 	private static final float FADE_IN_TICKS = 10.0F;

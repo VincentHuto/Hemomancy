@@ -2,9 +2,8 @@ package com.vincenthuto.hemomancy.client.render.item;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.common.item.harbinger.scar.ItemScarPattern;
 import com.mojang.math.Axis;
+import com.vincenthuto.hemomancy.common.item.harbinger.scar.ItemScarPattern;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.geom.EntityModelSet;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
