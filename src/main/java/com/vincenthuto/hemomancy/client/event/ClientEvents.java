@@ -58,7 +58,6 @@ import com.vincenthuto.hemomancy.client.screen.item.living.LivingStaffScreen;
 import com.vincenthuto.hemomancy.client.screen.item.living.LivingSyringeScreen;
 import com.vincenthuto.hemomancy.client.screen.item.living.MorphlingJarScreen;
 import com.vincenthuto.hemomancy.client.screen.manips.RadialChooseManipScreen;
-import com.vincenthuto.hemomancy.client.screen.manips.RadialChooseVeinScreen;
 import com.vincenthuto.hemomancy.client.screen.overlay.*;
 import com.vincenthuto.hemomancy.client.screen.summon.CrossbarRadialScreen;
 import com.vincenthuto.hemomancy.client.screen.tile.crafting.*;
@@ -399,10 +398,7 @@ public class ClientEvents {
 				}
 				case START_CONTINUOUS -> PacketHandler.sendToServer(UseManipKeyPacket.startContinuous());
 				case STOP_CONTINUOUS -> PacketHandler.sendToServer(UseManipKeyPacket.stopContinuous());
-				case CAST -> {
-					if (selected.getName().equals("venous_travel")) mc.setScreen(new RadialChooseVeinScreen(known));
-					else PacketHandler.sendToServer(new UseManipKeyPacket(input.castTicks()));
-				}
+				case CAST -> PacketHandler.sendToServer(new UseManipKeyPacket(input.castTicks()));
 			}
 		});
 	}

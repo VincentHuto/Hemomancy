@@ -310,11 +310,6 @@
         {
           "type": "minecraft:item",
           "weight": 4,
-          "name": "hemomancy:memory_venous_travel"
-        },
-        {
-          "type": "minecraft:item",
-          "weight": 4,
           "name": "hemomancy:memory_activation_potential"
         },
         {

@@ -1,0 +1,21 @@
+{
+  "type": "hemomancy:memory_weaving",
+  "catalysts": [
+    {
+      "item": "minecraft:fire_charge"
+    }
+  ],
+  "enzymes": {
+    "animus": 0,
+    "flammeus": 2,
+    "ductilis": 1,
+    "lux": 0,
+    "mortem": 0,
+    "congeatio": 0,
+    "ferric": 0,
+    "tenebris": 0
+  },
+  "blood": 150,
+  "result": "hemomancy:memory_soaring_updraft",
+  "count": 1
+}

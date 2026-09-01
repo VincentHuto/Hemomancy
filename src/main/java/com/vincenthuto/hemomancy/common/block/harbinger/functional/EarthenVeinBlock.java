@@ -10,6 +10,8 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.level.storage.loot.LootParams;
+import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -37,6 +39,7 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
 import javax.annotation.Nullable;
+import java.util.List;
 
 public class EarthenVeinBlock extends Block implements EntityBlock, SimpleWaterloggedBlock {
 	public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
@@ -117,6 +120,9 @@ public class EarthenVeinBlock extends Block implements EntityBlock, SimpleWaterl
 
 	private InteractionResult handleInteraction(BlockState state, Level worldIn, BlockPos pos, Player player,
 			ItemStack stack) {
+		if (worldIn.getBlockEntity(pos) instanceof EarthenVeinBlockEntity vein && vein.isTemporary()) {
+			return InteractionResult.SUCCESS;
+		}
 		IKnownManipulations known = HemoCapabilityAccess.getKnownManipulations(player)
 				.orElseThrow(NullPointerException::new);
 		if (worldIn.getBlockEntity(pos)instanceof EarthenVeinBlockEntity te) {
@@ -175,6 +181,13 @@ public class EarthenVeinBlock extends Block implements EntityBlock, SimpleWaterl
 		}
 		return InteractionResult.SUCCESS;
 
+	}
+
+	@Override
+	protected List<ItemStack> getDrops(BlockState state, LootParams.Builder params) {
+		BlockEntity blockEntity = params.getOptionalParameter(LootContextParams.BLOCK_ENTITY);
+		return blockEntity instanceof EarthenVeinBlockEntity vein && vein.isTemporary()
+				? List.of() : super.getDrops(state, params);
 	}
 
 	@Override

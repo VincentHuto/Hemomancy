@@ -20,7 +20,8 @@ public final class ManipulationRetirementSourceTest {
 			"ferric_transmutation",
 			"vigil_of_glass",
 			"hematic_ballast",
-			"summon_thrall"
+			"summon_thrall",
+			"venous_travel"
 	};
 	private static final String[] RETIRED_MEMORY_ITEMS = {
 			"memory_conjure_living_staff",
@@ -41,7 +42,8 @@ public final class ManipulationRetirementSourceTest {
 			"memory_ferric_transmutation",
 			"memory_vigil_of_glass",
 			"memory_hematic_ballast",
-			"memory_summon_thrall"
+			"memory_summon_thrall",
+			"memory_venous_travel"
 	};
 
 	private ManipulationRetirementSourceTest() {
@@ -90,14 +92,14 @@ public final class ManipulationRetirementSourceTest {
 			assertNotContains(id + " absent from manipulation tree", tree, "register(\"" + id + "\"");
 			assertNotContains(id + " absent as tree parent", tree, "\"" + id + "\"");
 		}
-		assertContains("ductilis reroutes activation potential through synaptic jolt", tree,
-				"register(\"activation_potential\",1030,160, \"synaptic_jolt\")");
+		assertNotContains("activation potential is represented by the synaptic family", tree,
+				"register(\"activation_potential\"");
 		assertContains("lux reroutes unclosing eye through hematic flare", tree,
 				"register(\"unclosing_eye\",1340,180, \"hematic_flare\")");
 		assertContains("lux capstone bypasses vigil of glass", tree,
 				"register(\"white_verdict\",1300,300, \"unclosing_eye\", \"prismatic_reproof\")");
-		assertContains("congeatio reroutes cryogenic pulse through glacial grasp", tree,
-				"register(\"cryogenic_pulse\",1560,170, \"glacial_grasp\")");
+		assertNotContains("cryogenic pulse is represented by the cryogenic family", tree,
+				"register(\"cryogenic_pulse\"");
 		assertContains("ferric capstone bypasses hematic ballast", tree,
 				"register(\"iron_choir\",820,20, \"iron_retort\", \"ironhearted\")");
 		assertContains("mortem reroutes grave debt away from vital reservoir", tree,

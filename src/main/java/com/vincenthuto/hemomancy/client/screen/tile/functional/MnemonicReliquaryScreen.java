@@ -60,7 +60,7 @@ public class MnemonicReliquaryScreen extends AbstractContainerScreen<MnemonicRel
 	private List<MuscleMemory> preparedMuscleMemories = new ArrayList<>();
 	private List<MuscleMemory> equippedMuscleMemories = new ArrayList<>();
 	private Set<String> equippedNames = new HashSet<>();
-	private final Set<String> knownManipNames = new HashSet<>();
+	private final Set<String> availableManipNames = new HashSet<>();
 	private int maxSlots;
 
 	private BloodManipulation draggingManip;
@@ -155,7 +155,7 @@ public class MnemonicReliquaryScreen extends AbstractContainerScreen<MnemonicRel
 		preparedMuscleMemories.clear();
 		equippedMuscleMemories.clear();
 		equippedNames.clear();
-		knownManipNames.clear();
+		availableManipNames.clear();
 		tendencyGroups.clear();
 
 		for (EnumBloodTendency tend : EnumBloodTendency.values()) {
@@ -166,17 +166,20 @@ public class MnemonicReliquaryScreen extends AbstractContainerScreen<MnemonicRel
 			List<String> equipped = known.getEquippedManipNames();
 			equippedNames.addAll(equipped);
 			known.getKnownManips().keySet().stream().filter(Objects::nonNull)
-					.map(BloodManipulation::getName).forEach(knownManipNames::add);
+					.filter(known::isManipulationAvailable)
+					.map(BloodManipulation::getName).forEach(availableManipNames::add);
 
 			Set<String> listedFamilies = new HashSet<>();
 			for (BloodManipulation manip : known.getKnownManips().keySet()) {
+				if (!known.isManipulationAvailable(manip)) continue;
 				if (ManipulationEquipHelper.isFixedMechanicalManip(manip.getName())
 						|| ManipulationRetirementRules.isRetiredManipulation(manip)) {
 					continue;
 				}
 				String displayId = ManipulationFamilyRegistry.baselineId(manip.getName());
 				if (!listedFamilies.add(displayId)) continue;
-				BloodManipulation displayManip = ManipulationInit.getByName(displayId);
+				BloodManipulation displayManip = availableManipNames.contains(displayId)
+						? ManipulationInit.getByName(displayId) : manip;
 				if (displayManip == null) displayManip = manip;
 				EnumBloodTendency tend = displayManip.getTend();
 				if (tend != null && tendencyGroups.containsKey(tend)) {
@@ -819,7 +822,7 @@ public class MnemonicReliquaryScreen extends AbstractContainerScreen<MnemonicRel
 				.flatMap(family -> family.forms().stream())
 				.map(form -> ManipulationInit.getByName(form.id()))
 				.filter(Objects::nonNull)
-				.filter(form -> knownManipNames.contains(form.getName()))
+				.filter(form -> availableManipNames.contains(form.getName()))
 				.toList();
 	}
 

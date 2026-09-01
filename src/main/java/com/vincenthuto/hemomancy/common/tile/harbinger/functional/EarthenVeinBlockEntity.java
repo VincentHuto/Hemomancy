@@ -17,12 +17,16 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 
+import java.util.UUID;
+
 public class EarthenVeinBlockEntity extends BlockEntity {
 
 	public final AnimationState idleAnimationState = new AnimationState();
 
 	static final String TAG_VEIN_LOC = "veinlocation";
 	static final String TAG_NAME = "name";
+	static final String TAG_TEMPORARY_OWNER = "temporaryOwner";
+	static final String TAG_TEMPORARY_EXPIRY = "temporaryExpiry";
 	public int time;
 	public float flip;
 	public float oFlip;
@@ -38,6 +42,10 @@ public class EarthenVeinBlockEntity extends BlockEntity {
 	public static <T> void tick(Level level, BlockPos pos, BlockState state, T blockEntity) {
 
 		if (level.getBlockEntity(pos) instanceof EarthenVeinBlockEntity te) {
+			if (!level.isClientSide && te.isTemporary() && level.getGameTime() >= te.temporaryExpiry) {
+				level.removeBlock(pos, false);
+				return;
+			}
 			if (!te.hasTicked) {
 				if (!level.isClientSide) {
 					if (te.getName() == "") {
@@ -112,6 +120,8 @@ public class EarthenVeinBlockEntity extends BlockEntity {
 	String name = "";
 
 	boolean hasTicked = false;
+	private UUID temporaryOwner;
+	private long temporaryExpiry;
 
 	public EarthenVeinBlockEntity(BlockPos pos, BlockState state) {
 		super(BlockEntityInit.earthen_vein.get(), pos, state);
@@ -135,6 +145,8 @@ public class EarthenVeinBlockEntity extends BlockEntity {
 		CompoundTag compound = super.getUpdateTag(provider);
 		compound.put(TAG_VEIN_LOC, locCap.getVeinLocation().serializeNBT(provider));
 		compound.putString(TAG_NAME, getName());
+		if (temporaryOwner != null) compound.putUUID(TAG_TEMPORARY_OWNER, temporaryOwner);
+		compound.putLong(TAG_TEMPORARY_EXPIRY, temporaryExpiry);
 		return compound;
 	}
 
@@ -145,6 +157,7 @@ public class EarthenVeinBlockEntity extends BlockEntity {
 		veinLocation.deserializeNBT(provider, tag.getCompound(TAG_VEIN_LOC));
 		locCap.setVeinLoc(veinLocation);
 		name = tag.getString(TAG_NAME);
+		loadTemporaryData(tag);
 
 	}
 
@@ -160,6 +173,7 @@ public class EarthenVeinBlockEntity extends BlockEntity {
 		veinLocation.deserializeNBT(provider, tag.getCompound(TAG_VEIN_LOC));
 		locCap.setVeinLoc(veinLocation);
 		name = tag.getString(TAG_NAME);
+		loadTemporaryData(tag);
 	}
 
 	@Override
@@ -170,6 +184,7 @@ public class EarthenVeinBlockEntity extends BlockEntity {
 		veinLocation.deserializeNBT(provider, tag.getCompound(TAG_VEIN_LOC));
 		locCap.setVeinLoc(veinLocation);
 		name = tag.getString(TAG_NAME);
+		loadTemporaryData(tag);
 
 	}
 
@@ -178,6 +193,8 @@ public class EarthenVeinBlockEntity extends BlockEntity {
 		super.saveAdditional(compound, provider);
 		compound.put(TAG_VEIN_LOC, locCap.getVeinLocation().serializeNBT(provider));
 		compound.putString(TAG_NAME, getName());
+		if (temporaryOwner != null) compound.putUUID(TAG_TEMPORARY_OWNER, temporaryOwner);
+		compound.putLong(TAG_TEMPORARY_EXPIRY, temporaryExpiry);
 	}
 
 	public void sendUpdates() {
@@ -196,6 +213,28 @@ public class EarthenVeinBlockEntity extends BlockEntity {
 
 	public void setName(String name) {
 		this.name = name;
+	}
+
+	public void makeTemporary(UUID owner, long expiry) {
+		temporaryOwner = owner;
+		temporaryExpiry = expiry;
+		name = "Temporary Earthen Vein";
+		setLoc(new VeinLocation(name, level.dimension().location(), worldPosition));
+		hasTicked = true;
+		sendUpdates();
+	}
+
+	public boolean isTemporary() {
+		return temporaryOwner != null;
+	}
+
+	public boolean isTemporaryOwnedBy(UUID owner) {
+		return owner != null && owner.equals(temporaryOwner);
+	}
+
+	private void loadTemporaryData(CompoundTag tag) {
+		temporaryOwner = tag.hasUUID(TAG_TEMPORARY_OWNER) ? tag.getUUID(TAG_TEMPORARY_OWNER) : null;
+		temporaryExpiry = tag.getLong(TAG_TEMPORARY_EXPIRY);
 	}
 
 }

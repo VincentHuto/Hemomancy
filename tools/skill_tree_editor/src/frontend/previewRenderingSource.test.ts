@@ -144,8 +144,9 @@ test('manipulation node outer glow uses secondary tendency color when present', 
 
   expect(manipulations).toContain('secondaryTendencyColor(node)');
   expect(manipulations).toContain('class="node-glow"');
-  expect(manipulations).toContain('style="stroke: ${escapeAttr(secondaryTendencyColor(node))}"');
-  expect(manipulations).toContain('class="node-frame" x="-18" y="-18" width="36" height="36" style="stroke: ${escapeAttr(node.color)}"');
+  expect(manipulations).toContain("nodeShapeMarkup(shape, 'node-glow', 22, secondaryTendencyColor(node))");
+  expect(manipulations).toContain("nodeShapeMarkup(shape, 'node-frame', 18, borderColor)");
+  expect(manipulations).toContain("return node.isFamilyBaseline ? 'OCTAGON' : (node.nodeShape ?? 'SQUARE');");
 });
 
 function read(path: string): string {

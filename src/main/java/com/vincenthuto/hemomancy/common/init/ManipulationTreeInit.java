@@ -40,10 +40,9 @@ public class ManipulationTreeInit {
 		// Row 0 (top) — SUMMA
 		register("blood_aneurysm",480,242, "blood_cloud");
 		register("summon_avatar",590,192, "blood_cloud", "blood_rush");
-		register("hematic_impressment",640,122, "hematic_rebuke");
 
 		// Row 1 (middle) — MEDIOCRITAS
-		register("deadly_gaze",1110,180, "activation_potential");
+		register("deadly_gaze",1110,180, "synaptic_jolt");
 		register("blood_cloud",520,192, "blood_needle", "blood_shot");
 		register("hematic_rebuke",670,182, "blood_rush");
 
@@ -64,21 +63,19 @@ public class ManipulationTreeInit {
 		register("ironhearted",850,80, "iron_retort");
 
 		// Row 2 (bottom) — HUMILIS / MEDIOCRITAS roots
-		register("venous_travel",968,170, "activation_potential");
 		register("conjure_staff",1040,120, "blood_projection", "blood_absorption");
 		register("sanguine_mending",910,140);
 		register("vascular_dowsing",910,200, "sanguine_mending");
 
 		// Row 0 (top) — MEDIOCRITAS
-		register("sanguine_ward",980,110, "activation_potential");
+		register("sanguine_ward",980,110, "synaptic_jolt");
 
 		// Row 1 (middle) — MEDIOCRITAS root
-		register("activation_potential",1030,160, "synaptic_jolt");
 
 		// Row 2 (bottom) — HUMILIS
 		register("synaptic_jolt",980,230);
-		register("conductive_mark",1035,90, "activation_potential");
-		register("hemolymphal_pulse",1120,240, "activation_potential", "deadly_gaze");
+		register("conductive_mark",1035,90, "synaptic_jolt");
+		register("hemolymphal_pulse",1120,240, "synaptic_jolt", "deadly_gaze");
 		register("conjure_crossbow",1050,220, "hemolymphal_pulse")
 				.setSoftParents("conjure_staff");
 
@@ -100,13 +97,12 @@ public class ManipulationTreeInit {
 		register("endless_hour",1510,200, "glacial_rampart");
 
 		// Row 1 (middle) — MEDIOCRITAS
-		register("glacial_rampart",1460,120, "glacial_grasp", "cryogenic_pulse");
+		register("glacial_rampart",1460,120, "glacial_grasp");
 		register("conjure_flail",1460,170, "glacial_rampart")
 				.setSoftParents("conjure_staff");
 
 		// Row 2 (bottom) — HUMILIS
 		register("glacial_grasp",1460,70);
-		register("cryogenic_pulse",1560,170, "glacial_grasp");
 
 		register("vitric_combustion",1790,50, "pyretic_forge");
 
@@ -124,7 +120,6 @@ public class ManipulationTreeInit {
 		// Row 0 (top) — MEDIOCRITAS
 		register("umbral_step",2040,160, "blood_eclipse");
 		register("black_veil_covenant",1940,90, "void_shroud");
-		register("umbral_reversal",1960,20, "umbral_step", "black_veil_covenant");
 
 		// Row 1 (bottom) — HUMILIS / MEDIOCRITAS
 		register("void_shroud",1870,70);
@@ -142,14 +137,12 @@ public class ManipulationTreeInit {
 		register("blackhearted",2160,21, "grave_debt");
 
 		// Degree 4–5 tendency capstones
-		register("sovereign_instinct",560,121, "hematic_impressment");
+		register("sovereign_instinct",560,121, "hematic_rebuke");
 		register("crimson_coronation",490,133, "sovereign_instinct", "summon_avatar");
 		register("iron_choir",820,20, "iron_retort", "ironhearted");
 		register("living_circuit",1110,125, "conductive_mark");
-		register("synaptic_storm",1200,150, "living_circuit", "hemolymphal_pulse");
 		register("white_verdict",1300,300, "unclosing_eye", "prismatic_reproof");
-		register("rimebound_sentence",1510,260, "endless_hour");
-		register("absolute_stillness",1580,260, "rimebound_sentence");
+		register("absolute_stillness",1580,260, "glacial_grasp", "endless_hour");
 		register("furnace_veins",1800,-20, "vitric_combustion");
 		register("phoenix_debt",1860,20, "furnace_veins");
 		register("penumbral_drift",1890,10, "black_veil_covenant");

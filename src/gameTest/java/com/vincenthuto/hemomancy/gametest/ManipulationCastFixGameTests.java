@@ -16,7 +16,6 @@ import com.vincenthuto.hemomancy.common.init.ManipulationInit;
 import com.vincenthuto.hemomancy.common.manipulation.*;
 import com.vincenthuto.hemomancy.common.manipulation.animus.AvatarManifestationManager;
 import com.vincenthuto.hemomancy.common.manipulation.animus.SummonAvatarManip;
-import com.vincenthuto.hemomancy.common.manipulation.family.ManipulationFamilyRegistry;
 import io.netty.channel.embedded.EmbeddedChannel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.gametest.framework.GameTest;
@@ -79,7 +78,7 @@ public final class ManipulationCastFixGameTests {
 	}
 
 	@GameTest(templateNamespace = "minecraft", template = EMPTY_TEMPLATE, timeoutTicks = 40)
-	public static void venousTravelUsesTheSharedCastEconomy(GameTestHelper helper) {
+	public static void retiredVenousTravelCannotCast(GameTestHelper helper) {
 		ServerPlayer player = player(helper, "venous-travel-test");
 		try {
 			BloodManipulation.clearSessionState();
@@ -93,12 +92,12 @@ public final class ManipulationCastFixGameTests {
 			boolean cast = ManipulationInit.venous_travel.get().tryPerformAction(player, helper.getLevel(),
 					ItemStack.EMPTY, player.blockPosition(), 0.0F);
 
-			helper.assertTrue(cast, "Venous Travel did not pass the shared cast economy");
-			helper.assertTrue(Math.abs(blood.getBloodVolume() - 1_000.0D) < 0.001D,
-					"Venous Travel did not spend its registered 1000 blood");
-			helper.assertTrue(level.getXp() == 1.0D, "Venous Travel did not gain manipulation mastery");
-			helper.assertTrue(ManipulationInit.venous_travel.get().getRemainingCooldownTicks(player) == 20L,
-					"Venous Travel did not start its registered cooldown");
+			helper.assertTrue(!cast, "Retired Venous Travel still cast");
+			helper.assertTrue(Math.abs(blood.getBloodVolume() - 2_000.0D) < 0.001D,
+					"Retired Venous Travel spent blood");
+			helper.assertTrue(level.getXp() == 0.0D, "Retired Venous Travel gained manipulation mastery");
+			helper.assertTrue(ManipulationInit.venous_travel.get().getRemainingCooldownTicks(player) == 0L,
+					"Retired Venous Travel started a cooldown");
 			helper.succeed();
 		} finally {
 			BloodManipulation.clearSessionState();
@@ -131,29 +130,17 @@ public final class ManipulationCastFixGameTests {
 	}
 
 	@GameTest(templateNamespace = "minecraft", template = EMPTY_TEMPLATE, timeoutTicks = 40)
-	public static void familyFormsUnlockFromSharedMasteryWithoutReplacingTheBaseline(GameTestHelper helper) {
+	public static void familyMasteryDoesNotAutomaticallyTeachForms(GameTestHelper helper) {
 		var baseline = ManipulationInit.blood_shot.get();
 		var mastery = new ManipLevel(0, 9);
 		var known = new java.util.LinkedHashMap<BloodManipulation, ManipLevel>();
 		known.put(baseline, mastery);
 
-		ManipulationFamilyRegistry.unlockEligibleForms(known);
-		helper.assertTrue(known.size() == 1, "A Blood Shot form unlocked before mastery level one");
 		mastery.setXp(10);
 		mastery.tryLevelUp();
-		ManipulationFamilyRegistry.unlockEligibleForms(known);
-		helper.assertTrue(known.keySet().stream().anyMatch(manip -> "guided_blood_shot".equals(manip.getName())),
-				"Guided Blood Shot did not unlock at mastery level one");
-		helper.assertTrue(known.keySet().stream().noneMatch(manip -> "hematic_mortar".equals(manip.getName())
-				|| "sanguine_halo".equals(manip.getName())),
-				"A higher Blood Shot form unlocked too early");
-
 		mastery.setXp(185);
 		mastery.tryLevelUp();
-		ManipulationFamilyRegistry.unlockEligibleForms(known);
-		helper.assertTrue(known.size() == 4, "Blood Shot family did not retain all four selectable forms");
-		helper.assertTrue(known.values().stream().allMatch(level -> level == mastery),
-				"Blood Shot family forms do not share one mastery state");
+		helper.assertTrue(known.size() == 1, "Mastery automatically taught a Blood Shot family form");
 		helper.assertTrue(known.containsKey(baseline), "Blood Shot baseline was replaced by its stronger forms");
 		helper.succeed();
 	}
@@ -167,12 +154,12 @@ public final class ManipulationCastFixGameTests {
 		helper.assertTrue(ManipulationRetirementRules.isRetiredManipulation("blood_eclipse_mantle"),
 				"Blood Eclipse Mantle remains active");
 		for (String id : Set.of("crimson_sight", "glacial_circulation", "ferric_transmutation",
-				"vigil_of_glass", "hematic_ballast", "summon_thrall")) {
+				"vigil_of_glass", "hematic_ballast", "summon_thrall", "venous_travel")) {
 			helper.assertTrue(ManipulationRetirementRules.isRetiredManipulation(id), id + " remains active");
 		}
 		long active = ManipulationInit.MANIPS.getEntries().stream().map(holder -> holder.get())
 				.filter(manipulation -> !ManipulationRetirementRules.isRetiredManipulation(manipulation)).count();
-		helper.assertTrue(active == 97, "Expected 97 active manipulations after pruning, got " + active);
+		helper.assertTrue(active == 96, "Expected 96 active manipulations after pruning, got " + active);
 		helper.assertTrue(!ManipulationRetirementRules.isRetiredManipulation("summon_avatar"),
 				"Summon Avatar was retired");
 		helper.assertTrue(ManipulationInit.deadly_gaze.get().getType() == EnumManipulationType.CHARGED

@@ -90,6 +90,12 @@ export interface ManipulationNodeModel {
   tendency: string | null;
   secondaryTendency: string | null;
   color: string;
+  rank?: string | null;
+  borderColor?: string;
+  familyBaseline?: string | null;
+  familyForms?: string[];
+  familyRequiredLevel?: number | null;
+  isFamilyBaseline?: boolean;
 }
 
 export interface ManipulationTreeFile {

@@ -3,10 +3,12 @@ package com.vincenthuto.hemomancy.common.capability.player.harbinger.manip;
 import com.vincenthuto.hemomancy.common.capability.block.vein.VeinLocation;
 import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
 import com.vincenthuto.hemomancy.common.manipulation.ManipLevel;
+import com.vincenthuto.hemomancy.common.manipulation.family.ManipulationFamilyRegistry;
 import net.minecraft.core.BlockPos;
 
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Set;
 
 public interface IKnownManipulations {
 
@@ -53,6 +55,21 @@ public interface IKnownManipulations {
 	}
 
 	public void setKnownManips(LinkedHashMap<BloodManipulation, ManipLevel> knownManips);
+
+	public Set<String> getGrandfatheredFamilyForms();
+
+	public void setGrandfatheredFamilyForms(Set<String> forms);
+
+	default boolean isManipulationAvailable(BloodManipulation manipulation) {
+		if (manipulation == null || !doesListContainName(getKnownManips(), manipulation)) return false;
+		var form = ManipulationFamilyRegistry.form(manipulation.getName());
+		if (form.isEmpty() || getGrandfatheredFamilyForms().contains(manipulation.getName())) return true;
+		String baselineId = ManipulationFamilyRegistry.baselineId(manipulation.getName());
+		BloodManipulation baseline = getManipList().stream()
+				.filter(known -> known != null && baselineId.equals(known.getName())).findFirst().orElse(null);
+		ManipLevel level = baseline == null ? null : getManipLevel(baseline);
+		return level != null && level.getCurrentLevel() >= form.orElseThrow().requiredLevel();
+	}
 
 	public void setSelectedManip(BloodManipulation selectedManip);
 

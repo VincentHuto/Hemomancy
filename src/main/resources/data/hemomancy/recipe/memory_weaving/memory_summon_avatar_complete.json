@@ -1,0 +1,21 @@
+{
+  "type": "hemomancy:memory_weaving",
+  "catalysts": [
+    {
+      "item": "minecraft:nether_star"
+    }
+  ],
+  "enzymes": {
+    "animus": 5,
+    "flammeus": 1,
+    "ductilis": 1,
+    "lux": 1,
+    "mortem": 1,
+    "congeatio": 1,
+    "ferric": 1,
+    "tenebris": 1
+  },
+  "blood": 750,
+  "result": "hemomancy:memory_summon_avatar_complete",
+  "count": 1
+}

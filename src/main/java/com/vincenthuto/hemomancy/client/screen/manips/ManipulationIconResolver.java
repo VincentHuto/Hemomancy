@@ -38,6 +38,9 @@ public final class ManipulationIconResolver {
 			case "lignum_mortis" -> "memory_hemorrhage_overlay";
 			case "penumbral_drift" -> "memory_void_shroud_overlay";
 			case "eclipse_well" -> "memory_black_veil_covenant_overlay";
+			case "hematic_rebuke" -> "memory_activation_potential_overlay";
+			case "hematic_impressment" -> "memory_deadly_gaze_overlay";
+			case "blackhearted" -> "memory_grave_debt_overlay";
 			default -> "memory_" + manipulationId + "_overlay";
 		};
 		return Hemomancy.rloc("textures/item/memories/" + texture + ".png");

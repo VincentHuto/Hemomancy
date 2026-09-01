@@ -35,7 +35,8 @@ public final class NodeShapeRenderer {
 			case CIRCLE   -> drawCircleFill(sink, cx, cy, hs, color);
 			case TRIANGLE -> drawTriangleFill(sink, cx, cy, hs, color);
 			case HEXAGON  -> drawHexagonFill(sink, cx, cy, hs, color);
-			case DECAGON  -> drawDecagonFill(sink, cx, cy, hs, color);
+			case OCTAGON  -> drawRegularPolygonFill(sink, cx, cy, hs, 8, color);
+			case DECAGON  -> drawRegularPolygonFill(sink, cx, cy, hs, 10, color);
 		}
 	}
 
@@ -60,7 +61,8 @@ public final class NodeShapeRenderer {
 			case CIRCLE   -> drawCircleOutline(sink, cx, cy, hs, color);
 			case TRIANGLE -> drawTriangleOutline(sink, cx, cy, hs, color);
 			case HEXAGON  -> drawHexagonOutline(sink, cx, cy, hs, color);
-			case DECAGON  -> drawDecagonOutline(sink, cx, cy, hs, color);
+			case OCTAGON  -> drawRegularPolygonOutline(sink, cx, cy, hs, 8, color);
+			case DECAGON  -> drawRegularPolygonOutline(sink, cx, cy, hs, 10, color);
 		}
 	}
 
@@ -76,6 +78,7 @@ public final class NodeShapeRenderer {
 			case CIRCLE   -> isInsideCircle(mx, my, cx, cy, hs);
 			case TRIANGLE -> isInsideTriangle(mx, my, cx, cy, hs);
 			case HEXAGON  -> isInsideHexagon(mx, my, cx, cy, hs);
+			case OCTAGON  -> RegularPolygonGeometry.isInside(mx, my, cx, cy, hs, 8);
 			case DECAGON  -> RegularPolygonGeometry.isInside(mx, my, cx, cy, hs, 10);
 		};
 	}
@@ -153,17 +156,17 @@ public final class NodeShapeRenderer {
 		return dx * dx + dy * dy <= (double) hs * hs;
 	}
 
-	private static void drawDecagonFill(RectSink sink, int cx, int cy, int hs, int color) {
+	private static void drawRegularPolygonFill(RectSink sink, int cx, int cy, int hs, int sides, int color) {
 		for (int row = -hs; row <= hs; row++) {
-			int[] span = RegularPolygonGeometry.horizontalSpan(row, hs, 10);
+			int[] span = RegularPolygonGeometry.horizontalSpan(row, hs, sides);
 			if (span[1] >= span[0]) sink.fill(cx + span[0], cy + row, cx + span[1] + 1, cy + row + 1, color);
 		}
 	}
 
-	private static void drawDecagonOutline(RectSink sink, int cx, int cy, int hs, int color) {
+	private static void drawRegularPolygonOutline(RectSink sink, int cx, int cy, int hs, int sides, int color) {
 		int[] previous = null;
 		for (int row = -hs; row <= hs; row++) {
-			int[] span = RegularPolygonGeometry.horizontalSpan(row, hs, 10);
+			int[] span = RegularPolygonGeometry.horizontalSpan(row, hs, sides);
 			if (span[1] < span[0]) continue;
 			if (previous == null || row == hs) {
 				sink.fill(cx + span[0], cy + row, cx + span[1] + 1, cy + row + 1, color);

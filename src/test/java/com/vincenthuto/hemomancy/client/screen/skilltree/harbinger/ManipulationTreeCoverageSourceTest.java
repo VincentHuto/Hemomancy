@@ -57,7 +57,7 @@ public final class ManipulationTreeCoverageSourceTest {
 			"hemosynthesis", "blood_lamp", "crimson_harvest", "sanguine_excavation", "vital_reservoir",
 			"conjure_sickle", "ferric_resonance", "glacial_bastion", "blood_eclipse_mantle",
 			"crimson_sight", "glacial_circulation", "ferric_transmutation", "vigil_of_glass",
-			"hematic_ballast", "summon_thrall");
+			"hematic_ballast", "summon_thrall", "venous_travel");
 
 	private ManipulationTreeCoverageSourceTest() {
 	}

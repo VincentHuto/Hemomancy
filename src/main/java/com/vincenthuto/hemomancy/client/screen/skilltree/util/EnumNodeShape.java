@@ -10,5 +10,6 @@ public enum EnumNodeShape {
 	CIRCLE,
 	TRIANGLE,
 	HEXAGON,
+	OCTAGON,
 	DECAGON
 }

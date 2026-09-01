@@ -80,6 +80,8 @@ public final class MemoryBrazierRite {
 			case ALREADY_KNOWN -> "Your blood already carries this memory.";
 			case NO_ACTIVE_BLOOD -> "The memory finds no living blood to enter.";
 			case RANK_TOO_LOW -> "This memory requires Degree " + result.requiredDegree() + ".";
+			case MASTERY_TOO_LOW -> "Master " + result.familyId().replace('_', ' ') + " to stage "
+					+ result.requiredMastery() + " before absorbing this memory.";
 			case RETIRED -> "This memory has gone dormant.";
 			default -> "The burning memory will not take.";
 		};

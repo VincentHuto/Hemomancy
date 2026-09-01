@@ -53,7 +53,7 @@ public class ManipulationInit {
 
 	public static final Registry<BloodManipulation> MANIPS_TYPE_REGISTRY = MANIPS
 			.makeRegistry(builder -> builder.maxId(Integer.MAX_VALUE - 1)
-					.defaultKey(Hemomancy.rloc("venous_travel")));
+					.defaultKey(Hemomancy.rloc("blood_shot")));
 
 	public static final DeferredHolder<BloodManipulation, BloodManipulation> venous_travel = MANIPS.register("venous_travel",
 			() -> new BloodManipulation("venous_travel", 1000, 0, 0, EnumManipulationType.QUICK,

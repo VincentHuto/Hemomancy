@@ -1,6 +1,5 @@
 package com.vincenthuto.hemomancy.common.manipulation.family;
 
-import com.vincenthuto.hemomancy.common.init.ManipulationInit;
 import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
 import com.vincenthuto.hemomancy.common.manipulation.ManipLevel;
 
@@ -22,7 +21,11 @@ public final class ManipulationFamilyRegistry {
 					form("expulsive_updraft", 3)),
 			family("lignum_mortis", form("canopy_mortis", 1), form("worked_lignum", 3)),
 			family("summon_avatar", form("summon_avatar_arms", 1), form("summon_avatar_armor", 2),
-					form("summon_avatar_legs", 3), form("summon_avatar_complete", 4)));
+					form("summon_avatar_legs", 3), form("summon_avatar_complete", 4)),
+			family("hematic_rebuke", form("hematic_impressment", 3)),
+			family("umbral_step", form("umbral_reversal", 2)),
+			family("synaptic_jolt", form("activation_potential", 2), form("synaptic_storm", 4)),
+			family("glacial_grasp", form("cryogenic_pulse", 1), form("rimebound_sentence", 4)));
 
 	private static final Map<String, ManipulationFamilyDefinition> BY_ID = new LinkedHashMap<>();
 	private static final Map<String, ManipulationFormDefinition> FORMS_BY_ID = new LinkedHashMap<>();
@@ -91,41 +94,6 @@ public final class ManipulationFamilyRegistry {
 			}
 		}
 		return changed;
-	}
-
-	public static boolean unlockEligibleForms(LinkedHashMap<BloodManipulation, ManipLevel> known) {
-		if (known == null || known.isEmpty()) return false;
-		boolean changed = normalizeKnown(known);
-		for (ManipulationFamilyDefinition family : FAMILIES) {
-			ManipLevel shared = levelForFamily(known, family);
-			if (shared == null) continue;
-			changed |= addIfAvailable(known, family.baselineId(), shared);
-			for (ManipulationFormDefinition form : family.forms()) {
-				if (shared.getCurrentLevel() >= form.requiredLevel()) {
-					changed |= addIfAvailable(known, form.id(), shared);
-				}
-			}
-		}
-		return changed;
-	}
-
-	private static ManipLevel levelForFamily(LinkedHashMap<BloodManipulation, ManipLevel> known,
-			ManipulationFamilyDefinition family) {
-		for (Map.Entry<BloodManipulation, ManipLevel> entry : known.entrySet()) {
-			if (entry.getKey() != null && BY_ID.get(entry.getKey().getName()) == family) return entry.getValue();
-		}
-		return null;
-	}
-
-	private static boolean addIfAvailable(LinkedHashMap<BloodManipulation, ManipLevel> known, String id,
-			ManipLevel shared) {
-		for (BloodManipulation current : known.keySet()) {
-			if (current != null && id.equals(current.getName())) return false;
-		}
-		BloodManipulation manipulation = ManipulationInit.getByName(id);
-		if (manipulation == null) return false;
-		known.put(manipulation, shared);
-		return true;
 	}
 
 	private static ManipulationFamilyDefinition family(String baselineId, ManipulationFormDefinition... forms) {

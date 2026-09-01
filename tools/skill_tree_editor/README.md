@@ -34,7 +34,7 @@ Skill node positions are stored in Java with `.setTreePosition(x, y)`. The in-ga
 
 The inspector preserves `.setNodeShape(EnumNodeShape...)` and `.setToggleable(true)`. Toggleable techniques are previewed in their unlocked/enabled decagon state with the same bronze border and subtle red glow used by the game.
 
-The Tendencies editor loads manipulation metadata from `ManipulationInit.java` and scar metadata from `ScarInit.java`. It edits both `ManipulationTreeInit.java` and the explicit `authored(...)` entries in `ScarTreeLayout.java`, mirrors the combined in-game radial layout, and previews/applies both kinds of changes as one operation.
+The Tendencies editor loads manipulation metadata from `ManipulationInit.java`, family metadata from `ManipulationFamilyRegistry.java`, and scar metadata from `ScarInit.java`. It edits both `ManipulationTreeInit.java` and the explicit `authored(...)` entries in `ScarTreeLayout.java`, mirrors the combined in-game radial layout, previews family baselines as octagons with their strongest authored family-rank border, and previews/applies both kinds of changes as one operation.
 
 The material atlas editor reads `MaterialAtlasSpec.java` and `MaterialsData.java`. Buckets are cosmetic category metadata only: they provide the atlas color, category anchor, and label plaque, while explicit `parentIds` provide node lineage/vein links. Gates, parent veins, catalogue text, and icon registry fields are previewed back into those Java files. Material nodes keep the existing auto-layout until moved; moved nodes are written as `entryAt(...)` calls with explicit atlas coordinates.
 

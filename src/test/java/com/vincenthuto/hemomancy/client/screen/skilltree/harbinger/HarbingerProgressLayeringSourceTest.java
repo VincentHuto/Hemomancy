@@ -29,6 +29,8 @@ public final class HarbingerProgressLayeringSourceTest {
 				progressScreen, "SCREEN_CHROME_Z = 200.0F");
 		assertContains("harbinger tabs render above node item stacks",
 				progressScreen, "drawTabsAboveCanvas(gfx, mouseX, mouseY)");
+		assertContains("harbinger canvas item stack batch flushes before overlays",
+				progressScreen, "active.render(gfx, ctx, mouseX, mouseY, partial);\n\t\tgfx.flush();\n        gfx.disableScissor();");
 		assertContains("harbinger tab chrome pushes above item depth",
 				progressScreen, "pose.translate(0.0F, 0.0F, SCREEN_CHROME_Z)");
 		assertNotContains("harbinger skill points no longer render as persistent screen chrome",

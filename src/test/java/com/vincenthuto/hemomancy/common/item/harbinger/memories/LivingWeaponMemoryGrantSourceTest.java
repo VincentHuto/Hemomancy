@@ -22,10 +22,9 @@ public final class LivingWeaponMemoryGrantSourceTest {
 		assertContains("helper validates already known", helper, "ALREADY_KNOWN");
 		assertContains("helper grants and syncs player memory", helper, "grantMemory(ServerPlayer player");
 		assertContains("helper syncs known manipulations", helper, "new KnownManipulationServerPacket(known)");
-		assertContains("helper preserves open-slot auto equip", helper, "ManipulationEquipHelper.equipNameIfPossible");
+		assertContains("helper preserves guarded open-slot auto equip", helper, "known.equipManip");
 
-		assertContains("memory item delegates grant logic", memoryItem, "KnownManipulationGrantHelper.grantMemory");
-		assertContains("memory item consumes only successful grant", memoryItem, "result.success()");
+		assertContains("memory item directs learning through brazier absorption", memoryItem, "lit Iron Brazier");
 		assertContains("memory item keeps retired memory guard", memoryItem, "isRetiredMemoryItem()");
 
 		assertContains("living weapon unlock helper exists", unlocks, "final class LivingWeaponMemoryUnlocks");

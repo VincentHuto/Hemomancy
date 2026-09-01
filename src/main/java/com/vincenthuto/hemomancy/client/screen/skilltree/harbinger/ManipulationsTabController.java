@@ -31,7 +31,6 @@ public class ManipulationsTabController implements IProgressTab {
     private static final int NODE_GAP_X = 80;
     private static final int INNER_MANIPULATION_RADIUS = 175;
     private static final int COL_NODE_BG     = 0xCC1A0505;
-    private static final int COL_NODE_BORDER_LOCK = 0xFF333333;
     private static final float INFO_PANEL_Z = 400.0F;
     private static final float FAMILY_MENU_Z = INFO_PANEL_Z - 100.0F;
     private static final float MANIP_TOOLTIP_Z = INFO_PANEL_Z + 500.0F;
@@ -62,6 +61,8 @@ public class ManipulationsTabController implements IProgressTab {
     private int manipRingCenterX, manipRingCenterY;
     private final Map<ManipulationTreeEntry, int[]> manipPositions = new HashMap<>();
     private final Set<String> knownManipNames = new HashSet<>();
+	private final Set<String> availableManipNames = new HashSet<>();
+	private final Set<String> grandfatheredFamilyForms = new HashSet<>();
 	private final Map<String, Integer> masteryLevels = new HashMap<>();
     private final Map<String, ItemStack> manipMemoryItems = new HashMap<>();
     private int contentW, contentH;
@@ -247,14 +248,18 @@ public class ManipulationsTabController implements IProgressTab {
 
     private void cacheKnownManipulations() {
         knownManipNames.clear();
+		availableManipNames.clear();
+		grandfatheredFamilyForms.clear();
 		masteryLevels.clear();
         Minecraft mc = Minecraft.getInstance();
         if (mc.player != null) {
             HemoCapabilityAccess.getKnownManipulations(mc.player).ifPresent(cap -> {
+				grandfatheredFamilyForms.addAll(cap.getGrandfatheredFamilyForms());
 				for (var entry : cap.getKnownManips().entrySet()) {
 					BloodManipulation m = entry.getKey();
 					if (m == null || m.getName() == null) continue;
 					knownManipNames.add(m.getName());
+					if (cap.isManipulationAvailable(m)) availableManipNames.add(m.getName());
 					if (entry.getValue() != null) {
 						String baseline = ManipulationFamilyRegistry.baselineId(m.getName());
 						masteryLevels.merge(baseline, entry.getValue().getCurrentLevel(), Math::max);
@@ -389,7 +394,7 @@ public class ManipulationsTabController implements IProgressTab {
             BloodManipulation manip = entry.resolve();
             boolean known = knownManipNames.contains(entry.getManipName());
             boolean rankLocked = isManipRankLocked(manip);
-            EnumNodeShape shape = entry.getNodeShape();
+            EnumNodeShape shape = manipulationNodeShape(entry);
 
             int tendR = 128, tendG = 128, tendB = 128;
             if (manip != null) {
@@ -399,22 +404,15 @@ public class ManipulationsTabController implements IProgressTab {
                 tendB = (int)pc.getBlue();
             }
 
-            int borderColor;
-            if (rankLocked) {
-                borderColor = COL_NODE_BORDER_LOCK;
-            } else if (known) {
-                borderColor = 0xFF000000 | (tendR << 16) | (tendG << 8) | tendB;
+            int tendencyColor = 0xFF000000 | (tendR << 16) | (tendG << 8) | tendB;
+            int borderColor = manipulationBorderColor(entry, manip);
+            if (known && !rankLocked) {
                 float pulse = 0.5f + 0.5f * Mth.sin(time * 2f + entry.getManipName().hashCode() * 0.1f);
                 int ga = (int)(35 * pulse);
                 int gr = (int)(tendR * 0.6f);
                 int gg = (int)(tendG * 0.6f);
                 int gb = (int)(tendB * 0.6f);
                 NodeShapeRenderer.drawFill(gfx, shape, nx, ny, hn + 3, (ga << 24) | (gr << 16) | (gg << 8) | gb);
-            } else {
-                int dr = (int)(tendR * 0.3f);
-                int dg = (int)(tendG * 0.3f);
-                int db = (int)(tendB * 0.3f);
-                borderColor = 0xFF000000 | (dr << 16) | (dg << 8) | db;
             }
 
             boolean isSelected = entry == selectedEntry;
@@ -426,10 +424,7 @@ public class ManipulationsTabController implements IProgressTab {
             }
 
             int fill = known && !rankLocked ? COL_NODE_BG : 0xCC0D0303;
-			HarbingerChromeRenderer.drawNodeFrame(gfx, shape, nx, ny, hn, fill, borderColor,
-					rankLocked ? HarbingerChromeRenderer.State.DISABLED
-							: selectedEntry == entry ? HarbingerChromeRenderer.State.ACTIVE
-							: HarbingerChromeRenderer.State.IDLE);
+			drawManipulationNodeFrame(gfx, shape, nx, ny, hn, fill, borderColor);
 
             if (rankLocked) {
                 NodeShapeRenderer.drawFill(gfx, shape, nx, ny, hn - 1, 0xBB000000);
@@ -458,7 +453,8 @@ public class ManipulationsTabController implements IProgressTab {
                     gfx.drawCenteredString(ctx.font(), sym, nx, ny - 4, textCol);
                 }
 
-				if (known) drawMasteryPips(gfx, nx, ny, hn, masteryLevel(entry.getManipName()), borderColor);
+				if (known) drawMasteryPips(gfx, nx, ny, hn, masteryLevel(entry.getManipName()),
+						borderColor != 0 ? borderColor : tendencyColor);
             }
         }
 		updateHoveredFamily(ctx, mouseX, mouseY);
@@ -468,17 +464,43 @@ public class ManipulationsTabController implements IProgressTab {
 		return masteryLevels.getOrDefault(ManipulationFamilyRegistry.baselineId(manipulationId), 0);
 	}
 
+	private EnumNodeShape manipulationNodeShape(ManipulationTreeEntry entry) {
+		return ManipulationNodePresentation.shape(entry.getManipName(), entry.getNodeShape());
+	}
+
+	private int manipulationBorderColor(ManipulationTreeEntry entry, BloodManipulation manipulation) {
+		EnumManipulationRank rank = ManipulationFamilyRegistry.family(entry.getManipName())
+				.filter(family -> family.baselineId().equals(entry.getManipName()))
+				.map(family -> ManipulationNodePresentation.familyBorderRank(entry.getManipName(),
+						availableManipNames, this::manipulationRank))
+				.orElse(manipulation != null ? manipulation.getRank() : null);
+		return ManipulationNodePresentation.borderColor(rank);
+	}
+
+	private EnumManipulationRank manipulationRank(String manipulationId) {
+		BloodManipulation manipulation = ManipulationInit.getByName(manipulationId);
+		return manipulation != null ? manipulation.getRank() : null;
+	}
+
+	private static void drawManipulationNodeFrame(GuiGraphics gfx, EnumNodeShape shape,
+			int centerX, int centerY, int half, int fill, int borderColor) {
+		if (borderColor == 0) {
+			NodeShapeRenderer.drawFill(gfx, shape, centerX, centerY, half, fill);
+			return;
+		}
+		HarbingerChromeRenderer.drawNodeFrame(gfx, shape, centerX, centerY, half, fill, borderColor,
+				HarbingerChromeRenderer.State.ACTIVE);
+	}
+
 	private void drawMasteryPips(GuiGraphics gfx, int centerX, int centerY, int halfNode,
 			int level, int activeColor) {
 		if (panZoom.zoom < 0.55F) return;
-		int pipSize = Math.max(2, Math.round(3 * panZoom.zoom));
-		int gap = Math.max(1, Math.round(panZoom.zoom));
-		int width = pipSize * 4 + gap * 3;
-		int x = centerX - width / 2;
-		int y = centerY - halfNode - pipSize - 3;
+		int pipHalf = Math.max(2, Math.round(2 * panZoom.zoom));
 		for (int i = 0; i < 4; i++) {
-			gfx.fill(x, y, x + pipSize, y + pipSize, i < level ? activeColor : 0xFF351515);
-			x += pipSize + gap;
+			NodeShapeRenderer.drawFill(gfx, EnumNodeShape.DIAMOND,
+					centerX + ManipulationNodePresentation.masteryPipX(i, halfNode),
+					centerY + ManipulationNodePresentation.masteryPipY(i, halfNode), pipHalf,
+					i < level ? activeColor : 0xFF351515);
 		}
 	}
 
@@ -529,7 +551,10 @@ public class ManipulationsTabController implements IProgressTab {
 			double angle = -Math.PI / 2 + Math.PI * 2 * i / family.forms().size();
 			int x = centerX + (int) Math.round(Math.cos(angle) * radius);
 			int y = centerY + (int) Math.round(Math.sin(angle) * radius);
-			satellites.add(new FormSatellite(entry, form, x, y, size, level >= form.requiredLevel()));
+			boolean masteryEligible = level >= form.requiredLevel()
+					|| grandfatheredFamilyForms.contains(form.id());
+			satellites.add(new FormSatellite(entry, form, x, y, size,
+					availableManipNames.contains(form.id()), masteryEligible));
 		}
 		return satellites;
 	}
@@ -550,17 +575,23 @@ public class ManipulationsTabController implements IProgressTab {
 			int half = satellite.size() / 2;
 			boolean hovered = mouseX >= satellite.x() - half && mouseX < satellite.x() + half
 					&& mouseY >= satellite.y() - half && mouseY < satellite.y() + half;
-			int border = hovered || satellite.form().id().equals(selectedFormName) ? 0xFFFFAA44 : 0xFF772222;
-			gfx.fill(satellite.x() - half - 2, satellite.y() - half - 2,
-					satellite.x() + half + 2, satellite.y() + half + 2, border);
-			gfx.fill(satellite.x() - half - 1, satellite.y() - half - 1,
-					satellite.x() + half + 1, satellite.y() + half + 1, 0xEE180505);
+			if (hovered || satellite.form().id().equals(selectedFormName)) {
+				NodeShapeRenderer.drawFill(gfx, EnumNodeShape.SQUARE, satellite.x(), satellite.y(),
+						half + 3, 0x88FFAA44);
+			}
+			int border = ManipulationNodePresentation.borderColor(manipulationRank(satellite.form().id()));
+			drawManipulationNodeFrame(gfx, EnumNodeShape.SQUARE, satellite.x(), satellite.y(),
+					half + 1, 0xEE180505, border);
 			drawResolvedIcon(gfx, satellite.form().id(), satellite.x(), satellite.y(), satellite.size());
-			if (!satellite.unlocked()) {
+			if (!satellite.masteryEligible()) {
 				gfx.fill(satellite.x() - half, satellite.y() - half,
 						satellite.x() + half, satellite.y() + half, 0xCC000000);
 				gfx.drawCenteredString(ctx.font(), Integer.toString(satellite.form().requiredLevel()),
 						satellite.x(), satellite.y() - 4, 0xFFAA4444);
+			} else if (!satellite.known()) {
+				gfx.fill(satellite.x() - half, satellite.y() - half,
+						satellite.x() + half, satellite.y() + half, 0x88000000);
+				gfx.drawCenteredString(ctx.font(), "M", satellite.x(), satellite.y() - 4, 0xFFFFAA44);
 			}
 		}
 	}
@@ -579,11 +610,14 @@ public class ManipulationsTabController implements IProgressTab {
 				menuRadius + 2, FAMILY_MENU_BORDER);
 		NodeShapeRenderer.drawFill(gfx, EnumNodeShape.CIRCLE, centerX, centerY, menuRadius, FAMILY_MENU_BG);
 		int centerHalf = halfNode();
-		HarbingerChromeRenderer.drawNodeFrame(gfx, entry.getNodeShape(), centerX, centerY, centerHalf,
-				COL_NODE_BG, 0xFFFFAA44, HarbingerChromeRenderer.State.ACTIVE);
+		EnumNodeShape centerShape = manipulationNodeShape(entry);
+		NodeShapeRenderer.drawFill(gfx, centerShape, centerX, centerY, centerHalf + 4, 0x88FFAA44);
+		int centerBorder = manipulationBorderColor(entry, entry.resolve());
+		drawManipulationNodeFrame(gfx, centerShape, centerX, centerY, centerHalf,
+				COL_NODE_BG, centerBorder);
 		drawResolvedIcon(gfx, entry.getManipName(), centerX, centerY, Math.max(12, centerHalf * 2 - 4));
 		drawMasteryPips(gfx, centerX, centerY, centerHalf,
-				masteryLevel(entry.getManipName()), 0xFFFFAA44);
+				masteryLevel(entry.getManipName()), centerBorder != 0 ? centerBorder : 0xFFFFAA44);
 		drawFamilySatellites(gfx, ctx, entry, mouseX, mouseY);
 		pose.popPose();
 	}
@@ -611,11 +645,17 @@ public class ManipulationsTabController implements IProgressTab {
 		if (satellite == null) return false;
 
 		List<Component> tip = new ArrayList<>();
-		if (!satellite.unlocked()) {
+		BloodManipulation manipulation = ManipulationInit.getByName(satellite.form().id());
+		if (manipulation != null && isManipRankLocked(manipulation)) {
+			tip.add(Component.literal("Requires Degree " + manipMinDegree(manipulation.getRank()))
+					.withStyle(s -> s.withColor(0xAA4444)));
+		} else if (!satellite.masteryEligible()) {
 			tip.add(Component.literal("Requires mastery level " + satellite.form().requiredLevel())
 					.withStyle(s -> s.withColor(0xAA4444)));
+		} else if (!satellite.known()) {
+			tip.add(Component.literal("Mastery reached — craft and absorb this memory")
+					.withStyle(s -> s.withColor(0xFFAA44)));
 		} else {
-			BloodManipulation manipulation = ManipulationInit.getByName(satellite.form().id());
 			String name = manipulation != null ? manipulation.getName() : satellite.form().id();
 			tip.add(Component.literal(HLTextUtils.toProperCase(name.replace('_', ' ')))
 					.withStyle(s -> s.withColor(0xFFAA44).withBold(true)));
@@ -634,7 +674,7 @@ public class ManipulationsTabController implements IProgressTab {
 	}
 
 	private record FormSatellite(ManipulationTreeEntry entry, ManipulationFormDefinition form,
-			int x, int y, int size, boolean unlocked) {
+			int x, int y, int size, boolean known, boolean masteryEligible) {
 	}
 
     private void drawManipTooltip(GuiGraphics gfx, ProgressScreenContext ctx, int mouseX, int mouseY) {
@@ -648,7 +688,7 @@ public class ManipulationsTabController implements IProgressTab {
             if (!isVisibleFamily(entry)) continue;
             int[] pos = e.getValue();
             int nx = sx(ctx, pos[0]), ny = sy(ctx, pos[1]);
-            if (!NodeShapeRenderer.isInside(entry.getNodeShape(), mouseX, mouseY, nx, ny, hn)) continue;
+            if (!NodeShapeRenderer.isInside(manipulationNodeShape(entry), mouseX, mouseY, nx, ny, hn)) continue;
 
             BloodManipulation manip = entry.resolve();
             boolean known = knownManipNames.contains(entry.getManipName());
@@ -718,7 +758,13 @@ public class ManipulationsTabController implements IProgressTab {
 		BloodManipulation manip = selectedManipulation(entry);
         if (manip == null) return;
 
-		boolean known = knownManipNames.contains(manip.getName());
+		boolean known = ManipulationFamilyRegistry.form(manip.getName()).isPresent()
+				? availableManipNames.contains(manip.getName()) : knownManipNames.contains(manip.getName());
+		var selectedForm = ManipulationFamilyRegistry.form(manip.getName());
+		boolean masteryEligible = selectedForm.isEmpty()
+				|| masteryLevel(ManipulationFamilyRegistry.baselineId(manip.getName()))
+						>= selectedForm.orElseThrow().requiredLevel()
+				|| grandfatheredFamilyForms.contains(manip.getName());
         boolean rankLocked = isManipRankLocked(manip);
         boolean veilUnknown = shouldVeilUnknown(known, rankLocked);
 
@@ -810,8 +856,10 @@ public class ManipulationsTabController implements IProgressTab {
             gfx.drawString(ctx.font(), "Requires: " + degreeName, tx, ty, 0xFFAA4444, false);
             ty += lineH;
         } else {
-            String statusStr = known ? "Known" : "Unknown";
-            int statusCol = known ? 0xFF44AA44 : 0xFFAA4444;
+			String statusStr = known ? "Known" : !masteryEligible
+					? "Requires mastery stage " + selectedForm.orElseThrow().requiredLevel()
+					: selectedForm.isPresent() ? "Memory not absorbed" : "Unknown";
+			int statusCol = known ? 0xFF44AA44 : masteryEligible ? 0xFFFFAA44 : 0xFFAA4444;
             gfx.drawString(ctx.font(), statusStr, tx, ty, statusCol, false);
             ty += lineH + 3;
             drawManipStatGrid(gfx, ctx, manip, tx, ty, maxW, tendCol);
@@ -950,7 +998,7 @@ public class ManipulationsTabController implements IProgressTab {
             if (!isVisibleFamily(e.getKey())) continue;
             int[] p = e.getValue();
             int nx = sx(ctx, p[0]), ny = sy(ctx, p[1]);
-            if (NodeShapeRenderer.isInside(e.getKey().getNodeShape(), mx, my, nx, ny, h)) return e.getKey();
+            if (NodeShapeRenderer.isInside(manipulationNodeShape(e.getKey()), mx, my, nx, ny, h)) return e.getKey();
         }
         return null;
     }
@@ -976,11 +1024,9 @@ public class ManipulationsTabController implements IProgressTab {
 		if (familyEntry != null) {
 			FormSatellite satellite = familySatelliteUnder(ctx, familyEntry, mx, my);
 			if (satellite != null) {
-				if (satellite.unlocked()) {
-					scarState.closeDetails();
-					selectedEntry = satellite.entry();
-					selectedFormName = satellite.form().id();
-				}
+				scarState.closeDetails();
+				selectedEntry = satellite.entry();
+				selectedFormName = satellite.form().id();
 				return true;
 			}
 		}

@@ -17,7 +17,9 @@ import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
 public class KnownManipulationServerPacket implements CustomPacketPayload {
 
@@ -38,6 +40,7 @@ public class KnownManipulationServerPacket implements CustomPacketPayload {
 
 	private List<String> equippedManipNames = new ArrayList<>();
 	private List<ManipulationLoadout> loadouts = new ArrayList<>();
+	private Set<String> grandfatheredFamilyForms = new LinkedHashSet<>();
 
 	public KnownManipulationServerPacket(IKnownManipulations known) {
 		ManipulationRetirementRules.sanitizeKnownManipulations(known);
@@ -50,6 +53,7 @@ public class KnownManipulationServerPacket implements CustomPacketPayload {
 		this.lastVeinMineStart = known.getLastVeinMineStart();
 		this.equippedManipNames = new ArrayList<>(known.getEquippedManipNames());
 		this.loadouts = new ArrayList<>(known.getLoadouts());
+		this.grandfatheredFamilyForms = new LinkedHashSet<>(known.getGrandfatheredFamilyForms());
 	}
 
 	public KnownManipulationServerPacket(LinkedHashMap<BloodManipulation, ManipLevel> list, BloodManipulation selected,
@@ -117,8 +121,11 @@ public class KnownManipulationServerPacket implements CustomPacketPayload {
 			loadouts.add(ManipulationLoadout.readFromBuf(buf, i));
 		}
 		String selectedMemoryKey = buf.readUtf();
-		return new KnownManipulationServerPacket(manips, sel, veinList, selvein, avatarForm, lastveinstart,
-				equippedManipNames, loadouts, selectedMemoryKey);
+		KnownManipulationServerPacket packet = new KnownManipulationServerPacket(manips, sel, veinList, selvein,
+				avatarForm, lastveinstart, equippedManipNames, loadouts, selectedMemoryKey);
+		int grandfatheredCount = buf.readInt();
+		for (int i = 0; i < grandfatheredCount; i++) packet.grandfatheredFamilyForms.add(buf.readUtf());
+		return packet;
 	}
 	public static void encode(final FriendlyByteBuf buf, final KnownManipulationServerPacket msg) {
 		if (msg.selected != null) {
@@ -152,6 +159,8 @@ public class KnownManipulationServerPacket implements CustomPacketPayload {
 			loadout.writeToBuf(buf);
 		}
 		buf.writeUtf(msg.selectedMemoryKey);
+		buf.writeInt(msg.grandfatheredFamilyForms.size());
+		for (String id : msg.grandfatheredFamilyForms) buf.writeUtf(id);
 
 	}
 	public static void handle(final KnownManipulationServerPacket msg, final IPayloadContext ctx) {
@@ -162,6 +171,7 @@ public class KnownManipulationServerPacket implements CustomPacketPayload {
 			}
 			IKnownManipulations known = HemoCapabilityAccess.requireKnownManipulations(player);
 			known.setKnownManips(msg.known);
+			known.setGrandfatheredFamilyForms(msg.grandfatheredFamilyForms);
 			known.setSelectedManip(msg.selected);
 			known.setVeinList(msg.veinList);
 			known.setSelectedVein(msg.selectedVein);

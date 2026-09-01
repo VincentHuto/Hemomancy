@@ -29,6 +29,7 @@ public final class ManipulationRetirementRulesTest {
 		assertTrue("vigil of glass retired", ManipulationRetirementRules.isRetiredManipulation("vigil_of_glass"));
 		assertTrue("hematic ballast retired", ManipulationRetirementRules.isRetiredManipulation("hematic_ballast"));
 		assertTrue("summon thrall manipulation retired", ManipulationRetirementRules.isRetiredManipulation("summon_thrall"));
+		assertTrue("venous travel manipulation retired", ManipulationRetirementRules.isRetiredManipulation("venous_travel"));
 		assertFalse("summon avatar remains active", ManipulationRetirementRules.isRetiredManipulation("summon_avatar"));
 		assertFalse("blood absorption remains functional",
 				ManipulationRetirementRules.isRetiredManipulation(ManipulationEquipHelper.BLOOD_ABSORPTION));
@@ -81,6 +82,8 @@ public final class ManipulationRetirementRulesTest {
 				ManipulationRetirementRules.isRetiredMemoryItemId("memory_hematic_ballast"));
 		assertTrue("summon thrall memory retired",
 				ManipulationRetirementRules.isRetiredMemoryItemId("memory_summon_thrall"));
+		assertTrue("venous travel memory retired",
+				ManipulationRetirementRules.isRetiredMemoryItemId("memory_venous_travel"));
 		assertFalse("sanguine mending memory remains active",
 				ManipulationRetirementRules.isRetiredMemoryItemId("memory_sanguine_mending"));
 		assertFalse("pyretic forge memory remains active",

@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 final class HematicCommandWiringSourceTest {
@@ -22,7 +23,8 @@ final class HematicCommandWiringSourceTest {
 		assertTrue(manipulations.contains("MANIPS.register(\"hematic_impressment\""));
 		assertTrue(items.contains("BASEITEMS.register(\"memory_hematic_rebuke\""));
 		assertTrue(items.contains("BASEITEMS.register(\"memory_hematic_impressment\""));
-		assertTrue(tree.contains("register(\"hematic_impressment\",640,122, \"hematic_rebuke\")"));
+		assertFalse(tree.contains("register(\"hematic_impressment\""));
+		assertTrue(tree.contains("register(\"sovereign_instinct\",560,121, \"hematic_rebuke\")"));
 		assertTrue(manager.contains("IMPRESSED_BY_CASTER"));
 		assertTrue(manager.contains("HemoEntityPredicates.NOBLOOD.test(target)"));
 		for (String id : new String[] {"hematic_rebuke", "hematic_impressment"}) {

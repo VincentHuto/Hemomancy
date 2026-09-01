@@ -22,7 +22,8 @@ public final class ManipulationRetirementRules {
 			"ferric_transmutation",
 			"vigil_of_glass",
 			"hematic_ballast",
-			"summon_thrall");
+			"summon_thrall",
+			"venous_travel");
 
 	private static final Set<String> RETIRED_MEMORY_ITEM_IDS = Set.of(
 			"memory_conjure_living_staff",
@@ -43,7 +44,8 @@ public final class ManipulationRetirementRules {
 			"memory_ferric_transmutation",
 			"memory_vigil_of_glass",
 			"memory_hematic_ballast",
-			"memory_summon_thrall");
+			"memory_summon_thrall",
+			"memory_venous_travel");
 
 	private ManipulationRetirementRules() {
 	}

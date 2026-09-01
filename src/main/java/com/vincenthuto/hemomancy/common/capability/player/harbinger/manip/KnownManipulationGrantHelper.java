@@ -28,11 +28,16 @@ public final class KnownManipulationGrantHelper {
 		ALREADY_KNOWN,
 		NO_ACTIVE_BLOOD,
 		RANK_TOO_LOW,
+		MASTERY_TOO_LOW,
 		RETIRED,
 		INVALID
 	}
 
-	public record MemoryGrantResult(MemoryGrantStatus status, BloodManipulation manipulation, int requiredDegree) {
+	public record MemoryGrantResult(MemoryGrantStatus status, BloodManipulation manipulation, int requiredDegree,
+			String familyId, int requiredMastery, int currentMastery) {
+		public MemoryGrantResult(MemoryGrantStatus status, BloodManipulation manipulation, int requiredDegree) {
+			this(status, manipulation, requiredDegree, "", 0, 0);
+		}
 		public boolean success() {
 			return status == MemoryGrantStatus.GRANTED_EQUIPPED || status == MemoryGrantStatus.GRANTED;
 		}
@@ -71,6 +76,19 @@ public final class KnownManipulationGrantHelper {
 		if (known.doesListContainName(known.getKnownManips(), manipulation)) {
 			return new MemoryGrantResult(MemoryGrantStatus.ALREADY_KNOWN, manipulation, requiredDegree);
 		}
+		var form = ManipulationFamilyRegistry.form(manipulation.getName());
+		if (form.isPresent()) {
+			String baselineId = ManipulationFamilyRegistry.baselineId(manipulation.getName());
+			BloodManipulation baseline = known.getManipList().stream()
+					.filter(candidate -> candidate != null && baselineId.equals(candidate.getName()))
+					.findFirst().orElse(null);
+			ManipLevel level = baseline == null ? null : known.getManipLevel(baseline);
+			int currentMastery = level != null ? level.getCurrentLevel() : 0;
+			if (baseline == null || currentMastery < form.orElseThrow().requiredLevel()) {
+				return new MemoryGrantResult(MemoryGrantStatus.MASTERY_TOO_LOW, manipulation, requiredDegree,
+						baselineId, form.orElseThrow().requiredLevel(), currentMastery);
+			}
+		}
 		return new MemoryGrantResult(MemoryGrantStatus.GRANTED, manipulation, requiredDegree);
 	}
 
@@ -88,9 +106,8 @@ public final class KnownManipulationGrantHelper {
 			return new MemoryGrantResult(MemoryGrantStatus.INVALID, manipulation, checked.requiredDegree());
 		}
 		known.getKnownManips().put(manipulation, new ManipLevel(0, 0));
-		ManipulationFamilyRegistry.unlockEligibleForms(known.getKnownManips());
-		boolean equipped = ManipulationEquipHelper.equipNameIfPossible(known.getEquippedManipNames(),
-				manipulation.getName(), ManipSlotHelper.getMaxSlots(player));
+		ManipulationFamilyRegistry.normalizeKnown(known.getKnownManips());
+		boolean equipped = known.equipManip(manipulation.getName(), ManipSlotHelper.getMaxSlots(player));
 		MnemonicReliquaryProgression.onCapacityChanged(player, known);
 		PacketHandler.sendToPlayer(player, new KnownManipulationServerPacket(known));
 		return new MemoryGrantResult(equipped ? MemoryGrantStatus.GRANTED_EQUIPPED : MemoryGrantStatus.GRANTED,

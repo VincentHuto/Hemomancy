@@ -253,6 +253,7 @@ public class HarbingerProgressScreen extends Screen {
 
         gfx.enableScissor(guiLeft + 2, guiTop + 2, guiLeft + guiWidth - 2, guiTop + guiHeight - 2);
 		active.render(gfx, ctx, mouseX, mouseY, partial);
+		gfx.flush();
         gfx.disableScissor();
 
 		active.renderOverlay(gfx, ctx, mouseX, mouseY);

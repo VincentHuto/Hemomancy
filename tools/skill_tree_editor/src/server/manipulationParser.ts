@@ -62,7 +62,13 @@ export function parseManipulationTreeJava(path: string, source: string, tendency
       nodeShape: register.nodeShape,
       tendency,
       secondaryTendency: null,
-      color
+      color,
+      rank: null,
+      borderColor: color,
+      familyBaseline: null,
+      familyForms: [],
+      familyRequiredLevel: null,
+      isFamilyBaseline: false
     };
 
     nodes.push(model);

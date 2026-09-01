@@ -1166,6 +1166,7 @@ These registry IDs remain for old save compatibility, but their memories are hid
 | `vigil_of_glass` | Automatic distant-projectile reduction and reveal | `iron_choir`, projectile-resistant equipment, and Lux scar/skill defenses |
 | `hematic_ballast` | Automatic knockback suppression | Nerves of Steel, equipment attributes, scars, and morphling knockback resistance |
 | `summon_thrall` | Two-step manipulation for a blood-routing worker | Blood Thrall Effigy, now directly woven from the retired manipulation's recipe inputs |
+| `venous_travel` | Teleport between claimed Earthen Veins | Terrestrial Speculum, a reusable Degree 2 tool |
 
 #### 8.2.1 Living Staff Rework Summary
 

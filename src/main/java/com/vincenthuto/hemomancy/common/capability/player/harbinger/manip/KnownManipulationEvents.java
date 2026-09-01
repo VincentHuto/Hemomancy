@@ -176,7 +176,7 @@ public class KnownManipulationEvents {	@SubscribeEvent
 									level.getCurrentLevel()),
 							false);
 				}
-				ManipulationFamilyRegistry.unlockEligibleForms(known.getKnownManips());
+				ManipulationFamilyRegistry.normalizeKnown(known.getKnownManips());
 			}
 			PacketHandler.sendToPlayer(player, new KnownManipulationServerPacket(known));
 		});

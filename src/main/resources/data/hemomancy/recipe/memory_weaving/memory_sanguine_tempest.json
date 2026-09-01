@@ -1,0 +1,21 @@
+{
+  "type": "hemomancy:memory_weaving",
+  "catalysts": [
+    {
+      "item": "hemomancy:spore_sac"
+    }
+  ],
+  "enzymes": {
+    "animus": 4,
+    "flammeus": 0,
+    "ductilis": 0,
+    "lux": 0,
+    "mortem": 0,
+    "congeatio": 1,
+    "ferric": 0,
+    "tenebris": 0
+  },
+  "blood": 400,
+  "result": "hemomancy:memory_sanguine_tempest",
+  "count": 1
+}

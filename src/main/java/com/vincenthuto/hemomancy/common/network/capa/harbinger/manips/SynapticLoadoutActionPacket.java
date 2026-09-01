@@ -209,7 +209,8 @@ public class SynapticLoadoutActionPacket implements CustomPacketPayload {
 			return null;
 		}
 		for (BloodManipulation manipulation : known.getManipList()) {
-			if (manipulation != null && manipName.equals(manipulation.getName())) {
+			if (manipulation != null && manipName.equals(manipulation.getName())
+					&& known.isManipulationAvailable(manipulation)) {
 				return manipulation;
 			}
 		}

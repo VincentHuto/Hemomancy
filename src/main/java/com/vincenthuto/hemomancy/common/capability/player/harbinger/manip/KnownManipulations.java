@@ -11,7 +11,9 @@ import net.neoforged.neoforge.common.util.INBTSerializable;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
 public class KnownManipulations implements IKnownManipulations, INBTSerializable<ListTag> {
 
@@ -25,6 +27,8 @@ public class KnownManipulations implements IKnownManipulations, INBTSerializable
 	List<String> activePassiveNames = new ArrayList<>();
 	List<ManipulationLoadout> loadouts = new ArrayList<>();
 	String selectedMemoryKey = "";
+	Set<String> grandfatheredFamilyForms = new LinkedHashSet<>();
+	private static final int FAMILY_MEMORY_VERSION = 1;
 
 	@Override
 	public BlockPos getLastVeinMineStart() {
@@ -135,7 +139,7 @@ public class KnownManipulations implements IKnownManipulations, INBTSerializable
 		if (sel == null) return;
 		int currLevel = sel.getCurrentLevel();
 		sel.setCurrentLevel(currLevel + incr);
-		ManipulationFamilyRegistry.unlockEligibleForms(knownManips);
+		ManipulationFamilyRegistry.normalizeKnown(knownManips);
 
 	}
 
@@ -152,7 +156,17 @@ public class KnownManipulations implements IKnownManipulations, INBTSerializable
 	@Override
 	public void setKnownManips(LinkedHashMap<BloodManipulation, ManipLevel> knownManips) {
 		this.knownManips = knownManips != null ? knownManips : new LinkedHashMap<>();
-		ManipulationFamilyRegistry.unlockEligibleForms(this.knownManips);
+		ManipulationFamilyRegistry.normalizeKnown(this.knownManips);
+	}
+
+	@Override
+	public Set<String> getGrandfatheredFamilyForms() {
+		return grandfatheredFamilyForms;
+	}
+
+	@Override
+	public void setGrandfatheredFamilyForms(Set<String> forms) {
+		grandfatheredFamilyForms = forms != null ? new LinkedHashSet<>(forms) : new LinkedHashSet<>();
 	}
 
 	@Override
@@ -168,7 +182,7 @@ public class KnownManipulations implements IKnownManipulations, INBTSerializable
 		ManipLevel selectedLevel = getManipLevel(selectedManip);
 		if (selectedLevel != null) {
 			selectedLevel.setCurrentLevel(level);
-			ManipulationFamilyRegistry.unlockEligibleForms(knownManips);
+			ManipulationFamilyRegistry.normalizeKnown(knownManips);
 		}
 	}
 
@@ -194,6 +208,7 @@ public class KnownManipulations implements IKnownManipulations, INBTSerializable
 				.filter(old::isPassiveActive).toList());
 		this.loadouts = new ArrayList<>(old.getLoadouts());
 		this.selectedMemoryKey = old.getSelectedMemoryRef().storageKey();
+		this.grandfatheredFamilyForms = new LinkedHashSet<>(old.getGrandfatheredFamilyForms());
 	}
 
 	// ── Equipped manipulation slots ──
@@ -258,7 +273,10 @@ public class KnownManipulations implements IKnownManipulations, INBTSerializable
 			return result == MemoryEquipRules.AutoEquipResult.ADDED
 					|| result == MemoryEquipRules.AutoEquipResult.REPLACED_SECTION;
 		}
-		return ManipulationEquipHelper.equipNameIfPossible(equippedManipNames, ref.storageKey(), maxSlots);
+		BloodManipulation manipulation = getManipList().stream()
+				.filter(known -> known != null && ref.id().equals(known.getName())).findFirst().orElse(null);
+		return manipulation != null && isManipulationAvailable(manipulation)
+				&& ManipulationEquipHelper.equipNameIfPossible(equippedManipNames, ref.storageKey(), maxSlots);
 	}
 
 	@Override
@@ -278,7 +296,10 @@ public class KnownManipulations implements IKnownManipulations, INBTSerializable
 
 	@Override
 	public boolean equipManip(String manipName, int maxSlots) {
-		return ManipulationEquipHelper.equipNameIfPossible(equippedManipNames, manipName, maxSlots);
+		BloodManipulation manipulation = getManipList().stream()
+				.filter(known -> known != null && manipName.equals(known.getName())).findFirst().orElse(null);
+		return manipulation != null && isManipulationAvailable(manipulation)
+				&& ManipulationEquipHelper.equipNameIfPossible(equippedManipNames, manipName, maxSlots);
 	}
 
 	@Override
@@ -386,6 +407,13 @@ public class KnownManipulations implements IKnownManipulations, INBTSerializable
 		loadoutsEntry.put("synapticLoadouts", loadoutsTag);
 		list.add(loadoutsEntry);
 
+		CompoundTag familyMemoryState = new CompoundTag();
+		familyMemoryState.putInt("familyMemoryVersion", FAMILY_MEMORY_VERSION);
+		ListTag grandfathered = new ListTag();
+		for (String id : grandfatheredFamilyForms) grandfathered.add(StringTag.valueOf(id));
+		familyMemoryState.put("grandfatheredFamilyForms", grandfathered);
+		list.add(familyMemoryState);
+
 		return list;
 	}
 
@@ -396,6 +424,8 @@ public class KnownManipulations implements IKnownManipulations, INBTSerializable
 		int veinCount = 0;
 		boolean legacyAvatarActive = false;
 		String savedAvatarForm = "";
+		int familyMemoryVersion = 0;
+		Set<String> savedGrandfatheredForms = new LinkedHashSet<>();
 		for (int i = 0; i < listNbt.size(); i++) {
 			CompoundTag parsedNbt = (CompoundTag) listNbt.get(i);
 			if (parsedNbt != null && !parsedNbt.isEmpty()) {
@@ -459,9 +489,22 @@ public class KnownManipulations implements IKnownManipulations, INBTSerializable
 					}
 					setLoadouts(parsedLoadouts);
 				}
+				if (parsedNbt.contains("familyMemoryVersion")) {
+					familyMemoryVersion = parsedNbt.getInt("familyMemoryVersion");
+					ListTag forms = parsedNbt.getList("grandfatheredFamilyForms", Tag.TAG_STRING);
+					for (int j = 0; j < forms.size(); j++) savedGrandfatheredForms.add(forms.getString(j));
+				}
 			}
 		}
 		setKnownManips(map);
+		if (familyMemoryVersion < FAMILY_MEMORY_VERSION) {
+			for (BloodManipulation manipulation : map.keySet()) {
+				if (manipulation != null && ManipulationFamilyRegistry.form(manipulation.getName()).isPresent()) {
+					savedGrandfatheredForms.add(manipulation.getName());
+				}
+			}
+		}
+		setGrandfatheredFamilyForms(savedGrandfatheredForms);
 		setVeinList(veinList);
 		String restoredAvatar = !savedAvatarForm.isBlank() ? savedAvatarForm
 				: legacyAvatarActive ? "summon_avatar" : "";
@@ -472,6 +515,6 @@ public class KnownManipulations implements IKnownManipulations, INBTSerializable
 		if (manipulationId == null || manipulationId.isBlank()
 				|| !equippedManipNames.contains(manipulationId)) return false;
 		return knownManips.keySet().stream().anyMatch(manipulation -> manipulation != null
-				&& manipulationId.equals(manipulation.getName()));
+				&& manipulationId.equals(manipulation.getName()) && isManipulationAvailable(manipulation));
 	}
 }

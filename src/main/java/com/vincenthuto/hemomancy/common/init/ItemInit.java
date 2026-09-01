@@ -342,6 +342,8 @@ public class ItemInit {
     // Vascular Status Gauge
     public static final DeferredHolder<Item, Item> vascular_status_gauge = BASEITEMS.register("vascular_status_gauge",
             () -> new VascularStatusGaugeItem(new Item.Properties().stacksTo(1)));
+    public static final DeferredHolder<Item, Item> terrestrial_speculum = BASEITEMS.register("terrestrial_speculum",
+            () -> new TerrestrialSpeculumItem(new Item.Properties().rarity(Rarity.UNCOMMON)));
     // Bloodline Pool Monitor - Now part of the bloodwell
     // Hematic Memories
     public static final DeferredHolder<Item, Item> drudge_electrode = BASEITEMS.register("drudge_electrode",
@@ -590,6 +592,26 @@ public class ItemInit {
 			ManipulationInit.absolute_stillness);
 	public static final DeferredHolder<Item, Item> memory_rimebound_sentence = memory("rimebound_sentence",
 			ManipulationInit.rimebound_sentence);
+	public static final DeferredHolder<Item, Item> memory_lingering_blood_binding = memory("lingering_blood_binding", ManipulationInit.lingering_blood_binding);
+	public static final DeferredHolder<Item, Item> memory_chain_blood_binding = memory("chain_blood_binding", ManipulationInit.chain_blood_binding);
+	public static final DeferredHolder<Item, Item> memory_blood_lattice = memory("blood_lattice", ManipulationInit.blood_lattice);
+	public static final DeferredHolder<Item, Item> memory_blood_needle_fan = memory("blood_needle_fan", ManipulationInit.blood_needle_fan);
+	public static final DeferredHolder<Item, Item> memory_blood_needle_lance = memory("blood_needle_lance", ManipulationInit.blood_needle_lance);
+	public static final DeferredHolder<Item, Item> memory_guided_blood_shot = memory("guided_blood_shot", ManipulationInit.guided_blood_shot);
+	public static final DeferredHolder<Item, Item> memory_hematic_mortar = memory("hematic_mortar", ManipulationInit.hematic_mortar);
+	public static final DeferredHolder<Item, Item> memory_sanguine_halo = memory("sanguine_halo", ManipulationInit.sanguine_halo);
+	public static final DeferredHolder<Item, Item> memory_expansive_blood_cloud = memory("expansive_blood_cloud", ManipulationInit.expansive_blood_cloud);
+	public static final DeferredHolder<Item, Item> memory_pursuing_blood_cloud = memory("pursuing_blood_cloud", ManipulationInit.pursuing_blood_cloud);
+	public static final DeferredHolder<Item, Item> memory_sanguine_tempest = memory("sanguine_tempest", ManipulationInit.sanguine_tempest);
+	public static final DeferredHolder<Item, Item> memory_soaring_updraft = memory("soaring_updraft", ManipulationInit.soaring_updraft);
+	public static final DeferredHolder<Item, Item> memory_suspended_updraft = memory("suspended_updraft", ManipulationInit.suspended_updraft);
+	public static final DeferredHolder<Item, Item> memory_expulsive_updraft = memory("expulsive_updraft", ManipulationInit.expulsive_updraft);
+	public static final DeferredHolder<Item, Item> memory_canopy_mortis = memory("canopy_mortis", ManipulationInit.canopy_mortis);
+	public static final DeferredHolder<Item, Item> memory_worked_lignum = memory("worked_lignum", ManipulationInit.worked_lignum);
+	public static final DeferredHolder<Item, Item> memory_summon_avatar_arms = memory("summon_avatar_arms", ManipulationInit.summon_avatar_arms);
+	public static final DeferredHolder<Item, Item> memory_summon_avatar_armor = memory("summon_avatar_armor", ManipulationInit.summon_avatar_armor);
+	public static final DeferredHolder<Item, Item> memory_summon_avatar_legs = memory("summon_avatar_legs", ManipulationInit.summon_avatar_legs);
+	public static final DeferredHolder<Item, Item> memory_summon_avatar_complete = memory("summon_avatar_complete", ManipulationInit.summon_avatar_complete);
 	public static final DeferredHolder<Item, Item> memory_hematic_ballast = memory("hematic_ballast",
 			ManipulationInit.hematic_ballast);
 	public static final DeferredHolder<Item, Item> memory_iron_choir = memory("iron_choir",

@@ -230,12 +230,13 @@ function countBadge(count: number): string {
 function renderNodeButton(node: ManipulationNodeModel): string {
   const selected = node.name === selectedName ? 'selected' : '';
   const coords = `${Math.round(node.treeX)}, ${Math.round(node.treeY)}`;
+  const familyLabel = node.isFamilyBaseline ? `Family (${node.familyForms?.length ?? 0})` : node.familyBaseline ? `Form of ${node.familyBaseline}` : tendencySummary(node);
   return `<button class="skill-button ${selected}" data-node="${escapeAttr(node.name)}">
     <span>
-      <b style="color: ${escapeAttr(node.color)}">${escapeHtml(node.name)}</b><br/>
+      <b style="color: ${escapeAttr(node.borderColor || node.color)}">${escapeHtml(node.name)}</b><br/>
       <small>${escapeHtml(coords)}</small>
     </span>
-    <small>${escapeHtml(tendencySummary(node))}</small>
+    <small>${escapeHtml(familyLabel)}</small>
   </button>`;
 }
 
@@ -321,9 +322,9 @@ function renderInspector(): string {
     <div class="form-heading">
       <div>
         <h2>${escapeHtml(node.name)}</h2>
-        <p>${escapeHtml(tendencySummary(node) || 'Unaligned')} - ${escapeHtml(node.nodeShape)}</p>
+        <p>${escapeHtml(manipulationSummary(node))}</p>
       </div>
-      <div class="icon-chip">${escapeHtml(node.color)}</div>
+      <div class="icon-chip">${escapeHtml(node.borderColor || node.color)}</div>
     </div>
     <label>
       <span>Tendency</span>
@@ -435,14 +436,35 @@ function renderNode(node: ManipulationNodeModel, x: number, y: number): string {
   const initial = node.name.charAt(0).toUpperCase() || '?';
   const memoryBaseUrl = '/asset/item/memory_blank.png';
   const memoryOverlayUrl = `/asset/item/${encodeURIComponent(memoryOverlayName(node.name))}.png`;
+  const shape = effectiveManipulationNodeShape(node);
+  const borderColor = node.borderColor || node.color;
   return `<g class="skill-node ${selected}" data-node="${escapeAttr(node.name)}" transform="translate(${x} ${y})">
-    <rect class="node-glow" x="-22" y="-22" width="44" height="44" style="stroke: ${escapeAttr(secondaryTendencyColor(node))}"></rect>
-    <rect class="node-frame" x="-18" y="-18" width="36" height="36" style="stroke: ${escapeAttr(node.color)}"></rect>
-    <rect class="node-core" x="-12" y="-12" width="24" height="24"></rect>
+    ${nodeShapeMarkup(shape, 'node-glow', 22, secondaryTendencyColor(node))}
+    ${nodeShapeMarkup(shape, 'node-frame', 18, borderColor)}
+    ${nodeShapeMarkup(shape, 'node-core', 12)}
     <image class="memory-base" href="${escapeAttr(memoryBaseUrl)}" x="-11" y="-11" width="22" height="22" preserveAspectRatio="xMidYMid meet"></image>
     <image class="memory-overlay" href="${escapeAttr(memoryOverlayUrl)}" x="-11" y="-11" width="22" height="22" preserveAspectRatio="xMidYMid meet"></image>
     <text x="0" y="5" class="node-fallback">${escapeHtml(initial)}</text>
   </g>`;
+}
+
+function nodeShapeMarkup(shape: string, className: string, radius: number, stroke?: string): string {
+  const style = stroke ? ` style="stroke: ${escapeAttr(stroke)}"` : '';
+  if (shape === 'CIRCLE') return `<circle class="${className}" cx="0" cy="0" r="${radius}"${style}></circle>`;
+  if (shape === 'SQUARE') {
+    return `<rect class="${className}" x="${-radius}" y="${-radius}" width="${radius * 2}" height="${radius * 2}"${style}></rect>`;
+  }
+  const sides = shape === 'TRIANGLE' ? 3
+    : shape === 'DIAMOND' ? 4
+      : shape === 'HEXAGON' ? 6
+        : shape === 'OCTAGON' ? 8
+          : shape === 'DECAGON' ? 10 : 4;
+  const rotation = shape === 'DIAMOND' ? 0 : -Math.PI / 2;
+  const points = Array.from({ length: sides }, (_, index) => {
+    const angle = rotation + index * Math.PI * 2 / sides;
+    return `${(Math.cos(angle) * radius).toFixed(2)},${(Math.sin(angle) * radius).toFixed(2)}`;
+  }).join(' ');
+  return `<polygon class="${className}" points="${points}"${style}></polygon>`;
 }
 
 function renderScarEdges(layout: ManipulationLayout): string {
@@ -857,6 +879,17 @@ function updateSelectedNodeSecondaryTendency(select: HTMLSelectElement): void {
 function tendencySummary(node: ManipulationNodeModel): string {
   if (!node.tendency) return node.secondaryTendency ?? '';
   return node.secondaryTendency ? `${node.tendency} / ${node.secondaryTendency}` : node.tendency;
+}
+
+function manipulationSummary(node: ManipulationNodeModel): string {
+  const family = node.isFamilyBaseline ? `Family baseline (${node.familyForms?.length ?? 0} forms)`
+    : node.familyBaseline ? `Family form of ${node.familyBaseline}${node.familyRequiredLevel ? `, stage ${node.familyRequiredLevel}` : ''}`
+      : 'Standalone';
+  return `${tendencySummary(node) || 'Unaligned'} - ${effectiveManipulationNodeShape(node)} - ${node.rank ?? 'Unranked'} - ${family}`;
+}
+
+function effectiveManipulationNodeShape(node: ManipulationNodeModel): string {
+  return node.isFamilyBaseline ? 'OCTAGON' : (node.nodeShape ?? 'SQUARE');
 }
 
 function secondaryTendencyColor(node: ManipulationNodeModel): string {

@@ -23,6 +23,7 @@ import com.vincenthuto.hemomancy.common.event.BorrowedBloodRules;
 import com.vincenthuto.hemomancy.common.init.EffectInit;
 import com.vincenthuto.hemomancy.common.item.harbinger.CheapBloodInfusionHelper;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.SporiticThuribleResonanceState;
+import com.vincenthuto.hemomancy.common.manipulation.family.ManipulationFamilyRegistry;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.BloodVolumeServerPacket;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.manips.ManipCooldownPacket;
@@ -404,6 +405,13 @@ public class BloodManipulation implements EntityCastableManipulation {
 
 		if (!player.level().isClientSide) {
 			if (!canPerformAction(player, heldItemMainhand, chargeTicks)) return false;
+			if (ManipulationFamilyRegistry.form(getName()).isPresent()
+					&& HemoCapabilityAccess.getKnownManipulations(player)
+							.map(known -> !known.isManipulationAvailable(this)).orElse(true)) {
+				player.displayClientMessage(Component.literal("You have not absorbed this form's memory.")
+						.withStyle(ChatFormatting.DARK_RED), true);
+				return false;
+			}
 			if (ManipulationRetirementRules.isRetiredManipulation(this)) {
 				player.displayClientMessage(Component.literal("That manipulation has gone dormant.")
 						.withStyle(ChatFormatting.DARK_GRAY), true);

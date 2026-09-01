@@ -1,14 +1,11 @@
 package com.vincenthuto.hemomancy.common.item.harbinger.memories;
 
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.KnownManipulationGrantHelper;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.KnownManipulationGrantHelper.MemoryGrantResult;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.KnownManipulationGrantHelper.MemoryGrantStatus;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.ManipulationRetirementRules;
 import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
+import com.vincenthuto.hemomancy.common.manipulation.family.ManipulationFamilyRegistry;
 import com.vincenthuto.hutoslib.client.HLTextUtils;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.player.Player;
@@ -49,6 +46,11 @@ public class BloodMemoryItem extends Item {
 							tooltip.add(Component.literal("§7Drudge: " + desc)));
 				}
 			}, () -> { /* no DrudgeAction registered yet — show nothing */ });
+			tooltip.add(Component.literal("Burn in a lit Iron Brazier and absorb with Blood Absorption.")
+					.withStyle(ChatFormatting.DARK_GRAY));
+			ManipulationFamilyRegistry.form(getManip().getName()).ifPresent(form ->
+					tooltip.add(Component.literal("Requires family mastery stage " + form.requiredLevel() + ".")
+							.withStyle(ChatFormatting.DARK_RED)));
 		}
 	}
 
@@ -73,13 +75,10 @@ public class BloodMemoryItem extends Item {
 	public InteractionResultHolder<ItemStack> use(Level worldIn, Player playerIn, InteractionHand handIn) {
 		if (handIn == InteractionHand.MAIN_HAND) {
 			ItemStack stack = playerIn.getItemInHand(handIn);
-			if (!worldIn.isClientSide && !playerIn.isShiftKeyDown() && playerIn instanceof ServerPlayer serverPlayer) {
-				MemoryGrantResult result = KnownManipulationGrantHelper.grantMemory(serverPlayer, getManip(), this);
-				reportGrantResult(playerIn, result);
-				if (result.success()) {
-					stack.shrink(1);
-					return InteractionResultHolder.sidedSuccess(stack, false);
-				}
+			if (!worldIn.isClientSide && !playerIn.isShiftKeyDown()) {
+				playerIn.displayClientMessage(Component.literal(
+						"Burn this memory in a lit Iron Brazier and absorb it with Blood Absorption.")
+						.withStyle(ChatFormatting.DARK_RED), true);
 				return InteractionResultHolder.fail(stack);
 			}
 		}
@@ -87,29 +86,4 @@ public class BloodMemoryItem extends Item {
 
 	}
 
-	private static void reportGrantResult(Player player, MemoryGrantResult result) {
-		BloodManipulation manipulation = result.manipulation();
-		switch (result.status()) {
-		case MemoryGrantStatus.GRANTED_EQUIPPED -> player.displayClientMessage(Component.literal("Memorized and equipped: "
-						+ manipulation.getProperName())
-				.withStyle(ChatFormatting.DARK_RED), true);
-		case MemoryGrantStatus.GRANTED -> player.displayClientMessage(Component.literal(
-						"Memory learned. Use a Mnemonic Reliquary to change equipped memories.")
-				.withStyle(ChatFormatting.DARK_RED), true);
-		case MemoryGrantStatus.ALREADY_KNOWN -> player.displayClientMessage(Component.literal(
-						"You already know this manipulation.")
-				.withStyle(ChatFormatting.DARK_RED), true);
-		case MemoryGrantStatus.NO_ACTIVE_BLOOD -> player.displayClientMessage(
-				Component.literal("You don't understand what you're holding yet.")
-						.withStyle(ChatFormatting.DARK_RED),
-				true);
-		case MemoryGrantStatus.RANK_TOO_LOW -> player.displayClientMessage(Component.literal("This memory requires Degree "
-						+ result.requiredDegree() + ".")
-				.withStyle(ChatFormatting.DARK_RED), true);
-		case MemoryGrantStatus.RETIRED -> player.displayClientMessage(Component.literal("This memory has gone dormant.")
-				.withStyle(ChatFormatting.DARK_GRAY), true);
-		case MemoryGrantStatus.INVALID -> player.displayClientMessage(Component.literal("This memory will not take.")
-				.withStyle(ChatFormatting.DARK_RED), true);
-		}
-	}
 }
