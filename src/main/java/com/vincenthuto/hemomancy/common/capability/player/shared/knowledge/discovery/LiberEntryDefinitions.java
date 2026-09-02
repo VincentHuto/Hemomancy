@@ -114,6 +114,7 @@ public final class LiberEntryDefinitions {
 		// Harbinger utility / greater rites
 		registerRite("cardinal_rite/vascular_mending",         HEMOMANCY);
 		registerRite("cardinal_rite/hungering_earth",           HEMOMANCY);
+		registerRite("cardinal_rite/rooted_vein",               HEMOMANCY);
 		registerRite("cardinal_rite/hematic_fortification",     THE_HARBINGERS);
 		registerRite("cardinal_rite/sanguine_fervor",           THE_HARBINGERS);
 		registerRite("cardinal_rite/sanguine_attunement",       THE_HARBINGERS);

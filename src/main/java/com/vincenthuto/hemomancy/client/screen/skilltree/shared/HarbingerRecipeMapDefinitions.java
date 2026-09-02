@@ -32,7 +32,7 @@ public final class HarbingerRecipeMapDefinitions {
 				"scarlet_summons", "covenant_vigil", "sanguine_dominion");
 		registerRites("Body/Will", "sanguine_attunement", "vascular_mending", "hematic_fortification", "eternal_covenant",
 				"chamber_of_will", "crimson_beacon");
-		registerRites("Domain/World", "exsanguination", "hungering_earth", "sanguine_fervor", "sanguine_eclipse", "pallid_shadow");
+		registerRites("Domain/World", "exsanguination", "rooted_vein", "hungering_earth", "sanguine_fervor", "sanguine_eclipse", "pallid_shadow");
 		registerRites("Qliphoth/Forbidden", "ancestral_communion", "bloom_of_qliphoth");
 
 		registerCrafting("Foundations", "dried_gourd", "hematic_iron_block", "iron_brazier", "liber_sanguinum", "living_staff");
@@ -74,6 +74,7 @@ public final class HarbingerRecipeMapDefinitions {
 		iconRites("cardinal_rite/crimson_beacon", () -> new ItemStack(ItemInit.memory_hematic_beacon.get()));
 
 		iconRites("cardinal_rite/exsanguination", () -> new ItemStack(ItemInit.memory_exsanguinate.get()));
+		iconRites("cardinal_rite/rooted_vein", () -> new ItemStack(BlockInit.earthen_vein.get()));
 		iconRites("cardinal_rite/hungering_earth", () -> new ItemStack(BlockInit.earthen_vein.get()));
 		iconRites("cardinal_rite/sanguine_fervor", () -> new ItemStack(ItemInit.blood_lust_helm.get()));
 		iconRites("cardinal_rite/sanguine_eclipse", () -> new ItemStack(ItemInit.memory_blood_eclipse.get()));
@@ -121,6 +122,7 @@ public final class HarbingerRecipeMapDefinitions {
 		linkRites("cardinal_rite/sanguine_attunement", "cardinal_rite/chamber_of_will", RecipeMapLink.Kind.CONCEPTUAL);
 		linkRites("cardinal_rite/sanguine_attunement", "cardinal_rite/crimson_beacon", RecipeMapLink.Kind.CONCEPTUAL);
 		linkRites("cardinal_rite/exsanguination", "cardinal_rite/hungering_earth", RecipeMapLink.Kind.CONCEPTUAL);
+		linkRites("cardinal_rite/exsanguination", "cardinal_rite/rooted_vein", RecipeMapLink.Kind.CONCEPTUAL);
 		linkRites("cardinal_rite/exsanguination", "cardinal_rite/sanguine_fervor", RecipeMapLink.Kind.CONCEPTUAL);
 		linkRites("cardinal_rite/exsanguination", "cardinal_rite/sanguine_eclipse", RecipeMapLink.Kind.CONCEPTUAL);
 		linkRites("cardinal_rite/exsanguination", "cardinal_rite/pallid_shadow", RecipeMapLink.Kind.CONCEPTUAL);

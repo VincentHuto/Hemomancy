@@ -48,10 +48,10 @@ public class EarthenVeinBlockEntity extends BlockEntity {
 			}
 			if (!te.hasTicked) {
 				if (!level.isClientSide) {
-					if (te.getName() == "") {
-						te.setName(VeinLocation.getRandomName());
+					if (te.getLoc() == VeinLocation.BLANK) {
+						if (te.getName().isEmpty()) te.setName(VeinLocation.getRandomName());
+						te.setLoc(new VeinLocation(te.getName(), te.getLevel().dimension().location(), te.getBlockPos()));
 					}
-					te.setLoc(new VeinLocation(te.getName(), te.getLevel().dimension().location(), te.getBlockPos()));
 				}
 				te.setHasTicked(true);
 				te.sendUpdates();

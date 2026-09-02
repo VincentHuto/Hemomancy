@@ -201,6 +201,28 @@ public final class HarbingerPilotGameTests {
 	}
 
 	@GameTest(templateNamespace = "minecraft", template = EMPTY_TEMPLATE, timeoutTicks = 40)
+	public static void rootedVeinRiteReplacesFocusAndGrowsVeinAbove(GameTestHelper helper) {
+		BlockPos focusPos = helper.absolutePos(new BlockPos(1, 1, 1));
+		helper.getLevel().setBlock(focusPos, BlockInit.cardinal_focus.get().defaultBlockState(), 3);
+
+		try {
+			var complete = Class.forName(
+					"com.vincenthuto.hemomancy.common.rite.harbinger.HarbingerCardinalRiteEvents")
+					.getDeclaredMethod("completeRootedVein", net.minecraft.server.level.ServerLevel.class,
+							BlockPos.class);
+			complete.setAccessible(true);
+			complete.invoke(null, helper.getLevel(), focusPos);
+			helper.assertTrue(helper.getLevel().getBlockState(focusPos).is(BlockInit.venous_stone.get()),
+					"The rite must replace its Cardinal Focus with Venous Stone");
+			helper.assertTrue(helper.getLevel().getBlockState(focusPos.above()).is(BlockInit.earthen_vein.get()),
+					"The rite must grow an Earthen Vein one block above its Cardinal Focus");
+			helper.succeed();
+		} catch (ReflectiveOperationException exception) {
+			helper.fail("Rooted Vein completion effect is missing: " + exception);
+		}
+	}
+
+	@GameTest(templateNamespace = "minecraft", template = EMPTY_TEMPLATE, timeoutTicks = 40)
 	public static void cardinalRiteMediumMatchingIsExact(GameTestHelper helper) {
 		try {
 			Class<?> rules = Class.forName("com.vincenthuto.hemomancy.common.rite.CardinalRiteMediumRules");

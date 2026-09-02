@@ -18,7 +18,6 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -45,7 +44,6 @@ public class RadialChooseVeinScreen extends Screen {
 		}
 	}
 
-	private Minecraft mc;
 	private boolean needsRecheckStacks = true;
 	private boolean committed;
 	private final List<BlitRadialMenuItem> cachedMenuItems = Lists.newArrayList();
@@ -55,7 +53,6 @@ public class RadialChooseVeinScreen extends Screen {
 
 	public RadialChooseVeinScreen(IKnownManipulations manip, BlockPos origin) {
 		super(Component.literal("RADIAL MENU"));
-		this.mc = Minecraft.getInstance();
 		manips = manip;
 		this.origin = origin;
 
@@ -116,7 +113,6 @@ public class RadialChooseVeinScreen extends Screen {
 							Component.literal(current.getName()+" [" + HLTextUtils.convertInitToLang(current.getDimension().getPath())+"]")) {
 						@Override
 						public boolean onClick() {
-							mc.player.playSound(SoundEvents.PORTAL_TRAVEL, 0.20f, 0.1F);
 							committed = true;
 							PacketHandler.sendToServer(new TeleportToVeinPacket(origin, current));
 							RadialChooseVeinScreen.this.menu.close();

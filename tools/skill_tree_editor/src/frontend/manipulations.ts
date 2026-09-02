@@ -102,6 +102,7 @@ let suppressNextGraphNodeClick = false;
 let renderedLayout: ManipulationLayout | null = null;
 let stableClusterCenters = new Map<string, NodePosition>();
 let stableRingMetrics: ManipulationRingMetrics | null = null;
+let stableOuterRadiusByTendency = new Map<string, number>();
 
 const appRoot = document.querySelector<HTMLDivElement>('#app');
 if (!appRoot) throw new Error('Missing app root.');
@@ -129,6 +130,7 @@ async function load(): Promise<void> {
     selectedScarId = '';
     stableClusterCenters = computeClusterCenters(workspace.manipulations.tree.nodes);
     stableRingMetrics = null;
+    stableOuterRadiusByTendency = new Map();
     movementHistory = createMovementHistory();
     preview = null;
     statusText = `Loaded ${workspace.manipulations.tree.nodes.length} manipulations and ${workspace.scars.tree.nodes.length} scars.`;
@@ -1189,6 +1191,9 @@ function computeLayout(nodes: ManipulationNodeModel[], scars: ScarTreeNodeModel[
     }
     outerRadiusByTendency.set(tendency, outerRadius);
   }
+  for (const [tendency, outerRadius] of outerRadiusByTendency) {
+    if (!stableOuterRadiusByTendency.has(tendency)) stableOuterRadiusByTendency.set(tendency, outerRadius);
+  }
 
   const rawScarPositionsById = new Map<string, NodePosition>();
   const scarShiftById = new Map<string, NodePosition>();
@@ -1196,7 +1201,7 @@ function computeLayout(nodes: ManipulationNodeModel[], scars: ScarTreeNodeModel[
     const tendencyIndex = tendencyOrder.indexOf(scar.tendency as (typeof tendencyOrder)[number]);
     if (tendencyIndex < 0) continue;
     const angle = -Math.PI / 2 + tendencyIndex * Math.PI / 4;
-    const shiftAmount = (outerRadiusByTendency.get(scar.tendency!) ?? branchRadius)
+    const shiftAmount = (stableOuterRadiusByTendency.get(scar.tendency!) ?? branchRadius)
       + scarFamilyClearance - scarAuthoredFirstRadius;
     const shift = { x: Math.cos(angle) * shiftAmount, y: Math.sin(angle) * shiftAmount };
     scarShiftById.set(scar.id, shift);

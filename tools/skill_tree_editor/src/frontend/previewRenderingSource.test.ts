@@ -149,6 +149,14 @@ test('manipulation node outer glow uses secondary tendency color when present', 
   expect(manipulations).toContain("return node.isFamilyBaseline ? 'OCTAGON' : (node.nodeShape ?? 'SQUARE');");
 });
 
+test('manipulation scar spacing stays stable while nearby nodes are dragged', () => {
+  const manipulations = read('manipulations.ts');
+
+  expect(manipulations).toContain('stableOuterRadiusByTendency');
+  expect(manipulations).toContain('if (!stableOuterRadiusByTendency.has(tendency)) stableOuterRadiusByTendency.set(tendency, outerRadius);');
+  expect(manipulations).toContain('stableOuterRadiusByTendency.get(scar.tendency!)');
+});
+
 function read(path: string): string {
   return readFileSync(resolve(sourceRoot, path), 'utf8');
 }

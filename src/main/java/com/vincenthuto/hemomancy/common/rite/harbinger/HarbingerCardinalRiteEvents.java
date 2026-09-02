@@ -1074,6 +1074,7 @@ public class HarbingerCardinalRiteEvents {
 	private static final String VASCULAR_MENDING_RITE = "cardinal_rite/vascular_mending";
 	private static final String HEMATIC_FORTIFICATION_RITE = "cardinal_rite/hematic_fortification";
 	private static final String HUNGERING_EARTH_RITE = "cardinal_rite/hungering_earth";
+	private static final String ROOTED_VEIN_RITE = "cardinal_rite/rooted_vein";
 	private static final String SCARLET_SUMMONS_RITE = "cardinal_rite/scarlet_summons";
 	private static final String SANGUINE_DOMINION_RITE = "cardinal_rite/sanguine_dominion";
 	private static final String ETERNAL_COVENANT_RITE = "cardinal_rite/eternal_covenant";
@@ -1261,6 +1262,10 @@ public class HarbingerCardinalRiteEvents {
 		// Rite of the Hungering Earth: corrupt terrain in a radius
 		if (HUNGERING_EARTH_RITE.equals(ritePath)) {
 			completeHungeringEarth(sLevel, caster, center);
+		}
+
+		if (ROOTED_VEIN_RITE.equals(ritePath)) {
+			completeRootedVein(sLevel, center);
 		}
 
 		// Rite of the Scarlet Summons: teleport all bloodline members
@@ -1527,6 +1532,11 @@ public class HarbingerCardinalRiteEvents {
 	// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 	// Utility Rite Completion Handlers
 	// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+
+	private static void completeRootedVein(ServerLevel level, BlockPos center) {
+		level.setBlockAndUpdate(center.above(), BlockInit.earthen_vein.get().defaultBlockState());
+		level.setBlockAndUpdate(center, BlockInit.venous_stone.get().defaultBlockState());
+	}
 
 	/**
 	 * Rite of Sanguine Attunement (Degree 2, Minor):

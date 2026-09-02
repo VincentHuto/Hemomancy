@@ -13,6 +13,7 @@ import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.Mth;
 import net.minecraft.world.entity.AnimationState;
 import net.minecraft.world.level.block.HorizontalDirectionalBlock;
 import net.minecraft.world.level.block.state.properties.DirectionProperty;
@@ -20,6 +21,8 @@ import net.minecraft.world.level.block.state.properties.DirectionProperty;
 public class EarthenVeinRenderer implements BlockEntityRenderer<EarthenVeinBlockEntity> {
 	public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
 	public static ResourceLocation texture = Hemomancy.rloc("textures/entity/earthen_vein/model_earthen_vein.png");
+	private static final float TEMPORARY_GROWTH_TICKS = 8.0F;
+	private static final float TEMPORARY_MIN_SCALE = 0.15F;
 
 	private final EarthenVeinModel vein;
 
@@ -35,8 +38,14 @@ public class EarthenVeinRenderer implements BlockEntityRenderer<EarthenVeinBlock
 	public void render(EarthenVeinBlockEntity te, float partialTicks, PoseStack pPoseStack,
 			MultiBufferSource bufferIn, int combinedLightIn, int combinedOverlayIn) {
 		pPoseStack.pushPose();
-		pPoseStack.translate(0.5, 1.51, 0.5);
+		float growth = 1.0F;
+		if (te.isTemporary()) {
+			float progress = Mth.clamp((te.time + partialTicks) / TEMPORARY_GROWTH_TICKS, 0.0F, 1.0F);
+			growth = TEMPORARY_MIN_SCALE + (1.0F - TEMPORARY_MIN_SCALE) * progress;
+		}
+		pPoseStack.translate(0.5, 1.51D + (growth - 1.0F) * 1.5D, 0.5);
 		pPoseStack.mulPose(new Quaternion(Vector3.XN, 180, true).toMoj());
+		pPoseStack.scale(growth, growth, growth);
  
 		vein.setupAnimation(te.getLevel(), partialTicks, animCtx);
 		Boolean stented = te.getBlockState().getValue(EarthenVeinBlock.STENTED);

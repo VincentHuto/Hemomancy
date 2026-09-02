@@ -26,6 +26,8 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.level.TicketType;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
@@ -106,6 +108,7 @@ public record TeleportToVeinPacket(BlockPos origin, VeinLocation selected, boole
 		HLParticleUtils.spawnPoof((ServerLevel) player.level(), msg.origin, DustParticleOptions.REDSTONE);
 		player.teleportTo(destination, targetPos.getX() + 0.5, targetPos.getY() + 1,
 				targetPos.getZ() + 0.5, player.getYRot(), player.getXRot());
+		destination.playSound(null, targetPos, SoundEvents.ENDERMAN_TELEPORT, SoundSource.PLAYERS, 0.8F, 1.0F);
 		HLParticleUtils.spawnPoof(destination, targetPos, ParticleTypes.CRIMSON_SPORE);
 		HLParticleUtils.spawnPoof(destination, targetPos, DustParticleOptions.REDSTONE);
 	}

@@ -26,11 +26,12 @@ public class VeinLocation extends DimensionalPosition {
 	static List<String> suffixes = Arrays.asList("Cava", "Vein", "Artery", "Arteriole", "Capillary");
 
 	public static VeinLocation deserializeFromBuf(FriendlyByteBuf buf) {
-		VeinLocation s = new VeinLocation(buf.readUtf(), buf.readResourceLocation(), buf.readBlockPos());
+		VeinLocation s = new VeinLocation(buf.readUUID(), buf.readUtf(), buf.readResourceLocation(), buf.readBlockPos());
 		return s;
 	}
 
 	public void serializeToBuf(FriendlyByteBuf buf) {
+		buf.writeUUID(getUUID());
 		buf.writeUtf(getName());
 		buf.writeResourceLocation(getDimension());
 		buf.writeBlockPos(getPosition());

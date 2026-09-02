@@ -2,7 +2,7 @@
 
 > This document covers **lore only**: world history, cosmic origins, factions, characters, beliefs, mythology, and narrative themes. For mechanics, systems, and code details see [HEMOMANCY_REFERENCE.md](HEMOMANCY_REFERENCE.md).
 >
-> **Last Updated:** 2026-08-02 lore/reference synchronization audit. LORE_REFERENCE.md is the authority for canon. `HEMOMANCY_REFERENCE.md` describes the mechanics that implement it. Game code, dialogue, inquiries, item text, advancements, and wiki pages are downstream and must be corrected when they disagree with these documents.
+> **Last Updated:** 2026-09-01 lore/reference synchronization audit. LORE_REFERENCE.md is the authority for canon. `HEMOMANCY_REFERENCE.md` describes the mechanics that implement it. Game code, dialogue, inquiries, item text, advancements, and wiki pages are downstream and must be corrected when they disagree with these documents.
 
 ## Canon Governance
 
@@ -20,7 +20,7 @@ The following settled facts are non-negotiable consistency anchors:
 - Hemorath expresses Ferric and Mortem. Seraphae expresses Animus and Lux.
 - Eight canonical Morphling strains are implemented. Older references to twelve describe superseded prototypes.
 
-> **Current Lore-State Snapshot (2026-08-02 audit):**
+> **Current Lore-State Snapshot (2026-09-01 audit):**
 > - Core narrative pillars remain directly represented in gameplay: Harbinger initiation/degrees (now including the explicit Apotheos gate), Unstained purification path, faction NPC dialogue trees, blood-memory framing, and fungal-whisper escalation.
 > - **Memory Weaving now reads as a physical Somatic Loom rite:** blank Hematic Memories, catalyst patterns, enzyme-dye reservoirs, projected blood, and unruly colored memory-orbs all make refined manipulation learning feel like wrestling dormant biology into a chosen shape rather than selecting a recipe from a menu.
 > - Qliphoth Communion now has a clearer in-game rhythm: the Sanguine Monolith breaks open with a black void-bloom, the Qliphoth Tree drops nine named husks with personal whispers, and a Silent Archon's Living Arsenal must become the sickle that wounds it.
@@ -114,6 +114,7 @@ The player is **not physically transported**. Their body remains in the world. W
 What they encounter:
 - A vast **spherical mass of flesh, meat, and pulsing biology**
 - Enormous **hyphae tendrils** arcing upward into a sky where the world and moon are visible, as though this space exists just above the Earth
+- A low, uneven living floor where exposed hemorrhagic crust has grown over with erythrocytic soil, calcified hyphae, and mycelial mats rather than lying as bare stone
 - Bulb-nodes on the tendrils that eventually break off like seeds, falling back toward the world as spores
 - Alien, bizarre creatures that exist nowhere else — beings that are not infected Earth-life but genuinely alien life forms native to the Entity's substrate
 - **Constant Fungal Whispers**, nearly harassing in frequency, saying things like *"This is what you wanted. This is what you were working toward. Is it not?"*
@@ -213,6 +214,8 @@ They do not view themselves as recluses by choice. The Hematic Order is, at its 
 
 - A **Noetic Memory** is apprehended as an intelligible pattern and enacted through a blood manipulation. It is the Mnemonist's usual field: a remembered form which the practitioner understands well enough to project.
 - A **Thelemic Memory** is enacted as embodied will. The body learns a repeatable answer through tincture preparation, holds a finite reserve of that preparation, and answers through a vascular section when the learned action becomes useful.
+
+Some Noetic Memories are not isolated tricks but families of one remembered grammar. The first form teaches the pattern; deeper forms are more exact, larger, or more forceful uses of that same understanding. The Order treats mastery as cumulative rather than asking a practitioner to relearn the first lesson for every refinement.
 
 The specialist mnemonic is: **Mneme keeps. Nous knows. Thelēma acts.** Memory preserves; intellect apprehends; will enacts. This quietly echoes the older `memoria–intelligentia–voluntas` structure and its Greek vocabulary, but the Order claims no historical founder or secret lineage for it. Routine controls use the simple Noetic/Thelemic terms and do not lecture the player about later philosophical descendants.
 
