@@ -730,6 +730,7 @@
   "entity.hemomancy.venom_rib_centipede": "Venom-Rib Centipede",
   "entity.hemomancy.venous_strider": "Venous Strider",
   "entity.hemomancy.verdigris_moth": "Verdigris Moth",
+  "entity.hemomancy.luminal_cicada": "Luminal Cicada",
   "entity.hemomancy.vesper_crowned_refusal": "Vesper, The Crowned Refusal",
   "entity.hemomancy.vesper_evening_star": "Vesper, The Evening Star",
   "entity.hemomancy.void_drinker": "Void Drinker",
@@ -1336,6 +1337,7 @@
   "hemomancy.dialogue.hermit.option.who_are_you": "Who are you? Why are you here?",
   "hemomancy.dialogue.memo.make_note": "[Make a note before it fades.]",
   "hemomancy.dialogue.mnemonist.option.ask_about_crude_memories": "Tell me about crude memories.",
+  "hemomancy.dialogue.mnemonist.option.ask_about_circus": "What is the Circus?",
   "hemomancy.dialogue.mnemonist.option.ask_about_item": "What can you tell me about this?",
   "hemomancy.dialogue.mnemonist.option.ask_about_loom": "Tell me about the Somatic Loom.",
   "hemomancy.dialogue.mnemonist.option.ask_about_memory": "What is blood-memory?",
@@ -1346,6 +1348,7 @@
   "hemomancy.dialogue.mnemonist.option.choose_deadly_gaze": "Deadly Gaze.",
   "hemomancy.dialogue.mnemonist.option.choose_starter": "Can you teach me an early echo?",
   "hemomancy.dialogue.mnemonist.option.leave": "I have heard enough.",
+  "hemomancy.dialogue.mnemonist.option.take_circus_waybill": "Give me a route to them.",
   "hemomancy.dialogue.mnemonist.option.turn_in_woven_vessel": "I brought the blank vessel and archive materials.",
   "hemomancy.dialogue.mnemonist.option.woven_vessel": "How do I prepare a blank memory?",
   "hemomancy.dialogue.monolith.option.accept_cornerstone": "[Accept the cornerstone.]",
@@ -2622,6 +2625,11 @@
   "item.hemomancy.covenant_waybill.attuned": "The lodestone catches the pulse of a Harbinger Outpost.",
   "item.hemomancy.covenant_waybill.tooltip": "Its blood-red pressure strengthens when you face the nearest Harbinger Outpost.",
   "item.hemomancy.covenant_waybill.tooltip.use": "Hold to follow its pull. Use to seek the nearest Outpost again.",
+  "item.hemomancy.circus_waybill": "Scarlet Waybill",
+  "item.hemomancy.circus_waybill.not_found": "The threads find no Circus pavilion within their reach.",
+  "item.hemomancy.circus_waybill.attuned": "The waybill catches on a distant knot of shared attention.",
+  "item.hemomancy.circus_waybill.tooltip": "A scarlet route inked by a Mnemonist who refuses to call it a map.",
+  "item.hemomancy.circus_waybill.tooltip.use": "Hold to follow its pull. Use to seek the nearest Circus again.",
   "item.hemomancy.crimson_lacquer": "Crimson Lacquer",
   "item.hemomancy.crimson_vestment_fitting": "Crimson Vestment Fitting",
   "item.hemomancy.crucible_of_nether_ichor": "Crucible of Nether Ichor",
@@ -3105,6 +3113,7 @@
   "item.hemomancy.spawn_egg_venom_rib_centipede": "Venom-Rib Centipede Spawn Egg",
   "item.hemomancy.spawn_egg_venous_strider": "Venous Strider Spawn Egg",
   "item.hemomancy.spawn_egg_verdigris_moth": "Verdigris Moth Spawn Egg",
+  "item.hemomancy.spawn_egg_luminal_cicada": "Luminal Cicada Spawn Egg",
   "item.hemomancy.spawn_egg_void_drinker": "Void Drinker Spawn Egg",
   "item.hemomancy.spawn_egg_will": "Rogue Will Spawn Egg",
   "item.hemomancy.spider_husk_effigy": "Spider Husk Effigy",
@@ -3896,6 +3905,12 @@
 	"hemomancy.dialogue.mnemonist.option.anchorite_counsel": "The Vein-Mason sent me to ask how a scar should bear a memory.",
 	"hemomancy.mnemonist.anchorite_counsel.line1": "I can tell you what the instruction means and which tendency leads it. The Anchorite cares for the tissue that must carry it.",
 	"hemomancy.mnemonist.anchorite_counsel.line2": "Match an active cerebral scar to the Noetic Memory's primary tendency. Then change the arrangement and prove the new route still bears the instruction."
+	,"hemomancy.mnemonist.circus.undiscovered.line1": "Some Harbingers make their practice a performance. They call themselves the Circus, and each body beneath its pavilion serves a different discipline."
+	,"hemomancy.mnemonist.circus.undiscovered.line2": "Do not mistake spectacle for welcome. Their feats are dangerous because the whole company can manifest one intention together."
+	,"hemomancy.mnemonist.circus.discovered.line1": "You have already stood beneath their rough pavilion. Then you know the performances are methods, not disguises."
+	,"hemomancy.mnemonist.circus.discovered.line2": "Watch which body leads and which answer it receives. Their collective manifestation depends on that exchange."
+	,"hemomancy.dialogue.event.mnemonist_circus_waybill": "The Mnemonist folds a scarlet waybill along a line that tugs toward the nearest Circus."
+	,"hemomancy.circus.discovery": "The rough pavilion settles into focus. You have found the Circus."
 	,"screen.hemomancy.harbinger_assignment_ledger.anchorite_d5.title": "What the Vein Bears"
 	,"screen.hemomancy.harbinger_assignment_ledger.anchorite_d5.progress": "%s/%s"
 	,"screen.hemomancy.harbinger_assignment_ledger.anchorite_d5.desc": "Cause Thelemic Varicosity, receive a diagnosis, use Salve or Poultice, and complete Hematic Fortification."
@@ -4124,4 +4139,24 @@
 	,"screen.hemomancy.scars.lore.cryostroma_perdurans": "Cryostroma Perdurans forms a cold skin over living mycelium. Motion and casting crack the frost, while stillness conserves blood and gives damaged vascular paths time to close."
 	,"screen.hemomancy.scars.lore.antiphonomyces_resonans": "Antiphonomyces Resonans answers impact with a counter-song. Violence enters the body, and the scar teaches the vessel how to echo that force in useful directions."
 	,"screen.hemomancy.scars.lore.saprovitta_vestigium": "Saprovitta Vestigium leaves a feeding wake behind the moving practitioner. Anyone who follows steps into hungry blood-fungus and meets the garden's appetite firsthand."
+	,"entity.hemomancy.circus_fire_eater": "Fire Eater"
+	,"entity.hemomancy.circus_stilt_walker": "Stilt Walker"
+	,"entity.hemomancy.circus_acrobat": "Acrobat"
+	,"entity.hemomancy.circus_knife_thrower": "Knife Thrower"
+	,"entity.hemomancy.circus_knife": "Circus Knife"
+	,"entity.hemomancy.circus_carousel": "The Impaled Procession"
+	,"entity.hemomancy.circus_ringmaster": "Ringmaster"
+	,"hemomancy.dialogue.circus_performer.leave": "I have seen enough."
+	,"hemomancy.dialogue.circus_fire_eater.line1": "The trick is not swallowing flame. It is teaching the body which burning belongs to it."
+	,"hemomancy.dialogue.circus_fire_eater.line2": "The torch is an ordinary staff-form. We only carry the breath farther."
+	,"hemomancy.dialogue.circus_fire_eater.line3": "A crowd lends shape to an intention. Alone, this would only scorch my throat."
+	,"hemomancy.dialogue.circus_stilt_walker.line1": "Height makes an audience decide where danger lives."
+	,"hemomancy.dialogue.circus_stilt_walker.line2": "The stilts are braces, not legs. Watch the cords."
+	,"hemomancy.dialogue.circus_stilt_walker.line3": "When every eye rises, the floor belongs to someone else."
+	,"hemomancy.dialogue.circus_acrobat.line1": "A body need not remain where its enemy finished understanding it."
+	,"hemomancy.dialogue.circus_acrobat.line2": "I do not vanish. You commit to the wrong landing."
+	,"hemomancy.dialogue.circus_acrobat.line3": "The Mummer steals the eye. I steal the interval after it turns."
+	,"hemomancy.dialogue.circus_knife_thrower.line1": "A blade is honest. The hand that promises its path is not."
+	,"hemomancy.dialogue.circus_knife_thrower.line2": "None of these knives curve. People do."
+	,"hemomancy.dialogue.circus_knife_thrower.line3": "Nine marks teach distance. The tenth teaches restraint."
 }

@@ -14,6 +14,8 @@ final class StructurePlacementChecks {
 	private static final int MAUSOLEUM_FOOTPRINT_RADIUS = 32;
 	private static final int MAUSOLEUM_SAMPLE_STEP = 16;
 	private static final int MAX_MAUSOLEUM_SURFACE_VARIATION = 10;
+	private static final int CIRCUS_PAVILION_FOOTPRINT_RADIUS = 24;
+	private static final int CIRCUS_PAVILION_SAMPLE_STEP = 12;
 
 	private StructurePlacementChecks() {
 	}
@@ -82,6 +84,37 @@ final class StructurePlacementChecks {
 		}
 
 		return true;
+	}
+
+	static boolean isSuitableCircusPavilionSite(Structure.GenerationContext context) {
+		if (!canPlaceOverworldHemomancyStructure(context)) {
+			return false;
+		}
+
+		ChunkPos chunkPos = context.chunkPos();
+		int centerX = chunkPos.getMinBlockX() + 8;
+		int centerZ = chunkPos.getMinBlockZ() + 8;
+		int sampleCount = (CIRCUS_PAVILION_FOOTPRINT_RADIUS * 2 / CIRCUS_PAVILION_SAMPLE_STEP + 1);
+		int[] heights = new int[sampleCount * sampleCount];
+		int sampleIndex = 0;
+
+		for (int xOffset = -CIRCUS_PAVILION_FOOTPRINT_RADIUS;
+				xOffset <= CIRCUS_PAVILION_FOOTPRINT_RADIUS;
+				xOffset += CIRCUS_PAVILION_SAMPLE_STEP) {
+			for (int zOffset = -CIRCUS_PAVILION_FOOTPRINT_RADIUS;
+					zOffset <= CIRCUS_PAVILION_FOOTPRINT_RADIUS;
+					zOffset += CIRCUS_PAVILION_SAMPLE_STEP) {
+				int x = centerX + xOffset;
+				int z = centerZ + zOffset;
+				if (!isSuitableLandColumn(context, x, z, 0)) {
+					return false;
+				}
+				heights[sampleIndex++] = getSurfaceHeight(context, x, z);
+			}
+		}
+
+		return CircusPavilionPlacementRules.canPlacePavilion(true, true, true,
+				CircusPavilionPlacementRules.surfaceVariation(heights));
 	}
 
 	static boolean isSuitableOceanWreckChunk(Structure.GenerationContext context) {

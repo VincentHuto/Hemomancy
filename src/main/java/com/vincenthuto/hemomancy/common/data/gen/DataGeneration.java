@@ -21,5 +21,6 @@ public class DataGeneration {
 		generator.addProvider(event.includeClient(),
 				new HemoItemModelProvider(packOutput, event.getExistingFileHelper()));
 		generator.addProvider(event.includeClient(), new HemoLanguageProvider(packOutput, "en_us"));
+		generator.addProvider(event.includeServer(), new CircusPavilionStructureProvider(packOutput));
 	}
 }

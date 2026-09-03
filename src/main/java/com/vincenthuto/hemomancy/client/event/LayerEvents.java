@@ -136,6 +136,12 @@ public class LayerEvents {
 		event.registerLayerDefinition(MnemonistPuppetModel.LAYER_LOCATION, MnemonistPuppetModel::createBodyLayer);
 		event.registerLayerDefinition(ScarletMummerModel.LAYER_LOCATION, ScarletMummerModel::createBodyLayer);
 		event.registerLayerDefinition(SanguineHoundModel.LAYER_LOCATION, SanguineHoundModel::createBodyLayer);
+		event.registerLayerDefinition(CircusFireEaterModel.LAYER_LOCATION, CircusFireEaterModel::createBodyLayer);
+		event.registerLayerDefinition(CircusStiltWalkerModel.LAYER_LOCATION, CircusStiltWalkerModel::createBodyLayer);
+		event.registerLayerDefinition(CircusAcrobatModel.LAYER_LOCATION, CircusAcrobatModel::createBodyLayer);
+		event.registerLayerDefinition(CircusKnifeThrowerModel.LAYER_LOCATION, CircusKnifeThrowerModel::createBodyLayer);
+		event.registerLayerDefinition(CircusCarouselModel.LAYER_LOCATION, CircusCarouselModel::createBodyLayer);
+		event.registerLayerDefinition(CircusRingmasterModel.LAYER_LOCATION, CircusRingmasterModel::createBodyLayer);
 		event.registerLayerDefinition(MorphlingPolypModel.LAYER_LOCATION, MorphlingPolypModel::createBodyLayer);
 		event.registerLayerDefinition(MorphlingPolypLayerModel.LAYER_LOCATION, MorphlingPolypLayerModel::createBodyLayer);
 		event.registerLayerDefinition(MorphlingAttachmentExampleModel.HEAD_LAYER, MorphlingAttachmentExampleModel::createBodyLayer);
@@ -202,6 +208,7 @@ public class LayerEvents {
 		event.registerLayerDefinition(DesiccantModel.LAYER_LOCATION, DesiccantModel::createBodyLayer);
 		event.registerLayerDefinition(CrimsonDoeModel.LAYER_LOCATION, CrimsonDoeModel::createBodyLayer);
 		event.registerLayerDefinition(VerdigrisMothModel.LAYER_LOCATION, VerdigrisMothModel::createBodyLayer);
+		event.registerLayerDefinition(LuminalCicadaModel.LAYER_LOCATION, LuminalCicadaModel::createBodyLayer);
 		event.registerLayerDefinition(ScarletSerpentModel.LAYER_LOCATION, ScarletSerpentModel::createBodyLayer);
 		event.registerLayerDefinition(HemojellyModel.LAYER_LOCATION, HemojellyModel::createBodyLayer);
 		event.registerLayerDefinition(VenousStriderModel.LAYER_LOCATION, VenousStriderModel::createBodyLayer);

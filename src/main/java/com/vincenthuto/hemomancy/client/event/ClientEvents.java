@@ -8,6 +8,7 @@ import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.client.data.*;
 import com.vincenthuto.hemomancy.client.item.HemoClientItemExtensionsProvider;
 import com.vincenthuto.hemomancy.client.morphling.MorphlingPlayerPartVisibility;
+import com.vincenthuto.hemomancy.client.model.entity.npc.*;
 import com.vincenthuto.hemomancy.client.render.CrimsonFireRenderer;
 import com.vincenthuto.hemomancy.client.render.entity.blood.iron.IronPillarRenderer;
 import com.vincenthuto.hemomancy.client.render.entity.blood.iron.IronSpikeRenderer;
@@ -761,6 +762,9 @@ public class ClientEvents {
 			event.registerEntityRenderer(EntityInit.living_flail_head.get(), LivingFlailHeadProjectileRenderer::new);
 			event.registerEntityRenderer(EntityInit.vesper_scute_projectile.get(), VesperScuteProjectileRenderer::new);
 			event.registerEntityRenderer(EntityInit.veinwing_feather.get(), VeinwingFeatherRenderer::new);
+			event.registerEntityRenderer(EntityInit.circus_knife.get(), CircusKnifeProjectileRenderer::new);
+			event.registerEntityRenderer(EntityInit.circus_carousel.get(), CircusCarouselRenderer::new);
+			event.registerEntityRenderer(EntityInit.circus_ringmaster.get(), CircusRingmasterRenderer::new);
             event.registerEntityRenderer(EntityInit.blood_needle.get(), BloodNeedleRenderer::new);
             event.registerEntityRenderer(EntityInit.blood_shot.get(), BloodShotRenderer::new);
             event.registerEntityRenderer(EntityInit.blood_bullet.get(), BloodBulletRenderer::new);
@@ -826,6 +830,18 @@ public class ClientEvents {
             event.registerEntityRenderer(EntityInit.harbinger_vicar.get(), HarbingerVicarRenderer::new);
             event.registerEntityRenderer(EntityInit.harbinger_voyager.get(), HarbingerVoyagerRenderer::new);
             event.registerEntityRenderer(EntityInit.harbinger_votary_wayfarer.get(), HarbingerVotaryWayfarerRenderer::new);
+			event.registerEntityRenderer(EntityInit.circus_fire_eater.get(), context -> new CircusPerformerRenderer<>(
+					context, new CircusFireEaterModel(context.bakeLayer(CircusFireEaterModel.LAYER_LOCATION)),
+					"fire_eater", 0.45F));
+			event.registerEntityRenderer(EntityInit.circus_stilt_walker.get(), context -> new CircusPerformerRenderer<>(
+					context, new CircusStiltWalkerModel(context.bakeLayer(CircusStiltWalkerModel.LAYER_LOCATION)),
+					"stilt_walker", 0.5F));
+			event.registerEntityRenderer(EntityInit.circus_acrobat.get(), context -> new CircusPerformerRenderer<>(
+					context, new CircusAcrobatModel(context.bakeLayer(CircusAcrobatModel.LAYER_LOCATION)),
+					"acrobat", 0.4F));
+			event.registerEntityRenderer(EntityInit.circus_knife_thrower.get(), context -> new CircusPerformerRenderer<>(
+					context, new CircusKnifeThrowerModel(context.bakeLayer(CircusKnifeThrowerModel.LAYER_LOCATION)),
+					"knife_thrower", 0.45F));
             event.registerEntityRenderer(EntityInit.drudge.get(),DrudgeRenderer::new);
             event.registerEntityRenderer(EntityInit.hemorath.get(), HemorathRenderer::new);
             event.registerEntityRenderer(EntityInit.annetta_knowles.get(), AnnettaKnowlesRenderer::new);
@@ -846,6 +862,7 @@ public class ClientEvents {
             event.registerEntityRenderer(EntityInit.desiccant.get(), DesiccantRenderer::new);
             event.registerEntityRenderer(EntityInit.crimson_doe.get(), CrimsonDoeRenderer::new);
             event.registerEntityRenderer(EntityInit.verdigris_moth.get(), VerdigrisMothRenderer::new);
+            event.registerEntityRenderer(EntityInit.luminal_cicada.get(), LuminalCicadaRenderer::new);
             event.registerEntityRenderer(EntityInit.hematic_burrower.get(), HematicBurrowerRenderer::new);
             event.registerEntityRenderer(EntityInit.scarlet_serpent.get(), ScarletSerpentRenderer::new);
             event.registerEntityRenderer(EntityInit.hemojelly.get(), HemojellyRenderer::new);

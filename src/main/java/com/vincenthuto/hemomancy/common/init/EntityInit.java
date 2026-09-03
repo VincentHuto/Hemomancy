@@ -23,6 +23,7 @@ import com.vincenthuto.hemomancy.common.entity.mob.monster.*;
 import com.vincenthuto.hemomancy.common.entity.mob.monster.will.WillAnchorEntity;
 import com.vincenthuto.hemomancy.common.entity.mob.monster.will.WillEntity;
 import com.vincenthuto.hemomancy.common.entity.npc.DrudgeEntity;
+import com.vincenthuto.hemomancy.common.entity.npc.circus.*;
 import com.vincenthuto.hemomancy.common.entity.npc.harbinger.*;
 import com.vincenthuto.hemomancy.common.entity.npc.unstained.UnstainedAcolyteEntity;
 import com.vincenthuto.hemomancy.common.entity.npc.unstained.UnstainedGuardianEntity;
@@ -63,6 +64,7 @@ public class EntityInit {
     public static final TagKey<EntityType<?>> SPECIMEN_JAR_CAPTURABLE = createTag("specimen_jar_capturable");
     public static final TagKey<EntityType<?>> WILLS = createTag("wills");
     public static final TagKey<EntityType<?>> PUPPET_ATTENTION_IMMUNE = createTag("puppet_attention_immune");
+    public static final TagKey<EntityType<?>> CIRCUS_PERFORMERS = createTag("circus_performers");
 
     public static final DeferredHolder<EntityType<?>, EntityType<CovenantThroneSeatEntity>> covenant_throne_seat =
             ENTITY_TYPES.register("covenant_throne_seat",
@@ -191,6 +193,31 @@ public class EntityInit {
             () -> EntityType.Builder.of(HarbingerVotaryWayfarerEntity::new, MobCategory.CREATURE)
                     .sized(0.6F, 1.95F)
                     .build(Hemomancy.rloc("harbinger_votary_wayfarer").toString()));
+
+    public static final DeferredHolder<EntityType<?>, EntityType<CircusFireEaterEntity>> circus_fire_eater = ENTITY_TYPES.register(
+            "circus_fire_eater", () -> EntityType.Builder.of(CircusFireEaterEntity::new, MobCategory.CREATURE)
+                    .sized(0.65F, 1.95F).clientTrackingRange(10).fireImmune()
+                    .build(Hemomancy.rloc("circus_fire_eater").toString()));
+    public static final DeferredHolder<EntityType<?>, EntityType<CircusStiltWalkerEntity>> circus_stilt_walker = ENTITY_TYPES.register(
+            "circus_stilt_walker", () -> EntityType.Builder.of(CircusStiltWalkerEntity::new, MobCategory.CREATURE)
+                    .sized(0.8F, 3.6F).clientTrackingRange(10)
+                    .build(Hemomancy.rloc("circus_stilt_walker").toString()));
+    public static final DeferredHolder<EntityType<?>, EntityType<CircusAcrobatEntity>> circus_acrobat = ENTITY_TYPES.register(
+            "circus_acrobat", () -> EntityType.Builder.of(CircusAcrobatEntity::new, MobCategory.CREATURE)
+                    .sized(0.6F, 1.8F).clientTrackingRange(10)
+                    .build(Hemomancy.rloc("circus_acrobat").toString()));
+    public static final DeferredHolder<EntityType<?>, EntityType<CircusKnifeThrowerEntity>> circus_knife_thrower = ENTITY_TYPES.register(
+            "circus_knife_thrower", () -> EntityType.Builder.of(CircusKnifeThrowerEntity::new, MobCategory.CREATURE)
+                    .sized(0.65F, 1.95F).clientTrackingRange(10)
+                    .build(Hemomancy.rloc("circus_knife_thrower").toString()));
+    public static final DeferredHolder<EntityType<?>, EntityType<CircusCarouselEntity>> circus_carousel = ENTITY_TYPES.register(
+            "circus_carousel", () -> EntityType.Builder.<CircusCarouselEntity>of(CircusCarouselEntity::new, MobCategory.MISC)
+                    .sized(1.0F, 7.0F).clientTrackingRange(12).updateInterval(2)
+                    .build(Hemomancy.rloc("circus_carousel").toString()));
+	public static final DeferredHolder<EntityType<?>, EntityType<CircusRingmasterEntity>> circus_ringmaster = ENTITY_TYPES.register(
+			"circus_ringmaster", () -> EntityType.Builder.of(CircusRingmasterEntity::new, MobCategory.CREATURE)
+					.sized(0.7F, 1.8F).clientTrackingRange(12)
+					.build(Hemomancy.rloc("circus_ringmaster").toString()));
 
     // Boss room: Hematic Construct (inner trial minion)
     public static final DeferredHolder<EntityType<?>, EntityType<HematicConstructEntity>> hematic_construct = ENTITY_TYPES.register(
@@ -532,6 +559,14 @@ public class EntityInit {
                     .updateInterval(3)
                     .build(Hemomancy.rloc("verdigris_moth").toString()));
 
+    public static final DeferredHolder<EntityType<?>, EntityType<LuminalCicadaEntity>> luminal_cicada = ENTITY_TYPES.register(
+            "luminal_cicada",
+            () -> EntityType.Builder.of(LuminalCicadaEntity::new, MobCategory.AMBIENT)
+                    .sized(0.45F, 0.3F)
+                    .clientTrackingRange(8)
+                    .updateInterval(3)
+                    .build(Hemomancy.rloc("luminal_cicada").toString()));
+
     public static final DeferredHolder<EntityType<?>, EntityType<HematicBurrowerEntity>> hematic_burrower = ENTITY_TYPES.register(
             "hematic_burrower",
             () -> EntityType.Builder.of(HematicBurrowerEntity::new, MobCategory.CREATURE)
@@ -660,6 +695,11 @@ public class EntityInit {
 					() -> EntityType.Builder.<VeinwingFeatherEntity>of(VeinwingFeatherEntity::new, MobCategory.MISC)
 							.sized(0.25F, 0.25F).clientTrackingRange(8).updateInterval(1)
 							.build(Hemomancy.rloc("veinwing_feather").toString()));
+	public static final DeferredHolder<EntityType<?>, EntityType<CircusKnifeProjectileEntity>> circus_knife =
+			ENTITY_TYPES.register("circus_knife",
+					() -> EntityType.Builder.<CircusKnifeProjectileEntity>of(CircusKnifeProjectileEntity::new, MobCategory.MISC)
+							.sized(0.25F, 0.25F).clientTrackingRange(8).updateInterval(1)
+							.build(Hemomancy.rloc("circus_knife").toString()));
 
     public static final DeferredHolder<EntityType<?>, EntityType<BloodNeedleEntity>> blood_needle = ENTITY_TYPES.register(
             "blood_needle",
@@ -745,6 +785,9 @@ public class EntityInit {
                 RegisterSpawnPlacementsEvent.Operation.OR);
         event.register(EntityInit.verdigris_moth.get(), SpawnPlacementTypes.ON_GROUND,
                 Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, VerdigrisMothEntity::canSpawnHere,
+                RegisterSpawnPlacementsEvent.Operation.OR);
+        event.register(EntityInit.luminal_cicada.get(), SpawnPlacementTypes.ON_GROUND,
+                Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, LuminalCicadaEntity::canSpawnHere,
                 RegisterSpawnPlacementsEvent.Operation.OR);
         event.register(EntityInit.hematic_burrower.get(), SpawnPlacementTypes.ON_GROUND,
                 Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, HematicBurrowerEntity::canSpawnHere,
@@ -847,6 +890,11 @@ public class EntityInit {
         event.put(EntityInit.harbinger_vicar.get(), HarbingerVicarEntity.setAttributes().build());
         event.put(EntityInit.harbinger_voyager.get(), HarbingerVoyagerEntity.setAttributes().build());
         event.put(EntityInit.harbinger_votary_wayfarer.get(), HarbingerVotaryWayfarerEntity.setAttributes().build());
+		event.put(EntityInit.circus_fire_eater.get(), CircusFireEaterEntity.setAttributes().build());
+		event.put(EntityInit.circus_ringmaster.get(), CircusRingmasterEntity.setAttributes().build());
+		event.put(EntityInit.circus_stilt_walker.get(), CircusStiltWalkerEntity.setAttributes().build());
+		event.put(EntityInit.circus_acrobat.get(), CircusAcrobatEntity.setAttributes().build());
+		event.put(EntityInit.circus_knife_thrower.get(), CircusKnifeThrowerEntity.setAttributes().build());
         event.put(EntityInit.hemorath.get(), HemorathEntity.setAttributes().build());
         event.put(EntityInit.seraphae.get(), SeraphaeEntity.setAttributes().build());
         event.put(EntityInit.seraphae_fragment.get(), SeraphaeFragmentEntity.setAttributes().build());
@@ -861,6 +909,7 @@ public class EntityInit {
         event.put(EntityInit.desiccant.get(), DesiccantEntity.setAttributes().build());
         event.put(EntityInit.crimson_doe.get(), CrimsonDoeEntity.setAttributes().build());
         event.put(EntityInit.verdigris_moth.get(), VerdigrisMothEntity.setAttributes().build());
+        event.put(EntityInit.luminal_cicada.get(), LuminalCicadaEntity.setAttributes().build());
         event.put(EntityInit.hematic_burrower.get(), HematicBurrowerEntity.setAttributes().build());
         event.put(EntityInit.scarlet_serpent.get(), ScarletSerpentEntity.setAttributes().build());
         event.put(EntityInit.hemojelly.get(), HemojellyEntity.setAttributes().build());

@@ -95,8 +95,8 @@ public class HemoLanguageProvider extends LanguageProvider {
         add("item.hemomancy.hematic_suture_needle.status", "Use on a blood machine or node. Sneak-use to toggle bloodline opt-in.");
 
         for (DeferredHolder<EntityType<?>, ? extends EntityType<?>> e : EntityInit.ENTITY_TYPES.getEntries()) {
-            addEntityType(e,
-                    HLTextUtils.convertInitToLang(e.get().getDescriptionId().replace("entity.hemomancy.", "")));
+            addEntityType(e, e == EntityInit.circus_ringmaster ? "Ringmaster"
+                    : HLTextUtils.convertInitToLang(e.get().getDescriptionId().replace("entity.hemomancy.", "")));
         }
         for (DeferredHolder<Block, ? extends Block> b : BlockInit.CROSSBLOCKS.getEntries()) {
             addBlock(b,

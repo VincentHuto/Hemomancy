@@ -85,13 +85,13 @@ public class MnemonistPuppetModel extends HumanoidModel<MnemonistPuppetEntity> {
 						.texOffs(0, 26).addBox(-1.35F, 0.0F, -1.25F, 2.7F, 12.0F, 2.5F, new CubeDeformation(-0.05F))
 						.texOffs(10, 26).addBox(-1.7F, 2.8F, -1.6F, 3.4F, 1.4F, 3.2F, new CubeDeformation(0.0F))
 						.texOffs(10, 31).addBox(-1.7F, 7.0F, -1.6F, 3.4F, 1.4F, 3.2F, new CubeDeformation(0.0F))
-						.texOffs(52, 38).addBox(-1.7F, 10.4F, -3.0F, 3.4F, 1.8F, 4.0F, new CubeDeformation(0.0F)),
+						.texOffs(36, 5).addBox(-1.7F, 10.4F, -3.0F, 3.4F, 1.8F, 4.0F, new CubeDeformation(0.0F)),
 				PartPose.offset(-1.9F, 12.0F, 0.0F));
 		root.addOrReplaceChild("left_leg", CubeListBuilder.create()
 						.texOffs(0, 26).mirror().addBox(-1.35F, 0.0F, -1.25F, 2.7F, 12.0F, 2.5F, new CubeDeformation(-0.05F))
 						.texOffs(10, 26).mirror().addBox(-1.7F, 2.8F, -1.6F, 3.4F, 1.4F, 3.2F, new CubeDeformation(0.0F))
 						.texOffs(10, 31).mirror().addBox(-1.7F, 7.0F, -1.6F, 3.4F, 1.4F, 3.2F, new CubeDeformation(0.0F))
-						.texOffs(52, 38).mirror().addBox(-1.7F, 10.4F, -3.0F, 3.4F, 1.8F, 4.0F, new CubeDeformation(0.0F)),
+						.texOffs(36, 5).mirror().addBox(-1.7F, 10.4F, -3.0F, 3.4F, 1.8F, 4.0F, new CubeDeformation(0.0F)),
 				PartPose.offset(1.9F, 12.0F, 0.0F));
 
 		return LayerDefinition.create(mesh, 64, 64);

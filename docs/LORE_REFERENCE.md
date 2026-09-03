@@ -34,7 +34,7 @@ The following settled facts are non-negotiable consistency anchors:
 > - Cerebral scars now read more like internalized mind-maps than worn trinkets: Scar items are burned into memory, Mason's Effigy prepares known scars into a motif, projected blood writes the motif into a dynamic Scar Pattern, and an empty, lit Iron Brazier burns that pattern to set the active scar loadout.
 > - **Cardinal Rites now have a shared bodily liturgy:** an authored ritual floor establishes the grammar, a Cardinal Focus holds the rite's medium, lit braziers declare offerings, and a planted Living Staff becomes the temporary vascular axis around which the rite manifests.
 > - **Mnemonic Blueprints replace disposable hint sheets:** an unlocked rite or blood structure can be impressed into a reusable mnemonic plan, examined as an authored diagram, and projected into the world as a construction memory. Mnemonic Folios preserve collections of those plans.
-> - **Puppetry unlocks are now Cardinal Ordeals:** four artificial bodies share the Dominion Lesser floor, preserve the owner's attuned Crossbar as their medium, and become known only after the manifested puppet itself is defeated.
+> - **Puppetry unlocks are now Cardinal Ordeals:** six artificial bodies share the Dominion Lesser floor, preserve the owner's attuned Crossbar as their medium, and become known only after the manifested puppet itself is defeated.
 > - This document remains canonical for worldbuilding. [HEMOMANCY_REFERENCE.md](HEMOMANCY_REFERENCE.md) records how that canon is implemented and must be updated when the implementation changes.
 
 ---
@@ -253,6 +253,14 @@ Cardinal Rites are not ordinary multiblock recipes enlarged for spectacle. They 
 - **Anchors, sockets, sigils, boundaries, fog, and ordeal waves** are expressions of the rite becoming anatomically coherent. Breaking the authored station tears that temporary body apart; cancellation is an intentional reabsorption, not a clean refund.
 
 The simpler rites keep this anatomy restrained. Greater and Grand rites make it visible enough to become an ordeal in its own right. The shared form is why one learned ritual floor can support multiple rites without making those rites interchangeable: floor, medium, offerings, ceremony profile, and intended transformation all carry separate meaning.
+
+### 6.3b The Circus
+
+The **Circus** is a specialist Harbinger sect, not a separate degree ladder and not an enemy faction by default. Its practitioners take puppetry, attention, decoys, displacement, light, sound, and mental manifestation further than ordinary outpost instruction. Saints retain singular unstable powers; the Circus instead refines systems that other Harbingers already recognize.
+
+Their physical camp is a rough traveling pavilion of dark cloth, blackened hematic frames, bones, pelts, masks, hanging Crossbars, and visible thread. The complete spectacle exists in layered perception. An outsider first sees heat-haze, scraps, contradictory silhouettes, and incomplete geometry. Familiarity makes the shared vision calmer and more coherent until tents, performers, impossible movement, and apparently solid manifestations agree with one another. Collective imagination can acquire physical consequence, so the danger is not dismissed as harmless hallucination.
+
+Scarlet Serpents and Prism Cuttles are natural Hemomancy-reactive animals rather than Circus members. Their hood displays, warning color, chromatophores, camouflage, and false visual tells inform Circus practice without transferring their ecology to the sect. The Mnemonist may direct an Adept toward these specialists after the player has practical experience with puppetry.
 
 ### 6.4 Degrees of Initiation
 

@@ -1,12 +1,17 @@
 package com.vincenthuto.hemomancy.common.entity.mob.monster;
 
+import com.vincenthuto.hemomancy.client.particle.factory.BloodCellParticleFactory;
 import com.vincenthuto.hemomancy.common.init.EntityInit;
 import com.vincenthuto.hemomancy.common.init.SoundInit;
+import com.vincenthuto.hemomancy.common.entity.npc.circus.CircusPerformerEntity;
+import com.vincenthuto.hemomancy.common.entity.npc.circus.CircusPerformerEntity.ActState;
+import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.players.OldUsersConverter;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.damagesource.DamageSource;
@@ -23,11 +28,11 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 
 import javax.annotation.Nullable;
-import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
 public class EnthralledDollEntity extends Monster implements OwnableEntity {
+	private static final byte BLOOD_MELT_EVENT = 61;
 
 	protected static final EntityDataAccessor<Byte> DATA_FLAGS_ID = SynchedEntityData.defineId(EnthralledDollEntity.class,
 			EntityDataSerializers.BYTE);
@@ -66,19 +71,7 @@ public class EnthralledDollEntity extends Monster implements OwnableEntity {
 	}
 
 	public BloodDrunkPuppeteerEntity getPuppeteer() {
-		UUID ownerId = getOwnerUUID();
-		if (ownerId == null) {
-			return null;
-		}
-		List<BloodDrunkPuppeteerEntity> owners = level().getEntitiesOfClass(BloodDrunkPuppeteerEntity.class,
-				getBoundingBox().inflate(BloodDrunkPuppeteerTuning.DOLL_OWNER_SEARCH_RANGE));
-		Optional<BloodDrunkPuppeteerEntity> owner = owners.stream()
-				.filter(o -> o.getUUID().equals(ownerId) && o.isAlive())
-				.findFirst();
-		if (owner.isPresent()) {
-			return owner.get();
-		}
-		return null;
+		return getSummoner() instanceof BloodDrunkPuppeteerEntity puppeteer ? puppeteer : null;
 	}
 
 	@Override
@@ -116,6 +109,29 @@ public class EnthralledDollEntity extends Monster implements OwnableEntity {
 	@Override
 	protected SoundEvent getDeathSound() {
 		return SoundInit.ENTITY_ENTHRALLED_DOLL_DEATH.get();
+	}
+
+	@Override
+	public void die(DamageSource source) {
+		if (!level().isClientSide) {
+			level().broadcastEntityEvent(this, BLOOD_MELT_EVENT);
+		}
+		super.die(source);
+	}
+
+	@Override
+	public void handleEntityEvent(byte id) {
+		if (id != BLOOD_MELT_EVENT) {
+			super.handleEntityEvent(id);
+			return;
+		}
+		for (int i = 0; i < 36; i++) {
+			double x = (random.nextDouble() - 0.5D) * getBbWidth();
+			double y = random.nextDouble() * getBbHeight();
+			double z = (random.nextDouble() - 0.5D) * getBbWidth();
+			level().addParticle(BloodCellParticleFactory.createData(ParticleColor.BLOOD),
+					getX() + x, getY() + y, getZ() + z, x * 0.08D, -0.025D, z * 0.08D);
+		}
 	}
 
 	@Override
@@ -208,9 +224,15 @@ public class EnthralledDollEntity extends Monster implements OwnableEntity {
 
 	@Override
 	public boolean canAttack(net.minecraft.world.entity.LivingEntity target) {
-		return !(target instanceof BloodDrunkPuppeteerEntity)
-				&& !(target instanceof EnthralledDollEntity)
-				&& super.canAttack(target);
+		if (target instanceof BloodDrunkPuppeteerEntity
+				|| target instanceof CircusPerformerEntity
+				|| target instanceof EnthralledDollEntity) return false;
+		if (getSummoner() instanceof CircusPerformerEntity performer && performer.getTarget() != target) return false;
+		return super.canAttack(target);
+	}
+
+	public boolean isOwnedByCircusPerformer() {
+		return getSummoner() instanceof CircusPerformerEntity;
 	}
 
 	@Override
@@ -228,29 +250,43 @@ public class EnthralledDollEntity extends Monster implements OwnableEntity {
 		if (!isSummonedByPuppeteer()) {
 			return;
 		}
-		BloodDrunkPuppeteerEntity puppeteer = getPuppeteer();
-		if (puppeteer == null) {
+		Mob owner = getSummoner();
+		if (owner == null || !owner.isAlive()) {
 			discard();
 			return;
 		}
-		LivingEntity puppeteerTarget = puppeteer.getTarget();
-		if (puppeteerTarget != null && canAttack(puppeteerTarget)) {
-			setTarget(puppeteerTarget);
-			getNavigation().moveTo(puppeteerTarget, BloodDrunkPuppeteerTuning.DOLL_ATTACK_SPEED);
+		if (owner instanceof CircusPerformerEntity performer && performer.getTarget() == null
+				&& performer.getActState() != ActState.ALERT && performer.getActState() != ActState.DOWNED) {
+			discard();
+			return;
 		}
-		double distanceToPuppeteer = distanceToSqr(puppeteer);
+		LivingEntity ownerTarget = owner.getTarget();
+		if (ownerTarget != null && canAttack(ownerTarget)) {
+			setTarget(ownerTarget);
+			getNavigation().moveTo(ownerTarget, BloodDrunkPuppeteerTuning.DOLL_ATTACK_SPEED);
+		} else {
+			setTarget(null);
+		}
+		double distanceToPuppeteer = distanceToSqr(owner);
 		double teleportDistance = BloodDrunkPuppeteerTuning.DOLL_TELEPORT_DISTANCE;
 		if (distanceToPuppeteer > teleportDistance * teleportDistance) {
 			double[] offset = BloodDrunkPuppeteerTuning.dollSpawnOffset(getId());
-			moveTo(puppeteer.getX() + offset[0], puppeteer.getY() + offset[1],
-					puppeteer.getZ() + offset[2], getYRot(), getXRot());
+			moveTo(owner.getX() + offset[0], owner.getY() + offset[1],
+					owner.getZ() + offset[2], getYRot(), getXRot());
 			getNavigation().stop();
 			return;
 		}
 		double followDistance = BloodDrunkPuppeteerTuning.DOLL_FOLLOW_START_DISTANCE;
 		if ((getTarget() == null || !getTarget().isAlive())
 				&& distanceToPuppeteer > followDistance * followDistance) {
-			getNavigation().moveTo(puppeteer, BloodDrunkPuppeteerTuning.DOLL_FOLLOW_SPEED);
+			getNavigation().moveTo(owner, BloodDrunkPuppeteerTuning.DOLL_FOLLOW_SPEED);
 		}
+	}
+
+	@Nullable
+	private Mob getSummoner() {
+		UUID ownerId = getOwnerUUID();
+		if (ownerId == null || !(level() instanceof ServerLevel server)) return null;
+		return server.getEntity(ownerId) instanceof Mob owner ? owner : null;
 	}
 }

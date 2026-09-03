@@ -35,6 +35,9 @@ public class StructureInit {
 	public static final DeferredHolder<StructureType<?>, StructureType<HarbingerOutpostStructure>> harbinger_outpost = STRUCTURES
 			.register("harbinger_outpost", () -> explicitStructureTypeTyping(HarbingerOutpostStructure.CODEC));
 
+	public static final DeferredHolder<StructureType<?>, StructureType<CircusPavilionStructure>> circus_pavilion = STRUCTURES
+			.register("circus_pavilion", () -> explicitStructureTypeTyping(CircusPavilionStructure.CODEC));
+
 	public static final DeferredHolder<StructureType<?>, StructureType<HarbingerVoyagerWreckStructure>> harbinger_voyager_wreck = STRUCTURES
 			.register("harbinger_voyager_wreck", () -> explicitStructureTypeTyping(HarbingerVoyagerWreckStructure.CODEC));
 

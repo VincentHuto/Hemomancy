@@ -1,0 +1,14 @@
+{
+  "structures": [
+    {
+      "structure": "hemomancy:circus_pavilion",
+      "weight": 1
+    }
+  ],
+  "placement": {
+    "salt": 2030148867,
+    "spacing": 48,
+    "separation": 16,
+    "type": "minecraft:random_spread"
+  }
+}

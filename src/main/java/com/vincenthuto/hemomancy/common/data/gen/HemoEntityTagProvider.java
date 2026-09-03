@@ -45,11 +45,18 @@ public class HemoEntityTagProvider extends TagsProvider<EntityType<?>> {
 				.add(ResourceKey.create(Registries.ENTITY_TYPE, EntityInit.chthonian_queen.getId()))
 				.add(ResourceKey.create(Registries.ENTITY_TYPE, EntityInit.chitinite.getId()))
 				.add(ResourceKey.create(Registries.ENTITY_TYPE, EntityInit.fervent_chitinite.getId()))
+				.add(ResourceKey.create(Registries.ENTITY_TYPE, EntityInit.luminal_cicada.getId()))
 				.add(ResourceKey.create(Registries.ENTITY_TYPE, EntityInit.hemolymphopoda.getId()))
 				.add(ResourceKey.create(Registries.ENTITY_TYPE, EntityInit.desiccant.getId()))
 				.add(ResourceKey.create(Registries.ENTITY_TYPE, EntityInit.fargone.getId()))
 				.add(ResourceKey.create(Registries.ENTITY_TYPE, EntityInit.venom_rib_centipede.getId()))
 				.add(ResourceKey.create(Registries.ENTITY_TYPE, EntityInit.tooth_pecks.getId()));
+
+		tag(EntityInit.CIRCUS_PERFORMERS)
+				.add(ResourceKey.create(Registries.ENTITY_TYPE, EntityInit.circus_fire_eater.getId()))
+				.add(ResourceKey.create(Registries.ENTITY_TYPE, EntityInit.circus_stilt_walker.getId()))
+				.add(ResourceKey.create(Registries.ENTITY_TYPE, EntityInit.circus_acrobat.getId()))
+				.add(ResourceKey.create(Registries.ENTITY_TYPE, EntityInit.circus_knife_thrower.getId()));
 
 		// All hemomancy monster entities — used by PurityGainEvents for kill rewards
 		tag(EntityInit.HEMOMANCY_MOB)

@@ -38,6 +38,11 @@ public class QliphothBloomRenderer {
 	private static final ResourceLocation BARK = Hemomancy.rloc("textures/block/dark_oak_log.png");
 	private static final ResourceLocation QLIPHOTH_SKY = Hemomancy.rloc("textures/environment/qliphoth_communion_sky.png");
 	private static final RenderType BARK_TYPE = RenderType.entityCutoutNoCull(BARK);
+	// ponytail: faceted transient effects; restore higher tessellation only if close visual checks show silhouette loss.
+	private static final int EFFECT_LATITUDES = 5;
+	private static final int EFFECT_LONGITUDES = 8;
+	// ponytail: half-resolution scene capture; restore full resolution only if lensing visibly pixelates.
+	private static final int SCENE_COPY_SCALE = 2;
 	private static TextureTarget frameCopyTarget;
 
 	public static void clearCaches() {
@@ -112,17 +117,22 @@ public class QliphothBloomRenderer {
 		float currentTime = mc.level.getGameTime() + partialTick;
 		Vec3 cam = mc.gameRenderer.getMainCamera().getPosition();
 
+		boolean sceneCopied = false;
 		for (QliphothBloomClientData.BloomEntry bloom : blooms) {
 			BlockPos center = bloom.getCenter();
 			double cx = center.getX() + 0.5;
 			double cy = center.getY() + 4.0;
 			double cz = center.getZ() + 0.5;
+			double distanceSquared = cam.distanceToSqr(cx, cy, cz);
 			boolean visible = frustum != null && frustum.isVisible(new AABB(
 					cx - 10.0, center.getY() - 1.0, cz - 10.0,
 					cx + 10.0, center.getY() + 12.0, cz + 10.0));
-			if (!QliphothBloomRenderRules.shouldRender(cam.distanceToSqr(cx, cy, cz), visible)) continue;
-			drawQliphothTree(poseStack, buffer, bloom, currentTime, cam);
-			if (!bloom.isPortalOpen() && !bloom.isSealedTrophy()) {
+			if (!QliphothBloomRenderRules.shouldRender(distanceSquared, visible)) continue;
+			boolean dynamicEffects = QliphothBloomRenderRules.shouldRenderDynamicEffects(distanceSquared);
+			if (drawQliphothTree(poseStack, buffer, bloom, currentTime, cam, dynamicEffects, !sceneCopied)) {
+				sceneCopied = true;
+			}
+			if (dynamicEffects && !bloom.isPortalOpen() && !bloom.isSealedTrophy()) {
 				drawPulsingRings(poseStack, buffer, bloom, currentTime, cam);
 			}
 		}
@@ -194,7 +204,7 @@ public class QliphothBloomRenderer {
 
 		double pulse = (Math.sin(time * 0.06) + 1.0) * 0.5;
 
-		drawFacetedBloom(stack, buffer, time, stage);
+		drawFacetedBloom(stack, buffer, time, stage, true, true);
 
 		stack.popPose();
 	}
@@ -302,8 +312,9 @@ public class QliphothBloomRenderer {
 	//  Tree Rendering — trunk, branches, canopy, roots
 	// ════════════════════════════════════════════════════════════════════════
 
-	private static void drawQliphothTree(PoseStack stack, MultiBufferSource buffer,
-			QliphothBloomClientData.BloomEntry bloom, float time, Vec3 cam) {
+	private static boolean drawQliphothTree(PoseStack stack, MultiBufferSource buffer,
+			QliphothBloomClientData.BloomEntry bloom, float time, Vec3 cam, boolean dynamicEffects,
+			boolean copyScene) {
 
 		BlockPos center = bloom.getCenter();
 		double cx = center.getX() + 0.5;
@@ -324,15 +335,12 @@ public class QliphothBloomRenderer {
 			float stumpSeed = Math.floorMod(center.asLong(), 10007L) / 10007.0F;
 			drawSeveredStump(buffer, mat, time, pulse, stumpSeed, bloom.isPortalOpen());
 			stack.popPose();
-			return;
+			return false;
 		}
-		float heightFrac = trunkHeightFrac(stage);
-		float rootFrac   = rootLengthFrac(stage);
-		float branchFrac = branchLengthFrac(stage);
-
-		drawFacetedBloom(stack, buffer, time, stage);
+		drawFacetedBloom(stack, buffer, time, stage, dynamicEffects, copyScene);
 
 		stack.popPose();
+		return dynamicEffects && QliphothBloomGeometry.hasApex(stage) && copyScene;
 	}
 
 	private static void drawSeveredStump(MultiBufferSource buffer, Matrix4f mat, float time,
@@ -396,10 +404,12 @@ public class QliphothBloomRenderer {
 		}
 	}
 
-	private static void drawFacetedBloom(PoseStack stack, MultiBufferSource buffer, float time, int stage) {
+	private static void drawFacetedBloom(PoseStack stack, MultiBufferSource buffer, float time, int stage,
+			boolean dynamicEffects, boolean copyScene) {
 		Matrix4f mat = stack.last().pose();
 		QliphothBloomGeometry.StageSnapshot snapshot = QliphothBloomGeometry.snapshot(stage);
 		QliphothBarkCache.renderTree(stack, snapshot.stage());
+		if (!dynamicEffects) return;
 		drawVeins(buffer, mat, snapshot.trunk(), time, 3);
 		drawRootVeins(buffer, mat, time, snapshot);
 
@@ -417,7 +427,7 @@ public class QliphothBloomRenderer {
 			drawFruitStem(buffer, mat, crystal, time);
 			drawCrystal(buffer, mat, crystal, time);
 		}
-		if (QliphothBloomGeometry.hasApex(stage)) drawFacetedApex(stack, buffer, mat, time);
+		if (QliphothBloomGeometry.hasApex(stage)) drawFacetedApex(stack, buffer, mat, time, copyScene);
 	}
 
 	private static void drawRootVeins(MultiBufferSource buffer, Matrix4f mat, float time,
@@ -427,7 +437,8 @@ public class QliphothBloomRenderer {
 		}
 	}
 
-	private static void drawFacetedApex(PoseStack stack, MultiBufferSource buffer, Matrix4f mat, float time) {
+	private static void drawFacetedApex(PoseStack stack, MultiBufferSource buffer, Matrix4f mat, float time,
+			boolean copyScene) {
 		for (QliphothBloomGeometry.Limb prong : QliphothBloomGeometry.snapshot(9).crownProngs()) {
 			drawVeins(buffer, mat, prong, time, 1);
 		}
@@ -437,17 +448,17 @@ public class QliphothBloomRenderer {
 					loop.radii().stream().map(radius -> radius * 1.7).toList(), loop.seed());
 			drawLimbGlow(buffer, mat, glow, 6, .95f, .012f, .022f, .12f);
 		}
-		renderAccretionBlackHole(stack, buffer, QliphothBloomGeometry.apexCenter(time), time);
+		renderAccretionBlackHole(stack, buffer, QliphothBloomGeometry.apexCenter(time), time, copyScene);
 	}
 
 	private static void renderAccretionBlackHole(PoseStack stack, MultiBufferSource buffer,
-			QliphothBloomGeometry.Point center, float time) {
+			QliphothBloomGeometry.Point center, float time, boolean copyScene) {
 		if (buffer instanceof MultiBufferSource.BufferSource source) {
 			source.endBatch(BARK_TYPE);
 			source.endBatch(RenderTypeInit.RITE_BOUNDARY_CORE);
 			source.endBatch(RenderTypeInit.RITE_BOUNDARY_GLOW);
 		}
-		copyMainRenderTarget(Minecraft.getInstance());
+		if (copyScene) copyMainRenderTarget(Minecraft.getInstance());
 		int sceneTexture = frameCopyTarget == null ? -1 : frameCopyTarget.getColorTextureId();
 		RenderType type = HemoRenderTypes.qliphothBlackHole(QLIPHOTH_SKY, sceneTexture, time * .050f,
 				.731f, 1.72f, 1.72f, true, true);
@@ -478,10 +489,11 @@ public class QliphothBloomRenderer {
 	}
 
 	private static void ensureFrameCopyTarget(RenderTarget mainTarget) {
-		if (frameCopyTarget != null && frameCopyTarget.width == mainTarget.width
-				&& frameCopyTarget.height == mainTarget.height) return;
+		int width = Math.max(1, mainTarget.width / SCENE_COPY_SCALE);
+		int height = Math.max(1, mainTarget.height / SCENE_COPY_SCALE);
+		if (frameCopyTarget != null && frameCopyTarget.width == width && frameCopyTarget.height == height) return;
 		if (frameCopyTarget != null) frameCopyTarget.destroyBuffers();
-		frameCopyTarget = new TextureTarget(mainTarget.width, mainTarget.height, false, Minecraft.ON_OSX);
+		frameCopyTarget = new TextureTarget(width, height, false, Minecraft.ON_OSX);
 		frameCopyTarget.setFilterMode(GL11.GL_LINEAR);
 	}
 
@@ -492,18 +504,19 @@ public class QliphothBloomRenderer {
 			float traveling = (float) ((Math.sin(time * .11 - index * 1.7 + wood.seed() * .17) + 1) * .5);
 			QliphothBloomGeometry.Limb vein = new QliphothBloomGeometry.Limb(path,
 					path.stream().map(point -> .018 + traveling * .009).toList(), wood.seed() + index);
-			drawLimbGlow(buffer, mat, vein, 5, .60f + traveling * .35f, .006f, .012f, .58f);
+			drawLimbGlow(buffer, mat, vein, 4, .60f + traveling * .35f, .006f, .012f, .58f);
 		}
 	}
 
 	private static void drawFruitStem(MultiBufferSource buffer, Matrix4f mat,
 			QliphothBloomGeometry.Crystal fruit, float time) {
 		QliphothBloomGeometry.Limb stem = QliphothBloomGeometry.fruitStem(fruit, time);
-		drawSphere(buffer, mat, fruit.anchor(), .095, .19f, .018f, .020f, .94f, 6, 8);
-		drawLimb(buffer, mat, stem, 7, .20f, .012f, .018f, .97f);
+		drawSphere(buffer, mat, fruit.anchor(), .095, .19f, .018f, .020f, .94f,
+				EFFECT_LATITUDES, EFFECT_LONGITUDES);
+		drawLimb(buffer, mat, stem, 5, .20f, .012f, .018f, .97f);
 		drawVeins(buffer, mat, stem, time, 1);
 		drawSphere(buffer, mat, fruit.center().add(new QliphothBloomGeometry.Point(0, fruit.size() * .68, 0)),
-				fruit.size() * .24, .26f, .015f, .024f, .95f, 6, 8);
+				fruit.size() * .24, .26f, .015f, .024f, .95f, EFFECT_LATITUDES, EFFECT_LONGITUDES);
 	}
 
 	private static void drawCrystal(MultiBufferSource buffer, Matrix4f mat,
@@ -542,7 +555,7 @@ public class QliphothBloomRenderer {
 					center.add(side.scale(size * .78)),
 					center.add(side.scale(size * .48)).add(new QliphothBloomGeometry.Point(0, -size * .70, 0)));
 			drawLimbGlow(buffer, mat, new QliphothBloomGeometry.Limb(path, List.of(.010, .014, .006), 1400 + seam),
-					5, .82f, .016f, .034f, .38f);
+					4, .82f, .016f, .034f, .38f);
 		}
 	}
 
@@ -565,7 +578,7 @@ public class QliphothBloomRenderer {
 					Math.cos(angle) * orbit, Math.sin(angle * 1.7 + i) * radius * .38,
 					Math.sin(angle) * orbit));
 			drawSphere(buffer, mat, wisp, radius * (.13 + i * .025), .58f, .006f, .030f,
-					.055f - i * .010f, 4, 6);
+					.055f - i * .010f, 3, 5);
 		}
 	}
 
@@ -703,7 +716,7 @@ public class QliphothBloomRenderer {
 			QliphothBloomGeometry.Point center, double rx, double ry, double rz, double yaw, int seed,
 			float red, float green, float blue, float alpha) {
 		VertexConsumer out = buffer.getBuffer(RenderTypeInit.RITE_BOUNDARY_CORE);
-		int latitudes = 8, longitudes = 12;
+		int latitudes = EFFECT_LATITUDES, longitudes = EFFECT_LONGITUDES;
 		for (int lat = 0; lat < latitudes; lat++) for (int lon = 0; lon < longitudes; lon++) {
 			double t0 = lat * Math.PI / latitudes, t1 = (lat + 1) * Math.PI / latitudes;
 			double p0 = lon * Math.PI * 2 / longitudes, p1 = (lon + 1) * Math.PI * 2 / longitudes;

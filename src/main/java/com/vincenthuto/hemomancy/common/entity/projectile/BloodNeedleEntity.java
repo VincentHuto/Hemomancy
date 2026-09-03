@@ -44,7 +44,12 @@ public class BloodNeedleEntity extends AbstractArrow implements CombatWeaponCarr
 	}
 
 	public BloodNeedleEntity(Level worldIn, LivingEntity shooter, @Nullable ItemStack firedFromWeapon) {
-		super(EntityInit.blood_needle.get(), shooter, worldIn, new ItemStack(Items.ARROW),
+		this(EntityInit.blood_needle.get(), worldIn, shooter, firedFromWeapon);
+	}
+
+	protected BloodNeedleEntity(EntityType<? extends BloodNeedleEntity> type, Level worldIn, LivingEntity shooter,
+			@Nullable ItemStack firedFromWeapon) {
+		super(type, shooter, worldIn, new ItemStack(Items.ARROW),
 				firedFromWeapon != null && !firedFromWeapon.isEmpty() ? firedFromWeapon : null);
 		this.pickup = Pickup.DISALLOWED;
 		this.combatWeaponItem = copyCombatWeapon(firedFromWeapon);

@@ -1,0 +1,12 @@
+{
+  "type": "neoforge:add_spawns",
+  "biomes": "#hemomancy:luminal_cicada_spawnlist",
+  "spawners": [
+    {
+      "type": "hemomancy:luminal_cicada",
+      "weight": 7,
+      "minCount": 1,
+      "maxCount": 2
+    }
+  ]
+}

@@ -20,6 +20,7 @@ public final class HarbingerMnemonistDialogueTrees {
 	public static final String EVENT_WOVEN_VESSEL_TURN_IN = "mnemonist_woven_vessel_turn_in";
 	public static final String EVENT_RELIQUARY_TAUGHT = "mnemonist_reliquary_taught";
 	public static final String EVENT_ANCHORITE_COUNSEL = "mnemonist_anchorite_counsel";
+	public static final String EVENT_CIRCUS_WAYBILL = "mnemonist_circus_waybill";
 
 	private HarbingerMnemonistDialogueTrees() {
 	}
@@ -44,11 +45,20 @@ public final class HarbingerMnemonistDialogueTrees {
 	public static DialogueTree forDegree(int degree, int entityId, boolean hasBloodline, boolean isNpcRecruited,
 			boolean canClaimStarter, boolean wovenVesselComplete, boolean morphlingPuppetInterference,
 			boolean anchoriteReferral, boolean anchoriteCounsel) {
+		return forDegree(degree, entityId, hasBloodline, isNpcRecruited, canClaimStarter, wovenVesselComplete,
+				morphlingPuppetInterference, anchoriteReferral, anchoriteCounsel, false, false);
+	}
+
+	public static DialogueTree forDegree(int degree, int entityId, boolean hasBloodline, boolean isNpcRecruited,
+			boolean canClaimStarter, boolean wovenVesselComplete, boolean morphlingPuppetInterference,
+			boolean anchoriteReferral, boolean anchoriteCounsel, boolean circusDiscovered,
+			boolean carryingCircusWaybill) {
 		if (degree <= 0) return uninitiated(entityId);
 		if (degree == 1) return neophyte(entityId, canClaimStarter);
 		if (degree == 2) return votary(entityId, canClaimStarter);
 		return woven(entityId, degree, degree >= 5 && hasBloodline, isNpcRecruited, canClaimStarter,
-				!wovenVesselComplete, morphlingPuppetInterference, anchoriteReferral, anchoriteCounsel);
+				!wovenVesselComplete, morphlingPuppetInterference, anchoriteReferral, anchoriteCounsel,
+				circusDiscovered, carryingCircusWaybill);
 	}
 
 	public static DialogueTree purifying(int entityId) {
@@ -125,7 +135,8 @@ public final class HarbingerMnemonistDialogueTrees {
 
 	private static DialogueTree woven(int entityId, int degree, boolean hasBloodline, boolean isNpcRecruited,
 			boolean canClaimStarter, boolean canCompleteWovenVessel, boolean morphlingPuppetInterference,
-			boolean anchoriteReferral, boolean anchoriteCounsel) {
+			boolean anchoriteReferral, boolean anchoriteCounsel, boolean circusDiscovered,
+			boolean carryingCircusWaybill) {
 		List<DialogueOption> options = new ArrayList<>();
 		if (canCompleteWovenVessel) {
 			options.add(new DialogueOption("hemomancy.dialogue.mnemonist.option.woven_vessel",
@@ -146,6 +157,11 @@ public final class HarbingerMnemonistDialogueTrees {
 		if (anchoriteReferral && !anchoriteCounsel) {
 			options.add(new DialogueOption("hemomancy.dialogue.mnemonist.option.anchorite_counsel",
 					"anchorite_counsel", EVENT_ANCHORITE_COUNSEL));
+		}
+		if (CircusIntroductionRules.introductionFor(degree, circusDiscovered)
+				!= CircusIntroductionRules.Introduction.HIDDEN) {
+			options.add(new DialogueOption("hemomancy.dialogue.mnemonist.option.ask_about_circus",
+					"circus", null));
 		}
 		if (canClaimStarter) {
 			options.add(new DialogueOption("hemomancy.dialogue.mnemonist.option.choose_starter", "starter_choice", null));
@@ -169,12 +185,28 @@ public final class HarbingerMnemonistDialogueTrees {
 						"hemomancy.mnemonist.anchorite_counsel.line2"), List.of(
 						new DialogueOption("hemomancy.dialogue.mnemonist.option.leave", null, null))))
 				.addNode(morphlingPuppetInterferenceNode())
+				.addNode(circusNode(degree, circusDiscovered, carryingCircusWaybill))
 				.addNode(chamberNode())
 				.addNode(wovenVesselNode())
 				.addNode(starterChoiceNode())
 				.addNode(recruitOfferNode())
 				.addNode(itemHintNode())
 				.build();
+	}
+
+	private static DialogueNode circusNode(int degree, boolean discovered, boolean carryingWaybill) {
+		List<String> lines = discovered ? List.of(
+				"hemomancy.mnemonist.circus.discovered.line1",
+				"hemomancy.mnemonist.circus.discovered.line2") : List.of(
+				"hemomancy.mnemonist.circus.undiscovered.line1",
+				"hemomancy.mnemonist.circus.undiscovered.line2");
+		List<DialogueOption> options = new ArrayList<>();
+		if (CircusIntroductionRules.canRequestWaybill(degree, carryingWaybill)) {
+			options.add(new DialogueOption("hemomancy.dialogue.mnemonist.option.take_circus_waybill",
+					null, EVENT_CIRCUS_WAYBILL));
+		}
+		options.add(new DialogueOption("hemomancy.dialogue.mnemonist.option.leave", null, null));
+		return new DialogueNode("circus", lines, options);
 	}
 
 	private static void addRecruitmentOption(List<DialogueOption> options, boolean hasBloodline,

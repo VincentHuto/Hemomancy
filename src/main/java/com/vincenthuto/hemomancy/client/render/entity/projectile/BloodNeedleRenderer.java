@@ -16,7 +16,7 @@ import org.joml.Matrix3f;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 
-public class BloodNeedleRenderer extends EntityRenderer<BloodNeedleEntity> {
+public class BloodNeedleRenderer<T extends BloodNeedleEntity> extends EntityRenderer<T> {
 
 	protected static final ResourceLocation TEXTURE = Hemomancy.rloc("textures/entity/blood_needle/model_blood_needle.png");
 
@@ -34,12 +34,12 @@ public class BloodNeedleRenderer extends EntityRenderer<BloodNeedleEntity> {
 	}
 
 	@Override
-	public ResourceLocation getTextureLocation(BloodNeedleEntity entity) {
+	public ResourceLocation getTextureLocation(T entity) {
 		return TEXTURE;
 	}
 
 	@Override
-	public void render(BloodNeedleEntity entityIn, float entityYaw, float partialTicks, PoseStack matrixStackIn,
+	public void render(T entityIn, float entityYaw, float partialTicks, PoseStack matrixStackIn,
 			MultiBufferSource bufferIn, int packedLightIn) {
 		matrixStackIn.pushPose();
 		matrixStackIn.mulPose(

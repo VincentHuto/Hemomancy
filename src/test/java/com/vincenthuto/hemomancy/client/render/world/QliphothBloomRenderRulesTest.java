@@ -13,4 +13,10 @@ class QliphothBloomRenderRulesTest {
         assertTrue(QliphothBloomRenderRules.shouldRender(256.0 * 256.0, true));
         assertFalse(QliphothBloomRenderRules.shouldRender(256.0 * 256.0 + 1.0, true));
     }
+
+    @Test
+    void onlyNearbyBloomsRenderDynamicEffects() {
+        assertTrue(QliphothBloomRenderRules.shouldRenderDynamicEffects(48.0 * 48.0));
+        assertFalse(QliphothBloomRenderRules.shouldRenderDynamicEffects(48.0 * 48.0 + 1.0));
+    }
 }

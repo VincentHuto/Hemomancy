@@ -173,6 +173,8 @@ public class ItemInit {
             () -> new MasonsRespiteMapItem(new Item.Properties().fireResistant()));
     public static final DeferredHolder<Item, Item> covenant_waybill = BASEITEMS.register("covenant_waybill",
             () -> new CovenantWaybillItem(new Item.Properties().fireResistant()));
+    public static final DeferredHolder<Item, Item> circus_waybill = BASEITEMS.register("circus_waybill",
+            () -> new CircusWaybillItem(new Item.Properties().fireResistant()));
     public static final DeferredHolder<Item, Item> veins_pattern = BASEITEMS.register("veins_pattern",
             () -> new BannerPatternItem(
                     TagKey.create(Registries.BANNER_PATTERN, Hemomancy.rloc("pattern_item/hemomancy_veins")),
@@ -1156,6 +1158,9 @@ public class ItemInit {
     public static final DeferredHolder<Item, DeferredSpawnEggItem> spawn_egg_verdigris_moth = SPAWNEGGS.register(
             "spawn_egg_verdigris_moth",
             () -> new DeferredSpawnEggItem(EntityInit.verdigris_moth, 0xBEE8A8, 0xB04475, new Item.Properties()));
+    public static final DeferredHolder<Item, DeferredSpawnEggItem> spawn_egg_luminal_cicada = SPAWNEGGS.register(
+            "spawn_egg_luminal_cicada",
+            () -> new DeferredSpawnEggItem(EntityInit.luminal_cicada, 0x312B24, 0xFFF49A, new Item.Properties()));
     public static final DeferredHolder<Item, DeferredSpawnEggItem> spawn_egg_venom_rib_centipede = SPAWNEGGS.register(
             "spawn_egg_venom_rib_centipede",
             () -> new DeferredSpawnEggItem(EntityInit.venom_rib_centipede, 0x2A1412, 0x8E1F2B,

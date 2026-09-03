@@ -1995,7 +1995,15 @@ Current summon definitions:
 
 `scarlet_mummer` draws hostile attention and survives through evasive movement rather than adding another damage role. `sanguine_hound` is a fast pursuit body that ruptures below 40% health into three to five short-lived Blood Curs. Those curs inherit pursuit ownership only: they consume no Crossbar capacity or upkeep, do not persist, and grant no refund when they expire.
 
-### 17.1 Rogue Hemomancer Wills
+### 17.1 Circus Integration Boundary
+
+The Circus is the planned specialist wrapper around the existing puppetry system. It reuses the Marionette Crossbar, Puppeteer's Spindle, summon definitions, Cardinal Ordeals, command radial, Living Staff forms, and shared summon lifecycle. It must not introduce a second summon registry, ownership capability, upkeep currency, command surface, or progression ladder.
+
+The first implementation slice uses the six current artificial bodies and treats `scarlet_mummer` as the attention-control anchor. Scarlet Serpents and Prism Cuttles remain natural animals whose warning displays and chromatophores inform Circus presentation; they are not faction agents or additional artificial summon definitions.
+
+The physical Circus pavilion is a world-generated location rather than a runtime event that can overwrite an established player build. Its placement must reject wet, obstructed, or sharply uneven footprints. Layered presentation is viewer-specific, but collision, hostile entities, rewards, discovery, and progression remain server-authoritative.
+
+### 17.2 Rogue Hemomancer Wills
 
 Rogue Hemomancer Wills are late-Harbinger ambushers keyed to the player's blood tendency rather than ordinary biome spawns. The system uses one data-driven `will` entity with two origins: **Broken** Wills use fixed tier stats forever, while **Sent** Wills snapshot scaled stats from the target player when spawned. Wills cast their curated school kits through `WillManipulationCaster`, `ManipulationCastContext`, and the `EntityCastableManipulation` path, so their combat uses mob-safe versions of the same projectile, fire, ice, light, death, and shadow manipulation fantasies the player uses. `DrudgeAction` and `MobManipCaster` remain Drudge infrastructure only.
 

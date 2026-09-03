@@ -21,6 +21,7 @@ import com.vincenthuto.hemomancy.common.capability.player.unstained.UnstainedSta
 import com.vincenthuto.hemomancy.common.entity.npc.harbinger.HarbingerAlchemistEntity;
 import com.vincenthuto.hemomancy.common.entity.npc.harbinger.HarbingerArtificerEntity;
 import com.vincenthuto.hemomancy.common.entity.npc.harbinger.HarbingerHermitEntity;
+import com.vincenthuto.hemomancy.common.entity.npc.harbinger.HarbingerMnemonistEntity;
 import com.vincenthuto.hemomancy.common.entity.npc.unstained.UnstainedScoutEntity;
 import com.vincenthuto.hemomancy.common.entity.summon.MorphlingPolypLayer;
 import com.vincenthuto.hemomancy.common.event.HarbingerAdvancementGranter;
@@ -108,6 +109,8 @@ public class DialogueEventHandler {
 		if (event.getEventId().startsWith("artificer_") && !isValidArtificerDialogueSource(event)) return;
 		if (handleArtificerLegacyBranchChoice(player, event.getEventId())) return;
 		switch (event.getEventId()) {
+			case HarbingerMnemonistDialogueTrees.EVENT_CIRCUS_WAYBILL ->
+					handleMnemonistCircusWaybill(player, event.getEntityId());
 			case HarbingerMnemonistDialogueTrees.EVENT_RELIQUARY_TAUGHT ->
 					MnemonicReliquaryProgression.teach(player);
 			case HarbingerCicatrixAnchoriteDialogueTrees.EVENT_DIAGNOSIS -> handleAnchoriteDiagnosis(player);
@@ -405,6 +408,15 @@ public class DialogueEventHandler {
 				// Unknown event — log for development
 			}
 		}
+	}
+
+	private static void handleMnemonistCircusWaybill(ServerPlayer player, int entityId) {
+		if (!(player.level().getEntity(entityId) instanceof HarbingerMnemonistEntity)
+				|| HemoCapabilityAccess.getPlayerDegreeNumber(player) < CircusIntroductionRules.MINIMUM_DEGREE
+				|| player.getInventory().contains(new ItemStack(ItemInit.circus_waybill.get()))) return;
+		giveOrDropAtEntity(player, entityId, new ItemStack(ItemInit.circus_waybill.get()));
+		player.displayClientMessage(Component.translatable(
+				"hemomancy.dialogue.event.mnemonist_circus_waybill").withStyle(ChatFormatting.DARK_RED), false);
 	}
 
 	private static void handleVicarBloodShotting(ServerPlayer player) {

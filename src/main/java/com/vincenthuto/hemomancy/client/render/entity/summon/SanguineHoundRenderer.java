@@ -1,6 +1,7 @@
 package com.vincenthuto.hemomancy.client.render.entity.summon;
 
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.client.model.entity.summon.SanguineHoundModel;
 import com.vincenthuto.hemomancy.common.entity.summon.SanguineHoundEntity;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -9,13 +10,16 @@ import net.minecraft.client.renderer.entity.MobRenderer;
 import net.minecraft.resources.ResourceLocation;
 
 public class SanguineHoundRenderer extends MobRenderer<SanguineHoundEntity, SanguineHoundModel> {
+	private static final ResourceLocation TEXTURE = Hemomancy.rloc(
+			"textures/entity/puppeteer_summon/sanguine_hound.png");
+
 	public SanguineHoundRenderer(EntityRendererProvider.Context context) {
 		super(context, new SanguineHoundModel(context.bakeLayer(SanguineHoundModel.LAYER_LOCATION)), 0.55F);
 	}
 
 	@Override
 	public ResourceLocation getTextureLocation(SanguineHoundEntity entity) {
-		return entity.getTexture();
+		return TEXTURE;
 	}
 
 	@Override

@@ -61,6 +61,9 @@ class QliphothBloomBlackHoleResourceTest {
 
         assertTrue(renderer.contains("copyMainRenderTarget("));
         assertTrue(renderer.contains("frameCopyTarget.getColorTextureId()"));
+        assertTrue(renderer.contains("SCENE_COPY_SCALE = 2"));
+        assertTrue(renderer.contains("mainTarget.width / SCENE_COPY_SCALE"));
+        assertTrue(renderer.contains("mainTarget.height / SCENE_COPY_SCALE"));
         assertTrue(renderer.contains("1.72f, 1.72f, true, true"));
         assertTrue(renderTypes.contains("RenderSystem.setShaderTexture(0, sceneTextureId)"));
         assertTrue(renderTypes.contains("setUniform(shader, \"TreeApex\", treeApex ? 1.0f : 0.0f);"));

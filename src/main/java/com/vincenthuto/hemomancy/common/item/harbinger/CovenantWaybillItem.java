@@ -7,6 +7,7 @@ import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.InteractionHand;
@@ -25,16 +26,25 @@ import java.util.List;
 
 /** A post-initiation lodestone that responds when aimed toward a Harbinger Outpost. */
 public class CovenantWaybillItem extends Item {
-	private static final TagKey<Structure> TARGETS = TagKey.create(
-			Registries.STRUCTURE, Hemomancy.rloc("covenant_waybill_targets"));
-	private static final int SEARCH_RADIUS_CHUNKS = 160;
 	private static final String TARGET_DIMENSION = "LodestoneTargetDimension";
 	private static final String TARGET_X = "LodestoneTargetX";
 	private static final String TARGET_Z = "LodestoneTargetZ";
 	private static final String CHECKED_DIMENSION = "LodestoneCheckedDimension";
+	private final TagKey<Structure> targets;
+	private final String translationKey;
+	private final int searchRadiusChunks;
 
 	public CovenantWaybillItem(Properties properties) {
+		this(properties, Hemomancy.rloc("covenant_waybill_targets"),
+				"item.hemomancy.covenant_waybill", 160);
+	}
+
+	protected CovenantWaybillItem(Properties properties, ResourceLocation targetTag,
+			String translationKey, int searchRadiusChunks) {
 		super(properties.stacksTo(1).rarity(Rarity.UNCOMMON));
+		this.targets = TagKey.create(Registries.STRUCTURE, targetTag);
+		this.translationKey = translationKey;
+		this.searchRadiusChunks = searchRadiusChunks;
 	}
 
 	@Override
@@ -56,9 +66,9 @@ public class CovenantWaybillItem extends Item {
 		}
 	}
 
-	private static void attune(ItemStack stack, ServerLevel level, Player player, boolean showFeedback) {
+	private void attune(ItemStack stack, ServerLevel level, Player player, boolean showFeedback) {
 		BlockPos target = level.findNearestMapStructure(
-				TARGETS, player.blockPosition(), SEARCH_RADIUS_CHUNKS, false);
+				targets, player.blockPosition(), searchRadiusChunks, false);
 		CompoundTag tag = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
 		tag.putString(CHECKED_DIMENSION, level.dimension().location().toString());
 		if (target == null) {
@@ -67,7 +77,7 @@ public class CovenantWaybillItem extends Item {
 			tag.remove(TARGET_Z);
 			stack.set(DataComponents.CUSTOM_DATA, CustomData.of(tag));
 			if (showFeedback) {
-				player.displayClientMessage(Component.translatable("item.hemomancy.covenant_waybill.not_found")
+				player.displayClientMessage(Component.translatable(translationKey + ".not_found")
 						.withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC), false);
 			}
 			return;
@@ -78,7 +88,7 @@ public class CovenantWaybillItem extends Item {
 		tag.putInt(TARGET_Z, target.getZ());
 		stack.set(DataComponents.CUSTOM_DATA, CustomData.of(tag));
 		if (showFeedback) {
-			player.displayClientMessage(Component.translatable("item.hemomancy.covenant_waybill.attuned")
+			player.displayClientMessage(Component.translatable(translationKey + ".attuned")
 					.withStyle(ChatFormatting.DARK_RED), false);
 		}
 	}
@@ -98,9 +108,9 @@ public class CovenantWaybillItem extends Item {
 	@Override
 	public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
 		super.appendHoverText(stack, context, tooltip, flag);
-		tooltip.add(Component.translatable("item.hemomancy.covenant_waybill.tooltip")
+		tooltip.add(Component.translatable(translationKey + ".tooltip")
 				.withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC));
-		tooltip.add(Component.translatable("item.hemomancy.covenant_waybill.tooltip.use")
+		tooltip.add(Component.translatable(translationKey + ".tooltip.use")
 				.withStyle(ChatFormatting.DARK_GRAY));
 	}
 
