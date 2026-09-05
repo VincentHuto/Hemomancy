@@ -15,11 +15,14 @@ public final class CircusKnifeThrowerModel extends HumanoidModel<CircusKnifeThro
 			Hemomancy.rloc("circus_knife_thrower"), "main");
 	private final ModelPart knifeFan;
 	private final ModelPart sideCowl;
+	private final ModelPart[] jugglingKnives;
 
 	public CircusKnifeThrowerModel(ModelPart root) {
 		super(root);
 		knifeFan = body.getChild("knife_fan");
 		sideCowl = head.getChild("side_cowl");
+		jugglingKnives = new ModelPart[] { root.getChild("juggle_knife_0"),
+				root.getChild("juggle_knife_1"), root.getChild("juggle_knife_2") };
 	}
 
 	public static LayerDefinition createBodyLayer() {
@@ -67,7 +70,15 @@ public final class CircusKnifeThrowerModel extends HumanoidModel<CircusKnifeThro
 				.texOffs(16, 42).mirror().addBox(-2.0F, 6.0F, -2.0F, 4.0F, 6.0F, 4.0F, new CubeDeformation(-0.08F))
 				.texOffs(48, 32).mirror().addBox(-2.0F, 0.0F, -2.0F, 4.0F, 6.0F, 4.0F, new CubeDeformation(0.3F)),
 				PartPose.offset(1.9F, 12.0F, 0.0F));
+		root.addOrReplaceChild("juggle_knife_0", jugglingKnife(), PartPose.ZERO);
+		root.addOrReplaceChild("juggle_knife_1", jugglingKnife(), PartPose.ZERO);
+		root.addOrReplaceChild("juggle_knife_2", jugglingKnife(), PartPose.ZERO);
 		return LayerDefinition.create(mesh, 128, 128);
+	}
+
+	private static CubeListBuilder jugglingKnife() {
+		return CubeListBuilder.create().texOffs(96, 24)
+				.addBox(-0.4F, -3.0F, -0.3F, 0.8F, 6.0F, 0.6F);
 	}
 
 	@Override
@@ -76,6 +87,16 @@ public final class CircusKnifeThrowerModel extends HumanoidModel<CircusKnifeThro
 		super.setupAnim(entity, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch);
 		knifeFan.yRot = Mth.sin(ageInTicks * 0.07F) * 0.08F;
 		sideCowl.zRot = 0.48F + Mth.sin(ageInTicks * 0.1F) * 0.07F;
+		for (int i = 0; i < jugglingKnives.length; i++) {
+			ModelPart knife = jugglingKnives[i];
+			knife.visible = entity.isJuggling();
+			if (!knife.visible) continue;
+			float cycle = Mth.frac(ageInTicks * 0.08F + i / 3.0F);
+			knife.x = Mth.lerp(cycle, -6.0F, 6.0F);
+			knife.y = -1.0F - 36.0F * cycle * (1.0F - cycle);
+			knife.z = -4.5F;
+			knife.zRot = cycle * Mth.TWO_PI;
+		}
 		if (entity.getActState() == ActState.PERFORM || entity.getActState() == ActState.ALERT) {
 			rightArm.xRot = -1.55F + Mth.sin(ageInTicks * 0.32F) * 0.35F;
 			leftArm.xRot = -0.45F;

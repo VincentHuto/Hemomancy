@@ -6,6 +6,7 @@ public final class JourneyRoute {
 	public static final String KEY = "hemomancy.dev_test.journey.route";
 	public static final String HARBINGER = "harbinger";
 	public static final String UNSTAINED = "unstained";
+	public static final String CIRCUS = "circus";
 
 	private JourneyRoute() { }
 

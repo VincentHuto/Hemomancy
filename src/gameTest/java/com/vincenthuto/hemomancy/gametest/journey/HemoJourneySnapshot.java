@@ -10,6 +10,7 @@ import com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.Initi
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.livingstaff.LivingStaffBondHelper;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.livingstaff.LivingStaffProgress;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.KnownManipulations;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.summon.KnownSummons;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.musclememory.MuscleMemoryEvents;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.musclememory.MuscleMemoryState;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.scar.ScarsContainer;
@@ -74,6 +75,7 @@ public final class HemoJourneySnapshot {
 	private static final String SKILL_PROGRESS = "skill_progress";
 	private static final String LIBER_KNOWLEDGE = "liber_knowledge";
 	private static final String KNOWN_MANIPULATIONS = "known_manipulations";
+	private static final String KNOWN_SUMMONS = "known_summons";
 	private static final String SCAR_STATE = "scar_state";
 	private static final String UNSTAINED_PROGRESS = "unstained_progress";
 	private static final String KNOWN_STILL_ARTS = "known_still_arts";
@@ -259,6 +261,8 @@ public final class HemoJourneySnapshot {
 			return HemoJourneyResult.fail(currentStage(data), "Known manipulation snapshot failed: unsupported implementation.");
 		}
 		snapshot.put(KNOWN_MANIPULATIONS, HemoJourneyManipulationState.capture(knownManipulations, player.registryAccess()));
+		snapshot.put(KNOWN_SUMMONS, player.getData(HemoAttachmentTypes.KNOWN_SUMMONS)
+				.serializeNBT(player.registryAccess()));
 		if (!(HemoCapabilityAccess.requireScarState(player) instanceof ScarsContainer scars)) {
 			return HemoJourneyResult.fail(currentStage(data), "Scar state snapshot failed: unsupported implementation.");
 		}
@@ -335,6 +339,7 @@ public final class HemoJourneySnapshot {
 		var emptySkills = new com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillProgress();
 		var emptyKnowledge = new LiberKnowledge();
 		var emptyManipulations = new KnownManipulations();
+		var emptySummons = new KnownSummons();
 		var emptyScars = new ScarsContainer();
 		var emptyUnstained = new UnstainedProgress();
 		var emptyStillArts = new KnownStillArts();
@@ -350,6 +355,7 @@ public final class HemoJourneySnapshot {
 				resetAdvancements, emptySkills.serializeNBT(player.registryAccess()),
 				emptyKnowledge.serializeNBT(player.registryAccess()),
 				HemoJourneyManipulationState.capture(emptyManipulations, player.registryAccess()),
+				emptySummons.serializeNBT(player.registryAccess()),
 				emptyScars.serializeNBT(player.registryAccess()), emptyUnstained.serializeNBT(player.registryAccess()),
 				emptyStillArts.serializeNBT(player.registryAccess()),
 				emptyMuscleMemory.serializeNBT(player.registryAccess()),
@@ -402,6 +408,7 @@ public final class HemoJourneySnapshot {
 				|| !snapshot.contains(SKILL_PROGRESS, Tag.TAG_COMPOUND)
 				|| !snapshot.contains(LIBER_KNOWLEDGE, Tag.TAG_COMPOUND)
 				|| !snapshot.contains(KNOWN_MANIPULATIONS, Tag.TAG_LIST)
+				|| !snapshot.contains(KNOWN_SUMMONS, Tag.TAG_COMPOUND)
 				|| !snapshot.contains(SCAR_STATE, Tag.TAG_COMPOUND)
 				|| !snapshot.contains(UNSTAINED_PROGRESS, Tag.TAG_COMPOUND)
 				|| !snapshot.contains(KNOWN_STILL_ARTS, Tag.TAG_COMPOUND)
@@ -426,6 +433,8 @@ public final class HemoJourneySnapshot {
 		if (!validateLiberKnowledgeSchema(player, knowledgeTag)) return PreflightResult.fail("Liber knowledge restore failed: malformed schema.");
 		ListTag manipulationTag = snapshot.getList(KNOWN_MANIPULATIONS, Tag.TAG_COMPOUND);
 		if (!validateKnownManipulationsSchema(player, manipulationTag)) return PreflightResult.fail("Known manipulation restore failed: malformed schema.");
+		CompoundTag summonsTag = snapshot.getCompound(KNOWN_SUMMONS);
+		if (!validateKnownSummonsSchema(player, summonsTag)) return PreflightResult.fail("Known summons restore failed: malformed schema.");
 		CompoundTag scarTag = snapshot.getCompound(SCAR_STATE);
 		if (!validateScarStateSchema(player, scarTag)) return PreflightResult.fail("Scar state restore failed: malformed schema.");
 		CompoundTag unstainedTag = snapshot.getCompound(UNSTAINED_PROGRESS);
@@ -471,7 +480,7 @@ public final class HemoJourneySnapshot {
 		if (!snapshot.contains(CURRENT_STAGE, Tag.TAG_STRING) || !isKnownStage(snapshot.getString(CURRENT_STAGE))) return PreflightResult.fail("Stage restore failed: saved stage is missing or invalid.");
 		return PreflightResult.ok(new ParsedState(snapshot.getBoolean(BLOOD_ACTIVE), current, max, degree,
 				snapshot.getCompound(DEGREE_STATE).copy(), snapshot.getCompound(BLOOD_TENDENCY).copy(),
-				inventory, advancements, skillTag.copy(), knowledgeTag.copy(), manipulationTag.copy(), scarTag.copy(),
+				inventory, advancements, skillTag.copy(), knowledgeTag.copy(), manipulationTag.copy(), summonsTag.copy(), scarTag.copy(),
 				unstainedTag.copy(), stillArtsTag.copy(), muscleMemoryTag.copy(), livingStaffTag.copy(), vascularTag.copy(), recipeBookTag.copy(), bestiaryTag.copy(),
 				persistentDataTag.copy(), vasc, target,
 				stageById(snapshot.getString(CURRENT_STAGE))));
@@ -480,6 +489,7 @@ public final class HemoJourneySnapshot {
 	private static ParsedState captureLiveState(ServerPlayer player) {
 		if (!(HemoCapabilityAccess.requireLiberKnowledge(player) instanceof LiberKnowledge knowledge)) throw new IllegalStateException("unsupported Liber knowledge implementation");
 		if (!(HemoCapabilityAccess.requireKnownManipulations(player) instanceof KnownManipulations manipulations)) throw new IllegalStateException("unsupported known manipulation implementation");
+		KnownSummons summons = player.getData(HemoAttachmentTypes.KNOWN_SUMMONS);
 		if (!(HemoCapabilityAccess.requireScarState(player) instanceof ScarsContainer scars)) throw new IllegalStateException("unsupported scar state implementation");
 		if (!(HemoCapabilityAccess.requireUnstainedProgress(player) instanceof UnstainedProgress unstained)) throw new IllegalStateException("unsupported Unstained progress implementation");
 		if (!(HemoCapabilityAccess.requireKnownStillArts(player) instanceof KnownStillArts stillArts)) throw new IllegalStateException("unsupported Known Still Arts implementation");
@@ -499,6 +509,7 @@ public final class HemoJourneySnapshot {
 				player.getData(HemoAttachmentTypes.BLOOD_TENDENCY).serializeNBT(player.registryAccess()), inventory, advancements,
 				HemoCapabilityAccess.requireSkillProgress(player).serializeNBT(player.registryAccess()),
 				knowledge.serializeNBT(player.registryAccess()), HemoJourneyManipulationState.capture(manipulations, player.registryAccess()),
+				summons.serializeNBT(player.registryAccess()),
 				scars.serializeNBT(player.registryAccess()), unstained.serializeNBT(player.registryAccess()),
 				stillArts.serializeNBT(player.registryAccess()),
 				muscleMemory.serializeNBT(player.registryAccess()),
@@ -541,6 +552,8 @@ public final class HemoJourneySnapshot {
 		HemoCapabilityAccess.requireSkillProgress(player).deserializeNBT(player.registryAccess(), target.skillTag().copy());
 		knowledge.deserializeNBT(player.registryAccess(), target.knowledgeTag().copy());
 		HemoJourneyManipulationState.apply(manipulations, target.manipulationTag(), player.registryAccess());
+		KnownSummons summons = player.getData(HemoAttachmentTypes.KNOWN_SUMMONS);
+		summons.deserializeNBT(player.registryAccess(), target.summonsTag().copy());
 		scars.deserializeNBT(player.registryAccess(), target.scarTag().copy());
 		unstained.deserializeNBT(player.registryAccess(), target.unstainedTag().copy());
 		stillArts.deserializeNBT(player.registryAccess(), target.stillArtsTag().copy());
@@ -558,6 +571,8 @@ public final class HemoJourneySnapshot {
 		bestiary.deserializeNBT(player.registryAccess(), target.bestiaryTag().copy());
 		CompoundTag persistentData = player.getPersistentData();
 		for (String key : JOURNEY_PERSISTENT_KEYS) persistentData.remove(key);
+		for (String key : List.copyOf(persistentData.getAllKeys()))
+			if (key.startsWith("hemomancy.circus_")) persistentData.remove(key);
 		for (String key : target.persistentDataTag().getAllKeys()) {
 			persistentData.put(key, target.persistentDataTag().get(key).copy());
 		}
@@ -567,6 +582,7 @@ public final class HemoJourneySnapshot {
 				manipulations.getKnownManips(), manipulations.getSelectedManip(), manipulations.getVeinList(),
 				manipulations.getSelectedVein(), manipulations.getActiveAvatarForm(), manipulations.getLastVeinMineStart(),
 				new ArrayList<>(manipulations.getEquippedManipNames()), new ArrayList<>(manipulations.getLoadouts())));
+		com.vincenthuto.hemomancy.common.capability.player.harbinger.summon.KnownSummonEvents.sync(player, summons);
 		PacketHandler.sendToPlayer(player, new PacketSyncScarsState(player, scars));
 		UnstainedProgressEvents.syncProgress(player, unstained);
 		KnownStillArtEvents.sync(player, stillArts);
@@ -608,6 +624,8 @@ public final class HemoJourneySnapshot {
 				|| !knowledge.serializeNBT(player.registryAccess()).equals(target.knowledgeTag())) return ApplyResult.fail("Liber knowledge postcondition mismatch");
 		if (!(HemoCapabilityAccess.requireKnownManipulations(player) instanceof KnownManipulations manipulations)
 				|| !HemoJourneyManipulationState.matches(manipulations, target.manipulationTag(), player.registryAccess())) return ApplyResult.fail("Known manipulation postcondition mismatch");
+		if (!player.getData(HemoAttachmentTypes.KNOWN_SUMMONS).serializeNBT(player.registryAccess())
+				.equals(target.summonsTag())) return ApplyResult.fail("Known summons postcondition mismatch");
 		if (!(HemoCapabilityAccess.requireScarState(player) instanceof ScarsContainer scars)
 				|| !scars.serializeNBT(player.registryAccess()).equals(target.scarTag())) return ApplyResult.fail("Scar state postcondition mismatch");
 		if (!(HemoCapabilityAccess.requireUnstainedProgress(player) instanceof UnstainedProgress unstained)
@@ -723,6 +741,16 @@ public final class HemoJourneySnapshot {
 		}
 	}
 
+	private static boolean validateKnownSummonsSchema(ServerPlayer player, CompoundTag tag) {
+		try {
+			KnownSummons temporary = new KnownSummons();
+			temporary.deserializeNBT(player.registryAccess(), tag.copy());
+			return temporary.serializeNBT(player.registryAccess()).equals(tag);
+		} catch (RuntimeException exception) {
+			return false;
+		}
+	}
+
 	private static boolean validateScarStateSchema(ServerPlayer player, CompoundTag tag) {
 		try {
 			ScarsContainer temporary = new ScarsContainer();
@@ -797,11 +825,13 @@ public final class HemoJourneySnapshot {
 		CompoundTag captured = new CompoundTag();
 		CompoundTag data = player.getPersistentData();
 		for (String key : JOURNEY_PERSISTENT_KEYS) if (data.contains(key)) captured.put(key, data.get(key).copy());
+		for (String key : data.getAllKeys()) if (key.startsWith("hemomancy.circus_")) captured.put(key, data.get(key).copy());
 		return captured;
 	}
 
 	private static boolean validatePersistentDataSchema(CompoundTag tag) {
 		for (String key : tag.getAllKeys()) {
+			if (key.startsWith("hemomancy.circus_")) continue;
 			if (!JOURNEY_PERSISTENT_KEYS.contains(key)
 					|| !tag.contains(key, Tag.TAG_BYTE) && !tag.contains(key, Tag.TAG_STRING)) return false;
 		}
@@ -874,7 +904,7 @@ public final class HemoJourneySnapshot {
 	private record ParsedState(boolean bloodActive, double bloodCurrent, double bloodMax, int degree,
 			CompoundTag degreeStateTag, CompoundTag bloodTendencyTag,
 			List<ItemStack> inventory, Map<ResourceLocation, Boolean> advancements, CompoundTag skillTag,
-			CompoundTag knowledgeTag, ListTag manipulationTag, CompoundTag scarTag, CompoundTag unstainedTag,
+			CompoundTag knowledgeTag, ListTag manipulationTag, CompoundTag summonsTag, CompoundTag scarTag, CompoundTag unstainedTag,
 			CompoundTag stillArtsTag,
 			CompoundTag muscleMemoryTag, CompoundTag livingStaffProgressTag, CompoundTag vascularSystemTag,
 			CompoundTag recipeBookTag, CompoundTag bestiaryTag,

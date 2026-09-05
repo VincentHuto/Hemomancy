@@ -28,6 +28,7 @@ public final class PuppeteerSummonFactory {
 			case PuppeteerSummonDefinitions.MARROW_SPITTER -> EntityInit.marrow_spitter.get().create(level);
 			case PuppeteerSummonDefinitions.GOREBOUND_HULK -> EntityInit.gorebound_hulk.get().create(level);
 			case PuppeteerSummonDefinitions.MNEMONIST_PUPPET -> EntityInit.mnemonist_puppet.get().create(level);
+			case PuppeteerSummonDefinitions.RINGMASTER_PATTERN -> EntityInit.mnemonist_puppet.get().create(level);
 			case PuppeteerSummonDefinitions.SCARLET_MUMMER -> EntityInit.scarlet_mummer.get().create(level);
 			case PuppeteerSummonDefinitions.SANGUINE_HOUND -> EntityInit.sanguine_hound.get().create(level);
 			default -> null;
@@ -57,6 +58,7 @@ public final class PuppeteerSummonFactory {
 			case PuppeteerSummonDefinitions.MARROW_SPITTER -> EntityInit.marrow_spitter.get().create(level);
 			case PuppeteerSummonDefinitions.GOREBOUND_HULK -> EntityInit.gorebound_hulk.get().create(level);
 			case PuppeteerSummonDefinitions.MNEMONIST_PUPPET -> EntityInit.mnemonist_puppet.get().create(level);
+			case PuppeteerSummonDefinitions.RINGMASTER_PATTERN -> EntityInit.mnemonist_puppet.get().create(level);
 			case PuppeteerSummonDefinitions.SCARLET_MUMMER -> EntityInit.scarlet_mummer.get().create(level);
 			case PuppeteerSummonDefinitions.SANGUINE_HOUND -> EntityInit.sanguine_hound.get().create(level);
 			default -> null;

@@ -1,12 +1,18 @@
 package com.vincenthuto.hemomancy.common.entity.mob.monster;
 
+import com.vincenthuto.hemomancy.common.entity.npc.circus.CircusCarouselEntity;
 import com.vincenthuto.hemomancy.common.init.SoundInit;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.syncher.EntityDataAccessor;
+import net.minecraft.network.syncher.EntityDataSerializers;
+import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.DifficultyInstance;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.Mob;
@@ -27,6 +33,8 @@ import net.minecraft.world.level.ServerLevelAccessor;
 import java.util.List;
 
 public class BloodDrunkPuppeteerEntity extends Monster {
+	private static final EntityDataAccessor<Integer> CAROUSEL_HORSE = SynchedEntityData.defineId(
+			BloodDrunkPuppeteerEntity.class, EntityDataSerializers.INT);
 
 	private boolean spawnedDolls = false;
 
@@ -40,6 +48,12 @@ public class BloodDrunkPuppeteerEntity extends Monster {
 
 	public BloodDrunkPuppeteerEntity(EntityType<? extends BloodDrunkPuppeteerEntity> type, Level worldIn) {
 		super(type, worldIn);
+	}
+
+	@Override
+	protected void defineSynchedData(SynchedEntityData.Builder builder) {
+		super.defineSynchedData(builder);
+		builder.define(CAROUSEL_HORSE, -1);
 	}
 
 	@Override
@@ -93,12 +107,41 @@ public class BloodDrunkPuppeteerEntity extends Monster {
 	public void addAdditionalSaveData(CompoundTag tag) {
 		super.addAdditionalSaveData(tag);
 		tag.putBoolean("SpawnedDolls", spawnedDolls);
+		if (getCarouselHorse() >= 0) tag.putInt("CarouselHorse", getCarouselHorse());
 	}
 
 	@Override
 	public void readAdditionalSaveData(CompoundTag tag) {
 		super.readAdditionalSaveData(tag);
 		spawnedDolls = tag.getBoolean("SpawnedDolls");
+		if (tag.contains("CarouselHorse")) bindToCarousel(tag.getInt("CarouselHorse"));
+	}
+
+	public void bindToCarousel(int horse) {
+		entityData.set(CAROUSEL_HORSE, Math.floorMod(horse, 3));
+		spawnedDolls = true;
+		setNoAi(true);
+		setSilent(true);
+		setInvulnerable(true);
+		setPersistenceRequired();
+	}
+
+	public int getCarouselHorse() {
+		return entityData.get(CAROUSEL_HORSE);
+	}
+
+	@Override
+	protected InteractionResult mobInteract(Player player, InteractionHand hand) {
+		if (hand == InteractionHand.MAIN_HAND && getVehicle() instanceof CircusCarouselEntity carousel) {
+			if (!level().isClientSide && !carousel.severCaptive(player, getCarouselHorse())) return InteractionResult.PASS;
+			return InteractionResult.sidedSuccess(level().isClientSide);
+		}
+		return super.mobInteract(player, hand);
+	}
+
+	@Override
+	protected boolean shouldDespawnInPeaceful() {
+		return getCarouselHorse() < 0;
 	}
 
 	public static boolean canSpawnHere(EntityType<? extends Monster> pType, ServerLevelAccessor pLevel,

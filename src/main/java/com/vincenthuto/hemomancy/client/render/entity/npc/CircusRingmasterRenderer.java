@@ -11,9 +11,9 @@ import net.minecraft.client.renderer.culling.Frustum;
 import net.minecraft.resources.ResourceLocation;
 
 public final class CircusRingmasterRenderer extends MobRenderer<CircusRingmasterEntity, CircusRingmasterModel> {
-	private static final ResourceLocation TEXTURE = Hemomancy.rloc("textures/entity/circus/ringmaster.png");
+	private static final ResourceLocation TEXTURE = Hemomancy.rloc("textures/entity/npc/harbinger/circus/ringmaster.png");
 	private static final RenderType GLOW = RenderType.eyes(
-			Hemomancy.rloc("textures/entity/circus/ringmaster_glow.png"));
+			Hemomancy.rloc("textures/entity/npc/harbinger/circus/ringmaster_glow.png"));
 
 	public CircusRingmasterRenderer(EntityRendererProvider.Context context) {
 		super(context, new CircusRingmasterModel(context.bakeLayer(CircusRingmasterModel.LAYER_LOCATION)), 0.45F);

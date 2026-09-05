@@ -15,6 +15,7 @@ import com.vincenthuto.hemomancy.common.network.capa.harbinger.visceral.Visceral
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.visceral.VisceralMirrorExtractPacket;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.visceral.VisceralMirrorUpdatePacket;
 import com.vincenthuto.hemomancy.common.network.capa.unstained.*;
+import com.vincenthuto.hemomancy.common.network.circus.PacketSyncCircusPerception;
 import com.vincenthuto.hemomancy.common.network.dialogue.DialogueOptionPacket;
 import com.vincenthuto.hemomancy.common.network.dialogue.DialogueTopicOpenedPacket;
 import com.vincenthuto.hemomancy.common.network.dialogue.OpenDialoguePacket;
@@ -85,6 +86,8 @@ public class PacketHandler {
                 PacketSyncFungalProjection.STREAM_CODEC, PacketSyncFungalProjection::handle);
 		net.playToClient(PacketSyncChamberVisit.TYPE,
 				PacketSyncChamberVisit.STREAM_CODEC, PacketSyncChamberVisit::handle);
+		net.playToClient(PacketSyncCircusPerception.TYPE,
+				PacketSyncCircusPerception.STREAM_CODEC, PacketSyncCircusPerception::handle);
         net.playToClient(PacketSyncChamberOfWill.TYPE,
                 PacketSyncChamberOfWill.STREAM_CODEC, PacketSyncChamberOfWill::handle);
         net.playToClient(PacketSyncVesperFightScene.TYPE,

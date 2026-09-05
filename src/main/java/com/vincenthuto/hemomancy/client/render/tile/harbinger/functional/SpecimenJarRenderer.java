@@ -86,12 +86,15 @@ public class SpecimenJarRenderer implements BlockEntityRenderer<SpecimenJarBlock
 	}
 
 	private static float longBodiedVisualLength(Entity entity) {
-		String path = entityPath(entity);
+		return longBodiedVisualLength(entityPath(entity), entity.getBbWidth(), entity.getBbHeight());
+	}
+
+	static float longBodiedVisualLength(String path, float width, float height) {
 		if (path.contains("centipede")) {
-			return Math.max(entity.getBbWidth() * 2.65F, entity.getBbHeight() * 6.0F);
+			return Math.max(width * 2.65F, height * 6.0F);
 		}
 		if (isLongBodiedPath(path)) {
-			return Math.max(entity.getBbWidth() * 1.9F, entity.getBbHeight() * 2.6F);
+			return Math.max(width * 1.9F, height * 2.6F);
 		}
 		return 0.0F;
 	}
@@ -109,15 +112,21 @@ public class SpecimenJarRenderer implements BlockEntityRenderer<SpecimenJarBlock
 
 	private static void applySpecimenVisualOffset(Entity entity, PoseStack poseStack) {
 		String path = entityPath(entity);
-		if (path.contains("centipede")) {
-			poseStack.translate(0.0D, 0.0D, -entity.getBbWidth() * 0.45D);
-		} else if (isLongBodiedPath(path)) {
-			poseStack.translate(0.0D, 0.0D, -entity.getBbWidth() * 0.15D);
+		poseStack.translate(0.0D, 0.0D, specimenVisualDepthOffset(path, entity.getBbWidth()));
+	}
+
+	static double specimenVisualDepthOffset(String path, float width) {
+		if (path.contains("prism_cuttle")) {
+			return width * 0.18D;
 		}
+		if (path.contains("centipede")) {
+			return -width * 0.45D;
+		}
+		return isLongBodiedPath(path) ? -width * 0.15D : 0.0D;
 	}
 
 	private static boolean isLongBodiedPath(String path) {
-		return path.contains("chthonian") || path.contains("serpent") || path.contains("snake")
+		return path.contains("prism_cuttle") || path.contains("chthonian") || path.contains("serpent") || path.contains("snake")
 				|| path.contains("worm") || path.contains("leech") || path.contains("borer");
 	}
 

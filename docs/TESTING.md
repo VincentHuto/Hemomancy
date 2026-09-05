@@ -16,7 +16,7 @@ From the project root on Windows:
 - `runGameTestServer` starts a headless NeoForge server, runs the registered progression scenarios, and exits non-zero if a required scenario fails.
 - `alphaCheck` runs both layers in order. Use this before an alpha build or whenever progression, crafting, quests, or rewards change.
 
-## Automatic Harbinger and Unstained journeys
+## Automatic Harbinger, Unstained, and Circus journeys
 
 Launch the isolated client below, create or open a disposable world, grant yourself operator permission, and run one of these development-only commands:
 
@@ -25,14 +25,34 @@ Launch the isolated client below, create or open a disposable world, grant yours
 /hemo test journey unstained run
 /hemo test journey unstained cure run
 /hemo test journey unstained novitiate run
+/hemo test journey circus run
+/hemo test journey circus succession run
+/hemo test journey circus liberation run
 /hemo test journey run_all
 ```
 
-`unstained run` is the cure alias. `run_all` executes Harbinger, Unstained cure, then Unstained novitiate. A server-tick runner prepares each existing fixture, invokes the same server gameplay hooks exercised by the fixture GameTests, and advances only after the authoritative journey check passes. It restores the captured player snapshot and removes journey-owned blocks, entities, drops, and temporary world state after each successful route.
+`unstained run` is the cure alias. `circus run` executes Succession and Liberation using separate pavilion fixtures. `run_all` executes Harbinger, Unstained cure, Unstained novitiate, Circus Succession, then Circus Liberation. A server-tick runner prepares each existing fixture, invokes the same server gameplay hooks exercised by the fixture GameTests, and advances only after the authoritative journey check passes. It restores the captured player snapshot—including Circus progress, known summons, known manipulations, and inventory—and removes journey-owned blocks, entities, drops, and temporary world state after each successful route.
 
 `/hemo test journey harbinger status` or `/hemo test journey unstained status` reports the route, checkpoint, automation state, and any latched failure. Reissuing the matching `run` resumes the current checkpoint. Exceptions and timeouts stop the runner without advancing; the snapshot and current fixture remain available for inspection. `/hemo test clear` cancels the runner, removes its fixtures, and restores the snapshot. Manual `start`, `next`, and `reset` commands stop automation before taking control.
 
 This automation validates server-side progression, stations, rites, dialogue events, observances, assignments, travel, ceremonies, item use, and pickup hooks. It does not validate mouse/key handling, dialogue or HUD rendering, animations, particles, sound, or other client visuals. Use the manual journey commands for those checks.
+
+## Manual Circus journeys
+
+Use the isolated journey client and an operator account:
+
+```text
+/hemo test journey circus succession start
+/hemo test journey circus liberation start
+/hemo test journey circus status
+/hemo test journey circus next
+/hemo test journey circus reset
+/hemo test clear
+```
+
+Each route builds a compact pavilion arena with the Ringmaster, carousel, and all four performers. The checkpoints cover generated-site discovery, all performer introductions, Attuned perception, the neutral attention act, explicit route choice, the remaining three Succession acts, both finale paths, carousel captives and anchors, Ringmaster completion, and route rewards. Fixtures accelerate passive acclimation and protect the operator with temporary resistance during automatic combat, but route choice, act startup, encounter phases, target rules, completion, and rewards still use their production server paths.
+
+The discovery checkpoint deliberately requires a real generated pavilion in manual mode: use the Scarlet Waybill or `/locate structure hemomancy:circus_pavilion`, enter it, then return and advance. Automatic mode marks that already-covered discovery hook because a compact fixture is not a registered worldgen structure. At the Attuned and reward checkpoints, pause automation with the matching manual route if you need to judge overlays, models, animation, particles, sound, Crossbar radial behavior, or Thread Ripper aiming. Those are client observations and cannot honestly be passed by headless automation.
 
 ## Manual Harbinger journey
 

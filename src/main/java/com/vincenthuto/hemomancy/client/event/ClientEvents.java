@@ -226,6 +226,7 @@ public class ClientEvents {
             FungalWhisperVignetteOverlay.instance.tick();
         }
 		ChamberVisitOverlay.tick();
+		CircusPerceptionOverlay.tick();
         if (WillPresenceOverlay.instance != null) {
             WillPresenceOverlay.instance.tick();
         }
@@ -561,6 +562,7 @@ public class ClientEvents {
 
     @SubscribeEvent
     public static void onClientPlayerLogin(net.neoforged.neoforge.client.event.ClientPlayerNetworkEvent.LoggingIn event) {
+        CircusPerceptionOverlay.clear();
         QliphothBloomClientData.clear();
         NpcProgressionMarkerClientState.clear();
     }
@@ -579,6 +581,7 @@ public class ClientEvents {
         QliphothBloomClientData.clear();
 		NpcProgressionMarkerClientState.clear();
 		CardinalRiteImpactClientEvents.clear();
+		CircusPerceptionOverlay.clear();
 		if (SanguineOmenOverlay.instance != null) SanguineOmenOverlay.instance.clear();
         MnemonicBlueprintRenderer.disconnect();
     }
@@ -608,6 +611,7 @@ public class ClientEvents {
     @SubscribeEvent
     public static void renderMorphicNectarScreenOverlay(RenderGuiEvent.Pre event) {
         MorphicNectarScreenOverlay.render(event.getGuiGraphics());
+		CircusPerceptionOverlay.render(event.getGuiGraphics());
     }
 
     @SubscribeEvent
@@ -640,6 +644,7 @@ public class ClientEvents {
         if (event.getStage() == RenderLevelStageEvent.Stage.AFTER_TRANSLUCENT_BLOCKS) {
             MnemonicBlueprintRenderer.render(event);
             float partialTick = event.getPartialTick().getGameTimeDeltaPartialTick(true);
+			CircusPerceptionOverlay.renderWorld(event.getPoseStack(), partialTick);
 			VesperFightFloorRenderer.renderFadingPerimeter(event);
 			VesperFightFloorRenderer.renderFissures(event.getPoseStack(), partialTick);
             CardinalRiteBoundaryRenderer.render(event.getPoseStack(), partialTick);
@@ -765,6 +770,8 @@ public class ClientEvents {
 			event.registerEntityRenderer(EntityInit.circus_knife.get(), CircusKnifeProjectileRenderer::new);
 			event.registerEntityRenderer(EntityInit.circus_carousel.get(), CircusCarouselRenderer::new);
 			event.registerEntityRenderer(EntityInit.circus_ringmaster.get(), CircusRingmasterRenderer::new);
+			event.registerEntityRenderer(EntityInit.peacock_spider.get(), PeacockSpiderRenderer::new);
+			event.registerEntityRenderer(EntityInit.vampire_bat.get(), VampireBatRenderer::new);
             event.registerEntityRenderer(EntityInit.blood_needle.get(), BloodNeedleRenderer::new);
             event.registerEntityRenderer(EntityInit.blood_shot.get(), BloodShotRenderer::new);
             event.registerEntityRenderer(EntityInit.blood_bullet.get(), BloodBulletRenderer::new);

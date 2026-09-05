@@ -73,6 +73,8 @@ final class CircusPavilionTemplate {
 		}
 		place(blocks, 12, 1, 3, "minecraft:bone_block");
 		place(blocks, 20, 1, 3, "minecraft:bone_block");
+		place(blocks, new BlockPlacement(10, 1, 24, "hemomancy:specimen_jar", "hemomancy:prism_cuttle"));
+		place(blocks, new BlockPlacement(22, 1, 24, "hemomancy:specimen_jar", "hemomancy:prism_cuttle"));
 		place(blocks, 23, 2, 24, "minecraft:target");
 		for (int y = 6; y <= 10; y++) {
 			place(blocks, 20, y, 12, "minecraft:chain");
@@ -98,10 +100,14 @@ final class CircusPavilionTemplate {
 	}
 
 	private static void place(Map<Position, BlockPlacement> blocks, int x, int y, int z, String name) {
-		blocks.put(new Position(x, y, z), new BlockPlacement(x, y, z, name));
+		place(blocks, new BlockPlacement(x, y, z, name, null));
 	}
 
-	record BlockPlacement(int x, int y, int z, String name) {
+	private static void place(Map<Position, BlockPlacement> blocks, BlockPlacement placement) {
+		blocks.put(new Position(placement.x(), placement.y(), placement.z()), placement);
+	}
+
+	record BlockPlacement(int x, int y, int z, String name, String specimenId) {
 	}
 
 	record PerformerPlacement(String entityId, double x, double y, double z) {

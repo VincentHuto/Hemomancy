@@ -15,6 +15,7 @@ import com.vincenthuto.hemomancy.common.summon.PuppeteerCommandMode;
 import com.vincenthuto.hemomancy.common.summon.PuppeteerSummonDefinition;
 import com.vincenthuto.hemomancy.common.summon.PuppeteerSummonDefinitions;
 import com.vincenthuto.hemomancy.common.summon.PuppeteerSummonRules;
+import com.vincenthuto.hemomancy.common.summon.RingmasterConductorRules;
 import com.vincenthuto.hemomancy.common.worldgen.FungalGardenTravelHelper;
 import com.vincenthuto.hemomancy.config.HemoServerConfig;
 import net.minecraft.core.particles.ParticleTypes;
@@ -46,6 +47,7 @@ public final class BoundSummonBehavior {
 	private static final String TAG_OWNER_SESSION = "HemomancyOwnerSession";
 	private static final String TAG_BOUND_AT = "HemomancyBoundAtGameTime";
 	private static final String TAG_FOCUS_TARGET = "HemomancyFocusTarget";
+	private static final String TAG_COMMAND_SILENCED_UNTIL = "HemomancyCommandSilencedUntil";
 	private static final String PLAYER_TAG_OWNER_SESSION = "HemomancyPuppeteerSession";
 	private static final ResourceLocation HIGH_STRUNG_SPEED = Hemomancy.rloc("high_strung_speed");
 	private static final ResourceLocation HIGH_STRUNG_FLIGHT = Hemomancy.rloc("high_strung_flight");
@@ -260,7 +262,19 @@ public final class BoundSummonBehavior {
 			MarionetteCrossbarItem.getGuardPosition(equippedCrossbar).ifPresent(anchor ->
 					mob.getNavigation().moveTo(anchor.getX() + 0.5, anchor.getY(), anchor.getZ() + 0.5, 1.0));
 		}
+		if (persistentData.getLong(TAG_COMMAND_SILENCED_UNTIL) > gameTime) {
+			mob.setTarget(null);
+			mob.getNavigation().stop();
+		}
 		return true;
+	}
+
+	public static void silenceCommands(Mob mob, int ticks) {
+		if (mob != null && ticks > 0) {
+			mob.getPersistentData().putLong(TAG_COMMAND_SILENCED_UNTIL, mob.level().getGameTime() + ticks);
+			mob.setTarget(null);
+			mob.getNavigation().stop();
+		}
 	}
 
 	public static void setFocusedTarget(Mob mob, LivingEntity target) {
@@ -371,8 +385,26 @@ public final class BoundSummonBehavior {
 	}
 
 	public static int totalActiveCap(ServerPlayer owner) {
-		return PuppeteerSummonRules.activeSummonCap(SkillPointHelper.getPuppetSkeinLevel(owner))
+		boolean conductor = MarionetteCrossbarItem.activeSummonsForOwner(owner).stream()
+				.anyMatch(BoundSummonBehavior::isRingmasterConductor);
+		return RingmasterConductorRules.activeCap(
+				PuppeteerSummonRules.activeSummonCap(SkillPointHelper.getPuppetSkeinLevel(owner)), conductor)
 				+ claimedWillBonusCap(owner);
+	}
+
+	public static boolean isRingmasterConductor(Mob mob) {
+		return mob instanceof BoundPuppeteerSummon bound
+				&& PuppeteerSummonDefinitions.RINGMASTER_PATTERN.equals(bound.hemomancy$getSummonName());
+	}
+
+	public static boolean sharesOwnerSession(Mob conductor, Mob summon) {
+		if (!(conductor instanceof BoundPuppeteerSummon a) || !(summon instanceof BoundPuppeteerSummon b)) return false;
+		CompoundTag first = conductor.getPersistentData();
+		CompoundTag second = summon.getPersistentData();
+		return first.hasUUID(TAG_OWNER_SESSION) && second.hasUUID(TAG_OWNER_SESSION)
+				&& RingmasterConductorRules.canRelay(a.hemomancy$getOwnerUUID(), b.hemomancy$getOwnerUUID(),
+						first.getUUID(TAG_OWNER_SESSION), second.getUUID(TAG_OWNER_SESSION),
+						conductor.distanceToSqr(summon));
 	}
 
 	public static boolean isClaimedWill(Mob mob) {
@@ -403,7 +435,10 @@ public final class BoundSummonBehavior {
 	}
 
 	private static boolean reconcileLoadedActiveCap(Mob candidate, ServerPlayer owner) {
-		int baseCap = PuppeteerSummonRules.activeSummonCap(SkillPointHelper.getPuppetSkeinLevel(owner));
+		int baseCap = RingmasterConductorRules.activeCap(
+				PuppeteerSummonRules.activeSummonCap(SkillPointHelper.getPuppetSkeinLevel(owner)),
+				MarionetteCrossbarItem.activeSummonsForOwner(owner).stream()
+						.anyMatch(BoundSummonBehavior::isRingmasterConductor));
 		int claimedBonusCap = claimedWillBonusCap(owner);
 		List<Mob> loaded = new ArrayList<>(MarionetteCrossbarItem.activeSummonsForOwner(owner));
 		loaded.removeIf(mob -> mob.level() != owner.level() || !ownerSessionMatches(mob, owner));

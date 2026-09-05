@@ -22,6 +22,7 @@ import com.vincenthuto.hemomancy.common.entity.npc.harbinger.HarbingerAlchemistE
 import com.vincenthuto.hemomancy.common.entity.npc.harbinger.HarbingerArtificerEntity;
 import com.vincenthuto.hemomancy.common.entity.npc.harbinger.HarbingerHermitEntity;
 import com.vincenthuto.hemomancy.common.entity.npc.harbinger.HarbingerMnemonistEntity;
+import com.vincenthuto.hemomancy.common.entity.npc.circus.CircusRingmasterEntity;
 import com.vincenthuto.hemomancy.common.entity.npc.unstained.UnstainedScoutEntity;
 import com.vincenthuto.hemomancy.common.entity.summon.MorphlingPolypLayer;
 import com.vincenthuto.hemomancy.common.event.HarbingerAdvancementGranter;
@@ -83,6 +84,11 @@ public class DialogueEventHandler {
 	@SubscribeEvent
 	public static void onDialogueOption(DialogueEvent event) {
 		ServerPlayer player = event.getPlayer();
+		if (event.getEventId().startsWith("circus_")
+				&& player.level().getEntity(event.getEntityId()) instanceof CircusRingmasterEntity ringmaster) {
+			ringmaster.handleChoice(player, event.getEventId());
+			return;
+		}
 		var mnemonistChoice = MnemonistStarterMemoryChoice.fromEventId(event.getEventId());
 		if (mnemonistChoice.isPresent()) {
 			handleMnemonistStarterMemory(player, event.getEntityId(), mnemonistChoice.get());

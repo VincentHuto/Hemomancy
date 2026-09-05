@@ -1178,6 +1178,13 @@ public class ManipulationInit {
 					EnumManipulationRank.PERFECTUS, EnumBloodTendency.TENEBRIS, EnumVeinSections.HEAD)
 					.setCooldownTicks(140).setDrudgeAction(DrudgeAction.DRUDGE_UNSUPPORTED, "Not usable by Drudges"));
 
+	public static final DeferredHolder<BloodManipulation, BloodManipulation> thread_ripper = MANIPS.register("thread_ripper",
+			() -> new ThreadRipperManip("thread_ripper", 35, 0, 0, EnumManipulationType.CHARGED,
+					EnumManipulationRank.SUMMA, EnumBloodTendency.DUCTILIS, EnumVeinSections.HEAD)
+					.setSecondaryTend(EnumBloodTendency.TENEBRIS)
+					.setCooldownTicks(240)
+					.setDrudgeAction(DrudgeAction.DRUDGE_UNSUPPORTED, "Severs puppet tethers"));
+
 	// ── SAINT — Canon Memories (imprinted from Sainted Mausoleums) ──
 
 	public static final DeferredHolder<BloodManipulation, BloodManipulation> crimson_tithe = MANIPS.register("crimson_tithe",

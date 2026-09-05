@@ -46,7 +46,18 @@ public final class HemoTestCommands {
 												.then(Commands.literal("run").executes(context -> unstainedJourneyRun(context.getSource(), "novitiate"))))
 										.then(Commands.literal("next").executes(context -> unstainedJourneyNext(context.getSource())))
 										.then(Commands.literal("status").executes(context -> unstainedJourneyStatus(context.getSource())))
-										.then(Commands.literal("reset").executes(context -> unstainedJourneyReset(context.getSource())))))
+										.then(Commands.literal("reset").executes(context -> unstainedJourneyReset(context.getSource()))))
+								.then(Commands.literal("circus")
+										.then(Commands.literal("run").executes(context -> circusJourneyRun(context.getSource())))
+										.then(Commands.literal("succession")
+												.then(Commands.literal("start").executes(context -> circusJourneyStart(context.getSource(), "succession")))
+												.then(Commands.literal("run").executes(context -> circusJourneyRun(context.getSource(), "succession"))))
+										.then(Commands.literal("liberation")
+												.then(Commands.literal("start").executes(context -> circusJourneyStart(context.getSource(), "liberation")))
+												.then(Commands.literal("run").executes(context -> circusJourneyRun(context.getSource(), "liberation"))))
+										.then(Commands.literal("next").executes(context -> circusJourneyNext(context.getSource())))
+										.then(Commands.literal("status").executes(context -> circusJourneyStatus(context.getSource())))
+										.then(Commands.literal("reset").executes(context -> circusJourneyReset(context.getSource())))))
 						.then(Commands.literal("clear").executes(context -> clear(context.getSource())))));
 	}
 
@@ -152,7 +163,13 @@ public final class HemoTestCommands {
 	private static int clear(CommandSourceStack source) throws com.mojang.brigadier.exceptions.CommandSyntaxException {
 		ServerPlayer player = source.getPlayerOrException();
 		JourneyAutoRunner.cancel(player);
-		if (JourneyRoute.is(player, JourneyRoute.UNSTAINED)) {
+		if (JourneyRoute.is(player, JourneyRoute.CIRCUS)) {
+			CircusJourneyResult journeyClear = CircusJourneyController.clear(player);
+			if (!journeyClear.passed()) {
+				source.sendFailure(Component.literal(journeyClear.message()));
+				return 0;
+			}
+		} else if (JourneyRoute.is(player, JourneyRoute.UNSTAINED)) {
 			UnstainedJourneyResult journeyClear = UnstainedJourneyController.clear(player);
 			if (!journeyClear.passed()) {
 				source.sendFailure(Component.literal(journeyClear.message()));
@@ -257,6 +274,47 @@ public final class HemoTestCommands {
 		return reportJourney(source, UnstainedJourneyController.reset(player));
 	}
 
+	private static int circusJourneyStart(CommandSourceStack source, String mode)
+			throws com.mojang.brigadier.exceptions.CommandSyntaxException {
+		ServerPlayer player = source.getPlayerOrException();
+		JourneyAutoRunner.cancel(player);
+		return reportJourney(source, CircusJourneyController.start(player, mode));
+	}
+
+	private static int circusJourneyRun(CommandSourceStack source)
+			throws com.mojang.brigadier.exceptions.CommandSyntaxException {
+		return JourneyAutoRunner.runCircus(source.getPlayerOrException()) ? 1 : 0;
+	}
+
+	private static int circusJourneyRun(CommandSourceStack source, String mode)
+			throws com.mojang.brigadier.exceptions.CommandSyntaxException {
+		return JourneyAutoRunner.runCircus(source.getPlayerOrException(), mode) ? 1 : 0;
+	}
+
+	private static int circusJourneyNext(CommandSourceStack source)
+			throws com.mojang.brigadier.exceptions.CommandSyntaxException {
+		JourneyAutoRunner.cancel(source.getPlayerOrException());
+		return reportJourney(source, CircusJourneyController.next(source.getPlayerOrException()));
+	}
+
+	private static int circusJourneyStatus(CommandSourceStack source)
+			throws com.mojang.brigadier.exceptions.CommandSyntaxException {
+		CircusJourneyResult result = CircusJourneyController.status(source.getPlayerOrException());
+		int reported = reportJourney(source, result);
+		String automation = JourneyAutoRunner.describe(source.getPlayerOrException());
+		if (!automation.isEmpty()) source.sendSuccess(() -> Component.literal(automation), false);
+		return reported;
+	}
+
+	private static int circusJourneyReset(CommandSourceStack source)
+			throws com.mojang.brigadier.exceptions.CommandSyntaxException {
+		ServerPlayer player = source.getPlayerOrException();
+		String mode = CircusJourneyController.mode(player);
+		JourneyAutoRunner.cancel(player);
+		CircusJourneyResult cleared = CircusJourneyController.clear(player);
+		return cleared.passed() ? reportJourney(source, CircusJourneyController.start(player, mode)) : reportJourney(source, cleared);
+	}
+
 	private static int reportJourney(CommandSourceStack source, HemoJourneyResult result) {
 		Component message = Component.literal(result.stage().id() + ": " + result.message())
 				.withStyle(result.passed() ? ChatFormatting.GREEN : ChatFormatting.RED);
@@ -269,6 +327,17 @@ public final class HemoTestCommands {
 	}
 
 	private static int reportJourney(CommandSourceStack source, UnstainedJourneyResult result) {
+		Component message = Component.literal(result.stage().id() + ": " + result.message())
+				.withStyle(result.passed() ? ChatFormatting.GREEN : ChatFormatting.RED);
+		if (result.passed()) {
+			source.sendSuccess(() -> message, false);
+			return 1;
+		}
+		source.sendFailure(message);
+		return 0;
+	}
+
+	private static int reportJourney(CommandSourceStack source, CircusJourneyResult result) {
 		Component message = Component.literal(result.stage().id() + ": " + result.message())
 				.withStyle(result.passed() ? ChatFormatting.GREEN : ChatFormatting.RED);
 		if (result.passed()) {

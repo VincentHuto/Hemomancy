@@ -1999,9 +1999,11 @@ Current summon definitions:
 
 The Circus is the planned specialist wrapper around the existing puppetry system. It reuses the Marionette Crossbar, Puppeteer's Spindle, summon definitions, Cardinal Ordeals, command radial, Living Staff forms, and shared summon lifecycle. It must not introduce a second summon registry, ownership capability, upkeep currency, command surface, or progression ladder.
 
-The first implementation slice uses the six current artificial bodies and treats `scarlet_mummer` as the attention-control anchor. Scarlet Serpents and Prism Cuttles remain natural animals whose warning displays and chromatophores inform Circus presentation; they are not faction agents or additional artificial summon definitions.
+The first implementation slice uses the six current artificial bodies and treats `scarlet_mummer` as the attention-control anchor. Scarlet Serpents and Prism Cuttles remain natural animals whose warning displays and chromatophores inform Circus presentation; they are not faction agents or additional artificial summon definitions. Two jarred Prism Cuttles in the pavilion make that influence visible without moving their ecology into the Circus.
 
 The physical Circus pavilion is a world-generated location rather than a runtime event that can overwrite an established player build. Its placement must reject wet, obstructed, or sharply uneven footprints. Layered presentation is viewer-specific, but collision, hostile entities, rewards, discovery, and progression remain server-authoritative.
+
+The playable pavilion route now uses per-player acclimation (0-1000), warning-and-confirmed Succession or Liberation, one route repair before completion, four controlled-real acts, and a site-global first-completion claim. Its shared Ringmaster finale moves through rafters, carousel, and descent. Succession nonlethally downs the troupe and captures the Ringmaster office as a low-damage Conductor pattern. Liberation uses Thread Ripper on the three captives, who are specifically the three failed initiates bound atop the carousel horses; each severed rider exposes one anchor, and breaking all three leaves the carousel and pavilion in persistent ruin before the lethal descent. Both routes award the cosmetic Ringmaster's Topper.
 
 ### 17.2 Rogue Hemomancer Wills
 

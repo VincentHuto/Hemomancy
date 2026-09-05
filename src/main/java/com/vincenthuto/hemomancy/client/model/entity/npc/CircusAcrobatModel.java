@@ -82,7 +82,6 @@ public final class CircusAcrobatModel extends HumanoidModel<CircusAcrobatEntity>
 			leftArm.xRot = rightArm.xRot = -2.65F;
 			leftArm.zRot = -0.15F;
 			rightArm.zRot = 0.15F;
-			body.zRot = Mth.sin(ageInTicks * 0.16F) * 0.18F;
 		}
 		if (entity.getActState() == ActState.DOWNED) {
 			body.xRot = 1.35F;

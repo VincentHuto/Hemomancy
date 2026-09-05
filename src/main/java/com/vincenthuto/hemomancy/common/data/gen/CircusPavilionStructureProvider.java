@@ -72,6 +72,14 @@ final class CircusPavilionStructureProvider implements DataProvider {
 			CompoundTag block = new CompoundTag();
 			block.put("pos", vector(placement.x(), placement.y(), placement.z()));
 			block.putInt("state", stateIds.get(placement.name()));
+			if (placement.specimenId() != null) {
+				CompoundTag jar = new CompoundTag();
+				jar.putString("id", "hemomancy:specimen_jar");
+				CompoundTag specimen = new CompoundTag();
+				specimen.putString("id", placement.specimenId());
+				jar.put("Specimen", specimen);
+				block.put("nbt", jar);
+			}
 			blocks.add(block);
 		}
 		root.put("blocks", blocks);

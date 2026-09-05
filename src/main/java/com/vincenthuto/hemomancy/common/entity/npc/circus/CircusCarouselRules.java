@@ -30,7 +30,7 @@ public final class CircusCarouselRules {
 	}
 
 	public static HorsePose horsePose(float rotationDegrees, int horseIndex) {
-		float angle = rotationDegrees + Math.floorMod(horseIndex, 3) * 120.0F;
+		float angle = 180.0F - rotationDegrees - Math.floorMod(horseIndex, 3) * 120.0F;
 		double radians = Math.toRadians(angle);
 		return new HorsePose(angle, Math.cos(radians) * HORSE_RADIUS,
 				Math.sin(radians) * HORSE_RADIUS, Math.sin(radians) * BOB_HEIGHT);

@@ -10,7 +10,7 @@ import net.minecraft.resources.ResourceLocation;
 public class HarbingerCicatrixAnchoriteRenderer extends MobRenderer<HarbingerCicatrixAnchoriteEntity,
 		HarbingerCicatrixAnchoriteModel<HarbingerCicatrixAnchoriteEntity>> {
 	protected static final ResourceLocation TEXTURE = Hemomancy.rloc(
-			"textures/entity/harbinger_cicatrix_anchorite/harbinger_cicatrix_anchorite.png");
+			"textures/entity/npc/harbinger/harbinger_cicatrix_anchorite/harbinger_cicatrix_anchorite.png");
 
 	public HarbingerCicatrixAnchoriteRenderer(Context context) {
 		super(context, new HarbingerCicatrixAnchoriteModel<>(

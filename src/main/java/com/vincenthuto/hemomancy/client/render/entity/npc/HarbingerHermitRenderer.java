@@ -20,7 +20,7 @@ import javax.annotation.Nullable;
 
 public class HarbingerHermitRenderer extends MobRenderer<HarbingerHermitEntity, HarbingerHermitModel<HarbingerHermitEntity>> {
 
-    protected static final ResourceLocation TEXTURE = Hemomancy.rloc("textures/entity/harbinger_hermit/harbinger_hermit.png");
+    protected static final ResourceLocation TEXTURE = Hemomancy.rloc("textures/entity/npc/harbinger/harbinger_hermit/harbinger_hermit.png");
     private static final float CHEST_BEAM_Y = 1.28F;
     private static final float CHEST_FLARE_Z = -0.16F;
     private static final float FAREWELL_MIN_BEAM_WIDTH = 0.048F;

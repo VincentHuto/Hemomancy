@@ -2,6 +2,9 @@ package com.vincenthuto.hemomancy.common.entity.npc.circus;
 
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.core.particles.BlockParticleOption;
+import net.minecraft.network.syncher.EntityDataAccessor;
+import net.minecraft.network.syncher.EntityDataSerializers;
+import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -13,6 +16,8 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.level.Level;
 
 public final class CircusStiltWalkerEntity extends CircusPerformerEntity {
+	private static final EntityDataAccessor<Integer> SPIN_TICKS = SynchedEntityData.defineId(
+			CircusStiltWalkerEntity.class, EntityDataSerializers.INT);
 	private int attackCooldown;
 
 	public CircusStiltWalkerEntity(EntityType<? extends CircusStiltWalkerEntity> type, Level level) {
@@ -25,17 +30,48 @@ public final class CircusStiltWalkerEntity extends CircusPerformerEntity {
 				.add(Attributes.STEP_HEIGHT, 1.5D).add(Attributes.FOLLOW_RANGE, 24.0D);
 	}
 
+	@Override
+	protected void defineSynchedData(SynchedEntityData.Builder builder) {
+		super.defineSynchedData(builder);
+		builder.define(SPIN_TICKS, 0);
+	}
+
+	@Override
+	public void tick() {
+		super.tick();
+		if (!level().isClientSide && getActState() != ActState.PERFORM && entityData.get(SPIN_TICKS) != 0) {
+			entityData.set(SPIN_TICKS, 0);
+		}
+	}
+
 	@Override protected String roleId() { return "circus_stilt_walker"; }
 	@Override protected String texturePath() { return "textures/entity/circus/stilt_walker_0.png"; }
 	@Override protected int performanceDuration() { return 160; }
 
 	@Override
 	protected void tickPerformance(int actTick) {
+		int spinTicks = entityData.get(SPIN_TICKS);
+		if (actTick == 60) {
+			getNavigation().stop();
+			entityData.set(SPIN_TICKS, 1);
+		} else if (spinTicks > 0) {
+			entityData.set(SPIN_TICKS, spinTicks >= 40 ? 0 : spinTicks + 1);
+		}
+		if (spinTicks > 0) return;
 		if (actTick % 40 == 1) {
 			double angle = actTick / 160.0D * Math.PI * 2.0D;
 			getNavigation().moveTo(getHome().getX() + 0.5D + Math.cos(angle) * 4.0D, getHome().getY(),
 					getHome().getZ() + 0.5D + Math.sin(angle) * 4.0D, 0.65D);
 		}
+	}
+
+	public boolean isSpinning() {
+		return entityData.get(SPIN_TICKS) > 0;
+	}
+
+	public float getSpinProgress(float partialTick) {
+		int ticks = entityData.get(SPIN_TICKS);
+		return ticks == 0 ? 0.0F : Math.min(1.0F, (ticks + partialTick) / 40.0F);
 	}
 
 	@Override

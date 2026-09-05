@@ -3,6 +3,7 @@ package com.vincenthuto.hemomancy.gametest.journey;
 import com.mojang.authlib.GameProfile;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
+import com.vincenthuto.hemomancy.common.circus.CircusPerformanceController;
 import com.vincenthuto.hemomancy.common.init.BlockInit;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.mission.alchemist.FirstSeparationAssignment;
@@ -25,6 +26,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Blocks;
 import net.neoforged.neoforge.gametest.GameTestHolder;
 import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
+import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,6 +39,114 @@ public final class JourneyAutomationGameTests {
 	private static final String EMPTY_TEMPLATE = "bastion/mobs/empty";
 
 	private JourneyAutomationGameTests() { }
+
+	@GameTest(templateNamespace = "minecraft", template = EMPTY_TEMPLATE, timeoutTicks = 120,
+			batch = "journeyAutomationCircus")
+	public static void circusRunnerStartsAndRestoresKnownSummons(GameTestHelper helper) {
+		ServerPlayer player = connectedPlayer(helper);
+		List<String> originalSummons = List.copyOf(HemoCapabilityAccess.requireKnownSummons(player).getKnownSummonNames());
+		try {
+			helper.assertTrue(JourneyAutoRunner.runCircus(player), "Circus automation must start");
+			JourneyAutoRunner.cancel(player);
+			helper.assertTrue(CircusJourneyController.clear(player).passed(), "Circus clear must restore the snapshot");
+			helper.assertTrue(!player.getPersistentData().contains(HemoJourneySnapshot.SNAPSHOT_KEY)
+					&& originalSummons.equals(HemoCapabilityAccess.requireKnownSummons(player).getKnownSummonNames()),
+					"Circus automation must restore the snapshot and known summons");
+			helper.succeed();
+		} finally {
+			JourneyAutoRunner.cancel(player);
+			player.discard();
+		}
+	}
+
+	@GameTest(templateNamespace = "minecraft", template = EMPTY_TEMPLATE, timeoutTicks = 600,
+			batch = "journeyAutomationCircus")
+	public static void circusLiberationRunnerCompletesAtDegreeFour(GameTestHelper helper) {
+		ServerPlayer player = connectedPlayer(helper);
+		try {
+			setServerPlayerLookup(player, true);
+			helper.getLevel().addNewPlayer(player);
+			helper.assertTrue(JourneyAutoRunner.runCircus(player, "liberation"),
+					"Degree-4 Liberation automation must start");
+			BlockPos fixtureOrigin = CircusJourneyController.origin(player);
+			var fixtureRingmaster = CircusJourneyFixtures.ringmaster(player, fixtureOrigin);
+			var fixtureCarousel = CircusJourneyFixtures.carousel(player, fixtureOrigin);
+			for (int tick = 1; tick <= 560; tick++) {
+				int expectedTicks = tick;
+				helper.runAtTickTime(tick, () -> {
+					if (!fixtureCarousel.isRemoved() && fixtureCarousel.tickCount < expectedTicks) fixtureCarousel.tick();
+					if (!fixtureRingmaster.isRemoved() && fixtureRingmaster.tickCount < expectedTicks) fixtureRingmaster.tick();
+					JourneyAutoRunner.tickForTest(player);
+					CircusPerformanceController.onPlayerTick(new PlayerTickEvent.Post(player));
+				});
+			}
+			helper.runAtTickTime(570, () -> {
+				boolean complete = !JourneyAutoRunner.activeForTest(player)
+						&& !player.getPersistentData().contains(HemoJourneySnapshot.SNAPSHOT_KEY);
+				if (complete) {
+					helper.assertTrue(!com.vincenthuto.hemomancy.common.circus.CircusPavilionSavedData
+							.get(player.serverLevel()).hasSite(player.serverLevel(), fixtureOrigin.above()),
+						"Circus automation must remove its fixture pavilion state after restoring the player");
+					setServerPlayerLookup(player, false);
+					player.discard();
+					helper.succeed();
+					return;
+				}
+				helper.assertTrue(false,
+						"Degree-4 Liberation must finish, award Thread Ripper, and restore the snapshot. "
+								+ JourneyAutoRunner.describe(player));
+				helper.succeed();
+			});
+		} catch (RuntimeException exception) {
+			setServerPlayerLookup(player, false);
+			player.discard();
+			throw exception;
+		}
+	}
+
+	@GameTest(templateNamespace = "minecraft", template = EMPTY_TEMPLATE, timeoutTicks = 1350,
+			batch = "journeyAutomationCircus")
+	public static void circusSuccessionRunnerCompletesAtDegreeFour(GameTestHelper helper) {
+		ServerPlayer player = connectedPlayer(helper);
+		try {
+			setServerPlayerLookup(player, true);
+			helper.getLevel().addNewPlayer(player);
+			helper.assertTrue(JourneyAutoRunner.runCircus(player, "succession"),
+					"Degree-4 Succession automation must start");
+			BlockPos fixtureOrigin = CircusJourneyController.origin(player);
+			var fixtureRingmaster = CircusJourneyFixtures.ringmaster(player, fixtureOrigin);
+			var fixtureCarousel = CircusJourneyFixtures.carousel(player, fixtureOrigin);
+			for (int tick = 1; tick <= 1320; tick++) {
+				int expectedTicks = tick;
+				helper.runAtTickTime(tick, () -> {
+					if (!fixtureCarousel.isRemoved() && fixtureCarousel.tickCount < expectedTicks) fixtureCarousel.tick();
+					if (!fixtureRingmaster.isRemoved() && fixtureRingmaster.tickCount < expectedTicks) fixtureRingmaster.tick();
+					JourneyAutoRunner.tickForTest(player);
+					CircusPerformanceController.onPlayerTick(new PlayerTickEvent.Post(player));
+				});
+			}
+			helper.runAtTickTime(1330, () -> {
+				boolean complete = !JourneyAutoRunner.activeForTest(player)
+						&& !player.getPersistentData().contains(HemoJourneySnapshot.SNAPSHOT_KEY);
+				helper.assertTrue(complete,
+						"Degree-4 Succession must finish, award the Ringmaster Pattern, and restore the snapshot. "
+								+ JourneyAutoRunner.describe(player) + " Challenges="
+								+ com.vincenthuto.hemomancy.common.circus.CircusPlayerProgress.challenges(player)
+								+ " active=" + player.getPersistentData().getInt("hemomancy.circus_active_challenge")
+								+ " ticks=" + player.getPersistentData().getInt("hemomancy.circus_challenge_ticks"));
+				helper.assertTrue(!com.vincenthuto.hemomancy.common.circus.CircusPavilionSavedData
+						.get(player.serverLevel()).hasSite(player.serverLevel(), fixtureOrigin.above()),
+						"Circus automation must remove its fixture pavilion state after restoring the player");
+				setServerPlayerLookup(player, false);
+				player.discard();
+				helper.succeed();
+			});
+		} catch (RuntimeException exception) {
+			setServerPlayerLookup(player, false);
+			player.discard();
+			throw exception;
+		}
+	}
 
 	@GameTest(templateNamespace = "minecraft", template = EMPTY_TEMPLATE, timeoutTicks = 80,
 			batch = "journeyAutomationHarbinger")

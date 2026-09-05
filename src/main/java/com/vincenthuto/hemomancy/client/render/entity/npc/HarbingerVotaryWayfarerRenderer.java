@@ -10,7 +10,7 @@ import net.minecraft.resources.ResourceLocation;
 public class HarbingerVotaryWayfarerRenderer extends
 		MobRenderer<HarbingerVotaryWayfarerEntity, HarbingerVotaryWayfarerModel<HarbingerVotaryWayfarerEntity>> {
 	private static final ResourceLocation TEXTURE = Hemomancy
-			.rloc("textures/entity/harbinger_votary_wayfarer/harbinger_votary_wayfarer.png");
+			.rloc("textures/entity/npc/harbinger/harbinger_votary_wayfarer/harbinger_votary_wayfarer.png");
 
 	public HarbingerVotaryWayfarerRenderer(Context context) {
 		super(context,

@@ -56,8 +56,7 @@ public class TerrestrialSpeculumItem extends HematicMemoryToolItem {
 
 		if (level.isClientSide) {
 			HemoCapabilityAccess.getKnownManipulations(context.getPlayer())
-					.ifPresent(known -> net.minecraft.client.Minecraft.getInstance()
-							.setScreen(new RadialChooseVeinScreen(known, origin)));
+					.ifPresent(known -> RadialChooseVeinScreen.openScreen(known, origin));
 			return InteractionResult.SUCCESS;
 		}
 

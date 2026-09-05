@@ -29,10 +29,23 @@ public final class PuppeteerCrossbarCommands {
 		} else {
 			MarionetteCrossbarItem.clearGuardAnchor(crossbar);
 		}
+		relayMode(player, mode);
 		player.playSound(SoundEvents.WOODEN_BUTTON_CLICK_ON, 0.35F, 0.75F);
 		player.displayClientMessage(Component.translatable("hemomancy.summon.command." + mode.serializedName())
 				.withStyle(ChatFormatting.RED), true);
 		return true;
+	}
+
+	private static void relayMode(ServerPlayer player, PuppeteerCommandMode mode) {
+		List<Mob> bodies = MarionetteCrossbarItem.activeSummonsForOwner(player);
+		Mob conductor = bodies.stream().filter(BoundSummonBehavior::isRingmasterConductor).findFirst().orElse(null);
+		if (conductor == null) return;
+		for (Mob body : bodies) {
+			if (body == conductor || !BoundSummonBehavior.sharesOwnerSession(conductor, body)
+					|| !(body instanceof com.vincenthuto.hemomancy.common.entity.summon.BoundPuppeteerSummon bound)) continue;
+			MarionetteCrossbarItem.findEquippedCrossbar(player, bound.hemomancy$getCrossbarUUID())
+					.ifPresent(relayed -> MarionetteCrossbarItem.setCommandMode(relayed, mode));
+		}
 	}
 
 	public static boolean hotSwap(ServerPlayer player, ItemStack crossbar, String selectedName) {
@@ -62,7 +75,10 @@ public final class PuppeteerCrossbarCommands {
 				.toList();
 		int shapedBodies = (int) activeBodies.stream().filter(body -> !BoundSummonBehavior.isClaimedWill(body)).count();
 		int projectedShaped = PuppeteerSummonRules.projectedShapedCount(shapedBodies, oldCohort.size(), 1);
-		int shapedCap = PuppeteerSummonRules.activeSummonCap(SkillPointHelper.getPuppetSkeinLevel(player));
+		boolean conductor = PuppeteerSummonDefinitions.RINGMASTER_PATTERN.equals(selectedName)
+				|| activeBodies.stream().anyMatch(BoundSummonBehavior::isRingmasterConductor);
+		int shapedCap = RingmasterConductorRules.activeCap(
+				PuppeteerSummonRules.activeSummonCap(SkillPointHelper.getPuppetSkeinLevel(player)), conductor);
 		int projectedTotal = activeBodies.size() - oldCohort.size() + 1;
 		if (projectedShaped > shapedCap || projectedTotal > shapedCap + BoundSummonBehavior.claimedWillBonusCap(player)) {
 			return false;

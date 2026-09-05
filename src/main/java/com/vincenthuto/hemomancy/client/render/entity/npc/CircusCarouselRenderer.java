@@ -13,8 +13,8 @@ import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.ResourceLocation;
 
 public final class CircusCarouselRenderer extends EntityRenderer<CircusCarouselEntity> {
-	private static final ResourceLocation TEXTURE = Hemomancy.rloc("textures/entity/circus/carousel.png");
-	private static final ResourceLocation GLOW = Hemomancy.rloc("textures/entity/circus/carousel_glow.png");
+	private static final ResourceLocation TEXTURE = Hemomancy.rloc("textures/entity/npc/harbinger/circus/carousel.png");
+	private static final ResourceLocation GLOW = Hemomancy.rloc("textures/entity/npc/harbinger/circus/carousel_glow.png");
 	private final CircusCarouselModel model;
 
 	public CircusCarouselRenderer(EntityRendererProvider.Context context) {

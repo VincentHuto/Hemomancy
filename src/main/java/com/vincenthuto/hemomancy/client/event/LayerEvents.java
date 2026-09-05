@@ -142,6 +142,8 @@ public class LayerEvents {
 		event.registerLayerDefinition(CircusKnifeThrowerModel.LAYER_LOCATION, CircusKnifeThrowerModel::createBodyLayer);
 		event.registerLayerDefinition(CircusCarouselModel.LAYER_LOCATION, CircusCarouselModel::createBodyLayer);
 		event.registerLayerDefinition(CircusRingmasterModel.LAYER_LOCATION, CircusRingmasterModel::createBodyLayer);
+		event.registerLayerDefinition(PeacockSpiderModel.LAYER_LOCATION, PeacockSpiderModel::createBodyLayer);
+		event.registerLayerDefinition(VampireBatModel.LAYER_LOCATION, VampireBatModel::createBodyLayer);
 		event.registerLayerDefinition(MorphlingPolypModel.LAYER_LOCATION, MorphlingPolypModel::createBodyLayer);
 		event.registerLayerDefinition(MorphlingPolypLayerModel.LAYER_LOCATION, MorphlingPolypLayerModel::createBodyLayer);
 		event.registerLayerDefinition(MorphlingAttachmentExampleModel.HEAD_LAYER, MorphlingAttachmentExampleModel::createBodyLayer);

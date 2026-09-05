@@ -10,7 +10,7 @@ import net.minecraft.resources.ResourceLocation;
 
 public class UnstainedScoutRenderer extends MobRenderer<UnstainedScoutEntity, UnstainedScoutModel<UnstainedScoutEntity>> {
 
-    protected static final ResourceLocation TEXTURE = Hemomancy.rloc("textures/entity/unstained_scout/unstained_scout.png");
+    protected static final ResourceLocation TEXTURE = Hemomancy.rloc("textures/entity/npc/unstained/unstained_scout/unstained_scout.png");
 
     public UnstainedScoutRenderer(Context context) {
         super(context, new UnstainedScoutModel<>(context.bakeLayer(UnstainedScoutModel.LAYER_LOCATION)), 0.5F);

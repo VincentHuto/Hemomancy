@@ -125,12 +125,13 @@ class GameTestHarnessSourceContractTest {
 		String journeyCommands = commands.substring(journeyStart, commands.indexOf(")));", journeyStart));
 		assertTrue(journeyCommands.contains("literal(\"harbinger\")"));
 		assertTrue(journeyCommands.contains("literal(\"unstained\")"));
+		assertTrue(journeyCommands.contains("literal(\"circus\")"));
 		assertTrue(journeyCommands.contains("literal(\"cure\")"));
 		assertTrue(journeyCommands.contains("literal(\"novitiate\")"));
-		assertEquals(4, journeyCommands.split("literal\\(\"start\"\\)", -1).length - 1);
-		assertEquals(2, journeyCommands.split("literal\\(\"next\"\\)", -1).length - 1);
-		assertEquals(2, journeyCommands.split("literal\\(\"status\"\\)", -1).length - 1);
-		assertEquals(2, journeyCommands.split("literal\\(\"reset\"\\)", -1).length - 1);
+		assertEquals(6, journeyCommands.split("literal\\(\"start\"\\)", -1).length - 1);
+		assertEquals(3, journeyCommands.split("literal\\(\"next\"\\)", -1).length - 1);
+		assertEquals(3, journeyCommands.split("literal\\(\"status\"\\)", -1).length - 1);
+		assertEquals(3, journeyCommands.split("literal\\(\"reset\"\\)", -1).length - 1);
 		assertTrue(commands.contains("HemoJourneyController.start(player)"));
 		assertTrue(commands.contains("HemoJourneyController.next(player)"));
 		assertTrue(commands.contains("HemoJourneyController.status(player)"));
@@ -268,12 +269,13 @@ class GameTestHarnessSourceContractTest {
 
 		assertTrue(commands.contains("JourneyAutoRunner.register()"));
 		assertTrue(commands.contains("literal(\"run_all\")"));
-		assertEquals(5, commands.split("literal\\(\"run\"\\)", -1).length - 1,
-				"The existing scenario run plus Harbinger, Unstained alias, cure, and novitiate runs must remain");
+		assertEquals(8, commands.split("literal\\(\"run\"\\)", -1).length - 1,
+				"Scenario, Harbinger, Unstained, and both Circus route runs must remain");
 		assertTrue(commands.contains("JourneyAutoRunner.runHarbinger(player)"));
 		assertTrue(commands.contains("unstainedJourneyRun(context.getSource(), \"cure\")"));
 		assertTrue(commands.contains("unstainedJourneyRun(context.getSource(), \"novitiate\")"));
 		assertTrue(commands.contains("JourneyAutoRunner.runUnstained(player, mode)"));
+		assertTrue(commands.contains("JourneyAutoRunner.runCircus(source.getPlayerOrException())"));
 		assertTrue(commands.contains("JourneyAutoRunner.runAll(player)"));
 		assertTrue(commands.contains("JourneyAutoRunner.cancel(player)"));
 		assertTrue(commands.contains("JourneyAutoRunner.describe(player)"));

@@ -108,13 +108,14 @@ public final class ManipulationCastFixGameTests {
 	@GameTest(templateNamespace = "minecraft", template = EMPTY_TEMPLATE, timeoutTicks = 40)
 	public static void registryTypesMatchUnifiedInputSemantics(GameTestHelper helper) {
 		var manipulations = ManipulationInit.MANIPS.getEntries().stream().map(holder -> holder.get()).toList();
-		helper.assertTrue(manipulations.size() == 111, "Expected 111 registered manipulations, got " + manipulations.size());
+		helper.assertTrue(manipulations.size() == 112, "Expected 112 registered manipulations, got " + manipulations.size());
 		helper.assertTrue(manipulations.stream().filter(m -> m.getType() == EnumManipulationType.QUICK).count() == 74,
 				"Quick manipulation count changed");
 		helper.assertTrue(names(manipulations, EnumManipulationType.CHARGED).equals(Set.of(
 				"blood_needle", "activation_potential", "blood_aneurysm", "ironhearted", "vitric_combustion",
 				"deadly_gaze", "crimson_coronation", "synaptic_storm", "white_verdict", "rimebound_sentence",
-				"funeral_bell", "eclipse_well", "blood_needle_fan", "blood_needle_lance", "hematic_mortar")),
+				"funeral_bell", "eclipse_well", "blood_needle_fan", "blood_needle_lance", "hematic_mortar",
+				"thread_ripper")),
 				"Charged manipulation set is incorrect");
 		helper.assertTrue(names(manipulations, EnumManipulationType.CONTINUOUS).equals(Set.of(
 				"sanguine_ward", "sanguine_mending", "vascular_dowsing", "living_circuit",
@@ -159,7 +160,7 @@ public final class ManipulationCastFixGameTests {
 		}
 		long active = ManipulationInit.MANIPS.getEntries().stream().map(holder -> holder.get())
 				.filter(manipulation -> !ManipulationRetirementRules.isRetiredManipulation(manipulation)).count();
-		helper.assertTrue(active == 96, "Expected 96 active manipulations after pruning, got " + active);
+		helper.assertTrue(active == 97, "Expected 97 active manipulations after pruning, got " + active);
 		helper.assertTrue(!ManipulationRetirementRules.isRetiredManipulation("summon_avatar"),
 				"Summon Avatar was retired");
 		helper.assertTrue(ManipulationInit.deadly_gaze.get().getType() == EnumManipulationType.CHARGED

@@ -436,7 +436,10 @@ public class MarionetteCrossbarItem extends Item {
 			return;
 		}
 		List<Mob> activeBodies = activeSummonsForOwner(player);
-		int shapedBodyCap = PuppeteerSummonRules.activeSummonCap(SkillPointHelper.getPuppetSkeinLevel(player));
+		boolean conductor = PuppeteerSummonDefinitions.RINGMASTER_PATTERN.equals(selected)
+				|| activeBodies.stream().anyMatch(BoundSummonBehavior::isRingmasterConductor);
+		int shapedBodyCap = com.vincenthuto.hemomancy.common.summon.RingmasterConductorRules.activeCap(
+				PuppeteerSummonRules.activeSummonCap(SkillPointHelper.getPuppetSkeinLevel(player)), conductor);
 		int claimedBonusCap = BoundSummonBehavior.claimedWillBonusCap(player);
 		int shapedBodies = (int) activeBodies.stream()
 				.filter(body -> !BoundSummonBehavior.isClaimedWill(body))
@@ -536,11 +539,15 @@ public class MarionetteCrossbarItem extends Item {
 			return 0;
 		}
 		int focused = 0;
+		Mob conductor = activeSummonsForOwner(player).stream()
+				.filter(body -> body.level() == player.level())
+				.filter(BoundSummonBehavior::isRingmasterConductor).findFirst().orElse(null);
 		for (Mob summon : player.serverLevel().getEntitiesOfClass(Mob.class,
 				player.getBoundingBox().inflate(tetherRange * 3.0), Mob::isAlive)) {
 			if (summon instanceof BoundPuppeteerSummon bound
 					&& player.getUUID().equals(bound.hemomancy$getOwnerUUID())
-					&& crossbarId.equals(bound.hemomancy$getCrossbarUUID())
+					&& (crossbarId.equals(bound.hemomancy$getCrossbarUUID())
+							|| conductor != null && BoundSummonBehavior.sharesOwnerSession(conductor, summon))
 					&& summon.canAttack(target)) {
 				BoundSummonBehavior.setFocusedTarget(summon, target);
 				focused++;

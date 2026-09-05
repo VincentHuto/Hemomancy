@@ -16,9 +16,12 @@ class CircusCarouselRulesTest {
 		var second = CircusCarouselRules.horsePose(0.0F, 1);
 		var third = CircusCarouselRules.horsePose(0.0F, 2);
 		assertEquals(CircusCarouselRules.HORSE_RADIUS, Math.hypot(first.x(), first.z()), 0.0001D);
-		assertEquals(120.0F, second.angleDegrees() - first.angleDegrees(), 0.0001F);
-		assertEquals(120.0F, third.angleDegrees() - second.angleDegrees(), 0.0001F);
+		assertEquals(180.0F, first.angleDegrees(), 0.0001F);
+		assertEquals(60.0F, second.angleDegrees(), 0.0001F);
+		assertEquals(-60.0F, third.angleDegrees(), 0.0001F);
 		assertNotEquals(first.bob(), second.bob());
+		assertTrue(CircusCarouselRules.horsePose(10.0F, 0).z() > 0.0D,
+				"Horse positions must rotate in the model turntable's negative-yaw direction");
 	}
 
 	@Test

@@ -71,4 +71,13 @@ class CircusPavilionPerformerTemplateTest {
 				.filter(block -> block.x() == 16 && block.z() == 21 && block.y() >= 8 && block.y() <= 10)
 				.count(), "Ringmaster hat needs three unobstructed blocks above the rafter");
 	}
+
+	@Test
+	void pavilionDisplaysTwoCapturedPrismCuttles() {
+		var jars = CircusPavilionTemplate.blocks().stream()
+				.filter(block -> "hemomancy:specimen_jar".equals(block.name()))
+				.toList();
+		assertEquals(2, jars.size());
+		assertTrue(jars.stream().allMatch(block -> "hemomancy:prism_cuttle".equals(block.specimenId())));
+	}
 }

@@ -10,7 +10,7 @@ import net.minecraft.resources.ResourceLocation;
 
 public class UnstainedGuardianRenderer extends MobRenderer<UnstainedGuardianEntity, UnstainedGuardianModel<UnstainedGuardianEntity>> {
 
-    protected static final ResourceLocation TEXTURE = Hemomancy.rloc("textures/entity/unstained_guardian/unstained_guardian.png");
+    protected static final ResourceLocation TEXTURE = Hemomancy.rloc("textures/entity/npc/unstained/unstained_guardian/unstained_guardian.png");
 
     public UnstainedGuardianRenderer(Context context) {
         super(context, new UnstainedGuardianModel<>(context.bakeLayer(UnstainedGuardianModel.LAYER_LOCATION)), 0.5F);

@@ -11,7 +11,7 @@ import net.minecraft.resources.ResourceLocation;
 public class HarbingerArtificerRenderer
 		extends MobRenderer<HarbingerArtificerEntity, HarbingerArtificerModel<HarbingerArtificerEntity>> {
 	protected static final ResourceLocation TEXTURE = Hemomancy.rloc(
-			"textures/entity/harbinger_artificer/harbinger_artificer.png");
+			"textures/entity/npc/harbinger/harbinger_artificer/harbinger_artificer.png");
 
 	public HarbingerArtificerRenderer(Context context) {
 		super(context, new HarbingerArtificerModel<>(context.bakeLayer(HarbingerArtificerModel.LAYER_LOCATION)),

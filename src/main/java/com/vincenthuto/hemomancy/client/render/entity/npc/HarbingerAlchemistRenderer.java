@@ -10,7 +10,7 @@ import net.minecraft.resources.ResourceLocation;
 
 public class HarbingerAlchemistRenderer extends MobRenderer<HarbingerAlchemistEntity, HarbingerAlchemistModel<HarbingerAlchemistEntity>> {
 
-    protected static final ResourceLocation TEXTURE = Hemomancy.rloc("textures/entity/harbinger_alchemist/harbinger_alchemist.png");
+    protected static final ResourceLocation TEXTURE = Hemomancy.rloc("textures/entity/npc/harbinger/harbinger_alchemist/harbinger_alchemist.png");
 
     public HarbingerAlchemistRenderer(Context context) {
         super(context, new HarbingerAlchemistModel<>(context.bakeLayer(HarbingerAlchemistModel.LAYER_LOCATION)), 0.5F);

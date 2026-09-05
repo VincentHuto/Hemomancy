@@ -9,7 +9,7 @@ import net.minecraft.resources.ResourceLocation;
 
 public class HarbingerMnemonistRenderer extends MobRenderer<HarbingerMnemonistEntity, HarbingerMnemonistModel<HarbingerMnemonistEntity>> {
 	protected static final ResourceLocation TEXTURE = Hemomancy.rloc(
-			"textures/entity/harbinger_mnemonist/harbinger_mnemonist.png");
+			"textures/entity/npc/harbinger/harbinger_mnemonist/harbinger_mnemonist.png");
 
 	public HarbingerMnemonistRenderer(Context context) {
 		super(context, new HarbingerMnemonistModel<>(context.bakeLayer(HarbingerMnemonistModel.LAYER_LOCATION)), 0.5F);

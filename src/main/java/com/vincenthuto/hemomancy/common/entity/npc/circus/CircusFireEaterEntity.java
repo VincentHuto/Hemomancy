@@ -42,6 +42,17 @@ public final class CircusFireEaterEntity extends CircusPerformerEntity {
 					getZ() + look.z, 18, 0.2D, 0.15D, 0.2D, 0.04D);
 			level().playSound(null, blockPosition(), SoundEvents.FIRECHARGE_USE, SoundSource.NEUTRAL, 0.7F, 0.85F);
 		}
+		if (actTick >= 52 && actTick <= 68 && level() instanceof ServerLevel server) {
+			Vec3 look = getLookAngle();
+			Vec3 stream = new Vec3(look.x, 0.55D, look.z).normalize();
+			Vec3 mouth = new Vec3(getX() + look.x * 0.65D, getEyeY() - 0.2D,
+					getZ() + look.z * 0.65D);
+			for (int step = 1; step <= 8; step++) {
+				Vec3 flame = mouth.add(stream.scale(step * 0.55D));
+				server.sendParticles(ParticleTypes.FLAME, flame.x, flame.y, flame.z,
+						2, 0.07D, 0.07D, 0.07D, 0.01D);
+			}
+		}
 	}
 
 	@Override

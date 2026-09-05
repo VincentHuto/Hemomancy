@@ -1337,7 +1337,7 @@
   "hemomancy.dialogue.hermit.option.who_are_you": "Who are you? Why are you here?",
   "hemomancy.dialogue.memo.make_note": "[Make a note before it fades.]",
   "hemomancy.dialogue.mnemonist.option.ask_about_crude_memories": "Tell me about crude memories.",
-  "hemomancy.dialogue.mnemonist.option.ask_about_circus": "What is the Circus?",
+  "hemomancy.dialogue.mnemonist.option.ask_about_circus": "What is the Circus, exactly?",
   "hemomancy.dialogue.mnemonist.option.ask_about_item": "What can you tell me about this?",
   "hemomancy.dialogue.mnemonist.option.ask_about_loom": "Tell me about the Somatic Loom.",
   "hemomancy.dialogue.mnemonist.option.ask_about_memory": "What is blood-memory?",
@@ -1348,7 +1348,7 @@
   "hemomancy.dialogue.mnemonist.option.choose_deadly_gaze": "Deadly Gaze.",
   "hemomancy.dialogue.mnemonist.option.choose_starter": "Can you teach me an early echo?",
   "hemomancy.dialogue.mnemonist.option.leave": "I have heard enough.",
-  "hemomancy.dialogue.mnemonist.option.take_circus_waybill": "Give me a route to them.",
+  "hemomancy.dialogue.mnemonist.option.take_circus_waybill": "Give me a waybill to their pavilion.",
   "hemomancy.dialogue.mnemonist.option.turn_in_woven_vessel": "I brought the blank vessel and archive materials.",
   "hemomancy.dialogue.mnemonist.option.woven_vessel": "How do I prepare a blank memory?",
   "hemomancy.dialogue.monolith.option.accept_cornerstone": "[Accept the cornerstone.]",
@@ -3905,10 +3905,10 @@
 	"hemomancy.dialogue.mnemonist.option.anchorite_counsel": "The Vein-Mason sent me to ask how a scar should bear a memory.",
 	"hemomancy.mnemonist.anchorite_counsel.line1": "I can tell you what the instruction means and which tendency leads it. The Anchorite cares for the tissue that must carry it.",
 	"hemomancy.mnemonist.anchorite_counsel.line2": "Match an active cerebral scar to the Noetic Memory's primary tendency. Then change the arrangement and prove the new route still bears the instruction."
-	,"hemomancy.mnemonist.circus.undiscovered.line1": "Some Harbingers make their practice a performance. They call themselves the Circus, and each body beneath its pavilion serves a different discipline."
-	,"hemomancy.mnemonist.circus.undiscovered.line2": "Do not mistake spectacle for welcome. Their feats are dangerous because the whole company can manifest one intention together."
-	,"hemomancy.mnemonist.circus.discovered.line1": "You have already stood beneath their rough pavilion. Then you know the performances are methods, not disguises."
-	,"hemomancy.mnemonist.circus.discovered.line2": "Watch which body leads and which answer it receives. Their collective manifestation depends on that exchange."
+	,"hemomancy.mnemonist.circus.undiscovered.line1": "There is a Harbinger company that works through performance. They call themselves the Circus. Under that pavilion, every body practices something different."
+	,"hemomancy.mnemonist.circus.undiscovered.line2": "Do not confuse the show with an invitation. The whole troupe can make one intention real between them, and that is where the danger is."
+	,"hemomancy.mnemonist.circus.discovered.line1": "So you found the pavilion. Then you saw it yourself: the acts are the practice. They are not hiding something else behind the show."
+	,"hemomancy.mnemonist.circus.discovered.line2": "Watch who begins an act and who answers. Their manifestations take shape in that exchange."
 	,"hemomancy.dialogue.event.mnemonist_circus_waybill": "The Mnemonist folds a scarlet waybill along a line that tugs toward the nearest Circus."
 	,"hemomancy.circus.discovery": "The rough pavilion settles into focus. You have found the Circus."
 	,"screen.hemomancy.harbinger_assignment_ledger.anchorite_d5.title": "What the Vein Bears"
@@ -4147,16 +4147,64 @@
 	,"entity.hemomancy.circus_carousel": "The Impaled Procession"
 	,"entity.hemomancy.circus_ringmaster": "Ringmaster"
 	,"hemomancy.dialogue.circus_performer.leave": "I have seen enough."
-	,"hemomancy.dialogue.circus_fire_eater.line1": "The trick is not swallowing flame. It is teaching the body which burning belongs to it."
-	,"hemomancy.dialogue.circus_fire_eater.line2": "The torch is an ordinary staff-form. We only carry the breath farther."
-	,"hemomancy.dialogue.circus_fire_eater.line3": "A crowd lends shape to an intention. Alone, this would only scorch my throat."
-	,"hemomancy.dialogue.circus_stilt_walker.line1": "Height makes an audience decide where danger lives."
-	,"hemomancy.dialogue.circus_stilt_walker.line2": "The stilts are braces, not legs. Watch the cords."
-	,"hemomancy.dialogue.circus_stilt_walker.line3": "When every eye rises, the floor belongs to someone else."
-	,"hemomancy.dialogue.circus_acrobat.line1": "A body need not remain where its enemy finished understanding it."
-	,"hemomancy.dialogue.circus_acrobat.line2": "I do not vanish. You commit to the wrong landing."
-	,"hemomancy.dialogue.circus_acrobat.line3": "The Mummer steals the eye. I steal the interval after it turns."
-	,"hemomancy.dialogue.circus_knife_thrower.line1": "A blade is honest. The hand that promises its path is not."
-	,"hemomancy.dialogue.circus_knife_thrower.line2": "None of these knives curve. People do."
-	,"hemomancy.dialogue.circus_knife_thrower.line3": "Nine marks teach distance. The tenth teaches restraint."
+	,"hemomancy.dialogue.circus_performer.welcome": "Stand there. Let every eye find you. Strangers fare better here once the whole pavilion is looking at the same person."
+	,"hemomancy.dialogue.circus_fire_eater.line1": "You do not swallow the fire. You teach your body which burns to keep and which to breathe back out."
+	,"hemomancy.dialogue.circus_fire_eater.line2": "The torch is just a staff-form. We make the breath carry farther."
+	,"hemomancy.dialogue.circus_fire_eater.line3": "The crowd holds the shape for me. Without them, I would only burn my throat."
+	,"hemomancy.dialogue.circus_stilt_walker.line1": "Up here, I decide where the crowd looks for danger."
+	,"hemomancy.dialogue.circus_stilt_walker.line2": "These are braces, not legs. Watch the cords, not my feet."
+	,"hemomancy.dialogue.circus_stilt_walker.line3": "Once every eye comes up to meet me, somebody else owns the floor."
+	,"hemomancy.dialogue.circus_acrobat.line1": "By the time you understand where I landed, I have already left it."
+	,"hemomancy.dialogue.circus_acrobat.line2": "I never vanish. You just choose the landing too soon."
+	,"hemomancy.dialogue.circus_acrobat.line3": "The Mummer takes your eye. I take the moment after you turn it."
+	,"hemomancy.dialogue.circus_knife_thrower.line1": "A blade tells the truth. The hand telling you where it will land does not."
+	,"hemomancy.dialogue.circus_knife_thrower.line2": "The knives fly straight. People are what bend."
+	,"hemomancy.dialogue.circus_knife_thrower.line3": "Nine marks teach distance. The tenth teaches when not to throw."
+	,"entity.hemomancy.peacock_spider": "Peacock Jumping Spider"
+	,"entity.hemomancy.trained_peacock_spider": "Trained Peacock Jumping Spider"
+	,"entity.hemomancy.vampire_bat": "Vampire Bat"
+	,"entity.hemomancy.manifested_vampire_bat_swarm": "Manifested Vampire-Bat Swarm"
+	,"entity.hemomancy.ringmaster_pattern": "Ringmaster Pattern"
+	,"item.hemomancy.memory_thread_ripper": "Memory Thread Ripper"
+	,"item.hemomancy.ringmaster_topper": "Ringmaster's Topper"
+	,"item.hemomancy.spawn_egg_peacock_spider": "Peacock Jumping Spider Spawn Egg"
+	,"item.hemomancy.spawn_egg_vampire_bat": "Vampire Bat Spawn Egg"
+	,"hemomancy.summon.ringmaster_pattern.role": "Conductor"
+	,"hemomancy.summon.ringmaster_pattern.lore": "A captured office in a low-damage body. Its gestures relay one owner's nearby commands without multiplying them."
+	,"message.hemomancy.thread_ripper.charge": "The tether needs a full moment of tension before it can be cut."
+	,"message.hemomancy.thread_ripper.no_tether": "Thread Ripper finds no hostile tether it is permitted to sever."
+	,"hemomancy.circus.captive.severed": "The thread snaps. Captive %s dies with it, and the anchor beneath the horse is exposed."
+	,"hemomancy.circus.ringmaster.silent": "The figure in the rafters looks through you. It will not take shape for you yet."
+	,"hemomancy.circus.ringmaster.line.neutral": "Now you understand the bargain. Take my place, cut the others free, or walk away."
+	,"hemomancy.circus.ringmaster.line.succession": "Learn every act. Hold every eye in the pavilion. Then come take this hat and the office bound to it."
+	,"hemomancy.circus.ringmaster.line.liberation": "Three failed initiates ride that carousel. Cut their threads and their bodies will die. The anchors beneath them will not. Break those too."
+	,"hemomancy.circus.ringmaster.line.succession_complete": "The pavilion knows its successor. It answers to you now."
+	,"hemomancy.circus.ringmaster.line.liberation_complete": "Only the ruin answers you now."
+	,"hemomancy.circus.ringmaster.warning.succession": "Choose Succession and the pavilion stays standing, but its trials bind to you. You get one chance to change this choice before either ending is complete."
+	,"hemomancy.circus.ringmaster.warning.liberation": "Choose Liberation and the three bound initiates die when you sever their threads. Then you destroy the carousel and leave the pavilion in ruins. You get one chance to change this choice before either ending is complete."
+	,"hemomancy.circus.option.accept": "I will succeed you."
+	,"hemomancy.circus.option.reject": "No. I will break the carousel and free its captives."
+	,"hemomancy.circus.option.confirm_succession": "I understand. Bind me to Succession."
+	,"hemomancy.circus.option.confirm_liberation": "I understand what it costs. I will end the pavilion."
+	,"hemomancy.circus.option.not_yet": "Not yet."
+	,"hemomancy.circus.option.trial": "Show me the next act."
+	,"hemomancy.circus.option.finale": "Begin the finale."
+	,"hemomancy.circus.option.repair": "I chose wrong. Let me use my one chance to change it."
+	,"hemomancy.circus.finale.not_ready": "You are not ready for Succession. Finish every controlled act and complete your attunement."
+	,"hemomancy.circus.finale.claimed": "Another performer has already claimed this pavilion. It will not answer you."
+	,"hemomancy.circus.finale.complete.succession": "The Ringmaster yields without dying. His office becomes a pattern, and the pavilion remains standing."
+	,"hemomancy.circus.finale.complete.liberation": "The Ringmaster falls. The three captives and their anchors are gone, and the carousel is ruined for good."
+	,"hemomancy.circus.challenge.begin.0": "Keep the trained peacock spider in sight until its dance ends. It will not attack you."
+	,"hemomancy.circus.challenge.begin.2": "Stay inside the ring and withstand the dolls until the act ends."
+	,"hemomancy.circus.challenge.begin.3": "Watch the Knife Thrower. The blade flies straight. The setup does not."
+	,"hemomancy.circus.challenge.begin.4": "Stay in the ring until the troupe finishes the carousel pattern."
+	,"hemomancy.circus.challenge.hold.0": "The spider is still dancing. Keep your eyes on it."
+	,"hemomancy.circus.challenge.hold.2": "The dolls are committed. Hold your ground."
+	,"hemomancy.circus.challenge.hold.3": "You found the thrower's rhythm. Do not lose it."
+	,"hemomancy.circus.challenge.hold.4": "The troupe is halfway through the pattern. Stay in the ring."
+	,"hemomancy.circus.challenge.complete.0": "You kept the spider in sight until the dance ended."
+	,"hemomancy.circus.challenge.complete.2": "You held the ring until the dolls stopped."
+	,"hemomancy.circus.challenge.complete.3": "You read the Knife Thrower's rhythm and survived the act."
+	,"hemomancy.circus.challenge.complete.4": "You held the ring until the carousel pattern ended."
+	,"hemomancy.circus.challenge.failed": "The act is over. Speak to the Ringmaster when you are ready to try again."
 }

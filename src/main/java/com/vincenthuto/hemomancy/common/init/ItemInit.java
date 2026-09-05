@@ -175,6 +175,8 @@ public class ItemInit {
             () -> new CovenantWaybillItem(new Item.Properties().fireResistant()));
     public static final DeferredHolder<Item, Item> circus_waybill = BASEITEMS.register("circus_waybill",
             () -> new CircusWaybillItem(new Item.Properties().fireResistant()));
+	public static final DeferredHolder<Item, Item> ringmaster_topper = BASEITEMS.register("ringmaster_topper",
+			() -> new RingmasterTopperItem(new Item.Properties().stacksTo(1).rarity(Rarity.RARE).fireResistant()));
     public static final DeferredHolder<Item, Item> veins_pattern = BASEITEMS.register("veins_pattern",
             () -> new BannerPatternItem(
                     TagKey.create(Registries.BANNER_PATTERN, Hemomancy.rloc("pattern_item/hemomancy_veins")),
@@ -626,6 +628,8 @@ public class ItemInit {
 			ManipulationInit.penumbral_drift);
 	public static final DeferredHolder<Item, Item> memory_eclipse_well = memory("eclipse_well",
 			ManipulationInit.eclipse_well);
+	public static final DeferredHolder<Item, Item> memory_thread_ripper = memory("thread_ripper",
+			ManipulationInit.thread_ripper);
     // Living
     public static final DeferredHolder<Item, Item> blood_absorption = SPECIALITEMS.register("blood_absorption",
             () -> new BloodAbsorptionItem(new Item.Properties()));
@@ -1158,6 +1162,12 @@ public class ItemInit {
     public static final DeferredHolder<Item, DeferredSpawnEggItem> spawn_egg_verdigris_moth = SPAWNEGGS.register(
             "spawn_egg_verdigris_moth",
             () -> new DeferredSpawnEggItem(EntityInit.verdigris_moth, 0xBEE8A8, 0xB04475, new Item.Properties()));
+	public static final DeferredHolder<Item, DeferredSpawnEggItem> spawn_egg_peacock_spider = SPAWNEGGS.register(
+			"spawn_egg_peacock_spider",
+			() -> new DeferredSpawnEggItem(EntityInit.peacock_spider, 0x17212B, 0x28B9C7, new Item.Properties()));
+	public static final DeferredHolder<Item, DeferredSpawnEggItem> spawn_egg_vampire_bat = SPAWNEGGS.register(
+			"spawn_egg_vampire_bat",
+			() -> new DeferredSpawnEggItem(EntityInit.vampire_bat, 0x21151B, 0x8F182B, new Item.Properties()));
     public static final DeferredHolder<Item, DeferredSpawnEggItem> spawn_egg_luminal_cicada = SPAWNEGGS.register(
             "spawn_egg_luminal_cicada",
             () -> new DeferredSpawnEggItem(EntityInit.luminal_cicada, 0x312B24, 0xFFF49A, new Item.Properties()));

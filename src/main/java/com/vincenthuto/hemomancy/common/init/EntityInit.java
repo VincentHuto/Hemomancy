@@ -37,6 +37,7 @@ import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.entity.SpawnPlacementTypes;
+import net.minecraft.world.entity.monster.Spider;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
@@ -218,6 +219,14 @@ public class EntityInit {
 			"circus_ringmaster", () -> EntityType.Builder.of(CircusRingmasterEntity::new, MobCategory.CREATURE)
 					.sized(0.7F, 1.8F).clientTrackingRange(12)
 					.build(Hemomancy.rloc("circus_ringmaster").toString()));
+	public static final DeferredHolder<EntityType<?>, EntityType<PeacockSpiderEntity>> peacock_spider = ENTITY_TYPES.register(
+			"peacock_spider", () -> EntityType.Builder.of(PeacockSpiderEntity::new, MobCategory.CREATURE)
+					.sized(0.7F, 0.45F).clientTrackingRange(8)
+					.build(Hemomancy.rloc("peacock_spider").toString()));
+	public static final DeferredHolder<EntityType<?>, EntityType<VampireBatEntity>> vampire_bat = ENTITY_TYPES.register(
+			"vampire_bat", () -> EntityType.Builder.of(VampireBatEntity::new, MobCategory.AMBIENT)
+					.sized(0.5F, 0.9F).clientTrackingRange(8)
+					.build(Hemomancy.rloc("vampire_bat").toString()));
 
     // Boss room: Hematic Construct (inner trial minion)
     public static final DeferredHolder<EntityType<?>, EntityType<HematicConstructEntity>> hematic_construct = ENTITY_TYPES.register(
@@ -786,6 +795,12 @@ public class EntityInit {
         event.register(EntityInit.verdigris_moth.get(), SpawnPlacementTypes.ON_GROUND,
                 Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, VerdigrisMothEntity::canSpawnHere,
                 RegisterSpawnPlacementsEvent.Operation.OR);
+		event.register(EntityInit.peacock_spider.get(), SpawnPlacementTypes.ON_GROUND,
+				Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, PeacockSpiderEntity::canSpawnHere,
+				RegisterSpawnPlacementsEvent.Operation.OR);
+		event.register(EntityInit.vampire_bat.get(), SpawnPlacementTypes.NO_RESTRICTIONS,
+				Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, VampireBatEntity::canSpawnHere,
+				RegisterSpawnPlacementsEvent.Operation.OR);
         event.register(EntityInit.luminal_cicada.get(), SpawnPlacementTypes.ON_GROUND,
                 Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, LuminalCicadaEntity::canSpawnHere,
                 RegisterSpawnPlacementsEvent.Operation.OR);
@@ -909,6 +924,8 @@ public class EntityInit {
         event.put(EntityInit.desiccant.get(), DesiccantEntity.setAttributes().build());
         event.put(EntityInit.crimson_doe.get(), CrimsonDoeEntity.setAttributes().build());
         event.put(EntityInit.verdigris_moth.get(), VerdigrisMothEntity.setAttributes().build());
+		event.put(EntityInit.peacock_spider.get(), Spider.createAttributes().build());
+		event.put(EntityInit.vampire_bat.get(), VampireBatEntity.setAttributes().build());
         event.put(EntityInit.luminal_cicada.get(), LuminalCicadaEntity.setAttributes().build());
         event.put(EntityInit.hematic_burrower.get(), HematicBurrowerEntity.setAttributes().build());
         event.put(EntityInit.scarlet_serpent.get(), ScarletSerpentEntity.setAttributes().build());

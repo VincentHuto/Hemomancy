@@ -33,6 +33,10 @@ public class RadialChooseVeinScreen extends Screen {
 	final ResourceLocation selectTexture = Hemomancy.rloc("textures/gui/vein_selection.png");
 	final ResourceLocation teleportTexture = Hemomancy.rloc("textures/gui/vein_teleport.png");
 
+	public static void openScreen(IKnownManipulations manip, BlockPos origin) {
+		Minecraft.getInstance().setScreen(new RadialChooseVeinScreen(manip, origin));
+	}
+
 	@SubscribeEvent
 	public static void overlayEvent(RenderGuiLayerEvent.Pre event) {
 		if (!event.getName().equals(VanillaGuiLayers.CROSSHAIR))

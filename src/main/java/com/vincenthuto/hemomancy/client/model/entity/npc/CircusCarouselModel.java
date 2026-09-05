@@ -22,12 +22,16 @@ public final class CircusCarouselModel extends EntityModel<CircusCarouselEntity>
 	private final ModelPart root;
 	private final ModelPart turntable;
 	private final ModelPart[] horses;
+	private final ModelPart[] anchors;
 
 	public CircusCarouselModel(ModelPart root) {
 		this.root = root;
 		turntable = root.getChild("turntable");
 		horses = new ModelPart[] {
 				turntable.getChild("horse_0"), turntable.getChild("horse_1"), turntable.getChild("horse_2")
+		};
+		anchors = new ModelPart[] {
+				horses[0].getChild("anchor_0"), horses[1].getChild("anchor_1"), horses[2].getChild("anchor_2")
 		};
 	}
 
@@ -69,6 +73,7 @@ public final class CircusCarouselModel extends EntityModel<CircusCarouselEntity>
 				PartPose.offsetAndRotation(37.6F, HORSE_BASE_Y, 0.0F, 0.0F, 1.5708F, 0.0F));
 		horse0.addOrReplaceChild("scar_0", CubeListBuilder.create().texOffs(184, 198)
 				.addBox(-5.5F, -15.0F, -20.7F, 11.0F, 2.0F, 1.0F), PartPose.rotation(0.0F, 0.0F, 0.28F));
+		addAnchor(horse0, 0);
 
 		PartDefinition horse1 = turntable.addOrReplaceChild("horse_1", CubeListBuilder.create()
 				.texOffs(0, 200).addBox(-6.0F, -6.0F, -14.0F, 12.0F, 12.0F, 28.0F)
@@ -82,6 +87,7 @@ public final class CircusCarouselModel extends EntityModel<CircusCarouselEntity>
 				PartPose.offsetAndRotation(-18.8F, HORSE_BASE_Y, 32.56F, 0.0F, 3.6652F, 0.0F));
 		horse1.addOrReplaceChild("scar_1", CubeListBuilder.create().texOffs(184, 202)
 				.addBox(-5.5F, -9.0F, -14.7F, 11.0F, 2.0F, 1.0F), PartPose.rotation(0.0F, 0.0F, -0.36F));
+		addAnchor(horse1, 1);
 
 		PartDefinition horse2 = turntable.addOrReplaceChild("horse_2", CubeListBuilder.create()
 				.texOffs(0, 200).addBox(-6.0F, -6.0F, -14.0F, 12.0F, 12.0F, 28.0F)
@@ -95,7 +101,14 @@ public final class CircusCarouselModel extends EntityModel<CircusCarouselEntity>
 				PartPose.offsetAndRotation(-18.8F, HORSE_BASE_Y, -32.56F, 0.0F, 5.7596F, 0.0F));
 		horse2.addOrReplaceChild("scar_2", CubeListBuilder.create().texOffs(184, 206)
 				.addBox(-5.5F, -18.0F, -17.7F, 11.0F, 2.0F, 1.0F), PartPose.rotation(0.0F, 0.0F, 0.5F));
+		addAnchor(horse2, 2);
 		return LayerDefinition.create(mesh, 256, 256);
+	}
+
+	private static void addAnchor(PartDefinition horse, int index) {
+		horse.addOrReplaceChild("anchor_" + index, CubeListBuilder.create()
+				.texOffs(238, 42).addBox(-3.0F, -10.0F, -17.0F, 6.0F, 6.0F, 6.0F)
+				.texOffs(246, 0).addBox(-0.75F, -4.0F, -14.0F, 1.5F, 18.0F, 1.5F), PartPose.ZERO);
 	}
 
 	public void prepare(CircusCarouselEntity entity, float partialTick) {
@@ -103,6 +116,8 @@ public final class CircusCarouselModel extends EntityModel<CircusCarouselEntity>
 		turntable.yRot = -rotation * Mth.DEG_TO_RAD;
 		for (int horse = 0; horse < horses.length; horse++) {
 			horses[horse].y = HORSE_BASE_Y - (float) CircusCarouselRules.horsePose(rotation, horse).bob() * 16.0F;
+			horses[horse].visible = !entity.isDestroyed();
+			anchors[horse].visible = entity.isRiderSevered(horse) && !entity.isAnchorBroken(horse);
 		}
 	}
 

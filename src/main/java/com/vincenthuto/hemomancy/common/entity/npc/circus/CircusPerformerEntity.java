@@ -1,6 +1,7 @@
 package com.vincenthuto.hemomancy.common.entity.npc.circus;
 
 import com.vincenthuto.hemomancy.Hemomancy;
+import com.vincenthuto.hemomancy.common.circus.CircusPlayerProgress;
 import com.vincenthuto.hemomancy.common.entity.mob.monster.BloodDrunkPuppeteerTuning;
 import com.vincenthuto.hemomancy.common.entity.mob.monster.EnthralledDollEntity;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.DialogueNode;
@@ -44,6 +45,8 @@ public abstract class CircusPerformerEntity extends PathfinderMob {
 	private int outsideThreatTicks;
 	private int downedTicks;
 	private boolean dollsSummonedForThreat;
+	private UUID finaleOwner;
+	private boolean finaleLethal;
 
 	protected CircusPerformerEntity(EntityType<? extends CircusPerformerEntity> type, Level level) {
 		super(type, level);
@@ -70,6 +73,10 @@ public abstract class CircusPerformerEntity extends PathfinderMob {
 		super.tick();
 		if (level().isClientSide) return;
 		initializeHome();
+		if (finaleOwner != null && level() instanceof ServerLevel server
+				&& server.getPlayerByUUID(finaleOwner) instanceof LivingEntity owner && owner.isAlive()) {
+			if (!owner.getUUID().equals(threatId)) setThreat(owner);
+		}
 		if (isDowned()) {
 			tickDowned();
 			return;
@@ -174,6 +181,9 @@ public abstract class CircusPerformerEntity extends PathfinderMob {
 		boolean administrative = source.is(DamageTypes.GENERIC_KILL)
 				|| source.getEntity() instanceof Player player && player.isCreative();
 		if (administrative) return super.hurt(source, amount);
+		if (finaleOwner != null && (!(source.getEntity() instanceof Player player)
+				|| !finaleOwner.equals(player.getUUID()))) return false;
+		if (finaleLethal) return super.hurt(source, amount);
 		if (isDowned()) return false;
 		if (source.getEntity() instanceof LivingEntity attacker) {
 			summonDolls();
@@ -185,6 +195,28 @@ public abstract class CircusPerformerEntity extends PathfinderMob {
 			return true;
 		}
 		return super.hurt(source, amount);
+	}
+
+	public void beginFinale(LivingEntity owner, boolean lethal) {
+		if (owner.getUUID().equals(finaleOwner) && finaleLethal == lethal) return;
+		finaleOwner = owner.getUUID();
+		finaleLethal = lethal;
+		if (isDowned()) {
+			setHealth(getMaxHealth());
+			setActState(ActState.REST);
+		}
+		setThreat(owner);
+	}
+
+	public void resetFinale() {
+		if (finaleOwner == null) return;
+		finaleOwner = null;
+		finaleLethal = false;
+		if (isAlive()) {
+			setHealth(getMaxHealth());
+			setActState(ActState.REST);
+			clearThreat();
+		}
 	}
 
 	private void alertTroupe(LivingEntity attacker) {
@@ -205,6 +237,10 @@ public abstract class CircusPerformerEntity extends PathfinderMob {
 			doll.setSummonedByPuppeteer(true);
 			level().addFreshEntity(doll);
 		}
+	}
+
+	public void summonControlledDolls() {
+		summonDolls();
 	}
 
 	private void setThreat(LivingEntity threat) {
@@ -235,16 +271,21 @@ public abstract class CircusPerformerEntity extends PathfinderMob {
 		if (hand != InteractionHand.MAIN_HAND || isDowned() || threatId != null)
 			return InteractionResult.PASS;
 		if (!level().isClientSide && player instanceof ServerPlayer serverPlayer) {
+			boolean firstVisit = CircusPlayerProgress.awardMilestone(serverPlayer, "performer." + roleId(), 50);
+			CircusPlayerProgress.sync(serverPlayer, true);
 			changeState(ActState.RECOVER);
-			PacketHandler.sendToPlayer(serverPlayer, new OpenDialoguePacket(dialogueTree()));
+			PacketHandler.sendToPlayer(serverPlayer, new OpenDialoguePacket(dialogueTree(firstVisit)));
 		}
 		return InteractionResult.sidedSuccess(level().isClientSide);
 	}
 
-	private DialogueTree dialogueTree() {
+	private DialogueTree dialogueTree(boolean firstVisit) {
 		String key = "hemomancy.dialogue." + roleId();
+		List<String> lines = firstVisit
+				? List.of("hemomancy.dialogue.circus_performer.welcome", key + ".line1", key + ".line2", key + ".line3")
+				: List.of(key + ".line1", key + ".line2", key + ".line3");
 		return DialogueTree.builder(getType().getDescriptionId(), Hemomancy.rloc(texturePath()), getId())
-				.addNode(new DialogueNode("greeting", List.of(key + ".line1", key + ".line2", key + ".line3"),
+				.addNode(new DialogueNode("greeting", lines,
 						List.of(new DialogueOption("hemomancy.dialogue.circus_performer.leave", null, null))))
 				.build();
 	}
@@ -288,6 +329,8 @@ public abstract class CircusPerformerEntity extends PathfinderMob {
 	public void addAdditionalSaveData(CompoundTag tag) {
 		super.addAdditionalSaveData(tag);
 		if (home != null) tag.putLong("CircusHome", home.asLong());
+		if (finaleOwner != null) tag.putUUID("CircusFinaleOwner", finaleOwner);
+		tag.putBoolean("CircusFinaleLethal", finaleLethal);
 		tag.putInt("CircusVariant", getVariant());
 		tag.putBoolean("CircusDowned", isDowned());
 	}
@@ -296,6 +339,8 @@ public abstract class CircusPerformerEntity extends PathfinderMob {
 	public void readAdditionalSaveData(CompoundTag tag) {
 		super.readAdditionalSaveData(tag);
 		home = tag.contains("CircusHome") ? BlockPos.of(tag.getLong("CircusHome")) : null;
+		finaleOwner = tag.hasUUID("CircusFinaleOwner") ? tag.getUUID("CircusFinaleOwner") : null;
+		finaleLethal = tag.getBoolean("CircusFinaleLethal");
 		setVariant(tag.getInt("CircusVariant"));
 		setActState(tag.getBoolean("CircusDowned") ? ActState.DOWNED : ActState.REST);
 	}

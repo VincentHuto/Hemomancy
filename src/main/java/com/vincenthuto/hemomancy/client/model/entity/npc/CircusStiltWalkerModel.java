@@ -80,14 +80,23 @@ public final class CircusStiltWalkerModel extends HumanoidModel<CircusStiltWalke
 	public void setupAnim(CircusStiltWalkerEntity entity, float limbSwing, float limbSwingAmount,
 			float ageInTicks, float netHeadYaw, float headPitch) {
 		super.setupAnim(entity, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch);
+		head.y = body.y = -24.0F;
+		rightArm.y = leftArm.y = -22.0F;
+		rightLeg.y = leftLeg.y = -12.0F;
+		rightLeg.xRot *= 0.15F;
+		leftLeg.xRot *= 0.15F;
 		float sway = Mth.sin(ageInTicks * 0.08F) * 0.08F;
-		body.zRot = sway;
 		leftCord.zRot = sway * 0.7F;
 		rightCord.zRot = -sway * 0.7F;
 		crown.zRot = sway * 1.4F;
 		if (entity.getActState() == ActState.PERFORM) {
 			leftArm.zRot = -0.7F;
 			rightArm.zRot = 0.7F;
+			if (entity.isSpinning()) {
+				rightLeg.xRot = leftLeg.xRot = 0.0F;
+				rightLeg.zRot = 0.0F;
+				leftLeg.zRot = -Mth.PI / 4.0F;
+			}
 		}
 		if (entity.getActState() == ActState.ALERT) leftArm.xRot = rightArm.xRot = -0.55F;
 		if (entity.getActState() == ActState.DOWNED) {

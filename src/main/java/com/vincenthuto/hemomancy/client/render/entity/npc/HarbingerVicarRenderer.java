@@ -10,7 +10,7 @@ import net.minecraft.resources.ResourceLocation;
 
 public class HarbingerVicarRenderer extends MobRenderer<HarbingerVicarEntity, HarbingerVicarModel<HarbingerVicarEntity>> {
 
-    protected static final ResourceLocation TEXTURE = Hemomancy.rloc("textures/entity/harbinger_vicar/harbinger_vicar.png");
+    protected static final ResourceLocation TEXTURE = Hemomancy.rloc("textures/entity/npc/harbinger/harbinger_vicar/harbinger_vicar.png");
 
     public HarbingerVicarRenderer(Context context) {
         super(context, new HarbingerVicarModel<>(context.bakeLayer(HarbingerVicarModel.LAYER_LOCATION)), 0.5F);

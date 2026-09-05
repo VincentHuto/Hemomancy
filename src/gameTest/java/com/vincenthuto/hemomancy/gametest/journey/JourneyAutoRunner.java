@@ -36,8 +36,17 @@ public final class JourneyAutoRunner {
 		return start(player, List.of("novitiate".equals(mode) ? Route.UNSTAINED_NOVITIATE : Route.UNSTAINED_CURE), true);
 	}
 
+	public static boolean runCircus(ServerPlayer player) {
+		return start(player, List.of(Route.CIRCUS_SUCCESSION, Route.CIRCUS_LIBERATION), false);
+	}
+
+	public static boolean runCircus(ServerPlayer player, String mode) {
+		return start(player, List.of("liberation".equals(mode) ? Route.CIRCUS_LIBERATION : Route.CIRCUS_SUCCESSION), true);
+	}
+
 	public static boolean runAll(ServerPlayer player) {
-		return start(player, List.of(Route.HARBINGER, Route.UNSTAINED_CURE, Route.UNSTAINED_NOVITIATE), false);
+		return start(player, List.of(Route.HARBINGER, Route.UNSTAINED_CURE, Route.UNSTAINED_NOVITIATE,
+				Route.CIRCUS_SUCCESSION, Route.CIRCUS_LIBERATION), false);
 	}
 
 	public static void cancel(ServerPlayer player) {
@@ -113,7 +122,7 @@ public final class JourneyAutoRunner {
 				return;
 			}
 			BlockPos origin = BlockPos.of(player.getPersistentData().getLong(HemoJourneyFixtures.ORIGIN_KEY));
-			if (!state.acted && !"complete".equals(stageId)) {
+			if ((!state.acted || state.route().runsContinuously(stageId)) && !"complete".equals(stageId)) {
 				state.route().perform(player, stageId, origin);
 				state.acted = true;
 			}
@@ -124,8 +133,12 @@ public final class JourneyAutoRunner {
 				HemoJourneyResult result = HemoJourneyController.next(player);
 				passed = result.passed();
 				message = result.message();
-			} else {
+			} else if (!state.route().circus()) {
 				UnstainedJourneyResult result = UnstainedJourneyController.next(player);
+				passed = result.passed();
+				message = result.message();
+			} else {
+				CircusJourneyResult result = CircusJourneyController.next(player);
 				passed = result.passed();
 				message = result.message();
 			}
@@ -163,8 +176,12 @@ public final class JourneyAutoRunner {
 			HemoJourneyResult result = HemoJourneyController.start(player);
 			passed = result.passed();
 			message = result.message();
-		} else {
+		} else if (!route.circus()) {
 			UnstainedJourneyResult result = UnstainedJourneyController.start(player, route.mode);
+			passed = result.passed();
+			message = result.message();
+		} else {
+			CircusJourneyResult result = CircusJourneyController.start(player, route.mode);
 			passed = result.passed();
 			message = result.message();
 		}
@@ -196,7 +213,9 @@ public final class JourneyAutoRunner {
 	private enum Route {
 		HARBINGER("Harbinger", "harbinger"),
 		UNSTAINED_CURE("Unstained cure", "cure"),
-		UNSTAINED_NOVITIATE("Unstained novitiate", "novitiate");
+		UNSTAINED_NOVITIATE("Unstained novitiate", "novitiate"),
+		CIRCUS_SUCCESSION("Circus succession", "succession"),
+		CIRCUS_LIBERATION("Circus liberation", "liberation");
 
 		private final String label;
 		private final String mode;
@@ -208,13 +227,23 @@ public final class JourneyAutoRunner {
 
 		private boolean owns(ServerPlayer player) {
 			if (this == HARBINGER) return JourneyRoute.is(player, JourneyRoute.HARBINGER);
+			if (circus()) return JourneyRoute.is(player, JourneyRoute.CIRCUS)
+					&& mode.equals(CircusJourneyController.mode(player));
 			return JourneyRoute.is(player, JourneyRoute.UNSTAINED)
 					&& mode.equals(UnstainedJourneyController.mode(player));
 		}
 
 		private void perform(ServerPlayer player, String stageId, BlockPos origin) {
 			if (this == HARBINGER) HarbingerJourneyAutomation.perform(player, stageId, origin);
+			else if (circus()) CircusJourneyAutomation.perform(player);
 			else UnstainedJourneyAutomation.perform(player, UnstainedJourneyStage.byId(stageId), origin);
+		}
+
+		private boolean circus() { return this == CIRCUS_SUCCESSION || this == CIRCUS_LIBERATION; }
+		private boolean runsContinuously(String stageId) {
+			return circus() && (CircusJourneyStage.ATTENTION.id().equals(stageId)
+					|| CircusJourneyStage.ACTS.id().equals(stageId)
+					|| CircusJourneyStage.FINALE.id().equals(stageId));
 		}
 	}
 

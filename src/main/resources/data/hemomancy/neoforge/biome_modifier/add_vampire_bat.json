@@ -1,0 +1,12 @@
+{
+  "type": "neoforge:add_spawns",
+  "biomes": "#hemomancy:vampire_bat_spawnlist",
+  "spawners": [
+    {
+      "type": "hemomancy:vampire_bat",
+      "weight": 4,
+      "minCount": 8,
+      "maxCount": 20
+    }
+  ]
+}

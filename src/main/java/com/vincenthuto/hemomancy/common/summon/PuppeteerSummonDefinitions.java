@@ -11,6 +11,7 @@ public final class PuppeteerSummonDefinitions {
 	public static final String SCARLET_MUMMER = "scarlet_mummer";
 	public static final String SANGUINE_HOUND = "sanguine_hound";
 	public static final String MNEMONIST_PUPPET = "mnemonist_puppet";
+	public static final String RINGMASTER_PATTERN = "ringmaster_pattern";
 
 	private static final List<PuppeteerSummonDefinition> DEFINITIONS = List.of(
 			new PuppeteerSummonDefinition(VEINWING_VULTURE, "Flying Striker", 3,
@@ -28,6 +29,9 @@ public final class PuppeteerSummonDefinitions {
 			new PuppeteerSummonDefinition(SANGUINE_HOUND, "Pursuit Harrier", 4,
 					30.0, 6.0, 0.36, 44, 15,
 					"hemomancy.summon.sanguine_hound.lore"),
+			new PuppeteerSummonDefinition(RINGMASTER_PATTERN, "Conductor", 4,
+					28.0, 1.0, 0.28, 52, 14,
+					"hemomancy.summon.ringmaster_pattern.lore"),
 			new PuppeteerSummonDefinition(MNEMONIST_PUPPET, "Memory Echo", 5,
 					26.0, 3.0, 0.26, 64, 16,
 					"hemomancy.summon.mnemonist_puppet.lore")
