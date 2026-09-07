@@ -7,12 +7,18 @@ import com.vincenthuto.hemomancy.common.init.StructureInit;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.ChunkPos;
+import net.minecraft.world.level.StructureManager;
+import net.minecraft.world.level.WorldGenLevel;
+import net.minecraft.world.level.chunk.ChunkGenerator;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.level.levelgen.WorldGenerationContext;
 import net.minecraft.world.level.levelgen.heightproviders.HeightProvider;
+import net.minecraft.world.level.levelgen.structure.BoundingBox;
 import net.minecraft.world.level.levelgen.structure.Structure;
 import net.minecraft.world.level.levelgen.structure.StructureType;
+import net.minecraft.world.level.levelgen.structure.pieces.PiecesContainer;
 import net.minecraft.world.level.levelgen.structure.pools.JigsawPlacement;
 import net.minecraft.world.level.levelgen.structure.pools.StructureTemplatePool;
 import net.minecraft.world.level.levelgen.structure.pools.alias.PoolAliasLookup;
@@ -73,5 +79,18 @@ public final class CircusPavilionStructure extends Structure {
 	@Override
 	public StructureType<?> type() {
 		return StructureInit.circus_pavilion.get();
+	}
+
+	@Override
+	public void afterPlace(WorldGenLevel level, StructureManager structureManager,
+			ChunkGenerator chunkGenerator, RandomSource random, BoundingBox chunkBox,
+			ChunkPos chunkPos, PiecesContainer pieces) {
+		BoundingBox fullBox = pieces.calculateBoundingBox();
+		int centerX = (fullBox.minX() + fullBox.maxX()) / 2;
+		int centerZ = (fullBox.minZ() + fullBox.maxZ()) / 2;
+		if (chunkBox.isInside(centerX, fullBox.minY(), centerZ)) {
+			AbocipherEmitterPlacement.placeHarbingerOutpostEmitters(level, fullBox, random,
+					centerX, centerZ, fullBox.minY(), fullBox.maxY());
+		}
 	}
 }

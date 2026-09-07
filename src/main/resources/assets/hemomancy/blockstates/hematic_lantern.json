@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "hanging=false": {
+      "model": "hemomancy:block/hematic_lantern"
+    },
+    "hanging=true": {
+      "model": "hemomancy:block/hematic_lantern_hanging"
+    }
+  }
+}

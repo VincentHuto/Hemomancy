@@ -12,6 +12,8 @@ import net.minecraft.resources.ResourceLocation;
 public class SanguineHoundRenderer extends MobRenderer<SanguineHoundEntity, SanguineHoundModel> {
 	private static final ResourceLocation TEXTURE = Hemomancy.rloc(
 			"textures/entity/puppeteer_summon/sanguine_hound.png");
+	private static final ResourceLocation CUR_TEXTURE = Hemomancy.rloc(
+			"textures/entity/puppeteer_summon/sanguine_hound_cur.png");
 
 	public SanguineHoundRenderer(EntityRendererProvider.Context context) {
 		super(context, new SanguineHoundModel(context.bakeLayer(SanguineHoundModel.LAYER_LOCATION)), 0.55F);
@@ -19,7 +21,7 @@ public class SanguineHoundRenderer extends MobRenderer<SanguineHoundEntity, Sang
 
 	@Override
 	public ResourceLocation getTextureLocation(SanguineHoundEntity entity) {
-		return TEXTURE;
+		return entity.isBloodCur() ? CUR_TEXTURE : TEXTURE;
 	}
 
 	@Override
@@ -33,9 +35,7 @@ public class SanguineHoundRenderer extends MobRenderer<SanguineHoundEntity, Sang
 		if (PuppeteerSummonRenderHelper.shouldSkipRender(entity)) return;
 		poseStack.pushPose();
 		PuppeteerSummonRenderHelper.applyDismissalScale(entity, partialTicks, poseStack);
-		model.setColor(entity.isBloodCur() ? 0xFFB42932 : 0xFF841827);
 		super.render(entity, entityYaw, partialTicks, poseStack, buffer, packedLight);
-		model.setColor(-1);
 		poseStack.popPose();
 	}
 }

@@ -2,6 +2,6 @@
   "parent": "minecraft:item/generated",
   "textures": {
     "layer0": "hemomancy:item/memories/memory_blank",
-    "layer1": "hemomancy:item/memories/memory_iron_retort_overlay"
+    "layer1": "hemomancy:item/memories/memory_ironhearted_overlay"
   }
 }

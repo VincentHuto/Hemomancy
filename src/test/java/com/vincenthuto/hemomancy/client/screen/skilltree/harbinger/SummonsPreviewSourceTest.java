@@ -38,6 +38,8 @@ public final class SummonsPreviewSourceTest {
 				view, "case PuppeteerSummonDefinitions.SCARLET_MUMMER -> EntityInit.scarlet_mummer.get().create(mc.level)");
 		assertContains("sanguine hound should have a preview entity",
 				view, "case PuppeteerSummonDefinitions.SANGUINE_HOUND -> EntityInit.sanguine_hound.get().create(mc.level)");
+		assertContains("preview must retain the summon identity for shared entity types",
+				view, "bound.hemomancy$setSummonName(definition.name())");
 		assertContains("summons auto spin should be half the prior speed",
 				controller, "PREVIEW_AUTO_ROTATION_SPEED = 0.175f");
 		assertContains("summons drag spin should be half the prior sensitivity",

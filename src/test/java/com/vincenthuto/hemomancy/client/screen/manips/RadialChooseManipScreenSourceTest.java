@@ -34,14 +34,8 @@ public final class RadialChooseManipScreenSourceTest {
 				"case \"conjure_blade\" -> \"memory_living_blade_overlay\"");
 		assertContains("shared resolver maps conjure staff to the living staff memory overlay", iconResolver,
 				"case \"conjure_staff\" -> \"memory_living_staff_overlay\"");
-		assertContains("shared resolver maps Lignum Mortis to its item model overlay", iconResolver,
-				"case \"lignum_mortis\" -> \"memory_hemorrhage_overlay\"");
-		assertContains("shared resolver maps Hematic Rebuke to its item model overlay", iconResolver,
-				"case \"hematic_rebuke\" -> \"memory_activation_potential_overlay\"");
-		assertContains("shared resolver maps Hematic Impressment to its item model overlay", iconResolver,
-				"case \"hematic_impressment\" -> \"memory_deadly_gaze_overlay\"");
-		assertContains("shared resolver maps Blackhearted to its item model overlay", iconResolver,
-				"case \"blackhearted\" -> \"memory_grave_debt_overlay\"");
+		assertContains("shared resolver uses dedicated manipulation overlays", iconResolver,
+				"default -> \"memory_\" + manipulationId + \"_overlay\"");
 		assertContains("radial item construction uses the shared memory overlay resolver", screen,
 				"ManipulationIconResolver.overlay(manipulation.getName())");
 		assertContains("saved loadouts use the shared memory overlay resolver", loadout,

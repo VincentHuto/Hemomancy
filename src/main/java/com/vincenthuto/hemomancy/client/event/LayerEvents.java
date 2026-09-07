@@ -134,6 +134,7 @@ public class LayerEvents {
 		event.registerLayerDefinition(MarrowSpitterModel.LAYER_LOCATION, MarrowSpitterModel::createBodyLayer);
 		event.registerLayerDefinition(GoreboundHulkModel.LAYER_LOCATION, GoreboundHulkModel::createBodyLayer);
 		event.registerLayerDefinition(MnemonistPuppetModel.LAYER_LOCATION, MnemonistPuppetModel::createBodyLayer);
+		event.registerLayerDefinition(RingmasterPatternModel.LAYER_LOCATION, RingmasterPatternModel::createBodyLayer);
 		event.registerLayerDefinition(ScarletMummerModel.LAYER_LOCATION, ScarletMummerModel::createBodyLayer);
 		event.registerLayerDefinition(SanguineHoundModel.LAYER_LOCATION, SanguineHoundModel::createBodyLayer);
 		event.registerLayerDefinition(CircusFireEaterModel.LAYER_LOCATION, CircusFireEaterModel::createBodyLayer);

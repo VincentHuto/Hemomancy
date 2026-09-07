@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:block/template_glass_pane_side_alt",
+  "textures": {
+    "edge": "hemomancy:block/circus_curtain_top",
+    "pane": "hemomancy:block/circus_curtain"
+  }
+}

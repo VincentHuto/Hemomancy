@@ -5,6 +5,7 @@ import com.vincenthuto.hemomancy.client.screen.skilltree.util.ProgressScreenCont
 import com.vincenthuto.hemomancy.client.screen.skilltree.util.ScreenDrawUtils;
 import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillPointHelper;
 import com.vincenthuto.hemomancy.common.entity.summon.BoundSummonBehavior;
+import com.vincenthuto.hemomancy.common.entity.summon.BoundPuppeteerSummon;
 import com.vincenthuto.hemomancy.common.init.EntityInit;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.MarionetteCrossbarItem;
@@ -286,6 +287,9 @@ public final class SummonsTabView {
 			default -> null;
 		};
 		if (entity != null) {
+			if (entity instanceof BoundPuppeteerSummon bound) {
+				bound.hemomancy$setSummonName(definition.name());
+			}
 			if (entity instanceof Mob mob) {
 				mob.setNoAi(true);
 			}

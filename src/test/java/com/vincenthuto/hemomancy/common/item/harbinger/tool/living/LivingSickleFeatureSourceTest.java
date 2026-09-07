@@ -42,6 +42,25 @@ final class LivingSickleFeatureSourceTest {
 	}
 
 	@Test
+	void sickleUsesTheCurvedBlockbenchModelAndSharedTexture() throws IOException {
+		String javaModel = read("src/main/java/com/vincenthuto/hemomancy/client/model/item/LivingSickleModel.java");
+		String itemRenderer = read("src/main/java/com/vincenthuto/hemomancy/client/render/item/harbinger/LivingSickleItemRenderer.java");
+		String vesperLayer = read("src/main/java/com/vincenthuto/hemomancy/client/render/layer/mob/endgame/VesperLivingWeaponLayer.java");
+		Path bbmodel = ROOT.resolve("src/main/resources/assets/hemomancy/models/item/bbmodel/LivingSickleModel.bbmodel");
+		Path texture = ROOT.resolve("src/main/resources/assets/hemomancy/textures/entity/model_living_sickle.png");
+
+		assertTrue(javaModel.contains("blade_root"));
+		assertTrue(javaModel.contains("blade_tip"));
+		String blockbenchModel = Files.readString(bbmodel);
+		assertTrue(blockbenchModel.contains("model_living_sickle.png"));
+		assertTrue(blockbenchModel.contains("data:image/png;base64,"), "the Blockbench project must carry its texture");
+		assertTrue(Files.size(texture) > 0L, "the living sickle texture must be present");
+		assertTrue(javaModel.contains("entityCutoutNoCull"), "opaque pixels must render crisply on both wielders");
+		assertTrue(itemRenderer.contains("model_living_sickle.png"));
+		assertTrue(vesperLayer.contains("renderStatic(weapon"), "Vesper must keep using the shared item renderer");
+	}
+
+	@Test
 	void ordinarySickleHasTwoActiveModesAndARealHookProjectile() throws IOException {
 		String item = read("src/main/java/com/vincenthuto/hemomancy/common/item/harbinger/tool/living/LivingSickleItem.java");
 		String hook = read("src/main/java/com/vincenthuto/hemomancy/common/entity/projectile/LivingSickleHookEntity.java");

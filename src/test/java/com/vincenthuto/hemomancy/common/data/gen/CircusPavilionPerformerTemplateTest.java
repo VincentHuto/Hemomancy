@@ -2,10 +2,13 @@ package com.vincenthuto.hemomancy.common.data.gen;
 
 import org.junit.jupiter.api.Test;
 
+import java.util.ArrayDeque;
+import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class CircusPavilionPerformerTemplateTest {
@@ -70,6 +73,90 @@ class CircusPavilionPerformerTemplateTest {
 		assertEquals(0, CircusPavilionTemplate.blocks().stream()
 				.filter(block -> block.x() == 16 && block.z() == 21 && block.y() >= 8 && block.y() <= 10)
 				.count(), "Ringmaster hat needs three unobstructed blocks above the rafter");
+	}
+
+	@Test
+	void pavilionHasRaftersOnAllFourSides() {
+		var rafters = CircusPavilionTemplate.blocks().stream()
+				.filter(block -> block.y() == 7 && "hemomancy:hematic_iron_pillar".equals(block.name()))
+				.map(block -> block.x() + ":" + block.z())
+				.collect(Collectors.toSet());
+
+		for (int offset = 9; offset <= 23; offset++) {
+			assertTrue(rafters.contains(offset + ":11"), "missing north rafter at " + offset + ":11");
+			assertTrue(rafters.contains(offset + ":21"), "missing south rafter at " + offset + ":21");
+			assertTrue(rafters.contains("11:" + offset), "missing west rafter at 11:" + offset);
+			assertTrue(rafters.contains("21:" + offset), "missing east rafter at 21:" + offset);
+		}
+	}
+
+	@Test
+	void pavilionCurtainsSealTheOuterEavesExceptForTheFiveWideEntrance() {
+		var blocks = CircusPavilionTemplate.blocks().stream()
+				.collect(Collectors.toMap(block -> block.x() + ":" + block.y() + ":" + block.z(),
+						CircusPavilionTemplate.BlockPlacement::name));
+
+		for (int x = 1; x < CircusPavilionTemplate.WIDTH - 1; x++) {
+			for (int z = 1; z < CircusPavilionTemplate.DEPTH - 1; z++) {
+				int dx = x - CircusPavilionTemplate.CENTER;
+				int dz = z - CircusPavilionTemplate.CENTER;
+				boolean inside = dx * dx + dz * dz <= 225;
+				boolean outerEdge = inside && (dx * dx + (dz - 1) * (dz - 1) > 225
+						|| dx * dx + (dz + 1) * (dz + 1) > 225
+						|| (dx - 1) * (dx - 1) + dz * dz > 225
+						|| (dx + 1) * (dx + 1) + dz * dz > 225);
+				if (!outerEdge) continue;
+
+				boolean entrance = z < CircusPavilionTemplate.CENTER && x >= 14 && x <= 18;
+				for (int y = 1; y <= 6; y++) {
+					String block = blocks.get(x + ":" + y + ":" + z);
+					if (entrance) {
+						assertFalse("hemomancy:circus_curtain".equals(block),
+								"entrance blocked at " + x + ":" + y + ":" + z);
+					} else {
+						assertEquals("hemomancy:circus_curtain", block,
+								"curtain gap at " + x + ":" + y + ":" + z);
+					}
+				}
+			}
+		}
+	}
+
+	@Test
+	void pavilionCurtainsFormOneConnectedWall() {
+		Set<String> curtains = CircusPavilionTemplate.blocks().stream()
+				.filter(block -> block.y() == 1 && "hemomancy:circus_curtain".equals(block.name()))
+				.map(block -> block.x() + ":" + block.z())
+				.collect(Collectors.toSet());
+		Set<String> reached = new HashSet<>();
+		var pending = new ArrayDeque<String>();
+		pending.add(curtains.iterator().next());
+
+		while (!pending.isEmpty()) {
+			String position = pending.removeFirst();
+			if (!reached.add(position)) continue;
+			String[] coordinates = position.split(":");
+			int x = Integer.parseInt(coordinates[0]);
+			int z = Integer.parseInt(coordinates[1]);
+			for (String neighbor : Set.of((x - 1) + ":" + z, (x + 1) + ":" + z,
+					x + ":" + (z - 1), x + ":" + (z + 1))) {
+				if (curtains.contains(neighbor) && !reached.contains(neighbor)) pending.add(neighbor);
+			}
+		}
+
+		assertEquals(curtains, reached, "diagonal gaps stop adjacent curtain panes from connecting");
+	}
+
+	@Test
+	void pavilionClearsTwoBlocksAboveItsFloor() {
+		Set<String> blocks = CircusPavilionTemplate.blocks().stream()
+				.map(block -> block.x() + ":" + block.y() + ":" + block.z())
+				.collect(Collectors.toSet());
+		for (String floor : blocks.stream().filter(position -> position.split(":")[1].equals("0")).toList()) {
+			String[] coordinates = floor.split(":");
+			assertTrue(blocks.contains(coordinates[0] + ":1:" + coordinates[2]), "uncleared floor cell above " + floor);
+			assertTrue(blocks.contains(coordinates[0] + ":2:" + coordinates[2]), "uncleared tall-grass cell above " + floor);
+		}
 	}
 
 	@Test

@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "SSS",
+    "STS",
+    "SSS"
+  ],
+  "key": {
+    "S": { "item": "hemomancy:hematic_iron_scrap" },
+    "T": { "item": "minecraft:torch" }
+  },
+  "result": {
+    "id": "hemomancy:hematic_lantern",
+    "count": 1
+  }
+}

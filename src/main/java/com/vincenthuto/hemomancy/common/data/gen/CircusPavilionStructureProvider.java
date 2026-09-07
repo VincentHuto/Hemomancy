@@ -16,9 +16,11 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.nio.file.Path;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 
 final class CircusPavilionStructureProvider implements DataProvider {
@@ -54,15 +56,25 @@ final class CircusPavilionStructureProvider implements DataProvider {
 		root.put("size", vector(CircusPavilionTemplate.WIDTH, CircusPavilionTemplate.HEIGHT,
 				CircusPavilionTemplate.DEPTH));
 
-		Map<String, Integer> stateIds = new LinkedHashMap<>();
+		Set<Position> curtains = new HashSet<>();
 		for (CircusPavilionTemplate.BlockPlacement block : placements) {
-			stateIds.computeIfAbsent(block.name(), ignored -> stateIds.size());
+			if ("hemomancy:circus_curtain".equals(block.name())) curtains.add(new Position(block.x(), block.y(), block.z()));
+		}
+
+		Map<PaletteState, Integer> stateIds = new LinkedHashMap<>();
+		for (CircusPavilionTemplate.BlockPlacement block : placements) {
+			stateIds.computeIfAbsent(paletteState(block, curtains), ignored -> stateIds.size());
 		}
 
 		ListTag palette = new ListTag();
-		stateIds.keySet().forEach(name -> {
+		stateIds.keySet().forEach(paletteState -> {
 			CompoundTag state = new CompoundTag();
-			state.putString("Name", name);
+			state.putString("Name", paletteState.name());
+			if (!paletteState.properties().isEmpty()) {
+				CompoundTag properties = new CompoundTag();
+				paletteState.properties().forEach(properties::putString);
+				state.put("Properties", properties);
+			}
 			palette.add(state);
 		});
 		root.put("palette", palette);
@@ -71,7 +83,7 @@ final class CircusPavilionStructureProvider implements DataProvider {
 		for (CircusPavilionTemplate.BlockPlacement placement : placements) {
 			CompoundTag block = new CompoundTag();
 			block.put("pos", vector(placement.x(), placement.y(), placement.z()));
-			block.putInt("state", stateIds.get(placement.name()));
+			block.putInt("state", stateIds.get(paletteState(placement, curtains)));
 			if (placement.specimenId() != null) {
 				CompoundTag jar = new CompoundTag();
 				jar.putString("id", "hemomancy:specimen_jar");
@@ -91,6 +103,25 @@ final class CircusPavilionStructureProvider implements DataProvider {
 		entities.add(entity(CircusPavilionTemplate.ringmaster()));
 		root.put("entities", entities);
 		return root;
+	}
+
+	private static PaletteState paletteState(CircusPavilionTemplate.BlockPlacement block, Set<Position> curtains) {
+		if ("hemomancy:hematic_iron_chain".equals(block.name())) {
+			return new PaletteState(block.name(), Map.of("axis", "y", "waterlogged", "false"));
+		}
+		if ("hemomancy:hematic_lantern".equals(block.name())) {
+			return new PaletteState(block.name(), Map.of("hanging", "true", "waterlogged", "false"));
+		}
+		if (!"hemomancy:circus_curtain".equals(block.name())) return new PaletteState(block.name(), Map.of());
+		int x = block.x();
+		int y = block.y();
+		int z = block.z();
+		return new PaletteState(block.name(), Map.of(
+				"north", Boolean.toString(curtains.contains(new Position(x, y, z - 1))),
+				"east", Boolean.toString(curtains.contains(new Position(x + 1, y, z))),
+				"south", Boolean.toString(curtains.contains(new Position(x, y, z + 1))),
+				"west", Boolean.toString(curtains.contains(new Position(x - 1, y, z))),
+				"waterlogged", "false"));
 	}
 
 	private static CompoundTag entity(CircusPavilionTemplate.PerformerPlacement placement) {
@@ -118,5 +149,11 @@ final class CircusPavilionStructureProvider implements DataProvider {
 		vector.add(DoubleTag.valueOf(y));
 		vector.add(DoubleTag.valueOf(z));
 		return vector;
+	}
+
+	private record PaletteState(String name, Map<String, String> properties) {
+	}
+
+	private record Position(int x, int y, int z) {
 	}
 }

@@ -22,6 +22,8 @@ final class CircusPavilionTemplate {
 				int dz = z - CENTER;
 				if (dx * dx + dz * dz <= 225 || (x >= CENTER - 1 && x <= CENTER + 1 && z <= CENTER)) {
 					place(blocks, x, 0, z, "hemomancy:polished_venous_stone");
+					place(blocks, x, 1, z, "minecraft:air");
+					place(blocks, x, 2, z, "minecraft:air");
 				}
 			}
 		}
@@ -52,24 +54,52 @@ final class CircusPavilionTemplate {
 			}
 		}
 
+		for (int z = 1; z < DEPTH - 1; z++) {
+			int dz = z - CENTER;
+			int radius = (int) Math.sqrt(225 - dz * dz);
+			int left = CENTER - radius;
+			int right = CENTER + radius;
+			int previousRadius = z == 1 ? 0 : (int) Math.sqrt(225 - (dz - 1) * (dz - 1));
+			int nextRadius = z == DEPTH - 2 ? 0 : (int) Math.sqrt(225 - (dz + 1) * (dz + 1));
+			for (int x = left; x <= CENTER - Math.min(previousRadius, nextRadius); x++) {
+				if (z < CENTER && x >= CENTER - 2) continue;
+				for (int y = 1; y <= 6; y++) place(blocks, x, y, z, "hemomancy:circus_curtain");
+			}
+			for (int x = CENTER + Math.min(previousRadius, nextRadius); x <= right; x++) {
+				if (z < CENTER && x <= CENTER + 2) continue;
+				for (int y = 1; y <= 6; y++) place(blocks, x, y, z, "hemomancy:circus_curtain");
+			}
+		}
+
 		place(blocks, 12, 1, 16, "hemomancy:puppeteers_spindle");
 		for (int y = 6; y <= 10; y++) {
-			place(blocks, 12, y, 16, "minecraft:chain");
-			place(blocks, 20, y, 16, "minecraft:chain");
+			place(blocks, 12, y, 16, "hemomancy:hematic_iron_chain");
+			place(blocks, 20, y, 16, "hemomancy:hematic_iron_chain");
 		}
-		place(blocks, 12, 5, 16, "minecraft:lantern");
-		place(blocks, 20, 5, 16, "minecraft:lantern");
+		place(blocks, 12, 5, 16, "hemomancy:hematic_lantern");
+		place(blocks, 20, 5, 16, "hemomancy:hematic_lantern");
 
 		for (int y = 1; y <= 3; y++) {
 			place(blocks, 9, y, 24, y == 2 ? "minecraft:blue_wool" : "minecraft:red_wool");
 			place(blocks, 23, y, 24, y == 2 ? "minecraft:red_wool" : "minecraft:blue_wool");
 		}
 		for (int x = 9; x <= 23; x++) {
+			place(blocks, x, 7, 11, "hemomancy:hematic_iron_pillar");
 			place(blocks, x, 7, 21, "hemomancy:hematic_iron_pillar");
 		}
-		for (int z = 21; z <= 24; z++) {
-			place(blocks, 8, 7, z, "hemomancy:hematic_iron_pillar");
-			place(blocks, 24, 7, z, "hemomancy:hematic_iron_pillar");
+		for (int z = 9; z <= 23; z++) {
+			place(blocks, 11, 7, z, "hemomancy:hematic_iron_pillar");
+			place(blocks, 21, 7, z, "hemomancy:hematic_iron_pillar");
+		}
+		for (int offset = 0; offset <= 3; offset++) {
+			place(blocks, 8, 7, 11 - offset, "hemomancy:hematic_iron_pillar");
+			place(blocks, 24, 7, 11 - offset, "hemomancy:hematic_iron_pillar");
+			place(blocks, 8, 7, 21 + offset, "hemomancy:hematic_iron_pillar");
+			place(blocks, 24, 7, 21 + offset, "hemomancy:hematic_iron_pillar");
+			place(blocks, 11 - offset, 7, 8, "hemomancy:hematic_iron_pillar");
+			place(blocks, 11 - offset, 7, 24, "hemomancy:hematic_iron_pillar");
+			place(blocks, 21 + offset, 7, 8, "hemomancy:hematic_iron_pillar");
+			place(blocks, 21 + offset, 7, 24, "hemomancy:hematic_iron_pillar");
 		}
 		place(blocks, 12, 1, 3, "minecraft:bone_block");
 		place(blocks, 20, 1, 3, "minecraft:bone_block");
@@ -77,7 +107,7 @@ final class CircusPavilionTemplate {
 		place(blocks, new BlockPlacement(22, 1, 24, "hemomancy:specimen_jar", "hemomancy:prism_cuttle"));
 		place(blocks, 23, 2, 24, "minecraft:target");
 		for (int y = 6; y <= 10; y++) {
-			place(blocks, 20, y, 12, "minecraft:chain");
+			place(blocks, 20, y, 12, "hemomancy:hematic_iron_chain");
 		}
 
 		return List.copyOf(blocks.values());

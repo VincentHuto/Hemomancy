@@ -226,6 +226,9 @@ public class BlockInit {
 			() -> new IronBarsBlock(
 					BlockBehaviour.Properties.of().strength(0.1f, 1f).sound(SoundType.GLASS).noOcclusion()));
 
+	public static final DeferredHolder<Block, Block> circus_curtain = SPECIALBLOCKS.register("circus_curtain",
+			() -> new IronBarsBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.BLACK_WOOL).noOcclusion()));
+
 	public static final DeferredHolder<Block, Block> venous_stone = BASEBLOCKS.register("venous_stone",
 			() -> new Block(BlockBehaviour.Properties.of().requiresCorrectToolForDrops().strength(1.5F, 6.0F)));
 
@@ -637,6 +640,8 @@ public class BlockInit {
 					.strength(2.0F, 5.0F).sound(SoundType.METAL).lightLevel(s -> 10).noOcclusion()));
 
 	public static final DeferredHolder<Block, Block> pallid_lantern = BASEBLOCKS.register("pallid_lantern",
+			() -> new LanternBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.LANTERN)));
+	public static final DeferredHolder<Block, Block> hematic_lantern = BASEBLOCKS.register("hematic_lantern",
 			() -> new LanternBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.LANTERN)));
 
 	public static final DeferredHolder<Block, Block> pallid_silver_chain = BASEBLOCKS.register("pallid_silver_chain",

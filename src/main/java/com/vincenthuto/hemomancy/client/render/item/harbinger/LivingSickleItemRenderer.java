@@ -5,8 +5,7 @@ import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.client.model.item.LivingSickleModel;
 import com.vincenthuto.hemomancy.common.init.RenderTypeInit;
-import com.vincenthuto.hutoslib.math.Quaternion;
-import com.vincenthuto.hutoslib.math.Vector3;
+import com.mojang.math.Axis;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.geom.EntityModelSet;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
@@ -30,11 +29,11 @@ public final class LivingSickleItemRenderer extends BlockEntityWithoutLevelRende
 	public void renderByItem(ItemStack stack, ItemDisplayContext context, PoseStack poseStack,
 			MultiBufferSource buffers, int light, int overlay) {
 		poseStack.pushPose();
-		poseStack.mulPose(new Quaternion(Vector3.XP, 180, true).toMoj());
-		poseStack.mulPose(new Quaternion(Vector3.YP, 180, true).toMoj());
-		poseStack.scale(0.7F, 0.7F, 0.7F);
-		poseStack.translate(-0.3D, -0.15D, 0.0D);
-		if (context == ItemDisplayContext.GUI) poseStack.translate(-0.2D, 0.2D, 0.0D);
+		poseStack.mulPose(Axis.XP.rotationDegrees(180.0F));
+		poseStack.mulPose(Axis.YP.rotationDegrees(180.0F));
+		float scale = context == ItemDisplayContext.GUI ? 0.55F : 0.62F;
+		poseStack.scale(scale, scale, scale);
+		poseStack.translate(context == ItemDisplayContext.GUI ? -0.6D : -0.45D, -0.1D, 0.0D);
 		VertexConsumer base = buffers.getBuffer(model.renderType(TEXTURE));
 		model.renderToBuffer(poseStack, base, light, OverlayTexture.NO_OVERLAY, -1);
 		if (!LivingStaffMorphRenderer.isMorphBuffer(buffers)) {
