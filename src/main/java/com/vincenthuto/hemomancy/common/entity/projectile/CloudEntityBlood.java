@@ -168,7 +168,12 @@ public class CloudEntityBlood extends BloodConstructEntity {
 	@Override
 	public void tick() {
 		super.tick();
-		if (tickCount > durationTicks) {
+        if (!level().isClientSide && tickCount % 20 == 1) {
+            com.vincenthuto.hemomancy.common.manipulation.ManipulationVisuals.attached(this,
+                    com.vincenthuto.hemomancy.common.manipulation.ManipulationVisuals.Form.CLOUD,
+                    effectRadius(), Math.min(25, durationTicks-tickCount), mode.ordinal()+1);
+        }
+		if (!level().isClientSide && tickCount > durationTicks) {
 			this.remove(RemovalReason.KILLED);
 		}
 	}

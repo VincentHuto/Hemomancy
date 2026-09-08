@@ -32,6 +32,14 @@ final class LivingSickleFeatureSourceTest {
 	}
 
 	@Test
+	void radialWheelOnlyOffersEquippedMechanicalManipulations() throws IOException {
+		String radial = read("src/main/java/com/vincenthuto/hemomancy/client/screen/manips/RadialChooseManipScreen.java");
+
+		assertTrue(radial.contains("addMechanicalManipulation(allManips, equippedNames,"));
+		assertTrue(radial.contains("if (!equippedNames.contains(manipName)) return;"));
+	}
+
+	@Test
 	void oldPruningRiteIsRetiredAndSickleModelExists() throws IOException {
 		assertFalse(Files.exists(ROOT.resolve(
 				"src/main/resources/data/hemomancy/recipe/cardinal_rite/pruning_of_qliphoth.json")));
@@ -80,6 +88,31 @@ final class LivingSickleFeatureSourceTest {
 		assertTrue(renderer.contains("LivingSickleItemRenderer.renderModel"));
 		assertTrue(entities.contains("living_sickle_hook"));
 		assertTrue(client.contains("LivingSickleHookRenderer::new"));
+	}
+
+	@Test
+	void allHeldSickleViewsUseTheSharedHandGripRotation() throws IOException {
+		String renderer = read("src/main/java/com/vincenthuto/hemomancy/client/render/item/harbinger/LivingSickleItemRenderer.java");
+		String vesperLayer = read("src/main/java/com/vincenthuto/hemomancy/client/render/layer/mob/endgame/VesperLivingWeaponLayer.java");
+
+		assertTrue(renderer.contains("ItemDisplayContext.THIRD_PERSON_RIGHT_HAND"));
+		assertTrue(renderer.contains("ItemDisplayContext.FIRST_PERSON_RIGHT_HAND"));
+		assertTrue(renderer.contains("ItemDisplayContext.FIRST_PERSON_LEFT_HAND"));
+		assertTrue(renderer.contains("poseStack.translate(0.5D, 1.2D, 0.2D)"));
+		assertTrue(renderer.contains("Axis.XP.rotationDegrees(0F)"));
+		assertTrue(renderer.contains("Axis.YP.rotationDegrees(-90F)"));
+		assertTrue(renderer.contains("Axis.ZP.rotationDegrees( 0F)"));
+		assertTrue(renderer.contains("THIRD_PERSON_MODEL_LIFT = 0.52D"));
+		assertFalse(vesperLayer.contains("applySickleGrip"));
+	}
+
+	@Test
+	void inventorySickleIsLiftedAndTurnedInward() throws IOException {
+		String renderer = read("src/main/java/com/vincenthuto/hemomancy/client/render/item/harbinger/LivingSickleItemRenderer.java");
+
+		assertTrue(renderer.contains("if (context == ItemDisplayContext.GUI)"));
+		assertTrue(renderer.contains("poseStack.translate(0.0D, 0.18D, 0.0D)"));
+		assertTrue(renderer.contains("Axis.ZP.rotationDegrees(-24.0F)"));
 	}
 
 	private static String read(String path) throws IOException {

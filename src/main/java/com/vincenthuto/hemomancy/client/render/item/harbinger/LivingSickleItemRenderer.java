@@ -17,6 +17,7 @@ import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 
 public final class LivingSickleItemRenderer extends BlockEntityWithoutLevelRenderer {
+	private static final double THIRD_PERSON_MODEL_LIFT = 0.52D;
 	private static final ResourceLocation TEXTURE = Hemomancy.rloc("textures/entity/model_living_sickle.png");
 	private final LivingSickleModel model;
 
@@ -29,11 +30,19 @@ public final class LivingSickleItemRenderer extends BlockEntityWithoutLevelRende
 	public void renderByItem(ItemStack stack, ItemDisplayContext context, PoseStack poseStack,
 			MultiBufferSource buffers, int light, int overlay) {
 		poseStack.pushPose();
+		applyHandGrip(poseStack, context);
+		if (context == ItemDisplayContext.GUI) {
+			poseStack.translate(0.0D, 0.18D, -0.1D);
+			poseStack.mulPose(Axis.ZP.rotationDegrees(-24.0F));
+		}
 		poseStack.mulPose(Axis.XP.rotationDegrees(180.0F));
 		poseStack.mulPose(Axis.YP.rotationDegrees(180.0F));
-		float scale = context == ItemDisplayContext.GUI ? 0.55F : 0.62F;
+		float scale = context == ItemDisplayContext.GUI ? 0.75F : 0.62F;
+		boolean thirdPersonHand = context == ItemDisplayContext.THIRD_PERSON_LEFT_HAND
+				|| context == ItemDisplayContext.THIRD_PERSON_RIGHT_HAND;
 		poseStack.scale(scale, scale, scale);
-		poseStack.translate(context == ItemDisplayContext.GUI ? -0.6D : -0.45D, -0.1D, 0.0D);
+		poseStack.translate(context == ItemDisplayContext.GUI ? 0.8D : -0.45D,
+				thirdPersonHand ? THIRD_PERSON_MODEL_LIFT : -0.1D, 0.0D);
 		VertexConsumer base = buffers.getBuffer(model.renderType(TEXTURE));
 		model.renderToBuffer(poseStack, base, light, OverlayTexture.NO_OVERLAY, -1);
 		if (!LivingStaffMorphRenderer.isMorphBuffer(buffers)) {
@@ -41,6 +50,17 @@ public final class LivingSickleItemRenderer extends BlockEntityWithoutLevelRende
 			model.renderToBuffer(poseStack, glint, light, OverlayTexture.NO_OVERLAY, -1);
 		}
 		poseStack.popPose();
+	}
+
+	private static void applyHandGrip(PoseStack poseStack, ItemDisplayContext context) {
+		if (context != ItemDisplayContext.FIRST_PERSON_LEFT_HAND
+				&& context != ItemDisplayContext.FIRST_PERSON_RIGHT_HAND
+				&& context != ItemDisplayContext.THIRD_PERSON_LEFT_HAND
+				&& context != ItemDisplayContext.THIRD_PERSON_RIGHT_HAND) return;
+		poseStack.translate(0.5D, 1.1D, 0.2D);
+		poseStack.mulPose(Axis.XP.rotationDegrees(0F));
+		poseStack.mulPose(Axis.YP.rotationDegrees(-90F));
+		poseStack.mulPose(Axis.ZP.rotationDegrees( 0F));
 	}
 
 	public static void renderModel(ItemStack stack, ItemDisplayContext context, PoseStack poseStack,

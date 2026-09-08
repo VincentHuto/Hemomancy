@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.manipulation.congeatio;
 
+import com.vincenthuto.hemomancy.common.manipulation.ManipulationVisuals;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.EnumVeinSections;
 import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
@@ -26,15 +27,22 @@ public class AbsoluteStillnessManip extends BloodManipulation {
 	@Override
 	public void getAction(Player player, Level world, ItemStack heldItemMainhand, BlockPos position, float heldTicks) {
 		if (!(world instanceof ServerLevel level)) return;
-		for (Projectile projectile : level.getEntitiesOfClass(Projectile.class, player.getBoundingBox().inflate(6))) {
-			if (projectile.getOwner() != player) projectile.setDeltaMovement(projectile.getDeltaMovement().scale(0.45D));
-		}
 		for (LivingEntity target : ManipulationCombatHelper.hostileTargets(player, level, 6)) {
 			target.clearFire();
 			target.setTicksFrozen(Math.max(target.getTicksFrozen(), 80));
-			target.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 25, 3, false, true));
+			target.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 25,
+					com.vincenthuto.hemomancy.common.manipulation.ManipulationReactiveEvents.isBoss(target) ? 0 : 3, false, true));
 		}
 		player.clearFire();
-		level.sendParticles(ParticleTypes.SNOWFLAKE, player.getX(), player.getY() + 1, player.getZ(), 28, 3, 1, 3, 0.01);
+		ManipulationVisuals.attached(player, ManipulationVisuals.Form.STILLNESS, 6, 25, 1);
+	}
+
+	@Override
+	public void tickContinuousAction(Player player, Level world) {
+		if (world.isClientSide) return;
+		for (Projectile projectile : world.getEntitiesOfClass(Projectile.class, player.getBoundingBox().inflate(6),
+				shot -> ManipulationCombatHelper.hostileProjectile(player, shot))) {
+			projectile.setDeltaMovement(projectile.getDeltaMovement().scale(0.75D));
+		}
 	}
 }

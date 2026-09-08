@@ -307,9 +307,11 @@ public final class ManipulationCastFixGameTests {
 		}
 	}
 
-	@GameTest(templateNamespace = "minecraft", template = EMPTY_TEMPLATE, timeoutTicks = 60)
+	// Other default-batch tests clear all reactive state while this test waits for upkeep.
+	@GameTest(templateNamespace = "minecraft", template = EMPTY_TEMPLATE, timeoutTicks = 60, batch = "hematic_beacon_refresh")
 	public static void hematicBeaconRefreshesItsRallyZone(GameTestHelper helper) {
 		ServerPlayer player = player(helper, "hematic-beacon-zone-test");
+		helper.getLevel().addNewPlayer(player);
 		Vec3 center = player.getEyePosition().add(player.getLookAngle().scale(20.0D));
 		Zombie target = zombie(helper, center);
 		ManipulationReactiveEvents.clearSessionState();
@@ -515,6 +517,8 @@ public final class ManipulationCastFixGameTests {
 	@GameTest(templateNamespace = "minecraft", template = EMPTY_TEMPLATE, timeoutTicks = 40)
 	public static void phoenixDebtUsesSharedLastRiteArming(GameTestHelper helper) {
 		ServerPlayer player = player(helper, "phoenix-last-rite-test");
+		HemoCapabilityAccess.requireBloodVolume(player).setActive(true);
+		HemoCapabilityAccess.getBloodTendency(player).orElseThrow().setTendencyAlignment(EnumBloodTendency.FLAMMEUS, 75);
 		try {
 			var known = HemoCapabilityAccess.requireKnownManipulations(player);
 			known.setEquippedManipNames(java.util.List.of("phoenix_debt"));
@@ -550,7 +554,7 @@ public final class ManipulationCastFixGameTests {
 		assertImplementation(helper, "carrion_communion", "CarrionCommunionManip");
 		assertImplementation(helper, "penumbral_drift", "PenumbralDriftManip");
 		assertImplementation(helper, "eclipse_well", "EclipseWellManip");
-		assertMeta(helper, "crimson_coronation", 1000, 70, EnumManipulationType.CHARGED,
+		assertMeta(helper, "crimson_coronation", 600, 70, EnumManipulationType.CHARGED,
 				EnumManipulationRank.PERFECTUS, EnumBloodTendency.ANIMUS, EnumVeinSections.HEAD, 80, 120);
 		assertMeta(helper, "sovereign_instinct", 450, 60, EnumManipulationType.PASSIVE,
 				EnumManipulationRank.MAGISTER, EnumBloodTendency.ANIMUS, EnumVeinSections.HEAD, 0, 0);
@@ -562,7 +566,7 @@ public final class ManipulationCastFixGameTests {
 				EnumManipulationRank.PERFECTUS, EnumBloodTendency.LUX, EnumVeinSections.HEAD, 60, 100);
 		assertMeta(helper, "vigil_of_glass", 300, 55, EnumManipulationType.PASSIVE,
 				EnumManipulationRank.MAGISTER, EnumBloodTendency.LUX, EnumVeinSections.HEAD, 0, 0);
-		assertMeta(helper, "furnace_veins", 250, 55, EnumManipulationType.CONTINUOUS,
+		assertMeta(helper, "furnace_veins", 150, 55, EnumManipulationType.CONTINUOUS,
 				EnumManipulationRank.MAGISTER, EnumBloodTendency.FLAMMEUS, EnumVeinSections.BODY, 0, 100);
 		assertMeta(helper, "phoenix_debt", 2000, 75, EnumManipulationType.PASSIVE,
 				EnumManipulationRank.PERFECTUS, EnumBloodTendency.FLAMMEUS, EnumVeinSections.HEART, 0, 0);
@@ -578,7 +582,7 @@ public final class ManipulationCastFixGameTests {
 				EnumManipulationRank.PERFECTUS, EnumBloodTendency.MORTEM, EnumVeinSections.HEART, 80, 160);
 		assertMeta(helper, "carrion_communion", 220, 60, EnumManipulationType.CONTINUOUS,
 				EnumManipulationRank.MAGISTER, EnumBloodTendency.MORTEM, EnumVeinSections.BODY, 0, 120);
-		assertMeta(helper, "penumbral_drift", 175, 55, EnumManipulationType.CONTINUOUS,
+		assertMeta(helper, "penumbral_drift", 75, 55, EnumManipulationType.CONTINUOUS,
 				EnumManipulationRank.MAGISTER, EnumBloodTendency.TENEBRIS, EnumVeinSections.LEGS, 0, 60);
 		assertMeta(helper, "eclipse_well", 900, 65, EnumManipulationType.CHARGED,
 				EnumManipulationRank.PERFECTUS, EnumBloodTendency.TENEBRIS, EnumVeinSections.HEAD, 80, 140);
@@ -673,6 +677,7 @@ public final class ManipulationCastFixGameTests {
 	@GameTest(templateNamespace = "minecraft", template = EMPTY_TEMPLATE, timeoutTicks = 40)
 	public static void bloodAneurysmScalesDamageAndLaunchFromPartialToFull(GameTestHelper helper) {
 		ServerPlayer player = player(helper, "blood-aneurysm-charge-test");
+		player.setPos(player.position().add(0, 8, 0)); // Keep the visibility fixture above neighboring test structures.
 		Zombie target = zombie(helper, player.position().add(2.0D, 0.0D, 0.0D));
 		try {
 			var manipulation = ManipulationInit.blood_aneurysm.get();
@@ -882,13 +887,13 @@ public final class ManipulationCastFixGameTests {
 		BloodManipulation.clearSessionState();
 		var blood = HemoCapabilityAccess.requireBloodVolume(player);
 		blood.setActive(true);
-		blood.setBloodVolume(750.0D);
+		blood.setBloodVolume(100.0D);
 		select(player, ManipulationInit.vascular_dowsing.get());
 
 		ManipulationChannelManager.start(player);
 		helper.assertTrue(ManipulationChannelManager.isChanneling(player.getUUID()),
 				"Vascular Dowsing did not perform its immediate scan");
-		helper.assertTrue(Math.abs(blood.getBloodVolume() - 250.0D) < 0.001D,
+		helper.assertTrue(Math.abs(blood.getBloodVolume() - 25.0D) < 0.001D,
 				"Vascular Dowsing did not pay its immediate scan cost");
 		helper.runAtTickTime(21, () -> {
 			try {
@@ -896,7 +901,7 @@ public final class ManipulationCastFixGameTests {
 				helper.assertTrue(!ManipulationChannelManager.isChanneling(player.getUUID()),
 						"Vascular Dowsing continued without enough blood");
 				long cooldown = ManipulationInit.vascular_dowsing.get().getRemainingCooldownTicks(player);
-				helper.assertTrue(cooldown > 0L && cooldown <= 400L,
+				helper.assertTrue(cooldown > 0L && cooldown <= 40L,
 						"Forced Dowsing stop did not apply its cooldown");
 				helper.succeed();
 			} finally {

@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.manipulation.flammeus;
 
+import com.vincenthuto.hemomancy.common.manipulation.ManipulationVisuals;
 import com.vincenthuto.hemomancy.common.block.harbinger.CrimsonFireHelper;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.EnumVeinSections;
@@ -92,7 +93,7 @@ public class VitricCombustionManip extends BloodManipulation {
 		BlockPos blastPos = BlockPos.containing(blastCenter);
 		AABB searchBox = new AABB(blastPos).inflate(blastRadius);
 		List<LivingEntity> targets = world.getEntitiesOfClass(LivingEntity.class, searchBox,
-				e -> e != player && e.isAlive());
+				e -> ManipulationCombatHelper.canHarm(player, e));
 
 		for (LivingEntity target : targets) {
 			if (target.position().distanceTo(blastCenter) > blastRadius) continue;
@@ -109,14 +110,6 @@ public class VitricCombustionManip extends BloodManipulation {
 		world.playSound(null, blastPos, SoundEvents.GENERIC_EXPLODE.value(), SoundSource.PLAYERS, 1.2f, 0.7f);
 		world.playSound(null, blastPos, SoundEvents.FIRECHARGE_USE, SoundSource.PLAYERS, 1.0f, 0.6f);
 
-		RandomSource random = world.random;
-		for (int i = 0; i < 60; i++) {
-			sLevel.sendParticles(
-					COMBUSTION_DUST,
-					blastCenter.x + (random.nextDouble() - 0.5) * blastRadius * 2,
-					blastCenter.y + random.nextDouble() * blastRadius,
-					blastCenter.z + (random.nextDouble() - 0.5) * blastRadius * 2,
-					1, 0f, 0.25f, 0f, 0.03f);
-		}
+		ManipulationVisuals.burst(sLevel, ManipulationVisuals.Form.GLASS, blastCenter, blastCenter, blastRadius, 28);
 	}
 }

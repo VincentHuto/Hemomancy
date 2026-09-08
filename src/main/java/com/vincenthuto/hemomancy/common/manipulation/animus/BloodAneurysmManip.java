@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.manipulation.animus;
 
+import com.vincenthuto.hemomancy.common.manipulation.ManipulationVisuals;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.EnumVeinSections;
 import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillPointHelper;
@@ -66,9 +67,10 @@ public class BloodAneurysmManip extends BloodManipulation {
 
 		AABB searchBox = new AABB(player.blockPosition()).inflate(TARGET_RADIUS);
 		List<LivingEntity> nearby = world.getEntitiesOfClass(LivingEntity.class, searchBox,
-				e -> e != player && e.isAlive());
+				e -> ManipulationCombatHelper.canHarm(player, e));
 
 		Optional<LivingEntity> targetOpt = nearby.stream()
+				.filter(e -> ManipulationCombatHelper.visible(player, e))
 				.filter(e -> e.distanceTo(player) <= TARGET_RADIUS)
 				.min(Comparator.comparingDouble(e -> e.distanceTo(player)));
 
@@ -88,9 +90,10 @@ public class BloodAneurysmManip extends BloodManipulation {
 		target.hurtMarked = true;
 
 		Vec3 tPos = target.position().add(0, target.getBbHeight() * 0.5, 0);
+        ManipulationVisuals.burst(sLevel, ManipulationVisuals.Form.RUPTURE, tPos, tPos, BURST_RADIUS, 24);
 		AABB burstBox = new AABB(target.blockPosition()).inflate(BURST_RADIUS);
 		world.getEntitiesOfClass(LivingEntity.class, burstBox,
-				e -> e != player && e != target && e.isAlive()
+				e -> e != target && ManipulationCombatHelper.canHarm(player, e)
 						&& e.position().distanceTo(tPos) <= BURST_RADIUS)
 				.forEach(e -> e.hurt(world.damageSources().magic(),
 						TendencyAffinityRules.adjustManipulationDamage(player, e, this,

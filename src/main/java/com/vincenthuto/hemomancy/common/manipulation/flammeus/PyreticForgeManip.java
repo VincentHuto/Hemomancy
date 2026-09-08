@@ -1,12 +1,14 @@
 package com.vincenthuto.hemomancy.common.manipulation.flammeus;
 
+import com.vincenthuto.hemomancy.common.manipulation.ManipulationVisuals;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.EnumVeinSections;
 import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillPointHelper;
 import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
 import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationRank;
 import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationType;
-import com.vincenthuto.hutoslib.client.particle.factory.GlowParticleFactory;
+import com.vincenthuto.hutoslib.client.particle.data.ColorParticleData;
+import com.vincenthuto.hutoslib.common.registry.HLParticleInit;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
@@ -48,6 +50,14 @@ public class PyreticForgeManip extends BloodManipulation {
 	}
 
 	@Override
+	protected boolean canPerformAction(Player player, ItemStack heldItem, float ticks) {
+		return !heldItem.isEmpty() && player.level().getRecipeManager()
+				.getRecipeFor(RecipeType.SMELTING, new SingleRecipeInput(heldItem), player.level())
+				.filter(recipe -> !recipe.value().getResultItem(player.level().registryAccess()).isEmpty()).isPresent()
+				&& super.canPerformAction(player, heldItem, ticks);
+	}
+
+	@Override
 	public void getAction(Player player, Level world, ItemStack heldItemMainhand, BlockPos position) {
 		if (heldItemMainhand.isEmpty()) {
 			return;
@@ -69,14 +79,17 @@ public class PyreticForgeManip extends BloodManipulation {
 		int smeltCount = (int) Math.min(held,
 				Math.ceil(BASE_SMELT_COUNT * SkillPointHelper.getCrimsonMasteryMultiplier(player)));
 
-		ItemStack smeltedStack = result.copy();
-		smeltedStack.setCount(smeltCount);
-
+		int outputCount = smeltCount * result.getCount();
 		heldItemMainhand.shrink(smeltCount);
-		if (heldItemMainhand.isEmpty()) {
-			player.setItemInHand(net.minecraft.world.InteractionHand.MAIN_HAND, smeltedStack);
-		} else {
-			if (!player.getInventory().add(smeltedStack)) {
+		boolean replaceHand = heldItemMainhand.isEmpty();
+		while (outputCount > 0) {
+			int count = Math.min(outputCount, result.getMaxStackSize());
+			ItemStack smeltedStack = result.copyWithCount(count);
+			outputCount -= count;
+			if (replaceHand) {
+				player.setItemInHand(net.minecraft.world.InteractionHand.MAIN_HAND, smeltedStack);
+				replaceHand = false;
+			} else if (!player.getInventory().add(smeltedStack)) {
 				player.drop(smeltedStack, false);
 			}
 		}
@@ -85,7 +98,8 @@ public class PyreticForgeManip extends BloodManipulation {
 		world.playSound(null, player.blockPosition(), SoundEvents.FIRE_AMBIENT, SoundSource.PLAYERS, 0.6f, 1.2f);
 
 		if (world instanceof ServerLevel sLevel) {
-			BlockPos pos = player.blockPosition();
+			ManipulationVisuals.burst(sLevel, ManipulationVisuals.Form.FORGE, player.getEyePosition().add(player.getLookAngle()).add(0,-1,0), player.position(), 1, 24);
+            BlockPos pos = player.blockPosition();
 			RandomSource random = world.random;
 
 			for (int i = 0; i < 20; i++) {
@@ -93,7 +107,7 @@ public class PyreticForgeManip extends BloodManipulation {
 				float g = 80 + random.nextFloat() * 100;
 				float b = random.nextFloat() * 20;
 				sLevel.sendParticles(
-						GlowParticleFactory.createData(new ParticleColor(r, g, b)),
+						new ColorParticleData(HLParticleInit.glow.get(), new ParticleColor(r, g, b)),
 						pos.getX() + 0.5 + (random.nextDouble() - 0.5) * 0.6,
 						pos.getY() + 1.0 + random.nextDouble() * 0.5,
 						pos.getZ() + 0.5 + (random.nextDouble() - 0.5) * 0.6,

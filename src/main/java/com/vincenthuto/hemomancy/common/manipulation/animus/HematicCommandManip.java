@@ -26,15 +26,28 @@ public class HematicCommandManip extends BloodManipulation {
 		this.impressment = impressment;
 	}
 
+	private LivingEntity target(Player player) {
+		EntityHitResult hit = DeadlyGazeManip.rayTraceEntities(player, 24,
+				entity -> entity instanceof Mob && entity.isAlive());
+		return hit != null && hit.getEntity() instanceof LivingEntity living
+				&& HematicCommandManager.canCommand(living)
+				&& com.vincenthuto.hemomancy.common.manipulation.ManipulationCombatHelper.canHarm(player, living) ? living : null;
+	}
+
+	@Override
+	protected boolean canPerformAction(Player player, ItemStack heldItem, float ticks) {
+		if (target(player) == null) {
+			player.displayClientMessage(Component.literal("No commandable enemy in sight."), true);
+			return false;
+		}
+		return super.canPerformAction(player, heldItem, ticks);
+	}
+
 	@Override
 	public void getAction(Player player, Level world, ItemStack heldItem, BlockPos position) {
 		if (!(player instanceof ServerPlayer serverPlayer)) return;
-		EntityHitResult hit = DeadlyGazeManip.rayTraceEntities(player, 24.0D,
-				entity -> entity instanceof Mob && entity.isAlive());
-		if (hit == null || !(hit.getEntity() instanceof LivingEntity target)) {
-			player.displayClientMessage(Component.literal("No commandable blood answers your will."), true);
-			return;
-		}
+		LivingEntity target = target(player);
+		if (target == null) return;
 		boolean applied = impressment
 				? HematicCommandManager.impress(serverPlayer, target)
 				: HematicCommandManager.rebuke(serverPlayer, target);

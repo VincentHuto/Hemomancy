@@ -43,7 +43,7 @@ public final class ManipulationGapCombatStyleSourceTest {
 		assertContains("synaptic jolt cooldown", manipInit, ".setCooldownTicks(25)");
 
 		assertContains("conductive mark registration", manipInit,
-				"new ConductiveMarkManip(\"conductive_mark\", 225");
+				"new ConductiveMarkManip(\"conductive_mark\", 150");
 		assertContains("conductive mark secondary", manipInit,
 				".setSecondaryTend(EnumBloodTendency.FERRIC)");
 		assertContains("conductive mark cooldown", manipInit, ".setCooldownTicks(50)");
@@ -129,7 +129,7 @@ public final class ManipulationGapCombatStyleSourceTest {
 		assertContains("synaptic reports conductive school", synaptic, "EnumBloodTendency.DUCTILIS");
 
 		String conductive = read("src/main/java/com/vincenthuto/hemomancy/common/manipulation/ductilis/ConductiveMarkManip.java");
-		assertContains("conductive duration", conductive, "DURATION_TICKS = 160");
+		assertContains("conductive duration", conductive, "DURATION_TICKS = 240");
 		assertContains("conductive effect", conductive, "EffectInit.conductive_mark");
 		assertContains("conductive metadata", conductive, "SchoolHitHelper.markConductive");
 

@@ -1,14 +1,17 @@
 package com.vincenthuto.hemomancy.common.manipulation.mortem;
 
+import com.vincenthuto.hemomancy.common.manipulation.ManipulationVisuals;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.EnumVeinSections;
 import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillPointHelper;
 import com.vincenthuto.hemomancy.common.init.EffectInit;
 import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
+import com.vincenthuto.hemomancy.common.manipulation.ManipulationCombatHelper;
 import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationRank;
 import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationType;
 import com.vincenthuto.hemomancy.common.manipulation.SchoolHitHelper;
-import com.vincenthuto.hutoslib.client.particle.factory.GlowParticleFactory;
+import com.vincenthuto.hutoslib.client.particle.data.ColorParticleData;
+import com.vincenthuto.hutoslib.common.registry.HLParticleInit;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
@@ -38,7 +41,7 @@ public class GraveDebtManip extends BloodManipulation {
 		if (!(world instanceof ServerLevel serverLevel)) return;
 		double range = BASE_RANGE * SkillPointHelper.getSanguineReachMultiplier(player);
 		LivingEntity target = world.getEntitiesOfClass(LivingEntity.class, new AABB(player.blockPosition()).inflate(range),
-						entity -> entity != player && entity.isAlive() && !entity.isAlliedTo(player)
+						entity -> ManipulationCombatHelper.canHarm(player, entity) && ManipulationCombatHelper.visible(player, entity)
 								&& entity.distanceTo(player) <= range)
 				.stream()
 				.min(Comparator.comparingDouble(player::distanceToSqr))
@@ -49,9 +52,9 @@ public class GraveDebtManip extends BloodManipulation {
 
 		target.addEffect(new MobEffectInstance(EffectInit.grave_debt, DURATION_TICKS, 0, false, true, true));
 		SchoolHitHelper.markGraveDebt(target, player, DURATION_TICKS);
-		world.playSound(null, target.blockPosition(), SoundEvents.SCULK_SHRIEKER_SHRIEK, SoundSource.PLAYERS,
+		ManipulationVisuals.attached(target, ManipulationVisuals.Form.GRAVE, 1, DURATION_TICKS, 1); world.playSound(null, target.blockPosition(), SoundEvents.SCULK_SHRIEKER_SHRIEK, SoundSource.PLAYERS,
 				0.45F, 0.55F);
-		serverLevel.sendParticles(GlowParticleFactory.createData(new ParticleColor(70, 105, 35)),
+		serverLevel.sendParticles(new ColorParticleData(HLParticleInit.glow.get(), new ParticleColor(70, 105, 35)),
 				target.getX(), target.getY() + target.getBbHeight() * 0.5D, target.getZ(),
 				24, 0.5D, 0.55D, 0.5D, 0.018D);
 	}

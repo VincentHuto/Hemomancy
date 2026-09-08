@@ -22,6 +22,34 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 public class BloodNeedleEntity extends AbstractArrow implements CombatWeaponCarrierProjectile, TendencyDamageCarrier {
+    private static final net.minecraft.network.syncher.EntityDataAccessor<Boolean> CORONATION_SWORD =
+            net.minecraft.network.syncher.SynchedEntityData.defineId(BloodNeedleEntity.class,
+                    net.minecraft.network.syncher.EntityDataSerializers.BOOLEAN);
+    private static final net.minecraft.network.syncher.EntityDataAccessor<Byte> PIERCE_STYLE =
+            net.minecraft.network.syncher.SynchedEntityData.defineId(BloodNeedleEntity.class,
+                    net.minecraft.network.syncher.EntityDataSerializers.BYTE);
+
+    @Override
+    protected void defineSynchedData(net.minecraft.network.syncher.SynchedEntityData.Builder builder) {
+        super.defineSynchedData(builder);
+        builder.define(CORONATION_SWORD, false);
+        builder.define(PIERCE_STYLE, (byte)0);
+    }
+
+    public boolean isCoronationSword() { return entityData.get(CORONATION_SWORD); }
+    public boolean isLanceNeedle() { return entityData.get(PIERCE_STYLE) >= 3; }
+    public float swordOpacity() { return Math.max(0, 1 - inGroundTime / 25F); }
+    public void setCoronationSword(boolean sword) { entityData.set(CORONATION_SWORD, sword); }
+
+    @Override
+    protected void onHit(net.minecraft.world.phys.HitResult hit) {
+        super.onHit(hit);
+        if (isCoronationSword() && level() instanceof net.minecraft.server.level.ServerLevel server) {
+            com.vincenthuto.hemomancy.common.manipulation.ManipulationVisuals.burst(server,
+                    com.vincenthuto.hemomancy.common.manipulation.ManipulationVisuals.Form.SWORD_IMPACT,
+                    hit.getLocation(), hit.getLocation(), 1, 16);
+        }
+    }
 	private ItemStack combatWeaponItem = ItemStack.EMPTY;
 	private boolean bloodburstNeedle = false;
 	private byte configuredPierceLevel;
@@ -58,6 +86,7 @@ public class BloodNeedleEntity extends AbstractArrow implements CombatWeaponCarr
 	@Override
 	public void addAdditionalSaveData(CompoundTag compound) {
 		super.addAdditionalSaveData(compound);
+        compound.putBoolean("CoronationSword", isCoronationSword());
 		if (!this.combatWeaponItem.isEmpty()) {
 			compound.put("CombatWeapon", this.combatWeaponItem.save(this.registryAccess()));
 		}
@@ -116,25 +145,14 @@ public class BloodNeedleEntity extends AbstractArrow implements CombatWeaponCarr
 	}
 
 	@Override
-	protected void onHitEntity(EntityHitResult p_213868_1_) {
-		super.onHitEntity(p_213868_1_);
-		Entity entity = p_213868_1_.getEntity();
-		if (entity instanceof LivingEntity) {
-			((LivingEntity) entity).addEffect(new MobEffectInstance(EffectInit.blood_loss, 1000, 2));
-			applyBloodburstEffects((LivingEntity) entity);
-
-		}
-
-	}
-
-	@Override
 	public void readAdditionalSaveData(CompoundTag compound) {
 		super.readAdditionalSaveData(compound);
+        setCoronationSword(compound.getBoolean("CoronationSword"));
 		this.combatWeaponItem = compound.contains("CombatWeapon", 10)
 				? ItemStack.parseOptional(this.registryAccess(), compound.getCompound("CombatWeapon"))
 				: ItemStack.EMPTY;
 		this.bloodburstNeedle = compound.getBoolean("BloodburstNeedle");
-		this.configuredPierceLevel = compound.getByte("ConfiguredPierceLevel");
+		configurePiercing(compound.getByte("ConfiguredPierceLevel"));
 		this.damageTendency = readDamageTendency(compound);
 		this.secondaryDamageTendency = readTendency(compound, "SecondaryDamageTendency");
 	}
@@ -145,6 +163,7 @@ public class BloodNeedleEntity extends AbstractArrow implements CombatWeaponCarr
 
 	public void configurePiercing(byte pierceLevel) {
 		this.configuredPierceLevel = pierceLevel;
+        entityData.set(PIERCE_STYLE,pierceLevel);
 	}
 
 	@Override

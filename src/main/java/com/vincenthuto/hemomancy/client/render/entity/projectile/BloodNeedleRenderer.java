@@ -41,10 +41,19 @@ public class BloodNeedleRenderer<T extends BloodNeedleEntity> extends EntityRend
 	@Override
 	public void render(T entityIn, float entityYaw, float partialTicks, PoseStack matrixStackIn,
 			MultiBufferSource bufferIn, int packedLightIn) {
+        if (entityIn.isCoronationSword()) {
+            var direction = entityIn.getDeltaMovement();
+            if (direction.lengthSqr() < .0001) direction = entityIn.getLookAngle();
+            com.vincenthuto.hemomancy.client.render.world.ManipulationVisualRenderer.projectileSword(
+                    matrixStackIn, bufferIn, direction, entityIn.swordOpacity());
+            super.render(entityIn, entityYaw, partialTicks, matrixStackIn, bufferIn, packedLightIn);
+            return;
+        }
 		matrixStackIn.pushPose();
 		matrixStackIn.mulPose(
 				Vector3.YP.rotationDegrees(Mth.lerp(partialTicks, entityIn.yRotO, entityIn.getYRot()) - 90.0F).toMoj());
 		matrixStackIn.mulPose(Vector3.ZP.rotationDegrees(Mth.lerp(partialTicks, entityIn.xRotO, entityIn.getXRot())).toMoj());
+        if (entityIn.isLanceNeedle()) matrixStackIn.scale(1.8F,.75F,.75F);
 		int i = 0;
 		float f = 0.0F;
 		float f1 = 0.5F;

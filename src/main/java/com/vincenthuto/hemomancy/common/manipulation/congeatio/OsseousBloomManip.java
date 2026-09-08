@@ -1,10 +1,12 @@
 package com.vincenthuto.hemomancy.common.manipulation.congeatio;
 
+import com.vincenthuto.hemomancy.common.manipulation.ManipulationVisuals;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.EnumVeinSections;
 import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillPointHelper;
 import com.vincenthuto.hemomancy.common.manipulation.*;
-import com.vincenthuto.hutoslib.client.particle.factory.GlowParticleFactory;
+import com.vincenthuto.hutoslib.client.particle.data.ColorParticleData;
+import com.vincenthuto.hutoslib.common.registry.HLParticleInit;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
@@ -56,7 +58,7 @@ public class OsseousBloomManip extends BloodManipulation {
 		BlockPos center = player.blockPosition();
 		AABB searchBox = new AABB(center).inflate(RADIUS);
 		List<LivingEntity> targets = world.getEntitiesOfClass(LivingEntity.class, searchBox,
-				e -> e != player && e.isAlive() && e.distanceTo(player) <= RADIUS);
+				e -> ManipulationCombatHelper.canHarm(player, e) && e.distanceTo(player) <= RADIUS);
 
 		if (targets.isEmpty()) {
 			player.displayClientMessage(Component.literal("§8No vessels within the bloom's reach."), true);
@@ -67,12 +69,14 @@ public class OsseousBloomManip extends BloodManipulation {
 
 		for (LivingEntity target : targets) {
 			float damage = target.getHealth() * HP_FRACTION * masteryMult;
-			target.hurt(world.damageSources().freeze(),
-					TendencyAffinityRules.adjustManipulationDamage(player, target, this, damage));
+			damage = TendencyAffinityRules.adjustManipulationDamage(player, target, this, damage);
+			if (ManipulationReactiveEvents.isBoss(target)) damage = Math.min(12.0F, damage);
+			target.hurt(world.damageSources().freeze(), damage);
 			target.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN,
 					SLOWNESS_DURATION, SLOWNESS_AMPLIFIER, false, true));
 		}
 		HemomancyTendrilEffects.osseousBloom(player, targets);
+        for (LivingEntity target : targets) ManipulationVisuals.attached(target, ManipulationVisuals.Form.BONE, target.getBbWidth()*.7, 32, 1);
 
 		RandomSource random = world.random;
 		// Icy crystallisation burst — blue-white with flecks of red (blood)
@@ -82,7 +86,7 @@ public class OsseousBloomManip extends BloodManipulation {
 			float g = t < 0.15f ? 0 : 160 + random.nextFloat() * 60;
 			float b = t < 0.15f ? 0 : 255;
 			sLevel.sendParticles(
-					GlowParticleFactory.createData(new ParticleColor(r, g, b)),
+					new ColorParticleData(HLParticleInit.glow.get(), new ParticleColor(r, g, b)),
 					center.getX() + 0.5 + (random.nextDouble() - 0.5) * RADIUS * 2,
 					center.getY() + 0.5 + random.nextDouble() * 2.0,
 					center.getZ() + 0.5 + (random.nextDouble() - 0.5) * RADIUS * 2,

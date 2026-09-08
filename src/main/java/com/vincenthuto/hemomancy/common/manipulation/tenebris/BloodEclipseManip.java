@@ -4,7 +4,8 @@ import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.Enu
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.EnumVeinSections;
 import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillPointHelper;
 import com.vincenthuto.hemomancy.common.manipulation.*;
-import com.vincenthuto.hutoslib.client.particle.factory.GlowParticleFactory;
+import com.vincenthuto.hutoslib.client.particle.data.ColorParticleData;
+import com.vincenthuto.hutoslib.common.registry.HLParticleInit;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
@@ -63,10 +64,11 @@ public class BloodEclipseManip extends BloodManipulation {
 		BlockPos center = player.blockPosition();
 		AABB searchBox = new AABB(center).inflate(range);
 		List<LivingEntity> targets = world.getEntitiesOfClass(LivingEntity.class, searchBox,
-				e -> e != player && e.isAlive());
+				e -> ManipulationCombatHelper.canHarm(player, e));
 
 		int hit = 0;
 		for (LivingEntity target : targets) {
+			if (!ManipulationCombatHelper.visible(player, target)) continue;
 			double dist = target.distanceTo(player);
 			if (dist > range) continue;
 
@@ -106,9 +108,9 @@ public class BloodEclipseManip extends BloodManipulation {
 					.add(perp1.scale(sinPhi * Math.cos(theta)))
 					.add(perp2.scale(sinPhi * Math.sin(theta)));
 			double dist = 2.0 + random.nextDouble() * (range * 0.4);
-			Vec3 pPos = player.getEyePosition(1.0F).add(dir.scale(dist));
+			Vec3 pPos = ManipulationCombatHelper.clipToGeometry(player, player.getEyePosition(1.0F).add(dir.scale(dist)));
 			sLevel.sendParticles(
-					GlowParticleFactory.createData(new ParticleColor(
+					new ColorParticleData(HLParticleInit.glow.get(), new ParticleColor(
 							50 + random.nextFloat() * 20,
 							0,
 							80 + random.nextFloat() * 60)),

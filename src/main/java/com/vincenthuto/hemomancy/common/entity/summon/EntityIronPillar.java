@@ -53,6 +53,9 @@ public class EntityIronPillar extends BloodConstructEntity {
 		super.tick();
 		this.setYBodyRot(0);
 		if (magnetic && !this.level().isClientSide) {
+            if(tickCount % 20 == 1) com.vincenthuto.hemomancy.common.manipulation.ManipulationVisuals.attached(this,
+                    com.vincenthuto.hemomancy.common.manipulation.ManipulationVisuals.Form.MAGNET,
+                    MAGNETIC_RADIUS,Math.min(25,lifeTicks-tickCount),1);
 			tickMagnetism();
 		}
 
@@ -73,7 +76,7 @@ public class EntityIronPillar extends BloodConstructEntity {
 						this.getY() + (0.0D + i) + f3, this.getZ() + f2, 0.0D, 0.0D, 0.0D);
 			}
 		}
-		if (this.tickCount == lifeTicks) {
+		if (!level().isClientSide && this.tickCount == lifeTicks) {
 			this.level().addParticle(ParticleTypes.SQUID_INK, this.getX() + f, this.getY() + 2.0D + f1,
 					this.getZ() + f2, 0.0D, 0.0D, 0.0D);
 			this.setHealth(0);

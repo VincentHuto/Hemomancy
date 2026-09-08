@@ -36,7 +36,7 @@ public final class ManipulationTreeCoverageSourceTest {
 			"conjure_flail", "CONGEATIO"
 	);
 	private static final Map<String, List<String>> LIVING_WEAPON_TREE_PARENTS = Map.of(
-			"conjure_blade", List.of("vital_effusion"),
+			"conjure_blade", List.of("vital_effusion", "blood_binding"),
 			"conjure_axe", List.of("exsanguinate"),
 			"conjure_spear", List.of("hematic_flare"),
 			"conjure_claws", List.of("void_shroud"),
@@ -57,7 +57,7 @@ public final class ManipulationTreeCoverageSourceTest {
 			"hemosynthesis", "blood_lamp", "crimson_harvest", "sanguine_excavation", "vital_reservoir",
 			"conjure_sickle", "ferric_resonance", "glacial_bastion", "blood_eclipse_mantle",
 			"crimson_sight", "glacial_circulation", "ferric_transmutation", "vigil_of_glass",
-			"hematic_ballast", "summon_thrall", "venous_travel");
+			"hematic_ballast", "summon_thrall", "venous_travel", "thread_ripper");
 
 	private ManipulationTreeCoverageSourceTest() {
 	}

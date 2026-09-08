@@ -74,8 +74,8 @@ public final class LivingStaffArmamentSourceTest {
 		assertContains("flail item model uses custom renderer", flailModel, "\"parent\": \"builtin/entity\"");
 
 		String flailItem = read("src/main/java/com/vincenthuto/hemomancy/common/item/harbinger/tool/living/LivingFlailItem.java");
-		String flailRenderer = read("src/main/java/com/vincenthuto/hemomancy/client/render/item/hematic/LivingFlailItemRenderer.java");
-		String flailHelper = read("src/main/java/com/vincenthuto/hemomancy/client/render/item/hematic/LivingFlailRenderHelper.java");
+		String flailRenderer = read("src/main/java/com/vincenthuto/hemomancy/client/render/item/harbinger/LivingFlailItemRenderer.java");
+		String flailHelper = read("src/main/java/com/vincenthuto/hemomancy/client/render/item/harbinger/LivingFlailRenderHelper.java");
 		String flailModelClass = read("src/main/java/com/vincenthuto/hemomancy/client/model/item/LivingFlailModel.java");
 		String layerEvents = read("src/main/java/com/vincenthuto/hemomancy/client/event/LayerEvents.java");
 		assertContains("flail item routes custom renderer", flailItem, "RenderPropLivingFlail");

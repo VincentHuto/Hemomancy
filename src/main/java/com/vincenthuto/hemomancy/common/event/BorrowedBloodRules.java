@@ -36,10 +36,10 @@ public final class BorrowedBloodRules {
 	}
 
 	public static double castDeficitToCover(boolean nonBloodGatesPassed, double currentBlood, double effectiveCost) {
-		if (!nonBloodGatesPassed || currentBlood > effectiveCost) {
+		if (!nonBloodGatesPassed || currentBlood >= effectiveCost) {
 			return 0.0D;
 		}
-		return Math.max(0.0D, effectiveCost - currentBlood + 1.0D);
+		return Math.max(0.0D, effectiveCost - currentBlood);
 	}
 
 	/**

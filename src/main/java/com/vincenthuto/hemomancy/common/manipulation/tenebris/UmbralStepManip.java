@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.manipulation.tenebris;
 
+import com.vincenthuto.hemomancy.common.manipulation.ManipulationVisuals;
 import com.vincenthuto.hemomancy.common.armor.ArmorSetHelper;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.EnumVeinSections;
@@ -7,7 +8,8 @@ import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillPoin
 import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
 import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationRank;
 import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationType;
-import com.vincenthuto.hutoslib.client.particle.factory.GlowParticleFactory;
+import com.vincenthuto.hutoslib.client.particle.data.ColorParticleData;
+import com.vincenthuto.hutoslib.common.registry.HLParticleInit;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
@@ -53,62 +55,43 @@ public class UmbralStepManip extends BloodManipulation {
 		return ArmorSetHelper.hasFullPhantasmalBloodlust(player);
 	}
 
+	private BlockPos destination(Player player) {
+		Level world = player.level();
+		double range = BASE_RANGE * SkillPointHelper.getSanguineReachMultiplier(player);
+		Vec3 eye = player.getEyePosition();
+		BlockHitResult hit = world.clip(new ClipContext(eye, eye.add(player.getLookAngle().scale(range)),
+				ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, player));
+		if (hit.getType() == HitResult.Type.MISS) return null;
+		for (BlockPos candidate : new BlockPos[]{hit.getBlockPos().above(), hit.getBlockPos().relative(hit.getDirection())}) {
+			if (com.vincenthuto.hemomancy.common.manipulation.ManipulationCombatHelper.safeLanding(player, candidate)
+					&& (ArmorSetHelper.hasFullPhantasmalBloodlust(player)
+					|| BlackVeilCovenantManager.isDarkEnough(world, candidate, MAX_LIGHT_LEVEL))) return candidate;
+		}
+		return null;
+	}
+
+	@Override
+	protected boolean canPerformAction(Player player, ItemStack heldItem, float ticks) {
+		if (destination(player) == null) {
+			player.displayClientMessage(Component.literal("No safe shadow answers your step."), true);
+			return false;
+		}
+		return super.canPerformAction(player, heldItem, ticks);
+	}
+
 	@Override
 	public void getAction(Player player, Level world, ItemStack heldItemMainhand, BlockPos position) {
-		double range = BASE_RANGE * SkillPointHelper.getSanguineReachMultiplier(player);
-		boolean phantasmalStep = ArmorSetHelper.hasFullPhantasmalBloodlust(player);
-
-		Vec3 eyePos = player.getEyePosition(1.0F);
-		Vec3 lookVec = player.getViewVector(1.0F);
-		Vec3 endPos = eyePos.add(lookVec.scale(range));
-
-		BlockHitResult hitResult = world.clip(new ClipContext(
-				eyePos, endPos, ClipContext.Block.OUTLINE, ClipContext.Fluid.NONE, player));
-
-		if (hitResult.getType() == HitResult.Type.MISS) {
-			player.displayClientMessage(
-					Component.literal("§cLook at a block to teleport!"), true);
-			return;
-		}
-
-		BlockPos targetBlock = hitResult.getBlockPos();
-
-		BlockPos landingPos = targetBlock.above();
-
-		// Umbral Step requires darkness at the destination
-		int lightAtDest = world.getMaxLocalRawBrightness(landingPos);
-		if (!phantasmalStep && !BlackVeilCovenantManager.isDarkEnough(world, landingPos, MAX_LIGHT_LEVEL)) {
-			player.displayClientMessage(
-					Component.literal("§5The shadows there are too thin... (light level " + lightAtDest + ")"),
-					true);
-			return;
-		}
-		BlockState landingState = world.getBlockState(landingPos);
-		BlockState headState = world.getBlockState(landingPos.above());
-
-		if (!landingState.isAir() && !landingState.getCollisionShape(world, landingPos).isEmpty()) {
-			// Try the face that was hit instead
-			landingPos = targetBlock.relative(hitResult.getDirection());
-			landingState = world.getBlockState(landingPos);
-			headState = world.getBlockState(landingPos.above());
-			if (!landingState.isAir() && !landingState.getCollisionShape(world, landingPos).isEmpty()) {
-				player.displayClientMessage(
-						Component.literal("§cNo safe landing spot!"), true);
-				return;
-			}
-		}
-		if (!headState.isAir() && !headState.getCollisionShape(world, landingPos.above()).isEmpty()) {
-			player.displayClientMessage(
-					Component.literal("§cNo safe landing spot!"), true);
-			return;
-		}
+		BlockPos landingPos = destination(player);
+		if (landingPos == null) return;
 
 		if (world instanceof ServerLevel sLevel) {
 			Vec3 oldPos = player.position();
+            ManipulationVisuals.burst(sLevel, ManipulationVisuals.Form.TELEPORT, oldPos, oldPos, 1, 18);
+            ManipulationVisuals.burst(sLevel, ManipulationVisuals.Form.TELEPORT, Vec3.atBottomCenterOf(landingPos), Vec3.atBottomCenterOf(landingPos), 1, 22);
 			RandomSource random = world.random;
 			for (int i = 0; i < 25; i++) {
 				sLevel.sendParticles(
-						GlowParticleFactory.createData(new ParticleColor(
+						new ColorParticleData(HLParticleInit.glow.get(), new ParticleColor(
 								70 + random.nextFloat() * 30,
 								0,
 								110 + random.nextFloat() * 50)),
@@ -133,7 +116,7 @@ public class UmbralStepManip extends BloodManipulation {
 			RandomSource random = world.random;
 			for (int i = 0; i < 25; i++) {
 				sLevel.sendParticles(
-						GlowParticleFactory.createData(new ParticleColor(
+						new ColorParticleData(HLParticleInit.glow.get(), new ParticleColor(
 								70 + random.nextFloat() * 30,
 								0,
 								110 + random.nextFloat() * 50)),

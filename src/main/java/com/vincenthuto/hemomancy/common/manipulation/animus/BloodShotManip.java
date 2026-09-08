@@ -72,6 +72,10 @@ public class BloodShotManip extends BloodManipulation {
 
 	@Override
 	protected boolean canPerformAction(Player player, ItemStack heldItemMainhand, float chargeTicks) {
+		if (mode == Mode.MORTAR && chargeTicks < getRequiredChargeTicks()) {
+			player.displayClientMessage(Component.literal("Hematic Mortar requires a full charge."), true);
+			return false;
+		}
 		if (mode == Mode.HALO && player.level().getEntitiesOfClass(BloodShotEntity.class,
 				player.getBoundingBox().inflate(4), shot -> shot.isOrbitingFor(player.getUUID())).size() > 0) {
 			player.displayClientMessage(Component.literal("A sanguine halo already surrounds you."), true);

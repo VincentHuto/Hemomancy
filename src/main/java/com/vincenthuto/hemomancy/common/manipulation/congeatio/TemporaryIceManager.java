@@ -41,6 +41,9 @@ public final class TemporaryIceManager {
 			return false;
 		}
 		level.setBlock(pos, state, 3);
+        com.vincenthuto.hemomancy.common.manipulation.ManipulationVisuals.burst(level,
+                com.vincenthuto.hemomancy.common.manipulation.ManipulationVisuals.Form.ICE,
+                net.minecraft.world.phys.Vec3.atBottomCenterOf(pos), net.minecraft.world.phys.Vec3.atCenterOf(pos), .45, 12);
 		TEMPORARY_ICE.computeIfAbsent(level.dimension(), key -> new HashMap<>())
 				.put(pos.immutable(), level.getGameTime() + lifetimeTicks);
 		if (owner != null) {
@@ -103,6 +106,9 @@ public final class TemporaryIceManager {
 			}
 			BlockPos pos = entry.getKey();
 			if (level.getBlockState(pos).is(Blocks.PACKED_ICE)) {
+                com.vincenthuto.hemomancy.common.manipulation.ManipulationVisuals.burst(level,
+                        com.vincenthuto.hemomancy.common.manipulation.ManipulationVisuals.Form.ICE,
+                        net.minecraft.world.phys.Vec3.atBottomCenterOf(pos), net.minecraft.world.phys.Vec3.atCenterOf(pos), .45, 8);
 				level.setBlock(pos, Blocks.AIR.defaultBlockState(), 3);
 			}
 			Map<BlockPos, UUID> owners = ICE_OWNERS.get(level.dimension());

@@ -53,6 +53,9 @@ public class VoidShroudManip extends BloodManipulation {
 		world.playSound(null, player.blockPosition(),
 				SoundEvents.ENDERMAN_TELEPORT, SoundSource.PLAYERS, 0.5f, 1.8f);
 
+        com.vincenthuto.hemomancy.common.manipulation.ManipulationVisuals.burst(sLevel,
+                com.vincenthuto.hemomancy.common.manipulation.ManipulationVisuals.Form.VEIL,
+                player.position(), player.position(), 1, 18);
 		RandomSource random = world.random;
 		BlockPos pos = player.blockPosition();
 		for (int i = 0; i < 25; i++) {

@@ -61,7 +61,7 @@ final class LivingFlailReworkSourceTest {
 
 	@Test
 	void firstAndThirdPersonRenderOrbitChainAndHeadlessDeployment() throws Exception {
-		String helper = read("src/main/java/com/vincenthuto/hemomancy/client/render/item/hematic/LivingFlailRenderHelper.java");
+		String helper = read("src/main/java/com/vincenthuto/hemomancy/client/render/item/harbinger/LivingFlailRenderHelper.java");
 		String projectile = read("src/main/java/com/vincenthuto/hemomancy/client/render/entity/projectile/LivingFlailHeadProjectileRenderer.java");
 		contains("charge orbit", helper, "renderChargingOrbit");
 		contains("headless deployment", helper, "LivingFlailDeployment.isDeployed");

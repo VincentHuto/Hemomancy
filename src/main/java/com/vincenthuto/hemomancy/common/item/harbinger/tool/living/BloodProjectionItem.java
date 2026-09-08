@@ -99,6 +99,18 @@ public class BloodProjectionItem extends Item implements IDispellable, ICellHand
 
 	public static double projectFromEntity(Level worldIn, LivingEntity player, double structureFeedRate,
 			double tileTransferRate, boolean livingStaff) {
+        double spent=performProjection(worldIn,player,structureFeedRate,tileTransferRate,livingStaff);
+        if(spent>0 && worldIn instanceof ServerLevel server && player.tickCount%5==0) {
+            var target=SanguineProjectionTargeting.pick(worldIn,player,SanguineProjectionTargeting.PROJECTION_REACH,true);
+            com.vincenthuto.hemomancy.common.manipulation.ManipulationVisuals.burst(server,
+                    com.vincenthuto.hemomancy.common.manipulation.ManipulationVisuals.Form.SUTURE,
+                    player.getEyePosition().add(0,-.3,0),target.getLocation(),1,8);
+        }
+        return spent;
+    }
+
+    private static double performProjection(Level worldIn, LivingEntity player, double structureFeedRate,
+            double tileTransferRate, boolean livingStaff) {
 		if (worldIn.isClientSide) {
 			return 0.0D;
 		}

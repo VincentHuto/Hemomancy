@@ -10,6 +10,7 @@ import com.vincenthuto.hemomancy.common.event.LastRiteHelper;
 import com.vincenthuto.hemomancy.common.init.EffectInit;
 import com.vincenthuto.hemomancy.common.init.ManipulationInit;
 import com.vincenthuto.hemomancy.common.manipulation.saint.CrimsonTitheManip;
+import com.vincenthuto.hemomancy.common.manipulation.saint.EndlessHourManip;
 import net.minecraft.core.particles.DustParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.resources.ResourceKey;
@@ -40,8 +41,6 @@ import java.util.*;
 
 @EventBusSubscriber(modid = Hemomancy.MOD_ID)
 public final class ManipulationReactiveEvents {
-	private static final DustParticleOptions SHADOW = new DustParticleOptions(new Vector3f(.08F, .02F, .12F), 1.5F);
-	private static final DustParticleOptions CROWN = new DustParticleOptions(new Vector3f(.65F, .01F, .03F), 1.1F);
 	private static final DustParticleOptions RALLY = new DustParticleOptions(new Vector3f(.95F, .18F, .32F), 1.2F);
 	private static final Map<UUID, Coronation> CORONATIONS = new HashMap<>();
 	private static final Map<UUID, Long> CIRCUIT_HITS = new HashMap<>();
@@ -69,14 +68,17 @@ public final class ManipulationReactiveEvents {
 	public static void armCoronation(Player player, int lances, float strength) {
 		CORONATIONS.put(player.getUUID(), new Coronation(lances, strength,
 				player.level().getGameTime() + 400));
+        ManipulationVisuals.attached(player, ManipulationVisuals.Form.CROWN, 1.15, 400, lances);
 	}
 
 	public static void armLivingCircuit(Player player) {
 		CIRCUIT_HITS.put(player.getUUID(), player.level().getGameTime() + 40);
+        ManipulationVisuals.attached(player, ManipulationVisuals.Form.CIRCUIT, 1, 40, 1);
 	}
 
 	public static void createEclipseWell(ServerLevel level, Vec3 center, double radius, int duration, UUID owner) {
 		ECLIPSE_WELLS.add(new EclipseWell(level.dimension(), center, radius, level.getGameTime() + duration, owner));
+        ManipulationVisuals.burst(level, ManipulationVisuals.Form.WELL, center, center, radius, duration);
 	}
 
 	public static void createHematicBeacon(ServerLevel level, Vec3 center, double radius, int duration, UUID owner) {
@@ -89,11 +91,13 @@ public final class ManipulationReactiveEvents {
 	public static void refreshSanguineWard(Player player) {
 		long until = player.level().getGameTime() + 25;
 		Ward current = SANGUINE_WARDS.get(player.getUUID());
-		SANGUINE_WARDS.put(player.getUUID(), new Ward(current == null ? 6.0F : Math.min(8.0F, current.pool + 2.0F), until));
+		SANGUINE_WARDS.put(player.getUUID(), new Ward(current == null || current.until < player.level().getGameTime() ? 6.0F : Math.min(8.0F, current.pool + 2.0F), until));
+        ManipulationVisuals.attached(player, ManipulationVisuals.Form.WARD, 1, 25, (int)Math.ceil(SANGUINE_WARDS.get(player.getUUID()).pool));
 	}
 
 	public static void armUnclosingEye(Player player, int duration) {
 		UNCLOSING_EYES.put(player.getUUID(), player.level().getGameTime() + duration);
+        ManipulationVisuals.attached(player, ManipulationVisuals.Form.EYE, 1, duration, 1);
 	}
 
 	public static void scheduleDeadlyGazeSlam(ServerLevel level, Player owner, LivingEntity target, int delay, float damage) {
@@ -111,18 +115,27 @@ public final class ManipulationReactiveEvents {
 			else {
 				float absorbed = Math.min(ward.pool, event.getAmount());
 				event.setAmount(event.getAmount() - absorbed);
-				if (absorbed >= ward.pool) SANGUINE_WARDS.remove(player.getUUID());
-				else SANGUINE_WARDS.put(player.getUUID(), new Ward(ward.pool - absorbed, ward.until));
+				SANGUINE_WARDS.put(player.getUUID(), new Ward(ward.pool - absorbed, ward.until));
+                ManipulationVisuals.attached(player, ManipulationVisuals.Form.WARD, 1,
+                        (int)(ward.until-now), (int)Math.ceil(ward.pool-absorbed));
 			}
 		}
 
 		Coronation crown = CORONATIONS.get(player.getUUID());
-		if (crown != null && now < crown.until && crown.lances > 0 && attacker instanceof LivingEntity living) {
+		if (crown != null && now < crown.until && crown.lances > 0 && attacker instanceof LivingEntity living
+				&& ManipulationCombatHelper.canHarm(player, living)) {
 			BloodNeedleEntity needle = new BloodNeedleEntity(player.level(), player);
 			needle.setDamageTendency(EnumBloodTendency.ANIMUS);
-			Vec3 direction = living.getEyePosition().subtract(player.getEyePosition()).normalize();
+            needle.setCoronationSword(true);
+            Vec3 launch = player.position().add(ManipulationVisuals.swordOffset(now, crown.lances - 1));
+            needle.setPos(launch);
+			needle.setBaseDamage(1.0D + 2.0D * crown.strength);
+			if (crown.strength >= 1.0F) needle.configurePiercing((byte) 1);
+			Vec3 direction = living.getEyePosition().subtract(needle.position()).normalize();
 			needle.shoot(direction.x, direction.y, direction.z, 2.4F + crown.strength, 1.0F);
 			player.level().addFreshEntity(needle);
+            ManipulationVisuals.attached(player, ManipulationVisuals.Form.CROWN, 1.15,
+                    (int) (crown.until - now), crown.lances - 1);
 			if (crown.lances == 1) CORONATIONS.remove(player.getUUID());
 			else CORONATIONS.put(player.getUUID(), new Coronation(crown.lances - 1, crown.strength, crown.until));
 		}
@@ -132,9 +145,10 @@ public final class ManipulationReactiveEvents {
 
 	@SubscribeEvent(priority = EventPriority.LOWEST)
 	public static void onFinalDamage(LivingDamageEvent.Pre event) {
+		EndlessHourManip.deferDamage(event);
 		if (event.getSource().getEntity() instanceof ServerPlayer attacker && event.getEntity() != attacker
 				&& selected(attacker, "penumbral_drift")) ManipulationChannelManager.stop(attacker);
-		if (!(event.getEntity() instanceof ServerPlayer player) || event.getNewDamage() < player.getHealth()
+		if (!(event.getEntity() instanceof ServerPlayer player) || event.getNewDamage() < player.getHealth() + player.getAbsorptionAmount()
 				|| !active(player, "phoenix_debt")
 				|| !LastRiteHelper.canFire(player, LastRiteHelper.PHOENIX_DEBT_ID)
 				|| !trigger(player, ManipulationInit.phoenix_debt.get(), 6000)) return;
@@ -147,22 +161,25 @@ public final class ManipulationReactiveEvents {
 		player.addEffect(new MobEffectInstance(MobEffects.FIRE_RESISTANCE, 200, 0, false, true));
 		if (player.level() instanceof ServerLevel level) {
 			for (LivingEntity target : level.getEntitiesOfClass(LivingEntity.class, player.getBoundingBox().inflate(5),
-					candidate -> candidate != player && !player.isAlliedTo(candidate))) {
+					candidate -> ManipulationCombatHelper.canHarm(player, candidate))) {
 				target.igniteForSeconds(5);
 				target.hurt(level.damageSources().inFire(), 8.0F);
 			}
-			level.sendParticles(ParticleTypes.FLAME, player.getX(), player.getY() + 1, player.getZ(), 80, 2, 1, 2, .08);
+			ManipulationVisuals.burst(level, ManipulationVisuals.Form.PHOENIX, player.position(), player.position(), 5, 48);
 		}
 	}
 
 	@SubscribeEvent
 	public static void onAttack(AttackEntityEvent event) {
 		if (!(event.getEntity() instanceof ServerPlayer player)) return;
-		Long armedUntil = CIRCUIT_HITS.remove(player.getUUID());
+		Long armedUntil = event.getTarget() instanceof LivingEntity victim && ManipulationCombatHelper.canHarm(player, victim)
+				? CIRCUIT_HITS.remove(player.getUUID()) : null;
 		if (armedUntil != null && player.level().getGameTime() <= armedUntil
 				&& event.getTarget() instanceof LivingEntity target) {
 			target.addEffect(new MobEffectInstance(EffectInit.conductive_mark, 160, 0, false, true));
 			SchoolHitHelper.markConductive(target, 160);
+            ManipulationVisuals.attached(player, ManipulationVisuals.Form.CIRCUIT, 0, 0, 0);
+            ManipulationVisuals.attached(target, ManipulationVisuals.Form.MARK, 1, 160, 1);
 		}
 		if (selected(player, "penumbral_drift")) ManipulationChannelManager.stop(player);
 	}
@@ -171,6 +188,22 @@ public final class ManipulationReactiveEvents {
 	public static void onPlayerTick(PlayerTickEvent.Post event) {
 		if (!(event.getEntity() instanceof ServerPlayer player)) return;
 		CrimsonTitheManip.tickDebt(player);
+        if (player.tickCount % 20 == 0) {
+            var data = player.getPersistentData();
+            long now=player.level().getGameTime();
+            if(active(player,"sovereign_instinct") && PASSIVE_COOLDOWNS.getOrDefault(player.getUUID()+":sovereign_instinct",0L)<=now)
+                ManipulationVisuals.attached(player,ManipulationVisuals.Form.COMMAND,1.8,25,3);
+            if(active(player,"phoenix_debt") && LastRiteHelper.canFire(player,LastRiteHelper.PHOENIX_DEBT_ID)
+                    && PASSIVE_COOLDOWNS.getOrDefault(player.getUUID()+":phoenix_debt",0L)<=now)
+                ManipulationVisuals.attached(player,ManipulationVisuals.Form.PHOENIX_READY,1,25,1);
+            long tithe = data.getLong("hemomancy:crimson_tithe_expiry") - player.level().getGameTime();
+            double reserve = com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BorrowedBloodReserve.get(player);
+            if (tithe > 0) ManipulationVisuals.attached(player, ManipulationVisuals.Form.DEBT,
+                    Math.max(0, data.getDouble("hemomancy:crimson_tithe_stored") - reserve) * 2, (int)Math.max(0, tithe), (int)reserve);
+            long hour = data.getLong("hemomancy:endless_hour_expiry") - player.level().getGameTime();
+            if (hour > 0) ManipulationVisuals.attached(player, ManipulationVisuals.Form.HOUR, data.getFloat("hemomancy:endless_hour_deferred"), (int)Math.max(0, hour), 1);
+        }
+		EndlessHourManip.tickEndlessHour(player);
 		if (active(player, "phoenix_debt")) {
 			if (!LastRiteHelper.hasArmedSource(player)) LastRiteHelper.arm(player, LastRiteHelper.PHOENIX_DEBT_ID);
 		} else LastRiteHelper.clearIfArmed(player, LastRiteHelper.PHOENIX_DEBT_ID);
@@ -188,19 +221,15 @@ public final class ManipulationReactiveEvents {
 		Coronation crown = CORONATIONS.get(player.getUUID());
 		if (crown != null) {
 			if (player.level().getGameTime() >= crown.until) CORONATIONS.remove(player.getUUID());
-			else if (player.tickCount % 4 == 0) {
-				double rotation = player.tickCount * .12D;
-				for (int i = 0; i < crown.lances; i++) {
-					double angle = rotation + Math.PI * 2 * i / crown.lances;
-					player.serverLevel().sendParticles(CROWN, player.getX() + Math.cos(angle) * .85,
-							player.getY() + 2.1, player.getZ() + Math.sin(angle) * .85, 1, 0, 0, 0, 0);
-				}
+			else if (player.tickCount % 20 == 0) {
+                ManipulationVisuals.attached(player, ManipulationVisuals.Form.CROWN, 1.15,
+                        (int) (crown.until - player.level().getGameTime()), crown.lances);
 			}
 		}
 		if (player.tickCount % 10 != 0 || !ManipulationChannelManager.isChanneling(player.getUUID())
 				|| !selected(player, "penumbral_drift")) return;
 		for (Mob mob : player.level().getEntitiesOfClass(Mob.class, player.getBoundingBox().inflate(12),
-				mob -> mob.getTarget() == player)) mob.setTarget(null);
+				mob -> mob.getTarget() == player && !isBoss(mob))) mob.setTarget(null);
 	}
 
 	@SubscribeEvent
@@ -214,8 +243,9 @@ public final class ManipulationReactiveEvents {
 			slams.remove();
 			Entity target = level.getEntity(slam.target);
 			Player owner = level.getPlayerByUUID(slam.owner);
-			if (target instanceof LivingEntity living && owner != null && living.isAlive()) {
+			if (target instanceof LivingEntity living && owner != null && ManipulationCombatHelper.canHarm(owner, living)) {
 				living.setDeltaMovement(living.getDeltaMovement().x, -1.5D, living.getDeltaMovement().z);
+                ManipulationVisuals.burst(level,ManipulationVisuals.Form.SWORD_IMPACT,living.position(),living.position(),1,18);
 				ManipulationCombatHelper.hurt(ManipulationInit.deadly_gaze.get(), owner, living, level, slam.damage);
 			}
 		}
@@ -231,15 +261,14 @@ public final class ManipulationReactiveEvents {
 			Player owner = level.getPlayerByUUID(well.owner);
 			for (LivingEntity target : level.getEntitiesOfClass(LivingEntity.class,
 					new AABB(well.center, well.center).inflate(well.radius),
-					candidate -> candidate.isAlive() && candidate != owner && (owner == null || !owner.isAlliedTo(candidate)))) {
+					candidate -> candidate.isAlive() && candidate != owner && (owner != null && ManipulationCombatHelper.canHarm(owner, candidate)))) {
 				Vec3 pull = well.center.subtract(target.position());
 				if (pull.lengthSqr() > .01) target.push(pull.x * .04, Math.max(0, pull.y) * .02, pull.z * .04);
 				target.addEffect(new MobEffectInstance(MobEffects.BLINDNESS, 25, 0, false, true));
 				target.addEffect(new MobEffectInstance(MobEffects.DARKNESS, 25, 0, false, true));
 				if (target instanceof Mob mob) mob.setTarget(null);
 			}
-			level.sendParticles(SHADOW, well.center.x, well.center.y, well.center.z, 12,
-					well.radius * .5, .4, well.radius * .5, .01);
+			if (now % 20 == 0) ManipulationVisuals.burst(level, ManipulationVisuals.Form.WELL, well.center, well.center, well.radius, (int) (well.until - now));
 		}
 		Iterator<HematicBeacon> beacons = HEMATIC_BEACONS.iterator();
 		while (beacons.hasNext()) {
@@ -257,17 +286,31 @@ public final class ManipulationReactiveEvents {
 
 	@SubscribeEvent
 	public static void onLogout(PlayerEvent.PlayerLoggedOutEvent event) {
-		clear(event.getEntity().getUUID());
+		EndlessHourManip.settleDebt(event.getEntity());
+		clear(event.getEntity());
 	}
 
 	@SubscribeEvent
 	public static void onRespawn(PlayerEvent.PlayerRespawnEvent event) {
-		clear(event.getEntity().getUUID());
+		clear(event.getEntity());
+	}
+
+	@SubscribeEvent(priority = EventPriority.LOWEST)
+	public static void onDeath(net.neoforged.neoforge.event.entity.living.LivingDeathEvent event) {
+		if (event.getEntity() instanceof ServerPlayer player) EndlessHourManip.clearDebt(player);
+	}
+
+	@SubscribeEvent
+	public static void onClone(PlayerEvent.Clone event) {
+		if (event.isWasDeath()) {
+			EndlessHourManip.clearDebt(event.getOriginal());
+			EndlessHourManip.clearDebt(event.getEntity());
+		} else EndlessHourManip.transferDebt(event.getOriginal(), event.getEntity());
 	}
 
 	private static void sovereignInstinct(ServerPlayer player) {
 		List<Mob> mobs = player.level().getEntitiesOfClass(Mob.class, player.getBoundingBox().inflate(10),
-				mob -> mob.isAlive() && mob.getTarget() == player && !HemoEntityPredicates.NOBLOOD.test(mob));
+				mob -> ManipulationCombatHelper.canHarm(player, mob) && mob.getTarget() == player && !HemoEntityPredicates.NOBLOOD.test(mob));
 		if (mobs.size() < 4 || !trigger(player, ManipulationInit.sovereign_instinct.get(), 600)) return;
 		for (int i = 0; i < mobs.size(); i++) {
 			Mob mob = mobs.get(i);
@@ -275,21 +318,23 @@ public final class ManipulationReactiveEvents {
 				mob.setTarget(null);
 				mob.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, 100, 1, false, true));
 			} else {
-				mob.setTarget(mobs.get((i + 1) % mobs.size()));
+				HematicCommandManager.redirect(player, mob, mobs.get((i + 1) % mobs.size()), 100);
 			}
 		}
 	}
 
 	private static void pulseHematicBeacon(ServerLevel level, HematicBeacon beacon) {
 		Player owner = level.getPlayerByUUID(beacon.owner);
-		AABB area = new AABB(beacon.center, beacon.center).inflate(beacon.radius);
+		if (owner == null) return;
+		ManipulationVisuals.burst(level, ManipulationVisuals.Form.BEACON, beacon.center, beacon.center, beacon.radius, (int) (beacon.until - level.getGameTime()));
+        AABB area = new AABB(beacon.center, beacon.center).inflate(beacon.radius);
 		for (Player ally : level.getEntitiesOfClass(Player.class, area,
-				player -> player.isAlive() && (owner == null || player == owner || owner.isAlliedTo(player)))) {
-			ally.addEffect(new MobEffectInstance(MobEffects.REGENERATION, 30, 0, false, true));
+				player -> player.isAlive() && ManipulationCombatHelper.allied(owner, player))) {
+			ally.heal(0.4F);
 			ally.addEffect(new MobEffectInstance(MobEffects.DAMAGE_RESISTANCE, 30, 0, false, true));
 		}
 		for (Mob mob : level.getEntitiesOfClass(Mob.class, area,
-				entity -> entity.isAlive() && (owner == null || !owner.isAlliedTo(entity)))) {
+				entity -> entity.isAlive() && ManipulationCombatHelper.canHarm(owner, entity))) {
 			mob.addEffect(new MobEffectInstance(MobEffects.GLOWING, 30, 0, false, true));
 		}
 		level.sendParticles(RALLY, beacon.center.x, beacon.center.y + .1, beacon.center.z, 16,
@@ -305,9 +350,8 @@ public final class ManipulationReactiveEvents {
 	}
 
 	private static boolean active(ServerPlayer player, String name) {
-		if (HemoCapabilityAccess.getUnstainedProgress(player)
-				.map(UnstainedAccessRules::blocksKnownBloodPowerUse).orElse(false)) return false;
-		return HemoCapabilityAccess.getKnownManipulations(player).map(known -> known.isPassiveActive(name)).orElse(false);
+		BloodManipulation manipulation = ManipulationInit.getByName(name);
+		return manipulation != null && manipulation.isPassiveReady(player);
 	}
 
 	private static boolean selected(ServerPlayer player, String name) {
@@ -316,7 +360,18 @@ public final class ManipulationReactiveEvents {
 				.orElse(false);
 	}
 
-	private static void clear(UUID player) {
+	private static void clear(Player entity) {
+        UUID player = entity.getUUID();
+        if (entity.level() instanceof ServerLevel current) {
+            for (var well : ECLIPSE_WELLS) if (well.owner.equals(player)) {
+                var level=current.getServer().getLevel(well.dimension);
+                if(level!=null)ManipulationVisuals.burst(level,ManipulationVisuals.Form.WELL,well.center,well.center,0,0);
+            }
+            for (var beacon : HEMATIC_BEACONS) if (beacon.owner.equals(player)) {
+                var level=current.getServer().getLevel(beacon.dimension);
+                if(level!=null)ManipulationVisuals.burst(level,ManipulationVisuals.Form.BEACON,beacon.center,beacon.center,0,0);
+            }
+        }
 		CORONATIONS.remove(player);
 		CIRCUIT_HITS.remove(player);
 		SANGUINE_WARDS.remove(player);

@@ -38,8 +38,8 @@ public final class BodyIdiomGameTests {
 			ManipulationInit.ironhearted.get().getAction(player, helper.getLevel(), ItemStack.EMPTY,
 					player.blockPosition(), BodyIdiomRules.IRON_HEART_CHARGE_TICKS);
 			var state = HemoCapabilityAccess.getPowerGuardrails(player);
-			helper.assertTrue(state.getIronHeartHealth() == 2.0F, "Charged action did not form one Iron Heart");
-			LivingIncomingDamageEvent event = damage(player, helper.getLevel().damageSources().generic(), 3.0F);
+			helper.assertTrue(state.getIronHeartHealth() == 4.0F, "Charged action did not form two Iron Hearts");
+			LivingIncomingDamageEvent event = damage(player, helper.getLevel().damageSources().generic(), 5.0F);
 			BodyIdiomEvents.onIncomingDamage(event);
 			helper.assertTrue(Math.abs(event.getAmount() - 1.0F) < 0.001F,
 					"Iron Heart did not absorb damage before health: " + event.getAmount());
@@ -92,6 +92,9 @@ public final class BodyIdiomGameTests {
 			var known = HemoCapabilityAccess.getKnownManipulations(player).orElseThrow();
 			known.setEquippedManipNames(List.of("blackhearted"));
 			known.togglePassive("blackhearted");
+			HemoCapabilityAccess.requireBloodVolume(player).setActive(true);
+			HemoCapabilityAccess.getBloodTendency(player).orElseThrow().setTendencyAlignment(
+					com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency.MORTEM, 35);
 			player.setHealth(10.0F);
 			LivingIncomingDamageEvent event = damage(player, helper.getLevel().damageSources().wither(), 4.0F);
 			BodyIdiomEvents.onIncomingDamage(event);

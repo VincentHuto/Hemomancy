@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.manipulation.mortem;
 
+import com.vincenthuto.hemomancy.common.manipulation.ManipulationVisuals;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
@@ -8,7 +9,8 @@ import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillPoin
 import com.vincenthuto.hemomancy.common.manipulation.*;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.BloodVolumeServerPacket;
-import com.vincenthuto.hutoslib.client.particle.factory.GlowParticleFactory;
+import com.vincenthuto.hutoslib.client.particle.data.ColorParticleData;
+import com.vincenthuto.hutoslib.common.registry.HLParticleInit;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
@@ -55,19 +57,34 @@ public class ExsanguinateManip extends BloodManipulation {
 		super(name, cost, alignLevel, xpCost, type, rank, tendency, section);
 	}
 
+	private Optional<LivingEntity> target(Player player) {
+		AABB searchBox = new AABB(player.blockPosition()).inflate(RADIUS);
+		List<LivingEntity> nearby = player.level().getEntitiesOfClass(LivingEntity.class, searchBox,
+				e -> ManipulationCombatHelper.canHarm(player, e) && !com.vincenthuto.hemomancy.common.entity.HemoEntityPredicates.NOBLOOD.test(e));
+
+		return nearby.stream()
+				.filter(e -> ManipulationCombatHelper.visible(player, e))
+				.filter(e -> e.distanceTo(player) <= RADIUS)
+				.filter(e -> e.getHealth() <= e.getMaxHealth() * HP_THRESHOLD_FRACTION)
+				.min(Comparator.comparingDouble(e -> e.distanceTo(player)));
+
+	}
+
+	@Override
+	protected boolean canPerformAction(Player player, ItemStack heldItem, float ticks) {
+		if (target(player).isEmpty()) {
+			player.displayClientMessage(Component.literal("No weakened blood-bearing enemy in sight."), true);
+			return false;
+		}
+		return super.canPerformAction(player, heldItem, ticks);
+	}
+
 	@Override
 	public void getAction(Player player, Level world, ItemStack heldItemMainhand, BlockPos position) {
 		if (!(world instanceof ServerLevel sLevel)) return;
 
 		BlockPos center = player.blockPosition();
-		AABB searchBox = new AABB(center).inflate(RADIUS);
-		List<LivingEntity> nearby = world.getEntitiesOfClass(LivingEntity.class, searchBox,
-				e -> e != player && e.isAlive());
-
-		Optional<LivingEntity> targetOpt = nearby.stream()
-				.filter(e -> e.distanceTo(player) <= RADIUS)
-				.filter(e -> e.getHealth() <= e.getMaxHealth() * HP_THRESHOLD_FRACTION)
-				.min(Comparator.comparingDouble(e -> e.distanceTo(player)));
+		Optional<LivingEntity> targetOpt = target(player);
 
 		if (targetOpt.isEmpty()) {
 			player.displayClientMessage(
@@ -77,9 +94,10 @@ public class ExsanguinateManip extends BloodManipulation {
 
 		LivingEntity target = targetOpt.get();
 		float drainDamage = target.getHealth() * DRAIN_DAMAGE_MULTIPLIER * (float) SkillPointHelper.getCrimsonMasteryMultiplier(player);
-		target.hurt(world.damageSources().magic(),
-				TendencyAffinityRules.adjustManipulationDamage(player, target, this, drainDamage));
+		if (!target.hurt(world.damageSources().magic(),
+				TendencyAffinityRules.adjustManipulationDamage(player, target, this, drainDamage)) || target.isAlive()) return;
 		HemomancyTendrilEffects.exsanguinate(player, target);
+        ManipulationVisuals.burst(sLevel, ManipulationVisuals.Form.DRAIN, player.getEyePosition(), target.getEyePosition(), 1, 24);
 
 		IBloodVolume volume = HemoCapabilityAccess.getBloodVolume(player).orElse(null);
 		if (volume != null && volume.isActive()) {
@@ -100,7 +118,7 @@ public class ExsanguinateManip extends BloodManipulation {
 			double py = target.getEyeY() + (player.getEyeY() - target.getEyeY()) * t;
 			double pz = target.getZ() + (player.getZ() - target.getZ()) * t;
 			sLevel.sendParticles(
-					GlowParticleFactory.createData(new ParticleColor(
+					new ColorParticleData(HLParticleInit.glow.get(), new ParticleColor(
 							120 + random.nextFloat() * 80,
 							0,
 							random.nextFloat() * 20)),

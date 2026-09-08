@@ -1,11 +1,14 @@
 package com.vincenthuto.hemomancy.common.manipulation.saint;
 
+import com.vincenthuto.hemomancy.common.manipulation.ManipulationVisuals;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.EnumVeinSections;
 import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
+import com.vincenthuto.hemomancy.common.manipulation.ManipulationCombatHelper;
 import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationRank;
 import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationType;
-import com.vincenthuto.hutoslib.client.particle.factory.GlowParticleFactory;
+import com.vincenthuto.hutoslib.client.particle.data.ColorParticleData;
+import com.vincenthuto.hutoslib.common.registry.HLParticleInit;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 
 import net.minecraft.core.BlockPos;
@@ -44,7 +47,7 @@ public class BloomOfRotManip extends BloodManipulation {
 	@Override
 	public void getAction(Player player, Level world, ItemStack heldItemMainhand, BlockPos position) {
 		world.getEntitiesOfClass(LivingEntity.class,
-				player.getBoundingBox().inflate(RADIUS), e -> e != player)
+				player.getBoundingBox().inflate(RADIUS), e -> ManipulationCombatHelper.canHarm(player, e))
 				.forEach(entity -> {
 					entity.addEffect(new MobEffectInstance(MobEffects.WITHER, ENEMY_EFFECT_DURATION, 1, false, true));
 					entity.addEffect(new MobEffectInstance(MobEffects.POISON, ENEMY_EFFECT_DURATION, 0, false, true));
@@ -62,11 +65,12 @@ public class BloomOfRotManip extends BloodManipulation {
 		world.playSound(null, player.blockPosition(), SoundEvents.SCULK_BLOCK_SPREAD, SoundSource.PLAYERS, 1.0f, 0.7f);
 
 		if (world instanceof ServerLevel sLevel) {
+            ManipulationVisuals.burst(sLevel, ManipulationVisuals.Form.BLOOM, player.position(), player.position(), RADIUS, 36);
 			for (int i = 0; i < 60; i++) {
 				double offsetX = (world.random.nextDouble() - 0.5) * RADIUS * 2;
 				double offsetZ = (world.random.nextDouble() - 0.5) * RADIUS * 2;
 				sLevel.sendParticles(
-						GlowParticleFactory.createData(new ParticleColor(
+						new ColorParticleData(HLParticleInit.glow.get(), new ParticleColor(
 								30 + world.random.nextFloat() * 50,
 								100 + world.random.nextFloat() * 80,
 								20)),

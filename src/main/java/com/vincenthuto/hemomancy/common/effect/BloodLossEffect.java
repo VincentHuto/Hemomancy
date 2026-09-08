@@ -36,7 +36,7 @@ public class BloodLossEffect extends MobEffect {
 					double coagChance = SkillPointHelper.getCoagulationChance(playerIn);
 					if (coagChance > 0 && playerIn.level().random.nextDouble() < coagChance) {
 						BloodFlowLedger.recordApplied((ServerPlayer) playerIn, "blood_loss",
-								"Blood Loss", Category.EFFECT, -(0.5f * amplifier), 0.0D, 1, false,
+								"Blood Loss", Category.EFFECT, -(0.5f * (amplifier + 1)), 0.0D, 1, false,
 								"Blocked by Coagulation");
 						return true; // Blocked by Coagulation skill
 					}
@@ -44,7 +44,7 @@ public class BloodLossEffect extends MobEffect {
 					IBloodVolume playerVolume = HemoCapabilityAccess.getBloodVolume(playerIn)
 							.orElseThrow(NullPointerException::new);
 					BloodFlowLedger.applyDrain((ServerPlayer) playerIn, playerVolume, "blood_loss",
-							"Blood Loss", Category.EFFECT, 0.5f * amplifier, 1, false);
+							"Blood Loss", Category.EFFECT, 0.5f * (amplifier + 1), 1, false);
 
 				}
 			} else if (!HemoEntityPredicates.NOBLOOD.test(entity)) {

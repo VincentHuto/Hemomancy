@@ -8,15 +8,15 @@ import java.nio.file.Path;
 
 public final class CellHandItemRendererParticleOriginTest {
 	private static final Path EFFECTS = Path.of(
-			"src/main/java/com/vincenthuto/hemomancy/client/render/item/hematic/CellHandParticleEffects.java");
+			"src/main/java/com/vincenthuto/hemomancy/client/render/item/harbinger/CellHandParticleEffects.java");
 	private static final Path ITEM_RENDERER = Path.of(
-			"src/main/java/com/vincenthuto/hemomancy/client/render/item/hematic/CellHandItemRenderer.java");
+			"src/main/java/com/vincenthuto/hemomancy/client/render/item/harbinger/CellHandItemRenderer.java");
 	private static final Path THIRD_PERSON_LAYER = Path.of(
 			"src/main/java/com/vincenthuto/hemomancy/client/render/layer/player/CellHandLayer.java");
 	private static final Path PROJECTION_ITEM = Path.of(
 			"src/main/java/com/vincenthuto/hemomancy/common/item/harbinger/tool/living/BloodProjectionItem.java");
 	private static final Path BLOCK_INTERACTIONS = Path.of(
-			"src/main/java/com/vincenthuto/hemomancy/common/block/shared/BlockBloodInteractions.java");
+			"src/main/java/com/vincenthuto/hemomancy/common/block/harbinger/BlockBloodInteractions.java");
 	private static final Path FORMATION_HANDLER = Path.of(
 			"src/main/java/com/vincenthuto/hemomancy/common/event/SanguineFormationProjectionHandler.java");
 	private static final Path CARDINAL_RITE_HANDLER = Path.of(

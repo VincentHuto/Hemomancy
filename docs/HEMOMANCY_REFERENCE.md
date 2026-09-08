@@ -1048,6 +1048,12 @@ This is why beginning purification does not erase an existing loadout, while com
 
 Blood manipulations are abilities fueled by blood. Lore-wise, they are dormant memories everyone has access to. They can now be learned through two paths: crude memory shards for early, weak starter echoes, and full **Blood Memory** items for the refined midgame-and-later memory-weaving path.
 
+### September 2026 casting corrections
+
+The [acquisition pass](manipulation_work_plan/03-acquisition-results.md) verifies all eleven manipulation families, keeps loaded crossbow ammunition through staff restoration/reload, and gives a physical Thread Ripper memory if Liberation's direct grant is rejected. Base cast, upkeep, reactive and staff-switch prices are distinguished in the existing UI; item attack costs remain separate. The [90-recipe ledger](manipulation_work_plan/03-memory-recipe-ledger.md) includes blank and lantern costs. Final repricing awaits combat tuning; survival acquisition and full graft/reward routes retain live acceptance checks.
+
+[Work area 2 results](manipulation_work_plan/02-targeting-and-casting-results.md) records M08–M12's targeting, payment and passive rules. Aimed rays stop at collision geometry; nearest-victim powers require visibility but still search around the caster. The audited hostile payloads exclude allies, owned/allied summons and PvP-disabled players. Existing area pulses retain their area geometry. Circuit requires allied recipients; Suture falls back to self. Predictable invalid actions validate before blood/cooldown/mastery bookkeeping; exact-cost payment is allowed without a hidden 1 mL reserve. Blackhearted, Sovereign and Phoenix require active blood, an enabled equipped passive and their registered alignment; Sovereign reuses the command manager for five seconds of redirection.
+
 ### 8.1 Manipulation Properties
 
 Each manipulation has:
@@ -4090,3 +4096,15 @@ The Vein-Mason arc now continues as optional Degree 5 and Degree 6 assignments. 
 Active scars add transient tendency alignment; saved base alignment is unchanged. Ordinary non-mechanical Noetic Memories receive the best matching cerebral-scar reduction only: 5% at tier one, 10% at tier two, and 15% at tier three. Hematic Fortification multiplies both Noetic and Thelemic vascular strain by 0.85. The canonical vascular sections are Head, Arms, Heart, Body, and Legs.
 
 ---
+
+## Manipulation balance pass — 7 September 2026
+
+Ironhearted now stores up to 4 HP per fully charged cast. Iron Choir intercepts up to three hostile projectiles per paid second, and Absolute Stillness slows hostile projectiles every channel tick with reduced boss slowing. Carrion heals from health actually drained. Furnace grants allied fire resistance and respects pets and summons.
+
+Base costs are now Hemorrhage 75 mL, Coronation 600 mL, Conductive Mark 150 mL and Crimson Tithe 100 mL; channel upkeep is Furnace 150, Drift 75 and Dowsing 75 mL/s. Mark and Hemorrhage last twelve seconds. Full-charge Coronation counterattacks gain stronger piercing needles. Tithe provides a 500 mL advance with its existing repayment and damage risk.
+
+Dowsing reports nearest ore coordinates, Forge preserves multi-output recipe counts and stack limits, and Lignum-family channels automatically harvest permitted blocks when selection completes. Earlier release and forced cancellation retain their separate behaviors. Memory recipes and progression gates are unchanged. Live balance acceptance and authored effects remain open.
+
+See [area 4 comparisons and verification](manipulation_work_plan/04-balance-results.md).
+
+The [area 5 presentation pass](manipulation_work_plan/05-visuals-results.md) adds server-driven world meshes, all charged buildup forms, bloody Coronation swords, distinct projectile family bodies, zone/status/debt cues and successful utility-transfer feedback. Avatar upkeep no longer replays activation audio. Existing authored staff/Avatar assets and exact heart HUD remain. The report records all 97 active powers, isolated client captures and outstanding remote/visual acceptance.

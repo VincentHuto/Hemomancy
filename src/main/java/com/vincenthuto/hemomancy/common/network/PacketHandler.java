@@ -69,6 +69,10 @@ public class PacketHandler {
 
     private static void onRegisterPayloads(RegisterPayloadHandlersEvent event) {
         var net = event.registrar(Hemomancy.MOD_ID);
+        net.playToServer(ManipulationChargeVisualPacket.TYPE, ManipulationChargeVisualPacket.STREAM_CODEC,
+                ManipulationChargeVisualPacket::handle);
+        net.playToClient(ManipulationVisualPacket.TYPE, ManipulationVisualPacket.STREAM_CODEC,
+                ManipulationVisualPacket::handle);
 
         // ── Blood Volume capability ───────────────────────────────────────────
         net.playToServer(BloodVolumeClientPacket.TYPE,

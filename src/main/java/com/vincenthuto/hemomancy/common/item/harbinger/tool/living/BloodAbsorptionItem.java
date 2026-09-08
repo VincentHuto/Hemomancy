@@ -302,6 +302,9 @@ public class BloodAbsorptionItem extends Item implements IDispellable, ICellHand
 		if (user instanceof ServerPlayer serverPlayer) {
 			PacketHandler.sendToPlayer(serverPlayer, new BloodVolumeServerPacket(volume));
 		}
+        if (level instanceof net.minecraft.server.level.ServerLevel server) com.vincenthuto.hemomancy.common.manipulation.ManipulationVisuals.burst(server,
+                com.vincenthuto.hemomancy.common.manipulation.ManipulationVisuals.Form.DRAIN,
+                user.getEyePosition().add(0,-.3,0), target.getEyePosition(), 1, 12);
 		return absorbed;
 	}
 

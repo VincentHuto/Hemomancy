@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.manipulation.ductilis;
 
+import com.vincenthuto.hemomancy.common.manipulation.ManipulationVisuals;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.EnumVeinSections;
 import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillPointHelper;
@@ -26,7 +27,13 @@ import javax.annotation.Nullable;
 public class ConductiveMarkManip extends BloodManipulation {
 	private static final double BASE_RANGE = 14.0D;
 	private static final double TARGET_DOT = 0.86D;
-	private static final int DURATION_TICKS = 160;
+	private static final int DURATION_TICKS = 240;
+
+	@Override
+	protected boolean canPerformAction(Player player, ItemStack heldItem, float ticks) {
+		return findTarget(player, player.level(), BASE_RANGE * SkillPointHelper.getSanguineReachMultiplier(player)) != null
+				&& super.canPerformAction(player, heldItem, ticks);
+	}
 
 	public ConductiveMarkManip(String name, double cost, double alignLevel, double xpCost,
 			EnumManipulationType type, EnumManipulationRank rank, EnumBloodTendency tendency,
@@ -47,6 +54,7 @@ public class ConductiveMarkManip extends BloodManipulation {
 		target.addEffect(new MobEffectInstance(MobEffects.GLOWING, DURATION_TICKS, 0, false, true, true));
 		SchoolHitHelper.markConductive(target, DURATION_TICKS);
 		DuctilisLightningEffects.conductiveMark(player, target);
+        ManipulationVisuals.attached(target, ManipulationVisuals.Form.MARK, .6, DURATION_TICKS, 1);
 		world.playSound(null, target.blockPosition(), SoundEvents.TRIDENT_THUNDER.value(), SoundSource.PLAYERS,
 				0.35F, 2.0F);
 	}
@@ -56,7 +64,7 @@ public class ConductiveMarkManip extends BloodManipulation {
 		Vec3 eye = player.getEyePosition();
 		Vec3 look = player.getLookAngle().normalize();
 		return world.getEntitiesOfClass(LivingEntity.class, new AABB(player.blockPosition()).inflate(range),
-						target -> target != player && target.isAlive() && !target.isAlliedTo(player)
+						target -> com.vincenthuto.hemomancy.common.manipulation.ManipulationCombatHelper.canHarm(player, target)
 								&& player.hasLineOfSight(target))
 				.stream()
 				.filter(target -> {

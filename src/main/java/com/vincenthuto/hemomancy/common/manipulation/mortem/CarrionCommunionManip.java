@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.manipulation.mortem;
 
+import com.vincenthuto.hemomancy.common.manipulation.ManipulationVisuals;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.EnumVeinSections;
 import com.vincenthuto.hemomancy.common.init.EffectInit;
@@ -36,14 +37,17 @@ public class CarrionCommunionManip extends BloodManipulation {
 		float drained = 0;
 		for (LivingEntity target : eligibleTargets(player, level).stream()
 				.sorted(Comparator.comparingDouble(player::distanceToSqr)).limit(4).toList()) {
-			if (ManipulationCombatHelper.hurt(this, player, target, level, 2.0F)) drained += 2.0F;
-			level.sendParticles(BLOOD, target.getX(), target.getY() + .6, target.getZ(), 8, .2, .3, .2, .02);
+			float before = target.getHealth();
+			if (ManipulationCombatHelper.hurt(this, player, target, level, 2.0F))
+				drained += Math.min(2.0F, Math.max(0.0F, before - target.getHealth()));
+			if (target.getHealth() < before) ManipulationVisuals.burst(level, ManipulationVisuals.Form.DRAIN, player.getEyePosition().add(0,-.4,0), target.getEyePosition(), 1, 20);
 		}
 		player.heal(drained * .5F);
 	}
 
 	private static List<LivingEntity> eligibleTargets(Player player, Level world) {
-		return ManipulationCombatHelper.hostileTargets(player, world, 8).stream().filter(target ->
+		return ManipulationCombatHelper.hostileTargets(player, world, 8).stream()
+				.filter(target -> !com.vincenthuto.hemomancy.common.entity.HemoEntityPredicates.NOBLOOD.test(target)).filter(target ->
 				target.hasEffect(MobEffects.WITHER) || target.hasEffect(MobEffects.POISON)
 						|| target.hasEffect(EffectInit.blood_loss) || target.hasEffect(EffectInit.grave_debt)).toList();
 	}

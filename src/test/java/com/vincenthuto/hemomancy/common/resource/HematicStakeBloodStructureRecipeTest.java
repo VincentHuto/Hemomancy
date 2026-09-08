@@ -23,7 +23,7 @@ final class HematicStakeBloodStructureRecipeTest {
 
 		assertEquals("hemomancy:blood_structure_recipe", recipe.get("type").getAsString());
 		assertEquals(100, recipe.get("bloodCost").getAsInt());
-		assertEquals(0, recipe.get("required_degree").getAsInt());
+		assertEquals(5, recipe.get("required_degree").getAsInt());
 		assertEquals("hemomancy:sanguine_formation", recipe.get("heldItem").getAsString());
 		assertEquals("hemomancy:hematic_iron_bars", recipe.get("hitBlock").getAsString());
 		assertEquals("hemomancy:hematic_stake", recipe.getAsJsonObject("result").get("id").getAsString());

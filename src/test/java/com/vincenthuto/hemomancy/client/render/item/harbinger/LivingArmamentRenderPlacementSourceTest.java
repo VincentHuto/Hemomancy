@@ -12,15 +12,15 @@ public final class LivingArmamentRenderPlacementSourceTest {
 		String flailModel = Files.readString(root.resolve(
 				"src/main/java/com/vincenthuto/hemomancy/client/model/item/LivingFlailModel.java"));
 		String flailHelper = Files.readString(root.resolve(
-				"src/main/java/com/vincenthuto/hemomancy/client/render/item/hematic/LivingFlailRenderHelper.java"));
+				"src/main/java/com/vincenthuto/hemomancy/client/render/item/harbinger/LivingFlailRenderHelper.java"));
 		String flailRenderer = Files.readString(root.resolve(
-				"src/main/java/com/vincenthuto/hemomancy/client/render/item/hematic/LivingFlailItemRenderer.java"));
+				"src/main/java/com/vincenthuto/hemomancy/client/render/item/harbinger/LivingFlailItemRenderer.java"));
 		String flailLayer = Files.readString(root.resolve(
 				"src/main/java/com/vincenthuto/hemomancy/client/render/layer/player/LivingFlailLayer.java"));
 		String torchRenderer = Files.readString(root.resolve(
-				"src/main/java/com/vincenthuto/hemomancy/client/render/item/hematic/LivingTorchItemRenderer.java"));
+				"src/main/java/com/vincenthuto/hemomancy/client/render/item/harbinger/LivingTorchItemRenderer.java"));
 		String torchPlacement = Files.readString(root.resolve(
-				"src/main/java/com/vincenthuto/hemomancy/client/render/item/hematic/LivingTorchRenderPlacement.java"));
+				"src/main/java/com/vincenthuto/hemomancy/client/render/item/harbinger/LivingTorchRenderPlacement.java"));
 
 		assertContains("torch has positive upright flame placement", torchModel, "TORCH_FLAME_MIN_Y = 20.5F");
 		assertContains("torch shaft overlaps crown instead of separating", torchModel, "TORCH_SHAFT_TOP_Y = 18.0F");

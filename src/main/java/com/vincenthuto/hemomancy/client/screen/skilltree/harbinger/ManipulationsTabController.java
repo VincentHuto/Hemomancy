@@ -626,7 +626,7 @@ public class ManipulationsTabController implements IProgressTab {
 			int centerX, int centerY, int size) {
 		int x = centerX - size / 2;
 		int y = centerY - size / 2;
-		gfx.blit(ManipulationIconResolver.MEMORY_BASE, x, y, size, size, 0F, 0F, 16, 16, 16, 16);
+		gfx.blit(ManipulationIconResolver.base(manipulationId), x, y, size, size, 0F, 0F, 16, 16, 16, 16);
 		gfx.blit(ManipulationIconResolver.overlay(manipulationId), x, y, size, size, 0F, 0F, 16, 16, 16, 16);
 	}
 
@@ -661,7 +661,7 @@ public class ManipulationsTabController implements IProgressTab {
 					.withStyle(s -> s.withColor(0xFFAA44).withBold(true)));
 			if (manipulation != null) {
 				tip.add(Component.literal(HLTextUtils.toProperCase(manipulation.getType().name())
-						+ " · " + (int) manipulation.getCost() + " mL · "
+						+ " · " + manipulation.getBaseCostLabel() + ": " + manipulation.getBaseCostText() + " · "
 						+ cooldownText(manipulation.getCooldownTicks())).withStyle(s -> s.withColor(0xAAAAAA)));
 			}
 		}
@@ -715,6 +715,14 @@ public class ManipulationsTabController implements IProgressTab {
                         .withStyle(s -> s.withColor(known ? 0x44AA44 : 0xAA4444).withItalic(!known)));
 
                 if (manip != null) {
+                    tip.add(Component.literal(manip.getBaseCostLabel() + ": " + manip.getBaseCostText())
+                            .withStyle(s -> s.withColor(0xAA4444)));
+                    if (com.vincenthuto.hemomancy.common.item.harbinger.tool.living.LivingStaffWeaponFormRules.isStaffWeaponFormManip(manip.getName())) {
+                        tip.add(Component.literal("Weapons Master reduces switches to 50 mL. Item attacks cost separately."));
+                    }
+                    if ("conjure_sickle".equals(manip.getName())) {
+                        tip.add(Component.literal("Acquire at Degree VII: Silent Archon, defeated Vesper, staff bond and his memory."));
+                    }
                     tip.add(Component.literal("Rank: " + HLTextUtils.toProperCase(manip.getRank().name()))
                             .withStyle(s -> s.withColor(0x888888)));
                     ParticleColor pc = manip.getTend().getColor();
@@ -722,7 +730,7 @@ public class ManipulationsTabController implements IProgressTab {
                     String tendTipName = HLTextUtils.toProperCase(manip.getTend().name());
                     double alignReq = manip.getAlignLevel();
                     String tendTipText = alignReq > 0
-                            ? "Tendency: " + tendTipName + " (" + (int)alignReq + ")"
+                            ? "Casting alignment: " + tendTipName + " (" + (int)alignReq + ")"
                             : "Tendency: " + tendTipName;
                     tip.add(Component.literal(tendTipText).withStyle(s -> s.withColor(tendCol)));
                     EnumBloodTendency secondaryTend = manip.getSecondaryTend();
@@ -937,9 +945,9 @@ public class ManipulationsTabController implements IProgressTab {
                 new ManipStatCell("Type", HLTextUtils.toProperCase(manip.getType().name()), 0xFFCCCCCC, 0xFFCCCCCC, false),
                 new ManipStatCell("Rank", HLTextUtils.toProperCase(manip.getRank().name()), 0xFFCCCCCC, 0xFFCCCCCC, false),
                 new ManipStatCell("Tendency", tendText, tendCol, secondaryColor, secondaryTend != null),
-                new ManipStatCell("Cost", (int)manip.getCost() + " mL", 0xFFAA4444, 0xFFAA4444, false),
+                new ManipStatCell(manip.getBaseCostLabel(), manip.getBaseCostText(), 0xFFAA4444, 0xFFAA4444, false),
                 new ManipStatCell("Section", HLTextUtils.toProperCase(manip.getSection().name()), 0xFFAAAAAA, 0xFFAAAAAA, false),
-                new ManipStatCell("Cooldown", cooldownText(manip.getCooldownTicks()), 0xFFAAAA88, 0xFFAAAA88, false)
+                new ManipStatCell("Base cooldown", cooldownText(manip.getCooldownTicks()), 0xFFAAAA88, 0xFFAAAA88, false)
         );
     }
 

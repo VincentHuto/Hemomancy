@@ -27,7 +27,7 @@ public final class ManipulationChannelManager {
 	public static void start(ServerPlayer player) {
 		if (CHANNELS.containsKey(player.getUUID())) return;
 		BloodManipulation manipulation = selectedContinuous(player);
-		if (manipulation == null) return;
+		if (manipulation == null || !player.isAlive() || manipulation.isOnCooldown(player)) return;
 		if (!manipulation.canContinueChannel(player, player.level())) return;
 		if (manipulation.tryPerformContinuousPulse(player, player.level(), player.getMainHandItem(),
 				player.blockPosition())) {
@@ -44,6 +44,7 @@ public final class ManipulationChannelManager {
 	public static void stop(ServerPlayer player, boolean released) {
 		ChannelState state = CHANNELS.remove(player.getUUID());
 		if (state == null) return;
+		ManipulationVisuals.endChannel(player, state.manipulationName());
 		BloodManipulation manipulation = ManipulationInit.getByName(state.manipulationName());
 		if (manipulation != null) manipulation.finishContinuousAction(player, released);
 	}
@@ -76,6 +77,7 @@ public final class ManipulationChannelManager {
 			return;
 		}
 		manipulation.tickContinuousAction(player, player.level());
+		if (!CHANNELS.containsKey(player.getUUID())) return;
 		long now = player.level().getGameTime();
 		if (now - state.lastPulseTick() < PULSE_TICKS) return;
 		if (!manipulation.tryPerformContinuousPulse(player, player.level(), player.getMainHandItem(),
@@ -98,6 +100,11 @@ public final class ManipulationChannelManager {
 
 	@SubscribeEvent
 	public static void onRespawn(PlayerEvent.PlayerRespawnEvent event) {
+		if (event.getEntity() instanceof ServerPlayer player) stop(player, false);
+	}
+
+	@SubscribeEvent
+	public static void onChangedDimension(PlayerEvent.PlayerChangedDimensionEvent event) {
 		if (event.getEntity() instanceof ServerPlayer player) stop(player, false);
 	}
 

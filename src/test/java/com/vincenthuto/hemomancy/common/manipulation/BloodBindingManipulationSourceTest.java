@@ -44,7 +44,7 @@ public final class BloodBindingManipulationSourceTest {
 		assertContains(clientEvents, "BloodBindingTendrilRenderer.render(event.getPoseStack(), partialTick)");
 
 		String tree = read("src/main/java/com/vincenthuto/hemomancy/common/init/ManipulationTreeInit.java");
-		assertContains(tree, "register(\"blood_binding\",470,342);");
+		assertContains(tree, "register(\"blood_binding\",560,353);");
 
 		String items = read("src/main/java/com/vincenthuto/hemomancy/common/init/ItemInit.java");
 		assertContains(items, "memory_blood_binding");

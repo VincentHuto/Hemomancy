@@ -1,9 +1,11 @@
 package com.vincenthuto.hemomancy.common.manipulation.mortem;
 
+import com.vincenthuto.hemomancy.common.manipulation.ManipulationVisuals;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.EnumVeinSections;
 import com.vincenthuto.hemomancy.common.init.EffectInit;
 import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
+import com.vincenthuto.hemomancy.common.manipulation.ManipulationCombatHelper;
 import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationRank;
 import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationType;
 import com.vincenthuto.hemomancy.common.manipulation.HemomancyTendrilEffects;
@@ -34,7 +36,7 @@ import java.util.Optional;
 public class HemorrhageManip extends BloodManipulation {
 
 	private static final double RADIUS = 8.0;
-	private static final int BLOOD_LOSS_TICKS = 160;
+	private static final int BLOOD_LOSS_TICKS = 240;
 
 	public HemorrhageManip(String name, double cost, double alignLevel, double xpCost,
 			EnumManipulationType type, EnumManipulationRank rank, EnumBloodTendency tendency,
@@ -49,9 +51,10 @@ public class HemorrhageManip extends BloodManipulation {
 		BlockPos center = player.blockPosition();
 		AABB searchBox = new AABB(center).inflate(RADIUS);
 		List<LivingEntity> nearby = world.getEntitiesOfClass(LivingEntity.class, searchBox,
-				e -> e != player && e.isAlive());
+				e -> ManipulationCombatHelper.canHarm(player, e));
 
 		Optional<LivingEntity> closest = nearby.stream()
+				.filter(e -> ManipulationCombatHelper.visible(player, e))
 				.filter(e -> e.distanceTo(player) <= RADIUS)
 				.min(Comparator.comparingDouble(e -> e.distanceTo(player)));
 
@@ -65,6 +68,7 @@ public class HemorrhageManip extends BloodManipulation {
 		target.addEffect(new MobEffectInstance(EffectInit.blood_loss,
 				BLOOD_LOSS_TICKS, 1, false, true));
 		HemomancyTendrilEffects.hemorrhage(player, target);
+        ManipulationVisuals.attached(target, ManipulationVisuals.Form.WOUND, 1, BLOOD_LOSS_TICKS, 1);
 
 		world.playSound(null, center, SoundEvents.WITHER_HURT, SoundSource.PLAYERS, 0.7f, 1.6f);
 

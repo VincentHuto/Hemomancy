@@ -5,7 +5,8 @@ import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.Enu
 import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
 import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationRank;
 import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationType;
-import com.vincenthuto.hutoslib.client.particle.factory.GlowParticleFactory;
+import com.vincenthuto.hutoslib.client.particle.data.ColorParticleData;
+import com.vincenthuto.hutoslib.common.registry.HLParticleInit;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 
 import net.minecraft.core.BlockPos;
@@ -42,11 +43,45 @@ public class EndlessHourManip extends BloodManipulation {
 	}
 
 	@Override
+	protected boolean canPerformAction(Player player, ItemStack heldItemMainhand, float chargeTicks) {
+		return player.getPersistentData().getLong(EXPIRY_KEY) <= 0
+				&& super.canPerformAction(player, heldItemMainhand, chargeTicks);
+	}
+
+	public static void deferDamage(net.neoforged.neoforge.event.entity.living.LivingDamageEvent.Pre event) {
+		if (!(event.getEntity() instanceof net.minecraft.server.level.ServerPlayer player)
+				|| player.getPersistentData().getLong(EXPIRY_KEY) <= player.level().getGameTime()) return;
+		// This hook follows armor/resistance but precedes absorption consumption.
+		float payable = player.getAbsorptionAmount() + Math.max(0, player.getHealth() - 1.0F);
+		float deferred = Math.max(0, event.getNewDamage() - payable);
+		if (deferred > 0) {
+			accumulateDeferredDamage(player, deferred);
+			event.setNewDamage(event.getNewDamage() - deferred);
+		}
+	}
+
+	public static void clearDebt(Player player) {
+		player.getPersistentData().remove(EXPIRY_KEY);
+		player.getPersistentData().remove(DEFERRED_DAMAGE_KEY);
+	}
+
+	public static void transferDebt(Player original, Player replacement) {
+		long expiry = original.getPersistentData().getLong(EXPIRY_KEY);
+		if (expiry > 0) {
+			replacement.getPersistentData().putLong(EXPIRY_KEY, expiry);
+			replacement.getPersistentData().putFloat(DEFERRED_DAMAGE_KEY,
+					original.getPersistentData().getFloat(DEFERRED_DAMAGE_KEY));
+			clearDebt(original);
+		}
+	}
+
+	@Override
 	public void getAction(Player player, Level world, ItemStack heldItemMainhand, BlockPos position) {
+		if (world.isClientSide) return;
 		long currentTime = world.getGameTime();
 
 		long existingExpiry = player.getPersistentData().getLong(EXPIRY_KEY);
-		if (existingExpiry > currentTime) {
+		if (existingExpiry > 0) {
 			player.displayClientMessage(
 					net.minecraft.network.chat.Component.literal(
 							"The hour has not yet ended. You cannot extend borrowed time.")
@@ -71,7 +106,7 @@ public class EndlessHourManip extends BloodManipulation {
 
 		if (world instanceof ServerLevel sLevel) {
 			sLevel.sendParticles(
-					GlowParticleFactory.createData(new ParticleColor(100, 180, 255)),
+					new ColorParticleData(HLParticleInit.glow.get(), new ParticleColor(100, 180, 255)),
 					player.getX(), player.getY() + 1.0, player.getZ(),
 					25, 0.4, 0.8, 0.4, 0.03);
 		}
@@ -85,32 +120,25 @@ public class EndlessHourManip extends BloodManipulation {
 		long expiry = player.getPersistentData().getLong(EXPIRY_KEY);
 		if (expiry <= 0) return;
 
-		long currentTime = player.level().getGameTime();
-		if (currentTime >= expiry) {
-			// Time's up — all deferred damage returns at once
-			float deferred = player.getPersistentData().getFloat(DEFERRED_DAMAGE_KEY);
+		if (player.level().getGameTime() >= expiry) settleDebt(player);
+	}
 
-			player.getPersistentData().remove(EXPIRY_KEY);
-			player.getPersistentData().remove(DEFERRED_DAMAGE_KEY);
-
-			if (deferred > 0) {
-				player.hurt(player.damageSources().magic(), deferred);
-				player.displayClientMessage(
-						net.minecraft.network.chat.Component.literal(
-								"The hour ends. Velorum collects: " + String.format("%.1f", deferred) + " damage returns.")
-								.withStyle(net.minecraft.ChatFormatting.RED, net.minecraft.ChatFormatting.BOLD),
-						false);
-
-				if (player.level() instanceof ServerLevel sLevel) {
-					sLevel.sendParticles(
-							GlowParticleFactory.createData(new ParticleColor(255, 50, 50)),
-							player.getX(), player.getY() + 1.0, player.getZ(),
-							40, 0.5, 0.5, 0.5, 0.1);
-				}
-
-				player.level().playSound(null, player.blockPosition(),
-						SoundEvents.LIGHTNING_BOLT_THUNDER, SoundSource.PLAYERS, 0.6f, 0.5f);
-			}
+	/** Collect on expiry or logout. Debt is already mitigated health loss. */
+	public static void settleDebt(Player player) {
+		if (player.level().isClientSide) return;
+		float deferred = player.getPersistentData().getFloat(DEFERRED_DAMAGE_KEY);
+		clearDebt(player);
+		if (deferred <= 0 || !player.isAlive()) return;
+		player.setHealth(Math.max(0, player.getHealth() - deferred));
+		if (!player.isAlive()) player.die(player.damageSources().magic());
+		player.displayClientMessage(net.minecraft.network.chat.Component.literal(
+				"The hour ends. Velorum collects: " + String.format("%.1f", deferred) + " damage returns.")
+				.withStyle(net.minecraft.ChatFormatting.RED, net.minecraft.ChatFormatting.BOLD), false);
+		if (player.level() instanceof ServerLevel level) {
+			level.sendParticles(new ColorParticleData(HLParticleInit.glow.get(), new ParticleColor(255, 50, 50)),
+					player.getX(), player.getY() + 1, player.getZ(), 40, .5, .5, .5, .1);
+			level.playSound(null, player.blockPosition(), SoundEvents.LIGHTNING_BOLT_THUNDER,
+					SoundSource.PLAYERS, .6F, .5F);
 		}
 	}
 

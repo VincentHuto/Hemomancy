@@ -57,13 +57,17 @@ public class VascularDowsingManip extends BloodManipulation {
 		for (BlockPos p : BlockPos.betweenClosed(
 				origin.offset(-SCAN_RADIUS, -SCAN_RADIUS, -SCAN_RADIUS),
 				origin.offset(SCAN_RADIUS, SCAN_RADIUS, SCAN_RADIUS))) {
+			if (!world.hasChunkAt(p)) continue;
 			BlockState state = world.getBlockState(p);
 			if (isOre(state)) {
 				found.add(p.immutable());
 			}
 		}
 
-		for (BlockPos ore : found) {
+		for (BlockPos ore : found.stream().sorted(java.util.Comparator.comparingDouble(origin::distSqr)).limit(24).toList()) {
+            net.neoforged.neoforge.network.PacketDistributor.sendToPlayer(sPlayer, new com.vincenthuto.hemomancy.common.network.particle.ManipulationVisualPacket(
+                    com.vincenthuto.hemomancy.common.manipulation.ManipulationVisuals.Form.ORE, -1,
+                    net.minecraft.world.phys.Vec3.atCenterOf(ore), net.minecraft.world.phys.Vec3.atCenterOf(ore), .5F, 25, 1));
 			DustParticleOptions colour = oreColour(world.getBlockState(ore));
 			sLevel.sendParticles(sPlayer, colour, true,
 					ore.getX() + 0.5, ore.getY() + 0.5, ore.getZ() + 0.5,
@@ -71,16 +75,21 @@ public class VascularDowsingManip extends BloodManipulation {
 		}
 
 		if (!found.isEmpty()) {
+			BlockPos nearest = found.stream().min(java.util.Comparator.comparingDouble(origin::distSqr)).orElseThrow();
+			player.displayClientMessage(net.minecraft.network.chat.Component.literal("Dowsing: " + found.size()
+					+ " ore blocks; nearest " + world.getBlockState(nearest).getBlock().getName().getString()
+					+ " at " + nearest.getX() + ", " + nearest.getY() + ", " + nearest.getZ() + "."), true);
 			world.playSound(null, origin, SoundEvents.AMETHYST_BLOCK_CHIME,
 					SoundSource.PLAYERS, 0.6f, 1.2f);
 		} else {
+			player.displayClientMessage(net.minecraft.network.chat.Component.literal("Dowsing: no ore within 8 blocks."), true);
 			world.playSound(null, origin, SoundEvents.IRON_GOLEM_DAMAGE,
 					SoundSource.PLAYERS, 0.4f, 2.0f);
 		}
 	}
 
 	private static boolean isOre(BlockState state) {
-		return state.is(BlockTags.IRON_ORES)
+		return state.is(net.neoforged.neoforge.common.Tags.Blocks.ORES) || state.is(BlockTags.IRON_ORES)
 				|| state.is(BlockTags.GOLD_ORES)
 				|| state.is(BlockTags.DIAMOND_ORES)
 				|| state.is(BlockTags.EMERALD_ORES)

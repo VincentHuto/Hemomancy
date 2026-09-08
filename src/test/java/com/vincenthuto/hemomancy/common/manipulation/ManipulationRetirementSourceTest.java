@@ -95,17 +95,17 @@ public final class ManipulationRetirementSourceTest {
 		assertNotContains("activation potential is represented by the synaptic family", tree,
 				"register(\"activation_potential\"");
 		assertContains("lux reroutes unclosing eye through hematic flare", tree,
-				"register(\"unclosing_eye\",1340,180, \"hematic_flare\")");
+				"register(\"unclosing_eye\",1330,180, \"hematic_flare\")");
 		assertContains("lux capstone bypasses vigil of glass", tree,
-				"register(\"white_verdict\",1300,300, \"unclosing_eye\", \"prismatic_reproof\")");
+				"register(\"white_verdict\",1351,280, \"unclosing_eye\", \"prismatic_reproof\", \"hematic_beacon\")");
 		assertNotContains("cryogenic pulse is represented by the cryogenic family", tree,
 				"register(\"cryogenic_pulse\"");
 		assertContains("ferric capstone bypasses hematic ballast", tree,
-				"register(\"iron_choir\",820,20, \"iron_retort\", \"ironhearted\")");
+				"register(\"iron_choir\",850,70, \"iron_retort\", \"ironhearted\")");
 		assertContains("mortem reroutes grave debt away from vital reservoir", tree,
-				"register(\"grave_debt\",2170,81, \"hemorrhage\", \"exsanguinate\")");
+				"register(\"grave_debt\",2210,83, \"hemorrhage\", \"exsanguinate\")");
 		assertContains("ferric magnetism no longer depends on excavation", tree,
-				"register(\"sanguine_magnetism\",790,200, \"iron_retort\")");
+				"register(\"sanguine_magnetism\",850,180, \"iron_retort\")");
 	}
 
 	private static void retiredAcquisitionResourcesAreRemoved() throws IOException {

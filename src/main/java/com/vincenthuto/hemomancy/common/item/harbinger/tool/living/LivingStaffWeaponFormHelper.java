@@ -32,6 +32,7 @@ public final class LivingStaffWeaponFormHelper {
 	public static final String STORED_STAFF_KEY = "HemomancyStoredLivingStaff";
 	public static final String FORM_KEY = "HemomancyStaffWeaponForm";
 	public static final String SECONDARY_TENDENCY_KEY = "HemomancyStaffWeaponSecondaryTendency";
+	private static final String CROSSBOW_LOAD_KEY = "HemomancyStoredCrossbowLoad";
 
 	private LivingStaffWeaponFormHelper() {
 	}
@@ -151,6 +152,13 @@ public final class LivingStaffWeaponFormHelper {
 				ItemStack restored = ItemStack.parseOptional(registryAccess, root.getCompound(STORED_STAFF_KEY));
 				if (!restored.isEmpty()) {
 					restored.setCount(1);
+					if (LivingStaffWeaponFormRules.CONJURE_CROSSBOW.equals(currentFormName(transformedStack))
+							&& !root.getList("ChargedProjectiles", Tag.TAG_COMPOUND).isEmpty()) {
+						CompoundTag load = new CompoundTag();
+						load.putBoolean("Charged", root.getBoolean("Charged"));
+						load.put("ChargedProjectiles", root.getList("ChargedProjectiles", Tag.TAG_COMPOUND).copy());
+						CustomData.update(DataComponents.CUSTOM_DATA, restored, tag -> tag.put(CROSSBOW_LOAD_KEY, load));
+					}
 					return restored;
 				}
 			}
@@ -221,6 +229,14 @@ public final class LivingStaffWeaponFormHelper {
 			HolderLookup.Provider registryAccess) {
 		ItemStack weapon = new ItemStack(itemForForm(formName));
 		CompoundTag root = weapon.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
+		if (LivingStaffWeaponFormRules.CONJURE_CROSSBOW.equals(formName)) {
+			CompoundTag staffData = sourceStaff.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
+			if (staffData.contains(CROSSBOW_LOAD_KEY, Tag.TAG_COMPOUND)) {
+				root.merge(staffData.getCompound(CROSSBOW_LOAD_KEY));
+				staffData.remove(CROSSBOW_LOAD_KEY);
+				sourceStaff.set(DataComponents.CUSTOM_DATA, CustomData.of(staffData));
+			}
+		}
 		Tag savedStaff = sourceStaff.save(registryAccess);
 		if (savedStaff instanceof CompoundTag staffTag) {
 			root.put(STORED_STAFF_KEY, staffTag);

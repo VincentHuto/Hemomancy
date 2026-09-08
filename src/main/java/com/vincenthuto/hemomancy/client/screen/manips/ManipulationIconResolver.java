@@ -1,12 +1,27 @@
 package com.vincenthuto.hemomancy.client.screen.manips;
 
 import com.vincenthuto.hemomancy.Hemomancy;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.ManipulationRetirementRules;
+import com.vincenthuto.hemomancy.common.init.ManipulationInit;
+import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationRank;
 import net.minecraft.resources.ResourceLocation;
+
+import java.util.Locale;
 
 public final class ManipulationIconResolver {
 	public static final ResourceLocation MEMORY_BASE = Hemomancy.rloc("textures/item/memories/memory_blank.png");
+	private static final ResourceLocation CONJURE_BASE = Hemomancy.rloc("textures/item/memories/memory_conjure_base.png");
 
 	private ManipulationIconResolver() {
+	}
+
+	public static ResourceLocation base(String manipulationId) {
+		if (manipulationId.startsWith("conjure_")) return CONJURE_BASE;
+		if (ManipulationRetirementRules.isRetiredManipulation(manipulationId)) return MEMORY_BASE;
+		var manipulation = ManipulationInit.MANIPS_TYPE_REGISTRY.get(Hemomancy.rloc(manipulationId));
+		if (manipulation == null || manipulation.getRank() == EnumManipulationRank.HUMILIS) return MEMORY_BASE;
+		return Hemomancy.rloc("textures/item/memories/memory_rank_"
+				+ manipulation.getRank().name().toLowerCase(Locale.ROOT) + "_base.png");
 	}
 
 	public static ResourceLocation overlay(String manipulationId) {

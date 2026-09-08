@@ -28,8 +28,6 @@ import java.util.Optional;
 import java.util.Random;
 
 public class SynapticLoadoutScreen extends Screen {
-	private static final ResourceLocation MEMORY_BASE =
-			Hemomancy.rloc("textures/item/memories/memory_blank.png");
 	private static final int PANEL = 128;
 	private static final int SIDE_PANEL = 96;
 	private static final int MIN_SIDE_PANEL = 48;
@@ -312,7 +310,7 @@ public class SynapticLoadoutScreen extends Screen {
 			int ix = cx + (int) Math.round(Math.cos(angle) * radius) - 8;
 			int iy = cy + (int) Math.round(Math.sin(angle) * radius) - 8;
 			if (MemorySlotRef.fromStorageKey(names.get(i)).kind() == MemoryEntryKind.MANIPULATION) {
-				gfx.blit(MEMORY_BASE, ix, iy, 0, 0, 16, 16, 16, 16);
+				gfx.blit(ManipulationIconResolver.base(MemorySlotRef.fromStorageKey(names.get(i)).id()), ix, iy, 0, 0, 16, 16, 16, 16);
 			}
 			gfx.blit(memoryOverlayTexture(names.get(i)), ix, iy, 0, 0, 16, 16, 16, 16);
 		}

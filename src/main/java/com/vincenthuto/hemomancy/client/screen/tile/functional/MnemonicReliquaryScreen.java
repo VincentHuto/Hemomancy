@@ -742,7 +742,7 @@ public class MnemonicReliquaryScreen extends AbstractContainerScreen<MnemonicRel
 		graphics.pose().pushPose();
 		graphics.pose().translate(x, y, 0.0F);
 		graphics.pose().scale(scale, scale, 1.0F);
-		graphics.blit(ManipulationIconResolver.MEMORY_BASE, 0, 0, 0, 0, 16, 16, 16, 16);
+		graphics.blit(ManipulationIconResolver.base(manip.getName()), 0, 0, 0, 0, 16, 16, 16, 16);
 		graphics.blit(ManipulationIconResolver.overlay(manip.getName()), 0, 0, 0, 0, 16, 16, 16, 16);
 		graphics.pose().popPose();
 	}

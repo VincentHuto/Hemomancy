@@ -13,8 +13,8 @@ public final class CellHandRenderingResourceTest {
 	public static void main(String[] args) throws IOException {
 		String layer = read("src/main/java/com/vincenthuto/hemomancy/client/render/layer/player/CellHandLayer.java");
 		String model = read("src/main/java/com/vincenthuto/hemomancy/client/model/item/BloodArmModel.java");
-		String itemRenderer = read("src/main/java/com/vincenthuto/hemomancy/client/render/item/hematic/CellHandItemRenderer.java");
-		String particleEffects = read("src/main/java/com/vincenthuto/hemomancy/client/render/item/hematic/CellHandParticleEffects.java");
+		String itemRenderer = read("src/main/java/com/vincenthuto/hemomancy/client/render/item/harbinger/CellHandItemRenderer.java");
+		String particleEffects = read("src/main/java/com/vincenthuto/hemomancy/client/render/item/harbinger/CellHandParticleEffects.java");
 		String bloodCellParticle = read("src/main/java/com/vincenthuto/hemomancy/client/particle/BloodCellParticle.java");
 		String absorbedBloodCellParticle = read("src/main/java/com/vincenthuto/hemomancy/client/particle/AbsorbedBloodCellParticle.java");
 		String willAbsorptionGlowParticle = read("src/main/java/com/vincenthuto/hemomancy/client/particle/WillAbsorptionGlowParticle.java");
@@ -22,7 +22,7 @@ public final class CellHandRenderingResourceTest {
 		String particleInit = read("src/main/java/com/vincenthuto/hemomancy/common/init/ParticleInit.java");
 		String projectionItem = read("src/main/java/com/vincenthuto/hemomancy/common/item/harbinger/tool/living/BloodProjectionItem.java");
 		String absorptionItem = read("src/main/java/com/vincenthuto/hemomancy/common/item/harbinger/tool/living/BloodAbsorptionItem.java");
-		String blockBloodInteractions = read("src/main/java/com/vincenthuto/hemomancy/common/block/shared/BlockBloodInteractions.java");
+		String blockBloodInteractions = read("src/main/java/com/vincenthuto/hemomancy/common/block/harbinger/BlockBloodInteractions.java");
 
 		assertDoesNotContain("third-person particles do not use a fixed body-yaw approximation", layer,
 				"double bodyYaw = Math.toRadians(living.yBodyRot)");

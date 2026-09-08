@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.manipulation.congeatio;
 
+import com.vincenthuto.hemomancy.common.manipulation.ManipulationVisuals;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.EnumVeinSections;
 import com.vincenthuto.hemomancy.common.manipulation.*;
@@ -34,6 +35,7 @@ public class RimeboundSentenceManip extends BloodManipulation {
 		int duration = ManipulationScalingRules.scaledInt(20, 120, heldTicks, CHARGE_TICKS);
 		ManipulationCombatHelper.hurt(this, player, target, level, 2.0F + 6.0F * charge);
 		target.setTicksFrozen(Math.max(target.getTicksFrozen(), duration));
+        ManipulationVisuals.attached(target, ManipulationVisuals.Form.ICE, .7, duration, 1);
 		target.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, duration,
 				ManipulationReactiveEvents.isBoss(target) ? 2 : 5, false, true));
 		if (!ManipulationReactiveEvents.isBoss(target)) {

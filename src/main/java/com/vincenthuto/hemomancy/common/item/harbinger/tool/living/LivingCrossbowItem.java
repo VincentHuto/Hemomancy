@@ -155,6 +155,9 @@ public class LivingCrossbowItem extends CrossbowItem implements IDispellable, IT
 	public static void fireProjectiles(Level worldIn, LivingEntity shooter, InteractionHand handIn, ItemStack stack,
 			float velocityIn, float inaccuracyIn) {
 		List<ItemStack> list = getChargedProjectiles(stack, worldIn.registryAccess());
+		// Consume the volley before a blood failure can restore and save the staff.
+		clearProjectiles(stack);
+		setCharged(stack, false);
 		float[] afloat = getRandomSoundPitches(shooter.getRandom());
 
 		for (int i = 0; i < list.size(); ++i) {
@@ -369,6 +372,8 @@ public class LivingCrossbowItem extends CrossbowItem implements IDispellable, IT
 	@Override
 	public void appendHoverText(ItemStack stack, Item.TooltipContext context, List<Component> tooltip, TooltipFlag flagIn) {
 		TendencyWeaponHelper.appendTendencyTooltip(stack, tooltip);
+		tooltip.add(Component.literal("Blood bolt: 50% chance of 50 mL per projectile. Other ammunition has no blood cost.")
+				.withStyle(ChatFormatting.DARK_RED));
 		List<ItemStack> list = getChargedProjectiles(stack, context.registries());
 		if (isCharged(stack) && !list.isEmpty()) {
 			ItemStack itemstack = list.get(0);

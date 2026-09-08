@@ -31,8 +31,9 @@ public class WhiteVerdictManip extends BloodManipulation {
 		double range = 8.0D + 16.0D * charge;
 		double width = 0.25D + 1.25D * charge;
 		Vec3 eye = player.getEyePosition();
-		Vec3 end = eye.add(player.getLookAngle().normalize().scale(range));
+		Vec3 end = ManipulationCombatHelper.clipToGeometry(player, eye.add(player.getLookAngle().normalize().scale(range)));
 		for (LivingEntity target : ManipulationCombatHelper.hostileTargets(player, level, range)) {
+			if (!ManipulationCombatHelper.visible(player, target) || target.getEyePosition().subtract(eye).dot(player.getLookAngle()) <= 0) continue;
 			if (ManipulationCombatHelper.distanceToSegment(target.getEyePosition(), eye, end) > width) continue;
 			boolean concealed = target.isInvisible();
 			target.removeEffect(MobEffects.INVISIBILITY);
@@ -40,6 +41,6 @@ public class WhiteVerdictManip extends BloodManipulation {
 			ManipulationCombatHelper.hurt(this, player, target, level,
 					(2.0F + 8.0F * charge) * (concealed ? 1.5F : 1.0F));
 		}
-		level.sendParticles(ParticleTypes.END_ROD, end.x, end.y, end.z, 18, width, width, width, 0.02D);
+        ManipulationVisuals.burst(level, ManipulationVisuals.Form.VERDICT, eye, end, width, 16);
 	}
 }

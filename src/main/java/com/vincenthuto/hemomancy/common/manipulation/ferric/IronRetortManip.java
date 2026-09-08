@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.manipulation.ferric;
 
+import com.vincenthuto.hemomancy.common.manipulation.ManipulationVisuals;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.EnumVeinSections;
 import com.vincenthuto.hemomancy.common.init.EffectInit;
@@ -29,7 +30,7 @@ public class IronRetortManip extends BloodManipulation {
 	@Override
 	public void getAction(Player player, Level world, ItemStack heldItemMainhand, BlockPos position) {
 		player.addEffect(new MobEffectInstance(EffectInit.iron_retort, DURATION_TICKS, 0, false, true, true));
-		world.playSound(null, player.blockPosition(), SoundEvents.ANVIL_USE, SoundSource.PLAYERS, 0.55F, 1.8F);
+		ManipulationVisuals.attached(player, ManipulationVisuals.Form.RETORT, 1, DURATION_TICKS, 1); world.playSound(null, player.blockPosition(), SoundEvents.ANVIL_USE, SoundSource.PLAYERS, 0.55F, 1.8F);
 		if (world instanceof ServerLevel serverLevel) {
 			serverLevel.sendParticles(GlowParticleFactory.createData(new ParticleColor(155, 155, 150)),
 					player.getX(), player.getY() + player.getBbHeight() * 0.58D, player.getZ(),

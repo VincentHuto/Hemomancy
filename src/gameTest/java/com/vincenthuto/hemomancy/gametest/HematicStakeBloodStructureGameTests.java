@@ -229,6 +229,7 @@ public final class HematicStakeBloodStructureGameTests {
 			public void send(net.minecraft.network.protocol.Packet<?> packet) {
 			}
 		};
+		HemoCapabilityAccess.getInitiatoryDegree(player).orElseThrow().setDegreeNumber(5);
 		return player;
 	}
 

@@ -25,7 +25,7 @@ public class EclipseWellManip extends BloodManipulation {
 		if (!(world instanceof ServerLevel level)) return;
 		double radius = ManipulationScalingRules.scaled(2, 7, heldTicks, CHARGE_TICKS);
 		int duration = ManipulationScalingRules.scaledInt(40, 200, heldTicks, CHARGE_TICKS);
-		Vec3 center = player.getEyePosition().add(player.getLookAngle().scale(12));
+		Vec3 center = ManipulationCombatHelper.clipToGeometry(player, player.getEyePosition().add(player.getLookAngle().scale(12)));
 		ManipulationReactiveEvents.createEclipseWell(level, center, radius, duration, player.getUUID());
 	}
 }

@@ -1,13 +1,16 @@
 package com.vincenthuto.hemomancy.common.manipulation.flammeus;
 
+import com.vincenthuto.hemomancy.common.manipulation.ManipulationVisuals;
 import com.vincenthuto.hemomancy.common.block.harbinger.CrimsonFireHelper;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.EnumVeinSections;
 import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
+import com.vincenthuto.hemomancy.common.manipulation.ManipulationCombatHelper;
 import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationRank;
 import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationType;
 import com.vincenthuto.hemomancy.common.manipulation.TendencyAffinityRules;
-import com.vincenthuto.hutoslib.client.particle.factory.GlowParticleFactory;
+import com.vincenthuto.hutoslib.client.particle.data.ColorParticleData;
+import com.vincenthuto.hutoslib.common.registry.HLParticleInit;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
@@ -53,6 +56,7 @@ public class ScaldingUpdraftManip extends BloodManipulation {
 		if (look.lengthSqr() > 0.01) look = look.normalize().scale(horizontal);
 		player.push(look.x, vertical, look.z);
 		player.hurtMarked = true;
+        ManipulationVisuals.attached(player, ManipulationVisuals.Form.UPDRAFT, mode == Mode.EXPULSIVE ? 2 : mode == Mode.SOARING ? .6 : 1, mode == Mode.SUSPENDED ? 25 : 16, mode.ordinal()+1);
 		player.fallDistance = 0;
 		player.resetFallDistance();
 		int slowFalling = switch (mode) {
@@ -66,7 +70,7 @@ public class ScaldingUpdraftManip extends BloodManipulation {
 		player.addEffect(new MobEffectInstance(MobEffects.SLOW_FALLING, slowFalling, 0, false, true));
 
 		for (LivingEntity target : world.getEntitiesOfClass(LivingEntity.class, new AABB(player.blockPosition()).inflate(RADIUS),
-				e -> e != player && e.isAlive())) {
+				e -> ManipulationCombatHelper.canHarm(player, e))) {
 			CrimsonFireHelper.igniteCrimson(target, 3);
 			target.hurt(world.damageSources().onFire(),
 					TendencyAffinityRules.adjustManipulationDamage(player, target, this, 1.5F));
@@ -79,7 +83,7 @@ public class ScaldingUpdraftManip extends BloodManipulation {
 		}
 		world.playSound(null, player.blockPosition(), SoundEvents.FIRECHARGE_USE, SoundSource.PLAYERS, 0.9F, 0.6F);
 		for (int i = 0; i < 60; i++) {
-			sLevel.sendParticles(GlowParticleFactory.createData(new ParticleColor(255, 120 + world.random.nextFloat() * 80, 20)),
+			sLevel.sendParticles(new ColorParticleData(HLParticleInit.glow.get(), new ParticleColor(255, 120 + world.random.nextFloat() * 80, 20)),
 					player.getX() + (world.random.nextDouble() - 0.5) * 2.0,
 					player.getY() + world.random.nextDouble() * 1.2,
 					player.getZ() + (world.random.nextDouble() - 0.5) * 2.0,

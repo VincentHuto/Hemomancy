@@ -395,6 +395,13 @@ public class ClientEvents {
 			var input = ManipulationInputRules.tick(selected.getType(), down, clicked,
 					manipulationChargeTicks, selected.getRequiredChargeTicks());
 			manipulationChargeTicks = input.nextHeldTicks();
+            if (selected.getType() == EnumManipulationType.CHARGED
+                    && (down || input.action() == ManipulationInputRules.Action.CAST)
+                    && com.vincenthuto.hemomancy.common.manipulation.ManipulationVisuals.chargeForm(selected.getName()) != null
+                    && (manipulationChargeTicks % 4 == 0 || input.action() == ManipulationInputRules.Action.CAST)) {
+                PacketHandler.sendToServer(new com.vincenthuto.hemomancy.common.network.capa.harbinger.manips.ManipulationChargeVisualPacket(
+                        input.action() == ManipulationInputRules.Action.CAST ? 0 : manipulationChargeTicks));
+            }
 			switch (input.action()) {
 				case NONE -> {
 				}

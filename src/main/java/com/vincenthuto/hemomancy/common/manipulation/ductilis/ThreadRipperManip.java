@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.manipulation.ductilis;
 
+import com.vincenthuto.hemomancy.common.manipulation.ManipulationVisuals;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.EnumVeinSections;
 import com.vincenthuto.hemomancy.common.circus.ThreadRipperRules;
@@ -57,7 +58,7 @@ public final class ThreadRipperManip extends BloodManipulation {
 	public void getAction(Player player, Level level, ItemStack heldItem, BlockPos position, float chargeTicks) {
 		if (!(level instanceof ServerLevel server)) return;
 		CircusCarouselEntity carousel = aimedCarousel(player);
-		if (carousel != null && carousel.severCaptive(player)) return;
+		if (carousel != null && carousel.severCaptive(player)) { ManipulationVisuals.burst(server, ManipulationVisuals.Form.THREAD, player.getEyePosition(), carousel.position().add(0, 2.5, 0), 1, 24); return; }
 
 		EntityHitResult hit = DeadlyGazeManip.rayTraceEntities(player, RANGE,
 				entity -> entity instanceof LivingEntity && entity != player);
@@ -78,7 +79,10 @@ public final class ThreadRipperManip extends BloodManipulation {
 		}
 		server.sendParticles(ParticleTypes.CRIMSON_SPORE, target.getX(), target.getY() + target.getBbHeight() * 0.5D,
 				target.getZ(), 28, 0.35D, 0.55D, 0.35D, 0.04D);
-		server.playSound(null, target.blockPosition(), SoundEvents.CHAIN_BREAK, SoundSource.PLAYERS, 0.8F, 1.25F);
+		var controller=target instanceof BoundPuppeteerSummon bound && bound.hemomancy$getOwnerUUID()!=null
+                ? server.getEntity(bound.hemomancy$getOwnerUUID()) : null;
+        ManipulationVisuals.burst(server, ManipulationVisuals.Form.THREAD,
+                controller!=null?controller.getEyePosition():player.getEyePosition(), target.getEyePosition(), 1, 24); server.playSound(null, target.blockPosition(), SoundEvents.CHAIN_BREAK, SoundSource.PLAYERS, 0.8F, 1.25F);
 	}
 
 	private static CircusCarouselEntity aimedCarousel(Player player) {

@@ -1,1 +1,8 @@
-{"parent":"minecraft:item/generated","textures":{"layer0":"hemomancy:item/memories/memory_blank","layer1":"hemomancy:item/memories/memory_crimson_coronation_overlay"}}
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "hemomancy:item/memories/memory_blank",
+    "layer1": "hemomancy:item/memories/memory_crimson_coronation_overlay",
+    "layer2": "hemomancy:item/memories/memory_rank_perfectus_overlay"
+  }
+}

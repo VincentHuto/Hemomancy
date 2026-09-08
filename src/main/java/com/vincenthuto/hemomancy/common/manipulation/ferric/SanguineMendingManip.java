@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.manipulation.ferric;
 
+import com.vincenthuto.hemomancy.common.manipulation.ManipulationVisuals;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.EnumVeinSections;
 import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
@@ -54,7 +55,8 @@ public class SanguineMendingManip extends BloodManipulation {
 		world.playSound(null, player.blockPosition(), SoundEvents.ANVIL_USE, SoundSource.PLAYERS, 0.5f, 1.5f);
 
 		if (world instanceof ServerLevel sLevel) {
-			BlockPos pos = player.blockPosition();
+			ManipulationVisuals.burst(sLevel, ManipulationVisuals.Form.MENDING, player.getEyePosition().add(player.getLookAngle()).add(0,-1,0), player.position(), 1, 18);
+            BlockPos pos = player.blockPosition();
 			RandomSource random = world.random;
 			for (int i = 0; i < 15; i++) {
 				sLevel.sendParticles(

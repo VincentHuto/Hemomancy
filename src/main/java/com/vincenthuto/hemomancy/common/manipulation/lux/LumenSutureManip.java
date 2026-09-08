@@ -1,12 +1,15 @@
 package com.vincenthuto.hemomancy.common.manipulation.lux;
 
+import com.vincenthuto.hemomancy.common.manipulation.ManipulationVisuals;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.EnumVeinSections;
 import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
+import com.vincenthuto.hemomancy.common.manipulation.ManipulationCombatHelper;
 import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationRank;
 import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationType;
 import com.vincenthuto.hemomancy.common.manipulation.HemomancyTendrilEffects;
-import com.vincenthuto.hutoslib.client.particle.factory.GlowParticleFactory;
+import com.vincenthuto.hutoslib.client.particle.data.ColorParticleData;
+import com.vincenthuto.hutoslib.common.registry.HLParticleInit;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
@@ -34,9 +37,9 @@ public class LumenSutureManip extends BloodManipulation {
 	@Override
 	public void getAction(Player player, Level world, ItemStack heldItemMainhand, BlockPos position) {
 		Player target = world.getEntitiesOfClass(Player.class, new AABB(player.blockPosition()).inflate(RADIUS),
-						p -> p.isAlive() && p.getHealth() < p.getMaxHealth())
+						p -> p != player && p.isAlive() && !p.isSpectator() && ManipulationCombatHelper.allied(player, p) && p.getHealth() < p.getMaxHealth())
 				.stream()
-				.min(Comparator.comparingDouble(p -> p.distanceToSqr(player)))
+				.min(Comparator.comparingDouble((Player p) -> p.distanceToSqr(player)).thenComparing(Player::getUUID))
 				.orElse(player);
 
 		target.addEffect(new MobEffectInstance(MobEffects.ABSORPTION, 400, 1, false, true));
@@ -47,9 +50,10 @@ public class LumenSutureManip extends BloodManipulation {
 
 		if (world instanceof ServerLevel sLevel) {
 			HemomancyTendrilEffects.lumenSuture(player, target);
+            ManipulationVisuals.attached(target, ManipulationVisuals.Form.MENDING, .5, 28, 1);
 			RandomSource random = world.random;
 			for (int i = 0; i < 36; i++) {
-				sLevel.sendParticles(GlowParticleFactory.createData(new ParticleColor(
+				sLevel.sendParticles(new ColorParticleData(HLParticleInit.glow.get(), new ParticleColor(
 								235 + random.nextFloat() * 20,
 								180 + random.nextFloat() * 50,
 								210 + random.nextFloat() * 35)),

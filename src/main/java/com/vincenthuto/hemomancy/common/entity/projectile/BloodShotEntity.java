@@ -35,6 +35,13 @@ import java.util.Comparator;
 import java.util.UUID;
 
 public class BloodShotEntity extends AbstractArrow implements CombatWeaponCarrierProjectile, TendencyDamageCarrier {
+    private static final net.minecraft.network.syncher.EntityDataAccessor<Integer> VISUAL_FORM =
+            net.minecraft.network.syncher.SynchedEntityData.defineId(BloodShotEntity.class,
+                    net.minecraft.network.syncher.EntityDataSerializers.INT);
+    @Override protected void defineSynchedData(net.minecraft.network.syncher.SynchedEntityData.Builder builder) {
+        super.defineSynchedData(builder);builder.define(VISUAL_FORM,0);
+    }
+    public int visualForm(){return entityData.get(VISUAL_FORM);}
 	private ItemStack combatWeaponItem = ItemStack.EMPTY;
 	@Nullable
 	private EnumBloodTendency damageTendency;
@@ -71,6 +78,7 @@ public class BloodShotEntity extends AbstractArrow implements CombatWeaponCarrie
 	@Override
 	public void addAdditionalSaveData(CompoundTag compound) {
 		super.addAdditionalSaveData(compound);
+        compound.putInt("VisualForm",visualForm());
 		if (!this.combatWeaponItem.isEmpty()) {
 			compound.put("CombatWeapon", this.combatWeaponItem.save(this.registryAccess()));
 		}
@@ -169,6 +177,7 @@ public class BloodShotEntity extends AbstractArrow implements CombatWeaponCarrie
 	@Override
 	public void readAdditionalSaveData(CompoundTag compound) {
 		super.readAdditionalSaveData(compound);
+        entityData.set(VISUAL_FORM,compound.getInt("VisualForm"));
 		this.combatWeaponItem = compound.contains("CombatWeapon", 10)
 				? ItemStack.parseOptional(this.registryAccess(), compound.getCompound("CombatWeapon"))
 				: ItemStack.EMPTY;
@@ -179,6 +188,7 @@ public class BloodShotEntity extends AbstractArrow implements CombatWeaponCarrie
 		this.mortar = compound.getBoolean("Mortar");
 		this.orbitOwnerId = compound.hasUUID("OrbitOwner") ? compound.getUUID("OrbitOwner") : null;
 		this.orbitIndex = compound.getInt("OrbitIndex");
+        if(!compound.contains("VisualForm")) entityData.set(VISUAL_FORM, orbitOwnerId!=null?3:mortar?2:homingTargetId!=null?1:0);
 		if (orbitOwnerId != null) {
 			this.noPhysics = true;
 			this.setNoGravity(true);
@@ -207,15 +217,18 @@ public class BloodShotEntity extends AbstractArrow implements CombatWeaponCarrie
 	}
 
 	public void setHomingTarget(@Nullable LivingEntity target, int ticks) {
+        entityData.set(VISUAL_FORM,1);
 		this.homingTargetId = target != null ? target.getUUID() : null;
 		this.homingTicks = Math.max(0, ticks);
 	}
 
 	public void setMortar(boolean mortar) {
+        entityData.set(VISUAL_FORM,mortar?2:0);
 		this.mortar = mortar;
 	}
 
 	public void configureOrbit(LivingEntity owner, int index) {
+        entityData.set(VISUAL_FORM,3);
 		this.orbitOwnerId = owner.getUUID();
 		this.orbitIndex = Math.max(0, Math.min(index, 4));
 		this.noPhysics = true;

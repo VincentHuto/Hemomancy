@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.manipulation.flammeus;
 
+import com.vincenthuto.hemomancy.common.manipulation.ManipulationVisuals;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.EnumVeinSections;
 import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
@@ -25,10 +26,11 @@ public class FurnaceVeinsManip extends BloodManipulation {
 	public void getAction(Player player, Level world, ItemStack heldItemMainhand, BlockPos position, float heldTicks) {
 		if (!(world instanceof ServerLevel level)) return;
 		for (LivingEntity target : level.getEntitiesOfClass(LivingEntity.class, player.getBoundingBox().inflate(5), LivingEntity::isAlive)) {
-			if (target == player || player.isAlliedTo(target)) {
+			if (ManipulationCombatHelper.allied(player, target)) {
 				target.clearFire();
 				target.setTicksFrozen(0);
-			} else {
+				target.addEffect(new net.minecraft.world.effect.MobEffectInstance(net.minecraft.world.effect.MobEffects.FIRE_RESISTANCE, 25, 0, false, true));
+			} else if (ManipulationCombatHelper.canHarm(player, target)) {
 				target.igniteForSeconds(3);
 				ManipulationCombatHelper.hurt(this, player, target, level, 2.0F);
 			}
@@ -37,6 +39,6 @@ public class FurnaceVeinsManip extends BloodManipulation {
 				player.blockPosition().offset(5, 5, 5))) {
 			if (level.getBlockState(pos).is(Blocks.FROSTED_ICE)) level.setBlockAndUpdate(pos, Blocks.AIR.defaultBlockState());
 		}
-		level.sendParticles(ParticleTypes.FLAME, player.getX(), player.getY() + 1, player.getZ(), 24, 2.5, 1, 2.5, 0.03);
+		ManipulationVisuals.attached(player, ManipulationVisuals.Form.FURNACE, 5, 25, 1);
 	}
 }

@@ -109,16 +109,17 @@ public final class BodyIdiomEvents {
 	}
 
 	public static void sync(ServerPlayer player) {
+        var state=HemoCapabilityAccess.getPowerGuardrails(player);
+        ManipulationVisuals.attached(player,ManipulationVisuals.Form.IRON_HEART,state.getIronHeartHealth(),
+                state.getIronHeartHealth()>0?(int)Math.max(0,state.getIronHeartExpiryTick()-player.level().getGameTime()):0,1);
+        ManipulationVisuals.attached(player,ManipulationVisuals.Form.BLACK_HEART,state.getNecroticSaturation(),
+                state.getNecroticSaturation()>0?30:0,1);
 		PacketHandler.sendToPlayer(player,
 				new PacketSyncBodyIdiomState(HemoCapabilityAccess.getPowerGuardrails(player)));
 	}
 
 	private static boolean isBlackheartedActive(ServerPlayer player) {
-		if (HemoCapabilityAccess.getUnstainedProgress(player)
-				.map(UnstainedAccessRules::blocksKnownBloodPowerUse).orElse(false)) return false;
-		return HemoCapabilityAccess.getKnownManipulations(player)
-				.map(known -> known.isPassiveActive("blackhearted"))
-				.orElse(false);
+		return com.vincenthuto.hemomancy.common.init.ManipulationInit.blackhearted.get().isPassiveReady(player);
 	}
 
 	private static void rupture(ServerPlayer player) {

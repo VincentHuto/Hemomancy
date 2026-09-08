@@ -30,6 +30,12 @@ public class LivingWeaponGraftItem extends Item {
 		tooltip.add(Component.literal("Burn it in an Iron Brazier and draw it in with Blood Absorption to remember "
 						+ form.manipulationDisplayName() + ".")
 				.withStyle(ChatFormatting.DARK_RED));
+		tooltip.add(Component.literal("Hold the Living Staff and channel into the lit brazier. Earn the graft's activity first.")
+				.withStyle(ChatFormatting.GRAY));
+		tooltip.add(Component.literal("Base switch: "
+				+ (int) com.vincenthuto.hemomancy.common.item.harbinger.tool.living.LivingStaffWeaponFormRules.BASE_HOT_SWAP_COST_ML
+				+ " mL; Weapons Master reduces it to 50 mL. Weapon attacks cost separately.")
+				.withStyle(ChatFormatting.DARK_RED));
 	}
 
 	public static List<ItemStack> creativeStacks() {

@@ -180,3 +180,5 @@ Pages still to add:
 ---
 
 *"The wiki, like the Liber Sanguinum, is a living document. It grows, adapts, and remembers."*
+
+- [Manipulation presentation pass: all 97 active powers and verification limits](../docs/manipulation_work_plan/05-visuals-results.md)

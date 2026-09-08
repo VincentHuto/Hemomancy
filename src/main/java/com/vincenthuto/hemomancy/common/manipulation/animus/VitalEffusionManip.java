@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.manipulation.animus;
 
+import com.vincenthuto.hemomancy.common.manipulation.ManipulationVisuals;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.EnumVeinSections;
 import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
@@ -65,7 +66,8 @@ public class VitalEffusionManip extends BloodManipulation {
 				}
 				sLevel.sendParticles(net.minecraft.core.particles.ParticleTypes.HAPPY_VILLAGER,
 						p.getX() + 0.5, p.getY() + 1.1, p.getZ() + 0.5, 3, 0.3, 0.2, 0.3, 0.0);
-				grew++;
+				ManipulationVisuals.burst(sLevel, ManipulationVisuals.Form.GROWTH, Vec3.atBottomCenterOf(p.above()), Vec3.atCenterOf(p), .35, 24);
+                grew++;
 			}
 		}
 

@@ -25,9 +25,9 @@ final class LivingStaffMorphWiringSourceTest {
 
 	@Test
 	void morphRendererAddsTheExistingBloodMeltPass() throws IOException {
-		String renderer = read("src/main/java/com/vincenthuto/hemomancy/client/render/item/hematic/"
+		String renderer = read("src/main/java/com/vincenthuto/hemomancy/client/render/item/harbinger/"
 				+ "LivingStaffMorphRenderer.java");
-		String flail = read("src/main/java/com/vincenthuto/hemomancy/client/render/item/hematic/"
+		String flail = read("src/main/java/com/vincenthuto/hemomancy/client/render/item/harbinger/"
 				+ "LivingFlailRenderHelper.java");
 
 		assertTrue(renderer.contains("HemoRenderTypes.cardinalStaffBloodMelt"),

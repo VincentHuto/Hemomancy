@@ -5,11 +5,11 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 
-final class ManipulationCastSounds {
+public final class ManipulationCastSounds {
 	private ManipulationCastSounds() {
 	}
 
-	static void play(Level level, Player player, BloodManipulation manipulation) {
+	public static void play(Level level, Player player, BloodManipulation manipulation) {
 		Profile profile = profileFor(manipulation.getName());
 		if (profile == null) return;
 		var sound = switch (profile.cue()) {
@@ -39,10 +39,11 @@ final class ManipulationCastSounds {
 
 	static Profile profileFor(String manipulation) {
 		return switch (manipulation) {
-			case "blood_shot" -> new Profile(Cue.LLAMA_SPIT, 0.65F, 0.85F);
-			case "blood_needle" -> new Profile(Cue.SKELETON_SHOOT, 0.65F, 1.25F);
+			case "blood_shot", "guided_blood_shot", "sanguine_halo" -> new Profile(Cue.LLAMA_SPIT, 0.65F, 0.85F);
+			case "blood_needle", "blood_needle_fan", "blood_needle_lance" -> new Profile(Cue.SKELETON_SHOOT, 0.65F, 1.25F);
+			case "hematic_mortar" -> new Profile(Cue.LLAMA_SPIT, 0.85F, 0.50F);
 			case "blood_rush" -> new Profile(Cue.PLAYER_ATTACK_SWEEP, 0.60F, 0.75F);
-			case "summon_avatar" -> new Profile(Cue.EVOKER_CAST_SPELL, 0.65F, 0.85F);
+			case "summon_avatar", "summon_avatar_arms", "summon_avatar_armor", "summon_avatar_legs", "summon_avatar_complete" -> new Profile(Cue.EVOKER_CAST_SPELL, 0.65F, 0.85F);
 			case "crimson_coronation" -> new Profile(Cue.WITHER_SPAWN, 0.40F, 1.50F);
 			case "deadly_gaze" -> new Profile(Cue.ILLUSIONER_CAST_SPELL, 0.60F, 0.70F);
 			case "activation_potential" -> new Profile(Cue.TRIDENT_THUNDER, 0.25F, 1.25F);

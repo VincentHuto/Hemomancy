@@ -1,5 +1,11 @@
 # Blood Systems
 
+Hematic Flare requires a visible permitted target before charging blood; Funeral Bell respects owned allies and disabled PvP for damage and statuses. [Manipulation acceptance results and remaining checks](../docs/manipulation_work_plan/06-acceptance-results.md).
+
+Memory and progression tooltips distinguish **base cast**, **upkeep per second**, **reactive trigger** and **Living Staff switch** costs. A staff form's registry-zero cost does not make switching free: the base is 250 mL, reduced by Weapons Master to a minimum of 50 mL. Weapon attacks have their own costs, shown on weapon tooltips. Restoration is free, and loaded crossbow ammunition is retained through restoration and re-forming, including a save/reload.
+
+Family mastery is shared at 10, 35, 85 and 185 cumulative credits. Absorb each chosen form's memory after reaching its threshold; intermediate forms are optional. Sustained channels earn a credit after five seconds, rather than on every one-second upkeep pulse. Learning degree and casting alignment are separate gates.
+
 Use this page as the mechanics reference: blood volume, manipulations, tendencies, vascular state, skills, and routing.
 
 ---
@@ -137,13 +143,23 @@ Manipulations are organized into four power tiers:
 - Depends on manipulation type
 - Quick: Single press of manipulation key (`R` default)
 - Charged: Hold manipulation key until charged
-- Passive: Automatically active
-- Continuous: Toggle with manipulation key
+- Passive: Equip and toggle on with the manipulation key; activation still requires active blood and the stated alignment
+- Continuous: Hold the manipulation key to channel; release to stop
 
 **Management:**
 - Check Field Notes (`B`) for known manipulations
 - Organize by tendency or frequency of use
 - Monitor cooldowns via HUD
+
+### Targeting and failed casts
+
+Aimed rays stop at walls and glass; openings and partial cover follow collision shapes. Nearest-victim powers such as Hemorrhage and Exsanguinate require a visible enemy and can select behind you. Area pulses retain their area behavior. The audited hostile area powers protect teammates and owned/allied creatures, and respect disabled PvP.
+
+Living Circuit requires a nearby teammate and stops when none remain. Lumen Suture prioritizes the nearest injured teammate and falls back to yourself. Predictably invalid Forge, command, execution or shadow-teleport casts spend no blood, cooldown or mastery credit. A valid cast can spend exactly the blood you have; no additional 1 mL reserve is required.
+
+Sovereign Instinct redirects ordinary attackers for five seconds when at least four blood-bearing enemies are targeting you. Blackhearted's rupture clears its saturation and starts its existing refractory period. Phoenix Debt uses the shared Last Rite gate and cannot fire repeatedly. These passives must be equipped, enabled, and meet their active-blood and alignment requirements.
+
+See the [casting implementation report](../docs/manipulation_work_plan/02-targeting-and-casting-results.md) for exact scope and remaining live acceptance.
 
 ### Manipulation Diagnostics
 
@@ -681,3 +697,13 @@ Curios compatibility is dormant in the NeoForge 1.21.1 branch. The Charm of Vasc
 *"Blood is not merely a resource. It is memory, identity, power, and price. Master it, and you master yourself. Lose control, and it will consume you."*
 
 *From the Liber Sanguinum, Chapter on Fundamentals*
+
+## Manipulation balance pass — 7 September 2026
+
+Ironhearted now stores up to 4 HP per fully charged cast. Iron Choir intercepts up to three hostile projectiles per paid second, and Absolute Stillness slows hostile projectiles every channel tick with reduced boss slowing. Carrion heals from health actually drained. Furnace grants allied fire resistance and respects pets and summons.
+
+Base costs are now Hemorrhage 75 mL, Coronation 600 mL, Conductive Mark 150 mL and Crimson Tithe 100 mL; channel upkeep is Furnace 150, Drift 75 and Dowsing 75 mL/s. Mark and Hemorrhage last twelve seconds. Full-charge Coronation counterattacks gain stronger piercing needles. Tithe provides a 500 mL advance with its existing repayment and damage risk.
+
+Dowsing reports nearest ore coordinates, Forge preserves multi-output recipe counts and stack limits, and Lignum-family channels automatically harvest permitted blocks when selection completes. Earlier release and forced cancellation retain their separate behaviors. Memory recipes and progression gates are unchanged. Live balance acceptance and authored effects remain open.
+
+See [area 4 comparisons and verification](../docs/manipulation_work_plan/04-balance-results.md).

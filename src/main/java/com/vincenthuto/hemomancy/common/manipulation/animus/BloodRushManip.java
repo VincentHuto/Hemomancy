@@ -3,6 +3,7 @@ package com.vincenthuto.hemomancy.common.manipulation.animus;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.EnumVeinSections;
 import com.vincenthuto.hemomancy.common.init.EffectInit;
+import com.vincenthuto.hemomancy.common.manipulation.ManipulationVisuals;
 import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
 import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationRank;
 import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationType;
@@ -28,6 +29,7 @@ public class BloodRushManip extends BloodManipulation {
 		Vec3 horizontal = new Vec3(look.x, 0, look.z).normalize().scale(1.2D);
 		player.setDeltaMovement(horizontal.x, Math.max(.1D, player.getDeltaMovement().y), horizontal.z);
 		player.hasImpulse = true;
+        ManipulationVisuals.attached(player, ManipulationVisuals.Form.RUSH, 1, 20, 1);
 	}
 
 }

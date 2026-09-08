@@ -1,10 +1,12 @@
 package com.vincenthuto.hemomancy.common.manipulation.lux;
 
+import com.vincenthuto.hemomancy.common.manipulation.ManipulationVisuals;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.EnumVeinSections;
 import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillPointHelper;
 import com.vincenthuto.hemomancy.common.manipulation.*;
-import com.vincenthuto.hutoslib.client.particle.factory.GlowParticleFactory;
+import com.vincenthuto.hutoslib.client.particle.data.ColorParticleData;
+import com.vincenthuto.hutoslib.common.registry.HLParticleInit;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
@@ -39,7 +41,8 @@ public class PrismaticReproofManip extends BloodManipulation {
 		int struck = 0;
 
 		for (LivingEntity target : world.getEntitiesOfClass(LivingEntity.class,
-				new AABB(player.blockPosition()).inflate(RANGE), e -> e != player && e.isAlive())) {
+				new AABB(player.blockPosition()).inflate(RANGE), e -> ManipulationCombatHelper.canHarm(player, e))) {
+			if (!ManipulationCombatHelper.visible(player, target)) continue;
 			Vec3 toTarget = target.getEyePosition().subtract(eye);
 			double distance = toTarget.length();
 			if (distance <= 0.001 || distance > RANGE) continue;
@@ -53,7 +56,8 @@ public class PrismaticReproofManip extends BloodManipulation {
 				SchoolHitHelper.tryTriggerConductiveArc(player, target, EnumBloodTendency.LUX, getSecondaryTend(),
 						adjusted);
 			}
-			struck++;
+			ManipulationVisuals.burst(sLevel, ManipulationVisuals.Form.VERDICT, eye, target.getEyePosition(), .25, 12);
+            struck++;
 		}
 
 		world.playSound(null, player.blockPosition(), SoundEvents.AMETHYST_BLOCK_CHIME, SoundSource.PLAYERS,
@@ -65,11 +69,12 @@ public class PrismaticReproofManip extends BloodManipulation {
 					(random.nextDouble() - 0.5) * distance * 0.55,
 					(random.nextDouble() - 0.5) * distance * 0.20,
 					(random.nextDouble() - 0.5) * distance * 0.55);
-			sLevel.sendParticles(GlowParticleFactory.createData(new ParticleColor(
+			Vec3 particlePos = ManipulationCombatHelper.clipToGeometry(player, eye.add(scatter));
+			sLevel.sendParticles(new ColorParticleData(HLParticleInit.glow.get(), new ParticleColor(
 							190 + random.nextFloat() * 65,
 							170 + random.nextFloat() * 85,
 							230 + random.nextFloat() * 25)),
-					eye.x + scatter.x, eye.y + scatter.y, eye.z + scatter.z,
+					particlePos.x, particlePos.y, particlePos.z,
 					1, 0, 0, 0, 0.02);
 		}
 	}

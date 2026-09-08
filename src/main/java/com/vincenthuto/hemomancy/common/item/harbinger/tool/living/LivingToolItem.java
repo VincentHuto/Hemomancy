@@ -83,6 +83,16 @@ public class LivingToolItem extends DiggerItem implements IDispellable, ITendenc
 	public void appendHoverText(ItemStack stack, Item.TooltipContext context, List<Component> tooltip, TooltipFlag flagIn) {
 		super.appendHoverText(stack, context, tooltip, flagIn);
 		TendencyWeaponHelper.appendTendencyTooltip(stack, tooltip);
+		tooltip.add(Component.literal("Melee blood cost: 50% chance of " + (int) (getLivingAttackDamage() * 25f) + " mL per hit.")
+				.withStyle(ChatFormatting.DARK_RED));
+		if (this instanceof LivingBladeItem || this instanceof LivingAxeItem) {
+			tooltip.add(Component.literal("Feral hit: an additional " + (int) (getLivingAttackDamage() * 75f) + " mL.")
+					.withStyle(ChatFormatting.DARK_RED));
+		}
+		if (this instanceof LivingTorchItem) {
+			tooltip.add(Component.literal("Breath upkeep: " + (int) (LivingTorchBreathRules.BLOOD_COST_PER_TICK * 20) + " mL/s.")
+					.withStyle(ChatFormatting.DARK_RED));
+		}
 	}
 
 	@Override

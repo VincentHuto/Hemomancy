@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.manipulation.mortem;
 
+import com.vincenthuto.hemomancy.common.manipulation.ManipulationVisuals;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.EnumVeinSections;
 import com.vincenthuto.hemomancy.common.manipulation.*;
@@ -31,17 +32,18 @@ public class FuneralBellManip extends BloodManipulation {
 		if (!(world instanceof ServerLevel level)) return;
 		float charge = ManipulationCastingRules.chargeFraction(heldTicks, CHARGE_TICKS);
 		double radius = 4.0D + 6.0D * charge;
+        ManipulationVisuals.burst(level, ManipulationVisuals.Form.BELL, player.position(), player.position(), radius, 40);
 		for (LivingEntity target : level.getEntitiesOfClass(LivingEntity.class,
 				new AABB(player.blockPosition()).inflate(radius),
-				entity -> entity != player && entity.isAlive() && !player.isAlliedTo(entity))) {
+				entity -> ManipulationCombatHelper.canHarm(player, entity))) {
 			int statuses = 0;
 			if (target.hasEffect(MobEffects.WITHER)) statuses++;
 			if (target.hasEffect(MobEffects.POISON)) statuses++;
 			if (target.hasEffect(com.vincenthuto.hemomancy.common.init.EffectInit.blood_loss)) statuses++;
 			if (target.hasEffect(com.vincenthuto.hemomancy.common.init.EffectInit.grave_debt)) statuses++;
-			ManipulationCombatHelper.hurt(this, player, target, level, 2.0F + 2.0F * charge + statuses * 2.0F);
+			ManipulationCombatHelper.hurt(this, player, target, level, (4.0F + statuses * 2.0F) * charge);
 			if (statuses > 0) target.addEffect(new MobEffectInstance(MobEffects.WITHER,
-					40 + Math.round(80 * charge), Math.min(2, statuses - 1), false, true));
+					Math.round(120 * charge), Math.min(2, statuses - 1), false, true));
 			level.sendParticles(BLOOD, target.getX(), target.getY() + target.getBbHeight() * .5,
 					target.getZ(), 12 + statuses * 6, .5, .7, .5, .03);
 		}

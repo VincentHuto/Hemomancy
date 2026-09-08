@@ -140,6 +140,20 @@ public class BloodManipulation implements EntityCastableManipulation {
 		return cost;
 	}
 
+	public String getBaseCostLabel() {
+		if (com.vincenthuto.hemomancy.common.item.harbinger.tool.living.LivingStaffWeaponFormRules.isStaffWeaponFormManip(name)) return "Base switch";
+		if (type == EnumManipulationType.CONTINUOUS || name.startsWith("summon_avatar")) return "Base upkeep";
+		return type == EnumManipulationType.PASSIVE ? "Base trigger" : "Base cast";
+	}
+
+	public String getBaseCostText() {
+		if (com.vincenthuto.hemomancy.common.item.harbinger.tool.living.LivingStaffWeaponFormRules.isStaffWeaponFormManip(name)) {
+			return (int) com.vincenthuto.hemomancy.common.item.harbinger.tool.living.LivingStaffWeaponFormRules.BASE_HOT_SWAP_COST_ML + " mL";
+		}
+		return java.math.BigDecimal.valueOf(cost).stripTrailingZeros().toPlainString()
+				+ (type == EnumManipulationType.CONTINUOUS || name.startsWith("summon_avatar") ? " mL/s" : " mL");
+	}
+
 	public String getName() {
 		return name;
 	}
@@ -357,8 +371,17 @@ public class BloodManipulation implements EntityCastableManipulation {
 						false, false, false);
 	}
 
+	public boolean isPassiveReady(ServerPlayer player) {
+		return type == EnumManipulationType.PASSIVE && player.isAlive()
+				&& HemoCapabilityAccess.requireBloodVolume(player).isActive()
+				&& HemoCapabilityAccess.getKnownManipulations(player).map(known -> known.isPassiveActive(name)).orElse(false)
+				&& HemoCapabilityAccess.getBloodTendency(player).map(tendency -> tendency.getAlignmentByTendency(tend) >= alignLevel).orElse(false)
+				&& !HemoCapabilityAccess.getUnstainedProgress(player)
+						.map(com.vincenthuto.hemomancy.common.capability.player.unstained.UnstainedAccessRules::blocksKnownBloodPowerUse).orElse(false);
+	}
+
 	public boolean tryPerformPassiveTrigger(ServerPlayer player) {
-		return type == EnumManipulationType.PASSIVE
+		return isPassiveReady(player)
 				&& tryPerformAction(player, player.level(), ItemStack.EMPTY, player.blockPosition(), 0.0F,
 						false, false);
 	}
@@ -462,7 +485,8 @@ public class BloodManipulation implements EntityCastableManipulation {
 
 				boolean hasRequiredAlignment = tendency.getAlignmentByTendency(tend) >= alignLevel;
 				if (!hasRequiredAlignment) {
-					player.displayClientMessage(Component.translatable("Not Enough Alignment for Manipulation!")
+					player.displayClientMessage(Component.literal("Requires " + (int) alignLevel + " " + tend.name()
+							+ " alignment; current " + (int) tendency.getAlignmentByTendency(tend) + ".")
 							.withStyle(ChatFormatting.RED), true);
 					return false;
 				}
@@ -474,7 +498,7 @@ public class BloodManipulation implements EntityCastableManipulation {
 				if (deficit > 0.0D && BorrowedBloodReserve.get(player) >= deficit) {
 					volume.fill(BorrowedBloodReserve.drainToCover(player, deficit));
 				}
-				if (volume.getBloodVolume() > effectiveCost) {
+				if (volume.getBloodVolume() >= effectiveCost) {
 					volume.drain(effectiveCost);
 					volume.addBloodSpend(effectiveCost);
 					HemorathEntity
@@ -483,7 +507,7 @@ public class BloodManipulation implements EntityCastableManipulation {
 					ConserveStateHelper.markManipulationCast(player);
 					PacketHandler.sendToPlayer((ServerPlayer) player, new BloodVolumeServerPacket(volume));
 					getAction(player, world, heldItemMainhand, position, chargeTicks);
-					if (type != EnumManipulationType.CONTINUOUS) {
+					if (creditUse && type != EnumManipulationType.CONTINUOUS) {
 						ManipulationCastSounds.play(world, player, this);
 					}
 

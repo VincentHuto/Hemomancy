@@ -52,6 +52,7 @@ public final class AvatarManifestationManager {
 		STATES.put(player.getUUID(), new State(now + 20, now + 100));
 		applyAttributes(player, avatar.getName());
 		sync(player, known);
+        com.vincenthuto.hemomancy.common.manipulation.ManipulationCastSounds.play(player.level(), player, avatar);
 		return true;
 	}
 

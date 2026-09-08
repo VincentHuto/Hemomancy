@@ -21,6 +21,13 @@ public final class HemoRenderTypes {
 	private HemoRenderTypes() {
 	}
 
+    public static final RenderType MANIPULATION_LOCATOR = RenderType.create("manipulation_locator",
+            DefaultVertexFormat.POSITION_COLOR, VertexFormat.Mode.QUADS, 1024, false, true,
+            RenderType.CompositeState.builder().setShaderState(RenderType.RENDERTYPE_LIGHTNING_SHADER)
+                    .setTransparencyState(RenderType.TRANSLUCENT_TRANSPARENCY)
+                    .setDepthTestState(RenderType.NO_DEPTH_TEST).setWriteMaskState(RenderType.COLOR_WRITE)
+                    .setCullState(RenderType.NO_CULL).setLightmapState(RenderType.NO_LIGHTMAP).createCompositeState(false));
+
 	public static final RenderType QLIPHOTH_CORE = RenderType.create("qliphoth_core",
 			DefaultVertexFormat.POSITION_COLOR, VertexFormat.Mode.QUADS, 256, false, true,
 			RenderType.CompositeState.builder()

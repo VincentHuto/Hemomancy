@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.manipulation.ferric;
 
+import com.vincenthuto.hemomancy.common.manipulation.ManipulationVisuals;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.EnumVeinSections;
 import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
@@ -21,6 +22,7 @@ import net.minecraft.world.level.Level;
 import java.util.Comparator;
 
 public class IronChoirManip extends BloodManipulation {
+	private static final String SHOTS_LEFT = "hemomancy:iron_choir_shots";
 	public IronChoirManip(String name, double cost, double alignment, double xpCost, EnumManipulationType type,
 			EnumManipulationRank rank, EnumBloodTendency tendency, EnumVeinSections section) {
 		super(name, cost, alignment, xpCost, type, rank, tendency, section);
@@ -30,12 +32,33 @@ public class IronChoirManip extends BloodManipulation {
 	public void getAction(Player player, Level world, ItemStack heldItemMainhand, BlockPos position, float heldTicks) {
 		if (!(world instanceof ServerLevel level)) return;
 		player.addEffect(new MobEffectInstance(MobEffects.DAMAGE_RESISTANCE, 25, 0, false, true));
-		Projectile projectile = level.getEntitiesOfClass(Projectile.class, player.getBoundingBox().inflate(5),
-				shot -> shot.getOwner() != player).stream().min(Comparator.comparingDouble(player::distanceToSqr)).orElse(null);
-		if (projectile == null) return;
-		Entity owner = projectile.getOwner();
-		projectile.discard();
-		if (owner instanceof LivingEntity attacker) ManipulationCombatHelper.hurt(this, player, attacker, level, 4.0F);
-		level.sendParticles(ParticleTypes.CRIT, projectile.getX(), projectile.getY(), projectile.getZ(), 12, .2, .2, .2, .03);
+		player.getPersistentData().putInt(SHOTS_LEFT, 3);
+		tickContinuousAction(player, world);
+        ManipulationVisuals.attached(player, ManipulationVisuals.Form.CHOIR, 5, 25, player.getPersistentData().getInt(SHOTS_LEFT));
+	}
+
+	@Override
+	public void tickContinuousAction(Player player, Level world) {
+		if (!(world instanceof ServerLevel level)) return;
+		int remaining = player.getPersistentData().getInt(SHOTS_LEFT);
+        int before = remaining;
+		if (remaining <= 0) return;
+		for (Projectile projectile : level.getEntitiesOfClass(Projectile.class, player.getBoundingBox().inflate(5),
+				shot -> ManipulationCombatHelper.hostileProjectile(player, shot)).stream()
+				.sorted(Comparator.comparingDouble(player::distanceToSqr)).limit(remaining).toList()) {
+			Entity owner = projectile.getOwner();
+			projectile.discard();
+			remaining--;
+			if (owner instanceof LivingEntity attacker) ManipulationCombatHelper.hurt(this, player, attacker, level, 4.0F);
+			level.sendParticles(ParticleTypes.CRIT, projectile.getX(), projectile.getY(), projectile.getZ(), 12, .2, .2, .2, .03);
+		}
+		player.getPersistentData().putInt(SHOTS_LEFT, remaining);
+        if (remaining != before) ManipulationVisuals.attached(player, ManipulationVisuals.Form.CHOIR, 5, 25, remaining);
+	}
+
+	@Override
+	public void finishContinuousAction(Player player, boolean released) {
+		player.getPersistentData().remove(SHOTS_LEFT);
+		super.finishContinuousAction(player, released);
 	}
 }

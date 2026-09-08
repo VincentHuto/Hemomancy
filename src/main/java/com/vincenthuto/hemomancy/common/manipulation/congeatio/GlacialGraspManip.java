@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.manipulation.congeatio;
 
+import com.vincenthuto.hemomancy.common.manipulation.ManipulationVisuals;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.EnumVeinSections;
 import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillPointHelper;
@@ -92,6 +93,7 @@ public class GlacialGraspManip extends BloodManipulation {
 
 		if (!frozenTargets.isEmpty() || frozenEntities > 0) {
 			HemomancyTendrilEffects.glacialGrasp(player, center, java.util.List.copyOf(frozenTargets));
+            ManipulationVisuals.burst(sLevel, ManipulationVisuals.Form.ICE, Vec3.atBottomCenterOf(center.above()), Vec3.atCenterOf(center), RADIUS, 24);
 			world.playSound(null, center, SoundEvents.GLASS_PLACE, SoundSource.PLAYERS, 0.8f, 1.3f);
 
 			for (int i = 0; i < 25; i++) {

@@ -46,7 +46,7 @@ public final class BorrowedBloodRulesTest {
 				BorrowedBloodRules.castDeficitToCover(false, 10.0D, 50.0D));
 		assertDouble("enough blood needs no borrowed cover", 0.0D,
 				BorrowedBloodRules.castDeficitToCover(true, 55.0D, 50.0D));
-		assertDouble("valid cast requests the exact legacy strict-greater deficit", 41.0D,
+		assertDouble("valid cast requests only the missing blood", 40.0D,
 				BorrowedBloodRules.castDeficitToCover(true, 10.0D, 50.0D));
 	}
 

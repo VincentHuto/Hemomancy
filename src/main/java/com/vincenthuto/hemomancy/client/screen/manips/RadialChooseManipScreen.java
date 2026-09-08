@@ -140,9 +140,9 @@ public class RadialChooseManipScreen extends Screen {
 			String selectedManipName = selectedMemory.kind() == MemoryEntryKind.MANIPULATION
 					&& selectedManip != null ? selectedManip.getName() : "";
 
-			addMechanicalManipulation(allManips, ManipulationEquipHelper.BLOOD_ABSORPTION, selectedManipName);
-			addMechanicalManipulation(allManips, ManipulationEquipHelper.BLOOD_PROJECTION, selectedManipName);
-			addMechanicalManipulation(allManips, ManipulationEquipHelper.CONJURE_SICKLE, selectedManipName);
+			addMechanicalManipulation(allManips, equippedNames, ManipulationEquipHelper.BLOOD_ABSORPTION, selectedManipName);
+			addMechanicalManipulation(allManips, equippedNames, ManipulationEquipHelper.BLOOD_PROJECTION, selectedManipName);
+			addMechanicalManipulation(allManips, equippedNames, ManipulationEquipHelper.CONJURE_SICKLE, selectedManipName);
 			addArmorSetAbility();
 
 			for (int i = 0; i < allManips.size(); i++) {
@@ -209,7 +209,9 @@ public class RadialChooseManipScreen extends Screen {
 		}
 	}
 
-	private void addMechanicalManipulation(List<BloodManipulation> allManips, String manipName, String selectedManipName) {
+	private void addMechanicalManipulation(List<BloodManipulation> allManips, List<String> equippedNames,
+			String manipName, String selectedManipName) {
+		if (!equippedNames.contains(manipName)) return;
 		for (int i = 0; i < allManips.size(); i++) {
 			BloodManipulation manipulation = allManips.get(i);
 			if (manipulation != null && manipName.equals(manipulation.getName())) {
@@ -269,7 +271,7 @@ public class RadialChooseManipScreen extends Screen {
 						|| LivingStaffWeaponFormRules.isStaffWeaponFormManip(manipulation.getName()));
 		BlitRadialMenuItem item = new BlitRadialMenuItem(this.menu, slot,
 				ManipulationIconResolver.overlay(manipulation.getName()),
-				Hemomancy.rloc("textures/item/memories/memory_blank.png"),
+				ManipulationIconResolver.base(manipulation.getName()),
 				0, 0, 16, 16, 16, 16,
 				Component.literal(manipulation.getProperName()
 						+ (staffUnavailable ? " (staff planted in active rite)" : ""))) {

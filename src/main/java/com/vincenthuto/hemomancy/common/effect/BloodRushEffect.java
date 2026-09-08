@@ -33,7 +33,7 @@ public class BloodRushEffect extends MobEffect {
 
 	@Override
 	public boolean shouldApplyEffectTickThisTick(int duration, int amplifier) {
-		return true;
+		return duration % 20 == 0;
 	}
 
 }

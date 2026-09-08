@@ -48,8 +48,15 @@ public class BloodMemoryItem extends Item {
 			}, () -> { /* no DrudgeAction registered yet — show nothing */ });
 			tooltip.add(Component.literal("Burn in a lit Iron Brazier and absorb with Blood Absorption.")
 					.withStyle(ChatFormatting.DARK_GRAY));
+			tooltip.add(Component.literal("Learn at Degree "
+					+ com.vincenthuto.hemomancy.common.manipulation.ManipulationRankGates.minDegreeForRank(getManip().getRank())
+					+ "; cast at " + (int) getManip().getAlignLevel() + " " + getManip().getTend().name() + " alignment.")
+					.withStyle(ChatFormatting.GRAY));
+			tooltip.add(Component.literal(getManip().getBaseCostLabel() + ": " + getManip().getBaseCostText())
+					.withStyle(ChatFormatting.DARK_RED));
 			ManipulationFamilyRegistry.form(getManip().getName()).ifPresent(form ->
-					tooltip.add(Component.literal("Requires family mastery stage " + form.requiredLevel() + ".")
+					tooltip.add(Component.literal("Requires " + ManipulationFamilyRegistry.baselineId(getManip().getName()).replace('_', ' ')
+							+ " mastery stage " + form.requiredLevel() + "; intermediate memories are optional.")
 							.withStyle(ChatFormatting.DARK_RED)));
 		}
 	}

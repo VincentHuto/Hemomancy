@@ -68,6 +68,12 @@ public class CrudeMemoryShardItem extends Item {
 			}
 			tooltip.add(Component.literal("Blood cost to absorb: " + (int) BLOOD_COST + " mL")
 					.withStyle(ChatFormatting.DARK_RED));
+			tooltip.add(Component.literal("Right-click with active blood. Learning requires Degree "
+					+ ManipulationRankGates.minDegreeForRank(getManip().getRank()) + "; no loom or brazier needed.")
+					.withStyle(ChatFormatting.GRAY));
+			tooltip.add(Component.literal("Casting requires " + (int) getManip().getAlignLevel() + " "
+					+ getManip().getTend().name() + " alignment. " + getManip().getBaseCostLabel() + ": " + getManip().getBaseCostText())
+					.withStyle(ChatFormatting.GRAY));
 		}
 	}
 

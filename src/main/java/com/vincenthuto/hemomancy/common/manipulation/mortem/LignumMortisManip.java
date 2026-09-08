@@ -110,8 +110,8 @@ public class LignumMortisManip extends BloodManipulation {
 		while (session.crawlBudget >= 1.0D && session.selected.size() < LignumMortisRules.MAX_BLOCKS) {
 			BlockPos next = session.nextEligible(serverLevel);
 			if (next == null) {
-				session.crawlBudget = 0.0D;
-				break;
+				completeSelection(player, session);
+				return;
 			}
 			session.crawlBudget -= 1.0D;
 			syncBand(serverLevel, player, session, session.band(next));
@@ -119,10 +119,20 @@ public class LignumMortisManip extends BloodManipulation {
 			session.ticksSinceArc = 0;
 			expanded = true;
 		}
+		if (session.selected.size() >= LignumMortisRules.MAX_BLOCKS) {
+			completeSelection(player, session);
+			return;
+		}
 		if (!expanded && ++session.ticksSinceArc >= 5) {
 			spawnBloodTendril(serverLevel, serverPlayer, session.latest);
 			session.ticksSinceArc = 0;
 		}
+	}
+
+	private void completeSelection(Player player, Session session) {
+		player.displayClientMessage(net.minecraft.network.chat.Component.literal(
+				"Lignum selection complete: " + session.selected.size() + " blocks. Harvesting permitted blocks."), true);
+		com.vincenthuto.hemomancy.common.manipulation.ManipulationChannelManager.stop((ServerPlayer) player, true);
 	}
 
 	@Override

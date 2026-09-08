@@ -265,8 +265,7 @@ public final class CircusRingmasterEntity extends PathfinderMob {
 			PuppeteerSummonDefinitions.byName(PuppeteerSummonDefinitions.RINGMASTER_PATTERN)
 					.ifPresent(definition -> KnownSummonEvents.grantSummon(player, definition));
 		} else {
-			KnownManipulationGrantHelper.grantMemory(player, ManipulationInit.thread_ripper.get(),
-					ItemInit.memory_thread_ripper.get());
+			grantLiberationMemory(player);
 			authorRuin(server);
 		}
 		ItemStack topper = new ItemStack(ItemInit.ringmaster_topper.get());
@@ -278,6 +277,18 @@ public final class CircusRingmasterEntity extends PathfinderMob {
 		server.playSound(null, blockPosition(), SoundEvents.TOTEM_USE, SoundSource.PLAYERS, 1.0F, 0.7F);
 		player.displayClientMessage(Component.translatable("hemomancy.circus.finale.complete." + route.serializedName())
 				.withStyle(ChatFormatting.DARK_RED), false);
+	}
+
+	public static void grantLiberationMemory(ServerPlayer player) {
+		var result = KnownManipulationGrantHelper.grantMemory(player, ManipulationInit.thread_ripper.get(),
+				ItemInit.memory_thread_ripper.get());
+		if (!result.success() && result.status() != KnownManipulationGrantHelper.MemoryGrantStatus.ALREADY_KNOWN) {
+			ItemStack memory = new ItemStack(ItemInit.memory_thread_ripper.get());
+			if (!player.getInventory().add(memory)) player.drop(memory, false);
+			player.displayClientMessage(Component.literal(
+					"Thread Ripper remains in its memory. Keep it until you can absorb it at a lit Iron Brazier.")
+					.withStyle(ChatFormatting.DARK_RED), false);
+		}
 	}
 
 	private void authorRuin(ServerLevel server) {

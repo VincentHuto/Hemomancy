@@ -40,7 +40,7 @@ public class ActivationPotentialManip extends BloodManipulation {
 		if (targets.size() > 0) {
 			int targetIndex = 0;
 			for (Entity target2 : targets) {
-				if (target2 instanceof LivingEntity) {
+				if (target2 instanceof LivingEntity living && ManipulationCombatHelper.canHarm(player, living)) {
 					LivingEntity target = (LivingEntity) target2;
 					DuctilisLightningEffects.activationPotential(player, target, targetIndex++);
 					float damage = (float) (5.0f * strength * SkillPointHelper.getCrimsonMasteryMultiplier(player));

@@ -59,7 +59,8 @@ public final class SchoolHitHelper {
 		markedTarget.level().getEntitiesOfClass(LivingEntity.class,
 						new AABB(markedTarget.blockPosition()).inflate(ManipulationStatusRules.CONDUCTIVE_ARC_RADIUS),
 						target -> target != markedTarget && target != attacker && target.isAlive()
-								&& !target.isAlliedTo(attacker) && !attacker.isAlliedTo(target)
+								&& (attacker instanceof Player player ? ManipulationCombatHelper.canHarm(player, target)
+								: !target.isAlliedTo(attacker) && !attacker.isAlliedTo(target))
 								&& target.position().distanceTo(center) <= ManipulationStatusRules.CONDUCTIVE_ARC_RADIUS)
 				.stream()
 				.sorted(Comparator.comparingDouble(target -> target.distanceToSqr(markedTarget)))
@@ -111,7 +112,7 @@ public final class SchoolHitHelper {
 		target.level().getEntitiesOfClass(LivingEntity.class,
 						new AABB(target.blockPosition()).inflate(ManipulationStatusRules.GRAVE_DEBT_RADIUS),
 						victim -> victim != target && victim.isAlive()
-								&& (owner == null || (!victim.isAlliedTo(owner) && !owner.isAlliedTo(victim)))
+								&& (owner == null ? !data.hasUUID(GRAVE_DEBT_OWNER_KEY) : ManipulationCombatHelper.canHarm(owner, victim))
 								&& victim.position().distanceTo(center) <= ManipulationStatusRules.GRAVE_DEBT_RADIUS)
 				.forEach(victim -> victim.hurt(target.damageSources().magic(),
 						ManipulationStatusRules.GRAVE_DEBT_BURST_DAMAGE));

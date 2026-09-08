@@ -59,8 +59,7 @@ public final class VesperLivingWeaponLayer
 			poseStack.popPose();
 			return;
 		}
-		if (entity.isRaging()) applySickleGrip(poseStack, leftHand);
-		else applyWeaponGrip(poseStack, entity.getActiveTendency(), leftHand);
+		if (!entity.isRaging()) applyWeaponGrip(poseStack, entity.getActiveTendency(), leftHand);
 		poseStack.scale(scale, scale, scale);
 		MultiBufferSource weaponBuffer = dissolve > 0.0F
 				? ignored -> buffer.getBuffer(HemoRenderTypes.hermitFarewellDissolve(
@@ -105,11 +104,4 @@ public final class VesperLivingWeaponLayer
 		if (tendency == EnumBloodTendency.CONGEATIO) poseStack.translate(0.0D, 0.05D, -0.12D);
 	}
 
-	private static void applySickleGrip(PoseStack poseStack, boolean leftHand) {
-		float side = leftHand ? -1.0F : 1.0F;
-		poseStack.translate(side * 0.045D, 0.04D, -0.10D);
-		poseStack.mulPose(Axis.XP.rotationDegrees(-92.0F));
-		poseStack.mulPose(Axis.YP.rotationDegrees(leftHand ? 0.0F : 180.0F));
-		poseStack.mulPose(Axis.ZP.rotationDegrees(side * 14.0F));
-	}
 }

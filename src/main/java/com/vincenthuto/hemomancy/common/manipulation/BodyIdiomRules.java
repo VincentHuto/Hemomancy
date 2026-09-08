@@ -6,7 +6,7 @@ import net.minecraft.world.entity.player.Player;
 
 public final class BodyIdiomRules {
 	public static final float BASE_IRON_HEART_HEALTH = 10.0F;
-	public static final float IRON_HEART_HEALTH_PER_CAST = 2.0F;
+	public static final float IRON_HEART_HEALTH_PER_CAST = 4.0F;
 	public static final float HEALTH_PER_HEART = 2.0F;
 	public static final int IRON_HEART_DURATION_TICKS = 12_000;
 	public static final int IRON_HEART_CHARGE_TICKS = 40;

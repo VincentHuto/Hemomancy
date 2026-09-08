@@ -1657,7 +1657,7 @@
   "hemomancy.manipulation.black_veil_covenant": "Black Veil Covenant",
   "hemomancy.manipulation.black_veil_covenant.desc": "Raises a dark veil that protects its caster with resistance and fire protection at the cost of weakness.",
   "hemomancy.manipulation.blood_absorption.desc": "Readies the staff to draw blood from valid targets.",
-  "hemomancy.manipulation.blood_aneurysm.desc": "Ruptures a target's blood and splashes damage into nearby bodies.",
+  "hemomancy.manipulation.blood_aneurysm.desc": "Ruptures the nearest visible enemy and splashes damage into nearby enemies.",
   "hemomancy.manipulation.blood_lattice": "Blood Lattice",
   "hemomancy.manipulation.blood_lattice.desc": "Spreads an aimed binding lattice through a packed group of nearby creatures.",
   "hemomancy.manipulation.blood_cloud.desc": "Hurls a blood cloud that withers creatures caught inside.",
@@ -1669,19 +1669,19 @@
   "hemomancy.manipulation.blood_needle_fan": "Blood Needle Fan",
   "hemomancy.manipulation.blood_needle_fan.desc": "Scatters a broad fan of blood needles across a wider area.",
   "hemomancy.manipulation.blood_needle_lance": "Blood Needle Lance",
-  "hemomancy.manipulation.blood_needle_lance.desc": "Condenses the volley into three fast needles that pierce several bodies.",
+  "hemomancy.manipulation.blood_needle_lance.desc": "Fully charge to condense the volley into three fast needles that pierce several bodies.",
   "hemomancy.manipulation.blood_projection.desc": "Readies the staff to feed blood into structures and machines.",
-  "hemomancy.manipulation.blood_rush.desc": "Floods your body with quickening blood, increasing speed and momentum.",
+  "hemomancy.manipulation.blood_rush.desc": "Floods your body with quickening blood, increasing speed and momentum and healing half a health point each second.",
   "hemomancy.manipulation.blood_shot.desc": "Fires a condensed blood projectile at the target.",
   "hemomancy.manipulation.canopy_mortis": "Canopy Mortis",
-  "hemomancy.manipulation.canopy_mortis.desc": "Carries Lignum Mortis between trees through touching leaves without harvesting the canopy.",
+  "hemomancy.manipulation.canopy_mortis.desc": "Carries Lignum Mortis between trees through touching leaves without harvesting leaves. Release or complete the selection to harvest.",
   "hemomancy.manipulation.chain_blood_binding": "Chain Blood Binding",
   "hemomancy.manipulation.chain_blood_binding.desc": "Chains a shorter binding from the first victim into nearby creatures.",
   "hemomancy.manipulation.bloom_of_rot": "Bloom of Rot",
   "hemomancy.manipulation.bloom_of_rot.desc": "Spreads rot through nearby enemies, poisoning and withering them.",
   "hemomancy.manipulation.cauterizing_rebuke": "Cauterizing Rebuke",
   "hemomancy.manipulation.cauterizing_rebuke.desc": "Burns poison, wither, and blood loss out of your body at a painful cost.",
-  "hemomancy.manipulation.conductive_mark.desc": "Marks a target so later Ductilis, Lux, or Ferric hits from allies arc into nearby enemies.",
+  "hemomancy.manipulation.conductive_mark.desc": "Marks a target for twelve seconds so later allied Ductilis, Lux, or Ferric hits arc into nearby enemies.",
   "hemomancy.manipulation.conjure_axe.desc": "Reshapes a held Living Staff into a Living Axe.",
   "hemomancy.manipulation.conjure_blade.desc": "Reshapes a held Living Staff into a Living Blade.",
   "hemomancy.manipulation.conjure_claws.desc": "Reshapes a held Living Staff into living claws.",
@@ -1695,16 +1695,16 @@
   "hemomancy.manipulation.crimson_harvest.desc": "Coaxes crops and living growth with a crimson surge.",
   "hemomancy.manipulation.crimson_sight.desc": "Grants night vision and marks nearby creatures through darkness.",
   "hemomancy.manipulation.crimson_tithe": "Crimson Tithe",
-  "hemomancy.manipulation.crimson_tithe.desc": "Borrows blood into the shared reserve, then automatically collects spent blood at double value.",
+  "hemomancy.manipulation.crimson_tithe.desc": "Borrows 500 blood into the shared reserve for thirty seconds. Spent reserve incurs double blood repayment and six health damage; unused blood is reclaimed.",
   "hemomancy.manipulation.cryogenic_pulse.desc": "Releases a cold pulse that slows and weakens nearby bodies.",
   "hemomancy.manipulation.deadly_gaze.desc": "Lifts what you look at; a full charge interrupts and slams the target.",
   "hemomancy.manipulation.endless_hour": "Endless Hour",
-  "hemomancy.manipulation.endless_hour.desc": "Delays incoming pain behind a brief saintly bulwark.",
+  "hemomancy.manipulation.endless_hour.desc": "Defers lethal damage at one health point for ten seconds. The unpaid damage returns when the hour ends or you leave the world.",
   "hemomancy.manipulation.expansive_blood_cloud": "Expansive Blood Cloud",
   "hemomancy.manipulation.expansive_blood_cloud.desc": "Hurls a larger blood cloud that briefly blankets a wider area.",
   "hemomancy.manipulation.expulsive_updraft": "Expulsive Updraft",
   "hemomancy.manipulation.expulsive_updraft.desc": "Bursts outward as it launches you, throwing nearby non-allied creatures aside.",
-  "hemomancy.manipulation.exsanguinate.desc": "Executes a badly wounded target and returns blood.",
+  "hemomancy.manipulation.exsanguinate.desc": "Executes a visible, badly wounded blood-bearing enemy and returns blood only on a kill.",
   "hemomancy.manipulation.ferric_resonance.desc": "Retired compatibility entry; Ferric Transmutation owns the alloy-buff identity.",
   "hemomancy.manipulation.ferric_transmutation.desc": "Hardens blood into ferric force, empowering strikes and siphon effects.",
   "hemomancy.manipulation.glacial_bastion.desc": "Retired compatibility entry; crouch-cast Glacial Rampart for its ice shell.",
@@ -1714,33 +1714,33 @@
   "hemomancy.manipulation.glacial_rampart.desc": "Raises an aimed ice wall, or a surrounding ice shell while crouching.",
   "hemomancy.manipulation.grave_debt.desc": "Marks a target with a debt that bursts at low health and refunds blood if death claims it.",
 	"hemomancy.manipulation.blackhearted": "Blackhearted",
-	"hemomancy.manipulation.blackhearted.desc": "Passively converts most Wither harm into recovery while equipped, until necrotic saturation ruptures.",
+	"hemomancy.manipulation.blackhearted.desc": "While enabled with active blood and sufficient Mortem alignment, converts most Wither harm into recovery until necrotic saturation ruptures.",
   "hemomancy.manipulation.hematic_beacon": "Hematic Beacon",
-  "hemomancy.manipulation.hematic_beacon.desc": "Creates an aimed rally zone that repeatedly steadies allies and reveals hostiles.",
+  "hemomancy.manipulation.hematic_beacon.desc": "Creates an aimed rally zone that heals and steadies allies each second while revealing hostiles.",
   "hemomancy.manipulation.hematic_impressment": "Hematic Impressment",
   "hemomancy.manipulation.hematic_impressment.desc": "Temporarily impresses one blood-bearing creature into defending you and your allies.",
   "hemomancy.manipulation.hematic_rebuke": "Hematic Rebuke",
   "hemomancy.manipulation.hematic_rebuke.desc": "Commands a blood-bearing creature to drop its target and flee for eight seconds.",
   "hemomancy.manipulation.hematic_mortar": "Hematic Mortar",
-  "hemomancy.manipulation.hematic_mortar.desc": "Lobs one heavy blood shot in an arc before it bursts across a small area.",
+  "hemomancy.manipulation.hematic_mortar.desc": "Fully charge to lob one heavy blood shot in an arc before it bursts across a small area.",
   "hemomancy.manipulation.hemolymphal_pulse.desc": "Reveals blood-bearing bodies and primes wounded ones with Conductive Mark.",
-  "hemomancy.manipulation.hemorrhage.desc": "Ruptures a nearby living target with Blood Loss for Mortem follow-ups.",
+  "hemomancy.manipulation.hemorrhage.desc": "Inflicts twelve seconds of Blood Loss on the nearest visible enemy for Mortem follow-ups.",
   "hemomancy.manipulation.hemosynthesis.desc": "Turns blood into restorative living energy.",
   "hemomancy.manipulation.insatiable_hunger.desc": "Curses a target's recovery, reducing healing and turning food into gnawing hunger.",
   "hemomancy.manipulation.lignum_mortis": "Lignum Mortis",
-  "hemomancy.manipulation.lignum_mortis.desc": "Threads blood through connected wood and fungus, then dismantles every marked block when released.",
+  "hemomancy.manipulation.lignum_mortis.desc": "Threads blood through connected wood and fungus. Release to harvest marked blocks; a completed selection automatically harvests and ends the channel.",
   "hemomancy.manipulation.lingering_blood_binding": "Lingering Blood Binding",
   "hemomancy.manipulation.lingering_blood_binding.desc": "Forms a longer-lived binding around one creature.",
   "hemomancy.manipulation.iron_retort.desc": "Raises a brief iron guard that cuts incoming melee damage and lashes back at the attacker.",
 	"hemomancy.manipulation.ironhearted": "Ironhearted",
-	"hemomancy.manipulation.ironhearted.desc": "Charge a ferric heart around your own; each cast adds one temporary Iron Heart that takes damage first. Active Thorn, Anvil, and Crucible scars expand its capacity.",
+	"hemomancy.manipulation.ironhearted.desc": "Fully charge to store up to two Iron Hearts (4 health) for ten minutes. Stored hearts take damage first; active Thorn, Anvil, and Crucible scars expand capacity.",
 	"message.hemomancy.ironhearted.charge": "Hold the manipulation until the iron heart finishes forming.",
 	"message.hemomancy.ironhearted.full": "Your iron casing cannot hold another heart.",
 	"message.hemomancy.blackhearted.passive": "Blackhearted is a passive; toggle it with the manipulation key.",
   "hemomancy.manipulation.levelup": "§5[Hemomancy] §7%s §5has grown stronger! §7(Level §5%d§7)",
   "hemomancy.manipulation.lumen_suture": "Lumen Suture",
-  "hemomancy.manipulation.lumen_suture.desc": "Sutures a nearby wounded ally with light, granting absorption and clearing blindness.",
-  "hemomancy.manipulation.osseous_bloom.desc": "Bursts osseous cold through healthier enemies, slowing them.",
+  "hemomancy.manipulation.lumen_suture.desc": "Sutures the nearest wounded ally with light, granting absorption and clearing blindness and Wither. Falls back to yourself.",
+  "hemomancy.manipulation.osseous_bloom.desc": "Bursts osseous cold through healthier enemies, slowing them. Boss damage is capped at twelve health points.",
   "hemomancy.manipulation.prismatic_reproof": "Prismatic Reproof",
   "hemomancy.manipulation.prismatic_reproof.desc": "Projects a cone of refracted Lux that blinds and weakens enemies, punishing marked targets.",
   "hemomancy.manipulation.pyretic_forge.desc": "Smelts held items with fevered blood.",
@@ -1776,16 +1776,16 @@
   "hemomancy.manipulation.synaptic_jolt.desc": "Interrupts a nearby enemy with a short lightning jolt, staggering movement and weakening their strike.",
   "hemomancy.manipulation.umbral_reversal": "Umbral Reversal",
   "hemomancy.manipulation.umbral_reversal.desc": "Reverses backward into a nearby dark space and blinds enemies left behind.",
-  "hemomancy.manipulation.umbral_step.desc": "Steps through shadow to a targeted air space.",
+  "hemomancy.manipulation.umbral_step.desc": "Steps to a safe, supported shadow beside or above the targeted block.",
   "hemomancy.manipulation.unclosing_eye": "Unclosing Eye",
   "hemomancy.manipulation.unclosing_eye.desc": "Persistently strips nearby concealment with Seraphae's unforgiving sight.",
-  "hemomancy.manipulation.vascular_dowsing.desc": "Reveals nearby ore-like veins through ferric resonance.",
+  "hemomancy.manipulation.vascular_dowsing.desc": "Scans nearby ore veins and reports their count plus the nearest ore and its coordinates.",
   "hemomancy.manipulation.venous_travel.desc": "Travel along prepared venous paths between linked blood structures.",
   "hemomancy.manipulation.vital_effusion.desc": "Spends blood to stir living growth in nearby plants.",
   "hemomancy.manipulation.vital_reservoir.desc": "Drains life from a wounded target and returns blood to you.",
   "hemomancy.manipulation.vitric_combustion.desc": "Detonates heated blood in an explosive blast.",
   "hemomancy.manipulation.worked_lignum": "Worked Lignum",
-  "hemomancy.manipulation.worked_lignum.desc": "Extends Lignum Mortis into tagged worked materials such as wooden planks.",
+  "hemomancy.manipulation.worked_lignum.desc": "Extends Lignum Mortis into tagged worked materials such as wooden planks. Release or complete the selection to harvest.",
   "hemomancy.manipulation.void_shroud.desc": "Cloaks you in shadow with invisibility, speed, and night vision.",
   "hemomancy.memory_of_vesper.already_awakened": "Vesper's refusal is already disciplined within your staff-bond.",
   "hemomancy.memory_of_vesper.awakened": "Vesper's memory settles into your Living Staff bond.",
@@ -4059,35 +4059,35 @@
 	,"screen.hemomancy.harbinger_assignment_ledger.weight_of_the_frame.fitting": "Return for the Monolithic Frame Fitting."
 	,"screen.hemomancy.harbinger_assignment_ledger.weight_of_the_frame.complete": "Weight of the Frame is complete."
 	,"hemomancy.manipulation.crimson_coronation": "Crimson Coronation"
-	,"hemomancy.manipulation.crimson_coronation.desc": "Forms up to eight blood lances that retaliate when their bearer is struck."
+	,"hemomancy.manipulation.crimson_coronation.desc": "Prepares up to eight retaliatory blood lances for twenty seconds. Full charge strengthens their damage and lets each pierce an additional target."
 	,"hemomancy.manipulation.sovereign_instinct": "Sovereign Instinct"
-	,"hemomancy.manipulation.sovereign_instinct.desc": "When surrounded and struck, turns blood-bearing attackers against one another."
+	,"hemomancy.manipulation.sovereign_instinct.desc": "When enabled and struck while at least four blood-bearing enemies target you, redirects ordinary attackers for five seconds. Requires active blood and Animus alignment."
 	,"hemomancy.manipulation.synaptic_storm": "Synaptic Storm"
 	,"hemomancy.manipulation.synaptic_storm.desc": "Chains a charged paralytic current through up to eight nearby enemies."
 	,"hemomancy.manipulation.living_circuit": "Living Circuit"
-	,"hemomancy.manipulation.living_circuit.desc": "Channels speed and haste into nearby allies and arms their next strike with Conductive Mark."
+	,"hemomancy.manipulation.living_circuit.desc": "Channels speed and haste into up to three nearby teammates and arms their next hostile strike with Conductive Mark. Requires an allied recipient."
 	,"hemomancy.manipulation.white_verdict": "White Verdict"
 	,"hemomancy.manipulation.white_verdict.desc": "Projects a charged piercing beam that exposes and punishes concealed targets."
 	,"hemomancy.manipulation.vigil_of_glass": "Vigil of Glass"
 	,"hemomancy.manipulation.vigil_of_glass.desc": "Greatly reduces distant projectile harm and exposes its shooter."
 	,"hemomancy.manipulation.furnace_veins": "Furnace Veins"
-	,"hemomancy.manipulation.furnace_veins.desc": "Channels a close heat field that burns enemies and frees allies from frost."
+	,"hemomancy.manipulation.furnace_veins.desc": "Channels a close heat field that burns enemies, thaws allies, and grants allies fire resistance."
 	,"hemomancy.manipulation.phoenix_debt": "Phoenix Debt"
-	,"hemomancy.manipulation.phoenix_debt.desc": "Arms a shared Last Rite, paying a vast blood debt to survive lethal harm and erupt in cleansing flame."
+	,"hemomancy.manipulation.phoenix_debt.desc": "When enabled with active blood and sufficient Flammeus alignment, arms a shared Last Rite and pays blood to survive lethal harm and erupt in cleansing flame."
 	,"hemomancy.manipulation.absolute_stillness": "Absolute Stillness"
-	,"hemomancy.manipulation.absolute_stillness.desc": "Channels a freezing field that slows projectiles, smothers fire, and locks enemies in rime."
+	,"hemomancy.manipulation.absolute_stillness.desc": "Channels a freezing field that continuously slows hostile projectiles, smothers fire, and slows enemies. Bosses resist its strongest slow."
 	,"hemomancy.manipulation.rimebound_sentence": "Rimebound Sentence"
 	,"hemomancy.manipulation.rimebound_sentence.desc": "Condemns a targeted enemy to charged frost damage and temporary confinement."
 	,"hemomancy.manipulation.hematic_ballast": "Hematic Ballast"
 	,"hemomancy.manipulation.hematic_ballast.desc": "Automatically anchors the body against a powerful launch or knockback."
 	,"hemomancy.manipulation.iron_choir": "Iron Choir"
-	,"hemomancy.manipulation.iron_choir.desc": "Channels a ferric guard that intercepts one hostile projectile with each pulse."
+	,"hemomancy.manipulation.iron_choir.desc": "Channels Resistance and intercepts up to three hostile projectiles per second, striking back at their owners."
 	,"hemomancy.manipulation.funeral_bell": "Funeral Bell"
-	,"hemomancy.manipulation.funeral_bell.desc": "Detonates Wither, Poison, Blood Loss, and Grave Debt across a charged deathly pulse."
+	,"hemomancy.manipulation.funeral_bell.desc": "Releases a deathly pulse strengthened by Wither, Poison, Blood Loss, and Grave Debt. Damage and added Wither duration grow with charge."
 	,"hemomancy.manipulation.carrion_communion": "Carrion Communion"
-	,"hemomancy.manipulation.carrion_communion.desc": "Drains afflicted nearby enemies while channeled and returns part of their life."
+	,"hemomancy.manipulation.carrion_communion.desc": "Drains up to four afflicted, blood-bearing enemies while channeled, restoring half the health actually drained."
 	,"hemomancy.manipulation.penumbral_drift": "Penumbral Drift"
-	,"hemomancy.manipulation.penumbral_drift.desc": "Channels a swift invisible drift that ends when the caster attacks."
+	,"hemomancy.manipulation.penumbral_drift.desc": "Channels swift invisibility and repeatedly sheds ordinary enemy attention. Bosses retain their target; attacking ends the drift."
 	,"hemomancy.manipulation.eclipse_well": "Eclipse Well"
 	,"hemomancy.manipulation.eclipse_well.desc": "Creates a charged well of darkness that blinds, pulls, and breaks hostile sight."
 	,"item.hemomancy.memory_crimson_coronation": "Memory Crimson Coronation"

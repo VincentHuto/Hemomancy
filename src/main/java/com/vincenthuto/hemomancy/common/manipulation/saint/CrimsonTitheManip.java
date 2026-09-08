@@ -56,8 +56,8 @@ public class CrimsonTitheManip extends BloodManipulation {
 			return false;
 		}
 		if (!HemoServerConfig.BORROWED_BLOOD_ENABLED.get()
-				|| BorrowedBloodReserve.get(player) >= HemoServerConfig.BORROWED_BLOOD_CAP.get()) {
-			player.displayClientMessage(Component.literal("There is no room for borrowed blood.")
+				|| HemoServerConfig.BORROWED_BLOOD_CAP.get() - BorrowedBloodReserve.get(player) < BLOOD_STORE_AMOUNT) {
+			player.displayClientMessage(Component.literal("The reserve needs room for the full 500 mL tithe.")
 					.withStyle(ChatFormatting.DARK_RED), true);
 			return false;
 		}

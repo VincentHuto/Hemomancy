@@ -2,7 +2,6 @@ package com.vincenthuto.hemomancy.common.manipulation;
 
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.entity.HemoEntityPredicates;
-import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -36,18 +35,18 @@ public final class HematicCommandManager {
 	}
 
 	public static boolean rebuke(ServerPlayer caster, LivingEntity target) {
-		return apply(caster, target, Mode.REBUKED, HematicCommandRules.REBUKE_DURATION_TICKS);
+		return apply(caster, target, Mode.REBUKED, HematicCommandRules.REBUKE_DURATION_TICKS, null);
 	}
 
 	public static boolean impress(ServerPlayer caster, LivingEntity target) {
-		if (!canCommand(target)) return false;
+		if (!canCommand(target) || !ManipulationCombatHelper.canHarm(caster, target)) return false;
 		UUID previousId = IMPRESSED_BY_CASTER.get(caster.getUUID());
 		if (previousId != null) {
 			if (caster.serverLevel().getEntity(previousId) instanceof Mob previous) release(previous);
 			COMMANDS.remove(previousId);
 		}
 		return apply(caster, target, Mode.IMPRESSED,
-				HematicCommandRules.impressmentDurationTicks(target.getMaxHealth()));
+				HematicCommandRules.impressmentDurationTicks(target.getMaxHealth()), null);
 	}
 
 	public static boolean canCommand(LivingEntity target) {
@@ -67,15 +66,24 @@ public final class HematicCommandManager {
 		return state != null && state.mode == Mode.IMPRESSED && state.caster.equals(caster.getUUID());
 	}
 
-	private static boolean apply(ServerPlayer caster, LivingEntity target, Mode mode, int duration) {
-		if (!canCommand(target) || !(target instanceof Mob mob)) return false;
+	public static boolean redirect(ServerPlayer caster, Mob mob, LivingEntity target, int duration) {
+		return apply(caster, mob, Mode.REDIRECTED, duration, target.getUUID());
+	}
+
+	private static boolean apply(ServerPlayer caster, LivingEntity target, Mode mode, int duration, UUID redirectedTarget) {
+		if (!(target instanceof Mob mob) || !ManipulationCombatHelper.canHarm(caster, target)
+				|| (mode == Mode.REDIRECTED ? ManipulationReactiveEvents.isBoss(target) : !canCommand(target))) return false;
 		CommandState old = COMMANDS.put(target.getUUID(), new CommandState(caster.getUUID(),
-				caster.level().dimension(), caster.level().getGameTime() + duration, mode));
+				caster.level().dimension(), caster.level().getGameTime() + duration, mode, redirectedTarget));
 		if (old != null && old.mode == Mode.IMPRESSED) IMPRESSED_BY_CASTER.remove(old.caster, target.getUUID());
 		if (mode == Mode.IMPRESSED) IMPRESSED_BY_CASTER.put(caster.getUUID(), target.getUUID());
 		mob.setTarget(null);
 		mob.targetSelector.disableControlFlag(Goal.Flag.TARGET);
-		feedback(caster.serverLevel(), mob, mode);
+		if (mode == Mode.REDIRECTED) {
+			Entity redirected = caster.serverLevel().getEntity(redirectedTarget);
+			mob.setTarget(redirected instanceof LivingEntity living ? living : null);
+		} else feedback(caster.serverLevel(), mob, mode);
+        visual(caster,mob,COMMANDS.get(mob.getUUID()));
 		return true;
 	}
 
@@ -89,15 +97,19 @@ public final class HematicCommandManager {
 			CommandState state = entry.getValue();
 			if (!state.dimension.equals(level.dimension())) continue;
 			Entity entity = level.getEntity(entry.getKey());
-			ServerPlayer caster = level.getServer().getPlayerList().getPlayer(state.caster);
+			ServerPlayer caster = level.getPlayerByUUID(state.caster) instanceof ServerPlayer player ? player : null;
 			if (!(entity instanceof Mob mob) || !mob.isAlive() || caster == null || now >= state.until) {
 				if (entity instanceof Mob mob) release(mob);
 				if (state.mode == Mode.IMPRESSED) IMPRESSED_BY_CASTER.remove(state.caster, entry.getKey());
 				iterator.remove();
 				continue;
 			}
+	            if(now%5==0) visual(caster,mob,state);
 			if (state.mode == Mode.REBUKED) tickRebuke(mob, caster, now);
-			else tickImpressed(mob, caster);
+			else if (state.mode == Mode.REDIRECTED) {
+				Entity redirected = level.getEntity(state.redirectedTarget);
+				mob.setTarget(redirected instanceof LivingEntity living && ManipulationCombatHelper.canHarm(caster, living) ? living : null);
+			} else tickImpressed(mob, caster);
 		}
 	}
 
@@ -157,15 +169,21 @@ public final class HematicCommandManager {
 		return caster != null && (entity == caster || caster.isAlliedTo(entity) || entity.isAlliedTo(caster));
 	}
 
+    private static void visual(ServerPlayer caster, Mob mob, CommandState state) {
+        net.neoforged.neoforge.network.PacketDistributor.sendToPlayersNear(caster.serverLevel(),null,
+                mob.getX(),mob.getY(),mob.getZ(),64,
+                new com.vincenthuto.hemomancy.common.network.particle.ManipulationVisualPacket(
+                        ManipulationVisuals.Form.COMMAND,mob.getId(),mob.position(),caster.getEyePosition(),
+                        mob.getBbHeight(),(int)Math.min(10,state.until-caster.level().getGameTime()),state.mode.ordinal()+1));
+    }
+
 	private static void release(Mob mob) {
+        ManipulationVisuals.attached(mob,ManipulationVisuals.Form.COMMAND,0,0,0);
 		mob.setTarget(null);
 		mob.targetSelector.enableControlFlag(Goal.Flag.TARGET);
 	}
 
 	private static void feedback(ServerLevel level, Mob target, Mode mode) {
-		level.sendParticles(mode == Mode.REBUKED ? ParticleTypes.CRIMSON_SPORE : ParticleTypes.WITCH,
-				target.getX(), target.getY() + target.getBbHeight() * 0.6D,
-				target.getZ(), 28, 0.45D, 0.55D, 0.45D, 0.03D);
 		level.playSound(null, target.blockPosition(), SoundEvents.ILLUSIONER_CAST_SPELL, SoundSource.PLAYERS,
 				0.7F, mode == Mode.REBUKED ? 0.7F : 1.15F);
 	}
@@ -175,8 +193,8 @@ public final class HematicCommandManager {
 		IMPRESSED_BY_CASTER.clear();
 	}
 
-	private enum Mode { REBUKED, IMPRESSED }
+	private enum Mode { REBUKED, IMPRESSED, REDIRECTED }
 
-	private record CommandState(UUID caster, ResourceKey<Level> dimension, long until, Mode mode) {
+	private record CommandState(UUID caster, ResourceKey<Level> dimension, long until, Mode mode, UUID redirectedTarget) {
 	}
 }

@@ -25,7 +25,7 @@ class SomaticLoomMissingEnzymeFeedbackTest {
 	@Test
 	void insertingCatalystReportsAnyStillMissingEnzyme() throws Exception {
 		String source = Files.readString(Path.of(
-				"src/main/java/com/vincenthuto/hemomancy/common/tile/crafting/SomaticLoomBlockEntity.java"));
+				"src/main/java/com/vincenthuto/hemomancy/common/tile/harbinger/crafting/SomaticLoomBlockEntity.java"));
 		int start = source.indexOf("void placeCatalyst");
 		int end = source.indexOf("\n\t}", start);
 

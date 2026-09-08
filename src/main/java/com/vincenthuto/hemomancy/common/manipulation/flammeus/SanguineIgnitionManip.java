@@ -1,14 +1,17 @@
 package com.vincenthuto.hemomancy.common.manipulation.flammeus;
 
+import com.vincenthuto.hemomancy.common.manipulation.ManipulationVisuals;
 import com.vincenthuto.hemomancy.common.block.harbinger.CrimsonFireHelper;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.EnumVeinSections;
 import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillPointHelper;
 import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
+import com.vincenthuto.hemomancy.common.manipulation.ManipulationCombatHelper;
 import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationRank;
 import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationType;
 import com.vincenthuto.hemomancy.common.manipulation.TendencyAffinityRules;
-import com.vincenthuto.hutoslib.client.particle.factory.GlowParticleFactory;
+import com.vincenthuto.hutoslib.client.particle.data.ColorParticleData;
+import com.vincenthuto.hutoslib.common.registry.HLParticleInit;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
@@ -53,7 +56,7 @@ public class SanguineIgnitionManip extends BloodManipulation {
 		BlockPos center = player.blockPosition();
 		AABB searchBox = new AABB(center).inflate(RADIUS);
 		List<LivingEntity> targets = world.getEntitiesOfClass(LivingEntity.class, searchBox,
-				e -> e != player && e.isAlive());
+				e -> ManipulationCombatHelper.canHarm(player, e));
 
 		int hit = 0;
 		for (LivingEntity target : targets) {
@@ -71,13 +74,14 @@ public class SanguineIgnitionManip extends BloodManipulation {
 			world.playSound(null, center, SoundEvents.FIRE_AMBIENT, SoundSource.PLAYERS, 0.6f, 1.1f);
 		}
 
-		RandomSource random = world.random;
+		ManipulationVisuals.burst(sLevel, ManipulationVisuals.Form.FURNACE, player.position(), player.position(), RADIUS, 18);
+        RandomSource random = world.random;
 		for (int i = 0; i < 35; i++) {
 			float r = 220 + random.nextFloat() * 35;
 			float g = 60 + random.nextFloat() * 100;
 			float b = random.nextFloat() * 10;
 			sLevel.sendParticles(
-					GlowParticleFactory.createData(new ParticleColor(r, g, b)),
+					new ColorParticleData(HLParticleInit.glow.get(), new ParticleColor(r, g, b)),
 					center.getX() + 0.5 + (random.nextDouble() - 0.5) * RADIUS * 2,
 					center.getY() + 0.3 + random.nextDouble() * 1.5,
 					center.getZ() + 0.5 + (random.nextDouble() - 0.5) * RADIUS * 2,

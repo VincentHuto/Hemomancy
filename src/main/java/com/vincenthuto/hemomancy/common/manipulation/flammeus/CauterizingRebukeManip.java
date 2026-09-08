@@ -7,7 +7,6 @@ import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
 import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationRank;
 import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationType;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -18,7 +17,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 
 public class CauterizingRebukeManip extends BloodManipulation {
-	private static final double RADIUS = 5.0;
 
 	public CauterizingRebukeManip(String name, double cost, double alignLevel, double xpCost,
 			EnumManipulationType type, EnumManipulationRank rank, EnumBloodTendency tendency,
@@ -40,12 +38,7 @@ public class CauterizingRebukeManip extends BloodManipulation {
 		}
 		world.playSound(null, player.blockPosition(), SoundEvents.FIRE_EXTINGUISH, SoundSource.PLAYERS, 0.8F, 1.7F);
 		world.playSound(null, player.blockPosition(), SoundEvents.FIRECHARGE_USE, SoundSource.PLAYERS, 0.7F, 1.0F);
-		for (int i = 0; i < 45; i++) {
-			sLevel.sendParticles(ParticleTypes.FLAME,
-					player.getX() + (world.random.nextDouble() - 0.5) * RADIUS * 1.5,
-					player.getY() + 0.2 + world.random.nextDouble() * 1.4,
-					player.getZ() + (world.random.nextDouble() - 0.5) * RADIUS * 1.5,
-					1, 0, 0.08, 0, 0.02);
-		}
+        if (purged > 0) com.vincenthuto.hemomancy.common.manipulation.ManipulationVisuals.attached(player,
+                com.vincenthuto.hemomancy.common.manipulation.ManipulationVisuals.Form.CAUTERIZE, 1, 24, purged);
 	}
 }
