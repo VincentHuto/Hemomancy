@@ -72,12 +72,13 @@ public class HematicFlareManip extends BloodManipulation {
 			float damage = (float) ((BASE_DAMAGE + (concealed ? CONCEALED_BONUS : 0.0F))
 					* SkillPointHelper.getCrimsonMasteryMultiplier(player));
 			float adjusted = TendencyAffinityRules.adjustManipulationDamage(player, target, this, damage);
-			if (target.hurt(world.damageSources().magic(), adjusted)) {
+			if (ManipulationParticles.hurt(this, target, world.damageSources().magic(), adjusted)) {
 				SchoolHitHelper.tryTriggerConductiveArc(player, target, EnumBloodTendency.LUX, getSecondaryTend(),
 						adjusted);
 			}
 			world.playSound(null, target.blockPosition(), SoundEvents.AMETHYST_BLOCK_CHIME, SoundSource.PLAYERS,
 					0.85F, concealed ? 1.75F : 1.45F);
+        HemomancyTendrilEffects.luxRelease(player, target.getEyePosition());
 			sendImpactParticles(sLevel, target);
             ManipulationVisuals.burst(sLevel, ManipulationVisuals.Form.FLARE, target.getEyePosition(), target.getEyePosition(), 1.1, 18);
 		} else {
@@ -107,13 +108,10 @@ public class HematicFlareManip extends BloodManipulation {
 
 	private void sendRayParticles(ServerLevel level, Vec3 eye, Vec3 look, double range) {
 		RandomSource random = level.random;
-		for (int i = 0; i < 24; i++) {
+		for (int i = 0; i < 8; i++) {
 			double distance = 0.8D + random.nextDouble() * range;
 			Vec3 pos = eye.add(look.scale(distance));
-			level.sendParticles(new ColorParticleData(HLParticleInit.glow.get(), new ParticleColor(
-							235 + random.nextFloat() * 20,
-							215 + random.nextFloat() * 35,
-							165 + random.nextFloat() * 55)),
+			level.sendParticles(new ColorParticleData(HLParticleInit.glow.get(), new ParticleColor(255, 250, 239)),
 					pos.x + (random.nextDouble() - 0.5D) * 0.16D,
 					pos.y + (random.nextDouble() - 0.5D) * 0.16D,
 					pos.z + (random.nextDouble() - 0.5D) * 0.16D,
@@ -124,8 +122,8 @@ public class HematicFlareManip extends BloodManipulation {
 	private void sendImpactParticles(ServerLevel level, LivingEntity target) {
 		Vec3 center = target.getEyePosition();
 		RandomSource random = level.random;
-		for (int i = 0; i < 16; i++) {
-			level.sendParticles(new ColorParticleData(HLParticleInit.glow.get(), new ParticleColor(255, 235, 175)),
+		for (int i = 0; i < 6; i++) {
+			level.sendParticles(new ColorParticleData(HLParticleInit.glow.get(), new ParticleColor(255, 250, 239)),
 					center.x + (random.nextDouble() - 0.5D) * 0.7D,
 					center.y + (random.nextDouble() - 0.5D) * 0.7D,
 					center.z + (random.nextDouble() - 0.5D) * 0.7D,

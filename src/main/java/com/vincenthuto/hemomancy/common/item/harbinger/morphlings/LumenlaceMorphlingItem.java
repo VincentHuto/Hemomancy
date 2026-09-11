@@ -52,8 +52,8 @@ public class LumenlaceMorphlingItem extends MorphlingItem {
 	}
 
 	@Override
-	public void use(Player playerIn, InteractionHand handIn, ItemStack itemStack, Level worldIn) {
-		triggerPrimalLastLightMantle(playerIn, itemStack);
+	public boolean tryUse(Player playerIn, InteractionHand handIn, ItemStack itemStack, Level worldIn) {
+		return triggerPrimalLastLightMantle(playerIn, itemStack);
 	}
 
 	@Override

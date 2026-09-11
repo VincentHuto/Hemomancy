@@ -42,9 +42,9 @@ public class WitchsEarMorphlingItem extends MorphlingItem {
 	}
 
 	@Override
-	public void use(Player playerIn, InteractionHand handIn, ItemStack itemStack, Level worldIn) {
+	public boolean tryUse(Player playerIn, InteractionHand handIn, ItemStack itemStack, Level worldIn) {
 		if (!MorphlingItem.tryBeginPrimalAbility(playerIn, itemStack, "Echothesis",
-				260.0, 500, 160, 0)) return;
+				260.0, 500, 160, 0)) return false;
 		AABB area = playerIn.getBoundingBox().inflate(36.0);
 		for (LivingEntity entity : worldIn.getEntitiesOfClass(LivingEntity.class, area,
 				entity -> entity != playerIn && entity.isAlive())) {
@@ -62,6 +62,7 @@ public class WitchsEarMorphlingItem extends MorphlingItem {
 						100, 0, true, true, true));
 			}
 		}
+		return true;
 	}
 
 	@Override

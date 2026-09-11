@@ -1,20 +1,42 @@
 {
   "type": "hemomancy:blood_structure_recipe",
   "bloodCost": 175,
-  "required_degree": 7,
+  "required_degree": 6,
   "heldItem": "hemomancy:sanguine_formation",
   "hitBlock": "hemomancy:conscious_mass",
   "pattern": [
-    ["PSP", "SIS", "PSP"],
-    ["SIS", "ICI", "SIS"],
-    ["PGP", "GIG", "PGP"]
+    [
+      "PSP",
+      "SIS",
+      "PSP"
+    ],
+    [
+      "SCS",
+      "III",
+      "SIS"
+    ],
+    [
+      "PGP",
+      "GIG",
+      "PGP"
+    ]
   ],
   "key": {
-    "P": {"block": "hemomancy:hematic_iron_pillar"},
-    "S": {"block": "minecraft:polished_basalt"},
-    "I": {"block": "hemomancy:hematic_iron_block"},
-    "C": {"block": "hemomancy:conscious_mass"},
-    "G": {"block": "minecraft:tinted_glass"}
+    "P": {
+      "block": "hemomancy:hematic_iron_pillar"
+    },
+    "S": {
+      "block": "minecraft:polished_basalt"
+    },
+    "I": {
+      "block": "hemomancy:hematic_iron_block"
+    },
+    "C": {
+      "block": "hemomancy:conscious_mass"
+    },
+    "G": {
+      "block": "minecraft:tinted_glass"
+    }
   },
   "result": {
     "id": "hemomancy:sanguine_monolith"

@@ -24,7 +24,14 @@ public class StaffWeaponFormManip extends BloodManipulation {
 
 	@Override
 	public void getAction(Player player, Level world, ItemStack heldItemMainhand, BlockPos position) {
-		LivingStaffWeaponFormHelper.applySelection(player, this);
+        if(LivingStaffWeaponFormHelper.applySelection(player, this) && !world.isClientSide) {
+            var form=getTend()==EnumBloodTendency.ANIMUS?com.vincenthuto.hemomancy.common.manipulation.ManipulationVisuals.Form.ANIMUS_CONJURE:
+                    getTend()==EnumBloodTendency.MORTEM?com.vincenthuto.hemomancy.common.manipulation.ManipulationVisuals.Form.MORTEM_CONJURE:
+                    getName().equals("conjure_torch")?com.vincenthuto.hemomancy.common.manipulation.ManipulationVisuals.Form.FLAME_CONJURE:
+                    getName().equals("conjure_flail")?com.vincenthuto.hemomancy.common.manipulation.ManipulationVisuals.Form.FROST_CONJURE:
+                    getSecondaryTend()==EnumBloodTendency.FERRIC?com.vincenthuto.hemomancy.common.manipulation.ManipulationVisuals.Form.FERRIC_CONJURE:null;
+            if(form!=null)com.vincenthuto.hemomancy.common.manipulation.ManipulationVisuals.attached(player,form,.5,20,1);
+        }
 	}
 
 	public DeferredHolder<Item, Item> getFormItem() {

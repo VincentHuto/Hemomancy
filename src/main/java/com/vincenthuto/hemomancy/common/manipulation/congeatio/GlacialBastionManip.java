@@ -1,11 +1,12 @@
 package com.vincenthuto.hemomancy.common.manipulation.congeatio;
 
+import com.vincenthuto.hemomancy.common.particle.HemoParticleData;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.EnumVeinSections;
+import com.vincenthuto.hemomancy.common.init.BlockInit;
 import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
 import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationRank;
 import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationType;
-import com.vincenthuto.hutoslib.client.particle.factory.GlowParticleFactory;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 
 import net.minecraft.core.BlockPos;
@@ -55,7 +56,7 @@ public class GlacialBastionManip extends BloodManipulation {
 					if (target.equals(base) || target.equals(base.above())) {
 						continue;
 					}
-					if (TemporaryIceManager.place(sLevel, target, Blocks.PACKED_ICE.defaultBlockState(),
+					if (TemporaryIceManager.place(sLevel, target, BlockInit.frozen_cruor.get().defaultBlockState(),
 							BASE_LIFETIME_TICKS + random.nextInt(LIFETIME_VARIANCE))) {
 						placed++;
 					}
@@ -68,7 +69,7 @@ public class GlacialBastionManip extends BloodManipulation {
 			world.playSound(null, base, SoundEvents.POWDER_SNOW_BREAK, SoundSource.PLAYERS, 0.6f, 0.8f);
 			for (int i = 0; i < 30; i++) {
 				sLevel.sendParticles(
-						GlowParticleFactory.createData(new ParticleColor(
+						HemoParticleData.glow(new ParticleColor(
 								140 + random.nextFloat() * 80,
 								200 + random.nextFloat() * 55,
 								255)),

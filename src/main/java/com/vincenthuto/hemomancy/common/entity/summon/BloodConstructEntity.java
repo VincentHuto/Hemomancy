@@ -111,17 +111,18 @@ public class BloodConstructEntity extends PathfinderMob implements IBloodConstru
 	@Override
 	public void tick() {
 		super.tick();
+		if (!usesLegacyConstructLifecycle()) return;
 		this.setYBodyRot(0);
 		// Particle MobEffects
 		float f = (this.random.nextFloat() - 0.5F) * 2.0F;
 		float f1 = -1;
 		float f2 = (this.random.nextFloat() - 0.5F) * 2.0F;
 		float f3 = (this.random.nextFloat() - 0.5F) * 1.5F;
-		if (this.tickCount < 2) {
+		if (usesLegacyConstructParticles() && this.tickCount < 2) {
 			this.level().addParticle(ParticleTypes.SQUID_INK, this.getX() + f, this.getY() + 2.0D + f1, this.getZ() + f2,
 					0.0D, 0.0D, 0.0D);
 		}
-		if (this.tickCount > 2 && this.tickCount < 120) {
+		if (usesLegacyConstructParticles() && this.tickCount > 2 && this.tickCount < 120) {
 			for (int i = 0; i < 2; i++) {
 				this.level().addParticle(DustParticleOptions.REDSTONE, this.getX() + f * 0.5, this.getY(),
 						this.getZ() + f2 * 0.5, 0.0D, 0.0D, 0.0D);
@@ -130,7 +131,7 @@ public class BloodConstructEntity extends PathfinderMob implements IBloodConstru
 			}
 		}
 		if (this.tickCount == 120) {
-			this.level().addParticle(ParticleTypes.SQUID_INK, this.getX() + f, this.getY() + 2.0D + f1, this.getZ() + f2,
+			if(usesLegacyConstructParticles())this.level().addParticle(ParticleTypes.SQUID_INK, this.getX() + f, this.getY() + 2.0D + f1, this.getZ() + f2,
 					0.0D, 0.0D, 0.0D);
 			this.setHealth(0);
 
@@ -138,6 +139,10 @@ public class BloodConstructEntity extends PathfinderMob implements IBloodConstru
 
 		}
 	}
+
+	protected boolean usesLegacyConstructLifecycle() { return true; }
+
+    protected boolean usesLegacyConstructParticles() { return true; }
 
 	@Override
 	protected void tickDeath() {

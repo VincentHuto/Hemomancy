@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.network.capa.harbinger;
 
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.HarbingerPathPermissions;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.Bloodline;
@@ -443,6 +444,15 @@ public class BloodCraftingKeyPressPacket implements CustomPacketPayload {
 							Component.literal("Not enough blood to begin the " + recipe.getRiteName())
 									.withStyle(ChatFormatting.DARK_RED),
 							true);
+					return CardinalRiteActivationRules.ActivationAttempt.HANDLED;
+				}
+
+				boolean pathPermitsRite = HemoCapabilityAccess.getInitiatoryDegree(player)
+						.map(d -> HarbingerPathPermissions.canPerformRite(d.getTotalPomesConsumed(),
+								d.getArchonPath(), APOTHEOS_RITE_ID.equals(recipe.getId()))).orElse(false);
+				if (!recipe.isUnstained() && !pathPermitsRite) {
+					player.displayClientMessage(Component.literal(
+							"This rite cannot answer your current path. Resolve the ninth husk's choice first."), false);
 					return CardinalRiteActivationRules.ActivationAttempt.HANDLED;
 				}
 

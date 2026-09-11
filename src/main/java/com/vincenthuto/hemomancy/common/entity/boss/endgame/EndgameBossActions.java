@@ -1,6 +1,6 @@
 package com.vincenthuto.hemomancy.common.entity.boss.endgame;
 
-import com.vincenthuto.hemomancy.client.particle.factory.AbsorbedBloodCellParticleFactory;
+import com.vincenthuto.hemomancy.common.particle.HemoParticleData;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.entity.mob.animal.FunglingEntity;
 import com.vincenthuto.hemomancy.common.entity.projectile.VesperScuteProjectileEntity;
@@ -277,7 +277,7 @@ final class EndgameBossActions {
 		VesperVisualEffects.darkGlow(server, center, VesperVisualEffects.BLACK,
 				tick % 4 == 0 ? 4 : 2, 1.35D, 1.65D, 1.35D, 0.025D);
 		if (absorption > 0.0F && absorption < 1.0F) {
-			server.sendParticles(AbsorbedBloodCellParticleFactory.createData(ParticleColor.BLOOD),
+			server.sendParticles(HemoParticleData.absorbedBloodCell(ParticleColor.BLOOD),
 					center.x, center.y, center.z, 5,
 					1.5D * (1.0D - absorption * 0.55D), 1.35D,
 					1.5D * (1.0D - absorption * 0.55D), 0.055D);
@@ -419,7 +419,7 @@ final class EndgameBossActions {
 		if (boss.tickCount % 2 != 0 && !finalCollapse) return;
 		float normalized = VesperEveningStarPresentationRules.absorptionProgress(progress);
 		Vec3 center = boss.position().add(0.0D, 0.72D * (1.0D - normalized * 0.55D), 0.0D);
-		server.sendParticles(AbsorbedBloodCellParticleFactory.createData(ParticleColor.BLOOD),
+		server.sendParticles(HemoParticleData.absorbedBloodCell(ParticleColor.BLOOD),
 				center.x, center.y, center.z, 5,
 				0.9D * (1.0D - normalized * 0.72D), 0.65D, 0.9D * (1.0D - normalized * 0.72D), 0.045D);
 		if (boss.tickCount % 10 == 0) {
@@ -497,7 +497,7 @@ final class EndgameBossActions {
 						0.3D + random.nextDouble() * crowned.getBbHeight() * 0.48D,
 						Mth.sin((float) angle) * radius);
 				Vec3 sourceOffset = source.subtract(target);
-				boss.level().addParticle(AbsorbedBloodCellParticleFactory.createData(ParticleColor.BLOOD),
+				boss.level().addParticle(HemoParticleData.absorbedBloodCell(ParticleColor.BLOOD),
 						target.x, target.y, target.z, sourceOffset.x, sourceOffset.y, sourceOffset.z);
 			}
 			return;
@@ -513,7 +513,7 @@ final class EndgameBossActions {
 				Vec3 source = target.add(Mth.cos((float) angle) * radius,
 						(random.nextDouble() - 0.5D) * 1.2D, Mth.sin((float) angle) * radius);
 				Vec3 sourceOffset = source.subtract(target);
-				boss.level().addParticle(AbsorbedBloodCellParticleFactory.createData(ParticleColor.BLOOD),
+				boss.level().addParticle(HemoParticleData.absorbedBloodCell(ParticleColor.BLOOD),
 						target.x, target.y, target.z, sourceOffset.x, sourceOffset.y, sourceOffset.z);
 			}
 			return;

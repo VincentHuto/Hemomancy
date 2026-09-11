@@ -1,7 +1,7 @@
 package com.vincenthuto.hemomancy.common.entity.mob.arthropod;
 
+import com.vincenthuto.hemomancy.common.particle.HemoParticleData;
 import com.vincenthuto.hemomancy.common.init.SoundInit;
-import com.vincenthuto.hutoslib.client.particle.factory.GlowParticleFactory;
 import com.vincenthuto.hutoslib.client.particle.util.HLParticleUtils;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import com.vincenthuto.hutoslib.math.MathUtils;
@@ -144,11 +144,11 @@ public class FerventChitiniteEntity extends PathfinderMob {
 				LivingEntity liv = (LivingEntity) ent;
 				liv.addEffect(new MobEffectInstance(MobEffects.POISON, 200, 200));
 				for (int countparticles = 0; countparticles <= 10; ++countparticles) {
-					world.addParticle(GlowParticleFactory.createData(new ParticleColor(0, 150, 0)),
+					world.addParticle(HemoParticleData.glow(new ParticleColor(0, 150, 0)),
 							getX() + HLParticleUtils.inRange(-0.25, 0.25),
 							getY() + HLParticleUtils.inRange(-0.25, 0.25),
 							getZ() + HLParticleUtils.inRange(-0.25, 0.25), 0, 0.000, 0);
-					world.addParticle(GlowParticleFactory.createData(new ParticleColor(0, 250, 0)),
+					world.addParticle(HemoParticleData.glow(new ParticleColor(0, 250, 0)),
 							getX() + HLParticleUtils.inRange(-0.25, 0.25), getY() + HLParticleUtils.inRange(-0.1, 0.1),
 							getZ() + HLParticleUtils.inRange(-0.25, 0.25), 0, 0.000, 0);
 				}

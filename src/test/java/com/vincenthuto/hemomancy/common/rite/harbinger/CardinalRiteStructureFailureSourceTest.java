@@ -34,7 +34,7 @@ final class CardinalRiteStructureFailureSourceTest {
 				"anchor dispersal lightning must have a black outer arc");
 		assertTrue(events.contains("BROKEN_ANCHOR_INNER_PURPLE"),
 				"anchor dispersal lightning must have a purple core");
-		assertTrue(events.contains("DarkGlowParticleFactory.createData(ParticleColor.BLACK)"),
+		assertTrue(events.contains("new DarkColorParticleData(HLParticleInit.dark_glow.get(), ParticleColor.BLACK)"),
 				"each vanished anchor must poof into black particles");
 		assertTrue(events.contains("new EmberParticleData(ParticleColor.PURPLE"),
 				"each vanished anchor must burst into purple particles");

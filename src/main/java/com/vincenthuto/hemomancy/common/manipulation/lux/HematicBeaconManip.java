@@ -1,5 +1,7 @@
 package com.vincenthuto.hemomancy.common.manipulation.lux;
 
+import com.vincenthuto.hemomancy.common.manipulation.HemomancyTendrilEffects;
+import com.vincenthuto.hemomancy.common.manipulation.ManipulationParticles;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.EnumVeinSections;
 import com.vincenthuto.hemomancy.common.capability.player.shared.skill.BodyRefinementSkillRules;
@@ -8,13 +10,10 @@ import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
 import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationRank;
 import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationType;
 import com.vincenthuto.hemomancy.common.manipulation.ManipulationReactiveEvents;
-import com.vincenthuto.hutoslib.client.particle.data.ColorParticleData;
-import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
-import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.ClipContext;
@@ -50,16 +49,7 @@ public class HematicBeaconManip extends BloodManipulation {
 		ManipulationReactiveEvents.createHematicBeacon(sLevel, center, radius, DURATION, player.getUUID());
 
 		world.playSound(null, BlockPos.containing(center), SoundEvents.BEACON_ACTIVATE, SoundSource.PLAYERS, 0.7F, 1.5F);
-		RandomSource random = world.random;
-		for (int i = 0; i < 70; i++) {
-			double angle = random.nextDouble() * Math.PI * 2.0;
-			double particleRadius = random.nextDouble() * radius;
-			double y = random.nextDouble() * 4.0;
-			sLevel.sendParticles(new ColorParticleData(new ParticleColor(
-							245, 60 + random.nextFloat() * 50, 90 + random.nextFloat() * 70)),
-					center.x + Math.cos(angle) * particleRadius, center.y + y,
-					center.z + Math.sin(angle) * particleRadius,
-					1, 0, 0.05, 0, 0.01);
-		}
+        HemomancyTendrilEffects.luxRelease(player, center.add(0, 1.35, 0));
+		ManipulationParticles.accent(sLevel, EnumBloodTendency.LUX, center.add(0, 1.35, 0), net.minecraft.world.phys.Vec3.ZERO);
 	}
 }

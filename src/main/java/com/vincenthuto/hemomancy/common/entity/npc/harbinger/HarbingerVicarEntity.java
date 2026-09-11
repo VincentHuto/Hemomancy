@@ -187,14 +187,18 @@ public class HarbingerVicarEntity extends PathfinderMob implements ProgressionDi
         int degree = HemoCapabilityAccess.getPlayerDegreeNumber(serverPlayer);
         if (isPurifying(serverPlayer)) return HarbingerVicarDialogueTrees.purifying(this.getId());
         if (degree >= 7 && hasPomeEmpowerment(serverPlayer)) {
-            return HarbingerVicarDialogueTrees.archonPomeEmpowered(this.getId());
+            return HarbingerVicarDialogueTrees.withContinuingConsecration(
+                    HarbingerVicarDialogueTrees.archonPomeEmpowered(this.getId()), degree,
+                    com.vincenthuto.hemomancy.common.entity.npc.dialogue.DialogueEventHandler.hasClaimedConsecrationKit(serverPlayer));
         }
-        return HarbingerVicarDialogueTrees.forDegree(degree, this.getId(), canShowRecruitment(player, this),
+        DialogueTree tree = HarbingerVicarDialogueTrees.forDegree(degree, this.getId(), canShowRecruitment(player, this),
                 isNpcInPlayerBloodline(player, this), hasAbocipherLiteracy(serverPlayer),
                 hasAdvancement(serverPlayer, HarbingerAdvancementGranter.ADV_HERMIT_ROAD_FIRST_REMNANT),
                 hasAdvancement(serverPlayer, HarbingerAdvancementGranter.ADV_HERMIT_ROAD_REPORTED),
                 hasAdvancement(serverPlayer, HarbingerAdvancementGranter.ADV_VICAR_MASONS_RESPITE_DIRECTIVE),
                 FirstBloodcraftAssignment.canClaim(serverPlayer), FirstBloodcraftAssignment.isClaimed(serverPlayer));
+        return HarbingerVicarDialogueTrees.withContinuingConsecration(tree, degree,
+                com.vincenthuto.hemomancy.common.entity.npc.dialogue.DialogueEventHandler.hasClaimedConsecrationKit(serverPlayer));
     }
 
     @Override

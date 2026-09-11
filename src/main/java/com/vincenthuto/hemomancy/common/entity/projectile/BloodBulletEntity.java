@@ -1,9 +1,8 @@
 package com.vincenthuto.hemomancy.common.entity.projectile;
 
-import com.vincenthuto.hemomancy.client.particle.factory.BloodCellParticleFactory;
+import com.vincenthuto.hemomancy.common.particle.HemoParticleData;
 import com.vincenthuto.hemomancy.common.init.EffectInit;
 import com.vincenthuto.hemomancy.common.init.EntityInit;
-import com.vincenthuto.hutoslib.client.particle.factory.GlowParticleFactory;
 import com.vincenthuto.hutoslib.client.particle.util.HLParticleUtils;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import com.vincenthuto.hutoslib.common.network.HLPacketHandler;
@@ -124,11 +123,11 @@ public class BloodBulletEntity extends AbstractArrow implements CombatWeaponCarr
 		if (this.level().isClientSide) {
 			for (int i = 0; i < 2; i++) {
 				level().addParticle(
-						GlowParticleFactory.createData(new ParticleColor(255 * level().random.nextFloat(), 0, 0)),
+						HemoParticleData.glow(new ParticleColor(255 * level().random.nextFloat(), 0, 0)),
 						getX() + HLParticleUtils.inRange(-0.1, 0.1), getY() + HLParticleUtils.inRange(-0.1, 0.1),
 						getZ() + HLParticleUtils.inRange(-0.1, 0.1), 0, 0.005, 0);
 				level().addParticle(
-						BloodCellParticleFactory.createData(new ParticleColor(255 * level().random.nextFloat(), 0, 0)),
+						HemoParticleData.bloodCell(new ParticleColor(255 * level().random.nextFloat(), 0, 0)),
 						getX() + HLParticleUtils.inRange(-0.1, 0.1), getY() + HLParticleUtils.inRange(-0.1, 0.1),
 						getZ() + HLParticleUtils.inRange(-0.1, 0.1), 0, 0.005, 0);
 

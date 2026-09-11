@@ -11,8 +11,6 @@ import com.vincenthuto.hemomancy.common.init.EffectInit;
 import com.vincenthuto.hemomancy.common.init.ManipulationInit;
 import com.vincenthuto.hemomancy.common.manipulation.saint.CrimsonTitheManip;
 import com.vincenthuto.hemomancy.common.manipulation.saint.EndlessHourManip;
-import net.minecraft.core.particles.DustParticleOptions;
-import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -35,13 +33,11 @@ import net.neoforged.neoforge.event.entity.player.AttackEntityEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.event.tick.LevelTickEvent;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
-import org.joml.Vector3f;
 
 import java.util.*;
 
 @EventBusSubscriber(modid = Hemomancy.MOD_ID)
 public final class ManipulationReactiveEvents {
-	private static final DustParticleOptions RALLY = new DustParticleOptions(new Vector3f(.95F, .18F, .32F), 1.2F);
 	private static final Map<UUID, Coronation> CORONATIONS = new HashMap<>();
 	private static final Map<UUID, Long> CIRCUIT_HITS = new HashMap<>();
 	private static final Map<UUID, Ward> SANGUINE_WARDS = new HashMap<>();
@@ -118,6 +114,8 @@ public final class ManipulationReactiveEvents {
 				SANGUINE_WARDS.put(player.getUUID(), new Ward(ward.pool - absorbed, ward.until));
                 ManipulationVisuals.attached(player, ManipulationVisuals.Form.WARD, 1,
                         (int)(ward.until-now), (int)Math.ceil(ward.pool-absorbed));
+                if(absorbed>0) ManipulationVisuals.burst(player.serverLevel(),ManipulationVisuals.Form.NERVE_HIT,
+                        player.position().add(0,1,0),player.position(),.6,10);
 			}
 		}
 
@@ -180,6 +178,7 @@ public final class ManipulationReactiveEvents {
 			SchoolHitHelper.markConductive(target, 160);
             ManipulationVisuals.attached(player, ManipulationVisuals.Form.CIRCUIT, 0, 0, 0);
             ManipulationVisuals.attached(target, ManipulationVisuals.Form.MARK, 1, 160, 1);
+            com.vincenthuto.hemomancy.common.manipulation.ductilis.DuctilisLightningEffects.conductiveArc(player,target,0);
 		}
 		if (selected(player, "penumbral_drift")) ManipulationChannelManager.stop(player);
 	}
@@ -337,8 +336,7 @@ public final class ManipulationReactiveEvents {
 				entity -> entity.isAlive() && ManipulationCombatHelper.canHarm(owner, entity))) {
 			mob.addEffect(new MobEffectInstance(MobEffects.GLOWING, 30, 0, false, true));
 		}
-		level.sendParticles(RALLY, beacon.center.x, beacon.center.y + .1, beacon.center.z, 16,
-				beacon.radius * .7, .2, beacon.radius * .7, .01);
+        ManipulationParticles.accent(level, EnumBloodTendency.LUX, beacon.center.add(0, 1.35, 0), Vec3.ZERO);
 	}
 
 	private static boolean trigger(ServerPlayer player, BloodManipulation manipulation, int cooldown) {

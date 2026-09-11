@@ -32,6 +32,7 @@ public class PacketUpdateLivingStaffMorph implements CustomPacketPayload {
 			ctx.enqueueWork(() -> {
 				if (!(ctx.player() instanceof ServerPlayer player))
 					return;
+				EquippedMorphlingEvents.persistEquippedMorphling(player);
 
 				// ── Unequip: selected == -1 means clear the equipped morphling ──────────
 				if (msg.selected == -1) {

@@ -39,11 +39,11 @@ public final class BookOfObservancesScreen extends Screen {
 
 	private enum NpcSection {
 		ACOLYTE("screen.hemomancy.book_of_observances.npc.acolyte",
-				Hemomancy.rloc("textures/entity/unstained_acolyte/unstained_acolyte_portrait.png")),
+				Hemomancy.rloc("textures/entity/npc/unstained/unstained_acolyte/unstained_acolyte_portrait.png")),
 		ZEALOT("screen.hemomancy.book_of_observances.npc.zealot",
-				Hemomancy.rloc("textures/entity/unstained_zealot/unstained_zealot_portrait.png")),
+				Hemomancy.rloc("textures/entity/npc/unstained/unstained_zealot/unstained_zealot_portrait.png")),
 		GUARDIAN("screen.hemomancy.book_of_observances.npc.guardian",
-				Hemomancy.rloc("textures/entity/unstained_guardian/unstained_guardian_portrait.png"));
+				Hemomancy.rloc("textures/entity/npc/unstained/unstained_guardian/unstained_guardian_portrait.png"));
 
 		private final String nameKey;
 		private final ResourceLocation portrait;
@@ -197,7 +197,7 @@ public final class BookOfObservancesScreen extends Screen {
 		graphics.drawString(font, Component.translatable(observation.translation("title")), x + 8, y + 6,
 				status.color, false);
 		graphics.drawString(font, Component.translatable(status.key), x + width - 92, y + 6, status.color, false);
-		drawWrappedLine(graphics, Component.translatable(observation.translation("description")), x + 8, y + 19,
+		drawWrappedLine(graphics, Component.translatable(observation.translation(status == Status.LOCKED ? "unlock" : "description")), x + 8, y + 19,
 				width - 16, TEXT);
 		graphics.drawString(font, Component.translatable(observation.translation("requirement")), x + 8, y + 41,
 				status == Status.LOCKED ? LOCKED : MUTED, false);

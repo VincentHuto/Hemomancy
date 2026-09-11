@@ -31,6 +31,14 @@ public final class MnemonicReliquaryConjurationIconSourceTest {
 				screen, "ItemStack stack = iconStackFor(manip);");
 		assertContains("family variants should use a compact two-column dropdown",
 				screen, "int cols = Math.min(2, forms.size());");
+		assertContains("known manipulations with selectable family forms should render a mode indicator",
+				screen, "drawFamilyModeIndicator(graphics, icon);");
+		assertContains("the mode indicator should use the same unlocked-form rule as the family dropdown",
+				screen, "if (unlockedFamilyForms(icon.manip).isEmpty()) return;");
+		assertContains("the mode indicator should draw a compact plus badge",
+				screen, "graphics.fill(centerX, badgeY + 1, centerX + 1, badgeY + badgeSize - 1, FAMILY_MODE_MARKER);");
+		assertContains("family icons should explain the mode indicator on hover",
+				screen, "Component.literal(\"Hold to choose variation\")");
 		assertContains("family variants should wrap beneath the baseline icon",
 				screen, "int y = heldFamilyIcon.y + (i / cols + 1) * (currentIconSize + gap);");
 		assertContains("the family dropdown should hide already memorized forms",

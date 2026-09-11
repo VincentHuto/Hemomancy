@@ -4,9 +4,6 @@ import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.Enu
 import com.vincenthuto.hemomancy.common.init.EffectInit;
 import com.vincenthuto.hemomancy.common.init.EntityInit;
 import com.vincenthuto.hemomancy.common.manipulation.TendencyDamageCarrier;
-import com.vincenthuto.hutoslib.client.particle.factory.GlowParticleFactory;
-import com.vincenthuto.hutoslib.client.particle.util.HLParticleUtils;
-import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
@@ -16,7 +13,6 @@ import net.minecraft.world.entity.projectile.AbstractArrow;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.phys.EntityHitResult;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -46,8 +42,8 @@ public class BloodNeedleEntity extends AbstractArrow implements CombatWeaponCarr
         super.onHit(hit);
         if (isCoronationSword() && level() instanceof net.minecraft.server.level.ServerLevel server) {
             com.vincenthuto.hemomancy.common.manipulation.ManipulationVisuals.burst(server,
-                    com.vincenthuto.hemomancy.common.manipulation.ManipulationVisuals.Form.SWORD_IMPACT,
-                    hit.getLocation(), hit.getLocation(), 1, 16);
+                    com.vincenthuto.hemomancy.common.manipulation.ManipulationVisuals.Form.ANIMUS_IMPACT,
+                    hit.getLocation(), hit.getLocation().add(getDeltaMovement().normalize()), 1, 16);
         }
     }
 	private ItemStack combatWeaponItem = ItemStack.EMPTY;
@@ -128,6 +124,8 @@ public class BloodNeedleEntity extends AbstractArrow implements CombatWeaponCarr
 	@Override
 	protected void doPostHurtEffects(LivingEntity living) {
 		super.doPostHurtEffects(living);
+		com.vincenthuto.hemomancy.common.manipulation.ManipulationParticles.impact(
+				living, damageTendency, secondaryDamageTendency, getDeltaMovement());
 		Entity entity = living;
 		if (entity instanceof LivingEntity) {
 			((LivingEntity) entity).addEffect(new MobEffectInstance(EffectInit.blood_loss, 1000, 2));
@@ -174,15 +172,6 @@ public class BloodNeedleEntity extends AbstractArrow implements CombatWeaponCarr
 	@Override
 	public void tick() {
 		super.tick();
-		if (this.level().isClientSide) {
-			for (int i = 0; i < 2; i++) {
-				level().addParticle(
-						GlowParticleFactory.createData(new ParticleColor(255 * level().random.nextFloat(), 0, 0)),
-						getX() + HLParticleUtils.inRange(-0.1, 0.1), getY() + HLParticleUtils.inRange(-0.1, 0.1),
-						getZ() + HLParticleUtils.inRange(-0.1, 0.1), 0, 0.005, 0);
-
-			}
-		}
 		if (this.inGround && this.inGroundTime != 0 && this.inGroundTime >= 25) {
 			this.level().broadcastEntityEvent(this, (byte) 0);
 			this.remove(RemovalReason.KILLED);

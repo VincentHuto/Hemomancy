@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.manipulation.tenebris;
 
+import com.vincenthuto.hemomancy.common.manipulation.ManipulationParticles;
 import com.vincenthuto.hemomancy.common.manipulation.ManipulationVisuals;
 import com.vincenthuto.hemomancy.common.armor.ArmorSetHelper;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
@@ -8,20 +9,15 @@ import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillPoin
 import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
 import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationRank;
 import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationType;
-import com.vincenthuto.hutoslib.client.particle.data.ColorParticleData;
-import com.vincenthuto.hutoslib.common.registry.HLParticleInit;
-import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
-import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
@@ -48,6 +44,12 @@ public class UmbralStepManip extends BloodManipulation {
 			EnumManipulationType type, EnumManipulationRank rank, EnumBloodTendency tendency,
 			EnumVeinSections section) {
 		super(name, cost, alignLevel, xpCost, type, rank, tendency, section);
+	}
+
+	@Override
+	public boolean usesDefaultActivationParticles() {
+		// Departure and arrival already emit smoke at the player's body.
+		return false;
 	}
 
 	@Override
@@ -87,19 +89,8 @@ public class UmbralStepManip extends BloodManipulation {
 		if (world instanceof ServerLevel sLevel) {
 			Vec3 oldPos = player.position();
             ManipulationVisuals.burst(sLevel, ManipulationVisuals.Form.TELEPORT, oldPos, oldPos, 1, 18);
-            ManipulationVisuals.burst(sLevel, ManipulationVisuals.Form.TELEPORT, Vec3.atBottomCenterOf(landingPos), Vec3.atBottomCenterOf(landingPos), 1, 22);
-			RandomSource random = world.random;
-			for (int i = 0; i < 25; i++) {
-				sLevel.sendParticles(
-						new ColorParticleData(HLParticleInit.glow.get(), new ParticleColor(
-								70 + random.nextFloat() * 30,
-								0,
-								110 + random.nextFloat() * 50)),
-						oldPos.x + (random.nextDouble() - 0.5) * 0.8,
-						oldPos.y + random.nextDouble() * 1.8,
-						oldPos.z + (random.nextDouble() - 0.5) * 0.8,
-						1, 0f, -0.1f, 0f, 0.02f);
-			}
+            ManipulationVisuals.burst(sLevel, ManipulationVisuals.Form.UMBRA_ARRIVAL, Vec3.atBottomCenterOf(landingPos), Vec3.atBottomCenterOf(landingPos), 1, 22);
+			ManipulationParticles.accent(sLevel, EnumBloodTendency.TENEBRIS, oldPos.add(0, 1, 0), net.minecraft.world.phys.Vec3.ZERO);
 		}
 
 		// Teleport the player
@@ -113,18 +104,7 @@ public class UmbralStepManip extends BloodManipulation {
 		world.playSound(null, landingPos, SoundEvents.ENDERMAN_TELEPORT, SoundSource.PLAYERS, 0.8f, 1.2f);
 
 		if (world instanceof ServerLevel sLevel) {
-			RandomSource random = world.random;
-			for (int i = 0; i < 25; i++) {
-				sLevel.sendParticles(
-						new ColorParticleData(HLParticleInit.glow.get(), new ParticleColor(
-								70 + random.nextFloat() * 30,
-								0,
-								110 + random.nextFloat() * 50)),
-						destX + (random.nextDouble() - 0.5) * 0.8,
-						destY + random.nextDouble() * 1.8,
-						destZ + (random.nextDouble() - 0.5) * 0.8,
-						1, 0f, 0.1f, 0f, 0.02f);
-			}
+			ManipulationParticles.accent(sLevel, EnumBloodTendency.TENEBRIS, new Vec3(destX, destY + 1, destZ), net.minecraft.world.phys.Vec3.ZERO);
 		}
 	}
 }

@@ -30,6 +30,7 @@ public class AbsoluteStillnessManip extends BloodManipulation {
 		for (LivingEntity target : ManipulationCombatHelper.hostileTargets(player, level, 6)) {
 			target.clearFire();
 			target.setTicksFrozen(Math.max(target.getTicksFrozen(), 80));
+            ManipulationVisuals.attached(target,ManipulationVisuals.Form.FROZEN_VEINS,target.getBbWidth(),25,1);
 			target.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 25,
 					com.vincenthuto.hemomancy.common.manipulation.ManipulationReactiveEvents.isBoss(target) ? 0 : 3, false, true));
 		}

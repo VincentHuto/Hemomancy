@@ -123,8 +123,7 @@ public class VialCentrifugeBlockEntity extends BaseContainerBlockEntity
 			te.sendUpdates();
 			setChanged(level, pos, p_155016_);
 			if (te.spinningProgress == 0) {
-				te.outputResults();
-				te.addOperationBlood();
+				if (te.outputResults()) te.addOperationBlood();
 			}
 			if (!te.inventory.isEmpty()) {
 				if (!((te.checkBalancedSpots(2, 6) && te.checkBalancedSpots(3, 7) && te.checkBalancedSpots(4, 8)
@@ -147,58 +146,56 @@ public class VialCentrifugeBlockEntity extends BaseContainerBlockEntity
 		sendUpdates();
 	}
 
-	private void outputResults() {
-		for (int i = 0; i < getVialSlots().size(); i++) {
-			ItemStack vialStack = getVialSlots().get(i);
-			if (!getVialSlots().get(i).isEmpty()) {
-				if (vialStack.getItem() instanceof BloodVialItem) {
-					EntityType<?> sampledMob = BloodVialItem.getEntityType(vialStack);
-					ItemStack resultStack = getResultFromVial(sampledMob);
-					FirstSeparationAssignment.markAssignmentOutput(resultStack,
-							assignmentPlayerId, assignmentSpinId);
-					vialStack = new ItemStack(ItemInit.bloody_vial.get(), 1);
-					// Only outputs to slot if it is not already occupied
-					if (inventory.get(inOutMap.get(i + 2)).isEmpty()) {
-						inventory.set(i + 2, vialStack);
-						inventory.set(inOutMap.get(i + 2), resultStack);
-					} else {
-						if (inventory.get(inOutMap.get(i + 2)).getItem() == resultStack.getItem()
-								&& !(resultStack.getCount() + inventory.get(inOutMap.get(i + 2))
-										.getCount() > resultStack.getMaxStackSize())) {
-							inventory.get(inOutMap.get(i + 2)).grow(resultStack.getCount());
-							inventory.set(i + 2, vialStack);
-						}
-					}
-					// Auxillary output chance 
-					if (level.random.nextInt(1, 5) %2 == 0) {
-						if (inventory.get(18).isEmpty()) {
-							inventory.set(18, new ItemStack(ItemInit.hematic_iron_powder.get()));
-						} else if (inventory.get(18).getCount() < 64
-								&& inventory.get(18).getItem() == ItemInit.hematic_iron_powder.get()) {
-							inventory.get(18).grow(1);
-						}
-					}
-				} else if (vialStack.getItem() instanceof ConsecratedSyringeItem) {
-					EnumSaintType saint = ConsecratedSyringeItem.getSaintType(vialStack);
-					if (saint != null) {
-						ItemStack resultStack = getResultFromSyringe(saint);
-						if (!resultStack.isEmpty()) {
-							ItemStack outputSlot = inventory.get(inOutMap.get(i + 2));
-							if (outputSlot.isEmpty()) {
-								inventory.set(i + 2, ItemStack.EMPTY);
-								inventory.set(inOutMap.get(i + 2), resultStack);
-							} else if (outputSlot.getItem() == resultStack.getItem()
-									&& outputSlot.getCount() + resultStack.getCount() <= outputSlot.getMaxStackSize()) {
-								outputSlot.grow(resultStack.getCount());
-								inventory.set(i + 2, ItemStack.EMPTY);
-							}
-						}
-					}
-				}
+	private boolean outputResults() {
+		if (!(checkBalancedSpots(2, 6) && checkBalancedSpots(3, 7)
+				&& checkBalancedSpots(4, 8) && checkBalancedSpots(9, 5))) {
+			startupResultId = VialCentrifugeStartupResult.IMBALANCE.ordinal();
+			assignmentSpinId = null;
+			assignmentPlayerId = null;
+			return false;
+		}
+		NonNullList<ItemStack> results = NonNullList.withSize(8, ItemStack.EMPTY);
+		boolean hasSample = false;
+		for (int i = 0; i < results.size(); i++) {
+			ItemStack sample = inventory.get(i + 2);
+			if (sample.isEmpty()) continue;
+			ItemStack result = ItemStack.EMPTY;
+			if (sample.getItem() instanceof BloodVialItem) {
+				result = getResultFromVial(BloodVialItem.getEntityType(sample));
+				FirstSeparationAssignment.markAssignmentOutput(result, assignmentPlayerId, assignmentSpinId);
+			} else if (sample.getItem() instanceof ConsecratedSyringeItem) {
+				EnumSaintType saint = ConsecratedSyringeItem.getSaintType(sample);
+				if (saint != null) result = getResultFromSyringe(saint);
+			}
+			if (sample.getCount() != 1 || result.isEmpty() || !canFitOutput(i + 10, result)) {
+				startupResultId = (sample.getCount() != 1 ? VialCentrifugeStartupResult.BLOCKED_VIAL_RETURN
+						: result.isEmpty() ? VialCentrifugeStartupResult.INVALID_SAMPLE
+						: VialCentrifugeStartupResult.BLOCKED_ENZYME_OUTPUT).ordinal();
+				assignmentSpinId = null;
+				assignmentPlayerId = null;
+				return false;
+			}
+			results.set(i, result);
+			hasSample = true;
+		}
+		// Check the whole batch before consuming any sample or awarding its byproducts.
+		for (int i = 0; i < results.size(); i++) {
+			ItemStack result = results.get(i);
+			if (result.isEmpty()) continue;
+			boolean vial = inventory.get(i + 2).getItem() instanceof BloodVialItem;
+			ItemStack output = inventory.get(i + 10);
+			if (output.isEmpty()) inventory.set(i + 10, result);
+			else output.grow(result.getCount());
+			inventory.set(i + 2, vial ? new ItemStack(ItemInit.bloody_vial.get()) : ItemStack.EMPTY);
+			if (vial && level.random.nextInt(1, 5) % 2 == 0) {
+				ItemStack powder = inventory.get(18);
+				if (powder.isEmpty()) inventory.set(18, new ItemStack(ItemInit.hematic_iron_powder.get()));
+				else if (powder.is(ItemInit.hematic_iron_powder.get()) && powder.getCount() < powder.getMaxStackSize()) powder.grow(1);
 			}
 		}
 		assignmentSpinId = null;
 		assignmentPlayerId = null;
+		return hasSample;
 	}
 
 	public List<ItemStack> getVialSlots() {
@@ -223,7 +220,7 @@ public class VialCentrifugeBlockEntity extends BaseContainerBlockEntity
 					break;
 				}
 				inventory.set(destination, rackVial.copyWithCount(1));
-				rackVials.set(i, VialRackItem.createDefaultVial());
+				rackVials.set(i, ItemStack.EMPTY);
 				moved++;
 			}
 		}
@@ -354,7 +351,11 @@ public class VialCentrifugeBlockEntity extends BaseContainerBlockEntity
 			EntityType<?> sampledMob = vialStack.getItem() instanceof BloodVialItem
 					? BloodVialItem.getEntityType(vialStack) : null;
 			ItemStack resultStack = sampledMob == null ? ItemStack.EMPTY : getResultFromVial(sampledMob);
-			boolean processable = sampledMob != null && !resultStack.isEmpty();
+			if (vialStack.getItem() instanceof ConsecratedSyringeItem) {
+				EnumSaintType saint = ConsecratedSyringeItem.getSaintType(vialStack);
+				if (saint != null) resultStack = getResultFromSyringe(saint);
+			}
+			boolean processable = !resultStack.isEmpty();
 			Integer outputSlot = inOutMap.get(inputSlot);
 			boolean outputFits = !processable || outputSlot != null
 					&& (assignmentSpin ? inventory.get(outputSlot).isEmpty() : canFitOutput(outputSlot, resultStack));

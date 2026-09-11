@@ -71,6 +71,11 @@ public final class BodyIdiomEvents {
 	@SubscribeEvent
 	public static void onPlayerTick(PlayerTickEvent.Post event) {
 		if (!(event.getEntity() instanceof ServerPlayer player)) return;
+        if(player.tickCount%20==0) {
+            var necrotic=HemoCapabilityAccess.getPowerGuardrails(player);
+            ManipulationVisuals.attached(player,ManipulationVisuals.Form.BLACK_HEART,necrotic.getNecroticSaturation(),
+                    isBlackheartedActive(player)&&necrotic.getNecroticSaturation()>0?25:0,1);
+        }
 		reconcileIronHeartCapacity(player);
 		PowerGuardrailState state = HemoCapabilityAccess.getPowerGuardrails(player);
 		if (state.getIronHeartHealth() > 0.0F
@@ -124,8 +129,8 @@ public final class BodyIdiomEvents {
 
 	private static void rupture(ServerPlayer player) {
 		ServerLevel level = player.serverLevel();
-		level.sendParticles(ParticleTypes.SOUL, player.getX(), player.getY() + 1.0D, player.getZ(),
-				24, 0.45D, 0.65D, 0.45D, 0.06D);
+		ManipulationVisuals.burst(level,ManipulationVisuals.Form.BLACKHEART_RUPTURE,
+                player.position().add(0,.8,0),player.position(),1.2,24);
 		level.playSound(null, player.blockPosition(), SoundEvents.WITHER_HURT, SoundSource.PLAYERS, 0.8F, 0.65F);
 		RUPTURING.add(player.getUUID());
 		try {

@@ -105,10 +105,8 @@ public class EndlessHourManip extends BloodManipulation {
 		world.playSound(null, player.blockPosition(), SoundEvents.BELL_BLOCK, SoundSource.PLAYERS, 1.2f, 0.3f);
 
 		if (world instanceof ServerLevel sLevel) {
-			sLevel.sendParticles(
-					new ColorParticleData(HLParticleInit.glow.get(), new ParticleColor(100, 180, 255)),
-					player.getX(), player.getY() + 1.0, player.getZ(),
-					25, 0.4, 0.8, 0.4, 0.03);
+            com.vincenthuto.hemomancy.common.manipulation.ManipulationVisuals.attached(player,
+                    com.vincenthuto.hemomancy.common.manipulation.ManipulationVisuals.Form.HOUR,0,DURATION_TICKS,1);
 		}
 	}
 
@@ -126,8 +124,16 @@ public class EndlessHourManip extends BloodManipulation {
 	/** Collect on expiry or logout. Debt is already mitigated health loss. */
 	public static void settleDebt(Player player) {
 		if (player.level().isClientSide) return;
+		boolean active = player.getPersistentData().getLong(EXPIRY_KEY) > 0;
 		float deferred = player.getPersistentData().getFloat(DEFERRED_DAMAGE_KEY);
 		clearDebt(player);
+        if(active && player.level() instanceof ServerLevel level) {
+            com.vincenthuto.hemomancy.common.manipulation.ManipulationVisuals.attached(player,
+                    com.vincenthuto.hemomancy.common.manipulation.ManipulationVisuals.Form.HOUR,0,0,0);
+            com.vincenthuto.hemomancy.common.manipulation.ManipulationVisuals.burst(level,
+                    com.vincenthuto.hemomancy.common.manipulation.ManipulationVisuals.Form.HOUR_BREAK,
+                    player.position(),player.position(),deferred,24);
+        }
 		if (deferred <= 0 || !player.isAlive()) return;
 		player.setHealth(Math.max(0, player.getHealth() - deferred));
 		if (!player.isAlive()) player.die(player.damageSources().magic());
@@ -135,8 +141,6 @@ public class EndlessHourManip extends BloodManipulation {
 				"The hour ends. Velorum collects: " + String.format("%.1f", deferred) + " damage returns.")
 				.withStyle(net.minecraft.ChatFormatting.RED, net.minecraft.ChatFormatting.BOLD), false);
 		if (player.level() instanceof ServerLevel level) {
-			level.sendParticles(new ColorParticleData(HLParticleInit.glow.get(), new ParticleColor(255, 50, 50)),
-					player.getX(), player.getY() + 1, player.getZ(), 40, .5, .5, .5, .1);
 			level.playSound(null, player.blockPosition(), SoundEvents.LIGHTNING_BOLT_THUNDER,
 					SoundSource.PLAYERS, .6F, .5F);
 		}

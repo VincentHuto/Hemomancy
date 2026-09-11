@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.manipulation.ductilis;
 
+import com.vincenthuto.hemomancy.common.manipulation.ManipulationParticles;
 import com.vincenthuto.hemomancy.common.manipulation.ManipulationVisuals;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.EnumVeinSections;
@@ -15,7 +16,6 @@ import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationType;
 import com.vincenthuto.hemomancy.common.manipulation.animus.DeadlyGazeManip;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
@@ -68,7 +68,7 @@ public final class ThreadRipperManip extends BloodManipulation {
 		ThreadRipperRules.Outcome outcome = ThreadRipperRules.outcome(false, tethered, protectedBody,
 				target.getHealth() / Math.max(1.0F, target.getMaxHealth()));
 		if (outcome == ThreadRipperRules.Outcome.DISRUPT) {
-			target.hurt(level.damageSources().magic(), target.getMaxHealth() * 0.25F);
+			ManipulationParticles.hurt(this, target, level.damageSources().magic(), target.getMaxHealth() * 0.25F);
 			if (target instanceof Mob mob) BoundSummonBehavior.silenceCommands(mob, SILENCE_TICKS);
 		} else if (outcome == ThreadRipperRules.Outcome.UNRAVEL) {
 			target.discard();
@@ -77,8 +77,6 @@ public final class ThreadRipperManip extends BloodManipulation {
 					.withStyle(ChatFormatting.DARK_GRAY), true);
 			return;
 		}
-		server.sendParticles(ParticleTypes.CRIMSON_SPORE, target.getX(), target.getY() + target.getBbHeight() * 0.5D,
-				target.getZ(), 28, 0.35D, 0.55D, 0.35D, 0.04D);
 		var controller=target instanceof BoundPuppeteerSummon bound && bound.hemomancy$getOwnerUUID()!=null
                 ? server.getEntity(bound.hemomancy$getOwnerUUID()) : null;
         ManipulationVisuals.burst(server, ManipulationVisuals.Form.THREAD,

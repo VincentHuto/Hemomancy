@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.rite;
 
+import com.vincenthuto.hemomancy.common.particle.HemoParticleData;
 import com.vincenthuto.hemomancy.common.block.harbinger.rite.BrazierBlock;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.KnownManipulationGrantHelper;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.KnownManipulationGrantHelper.MemoryGrantResult;
@@ -7,7 +8,6 @@ import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.KnownM
 import com.vincenthuto.hemomancy.common.item.harbinger.memories.BloodMemoryItem;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.BloodAbsorptionItem;
 import com.vincenthuto.hemomancy.common.tile.harbinger.rite.IronBrazierBlockEntity;
-import com.vincenthuto.hutoslib.client.particle.factory.GlowParticleFactory;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 
 import net.minecraft.ChatFormatting;
@@ -66,7 +66,7 @@ public final class MemoryBrazierRite {
 					: "The burning memory enters your blood. Recall it at a Mnemonic Reliquary.")
 				.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC), false);
 		level.playSound(null, pos, SoundEvents.SOUL_ESCAPE.value(), SoundSource.BLOCKS, 0.65F, 0.8F);
-		level.sendParticles(GlowParticleFactory.createData(new ParticleColor(190, 0, 24)),
+		level.sendParticles(HemoParticleData.glow(new ParticleColor(190, 0, 24)),
 				pos.getX() + 0.5D, pos.getY() + 1.0D, pos.getZ() + 0.5D,
 				32, 0.45D, 0.35D, 0.45D, 0.03D);
 		return maxAmount;

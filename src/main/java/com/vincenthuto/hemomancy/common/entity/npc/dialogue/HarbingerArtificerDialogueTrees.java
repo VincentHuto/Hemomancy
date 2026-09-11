@@ -11,7 +11,7 @@ import static com.vincenthuto.hemomancy.common.mission.artificer.ArtificerProgre
 
 public final class HarbingerArtificerDialogueTrees {
 	private static final ResourceLocation ARTIFICER_ICON = Hemomancy.rloc(
-			"textures/entity/harbinger_artificer/harbinger_artificer.png");
+			"textures/entity/npc/harbinger/harbinger_artificer/harbinger_artificer.png");
 	private static final String SPEAKER = "entity.hemomancy.harbinger_artificer";
 	public static final String EVENT_CLAIM_WORN_VOW_REWARD = "artificer_claim_worn_vow_reward";
 	public static final String EVENT_CLAIM_THREE_ANSWERS_REWARD = "artificer_claim_three_answers_reward";

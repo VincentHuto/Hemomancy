@@ -1,11 +1,11 @@
 package com.vincenthuto.hemomancy.common.manipulation.congeatio;
 
+import com.vincenthuto.hemomancy.common.particle.HemoParticleData;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.EnumVeinSections;
 import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
 import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationRank;
 import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationType;
-import com.vincenthuto.hutoslib.client.particle.factory.GlowParticleFactory;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 
 import net.minecraft.core.BlockPos;
@@ -53,7 +53,7 @@ public class GlacialCirculationManip extends BloodManipulation {
 			// Icy blue-white mist around the caster's feet
 			for (int i = 0; i < 30; i++) {
 				sLevel.sendParticles(
-						GlowParticleFactory.createData(new ParticleColor(
+						HemoParticleData.glow(new ParticleColor(
 								120 + random.nextFloat() * 60,
 								180 + random.nextFloat() * 60,
 								255)),

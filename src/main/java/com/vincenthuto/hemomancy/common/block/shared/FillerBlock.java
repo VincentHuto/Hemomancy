@@ -39,7 +39,7 @@ public class FillerBlock extends BaseEntityBlock implements SimpleWaterloggedBlo
     public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
 
     public FillerBlock(Properties properties) {
-        super(properties);
+        super(properties.dynamicShape());
         this.registerDefaultState(this.stateDefinition.any().setValue(WATERLOGGED, false));
     }
 

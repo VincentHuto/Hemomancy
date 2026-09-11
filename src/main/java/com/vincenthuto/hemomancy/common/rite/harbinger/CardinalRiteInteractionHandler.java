@@ -100,8 +100,7 @@ public final class CardinalRiteInteractionHandler {
 			int committed = spendBlood(player, rite, requested);
 			if (committed <= 0) return CardinalRiteProjectionResult.handled(0.0D);
 			rite.fillAnchor(anchor, committed);
-			if (rite.areAnchorsConsecrated()) {
-				rite.enterInscription();
+			if (rite.enterInscription()) {
 				player.displayClientMessage(Component.literal(
 						"The boundary lives. Prepare support, then project into the daemon.")
 						.withStyle(ChatFormatting.DARK_RED), false);
@@ -520,7 +519,7 @@ public final class CardinalRiteInteractionHandler {
 				BlockPos.ZERO, sigil.nodes(), occupiedSigilTargets(anchors, supportPlacements));
 	}
 
-	private static Set<BlockPos> occupiedSigilTargets(
+	static Set<BlockPos> occupiedSigilTargets(
 			List<CardinalRiteCeremonyDefinition.Anchor> anchors,
 			List<SigilPlacement> supportPlacements) {
 		Set<BlockPos> occupied = new HashSet<>();
@@ -651,8 +650,7 @@ public final class CardinalRiteInteractionHandler {
 			}
 			player.setHealth(Math.max(2.0F, player.getHealth() - 2.0F));
 			rite.fillAnchor(anchor, 50);
-			if (rite.areAnchorsConsecrated()) {
-				rite.enterInscription();
+			if (rite.enterInscription()) {
 				player.displayClientMessage(Component.literal(
 						"Your first circulation closes. Project into the daemon.")
 						.withStyle(ChatFormatting.RED, ChatFormatting.BOLD), false);

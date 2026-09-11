@@ -140,12 +140,9 @@ public class GhastlyAlembicScreen extends AbstractContainerScreen<GhastlyAlembic
         gfx.drawString(font, this.title, this.titleLabelX, 4, 0xFFAA2222, false);
         // Inventory label
 
-        // Heat status text below heat indicator
-        if (this.menu.isHeated()) {
-            gfx.drawString(font, Component.literal("Distilling"), 36, 56, 0xFFCC4400, false);
-        } else {
-            gfx.drawString(font, Component.literal("No Heat"), 40, 56, 0xFF554444, false);
-        }
+        Component status = Component.translatable("container.hemomancy.alembic.status."
+                + menu.getProcessingStatus().name().toLowerCase(java.util.Locale.ROOT));
+        gfx.drawString(font, status, 36, 56, 0xFFCC4400, false);
     }
 
     // ───── Slot backgrounds ─────

@@ -345,12 +345,16 @@ public class LayerEvents {
 			EntityRenderer<?> renderer = event.getRenderer(entityType);
 			if (renderer instanceof LivingEntityRenderer livingRenderer) {
 				livingRenderer.addLayer(new MonolithicDislocationShellLayer(livingRenderer));
+                livingRenderer.addLayer(new com.vincenthuto.hemomancy.client.render.layer.ThermalSkinLayer(livingRenderer));
+                livingRenderer.addLayer(new com.vincenthuto.hemomancy.client.render.layer.MortemSkinLayer(livingRenderer));
 			}
 		}
 		for (PlayerSkin.Model skinModel : event.getSkins()) {
 			EntityRenderer<? extends Player> renderer = event.getSkin(skinModel);
 			if (renderer instanceof LivingEntityRenderer livingRenderer) {
 				livingRenderer.addLayer(new MonolithicDislocationShellLayer(livingRenderer));
+                livingRenderer.addLayer(new com.vincenthuto.hemomancy.client.render.layer.ThermalSkinLayer(livingRenderer));
+                livingRenderer.addLayer(new com.vincenthuto.hemomancy.client.render.layer.MortemSkinLayer(livingRenderer));
 			}
 		}
 	}

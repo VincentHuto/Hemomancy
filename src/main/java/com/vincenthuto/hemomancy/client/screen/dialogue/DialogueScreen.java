@@ -4,6 +4,7 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.*;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.dialogue.DialogueOptionPacket;
+import com.vincenthuto.hemomancy.common.network.dialogue.DialogueRewardChoicePacket;
 import com.vincenthuto.hemomancy.common.network.dialogue.DialogueTopicOpenedPacket;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
@@ -38,7 +39,11 @@ public final class DialogueScreen extends Screen {
 	private final DialogueNavigationState navigation;
 	private final List<ClickTarget> clickTargets = new ArrayList<>();
 	private final Set<String> locallyReadTopics = new HashSet<>();
+	private static long nextClaimRequest;
+	private record PendingClaim(DialogueNode node, DialogueOption option) {}
+	private final java.util.Map<Long, PendingClaim> pendingClaims = new java.util.HashMap<>();
 	private DialogueNode currentNode;
+	private java.util.UUID pendingWhisperId;
 	private DialogueLayout layout;
 	private ResourceLocation resolvedPortraitIcon;
 	private boolean resolvedPortraitIsCompanion;
@@ -59,6 +64,22 @@ public final class DialogueScreen extends Screen {
 			navigation.openCategory(attentionTopic.category());
 			openTopic(attentionTopic);
 		}
+	}
+
+	public static void openWhisper(DialogueTree tree, java.util.UUID id) {
+		Screen current = Minecraft.getInstance().screen;
+		if (current != null && !(current instanceof net.minecraft.client.gui.screens.ChatScreen)) return;
+		open(tree);
+		((DialogueScreen) Minecraft.getInstance().screen).pendingWhisperId = id;
+	}
+
+	@Override
+	public void onClose() {
+		if (pendingWhisperId != null) {
+			PacketHandler.sendToServer(new com.vincenthuto.hemomancy.common.network.dialogue.ClosePendingWhisperPacket(pendingWhisperId));
+			pendingWhisperId = null;
+		}
+		super.onClose();
 	}
 
 	public static void open(DialogueTree tree) {
@@ -118,12 +139,21 @@ public final class DialogueScreen extends Screen {
 		int y = header.y() + 20;
 		DialogueNode headerNode = navigation.view() == DialogueNavigationState.View.NODE ? null : tree.getStartNode();
 		if (headerNode != null) {
-			for (String key : headerNode.lines()) {
-				for (var line : font.split(resolveDialogueLine(key), textWidth)) {
-					if (y + font.lineHeight > header.bottom()) return;
-					gfx.drawString(font, line, textX, y, style.textColor(), false);
-					y += LINE_HEIGHT;
-				}
+			var lines = headerNode.lines().stream()
+					.flatMap(key -> font.split(resolveDialogueLine(key), textWidth).stream()).toList();
+			boolean overflow = y + Math.max(0, lines.size() - 1) * LINE_HEIGHT + font.lineHeight > header.bottom() - 2;
+			int limit = overflow ? header.bottom() - LINE_HEIGHT - 3 : header.bottom() - 2;
+			for (var line : lines) {
+				if (y + font.lineHeight > limit) break;
+				gfx.drawString(font, line, textX, y, style.textColor(), false);
+				y += LINE_HEIGHT;
+			}
+			if (overflow) {
+				int buttonY = header.bottom() - LINE_HEIGHT - 2;
+				gfx.drawString(font, Component.translatable("hemomancy.dialogue.ui.read_greeting"),
+						textX, buttonY, style.optionColor(), true);
+				clickTargets.add(new ClickTarget(textX, buttonY, textWidth, LINE_HEIGHT,
+						TargetKind.GREETING, null, null, -1, true));
 			}
 		}
 		gfx.fill(header.x(), header.bottom() - 1, header.right(), header.bottom(), style.separatorColor());
@@ -282,7 +312,7 @@ public final class DialogueScreen extends Screen {
 			DialogueOption option = currentNode.options().get(i);
 			int lines = Math.max(1, font.split(Component.translatable(option.text()), width - 24).size());
 			int height = Math.max(24, lines * LINE_HEIGHT + 10);
-			boolean enabled = option.presentation().enabled();
+			boolean enabled = option.presentation().enabled() && !isClaimPending(option);
 			renderResponse(gfx, x, y, width, height, mouseX, mouseY, enabled,
 					navigation.focusIndex() == i, option);
 			clickTargets.add(ClickTarget.option(x, y, width, height, i, enabled));
@@ -453,6 +483,10 @@ public final class DialogueScreen extends Screen {
 	private void activate(ClickTarget target) {
 		if (!target.enabled) return;
 		switch (target.kind) {
+			case GREETING -> {
+				currentNode = tree.getStartNode();
+				navigation.openNode(currentNode.id());
+			}
 			case CATEGORY -> navigation.openCategory(target.category);
 			case TOPIC -> openTopic(target.topic);
 			case OPTION -> selectOption(target.optionIndex);
@@ -481,10 +515,36 @@ public final class DialogueScreen extends Screen {
 	private void selectOption(int index) {
 		if (currentNode == null || index < 0 || index >= currentNode.options().size()) return;
 		DialogueOption option = currentNode.options().get(index);
-		if (!option.presentation().enabled()) return;
+		if (!option.presentation().enabled() || isClaimPending(option)) return;
+		if (DialogueRewardClaims.requiresAcknowledgement(option.eventId())) {
+			long request = ++nextClaimRequest;
+			pendingClaims.put(request, new PendingClaim(currentNode, option));
+			PacketHandler.sendToServer(new DialogueRewardChoicePacket(option.eventId(), tree.entityId(), request));
+			return;
+		}
 		if (option.eventId() != null && !option.eventId().isEmpty()) {
 			PacketHandler.sendToServer(new DialogueOptionPacket(option.eventId(), tree.entityId()));
 		}
+		followOption(option);
+	}
+
+	private boolean isClaimPending(DialogueOption option) {
+		return pendingClaims.values().stream().anyMatch(p -> p.node() == currentNode && p.option() == option);
+	}
+
+	public static void receiveRewardResult(long requestId, boolean delivered) {
+		if (!(Minecraft.getInstance().screen instanceof DialogueScreen screen)) return;
+		PendingClaim claim = screen.pendingClaims.remove(requestId);
+		if (claim == null) return;
+		if (delivered) {
+			if (screen.currentNode == claim.node()) screen.followOption(claim.option());
+		} else if (Minecraft.getInstance().player != null) {
+			Minecraft.getInstance().player.displayClientMessage(Component.translatable(
+					"hemomancy.dialogue.reward_not_delivered"), false);
+		}
+	}
+
+	private void followOption(DialogueOption option) {
 		if (option.nextNodeId() == null) {
 			onClose();
 			return;
@@ -539,7 +599,7 @@ public final class DialogueScreen extends Screen {
 		return mouseX >= x && mouseX < x + width && mouseY >= y && mouseY < y + height;
 	}
 
-	private enum TargetKind { CATEGORY, TOPIC, OPTION, BACK, CLOSE }
+	private enum TargetKind { GREETING, CATEGORY, TOPIC, OPTION, BACK, CLOSE }
 
 	private record ClickTarget(int x, int y, int width, int height, TargetKind kind,
 			DialogueCategory category, DialogueTopic topic, int optionIndex, boolean enabled) {

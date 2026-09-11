@@ -44,9 +44,9 @@ class ManipulationFamilyRegistryTest {
 	}
 
 	@Test
-	void declaresTheElevenApprovedFamiliesAndTwentySixForms() {
-		assertEquals(11, ManipulationFamilyRegistry.families().size());
-		assertEquals(26, ManipulationFamilyRegistry.families().stream()
+	void declaresTheApprovedFamiliesAndForms() {
+		assertEquals(12, ManipulationFamilyRegistry.families().size());
+		assertEquals(28, ManipulationFamilyRegistry.families().stream()
 				.mapToInt(family -> family.forms().size()).sum());
 		assertEquals("blood_shot", ManipulationFamilyRegistry.family("sanguine_halo")
 				.orElseThrow().baselineId());

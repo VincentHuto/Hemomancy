@@ -4,7 +4,6 @@ import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.Enu
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.EnumVeinSections;
 import com.vincenthuto.hemomancy.common.manipulation.*;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
@@ -41,6 +40,6 @@ public class WhiteVerdictManip extends BloodManipulation {
 			ManipulationCombatHelper.hurt(this, player, target, level,
 					(2.0F + 8.0F * charge) * (concealed ? 1.5F : 1.0F));
 		}
-        ManipulationVisuals.burst(level, ManipulationVisuals.Form.VERDICT, eye, end, width, 16);
+        ManipulationVisuals.burst(level, ManipulationVisuals.Form.WHITE_VERDICT, eye, end, width, 40);
 	}
 }

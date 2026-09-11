@@ -19,6 +19,13 @@ public interface IMorphling {
 
 	public void use(Player playerIn, InteractionHand handIn, ItemStack itemStack, Level worldIn);
 
+	/** Server activation result; legacy implementations retain their use callback. */
+	default boolean tryUse(Player player, InteractionHand hand, ItemStack creature, Level level) {
+		use(player, hand, creature, level);
+		return true;
+	}
+
+
 	/**
 	 * Returns the primary blood tendency this morphling prefers when being fed
 	 * enzymes. Feeding a preferred enzyme grants full power contribution.

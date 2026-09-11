@@ -62,6 +62,7 @@ public class UseManipKeyPacket implements CustomPacketPayload {
 					ManipulationChannelManager.stop((net.minecraft.server.level.ServerPlayer) player, true);
 					return;
 				}
+				if (com.vincenthuto.hemomancy.common.manipulation.ductilis.Paralysis.isParalyzed(player)) return;
 				if (message.action == Action.START_CONTINUOUS) {
 					if (!bloodPowersBlocked) {
 						ManipulationChannelManager.start((net.minecraft.server.level.ServerPlayer) player);

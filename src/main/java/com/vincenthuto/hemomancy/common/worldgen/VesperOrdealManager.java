@@ -70,6 +70,9 @@ public final class VesperOrdealManager {
 				180.0F, 0.0F, DimensionTransition.DO_NOTHING));
 		PacketHandler.sendToPlayer(player, PacketSyncVesperFightScene.activate(center));
 		spawnCrownedRefusal(arenaLevel, player, bloom.center().asLong(), center);
+		player.displayClientMessage(Component.literal(
+				"Strike the exposed throne anchors when Vesper leaves them vulnerable. After the Evening Star falls, use Blood Absorption on the downed body to finish the refusal. If you die, the unsealed wound remains your route back.")
+				.withStyle(ChatFormatting.DARK_PURPLE), false);
 		return true;
 	}
 

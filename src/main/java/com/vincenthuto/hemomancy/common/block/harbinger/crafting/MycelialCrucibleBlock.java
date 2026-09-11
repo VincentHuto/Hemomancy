@@ -1,6 +1,6 @@
 package com.vincenthuto.hemomancy.common.block.harbinger.crafting;
 
-import com.vincenthuto.hemomancy.client.particle.factory.AbsorbedBloodCellParticleFactory;
+import com.vincenthuto.hemomancy.common.particle.HemoParticleData;
 import com.vincenthuto.hemomancy.common.block.shared.FillerBlock;
 import com.vincenthuto.hemomancy.common.block.shared.HorizontalFacingRotationHelper;
 import com.vincenthuto.hemomancy.common.block.shared.IMultiBlock;
@@ -9,7 +9,6 @@ import com.vincenthuto.hemomancy.common.init.BlockEntityInit;
 import com.vincenthuto.hemomancy.common.init.BlockInit;
 import com.vincenthuto.hemomancy.common.tile.harbinger.crafting.MycelialCrucibleBlockEntity;
 import com.vincenthuto.hemomancy.common.tile.shared.FillerBlockEntity;
-import com.vincenthuto.hutoslib.client.particle.factory.EmberParticleFactory;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import com.vincenthuto.hutoslib.common.network.VanillaPacketDispatcher;
 import net.minecraft.core.BlockPos;
@@ -112,9 +111,9 @@ public class MycelialCrucibleBlock extends Block implements EntityBlock, IMultiB
 
         Direction facing = state.getValue(FACING);
         spawnSpoutTrail(level, pos, random, facing, CHAIN_L_SPOUT, CHAIN_L_BASIN,
-                EmberParticleFactory.createData(ParticleColor.GREEN, 1.25F, 0.16F, 34));
+                HemoParticleData.ember(ParticleColor.GREEN, 1.25F, 0.16F, 34));
         spawnSpoutTrail(level, pos, random, facing, CHAIN_R_SPOUT, CHAIN_R_BASIN,
-                AbsorbedBloodCellParticleFactory.createData(ParticleColor.BLOOD));
+                HemoParticleData.absorbedBloodCell(ParticleColor.BLOOD));
     }
 
     private static void spawnSpoutTrail(Level level, BlockPos pos, RandomSource random, Direction facing,

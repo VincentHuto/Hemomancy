@@ -2,6 +2,7 @@ package com.vincenthuto.hemomancy.common.network.capa.harbinger.manips;
 
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
+import com.vincenthuto.hemomancy.common.init.ManipulationInit;
 import com.vincenthuto.hemomancy.common.manipulation.*;
 import com.vincenthuto.hemomancy.common.network.particle.ManipulationVisualPacket;
 import net.minecraft.network.FriendlyByteBuf;
@@ -20,8 +21,10 @@ public record ManipulationChargeVisualPacket(int heldTicks) implements CustomPac
     public static void handle(ManipulationChargeVisualPacket packet, IPayloadContext context) {
         context.enqueueWork(() -> {
             if (!(context.player() instanceof ServerPlayer player)) return;
+            if (packet.heldTicks>0 && com.vincenthuto.hemomancy.common.manipulation.ductilis.Paralysis.isParalyzed(player)) return;
             var known=HemoCapabilityAccess.requireKnownManipulations(player);
-            var selected=known.getSelectedManip();
+            var saved=known.getSelectedManip();
+            var selected=saved==null?null:ManipulationInit.getByName(saved.getName());
             if(selected==null || selected.getType()!=EnumManipulationType.CHARGED || !known.isManipEquipped(selected)
                     || !known.isManipulationAvailable(selected) || !HemoCapabilityAccess.requireBloodVolume(player).isActive()
                     || selected.isOnCooldown(player) || !player.isAlive()) return;

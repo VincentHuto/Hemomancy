@@ -44,10 +44,10 @@ public class KnownManipulationServerPacket implements CustomPacketPayload {
 
 	public KnownManipulationServerPacket(IKnownManipulations known) {
 		ManipulationRetirementRules.sanitizeKnownManipulations(known);
-		this.known = known.getKnownManips();
+		this.known = snapshot(known.getKnownManips());
 		this.selected = known.getSelectedManip();
 		this.selectedMemoryKey = known.getSelectedMemoryRef().storageKey();
-		this.veinList = known.getVeinList();
+		this.veinList = new ArrayList<>(known.getVeinList());
 		this.selectedVein = known.getSelectedVein();
 		this.avatarForm = known.getActiveAvatarForm();
 		this.lastVeinMineStart = known.getLastVeinMineStart();
@@ -82,18 +82,25 @@ public class KnownManipulationServerPacket implements CustomPacketPayload {
 			List<VeinLocation> veinList, VeinLocation selectedVein, String avatarForm, BlockPos lastVeinMineStart,
 			List<String> equippedManipNames, List<ManipulationLoadout> loadouts, String selectedMemoryKey) {
 
-		this.known = list;
+		this.known = snapshot(list);
 		this.selected = selected;
-		this.veinList = veinList;
+		this.veinList = new ArrayList<>(veinList);
 		this.selectedVein = selectedVein;
 		this.avatarForm = avatarForm != null ? avatarForm : "";
 		this.lastVeinMineStart = lastVeinMineStart;
-		this.equippedManipNames = equippedManipNames != null ? equippedManipNames : new ArrayList<>();
-		this.loadouts = loadouts != null ? loadouts : new ArrayList<>();
+		this.equippedManipNames = equippedManipNames != null ? new ArrayList<>(equippedManipNames) : new ArrayList<>();
+		this.loadouts = loadouts != null ? new ArrayList<>(loadouts) : new ArrayList<>();
 		this.selectedMemoryKey = selectedMemoryKey != null ? selectedMemoryKey : "";
 	}
 	
 	
+    // Capture on the server thread before asynchronous network encoding.
+    private static LinkedHashMap<BloodManipulation,ManipLevel> snapshot(LinkedHashMap<BloodManipulation,ManipLevel> source) {
+        var snapshot=new LinkedHashMap<BloodManipulation,ManipLevel>();
+        source.forEach((manip,level)->snapshot.put(manip,level==null?null:new ManipLevel(level.getCurrentLevel(),level.getXp())));
+        return snapshot;
+    }
+
 	public static KnownManipulationServerPacket decode(final FriendlyByteBuf buf) {
 		BloodManipulation sel = BloodManipulation.deserialize(buf.readNbt());
 		VeinLocation selvein = VeinLocation.deserializeToLoc(buf.readNbt());
@@ -136,12 +143,12 @@ public class KnownManipulationServerPacket implements CustomPacketPayload {
 		}
 
 		buf.writeInt(msg.known.size());
-		for (int i = 0; i < msg.known.size(); ++i) {
-			if (msg.known.keySet().toArray()[i] != null) {
-				buf.writeNbt(((BloodManipulation) msg.known.keySet().toArray()[i]).serialize());
-				buf.writeNbt(((ManipLevel) msg.known.values().toArray()[i]).serialize());
-			}
-		}
+        for(var entry:msg.known.entrySet()) {
+            if(entry.getKey()!=null) {
+                buf.writeNbt(entry.getKey().serialize());
+                buf.writeNbt(entry.getValue().serialize());
+            }
+        }
 		buf.writeInt(msg.veinList.size());
 		for (VeinLocation element : msg.veinList) {
 			if (element != null) {

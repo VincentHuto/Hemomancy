@@ -38,7 +38,7 @@ public class PacketLoadScarPattern implements CustomPacketPayload {
 		public static void handle(final PacketLoadScarPattern msg, final IPayloadContext ctx) {
 			ctx.enqueueWork(() -> {
 				AbstractContainerMenu container = ctx.player().containerMenu;
-				if (container instanceof ScarStationMenu) {
+				if (container instanceof ScarStationMenu && container.stillValid(ctx.player())) {
 					ScarStationBlockEntity station = ((ScarStationMenu) container).getTe();
 					station.tryLoadPatternFromSlot();
 				}

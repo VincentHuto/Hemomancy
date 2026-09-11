@@ -21,8 +21,7 @@ public class BloodShotRenderer extends EntityRenderer<BloodShotEntity> {
     @Override
     public void render(BloodShotEntity entity,float yaw,float partial,com.mojang.blaze3d.vertex.PoseStack poses,
             net.minecraft.client.renderer.MultiBufferSource buffers,int light) {
-        com.vincenthuto.hemomancy.client.render.world.ManipulationVisualRenderer.bloodShot(poses,buffers,
-                entity.getDeltaMovement(),entity.visualForm(),entity.tickCount+partial);
+        // The shared blood pass draws this projectile together with its curved wake.
         super.render(entity,yaw,partial,poses,buffers,light);
     }
 

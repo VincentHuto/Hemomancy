@@ -982,6 +982,8 @@ public final class HemoJourneyFixtures {
 		loom.addItem(null, new ItemStack(ItemInit.hematic_memory.get()), null);
 		loom.addItem(null, new ItemStack(ItemInit.bleeding_bulb.get()), null);
 		loom.addItem(null, new ItemStack(ItemInit.vivacious_enzyme.get()), null);
+		// Supplied lesson fixture explicitly chooses its intended recipe.
+		loom.selectRecipe(null, ResourceLocation.parse("hemomancy:memory_weaving/memory_blood_shot"));
 		if (!loom.hasValidRecipe()) throw new IllegalStateException("Blood Shot memory weave could not be prepared");
 		player.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(ItemInit.blood_projection.get()));
 		player.setItemSlot(EquipmentSlot.OFFHAND, new ItemStack(ItemInit.living_staff.get()));
@@ -1349,7 +1351,14 @@ public final class HemoJourneyFixtures {
 		if (!line.isValid()) throw new IllegalStateException("Covenant Vigil requires the journey bloodline");
 		HarbingerVicarEntity helper = EntityInit.harbinger_vicar.get().create(level);
 		if (helper == null) throw new IllegalStateException("Covenant Vigil helper creation returned null");
-		BlockPos station = focusPos.offset(-3, 1, 0);
+		// Fast-stage fixture: supply the helper at the actual role marker. This does not test navigation.
+		BlockPos station = focusPos.offset(
+				com.vincenthuto.hemomancy.common.rite.harbinger.CardinalRiteAllyService.markers(recipe)
+						.get(com.vincenthuto.hemomancy.common.rite.CardinalRiteAllyRole.ANCHOR));
+		if (!level.getBlockState(station.below()).is(net.minecraft.world.level.block.Blocks.STONE))
+			set(player, station.below(), net.minecraft.world.level.block.Blocks.STONE);
+		if (!level.isEmptyBlock(station)) set(player, station, net.minecraft.world.level.block.Blocks.AIR);
+		if (!level.isEmptyBlock(station.above())) set(player, station.above(), net.minecraft.world.level.block.Blocks.AIR);
 		helper.setPos(station.getX() + 0.5D, station.getY(), station.getZ() + 0.5D);
 		helper.setNoAi(true);
 		helper.setInvulnerable(true);

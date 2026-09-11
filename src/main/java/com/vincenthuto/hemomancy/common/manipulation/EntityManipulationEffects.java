@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.manipulation;
 
+import com.vincenthuto.hemomancy.common.particle.HemoParticleData;
 import com.vincenthuto.hemomancy.common.block.harbinger.CrimsonFireHelper;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.entity.projectile.BloodCloudCarrierEntity;
@@ -11,10 +12,12 @@ import com.vincenthuto.hemomancy.common.item.harbinger.memories.LivingWeaponGraf
 import com.vincenthuto.hemomancy.common.manipulation.congeatio.TemporaryIceManager;
 import com.vincenthuto.hemomancy.common.manipulation.ductilis.DuctilisLightningEffects;
 import com.vincenthuto.hemomancy.common.manipulation.ductilis.SynapticJoltManip;
+import com.vincenthuto.hemomancy.common.manipulation.ductilis.ConductionManager;
+import com.vincenthuto.hemomancy.common.manipulation.ductilis.Discharge;
+import com.vincenthuto.hemomancy.common.manipulation.ductilis.Paralysis;
 import com.vincenthuto.hemomancy.common.manipulation.ferric.SanguineMagnetismManip;
 import com.vincenthuto.hemomancy.common.manipulation.tenebris.BlackVeilCovenantManager;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
-import com.vincenthuto.hutoslib.client.particle.factory.GlowParticleFactory;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -60,7 +63,8 @@ public final class EntityManipulationEffects {
 	}
 
 	public static boolean cast(BloodManipulation manipulation, ManipulationCastContext context) {
-		if (manipulation == null || context == null || context.level().isClientSide) return false;
+		if (manipulation == null || context == null || context.level().isClientSide
+                || Paralysis.isParalyzed(context.caster())) return false;
 		return switch (manipulation.getName()) {
 		case "blood_shot" -> bloodShot(context);
 		case "blood_needle" -> bloodNeedle(context);
@@ -158,7 +162,7 @@ public final class EntityManipulationEffects {
 		if (!existing.canBeReplaced()) return false;
 		context.level().setBlock(firePos, BlockInit.crimson_flames.get().defaultBlockState(), 3);
 		context.level().playSound(null, firePos, SoundEvents.FIRECHARGE_USE, SoundSource.HOSTILE, 0.8F, 0.9F);
-		sendParticles(context.level(), Vec3.atCenterOf(firePos), 18, new ParticleColor(255, 40, 20), 0.35D);
+		thermalBurst(context, ManipulationVisuals.Form.FLAME_CONJURE, Vec3.atBottomCenterOf(firePos), .7, 30);
 		return true;
 	}
 
@@ -170,8 +174,7 @@ public final class EntityManipulationEffects {
 			hits++;
 		}
 		context.level().playSound(null, context.origin(), SoundEvents.FIRECHARGE_USE, SoundSource.HOSTILE, 0.9F, 0.8F);
-		sendParticles(context.level(), context.caster().position().add(0.0D, 0.8D, 0.0D), 32,
-				new ParticleColor(245, 95, 10), 3.0D);
+		thermalBurst(context, ManipulationVisuals.Form.IGNITION, context.caster().position(), 5, 22);
 		if (hits > 0) {
 			LivingWeaponGraftRecipeUnlockEvents.onTorchAlignedManipulation(context.caster());
 		}
@@ -193,8 +196,7 @@ public final class EntityManipulationEffects {
 			target.hurt(context.level().damageSources().onFire(), context.scaleDamage(1.5F));
 		}
 		context.level().playSound(null, context.origin(), SoundEvents.FIRECHARGE_USE, SoundSource.HOSTILE, 0.9F, 0.6F);
-		sendParticles(context.level(), context.caster().position().add(0.0D, 0.7D, 0.0D), 40,
-				new ParticleColor(255, 140, 20), 1.4D);
+		ManipulationVisuals.attached(context.caster(), ManipulationVisuals.Form.UPDRAFT, 1, 22, 1);
 		LivingWeaponGraftRecipeUnlockEvents.onTorchAlignedManipulation(context.caster());
 		return true;
 	}
@@ -217,7 +219,7 @@ public final class EntityManipulationEffects {
 		}
 		context.level().playSound(null, BlockPos.containing(center), SoundEvents.GENERIC_EXPLODE.value(),
 				SoundSource.HOSTILE, 1.1F, 0.7F);
-		sendParticles(context.level(), center, 56, new ParticleColor(235, 80, 10), 3.0D);
+		thermalBurst(context, ManipulationVisuals.Form.GLASS, center, 4, 36);
 		return hits > 0;
 	}
 
@@ -254,33 +256,47 @@ public final class EntityManipulationEffects {
 		return tagged > 0;
 	}
 
-	private static boolean activationPotential(ManipulationCastContext context) {
-		int hits = 0;
-		for (LivingEntity target : targetsAroundCaster(context, 5.0D)) {
-			float damage = context.scaleDamage(5.0F);
-			target.hurt(context.level().damageSources().mobAttack(context.caster()), damage);
-			SchoolHitHelper.tryTriggerConductiveArc(context.caster(), target, EnumBloodTendency.DUCTILIS, null, damage);
-			target.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 80, 0, false, true));
-			hits++;
-		}
-		context.caster().addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SPEED, 100, 0, false, true));
-		context.level().playSound(null, context.origin(), SoundEvents.TRIDENT_THUNDER.value(), SoundSource.HOSTILE,
-				0.55F, 1.5F);
-		return hits > 0;
-	}
+    private static boolean activationPotential(ManipulationCastContext context) {
+        var discharge=new Discharge();
+        var hitTargets=new java.util.ArrayList<LivingEntity>();
+        int hits=0;
+        for (LivingEntity target:targetsAroundCaster(context,5.0D)) {
+            if (!ConductionManager.canHarm(context.caster(),target)
+                    || !ConductionManager.visible((ServerLevel)context.level(),context.caster().getEyePosition(),target.getEyePosition(),context.caster())
+                    || !ConductionManager.claimHit(context.caster(),target,discharge)) continue;
+            DuctilisLightningEffects.synapticJolt(context.caster(),target);
+            Paralysis.interrupt(target);
+            if (target.hurt(context.level().damageSources().mobAttack(context.caster()),context.scaleDamage(5))) {
+                ConductionManager.energizeTouching(context.caster(),target,discharge);
+                hitTargets.add(target);
+            }
+            target.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN,80,0,false,true));
+            hits++;
+        }
+        ConductionManager.energizeVisibleBounds(context.caster(),context.caster().getBoundingBox().inflate(5),discharge);
+        for (LivingEntity target:hitTargets) SchoolHitHelper.tryTriggerConductiveArc(context.caster(),target,
+                EnumBloodTendency.DUCTILIS,null,context.scaleDamage(5),discharge);
+        context.caster().addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SPEED,100,0,false,true));
+        context.level().playSound(null,context.origin(),SoundEvents.TRIDENT_THUNDER.value(),SoundSource.HOSTILE,0.55F,1.5F);
+        return hits>0;
+    }
 
-	private static boolean synapticJolt(ManipulationCastContext context) {
-		LivingEntity target = preferredTarget(context, context.scaleRange(7.0D));
-		if (target == null) return false;
-		SynapticJoltManip.staggerTarget(target);
-		DuctilisLightningEffects.synapticJolt(context.caster(), target);
-		float damage = context.scaleDamage(3.0F);
-		target.hurt(context.level().damageSources().magic(), damage);
-		SchoolHitHelper.tryTriggerConductiveArc(context.caster(), target, EnumBloodTendency.DUCTILIS, null, damage);
-		context.level().playSound(null, target.blockPosition(), SoundEvents.TRIDENT_THUNDER.value(), SoundSource.HOSTILE,
-				0.45F, 1.75F);
-		return true;
-	}
+    private static boolean synapticJolt(ManipulationCastContext context) {
+        LivingEntity target=preferredTarget(context,context.scaleRange(7.0D));
+        if (target==null || !ConductionManager.canHarm(context.caster(),target)
+                || !ConductionManager.visible((ServerLevel)context.level(),context.caster().getEyePosition(),target.getEyePosition(),context.caster())) return false;
+        var discharge=new Discharge();
+        if (!ConductionManager.claimHit(context.caster(),target,discharge)) return false;
+        SynapticJoltManip.staggerTarget(target);
+        DuctilisLightningEffects.synapticJolt(context.caster(),target);
+        float damage=context.scaleDamage(3.0F);
+        if (target.hurt(context.level().damageSources().magic(),damage)) {
+            ConductionManager.energizeTouching(context.caster(),target,discharge);
+            SchoolHitHelper.tryTriggerConductiveArc(context.caster(),target,EnumBloodTendency.DUCTILIS,null,damage,discharge);
+        }
+        context.level().playSound(null,target.blockPosition(),SoundEvents.TRIDENT_THUNDER.value(),SoundSource.HOSTILE,0.45F,1.75F);
+        return true;
+    }
 
 	private static boolean conductiveMark(ManipulationCastContext context) {
 		LivingEntity target = preferredTarget(context, context.scaleRange(14.0D));
@@ -308,7 +324,10 @@ public final class EntityManipulationEffects {
 				EnumBloodTendency.FLAMMEUS, damage);
 		context.level().playSound(null, target.blockPosition(), SoundEvents.AMETHYST_BLOCK_CHIME, SoundSource.HOSTILE,
 				0.75F, concealed ? 1.75F : 1.45F);
-		sendParticles(context.level(), target.getEyePosition(), 20, new ParticleColor(255, 235, 175), 0.8D);
+		if (context.level() instanceof ServerLevel level) {
+            HemomancyTendrilEffects.luxRelease(context.caster(), target.getEyePosition());
+            ManipulationVisuals.burst(level, ManipulationVisuals.Form.FLARE, target.getEyePosition(), target.getEyePosition(), 1.1, 18);
+        }
 		LivingWeaponGraftRecipeUnlockEvents.onSpearAlignedManipulation(context.caster());
 		return true;
 	}
@@ -345,7 +364,9 @@ public final class EntityManipulationEffects {
 		}
 		context.level().playSound(null, context.origin(), SoundEvents.AMETHYST_BLOCK_CHIME, SoundSource.HOSTILE,
 				0.8F, 1.4F);
-		sendParticles(context.level(), target.getEyePosition(), 24, new ParticleColor(220, 200, 255), 0.9D);
+		if (context.level() instanceof ServerLevel level) {
+            ManipulationVisuals.burst(level, ManipulationVisuals.Form.VERDICT, context.caster().getEyePosition(), target.getEyePosition(), .25, 12);
+        }
 		return true;
 	}
 
@@ -360,8 +381,7 @@ public final class EntityManipulationEffects {
 			revealed++;
 		}
 		context.level().playSound(null, context.origin(), SoundEvents.BEACON_ACTIVATE, SoundSource.HOSTILE, 1.0F, 1.5F);
-		sendParticles(context.level(), context.caster().position().add(0.0D, 1.4D, 0.0D), 44,
-				new ParticleColor(255, 240, 180), 2.4D);
+		ManipulationVisuals.attached(context.caster(), ManipulationVisuals.Form.EYE, 1, 600, 1);
 		return revealed > 0;
 	}
 
@@ -370,7 +390,7 @@ public final class EntityManipulationEffects {
 		if (target == null) return false;
 		target.addEffect(new MobEffectInstance(MobEffects.WITHER, 120, 1, false, true));
 		context.level().playSound(null, context.origin(), SoundEvents.WITHER_HURT, SoundSource.HOSTILE, 0.7F, 1.6F);
-		sendParticles(context.level(), midpoint(context.caster(), target), 20, new ParticleColor(0, 75, 0), 0.9D);
+		BloodFlowVisuals.connect(context.caster(), target, com.vincenthuto.hemomancy.common.network.particle.BloodFlowPacket.Style.TEAR);
 		LivingWeaponGraftRecipeUnlockEvents.onAxeAlignedManipulation(context.caster());
 		return true;
 	}
@@ -382,7 +402,7 @@ public final class EntityManipulationEffects {
 		target.hurt(context.level().damageSources().magic(), context.scaleDamage(damage));
 		context.caster().heal(Math.min(6.0F, damage * 0.35F));
 		context.level().playSound(null, context.origin(), SoundEvents.WITHER_DEATH, SoundSource.HOSTILE, 0.7F, 1.8F);
-		sendParticles(context.level(), midpoint(target, context.caster()), 28, new ParticleColor(145, 0, 20), 1.1D);
+		BloodFlowVisuals.connect(context.caster(), target, com.vincenthuto.hemomancy.common.network.particle.BloodFlowPacket.Style.EXTRACTION);
 		return true;
 	}
 
@@ -392,8 +412,7 @@ public final class EntityManipulationEffects {
 		target.addEffect(new MobEffectInstance(EffectInit.insatiable_hunger, 220, 0, false, true, true));
 		context.level().playSound(null, target.blockPosition(), SoundEvents.HUSK_AMBIENT, SoundSource.HOSTILE,
 				0.65F, 0.7F);
-		sendParticles(context.level(), target.position().add(0.0D, target.getBbHeight() * 0.55D, 0.0D),
-				22, new ParticleColor(45, 105, 30), 0.9D);
+		ManipulationVisuals.attached(target, ManipulationVisuals.Form.HUNGER, .6, 220, 1);
 		return true;
 	}
 
@@ -409,8 +428,7 @@ public final class EntityManipulationEffects {
 		}
 		context.level().playSound(null, target.blockPosition(), SoundEvents.SCULK_SHRIEKER_SHRIEK, SoundSource.HOSTILE,
 				0.45F, 0.55F);
-		sendParticles(context.level(), target.position().add(0.0D, target.getBbHeight() * 0.5D, 0.0D),
-				24, new ParticleColor(70, 105, 35), 1.0D);
+		ManipulationVisuals.attached(target, ManipulationVisuals.Form.GRAVE, .6, ManipulationStatusRules.GRAVE_DEBT_TICKS, 1);
 		return true;
 	}
 
@@ -420,12 +438,14 @@ public final class EntityManipulationEffects {
 			target.addEffect(new MobEffectInstance(MobEffects.WITHER, 200, 1, false, true));
 			target.addEffect(new MobEffectInstance(MobEffects.POISON, 200, 0, false, true));
 			target.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 200, 1, false, true));
+            MortemStatusVisuals.infect(target, 200);
 			hits++;
 		}
 		context.caster().addEffect(new MobEffectInstance(MobEffects.POISON, 60, 0, false, true));
 		context.level().playSound(null, context.origin(), SoundEvents.SCULK_BLOCK_SPREAD, SoundSource.HOSTILE, 1.0F, 0.7F);
-		sendParticles(context.level(), context.caster().position().add(0.0D, 0.7D, 0.0D), 48,
-				new ParticleColor(45, 125, 25), 4.0D);
+		MortemStatusVisuals.infect(context.caster(), 60);
+        if(context.level() instanceof net.minecraft.server.level.ServerLevel server)
+            ManipulationVisuals.burst(server, ManipulationVisuals.Form.BLOOM, context.caster().position(), context.caster().position(), 8, 40);
 		return hits > 0;
 	}
 
@@ -437,8 +457,7 @@ public final class EntityManipulationEffects {
 			hits++;
 		}
 		context.level().playSound(null, context.origin(), SoundEvents.GLASS_PLACE, SoundSource.HOSTILE, 1.0F, 0.7F);
-		sendParticles(context.level(), context.caster().position().add(0.0D, 0.7D, 0.0D), 36,
-				new ParticleColor(145, 215, 255), 3.0D);
+		thermalBurst(context, ManipulationVisuals.Form.CRYOGENIC_PULSE, context.caster().position(), 5, 28);
 		if (hits > 0) {
 			LivingWeaponGraftRecipeUnlockEvents.onFlailAlignedManipulation(context.caster());
 		}
@@ -451,6 +470,7 @@ public final class EntityManipulationEffects {
 		if (target != null) {
 			applyColdControl(context, target, 120, 3);
 			target.setTicksFrozen(Math.min(target.getTicksRequiredToFreeze() + 40, target.getTicksFrozen() + 100));
+            ManipulationVisuals.attached(target,ManipulationVisuals.Form.FROZEN_VEINS,target.getBbWidth(),100,1);
 			controlled = true;
 		}
 		if (context.level() instanceof ServerLevel serverLevel) {
@@ -463,15 +483,19 @@ public final class EntityManipulationEffects {
 						BlockState state = context.level().getBlockState(pos);
 						if (state.getFluidState().is(Fluids.WATER) && state.getFluidState().isSource()
 								&& context.level().getBlockState(pos.above()).isAir()) {
-							context.level().setBlock(pos, Blocks.FROSTED_ICE.defaultBlockState(), 3);
-							context.level().scheduleTick(pos, Blocks.FROSTED_ICE, 60 + context.level().random.nextInt(40));
-							placed++;
+							if (TemporaryIceManager.placeOwned(serverLevel, pos,
+									BlockInit.frozen_cruor.get().defaultBlockState(),
+									60 + context.level().random.nextInt(40), context.caster().getUUID())) {
+                                placed++;
+                                ManipulationVisuals.burst(serverLevel,ManipulationVisuals.Form.FROST_ADVANCE,
+                                        Vec3.atBottomCenterOf(pos.above()),context.caster().position(),.45,36);
+                            }
 						}
 					}
 				}
 			}
 			if (placed > 0) {
-				sendParticles(serverLevel, Vec3.atCenterOf(center), 20, new ParticleColor(175, 230, 255), 2.2D);
+				ManipulationVisuals.burst(serverLevel, ManipulationVisuals.Form.ICE, Vec3.atBottomCenterOf(center), Vec3.atCenterOf(center), 2.2, 24);
 				controlled = true;
 			}
 		}
@@ -493,7 +517,7 @@ public final class EntityManipulationEffects {
 				for (int dy = 0; dy < 3; dy++) {
 					BlockPos pos = base.offset(dx, dy, dz);
 					if (pos.equals(base) || pos.equals(base.above())) continue;
-					if (TemporaryIceManager.place(serverLevel, pos, Blocks.PACKED_ICE.defaultBlockState(),
+					if (TemporaryIceManager.place(serverLevel, pos, BlockInit.frozen_cruor.get().defaultBlockState(),
 							420 + context.level().random.nextInt(120))) {
 						placed++;
 					}
@@ -515,7 +539,7 @@ public final class EntityManipulationEffects {
 		for (int dLat = -1; dLat <= 1; dLat++) {
 			for (int dUp = 0; dUp < 3; dUp++) {
 				BlockPos pos = base.relative(lateral, dLat).above(dUp);
-				if (TemporaryIceManager.placeOwned(serverLevel, pos, Blocks.PACKED_ICE.defaultBlockState(),
+				if (TemporaryIceManager.placeOwned(serverLevel, pos, BlockInit.frozen_cruor.get().defaultBlockState(),
 						420 + context.level().random.nextInt(120), context.caster().getUUID())) {
 					placed++;
 				}
@@ -532,8 +556,7 @@ public final class EntityManipulationEffects {
 		target.hurt(context.level().damageSources().onFire(), context.scaleDamage(4.0F));
 		context.caster().addEffect(new MobEffectInstance(MobEffects.DAMAGE_RESISTANCE, 120, 0, false, true));
 		context.level().playSound(null, context.origin(), SoundEvents.FIRECHARGE_USE, SoundSource.HOSTILE, 0.8F, 1.0F);
-		sendParticles(context.level(), target.position().add(0.0D, target.getBbHeight() * 0.5D, 0.0D), 26,
-				new ParticleColor(230, 105, 20), 1.1D);
+		ManipulationVisuals.attached(target, ManipulationVisuals.Form.FORGE, .7, 24, 1);
 		LivingWeaponGraftRecipeUnlockEvents.onTorchAlignedManipulation(context.caster());
 		return true;
 	}
@@ -563,8 +586,10 @@ public final class EntityManipulationEffects {
 		context.caster().addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SPEED, 100, 1, false, false));
 		context.caster().addEffect(new MobEffectInstance(MobEffects.NIGHT_VISION, 100, 0, false, false));
 		context.level().playSound(null, context.origin(), SoundEvents.ENDERMAN_TELEPORT, SoundSource.HOSTILE, 0.5F, 1.8F);
-		sendParticles(context.level(), context.caster().position().add(0.0D, 0.9D, 0.0D), 24,
-				new ParticleColor(70, 0, 120), 1.0D);
+		if (context.level() instanceof ServerLevel level) {
+            ManipulationVisuals.attached(context.caster(), ManipulationVisuals.Form.VEIL, 1, 18, 1);
+            ManipulationParticles.accent(level, EnumBloodTendency.TENEBRIS, context.caster().position().add(0, 1, 0), Vec3.ZERO);
+        }
 		return true;
 	}
 
@@ -579,9 +604,9 @@ public final class EntityManipulationEffects {
 		context.level().playSound(null, target.blockPosition(), SoundEvents.PLAYER_ATTACK_SWEEP, SoundSource.HOSTILE,
 				0.75F, ambush ? 0.65F : 0.85F);
 		if (context.level() instanceof ServerLevel serverLevel) {
-			PacketHandler.sendClawSlash(target.position().add(0.0D, target.getBbHeight() * 0.55D, 0.0D),
-					context.aim(), new ParticleColor(ambush ? 55 : 85, 0, ambush ? 135 : 100),
-					ambush, ambush ? 1.05F : 0.92F, 64.0D, serverLevel);
+            Vec3 at = target.position().add(0, target.getBbHeight() * .55, 0);
+            ManipulationVisuals.burst(serverLevel, ManipulationVisuals.Form.UMBRA_SLASH, at,
+                    at.add(context.aim()), ambush ? 1.05 : .92, 18);
 		}
 		return true;
 	}
@@ -595,9 +620,11 @@ public final class EntityManipulationEffects {
 		context.caster().fallDistance = 0.0F;
 		context.caster().resetFallDistance();
 		context.level().playSound(null, landing, SoundEvents.ENDERMAN_TELEPORT, SoundSource.HOSTILE, 0.8F, 1.2F);
-		sendParticles(context.level(), oldPos.add(0.0D, 0.9D, 0.0D), 20, new ParticleColor(70, 0, 125), 0.8D);
-		sendParticles(context.level(), Vec3.atBottomCenterOf(landing).add(0.0D, 0.9D, 0.0D), 20,
-				new ParticleColor(70, 0, 125), 0.8D);
+        if (context.level() instanceof ServerLevel level) {
+            ManipulationVisuals.burst(level, ManipulationVisuals.Form.TELEPORT, oldPos, oldPos, 1, 18);
+            Vec3 destination = Vec3.atBottomCenterOf(landing);
+            ManipulationVisuals.burst(level, ManipulationVisuals.Form.UMBRA_ARRIVAL, destination, destination, 1, 22);
+        }
 		return true;
 	}
 
@@ -613,6 +640,7 @@ public final class EntityManipulationEffects {
 			target.addEffect(new MobEffectInstance(MobEffects.BLINDNESS, 100, 1, false, true));
 			target.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, 120, 0, false, true));
 			target.hurt(context.level().damageSources().magic(), context.scaleDamage(3.0F));
+			if (hits < 6) HemomancyTendrilEffects.bloodEclipse(context.caster(), target, hits);
 			hits++;
 		}
 		context.level().playSound(null, context.origin(), SoundEvents.WITHER_SHOOT, SoundSource.HOSTILE, 0.6F, 2.0F);
@@ -624,10 +652,16 @@ public final class EntityManipulationEffects {
 		context.caster().addEffect(new MobEffectInstance(MobEffects.FIRE_RESISTANCE, 360, 0, false, true));
 		context.caster().addEffect(new MobEffectInstance(MobEffects.WEAKNESS, 240, 0, false, true));
 		context.level().playSound(null, context.origin(), SoundEvents.WARDEN_HEARTBEAT, SoundSource.HOSTILE, 0.75F, 0.6F);
-		sendParticles(context.level(), context.caster().position().add(0.0D, 0.9D, 0.0D), 36,
-				new ParticleColor(70, 0, 120), 1.6D);
+		if (context.level() instanceof ServerLevel level) {
+            ManipulationVisuals.attached(context.caster(), ManipulationVisuals.Form.VEIL, 1, 18, 1);
+            ManipulationParticles.accent(level, EnumBloodTendency.TENEBRIS, context.caster().position().add(0, 1, 0), Vec3.ZERO);
+        }
 		return true;
 	}
+
+    private static void thermalBurst(ManipulationCastContext context,ManipulationVisuals.Form form,Vec3 at,double radius,int ticks) {
+        if(context.level() instanceof ServerLevel level)ManipulationVisuals.burst(level,form,at,at,radius,ticks);
+    }
 
 	private static void shootArrow(ManipulationCastContext context, AbstractArrow arrow, float velocity, float inaccuracy,
 			double baseDamage) {
@@ -668,6 +702,7 @@ public final class EntityManipulationEffects {
 	private static void applyColdControl(ManipulationCastContext context, LivingEntity target, int duration, int amplifier) {
 		target.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, duration, amplifier, false, true));
 		target.addEffect(new MobEffectInstance(MobEffects.DIG_SLOWDOWN, duration + 20, 0, false, true));
+        ManipulationVisuals.attached(target,ManipulationVisuals.Form.BONE,target.getBbWidth()*.5,24,1);
 	}
 
 	private static java.util.Optional<BlockHitResult> aimedBlock(ManipulationCastContext context, double range) {
@@ -719,7 +754,7 @@ public final class EntityManipulationEffects {
 	private static void sendParticles(Level level, Vec3 center, int count, ParticleColor color, double spread) {
 		if (!(level instanceof ServerLevel serverLevel)) return;
 		for (int i = 0; i < count; i++) {
-			serverLevel.sendParticles(GlowParticleFactory.createData(color),
+			serverLevel.sendParticles(HemoParticleData.glow(color),
 					center.x + (level.random.nextDouble() - 0.5D) * spread,
 					center.y + (level.random.nextDouble() - 0.5D) * spread,
 					center.z + (level.random.nextDouble() - 0.5D) * spread,

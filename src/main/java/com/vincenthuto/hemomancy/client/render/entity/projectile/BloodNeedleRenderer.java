@@ -41,11 +41,12 @@ public class BloodNeedleRenderer<T extends BloodNeedleEntity> extends EntityRend
 	@Override
 	public void render(T entityIn, float entityYaw, float partialTicks, PoseStack matrixStackIn,
 			MultiBufferSource bufferIn, int packedLightIn) {
+        com.vincenthuto.hemomancy.client.render.world.AnimusMortemRenderTypes.begin(entityIn.level().getGameTime()+partialTicks);
         if (entityIn.isCoronationSword()) {
             var direction = entityIn.getDeltaMovement();
             if (direction.lengthSqr() < .0001) direction = entityIn.getLookAngle();
             com.vincenthuto.hemomancy.client.render.world.ManipulationVisualRenderer.projectileSword(
-                    matrixStackIn, bufferIn, direction, entityIn.swordOpacity());
+                    matrixStackIn, bufferIn, direction, entityIn.swordOpacity(), entityIn.tickCount + partialTicks,entityIn.getId());
             super.render(entityIn, entityYaw, partialTicks, matrixStackIn, bufferIn, packedLightIn);
             return;
         }
@@ -73,7 +74,9 @@ public class BloodNeedleRenderer<T extends BloodNeedleEntity> extends EntityRend
 		matrixStackIn.mulPose(Vector3.XP.rotationDegrees(45.0F).toMoj());
 		matrixStackIn.scale(0.05625F, 0.05625F, 0.05625F);
 		matrixStackIn.translate(-4.0D, 0.0D, 0.0D);
-		VertexConsumer ivertexbuilder = bufferIn.getBuffer(RenderType.entityCutout(TEXTURE));
+		VertexConsumer ivertexbuilder = com.vincenthuto.hemomancy.client.render.world.ManipulationVisualRenderer.formingProjectile(
+                new com.vincenthuto.hemomancy.client.render.world.BloodSurfaceVertices(bufferIn.getBuffer(
+                        com.vincenthuto.hemomancy.client.render.world.AnimusMortemRenderTypes.AVATAR)),entityIn.tickCount+partialTicks);
 		PoseStack.Pose matrixstack$entry = matrixStackIn.last();
 		Matrix4f matrix4f = matrixstack$entry.pose();
 		Matrix3f matrix3f = matrixstack$entry.normal();

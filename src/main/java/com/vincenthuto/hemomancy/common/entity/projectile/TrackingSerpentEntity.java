@@ -1,7 +1,7 @@
 package com.vincenthuto.hemomancy.common.entity.projectile;
 
+import com.vincenthuto.hemomancy.common.particle.HemoParticleData;
 import com.google.common.base.Predicates;
-import com.vincenthuto.hemomancy.client.particle.factory.SerpentParticleFactory;
 import com.vincenthuto.hemomancy.common.init.EffectInit;
 import com.vincenthuto.hemomancy.common.init.EntityInit;
 import com.vincenthuto.hutoslib.client.particle.util.HLParticleUtils;
@@ -159,20 +159,20 @@ public class TrackingSerpentEntity extends ThrowableProjectile {
 	public void tick() {
 		super.tick();
 		if (level().isClientSide) {
-			level().addParticle(SerpentParticleFactory.createData(new ParticleColor(100, 100, 0)),
+			level().addParticle(HemoParticleData.serpent(new ParticleColor(100, 100, 0)),
 					this.getX() + (Math.random() - 0.5) * 0.1, this.getY() + (Math.random() - 0.5) * 0.1,
 					this.getZ() + (Math.random() - 0.5) * 0.1, 0, 0, 0);
-			level().addParticle(SerpentParticleFactory.createData(new ParticleColor(100, 100, 0)),
+			level().addParticle(HemoParticleData.serpent(new ParticleColor(100, 100, 0)),
 					this.getX() + (Math.random() - 0.5) * 0.1, this.getY() + (Math.random() - 0.5) * 0.1,
 					this.getZ() + (Math.random() - 0.5) * 0.1, 0, 0, 0);
 			for (int i = 0; i < 10; i++) {
-				level().addParticle(SerpentParticleFactory.createData(new ParticleColor(255, 50, 50)),
+				level().addParticle(HemoParticleData.serpent(new ParticleColor(255, 50, 50)),
 						this.getX() + (Math.random() - 0.5) * 0.1, this.getY() + (Math.random() - 0.5) * 0.1,
 						this.getZ() + (Math.random() - 0.5) * 0.1, 0, 0, 0);
-				level().addParticle(SerpentParticleFactory.createData(new ParticleColor(255, 50, 50)),
+				level().addParticle(HemoParticleData.serpent(new ParticleColor(255, 50, 50)),
 						this.getX() + (Math.random() - 0.5) * 0.1, this.getY() + (Math.random() - 0.5) * 0.1,
 						this.getZ() + (Math.random() - 0.5) * 0.1, 0, 0, 0);
-				level().addParticle(SerpentParticleFactory.createData(new ParticleColor(255, 50, 50)),
+				level().addParticle(HemoParticleData.serpent(new ParticleColor(255, 50, 50)),
 						this.getX() + (Math.random() - 0.5) * 0.1, this.getY() + (Math.random() - 0.5) * 0.1,
 						this.getZ() + (Math.random() - 0.5) * 0.1, 0, 0, 0);
 			}

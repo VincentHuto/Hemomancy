@@ -112,6 +112,10 @@ public class Bloodline {
 		return playerUUIDS.contains(playerUUID);
 	}
 
+	public boolean canManage(UUID playerUUID) {
+		return isValid() && leaderUUID.equals(playerUUID);
+	}
+
 	public boolean addMember(UUID playerUUID) {
 		if (!playerUUIDS.contains(playerUUID)) {
 			playerUUIDS.add(playerUUID);

@@ -69,9 +69,9 @@ public class IrontoothMorphlingItem extends MorphlingItem {
 	}
 
 	@Override
-	public void use(Player playerIn, InteractionHand handIn, ItemStack itemStack, Level worldIn) {
+	public boolean tryUse(Player playerIn, InteractionHand handIn, ItemStack itemStack, Level worldIn) {
 		if (!MorphlingItem.tryBeginPrimalAbility(playerIn, itemStack, "DeepTremorSense",
-				320.0, 600, 180, 0)) return;
+				320.0, 600, 180, 0)) return false;
 		playerIn.addEffect(new MobEffectInstance(MobEffects.DIG_SPEED,
 				300, 2, true, false, true));
 		playerIn.addEffect(new MobEffectInstance(MobEffects.NIGHT_VISION,
@@ -99,6 +99,7 @@ public class IrontoothMorphlingItem extends MorphlingItem {
 				}
 			}
 		}
+		return true;
 	}
 
 	@Override

@@ -505,3 +505,6 @@ Location: `tools/skill_tree_editor/`
 *"The code, like the blood, remembers. Study it well, and you'll find the patterns that connect biology to mechanics, lore to implementation, cosmic horror to Minecraft blocks."*
 
 *Developer philosophy*
+
+See [Ferric and Ductilis](Ferric-Ductilis.md) for construct geometry, conductor rules, paralysis, packet compatibility and the disposable two-client review.
+

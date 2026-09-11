@@ -91,7 +91,7 @@ public class DialogueEventHandler {
 		}
 		var mnemonistChoice = MnemonistStarterMemoryChoice.fromEventId(event.getEventId());
 		if (mnemonistChoice.isPresent()) {
-			handleMnemonistStarterMemory(player, event.getEntityId(), mnemonistChoice.get());
+			event.setRewardDelivered(handleMnemonistStarterMemory(player, event.getEntityId(), mnemonistChoice.get()));
 			return;
 		}
 		HarbingerAlchemistDialogueTrees.RedTaxonomySample redTaxonomySample =
@@ -179,11 +179,14 @@ public class DialogueEventHandler {
 			}
 			case "hermit_heart_offered" -> {
 				Entity entity = player.level().getEntity(event.getEntityId());
+				boolean personalInitiation = false;
 				if (entity instanceof HarbingerHermitEntity hermit) {
 					TempleOathRules.bless(player, hermit.getUUID());
+					personalInitiation = com.vincenthuto.hemomancy.common.mission.hermit.SpentTempleInitiation.acceptBlessing(player, hermit);
 				}
 				player.displayClientMessage(
-						Component.translatable("hemomancy.dialogue.event.hermit_heart_offered")
+						Component.translatable(personalInitiation ? "hemomancy.dialogue.event.hermit_spent_temple_oath"
+								: "hemomancy.dialogue.event.hermit_heart_offered")
 								.withStyle(ChatFormatting.DARK_RED),
 						false);
 			}
@@ -239,13 +242,13 @@ public class DialogueEventHandler {
 				handleVicarHermitRoadReport(player, event.getEntityId());
 			}
 			case HarbingerVicarDialogueTrees.EVENT_CLAIM_FIRST_BLOODCRAFT_REWARD -> {
-				handleVicarFirstBloodcraftReward(player, event.getEntityId());
+				event.setRewardDelivered(handleVicarFirstBloodcraftReward(player, event.getEntityId()));
 			}
 			case HarbingerAlchemistDialogueTrees.EVENT_FIRST_SEPARATION_BRIEF -> {
 				handleAlchemistFirstSeparationBrief(player);
 			}
 			case HarbingerAlchemistDialogueTrees.EVENT_FIRST_SEPARATION_CLAIM -> {
-				handleAlchemistFirstSeparationReward(player, event.getEntityId());
+				event.setRewardDelivered(handleAlchemistFirstSeparationReward(player, event.getEntityId()));
 			}
 			case HarbingerAlchemistDialogueTrees.EVENT_BODY_ANSWERS_BRIEF -> {
 				handleAlchemistBodyAnswersBrief(player);
@@ -254,10 +257,13 @@ public class DialogueEventHandler {
 				handleVicarMasonsRespiteDirective(player, event.getEntityId());
 			}
 			case HarbingerVicarDialogueTrees.EVENT_CONSECRATION_KIT -> {
-				handleVicarConsecrationKit(player, event.getEntityId());
+				event.setRewardDelivered(handleVicarConsecrationKit(player, event.getEntityId()));
+			}
+			case SanguineMonolithDialogueTrees.EVENT_SHATTER -> {
+				event.setRewardDelivered(com.vincenthuto.hemomancy.common.block.harbinger.functional.SanguineMonolithBlock.pressFurther(player));
 			}
 			case SanguineMonolithDialogueTrees.EVENT_CORNERSTONE -> {
-				handleMonolithCornerstone(player, event.getEntityId());
+				event.setRewardDelivered(handleMonolithCornerstone(player, event.getEntityId()));
 			}
 			case HarbingerArtificerDialogueTrees.EVENT_BRIEF_WORN_VOW ->
 					handleArtificerBrief(player, 2, ArtificerAssignments.WORN_VOW_BRIEFED, false);
@@ -350,10 +356,10 @@ public class DialogueEventHandler {
 						"hemomancy.dialogue.event.artificer_living_arsenal_fitting_reissued");
 			}
 			case HarbingerCicatrixAnchoriteDialogueTrees.EVENT_FIRST_LESSON -> {
-				handleVeinMasonFirstLesson(player, event.getEntityId());
+				event.setRewardDelivered(handleVeinMasonFirstLesson(player, event.getEntityId()));
 			}
 			case HarbingerCicatrixAnchoriteDialogueTrees.EVENT_CONTINUATION_REWARD -> {
-				handleVeinMasonContinuationReward(player, event.getEntityId());
+				event.setRewardDelivered(handleVeinMasonContinuationReward(player, event.getEntityId()));
 			}
 			case "qliphoth_communion_done" -> {
 				// Player completed the full Qliphoth Communion — nine pomes consumed.
@@ -364,6 +370,7 @@ public class DialogueEventHandler {
 						false);
 			}
 			case "archon_choice_silence" -> {
+				if (!player.getPersistentData().getBoolean(FungalGardenTravelHelper.REVELATION_CHOICE_PENDING)) return;
 				player.getPersistentData().remove(FungalGardenTravelHelper.REVELATION_CHOICE_PENDING);
 				// Archon chose to carry the truth in silence — they turn back from the Eighth Degree.
 				HemoCapabilityAccess.getInitiatoryDegree(player).ifPresent(degree -> {
@@ -376,6 +383,7 @@ public class DialogueEventHandler {
 						false);
 			}
 			case "archon_choice_eighth_degree" -> {
+				if (!player.getPersistentData().getBoolean(FungalGardenTravelHelper.REVELATION_CHOICE_PENDING)) return;
 				player.getPersistentData().remove(FungalGardenTravelHelper.REVELATION_CHOICE_PENDING);
 				// Archon chose to pursue the Eighth Degree — the Apotheos path opens.
 				player.getPersistentData().putString(
@@ -409,7 +417,7 @@ public class DialogueEventHandler {
 						false);
 			}
 			case HarbingerMnemonistDialogueTrees.EVENT_WOVEN_VESSEL_TURN_IN ->
-					handleMnemonistWovenVessel(player, event.getEntityId());
+					event.setRewardDelivered(handleMnemonistWovenVessel(player, event.getEntityId()));
 			default -> {
 				// Unknown event — log for development
 			}
@@ -466,7 +474,7 @@ public class DialogueEventHandler {
 				false);
 	}
 
-	private static void handleVicarFirstBloodcraftReward(ServerPlayer player, int entityId) {
+	private static boolean handleVicarFirstBloodcraftReward(ServerPlayer player, int entityId) {
 		if (!FirstBloodcraftAssignment.canClaim(player)) {
 			String messageKey = FirstBloodcraftAssignment.isClaimed(player)
 					? "hemomancy.dialogue.event.vicar_first_bloodcraft_reward_known"
@@ -474,14 +482,14 @@ public class DialogueEventHandler {
 			player.displayClientMessage(
 					Component.translatable(messageKey).withStyle(ChatFormatting.GRAY),
 					false);
-			return;
+			return false;
 		}
 
 		if (!FirstBloodcraftAssignment.markClaimed(player)) {
 			player.displayClientMessage(
 					Component.translatable("hemomancy.dialogue.event.vicar_first_bloodcraft_reward_claim_failed")
 							.withStyle(ChatFormatting.RED), false);
-			return;
+			return false;
 		}
 		for (ItemStack stack : FirstBloodcraftAssignment.rewardStacks()) {
 			giveOrDropAtEntity(player, entityId, stack);
@@ -490,6 +498,7 @@ public class DialogueEventHandler {
 				Component.translatable("hemomancy.dialogue.event.vicar_first_bloodcraft_reward_granted")
 						.withStyle(ChatFormatting.DARK_RED),
 				false);
+		return true;
 	}
 
 	private static void handleAlchemistFirstSeparationBrief(ServerPlayer player) {
@@ -498,12 +507,13 @@ public class DialogueEventHandler {
 		FirstSeparationAssignment.giveBriefingSupplies(player);
 	}
 
-	private static void handleAlchemistFirstSeparationReward(ServerPlayer player, int entityId) {
-		if (!FirstSeparationAssignment.canClaim(player)) return;
-		if (!FirstSeparationAssignment.markClaimed(player)) return;
+	private static boolean handleAlchemistFirstSeparationReward(ServerPlayer player, int entityId) {
+		if (!FirstSeparationAssignment.canClaim(player)) return false;
+		if (!FirstSeparationAssignment.markClaimed(player)) return false;
 		for (ItemStack stack : FirstSeparationAssignment.rewardStacks()) {
 			giveOrDropAtEntity(player, entityId, stack);
 		}
+		return true;
 	}
 
 	private static void handleVicarMasonsRespiteDirective(ServerPlayer player, int entityId) {
@@ -530,20 +540,24 @@ public class DialogueEventHandler {
 				false);
 	}
 
-	private static void handleVicarConsecrationKit(ServerPlayer player, int entityId) {
+	public static boolean hasClaimedConsecrationKit(ServerPlayer player) {
+		return player.getPersistentData().getBoolean(VICAR_CONSECRATION_KIT_CLAIM_KEY);
+	}
+
+	private static boolean handleVicarConsecrationKit(ServerPlayer player, int entityId) {
 		if (HemoCapabilityAccess.getPlayerDegreeNumber(player) < 5) {
 			player.displayClientMessage(
 					Component.translatable("hemomancy.dialogue.event.vicar_consecration_kit_unready")
 							.withStyle(ChatFormatting.GRAY),
 					false);
-			return;
+			return false;
 		}
-		if (player.getPersistentData().getBoolean(VICAR_CONSECRATION_KIT_CLAIM_KEY)) {
+		if (hasClaimedConsecrationKit(player)) {
 			player.displayClientMessage(
 					Component.translatable("hemomancy.dialogue.event.vicar_consecration_kit_known")
 							.withStyle(ChatFormatting.GRAY),
 					false);
-			return;
+			return false;
 		}
 		giveOrDropAtEntity(player, entityId, new ItemStack(ItemInit.vicars_consecration_kit.get()));
 		player.getPersistentData().putBoolean(VICAR_CONSECRATION_KIT_CLAIM_KEY, true);
@@ -551,22 +565,27 @@ public class DialogueEventHandler {
 				Component.translatable("hemomancy.dialogue.event.vicar_consecration_kit_granted")
 						.withStyle(ChatFormatting.DARK_RED),
 				false);
+		return true;
 	}
 
-	private static void handleMonolithCornerstone(ServerPlayer player, int entityId) {
+	public static boolean hasClaimedMonolithCornerstone(ServerPlayer player) {
+		return player.getPersistentData().getBoolean(MONOLITH_CORNERSTONE_CLAIM_KEY);
+	}
+
+	private static boolean handleMonolithCornerstone(ServerPlayer player, int entityId) {
 		if (HemoCapabilityAccess.getPlayerDegreeNumber(player) < 7) {
 			player.displayClientMessage(
 					Component.translatable("hemomancy.dialogue.event.monolith_cornerstone_unready")
 							.withStyle(ChatFormatting.GRAY),
 					false);
-			return;
+			return false;
 		}
-		if (player.getPersistentData().getBoolean(MONOLITH_CORNERSTONE_CLAIM_KEY)) {
+		if (hasClaimedMonolithCornerstone(player)) {
 			player.displayClientMessage(
 					Component.translatable("hemomancy.dialogue.event.monolith_cornerstone_known")
 							.withStyle(ChatFormatting.GRAY),
 					false);
-			return;
+			return false;
 		}
 		giveOrDropAtEntity(player, entityId, new ItemStack(ItemInit.monolithic_cornerstone.get()));
 		player.getPersistentData().putBoolean(MONOLITH_CORNERSTONE_CLAIM_KEY, true);
@@ -574,6 +593,7 @@ public class DialogueEventHandler {
 				Component.translatable("hemomancy.dialogue.event.monolith_cornerstone_granted")
 						.withStyle(ChatFormatting.DARK_RED),
 				false);
+		return true;
 	}
 
 	private static void handleArtificerBrief(ServerPlayer player, int minimumDegree, ResourceLocation briefing,
@@ -719,7 +739,7 @@ public class DialogueEventHandler {
 		ItemStack stackFor(ServerPlayer player);
 	}
 
-	private static void handleVeinMasonFirstLesson(ServerPlayer player, int entityId) {
+	private static boolean handleVeinMasonFirstLesson(ServerPlayer player, int entityId) {
 		int degree = HemoCapabilityAccess.getPlayerDegreeNumber(player);
 		boolean activeBlood = HemoCapabilityAccess.getBloodVolume(player)
 				.map(volume -> volume.isActive())
@@ -735,14 +755,14 @@ public class DialogueEventHandler {
 					Component.translatable("hemomancy.dialogue.event.vein_mason_unready")
 							.withStyle(ChatFormatting.GRAY),
 					false);
-			return;
+			return false;
 		}
 		if (HarbingerAdvancementGranter.isVeinMasonFirstLesson(player)) {
 			player.displayClientMessage(
 					Component.translatable("hemomancy.dialogue.event.vein_mason_known")
 							.withStyle(ChatFormatting.GRAY),
 					false);
-			return;
+			return false;
 		}
 
 		VeinMasonScarLesson.Lesson lesson = VeinMasonScarLesson.forPlayer(player);
@@ -758,22 +778,23 @@ public class DialogueEventHandler {
 				Component.translatable("hemomancy.dialogue.event.vein_mason_first_lesson")
 						.withStyle(ChatFormatting.DARK_RED),
 				false);
+		return true;
 	}
 
-	private static void handleVeinMasonContinuationReward(ServerPlayer player, int entityId) {
+	private static boolean handleVeinMasonContinuationReward(ServerPlayer player, int entityId) {
 		if (!HarbingerAdvancementGranter.isVeinMasonFirstEffigyLoadout(player)) {
 			player.displayClientMessage(
 					Component.translatable("hemomancy.dialogue.event.vein_mason_reward_unready")
 							.withStyle(ChatFormatting.GRAY),
 					false);
-			return;
+			return false;
 		}
 		if (HarbingerAdvancementGranter.isVeinMasonRewardClaimed(player)) {
 			player.displayClientMessage(
 					Component.translatable("hemomancy.dialogue.event.vein_mason_reward_known")
 							.withStyle(ChatFormatting.GRAY),
 					false);
-			return;
+			return false;
 		}
 
 		VeinMasonScarLesson.Lesson lesson = VeinMasonScarLesson.continuationForPlayer(player);
@@ -787,6 +808,7 @@ public class DialogueEventHandler {
 				Component.translatable("hemomancy.dialogue.event.vein_mason_reward_claimed")
 						.withStyle(ChatFormatting.DARK_RED),
 				false);
+		return true;
 	}
 
 	private static void handleAlchemistRedTaxonomy(ServerPlayer player,
@@ -971,7 +993,7 @@ public class DialogueEventHandler {
 		return null;
 	}
 
-	private static void handleMnemonistStarterMemory(ServerPlayer player, int entityId, MnemonistStarterMemoryChoice choice) {
+	private static boolean handleMnemonistStarterMemory(ServerPlayer player, int entityId, MnemonistStarterMemoryChoice choice) {
 		boolean purifying = HemoCapabilityAccess.getUnstainedProgress(player)
 				.map(progress -> progress.hasBegunPurification())
 				.orElse(false);
@@ -986,19 +1008,19 @@ public class DialogueEventHandler {
 					Component.translatable("hemomancy.dialogue.event.mnemonist_starter_unavailable")
 							.withStyle(ChatFormatting.DARK_RED),
 					false);
-			return;
+			return false;
 		}
 		if (knowsStarterManipulation(player, choice.manipulationName())) {
 			player.displayClientMessage(
 					Component.translatable("hemomancy.dialogue.event.mnemonist_starter_already_known")
 							.withStyle(ChatFormatting.GRAY),
 					false);
-			return;
+			return false;
 		}
 
 		ItemStack stack = starterStack(choice);
 		if (stack.isEmpty()) {
-			return;
+			return false;
 		}
 		giveOrDropAtEntity(player, entityId, stack);
 		player.getPersistentData().putBoolean(MnemonistStarterMemoryChoice.CLAIM_KEY, true);
@@ -1006,6 +1028,7 @@ public class DialogueEventHandler {
 				Component.translatable("hemomancy.dialogue.event.mnemonist_starter_granted")
 						.withStyle(ChatFormatting.DARK_RED),
 				false);
+		return true;
 	}
 
 	private static boolean knowsStarterManipulation(ServerPlayer player, String manipulationName) {
@@ -1023,7 +1046,7 @@ public class DialogueEventHandler {
 		};
 	}
 
-	private static void handleMnemonistWovenVessel(ServerPlayer player, int entityId) {
+	private static boolean handleMnemonistWovenVessel(ServerPlayer player, int entityId) {
 		int degree = HemoCapabilityAccess.getPlayerDegreeNumber(player);
 		boolean purifying = HemoCapabilityAccess.getUnstainedProgress(player)
 				.map(progress -> progress.hasBegunPurification())
@@ -1037,7 +1060,7 @@ public class DialogueEventHandler {
 					Component.translatable("hemomancy.dialogue.event.mnemonist_woven_vessel_unready")
 							.withStyle(ChatFormatting.GRAY),
 					false);
-			return;
+			return false;
 		}
 		if (HarbingerAdvancementGranter.isMnemonistWovenVesselComplete(player)) {
 			MnemonicRecipeKnowledge.awardCatalogue(player);
@@ -1045,14 +1068,14 @@ public class DialogueEventHandler {
 					Component.translatable("hemomancy.dialogue.event.mnemonist_woven_vessel_known")
 							.withStyle(ChatFormatting.GRAY),
 					false);
-			return;
+			return false;
 		}
 		if (!hasItemCount(player, ItemInit.hematic_memory.get(), 1)) {
 			player.displayClientMessage(
 					Component.translatable("hemomancy.dialogue.event.mnemonist_woven_vessel_missing_memory")
 							.withStyle(ChatFormatting.GRAY),
 					false);
-			return;
+			return false;
 		}
 		if (!hasItemCount(player, Items.BOOK, 1)
 				|| !hasItemCount(player, Items.INK_SAC, 1)
@@ -1061,7 +1084,7 @@ public class DialogueEventHandler {
 					Component.translatable("hemomancy.dialogue.event.mnemonist_woven_vessel_missing_archive")
 							.withStyle(ChatFormatting.GRAY),
 					false);
-			return;
+			return false;
 		}
 
 		if (!player.isCreative()) {
@@ -1070,7 +1093,7 @@ public class DialogueEventHandler {
 			consumeItemCount(player, Items.PAPER, 3);
 		}
 		giveOrDropAtEntity(player, entityId, new ItemStack(ItemInit.bleeding_bulb.get()));
-		giveOrDropAtEntity(player, entityId, new ItemStack(ItemInit.vivacious_enzyme.get()));
+		giveOrDropAtEntity(player, entityId, new ItemStack(ItemInit.vivacious_enzyme.get(), 3));
 		HarbingerAdvancementGranter.grantIfNotDone(player,
 				HarbingerAdvancementGranter.ADV_MNEMONIST_WOVEN_VESSEL_COMPLETE);
 		MnemonicReliquaryProgression.teach(player);
@@ -1083,6 +1106,7 @@ public class DialogueEventHandler {
 				Component.translatable("hemomancy.dialogue.event.mnemonist_woven_vessel_complete")
 						.withStyle(ChatFormatting.DARK_RED),
 				false);
+		return true;
 	}
 
 	private static boolean hasItemCount(ServerPlayer player, Item item, int needed) {

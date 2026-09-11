@@ -1,6 +1,6 @@
 package com.vincenthuto.hemomancy.common.rite.harbinger;
 
-import com.vincenthuto.hemomancy.client.particle.factory.BloodCellParticleFactory;
+import com.vincenthuto.hemomancy.common.particle.HemoParticleData;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodVolumeEvents;
 import com.vincenthuto.hemomancy.common.entity.mob.animal.BloodlickerEntity;
@@ -13,11 +13,12 @@ import com.vincenthuto.hemomancy.common.recipe.CardinalRiteRecipe;
 import com.vincenthuto.hemomancy.common.rite.ActiveCardinalRite;
 import com.vincenthuto.hemomancy.common.rite.CardinalRiteAllyRole;
 import com.vincenthuto.hemomancy.common.rite.CardinalRiteCeremonyRules;
+import com.vincenthuto.hemomancy.common.rite.CardinalRitePhase;
+import com.vincenthuto.hemomancy.common.rite.CardinalRiteWaveRules;
 import com.vincenthuto.hemomancy.common.rite.sigil.CardinalRiteSigilRules;
 import com.vincenthuto.hemomancy.common.rite.sigil.IchorianSigilDefinition;
 import com.vincenthuto.hemomancy.common.rite.sigil.IchorianSigilRegistry;
 import com.vincenthuto.hemomancy.common.tile.harbinger.rite.IronBrazierBlockEntity;
-import com.vincenthuto.hutoslib.client.particle.factory.GlowParticleFactory;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
@@ -45,13 +46,16 @@ import java.util.UUID;
  */
 public final class CardinalRiteOrdealEngine {
 	private static final String RITE_CASTER = "HemomancyRiteCaster";
-	private static final int WAVE_TIMEOUT_TICKS = 360;
+	private static final int WAVE_TIMEOUT_TICKS = CardinalRiteWaveRules.DEADLINE_TICKS;
 
 	private CardinalRiteOrdealEngine() {
 	}
 
 	public static void tick(ServerLevel level, ServerPlayer caster, ActiveCardinalRite rite,
 			CardinalRiteRecipe recipe) {
+		if ((rite.getPhase() == CardinalRitePhase.OFFERING_PROCESSION
+				|| rite.getPhase() == CardinalRitePhase.CULMINATION)
+				&& !level.areEntitiesLoaded(net.minecraft.world.level.ChunkPos.asLong(rite.getCenterPos()))) return;
 		rite.tick();
 		switch (rite.getPhase()) {
 			case CONSECRATION -> tickConsecration(level, caster, rite, recipe);
@@ -145,6 +149,7 @@ public final class CardinalRiteOrdealEngine {
 		HumanitySpriteEntity daemon = HumanitySpriteEntity.findBoundToRite(
 				level, rite.getPlayerUUID(), rite.getCenterPos());
 		if (daemon != null) return daemon;
+		if (!level.areEntitiesLoaded(net.minecraft.world.level.ChunkPos.asLong(rite.getCenterPos()))) return null;
 		daemon = EntityInit.humanity_sprite.get().create(level);
 		if (daemon == null) return null;
 		daemon.initialize(centerPosition(rite, scale), scale);
@@ -215,6 +220,7 @@ public final class CardinalRiteOrdealEngine {
 		tickAllies(level, rite);
 		pruneThreats(level, rite);
 		ResourceLocation sigilId = CardinalRiteInteractionHandler.sigilForWave(rite);
+		boolean traced = false;
 		if ("false_omens".equals(currentWave(rite))) drawFalseOmens(level, rite);
 		if (sigilId != null) {
 			String wave = currentWave(rite);
@@ -226,9 +232,8 @@ public final class CardinalRiteOrdealEngine {
 			drawSigil(level, rite, sigilId,
 					new BlockPos(placement.x(), placement.y(), placement.z()), progressKey);
 			IchorianSigilDefinition sigil = IchorianSigilRegistry.get(sigilId);
-			if (sigil != null
-					&& rite.getSigilProgress().getOrDefault(progressKey, 0) >= sigil.nodes().size()
-					&& rite.areAnchorsConsecrated()) {
+			traced = sigil != null && rite.getSigilProgress().getOrDefault(progressKey, 0) >= sigil.nodes().size();
+			if (traced && rite.areAnchorsConsecrated()) {
 				rite.completeWave();
 				return;
 			}
@@ -239,6 +244,16 @@ public final class CardinalRiteOrdealEngine {
 				rite.completeWave();
 				return;
 			}
+		}
+		if (rite.getPhaseTicks() >= WAVE_TIMEOUT_TICKS
+				&& CardinalRiteWaveRules.missedRequiredObjective(currentWave(rite), traced, !rite.getRiteThreats().isEmpty())) {
+			clearThreats(level, rite);
+			rite.markCollapsed();
+			caster.displayClientMessage(Component.literal(sigilId != null
+					? "The demanded sigil went unanswered. The rite fails; prepare it again."
+					: "The puppeteers outlasted the calling. The rite fails; prepare it again.")
+					.withStyle(ChatFormatting.DARK_RED), false);
+			return;
 		}
 		if (rite.getPhaseTicks() == WAVE_TIMEOUT_TICKS) {
 			if (!attendantCatchesMiss(level, rite)) {
@@ -293,6 +308,8 @@ public final class CardinalRiteOrdealEngine {
 					: "A response sigil is demanded.";
 		};
 		caster.displayClientMessage(Component.literal(cue).withStyle(ChatFormatting.DARK_RED), false);
+		caster.displayClientMessage(Component.literal(CardinalRiteWaveRules.deadlineHint(wave)
+				+ ". Restore every anchor before advancing.").withStyle(ChatFormatting.GRAY), false);
 		if (!wave.startsWith("discover_") && !"response_sigil".equals(wave)) {
 			spawnThreats(level, caster, rite, wave);
 		}
@@ -434,34 +451,33 @@ public final class CardinalRiteOrdealEngine {
 				if (entry.getValue() != CardinalRiteAllyRole.ANCHOR
 						|| !CardinalRiteAllyService.isAvailable(level, rite, entry.getKey())) continue;
 				int[] anchors = rite.getAnchorBloodMl();
-				int ring = Math.floorMod(anchorOrdinal++, Math.max(1, rite.getDegree()));
+				int ringCount = Math.max(1, (anchors.length + 3) / 4);
+				int ring = Math.floorMod(anchorOrdinal++, ringCount);
 				for (int i = ring * 4; i < Math.min(anchors.length, ring * 4 + 4); i++) {
 					if (rite.bloodNeededForAnchor(i) <= 0) continue;
-					int drawn = CardinalRiteAllyService.spend(level, rite, entry.getKey(), 10);
+					int drawn = CardinalRiteAllyService.spend(level, rite, entry.getKey(), Math.min(10, rite.bloodNeededForAnchor(i)));
 					if (drawn > 0) rite.fillAnchor(i, drawn);
 					break;
 				}
 			}
 		}
 		if (rite.getPhaseTicks() % 100 == 0) {
+			Mob target = rite.getRiteThreats().stream().map(level::getEntity)
+					.filter(Mob.class::isInstance).map(Mob.class::cast)
+					.filter(Mob::isAlive).findFirst().orElse(null);
+			if (target == null) return;
 			for (var entry : rite.getAllyRoles().entrySet()) {
 				if (entry.getValue() != CardinalRiteAllyRole.WARDEN
 						|| !CardinalRiteAllyService.isAvailable(level, rite, entry.getKey())
-						|| CardinalRiteAllyService.spend(level, rite, entry.getKey(), 25) < 25) continue;
-				for (UUID threatId : rite.getRiteThreats()) {
-					Entity threat = level.getEntity(threatId);
-					if (threat instanceof Mob mob) {
-						mob.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 100, 3));
-						break;
-					}
-				}
+						|| !CardinalRiteAllyService.trySpend(level, rite, entry.getKey(), 25)) continue;
+				target.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 100, 3));
 			}
 		}
 	}
 
 	private static void drawAllyStations(ServerLevel level, ActiveCardinalRite rite) {
 		if (rite.getDegree() < 5 || level.getGameTime() % 4 != 0) return;
-		for (var marker : CardinalRiteAllyService.markers().entrySet()) {
+		for (var marker : CardinalRiteAllyService.markers(CardinalRiteRecipe.getRiteByLocation(level, rite.getRecipeId())).entrySet()) {
 			BlockPos pos = rite.getCenterPos().offset(marker.getValue());
 			ParticleColor color = switch (marker.getKey()) {
 				case ANCHOR -> new ParticleColor(220, 40, 40);
@@ -589,9 +605,9 @@ public final class CardinalRiteOrdealEngine {
 			double spreadX, double spreadY, double spreadZ) {
 		for (CardinalRiteInteractionMarker.Layer layer : CardinalRiteInteractionMarker.layers()) {
 			switch (layer) {
-				case BLOOD_CELL -> level.sendParticles(BloodCellParticleFactory.createData(color),
+				case BLOOD_CELL -> level.sendParticles(HemoParticleData.bloodCell(color),
 						x, y, z, bloodCellCount, spreadX, spreadY, spreadZ, 0.0D);
-				case GLOW -> level.sendParticles(GlowParticleFactory.createData(color),
+				case GLOW -> level.sendParticles(HemoParticleData.glow(color),
 						x, y + 0.04D, z, 1, 0.02D, 0.01D, 0.02D, 0.0D);
 			}
 		}

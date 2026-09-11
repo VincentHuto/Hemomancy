@@ -12,12 +12,29 @@ import net.minecraft.world.phys.Vec3;
 
 import javax.annotation.Nullable;
 
+@net.neoforged.fml.common.EventBusSubscriber(modid=com.vincenthuto.hemomancy.Hemomancy.MOD_ID)
 public final class DuctilisLightningEffects {
 	private static final int OUTER_YELLOW = 0xE8FFE84A;
 	private static final int INNER_WHITE = 0xFFFFFFFF;
 	private static final double GOLDEN_ANGLE = Math.PI * (3.0D - Math.sqrt(5.0D));
+	private record Restrike(ServerLevel level, LivingEntity source, Vec3 start, Vec3 end, long at, long seed) {}
+	private static final java.util.List<Restrike> RESTRIKES=new java.util.ArrayList<>();
 
 	private DuctilisLightningEffects() {
+	}
+
+	public static void conductorStrike(LivingEntity caster, Vec3 endpoint) {
+		if (!(caster.level() instanceof ServerLevel level)) return;
+		Vec3 start = castOrigin(caster, .18);
+		spawn(level, caster, start, endpoint, seed(level, caster, endpoint.hashCode()), 62, 2.1f, 8, 7, .08f, .012f);
+	}
+
+	public static void conductorDischarge(LivingEntity source, Vec3 surface, LivingEntity target) {
+		if (!(source.level() instanceof ServerLevel level)) return;
+		Vec3 end=target.position().add(0,target.getBbHeight()*.55,0);
+		spawn(level,source,surface,end,seed(level,source,target.getId()),62,2.1f,8,7,.07f,.01f);
+		restrike(level,source,surface,end);
+		nervousImpact(target);
 	}
 
 	public static void activationPotential(Player player, LivingEntity target, int index) {
@@ -25,16 +42,18 @@ public final class DuctilisLightningEffects {
 			return;
 		}
 
-		Vec3 start = player.getEyePosition().subtract(0.0D, 0.35D, 0.0D);
+		Vec3 start = castOrigin(player, .35);
 		Vec3 end = target.position().add(0.0D, target.getBbHeight() * 0.55D, 0.0D);
+		nervousImpact(target);
 		long seed = seed(level, player, target.getId() * 31L + index);
-		spawn(level, player, start, end, seed, 64.0F, 2.0F, 7, 7, 0.11F, 0.045F);
+		spawn(level, player, start, end, seed, 64.0F, 2.0F, 7, 7, 0.11F, 0.017F);
+		if(index<6)restrike(level,player,start,end);
 
 		if (index < 6) {
 			RandomSource random = level.random;
 			Vec3 forkEnd = end.add(randomSigned(random, 0.28D), random.nextDouble() * 0.25D - 0.05D,
 					randomSigned(random, 0.28D));
-			spawn(level, player, end, forkEnd, seed ^ 0x5DEECE66DL, 48.0F, 1.6F, 5, 4, 0.06F, 0.023F);
+			spawn(level, player, end, forkEnd, seed ^ 0x5DEECE66DL, 48.0F, 1.6F, 5, 4, 0.06F, 0.01F);
 		}
 	}
 
@@ -43,12 +62,15 @@ public final class DuctilisLightningEffects {
 			return;
 		}
 
-		Vec3 start = caster.getEyePosition().subtract(0.0D, 0.18D, 0.0D);
+		Vec3 start = castOrigin(caster, .18);
 		Vec3 end = target.position().add(0.0D, target.getBbHeight() * 0.62D, 0.0D);
+		nervousImpact(target);
+		link(caster,target,10);
 		long seed = seed(level, caster, target.getId() * 17L);
-		spawn(level, caster, start, end, seed, 72.0F, 2.4F, 6, 8, 0.09F, 0.038F);
+		spawn(level, caster, start, end, seed, 72.0F, 2.4F, 6, 8, 0.09F, 0.014F);
+		restrike(level,caster,start,end);
 		spawn(level, caster, end, end.add(randomSigned(level.random, 0.35D), 0.18D,
-				randomSigned(level.random, 0.35D)), seed ^ 0xBADC0FFEE0DDF00DL, 56.0F, 2.0F, 4, 5, 0.05F, 0.026F);
+				randomSigned(level.random, 0.35D)), seed ^ 0xBADC0FFEE0DDF00DL, 56.0F, 2.0F, 4, 5, 0.05F, 0.012F);
 	}
 
 	public static void conductiveMark(LivingEntity caster, LivingEntity target) {
@@ -64,7 +86,7 @@ public final class DuctilisLightningEffects {
 			Vec3 end = center.add(Math.cos(angle + 0.95D) * 0.52D, 0.25D - (i % 2) * 0.24D,
 					Math.sin(angle + 0.95D) * 0.52D);
 			spawn(level, caster, start, end, seed(level, caster, target.getId() * 53L + i), 44.0F, 1.6F, 5, 5,
-					0.055F, 0.024F);
+					0.055F, 0.011F);
 		}
 	}
 
@@ -73,10 +95,12 @@ public final class DuctilisLightningEffects {
 			return;
 		}
 
-		Vec3 start = source.position().add(0.0D, source.getBbHeight() * 0.58D, 0.0D);
+		Vec3 start = source instanceof Player ? castOrigin(source, .3) : source.position().add(0.0D, source.getBbHeight() * 0.58D, 0.0D);
 		Vec3 end = target.position().add(0.0D, target.getBbHeight() * 0.55D, 0.0D);
+		link(source,target,10);
 		spawn(level, source, start, end, seed(level, source, target.getId() * 97L + index), 62.0F, 2.1F, 6, 7,
-				0.085F, 0.033F);
+				0.085F, 0.014F);
+		restrike(level,source,start,end);
 	}
 
 	public static void hemolymphalPulse(Player player) {
@@ -85,6 +109,9 @@ public final class DuctilisLightningEffects {
 		}
 
 		Vec3 center = player.position().add(0.0D, player.getBbHeight() * 0.58D, 0.0D);
+		com.vincenthuto.hemomancy.common.manipulation.ManipulationVisuals.burst(level,
+				com.vincenthuto.hemomancy.common.manipulation.ManipulationVisuals.Form.NERVE_PULSE,
+				player.position(),player.position(),24,32);
 		double rotation = level.getGameTime() * 0.13D + player.getId();
 		int count = 12;
 		for (int i = 0; i < count; i++) {
@@ -92,7 +119,7 @@ public final class DuctilisLightningEffects {
 			double distance = 1.35D + level.random.nextDouble() * 0.95D;
 			Vec3 start = center.add(direction.scale(0.24D));
 			Vec3 end = center.add(direction.scale(distance));
-			spawn(level, player, start, end, seed(level, player, i), 40.0F, 1.8F, 8, 5, 0.09F, 0.03F);
+			spawn(level, player, start, end, seed(level, player, i), 40.0F, 1.8F, 8, 5, 0.09F, 0.012F);
 		}
 	}
 
@@ -109,7 +136,7 @@ public final class DuctilisLightningEffects {
 			Vec3 start = center.add(Math.cos(angle) * 0.72D, -0.25D + (i % 2) * 0.5D, Math.sin(angle) * 0.72D);
 			Vec3 end = center.add(Math.cos(nextAngle) * 0.72D, 0.25D - (i % 2) * 0.5D,
 					Math.sin(nextAngle) * 0.72D);
-			spawn(level, player, start, end, seed(level, player, 80L + i), 36.0F, 1.4F, 8, 5, 0.08F, 0.032F);
+			spawn(level, player, start, end, seed(level, player, 80L + i), 36.0F, 1.4F, 8, 5, 0.08F, 0.012F);
 		}
 	}
 
@@ -129,6 +156,46 @@ public final class DuctilisLightningEffects {
 		double horizontalRadius = Math.sqrt(Math.max(0.0D, 1.0D - y * y));
 		double theta = index * GOLDEN_ANGLE + rotation;
 		return new Vec3(Math.cos(theta) * horizontalRadius, y, Math.sin(theta) * horizontalRadius);
+	}
+
+	public static void livingCircuit(LivingEntity source, LivingEntity target) {
+		link(source,target,25);
+	}
+
+	public static void sensoryResponse(LivingEntity target) {
+		com.vincenthuto.hemomancy.common.manipulation.ManipulationVisuals.attached(target,
+				com.vincenthuto.hemomancy.common.manipulation.ManipulationVisuals.Form.NERVE_HIT, .4, 18, 1);
+	}
+
+	private static void link(LivingEntity source, LivingEntity target, int ticks) {
+        com.vincenthuto.hemomancy.common.manipulation.FerricDuctilisStatusVisuals.link(source,target,ticks);
+    }
+
+	private static void nervousImpact(LivingEntity target) {
+		if (target.level() instanceof ServerLevel level)
+			com.vincenthuto.hemomancy.common.manipulation.ManipulationVisuals.burst(level,
+					com.vincenthuto.hemomancy.common.manipulation.ManipulationVisuals.Form.NERVE_HIT,
+					target.position().add(0,target.getBbHeight()*.6,0),target.position(),.5,12);
+	}
+
+	private static void restrike(ServerLevel level,LivingEntity source,Vec3 start,Vec3 end) {
+		if(RESTRIKES.size()<32)RESTRIKES.add(new Restrike(level,source,start,end,level.getGameTime()+3,seed(level,source,end.hashCode())));
+	}
+	@net.neoforged.bus.api.SubscribeEvent public static void tickRestrikes(net.neoforged.neoforge.event.tick.ServerTickEvent.Post event) {
+		var iterator=RESTRIKES.iterator();
+		while(iterator.hasNext()) {
+			var strike=iterator.next();
+			if(strike.level.getGameTime()<strike.at)continue;
+			iterator.remove();
+			if(strike.source.isAlive() && strike.source.level()==strike.level)
+				spawn(strike.level,strike.source,strike.start,strike.end,strike.seed,72,3,3,6,.055f,.009f);
+		}
+	}
+	@net.neoforged.bus.api.SubscribeEvent public static void clearRestrikes(net.neoforged.neoforge.event.server.ServerStoppedEvent event) {RESTRIKES.clear();}
+
+	private static Vec3 castOrigin(LivingEntity source,double down) {
+		// Keep a player's luminous core in front of the first-person near plane.
+		return source.getEyePosition().subtract(0,down,0).add(source instanceof Player ? source.getLookAngle().scale(.4) : Vec3.ZERO);
 	}
 
 	private static void spawn(ServerLevel level, Player player, Vec3 start, Vec3 end, long seed, float ticksPerMeter,

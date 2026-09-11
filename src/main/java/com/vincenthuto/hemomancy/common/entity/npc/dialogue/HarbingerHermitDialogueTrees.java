@@ -15,7 +15,7 @@ import java.util.List;
  */
 public final class HarbingerHermitDialogueTrees {
 
-	private static final ResourceLocation HERMIT_ICON = Hemomancy.rloc("textures/entity/harbinger_hermit/harbinger_hermit.png");
+	private static final ResourceLocation HERMIT_ICON = Hemomancy.rloc("textures/entity/npc/harbinger/harbinger_hermit/harbinger_hermit.png");
 	private static final String SPEAKER = "entity.hemomancy.harbinger_hermit";
 
 	private HarbingerHermitDialogueTrees() {}

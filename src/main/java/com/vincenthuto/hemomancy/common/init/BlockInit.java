@@ -201,6 +201,9 @@ public class BlockInit {
 							.lightLevel(state -> 7)));
 
 	// Blocks
+	public static final DeferredHolder<Block, Block> frozen_cruor = BASEBLOCKS.register("frozen_cruor",
+			() -> new IceBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.PACKED_ICE)
+					.mapColor(MapColor.COLOR_RED)));
 
 	public static final DeferredHolder<Block, Block> sanguine_glass = BASEBLOCKS.register("sanguine_glass",
 			() -> new TransparentBlock(

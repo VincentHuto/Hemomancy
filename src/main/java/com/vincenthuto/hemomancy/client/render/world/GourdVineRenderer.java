@@ -78,21 +78,26 @@ public class GourdVineRenderer {
 		float currentTime = mc.level.getGameTime() + partialTick;
 		Vec3 cam = mc.gameRenderer.getMainCamera().getPosition();
 
-		for (ActiveRiteClientData.RiteEntry rite : rites) {
-			if (!isVesselRite(rite.getRecipeId())) continue;
-			drawVines(poseStack, buffer, rite, currentTime, cam);
-		}
-
-		buffer.endBatch(RenderTypeInit.RITE_BOUNDARY_CORE);
-		buffer.endBatch(RenderTypeInit.RITE_BOUNDARY_GLOW);
+        // Shared BufferSource finishes the previous non-fixed buffer when its type changes.
+        renderPass(poseStack, buffer.getBuffer(RenderTypeInit.RITE_BOUNDARY_CORE), rites, currentTime, cam, false);
+        buffer.endBatch(RenderTypeInit.RITE_BOUNDARY_CORE);
+        renderPass(poseStack, buffer.getBuffer(RenderTypeInit.RITE_BOUNDARY_GLOW), rites, currentTime, cam, true);
+        buffer.endBatch(RenderTypeInit.RITE_BOUNDARY_GLOW);
 	}
 
 	// ════════════════════════════════════════════════════════════════════════
 	//  Per-rite vine rendering
 	// ════════════════════════════════════════════════════════════════════════
 
-	private static void drawVines(PoseStack stack, MultiBufferSource buffer,
-			ActiveRiteClientData.RiteEntry rite, float time, Vec3 cam) {
+    private static void renderPass(PoseStack stack, VertexConsumer consumer,
+            List<ActiveRiteClientData.RiteEntry> rites, float time, Vec3 cam, boolean glowPass) {
+        for (ActiveRiteClientData.RiteEntry rite : rites) {
+            if (isVesselRite(rite.getRecipeId())) drawVines(stack, consumer, rite, time, cam, glowPass);
+        }
+    }
+
+	private static void drawVines(PoseStack stack, VertexConsumer consumer,
+			ActiveRiteClientData.RiteEntry rite, float time, Vec3 cam, boolean glowPass) {
 
 		Minecraft mc = Minecraft.getInstance();
 		ClientLevel level = mc.level;
@@ -108,8 +113,6 @@ public class GourdVineRenderer {
 		// progress ∈ [0,1]: how far the rite has advanced
 		float progress = (float) Math.min(1.0, rite.getProgress());
 
-		VertexConsumer coreVC = buffer.getBuffer(RenderTypeInit.RITE_BOUNDARY_CORE);
-		VertexConsumer glowVC = buffer.getBuffer(RenderTypeInit.RITE_BOUNDARY_GLOW);
 
 		stack.pushPose();
 		Matrix4f mat = stack.last().pose();
@@ -159,7 +162,7 @@ public class GourdVineRenderer {
 			float rootZ = (float) (worldRootZ - cam.z);
 			float rootY = (float) (groundY - cam.y);
 
-			drawSingleVine(coreVC, glowVC, mat, rootX, rootZ, rootY,
+			drawSingleVine(consumer, glowPass, mat, rootX, rootZ, rootY,
 					vineHeight, swayDirX, swayDirZ,
 					vineAlpha, time, v);
 		}
@@ -171,7 +174,7 @@ public class GourdVineRenderer {
 	//  Single vine: tapered quad strip rising upward with sway
 	// ════════════════════════════════════════════════════════════════════════
 
-	private static void drawSingleVine(VertexConsumer coreVC, VertexConsumer glowVC, Matrix4f mat,
+	private static void drawSingleVine(VertexConsumer consumer, boolean glowPass, Matrix4f mat,
 			float rootX, float rootZ, float rootY,
 			float vineHeight, float swayDirX, float swayDirZ,
 			float vineAlpha, float time, int vineIndex) {
@@ -219,11 +222,14 @@ public class GourdVineRenderer {
 			float coreB1 = lerp(BASE_B, TIP_B, t1);
 
 			// Core quad (the solid vine body)
-			emitQuad(coreVC, mat,
+            if (!glowPass) {
+			emitQuad(consumer, mat,
 					cx0 - perpX * w0, y0, cz0 - perpZ * w0, coreR0, coreG0, coreB0, a0,
 					cx0 + perpX * w0, y0, cz0 + perpZ * w0, coreR0, coreG0, coreB0, a0,
 					cx1 + perpX * w1, y1, cz1 + perpZ * w1, coreR1, coreG1, coreB1, a1,
 					cx1 - perpX * w1, y1, cz1 - perpZ * w1, coreR1, coreG1, coreB1, a1);
+                continue;
+            }
 
 			// Glow halo (wider, dimmer)
 			float gw0 = w0 * 2.8f;
@@ -231,13 +237,13 @@ public class GourdVineRenderer {
 			float ga0 = a0 * 0.30f;
 			float ga1 = a1 * 0.22f;
 
-			emitQuad(glowVC, mat,
+			emitQuad(consumer, mat,
 					cx0 - perpX * gw0, y0, cz0 - perpZ * gw0, GLOW_R, GLOW_G, GLOW_B, 0f,
 					cx0 - perpX * w0,  y0, cz0 - perpZ * w0,  GLOW_R, GLOW_G, GLOW_B, ga0,
 					cx1 - perpX * w1,  y1, cz1 - perpZ * w1,  GLOW_R, GLOW_G, GLOW_B, ga1,
 					cx1 - perpX * gw1, y1, cz1 - perpZ * gw1, GLOW_R, GLOW_G, GLOW_B, 0f);
 
-			emitQuad(glowVC, mat,
+			emitQuad(consumer, mat,
 					cx0 + perpX * w0,  y0, cz0 + perpZ * w0,  GLOW_R, GLOW_G, GLOW_B, ga0,
 					cx0 + perpX * gw0, y0, cz0 + perpZ * gw0, GLOW_R, GLOW_G, GLOW_B, 0f,
 					cx1 + perpX * gw1, y1, cz1 + perpZ * gw1, GLOW_R, GLOW_G, GLOW_B, 0f,

@@ -18,6 +18,7 @@ import net.minecraft.world.level.block.state.BlockState;
 public class CardinalFocusBlockEntity extends BlockEntity {
 	private static final String TAG_MEDIUM = "Medium";
 	private BlockPos templeDisplay;
+	private java.util.UUID templeHermit;
 	private ItemStack medium = ItemStack.EMPTY;
 
 	public CardinalFocusBlockEntity(BlockPos pos, BlockState state) {
@@ -32,6 +33,13 @@ public class CardinalFocusBlockEntity extends BlockEntity {
 	public BlockPos getTempleDisplay() {
 		return templeDisplay;
 	}
+
+	public void linkTempleHermit(java.util.UUID hermit) {
+		templeHermit = hermit;
+		setChanged();
+	}
+
+	public java.util.UUID getTempleHermit() { return templeHermit; }
 
 	public ItemStack getMediumDisplayStack() {
 		return medium.copy();
@@ -79,6 +87,7 @@ public class CardinalFocusBlockEntity extends BlockEntity {
 	protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
 		super.saveAdditional(tag, registries);
 		if (templeDisplay != null) tag.putLong("TempleDisplay", templeDisplay.asLong());
+		if (templeHermit != null) tag.putUUID("TempleHermit", templeHermit);
 		if (!medium.isEmpty()) tag.put(TAG_MEDIUM, medium.save(registries));
 	}
 
@@ -86,6 +95,7 @@ public class CardinalFocusBlockEntity extends BlockEntity {
 	protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
 		super.loadAdditional(tag, registries);
 		templeDisplay = tag.contains("TempleDisplay") ? BlockPos.of(tag.getLong("TempleDisplay")) : null;
+		templeHermit = tag.hasUUID("TempleHermit") ? tag.getUUID("TempleHermit") : null;
 		medium = tag.contains(TAG_MEDIUM)
 				? ItemStack.parseOptional(registries, tag.getCompound(TAG_MEDIUM))
 				: ItemStack.EMPTY;

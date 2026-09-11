@@ -27,7 +27,7 @@ public class EquippedMorphlingOverlay {
 			renderLegacyIcon(gfx, equipped, barOnLeft, barX, barY, barWidth, barHeight);
 			renderBondMeter(gfx, equipped,
 					EquippedMorphlingOverlayPlacement.iconXForBloodBar(barOnLeft, barX, barWidth),
-					EquippedMorphlingOverlayPlacement.iconYForBloodBar(barY, barHeight) + 18);
+					EquippedMorphlingOverlayPlacement.iconYForBloodBar(barY, barHeight) + 18 - 62);
 			renderDistractedStatus(gfx, barOnLeft, barX, barY, barWidth);
 			return;
 		}
@@ -39,18 +39,19 @@ public class EquippedMorphlingOverlay {
 			renderDistractedStatus(gfx, barOnLeft, barX, barY, barWidth);
 			return;
 		}
-		int xOffset = barOnLeft  ? -25 :25;
-		int x = EquippedMorphlingOverlayPlacement.attachedXForBloodBar(barOnLeft, barX, barWidth)+xOffset;
-		int y = EquippedMorphlingOverlayPlacement.attachedYForBloodBar(barY, barHeight);
+		var attachment = EquippedMorphlingOverlayPlacement.attachment(barOnLeft,
+				BloodVolumeOverlay.getVesselEdgeX(barOnLeft, barX),
+				BloodVolumeOverlay.getVesselCenterY(barY), HemoClientConfig.MORPHLING_HUD_SCALE.get().floatValue());
 		boolean primal = MorphlingItem.isPrimal(equipped);
 
 		RenderSystem.enableBlend();
 		RenderSystem.defaultBlendFunc();
-		renderSprite(gfx, visual, x, y, EquippedMorphlingOverlayPlacement.shouldMirror(barOnLeft), time);
+		renderSprite(gfx, visual, attachment, EquippedMorphlingOverlayPlacement.shouldMirror(barOnLeft), time);
 		if (primal) {
-			renderPrimalMotes(gfx, x, y, time, visual.accentColor());
+			renderPrimalMotes(gfx, attachment, time, visual.accentColor());
 		}
-		renderBondMeter(gfx, equipped, x + 8, y + EquippedMorphlingOverlayPlacement.ATTACHED_SIZE - 5);
+		// At large scales near the screen top, put the meter beside the body.
+		renderBondMeter(gfx, equipped, attachment.bondMeterX(barOnLeft), attachment.bondMeterY());
 		renderDistractedStatus(gfx, barOnLeft, barX, barY, barWidth);
 		RenderSystem.disableBlend();
 	}
@@ -70,8 +71,6 @@ public class EquippedMorphlingOverlay {
 				|| MorphlingItem.getMaturityLevel(equipped) >= 4) {
 			return;
 		}
-		gfx.pose().pushPose();
-		gfx.pose().translate(0,-62,0);
 		double absorbed = Math.min(required, MorphlingItem.getBondingBlood(equipped));
 		int width = 32;
 		int filled = (int) Math.round(width * absorbed / required);
@@ -81,7 +80,6 @@ public class EquippedMorphlingOverlay {
 		String text = String.format("%.0f/%.0f", absorbed, required);
 		gfx.drawString(Minecraft.getInstance().font, text, x + (width - Minecraft.getInstance().font.width(text)) / 2,
 				y + 5, 0xFFE7B8B8, true);
-		gfx.pose().popPose();
 	}
 
 	private void renderLegacyIcon(GuiGraphics gfx, ItemStack equipped, boolean barOnLeft,
@@ -91,37 +89,27 @@ public class EquippedMorphlingOverlay {
 		gfx.renderItem(equipped, x, y);
 	}
 
-	private void renderSprite(GuiGraphics gfx, MorphlingHudVisuals.Visual visual, int x, int y,
-			boolean mirror, float time) {
+	private void renderSprite(GuiGraphics gfx, MorphlingHudVisuals.Visual visual,
+			EquippedMorphlingOverlayPlacement.Attachment attachment, boolean mirror, float time) {
 		ResourceLocation texture = Hemomancy.rloc("textures/gui/morphling_overlay/" + visual.textureName() + ".png");
 		EquippedMorphlingOverlayPlacement.SpriteBlit blit = EquippedMorphlingOverlayPlacement.spriteBlit(mirror);
-		int frameV = EquippedMorphlingOverlayPlacement.feedingFrame(time,
-				HemoClientConfig.RENDER_MORPHLING_FEEDING_ANIMATION.get())
-				* EquippedMorphlingOverlayPlacement.ATTACHED_SIZE;
-		float centerX = x + EquippedMorphlingOverlayPlacement.ATTACHED_SIZE * 0.5f;
-		float centerY = y + EquippedMorphlingOverlayPlacement.ATTACHED_SIZE * 0.5f;
-		float renderScale = EquippedMorphlingOverlayPlacement.morphlingRenderScale(
-				0.5f, time);
 		gfx.pose().pushPose();
-
-		gfx.pose().translate(centerX, centerY, 0.0f);
-		gfx.pose().scale(renderScale, renderScale, 1.0f);
-		gfx.pose().translate(-centerX, -centerY, 0.0f);
-
-		gfx.blit(texture, x-15, y-15, blit.width(), EquippedMorphlingOverlayPlacement.ATTACHED_SIZE,
-				blit.uOffset(), frameV, blit.uWidth(), EquippedMorphlingOverlayPlacement.ATTACHED_SIZE,
-				EquippedMorphlingOverlayPlacement.ATTACHED_SIZE,
-				EquippedMorphlingOverlayPlacement.FEEDING_TEXTURE_HEIGHT);
-
+		gfx.pose().translate(attachment.anchorX(), attachment.anchorY(), 0.0f);
+		float scale = EquippedMorphlingOverlayPlacement.morphlingRenderScale(attachment.scale(), time);
+		gfx.pose().scale(scale, scale, 1.0f);
+		gfx.pose().translate(-attachment.mouthX(), -EquippedMorphlingOverlayPlacement.MOUTH_Y, 0.0f);
+		gfx.blit(texture, 0, 0, blit.width(), EquippedMorphlingOverlayPlacement.ATTACHED_SIZE,
+				blit.uOffset(), 0, blit.uWidth(), EquippedMorphlingOverlayPlacement.ATTACHED_SIZE,
+				EquippedMorphlingOverlayPlacement.ATTACHED_SIZE, EquippedMorphlingOverlayPlacement.ATTACHED_SIZE);
 		gfx.pose().popPose();
-
 	}
 
-	private void renderPrimalMotes(GuiGraphics gfx, int x, int y, float time, int color) {
+	private void renderPrimalMotes(GuiGraphics gfx, EquippedMorphlingOverlayPlacement.Attachment attachment,
+			float time, int color) {
 		for (int i = 0; i < 4; i++) {
 			float phase = time * 1.7f + i * 1.57f;
-			int moteX = x + 25 + Math.round(Mth.cos(phase) * (18 + (i & 1) * 3));
-			int moteY = y + 24 + Math.round(Mth.sin(phase * 1.23f) * 20);
+			int moteX = Math.round(attachment.left() + attachment.size() * (0.5f + Mth.cos(phase) * 0.45f));
+			int moteY = Math.round(attachment.top() + attachment.size() * (0.5f + Mth.sin(phase * 1.23f) * 0.45f));
 			gfx.fill(moteX, moteY, moteX + 2, moteY + 2, color);
 		}
 	}

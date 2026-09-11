@@ -22,6 +22,13 @@ public class IronWallRenderer extends MobRenderer<EntityIronWall, IronWallModel<
 
 
 	@Override
+	public void render(EntityIronWall entity, float yaw, float partial, PoseStack poses,
+			net.minecraft.client.renderer.MultiBufferSource buffers, int light) {
+		if (entity.isPlayerConstruct()) return;
+		super.render(entity, yaw, partial, poses, buffers, light);
+	}
+
+	@Override
 	public ResourceLocation getTextureLocation(EntityIronWall p_114482_) {
 		return texture;
 	}

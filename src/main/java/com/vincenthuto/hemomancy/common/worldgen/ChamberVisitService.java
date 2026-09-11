@@ -75,6 +75,24 @@ public final class ChamberVisitService {
 		HarbingerAdvancementGranter.grantIfNotDone(player, HarbingerAdvancementGranter.ADV_CHAMBER_RITE_ATTUNED);
 	}
 
+	public static void copyEarnedProgress(ServerPlayer original, ServerPlayer replacement) {
+		var oldData = original.getPersistentData();
+		var newData = replacement.getPersistentData();
+		for (String key : new String[] { CHAIR_BOUND, ATTUNED, DREAM_SEEN, DREAM_ATTEMPTS }) {
+			if (oldData.contains(key)) newData.put(key, oldData.get(key).copy());
+		}
+	}
+
+	public static void restoreEarnedAccess(ServerPlayer player) {
+		if (!isAttuned(player) && HarbingerAdvancementGranter.hasAdvancement(player,
+				HarbingerAdvancementGranter.ADV_CHAMBER_RITE_ATTUNED)) {
+			attune(player);
+		} else if (!isChairBound(player) && HarbingerAdvancementGranter.hasAdvancement(player,
+				HarbingerAdvancementGranter.ADV_WARP_CHAIR_BOUND)) {
+			bindChair(player);
+		}
+	}
+
 	public static boolean beginChairVisit(ServerPlayer player) {
 		if (HemoCapabilityAccess.getPlayerDegreeNumber(player) < 3) {
 			player.displayClientMessage(Component.translatable("message.hemomancy.warp_chair.degree"), true);

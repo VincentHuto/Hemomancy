@@ -41,11 +41,11 @@ public class FuneralBellManip extends BloodManipulation {
 			if (target.hasEffect(MobEffects.POISON)) statuses++;
 			if (target.hasEffect(com.vincenthuto.hemomancy.common.init.EffectInit.blood_loss)) statuses++;
 			if (target.hasEffect(com.vincenthuto.hemomancy.common.init.EffectInit.grave_debt)) statuses++;
-			ManipulationCombatHelper.hurt(this, player, target, level, (4.0F + statuses * 2.0F) * charge);
+			boolean hit = ManipulationCombatHelper.hurt(this, player, target, level, (4.0F + statuses * 2.0F) * charge);
 			if (statuses > 0) target.addEffect(new MobEffectInstance(MobEffects.WITHER,
 					Math.round(120 * charge), Math.min(2, statuses - 1), false, true));
-			level.sendParticles(BLOOD, target.getX(), target.getY() + target.getBbHeight() * .5,
-					target.getZ(), 12 + statuses * 6, .5, .7, .5, .03);
+			if(hit) ManipulationVisuals.burst(level,ManipulationVisuals.Form.MORTEM_BURST,
+                    target.position(),target.position(),.6+statuses*.18,20);
 		}
 	}
 }

@@ -17,8 +17,13 @@ import com.vincenthuto.hemomancy.common.network.capa.harbinger.visceral.Visceral
 import com.vincenthuto.hemomancy.common.network.capa.unstained.*;
 import com.vincenthuto.hemomancy.common.network.circus.PacketSyncCircusPerception;
 import com.vincenthuto.hemomancy.common.network.dialogue.DialogueOptionPacket;
+import com.vincenthuto.hemomancy.common.network.dialogue.DialogueRewardChoicePacket;
+import com.vincenthuto.hemomancy.common.network.dialogue.DialogueRewardResultPacket;
 import com.vincenthuto.hemomancy.common.network.dialogue.DialogueTopicOpenedPacket;
 import com.vincenthuto.hemomancy.common.network.dialogue.OpenDialoguePacket;
+import com.vincenthuto.hemomancy.common.network.dialogue.OpenPendingWhisperPacket;
+import com.vincenthuto.hemomancy.common.network.dialogue.ClosePendingWhisperPacket;
+import com.vincenthuto.hemomancy.common.entity.npc.dialogue.PendingWhispers;
 import com.vincenthuto.hemomancy.common.network.dialogue.PacketSyncNpcProgressionMarkers;
 import com.vincenthuto.hemomancy.common.network.discovery.OpenInscriptionPacket;
 import com.vincenthuto.hemomancy.common.network.mission.OpenBookOfObservancesPacket;
@@ -30,6 +35,7 @@ import com.vincenthuto.hemomancy.common.network.routing.PacketSyncSutureLinks;
 import com.vincenthuto.hemomancy.common.network.summon.PacketCrossbarRadialAction;
 import com.vincenthuto.hemomancy.common.network.summon.PacketPuppeteersSpindleAction;
 import com.vincenthuto.hemomancy.common.network.will.WillPresenceCuePacket;
+import com.vincenthuto.hemomancy.common.network.vein.*;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.server.level.ServerLevel;
@@ -71,8 +77,19 @@ public class PacketHandler {
         var net = event.registrar(Hemomancy.MOD_ID);
         net.playToServer(ManipulationChargeVisualPacket.TYPE, ManipulationChargeVisualPacket.STREAM_CODEC,
                 ManipulationChargeVisualPacket::handle);
+        net.playToClient(BloodFlowPacket.TYPE, BloodFlowPacket.STREAM_CODEC, BloodFlowPacket::handle);
+        net.playToClient(ManipulationFlowPacket.TYPE, ManipulationFlowPacket.STREAM_CODEC,
+                ManipulationFlowPacket::handle);
+        net.playToClient(ManipulationInterruptedPacket.TYPE, ManipulationInterruptedPacket.STREAM_CODEC,
+                (packet, context) -> context.enqueueWork(com.vincenthuto.hemomancy.client.event.ClientEvents::interruptManipulationCharge));
+        net.playToClient(ConductionPathPacket.TYPE, ConductionPathPacket.STREAM_CODEC,
+                (packet, context) -> context.enqueueWork(() -> com.vincenthuto.hemomancy.client.render.world.FerricDuctilisEffects.accept(packet)));
+        net.playToClient(NerveLinkPacket.TYPE, NerveLinkPacket.STREAM_CODEC,
+                (packet, context) -> context.enqueueWork(() -> com.vincenthuto.hemomancy.client.render.world.FerricDuctilisEffects.accept(packet)));
         net.playToClient(ManipulationVisualPacket.TYPE, ManipulationVisualPacket.STREAM_CODEC,
                 ManipulationVisualPacket::handle);
+        net.playToClient(ManipulationAccentPacket.TYPE, ManipulationAccentPacket.STREAM_CODEC,
+                ManipulationAccentPacket::handle);
 
         // ── Blood Volume capability ───────────────────────────────────────────
         net.playToServer(BloodVolumeClientPacket.TYPE,
@@ -153,7 +170,12 @@ public class PacketHandler {
         net.playBidirectional(ManipCooldownPacket.TYPE, ManipCooldownPacket.STREAM_CODEC, ManipCooldownPacket::handle);
         net.playBidirectional(UpdateCurrentManipPacket.TYPE, UpdateCurrentManipPacket.STREAM_CODEC, UpdateCurrentManipPacket::handle);
         net.playToServer(UpdateCurrentMemoryPacket.TYPE, UpdateCurrentMemoryPacket.STREAM_CODEC, UpdateCurrentMemoryPacket::handle);
-        net.playBidirectional(TeleportToVeinPacket.TYPE, TeleportToVeinPacket.STREAM_CODEC, TeleportToVeinPacket::handle);
+        net.playToClient(OpenEarthenVeinDisplayPacket.TYPE,
+                OpenEarthenVeinDisplayPacket.STREAM_CODEC, OpenEarthenVeinDisplayPacket::handle);
+        net.playToServer(SelectEarthenVeinDestinationPacket.TYPE,
+                SelectEarthenVeinDestinationPacket.STREAM_CODEC, SelectEarthenVeinDestinationPacket::handle);
+        net.playToClient(EarthenVeinTravelVisualPacket.TYPE,
+                EarthenVeinTravelVisualPacket.STREAM_CODEC, EarthenVeinTravelVisualPacket::handle);
         net.playBidirectional(SyncTrackingAvatarPacket.TYPE, SyncTrackingAvatarPacket.STREAM_CODEC, SyncTrackingAvatarPacket::handle);
         net.playBidirectional(UpdateCurrentVeinPacket.TYPE, UpdateCurrentVeinPacket.STREAM_CODEC, UpdateCurrentVeinPacket::handle);
         net.playBidirectional(StartCentrifugeButtonPacket.TYPE, StartCentrifugeButtonPacket.STREAM_CODEC, StartCentrifugeButtonPacket::handle);
@@ -284,10 +306,14 @@ public class PacketHandler {
         net.playToServer(PlaceStructurePacket.TYPE, PlaceStructurePacket.STREAM_CODEC, PlaceStructurePacket::handle);
 
         // ── Dialogue system ───────────────────────────────────────────────────
+        net.playToClient(OpenPendingWhisperPacket.TYPE, OpenPendingWhisperPacket.STREAM_CODEC, OpenPendingWhisperPacket::handle);
+        net.playToServer(ClosePendingWhisperPacket.TYPE, ClosePendingWhisperPacket.STREAM_CODEC, ClosePendingWhisperPacket::handle);
         net.playToClient(OpenDialoguePacket.TYPE, OpenDialoguePacket.STREAM_CODEC, OpenDialoguePacket::handle);
         net.playToClient(PacketSyncNpcProgressionMarkers.TYPE, PacketSyncNpcProgressionMarkers.STREAM_CODEC,
                 PacketSyncNpcProgressionMarkers::handle);
         net.playToServer(DialogueOptionPacket.TYPE, DialogueOptionPacket.STREAM_CODEC, DialogueOptionPacket::handle);
+        net.playToServer(DialogueRewardChoicePacket.TYPE, DialogueRewardChoicePacket.STREAM_CODEC, DialogueRewardChoicePacket::handle);
+        net.playToClient(DialogueRewardResultPacket.TYPE, DialogueRewardResultPacket.STREAM_CODEC, DialogueRewardResultPacket::handle);
         net.playToServer(DialogueTopicOpenedPacket.TYPE, DialogueTopicOpenedPacket.STREAM_CODEC,
                 DialogueTopicOpenedPacket::handle);
         net.playToClient(OpenInscriptionPacket.TYPE, OpenInscriptionPacket.STREAM_CODEC, OpenInscriptionPacket::handle);
@@ -414,6 +440,13 @@ public class PacketHandler {
         // have one, and detached players have nothing to synchronize.
         if (player.connection == null) {
             return;
+        }
+        if (payload instanceof OpenDialoguePacket open && PendingWhispers.isWhisper(open.tree())) {
+            PendingWhispers.enqueue(player, open.tree());
+            return;
+        }
+        if (payload instanceof OpenDialoguePacket open && open.tree().entityId() != -1) {
+            com.vincenthuto.hemomancy.common.entity.npc.dialogue.MonolithDialogueContext.clear(player);
         }
         PacketDistributor.sendToPlayer(player, payload);
     }

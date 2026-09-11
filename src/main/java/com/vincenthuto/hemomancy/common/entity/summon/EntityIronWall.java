@@ -8,7 +8,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 
-public class EntityIronWall extends BloodConstructEntity {
+public class EntityIronWall extends FerricConstructEntity {
 	public float deathTicks = 1;
 
 	public EntityIronWall(EntityType<? extends EntityIronWall> type, Level worldIn) {
@@ -23,6 +23,7 @@ public class EntityIronWall extends BloodConstructEntity {
 
 	@Override
 	protected void doPush(Entity entityIn) {
+		if (isPlayerConstruct()) return;
 		if (!(entityIn instanceof EntityIronWall)) {
 			if (getCreator() != null) {
 				if (entityIn != creator) {
@@ -47,6 +48,7 @@ public class EntityIronWall extends BloodConstructEntity {
 	@Override
 	public void tick() {
 		super.tick();
+		if (isPlayerConstruct()) return;
 		this.setYBodyRot(0);
 		// Particle MobEffects
 		float f = (this.random.nextFloat() - 0.5F) * 2.0F;

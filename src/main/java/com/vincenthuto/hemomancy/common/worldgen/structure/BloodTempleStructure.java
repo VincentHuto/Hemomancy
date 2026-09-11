@@ -196,6 +196,7 @@ public class BloodTempleStructure extends Structure {
 		if (focusPos != null && displayPos != null
 				&& level.getBlockEntity(focusPos) instanceof CardinalFocusBlockEntity focus) {
 			focus.linkTempleDisplay(displayPos);
+			focus.linkTempleHermit(entity.getUUID());
 		}
 	}
 }

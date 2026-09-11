@@ -1,10 +1,15 @@
 package com.vincenthuto.hemomancy.common.rite.harbinger;
 
 import com.vincenthuto.hemomancy.common.rite.CardinalRiteAllyRole;
+import com.vincenthuto.hemomancy.common.rite.sigil.CardinalRiteSigilPlacementRules;
+import com.vincenthuto.hemomancy.common.rite.sigil.IchorianSigilDefinition;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.phys.Vec3;
 
 import java.util.List;
+import java.util.EnumMap;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.Map;
 import java.util.UUID;
 import java.util.function.Predicate;
@@ -18,6 +23,35 @@ public final class CardinalRiteNpcStationRules {
 	private static final double MAX_APPROACH_HEIGHT_DIFFERENCE = 6.0D;
 
 	private CardinalRiteNpcStationRules() {
+	}
+
+	/** Keeps the helper body and its hold radius away from targets and their approach lanes. */
+	public static Map<CardinalRiteAllyRole, BlockPos> roleMarkers(Set<BlockPos> targets) {
+		Set<BlockPos> occupied = new HashSet<>();
+		occupied.add(BlockPos.ZERO);
+		for (BlockPos target : targets) {
+			int steps = Math.max(Math.abs(target.getX()), Math.abs(target.getZ()));
+			for (int step = 1; step <= steps; step++) {
+				occupied.add(new BlockPos(Math.round((float) target.getX() * step / steps), 0,
+						Math.round((float) target.getZ() * step / steps)));
+			}
+		}
+		Map<CardinalRiteAllyRole, BlockPos> result = new EnumMap<>(CardinalRiteAllyRole.class);
+		for (CardinalRiteAllyRole role : CardinalRiteAllyRole.values()) {
+			BlockPos preferred = switch (role) {
+				case ANCHOR -> new BlockPos(-3, 0, -3);
+				case ATTENDANT -> new BlockPos(3, 0, -3);
+				case WARDEN -> new BlockPos(3, 0, 3);
+			};
+			BlockPos resolved = CardinalRiteSigilPlacementRules.resolveNearestPlacement(preferred,
+					List.of(new IchorianSigilDefinition.Node(0, 0)), occupied);
+			result.put(role, resolved.above());
+			// Reserve room for both helpers' hold radii, rather than stacking different roles.
+			for (int x = -1; x <= 1; x++) {
+				for (int z = -1; z <= 1; z++) occupied.add(resolved.offset(x, 0, z));
+			}
+		}
+		return result;
 	}
 
 	public static boolean stationSafe(boolean loaded, boolean sturdySupport, boolean collisionFree) {

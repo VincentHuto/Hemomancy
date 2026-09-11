@@ -7,7 +7,7 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;
 
-public class EntityIronSpike extends BloodConstructEntity {
+public class EntityIronSpike extends FerricConstructEntity {
 	public float deathTicks = 1;
 	private int lifeTicks = 120;
 	private static final String NO_CONTACT_DAMAGE = "HemomancyNoContactDamage";
@@ -25,6 +25,7 @@ public class EntityIronSpike extends BloodConstructEntity {
 
 	@Override
 	protected void doPush(Entity entityIn) {
+		if (isPlayerConstruct()) return;
 		if (!getPersistentData().getBoolean(NO_CONTACT_DAMAGE) && !(entityIn instanceof EntityIronSpike)) {
 			if (getCreator() != null) {
 				if (entityIn != creator) {
@@ -44,6 +45,7 @@ public class EntityIronSpike extends BloodConstructEntity {
 	@Override
 	public void tick() {
 		super.tick();
+		if (isPlayerConstruct()) return;
 		if (getPersistentData().contains(TEMPORARY_LIFE)) lifeTicks = getPersistentData().getInt(TEMPORARY_LIFE);
 		this.setYBodyRot(0);
 

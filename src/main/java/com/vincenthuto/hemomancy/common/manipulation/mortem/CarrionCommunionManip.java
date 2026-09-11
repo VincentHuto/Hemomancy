@@ -40,7 +40,11 @@ public class CarrionCommunionManip extends BloodManipulation {
 			float before = target.getHealth();
 			if (ManipulationCombatHelper.hurt(this, player, target, level, 2.0F))
 				drained += Math.min(2.0F, Math.max(0.0F, before - target.getHealth()));
-			if (target.getHealth() < before) ManipulationVisuals.burst(level, ManipulationVisuals.Form.DRAIN, player.getEyePosition().add(0,-.4,0), target.getEyePosition(), 1, 20);
+			if (target.getHealth() < before) {
+                com.vincenthuto.hemomancy.common.manipulation.BloodFlowVisuals.connect(player,target,
+                        com.vincenthuto.hemomancy.common.network.particle.BloodFlowPacket.Style.COMMUNION);
+                ManipulationVisuals.attached(target,ManipulationVisuals.Form.COMMUNION,.6,22,1);
+            }
 		}
 		player.heal(drained * .5F);
 	}

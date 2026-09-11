@@ -45,15 +45,15 @@ public class HemoClientConfig {
                 .defineInRange("location", 0, 0, 3);
 
 	MORPHLING_HUD_MODE = CLIENT_BUILDER
-		.comment("Equipped morphling display: ATTACHED uses the large siphoning pose, LEGACY_ICON uses the item sprite, and OFF hides it.")
+		.comment("Equipped morphling display: ATTACHED uses a static 32px gripping sprite, LEGACY_ICON uses the item sprite, and OFF hides it.")
 		.defineEnum("morphlingHudMode", MorphlingHudMode.ATTACHED);
 
 	RENDER_MORPHLING_FEEDING_ANIMATION = CLIENT_BUILDER
-		.comment("Animate the equipped morphling feeding pose. Disable to keep the first animation frame displayed.")
+		.comment("Legacy compatibility setting. Attached Morphling sprites are now static and ignore this value.")
 		.define("renderMorphlingFeedingAnimation", false);
 
 	MORPHLING_HUD_SCALE = CLIENT_BUILDER
-		.comment("Scale the attached Morphling render around its current center. 1.0 keeps the default size and placement.")
+		.comment("Scale the attached Morphling around its feeding point on the vessel. 1.0 displays a 32px sprite.")
 		.defineInRange("morphlingHudScale", 1.0D, 0.25D, 4.0D);
 
 	USE_COOLDOWN_VIGNETTE = CLIENT_BUILDER

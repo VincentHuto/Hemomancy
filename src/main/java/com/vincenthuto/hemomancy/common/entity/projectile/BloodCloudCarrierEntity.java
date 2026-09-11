@@ -1,6 +1,5 @@
 package com.vincenthuto.hemomancy.common.entity.projectile;
 
-import com.vincenthuto.hemomancy.client.particle.factory.BloodCellParticleFactory;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.init.EntityInit;
 import com.vincenthuto.hutoslib.client.particle.util.HLParticleUtils;
@@ -39,16 +38,6 @@ public class BloodCloudCarrierEntity extends AbstractHurtingProjectile {
 	private int cloudDuration = 100;
 	private CloudEntityBlood.Mode cloudMode = CloudEntityBlood.Mode.STATIC;
 
-	/**
-	 * Called to update the entity's position/logic.
-	 */
-	int globalPartCount = 20;
-
-	Vec3[] fibboSphere = HLParticleUtils.fibboSphere(globalPartCount, -level().getGameTime() * 0.01, 0.15);
-
-	Vec3[] corona = HLParticleUtils.randomSphere(globalPartCount, -level().getGameTime() * 0.01, 0.15);
-
-	Vec3[] inversedSphere = HLParticleUtils.inversedSphere(globalPartCount, -level().getGameTime() * 0.016, 0.15, false);
 
 	public BloodCloudCarrierEntity(EntityType<? extends BloodCloudCarrierEntity> ent, Level world) {
 		super(ent, world);
@@ -101,7 +90,7 @@ public class BloodCloudCarrierEntity extends AbstractHurtingProjectile {
 
 	@Override
 	protected ParticleOptions getTrailParticle() {
-		return BloodCellParticleFactory.createData(ParticleColor.RED);
+		return null;
 	}
 
 	/**
@@ -265,15 +254,6 @@ public class BloodCloudCarrierEntity extends AbstractHurtingProjectile {
 	@Override
 	public void tick() {
 		super.tick();
-		Vector3 pos = Vector3.fromEntityCenter(this);
-		if (!level().isClientSide) {
-			ServerLevel sLevel = (ServerLevel) level();
-			for (int i = 0; i < globalPartCount; i++) {
-				sLevel.sendParticles(BloodCellParticleFactory.createData(new ParticleColor(255, 0, 0)),
-						pos.x + inversedSphere[i].x, pos.y + inversedSphere[i].y, pos.z + inversedSphere[i].z, 3, 0.0,
-						0.1, 0.00, 0.002d);
-			}
-		}
 
 		if (tickCount > 50) {
 

@@ -1,7 +1,7 @@
 package com.vincenthuto.hemomancy.common.event;
 
+import com.vincenthuto.hemomancy.common.particle.HemoParticleData;
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.client.particle.factory.AbsorbedBloodCellParticleFactory;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodFlowContribution.Category;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodFlowLedger;
@@ -45,7 +45,7 @@ public final class ToggleableSkillEvents {
 		if (player.tickCount % 4 == 0 && ToggleablePlayerPowerRules.leaveCrimsonWake(
 				SkillPointHelper.isTechniqueEnabled(player, SkillPointInit.skill_crimson_wake),
 				player.isSprinting(), player.getHealth(), player.getMaxHealth())) {
-			level.sendParticles(AbsorbedBloodCellParticleFactory.createData(new ParticleColor(150, 8, 12)),
+			level.sendParticles(HemoParticleData.absorbedBloodCell(new ParticleColor(150, 8, 12)),
 					player.getX(), player.getY() + 0.1D, player.getZ(), 3, 0.22D, 0.04D, 0.22D, 0.01D);
 			for (LivingEntity target : level.getEntitiesOfClass(LivingEntity.class,
 					player.getBoundingBox().inflate(1.25D), target -> target instanceof Enemy)) {

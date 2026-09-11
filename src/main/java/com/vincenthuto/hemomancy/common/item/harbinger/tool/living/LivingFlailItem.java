@@ -1,10 +1,10 @@
 package com.vincenthuto.hemomancy.common.item.harbinger.tool.living;
 
+import com.vincenthuto.hemomancy.common.particle.HemoParticleData;
 import com.vincenthuto.hemomancy.client.item.HemoClientItemExtensionsProvider;
 import com.vincenthuto.hemomancy.client.render.item.harbinger.LivingFlailItemRenderer;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.entity.projectile.LivingFlailHeadProjectileEntity;
-import com.vincenthuto.hutoslib.client.particle.factory.GlowParticleFactory;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
@@ -76,7 +76,7 @@ public class LivingFlailItem extends LivingToolItem implements HemoClientItemExt
 			level.playSound(null, player.blockPosition(), SoundEvents.AMETHYST_BLOCK_CHIME, SoundSource.PLAYERS,
 					1.25F, 0.62F);
 			if (level instanceof ServerLevel server) {
-				server.sendParticles(GlowParticleFactory.createData(ICE_BLUE), player.getX(),
+				server.sendParticles(HemoParticleData.glow(ICE_BLUE), player.getX(),
 						player.getEyeY() - 0.35D, player.getZ(), 18, 0.45D, 0.25D, 0.45D, 0.04D);
 			}
 		}

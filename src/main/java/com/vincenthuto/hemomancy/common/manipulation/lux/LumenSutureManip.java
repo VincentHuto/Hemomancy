@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.manipulation.lux;
 
+import com.vincenthuto.hemomancy.common.manipulation.ManipulationParticles;
 import com.vincenthuto.hemomancy.common.manipulation.ManipulationVisuals;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.EnumVeinSections;
@@ -8,14 +9,10 @@ import com.vincenthuto.hemomancy.common.manipulation.ManipulationCombatHelper;
 import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationRank;
 import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationType;
 import com.vincenthuto.hemomancy.common.manipulation.HemomancyTendrilEffects;
-import com.vincenthuto.hutoslib.client.particle.data.ColorParticleData;
-import com.vincenthuto.hutoslib.common.registry.HLParticleInit;
-import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
-import net.minecraft.util.RandomSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.player.Player;
@@ -50,18 +47,8 @@ public class LumenSutureManip extends BloodManipulation {
 
 		if (world instanceof ServerLevel sLevel) {
 			HemomancyTendrilEffects.lumenSuture(player, target);
-            ManipulationVisuals.attached(target, ManipulationVisuals.Form.MENDING, .5, 28, 1);
-			RandomSource random = world.random;
-			for (int i = 0; i < 36; i++) {
-				sLevel.sendParticles(new ColorParticleData(HLParticleInit.glow.get(), new ParticleColor(
-								235 + random.nextFloat() * 20,
-								180 + random.nextFloat() * 50,
-								210 + random.nextFloat() * 35)),
-						target.getX() + (random.nextDouble() - 0.5) * 0.8,
-						target.getY() + 0.2 + random.nextDouble() * 1.7,
-						target.getZ() + (random.nextDouble() - 0.5) * 0.8,
-						1, 0, 0.03, 0, 0.01);
-			}
+            ManipulationVisuals.attached(target, ManipulationVisuals.Form.LUX_MENDING, .5, 28, 1);
+			ManipulationParticles.accent(sLevel, EnumBloodTendency.LUX, target.position().add(0, 1, 0), net.minecraft.world.phys.Vec3.ZERO);
 		}
 	}
 }

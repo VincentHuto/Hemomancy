@@ -13,6 +13,23 @@ import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.*;
 
 final class ActiveCardinalRiteCeremonyTest {
+    @Test
+    void ringCountUsesAuthoredAnchorsAndRepairDoesNotRestartInscription() {
+        ActiveCardinalRite rite = ActiveCardinalRite.interactive(UUID.randomUUID(), BlockPos.ZERO,
+                ResourceLocation.fromNamespaceAndPath("hemomancy", "cardinal_rite/chamber_of_will"),
+                100, 5, 6, false, 1, 8);
+        assertEquals(2, rite.totalAnchorRings());
+        for (int i = 0; i < 8; i++) rite.fillAnchor(i, 50);
+        assertEquals(2, rite.completedRings());
+        assertTrue(rite.enterInscription());
+        assertTrue(rite.sealAltar());
+        rite.drainAnchor(7, 1);
+        assertEquals(1, rite.bloodNeededForAnchor(7));
+        assertTrue(rite.fillAnchor(7, 1));
+        assertFalse(rite.enterInscription());
+        assertEquals(CardinalRitePhase.ORDEAL, rite.getPhase());
+    }
+
 	@Test
 	void riteWithoutAuthoredWavesSkipsTheRemovedProfessionPhase() {
 		ActiveCardinalRite rite = ActiveCardinalRite.interactive(UUID.randomUUID(), BlockPos.ZERO,

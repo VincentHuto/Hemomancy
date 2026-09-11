@@ -34,9 +34,11 @@ public class SynapticJoltManip extends BloodManipulation {
 	@Override
 	public void getAction(Player player, Level world, ItemStack heldItemMainhand, BlockPos position) {
 		if (!(world instanceof ServerLevel)) return;
+        Discharge discharge = new Discharge();
 		double range = BASE_RANGE * SkillPointHelper.getSanguineReachMultiplier(player);
 		LivingEntity target = findTarget(player, world, range);
 		if (target == null) {
+            if (ConductionManager.energizeAimed(player,range,discharge)) return;
 			world.playSound(null, player.blockPosition(), SoundEvents.TRIDENT_THUNDER.value(), SoundSource.PLAYERS,
 					0.25F, 1.9F);
 			return;
@@ -46,19 +48,22 @@ public class SynapticJoltManip extends BloodManipulation {
 		DuctilisLightningEffects.synapticJolt(player, target);
 		float damage = (float) (BASE_DAMAGE * SkillPointHelper.getCrimsonMasteryMultiplier(player));
 		float adjusted = TendencyAffinityRules.adjustManipulationDamage(player, target, this, damage);
-		if (target.hurt(world.damageSources().magic(), adjusted)) {
+		if (!ConductionManager.claimHit(player,target,discharge)) return;
+        if (ManipulationParticles.hurt(this, target, world.damageSources().magic(), adjusted)) {
+            ConductionManager.energizeTouching(player,target,discharge);
 			SchoolHitHelper.tryTriggerConductiveArc(player, target, EnumBloodTendency.DUCTILIS, getSecondaryTend(),
-					adjusted);
+					adjusted,discharge);
 		}
 		world.playSound(null, target.blockPosition(), SoundEvents.TRIDENT_THUNDER.value(), SoundSource.PLAYERS,
 				0.45F, 1.75F);
 	}
 
 	public static void staggerTarget(LivingEntity target) {
+        Paralysis.interrupt(target);
 		if (target instanceof Mob mob) {
 			mob.getNavigation().stop();
 		}
-		target.setDeltaMovement(0.0D, target.getDeltaMovement().y * 0.2D, 0.0D);
+		target.setDeltaMovement(0.0D, target.getDeltaMovement().y, 0.0D);
 		target.hurtMarked = true;
 		target.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 30, 2, false, true, true));
 		target.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, 40, 0, false, true, true));
@@ -68,14 +73,15 @@ public class SynapticJoltManip extends BloodManipulation {
 	private LivingEntity findTarget(Player player, Level world, double range) {
 		Vec3 eye = player.getEyePosition();
 		Vec3 look = player.getLookAngle().normalize();
+        double unobstructedRange = eye.distanceTo(ManipulationCombatHelper.clipToGeometry(player,eye.add(look.scale(range))));
 		return world.getEntitiesOfClass(LivingEntity.class, new AABB(player.blockPosition()).inflate(range),
-						target -> target != player && target.isAlive() && !target.isAlliedTo(player)
+						target -> ConductionManager.canHarm(player,target)
 								&& player.hasLineOfSight(target))
 				.stream()
 				.filter(target -> {
 					Vec3 toTarget = target.getEyePosition().subtract(eye);
 					double distance = toTarget.length();
-					return distance > 0.001D && distance <= range && look.dot(toTarget.normalize()) >= TARGET_DOT;
+					return distance > 0.001D && distance <= unobstructedRange && look.dot(toTarget.normalize()) >= TARGET_DOT;
 				})
 				.min((a, b) -> Double.compare(player.distanceToSqr(a), player.distanceToSqr(b)))
 				.orElse(null);

@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.manipulation.congeatio;
 
+import com.vincenthuto.hemomancy.common.manipulation.ManipulationParticles;
 import com.vincenthuto.hemomancy.common.manipulation.ManipulationVisuals;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.EnumVeinSections;
@@ -9,9 +10,6 @@ import com.vincenthuto.hemomancy.common.manipulation.ManipulationCombatHelper;
 import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationRank;
 import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationType;
 import com.vincenthuto.hemomancy.common.manipulation.TendencyAffinityRules;
-import com.vincenthuto.hutoslib.client.particle.data.ColorParticleData;
-import com.vincenthuto.hutoslib.common.registry.HLParticleInit;
-import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
@@ -70,8 +68,9 @@ public class CryogenicPulseManip extends BloodManipulation {
 						SLOWNESS_DURATION, SLOWNESS_AMPLIFIER, false, true));
 				target.addEffect(new MobEffectInstance(MobEffects.DIG_SLOWDOWN,
 						FATIGUE_DURATION, FATIGUE_AMPLIFIER, false, true));
+				ManipulationVisuals.attached(target, ManipulationVisuals.Form.BONE, target.getBbWidth()*.5, 24, 1);
 				float damage = (float) (DAMAGE * SkillPointHelper.getCrimsonMasteryMultiplier(player));
-				target.hurt(world.damageSources().freeze(),
+				ManipulationParticles.hurt(this, target, world.damageSources().freeze(),
 						TendencyAffinityRules.adjustManipulationDamage(player, target, this, damage));
 			}
 		}
@@ -79,18 +78,8 @@ public class CryogenicPulseManip extends BloodManipulation {
 		world.playSound(null, center, SoundEvents.GLASS_PLACE, SoundSource.PLAYERS, 1.0f, 0.7f);
 		world.playSound(null, center, SoundEvents.POWDER_SNOW_STEP, SoundSource.PLAYERS, 0.8f, 0.5f);
 
-		ManipulationVisuals.burst(sLevel, ManipulationVisuals.Form.ICE, player.position(), player.position(), RADIUS, 28);
+		ManipulationVisuals.burst(sLevel, ManipulationVisuals.Form.CRYOGENIC_PULSE, player.position(), player.position(), RADIUS, 28);
         RandomSource random = world.random;
-		for (int i = 0; i < 40; i++) {
-			sLevel.sendParticles(
-					new ColorParticleData(HLParticleInit.glow.get(), new ParticleColor(
-							100 + random.nextFloat() * 60,
-							160 + random.nextFloat() * 60,
-							255)),
-					center.getX() + 0.5 + (random.nextDouble() - 0.5) * RADIUS * 2,
-					center.getY() + 0.5 + random.nextDouble() * 1.5,
-					center.getZ() + 0.5 + (random.nextDouble() - 0.5) * RADIUS * 2,
-					1, 0f, 0.1f, 0f, 0.015f);
-		}
+
 	}
 }

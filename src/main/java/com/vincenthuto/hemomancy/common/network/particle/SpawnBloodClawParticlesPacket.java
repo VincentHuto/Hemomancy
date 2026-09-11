@@ -1,7 +1,7 @@
 package com.vincenthuto.hemomancy.common.network.particle;
 
+import com.vincenthuto.hemomancy.common.particle.HemoParticleData;
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.client.particle.factory.BloodClawParticleFactory;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
@@ -37,7 +37,7 @@ public class SpawnBloodClawParticlesPacket implements CustomPacketPayload {
 	public static void handle(final SpawnBloodClawParticlesPacket msg, final IPayloadContext ctxSupplier) {
 		if (ctxSupplier.player() == null) return;
 		ctxSupplier.player().level().addParticle(
-				BloodClawParticleFactory.createData(msg.getColor()),
+				HemoParticleData.bloodClaw(msg.getColor()),
 				msg.getPos().x, msg.getPos().y, msg.getPos().z, 0f, 0, 0);
 	}
 

@@ -1720,7 +1720,7 @@ public final class HarbingerJourneyFixtureGameTests {
 	@GameTest(templateNamespace = "minecraft", template = EMPTY_TEMPLATE, timeoutTicks = 40)
 	public static void formationAcceptsAutoPickedUpOutput(GameTestHelper helper) {
 		ServerPlayer player = detachedTestPlayer(helper);
-		BlockPos origin = helper.absolutePos(new BlockPos(4, 3, 4));
+		BlockPos origin = helper.absolutePos(new BlockPos(4, 12, 4));
 		try {
 			var blood = HemoCapabilityAccess.requireBloodVolume(player);
 			blood.setActive(true);

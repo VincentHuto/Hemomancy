@@ -47,9 +47,9 @@ public class BootlaceMorphlingItem extends MorphlingItem {
 	}
 
 	@Override
-	public void use(Player playerIn, InteractionHand handIn, ItemStack itemStack, Level worldIn) {
+	public boolean tryUse(Player playerIn, InteractionHand handIn, ItemStack itemStack, Level worldIn) {
 		if (!MorphlingItem.tryBeginPrimalAbility(playerIn, itemStack, "WebOfRedThread",
-				250.0, 160, 120, 0)) return;
+				250.0, 160, 120, 0)) return false;
 		LivingEntity target = MorphlingItem.findLookTarget(playerIn, 22.0);
 		if (target != null) {
 			Vec3 pull = playerIn.position().subtract(target.position()).normalize().scale(1.35);
@@ -65,6 +65,7 @@ public class BootlaceMorphlingItem extends MorphlingItem {
 			playerIn.addEffect(new MobEffectInstance(MobEffects.SLOW_FALLING,
 					80, 0, true, false, true));
 		}
+		return true;
 	}
 
 	@Override

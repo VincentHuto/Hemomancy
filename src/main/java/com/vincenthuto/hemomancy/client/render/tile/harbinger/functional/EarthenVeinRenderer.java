@@ -3,6 +3,8 @@ package com.vincenthuto.hemomancy.client.render.tile.harbinger.functional;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.client.model.tile.functional.EarthenVeinModel;
+import com.vincenthuto.hemomancy.client.render.world.EarthenVeinFeedingTendrilRenderer;
+import com.vincenthuto.hemomancy.client.vein.EarthenVeinTravelClientState;
 import com.vincenthuto.hemomancy.common.block.harbinger.functional.EarthenVeinBlock;
 import com.vincenthuto.hemomancy.common.tile.harbinger.functional.EarthenVeinBlockEntity;
 import com.vincenthuto.hutoslib.math.Quaternion;
@@ -26,11 +28,11 @@ public class EarthenVeinRenderer implements BlockEntityRenderer<EarthenVeinBlock
 
 	private final EarthenVeinModel vein;
 
-	private final EarthenVeinAnimContext animCtx = new EarthenVeinAnimContext(new AnimationState());
+	private final AnimationState animationState = new AnimationState();
 
 	public EarthenVeinRenderer(BlockEntityRendererProvider.Context p_173636_) {
 		vein = new EarthenVeinModel(p_173636_.bakeLayer(EarthenVeinModel.LAYER_LOCATION));
-		animCtx.state.start(0);
+		animationState.start(0);
 
 	}
 
@@ -43,11 +45,30 @@ public class EarthenVeinRenderer implements BlockEntityRenderer<EarthenVeinBlock
 			float progress = Mth.clamp((te.time + partialTicks) / TEMPORARY_GROWTH_TICKS, 0.0F, 1.0F);
 			growth = TEMPORARY_MIN_SCALE + (1.0F - TEMPORARY_MIN_SCALE) * progress;
 		}
+		float mouth = 0.0F;
+		var visual = EarthenVeinTravelClientState.visual(te.getLevel().dimension().location(), te.getBlockPos());
+		if (visual != null) {
+			switch (visual.phase()) {
+				case FEEDING -> mouth = 0.18F + visual.progress() * 0.38F;
+				case READY -> mouth = 0.82F;
+				case SWALLOWING -> {
+					mouth = 0.82F + visual.progress() * 0.18F;
+					growth *= 1.0F + visual.progress() * 0.50F;
+				}
+				case EJECTING -> {
+					mouth = 1.0F - visual.progress() * 0.55F;
+					growth *= 1.5F - visual.progress() * 0.5F;
+				}
+				default -> { }
+			}
+			EarthenVeinFeedingTendrilRenderer.render(pPoseStack, bufferIn, te.getBlockPos(), visual,
+					te.getLevel().getGameTime() + partialTicks);
+		}
 		pPoseStack.translate(0.5, 1.51D + (growth - 1.0F) * 1.5D, 0.5);
 		pPoseStack.mulPose(new Quaternion(Vector3.XN, 180, true).toMoj());
 		pPoseStack.scale(growth, growth, growth);
  
-		vein.setupAnimation(te.getLevel(), partialTicks, animCtx);
+		vein.setupAnimation(te.getLevel(), partialTicks, new EarthenVeinAnimContext(animationState, mouth));
 		Boolean stented = te.getBlockState().getValue(EarthenVeinBlock.STENTED);
 		Boolean named = te.getBlockState().getValue(EarthenVeinBlock.NAMED);
 
@@ -61,7 +82,7 @@ public class EarthenVeinRenderer implements BlockEntityRenderer<EarthenVeinBlock
 
 	}
 
-	public record EarthenVeinAnimContext(AnimationState state) {
+	public record EarthenVeinAnimContext(AnimationState state, float mouthProgress) {
 	}
 
 }

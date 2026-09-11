@@ -68,14 +68,10 @@ public class ChangeSelectedManipPacket implements CustomPacketPayload {
 						target = equipped.get(0);
 					}
 				}
-				if (!LivingStaffWeaponFormHelper.applySelection(player, target)) {
-					return;
-				}
-				if (!CellHandFormHelper.applySelection(player, target)) {
-					return;
-				}
 				known.setSelectedManip(target);
-				player.displayClientMessage(Component.literal("Selected:" + target.getProperName()), true);
+				boolean applied = LivingStaffWeaponFormHelper.applySelection(player, target)
+						&& CellHandFormHelper.applySelection(player, target);
+				if (applied) player.displayClientMessage(Component.literal("Selected: " + target.getProperName()), true);
 				PacketHandler.sendToPlayer((ServerPlayer) player, new KnownManipulationServerPacket(known));
 				ManipulationDiagnosticsSync.sync((ServerPlayer) player);
 			}

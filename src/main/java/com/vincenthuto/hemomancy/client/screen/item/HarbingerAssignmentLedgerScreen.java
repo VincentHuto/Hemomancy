@@ -73,15 +73,15 @@ public class HarbingerAssignmentLedgerScreen extends Screen {
 	private static final int TOOLTIP_TEXT_MAX_WIDTH = 240;
 	private static final int TOOLTIP_PAD = 4;
 	private static final ResourceLocation VICAR_PORTRAIT =
-			Hemomancy.rloc("textures/entity/harbinger_vicar/harbinger_vicar_portrait.png");
+			Hemomancy.rloc("textures/entity/npc/harbinger/harbinger_vicar/harbinger_vicar_portrait.png");
 	private static final ResourceLocation ALCHEMIST_PORTRAIT =
-			Hemomancy.rloc("textures/entity/harbinger_alchemist/harbinger_alchemist_portrait.png");
+			Hemomancy.rloc("textures/entity/npc/harbinger/harbinger_alchemist/harbinger_alchemist_portrait.png");
 	private static final ResourceLocation MNEMONIST_PORTRAIT =
-			Hemomancy.rloc("textures/entity/harbinger_mnemonist/harbinger_mnemonist_portrait.png");
+			Hemomancy.rloc("textures/entity/npc/harbinger/harbinger_mnemonist/harbinger_mnemonist_portrait.png");
 	private static final ResourceLocation VEIN_MASON_PORTRAIT =
-			Hemomancy.rloc("textures/entity/harbinger_cicatrix_anchorite/harbinger_cicatrix_anchorite_portrait.png");
+			Hemomancy.rloc("textures/entity/npc/harbinger/harbinger_cicatrix_anchorite/harbinger_cicatrix_anchorite_portrait.png");
 	private static final ResourceLocation ARTIFICER_PORTRAIT =
-			Hemomancy.rloc("textures/entity/harbinger_artificer/harbinger_artificer_portrait.png");
+			Hemomancy.rloc("textures/entity/npc/harbinger/harbinger_artificer/harbinger_artificer_portrait.png");
 
 	private enum AssignmentCategory {
 		MAIN("screen.hemomancy.harbinger_assignment_ledger.assignment_label.main"),

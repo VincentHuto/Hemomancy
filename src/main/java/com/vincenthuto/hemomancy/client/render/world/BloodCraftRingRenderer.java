@@ -113,6 +113,26 @@ public class BloodCraftRingRenderer {
 
 		stack.pushPose();
 		stack.translate(cx - cam.x, cy - cam.y, cz - cam.z);
+        drawRingGeometry(stack,glowVC,coreVC,currentRadius,currentTime,undulateScale,
+                coreAlpha,glowAlpha,coreR,coreG,coreB,glowR,glowG,glowB);
+		stack.popPose();
+	}
+
+
+    /** Established crafting ring, at the caller's local origin, with a supplied school tint. */
+    public static void drawBoundary(PoseStack stack,VertexConsumer glow,VertexConsumer core,
+            float radius,float time,float alpha,int color) {
+        if(radius<.05F || alpha<=0)return;
+        float pulse=(float)(.5+.5*Math.sin(time*.12));
+        float r=((color>>16)&255)/255F,g=((color>>8)&255)/255F,b=(color&255)/255F;
+        drawRingGeometry(stack,glow,core,radius,time,Math.min(1,radius),
+                (.7F+.3F*pulse)*alpha,(.18F+.18F*pulse)*alpha,
+                r,g,b,r*.75F,g*.75F,b*.75F);
+    }
+
+    private static void drawRingGeometry(PoseStack stack,VertexConsumer glowVC,VertexConsumer coreVC,
+            float currentRadius,float currentTime,float undulateScale,float coreAlpha,float glowAlpha,
+            float coreR,float coreG,float coreB,float glowR,float glowG,float glowB) {
 		Matrix4f mat = stack.last().pose();
 
 		// ── Draw the undulating, collapsing ring ──
@@ -172,8 +192,7 @@ public class BloodCraftRingRenderer {
 		drawVeins(glowVC, coreVC, mat, currentRadius, currentTime, undulateScale,
 				coreR, coreG, coreB, coreAlpha, glowR, glowG, glowB);
 
-		stack.popPose();
-	}
+    }
 
 	// ═══════════════════════════════════════════════════════════════
 	//  Undulation — layered sine waves

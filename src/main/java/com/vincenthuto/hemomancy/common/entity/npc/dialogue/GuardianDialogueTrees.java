@@ -17,7 +17,7 @@ import java.util.List;
 public final class GuardianDialogueTrees {
 
 	private static final ResourceLocation GUARDIAN_ICON = Hemomancy
-			.rloc("textures/entity/unstained_guardian/unstained_guardian.png");
+			.rloc("textures/entity/npc/unstained/unstained_guardian/unstained_guardian.png");
 	private static final String SPEAKER = "entity.hemomancy.unstained_guardian";
 
 	private GuardianDialogueTrees() {}

@@ -1,7 +1,7 @@
 package com.vincenthuto.hemomancy.common.tile.harbinger.functional;
 
+import com.vincenthuto.hemomancy.common.particle.HemoParticleData;
 import com.vincenthuto.hemomancy.common.init.BlockEntityInit;
-import com.vincenthuto.hutoslib.client.particle.factory.GlowParticleFactory;
 import com.vincenthuto.hutoslib.client.particle.util.HLParticleUtils;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 
@@ -32,7 +32,7 @@ public class FungalPodiumBlockEntity extends BlockEntity {
 				for (int i = 0; i < globalPartCount / 4; i++) {
 					// Outer pulsing sphere — deep crimson
 					level.addParticle(
-							GlowParticleFactory.createData(new ParticleColor(
+							HemoParticleData.glow(new ParticleColor(
 									180 + random.nextInt(40),
 									0,
 									random.nextInt(20))),
@@ -44,7 +44,7 @@ public class FungalPodiumBlockEntity extends BlockEntity {
 					// Corona — pale gold mycelium glow
 					if (i % 2 == 0) {
 						level.addParticle(
-								GlowParticleFactory.createData(new ParticleColor(
+								HemoParticleData.glow(new ParticleColor(
 										220 + random.nextInt(35),
 										180 + random.nextInt(40),
 										80 + random.nextInt(30))),
@@ -56,7 +56,7 @@ public class FungalPodiumBlockEntity extends BlockEntity {
 
 					// Inner inverse sphere — blood-dark core
 					level.addParticle(
-							GlowParticleFactory.createData(new ParticleColor(
+							HemoParticleData.glow(new ParticleColor(
 									100 + random.nextInt(60),
 									0,
 									random.nextInt(10))),

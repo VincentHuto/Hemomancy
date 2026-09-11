@@ -8,6 +8,7 @@ import com.vincenthuto.hemomancy.common.network.capa.harbinger.PacketLedgerActio
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.network.chat.Component;
@@ -27,10 +28,12 @@ import java.util.Random;
 public class LedgerScreen extends Screen {
 
 	private static final int GUI_WIDTH = 200;
-	private static final int GUI_HEIGHT = 180;
+	private static final int GUI_HEIGHT = 190;
 	private static final int VEIN_COUNT = 18;
 
 	private float[][] veinParams;
+	private Button setRecallButton;
+	private Button disbandButton;
 
 	public LedgerScreen() {
 		super(Component.literal("Ancestral Ledger"));
@@ -89,7 +92,7 @@ public class LedgerScreen extends Screen {
 		y += 28;
 
 		// ── Set Fane Recall Point Button (leader only) ──
-		addRenderableWidget(Button.builder(
+		setRecallButton = addRenderableWidget(Button.builder(
 				Component.literal("\u2691 Set Fane Recall"),
 				btn -> {
 					PacketHandler.sendToServer(
@@ -100,13 +103,30 @@ public class LedgerScreen extends Screen {
 		y += 28;
 
 		// ── Disband Bloodline Button (leader only) ──
-		addRenderableWidget(Button.builder(
+		disbandButton = addRenderableWidget(Button.builder(
 				Component.literal("\u2620 Disband Bloodline"),
 				btn -> {
 					PacketHandler.sendToServer(
 							new PacketLedgerAction(PacketLedgerAction.ACTION_DISBAND_BLOODLINE));
 					onClose();
 				}).bounds(btnX, y, btnW, 20).build());
+		updateRoleControls();
+	}
+
+	@Override
+	public void tick() {
+		super.tick();
+		updateRoleControls();
+	}
+
+	private void updateRoleControls() {
+		LocalPlayer player = Minecraft.getInstance().player;
+		boolean canManage = player != null && HemoCapabilityAccess.getBloodVolume(player)
+				.map(volume -> volume.getBloodLine().canManage(player.getUUID())).orElse(false);
+		setRecallButton.active = canManage;
+		disbandButton.active = canManage;
+		setRecallButton.setTooltip(canManage ? null : Tooltip.create(Component.translatable("hemomancy.ledger.recall.not_leader")));
+		disbandButton.setTooltip(canManage ? null : Tooltip.create(Component.translatable("hemomancy.ledger.disband.not_leader")));
 	}
 
 	@Override

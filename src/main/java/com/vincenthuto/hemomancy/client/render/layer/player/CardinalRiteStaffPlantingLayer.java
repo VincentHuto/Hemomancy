@@ -4,6 +4,8 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import com.vincenthuto.hemomancy.client.rite.CardinalRiteStaffPlantingClientState;
 import com.vincenthuto.hemomancy.common.rite.harbinger.CardinalRitePlantingSequence;
+import com.vincenthuto.hemomancy.common.init.ItemInit;
+import com.vincenthuto.hemomancy.common.item.harbinger.tool.TerrestrialSpeculumPlantingSequence;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.PlayerModel;
 import net.minecraft.client.player.AbstractClientPlayer;
@@ -13,7 +15,7 @@ import net.minecraft.client.renderer.entity.layers.RenderLayer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.world.item.ItemDisplayContext;
 
-/** Draws the transient staff between both hands during the third-person planting pose. */
+/** Draws the transient ritual implement between both hands during the third-person planting pose. */
 public final class CardinalRiteStaffPlantingLayer
 		extends RenderLayer<AbstractClientPlayer, PlayerModel<AbstractClientPlayer>> {
 
@@ -33,11 +35,13 @@ public final class CardinalRiteStaffPlantingLayer
 		float windup = CardinalRitePlantingSequence.windupProgress(elapsed);
 		float strike = CardinalRitePlantingSequence.strikeProgress(elapsed);
 		float recovery = CardinalRitePlantingSequence.recoveryProgress(elapsed);
+		float extractionLift = animation.staff().is(ItemInit.terrestrial_speculum.get())
+				? TerrestrialSpeculumPlantingSequence.extractionLift(recovery) : 0.0F;
 
 		poseStack.pushPose();
 		getParentModel().body.translateAndRotate(poseStack);
 		poseStack.translate(0.0D,
-				-0.25D - windup * 0.55D + strike * 0.92D - recovery * 0.08D,
+				-0.25D - windup * 0.55D + strike * 0.92D - recovery * 0.08D - extractionLift,
 				-0.34D);
 		poseStack.mulPose(Axis.XP.rotationDegrees(-8.0F + windup * 16.0F - strike * 12.0F));
 		poseStack.mulPose(Axis.ZP.rotationDegrees(180.0F));

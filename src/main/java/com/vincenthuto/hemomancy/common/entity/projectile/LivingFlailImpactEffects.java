@@ -1,11 +1,10 @@
 package com.vincenthuto.hemomancy.common.entity.projectile;
 
-import com.vincenthuto.hemomancy.client.particle.factory.BloodCellParticleFactory;
+import com.vincenthuto.hemomancy.common.particle.HemoParticleData;
 import com.vincenthuto.hemomancy.common.damage.HemoDamageTypes;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.LivingFlailRules;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.TendencyWeaponHelper;
 import com.vincenthuto.hemomancy.common.network.particle.LivingFlailImpactPacket;
-import com.vincenthuto.hutoslib.client.particle.factory.GlowParticleFactory;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import com.vincenthuto.hutoslib.common.tendril.TendrilAnchor;
 import com.vincenthuto.hutoslib.common.tendril.TendrilEffectConfig;
@@ -75,10 +74,10 @@ public final class LivingFlailImpactEffects {
 	public static void emitProjectileTrail(ServerLevel level, LivingFlailHeadProjectileEntity projectile) {
 		float charge = projectile.getCharge();
 		int glowCount = 1 + Math.round(charge * 2.0F);
-		level.sendParticles(GlowParticleFactory.createData(ICE_BLUE), projectile.getX(), projectile.getY(), projectile.getZ(),
+		level.sendParticles(HemoParticleData.glow(ICE_BLUE), projectile.getX(), projectile.getY(), projectile.getZ(),
 				glowCount, 0.08D, 0.08D, 0.08D, 0.01D);
 		if (projectile.tickCount % 4 == 0) {
-			level.sendParticles(BloodCellParticleFactory.createData(PALE_ICE), projectile.getX(), projectile.getY(),
+			level.sendParticles(HemoParticleData.bloodCell(PALE_ICE), projectile.getX(), projectile.getY(),
 					projectile.getZ(), 1, 0.06D, 0.06D, 0.06D, 0.005D);
 		}
 		if (projectile.tickCount % 6 == 0) {
@@ -128,9 +127,9 @@ public final class LivingFlailImpactEffects {
 
 	private static void emitImpact(ServerLevel level, Vec3 center, float charge, float impactScale, long seed) {
 		int population = Math.max(6, Math.round((12.0F + 32.0F * charge) * impactScale));
-		level.sendParticles(GlowParticleFactory.createData(ICE_BLUE), center.x, center.y, center.z,
+		level.sendParticles(HemoParticleData.glow(ICE_BLUE), center.x, center.y, center.z,
 				population, 0.4D + charge, 0.2D + charge * 0.5D, 0.4D + charge, 0.08D + charge * 0.08D);
-		level.sendParticles(BloodCellParticleFactory.createData(PALE_ICE), center.x, center.y + 0.1D, center.z,
+		level.sendParticles(HemoParticleData.bloodCell(PALE_ICE), center.x, center.y + 0.1D, center.z,
 				Math.max(2, population / 5), 0.3D + charge, 0.25D, 0.3D + charge, 0.04D);
 		level.sendParticles(new BlockParticleOption(ParticleTypes.BLOCK, Blocks.SNOW_BLOCK.defaultBlockState()),
 				center.x, center.y, center.z, population, 0.6D + charge, 0.35D, 0.6D + charge, 0.12D);

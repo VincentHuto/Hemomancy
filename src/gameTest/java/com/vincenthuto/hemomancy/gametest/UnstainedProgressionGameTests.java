@@ -137,7 +137,7 @@ public final class UnstainedProgressionGameTests {
 	}
 
 	@GameTest(templateNamespace = "minecraft", template = EMPTY_TEMPLATE, timeoutTicks = 40)
-	public static void unstainedJourneyReachesClarityWithAllObservances(GameTestHelper helper) {
+	public static void unstainedJourneyReachesClarityWithNinePurificationObservances(GameTestHelper helper) {
 		ServerPlayer player = testPlayer(helper);
 		try {
 			var progress = HemoCapabilityAccess.requireUnstainedProgress(player);
@@ -201,13 +201,48 @@ public final class UnstainedProgressionGameTests {
 			int allObservances = (1 << 9) - 1;
 			helper.assertTrue(progress.getAcceptedObservances() == allObservances
 							&& progress.getClaimedObservances() == allObservances,
-					"The critical Unstained journey must accept and fulfill every current Observance");
+					"The purification journey must accept and fulfill its nine Observances");
 			helper.assertTrue(player.getInventory().countItem(ItemInit.book_of_observances.get()) == 1,
 					"The journey must grant exactly one Book of Observances");
 			helper.succeed();
 		} finally {
 			player.discard();
 		}
+	}
+
+	@GameTest(templateNamespace = "minecraft", template = EMPTY_TEMPLATE, timeoutTicks = 40)
+	public static void fiveNovitiateObservancesRequireAcceptedWorkAndRewardOnce(GameTestHelper helper) {
+		ServerPlayer player = testPlayer(helper);
+		try {
+			var progress = HemoCapabilityAccess.requireUnstainedProgress(player);
+			UnstainedObservances.recordDewProduced(player, 4);
+			helper.assertTrue(progress.getNovitiateDewProduced() == 0, "Unaccepted work must not gain credit");
+			for (var observance : UnstainedObservances.Observance.values()) {
+				if (observance.ordinal() < 9) continue;
+				helper.assertTrue(UnstainedObservances.isAvailable(progress, observance), "Previous claim must unlock " + observance);
+				UnstainedObservances.handle(player, observance);
+				helper.assertTrue(!UnstainedObservances.isReady(player, observance), "Accepting must not fabricate work for " + observance);
+				switch (observance) {
+					case NOVITIATE_GATHER_REMEDIES -> {
+						player.getInventory().add(new ItemStack(BlockInit.ghost_pipe.get(), 4));
+						player.getInventory().add(new ItemStack(BlockInit.lethean_poppy.get(), 4));
+					}
+					case NOVITIATE_GENTLE_SEPARATION -> UnstainedObservances.recordRetortSolution(player);
+					case NOVITIATE_STILLWATER_LABOR -> UnstainedObservances.recordDewProduced(player, 4);
+					case NOVITIATE_CLEAN_LABOR -> { for (int i = 0; i < 8; i++) UnstainedObservances.recordConsecratedBlock(player); }
+					case NOVITIATE_SHELTER_AFFLICTED -> UnstainedObservances.recordProtection(player);
+					default -> throw new AssertionError(observance);
+				}
+				UnstainedObservances.handle(player, observance);
+				helper.assertTrue((progress.getClaimedObservances() & observance.mask()) != 0, "Completed work must claim " + observance);
+				var inventory = player.getInventory().save(new net.minecraft.nbt.ListTag());
+				UnstainedObservances.handle(player, observance);
+				helper.assertTrue(inventory.equals(player.getInventory().save(new net.minecraft.nbt.ListTag())), "Repeated claim duplicated a reward for " + observance);
+			}
+			helper.assertTrue(progress.getClaimedObservances() == ((1 << 14) - (1 << 9)), "All five novitiate claims must remain distinct from purification claims");
+			helper.assertTrue(!progress.hasBegunPurification() && !progress.hasClarityUnlocked(), "Novitiate work must not grant the later path");
+		} finally { player.discard(); }
+		helper.succeed();
 	}
 
 	private static StillwaterCondenserBlockEntity placeCondenser(GameTestHelper helper,

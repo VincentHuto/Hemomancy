@@ -1,15 +1,9 @@
 package com.vincenthuto.hemomancy.common.entity.projectile;
 
-import com.vincenthuto.hemomancy.client.particle.factory.BloodCellParticleFactory;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.entity.summon.BloodConstructEntity;
 import com.vincenthuto.hemomancy.common.init.EffectInit;
 import com.vincenthuto.hemomancy.common.manipulation.TendencyAffinityRules;
-import com.vincenthuto.hutoslib.client.particle.factory.GlowParticleFactory;
-import com.vincenthuto.hutoslib.client.particle.util.HLParticleUtils;
-import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
-import com.vincenthuto.hutoslib.math.Vector3;
-import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
@@ -101,32 +95,18 @@ public class CloudEntityBlood extends BloodConstructEntity {
 		}
 	}
 
+    @Override protected boolean usesLegacyConstructParticles() { return false; }
+
 	@Override
 	public void aiStep() {
 		super.aiStep();
 		resolveCreator();
 		// Prevents it from falling
 		Vec3 vector3d = this.getDeltaMovement();
-		Vector3 pos = Vector3.fromEntityCenter(this);
 		if (!this.onGround() && vector3d.y < 0.0D) {
 			this.setDeltaMovement(vector3d.multiply(1.0D, 0.0D, 1.0D));
 		}
-		if (level().isClientSide) {
-			double radius = Math.max(0.2D, effectRadius() * 0.8D);
-			level().addParticle(BloodCellParticleFactory.createData(new ParticleColor(200, 0, 0)),
-					pos.x + HLParticleUtils.inRange(-radius, radius), pos.y + HLParticleUtils.inRange(-radius, radius),
-					pos.z + HLParticleUtils.inRange(-radius, radius), 0, 0.005, 0);
-			level().addParticle(GlowParticleFactory.createData(new ParticleColor(200, 0, 0)),
-					pos.x + HLParticleUtils.inRange(-radius, radius), pos.y + HLParticleUtils.inRange(-radius, radius),
-					pos.z + HLParticleUtils.inRange(-radius, radius), 0, 0.005, 0);
-			level().addParticle(BloodCellParticleFactory.createData(new ParticleColor(200, 0, 0)),
-					pos.x + HLParticleUtils.inRange(-radius, radius), pos.y + HLParticleUtils.inRange(-radius, radius),
-					pos.z + HLParticleUtils.inRange(-radius, radius), 0, 0.005, 0);
-			level().addParticle(ParticleTypes.FALLING_LAVA, pos.x + HLParticleUtils.inRange(-radius, radius),
-					pos.y + HLParticleUtils.inRange(-radius, radius), pos.z + HLParticleUtils.inRange(-radius, radius),
-					0, 0.005, 0);
 
-		}
 		double x = this.getX();
 		double y = this.getY();
 		double offY = this.getY() - 10.0d;
@@ -198,12 +178,16 @@ public class CloudEntityBlood extends BloodConstructEntity {
 						&& (creator == null || !creator.isAlliedTo(candidate))).stream()
 				.min(Comparator.comparingDouble(this::distanceToSqr)).orElse(null);
 		if (target == null) return;
-		var lightning = EntityType.LIGHTNING_BOLT.create(server);
-		if (lightning != null) {
-			lightning.setVisualOnly(true);
-			lightning.setPos(target.position());
-			server.addFreshEntity(lightning);
-		}
+        com.vincenthuto.hutoslib.common.lightning.LightningTesterSpawner.spawn(server, position().add(0,.4,0), target.getEyePosition(),
+                new com.vincenthuto.hutoslib.common.lightning.LightningTestConfig(
+                        com.vincenthuto.hutoslib.common.lightning.LightningTestConfig.Backend.BOLT,
+                        0xBB800B24,0xBB800B24,0xFFF3ACAF,16F,0F,0F,0F,.25F,1F,10,3,.12F,.035F,
+                        true,getUUID().getLeastSignificantBits() ^ tickCount,false,20));
+        server.playSound(null,target.blockPosition(),net.minecraft.sounds.SoundEvents.LIGHTNING_BOLT_THUNDER,
+                net.minecraft.sounds.SoundSource.WEATHER,10000F,.8F+random.nextFloat()*.2F);
+        server.playSound(null,target.blockPosition(),net.minecraft.sounds.SoundEvents.LIGHTNING_BOLT_IMPACT,
+                net.minecraft.sounds.SoundSource.WEATHER,2F,.5F+random.nextFloat()*.2F);
+
 		float damage = creator instanceof Player player && damageTendency != null
 				? 4.0F * TendencyAffinityRules.damageMultiplier(player, target, damageTendency, secondaryDamageTendency)
 				: 4.0F;
@@ -222,16 +206,11 @@ public class CloudEntityBlood extends BloodConstructEntity {
 
 	@Override
 	protected void tickDeath() {
-		// Particle MobEffects
-		float g = (this.random.nextFloat() - 0.5F) * 2.0F;
-		float g1 = -1;
-		float g2 = (this.random.nextFloat() - 0.5F) * 2.0F;
 		deathTicks -= 0.05;
 		if (this.deathTicks <= 0.1) {
 			if (level().isClientSide) {
 				playConstructDissolutionSound();
-				this.level().addParticle(ParticleTypes.SQUID_INK, this.getX() + g, this.getY() + 2.0D + g1,
-						this.getZ() + g2, 0.0D, 0.0D, 0.0D);
+
 			}
 		}
 		if (this.deathTicks <= 0.1 && !this.level().isClientSide) {

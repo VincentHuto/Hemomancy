@@ -4,6 +4,7 @@ import com.vincenthuto.hemomancy.common.manipulation.ManipulationVisuals;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.EnumVeinSections;
 import com.vincenthuto.hemomancy.common.manipulation.*;
+import com.vincenthuto.hemomancy.common.init.BlockInit;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -35,13 +36,13 @@ public class RimeboundSentenceManip extends BloodManipulation {
 		int duration = ManipulationScalingRules.scaledInt(20, 120, heldTicks, CHARGE_TICKS);
 		ManipulationCombatHelper.hurt(this, player, target, level, 2.0F + 6.0F * charge);
 		target.setTicksFrozen(Math.max(target.getTicksFrozen(), duration));
-        ManipulationVisuals.attached(target, ManipulationVisuals.Form.ICE, .7, duration, 1);
+        ManipulationVisuals.attached(target, ManipulationVisuals.Form.RIMEBOUND, .7, duration, 1);
 		target.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, duration,
 				ManipulationReactiveEvents.isBoss(target) ? 2 : 5, false, true));
 		if (!ManipulationReactiveEvents.isBoss(target)) {
 			BlockPos base = target.blockPosition();
 			for (BlockPos offset : List.of(base.north(), base.south(), base.east(), base.west(), base.above(2))) {
-				TemporaryIceManager.placeOwned(level, offset, Blocks.PACKED_ICE.defaultBlockState(), duration, player.getUUID());
+				TemporaryIceManager.placeOwned(level, offset, BlockInit.frozen_cruor.get().defaultBlockState(), duration, player.getUUID());
 			}
 		}
 	}

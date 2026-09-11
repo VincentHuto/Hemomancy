@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.manipulation.tenebris;
 
+import com.vincenthuto.hemomancy.common.manipulation.ManipulationParticles;
 import com.vincenthuto.hemomancy.common.manipulation.ManipulationVisuals;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.EnumVeinSections;
@@ -7,9 +8,6 @@ import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
 import com.vincenthuto.hemomancy.common.manipulation.ManipulationCombatHelper;
 import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationRank;
 import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationType;
-import com.vincenthuto.hutoslib.client.particle.data.ColorParticleData;
-import com.vincenthuto.hutoslib.common.registry.HLParticleInit;
-import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
@@ -21,7 +19,6 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 
@@ -50,15 +47,9 @@ public class UmbralReversalManip extends BloodManipulation {
 				e -> ManipulationCombatHelper.canHarm(player, e))) {
 			target.addEffect(new MobEffectInstance(MobEffects.BLINDNESS, 80, 0, false, true));
 		}
-		for (int i = 0; i < 40; i++) {
-			sLevel.sendParticles(new ColorParticleData(HLParticleInit.glow.get(), new ParticleColor(60, 0, 105)),
-					origin.getX() + 0.5 + (world.random.nextDouble() - 0.5) * 1.5,
-					origin.getY() + world.random.nextDouble() * 2.0,
-					origin.getZ() + 0.5 + (world.random.nextDouble() - 0.5) * 1.5,
-					1, 0, 0, 0, 0.02);
-		}
+		ManipulationParticles.accent(sLevel, EnumBloodTendency.TENEBRIS, Vec3.atCenterOf(origin), net.minecraft.world.phys.Vec3.ZERO);
 		ManipulationVisuals.burst(sLevel, ManipulationVisuals.Form.TELEPORT, player.position(), player.position(), 1, 18);
-        ManipulationVisuals.burst(sLevel, ManipulationVisuals.Form.TELEPORT, Vec3.atBottomCenterOf(destination), Vec3.atBottomCenterOf(destination), 1, 22);
+        ManipulationVisuals.burst(sLevel, ManipulationVisuals.Form.UMBRA_ARRIVAL, Vec3.atBottomCenterOf(destination), Vec3.atBottomCenterOf(destination), 1, 22);
         player.teleportTo(destination.getX() + 0.5, destination.getY(), destination.getZ() + 0.5);
 		player.fallDistance = 0;
 		player.resetFallDistance();

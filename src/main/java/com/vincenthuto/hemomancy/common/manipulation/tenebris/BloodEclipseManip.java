@@ -4,9 +4,6 @@ import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.Enu
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.EnumVeinSections;
 import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillPointHelper;
 import com.vincenthuto.hemomancy.common.manipulation.*;
-import com.vincenthuto.hutoslib.client.particle.data.ColorParticleData;
-import com.vincenthuto.hutoslib.common.registry.HLParticleInit;
-import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
@@ -82,7 +79,7 @@ public class BloodEclipseManip extends BloodManipulation {
 			target.addEffect(new MobEffectInstance(MobEffects.WEAKNESS,
 					WEAKNESS_TICKS, WEAKNESS_AMP, false, true));
 			float damage = (float) (SHADOW_DAMAGE * SkillPointHelper.getCrimsonMasteryMultiplier(player));
-			target.hurt(world.damageSources().magic(),
+			ManipulationParticles.hurt(this, target, world.damageSources().magic(),
 					TendencyAffinityRules.adjustManipulationDamage(player, target, this, damage));
 			if (hit < 6) {
 				HemomancyTendrilEffects.bloodEclipse(player, target, hit);
@@ -100,7 +97,7 @@ public class BloodEclipseManip extends BloodManipulation {
 		}
 		Vec3 perp2 = look.cross(perp1).normalize();
 		double halfAngleRad = Math.toRadians(CONE_HALF_ANGLE_DEG);
-		for (int i = 0; i < 30; i++) {
+		for (int i = 0; i < 8; i++) {
 			double theta = random.nextDouble() * 2 * Math.PI;
 			double phi = random.nextDouble() * halfAngleRad;
 			double sinPhi = Math.sin(phi);
@@ -109,13 +106,7 @@ public class BloodEclipseManip extends BloodManipulation {
 					.add(perp2.scale(sinPhi * Math.sin(theta)));
 			double dist = 2.0 + random.nextDouble() * (range * 0.4);
 			Vec3 pPos = ManipulationCombatHelper.clipToGeometry(player, player.getEyePosition(1.0F).add(dir.scale(dist)));
-			sLevel.sendParticles(
-					new ColorParticleData(HLParticleInit.glow.get(), new ParticleColor(
-							50 + random.nextFloat() * 20,
-							0,
-							80 + random.nextFloat() * 60)),
-					pPos.x, pPos.y, pPos.z,
-					1, 0f, 0f, 0f, 0.005f);
+            ManipulationParticles.accent(sLevel, EnumBloodTendency.TENEBRIS, pPos, dir.scale(.02));
 		}
 	}
 }

@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.manipulation.flammeus;
 
+import com.vincenthuto.hemomancy.common.manipulation.ManipulationParticles;
 import com.vincenthuto.hemomancy.common.manipulation.ManipulationVisuals;
 import com.vincenthuto.hemomancy.common.block.harbinger.CrimsonFireHelper;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
@@ -9,9 +10,6 @@ import com.vincenthuto.hemomancy.common.manipulation.ManipulationCombatHelper;
 import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationRank;
 import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationType;
 import com.vincenthuto.hemomancy.common.manipulation.TendencyAffinityRules;
-import com.vincenthuto.hutoslib.client.particle.data.ColorParticleData;
-import com.vincenthuto.hutoslib.common.registry.HLParticleInit;
-import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
@@ -72,7 +70,7 @@ public class ScaldingUpdraftManip extends BloodManipulation {
 		for (LivingEntity target : world.getEntitiesOfClass(LivingEntity.class, new AABB(player.blockPosition()).inflate(RADIUS),
 				e -> ManipulationCombatHelper.canHarm(player, e))) {
 			CrimsonFireHelper.igniteCrimson(target, 3);
-			target.hurt(world.damageSources().onFire(),
+			ManipulationParticles.hurt(this, target, world.damageSources().onFire(),
 					TendencyAffinityRules.adjustManipulationDamage(player, target, this, 1.5F));
 			if (mode == Mode.EXPULSIVE && !player.isAlliedTo(target)) {
 				Vec3 outward = new Vec3(target.getX() - player.getX(), 0, target.getZ() - player.getZ());
@@ -82,13 +80,7 @@ public class ScaldingUpdraftManip extends BloodManipulation {
 			}
 		}
 		world.playSound(null, player.blockPosition(), SoundEvents.FIRECHARGE_USE, SoundSource.PLAYERS, 0.9F, 0.6F);
-		for (int i = 0; i < 60; i++) {
-			sLevel.sendParticles(new ColorParticleData(HLParticleInit.glow.get(), new ParticleColor(255, 120 + world.random.nextFloat() * 80, 20)),
-					player.getX() + (world.random.nextDouble() - 0.5) * 2.0,
-					player.getY() + world.random.nextDouble() * 1.2,
-					player.getZ() + (world.random.nextDouble() - 0.5) * 2.0,
-					1, 0, 0.3, 0, 0.03);
-		}
+
 	}
 
 	public enum Mode {

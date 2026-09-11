@@ -104,9 +104,9 @@ public final class ManipulationRetirementRulesTest {
 		assertFalse("retired manipulation cannot be equipped", equippedRetired);
 		assertEquals("fixed absorption first", ManipulationEquipHelper.BLOOD_ABSORPTION, equipped.get(0));
 		assertEquals("fixed projection second", ManipulationEquipHelper.BLOOD_PROJECTION, equipped.get(1));
-		assertEquals("blood shot preserved", "blood_shot", equipped.get(2));
-		assertEquals("sanguine mending preserved", "sanguine_mending", equipped.get(3));
-		assertEquals("retired entries removed", 4, equipped.size());
+		assertEquals("blood shot preserved", "blood_shot", equipped.get(3));
+		assertEquals("sanguine mending preserved", "sanguine_mending", equipped.get(4));
+		assertEquals("retired entries removed", 5, equipped.size());
 		assertEquals("normal count ignores fixed and retired entries", 2,
 				ManipulationEquipHelper.countNormalEquippedNames(equipped));
 	}

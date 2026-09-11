@@ -1,6 +1,7 @@
 package com.vincenthuto.hemomancy.common.block.harbinger.rite;
 
-import com.vincenthuto.hemomancy.client.particle.factory.BloodCellParticleFactory;
+import com.vincenthuto.hemomancy.common.init.ParticleInit;
+import com.vincenthuto.hemomancy.client.particle.data.BloodCellData;
 import com.vincenthuto.hemomancy.common.block.harbinger.BlockBloodEndpoint;
 import com.vincenthuto.hemomancy.common.block.shared.WaterloggedBlockSupport;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
@@ -97,7 +98,7 @@ public class BrazierBlock extends Block implements EntityBlock, SimpleWaterlogge
 				double ox = (pRandom.nextDouble() - 0.5) * 0.4;
 				double oz = (pRandom.nextDouble() - 0.5) * 0.4;
 				pLevel.addParticle(
-						BloodCellParticleFactory.createData(new ParticleColor(180, 0, 20)),
+						new BloodCellData(ParticleInit.blood_cell.get(), new ParticleColor(180, 0, 20)),
 						d0 + ox, d1 + pRandom.nextDouble() * 0.3, d2 + oz,
 						0.0D, 0.04D, 0.0D);
 			}
@@ -306,7 +307,7 @@ public class BrazierBlock extends Block implements EntityBlock, SimpleWaterlogge
 				? brazier.getOfferingDisplayStack()
 				: ItemStack.EMPTY;
 		level.setBlock(pos, state.setValue(RITUAL_PHASE, 1), Block.UPDATE_ALL);
-		HLParticleUtils.spawnPoof(level, pos, BloodCellParticleFactory.createData(ParticleColor.BLOOD));
+		HLParticleUtils.spawnPoof(level, pos, new BloodCellData(ParticleInit.blood_cell.get(), ParticleColor.BLOOD));
 		BrazierSpecialOfferingEffects.spawn(level, pos, offering, true,
 				BrazierSpecialOfferingRules.shouldEmitOnIgnition(false, true, !offering.isEmpty()));
 		level.playSound(null, pos, SoundEvents.FIRECHARGE_USE, SoundSource.BLOCKS, 0.55F, 0.75F);

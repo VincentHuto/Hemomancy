@@ -101,6 +101,14 @@ public class BloodVolumeOverlay {
         return Math.round(OVERLAY_H * OVERLAY_SCALE);
     }
 
+    static float getVesselEdgeX(boolean barOnLeft, int barX) {
+        return barX + (OVERLAY_W / 2.0f + (barOnLeft ? VESSEL_W : -VESSEL_W) / 2.0f) * OVERLAY_SCALE;
+    }
+
+    static float getVesselCenterY(int barY) {
+        return barY + (VESSEL_TOP + VESSEL_H / 2.0f) * OVERLAY_SCALE;
+    }
+
     public void renderHUD(GuiGraphics gfx, int width, int height, float partialTicks) {
         LocalPlayer player = this.mc.player;
         if (player == null) return;

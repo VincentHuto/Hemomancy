@@ -9,14 +9,11 @@ import com.vincenthuto.hemomancy.common.manipulation.ManipulationCombatHelper;
 import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationRank;
 import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationType;
 import com.vincenthuto.hemomancy.common.manipulation.HemomancyTendrilEffects;
-import com.vincenthuto.hutoslib.client.particle.data.ColorParticleData;
-import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
-import net.minecraft.util.RandomSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
@@ -72,19 +69,5 @@ public class HemorrhageManip extends BloodManipulation {
 
 		world.playSound(null, center, SoundEvents.WITHER_HURT, SoundSource.PLAYERS, 0.7f, 1.6f);
 
-		RandomSource random = world.random;
-		for (int i = 0; i < 20; i++) {
-			double t = random.nextDouble();
-			double px = player.getX() + (target.getX() - player.getX()) * t;
-			double py = player.getEyeY() + (target.getEyeY() - player.getEyeY()) * t;
-			double pz = player.getZ() + (target.getZ() - player.getZ()) * t;
-			sLevel.sendParticles(
-					new ColorParticleData(new ParticleColor(
-							0,
-							60 + random.nextFloat() * 40,
-							0)),
-					px, py, pz,
-					1, 0f, 0f, 0f, 0.01f);
-		}
 	}
 }

@@ -18,7 +18,7 @@ import java.util.List;
  */
 public final class HarbingerVicarDialogueTrees {
 
-	private static final ResourceLocation VICAR_ICON = Hemomancy.rloc("textures/entity/harbinger_vicar/harbinger_vicar.png");
+	private static final ResourceLocation VICAR_ICON = ResourceLocation.fromNamespaceAndPath(Hemomancy.MOD_ID, "textures/entity/npc/harbinger/harbinger_vicar/harbinger_vicar.png");
 	private static final String SPEAKER = "entity.hemomancy.harbinger_vicar";
 	public static final String EVENT_BLOOD_SHOTTING = "vicar_blood_shotting";
 	public static final String EVENT_HERMIT_ROAD_REPORT = "vicar_hermit_road_report";
@@ -72,6 +72,22 @@ public final class HarbingerVicarDialogueTrees {
 			case 7 -> archon(entityId, hasBloodline, isNpcRecruited, hasAbocipherLiteracy);
 			default -> apotheos(entityId, hasBloodline, isNpcRecruited, hasAbocipherLiteracy); // degree 8+
 		};
+	}
+
+	public static DialogueTree withContinuingConsecration(DialogueTree tree, int degree, boolean kitClaimed) {
+		if (degree < 6 || kitClaimed) return tree;
+		DialogueTree lesson = illuminatus(tree.entityId(), false, false, false);
+		var nodes = new java.util.LinkedHashMap<>(tree.nodes());
+		for (String id : List.of("armature_consecration", "armature_consecration_given")) {
+			nodes.put(id, lesson.getNode(id));
+		}
+		DialogueNode root = tree.getStartNode();
+		List<DialogueOption> options = new ArrayList<>(root.options());
+		options.addFirst(new DialogueOption("hemomancy.dialogue.vicar.option.consecrate_armature",
+				"armature_consecration", null));
+		nodes.put(root.id(), new DialogueNode(root.id(), root.lines(), options));
+		return new DialogueTree(tree.speakerName(), tree.speakerIcon(), tree.startNodeId(), nodes,
+				tree.entityId(), tree.theme(), tree.presentation());
 	}
 
 	public static DialogueTree forDegree(int degree, int entityId, boolean hasBloodline) {

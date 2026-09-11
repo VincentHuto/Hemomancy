@@ -1,7 +1,7 @@
 package com.vincenthuto.hemomancy.common.network.particle;
 
+import com.vincenthuto.hemomancy.common.particle.HemoParticleData;
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.client.particle.factory.BloodAvatarHitParticleFactory;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
@@ -37,7 +37,7 @@ public class SpawnAvatarParticlesPacket implements CustomPacketPayload {
 	public static void handle(final SpawnAvatarParticlesPacket msg, final IPayloadContext ctxSupplier) {
 		if (ctxSupplier.player() == null) return;
 		ctxSupplier.player().level().addParticle(
-				BloodAvatarHitParticleFactory.createData(msg.getColor()),
+				HemoParticleData.bloodAvatarHit(msg.getColor()),
 				msg.getPos().x, msg.getPos().y, msg.getPos().z, 0, 0, 0);
 	}
 

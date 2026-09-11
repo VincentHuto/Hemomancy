@@ -43,6 +43,8 @@ public class MnemonicReliquaryScreen extends AbstractContainerScreen<MnemonicRel
 	private static final int SCREEN_PADDING = 8;
 	private static final long FAMILY_HOLD_MILLIS = 600L;
 	private static final int FAMILY_DROPDOWN_BACKGROUND = 0xFF2A080D;
+	private static final int FAMILY_MODE_BADGE = 0xFF4A0B14;
+	private static final int FAMILY_MODE_MARKER = 0xFFFFD7DB;
 
 	private float[][] veinParams;
 	private int guiLeft;
@@ -187,18 +189,9 @@ public class MnemonicReliquaryScreen extends AbstractContainerScreen<MnemonicRel
 				}
 			}
 
-			for (String name : equipped) {
-				if (ManipulationEquipHelper.isFixedMechanicalManip(name)) {
-					continue;
-				}
-				for (BloodManipulation manip : known.getKnownManips().keySet()) {
-					if (manip.getName().equals(name)
-							&& !ManipulationRetirementRules.isRetiredManipulation(manip)) {
-						equippedManips.add(manip);
-						break;
-					}
-				}
-			}
+			ManipulationWheelOrder.resolve(known.getManipList(), equipped).stream()
+					.map(ManipulationWheelOrder.Entry::manipulation)
+					.forEach(equippedManips::add);
 		});
 		var muscleState = player.getData(HemoAttachmentTypes.MUSCLE_MEMORY);
 		knownMuscleMemories.addAll(muscleState.knownMemories());
@@ -492,7 +485,20 @@ public class MnemonicReliquaryScreen extends AbstractContainerScreen<MnemonicRel
 				graphics.fill(icon.x, icon.y, icon.x + currentIconSize, icon.y + currentIconSize, 0x4000CC00);
 				RenderSystem.disableBlend();
 			}
+			drawFamilyModeIndicator(graphics, icon);
 		}
+	}
+
+	private void drawFamilyModeIndicator(GuiGraphics graphics, ManipIcon icon) {
+		if (unlockedFamilyForms(icon.manip).isEmpty()) return;
+		int badgeSize = Math.max(5, scaled(6));
+		int badgeX = icon.x + currentIconSize - badgeSize + 1;
+		int badgeY = icon.y - 1;
+		int centerX = badgeX + badgeSize / 2;
+		int centerY = badgeY + badgeSize / 2;
+		graphics.fill(badgeX, badgeY, badgeX + badgeSize, badgeY + badgeSize, FAMILY_MODE_BADGE);
+		graphics.fill(badgeX + 1, centerY, badgeX + badgeSize - 1, centerY + 1, FAMILY_MODE_MARKER);
+		graphics.fill(centerX, badgeY + 1, centerX + 1, badgeY + badgeSize - 1, FAMILY_MODE_MARKER);
 	}
 
 	private void drawEquippedManips(GuiGraphics graphics, int mouseX, int mouseY) {
@@ -693,6 +699,11 @@ public class MnemonicReliquaryScreen extends AbstractContainerScreen<MnemonicRel
 		}
 		if (equippedNames.contains(hovered.getName())) {
 			tooltip.add(Component.literal("Equipped").withStyle(s -> s.withColor(0x55FF55)));
+		}
+		boolean knownFamilyIcon = knownIcons.stream()
+				.anyMatch(icon -> icon.manip == hovered && contains(icon, mouseX, mouseY));
+		if (knownFamilyIcon && !unlockedFamilyForms(hovered).isEmpty()) {
+			tooltip.add(Component.literal("Hold to choose variation").withStyle(ChatFormatting.LIGHT_PURPLE));
 		}
 
 		graphics.renderTooltip(font, tooltip, Optional.empty(), mouseX, mouseY);

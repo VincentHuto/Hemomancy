@@ -52,7 +52,7 @@ public class PrismaticReproofManip extends BloodManipulation {
 			float damage = (float) ((target.hasEffect(MobEffects.GLOWING) ? 4.0F : 2.0F)
 					* SkillPointHelper.getCrimsonMasteryMultiplier(player));
 			float adjusted = TendencyAffinityRules.adjustManipulationDamage(player, target, this, damage);
-			if (target.hurt(world.damageSources().magic(), adjusted)) {
+			if (ManipulationParticles.hurt(this, target, world.damageSources().magic(), adjusted)) {
 				SchoolHitHelper.tryTriggerConductiveArc(player, target, EnumBloodTendency.LUX, getSecondaryTend(),
 						adjusted);
 			}
@@ -63,17 +63,14 @@ public class PrismaticReproofManip extends BloodManipulation {
 		world.playSound(null, player.blockPosition(), SoundEvents.AMETHYST_BLOCK_CHIME, SoundSource.PLAYERS,
 				0.8F, struck > 0 ? 1.4F : 0.9F);
 		RandomSource random = world.random;
-		for (int i = 0; i < 42; i++) {
+		for (int i = 0; i < 10; i++) {
 			double distance = 1.0 + random.nextDouble() * RANGE;
 			Vec3 scatter = look.scale(distance).add(
 					(random.nextDouble() - 0.5) * distance * 0.55,
 					(random.nextDouble() - 0.5) * distance * 0.20,
 					(random.nextDouble() - 0.5) * distance * 0.55);
 			Vec3 particlePos = ManipulationCombatHelper.clipToGeometry(player, eye.add(scatter));
-			sLevel.sendParticles(new ColorParticleData(HLParticleInit.glow.get(), new ParticleColor(
-							190 + random.nextFloat() * 65,
-							170 + random.nextFloat() * 85,
-							230 + random.nextFloat() * 25)),
+			sLevel.sendParticles(new ColorParticleData(HLParticleInit.glow.get(), new ParticleColor(255, 250, 239)),
 					particlePos.x, particlePos.y, particlePos.z,
 					1, 0, 0, 0, 0.02);
 		}

@@ -156,11 +156,11 @@ import org.lwjgl.glfw.GLFW;
 @EventBusSubscriber(value = Dist.CLIENT, modid = Hemomancy.MOD_ID)
 public class ClientEvents {
 
-    public static final KeyMapping bloodFormation = new KeyMapping("key.hemomancy.bloodformation.desc", GLFW.GLFW_KEY_F,
+    public static final KeyMapping bloodFormation = new KeyMapping("key.hemomancy.bloodformation.desc", GLFW.GLFW_KEY_J,
             "key.hemomancy.category");
-    public static final KeyMapping bloodCrafting = new KeyMapping("key.hemomancy.bloodcrafting.desc", GLFW.GLFW_KEY_C,
+    public static final KeyMapping bloodCrafting = new KeyMapping("key.hemomancy.bloodcrafting.desc", GLFW.GLFW_KEY_K,
             "key.hemomancy.category");
-    public static final KeyMapping bloodDraw = new KeyMapping("key.hemomancy.drawtest.desc", GLFW.GLFW_KEY_LEFT_CONTROL,
+    public static final KeyMapping bloodDraw = new KeyMapping("key.hemomancy.drawtest.desc", GLFW.GLFW_KEY_LEFT_ALT,
             "key.hemomancy.category");
     public static final KeyMapping cycleSelectedManip = new KeyMapping("key.hemomancy.cyclemanip.desc", GLFW.GLFW_KEY_C,
             "key.hemomancy.category");
@@ -185,7 +185,7 @@ public class ClientEvents {
     public static final KeyMapping toggleGourd = new KeyMapping("key.hemomancy.togglegourd.desc", GLFW.GLFW_KEY_H,
             "key.hemomancy.category");
     public static final KeyMapping openMorphlingJarViewer = new KeyMapping("key.hemomancy.openmorphlingjar.desc",
-            GLFW.GLFW_KEY_B, "key.hemomancy.category");
+            GLFW.GLFW_KEY_N, "key.hemomancy.category");
     public static final KeyMapping bloodBallDrop = new KeyMapping("key.hemomancy.bloodballdrop.desc", GLFW.GLFW_KEY_V,
             "key.hemomancy.category");
 
@@ -358,6 +358,10 @@ public class ClientEvents {
 			suppressManipulationUntilRelease = false;
 			return;
 		}
+        if (com.vincenthuto.hemomancy.common.manipulation.ductilis.Paralysis.isParalyzed(mc.player)) {
+            interruptManipulationCharge();
+            return;
+        }
 		HemoCapabilityAccess.getKnownManipulations(mc.player).ifPresent(known -> {
 			var selected = known.getSelectedManip() == null ? null
 					: ManipulationInit.getByName(known.getSelectedManip().getName());
@@ -411,6 +415,19 @@ public class ClientEvents {
 			}
 		});
 	}
+
+    public static void interruptManipulationCharge() {
+        if (manipulationChargeTicks > 0) {
+            if (lastManipulationType == EnumManipulationType.CONTINUOUS) {
+                PacketHandler.sendToServer(UseManipKeyPacket.stopContinuous());
+            } else if (lastManipulationType == EnumManipulationType.CHARGED) {
+                PacketHandler.sendToServer(new com.vincenthuto.hemomancy.common.network.capa.harbinger.manips.ManipulationChargeVisualPacket(0));
+            }
+        }
+        manipulationChargeTicks = 0;
+        suppressManipulationUntilRelease = useManip.isDown();
+        while (useManip.consumeClick()) { }
+    }
 
 	public static int getManipulationChargeTicks() {
 		return manipulationChargeTicks;
@@ -660,12 +677,10 @@ public class ClientEvents {
             BloodStructureFeedWarpRenderer.render(event.getPoseStack(), partialTick);
             SanguineFormationProjectionRenderer.render(event.getPoseStack(), partialTick);
             FaneBoundaryRenderer.renderWorldMask(event.getPoseStack(), partialTick);
-            BlackVeilRenderer.render(event.getPoseStack(), partialTick);
             BloodCraftRingRenderer.render(event.getPoseStack(), partialTick);
             QliphothBloomRenderer.render(event.getPoseStack(), partialTick, event.getFrustum());
             OculifloraRevealRenderer.render(event.getPoseStack(), partialTick);
             BloodBallRenderer.render(event.getPoseStack(), partialTick);
-            BloodBindingTendrilRenderer.render(event.getPoseStack(), partialTick);
             SanguineMonolithShatterRenderer.render(event.getPoseStack(), partialTick);
             ClawSlashRenderer.render(event.getPoseStack(), partialTick);
             PuppeteerThreadRenderer.render(event.getPoseStack(), partialTick);
@@ -890,6 +905,7 @@ public class ClientEvents {
         @SubscribeEvent
         public static void clientSetup(FMLClientSetupEvent event) {
             event.enqueueWork(() -> {
+                ItemBlockRenderTypes.setRenderLayer(BlockInit.frozen_cruor.get(), RenderType.translucent());
                 ItemBlockRenderTypes.setRenderLayer(FluidInit.WHITE_HUMOR.get(), RenderType.translucent());
                 ItemBlockRenderTypes.setRenderLayer(FluidInit.WHITE_HUMOR_FLOWING.get(), RenderType.translucent());
             });

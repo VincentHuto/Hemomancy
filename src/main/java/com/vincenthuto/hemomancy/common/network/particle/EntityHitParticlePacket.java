@@ -1,7 +1,7 @@
 package com.vincenthuto.hemomancy.common.network.particle;
 
+import com.vincenthuto.hemomancy.common.particle.HemoParticleData;
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.client.particle.factory.HitGlowParticleFactory;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
@@ -33,7 +33,7 @@ public class EntityHitParticlePacket implements CustomPacketPayload {
 				return;
 			if (!player.level().isClientSide) {
 				ServerLevel sLevel = (ServerLevel) player.level();
-				sLevel.sendParticles(HitGlowParticleFactory.createData(ParticleColor.WHITE), message.x, message.y,
+				sLevel.sendParticles(HemoParticleData.hitGlow(ParticleColor.WHITE), message.x, message.y,
 						message.z, 4, 0, 0, 0, 0.001f);
 			}
 

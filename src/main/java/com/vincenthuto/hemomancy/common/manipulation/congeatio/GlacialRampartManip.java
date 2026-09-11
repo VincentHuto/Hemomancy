@@ -3,11 +3,10 @@ package com.vincenthuto.hemomancy.common.manipulation.congeatio;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.EnumVeinSections;
 import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillPointHelper;
+import com.vincenthuto.hemomancy.common.init.BlockInit;
 import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
 import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationRank;
 import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationType;
-import com.vincenthuto.hutoslib.client.particle.factory.GlowParticleFactory;
-import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -20,7 +19,6 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
@@ -72,7 +70,7 @@ public class GlacialRampartManip extends BloodManipulation {
 		for (int dLat = -HALF_WIDTH; dLat <= HALF_WIDTH; dLat++) {
 			for (int dUp = 0; dUp < HEIGHT; dUp++) {
 				BlockPos target = base.relative(lateral, dLat).above(dUp);
-				if (TemporaryIceManager.place(sLevel, target, Blocks.PACKED_ICE.defaultBlockState(),
+				if (TemporaryIceManager.place(sLevel, target, BlockInit.frozen_cruor.get().defaultBlockState(),
 						BASE_LIFETIME_TICKS + random.nextInt(LIFETIME_VARIANCE))) {
 					placed++;
 				}
@@ -82,17 +80,7 @@ public class GlacialRampartManip extends BloodManipulation {
 		if (placed > 0) {
 			world.playSound(null, base, SoundEvents.GLASS_PLACE, SoundSource.PLAYERS, 1.0f, 0.5f);
 			world.playSound(null, base, SoundEvents.POWDER_SNOW_BREAK, SoundSource.PLAYERS, 0.6f, 0.8f);
-			for (int i = 0; i < 30; i++) {
-				sLevel.sendParticles(
-						GlowParticleFactory.createData(new ParticleColor(
-								140 + random.nextFloat() * 80,
-								200 + random.nextFloat() * 55,
-								255)),
-						base.getX() + 0.5 + (random.nextDouble() - 0.5) * 3,
-						base.getY() + random.nextDouble() * HEIGHT,
-						base.getZ() + 0.5 + (random.nextDouble() - 0.5) * 3,
-						1, 0f, 0.05f, 0f, 0.01f);
-			}
+
 		}
 	}
 
@@ -107,7 +95,7 @@ public class GlacialRampartManip extends BloodManipulation {
 				if (dy == HEIGHT - 1 && distance == 3 && random.nextBoolean()) continue;
 				BlockPos target = base.offset(dx, dy, dz);
 				if (!target.equals(base) && !target.equals(base.above()) && TemporaryIceManager.place(level, target,
-						Blocks.PACKED_ICE.defaultBlockState(), BASE_LIFETIME_TICKS + random.nextInt(LIFETIME_VARIANCE))) placed++;
+						BlockInit.frozen_cruor.get().defaultBlockState(), BASE_LIFETIME_TICKS + random.nextInt(LIFETIME_VARIANCE))) placed++;
 			}
 		}
 		if (placed > 0) {

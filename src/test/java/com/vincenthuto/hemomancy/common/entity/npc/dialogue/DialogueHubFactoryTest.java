@@ -11,6 +11,19 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class DialogueHubFactoryTest {
 	@Test
+	void enteringARewardTopicDoesNotSkipItsEventBearingChoice() {
+		DialogueOption claim = new DialogueOption("claim_assignment_reward", "thanks", "claim_reward");
+		DialogueTree base = DialogueTree.builder("speaker", id("portrait"), 42)
+				.addNode(new DialogueNode("greeting", List.of("greeting"), List.of(claim)))
+				.addNode(new DialogueNode("thanks", List.of("reward_delivered"), List.of()))
+				.build();
+		DialogueTree decorated = DialogueHubFactory.decorate(base, "vicar", new DialogueKnowledge());
+		DialogueTopic topic = decorated.presentation().topics(DialogueCategory.QUESTS).getFirst();
+		assertEquals(List.of(claim), decorated.getNode(topic.targetNodeId()).options(),
+				"opening a topic must expose the server action before its success node");
+	}
+
+	@Test
 	void decoratesExistingRootOptionsWithoutChangingTheirEvents() {
 		DialogueTree base = DialogueTree.builder("speaker", id("portrait"), 42)
 				.addNode(new DialogueNode("greeting", List.of("greeting"), List.of(

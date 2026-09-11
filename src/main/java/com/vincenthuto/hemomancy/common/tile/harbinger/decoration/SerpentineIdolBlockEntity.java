@@ -1,6 +1,6 @@
 package com.vincenthuto.hemomancy.common.tile.harbinger.decoration;
 
-import com.vincenthuto.hemomancy.client.particle.factory.SerpentParticleFactory;
+import com.vincenthuto.hemomancy.common.particle.HemoParticleData;
 import com.vincenthuto.hemomancy.common.block.harbinger.decoration.BlockSerpentineIdol;
 import com.vincenthuto.hemomancy.common.init.BlockEntityInit;
 import com.vincenthuto.hemomancy.common.init.EffectInit;
@@ -38,19 +38,19 @@ public class SerpentineIdolBlockEntity extends BlockEntity {
 				if (level.isClientSide) {
 
 					double time = level.getGameTime();
-					level.addParticle(SerpentParticleFactory.createData(new ParticleColor(50, 50, 50)),
+					level.addParticle(HemoParticleData.serpent(new ParticleColor(50, 50, 50)),
 							centerVec.x + Math.sin(time * 0.3) * (0.50 + Math.sin(time) * 0.05),
 							centerVec.y + Math.sin(time * 0.1) * 0.55f,
 							centerVec.z + Math.cos(time * 0.3) * (0.50 + Math.sin(time) * 0.05), 0, 0f, 0.0f);
-					level.addParticle(SerpentParticleFactory.createData(new ParticleColor(100, 0, 0)),
+					level.addParticle(HemoParticleData.serpent(new ParticleColor(100, 0, 0)),
 							centerVec.x + Math.sin(time * 0.3) * (0.50 + Math.sin(time) * 0.05),
 							centerVec.y + Math.sin(time * 0.1) * 0.55f,
 							centerVec.z + Math.cos(time * 0.3) * (0.50 + Math.sin(time) * 0.05),0, 0f, 0.0f);
-					level.addParticle(SerpentParticleFactory.createData(new ParticleColor(255, 0, 0)),
+					level.addParticle(HemoParticleData.serpent(new ParticleColor(255, 0, 0)),
 							centerVec.x + Math.sin(time * 0.3) * (0.50 + Math.sin(time) * 0.05),
 							centerVec.y + Math.sin(time * 0.1) * 0.55f,
 							centerVec.z + Math.cos(time * 0.3) * (0.50 + Math.sin(time) * 0.05), 0, 0f, 0.0f);
-					level.addParticle(SerpentParticleFactory.createData(new ParticleColor(255, 0, 0)),
+					level.addParticle(HemoParticleData.serpent(new ParticleColor(255, 0, 0)),
 							centerVec.x + Math.sin(time * 0.3) * (0.50 + Math.sin(time) * 0.05),
 							centerVec.y + Math.sin(time * 0.1) * 0.55f,
 							centerVec.z + Math.cos(time * 0.3) * (0.50 + Math.sin(time) * 0.05), 0, 0f, 0.0f);

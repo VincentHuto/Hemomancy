@@ -229,10 +229,13 @@ public class ActiveCardinalRite {
 		return true;
 	}
 
+	public int totalAnchorRings() {
+		return Math.ceilDiv(anchorBloodMl.length, CardinalRiteCeremonyRules.ANCHORS_PER_DEGREE);
+	}
+
 	public int completedRings() {
 		int completed = 0;
-		int authoredRings = (anchorBloodMl.length + CardinalRiteCeremonyRules.ANCHORS_PER_DEGREE - 1)
-				/ CardinalRiteCeremonyRules.ANCHORS_PER_DEGREE;
+		int authoredRings = totalAnchorRings();
 		for (int ring = 0; ring < authoredRings; ring++) {
 			boolean full = true;
 			int start = ring * CardinalRiteCeremonyRules.ANCHORS_PER_DEGREE;

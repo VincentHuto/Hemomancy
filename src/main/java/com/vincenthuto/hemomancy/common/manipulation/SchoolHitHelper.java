@@ -6,7 +6,8 @@ import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.Enu
 import com.vincenthuto.hemomancy.common.init.EffectInit;
 import com.vincenthuto.hemomancy.common.item.harbinger.memories.LivingWeaponGraftRecipeUnlockEvents;
 import com.vincenthuto.hemomancy.common.manipulation.ductilis.DuctilisLightningEffects;
-import com.vincenthuto.hutoslib.client.particle.factory.GlowParticleFactory;
+import com.vincenthuto.hemomancy.common.manipulation.ductilis.Discharge;
+import com.vincenthuto.hemomancy.common.manipulation.ductilis.ConductionManager;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
@@ -41,7 +42,17 @@ public final class SchoolHitHelper {
 
 	public static boolean tryTriggerConductiveArc(LivingEntity attacker, LivingEntity markedTarget,
 			EnumBloodTendency primary, @Nullable EnumBloodTendency secondary, float sourceDamage) {
-		if (!(attacker instanceof Player) || markedTarget.level().isClientSide()
+        if (!(attacker instanceof Player)) return false;
+        Discharge discharge = new Discharge();
+        if (attacker instanceof Player player && player.level() instanceof ServerLevel)
+            ConductionManager.claimHit(player,markedTarget,discharge);
+        else discharge.claim(markedTarget.getUUID(),markedTarget.level().getGameTime());
+        return tryTriggerConductiveArc(attacker,markedTarget,primary,secondary,sourceDamage,discharge);
+    }
+
+    public static boolean tryTriggerConductiveArc(LivingEntity attacker, LivingEntity markedTarget,
+            EnumBloodTendency primary, @Nullable EnumBloodTendency secondary, float sourceDamage, Discharge discharge) {
+		if (markedTarget.level().isClientSide()
 				|| !markedTarget.hasEffect(EffectInit.conductive_mark)
 				|| !ManipulationStatusRules.isConductiveSchool(primary, secondary)) {
 			return false;
@@ -59,14 +70,19 @@ public final class SchoolHitHelper {
 		markedTarget.level().getEntitiesOfClass(LivingEntity.class,
 						new AABB(markedTarget.blockPosition()).inflate(ManipulationStatusRules.CONDUCTIVE_ARC_RADIUS),
 						target -> target != markedTarget && target != attacker && target.isAlive()
-								&& (attacker instanceof Player player ? ManipulationCombatHelper.canHarm(player, target)
-								: !target.isAlliedTo(attacker) && !attacker.isAlliedTo(target))
-								&& target.position().distanceTo(center) <= ManipulationStatusRules.CONDUCTIVE_ARC_RADIUS)
+								&& ConductionManager.canHarm(attacker,target)
+								&& ConductionManager.canClaimHit(attacker,target,discharge)
+                                && target.position().distanceTo(center) <= ManipulationStatusRules.CONDUCTIVE_ARC_RADIUS
+                                && (primary!=EnumBloodTendency.DUCTILIS && secondary!=EnumBloodTendency.DUCTILIS
+                                    || ConductionManager.visible((ServerLevel)markedTarget.level(),
+                                            markedTarget.getEyePosition(),target.getEyePosition(),attacker)))
 				.stream()
-				.sorted(Comparator.comparingDouble(target -> target.distanceToSqr(markedTarget)))
+				.sorted(Comparator.comparingDouble((LivingEntity target) -> target.distanceToSqr(markedTarget))
+                        .thenComparing(LivingEntity::getUUID))
 				.limit(ManipulationStatusRules.CONDUCTIVE_ARC_TARGETS)
 				.forEach(target -> {
-					DuctilisLightningEffects.conductiveArc(markedTarget, target, arcs[0]++);
+					if (!ConductionManager.claimHit(attacker,target,discharge)) return;
+                    DuctilisLightningEffects.conductiveArc(markedTarget, target, arcs[0]++);
 					target.hurt(attacker.damageSources().magic(), ManipulationStatusRules.CONDUCTIVE_ARC_DAMAGE);
 				});
 
@@ -132,6 +148,7 @@ public final class SchoolHitHelper {
 			if (volume.isActive()) {
 				volume.fill(ManipulationStatusRules.GRAVE_DEBT_DEATH_REFUND);
 				BloodVolumeEvents.syncVolume(serverPlayer, volume);
+                BloodFlowVisuals.connect(serverPlayer,target,com.vincenthuto.hemomancy.common.network.particle.BloodFlowPacket.Style.EXTRACTION);
 			}
 		});
 	}
@@ -153,13 +170,8 @@ public final class SchoolHitHelper {
 		if (!(target.level() instanceof ServerLevel serverLevel)) {
 			return;
 		}
-		for (int i = 0; i < 34; i++) {
-			serverLevel.sendParticles(GlowParticleFactory.createData(new ParticleColor(55, 120, 35)),
-					center.x + (target.getRandom().nextDouble() - 0.5D) * 2.6D,
-					center.y + (target.getRandom().nextDouble() - 0.5D) * 1.7D,
-					center.z + (target.getRandom().nextDouble() - 0.5D) * 2.6D,
-					1, 0.0D, 0.04D, 0.0D, 0.02D);
-		}
+        ManipulationVisuals.burst(serverLevel,ManipulationVisuals.Form.MORTEM_BURST,center,center,
+                ManipulationStatusRules.GRAVE_DEBT_RADIUS,24);
 		target.level().playSound(null, target.blockPosition(), SoundEvents.WITHER_DEATH, SoundSource.PLAYERS,
 				0.65F, 1.45F);
 	}

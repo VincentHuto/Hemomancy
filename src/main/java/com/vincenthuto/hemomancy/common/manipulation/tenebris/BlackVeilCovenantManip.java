@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.manipulation.tenebris;
 
+import com.vincenthuto.hemomancy.common.manipulation.ManipulationParticles;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.EnumVeinSections;
 import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
@@ -8,11 +9,9 @@ import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationType;
 import com.vincenthuto.hemomancy.common.manipulation.HemomancyTendrilEffects;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
-import net.minecraft.util.RandomSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.LivingEntity;
@@ -48,15 +47,6 @@ public class BlackVeilCovenantManip extends BloodManipulation {
 		}
 
 		world.playSound(null, center, SoundEvents.WARDEN_SONIC_BOOM, SoundSource.PLAYERS, 0.55F, 0.55F);
-		RandomSource random = world.random;
-		for (int i = 0; i < 90; i++) {
-			double angle = random.nextDouble() * Math.PI * 2.0;
-			double radius = random.nextDouble() * RADIUS;
-			sLevel.sendParticles(ParticleTypes.SQUID_INK,
-					center.getX() + 0.5 + Math.cos(angle) * radius,
-					center.getY() + 0.2 + random.nextDouble() * 5.0,
-					center.getZ() + 0.5 + Math.sin(angle) * radius,
-					1, 0, -0.03, 0, 0.01);
-		}
+		ManipulationParticles.accent(sLevel, EnumBloodTendency.TENEBRIS, player.position().add(0, .4, 0), net.minecraft.world.phys.Vec3.ZERO);
 	}
 }

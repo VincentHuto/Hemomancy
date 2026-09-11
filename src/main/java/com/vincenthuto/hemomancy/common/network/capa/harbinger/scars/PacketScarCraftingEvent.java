@@ -64,7 +64,7 @@ public class PacketScarCraftingEvent implements CustomPacketPayload {
 				}
 
 				AbstractContainerMenu container = player.containerMenu;
-				if (container instanceof ScarStationMenu) {
+				if (container instanceof ScarStationMenu && container.stillValid(ctx.player())) {
 					ScarStationBlockEntity station = ((ScarStationMenu) container).getTe();
 					ScarRecipe recipe = station.getCurrentRecipe();
 					if (recipe != null && recipe.getTier() >= 3
@@ -73,6 +73,17 @@ public class PacketScarCraftingEvent implements CustomPacketPayload {
 								Component.literal("The third inscription tier refuses a shallow hand.")
 										.withStyle(ChatFormatting.DARK_RED),
 								false);
+						return;
+					}
+					if (!com.vincenthuto.hemomancy.common.event.MachineAccessEvents.hasPersonalAccess(player, station.getBlockState().getBlock())
+							&& recipe != null && !recipe.getResultItem().is(
+									com.vincenthuto.hemomancy.common.entity.npc.dialogue.VeinMasonScarLesson.forPlayer(player).scar().get())) {
+						player.displayClientMessage(Component.literal("Supervised access is for your first lesson scar. Craft your own station for other patterns."), false);
+						return;
+					}
+					Component failure = station.craftingFailure();
+					if (failure != null) {
+						player.displayClientMessage(failure.copy().withStyle(ChatFormatting.RED), false);
 						return;
 					}
 					boolean outputWasEmpty = station.getItem(2).isEmpty();

@@ -7,9 +7,6 @@ import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillPoin
 import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
 import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationRank;
 import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationType;
-import com.vincenthuto.hutoslib.client.particle.data.ColorParticleData;
-import com.vincenthuto.hutoslib.common.registry.HLParticleInit;
-import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
@@ -102,17 +99,7 @@ public class PyreticForgeManip extends BloodManipulation {
             BlockPos pos = player.blockPosition();
 			RandomSource random = world.random;
 
-			for (int i = 0; i < 20; i++) {
-				float r = 200 + random.nextFloat() * 55;
-				float g = 80 + random.nextFloat() * 100;
-				float b = random.nextFloat() * 20;
-				sLevel.sendParticles(
-						new ColorParticleData(HLParticleInit.glow.get(), new ParticleColor(r, g, b)),
-						pos.getX() + 0.5 + (random.nextDouble() - 0.5) * 0.6,
-						pos.getY() + 1.0 + random.nextDouble() * 0.5,
-						pos.getZ() + 0.5 + (random.nextDouble() - 0.5) * 0.6,
-						1, 0f, 0.15f, 0f, 0.02f);
-			}
+
 		}
 	}
 }

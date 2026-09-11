@@ -201,10 +201,20 @@ public class QliphothPomeItem extends Item implements HemoClientItemExtensionsPr
 			return stack;
 		}
 
+		// Eating the last item empties the stack and hides its components.
+		CompoundTag itemTag = getCustomData(stack);
+		if (entity instanceof ServerPlayer player && itemTag.getBoolean(BOUND_KEY) && !itemTag.getBoolean(TAINTED_KEY)) {
+			int expected = HemoCapabilityAccess.requireInitiatoryDegree(player)
+					.getPomesConsumedFromBloom(itemTag.getLong(BLOOM_ORIGIN_KEY));
+			if (!itemTag.contains(BLOOM_ORIGIN_KEY) || !itemTag.contains(HUSK_INDEX_KEY)
+					|| itemTag.getInt(HUSK_INDEX_KEY) != expected || expected >= HUSK_NAMES.length) {
+				player.displayClientMessage(Component.literal("This husk is already consumed or belongs later in this tree's covenant. The pome remains untouched."), true);
+				return stack;
+			}
+		}
 		ItemStack result = super.finishUsingItem(stack, level, entity);
 
 		if (!level.isClientSide && entity instanceof Player player) {
-			CompoundTag itemTag = getCustomData(stack);
 			boolean isTainted = itemTag.getBoolean(TAINTED_KEY);
 			spawnPomePulse(player);
 
@@ -308,16 +318,18 @@ public class QliphothPomeItem extends Item implements HemoClientItemExtensionsPr
 				? itemTag.getLong(BLOOM_ORIGIN_KEY)
 				: CREATIVE_TEST_BLOOM_ORIGIN;
 		boolean completedCommunion = trackCommunionProgress((ServerPlayer) player, bloomOrigin);
-		clearPendingPome(level, bloomOrigin);
+		clearPendingPome(level, bloomOrigin, huskIdx);
 		playPomeSound(player, completedCommunion);
 		syncPomeProgress((ServerPlayer) player);
 	}
 
-	private static void clearPendingPome(Level level, long bloomOrigin) {
+	private static void clearPendingPome(Level level, long bloomOrigin, int huskIndex) {
 		if (bloomOrigin == CREATIVE_TEST_BLOOM_ORIGIN || !(level instanceof ServerLevel serverLevel)) {
 			return;
 		}
-		QliphothBloomSavedData.get(serverLevel.getServer().overworld()).clearPendingPome(bloomOrigin);
+		var blooms = QliphothBloomSavedData.get(serverLevel.getServer().overworld());
+		if (blooms.getPendingPomeHuskIndex(net.minecraft.core.BlockPos.of(bloomOrigin)) == huskIndex)
+			blooms.clearPendingPome(bloomOrigin);
 	}
 
 	private static int resolveHuskIndex(Player player, CompoundTag itemTag) {
@@ -340,8 +352,8 @@ public class QliphothPomeItem extends Item implements HemoClientItemExtensionsPr
 	 */
 	private static boolean trackCommunionProgress(ServerPlayer player, long bloomOrigin) {
 		return HemoCapabilityAccess.getInitiatoryDegree(player).map(degree -> {
-			if (degree.isQliphothCommunionDone()) return false;
 			int count = degree.recordPomeConsumed(bloomOrigin);
+			if (degree.isQliphothCommunionDone()) return false;
 			if (count >= 9) {
 				degree.setQliphothCommunionDone(true);
 				if (QliphothPomeRules.shouldGrantFungalSpine(count, degree.hasFungalSpineGranted())) {

@@ -29,6 +29,9 @@ final class ManipulationKnowledgeCommandSourceTest {
 		assertContains(command, "ManipulationInit.getAllEntries()");
 		assertContains(command, "ManipulationInit.getByName(manipulationName)");
 		assertContains(command, "new ManipLevel(0, 0)");
+		assertContains(command, "ManipLevel.MAX_LEVEL");
+		assertContains(command, "maxMasteryXp");
+		assertContains(command, "ManipulationFamilyRegistry.families()");
 		assertContains(command, "KnownManipulationEvents.syncPlayerEvent(player)");
 		assertContains(command, "known.setSelectedManip(BloodManipulation.BLANK)");
 		assertContains(command, "\"all\".equals(manipulationName)");

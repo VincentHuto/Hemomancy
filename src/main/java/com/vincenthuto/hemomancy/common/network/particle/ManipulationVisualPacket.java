@@ -11,7 +11,7 @@ import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 public record ManipulationVisualPacket(Form form, int entityId, Vec3 from, Vec3 to,
         float radius, int ticks, int count) implements CustomPacketPayload {
-    public static final Type<ManipulationVisualPacket> TYPE = new Type<>(Hemomancy.rloc("manipulation_visual"));
+    public static final Type<ManipulationVisualPacket> TYPE = new Type<>(net.minecraft.resources.ResourceLocation.fromNamespaceAndPath(Hemomancy.MOD_ID, "manipulation_visual"));
     public static final StreamCodec<FriendlyByteBuf, ManipulationVisualPacket> STREAM_CODEC =
             StreamCodec.of(ManipulationVisualPacket::encode, ManipulationVisualPacket::decode);
 

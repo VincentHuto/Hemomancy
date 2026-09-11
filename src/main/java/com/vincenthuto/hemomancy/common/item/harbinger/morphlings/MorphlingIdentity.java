@@ -43,7 +43,7 @@ public final class MorphlingIdentity {
 		return true;
 	}
 
-	private static String identity(ItemStack stack) {
+	public static String identity(ItemStack stack) {
 		if (!stack.has(DataComponents.CUSTOM_DATA)) {
 			return "";
 		}

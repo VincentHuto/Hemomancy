@@ -1,11 +1,11 @@
 package com.vincenthuto.hemomancy.common.block.harbinger.crafting;
 
+import com.vincenthuto.hemomancy.common.particle.HemoParticleData;
 import com.mojang.serialization.MapCodec;
 import com.vincenthuto.hemomancy.common.block.shared.IMultiBlock;
 import com.vincenthuto.hemomancy.common.block.shared.WaterloggedBlockSupport;
 import com.vincenthuto.hemomancy.common.init.BlockEntityInit;
 import com.vincenthuto.hemomancy.common.tile.harbinger.crafting.GhastlyAlembicBlockEntity;
-import com.vincenthuto.hutoslib.client.particle.factory.EmberParticleFactory;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import com.vincenthuto.hutoslib.common.network.VanillaPacketDispatcher;
 import net.minecraft.core.BlockPos;
@@ -120,7 +120,7 @@ public class GhastlyAlembicBlock extends BaseEntityBlock implements EntityBlock,
 				double ox = (random.nextDouble() - 0.5) * 0.3;
 				double oz = (random.nextDouble() - 0.5) * 0.3;
 				level.addParticle(
-						EmberParticleFactory.createData(ParticleColor.RED, 2, 0.12f, 120),
+						HemoParticleData.ember(ParticleColor.RED, 2, 0.12f, 120),
 						x + ox, y + 0.15, z + oz, 0.0, 0.015, 0.0);
 			}
 		}

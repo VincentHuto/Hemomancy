@@ -1,12 +1,12 @@
 package com.vincenthuto.hemomancy.common.manipulation.ferric;
 
+import com.vincenthuto.hemomancy.common.particle.HemoParticleData;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.EnumVeinSections;
 import com.vincenthuto.hemomancy.common.init.EffectInit;
 import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
 import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationRank;
 import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationType;
-import com.vincenthuto.hutoslib.client.particle.factory.GlowParticleFactory;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 
 import net.minecraft.core.BlockPos;
@@ -63,7 +63,7 @@ public class FerricTransmutationManip extends BloodManipulation {
 			float g = 60 + random.nextFloat() * 40;
 			float b = 60 + random.nextFloat() * 40;
 			sLevel.sendParticles(
-					GlowParticleFactory.createData(new ParticleColor(r, g, b)),
+					HemoParticleData.glow(new ParticleColor(r, g, b)),
 					pos.getX() + 0.5 + (random.nextDouble() - 0.5) * 1.2,
 					pos.getY() + 0.5 + random.nextDouble() * 1.8,
 					pos.getZ() + 0.5 + (random.nextDouble() - 0.5) * 1.2,

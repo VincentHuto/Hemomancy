@@ -27,7 +27,7 @@ import static com.vincenthuto.hemomancy.common.mission.artificer.ArtificerProgre
  */
 public final class HarbingerAlchemistDialogueTrees {
 
-	private static final ResourceLocation ALCHEMIST_ICON = Hemomancy.rloc("textures/entity/harbinger_alchemist/harbinger_alchemist.png");
+	private static final ResourceLocation ALCHEMIST_ICON = Hemomancy.rloc("textures/entity/npc/harbinger/harbinger_alchemist/harbinger_alchemist.png");
 	private static final String SPEAKER = "entity.hemomancy.harbinger_alchemist";
 	public static final String EVENT_RED_TAXONOMY_PREFIX = "alchemist_red_taxonomy_";
 	public static final String EVENT_BESTIARY_RECORD = "alchemist_bestiary_record";
@@ -117,7 +117,7 @@ public final class HarbingerAlchemistDialogueTrees {
 			return votary(entityId, heldRedTaxonomySample, heldSpecimenJar, canBriefFirstSeparation,
 					canClaimFirstSeparation, canBriefBodyAnswers, canDiscussMuscleMemories);
 		}
-		return switch (degree) {
+		DialogueTree tree = switch (degree) {
 			case 0 -> uninitiated(entityId);
 			case 1 -> neophyte(entityId);
 			case 2 -> votary(entityId, heldRedTaxonomySample, heldSpecimenJar, canBriefFirstSeparation,
@@ -129,6 +129,23 @@ public final class HarbingerAlchemistDialogueTrees {
 			case 7 -> archon(entityId, hasBloodline, isNpcRecruited);
 			default -> apotheos(entityId, hasBloodline, isNpcRecruited); // degree 8+
 		};
+		if (degree < 3 || !(canBriefFirstSeparation || canClaimFirstSeparation
+				|| canBriefBodyAnswers || canDiscussMuscleMemories)) return tree;
+		DialogueTree lessons = votary(entityId, null, null, canBriefFirstSeparation,
+				canClaimFirstSeparation, canBriefBodyAnswers, canDiscussMuscleMemories);
+		var nodes = new java.util.LinkedHashMap<>(tree.nodes());
+		lessons.nodes().forEach(nodes::putIfAbsent);
+		List<DialogueOption> options = new ArrayList<>();
+		for (DialogueOption option : lessons.getStartNode().options()) {
+			if (EVENT_FIRST_SEPARATION_BRIEF.equals(option.eventId())
+					|| EVENT_FIRST_SEPARATION_CLAIM.equals(option.eventId())
+					|| EVENT_BODY_ANSWERS_BRIEF.equals(option.eventId())
+					|| "muscle_memory_catalogue".equals(option.nextNodeId())) options.add(option);
+		}
+		options.addAll(tree.getStartNode().options());
+		nodes.put(tree.startNodeId(), new DialogueNode(tree.startNodeId(), tree.getStartNode().lines(), options));
+		return new DialogueTree(tree.speakerName(), tree.speakerIcon(), tree.startNodeId(), nodes,
+				tree.entityId(), tree.theme(), tree.presentation());
 	}
 
 	public record HeldSpecimenJar(ResourceLocation specimenId, List<MorphlingPolypLayer> morphlingLayers) {

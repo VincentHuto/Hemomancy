@@ -1,6 +1,6 @@
 package com.vincenthuto.hemomancy.common.entity.utility;
 
-import com.vincenthuto.hemomancy.client.particle.factory.DaemonDiffuseGlowParticleFactory;
+import com.vincenthuto.hemomancy.common.particle.HemoParticleData;
 import com.vincenthuto.hemomancy.common.init.EntityInit;
 import com.vincenthuto.hemomancy.common.rite.ActiveCardinalRite;
 import com.vincenthuto.hemomancy.common.rite.CardinalRiteSavedData;
@@ -164,7 +164,7 @@ public final class HumanitySpriteEntity extends Entity {
 			};
 			ParticleOptions particle = switch (
 					CardinalRiteHumanityGeometry.particleStyle(point.layer())) {
-				case DIFFUSE_GLOW -> DaemonDiffuseGlowParticleFactory.createData(
+				case DIFFUSE_GLOW -> HemoParticleData.daemonDiffuseGlow(
 						CardinalRiteHumanityGeometry.particleScale(point.layer(), scale));
 				case GLOW -> new EmberParticleData(color, alpha,
 						CardinalRiteHumanityGeometry.particleScale(point.layer(), scale),

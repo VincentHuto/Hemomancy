@@ -1,6 +1,6 @@
 package com.vincenthuto.hemomancy.common.effect;
 
-import com.vincenthuto.hemomancy.client.particle.factory.HitGlowParticleFactory;
+import com.vincenthuto.hemomancy.common.particle.HemoParticleData;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.effect.MobEffect;
@@ -53,7 +53,7 @@ public class SanguineFertilityEffect extends MobEffect {
 					double ox = (level.random.nextDouble() - 0.5) * animal.getBbWidth();
 					double oz = (level.random.nextDouble() - 0.5) * animal.getBbWidth();
 					level.addParticle(
-							HitGlowParticleFactory.createData(ParticleColor.GREEN),
+							HemoParticleData.hitGlow(ParticleColor.GREEN),
 							ax + ox, ay, az + oz,
 							0, 0.02, 0);
 				}
@@ -69,7 +69,7 @@ public class SanguineFertilityEffect extends MobEffect {
 					double ox = (level.random.nextDouble() - 0.5) * animal.getBbWidth();
 					double oz = (level.random.nextDouble() - 0.5) * animal.getBbWidth();
 					level.addParticle(
-							HitGlowParticleFactory.createData(ParticleColor.RED),
+							HemoParticleData.hitGlow(ParticleColor.RED),
 							ax + ox, ay, az + oz,
 							0, 0.03, 0);
 				}

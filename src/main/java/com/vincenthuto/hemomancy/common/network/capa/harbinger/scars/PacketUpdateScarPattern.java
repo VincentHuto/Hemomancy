@@ -28,9 +28,11 @@ public class PacketUpdateScarPattern implements CustomPacketPayload {
 
 	public static PacketUpdateScarPattern decode(FriendlyByteBuf buf) {
 		int listSize = buf.readInt();
+		if (listSize != 8) throw new IllegalArgumentException("Scar grid must have eight rows");
 		byte[][] pattern = new byte[listSize][];
 		for (int i = 0; i < listSize; ++i) {
-			pattern[i] = buf.readByteArray();
+			pattern[i] = buf.readByteArray(8);
+			if (pattern[i].length != 8) throw new IllegalArgumentException("Scar grid must have eight columns");
 		}
 
 		return new PacketUpdateScarPattern(pattern);
@@ -49,7 +51,7 @@ public class PacketUpdateScarPattern implements CustomPacketPayload {
 		public static void handle(final PacketUpdateScarPattern msg, final IPayloadContext ctx) {
 			ctx.enqueueWork(() -> {
 				AbstractContainerMenu container = ctx.player().containerMenu;
-				if (container instanceof ScarStationMenu) {
+				if (container instanceof ScarStationMenu && container.stillValid(ctx.player())) {
 					ScarStationBlockEntity station = ((ScarStationMenu) container).getTe();
 					station.setScarList(msg.getPattern());
 				}

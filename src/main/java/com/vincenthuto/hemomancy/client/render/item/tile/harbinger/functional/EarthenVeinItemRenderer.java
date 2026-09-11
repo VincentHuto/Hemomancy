@@ -26,7 +26,7 @@ public class EarthenVeinItemRenderer extends BlockEntityWithoutLevelRenderer {
 	private static final float GUI_MODEL_ROLL_DEGREES = -8.0F;
 
 	private EarthenVeinModel model;
-	private final EarthenVeinAnimContext animCtx = new EarthenVeinAnimContext(new AnimationState());
+	private final EarthenVeinAnimContext animCtx = new EarthenVeinAnimContext(new AnimationState(), 0.0F);
 
 	public EarthenVeinItemRenderer(BlockEntityRenderDispatcher dispatcher, EntityModelSet modelSet) {
 		super(dispatcher, modelSet);

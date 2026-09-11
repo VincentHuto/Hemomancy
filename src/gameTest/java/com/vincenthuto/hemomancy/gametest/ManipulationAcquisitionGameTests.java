@@ -26,12 +26,34 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.component.CustomData;
+import net.minecraft.world.level.GameType;
 import net.neoforged.neoforge.gametest.GameTestHolder;
 import java.util.UUID;
 
 @GameTestHolder(Hemomancy.MOD_ID)
 @net.neoforged.neoforge.gametest.PrefixGameTestTemplate(false)
 public class ManipulationAcquisitionGameTests {
+    @GameTest(templateNamespace = "minecraft", template = "bastion/mobs/empty", batch = "manipulation_acquisition")
+    public static void creativeRightClickLearnsFullMemoryWithoutProgressionOrConsumption(GameTestHelper h) {
+        var p = player(h);
+        try {
+            p.setGameMode(GameType.CREATIVE);
+            HemoCapabilityAccess.requireBloodVolume(p).setActive(false);
+            HemoCapabilityAccess.getInitiatoryDegree(p).orElseThrow().setDegreeNumber(0);
+            var memory = ItemInit.memory_guided_blood_shot.get();
+            var manipulation = ManipulationInit.guided_blood_shot.get();
+            var stack = new ItemStack(memory);
+            p.setItemInHand(InteractionHand.MAIN_HAND, stack);
+
+            memory.use(h.getLevel(), p, InteractionHand.MAIN_HAND);
+
+            h.assertTrue(HemoCapabilityAccess.requireKnownManipulations(p).getManipLevel(manipulation) != null,
+                    "Creative right-click did not learn the memory");
+            h.assertTrue(stack.getCount() == 1, "Creative learning consumed the memory item");
+            h.succeed();
+        } finally { p.discard(); }
+    }
+
     @GameTest(templateNamespace = "minecraft", template = "bastion/mobs/empty", batch = "manipulation_acquisition")
     public static void loadedCrossbowSurvivesRestorationReloadAndAnotherForm(GameTestHelper h) {
         var p = player(h);

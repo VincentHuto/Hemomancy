@@ -3,6 +3,7 @@ package com.vincenthuto.hemomancy.common.manipulation.flammeus;
 import com.vincenthuto.hemomancy.common.manipulation.ManipulationVisuals;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.EnumVeinSections;
+import com.vincenthuto.hemomancy.common.init.BlockInit;
 import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
 import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationRank;
 import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationType;
@@ -37,7 +38,9 @@ public class FurnaceVeinsManip extends BloodManipulation {
 		}
 		for (BlockPos pos : BlockPos.betweenClosed(player.blockPosition().offset(-5, -5, -5),
 				player.blockPosition().offset(5, 5, 5))) {
-			if (level.getBlockState(pos).is(Blocks.FROSTED_ICE)) level.setBlockAndUpdate(pos, Blocks.AIR.defaultBlockState());
+			if (level.getBlockState(pos).is(Blocks.FROSTED_ICE) || level.getBlockState(pos).is(BlockInit.frozen_cruor.get())) {
+				level.setBlockAndUpdate(pos, Blocks.AIR.defaultBlockState());
+			}
 		}
 		ManipulationVisuals.attached(player, ManipulationVisuals.Form.FURNACE, 5, 25, 1);
 	}

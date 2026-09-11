@@ -52,9 +52,11 @@ public class BloomOfRotManip extends BloodManipulation {
 					entity.addEffect(new MobEffectInstance(MobEffects.WITHER, ENEMY_EFFECT_DURATION, 1, false, true));
 					entity.addEffect(new MobEffectInstance(MobEffects.POISON, ENEMY_EFFECT_DURATION, 0, false, true));
 					entity.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, ENEMY_EFFECT_DURATION, 1, false, true));
+                    com.vincenthuto.hemomancy.common.manipulation.MortemStatusVisuals.infect(entity,ENEMY_EFFECT_DURATION);
 				});
 
 		player.addEffect(new MobEffectInstance(MobEffects.POISON, SELF_POISON_DURATION, 0, false, true));
+        com.vincenthuto.hemomancy.common.manipulation.MortemStatusVisuals.infect(player,SELF_POISON_DURATION);
 
 		player.displayClientMessage(
 				net.minecraft.network.chat.Component.literal(
@@ -66,19 +68,6 @@ public class BloomOfRotManip extends BloodManipulation {
 
 		if (world instanceof ServerLevel sLevel) {
             ManipulationVisuals.burst(sLevel, ManipulationVisuals.Form.BLOOM, player.position(), player.position(), RADIUS, 36);
-			for (int i = 0; i < 60; i++) {
-				double offsetX = (world.random.nextDouble() - 0.5) * RADIUS * 2;
-				double offsetZ = (world.random.nextDouble() - 0.5) * RADIUS * 2;
-				sLevel.sendParticles(
-						new ColorParticleData(HLParticleInit.glow.get(), new ParticleColor(
-								30 + world.random.nextFloat() * 50,
-								100 + world.random.nextFloat() * 80,
-								20)),
-						player.getX() + offsetX,
-						player.getY() + 0.5 + world.random.nextDouble() * 1.5,
-						player.getZ() + offsetZ,
-						1, 0f, 0.05f, 0f, 0.01f);
-			}
 		}
 	}
 }

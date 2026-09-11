@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.manipulation.mortem;
 
+import com.vincenthuto.hemomancy.common.particle.HemoParticleData;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
@@ -9,7 +10,6 @@ import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationRank;
 import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationType;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.BloodVolumeServerPacket;
-import com.vincenthuto.hutoslib.client.particle.factory.GlowParticleFactory;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
@@ -80,7 +80,7 @@ public class VitalReservoirManip extends BloodManipulation {
 
 			for (int i = 0; i < 20; i++) {
 				sLevel.sendParticles(
-						GlowParticleFactory.createData(new ParticleColor(0, 180 + random.nextFloat() * 75, 0)),
+						HemoParticleData.glow(new ParticleColor(0, 180 + random.nextFloat() * 75, 0)),
 						pos.getX() + 0.5 + (random.nextDouble() - 0.5) * 0.6,
 						pos.getY() + 0.5 + random.nextDouble() * 0.8,
 						pos.getZ() + 0.5 + (random.nextDouble() - 0.5) * 0.6,
@@ -88,7 +88,7 @@ public class VitalReservoirManip extends BloodManipulation {
 			}
 			for (int i = 0; i < 15; i++) {
 				sLevel.sendParticles(
-						GlowParticleFactory.createData(new ParticleColor(
+						HemoParticleData.glow(new ParticleColor(
 								120 + random.nextFloat() * 80, 0, random.nextFloat() * 30)),
 						pos.getX() + 0.5 + (random.nextDouble() - 0.5) * 1.2,
 						pos.getY() + 1.5 + (random.nextDouble() - 0.5) * 0.4,

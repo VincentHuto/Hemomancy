@@ -1,9 +1,9 @@
 package com.vincenthuto.hemomancy.common.manipulation;
 
+import com.vincenthuto.hemomancy.common.particle.HemoParticleData;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.init.EffectInit;
-import com.vincenthuto.hutoslib.client.particle.factory.GlowParticleFactory;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.server.level.ServerLevel;
@@ -27,7 +27,11 @@ public final class ManipulationStatusEvents {
 	@SubscribeEvent
 	public static void onLivingHeal(LivingHealEvent event) {
 		if (event.getEntity().hasEffect(EffectInit.insatiable_hunger)) {
-			event.setAmount(event.getAmount() * ManipulationStatusRules.INSATIABLE_HEAL_MULTIPLIER);
+			float requested=event.getAmount();
+            event.setAmount(requested * ManipulationStatusRules.INSATIABLE_HEAL_MULTIPLIER);
+            if(requested>event.getAmount() && event.getEntity().level() instanceof net.minecraft.server.level.ServerLevel level)
+                ManipulationVisuals.burst(level,ManipulationVisuals.Form.HUNGER_COLLAPSE,event.getEntity().position(),
+                        event.getEntity().position(),1,18);
 		}
 	}
 
@@ -62,6 +66,10 @@ public final class ManipulationStatusEvents {
 
 		event.setAmount(event.getAmount() * ManipulationStatusRules.IRON_RETORT_DAMAGE_MULTIPLIER);
 		defender.removeEffect(EffectInit.iron_retort);
+		if (defender.level() instanceof ServerLevel level)
+			ManipulationVisuals.burst(level, ManipulationVisuals.Form.FERRIC_IMPACT,
+					defender.position().add(0, defender.getBbHeight() * .6, 0),
+					attacker.position().add(0, attacker.getBbHeight() * .6, 0), .5, 14);
 		if (attacker.hurt(defender.damageSources().thorns(defender), ManipulationStatusRules.IRON_RETORT_DAMAGE)) {
 			SchoolHitHelper.tryTriggerConductiveArc(defender, attacker, EnumBloodTendency.FERRIC,
 					EnumBloodTendency.DUCTILIS, ManipulationStatusRules.IRON_RETORT_DAMAGE);
@@ -90,7 +98,7 @@ public final class ManipulationStatusEvents {
 		double y = defender.getY() + defender.getBbHeight() * 0.65D;
 		double z = (defender.getZ() + attacker.getZ()) * 0.5D;
 		for (int i = 0; i < 24; i++) {
-			serverLevel.sendParticles(GlowParticleFactory.createData(new ParticleColor(150, 150, 145)),
+			serverLevel.sendParticles(HemoParticleData.glow(new ParticleColor(150, 150, 145)),
 					x + (defender.getRandom().nextDouble() - 0.5D) * 0.9D,
 					y + (defender.getRandom().nextDouble() - 0.5D) * 0.7D,
 					z + (defender.getRandom().nextDouble() - 0.5D) * 0.9D,

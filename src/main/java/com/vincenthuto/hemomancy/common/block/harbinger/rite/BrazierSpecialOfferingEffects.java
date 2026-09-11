@@ -1,6 +1,8 @@
 package com.vincenthuto.hemomancy.common.block.harbinger.rite;
 
-import com.vincenthuto.hemomancy.client.particle.factory.BloodCellParticleFactory;
+import com.vincenthuto.hutoslib.common.registry.HLParticleInit;
+import com.vincenthuto.hemomancy.common.init.ParticleInit;
+import com.vincenthuto.hemomancy.client.particle.data.BloodCellData;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.item.component.LivingWeaponGraftData;
 import com.vincenthuto.hemomancy.common.item.harbinger.MemoryOfVesperItem;
@@ -9,7 +11,7 @@ import com.vincenthuto.hemomancy.common.item.harbinger.memories.CrudeMemoryShard
 import com.vincenthuto.hemomancy.common.item.harbinger.memories.HematicMemoryItem;
 import com.vincenthuto.hemomancy.common.item.harbinger.scar.ItemScar;
 import com.vincenthuto.hemomancy.common.item.harbinger.scar.ItemScarPattern;
-import com.vincenthuto.hutoslib.client.particle.factory.GlowParticleFactory;
+import com.vincenthuto.hutoslib.client.particle.data.ColorParticleData;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import com.vincenthuto.hutoslib.common.network.HLPacketHandler;
 import com.vincenthuto.hutoslib.common.tendril.TendrilAnchor;
@@ -113,9 +115,9 @@ public final class BrazierSpecialOfferingEffects {
 		double x = pos.getX() + 0.5D;
 		double y = pos.getY() + 1.12D;
 		double z = pos.getZ() + 0.5D;
-		level.sendParticles(GlowParticleFactory.createData(DEEP_RED), x, y, z,
+		level.sendParticles(new ColorParticleData(HLParticleInit.glow.get(), DEEP_RED), x, y, z,
 				18, 0.32D, 0.28D, 0.32D, 0.025D);
-		level.sendParticles(BloodCellParticleFactory.createData(ParticleColor.BLOOD), x, y - 0.08D, z,
+		level.sendParticles(new BloodCellData(ParticleInit.blood_cell.get(), ParticleColor.BLOOD), x, y - 0.08D, z,
 				24, 0.38D, 0.18D, 0.38D, 0.055D);
 	}
 
@@ -123,9 +125,9 @@ public final class BrazierSpecialOfferingEffects {
 		double x = pos.getX() + 0.5D;
 		double y = pos.getY() + 1.08D;
 		double z = pos.getZ() + 0.5D;
-		level.sendParticles(GlowParticleFactory.createData(DEEP_RED), x, y, z,
+		level.sendParticles(new ColorParticleData(HLParticleInit.glow.get(), DEEP_RED), x, y, z,
 				2, 0.22D, 0.16D, 0.22D, 0.008D);
-		level.sendParticles(BloodCellParticleFactory.createData(ParticleColor.BLOOD), x, y - 0.08D, z,
+		level.sendParticles(new BloodCellData(ParticleInit.blood_cell.get(), ParticleColor.BLOOD), x, y - 0.08D, z,
 				3, 0.28D, 0.12D, 0.28D, 0.018D);
 	}
 }

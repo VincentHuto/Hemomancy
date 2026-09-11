@@ -10,7 +10,7 @@ import java.util.List;
 
 public final class HarbingerVotaryWayfarerDialogueTrees {
 	private static final ResourceLocation VOTARY_ICON = Hemomancy.rloc(
-			"textures/entity/harbinger_votary_wayfarer/harbinger_votary_wayfarer.png");
+			"textures/entity/npc/harbinger/harbinger_votary_wayfarer/harbinger_votary_wayfarer.png");
 	private static final String SPEAKER = "entity.hemomancy.harbinger_votary_wayfarer";
 
 	private HarbingerVotaryWayfarerDialogueTrees() {

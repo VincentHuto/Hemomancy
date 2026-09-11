@@ -10,6 +10,7 @@ import java.util.Collection;
 import java.util.HashSet;
 
 public final class VeinMasonAssignments {
+    private static final String FIRST_ROUTE_BUILD = "hemomancy:vein_mason_first_route_build";
     public static final ResourceLocation D5_VARICOSE = id("vein_mason_d5_varicose");
     public static final ResourceLocation D5_DIAGNOSED = id("vein_mason_d5_diagnosed");
     public static final ResourceLocation D5_TREATED = id("vein_mason_d5_treated");
@@ -68,8 +69,22 @@ public final class VeinMasonAssignments {
 
     public static void onMatchingNoeticCast(ServerPlayer player) {
         RoutingStep step = nextRoutingStep(has(player, D6_COUNSEL), has(player, D6_FIRST_ROUTE), has(player, D6_LOADOUT));
-        if (step == RoutingStep.FIRST) grant(player, D6_FIRST_ROUTE);
+        if (step == RoutingStep.NONE || has(player, D6_SECOND_ROUTE)) return;
+        String build = HemoCapabilityAccess.getScarState(player)
+                .map(scars -> scars.getActiveCerebralScars().stream().map(ResourceLocation::toString).sorted()
+                        .collect(java.util.stream.Collectors.joining(";"))).orElse("");
+        if (build.isEmpty()) return;
+        var durable = player.getPersistentData().getCompound(net.minecraft.world.entity.player.Player.PERSISTED_NBT_TAG);
+        if (step == RoutingStep.FIRST || !durable.contains(FIRST_ROUTE_BUILD)) {
+            durable.putString(FIRST_ROUTE_BUILD, build);
+            player.getPersistentData().put(net.minecraft.world.entity.player.Player.PERSISTED_NBT_TAG, durable);
+            grant(player, D6_FIRST_ROUTE);
+            if (step != RoutingStep.FIRST) player.displayClientMessage(net.minecraft.network.chat.Component.literal(
+                    "Your current scar route is recorded. Fit a different build and make its matching cast."), false);
+            return;
+        }
         if (step == RoutingStep.SECOND) {
+            if (build.equals(durable.getString(FIRST_ROUTE_BUILD))) return;
             grant(player, D6_SECOND_ROUTE);
             grant(player, D6_READY);
         }

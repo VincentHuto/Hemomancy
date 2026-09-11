@@ -30,6 +30,10 @@ public final class CardinalRiteStaffPlantingClientState {
 				focus.immutable(), staff.copyWithCount(1), minecraft.level.getGameTime()));
 	}
 
+	public static void stop(int casterEntityId) {
+		ACTIVE.remove(casterEntityId);
+	}
+
 	public static void tick() {
 		Minecraft minecraft = Minecraft.getInstance();
 		if (minecraft.level == null) {

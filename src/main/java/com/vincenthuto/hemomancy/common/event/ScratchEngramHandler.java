@@ -1,7 +1,7 @@
 package com.vincenthuto.hemomancy.common.event;
 
+import com.vincenthuto.hemomancy.common.particle.HemoParticleData;
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.client.particle.factory.BloodCellParticleFactory;
 import com.vincenthuto.hemomancy.common.block.harbinger.rite.EngramBlock;
 import com.vincenthuto.hemomancy.common.init.BlockInit;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
@@ -115,7 +115,7 @@ public class ScratchEngramHandler {
         if (level instanceof ServerLevel serverLevel) {
             com.vincenthuto.hutoslib.client.particle.util.HLParticleUtils.spawnPoof(
                     serverLevel, targetPos,
-                    BloodCellParticleFactory.createData(ParticleColor.BLOOD));
+                    HemoParticleData.bloodCell(ParticleColor.BLOOD));
         }
 
         event.setCancellationResult(InteractionResult.SUCCESS);

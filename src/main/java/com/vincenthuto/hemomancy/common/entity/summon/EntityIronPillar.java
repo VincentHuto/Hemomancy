@@ -13,7 +13,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 
-public class EntityIronPillar extends BloodConstructEntity {
+public class EntityIronPillar extends FerricConstructEntity {
 	private static final double MAGNETIC_RADIUS = 8.0D;
 	private static final double MAGNETIC_PIN_RADIUS = 1.3D;
 	public float deathTicks = 1;
@@ -32,6 +32,7 @@ public class EntityIronPillar extends BloodConstructEntity {
 
 	@Override
 	protected void doPush(Entity entityIn) {
+		if (isPlayerConstruct()) return;
 		super.doPush(entityIn);
 		if (magnetic && entityIn instanceof LivingEntity target && isMagneticTarget(target)) {
 			pullTowardPillar(target, this.position().add(0.0D, this.getBbHeight() * 0.45D, 0.0D));
@@ -51,6 +52,10 @@ public class EntityIronPillar extends BloodConstructEntity {
 	@Override
 	public void tick() {
 		super.tick();
+		if (isPlayerConstruct()) {
+			if (!level().isClientSide && isAlive()) tickMagnetism();
+			return;
+		}
 		this.setYBodyRot(0);
 		if (magnetic && !this.level().isClientSide) {
             if(tickCount % 20 == 1) com.vincenthuto.hemomancy.common.manipulation.ManipulationVisuals.attached(this,
@@ -92,7 +97,7 @@ public class EntityIronPillar extends BloodConstructEntity {
 	}
 
 	public boolean isMagnetic() {
-		return magnetic;
+		return magnetic || isPlayerConstruct();
 	}
 
 	private void tickMagnetism() {
@@ -104,6 +109,7 @@ public class EntityIronPillar extends BloodConstructEntity {
 	}
 
 	private boolean isMagneticTarget(LivingEntity target) {
+		if (target instanceof IBloodConstruct) return false;
 		return ManipulationStatusRules.canMagnetize(target instanceof Monster,
 				getCreator() != null && (target.isAlliedTo(getCreator()) || getCreator().isAlliedTo(target)),
 				target == getCreator());

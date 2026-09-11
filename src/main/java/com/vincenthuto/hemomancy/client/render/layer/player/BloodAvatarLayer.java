@@ -88,8 +88,10 @@ public class BloodAvatarLayer<T extends LivingEntity, M extends HumanoidModel<T>
 		applyEmergencePose(ms, transition, avatarScale);
 		RenderType renderType = transition.warping()
 				? bloodTransitionType(player, ms, age, transition)
-				: RenderType.energySwirl(glowTexture, this.xOffset(age) % 4.0F, age * .01F % 2.0F);
+				: com.vincenthuto.hemomancy.client.render.world.AnimusMortemRenderTypes.AVATAR;
 		VertexConsumer consumer = pBuffer.getBuffer(renderType);
+        com.vincenthuto.hemomancy.client.render.world.AnimusMortemRenderTypes.begin(player.level().getGameTime()+pPartialTicks);
+        if(!transition.warping())consumer=new com.vincenthuto.hemomancy.client.render.world.BloodSurfaceVertices(consumer);
 		modelBloodAvatar.renderToBuffer(ms, consumer, pPackedLight, OverlayTexture.NO_OVERLAY,
 				transition.warping() ? BLOOD_TRANSITION_COLOR : packColor(0.5F, 0.5F, 0.5F, 0.3F));
 

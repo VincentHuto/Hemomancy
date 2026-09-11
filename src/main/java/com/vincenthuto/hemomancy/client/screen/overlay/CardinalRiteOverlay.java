@@ -61,7 +61,7 @@ public final class CardinalRiteOverlay {
 				+ "  Waves " + Math.min(rite.getCurrentWave() + 1, Math.max(1, rite.getTotalWaves()))
 				+ "/" + Math.max(1, rite.getTotalWaves());
 		graphics.drawString(minecraft.font, pips, x, y + 34, 0xFFFFC4CB, false);
-		String resources = rite.getCommittedBloodMl() + "/" + rite.getUpfrontBloodMl() + "ml"
+		String resources = "Anchors " + rite.getCommittedBloodMl() + "/" + rite.getUpfrontBloodMl() + "ml"
 				+ (rite.getCarriedIchorMl() > 0 ? "  Ichor " + rite.getCarriedIchorMl() + "ml" : "")
 				+ "  Allies " + rite.getAllyCount()
 				+ (rite.getSharedBloodMl() >= 0 ? "  Pool " + rite.getSharedBloodMl() + "ml" : "");

@@ -139,6 +139,9 @@ public class HematicArmatureBlockEntity extends BaseContainerBlockEntity impleme
 
 			if (!isPendingCraft(slot, match.bowlSlot())) {
 				startPendingCraft(slot, match.bowlSlot(), now);
+				player.sendSystemMessage(Component.translatable("block.hemomancy.hematic_armature.preparing",
+						recipe.createResult(level.registryAccess()).getHoverName(), (int) recipe.getBloodCost(),
+						match.reagent().getHoverName(), Component.keybind("key.sneak")));
 				spawnWindupEffects(serverLevel, player, match.bowlSlot(), 0.0D);
 				return false;
 			}

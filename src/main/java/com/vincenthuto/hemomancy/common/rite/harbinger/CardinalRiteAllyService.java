@@ -27,23 +27,20 @@ import java.util.UUID;
  * the caster remains able to complete every ceremony alone.
  */
 public final class CardinalRiteAllyService {
-	private static final Map<CardinalRiteAllyRole, BlockPos> ROLE_MARKERS = Map.of(
-			CardinalRiteAllyRole.ANCHOR, new BlockPos(-3, 1, 0),
-			CardinalRiteAllyRole.ATTENDANT, new BlockPos(0, 1, -3),
-			CardinalRiteAllyRole.WARDEN, new BlockPos(3, 1, 0));
-
 	private CardinalRiteAllyService() {
 	}
 
-	public static Map<CardinalRiteAllyRole, BlockPos> markers() {
-		return ROLE_MARKERS;
+	public static Map<CardinalRiteAllyRole, BlockPos> markers(CardinalRiteRecipe recipe) {
+		if (recipe == null || recipe.getCeremony() == null) return java.util.Map.of();
+		return CardinalRiteNpcStationRules.roleMarkers(CardinalRiteInteractionHandler.occupiedSigilTargets(
+				recipe.getCeremony().anchors(), CardinalRiteInteractionHandler.supportSigils(recipe)));
 	}
 
 	public static boolean tryClaimPlayerRole(ServerLevel level, ServerPlayer player, ActiveCardinalRite rite,
 			BlockPos clicked) {
 		if (rite.getPhase() != CardinalRitePhase.INSCRIPTION || rite.getDegree() < 5
 				|| rite.getPlayerUUID().equals(player.getUUID())) return false;
-		CardinalRiteAllyRole role = roleAt(rite, clicked);
+		CardinalRiteAllyRole role = roleAt(level, rite, clicked);
 		if (role == null) return false;
 		Bloodline line = bloodline(level, rite);
 		if (line == null || !line.hasMember(player.getUUID())) return false;
@@ -84,7 +81,7 @@ public final class CardinalRiteAllyService {
 			return true;
 		}
 		CardinalRiteAllyRole next = nextRole(rite.getAllyRoles().get(npc.getUUID()));
-		if (!(npc instanceof Mob mob) || !safeStation(level, mob, station(rite, next))) {
+		if (!(npc instanceof Mob mob) || !safeStation(level, mob, station(level, rite, next))) {
 			caster.displayClientMessage(Component.literal(
 					"That rite station has no safe footing for an ally.")
 					.withStyle(ChatFormatting.DARK_RED), true);
@@ -108,10 +105,24 @@ public final class CardinalRiteAllyService {
 		boolean npc = line.hasNpcMember(ally);
 		if (!npc && !rite.getSharedPoolOptIns().contains(ally)) return 0;
 		BloodlineSavedData data = BloodlineSavedData.get(level.getServer().overworld());
-		int fromPool = Math.round(data.drawBlood(line.getBloodlineUUID(), requestedMl));
+		int poolRequest = Math.min(requestedMl, Math.max(0, (int) line.getBloodVolume()));
+		int fromPool = Math.round(data.drawBlood(line.getBloodlineUUID(), poolRequest));
 		if (!npc || fromPool >= requestedMl) return fromPool;
 		return fromPool + data.drawNpcRiteReserve(line.getBloodlineUUID(), ally,
 				requestedMl - fromPool, level.getGameTime());
+	}
+
+	public static boolean trySpend(ServerLevel level, ActiveCardinalRite rite, UUID ally, int requestedMl) {
+		if (requestedMl <= 0) return false;
+		Bloodline line = bloodline(level, rite);
+		if (line == null) return false;
+		boolean npc = line.hasNpcMember(ally);
+		if (!npc && !rite.getSharedPoolOptIns().contains(ally)) return false;
+		int fromPool = Math.min(requestedMl, Math.max(0, (int) line.getBloodVolume()));
+		int remaining = requestedMl - fromPool;
+		if (remaining > 0 && (!npc || line.isNpcBloodspent(ally, level.getGameTime())
+				|| line.getNpcRiteReserve(ally, level.getGameTime()) < remaining)) return false;
+		return spend(level, rite, ally, requestedMl) == requestedMl;
 	}
 
 	public static boolean isAvailable(ServerLevel level, ActiveCardinalRite rite, UUID ally) {
@@ -122,7 +133,7 @@ public final class CardinalRiteAllyService {
 			Entity entity = level.getEntity(ally);
 			CardinalRiteAllyRole role = rite.getAllyRoles().get(ally);
 			if (!(entity instanceof Mob mob) || role == null) return false;
-			BlockPos station = station(rite, role);
+			BlockPos station = station(level, rite, role);
 			boolean safe = safeStation(level, mob, station);
 			return CardinalRiteNpcStationRules.participates(mob.position(), station, safe);
 		}
@@ -152,7 +163,8 @@ public final class CardinalRiteAllyService {
 		for (UUID npcId : CardinalRiteNpcStationRules.assignedNpcAllies(
 				rite.getAllyRoles(), line::hasNpcMember)) {
 			CardinalRiteAllyRole role = rite.getAllyRoles().get(npcId);
-			if (role != null) riteLevel.getChunkAt(station(rite, role));
+			BlockPos assignedStation = role == null ? null : station(riteLevel, rite, role);
+			if (assignedStation != null) riteLevel.getChunkAt(assignedStation);
 			Mob npc = findLoadedNpc(riteLevel, npcId);
 			if (npc == null) continue;
 			npc.getNavigation().stop();
@@ -186,7 +198,7 @@ public final class CardinalRiteAllyService {
 			if (entry.getValue() != CardinalRiteAllyRole.ATTENDANT
 					|| rite.hasUsedAttendantCatch(entry.getKey())
 					|| !isAvailable(level, rite, entry.getKey())) continue;
-			if (spend(level, rite, entry.getKey(), 50) == 50) {
+			if (trySpend(level, rite, entry.getKey(), 50)) {
 				return rite.tryUseAttendantCatch(entry.getKey());
 			}
 		}
@@ -223,8 +235,8 @@ public final class CardinalRiteAllyService {
 		return recipe.getCeremony().helperRoles().size();
 	}
 
-	private static CardinalRiteAllyRole roleAt(ActiveCardinalRite rite, BlockPos clicked) {
-		for (var marker : ROLE_MARKERS.entrySet()) {
+	private static CardinalRiteAllyRole roleAt(ServerLevel level, ActiveCardinalRite rite, BlockPos clicked) {
+		for (var marker : markers(CardinalRiteRecipe.getRiteByLocation(level, rite.getRecipeId())).entrySet()) {
 			BlockPos pos = rite.getCenterPos().offset(marker.getValue());
 			if (clicked.closerThan(pos, 1.5D) || clicked.closerThan(pos.below(), 1.5D)) return marker.getKey();
 		}
@@ -233,7 +245,7 @@ public final class CardinalRiteAllyService {
 
 	private static void directToStation(ServerLevel level, ActiveCardinalRite rite,
 			Mob npc, CardinalRiteAllyRole role) {
-		BlockPos station = station(rite, role);
+		BlockPos station = station(level, rite, role);
 		boolean safe = safeStation(level, npc, station);
 		switch (CardinalRiteNpcStationRules.correction(npc.position(), station, safe)) {
 			case UNAVAILABLE -> npc.getNavigation().stop();
@@ -259,11 +271,13 @@ public final class CardinalRiteAllyService {
 		}
 	}
 
-	private static BlockPos station(ActiveCardinalRite rite, CardinalRiteAllyRole role) {
-		return rite.getCenterPos().offset(ROLE_MARKERS.get(role));
+	private static BlockPos station(ServerLevel level, ActiveCardinalRite rite, CardinalRiteAllyRole role) {
+		BlockPos offset = markers(CardinalRiteRecipe.getRiteByLocation(level, rite.getRecipeId())).get(role);
+		return offset == null ? null : rite.getCenterPos().offset(offset);
 	}
 
 	private static boolean safeStation(ServerLevel level, Mob npc, BlockPos station) {
+		if (station == null) return false;
 		boolean loaded = level.hasChunkAt(station);
 		boolean sturdySupport = loaded && level.getBlockState(station.below())
 				.isFaceSturdy(level, station.below(), Direction.UP);

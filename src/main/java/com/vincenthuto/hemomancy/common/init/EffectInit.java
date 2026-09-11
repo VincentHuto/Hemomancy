@@ -257,6 +257,8 @@ public class EffectInit {
     public static final DeferredHolder<MobEffect, MobEffect> hemophagy = EFFECTS.register("hemophagy",
             () -> new HemophagyEffect(MobEffectCategory.HARMFUL, 0x4B0000));
 
+    public static final DeferredHolder<MobEffect, MobEffect> paralysis = EFFECTS.register("paralysis", ParalysisEffect::new);
+
     public static final DeferredHolder<MobEffect, MobEffect> conductive_mark = EFFECTS.register("conductive_mark",
             () -> new ManipulationStatusEffect("conductive_mark", MobEffectCategory.HARMFUL, 0xE8D84A));
 

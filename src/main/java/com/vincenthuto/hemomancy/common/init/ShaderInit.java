@@ -80,6 +80,33 @@ public class ShaderInit {
 	public static ShaderHolder SILENT_ARCHON_FOG = new ShaderHolder(Hemomancy.rloc("world/silent_archon_fog"),
 			DefaultVertexFormat.POSITION_TEX_COLOR, "HemoTime", "FogSeed", "FogLayer", "FogDensity");
 
+	public static ShaderHolder MANIPULATION_LUX = new ShaderHolder(Hemomancy.rloc("world/manipulation_lux"),
+			DefaultVertexFormat.POSITION_TEX_COLOR, "HemoTime", "ColorModulator");
+
+	public static ShaderHolder MANIPULATION_UMBRA = new ShaderHolder(Hemomancy.rloc("world/manipulation_umbra"),
+			DefaultVertexFormat.POSITION_TEX_COLOR, "HemoTime", "ColorModulator");
+
+    public static ShaderHolder MANIPULATION_ANIMUS = thermal("animus");
+    public static ShaderHolder MANIPULATION_ANIMUS_MODEL = new ShaderHolder(Hemomancy.rloc("world/manipulation_animus_model"),
+            DefaultVertexFormat.NEW_ENTITY, "HemoTime", "ColorModulator");
+    public static ShaderHolder MANIPULATION_MORTEM = thermal("mortem");
+    public static ShaderHolder MANIPULATION_INFECTION = new ShaderHolder(Hemomancy.rloc("world/manipulation_infection"),
+            DefaultVertexFormat.NEW_ENTITY, "HemoTime", "ColorModulator");
+    public static ShaderHolder MANIPULATION_FERRIC = thermal("ferric");
+    public static ShaderHolder MANIPULATION_DUCTILIS = thermal("ductilis");
+    public static ShaderHolder MANIPULATION_FLAME = thermal("flame");
+    public static ShaderHolder MANIPULATION_MOLTEN = thermal("molten");
+    public static ShaderHolder MANIPULATION_GLASS = thermal("glass");
+    public static ShaderHolder MANIPULATION_CRUOR = thermal("cruor");
+    public static ShaderHolder MANIPULATION_SKIN = new ShaderHolder(Hemomancy.rloc("world/manipulation_skin"),
+            DefaultVertexFormat.NEW_ENTITY, "ColorModulator");
+
+    private static ShaderHolder thermal(String material) {
+        return new ShaderHolder(Hemomancy.rloc("world/manipulation_" + material),
+                DefaultVertexFormat.POSITION_TEX_COLOR, material.equals("glass")?
+                        new String[]{"ColorModulator"}:new String[]{"HemoTime", "ColorModulator"});
+    }
+
 	public static ShaderHolder CARDINAL_RITE_FOG = new ShaderHolder(Hemomancy.rloc("world/cardinal_rite_fog"),
 			DefaultVertexFormat.POSITION_TEX_COLOR, "HemoTime", "FogSeed");
 
@@ -151,6 +178,19 @@ public class ShaderInit {
         registerShader(event, MNEMONIC_LOWTIDE_PARCHMENT.createInstance(provider));
         registerShader(event, SILENT_ARCHON_FOG.createInstance(provider));
         registerShader(event, CARDINAL_RITE_FOG.createInstance(provider));
+        registerShader(event, MANIPULATION_LUX.createInstance(provider));
+        registerShader(event, MANIPULATION_ANIMUS.createInstance(provider));
+        registerShader(event, MANIPULATION_ANIMUS_MODEL.createInstance(provider));
+        registerShader(event, MANIPULATION_MORTEM.createInstance(provider));
+        registerShader(event, MANIPULATION_INFECTION.createInstance(provider));
+        registerShader(event, MANIPULATION_FERRIC.createInstance(provider));
+        registerShader(event, MANIPULATION_DUCTILIS.createInstance(provider));
+        registerShader(event, MANIPULATION_UMBRA.createInstance(provider));
+        registerShader(event, MANIPULATION_FLAME.createInstance(provider));
+        registerShader(event, MANIPULATION_MOLTEN.createInstance(provider));
+        registerShader(event, MANIPULATION_GLASS.createInstance(provider));
+        registerShader(event, MANIPULATION_CRUOR.createInstance(provider));
+        registerShader(event, MANIPULATION_SKIN.createInstance(provider));
         registerShader(event, SILENT_ARCHON_STORM_CLOUD.createInstance(provider));
         registerShader(event, QLIPHOTH_BLACK_HOLE.createInstance(provider));
         registerShader(event, APOTHEOS_FLOOR_FUNNEL.createInstance(provider));

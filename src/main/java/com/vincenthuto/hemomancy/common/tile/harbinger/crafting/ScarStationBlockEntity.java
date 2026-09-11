@@ -23,14 +23,12 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.block.entity.BaseContainerBlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -40,7 +38,7 @@ public class ScarStationBlockEntity extends BaseContainerBlockEntity implements 
 	public int numPlayersUsing = 0;
 	public float lidAngle, prevLidAngle;
 	public final String TAG_scarList = "scarList";
-	public byte[][] scarsList;
+	public byte[][] scarsList = ScarRecipe.blank();
 	public byte[][] clientScarList;
 
 	ScarRecipe currentRecipe;
@@ -54,16 +52,9 @@ public class ScarStationBlockEntity extends BaseContainerBlockEntity implements 
 	}
 
 
-	@Override
-	public void onLoad() {
-		this.scarsList = ScarRecipe.blank();
-	}
-
 	public void clearScarList() {
+		scarsList = ScarRecipe.blank();
 		this.sendUpdates();
-		if (scarsList != null) {
-			scarsList = ScarRecipe.blank();
-		}
 	}
 
 	public void setScarList(byte[][] bs) {
@@ -156,13 +147,7 @@ public class ScarStationBlockEntity extends BaseContainerBlockEntity implements 
 		super.loadAdditional(compound, registries);
 		this.contents = NonNullList.withSize(this.getContainerSize(), ItemStack.EMPTY);
 		ContainerHelper.loadAllItems(compound, this.contents, registries);
-		ListTag tagList = compound.getList(TAG_scarList, Tag.TAG_BYTE_ARRAY);
-		if (this.scarsList != null) {
-			for (int i = 0; i < tagList.size(); i++) {
-				ByteArrayTag arr = (ByteArrayTag) tagList.get(i);
-				scarsList[i] = arr.getAsByteArray();
-			}
-		}
+		readScarList(compound);
 	}
 
 	@Override
@@ -182,18 +167,19 @@ public class ScarStationBlockEntity extends BaseContainerBlockEntity implements 
 
 	}
 
+	private void readScarList(CompoundTag tag) {
+		scarsList = ScarRecipe.blank();
+		ListTag rows = tag.getList(TAG_scarList, Tag.TAG_BYTE_ARRAY);
+		for (int i = 0; i < Math.min(rows.size(), scarsList.length); i++) {
+			byte[] row = ((ByteArrayTag) rows.get(i)).getAsByteArray();
+			System.arraycopy(row, 0, scarsList[i], 0, Math.min(row.length, scarsList[i].length));
+		}
+	}
+
 	@Override
 	public void handleUpdateTag(CompoundTag tag, HolderLookup.Provider registries) {
 		super.handleUpdateTag(tag, registries);
-		if (tag != null) {
-			ListTag tagList = tag.getList(TAG_scarList, Tag.TAG_BYTE_ARRAY);
-			if (this.scarsList != null) {
-				for (int i = 0; i < tagList.size(); i++) {
-					ByteArrayTag arr = (ByteArrayTag) tagList.get(i);
-					scarsList[i] = arr.getAsByteArray();
-				}
-			}
-		}
+		readScarList(tag);
 	}
 
 	@Override
@@ -214,15 +200,7 @@ public class ScarStationBlockEntity extends BaseContainerBlockEntity implements 
 	@Override
 	public void onDataPacket(Connection net, ClientboundBlockEntityDataPacket pkt, HolderLookup.Provider registries) {
 		super.onDataPacket(net, pkt, registries);
-		if (pkt.getTag() != null) {
-			ListTag tagList = pkt.getTag().getList(TAG_scarList, Tag.TAG_BYTE_ARRAY);
-			if (this.scarsList != null) {
-				for (int i = 0; i < tagList.size(); i++) {
-					ByteArrayTag arr = (ByteArrayTag) tagList.get(i);
-					scarsList[i] = arr.getAsByteArray();
-				}
-			}
-		}
+		if (pkt.getTag() != null) readScarList(pkt.getTag());
 	}
 
 	public void sendUpdates() {
@@ -271,47 +249,37 @@ public class ScarStationBlockEntity extends BaseContainerBlockEntity implements 
 		return new ScarStationMenu(id, player, this);
 	}
 
-	public boolean canCraft() {
+	/** Null means the current server inventory and trace are ready to carve. */
+	public Component craftingFailure() {
+		if (!contents.get(2).isEmpty()) return Component.literal("Take the finished scar from the output first.");
+		if (!(contents.get(3).getItem() instanceof ItemKnapper)) return Component.literal("Place a knapper in the tool slot.");
+		ScarRecipe recipe = getCurrentRecipe();
+		if (recipe == null) return Component.literal("Place a scar blank and the pattern's catalyst in the ingredient slots.");
+		if (!Arrays.deepEquals(recipe.getPattern(), scarsList)) return Component.literal("Trace the purple stencil cells in red before carving. Remove any extra marks.");
+		return null;
+	}
 
-		return false;
+	public boolean canCraft() {
+		return craftingFailure() == null;
 	}
 
 	public void craftEvent() {
-		List<ItemStack> chestStuff = new ArrayList<ItemStack>();
-		chestStuff.add(contents.get(0));
-		chestStuff.add(contents.get(1));
+		if (!canCraft()) return;
 		ScarRecipe recipe = currentRecipe;
-		if (recipe != null && contents.get(2).isEmpty()) {
-			List<Ingredient> recipieInObj = recipe.getIngredients();
-			boolean matcher = false;
-			if (recipieInObj.get(0).test(chestStuff.get(0)) && recipieInObj.size() == 1) {
-				matcher = true;
-			} else if (recipieInObj.get(0).test(chestStuff.get(0)) && recipieInObj.get(1).test(chestStuff.get(1))
-					&& recipieInObj.size() == 2) {
-				matcher = true;
-			}
-			if (Arrays.deepEquals(scarsList, currentRecipe.getPattern()) && matcher) {
-				ItemStack output = recipe.getResultItem().copy();
-				contents.set(0, ItemStack.EMPTY);
-				contents.set(1, ItemStack.EMPTY);
-				contents.set(2, output);
-				ItemStack knapperIn = contents.get(3);
-				if (knapperIn.getItem() instanceof ItemKnapper) {
-					ItemStack newKnapper = knapperIn.copy();
-					int newDamage = newKnapper.getDamageValue() + recipe.getPattern().length;
-					if (newDamage >= newKnapper.getMaxDamage()) {
-						contents.set(3, ItemStack.EMPTY);
-					} else {
-						newKnapper.setDamageValue(newDamage);
-						contents.set(3, newKnapper);
-					}
-				}
-				currentRecipe = null;
-				scarsList = ScarRecipe.blank();
-				this.sendUpdates();
-				VanillaPacketDispatcher.dispatchTEToNearbyPlayers(level, worldPosition);
-			}
+		contents.set(0, ItemStack.EMPTY);
+		if (recipe.getIngredients().size() > 1) contents.set(1, ItemStack.EMPTY);
+		contents.set(2, recipe.getResultItem().copy());
+		ItemStack knapper = contents.get(3).copy();
+		int damage = knapper.getDamageValue() + recipe.getPattern().length;
+		if (damage >= knapper.getMaxDamage()) contents.set(3, ItemStack.EMPTY);
+		else {
+			knapper.setDamageValue(damage);
+			contents.set(3, knapper);
 		}
+		currentRecipe = null;
+		scarsList = ScarRecipe.blank();
+		sendUpdates();
+		VanillaPacketDispatcher.dispatchTEToNearbyPlayers(level, worldPosition);
 	}
 
 	@Override
@@ -336,7 +304,8 @@ public class ScarStationBlockEntity extends BaseContainerBlockEntity implements 
 
 	@Override
 	public boolean stillValid(Player p_58340_) {
-		return (this.level.getBlockEntity(this.worldPosition) != this) ? false
+		return (p_58340_.level() != level || this.level.getBlockEntity(this.worldPosition) != this
+				|| (!level.isClientSide && !com.vincenthuto.hemomancy.common.event.MachineAccessEvents.canUseStation(p_58340_, level, worldPosition))) ? false
 				: p_58340_.distanceToSqr(this.worldPosition.getX() + 0.5D, this.worldPosition.getY() + 0.5D,
 						this.worldPosition.getZ() + 0.5D) <= 64.0D;
 	}

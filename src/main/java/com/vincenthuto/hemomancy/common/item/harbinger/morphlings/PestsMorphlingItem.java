@@ -57,15 +57,15 @@ public class PestsMorphlingItem extends MorphlingItem {
 	}
 
 	@Override
-	public void use(Player playerIn, InteractionHand handIn, ItemStack itemStack, Level worldIn) {
+	public boolean tryUse(Player playerIn, InteractionHand handIn, ItemStack itemStack, Level worldIn) {
 		CompoundTag tag = itemStack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
 		int stored = tag.getInt("VerminCrownSwarm");
 		if (stored <= 0) {
 			playerIn.displayClientMessage(Component.literal("The Vermin Crown is quiet."), true);
-			return;
+			return false;
 		}
 		if (!MorphlingItem.tryBeginPrimalAbility(playerIn, itemStack, "VerminCrown",
-				300.0, 500, 180, 0)) return;
+				300.0, 500, 180, 0)) return false;
 		AABB area = playerIn.getBoundingBox().inflate(18.0);
 		List<Monster> hostiles = worldIn.getEntitiesOfClass(Monster.class, area, Monster::isAlive);
 		int releases = Math.min(stored, MAX_PRIMAL_SWARM);
@@ -79,6 +79,7 @@ public class PestsMorphlingItem extends MorphlingItem {
 		}
 		tag.putInt("VerminCrownSwarm", Math.max(0, stored - releases));
 		itemStack.set(DataComponents.CUSTOM_DATA, CustomData.of(tag));
+		return true;
 	}
 
 	@Override

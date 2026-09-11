@@ -1,11 +1,11 @@
 package com.vincenthuto.hemomancy.common.manipulation.ductilis;
 
+import com.vincenthuto.hemomancy.common.particle.HemoParticleData;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.EnumVeinSections;
 import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
 import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationRank;
 import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationType;
-import com.vincenthuto.hutoslib.client.particle.factory.GlowParticleFactory;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 
 import net.minecraft.core.BlockPos;
@@ -64,7 +64,7 @@ public class CrimsonHarvestManip extends BloodManipulation {
 								grownTargets.add(target.immutable());
 
 								sLevel.sendParticles(
-										GlowParticleFactory.createData(
+										HemoParticleData.glow(
 												new ParticleColor(180 + random.nextFloat() * 75, 30, 30)),
 										target.getX() + 0.5, target.getY() + 0.5, target.getZ() + 0.5,
 										3, 0.2, 0.2, 0.2, 0.01f);
@@ -86,7 +86,7 @@ public class CrimsonHarvestManip extends BloodManipulation {
 
 			for (int i = 0; i < 10; i++) {
 				sLevel.sendParticles(
-						GlowParticleFactory.createData(new ParticleColor(200, 50, 50)),
+						HemoParticleData.glow(new ParticleColor(200, 50, 50)),
 						center.getX() + 0.5 + (random.nextDouble() - 0.5) * (RADIUS * 2),
 						center.getY() + 0.5,
 						center.getZ() + 0.5 + (random.nextDouble() - 0.5) * (RADIUS * 2),

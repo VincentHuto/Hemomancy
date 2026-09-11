@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.entity.projectile;
 
+import com.vincenthuto.hemomancy.common.particle.HemoParticleData;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.entity.mob.arthropod.FargoneEntity;
@@ -8,7 +9,6 @@ import com.vincenthuto.hemomancy.common.entity.summon.IBloodConstruct;
 import com.vincenthuto.hemomancy.common.init.EffectInit;
 import com.vincenthuto.hemomancy.common.init.EntityInit;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
-import com.vincenthuto.hutoslib.client.particle.factory.GlowParticleFactory;
 import com.vincenthuto.hutoslib.client.particle.util.HLParticleUtils;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import net.minecraft.core.particles.ParticleOptions;
@@ -101,7 +101,7 @@ public class HemolyticVialEntity extends ThrowableItemProjectile {
     }
 
     private void spawnBurstParticles(ServerLevel sLevel, Vec3 impactPos) {
-        var glowData = GlowParticleFactory.createData(new ParticleColor(200, 235, 255));
+        var glowData = HemoParticleData.glow(new ParticleColor(200, 235, 255));
         emitSphericalBurst(sLevel, impactPos, glowData, 140, 1.0f, 0.12f);
         emitSphericalBurst(sLevel, impactPos, ParticleTypes.SPLASH, 70, 0.9f, 0.085f);
         emitSphericalBurst(sLevel, impactPos, ParticleTypes.SNOWFLAKE, 40, 0.85f, 0.06f);
@@ -144,7 +144,7 @@ public class HemolyticVialEntity extends ThrowableItemProjectile {
         super.tick();
         if (level().isClientSide) {
             level().addParticle(
-                    GlowParticleFactory.createData(new ParticleColor(180, 225, 255)),
+                    HemoParticleData.glow(new ParticleColor(180, 225, 255)),
                     getX() + HLParticleUtils.inRange(-0.15, 0.15),
                     getY() + HLParticleUtils.inRange(-0.15, 0.15),
                     getZ() + HLParticleUtils.inRange(-0.15, 0.15),

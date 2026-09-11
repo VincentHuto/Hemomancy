@@ -37,7 +37,7 @@ public class GhastlyAlembicMenu extends AbstractContainerMenu {
 	public static final int FLASK_OUTPUT_SLOT = 4;
 	public static final int TINCTURE_BLOOD_SLOT = 5;
 	public static final int SLOT_COUNT      = 6;
-	public static final int DATA_COUNT      = 3;
+	public static final int DATA_COUNT      = GhastlyAlembicBlockEntity.NUM_DATA_VALUES;
 
 	// Crafting area height — matches the screen's layout
 	public static final int CRAFT_AREA_HEIGHT = 80;
@@ -136,6 +136,10 @@ public class GhastlyAlembicMenu extends AbstractContainerMenu {
 	/** Whether the Ghastly Alembic is currently being heated (fire below) */
 	public boolean isHeated() {
 		return this.data.get(0) > 0;
+	}
+
+	public GhastlyAlembicBlockEntity.Status getProcessingStatus() {
+		return GhastlyAlembicBlockEntity.Status.values()[data.get(GhastlyAlembicBlockEntity.DATA_STATUS)];
 	}
 
 	/** Progress scaled 0–24 for rendering */

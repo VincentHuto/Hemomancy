@@ -9,9 +9,6 @@ import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
 import com.vincenthuto.hemomancy.common.manipulation.ManipulationCombatHelper;
 import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationRank;
 import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationType;
-import com.vincenthuto.hutoslib.client.particle.data.ColorParticleData;
-import com.vincenthuto.hutoslib.common.registry.HLParticleInit;
-import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
@@ -51,8 +48,5 @@ public class InsatiableHungerManip extends BloodManipulation {
 
 		target.addEffect(new MobEffectInstance(EffectInit.insatiable_hunger, DURATION_TICKS, 0, false, true, true));
 		ManipulationVisuals.attached(target, ManipulationVisuals.Form.HUNGER, 1, DURATION_TICKS, 1); world.playSound(null, target.blockPosition(), SoundEvents.HUSK_AMBIENT, SoundSource.PLAYERS, 0.65F, 0.7F);
-		serverLevel.sendParticles(new ColorParticleData(HLParticleInit.glow.get(), new ParticleColor(45, 105, 30)),
-				target.getX(), target.getY() + target.getBbHeight() * 0.55D, target.getZ(),
-				22, 0.45D, 0.55D, 0.45D, 0.02D);
 	}
 }

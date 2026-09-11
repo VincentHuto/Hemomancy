@@ -37,16 +37,27 @@ public final class ChamberVisitEvents {
 	public static void onLogin(PlayerEvent.PlayerLoggedInEvent event) {
 		if (!(event.getEntity() instanceof ServerPlayer player)) return;
 		ChamberVisitService.clearInterruptedChairSleep(player);
-		if (!ChamberVisitService.isAttuned(player)
-				&& com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess.getPlayerDegreeNumber(player) >= 6
-				&& com.vincenthuto.hemomancy.common.event.HarbingerAdvancementGranter.hasAdvancement(player,
-						com.vincenthuto.hemomancy.common.event.HarbingerAdvancementGranter.ADV_CHAMBER_RETURNED)) {
-			ChamberVisitService.attune(player);
-		}
+		ChamberVisitService.restoreEarnedAccess(player);
 		if (ChamberVisitService.isActive(player)
 				&& !player.level().dimension().equals(com.vincenthuto.hemomancy.common.worldgen.ChamberOfWillManager.CHAMBER_OF_WILL)) {
 			ChamberVisitService.recoverOutsideChamber(player);
 		} else {
+			ChamberVisitService.sync(player);
+		}
+	}
+
+	@SubscribeEvent
+	public static void onClone(PlayerEvent.Clone event) {
+		if (event.getOriginal() instanceof ServerPlayer original
+				&& event.getEntity() instanceof ServerPlayer replacement) {
+			ChamberVisitService.copyEarnedProgress(original, replacement);
+		}
+	}
+
+	@SubscribeEvent
+	public static void onRespawn(PlayerEvent.PlayerRespawnEvent event) {
+		if (event.getEntity() instanceof ServerPlayer player) {
+			ChamberVisitService.restoreEarnedAccess(player);
 			ChamberVisitService.sync(player);
 		}
 	}

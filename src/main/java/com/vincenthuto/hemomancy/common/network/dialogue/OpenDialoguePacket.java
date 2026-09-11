@@ -22,6 +22,8 @@ public class OpenDialoguePacket implements CustomPacketPayload {
 		this.tree = tree;
 	}
 
+	public DialogueTree tree() { return tree; }
+
 	public static void encode(FriendlyByteBuf buf, OpenDialoguePacket msg) {
 		msg.tree.toNetwork(buf);
 	}

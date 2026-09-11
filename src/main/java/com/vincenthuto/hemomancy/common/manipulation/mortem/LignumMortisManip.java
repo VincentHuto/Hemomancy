@@ -10,9 +10,6 @@ import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
 import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationRank;
 import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationType;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.PacketBloodStructureFeed;
-import com.vincenthuto.hutoslib.common.tendril.TendrilAnchor;
-import com.vincenthuto.hutoslib.common.tendril.TendrilEffectConfig;
-import com.vincenthuto.hutoslib.common.tendril.TendrilEffectSpawner;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
@@ -22,7 +19,6 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.TagKey;
-import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.ClipContext;
@@ -192,7 +188,9 @@ public class LignumMortisManip extends BloodManipulation {
 					|| !VeinMinerHelper.hasBreakPermission(player, pos)) continue;
 			BlockState state = level.getBlockState(pos);
 			Block.dropResources(state, level, pos, null, player, ItemStack.EMPTY);
-			level.destroyBlock(pos, false, player);
+			if(level.destroyBlock(pos, false, player))
+                com.vincenthuto.hemomancy.common.manipulation.ManipulationParticles.accent(level,EnumBloodTendency.MORTEM,
+                        Vec3.atCenterOf(pos),new Vec3(0,-.15,0));
 		}
 	}
 
@@ -226,24 +224,10 @@ public class LignumMortisManip extends BloodManipulation {
 		return (base & ~3L) | band;
 	}
 
-	private static void spawnBloodTendril(ServerLevel level, ServerPlayer player, BlockPos target) {
-		Vec3 forward = player.getViewVector(1.0F).normalize();
-		Vec3 right = new Vec3(-forward.z, 0.0D, forward.x).normalize();
-		double side = player.getMainArm() == HumanoidArm.RIGHT ? 0.30D : -0.30D;
-		Vec3 start = player.getEyePosition().add(forward.scale(0.14D)).add(right.scale(side)).add(0.0D, -0.38D, 0.0D);
-		Vec3 end = Vec3.atCenterOf(target);
-		long seed = level.random.nextLong() ^ player.getUUID().getLeastSignificantBits() ^ target.asLong();
-		TendrilEffectConfig config = TendrilEffectConfig.defaults()
-				.withColors(INNER_BLOOD, OUTER_BLOOD)
-				.withRange((float) Math.max(8.0D, start.distanceTo(end) + 4.0D))
-				.withLifecycle(2, 4, 5)
-				.withShape(16, 2, 0.065F, 0.04F)
-				.withBranching(2, 1, 0.2F, 0.7F)
-				.withWrithe(0.1F, 0.055F, 0.6F, 0.04F)
-				.withBlendColors(false)
-				.withFixedSeed(true, seed);
-		TendrilEffectSpawner.spawn(level, new TendrilAnchor.Point(start), new TendrilAnchor.Point(end), config);
-	}
+    private static void spawnBloodTendril(ServerLevel level, ServerPlayer player, BlockPos target) {
+        com.vincenthuto.hemomancy.common.manipulation.BloodFlowVisuals.lignum(player,Vec3.atCenterOf(target),
+                target.asLong() ^ player.getUUID().getLeastSignificantBits());
+    }
 
 	private static final class Session {
 		private final ResourceKey<Level> dimension;

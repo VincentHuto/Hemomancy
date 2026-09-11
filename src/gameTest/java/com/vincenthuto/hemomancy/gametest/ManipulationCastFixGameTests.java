@@ -10,6 +10,7 @@ import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.Enu
 import com.vincenthuto.hemomancy.common.entity.projectile.BloodNeedleEntity;
 import com.vincenthuto.hemomancy.common.entity.summon.EntityWretchedWill;
 import com.vincenthuto.hemomancy.common.event.LastRiteHelper;
+import com.vincenthuto.hemomancy.common.init.BlockInit;
 import com.vincenthuto.hemomancy.common.init.EffectInit;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.init.ManipulationInit;
@@ -108,8 +109,8 @@ public final class ManipulationCastFixGameTests {
 	@GameTest(templateNamespace = "minecraft", template = EMPTY_TEMPLATE, timeoutTicks = 40)
 	public static void registryTypesMatchUnifiedInputSemantics(GameTestHelper helper) {
 		var manipulations = ManipulationInit.MANIPS.getEntries().stream().map(holder -> holder.get()).toList();
-		helper.assertTrue(manipulations.size() == 112, "Expected 112 registered manipulations, got " + manipulations.size());
-		helper.assertTrue(manipulations.stream().filter(m -> m.getType() == EnumManipulationType.QUICK).count() == 74,
+		helper.assertTrue(manipulations.size() == 114, "Expected 114 registered manipulations, got " + manipulations.size());
+		helper.assertTrue(manipulations.stream().filter(m -> m.getType() == EnumManipulationType.QUICK).count() == 76,
 				"Quick manipulation count changed");
 		helper.assertTrue(names(manipulations, EnumManipulationType.CHARGED).equals(Set.of(
 				"blood_needle", "activation_potential", "blood_aneurysm", "ironhearted", "vitric_combustion",
@@ -160,7 +161,7 @@ public final class ManipulationCastFixGameTests {
 		}
 		long active = ManipulationInit.MANIPS.getEntries().stream().map(holder -> holder.get())
 				.filter(manipulation -> !ManipulationRetirementRules.isRetiredManipulation(manipulation)).count();
-		helper.assertTrue(active == 97, "Expected 97 active manipulations after pruning, got " + active);
+		helper.assertTrue(active == 99, "Expected 99 active manipulations after pruning, got " + active);
 		helper.assertTrue(!ManipulationRetirementRules.isRetiredManipulation("summon_avatar"),
 				"Summon Avatar was retired");
 		helper.assertTrue(ManipulationInit.deadly_gaze.get().getType() == EnumManipulationType.CHARGED
@@ -489,7 +490,7 @@ public final class ManipulationCastFixGameTests {
 					player.blockPosition());
 			long ice = BlockPos.betweenClosedStream(player.blockPosition().offset(-2, 0, -2),
 					player.blockPosition().offset(2, 2, 2))
-					.filter(pos -> helper.getLevel().getBlockState(pos).is(net.minecraft.world.level.block.Blocks.PACKED_ICE))
+					.filter(pos -> helper.getLevel().getBlockState(pos).is(BlockInit.frozen_cruor.get()))
 					.count();
 			helper.assertTrue(ice >= 8, "Crouch-cast Rampart did not raise a surrounding bastion");
 			helper.succeed();
@@ -655,24 +656,23 @@ public final class ManipulationCastFixGameTests {
 
 	@GameTest(templateNamespace = "minecraft", template = EMPTY_TEMPLATE, timeoutTicks = 40)
 	public static void activationPotentialScalesDamageFromPartialToFull(GameTestHelper helper) {
-		ServerPlayer player = player(helper, "activation-potential-charge-test");
-		Zombie target = zombie(helper, player.position().add(2.0D, 0.0D, 0.0D));
-		try {
-			var manipulation = ManipulationInit.activation_potential.get();
-			manipulation.getAction(player, helper.getLevel(), ItemStack.EMPTY, player.blockPosition(), 15.0F);
-			float partial = target.getMaxHealth() - target.getHealth();
-			target.setHealth(target.getMaxHealth());
-			target.invulnerableTime = 0;
-			manipulation.getAction(player, helper.getLevel(), ItemStack.EMPTY, player.blockPosition(), 30.0F);
-			float full = target.getMaxHealth() - target.getHealth();
-			helper.assertTrue(partial > 0.0F && full > partial,
-					"Activation Potential damage did not increase: partial=" + partial + ", full=" + full);
-			helper.succeed();
-		} finally {
-			target.discard();
-			player.discard();
-		}
-	}
+        ServerPlayer player = player(helper, "activation-potential-charge-test");
+        Zombie target = zombie(helper, player.position().add(2.0D, 0.0D, 0.0D));
+        var manipulation = ManipulationInit.activation_potential.get();
+        manipulation.getAction(player, helper.getLevel(), ItemStack.EMPTY, player.blockPosition(), 15.0F);
+        float partial = target.getMaxHealth() - target.getHealth();
+        // A second charged release happens on a later tick, outside the first discharge ledger.
+        helper.runAfterDelay(1, () -> {
+            try {
+                target.setHealth(target.getMaxHealth()); target.invulnerableTime = 0;
+                manipulation.getAction(player, helper.getLevel(), ItemStack.EMPTY, player.blockPosition(), 30.0F);
+                float full = target.getMaxHealth() - target.getHealth();
+                helper.assertTrue(partial > 0.0F && full > partial,
+                        "Activation Potential damage did not increase: partial=" + partial + ", full=" + full);
+                helper.succeed();
+            } finally { target.discard(); player.discard(); }
+        });
+    }
 
 	@GameTest(templateNamespace = "minecraft", template = EMPTY_TEMPLATE, timeoutTicks = 40)
 	public static void bloodAneurysmScalesDamageAndLaunchFromPartialToFull(GameTestHelper helper) {

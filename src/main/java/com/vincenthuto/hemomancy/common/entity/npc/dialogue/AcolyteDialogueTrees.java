@@ -12,7 +12,7 @@ import java.util.List;
  */
 public final class AcolyteDialogueTrees {
 
-	private static final ResourceLocation ACOLYTE_ICON = Hemomancy.rloc("textures/entity/unstained_acolyte/unstained_acolyte.png");
+	private static final ResourceLocation ACOLYTE_ICON = Hemomancy.rloc("textures/entity/npc/unstained/unstained_acolyte/unstained_acolyte.png");
 	private static final String SPEAKER = "entity.hemomancy.unstained_acolyte";
 
 	private AcolyteDialogueTrees() {}

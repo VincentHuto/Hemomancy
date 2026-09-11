@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.manipulation.saint;
 
+import com.vincenthuto.hemomancy.common.manipulation.ManipulationParticles;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.EnumVeinSections;
 import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
@@ -8,7 +9,6 @@ import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationType;
 import com.vincenthuto.hemomancy.common.manipulation.ManipulationReactiveEvents;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
@@ -72,17 +72,7 @@ public class UnclosingEyeManip extends BloodManipulation {
 		world.playSound(null, player.blockPosition(), SoundEvents.BEACON_ACTIVATE, SoundSource.PLAYERS, 1.0f, 1.5f);
 
 		if (world instanceof ServerLevel sLevel) {
-			BlockPos pos = player.blockPosition();
-			for (int i = 0; i < 50; i++) {
-				double angle = (i / 50.0) * Math.PI * 2;
-				double dist = 1.5 + (i % 3) * 0.4;
-				sLevel.sendParticles(
-						ParticleTypes.END_ROD,
-						pos.getX() + 0.5 + Math.cos(angle) * dist,
-						pos.getY() + 1.8,
-						pos.getZ() + 0.5 + Math.sin(angle) * dist,
-						1, 0f, 0.08f, 0f, 0.02f);
-			}
+			ManipulationParticles.accent(sLevel, EnumBloodTendency.LUX, player.position().add(0, 2.5, 0), net.minecraft.world.phys.Vec3.ZERO);
 		}
 	}
 }

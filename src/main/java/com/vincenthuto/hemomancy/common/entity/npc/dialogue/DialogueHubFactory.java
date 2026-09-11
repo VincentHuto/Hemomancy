@@ -37,7 +37,7 @@ public final class DialogueHubFactory {
 
 			String slug = slug(option.nextNodeId() != null ? option.nextNodeId() : option.text());
 			String target = option.nextNodeId();
-			if (target == null) {
+			if (target == null || option.eventId() != null) {
 				target = "__hub_" + category.name().toLowerCase(Locale.ROOT) + "_" + syntheticIndex++;
 				nodes.put(target, new DialogueNode(target, List.of(), List.of(option)));
 			}

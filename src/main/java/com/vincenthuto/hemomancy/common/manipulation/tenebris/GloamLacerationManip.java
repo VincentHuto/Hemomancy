@@ -1,5 +1,7 @@
 package com.vincenthuto.hemomancy.common.manipulation.tenebris;
 
+import com.vincenthuto.hemomancy.common.manipulation.ManipulationVisuals;
+import com.vincenthuto.hemomancy.common.manipulation.ManipulationParticles;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.EnumVeinSections;
 import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillPointHelper;
@@ -8,8 +10,6 @@ import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
 import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationRank;
 import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationType;
 import com.vincenthuto.hemomancy.common.manipulation.TendencyAffinityRules;
-import com.vincenthuto.hemomancy.common.network.PacketHandler;
-import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
@@ -52,7 +52,7 @@ public class GloamLacerationManip extends BloodManipulation {
 			target.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, 120, 0, false, true));
 			float damage = (float) ((BASE_DAMAGE + (ambush ? AMBUSH_BONUS : 0.0F))
 					* SkillPointHelper.getCrimsonMasteryMultiplier(player));
-			target.hurt(world.damageSources().magic(),
+			ManipulationParticles.hurt(this, target, world.damageSources().magic(),
 					TendencyAffinityRules.adjustManipulationDamage(player, target, this, damage));
 			world.playSound(null, target.blockPosition(), SoundEvents.PLAYER_ATTACK_SWEEP, SoundSource.PLAYERS,
 					0.75F, ambush ? 0.65F : 0.85F);
@@ -86,10 +86,8 @@ public class GloamLacerationManip extends BloodManipulation {
 		Vec3 center = target != null
 				? target.position().add(0.0D, target.getBbHeight() * 0.58D, 0.0D)
 				: player.getEyePosition().add(look.scale(2.8D));
-		PacketHandler.sendClawSlash(center, look, new ParticleColor(
-				ambush ? 45 : 80,
-				0,
-				ambush ? 135 : 100),
-				ambush, ambush ? 1.18F : 1.0F, 64.0D, level);
+        ManipulationVisuals.burst(level,
+                ManipulationVisuals.Form.UMBRA_SLASH,
+                center, center.add(look), ambush ? 1.18 : 1.0, 18);
 	}
 }

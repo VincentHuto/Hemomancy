@@ -6,6 +6,8 @@ import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.client.rite.CardinalRiteFirstPersonPlantingPose;
 import com.vincenthuto.hemomancy.client.rite.CardinalRiteStaffPlantingClientState;
 import com.vincenthuto.hemomancy.common.rite.harbinger.CardinalRitePlantingSequence;
+import com.vincenthuto.hemomancy.common.init.ItemInit;
+import com.vincenthuto.hemomancy.common.item.harbinger.tool.TerrestrialSpeculumPlantingSequence;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.client.renderer.entity.player.PlayerRenderer;
@@ -20,7 +22,7 @@ import net.neoforged.neoforge.client.event.ClientTickEvent;
 import net.neoforged.neoforge.client.event.RenderHandEvent;
 import net.neoforged.neoforge.client.event.ViewportEvent;
 
-/** First-person rendering, input restraint, and impact shake for staff planting. */
+/** First-person rendering, input restraint, and impact shake for ritual-implement planting. */
 @EventBusSubscriber(modid = Hemomancy.MOD_ID, value = Dist.CLIENT)
 public final class CardinalRiteStaffPlantingClientEvents {
 	private CardinalRiteStaffPlantingClientEvents() {
@@ -42,6 +44,9 @@ public final class CardinalRiteStaffPlantingClientEvents {
 		float recovery = CardinalRitePlantingSequence.recoveryProgress(elapsed);
 		float vertical = CardinalRiteFirstPersonPlantingPose.verticalOffset(
 				windup, strike, recovery);
+		if (animation.staff().is(ItemInit.terrestrial_speculum.get())) {
+			vertical += TerrestrialSpeculumPlantingSequence.extractionLift(recovery);
+		}
 		PoseStack poseStack = event.getPoseStack();
 		PlayerRenderer renderer = (PlayerRenderer) minecraft.getEntityRenderDispatcher().getRenderer(player);
 

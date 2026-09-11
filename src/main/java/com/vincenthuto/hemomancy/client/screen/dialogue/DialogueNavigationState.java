@@ -9,6 +9,7 @@ public final class DialogueNavigationState {
 	private DialogueCategory category;
 	private String nodeId;
 	private int focusIndex;
+	private boolean returnToHub;
 
 	private DialogueNavigationState(View view) {
 		this.view = view;
@@ -32,12 +33,17 @@ public final class DialogueNavigationState {
 	}
 
 	public void openNode(String nodeId) {
+		if (view == View.HUB) returnToHub = true;
 		this.nodeId = nodeId;
 		this.view = View.NODE;
 		this.focusIndex = 0;
 	}
 
 	public boolean back() {
+		if (view == View.NODE && category == null && returnToHub) {
+			toHub();
+			return true;
+		}
 		if (view == View.NODE && category != null) {
 			view = View.CATEGORY;
 			nodeId = null;
@@ -54,6 +60,7 @@ public final class DialogueNavigationState {
 	}
 
 	public void toHub() {
+		returnToHub = false;
 		view = View.HUB;
 		category = null;
 		nodeId = null;

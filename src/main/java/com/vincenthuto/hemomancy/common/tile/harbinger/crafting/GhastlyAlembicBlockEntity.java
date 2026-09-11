@@ -80,7 +80,10 @@ public class GhastlyAlembicBlockEntity extends BaseContainerBlockEntity
 	public static final int DATA_HEATED = 0;
 	public static final int DATA_COOKING_PROGRESS = 1;
 	public static final int DATA_COOKING_TOTAL_TIME = 2;
-	public static final int NUM_DATA_VALUES = 3;
+	public static final int DATA_STATUS = 3;
+	public static final int NUM_DATA_VALUES = 4;
+
+	public enum Status { NO_HEAT, NO_INPUT, MISSING_INGREDIENTS, OUTPUT_BLOCKED, TANK_FULL, DISTILLING }
 
 	public static final int BURN_TIME_STANDARD = 200;
 
@@ -105,6 +108,7 @@ public class GhastlyAlembicBlockEntity extends BaseContainerBlockEntity
 				case DATA_HEATED -> heated ? 1 : 0;
 				case DATA_COOKING_PROGRESS -> cookingProgress;
 				case DATA_COOKING_TOTAL_TIME -> cookingTotalTime;
+				case DATA_STATUS -> getProcessingStatus().ordinal();
 				default -> 0;
 			};
 		}
@@ -260,6 +264,19 @@ public class GhastlyAlembicBlockEntity extends BaseContainerBlockEntity
 		}
 	}
 
+	public Status getProcessingStatus() {
+		if (!heated) return Status.NO_HEAT;
+		if (items.get(SLOT_INPUT).isEmpty()) return Status.NO_INPUT;
+		if (level == null) return Status.MISSING_INGREDIENTS;
+		RecipeHolder<DistillationRecipe> recipe = findMatchingRecipe(level, this);
+		if (recipe == null) return Status.MISSING_INGREDIENTS;
+		if (!canBurn(level.registryAccess(), recipe, items, getMaxStackSize())) return Status.OUTPUT_BLOCKED;
+		if (!recipe.value().requiresBloodInput() && getBloodVolume() >= getMaxBloodVolume() - 99) {
+			return Status.TANK_FULL;
+		}
+		return Status.DISTILLING;
+	}
+
 	// ---- Recipe logic ----
 
 	private boolean canBurn(RegistryAccess registryAccess, @Nullable RecipeHolder<DistillationRecipe> recipeHolder, NonNullList<ItemStack> inv, int maxStack) {
@@ -281,33 +298,11 @@ public class GhastlyAlembicBlockEntity extends BaseContainerBlockEntity
 		DistillationRecipe recipe = recipeHolder.value();
 		ItemStack input = inv.get(SLOT_INPUT);
 		ItemStack recipeResult = recipe.getResultItem(registryAccess).copy();
-		ItemStack flaskStack = inv.get(SLOT_FLASK);
 		ItemStack resultStack = inv.get(SLOT_RESULT);
-
-		// If a flask is present and result slot can accept a bloody flask
-		if (!flaskStack.isEmpty() && flaskStack.getItem() == HLItemInit.cured_clay_flask.get()) {
-			if (resultStack.isEmpty()) {
-				inv.set(SLOT_RESULT, new ItemStack(ItemInit.bloody_flask.get()));
-				flaskStack.shrink(1);
-			} else if (resultStack.getItem() == ItemInit.bloody_flask.get()
-					&& resultStack.getCount() < resultStack.getMaxStackSize()) {
-				resultStack.grow(1);
-				flaskStack.shrink(1);
-			} else {
-				// Result slot has something incompatible or is full — just put recipe result
-				if (resultStack.isEmpty()) {
-					inv.set(SLOT_RESULT, recipeResult.copy());
-				} else if (ItemStack.isSameItem(resultStack, recipeResult)) {
-					resultStack.grow(recipeResult.getCount());
-				}
-			}
+		if (resultStack.isEmpty()) {
+			inv.set(SLOT_RESULT, recipeResult);
 		} else {
-			// No flask — output the recipe result directly
-			if (resultStack.isEmpty()) {
-				inv.set(SLOT_RESULT, recipeResult.copy());
-			} else if (ItemStack.isSameItem(resultStack, recipeResult)) {
-				resultStack.grow(recipeResult.getCount());
-			}
+			resultStack.grow(recipeResult.getCount());
 		}
 
 		DistillationConsumptionRules.Consumption consumption = DistillationConsumptionRules.forRecipe(
@@ -568,7 +563,7 @@ public class GhastlyAlembicBlockEntity extends BaseContainerBlockEntity
 		IBloodVolume vol = resolveVolume();
 		if (vol != null) {
 			vol.setActive(true);
-			vol.setMaxBloodVolume(2000f);
+			vol.setMaxBloodVolume(AlembicVesselRules.requiredBlood(AlembicVesselRules.Vessel.JUG));
 		}
 	}
 

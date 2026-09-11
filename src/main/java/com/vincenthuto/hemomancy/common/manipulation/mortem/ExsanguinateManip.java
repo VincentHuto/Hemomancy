@@ -9,16 +9,12 @@ import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillPoin
 import com.vincenthuto.hemomancy.common.manipulation.*;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.BloodVolumeServerPacket;
-import com.vincenthuto.hutoslib.client.particle.data.ColorParticleData;
-import com.vincenthuto.hutoslib.common.registry.HLParticleInit;
-import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
-import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -94,10 +90,10 @@ public class ExsanguinateManip extends BloodManipulation {
 
 		LivingEntity target = targetOpt.get();
 		float drainDamage = target.getHealth() * DRAIN_DAMAGE_MULTIPLIER * (float) SkillPointHelper.getCrimsonMasteryMultiplier(player);
-		if (!target.hurt(world.damageSources().magic(),
+		if (!ManipulationParticles.hurt(this, target, world.damageSources().magic(),
 				TendencyAffinityRules.adjustManipulationDamage(player, target, this, drainDamage)) || target.isAlive()) return;
 		HemomancyTendrilEffects.exsanguinate(player, target);
-        ManipulationVisuals.burst(sLevel, ManipulationVisuals.Form.DRAIN, player.getEyePosition(), target.getEyePosition(), 1, 24);
+        ManipulationVisuals.burst(sLevel, ManipulationVisuals.Form.MORTEM_BURST, target.position(), target.position(), .7, 24);
 
 		IBloodVolume volume = HemoCapabilityAccess.getBloodVolume(player).orElse(null);
 		if (volume != null && volume.isActive()) {
@@ -111,19 +107,5 @@ public class ExsanguinateManip extends BloodManipulation {
 		world.playSound(null, center, SoundEvents.WITHER_DEATH, SoundSource.PLAYERS, 0.7f, 1.8f);
 		world.playSound(null, center, SoundEvents.BREWING_STAND_BREW, SoundSource.PLAYERS, 0.5f, 0.7f);
 
-		RandomSource random = world.random;
-		for (int i = 0; i < 30; i++) {
-			double t = random.nextDouble();
-			double px = target.getX() + (player.getX() - target.getX()) * t;
-			double py = target.getEyeY() + (player.getEyeY() - target.getEyeY()) * t;
-			double pz = target.getZ() + (player.getZ() - target.getZ()) * t;
-			sLevel.sendParticles(
-					new ColorParticleData(HLParticleInit.glow.get(), new ParticleColor(
-							120 + random.nextFloat() * 80,
-							0,
-							random.nextFloat() * 20)),
-					px, py, pz,
-					1, 0f, 0f, 0f, 0.015f);
-		}
 	}
 }

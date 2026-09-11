@@ -1,6 +1,5 @@
 package com.vincenthuto.hemomancy.common.manipulation.animus;
 
-import com.vincenthuto.hemomancy.client.particle.factory.HitGlowParticleFactory;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.EnumVeinSections;
 import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillPointHelper;
@@ -8,15 +7,12 @@ import com.vincenthuto.hemomancy.common.init.BlockInit;
 import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
 import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationRank;
 import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationType;
-import com.vincenthuto.hutoslib.client.particle.factory.GlowParticleFactory;
-import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
-import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.ClipContext;
@@ -75,37 +71,10 @@ public class CrimsonFlameConjurationManip extends BloodManipulation {
 		world.setBlock(firePos, flameState, 3);
 		world.playSound(null, firePos, SoundEvents.FIRECHARGE_USE, SoundSource.PLAYERS, 0.8f, 0.9f);
 
-		if (world instanceof ServerLevel sLevel) {
-			double cx = firePos.getX() + 0.5;
-			double cy = firePos.getY() + 0.5;
-			double cz = firePos.getZ() + 0.5;
-			RandomSource random = world.random;
-
-			sLevel.sendParticles(
-					HitGlowParticleFactory.createData(new ParticleColor(255, 40, 20)),
-					cx, cy, cz,
-					6, 0.1, 0.1, 0.1, 0.01f);
-
-			for (int i = 0; i < 18; i++) {
-				float r = 180 + random.nextFloat() * 75;  // 180-255 red
-				float g = random.nextFloat() * 60;         // 0-60 green (orange tint)
-				float b = random.nextFloat() * 15;         // near-zero blue
-				sLevel.sendParticles(
-						GlowParticleFactory.createData(new ParticleColor(r, g, b)),
-						cx + (random.nextDouble() - 0.5) * 0.6,
-						cy + random.nextDouble() * 0.6,
-						cz + (random.nextDouble() - 0.5) * 0.6,
-						1, 0f, 0.15f, 0f, 0.02f);
-			}
-
-			for (int i = 0; i < 8; i++) {
-				sLevel.sendParticles(
-						GlowParticleFactory.createData(new ParticleColor(120, 0, 0)),
-						cx + (random.nextDouble() - 0.5) * 0.4,
-						cy + 0.2,
-						cz + (random.nextDouble() - 0.5) * 0.4,
-						1, 0f, 0.3f, 0f, 0.01f);
-			}
-		}
-	}
+        if (world instanceof ServerLevel level) {
+            com.vincenthuto.hemomancy.common.manipulation.ManipulationVisuals.burst(level,
+                    com.vincenthuto.hemomancy.common.manipulation.ManipulationVisuals.Form.FLAME_CONJURE,
+                    Vec3.atBottomCenterOf(firePos),Vec3.atCenterOf(firePos),.7,30);
+        }
+    }
 }

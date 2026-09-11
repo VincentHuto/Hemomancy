@@ -672,6 +672,15 @@ public class ManipulationInit {
 						return true;
 					}, "Raises a magnetic iron pillar that traps hostiles"));
 
+	public static final DeferredHolder<BloodManipulation, BloodManipulation> ferric_rampart = MANIPS.register("ferric_rampart",
+			() -> new FerricBarrierManip("ferric_rampart", FerricConstructShapes.Kind.WALL)
+					.setSecondaryTend(EnumBloodTendency.DUCTILIS).setCooldownTicks(140)
+					.setDrudgeAction(DrudgeAction.DRUDGE_UNSUPPORTED, "Player-shaped iron cover"));
+	public static final DeferredHolder<BloodManipulation, BloodManipulation> ferric_spikes = MANIPS.register("ferric_spikes",
+			() -> new FerricBarrierManip("ferric_spikes", FerricConstructShapes.Kind.SPIKE)
+					.setSecondaryTend(EnumBloodTendency.DUCTILIS).setCooldownTicks(140)
+					.setDrudgeAction(DrudgeAction.DRUDGE_UNSUPPORTED, "Player-shaped iron barrier"));
+
 	public static final DeferredHolder<BloodManipulation, BloodManipulation> pyretic_forge = MANIPS.register("pyretic_forge",
 			() -> new PyreticForgeManip("pyretic_forge", 350, 10, 0, EnumManipulationType.QUICK,
 					EnumManipulationRank.MEDIOCRITAS, EnumBloodTendency.FLAMMEUS, EnumVeinSections.BODY)
@@ -828,13 +837,13 @@ public class ManipulationInit {
 										base.getX() + 0.5 + 2.0 * Math.cos(angle),
 										base.getY() + dy,
 										base.getZ() + 0.5 + 2.0 * Math.sin(angle));
-								if (TemporaryIceManager.place(sLevel, wallPos, Blocks.PACKED_ICE.defaultBlockState(), 500)) {
+								if (TemporaryIceManager.place(sLevel, wallPos, BlockInit.frozen_cruor.get().defaultBlockState(), 500)) {
 									placed++;
 								}
 							}
 						}
 						return placed > 0;
-					}, "Raises temporary packed ice around the Drudge"));
+					}, "Raises temporary Frozen Cruor around the Drudge"));
 
 	public static final DeferredHolder<BloodManipulation, BloodManipulation> glacial_rampart = MANIPS.register("glacial_rampart",
 			() -> new GlacialRampartManip("glacial_rampart", 350, 10, 0, EnumManipulationType.QUICK,
@@ -849,13 +858,13 @@ public class ManipulationInit {
 						for (int dx = -1; dx <= 1; dx++) {
 							for (int dy = 0; dy < 3; dy++) {
 								BlockPos wallPos = base.offset(dx, dy, 0);
-								if (TemporaryIceManager.place(sLevel, wallPos, Blocks.PACKED_ICE.defaultBlockState(), 500)) {
+								if (TemporaryIceManager.place(sLevel, wallPos, BlockInit.frozen_cruor.get().defaultBlockState(), 500)) {
 									placed++;
 								}
 							}
 						}
 						return placed > 0;
-					}, "Raises a temporary packed ice wall"));
+					}, "Raises a temporary Frozen Cruor wall"));
 
 	public static final DeferredHolder<BloodManipulation, BloodManipulation> osseous_bloom = MANIPS.register("osseous_bloom",
 			() -> new OsseousBloomManip("osseous_bloom", 600, 25, 0, EnumManipulationType.QUICK,

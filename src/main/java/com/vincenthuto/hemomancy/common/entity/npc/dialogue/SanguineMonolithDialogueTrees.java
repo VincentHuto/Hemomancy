@@ -21,8 +21,23 @@ public final class SanguineMonolithDialogueTrees {
 	/** Sentinel used in place of an entity ID for this block-based speaker. */
 	public static final int BLOCK_ENTITY_ID = -1;
 	public static final String EVENT_CORNERSTONE = "monolith_cornerstone";
+	public static final String EVENT_SHATTER = "monolith_press_further";
 
 	private SanguineMonolithDialogueTrees() {}
+
+	public static DialogueTree forPlayer(net.minecraft.server.level.ServerPlayer player, int degree) {
+		DialogueTree tree = forDegree(degree);
+		if (degree >= 7 && DialogueEventHandler.hasClaimedMonolithCornerstone(player)) {
+			var nodes = new java.util.LinkedHashMap<>(tree.nodes());
+			nodes.put("armature_cornerstone", new DialogueNode("armature_cornerstone", List.of(
+					"hemomancy.dialogue.event.monolith_cornerstone_known",
+					"hemomancy.monolith.armature_cornerstone.given"), List.of(
+					new DialogueOption("hemomancy.dialogue.monolith.option.leave", null, null))));
+			return new DialogueTree(tree.speakerName(), tree.speakerIcon(), tree.startNodeId(), nodes,
+					tree.entityId(), tree.theme(), tree.presentation());
+		}
+		return tree;
+	}
 
 	/**
 	 * Returns the appropriate dialogue tree for the given degree.
@@ -104,8 +119,8 @@ public final class SanguineMonolithDialogueTrees {
 
 	/**
 	 * Degree 7+ — Archon. The lodestone speaks with intimate recognition; pressing
-	 * further reveals the shatter warning. Two interactions with the block trigger
-	 * the actual shatter (handled by {@code SanguineMonolithBlockEntity}).
+	 * further reveals the shatter warning. A second deliberate dialogue choice
+	 * triggers the shatter through the validated block conversation.
 	 */
 	public static DialogueTree archon() {
 		return DialogueTree.builder(SPEAKER, MONOLITH_ICON, BLOCK_ENTITY_ID)
@@ -141,6 +156,7 @@ public final class SanguineMonolithDialogueTrees {
 				.addNode(new DialogueNode("press_again", List.of(
 						"hemomancy.monolith.archon.press_again"
 				), List.of(
+						new DialogueOption("hemomancy.dialogue.monolith.option.press_further", null, EVENT_SHATTER),
 						new DialogueOption("hemomancy.dialogue.monolith.option.leave", null, null)
 				)))
 				.build();

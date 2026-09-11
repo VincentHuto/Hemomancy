@@ -15,10 +15,7 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.phys.BlockHitResult;
-import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 
 public class SanguineMagnetismManip extends BloodManipulation {
@@ -32,10 +29,18 @@ public class SanguineMagnetismManip extends BloodManipulation {
 	}
 
 	@Override
+	protected boolean canPerformAction(Player player, ItemStack heldItem, float ticks) {
+		return FerricPlacement.aimed(player, FerricConstructShapes.Kind.PILLAR,
+				BASE_RANGE * SkillPointHelper.getSanguineReachMultiplier(player)) != null
+				&& super.canPerformAction(player, heldItem, ticks);
+	}
+
+	@Override
 	public void getAction(Player player, Level world, ItemStack heldItemMainhand, BlockPos position) {
 		if (!(world instanceof ServerLevel serverLevel)) return;
-		Vec3 center = targetPosition(player, world, BASE_RANGE * SkillPointHelper.getSanguineReachMultiplier(player));
-		spawnMagneticPillar(player, serverLevel, center, DURATION_TICKS);
+		var placement = FerricPlacement.aimed(player, FerricConstructShapes.Kind.PILLAR,
+				BASE_RANGE * SkillPointHelper.getSanguineReachMultiplier(player));
+		if (placement != null) spawnMagneticPillar(player, serverLevel, placement.origins().getFirst(), DURATION_TICKS);
 	}
 
 	public static EntityIronPillar spawnMagneticPillar(LivingEntity caster, ServerLevel level, Vec3 center,
@@ -43,23 +48,11 @@ public class SanguineMagnetismManip extends BloodManipulation {
 		EntityIronPillar pillar = new EntityIronPillar(EntityInit.iron_pillar.get(), level, caster);
 		pillar.moveTo(center.x, center.y, center.z, caster.getYRot(), 0.0F);
 		pillar.setMagnetic(durationTicks);
+		pillar.configure(caster, FerricConstructShapes.Kind.PILLAR,
+				net.minecraft.core.Direction.fromYRot(caster.getYRot()), durationTicks);
 		level.addFreshEntity(pillar);
 		level.playSound(null, pillar.blockPosition(), SoundEvents.IRON_GOLEM_DAMAGE, SoundSource.PLAYERS, 1.0F, 0.65F);
 		return pillar;
 	}
 
-	private Vec3 targetPosition(Player player, Level world, double range) {
-		Vec3 eye = player.getEyePosition(1.0F);
-		Vec3 look = player.getViewVector(1.0F).normalize();
-		BlockHitResult hit = world.clip(new ClipContext(eye, eye.add(look.scale(range)), ClipContext.Block.OUTLINE,
-				ClipContext.Fluid.NONE, player));
-		if (hit.getType() != HitResult.Type.MISS) {
-			BlockPos pos = hit.getBlockPos().relative(hit.getDirection());
-			if (!world.getBlockState(pos).canBeReplaced()) {
-				pos = pos.above();
-			}
-			return Vec3.atBottomCenterOf(pos);
-		}
-		return player.position().add(look.scale(8.0D));
-	}
 }

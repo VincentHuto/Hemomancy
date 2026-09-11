@@ -1,7 +1,7 @@
 package com.vincenthuto.hemomancy.common.network.particle;
 
+import com.vincenthuto.hemomancy.common.particle.HemoParticleData;
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hutoslib.client.particle.factory.GlowParticleFactory;
 import com.vincenthuto.hutoslib.client.particle.util.HLParticleUtils;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import net.minecraft.network.FriendlyByteBuf;
@@ -38,7 +38,7 @@ public class SpawnFlaskParticlesPacket implements CustomPacketPayload {
 	public static void handle(final SpawnFlaskParticlesPacket msg, final IPayloadContext ctxSupplier) {
 		if (ctxSupplier.player() == null) return;
 		ctxSupplier.player().level().addParticle(
-				GlowParticleFactory.createData(msg.getColor()),
+				HemoParticleData.glow(msg.getColor()),
 				msg.getPos().x, msg.getPos().y + 1, msg.getPos().z,
 				HLParticleUtils.inRange(-3, 3) * 0.015f,
 				HLParticleUtils.inRange(-3, 3) * 0.015f,

@@ -16,6 +16,29 @@ final class CardinalRiteNpcStationRulesTest {
 	private static final BlockPos STATION = new BlockPos(10, 64, -4);
 
 	@Test
+	void roleStationsLeaveRoomForRepairLanesAndOtherHelpers() {
+		var targets = java.util.Set.of(new BlockPos(0, 0, -5), new BlockPos(5, 0, 0),
+				new BlockPos(0, 0, 5), new BlockPos(-5, 0, 0), new BlockPos(3, 0, -3));
+		var markers = CardinalRiteNpcStationRules.roleMarkers(targets);
+		assertEquals(3, markers.size());
+		for (var marker : markers.values()) {
+			assertEquals(1, marker.getY());
+			assertTrue(Math.abs(marker.getX()) >= 2 && Math.abs(marker.getZ()) >= 2,
+					"Leave the cardinal approach lanes clear");
+			for (var target : targets) {
+				double dx = marker.getX() - target.getX(), dz = marker.getZ() - target.getZ();
+				assertTrue(dx * dx + dz * dz >= 4, "Leave room to interact with support targets");
+			}
+			for (var other : markers.values()) {
+				if (marker == other) continue;
+				assertTrue(marker.distSqr(other) >= 9, "Different roles must not stack helpers");
+			}
+		}
+		assertEquals(markers, CardinalRiteNpcStationRules.roleMarkers(targets),
+				"Unchanged recipe geometry has stable markers after reload");
+	}
+
+	@Test
 	void assignedNpcOnlyParticipatesNearItsSafeRoleStation() {
 		assertTrue(CardinalRiteNpcStationRules.participates(
 				new Vec3(12.75D, 64.0D, -3.5D), STATION, true));

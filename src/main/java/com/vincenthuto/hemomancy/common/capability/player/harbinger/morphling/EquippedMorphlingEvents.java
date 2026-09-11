@@ -380,7 +380,52 @@ public class EquippedMorphlingEvents {
 		}
 	}
 
+	@SubscribeEvent
+	public static void playerLoggedOut(PlayerEvent.PlayerLoggedOutEvent event) {
+		if (event.getEntity() instanceof ServerPlayer player) persistEquippedMorphling(player);
+	}
+
+	public static boolean isStoredInCarriedJar(Player player, ItemStack equipped) {
+		for (MorphlingJarItemHandler jar : findMorphlingJars(player)) {
+			jar.load();
+			for (int slot = 0; slot < jar.getSlots(); slot++) {
+				if (com.vincenthuto.hemomancy.common.item.harbinger.morphlings.MorphlingIdentity.matches(
+						equipped, jar.getStackInSlot(slot))) return true;
+			}
+		}
+		return false;
+	}
+
+	public static void persistEquippedMorphling(ServerPlayer player) {
+		ItemStack equipped = HemoCapabilityAccess.getEquippedMorphling(player)
+				.map(IEquippedMorphling::getEquippedMorphling).orElse(ItemStack.EMPTY);
+		String identity = com.vincenthuto.hemomancy.common.item.harbinger.morphlings.MorphlingIdentity.identity(equipped);
+		if (identity.isEmpty()) return;
+		MorphlingJarItemHandler owner = null;
+		int ownerSlot = -1;
+		for (MorphlingJarItemHandler jar : findMorphlingJars(player)) {
+			jar.load();
+			for (int slot = 0; slot < jar.getSlots(); slot++) {
+				ItemStack stored = jar.getStackInSlot(slot);
+				if (ItemStack.isSameItem(stored, equipped) && identity.equals(
+						com.vincenthuto.hemomancy.common.item.harbinger.morphlings.MorphlingIdentity.identity(stored))) {
+					if (owner != null) return; // Duplicate identities cannot identify one owning specimen.
+					owner = jar;
+					ownerSlot = slot;
+				}
+			}
+		}
+		if (owner == null) return;
+		owner.setStackInSlot(ownerSlot, equipped.copy());
+		owner.save();
+		if (player.containerMenu instanceof com.vincenthuto.hemomancy.common.menu.MorphlingJarMenu menu
+				&& menu.handler != null && menu.handler.hasSameBackingStack(owner)) {
+			menu.handler.load();
+		}
+	}
+
 	public static void syncToClient(ServerPlayer player) {
+		persistEquippedMorphling(player);
 		HemoCapabilityAccess.getEquippedMorphling(player).ifPresent(cap -> {
 			PacketDistributor.sendToPlayersTrackingEntityAndSelf(player,
 					new SyncEquippedMorphlingPacket(player.getUUID(), cap.getEquippedMorphling().copy()));

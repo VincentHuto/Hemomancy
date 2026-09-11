@@ -66,6 +66,10 @@ public class MorphlingJarItemHandler extends ItemStackHandler {
 		return super.insertItem(slot, stack, simulate);
 	}
 
+	public boolean hasSameBackingStack(MorphlingJarItemHandler other) {
+		return other != null && itemStack == other.itemStack;
+	}
+
 	public void load() {
 		load(itemStack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag());
 	}

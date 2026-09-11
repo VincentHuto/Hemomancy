@@ -76,6 +76,11 @@ public class InitiatoryDegree implements IInitiatoryDegree, INBTSerializable<Com
 	}
 
 	@Override
+	public int getPomesConsumedFromBloom(long bloomOrigin) {
+		return pomeCommunionProgress.getOrDefault(bloomOrigin, 0);
+	}
+
+	@Override
 	public int getTotalPomesConsumed() { return totalPomesConsumed; }
 
 	@Override

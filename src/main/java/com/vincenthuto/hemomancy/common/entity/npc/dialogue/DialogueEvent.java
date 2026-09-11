@@ -13,12 +13,16 @@ public class DialogueEvent extends Event {
 	private final ServerPlayer player;
 	private final String eventId;
 	private final int entityId;
+	private boolean rewardDelivered;
 
 	public DialogueEvent(ServerPlayer player, String eventId, int entityId) {
 		this.player = player;
 		this.eventId = eventId;
 		this.entityId = entityId;
 	}
+
+	public void setRewardDelivered(boolean delivered) { rewardDelivered = delivered; }
+	public boolean wasRewardDelivered() { return rewardDelivered; }
 
 	/** The player who picked the dialogue option. */
 	public ServerPlayer getPlayer() {

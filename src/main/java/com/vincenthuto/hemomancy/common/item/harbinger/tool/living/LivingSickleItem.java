@@ -1,13 +1,12 @@
 package com.vincenthuto.hemomancy.common.item.harbinger.tool.living;
 
+import com.vincenthuto.hemomancy.common.particle.HemoParticleData;
 import com.vincenthuto.hemomancy.client.item.HemoClientItemExtensionsProvider;
 import com.vincenthuto.hemomancy.client.render.item.harbinger.LivingSickleItemRenderer;
-import com.vincenthuto.hemomancy.client.particle.factory.BloodCellParticleFactory;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.entity.projectile.LivingSickleHookEntity;
 import com.vincenthuto.hemomancy.common.manipulation.HemomancyTendrilEffects;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
-import com.vincenthuto.hutoslib.client.particle.factory.DarkGlowParticleFactory;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
@@ -114,9 +113,9 @@ public class LivingSickleItem extends LivingToolItem implements HemoClientItemEx
 		player.swing(hand, true);
 		player.getCooldowns().addCooldown(this, LivingSickleCombatRules.SPIN_COOLDOWN_TICKS);
 		Vec3 center = player.position().add(0.0D, player.getBbHeight() * 0.52D, 0.0D);
-		level.sendParticles(BloodCellParticleFactory.createData(SICKLE_BLOOD), center.x, center.y, center.z,
+		level.sendParticles(HemoParticleData.bloodCell(SICKLE_BLOOD), center.x, center.y, center.z,
 				34, 2.4D, 0.65D, 2.4D, 0.09D);
-		level.sendParticles(DarkGlowParticleFactory.createData(new ParticleColor(18, 0, 5)),
+		level.sendParticles(HemoParticleData.darkGlow(new ParticleColor(18, 0, 5)),
 				center.x, center.y, center.z, 22, 2.8D, 0.5D, 2.8D, 0.05D);
 		for (int i = 0; i < 4; i++) {
 			double angle = i * Math.PI * 0.5D;

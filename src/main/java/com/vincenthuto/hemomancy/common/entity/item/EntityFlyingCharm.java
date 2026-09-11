@@ -1,8 +1,8 @@
 package com.vincenthuto.hemomancy.common.entity.item;
 
+import com.vincenthuto.hemomancy.common.particle.HemoParticleData;
 import com.vincenthuto.hemomancy.common.init.EntityInit;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
-import com.vincenthuto.hutoslib.client.particle.factory.GlowParticleFactory;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import net.minecraft.Util;
 import net.minecraft.core.BlockPos;
@@ -194,7 +194,7 @@ public class EntityFlyingCharm extends Entity implements ItemSupplier {
 						d2 - vec3.z * 0.25D, vec3.x, vec3.y, vec3.z);
 			}
 		} else {
-			this.level().addParticle(GlowParticleFactory.createData(ParticleColor.BLOOD),
+			this.level().addParticle(HemoParticleData.glow(ParticleColor.BLOOD),
 					d0 - vec3.x * 0.25D + this.random.nextDouble() * 0.6D - 0.3D, d1 - vec3.y * 0.25D - 0.5D,
 					d2 - vec3.z * 0.25D + this.random.nextDouble() * 0.6D - 0.3D, vec3.x, vec3.y, vec3.z);
 		}

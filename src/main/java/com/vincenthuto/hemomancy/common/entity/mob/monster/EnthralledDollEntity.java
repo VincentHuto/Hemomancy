@@ -1,6 +1,6 @@
 package com.vincenthuto.hemomancy.common.entity.mob.monster;
 
-import com.vincenthuto.hemomancy.client.particle.factory.BloodCellParticleFactory;
+import com.vincenthuto.hemomancy.common.particle.HemoParticleData;
 import com.vincenthuto.hemomancy.common.init.EntityInit;
 import com.vincenthuto.hemomancy.common.init.SoundInit;
 import com.vincenthuto.hemomancy.common.entity.npc.circus.CircusPerformerEntity;
@@ -129,7 +129,7 @@ public class EnthralledDollEntity extends Monster implements OwnableEntity {
 			double x = (random.nextDouble() - 0.5D) * getBbWidth();
 			double y = random.nextDouble() * getBbHeight();
 			double z = (random.nextDouble() - 0.5D) * getBbWidth();
-			level().addParticle(BloodCellParticleFactory.createData(ParticleColor.BLOOD),
+			level().addParticle(HemoParticleData.bloodCell(ParticleColor.BLOOD),
 					getX() + x, getY() + y, getZ() + z, x * 0.08D, -0.025D, z * 0.08D);
 		}
 	}

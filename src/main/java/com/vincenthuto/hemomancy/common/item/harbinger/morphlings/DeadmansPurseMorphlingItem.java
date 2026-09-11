@@ -51,14 +51,15 @@ public class DeadmansPurseMorphlingItem extends MorphlingItem {
 	}
 
 	@Override
-	public void use(Player playerIn, InteractionHand handIn, ItemStack itemStack, Level worldIn) {
+	public boolean tryUse(Player playerIn, InteractionHand handIn, ItemStack itemStack, Level worldIn) {
 		if (!MorphlingItem.tryBeginPrimalAbility(playerIn, itemStack, "HemophageCovenant",
-				450.0, 1200, 300, 0)) return;
+				450.0, 1200, 300, 0)) return false;
 		CompoundTag tag = itemStack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
 		tag.putLong("HemophageCovenantUntil", worldIn.getGameTime() + HEMOPHAGE_COVENANT_DURATION);
 		itemStack.set(DataComponents.CUSTOM_DATA, CustomData.of(tag));
 		playerIn.displayClientMessage(Component.literal("Hemophage Covenant opens.")
 				.withStyle(net.minecraft.ChatFormatting.DARK_RED), true);
+		return true;
 	}
 
 	@Override

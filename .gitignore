@@ -48,6 +48,15 @@ repo/
 /tools/dialogue_editor/node_modules/
 /tools/dialogue_editor/dist/
 /tools/*
+!/tools/misc/import_manipulation_materials.py
+!/tools/misc/manipulation-visceral-review.init.gradle
+!/tools/misc/validate_thermal_shaders.py
+!/tools/misc/review-thermal-observer.ps1
+!/tools/misc/ferric-ductilis-review.init.gradle
+!/tools/misc/review-ferric-observer.ps1
+!/tools/misc/assemble_ferric_review.py
+!/tools/misc/validate_ferric_ductilis_shaders.py
+!/tools/misc/generate_ferric_memory_icons.py
 !/tools/dialogue_editor/
 !/tools/dialogue_editor/**
 /tools/dialogue_editor/node_modules/

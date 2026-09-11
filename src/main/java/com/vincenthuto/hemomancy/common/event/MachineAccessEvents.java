@@ -46,7 +46,7 @@ public final class MachineAccessEvents {
 				&& HemoCapabilityAccess.getPlayerDegreeNumber(player) >= 3) {
 			MnemonicReliquaryProgression.teach(serverPlayer);
 		}
-		if (!isAccessBlocked(player, block)) {
+		if (canUseStation(player, level, event.getPos())) {
 			return;
 		}
 
@@ -96,6 +96,35 @@ public final class MachineAccessEvents {
 		player.awardStat(Stats.ITEM_CRAFTED.get(item), 1);
 	}
 
+	/** Server authority for opening and continuing station interactions. */
+	public static boolean canUseStation(Player player, Level level, BlockPos pos) {
+		if (player.level() != level) return false;
+		BlockPos mainPos = resolveBreakPos(level, pos, level.getBlockState(pos));
+		Block block = level.getBlockState(mainPos).getBlock();
+		return hasPersonalAccess(player, block) || isSupervisedScarLesson(player, level, mainPos);
+	}
+
+	public static boolean hasPersonalAccess(Player player, Block block) {
+		return !isAccessBlocked(player, block);
+	}
+
+	public static boolean isSupervisedScarLesson(Player player, Level level, BlockPos pos) {
+		if (!(player instanceof ServerPlayer student) || player.level() != level
+				|| !level.getBlockState(pos).is(BlockInit.scar_station.get())
+				|| HemoCapabilityAccess.getPlayerDegreeNumber(player) < 4
+				|| !HemoCapabilityAccess.getBloodVolume(player).map(volume -> volume.isActive()).orElse(false)
+				|| !HarbingerAdvancementGranter.isVeinMasonFirstLesson(student)
+				|| HarbingerAdvancementGranter.isVeinMasonFirstScarLearned(student)) return false;
+		return !level.getEntitiesOfClass(
+				com.vincenthuto.hemomancy.common.entity.npc.harbinger.HarbingerCicatrixAnchoriteEntity.class,
+				new net.minecraft.world.phys.AABB(pos).inflate(8), instructor -> instructor.isAlive()
+						&& instructor.distanceToSqr(pos.getX() + .5, pos.getY() + .5, pos.getZ() + .5) <= 64).isEmpty();
+	}
+
+	public static Component accessReason(Block block) {
+		return Component.translatable("hemomancy.machine_access.locked", new ItemStack(block.asItem()).getHoverName());
+	}
+
 	private static boolean isAccessBlocked(Player player, Block block) {
 		if (player.isCreative()) {
 			return false;
@@ -114,6 +143,18 @@ public final class MachineAccessEvents {
 		if (block == BlockInit.mnemonic_reliquary.get()
 				&& MnemonicReliquaryProgression.isTaught(serverPlayer)) {
 			return true;
+		}
+		if (block == BlockInit.consecrated_bloodwell.get()) {
+			for (var dimension : serverPlayer.server.getAllLevels()) {
+				if (com.vincenthuto.hemomancy.common.event.worldevent.FoundingFaneSavedData.get(dimension)
+						.hasFane(serverPlayer.getUUID())) {
+					// Older cardinal completions recorded ownership but omitted personal craft credit.
+					if (serverPlayer.getStats().getValue(Stats.ITEM_CRAFTED.get(block.asItem())) == 0) {
+						awardMachineCrafted(serverPlayer, block);
+					}
+					return true;
+				}
+			}
 		}
 
 		Item item = block.asItem();
@@ -161,9 +202,8 @@ public final class MachineAccessEvents {
 	}
 
 	private static void deny(Player player, Block block) {
-		ItemStack required = new ItemStack(block.asItem());
 		player.displayClientMessage(
-				Component.translatable("hemomancy.machine_access.locked", required.getHoverName())
+				accessReason(block).copy()
 						.withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC),
 				true);
 	}

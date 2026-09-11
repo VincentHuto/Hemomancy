@@ -8,6 +8,7 @@ import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.BloodVolumeServerPacket;
 import com.vincenthuto.hemomancy.common.tile.IBloodReservoir;
 import com.vincenthuto.hemomancy.common.tile.shared.FillerBlockEntity;
+import com.vincenthuto.hemomancy.common.vein.EarthenVeinTravelManager;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -53,6 +54,8 @@ public final class BlockBloodInteractions {
 		if (pos == null) {
 			return 0.0D;
 		}
+		double veinHandled = EarthenVeinTravelManager.project(player, serverLevel, pos, maxAmount);
+		if (veinHandled > 0.0D) return veinHandled;
 		double bloodwoodHandled = BloodwoodGrowthHandler.tryGrowFromProjection(serverLevel, pos, player, maxAmount);
 		if (bloodwoodHandled > 0.0D) {
 			return bloodwoodHandled;

@@ -1,7 +1,7 @@
 package com.vincenthuto.hemomancy.common.tile.harbinger.decoration;
 
+import com.vincenthuto.hemomancy.common.particle.HemoParticleData;
 import com.vincenthuto.hemomancy.common.init.BlockEntityInit;
-import com.vincenthuto.hutoslib.client.particle.factory.DarkGlowParticleFactory;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import com.vincenthuto.hutoslib.math.Vector3;
 
@@ -32,9 +32,9 @@ public class HumaneIdolBlockEntity extends BlockEntity {
 			double sin = Math.sin(time * 0.75) * count;
 
 			for (int i = 0; i < globalPartCount; i++) {
-				level.addParticle(DarkGlowParticleFactory.createData(ParticleColor.BLACK), centerVec.x + cos,
+				level.addParticle(HemoParticleData.darkGlow(ParticleColor.BLACK), centerVec.x + cos,
 						centerVec.y + 1, centerVec.z - sin, 0, 0.00, 0);
-				level.addParticle(DarkGlowParticleFactory.createData(ParticleColor.RED), centerVec.x - cos,
+				level.addParticle(HemoParticleData.darkGlow(ParticleColor.RED), centerVec.x - cos,
 						centerVec.y + 1, centerVec.z + sin, 0, 0.00, 0);
 			}
 		}

@@ -1,0 +1,8 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "hemomancy:item/memories/memory_blank",
+    "layer1": "hemomancy:item/memories/memory_ferric_spikes_overlay",
+    "layer2": "hemomancy:item/memories/memory_rank_summa_overlay"
+  }
+}

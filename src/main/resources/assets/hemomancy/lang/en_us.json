@@ -388,6 +388,7 @@
   "block.hemomancy.erythrocytic_dirt": "Erythrocytic Dirt",
   "block.hemomancy.erythrocytic_mycelium": "Erythrocytic Mycelium",
   "block.hemomancy.filler_block": "Hemomancy Filler",
+  "block.hemomancy.frozen_cruor": "Frozen Cruor",
   "block.hemomancy.fruiting_infected_cap": "Fruiting Infected Cap",
   "block.hemomancy.fungal_implantation_pylon": "Fungal Implantation Pylon",
   "block.hemomancy.fungal_podium": "Fungal Podium",
@@ -399,6 +400,7 @@
   "block.hemomancy.hematic_armature": "Hematic Armature",
   "block.hemomancy.hematic_armature.cornerstone_requires_vicar": "The Armature must be consecrated before it can accept the Cornerstone.",
   "block.hemomancy.hematic_armature.insufficient_blood": "The Armature requires %s blood for the next graft.",
+  "block.hemomancy.hematic_armature.preparing": "Preparing %s: %s ml from the Armature and one %s. No health payment. Hold %s to leave before it binds.",
   "block.hemomancy.hematic_armature.tier.base": "Armature Rack",
   "block.hemomancy.hematic_armature.tier.monolithic": "Monolithic Armature",
   "block.hemomancy.hematic_armature.tier.vicar_consecrated": "Consecrated Armature",
@@ -968,13 +970,13 @@
   "hemomancy.altar.not_on_path": "The altar is silent. Only those who walk the Unstained path may hear its call.",
   "hemomancy.altar.wreath_offered": "§7The lethean poppies wilt upon the altar, their essence drawn into the stone. Purity rises.",
   "hemomancy.anchorite.carve_reminder.line1": "The pattern still waits to be made flesh. Place it in the Cerebral Scarring Station and let the grid teach your hand.",
-  "hemomancy.anchorite.carve_reminder.line2": "After carving the Scar item, sneak-use it on an empty, lit Iron Brazier. The old pattern will not do.",
+  "hemomancy.anchorite.carve_reminder.line2": "After carving the Scar item, sneak-use it on an empty, lit Iron Brazier. The old pattern will not do. Load Pattern shows a purple stencil; trace those cells in red before Carve. A rejected carving keeps your work.",
   "hemomancy.anchorite.completed.line1": "There. The wound has become architecture.",
   "hemomancy.anchorite.completed.line2": "More patterns will answer you now, but none should be carved without asking what they make possible and what they close.",
   "hemomancy.anchorite.effigy_instruction.line1": "Now the scar is known. The Mason's Effigy arranges the scars your blood already remembers.",
   "hemomancy.anchorite.effigy_instruction.line2": "Choose the known scar and feed Runic Motif Paper with projected blood. When the Effigy casts off a prepared motif, remember that the wound is still ahead of you.",
   "hemomancy.anchorite.first_lesson.given.line1": "The pattern teaches a route. Power comes when the scar carries it.",
-  "hemomancy.anchorite.first_lesson.given.line2": "Carve the Scar item first. Burn the Scar item after. Only then may the Mason's Effigy prepare a living motif.",
+  "hemomancy.anchorite.first_lesson.given.line2": "Carve the Scar item first. Burn the Scar item after. Only then may the Mason's Effigy prepare a living motif. Until you learn your first scar, you may use a nearby Scarring Station under my supervision. Other patterns require a station made by your own hand.",
   "hemomancy.anchorite.first_lesson.line1": "They call me the Vein-Mason. I teach vessels where to remember breaking, then mend them around that memory.",
   "hemomancy.anchorite.first_lesson.line2": "Your strongest tendency has already chosen the first cut. Take its old Scar Pattern and carve it at the Cerebral Scarring Station.",
   "hemomancy.anchorite.first_lesson.line3": "Blank plate, catalyst, knapper, pattern. Then an empty, lit Iron Brazier will decide whether the scar can become memory.",
@@ -1279,7 +1281,7 @@
   "hemomancy.dialogue.event.mnemonist_starter_already_known": "The Mnemonist smiles faintly. Your blood already knows that motion.",
   "hemomancy.dialogue.event.mnemonist_starter_granted": "The Mnemonist releases a crude memory shard. The echo waits for your blood.",
   "hemomancy.dialogue.event.mnemonist_starter_unavailable": "The Mnemonist closes their hand around the echo. This lesson is not yours to claim now.",
-  "hemomancy.dialogue.event.mnemonist_woven_vessel_complete": "The Mnemonist indexes the blank vessel and sets aside fresh tissue for your first deliberate weave.",
+  "hemomancy.dialogue.event.mnemonist_woven_vessel_complete": "The Mnemonist indexes the blank vessel. Choose Blood Shot at the Loom: one bulb, 50 blood, and one vivacious enzyme. Two extra enzymes cover a little drift. Prepare a Living Staff before charging; hold a strand, then turn and move to draw it home.",
   "hemomancy.dialogue.event.mnemonist_woven_vessel_known": "The Mnemonist closes the archive. 'This vessel has already been indexed. Use what it taught you.'",
   "hemomancy.dialogue.event.mnemonist_woven_vessel_missing_archive": "The Mnemonist waits beside an empty desk. 'A book, ink, and three sheets of paper. Memory without an index is only hunger.'",
   "hemomancy.dialogue.event.mnemonist_woven_vessel_missing_memory": "The Mnemonist extends an empty hand. 'First bring the blank memory. The lesson needs a vessel.'",
@@ -1388,6 +1390,7 @@
   "hemomancy.dialogue.topic.inventory_item.summary": "Ask about this item.",
   "hemomancy.dialogue.topic.speak_freely": "Speak Freely",
   "hemomancy.dialogue.ui.back": "Back",
+  "hemomancy.dialogue.ui.read_greeting": "Read full greeting...",
   "hemomancy.dialogue.ui.leave": "Leave",
   "hemomancy.dialogue.ui.no_topics": "No topics are available right now.",
   "hemomancy.dialogue.unstained.observances.line1": "Service reveals whether stillness has become a habit. Choose the work you are prepared to finish.",
@@ -1651,9 +1654,9 @@
   "hemomancy.ledger.summon.success": "%d recruited Harbinger(s) have been summoned to your side.",
   "hemomancy.lethean_tide.end": "§b§lThe Lethean Tide sweeps the sky clean. The Blood Moon is gone.",
   "hemomancy.living_staff.bond_unlocked": "A Living Staff answers your blood.",
-  "hemomancy.machine_access.locked": "You have not yet made a %s by your own hand.",
+  "hemomancy.machine_access.locked": "Craft a %s yourself to use it. Fane membership does not grant personal mastery.",
   "hemomancy.machine_access.no_loot": "The %s comes apart without yielding its workings.",
-  "hemomancy.manipulation.activation_potential.desc": "Snaps a target's nerves with a burst of bloodborne force.",
+  "hemomancy.manipulation.activation_potential.desc": "Charges a radial electrical discharge. More charge strengthens the shock and nervous disruption. Struck water, iron and copper carry the current.",
   "hemomancy.manipulation.black_veil_covenant": "Black Veil Covenant",
   "hemomancy.manipulation.black_veil_covenant.desc": "Raises a dark veil that protects its caster with resistance and fire protection at the cost of weakness.",
   "hemomancy.manipulation.blood_absorption.desc": "Readies the staff to draw blood from valid targets.",
@@ -1681,7 +1684,7 @@
   "hemomancy.manipulation.bloom_of_rot.desc": "Spreads rot through nearby enemies, poisoning and withering them.",
   "hemomancy.manipulation.cauterizing_rebuke": "Cauterizing Rebuke",
   "hemomancy.manipulation.cauterizing_rebuke.desc": "Burns poison, wither, and blood loss out of your body at a painful cost.",
-  "hemomancy.manipulation.conductive_mark.desc": "Marks a target for twelve seconds so later allied Ductilis, Lux, or Ferric hits arc into nearby enemies.",
+  "hemomancy.manipulation.conductive_mark.desc": "Marks a preferred discharge target for twelve seconds. Later allied Ductilis, Lux or Ferric hits arc into nearby enemies. The mark itself does not electrify terrain.",
   "hemomancy.manipulation.conjure_axe.desc": "Reshapes a held Living Staff into a Living Axe.",
   "hemomancy.manipulation.conjure_blade.desc": "Reshapes a held Living Staff into a Living Blade.",
   "hemomancy.manipulation.conjure_claws.desc": "Reshapes a held Living Staff into living claws.",
@@ -1723,7 +1726,7 @@
   "hemomancy.manipulation.hematic_rebuke.desc": "Commands a blood-bearing creature to drop its target and flee for eight seconds.",
   "hemomancy.manipulation.hematic_mortar": "Hematic Mortar",
   "hemomancy.manipulation.hematic_mortar.desc": "Fully charge to lob one heavy blood shot in an arc before it bursts across a small area.",
-  "hemomancy.manipulation.hemolymphal_pulse.desc": "Reveals blood-bearing bodies and primes wounded ones with Conductive Mark.",
+  "hemomancy.manipulation.hemolymphal_pulse.desc": "Sends a sensory impulse through nearby blood-bearing bodies, revealing them and marking wounded targets. Does not electrify terrain.",
   "hemomancy.manipulation.hemorrhage.desc": "Inflicts twelve seconds of Blood Loss on the nearest visible enemy for Mortem follow-ups.",
   "hemomancy.manipulation.hemosynthesis.desc": "Turns blood into restorative living energy.",
   "hemomancy.manipulation.insatiable_hunger.desc": "Curses a target's recovery, reducing healing and turning food into gnawing hunger.",
@@ -1746,9 +1749,9 @@
   "hemomancy.manipulation.pyretic_forge.desc": "Smelts held items with fevered blood.",
   "hemomancy.manipulation.sanguine_excavation.desc": "Breaks a compact cluster of blocks along your line of sight.",
   "hemomancy.manipulation.sanguine_ignition.desc": "Ignites nearby bodies with superheated blood.",
-  "hemomancy.manipulation.sanguine_magnetism.desc": "Summons a hematic iron pillar that drags hostile mobs inward and pins them against it.",
+  "hemomancy.manipulation.sanguine_magnetism.desc": "Raises an anchored iron pillar for six seconds, pulling enemies inward and pinning nearby bodies. Ductilis can energize the pillar to relay shocks into nearby enemies.",
   "hemomancy.manipulation.sanguine_mending.desc": "Cheaply repairs the damaged gear held in your hand.",
-  "hemomancy.manipulation.sanguine_ward.desc": "Channels a capped damage ward that later pulses replenish.",
+  "hemomancy.manipulation.sanguine_ward.desc": "Channels a reactive electrical sheath. Incoming damage consumes its protection pool; later paid pulses replenish it.",
   "hemomancy.manipulation.scalding_updraft": "Scalding Updraft",
   "hemomancy.manipulation.scalding_updraft.desc": "Superheats the air beneath your feet, launching you upward and scorching nearby foes.",
   "hemomancy.manipulation.guided_blood_shot": "Guided Blood Shot",
@@ -1773,7 +1776,7 @@
   "hemomancy.manipulation.summon_avatar_complete": "Blood Avatar: Complete",
   "hemomancy.manipulation.summon_avatar_complete.desc": "Manifests the complete Blood Avatar at its greatest protection, strength, and speed.",
   "hemomancy.manipulation.summon_thrall.desc": "Raises a blood thrall from a suitable source block.",
-  "hemomancy.manipulation.synaptic_jolt.desc": "Interrupts a nearby enemy with a short lightning jolt, staggering movement and weakening their strike.",
+  "hemomancy.manipulation.synaptic_jolt.desc": "Immediately shocks a nearby target, interrupts actions and briefly impairs movement. Can energize water, iron, copper or a Ferric construct.",
   "hemomancy.manipulation.umbral_reversal": "Umbral Reversal",
   "hemomancy.manipulation.umbral_reversal.desc": "Reverses backward into a nearby dark space and blinds enemies left behind.",
   "hemomancy.manipulation.umbral_step.desc": "Steps to a safe, supported shadow beside or above the targeted block.",
@@ -2420,6 +2423,13 @@
   "hemomancy.whisper.sanctified.v2.line1": "§5§o[A vision flashes: vast underground networks of pulsing red threads, connecting everything...]",
   "hemomancy.whisper.sanctified.v2.line2": "§5§oThe temples grew. Hyphal pressure shaped the stone over millennia. The blood soaking them is sap rather than sacrifice.",
   "hemomancy.whisper.sanctified.v2.line2.canon": "§5§oHands built the temples, but roots moved beneath every foundation. The network learned each stone as the Order raised it; sacrifice and sap entered the same ground.",
+  "hemomancy.whisper.pending": "A voice waits at the edge of thought (%s pending).",
+  "hemomancy.whisper.listen": "[Listen when ready]",
+  "hemomancy.whisper.busy.machine": "Close the station before listening.",
+  "hemomancy.whisper.busy.item": "Finish using the held item before listening.",
+  "hemomancy.whisper.busy.combat": "Let the struggle settle for a few seconds before listening.",
+  "hemomancy.whisper.busy.rite": "Finish or leave the active rite before listening.",
+  "hemomancy.whisper.busy": "Finish your current task and find a quiet moment before listening.",
   "hemomancy.whisper.speaker_name": "???",
   "hemomancy.whisper.spine_emerged.line1": "§4§o[Wet cartilage splits with a loud, living crack.]",
   "hemomancy.whisper.spine_emerged.line2": "§4§oThere. Your return-thread has grown teeth.",
@@ -3886,7 +3896,7 @@
 	"hemomancy.anchorite.d5.cause_strain": "Use a Thelemic Memory until one section becomes Varicose. I need the body's instruction to make the injury, not steel and not projected will.",
 	"hemomancy.anchorite.d5.return_diagnosis": "The current catches. Let me read where it catches, then we will choose medicine by the damage rather than habit.",
 	"hemomancy.anchorite.d5.recover": "The Alchemist's Salve handles one failing course. The Poultice spreads across two. Clotting or widespread Varicosity calls for Vascular Mending.",
-	"hemomancy.anchorite.d5.fortify": "Medicine restores what was spent. Hematic Fortification changes what the vessel can bear. Complete the Fourth Degree rite.",
+	"hemomancy.anchorite.d5.fortify": "Medicine restores what was spent. Hematic Fortification permanently reduces vascular strain by 15%. Complete that Fourth Degree rite, then return; it does not erase your earned diagnosis or treatment.",
 	"hemomancy.anchorite.d5.complete": "The vessel now knows injury, repair, and preparation. Take the deeper pattern.",
 	"hemomancy.anchorite.d6.referral": "A scar can route an instruction, but I do not author the instruction. Carry my question to a Mnemonist.",
 	"hemomancy.anchorite.d6.seek_counsel": "The Mnemonist interprets the memory. I determine how the body bears it. Return to their discipline first.",
@@ -4063,9 +4073,9 @@
 	,"hemomancy.manipulation.sovereign_instinct": "Sovereign Instinct"
 	,"hemomancy.manipulation.sovereign_instinct.desc": "When enabled and struck while at least four blood-bearing enemies target you, redirects ordinary attackers for five seconds. Requires active blood and Animus alignment."
 	,"hemomancy.manipulation.synaptic_storm": "Synaptic Storm"
-	,"hemomancy.manipulation.synaptic_storm.desc": "Chains a charged paralytic current through up to eight nearby enemies."
+	,"hemomancy.manipulation.synaptic_storm.desc": "Chains charged electricity between up to eight enemies, prioritizing conductive targets. Paralysis lasts 10-60 ticks; players are capped at 20 ticks and bosses are slowed. Ordinary hops reach five blocks, conductive hops eight."
 	,"hemomancy.manipulation.living_circuit": "Living Circuit"
-	,"hemomancy.manipulation.living_circuit.desc": "Channels speed and haste into up to three nearby teammates and arms their next hostile strike with Conductive Mark. Requires an allied recipient."
+	,"hemomancy.manipulation.living_circuit.desc": "Links up to three nearby teammates with travelling nerve impulses, granting speed and haste and arming their next hostile strike with Conductive Mark. Requires an allied recipient."
 	,"hemomancy.manipulation.white_verdict": "White Verdict"
 	,"hemomancy.manipulation.white_verdict.desc": "Projects a charged piercing beam that exposes and punishes concealed targets."
 	,"hemomancy.manipulation.vigil_of_glass": "Vigil of Glass"
@@ -4081,7 +4091,7 @@
 	,"hemomancy.manipulation.hematic_ballast": "Hematic Ballast"
 	,"hemomancy.manipulation.hematic_ballast.desc": "Automatically anchors the body against a powerful launch or knockback."
 	,"hemomancy.manipulation.iron_choir": "Iron Choir"
-	,"hemomancy.manipulation.iron_choir.desc": "Channels Resistance and intercepts up to three hostile projectiles per second, striking back at their owners."
+	,"hemomancy.manipulation.iron_choir.desc": "Channels Resistance and three projectile interceptions per paid pulse. Iron plates intercept hostile shots and strike back at their owners."
 	,"hemomancy.manipulation.funeral_bell": "Funeral Bell"
 	,"hemomancy.manipulation.funeral_bell.desc": "Releases a deathly pulse strengthened by Wither, Poison, Blood Loss, and Grave Debt. Damage and added Wither duration grow with charge."
 	,"hemomancy.manipulation.carrion_communion": "Carrion Communion"
@@ -4206,5 +4216,47 @@
 	,"hemomancy.circus.challenge.complete.2": "You held the ring until the dolls stopped."
 	,"hemomancy.circus.challenge.complete.3": "You read the Knife Thrower's rhythm and survived the act."
 	,"hemomancy.circus.challenge.complete.4": "You held the ring until the carousel pattern ended."
-	,"hemomancy.circus.challenge.failed": "The act is over. Speak to the Ringmaster when you are ready to try again."
+	,"hemomancy.circus.challenge.failed": "The act is over. Speak to the Ringmaster when you are ready to try again.",
+  "hemomancy.manipulation.ferric_rampart": "Ferric Rampart",
+  "hemomancy.manipulation.ferric_rampart.desc": "Raises a rigid five-block-wide, three-block-high iron wall for six seconds. Blocks bodies and projectiles. Requires clear, supported ground. Magnetism family level 1.",
+  "hemomancy.manipulation.ferric_spikes": "Ferric Spikes",
+  "hemomancy.manipulation.ferric_spikes.desc": "Raises five blood-iron blades for six seconds. Obstructs movement and deals 3.5 damage on contact, at most once every ten ticks per enemy. Requires supported ground. Magnetism family level 2.",
+  "item.hemomancy.memory_ferric_rampart": "Memory Ferric Rampart",
+  "item.hemomancy.memory_ferric_spikes": "Memory Ferric Spikes",
+  "effect.hemomancy.paralysis": "Paralysis",
+  "hemomancy.mnemonist.item_inquiry.memory_ferric_rampart.line1": "Ferric Rampart. Blood gathers into overlapping iron plates.",
+  "hemomancy.mnemonist.item_inquiry.memory_ferric_rampart.line2": "Learn its memory after the first level of Sanguine Magnetism. The wall needs firm ground and room to stand.",
+  "hemomancy.mnemonist.item_inquiry.memory_ferric_spikes.line1": "Ferric Spikes. Rusted blades rise from a line of blood.",
+  "hemomancy.mnemonist.item_inquiry.memory_ferric_spikes.line2": "The second level of Sanguine Magnetism steadies their shape. Ductilis can carry a current through summoned iron.",
+  "container.hemomancy.alembic.status.no_heat": "No heat",
+  "container.hemomancy.alembic.status.no_input": "No input",
+  "container.hemomancy.alembic.status.missing_ingredients": "Check inputs",
+  "container.hemomancy.alembic.status.output_blocked": "Output blocked",
+  "container.hemomancy.alembic.status.tank_full": "Tank full",
+  "container.hemomancy.alembic.status.distilling": "Distilling",
+  "hemomancy.dialogue.reward_not_delivered": "No reward was delivered. Check the requirements or reopen the conversation near the speaker.",
+  "hemomancy.tutorial.current_controls": "Hold a sword and press %s for Blood Formation. Aim at a completed bloodcraft pattern and press %s to activate it. Cycle equipped manipulations with %s.",
+  "hemomancy.tutorial.sample_controls": "Loose vials take a sample with Attack (%s). The Living Syringe uses Use Item (%s).",
+  "hemomancy.tutorial.starter_blood": "Your initiation provides four Bloody Flasks, once only. Drink one to conjure Blood Absorption and Blood Projection. The next two can fill your vessel; keep the fourth for recovery. Drinking raises casting costs temporarily. Visit the Vicar for first bloodcraft. For repeatable blood, spin animal samples in opposing Vial Centrifuge slots, then reclaim its reservoir with Blood Absorption. Each completed batch yields 250 ml; more samples yield more enzymes.",
+  "hemomancy.dialogue.event.hermit_spent_temple_oath": "The display is spent, but this temple has recorded your own oath. Your charm remains dormant. Place an iron nugget in this temple's Cardinal Focus with at least six health, pay four health, and remain within the ring to earn initiation.",
+	"screen.hemomancy.puppeteers_spindle.body_cap": "Shaped body limit: %s (shared across forms)",
+	"screen.hemomancy.puppeteers_spindle.recall_cost": "Recall dismisses the body. Calling again pays the call cost for full health.",
+	"screen.hemomancy.puppeteers_spindle.ringmaster_partner": "Call a partner body: the Conductor supports other puppets.",
+	"screen.hemomancy.puppeteers_spindle.mnemonist_target": "Mark a target, then attack it: the Mnemonist echoes recorded hits.",
+	"hemomancy.anchorite.d5.activation": "Distill and drink a Thelemic dose, equip its memory, select it, then press your manipulation-use key to enable it. Its ordinary bodily action spends blood and reserve. Crouch and press that key to arm the next response for overexertion: twice the blood and two-and-a-half times the strain.",
+	"hemomancy.anchorite.d5.stop": "Watch the named body section in Vascular Status. Stop when it first becomes Varicose, below 50 health: press the use key again without crouching to disable the memory. Bring Salve before training and return for diagnosis before treatment. Passive recovery can change the medicine you need; your earned lesson progress remains.",
+	"screen.hemomancy.book_of_observances.observance.gather_ghost_pipe.unlock": "Begin purification through Lethean Baptism.",
+	"screen.hemomancy.book_of_observances.observance.weave_wreath.unlock": "Begin purification and reach 25 Purity.",
+	"screen.hemomancy.book_of_observances.observance.prepare_hemolytic.unlock": "Begin purification and reach 25 Purity.",
+	"screen.hemomancy.book_of_observances.observance.consecrate_copper.unlock": "Begin purification and become Purified.",
+	"screen.hemomancy.book_of_observances.observance.offer_chalice.unlock": "Unlock Clarity through Clarity Ascension.",
+	"screen.hemomancy.book_of_observances.observance.condense_still_waters.unlock": "Begin purification and reach 50 Purity.",
+	"screen.hemomancy.book_of_observances.observance.bear_pallid_icon.unlock": "Begin purification and reach 75 Purity.",
+	"screen.hemomancy.book_of_observances.observance.plate_the_ward.unlock": "Begin purification and reach 50 Purity.",
+	"screen.hemomancy.book_of_observances.observance.ring_the_pale_watch.unlock": "Unlock Clarity and reach 50 Clarity.",
+	"screen.hemomancy.book_of_observances.observance.novitiate_gather_remedies.unlock": "Novitiate work is available only before purification, baseline restoration, or Clarity.",
+	"screen.hemomancy.book_of_observances.observance.novitiate_gentle_separation.unlock": "Before purification: claim Gather Remedies from the Acolyte first.",
+	"screen.hemomancy.book_of_observances.observance.novitiate_stillwater_labor.unlock": "Before purification: claim Gentle Separation from the Acolyte first.",
+	"screen.hemomancy.book_of_observances.observance.novitiate_clean_labor.unlock": "Before purification: claim Stillwater Labor from the Zealot first.",
+	"screen.hemomancy.book_of_observances.observance.novitiate_shelter_afflicted.unlock": "Before purification: claim Clean Labor from the Zealot first."
 }

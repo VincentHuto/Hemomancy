@@ -3,12 +3,10 @@ package com.vincenthuto.hemomancy.client.screen.overlay;
 final class EquippedMorphlingOverlayPlacement {
 	static final int ICON_SIZE = 16;
 	static final int ICON_GAP = 8;
-	static final int ATTACHED_SIZE = 48;
-	static final int ATTACHED_OVERLAP = ATTACHED_SIZE / 2;
-	static final int FEEDING_FRAME_COUNT = 6;
-	static final int FEEDING_TEXTURE_HEIGHT = ATTACHED_SIZE * FEEDING_FRAME_COUNT;
-	private static final float FEEDING_FRAME_SECONDS = 0.18f;
-	private static final float FEEDING_PULSE_CYCLE_SECONDS = 0.9f;
+	static final int ATTACHED_SIZE = 32;
+	// Pixel centers keep the feeding pixel on the vessel edge after mirroring.
+	static final float MOUTH_X = 5.5f;
+	static final float MOUTH_Y = 16.5f;
 
 	private EquippedMorphlingOverlayPlacement() {
 	}
@@ -21,38 +19,20 @@ final class EquippedMorphlingOverlayPlacement {
 		return barY + barHeight / 2 - ICON_SIZE / 2;
 	}
 
-	static int attachedXForBloodBar(boolean barOnLeft, int barX, int barWidth) {
-		return barOnLeft
-				? barX + barWidth - ATTACHED_OVERLAP
-				: barX - ATTACHED_SIZE + ATTACHED_OVERLAP;
-	}
-
-	static int attachedYForBloodBar(int barY, int barHeight) {
-		return barY + barHeight / 2 - ATTACHED_SIZE / 2;
+	static Attachment attachment(boolean barOnLeft, float vesselEdgeX, float vesselCenterY, float scale) {
+		return new Attachment(vesselEdgeX, vesselCenterY,
+				barOnLeft ? MOUTH_X : ATTACHED_SIZE - MOUTH_X, scale);
 	}
 
 	static boolean shouldMirror(boolean barOnLeft) {
 		return !barOnLeft;
 	}
 
-	static int feedingFrame(float timeSeconds) {
-		return feedingFrame(timeSeconds, true);
-	}
-
-	static int feedingFrame(float timeSeconds, boolean animationEnabled) {
-		if (!animationEnabled) {
-			return 0;
-		}
-		int elapsedFrames = (int) Math.floor(timeSeconds / FEEDING_FRAME_SECONDS);
-		return Math.floorMod(elapsedFrames, FEEDING_FRAME_COUNT);
-	}
-
 	static float feedingPulseScale(float timeSeconds) {
-		float phase = timeSeconds
-				- (float) Math.floor(timeSeconds / FEEDING_PULSE_CYCLE_SECONDS) * FEEDING_PULSE_CYCLE_SECONDS;
-		float primaryBeat = heartbeatPulse(phase, 0.08f, 0.032f, 0.045f);
-		float secondaryBeat = heartbeatPulse(phase, 0.21f, 0.018f, 0.035f);
-		return 1.0f + primaryBeat + secondaryBeat;
+		float cycleSeconds = 0.9f;
+		float phase = timeSeconds - (float) Math.floor(timeSeconds / cycleSeconds) * cycleSeconds;
+		return 1.0f + heartbeatPulse(phase, 0.08f, 0.032f, 0.045f)
+				+ heartbeatPulse(phase, 0.21f, 0.018f, 0.035f);
 	}
 
 	static float morphlingRenderScale(float configuredScale, float timeSeconds) {
@@ -73,6 +53,23 @@ final class EquippedMorphlingOverlayPlacement {
 		return mirrored
 				? new SpriteBlit(ATTACHED_SIZE, ATTACHED_SIZE, -ATTACHED_SIZE)
 				: new SpriteBlit(ATTACHED_SIZE, 0, ATTACHED_SIZE);
+	}
+
+	record Attachment(float anchorX, float anchorY, float mouthX, float scale) {
+		float left() { return anchorX - mouthX * scale; }
+		float top() { return anchorY - MOUTH_Y * scale; }
+		float size() { return ATTACHED_SIZE * scale; }
+
+		int bondMeterX(boolean barOnLeft) {
+			if (top() < 18) {
+				return Math.round(barOnLeft ? left() + size() + 4 : left() - 36);
+			}
+			return Math.round(barOnLeft ? anchorX + 4 : anchorX - 36);
+		}
+
+		int bondMeterY() {
+			return Math.round(top() < 18 ? Math.max(2, anchorY - 6) : top() - 16);
+		}
 	}
 
 	record SpriteBlit(int width, int uOffset, int uWidth) {

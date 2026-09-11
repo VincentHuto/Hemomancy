@@ -47,8 +47,8 @@ public class WinterShroudMorphlingItem extends MorphlingItem {
 	}
 
 	@Override
-	public void use(Player playerIn, InteractionHand handIn, ItemStack itemStack, Level worldIn) {
-		triggerCryptobiosis(playerIn, itemStack, worldIn);
+	public boolean tryUse(Player playerIn, InteractionHand handIn, ItemStack itemStack, Level worldIn) {
+		return triggerCryptobiosis(playerIn, itemStack, worldIn);
 	}
 
 	@Override

@@ -15,7 +15,7 @@ import java.util.List;
  */
 public final class UnstainedScoutDialogueTrees {
 
-    private static final ResourceLocation SCOUT_ICON = Hemomancy.rloc("textures/entity/unstained_scout/unstained_scout.png");
+    private static final ResourceLocation SCOUT_ICON = Hemomancy.rloc("textures/entity/npc/unstained/unstained_scout/unstained_scout.png");
     private static final String SPEAKER = "entity.hemomancy.unstained_scout";
 
     private UnstainedScoutDialogueTrees() {}

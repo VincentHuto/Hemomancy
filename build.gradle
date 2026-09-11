@@ -86,7 +86,7 @@ repositories {
 sourceSets {
     gameTest {
         java.srcDir('src/gameTest/java')
-        resources.srcDir('src/gameTest/resources')
+        resources.setSrcDirs(['src/gameTest/resources'])
         compileClasspath += sourceSets.main.output + sourceSets.main.compileClasspath
         runtimeClasspath += output + compileClasspath + sourceSets.main.runtimeClasspath
     }
@@ -297,7 +297,7 @@ tasks.register('verifyGameTestResourceLog') {
     dependsOn tasks.named('runGameTestServer')
 
     doLast {
-        File gameTestLog = layout.projectDirectory.file('run/logs/latest.log').asFile
+        File gameTestLog = neoForge.runs.gameTestServer.gameDirectory.get().file('logs/latest.log').asFile
         if (!gameTestLog.isFile()) {
             throw new GradleException("GameTest log was not created: ${gameTestLog}")
         }

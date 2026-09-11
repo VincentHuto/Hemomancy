@@ -101,9 +101,33 @@ public final class KnownManipulationGrantHelper {
 		if (!checked.success() || player == null) {
 			return checked;
 		}
+		return addMemory(player, manipulation, checked.requiredDegree());
+	}
+
+	public static MemoryGrantResult grantCreativeMemory(ServerPlayer player, BloodManipulation manipulation,
+			Item memoryItem) {
+		if (player == null || manipulation == null || manipulation == BloodManipulation.BLANK) {
+			return new MemoryGrantResult(MemoryGrantStatus.INVALID, manipulation, 0);
+		}
+		if (ManipulationRetirementRules.isRetiredManipulation(manipulation)
+				|| (memoryItem != null && ManipulationRetirementRules.isRetiredMemoryItem(memoryItem, manipulation))) {
+			return new MemoryGrantResult(MemoryGrantStatus.RETIRED, manipulation, 0);
+		}
 		IKnownManipulations known = HemoCapabilityAccess.getKnownManipulations(player).orElse(null);
 		if (known == null) {
-			return new MemoryGrantResult(MemoryGrantStatus.INVALID, manipulation, checked.requiredDegree());
+			return new MemoryGrantResult(MemoryGrantStatus.INVALID, manipulation, 0);
+		}
+		if (known.doesListContainName(known.getKnownManips(), manipulation)) {
+			return new MemoryGrantResult(MemoryGrantStatus.ALREADY_KNOWN, manipulation, 0);
+		}
+		return addMemory(player, manipulation, 0);
+	}
+
+	private static MemoryGrantResult addMemory(ServerPlayer player, BloodManipulation manipulation,
+			int requiredDegree) {
+		IKnownManipulations known = HemoCapabilityAccess.getKnownManipulations(player).orElse(null);
+		if (known == null) {
+			return new MemoryGrantResult(MemoryGrantStatus.INVALID, manipulation, requiredDegree);
 		}
 		known.getKnownManips().put(manipulation, new ManipLevel(0, 0));
 		ManipulationFamilyRegistry.normalizeKnown(known.getKnownManips());
@@ -111,7 +135,7 @@ public final class KnownManipulationGrantHelper {
 		MnemonicReliquaryProgression.onCapacityChanged(player, known);
 		PacketHandler.sendToPlayer(player, new KnownManipulationServerPacket(known));
 		return new MemoryGrantResult(equipped ? MemoryGrantStatus.GRANTED_EQUIPPED : MemoryGrantStatus.GRANTED,
-				manipulation, checked.requiredDegree());
+				manipulation, requiredDegree);
 	}
 
 	public static boolean learnAndEquipIfPossible(IKnownManipulations known, BloodManipulation manipulation,

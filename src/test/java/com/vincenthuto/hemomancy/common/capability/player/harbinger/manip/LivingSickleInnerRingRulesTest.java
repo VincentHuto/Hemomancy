@@ -26,6 +26,7 @@ final class LivingSickleInnerRingRulesTest {
 		ManipulationEquipHelper.normalizeEquippedNames(unlocked);
 		assertEquals(List.of(ManipulationEquipHelper.BLOOD_ABSORPTION,
 				ManipulationEquipHelper.BLOOD_PROJECTION,
+				ManipulationEquipHelper.CONJURE_STAFF,
 				ManipulationEquipHelper.CONJURE_SICKLE), unlocked);
 
 		List<String> locked = new ArrayList<>();

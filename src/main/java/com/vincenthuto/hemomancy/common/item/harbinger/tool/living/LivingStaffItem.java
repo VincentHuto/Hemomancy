@@ -1,6 +1,6 @@
 package com.vincenthuto.hemomancy.common.item.harbinger.tool.living;
 
-import com.vincenthuto.hemomancy.client.particle.factory.AbsorbedBloodCellParticleFactory;
+import com.vincenthuto.hemomancy.common.particle.HemoParticleData;
 import com.vincenthuto.hemomancy.client.render.item.harbinger.CellHandParticleEffects;
 import com.vincenthuto.hemomancy.common.block.harbinger.BlockBloodInteractions;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
@@ -165,7 +165,7 @@ public class LivingStaffItem extends LivingItem implements IDispellable {
 									}
 
 									worldIn.addParticle(
-											AbsorbedBloodCellParticleFactory.createData(ParticleColor.genRandomColor()),
+											HemoParticleData.absorbedBloodCell(ParticleColor.genRandomColor()),
 											vec.x(), vec.y() + 2D, vec.z(), i + rand.nextFloat() - 0.5D,
 											k - rand.nextFloat() - 1.0F, j + rand.nextFloat() - 0.5D);
 
@@ -245,33 +245,25 @@ public class LivingStaffItem extends LivingItem implements IDispellable {
 				player.awardStat(Stats.ITEM_USED.get(this));
 				return;
 			}
-			IBloodVolume playerVolume = HemoCapabilityAccess.getBloodVolume(player)
-					.orElseThrow(NullPointerException::new);
-			if (playerVolume.getBloodVolume() > 50f) {
-				if (!worldIn.isClientSide) {
-
-					if (!player.isCrouching()) {
-						HemoCapabilityAccess.getEquippedMorphling(player).ifPresent(cap -> {
-							ItemStack selectedStack = cap.getEquippedMorphling();
-							if (!selectedStack.isEmpty() && selectedStack.getItem() instanceof IMorphling) {
-								IMorphling morphling = (IMorphling) selectedStack.getItem();
-								morphling.use(player, player.getUsedItemHand(), stack, worldIn);
-								playerVolume.drain(morphling.getBloodCost());
-
-								PacketHandler.sendToPlayer((ServerPlayer) player, new BloodVolumeServerPacket(playerVolume));
-							}
-						});
-
+			if (player instanceof ServerPlayer serverPlayer && !player.isCrouching()) {
+				HemoCapabilityAccess.getEquippedMorphling(player).ifPresent(cap -> {
+					ItemStack creature = cap.getEquippedMorphling();
+					if (!(creature.getItem() instanceof IMorphling morphling)) return;
+					if (!com.vincenthuto.hemomancy.common.item.harbinger.morphlings.MorphlingItem.isPrimal(creature)) {
+						player.displayClientMessage(Component.literal("Your morphling has not reached its Primal stage."), true);
+						return;
 					}
-				} else {
-					player.playSound(SoundEvents.HOGLIN_CONVERTED_TO_ZOMBIFIED, 0.2F,
-							0.8F + (float) Math.random() * 0.2F);
-				}
-				stack.hurtAndBreak(1, player,
-						player.getUsedItemHand() == InteractionHand.MAIN_HAND ? EquipmentSlot.MAINHAND
-								: EquipmentSlot.OFFHAND);
-			} else {
-				player.displayClientMessage(Component.literal("Not enough blood to be shed"), true);
+					if (!com.vincenthuto.hemomancy.common.capability.player.harbinger.morphling.EquippedMorphlingEvents
+							.isStoredInCarriedJar(player, creature)) return;
+					if (morphling.tryUse(player, player.getUsedItemHand(), creature, worldIn)) {
+						stack.hurtAndBreak(1, player, player.getUsedItemHand() == InteractionHand.MAIN_HAND
+								? EquipmentSlot.MAINHAND : EquipmentSlot.OFFHAND);
+						worldIn.playSound(null, player.blockPosition(), SoundEvents.HOGLIN_CONVERTED_TO_ZOMBIFIED,
+								net.minecraft.sounds.SoundSource.PLAYERS, 0.2F, 0.8F + worldIn.random.nextFloat() * 0.2F);
+						com.vincenthuto.hemomancy.common.capability.player.harbinger.morphling.EquippedMorphlingEvents
+								.syncToClient(serverPlayer);
+					}
+				});
 			}
 		}
 

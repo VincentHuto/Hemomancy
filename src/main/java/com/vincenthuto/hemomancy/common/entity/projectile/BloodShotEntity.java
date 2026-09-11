@@ -7,10 +7,6 @@ import com.vincenthuto.hemomancy.common.init.EffectInit;
 import com.vincenthuto.hemomancy.common.init.EntityInit;
 import com.vincenthuto.hemomancy.common.manipulation.TendencyAffinityRules;
 import com.vincenthuto.hemomancy.common.manipulation.TendencyDamageCarrier;
-import com.vincenthuto.hutoslib.client.particle.factory.GlowParticleFactory;
-import com.vincenthuto.hutoslib.client.particle.util.HLParticleUtils;
-import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
-import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
@@ -38,8 +34,16 @@ public class BloodShotEntity extends AbstractArrow implements CombatWeaponCarrie
     private static final net.minecraft.network.syncher.EntityDataAccessor<Integer> VISUAL_FORM =
             net.minecraft.network.syncher.SynchedEntityData.defineId(BloodShotEntity.class,
                     net.minecraft.network.syncher.EntityDataSerializers.INT);
+    private static final net.minecraft.network.syncher.EntityDataAccessor<Integer> ORBIT_SLOT =
+            net.minecraft.network.syncher.SynchedEntityData.defineId(BloodShotEntity.class,
+                    net.minecraft.network.syncher.EntityDataSerializers.INT);
+    private static final net.minecraft.network.syncher.EntityDataAccessor<Long> ORBIT_STARTED_AT =
+            net.minecraft.network.syncher.SynchedEntityData.defineId(BloodShotEntity.class,
+                    net.minecraft.network.syncher.EntityDataSerializers.LONG);
     @Override protected void defineSynchedData(net.minecraft.network.syncher.SynchedEntityData.Builder builder) {
         super.defineSynchedData(builder);builder.define(VISUAL_FORM,0);
+        builder.define(ORBIT_SLOT,-1);
+        builder.define(ORBIT_STARTED_AT,0L);
     }
     public int visualForm(){return entityData.get(VISUAL_FORM);}
 	private ItemStack combatWeaponItem = ItemStack.EMPTY;
@@ -123,6 +127,8 @@ public class BloodShotEntity extends AbstractArrow implements CombatWeaponCarrie
 	@Override
 	protected void doPostHurtEffects(LivingEntity living) {
 		super.doPostHurtEffects(living);
+		com.vincenthuto.hemomancy.common.manipulation.ManipulationParticles.impact(
+				living, damageTendency, secondaryDamageTendency, getDeltaMovement());
 		Entity entity = living;
 		if (entity instanceof LivingEntity) {
 			((LivingEntity) entity).addEffect(new MobEffectInstance(EffectInit.blood_loss, 1000, 2));
@@ -190,6 +196,8 @@ public class BloodShotEntity extends AbstractArrow implements CombatWeaponCarrie
 		this.orbitIndex = compound.getInt("OrbitIndex");
         if(!compound.contains("VisualForm")) entityData.set(VISUAL_FORM, orbitOwnerId!=null?3:mortar?2:homingTargetId!=null?1:0);
 		if (orbitOwnerId != null) {
+			entityData.set(ORBIT_SLOT,orbitIndex);
+			entityData.set(ORBIT_STARTED_AT,level().getGameTime());
 			this.noPhysics = true;
 			this.setNoGravity(true);
 		}
@@ -200,15 +208,6 @@ public class BloodShotEntity extends AbstractArrow implements CombatWeaponCarrie
 		super.tick();
 		if (!level().isClientSide && orbitOwnerId != null) tickOrbit();
 		else if (!level().isClientSide && homingTargetId != null && homingTicks-- > 0) steerTowardTarget();
-		if (this.level().isClientSide) {
-			for (int i = 0; i < 2; i++) {
-				level().addParticle(
-						GlowParticleFactory.createData(new ParticleColor(255 * level().random.nextFloat(), 0, 0)),
-						getX() + HLParticleUtils.inRange(-0.1, 0.1), getY() + HLParticleUtils.inRange(-0.1, 0.1),
-						getZ() + HLParticleUtils.inRange(-0.1, 0.1), 0, 0.005, 0);
-
-			}
-		}
 		if (this.inGround && this.inGroundTime != 0 && this.inGroundTime >= 25) {
 			this.level().broadcastEntityEvent(this, (byte) 0);
 			this.remove(RemovalReason.KILLED);
@@ -231,6 +230,9 @@ public class BloodShotEntity extends AbstractArrow implements CombatWeaponCarrie
         entityData.set(VISUAL_FORM,3);
 		this.orbitOwnerId = owner.getUUID();
 		this.orbitIndex = Math.max(0, Math.min(index, 4));
+		setOwner(owner);
+		entityData.set(ORBIT_SLOT,this.orbitIndex);
+		entityData.set(ORBIT_STARTED_AT,level().getGameTime()-tickCount);
 		this.noPhysics = true;
 		this.setNoGravity(true);
 	}
@@ -238,6 +240,14 @@ public class BloodShotEntity extends AbstractArrow implements CombatWeaponCarrie
 	public boolean isOrbitingFor(UUID ownerId) {
 		return ownerId != null && ownerId.equals(orbitOwnerId);
 	}
+
+    public Vec3 visualPosition(float partial) {
+        int slot=entityData.get(ORBIT_SLOT);
+        Entity owner=getOwner();
+        if(slot<0 || owner==null || !owner.isAlive())return getPosition(partial);
+        double age=level().getGameTime()-entityData.get(ORBIT_STARTED_AT)-1+partial;
+        return owner.getPosition(partial).add(BloodShotOrbit.offset(age,slot));
+    }
 
 	private void tickOrbit() {
 		if (!(level() instanceof ServerLevel server) || tickCount > 200) {
@@ -249,9 +259,7 @@ public class BloodShotEntity extends AbstractArrow implements CombatWeaponCarrie
 			discard();
 			return;
 		}
-		double angle = tickCount * 0.08D + orbitIndex * Math.PI * 2.0D / 5.0D;
-		setPos(owner.getX() + Math.cos(angle) * 1.25D, owner.getY() + 1.55D + Math.sin(angle * 2) * 0.12D,
-				owner.getZ() + Math.sin(angle) * 1.25D);
+		setPos(owner.position().add(BloodShotOrbit.offset(tickCount,orbitIndex)));
 		setDeltaMovement(Vec3.ZERO);
 		if (tickCount < orbitIndex * 10 + 1 || (tickCount - orbitIndex * 10 - 1) % 50 != 0) return;
 		LivingEntity target = level().getEntitiesOfClass(LivingEntity.class, owner.getBoundingBox().inflate(16),
@@ -261,6 +269,8 @@ public class BloodShotEntity extends AbstractArrow implements CombatWeaponCarrie
 		if (target == null) return;
 		Vec3 direction = target.getEyePosition().subtract(position()).normalize();
 		orbitOwnerId = null;
+		entityData.set(ORBIT_SLOT,-1);
+		entityData.set(VISUAL_FORM,0);
 		noPhysics = false;
 		setNoGravity(false);
 		shoot(direction.x, direction.y, direction.z, 4.5F, 0.5F);
@@ -290,9 +300,12 @@ public class BloodShotEntity extends AbstractArrow implements CombatWeaponCarrie
 			if (owner instanceof net.minecraft.world.entity.player.Player player && damageTendency != null) {
 				damage *= TendencyAffinityRules.damageMultiplier(player, target, damageTendency, secondaryDamageTendency);
 			}
-			target.hurt(server.damageSources().magic(), Math.max(4.0F, damage));
+			if (target.hurt(server.damageSources().magic(), Math.max(4.0F, damage)))
+				com.vincenthuto.hemomancy.common.manipulation.ManipulationParticles.impact(
+						target, damageTendency, secondaryDamageTendency, target.position().subtract(position()));
 		}
-		server.sendParticles(ParticleTypes.CRIMSON_SPORE, getX(), getY(), getZ(), 60, 2.0D, 1.0D, 2.0D, 0.03D);
+		com.vincenthuto.hemomancy.common.manipulation.ManipulationVisuals.burst(server,
+                com.vincenthuto.hemomancy.common.manipulation.ManipulationVisuals.Form.RUPTURE,position(),position(),2,24);
 		server.playSound(null, blockPosition(), SoundEvents.GENERIC_EXPLODE.value(), SoundSource.PLAYERS, 1.0F, 0.8F);
 		discard();
 	}

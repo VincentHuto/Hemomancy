@@ -92,9 +92,11 @@ public final class AvatarFirstPersonRenderer {
 
 		RenderType renderType = transition.warping()
 				? BloodAvatarLayer.bloodTransitionType(player, poseStack, age, transition)
-				: RenderTypeInit.firstPersonEnergySwirl(TEXTURE, age * .01F % 4.0F, age * .01F % 2.0F);
+				: com.vincenthuto.hemomancy.client.render.world.AnimusMortemRenderTypes.AVATAR;
 		MultiBufferSource.BufferSource buffer = minecraft.renderBuffers().bufferSource();
 		VertexConsumer consumer = buffer.getBuffer(renderType);
+        com.vincenthuto.hemomancy.client.render.world.AnimusMortemRenderTypes.begin(player.level().getGameTime()+partialTick);
+        if(!transition.warping())consumer=new com.vincenthuto.hemomancy.client.render.world.BloodSurfaceVertices(consumer);
 		int packedLight = LevelRenderer.getLightColor(player.level(), player.blockPosition());
 		model.head.visible = shouldRenderHelmet(stats.stage());
 		model.renderToBuffer(poseStack, consumer, packedLight, 0,

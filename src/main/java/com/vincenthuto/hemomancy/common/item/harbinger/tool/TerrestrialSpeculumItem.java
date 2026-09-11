@@ -1,12 +1,13 @@
 package com.vincenthuto.hemomancy.common.item.harbinger.tool;
 
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.client.screen.manips.RadialChooseVeinScreen;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.block.harbinger.functional.EarthenVeinBlock;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.init.BlockInit;
 import com.vincenthuto.hemomancy.common.item.harbinger.memory.HematicMemoryToolItem;
 import com.vincenthuto.hemomancy.common.tile.harbinger.functional.EarthenVeinBlockEntity;
+import com.vincenthuto.hemomancy.common.vein.EarthenVeinTravelManager;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.Registries;
@@ -21,6 +22,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.context.UseOnContext;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Fluids;
@@ -41,11 +43,8 @@ public class TerrestrialSpeculumItem extends HematicMemoryToolItem {
 		Level level = context.getLevel();
 		if (context.getPlayer() == null || !canUseHematicTool(context.getPlayer())) return InteractionResult.FAIL;
 		BlockPos origin = context.getClickedPos().relative(context.getClickedFace());
-		boolean hasVeins = HemoCapabilityAccess.getKnownManipulations(context.getPlayer())
-				.map(known -> !known.getVeinList().isEmpty()).orElse(false);
-		if (!TerrestrialSpeculumRules.canManifest(HemoCapabilityAccess.getPlayerDegreeNumber(context.getPlayer()),
-				canUseHematicToolSilently(context.getPlayer()), hasVeins ? 1 : 0,
-				level.getBlockState(origin).canBeReplaced())) {
+		boolean hasVeins = hasKnownVeins(context.getPlayer());
+		if (!canManifestAt(context.getPlayer(), origin)) {
 			if (!level.isClientSide && !hasVeins) {
 				context.getPlayer().displayClientMessage(
 						Component.translatable("item.hemomancy.terrestrial_speculum.no_veins")
@@ -55,23 +54,47 @@ public class TerrestrialSpeculumItem extends HematicMemoryToolItem {
 		}
 
 		if (level.isClientSide) {
-			HemoCapabilityAccess.getKnownManipulations(context.getPlayer())
-					.ifPresent(known -> RadialChooseVeinScreen.openScreen(known, origin));
 			return InteractionResult.SUCCESS;
 		}
 
 		ServerPlayer player = (ServerPlayer) context.getPlayer();
+		return TerrestrialSpeculumPlantingManager.start(player, origin,
+				context.getHorizontalDirection().getOpposite(), context.getHand())
+				? InteractionResult.CONSUME : InteractionResult.FAIL;
+	}
+
+	static boolean manifest(ServerPlayer player, BlockPos origin, net.minecraft.core.Direction facing) {
+		Level level = player.level();
+		if (!level.getBlockState(origin).canBeReplaced()) return false;
 		removePreviousOrigin(player);
 		BlockState state = BlockInit.earthen_vein.get().defaultBlockState()
-				.setValue(EarthenVeinBlock.FACING, context.getHorizontalDirection().getOpposite())
+				.setValue(EarthenVeinBlock.FACING, facing)
 				.setValue(EarthenVeinBlock.WATERLOGGED, level.getFluidState(origin).is(Fluids.WATER));
 		if (!level.setBlock(origin, state, 3)
 				|| !(level.getBlockEntity(origin) instanceof EarthenVeinBlockEntity vein)) {
-			return InteractionResult.FAIL;
+			return false;
 		}
 		vein.makeTemporary(player.getUUID(), level.getGameTime() + LIFETIME_TICKS);
 		rememberOrigin(player, origin);
-		return InteractionResult.CONSUME;
+		if (!EarthenVeinTravelManager.begin(player, origin)) {
+			level.removeBlock(origin, false);
+			clearRememberedOrigin(player, level.dimension(), origin);
+			return false;
+		}
+		return true;
+	}
+
+	static boolean canManifestAt(Player player, BlockPos origin) {
+		boolean activeBlood = HemoCapabilityAccess.getBloodVolume(player)
+				.map(IBloodVolume::isActive).orElse(false);
+		return TerrestrialSpeculumRules.canManifest(HemoCapabilityAccess.getPlayerDegreeNumber(player),
+				activeBlood, hasKnownVeins(player) ? 1 : 0,
+				player.level().getBlockState(origin).canBeReplaced());
+	}
+
+	private static boolean hasKnownVeins(Player player) {
+		return HemoCapabilityAccess.getKnownManipulations(player)
+				.map(known -> !known.getVeinList().isEmpty()).orElse(false);
 	}
 
 	public static boolean dismissTemporaryOrigin(ServerPlayer player, BlockPos origin) {

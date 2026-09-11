@@ -59,9 +59,9 @@ public class ChitiniteMorphlingItem extends MorphlingItem {
 	}
 
 	@Override
-	public void use(Player playerIn, InteractionHand handIn, ItemStack itemStack, Level worldIn) {
+	public boolean tryUse(Player playerIn, InteractionHand handIn, ItemStack itemStack, Level worldIn) {
 		if (!MorphlingItem.tryBeginPrimalAbility(playerIn, itemStack, "PrimalCarapace",
-				500.0, 900, 260, 0)) return;
+				500.0, 900, 260, 0)) return false;
 		CompoundTag tag = itemStack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
 		tag.putLong("PrimalCarapaceUntil", worldIn.getGameTime() + PRIMAL_CARAPACE_DURATION);
 		tag.putFloat("PrimalCarapaceStored", 0.0f);
@@ -69,6 +69,7 @@ public class ChitiniteMorphlingItem extends MorphlingItem {
 		playerIn.addEffect(new MobEffectInstance(MobEffects.DAMAGE_RESISTANCE,
 				PRIMAL_CARAPACE_DURATION, 2, true, false, true));
 		playerIn.setAbsorptionAmount(Math.min(playerIn.getAbsorptionAmount() + 8.0f, 16.0f));
+		return true;
 	}
 
 	@Override

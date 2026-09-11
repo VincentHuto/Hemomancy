@@ -3,10 +3,9 @@ package com.vincenthuto.hemomancy.common.manipulation.congeatio;
 import com.vincenthuto.hemomancy.common.manipulation.ManipulationVisuals;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.EnumVeinSections;
+import com.vincenthuto.hemomancy.common.init.BlockInit;
 import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillPointHelper;
 import com.vincenthuto.hemomancy.common.manipulation.*;
-import com.vincenthuto.hutoslib.client.particle.data.ColorParticleData;
-import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
@@ -19,7 +18,6 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.phys.BlockHitResult;
@@ -72,13 +70,14 @@ public class GlacialGraspManip extends BloodManipulation {
 			}
 			target.setTicksFrozen(Math.max(target.getTicksFrozen(), target.getTicksRequiredToFreeze() + 40));
 			target.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 100, 1, false, true));
+            ManipulationVisuals.attached(target,ManipulationVisuals.Form.FROZEN_VEINS,target.getBbWidth(),100,1);
 			frozenEntities++;
 		}
 
 		for (int dx = -RADIUS; dx <= RADIUS; dx++) {
 			for (int dz = -RADIUS; dz <= RADIUS; dz++) {
 				if (dx * dx + dz * dz > RADIUS * RADIUS) continue;
-				for (int dy = -1; dy <= 1; dy++) freezeWater(world, center.offset(dx, dy, dz), random, frozenTargets);
+				for (int dy = -1; dy <= 1; dy++) freezeWater(sLevel, center.offset(dx, dy, dz), random, frozenTargets, player);
 			}
 		}
 		Vec3 horizontal = new Vec3(look.x, 0.0D, look.z);
@@ -86,36 +85,28 @@ public class GlacialGraspManip extends BloodManipulation {
 			horizontal = horizontal.normalize();
 			for (int step = 1; step <= (int) Math.ceil(range); step++) {
 				BlockPos path = BlockPos.containing(player.position().add(horizontal.scale(step)));
-				freezeWater(world, path, random, frozenTargets);
-				freezeWater(world, path.below(), random, frozenTargets);
+				freezeWater(sLevel, path, random, frozenTargets, player);
+				freezeWater(sLevel, path.below(), random, frozenTargets, player);
 			}
 		}
 
 		if (!frozenTargets.isEmpty() || frozenEntities > 0) {
-			HemomancyTendrilEffects.glacialGrasp(player, center, java.util.List.copyOf(frozenTargets));
+            for(BlockPos frozen:frozenTargets)ManipulationVisuals.burst(sLevel,ManipulationVisuals.Form.FROST_ADVANCE,
+                    Vec3.atBottomCenterOf(frozen.above()),player.position(),.45,36);
             ManipulationVisuals.burst(sLevel, ManipulationVisuals.Form.ICE, Vec3.atBottomCenterOf(center.above()), Vec3.atCenterOf(center), RADIUS, 24);
 			world.playSound(null, center, SoundEvents.GLASS_PLACE, SoundSource.PLAYERS, 0.8f, 1.3f);
 
-			for (int i = 0; i < 25; i++) {
-				sLevel.sendParticles(
-						new ColorParticleData(new ParticleColor(
-								150 + random.nextFloat() * 105,
-								200 + random.nextFloat() * 55,
-								255)),
-						center.getX() + 0.5 + (random.nextDouble() - 0.5) * (RADIUS * 2),
-						center.getY() + 0.2,
-						center.getZ() + 0.5 + (random.nextDouble() - 0.5) * (RADIUS * 2),
-						1, 0f, 0.15f, 0f, 0.01f);
-			}
+
 		}
 	}
 
-	private static void freezeWater(Level world, BlockPos target, RandomSource random, Set<BlockPos> frozenTargets) {
+	private static void freezeWater(ServerLevel world, BlockPos target, RandomSource random, Set<BlockPos> frozenTargets,
+			Player owner) {
 		BlockState state = world.getBlockState(target);
 		if (!state.getFluidState().is(Fluids.WATER) || !state.getFluidState().isSource()
 				|| !world.getBlockState(target.above()).isAir()) return;
-		world.setBlock(target, Blocks.FROSTED_ICE.defaultBlockState(), 3);
-		world.scheduleTick(target, Blocks.FROSTED_ICE, 60 + random.nextInt(40));
+		TemporaryIceManager.placeOwned(world, target, BlockInit.frozen_cruor.get().defaultBlockState(),
+				60 + random.nextInt(40), owner.getUUID());
 		frozenTargets.add(target.immutable());
 	}
 }

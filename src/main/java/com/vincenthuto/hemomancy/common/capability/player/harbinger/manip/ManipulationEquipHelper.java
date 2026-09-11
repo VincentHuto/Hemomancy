@@ -8,6 +8,7 @@ public final class ManipulationEquipHelper {
 	public static final String BLOOD_ABSORPTION = "blood_absorption";
 	public static final String BLOOD_PROJECTION = "blood_projection";
 	public static final String CONJURE_SICKLE = "conjure_sickle";
+	public static final String CONJURE_STAFF = "conjure_staff";
 
 	private ManipulationEquipHelper() {
 	}
@@ -67,6 +68,7 @@ public final class ManipulationEquipHelper {
 		equippedNames.clear();
 		equippedNames.add(BLOOD_ABSORPTION);
 		equippedNames.add(BLOOD_PROJECTION);
+		equippedNames.add(CONJURE_STAFF);
 		if (hadSickle) equippedNames.add(CONJURE_SICKLE);
 		equippedNames.addAll(normalNames);
 		return !original.equals(equippedNames);
@@ -88,6 +90,6 @@ public final class ManipulationEquipHelper {
 
 	public static boolean isFixedMechanicalManip(String manipName) {
 		return BLOOD_ABSORPTION.equals(manipName) || BLOOD_PROJECTION.equals(manipName)
-				|| CONJURE_SICKLE.equals(manipName);
+				|| CONJURE_SICKLE.equals(manipName) || CONJURE_STAFF.equals(manipName);
 	}
 }

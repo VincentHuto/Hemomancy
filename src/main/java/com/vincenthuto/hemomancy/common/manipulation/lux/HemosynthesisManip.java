@@ -1,18 +1,16 @@
 package com.vincenthuto.hemomancy.common.manipulation.lux;
 
+import com.vincenthuto.hemomancy.common.manipulation.ManipulationParticles;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.EnumVeinSections;
 import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
 import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationRank;
 import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationType;
-import com.vincenthuto.hutoslib.client.particle.factory.GlowParticleFactory;
-import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
-import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.food.FoodData;
 import net.minecraft.world.item.ItemStack;
@@ -48,16 +46,7 @@ public class HemosynthesisManip extends BloodManipulation {
 		world.playSound(null, player.blockPosition(), SoundEvents.PLAYER_BURP, SoundSource.PLAYERS, 0.5f, 1.2f);
 
 		if (world instanceof ServerLevel sLevel) {
-			BlockPos pos = player.blockPosition();
-			RandomSource random = world.random;
-			for (int i = 0; i < 12; i++) {
-				sLevel.sendParticles(
-						GlowParticleFactory.createData(new ParticleColor(255, 255 * random.nextFloat(), 200 * random.nextFloat())),
-						pos.getX() + 0.5 + (random.nextDouble() - 0.5) * 0.8,
-						pos.getY() + 0.8 + random.nextDouble() * 0.6,
-						pos.getZ() + 0.5 + (random.nextDouble() - 0.5) * 0.8,
-						1, 0f, 0.15f, 0f, 0.01f);
-			}
+			ManipulationParticles.accent(sLevel, EnumBloodTendency.LUX, player.position().add(0, 1, 0), net.minecraft.world.phys.Vec3.ZERO);
 		}
 	}
 }

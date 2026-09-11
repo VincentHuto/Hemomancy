@@ -54,6 +54,7 @@ public interface IInitiatoryDegree {
 	 * per-bloom consumption count after the increment.
 	 */
 	int recordPomeConsumed(long bloomOrigin);
+	int getPomesConsumedFromBloom(long bloomOrigin);
 
 	/**
 	 * Returns total pomes consumed (0–9, capped). Used for HUD display.

@@ -47,10 +47,11 @@ public class IronChoirManip extends BloodManipulation {
 				shot -> ManipulationCombatHelper.hostileProjectile(player, shot)).stream()
 				.sorted(Comparator.comparingDouble(player::distanceToSqr)).limit(remaining).toList()) {
 			Entity owner = projectile.getOwner();
+			ManipulationVisuals.burst(level, ManipulationVisuals.Form.FERRIC_IMPACT,
+					player.position().add(0, 1.1, 0), projectile.position(), .5, 12);
 			projectile.discard();
 			remaining--;
 			if (owner instanceof LivingEntity attacker) ManipulationCombatHelper.hurt(this, player, attacker, level, 4.0F);
-			level.sendParticles(ParticleTypes.CRIT, projectile.getX(), projectile.getY(), projectile.getZ(), 12, .2, .2, .2, .03);
 		}
 		player.getPersistentData().putInt(SHOTS_LEFT, remaining);
         if (remaining != before) ManipulationVisuals.attached(player, ManipulationVisuals.Form.CHOIR, 5, 25, remaining);

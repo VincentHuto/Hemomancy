@@ -1,7 +1,7 @@
 package com.vincenthuto.hemomancy.common.network.particle;
 
+import com.vincenthuto.hemomancy.common.particle.HemoParticleData;
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.client.particle.factory.BloodCellParticleFactory;
 import com.vincenthuto.hutoslib.client.particle.util.HLParticleUtils;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import net.minecraft.network.FriendlyByteBuf;
@@ -39,7 +39,7 @@ public class SpawnLivingToolParticlesPacket implements CustomPacketPayload {
 		if (ctxSupplier.player() == null) return;
 		for (int i = 0; i < 20; i++) {
 			ctxSupplier.player().level().addParticle(
-					BloodCellParticleFactory.createData(msg.getColor()),
+					HemoParticleData.bloodCell(msg.getColor()),
 					msg.getPos().x, msg.getPos().y + 1, msg.getPos().z,
 					HLParticleUtils.inRange(-3, 3) * 0.015f,
 					HLParticleUtils.inRange(-3, 3) * 0.015f,

@@ -186,10 +186,31 @@ public class QliphothBloomBlock extends BaseEntityBlock implements IMultiBlock {
 		}
 		int huskIndex = data.getPendingPomeHuskIndex(pos);
 		boolean claimed = data.isPendingPomeClaimed(pos);
+		int consumedHere = HemoCapabilityAccess.getInitiatoryDegree(player)
+				.map(degree -> degree.getPomesConsumedFromBloom(pos.asLong())).orElse(0);
+		if (bloomState == SeveredQliphothState.LIVING && claimed && huskIndex >= 0
+				&& consumedHere == huskIndex + 1) {
+			data.clearPendingPome(pos.asLong());
+			player.displayClientMessage(Component.literal(
+					"Your covenant remembers eating this husk. The tree releases its old wait and resumes its course.")
+					.withStyle(ChatFormatting.DARK_PURPLE), false);
+			return InteractionResult.SUCCESS;
+		}
 		if (!QliphothPomeRules.canPickPendingPome(huskIndex >= 0, claimed)) {
 			Component message = claimed
 					? Component.literal("The tree has already given you its pome. Eat it before the next can grow.")
-					: Component.literal("No Qliphoth pome is ripe enough to be taken.");
+					: Component.literal("The next pome is growing. Return when it ripens; this tree has "
+							+ data.getRemainingPomes(pos) + " pomes left to bear.");
+			if (!claimed && data.getRemainingPomes(pos) == 0) {
+				EnumArchonPath path = HemoCapabilityAccess.getInitiatoryDegree(player)
+						.map(degree -> degree.getArchonPath()).orElse(EnumArchonPath.NONE);
+				message = Component.literal(switch (path) {
+					case NONE -> "The nine husks are spent. Use your Fungal Spine to witness the Gardens and answer the waiting choice.";
+					case SILENT_PENDING -> "Your refusal awaits its act. Sever this tree with your Living Arsenal to open the ordeal; ordinary pruning belongs to the Unstained path.";
+					case APOTHEOS_PENDING -> "The tree has fulfilled its nine husks. Your chosen Apotheosis now awaits its final rite.";
+					case SILENT_ARCHON, APOTHEOS -> "The nine-husk covenant is complete. This tree will not bear another pome.";
+				});
+			}
 			player.displayClientMessage(message.copy()
 					.withStyle(ChatFormatting.DARK_PURPLE, ChatFormatting.ITALIC), true);
 			return InteractionResult.SUCCESS;

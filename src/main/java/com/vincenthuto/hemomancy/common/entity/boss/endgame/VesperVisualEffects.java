@@ -1,10 +1,7 @@
 package com.vincenthuto.hemomancy.common.entity.boss.endgame;
 
-import com.vincenthuto.hemomancy.client.particle.factory.BloodCellParticleFactory;
-import com.vincenthuto.hemomancy.client.particle.factory.SporiticSporeParticleFactory;
+import com.vincenthuto.hemomancy.common.particle.HemoParticleData;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
-import com.vincenthuto.hutoslib.client.particle.factory.DarkGlowParticleFactory;
-import com.vincenthuto.hutoslib.client.particle.factory.EmberParticleFactory;
 import com.vincenthuto.hutoslib.client.particle.factory.GlowParticleFactory;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import com.vincenthuto.hutoslib.common.lightning.LightningTestConfig;
@@ -42,28 +39,28 @@ final class VesperVisualEffects {
 
 	static void glow(ServerLevel level, Vec3 center, ParticleColor color, int count,
 			double xSpread, double ySpread, double zSpread, double speed) {
-		send(level, GlowParticleFactory.createData(color), center, count, xSpread, ySpread, zSpread, speed);
+		send(level, HemoParticleData.glow(color), center, count, xSpread, ySpread, zSpread, speed);
 	}
 
 	static void darkGlow(ServerLevel level, Vec3 center, ParticleColor color, int count,
 			double xSpread, double ySpread, double zSpread, double speed) {
-		send(level, DarkGlowParticleFactory.createData(color), center, count, xSpread, ySpread, zSpread, speed);
+		send(level, HemoParticleData.darkGlow(color), center, count, xSpread, ySpread, zSpread, speed);
 	}
 
 	static void bloodCells(ServerLevel level, Vec3 center, ParticleColor color, int count,
 			double xSpread, double ySpread, double zSpread, double speed) {
-		send(level, BloodCellParticleFactory.createData(color), center, count, xSpread, ySpread, zSpread, speed);
+		send(level, HemoParticleData.bloodCell(color), center, count, xSpread, ySpread, zSpread, speed);
 	}
 
 	static void embers(ServerLevel level, Vec3 center, ParticleColor color, int count,
 			double xSpread, double ySpread, double zSpread, double speed, float scale, int life) {
-		send(level, EmberParticleFactory.createData(color, scale, 0.92F, life), center, count,
+		send(level, HemoParticleData.ember(color, scale, 0.92F, life), center, count,
 				xSpread, ySpread, zSpread, speed);
 	}
 
 	static void spores(ServerLevel level, Vec3 center, ParticleColor color, int count,
 			double xSpread, double ySpread, double zSpread, double speed) {
-		send(level, SporiticSporeParticleFactory.createData(color), center, count,
+		send(level, HemoParticleData.sporiticSpore(color), center, count,
 				xSpread, ySpread, zSpread, speed);
 	}
 
@@ -75,8 +72,8 @@ final class VesperVisualEffects {
 		for (int i = 1; i <= points; i++) {
 			Vec3 point = start.add(step.scale(i));
 			ParticleOptions particle = i % 4 == 0
-					? BloodCellParticleFactory.createData(color)
-					: DarkGlowParticleFactory.createData(color);
+					? HemoParticleData.bloodCell(color)
+					: HemoParticleData.darkGlow(color);
 			level.sendParticles(particle, point.x, point.y + 0.07D, point.z,
 					1, 0.015D, 0.015D, 0.015D, 0.0D);
 		}
@@ -87,8 +84,8 @@ final class VesperVisualEffects {
 			double angle = Mth.TWO_PI * i / points;
 			Vec3 point = center.add(Math.cos(angle) * radius, 0.08D, Math.sin(angle) * radius);
 			ParticleOptions particle = i % 5 == 0
-					? BloodCellParticleFactory.createData(color)
-					: DarkGlowParticleFactory.createData(color);
+					? HemoParticleData.bloodCell(color)
+					: HemoParticleData.darkGlow(color);
 			level.sendParticles(particle, point.x, point.y, point.z, 1, 0.02D, 0.01D, 0.02D, 0.0D);
 		}
 	}
@@ -101,10 +98,10 @@ final class VesperVisualEffects {
 			double y = center.y + level.random.nextDouble() * height;
 			double z = center.z + (level.random.nextDouble() - 0.5D) * width;
 			ParticleOptions particle;
-			if (crowned && i == 0) particle = SporiticSporeParticleFactory.createData(DEEP_BLOOD);
-			else if (i == 0) particle = GlowParticleFactory.createData(color);
-			else particle = i % 2 == 0 ? BloodCellParticleFactory.createData(color)
-					: DarkGlowParticleFactory.createData(crowned ? BLACK : color);
+			if (crowned && i == 0) particle = HemoParticleData.sporiticSpore(DEEP_BLOOD);
+			else if (i == 0) particle = HemoParticleData.glow(color);
+			else particle = i % 2 == 0 ? HemoParticleData.bloodCell(color)
+					: HemoParticleData.darkGlow(crowned ? BLACK : color);
 			level.addParticle(particle, x, y, z, 0.0D, 0.008D, 0.0D);
 		}
 	}

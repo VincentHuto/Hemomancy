@@ -1,8 +1,8 @@
 package com.vincenthuto.hemomancy.common.tile.harbinger.functional;
 
+import com.vincenthuto.hemomancy.common.particle.HemoParticleData;
 import com.vincenthuto.hemomancy.common.init.BlockEntityInit;
 import com.vincenthuto.hemomancy.common.tile.shared.IMultiBlockEntity;
-import com.vincenthuto.hutoslib.client.particle.factory.GlowParticleFactory;
 import com.vincenthuto.hutoslib.client.particle.util.HLParticleUtils;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 
@@ -27,15 +27,15 @@ public class FungalImplantationPylonBlockEntity extends BlockEntity implements I
 					false);
 			for (int i = 0; i < globalPartCount; i++) {
 				level.addParticle(
-						GlowParticleFactory.createData(ParticleColor.YELLOW),
+						HemoParticleData.glow(ParticleColor.YELLOW),
 						pos.getX() + tangentFunnel[i].x + .5, pos.getY() + 2.75 + tangentFunnel[i].y,
 						pos.getZ() + tangentFunnel[i].z + .5, 0, 0.001f, 0);
 				level.addParticle(
-						GlowParticleFactory.createData(ParticleColor.YELLOW),
+						HemoParticleData.glow(ParticleColor.YELLOW),
 						pos.getX() + tangentFunnel[i].x + .5, pos.getY() + 2.75  + tangentFunnel[i].y,
 						pos.getZ() + tangentFunnel[i].z + .5, 0, -0.001f, 0);
 				level.addParticle(
-						GlowParticleFactory.createData(ParticleColor.WHITE),
+						HemoParticleData.glow(ParticleColor.WHITE),
 						pos.getX() + tangentFunnel[i].x + .5, pos.getY() + 2.75  + tangentFunnel[i].y,
 						pos.getZ() + tangentFunnel[i].z + .5, 0, 0.00, 0);
 			

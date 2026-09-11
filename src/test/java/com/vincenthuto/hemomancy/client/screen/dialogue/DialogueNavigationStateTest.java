@@ -7,6 +7,15 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class DialogueNavigationStateTest {
 	@Test
+	void readingGreetingReturnsToHubButFocusedConversationStillCloses() {
+		DialogueNavigationState state = DialogueNavigationState.hub();
+		state.openNode("greeting");
+		state.openNode("continued");
+		assertTrue(state.back());
+		assertEquals(DialogueNavigationState.View.HUB, state.view());
+		assertFalse(DialogueNavigationState.focused("greeting").back());
+	}
+	@Test
 	void hubCategoryNodeBackStackIsDeterministic() {
 		DialogueNavigationState state = DialogueNavigationState.hub();
 

@@ -1,9 +1,9 @@
 package com.vincenthuto.hemomancy.common.entity.projectile;
 
+import com.vincenthuto.hemomancy.common.particle.HemoParticleData;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.IBloodTendency;
 import com.vincenthuto.hemomancy.common.init.EntityInit;
-import com.vincenthuto.hutoslib.client.particle.factory.DarkGlowParticleFactory;
 import com.vincenthuto.hutoslib.client.particle.util.HLParticleUtils;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import net.minecraft.nbt.CompoundTag;
@@ -99,11 +99,11 @@ public class DarkArrowEntity extends AbstractArrow implements CombatWeaponCarrie
 			ParticleColor color = ParticleColor.BLACK;
 			ServerLevel sLevel = (ServerLevel) level();
 
-			sLevel.sendParticles(DarkGlowParticleFactory.createData(color), getX() + HLParticleUtils.inRange(-0.05, 0.05),
+			sLevel.sendParticles(HemoParticleData.darkGlow(color), getX() + HLParticleUtils.inRange(-0.05, 0.05),
 					getY() + HLParticleUtils.inRange(-0.05, 0.05), getZ() + HLParticleUtils.inRange(-0.05, 0.05), 20, 0.005,
 					0.3, 0.005, 0.001d);
 
-			sLevel.sendParticles(DarkGlowParticleFactory.createData(color), getX() + HLParticleUtils.inRange(-0.05, 0.05),
+			sLevel.sendParticles(HemoParticleData.darkGlow(color), getX() + HLParticleUtils.inRange(-0.05, 0.05),
 					getY() + HLParticleUtils.inRange(-0.05, 0.05), getZ() + HLParticleUtils.inRange(-0.05, 0.05), 20, 0.005,
 					-0.3, 0.0005, 0.001d);
 

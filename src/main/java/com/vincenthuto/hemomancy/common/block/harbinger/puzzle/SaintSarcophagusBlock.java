@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.block.harbinger.puzzle;
 
+import com.vincenthuto.hemomancy.common.particle.HemoParticleData;
 import com.vincenthuto.hemomancy.common.block.shared.FillerBlock;
 import com.vincenthuto.hemomancy.common.block.shared.HorizontalFacingRotationHelper;
 import com.vincenthuto.hemomancy.common.block.shared.IMultiBlock;
@@ -18,7 +19,6 @@ import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.BloodVolumeServerPacket;
 import com.vincenthuto.hemomancy.common.tile.harbinger.puzzle.EnumCorpusState;
 import com.vincenthuto.hemomancy.common.tile.harbinger.puzzle.SaintSarcophagusBlockEntity;
-import com.vincenthuto.hutoslib.client.particle.factory.GlowParticleFactory;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
@@ -344,13 +344,13 @@ private static void spawnConsecrationParticles(Level level, BlockPos pos, Direct
 	for (double[] r : getBrazierPositions(facing)) {
 		serverLevel.sendParticles(ParticleTypes.FLAME,
 			bx + r[0], by + r[1], bz + r[2], 5, 0.10, 0.10, 0.10, 0.02);
-		serverLevel.sendParticles(GlowParticleFactory.createData(new ParticleColor(200, 0, 0)),
+		serverLevel.sendParticles(HemoParticleData.glow(new ParticleColor(200, 0, 0)),
 			bx + r[0], by + r[1] + 0.1, bz + r[2], 4, 0.08, 0.08, 0.08, 0.0);
 	}
 	double[] bowl = getBowlOffset(facing);
 	serverLevel.sendParticles(ParticleTypes.FLAME,
 		bx + bowl[0], by + bowl[1], bz + bowl[2], 5, 0.05, 0.05, 0.05, 0.02);
-	serverLevel.sendParticles(GlowParticleFactory.createData(new ParticleColor(200, 0, 0)),
+	serverLevel.sendParticles(HemoParticleData.glow(new ParticleColor(200, 0, 0)),
 		bx + bowl[0], by + bowl[1] + 0.1, bz + bowl[2], 4, 0.05, 0.05, 0.05, 0.0);
 }
 
@@ -361,7 +361,7 @@ private static void spawnBrazierFlames(ServerLevel level, BlockPos pos, Directio
 		level.sendParticles(ParticleTypes.FLAME,
 			bx + r[0], by + r[1], bz + r[2], 1, 0.02, 0.04, 0.02, 0.0);
 		if (level.random.nextInt(4) == 0) {
-			level.sendParticles(GlowParticleFactory.createData(new ParticleColor(200, 0, 0)),
+			level.sendParticles(HemoParticleData.glow(new ParticleColor(200, 0, 0)),
 				bx + r[0], by + r[1] + 0.15, bz + r[2], 1, 0.05, 0.05, 0.05, 0.0);
 		}
 	}
@@ -369,7 +369,7 @@ private static void spawnBrazierFlames(ServerLevel level, BlockPos pos, Directio
 	level.sendParticles(ParticleTypes.FLAME,
 		bx + bowl[0], by + bowl[1], bz + bowl[2], 1, 0.02, 0.04, 0.02, 0.0);
 	if (level.random.nextInt(4) == 0) {
-		level.sendParticles(GlowParticleFactory.createData(new ParticleColor(200, 0, 0)),
+		level.sendParticles(HemoParticleData.glow(new ParticleColor(200, 0, 0)),
 			bx + bowl[0], by + bowl[1] + 0.1, bz + bowl[2], 1, 0.03, 0.03, 0.03, 0.0);
 	}
 }

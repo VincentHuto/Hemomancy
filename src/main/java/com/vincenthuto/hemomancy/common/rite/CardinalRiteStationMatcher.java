@@ -32,14 +32,13 @@ public final class CardinalRiteStationMatcher {
 
 		for (CardinalRiteFloorDefinition actual : CardinalRiteFloorRegistry.highestTierFirst()) {
 			if (!required.requirement().accepts(actual.style(), actual.tier())) continue;
-			BlockPattern.BlockPatternMatch floorMatch = matchFloorAtFocus(level, focusPos, actual);
-			if (floorMatch == null) continue;
-			BlockPattern.BlockPatternMatch structureMatch =
-					matchRequiredStructure(level, focusPos, floorMatch, recipe.getRequiredStructure());
-			if (recipe.getRequiredStructure() != null && structureMatch == null) continue;
-			List<BrazierMatch> braziers = matchedBraziers(level, focusPos, floorMatch, actual, recipe);
-			if (braziers == null) continue;
-			return Optional.of(new StationMatch(actual, floorMatch, structureMatch, braziers));
+            for (BlockPattern.BlockPatternMatch floorMatch : matchFloorsAtFocus(level, focusPos, actual)) {
+                BlockPattern.BlockPatternMatch structureMatch =
+                        matchRequiredStructure(level, focusPos, floorMatch, recipe.getRequiredStructure());
+                if (recipe.getRequiredStructure() != null && structureMatch == null) continue;
+                List<BrazierMatch> braziers = matchedBraziers(level, focusPos, floorMatch, actual, recipe);
+                if (braziers != null) return Optional.of(new StationMatch(actual, floorMatch, structureMatch, braziers));
+            }
 		}
 		return Optional.empty();
 	}
@@ -50,30 +49,36 @@ public final class CardinalRiteStationMatcher {
 		}
 		List<FloorMatch> floorMatches = new ArrayList<>();
 		for (CardinalRiteFloorDefinition floor : CardinalRiteFloorRegistry.highestTierFirst()) {
-			BlockPattern.BlockPatternMatch match = matchFloorAtFocus(level, focusPos, floor);
-			if (match != null) floorMatches.add(new FloorMatch(floor, match));
+			for (var match : matchFloorsAtFocus(level, focusPos, floor)) {
+                floorMatches.add(new FloorMatch(floor, match));
+            }
 		}
 		if (floorMatches.isEmpty()) return new Resolution(Status.NO_FLOOR, List.of());
 		int highestTier = floorMatches.stream().mapToInt(match -> match.floor().tier().ordinal()).max().orElse(-1);
 		List<FloorMatch> highest = floorMatches.stream()
 				.filter(match -> match.floor().tier().ordinal() == highestTier).toList();
-		if (highest.size() != 1) return new Resolution(Status.AMBIGUOUS_FLOOR, List.of());
-		FloorMatch actual = highest.get(0);
+		if (highest.stream().map(match -> match.floor().id()).distinct().count() != 1) {
+            return new Resolution(Status.AMBIGUOUS_FLOOR, List.of());
+        }
 		List<ResolvedRecipe> resolved = new ArrayList<>();
 		for (CardinalRiteRecipe recipe : recipes) {
 			if (!recipe.hasLayeredStation()) continue;
 			if (!mediumMatches(level, focusPos, recipe)) continue;
 			CardinalRiteFloorDefinition required = CardinalRiteFloorRegistry.get(recipe.getFloorId()).orElse(null);
-			if (required == null || !required.requirement().accepts(
-					actual.floor().style(), actual.floor().tier())) continue;
-			BlockPattern.BlockPatternMatch structure = matchRequiredStructure(
-					level, focusPos, actual.match(), recipe.getRequiredStructure());
-			if (recipe.getRequiredStructure() != null && structure == null) continue;
-			List<BrazierMatch> braziers = matchedBraziers(
-					level, focusPos, actual.match(), actual.floor(), recipe);
-			if (braziers == null) continue;
-			resolved.add(new ResolvedRecipe(recipe,
-					new StationMatch(actual.floor(), actual.match(), structure, braziers)));
+            if (required == null) continue;
+            for (FloorMatch actual : highest) {
+                if (!required.requirement().accepts(actual.floor().style(), actual.floor().tier())) continue;
+                BlockPattern.BlockPatternMatch structure = matchRequiredStructure(
+                        level, focusPos, actual.match(), recipe.getRequiredStructure());
+                if (recipe.getRequiredStructure() != null && structure == null) continue;
+                List<BrazierMatch> braziers = matchedBraziers(
+                        level, focusPos, actual.match(), actual.floor(), recipe);
+                if (braziers == null) continue;
+                resolved.add(new ResolvedRecipe(recipe,
+                        new StationMatch(actual.floor(), actual.match(), structure, braziers)));
+                // Multiple valid orientations of one recipe are not different rites.
+                break;
+            }
 		}
 		return new Resolution(resolved.size() > 1 ? Status.AMBIGUOUS_RITE
 				: resolved.isEmpty() ? Status.NO_RITE : Status.MATCHED, resolved);
@@ -115,28 +120,19 @@ public final class CardinalRiteStationMatcher {
 		return CardinalRiteMediumRules.matches(recipe.getMedium(), seated);
 	}
 
-	private static BlockPattern.BlockPatternMatch matchFloorAtFocus(
-			ServerLevel level, BlockPos focusPos, CardinalRiteFloorDefinition floor) {
-		BlockPattern pattern = floor.pattern().getBlockPattern();
-		for (Direction forwards : DIRECTIONS) {
-			if (forwards.getAxis().isVertical()) continue;
-			Direction up = Direction.UP;
-				for (int x = 0; x < pattern.getWidth(); x++) {
-					for (int y = 0; y < pattern.getHeight(); y++) {
-						for (int z = 0; z < pattern.getDepth(); z++) {
-							BlockPos origin = originForCell(focusPos, forwards, up, x, y, z);
-							BlockPattern.BlockPatternMatch match = pattern.matches(level, origin, forwards, up);
-							if (match != null && match.getBlock(
-									floor.focus().getX(), floor.focus().getY(), floor.focus().getZ())
-									.getPos().equals(focusPos)) {
-								return match;
-							}
-						}
-					}
-				}
-		}
-		return null;
-	}
+    private static List<BlockPattern.BlockPatternMatch> matchFloorsAtFocus(
+            ServerLevel level, BlockPos focusPos, CardinalRiteFloorDefinition floor) {
+        BlockPattern pattern = floor.pattern().getBlockPattern();
+        List<BlockPattern.BlockPatternMatch> matches = new ArrayList<>();
+        for (Direction forwards : DIRECTIONS) {
+            if (forwards.getAxis().isVertical()) continue;
+            BlockPos origin = originForCell(focusPos, forwards, Direction.UP,
+                    floor.focus().getX(), floor.focus().getY(), floor.focus().getZ());
+            var match = pattern.matches(level, origin, forwards, Direction.UP);
+            if (match != null) matches.add(match);
+        }
+        return matches;
+    }
 
 	private static BlockPattern.BlockPatternMatch matchRequiredStructure(ServerLevel level, BlockPos focusPos,
 			BlockPattern.BlockPatternMatch floorMatch, com.vincenthuto.hutoslib.math.MultiblockPattern structure) {

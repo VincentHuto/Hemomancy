@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.rite.harbinger;
 
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.HarbingerPathPermissions;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodVolumeEvents;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.MarionetteCrossbarItem;
@@ -43,9 +44,10 @@ public final class PuppeteerTrialRiteController {
 
 	public static boolean canBegin(ServerPlayer caster, ItemStack crossbar, String summonName, double bloodCost,
 			boolean notify) {
-		int pomesConsumed = HemoCapabilityAccess.getInitiatoryDegree(caster)
-				.map(degree -> degree.getTotalPomesConsumed()).orElse(0);
-		if (pomesConsumed >= 9) {
+		boolean unresolved = HemoCapabilityAccess.getInitiatoryDegree(caster)
+				.map(degree -> HarbingerPathPermissions.isChoiceUnresolved(
+						degree.getTotalPomesConsumed(), degree.getArchonPath())).orElse(false);
+		if (unresolved) {
 			if (notify) caster.displayClientMessage(
 					Component.literal("The void has claimed your will — only one path remains, and one way back.")
 							.withStyle(ChatFormatting.DARK_PURPLE, ChatFormatting.ITALIC), false);

@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.entity.projectile;
 
+import com.vincenthuto.hemomancy.common.particle.HemoParticleData;
 import com.google.common.collect.Sets;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.init.EffectInit;
@@ -10,7 +11,6 @@ import com.vincenthuto.hutoslib.client.HlClientTickHandler;
 import com.vincenthuto.hutoslib.client.particle.BoltRenderer;
 import com.vincenthuto.hutoslib.client.particle.data.BoltParticleData;
 import com.vincenthuto.hutoslib.client.particle.data.BoltParticleData.FadeFunction;
-import com.vincenthuto.hutoslib.client.particle.factory.GlowParticleFactory;
 import com.vincenthuto.hutoslib.client.particle.util.HLParticleUtils;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import com.vincenthuto.hutoslib.common.lightning.LightningTestConfig;
@@ -384,7 +384,7 @@ public class BloodBoltEntity extends AbstractArrow implements CombatWeaponCarrie
 		if (this.level().isClientSide) {
 			for (int i = 0; i < 2; i++) {
 				level().addParticle(
-						GlowParticleFactory.createData(new ParticleColor(255 * level().random.nextFloat(), 0, 0)),
+						HemoParticleData.glow(new ParticleColor(255 * level().random.nextFloat(), 0, 0)),
 						getX() + HLParticleUtils.inRange(-0.1, 0.1), getY() + HLParticleUtils.inRange(-0.1, 0.1),
 						getZ() + HLParticleUtils.inRange(-0.1, 0.1), 0, 0.005, 0);
 

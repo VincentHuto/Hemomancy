@@ -15,7 +15,7 @@ import java.util.List;
  */
 public final class HarbingerMnemonistDialogueTrees {
 	private static final ResourceLocation MNEMONIST_ICON = Hemomancy.rloc(
-			"textures/entity/harbinger_mnemonist/harbinger_mnemonist.png");
+			"textures/entity/npc/harbinger/harbinger_mnemonist/harbinger_mnemonist.png");
 	private static final String SPEAKER = "entity.hemomancy.harbinger_mnemonist";
 	public static final String EVENT_WOVEN_VESSEL_TURN_IN = "mnemonist_woven_vessel_turn_in";
 	public static final String EVENT_RELIQUARY_TAUGHT = "mnemonist_reliquary_taught";

@@ -356,8 +356,17 @@ public class PuppeteersSpindleScreen extends AbstractContainerScreen<PuppeteersS
 			int upkeep = PuppeteerSummonRules.adjustedThreadCost(definition.threadUpkeepPerMinute(), economy);
 			List<Component> tooltip = new ArrayList<>();
 			tooltip.add(Component.translatable(definition.translationKey()).withStyle(ChatFormatting.RED));
+			tooltip.add(Component.translatable(definition.roleTranslationKey()).withStyle(ChatFormatting.GOLD));
 			tooltip.add(Component.translatable("screen.hemomancy.puppeteers_spindle.cost",
 					callCost, upkeep).withStyle(ChatFormatting.GRAY));
+			tooltip.add(Component.translatable("screen.hemomancy.puppeteers_spindle.body_cap",
+					PuppeteerSummonRules.activeSummonCap(SkillPointHelper.getPuppetSkeinLevel())).withStyle(ChatFormatting.GRAY));
+			tooltip.add(Component.translatable("screen.hemomancy.puppeteers_spindle.recall_cost").withStyle(ChatFormatting.GRAY));
+			if (definition.name().equals(PuppeteerSummonDefinitions.RINGMASTER_PATTERN)) {
+				tooltip.add(Component.translatable("screen.hemomancy.puppeteers_spindle.ringmaster_partner").withStyle(ChatFormatting.YELLOW));
+			} else if (definition.name().equals(PuppeteerSummonDefinitions.MNEMONIST_PUPPET)) {
+				tooltip.add(Component.translatable("screen.hemomancy.puppeteers_spindle.mnemonist_target").withStyle(ChatFormatting.YELLOW));
+			}
 			if (known) {
 				tooltip.add(Component.translatable("screen.hemomancy.puppeteers_spindle.known")
 						.withStyle(ChatFormatting.DARK_RED));

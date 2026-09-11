@@ -5,13 +5,11 @@ import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.Enu
 import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillPointHelper;
 import com.vincenthuto.hemomancy.common.manipulation.*;
 import net.minecraft.core.BlockPos;
-import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 
-import java.util.List;
 
 public class ActivationPotentialManip extends BloodManipulation {
 	private static final int CHARGE_TICKS = 30;
@@ -35,23 +33,29 @@ public class ActivationPotentialManip extends BloodManipulation {
 	@Override
 	public void getAction(Player player, Level world, ItemStack heldItemMainhand, BlockPos position,
 			float chargeTicks) {
-		float strength = ManipulationCastingRules.chargeFraction(chargeTicks, CHARGE_TICKS);
-		List<Entity> targets = player.level().getEntities(player, player.getBoundingBox().inflate(5.0));
-		if (targets.size() > 0) {
-			int targetIndex = 0;
-			for (Entity target2 : targets) {
-				if (target2 instanceof LivingEntity living && ManipulationCombatHelper.canHarm(player, living)) {
-					LivingEntity target = (LivingEntity) target2;
-					DuctilisLightningEffects.activationPotential(player, target, targetIndex++);
-					float damage = (float) (5.0f * strength * SkillPointHelper.getCrimsonMasteryMultiplier(player));
-					float adjusted = TendencyAffinityRules.adjustManipulationDamage(player, target, this, damage);
-					if (target.hurt(player.damageSources().magic(), adjusted)) {
-						SchoolHitHelper.tryTriggerConductiveArc(player, target, EnumBloodTendency.DUCTILIS,
-								getSecondaryTend(), adjusted);
-					}
-				}
-			}
-		}
-	}
-
+        if (!(world instanceof net.minecraft.server.level.ServerLevel level)) return;
+        float strength = ManipulationCastingRules.chargeFraction(chargeTicks, CHARGE_TICKS);
+        Discharge discharge = new Discharge();
+        java.util.List<LivingEntity> struck = new java.util.ArrayList<>();
+        int index = 0;
+        float damage = (float)(5.0F * strength * SkillPointHelper.getCrimsonMasteryMultiplier(player));
+        for (LivingEntity target : level.getEntitiesOfClass(LivingEntity.class,player.getBoundingBox().inflate(5),
+                e -> ConductionManager.canHarm(player,e)
+                        && ConductionManager.visible(level,player.getEyePosition(),e.getEyePosition(),player)).stream()
+                .sorted(java.util.Comparator.comparing(LivingEntity::getUUID)).toList()) {
+            if (!ConductionManager.claimHit(player,target,discharge)) continue;
+            DuctilisLightningEffects.activationPotential(player,target,index++);
+            if (ManipulationCombatHelper.hurt(this,player,target,level,damage)) {
+                Paralysis.interrupt(target);
+                target.addEffect(new net.minecraft.world.effect.MobEffectInstance(
+                        net.minecraft.world.effect.MobEffects.MOVEMENT_SLOWDOWN,
+                        ManipulationScalingRules.scaledInt(5,30,chargeTicks,CHARGE_TICKS),1,false,true));
+                ConductionManager.energizeTouching(player,target,discharge);
+                struck.add(target);
+            }
+        }
+        ConductionManager.energizeVisibleBounds(player,player.getBoundingBox().inflate(5),discharge);
+        for (LivingEntity target:struck) SchoolHitHelper.tryTriggerConductiveArc(player,target,
+                EnumBloodTendency.DUCTILIS,getSecondaryTend(),damage,discharge);
+    }
 }

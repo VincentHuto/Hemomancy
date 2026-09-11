@@ -6,7 +6,8 @@ import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.
 import com.vincenthuto.hemomancy.common.capability.player.unstained.UnstainedAccessRules;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
-import com.vincenthuto.hutoslib.client.particle.factory.GlowParticleFactory;
+import com.vincenthuto.hutoslib.client.particle.data.ColorParticleData;
+import com.vincenthuto.hutoslib.common.registry.HLParticleInit;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
@@ -53,7 +54,7 @@ public class BloodFormationKeyPressPacket implements CustomPacketPayload {
 					RandomSource random = player.level().random;
 					for (int i = 0; i < 30; i++) {
 						sLevel.sendParticles(
-								GlowParticleFactory.createData(new ParticleColor(255 * random.nextFloat(), 0, 0)),
+								new ColorParticleData(HLParticleInit.glow.get(), new ParticleColor(255 * random.nextFloat(), 0, 0)),
 								pos.getX() + random.nextDouble(), pos.getY() + random.nextDouble() + 1,
 								pos.getZ() + random.nextDouble(), 1, 0f, 0.2f, 0f, sLevel.random.nextInt(3) * 0.015f);
 					}

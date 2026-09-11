@@ -38,6 +38,11 @@ public class LivingSyringeItem extends LivingItem {
 	}
 
 	@Override
+	public int getEntityLifespan(ItemStack stack, Level level) {
+		return 6000;
+	}
+
+	@Override
 	public void appendHoverText(ItemStack stack, Item.TooltipContext context, List<Component> tooltip, TooltipFlag flagIn) {
 		super.appendHoverText(stack, context, tooltip, flagIn);
 		if (hasLoadedRack(stack)) {

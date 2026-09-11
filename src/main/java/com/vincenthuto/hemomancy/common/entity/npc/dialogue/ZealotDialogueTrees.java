@@ -14,7 +14,7 @@ import java.util.List;
  */
 public final class ZealotDialogueTrees {
 
-    private static final ResourceLocation ZEALOT_ICON = Hemomancy.rloc("textures/entity/unstained_zealot/unstained_zealot.png");
+    private static final ResourceLocation ZEALOT_ICON = Hemomancy.rloc("textures/entity/npc/unstained/unstained_zealot/unstained_zealot.png");
     private static final String SPEAKER = "entity.hemomancy.unstained_zealot";
 
     private ZealotDialogueTrees() {

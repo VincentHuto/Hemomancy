@@ -3,7 +3,9 @@ package com.vincenthuto.hemomancy.common.network.dialogue;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.player.shared.knowledge.discovery.LiberKnowledgeHelper;
 import com.vincenthuto.hemomancy.common.capability.player.shared.knowledge.discovery.MemoHelper;
-import com.vincenthuto.hemomancy.common.entity.npc.dialogue.DialogueEvent;
+import com.vincenthuto.hemomancy.common.entity.npc.dialogue.*;
+import com.vincenthuto.hemomancy.common.entity.npc.harbinger.HarbingerVicarEntity;
+import com.vincenthuto.hemomancy.common.entity.npc.harbinger.HarbingerAlchemistEntity;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
@@ -50,20 +52,34 @@ public class DialogueOptionPacket implements CustomPacketPayload {
 				if (LiberKnowledgeHelper.handleDialogueEvent(sender, msg.eventId)) {
 					return;
 				}
-				if (msg.entityId == 0) {
-					// Disembodied voice (e.g. fungal whispers) — no entity to validate
-					NeoForge.EVENT_BUS.post(
-							new DialogueEvent(sender, msg.eventId, msg.entityId));
-				} else {
-					// Validate entity exists and is within interaction range
-					net.minecraft.world.entity.Entity entity = sender.level().getEntity(msg.entityId);
-					if (entity != null && sender.distanceTo(entity) <= 8.0) {
-						NeoForge.EVENT_BUS.post(
-								new DialogueEvent(sender, msg.eventId, msg.entityId));
-					}
-				}
+				dispatch(sender, msg.eventId, msg.entityId);
 			}
 		});
+	}
+
+	public static DialogueEvent dispatch(ServerPlayer sender, String eventId, int entityId) {
+		var entity = sender.level().getEntity(entityId);
+		if (SanguineMonolithDialogueTrees.EVENT_CORNERSTONE.equals(eventId)
+				|| SanguineMonolithDialogueTrees.EVENT_SHATTER.equals(eventId)) {
+			if (entityId != SanguineMonolithDialogueTrees.BLOCK_ENTITY_ID
+					|| !MonolithDialogueContext.permits(sender, eventId)) return null;
+		} else {
+			if (entityId != 0 && (entity == null || sender.distanceTo(entity) > 8.0)) return null;
+			if ((HarbingerVicarDialogueTrees.EVENT_CLAIM_FIRST_BLOODCRAFT_REWARD.equals(eventId)
+					|| HarbingerVicarDialogueTrees.EVENT_CONSECRATION_KIT.equals(eventId))
+					&& !(entity instanceof HarbingerVicarEntity)) return null;
+			if ((MnemonistStarterMemoryChoice.fromEventId(eventId).isPresent()
+					|| HarbingerMnemonistDialogueTrees.EVENT_WOVEN_VESSEL_TURN_IN.equals(eventId))
+					&& !(entity instanceof com.vincenthuto.hemomancy.common.entity.npc.harbinger.HarbingerMnemonistEntity)) return null;
+			if ((HarbingerCicatrixAnchoriteDialogueTrees.EVENT_FIRST_LESSON.equals(eventId)
+					|| HarbingerCicatrixAnchoriteDialogueTrees.EVENT_CONTINUATION_REWARD.equals(eventId))
+					&& !(entity instanceof com.vincenthuto.hemomancy.common.entity.npc.harbinger.HarbingerCicatrixAnchoriteEntity)) return null;
+			if (HarbingerAlchemistDialogueTrees.EVENT_FIRST_SEPARATION_CLAIM.equals(eventId)
+					&& !(entity instanceof HarbingerAlchemistEntity)) return null;
+		}
+		DialogueEvent event = new DialogueEvent(sender, eventId, entityId);
+		NeoForge.EVENT_BUS.post(event);
+		return event;
 	}
 
 	@Override

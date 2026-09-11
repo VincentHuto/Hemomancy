@@ -98,8 +98,28 @@ public class MasonsEffigyScreen extends AbstractContainerScreen<MasonsEffigyMenu
 		renderBackground(gfx, mouseX, mouseY, partialTick);
 		super.render(gfx, mouseX, mouseY, partialTick);
 		renderTooltip(gfx, mouseX, mouseY);
+		renderScarTooltip(gfx, mouseX, mouseY);
 		oldMouseX = mouseX;
 		oldMouseY = mouseY;
+	}
+
+	private void renderScarTooltip(GuiGraphics gfx, int mouseX, int mouseY) {
+		if (mouseX < leftPos + LIST_X || mouseX >= leftPos + LIST_X + LIST_W
+				|| mouseY < topPos + LIST_Y || mouseY >= topPos + LIST_Y + (LIST_H / ROW_HEIGHT) * ROW_HEIGHT) return;
+		int index = scroll + (mouseY - topPos - LIST_Y) / ROW_HEIGHT;
+		List<ResourceLocation> known = menu.getKnownScarIds();
+		if (index >= known.size()) return;
+		ResourceLocation id = known.get(index);
+		ItemStack stack = scarStackFor(id);
+		if (!(stack.getItem() instanceof com.vincenthuto.hemomancy.common.item.harbinger.scar.ItemScar scar)) return;
+		List<Component> tooltip = new ArrayList<>();
+		tooltip.add(stack.getHoverName());
+		tooltip.add(Component.literal(menu.getActiveScarIds().contains(id) ? "Learned and active" : "Learned; not currently active"));
+		tooltip.add(Component.literal(selected.contains(id) ? "Selected for the next motif" : "Not selected for the next motif"));
+		scar.getScarDefinition().appendHoverText(tooltip);
+		tooltip.add(Component.literal("Place motif paper, then project 500 ml per selected scar."));
+		tooltip.add(Component.literal("Fit the prepared motif at a brazier: 50 ml."));
+		gfx.renderComponentTooltip(font, tooltip, mouseX, mouseY);
 	}
 
 	@Override

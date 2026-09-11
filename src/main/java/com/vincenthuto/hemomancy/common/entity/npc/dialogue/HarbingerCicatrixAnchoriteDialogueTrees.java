@@ -7,7 +7,7 @@ import java.util.List;
 
 public final class HarbingerCicatrixAnchoriteDialogueTrees {
 	private static final ResourceLocation ANCHORITE_ICON = Hemomancy.rloc(
-			"textures/entity/harbinger_cicatrix_anchorite/harbinger_cicatrix_anchorite.png");
+			"textures/entity/npc/harbinger/harbinger_cicatrix_anchorite/harbinger_cicatrix_anchorite.png");
 	private static final String SPEAKER = "entity.hemomancy.harbinger_cicatrix_anchorite";
 	public static final String EVENT_FIRST_LESSON = "vein_mason_first_lesson";
 	public static final String EVENT_CONTINUATION_REWARD = "vein_mason_continuation_reward";
@@ -64,7 +64,9 @@ public final class HarbingerCicatrixAnchoriteDialogueTrees {
 				p.replacementTier() == 2 ? EVENT_REPLACE_D5 : EVENT_REPLACE_D4));
 		options.add(new DialogueOption("hemomancy.dialogue.anchorite.option.leave", null, null));
 		return DialogueTree.builder(SPEAKER, ANCHORITE_ICON, entityId)
-				.addNode(new DialogueNode("greeting", List.of(line), options))
+				.addNode(new DialogueNode("greeting", !p.d5Varicose()
+						? List.of(line, "hemomancy.anchorite.d5.activation", "hemomancy.anchorite.d5.stop")
+						: List.of(line), options))
 				.build();
 	}
 

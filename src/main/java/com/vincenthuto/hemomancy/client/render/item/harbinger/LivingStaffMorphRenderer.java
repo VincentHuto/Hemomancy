@@ -132,8 +132,12 @@ public final class LivingStaffMorphRenderer {
 	private record MorphBufferSource(MultiBufferSource delegate, RenderType renderType)
 			implements MultiBufferSource {
 		@Override
-		public VertexConsumer getBuffer(RenderType ignored) {
-			return delegate.getBuffer(renderType);
+		public VertexConsumer getBuffer(RenderType requested) {
+			// Foil consumers use their own format and must remain distinct from the dissolving base.
+			boolean foil = requested == RenderType.glint() || requested == RenderType.glintTranslucent()
+					|| requested == RenderType.entityGlint() || requested == RenderType.entityGlintDirect()
+					|| requested == RenderType.armorEntityGlint();
+			return delegate.getBuffer(foil ? requested : renderType);
 		}
 	}
 }

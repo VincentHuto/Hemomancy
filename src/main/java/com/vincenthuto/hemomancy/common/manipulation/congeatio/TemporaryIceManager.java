@@ -1,6 +1,7 @@
 package com.vincenthuto.hemomancy.common.manipulation.congeatio;
 
 import com.vincenthuto.hemomancy.Hemomancy;
+import com.vincenthuto.hemomancy.common.init.BlockInit;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
@@ -42,8 +43,9 @@ public final class TemporaryIceManager {
 		}
 		level.setBlock(pos, state, 3);
         com.vincenthuto.hemomancy.common.manipulation.ManipulationVisuals.burst(level,
-                com.vincenthuto.hemomancy.common.manipulation.ManipulationVisuals.Form.ICE,
+                com.vincenthuto.hemomancy.common.manipulation.ManipulationVisuals.Form.CRUOR_FORM,
                 net.minecraft.world.phys.Vec3.atBottomCenterOf(pos), net.minecraft.world.phys.Vec3.atCenterOf(pos), .45, 12);
+        surface(level,pos,lifetimeTicks);
 		TEMPORARY_ICE.computeIfAbsent(level.dimension(), key -> new HashMap<>())
 				.put(pos.immutable(), level.getGameTime() + lifetimeTicks);
 		if (owner != null) {
@@ -62,7 +64,7 @@ public final class TemporaryIceManager {
 			BlockPos pos = iterator.next().getKey();
 			if (!owner.equals(owners.get(pos))
 					|| !bounds.contains(pos.getX() + 0.5D, pos.getY() + 0.5D, pos.getZ() + 0.5D)) continue;
-			if (level.getBlockState(pos).is(Blocks.PACKED_ICE)) {
+			if (level.getBlockState(pos).is(BlockInit.frozen_cruor.get())) {
 				level.setBlock(pos, Blocks.AIR.defaultBlockState(), 3);
 			}
 			iterator.remove();
@@ -81,7 +83,7 @@ public final class TemporaryIceManager {
 		BlockPos min = BlockPos.containing(bounds.minX, bounds.minY, bounds.minZ);
 		BlockPos max = BlockPos.containing(bounds.maxX, bounds.maxY, bounds.maxZ);
 		for (BlockPos cursor : BlockPos.betweenClosed(min, max)) {
-			if (level.getBlockState(cursor).is(Blocks.PACKED_ICE)) {
+			if (level.getBlockState(cursor).is(BlockInit.frozen_cruor.get())) {
 				level.setBlock(cursor, Blocks.AIR.defaultBlockState(), 3);
 			}
 		}
@@ -102,12 +104,14 @@ public final class TemporaryIceManager {
 		while (iterator.hasNext()) {
 			Map.Entry<BlockPos, Long> entry = iterator.next();
 			if (now < entry.getValue()) {
+                if(now%40==0 && level.getBlockState(entry.getKey()).is(BlockInit.frozen_cruor.get()))
+                    surface(level,entry.getKey(),(int)(entry.getValue()-now));
 				continue;
 			}
 			BlockPos pos = entry.getKey();
-			if (level.getBlockState(pos).is(Blocks.PACKED_ICE)) {
+			if (level.getBlockState(pos).is(BlockInit.frozen_cruor.get())) {
                 com.vincenthuto.hemomancy.common.manipulation.ManipulationVisuals.burst(level,
-                        com.vincenthuto.hemomancy.common.manipulation.ManipulationVisuals.Form.ICE,
+                        com.vincenthuto.hemomancy.common.manipulation.ManipulationVisuals.Form.CRUOR_BREAK,
                         net.minecraft.world.phys.Vec3.atBottomCenterOf(pos), net.minecraft.world.phys.Vec3.atCenterOf(pos), .45, 8);
 				level.setBlock(pos, Blocks.AIR.defaultBlockState(), 3);
 			}
@@ -120,4 +124,11 @@ public final class TemporaryIceManager {
 			ICE_OWNERS.remove(level.dimension());
 		}
 	}
+
+    private static void surface(ServerLevel level,BlockPos pos,int ticks) {
+        var at=net.minecraft.world.phys.Vec3.atBottomCenterOf(pos);
+        com.vincenthuto.hemomancy.common.manipulation.ManipulationVisuals.burst(level,
+                com.vincenthuto.hemomancy.common.manipulation.ManipulationVisuals.Form.CRUOR_SURFACE,
+                at,at,.5,ticks);
+    }
 }

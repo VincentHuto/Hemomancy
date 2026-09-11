@@ -1,6 +1,6 @@
 package com.vincenthuto.hemomancy.common.block.harbinger.plant;
 
-import com.vincenthuto.hemomancy.client.particle.factory.BloodCellParticleFactory;
+import com.vincenthuto.hemomancy.common.particle.HemoParticleData;
 import com.vincenthuto.hemomancy.common.init.EntityInit;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hutoslib.client.particle.util.HLParticleUtils;
@@ -124,7 +124,7 @@ public class BogBodyBlock extends Block implements SimpleWaterloggedBlock {
           player.hurt(player.damageSources().generic(), 1.5f);
           if (!worldIn.isClientSide) {
             HLParticleUtils.spawnPoof((ServerLevel) worldIn, pos,
-                BloodCellParticleFactory.createData(ParticleColor.BLOOD));
+                HemoParticleData.bloodCell(ParticleColor.BLOOD));
             ItemEntity spawn = new ItemEntity(worldIn, pos.getX(), pos.getY() + 1, pos.getZ(),
                 new ItemStack(ItemInit.vivianite_cluster.get(), 1));
             worldIn.addFreshEntity(spawn);
@@ -142,7 +142,7 @@ public class BogBodyBlock extends Block implements SimpleWaterloggedBlock {
           player.hurt(player.damageSources().generic(), 0.5f);
           if (!worldIn.isClientSide) {
             HLParticleUtils.spawnPoof((ServerLevel) worldIn, pos,
-                BloodCellParticleFactory.createData(ParticleColor.BLOOD));
+                HemoParticleData.bloodCell(ParticleColor.BLOOD));
             ItemEntity spawn = new ItemEntity(worldIn, pos.getX(), pos.getY() + 1, pos.getZ(),
                 new ItemStack(ItemInit.vivianite_cluster.get(), 2));
             worldIn.addFreshEntity(spawn);

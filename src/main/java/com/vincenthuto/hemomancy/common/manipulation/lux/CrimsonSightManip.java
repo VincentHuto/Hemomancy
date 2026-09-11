@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.manipulation.lux;
 
+import com.vincenthuto.hemomancy.common.manipulation.ManipulationParticles;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.EnumVeinSections;
 import com.vincenthuto.hemomancy.common.capability.player.shared.skill.BodyRefinementSkillRules;
@@ -7,13 +8,10 @@ import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillPoin
 import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
 import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationRank;
 import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationType;
-import com.vincenthuto.hutoslib.client.particle.factory.GlowParticleFactory;
-import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
-import net.minecraft.util.RandomSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
@@ -64,22 +62,8 @@ public class CrimsonSightManip extends BloodManipulation {
 		world.playSound(null, player.blockPosition(), SoundEvents.BEACON_ACTIVATE, SoundSource.PLAYERS, 0.5f, 1.8f);
 
 		if (world instanceof ServerLevel sLevel) {
-			BlockPos pos = player.blockPosition();
-			RandomSource random = world.random;
 
-			for (int i = 0; i < 30; i++) {
-				float r = 220 + random.nextFloat() * 35;
-				float g = 200 + random.nextFloat() * 55;
-				float b = 180 + random.nextFloat() * 75;
-				double angle = random.nextDouble() * Math.PI * 2;
-				double dist = 0.5 + random.nextDouble() * 2.0;
-				sLevel.sendParticles(
-						GlowParticleFactory.createData(new ParticleColor(r, g, b)),
-						pos.getX() + 0.5 + Math.cos(angle) * dist,
-						pos.getY() + 1.5 + (random.nextDouble() - 0.5) * 0.4,
-						pos.getZ() + 0.5 + Math.sin(angle) * dist,
-						1, 0f, 0.05f, 0f, 0.01f);
-			}
+			ManipulationParticles.accent(sLevel, EnumBloodTendency.LUX, player.getEyePosition(), net.minecraft.world.phys.Vec3.ZERO);
 		}
 	}
 }

@@ -5,6 +5,7 @@ import com.vincenthuto.hemomancy.common.block.shared.WaterloggedBlockSupport;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.shared.knowledge.discovery.MemoDefinitions;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.DialogueTree;
+import com.vincenthuto.hemomancy.common.entity.npc.dialogue.MonolithDialogueContext;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.FungalWhisperDialogueTrees;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.SanguineMonolithDialogueTrees;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
@@ -60,7 +61,6 @@ public class SanguineMonolithBlock extends Block implements EntityBlock, IMultiB
 	public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
 	public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
 	private static final VoxelShape SHAPE = Block.box(0, 0, 4, 16, 16, 12);
-	private static final int SHATTER_INTERACTION_THRESHOLD = 2;
 	private static final double SHATTER_PACKET_RADIUS = 64.0;
 
 	/** Filler offsets: 1×2×1 — one filler block above the base. */
@@ -203,33 +203,38 @@ public class SanguineMonolithBlock extends Block implements EntityBlock, IMultiB
 
 		HemoCapabilityAccess.getInitiatoryDegree(player).ifPresent(degree -> {
 			int degreeNumber = degree.getDegreeNumber();
-			if (degreeNumber >= 7 && worldIn.getBlockEntity(pos) instanceof SanguineMonolithBlockEntity monolith) {
-				int interactions = monolith.incrementArchonInteractions();
-				if (interactions >= SHATTER_INTERACTION_THRESHOLD) {
-					explodeIntoBlackShards(worldIn, pos);
-					popResource(worldIn, pos.above(), new ItemStack(ItemInit.monolith_fragment.get(), MonolithFragmentDropRules.rollFragmentCount(worldIn.random)));
-					popResource(worldIn, pos.above(), new ItemStack(ItemInit.qliphoth_seed.get()));
-					worldIn.setBlockAndUpdate(pos, WaterloggedBlockSupport.survivorOrWater(state));
-
-					// Fire the post-shatter Fungal Whisper so the Entity comments on what was inside
-					if (FungalWhisperDialogueTrees.shouldOfferMemoWhisper(serverPlayer, MemoDefinitions.FUNGAL_WHISPER_TRUTH)) {
-					PacketHandler.sendToPlayer(serverPlayer, new OpenDialoguePacket(FungalWhisperDialogueTrees.postMonolithShatter()));
-					}
-					return;
-				}
-				worldIn.sendBlockUpdated(pos, state, state, 3);
-			}
 
 			DialogueTree tree = degreeNumber < MIN_DEGREE
 					? SanguineMonolithDialogueTrees.unworthy()
 					: (heldItem.isEmpty()
-					? SanguineMonolithDialogueTrees.forDegree(degreeNumber)
+					? SanguineMonolithDialogueTrees.forPlayer(serverPlayer, degreeNumber)
 					: SanguineMonolithDialogueTrees.itemInquiry(heldItem, degreeNumber));
 
+			MonolithDialogueContext.open(serverPlayer, pos, tree);
 			PacketHandler.sendToPlayer(serverPlayer, new OpenDialoguePacket(tree));
 		});
 
 		return InteractionResult.SUCCESS;
+	}
+
+	public static boolean pressFurther(ServerPlayer player) {
+		if (HemoCapabilityAccess.getPlayerDegreeNumber(player) < 7) return false;
+		SanguineMonolithBlockEntity monolith = MonolithDialogueContext.takeBlock(player,
+				SanguineMonolithDialogueTrees.EVENT_SHATTER);
+		if (monolith == null) return false;
+		Level level = player.level();
+		BlockPos pos = monolith.getBlockPos();
+		BlockState state = level.getBlockState(pos);
+		monolith.incrementArchonInteractions();
+		explodeIntoBlackShards(level, pos);
+		popResource(level, pos.above(), new ItemStack(ItemInit.monolith_fragment.get(),
+				MonolithFragmentDropRules.rollFragmentCount(level.random)));
+		popResource(level, pos.above(), new ItemStack(ItemInit.qliphoth_seed.get()));
+		level.setBlockAndUpdate(pos, WaterloggedBlockSupport.survivorOrWater(state));
+		if (FungalWhisperDialogueTrees.shouldOfferMemoWhisper(player, MemoDefinitions.FUNGAL_WHISPER_TRUTH)) {
+			PacketHandler.sendToPlayer(player, new OpenDialoguePacket(FungalWhisperDialogueTrees.postMonolithShatter()));
+		}
+		return true;
 	}
 
 	@Override

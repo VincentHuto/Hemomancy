@@ -38,6 +38,7 @@ public class ChangeMorphKeyPacket implements CustomPacketPayload {
 				Player packetPlayer = ctx.player();
 				if (!(packetPlayer instanceof ServerPlayer player))
 					return;
+				EquippedMorphlingEvents.persistEquippedMorphling(player);
 
 				ItemStack jar = Hemomancy.findItemInPlayerInv(player, ItemMorphlingJar.class);
 				if (!(jar.getItem() instanceof ItemMorphlingJar))

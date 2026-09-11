@@ -1,6 +1,38 @@
 {
-  "parent": "minecraft:item/handheld",
+  "credit": "Made with Blockbench",
+  "ambientocclusion": true,
+  "gui_light": "front",
   "textures": {
-    "layer0": "hemomancy:item/venous_recaller"
+    "particle": "hemomancy:block/venous_stone",
+    "venous": "hemomancy:block/venous_stone",
+    "iron": "hemomancy:block/chiseled_hematic_iron_block",
+    "flesh": "hemomancy:block/venous_stone_trans"
+  },
+  "elements": [
+    {"name":"spike_tip","from":[7.5,0,7.5],"to":[8.5,2,8.5],"faces":{"north":{"texture":"#iron"},"east":{"texture":"#iron"},"south":{"texture":"#iron"},"west":{"texture":"#iron"},"up":{"texture":"#iron"},"down":{"texture":"#iron"}}},
+    {"name":"root_spike","from":[7,2,7],"to":[9,6,9],"faces":{"north":{"texture":"#venous"},"east":{"texture":"#venous"},"south":{"texture":"#venous"},"west":{"texture":"#venous"},"up":{"texture":"#venous"},"down":{"texture":"#venous"}}},
+    {"name":"lower_ferrule","from":[5.5,5,5.5],"to":[10.5,7,10.5],"faces":{"north":{"texture":"#iron"},"east":{"texture":"#iron"},"south":{"texture":"#iron"},"west":{"texture":"#iron"},"up":{"texture":"#iron"},"down":{"texture":"#iron"}}},
+    {"name":"haft","from":[7,6,7],"to":[9,18,9],"faces":{"north":{"texture":"#venous"},"east":{"texture":"#venous"},"south":{"texture":"#venous"},"west":{"texture":"#venous"},"up":{"texture":"#venous"},"down":{"texture":"#venous"}}},
+    {"name":"lower_grip","from":[6.5,8,6.5],"to":[9.5,10,9.5],"faces":{"north":{"texture":"#iron"},"east":{"texture":"#iron"},"south":{"texture":"#iron"},"west":{"texture":"#iron"},"up":{"texture":"#iron"},"down":{"texture":"#iron"}}},
+    {"name":"upper_grip","from":[6.5,13,6.5],"to":[9.5,15,9.5],"faces":{"north":{"texture":"#iron"},"east":{"texture":"#iron"},"south":{"texture":"#iron"},"west":{"texture":"#iron"},"up":{"texture":"#iron"},"down":{"texture":"#iron"}}},
+    {"name":"lens_ferrule","from":[5.5,17,5.5],"to":[10.5,19,10.5],"faces":{"north":{"texture":"#iron"},"east":{"texture":"#iron"},"south":{"texture":"#iron"},"west":{"texture":"#iron"},"up":{"texture":"#iron"},"down":{"texture":"#iron"}}},
+    {"name":"lens_left","from":[3,19,6.5],"to":[5.5,26,9.5],"faces":{"north":{"texture":"#venous"},"east":{"texture":"#venous"},"south":{"texture":"#venous"},"west":{"texture":"#venous"},"up":{"texture":"#venous"},"down":{"texture":"#venous"}}},
+    {"name":"lens_right","from":[10.5,19,6.5],"to":[13,26,9.5],"faces":{"north":{"texture":"#venous"},"east":{"texture":"#venous"},"south":{"texture":"#venous"},"west":{"texture":"#venous"},"up":{"texture":"#venous"},"down":{"texture":"#venous"}}},
+    {"name":"lens_crown","from":[5,24.5,6.5],"to":[11,27.5,9.5],"faces":{"north":{"texture":"#venous"},"east":{"texture":"#venous"},"south":{"texture":"#venous"},"west":{"texture":"#venous"},"up":{"texture":"#venous"},"down":{"texture":"#venous"}}},
+    {"name":"lens_base","from":[5,18.5,6.5],"to":[11,21,9.5],"faces":{"north":{"texture":"#venous"},"east":{"texture":"#venous"},"south":{"texture":"#venous"},"west":{"texture":"#venous"},"up":{"texture":"#venous"},"down":{"texture":"#venous"}}},
+    {"name":"blood_lens","from":[6,20.5,6.75],"to":[10,25.5,9.25],"faces":{"north":{"texture":"#flesh"},"east":{"texture":"#flesh"},"south":{"texture":"#flesh"},"west":{"texture":"#flesh"},"up":{"texture":"#flesh"},"down":{"texture":"#flesh"}}},
+    {"name":"lens_pupil","from":[7.25,21.5,5.75],"to":[8.75,24.5,10.25],"faces":{"north":{"texture":"#iron"},"east":{"texture":"#iron"},"south":{"texture":"#iron"},"west":{"texture":"#iron"},"up":{"texture":"#iron"},"down":{"texture":"#iron"}}},
+    {"name":"left_tendril","from":[0.5,22,7],"to":[4.5,24,9],"rotation":{"angle":-22.5,"axis":"z","origin":[4,23,8]},"faces":{"north":{"texture":"#venous"},"east":{"texture":"#venous"},"south":{"texture":"#venous"},"west":{"texture":"#venous"},"up":{"texture":"#venous"},"down":{"texture":"#venous"}}},
+    {"name":"right_tendril","from":[11.5,22,7],"to":[15.5,24,9],"rotation":{"angle":22.5,"axis":"z","origin":[12,23,8]},"faces":{"north":{"texture":"#venous"},"east":{"texture":"#venous"},"south":{"texture":"#venous"},"west":{"texture":"#venous"},"up":{"texture":"#venous"},"down":{"texture":"#venous"}}},
+    {"name":"apical_tendril","from":[7,26,7],"to":[9,30,9],"rotation":{"angle":22.5,"axis":"z","origin":[8,26,8]},"faces":{"north":{"texture":"#flesh"},"east":{"texture":"#flesh"},"south":{"texture":"#flesh"},"west":{"texture":"#flesh"},"up":{"texture":"#flesh"},"down":{"texture":"#flesh"}}}
+  ],
+  "display": {
+    "thirdperson_righthand":{"rotation":[0,90,0],"translation":[0,-7,1],"scale":[0.55,0.55,0.55]},
+    "thirdperson_lefthand":{"rotation":[0,-90,0],"translation":[0,-7,1],"scale":[0.55,0.55,0.55]},
+    "firstperson_righthand":{"rotation":[0,-90,0],"translation":[1,-6,1],"scale":[0.68,0.68,0.68]},
+    "firstperson_lefthand":{"rotation":[0,90,0],"translation":[-1,-6,1],"scale":[0.68,0.68,0.68]},
+    "ground":{"translation":[0,2,0],"scale":[0.35,0.35,0.35]},
+    "gui":{"rotation":[25,-35,0],"translation":[0,-5,0],"scale":[0.55,0.55,0.55]},
+    "fixed":{"translation":[0,-7,0],"scale":[0.65,0.65,0.65]}
   }
 }

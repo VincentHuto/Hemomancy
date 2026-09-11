@@ -505,6 +505,8 @@ public class ItemInit {
 			() -> new BloodMemoryItem(new Item.Properties(), ManipulationInit.ironhearted));
     public static final DeferredHolder<Item, Item> memory_sanguine_magnetism = BASEITEMS.register("memory_sanguine_magnetism",
             () -> new BloodMemoryItem(new Item.Properties(), ManipulationInit.sanguine_magnetism));
+    public static final DeferredHolder<Item, Item> memory_ferric_rampart = memory("ferric_rampart", ManipulationInit.ferric_rampart);
+    public static final DeferredHolder<Item, Item> memory_ferric_spikes = memory("ferric_spikes", ManipulationInit.ferric_spikes);
     public static final DeferredHolder<Item, Item> memory_pyretic_forge = BASEITEMS.register("memory_pyretic_forge",
             () -> new BloodMemoryItem(new Item.Properties(), ManipulationInit.pyretic_forge));
     public static final DeferredHolder<Item, Item> memory_umbral_step = BASEITEMS.register("memory_umbral_step",

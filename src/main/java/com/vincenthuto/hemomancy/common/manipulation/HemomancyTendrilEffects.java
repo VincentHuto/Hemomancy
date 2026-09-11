@@ -1,6 +1,7 @@
 package com.vincenthuto.hemomancy.common.manipulation;
 
 import com.vincenthuto.hutoslib.common.tendril.TendrilAnchor;
+import com.vincenthuto.hemomancy.common.network.particle.ManipulationFlowPacket;
 import com.vincenthuto.hutoslib.common.tendril.TendrilEffectConfig;
 import com.vincenthuto.hutoslib.common.tendril.TendrilEffectSpawner;
 import net.minecraft.core.BlockPos;
@@ -124,22 +125,43 @@ public final class HemomancyTendrilEffects {
 				.withFixedSeed(true, seed);
 	}
 
+    public static void luxRelease(LivingEntity caster, Vec3 destination) {
+        release(caster, destination, false);
+    }
+
+    public static void umbraRelease(LivingEntity caster, Vec3 destination) {
+        release(caster, destination, true);
+    }
+
+    private static void release(LivingEntity caster, Vec3 destination, boolean umbra) {
+        if (!(caster.level() instanceof ServerLevel level)) return;
+        ManipulationFlowPacket.send(level, umbra,
+                entity(caster, TendrilAnchor.AnchorPoint.EYES, 0, -.15, 0),
+                new TendrilAnchor.Point(destination),
+                sutureConfig(caster.position().distanceTo(destination) + 4, level.getGameTime() ^ caster.getId())
+                        .withLifecycle(2, 4, 6).withShape(12, 1, .055f, .2f));
+    }
+
 	public static void lumenSuture(Player caster, Player target) {
 		if (!(caster.level() instanceof ServerLevel level)) {
 			return;
 		}
 		long seed = worldSeed(level, caster, target.getId());
-		spawn(level, caster, entity(caster, TendrilAnchor.AnchorPoint.CENTER, 0.0D, 0.18D, 0.0D),
+		ManipulationFlowPacket.send(level, false, entity(caster, TendrilAnchor.AnchorPoint.CENTER, 0.0D, 0.18D, 0.0D),
 				entity(target, TendrilAnchor.AnchorPoint.CENTER, 0.0D, 0.08D, 0.0D),
 				sutureConfig(caster.distanceTo(target) + 4.0D, seed));
 	}
 
-	public static void bloodEclipse(Player caster, LivingEntity target, int index) {
+    public static void bloodEclipse(Player caster, LivingEntity target, int index) {
+        bloodEclipse((LivingEntity) caster, target, index);
+    }
+
+    public static void bloodEclipse(LivingEntity caster, LivingEntity target, int index) {
 		if (!(caster.level() instanceof ServerLevel level)) {
 			return;
 		}
 		long seed = worldSeed(level, caster, target.getId() * 37L + index);
-		spawn(level, caster, entity(caster, TendrilAnchor.AnchorPoint.CENTER, 0.0D, 0.12D, 0.0D),
+		ManipulationFlowPacket.send(level, true, entity(caster, TendrilAnchor.AnchorPoint.CENTER, 0.0D, 0.12D, 0.0D),
 				entity(target, TendrilAnchor.AnchorPoint.CENTER, 0.0D, 0.0D, 0.0D),
 				voidConfig(caster.distanceTo(target) + 5.0D, seed));
 	}
@@ -153,7 +175,7 @@ public final class HemomancyTendrilEffects {
 			double distance = radius * (0.45D + 0.45D * level.random.nextDouble());
 			Vec3 end = origin.add(Math.cos(angle) * distance, level.random.nextDouble() * 0.75D,
 					Math.sin(angle) * distance);
-			spawn(level, caster, new TendrilAnchor.Point(origin), new TendrilAnchor.Point(end),
+			ManipulationFlowPacket.send(level, true, new TendrilAnchor.Point(origin), new TendrilAnchor.Point(end),
 					voidSurfaceConfig(radius + 4.0D, worldSeed(level, caster, center.asLong() + i)));
 		}
 	}
@@ -174,54 +196,25 @@ public final class HemomancyTendrilEffects {
 	}
 
 	public static void hemorrhage(Player caster, LivingEntity target) {
-		if (!(caster.level() instanceof ServerLevel level)) {
-			return;
-		}
-		long seed = worldSeed(level, caster, target.getId());
-		spawn(level, caster, entity(caster, TendrilAnchor.AnchorPoint.CENTER, 0.0D, 0.1D, 0.0D),
-				entity(target, TendrilAnchor.AnchorPoint.CENTER, 0.0D, 0.0D, 0.0D),
-				bloodDrainConfig(caster.distanceTo(target) + 4.0D, seed));
+        BloodFlowVisuals.connect(caster,target,com.vincenthuto.hemomancy.common.network.particle.BloodFlowPacket.Style.TEAR);
 	}
 
 	public static void exsanguinate(Player caster, LivingEntity target) {
-		if (!(caster.level() instanceof ServerLevel level)) {
-			return;
-		}
-		long seed = worldSeed(level, caster, target.getId() ^ 0x51F15EEDL);
-		spawn(level, caster, entity(target, TendrilAnchor.AnchorPoint.CENTER, 0.0D, 0.0D, 0.0D),
-				entity(caster, TendrilAnchor.AnchorPoint.CENTER, 0.0D, 0.1D, 0.0D),
-				bloodDrainConfig(caster.distanceTo(target) + 4.0D, seed));
+        BloodFlowVisuals.connect(caster,target,com.vincenthuto.hemomancy.common.network.particle.BloodFlowPacket.Style.EXTRACTION);
 	}
 
-	public static void osseousBloom(Player caster, List<LivingEntity> targets) {
-		if (!(caster.level() instanceof ServerLevel level) || targets.isEmpty()) {
-			return;
-		}
-		Vec3 origin = caster.position().add(0.0D, 0.22D, 0.0D);
-		int count = Math.min(6, targets.size());
-		for (int i = 0; i < count; i++) {
-			LivingEntity target = targets.get((int) Math.floor(i * targets.size() / (double) count));
-			spawn(level, caster, new TendrilAnchor.Point(origin),
-					entity(target, TendrilAnchor.AnchorPoint.FEET, 0.0D, 0.08D, 0.0D),
-					boneConfig(caster.distanceTo(target) + 4.0D, worldSeed(level, caster, target.getId() + i)));
-		}
-	}
+    public static void osseousBloom(Player caster,List<LivingEntity> targets) {
+        for(LivingEntity target:targets)ManipulationVisuals.attached(target,ManipulationVisuals.Form.BONE,
+                target.getBbWidth()*.7,32,1);
+    }
 
-	public static void glacialGrasp(Player caster, BlockPos center, List<BlockPos> frozenTargets) {
-		if (!(caster.level() instanceof ServerLevel level) || frozenTargets.isEmpty()) {
-			return;
-		}
-		Vec3 origin = Vec3.atCenterOf(center).add(0.0D, 0.08D, 0.0D);
-		int count = Math.min(7, frozenTargets.size());
-		for (int i = 0; i < count; i++) {
-			BlockPos target = frozenTargets.get((int) Math.floor(i * frozenTargets.size() / (double) count));
-			Vec3 end = Vec3.atCenterOf(target).add(0.0D, 0.1D, 0.0D);
-			spawn(level, caster, new TendrilAnchor.Point(origin), new TendrilAnchor.Point(end),
-					iceConfig(origin.distanceTo(end) + 3.0D, worldSeed(level, caster, target.asLong() + i)));
-		}
-	}
+    public static void glacialGrasp(Player caster,BlockPos center,List<BlockPos> frozenTargets) {
+        if(!(caster.level() instanceof ServerLevel level))return;
+        for(BlockPos pos:frozenTargets)ManipulationVisuals.burst(level,ManipulationVisuals.Form.FROST_ADVANCE,
+                Vec3.atBottomCenterOf(pos.above()),caster.position(),.45,36);
+    }
 
-	private static long worldSeed(ServerLevel level, Player player, long salt) {
+	private static long worldSeed(ServerLevel level, LivingEntity player, long salt) {
 		return seed(player.getUUID().getLeastSignificantBits(), level.getGameTime(), salt);
 	}
 

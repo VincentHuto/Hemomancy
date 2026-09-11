@@ -100,7 +100,7 @@ public class VitricCombustionManip extends BloodManipulation {
 			Vec3 toTarget = target.position().subtract(blastCenter).normalize();
 			CrimsonFireHelper.igniteCrimson(target, Math.max(1, (int) Math.ceil(FIRE_SECONDS * strength)));
 			float damage = (float) (BLAST_DAMAGE * strength * SkillPointHelper.getCrimsonMasteryMultiplier(player));
-			target.hurt(world.damageSources().explosion(null, player),
+			ManipulationParticles.hurt(this, target, world.damageSources().explosion(null, player),
 					TendencyAffinityRules.adjustManipulationDamage(player, target, this, damage));
 			target.push(toTarget.x * KNOCKBACK_STRENGTH * strength,
 					0.4 * KNOCKBACK_STRENGTH * strength,

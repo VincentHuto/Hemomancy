@@ -40,7 +40,7 @@ final class VesperCombatImplementationSourceTest {
 		String model = read("client/model/entity/boss/endgame/VesperTheCrownedRefusalModel.java");
 		String renderer = read("client/render/entity/boss/endgame/VesperTheCrownedRefusalRenderer.java");
 		String layer = read("client/render/layer/mob/endgame/VesperThroneAnchorLayer.java");
-		String conduit = read("client/render/tile/functional/SanguineConduitBlockRenderer.java");
+		String conduit = read("client/render/tile/harbinger/functional/SanguineConduitBlockRenderer.java");
 
 		assertTrue(crowned.contains("DATA_VULNERABLE_YAW"));
 		assertTrue(crowned.contains("DATA_ACTIVE_ANCHOR_DAMAGE"));
@@ -188,7 +188,7 @@ final class VesperCombatImplementationSourceTest {
 
 		assertTrue(crowned.contains("VesperPhaseTransitionRules.isComplete(transition)"));
 		assertTrue(crowned.contains("dismountLandingPosition()"));
-		assertTrue(actions.contains("AbsorbedBloodCellParticleFactory"));
+		assertTrue(actions.contains("HemoParticleData.absorbedBloodCell(ParticleColor.BLOOD)"));
 		assertTrue(model.contains("VesperPhaseTransitionRules.dismountProgress"));
 		assertTrue(model.contains("VesperPhaseTransitionRules.collapseProgress"));
 		assertTrue(model.contains("this.head.zRot += 0.42F * collapse"));

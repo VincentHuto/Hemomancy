@@ -42,7 +42,7 @@ public class VascularViewScreen extends EffectRenderingInventoryScreen<VascularV
     public double dragLeftRight = 0.0;
     public double dragUpDown = 0.0;
     public int guiHeight = 254;
-    public int guiWidth = 190;
+    public int guiWidth = 300;
     protected int left;
     protected int top;
     protected Minecraft mc = Minecraft.getInstance();
@@ -64,6 +64,10 @@ public class VascularViewScreen extends EffectRenderingInventoryScreen<VascularV
 
     @Override
     protected void init() {
+        this.guiWidth = Math.min(300, this.width - 16);
+        this.guiHeight = Math.min(254, this.height - 16);
+        this.imageWidth = this.guiWidth;
+        this.imageHeight = this.guiHeight;
         this.left = this.width / 2 - this.guiWidth / 2;
         this.top = this.height / 2 - this.guiHeight / 2;
         this.clearWidgets();
@@ -351,16 +355,16 @@ public class VascularViewScreen extends EffectRenderingInventoryScreen<VascularV
             Item item = stack.getItem();
             Item renderItem = ItemInit.dried_leech.get();
             double angleBetweenEach = 360.0 / EnumVeinSections.values().length;
-            Point point = new Point(centerX - 45, centerY - 36), center = new Point(centerX, centerY);
+            Point point = new Point(centerX - 80, centerY - 60), center = new Point(centerX, centerY);
             for (EnumVeinSections selectedSection : EnumVeinSections.values()) {
                 graphics.drawCenteredString(font,
                         HLTextUtils.toProperCase(selectedSection.toString()), point.x + guiWidth / 2, point.y -20 + guiHeight / 2,
-                        new Color(255, 0, 0, 255).getRGB());
+                        0xFFE2B5AD);
                 graphics.drawCenteredString(font,
                         vascularSystem.getBloodFlowBySection(selectedSection) + " "
                                 + String.format("%.1f/100", vascularSystem.getHealthBySection(selectedSection)),
                         point.x + guiWidth / 2, point.y -30  + guiHeight / 2,
-                        new Color(255, 0, 0, 255).getRGB());
+                        0xFFE2B5AD);
                 int iconX = point.x - 8 + guiWidth / 2;
                 int iconY = point.y - 10 + guiHeight / 2;
                 graphics.renderItem(new ItemStack(renderItem), iconX, iconY);
@@ -392,8 +396,8 @@ public class VascularViewScreen extends EffectRenderingInventoryScreen<VascularV
 
         });
 
-            int entityCenterX = k - 7 + guiWidth / 2;
-            int entityCenterY = l - 30 + guiHeight / 2;
+            int entityCenterX = centerX + guiWidth / 2;
+            int entityCenterY = centerY - 4 + guiHeight / 2;
             InventoryScreen.renderEntityInInventoryFollowsMouse(graphics, entityCenterX - 25, entityCenterY - 35,
                 entityCenterX + 25, entityCenterY + 35, 30, 0.0625F,
                 this.oldMouseX, this.oldMouseY, player);

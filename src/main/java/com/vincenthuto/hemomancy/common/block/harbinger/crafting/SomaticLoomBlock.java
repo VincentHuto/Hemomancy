@@ -242,7 +242,7 @@ public class SomaticLoomBlock extends Block implements EntityBlock, IMultiBlock,
 		if (!(tile instanceof SomaticLoomBlockEntity te)) return InteractionResult.PASS;
 
 		if (player.isShiftKeyDown()) {
-			if (te.isWeavingOrbs()) {
+			if (te.isWeavingOrbs() || te.getRitualBloodCharged() > 0) {
 				te.cancelRitual(player);
 				return InteractionResult.SUCCESS;
 			}
@@ -257,8 +257,7 @@ public class SomaticLoomBlock extends Block implements EntityBlock, IMultiBlock,
 			return InteractionResult.SUCCESS;
 		}
 
-		te.refreshRecipe();
-		te.provideTendencyFeedback(player);
+		te.chooseNextRecipe(player);
 		return InteractionResult.SUCCESS;
 	}
 

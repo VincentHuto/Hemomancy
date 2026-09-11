@@ -60,6 +60,7 @@ public class MorphlingJarMenu extends AbstractContainerMenu {
 		super(ContainerInit.morphling_jar.get(), windowId);
 
 		playerInv = playerInventory;
+		if (playerEntity instanceof ServerPlayer serverPlayer) EquippedMorphlingEvents.persistEquippedMorphling(serverPlayer);
 		ItemStack stack = findMorphlingJar(playerEntity);
 
 		if (stack == null || stack.isEmpty()) {
@@ -127,14 +128,15 @@ public class MorphlingJarMenu extends AbstractContainerMenu {
 
 	@Override
 	public void clicked(int slot, int dragType, ClickType clickTypeIn, Player player) {
+		if (player instanceof ServerPlayer serverPlayer) EquippedMorphlingEvents.persistEquippedMorphling(serverPlayer);
 		super.clicked(slot, dragType, clickTypeIn, player);
 		if (slot >= 0 && clickTypeIn != ClickType.SWAP
 				&& !(getSlot(slot).getItem().getItem() instanceof ItemMorphlingJar)) {
 			getSlot(slot).container.setChanged();
 		}
-		clearEquippedMorphlingIfNoLongerInJar(player);
 		if (handler != null)
 			handler.save();
+		clearEquippedMorphlingIfNoLongerInJar(player);
 	}
 
 	@Override
@@ -146,6 +148,7 @@ public class MorphlingJarMenu extends AbstractContainerMenu {
 
 	@Override
 	public ItemStack quickMoveStack(Player playerIn, int index) {
+		if (playerIn instanceof ServerPlayer serverPlayer) EquippedMorphlingEvents.persistEquippedMorphling(serverPlayer);
 		ItemStack result = ItemStack.EMPTY;
 		Slot slot = this.slots.get(index);
 		if (slot != null && slot.hasItem()) {
@@ -164,9 +167,9 @@ public class MorphlingJarMenu extends AbstractContainerMenu {
 				slot.set(ItemStack.EMPTY);
 			else
 				slot.setChanged();
-			clearEquippedMorphlingIfNoLongerInJar(playerIn);
 			if (handler != null)
 				handler.save();
+			clearEquippedMorphlingIfNoLongerInJar(playerIn);
 		}
 		return result;
 	}
@@ -213,11 +216,7 @@ public class MorphlingJarMenu extends AbstractContainerMenu {
 			if (equipped.isEmpty())
 				return;
 
-			for (int i = 0; i < slotcount; i++) {
-				if (MorphlingIdentity.matches(equipped, handler.getStackInSlot(i))) {
-					return;
-				}
-			}
+			if (EquippedMorphlingEvents.isStoredInCarriedJar(player, equipped)) return;
 
 			cap.clearMorphling();
 			LastRiteHelper.clearMorphlingRites(player);

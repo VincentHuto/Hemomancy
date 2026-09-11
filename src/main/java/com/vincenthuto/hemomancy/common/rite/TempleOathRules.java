@@ -43,12 +43,21 @@ public final class TempleOathRules {
 	public static void recordHeartClaim(Player player, UUID hermit) {
 		if (player != null && hermit != null) {
 			player.getPersistentData().putUUID(CLAIMED_HEART_HERMIT, hermit);
+			var durable = player.getPersistentData().getCompound(Player.PERSISTED_NBT_TAG);
+			durable.putUUID(CLAIMED_HEART_HERMIT, hermit);
+			player.getPersistentData().put(Player.PERSISTED_NBT_TAG, durable);
 		}
 	}
 
+	public static UUID claimedHeartHermit(Player player) {
+		if (player == null) return null;
+		var durable = player.getPersistentData().getCompound(Player.PERSISTED_NBT_TAG);
+		if (durable.hasUUID(CLAIMED_HEART_HERMIT)) return durable.getUUID(CLAIMED_HEART_HERMIT);
+		return player.getPersistentData().hasUUID(CLAIMED_HEART_HERMIT)
+				? player.getPersistentData().getUUID(CLAIMED_HEART_HERMIT) : null;
+	}
+
 	public static boolean hasClaimedHeartFrom(Player player, UUID hermit) {
-		return player != null && hermit != null
-				&& player.getPersistentData().hasUUID(CLAIMED_HEART_HERMIT)
-				&& hermit.equals(player.getPersistentData().getUUID(CLAIMED_HEART_HERMIT));
+		return hermit != null && hermit.equals(claimedHeartHermit(player));
 	}
 }

@@ -44,6 +44,7 @@ import com.vincenthuto.hemomancy.common.item.harbinger.morphlings.PrimalMorphlin
 import com.vincenthuto.hemomancy.common.item.itemhandler.MorphlingJarItemHandler;
 import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
 import com.vincenthuto.hemomancy.common.manipulation.ManipLevel;
+import com.vincenthuto.hemomancy.common.manipulation.family.ManipulationFamilyRegistry;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.PacketSyncBloodMoon;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.PacketSyncPomeProgress;
@@ -1545,9 +1546,13 @@ public class HemoCommand {
 		int added = 0;
 		if ("all".equals(manipulationName)) {
 			for (BloodManipulation manipulation : availableManipulations()) {
-				if (!known.doesListContainName(updated, manipulation)) {
-					updated.put(manipulation, new ManipLevel(0, 0));
+				ManipLevel mastery = findManipulationLevel(updated, manipulation);
+				if (mastery == null) {
+					updated.put(manipulation, maxMastery());
 					added++;
+				} else {
+					mastery.setCurrentLevel(ManipLevel.MAX_LEVEL);
+					mastery.setXp(maxMasteryXp());
 				}
 			}
 		} else {
@@ -1572,6 +1577,24 @@ public class HemoCommand {
 				+ (changed == 1 ? "" : "s") + " for ")
 				.append(Component.literal(player.getName().getString()).withStyle(ChatFormatting.GOLD)), true);
 		return Math.max(1, added);
+	}
+
+	private static ManipLevel findManipulationLevel(LinkedHashMap<BloodManipulation, ManipLevel> knownManips,
+			BloodManipulation manipulation) {
+		for (Map.Entry<BloodManipulation, ManipLevel> entry : knownManips.entrySet()) {
+			if (entry.getKey() != null && entry.getKey().getName().equals(manipulation.getName())) {
+				return entry.getValue();
+			}
+		}
+		return null;
+	}
+
+	private static ManipLevel maxMastery() {
+		return new ManipLevel(ManipLevel.MAX_LEVEL, maxMasteryXp());
+	}
+
+	private static double maxMasteryXp() {
+		return Arrays.stream(ManipLevel.XP_THRESHOLDS).sum();
 	}
 
 	private static int removeKnownManipulation(CommandSourceStack source, ServerPlayer player,
@@ -1660,8 +1683,25 @@ public class HemoCommand {
 	}
 
 	private static List<BloodManipulation> availableManipulations() {
-		return ManipulationInit.getAllEntries().stream().filter(HemoCommand::isAvailableManipulation)
+		Map<String, BloodManipulation> available = new LinkedHashMap<>();
+		for (BloodManipulation manipulation : ManipulationInit.getAllEntries()) {
+			addAvailableManipulation(available, manipulation);
+		}
+		for (var family : ManipulationFamilyRegistry.families()) {
+			addAvailableManipulation(available, ManipulationInit.getByName(family.baselineId()));
+			for (var form : family.forms()) {
+				addAvailableManipulation(available, ManipulationInit.getByName(form.id()));
+			}
+		}
+		return available.values().stream()
 				.sorted(Comparator.comparing(BloodManipulation::getName)).toList();
+	}
+
+	private static void addAvailableManipulation(Map<String, BloodManipulation> available,
+			BloodManipulation manipulation) {
+		if (isAvailableManipulation(manipulation)) {
+			available.putIfAbsent(manipulation.getName(), manipulation);
+		}
 	}
 
 	private static boolean isAvailableManipulation(BloodManipulation manipulation) {

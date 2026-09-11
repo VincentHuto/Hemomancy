@@ -101,6 +101,7 @@ public class StillArt {
 		if (!(player instanceof ServerPlayer serverPlayer) || !(level instanceof ServerLevel serverLevel)) {
 			return;
 		}
+        if (com.vincenthuto.hemomancy.common.manipulation.ductilis.Paralysis.isParalyzed(player)) return;
 		if (this == BLANK || "no_selected".equals(name)) {
 			serverPlayer.displayClientMessage(Component.literal("No Still Art selected.")
 					.withStyle(ChatFormatting.GRAY), true);

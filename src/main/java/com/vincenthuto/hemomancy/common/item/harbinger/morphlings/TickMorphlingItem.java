@@ -53,9 +53,9 @@ public class TickMorphlingItem extends MorphlingItem {
 	}
 
 	@Override
-	public void use(Player playerIn, InteractionHand handIn, ItemStack itemStack, Level worldIn) {
+	public boolean tryUse(Player playerIn, InteractionHand handIn, ItemStack itemStack, Level worldIn) {
 		if (!MorphlingItem.tryBeginPrimalAbility(playerIn, itemStack, "HemorrhagicSeason",
-				420.0, 700, 260, 0)) return;
+				420.0, 700, 260, 0)) return false;
 		AABB area = playerIn.getBoundingBox().inflate(12.0);
 		for (Monster mob : worldIn.getEntitiesOfClass(Monster.class, area,
 				mob -> mob.isAlive() && mob.getHealth() < mob.getMaxHealth())) {
@@ -64,6 +64,7 @@ public class TickMorphlingItem extends MorphlingItem {
 			mob.addEffect(new MobEffectInstance(MobEffects.WEAKNESS,
 					180, 0, true, true, true));
 		}
+		return true;
 	}
 
 	@Override

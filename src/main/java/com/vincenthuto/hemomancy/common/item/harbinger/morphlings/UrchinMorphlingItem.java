@@ -53,9 +53,9 @@ public class UrchinMorphlingItem extends MorphlingItem {
 	}
 
 	@Override
-	public void use(Player playerIn, InteractionHand handIn, ItemStack itemStack, Level worldIn) {
+	public boolean tryUse(Player playerIn, InteractionHand handIn, ItemStack itemStack, Level worldIn) {
 		if (!MorphlingItem.tryBeginPrimalAbility(playerIn, itemStack, "ReefheartBastion",
-				480.0, 900, 260, 0)) return;
+				480.0, 900, 260, 0)) return false;
 		playerIn.addEffect(new MobEffectInstance(MobEffects.DAMAGE_RESISTANCE,
 				220, 2, true, false, true));
 		playerIn.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN,
@@ -72,6 +72,7 @@ public class UrchinMorphlingItem extends MorphlingItem {
 				mob.push(dx / dist * 1.2, 0.3, dz / dist * 1.2);
 			}
 		}
+		return true;
 	}
 
 	@Override

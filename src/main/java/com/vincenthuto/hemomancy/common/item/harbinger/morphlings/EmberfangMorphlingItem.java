@@ -74,20 +74,21 @@ public class EmberfangMorphlingItem extends MorphlingItem {
 	}
 
 	@Override
-	public void use(Player playerIn, InteractionHand handIn, ItemStack itemStack, Level worldIn) {
+	public boolean tryUse(Player playerIn, InteractionHand handIn, ItemStack itemStack, Level worldIn) {
 		LivingEntity target = MorphlingItem.findLookTarget(playerIn, 24.0);
 		if (target == null) {
 			playerIn.displayClientMessage(Component.literal("No blood-warm target answers the venom."), true);
-			return;
+			return false;
 		}
 		if (!MorphlingItem.tryBeginPrimalAbility(playerIn, itemStack, "SovereignVenom",
-				420.0, 700, 220, 0)) return;
+				420.0, 700, 220, 0)) return false;
 		CompoundTag tag = itemStack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
 		tag.putString("SovereignVenomTarget", target.getStringUUID());
 		tag.putLong("SovereignVenomUntil", worldIn.getGameTime() + SOVEREIGN_VENOM_WINDOW);
 		tag.putInt("SovereignVenomHits", 0);
 		itemStack.set(DataComponents.CUSTOM_DATA, CustomData.of(tag));
 		target.addEffect(new MobEffectInstance(MobEffects.GLOWING, 120, 0, true, false, true));
+		return true;
 	}
 
 	@Override

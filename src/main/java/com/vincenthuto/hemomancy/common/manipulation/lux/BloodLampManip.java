@@ -1,19 +1,18 @@
 package com.vincenthuto.hemomancy.common.manipulation.lux;
 
+import com.vincenthuto.hemomancy.common.manipulation.HemomancyTendrilEffects;
+import com.vincenthuto.hemomancy.common.manipulation.ManipulationParticles;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.EnumVeinSections;
 import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillPointHelper;
 import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
 import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationRank;
 import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationType;
-import com.vincenthuto.hutoslib.client.particle.factory.GlowParticleFactory;
-import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
-import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.ClipContext;
@@ -78,19 +77,9 @@ public class BloodLampManip extends BloodManipulation {
 			double cx = lightPos.getX() + 0.5;
 			double cy = lightPos.getY() + 0.5;
 			double cz = lightPos.getZ() + 0.5;
-			RandomSource random = world.random;
+        HemomancyTendrilEffects.luxRelease(player, new Vec3(cx, cy, cz));
 
-			for (int i = 0; i < 20; i++) {
-				sLevel.sendParticles(
-						GlowParticleFactory.createData(new ParticleColor(
-								200 + random.nextFloat() * 55,
-								180 + random.nextFloat() * 75,
-								180 + random.nextFloat() * 75)),
-						cx + (random.nextDouble() - 0.5) * 0.6,
-						cy + (random.nextDouble() - 0.5) * 0.6,
-						cz + (random.nextDouble() - 0.5) * 0.6,
-						1, 0f, 0.05f, 0f, 0.015f);
-			}
+			ManipulationParticles.accent(sLevel, EnumBloodTendency.LUX, new Vec3(cx, cy, cz), net.minecraft.world.phys.Vec3.ZERO);
 		}
 	}
 }

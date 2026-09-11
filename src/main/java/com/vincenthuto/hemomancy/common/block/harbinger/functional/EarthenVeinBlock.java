@@ -6,6 +6,7 @@ import com.vincenthuto.hemomancy.common.init.BlockEntityInit;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.manips.KnownManipulationServerPacket;
 import com.vincenthuto.hemomancy.common.tile.harbinger.functional.EarthenVeinBlockEntity;
+import com.vincenthuto.hemomancy.common.vein.EarthenVeinTravelManager;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.component.DataComponents;
@@ -121,11 +122,17 @@ public class EarthenVeinBlock extends Block implements EntityBlock, SimpleWaterl
 	private InteractionResult handleInteraction(BlockState state, Level worldIn, BlockPos pos, Player player,
 			ItemStack stack) {
 		if (worldIn.getBlockEntity(pos) instanceof EarthenVeinBlockEntity vein && vein.isTemporary()) {
+			if (!worldIn.isClientSide && player instanceof ServerPlayer serverPlayer
+					&& vein.isTemporaryOwnedBy(player.getUUID())) {
+				EarthenVeinTravelManager.begin(serverPlayer, pos);
+			}
 			return InteractionResult.SUCCESS;
 		}
 		IKnownManipulations known = HemoCapabilityAccess.getKnownManipulations(player)
 				.orElseThrow(NullPointerException::new);
 		if (worldIn.getBlockEntity(pos)instanceof EarthenVeinBlockEntity te) {
+			boolean usedClaimItem = stack.getItem() == Blocks.IRON_BARS.asItem();
+			boolean usedNameTag = stack.getItem() == Items.NAME_TAG;
 			if (!state.getValue(STENTED)) {
 				if (stack.getItem() == Blocks.IRON_BARS.asItem()) {
 
@@ -176,7 +183,9 @@ public class EarthenVeinBlock extends Block implements EntityBlock, SimpleWaterl
 			}
 			if (!worldIn.isClientSide) {
 				PacketHandler.sendToPlayer((ServerPlayer) player, new KnownManipulationServerPacket(known));
-
+				if (!usedClaimItem && !usedNameTag && state.getValue(STENTED)) {
+					EarthenVeinTravelManager.begin((ServerPlayer) player, pos);
+				}
 			}
 		}
 		return InteractionResult.SUCCESS;

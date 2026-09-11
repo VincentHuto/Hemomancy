@@ -13,6 +13,9 @@ import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -33,18 +36,42 @@ public class VialRackItem extends Item {
 		super(properties.stacksTo(1));
 	}
 
+	@Override
+	public InteractionResultHolder<ItemStack> use(Level level,
+			Player player, InteractionHand hand) {
+		ItemStack rack = player.getItemInHand(hand);
+		ItemStack supply = player.getItemInHand(hand == InteractionHand.MAIN_HAND
+				? InteractionHand.OFF_HAND : InteractionHand.MAIN_HAND);
+		if (!isEmptyVial(supply)) return InteractionResultHolder.pass(rack);
+		if (!level.isClientSide) {
+			NonNullList<ItemStack> vials = getVials(rack);
+			for (int i = 0; i < vials.size() && !supply.isEmpty(); i++) {
+				if (vials.get(i).isEmpty()) {
+					vials.set(i, supply.copyWithCount(1));
+					supply.shrink(1);
+				}
+			}
+			setVials(rack, vials);
+		}
+		return InteractionResultHolder.sidedSuccess(rack, level.isClientSide);
+	}
+
 	@OnlyIn(Dist.CLIENT)
 	@Override
 	public void appendHoverText(ItemStack stack, Item.TooltipContext context, List<Component> tooltip, TooltipFlag flagIn) {
 		super.appendHoverText(stack, context, tooltip, flagIn);
 		int emptyCount = countEmptyVials(stack);
 		tooltip.add(Component.translatable("item.hemomancy.vial_rack.empty_count", emptyCount, MAX_VIALS));
+		tooltip.add(Component.literal("Use with empty vials in the other hand to refill vacant slots.")
+				.withStyle(ChatFormatting.GRAY));
 		if (Screen.hasShiftDown()) {
 			NonNullList<ItemStack> vials = getVials(stack);
 			for (int i = 0; i < vials.size(); i++) {
 				ItemStack vial = vials.get(i);
 				Component slotLabel = Component.literal("[" + (i + 1) + "] ").withStyle(ChatFormatting.DARK_GRAY);
-				if (isEmptyVial(vial)) {
+				if (vial.isEmpty()) {
+					tooltip.add(slotLabel.copy().append(Component.literal("No vial").withStyle(ChatFormatting.GRAY)));
+				} else if (isEmptyVial(vial)) {
 					tooltip.add(slotLabel.copy().append(
 							Component.translatable("item.hemomancy.vial_rack.slot_empty").withStyle(ChatFormatting.GRAY)));
 				} else {
@@ -102,7 +129,7 @@ public class VialRackItem extends Item {
 		ListTag list = new ListTag();
 		for (int i = 0; i < MAX_VIALS; i++) {
 			ItemStack slotStack = i < vials.size() ? vials.get(i) : ItemStack.EMPTY;
-			list.add(slotStack.save(provider()));
+			list.add(slotStack.saveOptional(provider()));
 		}
 		tag.put(TAG_VIALS, list);
 		rack.set(DataComponents.CUSTOM_DATA, CustomData.of(tag));

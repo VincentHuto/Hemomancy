@@ -10,9 +10,6 @@ import com.vincenthuto.hemomancy.common.manipulation.ManipulationCombatHelper;
 import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationRank;
 import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationType;
 import com.vincenthuto.hemomancy.common.manipulation.SchoolHitHelper;
-import com.vincenthuto.hutoslib.client.particle.data.ColorParticleData;
-import com.vincenthuto.hutoslib.common.registry.HLParticleInit;
-import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
@@ -54,8 +51,5 @@ public class GraveDebtManip extends BloodManipulation {
 		SchoolHitHelper.markGraveDebt(target, player, DURATION_TICKS);
 		ManipulationVisuals.attached(target, ManipulationVisuals.Form.GRAVE, 1, DURATION_TICKS, 1); world.playSound(null, target.blockPosition(), SoundEvents.SCULK_SHRIEKER_SHRIEK, SoundSource.PLAYERS,
 				0.45F, 0.55F);
-		serverLevel.sendParticles(new ColorParticleData(HLParticleInit.glow.get(), new ParticleColor(70, 105, 35)),
-				target.getX(), target.getY() + target.getBbHeight() * 0.5D, target.getZ(),
-				24, 0.5D, 0.55D, 0.5D, 0.018D);
 	}
 }

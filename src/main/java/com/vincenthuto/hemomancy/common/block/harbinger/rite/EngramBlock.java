@@ -1,8 +1,7 @@
 package com.vincenthuto.hemomancy.common.block.harbinger.rite;
 
-import com.vincenthuto.hemomancy.client.particle.factory.BloodCellParticleFactory;
+import com.vincenthuto.hemomancy.common.particle.HemoParticleData;
 import com.vincenthuto.hemomancy.common.block.shared.WaterloggableBlock;
-import com.vincenthuto.hutoslib.client.particle.factory.GlowParticleFactory;
 import com.vincenthuto.hutoslib.client.particle.util.HLParticleUtils;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import net.minecraft.core.BlockPos;
@@ -76,7 +75,7 @@ public class EngramBlock extends WaterloggableBlock {
 				player.hurt(player.damageSources().generic(), 1.5f);
 				if (!worldIn.isClientSide) {
 					HLParticleUtils.spawnPoof((ServerLevel) worldIn, pos,
-							BloodCellParticleFactory.createData(ParticleColor.BLOOD));
+							HemoParticleData.bloodCell(ParticleColor.BLOOD));
 				}
 			}
 		} else {
@@ -184,12 +183,12 @@ public class EngramBlock extends WaterloggableBlock {
 		if (random.nextInt(10) == 0) {
 			Vec3 particlePos = randomSurfacePos(state, pos, random);
 
-			level.addParticle(BloodCellParticleFactory.createData(ParticleColor.BLOOD),
+			level.addParticle(HemoParticleData.bloodCell(ParticleColor.BLOOD),
 					particlePos.x, particlePos.y, particlePos.z, 0.0D, 0.0D, 0.0D);
 		}
 		if (state.getValue(LIT)) {
 			Vec3 particlePos = randomSurfacePos(state, pos, random);
-			level.addParticle(GlowParticleFactory.createData(ParticleColor.BLOOD),
+			level.addParticle(HemoParticleData.glow(ParticleColor.BLOOD),
 					particlePos.x, particlePos.y, particlePos.z, 0.0D, 0.0D, 0.0D);
 
 		}

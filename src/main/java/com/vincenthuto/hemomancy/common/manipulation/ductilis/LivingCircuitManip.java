@@ -51,7 +51,7 @@ public class LivingCircuitManip extends BloodManipulation {
 			ally.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SPEED, 25, 1, false, true));
 			ally.addEffect(new MobEffectInstance(MobEffects.DIG_SPEED, 25, 1, false, true));
 			ManipulationReactiveEvents.armLivingCircuit(ally);
-			DuctilisLightningEffects.conductiveArc(player, ally, 0);
+			DuctilisLightningEffects.livingCircuit(player, ally);
 		}
 	}
 }

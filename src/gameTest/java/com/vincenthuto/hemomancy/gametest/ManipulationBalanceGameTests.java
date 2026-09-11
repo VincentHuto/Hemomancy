@@ -44,7 +44,9 @@ public class ManipulationBalanceGameTests {
         target.addEffect(new MobEffectInstance(MobEffects.POISON,200)); h.getLevel().addFreshEntity(target); p.setHealth(10);
         try {
             ManipulationInit.carrion_communion.get().getAction(p,h.getLevel(),ItemStack.EMPTY,p.blockPosition(),0);
-            h.assertTrue(p.getHealth()>10 && p.getHealth()<=10.126f,"Drain healing counted overkill");
+            h.assertTrue(p.getHealth()>10 && p.getHealth()<=10.126f,"Drain healing counted overkill: player=" + p.getHealth()
+                    + ", target=" + target.getHealth() + ", visible targets="
+                    + h.getLevel().getEntitiesOfClass(net.minecraft.world.entity.LivingEntity.class, p.getBoundingBox().inflate(8)).size());
             h.succeed();
         } finally {target.discard();p.discard();}
     }
@@ -59,7 +61,9 @@ public class ManipulationBalanceGameTests {
         try {
             var m=ManipulationInit.iron_choir.get();m.getAction(p,h.getLevel(),ItemStack.EMPTY,p.blockPosition(),0);
             m.tickContinuousAction(p,h.getLevel());
-            h.assertTrue(shots.stream().filter(a->!a.isRemoved()).count()==1,"Choir volley budget was not three");
+            h.assertTrue(shots.stream().filter(a->!a.isRemoved()).count()==1,"Choir volley budget was not three: remaining="
+                    + shots.stream().filter(a->!a.isRemoved()).count() + ", visible projectiles="
+                    + h.getLevel().getEntitiesOfClass(net.minecraft.world.entity.projectile.Projectile.class, p.getBoundingBox().inflate(5)).size());
             h.assertTrue(!own.isRemoved(),"Choir consumed own projectile");h.succeed();
         } finally {ManipulationInit.iron_choir.get().finishContinuousAction(p,false);shots.forEach(Arrow::discard);own.discard();enemy.discard();p.discard();}
     }

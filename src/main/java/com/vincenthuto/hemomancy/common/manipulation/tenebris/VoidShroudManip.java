@@ -1,18 +1,17 @@
 package com.vincenthuto.hemomancy.common.manipulation.tenebris;
 
+import com.vincenthuto.hemomancy.common.manipulation.ManipulationVisuals;
+import com.vincenthuto.hemomancy.common.manipulation.ManipulationParticles;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.EnumVeinSections;
 import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
 import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationRank;
 import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationType;
-import com.vincenthuto.hutoslib.client.particle.factory.GlowParticleFactory;
-import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
-import net.minecraft.util.RandomSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.player.Player;
@@ -53,21 +52,7 @@ public class VoidShroudManip extends BloodManipulation {
 		world.playSound(null, player.blockPosition(),
 				SoundEvents.ENDERMAN_TELEPORT, SoundSource.PLAYERS, 0.5f, 1.8f);
 
-        com.vincenthuto.hemomancy.common.manipulation.ManipulationVisuals.burst(sLevel,
-                com.vincenthuto.hemomancy.common.manipulation.ManipulationVisuals.Form.VEIL,
-                player.position(), player.position(), 1, 18);
-		RandomSource random = world.random;
-		BlockPos pos = player.blockPosition();
-		for (int i = 0; i < 25; i++) {
-			sLevel.sendParticles(
-					GlowParticleFactory.createData(new ParticleColor(
-							40 + random.nextFloat() * 30,
-							0,
-							60 + random.nextFloat() * 50)),
-					pos.getX() + 0.5 + (random.nextDouble() - 0.5) * 0.8,
-					pos.getY() + random.nextDouble() * 2.0,
-					pos.getZ() + 0.5 + (random.nextDouble() - 0.5) * 0.8,
-					1, (random.nextDouble() - 0.5) * 0.1, -0.03f, (random.nextDouble() - 0.5) * 0.1, 0.01f);
-		}
+        ManipulationVisuals.attached(player, ManipulationVisuals.Form.VEIL, 1, 18, 1);
+		ManipulationParticles.accent(sLevel, EnumBloodTendency.TENEBRIS, player.position().add(0, 1, 0), net.minecraft.world.phys.Vec3.ZERO);
 	}
 }

@@ -56,6 +56,8 @@ public class ScarStationScreen extends AbstractContainerScreen<ScarStationMenu> 
 	public byte[][] pattern = ScarRecipe.blank();
 	public byte[][] preview = ScarRecipe.blank();
 	private ItemStack lastPatternSlotItem = ItemStack.EMPTY;
+	private boolean firstPatternSync = true;
+	private boolean outputWasEmpty;
 
 	/** Seeded vein parameters for animated background. */
 	private float[][] veinParams;
@@ -109,6 +111,7 @@ public class ScarStationScreen extends AbstractContainerScreen<ScarStationMenu> 
 		this.imageHeight = 186;
 		this.playerInv = inv;
 		this.te = screenContainer.getTe();
+		this.outputWasEmpty = te.getItem(2).isEmpty();
 		// Sync local pattern from TE so reopening the screen preserves grid state
 		if (te.scarsList != null) {
 			for (int i = 0; i < te.scarsList.length && i < pattern.length; i++) {
@@ -137,12 +140,24 @@ public class ScarStationScreen extends AbstractContainerScreen<ScarStationMenu> 
 			graphics.renderComponentTooltip(font, cat1, mouseX, mouseY);
 		}
 		List<Component> cat9 = new ArrayList<Component>();
-		cat9.add(Component.literal("Cerebral Scar"));
+		cat9.add(Component.literal("Carve scar"));
+		Component failure = te.craftingFailure();
+		cat9.add(failure == null ? Component.literal("Ready: carve the traced scar.") : failure);
 		if (ScarButton.isHovered()) {
 			graphics.renderComponentTooltip(font, cat9, mouseX, mouseY);
 		}
 		List<Component> cat10 = new ArrayList<Component>();
-		cat10.add(Component.literal("Load Pattern"));
+		cat10.add(Component.literal("Load stencil"));
+		cat10.add(Component.literal("Click or drag purple cells to trace them in red."));
+		cat10.add(Component.literal("Learn: 100 ml at a brazier. Effigy: 500 ml per scar."));
+		cat10.add(Component.literal("Fit the prepared motif at a brazier: 50 ml."));
+		List<ItemScarPattern.TemplateEntry> templates = ItemScarPattern.getTemplateEntries(te.getItem(4), minecraft.level);
+		int selectedEntry = binderSelectedEntry >= 0 ? binderSelectedEntry : 0;
+		if (selectedEntry < templates.size() && templates.get(selectedEntry).resultIcon().getItem()
+				instanceof com.vincenthuto.hemomancy.common.item.harbinger.scar.ItemScar scar) {
+			cat10.add(templates.get(selectedEntry).resultIcon().getHoverName());
+			scar.getScarDefinition().appendHoverText(cat10);
+		}
 		if (loadPatternButton.isHovered()) {
 			graphics.renderComponentTooltip(font, cat10, mouseX, mouseY);
 		}
@@ -153,20 +168,30 @@ public class ScarStationScreen extends AbstractContainerScreen<ScarStationMenu> 
 	protected void containerTick() {
 		super.containerTick();
 		syncPatternSlotState();
+		boolean empty = te.getItem(2).isEmpty();
+		if (outputWasEmpty && !empty) {
+			pattern = ScarRecipe.blank();
+			preview = ScarRecipe.blank();
+			refreshButtonsFromPattern();
+		}
+		outputWasEmpty = empty;
 	}
 
 	private void syncPatternSlotState() {
 		ItemStack currentPatternSlot = te.getItem(4);
-		if (!ItemStack.isSameItemSameComponents(currentPatternSlot, lastPatternSlotItem)) {
+		if (firstPatternSync || !ItemStack.isSameItemSameComponents(currentPatternSlot, lastPatternSlotItem)) {
 			lastPatternSlotItem = currentPatternSlot.copy();
 			if (currentPatternSlot.getItem() instanceof ItemScarPattern) {
 				rebuildBinderEntries(currentPatternSlot);
 				binderSelectedEntry = -1;
 				binderPanelVisible = binderEntries.size() > 1;
 				if (binderEntries.size() == 1 && binderEntries.get(0).pattern() != null) {
-					loadPatternIntoGrid(binderEntries.get(0).pattern());
+					if (firstPatternSync) {
+						byte[][] stencil = binderEntries.get(0).pattern();
+						for (int i = 0; i < preview.length; i++) preview[i] = stencil[i].clone();
+					} else loadPatternIntoGrid(binderEntries.get(0).pattern());
 				}
-			} else {
+			} else if (!firstPatternSync) {
 				binderPanelVisible = false;
 				binderEntries.clear();
 				binderSelectedEntry = -1;
@@ -176,6 +201,7 @@ public class ScarStationScreen extends AbstractContainerScreen<ScarStationMenu> 
 				PacketHandler.sendToServer(new PacketUpdateScarPattern(pattern));
 			}
 		}
+		firstPatternSync = false;
 	}
 
 	@Override
@@ -727,13 +753,7 @@ public class ScarStationScreen extends AbstractContainerScreen<ScarStationMenu> 
 		this.addRenderableWidget(ScarButton = new ScarActionButton(
 				left + 120, top + 36 + TOP_CONTENT_Y_OFFSET, 16, 16,
 				ScarActionButton.IconType.CHISEL, (press) -> {
-					if (te.contents.get(3).getItem() != Items.AIR) {
-						PacketHandler.sendToServer(new PacketScarCraftingEvent());
-						pattern = ScarRecipe.blank();
-						preview = ScarRecipe.blank();
-						refreshButtonsFromPattern();
-						PacketHandler.sendToServer(new PacketUpdateScarPattern(pattern));
-					}
+					PacketHandler.sendToServer(new PacketScarCraftingEvent());
 				}));
 		this.addRenderableWidget(loadPatternButton = new ScarActionButton(
 				left + 28, top + 80 + TOP_CONTENT_Y_OFFSET, 16, 16,

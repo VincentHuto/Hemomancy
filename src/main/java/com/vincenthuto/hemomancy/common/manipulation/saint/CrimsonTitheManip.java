@@ -79,12 +79,9 @@ public class CrimsonTitheManip extends BloodManipulation {
 
 		world.playSound(null, player.blockPosition(), SoundEvents.WARDEN_HEARTBEAT, SoundSource.PLAYERS, 0.8f, 1.2f);
 
-		if (world instanceof ServerLevel sLevel) {
-			sLevel.sendParticles(
-					new ColorParticleData(new ParticleColor(180, 0, 0)),
-					player.getX(), player.getY() + 1.0, player.getZ(),
-					20, 0.3, 0.5, 0.3, 0.02);
-		}
+        com.vincenthuto.hemomancy.common.manipulation.ManipulationVisuals.attached(player,
+                com.vincenthuto.hemomancy.common.manipulation.ManipulationVisuals.Form.DEBT,0,REPAYMENT_WINDOW_TICKS,(int)borrowed);
+
 	}
 
 	public static void tickDebt(ServerPlayer player) {
@@ -103,7 +100,13 @@ public class CrimsonTitheManip extends BloodManipulation {
 			PacketHandler.sendToPlayer(player, new BloodVolumeServerPacket(volume));
 		}
 
-		if (spent > 0.0D) {
+		com.vincenthuto.hemomancy.common.manipulation.ManipulationVisuals.attached(player,
+                com.vincenthuto.hemomancy.common.manipulation.ManipulationVisuals.Form.DEBT,0,0,0);
+        com.vincenthuto.hemomancy.common.manipulation.ManipulationVisuals.burst(player.serverLevel(),spent>0
+                ?com.vincenthuto.hemomancy.common.manipulation.ManipulationVisuals.Form.TITHE_COLLECT
+                :com.vincenthuto.hemomancy.common.manipulation.ManipulationVisuals.Form.TITHE_RETURN,
+                player.position(),player.position(),1,24);
+        if (spent > 0.0D) {
 			player.hurt(player.damageSources().magic(), 6.0F);
 			player.displayClientMessage(Component.literal("The tithe was spent. Hemorath collects double.")
 					.withStyle(ChatFormatting.DARK_RED, ChatFormatting.BOLD), false);

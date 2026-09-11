@@ -17,6 +17,7 @@ import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.*;
 import net.minecraft.client.renderer.RenderType;
+import net.minecraft.util.Mth;
 import net.minecraft.world.entity.AnimationState;
 import net.minecraft.world.level.Level;
 
@@ -81,7 +82,15 @@ public class EarthenVeinModel extends Model implements IAnimatedModel<EarthenVei
 		float time = (float) level.getGameTime() + partialTicks;
 		AnimationHelper.animate(this, state, EARTHENVEINMODEL_WIGGLE, time, 1F);
 		float animTime = AnimationHelper.getElapsedSeconds(EARTHENVEINMODEL_WIGGLE, state.getAccumulatedTime());
-
+		float mouth = Mth.clamp(ctx.mouthProgress(), 0.0F, 1.0F);
+		ModelPart upperMouth = root.getChild("section5");
+		upperMouth.xScale *= 1.0F + mouth * 0.48F;
+		upperMouth.zScale *= 1.0F + mouth * 0.48F;
+		upperMouth.y -= mouth * 1.4F;
+		ModelPart innerMouth = root.getChild("section6");
+		innerMouth.xScale *= 1.0F + mouth * 0.72F;
+		innerMouth.zScale *= 1.0F + mouth * 0.72F;
+		innerMouth.y -= mouth * 2.6F;
 	}
 
 	@Override

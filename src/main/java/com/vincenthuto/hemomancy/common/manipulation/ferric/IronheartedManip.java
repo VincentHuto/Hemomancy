@@ -7,7 +7,6 @@ import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.Enu
 import com.vincenthuto.hemomancy.common.manipulation.*;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -57,8 +56,6 @@ public class IronheartedManip extends BloodManipulation {
 				0.0F, BodyIdiomRules.maxIronHeartHealth(player)));
 		state.setIronHeartExpiryTick(world.getGameTime() + BodyIdiomRules.IRON_HEART_DURATION_TICKS);
 		BodyIdiomEvents.sync(serverPlayer);
-		level.sendParticles(ParticleTypes.CRIMSON_SPORE, player.getX(), player.getY() + 1.0D, player.getZ(),
-				22, 0.38D, 0.55D, 0.38D, 0.02D);
 		level.playSound(null, player.blockPosition(), SoundEvents.ANVIL_LAND, SoundSource.PLAYERS, 0.55F, 1.35F);
 	}
 }

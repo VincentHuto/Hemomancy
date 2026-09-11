@@ -79,6 +79,12 @@ public class MorphlingItem extends Item implements IMorphling {
 
 	@Override
 	public void use(Player playerIn, InteractionHand handIn, ItemStack itemStack, Level worldIn) {
+		tryUse(playerIn, handIn, itemStack, worldIn);
+	}
+
+	@Override
+	public boolean tryUse(Player player, InteractionHand hand, ItemStack creature, Level level) {
+		return false;
 	}
 
 	/**

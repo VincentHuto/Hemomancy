@@ -1,10 +1,9 @@
 package com.vincenthuto.hemomancy.common.entity.projectile;
 
-import com.vincenthuto.hemomancy.client.particle.factory.BloodCellParticleFactory;
+import com.vincenthuto.hemomancy.common.particle.HemoParticleData;
 import com.vincenthuto.hemomancy.common.init.EntityInit;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.LivingSickleCombatRules;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.TendencyWeaponHelper;
-import com.vincenthuto.hutoslib.client.particle.factory.DarkGlowParticleFactory;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import com.vincenthuto.hutoslib.common.tendril.TendrilAnchor;
 import com.vincenthuto.hutoslib.common.tendril.TendrilEffectConfig;
@@ -112,9 +111,9 @@ public final class LivingSickleHookEntity extends ThrowableProjectile {
 	private void emitImpact(LivingEntity target) {
 		if (!(level() instanceof ServerLevel server)) return;
 		Vec3 center = target.position().add(0.0D, target.getBbHeight() * 0.52D, 0.0D);
-		server.sendParticles(BloodCellParticleFactory.createData(BLOOD), center.x, center.y, center.z,
+		server.sendParticles(HemoParticleData.bloodCell(BLOOD), center.x, center.y, center.z,
 				18, 0.55D, 0.65D, 0.55D, 0.08D);
-		server.sendParticles(DarkGlowParticleFactory.createData(new ParticleColor(18, 0, 5)),
+		server.sendParticles(HemoParticleData.darkGlow(new ParticleColor(18, 0, 5)),
 				center.x, center.y, center.z, 10, 0.65D, 0.7D, 0.65D, 0.04D);
 	}
 }

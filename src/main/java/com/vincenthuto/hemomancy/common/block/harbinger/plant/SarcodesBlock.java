@@ -1,6 +1,6 @@
 package com.vincenthuto.hemomancy.common.block.harbinger.plant;
 
-import com.vincenthuto.hemomancy.client.particle.factory.BloodCellParticleFactory;
+import com.vincenthuto.hemomancy.common.particle.HemoParticleData;
 import com.vincenthuto.hemomancy.common.init.BlockInit;
 
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
@@ -44,7 +44,7 @@ public class SarcodesBlock extends FlowerBlock {
 			double x = pos.getX() + 0.5 + (random.nextDouble() - 0.5) * 0.4;
 			double y = pos.getY() + 0.4 + random.nextDouble() * 0.3;
 			double z = pos.getZ() + 0.5 + (random.nextDouble() - 0.5) * 0.4;
-			level.addParticle(BloodCellParticleFactory.createData(ParticleColor.BLOOD),
+			level.addParticle(HemoParticleData.bloodCell(ParticleColor.BLOOD),
 					x, y, z, 0.0, -0.04, 0.0);
 		}
 	}

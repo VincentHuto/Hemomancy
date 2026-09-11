@@ -76,6 +76,10 @@ final class VesperTendencyDefenseIntegrationSourceTest {
 		String source = Files.readString(Path.of(
 				"src/main/java/com/vincenthuto/hemomancy/common/manipulation/ductilis/ActivationPotentialManip.java"));
 
-		assertTrue(source.contains("target.hurt(player.damageSources().magic(), adjusted)"));
+        String helper = Files.readString(Path.of(
+                "src/main/java/com/vincenthuto/hemomancy/common/manipulation/ManipulationCombatHelper.java"));
+
+        assertTrue(source.contains("ManipulationCombatHelper.hurt("));
+        assertTrue(helper.contains("ManipulationParticles.hurt(manipulation, target, level.damageSources().magic(), adjusted)"));
 	}
 }

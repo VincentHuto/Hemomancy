@@ -22,6 +22,13 @@ public class IronSpikeRenderer extends MobRenderer<EntityIronSpike, IronSpikeMod
 
 
 	@Override
+	public void render(EntityIronSpike entity, float yaw, float partial, PoseStack poses,
+			net.minecraft.client.renderer.MultiBufferSource buffers, int light) {
+		if (entity.isPlayerConstruct()) return;
+		super.render(entity, yaw, partial, poses, buffers, light);
+	}
+
+	@Override
 	public ResourceLocation getTextureLocation(EntityIronSpike p_114482_) {
 		return texture;
 	}

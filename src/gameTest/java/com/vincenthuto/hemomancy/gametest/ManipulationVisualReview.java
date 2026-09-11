@@ -125,9 +125,9 @@ public final class ManipulationVisualReview {
                 double radius=form==Form.WELL || form==Form.STILLNESS || form==Form.BEACON?2:1;
                 var end=form==Form.VERDICT || form==Form.THREAD || form==Form.DRAIN?new Vec3(3,1,0):Vec3.ZERO;
                 try {draw.invoke(null,new ManipulationVisualPacket(form,-1,Vec3.ZERO,end,(float)radius,40,8),
-                        pose,buffers.getBuffer(HemoRenderTypes.QLIPHOTH_GLOW),100.0,age,opacity);}
+                        pose,buffers.getBuffer(com.vincenthuto.hemomancy.client.render.world.ManipulationMaterials.forForm(form).renderType()),100.0,age,opacity);}
                 catch(ReflectiveOperationException e){throw new IllegalStateException(e);}
-                pose.popPose();buffers.endBatch(HemoRenderTypes.QLIPHOTH_GLOW);
+                pose.popPose();buffers.endBatch(com.vincenthuto.hemomancy.client.render.world.ManipulationMaterials.forForm(form).renderType());
             }
         }
     }

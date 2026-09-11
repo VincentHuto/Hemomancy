@@ -92,6 +92,6 @@ public final class ManipulationCombatHelper {
 			ServerLevel level, float amount) {
 		if (!canHarm(player, target)) return false;
 		float adjusted = TendencyAffinityRules.adjustManipulationDamage(player, target, manipulation, amount);
-		return target.hurt(level.damageSources().magic(), adjusted);
+		return ManipulationParticles.hurt(manipulation, target, level.damageSources().magic(), adjusted);
 	}
 }

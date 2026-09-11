@@ -215,7 +215,7 @@ public class PacketLedgerAction implements CustomPacketPayload {
 			return;
 		}
 
-		if (!bloodline.getLeaderUUID().equals(player.getUUID())) {
+		if (!bloodline.canManage(player.getUUID())) {
 			player.displayClientMessage(
 					Component.translatable("hemomancy.ledger.recall.not_leader")
 							.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC),
@@ -255,7 +255,7 @@ public class PacketLedgerAction implements CustomPacketPayload {
 			return;
 		}
 
-		if (!bloodline.getLeaderUUID().equals(player.getUUID())) {
+		if (!bloodline.canManage(player.getUUID())) {
 			player.displayClientMessage(
 					Component.translatable("hemomancy.ledger.disband.not_leader")
 							.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC),

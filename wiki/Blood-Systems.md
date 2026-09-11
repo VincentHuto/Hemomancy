@@ -1,5 +1,7 @@
 # Blood Systems
 
+Lux manipulations form flowing white light, including a luminous Beacon, thin beams and the Unclosing Eye. White Verdict leaves a slightly thicker beam that fades over two seconds after release; the lingering light causes no additional hits. Tenebris forms black liquid that stretches into smoke. Umbral Step's smoke surrounds its departure and arrival positions. Charged manipulations keep their buildup visible through the gauge's full charge duration. Their costs, targeting, damage and gameplay durations are unchanged. [Visual implementation and verification](../docs/manipulation_work_plan/08-lux-umbra-flow.md).
+
 Hematic Flare requires a visible permitted target before charging blood; Funeral Bell respects owned allies and disabled PvP for damage and statuses. [Manipulation acceptance results and remaining checks](../docs/manipulation_work_plan/06-acceptance-results.md).
 
 Memory and progression tooltips distinguish **base cast**, **upkeep per second**, **reactive trigger** and **Living Staff switch** costs. A staff form's registry-zero cost does not make switching free: the base is 250 mL, reduced by Weapons Master to a minimum of 50 mL. Weapon attacks have their own costs, shown on weapon tooltips. Restoration is free, and loaded crossbow ammunition is retained through restoration and re-forming, including a save/reload.
@@ -54,6 +56,10 @@ Player/body sources such as base regeneration, **Sanguine Surge**, **Last Wind**
 ## Blood Manipulations
 
 **Manipulations** are the abilities you trigger, charge, toggle, or keep active with blood.
+
+Manipulation effects share material and movement within each tendency: circulating blood, drained residue, nerve impulses, blood-derived iron, heated glass, arrested frost, luminous fibers and inward shadow. Readiness counts and field boundaries continue to follow gameplay state. Brief blood-cell and school-colored glow accents accompany successful activation and hits, with sparse motes around sustained forms. Reducing particles removes decoration while retaining the main spell subjects. [Visual pass and evidence](../docs/manipulation_work_plan/07-visceral-visuals.md).
+
+Flammeus now uses red-orange flame, thin smoke, boiling blood and tumbling sanguine glass. Congeatio forms dark frozen blood beneath pale frost, with powder, heavy cruor fragments and cracks that follow affected bodies and surfaces. These effects retain the existing spell timing, range and combat behavior. [Fire and Cold materials](Flammeus-Congeatio-Visuals.md).
 
 ### Manipulation Types
 
@@ -175,7 +181,7 @@ At Degree 5, the **Dendritic Distributor** becomes a Synaptic Loadout station. I
 - `skill_synaptic_memory` adds 1 pattern per level, up to 7 total
 - Saving or overwriting costs 100 blood and 25 raw XP
 - Applying and renaming are free
-- Fixed mechanical utilities such as blood absorption and blood projection stay automatic and are not saved inside patterns
+- Fixed mechanical utilities such as Blood Absorption, Blood Projection, and Conjure Staff stay automatic and are not saved inside patterns. Once learned, Conjure Staff cannot be dememorized at the Reliquary, costs no memorized slot, and remains available in the radial's utility section.
 
 Use these patterns for combat, travel, rituals, and fane work. You do not need to relearn the manipulations.
 
@@ -387,7 +393,7 @@ The **Scrying Podium** **Tendency** tab shows your dominant and latent tendencie
 - Escape and infiltration
 - Countered by Lux tendency
 
-**Current implemented combat notes:** Tenebris now has `gloam_laceration` as a Humilis ambush slash: it applies Blood Loss and Weakness, deals magic damage, hits harder while the caster is invisible or standing in natural/synthetic darkness, and uses a three-line tapered claw ribbon visual instead of generic glow motes. `void_shroud`, `black_veil_covenant`, `umbral_step`, and `blood_eclipse` remain the core stealth/darkness chain. Tenebris attacks dynamically oppose Lux-school Rogue Wills by their synced Will school.
+**Current implemented combat notes:** Tenebris now has `gloam_laceration` as a Humilis ambush slash: it applies Blood Loss and Weakness, deals magic damage, hits harder while the caster is invisible or standing in natural/synthetic darkness, and uses a thin liquid-dark slash with dissolving smoky edges. `void_shroud`, `black_veil_covenant`, `umbral_step`, and `blood_eclipse` remain the core stealth/darkness chain. Tenebris attacks dynamically oppose Lux-school Rogue Wills by their synced Will school.
 
 ---
 

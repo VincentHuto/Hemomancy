@@ -5,9 +5,6 @@ import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.Enu
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.EnumVeinSections;
 import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillPointHelper;
 import com.vincenthuto.hemomancy.common.manipulation.*;
-import com.vincenthuto.hutoslib.client.particle.data.ColorParticleData;
-import com.vincenthuto.hutoslib.common.registry.HLParticleInit;
-import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
@@ -71,28 +68,14 @@ public class OsseousBloomManip extends BloodManipulation {
 			float damage = target.getHealth() * HP_FRACTION * masteryMult;
 			damage = TendencyAffinityRules.adjustManipulationDamage(player, target, this, damage);
 			if (ManipulationReactiveEvents.isBoss(target)) damage = Math.min(12.0F, damage);
-			target.hurt(world.damageSources().freeze(), damage);
+			ManipulationParticles.hurt(this, target, world.damageSources().freeze(), damage);
 			target.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN,
 					SLOWNESS_DURATION, SLOWNESS_AMPLIFIER, false, true));
 		}
-		HemomancyTendrilEffects.osseousBloom(player, targets);
         for (LivingEntity target : targets) ManipulationVisuals.attached(target, ManipulationVisuals.Form.BONE, target.getBbWidth()*.7, 32, 1);
 
 		RandomSource random = world.random;
-		// Icy crystallisation burst — blue-white with flecks of red (blood)
-		for (int i = 0; i < 60; i++) {
-			float t = random.nextFloat();
-			float r = t < 0.15f ? 180 + random.nextFloat() * 75 : 100 + random.nextFloat() * 60;
-			float g = t < 0.15f ? 0 : 160 + random.nextFloat() * 60;
-			float b = t < 0.15f ? 0 : 255;
-			sLevel.sendParticles(
-					new ColorParticleData(HLParticleInit.glow.get(), new ParticleColor(r, g, b)),
-					center.getX() + 0.5 + (random.nextDouble() - 0.5) * RADIUS * 2,
-					center.getY() + 0.5 + random.nextDouble() * 2.0,
-					center.getZ() + 0.5 + (random.nextDouble() - 0.5) * RADIUS * 2,
-					1, (random.nextDouble() - 0.5) * 0.2, random.nextDouble() * 0.15,
-					(random.nextDouble() - 0.5) * 0.2, 0.025f);
-		}
+
 
 		world.playSound(null, center, SoundEvents.GLASS_BREAK, SoundSource.PLAYERS, 1.0f, 0.5f);
 		world.playSound(null, center, SoundEvents.POWDER_SNOW_STEP, SoundSource.PLAYERS, 0.8f, 0.4f);

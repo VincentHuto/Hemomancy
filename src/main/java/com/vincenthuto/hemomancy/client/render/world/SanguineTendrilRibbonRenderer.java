@@ -46,7 +46,8 @@ public final class SanguineTendrilRibbonRenderer {
 				Color color = color(strand, glowPass);
 				emitQuad(consumer, matrix, firstLeft, firstRight, secondRight, secondLeft,
 						color.red(), color.green(), color.blue(),
-						first.opacity() * color.alpha(), second.opacity() * color.alpha());
+                        first.opacity() * color.alpha(), second.opacity() * color.alpha(),
+                        index / (float)(joints.size()-1), (index+1) / (float)(joints.size()-1));
 			}
 		}
 	}
@@ -92,15 +93,15 @@ public final class SanguineTendrilRibbonRenderer {
 
 	private static void emitQuad(VertexConsumer consumer, Matrix4f matrix,
 			Vec3 firstLeft, Vec3 firstRight, Vec3 secondRight, Vec3 secondLeft,
-			float red, float green, float blue, float firstAlpha, float secondAlpha) {
+			float red, float green, float blue, float firstAlpha, float secondAlpha, float fromV, float toV) {
 		consumer.addVertex(matrix, (float) firstLeft.x, (float) firstLeft.y, (float) firstLeft.z)
-				.setColor(red, green, blue, firstAlpha);
+				.setColor(red, green, blue, firstAlpha).setUv(0, fromV);
 		consumer.addVertex(matrix, (float) firstRight.x, (float) firstRight.y, (float) firstRight.z)
-				.setColor(red, green, blue, firstAlpha);
+				.setColor(red, green, blue, firstAlpha).setUv(1, fromV);
 		consumer.addVertex(matrix, (float) secondRight.x, (float) secondRight.y, (float) secondRight.z)
-				.setColor(red, green, blue, secondAlpha);
+				.setColor(red, green, blue, secondAlpha).setUv(1, toV);
 		consumer.addVertex(matrix, (float) secondLeft.x, (float) secondLeft.y, (float) secondLeft.z)
-				.setColor(red, green, blue, secondAlpha);
+				.setColor(red, green, blue, secondAlpha).setUv(0, toV);
 	}
 
 	public interface Strand {

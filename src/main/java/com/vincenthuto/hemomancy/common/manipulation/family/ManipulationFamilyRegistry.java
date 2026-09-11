@@ -25,6 +25,7 @@ public final class ManipulationFamilyRegistry {
 			family("hematic_rebuke", form("hematic_impressment", 3)),
 			family("umbral_step", form("umbral_reversal", 2)),
 			family("synaptic_jolt", form("activation_potential", 2), form("synaptic_storm", 4)),
+			family("sanguine_magnetism", form("ferric_rampart", 1), form("ferric_spikes", 2)),
 			family("glacial_grasp", form("cryogenic_pulse", 1), form("rimebound_sentence", 4)));
 
 	private static final Map<String, ManipulationFamilyDefinition> BY_ID = new LinkedHashMap<>();

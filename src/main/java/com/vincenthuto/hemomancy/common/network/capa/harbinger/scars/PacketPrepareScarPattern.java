@@ -68,7 +68,7 @@ public class PacketPrepareScarPattern implements CustomPacketPayload {
 			if (!(ctx.player() instanceof ServerPlayer player)) {
 				return;
 			}
-			if (!(player.containerMenu instanceof MasonsEffigyMenu menu) || !menu.getPos().equals(msg.pos)) {
+			if (!(player.containerMenu instanceof MasonsEffigyMenu menu) || !menu.stillValid(player) || !menu.getPos().equals(msg.pos)) {
 				fail(player, "The Effigy is no longer listening.");
 				return;
 			}

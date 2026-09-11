@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.manipulation;
 
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.HarbingerPathPermissions;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BorrowedBloodReserve;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
@@ -122,6 +123,10 @@ public class BloodManipulation implements EntityCastableManipulation {
 	public void getAction(Player player, Level world, ItemStack heldItemMainhand, BlockPos position,
 			float chargeTicks) {
 		getAction(player, world, heldItemMainhand, position);
+	}
+
+	public boolean usesDefaultActivationParticles() {
+		return true;
 	}
 
 	@Override
@@ -421,6 +426,7 @@ public class BloodManipulation implements EntityCastableManipulation {
 
 	private boolean tryPerformAction(Player player, Level world, ItemStack heldItemMainhand, BlockPos position,
 			float chargeTicks, boolean applyCooldown, boolean enforceCooldown, boolean creditUse) {
+		if (type != EnumManipulationType.PASSIVE && com.vincenthuto.hemomancy.common.manipulation.ductilis.Paralysis.isParalyzed(player)) return false;
 		IBloodVolume volume = HemoCapabilityAccess.getBloodVolume(player)
 				.orElseThrow(NullPointerException::new);
 		IBloodTendency tendency = HemoCapabilityAccess.getBloodTendency(player)
@@ -457,16 +463,16 @@ public class BloodManipulation implements EntityCastableManipulation {
 				return false;
 			}
 
-			// Qliphoth Pome Corruption: at 9 pomes manipulations are disabled until Apotheos.
+			// Unresolved ninth-pome choices restrict powers, but retain Staff recovery.
 			// for 1–8 pomes the variable is reused below inside volume.isActive() to scale cost.
 			var degreeData = HemoCapabilityAccess.getInitiatoryDegree(player);
 			int pomesConsumed = degreeData
 					.map(d -> d.getTotalPomesConsumed())
 					.orElse(0);
-			boolean hasCompletedApotheos = degreeData
-					.map(d -> d.getDegreeNumber() >= 8)
-					.orElse(false);
-			if (pomesConsumed >= 9 && !hasCompletedApotheos) {
+			boolean permitted = degreeData.map(d -> HarbingerPathPermissions.canUsePower(
+					d.getTotalPomesConsumed(), d.getArchonPath(), "conjure_staff".equals(getName())))
+					.orElse(true);
+			if (!permitted) {
 				player.displayClientMessage(
 						Component.literal("Your blood no longer answers to you. It belongs to the void now.")
 								.withStyle(ChatFormatting.DARK_PURPLE, ChatFormatting.ITALIC),
@@ -509,6 +515,7 @@ public class BloodManipulation implements EntityCastableManipulation {
 					getAction(player, world, heldItemMainhand, position, chargeTicks);
 					if (creditUse && type != EnumManipulationType.CONTINUOUS) {
 						ManipulationCastSounds.play(world, player, this);
+						ManipulationParticles.activate(player, this);
 					}
 
 					// Crawling Choir: chance to echo-cast at no additional blood cost

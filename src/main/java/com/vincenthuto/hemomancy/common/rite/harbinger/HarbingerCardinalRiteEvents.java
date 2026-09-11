@@ -1,9 +1,12 @@
 package com.vincenthuto.hemomancy.common.rite.harbinger;
 
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.HarbingerPathPermissions;
+import com.vincenthuto.hutoslib.common.registry.HLParticleInit;
+import com.vincenthuto.hemomancy.common.init.ParticleInit;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.client.data.ActiveRiteClientData;
-import com.vincenthuto.hemomancy.client.particle.factory.BloodCellParticleFactory;
-import com.vincenthuto.hemomancy.client.particle.factory.SerpentParticleFactory;
+import com.vincenthuto.hemomancy.client.particle.data.BloodCellData;
+import com.vincenthuto.hemomancy.client.particle.data.SerpentParticleData;
 import com.vincenthuto.hemomancy.common.block.harbinger.functional.QliphothBloomBlock;
 import com.vincenthuto.hemomancy.common.block.shared.IMultiBlock;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
@@ -51,7 +54,7 @@ import com.vincenthuto.hemomancy.common.summon.PuppeteerSummonDefinitions;
 import com.vincenthuto.hemomancy.common.tile.harbinger.functional.CardinalFocusBlockEntity;
 import com.vincenthuto.hemomancy.common.worldgen.ChamberVisitService;
 import com.vincenthuto.hutoslib.client.particle.data.EmberParticleData;
-import com.vincenthuto.hutoslib.client.particle.factory.DarkGlowParticleFactory;
+import com.vincenthuto.hutoslib.client.particle.data.DarkColorParticleData;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import com.vincenthuto.hutoslib.common.lightning.LightningTestConfig;
 import com.vincenthuto.hutoslib.common.lightning.LightningTesterSpawner;
@@ -387,11 +390,11 @@ public class HarbingerCardinalRiteEvents {
 			// Draw blood particles from sacrifice toward the rite center
 			BlockPos center = rite.getCenterPos();
 			sLevel.sendParticles(
-					BloodCellParticleFactory.createData(new ParticleColor(255, 0, 0)),
+					new BloodCellData(ParticleInit.blood_cell.get(), new ParticleColor(255, 0, 0)),
 					entity.getX(), entity.getY() + entity.getBbHeight() / 2.0, entity.getZ(),
 					3, 0.1, 0.1, 0.1, 0.02);
 			sLevel.sendParticles(
-					SerpentParticleFactory.createData(new ParticleColor(200, 0, 0)),
+					new SerpentParticleData(ParticleInit.serpent.get(), new ParticleColor(200, 0, 0)),
 					center.getX() + 0.5, center.getY() + 1.0, center.getZ() + 0.5,
 					1, 0.1, 0.2, 0.1, 0);
 		}
@@ -421,7 +424,7 @@ public class HarbingerCardinalRiteEvents {
 				double y = center.getY() + 1.0 + h;
 
 				sLevel.sendParticles(
-						BloodCellParticleFactory.createData(new ParticleColor(200, 0, 0)),
+						new BloodCellData(ParticleInit.blood_cell.get(), new ParticleColor(200, 0, 0)),
 						x, y, z, 1, 0.02, 0.02, 0.02, 0);
 			}
 		}
@@ -451,6 +454,8 @@ public class HarbingerCardinalRiteEvents {
 		HumanitySpriteEntity sprite = HumanitySpriteEntity.findBoundToRite(
 				level, rite.getPlayerUUID(), center);
 		if (sprite == null) {
+			// Rite data may tick before the chunk's saved entities become searchable on restart.
+			if (!level.areEntitiesLoaded(net.minecraft.world.level.ChunkPos.asLong(center))) return;
 			sprite = EntityInit.humanity_sprite.get().create(level);
 			if (sprite == null) return;
 			sprite.initialize(new Vec3(sourceX, sourceY, sourceZ),
@@ -477,7 +482,7 @@ public class HarbingerCardinalRiteEvents {
 					center.getX() + 0.5D, center.getZ() + 0.5D, elapsedTicks, pointIndex, 0);
 			CardinalRiteDaemonEmergence.SpiralPoint white = CardinalRiteDaemonEmergence.spiralPoint(
 					center.getX() + 0.5D, center.getZ() + 0.5D, elapsedTicks, pointIndex, 1);
-			level.sendParticles(DarkGlowParticleFactory.createData(ParticleColor.BLACK),
+			level.sendParticles(new DarkColorParticleData(HLParticleInit.dark_glow.get(), ParticleColor.BLACK),
 					black.x(), center.getY() + black.y(), black.z(), 1,
 					0.01D, 0.01D, 0.01D, 0.0D);
 			level.sendParticles(new EmberParticleData(new ParticleColor(240, 240, 240),
@@ -561,7 +566,7 @@ public class HarbingerCardinalRiteEvents {
 		double y = caster.getY() + caster.getBbHeight() * 0.55D;
 		double z = caster.getZ();
 		level.sendParticles(
-				DarkGlowParticleFactory.createData(new ParticleColor(3, 0, 2)),
+				new DarkColorParticleData(HLParticleInit.dark_glow.get(), new ParticleColor(3, 0, 2)),
 				x, y, z, 48, 0.28D, 0.42D, 0.28D, 0.16D);
 		level.sendParticles(
 				new EmberParticleData(new ParticleColor(225, 8, 18), 0.9F, 0.055F, 52),
@@ -570,7 +575,7 @@ public class HarbingerCardinalRiteEvents {
 				new EmberParticleData(new ParticleColor(235, 230, 225), 0.62F, 0.035F, 38),
 				x, y, z, 20, 0.32D, 0.45D, 0.32D, 0.26D);
 		level.sendParticles(
-				BloodCellParticleFactory.createData(new ParticleColor(190, 0, 12)),
+				new BloodCellData(ParticleInit.blood_cell.get(), new ParticleColor(190, 0, 12)),
 				x, y, z, 24, 0.30D, 0.42D, 0.30D, 0.20D);
 	}
 
@@ -727,7 +732,7 @@ public class HarbingerCardinalRiteEvents {
 		for (var anchor : recipe.getCeremony().anchors()) {
 			Vec3 origin = CardinalRiteTargetGeometry.anchorAimPoint(
 					rite.getCenterPos(), anchor.offset()).add(0.0D, 0.08D, 0.0D);
-			sLevel.sendParticles(DarkGlowParticleFactory.createData(ParticleColor.BLACK),
+			sLevel.sendParticles(new DarkColorParticleData(HLParticleInit.dark_glow.get(), ParticleColor.BLACK),
 					origin.x, origin.y, origin.z, 24, 0.22D, 0.18D, 0.22D, 0.12D);
 			sLevel.sendParticles(new EmberParticleData(ParticleColor.PURPLE, 0.92F, 0.065F, 24),
 					origin.x, origin.y, origin.z, 18, 0.20D, 0.16D, 0.20D, 0.18D);
@@ -762,7 +767,7 @@ public class HarbingerCardinalRiteEvents {
 		CardinalRiteRecipe recipe = CardinalRiteRecipe.getRiteByLocation(level, rite.getRecipeId());
 		boolean unstained = recipe != null && recipe.isUnstained();
 		int totalRings = rite.getPhase() == CardinalRitePhase.LEGACY
-				? Math.max(1, (rite.getRiteSize() - 1) / 2) : Math.max(1, rite.getDegree());
+				? Math.max(1, (rite.getRiteSize() - 1) / 2) : rite.totalAnchorRings();
 		int upfront = rite.getAnchorBloodMl().length * CardinalRiteCeremonyRules.BLOOD_PER_ANCHOR_ML;
 		int sharedBlood = -1;
 		ServerPlayer caster = level.getServer().getPlayerList().getPlayer(rite.getPlayerUUID());
@@ -800,7 +805,8 @@ public class HarbingerCardinalRiteEvents {
 				rite.getCenterPos(), rite.getRiteSize(), rite.getProgress(stillIntervalTicks),
 				rite.getRecipeId(), unstained,
 				rite.getPhase().name(), rite.getInstability(), rite.getCurrentWave(), rite.getTotalWaves(),
-				rite.completedRings(), totalRings, rite.getCommittedBloodMl(), upfront,
+				rite.completedRings(), totalRings, java.util.Arrays.stream(rite.getAnchorBloodMl())
+                        .map(blood -> Math.clamp(blood, 0, CardinalRiteCeremonyRules.BLOOD_PER_ANCHOR_ML)).sum(), upfront,
 				rite.getCarriedIchorMl(), rite.getAllyRoles().size(), sharedBlood, cue,
 				footprintRadius, checklist,
 				boundarySegments, sigilSegments, sanguineBlobs,
@@ -819,6 +825,19 @@ public class HarbingerCardinalRiteEvents {
 				(float) CardinalRiteBoundaryLeashRules.ritualRadius(rite.getRiteSize()));
 	}
 
+    private static String nextAnchorRepair(ActiveCardinalRite rite) {
+        int[] blood = rite.getAnchorBloodMl();
+        for (int index = 0; index < blood.length; index++) {
+            int repair = rite.instabilityRepairBloodNeeded(index);
+            if (repair > 0 || rite.bloodNeededForAnchor(index) > 0) {
+                return "Anchor " + (index + 1) + ": repair " + repair + "ml, blood "
+                        + Math.clamp(blood[index], 0, CardinalRiteCeremonyRules.BLOOD_PER_ANCHOR_ML)
+                        + "/" + CardinalRiteCeremonyRules.BLOOD_PER_ANCHOR_ML + "ml";
+            }
+        }
+        return "All anchors restored";
+    }
+
 	private static java.util.List<String> buildChecklist(ServerLevel level, ActiveCardinalRite rite,
 			CardinalRiteRecipe recipe) {
 		if (rite.getCancellationTicks() > 0) {
@@ -833,23 +852,31 @@ public class HarbingerCardinalRiteEvents {
 				if (blood < CardinalRiteCeremonyRules.BLOOD_PER_ANCHOR_ML) missing++;
 			}
 			return java.util.List.of(
-					"Boundary rings: " + rite.completedRings() + "/" + Math.max(1, rite.getDegree()),
+					"Boundary rings: " + rite.completedRings() + "/" + rite.totalAnchorRings(),
 					"Anchors remaining: " + missing,
+                    nextAnchorRepair(rite),
 					"Project blood into the glowing boundary anchors");
 		}
 		if (rite.getPhase() == CardinalRitePhase.INSCRIPTION) {
-			java.util.List<CardinalRiteInteractionHandler.SigilPlacement> supports =
-					recipe == null ? java.util.List.of() : CardinalRiteInteractionHandler.supportSigils(recipe);
-			int complete = 0;
-			for (CardinalRiteInteractionHandler.SigilPlacement placement : supports) {
-				IchorianSigilDefinition sigil = IchorianSigilRegistry.get(placement.id());
-				if (sigil != null && (rite.isSigilAwakened(placement.progressKey())
-						|| rite.isSigilComplete(placement.progressKey(), sigil.nodes().size()))) complete++;
-			}
-			boolean mediumReady = recipe == null
-					|| CardinalRiteInteractionHandler.sealMediumReady(level, rite, recipe);
-			return CardinalRiteChecklist.inscription(
-					supports.size(), complete, rite.getAllyRoles().size(), mediumReady);
+            int required = 0, optional = 0, requiredComplete = 0, optionalComplete = 0;
+            if (recipe != null && recipe.getCeremony() != null) {
+                for (var socket : recipe.getCeremony().supportSockets()) {
+                    boolean awakened = rite.isSigilAwakened(Hemomancy.rloc(socket.suggestedSigil()).toString());
+                    if (socket.required()) {
+                        required++;
+                        if (awakened) requiredComplete++;
+                    } else {
+                        optional++;
+                        if (awakened) optionalComplete++;
+                    }
+                }
+            }
+            boolean mediumReady = recipe == null || CardinalRiteInteractionHandler.sealMediumReady(level, rite, recipe);
+            int availableAllies = (int) rite.getAllyRoles().keySet().stream()
+                    .filter(ally -> CardinalRiteAllyService.isAvailable(level, rite, ally)).count();
+            int requiredAllies = recipe == null || recipe.getCeremony() == null ? 0 : recipe.getCeremony().requiredHelpers();
+            return CardinalRiteChecklist.inscription(optional, optionalComplete, required, requiredComplete,
+                    availableAllies, requiredAllies, mediumReady);
 		}
 		if (rite.getPhase() == CardinalRitePhase.ORDEAL) {
 			String wave = rite.getCurrentWave() < rite.getWaveDeck().size()
@@ -861,7 +888,7 @@ public class HarbingerCardinalRiteEvents {
 							+ "/" + rite.getTotalWaves(),
 					CardinalRiteChecklist.ordealObjective(wave),
 					"Damaged anchors: " + rite.getBrokenInstabilityAnchors().size(),
-					"Dry anchors: " + dry);
+					"Dry anchors: " + dry, nextAnchorRepair(rite));
 		}
 		if (rite.getPhase() == CardinalRitePhase.STILL_INTERVAL) {
 			int duration = recipe == null || recipe.getCeremony() == null ? 0
@@ -870,7 +897,8 @@ public class HarbingerCardinalRiteEvents {
 			return java.util.List.of(
 					"Still interval: " + seconds + "s",
 					"Repair damaged anchors: " + rite.getBrokenInstabilityAnchors().size(),
-					"Restore every dry cardinal station");
+					nextAnchorRepair(rite),
+                    "Reservoir: " + rite.getReservoirBloodMl() + "ml (replaces siphoned blood only)");
 		}
 		if (rite.getPhase() == CardinalRitePhase.OFFERING_PROCESSION) {
 			int total = rite.getOfferingItinerary().size();
@@ -1162,12 +1190,10 @@ public class HarbingerCardinalRiteEvents {
 			return false;
 		}
 
-		// Qliphoth Pome Corruption: at 9 pomes Apotheosis is the only remaining Cardinal Rite.
-		// Silent refusal is performed directly at the owned bloom with the Living Arsenal.
-		int pomesConsumed = HemoCapabilityAccess.getInitiatoryDegree(caster)
-				.map(d -> d.getTotalPomesConsumed())
-				.orElse(0);
-		if (pomesConsumed >= 9 && !isApotheosRite(recipe.getId())) {
+		boolean pathPermitsRite = HemoCapabilityAccess.getInitiatoryDegree(caster)
+				.map(d -> HarbingerPathPermissions.canPerformRite(d.getTotalPomesConsumed(),
+						d.getArchonPath(), isApotheosRite(recipe.getId()))).orElse(false);
+		if (!recipe.isUnstained() && !pathPermitsRite) {
 			caster.displayClientMessage(
 					Component.literal("The void has claimed your will \u2014 only one path remains, and one way back.")
 							.withStyle(ChatFormatting.DARK_PURPLE, ChatFormatting.ITALIC),
@@ -1391,6 +1417,12 @@ public class HarbingerCardinalRiteEvents {
 				volume.setActive(true);
 				BloodVolumeEvents.syncVolume(caster, volume);
 			});
+			caster.displayClientMessage(Component.translatable("hemomancy.tutorial.current_controls",
+					Component.keybind("key.hemomancy.bloodformation.desc"),
+					Component.keybind("key.hemomancy.bloodcrafting.desc"),
+					Component.keybind("key.hemomancy.cyclemanip.desc")), false);
+			caster.displayClientMessage(Component.translatable("hemomancy.tutorial.sample_controls",
+					Component.keybind("key.attack"), Component.keybind("key.use")), false);
 			replaceLinkedTempleDisplay(sLevel, center);
 			HarbingerAdvancementGranter.grantIfNotDone(caster,
 					Hemomancy.rloc("hemomancy/the_first_awakening"));
@@ -1398,6 +1430,14 @@ public class HarbingerCardinalRiteEvents {
 			giveOrDropAtRite(sLevel, caster, center, conduit);
 			ItemStack waybill = new ItemStack(ItemInit.covenant_waybill.get());
 			giveOrDropAtRite(sLevel, caster, center, waybill);
+			ResourceLocation starterClaim = Hemomancy.rloc("hemomancy/initiation_blood_claimed");
+			if (!HarbingerAdvancementGranter.hasAdvancement(caster, starterClaim)) {
+				HarbingerAdvancementGranter.grantIfNotDone(caster, starterClaim);
+				if (HarbingerAdvancementGranter.hasAdvancement(caster, starterClaim)) {
+					giveOrDropAtRite(sLevel, caster, center, new ItemStack(ItemInit.bloody_flask.get(), 4));
+					caster.displayClientMessage(Component.translatable("hemomancy.tutorial.starter_blood"), false);
+				}
+			}
 			caster.displayClientMessage(
 					Component.translatable("hemomancy.rite.sanguine_initiation.conduit_granted")
 							.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC),
@@ -1434,6 +1474,9 @@ public class HarbingerCardinalRiteEvents {
 		if (!(level.getBlockEntity(focusPos) instanceof CardinalFocusBlockEntity focus)) return;
 		BlockPos displayPos = focus.getTempleDisplay();
 		if (displayPos != null && level.getBlockState(displayPos).is(BlockInit.mortal_display.get())) {
+			if (level.getBlockEntity(displayPos) instanceof com.vincenthuto.hemomancy.common.tile.harbinger.functional.MortalDisplayBlockEntity display) {
+				focus.linkTempleHermit(display.getLinkedHermit());
+			}
 			level.setBlockAndUpdate(displayPos,
 					BlockInit.placed_blood_stained_stone.get().defaultBlockState());
 		}
@@ -2387,6 +2430,8 @@ public class HarbingerCardinalRiteEvents {
 			return;
 		}
 		faneData.consecrateHeart(faneOwner, heartPos);
+		com.vincenthuto.hemomancy.common.event.MachineAccessEvents.awardMachineCrafted(
+				caster, BlockInit.consecrated_bloodwell.get());
 		if (isReconsecrating) {
 			caster.displayClientMessage(
 					Component.literal("Your Founding Fane has been moved to this location.")

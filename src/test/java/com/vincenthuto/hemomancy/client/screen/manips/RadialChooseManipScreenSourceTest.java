@@ -46,8 +46,10 @@ public final class RadialChooseManipScreenSourceTest {
 				"ManipulationEquipHelper.BLOOD_ABSORPTION");
 		assertContains("projection is added to the second inner half", screen,
 				"ManipulationEquipHelper.BLOOD_PROJECTION");
-		assertContains("outer ring skips fixed mechanical manipulations", screen,
-				"ManipulationEquipHelper.isFixedMechanicalManip(c.getName())");
+		assertContains("outer ring uses the shared memorized wheel order", screen,
+				"ManipulationWheelOrder.resolve(allManips, equippedNames)");
+		assertContains("reliquary uses the shared memorized wheel order", reliquary,
+				"ManipulationWheelOrder.resolve(known.getManipList(), equipped)");
 		assertContains("item-stack radial entries can render custom tooltip lines", itemStackRadial,
 				"customTooltip");
 		assertContains("armor ability radial entry uses ability tooltip instead of helmet tooltip", screen,

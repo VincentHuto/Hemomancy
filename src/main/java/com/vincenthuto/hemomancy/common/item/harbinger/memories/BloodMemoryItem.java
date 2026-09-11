@@ -1,11 +1,14 @@
 package com.vincenthuto.hemomancy.common.item.harbinger.memories;
 
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.KnownManipulationGrantHelper;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.KnownManipulationGrantHelper.MemoryGrantStatus;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.ManipulationRetirementRules;
 import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
 import com.vincenthuto.hemomancy.common.manipulation.family.ManipulationFamilyRegistry;
 import com.vincenthuto.hutoslib.client.HLTextUtils;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.player.Player;
@@ -82,6 +85,23 @@ public class BloodMemoryItem extends Item {
 	public InteractionResultHolder<ItemStack> use(Level worldIn, Player playerIn, InteractionHand handIn) {
 		if (handIn == InteractionHand.MAIN_HAND) {
 			ItemStack stack = playerIn.getItemInHand(handIn);
+			if (playerIn.isCreative()) {
+				if (worldIn.isClientSide) {
+					return InteractionResultHolder.sidedSuccess(stack, true);
+				}
+				var result = KnownManipulationGrantHelper.grantCreativeMemory((ServerPlayer) playerIn, getManip(), this);
+				Component message = switch (result.status()) {
+					case GRANTED_EQUIPPED -> Component.literal("The memory settles into an open manipulation slot.");
+					case GRANTED -> Component.literal("The memory settles into your blood. Recall it at a Mnemonic Reliquary.");
+					case ALREADY_KNOWN -> Component.literal("You already carry this memory.");
+					case RETIRED -> Component.literal("This memory has gone dormant.");
+					default -> Component.literal("The memory will not take.");
+				};
+				playerIn.displayClientMessage(message.copy().withStyle(ChatFormatting.DARK_RED), true);
+				return result.success() || result.status() == MemoryGrantStatus.ALREADY_KNOWN
+						? InteractionResultHolder.sidedSuccess(stack, false)
+						: InteractionResultHolder.fail(stack);
+			}
 			if (!worldIn.isClientSide && !playerIn.isShiftKeyDown()) {
 				playerIn.displayClientMessage(Component.literal(
 						"Burn this memory in a lit Iron Brazier and absorb it with Blood Absorption.")

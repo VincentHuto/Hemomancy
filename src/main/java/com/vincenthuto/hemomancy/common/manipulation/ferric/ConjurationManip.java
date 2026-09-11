@@ -42,15 +42,29 @@ public class ConjurationManip extends BloodManipulation {
 		if (CellHandFormHelper.applySelection(player, this)
 				&& CellHandFormHelper.isCellHandManip(getName())
 				&& CellHandFormHelper.isCellHandForm(player.getMainHandItem())) {
+			formation(player);
 			return;
 		}
 		if (heldItemMainhand.isEmpty()) {
 			if (item.get() == ItemInit.living_staff.get()
 					&& LivingArsenalInventoryGuard.summonOrRecoverStaff(player, heldItemMainhand)) {
+				formation(player);
 				return;
 			}
 			player.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(item.get()));
+			formation(player);
 		}
+	}
+
+	@Override
+	public boolean usesDefaultActivationParticles() {
+		return !"conjure_staff".equals(getName());
+	}
+
+	private void formation(Player player) {
+		if ("conjure_staff".equals(getName())) return;
+		com.vincenthuto.hemomancy.common.manipulation.ManipulationVisuals.attached(player,
+				com.vincenthuto.hemomancy.common.manipulation.ManipulationVisuals.Form.FERRIC_CONJURE,1,22,1);
 	}
 
 	public 	DeferredHolder<Item, Item> getItem() {

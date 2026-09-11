@@ -1,6 +1,6 @@
 package com.vincenthuto.hemomancy.common.entity.npc.harbinger;
 
-import com.vincenthuto.hemomancy.client.particle.factory.HermitEdgeGlowParticleFactory;
+import com.vincenthuto.hemomancy.common.particle.HemoParticleData;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.*;
@@ -238,7 +238,7 @@ public class HarbingerHermitEntity extends PathfinderMob implements ProgressionD
         }
 
         double jitter = 0.008D + progress * 0.010D;
-        this.level().addParticle(HermitEdgeGlowParticleFactory.createData(color),
+        this.level().addParticle(HemoParticleData.hermitEdgeGlow(color),
                 position.x() + (this.random.nextDouble() - 0.5D) * jitter,
                 position.y() + (this.random.nextDouble() - 0.5D) * jitter,
                 position.z() + (this.random.nextDouble() - 0.5D) * jitter,

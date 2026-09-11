@@ -17,7 +17,13 @@ public final class ManipulationVisuals {
         VERDICT_CHARGE, GLASS_CHARGE, CROWN_CHARGE, BELL_CHARGE, THREAD_CHARGE, ORE, HOUR,
         BLOOM, CLOUD, MAGNET, RETORT, HUNGER, GRAVE, COMMAND, CIRCUIT, CAUTERIZE, RUSH, IRON_HEART, BLACK_HEART, PHOENIX_READY, RUPTURE,
         NEEDLE_CHARGE, FAN_CHARGE, LANCE_CHARGE, MORTAR_CHARGE, GAZE_CHARGE,
-        ANEURYSM_CHARGE, ICE_CHARGE, WELL_CHARGE, LIGHTNING_CHARGE, IRON_CHARGE
+        ANEURYSM_CHARGE, ICE_CHARGE, WELL_CHARGE, LIGHTNING_CHARGE, IRON_CHARGE,
+        LUX_MENDING, UMBRA_SLASH, LUX_MIST, UMBRA_MIST, UMBRA_ARRIVAL, WHITE_VERDICT,
+        IGNITION, CRYOGENIC_PULSE, CRUOR_FORM, CRUOR_BREAK, FROZEN_VEINS, RIMEBOUND,
+        FLAME_CONJURE, FROST_CONJURE, HOUR_BREAK, CRUOR_SURFACE, FROST_ADVANCE,
+        FERRIC_IMPACT, FERRIC_CONJURE, NERVE_PULSE, NERVE_HIT, PARALYSIS,
+        ANIMUS_IMPACT, ANIMUS_CONJURE, MORTEM_CONJURE, MORTEM_BURST, GRAVE_REFUND, HUNGER_COLLAPSE,
+        BLACKHEART_RUPTURE, TITHE_RETURN, TITHE_COLLECT, ROT_INFECTION, COMMUNION
     }
 
     public static void burst(ServerLevel level, Form form, Vec3 from, Vec3 to, double radius, int ticks) {
@@ -25,9 +31,12 @@ public final class ManipulationVisuals {
     }
 
     public static void attached(Entity entity, Form form, double radius, int ticks, int count) {
-        if (entity.level() instanceof ServerLevel level)
+        if (entity.level() instanceof ServerLevel level) {
+            ThermalStatusVisuals.track(entity, form, radius, ticks, count);
+            FerricDuctilisStatusVisuals.track(entity, form, radius, ticks, count);
             send(level, new ManipulationVisualPacket(form, entity.getId(), entity.position(),
                     entity.position(), (float) radius, ticks, count));
+        }
     }
 
     private static void send(ServerLevel level, ManipulationVisualPacket packet) {
@@ -65,6 +74,8 @@ public final class ManipulationVisuals {
     }
 
     public static void endChannel(Entity player, String name) {
+        if (player instanceof net.minecraft.world.entity.LivingEntity living && name.equals("carrion_communion"))
+            BloodFlowVisuals.stop(living, com.vincenthuto.hemomancy.common.network.particle.BloodFlowPacket.Style.COMMUNION);
         Form form = switch (name) {
             case "absolute_stillness" -> Form.STILLNESS;
             case "furnace_veins" -> Form.FURNACE;

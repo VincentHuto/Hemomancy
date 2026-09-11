@@ -1,12 +1,12 @@
 package com.vincenthuto.hemomancy.common.manipulation.ferric;
 
+import com.vincenthuto.hemomancy.common.particle.HemoParticleData;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.EnumVeinSections;
 import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillPointHelper;
 import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
 import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationRank;
 import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationType;
-import com.vincenthuto.hutoslib.client.particle.factory.GlowParticleFactory;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
@@ -120,7 +120,7 @@ public class SanguineExcavationManip extends BloodManipulation {
 			world.destroyBlock(bp, false);
 
 			sLevel.sendParticles(
-					GlowParticleFactory.createData(new ParticleColor(53, 53 + random.nextFloat() * 50, 53)),
+					HemoParticleData.glow(new ParticleColor(53, 53 + random.nextFloat() * 50, 53)),
 					bp.getX() + 0.5, bp.getY() + 0.5, bp.getZ() + 0.5,
 					2, 0.2, 0.2, 0.2, 0.01f);
 		}

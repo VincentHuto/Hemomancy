@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.manipulation.flammeus;
 
+import com.vincenthuto.hemomancy.common.manipulation.ManipulationParticles;
 import com.vincenthuto.hemomancy.common.manipulation.ManipulationVisuals;
 import com.vincenthuto.hemomancy.common.block.harbinger.CrimsonFireHelper;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
@@ -10,9 +11,6 @@ import com.vincenthuto.hemomancy.common.manipulation.ManipulationCombatHelper;
 import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationRank;
 import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationType;
 import com.vincenthuto.hemomancy.common.manipulation.TendencyAffinityRules;
-import com.vincenthuto.hutoslib.client.particle.data.ColorParticleData;
-import com.vincenthuto.hutoslib.common.registry.HLParticleInit;
-import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
@@ -63,7 +61,7 @@ public class SanguineIgnitionManip extends BloodManipulation {
 			if (target.distanceTo(player) <= RADIUS) {
 				CrimsonFireHelper.igniteCrimson(target, FIRE_SECONDS);
 				float damage = (float) (IGNITION_DAMAGE * SkillPointHelper.getCrimsonMasteryMultiplier(player));
-				target.hurt(world.damageSources().onFire(),
+				ManipulationParticles.hurt(this, target, world.damageSources().onFire(),
 						TendencyAffinityRules.adjustManipulationDamage(player, target, this, damage));
 				hit++;
 			}
@@ -74,18 +72,8 @@ public class SanguineIgnitionManip extends BloodManipulation {
 			world.playSound(null, center, SoundEvents.FIRE_AMBIENT, SoundSource.PLAYERS, 0.6f, 1.1f);
 		}
 
-		ManipulationVisuals.burst(sLevel, ManipulationVisuals.Form.FURNACE, player.position(), player.position(), RADIUS, 18);
+		ManipulationVisuals.burst(sLevel, ManipulationVisuals.Form.IGNITION, player.position(), player.position(), RADIUS, 18);
         RandomSource random = world.random;
-		for (int i = 0; i < 35; i++) {
-			float r = 220 + random.nextFloat() * 35;
-			float g = 60 + random.nextFloat() * 100;
-			float b = random.nextFloat() * 10;
-			sLevel.sendParticles(
-					new ColorParticleData(HLParticleInit.glow.get(), new ParticleColor(r, g, b)),
-					center.getX() + 0.5 + (random.nextDouble() - 0.5) * RADIUS * 2,
-					center.getY() + 0.3 + random.nextDouble() * 1.5,
-					center.getZ() + 0.5 + (random.nextDouble() - 0.5) * RADIUS * 2,
-					1, 0f, 0.2f, 0f, 0.02f);
-		}
+
 	}
 }

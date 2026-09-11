@@ -82,7 +82,7 @@ public class CardinalFocusBlock extends Block implements EntityBlock {
 				.withStyle(ChatFormatting.DARK_RED), false);
 
 		ServerLevel server = (ServerLevel) level;
-		boolean claimedHere = hasClaimedTempleHeart(server, pos, player.getUUID(), focus);
+		boolean claimedHere = hasClaimedTempleHeart(server, pos, player, focus);
 		boolean bloodActive = HemoCapabilityAccess.getBloodVolume(player)
 				.map(volume -> volume.isActive()).orElse(false);
 		if (bloodActive && !rites.hasActiveRite(player.getUUID())) {
@@ -140,17 +140,18 @@ public class CardinalFocusBlock extends Block implements EntityBlock {
 		super.onRemove(state, level, pos, newState, movedByPiston);
 	}
 
-	private static boolean hasClaimedTempleHeart(ServerLevel level, BlockPos focusPos, java.util.UUID player,
+	private static boolean hasClaimedTempleHeart(ServerLevel level, BlockPos focusPos, Player player,
 			CardinalFocusBlockEntity focus) {
+		if (focus != null && TempleOathRules.hasClaimedHeartFrom(player, focus.getTempleHermit())) return true;
 		if (focus != null && focus.getTempleDisplay() != null
 				&& level.getBlockEntity(focus.getTempleDisplay()) instanceof MortalDisplayBlockEntity display) {
-			return display.isClaimedBy(player);
+			return display.isClaimedBy(player.getUUID());
 		}
 		for (BlockPos candidate : BlockPos.betweenClosed(
 				focusPos.offset(-TEMPLE_LINK_RADIUS, -8, -TEMPLE_LINK_RADIUS),
 				focusPos.offset(TEMPLE_LINK_RADIUS, 8, TEMPLE_LINK_RADIUS))) {
 			if (level.getBlockEntity(candidate) instanceof MortalDisplayBlockEntity display
-					&& display.isClaimedBy(player)) return true;
+					&& display.isClaimedBy(player.getUUID())) return true;
 		}
 		return false;
 	}

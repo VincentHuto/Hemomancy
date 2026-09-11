@@ -142,17 +142,13 @@ public class RadialChooseManipScreen extends Screen {
 
 			addMechanicalManipulation(allManips, equippedNames, ManipulationEquipHelper.BLOOD_ABSORPTION, selectedManipName);
 			addMechanicalManipulation(allManips, equippedNames, ManipulationEquipHelper.BLOOD_PROJECTION, selectedManipName);
+			addMechanicalManipulation(allManips, equippedNames, ManipulationEquipHelper.CONJURE_STAFF, selectedManipName);
 			addMechanicalManipulation(allManips, equippedNames, ManipulationEquipHelper.CONJURE_SICKLE, selectedManipName);
 			addArmorSetAbility();
 
-			for (int i = 0; i < allManips.size(); i++) {
-				BloodManipulation c = allManips.get(i);
-				if (!equippedNames.contains(c.getName())
-						|| ManipulationEquipHelper.isFixedMechanicalManip(c.getName())
-						|| ManipulationRetirementRules.isRetiredManipulation(c)) {
-					continue;
-				}
-				this.cachedMenuItems.add(createManipulationItem(c, i, selectedManipName));
+			for (ManipulationWheelOrder.Entry entry : ManipulationWheelOrder.resolve(allManips, equippedNames)) {
+				this.cachedMenuItems.add(createManipulationItem(
+						entry.manipulation(), entry.knownIndex(), selectedManipName));
 			}
 			var memoryState = mc.player.getData(com.vincenthuto.hemomancy.common.capability.HemoAttachmentTypes.MUSCLE_MEMORY);
 			EnumSet<EnumVeinSections> shownSections = EnumSet.noneOf(EnumVeinSections.class);

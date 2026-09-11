@@ -1,8 +1,8 @@
 package com.vincenthuto.hemomancy.common.entity.projectile;
 
+import com.vincenthuto.hemomancy.common.particle.HemoParticleData;
 import com.google.common.base.Predicates;
 import com.vincenthuto.hemomancy.common.init.EntityInit;
-import com.vincenthuto.hutoslib.client.particle.factory.GlowParticleFactory;
 import com.vincenthuto.hutoslib.client.particle.util.HLParticleUtils;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import com.vincenthuto.hutoslib.math.Vector3;
@@ -153,11 +153,11 @@ public class TrackingPestsEntity extends ThrowableProjectile {
 	public void tick() {
 		super.tick();
 		if (level().isClientSide) {
-			level().addParticle(GlowParticleFactory.createData(new ParticleColor(0, 150, 0)),
+			level().addParticle(HemoParticleData.glow(new ParticleColor(0, 150, 0)),
 					getX() + HLParticleUtils.inRange(-0.25, 0.25), getY() + HLParticleUtils.inRange(-0.25, 0.25),
 					getZ() + HLParticleUtils.inRange(-0.25, 0.25), 0, 0.000, 0);
 
-			level().addParticle(GlowParticleFactory.createData(new ParticleColor(0, 250, 0)),
+			level().addParticle(HemoParticleData.glow(new ParticleColor(0, 250, 0)),
 					getX() + HLParticleUtils.inRange(-0.25, 0.25), getY() + HLParticleUtils.inRange(-0.1, 0.1),
 					getZ() + HLParticleUtils.inRange(-0.25, 0.25), 0, 0.000, 0);
 
