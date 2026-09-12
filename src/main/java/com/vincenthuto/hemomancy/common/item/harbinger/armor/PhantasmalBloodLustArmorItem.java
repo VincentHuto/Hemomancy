@@ -1,6 +1,7 @@
 package com.vincenthuto.hemomancy.common.item.harbinger.armor;
 
 import net.minecraft.core.Holder;
+import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.item.ArmorMaterial;
 
 public class PhantasmalBloodLustArmorItem extends AbstractSpecialBloodLustArmorItem {

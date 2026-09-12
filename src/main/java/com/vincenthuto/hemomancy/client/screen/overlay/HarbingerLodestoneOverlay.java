@@ -29,7 +29,7 @@ public class HarbingerLodestoneOverlay {
 				target.getZ() + 0.5D - minecraft.player.getZ());
 		if (alignment <= 0.0D) return;
 
-		ManipCooldownOverlay.renderRedVignette(
+		CooldownVignetteRenderer.renderRedVignette(
 				graphics, screenWidth, screenHeight, (float) alignment * 0.6F);
 	}
 

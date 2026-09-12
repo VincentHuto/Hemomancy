@@ -47,7 +47,7 @@ final class AnimusMortemGeometry {
             }
             case NEEDLE_CHARGE,FAN_CHARGE,LANCE_CHARGE,MORTAR_CHARGE,ANEURYSM_CHARGE -> {
                 Vec3 aim=end.lengthSqr()<1e-8?new Vec3(0,0,1):end.normalize();
-                Vec3 focus=aim.scale(1.2).add(0,-.12,0);
+                Vec3 focus=ChargeVisualGeometry.focus(form,aim);
                 boolean mortar=form==Form.MORTAR_CHARGE,aneurysm=form==Form.ANEURYSM_CHARGE;
                 int strands=form==Form.FAN_CHARGE?7:form==Form.LANCE_CHARGE?3:4;
                 double size=mortar?.13+r*.23:aneurysm?.08+r*.12:.08;

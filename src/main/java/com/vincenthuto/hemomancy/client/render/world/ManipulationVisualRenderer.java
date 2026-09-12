@@ -377,13 +377,14 @@ public final class ManipulationVisualRenderer {
                 int count=packet.form()==ManipulationVisuals.Form.FAN_CHARGE?7:packet.form()==ManipulationVisuals.Form.LANCE_CHARGE?3:4;
                 for(int i=0;i<count;i++) {
                     double offset=(i-(count-1)*.5)*.12;
-                    Vec3 tip=direction.scale(1.3).add(side.scale(offset)).add(0,-.25,0);
+                    Vec3 tip=direction.scale(1.3).add(side.scale(offset));
                     Vec3 axis=packet.form()==ManipulationVisuals.Form.FAN_CHARGE?direction.add(side.scale(offset*2)):direction;
                     tube(p,v,tip.subtract(axis.scale((packet.form()==ManipulationVisuals.Form.LANCE_CHARGE?.85:.4)*r)),tip,.018,EDGE,fade);
                 }
             }
             case MORTAR_CHARGE, ANEURYSM_CHARGE, ICE_CHARGE, LIGHTNING_CHARGE, IRON_CHARGE, GAZE_CHARGE -> {
-                Vec3 focus=end.normalize().scale(1.25).add(0,-.25,0);
+                Vec3 focus=packet.form()==ManipulationVisuals.Form.GAZE_CHARGE
+                        ?ChargeVisualGeometry.focus(packet.form(),end):ChargeVisualGeometry.alongAim(end,1.25);
                 p.translate(focus.x,focus.y,focus.z);
                 int color=switch(packet.form()) {case ICE_CHARGE -> ICE;
                     case LIGHTNING_CHARGE -> 0xFFE9AB;case IRON_CHARGE -> 0xD6C0B9;default -> EDGE;};

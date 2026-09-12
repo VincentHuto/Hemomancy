@@ -59,6 +59,7 @@ import com.vincenthuto.hemomancy.client.screen.item.living.LivingStaffScreen;
 import com.vincenthuto.hemomancy.client.screen.item.living.LivingSyringeScreen;
 import com.vincenthuto.hemomancy.client.screen.item.living.MorphlingJarScreen;
 import com.vincenthuto.hemomancy.client.screen.manips.RadialChooseManipScreen;
+import com.vincenthuto.hemomancy.client.screen.manips.ClientManipulationCooldowns;
 import com.vincenthuto.hemomancy.client.screen.overlay.*;
 import com.vincenthuto.hemomancy.client.screen.summon.CrossbarRadialScreen;
 import com.vincenthuto.hemomancy.client.screen.tile.crafting.*;
@@ -204,7 +205,6 @@ public class ClientEvents {
     @SubscribeEvent
     public static void onClientTickPost(ClientTickEvent.Post event) {
         MnemonicBlueprintRenderer.tick();
-        ManipCooldownOverlay.tick();
         StillArtCooldownOverlay.tick();
         ActiveBloodCraftClientData.tick();
         ActiveBloodStructureFeedClientData.tick();
@@ -586,6 +586,7 @@ public class ClientEvents {
 
     @SubscribeEvent
     public static void onClientPlayerLogin(net.neoforged.neoforge.client.event.ClientPlayerNetworkEvent.LoggingIn event) {
+        ClientManipulationCooldowns.clear();
         CircusPerceptionOverlay.clear();
         QliphothBloomClientData.clear();
         NpcProgressionMarkerClientState.clear();
@@ -593,6 +594,7 @@ public class ClientEvents {
 
     @SubscribeEvent
     public static void onClientPlayerLogout(net.neoforged.neoforge.client.event.ClientPlayerNetworkEvent.LoggingOut event) {
+        ClientManipulationCooldowns.clear();
         // HutosLib now retains read tracker state across disconnect/reload.
         FaneBoundaryClientData.clear();
         ActiveRiteClientData.clear();
@@ -912,7 +914,6 @@ public class ClientEvents {
             NeoForge.EVENT_BUS.register(RenderBloodLaserEvent.class);
             BloodVolumeOverlay.instance = new BloodVolumeOverlay();
             EquippedMorphlingOverlay.instance = new EquippedMorphlingOverlay();
-            ManipCooldownOverlay.instance = new ManipCooldownOverlay();
             HarbingerLodestoneOverlay.instance = new HarbingerLodestoneOverlay();
             StillArtCooldownOverlay.instance = new StillArtCooldownOverlay();
             UnstainedGaugeOverlay.instance = new UnstainedGaugeOverlay();
@@ -1251,12 +1252,6 @@ public class ClientEvents {
                 if (BloodVolumeOverlay.instance != null) {
                     float partialTicks = deltaTracker.getGameTimeDeltaPartialTick(true);
                     BloodVolumeOverlay.instance.renderHUD(graphics, graphics.guiWidth(), graphics.guiHeight(), partialTicks);
-                }
-            });
-            event.registerAboveAll(Hemomancy.rloc("manip_cooldown"), (graphics, deltaTracker) -> {
-                if (ManipCooldownOverlay.instance != null) {
-                    float partialTicks = deltaTracker.getGameTimeDeltaPartialTick(true);
-                    ManipCooldownOverlay.instance.renderHUD(graphics, graphics.guiWidth(), graphics.guiHeight(), partialTicks);
                 }
             });
             event.registerAboveAll(Hemomancy.rloc("harbinger_lodestone"), (graphics, deltaTracker) -> {

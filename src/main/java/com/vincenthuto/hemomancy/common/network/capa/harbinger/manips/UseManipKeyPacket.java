@@ -20,7 +20,6 @@ import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationType;
 import com.vincenthuto.hemomancy.common.manipulation.ManipulationChannelManager;
 import com.vincenthuto.hemomancy.common.manipulation.animus.AvatarManifestationManager;
 import com.vincenthuto.hemomancy.common.manipulation.animus.SummonAvatarManip;
-import com.vincenthuto.hemomancy.common.manipulation.animus.SummonThrallManip;
 import com.vincenthuto.hemomancy.common.manipulation.ferric.ConjurationManip;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.FriendlyByteBuf;
@@ -71,8 +70,6 @@ public class UseManipKeyPacket implements CustomPacketPayload {
 				}
 				float pTic = message.parTick;
 
-				// Allow SummonThrallManip through cooldown when selecting a destination
-				boolean bypassCooldown = false;
 				IKnownManipulations knownCheck = HemoCapabilityAccess.getKnownManipulations(player).orElse(null);
 				if (knownCheck != null && knownCheck.getSelectedMemoryRef().kind() == MemoryEntryKind.MUSCLE_MEMORY) {
 					if (bloodPowersBlocked) return;
@@ -105,21 +102,6 @@ public class UseManipKeyPacket implements CustomPacketPayload {
 					}
 				}
 				if (bloodPowersBlocked) return;
-				if (knownCheck != null && knownCheck.getSelectedManip() != null) {
-					BloodManipulation selManip = ManipulationInit.getByName(knownCheck.getSelectedManip().getName());
-					if (selManip instanceof SummonThrallManip && SummonThrallManip.hasPendingThrall(player.getUUID())) {
-						bypassCooldown = true;
-					}
-					if (selManip != null && selManip.ignoresCooldown(player)) {
-						bypassCooldown = true;
-					}
-				}
-
-				if (!bypassCooldown && BloodManipulation.isAnyManipOnCooldown(player)) {
-					player.displayClientMessage(Component.literal("Manipulation on cooldown!")
-							.withStyle(ChatFormatting.RED), true);
-					return;
-				}
 				IBloodVolume volume = HemoCapabilityAccess.getBloodVolume(player)
 						.orElseThrow(NullPointerException::new);
 				IKnownManipulations known = HemoCapabilityAccess.getKnownManipulations(player)

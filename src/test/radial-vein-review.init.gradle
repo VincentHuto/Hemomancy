@@ -1,0 +1,14 @@
+gradle.projectsEvaluated {
+    def project = gradle.rootProject
+    project.tasks.register('radialVeinRenderReview', JavaExec) {
+        dependsOn project.tasks.named('testClasses')
+        classpath = project.sourceSets.test.runtimeClasspath
+        mainClass = 'com.vincenthuto.hemomancy.client.screen.radial.RadialVeinBorderRenderTest'
+        javaLauncher = project.javaToolchains.launcherFor {
+            languageVersion = JavaLanguageVersion.of(21)
+        }
+        workingDir = project.projectDir
+        def label = project.findProperty('radialReviewLabel') ?: 'current'
+        args project.layout.buildDirectory.dir("radial-vein-review/${label}").get().asFile.absolutePath
+    }
+}

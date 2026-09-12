@@ -79,7 +79,7 @@ public final class ManipulationCorrectnessGameTests {
                     boolean cast = m.tryPerformAction(p, h.getLevel(), ItemStack.EMPTY, p.blockPosition(), ticks);
                     h.assertTrue(!cast, m.getName() + " accepted incomplete charge " + ticks);
                     near(h, 2000, HemoCapabilityAccess.requireBloodVolume(p).getBloodVolume(), "Incomplete charge spent blood");
-                    h.assertTrue(!BloodManipulation.isAnyManipOnCooldown(p), "Incomplete charge started cooldown");
+					h.assertTrue(m.getRemainingCooldownTicks(p) == 0L, "Incomplete charge started cooldown");
                 }
             }
             h.succeed();

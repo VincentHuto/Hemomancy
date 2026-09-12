@@ -10,6 +10,8 @@ class ConjureStaffEquipTest {
     void staffDoesNotConsumeASlotAndCannotBeRemoved() {
         var names = new ArrayList<>(List.of("conjure_staff", "blood_shot"));
         ManipulationEquipHelper.normalizeEquippedNames(names);
+        assertTrue(ManipulationEquipHelper.isMemorizationCapExempt("conjure_staff"));
+        assertFalse(ManipulationEquipHelper.isMemorizationCapExempt("conjure_sickle"));
         assertEquals(1, ManipulationEquipHelper.countNormalEquippedNames(names));
         assertFalse(ManipulationEquipHelper.unequipNameIfAllowed(names, "conjure_staff"));
         assertTrue(names.contains("conjure_staff"));

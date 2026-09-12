@@ -57,7 +57,7 @@ public class HemoClientConfig {
 		.defineInRange("morphlingHudScale", 1.0D, 0.25D, 4.0D);
 
 	USE_COOLDOWN_VIGNETTE = CLIENT_BUILDER
-		.comment("Render cooldowns as full-screen vignette overlays. If false, cooldowns render as compact numerical timers beside the relevant HUD gauge.")
+		.comment("Render Still Art cooldowns as full-screen vignette overlays. If false, they render as compact numerical timers beside the relevant HUD gauge.")
 		.define("useCooldownVignette", true);
 
 	RENDER_CROWN_POMES_AS_ITEMS = CLIENT_BUILDER

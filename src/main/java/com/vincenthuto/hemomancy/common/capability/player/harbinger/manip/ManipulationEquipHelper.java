@@ -21,13 +21,6 @@ public final class ManipulationEquipHelper {
 		if (ManipulationRetirementRules.isRetiredManipulation(manipName)) {
 			return changed;
 		}
-		if (CONJURE_SICKLE.equals(manipName)) {
-			if (!equippedNames.contains(manipName)) {
-				equippedNames.add(manipName);
-				return true;
-			}
-			return changed;
-		}
 		if (isFixedMechanicalManip(manipName)) {
 			return changed;
 		}
@@ -57,10 +50,9 @@ public final class ManipulationEquipHelper {
 			return false;
 		}
 		List<String> original = new ArrayList<>(equippedNames);
-		boolean hadSickle = equippedNames.contains(CONJURE_SICKLE);
 		LinkedHashSet<String> normalNames = new LinkedHashSet<>();
 		for (String name : equippedNames) {
-			if (name != null && !name.isEmpty() && !isFixedMechanicalManip(name)
+			if (name != null && !name.isEmpty() && !isMemorizationCapExempt(name)
 					&& !ManipulationRetirementRules.isRetiredManipulation(name)) {
 				normalNames.add(name);
 			}
@@ -69,7 +61,6 @@ public final class ManipulationEquipHelper {
 		equippedNames.add(BLOOD_ABSORPTION);
 		equippedNames.add(BLOOD_PROJECTION);
 		equippedNames.add(CONJURE_STAFF);
-		if (hadSickle) equippedNames.add(CONJURE_SICKLE);
 		equippedNames.addAll(normalNames);
 		return !original.equals(equippedNames);
 	}
@@ -80,7 +71,7 @@ public final class ManipulationEquipHelper {
 		}
 		int count = 0;
 		for (String name : equippedNames) {
-			if (name != null && !name.isEmpty() && !isFixedMechanicalManip(name)
+			if (name != null && !name.isEmpty() && !isMemorizationCapExempt(name)
 					&& !ManipulationRetirementRules.isRetiredManipulation(name)) {
 				count++;
 			}
@@ -89,7 +80,11 @@ public final class ManipulationEquipHelper {
 	}
 
 	public static boolean isFixedMechanicalManip(String manipName) {
+		return isMemorizationCapExempt(manipName);
+	}
+
+	public static boolean isMemorizationCapExempt(String manipName) {
 		return BLOOD_ABSORPTION.equals(manipName) || BLOOD_PROJECTION.equals(manipName)
-				|| CONJURE_SICKLE.equals(manipName) || CONJURE_STAFF.equals(manipName);
+				|| CONJURE_STAFF.equals(manipName);
 	}
 }

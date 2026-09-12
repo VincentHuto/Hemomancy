@@ -32,9 +32,10 @@ public final class PhantasmalUmbralStepSourceTest {
 		assertContains("phantasmal bypasses light only", umbralStep,
 				"if (!phantasmalStep && !BlackVeilCovenantManager.isDarkEnough");
 		assertContains("umbral step exposes cooldown override", umbralStep, "public boolean ignoresCooldown(Player player)");
-		assertContains("blood manipulation checks override before cooldown", bloodManipulation, "!ignoresCooldown(player) && isAnyManipOnCooldown(player)");
+		assertContains("blood manipulation checks its own cooldown", bloodManipulation, "enforceCooldown && isOnCooldown(player)");
 		assertContains("blood manipulation skips starting cooldown", bloodManipulation, "ignoresCooldown(player) ? 0L : startCooldown(player)");
-		assertContains("unified use packet respects selected override", useManipPacket, "selManip.ignoresCooldown(player)");
+		assertNotContains("unified use packet has no player-wide cooldown gate", useManipPacket,
+				"BloodManipulation.isAnyManipOnCooldown(player)");
 	}
 
 	private static String read(Path path) throws IOException {
@@ -47,6 +48,12 @@ public final class PhantasmalUmbralStepSourceTest {
 	private static void assertContains(String label, String text, String expected) {
 		if (!text.contains(expected)) {
 			throw new AssertionError(label + ": missing " + expected);
+		}
+	}
+
+	private static void assertNotContains(String label, String text, String unexpected) {
+		if (text.contains(unexpected)) {
+			throw new AssertionError(label + ": still contains " + unexpected);
 		}
 	}
 }

@@ -42,12 +42,13 @@ final class FerricDuctilisGeometry {
         switch(packet.form()) {
             case IRON_HEART,IRON_CHARGE -> {
                 boolean charge=packet.form()==Form.IRON_CHARGE;
-                Vec3 at=charge?aim.scale(1.1).add(0,-.45,0):Vec3.ZERO;
+                Vec3 at=charge?ChargeVisualGeometry.focus(packet.form(),aim):Vec3.ZERO;
                 float growth=charge?Mth.clamp(packet.radius(),0,1):formation;
                 p.pushPose();p.translate(at.x,at.y,at.z);
                 for(int i=0;i<3;i++) {
                     double x=(i-1)*.11;
-                    plate(p,iron,new Vec3(x,-.08+Math.abs(i-1)*.075,0),.11,.23-Math.abs(i-1)*.04,.055,seed+i,growth*opacity);
+                    double y=(charge?.05:0)-.08+Math.abs(i-1)*.075;
+                    plate(p,iron,new Vec3(x,y,0),.11,.23-Math.abs(i-1)*.04,.055,seed+i,growth*opacity);
                 }
                 ribbon(p,flow,new Vec3(-.18,.12,.034),new Vec3(.16,-.12,.034),.026,.025,time,seed,camera,BLOOD,opacity);
                 if(growth<1)gather(p,flow,Vec3.ZERO,.4,1-growth,time,seed,camera,opacity);
@@ -117,7 +118,7 @@ final class FerricDuctilisGeometry {
                 }
             }
             case LIGHTNING_CHARGE -> {
-                Vec3 focus=aim.scale(1.15).add(0,-.35,0);
+                Vec3 focus=ChargeVisualGeometry.focus(packet.form(),aim);
                 double radius=.1+packet.radius()*.24;
                 for(int i=0;i<7;i++) {
                     double a=i*2.399+time*.014;
@@ -129,7 +130,7 @@ final class FerricDuctilisGeometry {
             }
             case THREAD,THREAD_CHARGE -> {
                 boolean charge=packet.form()==Form.THREAD_CHARGE;
-                Vec3 focus=charge?aim.scale(1.2).add(0,-.2,0):Vec3.ZERO;
+                Vec3 focus=charge?ChargeVisualGeometry.focus(packet.form(),aim):Vec3.ZERO;
                 Vec3 from=charge?focus.add(-.35,0,0):Vec3.ZERO,to=charge?focus.add(.35,0,0):end;
                 Vec3 mid=from.lerp(to,.5);
                 double gap=charge?0:Math.min(.4,age*.028);

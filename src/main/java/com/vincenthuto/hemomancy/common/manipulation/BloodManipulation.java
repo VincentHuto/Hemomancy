@@ -41,10 +41,8 @@ import net.neoforged.fml.ModList;
 
 import javax.annotation.Nullable;
 import java.lang.reflect.Method;
-import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.concurrent.ConcurrentHashMap;
 
 public class BloodManipulation implements EntityCastableManipulation {
 	public static BloodManipulation BLANK = new BloodManipulation("No Selected", 0, 0, 0, EnumManipulationType.QUICK,
@@ -87,10 +85,10 @@ public class BloodManipulation implements EntityCastableManipulation {
 	private static final double TICKS_PER_SECOND = 20.0;
 	private static final String MNA_MANIP_COMBO_HELPER = "com.vincenthuto.hemomancy.compat.mna.spell.ManipComboHelper";
 
-	private static final Map<UUID, Long> UNIVERSAL_COOLDOWN_MAP = new ConcurrentHashMap<>();
+	private static final ManipulationCooldownState COOLDOWNS = new ManipulationCooldownState();
 
 	public static void clearSessionState() {
-		UNIVERSAL_COOLDOWN_MAP.clear();
+		COOLDOWNS.clear();
 		ManipulationChannelManager.clearSessionState();
 		ManipulationReactiveEvents.clearSessionState();
 	}
@@ -249,37 +247,15 @@ public class BloodManipulation implements EntityCastableManipulation {
 		if (ignoresCooldown(player)) {
 			return false;
 		}
-		return isAnyManipOnCooldown(player);
+		return COOLDOWNS.isOnCooldown(player.getUUID(), name, player.level().getGameTime());
 	}
 
 	public boolean ignoresCooldown(Player player) {
 		return false;
 	}
 
-	public static boolean isAnyManipOnCooldown(Player player) {
-		Long expiryTick = UNIVERSAL_COOLDOWN_MAP.get(player.getUUID());
-		if (expiryTick == null) {
-			return false;
-		}
-		if (player.level().getGameTime() >= expiryTick) {
-			UNIVERSAL_COOLDOWN_MAP.remove(player.getUUID());
-			return false;
-		}
-		return true;
-	}
-
 	public long getRemainingCooldownTicks(Player player) {
-		Long expiryTick = UNIVERSAL_COOLDOWN_MAP.get(player.getUUID());
-		if (expiryTick == null) {
-			return 0;
-		}
-		long remaining = expiryTick - player.level().getGameTime();
-		return Math.max(0, remaining);
-	}
-
-	public static long getUniversalCooldownExpiry(Player player) {
-		Long expiryTick = UNIVERSAL_COOLDOWN_MAP.get(player.getUUID());
-		return expiryTick != null ? expiryTick : 0;
+		return COOLDOWNS.remainingTicks(player.getUUID(), name, player.level().getGameTime());
 	}
 
 	private void invokeMnAComboHelper(Player player) {
@@ -314,7 +290,7 @@ public class BloodManipulation implements EntityCastableManipulation {
 					* MnemonicCandleRules.manipulationCooldownMultiplier(
 							player.hasEffect(EffectInit.mnemonic_candle_aura)));
 
-			UNIVERSAL_COOLDOWN_MAP.put(player.getUUID(), player.level().getGameTime() + effectiveCooldown);
+			COOLDOWNS.start(player.getUUID(), name, player.level().getGameTime(), effectiveCooldown);
 			return effectiveCooldown;
 		}
 		return 0L;
@@ -405,7 +381,7 @@ public class BloodManipulation implements EntityCastableManipulation {
 		if (type != EnumManipulationType.CONTINUOUS || ignoresCooldown(player)) return;
 		long appliedCooldown = startCooldown(player);
 		if (player instanceof ServerPlayer serverPlayer) {
-			PacketHandler.sendToPlayer(serverPlayer, new ManipCooldownPacket((int) appliedCooldown));
+			PacketHandler.sendToPlayer(serverPlayer, new ManipCooldownPacket(name, (int) appliedCooldown));
 		}
 	}
 
@@ -446,7 +422,7 @@ public class BloodManipulation implements EntityCastableManipulation {
 						.withStyle(ChatFormatting.DARK_GRAY), true);
 				return false;
 			}
-			if (enforceCooldown && !ignoresCooldown(player) && isAnyManipOnCooldown(player)) {
+			if (enforceCooldown && isOnCooldown(player)) {
 				long remaining = getRemainingCooldownTicks(player);
 				double seconds = remaining / TICKS_PER_SECOND;
 				player.displayClientMessage(
@@ -527,7 +503,7 @@ public class BloodManipulation implements EntityCastableManipulation {
 					// MnA Combo System: Grant Sanguine Clarity (reduces next spell mana cost)
 					// and consume Arcane Resonance if present (it already reduced this manipulation's cost)
 					long appliedCooldown = !applyCooldown || ignoresCooldown(player) ? 0L : startCooldown(player);
-					PacketHandler.sendToPlayer((ServerPlayer) player, new ManipCooldownPacket((int) appliedCooldown));
+					PacketHandler.sendToPlayer((ServerPlayer) player, new ManipCooldownPacket(name, (int) appliedCooldown));
 					return true;
 				} else {
 					player.displayClientMessage(

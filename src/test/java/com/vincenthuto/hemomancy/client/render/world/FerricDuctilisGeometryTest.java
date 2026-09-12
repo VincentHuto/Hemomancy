@@ -9,6 +9,17 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
 class FerricDuctilisGeometryTest {
+    @Test void chargedFocalPointsStayOnTheCrosshairRay() {
+        Vec3 aim=new Vec3(.31,-.22,.925).normalize();
+        for(var form:new Form[]{Form.LIGHTNING_CHARGE,Form.IRON_CHARGE,Form.THREAD_CHARGE,
+                Form.NEEDLE_CHARGE,Form.FAN_CHARGE,Form.LANCE_CHARGE,Form.MORTAR_CHARGE,
+                Form.ANEURYSM_CHARGE,Form.GAZE_CHARGE}) {
+            Vec3 focus=ChargeVisualGeometry.focus(form,aim);
+            assertEquals(0,focus.cross(aim).length(),1e-9,form+" shifted off the aim ray");
+            assertTrue(focus.dot(aim)>0,form+" rendered behind the player");
+        }
+    }
+
     @Test void everyNerveStateAndPlateRemainsVisibleWithoutParticleGeometry() {
         for(var form:Form.values())if(FerricDuctilisGeometry.handles(form))for(float phase:new float[]{1,12,40}) {
             FerricDuctilisGeometry.begin();var output=new Vertices();

@@ -145,6 +145,8 @@ Manipulations are organized into four power tiers:
 - Move mouse to desired manipulation
 - Release to select
 
+The selected manipulation has a thin, continuous animated vein border with tapered branches around its wheel slice. A red slice fill indicates cooldown, with the remaining time shown on hover. A selected manipulation that is cooling down displays both the border and the red fill.
+
 **Activation:**
 - Depends on manipulation type
 - Quick: Single press of manipulation key (`R` default)

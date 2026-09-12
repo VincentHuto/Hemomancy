@@ -167,7 +167,7 @@ public class PacketHandler {
         net.playBidirectional(UseQuickManipKeyPacket.TYPE, UseQuickManipKeyPacket.STREAM_CODEC, UseQuickManipKeyPacket::handle);
         net.playBidirectional(UseContManipKeyPacket.TYPE, UseContManipKeyPacket.STREAM_CODEC, UseContManipKeyPacket::handle);
         net.playBidirectional(UseManipKeyPacket.TYPE, UseManipKeyPacket.STREAM_CODEC, UseManipKeyPacket::handle);
-        net.playBidirectional(ManipCooldownPacket.TYPE, ManipCooldownPacket.STREAM_CODEC, ManipCooldownPacket::handle);
+        net.playToClient(ManipCooldownPacket.TYPE, ManipCooldownPacket.STREAM_CODEC, ManipCooldownPacket::handle);
         net.playBidirectional(UpdateCurrentManipPacket.TYPE, UpdateCurrentManipPacket.STREAM_CODEC, UpdateCurrentManipPacket::handle);
         net.playToServer(UpdateCurrentMemoryPacket.TYPE, UpdateCurrentMemoryPacket.STREAM_CODEC, UpdateCurrentMemoryPacket::handle);
         net.playToClient(OpenEarthenVeinDisplayPacket.TYPE,

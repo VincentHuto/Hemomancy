@@ -46,8 +46,8 @@ final class ManipulationBloodFormation {
             if(packet.form().name().endsWith("_CHARGE") && packet.form()!=Form.CROWN_CHARGE
                     && packet.form()!=Form.BELL_CHARGE && packet.form()!=Form.THREAD_CHARGE) {
                 Vec3 direction=packet.to().subtract(packet.from()).normalize();
-                focus=direction.scale(packet.form()==Form.GLASS_CHARGE?1.4:1.25)
-                        .add(Math.cos(angle)*.05,-.25,Math.sin(angle)*.05);
+                focus=ChargeVisualGeometry.alongAim(direction,packet.form()==Form.GLASS_CHARGE?1.4:1.25)
+                        .add(Math.cos(angle)*.05,0,Math.sin(angle)*.05);
             }
             if(packet.form()==Form.CROWN || packet.form()==Form.CROWN_CHARGE) {
                 int count=packet.form()==Form.CROWN?Math.min(8,packet.count()):(int)Math.ceil(8*Math.min(1,packet.radius()));

@@ -145,7 +145,7 @@ public final class ManipulationTargetingGameTests {
                 h.assertTrue(!m.tryPerformAction(p, h.getLevel(), ItemStack.EMPTY, p.blockPosition(), 0), "Invalid cast accepted: " + m.getName());
                 near(h, 2000, HemoCapabilityAccess.requireBloodVolume(p).getBloodVolume(), "Invalid cast spent blood");
                 near(h, 185, HemoCapabilityAccess.requireKnownManipulations(p).getKnownManips().get(m).getXp(), "Invalid cast earned mastery");
-                h.assertTrue(!BloodManipulation.isAnyManipOnCooldown(p), "Invalid cast started cooldown");
+				h.assertTrue(m.getRemainingCooldownTicks(p) == 0L, "Invalid cast started cooldown");
             }
             h.succeed();
         } finally { p.discard(); }
@@ -270,7 +270,7 @@ public final class ManipulationTargetingGameTests {
                 var m = ManipulationInit.getByName(name); select(p, m);
                 h.assertTrue(!m.tryPerformAction(p, h.getLevel(), ItemStack.EMPTY, p.blockPosition(), 0), "Unsafe teleport accepted: " + name);
                 near(h, 2000, HemoCapabilityAccess.requireBloodVolume(p).getBloodVolume(), "Failed teleport payment");
-                h.assertTrue(!BloodManipulation.isAnyManipOnCooldown(p), "Failed teleport cooldown");
+				h.assertTrue(m.getRemainingCooldownTicks(p) == 0L, "Failed teleport cooldown");
                 near(h, 185, HemoCapabilityAccess.requireKnownManipulations(p).getKnownManips().get(m).getXp(), "Failed teleport mastery");
             }
             var pos = p.blockPosition().offset(0, 0, 4);

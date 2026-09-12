@@ -190,6 +190,15 @@ public class GenericRadialMenu {
 		visibleInnerItems.clear();
 	}
 
+	public void selectVeinyBorder(RadialMenuItem selected) {
+		for (RadialMenuItem item : items) {
+			item.setVeinyBorder(item == selected);
+		}
+		for (RadialMenuItem item : innerItems) {
+			item.setVeinyBorder(item == selected);
+		}
+	}
+
 	public void close() {
 		Screen owner = host.getScreen();
 		state = State.CLOSING;
@@ -237,6 +246,7 @@ public class GenericRadialMenu {
 		poseStack.translate(0, animTop, 0);
 
 		drawBackground(poseStack, x, y, z, radiusIn, radiusOut);
+		drawVeinyBorders(x,y,z+1,partialTicks);
 
 		poseStack.popPose();
 
@@ -385,6 +395,97 @@ public class GenericRadialMenu {
 	}
 
 	private static final float PRECISION = 2.5f / 360.0f;
+
+	private void drawVeinyBorders(float x,float y,float z,float partialTicks) {
+		if(visibleInnerItems.stream().noneMatch(RadialMenuItem::hasVeinyBorder)
+				&& visibleItems.stream().noneMatch(RadialMenuItem::hasVeinyBorder))return;
+		RenderSystem.disableDepthTest();
+		RenderSystem.enableBlend();
+		RenderSystem.defaultBlendFunc();
+		RenderSystem.setShader(GameRenderer::getPositionColorShader);
+		BufferBuilder buffer=Tesselator.getInstance().begin(VertexFormat.Mode.QUADS,DefaultVertexFormat.POSITION_COLOR);
+		double time=minecraft.level.getGameTime()+partialTicks;
+		int[] seed={0};
+		iterateBand(visibleInnerItems,(item,start,end)->{
+			if(item.hasVeinyBorder())drawVeinSegments(buffer,x,y,z,start,end,centerRadius,innerRadiusOut,seed[0],time);
+			seed[0]++;
+		});
+		iterateBand(visibleItems,(item,start,end)->{
+			if(item.hasVeinyBorder())drawVeinSegments(buffer,x,y,z,start,end,radiusIn,radiusOut,seed[0],time);
+			seed[0]++;
+		});
+		BufferUploader.drawWithShader(buffer.buildOrThrow());
+		RenderSystem.disableBlend();
+		RenderSystem.enableDepthTest();
+	}
+
+	private static void drawVeinSegments(BufferBuilder buffer,float centerX,float centerY,float z,
+			float start,float end,float inner,float outer,int seed,double time) {
+		var paths = RadialVeinBorderGeometry.paths(start, end, inner, outer, seed, time);
+		for (var path : paths) {
+			drawVeinPath(buffer, centerX, centerY, z, path, 1f, true);
+		}
+		for (var path : paths) {
+			drawVeinPath(buffer, centerX, centerY, z, path, .38f, false);
+		}
+	}
+
+	private record VeinStation(float x, float y, float nx, float ny, float opacity) {}
+
+	private static void drawVeinPath(BufferBuilder buffer, float centerX, float centerY, float z,
+			RadialVeinBorderGeometry.VeinPath path, float halfWidth, boolean glow) {
+		var points = path.points();
+		int count = points.size();
+		VeinStation first = null, previous = null;
+		for (int i = 0; i < count + (path.closed() ? 1 : 0); i++) {
+			VeinStation current;
+			if (i == count) {
+				current = first;
+			} else {
+				var at = points.get(i);
+				var before = points.get(path.closed() ? (i + count - 1) % count : Math.max(0, i - 1));
+				var after = points.get(path.closed() ? (i + 1) % count : Math.min(count - 1, i + 1));
+				float dx = after.x() - before.x(), dy = after.y() - before.y();
+				float length = (float)Math.hypot(dx, dy);
+				float nx = -dy / Math.max(.000001f, length), ny = dx / Math.max(.000001f, length);
+				float t = path.closed() ? 0 : i / (float)(count - 1);
+				float width = halfWidth * path.strength() * (1 - .96f * t);
+				// As with Lux strands, share each station's edges and keep tight joins from folding.
+				if (path.closed() || i > 0) width = Math.min(width, veinJoinWidth(before, at, nx, ny));
+				if (path.closed() || i + 1 < count) width = Math.min(width, veinJoinWidth(at, after, nx, ny));
+				current = new VeinStation(centerX + at.x(), centerY + at.y(), nx * width, ny * width, 1 - t);
+			}
+			if (previous != null) {
+				if (glow) {
+					drawVeinStrip(buffer, previous, current, z, 1, 0, 165, 12, 37, 0, 75);
+					drawVeinStrip(buffer, previous, current, z, 0, -1, 165, 12, 37, 75, 0);
+				} else {
+					drawVeinStrip(buffer, previous, current, z, 1, -1, 255, 64, 88, 235, 235);
+				}
+			}
+			if (first == null) first = current;
+			previous = current;
+		}
+	}
+
+	private static float veinJoinWidth(RadialVeinBorderGeometry.Point from, RadialVeinBorderGeometry.Point to,
+			float nx, float ny) {
+		float dx = to.x() - from.x(), dy = to.y() - from.y();
+		return .45f * (dx * dx + dy * dy) / Math.max(.000001f, Math.abs(dx * nx + dy * ny));
+	}
+
+	private static void drawVeinStrip(BufferBuilder buffer, VeinStation from, VeinStation to, float z,
+			float firstSide, float secondSide, int red, int green, int blue, int firstAlpha, int secondAlpha) {
+		// Keep the GUI-facing winding for both the core and the feathered glow.
+		buffer.addVertex(from.x() + from.nx() * firstSide, from.y() + from.ny() * firstSide, z)
+				.setColor(red, green, blue, (int)(firstAlpha * from.opacity()));
+		buffer.addVertex(to.x() + to.nx() * firstSide, to.y() + to.ny() * firstSide, z)
+				.setColor(red, green, blue, (int)(firstAlpha * to.opacity()));
+		buffer.addVertex(to.x() + to.nx() * secondSide, to.y() + to.ny() * secondSide, z)
+				.setColor(red, green, blue, (int)(secondAlpha * to.opacity()));
+		buffer.addVertex(from.x() + from.nx() * secondSide, from.y() + from.ny() * secondSide, z)
+				.setColor(red, green, blue, (int)(secondAlpha * from.opacity()));
+	}
 
 	private void drawPieArc(BufferBuilder buffer, float x, float y, float z, float radiusIn, float radiusOut,
 			float startAngle, float endAngle, int color) {

@@ -90,11 +90,12 @@ public final class ManipulationChargeVisualGameTests {
                 ManipulationChargeVisualPacket.handle(new ManipulationChargeVisualPacket(duration + 1), context);
                 ManipulationChargeVisualPacket.handle(new ManipulationChargeVisualPacket(-1), context);
                 require(packets.isEmpty(), "Invalid charge duration emitted a preview");
+				require(registered.getRemainingCooldownTicks(player) == 0L,
+						registered.getName() + " preview started a gameplay cooldown");
                 tested++;
             }
             require(tested == 16, "Expected coverage of all 16 registered charged manipulations, got " + tested);
-            require(blood.getBloodVolume() == 2000 && !BloodManipulation.isAnyManipOnCooldown(player),
-                    "Preview spent blood or started a gameplay cooldown");
+			require(blood.getBloodVolume() == 2000, "Preview spent blood");
             return tested;
         } finally {
             players.remove(player);

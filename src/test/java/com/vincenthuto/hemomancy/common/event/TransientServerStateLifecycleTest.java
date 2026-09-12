@@ -32,8 +32,23 @@ class TransientServerStateLifecycleTest {
 
 	@Test
 	void reportedCooldownMapsDiscardPriorWorldState() throws Exception {
-		assertResetClears("com.vincenthuto.hemomancy.common.manipulation.BloodManipulation");
+		assertManipulationCooldownsReset();
 		assertResetClears("com.vincenthuto.hemomancy.common.manipulation.stillarts.StillArt");
+	}
+
+	private static void assertManipulationCooldownsReset() throws Exception {
+		Class<?> owner = Class.forName("com.vincenthuto.hemomancy.common.manipulation.BloodManipulation");
+		Field field = owner.getDeclaredField("COOLDOWNS");
+		field.setAccessible(true);
+		Object cooldowns = field.get(null);
+		Method start = cooldowns.getClass().getMethod("start", java.util.UUID.class, String.class, long.class, long.class);
+		Method remaining = cooldowns.getClass().getMethod("remainingTicks", java.util.UUID.class, String.class, long.class);
+		java.util.UUID player = java.util.UUID.randomUUID();
+		start.invoke(cooldowns, player, "prior_world", 0L, 99_999L);
+
+		owner.getMethod("clearSessionState").invoke(null);
+		assertTrue((long) remaining.invoke(cooldowns, player, "prior_world", 0L) == 0L,
+				owner.getName() + " retained the prior world's timestamp");
 	}
 
 	@Test

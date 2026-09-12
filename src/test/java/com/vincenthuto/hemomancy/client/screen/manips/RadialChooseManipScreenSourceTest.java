@@ -22,14 +22,24 @@ public final class RadialChooseManipScreenSourceTest {
 				"ManipulationEquipHelper");
 		assertContains("radial screen adds mechanical entries to the inner band", screen,
 				"this.menu.addAllInner(this.cachedMechanicalItems);");
-		assertContains("radial screen defines the selected manipulation slice tint", screen,
+		assertNotContains("selected manipulation no longer shares a flat slice tint with cooldown", screen,
 				"SELECTED_MANIP_SLICE_TINT");
 		assertContains("radial screen defines a distinct recharging armor ability tint", screen,
 				"RECHARGING_ABILITY_SLICE_TINT");
 		assertContains("radial screen compares item names to the selected manipulation", screen,
 				"manipulation.getName().equals(selectedManipName)");
-		assertContains("selected radial item applies the tint to the whole slice", screen,
-				"item.setBackgroundColor(SELECTED_MANIP_SLICE_TINT);");
+		assertContains("radial screen resolves selected manipulation directly from its memory reference", screen,
+				"selectedMemory.id()");
+		assertContains("selected radial item enables its veiny slice border", screen,
+				"item.setVeinyBorder(true);");
+		assertContains("selecting a manipulation updates the open wheel immediately", screen,
+				"menu.selectVeinyBorder(this);");
+		assertContains("generic radial can move the selected border between existing items", menu,
+				"public void selectVeinyBorder(RadialMenuItem selected)");
+		assertContains("generic radial renders selected slice vein borders", menu,
+				"drawVeinyBorders");
+		assertContains("selected vein border is not hidden by the radial depth buffer", menu,
+				"RenderSystem.disableDepthTest();");
 		assertContains("shared resolver maps conjure blade to the living blade memory overlay", iconResolver,
 				"case \"conjure_blade\" -> \"memory_living_blade_overlay\"");
 		assertContains("shared resolver maps conjure staff to the living staff memory overlay", iconResolver,
@@ -62,6 +72,12 @@ public final class RadialChooseManipScreenSourceTest {
 				"getClientCooldownUntil");
 		assertContains("armor ability wedge computes the recharge tint while cooldown remains", screen,
 				"getBackgroundColor(int fallbackColor)");
+		assertContains("manipulation wedges read their own client cooldown", screen,
+				"ClientManipulationCooldowns.remainingTicks(manipulation.getName(), now)");
+		assertContains("cooling manipulation wedges reuse the red recharge tint", screen,
+				"? RECHARGING_ABILITY_SLICE_TINT : super.getBackgroundColor(fallbackColor)");
+		assertContains("cooling manipulation hover text shows its remaining time", screen,
+				"seconds + \"s cooldown\"");
 		assertContains("item-stack radial entries support dynamic tooltip suppliers", itemStackRadial,
 				"Supplier<List<Component>> customTooltip");
 		assertNotContains("armor ability radial entry does not duplicate the tooltip title as central hover text", screen,

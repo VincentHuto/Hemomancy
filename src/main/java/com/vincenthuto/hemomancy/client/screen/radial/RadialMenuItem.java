@@ -12,6 +12,7 @@ public abstract class RadialMenuItem
     private boolean hovered;
     private boolean hasBackgroundColor;
     private int backgroundColor;
+    private boolean veinyBorder;
 
     protected RadialMenuItem(GenericRadialMenu owner)
     {
@@ -59,6 +60,16 @@ public abstract class RadialMenuItem
     public int getBackgroundColor(int fallbackColor)
     {
         return hasBackgroundColor ? backgroundColor : fallbackColor;
+    }
+
+    public void setVeinyBorder(boolean veinyBorder)
+    {
+        this.veinyBorder = veinyBorder;
+    }
+
+    public boolean hasVeinyBorder()
+    {
+        return veinyBorder;
     }
 
     public abstract void draw(DrawingContext context);

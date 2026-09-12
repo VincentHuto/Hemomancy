@@ -9,19 +9,23 @@ import static org.junit.jupiter.api.Assertions.*;
 
 final class LivingSickleInnerRingRulesTest {
 	@Test
-	void optionalSickleIsFixedWithoutConsumingANormalLoadoutSlot() {
-		List<String> equipped = new ArrayList<>(List.of("some_spell"));
-		assertTrue(ManipulationEquipHelper.equipNameIfPossible(equipped,
-				ManipulationEquipHelper.CONJURE_SICKLE, 1));
+	void sickleUsesANormalLoadoutSlotAndCanBeUnequipped() {
+		List<String> equipped = new ArrayList<>();
+		assertTrue(ManipulationEquipHelper.equipNameIfPossible(equipped, ManipulationEquipHelper.CONJURE_SICKLE, 1));
 		assertTrue(equipped.contains(ManipulationEquipHelper.CONJURE_SICKLE));
 		assertEquals(1, ManipulationEquipHelper.countNormalEquippedNames(equipped));
 		assertTrue(ManipulationEquipHelper.unequipNameIfAllowed(equipped,
 				ManipulationEquipHelper.CONJURE_SICKLE));
-		assertTrue(equipped.contains(ManipulationEquipHelper.CONJURE_SICKLE));
+		assertFalse(equipped.contains(ManipulationEquipHelper.CONJURE_SICKLE));
+		assertFalse(ManipulationEquipHelper.isFixedMechanicalManip(ManipulationEquipHelper.CONJURE_SICKLE));
+
+		List<String> full = new ArrayList<>(List.of(ManipulationEquipHelper.BLOOD_ABSORPTION,
+				ManipulationEquipHelper.BLOOD_PROJECTION, ManipulationEquipHelper.CONJURE_STAFF, "some_spell"));
+		assertFalse(ManipulationEquipHelper.equipNameIfPossible(full, ManipulationEquipHelper.CONJURE_SICKLE, 1));
 	}
 
 	@Test
-	void normalizationPreservesAnUnlockedSickleButDoesNotGrantItEarly() {
+	void normalizationTreatsAnEquippedSickleLikeAnyOtherLoadoutEntryAndDoesNotGrantItEarly() {
 		List<String> unlocked = new ArrayList<>(List.of(ManipulationEquipHelper.CONJURE_SICKLE));
 		ManipulationEquipHelper.normalizeEquippedNames(unlocked);
 		assertEquals(List.of(ManipulationEquipHelper.BLOOD_ABSORPTION,

@@ -59,7 +59,7 @@ public final class ManipulationRemoteAcceptance {
             if(scene==0)check(known.getKnownManips().containsKey(ManipulationInit.blood_shot.get())
                     && caster.getMainHandItem().isEmpty() && blood<beforeBlood-490,"crude memory use learned Shot, consumed shard and paid 500 mL");
             if(scene==1)check(enemy!=null && enemy.getHealth()<20,"network Blood Shot damaged ordinary hostile");
-            if(scene==2 || scene==3)check(!BloodManipulation.isAnyManipOnCooldown(caster)
+			if(scene==2 || scene==3)check(ManipulationInit.getByName(POWERS[scene]).getRemainingCooldownTicks(caster) == 0L
                     && blood>=beforeBlood-1,"low blood / invalid target did not start cooldown or charge blood: "+scene);
             if(scene==4) {
                 check(observer.getHealth()==20,"PvP-disabled remote player remained unharmed inside beam");

@@ -45,7 +45,6 @@ import java.util.List;
 
 @EventBusSubscriber(Dist.CLIENT)
 public class RadialChooseManipScreen extends Screen {
-	private static final int SELECTED_MANIP_SLICE_TINT = 0x9F7A0D0D;
 	private static final int RECHARGING_ABILITY_SLICE_TINT = 0xBFA00000;
 	private static final int UNAVAILABLE_ABILITY_SLICE_TINT = 0x7F3F1010;
 
@@ -136,14 +135,12 @@ public class RadialChooseManipScreen extends Screen {
 			List<BloodManipulation> allManips = manips.getManipList();
 			List<String> equippedNames = manips.getEquippedManipNames();
 			MemorySlotRef selectedMemory = manips.getSelectedMemoryRef();
-			BloodManipulation selectedManip = allManips.isEmpty() ? null : manips.getSelectedManip();
 			String selectedManipName = selectedMemory.kind() == MemoryEntryKind.MANIPULATION
-					&& selectedManip != null ? selectedManip.getName() : "";
+					? selectedMemory.id() : "";
 
 			addMechanicalManipulation(allManips, equippedNames, ManipulationEquipHelper.BLOOD_ABSORPTION, selectedManipName);
 			addMechanicalManipulation(allManips, equippedNames, ManipulationEquipHelper.BLOOD_PROJECTION, selectedManipName);
 			addMechanicalManipulation(allManips, equippedNames, ManipulationEquipHelper.CONJURE_STAFF, selectedManipName);
-			addMechanicalManipulation(allManips, equippedNames, ManipulationEquipHelper.CONJURE_SICKLE, selectedManipName);
 			addArmorSetAbility();
 
 			for (ManipulationWheelOrder.Entry entry : ManipulationWheelOrder.resolve(allManips, equippedNames)) {
@@ -274,14 +271,32 @@ public class RadialChooseManipScreen extends Screen {
 			@Override
 			public boolean onClick() {
 				if (staffUnavailable) return false;
+				RadialChooseManipScreen.this.menu.selectVeinyBorder(this);
 				PacketHandler.sendToServer(new UpdateCurrentManipPacket(slot));
 				RadialChooseManipScreen.this.menu.close();
 				return true;
 			}
+
+			@Override
+			public int getBackgroundColor(int fallbackColor) {
+				long now = mc.level != null ? mc.level.getGameTime() : 0L;
+				return ClientManipulationCooldowns.remainingTicks(manipulation.getName(), now) > 0
+						? RECHARGING_ABILITY_SLICE_TINT : super.getBackgroundColor(fallbackColor);
+			}
+
+			@Override
+			public MutableComponent getCentralText() {
+				long now = mc.level != null ? mc.level.getGameTime() : 0L;
+				long remaining = ClientManipulationCooldowns.remainingTicks(manipulation.getName(), now);
+				MutableComponent label = Component.literal(manipulation.getProperName());
+				if (remaining <= 0) return label;
+				long seconds = Math.max(1L, (remaining + 19L) / 20L);
+				return label.append(Component.literal("\n" + seconds + "s cooldown").withStyle(ChatFormatting.RED));
+			}
 		};
 		if (staffUnavailable) item.setBackgroundColor(UNAVAILABLE_ABILITY_SLICE_TINT);
 		if (manipulation.getName().equals(selectedManipName)) {
-			item.setBackgroundColor(SELECTED_MANIP_SLICE_TINT);
+			item.setVeinyBorder(true);
 		}
 		item.setVisible(true);
 		return item;
