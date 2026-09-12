@@ -41,7 +41,8 @@ public final class BloodBindingManipulationSourceTest {
 		assertContains(packets, "sendBloodBindingTendril");
 		String clientEvents = read("src/main/java/com/vincenthuto/hemomancy/client/event/ClientEvents.java");
 		assertContains(clientEvents, "BloodBindingTendrilClientState.tick()");
-		assertContains(clientEvents, "BloodBindingTendrilRenderer.render(event.getPoseStack(), partialTick)");
+		assertContains(read("src/main/java/com/vincenthuto/hemomancy/client/render/world/ManipulationVisualRenderer.java"),
+                "BloodBindingTendrilRenderer.collect(poses,FLOWS,camera,partial)");
 
 		String tree = read("src/main/java/com/vincenthuto/hemomancy/common/init/ManipulationTreeInit.java");
 		assertContains(tree, "register(\"blood_binding\",560,353);");

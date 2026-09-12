@@ -28,7 +28,7 @@ public abstract class MixinParalysisLivingEntity {
     }
     @Inject(method="startUsingItem",at=@At("HEAD"),cancellable=true,remap=false)
     private void hemomancy$paralysisUse(InteractionHand hand,CallbackInfo ci) {
-        if (Paralysis.isParalyzed((LivingEntity)(Object)this)) ci.cancel();
+        if (Paralysis.blocksActions((LivingEntity)(Object)this)) ci.cancel();
     }
     @Inject(method="onEffectRemoved",at=@At("TAIL"),remap=false)
     private void hemomancy$paralysisRecovery(MobEffectInstance effect,CallbackInfo ci) {

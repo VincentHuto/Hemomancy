@@ -48,6 +48,8 @@ repo/
 /tools/dialogue_editor/node_modules/
 /tools/dialogue_editor/dist/
 /tools/*
+!/tools/GenerateSchoolStateIcons.java
+!/tools/school-combat-acceptance.init.gradle
 !/tools/misc/import_manipulation_materials.py
 !/tools/misc/manipulation-visceral-review.init.gradle
 !/tools/misc/validate_thermal_shaders.py
@@ -86,3 +88,5 @@ repo/
 /docs/agents/
 /docs/superpowers/
 /output/
+/tools/GenerateSchoolStateIcons.java
+/tools/school-combat-acceptance.init.gradle

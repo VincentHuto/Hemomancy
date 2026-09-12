@@ -217,6 +217,7 @@ public class PacketHandler {
         net.playToClient(SyncMonolithicDislocationVisualS2CPacket.TYPE,
                 SyncMonolithicDislocationVisualS2CPacket.STREAM_CODEC,
                 SyncMonolithicDislocationVisualS2CPacket::handle);
+        net.playToClient(SyncSchoolCombatS2CPacket.TYPE, SyncSchoolCombatS2CPacket.STREAM_CODEC, SyncSchoolCombatS2CPacket::handle);
         net.playToClient(SyncCrimsonFireVisualS2CPacket.TYPE,
                 SyncCrimsonFireVisualS2CPacket.STREAM_CODEC,
                 SyncCrimsonFireVisualS2CPacket::handle);

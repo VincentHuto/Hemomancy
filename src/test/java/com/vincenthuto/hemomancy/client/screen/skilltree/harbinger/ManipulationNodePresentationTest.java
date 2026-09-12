@@ -12,7 +12,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 class ManipulationNodePresentationTest {
 	@Test
 	void ranksUseTheAgreedBorderPalette() {
-		assertEquals(0, ManipulationNodePresentation.borderColor(EnumManipulationRank.HUMILIS));
+		assertEquals(0xFF4A1018, ManipulationNodePresentation.borderColor(EnumManipulationRank.HUMILIS));
 		assertEquals(0xFFCD7F32, ManipulationNodePresentation.borderColor(EnumManipulationRank.MEDIOCRITAS));
 		assertEquals(0xFFA7ADB2, ManipulationNodePresentation.borderColor(EnumManipulationRank.SUMMA));
 		assertEquals(0xFFFFC43D, ManipulationNodePresentation.borderColor(EnumManipulationRank.MAGISTER));

@@ -43,6 +43,12 @@ public class WitchsEarMorphlingItem extends MorphlingItem {
 
 	@Override
 	public boolean tryUse(Player playerIn, InteractionHand handIn, ItemStack itemStack, Level worldIn) {
+        if (com.vincenthuto.hemomancy.common.manipulation.ductilis.Paralysis.blocksActions(playerIn)) return false;
+        if (playerIn instanceof net.minecraft.server.level.ServerPlayer server
+                && com.vincenthuto.hemomancy.common.manipulation.HematicCommandManager.isMarionetteChannel(server))
+            com.vincenthuto.hemomancy.common.manipulation.ManipulationChannelManager.stop(server, false);
+        try (var schoolAbility = MorphlingCombat.scope(this, playerIn, itemStack, null)) {
+
 		if (!MorphlingItem.tryBeginPrimalAbility(playerIn, itemStack, "Echothesis",
 				260.0, 500, 160, 0)) return false;
 		AABB area = playerIn.getBoundingBox().inflate(36.0);
@@ -58,15 +64,18 @@ public class WitchsEarMorphlingItem extends MorphlingItem {
 			playerIn.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SPEED,
 					180, 1, true, false, true));
 			for (Monster mob : worldIn.getEntitiesOfClass(Monster.class, area, Monster::isAlive)) {
-				mob.addEffect(new MobEffectInstance(MobEffects.DARKNESS,
-						100, 0, true, true, true));
+				MorphlingCombat.afflict(this, playerIn, mob, 100);
 			}
 		}
 		return true;
-	}
+
+        }
+    }
 
 	@Override
 	public void onEquippedTick(Player player, ItemStack stack) {
+        try (var schoolAbility = MorphlingCombat.scope(this, player, stack, null)) {
+
 		int maturity = MorphlingItem.getMaturityLevel(stack);
 		int amplifier = MorphlingItem.passiveAmplifier(player, stack, maturity);
 
@@ -93,7 +102,9 @@ public class WitchsEarMorphlingItem extends MorphlingItem {
 				}
 			}
 		}
-	}
+
+        }
+    }
 
 	@Override
 	public boolean onEquippedFall(Player player, ItemStack stack, float distance) {

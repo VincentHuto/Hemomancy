@@ -36,6 +36,8 @@ public class HemosynthesisManip extends BloodManipulation {
 
 	@Override
 	public void getAction(Player player, Level world, ItemStack heldItemMainhand, BlockPos position) {
+        try (var schoolCast = com.vincenthuto.hemomancy.common.damage.SchoolDamage.cast(this, player, 1)) {
+
 		FoodData food = player.getFoodData();
 		if (food.getFoodLevel() >= 20) {
 			return;
@@ -48,5 +50,6 @@ public class HemosynthesisManip extends BloodManipulation {
 		if (world instanceof ServerLevel sLevel) {
 			ManipulationParticles.accent(sLevel, EnumBloodTendency.LUX, player.position().add(0, 1, 0), net.minecraft.world.phys.Vec3.ZERO);
 		}
-	}
+	        }
+    }
 }

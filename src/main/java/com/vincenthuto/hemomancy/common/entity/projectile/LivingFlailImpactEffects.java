@@ -46,15 +46,10 @@ public final class LivingFlailImpactEffects {
 		for (LivingEntity target : level.getEntitiesOfClass(LivingEntity.class, area)) {
 			boolean valid = LivingFlailImpactRules.isValidTarget(target == owner, target.isAlliedTo(owner),
 					target.isAlive(), owner.canAttack(target));
-			if (!valid || target.distanceToSqr(center) > radius * radius) continue;
-			float tendencyMultiplier = owner instanceof net.minecraft.world.entity.player.Player player
-					? TendencyWeaponHelper.getDamageMultiplier(player, target, projectile.getPrimaryTendency(),
-							projectile.getSecondaryTendency()) : 1.0F;
+			if (!valid || target.distanceToSqr(center) > radius * radius
+                    || !com.vincenthuto.hemomancy.common.manipulation.ductilis.ConductionManager.canHarm(owner, target)) continue;
 			target.hurt(HemoDamageTypes.livingFlailFreeze(level, projectile, owner),
-					LivingFlailRules.damage(charge) * impactScale * tendencyMultiplier);
-			target.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN,
-					Math.round(LivingFlailRules.slownessTicks(charge) * impactScale),
-					LivingFlailRules.slownessAmplifier(charge)));
+					LivingFlailRules.damage(charge) * impactScale);
 			Vec3 outward = target.position().subtract(center).multiply(1.0D, 0.0D, 1.0D);
 			if (outward.lengthSqr() > 1.0E-5D) {
 				outward = outward.normalize().scale(LivingFlailRules.knockback(charge) * impactScale);

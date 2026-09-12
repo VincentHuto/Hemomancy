@@ -34,6 +34,8 @@ public class PrismaticReproofManip extends BloodManipulation {
 
 	@Override
 	public void getAction(Player player, Level world, ItemStack heldItemMainhand, BlockPos position) {
+        try (var schoolCast = com.vincenthuto.hemomancy.common.damage.SchoolDamage.cast(this, player, 1)) {
+
 		if (!(world instanceof ServerLevel sLevel)) return;
 
 		Vec3 eye = player.getEyePosition();
@@ -47,15 +49,8 @@ public class PrismaticReproofManip extends BloodManipulation {
 			double distance = toTarget.length();
 			if (distance <= 0.001 || distance > RANGE) continue;
 			if (look.dot(toTarget.normalize()) < HALF_CONE_DOT) continue;
-			target.addEffect(new MobEffectInstance(MobEffects.BLINDNESS, 100, 0, false, true));
-			target.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, 140, 0, false, true));
-			float damage = (float) ((target.hasEffect(MobEffects.GLOWING) ? 4.0F : 2.0F)
-					* SkillPointHelper.getCrimsonMasteryMultiplier(player));
-			float adjusted = TendencyAffinityRules.adjustManipulationDamage(player, target, this, damage);
-			if (ManipulationParticles.hurt(this, target, world.damageSources().magic(), adjusted)) {
-				SchoolHitHelper.tryTriggerConductiveArc(player, target, EnumBloodTendency.LUX, getSecondaryTend(),
-						adjusted);
-			}
+			float damage = (float) (2.0F * SkillPointHelper.getCrimsonMasteryMultiplier(player));
+            ManipulationCombatHelper.hurt(this, player, target, sLevel, damage);
 			ManipulationVisuals.burst(sLevel, ManipulationVisuals.Form.VERDICT, eye, target.getEyePosition(), .25, 12);
             struck++;
 		}
@@ -74,5 +69,6 @@ public class PrismaticReproofManip extends BloodManipulation {
 					particlePos.x, particlePos.y, particlePos.z,
 					1, 0, 0, 0, 0.02);
 		}
-	}
+	        }
+    }
 }

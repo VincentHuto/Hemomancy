@@ -1,6 +1,9 @@
 package com.vincenthuto.hemomancy.common.init;
 
 import com.vincenthuto.hemomancy.Hemomancy;
+import com.vincenthuto.hemomancy.common.damage.SchoolStates;
+import com.vincenthuto.hemomancy.common.damage.SchoolState;
+import com.vincenthuto.hemomancy.common.damage.SchoolDamage;
 import com.vincenthuto.hemomancy.common.block.harbinger.CrimsonFireHelper;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.EnumVeinSections;
@@ -120,6 +123,9 @@ public class ManipulationInit {
 					.setCooldownTicks(100)
 					.setDrudgeAction(DrudgeAction.DRUDGE_UNSUPPORTED, "Not usable by Drudges"));
 
+	public static final DeferredHolder<BloodManipulation, BloodManipulation> sanguine_marionette = MANIPS.register("sanguine_marionette",
+            com.vincenthuto.hemomancy.common.manipulation.animus.SanguineMarionetteManip::new);
+
 	public static final DeferredHolder<BloodManipulation, BloodManipulation> blood_lattice = MANIPS.register("blood_lattice",
 			() -> new BloodBindingManip("blood_lattice", 275, 0, 0, EnumManipulationType.QUICK,
 					EnumManipulationRank.HUMILIS, EnumBloodTendency.ANIMUS, EnumVeinSections.LEGS,
@@ -230,10 +236,9 @@ public class ManipulationInit {
 						AABB area = new AABB(centre).inflate(radius / 2.0);
 						List<Monster> mobs = world.getEntitiesOfClass(Monster.class, area);
 						if (mobs.isEmpty()) return false;
-						mobs.forEach(m -> m.addEffect(
-								new MobEffectInstance(MobEffects.WITHER, 60, 0, false, true)));
+						mobs.forEach(m -> SchoolStates.apply(drudge, m, SchoolState.PRESSURE, 60));
 						return true;
-					}, "Applies Wither to nearby hostiles"));
+					}, "Builds pressure in nearby hostiles"));
 
 	public static final DeferredHolder<BloodManipulation, BloodManipulation> expansive_blood_cloud = MANIPS.register("expansive_blood_cloud",
 			() -> new BloodCloudManip("expansive_blood_cloud", 375, 25, 0, EnumManipulationType.QUICK,
@@ -284,11 +289,10 @@ public class ManipulationInit {
 						if (mobs.isEmpty()) return false;
 						float dmg = (float) drudge.getAttributeValue(Attributes.ATTACK_DAMAGE);
 						mobs.forEach(m -> {
-							m.addEffect(new MobEffectInstance(MobEffects.CONFUSION, 100, 0, false, true));
 							m.hurt(world.damageSources().mobAttack(drudge), dmg);
 						});
 						return true;
-					}, "Area nausea pulse on hostiles"));
+					}, "Ruptures pressure in nearby hostiles"));
 
 	public static final DeferredHolder<BloodManipulation, BloodManipulation> vital_effusion = MANIPS.register("vital_effusion",
 			() -> new VitalEffusionManip("vital_effusion", 350, 0, 0, EnumManipulationType.QUICK,
@@ -345,7 +349,6 @@ public class ManipulationInit {
 						Monster target = world.getEntitiesOfClass(Monster.class, area).stream()
 								.min(Comparator.comparingDouble(drudge::distanceToSqr)).orElse(null);
 						if (target == null) return false;
-						SynapticJoltManip.staggerTarget(target);
 						DuctilisLightningEffects.synapticJolt(drudge, target);
 						target.hurt(world.damageSources().mobAttack(drudge), 3.0F);
 						return true;
@@ -393,7 +396,7 @@ public class ManipulationInit {
 						nearby.forEach(e -> e.addEffect(
 								new MobEffectInstance(MobEffects.GLOWING, 300, 0, false, false)));
 						return true;
-					}, "Applies Glowing to all nearby entities"));
+					}, "Illuminates nearby entities"));
 
 	public static final DeferredHolder<BloodManipulation, BloodManipulation> conjure_blade = MANIPS.register("conjure_blade",
 			() -> new StaffWeaponFormManip("conjure_blade", ItemInit.living_blade, 0, 0,
@@ -481,9 +484,9 @@ public class ManipulationInit {
 						Monster target = world.getEntitiesOfClass(Monster.class, area).stream()
 								.min(Comparator.comparingDouble(drudge::distanceToSqr)).orElse(null);
 						if (target == null) return false;
-						CrimsonFireHelper.igniteCrimson(target, 6);
+						SchoolStates.apply(drudge, target, SchoolState.SEARING, 120);
 						return true;
-					}, "Sets nearest hostile on fire"));
+					}, "Sears the nearest hostile"));
 
 	// ── Utilitarian Manipulations ──
 
@@ -559,14 +562,9 @@ public class ManipulationInit {
 						Monster target = world.getEntitiesOfClass(Monster.class, area).stream()
 								.min(Comparator.comparingDouble(drudge::distanceToSqr)).orElse(null);
 						if (target == null) return false;
-						boolean concealed = target.hasEffect(MobEffects.INVISIBILITY);
-						if (concealed) {
-							target.removeEffect(MobEffects.INVISIBILITY);
-						}
-						target.addEffect(new MobEffectInstance(MobEffects.GLOWING, 180, 0, false, true));
-						target.hurt(world.damageSources().magic(), concealed ? 5.0F : 3.0F);
+						SchoolDamage.hurt(target, world.damageSources().magic(), 3.0F, 180, 1);
 						return true;
-					}, "Marks and burns the nearest hidden hostile"));
+					}, "Illuminates and damages the nearest hostile"));
 
 	public static final DeferredHolder<BloodManipulation, BloodManipulation> crimson_harvest = MANIPS.register("crimson_harvest",
 			() -> new CrimsonHarvestManip("crimson_harvest", 200, 0, 0, EnumManipulationType.QUICK,
@@ -600,11 +598,10 @@ public class ManipulationInit {
 						Monster target = world.getEntitiesOfClass(Monster.class, area).stream()
 								.min(Comparator.comparingDouble(drudge::distanceToSqr)).orElse(null);
 						if (target == null) return false;
-						target.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 120, 4, false, true));
-						target.hurt(world.damageSources().freeze(),
-								(float) drudge.getAttributeValue(Attributes.ATTACK_DAMAGE) * 1.5f);
+						SchoolDamage.hurt(target, world.damageSources().freeze(),
+                                (float) drudge.getAttributeValue(Attributes.ATTACK_DAMAGE) * 1.5f, 120, 1);
 						return true;
-					}, "Freezes and damages nearest hostile"));
+					}, "Builds Rime and damages the nearest hostile"));
 
 	// ── Mid-Game Utilitarian Manipulations (MEDIOCRITAS) ──
 
@@ -691,8 +688,7 @@ public class ManipulationInit {
 						List<Monster> mobs = world.getEntitiesOfClass(Monster.class, area);
 						if (mobs.isEmpty()) return false;
 						mobs.forEach(m -> {
-							CrimsonFireHelper.igniteCrimson(m, 10);
-							m.hurt(world.damageSources().onFire(), 3.0f);
+							SchoolDamage.hurt(m, world.damageSources().onFire(), 3.0f, 200, 1);
 						});
 						return true;
 					}, "Burns all hostiles in area"));
@@ -727,10 +723,9 @@ public class ManipulationInit {
 						AABB area = new AABB(centre).inflate(radius);
 						List<Monster> mobs = world.getEntitiesOfClass(Monster.class, area);
 						if (mobs.isEmpty()) return false;
-						mobs.forEach(m -> m.addEffect(
-								new MobEffectInstance(MobEffects.GLOWING, 600, 0, false, true)));
+						mobs.forEach(m -> SchoolStates.apply(drudge, m, SchoolState.ILLUMINATED, 600));
 						return true;
-					}, "Applies Glowing to nearby hostiles"));
+					}, "Illuminates nearby hostiles"));
 
 	public static final DeferredHolder<BloodManipulation, BloodManipulation> prismatic_reproof = MANIPS.register("prismatic_reproof",
 			() -> new PrismaticReproofManip("prismatic_reproof", 325, 10, 0, EnumManipulationType.QUICK,
@@ -741,11 +736,10 @@ public class ManipulationInit {
 						AABB area = new AABB(centre).inflate(radius);
 						List<Monster> mobs = world.getEntitiesOfClass(Monster.class, area);
 						mobs.forEach(m -> {
-							m.addEffect(new MobEffectInstance(MobEffects.BLINDNESS, 100, 0, false, true));
-							m.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, 140, 0, false, true));
+							m.hurt(world.damageSources().magic(), 2.0F);
 						});
 						return !mobs.isEmpty();
-					}, "Blinds and weakens hostile mobs"));
+					}, "Consumes illumination for a prismatic strike"));
 
 	public static final DeferredHolder<BloodManipulation, BloodManipulation> hematic_beacon = MANIPS.register("hematic_beacon",
 			() -> new HematicBeaconManip("hematic_beacon", 350, 10, 0, EnumManipulationType.QUICK,
@@ -759,7 +753,7 @@ public class ManipulationInit {
 							p.addEffect(new MobEffectInstance(MobEffects.DAMAGE_RESISTANCE, 160, 0, false, true));
 						});
 						world.getEntitiesOfClass(Monster.class, area).forEach(m ->
-								m.addEffect(new MobEffectInstance(MobEffects.GLOWING, 240, 0, false, true)));
+								SchoolStates.apply(drudge, m, SchoolState.ILLUMINATED, 240));
 						return true;
 					}, "Marks hostiles and steadies nearby allies"));
 
@@ -775,6 +769,7 @@ public class ManipulationInit {
 						if (ally == null) return false;
 						ally.addEffect(new MobEffectInstance(MobEffects.ABSORPTION, 300, 1, false, true));
 						ally.removeEffect(MobEffects.BLINDNESS);
+                        ally.removeEffect(EffectInit.obscured);
 						return true;
 					}, "Grants absorption and clears blindness"));
 
@@ -810,10 +805,9 @@ public class ManipulationInit {
 						AABB area = new AABB(centre).inflate(radius);
 						List<Monster> mobs = world.getEntitiesOfClass(Monster.class, area);
 						if (mobs.isEmpty()) return false;
-						mobs.forEach(m -> m.addEffect(
-								new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 100, 2, false, true)));
+						mobs.forEach(m -> SchoolStates.apply(drudge, m, SchoolState.RIME, 100));
 						return true;
-					}, "Slows all hostiles in area"));
+					}, "Builds Rime on nearby hostiles"));
 
 	public static final DeferredHolder<BloodManipulation, BloodManipulation> glacial_circulation = MANIPS.register("glacial_circulation",
 			() -> new GlacialCirculationManip("glacial_circulation", 175, 0, 0, EnumManipulationType.QUICK,
@@ -884,8 +878,7 @@ public class ManipulationInit {
 						Monster target = world.getEntitiesOfClass(Monster.class, area).stream()
 								.min(Comparator.comparingDouble(drudge::distanceToSqr)).orElse(null);
 						if (target == null) return false;
-						CrimsonFireHelper.igniteCrimson(target, 8);
-						target.hurt(world.damageSources().onFire(), 2.0f);
+						SchoolDamage.hurt(target, world.damageSources().onFire(), 2.0f, 160, 1);
 						return true;
 					}, "Sets nearest hostile on fire"));
 
@@ -899,8 +892,7 @@ public class ManipulationInit {
 						if (mobs.isEmpty()) return false;
 						float dmg = (float) drudge.getAttributeValue(Attributes.ATTACK_DAMAGE) * 2.0f;
 						mobs.forEach(m -> {
-							CrimsonFireHelper.igniteCrimson(m, 12);
-							m.hurt(world.damageSources().onFire(), dmg);
+							SchoolDamage.hurt(m, world.damageSources().onFire(), dmg, 240, 1);
 						});
 						return true;
 					}, "Heavy fire damage to all hostiles in area"));
@@ -913,14 +905,14 @@ public class ManipulationInit {
 					.setDrudgeAction((drudge, world, centre, radius) -> {
 						drudge.removeEffect(MobEffects.POISON);
 						drudge.removeEffect(MobEffects.WITHER);
+                        drudge.removeEffect(EffectInit.necrosis);
 						AABB area = new AABB(centre).inflate(radius / 2.0);
 						List<Monster> mobs = world.getEntitiesOfClass(Monster.class, area);
 						mobs.forEach(m -> {
-							CrimsonFireHelper.igniteCrimson(m, 5);
-							m.hurt(world.damageSources().onFire(), 2.0F);
+							SchoolDamage.hurt(m, world.damageSources().onFire(), 2.0F, 100, 1);
 						});
 						return true;
-					}, "Cleanses poison/wither and burns nearby hostiles"));
+					}, "Cleanses disease and Necrosis, then sears nearby hostiles"));
 
 	public static final DeferredHolder<BloodManipulation, BloodManipulation> scalding_updraft = MANIPS.register("scalding_updraft",
 			() -> new ScaldingUpdraftManip("scalding_updraft", 225, 5, 0, EnumManipulationType.QUICK,
@@ -965,10 +957,9 @@ public class ManipulationInit {
 					.setSecondaryTend(EnumBloodTendency.MORTEM)
 					.setCooldownTicks(20)
 					.setDrudgeAction((drudge, world, centre, radius) -> {
-						drudge.addEffect(
-								new MobEffectInstance(MobEffects.INVISIBILITY, 600, 0, false, false));
+						SchoolStates.apply(drudge, drudge, SchoolState.VEILED, 600);
 						return true;
-					}, "Cloaks the Drudge with Invisibility"));
+					}, "Veils the Drudge until it attacks"));
 
 	public static final DeferredHolder<BloodManipulation, BloodManipulation> gloam_laceration = MANIPS.register("gloam_laceration",
 			() -> new GloamLacerationManip("gloam_laceration", 175, 0, 0, EnumManipulationType.QUICK,
@@ -980,11 +971,10 @@ public class ManipulationInit {
 						Monster target = world.getEntitiesOfClass(Monster.class, area).stream()
 								.min(Comparator.comparingDouble(drudge::distanceToSqr)).orElse(null);
 						if (target == null) return false;
-						boolean ambush = drudge.hasEffect(MobEffects.INVISIBILITY)
+						boolean ambush = drudge.isInvisible()
 								|| BlackVeilCovenantManager.isDarkEnough(world, drudge.blockPosition(), 7);
-						target.addEffect(new MobEffectInstance(EffectInit.blood_loss, 140, 0, false, true));
-						target.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, 120, 0, false, true));
-						target.hurt(world.damageSources().magic(), ambush ? 6.0F : 3.5F);
+                        if (target.hurt(world.damageSources().magic(), ambush ? 6.0F : 3.5F))
+                            target.addEffect(new MobEffectInstance(EffectInit.blood_loss, 140, 0, false, true));
 						return true;
 					}, "Slashes the nearest hostile from darkness"));
 
@@ -999,11 +989,10 @@ public class ManipulationInit {
 						if (mobs.isEmpty()) return false;
 						float dmg = (float) drudge.getAttributeValue(Attributes.ATTACK_DAMAGE) * 1.2f;
 						mobs.forEach(m -> {
-							m.addEffect(new MobEffectInstance(MobEffects.BLINDNESS, 100, 0, false, true));
-							m.hurt(world.damageSources().magic(), dmg);
+							SchoolDamage.hurt(m, world.damageSources().magic(), dmg, 100, 1);
 						});
 						return true;
-					}, "Blinds and damages all hostiles in area"));
+					}, "Obscures and damages nearby hostiles"));
 
 	public static final DeferredHolder<BloodManipulation, BloodManipulation> black_veil_covenant = MANIPS.register("black_veil_covenant",
 			() -> new BlackVeilCovenantManip("black_veil_covenant", 425, 15, 0, EnumManipulationType.QUICK,
@@ -1043,9 +1032,9 @@ public class ManipulationInit {
 						Monster target = world.getEntitiesOfClass(Monster.class, area).stream()
 								.min(Comparator.comparingDouble(drudge::distanceToSqr)).orElse(null);
 						if (target == null) return false;
-						target.addEffect(new MobEffectInstance(MobEffects.WITHER, 100, 0, false, true));
+						SchoolStates.apply(drudge, target, SchoolState.NECROSIS, 100);
 						return true;
-					}, "Applies Wither to nearest hostile"));
+					}, "Afflicts the nearest hostile with Necrosis"));
 
 	public static final DeferredHolder<BloodManipulation, BloodManipulation> lignum_mortis = MANIPS.register("lignum_mortis",
 			() -> new LignumMortisManip("lignum_mortis", 100, 0, 0, EnumManipulationType.CONTINUOUS,
@@ -1211,7 +1200,7 @@ public class ManipulationInit {
 					.setDrudgeAction((drudge, world, centre, radius) -> {
 						AABB area = new AABB(centre).inflate(radius);
 						world.getEntitiesOfClass(LivingEntity.class, area).forEach(e ->
-								e.addEffect(new MobEffectInstance(MobEffects.GLOWING, 1200, 0, false, false)));
+								SchoolStates.apply(drudge, e, SchoolState.ILLUMINATED, 1200));
 						return true;
 					}, "Applies Glowing to all nearby entities"));
 
@@ -1225,11 +1214,10 @@ public class ManipulationInit {
 						List<Monster> mobs = world.getEntitiesOfClass(Monster.class, area);
 						if (mobs.isEmpty()) return false;
 						mobs.forEach(m -> {
-							m.addEffect(new MobEffectInstance(MobEffects.WITHER, 100, 1, false, true));
-							m.addEffect(new MobEffectInstance(MobEffects.POISON, 100, 0, false, true));
+							SchoolStates.apply(drudge, m, SchoolState.NECROSIS, 100);
 						});
 						return true;
-					}, "Applies Wither and Poison to all hostiles in area"));
+					}, "Afflicts nearby hostiles with Necrosis"));
 
 	public static final DeferredHolder<BloodManipulation, BloodManipulation> endless_hour = MANIPS.register("endless_hour",
 			() -> new EndlessHourManip("endless_hour", 600, 30, 0, EnumManipulationType.QUICK,

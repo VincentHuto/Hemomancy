@@ -33,6 +33,8 @@ public class BlackVeilCovenantManip extends BloodManipulation {
 
 	@Override
 	public void getAction(Player player, Level world, ItemStack heldItemMainhand, BlockPos position) {
+        try (var schoolCast = com.vincenthuto.hemomancy.common.damage.SchoolDamage.cast(this, player, 1)) {
+
 		if (!(world instanceof ServerLevel sLevel)) return;
 
 		BlockPos center = player.blockPosition();
@@ -42,11 +44,12 @@ public class BlackVeilCovenantManip extends BloodManipulation {
 
 		for (LivingEntity target : world.getEntitiesOfClass(LivingEntity.class, new AABB(center).inflate(RADIUS),
 				e -> e != player && e.isAlive())) {
-			target.addEffect(new MobEffectInstance(MobEffects.BLINDNESS, 120, 0, false, true));
-			target.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 120, 0, false, true));
+			com.vincenthuto.hemomancy.common.damage.SchoolStates.apply(player, target,
+                    com.vincenthuto.hemomancy.common.damage.SchoolState.OBSCURED, 25);
 		}
 
 		world.playSound(null, center, SoundEvents.WARDEN_SONIC_BOOM, SoundSource.PLAYERS, 0.55F, 0.55F);
 		ManipulationParticles.accent(sLevel, EnumBloodTendency.TENEBRIS, player.position().add(0, .4, 0), net.minecraft.world.phys.Vec3.ZERO);
-	}
+	        }
+    }
 }

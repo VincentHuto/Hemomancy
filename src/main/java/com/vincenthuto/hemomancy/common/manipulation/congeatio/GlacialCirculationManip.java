@@ -44,6 +44,8 @@ public class GlacialCirculationManip extends BloodManipulation {
 
 	@Override
 	public void getAction(Player player, Level world, ItemStack heldItemMainhand, BlockPos position) {
+        try (var schoolCast = com.vincenthuto.hemomancy.common.damage.SchoolDamage.cast(this, player, 1)) {
+
 		player.addEffect(new MobEffectInstance(MobEffects.FIRE_RESISTANCE, DURATION_TICKS, 0, false, true, true));
 		player.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, DURATION_TICKS, SLOWNESS_AMPLIFIER, false, true, true));
 
@@ -66,5 +68,6 @@ public class GlacialCirculationManip extends BloodManipulation {
 
 		world.playSound(null, player.blockPosition(), SoundEvents.POWDER_SNOW_PLACE, SoundSource.PLAYERS, 0.8f, 0.6f);
 		world.playSound(null, player.blockPosition(), SoundEvents.GLASS_PLACE, SoundSource.PLAYERS, 0.5f, 1.4f);
-	}
+	        }
+    }
 }

@@ -358,7 +358,7 @@ public class ClientEvents {
 			suppressManipulationUntilRelease = false;
 			return;
 		}
-        if (com.vincenthuto.hemomancy.common.manipulation.ductilis.Paralysis.isParalyzed(mc.player)) {
+        if (com.vincenthuto.hemomancy.common.manipulation.ductilis.Paralysis.blocksActions(mc.player)) {
             interruptManipulationCharge();
             return;
         }

@@ -164,6 +164,8 @@ public final class ManipulationVisualRenderer {
         PoseStack poses = new PoseStack();
         if(!solids)poses.mulPose(event.getModelViewMatrix());
         var buffers = mc.renderBuffers().bufferSource();
+        SchoolStateVisuals.collect(poses, FLOWS, solids ? buffers.getBuffer(FerricDuctilisRenderTypes.IRON) : null,
+                camera, time, partial, solids);
         for (Cue cue : CUES) {
             var packet = cue.packet;
             if(solids && !FerricDuctilisGeometry.handles(packet.form()))continue;
@@ -344,6 +346,47 @@ public final class ManipulationVisualRenderer {
                 diamond(p,v,.22,.28,.08,color,fade*.65F);
                 crystal(p,v,new Vec3(-.12,.12,0),.13,color,fade*.7F);
                 crystal(p,v,new Vec3(.12,.12,0),.13,color,fade*.7F);
+            }
+            case MARIONETTE_TETHER -> {
+                float partial = (float)(time - Math.floor(time));
+                var body = world.getEntity(packet.entityId());
+                var caster = world.getEntity(packet.count());
+                if (body != null && caster != null) {
+                    var mc = Minecraft.getInstance();
+                    boolean firstPerson = caster == mc.player && mc.options.getCameraType().isFirstPerson();
+                    float yaw = Mth.rotLerp(partial, caster.yRotO, caster.getYRot()) * Mth.DEG_TO_RAD;
+                    Vec3 endpoint = PuppeteerThreadEndpointRules.playerHandEndpoint(caster.getEyePosition(partial),
+                            caster.getViewVector(partial), yaw,
+                            caster instanceof net.minecraft.world.entity.LivingEntity living
+                                    && living.getMainArm() == net.minecraft.world.entity.HumanoidArm.LEFT ? 1 : -1,
+                            firstPerson).add(0, firstPerson ? -.3 : 0, 0).subtract(body.getPosition(partial));
+                    Vec3 root = new Vec3(0, r * .65, 0);
+                    Vec3 previous = root;
+                    for (int segment = 1; segment <= 32; segment++) {
+                        double t = segment / 32.0;
+                        Vec3 next = VisceralGeometry.strandPoint(root, endpoint, t, .12, time * .015);
+                        VisceralMesh.segment(p, v, previous, next, .016 - (t - 1.0 / 32) * .01,
+                                .016 - t * .01, 0xC3324D, fade * .9F, (segment - 1) * .2, segment * .2);
+                        previous = next;
+                    }
+                    double pulse = (time * .055) % 1;
+                    VisceralMesh.drop(p, v, root.lerp(endpoint, pulse), .018, .035, 0xFF9AAB, fade, 0);
+                }
+            }
+            case MARIONETTE_ORDER -> {
+                float partial = (float)(time - Math.floor(time));
+                var body = world.getEntity(packet.entityId());
+                var enemy = packet.count() < 0 ? null : world.getEntity(packet.count());
+                Vec3 at = enemy == null ? packet.to() : enemy.getPosition(partial).add(0, enemy.getBbHeight() + .35, 0);
+                if (body != null) at = at.subtract(body.getPosition(partial));
+                else at = at.subtract(packet.from());
+                p.translate(at.x, at.y + .04, at.z);
+                if (enemy == null) {
+                    ring(p, v, .28, 0, 0xFFAB96, fade, .025);
+                    tube(p, v, new Vec3(-.12, 0, 0), new Vec3(.12, 0, 0), .018, EDGE, fade);
+                } else {
+                    diamond(p, v, .16, .25, .04, EDGE, fade);
+                }
             }
             case COMMAND -> {
                 p.translate(0,r+.35,0);

@@ -40,7 +40,6 @@ public class LivingFlailItem extends LivingToolItem implements HemoClientItemExt
 		if (LivingStaffWeaponFormHelper.wasRestoredOutOfHand(stack, attacker)) {
 			return true;
 		}
-		target.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 80, 1));
 		return true;
 	}
 

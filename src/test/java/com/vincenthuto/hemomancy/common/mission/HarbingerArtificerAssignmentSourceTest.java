@@ -77,7 +77,7 @@ public final class HarbingerArtificerAssignmentSourceTest {
 		String block = read(SOURCE_ROOT.resolve(
 				"com/vincenthuto/hemomancy/common/block/harbinger/crafting/HematicArmatureBlock.java"));
 		String blockEntity = read(SOURCE_ROOT.resolve(
-				"com/vincenthuto/hemomancy/common/tile/crafting/HematicArmatureBlockEntity.java"));
+				"com/vincenthuto/hemomancy/common/tile/harbinger/crafting/HematicArmatureBlockEntity.java"));
 		String graftRite = read(SOURCE_ROOT.resolve(
 				"com/vincenthuto/hemomancy/common/item/harbinger/memories/LivingWeaponGraftRite.java"));
 

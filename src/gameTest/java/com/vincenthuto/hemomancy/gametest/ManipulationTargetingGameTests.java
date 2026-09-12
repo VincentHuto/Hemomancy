@@ -97,9 +97,9 @@ public final class ManipulationTargetingGameTests {
         try {
             var flare = ManipulationInit.hematic_flare.get(); select(p, flare);
             h.assertTrue(flare.tryPerformAction(p, h.getLevel(), ItemStack.EMPTY, p.blockPosition(), 0), "Valid flare rejected");
-            h.assertTrue(hostile.hasEffect(MobEffects.GLOWING) && hostile.getHealth() < 20, "Hostile was not revealed and hit");
-            h.assertTrue(!other.hasEffect(MobEffects.GLOWING) && other.getHealth() == 20, "Protected player affected");
-            h.assertTrue(!wolf.hasEffect(MobEffects.GLOWING) && wolf.getHealth() == wolf.getMaxHealth(), "Owned wolf affected");
+            h.assertTrue(hostile.hasEffect(com.vincenthuto.hemomancy.common.init.EffectInit.illuminated) && hostile.getHealth() < 20, "Hostile was not revealed and hit");
+            h.assertTrue(!other.hasEffect(com.vincenthuto.hemomancy.common.init.EffectInit.illuminated) && other.getHealth() == 20, "Protected player affected");
+            h.assertTrue(!wolf.hasEffect(com.vincenthuto.hemomancy.common.init.EffectInit.illuminated) && wolf.getHealth() == wolf.getMaxHealth(), "Owned wolf affected");
             other.addEffect(new net.minecraft.world.effect.MobEffectInstance(MobEffects.POISON, 80));
             wolf.addEffect(new net.minecraft.world.effect.MobEffectInstance(MobEffects.POISON, 80));
             var bell = ManipulationInit.funeral_bell.get();

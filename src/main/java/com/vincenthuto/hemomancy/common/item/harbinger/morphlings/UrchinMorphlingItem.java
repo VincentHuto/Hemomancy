@@ -25,7 +25,7 @@ import java.util.List;
  *
  * Maturity bonuses (unique reactive abilities):
  * - Developing (2): Spine Lash — when damaged by melee, reflect a portion
- *   back as thorns and apply Slowness (barbed spines snag the attacker)
+ *   back as thorns and embed Lodestone (barbed spines leave an iron signature)
  * - Mature (3): Tidal Anchor — periodically push away nearby hostile mobs
  *   with a defensive knockback pulse (like an urchin expelling water)
  * - Apex (4): Calcareous Shell — after taking a heavy hit (>6 damage),
@@ -54,6 +54,12 @@ public class UrchinMorphlingItem extends MorphlingItem {
 
 	@Override
 	public boolean tryUse(Player playerIn, InteractionHand handIn, ItemStack itemStack, Level worldIn) {
+        if (com.vincenthuto.hemomancy.common.manipulation.ductilis.Paralysis.blocksActions(playerIn)) return false;
+        if (playerIn instanceof net.minecraft.server.level.ServerPlayer server
+                && com.vincenthuto.hemomancy.common.manipulation.HematicCommandManager.isMarionetteChannel(server))
+            com.vincenthuto.hemomancy.common.manipulation.ManipulationChannelManager.stop(server, false);
+        try (var schoolAbility = MorphlingCombat.scope(this, playerIn, itemStack, null)) {
+
 		if (!MorphlingItem.tryBeginPrimalAbility(playerIn, itemStack, "ReefheartBastion",
 				480.0, 900, 260, 0)) return false;
 		playerIn.addEffect(new MobEffectInstance(MobEffects.DAMAGE_RESISTANCE,
@@ -64,7 +70,7 @@ public class UrchinMorphlingItem extends MorphlingItem {
 				220, 0, true, false, true));
 		AABB area = playerIn.getBoundingBox().inflate(7.0);
 		for (Monster mob : worldIn.getEntitiesOfClass(Monster.class, area, Monster::isAlive)) {
-			mob.hurt(playerIn.damageSources().thorns(playerIn), 6.0f);
+			if (!mob.hurt(playerIn.damageSources().thorns(playerIn), 6.0f)) continue;
 			double dx = mob.getX() - playerIn.getX();
 			double dz = mob.getZ() - playerIn.getZ();
 			double dist = Math.sqrt(dx * dx + dz * dz);
@@ -73,10 +79,14 @@ public class UrchinMorphlingItem extends MorphlingItem {
 			}
 		}
 		return true;
-	}
+
+        }
+    }
 
 	@Override
 	public void onEquippedTick(Player player, ItemStack stack) {
+        try (var schoolAbility = MorphlingCombat.scope(this, player, stack, null)) {
+
 		int maturity = MorphlingItem.getMaturityLevel(stack);
 
 		// Base effect: Spined Barricade (armor via attribute, amplifier = maturity)
@@ -110,22 +120,23 @@ public class UrchinMorphlingItem extends MorphlingItem {
 				}
 			}
 		}
-	}
+
+        }
+    }
 
 	@Override
 	public void onEquippedHurt(Player player, ItemStack stack, DamageSource source, float amount) {
+        try (var schoolAbility = MorphlingCombat.scope(this, player, stack, source)) {
+
 		int maturity = MorphlingItem.getMaturityLevel(stack);
 
-		// Developing (2+): Spine Lash — thorns + Slowness to melee attackers
+		// Developing (2+): Spine Lash — thorns and Lodestone for melee attackers
 		if (maturity >= 2 && source.getEntity() instanceof LivingEntity attacker) {
 			float thornsPct = 0.25f + (maturity - 2) * 0.10f; // 25% at Developing, 35% Mature, 45% Apex
 			float thornsDamage = amount * thornsPct;
-			if (thornsDamage > 0.5f) {
-				attacker.hurt(player.damageSources().thorns(player), thornsDamage);
-			}
-			int slowDuration = 30 + (maturity - 2) * 15; // 1.5s at Developing, 2.25s Mature, 3s Apex
-			attacker.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN,
-					slowDuration, 0, true, true, true));
+            if (thornsDamage > 0.5f && !attacker.hurt(player.damageSources().thorns(player), thornsDamage)) return;
+			int markDuration = 30 + (maturity - 2) * 15; // 1.5s at Developing, 2.25s Mature, 3s Apex
+			MorphlingCombat.afflict(this, player, attacker, markDuration);
 		}
 
 		// Apex (4): Calcareous Shell — brief Resistance after heavy hit
@@ -142,7 +153,9 @@ public class UrchinMorphlingItem extends MorphlingItem {
 						40, 2, true, false, true));
 			}
 		}
-	}
+
+        }
+    }
 
 	@Override
 	public List<Component> getMaturityBonusDescriptions(int currentMaturity) {

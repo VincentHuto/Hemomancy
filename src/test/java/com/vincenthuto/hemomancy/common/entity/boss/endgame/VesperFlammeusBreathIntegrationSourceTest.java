@@ -19,7 +19,8 @@ final class VesperFlammeusBreathIntegrationSourceTest {
 		assertContains(combat, "case FLAMMEUS_CONCENTRATION -> flammeusConcentration");
 		assertContains(combat, "LivingTorchBreathRules.isInsideCone");
 		assertContains(combat, "VesperFlammeusBreathRules.isDamagePulse");
-		assertContains(combat, "CrimsonFireHelper.igniteCrimson(candidate, 4)");
+		assertContains(combat, "SchoolDamage.scope");
+        assertTrue(!combat.contains("igniteCrimson(candidate"), "School fire must not also start vanilla burn");
 	}
 
 	@Test

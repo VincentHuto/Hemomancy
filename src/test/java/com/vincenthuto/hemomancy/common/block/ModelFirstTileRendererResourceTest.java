@@ -17,7 +17,7 @@ public final class ModelFirstTileRendererResourceTest {
 
 	public static void main(String[] args) throws IOException {
 		assertModelFirstBlock("mycelial_lantern",
-				"com/vincenthuto/hemomancy/common/block/harbinger/functional/MycelialLanternBlock.java");
+				"com/vincenthuto/hemomancy/common/block/harbinger/crafting/MycelialLanternBlock.java");
 		assertModelFirstBlock("somatic_loom",
 				"com/vincenthuto/hemomancy/common/block/harbinger/crafting/SomaticLoomBlock.java");
 		assertModelFirstBlock("scar_station",
@@ -159,7 +159,7 @@ public final class ModelFirstTileRendererResourceTest {
 				"new MorphlingCradleBlockItem");
 
 		String specimenJarBlockItem = read(SOURCE_ROOT.resolve(
-				"com/vincenthuto/hemomancy/common/item/harbinger/tile/SpecimenJarBlockItem.java"));
+				"com/vincenthuto/hemomancy/common/item/harbinger/tile/functional/SpecimenJarBlockItem.java"));
 		assertContains("specimen jar item keeps capture behavior", specimenJarBlockItem,
 				"interactLivingEntity");
 		assertContains("specimen jar item keeps specimen tooltip behavior", specimenJarBlockItem,
@@ -170,14 +170,14 @@ public final class ModelFirstTileRendererResourceTest {
 				specimenJarBlockItem, "getCustomRenderer");
 
 		String lanternRenderer = read(SOURCE_ROOT.resolve(
-				"com/vincenthuto/hemomancy/client/render/tile/crafting/MycelialLanternRenderer.java"));
+				"com/vincenthuto/hemomancy/client/render/tile/harbinger/crafting/MycelialLanternRenderer.java"));
 		assertContains("mycelial lantern keeps dynamic displayed stack rendering", lanternRenderer,
 				"renderDisplayItem(te, display, partialTick, poseStack, buffers, itemLight, overlay);");
 		assertDoesNotContain("mycelial lantern renderer should not render the static model body", lanternRenderer,
 				"MycelialLanternModel");
 
 		String loomRenderer = read(SOURCE_ROOT.resolve(
-				"com/vincenthuto/hemomancy/client/render/tile/crafting/SomaticLoomRenderer.java"));
+				"com/vincenthuto/hemomancy/client/render/tile/harbinger/crafting/SomaticLoomRenderer.java"));
 		assertContains("somatic loom keeps floating item rendering", loomRenderer, "renderItems(te, partialTicks");
 		assertContains("somatic loom keeps tendency star rendering", loomRenderer, "drawFractalStar(vc, mat, te");
 		assertContains("somatic loom keeps enzyme ring rendering", loomRenderer, "drawEnzymeRings(vc, mat, te");
@@ -185,7 +185,7 @@ public final class ModelFirstTileRendererResourceTest {
 				"SomaticLoomModel");
 
 		String scarStationRenderer = read(SOURCE_ROOT.resolve(
-				"com/vincenthuto/hemomancy/client/render/tile/crafting/ScarStationRenderer.java"));
+				"com/vincenthuto/hemomancy/client/render/tile/harbinger/crafting/ScarStationRenderer.java"));
 		assertContains("scar station keeps dynamic displayed slot rendering", scarStationRenderer,
 				"renderStatic(stack, ItemDisplayContext.GROUND");
 		assertDoesNotContain("scar station renderer must not render the baked block model twice", scarStationRenderer,
@@ -194,31 +194,31 @@ public final class ModelFirstTileRendererResourceTest {
 				"ScarStationModel");
 
 		String ghastlyRenderer = read(SOURCE_ROOT.resolve(
-				"com/vincenthuto/hemomancy/client/render/tile/crafting/GhastlyAlembicRenderer.java"));
+				"com/vincenthuto/hemomancy/client/render/tile/harbinger/crafting/GhastlyAlembicRenderer.java"));
 		assertContains("ghastly alembic keeps dynamic fluid rendering", ghastlyRenderer, "renderFluidLevel");
 		assertDoesNotContain("ghastly alembic renderer should not render the static model body", ghastlyRenderer,
 				"GhastlyAlembicModel");
 
 		String pallidRenderer = read(SOURCE_ROOT.resolve(
-				"com/vincenthuto/hemomancy/client/render/tile/crafting/PallidRetortRenderer.java"));
+				"com/vincenthuto/hemomancy/client/render/tile/unstained/crafting/PallidRetortRenderer.java"));
 		assertContains("pallid retort keeps dynamic fluid rendering", pallidRenderer, "renderFluidLevel");
 		assertDoesNotContain("pallid retort renderer should not render the static model body", pallidRenderer,
 				"PallidRetortModel");
 
 		String incubatorRenderer = read(SOURCE_ROOT.resolve(
-				"com/vincenthuto/hemomancy/client/render/tile/crafting/MorphlingIncubatorRenderer.java"));
+				"com/vincenthuto/hemomancy/client/render/tile/harbinger/crafting/MorphlingIncubatorRenderer.java"));
 		assertContains("morphling incubator keeps dynamic fluid rendering", incubatorRenderer, "renderFluidLevel");
 		assertContains("morphling incubator keeps dynamic creature rendering", incubatorRenderer, "renderCreature");
 		assertDoesNotContain("morphling incubator renderer should not render the static model body", incubatorRenderer,
 				"renderIncubatorModel");
 
 		String altarRenderer = read(SOURCE_ROOT.resolve(
-				"com/vincenthuto/hemomancy/client/render/tile/functional/AltarOfCleansingRenderer.java"));
+				"com/vincenthuto/hemomancy/client/render/tile/unstained/functional/AltarOfCleansingRenderer.java"));
 		assertDoesNotContain("altar of cleansing renderer should not render the static model body", altarRenderer,
 				"CleansingAltarModel");
 
 		String cradleRenderer = read(SOURCE_ROOT.resolve(
-				"com/vincenthuto/hemomancy/client/render/tile/functional/MorphlingCradleRenderer.java"));
+				"com/vincenthuto/hemomancy/client/render/tile/harbinger/functional/MorphlingCradleRenderer.java"));
 		assertContains("morphling cradle keeps dynamic hosted stack rendering", cradleRenderer,
 				"getHostedMorphling");
 		assertContains("morphling cradle keeps dynamic item rendering", cradleRenderer,
@@ -227,7 +227,7 @@ public final class ModelFirstTileRendererResourceTest {
 				"MorphlingCradleModel");
 
 		String specimenJarRenderer = read(SOURCE_ROOT.resolve(
-				"com/vincenthuto/hemomancy/client/render/tile/functional/SpecimenJarRenderer.java"));
+				"com/vincenthuto/hemomancy/client/render/tile/harbinger/functional/SpecimenJarRenderer.java"));
 		assertContains("specimen jar keeps dynamic captured specimen rendering", specimenJarRenderer,
 				"renderSpecimen");
 		assertDoesNotContain("specimen jar renderer should not render the static model body", specimenJarRenderer,

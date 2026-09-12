@@ -38,7 +38,7 @@ public final class VeinMasonMissionSourceTest {
 		assertContains("anchorite renderer is registered", clientEvents, "HarbingerCicatrixAnchoriteRenderer::new");
 		assertContains("anchorite layer is registered", layerEvents, "HarbingerCicatrixAnchoriteModel.LAYER_LOCATION");
 		assertContains("anchorite renderer uses existing texture", renderer,
-				"textures/entity/harbinger_cicatrix_anchorite/harbinger_cicatrix_anchorite.png");
+				"textures/entity/npc/harbinger/harbinger_cicatrix_anchorite/harbinger_cicatrix_anchorite.png");
 		assertContains("anchorite is not recruitable", entity, "HarbingerCicatrixAnchoriteDialogueTrees.forState");
 		assertDoesNotContain("anchorite does not use recruitment rules", entity, "HarbingerRecruitmentRules");
 		assertContains("anchorite language exists", lang,

@@ -24,12 +24,15 @@ public class BloodRushManip extends BloodManipulation {
 
 	@Override
 	public void getAction(Player player, Level world, ItemStack heldItemMainhand, BlockPos position) {
+        try (var schoolCast = com.vincenthuto.hemomancy.common.damage.SchoolDamage.cast(this, player, 1)) {
+
 		player.addEffect(new MobEffectInstance(EffectInit.blood_rush, 250, 1));
 		Vec3 look = player.getLookAngle();
 		Vec3 horizontal = new Vec3(look.x, 0, look.z).normalize().scale(1.2D);
 		player.setDeltaMovement(horizontal.x, Math.max(.1D, player.getDeltaMovement().y), horizontal.z);
 		player.hasImpulse = true;
         ManipulationVisuals.attached(player, ManipulationVisuals.Form.RUSH, 1, 20, 1);
-	}
+	        }
+    }
 
 }

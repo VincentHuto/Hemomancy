@@ -12,6 +12,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public abstract class MixinParalysisSlimeAttack {
     @Inject(method="dealDamage",at=@At("HEAD"),cancellable=true,remap=false)
     private void hemomancy$paralysisContact(LivingEntity victim,CallbackInfo ci) {
-        if (Paralysis.isParalyzed((LivingEntity)(Object)this)) ci.cancel();
+        if (Paralysis.blocksActions((LivingEntity)(Object)this)) ci.cancel();
     }
 }

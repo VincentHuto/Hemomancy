@@ -35,6 +35,10 @@ public final class HemoAttachmentTypes {
     public static final DeferredRegister<AttachmentType<?>> ATTACHMENT_TYPES =
             DeferredRegister.create(NeoForgeRegistries.Keys.ATTACHMENT_TYPES, Hemomancy.MOD_ID);
 
+    public static final DeferredHolder<AttachmentType<?>, AttachmentType<com.vincenthuto.hemomancy.common.damage.SchoolCombatState>> SCHOOL_COMBAT =
+            ATTACHMENT_TYPES.register("school_combat",
+                    () -> AttachmentType.serializable(com.vincenthuto.hemomancy.common.damage.SchoolCombatState::new).build());
+
     // ── Player attachments (copyOnDeath so data survives death/respawn) ──
     public static final DeferredHolder<AttachmentType<?>, AttachmentType<BloodVolume>> BLOOD_VOLUME =
             ATTACHMENT_TYPES.register("blood_volume",

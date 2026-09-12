@@ -14,13 +14,13 @@ public final class CovenantThroneSpectacleSourceTest {
 		String block = read(SOURCE_ROOT.resolve(
 				"com/vincenthuto/hemomancy/common/block/harbinger/functional/CovenantThroneBlock.java"));
 		String blockEntity = read(SOURCE_ROOT.resolve(
-				"com/vincenthuto/hemomancy/common/tile/functional/CovenantThroneBlockEntity.java"));
+				"com/vincenthuto/hemomancy/common/tile/harbinger/functional/CovenantThroneBlockEntity.java"));
 		String model = read(SOURCE_ROOT.resolve(
 				"com/vincenthuto/hemomancy/client/model/tile/functional/CovenantThroneModel.java"));
 		String renderer = read(SOURCE_ROOT.resolve(
-				"com/vincenthuto/hemomancy/client/render/tile/functional/CovenantThroneRenderer.java"));
+				"com/vincenthuto/hemomancy/client/render/tile/harbinger/functional/CovenantThroneRenderer.java"));
 		String itemRenderer = read(SOURCE_ROOT.resolve(
-				"com/vincenthuto/hemomancy/client/render/item/tile/functional/CovenantThroneItemRenderer.java"));
+				"com/vincenthuto/hemomancy/client/render/item/tile/harbinger/functional/CovenantThroneItemRenderer.java"));
 		String entityInit = read(SOURCE_ROOT.resolve(
 				"com/vincenthuto/hemomancy/common/init/EntityInit.java"));
 

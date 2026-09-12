@@ -73,7 +73,7 @@ public final class HarbingerArtificerFittingSourceTest {
 		String screen = read(SOURCE_ROOT.resolve(
 				"com/vincenthuto/hemomancy/client/screen/tile/functional/HarbingerEquipmentScreen.java"));
 		String renderer = read(SOURCE_ROOT.resolve(
-				"com/vincenthuto/hemomancy/client/render/tile/functional/ScarletVanityRenderer.java"));
+				"com/vincenthuto/hemomancy/client/render/tile/harbinger/functional/ScarletVanityRenderer.java"));
 		String layerTogglePacket = read(SOURCE_ROOT.resolve(
 				"com/vincenthuto/hemomancy/common/network/capa/harbinger/ToggleEquipmentLayerVisibilityPacket.java"));
 

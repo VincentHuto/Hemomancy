@@ -19,11 +19,11 @@ public final class HematicArmatureEntityModelResourceTest {
 		String layers = read(SOURCE_ROOT.resolve(
 				"com/vincenthuto/hemomancy/client/event/LayerEvents.java"));
 		String renderer = read(SOURCE_ROOT.resolve(
-				"com/vincenthuto/hemomancy/client/render/tile/crafting/HematicArmatureRenderer.java"));
+				"com/vincenthuto/hemomancy/client/render/tile/harbinger/crafting/HematicArmatureRenderer.java"));
 		String blockItem = read(SOURCE_ROOT.resolve(
-				"com/vincenthuto/hemomancy/common/item/harbinger/tile/HematicArmatureBlockItem.java"));
+				"com/vincenthuto/hemomancy/common/item/harbinger/tile/crafting/HematicArmatureBlockItem.java"));
 		String itemRenderer = read(SOURCE_ROOT.resolve(
-				"com/vincenthuto/hemomancy/client/render/item/tile/crafting/HematicArmatureItemRenderer.java"));
+				"com/vincenthuto/hemomancy/client/render/item/tile/harbinger/crafting/HematicArmatureItemRenderer.java"));
 		String blockModel = read(RESOURCE_ROOT.resolve(
 				"assets/hemomancy/models/block/hematic_armature.json"));
 		String itemModel = read(RESOURCE_ROOT.resolve(

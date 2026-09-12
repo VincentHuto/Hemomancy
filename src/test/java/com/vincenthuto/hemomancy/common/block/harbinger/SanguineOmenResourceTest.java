@@ -15,7 +15,7 @@ public final class SanguineOmenResourceTest {
 		String blockInit = read(SOURCE_ROOT.resolve("com/vincenthuto/hemomancy/common/init/BlockInit.java"));
 		String packetHandler = read(SOURCE_ROOT.resolve("com/vincenthuto/hemomancy/common/network/PacketHandler.java"));
 		String omenBlock = read(SOURCE_ROOT.resolve(
-				"com/vincenthuto/hemomancy/common/block/harbinger/functional/SanguineOmenBlock.java"));
+				"com/vincenthuto/hemomancy/common/block/harbinger/decoration/SanguineOmenBlock.java"));
 		String omenPacket = read(SOURCE_ROOT.resolve(
 				"com/vincenthuto/hemomancy/common/network/particle/SpawnSanguineOmenEffectPacket.java"));
 		String shaderInit = read(SOURCE_ROOT.resolve("com/vincenthuto/hemomancy/common/init/ShaderInit.java"));
@@ -38,7 +38,7 @@ public final class SanguineOmenResourceTest {
 		assertContains("block registry includes sanguine omen", blockInit,
 				"sanguine_omen = BASEBLOCKS.register(\"sanguine_omen\"");
 		assertExists("sanguine omen block class",
-				SOURCE_ROOT.resolve("com/vincenthuto/hemomancy/common/block/harbinger/functional/SanguineOmenBlock.java"));
+				SOURCE_ROOT.resolve("com/vincenthuto/hemomancy/common/block/harbinger/decoration/SanguineOmenBlock.java"));
 		assertContains("block use checks shift state for shader mode", omenBlock,
 				"triggerEffect(level, pos, player.isShiftKeyDown());");
 		assertContains("block forwards shader mode to packet helper", omenBlock,

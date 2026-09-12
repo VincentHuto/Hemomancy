@@ -89,7 +89,7 @@ public final class RegistryBackedScarRefactorSourceTest {
 		String clientEvents = read("src/main/java/com/vincenthuto/hemomancy/client/event/ClientEvents.java");
 		String pattern = read("src/main/java/com/vincenthuto/hemomancy/common/item/harbinger/scar/ItemScarPattern.java");
 		String brazier = read("src/main/java/com/vincenthuto/hemomancy/common/rite/ScarBrazierRite.java");
-		String brazierBlock = read("src/main/java/com/vincenthuto/hemomancy/common/block/harbinger/BrazierBlock.java");
+		String brazierBlock = read("src/main/java/com/vincenthuto/hemomancy/common/block/harbinger/rite/BrazierBlock.java");
 		String menu = read("src/main/java/com/vincenthuto/hemomancy/common/menu/tile/functional/MasonsEffigyMenu.java");
 		String screen = read("src/main/java/com/vincenthuto/hemomancy/client/screen/tile/functional/MasonsEffigyScreen.java");
 
@@ -156,10 +156,10 @@ public final class RegistryBackedScarRefactorSourceTest {
 
 	private static void masonEffigyMotifPaperPreparesDynamicPattern() throws IOException {
 		String block = read("src/main/java/com/vincenthuto/hemomancy/common/block/harbinger/functional/MasonsEffigyBlock.java");
-		String blockEntity = read("src/main/java/com/vincenthuto/hemomancy/common/tile/functional/MasonsEffigyBlockEntity.java");
+		String blockEntity = read("src/main/java/com/vincenthuto/hemomancy/common/tile/harbinger/functional/MasonsEffigyBlockEntity.java");
 		String packet = read("src/main/java/com/vincenthuto/hemomancy/common/network/capa/harbinger/scars/PacketPrepareScarPattern.java");
 		String renderer = read("src/main/java/com/vincenthuto/hemomancy/client/render/item/ScarPatternItemRenderer.java");
-		String effigyRenderer = read("src/main/java/com/vincenthuto/hemomancy/client/render/tile/functional/MasonsEffigyRenderer.java");
+		String effigyRenderer = read("src/main/java/com/vincenthuto/hemomancy/client/render/tile/harbinger/functional/MasonsEffigyRenderer.java");
 		String clientEvents = read("src/main/java/com/vincenthuto/hemomancy/client/event/ClientEvents.java");
 		String projection = read("src/main/java/com/vincenthuto/hemomancy/common/item/harbinger/tool/living/BloodProjectionItem.java");
 

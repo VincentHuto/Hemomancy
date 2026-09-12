@@ -89,7 +89,7 @@ public final class MorphlingStage4To8SourceTest {
 
 	private static void wildCradleStaffAndClientPipelinesAreRetargeted() throws IOException {
 		String bestiaryState = read("com/vincenthuto/hemomancy/common/capability/player/harbinger/bestiary/SpecimenBestiaryState.java");
-		String cradle = read("com/vincenthuto/hemomancy/common/tile/functional/MorphlingCradleBlockEntity.java");
+		String cradle = read("com/vincenthuto/hemomancy/common/tile/harbinger/functional/MorphlingCradleBlockEntity.java");
 		String clientRegistry = read("com/vincenthuto/hemomancy/client/morphling/MorphlingMutationRegistry.java");
 		String staffModel = Files.readString(RES.resolve("assets/hemomancy/models/item/living_staff.json"));
 		assertContains("bestiary sync migrates layer families", bestiaryState, "MorphlingMigrationRules.migrateLayerFamily");

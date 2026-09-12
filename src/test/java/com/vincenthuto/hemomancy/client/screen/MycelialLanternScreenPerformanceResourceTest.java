@@ -16,7 +16,7 @@ public final class MycelialLanternScreenPerformanceResourceTest {
         String menu = read(SOURCE_ROOT.resolve(
                 "com/vincenthuto/hemomancy/common/menu/tile/crafting/MycelialLanternMenu.java"));
         String blockEntity = read(SOURCE_ROOT.resolve(
-                "com/vincenthuto/hemomancy/common/tile/crafting/MycelialLanternBlockEntity.java"));
+                "com/vincenthuto/hemomancy/common/tile/harbinger/crafting/MycelialLanternBlockEntity.java"));
 
         assertContains("mycelial lantern should keep tendrils close to scar station cost", screen,
                 "private static final int TENDRIL_COUNT = 14;");

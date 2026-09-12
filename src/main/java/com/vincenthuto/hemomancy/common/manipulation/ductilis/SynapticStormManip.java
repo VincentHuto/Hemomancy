@@ -24,6 +24,8 @@ public class SynapticStormManip extends BloodManipulation {
 
 	@Override
 	public void getAction(Player player, Level world, ItemStack heldItemMainhand, BlockPos position, float heldTicks) {
+        try (var schoolCast = com.vincenthuto.hemomancy.common.damage.SchoolDamage.cast(this, player, getRequiredChargeTicks() <= 0 ? 1 : heldTicks / getRequiredChargeTicks())) {
+
 		if (!(world instanceof ServerLevel level)) return;
         float charge = ManipulationCastingRules.chargeFraction(heldTicks, CHARGE_TICKS);
         int limit=ManipulationScalingRules.scaledCount(1,8,heldTicks,CHARGE_TICKS);
@@ -39,6 +41,7 @@ public class SynapticStormManip extends BloodManipulation {
         var struck=new java.util.ArrayList<LivingEntity>();
         var successful=new java.util.ArrayList<LivingEntity>();
         Discharge discharge=new Discharge();
+        discharge.suppressReactiveArcs();
         LivingEntity previous=player;
         for (int hops=0;hops<DuctilisRules.MAX_TRAVERSAL && struck.size()<limit;hops++) {
             var endpoints=new java.util.ArrayList<DuctilisRules.Hop>();
@@ -73,7 +76,7 @@ public class SynapticStormManip extends BloodManipulation {
         if (visited.isEmpty()) ConductionManager.energizeAimed(player,18,discharge);
         // Marks influence the chosen chain; they cannot create a second, unbounded path.
         discharge.finishChain(level.getGameTime());
-        for (LivingEntity target:successful) SchoolHitHelper.tryTriggerConductiveArc(player,target,
-                EnumBloodTendency.DUCTILIS,getSecondaryTend(),2.0F+6.0F*charge,discharge);
+
+            }
     }
 }

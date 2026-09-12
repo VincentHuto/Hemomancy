@@ -124,11 +124,12 @@ public class BloodNeedleEntity extends AbstractArrow implements CombatWeaponCarr
 	@Override
 	protected void doPostHurtEffects(LivingEntity living) {
 		super.doPostHurtEffects(living);
+        if (com.vincenthuto.hemomancy.common.damage.SchoolDamage.projectileContext(this) == null)
+            living.addEffect(new MobEffectInstance(EffectInit.blood_loss, 1000, 2));
 		com.vincenthuto.hemomancy.common.manipulation.ManipulationParticles.impact(
 				living, damageTendency, secondaryDamageTendency, getDeltaMovement());
 		Entity entity = living;
 		if (entity instanceof LivingEntity) {
-			((LivingEntity) entity).addEffect(new MobEffectInstance(EffectInit.blood_loss, 1000, 2));
 			applyBloodburstEffects((LivingEntity) entity);
 
 		}

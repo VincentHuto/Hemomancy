@@ -45,7 +45,6 @@ public class LivingTorchItem extends LivingToolItem implements HemoClientItemExt
 		if (LivingStaffWeaponFormHelper.wasRestoredOutOfHand(stack, attacker)) {
 			return true;
 		}
-		CrimsonFireHelper.igniteCrimson(target, 4);
 		if (!attacker.level().isClientSide) {
 			attacker.level().playSound(null, target.blockPosition(), SoundEvents.FLINTANDSTEEL_USE,
 					SoundSource.PLAYERS, 0.45f, 0.85f);
@@ -123,6 +122,9 @@ public class LivingTorchItem extends LivingToolItem implements HemoClientItemExt
 	}
 
 	private static void damageCone(ServerPlayer player) {
+        var hit = com.vincenthuto.hemomancy.common.damage.SchoolDamage.weaponContext(player, player.getUseItem());
+        try (var scope = com.vincenthuto.hemomancy.common.damage.SchoolDamage.scope(hit, player)) {
+
 		Vec3 origin = player.getEyePosition();
 		Vec3 look = player.getLookAngle();
 		AABB bounds = new AABB(origin, origin).inflate(LivingTorchBreathRules.RANGE);
@@ -136,12 +138,12 @@ public class LivingTorchItem extends LivingToolItem implements HemoClientItemExt
 			if (!LivingTorchBreathRules.isInsideCone(origin.x, origin.y, origin.z,
 					look.x, look.y, look.z, aim.x, aim.y, aim.z)
 					|| !LivingTorchBreathRules.canHitCandidate(player.hasLineOfSight(target), true, alreadyHit)) continue;
-			if (target.hurt(HemoDamageTypes.livingTorchBreath(player.level(), player),
-					LivingTorchBreathRules.DAMAGE_PER_PULSE)) {
-				CrimsonFireHelper.igniteCrimson(target, 4);
-			}
+			target.hurt(HemoDamageTypes.livingTorchBreath(player.level(), player),
+                    LivingTorchBreathRules.DAMAGE_PER_PULSE);
 		}
-	}
+
+        }
+    }
 
 	private static boolean isBlockingCardinalRite(Player player) {
 		if (!(player.level() instanceof ServerLevel server)) return false;

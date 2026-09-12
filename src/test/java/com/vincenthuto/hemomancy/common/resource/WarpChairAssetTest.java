@@ -14,7 +14,7 @@ import static org.junit.jupiter.api.Assertions.*;
 final class WarpChairAssetTest {
 	private static final Path ASSETS = Path.of("src/main/resources/assets/hemomancy");
 	private static final Path CHAIR_RENDERER = Path.of(
-			"src/main/java/com/vincenthuto/hemomancy/client/render/tile/functional/WarpChairRenderer.java");
+			"src/main/java/com/vincenthuto/hemomancy/client/render/tile/harbinger/functional/WarpChairRenderer.java");
 
 	@Test
 	void blockEntityRendererUsesTheBakedJsonModel() throws IOException {

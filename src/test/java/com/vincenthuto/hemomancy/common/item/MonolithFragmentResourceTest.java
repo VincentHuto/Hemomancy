@@ -27,10 +27,12 @@ public final class MonolithFragmentResourceTest {
 				"monolith_fragment = BASEITEMS.register(\"monolith_fragment\"");
 		assertContains("monolith fragments use their custom item class", itemInit,
 				"new MonolithFragmentItem(new Item.Properties().rarity(Rarity.RARE).fireResistant())");
-		assertContains("shattering drops monolith fragments", monolithBlock,
-				"new ItemStack(ItemInit.monolith_fragment.get(), MonolithFragmentDropRules.rollFragmentCount(worldIn.random))");
+		assertContains("shattering creates a monolith fragment stack", monolithBlock,
+				"new ItemStack(ItemInit.monolith_fragment.get(),");
+		assertContains("shattering uses the bounded fragment count rule", monolithBlock,
+				"MonolithFragmentDropRules.rollFragmentCount(level.random)");
 		assertContains("fragment drop happens alongside qliphoth seed", monolithBlock,
-				"popResource(worldIn, pos.above(), new ItemStack(ItemInit.qliphoth_seed.get()));");
+				"popResource(level, pos.above(), new ItemStack(ItemInit.qliphoth_seed.get()));");
 		assertContains("fragment item is stackable through default item properties", fragmentItem,
 				"extends Item implements HemoClientItemExtensionsProvider");
 		assertContains("fragment item supplies custom renderer", fragmentItem,

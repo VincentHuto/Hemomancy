@@ -12,11 +12,11 @@ public final class IronBrazierOfferingSourceTest {
 
 	public static void main(String[] args) throws IOException {
 		String blockEntity = read(SOURCE_ROOT.resolve(
-				"com/vincenthuto/hemomancy/common/tile/IronBrazierBlockEntity.java"));
+				"com/vincenthuto/hemomancy/common/tile/harbinger/rite/IronBrazierBlockEntity.java"));
 		String block = read(SOURCE_ROOT.resolve(
-				"com/vincenthuto/hemomancy/common/block/harbinger/BrazierBlock.java"));
+				"com/vincenthuto/hemomancy/common/block/harbinger/rite/BrazierBlock.java"));
 		String renderer = read(SOURCE_ROOT.resolve(
-				"com/vincenthuto/hemomancy/client/render/tile/functional/IronBrazierRenderer.java"));
+				"com/vincenthuto/hemomancy/client/render/tile/harbinger/rite/IronBrazierRenderer.java"));
 		String clientEvents = read(SOURCE_ROOT.resolve(
 				"com/vincenthuto/hemomancy/client/event/ClientEvents.java"));
 

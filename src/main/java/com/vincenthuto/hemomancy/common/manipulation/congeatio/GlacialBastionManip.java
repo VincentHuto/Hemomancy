@@ -37,6 +37,8 @@ public class GlacialBastionManip extends BloodManipulation {
 
 	@Override
 	public void getAction(Player player, Level world, ItemStack heldItemMainhand, BlockPos position) {
+        try (var schoolCast = com.vincenthuto.hemomancy.common.damage.SchoolDamage.cast(this, player, 1)) {
+
 		if (!(world instanceof ServerLevel sLevel)) return;
 
 		RandomSource random = world.random;
@@ -81,5 +83,6 @@ public class GlacialBastionManip extends BloodManipulation {
 		} else {
 			player.displayClientMessage(Component.literal("No space for the bastion to rise."), true);
 		}
-	}
+	        }
+    }
 }

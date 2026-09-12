@@ -127,13 +127,10 @@ public class BloodShotEntity extends AbstractArrow implements CombatWeaponCarrie
 	@Override
 	protected void doPostHurtEffects(LivingEntity living) {
 		super.doPostHurtEffects(living);
+        if (com.vincenthuto.hemomancy.common.damage.SchoolDamage.projectileContext(this) == null)
+            living.addEffect(new MobEffectInstance(EffectInit.blood_loss, 1000, 2));
 		com.vincenthuto.hemomancy.common.manipulation.ManipulationParticles.impact(
 				living, damageTendency, secondaryDamageTendency, getDeltaMovement());
-		Entity entity = living;
-		if (entity instanceof LivingEntity) {
-			((LivingEntity) entity).addEffect(new MobEffectInstance(EffectInit.blood_loss, 1000, 2));
-
-		}
 
 	}
 
@@ -153,11 +150,6 @@ public class BloodShotEntity extends AbstractArrow implements CombatWeaponCarrie
 			return;
 		}
 		super.onHitEntity(p_213868_1_);
-		Entity entity = p_213868_1_.getEntity();
-		if (entity instanceof LivingEntity) {
-			((LivingEntity) entity).addEffect(new MobEffectInstance(EffectInit.blood_loss, 1000, 2));
-
-		}
 
 	}
 
@@ -294,13 +286,15 @@ public class BloodShotEntity extends AbstractArrow implements CombatWeaponCarrie
 		LivingEntity owner = getOwner() instanceof LivingEntity living ? living : null;
 		for (LivingEntity target : server.getEntitiesOfClass(LivingEntity.class, new AABB(position(), position()).inflate(4),
 				candidate -> candidate.isAlive() && candidate != owner
-						&& (owner == null || !owner.isAlliedTo(candidate)))) {
+						&& (owner == null || com.vincenthuto.hemomancy.common.manipulation.ductilis.ConductionManager.canHarm(owner, candidate)))) {
 			double distance = Math.min(4.0D, target.position().distanceTo(position()));
 			float damage = (float) (8.0D - distance);
-			if (owner instanceof net.minecraft.world.entity.player.Player player && damageTendency != null) {
-				damage *= TendencyAffinityRules.damageMultiplier(player, target, damageTendency, secondaryDamageTendency);
-			}
-			if (target.hurt(server.damageSources().magic(), Math.max(4.0F, damage)))
+			var context = com.vincenthuto.hemomancy.common.damage.SchoolDamage.projectileContext(this);
+            if (context == null) context = com.vincenthuto.hemomancy.common.damage.SchoolHitContext.direct(
+                    com.vincenthuto.hemomancy.Hemomancy.rloc("hematic_mortar"),
+                    damageTendency == null ? EnumBloodTendency.ANIMUS : damageTendency, secondaryDamageTendency, owner);
+            if (target.hurt(com.vincenthuto.hemomancy.common.damage.SchoolDamage.attributed(
+                    server.damageSources().indirectMagic(this, owner), context, owner), Math.max(4.0F, damage)))
 				com.vincenthuto.hemomancy.common.manipulation.ManipulationParticles.impact(
 						target, damageTendency, secondaryDamageTendency, target.position().subtract(position()));
 		}

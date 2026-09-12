@@ -23,8 +23,11 @@ public class CrimsonCoronationManip extends BloodManipulation {
 
 	@Override
 	public void getAction(Player player, Level world, ItemStack heldItemMainhand, BlockPos position, float heldTicks) {
+        try (var schoolCast = com.vincenthuto.hemomancy.common.damage.SchoolDamage.cast(this, player, getRequiredChargeTicks() <= 0 ? 1 : heldTicks / getRequiredChargeTicks())) {
+
 		float charge = ManipulationCastingRules.chargeFraction(heldTicks, CHARGE_TICKS);
 		ManipulationReactiveEvents.armCoronation(player,
 				ManipulationScalingRules.scaledCount(1, 8, heldTicks, CHARGE_TICKS), charge);
-	}
+	        }
+    }
 }

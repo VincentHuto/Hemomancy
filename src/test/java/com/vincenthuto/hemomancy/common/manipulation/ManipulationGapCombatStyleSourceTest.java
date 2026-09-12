@@ -73,7 +73,7 @@ public final class ManipulationGapCombatStyleSourceTest {
 		String effectInit = read("src/main/java/com/vincenthuto/hemomancy/common/init/EffectInit.java");
 		String events = read("src/main/java/com/vincenthuto/hemomancy/common/manipulation/ManipulationStatusEvents.java");
 		String helper = read("src/main/java/com/vincenthuto/hemomancy/common/manipulation/SchoolHitHelper.java");
-		String weaponEvents = read("src/main/java/com/vincenthuto/hemomancy/common/event/TendencyWeaponCombatEvents.java");
+		String weaponEvents = read("src/main/java/com/vincenthuto/hemomancy/common/damage/SchoolCombatEvents.java");
 
 		for (String effect : NEW_EFFECTS) {
 			assertContains(effect + " effect registered", effectInit, "EFFECTS.register(\"" + effect + "\"");
@@ -86,7 +86,7 @@ public final class ManipulationGapCombatStyleSourceTest {
 		assertContains("post damage hook", events, "onLivingDamagePost(LivingDamageEvent.Post event)");
 		assertContains("death hook", events, "onLivingDeath(LivingDeathEvent event)");
 		assertContains("school helper conductive trigger", helper, "tryTriggerConductiveArc");
-		assertContains("living weapon reports school hit", weaponEvents, "SchoolHitHelper.tryTriggerConductiveArc");
+		assertContains("shared resolver reports confirmed school hit", weaponEvents, "SchoolHitHelper.tryTriggerConductiveArc");
 	}
 
 	private static void memoryItemsAndResourcesExist() throws IOException {
@@ -126,7 +126,7 @@ public final class ManipulationGapCombatStyleSourceTest {
 		assertContains("synaptic base damage", synaptic, "BASE_DAMAGE = 3.0F");
 		assertContains("synaptic stagger", synaptic, "staggerTarget");
 		assertContains("synaptic lightning", synaptic, "DuctilisLightningEffects.synapticJolt");
-		assertContains("synaptic reports conductive school", synaptic, "EnumBloodTendency.DUCTILIS");
+		assertContains("synaptic uses its registered school", synaptic, "SchoolDamage.cast(this, player, 1)");
 
 		String conductive = read("src/main/java/com/vincenthuto/hemomancy/common/manipulation/ductilis/ConductiveMarkManip.java");
 		assertContains("conductive duration", conductive, "DURATION_TICKS = 240");

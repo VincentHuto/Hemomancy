@@ -11,6 +11,18 @@ import net.minecraft.world.level.Level;
 import javax.annotation.Nullable;
 
 public final class HemoDamageTypes {
+    public static final ResourceKey<DamageType> SEARING = ResourceKey.create(Registries.DAMAGE_TYPE, Hemomancy.rloc("searing"));
+    public static final ResourceKey<DamageType> DECAY_RELEASE = ResourceKey.create(Registries.DAMAGE_TYPE, Hemomancy.rloc("decay_release"));
+
+    public static DamageSource attributed(DamageSource source, SchoolHitContext context, @Nullable Entity owner) {
+        return SchoolDamage.attributed(source, context, owner);
+    }
+
+    public static DamageSource stateDamage(Level level, ResourceKey<DamageType> type,
+            SchoolHitContext context, @Nullable Entity owner) {
+        return attributed(new DamageSource(level.registryAccess().registryOrThrow(Registries.DAMAGE_TYPE)
+                .getHolderOrThrow(type), owner, owner), context, owner);
+    }
 	public static final ResourceKey<DamageType> PHANTASMAL_ECHO =
 			ResourceKey.create(Registries.DAMAGE_TYPE, Hemomancy.rloc("phantasmal_echo"));
 	public static final ResourceKey<DamageType> VESPER_IMPALE =
@@ -45,14 +57,20 @@ public final class HemoDamageTypes {
 	}
 
 	public static DamageSource livingTorchBreath(Level level, Entity caster) {
-		return new DamageSource(level.registryAccess().registryOrThrow(Registries.DAMAGE_TYPE)
-				.getHolderOrThrow(LIVING_TORCH_BREATH), caster, caster);
-	}
+        SchoolHitContext hit = SchoolDamage.current();
+        if (hit == null) hit = SchoolHitContext.direct(Hemomancy.rloc("living_torch_breath"),
+                com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency.FLAMMEUS, null, caster);
+        return attributed(new DamageSource(level.registryAccess().registryOrThrow(Registries.DAMAGE_TYPE)
+                .getHolderOrThrow(LIVING_TORCH_BREATH), caster, caster), hit, caster);
+    }
 
 	public static DamageSource livingFlailFreeze(Level level, Entity projectile, Entity owner) {
-		return new DamageSource(level.registryAccess().registryOrThrow(Registries.DAMAGE_TYPE)
-				.getHolderOrThrow(LIVING_FLAIL_FREEZE), projectile, owner);
-	}
+        SchoolHitContext hit = SchoolDamage.projectileContext(projectile);
+        if (hit == null) hit = SchoolHitContext.direct(Hemomancy.rloc("living_flail"),
+                com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency.CONGEATIO, null, owner);
+        return attributed(new DamageSource(level.registryAccess().registryOrThrow(Registries.DAMAGE_TYPE)
+                .getHolderOrThrow(LIVING_FLAIL_FREEZE), projectile, owner), hit, owner);
+    }
 
 	public static DamageSource paleIntercession(Level level, Entity manifestation, Entity owner) {
 		return new DamageSource(level.registryAccess().registryOrThrow(Registries.DAMAGE_TYPE)

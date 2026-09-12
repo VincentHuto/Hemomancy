@@ -28,6 +28,8 @@ public final class FerricBarrierManip extends BloodManipulation {
     }
 
     @Override public void getAction(Player player, Level world, ItemStack stack, BlockPos position) {
+        try (var schoolCast = com.vincenthuto.hemomancy.common.damage.SchoolDamage.cast(this, player, 1)) {
+
         if (!(world instanceof ServerLevel level)) return;
         var placement = FerricPlacement.aimed(player, kind, 18 * SkillPointHelper.getSanguineReachMultiplier(player));
         if (placement == null) return;
@@ -39,5 +41,6 @@ public final class FerricBarrierManip extends BloodManipulation {
             level.addFreshEntity(entity);
         }
         level.playSound(null, BlockPos.containing(placement.origins().getFirst()), SoundEvents.ANVIL_LAND, SoundSource.PLAYERS, .65f, .72f);
+            }
     }
 }

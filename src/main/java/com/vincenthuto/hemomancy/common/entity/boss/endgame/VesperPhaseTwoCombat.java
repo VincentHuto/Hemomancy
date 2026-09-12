@@ -135,6 +135,14 @@ public final class VesperPhaseTwoCombat {
 	}
 
 	private static void tickAction(VesperTheEveningStarEntity boss, LivingEntity target) {
+        var hit = com.vincenthuto.hemomancy.common.damage.SchoolHitContext.load(
+                boss.getPersistentData().getCompound("hemomancy:weapon_school_hit"));
+        try (var schoolAction = com.vincenthuto.hemomancy.common.damage.SchoolDamage.scope(hit, boss)) {
+            tickSchoolAction(boss, target);
+        }
+    }
+
+    private static void tickSchoolAction(VesperTheEveningStarEntity boss, LivingEntity target) {
 		VesperWeaponAction action = boss.getWeaponAction();
 		int tick = boss.getActionTick() + 1;
 		boss.setActionTick(tick);
@@ -252,7 +260,7 @@ public final class VesperPhaseTwoCombat {
 		int index = tick == 12 ? 0 : tick == 19 ? 1 : tick == 26 ? 2 : -1;
 		if (index >= 0) {
 			moveCommitted(boss, 0.55D, 0.03D);
-			if (hitLine(boss, target, 4.0D, 0.95D, 5.0F, index)) CrimsonFireHelper.igniteCrimson(target, 4);
+			hitLine(boss, target, 4.0D, 0.95D, 5.0F, index);
 		}
 	}
 
@@ -285,10 +293,7 @@ public final class VesperPhaseTwoCombat {
 			if (!LivingTorchBreathRules.isInsideCone(origin.x, origin.y, origin.z,
 					look.x, look.y, look.z, aim.x, aim.y, aim.z)
 					|| !LivingTorchBreathRules.canHitCandidate(boss.hasLineOfSight(candidate), true, false)) continue;
-			if (candidate.hurt(HemoDamageTypes.livingTorchBreath(boss.level(), boss),
-					LivingTorchBreathRules.DAMAGE_PER_PULSE)) {
-				CrimsonFireHelper.igniteCrimson(candidate, 4);
-			}
+			candidate.hurt(HemoDamageTypes.livingTorchBreath(boss.level(), boss), LivingTorchBreathRules.DAMAGE_PER_PULSE);
 		}
 	}
 
@@ -313,7 +318,6 @@ public final class VesperPhaseTwoCombat {
 	private static void chainSweep(VesperTheEveningStarEntity boss, LivingEntity target, int tick) {
 		stopHorizontal(boss);
 		if (tick == 18 && hitNear(boss, target, 6.5D, 13.0F, 0)) {
-			target.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 80, 1));
 			pushAway(boss, target, 0.75D);
 		}
 	}

@@ -14,11 +14,11 @@ public final class FaneHeartAndStakeSourceTest {
 	private static final Path BLOCK_ENTITY_INIT = Path.of(
 			"src/main/java/com/vincenthuto/hemomancy/common/init/BlockEntityInit.java");
 	private static final Path BLOODWELL_BLOCK_ENTITY = Path.of(
-			"src/main/java/com/vincenthuto/hemomancy/common/tile/functional/ConsecratedBloodwellBlockEntity.java");
+			"src/main/java/com/vincenthuto/hemomancy/common/tile/harbinger/functional/ConsecratedBloodwellBlockEntity.java");
 	private static final Path BLOCK_BLOOD_ENDPOINT = Path.of(
-			"src/main/java/com/vincenthuto/hemomancy/common/block/shared/BlockBloodEndpoint.java");
+			"src/main/java/com/vincenthuto/hemomancy/common/block/harbinger/BlockBloodEndpoint.java");
 	private static final Path BLOCK_BLOOD_INTERACTIONS = Path.of(
-			"src/main/java/com/vincenthuto/hemomancy/common/block/shared/BlockBloodInteractions.java");
+			"src/main/java/com/vincenthuto/hemomancy/common/block/harbinger/BlockBloodInteractions.java");
 	private static final Path BLOOD_ABSORPTION = Path.of(
 			"src/main/java/com/vincenthuto/hemomancy/common/item/harbinger/tool/living/BloodAbsorptionItem.java");
 	private static final Path BLOOD_PROJECTION = Path.of(
@@ -26,17 +26,17 @@ public final class FaneHeartAndStakeSourceTest {
 	private static final Path BLOOD_PROJECTION_EVENTS = Path.of(
 			"src/main/java/com/vincenthuto/hemomancy/common/event/BloodProjectionInteractionEvents.java");
 	private static final Path STAKE_BLOCK_ENTITY = Path.of(
-			"src/main/java/com/vincenthuto/hemomancy/common/tile/functional/HematicStakeBlockEntity.java");
+			"src/main/java/com/vincenthuto/hemomancy/common/tile/harbinger/functional/HematicStakeBlockEntity.java");
 	private static final Path STAKE_BLOCK_RENDERER = Path.of(
-			"src/main/java/com/vincenthuto/hemomancy/client/render/tile/functional/HematicStakeRenderer.java");
+			"src/main/java/com/vincenthuto/hemomancy/client/render/tile/harbinger/functional/HematicStakeRenderer.java");
 	private static final Path BLOODWELL_RENDERER = Path.of(
-			"src/main/java/com/vincenthuto/hemomancy/client/render/tile/functional/ConsecratedBloodwellRenderer.java");
+			"src/main/java/com/vincenthuto/hemomancy/client/render/tile/harbinger/functional/ConsecratedBloodwellRenderer.java");
 	private static final Path HEMO_RENDER_TYPES = Path.of(
 			"src/main/java/com/vincenthuto/hemomancy/client/render/HemoRenderTypes.java");
 	private static final Path STAKE_ITEM = Path.of(
-			"src/main/java/com/vincenthuto/hemomancy/common/item/harbinger/tile/HematicStakeBlockItem.java");
+			"src/main/java/com/vincenthuto/hemomancy/common/item/harbinger/tile/functional/HematicStakeBlockItem.java");
 	private static final Path STAKE_ITEM_RENDERER = Path.of(
-			"src/main/java/com/vincenthuto/hemomancy/client/render/item/tile/functional/HematicStakeItemRenderer.java");
+			"src/main/java/com/vincenthuto/hemomancy/client/render/item/tile/harbinger/functional/HematicStakeItemRenderer.java");
 	private static final Path CLIENT_EVENTS = Path.of(
 			"src/main/java/com/vincenthuto/hemomancy/client/event/ClientEvents.java");
 	private static final Path STAKE_AUTHORITY_EVENTS = Path.of(

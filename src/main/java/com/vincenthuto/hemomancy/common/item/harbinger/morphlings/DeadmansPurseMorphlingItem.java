@@ -52,6 +52,12 @@ public class DeadmansPurseMorphlingItem extends MorphlingItem {
 
 	@Override
 	public boolean tryUse(Player playerIn, InteractionHand handIn, ItemStack itemStack, Level worldIn) {
+        if (com.vincenthuto.hemomancy.common.manipulation.ductilis.Paralysis.blocksActions(playerIn)) return false;
+        if (playerIn instanceof net.minecraft.server.level.ServerPlayer server
+                && com.vincenthuto.hemomancy.common.manipulation.HematicCommandManager.isMarionetteChannel(server))
+            com.vincenthuto.hemomancy.common.manipulation.ManipulationChannelManager.stop(server, false);
+        try (var schoolAbility = MorphlingCombat.scope(this, playerIn, itemStack, null)) {
+
 		if (!MorphlingItem.tryBeginPrimalAbility(playerIn, itemStack, "HemophageCovenant",
 				450.0, 1200, 300, 0)) return false;
 		CompoundTag tag = itemStack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
@@ -60,10 +66,14 @@ public class DeadmansPurseMorphlingItem extends MorphlingItem {
 		playerIn.displayClientMessage(Component.literal("Hemophage Covenant opens.")
 				.withStyle(net.minecraft.ChatFormatting.DARK_RED), true);
 		return true;
-	}
+
+        }
+    }
 
 	@Override
 	public void onEquippedTick(Player player, ItemStack stack) {
+        try (var schoolAbility = MorphlingCombat.scope(this, player, stack, null)) {
+
 		int maturity = MorphlingItem.getMaturityLevel(stack);
 		int amplifier = MorphlingItem.passiveAmplifier(player, stack, maturity);
 
@@ -91,10 +101,14 @@ public class DeadmansPurseMorphlingItem extends MorphlingItem {
 				}
 			}
 		}
-	}
+
+        }
+    }
 
 	@Override
 	public void onEquippedAttack(Player player, ItemStack stack, LivingEntity target, float amount) {
+        try (var schoolAbility = MorphlingCombat.scope(this, player, stack, player.damageSources().magic())) {
+
 		int maturity = MorphlingItem.getMaturityLevel(stack);
 
 		if (maturity >= 2 && !player.level().isClientSide) {
@@ -125,10 +139,14 @@ public class DeadmansPurseMorphlingItem extends MorphlingItem {
 				});
 			}
 		}
-	}
+
+        }
+    }
 
 	@Override
 	public void onEquippedKill(Player player, ItemStack stack, LivingEntity victim) {
+        try (var schoolAbility = MorphlingCombat.scope(this, player, stack, player.damageSources().magic())) {
+
 		int maturity = MorphlingItem.getMaturityLevel(stack);
 		if (player.level().isClientSide) {
 			return;
@@ -138,7 +156,9 @@ public class DeadmansPurseMorphlingItem extends MorphlingItem {
 		if (accepted > 0.0D) {
 			MorphlingItem.addHusbandryProgress(stack, 2);
 		}
-	}
+
+        }
+    }
 
 	@Override
 	public List<Component> getMaturityBonusDescriptions(int currentMaturity) {

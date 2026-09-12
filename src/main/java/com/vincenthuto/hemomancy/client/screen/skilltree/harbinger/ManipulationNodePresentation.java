@@ -14,7 +14,7 @@ final class ManipulationNodePresentation {
 	static int borderColor(EnumManipulationRank rank) {
 		if (rank == null) return 0;
 		return switch (rank) {
-			case HUMILIS -> 0;
+			case HUMILIS -> 0xFF4A1018;
 			case MEDIOCRITAS -> 0xFFCD7F32;
 			case SUMMA -> 0xFFA7ADB2;
 			case MAGISTER -> 0xFFFFC43D;

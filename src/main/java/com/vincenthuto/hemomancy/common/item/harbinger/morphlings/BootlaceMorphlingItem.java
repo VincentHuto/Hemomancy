@@ -48,16 +48,19 @@ public class BootlaceMorphlingItem extends MorphlingItem {
 
 	@Override
 	public boolean tryUse(Player playerIn, InteractionHand handIn, ItemStack itemStack, Level worldIn) {
+        if (com.vincenthuto.hemomancy.common.manipulation.ductilis.Paralysis.blocksActions(playerIn)) return false;
+        if (playerIn instanceof net.minecraft.server.level.ServerPlayer server
+                && com.vincenthuto.hemomancy.common.manipulation.HematicCommandManager.isMarionetteChannel(server))
+            com.vincenthuto.hemomancy.common.manipulation.ManipulationChannelManager.stop(server, false);
+        try (var schoolAbility = MorphlingCombat.scope(this, playerIn, itemStack, null)) {
+
 		if (!MorphlingItem.tryBeginPrimalAbility(playerIn, itemStack, "WebOfRedThread",
 				250.0, 160, 120, 0)) return false;
 		LivingEntity target = MorphlingItem.findLookTarget(playerIn, 22.0);
 		if (target != null) {
 			Vec3 pull = playerIn.position().subtract(target.position()).normalize().scale(1.35);
 			target.push(pull.x, 0.35, pull.z);
-			target.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN,
-					100, 127, true, true, true));
-			target.addEffect(new MobEffectInstance(MobEffects.POISON,
-					100, 1, true, true, true));
+			MorphlingCombat.afflict(this, playerIn, target, 100);
 		} else {
 			Vec3 leap = playerIn.getLookAngle().normalize().scale(1.25);
 			playerIn.push(leap.x, Math.max(0.25, leap.y + 0.25), leap.z);
@@ -66,10 +69,14 @@ public class BootlaceMorphlingItem extends MorphlingItem {
 					80, 0, true, false, true));
 		}
 		return true;
-	}
+
+        }
+    }
 
 	@Override
 	public void onEquippedTick(Player player, ItemStack stack) {
+        try (var schoolAbility = MorphlingCombat.scope(this, player, stack, null)) {
+
 		int maturity = MorphlingItem.getMaturityLevel(stack);
 		int amplifier = MorphlingItem.passiveAmplifier(player, stack, maturity);
 
@@ -91,7 +98,9 @@ public class BootlaceMorphlingItem extends MorphlingItem {
 		}
 
 		runProximityWebNest(player, stack, maturity);
-	}
+
+        }
+    }
 
 	@Override
 	public boolean onEquippedFall(Player player, ItemStack stack, float distance) {
@@ -117,8 +126,7 @@ public class BootlaceMorphlingItem extends MorphlingItem {
 		for (Monster target : player.level().getEntitiesOfClass(Monster.class, area, Monster::isAlive)) {
 			BlockPos webPos = target.blockPosition();
 			EquippedMorphlingEvents.placeTemporaryWeb(player.level(), webPos);
-			target.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN,
-					60, 2, true, true, true));
+			MorphlingCombat.afflict(this, player, target, 60);
 			placedAny = true;
 		}
 		if (placedAny) {

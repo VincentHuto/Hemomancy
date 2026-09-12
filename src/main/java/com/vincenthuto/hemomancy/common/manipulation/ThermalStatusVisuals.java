@@ -40,7 +40,7 @@ public final class ThermalStatusVisuals {
             Entity entity=state.entity;
             boolean thawed=entity instanceof LivingEntity living && switch(state.form) {
                 case FROZEN_VEINS,RIMEBOUND -> living.getTicksFrozen()<=0;
-                case BONE -> !living.hasEffect(MobEffects.MOVEMENT_SLOWDOWN);
+                case BONE -> !living.hasEffect(com.vincenthuto.hemomancy.common.init.EffectInit.rime);
                 default -> false;
             };
             if(!entity.isAlive() || entity.level().getGameTime()>=state.until || thawed

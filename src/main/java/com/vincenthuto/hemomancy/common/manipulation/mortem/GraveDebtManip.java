@@ -35,6 +35,8 @@ public class GraveDebtManip extends BloodManipulation {
 
 	@Override
 	public void getAction(Player player, Level world, ItemStack heldItemMainhand, BlockPos position) {
+        try (var schoolCast = com.vincenthuto.hemomancy.common.damage.SchoolDamage.cast(this, player, 1)) {
+
 		if (!(world instanceof ServerLevel serverLevel)) return;
 		double range = BASE_RANGE * SkillPointHelper.getSanguineReachMultiplier(player);
 		LivingEntity target = world.getEntitiesOfClass(LivingEntity.class, new AABB(player.blockPosition()).inflate(range),
@@ -51,5 +53,6 @@ public class GraveDebtManip extends BloodManipulation {
 		SchoolHitHelper.markGraveDebt(target, player, DURATION_TICKS);
 		ManipulationVisuals.attached(target, ManipulationVisuals.Form.GRAVE, 1, DURATION_TICKS, 1); world.playSound(null, target.blockPosition(), SoundEvents.SCULK_SHRIEKER_SHRIEK, SoundSource.PLAYERS,
 				0.45F, 0.55F);
-	}
+	        }
+    }
 }

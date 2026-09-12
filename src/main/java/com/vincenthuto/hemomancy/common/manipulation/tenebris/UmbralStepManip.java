@@ -83,6 +83,8 @@ public class UmbralStepManip extends BloodManipulation {
 
 	@Override
 	public void getAction(Player player, Level world, ItemStack heldItemMainhand, BlockPos position) {
+        try (var schoolCast = com.vincenthuto.hemomancy.common.damage.SchoolDamage.cast(this, player, 1)) {
+
 		BlockPos landingPos = destination(player);
 		if (landingPos == null) return;
 
@@ -106,5 +108,6 @@ public class UmbralStepManip extends BloodManipulation {
 		if (world instanceof ServerLevel sLevel) {
 			ManipulationParticles.accent(sLevel, EnumBloodTendency.TENEBRIS, new Vec3(destX, destY + 1, destZ), net.minecraft.world.phys.Vec3.ZERO);
 		}
-	}
+	        }
+    }
 }

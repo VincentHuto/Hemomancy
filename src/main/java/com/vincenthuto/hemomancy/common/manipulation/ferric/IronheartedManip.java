@@ -48,6 +48,8 @@ public class IronheartedManip extends BloodManipulation {
 	@Override
 	public void getAction(Player player, Level world, ItemStack heldItemMainhand, BlockPos position,
 			float chargeTicks) {
+        try (var schoolCast = com.vincenthuto.hemomancy.common.damage.SchoolDamage.cast(this, player, getRequiredChargeTicks() <= 0 ? 1 : chargeTicks / getRequiredChargeTicks())) {
+
 		if (!(player instanceof ServerPlayer serverPlayer) || !(world instanceof ServerLevel level)) return;
 		PowerGuardrailState state = HemoCapabilityAccess.getPowerGuardrails(player);
 		float strength = ManipulationCastingRules.chargeFraction(chargeTicks, getRequiredChargeTicks());
@@ -57,5 +59,6 @@ public class IronheartedManip extends BloodManipulation {
 		state.setIronHeartExpiryTick(world.getGameTime() + BodyIdiomRules.IRON_HEART_DURATION_TICKS);
 		BodyIdiomEvents.sync(serverPlayer);
 		level.playSound(null, player.blockPosition(), SoundEvents.ANVIL_LAND, SoundSource.PLAYERS, 0.55F, 1.35F);
-	}
+	        }
+    }
 }

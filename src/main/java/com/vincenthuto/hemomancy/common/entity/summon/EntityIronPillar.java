@@ -110,23 +110,30 @@ public class EntityIronPillar extends FerricConstructEntity {
 
 	private boolean isMagneticTarget(LivingEntity target) {
 		if (target instanceof IBloodConstruct) return false;
-		return ManipulationStatusRules.canMagnetize(target instanceof Monster,
+		if (getCreator() instanceof net.minecraft.world.entity.player.Player player
+                && !com.vincenthuto.hemomancy.common.manipulation.ManipulationCombatHelper.canHarm(player, target)) return false;
+        return ManipulationStatusRules.canMagnetize(target instanceof Monster || target.hasEffect(com.vincenthuto.hemomancy.common.init.EffectInit.lodestone),
 				getCreator() != null && (target.isAlliedTo(getCreator()) || getCreator().isAlliedTo(target)),
 				target == getCreator());
 	}
 
-	private void pullTowardPillar(LivingEntity target, Vec3 anchor) {
+	public boolean attracts(LivingEntity target, java.util.UUID owner) {
+        return isAlive() && isMagnetic() && getCreator() != null && getCreator().getUUID().equals(owner)
+                && distanceToSqr(target) <= MAGNETIC_RADIUS * MAGNETIC_RADIUS && isMagneticTarget(target);
+    }
+
+    private void pullTowardPillar(LivingEntity target, Vec3 anchor) {
 		Vec3 toAnchor = anchor.subtract(target.position());
 		double distance = toAnchor.length();
 		if (distance <= 0.001D) {
 			return;
 		}
-		Vec3 pull = toAnchor.normalize().scale(distance <= MAGNETIC_PIN_RADIUS ? 0.08D : 0.22D);
+		double strength = (distance <= MAGNETIC_PIN_RADIUS ? 0.08D : 0.22D);
+        if (target.hasEffect(com.vincenthuto.hemomancy.common.init.EffectInit.lodestone)) strength *= 1.5;
+        strength *= 1 - target.getAttributeValue(net.minecraft.world.entity.ai.attributes.Attributes.KNOCKBACK_RESISTANCE);
+        Vec3 pull = toAnchor.normalize().scale(strength);
 		target.setDeltaMovement(target.getDeltaMovement().add(pull).multiply(0.72D, 0.92D, 0.72D));
 		target.hurtMarked = true;
-		if (distance <= MAGNETIC_PIN_RADIUS) {
-			target.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 12, 4, false, true, true));
-		}
 	}
 
 	@Override

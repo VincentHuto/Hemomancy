@@ -26,7 +26,7 @@ final class DaemonDiffuseGlowParticleResourceTest {
 		assertTrue(data.contains("ParticleInit.daemon_diffuse_glow.get()"));
 		assertTrue(particleInit.contains("register(\"daemon_diffuse_glow\""));
 		assertTrue(particleInit.contains("DaemonDiffuseGlowParticleFactory::new"));
-		assertTrue(daemon.contains("DaemonDiffuseGlowParticleFactory.createData"));
+		assertTrue(daemon.contains("HemoParticleData.daemonDiffuseGlow("));
 		assertFalse(daemon.contains("case SMOKE -> ParticleTypes.SMOKE"));
 		assertTrue(Files.isRegularFile(ROOT.resolve(
 				"src/main/resources/assets/hemomancy/particles/daemon_diffuse_glow.json")));

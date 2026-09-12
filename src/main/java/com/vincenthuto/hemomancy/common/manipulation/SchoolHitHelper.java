@@ -42,8 +42,8 @@ public final class SchoolHitHelper {
 
 	public static boolean tryTriggerConductiveArc(LivingEntity attacker, LivingEntity markedTarget,
 			EnumBloodTendency primary, @Nullable EnumBloodTendency secondary, float sourceDamage) {
-        if (!(attacker instanceof Player)) return false;
-        Discharge discharge = new Discharge();
+        Discharge discharge = Discharge.current();
+        if (discharge == null) discharge = new Discharge();
         if (attacker instanceof Player player && player.level() instanceof ServerLevel)
             ConductionManager.claimHit(player,markedTarget,discharge);
         else discharge.claim(markedTarget.getUUID(),markedTarget.level().getGameTime());
@@ -52,12 +52,15 @@ public final class SchoolHitHelper {
 
     public static boolean tryTriggerConductiveArc(LivingEntity attacker, LivingEntity markedTarget,
             EnumBloodTendency primary, @Nullable EnumBloodTendency secondary, float sourceDamage, Discharge discharge) {
-		if (markedTarget.level().isClientSide()
-				|| !markedTarget.hasEffect(EffectInit.conductive_mark)
+		if (!discharge.allowsReactiveArcs() || markedTarget.level().isClientSide()
+				|| !(markedTarget.hasEffect(EffectInit.conductive_mark) || markedTarget.hasEffect(EffectInit.lodestone))
 				|| !ManipulationStatusRules.isConductiveSchool(primary, secondary)) {
 			return false;
 		}
 
+        var schoolHit = com.vincenthuto.hemomancy.common.damage.SchoolDamage.current();
+        if (schoolHit != null && (schoolHit.kind() == com.vincenthuto.hemomancy.common.damage.SchoolHitContext.Kind.REACTION
+                || com.vincenthuto.hemomancy.common.damage.SchoolStates.data(markedTarget).hasPaid(schoolHit.rootAttack()))) return false;
 		long now = markedTarget.level().getGameTime();
 		CompoundTag data = markedTarget.getPersistentData();
 		long lastArc = data.contains(CONDUCTIVE_LAST_ARC_KEY) ? data.getLong(CONDUCTIVE_LAST_ARC_KEY) : -1L;
@@ -83,7 +86,8 @@ public final class SchoolHitHelper {
 				.forEach(target -> {
 					if (!ConductionManager.claimHit(attacker,target,discharge)) return;
                     DuctilisLightningEffects.conductiveArc(markedTarget, target, arcs[0]++);
-					target.hurt(attacker.damageSources().magic(), ManipulationStatusRules.CONDUCTIVE_ARC_DAMAGE);
+					target.hurt(com.vincenthuto.hemomancy.common.damage.SchoolDamage.reaction(attacker, "conductive_arc",
+                            EnumBloodTendency.DUCTILIS), ManipulationStatusRules.CONDUCTIVE_ARC_DAMAGE);
 				});
 
 		if (arcs[0] > 0) {
@@ -112,6 +116,11 @@ public final class SchoolHitHelper {
 	}
 
 	public static boolean tryTriggerGraveDebtBurst(LivingEntity target, float previousHealth) {
+        return tryTriggerGraveDebtBurst(target, previousHealth, null);
+    }
+
+    public static boolean tryTriggerGraveDebtBurst(LivingEntity target, float previousHealth,
+            @Nullable com.vincenthuto.hemomancy.common.damage.SchoolHitContext hit) {
 		if (target.level().isClientSide() || !target.hasEffect(EffectInit.grave_debt)) {
 			return false;
 		}
@@ -122,6 +131,11 @@ public final class SchoolHitHelper {
 			return false;
 		}
 		data.putBoolean(GRAVE_DEBT_BURST_USED_KEY, true);
+        if (hit != null) {
+            var states = com.vincenthuto.hemomancy.common.damage.SchoolStates.data(target);
+            if (states.hasPaid(hit.rootAttack())) return false;
+            states.recordPayoff(hit.rootAttack(), target.level().getGameTime());
+        }
 
 		Player owner = graveDebtOwner(target);
 		Vec3 center = target.position().add(0.0D, target.getBbHeight() * 0.45D, 0.0D);
@@ -130,7 +144,7 @@ public final class SchoolHitHelper {
 						victim -> victim != target && victim.isAlive()
 								&& (owner == null ? !data.hasUUID(GRAVE_DEBT_OWNER_KEY) : ManipulationCombatHelper.canHarm(owner, victim))
 								&& victim.position().distanceTo(center) <= ManipulationStatusRules.GRAVE_DEBT_RADIUS)
-				.forEach(victim -> victim.hurt(target.damageSources().magic(),
+				.forEach(victim -> victim.hurt(com.vincenthuto.hemomancy.common.damage.SchoolDamage.reaction(owner == null ? target : owner, "grave_debt", EnumBloodTendency.MORTEM),
 						ManipulationStatusRules.GRAVE_DEBT_BURST_DAMAGE));
 		sendGraveBurst(target, center);
 		return true;

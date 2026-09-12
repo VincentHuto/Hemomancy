@@ -65,7 +65,7 @@ public final class HarbingerAssignmentReturnReadySourceTest {
 		String centrifugeOutput = read(SOURCE_ROOT.resolve(
 				"com/vincenthuto/hemomancy/common/menu/slot/CentrifugeOutputSlot.java"));
 		String somaticLoom = read(SOURCE_ROOT.resolve(
-				"com/vincenthuto/hemomancy/common/tile/crafting/SomaticLoomBlockEntity.java"));
+				"com/vincenthuto/hemomancy/common/tile/harbinger/crafting/SomaticLoomBlockEntity.java"));
 		String brazier = read(SOURCE_ROOT.resolve(
 				"com/vincenthuto/hemomancy/common/rite/ScarBrazierRite.java"));
 

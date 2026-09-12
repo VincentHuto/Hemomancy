@@ -6,7 +6,7 @@ import java.nio.file.Path;
 
 public final class SpecimenJarDataRulesTest {
 	private static final Path SOURCE = Path.of(
-			"src/main/java/com/vincenthuto/hemomancy/common/util/SpecimenJarData.java");
+			"src/main/java/com/vincenthuto/hemomancy/common/item/harbinger/tile/functional/SpecimenJarData.java");
 
 	private SpecimenJarDataRulesTest() {
 	}

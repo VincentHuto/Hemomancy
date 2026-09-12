@@ -32,11 +32,11 @@ public final class HarbingerAssignmentLedgerPortraitSourceTest {
 		}
 
 		for (String texture : new String[] {
-				"assets/hemomancy/textures/entity/harbinger_vicar/harbinger_vicar_portrait.png",
-				"assets/hemomancy/textures/entity/harbinger_alchemist/harbinger_alchemist_portrait.png",
-				"assets/hemomancy/textures/entity/harbinger_mnemonist/harbinger_mnemonist_portrait.png",
-				"assets/hemomancy/textures/entity/harbinger_cicatrix_anchorite/harbinger_cicatrix_anchorite_portrait.png",
-				"assets/hemomancy/textures/entity/harbinger_artificer/harbinger_artificer_portrait.png"
+				"assets/hemomancy/textures/entity/npc/harbinger/harbinger_vicar/harbinger_vicar_portrait.png",
+				"assets/hemomancy/textures/entity/npc/harbinger/harbinger_alchemist/harbinger_alchemist_portrait.png",
+				"assets/hemomancy/textures/entity/npc/harbinger/harbinger_mnemonist/harbinger_mnemonist_portrait.png",
+				"assets/hemomancy/textures/entity/npc/harbinger/harbinger_cicatrix_anchorite/harbinger_cicatrix_anchorite_portrait.png",
+				"assets/hemomancy/textures/entity/npc/harbinger/harbinger_artificer/harbinger_artificer_portrait.png"
 		}) {
 			assertFileExists("assigner portrait texture exists: " + texture, RESOURCE_ROOT.resolve(texture));
 		}

@@ -1,6 +1,8 @@
 package com.vincenthuto.hemomancy.common.manipulation.tenebris;
 
 import com.vincenthuto.hemomancy.Hemomancy;
+import com.vincenthuto.hemomancy.common.damage.*;
+import com.vincenthuto.hemomancy.common.init.ManipulationInit;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
@@ -30,7 +32,8 @@ public final class BlackVeilCovenantManager {
 	}
 
 	public static void addVeil(ServerLevel level, BlockPos center, double radius, int durationTicks, UUID owner) {
-		VEILS.add(new Entry(level.dimension(), center.immutable(), radius, level.getGameTime() + durationTicks, owner));
+		VEILS.add(new Entry(level.dimension(), center.immutable(), radius, level.getGameTime() + durationTicks, owner,
+                SchoolDamage.context(ManipulationInit.black_veil_covenant.get(), level.getPlayerByUUID(owner))));
 	}
 
 	@SubscribeEvent
@@ -47,6 +50,7 @@ public final class BlackVeilCovenantManager {
 	}
 
 	public static boolean isSyntheticDarkness(Level level, BlockPos pos) {
+        if (com.vincenthuto.hemomancy.common.manipulation.ManipulationReactiveEvents.isEclipseDarkness(level, pos)) return true;
 		long now = level.getGameTime();
 		for (Entry entry : VEILS) {
 			if (entry.dimension.equals(level.dimension()) && now <= entry.expiryTick && entry.contains(pos)) {
@@ -69,11 +73,19 @@ public final class BlackVeilCovenantManager {
 			Entry entry = iterator.next();
 			if (entry.dimension.equals(level.dimension()) && now > entry.expiryTick) {
 				iterator.remove();
-			}
+            } else if (entry.dimension.equals(level.dimension()) && now % 5 == 0) {
+                var owner = level.getPlayerByUUID(entry.owner);
+                if (owner != null) for (var target : level.getEntitiesOfClass(net.minecraft.world.entity.LivingEntity.class,
+                        new net.minecraft.world.phys.AABB(entry.center).inflate(entry.radius),
+                        entity -> entry.contains(entity.blockPosition())
+                                && com.vincenthuto.hemomancy.common.manipulation.ManipulationCombatHelper.canHarm(owner, entity))) {
+                    SchoolStates.apply(entry.hit, owner, target, SchoolState.OBSCURED, 25, 1);
+                }
+            }
 		}
 	}
 
-	private record Entry(ResourceKey<Level> dimension, BlockPos center, double radius, long expiryTick, UUID owner) {
+	private record Entry(ResourceKey<Level> dimension, BlockPos center, double radius, long expiryTick, UUID owner, SchoolHitContext hit) {
 		boolean contains(BlockPos pos) {
 			double dx = pos.getX() + 0.5 - (center.getX() + 0.5);
 			double dy = pos.getY() + 0.5 - (center.getY() + 1.0);

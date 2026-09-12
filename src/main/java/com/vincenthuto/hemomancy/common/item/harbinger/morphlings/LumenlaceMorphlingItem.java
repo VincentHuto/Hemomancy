@@ -53,11 +53,21 @@ public class LumenlaceMorphlingItem extends MorphlingItem {
 
 	@Override
 	public boolean tryUse(Player playerIn, InteractionHand handIn, ItemStack itemStack, Level worldIn) {
-		return triggerPrimalLastLightMantle(playerIn, itemStack);
-	}
+        if (com.vincenthuto.hemomancy.common.manipulation.ductilis.Paralysis.blocksActions(playerIn)) return false;
+        if (playerIn instanceof net.minecraft.server.level.ServerPlayer server
+                && com.vincenthuto.hemomancy.common.manipulation.HematicCommandManager.isMarionetteChannel(server))
+            com.vincenthuto.hemomancy.common.manipulation.ManipulationChannelManager.stop(server, false);
+        try (var schoolAbility = MorphlingCombat.scope(this, playerIn, itemStack, null)) {
+
+		return triggerPrimalLastLightMantle(playerIn, itemStack, true);
+
+        }
+    }
 
 	@Override
 	public void onEquippedTick(Player player, ItemStack stack) {
+        try (var schoolAbility = MorphlingCombat.scope(this, player, stack, null)) {
+
 		int maturity = MorphlingItem.getMaturityLevel(stack);
 		int amplifier = MorphlingItem.passiveAmplifier(player, stack, maturity);
 
@@ -71,14 +81,15 @@ public class LumenlaceMorphlingItem extends MorphlingItem {
 				double radius = 4.0;
 				AABB area = player.getBoundingBox().inflate(radius);
 				List<Monster> hostiles = player.level().getEntitiesOfClass(Monster.class, area);
-				int blindDuration = 30 + (maturity - 2) * 10;
+				int exposureDuration = 30 + (maturity - 2) * 10;
 				for (Monster mob : hostiles) {
-					mob.addEffect(new MobEffectInstance(MobEffects.BLINDNESS,
-							blindDuration, 0, true, true, true));
+					MorphlingCombat.afflict(this, player, mob, exposureDuration);
 				}
 			}
 		}
-	}
+
+        }
+    }
 
 	private void runCamouflage(Player player, ItemStack stack, int maturity) {
 		if (player.level().isClientSide) {
@@ -108,15 +119,22 @@ public class LumenlaceMorphlingItem extends MorphlingItem {
 
 	@Override
 	public void onEquippedHurt(Player player, ItemStack stack, DamageSource source, float amount) {
+        onEquippedHurt(player, stack, source, amount, true);
+    }
+
+    @Override
+    public void onEquippedHurt(Player player, ItemStack stack, DamageSource source, float amount, boolean allowReactions) {
+        try (var schoolAbility = MorphlingCombat.scope(this, player, stack, source)) {
+
 		int maturity = MorphlingItem.getMaturityLevel(stack);
 
-		if (MorphlingItem.isPrimal(stack) && player.getHealth() - amount <= 0) {
-			if (triggerPrimalLastLightMantle(player, stack)) {
+		if (MorphlingItem.isPrimal(stack) && player.getHealth() <= 0) {
+			if (triggerPrimalLastLightMantle(player, stack, allowReactions)) {
 				return;
 			}
 		}
 
-		if (maturity >= 4 && player.getHealth() - amount <= 0
+		if (maturity >= 4 && player.getHealth() <= 0
 				&& LastRiteHelper.canFire(player, LastRiteHelper.INK_MANTLE_ID)) {
 			long lastReprieve = getLastAbilityTick(stack, "InkMantleReprieve");
 			long now = player.level().getGameTime();
@@ -137,9 +155,11 @@ public class LumenlaceMorphlingItem extends MorphlingItem {
 				});
 			}
 		}
-	}
 
-	private boolean triggerPrimalLastLightMantle(Player player, ItemStack stack) {
+        }
+    }
+
+	private boolean triggerPrimalLastLightMantle(Player player, ItemStack stack, boolean allowReactions) {
 		if (!LastRiteHelper.canFire(player, LastRiteHelper.LAST_LIGHT_ID)) return false;
 		if (!MorphlingItem.tryBeginPrimalAbility(player, stack, "LastLightMantle",
 				750.0, 12000, 700, 1)) return false;
@@ -151,12 +171,10 @@ public class LumenlaceMorphlingItem extends MorphlingItem {
 				160, 1, true, false, true));
 		player.addEffect(new MobEffectInstance(MobEffects.ABSORPTION,
 				240, 2, true, false, true));
+		if (!allowReactions) return true;
 		AABB area = player.getBoundingBox().inflate(8.0);
 		for (Monster mob : player.level().getEntitiesOfClass(Monster.class, area, Monster::isAlive)) {
-			mob.addEffect(new MobEffectInstance(MobEffects.BLINDNESS,
-					160, 0, true, true, true));
-			mob.addEffect(new MobEffectInstance(MobEffects.CONFUSION,
-					160, 0, true, true, true));
+			MorphlingCombat.afflict(this, player, mob, 160);
 		}
 		return true;
 	}
@@ -164,7 +182,7 @@ public class LumenlaceMorphlingItem extends MorphlingItem {
 	@Override
 	public List<Component> getMaturityBonusDescriptions(int currentMaturity) {
 		List<Component> list = new ArrayList<>();
-		list.add(MorphlingItem.maturityBonusLine("Sepia Wake (Blind hostiles while sprinting)", 2, currentMaturity));
+		list.add(MorphlingItem.maturityBonusLine("Sepia Wake (Illuminate hostiles while sprinting)", 2, currentMaturity));
 		list.add(MorphlingItem.maturityBonusLine("Low-Light Camouflage (Stillness hides you in dark or water)", 3, currentMaturity));
 		list.add(MorphlingItem.maturityBonusLine("Ink Mantle Reprieve (Prevent death using blood)", 4, currentMaturity));
 		list.add(MorphlingItem.maturityBonusLine("Last-Light Mantle (Primal rescue mantle cleanses and prevents death)", 5, currentMaturity));

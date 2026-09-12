@@ -1,5 +1,7 @@
 package com.vincenthuto.hemomancy.common.manipulation;
 
+import com.vincenthuto.hemomancy.common.damage.*;
+
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
@@ -41,7 +43,7 @@ public final class ManipulationReactiveEvents {
 	private static final Map<UUID, Coronation> CORONATIONS = new HashMap<>();
 	private static final Map<UUID, Long> CIRCUIT_HITS = new HashMap<>();
 	private static final Map<UUID, Ward> SANGUINE_WARDS = new HashMap<>();
-	private static final Map<UUID, Long> UNCLOSING_EYES = new HashMap<>();
+	private static final Map<UUID, UnclosingEye> UNCLOSING_EYES = new HashMap<>();
 	private static final Map<String, Long> PASSIVE_COOLDOWNS = new HashMap<>();
 	private static final List<EclipseWell> ECLIPSE_WELLS = new ArrayList<>();
 	private static final List<GazeSlam> GAZE_SLAMS = new ArrayList<>();
@@ -63,7 +65,7 @@ public final class ManipulationReactiveEvents {
 
 	public static void armCoronation(Player player, int lances, float strength) {
 		CORONATIONS.put(player.getUUID(), new Coronation(lances, strength,
-				player.level().getGameTime() + 400));
+				player.level().getGameTime() + 400, SchoolDamage.context(ManipulationInit.crimson_coronation.get(), player)));
         ManipulationVisuals.attached(player, ManipulationVisuals.Form.CROWN, 1.15, 400, lances);
 	}
 
@@ -72,14 +74,21 @@ public final class ManipulationReactiveEvents {
         ManipulationVisuals.attached(player, ManipulationVisuals.Form.CIRCUIT, 1, 40, 1);
 	}
 
-	public static void createEclipseWell(ServerLevel level, Vec3 center, double radius, int duration, UUID owner) {
-		ECLIPSE_WELLS.add(new EclipseWell(level.dimension(), center, radius, level.getGameTime() + duration, owner));
+    public static boolean isEclipseDarkness(Level level, net.minecraft.core.BlockPos pos) {
+        return ECLIPSE_WELLS.stream().anyMatch(well -> well.dimension.equals(level.dimension())
+                && level.getGameTime() < well.until && Vec3.atCenterOf(pos).distanceToSqr(well.center) <= well.radius * well.radius);
+    }
+
+    public static void createEclipseWell(ServerLevel level, Vec3 center, double radius, int duration, UUID owner) {
+		ECLIPSE_WELLS.add(new EclipseWell(level.dimension(), center, radius, level.getGameTime() + duration, owner,
+                SchoolDamage.context(ManipulationInit.eclipse_well.get(), level.getPlayerByUUID(owner))));
         ManipulationVisuals.burst(level, ManipulationVisuals.Form.WELL, center, center, radius, duration);
 	}
 
 	public static void createHematicBeacon(ServerLevel level, Vec3 center, double radius, int duration, UUID owner) {
 		HematicBeacon beacon = new HematicBeacon(level.dimension(), center, radius,
-				level.getGameTime() + duration, level.getGameTime() + 20, owner);
+				level.getGameTime() + duration, level.getGameTime() + 20, owner,
+                SchoolDamage.context(ManipulationInit.hematic_beacon.get(), level.getPlayerByUUID(owner)));
 		HEMATIC_BEACONS.add(beacon);
 		pulseHematicBeacon(level, beacon);
 	}
@@ -92,12 +101,14 @@ public final class ManipulationReactiveEvents {
 	}
 
 	public static void armUnclosingEye(Player player, int duration) {
-		UNCLOSING_EYES.put(player.getUUID(), player.level().getGameTime() + duration);
+		UNCLOSING_EYES.put(player.getUUID(), new UnclosingEye(player.level().getGameTime() + duration,
+                SchoolDamage.context(ManipulationInit.unclosing_eye.get(), player)));
         ManipulationVisuals.attached(player, ManipulationVisuals.Form.EYE, 1, duration, 1);
 	}
 
 	public static void scheduleDeadlyGazeSlam(ServerLevel level, Player owner, LivingEntity target, int delay, float damage) {
-		GAZE_SLAMS.add(new GazeSlam(level.dimension(), owner.getUUID(), target.getUUID(), level.getGameTime() + delay, damage));
+		GAZE_SLAMS.add(new GazeSlam(level.dimension(), owner.getUUID(), target.getUUID(), level.getGameTime() + delay, damage,
+                SchoolDamage.context(ManipulationInit.deadly_gaze.get(), owner)));
 	}
 
 	@SubscribeEvent(priority = EventPriority.LOW)
@@ -119,11 +130,23 @@ public final class ManipulationReactiveEvents {
 			}
 		}
 
+
+		if (active(player, "sovereign_instinct") && attacker != null) sovereignInstinct(player);
+	}
+
+    @SubscribeEvent
+    public static void coronationLanded(LivingDamageEvent.Post event) {
+        if (!(event.getEntity() instanceof ServerPlayer player)
+                || event.getNewDamage() + event.getReduction(net.neoforged.neoforge.common.damagesource.DamageContainer.Reduction.ABSORPTION) <= 0
+                || event.getSource() instanceof SchoolDamageSource school && school.context().kind() != SchoolHitContext.Kind.DIRECT) return;
+        long now = player.level().getGameTime();
+        Entity attacker = event.getSource().getEntity();
 		Coronation crown = CORONATIONS.get(player.getUUID());
 		if (crown != null && now < crown.until && crown.lances > 0 && attacker instanceof LivingEntity living
 				&& ManipulationCombatHelper.canHarm(player, living)) {
 			BloodNeedleEntity needle = new BloodNeedleEntity(player.level(), player);
 			needle.setDamageTendency(EnumBloodTendency.ANIMUS);
+            SchoolDamage.capture(needle, crown.hit.newAttack().child(SchoolHitContext.Kind.REACTION));
             needle.setCoronationSword(true);
             Vec3 launch = player.position().add(ManipulationVisuals.swordOffset(now, crown.lances - 1));
             needle.setPos(launch);
@@ -135,11 +158,10 @@ public final class ManipulationReactiveEvents {
             ManipulationVisuals.attached(player, ManipulationVisuals.Form.CROWN, 1.15,
                     (int) (crown.until - now), crown.lances - 1);
 			if (crown.lances == 1) CORONATIONS.remove(player.getUUID());
-			else CORONATIONS.put(player.getUUID(), new Coronation(crown.lances - 1, crown.strength, crown.until));
+			else CORONATIONS.put(player.getUUID(), new Coronation(crown.lances - 1, crown.strength, crown.until, crown.hit));
 		}
 
-		if (active(player, "sovereign_instinct") && attacker != null) sovereignInstinct(player);
-	}
+    }
 
 	@SubscribeEvent(priority = EventPriority.LOWEST)
 	public static void onFinalDamage(LivingDamageEvent.Pre event) {
@@ -158,10 +180,14 @@ public final class ManipulationReactiveEvents {
 				.map(MobEffectInstance::getEffect).toList().forEach(player::removeEffect);
 		player.addEffect(new MobEffectInstance(MobEffects.FIRE_RESISTANCE, 200, 0, false, true));
 		if (player.level() instanceof ServerLevel level) {
+                var hit = com.vincenthuto.hemomancy.common.damage.SchoolHitContext.direct(
+                        com.vincenthuto.hemomancy.Hemomancy.rloc("phoenix_debt"), EnumBloodTendency.FLAMMEUS,
+                        ManipulationInit.phoenix_debt.get().getSecondaryTend(), player)
+                        .child(com.vincenthuto.hemomancy.common.damage.SchoolHitContext.Kind.REACTION);
 			for (LivingEntity target : level.getEntitiesOfClass(LivingEntity.class, player.getBoundingBox().inflate(5),
 					candidate -> ManipulationCombatHelper.canHarm(player, candidate))) {
-				target.igniteForSeconds(5);
-				target.hurt(level.damageSources().inFire(), 8.0F);
+                target.hurt(com.vincenthuto.hemomancy.common.damage.SchoolDamage.attributed(
+                        level.damageSources().inFire(), hit, player), 8.0F);
 			}
 			ManipulationVisuals.burst(level, ManipulationVisuals.Form.PHOENIX, player.position(), player.position(), 5, 48);
 		}
@@ -170,18 +196,25 @@ public final class ManipulationReactiveEvents {
 	@SubscribeEvent
 	public static void onAttack(AttackEntityEvent event) {
 		if (!(event.getEntity() instanceof ServerPlayer player)) return;
-		Long armedUntil = event.getTarget() instanceof LivingEntity victim && ManipulationCombatHelper.canHarm(player, victim)
-				? CIRCUIT_HITS.remove(player.getUUID()) : null;
-		if (armedUntil != null && player.level().getGameTime() <= armedUntil
-				&& event.getTarget() instanceof LivingEntity target) {
-			target.addEffect(new MobEffectInstance(EffectInit.conductive_mark, 160, 0, false, true));
-			SchoolHitHelper.markConductive(target, 160);
-            ManipulationVisuals.attached(player, ManipulationVisuals.Form.CIRCUIT, 0, 0, 0);
-            ManipulationVisuals.attached(target, ManipulationVisuals.Form.MARK, 1, 160, 1);
-            com.vincenthuto.hemomancy.common.manipulation.ductilis.DuctilisLightningEffects.conductiveArc(player,target,0);
-		}
 		if (selected(player, "penumbral_drift")) ManipulationChannelManager.stop(player);
 	}
+
+    @SubscribeEvent
+    public static void circuitLanded(LivingDamageEvent.Post event) {
+        if (!(event.getSource().getEntity() instanceof ServerPlayer player)
+                || event.getSource().getDirectEntity() != player
+                || !event.getSource().is(net.minecraft.world.damagesource.DamageTypes.PLAYER_ATTACK)
+                || event.getSource() instanceof SchoolDamageSource school && school.context().kind() != SchoolHitContext.Kind.DIRECT
+                || event.getNewDamage() + event.getReduction(net.neoforged.neoforge.common.damagesource.DamageContainer.Reduction.ABSORPTION) <= 0
+                || !ManipulationCombatHelper.canHarm(player, event.getEntity())) return;
+        Long armedUntil = CIRCUIT_HITS.remove(player.getUUID());
+        if (armedUntil == null || player.level().getGameTime() > armedUntil) return;
+        LivingEntity target = event.getEntity();
+        SchoolHitHelper.markConductive(target, 160);
+        ManipulationVisuals.attached(player, ManipulationVisuals.Form.CIRCUIT, 0, 0, 0);
+        ManipulationVisuals.attached(target, ManipulationVisuals.Form.MARK, 1, 160, 1);
+        com.vincenthuto.hemomancy.common.manipulation.ductilis.DuctilisLightningEffects.conductiveArc(player, target, 0);
+    }
 
 	@SubscribeEvent
 	public static void onPlayerTick(PlayerTickEvent.Post event) {
@@ -206,15 +239,14 @@ public final class ManipulationReactiveEvents {
 		if (active(player, "phoenix_debt")) {
 			if (!LastRiteHelper.hasArmedSource(player)) LastRiteHelper.arm(player, LastRiteHelper.PHOENIX_DEBT_ID);
 		} else LastRiteHelper.clearIfArmed(player, LastRiteHelper.PHOENIX_DEBT_ID);
-		long eyeUntil = UNCLOSING_EYES.getOrDefault(player.getUUID(), 0L);
-		if (eyeUntil <= player.level().getGameTime()) UNCLOSING_EYES.remove(player.getUUID());
+		UnclosingEye eye = UNCLOSING_EYES.get(player.getUUID());
+		if (eye == null || eye.until <= player.level().getGameTime()) UNCLOSING_EYES.remove(player.getUUID());
 		else if (player.tickCount % 10 == 0) {
 			for (LivingEntity target : player.level().getEntitiesOfClass(LivingEntity.class,
 					player.getBoundingBox().inflate(32), entity -> entity != player && entity.isAlive())) {
-				target.removeEffect(MobEffects.INVISIBILITY);
-				target.addEffect(new MobEffectInstance(MobEffects.GLOWING, 25, 0, false, false));
+				SchoolStates.apply(eye.hit, player, target, SchoolState.ILLUMINATED, 25, 1);
 			}
-			player.addEffect(new MobEffectInstance(MobEffects.GLOWING, 25, 0, false, true));
+			SchoolStates.apply(eye.hit, player, player, SchoolState.ILLUMINATED, 25, 1);
 			player.addEffect(new MobEffectInstance(MobEffects.NIGHT_VISION, 25, 0, false, false, true));
 		}
 		Coronation crown = CORONATIONS.get(player.getUUID());
@@ -225,10 +257,6 @@ public final class ManipulationReactiveEvents {
                         (int) (crown.until - player.level().getGameTime()), crown.lances);
 			}
 		}
-		if (player.tickCount % 10 != 0 || !ManipulationChannelManager.isChanneling(player.getUUID())
-				|| !selected(player, "penumbral_drift")) return;
-		for (Mob mob : player.level().getEntitiesOfClass(Mob.class, player.getBoundingBox().inflate(12),
-				mob -> mob.getTarget() == player && !isBoss(mob))) mob.setTarget(null);
 	}
 
 	@SubscribeEvent
@@ -245,7 +273,7 @@ public final class ManipulationReactiveEvents {
 			if (target instanceof LivingEntity living && owner != null && ManipulationCombatHelper.canHarm(owner, living)) {
 				living.setDeltaMovement(living.getDeltaMovement().x, -1.5D, living.getDeltaMovement().z);
                 ManipulationVisuals.burst(level,ManipulationVisuals.Form.SWORD_IMPACT,living.position(),living.position(),1,18);
-				ManipulationCombatHelper.hurt(ManipulationInit.deadly_gaze.get(), owner, living, level, slam.damage);
+				living.hurt(SchoolDamage.attributed(level.damageSources().magic(), slam.hit, owner), slam.damage);
 			}
 		}
 		Iterator<EclipseWell> iterator = ECLIPSE_WELLS.iterator();
@@ -263,9 +291,7 @@ public final class ManipulationReactiveEvents {
 					candidate -> candidate.isAlive() && candidate != owner && (owner != null && ManipulationCombatHelper.canHarm(owner, candidate)))) {
 				Vec3 pull = well.center.subtract(target.position());
 				if (pull.lengthSqr() > .01) target.push(pull.x * .04, Math.max(0, pull.y) * .02, pull.z * .04);
-				target.addEffect(new MobEffectInstance(MobEffects.BLINDNESS, 25, 0, false, true));
-				target.addEffect(new MobEffectInstance(MobEffects.DARKNESS, 25, 0, false, true));
-				if (target instanceof Mob mob) mob.setTarget(null);
+				SchoolStates.apply(well.hit, owner, target, SchoolState.OBSCURED, 25, 1);
 			}
 			if (now % 20 == 0) ManipulationVisuals.burst(level, ManipulationVisuals.Form.WELL, well.center, well.center, well.radius, (int) (well.until - now));
 		}
@@ -314,8 +340,8 @@ public final class ManipulationReactiveEvents {
 		for (int i = 0; i < mobs.size(); i++) {
 			Mob mob = mobs.get(i);
 			if (isBoss(mob)) {
-				mob.setTarget(null);
-				mob.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, 100, 1, false, true));
+                SchoolStates.apply(SchoolDamage.context(ManipulationInit.sovereign_instinct.get(), player),
+                        player, mob, SchoolState.PRESSURE, 100, 1);
 			} else {
 				HematicCommandManager.redirect(player, mob, mobs.get((i + 1) % mobs.size()), 100);
 			}
@@ -334,7 +360,7 @@ public final class ManipulationReactiveEvents {
 		}
 		for (Mob mob : level.getEntitiesOfClass(Mob.class, area,
 				entity -> entity.isAlive() && ManipulationCombatHelper.canHarm(owner, entity))) {
-			mob.addEffect(new MobEffectInstance(MobEffects.GLOWING, 30, 0, false, true));
+			SchoolStates.apply(beacon.hit, owner, mob, SchoolState.ILLUMINATED, 30, 1);
 		}
         ManipulationParticles.accent(level, EnumBloodTendency.LUX, beacon.center.add(0, 1.35, 0), Vec3.ZERO);
 	}
@@ -386,10 +412,11 @@ public final class ManipulationReactiveEvents {
 				|| target.getClass().getName().startsWith("com.vincenthuto.hemomancy.common.entity.boss.");
 	}
 
-	private record Coronation(int lances, float strength, long until) { }
+	private record Coronation(int lances, float strength, long until, SchoolHitContext hit) { }
 	private record Ward(float pool, long until) { }
-	private record GazeSlam(ResourceKey<Level> dimension, UUID owner, UUID target, long at, float damage) { }
-	private record EclipseWell(ResourceKey<Level> dimension, Vec3 center, double radius, long until, UUID owner) { }
+    private record UnclosingEye(long until, SchoolHitContext hit) { }
+	private record GazeSlam(ResourceKey<Level> dimension, UUID owner, UUID target, long at, float damage, SchoolHitContext hit) { }
+	private record EclipseWell(ResourceKey<Level> dimension, Vec3 center, double radius, long until, UUID owner, SchoolHitContext hit) { }
 
 	private static final class HematicBeacon {
 		private final ResourceKey<Level> dimension;
@@ -398,14 +425,16 @@ public final class ManipulationReactiveEvents {
 		private final long until;
 		private final UUID owner;
 		private long nextPulse;
+        private final SchoolHitContext hit;
 
 		private HematicBeacon(ResourceKey<Level> dimension, Vec3 center, double radius, long until,
-				long nextPulse, UUID owner) {
+				long nextPulse, UUID owner, SchoolHitContext hit) {
 			this.dimension = dimension;
 			this.center = center;
 			this.radius = radius;
 			this.until = until;
 			this.nextPulse = nextPulse;
+            this.hit = hit;
 			this.owner = owner;
 		}
 	}

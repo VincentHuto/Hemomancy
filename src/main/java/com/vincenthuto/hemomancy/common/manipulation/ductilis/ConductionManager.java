@@ -185,7 +185,7 @@ public final class ConductionManager {
     }
 
     public static boolean conductive(LivingEntity entity) {
-        if (entity.hasEffect(EffectInit.conductive_mark)) return true;
+        if (entity.hasEffect(EffectInit.conductive_mark) || entity.hasEffect(EffectInit.lodestone)) return true;
         if (entity instanceof FerricConstructEntity ferric && energized(ferric)) return true;
         AABB bounds=entity.getBoundingBox().inflate(0.08);
         for (BlockPos pos:BlockPos.betweenClosed(BlockPos.containing(bounds.minX,bounds.minY,bounds.minZ),
@@ -220,10 +220,13 @@ public final class ConductionManager {
     private static boolean pulseHit(LivingEntity owner,LivingEntity victim,Discharge discharge) {
         ServerLevel level=(ServerLevel)owner.level();
         if (!canHarm(owner,victim) || !claimHit(owner,victim,discharge)) return false;
-        if (!victim.hurt(level.damageSources().indirectMagic(owner,owner),2)) return false;
-        victim.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN,12,1,false,true));
-        SchoolHitHelper.tryTriggerConductiveArc(owner,victim,EnumBloodTendency.DUCTILIS,null,2,discharge);
-        return true;
+        var hit = discharge.pulseContext(owner);
+        try (var scope = com.vincenthuto.hemomancy.common.damage.SchoolDamage.scope(hit, owner)) {
+            if (!victim.hurt(com.vincenthuto.hemomancy.common.damage.SchoolDamage.attributed(
+                    level.damageSources().indirectMagic(owner, owner), hit, owner), 2)) return false;
+            SchoolHitHelper.tryTriggerConductiveArc(owner, victim, EnumBloodTendency.DUCTILIS, null, 2, discharge);
+            return true;
+        }
     }
 
     @SubscribeEvent public static void onTick(LevelTickEvent.Post event) {

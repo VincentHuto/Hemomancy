@@ -42,6 +42,8 @@ public class CrimsonFlameConjurationManip extends BloodManipulation {
 
 	@Override
 	public void getAction(Player player, Level world, ItemStack heldItemMainhand, BlockPos position) {
+        try (var schoolCast = com.vincenthuto.hemomancy.common.damage.SchoolDamage.cast(this, player, 1)) {
+
 		double range = BASE_RANGE * SkillPointHelper.getSanguineReachMultiplier(player);
 
 		Vec3 eyePos = player.getEyePosition(1.0F);
@@ -76,5 +78,6 @@ public class CrimsonFlameConjurationManip extends BloodManipulation {
                     com.vincenthuto.hemomancy.common.manipulation.ManipulationVisuals.Form.FLAME_CONJURE,
                     Vec3.atBottomCenterOf(firePos),Vec3.atCenterOf(firePos),.7,30);
         }
+            }
     }
 }

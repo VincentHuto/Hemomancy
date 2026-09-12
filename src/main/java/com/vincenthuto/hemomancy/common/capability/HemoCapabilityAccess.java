@@ -40,6 +40,10 @@ public final class HemoCapabilityAccess {
 
 private HemoCapabilityAccess() {}
 
+public static com.vincenthuto.hemomancy.common.damage.SchoolCombatState getSchoolCombat(Entity entity) {
+    return entity.getData(HemoAttachmentTypes.SCHOOL_COMBAT);
+}
+
 // ── Blood Volume ──────────────────────────────────────────────────────────
 
 public static Optional<IBloodVolume> getBloodVolume(Player player) {

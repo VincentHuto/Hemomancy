@@ -42,6 +42,8 @@ public class ScaldingUpdraftManip extends BloodManipulation {
 
 	@Override
 	public void getAction(Player player, Level world, ItemStack heldItemMainhand, BlockPos position) {
+        try (var schoolCast = com.vincenthuto.hemomancy.common.damage.SchoolDamage.cast(this, player, 1)) {
+
 		if (!(world instanceof ServerLevel sLevel)) return;
 
 		Vec3 look = new Vec3(player.getLookAngle().x, 0.0, player.getLookAngle().z);
@@ -69,9 +71,8 @@ public class ScaldingUpdraftManip extends BloodManipulation {
 
 		for (LivingEntity target : world.getEntitiesOfClass(LivingEntity.class, new AABB(player.blockPosition()).inflate(RADIUS),
 				e -> ManipulationCombatHelper.canHarm(player, e))) {
-			CrimsonFireHelper.igniteCrimson(target, 3);
 			ManipulationParticles.hurt(this, target, world.damageSources().onFire(),
-					TendencyAffinityRules.adjustManipulationDamage(player, target, this, 1.5F));
+					1.5F, 60, 1);
 			if (mode == Mode.EXPULSIVE && !player.isAlliedTo(target)) {
 				Vec3 outward = new Vec3(target.getX() - player.getX(), 0, target.getZ() - player.getZ());
 				if (outward.lengthSqr() > 0.001D) outward = outward.normalize().scale(0.8D);
@@ -81,7 +82,8 @@ public class ScaldingUpdraftManip extends BloodManipulation {
 		}
 		world.playSound(null, player.blockPosition(), SoundEvents.FIRECHARGE_USE, SoundSource.PLAYERS, 0.9F, 0.6F);
 
-	}
+	        }
+    }
 
 	public enum Mode {
 		BASELINE,

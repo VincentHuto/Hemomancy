@@ -13,8 +13,8 @@ public final class BloodCrystalGrowthResourceTest {
 
 	public static void main(String[] args) throws IOException {
 		String blockInit = readSource("com/vincenthuto/hemomancy/common/init/BlockInit.java");
-		String crystalBlock = readSource("com/vincenthuto/hemomancy/common/block/harbinger/BloodCrystalBlock.java");
-		String alembic = readSource("com/vincenthuto/hemomancy/common/tile/crafting/GhastlyAlembicBlockEntity.java");
+		String crystalBlock = readSource("com/vincenthuto/hemomancy/common/block/harbinger/rite/BloodCrystalBlock.java");
+		String alembic = readSource("com/vincenthuto/hemomancy/common/tile/harbinger/crafting/GhastlyAlembicBlockEntity.java");
 		String crystalBlockstate = readResource("assets/hemomancy/blockstates/blood_crystal.json");
 		String crystalLoot = readResource("data/hemomancy/loot_table/blocks/blood_crystal.json");
 

@@ -6,13 +6,13 @@ import java.nio.file.Path;
 
 public final class SpecimenJarItemRendererSourceTest {
 	private static final Path ITEM_SOURCE = Path.of(
-			"src/main/java/com/vincenthuto/hemomancy/common/item/harbinger/tile/SpecimenJarBlockItem.java");
+			"src/main/java/com/vincenthuto/hemomancy/common/item/harbinger/tile/functional/SpecimenJarBlockItem.java");
 	private static final Path ITEM_MODEL = Path.of(
 			"src/main/resources/assets/hemomancy/models/item/specimen_jar.json");
 	private static final Path ITEM_RENDERER = Path.of(
-			"src/main/java/com/vincenthuto/hemomancy/client/render/item/tile/functional/SpecimenJarItemRenderer.java");
+			"src/main/java/com/vincenthuto/hemomancy/client/render/item/tile/harbinger/functional/SpecimenJarItemRenderer.java");
 	private static final Path TILE_RENDERER = Path.of(
-			"src/main/java/com/vincenthuto/hemomancy/client/render/tile/functional/SpecimenJarRenderer.java");
+			"src/main/java/com/vincenthuto/hemomancy/client/render/tile/harbinger/functional/SpecimenJarRenderer.java");
 
 	private SpecimenJarItemRendererSourceTest() {
 	}

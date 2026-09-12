@@ -12,7 +12,7 @@ public final class HematicArmatureUpgradeFeedbackSourceTest {
 
 	public static void main(String[] args) throws IOException {
 		String blockEntity = readSource(
-				"com/vincenthuto/hemomancy/common/tile/crafting/HematicArmatureBlockEntity.java");
+				"com/vincenthuto/hemomancy/common/tile/harbinger/crafting/HematicArmatureBlockEntity.java");
 
 		assertContains("upgrade matching scans bowls independently of armor slot",
 				blockEntity, "findMatchingUpgrade(recipes, slot, worn, player)");

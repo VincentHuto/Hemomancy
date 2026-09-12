@@ -74,6 +74,8 @@ public class LignumMortisManip extends BloodManipulation {
 
 	@Override
 	public void getAction(Player player, Level world, ItemStack heldItemMainhand, BlockPos position) {
+        try (var schoolCast = com.vincenthuto.hemomancy.common.damage.SchoolDamage.cast(this, player, 1)) {
+
 		if (!(player instanceof ServerPlayer serverPlayer) || !(world instanceof ServerLevel serverLevel)) return;
 		Session existing = SESSIONS.get(player.getUUID());
 		if (existing != null) {
@@ -91,7 +93,8 @@ public class LignumMortisManip extends BloodManipulation {
 				SoundSource.PLAYERS, 0.7F, 0.8F);
 		syncAll(serverLevel, player, session);
 		spawnBloodTendril(serverLevel, serverPlayer, origin);
-	}
+	        }
+    }
 
 	@Override
 	public void tickContinuousAction(Player player, Level world) {

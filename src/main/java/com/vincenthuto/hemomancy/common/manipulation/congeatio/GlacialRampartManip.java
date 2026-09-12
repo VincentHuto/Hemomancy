@@ -42,6 +42,8 @@ public class GlacialRampartManip extends BloodManipulation {
 
 	@Override
 	public void getAction(Player player, Level world, ItemStack heldItemMainhand, BlockPos position) {
+        try (var schoolCast = com.vincenthuto.hemomancy.common.damage.SchoolDamage.cast(this, player, 1)) {
+
 		if (!(world instanceof ServerLevel sLevel)) return;
 		if (player.isShiftKeyDown()) {
 			raiseBastion(player, sLevel);
@@ -82,7 +84,8 @@ public class GlacialRampartManip extends BloodManipulation {
 			world.playSound(null, base, SoundEvents.POWDER_SNOW_BREAK, SoundSource.PLAYERS, 0.6f, 0.8f);
 
 		}
-	}
+	        }
+    }
 
 	private static void raiseBastion(Player player, ServerLevel level) {
 		RandomSource random = level.random;

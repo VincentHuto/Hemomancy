@@ -1,5 +1,7 @@
 package com.vincenthuto.hemomancy.common.manipulation.ductilis;
 
+import com.vincenthuto.hemomancy.common.damage.*;
+
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.EnumVeinSections;
 import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillPointHelper;
@@ -33,6 +35,8 @@ public class SynapticJoltManip extends BloodManipulation {
 
 	@Override
 	public void getAction(Player player, Level world, ItemStack heldItemMainhand, BlockPos position) {
+        try (var schoolCast = com.vincenthuto.hemomancy.common.damage.SchoolDamage.cast(this, player, 1)) {
+
 		if (!(world instanceof ServerLevel)) return;
         Discharge discharge = new Discharge();
 		double range = BASE_RANGE * SkillPointHelper.getSanguineReachMultiplier(player);
@@ -44,30 +48,22 @@ public class SynapticJoltManip extends BloodManipulation {
 			return;
 		}
 
-		staggerTarget(target);
 		DuctilisLightningEffects.synapticJolt(player, target);
 		float damage = (float) (BASE_DAMAGE * SkillPointHelper.getCrimsonMasteryMultiplier(player));
-		float adjusted = TendencyAffinityRules.adjustManipulationDamage(player, target, this, damage);
+		float adjusted = (damage);
 		if (!ConductionManager.claimHit(player,target,discharge)) return;
         if (ManipulationParticles.hurt(this, target, world.damageSources().magic(), adjusted)) {
             ConductionManager.energizeTouching(player,target,discharge);
-			SchoolHitHelper.tryTriggerConductiveArc(player, target, EnumBloodTendency.DUCTILIS, getSecondaryTend(),
-					adjusted,discharge);
+
 		}
 		world.playSound(null, target.blockPosition(), SoundEvents.TRIDENT_THUNDER.value(), SoundSource.PLAYERS,
 				0.45F, 1.75F);
-	}
+	        }
+    }
 
 	public static void staggerTarget(LivingEntity target) {
-        Paralysis.interrupt(target);
-		if (target instanceof Mob mob) {
-			mob.getNavigation().stop();
-		}
-		target.setDeltaMovement(0.0D, target.getDeltaMovement().y, 0.0D);
-		target.hurtMarked = true;
-		target.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 30, 2, false, true, true));
-		target.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, 40, 0, false, true, true));
-	}
+        SchoolStates.apply(null, target, SchoolState.DISRUPTED, 10, 1);
+    }
 
 	@Nullable
 	private LivingEntity findTarget(Player player, Level world, double range) {

@@ -21,16 +21,16 @@ final class VesperTendencyDefenseIntegrationSourceTest {
 	@Test
 	void weaponDamageEventAppliesResistanceAsWellAsWeakness() throws IOException {
 		String source = Files.readString(Path.of(
-				"src/main/java/com/vincenthuto/hemomancy/common/event/TendencyWeaponCombatEvents.java"));
+				"src/main/java/com/vincenthuto/hemomancy/common/damage/SchoolCombatEvents.java"));
 
-		assertTrue(source.contains("if (multiplier == 1.0f)"));
-		assertTrue(source.contains("event.setAmount(event.getAmount() * multiplier)"));
+		assertTrue(source.contains("TendencyAffinityRules.damageMultiplier(player, target, hit.primary(), hit.secondary())"));
+		assertTrue(source.contains("event.setAmount(damage)"));
 	}
 
 	@Test
 	void animusProjectilesAndBloodCloudCannotBypassTheDefense() throws IOException {
 		String eventSource = Files.readString(Path.of(
-				"src/main/java/com/vincenthuto/hemomancy/common/event/TendencyWeaponCombatEvents.java"));
+				"src/main/java/com/vincenthuto/hemomancy/common/damage/SchoolDamage.java"));
 		String shotSource = Files.readString(Path.of(
 				"src/main/java/com/vincenthuto/hemomancy/common/manipulation/animus/BloodShotManip.java"));
 		String needleSource = Files.readString(Path.of(
@@ -38,10 +38,10 @@ final class VesperTendencyDefenseIntegrationSourceTest {
 		String cloudSource = Files.readString(Path.of(
 				"src/main/java/com/vincenthuto/hemomancy/common/entity/projectile/CloudEntityBlood.java"));
 
-		assertTrue(eventSource.contains("directEntity instanceof TendencyDamageCarrier carrier"));
+		assertTrue(eventSource.contains("projectile instanceof TendencyDamageCarrier carrier"));
 		assertTrue(shotSource.contains("shot.setDamageTendency(getTend())"));
 		assertTrue(needleSource.contains("needle.setDamageTendency(getTend())"));
-		assertTrue(cloudSource.contains("TendencyAffinityRules.damageMultiplier(player, ent,"));
+		assertTrue(cloudSource.contains("SchoolHitContext.Kind.PERIODIC"));
 	}
 
 	@Test
@@ -49,7 +49,7 @@ final class VesperTendencyDefenseIntegrationSourceTest {
 		String carrierSource = Files.readString(Path.of(
 				"src/main/java/com/vincenthuto/hemomancy/common/manipulation/TendencyDamageCarrier.java"));
 		String eventSource = Files.readString(Path.of(
-				"src/main/java/com/vincenthuto/hemomancy/common/event/TendencyWeaponCombatEvents.java"));
+				"src/main/java/com/vincenthuto/hemomancy/common/damage/SchoolDamage.java"));
 		String needleSource = Files.readString(Path.of(
 				"src/main/java/com/vincenthuto/hemomancy/common/manipulation/animus/BloodNeedleManip.java"));
 
@@ -80,6 +80,6 @@ final class VesperTendencyDefenseIntegrationSourceTest {
                 "src/main/java/com/vincenthuto/hemomancy/common/manipulation/ManipulationCombatHelper.java"));
 
         assertTrue(source.contains("ManipulationCombatHelper.hurt("));
-        assertTrue(helper.contains("ManipulationParticles.hurt(manipulation, target, level.damageSources().magic(), adjusted)"));
+        assertTrue(helper.contains("SchoolDamage.context(manipulation, player).withApplication(duration, levels)"));
 	}
 }

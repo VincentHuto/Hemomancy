@@ -64,7 +64,7 @@ public final class UnstainedProgressionRepairSourceTest {
 		String condenser = read("src/main/java/com/vincenthuto/hemomancy/common/block/unstained/crafting/StillwaterCondenserBlock.java");
 		assertContains(condenser, "extends BaseEntityBlock");
 		assertContains(condenser, "StillwaterCondenserBlockEntity");
-		String condenserTile = read("src/main/java/com/vincenthuto/hemomancy/common/tile/crafting/StillwaterCondenserBlockEntity.java");
+		String condenserTile = read("src/main/java/com/vincenthuto/hemomancy/common/tile/unstained/crafting/StillwaterCondenserBlockEntity.java");
 		assertContains(condenserTile, "SLOT_BOTTLES");
 		assertContains(condenserTile, "SLOT_DEW");
 		assertContains(condenserTile, "DATA_PROGRESS");

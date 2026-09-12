@@ -29,6 +29,8 @@ public class FuneralBellManip extends BloodManipulation {
 
 	@Override
 	public void getAction(Player player, Level world, ItemStack heldItemMainhand, BlockPos position, float heldTicks) {
+        try (var schoolCast = com.vincenthuto.hemomancy.common.damage.SchoolDamage.cast(this, player, getRequiredChargeTicks() <= 0 ? 1 : heldTicks / getRequiredChargeTicks())) {
+
 		if (!(world instanceof ServerLevel level)) return;
 		float charge = ManipulationCastingRules.chargeFraction(heldTicks, CHARGE_TICKS);
 		double radius = 4.0D + 6.0D * charge;
@@ -36,16 +38,10 @@ public class FuneralBellManip extends BloodManipulation {
 		for (LivingEntity target : level.getEntitiesOfClass(LivingEntity.class,
 				new AABB(player.blockPosition()).inflate(radius),
 				entity -> ManipulationCombatHelper.canHarm(player, entity))) {
-			int statuses = 0;
-			if (target.hasEffect(MobEffects.WITHER)) statuses++;
-			if (target.hasEffect(MobEffects.POISON)) statuses++;
-			if (target.hasEffect(com.vincenthuto.hemomancy.common.init.EffectInit.blood_loss)) statuses++;
-			if (target.hasEffect(com.vincenthuto.hemomancy.common.init.EffectInit.grave_debt)) statuses++;
-			boolean hit = ManipulationCombatHelper.hurt(this, player, target, level, (4.0F + statuses * 2.0F) * charge);
-			if (statuses > 0) target.addEffect(new MobEffectInstance(MobEffects.WITHER,
-					Math.round(120 * charge), Math.min(2, statuses - 1), false, true));
+			boolean hit = ManipulationCombatHelper.hurt(this, player, target, level, 4.0F * charge);
 			if(hit) ManipulationVisuals.burst(level,ManipulationVisuals.Form.MORTEM_BURST,
-                    target.position(),target.position(),.6+statuses*.18,20);
+                    target.position(),target.position(),1.1,20);
 		}
-	}
+	        }
+    }
 }

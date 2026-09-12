@@ -65,6 +65,11 @@ public interface IMorphling {
 	default void onEquippedHurt(Player player, ItemStack stack, DamageSource source, float amount) {
 	}
 
+    /** Defensive utility may still run for periodic hits; offensive reactions may not. */
+    default void onEquippedHurt(Player player, ItemStack stack, DamageSource source, float amount, boolean allowReactions) {
+        if (allowReactions) onEquippedHurt(player, stack, source, amount);
+    }
+
 	/**
 	 * Called when the player attacks a living entity while this morphling is equipped.
 	 * Use for on-hit abilities like life steal, venom strike, predator's mark, etc.
@@ -87,6 +92,11 @@ public interface IMorphling {
 	 */
 	default void onEquippedKill(Player player, ItemStack stack, LivingEntity victim) {
 	}
+
+    /** Periodic/reaction kills retain rewards, but cannot start another offensive chain. */
+    default void onEquippedKill(Player player, ItemStack stack, LivingEntity victim, boolean allowReactions) {
+        onEquippedKill(player, stack, victim);
+    }
 
 	/**
 	 * Called when the player is about to take fall damage while this morphling is

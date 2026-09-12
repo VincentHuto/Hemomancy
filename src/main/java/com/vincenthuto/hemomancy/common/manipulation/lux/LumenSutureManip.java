@@ -33,6 +33,8 @@ public class LumenSutureManip extends BloodManipulation {
 
 	@Override
 	public void getAction(Player player, Level world, ItemStack heldItemMainhand, BlockPos position) {
+        try (var schoolCast = com.vincenthuto.hemomancy.common.damage.SchoolDamage.cast(this, player, 1)) {
+
 		Player target = world.getEntitiesOfClass(Player.class, new AABB(player.blockPosition()).inflate(RADIUS),
 						p -> p != player && p.isAlive() && !p.isSpectator() && ManipulationCombatHelper.allied(player, p) && p.getHealth() < p.getMaxHealth())
 				.stream()
@@ -42,6 +44,8 @@ public class LumenSutureManip extends BloodManipulation {
 		target.addEffect(new MobEffectInstance(MobEffects.ABSORPTION, 400, 1, false, true));
 		target.removeEffect(MobEffects.BLINDNESS);
 		target.removeEffect(MobEffects.WITHER);
+		target.removeEffect(com.vincenthuto.hemomancy.common.init.EffectInit.necrosis);
+		target.removeEffect(com.vincenthuto.hemomancy.common.init.EffectInit.obscured);
 		target.heal(2.0F);
 		world.playSound(null, target.blockPosition(), SoundEvents.AMETHYST_BLOCK_RESONATE, SoundSource.PLAYERS, 0.7F, 1.8F);
 
@@ -50,5 +54,6 @@ public class LumenSutureManip extends BloodManipulation {
             ManipulationVisuals.attached(target, ManipulationVisuals.Form.LUX_MENDING, .5, 28, 1);
 			ManipulationParticles.accent(sLevel, EnumBloodTendency.LUX, target.position().add(0, 1, 0), net.minecraft.world.phys.Vec3.ZERO);
 		}
-	}
+	        }
+    }
 }

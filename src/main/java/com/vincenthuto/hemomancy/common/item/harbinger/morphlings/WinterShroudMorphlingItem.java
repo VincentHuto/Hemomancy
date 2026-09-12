@@ -48,11 +48,21 @@ public class WinterShroudMorphlingItem extends MorphlingItem {
 
 	@Override
 	public boolean tryUse(Player playerIn, InteractionHand handIn, ItemStack itemStack, Level worldIn) {
+        if (com.vincenthuto.hemomancy.common.manipulation.ductilis.Paralysis.blocksActions(playerIn)) return false;
+        if (playerIn instanceof net.minecraft.server.level.ServerPlayer server
+                && com.vincenthuto.hemomancy.common.manipulation.HematicCommandManager.isMarionetteChannel(server))
+            com.vincenthuto.hemomancy.common.manipulation.ManipulationChannelManager.stop(server, false);
+        try (var schoolAbility = MorphlingCombat.scope(this, playerIn, itemStack, null)) {
+
 		return triggerCryptobiosis(playerIn, itemStack, worldIn);
-	}
+
+        }
+    }
 
 	@Override
 	public void onEquippedTick(Player player, ItemStack stack) {
+        try (var schoolAbility = MorphlingCombat.scope(this, player, stack, null)) {
+
 		int maturity = MorphlingItem.getMaturityLevel(stack);
 		int amplifier = MorphlingItem.passiveAmplifier(player, stack, maturity);
 
@@ -72,7 +82,9 @@ public class WinterShroudMorphlingItem extends MorphlingItem {
 		if (maturity >= 3 && !player.level().isClientSide && player.tickCount % 60 == 0) {
 			cleanse(player);
 		}
-	}
+
+        }
+    }
 
 	public static void applyColdBloodedTick(Player player, ItemStack stack) {
 		if (player.isFreezing()) {
@@ -89,17 +101,24 @@ public class WinterShroudMorphlingItem extends MorphlingItem {
 				MorphlingItem.getMaturityLevel(stack), environmental, freezing);
 	}
 
+    @Override
+    public void onEquippedHurt(Player player, ItemStack stack, DamageSource source, float amount, boolean allowReactions) {
+        onEquippedHurt(player, stack, source, amount);
+    }
+
 	@Override
 	public void onEquippedHurt(Player player, ItemStack stack, DamageSource source, float amount) {
+        try (var schoolAbility = MorphlingCombat.scope(this, player, stack, source)) {
+
 		int maturity = MorphlingItem.getMaturityLevel(stack);
 
-		if (MorphlingItem.isPrimal(stack) && player.getHealth() - amount <= 0.0F
+		if (MorphlingItem.isPrimal(stack) && player.getHealth() <= 0.0F
 				&& triggerCryptobiosis(player, stack, player.level())) {
 			return;
 		}
 
 		if (WinterShroudResilienceRules.canTunMolt(maturity,
-				Math.max(0.0F, player.getHealth() - amount), player.getMaxHealth())) {
+				Math.max(0.0F, player.getHealth()), player.getMaxHealth())) {
 			long now = player.level().getGameTime();
 			long lastMolt = getLastAbilityTick(stack, "TunMolt");
 			if (now - lastMolt >= TUN_MOLT_COOLDOWN) {
@@ -115,7 +134,9 @@ public class WinterShroudMorphlingItem extends MorphlingItem {
 				spawnMoltParticles(player);
 			}
 		}
-	}
+
+        }
+    }
 
 	private boolean triggerCryptobiosis(Player player, ItemStack stack, Level level) {
 		if (!LastRiteHelper.canFire(player, LastRiteHelper.CRYPTOBIOSIS_ID)) {
@@ -144,6 +165,9 @@ public class WinterShroudMorphlingItem extends MorphlingItem {
 		player.removeEffect(MobEffects.WITHER);
 		player.removeEffect(MobEffects.MOVEMENT_SLOWDOWN);
 		player.removeEffect(MobEffects.WEAKNESS);
+        player.removeEffect(com.vincenthuto.hemomancy.common.init.EffectInit.necrosis);
+        player.removeEffect(com.vincenthuto.hemomancy.common.init.EffectInit.rime);
+        player.removeEffect(com.vincenthuto.hemomancy.common.init.EffectInit.disrupted);
 	}
 
 	private static void spawnMoltParticles(Player player) {

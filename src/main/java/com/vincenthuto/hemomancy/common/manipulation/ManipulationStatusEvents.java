@@ -26,6 +26,10 @@ public final class ManipulationStatusEvents {
 
 	@SubscribeEvent
 	public static void onLivingHeal(LivingHealEvent event) {
+		if (!event.getEntity().hasEffect(EffectInit.insatiable_hunger)
+                && !event.getEntity().hasEffect(EffectInit.hemophagy) && event.getEntity().hasEffect(EffectInit.necrosis)) {
+            event.setAmount(event.getAmount() * 0.75f);
+        }
 		if (event.getEntity().hasEffect(EffectInit.insatiable_hunger)) {
 			float requested=event.getAmount();
             event.setAmount(requested * ManipulationStatusRules.INSATIABLE_HEAL_MULTIPLIER);
@@ -65,24 +69,43 @@ public final class ManipulationStatusEvents {
 		}
 
 		event.setAmount(event.getAmount() * ManipulationStatusRules.IRON_RETORT_DAMAGE_MULTIPLIER);
-		defender.removeEffect(EffectInit.iron_retort);
-		if (defender.level() instanceof ServerLevel level)
-			ManipulationVisuals.burst(level, ManipulationVisuals.Form.FERRIC_IMPACT,
-					defender.position().add(0, defender.getBbHeight() * .6, 0),
-					attacker.position().add(0, attacker.getBbHeight() * .6, 0), .5, 14);
-		if (attacker.hurt(defender.damageSources().thorns(defender), ManipulationStatusRules.IRON_RETORT_DAMAGE)) {
-			SchoolHitHelper.tryTriggerConductiveArc(defender, attacker, EnumBloodTendency.FERRIC,
-					EnumBloodTendency.DUCTILIS, ManipulationStatusRules.IRON_RETORT_DAMAGE);
-		}
-		sendIronRetortParticles(defender, attacker);
-		defender.level().playSound(null, defender.blockPosition(), SoundEvents.ANVIL_LAND, SoundSource.PLAYERS,
-				0.65F, 1.6F);
 	}
+
+    @SubscribeEvent
+    public static void ironRetortLanded(LivingDamageEvent.Post event) {
+        if (event.getNewDamage() + event.getReduction(net.neoforged.neoforge.common.damagesource.DamageContainer.Reduction.ABSORPTION) <= 0) return;
+        LivingEntity defender = event.getEntity();
+        if (!defender.hasEffect(EffectInit.iron_retort) || event.getSource().is(DamageTypes.THORNS)
+                || !event.getSource().isDirect() || !(event.getSource().getDirectEntity() instanceof LivingEntity attacker)
+                || attacker == defender || event.getSource() instanceof com.vincenthuto.hemomancy.common.damage.SchoolDamageSource school
+                && school.context().kind() != com.vincenthuto.hemomancy.common.damage.SchoolHitContext.Kind.DIRECT) return;
+        var origin = com.vincenthuto.hemomancy.common.damage.SchoolDamage.retortContext(defender);
+        defender.removeEffect(EffectInit.iron_retort);
+        var parent = event.getSource() instanceof com.vincenthuto.hemomancy.common.damage.SchoolDamageSource school ? school.context() : null;
+        try (var scope = com.vincenthuto.hemomancy.common.damage.SchoolDamage.scope(parent, defender)) {
+            var reaction = com.vincenthuto.hemomancy.common.damage.SchoolDamage.reaction(defender, origin);
+            var hit = ((com.vincenthuto.hemomancy.common.damage.SchoolDamageSource)reaction).context();
+            attacker.hurt(com.vincenthuto.hemomancy.common.damage.SchoolDamage.attributed(defender.damageSources().thorns(defender),
+                    hit, defender), ManipulationStatusRules.IRON_RETORT_DAMAGE);
+        }
+        if (defender.level() instanceof ServerLevel level)
+            ManipulationVisuals.burst(level, ManipulationVisuals.Form.FERRIC_IMPACT,
+                    defender.position().add(0, defender.getBbHeight() * .6, 0),
+                    attacker.position().add(0, attacker.getBbHeight() * .6, 0), .5, 14);
+        sendIronRetortParticles(defender, attacker);
+        defender.level().playSound(null, defender.blockPosition(), SoundEvents.ANVIL_LAND, SoundSource.PLAYERS, .65F, 1.6F);
+    }
 
 	@SubscribeEvent
 	public static void onLivingDamagePost(LivingDamageEvent.Post event) {
+		if (event.getSource() instanceof com.vincenthuto.hemomancy.common.damage.SchoolDamageSource school
+                && school.context().kind() == com.vincenthuto.hemomancy.common.damage.SchoolHitContext.Kind.REACTION) return;
 		float previousHealth = event.getEntity().getHealth() + event.getNewDamage();
-		SchoolHitHelper.tryTriggerGraveDebtBurst(event.getEntity(), previousHealth);
+		var hit = event.getSource() instanceof com.vincenthuto.hemomancy.common.damage.SchoolDamageSource school
+                ? school.context() : null;
+        try (var scope = com.vincenthuto.hemomancy.common.damage.SchoolDamage.scope(hit)) {
+            SchoolHitHelper.tryTriggerGraveDebtBurst(event.getEntity(), previousHealth, hit);
+        }
 	}
 
 	@SubscribeEvent

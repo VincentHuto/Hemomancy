@@ -30,7 +30,7 @@ public final class PhantasmalUmbralStepSourceTest {
 		assertContains("umbral step keeps line of sight targeting", umbralStep, "world.clip(new ClipContext");
 		assertContains("umbral step keeps configured range", umbralStep, "BASE_RANGE * SkillPointHelper.getSanguineReachMultiplier(player)");
 		assertContains("phantasmal bypasses light only", umbralStep,
-				"if (!phantasmalStep && !BlackVeilCovenantManager.isDarkEnough");
+				"|| BlackVeilCovenantManager.isDarkEnough");
 		assertContains("umbral step exposes cooldown override", umbralStep, "public boolean ignoresCooldown(Player player)");
 		assertContains("blood manipulation checks its own cooldown", bloodManipulation, "enforceCooldown && isOnCooldown(player)");
 		assertContains("blood manipulation skips starting cooldown", bloodManipulation, "ignoresCooldown(player) ? 0L : startCooldown(player)");

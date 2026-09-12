@@ -412,7 +412,8 @@ public class HemorathEntity extends Monster {
 	 */
 	@SubscribeEvent
 	public static void onLivingHeal(LivingHealEvent event) {
-		if (event.getEntity().hasEffect(EffectInit.hemophagy)) {
+		if (event.getEntity().hasEffect(EffectInit.hemophagy)
+                && !event.getEntity().hasEffect(EffectInit.insatiable_hunger)) {
 			event.setAmount(event.getAmount() * HEMOPHAGY_HEAL_MULTIPLIER);
 		}
 	}

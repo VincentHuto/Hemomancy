@@ -52,6 +52,8 @@ public class BloodEclipseManip extends BloodManipulation {
 
 	@Override
 	public void getAction(Player player, Level world, ItemStack heldItemMainhand, BlockPos position) {
+        try (var schoolCast = com.vincenthuto.hemomancy.common.damage.SchoolDamage.cast(this, player, 1)) {
+
 		if (!(world instanceof ServerLevel sLevel)) return;
 
 		double range = BASE_RANGE * SkillPointHelper.getSanguineReachMultiplier(player);
@@ -74,13 +76,8 @@ public class BloodEclipseManip extends BloodManipulation {
 			double dot = look.dot(toTarget);
 			if (dot < cosThreshold) continue;
 
-			target.addEffect(new MobEffectInstance(MobEffects.BLINDNESS,
-					BLINDNESS_TICKS, BLINDNESS_AMP, false, true));
-			target.addEffect(new MobEffectInstance(MobEffects.WEAKNESS,
-					WEAKNESS_TICKS, WEAKNESS_AMP, false, true));
 			float damage = (float) (SHADOW_DAMAGE * SkillPointHelper.getCrimsonMasteryMultiplier(player));
-			ManipulationParticles.hurt(this, target, world.damageSources().magic(),
-					TendencyAffinityRules.adjustManipulationDamage(player, target, this, damage));
+			ManipulationCombatHelper.hurt(this, player, target, sLevel, damage, BLINDNESS_TICKS, 1);
 			if (hit < 6) {
 				HemomancyTendrilEffects.bloodEclipse(player, target, hit);
 			}
@@ -108,5 +105,6 @@ public class BloodEclipseManip extends BloodManipulation {
 			Vec3 pPos = ManipulationCombatHelper.clipToGeometry(player, player.getEyePosition(1.0F).add(dir.scale(dist)));
             ManipulationParticles.accent(sLevel, EnumBloodTendency.TENEBRIS, pPos, dir.scale(.02));
 		}
-	}
+	        }
+    }
 }

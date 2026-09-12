@@ -49,6 +49,8 @@ public class VascularDowsingManip extends BloodManipulation {
 
 	@Override
 	public void getAction(Player player, Level world, ItemStack heldItemMainhand, BlockPos position) {
+        try (var schoolCast = com.vincenthuto.hemomancy.common.damage.SchoolDamage.cast(this, player, 1)) {
+
 		if (!(world instanceof ServerLevel sLevel) || !(player instanceof ServerPlayer sPlayer)) return;
 
 		BlockPos origin = player.blockPosition();
@@ -86,7 +88,8 @@ public class VascularDowsingManip extends BloodManipulation {
 			world.playSound(null, origin, SoundEvents.IRON_GOLEM_DAMAGE,
 					SoundSource.PLAYERS, 0.4f, 2.0f);
 		}
-	}
+	        }
+    }
 
 	private static boolean isOre(BlockState state) {
 		return state.is(net.neoforged.neoforge.common.Tags.Blocks.ORES) || state.is(BlockTags.IRON_ORES)

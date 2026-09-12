@@ -46,7 +46,7 @@ class ManipulationFamilyRegistryTest {
 	@Test
 	void declaresTheApprovedFamiliesAndForms() {
 		assertEquals(12, ManipulationFamilyRegistry.families().size());
-		assertEquals(28, ManipulationFamilyRegistry.families().stream()
+		assertEquals(29, ManipulationFamilyRegistry.families().stream()
 				.mapToInt(family -> family.forms().size()).sum());
 		assertEquals("blood_shot", ManipulationFamilyRegistry.family("sanguine_halo")
 				.orElseThrow().baselineId());
@@ -116,6 +116,14 @@ class ManipulationFamilyRegistryTest {
 			for (ManipulationFormDefinition form : family.forms()) {
 				JsonObject recipe = JsonParser.parseString(Files.readString(
 						root.resolve("memory_" + form.id() + ".json"))).getAsJsonObject();
+                if (form.id().equals("sanguine_marionette")) {
+                    assertEquals(325, recipe.get("blood").getAsInt());
+                    assertEquals(4, recipe.getAsJsonObject("enzymes").get("animus").getAsInt());
+                    assertEquals(2, recipe.getAsJsonObject("enzymes").get("ductilis").getAsInt());
+                    assertEquals(baseline.get("catalysts"), recipe.get("catalysts"));
+                    assertEquals(3, form.requiredLevel());
+                    continue;
+                }
 				assertEquals(baseline.get("catalysts"), recipe.get("catalysts"), form.id());
 				assertEquals(baseline.get("blood").getAsInt() + bloodIncrease.get(form.requiredLevel()),
 						recipe.get("blood").getAsInt(), form.id());

@@ -102,7 +102,7 @@ final class LivingSickleFeatureSourceTest {
 		assertTrue(renderer.contains("ItemDisplayContext.THIRD_PERSON_RIGHT_HAND"));
 		assertTrue(renderer.contains("ItemDisplayContext.FIRST_PERSON_RIGHT_HAND"));
 		assertTrue(renderer.contains("ItemDisplayContext.FIRST_PERSON_LEFT_HAND"));
-		assertTrue(renderer.contains("poseStack.translate(0.5D, 1.2D, 0.2D)"));
+		assertTrue(renderer.contains("poseStack.translate(0.5D, 1.1D, 0.2D)"));
 		assertTrue(renderer.contains("Axis.XP.rotationDegrees(0F)"));
 		assertTrue(renderer.contains("Axis.YP.rotationDegrees(-90F)"));
 		assertTrue(renderer.contains("Axis.ZP.rotationDegrees( 0F)"));
@@ -115,7 +115,7 @@ final class LivingSickleFeatureSourceTest {
 		String renderer = read("src/main/java/com/vincenthuto/hemomancy/client/render/item/harbinger/LivingSickleItemRenderer.java");
 
 		assertTrue(renderer.contains("if (context == ItemDisplayContext.GUI)"));
-		assertTrue(renderer.contains("poseStack.translate(0.0D, 0.18D, 0.0D)"));
+		assertTrue(renderer.contains("poseStack.translate(0.0D, 0.18D, -0.1D)"));
 		assertTrue(renderer.contains("Axis.ZP.rotationDegrees(-24.0F)"));
 	}
 

@@ -30,6 +30,8 @@ public class BloodCloudManip extends BloodManipulation {
 
 	@Override
 	public void getAction(Player player, Level world, ItemStack heldItemMainhand, BlockPos position) {
+        try (var schoolCast = com.vincenthuto.hemomancy.common.damage.SchoolDamage.cast(this, player, 1)) {
+
 		if (!player.isSilent()) {
 			world.levelEvent((Player) null, 1016, player.blockPosition(), 0);
 		}
@@ -52,7 +54,8 @@ public class BloodCloudManip extends BloodManipulation {
 			fireballentity.setPos(player.getX(), player.getY(0.75D), fireballentity.getZ());
 			world.addFreshEntity(fireballentity);
 		}
-	}
+	        }
+    }
 
 	public enum Mode {
 		BASELINE,

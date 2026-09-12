@@ -198,6 +198,8 @@ public class BloodCloudCarrierEntity extends AbstractHurtingProjectile {
 		CloudEntityBlood cloud = new CloudEntityBlood(EntityInit.blood_cloud.get(), level(), source);
 		cloud.setDamageTendencies(damageTendency, secondaryDamageTendency);
 		cloud.configure(cloudRadius, cloudDuration, cloudMode);
+        com.vincenthuto.hemomancy.common.damage.SchoolDamage.capture(cloud,
+                com.vincenthuto.hemomancy.common.damage.SchoolDamage.projectileContext(this));
 		return cloud;
 	}
 

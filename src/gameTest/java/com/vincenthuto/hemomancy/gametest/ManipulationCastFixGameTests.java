@@ -109,7 +109,7 @@ public final class ManipulationCastFixGameTests {
 	@GameTest(templateNamespace = "minecraft", template = EMPTY_TEMPLATE, timeoutTicks = 40)
 	public static void registryTypesMatchUnifiedInputSemantics(GameTestHelper helper) {
 		var manipulations = ManipulationInit.MANIPS.getEntries().stream().map(holder -> holder.get()).toList();
-		helper.assertTrue(manipulations.size() == 114, "Expected 114 registered manipulations, got " + manipulations.size());
+		helper.assertTrue(manipulations.size() == 115, "Expected 115 registered manipulations, got " + manipulations.size());
 		helper.assertTrue(manipulations.stream().filter(m -> m.getType() == EnumManipulationType.QUICK).count() == 76,
 				"Quick manipulation count changed");
 		helper.assertTrue(names(manipulations, EnumManipulationType.CHARGED).equals(Set.of(
@@ -121,7 +121,7 @@ public final class ManipulationCastFixGameTests {
 		helper.assertTrue(names(manipulations, EnumManipulationType.CONTINUOUS).equals(Set.of(
 				"sanguine_ward", "sanguine_mending", "vascular_dowsing", "living_circuit",
 				"furnace_veins", "absolute_stillness", "iron_choir", "carrion_communion",
-				"penumbral_drift", "lignum_mortis", "canopy_mortis", "worked_lignum")),
+				"penumbral_drift", "lignum_mortis", "canopy_mortis", "worked_lignum", "sanguine_marionette")),
 				"Continuous manipulation set is incorrect");
 		helper.assertTrue(names(manipulations, EnumManipulationType.PASSIVE).equals(Set.of(
 				"blackhearted", "sovereign_instinct", "vigil_of_glass", "phoenix_debt", "hematic_ballast",
@@ -161,7 +161,7 @@ public final class ManipulationCastFixGameTests {
 		}
 		long active = ManipulationInit.MANIPS.getEntries().stream().map(holder -> holder.get())
 				.filter(manipulation -> !ManipulationRetirementRules.isRetiredManipulation(manipulation)).count();
-		helper.assertTrue(active == 99, "Expected 99 active manipulations after pruning, got " + active);
+		helper.assertTrue(active == 100, "Expected 100 active manipulations after pruning, got " + active);
 		helper.assertTrue(!ManipulationRetirementRules.isRetiredManipulation("summon_avatar"),
 				"Summon Avatar was retired");
 		helper.assertTrue(ManipulationInit.deadly_gaze.get().getType() == EnumManipulationType.CHARGED
@@ -318,12 +318,12 @@ public final class ManipulationCastFixGameTests {
 		ManipulationReactiveEvents.clearSessionState();
 		ManipulationInit.hematic_beacon.get().getAction(player, helper.getLevel(), ItemStack.EMPTY,
 				player.blockPosition());
-		helper.assertTrue(target.hasEffect(MobEffects.GLOWING), "Hematic Beacon did not pulse immediately");
-		target.removeEffect(MobEffects.GLOWING);
+		helper.assertTrue(target.hasEffect(EffectInit.illuminated), "Hematic Beacon did not pulse immediately");
+		target.removeEffect(EffectInit.illuminated);
 		helper.runAtTickTime(21, () -> {
 			try {
 				ManipulationReactiveEvents.onLevelTick(new LevelTickEvent.Post(() -> true, helper.getLevel()));
-				helper.assertTrue(target.hasEffect(MobEffects.GLOWING),
+				helper.assertTrue(target.hasEffect(EffectInit.illuminated),
 						"Hematic Beacon did not refresh its persistent rally zone");
 				helper.succeed();
 			} finally {
@@ -344,7 +344,7 @@ public final class ManipulationCastFixGameTests {
 		try {
 			ManipulationInit.glacial_grasp.get().getAction(player, helper.getLevel(), ItemStack.EMPTY,
 					player.blockPosition());
-			helper.assertTrue(target.getTicksFrozen() > 0 && target.hasEffect(MobEffects.MOVEMENT_SLOWDOWN),
+			helper.assertTrue(target.hasEffect(EffectInit.rime) && !target.hasEffect(MobEffects.DIG_SLOWDOWN),
 					"Glacial Grasp did not freeze and hinder a wet target in its aimed path");
 			helper.succeed();
 		} finally {
@@ -427,7 +427,7 @@ public final class ManipulationCastFixGameTests {
 			target.addEffect(new net.minecraft.world.effect.MobEffectInstance(MobEffects.INVISIBILITY, 200));
 			player.tickCount = 10;
 			ManipulationReactiveEvents.onPlayerTick(new PlayerTickEvent.Post(player));
-			helper.assertTrue(!target.hasEffect(MobEffects.INVISIBILITY) && target.hasEffect(MobEffects.GLOWING),
+			helper.assertTrue(!target.isInvisible() && target.hasEffect(EffectInit.illuminated),
 					"Unclosing Eye did not suppress concealment after the initial cast");
 			helper.succeed();
 		} finally {
@@ -464,8 +464,10 @@ public final class ManipulationCastFixGameTests {
 		Zombie marked = zombie(helper, player.position().add(2, 0, 0));
 		Zombie unmarked = zombie(helper, player.position().add(3, 0, 0));
 		try {
-			marked.addEffect(new net.minecraft.world.effect.MobEffectInstance(MobEffects.WITHER, 200));
-			marked.addEffect(new net.minecraft.world.effect.MobEffectInstance(EffectInit.grave_debt, 200));
+			com.vincenthuto.hemomancy.common.damage.SchoolStates.apply(player, marked,
+                    com.vincenthuto.hemomancy.common.damage.SchoolState.NECROSIS, 200);
+            com.vincenthuto.hemomancy.common.damage.SchoolStates.data(marked).get(
+                    com.vincenthuto.hemomancy.common.damage.SchoolState.NECROSIS).stored = 4;
 			ManipulationInit.funeral_bell.get().getAction(player, helper.getLevel(), ItemStack.EMPTY,
 					player.blockPosition(), 80.0F);
 			float markedDamage = marked.getMaxHealth() - marked.getHealth();

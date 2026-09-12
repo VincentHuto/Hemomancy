@@ -62,11 +62,8 @@ public class BloodBulletEntity extends AbstractArrow implements CombatWeaponCarr
 	@Override
 	protected void doPostHurtEffects(LivingEntity living) {
 		super.doPostHurtEffects(living);
-		Entity entity = living;
-		if (entity instanceof LivingEntity) {
-			((LivingEntity) entity).addEffect(new MobEffectInstance(EffectInit.blood_loss, 1000, 2));
-
-		}
+        if (com.vincenthuto.hemomancy.common.damage.SchoolDamage.projectileContext(this) == null)
+            living.addEffect(new MobEffectInstance(EffectInit.blood_loss, 1000, 2));
 
 	}
 
@@ -101,11 +98,6 @@ public class BloodBulletEntity extends AbstractArrow implements CombatWeaponCarr
 	@Override
 	protected void onHitEntity(EntityHitResult p_213868_1_) {
 		super.onHitEntity(p_213868_1_);
-		Entity entity = p_213868_1_.getEntity();
-		if (entity instanceof LivingEntity) {
-			((LivingEntity) entity).addEffect(new MobEffectInstance(EffectInit.blood_loss, 1000, 2));
-
-		}
 
 	}
 

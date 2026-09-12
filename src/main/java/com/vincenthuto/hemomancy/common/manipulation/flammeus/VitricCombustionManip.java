@@ -1,7 +1,6 @@
 package com.vincenthuto.hemomancy.common.manipulation.flammeus;
 
 import com.vincenthuto.hemomancy.common.manipulation.ManipulationVisuals;
-import com.vincenthuto.hemomancy.common.block.harbinger.CrimsonFireHelper;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.EnumVeinSections;
 import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillPointHelper;
@@ -25,27 +24,13 @@ import org.joml.Vector3f;
 
 import java.util.List;
 
-/**
- * Vitric Combustion — a T3 (SUMMA) FLAMMEUS charged manipulation that ignites
- * the caster's blood and triggers a concentrated eruption at the targeted
- * surface, dealing heavy fire damage and setting all nearby entities ablaze.
- *
- * <p>The explosion radius scales with the Crimson Mastery skill. Unlike vanilla
- * explosions, Vitric Combustion does <em>not</em> destroy blocks — it is a
- * pure anti-entity blast. Targets within the radius receive:
- * <ul>
- *   <li>4 hearts of fire damage</li>
- *   <li>8 seconds on fire</li>
- *   <li>Knockback away from the epicenter</li>
- * </ul>
- */
+/** Charged, terrain-safe blast that consumes remaining Searing heat on confirmed hits. */
 public class VitricCombustionManip extends BloodManipulation {
 	private static final int CHARGE_TICKS = 60;
 
 	private static final double BASE_RANGE = 22.0;
 	private static final double BASE_BLAST_RADIUS = 4.0;
 	private static final float BLAST_DAMAGE = 8.0f; // 4 hearts
-	private static final int FIRE_SECONDS = 8;
 	private static final double KNOCKBACK_STRENGTH = 1.2;
 	private static final DustParticleOptions COMBUSTION_DUST =
 			new DustParticleOptions(new Vector3f(1.0F, 0.35F, 0.05F), 1.0F);
@@ -58,8 +43,11 @@ public class VitricCombustionManip extends BloodManipulation {
 
 	@Override
 	public void getAction(Player player, Level world, ItemStack heldItemMainhand, BlockPos position) {
+        try (var schoolCast = com.vincenthuto.hemomancy.common.damage.SchoolDamage.cast(this, player, 1)) {
+
 		getAction(player, world, heldItemMainhand, position, CHARGE_TICKS);
-	}
+	        }
+    }
 
 	@Override
 	public int getRequiredChargeTicks() {
@@ -69,6 +57,8 @@ public class VitricCombustionManip extends BloodManipulation {
 	@Override
 	public void getAction(Player player, Level world, ItemStack heldItemMainhand, BlockPos position,
 			float chargeTicks) {
+        try (var schoolCast = com.vincenthuto.hemomancy.common.damage.SchoolDamage.cast(this, player, getRequiredChargeTicks() <= 0 ? 1 : chargeTicks / getRequiredChargeTicks())) {
+
 		if (!(world instanceof ServerLevel sLevel)) return;
 		float strength = ManipulationCastingRules.chargeFraction(chargeTicks, CHARGE_TICKS);
 
@@ -98,10 +88,9 @@ public class VitricCombustionManip extends BloodManipulation {
 		for (LivingEntity target : targets) {
 			if (target.position().distanceTo(blastCenter) > blastRadius) continue;
 			Vec3 toTarget = target.position().subtract(blastCenter).normalize();
-			CrimsonFireHelper.igniteCrimson(target, Math.max(1, (int) Math.ceil(FIRE_SECONDS * strength)));
 			float damage = (float) (BLAST_DAMAGE * strength * SkillPointHelper.getCrimsonMasteryMultiplier(player));
 			ManipulationParticles.hurt(this, target, world.damageSources().explosion(null, player),
-					TendencyAffinityRules.adjustManipulationDamage(player, target, this, damage));
+					(damage));
 			target.push(toTarget.x * KNOCKBACK_STRENGTH * strength,
 					0.4 * KNOCKBACK_STRENGTH * strength,
 					toTarget.z * KNOCKBACK_STRENGTH * strength);
@@ -111,5 +100,6 @@ public class VitricCombustionManip extends BloodManipulation {
 		world.playSound(null, blastPos, SoundEvents.FIRECHARGE_USE, SoundSource.PLAYERS, 1.0f, 0.6f);
 
 		ManipulationVisuals.burst(sLevel, ManipulationVisuals.Form.GLASS, blastCenter, blastCenter, blastRadius, 28);
-	}
+	        }
+    }
 }

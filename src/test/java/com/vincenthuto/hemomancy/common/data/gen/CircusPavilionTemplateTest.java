@@ -8,6 +8,7 @@ public final class CircusPavilionTemplateTest {
 	public static void main(String[] args) {
 		List<CircusPavilionTemplate.BlockPlacement> blocks = CircusPavilionTemplate.blocks();
 		Set<String> positions = new HashSet<>();
+		Set<String> solidPositions = new HashSet<>();
 		Set<String> palette = new HashSet<>();
 
 		for (CircusPavilionTemplate.BlockPlacement block : blocks) {
@@ -15,6 +16,9 @@ public final class CircusPavilionTemplateTest {
 			assert block.y() >= 0 && block.y() < CircusPavilionTemplate.HEIGHT;
 			assert block.z() >= 0 && block.z() < CircusPavilionTemplate.DEPTH;
 			assert positions.add(block.x() + ":" + block.y() + ":" + block.z()) : "duplicate block position";
+			if (!"minecraft:air".equals(block.name())) {
+				solidPositions.add(block.x() + ":" + block.y() + ":" + block.z());
+			}
 			palette.add(block.name());
 		}
 
@@ -26,7 +30,7 @@ public final class CircusPavilionTemplateTest {
 
 		for (int z = 0; z <= CircusPavilionTemplate.CENTER; z++) {
 			for (int y = 1; y <= 2; y++) {
-				assert !positions.contains(CircusPavilionTemplate.CENTER + ":" + y + ":" + z)
+				assert !solidPositions.contains(CircusPavilionTemplate.CENTER + ":" + y + ":" + z)
 						: "central entrance aisle is obstructed";
 			}
 		}

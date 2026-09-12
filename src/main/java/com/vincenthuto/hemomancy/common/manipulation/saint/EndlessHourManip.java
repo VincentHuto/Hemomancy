@@ -77,6 +77,8 @@ public class EndlessHourManip extends BloodManipulation {
 
 	@Override
 	public void getAction(Player player, Level world, ItemStack heldItemMainhand, BlockPos position) {
+        try (var schoolCast = com.vincenthuto.hemomancy.common.damage.SchoolDamage.cast(this, player, 1)) {
+
 		if (world.isClientSide) return;
 		long currentTime = world.getGameTime();
 
@@ -108,7 +110,8 @@ public class EndlessHourManip extends BloodManipulation {
             com.vincenthuto.hemomancy.common.manipulation.ManipulationVisuals.attached(player,
                     com.vincenthuto.hemomancy.common.manipulation.ManipulationVisuals.Form.HOUR,0,DURATION_TICKS,1);
 		}
-	}
+	        }
+    }
 
 	/**
 	 * Called from an event handler to check if the Endless Hour has expired

@@ -59,8 +59,11 @@ public class DeadlyGazeManip extends BloodManipulation {
 
 	@Override
 	public void getAction(Player player, Level world, ItemStack heldItemMainhand, BlockPos position) {
+        try (var schoolCast = com.vincenthuto.hemomancy.common.damage.SchoolDamage.cast(this, player, 1)) {
+
 		getAction(player, world, heldItemMainhand, position, CHARGE_TICKS);
-	}
+	        }
+    }
 
 	@Override
 	public int getRequiredChargeTicks() {
@@ -69,6 +72,8 @@ public class DeadlyGazeManip extends BloodManipulation {
 
 	@Override
 	public void getAction(Player player, Level world, ItemStack heldItemMainhand, BlockPos position, float heldTicks) {
+        try (var schoolCast = com.vincenthuto.hemomancy.common.damage.SchoolDamage.cast(this, player, getRequiredChargeTicks() <= 0 ? 1 : heldTicks / getRequiredChargeTicks())) {
+
 		float charge = ManipulationCastingRules.chargeFraction(heldTicks, CHARGE_TICKS);
 		HitResult pick = rayTraceEntities(player, 12 + 20 * charge, e -> e instanceof LivingEntity living && ManipulationCombatHelper.canHarm(player, living));
 		if (pick != null) {
@@ -100,5 +105,6 @@ public class DeadlyGazeManip extends BloodManipulation {
 			}
 		}
 
-	}
+	        }
+    }
 }

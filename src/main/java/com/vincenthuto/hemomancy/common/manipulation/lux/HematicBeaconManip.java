@@ -35,6 +35,8 @@ public class HematicBeaconManip extends BloodManipulation {
 
 	@Override
 	public void getAction(Player player, Level world, ItemStack heldItemMainhand, BlockPos position) {
+        try (var schoolCast = com.vincenthuto.hemomancy.common.damage.SchoolDamage.cast(this, player, 1)) {
+
 		if (!(world instanceof ServerLevel sLevel)) return;
 
 		int brightEyed = SkillPointHelper.getBrightEyedLevel(player);
@@ -51,5 +53,6 @@ public class HematicBeaconManip extends BloodManipulation {
 		world.playSound(null, BlockPos.containing(center), SoundEvents.BEACON_ACTIVATE, SoundSource.PLAYERS, 0.7F, 1.5F);
         HemomancyTendrilEffects.luxRelease(player, center.add(0, 1.35, 0));
 		ManipulationParticles.accent(sLevel, EnumBloodTendency.LUX, center.add(0, 1.35, 0), net.minecraft.world.phys.Vec3.ZERO);
-	}
+	        }
+    }
 }

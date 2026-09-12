@@ -40,20 +40,21 @@ public class GloamLacerationManip extends BloodManipulation {
 
 	@Override
 	public void getAction(Player player, Level world, ItemStack heldItemMainhand, BlockPos position) {
+        try (var schoolCast = com.vincenthuto.hemomancy.common.damage.SchoolDamage.cast(this, player, 1)) {
+
 		if (!(world instanceof ServerLevel sLevel)) return;
 
 		double range = BASE_RANGE * SkillPointHelper.getSanguineReachMultiplier(player);
 		LivingEntity target = findTarget(player, world, range);
-		boolean ambush = player.hasEffect(MobEffects.INVISIBILITY)
+		boolean ambush = player.isInvisible()
 				|| BlackVeilCovenantManager.isDarkEnough(world, player.blockPosition(), MAX_LIGHT_LEVEL);
 
 		if (target != null) {
 			target.addEffect(new MobEffectInstance(EffectInit.blood_loss, 140, 0, false, true));
-			target.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, 120, 0, false, true));
 			float damage = (float) ((BASE_DAMAGE + (ambush ? AMBUSH_BONUS : 0.0F))
 					* SkillPointHelper.getCrimsonMasteryMultiplier(player));
 			ManipulationParticles.hurt(this, target, world.damageSources().magic(),
-					TendencyAffinityRules.adjustManipulationDamage(player, target, this, damage));
+					(damage));
 			world.playSound(null, target.blockPosition(), SoundEvents.PLAYER_ATTACK_SWEEP, SoundSource.PLAYERS,
 					0.75F, ambush ? 0.65F : 0.85F);
 		} else {
@@ -62,7 +63,8 @@ public class GloamLacerationManip extends BloodManipulation {
 		}
 
 		sendSlashVisual(sLevel, player, target, ambush);
-	}
+	        }
+    }
 
 	@Nullable
 	private LivingEntity findTarget(Player player, Level world, double range) {

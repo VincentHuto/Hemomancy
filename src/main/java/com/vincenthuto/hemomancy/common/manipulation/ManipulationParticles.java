@@ -20,10 +20,24 @@ public final class ManipulationParticles {
     }
 
     public static boolean hurt(BloodManipulation manipulation,LivingEntity target,DamageSource source,float amount) {
+        if (!(source instanceof com.vincenthuto.hemomancy.common.damage.SchoolDamageSource)) {
+            LivingEntity caster = source.getEntity() instanceof LivingEntity living ? living : null;
+            var hit = com.vincenthuto.hemomancy.common.damage.SchoolDamage.context(manipulation, caster);
+            source = com.vincenthuto.hemomancy.common.damage.SchoolDamage.attributed(source, hit,
+                    caster == null ? com.vincenthuto.hemomancy.common.damage.SchoolDamage.owner(target, hit) : caster);
+        }
         boolean hurt=target.hurt(source,amount);
         if(hurt)impact(target,manipulation.getTend(),manipulation.getSecondaryTend(),
                 source.getSourcePosition()==null?Vec3.ZERO:target.position().subtract(source.getSourcePosition()));
         return hurt;
+    }
+
+    public static boolean hurt(BloodManipulation manipulation, LivingEntity target, DamageSource source,
+                               float amount, int duration, int levels) {
+        var hit = com.vincenthuto.hemomancy.common.damage.SchoolDamage.context(manipulation,
+                source.getEntity() instanceof LivingEntity living ? living : null).withApplication(duration, levels);
+        return hurt(manipulation, target, com.vincenthuto.hemomancy.common.damage.SchoolDamage.attributed(
+                source, hit, com.vincenthuto.hemomancy.common.damage.SchoolDamage.owner(target, hit)), amount);
     }
 
     public static void impact(LivingEntity target,EnumBloodTendency primary,EnumBloodTendency secondary,Vec3 direction) {

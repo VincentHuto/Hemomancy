@@ -22,11 +22,14 @@ public class EclipseWellManip extends BloodManipulation {
 
 	@Override
 	public void getAction(Player player, Level world, ItemStack heldItemMainhand, BlockPos position, float heldTicks) {
+        try (var schoolCast = com.vincenthuto.hemomancy.common.damage.SchoolDamage.cast(this, player, getRequiredChargeTicks() <= 0 ? 1 : heldTicks / getRequiredChargeTicks())) {
+
 		if (!(world instanceof ServerLevel level)) return;
 		double radius = ManipulationScalingRules.scaled(2, 7, heldTicks, CHARGE_TICKS);
 		int duration = ManipulationScalingRules.scaledInt(40, 200, heldTicks, CHARGE_TICKS);
 		Vec3 center = ManipulationCombatHelper.clipToGeometry(player, player.getEyePosition().add(player.getLookAngle().scale(12)));
         HemomancyTendrilEffects.umbraRelease(player, center);
 		ManipulationReactiveEvents.createEclipseWell(level, center, radius, duration, player.getUUID());
-	}
+	        }
+    }
 }

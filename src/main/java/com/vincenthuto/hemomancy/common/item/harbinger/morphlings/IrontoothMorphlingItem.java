@@ -70,6 +70,12 @@ public class IrontoothMorphlingItem extends MorphlingItem {
 
 	@Override
 	public boolean tryUse(Player playerIn, InteractionHand handIn, ItemStack itemStack, Level worldIn) {
+        if (com.vincenthuto.hemomancy.common.manipulation.ductilis.Paralysis.blocksActions(playerIn)) return false;
+        if (playerIn instanceof net.minecraft.server.level.ServerPlayer server
+                && com.vincenthuto.hemomancy.common.manipulation.HematicCommandManager.isMarionetteChannel(server))
+            com.vincenthuto.hemomancy.common.manipulation.ManipulationChannelManager.stop(server, false);
+        try (var schoolAbility = MorphlingCombat.scope(this, playerIn, itemStack, null)) {
+
 		if (!MorphlingItem.tryBeginPrimalAbility(playerIn, itemStack, "DeepTremorSense",
 				320.0, 600, 180, 0)) return false;
 		playerIn.addEffect(new MobEffectInstance(MobEffects.DIG_SPEED,
@@ -85,7 +91,7 @@ public class IrontoothMorphlingItem extends MorphlingItem {
 		for (net.minecraft.world.entity.monster.Monster mob :
 				worldIn.getEntitiesOfClass(net.minecraft.world.entity.monster.Monster.class,
 						playerIn.getBoundingBox().inflate(8.0), net.minecraft.world.entity.monster.Monster::isAlive)) {
-			mob.hurt(playerIn.damageSources().magic(), 7.0f);
+			if (!mob.hurt(playerIn.damageSources().magic(), 7.0f)) continue;
 			mob.push(0, 0.75, 0);
 		}
 		if (worldIn instanceof ServerLevel serverLevel) {
@@ -100,10 +106,14 @@ public class IrontoothMorphlingItem extends MorphlingItem {
 			}
 		}
 		return true;
-	}
+
+        }
+    }
 
 	@Override
 	public void onEquippedTick(Player player, ItemStack stack) {
+        try (var schoolAbility = MorphlingCombat.scope(this, player, stack, null)) {
+
 		int maturity = MorphlingItem.getMaturityLevel(stack);
 		int amplifier = MorphlingItem.passiveAmplifier(player, stack, maturity);
 
@@ -149,7 +159,7 @@ public class IrontoothMorphlingItem extends MorphlingItem {
 							player.level().getEntitiesOfClass(
 									net.minecraft.world.entity.monster.Monster.class, area);
 					for (net.minecraft.world.entity.monster.Monster mob : hostiles) {
-						mob.hurt(player.damageSources().magic(), 6.0f);
+						if (!mob.hurt(player.damageSources().magic(), 6.0f)) continue;
 						double dx = mob.getX() - player.getX();
 						double dz = mob.getZ() - player.getZ();
 						double dist = Math.sqrt(dx * dx + dz * dz);
@@ -160,10 +170,19 @@ public class IrontoothMorphlingItem extends MorphlingItem {
 				}
 			}
 		}
-	}
+
+        }
+    }
+
+    @Override
+    public void onEquippedHurt(Player player, ItemStack stack, DamageSource source, float amount, boolean allowReactions) {
+        onEquippedHurt(player, stack, source, amount);
+    }
 
 	@Override
 	public void onEquippedHurt(Player player, ItemStack stack, DamageSource source, float amount) {
+        try (var schoolAbility = MorphlingCombat.scope(this, player, stack, source)) {
+
 		int maturity = MorphlingItem.getMaturityLevel(stack);
 
 		// Mature (3+): Earthen Bulwark — Resistance when taking damage underground
@@ -178,7 +197,9 @@ public class IrontoothMorphlingItem extends MorphlingItem {
 				tryShedUnderground(player, stack, 1);
 			}
 		}
-	}
+
+        }
+    }
 
 	@Override
 	public void onEquippedBlockBreak(Player player, ItemStack stack, BlockPos pos, BlockState state) {

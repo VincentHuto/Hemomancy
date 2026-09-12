@@ -77,14 +77,14 @@ public final class HarbingerArtificerNpcSourceTest {
 		assertContains("outpost places Artificer in unused northern workshop quadrant", outpost, "centerZ - halfDepth");
 
 		assertContains("renderer uses dedicated Artificer texture path", renderer,
-				"textures/entity/harbinger_artificer/harbinger_artificer.png");
+				"textures/entity/npc/harbinger/harbinger_artificer/harbinger_artificer.png");
 		assertContains("model has dedicated Artificer layer", model, "Hemomancy.rloc(\"harbinger_artificer\")");
 		assertNotContains("renderer must not use Alchemist renderer/model classes", renderer, "HarbingerAlchemist");
 		assertNotContains("renderer must not point at Alchemist texture path", renderer, "harbinger_alchemist");
 		assertNotContains("model must not use Alchemist entity/model classes", model, "HarbingerAlchemist");
 		assertNotContains("model must not point at Alchemist texture path", model, "harbinger_alchemist");
 		assertExists("dedicated placeholder Artificer texture",
-				"src/main/resources/assets/hemomancy/textures/entity/harbinger_artificer/harbinger_artificer.png");
+				"src/main/resources/assets/hemomancy/textures/entity/npc/harbinger/harbinger_artificer/harbinger_artificer.png");
 		assertExists("Artificer spawn egg item model",
 				"src/main/resources/assets/hemomancy/models/item/spawn_egg_harbinger_artificer.json");
 

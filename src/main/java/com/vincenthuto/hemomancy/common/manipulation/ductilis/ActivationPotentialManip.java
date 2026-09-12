@@ -22,8 +22,11 @@ public class ActivationPotentialManip extends BloodManipulation {
 
 	@Override
 	public void getAction(Player player, Level world, ItemStack heldItemMainhand, BlockPos position) {
+        try (var schoolCast = com.vincenthuto.hemomancy.common.damage.SchoolDamage.cast(this, player, 1)) {
+
 		getAction(player, world, heldItemMainhand, position, CHARGE_TICKS);
-	}
+	        }
+    }
 
 	@Override
 	public int getRequiredChargeTicks() {
@@ -33,9 +36,12 @@ public class ActivationPotentialManip extends BloodManipulation {
 	@Override
 	public void getAction(Player player, Level world, ItemStack heldItemMainhand, BlockPos position,
 			float chargeTicks) {
+        try (var schoolCast = com.vincenthuto.hemomancy.common.damage.SchoolDamage.cast(this, player, getRequiredChargeTicks() <= 0 ? 1 : chargeTicks / getRequiredChargeTicks())) {
+
         if (!(world instanceof net.minecraft.server.level.ServerLevel level)) return;
         float strength = ManipulationCastingRules.chargeFraction(chargeTicks, CHARGE_TICKS);
         Discharge discharge = new Discharge();
+        discharge.deferReactions();
         java.util.List<LivingEntity> struck = new java.util.ArrayList<>();
         int index = 0;
         float damage = (float)(5.0F * strength * SkillPointHelper.getCrimsonMasteryMultiplier(player));
@@ -46,16 +52,12 @@ public class ActivationPotentialManip extends BloodManipulation {
             if (!ConductionManager.claimHit(player,target,discharge)) continue;
             DuctilisLightningEffects.activationPotential(player,target,index++);
             if (ManipulationCombatHelper.hurt(this,player,target,level,damage)) {
-                Paralysis.interrupt(target);
-                target.addEffect(new net.minecraft.world.effect.MobEffectInstance(
-                        net.minecraft.world.effect.MobEffects.MOVEMENT_SLOWDOWN,
-                        ManipulationScalingRules.scaledInt(5,30,chargeTicks,CHARGE_TICKS),1,false,true));
                 ConductionManager.energizeTouching(player,target,discharge);
                 struck.add(target);
             }
         }
         ConductionManager.energizeVisibleBounds(player,player.getBoundingBox().inflate(5),discharge);
-        for (LivingEntity target:struck) SchoolHitHelper.tryTriggerConductiveArc(player,target,
-                EnumBloodTendency.DUCTILIS,getSecondaryTend(),damage,discharge);
+        discharge.flushReactions();
+            }
     }
 }

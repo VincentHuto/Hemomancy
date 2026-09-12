@@ -15,7 +15,7 @@ class EnthralledDollBloodMeltSourceTest {
 		String renderer = source("client/render/entity/mob/monster/EnthralledDollRenderer.java");
 		assertTrue(entity.contains("public void die(DamageSource source)"));
 		assertTrue(entity.contains("broadcastEntityEvent(this, BLOOD_MELT_EVENT)"));
-		assertTrue(entity.contains("BloodCellParticleFactory.createData(ParticleColor.BLOOD)"));
+		assertTrue(entity.contains("HemoParticleData.bloodCell(ParticleColor.BLOOD)"));
 		assertTrue(renderer.contains("entity.deathTime"));
 	}
 

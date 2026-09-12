@@ -37,11 +37,14 @@ public class SanguineMagnetismManip extends BloodManipulation {
 
 	@Override
 	public void getAction(Player player, Level world, ItemStack heldItemMainhand, BlockPos position) {
+        try (var schoolCast = com.vincenthuto.hemomancy.common.damage.SchoolDamage.cast(this, player, 1)) {
+
 		if (!(world instanceof ServerLevel serverLevel)) return;
 		var placement = FerricPlacement.aimed(player, FerricConstructShapes.Kind.PILLAR,
 				BASE_RANGE * SkillPointHelper.getSanguineReachMultiplier(player));
 		if (placement != null) spawnMagneticPillar(player, serverLevel, placement.origins().getFirst(), DURATION_TICKS);
-	}
+	        }
+    }
 
 	public static EntityIronPillar spawnMagneticPillar(LivingEntity caster, ServerLevel level, Vec3 center,
 			int durationTicks) {

@@ -27,7 +27,7 @@ import java.util.List;
  * Doctrine: Witness / Light
  *
  * <p>Seraphae's gaze strips concealment from every living thing within range —
- * invisibility is dissolved, all entities glow, and the caster is revealed too.
+ * concealment is suppressed, all entities glow, and the caster is revealed too.
  * There is no hiding from a witness this complete.
  *
  * <p>Unlike Crimson Sight (which scouts enemies while the caster stays dark),
@@ -48,24 +48,25 @@ public class UnclosingEyeManip extends BloodManipulation {
 
 	@Override
 	public void getAction(Player player, Level world, ItemStack heldItemMainhand, BlockPos position) {
+        try (var schoolCast = com.vincenthuto.hemomancy.common.damage.SchoolDamage.cast(this, player, 1)) {
+
 		ManipulationReactiveEvents.armUnclosingEye(player, GLOWING_DURATION);
 		List<LivingEntity> targets = world.getEntitiesOfClass(LivingEntity.class,
 				player.getBoundingBox().inflate(SCAN_RADIUS), e -> e != player && e.isAlive());
 
 		int stripped = 0;
 		for (LivingEntity target : targets) {
-			target.addEffect(new MobEffectInstance(MobEffects.GLOWING, GLOWING_DURATION, 0, false, false));
-			if (target.hasEffect(MobEffects.INVISIBILITY)) {
-				target.removeEffect(MobEffects.INVISIBILITY);
-				stripped++;
-			}
+			if (target.isInvisible()) stripped++;
+            com.vincenthuto.hemomancy.common.damage.SchoolStates.apply(player, target,
+                    com.vincenthuto.hemomancy.common.damage.SchoolState.ILLUMINATED, GLOWING_DURATION);
 		}
 
-		player.addEffect(new MobEffectInstance(MobEffects.GLOWING, GLOWING_DURATION, 0, false, true));
+		com.vincenthuto.hemomancy.common.damage.SchoolStates.apply(player, player,
+                com.vincenthuto.hemomancy.common.damage.SchoolState.ILLUMINATED, GLOWING_DURATION);
 		player.addEffect(new MobEffectInstance(MobEffects.NIGHT_VISION, NIGHT_VISION_DURATION, 0, false, false, true));
 
 		String msg = stripped > 0
-				? "Seraphae's eye opens. Nothing is hidden. " + stripped + " concealment(s) dissolved."
+				? "Seraphae's eye opens. Nothing is hidden. " + stripped + " concealment(s) exposed."
 				: "Seraphae's eye opens. All is laid bare — including yourself.";
 		player.displayClientMessage(Component.literal(msg).withStyle(ChatFormatting.YELLOW, ChatFormatting.ITALIC), true);
 
@@ -74,5 +75,6 @@ public class UnclosingEyeManip extends BloodManipulation {
 		if (world instanceof ServerLevel sLevel) {
 			ManipulationParticles.accent(sLevel, EnumBloodTendency.LUX, player.position().add(0, 2.5, 0), net.minecraft.world.phys.Vec3.ZERO);
 		}
-	}
+	        }
+    }
 }

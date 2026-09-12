@@ -33,6 +33,8 @@ public class CarrionCommunionManip extends BloodManipulation {
 
 	@Override
 	public void getAction(Player player, Level world, ItemStack heldItemMainhand, BlockPos position, float heldTicks) {
+        try (var schoolCast = com.vincenthuto.hemomancy.common.damage.SchoolDamage.cast(this, player, getRequiredChargeTicks() <= 0 ? 1 : heldTicks / getRequiredChargeTicks())) {
+
 		if (!(world instanceof ServerLevel level)) return;
 		float drained = 0;
 		for (LivingEntity target : eligibleTargets(player, level).stream()
@@ -47,12 +49,13 @@ public class CarrionCommunionManip extends BloodManipulation {
             }
 		}
 		player.heal(drained * .5F);
-	}
+	        }
+    }
 
 	private static List<LivingEntity> eligibleTargets(Player player, Level world) {
 		return ManipulationCombatHelper.hostileTargets(player, world, 8).stream()
 				.filter(target -> !com.vincenthuto.hemomancy.common.entity.HemoEntityPredicates.NOBLOOD.test(target)).filter(target ->
-				target.hasEffect(MobEffects.WITHER) || target.hasEffect(MobEffects.POISON)
+				target.hasEffect(EffectInit.necrosis) || target.hasEffect(MobEffects.WITHER) || target.hasEffect(MobEffects.POISON)
 						|| target.hasEffect(EffectInit.blood_loss) || target.hasEffect(EffectInit.grave_debt)).toList();
 	}
 }

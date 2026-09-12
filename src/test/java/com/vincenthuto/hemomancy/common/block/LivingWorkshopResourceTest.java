@@ -22,7 +22,7 @@ public final class LivingWorkshopResourceTest {
 		String lanternMenu = Files.readString(SOURCES.resolve(
 				"com/vincenthuto/hemomancy/common/menu/tile/crafting/MycelialLanternMenu.java"));
 		String tapBlock = Files.readString(SOURCES.resolve(
-				"com/vincenthuto/hemomancy/common/block/harbinger/functional/GourdvineTapBlock.java"));
+				"com/vincenthuto/hemomancy/common/block/harbinger/plant/GourdvineTapBlock.java"));
 
 		assertContains("Lantern authoritative Degree-3 gate", lantern, "\"required_degree\": 3");
 		assertContains("Atlas Degree-3 gate", atlas, "entryAt(\"mycelial_lantern\", h, \"spores_cultures\", d(3)");

@@ -26,11 +26,14 @@ public class CauterizingRebukeManip extends BloodManipulation {
 
 	@Override
 	public void getAction(Player player, Level world, ItemStack heldItemMainhand, BlockPos position) {
+        try (var schoolCast = com.vincenthuto.hemomancy.common.damage.SchoolDamage.cast(this, player, 1)) {
+
 		if (!(world instanceof ServerLevel sLevel)) return;
 
 		int purged = 0;
 		if (player.removeEffect(MobEffects.POISON)) purged++;
 		if (player.removeEffect(MobEffects.WITHER)) purged++;
+        if (player.removeEffect(EffectInit.necrosis)) purged++;
 		if (player.removeEffect(EffectInit.blood_loss)) purged++;
 		if (purged > 0) {
 			player.setHealth(Math.max(1.0F, player.getHealth() - purged * 2.0F));
@@ -40,5 +43,6 @@ public class CauterizingRebukeManip extends BloodManipulation {
 		world.playSound(null, player.blockPosition(), SoundEvents.FIRECHARGE_USE, SoundSource.PLAYERS, 0.7F, 1.0F);
         if (purged > 0) com.vincenthuto.hemomancy.common.manipulation.ManipulationVisuals.attached(player,
                 com.vincenthuto.hemomancy.common.manipulation.ManipulationVisuals.Form.CAUTERIZE, 1, 24, purged);
-	}
+	        }
+    }
 }

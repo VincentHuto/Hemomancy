@@ -329,8 +329,8 @@ public final class DuctilisGameTests {
             player.attack(target);
             h.assertTrue(target.getHealth()==target.getMaxHealth(),"Player attacked during paralysis");
             h.assertTrue(!ManipulationInit.synaptic_jolt.get().tryPerformAction(player,h.getLevel(),ItemStack.EMPTY,player.blockPosition(),0),"Player cast during paralysis");
-            h.assertTrue(Paralysis.apply(boss,60) && !boss.hasEffect(EffectInit.paralysis)
-                    && boss.hasEffect(net.minecraft.world.effect.MobEffects.MOVEMENT_SLOWDOWN),"Boss received hard paralysis");
+            h.assertTrue(!Paralysis.apply(boss,60) && !boss.hasEffect(EffectInit.paralysis)
+                    && !boss.hasEffect(net.minecraft.world.effect.MobEffects.MOVEMENT_SLOWDOWN),"Boss received hard paralysis or generic slowing");
             player.removeEffectsCuredBy(net.neoforged.neoforge.common.EffectCures.MILK);
             h.assertTrue(!Paralysis.isParalyzed(player)&&!Paralysis.apply(player,60),"Milk left lock or bypassed recovery");
             h.succeed();

@@ -51,20 +51,15 @@ public final class WillWeaponController {
 			target.hurt(will.damageSources().mobAttack(will), 2.5F);
 			will.heal(1.5F);
 		}
-		case FLAMMEUS -> CrimsonFireHelper.igniteCrimson(target, 4);
+		case FLAMMEUS -> { }
 		case DUCTILIS -> {
-			target.addEffect(new MobEffectInstance(MobEffects.GLOWING, 160, 0, false, true));
-			target.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 60, 0, false, true));
 		}
 		case LUX -> {
-			target.addEffect(new MobEffectInstance(MobEffects.GLOWING, 180, 0, false, true));
-			target.addEffect(new MobEffectInstance(MobEffects.BLINDNESS, 50, 0, false, true));
 		}
 		case MORTEM -> {
-			target.addEffect(new MobEffectInstance(MobEffects.WITHER, 100, 0, false, true));
 			will.heal(2.0F);
 		}
-		case CONGEATIO -> target.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 100, 1, false, true));
+		case CONGEATIO -> { }
 		case FERRIC -> {
 			Vec3 away = target.position().subtract(will.position());
 			if (away.lengthSqr() > 1.0E-4D) {
@@ -75,8 +70,6 @@ public final class WillWeaponController {
 		}
 		case TENEBRIS -> {
 			target.addEffect(new MobEffectInstance(EffectInit.blood_loss, 120, 1));
-			target.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, 80, 0, false, true));
-			will.addEffect(new MobEffectInstance(MobEffects.INVISIBILITY, 45, 0, false, false));
 		}
 		}
 	}

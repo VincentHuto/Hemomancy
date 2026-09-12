@@ -13,6 +13,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 public abstract class MixinParalysisMobAttack {
     @Inject(method="doHurtTarget",at=@At("HEAD"),cancellable=true,remap=false)
     private void hemomancy$paralysisAttack(Entity target,CallbackInfoReturnable<Boolean> cir) {
-        if (Paralysis.isParalyzed((LivingEntity)(Object)this)) cir.setReturnValue(false);
+        if (Paralysis.blocksActions((LivingEntity)(Object)this)) cir.setReturnValue(false);
     }
 }

@@ -11,12 +11,12 @@ public final class LivingWeaponGraftRiteSourceTest {
 	}
 
 	public static void main(String[] args) throws IOException {
-		String blockEntity = read("src/main/java/com/vincenthuto/hemomancy/common/tile/IronBrazierBlockEntity.java");
-		String block = read("src/main/java/com/vincenthuto/hemomancy/common/block/harbinger/BrazierBlock.java");
+		String blockEntity = read("src/main/java/com/vincenthuto/hemomancy/common/tile/harbinger/rite/IronBrazierBlockEntity.java");
+		String block = read("src/main/java/com/vincenthuto/hemomancy/common/block/harbinger/rite/BrazierBlock.java");
 		String rite = read("src/main/java/com/vincenthuto/hemomancy/common/item/harbinger/memories/LivingWeaponGraftRite.java");
 		String memoryOfVesper = read("src/main/java/com/vincenthuto/hemomancy/common/item/harbinger/MemoryOfVesperItem.java");
 		String packetHandler = read("src/main/java/com/vincenthuto/hemomancy/common/network/PacketHandler.java");
-		String cellHandParticles = read("src/main/java/com/vincenthuto/hemomancy/client/render/item/hematic/CellHandParticleEffects.java");
+		String cellHandParticles = read("src/main/java/com/vincenthuto/hemomancy/client/render/item/harbinger/CellHandParticleEffects.java");
 
 		assertContains("brazier tracks absorption player", blockEntity, "itemAbsorptionPlayer");
 		assertContains("brazier tracks absorption rite", blockEntity, "itemAbsorptionRiteId");

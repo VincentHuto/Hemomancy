@@ -89,6 +89,7 @@ class RadialVeinBorderRenderTest {
 
     // Optional GPU check: gradlew -I src/test/radial-vein-review.init.gradle radialVeinRenderReview
     public static void main(String[] args) throws Exception {
+        if (args.length == 0) return;
         Path output = Path.of(args[0]);
         Files.createDirectories(output);
         assertTrue(GLFW.glfwInit(), "GLFW must initialize for the GPU review");

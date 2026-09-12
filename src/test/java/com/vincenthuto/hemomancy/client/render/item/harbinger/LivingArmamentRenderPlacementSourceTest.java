@@ -31,7 +31,7 @@ public final class LivingArmamentRenderPlacementSourceTest {
 		assertNotContains("torch item placement leaves positive Z mouth roll to the arm", torchPlacement,
 				"THIRD_PERSON_MOUTH_ROLL_DEGREES");
 		assertContains("torch third-person render lifts to mouth height", torchPlacement,
-				"THIRD_PERSON_TORCH_LIFT = 0.14D");
+				"THIRD_PERSON_TORCH_LIFT = 0.24D");
 		assertContains("torch third-person render points outward from the torso", torchPlacement,
 				"THIRD_PERSON_TORCH_OUTWARD_OFFSET = 0.18D");
 		assertContains("flail handle places chain end below the grip", flailModel, "CHAIN_COLLAR_MIN_Y = 8.5F");

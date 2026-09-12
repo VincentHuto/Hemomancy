@@ -79,24 +79,27 @@ public final class LuxTenebrisCombatStyleSourceTest {
 	private static void playerImplementationsCarryTrueOffense() throws IOException {
 		String flare = read("src/main/java/com/vincenthuto/hemomancy/common/manipulation/lux/HematicFlareManip.java");
 		assertContains("flare base damage", flare, "BASE_DAMAGE = 3.0F");
-		assertContains("flare concealed bonus", flare, "CONCEALED_BONUS = 2.0F");
-		assertContains("flare applies glowing", flare, "MobEffects.GLOWING");
-		assertContains("flare strips invisibility", flare, "removeEffect(MobEffects.INVISIBILITY)");
-		assertContains("flare scales affinity", flare, "TendencyAffinityRules.adjustManipulationDamage");
+		if (flare.contains("CONCEALED_BONUS")) throw new AssertionError("Flare prepares exposure; only designated Lux follow-ups receive a state payoff");
+		assertContains("flare uses confirmed school damage", flare, "ManipulationCombatHelper.hurt");
+		if (flare.contains("removeEffect(MobEffects.INVISIBILITY)")) throw new AssertionError("Exposure must preserve unrelated vanilla invisibility");
+		assertContains("flare captures school attribution", flare, "SchoolDamage.cast");
 
 		String slash = read("src/main/java/com/vincenthuto/hemomancy/common/manipulation/tenebris/GloamLacerationManip.java");
 		assertContains("slash base damage", slash, "BASE_DAMAGE = 3.5F");
 		assertContains("slash ambush bonus", slash, "AMBUSH_BONUS = 2.5F");
-		assertContains("slash checks shroud", slash, "MobEffects.INVISIBILITY");
+		assertContains("slash checks concealment", slash, "isInvisible()");
 		assertContains("slash checks darkness", slash, "BlackVeilCovenantManager.isDarkEnough");
 		assertContains("slash applies blood loss", slash, "EffectInit.blood_loss");
-		assertContains("slash applies weakness", slash, "MobEffects.WEAKNESS");
-		assertContains("slash scales affinity", slash, "TendencyAffinityRules.adjustManipulationDamage");
+		if (slash.contains("MobEffects.WEAKNESS")) throw new AssertionError("Obscured must replace offensive Weakness");
+		assertContains("slash captures school attribution", slash, "SchoolDamage.cast");
 	}
 
 	private static void tunedExistingOffenseIsDocumentedInSource() throws IOException {
 		String reproof = read("src/main/java/com/vincenthuto/hemomancy/common/manipulation/lux/PrismaticReproofManip.java");
-		assertContains("reproof has base and glowing damage", reproof, "target.hasEffect(MobEffects.GLOWING) ? 4.0F : 2.0F");
+		assertContains("reproof uses confirmed school damage", reproof, "ManipulationCombatHelper.hurt");
+        String resolver = read("src/main/java/com/vincenthuto/hemomancy/common/damage/SchoolCombatEvents.java");
+        assertContains("exposure is the only Lux state", resolver, "SchoolStates.has(target, SchoolState.ILLUMINATED)");
+        assertContains("reproof doubles before mitigation", resolver, "damage *= 2;");
 		String eclipse = read("src/main/java/com/vincenthuto/hemomancy/common/manipulation/tenebris/BloodEclipseManip.java");
 		assertContains("blood eclipse true offense damage", eclipse, "SHADOW_DAMAGE = 3.0f");
 	}

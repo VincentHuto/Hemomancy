@@ -9,7 +9,7 @@ public final class PuppeteerIntegrationSourceTest {
 
 	public static void main(String[] args) throws Exception {
 		String crossbar = read("src/main/java/com/vincenthuto/hemomancy/common/item/harbinger/tool/MarionetteCrossbarItem.java");
-		String spindle = read("src/main/java/com/vincenthuto/hemomancy/common/tile/crafting/PuppeteersSpindleBlockEntity.java");
+		String spindle = read("src/main/java/com/vincenthuto/hemomancy/common/tile/harbinger/crafting/PuppeteersSpindleBlockEntity.java");
 		String packet = read("src/main/java/com/vincenthuto/hemomancy/common/network/summon/PacketPuppeteersSpindleAction.java");
 		String radialPacket = read("src/main/java/com/vincenthuto/hemomancy/common/network/summon/PacketCrossbarRadialAction.java");
 		String packetHandler = read("src/main/java/com/vincenthuto/hemomancy/common/network/PacketHandler.java");

@@ -32,7 +32,7 @@ public final class HarbingerHermitFarewellDeathSourceTest {
 		assertContains("hermit exposes ritual death entrypoint", hermit, "public void beginFarewellDeath()");
 		assertContains("hermit freezes during ritual death", hermit, "this.setNoAi(true)");
 		assertContains("hermit removes only after ritual death duration", hermit, "this.remove(RemovalReason.KILLED)");
-		assertContains("hermit uses purpose-built glow particles for dissolve edge motes", hermit, "HermitEdgeGlowParticleFactory.createData");
+		assertContains("hermit uses purpose-built glow particles for dissolve edge motes", hermit, "HemoParticleData.hermitEdgeGlow");
 		assertContains("hermit colors motes with the shader edge red", hermit, "FAREWELL_EDGE_GLOW");
 		assertContains("hermit uses particle colors for edge continuity", hermit, "ParticleColor");
 		assertContains("hermit emits hybrid dissolve edge particles", hermit, "spawnFarewellDissolveEdgeParticles");

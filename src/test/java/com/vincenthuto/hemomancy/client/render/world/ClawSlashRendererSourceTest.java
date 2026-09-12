@@ -66,11 +66,15 @@ public final class ClawSlashRendererSourceTest {
 		String gloam = read("src/main/java/com/vincenthuto/hemomancy/common/manipulation/tenebris/GloamLacerationManip.java");
 		String entityEffects = read("src/main/java/com/vincenthuto/hemomancy/common/manipulation/EntityManipulationEffects.java");
 
-		assertContains("gloam player cast imports packet handler", gloam,
-				"import com.vincenthuto.hemomancy.common.network.PacketHandler;");
-		assertContains("gloam player cast sends slash packet", gloam, "PacketHandler.sendClawSlash(");
+		assertContains("gloam player cast uses the shared manipulation visual pipeline", gloam,
+				"ManipulationVisuals.burst(");
+		assertContains("gloam player cast requests the umbral slash form", gloam,
+				"ManipulationVisuals.Form.UMBRA_SLASH");
 		assertNotContains("gloam no longer imports generic glow", gloam, "GlowParticleFactory");
-		assertContains("entity cast sends slash packet", entityEffects, "PacketHandler.sendClawSlash(");
+		assertContains("entity cast uses the shared manipulation visual pipeline", entityEffects,
+				"ManipulationVisuals.burst(");
+		assertContains("entity cast requests the umbral slash form", entityEffects,
+				"ManipulationVisuals.Form.UMBRA_SLASH");
 		assertContains("entity cast uses caster aim", entityEffects, "context.aim()");
 	}
 

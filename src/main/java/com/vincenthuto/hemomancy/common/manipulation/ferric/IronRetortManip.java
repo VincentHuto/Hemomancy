@@ -29,6 +29,8 @@ public class IronRetortManip extends BloodManipulation {
 
 	@Override
 	public void getAction(Player player, Level world, ItemStack heldItemMainhand, BlockPos position) {
+        try (var schoolCast = com.vincenthuto.hemomancy.common.damage.SchoolDamage.cast(this, player, 1)) {
+
 		player.addEffect(new MobEffectInstance(EffectInit.iron_retort, DURATION_TICKS, 0, false, true, true));
 		ManipulationVisuals.attached(player, ManipulationVisuals.Form.RETORT, 1, DURATION_TICKS, 1); world.playSound(null, player.blockPosition(), SoundEvents.ANVIL_USE, SoundSource.PLAYERS, 0.55F, 1.8F);
 		if (world instanceof ServerLevel serverLevel) {
@@ -36,5 +38,6 @@ public class IronRetortManip extends BloodManipulation {
 					player.getX(), player.getY() + player.getBbHeight() * 0.58D, player.getZ(),
 					28, 0.55D, 0.55D, 0.55D, 0.018D);
 		}
-	}
+	        }
+    }
 }

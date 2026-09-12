@@ -40,6 +40,8 @@ public class BloodBindingManip extends BloodManipulation {
 
 	@Override
 	public void getAction(Player player, Level world, ItemStack heldItemMainhand, BlockPos position) {
+        try (var schoolCast = com.vincenthuto.hemomancy.common.damage.SchoolDamage.cast(this, player, 1)) {
+
 		LivingEntity target = target(player, world);
 		if (target == null) return;
 		List<LivingEntity> targets = switch (mode) {
@@ -59,7 +61,8 @@ public class BloodBindingManip extends BloodManipulation {
 		}
 		if (appliedAny) world.playSound(null, player.blockPosition(), SoundEvents.ILLUSIONER_CAST_SPELL,
 				SoundSource.PLAYERS, 0.7F, 0.8F);
-	}
+	        }
+    }
 
 	@Override
 	protected boolean canPerformAction(Player player, ItemStack heldItemMainhand, float chargeTicks) {

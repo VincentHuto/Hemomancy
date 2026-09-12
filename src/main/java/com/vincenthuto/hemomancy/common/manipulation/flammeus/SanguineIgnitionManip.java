@@ -49,6 +49,8 @@ public class SanguineIgnitionManip extends BloodManipulation {
 
 	@Override
 	public void getAction(Player player, Level world, ItemStack heldItemMainhand, BlockPos position) {
+        try (var schoolCast = com.vincenthuto.hemomancy.common.damage.SchoolDamage.cast(this, player, 1)) {
+
 		if (!(world instanceof ServerLevel sLevel)) return;
 
 		BlockPos center = player.blockPosition();
@@ -59,10 +61,9 @@ public class SanguineIgnitionManip extends BloodManipulation {
 		int hit = 0;
 		for (LivingEntity target : targets) {
 			if (target.distanceTo(player) <= RADIUS) {
-				CrimsonFireHelper.igniteCrimson(target, FIRE_SECONDS);
 				float damage = (float) (IGNITION_DAMAGE * SkillPointHelper.getCrimsonMasteryMultiplier(player));
 				ManipulationParticles.hurt(this, target, world.damageSources().onFire(),
-						TendencyAffinityRules.adjustManipulationDamage(player, target, this, damage));
+						(damage));
 				hit++;
 			}
 		}
@@ -75,5 +76,6 @@ public class SanguineIgnitionManip extends BloodManipulation {
 		ManipulationVisuals.burst(sLevel, ManipulationVisuals.Form.IGNITION, player.position(), player.position(), RADIUS, 18);
         RandomSource random = world.random;
 
-	}
+	        }
+    }
 }

@@ -37,9 +37,9 @@ final class LivingFlailReworkSourceTest {
 	void impactUsesProtectionHooksAndAuthoredGlacialEffects() throws Exception {
 		String effects = read("src/main/java/com/vincenthuto/hemomancy/common/entity/projectile/LivingFlailImpactEffects.java");
 		contains("placement hook", effects, "EventHooks.onBlockPlace");
-		contains("authored glow", effects, "GlowParticleFactory");
+		contains("authored glow", effects, "HemoParticleData.glow");
 		contains("authored tendril", effects, "TendrilEffectSpawner");
-		contains("authored cells", effects, "BloodCellParticleFactory");
+		contains("authored cells", effects, "HemoParticleData.bloodCell");
 		contains("charge-scaled camera impulse", effects, "LivingFlailImpactPacket");
 		contains("source water", effects, "Fluids.WATER");
 		contains("ice conversion", effects, "Blocks.ICE");

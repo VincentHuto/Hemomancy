@@ -39,6 +39,8 @@ public class HemolymphalPulseManip extends BloodManipulation {
 
 	@Override
 	public void getAction(Player player, Level world, ItemStack heldItemMainhand, BlockPos position) {
+        try (var schoolCast = com.vincenthuto.hemomancy.common.damage.SchoolDamage.cast(this, player, 1)) {
+
 		List<LivingEntity> nearby = world.getEntitiesOfClass(
 				LivingEntity.class, player.getBoundingBox().inflate(RADIUS));
 
@@ -60,5 +62,6 @@ public class HemolymphalPulseManip extends BloodManipulation {
 			world.playSound(null, player.blockPosition(), SoundEvents.WARDEN_HEARTBEAT,
 					SoundSource.PLAYERS, 0.8f, 0.6f);
 		}
-	}
+	        }
+    }
 }

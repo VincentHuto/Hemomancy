@@ -28,7 +28,7 @@ import java.util.List;
  * <p>Damage scales inversely with target wounds: healthy targets suffer more
  * as their full blood volume crystallises under the pressure, while
  * near-dead targets are largely spared (their blood is already depleted).
- * All affected enemies are flash-frozen into Slowness IV for 4 seconds.
+ * Confirmed hits build Rime for 4 seconds.
  *
  * <p>This rewards opening engagements — use it at the start of a fight when
  * enemies are at full health, not as a finisher. Pair with Exsanguinate or
@@ -39,8 +39,7 @@ public class OsseousBloomManip extends BloodManipulation {
 	private static final double RADIUS = 6.0;
 	/** Fraction of current HP dealt as magic damage. */
 	private static final float HP_FRACTION = 0.25f;
-	private static final int SLOWNESS_DURATION = 80;  // 4 seconds
-	private static final int SLOWNESS_AMPLIFIER = 3;  // Slowness IV
+	private static final int RIME_DURATION = 80;  // 4 seconds
 
 	public OsseousBloomManip(String name, double cost, double alignLevel, double xpCost,
 			EnumManipulationType type, EnumManipulationRank rank, EnumBloodTendency tendency,
@@ -50,6 +49,8 @@ public class OsseousBloomManip extends BloodManipulation {
 
 	@Override
 	public void getAction(Player player, Level world, ItemStack heldItemMainhand, BlockPos position) {
+        try (var schoolCast = com.vincenthuto.hemomancy.common.damage.SchoolDamage.cast(this, player, 1)) {
+
 		if (!(world instanceof ServerLevel sLevel)) return;
 
 		BlockPos center = player.blockPosition();
@@ -66,11 +67,8 @@ public class OsseousBloomManip extends BloodManipulation {
 
 		for (LivingEntity target : targets) {
 			float damage = target.getHealth() * HP_FRACTION * masteryMult;
-			damage = TendencyAffinityRules.adjustManipulationDamage(player, target, this, damage);
 			if (ManipulationReactiveEvents.isBoss(target)) damage = Math.min(12.0F, damage);
-			ManipulationParticles.hurt(this, target, world.damageSources().freeze(), damage);
-			target.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN,
-					SLOWNESS_DURATION, SLOWNESS_AMPLIFIER, false, true));
+			com.vincenthuto.hemomancy.common.damage.SchoolDamage.hurt(target, world.damageSources().freeze(), damage, RIME_DURATION, 1);
 		}
         for (LivingEntity target : targets) ManipulationVisuals.attached(target, ManipulationVisuals.Form.BONE, target.getBbWidth()*.7, 32, 1);
 
@@ -79,5 +77,6 @@ public class OsseousBloomManip extends BloodManipulation {
 
 		world.playSound(null, center, SoundEvents.GLASS_BREAK, SoundSource.PLAYERS, 1.0f, 0.5f);
 		world.playSound(null, center, SoundEvents.POWDER_SNOW_STEP, SoundSource.PLAYERS, 0.8f, 0.4f);
-	}
+	        }
+    }
 }

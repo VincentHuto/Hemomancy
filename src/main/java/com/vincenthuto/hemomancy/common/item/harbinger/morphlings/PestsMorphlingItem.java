@@ -32,7 +32,7 @@ import java.util.List;
  * - Mature (3): Infest — kills cause pest swarm to erupt from the corpse,
  *   automatically targeting nearby hostiles for chain-kill potential
  * - Apex (4): Plague Burst — when health drops below 25%, emit a massive
- *   AoE burst that withers all nearby hostiles
+ *   AoE burst that sears all nearby hostiles
  */
 public class PestsMorphlingItem extends MorphlingItem {
 
@@ -58,6 +58,12 @@ public class PestsMorphlingItem extends MorphlingItem {
 
 	@Override
 	public boolean tryUse(Player playerIn, InteractionHand handIn, ItemStack itemStack, Level worldIn) {
+        if (com.vincenthuto.hemomancy.common.manipulation.ductilis.Paralysis.blocksActions(playerIn)) return false;
+        if (playerIn instanceof net.minecraft.server.level.ServerPlayer server
+                && com.vincenthuto.hemomancy.common.manipulation.HematicCommandManager.isMarionetteChannel(server))
+            com.vincenthuto.hemomancy.common.manipulation.ManipulationChannelManager.stop(server, false);
+        try (var schoolAbility = MorphlingCombat.scope(this, playerIn, itemStack, null)) {
+
 		CompoundTag tag = itemStack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
 		int stored = tag.getInt("VerminCrownSwarm");
 		if (stored <= 0) {
@@ -80,10 +86,14 @@ public class PestsMorphlingItem extends MorphlingItem {
 		tag.putInt("VerminCrownSwarm", Math.max(0, stored - releases));
 		itemStack.set(DataComponents.CUSTOM_DATA, CustomData.of(tag));
 		return true;
-	}
+
+        }
+    }
 
 	@Override
 	public void onEquippedTick(Player player, ItemStack stack) {
+        try (var schoolAbility = MorphlingCombat.scope(this, player, stack, null)) {
+
 		int maturity = MorphlingItem.getMaturityLevel(stack);
 
 		// Base effect: Verminous Aura (AoE damage, amplifier = maturity)
@@ -92,7 +102,7 @@ public class PestsMorphlingItem extends MorphlingItem {
 					100, maturity, false, false, true));
 		}
 
-		// Apex (4): Plague Burst — emergency AoE Wither when health is critically low
+		// Apex (4): Plague Burst — emergency AoE Searing when health is critically low
 		if (maturity >= 4 && !player.level().isClientSide) {
 			if (player.getHealth() <= player.getMaxHealth() * 0.25f) {
 				long lastBurst = getLastAbilityTick(stack, "PlagueBurst");
@@ -104,17 +114,19 @@ public class PestsMorphlingItem extends MorphlingItem {
 					AABB area = player.getBoundingBox().inflate(radius);
 					List<Monster> hostiles = player.level().getEntitiesOfClass(Monster.class, area);
 					for (Monster mob : hostiles) {
-						mob.addEffect(new MobEffectInstance(MobEffects.WITHER,
-								100, 1, true, true, true));
-						mob.hurt(player.damageSources().magic(), 6.0F);
+                        com.vincenthuto.hemomancy.common.damage.SchoolDamage.hurt(mob, player.damageSources().magic(), 6.0F, 100, 1);
 					}
 				}
 			}
 		}
-	}
+
+        }
+    }
 
 	@Override
 	public void onEquippedHurt(Player player, ItemStack stack, DamageSource source, float amount) {
+        try (var schoolAbility = MorphlingCombat.scope(this, player, stack, source)) {
+
 		int maturity = MorphlingItem.getMaturityLevel(stack);
 
 		// Developing (2+): Swarm Retaliation — spawn tracking pests at attacker
@@ -133,15 +145,24 @@ public class PestsMorphlingItem extends MorphlingItem {
 				}
 			}
 		}
-	}
+
+        }
+    }
 
 	@Override
 	public void onEquippedKill(Player player, ItemStack stack, LivingEntity victim) {
+        onEquippedKill(player, stack, victim, true);
+    }
+
+    @Override
+    public void onEquippedKill(Player player, ItemStack stack, LivingEntity victim, boolean allowReactions) {
+        try (var schoolAbility = MorphlingCombat.scope(this, player, stack, player.damageSources().magic())) {
+
 		int maturity = MorphlingItem.getMaturityLevel(stack);
 
 		// Mature (3+): Infest — kills cause pest swarm to erupt from corpse,
 		// automatically targeting nearby hostiles for chain-kill potential
-		if (maturity >= 3 && !player.level().isClientSide) {
+		if (allowReactions && maturity >= 3 && !player.level().isClientSide) {
 			int pestCount = 2 + (maturity - 3); // 2 at Mature, 3 at Apex
 			double searchRadius = 12.0;
 			AABB area = victim.getBoundingBox().inflate(searchRadius);
@@ -166,14 +187,16 @@ public class PestsMorphlingItem extends MorphlingItem {
 					tag.getInt("VerminCrownSwarm") + (victim.getMaxHealth() >= 20.0f ? 2 : 1)));
 			stack.set(DataComponents.CUSTOM_DATA, CustomData.of(tag));
 		}
-	}
+
+        }
+    }
 
 	@Override
 	public List<Component> getMaturityBonusDescriptions(int currentMaturity) {
 		List<Component> list = new ArrayList<>();
 		list.add(MorphlingItem.maturityBonusLine("Swarm Retaliation (Pests hunt your attacker)", 2, currentMaturity));
 		list.add(MorphlingItem.maturityBonusLine("Infest (Kills spawn pests targeting nearby foes)", 3, currentMaturity));
-		list.add(MorphlingItem.maturityBonusLine("Plague Burst (AoE Wither at low health)", 4, currentMaturity));
+		list.add(MorphlingItem.maturityBonusLine("Plague Burst (AoE Searing at low health)", 4, currentMaturity));
 		list.add(MorphlingItem.maturityBonusLine("Vermin Crown (Kills store swarms; staff releases hunters)", 5, currentMaturity));
 		return list;
 	}

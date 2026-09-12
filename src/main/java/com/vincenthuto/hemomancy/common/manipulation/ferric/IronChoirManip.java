@@ -30,12 +30,15 @@ public class IronChoirManip extends BloodManipulation {
 
 	@Override
 	public void getAction(Player player, Level world, ItemStack heldItemMainhand, BlockPos position, float heldTicks) {
+        try (var schoolCast = com.vincenthuto.hemomancy.common.damage.SchoolDamage.cast(this, player, getRequiredChargeTicks() <= 0 ? 1 : heldTicks / getRequiredChargeTicks())) {
+
 		if (!(world instanceof ServerLevel level)) return;
 		player.addEffect(new MobEffectInstance(MobEffects.DAMAGE_RESISTANCE, 25, 0, false, true));
 		player.getPersistentData().putInt(SHOTS_LEFT, 3);
 		tickContinuousAction(player, world);
         ManipulationVisuals.attached(player, ManipulationVisuals.Form.CHOIR, 5, 25, player.getPersistentData().getInt(SHOTS_LEFT));
-	}
+	        }
+    }
 
 	@Override
 	public void tickContinuousAction(Player player, Level world) {

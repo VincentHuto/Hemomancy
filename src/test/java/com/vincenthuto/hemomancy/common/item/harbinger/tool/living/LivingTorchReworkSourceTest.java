@@ -14,7 +14,7 @@ final class LivingTorchReworkSourceTest {
 	void meleeStatsAndCrimsonIgnitionRemainIntact() throws IOException {
 		String item = read("common/item/harbinger/tool/living/LivingTorchItem.java");
 		assertContains(item, "super(speedIn, attackDamageIn, -2.1f, EnumBloodTendency.FLAMMEUS");
-		assertContains(item, "CrimsonFireHelper.igniteCrimson(target, 4)");
+		assertFalse(item.contains("igniteCrimson"), "Searing must replace the vanilla burn stream");
 	}
 
 	@Test
@@ -26,7 +26,7 @@ final class LivingTorchReworkSourceTest {
 		assertContains(item, "HemoCapabilityAccess.getBloodVolume(player)");
 		assertContains(item, "LivingTorchBreathRules.isDamagePulse");
 		assertContains(item, "player.hasLineOfSight(target)");
-		assertContains(item, "CrimsonFireHelper.igniteCrimson(target, 4)");
+		assertFalse(item.contains("igniteCrimson"), "Searing must replace the vanilla burn stream");
 		assertContains(item, "PacketHandler.syncPlayerAnimation");
 		assertContains(item, "stopUsingItem");
 		assertContains(item, "HemoDamageTypes.livingTorchBreath");

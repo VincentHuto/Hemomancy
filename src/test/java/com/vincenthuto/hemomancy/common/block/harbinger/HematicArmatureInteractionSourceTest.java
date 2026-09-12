@@ -16,7 +16,7 @@ public final class HematicArmatureInteractionSourceTest {
 		String restraint = read(SOURCE_ROOT.resolve(
 				"com/vincenthuto/hemomancy/common/entity/utility/ArmatureRestraintEntity.java"));
 		String blockEntity = read(SOURCE_ROOT.resolve(
-				"com/vincenthuto/hemomancy/common/tile/crafting/HematicArmatureBlockEntity.java"));
+				"com/vincenthuto/hemomancy/common/tile/harbinger/crafting/HematicArmatureBlockEntity.java"));
 		String block = read(SOURCE_ROOT.resolve(
 				"com/vincenthuto/hemomancy/common/block/harbinger/crafting/HematicArmatureBlock.java"));
 		String rotationHelper = read(SOURCE_ROOT.resolve(
@@ -24,7 +24,7 @@ public final class HematicArmatureInteractionSourceTest {
 		String fillerBlock = read(SOURCE_ROOT.resolve(
 				"com/vincenthuto/hemomancy/common/block/shared/FillerBlock.java"));
 		String renderer = read(SOURCE_ROOT.resolve(
-				"com/vincenthuto/hemomancy/client/render/tile/crafting/HematicArmatureRenderer.java"));
+				"com/vincenthuto/hemomancy/client/render/tile/harbinger/crafting/HematicArmatureRenderer.java"));
 		String model = read(SOURCE_ROOT.resolve(
 				"com/vincenthuto/hemomancy/client/model/tile/crafting/HematicArmatureModel.java"));
 

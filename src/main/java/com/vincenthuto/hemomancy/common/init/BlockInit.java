@@ -286,6 +286,14 @@ public class BlockInit {
 					.strength(1.5F, 6.0F)
 					.sound(SoundType.BONE_BLOCK)));
 
+	public static final DeferredHolder<Block, Block> harbinger_escritoire = MODELEDBLOCKS.register("harbinger_escritoire",
+			() -> new HarbingerEscritoireBlock(BlockBehaviour.Properties.of()
+					.mapColor(MapColor.COLOR_BROWN)
+					.requiresCorrectToolForDrops()
+					.noOcclusion()
+					.strength(2.5F, 6.0F)
+					.sound(SoundType.WOOD)));
+
 	public static final DeferredHolder<Block, Block> humoral_barometer = MODELEDBLOCKS.register("humoral_barometer",
 			() -> new HumoralBarometerBlock(BlockBehaviour.Properties.of()
 					.mapColor(MapColor.COLOR_RED)

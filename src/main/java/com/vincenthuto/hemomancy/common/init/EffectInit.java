@@ -259,6 +259,24 @@ public class EffectInit {
 
     public static final DeferredHolder<MobEffect, MobEffect> paralysis = EFFECTS.register("paralysis", ParalysisEffect::new);
 
+    public static final DeferredHolder<MobEffect, MobEffect> sanguine_pressure = schoolState("sanguine_pressure", 0xB21B38);
+    public static final DeferredHolder<MobEffect, MobEffect> necrosis = schoolState("necrosis", 0x435F31);
+    public static final DeferredHolder<MobEffect, MobEffect> lodestone = schoolState("lodestone", 0x929C9C);
+    public static final DeferredHolder<MobEffect, MobEffect> searing = schoolState("searing", 0xEF432A);
+    public static final DeferredHolder<MobEffect, MobEffect> rime = EFFECTS.register("rime",
+            () -> new ManipulationStatusEffect("rime", MobEffectCategory.HARMFUL, 0x79BFD9)
+                    .addAttributeModifier(net.minecraft.world.entity.ai.attributes.Attributes.MOVEMENT_SPEED,
+                            Hemomancy.rloc("rime"), -0.15, net.minecraft.world.entity.ai.attributes.AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL));
+    public static final DeferredHolder<MobEffect, MobEffect> disrupted = schoolState("disrupted", 0xEACA61);
+    public static final DeferredHolder<MobEffect, MobEffect> illuminated = schoolState("illuminated", 0xFFF5C9);
+    public static final DeferredHolder<MobEffect, MobEffect> obscured = schoolState("obscured", 0x423157);
+    public static final DeferredHolder<MobEffect, MobEffect> veiled = EFFECTS.register("veiled",
+            () -> new ManipulationStatusEffect("veiled", MobEffectCategory.BENEFICIAL, 0x685482));
+
+    private static DeferredHolder<MobEffect, MobEffect> schoolState(String name, int color) {
+        return EFFECTS.register(name, () -> new ManipulationStatusEffect(name, MobEffectCategory.HARMFUL, color));
+    }
+
     public static final DeferredHolder<MobEffect, MobEffect> conductive_mark = EFFECTS.register("conductive_mark",
             () -> new ManipulationStatusEffect("conductive_mark", MobEffectCategory.HARMFUL, 0xE8D84A));
 

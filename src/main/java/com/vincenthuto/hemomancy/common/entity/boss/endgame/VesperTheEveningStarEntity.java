@@ -406,6 +406,11 @@ public class VesperTheEveningStarEntity extends Monster {
 	void setActionHitMask(int mask) { actionHitMask = mask; }
 
 	void beginWeaponAction(VesperWeaponAction action, Vec3 aim) {
+        if (action.tendency() != null) getPersistentData().put("hemomancy:weapon_school_hit",
+                com.vincenthuto.hemomancy.common.damage.SchoolHitContext.direct(
+                        com.vincenthuto.hemomancy.Hemomancy.rloc("vesper_" + action.name().toLowerCase(java.util.Locale.ROOT)),
+                        action.tendency(), null, this).withApplication(action == VesperWeaponAction.CHAIN_SWEEP ? 80 : 0, 1).save());
+        else getPersistentData().remove("hemomancy:weapon_school_hit");
 		lastWeaponAction = action;
 		lockedActionAim = aim;
 		lockedActionOrigin = position();
@@ -416,6 +421,7 @@ public class VesperTheEveningStarEntity extends Monster {
 	}
 
 	void clearWeaponAction() {
+        getPersistentData().remove("hemomancy:weapon_school_hit");
 		entityData.set(DATA_WEAPON_ACTION, VesperWeaponAction.NONE.ordinal());
 		entityData.set(DATA_ACTION_TICK, 0);
 		actionHitMask = 0;

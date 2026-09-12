@@ -601,6 +601,7 @@ public class ItemInit {
 	public static final DeferredHolder<Item, Item> memory_lingering_blood_binding = memory("lingering_blood_binding", ManipulationInit.lingering_blood_binding);
 	public static final DeferredHolder<Item, Item> memory_chain_blood_binding = memory("chain_blood_binding", ManipulationInit.chain_blood_binding);
 	public static final DeferredHolder<Item, Item> memory_blood_lattice = memory("blood_lattice", ManipulationInit.blood_lattice);
+    public static final DeferredHolder<Item, Item> memory_sanguine_marionette = memory("sanguine_marionette", ManipulationInit.sanguine_marionette);
 	public static final DeferredHolder<Item, Item> memory_blood_needle_fan = memory("blood_needle_fan", ManipulationInit.blood_needle_fan);
 	public static final DeferredHolder<Item, Item> memory_blood_needle_lance = memory("blood_needle_lance", ManipulationInit.blood_needle_lance);
 	public static final DeferredHolder<Item, Item> memory_guided_blood_shot = memory("guided_blood_shot", ManipulationInit.guided_blood_shot);

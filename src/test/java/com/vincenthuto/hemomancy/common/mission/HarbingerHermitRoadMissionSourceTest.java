@@ -255,7 +255,7 @@ public final class HarbingerHermitRoadMissionSourceTest {
 		String mnemonistEntity = read(SOURCE_ROOT.resolve(
 				"com/vincenthuto/hemomancy/common/entity/npc/harbinger/HarbingerMnemonistEntity.java"));
 		String somaticLoom = read(SOURCE_ROOT.resolve(
-				"com/vincenthuto/hemomancy/common/tile/crafting/SomaticLoomBlockEntity.java"));
+				"com/vincenthuto/hemomancy/common/tile/harbinger/crafting/SomaticLoomBlockEntity.java"));
 		String eventHandler = read(SOURCE_ROOT.resolve(
 				"com/vincenthuto/hemomancy/common/entity/npc/dialogue/DialogueEventHandler.java"));
 		String advancementGranter = read(SOURCE_ROOT.resolve(

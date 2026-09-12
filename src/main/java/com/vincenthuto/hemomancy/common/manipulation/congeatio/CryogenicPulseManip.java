@@ -42,10 +42,7 @@ public class CryogenicPulseManip extends BloodManipulation {
 
 	private static final double RADIUS = 5.0;
 	private static final float DAMAGE = 3.0f; // 1.5 hearts
-	private static final int SLOWNESS_DURATION = 60;  // 3 s
-	private static final int SLOWNESS_AMPLIFIER = 2;  // Slowness III
-	private static final int FATIGUE_DURATION = 80;   // 4 s
-	private static final int FATIGUE_AMPLIFIER = 0;   // Mining Fatigue I
+	private static final int RIME_DURATION = 60;
 
 	public CryogenicPulseManip(String name, double cost, double alignLevel, double xpCost,
 			EnumManipulationType type, EnumManipulationRank rank, EnumBloodTendency tendency,
@@ -55,6 +52,8 @@ public class CryogenicPulseManip extends BloodManipulation {
 
 	@Override
 	public void getAction(Player player, Level world, ItemStack heldItemMainhand, BlockPos position) {
+        try (var schoolCast = com.vincenthuto.hemomancy.common.damage.SchoolDamage.cast(this, player, 1)) {
+
 		if (!(world instanceof ServerLevel sLevel)) return;
 
 		BlockPos center = player.blockPosition();
@@ -64,14 +63,10 @@ public class CryogenicPulseManip extends BloodManipulation {
 
 		for (LivingEntity target : targets) {
 			if (target.distanceTo(player) <= RADIUS) {
-				target.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN,
-						SLOWNESS_DURATION, SLOWNESS_AMPLIFIER, false, true));
-				target.addEffect(new MobEffectInstance(MobEffects.DIG_SLOWDOWN,
-						FATIGUE_DURATION, FATIGUE_AMPLIFIER, false, true));
 				ManipulationVisuals.attached(target, ManipulationVisuals.Form.BONE, target.getBbWidth()*.5, 24, 1);
 				float damage = (float) (DAMAGE * SkillPointHelper.getCrimsonMasteryMultiplier(player));
 				ManipulationParticles.hurt(this, target, world.damageSources().freeze(),
-						TendencyAffinityRules.adjustManipulationDamage(player, target, this, damage));
+						damage, RIME_DURATION, 1);
 			}
 		}
 
@@ -81,5 +76,6 @@ public class CryogenicPulseManip extends BloodManipulation {
 		ManipulationVisuals.burst(sLevel, ManipulationVisuals.Form.CRYOGENIC_PULSE, player.position(), player.position(), RADIUS, 28);
         RandomSource random = world.random;
 
-	}
+	        }
+    }
 }

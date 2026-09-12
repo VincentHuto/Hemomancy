@@ -13,9 +13,9 @@ public final class ScryingPodiumShaderResourceTest {
 
 	public static void main(String[] args) throws IOException {
 		String scryingRenderer = read(SOURCE_ROOT.resolve(
-				"com/vincenthuto/hemomancy/client/render/tile/functional/ScryingPodiumRenderer.java"));
+				"com/vincenthuto/hemomancy/client/render/tile/harbinger/functional/ScryingPodiumRenderer.java"));
 		String fungalRenderer = read(SOURCE_ROOT.resolve(
-				"com/vincenthuto/hemomancy/client/render/tile/functional/FungalPodiumRenderer.java"));
+				"com/vincenthuto/hemomancy/client/render/tile/harbinger/functional/FungalPodiumRenderer.java"));
 		String waterShader = read(RESOURCE_ROOT.resolve("assets/hemomancy/shaders/core/water.vsh"));
 		String waterShaderJson = read(RESOURCE_ROOT.resolve("assets/hemomancy/shaders/core/water.json"));
 

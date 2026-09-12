@@ -56,6 +56,8 @@ public final class ThreadRipperManip extends BloodManipulation {
 
 	@Override
 	public void getAction(Player player, Level level, ItemStack heldItem, BlockPos position, float chargeTicks) {
+        try (var schoolCast = com.vincenthuto.hemomancy.common.damage.SchoolDamage.cast(this, player, getRequiredChargeTicks() <= 0 ? 1 : chargeTicks / getRequiredChargeTicks())) {
+
 		if (!(level instanceof ServerLevel server)) return;
 		CircusCarouselEntity carousel = aimedCarousel(player);
 		if (carousel != null && carousel.severCaptive(player)) { ManipulationVisuals.burst(server, ManipulationVisuals.Form.THREAD, player.getEyePosition(), carousel.position().add(0, 2.5, 0), 1, 24); return; }
@@ -81,7 +83,8 @@ public final class ThreadRipperManip extends BloodManipulation {
                 ? server.getEntity(bound.hemomancy$getOwnerUUID()) : null;
         ManipulationVisuals.burst(server, ManipulationVisuals.Form.THREAD,
                 controller!=null?controller.getEyePosition():player.getEyePosition(), target.getEyePosition(), 1, 24); server.playSound(null, target.blockPosition(), SoundEvents.CHAIN_BREAK, SoundSource.PLAYERS, 0.8F, 1.25F);
-	}
+	        }
+    }
 
 	private static CircusCarouselEntity aimedCarousel(Player player) {
 		return player.level().getEntitiesOfClass(CircusCarouselEntity.class,

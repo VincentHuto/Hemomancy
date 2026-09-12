@@ -77,6 +77,8 @@ public class ExsanguinateManip extends BloodManipulation {
 
 	@Override
 	public void getAction(Player player, Level world, ItemStack heldItemMainhand, BlockPos position) {
+        try (var schoolCast = com.vincenthuto.hemomancy.common.damage.SchoolDamage.cast(this, player, 1)) {
+
 		if (!(world instanceof ServerLevel sLevel)) return;
 
 		BlockPos center = player.blockPosition();
@@ -91,7 +93,7 @@ public class ExsanguinateManip extends BloodManipulation {
 		LivingEntity target = targetOpt.get();
 		float drainDamage = target.getHealth() * DRAIN_DAMAGE_MULTIPLIER * (float) SkillPointHelper.getCrimsonMasteryMultiplier(player);
 		if (!ManipulationParticles.hurt(this, target, world.damageSources().magic(),
-				TendencyAffinityRules.adjustManipulationDamage(player, target, this, drainDamage)) || target.isAlive()) return;
+				(drainDamage)) || target.isAlive()) return;
 		HemomancyTendrilEffects.exsanguinate(player, target);
         ManipulationVisuals.burst(sLevel, ManipulationVisuals.Form.MORTEM_BURST, target.position(), target.position(), .7, 24);
 
@@ -107,5 +109,6 @@ public class ExsanguinateManip extends BloodManipulation {
 		world.playSound(null, center, SoundEvents.WITHER_DEATH, SoundSource.PLAYERS, 0.7f, 1.8f);
 		world.playSound(null, center, SoundEvents.BREWING_STAND_BREW, SoundSource.PLAYERS, 0.5f, 0.7f);
 
-	}
+	        }
+    }
 }

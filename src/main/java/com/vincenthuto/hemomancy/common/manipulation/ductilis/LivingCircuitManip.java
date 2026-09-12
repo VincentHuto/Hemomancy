@@ -46,6 +46,8 @@ public class LivingCircuitManip extends BloodManipulation {
 
 	@Override
 	public void getAction(Player player, Level world, ItemStack heldItemMainhand, BlockPos position, float heldTicks) {
+        try (var schoolCast = com.vincenthuto.hemomancy.common.damage.SchoolDamage.cast(this, player, getRequiredChargeTicks() <= 0 ? 1 : heldTicks / getRequiredChargeTicks())) {
+
 		if (!(world instanceof ServerLevel level)) return;
 		for (Player ally : recipients(player)) {
 			ally.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SPEED, 25, 1, false, true));
@@ -53,5 +55,6 @@ public class LivingCircuitManip extends BloodManipulation {
 			ManipulationReactiveEvents.armLivingCircuit(ally);
 			DuctilisLightningEffects.livingCircuit(player, ally);
 		}
-	}
+	        }
+    }
 }

@@ -25,7 +25,7 @@ public final class PuppeteerSummonRulesTest {
 				PuppeteerCommandMode.GUARD.retainsAutomaticTarget());
 		assertTrue("hunt retains an automatic hostile target",
 				PuppeteerCommandMode.HUNT.retainsAutomaticTarget());
-		assertEquals("six summon shapes", 6, PuppeteerSummonDefinitions.all().size());
+		assertEquals("seven summon shapes", 7, PuppeteerSummonDefinitions.all().size());
 
 		PuppeteerSummonDefinition vulture = PuppeteerSummonDefinitions.byName("veinwing_vulture")
 				.orElseThrow(() -> new AssertionError("missing veinwing vulture"));
@@ -39,6 +39,8 @@ public final class PuppeteerSummonRulesTest {
 				.orElseThrow(() -> new AssertionError("missing scarlet mummer"));
 		PuppeteerSummonDefinition hound = PuppeteerSummonDefinitions.byName("sanguine_hound")
 				.orElseThrow(() -> new AssertionError("missing sanguine hound"));
+		PuppeteerSummonDefinition ringmaster = PuppeteerSummonDefinitions.byName("ringmaster_pattern")
+				.orElseThrow(() -> new AssertionError("missing ringmaster pattern"));
 
 		assertEquals("vulture degree", 3, vulture.requiredDegree());
 		assertEquals("spitter degree", 3, spitter.requiredDegree());
@@ -51,6 +53,7 @@ public final class PuppeteerSummonRulesTest {
 		assertDouble("scarlet mummer damage", 3.0, mummer.baseDamage());
 		assertDouble("scarlet mummer speed", 0.30, mummer.movementSpeed());
 		assertEquals("sanguine hound degree", 4, hound.requiredDegree());
+		assertEquals("ringmaster pattern degree", 4, ringmaster.requiredDegree());
 		assertEquals("sanguine hound call cost", 44, hound.threadSummonCost());
 		assertEquals("sanguine hound upkeep", 15, hound.threadUpkeepPerMinute());
 		assertDouble("sanguine hound health", 30.0, hound.baseHealth());

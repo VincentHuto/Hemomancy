@@ -1,5 +1,7 @@
 package com.vincenthuto.hemomancy.common.manipulation.tenebris;
 
+import com.vincenthuto.hemomancy.common.damage.*;
+
 import com.vincenthuto.hemomancy.common.manipulation.ManipulationParticles;
 import com.vincenthuto.hemomancy.common.manipulation.ManipulationVisuals;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
@@ -33,6 +35,8 @@ public class UmbralReversalManip extends BloodManipulation {
 
 	@Override
 	public void getAction(Player player, Level world, ItemStack heldItemMainhand, BlockPos position) {
+        try (var schoolCast = com.vincenthuto.hemomancy.common.damage.SchoolDamage.cast(this, player, 1)) {
+
 		if (!(world instanceof ServerLevel sLevel)) return;
 
 		BlockPos origin = player.blockPosition();
@@ -45,7 +49,7 @@ public class UmbralReversalManip extends BloodManipulation {
 
 		for (LivingEntity target : world.getEntitiesOfClass(LivingEntity.class, new AABB(origin).inflate(4.0),
 				e -> ManipulationCombatHelper.canHarm(player, e))) {
-			target.addEffect(new MobEffectInstance(MobEffects.BLINDNESS, 80, 0, false, true));
+			SchoolStates.apply(player, target, SchoolState.OBSCURED, 80);
 		}
 		ManipulationParticles.accent(sLevel, EnumBloodTendency.TENEBRIS, Vec3.atCenterOf(origin), net.minecraft.world.phys.Vec3.ZERO);
 		ManipulationVisuals.burst(sLevel, ManipulationVisuals.Form.TELEPORT, player.position(), player.position(), 1, 18);
@@ -54,7 +58,8 @@ public class UmbralReversalManip extends BloodManipulation {
 		player.fallDistance = 0;
 		player.resetFallDistance();
 		world.playSound(null, destination, SoundEvents.ENDERMAN_TELEPORT, SoundSource.PLAYERS, 0.8F, 0.7F);
-	}
+	        }
+    }
 
 	private BlockPos destination(Player player) {
 		Level world = player.level();

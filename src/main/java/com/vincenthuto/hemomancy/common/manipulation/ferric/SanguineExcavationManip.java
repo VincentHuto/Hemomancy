@@ -60,6 +60,8 @@ public class SanguineExcavationManip extends BloodManipulation {
 
 	@Override
 	public void getAction(Player player, Level world, ItemStack heldItemMainhand, BlockPos position) {
+        try (var schoolCast = com.vincenthuto.hemomancy.common.damage.SchoolDamage.cast(this, player, 1)) {
+
 		if (!(world instanceof ServerLevel sLevel)) {
 			return;
 		}
@@ -128,5 +130,6 @@ public class SanguineExcavationManip extends BloodManipulation {
 		if (!toBreak.isEmpty()) {
 			world.playSound(null, center, SoundEvents.IRON_GOLEM_DAMAGE, SoundSource.PLAYERS, 0.7f, 1.4f);
 		}
-	}
+	        }
+    }
 }

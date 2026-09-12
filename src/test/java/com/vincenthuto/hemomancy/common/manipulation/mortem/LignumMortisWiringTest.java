@@ -36,9 +36,11 @@ class LignumMortisWiringTest {
 	@Test
 	void castingUsesOrganicTendrilsInsteadOfLightning() throws Exception {
 		String manipulation = read("common/manipulation/mortem/LignumMortisManip.java");
+		String visuals = read("common/manipulation/BloodFlowVisuals.java");
 
-		assertTrue(manipulation.contains("TendrilEffectSpawner.spawn"));
-		assertTrue(manipulation.contains("new TendrilAnchor.Point(start)"));
+		assertTrue(manipulation.contains("BloodFlowVisuals.lignum"));
+		assertTrue(visuals.contains("new TendrilAnchor.Point(target)"));
+		assertTrue(visuals.contains("Style.LIGNUM"));
 		assertTrue(!manipulation.contains("LightningTesterSpawner"));
 	}
 

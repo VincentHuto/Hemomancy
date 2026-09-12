@@ -30,7 +30,7 @@ public class HematicFlareManip extends BloodManipulation {
 	private static final double RAY_DOT = 0.975D;
 	private static final int GLOWING_TICKS = 180;
 	private static final float BASE_DAMAGE = 3.0F;
-	private static final float CONCEALED_BONUS = 2.0F;
+
 
 	public HematicFlareManip(String name, double cost, double alignLevel, double xpCost,
 			EnumManipulationType type, EnumManipulationRank rank, EnumBloodTendency tendency,
@@ -54,6 +54,8 @@ public class HematicFlareManip extends BloodManipulation {
 
 	@Override
 	public void getAction(Player player, Level world, ItemStack heldItemMainhand, BlockPos position) {
+        try (var schoolCast = com.vincenthuto.hemomancy.common.damage.SchoolDamage.cast(this, player, 1)) {
+
 		if (!(world instanceof ServerLevel sLevel)) return;
 
 		int brightEyed = SkillPointHelper.getBrightEyedLevel(player);
@@ -64,18 +66,9 @@ public class HematicFlareManip extends BloodManipulation {
 
 		if (target != null) {
 			boolean concealed = target.hasEffect(MobEffects.INVISIBILITY);
-			if (concealed) {
-				target.removeEffect(MobEffects.INVISIBILITY);
-			}
-			target.addEffect(new MobEffectInstance(MobEffects.GLOWING,
-					BodyRefinementSkillRules.revealTicks(GLOWING_TICKS, brightEyed), 0, false, true));
-			float damage = (float) ((BASE_DAMAGE + (concealed ? CONCEALED_BONUS : 0.0F))
-					* SkillPointHelper.getCrimsonMasteryMultiplier(player));
-			float adjusted = TendencyAffinityRules.adjustManipulationDamage(player, target, this, damage);
-			if (ManipulationParticles.hurt(this, target, world.damageSources().magic(), adjusted)) {
-				SchoolHitHelper.tryTriggerConductiveArc(player, target, EnumBloodTendency.LUX, getSecondaryTend(),
-						adjusted);
-			}
+			float damage = (float) (BASE_DAMAGE * SkillPointHelper.getCrimsonMasteryMultiplier(player));
+            ManipulationCombatHelper.hurt(this, player, target, sLevel, damage,
+                    BodyRefinementSkillRules.revealTicks(GLOWING_TICKS, brightEyed), 1);
 			world.playSound(null, target.blockPosition(), SoundEvents.AMETHYST_BLOCK_CHIME, SoundSource.PLAYERS,
 					0.85F, concealed ? 1.75F : 1.45F);
         HemomancyTendrilEffects.luxRelease(player, target.getEyePosition());
@@ -87,7 +80,8 @@ public class HematicFlareManip extends BloodManipulation {
 		}
 
 		sendRayParticles(sLevel, eye, look, range);
-	}
+	        }
+    }
 
 	@Nullable
 	private LivingEntity findTarget(Player player, Level world, double range) {

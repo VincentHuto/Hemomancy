@@ -25,6 +25,8 @@ public class BloodEclipseMantleManip extends BloodManipulation {
 
 	@Override
 	public void getAction(Player player, Level world, ItemStack heldItemMainhand, BlockPos position) {
+        try (var schoolCast = com.vincenthuto.hemomancy.common.damage.SchoolDamage.cast(this, player, 1)) {
+
 		player.addEffect(new MobEffectInstance(MobEffects.DAMAGE_RESISTANCE, 360, 1, false, true));
 		player.addEffect(new MobEffectInstance(MobEffects.FIRE_RESISTANCE, 360, 0, false, true));
 		player.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, 360, 0, false, true));
@@ -33,5 +35,6 @@ public class BloodEclipseMantleManip extends BloodManipulation {
 		if (world instanceof ServerLevel sLevel) {
 			ManipulationParticles.accent(sLevel, EnumBloodTendency.TENEBRIS, player.position().add(0, 1, 0), net.minecraft.world.phys.Vec3.ZERO);
 		}
-	}
+	        }
+    }
 }

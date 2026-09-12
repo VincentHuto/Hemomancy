@@ -15,10 +15,10 @@ public final class BloodDrunkPuppeteerBehaviorSourceTest {
 				puppeteerEntity, "new AvoidEntityGoal<>(this, Player.class");
 
 		String dollEntity = read("src/main/java/com/vincenthuto/hemomancy/common/entity/mob/monster/EnthralledDollEntity.java");
-		assertContains("summoned dolls should mirror the puppeteer's target",
-				dollEntity, "LivingEntity puppeteerTarget = puppeteer.getTarget();");
+		assertContains("summoned dolls should mirror their puppeteer owner's target",
+				dollEntity, "LivingEntity ownerTarget = owner.getTarget();");
 		assertContains("summoned dolls should navigate directly toward the puppeteer's target",
-				dollEntity, "getNavigation().moveTo(puppeteerTarget");
+				dollEntity, "getNavigation().moveTo(ownerTarget");
 		assertContains("summoned dolls should inherit the puppeteer's target when spawned",
 				puppeteerEntity, "doll.setTarget(getTarget());");
 

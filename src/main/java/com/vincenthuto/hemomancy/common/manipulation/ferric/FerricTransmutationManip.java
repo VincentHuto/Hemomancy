@@ -47,6 +47,8 @@ public class FerricTransmutationManip extends BloodManipulation {
 
 	@Override
 	public void getAction(Player player, Level world, ItemStack heldItemMainhand, BlockPos position) {
+        try (var schoolCast = com.vincenthuto.hemomancy.common.damage.SchoolDamage.cast(this, player, 1)) {
+
 		if (!(world instanceof ServerLevel sLevel)) return;
 
 		player.addEffect(new MobEffectInstance(MobEffects.DAMAGE_BOOST,
@@ -72,5 +74,6 @@ public class FerricTransmutationManip extends BloodManipulation {
 
 		world.playSound(null, pos, SoundEvents.ANVIL_USE, SoundSource.PLAYERS, 0.7f, 0.6f);
 		world.playSound(null, pos, SoundEvents.BREWING_STAND_BREW, SoundSource.PLAYERS, 0.5f, 1.4f);
-	}
+	        }
+    }
 }

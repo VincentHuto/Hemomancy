@@ -38,6 +38,8 @@ public class SanguineMendingManip extends BloodManipulation {
 
 	@Override
 	public void getAction(Player player, Level world, ItemStack heldItemMainhand, BlockPos position) {
+        try (var schoolCast = com.vincenthuto.hemomancy.common.damage.SchoolDamage.cast(this, player, 1)) {
+
 		if (heldItemMainhand.isEmpty() || !heldItemMainhand.isDamageableItem()
 				|| !heldItemMainhand.isDamaged()) {
 			return;
@@ -52,5 +54,6 @@ public class SanguineMendingManip extends BloodManipulation {
 		if (world instanceof ServerLevel sLevel) {
 			ManipulationVisuals.attached(player, ManipulationVisuals.Form.MENDING, 1, 18, 1);
 		}
-	}
+	        }
+    }
 }

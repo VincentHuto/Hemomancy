@@ -25,15 +25,18 @@ public class FurnaceVeinsManip extends BloodManipulation {
 
 	@Override
 	public void getAction(Player player, Level world, ItemStack heldItemMainhand, BlockPos position, float heldTicks) {
+        try (var schoolCast = com.vincenthuto.hemomancy.common.damage.SchoolDamage.cast(this, player, getRequiredChargeTicks() <= 0 ? 1 : heldTicks / getRequiredChargeTicks())) {
+
 		if (!(world instanceof ServerLevel level)) return;
 		for (LivingEntity target : level.getEntitiesOfClass(LivingEntity.class, player.getBoundingBox().inflate(5), LivingEntity::isAlive)) {
 			if (ManipulationCombatHelper.allied(player, target)) {
 				target.clearFire();
 				target.setTicksFrozen(0);
+				target.removeEffect(com.vincenthuto.hemomancy.common.init.EffectInit.rime);
+				target.removeEffect(com.vincenthuto.hemomancy.common.init.EffectInit.searing);
 				target.addEffect(new net.minecraft.world.effect.MobEffectInstance(net.minecraft.world.effect.MobEffects.FIRE_RESISTANCE, 25, 0, false, true));
 			} else if (ManipulationCombatHelper.canHarm(player, target)) {
-				target.igniteForSeconds(3);
-				ManipulationCombatHelper.hurt(this, player, target, level, 2.0F);
+				ManipulationCombatHelper.hurt(this, player, target, level, 2.0F, 60, 1);
 			}
 		}
 		for (BlockPos pos : BlockPos.betweenClosed(player.blockPosition().offset(-5, -5, -5),
@@ -43,5 +46,6 @@ public class FurnaceVeinsManip extends BloodManipulation {
 			}
 		}
 		ManipulationVisuals.attached(player, ManipulationVisuals.Form.FURNACE, 5, 25, 1);
-	}
+	        }
+    }
 }

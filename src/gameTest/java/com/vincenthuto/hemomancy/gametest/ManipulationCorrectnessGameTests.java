@@ -60,9 +60,9 @@ public final class ManipulationCorrectnessGameTests {
             try {
                 ManipulationInit.exsanguinate.get().getAction(p, h.getLevel(), ItemStack.EMPTY, p.blockPosition());
                 h.assertTrue(!victim.isAlive(), "Valid execution failed");
-                near(h, 2600, HemoCapabilityAccess.requireBloodVolume(p).getBloodVolume(), "Valid execution did not refund once");
+                near(h, 2625, HemoCapabilityAccess.requireBloodVolume(p).getBloodVolume(), "Execution refund plus the separately attributed 25 mL kill reward");
                 ManipulationInit.exsanguinate.get().getAction(p, h.getLevel(), ItemStack.EMPTY, p.blockPosition());
-                near(h, 2600, HemoCapabilityAccess.requireBloodVolume(p).getBloodVolume(), "Dead victim refunded twice");
+                near(h, 2625, HemoCapabilityAccess.requireBloodVolume(p).getBloodVolume(), "Dead victim refunded twice");
             } finally { victim.discard(); }
             h.succeed();
         } finally { p.discard(); }
@@ -226,8 +226,7 @@ public final class ManipulationCorrectnessGameTests {
     }
 
     @GameTest(templateNamespace = "minecraft", template = EMPTY, batch = "manipulation_correctness")
-    public static void funeralBellScalesEveryStatusBonusAndPayment(GameTestHelper h) {
-        var statuses = List.of(MobEffects.POISON, EffectInit.blood_loss, EffectInit.grave_debt, MobEffects.WITHER);
+    public static void funeralBellScalesBankedNecrosisAndPayment(GameTestHelper h) {
         for (int count = 0; count <= 4; count++) {
             for (int ticks : new int[]{1, 40, 80}) {
                 ServerPlayer p = player(h);
@@ -237,15 +236,19 @@ public final class ManipulationCorrectnessGameTests {
                 target.setPos(p.position().add(0, 0, 1));
                 h.getLevel().addFreshEntity(target);
                 try {
-                    for (int i = 0; i < count; i++) target.addEffect(new net.minecraft.world.effect.MobEffectInstance(statuses.get(i), 1));
+                    com.vincenthuto.hemomancy.common.damage.SchoolStates.apply(p, target,
+                            com.vincenthuto.hemomancy.common.damage.SchoolState.NECROSIS, 160);
+                    com.vincenthuto.hemomancy.common.damage.SchoolStates.data(target).get(
+                            com.vincenthuto.hemomancy.common.damage.SchoolState.NECROSIS).stored = count;
                     var bell = ManipulationInit.funeral_bell.get();
                     select(p, bell);
                     double cost = ManipulationCostLedger.collect(p, bell, 1).effectiveCost();
                     h.assertTrue(bell.tryPerformAction(p, h.getLevel(), ItemStack.EMPTY, p.blockPosition(), ticks), "Bell release rejected");
                     near(h, 2000 - cost * ticks / 80, HemoCapabilityAccess.requireBloodVolume(p).getBloodVolume(), "Bell charge payment");
-                    float raw = new float[]{4, 6, 8, 10, 12}[count] * ticks / 80;
-                    near(h, TendencyAffinityRules.adjustManipulationDamage(p, target, bell, raw), 100 - target.getHealth(), "Bell damage at " + ticks + " ticks, statuses=" + count);
-                    if (count > 0) near(h, Math.round(120F * ticks / 80), target.getEffect(MobEffects.WITHER).getDuration(), "Bell wither duration");
+                    float raw = 4F * ticks / 80;
+                    near(h, TendencyAffinityRules.adjustManipulationDamage(p, target, bell, raw) + count * ticks / 80F, 100 - target.getHealth(), "Bell damage at " + ticks + " ticks, statuses=" + count);
+                    h.assertTrue(!target.hasEffect(EffectInit.necrosis) && !target.hasEffect(MobEffects.WITHER),
+                            "Bell did not consume the bank cleanly");
                 } finally { target.discard(); p.discard(); }
             }
         }

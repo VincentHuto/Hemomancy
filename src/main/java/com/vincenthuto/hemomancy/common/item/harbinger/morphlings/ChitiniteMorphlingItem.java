@@ -60,6 +60,12 @@ public class ChitiniteMorphlingItem extends MorphlingItem {
 
 	@Override
 	public boolean tryUse(Player playerIn, InteractionHand handIn, ItemStack itemStack, Level worldIn) {
+        if (com.vincenthuto.hemomancy.common.manipulation.ductilis.Paralysis.blocksActions(playerIn)) return false;
+        if (playerIn instanceof net.minecraft.server.level.ServerPlayer server
+                && com.vincenthuto.hemomancy.common.manipulation.HematicCommandManager.isMarionetteChannel(server))
+            com.vincenthuto.hemomancy.common.manipulation.ManipulationChannelManager.stop(server, false);
+        try (var schoolAbility = MorphlingCombat.scope(this, playerIn, itemStack, null)) {
+
 		if (!MorphlingItem.tryBeginPrimalAbility(playerIn, itemStack, "PrimalCarapace",
 				500.0, 900, 260, 0)) return false;
 		CompoundTag tag = itemStack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
@@ -70,10 +76,14 @@ public class ChitiniteMorphlingItem extends MorphlingItem {
 				PRIMAL_CARAPACE_DURATION, 2, true, false, true));
 		playerIn.setAbsorptionAmount(Math.min(playerIn.getAbsorptionAmount() + 8.0f, 16.0f));
 		return true;
-	}
+
+        }
+    }
 
 	@Override
 	public void onEquippedTick(Player player, ItemStack stack) {
+        try (var schoolAbility = MorphlingCombat.scope(this, player, stack, null)) {
+
 		int maturity = MorphlingItem.getMaturityLevel(stack);
 
 		// Base effect: Chitinous Bulwark (armor toughness, amplifier capped at 2)
@@ -108,7 +118,7 @@ public class ChitiniteMorphlingItem extends MorphlingItem {
 				float burstDamage = Math.min(18.0f, 4.0f + stored * 0.65f);
 				for (net.minecraft.world.entity.monster.Monster mob :
 						player.level().getEntitiesOfClass(net.minecraft.world.entity.monster.Monster.class, area)) {
-					mob.hurt(player.damageSources().thorns(player), burstDamage);
+					if (!mob.hurt(player.damageSources().thorns(player), burstDamage)) continue;
 					double dx = mob.getX() - player.getX();
 					double dz = mob.getZ() - player.getZ();
 					double dist = Math.sqrt(dx * dx + dz * dz);
@@ -121,10 +131,14 @@ public class ChitiniteMorphlingItem extends MorphlingItem {
 				stack.set(DataComponents.CUSTOM_DATA, CustomData.of(tag));
 			}
 		}
-	}
+
+        }
+    }
 
 	@Override
 	public void onEquippedHurt(Player player, ItemStack stack, DamageSource source, float amount) {
+        try (var schoolAbility = MorphlingCombat.scope(this, player, stack, source)) {
+
 		int maturity = MorphlingItem.getMaturityLevel(stack);
 
 		// Developing (2+): Carapace Thorns — reflect damage to melee attackers
@@ -154,7 +168,7 @@ public class ChitiniteMorphlingItem extends MorphlingItem {
 									net.minecraft.world.entity.monster.Monster.class, area);
 					float burstDamage = amount * 0.5f; // 50% of triggering hit
 					for (net.minecraft.world.entity.monster.Monster mob : hostiles) {
-						mob.hurt(player.damageSources().thorns(player), burstDamage);
+						if (!mob.hurt(player.damageSources().thorns(player), burstDamage)) continue;
 						// Knockback from the burst
 						double dx = mob.getX() - player.getX();
 						double dz = mob.getZ() - player.getZ();
@@ -174,7 +188,9 @@ public class ChitiniteMorphlingItem extends MorphlingItem {
 				stack.set(DataComponents.CUSTOM_DATA, CustomData.of(tag));
 			}
 		}
-	}
+
+        }
+    }
 
 	@Override
 	public List<Component> getMaturityBonusDescriptions(int currentMaturity) {

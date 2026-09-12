@@ -61,6 +61,11 @@ public final class LivingFlailHeadProjectileEntity extends ThrowableProjectile {
 		originalHand = hand;
 		entityData.set(PRIMARY_TENDENCY, (primary == null ? EnumBloodTendency.CONGEATIO : primary).name());
 		entityData.set(SECONDARY_TENDENCY, secondary == null ? "" : secondary.name());
+        com.vincenthuto.hemomancy.common.damage.SchoolDamage.capture(this,
+                com.vincenthuto.hemomancy.common.damage.SchoolHitContext.direct(
+                        com.vincenthuto.hemomancy.Hemomancy.rloc("living_flail"),
+                        primary == null ? EnumBloodTendency.CONGEATIO : primary, secondary, getOwner())
+                        .withCharge(charge).withApplication(LivingFlailRules.slownessTicks(charge), 1));
 	}
 
 	public float getCharge() {

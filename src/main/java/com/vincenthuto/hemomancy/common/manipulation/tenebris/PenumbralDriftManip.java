@@ -1,5 +1,7 @@
 package com.vincenthuto.hemomancy.common.manipulation.tenebris;
 
+import com.vincenthuto.hemomancy.common.damage.*;
+
 import com.vincenthuto.hemomancy.common.manipulation.ManipulationVisuals;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.EnumVeinSections;
@@ -21,7 +23,10 @@ public class PenumbralDriftManip extends BloodManipulation {
 
 	@Override
 	public void getAction(Player player, Level world, ItemStack heldItemMainhand, BlockPos position, float heldTicks) {
-		ManipulationVisuals.attached(player, ManipulationVisuals.Form.VEIL, 1, 25, 1); player.addEffect(new MobEffectInstance(MobEffects.INVISIBILITY, 25, 0, false, false));
+        try (var schoolCast = com.vincenthuto.hemomancy.common.damage.SchoolDamage.cast(this, player, getRequiredChargeTicks() <= 0 ? 1 : heldTicks / getRequiredChargeTicks())) {
+
+		ManipulationVisuals.attached(player, ManipulationVisuals.Form.VEIL, 1, 25, 1); SchoolStates.apply(player, player, SchoolState.VEILED, 25);
 		player.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SPEED, 25, 1, false, false));
-	}
+	        }
+    }
 }

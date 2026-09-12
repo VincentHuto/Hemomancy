@@ -17,7 +17,7 @@ public final class BloodReservoirContractSourceTest {
 		String capabilityAccess = read(SOURCE_ROOT.resolve(
 				"com/vincenthuto/hemomancy/common/capability/HemoCapabilityAccess.java"));
 		String blockInteractions = read(SOURCE_ROOT.resolve(
-				"com/vincenthuto/hemomancy/common/block/shared/BlockBloodInteractions.java"));
+				"com/vincenthuto/hemomancy/common/block/harbinger/BlockBloodInteractions.java"));
 		String bloodTransfer = read(tileRoot.resolve("BloodContainerTransfer.java"));
 		String sourceTree = readAllJava(SOURCE_ROOT.resolve("com/vincenthuto/hemomancy/common"));
 

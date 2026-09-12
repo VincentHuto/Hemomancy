@@ -14,7 +14,7 @@ public final class HematicArmatureBreakDropSourceTest {
 		String block = readSource(
 				"com/vincenthuto/hemomancy/common/block/harbinger/crafting/HematicArmatureBlock.java");
 		String blockEntity = readSource(
-				"com/vincenthuto/hemomancy/common/tile/crafting/HematicArmatureBlockEntity.java");
+				"com/vincenthuto/hemomancy/common/tile/harbinger/crafting/HematicArmatureBlockEntity.java");
 
 		assertContains("armature removal drops persistent upgrade items", block,
 				"armature.dropAppliedUpgradeItems(level, pos)");

@@ -12,7 +12,7 @@ public final class MycelialLanternRendererLightingResourceTest {
 
 	public static void main(String[] args) throws IOException {
 		String renderer = read(SOURCE_ROOT.resolve(
-				"com/vincenthuto/hemomancy/client/render/tile/crafting/MycelialLanternRenderer.java"));
+				"com/vincenthuto/hemomancy/client/render/tile/harbinger/crafting/MycelialLanternRenderer.java"));
 
 		assertContains("mycelial lantern displayed item light should sample the chamber", renderer,
 				"LevelRenderer.getLightColor(te.getLevel(), te.getBlockPos().above())");

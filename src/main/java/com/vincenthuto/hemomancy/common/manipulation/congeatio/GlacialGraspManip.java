@@ -1,5 +1,7 @@
 package com.vincenthuto.hemomancy.common.manipulation.congeatio;
 
+import com.vincenthuto.hemomancy.common.damage.*;
+
 import com.vincenthuto.hemomancy.common.manipulation.ManipulationVisuals;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.EnumVeinSections;
@@ -46,6 +48,8 @@ public class GlacialGraspManip extends BloodManipulation {
 
 	@Override
 	public void getAction(Player player, Level world, ItemStack heldItemMainhand, BlockPos position) {
+        try (var schoolCast = com.vincenthuto.hemomancy.common.damage.SchoolDamage.cast(this, player, 1)) {
+
 		if (!(world instanceof ServerLevel sLevel)) {
 			return;
 		}
@@ -68,8 +72,7 @@ public class GlacialGraspManip extends BloodManipulation {
 			if (!wet || ManipulationCombatHelper.distanceToSegment(target.getEyePosition(), eye, end) > PATH_WIDTH) {
 				continue;
 			}
-			target.setTicksFrozen(Math.max(target.getTicksFrozen(), target.getTicksRequiredToFreeze() + 40));
-			target.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 100, 1, false, true));
+			SchoolStates.apply(player, target, SchoolState.RIME, 100, target.isInWaterOrRain() ? 2 : 1);
             ManipulationVisuals.attached(target,ManipulationVisuals.Form.FROZEN_VEINS,target.getBbWidth(),100,1);
 			frozenEntities++;
 		}
@@ -98,7 +101,8 @@ public class GlacialGraspManip extends BloodManipulation {
 
 
 		}
-	}
+	        }
+    }
 
 	private static void freezeWater(ServerLevel world, BlockPos target, RandomSource random, Set<BlockPos> frozenTargets,
 			Player owner) {

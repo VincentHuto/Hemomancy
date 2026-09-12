@@ -32,8 +32,11 @@ public class BloodNeedleManip extends BloodManipulation {
 
 	@Override
 	public void getAction(Player player, Level world, ItemStack heldItemMainhand, BlockPos position) {
+        try (var schoolCast = com.vincenthuto.hemomancy.common.damage.SchoolDamage.cast(this, player, 1)) {
+
 		getAction(player, world, heldItemMainhand, position, getRequiredChargeTicks());
-	}
+	        }
+    }
 
 	@Override
 	public int getRequiredChargeTicks() {
@@ -43,6 +46,8 @@ public class BloodNeedleManip extends BloodManipulation {
 	@Override
 	public void getAction(Player player, Level world, ItemStack heldItemMainhand, BlockPos position,
 			float chargeTicks) {
+        try (var schoolCast = com.vincenthuto.hemomancy.common.damage.SchoolDamage.cast(this, player, getRequiredChargeTicks() <= 0 ? 1 : chargeTicks / getRequiredChargeTicks())) {
+
 		Vec3 vector3d = player.getLookAngle();
 		Vector3 vector3f = new Vector3(vector3d);
 		float strength = ManipulationCastingRules.chargeFraction(chargeTicks, getRequiredChargeTicks());
@@ -66,7 +71,8 @@ public class BloodNeedleManip extends BloodManipulation {
 			}
 			world.addFreshEntity(needle);
 		}
-	}
+	        }
+    }
 
 	@Override
 	protected boolean canPerformAction(Player player, ItemStack heldItemMainhand, float chargeTicks) {

@@ -11,7 +11,7 @@ import java.util.Optional;
 public final class ManipulationFamilyRegistry {
 	private static final List<ManipulationFamilyDefinition> FAMILIES = List.of(
 			family("blood_binding", form("lingering_blood_binding", 1), form("chain_blood_binding", 2),
-					form("blood_lattice", 4)),
+					form("sanguine_marionette", 3), form("blood_lattice", 4)),
 			family("blood_needle", form("blood_needle_fan", 1), form("blood_needle_lance", 2)),
 			family("blood_shot", form("guided_blood_shot", 1), form("hematic_mortar", 3),
 					form("sanguine_halo", 4)),

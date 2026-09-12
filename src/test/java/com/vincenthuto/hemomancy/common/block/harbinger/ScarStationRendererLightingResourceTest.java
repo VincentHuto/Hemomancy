@@ -12,7 +12,7 @@ public final class ScarStationRendererLightingResourceTest {
 
 	public static void main(String[] args) throws IOException {
 		String renderer = read(SOURCE_ROOT.resolve(
-				"com/vincenthuto/hemomancy/client/render/tile/crafting/ScarStationRenderer.java"));
+				"com/vincenthuto/hemomancy/client/render/tile/harbinger/crafting/ScarStationRenderer.java"));
 
 		assertContains("scar station displayed item light should sample the tabletop", renderer,
 				"LevelRenderer.getLightColor(te.getLevel(), te.getBlockPos().above())");

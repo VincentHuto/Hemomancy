@@ -9,8 +9,8 @@ public final class NonEuclideanHallwayPlacementSourceTest {
 	}
 
 	public static void main(String[] args) throws IOException {
-		String block = read("src/main/java/com/vincenthuto/hemomancy/common/block/harbinger/functional/NonEuclideanHallwayBlock.java");
-		String blockEntity = read("src/main/java/com/vincenthuto/hemomancy/common/tile/functional/NonEuclideanHallwayBlockEntity.java");
+		String block = read("src/main/java/com/vincenthuto/hemomancy/common/block/harbinger/decoration/NonEuclideanHallwayBlock.java");
+		String blockEntity = read("src/main/java/com/vincenthuto/hemomancy/common/tile/harbinger/decoration/NonEuclideanHallwayBlockEntity.java");
 
 		assertContains("fresh placement should force a server-to-client block update",
 				block, "level.sendBlockUpdated(pos, state, state, 3)");

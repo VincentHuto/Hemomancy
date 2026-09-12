@@ -162,8 +162,9 @@ public final class MemoryWeavingRedesignSourceTest {
 		assertDoesNotContain("loom orb fragment shader does not paint sponge-like dark knots",
 				loomOrbFragmentShader, "knotShadow");
 		assertContains("input edits reset partial awaiting-blood progress", loom, "resetEditableRitualProgress()");
-		assertContains("memory-only loom feedback asks for catalysts", loom, "Add catalyst items to shape the memory.");
-		assertContains("bad catalyst pattern feedback is specific", loom, "No recipe accepts this catalyst pattern.");
+		assertContains("memory-only loom feedback asks for catalysts", loom, "Add catalysts for a known recipe.");
+		assertContains("valid catalyst patterns prompt output selection before blood payment", loom,
+				"Use the loom with an empty hand to choose an output before paying blood.");
 		assertDoesNotContain("loom feedback no longer says no matching recipe found", loom, "No matching recipe found.");
 		assertDoesNotContain("loom no longer fills a legacy blood tank from flasks", loom, "BloodyFlaskItem");
 		assertDoesNotContain("loom no longer fills a legacy blood tank from gourds", loom, "BloodGourdItem");

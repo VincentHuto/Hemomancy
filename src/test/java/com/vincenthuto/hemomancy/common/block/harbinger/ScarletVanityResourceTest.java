@@ -18,9 +18,9 @@ public final class ScarletVanityResourceTest {
 		String vanityBlock = readSource(
 				"com/vincenthuto/hemomancy/common/block/harbinger/functional/ScarletVanityBlock.java");
 		String vanityTile = readSource(
-				"com/vincenthuto/hemomancy/common/tile/functional/ScarletVanityBlockEntity.java");
+				"com/vincenthuto/hemomancy/common/tile/harbinger/functional/ScarletVanityBlockEntity.java");
 		String vanityRenderer = readSource(
-				"com/vincenthuto/hemomancy/client/render/tile/functional/ScarletVanityRenderer.java");
+				"com/vincenthuto/hemomancy/client/render/tile/harbinger/functional/ScarletVanityRenderer.java");
 		String vanityReflectionYaw = extractMethod(vanityRenderer, "playerReflectionYawForFacing");
 		String scryingPodium = readSource(
 				"com/vincenthuto/hemomancy/common/block/harbinger/functional/ScryingPodiumBlock.java");

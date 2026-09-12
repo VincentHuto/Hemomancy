@@ -93,7 +93,7 @@ public class EquippedMorphlingEvents {
 			boolean needsBonding = !MorphlingItem.isBondingReady(equippedStack);
 			if (MorphlingMetabolismRules.suspendUpkeep(SkillPointHelper.isTechniqueEnabled(player,
 					SkillPointInit.skill_dormant_symbiote), inCombat, needsBonding)) {
-				if (morphCap.hasMorphling()) morphling.onEquippedTick(player, equippedStack);
+				if (morphCap.hasMorphling()) MorphlingCombat.tick(morphling, player, equippedStack);
 				return;
 			}
 			boolean symbiotic = SkillPointHelper.isTechniqueEnabled(player,
@@ -134,7 +134,7 @@ public class EquippedMorphlingEvents {
 			}
 
 			if (morphCap.hasMorphling()) {
-				morphling.onEquippedTick(player, equippedStack);
+				MorphlingCombat.tick(morphling, player, equippedStack);
 			}
 		});
 	}
@@ -161,7 +161,7 @@ public class EquippedMorphlingEvents {
 					damage = EmberfangMorphlingItem.adjustIncomingDamage(player, morphStack, damage);
 				}
 				event.setNewDamage(damage);
-				morphling.onEquippedHurt(player, morphStack, event.getSource(), damage);
+
 			}
 		});
 	}
@@ -172,8 +172,9 @@ public class EquippedMorphlingEvents {
 	 * venom strike, predator's mark, etc.).
 	 */
 	@SubscribeEvent
-	public static void onPlayerAttack(LivingDamageEvent.Pre event) {
+	public static void onPlayerAttack(LivingDamageEvent.Post event) {
 		LivingEntity target = event.getEntity();
+        if (event.getNewDamage() + event.getReduction(net.neoforged.neoforge.common.damagesource.DamageContainer.Reduction.ABSORPTION) <= 0) return;
 		if (target.level().isClientSide) return;
 		if (!(event.getSource().getEntity() instanceof Player player)) return;
 
@@ -181,17 +182,36 @@ public class EquippedMorphlingEvents {
 			if (!morphCap.hasMorphling()) return;
 			ItemStack morphStack = morphCap.getEquippedMorphling();
 			if (morphStack.getItem() instanceof IMorphling morphling) {
-				morphling.onEquippedAttack(player, morphStack, target, event.getNewDamage());
+                // Blood transfer is independent of school buildup and damage reactions.
+                if (MorphlingCombat.isFollowUp(event.getSource()) && !(morphling instanceof DeadmansPurseMorphlingItem)) return;
+                try (var scope = MorphlingCombat.scope(morphling, player, morphStack, event.getSource())) {
+                    morphling.onEquippedAttack(player, morphStack, target, event.getNewDamage());
+                }
 			}
 		});
 	}
+
+    @SubscribeEvent
+    public static void onConfirmedPlayerHurt(LivingDamageEvent.Post event) {
+        if (!(event.getEntity() instanceof Player player) || player.level().isClientSide
+                || event.getNewDamage() + event.getReduction(net.neoforged.neoforge.common.damagesource.DamageContainer.Reduction.ABSORPTION) <= 0) return;
+        HemoCapabilityAccess.getEquippedMorphling(player).ifPresent(cap -> {
+            ItemStack stack = cap.getEquippedMorphling();
+            if (cap.hasMorphling() && stack.getItem() instanceof IMorphling morphling) {
+                try (var scope = MorphlingCombat.scope(morphling, player, stack, event.getSource())) {
+                    morphling.onEquippedHurt(player, stack, event.getSource(), event.getNewDamage(),
+                            !MorphlingCombat.isFollowUp(event.getSource()));
+                }
+            }
+        });
+    }
 
 	/**
 	 * When the player kills a living entity while a morphling is equipped,
 	 * delegate to the morphling's onEquippedKill for on-kill abilities
 	 * (bonus XP, carrion harvest, decomposer drops, etc.).
 	 */
-	@SubscribeEvent
+	@SubscribeEvent(priority = EventPriority.HIGH)
 	public static void onPlayerKill(LivingDeathEvent event) {
 		LivingEntity victim = event.getEntity();
 		if (victim.level().isClientSide) return;
@@ -201,7 +221,9 @@ public class EquippedMorphlingEvents {
 			if (!morphCap.hasMorphling()) return;
 			ItemStack morphStack = morphCap.getEquippedMorphling();
 			if (morphStack.getItem() instanceof IMorphling morphling) {
-				morphling.onEquippedKill(player, morphStack, victim);
+                try (var scope = MorphlingCombat.scope(morphling, player, morphStack, event.getSource())) {
+                    morphling.onEquippedKill(player, morphStack, victim, !MorphlingCombat.isFollowUp(event.getSource()));
+                }
 			}
 		});
 	}

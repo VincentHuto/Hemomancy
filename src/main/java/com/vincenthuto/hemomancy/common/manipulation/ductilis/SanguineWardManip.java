@@ -21,8 +21,11 @@ public class SanguineWardManip extends BloodManipulation {
 
 	@Override
 	public void getAction(Player player, Level world, ItemStack heldItemMainhand, BlockPos position) {
+        try (var schoolCast = com.vincenthuto.hemomancy.common.damage.SchoolDamage.cast(this, player, 1)) {
+
 		ManipulationReactiveEvents.refreshSanguineWard(player);
 		DuctilisLightningEffects.sanguineWard(player);
-	}
+	        }
+    }
 
 }

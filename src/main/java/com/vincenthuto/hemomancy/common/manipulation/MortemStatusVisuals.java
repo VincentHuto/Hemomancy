@@ -32,7 +32,7 @@ public final class MortemStatusVisuals {
         while(entries.hasNext()) {
             var infection=entries.next();var target=infection.target;
             if(!target.isAlive()||target.level().getGameTime()>=infection.until||!target.level().dimension().equals(infection.dimension)
-                    ||!target.hasEffect(MobEffects.WITHER)&&!target.hasEffect(MobEffects.POISON)) {
+                    || !target.hasEffect(EffectInit.necrosis)) {
                 entries.remove();ManipulationVisuals.attached(target,Form.ROT_INFECTION,1,0,0);
             }
         }

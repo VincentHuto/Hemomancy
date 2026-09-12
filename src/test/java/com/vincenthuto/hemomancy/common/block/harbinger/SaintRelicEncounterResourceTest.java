@@ -26,7 +26,7 @@ public final class SaintRelicEncounterResourceTest {
 		String itemInit = read(SOURCE_ROOT.resolve(
 				"com/vincenthuto/hemomancy/common/init/ItemInit.java"));
 		String sarcophagusBlock = read(SOURCE_ROOT.resolve(
-				"com/vincenthuto/hemomancy/common/block/harbinger/functional/SaintSarcophagusBlock.java"));
+				"com/vincenthuto/hemomancy/common/block/harbinger/puzzle/SaintSarcophagusBlock.java"));
 		String relicItem = read(SOURCE_ROOT.resolve(
 				"com/vincenthuto/hemomancy/common/item/harbinger/SaintRelicItem.java"));
 		String lang = read(RESOURCE_ROOT.resolve("assets/hemomancy/lang/en_us.json"));
@@ -79,8 +79,8 @@ public final class SaintRelicEncounterResourceTest {
 					"\"item\": \"" + relic.ingredientC + "\"");
 		}
 
-		assertContains("mausoleum biome tag remains present but has no spawn biomes", mausoleumBiomes,
-				"\"values\": []");
+		assertContains("mausoleum biome tag includes its restored overworld placement", mausoleumBiomes,
+				"\"minecraft:plains\"");
 		assertExists("mausoleum structure data stays in place",
 				RESOURCE_ROOT.resolve("data/hemomancy/worldgen/structure/mausoleum.json"));
 		assertExists("mausoleum structure set data stays in place",

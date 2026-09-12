@@ -25,6 +25,8 @@ public class WhiteVerdictManip extends BloodManipulation {
 
 	@Override
 	public void getAction(Player player, Level world, ItemStack heldItemMainhand, BlockPos position, float heldTicks) {
+        try (var schoolCast = com.vincenthuto.hemomancy.common.damage.SchoolDamage.cast(this, player, getRequiredChargeTicks() <= 0 ? 1 : heldTicks / getRequiredChargeTicks())) {
+
 		if (!(world instanceof ServerLevel level)) return;
 		float charge = ManipulationCastingRules.chargeFraction(heldTicks, CHARGE_TICKS);
 		double range = 8.0D + 16.0D * charge;
@@ -34,12 +36,10 @@ public class WhiteVerdictManip extends BloodManipulation {
 		for (LivingEntity target : ManipulationCombatHelper.hostileTargets(player, level, range)) {
 			if (!ManipulationCombatHelper.visible(player, target) || target.getEyePosition().subtract(eye).dot(player.getLookAngle()) <= 0) continue;
 			if (ManipulationCombatHelper.distanceToSegment(target.getEyePosition(), eye, end) > width) continue;
-			boolean concealed = target.isInvisible();
-			target.removeEffect(MobEffects.INVISIBILITY);
-			target.addEffect(new MobEffectInstance(MobEffects.GLOWING, 200, 0, false, true));
 			ManipulationCombatHelper.hurt(this, player, target, level,
-					(2.0F + 8.0F * charge) * (concealed ? 1.5F : 1.0F));
+					(2.0F + 8.0F * charge));
 		}
         ManipulationVisuals.burst(level, ManipulationVisuals.Form.WHITE_VERDICT, eye, end, width, 40);
-	}
+	        }
+    }
 }

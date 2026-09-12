@@ -13,7 +13,7 @@ public final class CrimsonFireVisualSourceTest {
 
 	public static void main(String[] args) throws IOException {
 		String helper = read(SOURCE_ROOT.resolve(
-				"com/vincenthuto/hemomancy/common/util/CrimsonFireHelper.java"));
+				"com/vincenthuto/hemomancy/common/block/harbinger/CrimsonFireHelper.java"));
 		String packetHandler = read(SOURCE_ROOT.resolve(
 				"com/vincenthuto/hemomancy/common/network/PacketHandler.java"));
 		String packet = read(SOURCE_ROOT.resolve(
@@ -80,12 +80,11 @@ public final class CrimsonFireVisualSourceTest {
 		assertOrder("crimson block marks after vanilla fire", crimsonBlock,
 				"super.entityInside(state, level, pos, entity);",
 				"CrimsonFireHelper.markCrimsonForRemainingFire(entity, 10);");
-		assertContains("sanguine ignition uses crimson helper", ignition,
-				"CrimsonFireHelper.igniteCrimson(target, FIRE_SECONDS)");
-		assertContains("vitric combustion uses crimson helper", combustion,
-				"CrimsonFireHelper.igniteCrimson(target,");
-		assertContains("living torch uses crimson helper", torch,
-				"CrimsonFireHelper.igniteCrimson(target, 4)");
+		assertContains("sanguine ignition captures school state", ignition, "SchoolDamage.cast");
+        if (ignition.contains("igniteCrimson")) throw new AssertionError("Ignition must use Searing instead of vanilla burn");
+		assertContains("vitric combustion captures its payoff school", combustion, "SchoolDamage.cast");
+        if (combustion.contains("igniteCrimson")) throw new AssertionError("Combustion must consume heat");
+		assertContains("living torch uses school burn", torch, "HemoDamageTypes.livingTorchBreath");
 	}
 
 	private static String read(Path path) throws IOException {

@@ -46,12 +46,13 @@ public class BloomOfRotManip extends BloodManipulation {
 
 	@Override
 	public void getAction(Player player, Level world, ItemStack heldItemMainhand, BlockPos position) {
+        try (var schoolCast = com.vincenthuto.hemomancy.common.damage.SchoolDamage.cast(this, player, 1)) {
+
 		world.getEntitiesOfClass(LivingEntity.class,
 				player.getBoundingBox().inflate(RADIUS), e -> ManipulationCombatHelper.canHarm(player, e))
 				.forEach(entity -> {
-					entity.addEffect(new MobEffectInstance(MobEffects.WITHER, ENEMY_EFFECT_DURATION, 1, false, true));
-					entity.addEffect(new MobEffectInstance(MobEffects.POISON, ENEMY_EFFECT_DURATION, 0, false, true));
-					entity.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, ENEMY_EFFECT_DURATION, 1, false, true));
+					com.vincenthuto.hemomancy.common.damage.SchoolStates.apply(player, entity,
+                            com.vincenthuto.hemomancy.common.damage.SchoolState.NECROSIS, ENEMY_EFFECT_DURATION);
                     com.vincenthuto.hemomancy.common.manipulation.MortemStatusVisuals.infect(entity,ENEMY_EFFECT_DURATION);
 				});
 
@@ -69,5 +70,6 @@ public class BloomOfRotManip extends BloodManipulation {
 		if (world instanceof ServerLevel sLevel) {
             ManipulationVisuals.burst(sLevel, ManipulationVisuals.Form.BLOOM, player.position(), player.position(), RADIUS, 36);
 		}
-	}
+	        }
+    }
 }

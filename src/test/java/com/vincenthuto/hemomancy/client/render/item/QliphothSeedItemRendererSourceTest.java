@@ -10,7 +10,7 @@ public final class QliphothSeedItemRendererSourceTest {
 	private static final Path TENDRIL_EFFECTS = Path.of(
 			"src/main/java/com/vincenthuto/hemomancy/client/render/item/QliphothSeedTendrilEffects.java");
 	private static final Path FOCUS_RENDERER = Path.of(
-			"src/main/java/com/vincenthuto/hemomancy/client/render/tile/functional/CardinalFocusRenderer.java");
+			"src/main/java/com/vincenthuto/hemomancy/client/render/tile/harbinger/functional/CardinalFocusRenderer.java");
 	private static final Path ITEM_RENDERER = Path.of(
 			"src/main/java/com/vincenthuto/hemomancy/client/render/item/QliphothSeedItemRenderer.java");
 	private static final Path ITEM_SOURCE = Path.of(

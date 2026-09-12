@@ -28,12 +28,15 @@ public final class Paralysis {
         return entity.isAlive() && entity.hasEffect(EffectInit.paralysis);
     }
 
+    public static boolean blocksActions(LivingEntity entity) {
+        return isParalyzed(entity) || entity.isAlive() && entity.hasEffect(EffectInit.disrupted);
+    }
+
     public static boolean apply(LivingEntity target, int ticks) {
         if (target.level().isClientSide || !target.isAlive()) return false;
         if (ManipulationReactiveEvents.isBoss(target)) {
-            target.forceAddEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN,
-                    DuctilisRules.paralysisDuration(ticks,false),1,false,true),null);
-            return target.hasEffect(MobEffects.MOVEMENT_SLOWDOWN);
+            com.vincenthuto.hemomancy.common.manipulation.SchoolHitHelper.markConductive(target, 160);
+            return false;
         }
         return target.addEffect(new MobEffectInstance(EffectInit.paralysis,
                 DuctilisRules.paralysisDuration(ticks,target instanceof Player),0,false,true,true));
@@ -79,19 +82,19 @@ public final class Paralysis {
     }
 
     @SubscribeEvent public static void onUseItem(PlayerInteractEvent.RightClickItem e) {
-        if (isParalyzed(e.getEntity())) e.setCanceled(true);
+        if (blocksActions(e.getEntity())) e.setCanceled(true);
     }
     @SubscribeEvent public static void onUseBlock(PlayerInteractEvent.RightClickBlock e) {
-        if (isParalyzed(e.getEntity())) e.setCanceled(true);
+        if (blocksActions(e.getEntity())) e.setCanceled(true);
     }
     @SubscribeEvent public static void onUseEntity(PlayerInteractEvent.EntityInteract e) {
-        if (isParalyzed(e.getEntity())) e.setCanceled(true);
+        if (blocksActions(e.getEntity())) e.setCanceled(true);
     }
     @SubscribeEvent public static void onUseEntityAt(PlayerInteractEvent.EntityInteractSpecific e) {
-        if (isParalyzed(e.getEntity())) e.setCanceled(true);
+        if (blocksActions(e.getEntity())) e.setCanceled(true);
     }
     @SubscribeEvent public static void onAttackBlock(PlayerInteractEvent.LeftClickBlock e) {
-        if (isParalyzed(e.getEntity())) e.setCanceled(true);
+        if (blocksActions(e.getEntity())) e.setCanceled(true);
     }
     @SubscribeEvent public static void onDeath(LivingDeathEvent e) {
         e.getEntity().removeEffect(EffectInit.paralysis); RECOVERY.remove(e.getEntity());

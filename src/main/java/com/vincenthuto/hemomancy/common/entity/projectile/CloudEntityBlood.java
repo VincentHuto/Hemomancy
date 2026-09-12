@@ -3,7 +3,8 @@ package com.vincenthuto.hemomancy.common.entity.projectile;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.entity.summon.BloodConstructEntity;
 import com.vincenthuto.hemomancy.common.init.EffectInit;
-import com.vincenthuto.hemomancy.common.manipulation.TendencyAffinityRules;
+import com.vincenthuto.hemomancy.common.damage.*;
+import com.vincenthuto.hemomancy.common.manipulation.ductilis.ConductionManager;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
@@ -95,6 +96,18 @@ public class CloudEntityBlood extends BloodConstructEntity {
 		}
 	}
 
+    private net.minecraft.world.damagesource.DamageSource cloudDamage(net.minecraft.world.damagesource.DamageSource nativeSource) {
+        SchoolHitContext hit = SchoolDamage.projectileContext(this);
+        if (hit == null && damageTendency != null) {
+            hit = SchoolHitContext.direct(com.vincenthuto.hemomancy.Hemomancy.rloc("blood_cloud"),
+                    damageTendency, secondaryDamageTendency, creator);
+            SchoolDamage.capture(this, hit);
+        }
+        return hit == null ? nativeSource : SchoolDamage.attributed(
+                SchoolDamage.projectileSource(nativeSource, this, creator),
+                hit.child(SchoolHitContext.Kind.PERIODIC), creator);
+    }
+
     @Override protected boolean usesLegacyConstructParticles() { return false; }
 
 	@Override
@@ -117,12 +130,8 @@ public class CloudEntityBlood extends BloodConstructEntity {
 			if (ent != null) {
 				if (ent != creator && ent != this && (creator == null || !creator.isAlliedTo(ent))) {
 					if (!(ent instanceof BloodConstructEntity)) {
-						float damage = creator instanceof Player player && damageTendency != null
-								? 2.0F * TendencyAffinityRules.damageMultiplier(player, ent,
-										damageTendency, secondaryDamageTendency)
-								: 2.0F;
-						ent.hurt(ent.damageSources().generic(), damage);
-						ent.addEffect(new MobEffectInstance(EffectInit.blood_loss, 20, 1));
+                        if (!level().isClientSide && (creator == null || ConductionManager.canHarm(creator, ent)))
+                            ent.hurt(cloudDamage(ent.damageSources().generic()), 2);
 					}
 				}
 			}
@@ -161,7 +170,7 @@ public class CloudEntityBlood extends BloodConstructEntity {
 	private void pursueTarget() {
 		LivingEntity target = level().getEntitiesOfClass(LivingEntity.class, getBoundingBox().inflate(12),
 				candidate -> candidate != this && candidate != creator && candidate.isAlive()
-						&& (creator == null || !creator.isAlliedTo(candidate))).stream()
+						&& (creator == null || ConductionManager.canHarm(creator, candidate))).stream()
 				.min(Comparator.comparingDouble(this::distanceToSqr)).orElse(null);
 		if (target == null) {
 			setDeltaMovement(Vec3.ZERO);
@@ -175,7 +184,7 @@ public class CloudEntityBlood extends BloodConstructEntity {
 		if (!(level() instanceof ServerLevel server)) return;
 		LivingEntity target = level().getEntitiesOfClass(LivingEntity.class, getBoundingBox().inflate(effectRadius()),
 				candidate -> candidate != this && candidate != creator && candidate.isAlive()
-						&& (creator == null || !creator.isAlliedTo(candidate))).stream()
+						&& (creator == null || ConductionManager.canHarm(creator, candidate))).stream()
 				.min(Comparator.comparingDouble(this::distanceToSqr)).orElse(null);
 		if (target == null) return;
         com.vincenthuto.hutoslib.common.lightning.LightningTesterSpawner.spawn(server, position().add(0,.4,0), target.getEyePosition(),
@@ -187,11 +196,7 @@ public class CloudEntityBlood extends BloodConstructEntity {
                 net.minecraft.sounds.SoundSource.WEATHER,10000F,.8F+random.nextFloat()*.2F);
         server.playSound(null,target.blockPosition(),net.minecraft.sounds.SoundEvents.LIGHTNING_BOLT_IMPACT,
                 net.minecraft.sounds.SoundSource.WEATHER,2F,.5F+random.nextFloat()*.2F);
-
-		float damage = creator instanceof Player player && damageTendency != null
-				? 4.0F * TendencyAffinityRules.damageMultiplier(player, target, damageTendency, secondaryDamageTendency)
-				: 4.0F;
-		target.hurt(server.damageSources().magic(), damage);
+        target.hurt(cloudDamage(server.damageSources().magic()), 4);
 	}
 
 	private double effectRadius() {

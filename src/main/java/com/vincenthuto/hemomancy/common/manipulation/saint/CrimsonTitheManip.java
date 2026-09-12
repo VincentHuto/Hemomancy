@@ -66,6 +66,8 @@ public class CrimsonTitheManip extends BloodManipulation {
 
 	@Override
 	public void getAction(Player player, Level world, ItemStack heldItemMainhand, BlockPos position) {
+        try (var schoolCast = com.vincenthuto.hemomancy.common.damage.SchoolDamage.cast(this, player, 1)) {
+
 		double borrowed = BorrowedBloodReserve.deposit(player, BLOOD_STORE_AMOUNT);
 		if (borrowed <= 0.0D) return;
 
@@ -82,7 +84,8 @@ public class CrimsonTitheManip extends BloodManipulation {
         com.vincenthuto.hemomancy.common.manipulation.ManipulationVisuals.attached(player,
                 com.vincenthuto.hemomancy.common.manipulation.ManipulationVisuals.Form.DEBT,0,REPAYMENT_WINDOW_TICKS,(int)borrowed);
 
-	}
+	        }
+    }
 
 	public static void tickDebt(ServerPlayer player) {
 		long expiry = player.getPersistentData().getLong(TITHE_EXPIRY_KEY);

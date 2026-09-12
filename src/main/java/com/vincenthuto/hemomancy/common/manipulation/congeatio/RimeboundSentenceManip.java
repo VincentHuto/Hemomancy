@@ -1,5 +1,7 @@
 package com.vincenthuto.hemomancy.common.manipulation.congeatio;
 
+import com.vincenthuto.hemomancy.common.damage.*;
+
 import com.vincenthuto.hemomancy.common.manipulation.ManipulationVisuals;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.EnumVeinSections;
@@ -29,21 +31,21 @@ public class RimeboundSentenceManip extends BloodManipulation {
 
 	@Override
 	public void getAction(Player player, Level world, ItemStack heldItemMainhand, BlockPos position, float heldTicks) {
+        try (var schoolCast = com.vincenthuto.hemomancy.common.damage.SchoolDamage.cast(this, player, getRequiredChargeTicks() <= 0 ? 1 : heldTicks / getRequiredChargeTicks())) {
+
 		if (!(world instanceof ServerLevel level)) return;
 		LivingEntity target = ManipulationCombatHelper.aimedTarget(player, level, 20, 0.75D);
 		if (target == null) return;
 		float charge = ManipulationCastingRules.chargeFraction(heldTicks, CHARGE_TICKS);
 		int duration = ManipulationScalingRules.scaledInt(20, 120, heldTicks, CHARGE_TICKS);
-		ManipulationCombatHelper.hurt(this, player, target, level, 2.0F + 6.0F * charge);
-		target.setTicksFrozen(Math.max(target.getTicksFrozen(), duration));
+		if (!ManipulationCombatHelper.hurt(this, player, target, level, 2.0F + 6.0F * charge, duration, charge >= 1 ? 3 : 1)) return;
         ManipulationVisuals.attached(target, ManipulationVisuals.Form.RIMEBOUND, .7, duration, 1);
-		target.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, duration,
-				ManipulationReactiveEvents.isBoss(target) ? 2 : 5, false, true));
 		if (!ManipulationReactiveEvents.isBoss(target)) {
 			BlockPos base = target.blockPosition();
 			for (BlockPos offset : List.of(base.north(), base.south(), base.east(), base.west(), base.above(2))) {
 				TemporaryIceManager.placeOwned(level, offset, BlockInit.frozen_cruor.get().defaultBlockState(), duration, player.getUUID());
 			}
 		}
-	}
+	        }
+    }
 }

@@ -31,8 +31,14 @@ public class VerminousAuraEffect extends MobEffect {
 		List<Monster> hostiles = level.getEntitiesOfClass(Monster.class, area);
 
 		float damage = 1.0F + amplifier * 0.5F;
-		for (Monster mob : hostiles) {
-			mob.hurt(entity.damageSources().magic(), damage);
+        var hit = com.vincenthuto.hemomancy.common.damage.SchoolHitContext.direct(
+                com.vincenthuto.hemomancy.Hemomancy.rloc("pests_morphling"),
+                com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency.FLAMMEUS,
+                com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency.TENEBRIS, entity)
+                .child(com.vincenthuto.hemomancy.common.damage.SchoolHitContext.Kind.PERIODIC);
+        for (Monster mob : hostiles) {
+            if (!com.vincenthuto.hemomancy.common.manipulation.ductilis.ConductionManager.canHarm(entity, mob)) continue;
+            mob.hurt(com.vincenthuto.hemomancy.common.damage.SchoolDamage.attributed(entity.damageSources().magic(), hit, entity), damage);
 		}
 		return true;
 	}

@@ -25,7 +25,7 @@ public final class ManipulationChannelManager {
 	}
 
 	public static void start(ServerPlayer player) {
-		if (CHANNELS.containsKey(player.getUUID()) || com.vincenthuto.hemomancy.common.manipulation.ductilis.Paralysis.isParalyzed(player)) return;
+		if (CHANNELS.containsKey(player.getUUID()) || com.vincenthuto.hemomancy.common.manipulation.ductilis.Paralysis.blocksActions(player)) return;
 		BloodManipulation manipulation = selectedContinuous(player);
 		if (manipulation == null || !player.isAlive() || manipulation.isOnCooldown(player)) return;
 		if (!manipulation.canContinueChannel(player, player.level())) return;
@@ -67,7 +67,7 @@ public final class ManipulationChannelManager {
 		if (!(event.getEntity() instanceof ServerPlayer player)) return;
 		ChannelState state = CHANNELS.get(player.getUUID());
 		if (state == null) return;
-		if (!player.isAlive() || com.vincenthuto.hemomancy.common.manipulation.ductilis.Paralysis.isParalyzed(player)) {
+		if (!player.isAlive() || com.vincenthuto.hemomancy.common.manipulation.ductilis.Paralysis.blocksActions(player)) {
 			stop(player, false);
 			return;
 		}

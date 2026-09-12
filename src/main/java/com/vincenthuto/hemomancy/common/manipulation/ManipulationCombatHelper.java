@@ -90,8 +90,14 @@ public final class ManipulationCombatHelper {
 
 	public static boolean hurt(BloodManipulation manipulation, Player player, LivingEntity target,
 			ServerLevel level, float amount) {
-		if (!canHarm(player, target)) return false;
-		float adjusted = TendencyAffinityRules.adjustManipulationDamage(player, target, manipulation, amount);
-		return ManipulationParticles.hurt(manipulation, target, level.damageSources().magic(), adjusted);
+        return hurt(manipulation, player, target, level, amount, 0, 1);
+    }
+
+    public static boolean hurt(BloodManipulation manipulation, Player player, LivingEntity target,
+            ServerLevel level, float amount, int duration, int levels) {
+        if (!canHarm(player, target)) return false;
+		return ManipulationParticles.hurt(manipulation, target,
+                com.vincenthuto.hemomancy.common.damage.SchoolDamage.attributed(level.damageSources().magic(),
+                        com.vincenthuto.hemomancy.common.damage.SchoolDamage.context(manipulation, player).withApplication(duration, levels), player), amount);
 	}
 }

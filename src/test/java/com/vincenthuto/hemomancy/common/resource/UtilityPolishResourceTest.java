@@ -41,7 +41,7 @@ public final class UtilityPolishResourceTest {
 	}
 
 	private static void assertBarometerIsWallMounted() throws IOException {
-		String block = read(SRC.resolve("common/block/shared/HumoralBarometerBlock.java"));
+		String block = read(SRC.resolve("common/block/harbinger/decoration/HumoralBarometerBlock.java"));
 		String blockstate = read(ASSETS.resolve("blockstates/humoral_barometer.json"));
 		assertContains("barometer has horizontal facing", block, "HorizontalDirectionalBlock.FACING");
 		assertContains("barometer rejects floor placement", block, "clickedFace.getAxis().isVertical()");
@@ -89,9 +89,9 @@ public final class UtilityPolishResourceTest {
 		assertContains("mycelial crucible documents the left model spout", block, "chain_l");
 		assertContains("mycelial crucible documents the right model spout", block, "chain_r");
 		assertContains("mycelial crucible emits green hutoslib embers", block,
-				"EmberParticleFactory.createData(ParticleColor.GREEN");
+				"HemoParticleData.ember(ParticleColor.GREEN");
 		assertContains("mycelial crucible emits hemomancy absorbed blood cells", block,
-				"AbsorbedBloodCellParticleFactory.createData(ParticleColor.BLOOD)");
+				"HemoParticleData.absorbedBloodCell(ParticleColor.BLOOD)");
 		assertContains("mycelial crucible rotates stream anchors by facing", block,
 				"rotateModelPointForFacing");
 		assertContains("mycelial crucible spawns particle trails", block, "spawnSpoutTrail");
@@ -100,7 +100,7 @@ public final class UtilityPolishResourceTest {
 	private static void assertMycelialCrucibleHasBasinShader() throws IOException {
 		String shaderInit = read(SRC.resolve("common/init/ShaderInit.java"));
 		String renderTypes = read(SRC.resolve("client/render/HemoRenderTypes.java"));
-		String renderer = read(SRC.resolve("client/render/tile/crafting/MycelialCrucibleRenderer.java"));
+		String renderer = read(SRC.resolve("client/render/tile/harbinger/crafting/MycelialCrucibleRenderer.java"));
 		String shaderJson = read(ASSETS.resolve("shaders/core/world/mycelial_crucible_basin.json"));
 		String fragment = read(ASSETS.resolve("shaders/core/world/mycelial_crucible_basin.fsh"));
 		String vertex = read(ASSETS.resolve("shaders/core/world/mycelial_crucible_basin.vsh"));
@@ -132,7 +132,7 @@ public final class UtilityPolishResourceTest {
 	}
 
 	private static void assertLetheanPoppyWreathIsWallMountedDecoration() throws IOException {
-		String block = read(SRC.resolve("common/block/unstained/decor/LetheanPoppyWreathBlock.java"));
+		String block = read(SRC.resolve("common/block/unstained/decoration/LetheanPoppyWreathBlock.java"));
 		String blockInit = read(SRC.resolve("common/init/BlockInit.java"));
 		String itemInit = read(SRC.resolve("common/init/ItemInit.java"));
 		String hemomancy = read(SRC.resolve("Hemomancy.java"));
@@ -184,7 +184,7 @@ public final class UtilityPolishResourceTest {
 	}
 
 	private static void assertOssuaryClockIsTwoBlocksTall() throws IOException {
-		String block = read(SRC.resolve("common/block/shared/OssuaryClockBlock.java"));
+		String block = read(SRC.resolve("common/block/harbinger/decoration/OssuaryClockBlock.java"));
 		String blockstate = read(ASSETS.resolve("blockstates/ossuary_clock.json"));
 		String lowerModel = read(ASSETS.resolve("models/block/ossuary_clock.json"));
 		String upperModel = read(ASSETS.resolve("models/block/ossuary_clock_upper.json"));

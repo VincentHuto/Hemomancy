@@ -51,8 +51,11 @@ public class BloodAneurysmManip extends BloodManipulation {
 
 	@Override
 	public void getAction(Player player, Level world, ItemStack heldItemMainhand, BlockPos position) {
+        try (var schoolCast = com.vincenthuto.hemomancy.common.damage.SchoolDamage.cast(this, player, 1)) {
+
 		getAction(player, world, heldItemMainhand, position, CHARGE_TICKS);
-	}
+	        }
+    }
 
 	@Override
 	public int getRequiredChargeTicks() {
@@ -62,6 +65,8 @@ public class BloodAneurysmManip extends BloodManipulation {
 	@Override
 	public void getAction(Player player, Level world, ItemStack heldItemMainhand, BlockPos position,
 			float chargeTicks) {
+        try (var schoolCast = com.vincenthuto.hemomancy.common.damage.SchoolDamage.cast(this, player, getRequiredChargeTicks() <= 0 ? 1 : chargeTicks / getRequiredChargeTicks())) {
+
 		if (!(world instanceof ServerLevel sLevel)) return;
 		float strength = ManipulationCastingRules.chargeFraction(chargeTicks, CHARGE_TICKS);
 
@@ -83,8 +88,7 @@ public class BloodAneurysmManip extends BloodManipulation {
 		float masteryMult = (float) SkillPointHelper.getCrimsonMasteryMultiplier(player);
 
 		ManipulationParticles.hurt(this, target, world.damageSources().magic(),
-				TendencyAffinityRules.adjustManipulationDamage(player, target, this,
-						DIRECT_DAMAGE * masteryMult * strength));
+				(DIRECT_DAMAGE * masteryMult * strength));
 		Vec3 current = target.getDeltaMovement();
 		target.setDeltaMovement(current.x, LAUNCH_FORCE * strength, current.z);
 		target.hurtMarked = true;
@@ -96,8 +100,7 @@ public class BloodAneurysmManip extends BloodManipulation {
 				e -> e != target && ManipulationCombatHelper.canHarm(player, e)
 						&& e.position().distanceTo(tPos) <= BURST_RADIUS)
 				.forEach(e -> ManipulationParticles.hurt(this, e, world.damageSources().magic(),
-						TendencyAffinityRules.adjustManipulationDamage(player, e, this,
-								BURST_DAMAGE * masteryMult * strength)));
+						(BURST_DAMAGE * masteryMult * strength)));
 
 		RandomSource random = world.random;
 		for (int i = 0; i < 50; i++) {
@@ -112,5 +115,6 @@ public class BloodAneurysmManip extends BloodManipulation {
 
 		world.playSound(null, target.blockPosition(), SoundEvents.GENERIC_EXPLODE.value(), SoundSource.PLAYERS, 0.5f, 1.8f);
 		world.playSound(null, target.blockPosition(), SoundEvents.WITHER_HURT, SoundSource.PLAYERS, 0.6f, 0.7f);
-	}
+	        }
+    }
 }

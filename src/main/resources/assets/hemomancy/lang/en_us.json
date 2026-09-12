@@ -454,6 +454,7 @@
   "block.hemomancy.non_euclidean_hallway": "Non-Euclidean Hallway",
   "block.hemomancy.offering_gate": "Offering Gate",
   "block.hemomancy.organic_prism": "Organic Prism",
+  "block.hemomancy.harbinger_escritoire": "Harbinger Escritoire",
   "block.hemomancy.ossuary_clock": "Ossuary Clock",
   "block.hemomancy.ossuary_clock.moon.first_quarter": "first-quarter moon",
   "block.hemomancy.ossuary_clock.moon.full_moon": "full moon",
@@ -1656,17 +1657,17 @@
   "hemomancy.living_staff.bond_unlocked": "A Living Staff answers your blood.",
   "hemomancy.machine_access.locked": "Craft a %s yourself to use it. Fane membership does not grant personal mastery.",
   "hemomancy.machine_access.no_loot": "The %s comes apart without yielding its workings.",
-  "hemomancy.manipulation.activation_potential.desc": "Charges a radial electrical discharge. More charge strengthens the shock and nervous disruption. Struck water, iron and copper carry the current.",
+  "hemomancy.manipulation.activation_potential.desc": "Charges a radial electrical discharge. Charge strengthens damage; confirmed hits interrupt actions for 10 ticks without slowing movement. Water, iron and copper carry current.",
   "hemomancy.manipulation.black_veil_covenant": "Black Veil Covenant",
   "hemomancy.manipulation.black_veil_covenant.desc": "Raises a dark veil that protects its caster with resistance and fire protection at the cost of weakness.",
   "hemomancy.manipulation.blood_absorption.desc": "Readies the staff to draw blood from valid targets.",
-  "hemomancy.manipulation.blood_aneurysm.desc": "Ruptures the nearest visible enemy and splashes damage into nearby enemies.",
+  "hemomancy.manipulation.blood_aneurysm.desc": "Ruptures a targeted vessel, consuming Sanguine Pressure for 2 additional damage per level.",
   "hemomancy.manipulation.blood_lattice": "Blood Lattice",
   "hemomancy.manipulation.blood_lattice.desc": "Spreads an aimed binding lattice through a packed group of nearby creatures.",
   "hemomancy.manipulation.blood_cloud.desc": "Hurls a blood cloud that withers creatures caught inside.",
   "hemomancy.manipulation.blood_eclipse_mantle": "Blood Eclipse Mantle",
   "hemomancy.manipulation.blood_eclipse_mantle.desc": "Retired compatibility entry; its defensive tradeoff now belongs to Black Veil Covenant.",
-  "hemomancy.manipulation.blood_eclipse.desc": "Blinds, weakens, and harms nearby enemies with shadowed blood.",
+  "hemomancy.manipulation.blood_eclipse.desc": "Obscures enemy perception beyond four blocks. Close defense remains possible; Illumination pierces school concealment.",
   "hemomancy.manipulation.blood_lamp.desc": "Places a small blood-made light in dark spaces.",
   "hemomancy.manipulation.blood_needle.desc": "Launches a rapid volley of piercing blood needles.",
   "hemomancy.manipulation.blood_needle_fan": "Blood Needle Fan",
@@ -1712,7 +1713,7 @@
   "hemomancy.manipulation.ferric_transmutation.desc": "Hardens blood into ferric force, empowering strikes and siphon effects.",
   "hemomancy.manipulation.glacial_bastion.desc": "Retired compatibility entry; crouch-cast Glacial Rampart for its ice shell.",
   "hemomancy.manipulation.glacial_circulation.desc": "Chills your blood to resist fire while slowing movement.",
-  "hemomancy.manipulation.glacial_grasp.desc": "Freezes wet targets and source water along an aimed path.",
+  "hemomancy.manipulation.glacial_grasp.desc": "Freezes source water along an aimed path and adds two Rime levels to wet targets. Rime slows movement, not attacks or casting.",
   "hemomancy.manipulation.glacial_rampart": "Glacial Rampart",
   "hemomancy.manipulation.glacial_rampart.desc": "Raises an aimed ice wall, or a surrounding ice shell while crouching.",
   "hemomancy.manipulation.grave_debt.desc": "Marks a target with a debt that bursts at low health and refunds blood if death claims it.",
@@ -1745,7 +1746,7 @@
   "hemomancy.manipulation.lumen_suture.desc": "Sutures the nearest wounded ally with light, granting absorption and clearing blindness and Wither. Falls back to yourself.",
   "hemomancy.manipulation.osseous_bloom.desc": "Bursts osseous cold through healthier enemies, slowing them. Boss damage is capped at twelve health points.",
   "hemomancy.manipulation.prismatic_reproof": "Prismatic Reproof",
-  "hemomancy.manipulation.prismatic_reproof.desc": "Projects a cone of refracted Lux that blinds and weakens enemies, punishing marked targets.",
+  "hemomancy.manipulation.prismatic_reproof.desc": "Projects a cone of Lux for 2 damage, or 4 against a previously Illuminated target. Consumes Illumination without reapplying it.",
   "hemomancy.manipulation.pyretic_forge.desc": "Smelts held items with fevered blood.",
   "hemomancy.manipulation.sanguine_excavation.desc": "Breaks a compact cluster of blocks along your line of sight.",
   "hemomancy.manipulation.sanguine_ignition.desc": "Ignites nearby bodies with superheated blood.",
@@ -1776,7 +1777,7 @@
   "hemomancy.manipulation.summon_avatar_complete": "Blood Avatar: Complete",
   "hemomancy.manipulation.summon_avatar_complete.desc": "Manifests the complete Blood Avatar at its greatest protection, strength, and speed.",
   "hemomancy.manipulation.summon_thrall.desc": "Raises a blood thrall from a suitable source block.",
-  "hemomancy.manipulation.synaptic_jolt.desc": "Immediately shocks a nearby target, interrupts actions and briefly impairs movement. Can energize water, iron, copper or a Ferric construct.",
+  "hemomancy.manipulation.synaptic_jolt.desc": "Shocks a nearby target and interrupts actions for 10 ticks without slowing movement. Can energize water, iron, copper or an owned Ferric construct.",
   "hemomancy.manipulation.umbral_reversal": "Umbral Reversal",
   "hemomancy.manipulation.umbral_reversal.desc": "Reverses backward into a nearby dark space and blinds enemies left behind.",
   "hemomancy.manipulation.umbral_step.desc": "Steps to a safe, supported shadow beside or above the targeted block.",
@@ -1786,7 +1787,7 @@
   "hemomancy.manipulation.venous_travel.desc": "Travel along prepared venous paths between linked blood structures.",
   "hemomancy.manipulation.vital_effusion.desc": "Spends blood to stir living growth in nearby plants.",
   "hemomancy.manipulation.vital_reservoir.desc": "Drains life from a wounded target and returns blood to you.",
-  "hemomancy.manipulation.vitric_combustion.desc": "Detonates heated blood in an explosive blast.",
+  "hemomancy.manipulation.vitric_combustion.desc": "Detonates superheated blood. Consumes remaining Searing heat for up to 4 additional damage.",
   "hemomancy.manipulation.worked_lignum": "Worked Lignum",
   "hemomancy.manipulation.worked_lignum.desc": "Extends Lignum Mortis into tagged worked materials such as wooden planks. Release or complete the selection to harvest.",
   "hemomancy.manipulation.void_shroud.desc": "Cloaks you in shadow with invisibility, speed, and night vision.",
@@ -1953,7 +1954,7 @@
   "hemomancy.mnemonist.item_inquiry.memory_lumen_suture.line1": "Lumen Suture. Lux can reveal a room, or place a needle of light where you need one.",
   "hemomancy.mnemonist.item_inquiry.memory_lumen_suture.line2": "It closes pain with a pale thread and cuts blindness from the wound.",
   "hemomancy.mnemonist.item_inquiry.memory_prismatic_reproof.line1": "Prismatic Reproof. Lux can judge a threat by splitting it into every color it tried to hide.",
-  "hemomancy.mnemonist.item_inquiry.memory_prismatic_reproof.line2": "It blinds, weakens, and strikes harder against prey already marked by light.",
+  "hemomancy.mnemonist.item_inquiry.memory_prismatic_reproof.line2": "It strikes harder against prey already exposed by Illumination, spending that light in the judgment.",
   "hemomancy.mnemonist.item_inquiry.memory_sanguine_magnetism.line1": "Sanguine Magnetism. Ferric blood remembers where iron wants to gather.",
   "hemomancy.mnemonist.item_inquiry.memory_sanguine_magnetism.line2": "A pillar rises, and hostile bodies are dragged close enough to learn stillness.",
   "hemomancy.mnemonist.item_inquiry.memory_scalding_updraft.line1": "Scalding Updraft. Blood remembers hot air rising under a storm-black roof.",
@@ -4077,7 +4078,7 @@
 	,"hemomancy.manipulation.living_circuit": "Living Circuit"
 	,"hemomancy.manipulation.living_circuit.desc": "Links up to three nearby teammates with travelling nerve impulses, granting speed and haste and arming their next hostile strike with Conductive Mark. Requires an allied recipient."
 	,"hemomancy.manipulation.white_verdict": "White Verdict"
-	,"hemomancy.manipulation.white_verdict.desc": "Projects a charged piercing beam that exposes and punishes concealed targets."
+	,"hemomancy.manipulation.white_verdict.desc": "Deals 50% more damage against a previously Illuminated or concealed target, never twice. Consumes existing Illumination."
 	,"hemomancy.manipulation.vigil_of_glass": "Vigil of Glass"
 	,"hemomancy.manipulation.vigil_of_glass.desc": "Greatly reduces distant projectile harm and exposes its shooter."
 	,"hemomancy.manipulation.furnace_veins": "Furnace Veins"
@@ -4087,13 +4088,13 @@
 	,"hemomancy.manipulation.absolute_stillness": "Absolute Stillness"
 	,"hemomancy.manipulation.absolute_stillness.desc": "Channels a freezing field that continuously slows hostile projectiles, smothers fire, and slows enemies. Bosses resist its strongest slow."
 	,"hemomancy.manipulation.rimebound_sentence": "Rimebound Sentence"
-	,"hemomancy.manipulation.rimebound_sentence.desc": "Condemns a targeted enemy to charged frost damage and temporary confinement."
+	,"hemomancy.manipulation.rimebound_sentence.desc": "Deals charged frost damage. Full charge establishes three Rime levels and temporarily encloses the target."
 	,"hemomancy.manipulation.hematic_ballast": "Hematic Ballast"
 	,"hemomancy.manipulation.hematic_ballast.desc": "Automatically anchors the body against a powerful launch or knockback."
 	,"hemomancy.manipulation.iron_choir": "Iron Choir"
 	,"hemomancy.manipulation.iron_choir.desc": "Channels Resistance and three projectile interceptions per paid pulse. Iron plates intercept hostile shots and strike back at their owners."
 	,"hemomancy.manipulation.funeral_bell": "Funeral Bell"
-	,"hemomancy.manipulation.funeral_bell.desc": "Releases a deathly pulse strengthened by Wither, Poison, Blood Loss, and Grave Debt. Damage and added Wither duration grow with charge."
+	,"hemomancy.manipulation.funeral_bell.desc": "Releases a charged deathly pulse, consuming Necrosis to release its stored damage early. Both the pulse and released debt scale with charge."
 	,"hemomancy.manipulation.carrion_communion": "Carrion Communion"
 	,"hemomancy.manipulation.carrion_communion.desc": "Drains up to four afflicted, blood-bearing enemies while channeled, restoring half the health actually drained."
 	,"hemomancy.manipulation.penumbral_drift": "Penumbral Drift"
@@ -4258,5 +4259,40 @@
 	"screen.hemomancy.book_of_observances.observance.novitiate_gentle_separation.unlock": "Before purification: claim Gather Remedies from the Acolyte first.",
 	"screen.hemomancy.book_of_observances.observance.novitiate_stillwater_labor.unlock": "Before purification: claim Gentle Separation from the Acolyte first.",
 	"screen.hemomancy.book_of_observances.observance.novitiate_clean_labor.unlock": "Before purification: claim Stillwater Labor from the Zealot first.",
-	"screen.hemomancy.book_of_observances.observance.novitiate_shelter_afflicted.unlock": "Before purification: claim Clean Labor from the Zealot first."
+	"screen.hemomancy.book_of_observances.observance.novitiate_shelter_afflicted.unlock": "Before purification: claim Clean Labor from the Zealot first.",
+  "effect.hemomancy.sanguine_pressure": "Sanguine Pressure",
+  "effect.hemomancy.sanguine_pressure.desc": "Up to 3 pressure levels. Rupture deals 2 extra damage per level.",
+  "effect.hemomancy.sanguine_pressure.counter": "Rupture consumes pressure. Bloodless targets cannot build it.",
+  "effect.hemomancy.necrosis": "Necrosis",
+  "effect.hemomancy.necrosis.desc": "Healing received -25%. Banks 25% of direct health damage, up to 6.",
+  "effect.hemomancy.necrosis.counter": "Cleansing removes debt safely; natural expiry releases it.",
+  "effect.hemomancy.lodestone": "Lodestone",
+  "effect.hemomancy.lodestone.desc": "Ferric knockback +25%. Owned magnetic fields pull 50% harder.",
+  "effect.hemomancy.lodestone.counter": "Also conducts electricity. Cleansing removes the iron signature.",
+  "effect.hemomancy.searing": "Searing",
+  "effect.hemomancy.searing.desc": "Crimson heat deals 1 damage per second. Refresh adds no extra streams.",
+  "effect.hemomancy.searing.counter": "Water, Fire Resistance or cold extinguish it. Combustion spends heat.",
+  "effect.hemomancy.rime": "Rime",
+  "effect.hemomancy.rime.desc": "Movement -15% per level, up to -45%. Actions remain available.",
+  "effect.hemomancy.rime.counter": "Heat melts one level. Ferric shatters level 3 for 4 extra damage.",
+  "effect.hemomancy.disrupted": "Disrupted",
+  "effect.hemomancy.disrupted.desc": "Attacks, item use and casting interrupted for half a second.",
+  "effect.hemomancy.disrupted.counter": "Movement remains available. Bosses resist interruption.",
+  "effect.hemomancy.illuminated": "Illuminated",
+  "effect.hemomancy.illuminated.desc": "Exposed through school concealment. Enables Lux follow-ups.",
+  "effect.hemomancy.illuminated.counter": "Reproof and White Verdict consume exposure. Glowing cannot replace it.",
+  "effect.hemomancy.obscured": "Obscured",
+  "effect.hemomancy.obscured.desc": "Reliable perception is limited to 4 blocks. No action or movement penalty.",
+  "effect.hemomancy.obscured.counter": "Close enemies and Illuminated targets remain perceivable.",
+  "effect.hemomancy.veiled": "Veiled",
+  "effect.hemomancy.veiled.desc": "School concealment hides the caster. Close enemies can still defend.",
+  "effect.hemomancy.veiled.counter": "Attacking breaks concealment. Illumination suppresses it temporarily.",
+  "item.hemomancy.memory_sanguine_marionette": "Memory Sanguine Marionette",
+  "hemomancy.manipulation.sanguine_marionette": "Sanguine Marionette",
+  "hemomancy.manipulation.sanguine_marionette.desc": "Channel a mobile blood tether for up to 8 seconds. Aim at an enemy to attack or reachable ground to move. One blood-bearing mob, at most 80 maximum health; 8-block acquisition and 16-block tether. Base cost: 50 mL per second.",
+  "hemomancy.manipulation.hematic_flare.desc": "Strikes nearby enemies and Illuminates them, exposing concealment and preparing Lux follow-ups.",
+  "death.attack.searing": "%1$s was consumed by crimson heat",
+  "death.attack.searing.player": "%1$s was seared by %2$s",
+  "death.attack.decay_release": "%1$s succumbed to accumulated necrosis",
+  "death.attack.decay_release.player": "%1$s succumbed to %2$s's necrosis"
 }

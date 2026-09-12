@@ -33,6 +33,8 @@ public class FerricResonanceManip extends BloodManipulation {
 
 	@Override
 	public void getAction(Player player, Level world, ItemStack heldItemMainhand, BlockPos position) {
+        try (var schoolCast = com.vincenthuto.hemomancy.common.damage.SchoolDamage.cast(this, player, 1)) {
+
 		player.addEffect(new MobEffectInstance(MobEffects.DIG_SPEED, DURATION_TICKS, 1, false, true, true));
 		player.addEffect(new MobEffectInstance(MobEffects.DAMAGE_BOOST, DURATION_TICKS, 0, false, true, true));
 		player.addEffect(new MobEffectInstance(MobEffects.DAMAGE_RESISTANCE, DURATION_TICKS, 0, false, true, true));
@@ -45,5 +47,6 @@ public class FerricResonanceManip extends BloodManipulation {
 
 		world.playSound(null, player.blockPosition(),
 				SoundEvents.ANVIL_USE, SoundSource.PLAYERS, 0.6f, 1.4f);
-	}
+	        }
+    }
 }

@@ -124,12 +124,13 @@ public class ManipulationBalanceGameTests {
     @GameTest(templateNamespace="minecraft", template="bastion/mobs/empty", batch="manipulation_balance")
     public static void driftClearsOrdinaryAggroButNotBossAggro(GameTestHelper h) {
         var p=player(h);var enemy=EntityType.ZOMBIE.create(h.getLevel());var boss=EntityType.WITHER.create(h.getLevel());
-        enemy.setPos(p.position().add(0,0,3));boss.setPos(p.position().add(0,0,5));enemy.setTarget(p);boss.setTarget(p);
+        enemy.setPos(p.position().add(0,0,6));boss.setPos(p.position().add(0,0,5));enemy.setTarget(p);boss.setTarget(p);
         h.getLevel().addFreshEntity(enemy);h.getLevel().addFreshEntity(boss);
         var m=ManipulationInit.penumbral_drift.get();ready(p,m);
         try {
             ManipulationChannelManager.start(p);h.assertTrue(ManipulationChannelManager.isChanneling(p.getUUID()),"Drift failed to start");
-            p.tickCount=10;ManipulationReactiveEvents.onPlayerTick(new net.neoforged.neoforge.event.tick.PlayerTickEvent.Post(p));
+            com.vincenthuto.hemomancy.common.damage.SchoolAwareness.tick(
+                    new net.neoforged.neoforge.event.tick.EntityTickEvent.Pre(enemy));
             h.assertTrue(enemy.getTarget()==null && boss.getTarget()==p,"Drift aggro policy failed");h.succeed();
         } finally {ManipulationChannelManager.stop(p,false);enemy.discard();boss.discard();p.discard();}
     }
@@ -178,11 +179,13 @@ public class ManipulationBalanceGameTests {
         var pet=EntityType.WOLF.create(h.getLevel());pet.tame(p);
         try {
             ManipulationReactiveEvents.armCoronation(p,1,1);
-            ManipulationReactiveEvents.onIncomingDamage(new net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent(p,
-                new net.neoforged.neoforge.common.damagesource.DamageContainer(h.getLevel().damageSources().mobAttack(pet),2)));
-            var event=new net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent(p,
-                new net.neoforged.neoforge.common.damagesource.DamageContainer(h.getLevel().damageSources().mobAttack(enemy),2));
-            ManipulationReactiveEvents.onIncomingDamage(event);ManipulationReactiveEvents.onIncomingDamage(event);
+            p.setGameMode(net.minecraft.world.level.GameType.SURVIVAL);
+            for (int tick = 0; tick < 61; tick++) p.tick();
+            p.hurt(h.getLevel().damageSources().mobAttack(pet), 2);
+            p.invulnerableTime = 0;
+            p.hurt(h.getLevel().damageSources().mobAttack(enemy), 2);
+            p.invulnerableTime = 0;
+            p.hurt(h.getLevel().damageSources().mobAttack(enemy), 2);
             var needles=h.getLevel().getEntitiesOfClass(com.vincenthuto.hemomancy.common.entity.projectile.BloodNeedleEntity.class,p.getBoundingBox().inflate(4),n->n.getOwner()==p);
             h.assertTrue(needles.size()==1,"Crown consumed friendly hit or duplicated spent counterattack");
             near(h,3,needles.getFirst().getBaseDamage(),"Full crown payload");

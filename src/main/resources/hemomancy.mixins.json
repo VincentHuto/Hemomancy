@@ -8,6 +8,12 @@
     "MixinFishingHook",
     "MixinHealOrHarmMobEffect",
     "MixinLivingEntity",
+    "MixinSchoolDamage",
+    "MixinCommandedPotion",
+    "MixinCommandedCreeper",
+    "MixinCommandedBrain",
+    "MixinSchoolAwareness",
+    "MixinSchoolConcealment",
     "MixinPlayer",
     "MixinParalysisLivingEntity",
     "MixinParalysisPlayer",
@@ -17,7 +23,8 @@
     "MixinPoisonMobEffect",
     "MixinPowderSnowBlock",
     "MixinRegenerationMobEffect",
-    "MobEffectInstanceAccessor"
+    "MobEffectInstanceAccessor",
+    "GoalSelectorAccessor"
   ],
   "client": [
     "MixinCapeLayer",

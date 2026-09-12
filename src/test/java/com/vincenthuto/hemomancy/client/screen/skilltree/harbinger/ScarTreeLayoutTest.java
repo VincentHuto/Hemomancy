@@ -58,10 +58,10 @@ final class ScarTreeLayoutTest {
 		assertEquals(new ScarTreeLayout.Point(601, 359), result.pointFor("hemomancy:scar_pyre"));
 		assertEquals(new ScarTreeLayout.Point(647, 313), result.pointFor("hemomancy:scar_sol"));
 		assertEquals(new ScarTreeLayout.Point(692, 268), result.pointFor("hemomancy:scar_corona"));
-		assertEquals(new ScarTreeLayout.Point(280, 480), result.pointFor("hemomancy:scar_thorn"));
-		assertEquals(new ScarTreeLayout.Point(230, 480), result.pointFor("hemomancy:scar_anvil"));
-		assertEquals(new ScarTreeLayout.Point(230, 440), result.pointFor("hemomancy:scar_blood_honed"));
-		assertEquals(new ScarTreeLayout.Point(180, 480), result.pointFor("hemomancy:scar_crucible"));
+		assertEquals(new ScarTreeLayout.Point(280, 490), result.pointFor("hemomancy:scar_thorn"));
+		assertEquals(new ScarTreeLayout.Point(230, 490), result.pointFor("hemomancy:scar_anvil"));
+		assertEquals(new ScarTreeLayout.Point(230, 450), result.pointFor("hemomancy:scar_blood_honed"));
+		assertEquals(new ScarTreeLayout.Point(180, 490), result.pointFor("hemomancy:scar_crucible"));
 	}
 
 	@Test

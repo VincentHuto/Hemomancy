@@ -41,6 +41,8 @@ public class VitalEffusionManip extends BloodManipulation {
 
 	@Override
 	public void getAction(Player player, Level world, ItemStack heldItemMainhand, BlockPos position) {
+        try (var schoolCast = com.vincenthuto.hemomancy.common.damage.SchoolDamage.cast(this, player, 1)) {
+
 		if (!(world instanceof ServerLevel sLevel)) return;
 
 		Vec3 eyePos = player.getEyePosition(1.0f);
@@ -74,5 +76,6 @@ public class VitalEffusionManip extends BloodManipulation {
 		if (grew > 0) {
 			world.playSound(null, center, SoundEvents.BONE_MEAL_USE, SoundSource.PLAYERS, 0.8f, 0.9f + world.random.nextFloat() * 0.2f);
 		}
-	}
+	        }
+    }
 }

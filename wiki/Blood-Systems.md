@@ -147,6 +147,8 @@ Manipulations are organized into four power tiers:
 
 The selected manipulation has a thin, continuous animated vein border with tapered branches around its wheel slice. A red slice fill indicates cooldown, with the remaining time shown on hover. A selected manipulation that is cooling down displays both the border and the red fill.
 
+Conjuring Blood Absorption, Blood Projection, or Living Staff does not produce the red formation strands or gold glow. Blood-transfer visuals still appear when using Absorption or Projection.
+
 **Activation:**
 - Depends on manipulation type
 - Quick: Single press of manipulation key (`R` default)

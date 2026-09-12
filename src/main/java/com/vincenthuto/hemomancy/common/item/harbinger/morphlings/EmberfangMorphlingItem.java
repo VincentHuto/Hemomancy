@@ -27,18 +27,12 @@ import java.util.List;
  * Emberfang strain that grants increased reflexes by applying the
  * Serpentine Guile effect while equipped. Maturity level scales the speed
  * bonuses (capped at amplifier 2 to prevent extreme stacking).
- * Prefers DUCTILIS (flexibility/neurotic energy fuels reflexes) with
- * FLAMMEUS as secondary (fervent heat drives quickness).
+ * Prefers FLAMMEUS, with DUCTILIS as its secondary affinity.
  *
  * Maturity bonuses (unique reactive abilities):
- * - Developing (2): Venom Strike — melee attacks apply scaling Poison to
- *   targets
- * - Mature (3): Constrict — repeated strikes on the same target build
- *   constriction stacks; at 3 stacks the target is rooted and crushed
- *   with burst Wither damage
- * - Apex (4): Ambush Predator — the first melee attack after sneaking for
- *   3+ seconds deals triple venom damage and inflicts Darkness, rewarding
- *   patient, calculated strikes
+ * - Developing (2): Venom Strike applies one attributed Searing stream.
+ * - Mature (3): Constrict's repeated strikes sustain that heat.
+ * - Apex (4): Ambush Predator extends Searing and retains its earned damage burst.
  */
 public class EmberfangMorphlingItem extends MorphlingItem {
 
@@ -75,6 +69,12 @@ public class EmberfangMorphlingItem extends MorphlingItem {
 
 	@Override
 	public boolean tryUse(Player playerIn, InteractionHand handIn, ItemStack itemStack, Level worldIn) {
+        if (com.vincenthuto.hemomancy.common.manipulation.ductilis.Paralysis.blocksActions(playerIn)) return false;
+        if (playerIn instanceof net.minecraft.server.level.ServerPlayer server
+                && com.vincenthuto.hemomancy.common.manipulation.HematicCommandManager.isMarionetteChannel(server))
+            com.vincenthuto.hemomancy.common.manipulation.ManipulationChannelManager.stop(server, false);
+        try (var schoolAbility = MorphlingCombat.scope(this, playerIn, itemStack, null)) {
+
 		LivingEntity target = MorphlingItem.findLookTarget(playerIn, 24.0);
 		if (target == null) {
 			playerIn.displayClientMessage(Component.literal("No blood-warm target answers the venom."), true);
@@ -89,10 +89,14 @@ public class EmberfangMorphlingItem extends MorphlingItem {
 		itemStack.set(DataComponents.CUSTOM_DATA, CustomData.of(tag));
 		target.addEffect(new MobEffectInstance(MobEffects.GLOWING, 120, 0, true, false, true));
 		return true;
-	}
+
+        }
+    }
 
 	@Override
 	public void onEquippedTick(Player player, ItemStack stack) {
+        try (var schoolAbility = MorphlingCombat.scope(this, player, stack, null)) {
+
 		int maturity = MorphlingItem.getMaturityLevel(stack);
 
 		// The named passive remains visible; Hotheaded owns its contextual attributes.
@@ -112,7 +116,9 @@ public class EmberfangMorphlingItem extends MorphlingItem {
 			}
 			stack.set(DataComponents.CUSTOM_DATA, CustomData.of(tag));
 		}
-	}
+
+        }
+    }
 
 	public static void applyHotheadedTick(Player player, ItemStack stack) {
 		double benefit = MorphlingItem.getMaturityLevel(stack) >= 2
@@ -168,18 +174,18 @@ public class EmberfangMorphlingItem extends MorphlingItem {
 
 	@Override
 	public void onEquippedAttack(Player player, ItemStack stack, LivingEntity target, float amount) {
+        try (var schoolAbility = MorphlingCombat.scope(this, player, stack, player.damageSources().magic())) {
+
 		int maturity = MorphlingItem.getMaturityLevel(stack);
 
-		// Developing (2+): Venom Strike — apply Poison on melee hit
+		// Developing (2+): Venom Strike — apply Searing on a confirmed hit
 		if (maturity >= 2) {
 			int venomDuration = 60 + (maturity - 2) * 40; // 3s at Developing, 5s Mature, 7s Apex
-			int venomAmplifier = (maturity >= 4) ? 1 : 0; // Poison II at Apex
-			target.addEffect(new MobEffectInstance(MobEffects.POISON,
-					venomDuration, venomAmplifier, true, true, true));
+			MorphlingCombat.afflict(this, player, target, venomDuration);
 		}
 
 		// Mature (3+): Constrict — repeated hits on same target build stacks,
-		// at 3 stacks the target is rooted and takes burst Wither damage
+		// at 3 stacks the existing heat is refreshed
 		if (maturity >= 3 && !player.level().isClientSide) {
 			CompoundTag tag = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
 			String targetId = target.getStringUUID();
@@ -200,20 +206,14 @@ public class EmberfangMorphlingItem extends MorphlingItem {
 			tag.putInt("ConstrHits", hits);
 
 			if (hits >= CONSTRICT_THRESHOLD) {
-				// Root the target (Slowness 127 = effectively frozen)
-				target.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN,
-						40, 127, true, true, true)); // 2 seconds
-				// Burst Wither damage (constriction crush)
-				int witherDuration = 60 + (maturity - 3) * 40; // 3s at Mature, 5s at Apex
-				target.addEffect(new MobEffectInstance(MobEffects.WITHER,
-						witherDuration, 1, true, true, true)); // Wither II
+				MorphlingCombat.afflict(this, player, target, 60 + (maturity - 3) * 40);
 				// Reset stacks
 				tag.putInt("ConstrHits", 0);
 			}
 			stack.set(DataComponents.CUSTOM_DATA, CustomData.of(tag));
 		}
 
-		// Apex (4): Ambush Predator — first hit from stealth deals triple venom + Darkness
+		// Apex (4): Ambush Predator — first hit from stealth extends heat and deals its earned burst
 		if (maturity >= 4 && !player.level().isClientSide) {
 			CompoundTag tag = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
 			if (tag.contains("SneakStart")) {
@@ -227,12 +227,8 @@ public class EmberfangMorphlingItem extends MorphlingItem {
 					tag.remove("SneakStart");
 					stack.set(DataComponents.CUSTOM_DATA, CustomData.of(tag));
 
-					// Triple venom: apply Poison II with extended duration
-					target.addEffect(new MobEffectInstance(MobEffects.POISON,
-							200, 2, true, true, true)); // Poison III for 10s
-					// Darkness follows the ambush strike.
-					target.addEffect(new MobEffectInstance(MobEffects.DARKNESS,
-							80, 0, true, true, true)); // 4 seconds
+					// An ambush extends the same burn rather than adding another stream.
+					MorphlingCombat.afflict(this, player, target, 200);
 					// Bonus magic damage burst.
 					target.hurt(player.damageSources().magic(), 6.0f);
 				}
@@ -246,17 +242,12 @@ public class EmberfangMorphlingItem extends MorphlingItem {
 				int hits = tag.getInt("SovereignVenomHits") + 1;
 				tag.putInt("SovereignVenomHits", hits);
 				if (hits == 1) {
-					target.addEffect(new MobEffectInstance(MobEffects.POISON,
-							160, 2, true, true, true));
+					MorphlingCombat.afflict(this, player, target, 160);
 				} else if (hits == 2) {
-					target.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN,
-							80, 127, true, true, true));
-					target.addEffect(new MobEffectInstance(MobEffects.WEAKNESS,
-							120, 1, true, true, true));
+					MorphlingCombat.afflict(this, player, target, 120);
 				} else {
 					target.hurt(player.damageSources().magic(), Math.min(18.0f, target.getMaxHealth() * 0.18f));
-					target.addEffect(new MobEffectInstance(MobEffects.WITHER,
-							140, 1, true, true, true));
+					MorphlingCombat.afflict(this, player, target, 140);
 					tag.remove("SovereignVenomTarget");
 					tag.remove("SovereignVenomUntil");
 					tag.remove("SovereignVenomHits");
@@ -264,15 +255,17 @@ public class EmberfangMorphlingItem extends MorphlingItem {
 				stack.set(DataComponents.CUSTOM_DATA, CustomData.of(tag));
 			}
 		}
-	}
+
+        }
+    }
 
 	@Override
 	public List<Component> getMaturityBonusDescriptions(int currentMaturity) {
 		List<Component> list = new ArrayList<>();
 		list.add(MorphlingItem.maturityBonusLine("Hotheaded + Venom Strike (Heat drives speed, damage, hunger, and risk)", 2, currentMaturity));
-		list.add(MorphlingItem.maturityBonusLine("Constrict (3 hits roots & crushes target)", 3, currentMaturity));
+		list.add(MorphlingItem.maturityBonusLine("Constrict (Repeated strikes sustain Searing)", 3, currentMaturity));
 		list.add(MorphlingItem.maturityBonusLine("Ambush Predator (Sneak 3s for lethal first strike)", 4, currentMaturity));
-		list.add(MorphlingItem.maturityBonusLine("Sovereign Venom (Staff active marks one target for escalating venom)", 5, currentMaturity));
+		list.add(MorphlingItem.maturityBonusLine("Sovereign Venom (Mark one target for heat and an earned burst)", 5, currentMaturity));
 		return list;
 	}
 

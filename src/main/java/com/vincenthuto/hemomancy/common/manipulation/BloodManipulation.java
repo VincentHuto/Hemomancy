@@ -219,7 +219,12 @@ public class BloodManipulation implements EntityCastableManipulation {
 	 * @return {@code this} for fluent chaining
 	 */
 	public BloodManipulation setDrudgeAction(DrudgeAction action, String description) {
-		this.drudgeAction = action;
+		this.drudgeAction = action == null || action == DrudgeAction.DRUDGE_UNSUPPORTED ? action : (caster, world, position, radius) -> {
+            if (com.vincenthuto.hemomancy.common.manipulation.ductilis.Paralysis.blocksActions(caster)) return false;
+            try (var schoolCast = com.vincenthuto.hemomancy.common.damage.SchoolDamage.cast(this, caster, 1)) {
+                return action.execute(caster, world, position, radius);
+            }
+        };
 		this.drudgeDescription = description;
 		return this;
 	}
@@ -402,7 +407,7 @@ public class BloodManipulation implements EntityCastableManipulation {
 
 	private boolean tryPerformAction(Player player, Level world, ItemStack heldItemMainhand, BlockPos position,
 			float chargeTicks, boolean applyCooldown, boolean enforceCooldown, boolean creditUse) {
-		if (type != EnumManipulationType.PASSIVE && com.vincenthuto.hemomancy.common.manipulation.ductilis.Paralysis.isParalyzed(player)) return false;
+		if (type != EnumManipulationType.PASSIVE && com.vincenthuto.hemomancy.common.manipulation.ductilis.Paralysis.blocksActions(player)) return false;
 		IBloodVolume volume = HemoCapabilityAccess.getBloodVolume(player)
 				.orElseThrow(NullPointerException::new);
 		IBloodTendency tendency = HemoCapabilityAccess.getBloodTendency(player)
@@ -488,7 +493,10 @@ public class BloodManipulation implements EntityCastableManipulation {
 					RootedStateHelper.refundManipulationCost(player, effectiveCost);
 					ConserveStateHelper.markManipulationCast(player);
 					PacketHandler.sendToPlayer((ServerPlayer) player, new BloodVolumeServerPacket(volume));
-					getAction(player, world, heldItemMainhand, position, chargeTicks);
+					try (var schoolCast = com.vincenthuto.hemomancy.common.damage.SchoolDamage.cast(this, player,
+                            getRequiredChargeTicks() <= 0 ? 1 : chargeTicks / getRequiredChargeTicks())) {
+					    getAction(player, world, heldItemMainhand, position, chargeTicks);
+                    }
 					if (creditUse && type != EnumManipulationType.CONTINUOUS) {
 						ManipulationCastSounds.play(world, player, this);
 						ManipulationParticles.activate(player, this);

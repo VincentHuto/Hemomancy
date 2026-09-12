@@ -29,10 +29,10 @@ public class EntityIronSpike extends FerricConstructEntity {
 		if (!getPersistentData().getBoolean(NO_CONTACT_DAMAGE) && !(entityIn instanceof EntityIronSpike)) {
 			if (getCreator() != null) {
 				if (entityIn != creator) {
-					entityIn.hurt(this.damageSources().generic(), 3.5f);
+					entityIn.hurt(com.vincenthuto.hemomancy.common.damage.SchoolDamage.projectileSource(this.damageSources().generic(), this, getCreator()), 3.5f);
 				}
 			} else {
-				entityIn.hurt(this.damageSources().generic(), 3.5f);
+				entityIn.hurt(com.vincenthuto.hemomancy.common.damage.SchoolDamage.projectileSource(this.damageSources().generic(), this, getCreator()), 3.5f);
 			}
 		}
 	}

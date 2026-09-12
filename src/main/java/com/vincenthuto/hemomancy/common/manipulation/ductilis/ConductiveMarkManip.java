@@ -43,6 +43,8 @@ public class ConductiveMarkManip extends BloodManipulation {
 
 	@Override
 	public void getAction(Player player, Level world, ItemStack heldItemMainhand, BlockPos position) {
+        try (var schoolCast = com.vincenthuto.hemomancy.common.damage.SchoolDamage.cast(this, player, 1)) {
+
 		if (!(world instanceof ServerLevel)) return;
 		LivingEntity target = findTarget(player, world, BASE_RANGE * SkillPointHelper.getSanguineReachMultiplier(player));
 		if (target == null) {
@@ -57,7 +59,8 @@ public class ConductiveMarkManip extends BloodManipulation {
         ManipulationVisuals.attached(target, ManipulationVisuals.Form.MARK, .6, DURATION_TICKS, 1);
 		world.playSound(null, target.blockPosition(), SoundEvents.TRIDENT_THUNDER.value(), SoundSource.PLAYERS,
 				0.35F, 2.0F);
-	}
+	        }
+    }
 
 	@Nullable
 	private LivingEntity findTarget(Player player, Level world, double range) {

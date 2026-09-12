@@ -31,7 +31,7 @@ import java.util.List;
  * - Mature (3): Blood Fever — gain movement speed when there are bleeding/
  *   damaged hostiles nearby (the tick grows frenzied near wounded prey)
  * - Apex (4): Pandemic Burst — when taking heavy damage (>6), release a
- *   disease cloud that applies Wither + Weakness to all nearby hostiles
+ *   disease cloud that applies Necrosis to all nearby hostiles
  */
 public class TickMorphlingItem extends MorphlingItem {
 
@@ -54,21 +54,28 @@ public class TickMorphlingItem extends MorphlingItem {
 
 	@Override
 	public boolean tryUse(Player playerIn, InteractionHand handIn, ItemStack itemStack, Level worldIn) {
+        if (com.vincenthuto.hemomancy.common.manipulation.ductilis.Paralysis.blocksActions(playerIn)) return false;
+        if (playerIn instanceof net.minecraft.server.level.ServerPlayer server
+                && com.vincenthuto.hemomancy.common.manipulation.HematicCommandManager.isMarionetteChannel(server))
+            com.vincenthuto.hemomancy.common.manipulation.ManipulationChannelManager.stop(server, false);
+        try (var schoolAbility = MorphlingCombat.scope(this, playerIn, itemStack, null)) {
+
 		if (!MorphlingItem.tryBeginPrimalAbility(playerIn, itemStack, "HemorrhagicSeason",
 				420.0, 700, 260, 0)) return false;
 		AABB area = playerIn.getBoundingBox().inflate(12.0);
 		for (Monster mob : worldIn.getEntitiesOfClass(Monster.class, area,
 				mob -> mob.isAlive() && mob.getHealth() < mob.getMaxHealth())) {
-			mob.addEffect(new MobEffectInstance(MobEffects.WITHER,
-					180, 1, true, true, true));
-			mob.addEffect(new MobEffectInstance(MobEffects.WEAKNESS,
-					180, 0, true, true, true));
+			MorphlingCombat.afflict(this, playerIn, mob, 180);
 		}
 		return true;
-	}
+
+        }
+    }
 
 	@Override
 	public void onEquippedTick(Player player, ItemStack stack) {
+        try (var schoolAbility = MorphlingCombat.scope(this, player, stack, null)) {
+
 		int maturity = MorphlingItem.getMaturityLevel(stack);
 
 		// Base effect: Hemorrhagic Venom (AoE damage to nearby hostiles)
@@ -96,10 +103,19 @@ public class TickMorphlingItem extends MorphlingItem {
 				}
 			}
 		}
-	}
+
+        }
+    }
 
 	@Override
 	public void onEquippedKill(Player player, ItemStack stack, LivingEntity victim) {
+        onEquippedKill(player, stack, victim, true);
+    }
+
+    @Override
+    public void onEquippedKill(Player player, ItemStack stack, LivingEntity victim, boolean allowReactions) {
+        try (var schoolAbility = MorphlingCombat.scope(this, player, stack, player.damageSources().magic())) {
+
 		int maturity = MorphlingItem.getMaturityLevel(stack);
 
 		// Developing (2+): Engorge — temporary armor bonus on kill
@@ -111,21 +127,22 @@ public class TickMorphlingItem extends MorphlingItem {
 					armorDuration, armorAmplifier, true, false, true));
 		}
 
-		if (MorphlingItem.isPrimal(stack) && !player.level().isClientSide
-				&& victim.hasEffect(MobEffects.WITHER)) {
+		if (allowReactions && MorphlingItem.isPrimal(stack) && !player.level().isClientSide
+				&& (victim.hasEffect(EffectInit.necrosis) || victim.hasEffect(MobEffects.WITHER))) {
 			AABB area = victim.getBoundingBox().inflate(8.0);
 			for (Monster mob : player.level().getEntitiesOfClass(Monster.class, area,
 					mob -> mob != victim && mob.isAlive() && mob.getHealth() < mob.getMaxHealth())) {
-				mob.addEffect(new MobEffectInstance(MobEffects.WITHER,
-						140, 1, true, true, true));
-				mob.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN,
-						100, 0, true, true, true));
+				MorphlingCombat.afflict(this, player, mob, 140);
 			}
 		}
-	}
+
+        }
+    }
 
 	@Override
 	public void onEquippedHurt(Player player, ItemStack stack, DamageSource source, float amount) {
+        try (var schoolAbility = MorphlingCombat.scope(this, player, stack, source)) {
+
 		int maturity = MorphlingItem.getMaturityLevel(stack);
 
 		// Apex (4): Pandemic Burst — disease cloud on heavy damage
@@ -139,21 +156,20 @@ public class TickMorphlingItem extends MorphlingItem {
 				AABB area = player.getBoundingBox().inflate(radius);
 				List<Monster> hostiles = player.level().getEntitiesOfClass(Monster.class, area);
 				for (Monster mob : hostiles) {
-					mob.addEffect(new MobEffectInstance(MobEffects.WITHER,
-							100, 1, true, true, true)); // Wither II for 5s
-					mob.addEffect(new MobEffectInstance(MobEffects.WEAKNESS,
-							100, 0, true, true, true)); // Weakness I for 5s
+					MorphlingCombat.afflict(this, player, mob, 100);
 				}
 			}
 		}
-	}
+
+        }
+    }
 
 	@Override
 	public List<Component> getMaturityBonusDescriptions(int currentMaturity) {
 		List<Component> list = new ArrayList<>();
 		list.add(MorphlingItem.maturityBonusLine("Engorge (Resistance on kill from feeding)", 2, currentMaturity));
 		list.add(MorphlingItem.maturityBonusLine("Blood Fever (Speed near wounded hostiles)", 3, currentMaturity));
-		list.add(MorphlingItem.maturityBonusLine("Pandemic Burst (AoE Wither + Weakness on heavy hit)", 4, currentMaturity));
+		list.add(MorphlingItem.maturityBonusLine("Pandemic Burst (AoE Necrosis on heavy hit)", 4, currentMaturity));
 		list.add(MorphlingItem.maturityBonusLine("Hemorrhagic Season (Staff active spreads outbreak through wounded mobs)", 5, currentMaturity));
 		return list;
 	}

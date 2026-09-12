@@ -1,5 +1,7 @@
 package com.vincenthuto.hemomancy.common.manipulation.congeatio;
 
+import com.vincenthuto.hemomancy.common.damage.*;
+
 import com.vincenthuto.hemomancy.common.manipulation.ManipulationVisuals;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.EnumVeinSections;
@@ -26,17 +28,18 @@ public class AbsoluteStillnessManip extends BloodManipulation {
 
 	@Override
 	public void getAction(Player player, Level world, ItemStack heldItemMainhand, BlockPos position, float heldTicks) {
+        try (var schoolCast = com.vincenthuto.hemomancy.common.damage.SchoolDamage.cast(this, player, getRequiredChargeTicks() <= 0 ? 1 : heldTicks / getRequiredChargeTicks())) {
+
 		if (!(world instanceof ServerLevel level)) return;
 		for (LivingEntity target : ManipulationCombatHelper.hostileTargets(player, level, 6)) {
 			target.clearFire();
-			target.setTicksFrozen(Math.max(target.getTicksFrozen(), 80));
             ManipulationVisuals.attached(target,ManipulationVisuals.Form.FROZEN_VEINS,target.getBbWidth(),25,1);
-			target.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 25,
-					com.vincenthuto.hemomancy.common.manipulation.ManipulationReactiveEvents.isBoss(target) ? 0 : 3, false, true));
+			SchoolStates.apply(player, target, SchoolState.RIME, 25);
 		}
 		player.clearFire();
 		ManipulationVisuals.attached(player, ManipulationVisuals.Form.STILLNESS, 6, 25, 1);
-	}
+	        }
+    }
 
 	@Override
 	public void tickContinuousAction(Player player, Level world) {

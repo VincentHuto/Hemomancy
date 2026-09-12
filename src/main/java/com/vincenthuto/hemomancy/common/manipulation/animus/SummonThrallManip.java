@@ -79,6 +79,8 @@ public class SummonThrallManip extends BloodManipulation {
 
 	@Override
 	public void getAction(Player player, Level world, ItemStack heldItemMainhand, BlockPos position) {
+        try (var schoolCast = com.vincenthuto.hemomancy.common.damage.SchoolDamage.cast(this, player, 1)) {
+
 		Vec3 eyePos = player.getEyePosition(1.0F);
 		Vec3 lookVec = player.getViewVector(1.0F);
 		Vec3 endPos = eyePos.add(lookVec.scale(SUMMON_RANGE));
@@ -135,7 +137,8 @@ public class SummonThrallManip extends BloodManipulation {
 
 		// ── First activation: spawn thrall with source, enter awaiting state ──
 		spawnNewThrall(player, world, hitBlock);
-	}
+	        }
+    }
 
 	private void spawnNewThrall(Player player, Level world, BlockPos sourceBlock) {
 		// Source must be a valid blood reservoir (has blood volume capability)
