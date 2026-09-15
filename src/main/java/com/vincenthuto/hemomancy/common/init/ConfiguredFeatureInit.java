@@ -23,6 +23,9 @@ import net.minecraft.world.level.levelgen.structure.templatesystem.BlockMatchTes
 import java.util.List;
 
 public class ConfiguredFeatureInit {
+	public static final ResourceKey<ConfiguredFeature<?, ?>> ESCHARIAN_OVERGROWTH=createKey("escharian_overgrowth");
+	public static final ResourceKey<ConfiguredFeature<?, ?>> PHLEGETHONTIC_BASIN_TERRAIN=createKey("phlegethontic_basin_terrain");
+	public static final ResourceKey<ConfiguredFeature<?, ?>> PHLEGETHONTIC_VEIN=createKey("phlegethontic_vein");
 	public static final ResourceKey<ConfiguredFeature<?, ?>> HYPHAE_TENDRIL = createKey("hyphae_tendril");
 	public static final ResourceKey<ConfiguredFeature<?, ?>> VENOUS_RIDGE = createKey("venous_ridge");
 	public static final ResourceKey<ConfiguredFeature<?, ?>> FUNGAL_FLOOR = createKey("fungal_floor");
@@ -94,6 +97,10 @@ public class ConfiguredFeatureInit {
 	}
 
 	public static void bootstrap(BootstrapContext<ConfiguredFeature<?, ?>> context) {
+		context.register(ESCHARIAN_OVERGROWTH,new ConfiguredFeature<>(BaseFeatureInit.ESCHARIAN_OVERGROWTH,
+				com.vincenthuto.hemomancy.common.worldgen.config.EscharianOvergrowthConfiguration.DEFAULT));
+		context.register(PHLEGETHONTIC_BASIN_TERRAIN,new ConfiguredFeature<>(BaseFeatureInit.PHLEGETHONTIC_BASIN_TERRAIN,NoneFeatureConfiguration.INSTANCE));
+		context.register(PHLEGETHONTIC_VEIN,new ConfiguredFeature<>(BaseFeatureInit.PHLEGETHONTIC_VEIN,NoneFeatureConfiguration.INSTANCE));
 		HolderGetter<ConfiguredFeature<?, ?>> features = context.lookup(Registries.CONFIGURED_FEATURE);
 
 		context.register(MYCELIUM_BLOB,

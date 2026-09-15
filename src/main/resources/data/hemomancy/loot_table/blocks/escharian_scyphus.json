@@ -1,0 +1,60 @@
+{
+  "type": "minecraft:block",
+  "pools": [
+    {
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "hemomancy:escharian_scyphus",
+          "functions": [
+            {
+              "function": "minecraft:set_count",
+              "count": 2.0,
+              "add": false,
+              "conditions": [{
+                "condition": "minecraft:block_state_property",
+                "block": "hemomancy:escharian_scyphus",
+                "properties": {"count": "2"}
+              }]
+            },
+            {
+              "function": "minecraft:set_count",
+              "count": 3.0,
+              "add": false,
+              "conditions": [{
+                "condition": "minecraft:block_state_property",
+                "block": "hemomancy:escharian_scyphus",
+                "properties": {"count": "3"}
+              }]
+            },
+            {
+              "function": "minecraft:set_count",
+              "count": 4.0,
+              "add": false,
+              "conditions": [{
+                "condition": "minecraft:block_state_property",
+                "block": "hemomancy:escharian_scyphus",
+                "properties": {"count": "4"}
+              }]
+            },
+            {
+              "function": "minecraft:set_count",
+              "count": 5.0,
+              "add": false,
+              "conditions": [{
+                "condition": "minecraft:block_state_property",
+                "block": "hemomancy:escharian_scyphus",
+                "properties": {"count": "5"}
+              }]
+            },
+            {
+              "function": "minecraft:explosion_decay"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "random_sequence": "hemomancy:blocks/escharian_scyphus"
+}

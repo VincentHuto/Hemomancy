@@ -70,7 +70,7 @@ final class LivingTorchReworkSourceTest {
 		assertContains(effects, "BloodCellParticleFactory");
 		assertFalse(effects.contains("AbsorbedBloodCellParticleFactory"),
 				"torch blood cells must travel outward instead of interpolating back toward their emitter");
-		assertContains(effects, "EmberParticleFactory");
+		assertContains(effects, "LivingTorchFlames.emit(");
 		assertFalse(effects.contains("GlowParticleFactory"),
 				"long-lived glow particles leave a detached world-space trail behind a moving player");
 		assertFalse(effects.contains("DarkGlowParticleFactory"),

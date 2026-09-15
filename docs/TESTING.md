@@ -16,6 +16,49 @@ From the project root on Windows:
 - `runGameTestServer` starts a headless NeoForge server, runs the registered progression scenarios, and exits non-zero if a required scenario fails.
 - `alphaCheck` runs both layers in order. Use this before an alpha build or whenever progression, crafting, quests, or rewards change.
 
+## Living weapons
+
+```powershell
+./gradlew.bat -I tools/living_weapon_validation.init.gradle test --tests '*Living*' --tests '*LuxUmbra*' --tests '*Gloam*' --tests '*Thermal*' runLivingWeaponGameTest compileJava processResources
+```
+
+The isolated server uses `build/living-weapons-gametest`. Its weapon scenarios cover saved spear charge, failed and uncooled hits, primary and nearby burst damage, ally exclusion, axe swing duration and pool timing, and Blood Bolt impact scaling and bounded chaining. JVM checks cover the hand curves, three-cut geometry, spherical Lux extent, and torch fan motion and visibility.
+
+For visual acceptance, inspect partial and full spear charge in hand, inventory, on the ground, and during the Living Staff morph. Check the axe swing in both hands and from another player, three separate Umbral cuts, and the torch's full fan from both ends. With paired claws, check alternating arms on clicks and held-attack repeats in first person, third person, and from another player, including the left-handed setting. An unrelated offhand item should keep its normal behavior. Shader compilation and server tests do not establish those views.
+
+## Unstained weapon animations
+
+Run `./gradlew.bat -I tools/living_weapon_validation.init.gradle test --tests '*UnstainedWeapon*' --tests '*LivingAxePlayerPose*' runLivingWeaponGameTest` for pose curves and synchronized swing durations. The dagger should start with its blade pointing down and lift its tip upward and outward ahead of the hilt, the glaive should cross a broad horizontal fan, and the hammer should visibly lift its head before the downstroke while retaining the Living Axe's timing and third-person pose. Check first person and third person, both handedness settings, offhand swings, Annetta's dagger, and return to the resting grip. Confirm the existing hit effects and weapon mechanics during combat.
+
+## Phlegethontic Nether
+
+```powershell
+./gradlew.bat test --tests '*Phlegethontic*' compileGameTestJava
+./gradlew.bat runGameTestServer
+./gradlew.bat runPhlegethonticValidationServer -PphlegethonticSeed=42 -PphlegethonticRun=fresh-unique-name
+./gradlew.bat runPhlegethonticValidationServer -PphlegethonticSeed=42 -PphlegethonticRun=reverse-unique-name -PphlegethonticOrder=reverse
+```
+
+Use a new run name for every fresh-world measurement. The validation server uses `build/phlegethontic-worlds/<seed>-<run>` and writes `phlegethontic-validation.json` there. It sets the actual world seed, adds a second TerraBlender Nether region and foreign-namespace Nether biome, generates 576 chunks, audits all feature writes, examines an inner 100-chunk sample, and advances 120 ticks with fluid ticking enabled. Its feature timings combine the queue, Basin materialization, and deferred vein completion per generated chunk; they exclude ore-reservation interception overhead and are not whole-generator overhead benchmarks.
+
+`tools/model_export/compare_phlegethontic_worlds.py` compares region-file block states in two matching runs. It reports river/vein differences separately from high cavern-surface scab changed by vanilla lava and magma decoration. It requires `nbtlib`. The [validation report](phlegethontic-nether-worldgen/VALIDATION.md) records tested seeds, measured targets, and visual/multiplayer evidence.
+
+`PhlegethonticCavernTest` checks domed overhead clearance, tapering before a protected boundary, and continuous overlapping vaults across negative chunk coordinates. For visual regression, compare fresh worlds at the same seed and camera position; loading an old save does not rebuild its roof.
+
+`PhlegethonticGameTests` is explicitly registered by `DevTestHooks`. It covers real codecs and modifier injection, thermal immunity and Blood Loss, multi-block contact cadence, ticking fluid containment with foreign blocks, full-size spawning, home return, clotting, bucket rejection, tether exclusion/escape/collision/lifetime, piercing projectiles, and persistence. The positive control deliberately spills uncontained ichor to prove that the containment tests advance real fluid ticks. Test entities are removed after the batch.
+
+The three existing combat-targeting cases that spawn beyond their original one-block template now use `combat_targeting_room`. Keeping their complete target footprint in loaded chunks avoids generation-grid-dependent entity-query failures.
+
+The isolated `runPhlegethonticReviewClient` opens `build/phlegethontic-client/saves/Phlegethontic Final Review`; `runPhlegethonticObserverClient` joins `localhost:25566` from a separate game directory. These profiles and the `review.json` driver belong to development only. The driver can send commands to its integrated server, capture through Minecraft's screenshot API, hold/release Sneak, and write server player/tether status. Never point these disposable review profiles at a normal save. Compile before launching the clients and avoid rebuilding dependency JARs while either is running.
+
+### Escharian Scyphus colonies
+
+Run `./gradlew.bat test --tests '*Escharian*' compileGameTestJava` for the five authored count models and rotations, deterministic count variation, patch budgets, contour connectivity, attachment, 50–70% patch coverage, complete dark-face pile coverage, solid tapered pile dimensions, ground-only rims, surface-following infested foundations and stone transitions, obstruction rejection, legacy configuration, and anchor preference checks. The runtime acceptance test stacks Scyphus from one through five on all six faces in dry and waterlogged states, checks count-aware shapes and drops, rejects a sixth placement, and repeats support-loss and white-rim checks.
+
+Run `./gradlew.bat runPhlegethonticValidationServer -PphlegethonticSeed=20260912 -PphlegethonticRun=UNIQUE` using a new run name. The disposable server tests actual BlockItem placement on all six faces, dry and waterlogged, selection thickness, rotation/mirror, empty-hand loot, replanting, support-loss drops, and white-rim placement rejection. The fresh Nether report scans 576 chunks for plant directions, backing validity, ground rims, and sample ichor proximity. It requires wall colonies, ceiling colonies, and ground piles for this seed. Every generated colony must have infested and regular venous stone nearby, and every ground-pile base must rest on infested venous stone. The original 100-chunk terrain/fluid checks remain.
+
+In the disposable review client, first enter spectator mode and teleport to `(1010,206,1000)` in the Nether. Wait for the area to load; the item-entity drop checks require loaded chunks. Then write `{"sequence":1500,"operation":"escharian"}` to `build/phlegethontic-client/review.json`. This also runs the attachment/harvest checks with the real player, then places six orientation fixtures at X 1000–1020, Y 202, Z 1000 and four production-layout ground piles at X 1000, 1018, 1036, and 1054, Y 200, Z 1020. Inspect from above and below; the cup base must touch the support and its opening face away. Inspect natural colonies against uneven walls and ceilings using coordinates from the validation report. Capture screenshots through the driver's `screenshot` operation. Existing chunks cannot demonstrate the replacement generator.
+
 ## Automatic Harbinger, Unstained, and Circus journeys
 
 Launch the isolated client below, create or open a disposable world, grant yourself operator permission, and run one of these development-only commands:
@@ -162,6 +205,20 @@ These are deliberately narrow pilots. They prove the harness through crafting lo
 5. Run `./gradlew.bat alphaCheck`.
 
 Avoid sharing mutable fixture state between tests. Prefer throwaway players and explicit cleanup, and assert observable outcomes rather than implementation details when the real gameplay API is available.
+
+## Phlegethontic Bombardier ecology
+
+1. Locate newly generated Phlegethontic Basin terrain and confirm Bombardiers spawn only with Escharian Overgrowth directly beneath them.
+2. Approach a camouflaged specimen. Confirm it remains visible and outlineable, rises into its warning pose, and does not become angry or attack.
+3. Strike one specimen. Confirm only Bombardiers bound to the same connected outcropping retaliate.
+4. Check the flame from its abdominal nozzle at the sweep edge, behind the creature, and behind solid cover. Confirm the 30-tick wind-up, final eight-tick aim lock, four discrete pulses, and 16-tick sweep.
+5. Observe cooling both on and away from Overgrowth. It should recharge in 120 ticks on habitat and 240 ticks elsewhere while trying to return to its outcropping.
+6. Reload once during anger and once during cooling. Confirm anger persists and an interrupted wind-up or firing state resumes as cooling rather than duplicating an attack.
+7. Snapshot the outcropping before firing, pathfinding, grazing, and cooling. Confirm no block state changes and no terrain ignition.
+8. Compare the spray beside a Flammeus manipulation. Confirm the shared pinkish-red and black-tipped flame language, with no vanilla-orange fallback.
+9. Inspect `latest.log` for missing entity models, textures, biome modifiers, loot tables, or client-only classloading errors.
+
+The dedicated `PhlegethonticBombardierGameTests` batch covers colony isolation, wind-up safety, front/rear cone selection, cooling transition, and the no-mutation invariant.
 
 ## Unstained progression smoke test
 

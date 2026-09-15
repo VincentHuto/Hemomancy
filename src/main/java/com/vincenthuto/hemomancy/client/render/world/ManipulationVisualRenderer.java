@@ -130,6 +130,7 @@ public final class ManipulationVisualRenderer {
         BloodBindingTendrilRenderer.tick();
         FerricDuctilisEffects.tick();
         ThermalParticles.tick();
+        LivingTorchFlames.tick();
         if (current != null) CUES.removeIf(c -> {
             c.fragments.update(c.packet,current.getGameTime()-c.life.born);
             if(!c.life.retiring() && (c.life.expired(current.getGameTime()) || !sourceActive(c,current)))
@@ -291,6 +292,7 @@ public final class ManipulationVisualRenderer {
         FerricDuctilisEffects.render(poses,FLOWS,FerricDuctilisGeometry.DISCARD,camera,right,up,time,partial,false);
         BlackVeilRenderer.collect(poses, FLOWS, partial);
         ThermalParticles.render(poses,FLOWS,camera,right,up,time,partial);
+        LivingTorchFlames.render(poses,FLOWS,camera,right,up,time);
         buffers.endBatch(ThermalRenderTypes.CORE);
         FLOWS.drawMaterials(material -> buffers.getBuffer(ThermalRenderTypes.material(material)));
         for(var material:LuxUmbraBatch.Material.values())buffers.endBatch(ThermalRenderTypes.material(material));

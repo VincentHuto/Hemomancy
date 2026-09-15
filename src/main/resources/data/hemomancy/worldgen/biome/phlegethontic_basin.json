@@ -1,0 +1,53 @@
+{
+  "temperature": 2,
+  "downfall": 0,
+  "has_precipitation": false,
+  "effects": {
+    "fog_color": 2424832,
+    "sky_color": 3802373,
+    "water_color": 7602176,
+    "water_fog_color": 2162688,
+    "ambient_sound": "minecraft:ambient.basalt_deltas.loop",
+    "mood_sound": {
+      "sound": "minecraft:ambient.basalt_deltas.mood",
+      "tick_delay": 6000,
+      "block_search_extent": 8,
+      "offset": 2
+    }
+  },
+  "spawners": {
+    "monster": [
+      {
+        "type": "hemomancy:excoriated_sagittary",
+        "weight": 4,
+        "minCount": 1,
+        "maxCount": 2
+      }
+    ]
+  },
+  "spawn_costs": {},
+  "carvers": {
+    "air": [
+      "minecraft:nether_cave"
+    ]
+  },
+  "features": [
+    [],
+    [],
+    [
+      "hemomancy:phlegethontic_basin_terrain"
+    ],
+    [],
+    [],
+    [],
+    [],
+    [
+      "minecraft:glowstone_extra"
+    ],
+    [],
+    [
+      "hemomancy:escharian_overgrowth"
+    ],
+    []
+  ]
+}

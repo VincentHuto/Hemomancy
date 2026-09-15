@@ -111,7 +111,7 @@ public final class ManipulationTargetingGameTests {
         } finally { h.getLevel().getServer().setPvpAllowed(pvp); p.discard(); other.discard(); wolf.discard(); hostile.discard(); }
     }
 
-    @GameTest(templateNamespace = "minecraft", template = EMPTY, batch = "manipulation_targeting")
+    @GameTest(templateNamespace = "hemomancy", template = "combat_targeting_room", batch = "manipulation_targeting")
     public static void beneficialSelectionSkipsCloserOpponent(GameTestHelper h) {
         ServerPlayer p = player(h), ally = player(h), enemy = player(h);
         var scoreboard = h.getLevel().getScoreboard();
@@ -213,7 +213,7 @@ public final class ManipulationTargetingGameTests {
         } finally { p.discard(); }
     }
 
-    @GameTest(templateNamespace = "minecraft", template = EMPTY, batch = "manipulation_targeting")
+    @GameTest(templateNamespace = "hemomancy", template = "combat_targeting_room", batch = "manipulation_targeting")
     public static void sovereignControlSurvivesAnAiTargetChange(GameTestHelper h) {
         ServerPlayer p = player(h);
         h.getLevel().addNewPlayer(p);

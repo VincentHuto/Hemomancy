@@ -1,6 +1,8 @@
 # Configuration
 
-`HemoConfig` exposes active **server**, **client**, and reserved **common** specs. Gameplay tuning lives in `HemoServerConfig`; presentation and rendering settings live in `HemoClientConfig`.
+`HemoConfig` exposes **server**, **client**, and **common** specs. Gameplay tuning lives in `HemoServerConfig`; presentation and rendering settings live in `HemoClientConfig`; TerraBlender region settings live in `HemoCommonConfig`.
+
+In `hemomancy-common.toml`, `[worldgen].enablePhlegethonticNetherRegion` defaults to `true`, and `phlegethonticNetherRegionWeight` defaults to `1` with an allowed range of `1–100`. Both require a restart. They control discovery of the Phlegethontic Basin in new Nether chunks. Buried ichor veins remain an independent Nether-wide feature. Existing chunks are not regenerated.
 
 Server settings control Blood Volume regeneration, drain, and kill gain; **Blood Tendency** shifts from combat and manipulation use; **Vascular System** strain, healing, and debuffs; **Bloodline** pool sharing, healing, and fane stake budget; and **Morphling** passive drain timing and cost. Change these values when the pack needs a different progression speed or multiplayer bloodline balance.
 

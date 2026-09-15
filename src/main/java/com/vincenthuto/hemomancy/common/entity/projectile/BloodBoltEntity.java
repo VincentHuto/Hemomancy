@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.entity.projectile;
 
+import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.particle.HemoParticleData;
 import com.google.common.collect.Sets;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
@@ -7,6 +8,13 @@ import com.vincenthuto.hemomancy.common.init.EffectInit;
 import com.vincenthuto.hemomancy.common.init.EntityInit;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.TendencyWeaponHelper;
+import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.LivingCrossbowItem;
+import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.LivingCrossbowChainRules;
+import com.vincenthuto.hemomancy.common.damage.SchoolDamage;
+import com.vincenthuto.hemomancy.common.damage.SchoolHitContext;
+import com.vincenthuto.hemomancy.common.manipulation.ManipulationCombatHelper;
+import com.vincenthuto.hemomancy.common.manipulation.ductilis.Discharge;
+import com.vincenthuto.hemomancy.common.manipulation.ductilis.DuctilisLightningEffects;
 import com.vincenthuto.hutoslib.client.HlClientTickHandler;
 import com.vincenthuto.hutoslib.client.particle.BoltRenderer;
 import com.vincenthuto.hutoslib.client.particle.data.BoltParticleData;
@@ -40,6 +48,7 @@ import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
@@ -68,6 +77,7 @@ public class BloodBoltEntity extends AbstractArrow implements CombatWeaponCarrie
 	private Holder<Potion> potion = null;
 	private final Set<MobEffectInstance> customPotionEffects = Sets.newHashSet();
 	private ItemStack combatWeaponItem = ItemStack.EMPTY;
+	private boolean hasChained;
 
 	private boolean fixedColor;
 
@@ -195,8 +205,73 @@ public class BloodBoltEntity extends AbstractArrow implements CombatWeaponCarrie
 		if (this.isDuctilisProjectile()) {
 			this.spawnDuctilisImpactArcs(p_213868_1_.getLocation(), p_213868_1_.getEntity());
 		}
-		super.onHitEntity(p_213868_1_);
+		if (!level().isClientSide && combatWeaponItem.getItem() instanceof LivingCrossbowItem) {
+			SchoolDamage.captureProjectile(this);
+			try (var scope = SchoolDamage.scope(SchoolDamage.projectileContext(this))) {
+				Discharge discharge = Discharge.current();
+				if (discharge == null) discharge = new Discharge();
+				discharge.suppressReactiveArcs();
+				super.onHitEntity(p_213868_1_);
+				discharge.finishChain(level().getGameTime());
+			}
+		} else {
+			super.onHitEntity(p_213868_1_);
+		}
 
+	}
+
+	public void chainFrom(LivingEntity directTarget, float initialDamage) {
+		if (hasChained || !(this.level() instanceof ServerLevel level)
+				|| !(this.getOwner() instanceof LivingEntity owner)
+				|| !(this.combatWeaponItem.getItem() instanceof LivingCrossbowItem)) return;
+		hasChained = true;
+		SchoolHitContext chainHit = SchoolHitContext.direct(Hemomancy.rloc("living_crossbow_chain"),
+				EnumBloodTendency.DUCTILIS,
+				TendencyWeaponHelper.getWeaponSecondaryTendency(this.combatWeaponItem).orElse(null), owner)
+				.withApplication(10, 1);
+		try (var scope = SchoolDamage.scope(chainHit, owner)) {
+			Discharge discharge = new Discharge();
+			discharge.suppressReactiveArcs();
+			Set<java.util.UUID> visited = new java.util.HashSet<>();
+			visited.add(owner.getUUID());
+			visited.add(directTarget.getUUID());
+			LivingEntity previous = directTarget;
+			for (int hop = 0; hop < LivingCrossbowChainRules.MAX_HOPS; hop++) {
+				LivingEntity next = nextChainTarget(level, owner, previous, visited);
+				if (next == null) break;
+				visited.add(next.getUUID());
+				DuctilisLightningEffects.conductiveArc(previous, next, hop);
+				float damage = LivingCrossbowChainRules.damageForHop(initialDamage, hop);
+				next.hurt(SchoolDamage.attributed(level.damageSources().magic(), chainHit, owner), damage);
+				previous = next;
+			}
+			discharge.finishChain(level.getGameTime());
+		}
+	}
+
+	@Nullable
+	private LivingEntity nextChainTarget(ServerLevel level, LivingEntity owner, LivingEntity previous,
+			Set<java.util.UUID> visited) {
+		AABB bounds = previous.getBoundingBox().inflate(LivingCrossbowChainRules.HOP_RANGE);
+		List<LivingEntity> entities = level.getEntitiesOfClass(LivingEntity.class, bounds,
+				target -> canChainTo(owner, target));
+		List<LivingCrossbowChainRules.Candidate> candidates = entities.stream().map(target -> {
+			Vec3 eye = target.getEyePosition();
+			return new LivingCrossbowChainRules.Candidate(target.getUUID(), eye.x, eye.y, eye.z,
+					true, previous.hasLineOfSight(target));
+		}).toList();
+		Vec3 source = previous.getEyePosition();
+		LivingCrossbowChainRules.Candidate selected = LivingCrossbowChainRules.nextHop(candidates,
+				source.x, source.y, source.z, visited);
+		if (selected == null) return null;
+		return entities.stream().filter(entity -> entity.getUUID().equals(selected.id())).findFirst().orElse(null);
+	}
+
+	private static boolean canChainTo(LivingEntity owner, LivingEntity target) {
+		if (target == owner || !target.isAlive() || target.isSpectator()
+				|| owner.isAlliedTo(target) || target.isAlliedTo(owner)) return false;
+		return !(owner instanceof net.minecraft.world.entity.player.Player player)
+				|| ManipulationCombatHelper.canHarm(player, target);
 	}
 
 	@Override

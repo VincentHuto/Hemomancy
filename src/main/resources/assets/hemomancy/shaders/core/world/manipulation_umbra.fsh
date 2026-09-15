@@ -37,6 +37,7 @@ void main() {
     float n = flow(p * 3.0 + warp * 1.2 + vec2(-t * 0.17, t * 0.23));
     float alpha;
     float highlight = 0.0;
+    float slashCore = 0.0;
     if (abs(flowShape - 2.0) < 0.5) {
         float r = length(p + warp * 0.09);
         // Rotating Cartesian noise is continuous across the angular seam.
@@ -52,6 +53,8 @@ void main() {
         float smoke = exp(-d * d * 4.0) * smoothstep(0.27, 0.7, n) * 0.48;
         alpha = (ink + smoke) * smoothstep(0.0, 0.04, uv.x) * (1.0 - smoothstep(0.90, 1.0, uv.x));
         highlight = exp(-pow((d - 0.1) * 24.0, 2.0)) * n;
+        if (abs(flowShape - 7.0) < 0.5)
+            slashCore = exp(-d * d * 220.0) * (.8 + .2 * n);
     } else {
         float lobes = flow((p + warp * 0.65) * 2.2 - t * 0.09);
         float density = smoothstep(0.30, 0.67, n * 0.62 + lobes * 0.38);
@@ -63,6 +66,7 @@ void main() {
     alpha *= vertexColor.a * ColorModulator.a;
     if (alpha < 0.002) discard;
     vec3 color = mix(vec3(0.008, 0.009, 0.014), vec3(0.095, 0.083, 0.11), highlight);
+    color = mix(color, vec3(.68, .32, 1.0), slashCore);
     color *= vertexColor.rgb * ColorModulator.rgb;
     fragColor = linear_fog(vec4(color, min(alpha, 0.94)), vertexDistance, FogStart, FogEnd, FogColor);
 }

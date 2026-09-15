@@ -340,6 +340,14 @@ As you progress, your body accumulates **Fungal Scars**: visible marks of corrup
 
 ### Weapons
 
+**Living Staff weapon forms**
+
+- **Spear:** stores up to 30 damage dealt in bright light or against Illuminated targets. Its white glow strengthens with charge; the next fully cooled hit releases an eight-damage sphere of Lux light across five blocks and Illuminates enemies for ten seconds.
+- **Axe:** uses a slower overhead swing. A jumping critical leaves a six-second Mortem pool beneath its victim, dealing one damage each second and refreshing Necrosis. Your overlapping pools merge.
+- **Crossbow:** Blood Bolts chain to three new visible enemies, reaching up to five blocks per hop for 75%, 50%, and 25% of the initial impact damage.
+- **Torch:** channels a seven-block fan of pink and crimson fire with black smoky tips and outward-moving blood cells.
+- **Claws:** with a claw in each hand, clicking or holding attack alternates left and right arm strikes. Each hit draws three separated black Umbral cuts with violet cores, rotated to a fresh random angle.
+
 **Sanguis Lance** (Annetta's Weapon)
 - Unique thrown/held weapon
 - Custom rendering and particle effects

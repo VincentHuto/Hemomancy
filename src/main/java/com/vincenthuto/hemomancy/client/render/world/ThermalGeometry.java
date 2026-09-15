@@ -16,7 +16,7 @@ final class ThermalGeometry {
 
     static boolean handles(Form form) {
         return switch(form) {
-            case FURNACE,IGNITION,GLASS,GLASS_CHARGE,UPDRAFT,FORGE,CAUTERIZE,PHOENIX,PHOENIX_READY,
+            case FURNACE,IGNITION,BOMBARDIER_SWEEP,GLASS,GLASS_CHARGE,UPDRAFT,FORGE,CAUTERIZE,PHOENIX,PHOENIX_READY,
                     FLAME_CONJURE,FROST_CONJURE,ICE,ICE_CHARGE,BONE,STILLNESS,HOUR,HOUR_BREAK,
                     CRYOGENIC_PULSE,CRUOR_FORM,CRUOR_BREAK,FROZEN_VEINS,RIMEBOUND,CRUOR_SURFACE,FROST_ADVANCE -> true;
             default -> false;
@@ -40,6 +40,24 @@ final class ThermalGeometry {
         double r=Math.min(8,Math.max(.2,packet.radius()));
         var flame=batch.vertices(FLAME);var frost=batch.vertices(CRUOR);
         switch(form) {
+            case BOMBARDIER_SWEEP -> {
+                Vec3 ray = packet.to().subtract(packet.from());
+                double length = Math.min(10, ray.length());
+                if (length < .01) break;
+                Vec3 direction = ray.normalize();
+                int count = Math.max(5, (int)Math.ceil(length * 1.5));
+                for (int i = 0; i < count; i++) {
+                    double along = length * (i + .35) / count;
+                    double curl = Math.sin(i * 2.39996 + time * .08) * .08;
+                    Vec3 at = direction.scale(along).add(right.scale(curl));
+                    double taper = 1.0 - along / length * .55;
+                    fire(p, flame, at, right, up, (.16 + random(seed, i) * .11) * taper,
+                            (.42 + random(seed, i + 37) * .38) * taper, seed + i, opacity);
+                    if (particles && i % 3 == 0)
+                        smoke(p, flame, at.add(0, .15, 0), right, up, .18 * taper, .34 * taper,
+                                seed + i + 91, opacity * .35F);
+                }
+            }
             case FURNACE,IGNITION -> {
                 boolean burst=form==Form.IGNITION || packet.entityId()<0;
                 float spread=burst?Mth.clamp(age/13,0,1):formation;

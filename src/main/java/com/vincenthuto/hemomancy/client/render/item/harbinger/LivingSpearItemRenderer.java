@@ -14,6 +14,7 @@ import net.minecraft.client.model.geom.EntityModelSet;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderDispatcher;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.ResourceLocation;
@@ -42,15 +43,12 @@ public class LivingSpearItemRenderer extends BlockEntityWithoutLevelRenderer {
 		if (stack.getItem() instanceof LivingSpearItem) {
 			Minecraft mc = Minecraft.getInstance();
 			LocalPlayer player = mc.player;
-			if (player == null) {
-				return;
-			}
 			ms.pushPose();
 			ms.mulPose(new Quaternion(Vector3.XP, 180, true).toMoj());
 			ms.mulPose(new Quaternion(Vector3.YP, 180, true).toMoj());
 
-			boolean itemIsInUse = player.getUseItemRemainingTicks() > 0;
-			InteractionHand activeHand = player.getUsedItemHand();
+			boolean itemIsInUse = player != null && player.getUseItem() == stack && player.getUseItemRemainingTicks() > 0;
+			InteractionHand activeHand = player == null ? InteractionHand.MAIN_HAND : player.getUsedItemHand();
 			ms.scale(0.65f, 0.65f, 0.65f);
 			ms.translate(-0.675, -0, 0.25);
 			if (p_239207_2_ == ItemDisplayContext.GUI) {
@@ -87,18 +85,15 @@ public class LivingSpearItemRenderer extends BlockEntityWithoutLevelRenderer {
 
 					}
 				}
-				if (player.getUseItem() == stack && !LivingStaffMorphRenderer.isMorphBuffer(buffers)) {
-					VertexConsumer baseBuffer = buffers.getBuffer(spearModel.renderType(living_spear));
-					spearModel.renderToBuffer(ms, baseBuffer, light, OverlayTexture.NO_OVERLAY, -1);
-					VertexConsumer glint = buffers.getBuffer(RenderTypeInit.getCrimsonGlint());
-					spearModel.renderToBuffer(ms, glint, light, OverlayTexture.NO_OVERLAY, -1);
-				} else {
-					VertexConsumer baseBuffer = buffers.getBuffer(spearModel.renderType(living_spear));
-					spearModel.renderToBuffer(ms, baseBuffer, light, OverlayTexture.NO_OVERLAY, -1);
-				}
-			} else {
-				VertexConsumer baseBuffer = buffers.getBuffer(spearModel.renderType(living_spear));
-				spearModel.renderToBuffer(ms, baseBuffer, light, OverlayTexture.NO_OVERLAY, -1);
+			}
+			VertexConsumer baseBuffer = buffers.getBuffer(spearModel.renderType(living_spear));
+			spearModel.renderToBuffer(ms, baseBuffer, light, OverlayTexture.NO_OVERLAY, -1);
+			float lux = com.vincenthuto.hemomancy.common.item.harbinger.tool.living.LivingSpearLuxRules
+					.chargeFraction(LivingSpearItem.getLuxCharge(stack));
+			if (lux > 0.0F) {
+				int color = Math.round(255 * lux) << 24 | 0xFFFFFF;
+				VertexConsumer glow = buffers.getBuffer(RenderTypeInit.getLuxGlint());
+				spearModel.renderToBuffer(ms, glow, LightTexture.FULL_BRIGHT, OverlayTexture.NO_OVERLAY, color);
 			}
 
 			ms.popPose();

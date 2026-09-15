@@ -33,6 +33,7 @@ public class BiomeInit {
 			Hemomancy.MOD_ID);
 
 	public static final ResourceKey<Biome> FUNGAL_GARDENS = register("fungal_gardens");
+	public static final ResourceKey<Biome> PHLEGETHONTIC_BASIN = register("phlegethontic_basin");
 	public static final ResourceKey<Biome> FUNGAL_ISLES = register("fungal_isles");
 	public static final ResourceKey<Biome> SPORECROWN_THICKET = register("sporecrown_thicket");
 	public static final ResourceKey<Biome> MYCELIAL_DEPTHS = register("mycelial_depths");
@@ -40,7 +41,8 @@ public class BiomeInit {
 	public static final ResourceKey<Biome> ERYTHROCORAL_REEF = register("erythrocoral_reef");
 
 	private static ResourceKey<Biome> register(String name) {
-		ResourceKey<Biome> key = ResourceKey.create(Registries.BIOME, Hemomancy.rloc(name));
+		ResourceKey<Biome> key = ResourceKey.create(Registries.BIOME,
+				net.minecraft.resources.ResourceLocation.fromNamespaceAndPath(Hemomancy.MOD_ID, name));
 		return key;
 	}
 
@@ -52,11 +54,28 @@ public class BiomeInit {
 		HolderGetter<ConfiguredWorldCarver<?>> carverGetter = context.lookup(Registries.CONFIGURED_CARVER);
 		HolderGetter<PlacedFeature> placedFeatureGetter = context.lookup(Registries.PLACED_FEATURE);
 		register(context, FUNGAL_GARDENS, fungalGardens(placedFeatureGetter, carverGetter));
+		register(context, PHLEGETHONTIC_BASIN, phlegethonticBasin(placedFeatureGetter, carverGetter));
 		register(context, FUNGAL_ISLES, fungalIsles(placedFeatureGetter, carverGetter));
 		register(context, SPORECROWN_THICKET, sporecrownThicket(placedFeatureGetter, carverGetter));
 		register(context, MYCELIAL_DEPTHS, mycelialDepths(placedFeatureGetter, carverGetter));
 		register(context, HEMORRHAGIC_PLATEAU, hemorrhagicPlateau(placedFeatureGetter, carverGetter));
 		register(context, ERYTHROCORAL_REEF, erythrocoralReef(placedFeatureGetter, carverGetter));
+	}
+
+	private static Biome phlegethonticBasin(HolderGetter<PlacedFeature> placed,HolderGetter<ConfiguredWorldCarver<?>> carvers) {
+		var generation=new BiomeGenerationSettings.Builder(placed,carvers);
+		generation.addCarver(GenerationStep.Carving.AIR,Carvers.NETHER_CAVE);
+		generation.addFeature(GenerationStep.Decoration.LOCAL_MODIFICATIONS,PlacedFeatureInit.PHLEGETHONTIC_BASIN_TERRAIN);
+		generation.addFeature(GenerationStep.Decoration.UNDERGROUND_DECORATION,NetherPlacements.GLOWSTONE_EXTRA);
+		generation.addFeature(GenerationStep.Decoration.VEGETAL_DECORATION,PlacedFeatureInit.ESCHARIAN_OVERGROWTH);
+		var spawns=new MobSpawnSettings.Builder();
+		spawns.addSpawn(MobCategory.MONSTER,new MobSpawnSettings.SpawnerData(EntityInit.excoriated_sagittary.get(),4,1,2));
+		return new Biome.BiomeBuilder().hasPrecipitation(false).temperature(2).downfall(0)
+				.specialEffects(new BiomeSpecialEffects.Builder().fogColor(0x250000).skyColor(0x3A0505)
+						.waterColor(0x740000).waterFogColor(0x210000)
+						.ambientLoopSound(SoundEvents.AMBIENT_BASALT_DELTAS_LOOP)
+						.ambientMoodSound(new AmbientMoodSettings(SoundEvents.AMBIENT_BASALT_DELTAS_MOOD,6000,8,2)).build())
+				.mobSpawnSettings(spawns.build()).generationSettings(generation.build()).build();
 	}
 
 	private static Biome fungalIsles(HolderGetter<PlacedFeature> placedFeatureGetter,
@@ -386,6 +405,12 @@ public class BiomeInit {
 		event.enqueueWork(() -> {
 
 			Regions.register(new ErythrocoralReefRegion(Hemomancy.rloc("erythrocoral_reef_overworld"), 1));
+			if(HemoCommonConfig.ENABLE_PHLEGETHONTIC_NETHER_REGION.get()) {
+				Regions.register(new com.vincenthuto.hemomancy.common.worldgen.terrablender.PhlegethonticNetherRegion(
+						Hemomancy.rloc("phlegethontic_nether"),HemoCommonConfig.PHLEGETHONTIC_NETHER_REGION_WEIGHT.get()));
+			}
+			SurfaceRuleManager.addSurfaceRules(SurfaceRuleManager.RuleCategory.NETHER,Hemomancy.MOD_ID,
+					com.vincenthuto.hemomancy.common.worldgen.terrablender.PhlegethonticSurfaceRuleData.makeRules());
 			if (HemoCommonConfig.enableOverworldFungalGardensRegion()) {
 				Regions.register(new FungalGardensOverworldRegion(
 						Hemomancy.rloc(FungalGardensOverworldRegion.REGION_PATH), 2));

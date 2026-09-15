@@ -23,11 +23,14 @@ public final class ManipulationVisuals {
         FLAME_CONJURE, FROST_CONJURE, HOUR_BREAK, CRUOR_SURFACE, FROST_ADVANCE,
         FERRIC_IMPACT, FERRIC_CONJURE, NERVE_PULSE, NERVE_HIT, PARALYSIS,
         ANIMUS_IMPACT, ANIMUS_CONJURE, MORTEM_CONJURE, MORTEM_BURST, GRAVE_REFUND, HUNGER_COLLAPSE,
-        BLACKHEART_RUPTURE, TITHE_RETURN, TITHE_COLLECT, ROT_INFECTION, COMMUNION, MARIONETTE_TETHER, MARIONETTE_ORDER
+        BLACKHEART_RUPTURE, TITHE_RETURN, TITHE_COLLECT, ROT_INFECTION, COMMUNION, MARIONETTE_TETHER, MARIONETTE_ORDER,
+        BOMBARDIER_SWEEP
     }
 
     public static void burst(ServerLevel level, Form form, Vec3 from, Vec3 to, double radius, int ticks) {
-        send(level, new ManipulationVisualPacket(form, -1, from, to, (float) radius, ticks, 1));
+        // For UMBRA_SLASH, the form-specific count field carries the shared roll in degrees.
+        int count = form == Form.UMBRA_SLASH ? level.random.nextInt(360) : 1;
+        send(level, new ManipulationVisualPacket(form, -1, from, to, (float) radius, ticks, count));
     }
 
     public static void attached(Entity entity, Form form, double radius, int ticks, int count) {

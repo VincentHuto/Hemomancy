@@ -50,7 +50,8 @@ public class HemoEntityTagProvider extends TagsProvider<EntityType<?>> {
 				.add(ResourceKey.create(Registries.ENTITY_TYPE, EntityInit.desiccant.getId()))
 				.add(ResourceKey.create(Registries.ENTITY_TYPE, EntityInit.fargone.getId()))
 				.add(ResourceKey.create(Registries.ENTITY_TYPE, EntityInit.venom_rib_centipede.getId()))
-				.add(ResourceKey.create(Registries.ENTITY_TYPE, EntityInit.tooth_pecks.getId()));
+				.add(ResourceKey.create(Registries.ENTITY_TYPE, EntityInit.tooth_pecks.getId()))
+				.add(ResourceKey.create(Registries.ENTITY_TYPE, EntityInit.phlegethontic_bombardier.getId()));
 
 		tag(EntityInit.CIRCUS_PERFORMERS)
 				.add(ResourceKey.create(Registries.ENTITY_TYPE, EntityInit.circus_fire_eater.getId()))

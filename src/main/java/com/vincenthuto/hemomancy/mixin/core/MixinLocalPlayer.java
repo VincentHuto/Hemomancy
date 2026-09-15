@@ -1,17 +1,20 @@
 package com.vincenthuto.hemomancy.mixin.core;
 
 import com.vincenthuto.hemomancy.common.armor.ability.SilentArchonArmorAbilityHandler;
+import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.LivingBaghnakhItem;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.LivingTorchBreathRules;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.LivingTorchItem;
 import com.vincenthuto.hemomancy.mixin.util.ClientMixinHooks;
 import net.minecraft.client.player.Input;
 import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.ItemStack;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
@@ -19,6 +22,19 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public class MixinLocalPlayer {
 	  @Unique
 	  private boolean hemomancy$flag = false;
+
+	  @ModifyVariable(method = "swing", at = @At("HEAD"), argsOnly = true, remap = false)
+	  private InteractionHand hemomancy$alternatePairedClaws(InteractionHand hand) {
+		LocalPlayer player = (LocalPlayer) (Object) this;
+		if (hand != InteractionHand.MAIN_HAND
+				|| !(player.getMainHandItem().getItem() instanceof LivingBaghnakhItem)
+				|| !(player.getOffhandItem().getItem() instanceof LivingBaghnakhItem)) {
+			return hand;
+		}
+		// Follow the last accepted swing; vanilla sends this hand to the server and observers.
+		return player.swingingArm == InteractionHand.MAIN_HAND
+				? InteractionHand.OFF_HAND : InteractionHand.MAIN_HAND;
+	  }
 
 	  @Inject(method = "aiStep", at = @At("HEAD"), remap = false)
 	  private void hemomancy$applySilentSlippingNoClipBeforePushOut(CallbackInfo cb) {

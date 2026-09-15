@@ -1,7 +1,9 @@
 package com.vincenthuto.hemomancy.common.item.harbinger.tool.living;
 
 import com.vincenthuto.hemomancy.client.item.HemoClientItemExtensionsProvider;
+import com.vincenthuto.hemomancy.client.player.LivingAxePlayerPose;
 import com.vincenthuto.hemomancy.client.render.item.harbinger.LivingAxeItemRenderer;
+import com.mojang.blaze3d.vertex.PoseStack;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
@@ -10,6 +12,7 @@ import com.vincenthuto.hemomancy.common.network.capa.harbinger.BloodVolumeServer
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
@@ -23,6 +26,7 @@ import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -41,7 +45,7 @@ public class LivingAxeItem extends LivingToolItem implements HemoClientItemExten
 	public static String TAG_STATE = "state";
 
 	public LivingAxeItem(float speedIn, float attackDamageIn, Tier tier, Properties builderIn) {
-		super(speedIn, attackDamageIn, -2.3f, EnumBloodTendency.MORTEM, tier, builderIn);
+		super(speedIn, attackDamageIn, -3.0f, EnumBloodTendency.MORTEM, tier, builderIn);
 	}
 
 	@Override
@@ -160,6 +164,13 @@ public class LivingAxeItem extends LivingToolItem implements HemoClientItemExten
 class RenderPropLivingAxe implements IClientItemExtensions {
 
 	public static RenderPropLivingAxe INSTANCE = new RenderPropLivingAxe();
+
+	@Override
+	public boolean applyForgeHandTransform(PoseStack poses, LocalPlayer player, HumanoidArm arm,
+			ItemStack stack, float partialTick, float equipProgress, float swingProgress) {
+		LivingAxePlayerPose.firstPerson(poses, swingProgress, equipProgress, arm == HumanoidArm.RIGHT);
+		return true;
+	}
 
 
 

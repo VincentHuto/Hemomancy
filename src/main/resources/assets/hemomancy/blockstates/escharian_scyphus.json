@@ -1,0 +1,154 @@
+{
+  "variants": {
+    "count=1,facing=up": {
+      "model": "hemomancy:block/escharian_scyphus_1",
+      "x": 0,
+      "y": 0
+    },
+    "count=1,facing=down": {
+      "model": "hemomancy:block/escharian_scyphus_1",
+      "x": 180,
+      "y": 0
+    },
+    "count=1,facing=north": {
+      "model": "hemomancy:block/escharian_scyphus_1",
+      "x": 90,
+      "y": 0
+    },
+    "count=1,facing=east": {
+      "model": "hemomancy:block/escharian_scyphus_1",
+      "x": 90,
+      "y": 90
+    },
+    "count=1,facing=south": {
+      "model": "hemomancy:block/escharian_scyphus_1",
+      "x": 90,
+      "y": 180
+    },
+    "count=1,facing=west": {
+      "model": "hemomancy:block/escharian_scyphus_1",
+      "x": 90,
+      "y": 270
+    },
+    "count=2,facing=up": {
+      "model": "hemomancy:block/escharian_scyphus_2",
+      "x": 0,
+      "y": 0
+    },
+    "count=2,facing=down": {
+      "model": "hemomancy:block/escharian_scyphus_2",
+      "x": 180,
+      "y": 0
+    },
+    "count=2,facing=north": {
+      "model": "hemomancy:block/escharian_scyphus_2",
+      "x": 90,
+      "y": 0
+    },
+    "count=2,facing=east": {
+      "model": "hemomancy:block/escharian_scyphus_2",
+      "x": 90,
+      "y": 90
+    },
+    "count=2,facing=south": {
+      "model": "hemomancy:block/escharian_scyphus_2",
+      "x": 90,
+      "y": 180
+    },
+    "count=2,facing=west": {
+      "model": "hemomancy:block/escharian_scyphus_2",
+      "x": 90,
+      "y": 270
+    },
+    "count=3,facing=up": {
+      "model": "hemomancy:block/escharian_scyphus_3",
+      "x": 0,
+      "y": 0
+    },
+    "count=3,facing=down": {
+      "model": "hemomancy:block/escharian_scyphus_3",
+      "x": 180,
+      "y": 0
+    },
+    "count=3,facing=north": {
+      "model": "hemomancy:block/escharian_scyphus_3",
+      "x": 90,
+      "y": 0
+    },
+    "count=3,facing=east": {
+      "model": "hemomancy:block/escharian_scyphus_3",
+      "x": 90,
+      "y": 90
+    },
+    "count=3,facing=south": {
+      "model": "hemomancy:block/escharian_scyphus_3",
+      "x": 90,
+      "y": 180
+    },
+    "count=3,facing=west": {
+      "model": "hemomancy:block/escharian_scyphus_3",
+      "x": 90,
+      "y": 270
+    },
+    "count=4,facing=up": {
+      "model": "hemomancy:block/escharian_scyphus_4",
+      "x": 0,
+      "y": 0
+    },
+    "count=4,facing=down": {
+      "model": "hemomancy:block/escharian_scyphus_4",
+      "x": 180,
+      "y": 0
+    },
+    "count=4,facing=north": {
+      "model": "hemomancy:block/escharian_scyphus_4",
+      "x": 90,
+      "y": 0
+    },
+    "count=4,facing=east": {
+      "model": "hemomancy:block/escharian_scyphus_4",
+      "x": 90,
+      "y": 90
+    },
+    "count=4,facing=south": {
+      "model": "hemomancy:block/escharian_scyphus_4",
+      "x": 90,
+      "y": 180
+    },
+    "count=4,facing=west": {
+      "model": "hemomancy:block/escharian_scyphus_4",
+      "x": 90,
+      "y": 270
+    },
+    "count=5,facing=up": {
+      "model": "hemomancy:block/escharian_scyphus",
+      "x": 0,
+      "y": 0
+    },
+    "count=5,facing=down": {
+      "model": "hemomancy:block/escharian_scyphus",
+      "x": 180,
+      "y": 0
+    },
+    "count=5,facing=north": {
+      "model": "hemomancy:block/escharian_scyphus",
+      "x": 90,
+      "y": 0
+    },
+    "count=5,facing=east": {
+      "model": "hemomancy:block/escharian_scyphus",
+      "x": 90,
+      "y": 90
+    },
+    "count=5,facing=south": {
+      "model": "hemomancy:block/escharian_scyphus",
+      "x": 90,
+      "y": 180
+    },
+    "count=5,facing=west": {
+      "model": "hemomancy:block/escharian_scyphus",
+      "x": 90,
+      "y": 270
+    }
+  }
+}

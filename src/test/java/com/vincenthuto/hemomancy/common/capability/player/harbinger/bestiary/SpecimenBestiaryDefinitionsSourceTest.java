@@ -11,6 +11,8 @@ public final class SpecimenBestiaryDefinitionsSourceTest {
 	private static final Path DEFINITIONS = ROOT.resolve(
 			"src/main/java/com/vincenthuto/hemomancy/common/capability/player/harbinger/bestiary/SpecimenBestiaryDefinitions.java");
 	private static final Path LANG = ROOT.resolve("src/main/resources/assets/hemomancy/lang/en_us.json");
+	private static final Path CAPTURABLE_SPECIMENS = ROOT.resolve(
+			"src/main/resources/data/hemomancy/tags/entity_type/specimen_jar_capturable.json");
 
 	private SpecimenBestiaryDefinitionsSourceTest() {
 	}
@@ -18,6 +20,7 @@ public final class SpecimenBestiaryDefinitionsSourceTest {
 	public static void main(String[] args) throws IOException {
 		String definitions = Files.readString(DEFINITIONS).replace("\r\n", "\n");
 		String lang = Files.readString(LANG).replace("\r\n", "\n");
+		String capturableSpecimens = Files.readString(CAPTURABLE_SPECIMENS).replace("\r\n", "\n");
 
 		assertContains("ordered specimen entries are exposed", definitions, "orderedResearchEntries()");
 		assertContains("ordered morphling entries are exposed", definitions, "orderedMorphlingEntries()");
@@ -34,6 +37,7 @@ public final class SpecimenBestiaryDefinitionsSourceTest {
 			assertContains("title lang exists for " + id, lang, "\"bestiary.hemomancy.specimen." + path + ".title\"");
 			assertContains("description lang exists for " + id, lang, "\"bestiary.hemomancy.specimen." + path + ".description\"");
 			assertContains("source lang exists for " + id, lang, "\"bestiary.hemomancy.specimen." + path + ".source\"");
+			assertContains("research specimen is capturable for " + id, capturableSpecimens, "\"" + id + "\"");
 		}
 		assertContains("tooth pecks record dialogue lang exists", lang,
 				"\"hemomancy.dialogue.event.alchemist_bestiary_recorded.tooth_pecks\"");
@@ -65,6 +69,7 @@ public final class SpecimenBestiaryDefinitionsSourceTest {
 				"hemomancy:hemolymphopoda",
 				"hemomancy:lantern_tick",
 				"hemomancy:morphling_polyp",
+				"hemomancy:phlegethontic_bombardier",
 				"hemomancy:prism_cuttle",
 				"hemomancy:scarlet_serpent",
 				"hemomancy:tooth_pecks",

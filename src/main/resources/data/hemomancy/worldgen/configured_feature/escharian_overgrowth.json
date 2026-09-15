@@ -1,0 +1,4 @@
+{
+  "type": "hemomancy:escharian_overgrowth",
+  "config": {"min_patch_blocks": 10, "max_patch_blocks": 30, "ichor_radius": 10, "anchor_search_budget": 256, "ground_pile_chance": 8}
+}

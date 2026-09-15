@@ -7,6 +7,7 @@ import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.client.model.item.LivingFlailModel;
 import com.vincenthuto.hemomancy.client.render.HemoRenderTypes;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.*;
+import com.vincenthuto.hemomancy.common.init.RenderTypeInit;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
@@ -136,7 +137,7 @@ public final class LivingStaffMorphRenderer {
 			// Foil consumers use their own format and must remain distinct from the dissolving base.
 			boolean foil = requested == RenderType.glint() || requested == RenderType.glintTranslucent()
 					|| requested == RenderType.entityGlint() || requested == RenderType.entityGlintDirect()
-					|| requested == RenderType.armorEntityGlint();
+					|| requested == RenderType.armorEntityGlint() || requested == RenderTypeInit.getLuxGlint();
 			return delegate.getBuffer(foil ? requested : renderType);
 		}
 	}

@@ -1,7 +1,10 @@
 {
   "variants": {
-    "": {
-      "model": "hemomancy:block/infested_venous_stone"
-    }
+    "": [
+      { "model": "hemomancy:block/infested_venous_stone", "y": 0 },
+      { "model": "hemomancy:block/infested_venous_stone", "y": 90 },
+      { "model": "hemomancy:block/infested_venous_stone", "y": 180 },
+      { "model": "hemomancy:block/infested_venous_stone", "y": 270 }
+    ]
   }
 }

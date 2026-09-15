@@ -21,6 +21,29 @@ public class FluidInit {
 	public static final DeferredRegister<FluidType> FLUID_TYPES =
 			DeferredRegister.create(NeoForgeRegistries.FLUID_TYPES, Hemomancy.MOD_ID);
 
+	public static final DeferredHolder<FluidType, FluidType> PHLEGETHONTIC_ICHOR_TYPE = FLUID_TYPES.register(
+			"phlegethontic_ichor", () -> new FluidType(FluidType.Properties.create()
+					.density(1500).viscosity(5000).temperature(1300).lightLevel(7).canConvertToSource(false)) {
+		@Override public void initializeClient(Consumer<IClientFluidTypeExtensions> consumer) {
+			consumer.accept(new IClientFluidTypeExtensions() {
+				@Override public ResourceLocation getStillTexture() { return Hemomancy.rloc("block/phlegethontic_ichor_still"); }
+				@Override public ResourceLocation getFlowingTexture() { return Hemomancy.rloc("block/phlegethontic_ichor_flow"); }
+				@Override public ResourceLocation getOverlayTexture() { return Hemomancy.rloc("block/phlegethontic_ichor_overlay"); }
+				@Override public ResourceLocation getRenderOverlayTexture(Minecraft minecraft) {
+					return Hemomancy.rloc("textures/block/phlegethontic_ichor_overlay.png");
+				}
+				@Override public int getTintColor() { return 0xE0FFFFFF; }
+			});
+		}
+	});
+	public static final DeferredHolder<Fluid, BaseFlowingFluid.Source> PHLEGETHONTIC_ICHOR = FLUIDS.register(
+			"phlegethontic_ichor", () -> new BaseFlowingFluid.Source(FluidInit.PHLEGETHONTIC_ICHOR_PROPS));
+	public static final DeferredHolder<Fluid, BaseFlowingFluid.Flowing> PHLEGETHONTIC_ICHOR_FLOWING = FLUIDS.register(
+			"phlegethontic_ichor_flowing", () -> new BaseFlowingFluid.Flowing(FluidInit.PHLEGETHONTIC_ICHOR_PROPS));
+	public static final BaseFlowingFluid.Properties PHLEGETHONTIC_ICHOR_PROPS = new BaseFlowingFluid.Properties(
+			PHLEGETHONTIC_ICHOR_TYPE, PHLEGETHONTIC_ICHOR, PHLEGETHONTIC_ICHOR_FLOWING)
+			.slopeFindDistance(2).levelDecreasePerBlock(2).tickRate(20).block(BlockInit.PHLEGETHONTIC_ICHOR_BLOCK);
+
 	// ---- Morphic Nectar ----
 
 	public static final DeferredHolder<FluidType, FluidType> MORPHIC_NECTAR_TYPE = FLUID_TYPES.register(

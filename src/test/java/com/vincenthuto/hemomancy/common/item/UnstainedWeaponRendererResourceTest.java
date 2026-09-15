@@ -25,9 +25,6 @@ public class UnstainedWeaponRendererResourceTest {
 		assertContains("src/main/java/com/vincenthuto/hemomancy/common/item/unstained/tool/UnstainedWarhammerItem.java",
 				"implements HemoClientItemExtensionsProvider",
 				"UnstainedWarhammerItem must expose client item extensions for its 3D renderer");
-		assertNotContains("src/main/java/com/vincenthuto/hemomancy/common/item/unstained/tool/UnstainedWarhammerItem.java",
-				"applyForgeHandTransform",
-				"UnstainedWarhammerItem should leave first-person swing timing to the shared event handler");
 		assertContains("src/main/java/com/vincenthuto/hemomancy/common/item/unstained/tool/UnstainedWarhammerItem.java",
 				"DiggerItem.createAttributes(tier, attackDamage, attackSpeed)",
 				"UnstainedWarhammerItem must apply its configured damage and attack speed attributes");
@@ -40,15 +37,9 @@ public class UnstainedWeaponRendererResourceTest {
 		assertContains("src/main/java/com/vincenthuto/hemomancy/common/item/unstained/tool/SilthmereGlaiveItem.java",
 				"implements HemoClientItemExtensionsProvider",
 				"SilthmereGlaiveItem must expose client item extensions for its 3D renderer");
-		assertNotContains("src/main/java/com/vincenthuto/hemomancy/common/item/unstained/tool/SilthmereGlaiveItem.java",
-				"applyForgeHandTransform",
-				"SilthmereGlaiveItem should leave first-person swing timing to the shared event handler");
 		assertContains("src/main/java/com/vincenthuto/hemomancy/common/item/unstained/tool/AbsolutionDaggerItem.java",
 				"implements HemoClientItemExtensionsProvider",
 				"AbsolutionDaggerItem must expose client item extensions for its 3D renderer");
-		assertNotContains("src/main/java/com/vincenthuto/hemomancy/common/item/unstained/tool/AbsolutionDaggerItem.java",
-				"applyForgeHandTransform",
-				"AbsolutionDaggerItem should keep the previously working event-handler thrust animation");
 
 		assertContains("src/main/java/com/vincenthuto/hemomancy/client/event/LayerEvents.java",
 				"UnstainedWarhammerModel.LAYER_LOCATION",
@@ -114,33 +105,6 @@ public class UnstainedWeaponRendererResourceTest {
 		assertContains("src/main/java/com/vincenthuto/hemomancy/client/render/item/unstained/AbsolutionDaggerItemRenderer.java",
 				"DAGGER_TEXTURE",
 				"Dagger renderer should own its texture");
-		assertContains("src/main/java/com/vincenthuto/hemomancy/client/event/UnstainedWeaponSwingAnimationHandler.java",
-				"@EventBusSubscriber",
-				"Unstained weapon swing adjustments should run through the old shared RenderHandEvent path");
-		assertContains("src/main/java/com/vincenthuto/hemomancy/client/event/UnstainedWeaponSwingAnimationHandler.java",
-				"RenderHandEvent",
-				"Unstained weapon swing adjustments should run through the old shared RenderHandEvent path");
-		assertContains("src/main/java/com/vincenthuto/hemomancy/client/event/UnstainedWeaponSwingAnimationHandler.java",
-				"public static void onRenderHand(RenderHandEvent event)",
-				"Unstained weapon swing adjustments should use the previously working render event hook");
-		assertContains("src/main/java/com/vincenthuto/hemomancy/client/event/UnstainedWeaponSwingAnimationHandler.java",
-				"float sqrtSwing = Mth.sqrt(swing);",
-				"Silthmere glaive should use the older event-path arc instead of the failed replacement sweep");
-		assertContains("src/main/java/com/vincenthuto/hemomancy/client/event/UnstainedWeaponSwingAnimationHandler.java",
-				"float windup = 1.0F - smoothStep(Mth.clamp(swing / 0.68F, 0.0F, 1.0F));",
-				"Unstained warhammer should hold the windup longer before its downward slam");
-		assertContains("src/main/java/com/vincenthuto/hemomancy/client/event/UnstainedWeaponSwingAnimationHandler.java",
-				"float slamPhase = smoothStep(Mth.clamp((swing - 0.58F) / 0.42F, 0.0F, 1.0F));",
-				"Unstained warhammer should delay its slam for a heavier swing");
-		assertContains("src/main/java/com/vincenthuto/hemomancy/client/event/UnstainedWeaponSwingAnimationHandler.java",
-				"poseStack.translate(side * 0.14F * sweep, 0.10F * arc, -0.06F * sweep);",
-				"Silthmere glaive should sweep up and right in first person");
-		assertContains("src/main/java/com/vincenthuto/hemomancy/client/event/UnstainedWeaponSwingAnimationHandler.java",
-				"Axis.XP.rotationDegrees(48.0F * thrust + 18.0F * lift)",
-				"Absolution dagger special swing should drive upward as a thrust");
-		assertNotContains("src/main/java/com/vincenthuto/hemomancy/client/event/UnstainedWeaponSwingAnimationHandler.java",
-				"public static boolean applyForgeHandTransform",
-				"Unstained weapon swings should not replace vanilla hand transforms");
 		assertContains("src/main/java/com/vincenthuto/hemomancy/client/model/item/unstained/UnstainedWarhammerModel.java",
 				"bell_flared_face",
 				"Warhammer bell head should rotate the flared mouth into the striking face");

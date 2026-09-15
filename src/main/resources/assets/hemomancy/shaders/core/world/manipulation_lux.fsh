@@ -39,6 +39,12 @@ void main() {
         float currents = 0.72 + 0.28 * flow(vec2(uv.x * 13.0 - t * 2.3, p.y * 3.0));
         alpha = (core * 0.96 + skirt) * currents;
         alpha *= smoothstep(0.0, 0.025, uv.x) * (1.0 - smoothstep(0.97, 1.0, uv.x));
+    } else if (abs(flowShape - 9.0) < 0.5) {
+        // Continuous spherical coordinates: no per-quad edge mask on the light shell.
+        float longitude = uv.x * 6.283185;
+        vec2 shellFlow = vec2(cos(longitude), sin(longitude)) * sin(uv.y * 3.14159) * 3.0;
+        float currents = flow(shellFlow + vec2(uv.y * 2.0, -t));
+        alpha = .35 + currents * .65;
     } else if (abs(flowShape - 1.0) < 0.5) {
         float curl = (flow(p * vec2(1.4, 2.1) + vec2(t * 0.17, -t * 0.55)) - 0.5) * 0.7;
         float d = abs(p.x + curl);
@@ -61,7 +67,8 @@ void main() {
         alpha = core * (0.52 + n * 0.45) + exp(-d * 3.3) * 0.11;
         alpha *= 1.0 - smoothstep(0.56, 1.0, length(p));
     }
-    alpha *= smoothstep(0.0, 0.045, min(min(uv.x, 1.0 - uv.x), min(uv.y, 1.0 - uv.y)));
+    if (abs(flowShape - 9.0) >= 0.5)
+        alpha *= smoothstep(0.0, 0.045, min(min(uv.x, 1.0 - uv.x), min(uv.y, 1.0 - uv.y)));
     alpha *= vertexColor.a * ColorModulator.a;
     if (alpha < 0.002) discard;
     vec3 color = vertexColor.rgb * ColorModulator.rgb;

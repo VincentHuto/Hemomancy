@@ -6,6 +6,8 @@ Use this page to find the implementation reference, package layout, build comman
 
 ## Documentation
 
+The [Phlegethontic Nether](Phlegethontic-Nether.md) has a [current implementation plan](../docs/phlegethontic-nether-worldgen/2026-09-12-phlegethontic-nether-worldgen.md) and [validation evidence](../docs/phlegethontic-nether-worldgen/VALIDATION.md). Geometry and containment are pure Java; runtime cases are explicitly registered through `DevTestHooks`. Model/material preparation tools live in `tools/model_export`.
+
 ### Primary References
 
 **[HEMOMANCY_REFERENCE.md](https://github.com/VincentHuto/Hemomancy/blob/main/docs/HEMOMANCY_REFERENCE.md)**

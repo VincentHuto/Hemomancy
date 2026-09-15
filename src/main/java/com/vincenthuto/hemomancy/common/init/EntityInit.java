@@ -53,6 +53,7 @@ public class EntityInit {
             Hemomancy.MOD_ID);
 
     public static final TagKey<EntityType<?>> FUNGAL_TAG = createTag("fungal");
+
     public static final TagKey<EntityType<?>> UMBRAL_TAG = createTag("umbral");
     public static final TagKey<EntityType<?>> INCANDESCENT_TAG = createTag("incandescent");
     public static final TagKey<EntityType<?>> FERRIC_TAG = createTag("ferric");
@@ -374,6 +375,18 @@ public class EntityInit {
                             .of(BloodDrunkPuppeteerEntity::new, MobCategory.MONSTER)
                             .sized(0.6F, 1.8F)
                             .build(Hemomancy.rloc("blood_drunk_puppeteer").toString()));
+
+    public static final DeferredHolder<EntityType<?>,EntityType<ExcoriatedSagittaryEntity>> excoriated_sagittary=ENTITY_TYPES.register(
+            "excoriated_sagittary",() -> EntityType.Builder.of(ExcoriatedSagittaryEntity::new,MobCategory.MONSTER)
+                    .sized(1.55F,4F).fireImmune().clientTrackingRange(10).build(Hemomancy.rloc("excoriated_sagittary").toString()));
+    public static final DeferredHolder<EntityType<?>,EntityType<PhlegethonticBombardier>> phlegethontic_bombardier=ENTITY_TYPES.register(
+            "phlegethontic_bombardier",() -> EntityType.Builder.of(PhlegethonticBombardier::new,MobCategory.MONSTER)
+                    .sized(1.35F,.8F).fireImmune().clientTrackingRange(10).updateInterval(2)
+                    .build(Hemomancy.rloc("phlegethontic_bombardier").toString()));
+    public static final DeferredHolder<EntityType<?>,EntityType<RecallBarbEntity>> recall_barb=ENTITY_TYPES.register(
+            "recall_barb",() -> EntityType.Builder.<RecallBarbEntity>of(RecallBarbEntity::new,MobCategory.MISC)
+                    .sized(.3F,.5F)
+                    .clientTrackingRange(10).updateInterval(1).build(Hemomancy.rloc("recall_barb").toString()));
 
     public static final DeferredHolder<EntityType<?>, EntityType<WillEntity>> will = ENTITY_TYPES
             .register("will",
@@ -754,6 +767,10 @@ public class EntityInit {
 
     @SubscribeEvent
     public static void onRegisterSpawnPlacements(RegisterSpawnPlacementsEvent event) {
+        event.register(excoriated_sagittary.get(),SpawnPlacementTypes.ON_GROUND,Heightmap.Types.MOTION_BLOCKING_NO_LEAVES,
+                ExcoriatedSagittarySpawnRules::canSpawn,RegisterSpawnPlacementsEvent.Operation.REPLACE);
+        event.register(phlegethontic_bombardier.get(),SpawnPlacementTypes.ON_GROUND,Heightmap.Types.MOTION_BLOCKING_NO_LEAVES,
+                PhlegethonticBombardier::canSpawn,RegisterSpawnPlacementsEvent.Operation.REPLACE);
         Hemomancy.LOGGER.info("[Hemomancy] Registering spawn placements...");
         event.register(EntityInit.chitinite.get(), SpawnPlacementTypes.ON_GROUND,
                 Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, ChitiniteEntity::canSpawnInCave,
@@ -851,6 +868,8 @@ public class EntityInit {
 
     @SubscribeEvent
     public static void onAttributeCreate(EntityAttributeCreationEvent event) {
+        event.put(excoriated_sagittary.get(),ExcoriatedSagittaryEntity.setAttributes().build());
+        event.put(phlegethontic_bombardier.get(),PhlegethonticBombardier.createAttributes().build());
         event.put(EntityInit.hematic_construct.get(), HematicConstructEntity.setAttributes().build());
         event.put(EntityInit.blood_cloud.get(), BloodConstructEntity.setAttributes().build());
         event.put(EntityInit.iron_pillar.get(), BloodConstructEntity.setAttributes().build());

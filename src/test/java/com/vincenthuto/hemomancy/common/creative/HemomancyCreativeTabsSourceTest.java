@@ -17,7 +17,6 @@ public final class HemomancyCreativeTabsSourceTest {
 			"hematic_suture_needle",
 			"unsigned_ancestral_ledger",
 			"sanguine_blob",
-			"fervent_husk",
 			"curor_lens",
 			"vascular_poultice",
 			"memory_thread",
@@ -103,6 +102,10 @@ public final class HemomancyCreativeTabsSourceTest {
 			assertAppearsAtLeastTwice("WIP block should be accepted and excluded from main tab: " + block,
 					hemomancy, "BlockInit." + block + ".get()");
 		}
+		assertContains("main tab should place Fervent Husk after the regular Chitinite Husk", hemomancy,
+				"if (item.get() == ItemInit.chitinous_husk.get())");
+		assertContains("main tab should accept the Fervent Husk beside the regular Chitinite Husk", hemomancy,
+				"populator.accept(ItemInit.fervent_husk.get())");
 		assertContains("Structure Spawner should reject non-creative use before opening its menu",
 				structureSpawner, "if (!player.isCreative())");
 		assertContains("Structure Spawner packet should reject non-creative world mutation",

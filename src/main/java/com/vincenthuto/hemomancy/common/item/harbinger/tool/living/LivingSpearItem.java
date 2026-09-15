@@ -34,6 +34,7 @@ import java.util.List;
 public class LivingSpearItem extends LivingToolItem implements HemoClientItemExtensionsProvider {
 
 	public static String TAG_STATE = "state";
+	public static final String TAG_LUX_CHARGE = "LuxChargeDamage";
 
 	public LivingSpearItem(float speedIn, float attackDamageIn, Tier tier, Properties builderIn) {
 		super(speedIn, attackDamageIn, -2.3f, EnumBloodTendency.LUX, tier, builderIn);
@@ -66,6 +67,18 @@ public class LivingSpearItem extends LivingToolItem implements HemoClientItemExt
 	public boolean hurtEnemy(ItemStack stack, LivingEntity target, LivingEntity attacker) {
 		super.hurtEnemy(stack, target, attacker);
 		return true;
+	}
+
+	public static float getLuxCharge(ItemStack stack) {
+		CustomData data = stack.get(DataComponents.CUSTOM_DATA);
+		return data == null ? 0.0F : Mth.clamp(data.copyTag().getFloat(TAG_LUX_CHARGE),
+				0.0F, LivingSpearLuxRules.DAMAGE_THRESHOLD);
+	}
+
+	public static void setLuxCharge(ItemStack stack, float charge) {
+		CompoundTag tag = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
+		tag.putFloat(TAG_LUX_CHARGE, Mth.clamp(charge, 0.0F, LivingSpearLuxRules.DAMAGE_THRESHOLD));
+		stack.set(DataComponents.CUSTOM_DATA, CustomData.of(tag));
 	}
 
 	@Override

@@ -32,12 +32,14 @@ float fissure(vec2 p) {
 void finish(vec3 color,float alpha) {
     alpha*=vertexColor.a*ColorModulator.a;
     if(alpha<.003)discard;
-    fragColor=linear_fog(vec4(color*vertexColor.rgb*ColorModulator.rgb,clamp(alpha,0.0,1.0)),vertexDistance,FogStart,FogEnd,FogColor);
+    vec3 tint = abs(shape - 3.0) < .5 ? vec3(1.0) : vertexColor.rgb;
+    fragColor=linear_fog(vec4(color*tint*ColorModulator.rgb,clamp(alpha,0.0,1.0)),vertexDistance,FogStart,FogEnd,FogColor);
 }
 void main() {
     vec2 p=uv*2.0-1.0;
     float t=HemoTime*.065+seed*2.73;
-    if(shape>1.5) {
+    bool torch = abs(shape - 3.0) < .5;
+    if(shape>1.5 && !torch) {
         float d=length(p*vec2(1.0,.7));
         finish(mix(vec3(.24,.003,.018),vec3(.82,.055,.065),exp(-d*d*9.0)),exp(-d*d*6.0)*edge(uv));
         return;
@@ -46,7 +48,7 @@ void main() {
     float curl=(fbm(q*.7+vec2(t*.18,0))-.5)*(.28+uv.y*.85);
     q.x+=curl*2.0;
     float n=fbm(q),fine=fbm(q*2.4+vec2(.4,-t*.65));
-    if(shape>.5) {
+    if(shape>.5 && !torch) {
         float density=fbm(vec2(p.x*2.5+curl,p.y*2.1-t*.42));
         float mask=exp(-pow((p.x+curl)*1.7,2.0))*smoothstep(.26,.73,density);
         finish(mix(vec3(.012,.008,.012),vec3(.085,.018,.027),density),mask*edge(uv)*.65*(1.0-uv.y*.6));
@@ -62,8 +64,14 @@ void main() {
     float heat=clamp(body*1.5+(1.0-uv.y)*.46+(fine-.5)*.25,0.0,1.0);
     vec3 color=mix(vec3(.16,.002,.018),vec3(.65,.012,.035),smoothstep(.0,.3,heat));
     color=mix(color,vec3(.9,.055,.075),smoothstep(.24,.65,heat));
-    color=mix(color,vec3(1.0,.16,.18),pow(heat,5.0)*.35);
+    color=mix(color,vec3(1.0,.70,.76),pow(heat,6.0)*.55);
+    if (torch) {
+        color=mix(vec3(.20,.002,.03),vec3(.98,.04,.16),smoothstep(.05,.55,heat));
+        color=mix(color,vec3(1.0,.29,.41),smoothstep(.45,.8,heat));
+        color=mix(color,vec3(1.0,.70,.76),pow(heat,6.0)*.75);
+    }
     float soot=smoothstep(.44,.82,uv.y+(fine-.5)*.18);
+    if (torch) soot=max(soot, smoothstep(.52,.94,vertexColor.r));
     color=mix(color,vec3(.014,.006,.011),soot*.98);
     finish(color,alpha*.94);
 }

@@ -1,0 +1,12 @@
+{
+  "replace": false,
+  "values": [
+    "minecraft:netherrack",
+    "minecraft:blackstone",
+    "minecraft:basalt",
+    "minecraft:smooth_basalt",
+    "hemomancy:venous_stone",
+    "hemomancy:infested_venous_stone",
+    "hemomancy:blood_scorched_scab"
+  ]
+}

@@ -12,10 +12,14 @@ import java.util.List;
 
 /** Unshaded surfaces carrying a shader shape and stable seed in otherwise unused UV tiles. */
 final class LuxUmbraGeometry {
-    static final int RIBBON = 0, WISP = 1, POOL = 2, EYE = 3, FOCUS = 4, BEAM = 5, RIPPLE = 6, SLASH = 7, WHITE_BEAM = 8;
+    static final int RIBBON = 0, WISP = 1, POOL = 2, EYE = 3, FOCUS = 4, BEAM = 5, RIPPLE = 6, SLASH = 7, WHITE_BEAM = 8, LUX_SHELL = 9;
     static final int WHITE = 0xFFFAEF;
 
     private LuxUmbraGeometry() {}
+
+    static double[] slashOffsets() {
+        return new double[] {-0.34D, 0.0D, 0.34D};
+    }
 
     static boolean handles(Form form) {
         return switch (form) {
@@ -90,13 +94,22 @@ final class LuxUmbraGeometry {
                         time * .03, RIBBON, seed, WHITE, opacity * (1 - formation));
             }
             case FLARE -> {
-                double spread = r * (.3 + Math.min(1, age / 7));
-                card(p, v, Vec3.ZERO, right, up, spread * .8, spread * .8, FOCUS, seed, WHITE, opacity);
-                for (int i = 0; i < 6; i++) {
-                    double angle = i * Math.PI / 3 + seed;
-                    Vec3 tip = right.scale(Math.cos(angle) * spread).add(up.scale(Math.sin(angle) * spread));
-                    stream(p, v, tip.scale(.06), tip, camera, .055, .05, i + age * .06,
-                            RIBBON, seed + i, WHITE, opacity * .6f);
+                double expansion = 1 - Math.pow(1 - Mth.clamp(age / 9.0, 0, 1), 3);
+                double spread = r * (.12 + expansion * .88);
+                lightShell(p, v, spread, camera, seed, opacity);
+                card(p, v, Vec3.ZERO, right, up, spread * .90, spread * .90,
+                        FOCUS, seed, 0xFFFFFF, opacity);
+                for (int i = 0; i < 18; i++) {
+                    double y = 1 - 2 * (i + .5) / 18;
+                    double horizontal = Math.sqrt(1 - y * y);
+                    double angle = i * 2.399963 + seed;
+                    Vec3 direction = new Vec3(Math.cos(angle) * horizontal, y, Math.sin(angle) * horizontal);
+                    Vec3 tip = direction.scale(spread);
+                    if (i % 2 == 0)
+                        card(p, v, tip.scale(.46), right, up, spread * .52, spread * .52,
+                                FOCUS, seed + i, 0xFFFFFF, opacity * .75F);
+                    ribbon(p, v, tip.scale(.35), tip, camera, r * .025,
+                            RIBBON, seed + i, 0xFFFFFF, opacity * .65f, 0, 1);
                 }
             }
             case SUTURE -> stream(p, v, Vec3.ZERO, end, camera, .15, .12, time * .035,
@@ -148,12 +161,22 @@ final class LuxUmbraGeometry {
             }
             case UMBRA_SLASH -> {
                 Vec3 across = end.lengthSqr() > 1e-8 ? facingSide(end.normalize(), new Vec3(0, 1, 0)) : right;
-                double cut = Math.min(1, age / 4.0);
-                Vec3 start = across.scale(-r).add(0, -.25, 0);
-                Vec3 tip = across.scale(r * cut).add(0, .25, 0);
-                stream(p, v, start, tip, camera, .24, .15, age * .02,
-                        SLASH, seed, 0xFFFFFF, opacity);
-                card(p, v, tip, right, up, .38, .42, WISP, seed + 1, 0xFFFFFF, opacity * .65f);
+                Vec3 cutUp = end.lengthSqr() > 1e-8 ? across.cross(end.normalize()).normalize() : up;
+                double roll = Math.toRadians(packet.count());
+                double cos = Math.cos(roll), sin = Math.sin(roll);
+                Vec3 rotatedAcross = across.scale(cos).add(cutUp.scale(sin));
+                cutUp = cutUp.scale(cos).subtract(across.scale(sin));
+                across = rotatedAcross;
+                double[] offsets = slashOffsets();
+                for (int strand = 0; strand < offsets.length; strand++) {
+                    double offset = offsets[strand] * r;
+                    double cut = Mth.clamp((age - strand * .65) / 3.0, .015, 1);
+                    Vec3 start = across.scale(-r).add(cutUp.scale(offset - r * .32));
+                    Vec3 finish = across.scale(r).add(cutUp.scale(offset + r * .32));
+                    Vec3 tip = start.lerp(finish, cut);
+                    stream(p, v, start, tip, camera, .16, .11, age * .02 + strand * .13,
+                            SLASH, seed + strand * 17, 0xFFFFFF, opacity * (strand == 1 ? 1.0f : .82f));
+                }
             }
             case LUX_MIST, UMBRA_MIST -> {
                 boolean dark = form == Form.UMBRA_MIST;
@@ -172,6 +195,30 @@ final class LuxUmbraGeometry {
     static Vec3 facingSide(Vec3 direction, Vec3 view) {
         Vec3 side = direction.cross(view);
         return side.lengthSqr() > 1e-8 ? side.normalize() : VisceralGeometry.side(direction);
+    }
+
+    private static void lightShell(PoseStack poses, VertexConsumer vertices, double radius,
+            Vec3 camera, int seed, float opacity) {
+        for (int latitude = 0; latitude < 16; latitude++) {
+            for (int longitude = 0; longitude < 32; longitude++) {
+                shellVertex(poses, vertices, longitude / 32.0, latitude / 16.0, radius, camera, seed, opacity);
+                shellVertex(poses, vertices, (longitude + 1) / 32.0, latitude / 16.0, radius, camera, seed, opacity);
+                shellVertex(poses, vertices, (longitude + 1) / 32.0, (latitude + 1) / 16.0, radius, camera, seed, opacity);
+                shellVertex(poses, vertices, longitude / 32.0, (latitude + 1) / 16.0, radius, camera, seed, opacity);
+            }
+        }
+    }
+
+    private static void shellVertex(PoseStack poses, VertexConsumer vertices, double u, double v,
+            double radius, Vec3 camera, int seed, float opacity) {
+        double ring = Math.sin(v * Math.PI);
+        Vec3 normal = new Vec3(Math.cos(u * Math.PI * 2) * ring, Math.cos(v * Math.PI),
+                Math.sin(u * Math.PI * 2) * ring);
+        Vec3 at = normal.scale(radius);
+        double facing = Math.abs(normal.dot(camera.subtract(at).normalize()));
+        float rim = (float) (.025 + .16 * Math.pow(1 - facing, 2));
+        vertex(poses, vertices, at, 0xFFFFFF, opacity * rim, LUX_SHELL * 2 + u,
+                Math.floorMod(seed, 127) * 2 + v);
     }
 
     private static void beam(PoseStack p, VertexConsumer v, Vec3 from, Vec3 to, Vec3 camera,

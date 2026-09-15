@@ -132,6 +132,24 @@ neoForge {
             systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
         }
 
+        phlegethonticReviewClient {
+            client()
+            gameDirectory = project.file('build/phlegethontic-client')
+            additionalRuntimeClasspathConfiguration.extendsFrom(clientLocalRuntime)
+            jvmArguments.addAll("-Xms2G", "-Xmx6G")
+            systemProperty 'hemomancy.phlegethontic.clientReview', 'true'
+            programArguments.addAll '--username', 'IchorReview', '--quickPlaySingleplayer', 'Phlegethontic Final Review'
+        }
+
+        phlegethonticObserverClient {
+            client()
+            gameDirectory = project.file('build/phlegethontic-observer')
+            additionalRuntimeClasspathConfiguration.extendsFrom(clientLocalRuntime)
+            jvmArguments.addAll("-Xms2G", "-Xmx6G")
+            systemProperty 'hemomancy.phlegethontic.clientReview', 'true'
+            programArguments.addAll '--username', 'IchorObserver', '--quickPlayMultiplayer', 'localhost:25566'
+        }
+
         server {
             server()
             programArgument '--nogui'
@@ -143,9 +161,21 @@ neoForge {
         // The gametest system is also enabled by default for other run configs under the /test command.
         gameTestServer {
             type = "gameTestServer"
+            gameDirectory = project.file('build/phlegethontic-gametest')
             // The pilot tests deliberately reuse Mojang's one-block empty
             // template, so their template namespace is minecraft.
             systemProperty 'neoforge.enabledGameTestNamespaces', "${project.mod_id},minecraft"
+        }
+
+        phlegethonticValidationServer {
+            type = "gameTestServer"
+            def seed = providers.gradleProperty('phlegethonticSeed').getOrElse('42')
+            def pass = providers.gradleProperty('phlegethonticRun').getOrElse('fresh')
+            gameDirectory = project.file("build/phlegethontic-worlds/${seed}-${pass}")
+            systemProperty 'neoforge.enabledGameTestNamespaces', 'phlegethontic_validation'
+            systemProperty 'hemomancy.phlegethontic.validationSeed', seed
+            systemProperty 'hemomancy.phlegethontic.validationOrder', providers.gradleProperty('phlegethonticOrder').getOrElse('forward')
+            programArguments.addAll '--mixin', 'phlegethontic-validation.mixins.json'
         }
 
         data {
@@ -289,6 +319,15 @@ tasks.named('test', Test).configure {
 
 tasks.named('runGameTestServer').configure {
     mustRunAfter tasks.named('test')
+}
+
+tasks.named('runPhlegethonticValidationServer').configure {
+    doFirst {
+        File netherRegions = neoForge.runs.phlegethonticValidationServer.gameDirectory.get().dir('world/DIM-1/region').asFile
+        if (netherRegions.isDirectory() && netherRegions.listFiles().any { it.name.endsWith('.mca') }) {
+            throw new GradleException('Fresh Nether validation requires a new -PphlegethonticRun name; this run already contains generated chunks.')
+        }
+    }
 }
 
 tasks.register('verifyGameTestResourceLog') {

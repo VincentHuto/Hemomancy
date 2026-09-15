@@ -1,0 +1,21 @@
+{
+  "replace": false,
+  "values": [
+    "minecraft:netherrack",
+    "minecraft:blackstone",
+    "minecraft:basalt",
+    "minecraft:smooth_basalt",
+    "minecraft:lava",
+    "minecraft:gravel",
+    "minecraft:soul_sand",
+    "minecraft:soul_soil",
+    "minecraft:crimson_nylium",
+    "minecraft:warped_nylium",
+    "minecraft:crimson_roots",
+    "minecraft:warped_roots",
+    "minecraft:nether_sprouts",
+    "minecraft:crimson_fungus",
+    "minecraft:warped_fungus",
+    "hemomancy:venous_stone"
+  ]
+}

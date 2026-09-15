@@ -28,6 +28,7 @@ public final class SpecimenBestiaryDefinitions {
 			specimen("hemolymphopoda"),
 			specimen("lantern_tick"),
 			specimen("morphling_polyp"),
+			specimen("phlegethontic_bombardier"),
 			specimen("prism_cuttle"),
 			specimen("scarlet_serpent"),
 			specimen("tooth_pecks"),

@@ -38,7 +38,7 @@ import java.util.UUID;
 public final class ManipulationCorrectnessGameTests {
     private static final String EMPTY = "bastion/mobs/empty";
 
-    @GameTest(templateNamespace = "minecraft", template = EMPTY, batch = "manipulation_correctness")
+    @GameTest(templateNamespace = "hemomancy", template = "combat_targeting_room", batch = "manipulation_correctness")
     public static void exsanguinateOnlyRefundsAnExecutedBloodVictim(GameTestHelper h) {
         ServerPlayer p = player(h);
         try {

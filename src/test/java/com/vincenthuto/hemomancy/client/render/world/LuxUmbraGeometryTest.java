@@ -13,13 +13,42 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 class LuxUmbraGeometryTest {
+    @Test void threeClawCutsKeepTheirPlacementWhenAnObserverRollsTheCamera() {
+        var packet = new ManipulationVisualPacket(Form.UMBRA_SLASH, -1, Vec3.ZERO, new Vec3(0, 0, 1), 1, 18, 1);
+        Capture first = new Capture(), rolled = new Capture();
+        Vec3 camera = new Vec3(0, 0, -6);
+        LuxUmbraGeometry.draw(packet, new PoseStack(), first, camera, new Vec3(1, 0, 0), new Vec3(0, 1, 0), 100, 8, 1, 1);
+        LuxUmbraGeometry.draw(packet, new PoseStack(), rolled, camera, new Vec3(0, 1, 0), new Vec3(-1, 0, 0), 100, 8, 1, 1);
+        var roots = new ArrayList<Vec3>();
+        for (int i = 0; i < first.points.size(); i += 4) {
+            if ((int)(first.uvs.get(i)[0] / 2) != LuxUmbraGeometry.SLASH || first.uvs.get(i)[0] % 2 > .001) continue;
+            Vec3 root = first.points.get(i).lerp(first.points.get(i + 3), .5);
+            Vec3 other = rolled.points.get(i).lerp(rolled.points.get(i + 3), .5);
+            assertEquals(0, root.distanceTo(other), .00001, "A claw cut moved with the camera");
+            roots.add(root);
+        }
+        assertEquals(3, roots.size(), "Exactly three umbral cuts must be drawn");
+        assertTrue(roots.get(0).distanceTo(roots.get(1)) > .25);
+        assertTrue(roots.get(1).distanceTo(roots.get(2)) > .25);
+    }
+
+    @Test void flareExpandsThroughAllThreeAxesInsteadOfStayingOnTheCameraPlane() {
+        Capture mesh = draw(Form.FLARE, Vec3.ZERO, 8);
+        for (int axis = 0; axis < 3; axis++) {
+            final int component = axis;
+            var values = mesh.points.stream().mapToDouble(p -> component == 0 ? p.x : component == 1 ? p.y : p.z).summaryStatistics();
+            assertTrue(values.getMin() < -.75 && values.getMax() > .75, "Missing spherical extent on axis " + axis);
+        }
+        assertTrue(mesh.points.stream().allMatch(p -> p.length() < 1.3), "Light must stay near the blast radius");
+    }
+
     @Test void flowFormsUseSmallFiniteSurfacesThroughoutTheirLifecycle() {
         for (Form form : Form.values()) {
             if (!LuxUmbraGeometry.handles(form)) continue;
             for (float age : new float[]{0, 3, 12, 30}) {
                 var mesh = draw(form, new Vec3(0, 8, 0), age);
                 assertFalse(mesh.points.isEmpty(), form.name());
-                assertTrue(mesh.points.size() <= 320, form + " exceeded the flow surface budget");
+                assertTrue(mesh.points.size() <= (form == Form.FLARE ? 2304 : 320), form + " exceeded the flow surface budget");
                 assertTrue(mesh.points.stream().allMatch(at -> Double.isFinite(at.lengthSqr())), form.name());
                 assertEquals(mesh.points.size(), mesh.uvs.size());
             }

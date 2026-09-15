@@ -224,6 +224,13 @@ public class RenderTypeInit extends RenderType {
 					.setTransparencyState(GLINT_TRANSPARENCY).setTexturingState(ENTITY_GLINT_TEXTURING)
 					.setLightmapState(LIGHTMAP).setOverlayState(OVERLAY)
 					.createCompositeState(false));
+	private static final RenderType LUX_GLINT = create("hemomancy_lux_entity_glint", DefaultVertexFormat.NEW_ENTITY,
+			VertexFormat.Mode.QUADS, 256, false, false,
+			RenderType.CompositeState.builder().setShaderState(ShaderInit.LUX_GLINT.getShard())
+					.setWriteMaskState(COLOR_WRITE).setCullState(NO_CULL).setDepthTestState(EQUAL_DEPTH_TEST)
+					.setTransparencyState(LIGHTNING_TRANSPARENCY).setTexturingState(ENTITY_GLINT_TEXTURING)
+					.setLightmapState(LIGHTMAP).setOverlayState(OVERLAY)
+					.createCompositeState(false));
 
 	public static RenderType energySwirl(ResourceLocation pLocation, float pU, float pV) {
 		return create("energy_swirl", DefaultVertexFormat.NEW_ENTITY, VertexFormat.Mode.QUADS, 256, false, true,
@@ -246,6 +253,10 @@ public class RenderTypeInit extends RenderType {
 
 	public static RenderType getCrimsonGlint() {
 		return CRIMSON_GLINT;
+	}
+
+	public static RenderType getLuxGlint() {
+		return LUX_GLINT;
 	}
 
 	public static RenderType itemEnergySwirl(ResourceLocation pLocation, float pU, float pV) {

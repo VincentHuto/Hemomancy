@@ -1,0 +1,10 @@
+{
+  "has_precipitation": false,
+  "temperature": 2.0,
+  "downfall": 0.0,
+  "effects": {"fog_color": 3342336, "sky_color": 0, "water_color": 4159204, "water_fog_color": 329011},
+  "spawners": {},
+  "spawn_costs": {},
+  "carvers": {"air": ["minecraft:nether_cave"]},
+  "features": [[], [], [], [], [], [], [], [], [], [], []]
+}

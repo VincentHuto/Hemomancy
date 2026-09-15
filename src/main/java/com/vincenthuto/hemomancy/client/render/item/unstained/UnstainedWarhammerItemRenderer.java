@@ -79,7 +79,11 @@ public class UnstainedWarhammerItemRenderer extends BlockEntityWithoutLevelRende
 				poseStack.mulPose(Axis.ZP.rotationDegrees(45.0F));
 				poseStack.scale(0.4F, 0.4F, 0.4F);
 			}
-			case FIRST_PERSON_LEFT_HAND -> applyFirstPersonTransform(poseStack, 1.0F);
+			case FIRST_PERSON_LEFT_HAND -> {
+				// Mirror around the hand after ItemRenderer's half-block centering offset.
+				poseStack.translate(1.0F, 0.0F, 0.0F);
+				applyFirstPersonTransform(poseStack, 1.0F);
+			}
 			case FIRST_PERSON_RIGHT_HAND -> applyFirstPersonTransform(poseStack, -1.0F);
 			case THIRD_PERSON_LEFT_HAND -> applyThirdPersonTransform(poseStack, 1.0F);
 			case THIRD_PERSON_RIGHT_HAND -> applyThirdPersonTransform(poseStack, -1.0F);

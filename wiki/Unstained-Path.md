@@ -471,17 +471,25 @@ A sacred item representing Our Lady of Still Waters.
 
 ### Weapons
 
+**Absolution Dagger**
+- Starts low with the blade pointing down, then rises upward and outward for a precise close strike
+- Inherent Hemolysis and Weakness on hit, with increased damage against wounded enemies
+- Annetta's dagger shares the same attack animation
+
+**Silthmere Glaive**
+- Broad horizontal sweep across the wielder's front
+- Extended reach and cleaves up to two additional enemies
+
 **Consecrated Copper Mace**
 - High damage against infected
 - No bleed effects
 - Can be upgraded
 - Glows faintly white
 
-**Pallid Warhammer**
-- Massive damage
-- Slow attack speed
-- Stun chance
-- Guardian-exclusive
+**Unstained Warhammer**
+- Heavy overhead windup and downward blow, with the Living Axe's timing and a visible first-person lift before impact
+- Slow attack speed with strong knockback
+- Cripples enemies with Slowness and Weakness
 
 **Purifier's Staff**
 - Range weapon (projectiles)

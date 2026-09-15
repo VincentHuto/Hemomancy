@@ -2,6 +2,7 @@ package com.vincenthuto.hemomancy.common.init;
 
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.worldgen.config.HyphaeConfig;
+import com.vincenthuto.hemomancy.common.worldgen.config.EscharianOvergrowthConfiguration;
 import com.vincenthuto.hemomancy.common.worldgen.config.SmallInfectedMushroomConfig;
 import com.vincenthuto.hemomancy.common.worldgen.feature.*;
 import net.minecraft.core.registries.Registries;
@@ -78,6 +79,12 @@ public class BaseFeatureInit {
 		return value;
 	}
 
+	public static final Feature<NoneFeatureConfiguration> PHLEGETHONTIC_BASIN_TERRAIN=register("phlegethontic_basin_terrain",
+			new PhlegethonticWorldgenFeature(true));
+	public static final Feature<NoneFeatureConfiguration> PHLEGETHONTIC_VEIN=register("phlegethontic_vein",
+			new PhlegethonticWorldgenFeature(false));
+	public static final Feature<EscharianOvergrowthConfiguration> ESCHARIAN_OVERGROWTH=register(
+			"escharian_overgrowth", new EscharianOvergrowthFeature());
 	public static void setup() {
 	}
 }

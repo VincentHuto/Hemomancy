@@ -22,6 +22,9 @@
     "MixinParalysisServerInput",
     "MixinPoisonMobEffect",
     "MixinPowderSnowBlock",
+    "MixinPhlegethonticVeinCompletion",
+    "MixinPhlegethonticOreContext",
+    "MixinPhlegethonticOreCandidates",
     "MixinRegenerationMobEffect",
     "MobEffectInstanceAccessor",
     "GoalSelectorAccessor"

@@ -1,12 +1,16 @@
 package com.vincenthuto.hemomancy.common.item.unstained.tool;
 
+import com.mojang.blaze3d.vertex.PoseStack;
+import com.vincenthuto.hemomancy.client.player.UnstainedWeaponPlayerPose;
 import com.vincenthuto.hemomancy.client.item.HemoClientItemExtensionsProvider;
 import com.vincenthuto.hemomancy.client.render.item.unstained.UnstainedWarhammerItemRenderer;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.init.EffectInit;
 import com.vincenthuto.hemomancy.common.item.unstained.PaleHumorFlaskItem;
 import net.minecraft.ChatFormatting;
+import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
+import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -99,6 +103,13 @@ public class UnstainedWarhammerItem extends DiggerItem implements HemoClientItem
 	public IClientItemExtensions hemomancy$getClientItemExtensions() {
 		return new IClientItemExtensions() {
 			private final BlockEntityWithoutLevelRenderer renderer = new UnstainedWarhammerItemRenderer(null, null);
+
+			@Override
+			public boolean applyForgeHandTransform(PoseStack poses, LocalPlayer player, HumanoidArm arm,
+					ItemStack stack, float partialTick, float equipProgress, float swingProgress) {
+				UnstainedWeaponPlayerPose.firstPersonHammer(poses, swingProgress, equipProgress, arm == HumanoidArm.RIGHT);
+				return true;
+			}
 
 			@Override
 			public BlockEntityWithoutLevelRenderer getCustomRenderer() {

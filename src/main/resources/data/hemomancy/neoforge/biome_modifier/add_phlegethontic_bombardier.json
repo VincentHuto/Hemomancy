@@ -1,0 +1,10 @@
+{
+  "type": "neoforge:add_spawns",
+  "biomes": "hemomancy:phlegethontic_basin",
+  "spawners": {
+    "type": "hemomancy:phlegethontic_bombardier",
+    "weight": 8,
+    "minCount": 1,
+    "maxCount": 3
+  }
+}

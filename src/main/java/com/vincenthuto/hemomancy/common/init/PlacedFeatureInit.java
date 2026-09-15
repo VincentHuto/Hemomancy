@@ -20,6 +20,9 @@ import net.minecraft.world.level.levelgen.placement.*;
 import java.util.List;
 
 public class PlacedFeatureInit {
+	public static final ResourceKey<PlacedFeature> ESCHARIAN_OVERGROWTH=createKey("escharian_overgrowth");
+	public static final ResourceKey<PlacedFeature> PHLEGETHONTIC_BASIN_TERRAIN=ResourceKey.create(Registries.PLACED_FEATURE,Hemomancy.rloc("phlegethontic_basin_terrain"));
+	public static final ResourceKey<PlacedFeature> PHLEGETHONTIC_VEIN=ResourceKey.create(Registries.PLACED_FEATURE,Hemomancy.rloc("phlegethontic_vein"));
 	public static final ResourceKey<PlacedFeature> HYPHAE_TENDRIL = createKey("hyphae_tendril");
 	public static final ResourceKey<PlacedFeature> VENOUS_RIDGE = createKey("venous_ridge");
 	public static final ResourceKey<PlacedFeature> FUNGAL_FLOOR = createKey("fungal_floor");
@@ -74,6 +77,12 @@ public class PlacedFeatureInit {
 	public static final ResourceKey<PlacedFeature> SPORITE_CRYSTAL_CLUSTER = createKey("sporite_crystal_cluster");
 
 	public static void bootstrap(BootstrapContext<PlacedFeature> context) {
+		var phlegethontic=context.lookup(Registries.CONFIGURED_FEATURE);
+		context.register(ESCHARIAN_OVERGROWTH,new PlacedFeature(
+				phlegethontic.getOrThrow(ConfiguredFeatureInit.ESCHARIAN_OVERGROWTH),
+				List.of(RarityFilter.onAverageOnceEvery(3),BiomeFilter.biome())));
+		context.register(PHLEGETHONTIC_BASIN_TERRAIN,new PlacedFeature(phlegethontic.getOrThrow(ConfiguredFeatureInit.PHLEGETHONTIC_BASIN_TERRAIN),List.of()));
+		context.register(PHLEGETHONTIC_VEIN,new PlacedFeature(phlegethontic.getOrThrow(ConfiguredFeatureInit.PHLEGETHONTIC_VEIN),List.of()));
 
 		HolderGetter<ConfiguredFeature<?, ?>> configuredFeatureGetter = context.lookup(Registries.CONFIGURED_FEATURE);
 

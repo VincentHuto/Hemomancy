@@ -35,6 +35,7 @@ Use this checklist for an alpha candidate. A checked box should mean the stated 
 - [ ] Review progression costs, reward duplication, and obvious farming exploits.
 - [ ] Confirm post-alpha/WIP content remains isolated and clearly labeled.
 - [ ] Confirm every Saint encounter—including Hemorath—remains outside natural world generation and launch progression.
+- [ ] Validate Phlegethontic Bombardier spawning, warning-only proximity, same-outcropping retaliation, abdominal flame cover/cone behavior, cooling, and zero Escharian terrain mutation.
 
 ## Packaging
 

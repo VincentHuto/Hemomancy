@@ -3,6 +3,8 @@ package com.vincenthuto.hemomancy.common.init;
 import com.mojang.datafixers.util.Pair;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.block.harbinger.BloodStainedStoneMarkerBlock;
+import com.vincenthuto.hemomancy.common.block.harbinger.BloodScabPointedDripstoneBlock;
+import com.vincenthuto.hemomancy.common.block.harbinger.EscharianOvergrowthBlock;
 import com.vincenthuto.hemomancy.common.block.harbinger.CrimsonFlameBlock;
 import com.vincenthuto.hemomancy.common.block.harbinger.crafting.*;
 import com.vincenthuto.hemomancy.common.block.harbinger.decoration.*;
@@ -121,6 +123,32 @@ public class BlockInit {
 					.mapColor(MapColor.SNOW)
 					.requiresCorrectToolForDrops()
 					.strength(1.5F, 6.0F)));
+
+	public static final DeferredHolder<Block, Block> blood_scorched_scab = BASEBLOCKS.register("blood_scorched_scab",
+			() -> new Block(BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_BLACK)
+					.strength(3.5F, 9F).sound(SoundType.NETHERRACK).requiresCorrectToolForDrops()));
+	public static final DeferredHolder<Block, Block> pointed_blood_scorched_scab = BASEBLOCKS.register(
+			"pointed_blood_scorched_scab", () -> new BloodScabPointedDripstoneBlock(BlockBehaviour.Properties.of()
+					.mapColor(MapColor.COLOR_BLACK).forceSolidOn().instrument(NoteBlockInstrument.BASEDRUM)
+					.noOcclusion().sound(SoundType.POINTED_DRIPSTONE).strength(1.5F, 3F).dynamicShape()
+					.offsetType(BlockBehaviour.OffsetType.XZ).pushReaction(PushReaction.DESTROY)
+					.isRedstoneConductor((state,level,pos) -> false)));
+	public static final DeferredHolder<Block, com.vincenthuto.hemomancy.common.block.harbinger.EscharianScyphusBlock> escharian_scyphus = MODELEDBLOCKS.register(
+			"escharian_scyphus", () -> new com.vincenthuto.hemomancy.common.block.harbinger.EscharianScyphusBlock(
+					BlockBehaviour.Properties.of().noCollission().noOcclusion().instabreak().sound(SoundType.FUNGUS)));
+
+	public static final DeferredHolder<Block, EscharianOvergrowthBlock> escharian_overgrowth = MODELEDBLOCKS.register(
+			"escharian_overgrowth", () -> new EscharianOvergrowthBlock(BlockBehaviour.Properties.of()
+					.mapColor(MapColor.COLOR_BLACK).forceSolidOn().noOcclusion().dynamicShape().noLootTable()
+					.strength(3.5F, 9F).sound(SoundType.NETHERRACK)));
+	public static final DeferredHolder<Block, EscharianOvergrowthBlock> escharian_overgrowth_rim = MODELEDBLOCKS.register(
+			"escharian_overgrowth_rim", () -> new EscharianOvergrowthBlock(BlockBehaviour.Properties.of()
+					.mapColor(MapColor.TERRACOTTA_WHITE).forceSolidOn().noOcclusion().dynamicShape().noLootTable()
+					.strength(3.5F, 9F).sound(SoundType.NETHERRACK)));
+	public static final DeferredHolder<Block, LiquidBlock> PHLEGETHONTIC_ICHOR_BLOCK = LIQUIDBLOCKS.register(
+			"phlegethontic_ichor_block", () -> new com.vincenthuto.hemomancy.common.block.harbinger.PhlegethonticIchorBlock(
+					FluidInit.PHLEGETHONTIC_ICHOR.get(), BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_RED)
+					.noCollission().strength(100F).noLootTable().liquid().lightLevel(state -> 7).pushReaction(PushReaction.DESTROY)));
 
 	public static final DeferredHolder<Block, LiquidBlock> MORPHIC_NECTAR_BLOCK = LIQUIDBLOCKS.register(
 			"morphic_nectar_block",
@@ -911,7 +939,9 @@ public class BlockInit {
 				|| block == BlockInit.abocipher_emitter.get()
 				|| block == BlockInit.qliphoth_bloom.get()
 				|| block == BlockInit.lethean_poppy_wreath.get()
-				|| block == BlockInit.sanguine_conduit.get();
+				|| block == BlockInit.sanguine_conduit.get()
+				|| block == BlockInit.escharian_overgrowth.get()
+				|| block == BlockInit.escharian_overgrowth_rim.get();
 	}
 
 	private static void registerBlockItem(RegisterEvent event, Pair<ResourceLocation, BlockItem> item) {

@@ -85,8 +85,8 @@ public final class ClawSlashRendererSourceTest {
 		assertContains("baghnakh preserves base living weapon behavior", baghnakh, "boolean hit = super.hurtEnemy(stack, target, attacker);");
 		assertContains("baghnakh respects restored staff guard", baghnakh, "LivingStaffWeaponFormHelper.wasRestoredOutOfHand(stack, attacker)");
 		assertContains("baghnakh only sends from server level", baghnakh, "attacker.level() instanceof ServerLevel serverLevel");
-		assertContains("baghnakh sends claw slash visual", baghnakh, "PacketHandler.sendClawSlash(");
-		assertContains("baghnakh uses Tenebris slash color", baghnakh, "new ParticleColor(70, 0, 125)");
+		assertContains("baghnakh sends the current umbral slash visual", baghnakh, "ManipulationVisuals.burst(");
+		assertContains("baghnakh uses the same form as Gloam Laceration", baghnakh, "ManipulationVisuals.Form.UMBRA_SLASH");
 	}
 
 	private static void livingBaghnakhAutoClicksWhenAttackCooldownIsReady() throws IOException {

@@ -46,6 +46,9 @@ public class ShaderInit {
 	public static ShaderHolder HERMIT_FAREWELL_DISSOLVE = new ShaderHolder(Hemomancy.rloc("entity/hermit_farewell_dissolve"),
 			DefaultVertexFormat.NEW_ENTITY, "HemoTime", "HermitDissolveProgress", "HermitDissolveSeed");
 
+	public static ShaderHolder LUX_GLINT = new ShaderHolder(Hemomancy.rloc("item/lux_glint"),
+			DefaultVertexFormat.NEW_ENTITY);
+
 	public static ShaderHolder BLOOD_STRUCTURE_WARP = new ShaderHolder(Hemomancy.rloc("world/blood_structure_warp"),
 			DefaultVertexFormat.BLOCK, "HemoTime", "Progress", "BlockSeed", "WiggleAmp");
 
@@ -168,6 +171,7 @@ public class ShaderInit {
         registerShader(event, MONOLITH_FRAGMENT_ENTITY.createInstance(provider));
         registerShader(event, WILL_STATE_MONOLITH.createInstance(provider));
         registerShader(event, HERMIT_FAREWELL_DISSOLVE.createInstance(provider));
+        registerShader(event, LUX_GLINT.createInstance(provider));
         registerShader(event, BLOOD_STRUCTURE_WARP.createInstance(provider));
         registerShader(event, BLOOD_STRUCTURE_WARP_ENTITY.createInstance(provider));
         registerShader(event, LOOM_ORB.createInstance(provider));

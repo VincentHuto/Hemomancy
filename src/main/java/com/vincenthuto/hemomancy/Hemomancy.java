@@ -165,8 +165,11 @@ public class Hemomancy {
         if (populator.getTabKey() == hemomancytab.getKey()) {
             var i = ItemInit.getAllItemEntriesAsStream();
             i.forEach(item -> {
-                if (shouldShowItemInCreativeTab(item.get())) {
+                if (shouldShowItemInCreativeTab(item.get()) && item.get() != ItemInit.fervent_husk.get()) {
                     populator.accept(item.get());
+                    if (item.get() == ItemInit.chitinous_husk.get()) {
+                        populator.accept(ItemInit.fervent_husk.get());
+                    }
                 }
             });
             LivingWeaponGraftItem.creativeStacks().forEach(populator::accept);
@@ -191,7 +194,6 @@ public class Hemomancy {
         populator.accept(ItemInit.hematic_suture_needle.get());
         populator.accept(ItemInit.unsigned_ancestral_ledger.get());
         populator.accept(ItemInit.sanguine_blob.get());
-        populator.accept(ItemInit.fervent_husk.get());
         populator.accept(ItemInit.curor_lens.get());
         populator.accept(ItemInit.vascular_poultice.get());
         populator.accept(ItemInit.memory_thread.get());
@@ -278,7 +280,6 @@ public class Hemomancy {
                 || item == ItemInit.hematic_suture_needle.get()
                 || item == ItemInit.unsigned_ancestral_ledger.get()
                 || item == ItemInit.sanguine_blob.get()
-                || item == ItemInit.fervent_husk.get()
                 || item == ItemInit.curor_lens.get()
                 || item == ItemInit.vascular_poultice.get()
                 || item == ItemInit.memory_thread.get()

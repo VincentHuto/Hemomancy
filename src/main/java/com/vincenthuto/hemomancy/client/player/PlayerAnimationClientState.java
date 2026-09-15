@@ -3,6 +3,10 @@ package com.vincenthuto.hemomancy.client.player;
 import com.vincenthuto.hemomancy.client.rite.CardinalRiteStaffPlantingClientState;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.LivingTorchBreathRules;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.LivingTorchItem;
+import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.LivingAxeItem;
+import com.vincenthuto.hemomancy.common.item.unstained.tool.AbsolutionDaggerItem;
+import com.vincenthuto.hemomancy.common.item.unstained.tool.SilthmereGlaiveItem;
+import com.vincenthuto.hemomancy.common.item.unstained.tool.UnstainedWarhammerItem;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.PlayerAnimationKind;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.HumanoidModel;
@@ -91,6 +95,38 @@ public final class PlayerAnimationClientState {
 		}
 		ItemStack main = player.getMainHandItem();
 		ItemStack off = player.getOffhandItem();
+		InteractionHand swingingHand = player.swingingArm == null ? InteractionHand.MAIN_HAND : player.swingingArm;
+		var swingingItem = player.getItemInHand(swingingHand).getItem();
+		if ((swingingItem instanceof AbsolutionDaggerItem || swingingItem instanceof SilthmereGlaiveItem)
+				&& !CardinalRiteStaffPlantingClientState.isAnimating(player)) {
+			float swing = player.getAttackAnim(partialTick);
+			if (swing <= 0.0F) return;
+			boolean right = armFor(player, swingingHand) == HumanoidArm.RIGHT;
+			var pose = swingingItem instanceof AbsolutionDaggerItem
+					? UnstainedWeaponPlayerPose.dagger(swing, right)
+					: UnstainedWeaponPlayerPose.glaive(swing, right);
+			UnstainedWeaponPlayerPose.applyThirdPerson(model, pose, right);
+			copySleeves(model);
+			return;
+		}
+		if ((swingingItem instanceof LivingAxeItem || swingingItem instanceof UnstainedWarhammerItem)
+				&& !CardinalRiteStaffPlantingClientState.isAnimating(player)) {
+			float swing = player.getAttackAnim(partialTick);
+			if (swing <= 0.0F) return;
+			boolean right = armFor(player, swingingHand) == HumanoidArm.RIGHT;
+			LivingAxePlayerPose.AxePose pose = LivingAxePlayerPose.swing(swing, right);
+			var arm = right ? model.rightArm : model.leftArm;
+			arm.xRot = Mth.lerp(pose.weight(), arm.xRot, pose.armXRot());
+			arm.yRot = Mth.lerp(pose.weight(), arm.yRot, pose.armYRot());
+			arm.zRot = Mth.lerp(pose.weight(), arm.zRot, pose.armZRot());
+			model.body.yRot = Mth.lerp(pose.weight(), model.body.yRot, pose.bodyYRot());
+			model.rightArm.x = -Mth.cos(model.body.yRot) * 5.0F;
+			model.rightArm.z = Mth.sin(model.body.yRot) * 5.0F;
+			model.leftArm.x = Mth.cos(model.body.yRot) * 5.0F;
+			model.leftArm.z = -Mth.sin(model.body.yRot) * 5.0F;
+			copySleeves(model);
+			return;
+		}
 		if (!(main.getItem() instanceof LivingTorchItem) && !(off.getItem() instanceof LivingTorchItem)) return;
 		float swing = player.getAttackAnim(partialTick);
 		if (swing <= 0.0F) return;
