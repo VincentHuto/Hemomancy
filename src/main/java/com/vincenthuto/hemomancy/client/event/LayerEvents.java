@@ -381,6 +381,9 @@ public class LayerEvents {
 			livingRenderer.addLayer(new LivingFlailLayer<>(livingRenderer));
 			livingRenderer.addLayer(new LivingStaffMorphLayer<>(livingRenderer));
 			livingRenderer.addLayer(new CardinalRiteStaffPlantingLayer(livingRenderer));
+            livingRenderer.addLayer(new BloodVialInjectionLayer(livingRenderer));
+            livingRenderer.addLayer(new com.vincenthuto.hemomancy.client.render.layer.player.CastingAnimationLayer(livingRenderer));
+            livingRenderer.addLayer(new com.vincenthuto.hemomancy.client.render.layer.player.HematicMicroscopeLayer(livingRenderer));
 			livingRenderer.addLayer(new SilentArchonArmorOverlayLayer(livingRenderer));
 			livingRenderer.addLayer(new EdaciousBloodLustWingLayer(livingRenderer));
 		}

@@ -1,0 +1,53 @@
+{
+  "entity": "minecraft:ravager",
+  "sounds": [
+    {
+      "kind": "ambient",
+      "sound": "minecraft:entity.ravager.ambient",
+      "pitch": 1,
+      "replay_interval_ticks": 120
+    },
+    {
+      "kind": "attack",
+      "sound": "minecraft:entity.ravager.attack",
+      "pitch": 1,
+      "replay_interval_ticks": 100
+    },
+    {
+      "kind": "celebration",
+      "sound": "minecraft:entity.ravager.celebrate",
+      "pitch": 1,
+      "replay_interval_ticks": 160
+    },
+    {
+      "kind": "death",
+      "sound": "minecraft:entity.ravager.death",
+      "pitch": 1,
+      "replay_interval_ticks": 100
+    },
+    {
+      "kind": "hurt",
+      "sound": "minecraft:entity.ravager.hurt",
+      "pitch": 1,
+      "replay_interval_ticks": 100
+    },
+    {
+      "kind": "warning",
+      "sound": "minecraft:entity.ravager.roar",
+      "pitch": 1,
+      "replay_interval_ticks": 120
+    },
+    {
+      "kind": "step",
+      "sound": "minecraft:entity.ravager.step",
+      "pitch": 1,
+      "replay_interval_ticks": 80
+    },
+    {
+      "kind": "special",
+      "sound": "minecraft:entity.ravager.stunned",
+      "pitch": 1,
+      "replay_interval_ticks": 120
+    }
+  ]
+}

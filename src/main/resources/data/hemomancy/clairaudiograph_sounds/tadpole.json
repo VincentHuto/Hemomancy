@@ -1,0 +1,29 @@
+{
+  "entity": "minecraft:tadpole",
+  "sounds": [
+    {
+      "kind": "death",
+      "sound": "minecraft:entity.tadpole.death",
+      "pitch": 1,
+      "replay_interval_ticks": 100
+    },
+    {
+      "kind": "special",
+      "sound": "minecraft:entity.tadpole.flop",
+      "pitch": 1,
+      "replay_interval_ticks": 120
+    },
+    {
+      "kind": "special",
+      "sound": "minecraft:entity.tadpole.grow_up",
+      "pitch": 1,
+      "replay_interval_ticks": 120
+    },
+    {
+      "kind": "hurt",
+      "sound": "minecraft:entity.tadpole.hurt",
+      "pitch": 1,
+      "replay_interval_ticks": 100
+    }
+  ]
+}

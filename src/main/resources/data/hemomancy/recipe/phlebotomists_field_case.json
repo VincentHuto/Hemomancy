@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "LIL",
+    "LCL",
+    "LIL"
+  ],
+  "key": {
+    "L": {
+      "item": "minecraft:leather"
+    },
+    "I": {
+      "item": "hemomancy:hematic_iron_scrap"
+    },
+    "C": {
+      "item": "hemomancy:phlebotomists_cabinet"
+    }
+  },
+  "result": {
+    "id": "hemomancy:phlebotomists_field_case",
+    "count": 1
+  }
+}

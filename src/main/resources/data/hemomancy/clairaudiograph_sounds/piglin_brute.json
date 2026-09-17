@@ -1,0 +1,41 @@
+{
+  "entity": "minecraft:piglin_brute",
+  "sounds": [
+    {
+      "kind": "ambient",
+      "sound": "minecraft:entity.piglin_brute.ambient",
+      "pitch": 1,
+      "replay_interval_ticks": 120
+    },
+    {
+      "kind": "warning",
+      "sound": "minecraft:entity.piglin_brute.angry",
+      "pitch": 1,
+      "replay_interval_ticks": 120
+    },
+    {
+      "kind": "special",
+      "sound": "minecraft:entity.piglin_brute.converted_to_zombified",
+      "pitch": 1,
+      "replay_interval_ticks": 120
+    },
+    {
+      "kind": "death",
+      "sound": "minecraft:entity.piglin_brute.death",
+      "pitch": 1,
+      "replay_interval_ticks": 100
+    },
+    {
+      "kind": "hurt",
+      "sound": "minecraft:entity.piglin_brute.hurt",
+      "pitch": 1,
+      "replay_interval_ticks": 100
+    },
+    {
+      "kind": "step",
+      "sound": "minecraft:entity.piglin_brute.step",
+      "pitch": 1,
+      "replay_interval_ticks": 80
+    }
+  ]
+}

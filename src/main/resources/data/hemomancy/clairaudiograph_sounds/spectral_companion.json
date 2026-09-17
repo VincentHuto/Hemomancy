@@ -1,0 +1,23 @@
+{
+  "entity": "hemomancy:spectral_companion",
+  "sounds": [
+    {
+      "kind": "special",
+      "sound": "hemomancy:entity.pale_intercession.dissolve",
+      "pitch": 1,
+      "replay_interval_ticks": 120
+    },
+    {
+      "kind": "special",
+      "sound": "hemomancy:entity.pale_intercession.manifest",
+      "pitch": 1,
+      "replay_interval_ticks": 120
+    },
+    {
+      "kind": "attack",
+      "sound": "hemomancy:entity.pale_intercession.strike",
+      "pitch": 1,
+      "replay_interval_ticks": 100
+    }
+  ]
+}

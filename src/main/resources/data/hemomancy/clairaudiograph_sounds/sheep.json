@@ -1,0 +1,35 @@
+{
+  "entity": "minecraft:sheep",
+  "sounds": [
+    {
+      "kind": "ambient",
+      "sound": "minecraft:entity.sheep.ambient",
+      "pitch": 1,
+      "replay_interval_ticks": 100
+    },
+    {
+      "kind": "death",
+      "sound": "minecraft:entity.sheep.death",
+      "pitch": 1,
+      "replay_interval_ticks": 100
+    },
+    {
+      "kind": "hurt",
+      "sound": "minecraft:entity.sheep.hurt",
+      "pitch": 1,
+      "replay_interval_ticks": 100
+    },
+    {
+      "kind": "special",
+      "sound": "minecraft:entity.sheep.shear",
+      "pitch": 1,
+      "replay_interval_ticks": 100
+    },
+    {
+      "kind": "step",
+      "sound": "minecraft:entity.sheep.step",
+      "pitch": 1,
+      "replay_interval_ticks": 100
+    }
+  ]
+}

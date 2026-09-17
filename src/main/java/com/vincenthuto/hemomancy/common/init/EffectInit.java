@@ -33,6 +33,31 @@ public class EffectInit {
             Hemomancy.MOD_ID);
     public static final DeferredRegister<MobEffect> EFFECTS = DeferredRegister.create(Registries.MOB_EFFECT,
             Hemomancy.MOD_ID);
+    public static final DeferredHolder<MobEffect, MobEffect> transfusion_saturation = EFFECTS.register("transfusion_saturation",
+            () -> new BloodResponseEffect(MobEffectCategory.HARMFUL, 0x762538));
+    public static final DeferredHolder<MobEffect, MobEffect> cryoprotection = EFFECTS.register("cryoprotection",
+            () -> new BloodResponseEffect(MobEffectCategory.BENEFICIAL, 0x639CCB));
+    public static final DeferredHolder<MobEffect, MobEffect> web_mobility = EFFECTS.register("web_mobility",
+            () -> new BloodResponseEffect(MobEffectCategory.BENEFICIAL, 0xB5AD99));
+    public static final DeferredHolder<MobEffect, MobEffect> earthen_mining = EFFECTS.register("earthen_mining",
+            () -> new BloodResponseEffect(MobEffectCategory.BENEFICIAL, 0x936746));
+    public static final DeferredHolder<MobEffect, MobEffect> ender_resistance = EFFECTS.register("ender_resistance",
+            () -> new BloodResponseEffect(MobEffectCategory.BENEFICIAL, 0x694289));
+    public static final DeferredHolder<MobEffect, MobEffect> wither_resistance = EFFECTS.register("wither_resistance",
+            () -> new BloodResponseEffect(MobEffectCategory.BENEFICIAL, 0x454A48));
+    public static final DeferredHolder<MobEffect, MobEffect> impaired_recovery = EFFECTS.register("impaired_recovery",
+            () -> new BloodResponseEffect(MobEffectCategory.HARMFUL, 0x74755B));
+    public static final DeferredHolder<MobEffect, MobEffect> explosion_resistance = EFFECTS.register("explosion_resistance",
+            () -> new BloodResponseEffect(MobEffectCategory.BENEFICIAL, 0x87965C));
+    public static final DeferredHolder<MobEffect, MobEffect> ferric_transfusion = EFFECTS.register("ferric_transfusion",
+            () -> new BloodResponseEffect(MobEffectCategory.BENEFICIAL, 0x777B82)
+                .addAttributeModifier(Attributes.ARMOR, Hemomancy.rloc("ferric_transfusion_armor"),
+                    com.vincenthuto.hemomancy.common.item.harbinger.BloodInjectionRules.ARMOR, AttributeModifier.Operation.ADD_VALUE)
+                .addAttributeModifier(Attributes.KNOCKBACK_RESISTANCE, Hemomancy.rloc("ferric_transfusion_knockback"),
+                    com.vincenthuto.hemomancy.common.item.harbinger.BloodInjectionRules.KNOCKBACK_RESISTANCE, AttributeModifier.Operation.ADD_VALUE));
+    public static final DeferredHolder<MobEffect, MobEffect> poison_resistance = EFFECTS.register("poison_resistance",
+            () -> new VenomousResilienceEffect(MobEffectCategory.BENEFICIAL, 0x638B35, "effect.hemomancy.poison_resistance"));
+
     private static final Set<UUID> MNEMONIC_WHISPERS_REDRINKS = ConcurrentHashMap.newKeySet();
 
     public static final DeferredHolder<MobEffect, MobEffect> fungal_elytra = EFFECTS.register("fungal_elytra",

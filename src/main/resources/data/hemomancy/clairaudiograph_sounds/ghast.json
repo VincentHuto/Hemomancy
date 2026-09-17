@@ -1,0 +1,41 @@
+{
+  "entity": "minecraft:ghast",
+  "sounds": [
+    {
+      "kind": "ambient",
+      "sound": "minecraft:entity.ghast.ambient",
+      "pitch": 1,
+      "replay_interval_ticks": 120
+    },
+    {
+      "kind": "death",
+      "sound": "minecraft:entity.ghast.death",
+      "pitch": 1,
+      "replay_interval_ticks": 100
+    },
+    {
+      "kind": "hurt",
+      "sound": "minecraft:entity.ghast.hurt",
+      "pitch": 1,
+      "replay_interval_ticks": 100
+    },
+    {
+      "kind": "warning",
+      "sound": "minecraft:entity.ghast.scream",
+      "pitch": 1,
+      "replay_interval_ticks": 120
+    },
+    {
+      "kind": "attack",
+      "sound": "minecraft:entity.ghast.shoot",
+      "pitch": 1,
+      "replay_interval_ticks": 100
+    },
+    {
+      "kind": "warning",
+      "sound": "minecraft:entity.ghast.warn",
+      "pitch": 1,
+      "replay_interval_ticks": 120
+    }
+  ]
+}

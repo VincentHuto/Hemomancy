@@ -1,0 +1,8 @@
+{
+  "property": "hemomancy:blood_properties/cold_native",
+  "benefits": [
+    {
+      "effect": "hemomancy:cryoprotection"
+    }
+  ]
+}

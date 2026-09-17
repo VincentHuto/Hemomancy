@@ -1,0 +1,65 @@
+{
+  "entity": "hemomancy:sanguine_hound",
+  "sounds": [
+    {
+      "kind": "special",
+      "sound": "minecraft:entity.slime.squish_small",
+      "pitch": 1,
+      "replay_interval_ticks": 120
+    },
+    {
+      "kind": "ambient",
+      "sound": "minecraft:entity.wolf.ambient",
+      "pitch": 1,
+      "replay_interval_ticks": 120
+    },
+    {
+      "kind": "death",
+      "sound": "minecraft:entity.wolf.death",
+      "pitch": 1,
+      "replay_interval_ticks": 100
+    },
+    {
+      "kind": "warning",
+      "sound": "minecraft:entity.wolf.growl",
+      "pitch": 1,
+      "replay_interval_ticks": 120
+    },
+    {
+      "kind": "warning",
+      "sound": "minecraft:entity.wolf.howl",
+      "pitch": 1,
+      "replay_interval_ticks": 120
+    },
+    {
+      "kind": "hurt",
+      "sound": "minecraft:entity.wolf.hurt",
+      "pitch": 1,
+      "replay_interval_ticks": 100
+    },
+    {
+      "kind": "special",
+      "sound": "minecraft:entity.wolf.pant",
+      "pitch": 1,
+      "replay_interval_ticks": 120
+    },
+    {
+      "kind": "special",
+      "sound": "minecraft:entity.wolf.shake",
+      "pitch": 1,
+      "replay_interval_ticks": 120
+    },
+    {
+      "kind": "step",
+      "sound": "minecraft:entity.wolf.step",
+      "pitch": 1,
+      "replay_interval_ticks": 80
+    },
+    {
+      "kind": "special",
+      "sound": "minecraft:entity.wolf.whine",
+      "pitch": 1,
+      "replay_interval_ticks": 120
+    }
+  ]
+}

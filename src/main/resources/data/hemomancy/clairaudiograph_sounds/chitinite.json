@@ -1,0 +1,23 @@
+{
+  "entity": "hemomancy:chitinite",
+  "sounds": [
+    {
+      "kind": "ambient",
+      "sound": "hemomancy:entity.chitinite.ambient",
+      "pitch": 1,
+      "replay_interval_ticks": 120
+    },
+    {
+      "kind": "death",
+      "sound": "hemomancy:entity.chitinite.death",
+      "pitch": 1,
+      "replay_interval_ticks": 100
+    },
+    {
+      "kind": "hurt",
+      "sound": "hemomancy:entity.chitinite.hurt",
+      "pitch": 1,
+      "replay_interval_ticks": 100
+    }
+  ]
+}

@@ -1,0 +1,23 @@
+{
+  "entity": "hemomancy:fungling",
+  "sounds": [
+    {
+      "kind": "ambient",
+      "sound": "hemomancy:entity.fungling.ambient",
+      "pitch": 1,
+      "replay_interval_ticks": 160
+    },
+    {
+      "kind": "death",
+      "sound": "hemomancy:entity.fungling.death",
+      "pitch": 1,
+      "replay_interval_ticks": 160
+    },
+    {
+      "kind": "hurt",
+      "sound": "hemomancy:entity.fungling.hurt",
+      "pitch": 1,
+      "replay_interval_ticks": 160
+    }
+  ]
+}

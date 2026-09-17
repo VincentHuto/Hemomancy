@@ -1,0 +1,77 @@
+{
+  "entity": "minecraft:turtle",
+  "sounds": [
+    {
+      "kind": "special",
+      "sound": "minecraft:entity.turtle.ambient_land",
+      "pitch": 1,
+      "replay_interval_ticks": 120
+    },
+    {
+      "kind": "death",
+      "sound": "minecraft:entity.turtle.death",
+      "pitch": 1,
+      "replay_interval_ticks": 100
+    },
+    {
+      "kind": "special",
+      "sound": "minecraft:entity.turtle.death_baby",
+      "pitch": 1,
+      "replay_interval_ticks": 120
+    },
+    {
+      "kind": "special",
+      "sound": "minecraft:entity.turtle.egg_break",
+      "pitch": 1,
+      "replay_interval_ticks": 120
+    },
+    {
+      "kind": "special",
+      "sound": "minecraft:entity.turtle.egg_crack",
+      "pitch": 1,
+      "replay_interval_ticks": 120
+    },
+    {
+      "kind": "special",
+      "sound": "minecraft:entity.turtle.egg_hatch",
+      "pitch": 1,
+      "replay_interval_ticks": 120
+    },
+    {
+      "kind": "hurt",
+      "sound": "minecraft:entity.turtle.hurt",
+      "pitch": 1,
+      "replay_interval_ticks": 100
+    },
+    {
+      "kind": "hurt",
+      "sound": "minecraft:entity.turtle.hurt_baby",
+      "pitch": 1,
+      "replay_interval_ticks": 100
+    },
+    {
+      "kind": "special",
+      "sound": "minecraft:entity.turtle.lay_egg",
+      "pitch": 1,
+      "replay_interval_ticks": 120
+    },
+    {
+      "kind": "special",
+      "sound": "minecraft:entity.turtle.shamble",
+      "pitch": 1,
+      "replay_interval_ticks": 120
+    },
+    {
+      "kind": "special",
+      "sound": "minecraft:entity.turtle.shamble_baby",
+      "pitch": 1,
+      "replay_interval_ticks": 120
+    },
+    {
+      "kind": "special",
+      "sound": "minecraft:entity.turtle.swim",
+      "pitch": 1,
+      "replay_interval_ticks": 120
+    }
+  ]
+}

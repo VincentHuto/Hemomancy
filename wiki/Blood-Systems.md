@@ -1,5 +1,17 @@
 # Blood Systems
 
+Manipulations use [school and rank casting animations](Casting-Animations.md), with distinct first- and third-person motion, blood anatomy and a local development preview. These gestures leave casting costs, targeting and movement unchanged.
+
+Use a [Hematic Microscope](Hematic-Microscope.md) in your main hand with a filled Blood Vial in your off hand. Hold use for two seconds to identify that vial and reveal its traits and injection prediction. Unknown samples remain injectable; examination does not increase potency.
+
+## Injectable blood samples
+
+Hold use with a loose filled Blood Vial for 0.8 seconds to inject it. Most responses last 10 seconds; Transfusion Saturation prevents another injection for 20 seconds. Survival use returns the empty vial. Creative use retains the sample and still applies saturation. Releasing early consumes nothing.
+
+Blood can be injected before identification. Unknown samples show their source, but hide their exact responses. The shared identification support is ready for the companion Hematic Microscope; that block is a separate implementation. Identified tooltips show the selected benefits and drawbacks. Up to three benefits apply, with duplicate effects counted once and Lux's reveal counting separately.
+
+This is an optional use for a field sample. It does not refill blood or permanently change tendencies. The rack carries samples, and centrifuging them still produces enzymes. Missing-mod and malformed samples stay filled and cannot be overwritten. See the [implementation and balance notes](Injectable-Blood-Vials.md) for all mappings.
+
 Lux manipulations form flowing white light, including a luminous Beacon, thin beams and the Unclosing Eye. White Verdict leaves a slightly thicker beam that fades over two seconds after release; the lingering light causes no additional hits. Tenebris forms black liquid that stretches into smoke. Umbral Step's smoke surrounds its departure and arrival positions. Charged manipulations keep their buildup visible through the gauge's full charge duration. Their costs, targeting, damage and gameplay durations are unchanged. [Visual implementation and verification](../docs/manipulation_work_plan/08-lux-umbra-flow.md).
 
 Hematic Flare requires a visible permitted target before charging blood; Funeral Bell respects owned allies and disabled PvP for damage and statuses. [Manipulation acceptance results and remaining checks](../docs/manipulation_work_plan/06-acceptance-results.md).
@@ -717,3 +729,7 @@ Base costs are now Hemorrhage 75 mL, Coronation 600 mL, Conductive Mark 150 mL a
 Dowsing reports nearest ore coordinates, Forge preserves multi-output recipe counts and stack limits, and Lignum-family channels automatically harvest permitted blocks when selection completes. Earlier release and forced cancellation retain their separate behaviors. Memory recipes and progression gates are unchanged. Live balance acceptance and authored effects remain open.
 
 See [area 4 comparisons and verification](../docs/manipulation_work_plan/04-balance-results.md).
+
+### Specimen storage
+
+The [Phlebotomist’s Cabinet](Phlebotomists-Cabinet.md) stores nine groups of up to 64 exactly matching full vials. Loose vials stay unstackable. Identified and unknown blood stay separate; ordinary extraction always produces individual vials.

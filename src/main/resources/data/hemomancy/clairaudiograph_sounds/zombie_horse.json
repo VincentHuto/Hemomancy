@@ -1,0 +1,23 @@
+{
+  "entity": "minecraft:zombie_horse",
+  "sounds": [
+    {
+      "kind": "ambient",
+      "sound": "minecraft:entity.zombie_horse.ambient",
+      "pitch": 1,
+      "replay_interval_ticks": 120
+    },
+    {
+      "kind": "death",
+      "sound": "minecraft:entity.zombie_horse.death",
+      "pitch": 1,
+      "replay_interval_ticks": 100
+    },
+    {
+      "kind": "hurt",
+      "sound": "minecraft:entity.zombie_horse.hurt",
+      "pitch": 1,
+      "replay_interval_ticks": 100
+    }
+  ]
+}

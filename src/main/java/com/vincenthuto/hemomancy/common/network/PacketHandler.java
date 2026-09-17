@@ -75,6 +75,14 @@ public class PacketHandler {
 
     private static void onRegisterPayloads(RegisterPayloadHandlersEvent event) {
         var net = event.registrar(Hemomancy.MOD_ID);
+        net.playToClient(CastingAnimationPacket.TYPE, CastingAnimationPacket.STREAM_CODEC, CastingAnimationPacket::handle);
+        net.playToServer(CastingChargePacket.TYPE, CastingChargePacket.STREAM_CODEC, CastingChargePacket::handle);
+        net.playToServer(ClairaudiographActionPacket.TYPE, ClairaudiographActionPacket.STREAM_CODEC, ClairaudiographActionPacket::handle);
+        net.playToClient(ClairaudiographChoicesPacket.TYPE, ClairaudiographChoicesPacket.STREAM_CODEC, ClairaudiographChoicesPacket::handle);
+        net.playToClient(ClairaudiographSoundPacket.TYPE, ClairaudiographSoundPacket.STREAM_CODEC, ClairaudiographSoundPacket::handle);
+        net.playToClient(BloodInjectionSyncPacket.TYPE, BloodInjectionSyncPacket.STREAM_CODEC, BloodInjectionSyncPacket::handle);
+        net.playToClient(PacketHematicMicroscopeViewing.TYPE, PacketHematicMicroscopeViewing.STREAM_CODEC, PacketHematicMicroscopeViewing::handle);
+        net.playToClient(PacketBloodVialInjection.TYPE, PacketBloodVialInjection.STREAM_CODEC, PacketBloodVialInjection::handle);
         net.playToServer(ManipulationChargeVisualPacket.TYPE, ManipulationChargeVisualPacket.STREAM_CODEC,
                 ManipulationChargeVisualPacket::handle);
         net.playToClient(BloodFlowPacket.TYPE, BloodFlowPacket.STREAM_CODEC, BloodFlowPacket::handle);

@@ -1,0 +1,47 @@
+{
+  "entity": "minecraft:magma_cube",
+  "sounds": [
+    {
+      "kind": "death",
+      "sound": "minecraft:entity.magma_cube.death",
+      "pitch": 1,
+      "replay_interval_ticks": 100
+    },
+    {
+      "kind": "special",
+      "sound": "minecraft:entity.magma_cube.death_small",
+      "pitch": 1,
+      "replay_interval_ticks": 120
+    },
+    {
+      "kind": "hurt",
+      "sound": "minecraft:entity.magma_cube.hurt",
+      "pitch": 1,
+      "replay_interval_ticks": 100
+    },
+    {
+      "kind": "hurt",
+      "sound": "minecraft:entity.magma_cube.hurt_small",
+      "pitch": 1,
+      "replay_interval_ticks": 100
+    },
+    {
+      "kind": "special",
+      "sound": "minecraft:entity.magma_cube.jump",
+      "pitch": 1,
+      "replay_interval_ticks": 120
+    },
+    {
+      "kind": "special",
+      "sound": "minecraft:entity.magma_cube.squish",
+      "pitch": 1,
+      "replay_interval_ticks": 120
+    },
+    {
+      "kind": "special",
+      "sound": "minecraft:entity.magma_cube.squish_small",
+      "pitch": 1,
+      "replay_interval_ticks": 120
+    }
+  ]
+}

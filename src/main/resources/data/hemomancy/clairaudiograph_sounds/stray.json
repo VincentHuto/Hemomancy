@@ -1,0 +1,29 @@
+{
+  "entity": "minecraft:stray",
+  "sounds": [
+    {
+      "kind": "ambient",
+      "sound": "minecraft:entity.stray.ambient",
+      "pitch": 1,
+      "replay_interval_ticks": 120
+    },
+    {
+      "kind": "death",
+      "sound": "minecraft:entity.stray.death",
+      "pitch": 1,
+      "replay_interval_ticks": 100
+    },
+    {
+      "kind": "hurt",
+      "sound": "minecraft:entity.stray.hurt",
+      "pitch": 1,
+      "replay_interval_ticks": 100
+    },
+    {
+      "kind": "step",
+      "sound": "minecraft:entity.stray.step",
+      "pitch": 1,
+      "replay_interval_ticks": 80
+    }
+  ]
+}

@@ -1,0 +1,47 @@
+{
+  "entity": "minecraft:donkey",
+  "sounds": [
+    {
+      "kind": "ambient",
+      "sound": "minecraft:entity.donkey.ambient",
+      "pitch": 1,
+      "replay_interval_ticks": 120
+    },
+    {
+      "kind": "warning",
+      "sound": "minecraft:entity.donkey.angry",
+      "pitch": 1,
+      "replay_interval_ticks": 120
+    },
+    {
+      "kind": "special",
+      "sound": "minecraft:entity.donkey.chest",
+      "pitch": 1,
+      "replay_interval_ticks": 120
+    },
+    {
+      "kind": "death",
+      "sound": "minecraft:entity.donkey.death",
+      "pitch": 1,
+      "replay_interval_ticks": 100
+    },
+    {
+      "kind": "special",
+      "sound": "minecraft:entity.donkey.eat",
+      "pitch": 1,
+      "replay_interval_ticks": 120
+    },
+    {
+      "kind": "hurt",
+      "sound": "minecraft:entity.donkey.hurt",
+      "pitch": 1,
+      "replay_interval_ticks": 100
+    },
+    {
+      "kind": "special",
+      "sound": "minecraft:entity.donkey.jump",
+      "pitch": 1,
+      "replay_interval_ticks": 120
+    }
+  ]
+}

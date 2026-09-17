@@ -1,0 +1,13 @@
+{
+  "tendency": "CONGEATIO",
+  "benefits": [
+    {
+      "effect": "hemomancy:cryoprotection",
+      "drawbacks": [
+        {
+          "effect": "minecraft:slowness"
+        }
+      ]
+    }
+  ]
+}

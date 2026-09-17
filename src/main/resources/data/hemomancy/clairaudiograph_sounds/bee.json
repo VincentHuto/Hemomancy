@@ -1,0 +1,41 @@
+{
+  "entity": "minecraft:bee",
+  "sounds": [
+    {
+      "kind": "death",
+      "sound": "minecraft:entity.bee.death",
+      "pitch": 1,
+      "replay_interval_ticks": 100
+    },
+    {
+      "kind": "hurt",
+      "sound": "minecraft:entity.bee.hurt",
+      "pitch": 1,
+      "replay_interval_ticks": 100
+    },
+    {
+      "kind": "special",
+      "sound": "minecraft:entity.bee.loop",
+      "pitch": 1,
+      "replay_interval_ticks": 120
+    },
+    {
+      "kind": "special",
+      "sound": "minecraft:entity.bee.loop_aggressive",
+      "pitch": 1,
+      "replay_interval_ticks": 120
+    },
+    {
+      "kind": "special",
+      "sound": "minecraft:entity.bee.pollinate",
+      "pitch": 1,
+      "replay_interval_ticks": 120
+    },
+    {
+      "kind": "attack",
+      "sound": "minecraft:entity.bee.sting",
+      "pitch": 1,
+      "replay_interval_ticks": 100
+    }
+  ]
+}

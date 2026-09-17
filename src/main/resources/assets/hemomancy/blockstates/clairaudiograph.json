@@ -1,0 +1,20 @@
+{
+  "variants": {
+    "facing=north": {
+      "model": "hemomancy:block/clairaudiograph",
+      "y": 0
+    },
+    "facing=east": {
+      "model": "hemomancy:block/clairaudiograph",
+      "y": 90
+    },
+    "facing=south": {
+      "model": "hemomancy:block/clairaudiograph",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "hemomancy:block/clairaudiograph",
+      "y": 270
+    }
+  }
+}

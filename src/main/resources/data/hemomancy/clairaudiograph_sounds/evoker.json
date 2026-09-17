@@ -1,0 +1,53 @@
+{
+  "entity": "minecraft:evoker",
+  "sounds": [
+    {
+      "kind": "ambient",
+      "sound": "minecraft:entity.evoker.ambient",
+      "pitch": 1,
+      "replay_interval_ticks": 120
+    },
+    {
+      "kind": "special",
+      "sound": "minecraft:entity.evoker.cast_spell",
+      "pitch": 1,
+      "replay_interval_ticks": 120
+    },
+    {
+      "kind": "celebration",
+      "sound": "minecraft:entity.evoker.celebrate",
+      "pitch": 1,
+      "replay_interval_ticks": 160
+    },
+    {
+      "kind": "death",
+      "sound": "minecraft:entity.evoker.death",
+      "pitch": 1,
+      "replay_interval_ticks": 100
+    },
+    {
+      "kind": "hurt",
+      "sound": "minecraft:entity.evoker.hurt",
+      "pitch": 1,
+      "replay_interval_ticks": 100
+    },
+    {
+      "kind": "attack",
+      "sound": "minecraft:entity.evoker.prepare_attack",
+      "pitch": 1,
+      "replay_interval_ticks": 100
+    },
+    {
+      "kind": "warning",
+      "sound": "minecraft:entity.evoker.prepare_summon",
+      "pitch": 1,
+      "replay_interval_ticks": 120
+    },
+    {
+      "kind": "warning",
+      "sound": "minecraft:entity.evoker.prepare_wololo",
+      "pitch": 1,
+      "replay_interval_ticks": 120
+    }
+  ]
+}

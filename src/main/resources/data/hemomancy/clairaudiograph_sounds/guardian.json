@@ -1,0 +1,53 @@
+{
+  "entity": "minecraft:guardian",
+  "sounds": [
+    {
+      "kind": "ambient",
+      "sound": "minecraft:entity.guardian.ambient",
+      "pitch": 1,
+      "replay_interval_ticks": 120
+    },
+    {
+      "kind": "special",
+      "sound": "minecraft:entity.guardian.ambient_land",
+      "pitch": 1,
+      "replay_interval_ticks": 120
+    },
+    {
+      "kind": "attack",
+      "sound": "minecraft:entity.guardian.attack",
+      "pitch": 1,
+      "replay_interval_ticks": 100
+    },
+    {
+      "kind": "death",
+      "sound": "minecraft:entity.guardian.death",
+      "pitch": 1,
+      "replay_interval_ticks": 100
+    },
+    {
+      "kind": "special",
+      "sound": "minecraft:entity.guardian.death_land",
+      "pitch": 1,
+      "replay_interval_ticks": 120
+    },
+    {
+      "kind": "special",
+      "sound": "minecraft:entity.guardian.flop",
+      "pitch": 1,
+      "replay_interval_ticks": 120
+    },
+    {
+      "kind": "hurt",
+      "sound": "minecraft:entity.guardian.hurt",
+      "pitch": 1,
+      "replay_interval_ticks": 100
+    },
+    {
+      "kind": "hurt",
+      "sound": "minecraft:entity.guardian.hurt_land",
+      "pitch": 1,
+      "replay_interval_ticks": 100
+    }
+  ]
+}

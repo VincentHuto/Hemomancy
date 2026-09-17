@@ -1,0 +1,29 @@
+{
+  "entity": "minecraft:vindicator",
+  "sounds": [
+    {
+      "kind": "ambient",
+      "sound": "minecraft:entity.vindicator.ambient",
+      "pitch": 1,
+      "replay_interval_ticks": 120
+    },
+    {
+      "kind": "celebration",
+      "sound": "minecraft:entity.vindicator.celebrate",
+      "pitch": 1,
+      "replay_interval_ticks": 160
+    },
+    {
+      "kind": "death",
+      "sound": "minecraft:entity.vindicator.death",
+      "pitch": 1,
+      "replay_interval_ticks": 100
+    },
+    {
+      "kind": "hurt",
+      "sound": "minecraft:entity.vindicator.hurt",
+      "pitch": 1,
+      "replay_interval_ticks": 100
+    }
+  ]
+}

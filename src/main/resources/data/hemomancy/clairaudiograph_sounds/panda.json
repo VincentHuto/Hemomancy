@@ -1,0 +1,71 @@
+{
+  "entity": "minecraft:panda",
+  "sounds": [
+    {
+      "kind": "ambient",
+      "sound": "minecraft:entity.panda.aggressive_ambient",
+      "pitch": 1,
+      "replay_interval_ticks": 120
+    },
+    {
+      "kind": "ambient",
+      "sound": "minecraft:entity.panda.ambient",
+      "pitch": 1,
+      "replay_interval_ticks": 120
+    },
+    {
+      "kind": "attack",
+      "sound": "minecraft:entity.panda.bite",
+      "pitch": 1,
+      "replay_interval_ticks": 100
+    },
+    {
+      "kind": "special",
+      "sound": "minecraft:entity.panda.cant_breed",
+      "pitch": 1,
+      "replay_interval_ticks": 120
+    },
+    {
+      "kind": "death",
+      "sound": "minecraft:entity.panda.death",
+      "pitch": 1,
+      "replay_interval_ticks": 100
+    },
+    {
+      "kind": "special",
+      "sound": "minecraft:entity.panda.eat",
+      "pitch": 1,
+      "replay_interval_ticks": 120
+    },
+    {
+      "kind": "hurt",
+      "sound": "minecraft:entity.panda.hurt",
+      "pitch": 1,
+      "replay_interval_ticks": 100
+    },
+    {
+      "kind": "warning",
+      "sound": "minecraft:entity.panda.pre_sneeze",
+      "pitch": 1,
+      "replay_interval_ticks": 120
+    },
+    {
+      "kind": "special",
+      "sound": "minecraft:entity.panda.sneeze",
+      "pitch": 1,
+      "replay_interval_ticks": 120
+    },
+    {
+      "kind": "step",
+      "sound": "minecraft:entity.panda.step",
+      "pitch": 1,
+      "replay_interval_ticks": 80
+    },
+    {
+      "kind": "ambient",
+      "sound": "minecraft:entity.panda.worried_ambient",
+      "pitch": 1,
+      "replay_interval_ticks": 120
+    }
+  ]
+}

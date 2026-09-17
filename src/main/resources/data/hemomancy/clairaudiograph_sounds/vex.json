@@ -1,0 +1,29 @@
+{
+  "entity": "minecraft:vex",
+  "sounds": [
+    {
+      "kind": "ambient",
+      "sound": "minecraft:entity.vex.ambient",
+      "pitch": 1,
+      "replay_interval_ticks": 120
+    },
+    {
+      "kind": "attack",
+      "sound": "minecraft:entity.vex.charge",
+      "pitch": 1,
+      "replay_interval_ticks": 100
+    },
+    {
+      "kind": "death",
+      "sound": "minecraft:entity.vex.death",
+      "pitch": 1,
+      "replay_interval_ticks": 100
+    },
+    {
+      "kind": "hurt",
+      "sound": "minecraft:entity.vex.hurt",
+      "pitch": 1,
+      "replay_interval_ticks": 100
+    }
+  ]
+}

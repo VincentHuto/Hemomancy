@@ -1,0 +1,35 @@
+{
+  "entity": "minecraft:pig",
+  "sounds": [
+    {
+      "kind": "ambient",
+      "sound": "minecraft:entity.pig.ambient",
+      "pitch": 1,
+      "replay_interval_ticks": 100
+    },
+    {
+      "kind": "death",
+      "sound": "minecraft:entity.pig.death",
+      "pitch": 1,
+      "replay_interval_ticks": 100
+    },
+    {
+      "kind": "hurt",
+      "sound": "minecraft:entity.pig.hurt",
+      "pitch": 1,
+      "replay_interval_ticks": 100
+    },
+    {
+      "kind": "special",
+      "sound": "minecraft:entity.pig.saddle",
+      "pitch": 1,
+      "replay_interval_ticks": 100
+    },
+    {
+      "kind": "step",
+      "sound": "minecraft:entity.pig.step",
+      "pitch": 1,
+      "replay_interval_ticks": 100
+    }
+  ]
+}

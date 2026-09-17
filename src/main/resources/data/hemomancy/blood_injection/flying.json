@@ -1,0 +1,8 @@
+{
+  "property": "hemomancy:blood_properties/flying",
+  "benefits": [
+    {
+      "effect": "minecraft:slow_falling"
+    }
+  ]
+}

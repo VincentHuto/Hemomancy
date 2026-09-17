@@ -1,0 +1,8 @@
+{
+  "property": "hemomancy:blood_properties/venomous",
+  "benefits": [
+    {
+      "effect": "hemomancy:poison_resistance"
+    }
+  ]
+}

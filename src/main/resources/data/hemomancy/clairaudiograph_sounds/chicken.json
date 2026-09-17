@@ -1,0 +1,35 @@
+{
+  "entity": "minecraft:chicken",
+  "sounds": [
+    {
+      "kind": "ambient",
+      "sound": "minecraft:entity.chicken.ambient",
+      "pitch": 1,
+      "replay_interval_ticks": 120
+    },
+    {
+      "kind": "death",
+      "sound": "minecraft:entity.chicken.death",
+      "pitch": 1,
+      "replay_interval_ticks": 100
+    },
+    {
+      "kind": "special",
+      "sound": "minecraft:entity.chicken.egg",
+      "pitch": 1,
+      "replay_interval_ticks": 120
+    },
+    {
+      "kind": "hurt",
+      "sound": "minecraft:entity.chicken.hurt",
+      "pitch": 1,
+      "replay_interval_ticks": 100
+    },
+    {
+      "kind": "step",
+      "sound": "minecraft:entity.chicken.step",
+      "pitch": 1,
+      "replay_interval_ticks": 80
+    }
+  ]
+}

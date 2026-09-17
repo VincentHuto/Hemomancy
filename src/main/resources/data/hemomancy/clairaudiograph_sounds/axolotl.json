@@ -1,0 +1,47 @@
+{
+  "entity": "minecraft:axolotl",
+  "sounds": [
+    {
+      "kind": "attack",
+      "sound": "minecraft:entity.axolotl.attack",
+      "pitch": 1,
+      "replay_interval_ticks": 100
+    },
+    {
+      "kind": "death",
+      "sound": "minecraft:entity.axolotl.death",
+      "pitch": 1,
+      "replay_interval_ticks": 100
+    },
+    {
+      "kind": "hurt",
+      "sound": "minecraft:entity.axolotl.hurt",
+      "pitch": 1,
+      "replay_interval_ticks": 100
+    },
+    {
+      "kind": "special",
+      "sound": "minecraft:entity.axolotl.idle_air",
+      "pitch": 1,
+      "replay_interval_ticks": 120
+    },
+    {
+      "kind": "special",
+      "sound": "minecraft:entity.axolotl.idle_water",
+      "pitch": 1,
+      "replay_interval_ticks": 120
+    },
+    {
+      "kind": "special",
+      "sound": "minecraft:entity.axolotl.splash",
+      "pitch": 1,
+      "replay_interval_ticks": 120
+    },
+    {
+      "kind": "special",
+      "sound": "minecraft:entity.axolotl.swim",
+      "pitch": 1,
+      "replay_interval_ticks": 120
+    }
+  ]
+}

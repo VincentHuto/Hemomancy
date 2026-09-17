@@ -6,6 +6,7 @@ import com.vincenthuto.hemomancy.common.capability.player.harbinger.scar.fungal.
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.EnumVeinSections;
 import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillPointHelper;
+import com.vincenthuto.hemomancy.common.init.BlockInit;
 import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
 import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationRank;
 import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationType;
@@ -191,6 +192,10 @@ public class LignumMortisManip extends BloodManipulation {
 					|| !VeinMinerHelper.hasBreakPermission(player, pos)) continue;
 			BlockState state = level.getBlockState(pos);
 			Block.dropResources(state, level, pos, null, player, ItemStack.EMPTY);
+			if (session.mode == Mode.STANDARD && LignumMortisRules.shouldDropInfestedWood(
+					state.is(BlockTags.LOGS), level.random.nextInt(LignumMortisRules.INFESTED_WOOD_DROP_ROLLS))) {
+				Block.popResource(level, pos, new ItemStack(BlockInit.infested_wood.get()));
+			}
 			if(level.destroyBlock(pos, false, player))
                 com.vincenthuto.hemomancy.common.manipulation.ManipulationParticles.accent(level,EnumBloodTendency.MORTEM,
                         Vec3.atCenterOf(pos),new Vec3(0,-.15,0));

@@ -1,0 +1,29 @@
+{
+  "entity": "minecraft:glow_squid",
+  "sounds": [
+    {
+      "kind": "ambient",
+      "sound": "minecraft:entity.glow_squid.ambient",
+      "pitch": 1,
+      "replay_interval_ticks": 120
+    },
+    {
+      "kind": "death",
+      "sound": "minecraft:entity.glow_squid.death",
+      "pitch": 1,
+      "replay_interval_ticks": 100
+    },
+    {
+      "kind": "hurt",
+      "sound": "minecraft:entity.glow_squid.hurt",
+      "pitch": 1,
+      "replay_interval_ticks": 100
+    },
+    {
+      "kind": "special",
+      "sound": "minecraft:entity.glow_squid.squirt",
+      "pitch": 1,
+      "replay_interval_ticks": 120
+    }
+  ]
+}

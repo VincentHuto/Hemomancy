@@ -1,0 +1,23 @@
+{
+  "entity": "hemomancy:erythromycelium_eruptus",
+  "sounds": [
+    {
+      "kind": "ambient",
+      "sound": "hemomancy:entity.erythromycelium_eruptus.ambient",
+      "pitch": 1,
+      "replay_interval_ticks": 120
+    },
+    {
+      "kind": "death",
+      "sound": "hemomancy:entity.erythromycelium_eruptus.death",
+      "pitch": 1,
+      "replay_interval_ticks": 100
+    },
+    {
+      "kind": "hurt",
+      "sound": "hemomancy:entity.erythromycelium_eruptus.hurt",
+      "pitch": 1,
+      "replay_interval_ticks": 100
+    }
+  ]
+}

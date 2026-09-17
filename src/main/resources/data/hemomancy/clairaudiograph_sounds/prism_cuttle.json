@@ -1,0 +1,11 @@
+{
+  "entity": "hemomancy:prism_cuttle",
+  "sounds": [
+    {
+      "kind": "special",
+      "sound": "minecraft:entity.glow_squid.squirt",
+      "pitch": 1,
+      "replay_interval_ticks": 120
+    }
+  ]
+}

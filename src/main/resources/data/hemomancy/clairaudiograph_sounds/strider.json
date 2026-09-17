@@ -1,0 +1,59 @@
+{
+  "entity": "minecraft:strider",
+  "sounds": [
+    {
+      "kind": "ambient",
+      "sound": "minecraft:entity.strider.ambient",
+      "pitch": 1,
+      "replay_interval_ticks": 120
+    },
+    {
+      "kind": "death",
+      "sound": "minecraft:entity.strider.death",
+      "pitch": 1,
+      "replay_interval_ticks": 100
+    },
+    {
+      "kind": "special",
+      "sound": "minecraft:entity.strider.eat",
+      "pitch": 1,
+      "replay_interval_ticks": 120
+    },
+    {
+      "kind": "special",
+      "sound": "minecraft:entity.strider.happy",
+      "pitch": 1,
+      "replay_interval_ticks": 120
+    },
+    {
+      "kind": "hurt",
+      "sound": "minecraft:entity.strider.hurt",
+      "pitch": 1,
+      "replay_interval_ticks": 100
+    },
+    {
+      "kind": "warning",
+      "sound": "minecraft:entity.strider.retreat",
+      "pitch": 1,
+      "replay_interval_ticks": 120
+    },
+    {
+      "kind": "special",
+      "sound": "minecraft:entity.strider.saddle",
+      "pitch": 1,
+      "replay_interval_ticks": 120
+    },
+    {
+      "kind": "step",
+      "sound": "minecraft:entity.strider.step",
+      "pitch": 1,
+      "replay_interval_ticks": 80
+    },
+    {
+      "kind": "step",
+      "sound": "minecraft:entity.strider.step_lava",
+      "pitch": 1,
+      "replay_interval_ticks": 80
+    }
+  ]
+}

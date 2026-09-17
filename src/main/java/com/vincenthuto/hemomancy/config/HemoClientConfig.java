@@ -3,6 +3,8 @@ package com.vincenthuto.hemomancy.config;
 import net.neoforged.neoforge.common.ModConfigSpec;
 
 public class HemoClientConfig {
+    public static ModConfigSpec.BooleanValue MICROSCOPE_REDUCED_MOTION;
+    public static ModConfigSpec.BooleanValue MICROSCOPE_LOW_DENSITY;
 
 	public static ModConfigSpec.IntValue HUD_LOCATION;
 	public static ModConfigSpec.EnumValue<MorphlingHudMode> MORPHLING_HUD_MODE;
@@ -38,6 +40,12 @@ public class HemoClientConfig {
 	}
 
 	public static void registerClientConfig(ModConfigSpec.Builder CLIENT_BUILDER) {
+        CLIENT_BUILDER.push("microscope");
+        MICROSCOPE_REDUCED_MOTION = CLIENT_BUILDER.translation("hemomancy.configuration.microscopeReducedMotion")
+                .comment("Slow cellular motion and replace sudden displacement with fades.").define("reducedMotion", false);
+        MICROSCOPE_LOW_DENSITY = CLIENT_BUILDER.translation("hemomancy.configuration.microscopeLowDensity")
+                .comment("Show fewer cells without changing specimen information or examination time.").define("lowDensity", false);
+        CLIENT_BUILDER.pop();
 		CLIENT_BUILDER.comment("Client settings for the power generator").push("powergen");
 
         HUD_LOCATION = CLIENT_BUILDER

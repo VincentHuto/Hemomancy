@@ -28,6 +28,7 @@ public class MixinHooks {
 	}
 
 	public static boolean canWalkOnPowderSnow(Entity entity, boolean vanillaResult) {
+		if (entity instanceof LivingEntity living && living.hasEffect(com.vincenthuto.hemomancy.common.init.EffectInit.cryoprotection)) return true;
 		if (vanillaResult || !(entity instanceof Player player)) return vanillaResult;
 		return HemoCapabilityAccess.getEquippedMorphling(player)
 				.filter(cap -> cap.hasMorphling()

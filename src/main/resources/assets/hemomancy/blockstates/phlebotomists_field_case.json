@@ -1,0 +1,400 @@
+{
+  "multipart": [
+    {
+      "when": {
+        "facing": "north"
+      },
+      "apply": {
+        "model": "hemomancy:block/phlebotomists_field_case",
+        "y": 0
+      }
+    },
+    {
+      "when": {
+        "facing": "east"
+      },
+      "apply": {
+        "model": "hemomancy:block/phlebotomists_field_case",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "facing": "south"
+      },
+      "apply": {
+        "model": "hemomancy:block/phlebotomists_field_case",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "facing": "west"
+      },
+      "apply": {
+        "model": "hemomancy:block/phlebotomists_field_case",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "facing": "north",
+        "occupied_0": "true"
+      },
+      "apply": {
+        "model": "hemomancy:block/phlebotomists_field_case_specimen_0",
+        "y": 0
+      }
+    },
+    {
+      "when": {
+        "facing": "east",
+        "occupied_0": "true"
+      },
+      "apply": {
+        "model": "hemomancy:block/phlebotomists_field_case_specimen_0",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "facing": "south",
+        "occupied_0": "true"
+      },
+      "apply": {
+        "model": "hemomancy:block/phlebotomists_field_case_specimen_0",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "facing": "west",
+        "occupied_0": "true"
+      },
+      "apply": {
+        "model": "hemomancy:block/phlebotomists_field_case_specimen_0",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "facing": "north",
+        "occupied_1": "true"
+      },
+      "apply": {
+        "model": "hemomancy:block/phlebotomists_field_case_specimen_1",
+        "y": 0
+      }
+    },
+    {
+      "when": {
+        "facing": "east",
+        "occupied_1": "true"
+      },
+      "apply": {
+        "model": "hemomancy:block/phlebotomists_field_case_specimen_1",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "facing": "south",
+        "occupied_1": "true"
+      },
+      "apply": {
+        "model": "hemomancy:block/phlebotomists_field_case_specimen_1",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "facing": "west",
+        "occupied_1": "true"
+      },
+      "apply": {
+        "model": "hemomancy:block/phlebotomists_field_case_specimen_1",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "facing": "north",
+        "occupied_2": "true"
+      },
+      "apply": {
+        "model": "hemomancy:block/phlebotomists_field_case_specimen_2",
+        "y": 0
+      }
+    },
+    {
+      "when": {
+        "facing": "east",
+        "occupied_2": "true"
+      },
+      "apply": {
+        "model": "hemomancy:block/phlebotomists_field_case_specimen_2",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "facing": "south",
+        "occupied_2": "true"
+      },
+      "apply": {
+        "model": "hemomancy:block/phlebotomists_field_case_specimen_2",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "facing": "west",
+        "occupied_2": "true"
+      },
+      "apply": {
+        "model": "hemomancy:block/phlebotomists_field_case_specimen_2",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "facing": "north",
+        "occupied_3": "true"
+      },
+      "apply": {
+        "model": "hemomancy:block/phlebotomists_field_case_specimen_3",
+        "y": 0
+      }
+    },
+    {
+      "when": {
+        "facing": "east",
+        "occupied_3": "true"
+      },
+      "apply": {
+        "model": "hemomancy:block/phlebotomists_field_case_specimen_3",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "facing": "south",
+        "occupied_3": "true"
+      },
+      "apply": {
+        "model": "hemomancy:block/phlebotomists_field_case_specimen_3",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "facing": "west",
+        "occupied_3": "true"
+      },
+      "apply": {
+        "model": "hemomancy:block/phlebotomists_field_case_specimen_3",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "facing": "north",
+        "occupied_4": "true"
+      },
+      "apply": {
+        "model": "hemomancy:block/phlebotomists_field_case_specimen_4",
+        "y": 0
+      }
+    },
+    {
+      "when": {
+        "facing": "east",
+        "occupied_4": "true"
+      },
+      "apply": {
+        "model": "hemomancy:block/phlebotomists_field_case_specimen_4",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "facing": "south",
+        "occupied_4": "true"
+      },
+      "apply": {
+        "model": "hemomancy:block/phlebotomists_field_case_specimen_4",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "facing": "west",
+        "occupied_4": "true"
+      },
+      "apply": {
+        "model": "hemomancy:block/phlebotomists_field_case_specimen_4",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "facing": "north",
+        "occupied_5": "true"
+      },
+      "apply": {
+        "model": "hemomancy:block/phlebotomists_field_case_specimen_5",
+        "y": 0
+      }
+    },
+    {
+      "when": {
+        "facing": "east",
+        "occupied_5": "true"
+      },
+      "apply": {
+        "model": "hemomancy:block/phlebotomists_field_case_specimen_5",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "facing": "south",
+        "occupied_5": "true"
+      },
+      "apply": {
+        "model": "hemomancy:block/phlebotomists_field_case_specimen_5",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "facing": "west",
+        "occupied_5": "true"
+      },
+      "apply": {
+        "model": "hemomancy:block/phlebotomists_field_case_specimen_5",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "facing": "north",
+        "occupied_6": "true"
+      },
+      "apply": {
+        "model": "hemomancy:block/phlebotomists_field_case_specimen_6",
+        "y": 0
+      }
+    },
+    {
+      "when": {
+        "facing": "east",
+        "occupied_6": "true"
+      },
+      "apply": {
+        "model": "hemomancy:block/phlebotomists_field_case_specimen_6",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "facing": "south",
+        "occupied_6": "true"
+      },
+      "apply": {
+        "model": "hemomancy:block/phlebotomists_field_case_specimen_6",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "facing": "west",
+        "occupied_6": "true"
+      },
+      "apply": {
+        "model": "hemomancy:block/phlebotomists_field_case_specimen_6",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "facing": "north",
+        "occupied_7": "true"
+      },
+      "apply": {
+        "model": "hemomancy:block/phlebotomists_field_case_specimen_7",
+        "y": 0
+      }
+    },
+    {
+      "when": {
+        "facing": "east",
+        "occupied_7": "true"
+      },
+      "apply": {
+        "model": "hemomancy:block/phlebotomists_field_case_specimen_7",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "facing": "south",
+        "occupied_7": "true"
+      },
+      "apply": {
+        "model": "hemomancy:block/phlebotomists_field_case_specimen_7",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "facing": "west",
+        "occupied_7": "true"
+      },
+      "apply": {
+        "model": "hemomancy:block/phlebotomists_field_case_specimen_7",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "facing": "north",
+        "occupied_8": "true"
+      },
+      "apply": {
+        "model": "hemomancy:block/phlebotomists_field_case_specimen_8",
+        "y": 0
+      }
+    },
+    {
+      "when": {
+        "facing": "east",
+        "occupied_8": "true"
+      },
+      "apply": {
+        "model": "hemomancy:block/phlebotomists_field_case_specimen_8",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "facing": "south",
+        "occupied_8": "true"
+      },
+      "apply": {
+        "model": "hemomancy:block/phlebotomists_field_case_specimen_8",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "facing": "west",
+        "occupied_8": "true"
+      },
+      "apply": {
+        "model": "hemomancy:block/phlebotomists_field_case_specimen_8",
+        "y": 270
+      }
+    }
+  ]
+}

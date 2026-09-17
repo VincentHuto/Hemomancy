@@ -1,0 +1,11 @@
+{
+  "entity": "hemomancy:marrow_spitter",
+  "sounds": [
+    {
+      "kind": "attack",
+      "sound": "minecraft:entity.llama.spit",
+      "pitch": 1,
+      "replay_interval_ticks": 100
+    }
+  ]
+}

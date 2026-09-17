@@ -4,6 +4,7 @@ import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.menu.*;
 import com.vincenthuto.hemomancy.common.menu.tile.crafting.*;
 import com.vincenthuto.hemomancy.common.menu.tile.functional.MasonsEffigyMenu;
+import com.vincenthuto.hemomancy.common.menu.tile.functional.PhlebotomistsCabinetMenu;
 import com.vincenthuto.hemomancy.common.menu.tile.functional.MnemonicReliquaryMenu;
 import com.vincenthuto.hemomancy.common.menu.tile.functional.SporeImplantMenu;
 import net.minecraft.core.registries.Registries;
@@ -70,6 +71,11 @@ public class ContainerInit {
 
 	public static final DeferredHolder<MenuType<?>, MenuType<PuppeteersSpindleMenu>> puppeteers_spindle = CONTAINERS
 			.register("puppeteers_spindle", () -> IMenuTypeExtension.create(PuppeteersSpindleMenu::new));
+
+    public static final DeferredHolder<MenuType<?>, MenuType<com.vincenthuto.hemomancy.common.menu.tile.functional.ClairaudiographMenu>> clairaudiograph = CONTAINERS.register("clairaudiograph", () -> IMenuTypeExtension.create(com.vincenthuto.hemomancy.common.menu.tile.functional.ClairaudiographMenu::new));
+	public static final DeferredHolder<MenuType<?>, MenuType<PhlebotomistsCabinetMenu>> phlebotomists_field_case = CONTAINERS.register("phlebotomists_field_case", () -> IMenuTypeExtension.create((id, inv, buf) -> new PhlebotomistsCabinetMenu(ContainerInit.phlebotomists_field_case.get(), id, inv, buf)));
+
+	public static final DeferredHolder<MenuType<?>, MenuType<PhlebotomistsCabinetMenu>> phlebotomists_cabinet = CONTAINERS.register("phlebotomists_cabinet", () -> IMenuTypeExtension.create(PhlebotomistsCabinetMenu::new));
 
 	public static final DeferredHolder<MenuType<?>, MenuType<MnemonicReliquaryMenu>> mnemonic_reliquary = CONTAINERS
 			.register("mnemonic_reliquary", () -> IMenuTypeExtension.create(MnemonicReliquaryMenu::new));

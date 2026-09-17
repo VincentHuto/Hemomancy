@@ -1,0 +1,41 @@
+{
+  "entity": "minecraft:polar_bear",
+  "sounds": [
+    {
+      "kind": "ambient",
+      "sound": "minecraft:entity.polar_bear.ambient",
+      "pitch": 1,
+      "replay_interval_ticks": 120
+    },
+    {
+      "kind": "ambient",
+      "sound": "minecraft:entity.polar_bear.ambient_baby",
+      "pitch": 1,
+      "replay_interval_ticks": 120
+    },
+    {
+      "kind": "death",
+      "sound": "minecraft:entity.polar_bear.death",
+      "pitch": 1,
+      "replay_interval_ticks": 120
+    },
+    {
+      "kind": "hurt",
+      "sound": "minecraft:entity.polar_bear.hurt",
+      "pitch": 1,
+      "replay_interval_ticks": 120
+    },
+    {
+      "kind": "step",
+      "sound": "minecraft:entity.polar_bear.step",
+      "pitch": 1,
+      "replay_interval_ticks": 120
+    },
+    {
+      "kind": "warning",
+      "sound": "minecraft:entity.polar_bear.warning",
+      "pitch": 1,
+      "replay_interval_ticks": 120
+    }
+  ]
+}

@@ -1,0 +1,35 @@
+{
+  "entity": "hemomancy:morphling_polyp",
+  "sounds": [
+    {
+      "kind": "attack",
+      "sound": "minecraft:entity.slime.attack",
+      "pitch": 1,
+      "replay_interval_ticks": 100
+    },
+    {
+      "kind": "special",
+      "sound": "minecraft:entity.slime.death_small",
+      "pitch": 1,
+      "replay_interval_ticks": 120
+    },
+    {
+      "kind": "hurt",
+      "sound": "minecraft:entity.slime.hurt_small",
+      "pitch": 1,
+      "replay_interval_ticks": 100
+    },
+    {
+      "kind": "special",
+      "sound": "minecraft:entity.slime.jump_small",
+      "pitch": 1,
+      "replay_interval_ticks": 120
+    },
+    {
+      "kind": "special",
+      "sound": "minecraft:entity.slime.squish_small",
+      "pitch": 1,
+      "replay_interval_ticks": 120
+    }
+  ]
+}

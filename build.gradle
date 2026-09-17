@@ -164,7 +164,19 @@ neoForge {
             gameDirectory = project.file('build/phlegethontic-gametest')
             // The pilot tests deliberately reuse Mojang's one-block empty
             // template, so their template namespace is minecraft.
-            systemProperty 'neoforge.enabledGameTestNamespaces', "${project.mod_id},minecraft"
+            systemProperty 'neoforge.enabledGameTestNamespaces', "${project.mod_id},minecraft,blood_injection_validation"
+        }
+
+        bloodInjectionGameTestServer {
+            type = "gameTestServer"
+            gameDirectory = project.file('build/blood-injection-gametest')
+            systemProperty 'neoforge.enabledGameTestNamespaces', 'blood_injection_validation'
+        }
+
+        castingAnimationGameTestServer {
+            type = "gameTestServer"
+            gameDirectory = project.file('build/casting-animation-gametest')
+            systemProperty 'neoforge.enabledGameTestNamespaces', 'casting_animation_validation'
         }
 
         phlegethonticValidationServer {

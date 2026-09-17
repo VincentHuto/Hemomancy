@@ -1,0 +1,77 @@
+{
+  "entity": "hemomancy:vesper_crowned_refusal",
+  "sounds": [
+    {
+      "kind": "ambient",
+      "sound": "hemomancy:entity.vesper.ambient",
+      "pitch": 1,
+      "replay_interval_ticks": 200
+    },
+    {
+      "kind": "special",
+      "sound": "hemomancy:entity.vesper.carapace_reform",
+      "pitch": 1,
+      "replay_interval_ticks": 200
+    },
+    {
+      "kind": "death",
+      "sound": "hemomancy:entity.vesper.death",
+      "pitch": 1,
+      "replay_interval_ticks": 200
+    },
+    {
+      "kind": "attack",
+      "sound": "hemomancy:entity.vesper.grab_bite",
+      "pitch": 1,
+      "replay_interval_ticks": 200
+    },
+    {
+      "kind": "attack",
+      "sound": "hemomancy:entity.vesper.grab_pierce",
+      "pitch": 1,
+      "replay_interval_ticks": 200
+    },
+    {
+      "kind": "attack",
+      "sound": "hemomancy:entity.vesper.grab_release",
+      "pitch": 1,
+      "replay_interval_ticks": 200
+    },
+    {
+      "kind": "warning",
+      "sound": "hemomancy:entity.vesper.grab_telegraph",
+      "pitch": 1,
+      "replay_interval_ticks": 200
+    },
+    {
+      "kind": "attack",
+      "sound": "hemomancy:entity.vesper.hit",
+      "pitch": 1,
+      "replay_interval_ticks": 200
+    },
+    {
+      "kind": "special",
+      "sound": "hemomancy:entity.vesper.hood_remove",
+      "pitch": 1,
+      "replay_interval_ticks": 200
+    },
+    {
+      "kind": "hurt",
+      "sound": "hemomancy:entity.vesper.hurt",
+      "pitch": 1,
+      "replay_interval_ticks": 200
+    },
+    {
+      "kind": "special",
+      "sound": "hemomancy:entity.vesper.music",
+      "pitch": 1,
+      "replay_interval_ticks": 200
+    },
+    {
+      "kind": "attack",
+      "sound": "hemomancy:entity.vesper.scute_launch",
+      "pitch": 1,
+      "replay_interval_ticks": 200
+    }
+  ]
+}

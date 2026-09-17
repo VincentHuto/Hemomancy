@@ -1,0 +1,14 @@
+{
+  "property": "hemomancy:blood_properties/explosive",
+  "benefits": [
+    {
+      "effect": "hemomancy:explosion_resistance",
+      "drawbacks": [
+        {
+          "effect": "minecraft:weakness",
+          "duration": 40
+        }
+      ]
+    }
+  ]
+}

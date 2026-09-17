@@ -44,6 +44,21 @@ public class DataComponentInit {
 					.cacheEncoding()
 					.build());
 
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<com.vincenthuto.hemomancy.common.item.component.ClairaudiographRecording>> CLAIRAUDIOGRAPH_RECORDING = COMPONENTS
+            .register("clairaudiograph_recording", () -> DataComponentType.<com.vincenthuto.hemomancy.common.item.component.ClairaudiographRecording>builder()
+                    .persistent(com.vincenthuto.hemomancy.common.item.component.ClairaudiographRecording.CODEC)
+                    .networkSynchronized(com.vincenthuto.hemomancy.common.item.component.ClairaudiographRecording.STREAM_CODEC).build());
+
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<Boolean>> BLOOD_SAMPLE_IDENTIFIED = COMPONENTS
+            .register("blood_sample_identified", () -> DataComponentType.<Boolean>builder()
+                    .persistent(com.mojang.serialization.Codec.BOOL)
+                    .networkSynchronized(net.minecraft.network.codec.ByteBufCodecs.BOOL).build());
+
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<com.vincenthuto.hemomancy.common.item.component.FieldCaseContents>> FIELD_CASE_CONTENTS = COMPONENTS
+            .register("field_case_contents", () -> DataComponentType.<com.vincenthuto.hemomancy.common.item.component.FieldCaseContents>builder()
+                    .persistent(com.vincenthuto.hemomancy.common.item.component.FieldCaseContents.CODEC)
+                    .networkSynchronized(com.vincenthuto.hemomancy.common.item.component.FieldCaseContents.STREAM_CODEC).build());
+
 	private DataComponentInit() {
 	}
 }

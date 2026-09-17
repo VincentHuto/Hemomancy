@@ -1,0 +1,41 @@
+{
+  "entity": "minecraft:zombie_villager",
+  "sounds": [
+    {
+      "kind": "ambient",
+      "sound": "minecraft:entity.zombie_villager.ambient",
+      "pitch": 1,
+      "replay_interval_ticks": 120
+    },
+    {
+      "kind": "special",
+      "sound": "minecraft:entity.zombie_villager.converted",
+      "pitch": 1,
+      "replay_interval_ticks": 120
+    },
+    {
+      "kind": "special",
+      "sound": "minecraft:entity.zombie_villager.cure",
+      "pitch": 1,
+      "replay_interval_ticks": 120
+    },
+    {
+      "kind": "death",
+      "sound": "minecraft:entity.zombie_villager.death",
+      "pitch": 1,
+      "replay_interval_ticks": 100
+    },
+    {
+      "kind": "hurt",
+      "sound": "minecraft:entity.zombie_villager.hurt",
+      "pitch": 1,
+      "replay_interval_ticks": 100
+    },
+    {
+      "kind": "step",
+      "sound": "minecraft:entity.zombie_villager.step",
+      "pitch": 1,
+      "replay_interval_ticks": 80
+    }
+  ]
+}

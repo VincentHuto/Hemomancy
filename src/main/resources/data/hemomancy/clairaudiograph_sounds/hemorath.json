@@ -1,0 +1,35 @@
+{
+  "entity": "hemomancy:hemorath",
+  "sounds": [
+    {
+      "kind": "ambient",
+      "sound": "minecraft:entity.wither.ambient",
+      "pitch": 1,
+      "replay_interval_ticks": 120
+    },
+    {
+      "kind": "death",
+      "sound": "minecraft:entity.wither.death",
+      "pitch": 1,
+      "replay_interval_ticks": 100
+    },
+    {
+      "kind": "hurt",
+      "sound": "minecraft:entity.wither.hurt",
+      "pitch": 1,
+      "replay_interval_ticks": 100
+    },
+    {
+      "kind": "attack",
+      "sound": "minecraft:entity.generic.explode",
+      "pitch": 1,
+      "replay_interval_ticks": 100
+    },
+    {
+      "kind": "special",
+      "sound": "minecraft:entity.wither.spawn",
+      "pitch": 1,
+      "replay_interval_ticks": 120
+    }
+  ]
+}

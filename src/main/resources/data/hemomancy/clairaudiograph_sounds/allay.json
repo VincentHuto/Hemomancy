@@ -1,0 +1,47 @@
+{
+  "entity": "minecraft:allay",
+  "sounds": [
+    {
+      "kind": "ambient",
+      "sound": "minecraft:entity.allay.ambient_with_item",
+      "pitch": 1,
+      "replay_interval_ticks": 140
+    },
+    {
+      "kind": "ambient",
+      "sound": "minecraft:entity.allay.ambient_without_item",
+      "pitch": 1,
+      "replay_interval_ticks": 140
+    },
+    {
+      "kind": "death",
+      "sound": "minecraft:entity.allay.death",
+      "pitch": 1,
+      "replay_interval_ticks": 140
+    },
+    {
+      "kind": "hurt",
+      "sound": "minecraft:entity.allay.hurt",
+      "pitch": 1,
+      "replay_interval_ticks": 140
+    },
+    {
+      "kind": "special",
+      "sound": "minecraft:entity.allay.item_given",
+      "pitch": 1,
+      "replay_interval_ticks": 140
+    },
+    {
+      "kind": "special",
+      "sound": "minecraft:entity.allay.item_taken",
+      "pitch": 1,
+      "replay_interval_ticks": 140
+    },
+    {
+      "kind": "special",
+      "sound": "minecraft:entity.allay.item_thrown",
+      "pitch": 1,
+      "replay_interval_ticks": 140
+    }
+  ]
+}

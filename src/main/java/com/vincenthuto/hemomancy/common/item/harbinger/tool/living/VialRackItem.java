@@ -142,7 +142,7 @@ public class VialRackItem extends Item {
 	}
 
 	public static boolean isEmptyVial(ItemStack stack) {
-		return !stack.isEmpty() && stack.getItem() == ItemInit.bloody_vial.get() && BloodVialItem.getEntityType(stack) == null;
+		return !stack.isEmpty() && stack.getItem() == ItemInit.bloody_vial.get() && !com.vincenthuto.hemomancy.common.item.harbinger.BloodSampleData.isFilled(stack);
 	}
 
 	public static int countEmptyVials(ItemStack rack) {

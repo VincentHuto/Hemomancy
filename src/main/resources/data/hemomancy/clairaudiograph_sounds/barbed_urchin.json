@@ -1,0 +1,23 @@
+{
+  "entity": "hemomancy:barbed_urchin",
+  "sounds": [
+    {
+      "kind": "ambient",
+      "sound": "hemomancy:entity.barbed_urchin.ambient",
+      "pitch": 1,
+      "replay_interval_ticks": 120
+    },
+    {
+      "kind": "death",
+      "sound": "hemomancy:entity.barbed_urchin.death",
+      "pitch": 1,
+      "replay_interval_ticks": 100
+    },
+    {
+      "kind": "hurt",
+      "sound": "hemomancy:entity.barbed_urchin.hurt",
+      "pitch": 1,
+      "replay_interval_ticks": 100
+    }
+  ]
+}

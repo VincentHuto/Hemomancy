@@ -1,0 +1,23 @@
+{
+  "entity": "minecraft:creeper",
+  "sounds": [
+    {
+      "kind": "death",
+      "sound": "minecraft:entity.creeper.death",
+      "pitch": 1,
+      "replay_interval_ticks": 100
+    },
+    {
+      "kind": "hurt",
+      "sound": "minecraft:entity.creeper.hurt",
+      "pitch": 1,
+      "replay_interval_ticks": 100
+    },
+    {
+      "kind": "special",
+      "sound": "minecraft:entity.creeper.primed",
+      "pitch": 1,
+      "replay_interval_ticks": 120
+    }
+  ]
+}

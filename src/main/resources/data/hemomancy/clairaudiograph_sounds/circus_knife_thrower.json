@@ -1,0 +1,11 @@
+{
+  "entity": "hemomancy:circus_knife_thrower",
+  "sounds": [
+    {
+      "kind": "attack",
+      "sound": "minecraft:item.trident.throw",
+      "pitch": 1,
+      "replay_interval_ticks": 100
+    }
+  ]
+}

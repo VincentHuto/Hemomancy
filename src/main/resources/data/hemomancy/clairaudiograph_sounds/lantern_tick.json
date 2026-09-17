@@ -1,0 +1,17 @@
+{
+  "entity": "hemomancy:lantern_tick",
+  "sounds": [
+    {
+      "kind": "hurt",
+      "sound": "minecraft:entity.player.hurt_sweet_berry_bush",
+      "pitch": 1,
+      "replay_interval_ticks": 100
+    },
+    {
+      "kind": "special",
+      "sound": "minecraft:entity.slime.squish",
+      "pitch": 1,
+      "replay_interval_ticks": 120
+    }
+  ]
+}

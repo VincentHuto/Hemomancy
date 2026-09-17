@@ -1,0 +1,8 @@
+{
+  "tendency": "DUCTILIS",
+  "benefits": [
+    {
+      "effect": "minecraft:haste"
+    }
+  ]
+}

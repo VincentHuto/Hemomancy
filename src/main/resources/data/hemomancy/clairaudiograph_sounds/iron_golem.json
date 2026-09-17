@@ -1,0 +1,41 @@
+{
+  "entity": "minecraft:iron_golem",
+  "sounds": [
+    {
+      "kind": "attack",
+      "sound": "minecraft:entity.iron_golem.attack",
+      "pitch": 1,
+      "replay_interval_ticks": 100
+    },
+    {
+      "kind": "special",
+      "sound": "minecraft:entity.iron_golem.damage",
+      "pitch": 1,
+      "replay_interval_ticks": 120
+    },
+    {
+      "kind": "death",
+      "sound": "minecraft:entity.iron_golem.death",
+      "pitch": 1,
+      "replay_interval_ticks": 100
+    },
+    {
+      "kind": "hurt",
+      "sound": "minecraft:entity.iron_golem.hurt",
+      "pitch": 1,
+      "replay_interval_ticks": 100
+    },
+    {
+      "kind": "special",
+      "sound": "minecraft:entity.iron_golem.repair",
+      "pitch": 1,
+      "replay_interval_ticks": 120
+    },
+    {
+      "kind": "step",
+      "sound": "minecraft:entity.iron_golem.step",
+      "pitch": 1,
+      "replay_interval_ticks": 80
+    }
+  ]
+}

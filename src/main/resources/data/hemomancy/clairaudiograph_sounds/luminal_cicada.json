@@ -1,0 +1,17 @@
+{
+  "entity": "hemomancy:luminal_cicada",
+  "sounds": [
+    {
+      "kind": "special",
+      "sound": "minecraft:entity.bee.loop",
+      "pitch": 1,
+      "replay_interval_ticks": 120
+    },
+    {
+      "kind": "special",
+      "sound": "minecraft:entity.firework_rocket.blast",
+      "pitch": 1,
+      "replay_interval_ticks": 120
+    }
+  ]
+}

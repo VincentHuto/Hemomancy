@@ -213,6 +213,7 @@ public class ItemInit {
             () -> new Item(new Item.Properties().rarity(Rarity.UNCOMMON)));
     public static final DeferredHolder<Item, Item> erythrocoral_fragment = BASEITEMS.register("erythrocoral_fragment",
             () -> new Item(new Item.Properties().rarity(Rarity.UNCOMMON)));
+    public static final DeferredHolder<Item, Item> ambergris_cylinder = SPECIALITEMS.register("ambergris_cylinder", com.vincenthuto.hemomancy.common.item.harbinger.AmbergrisCylinderItem::new);
     public static final DeferredHolder<Item, Item> mnemonic_ambergris = BASEITEMS.register("mnemonic_ambergris",
             () -> new Item(new Item.Properties().rarity(Rarity.UNCOMMON)));
     public static final DeferredHolder<Item, Item> salt_stained_voyager_log = BASEITEMS.register("salt_stained_voyager_log",
@@ -240,8 +241,8 @@ public class ItemInit {
 
     public static final DeferredHolder<Item, Item> scrying_dish = BASEITEMS.register("scrying_dish",
             () -> new Item(new Item.Properties()));
-    public static final DeferredHolder<Item, Item> curor_lens = BASEITEMS.register("curor_lens",
-            () -> new CurorLensItem(new Item.Properties()));
+    public static final DeferredHolder<Item, Item> hematic_microscope = BASEITEMS.register("hematic_microscope",
+            () -> new com.vincenthuto.hemomancy.common.item.harbinger.HematicMicroscopeItem(new Item.Properties()));
     public static final DeferredHolder<Item, Item> vitality_chalice = BASEITEMS.register("vitality_chalice",
             () -> new Item(new Item.Properties()));
     public static final DeferredHolder<Item, Item> blood_stained_stone = BASEITEMS.register("blood_stained_stone",

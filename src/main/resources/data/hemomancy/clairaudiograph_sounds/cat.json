@@ -1,0 +1,59 @@
+{
+  "entity": "minecraft:cat",
+  "sounds": [
+    {
+      "kind": "ambient",
+      "sound": "minecraft:entity.cat.ambient",
+      "pitch": 1,
+      "replay_interval_ticks": 100
+    },
+    {
+      "kind": "special",
+      "sound": "minecraft:entity.cat.beg_for_food",
+      "pitch": 1,
+      "replay_interval_ticks": 100
+    },
+    {
+      "kind": "death",
+      "sound": "minecraft:entity.cat.death",
+      "pitch": 1,
+      "replay_interval_ticks": 100
+    },
+    {
+      "kind": "special",
+      "sound": "minecraft:entity.cat.eat",
+      "pitch": 1,
+      "replay_interval_ticks": 100
+    },
+    {
+      "kind": "warning",
+      "sound": "minecraft:entity.cat.hiss",
+      "pitch": 1,
+      "replay_interval_ticks": 100
+    },
+    {
+      "kind": "hurt",
+      "sound": "minecraft:entity.cat.hurt",
+      "pitch": 1,
+      "replay_interval_ticks": 100
+    },
+    {
+      "kind": "special",
+      "sound": "minecraft:entity.cat.purr",
+      "pitch": 1,
+      "replay_interval_ticks": 120
+    },
+    {
+      "kind": "special",
+      "sound": "minecraft:entity.cat.purreow",
+      "pitch": 1,
+      "replay_interval_ticks": 100
+    },
+    {
+      "kind": "ambient",
+      "sound": "minecraft:entity.cat.stray_ambient",
+      "pitch": 1,
+      "replay_interval_ticks": 100
+    }
+  ]
+}

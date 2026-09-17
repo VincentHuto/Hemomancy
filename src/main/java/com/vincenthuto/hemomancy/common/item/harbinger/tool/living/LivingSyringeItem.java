@@ -130,11 +130,12 @@ public class LivingSyringeItem extends LivingItem {
 			return InteractionResult.FAIL;
 		}
 		NonNullList<ItemStack> vials = VialRackItem.getVials(rack);
-		ItemStack sampledVial = new ItemStack(ItemInit.bloody_vial.get());
+		ItemStack sampledVial = vials.get(emptySlot).copyWithCount(1);
 		CompoundTag vialTag = sampledVial.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
 		vialTag.putString(BloodVialItem.TAG_ENTITY_TYPE, targetId.toString());
 		vialTag.putBoolean(BloodVialItem.TAG_STATE, true);
 		sampledVial.set(DataComponents.CUSTOM_DATA, CustomData.of(vialTag));
+        sampledVial.remove(com.vincenthuto.hemomancy.common.init.DataComponentInit.BLOOD_SAMPLE_IDENTIFIED.get());
 		vials.set(emptySlot, sampledVial);
 		VialRackItem.setVials(rack, vials);
 		setLoadedRack(syringe, rack);

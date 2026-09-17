@@ -1,0 +1,11 @@
+{
+  "entity": "hemomancy:circus_fire_eater",
+  "sounds": [
+    {
+      "kind": "special",
+      "sound": "minecraft:item.firecharge.use",
+      "pitch": 1,
+      "replay_interval_ticks": 120
+    }
+  ]
+}

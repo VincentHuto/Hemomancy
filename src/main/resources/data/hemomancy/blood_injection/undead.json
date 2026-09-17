@@ -1,0 +1,13 @@
+{
+  "property": "hemomancy:blood_properties/undead",
+  "benefits": [
+    {
+      "effect": "hemomancy:wither_resistance",
+      "drawbacks": [
+        {
+          "effect": "hemomancy:impaired_recovery"
+        }
+      ]
+    }
+  ]
+}

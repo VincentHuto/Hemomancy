@@ -1,0 +1,41 @@
+{
+  "entity": "minecraft:zoglin",
+  "sounds": [
+    {
+      "kind": "ambient",
+      "sound": "minecraft:entity.zoglin.ambient",
+      "pitch": 1,
+      "replay_interval_ticks": 120
+    },
+    {
+      "kind": "warning",
+      "sound": "minecraft:entity.zoglin.angry",
+      "pitch": 1,
+      "replay_interval_ticks": 120
+    },
+    {
+      "kind": "attack",
+      "sound": "minecraft:entity.zoglin.attack",
+      "pitch": 1,
+      "replay_interval_ticks": 100
+    },
+    {
+      "kind": "death",
+      "sound": "minecraft:entity.zoglin.death",
+      "pitch": 1,
+      "replay_interval_ticks": 100
+    },
+    {
+      "kind": "hurt",
+      "sound": "minecraft:entity.zoglin.hurt",
+      "pitch": 1,
+      "replay_interval_ticks": 100
+    },
+    {
+      "kind": "step",
+      "sound": "minecraft:entity.zoglin.step",
+      "pitch": 1,
+      "replay_interval_ticks": 80
+    }
+  ]
+}

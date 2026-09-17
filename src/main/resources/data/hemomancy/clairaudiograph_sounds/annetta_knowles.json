@@ -1,0 +1,59 @@
+{
+  "entity": "hemomancy:annetta_knowles",
+  "sounds": [
+    {
+      "kind": "special",
+      "sound": "minecraft:block.beacon.activate",
+      "pitch": 1,
+      "replay_interval_ticks": 120
+    },
+    {
+      "kind": "special",
+      "sound": "minecraft:block.beacon.power_select",
+      "pitch": 1,
+      "replay_interval_ticks": 120
+    },
+    {
+      "kind": "hurt",
+      "sound": "minecraft:entity.generic.hurt",
+      "pitch": 1,
+      "replay_interval_ticks": 100
+    },
+    {
+      "kind": "attack",
+      "sound": "minecraft:entity.player.attack.sweep",
+      "pitch": 1,
+      "replay_interval_ticks": 100
+    },
+    {
+      "kind": "ambient",
+      "sound": "minecraft:entity.skeleton.ambient",
+      "pitch": 1,
+      "replay_interval_ticks": 120
+    },
+    {
+      "kind": "death",
+      "sound": "minecraft:entity.skeleton.death",
+      "pitch": 1,
+      "replay_interval_ticks": 100
+    },
+    {
+      "kind": "hurt",
+      "sound": "minecraft:entity.skeleton.hurt",
+      "pitch": 1,
+      "replay_interval_ticks": 100
+    },
+    {
+      "kind": "special",
+      "sound": "minecraft:entity.wither.spawn",
+      "pitch": 1,
+      "replay_interval_ticks": 120
+    },
+    {
+      "kind": "attack",
+      "sound": "minecraft:entity.splash_potion.throw",
+      "pitch": 1,
+      "replay_interval_ticks": 100
+    }
+  ]
+}

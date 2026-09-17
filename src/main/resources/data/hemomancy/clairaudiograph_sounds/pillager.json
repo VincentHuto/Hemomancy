@@ -1,0 +1,29 @@
+{
+  "entity": "minecraft:pillager",
+  "sounds": [
+    {
+      "kind": "ambient",
+      "sound": "minecraft:entity.pillager.ambient",
+      "pitch": 1,
+      "replay_interval_ticks": 120
+    },
+    {
+      "kind": "celebration",
+      "sound": "minecraft:entity.pillager.celebrate",
+      "pitch": 1,
+      "replay_interval_ticks": 160
+    },
+    {
+      "kind": "death",
+      "sound": "minecraft:entity.pillager.death",
+      "pitch": 1,
+      "replay_interval_ticks": 100
+    },
+    {
+      "kind": "hurt",
+      "sound": "minecraft:entity.pillager.hurt",
+      "pitch": 1,
+      "replay_interval_ticks": 100
+    }
+  ]
+}

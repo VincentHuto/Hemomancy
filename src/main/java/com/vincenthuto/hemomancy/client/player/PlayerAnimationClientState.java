@@ -75,6 +75,17 @@ public final class PlayerAnimationClientState {
 
 	public static void applyThirdPersonPose(LivingEntity entity, HumanoidModel<?> model, float partialTick) {
 		if (!(entity instanceof Player player)) return;
+        CastingPlayerPose.apply(player, model, partialTick);
+        var microscope = HematicMicroscopeClientState.animation(player);
+        if (microscope != null) {
+            HematicMicroscopePose.apply(model, microscope.poseTick(partialTick), microscope.packet.right());
+            return;
+        }
+        var injection = BloodVialInjectionClientState.animation(player);
+        if (injection != null) {
+            BloodVialInjectionPose.apply(model, injection.elapsed(partialTick), injection.packet.right());
+            return;
+        }
 		if (isBreathing(entity)) {
 			InteractionHand hand = hand(entity, PlayerAnimationKind.LIVING_TORCH_BREATH);
 			boolean right = armFor(player, hand) == HumanoidArm.RIGHT;

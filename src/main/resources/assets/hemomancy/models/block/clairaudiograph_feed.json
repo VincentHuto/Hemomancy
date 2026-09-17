@@ -1,0 +1,82 @@
+{
+  "parent": "minecraft:block/block",
+  "textures": {
+    "iron": "hemomancy:block/hematic_iron_block",
+    "wood": "hemomancy:block/blood_wood_planks",
+    "red": "minecraft:block/redstone_block",
+    "horn": "minecraft:block/copper_block",
+    "dark": "minecraft:block/black_terracotta",
+    "particle": "hemomancy:block/hematic_iron_block"
+  },
+  "elements": [
+    {
+      "name": "blood feed",
+      "from": [
+        -0.5,
+        -0.5,
+        -0.5
+      ],
+      "to": [
+        0.5,
+        0.5,
+        0.5
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            0,
+            0,
+            1.0,
+            1.0
+          ],
+          "texture": "#red"
+        },
+        "south": {
+          "uv": [
+            0,
+            0,
+            1.0,
+            1.0
+          ],
+          "texture": "#red"
+        },
+        "east": {
+          "uv": [
+            0,
+            0,
+            1.0,
+            1.0
+          ],
+          "texture": "#red"
+        },
+        "west": {
+          "uv": [
+            0,
+            0,
+            1.0,
+            1.0
+          ],
+          "texture": "#red"
+        },
+        "up": {
+          "uv": [
+            0,
+            0,
+            1.0,
+            1.0
+          ],
+          "texture": "#red"
+        },
+        "down": {
+          "uv": [
+            0,
+            0,
+            1.0,
+            1.0
+          ],
+          "texture": "#red"
+        }
+      }
+    }
+  ]
+}

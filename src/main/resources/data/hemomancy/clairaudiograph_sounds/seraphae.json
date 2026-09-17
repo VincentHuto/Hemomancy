@@ -1,0 +1,41 @@
+{
+  "entity": "hemomancy:seraphae",
+  "sounds": [
+    {
+      "kind": "special",
+      "sound": "minecraft:block.amethyst_block.chime",
+      "pitch": 1,
+      "replay_interval_ticks": 120
+    },
+    {
+      "kind": "special",
+      "sound": "minecraft:block.amethyst_cluster.break",
+      "pitch": 1,
+      "replay_interval_ticks": 120
+    },
+    {
+      "kind": "special",
+      "sound": "minecraft:block.beacon.activate",
+      "pitch": 1,
+      "replay_interval_ticks": 120
+    },
+    {
+      "kind": "special",
+      "sound": "minecraft:block.beacon.deactivate",
+      "pitch": 1,
+      "replay_interval_ticks": 120
+    },
+    {
+      "kind": "special",
+      "sound": "minecraft:block.glass.break",
+      "pitch": 1,
+      "replay_interval_ticks": 120
+    },
+    {
+      "kind": "special",
+      "sound": "minecraft:ui.toast.challenge_complete",
+      "pitch": 1,
+      "replay_interval_ticks": 120
+    }
+  ]
+}

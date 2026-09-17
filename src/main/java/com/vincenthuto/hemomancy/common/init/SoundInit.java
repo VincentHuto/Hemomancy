@@ -22,6 +22,12 @@ public class SoundInit {
 			"entity.pale_intercession.dissolve");
 
 
+    public static final DeferredHolder<SoundEvent, SoundEvent> BLOOD_VIAL_INJECT = registerSoundEvent("item.blood_vial.inject");
+    public static final DeferredHolder<SoundEvent, SoundEvent> MICROSCOPE_EXAMINE_LOOP = registerSoundEvent("item.microscope.examine_loop");
+    public static final DeferredHolder<SoundEvent, SoundEvent> MICROSCOPE_USE = registerSoundEvent("item.microscope.use");
+    public static final DeferredHolder<SoundEvent, SoundEvent> MICROSCOPE_FOCUS = registerSoundEvent("item.microscope.focus");
+    public static final DeferredHolder<SoundEvent, SoundEvent> MICROSCOPE_DISCOVERY = registerSoundEvent("item.microscope.discovery");
+
 	//Items
 	//Qliphoph
 	public static final DeferredHolder<SoundEvent, SoundEvent> ITEM_QLIPHOPH_POME_EAT = registerSoundEvent(

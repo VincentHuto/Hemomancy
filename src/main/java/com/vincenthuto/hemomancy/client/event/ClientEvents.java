@@ -68,6 +68,9 @@ import com.vincenthuto.hemomancy.client.screen.tile.crafting.scar.ScarStationScr
 import com.vincenthuto.hemomancy.client.screen.tile.functional.HarbingerEquipmentScreen;
 import com.vincenthuto.hemomancy.client.screen.tile.functional.MasonsEffigyScreen;
 import com.vincenthuto.hemomancy.client.screen.tile.functional.MnemonicReliquaryScreen;
+import com.vincenthuto.hemomancy.client.screen.tile.functional.PhlebotomistsCabinetScreen;
+import com.vincenthuto.hemomancy.client.render.tile.harbinger.functional.PhlebotomistsCabinetRenderer;
+import com.vincenthuto.hemomancy.client.render.tile.harbinger.functional.PhlebotomistsFieldCaseRenderer;
 import com.vincenthuto.hemomancy.client.screen.tile.functional.SporeImplantScreen;
 import com.vincenthuto.hemomancy.client.screen.unstained.RadialChooseStillArtScreen;
 import com.vincenthuto.hemomancy.client.sound.EndgameBossMusicHandler;
@@ -366,6 +369,7 @@ public class ClientEvents {
 			var selected = known.getSelectedManip() == null ? null
 					: ManipulationInit.getByName(known.getSelectedManip().getName());
 			if (selected == null) {
+                stopCastingChargePresentation();
 				if (lastManipulationType == EnumManipulationType.CONTINUOUS && manipulationChargeTicks > 0) {
 					PacketHandler.sendToServer(UseManipKeyPacket.stopContinuous());
 				}
@@ -377,6 +381,7 @@ public class ClientEvents {
 			boolean down = useManip.isDown();
 			boolean clicked = useManip.consumeClick();
 			if (!selected.getName().equals(lastManipulationName)) {
+                stopCastingChargePresentation();
 				if (lastManipulationType == EnumManipulationType.CONTINUOUS && manipulationChargeTicks > 0) {
 					PacketHandler.sendToServer(UseManipKeyPacket.stopContinuous());
 				}
@@ -400,6 +405,12 @@ public class ClientEvents {
 					manipulationChargeTicks, selected.getRequiredChargeTicks());
 			manipulationChargeTicks = input.nextHeldTicks();
             if (selected.getType() == EnumManipulationType.CHARGED
+                    && down && input.action() != ManipulationInputRules.Action.CAST
+                    && (manipulationChargeTicks == 1 || manipulationChargeTicks % 4 == 0)) {
+                PacketHandler.sendToServer(new com.vincenthuto.hemomancy.common.network.CastingChargePacket(
+                        selected.getName(), manipulationChargeTicks));
+            }
+            if (selected.getType() == EnumManipulationType.CHARGED
                     && (down || input.action() == ManipulationInputRules.Action.CAST)
                     && com.vincenthuto.hemomancy.common.manipulation.ManipulationVisuals.chargeForm(selected.getName()) != null
                     && (manipulationChargeTicks % 4 == 0 || input.action() == ManipulationInputRules.Action.CAST)) {
@@ -417,6 +428,7 @@ public class ClientEvents {
 	}
 
     public static void interruptManipulationCharge() {
+        stopCastingChargePresentation();
         if (manipulationChargeTicks > 0) {
             if (lastManipulationType == EnumManipulationType.CONTINUOUS) {
                 PacketHandler.sendToServer(UseManipKeyPacket.stopContinuous());
@@ -432,6 +444,12 @@ public class ClientEvents {
 	public static int getManipulationChargeTicks() {
 		return manipulationChargeTicks;
 	}
+
+    private static void stopCastingChargePresentation() {
+        if (lastManipulationType == EnumManipulationType.CHARGED && manipulationChargeTicks > 0) {
+            PacketHandler.sendToServer(new com.vincenthuto.hemomancy.common.network.CastingChargePacket(lastManipulationName, 0));
+        }
+    }
 
 	public static void manipulationCastAccepted() {
 		var manipulation = ManipulationInit.getByName(lastManipulationName);
@@ -594,6 +612,7 @@ public class ClientEvents {
 
     @SubscribeEvent
     public static void onClientPlayerLogout(net.neoforged.neoforge.client.event.ClientPlayerNetworkEvent.LoggingOut event) {
+        com.vincenthuto.hemomancy.common.item.harbinger.BloodInjectionData.clearClient();
         ClientManipulationCooldowns.clear();
         // HutosLib now retains read tracker state across disconnect/reload.
         FaneBoundaryClientData.clear();
@@ -761,6 +780,7 @@ public class ClientEvents {
 		@SubscribeEvent
 		public static void registerTreeCacheReloadListener(RegisterClientReloadListenersEvent event) {
 			event.registerReloadListener((ResourceManagerReloadListener) resourceManager -> {
+                com.vincenthuto.hemomancy.client.player.HematicMicroscopeClientState.clear();
 				ArborOfWillRenderer.clearCaches();
 				QliphothBloomRenderer.clearCaches();
 			});
@@ -920,7 +940,6 @@ public class ClientEvents {
             FungalWhisperVignetteOverlay.instance = new FungalWhisperVignetteOverlay();
             SanguineOmenOverlay.instance = new SanguineOmenOverlay();
             WillPresenceOverlay.instance = new WillPresenceOverlay();
-            CurorLensOverlay.instance = new CurorLensOverlay();
             CardinalRiteOverlay.instance = new CardinalRiteOverlay();
             // Tiles
             BlockEntityRenderers.register(BlockEntityInit.discovery_inscription.get(),
@@ -960,6 +979,9 @@ public class ClientEvents {
                     SomaticLoomRenderer::new);
             BlockEntityRenderers.register(BlockEntityInit.earthen_vein.get(), EarthenVeinRenderer::new);
             BlockEntityRenderers.register(BlockEntityInit.mnemonic_reliquary.get(), MnemonicReliquaryRenderer::new);
+            BlockEntityRenderers.register(BlockEntityInit.clairaudiograph.get(), com.vincenthuto.hemomancy.client.render.tile.harbinger.functional.ClairaudiographRenderer::new);
+            BlockEntityRenderers.register(BlockEntityInit.phlebotomists_cabinet.get(), PhlebotomistsCabinetRenderer::new);
+            BlockEntityRenderers.register(BlockEntityInit.phlebotomists_field_case.get(), PhlebotomistsFieldCaseRenderer::new);
             BlockEntityRenderers.register(BlockEntityInit.dictation_table.get(), DictationTableRenderer::new);
             BlockEntityRenderers.register(BlockEntityInit.visceral_mirror.get(), VisceralMirrorRenderer::new);
             BlockEntityRenderers.register(BlockEntityInit.non_euclidean_hallway.get(), NonEuclideanHallwayRenderer::new);
@@ -989,7 +1011,7 @@ public class ClientEvents {
                         HemoItemProperties.booleanTag("state"));
 
                 ItemProperties.register(ItemInit.bloody_vial.get(), Hemomancy.rloc("state"),
-                        HemoItemProperties.booleanTag("state"));
+                        (stack, world, entity, seed) -> com.vincenthuto.hemomancy.common.item.harbinger.BloodSampleData.isFilled(stack) ? 1.0F : 0.0F);
 
                 ItemProperties.register(ItemInit.vial_rack.get(), Hemomancy.rloc("state"),
                         (ItemStack stack, ClientLevel world, LivingEntity ent, int seed) -> {
@@ -1125,6 +1147,9 @@ public class ClientEvents {
             event.register(ContainerInit.structure_spawner.get(), StructureSpawnerScreen::new);
             event.register(ContainerInit.puppeteers_spindle.get(), PuppeteersSpindleScreen::new);
             event.register(ContainerInit.mnemonic_reliquary.get(), MnemonicReliquaryScreen::new);
+            event.register(ContainerInit.clairaudiograph.get(), com.vincenthuto.hemomancy.client.screen.tile.functional.ClairaudiographScreen::new);
+            event.register(ContainerInit.phlebotomists_cabinet.get(), PhlebotomistsCabinetScreen::new);
+            event.register(ContainerInit.phlebotomists_field_case.get(), PhlebotomistsCabinetScreen::new);
         }
 
         @SubscribeEvent
@@ -1199,6 +1224,12 @@ public class ClientEvents {
 
         @SubscribeEvent
         public static void modelRegisterEvent(ModelEvent.RegisterAdditional event) {
+            event.register(com.vincenthuto.hemomancy.client.render.layer.player.HematicMicroscopeLayer.LEFT_MODEL);
+            event.register(ModelResourceLocation.standalone(Hemomancy.rloc("block/phlebotomists_field_case_lid")));
+            for (String part : new String[]{"door_solid", "door_glazed", "glass"})
+                event.register(ModelResourceLocation.standalone(Hemomancy.rloc("block/phlebotomists_cabinet_" + part)));
+            event.register(ModelResourceLocation.standalone(Hemomancy.rloc("block/clairaudiograph_stylus")));
+            event.register(ModelResourceLocation.standalone(Hemomancy.rloc("block/clairaudiograph_feed")));
             event.register(ModelResourceLocation.standalone(Hemomancy.rloc("item/blood_absorption_texture")));
             event.register(ModelResourceLocation.standalone(Hemomancy.rloc("item/blood_projection_texture")));
             CardinalRitePlantedStaffModels.uniqueModelNames().forEach(model ->
@@ -1291,12 +1322,11 @@ public class ClientEvents {
                     WillPresenceOverlay.instance.renderHUD(graphics, graphics.guiWidth(), graphics.guiHeight(), partialTicks);
                 }
             });
-            event.registerAboveAll(Hemomancy.rloc("curor_lens"), (graphics, deltaTracker) -> {
-                if (CurorLensOverlay.instance != null) {
-                    float partialTicks = deltaTracker.getGameTimeDeltaPartialTick(true);
-                    CurorLensOverlay.instance.renderHUD(graphics, graphics.guiWidth(), graphics.guiHeight(), partialTicks);
-                }
-            });
+            event.registerAboveAll(Hemomancy.rloc("cabinet_inspection"), (graphics, deltaTracker) ->
+                    com.vincenthuto.hemomancy.client.screen.overlay.PhlebotomistsCabinetOverlay.render(graphics));
+            event.registerAboveAll(Hemomancy.rloc("hematic_microscope"), (graphics, deltaTracker) ->
+                    com.vincenthuto.hemomancy.client.screen.overlay.HematicMicroscopeOverlay.render(
+                            graphics, deltaTracker.getGameTimeDeltaPartialTick(true)));
         }
     }
 }

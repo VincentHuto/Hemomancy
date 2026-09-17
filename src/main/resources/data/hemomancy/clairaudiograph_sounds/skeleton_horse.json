@@ -1,0 +1,53 @@
+{
+  "entity": "minecraft:skeleton_horse",
+  "sounds": [
+    {
+      "kind": "ambient",
+      "sound": "minecraft:entity.skeleton_horse.ambient",
+      "pitch": 1,
+      "replay_interval_ticks": 120
+    },
+    {
+      "kind": "special",
+      "sound": "minecraft:entity.skeleton_horse.ambient_water",
+      "pitch": 1,
+      "replay_interval_ticks": 120
+    },
+    {
+      "kind": "death",
+      "sound": "minecraft:entity.skeleton_horse.death",
+      "pitch": 1,
+      "replay_interval_ticks": 100
+    },
+    {
+      "kind": "special",
+      "sound": "minecraft:entity.skeleton_horse.gallop_water",
+      "pitch": 1,
+      "replay_interval_ticks": 120
+    },
+    {
+      "kind": "hurt",
+      "sound": "minecraft:entity.skeleton_horse.hurt",
+      "pitch": 1,
+      "replay_interval_ticks": 100
+    },
+    {
+      "kind": "special",
+      "sound": "minecraft:entity.skeleton_horse.jump_water",
+      "pitch": 1,
+      "replay_interval_ticks": 120
+    },
+    {
+      "kind": "step",
+      "sound": "minecraft:entity.skeleton_horse.step_water",
+      "pitch": 1,
+      "replay_interval_ticks": 80
+    },
+    {
+      "kind": "special",
+      "sound": "minecraft:entity.skeleton_horse.swim",
+      "pitch": 1,
+      "replay_interval_ticks": 120
+    }
+  ]
+}

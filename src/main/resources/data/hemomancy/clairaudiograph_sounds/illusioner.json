@@ -1,0 +1,47 @@
+{
+  "entity": "minecraft:illusioner",
+  "sounds": [
+    {
+      "kind": "ambient",
+      "sound": "minecraft:entity.illusioner.ambient",
+      "pitch": 1,
+      "replay_interval_ticks": 120
+    },
+    {
+      "kind": "special",
+      "sound": "minecraft:entity.illusioner.cast_spell",
+      "pitch": 1,
+      "replay_interval_ticks": 120
+    },
+    {
+      "kind": "death",
+      "sound": "minecraft:entity.illusioner.death",
+      "pitch": 1,
+      "replay_interval_ticks": 100
+    },
+    {
+      "kind": "hurt",
+      "sound": "minecraft:entity.illusioner.hurt",
+      "pitch": 1,
+      "replay_interval_ticks": 100
+    },
+    {
+      "kind": "special",
+      "sound": "minecraft:entity.illusioner.mirror_move",
+      "pitch": 1,
+      "replay_interval_ticks": 120
+    },
+    {
+      "kind": "warning",
+      "sound": "minecraft:entity.illusioner.prepare_blindness",
+      "pitch": 1,
+      "replay_interval_ticks": 120
+    },
+    {
+      "kind": "warning",
+      "sound": "minecraft:entity.illusioner.prepare_mirror",
+      "pitch": 1,
+      "replay_interval_ticks": 120
+    }
+  ]
+}

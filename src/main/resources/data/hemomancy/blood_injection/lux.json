@@ -1,0 +1,13 @@
+{
+  "tendency": "LUX",
+  "benefits": [
+    {
+      "effect": "minecraft:night_vision"
+    },
+    {
+      "operation": "reveal",
+      "duration": 40,
+      "radius": 8
+    }
+  ]
+}

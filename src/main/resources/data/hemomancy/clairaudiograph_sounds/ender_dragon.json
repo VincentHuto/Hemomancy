@@ -1,0 +1,41 @@
+{
+  "entity": "minecraft:ender_dragon",
+  "sounds": [
+    {
+      "kind": "ambient",
+      "sound": "minecraft:entity.ender_dragon.ambient",
+      "pitch": 1,
+      "replay_interval_ticks": 120
+    },
+    {
+      "kind": "death",
+      "sound": "minecraft:entity.ender_dragon.death",
+      "pitch": 1,
+      "replay_interval_ticks": 100
+    },
+    {
+      "kind": "special",
+      "sound": "minecraft:entity.ender_dragon.flap",
+      "pitch": 1,
+      "replay_interval_ticks": 120
+    },
+    {
+      "kind": "warning",
+      "sound": "minecraft:entity.ender_dragon.growl",
+      "pitch": 1,
+      "replay_interval_ticks": 120
+    },
+    {
+      "kind": "hurt",
+      "sound": "minecraft:entity.ender_dragon.hurt",
+      "pitch": 1,
+      "replay_interval_ticks": 100
+    },
+    {
+      "kind": "attack",
+      "sound": "minecraft:entity.ender_dragon.shoot",
+      "pitch": 1,
+      "replay_interval_ticks": 100
+    }
+  ]
+}

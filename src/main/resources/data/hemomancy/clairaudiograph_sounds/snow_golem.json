@@ -1,0 +1,35 @@
+{
+  "entity": "minecraft:snow_golem",
+  "sounds": [
+    {
+      "kind": "ambient",
+      "sound": "minecraft:entity.snow_golem.ambient",
+      "pitch": 1,
+      "replay_interval_ticks": 120
+    },
+    {
+      "kind": "death",
+      "sound": "minecraft:entity.snow_golem.death",
+      "pitch": 1,
+      "replay_interval_ticks": 100
+    },
+    {
+      "kind": "hurt",
+      "sound": "minecraft:entity.snow_golem.hurt",
+      "pitch": 1,
+      "replay_interval_ticks": 100
+    },
+    {
+      "kind": "special",
+      "sound": "minecraft:entity.snow_golem.shear",
+      "pitch": 1,
+      "replay_interval_ticks": 120
+    },
+    {
+      "kind": "attack",
+      "sound": "minecraft:entity.snow_golem.shoot",
+      "pitch": 1,
+      "replay_interval_ticks": 100
+    }
+  ]
+}

@@ -1,0 +1,28 @@
+{
+  "type": "minecraft:block",
+  "pools": [
+    {
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "hemomancy:phlebotomists_cabinet",
+          "functions": [
+            {
+              "function": "minecraft:copy_state",
+              "block": "hemomancy:phlebotomists_cabinet",
+              "properties": [
+                "glazed"
+              ]
+            }
+          ]
+        }
+      ],
+      "conditions": [
+        {
+          "condition": "minecraft:survives_explosion"
+        }
+      ]
+    }
+  ]
+}

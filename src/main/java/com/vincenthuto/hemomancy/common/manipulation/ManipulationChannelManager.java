@@ -33,6 +33,7 @@ public final class ManipulationChannelManager {
 				player.blockPosition())) {
 			long now = player.level().getGameTime();
 			CHANNELS.put(player.getUUID(), new ChannelState(manipulation.getName(), now, now));
+            com.vincenthuto.hemomancy.common.manipulation.animation.CastingAnimationManager.channelStart(player, manipulation);
 			ManipulationCastSounds.play(player.level(), player, manipulation);
 			ManipulationParticles.activate(player, manipulation);
 		}
@@ -45,6 +46,7 @@ public final class ManipulationChannelManager {
 	public static void stop(ServerPlayer player, boolean released) {
 		ChannelState state = CHANNELS.remove(player.getUUID());
 		if (state == null) return;
+        com.vincenthuto.hemomancy.common.manipulation.animation.CastingAnimationManager.channelStop(player, released);
 		ManipulationVisuals.endChannel(player, state.manipulationName());
 		BloodManipulation manipulation = ManipulationInit.getByName(state.manipulationName());
 		if (manipulation != null) manipulation.finishContinuousAction(player, released);

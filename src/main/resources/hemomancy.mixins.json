@@ -5,6 +5,7 @@
   "refmap": "hemomancy.refmap.json",
   "mixins": [
     "MixinEntity",
+    "MixinBloodResponseMovement",
     "MixinFishingHook",
     "MixinHealOrHarmMobEffect",
     "MixinLivingEntity",
@@ -30,6 +31,7 @@
     "GoalSelectorAccessor"
   ],
   "client": [
+    "CastingHandRendererInvoker",
     "MixinCapeLayer",
     "MixinEntityRenderDispatcher",
     "MixinGameRenderer",

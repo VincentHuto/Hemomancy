@@ -576,6 +576,11 @@ public class BlockInit {
 	public static final DeferredHolder<Block, Block> somatic_loom = MODELEDBLOCKS
 			.register("somatic_loom", () -> new SomaticLoomBlock(BlockBehaviour.Properties.of()
 					.requiresCorrectToolForDrops().strength(1.5F, 6.0F).sound(SoundType.STONE)));
+	public static final DeferredHolder<Block, Block> clairaudiograph = SPECIALBLOCKS.register("clairaudiograph", com.vincenthuto.hemomancy.common.block.harbinger.functional.ClairaudiographBlock::new);
+	public static final DeferredHolder<Block, Block> phlebotomists_field_case = SPECIALBLOCKS.register("phlebotomists_field_case", PhlebotomistsFieldCaseBlock::new);
+
+	public static final DeferredHolder<Block, Block> phlebotomists_cabinet = SPECIALBLOCKS.register("phlebotomists_cabinet", PhlebotomistsCabinetBlock::new);
+
 	public static final DeferredHolder<Block, Block> mnemonic_reliquary = SPECIALBLOCKS.register("mnemonic_reliquary",
 			MnemonicReliquaryBlock::new);
 	public static final DeferredHolder<Block, Block> dictation_table = SPECIALBLOCKS.register("dictation_table",
@@ -876,6 +881,7 @@ public class BlockInit {
 		if (b == BlockInit.fungal_implantation_pylon.get()) {
 			return Pair.of(block.getSecond(), new FungalImplantationPylonBlockItem(b, new Item.Properties()));
 		}
+		if (b == BlockInit.phlebotomists_field_case.get()) return Pair.of(block.getSecond(), new PhlebotomistsFieldCaseBlockItem(b, new Item.Properties()));
 		if (b == BlockInit.mnemonic_reliquary.get()) {
 			return Pair.of(block.getSecond(), new MnemonicReliquaryBlockItem(b, new Item.Properties()));
 		}

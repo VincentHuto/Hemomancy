@@ -1,0 +1,8 @@
+{
+  "property": "hemomancy:blood_properties/aquatic",
+  "benefits": [
+    {
+      "effect": "minecraft:water_breathing"
+    }
+  ]
+}

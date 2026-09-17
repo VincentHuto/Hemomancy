@@ -194,17 +194,14 @@ public class Hemomancy {
         populator.accept(ItemInit.hematic_suture_needle.get());
         populator.accept(ItemInit.unsigned_ancestral_ledger.get());
         populator.accept(ItemInit.sanguine_blob.get());
-        populator.accept(ItemInit.curor_lens.get());
         populator.accept(ItemInit.vascular_poultice.get());
         populator.accept(ItemInit.memory_thread.get());
-        populator.accept(ItemInit.hearty_compass.get());
         populator.accept(ItemInit.void_eye_organ.get());
         populator.accept(ItemInit.zombie_husk_effigy.get());
         populator.accept(ItemInit.desert_husk_effigy.get());
         populator.accept(ItemInit.spider_husk_effigy.get());
         populator.accept(ItemInit.vitality_chalice.get());
         populator.accept(ItemInit.vein_spider.get());
-        populator.accept(ItemInit.constrictor_cord.get());
         populator.accept(ItemInit.blood_thrall_effigy.get());
         populator.accept(ItemInit.blood_bolt.get());
         populator.accept(ItemInit.vascular_status_gauge.get());
@@ -235,7 +232,6 @@ public class Hemomancy {
         populator.accept(BlockInit.witness_organ.get());
         populator.accept(BlockInit.saint_sarcophagus.get());
         populator.accept(BlockInit.gourdvine_tap.get());
-        populator.accept(BlockInit.infested_wood.get());
         populator.accept(BlockInit.sanguine_vigil.get());
         populator.accept(BlockInit.sanguine_omen.get());
         populator.accept(BlockInit.visceral_mirror.get());
@@ -280,17 +276,14 @@ public class Hemomancy {
                 || item == ItemInit.hematic_suture_needle.get()
                 || item == ItemInit.unsigned_ancestral_ledger.get()
                 || item == ItemInit.sanguine_blob.get()
-                || item == ItemInit.curor_lens.get()
                 || item == ItemInit.vascular_poultice.get()
                 || item == ItemInit.memory_thread.get()
-                || item == ItemInit.hearty_compass.get()
                 || item == ItemInit.void_eye_organ.get()
                 || item == ItemInit.zombie_husk_effigy.get()
                 || item == ItemInit.desert_husk_effigy.get()
                 || item == ItemInit.spider_husk_effigy.get()
                 || item == ItemInit.vitality_chalice.get()
                 || item == ItemInit.vein_spider.get()
-                || item == ItemInit.constrictor_cord.get()
                 || item == ItemInit.blood_thrall_effigy.get()
                 || item == ItemInit.blood_bolt.get()
                 || item == ItemInit.vascular_status_gauge.get()
@@ -339,7 +332,6 @@ public class Hemomancy {
                 || block == BlockInit.witness_organ.get()
                 || block == BlockInit.saint_sarcophagus.get()
                 || block == BlockInit.gourdvine_tap.get()
-                || block == BlockInit.infested_wood.get()
                 || block == BlockInit.sanguine_vigil.get()
                 || block == BlockInit.sanguine_omen.get()
                 || block == BlockInit.visceral_mirror.get()
@@ -358,6 +350,8 @@ public class Hemomancy {
     }
 
     private void onAddReloadListeners(AddReloadListenerEvent event) {
+        event.addListener(new com.vincenthuto.hemomancy.common.item.harbinger.BloodInjectionData());
+        event.addListener(new com.vincenthuto.hemomancy.common.tile.harbinger.functional.ClairaudiographCatalogue());
         event.addListener(new ItemInquiryLoader());
         event.addListener(new DiscoveryInscriptionLoader());
         event.addListener(new IchorianSigilLoader());

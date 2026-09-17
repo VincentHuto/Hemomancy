@@ -1,0 +1,71 @@
+{
+  "entity": "hemomancy:mnemonist_puppet",
+  "sounds": [
+    {
+      "kind": "special",
+      "sound": "minecraft:block.sculk_shrieker.shriek",
+      "pitch": 1,
+      "replay_interval_ticks": 120
+    },
+    {
+      "kind": "ambient",
+      "sound": "minecraft:entity.zombie.ambient",
+      "pitch": 1,
+      "replay_interval_ticks": 120
+    },
+    {
+      "kind": "attack",
+      "sound": "minecraft:entity.zombie.attack_iron_door",
+      "pitch": 1,
+      "replay_interval_ticks": 100
+    },
+    {
+      "kind": "attack",
+      "sound": "minecraft:entity.zombie.attack_wooden_door",
+      "pitch": 1,
+      "replay_interval_ticks": 100
+    },
+    {
+      "kind": "special",
+      "sound": "minecraft:entity.zombie.break_wooden_door",
+      "pitch": 1,
+      "replay_interval_ticks": 120
+    },
+    {
+      "kind": "special",
+      "sound": "minecraft:entity.zombie.converted_to_drowned",
+      "pitch": 1,
+      "replay_interval_ticks": 120
+    },
+    {
+      "kind": "death",
+      "sound": "minecraft:entity.zombie.death",
+      "pitch": 1,
+      "replay_interval_ticks": 100
+    },
+    {
+      "kind": "special",
+      "sound": "minecraft:entity.zombie.destroy_egg",
+      "pitch": 1,
+      "replay_interval_ticks": 120
+    },
+    {
+      "kind": "hurt",
+      "sound": "minecraft:entity.zombie.hurt",
+      "pitch": 1,
+      "replay_interval_ticks": 100
+    },
+    {
+      "kind": "special",
+      "sound": "minecraft:entity.zombie.infect",
+      "pitch": 1,
+      "replay_interval_ticks": 120
+    },
+    {
+      "kind": "step",
+      "sound": "minecraft:entity.zombie.step",
+      "pitch": 1,
+      "replay_interval_ticks": 80
+    }
+  ]
+}

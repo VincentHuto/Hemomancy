@@ -1,0 +1,41 @@
+{
+  "entity": "minecraft:witch",
+  "sounds": [
+    {
+      "kind": "ambient",
+      "sound": "minecraft:entity.witch.ambient",
+      "pitch": 1,
+      "replay_interval_ticks": 120
+    },
+    {
+      "kind": "celebration",
+      "sound": "minecraft:entity.witch.celebrate",
+      "pitch": 1,
+      "replay_interval_ticks": 160
+    },
+    {
+      "kind": "death",
+      "sound": "minecraft:entity.witch.death",
+      "pitch": 1,
+      "replay_interval_ticks": 100
+    },
+    {
+      "kind": "special",
+      "sound": "minecraft:entity.witch.drink",
+      "pitch": 1,
+      "replay_interval_ticks": 120
+    },
+    {
+      "kind": "hurt",
+      "sound": "minecraft:entity.witch.hurt",
+      "pitch": 1,
+      "replay_interval_ticks": 100
+    },
+    {
+      "kind": "attack",
+      "sound": "minecraft:entity.witch.throw",
+      "pitch": 1,
+      "replay_interval_ticks": 100
+    }
+  ]
+}

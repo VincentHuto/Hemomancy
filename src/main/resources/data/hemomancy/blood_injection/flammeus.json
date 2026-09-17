@@ -1,0 +1,8 @@
+{
+  "tendency": "FLAMMEUS",
+  "benefits": [
+    {
+      "effect": "minecraft:fire_resistance"
+    }
+  ]
+}

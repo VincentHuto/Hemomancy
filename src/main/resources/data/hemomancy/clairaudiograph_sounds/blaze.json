@@ -1,0 +1,35 @@
+{
+  "entity": "minecraft:blaze",
+  "sounds": [
+    {
+      "kind": "ambient",
+      "sound": "minecraft:entity.blaze.ambient",
+      "pitch": 1,
+      "replay_interval_ticks": 120
+    },
+    {
+      "kind": "special",
+      "sound": "minecraft:entity.blaze.burn",
+      "pitch": 1,
+      "replay_interval_ticks": 120
+    },
+    {
+      "kind": "death",
+      "sound": "minecraft:entity.blaze.death",
+      "pitch": 1,
+      "replay_interval_ticks": 100
+    },
+    {
+      "kind": "hurt",
+      "sound": "minecraft:entity.blaze.hurt",
+      "pitch": 1,
+      "replay_interval_ticks": 100
+    },
+    {
+      "kind": "attack",
+      "sound": "minecraft:entity.blaze.shoot",
+      "pitch": 1,
+      "replay_interval_ticks": 100
+    }
+  ]
+}

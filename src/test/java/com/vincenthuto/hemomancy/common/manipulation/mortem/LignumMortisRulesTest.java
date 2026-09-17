@@ -3,6 +3,8 @@ package com.vincenthuto.hemomancy.common.manipulation.mortem;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class LignumMortisRulesTest {
 	@Test
@@ -27,5 +29,12 @@ class LignumMortisRulesTest {
 		assertEquals(1, LignumMortisRules.overlayBand(6.0D, 24.0D));
 		assertEquals(2, LignumMortisRules.overlayBand(12.0D, 24.0D));
 		assertEquals(3, LignumMortisRules.overlayBand(23.9D, 24.0D));
+	}
+
+	@Test
+	void infestedWoodDropsOnlyForTheWinningWoodenLogRoll() {
+		assertTrue(LignumMortisRules.shouldDropInfestedWood(true, 0));
+		assertFalse(LignumMortisRules.shouldDropInfestedWood(true, 1));
+		assertFalse(LignumMortisRules.shouldDropInfestedWood(false, 0));
 	}
 }

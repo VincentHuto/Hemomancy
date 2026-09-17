@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "decorations",
+  "pattern": [
+    "IWI",
+    "WWW",
+    "IWI"
+  ],
+  "key": {
+    "W": {
+      "item": "hemomancy:blood_wood_planks"
+    },
+    "I": {
+      "item": "hemomancy:hematic_iron_scrap"
+    }
+  },
+  "result": {
+    "id": "hemomancy:phlebotomists_cabinet",
+    "count": 1
+  }
+}

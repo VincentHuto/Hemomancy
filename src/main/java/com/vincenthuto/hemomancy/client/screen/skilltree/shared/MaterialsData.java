@@ -910,11 +910,6 @@ public final class MaterialsData {
                 "Gourds & Vessels", () -> new ItemStack(ItemInit.blood_gourd_red.get()),
                 true, UnlockPredicate.minDegree(2)));
 
-        list.add(new MaterialEntry("curor_lens", "Curor Lens",
-                "A bloodcraft vessel or gourd-family component used in sanguine storage, rites, or remedies.",
-                "Gourds & Vessels", () -> new ItemStack(ItemInit.curor_lens.get()),
-                true, UnlockPredicate.minDegree(3)));
-
                                                                                                                                                                                                                         list.add(new MaterialEntry("dried_gourd", "Dried Gourd",
                 "A bloodcraft vessel or gourd-family component used in sanguine storage, rites, or remedies.",
                 "Gourds & Vessels", () -> new ItemStack(ItemInit.dried_gourd.get()),

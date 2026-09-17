@@ -1,0 +1,35 @@
+{
+  "entity": "minecraft:bogged",
+  "sounds": [
+    {
+      "kind": "ambient",
+      "sound": "minecraft:entity.bogged.ambient",
+      "pitch": 1,
+      "replay_interval_ticks": 120
+    },
+    {
+      "kind": "death",
+      "sound": "minecraft:entity.bogged.death",
+      "pitch": 1,
+      "replay_interval_ticks": 100
+    },
+    {
+      "kind": "hurt",
+      "sound": "minecraft:entity.bogged.hurt",
+      "pitch": 1,
+      "replay_interval_ticks": 100
+    },
+    {
+      "kind": "special",
+      "sound": "minecraft:entity.bogged.shear",
+      "pitch": 1,
+      "replay_interval_ticks": 120
+    },
+    {
+      "kind": "step",
+      "sound": "minecraft:entity.bogged.step",
+      "pitch": 1,
+      "replay_interval_ticks": 80
+    }
+  ]
+}

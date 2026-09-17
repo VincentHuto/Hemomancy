@@ -1,0 +1,41 @@
+{
+  "entity": "hemomancy:will",
+  "sounds": [
+    {
+      "kind": "ambient",
+      "sound": "hemomancy:entity.will.ambient",
+      "pitch": 1,
+      "replay_interval_ticks": 120
+    },
+    {
+      "kind": "special",
+      "sound": "hemomancy:entity.will.dissolve",
+      "pitch": 1,
+      "replay_interval_ticks": 120
+    },
+    {
+      "kind": "special",
+      "sound": "hemomancy:entity.will.falter",
+      "pitch": 1,
+      "replay_interval_ticks": 120
+    },
+    {
+      "kind": "hurt",
+      "sound": "hemomancy:entity.will.hurt",
+      "pitch": 1,
+      "replay_interval_ticks": 100
+    },
+    {
+      "kind": "special",
+      "sound": "hemomancy:entity.will.materialize",
+      "pitch": 1,
+      "replay_interval_ticks": 120
+    },
+    {
+      "kind": "attack",
+      "sound": "hemomancy:entity.will.presence_sting",
+      "pitch": 1,
+      "replay_interval_ticks": 100
+    }
+  ]
+}

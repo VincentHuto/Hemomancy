@@ -1,0 +1,23 @@
+{
+  "entity": "minecraft:ocelot",
+  "sounds": [
+    {
+      "kind": "ambient",
+      "sound": "minecraft:entity.ocelot.ambient",
+      "pitch": 1,
+      "replay_interval_ticks": 120
+    },
+    {
+      "kind": "death",
+      "sound": "minecraft:entity.ocelot.death",
+      "pitch": 1,
+      "replay_interval_ticks": 100
+    },
+    {
+      "kind": "hurt",
+      "sound": "minecraft:entity.ocelot.hurt",
+      "pitch": 1,
+      "replay_interval_ticks": 100
+    }
+  ]
+}

@@ -1,0 +1,41 @@
+{
+  "entity": "minecraft:phantom",
+  "sounds": [
+    {
+      "kind": "ambient",
+      "sound": "minecraft:entity.phantom.ambient",
+      "pitch": 1,
+      "replay_interval_ticks": 120
+    },
+    {
+      "kind": "attack",
+      "sound": "minecraft:entity.phantom.bite",
+      "pitch": 1,
+      "replay_interval_ticks": 100
+    },
+    {
+      "kind": "death",
+      "sound": "minecraft:entity.phantom.death",
+      "pitch": 1,
+      "replay_interval_ticks": 100
+    },
+    {
+      "kind": "special",
+      "sound": "minecraft:entity.phantom.flap",
+      "pitch": 1,
+      "replay_interval_ticks": 120
+    },
+    {
+      "kind": "hurt",
+      "sound": "minecraft:entity.phantom.hurt",
+      "pitch": 1,
+      "replay_interval_ticks": 100
+    },
+    {
+      "kind": "attack",
+      "sound": "minecraft:entity.phantom.swoop",
+      "pitch": 1,
+      "replay_interval_ticks": 100
+    }
+  ]
+}

@@ -1,0 +1,29 @@
+{
+  "entity": "hemomancy:latent_annetta_infection",
+  "sounds": [
+    {
+      "kind": "special",
+      "sound": "minecraft:block.sculk_shrieker.shriek",
+      "pitch": 1,
+      "replay_interval_ticks": 120
+    },
+    {
+      "kind": "ambient",
+      "sound": "minecraft:entity.warden.ambient",
+      "pitch": 1,
+      "replay_interval_ticks": 120
+    },
+    {
+      "kind": "death",
+      "sound": "minecraft:entity.warden.death",
+      "pitch": 1,
+      "replay_interval_ticks": 100
+    },
+    {
+      "kind": "hurt",
+      "sound": "minecraft:entity.warden.hurt",
+      "pitch": 1,
+      "replay_interval_ticks": 100
+    }
+  ]
+}

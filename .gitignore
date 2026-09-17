@@ -48,6 +48,10 @@ repo/
 /tools/dialogue_editor/node_modules/
 /tools/dialogue_editor/dist/
 /tools/*
+!/tools/audio/
+/tools/audio/*
+!/tools/audio/author_blood_vial_injection.py
+!/tools/audio/author_microscope_loop.py
 !/tools/GenerateSchoolStateIcons.java
 !/tools/school-combat-acceptance.init.gradle
 !/tools/misc/import_manipulation_materials.py
@@ -90,3 +94,9 @@ repo/
 /output/
 /tools/GenerateSchoolStateIcons.java
 /tools/school-combat-acceptance.init.gradle
+/tools/audio/author_blood_vial_injection.py
+/tools/audio/author_microscope_loop.py
+/tools/model_export/clairaudiograph.py
+/tools/model_export/specimen_slots.py
+/tools/model_export/phlebotomists_field_case.py
+/tools/model_export/phlebotomists_cabinet.py

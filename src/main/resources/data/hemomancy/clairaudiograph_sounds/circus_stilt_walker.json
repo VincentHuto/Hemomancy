@@ -1,0 +1,11 @@
+{
+  "entity": "hemomancy:circus_stilt_walker",
+  "sounds": [
+    {
+      "kind": "attack",
+      "sound": "minecraft:entity.iron_golem.attack",
+      "pitch": 1,
+      "replay_interval_ticks": 100
+    }
+  ]
+}

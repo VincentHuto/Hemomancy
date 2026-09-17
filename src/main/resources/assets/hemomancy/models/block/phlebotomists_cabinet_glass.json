@@ -1,0 +1,82 @@
+{
+  "textures": {
+    "wood": "hemomancy:block/blood_wood_planks",
+    "iron": "hemomancy:block/hematic_iron_block",
+    "back": "minecraft:block/black_terracotta",
+    "glass": "minecraft:block/glass",
+    "label": "minecraft:block/stripped_oak_log",
+    "particle": "hemomancy:block/blood_wood_planks"
+  },
+  "render_type": "minecraft:translucent",
+  "elements": [
+    {
+      "name": "viewing pane",
+      "from": [
+        3,
+        2.5,
+        1.45
+      ],
+      "to": [
+        13,
+        13.5,
+        1.55
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            0,
+            0,
+            10,
+            11.0
+          ],
+          "texture": "#glass"
+        },
+        "south": {
+          "uv": [
+            0,
+            0,
+            10,
+            11.0
+          ],
+          "texture": "#glass"
+        },
+        "east": {
+          "uv": [
+            0,
+            0,
+            0.10000000000000009,
+            11.0
+          ],
+          "texture": "#glass"
+        },
+        "west": {
+          "uv": [
+            0,
+            0,
+            0.10000000000000009,
+            11.0
+          ],
+          "texture": "#glass"
+        },
+        "up": {
+          "uv": [
+            0,
+            0,
+            10,
+            0.10000000000000009
+          ],
+          "texture": "#glass"
+        },
+        "down": {
+          "uv": [
+            0,
+            0,
+            10,
+            0.10000000000000009
+          ],
+          "texture": "#glass"
+        }
+      }
+    }
+  ]
+}

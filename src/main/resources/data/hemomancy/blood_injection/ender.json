@@ -1,0 +1,8 @@
+{
+  "property": "hemomancy:blood_properties/ender",
+  "benefits": [
+    {
+      "effect": "hemomancy:ender_resistance"
+    }
+  ]
+}

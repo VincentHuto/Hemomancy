@@ -1,0 +1,125 @@
+{
+  "entity": "minecraft:warden",
+  "sounds": [
+    {
+      "kind": "ambient",
+      "sound": "minecraft:entity.warden.ambient",
+      "pitch": 1,
+      "replay_interval_ticks": 160
+    },
+    {
+      "kind": "warning",
+      "sound": "minecraft:entity.warden.agitated",
+      "pitch": 1,
+      "replay_interval_ticks": 160
+    },
+    {
+      "kind": "warning",
+      "sound": "minecraft:entity.warden.angry",
+      "pitch": 1,
+      "replay_interval_ticks": 160
+    },
+    {
+      "kind": "attack",
+      "sound": "minecraft:entity.warden.attack_impact",
+      "pitch": 1,
+      "replay_interval_ticks": 160
+    },
+    {
+      "kind": "death",
+      "sound": "minecraft:entity.warden.death",
+      "pitch": 1,
+      "replay_interval_ticks": 160
+    },
+    {
+      "kind": "special",
+      "sound": "minecraft:entity.warden.dig",
+      "pitch": 1,
+      "replay_interval_ticks": 160
+    },
+    {
+      "kind": "special",
+      "sound": "minecraft:entity.warden.emerge",
+      "pitch": 1,
+      "replay_interval_ticks": 160
+    },
+    {
+      "kind": "warning",
+      "sound": "minecraft:entity.warden.heartbeat",
+      "pitch": 1,
+      "replay_interval_ticks": 160
+    },
+    {
+      "kind": "hurt",
+      "sound": "minecraft:entity.warden.hurt",
+      "pitch": 1,
+      "replay_interval_ticks": 160
+    },
+    {
+      "kind": "warning",
+      "sound": "minecraft:entity.warden.listening",
+      "pitch": 1,
+      "replay_interval_ticks": 160
+    },
+    {
+      "kind": "warning",
+      "sound": "minecraft:entity.warden.listening_angry",
+      "pitch": 1,
+      "replay_interval_ticks": 160
+    },
+    {
+      "kind": "warning",
+      "sound": "minecraft:entity.warden.nearby_close",
+      "pitch": 1,
+      "replay_interval_ticks": 160
+    },
+    {
+      "kind": "warning",
+      "sound": "minecraft:entity.warden.nearby_closer",
+      "pitch": 1,
+      "replay_interval_ticks": 160
+    },
+    {
+      "kind": "warning",
+      "sound": "minecraft:entity.warden.nearby_closest",
+      "pitch": 1,
+      "replay_interval_ticks": 160
+    },
+    {
+      "kind": "special",
+      "sound": "minecraft:entity.warden.sniff",
+      "pitch": 1,
+      "replay_interval_ticks": 160
+    },
+    {
+      "kind": "attack",
+      "sound": "minecraft:entity.warden.sonic_boom",
+      "pitch": 1,
+      "replay_interval_ticks": 160
+    },
+    {
+      "kind": "attack",
+      "sound": "minecraft:entity.warden.sonic_charge",
+      "pitch": 1,
+      "replay_interval_ticks": 160
+    },
+    {
+      "kind": "step",
+      "sound": "minecraft:entity.warden.step",
+      "pitch": 1,
+      "replay_interval_ticks": 160
+    },
+    {
+      "kind": "special",
+      "sound": "minecraft:entity.warden.tendril_clicks",
+      "pitch": 1,
+      "replay_interval_ticks": 160
+    },
+    {
+      "kind": "warning",
+      "sound": "minecraft:entity.warden.roar",
+      "pitch": 1,
+      "replay_interval_ticks": 200
+    }
+  ]
+}

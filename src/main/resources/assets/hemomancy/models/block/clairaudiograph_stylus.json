@@ -1,0 +1,151 @@
+{
+  "parent": "minecraft:block/block",
+  "textures": {
+    "iron": "hemomancy:block/hematic_iron_block",
+    "wood": "hemomancy:block/blood_wood_planks",
+    "red": "minecraft:block/redstone_block",
+    "horn": "minecraft:block/copper_block",
+    "dark": "minecraft:block/black_terracotta",
+    "particle": "hemomancy:block/hematic_iron_block"
+  },
+  "elements": [
+    {
+      "name": "stylus rail",
+      "from": [
+        3.4,
+        7.8,
+        6
+      ],
+      "to": [
+        3.8,
+        8.2,
+        10
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            0,
+            0,
+            0.3999999999999999,
+            0.39999999999999947
+          ],
+          "texture": "#iron"
+        },
+        "south": {
+          "uv": [
+            0,
+            0,
+            0.3999999999999999,
+            0.39999999999999947
+          ],
+          "texture": "#iron"
+        },
+        "east": {
+          "uv": [
+            0,
+            0,
+            4,
+            0.39999999999999947
+          ],
+          "texture": "#iron"
+        },
+        "west": {
+          "uv": [
+            0,
+            0,
+            4,
+            0.39999999999999947
+          ],
+          "texture": "#iron"
+        },
+        "up": {
+          "uv": [
+            0,
+            0,
+            0.3999999999999999,
+            4
+          ],
+          "texture": "#iron"
+        },
+        "down": {
+          "uv": [
+            0,
+            0,
+            0.3999999999999999,
+            4
+          ],
+          "texture": "#iron"
+        }
+      }
+    },
+    {
+      "name": "needle",
+      "from": [
+        3.45,
+        6.7,
+        6
+      ],
+      "to": [
+        3.65,
+        8,
+        6.3
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            0,
+            0,
+            0.19999999999999973,
+            1.2999999999999998
+          ],
+          "texture": "#horn"
+        },
+        "south": {
+          "uv": [
+            0,
+            0,
+            0.19999999999999973,
+            1.2999999999999998
+          ],
+          "texture": "#horn"
+        },
+        "east": {
+          "uv": [
+            0,
+            0,
+            0.2999999999999998,
+            1.2999999999999998
+          ],
+          "texture": "#horn"
+        },
+        "west": {
+          "uv": [
+            0,
+            0,
+            0.2999999999999998,
+            1.2999999999999998
+          ],
+          "texture": "#horn"
+        },
+        "up": {
+          "uv": [
+            0,
+            0,
+            0.19999999999999973,
+            0.2999999999999998
+          ],
+          "texture": "#horn"
+        },
+        "down": {
+          "uv": [
+            0,
+            0,
+            0.19999999999999973,
+            0.2999999999999998
+          ],
+          "texture": "#horn"
+        }
+      }
+    }
+  ]
+}

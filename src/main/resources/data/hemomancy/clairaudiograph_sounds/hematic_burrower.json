@@ -1,0 +1,11 @@
+{
+  "entity": "hemomancy:hematic_burrower",
+  "sounds": [
+    {
+      "kind": "special",
+      "sound": "minecraft:block.gravel.break",
+      "pitch": 1,
+      "replay_interval_ticks": 120
+    }
+  ]
+}

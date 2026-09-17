@@ -45,6 +45,9 @@ import java.util.Optional;
 import java.util.UUID;
 
 public class BloodManipulation implements EntityCastableManipulation {
+    public com.vincenthuto.hemomancy.common.manipulation.animation.CastPresentation getCastPresentation() {
+        return com.vincenthuto.hemomancy.common.manipulation.animation.CastPresentation.forId(getName());
+    }
 	public static BloodManipulation BLANK = new BloodManipulation("No Selected", 0, 0, 0, EnumManipulationType.QUICK,
 			EnumManipulationRank.HUMILIS, EnumBloodTendency.ANIMUS, EnumVeinSections.HEAD);
 	/*
@@ -498,6 +501,9 @@ public class BloodManipulation implements EntityCastableManipulation {
 					    getAction(player, world, heldItemMainhand, position, chargeTicks);
                     }
 					if (creditUse && type != EnumManipulationType.CONTINUOUS) {
+						if (type != EnumManipulationType.PASSIVE) {
+                            com.vincenthuto.hemomancy.common.manipulation.animation.CastingAnimationManager.release((ServerPlayer) player, this);
+                        }
 						ManipulationCastSounds.play(world, player, this);
 						ManipulationParticles.activate(player, this);
 					}

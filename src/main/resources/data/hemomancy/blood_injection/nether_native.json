@@ -1,0 +1,8 @@
+{
+  "property": "hemomancy:blood_properties/nether_native",
+  "benefits": [
+    {
+      "effect": "minecraft:fire_resistance"
+    }
+  ]
+}

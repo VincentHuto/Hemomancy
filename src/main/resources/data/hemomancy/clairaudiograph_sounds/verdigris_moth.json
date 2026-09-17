@@ -1,0 +1,29 @@
+{
+  "entity": "hemomancy:verdigris_moth",
+  "sounds": [
+    {
+      "kind": "special",
+      "sound": "minecraft:item.axe.scrape",
+      "pitch": 1,
+      "replay_interval_ticks": 120
+    },
+    {
+      "kind": "special",
+      "sound": "minecraft:block.beehive.exit",
+      "pitch": 1,
+      "replay_interval_ticks": 120
+    },
+    {
+      "kind": "special",
+      "sound": "minecraft:block.beehive.shear",
+      "pitch": 1,
+      "replay_interval_ticks": 120
+    },
+    {
+      "kind": "ambient",
+      "sound": "minecraft:entity.bat.ambient",
+      "pitch": 1,
+      "replay_interval_ticks": 120
+    }
+  ]
+}

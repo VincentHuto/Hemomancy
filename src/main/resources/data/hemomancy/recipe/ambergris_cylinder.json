@@ -1,0 +1,22 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "hemomancy:mnemonic_ambergris"
+    },
+    {
+      "item": "hemomancy:active_befouling_ash"
+    },
+    {
+      "item": "minecraft:honeycomb"
+    },
+    {
+      "item": "minecraft:paper"
+    }
+  ],
+  "result": {
+    "id": "hemomancy:ambergris_cylinder",
+    "count": 2
+  }
+}

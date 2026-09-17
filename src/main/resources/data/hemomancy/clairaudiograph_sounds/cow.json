@@ -1,0 +1,35 @@
+{
+  "entity": "minecraft:cow",
+  "sounds": [
+    {
+      "kind": "ambient",
+      "sound": "minecraft:entity.cow.ambient",
+      "pitch": 1,
+      "replay_interval_ticks": 100
+    },
+    {
+      "kind": "death",
+      "sound": "minecraft:entity.cow.death",
+      "pitch": 1,
+      "replay_interval_ticks": 100
+    },
+    {
+      "kind": "hurt",
+      "sound": "minecraft:entity.cow.hurt",
+      "pitch": 1,
+      "replay_interval_ticks": 100
+    },
+    {
+      "kind": "special",
+      "sound": "minecraft:entity.cow.milk",
+      "pitch": 1,
+      "replay_interval_ticks": 100
+    },
+    {
+      "kind": "step",
+      "sound": "minecraft:entity.cow.step",
+      "pitch": 1,
+      "replay_interval_ticks": 100
+    }
+  ]
+}

@@ -17,17 +17,14 @@ public final class HemomancyCreativeTabsSourceTest {
 			"hematic_suture_needle",
 			"unsigned_ancestral_ledger",
 			"sanguine_blob",
-			"curor_lens",
 			"vascular_poultice",
 			"memory_thread",
-			"hearty_compass",
 			"void_eye_organ",
 			"zombie_husk_effigy",
 			"desert_husk_effigy",
 			"spider_husk_effigy",
 			"vitality_chalice",
 			"vein_spider",
-			"constrictor_cord",
 			"blood_thrall_effigy",
 			"blood_bolt",
 			"vascular_status_gauge",
@@ -106,6 +103,18 @@ public final class HemomancyCreativeTabsSourceTest {
 				"if (item.get() == ItemInit.chitinous_husk.get())");
 		assertContains("main tab should accept the Fervent Husk beside the regular Chitinite Husk", hemomancy,
 				"populator.accept(ItemInit.fervent_husk.get())");
+		assertNotContains("Hearty Compass should not be added to the WIP tab", hemomancy,
+				"populator.accept(ItemInit.hearty_compass.get())");
+		assertNotContains("Constrictor Cord should not be added to the WIP tab", hemomancy,
+				"populator.accept(ItemInit.constrictor_cord.get())");
+		assertNotContains("Infested Wood should not be added to the WIP tab", hemomancy,
+				"populator.accept(BlockInit.infested_wood.get())");
+		assertNotContains("Hearty Compass should not be excluded from the main tab", hemomancy,
+				"|| item == ItemInit.hearty_compass.get()");
+		assertNotContains("Constrictor Cord should not be excluded from the main tab", hemomancy,
+				"|| item == ItemInit.constrictor_cord.get()");
+		assertNotContains("Infested Wood should not be excluded from the main tab", hemomancy,
+				"|| block == BlockInit.infested_wood.get()");
 		assertContains("Structure Spawner should reject non-creative use before opening its menu",
 				structureSpawner, "if (!player.isCreative())");
 		assertContains("Structure Spawner packet should reject non-creative world mutation",

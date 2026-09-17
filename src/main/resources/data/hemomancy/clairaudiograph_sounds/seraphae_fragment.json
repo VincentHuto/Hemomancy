@@ -1,0 +1,23 @@
+{
+  "entity": "hemomancy:seraphae_fragment",
+  "sounds": [
+    {
+      "kind": "special",
+      "sound": "minecraft:block.amethyst_block.break",
+      "pitch": 1,
+      "replay_interval_ticks": 120
+    },
+    {
+      "kind": "special",
+      "sound": "minecraft:block.amethyst_block.chime",
+      "pitch": 1,
+      "replay_interval_ticks": 120
+    },
+    {
+      "kind": "special",
+      "sound": "minecraft:block.amethyst_block.hit",
+      "pitch": 1,
+      "replay_interval_ticks": 120
+    }
+  ]
+}

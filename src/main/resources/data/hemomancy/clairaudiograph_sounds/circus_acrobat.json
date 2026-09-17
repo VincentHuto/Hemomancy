@@ -1,0 +1,11 @@
+{
+  "entity": "hemomancy:circus_acrobat",
+  "sounds": [
+    {
+      "kind": "special",
+      "sound": "minecraft:entity.enderman.teleport",
+      "pitch": 1,
+      "replay_interval_ticks": 120
+    }
+  ]
+}

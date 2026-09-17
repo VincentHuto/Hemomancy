@@ -130,6 +130,9 @@ public final class HemoCapabilityRegistrar {
                 },
                 ItemInit.living_syringe.get());
 
+        event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, BlockEntityInit.phlebotomists_cabinet.get(),
+                (be, facing) -> be.storage());
+
         // ── IItemHandler for WorldlyContainer block entities ──
         event.registerBlockEntity(Capabilities.ItemHandler.BLOCK,
                 BlockEntityInit.ghastly_alembic.get(),

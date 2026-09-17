@@ -188,6 +188,12 @@ public class BlockEntityInit {
 			.register("non_euclidean_hallway", () -> BlockEntityType.Builder
 					.of(NonEuclideanHallwayBlockEntity::new, BlockInit.non_euclidean_hallway.get()).build(null));
 
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<com.vincenthuto.hemomancy.common.tile.harbinger.functional.ClairaudiographBlockEntity>> clairaudiograph = TILES.register("clairaudiograph", () -> BlockEntityType.Builder.of(com.vincenthuto.hemomancy.common.tile.harbinger.functional.ClairaudiographBlockEntity::new, BlockInit.clairaudiograph.get()).build(null));
+	public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<PhlebotomistsFieldCaseBlockEntity>> phlebotomists_field_case = TILES.register("phlebotomists_field_case", () -> BlockEntityType.Builder.of(PhlebotomistsFieldCaseBlockEntity::new, BlockInit.phlebotomists_field_case.get()).build(null));
+
+	public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<PhlebotomistsCabinetBlockEntity>> phlebotomists_cabinet = TILES
+			.register("phlebotomists_cabinet", () -> BlockEntityType.Builder.of(PhlebotomistsCabinetBlockEntity::new, BlockInit.phlebotomists_cabinet.get()).build(null));
+
 	public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<MnemonicReliquaryBlockEntity>> mnemonic_reliquary = TILES
 			.register("mnemonic_reliquary", () -> BlockEntityType.Builder
 					.of(MnemonicReliquaryBlockEntity::new, BlockInit.mnemonic_reliquary.get()).build(null));

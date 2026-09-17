@@ -1,0 +1,29 @@
+{
+  "entity": "minecraft:spider",
+  "sounds": [
+    {
+      "kind": "ambient",
+      "sound": "minecraft:entity.spider.ambient",
+      "pitch": 1,
+      "replay_interval_ticks": 120
+    },
+    {
+      "kind": "death",
+      "sound": "minecraft:entity.spider.death",
+      "pitch": 1,
+      "replay_interval_ticks": 100
+    },
+    {
+      "kind": "hurt",
+      "sound": "minecraft:entity.spider.hurt",
+      "pitch": 1,
+      "replay_interval_ticks": 100
+    },
+    {
+      "kind": "step",
+      "sound": "minecraft:entity.spider.step",
+      "pitch": 1,
+      "replay_interval_ticks": 80
+    }
+  ]
+}

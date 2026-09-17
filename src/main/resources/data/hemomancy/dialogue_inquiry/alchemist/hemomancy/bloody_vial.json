@@ -1,3 +1,8 @@
 {
-  "lines": ["hemomancy.alchemist.item_inquiry.blood_vial.line1", "hemomancy.alchemist.item_inquiry.blood_vial.line2"]
+  "lines": [
+    "hemomancy.alchemist.item_inquiry.blood_vial.line1",
+    "hemomancy.alchemist.item_inquiry.blood_vial.line2",
+    "hemomancy.alchemist.item_inquiry.blood_vial.line3",
+    "hemomancy.alchemist.item_inquiry.blood_vial.line4"
+  ]
 }

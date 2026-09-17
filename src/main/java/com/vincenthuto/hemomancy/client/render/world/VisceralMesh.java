@@ -54,16 +54,46 @@ public final class VisceralMesh {
 
     public static void strand(PoseStack p, VertexConsumer v, Vec3 start, Vec3 end, double width,
             double bend, double phase, int color, float alpha) {
-        Vec3 last = start;
-        double textureDistance = phase*.015;
-        for (int i = 1; i <= 12; i++) {
-            double t = i / 12.0, previous = (i - 1) / 12.0;
-            Vec3 next = VisceralGeometry.strandPoint(start,end,t,bend,phase);
-            double a = width * (.95 - previous * .75), b = width * (.95 - t * .75);
-            double nextDistance = textureDistance + last.distanceTo(next);
-            segment(p,v,last,next,a,b,color,alpha,textureDistance,nextDistance);
-            textureDistance = nextDistance;
-            last = next;
+        if (start.distanceToSqr(end) < 1e-12 || width <= 0 || alpha <= 0) return;
+        Vec3[] centers = new Vec3[13];
+        for (int i = 0; i < centers.length; i++)
+            centers[i] = VisceralGeometry.strandPoint(start,end,i / 12.0,bend,phase);
+        Vec3[] previousRing = null;
+        Vec3 previousSide = null;
+        double previousWidth = 0;
+        double textureDistance = phase * .015;
+        for (int i = 0; i < centers.length; i++) {
+            Vec3 tangent = centers[Math.min(i + 1, 12)].subtract(centers[Math.max(i - 1, 0)]).normalize();
+            if (tangent.lengthSqr() < 1e-12) tangent = end.subtract(start).normalize();
+            // Transport one frame along the curve instead of independently orienting each tube.
+            Vec3 side = previousSide == null ? VisceralGeometry.side(tangent)
+                    : previousSide.subtract(tangent.scale(previousSide.dot(tangent))).normalize();
+            if (side.lengthSqr() < 1e-12) side = VisceralGeometry.side(tangent);
+            Vec3 up = tangent.cross(side).normalize();
+            double radius = width * (.95 - i / 12.0 * .75);
+            Vec3[] ring = new Vec3[6];
+            for (int face = 0; face < ring.length; face++) {
+                double angle = face * Math.PI / 3;
+                ring[face] = centers[i].add(side.scale(Math.cos(angle) * radius))
+                        .add(up.scale(Math.sin(angle) * radius));
+            }
+            if (previousRing != null) {
+                double nextDistance = textureDistance + centers[i - 1].distanceTo(centers[i]);
+                for (int face = 0; face < ring.length; face++) {
+                    int next = (face + 1) % ring.length;
+                    int tint = shade(color, .72 + .28 * Math.cos(face * Math.PI / 3 - .6));
+                    // Each hexagon edge is one radius long. Assign UVs per ring, so neither
+                    // positions nor texture coordinates restart at the next segment.
+                    vertex(p,v,previousRing[face],tint,alpha,face * previousWidth,textureDistance);
+                    vertex(p,v,previousRing[next],tint,alpha,(face + 1) * previousWidth,textureDistance);
+                    vertex(p,v,ring[next],tint,alpha,(face + 1) * radius,nextDistance);
+                    vertex(p,v,ring[face],tint,alpha,face * radius,nextDistance);
+                }
+                textureDistance = nextDistance;
+            }
+            previousRing = ring;
+            previousSide = side;
+            previousWidth = radius;
         }
     }
 

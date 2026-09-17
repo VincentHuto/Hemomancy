@@ -3,10 +3,15 @@ package com.vincenthuto.hemomancy.common.manipulation.mortem;
 public final class LignumMortisRules {
 	public static final int MAX_BLOCKS = 128;
 	public static final int MAX_RADIUS = 24;
+	public static final int INFESTED_WOOD_DROP_ROLLS = 8;
 	public static final double BASE_BLOCKS_PER_SECOND = 2.0D;
 	public static final double MAX_BLOCKS_PER_SECOND = 8.0D;
 
 	private LignumMortisRules() {
+	}
+
+	public static boolean shouldDropInfestedWood(boolean woodenLog, int roll) {
+		return woodenLog && roll == 0;
 	}
 
 	public static int maxRadius(int mastery, double mortemAlignment, double animusAlignment,

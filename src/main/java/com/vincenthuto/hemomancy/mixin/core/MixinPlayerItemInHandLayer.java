@@ -4,6 +4,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.vincenthuto.hemomancy.client.morphling.MorphlingPlayerPartVisibility;
 import com.vincenthuto.hemomancy.client.player.LivingStaffMorphClientState;
 import com.vincenthuto.hemomancy.client.player.PlayerAnimationClientState;
+import com.vincenthuto.hemomancy.client.player.BloodVialInjectionClientState;
 import com.vincenthuto.hemomancy.client.rite.CardinalRiteStaffPlantingClientState;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.SporiticThuribleItem;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.LivingFlailItem;
@@ -31,7 +32,10 @@ public class MixinPlayerItemInHandLayer {
                 && ((PlayerAnimationClientState.hand(livingEntity, PlayerAnimationKind.LIVING_TORCH_BREATH)
                         == net.minecraft.world.InteractionHand.MAIN_HAND)
                         == (arm != livingEntity.getMainArm()));
-        if (CardinalRiteStaffPlantingClientState.isAnimating(livingEntity)
+        var injection = BloodVialInjectionClientState.animation(livingEntity);
+        boolean injectingArm = injection != null && (arm == HumanoidArm.RIGHT) == injection.packet.right();
+        if (com.vincenthuto.hemomancy.client.player.HematicMicroscopeClientState.animation(livingEntity) != null
+                || injectingArm || CardinalRiteStaffPlantingClientState.isAnimating(livingEntity)
 				|| LivingStaffMorphClientState.affectsArm(livingEntity, arm)
                 || clearBreathOffhand
                 || MorphlingPlayerPartVisibility.shouldHideHeldItem(arm)

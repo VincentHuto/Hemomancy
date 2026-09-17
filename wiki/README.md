@@ -13,6 +13,9 @@ These files are the GitHub Wiki pages for Hemomancy.
 - **Harbinger-Path.md**: Blood-magic progression path
 - **Unstained-Path.md**: Purification path
 - **Blood-Systems.md**: Manipulations, tendencies, and blood mechanics
+- **Phlebotomists-Field-Case.md**: Portable specimen storage with safe placement and packing
+- **Phlebotomists-Cabinet.md**: Store and display exact blood specimens
+- **Hematic-Microscope.md**: Examine individual blood specimens and read their traits
 - **Lore-and-Story.md**: Narrative, factions, cosmology, and themes
 - **Mod-Compatibility.md**: Integration with other mods and modpack tips
 - **Developer-Reference.md**: Technical documentation and contribution guide
@@ -182,3 +185,5 @@ Pages still to add:
 *"The wiki, like the Liber Sanguinum, is a living document. It grows, adapts, and remembers."*
 
 - [Manipulation presentation pass: all 97 active powers and verification limits](../docs/manipulation_work_plan/05-visuals-results.md)
+
+- [Clairaudiograph](Clairaudiograph.md) — reusable creature calls, wax cylinders, and redstone playback.

@@ -1,0 +1,35 @@
+{
+  "entity": "minecraft:husk",
+  "sounds": [
+    {
+      "kind": "ambient",
+      "sound": "minecraft:entity.husk.ambient",
+      "pitch": 1,
+      "replay_interval_ticks": 120
+    },
+    {
+      "kind": "special",
+      "sound": "minecraft:entity.husk.converted_to_zombie",
+      "pitch": 1,
+      "replay_interval_ticks": 120
+    },
+    {
+      "kind": "death",
+      "sound": "minecraft:entity.husk.death",
+      "pitch": 1,
+      "replay_interval_ticks": 100
+    },
+    {
+      "kind": "hurt",
+      "sound": "minecraft:entity.husk.hurt",
+      "pitch": 1,
+      "replay_interval_ticks": 100
+    },
+    {
+      "kind": "step",
+      "sound": "minecraft:entity.husk.step",
+      "pitch": 1,
+      "replay_interval_ticks": 80
+    }
+  ]
+}

@@ -1,0 +1,35 @@
+{
+  "entity": "hemomancy:stained_priestess",
+  "sounds": [
+    {
+      "kind": "ambient",
+      "sound": "minecraft:entity.enderman.ambient",
+      "pitch": 1,
+      "replay_interval_ticks": 120
+    },
+    {
+      "kind": "death",
+      "sound": "minecraft:entity.enderman.death",
+      "pitch": 1,
+      "replay_interval_ticks": 100
+    },
+    {
+      "kind": "hurt",
+      "sound": "minecraft:entity.enderman.hurt",
+      "pitch": 1,
+      "replay_interval_ticks": 100
+    },
+    {
+      "kind": "special",
+      "sound": "minecraft:entity.generic.splash",
+      "pitch": 1,
+      "replay_interval_ticks": 120
+    },
+    {
+      "kind": "attack",
+      "sound": "minecraft:item.trident.throw",
+      "pitch": 1,
+      "replay_interval_ticks": 100
+    }
+  ]
+}

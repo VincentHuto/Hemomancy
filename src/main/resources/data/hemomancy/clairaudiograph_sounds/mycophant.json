@@ -1,0 +1,47 @@
+{
+  "entity": "hemomancy:mycophant",
+  "sounds": [
+    {
+      "kind": "ambient",
+      "sound": "hemomancy:entity.mycophant.ambient",
+      "pitch": 1,
+      "replay_interval_ticks": 120
+    },
+    {
+      "kind": "death",
+      "sound": "hemomancy:entity.mycophant.death",
+      "pitch": 1,
+      "replay_interval_ticks": 100
+    },
+    {
+      "kind": "hurt",
+      "sound": "hemomancy:entity.mycophant.hurt",
+      "pitch": 1,
+      "replay_interval_ticks": 100
+    },
+    {
+      "kind": "hurt",
+      "sound": "hemomancy:entity.mycophant.hurtother",
+      "pitch": 1,
+      "replay_interval_ticks": 100
+    },
+    {
+      "kind": "special",
+      "sound": "hemomancy:entity.mycophant.music",
+      "pitch": 1,
+      "replay_interval_ticks": 120
+    },
+    {
+      "kind": "special",
+      "sound": "hemomancy:entity.mycophant.summon",
+      "pitch": 1,
+      "replay_interval_ticks": 120
+    },
+    {
+      "kind": "special",
+      "sound": "hemomancy:entity.mycophant.teleport",
+      "pitch": 1,
+      "replay_interval_ticks": 120
+    }
+  ]
+}

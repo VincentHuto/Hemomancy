@@ -1,0 +1,8 @@
+{
+  "property": "hemomancy:blood_properties/burrowing",
+  "benefits": [
+    {
+      "effect": "hemomancy:earthen_mining"
+    }
+  ]
+}

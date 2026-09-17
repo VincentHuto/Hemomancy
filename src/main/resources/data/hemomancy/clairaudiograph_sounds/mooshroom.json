@@ -1,0 +1,35 @@
+{
+  "entity": "minecraft:mooshroom",
+  "sounds": [
+    {
+      "kind": "special",
+      "sound": "minecraft:entity.mooshroom.convert",
+      "pitch": 1,
+      "replay_interval_ticks": 120
+    },
+    {
+      "kind": "special",
+      "sound": "minecraft:entity.mooshroom.eat",
+      "pitch": 1,
+      "replay_interval_ticks": 120
+    },
+    {
+      "kind": "special",
+      "sound": "minecraft:entity.mooshroom.milk",
+      "pitch": 1,
+      "replay_interval_ticks": 120
+    },
+    {
+      "kind": "special",
+      "sound": "minecraft:entity.mooshroom.shear",
+      "pitch": 1,
+      "replay_interval_ticks": 120
+    },
+    {
+      "kind": "special",
+      "sound": "minecraft:entity.mooshroom.suspicious_milk",
+      "pitch": 1,
+      "replay_interval_ticks": 120
+    }
+  ]
+}

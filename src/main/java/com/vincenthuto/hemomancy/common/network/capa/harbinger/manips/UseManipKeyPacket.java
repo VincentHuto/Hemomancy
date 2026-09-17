@@ -55,6 +55,7 @@ public class UseManipKeyPacket implements CustomPacketPayload {
 			if (player == null)
 				return;
 			if (!player.level().isClientSide) {
+                try {
 				boolean bloodPowersBlocked = HemoCapabilityAccess.getUnstainedProgress(player)
 						.map(UnstainedAccessRules::blocksKnownBloodPowerUse).orElse(false);
 				if (message.action == Action.STOP_CONTINUOUS) {
@@ -87,6 +88,8 @@ public class UseManipKeyPacket implements CustomPacketPayload {
 							boolean active = AvatarManifestationManager.toggle(
 									(net.minecraft.server.level.ServerPlayer) player, avatar);
 							if (active || wasSelected) {
+                                com.vincenthuto.hemomancy.common.manipulation.animation.CastingAnimationManager.passive(
+                                        (net.minecraft.server.level.ServerPlayer) player, passive, active);
 								player.displayClientMessage(Component.literal(passive.getName().replace('_', ' ')
 										+ (active ? " manifested" : " dismissed"))
 										.withStyle(active ? ChatFormatting.GREEN : ChatFormatting.GRAY), true);
@@ -95,6 +98,8 @@ public class UseManipKeyPacket implements CustomPacketPayload {
 						}
 						if (bloodPowersBlocked && !knownCheck.isPassiveActive(passive.getName())) return;
 						boolean active = knownCheck.togglePassive(passive.getName());
+                        com.vincenthuto.hemomancy.common.manipulation.animation.CastingAnimationManager.passive(
+                                (net.minecraft.server.level.ServerPlayer) player, passive, active);
 						player.displayClientMessage(Component.literal(passive.getName().replace('_', ' ')
 								+ (active ? " enabled" : " disabled"))
 								.withStyle(active ? ChatFormatting.GREEN : ChatFormatting.GRAY), true);
@@ -128,7 +133,10 @@ public class UseManipKeyPacket implements CustomPacketPayload {
 							}
 							if (selectedManip.getType() == EnumManipulationType.CONTINUOUS) return;
 							if (LivingStaffWeaponFormRules.isStaffWeaponFormManip(selectedManip.getName())) {
-								LivingStaffWeaponFormHelper.toggleSelectedForm(player, selectedManip);
+                                if (LivingStaffWeaponFormHelper.toggleSelectedForm(player, selectedManip)) {
+                                    com.vincenthuto.hemomancy.common.manipulation.animation.CastingAnimationManager.release(
+                                            (net.minecraft.server.level.ServerPlayer) player, selectedManip);
+                                }
 								return;
 							}
 							// Handle conjuration dispel logic
@@ -170,6 +178,12 @@ public class UseManipKeyPacket implements CustomPacketPayload {
 					player.displayClientMessage(Component.literal("You lack the skill to manifest this power!")
 							.withStyle(ChatFormatting.RED), true);
 				}
+                } finally {
+                    if(message.action==Action.CAST) {
+                        com.vincenthuto.hemomancy.common.manipulation.animation.CastingAnimationManager.finishChargeAttempt(
+                                (net.minecraft.server.level.ServerPlayer)player);
+                    }
+                }
 			}
 		});
 	}
