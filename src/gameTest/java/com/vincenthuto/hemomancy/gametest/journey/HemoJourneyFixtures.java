@@ -1363,9 +1363,8 @@ public final class HemoJourneyFixtures {
 		helper.setNoAi(true);
 		helper.setInvulnerable(true);
 		helper.addTag(entityMarker(origin));
+		com.vincenthuto.hemomancy.gametest.SuccessionTestFixtures.resident(player, helper, focusPos);
 		if (!level.addFreshEntity(helper)) throw new IllegalStateException("Covenant Vigil helper could not be spawned");
-		BloodlineSavedData.get(player.server.overworld()).addNpcMember(line.getBloodlineUUID(), helper.getUUID(),
-				BuiltInRegistries.ENTITY_TYPE.getKey(helper.getType()));
 		HemoCapabilityAccess.requireInitiatoryDegree(player).setDegreeNumber(6);
 		player.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(ItemInit.living_staff.get()));
 	}

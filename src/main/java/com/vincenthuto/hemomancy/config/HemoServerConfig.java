@@ -6,6 +6,9 @@ import net.neoforged.neoforge.common.ModConfigSpec.Builder;
 
 public class HemoServerConfig {
 
+	public static ModConfigSpec.IntValue SUCCESSORS_PER_BLOODLINE;
+    public static ModConfigSpec.IntValue SUCCESSORS_GLOBAL;
+
 	// ===== Blood Volume =====
 	public static ModConfigSpec.BooleanValue BLOOD_REGEN_ENABLED;
 	public static ModConfigSpec.DoubleValue BLOOD_REGEN_RATE;
@@ -124,6 +127,10 @@ public class HemoServerConfig {
 	public static ModConfigSpec.IntValue DRUDGE_WORK_RADIUS;
 
 	public static void registerServerConfig(Builder builder) {
+        builder.push("succession");
+        SUCCESSORS_PER_BLOODLINE = builder.comment("Maximum living successors per bloodline; zero uses workplace capacity only.").defineInRange("per_bloodline_cap", 0, 0, 10000);
+        SUCCESSORS_GLOBAL = builder.comment("Maximum living successors across the server; zero disables this safeguard.").defineInRange("global_cap", 0, 0, 100000);
+        builder.pop();
 		// ───── Blood Volume ─────
 		builder.comment("Blood Volume Settings").push("blood_volume");
 

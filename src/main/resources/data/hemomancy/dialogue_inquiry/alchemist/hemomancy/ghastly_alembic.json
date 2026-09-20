@@ -1,3 +1,15 @@
 {
-  "lines": ["hemomancy.alchemist.item_inquiry.ghastly_alembic.line1", "hemomancy.alchemist.item_inquiry.ghastly_alembic.line2"]
+  "conditions": [
+    {
+      "max_degree": 1,
+      "lines": [
+        "hemomancy.clinical.inquiry.later"
+      ]
+    },
+    {
+      "lines": [
+        "hemomancy.clinical.inquiry.alembic"
+      ]
+    }
+  ]
 }

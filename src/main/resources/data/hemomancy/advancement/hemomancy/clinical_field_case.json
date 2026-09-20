@@ -1,0 +1,23 @@
+{
+  "parent": "hemomancy:hemomancy/degree_1_neophyte",
+  "display": {
+    "icon": {
+      "id": "hemomancy:phlebotomists_field_case"
+    },
+    "title": {
+      "translate": "advancements.hemomancy.clinical_field_case.title"
+    },
+    "description": {
+      "translate": "advancements.hemomancy.clinical_field_case.description"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": false,
+    "hidden": true
+  },
+  "criteria": {
+    "manual": {
+      "trigger": "minecraft:impossible"
+    }
+  }
+}

@@ -5,6 +5,7 @@ import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.vincenthuto.hemomancy.common.entity.mob.arthropod.BombardierState;
 import com.vincenthuto.hemomancy.common.entity.mob.arthropod.PhlegethonticBombardier;
 import net.minecraft.client.animation.AnimationDefinition;
+import net.minecraft.client.animation.KeyframeAnimations;
 import net.minecraft.client.model.HierarchicalModel;
 import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.model.geom.ModelPart;
@@ -15,12 +16,19 @@ import net.minecraft.client.model.geom.builders.LayerDefinition;
 import net.minecraft.client.model.geom.builders.MeshDefinition;
 import net.minecraft.client.model.geom.builders.PartDefinition;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.Mth;
+import org.joml.Vector3f;
+
+import java.util.Map;
+import java.util.WeakHashMap;
 
 public final class PhlegethonticBombardierModel extends HierarchicalModel<PhlegethonticBombardier> {
     public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(
             ResourceLocation.fromNamespaceAndPath("hemomancy", "phlegethontic_bombardier"), "main");
     private final ModelPart whole;
     private final ModelPart nozzle;
+    private final Map<PhlegethonticBombardier, ClipTransition> transitions = new WeakHashMap<>();
+    private final Vector3f animationScratch = new Vector3f();
 
     public PhlegethonticBombardierModel(ModelPart root) {
         whole = root.getChild("whole");
@@ -80,24 +88,20 @@ public final class PhlegethonticBombardierModel extends HierarchicalModel<Phlege
         tail3.addOrReplaceChild("tail4", CubeListBuilder.create()
                 .texOffs(30, 51).addBox(-1.0F, -3.25F, -0.75F, 3.0F, 4.0F, 3.0F, new CubeDeformation(0.0F))
                 .texOffs(14, 51).addBox(-2.0F, -2.25F, -0.75F, 5.0F, 2.0F, 3.0F, new CubeDeformation(0.0F))
-                .texOffs(42, 57).addBox(-0.5F, -2.25F, 1.25F, 2.0F, 2.0F, 3.0F, new CubeDeformation(0.0F))
-                .texOffs(32, 58).addBox(0.75F, -2.75F, 1.75F, 1.0F, 3.0F, 3.0F, new CubeDeformation(0.0F))
-                .texOffs(58, 40).addBox(-1.25F, -2.75F, 1.75F, 1.0F, 3.0F, 3.0F, new CubeDeformation(0.0F))
-                .texOffs(10, 56).addBox(-1.25F, -0.75F, 1.75F, 3.0F, 1.0F, 3.0F, new CubeDeformation(0.0F))
-                .texOffs(56, 32).addBox(-1.25F, -2.75F, 1.75F, 3.0F, 1.0F, 3.0F, new CubeDeformation(0.0F)),
+                .texOffs(75, 43).addBox(-1.0F, -2.75F, 1.75F, 3.0F, 3.0F, 3.0F, new CubeDeformation(0.0F)),
                 PartPose.offset(-0.5F, 1.0F, 3.75F));
 
         body.addOrReplaceChild("wingL", CubeListBuilder.create()
                 .texOffs(0, 0).addBox(-3.0F, -0.5F, 0.5F, 6.0F, 1.0F, 12.0F, new CubeDeformation(0.0F))
                 .texOffs(22, 38).addBox(-2.0F, -0.25F, 12.5F, 5.0F, 1.0F, 1.0F, new CubeDeformation(0.0F))
-                .texOffs(36, 8).addBox(3.0F, -0.25F, 1.5F, 1.0F, 1.0F, 11.0F, new CubeDeformation(0.0F))
-                .texOffs(10, 64).addBox(-2.0F, -0.25F, -0.5F, 4.0F, 1.0F, 1.0F, new CubeDeformation(0.0F)),
+                .texOffs(22, 38).addBox(-2.0F, -0.25F, -0.5F, 5.0F, 1.0F, 1.0F, new CubeDeformation(0.0F))
+                .texOffs(34, 8).addBox(3.0F, -0.25F, 0.5F, 1.0F, 1.0F, 12.0F, new CubeDeformation(0.0F)),
                 PartPose.offsetAndRotation(3.0F, -6.0F, -5.25F, 0.0F, 0.0F, 0.2618F));
         body.addOrReplaceChild("wingR", CubeListBuilder.create()
                 .texOffs(0, 13).addBox(-3.0F, -0.5F, 0.5F, 6.0F, 1.0F, 12.0F, new CubeDeformation(0.0F))
                 .texOffs(60, 26).addBox(-3.0F, -0.25F, 12.5F, 5.0F, 1.0F, 1.0F, new CubeDeformation(0.0F))
-                .texOffs(36, 20).addBox(-4.0F, -0.25F, 1.5F, 1.0F, 1.0F, 11.0F, new CubeDeformation(0.0F))
-                .texOffs(8, 66).addBox(-2.0F, -0.25F, -0.5F, 4.0F, 1.0F, 1.0F, new CubeDeformation(0.0F)),
+                .texOffs(60, 26).addBox(-3.0F, -0.25F, -0.5F, 5.0F, 1.0F, 1.0F, new CubeDeformation(0.0F))
+                .texOffs(0, 72).addBox(-4.0F, -0.25F, 0.5F, 1.0F, 1.0F, 12.0F, new CubeDeformation(0.0F)),
                 PartPose.offsetAndRotation(-3.0F, -6.0F, -5.25F, 0.0F, 0.0F, -0.2618F));
 
         PartDefinition lLegF = body.addOrReplaceChild("lLegF", CubeListBuilder.create().texOffs(20, 64)
@@ -196,14 +200,65 @@ public final class PhlegethonticBombardierModel extends HierarchicalModel<Phlege
                     case FIRING -> PhlegethonticBombardierAnimations.ABDOMEN_FIRE;
                     case COOLING -> PhlegethonticBombardierAnimations.VENT_COOLDOWN;
                 };
-        animate(entity.presentationAnimationState, animation, age);
-        if (swingAmount > .02F)
-            animateWalk(PhlegethonticBombardierAnimations.WALK, swing, swingAmount, 2, 2.5F);
+        applyBlendedAnimation(entity, animation, age);
+        animateWalk(PhlegethonticBombardierAnimations.WALK, swing, walkBlend(swingAmount), 2, 2.5F);
         if (entity.getBombardierState() == BombardierState.FIRING
                 || entity.getBombardierState() == BombardierState.WINDUP
                 && entity.getStateTick() >= PhlegethonticBombardier.AIM_TRACKING_TICKS) {
             nozzle.yRot += (float) Math.toRadians(entity.getLockedYaw() - entity.yBodyRot);
-            nozzle.xRot -= (float) Math.toRadians(entity.getLockedPitch());
+            nozzle.xRot += nozzlePitchOffset(entity.getLockedPitch());
+        }
+    }
+
+    static float nozzlePitchOffset(float lockedPitch) {
+        return (float) Math.toRadians(lockedPitch);
+    }
+
+    static float walkBlend(float swingAmount) {
+        float progress = Mth.clamp(swingAmount / .2F, 0.0F, 1.0F);
+        return progress * progress * (3.0F - 2.0F * progress);
+    }
+
+    private void applyBlendedAnimation(PhlegethonticBombardier entity, AnimationDefinition animation, float age) {
+        ClipTransition transition = transitions.computeIfAbsent(entity,
+                ignored -> new ClipTransition(animation, age));
+        if (transition.current != animation) transition.begin(animation, age);
+
+        float elapsed = Math.max(0.0F, age - transition.transitionAge);
+        float incoming = BombardierAnimationBlend.incomingWeight(elapsed);
+        if (transition.previous != null && incoming < 1.0F) {
+            KeyframeAnimations.animate(this, transition.previous, ticksToMillis(transition.previousTime),
+                    BombardierAnimationBlend.outgoingWeight(elapsed), animationScratch);
+        } else {
+            transition.previous = null;
+        }
+        KeyframeAnimations.animate(this, transition.current,
+                ticksToMillis(Math.max(0.0F, age - transition.currentAge)), incoming, animationScratch);
+    }
+
+    private static long ticksToMillis(float ticks) {
+        return (long) (ticks * 50.0F);
+    }
+
+    private static final class ClipTransition {
+        private AnimationDefinition current;
+        private AnimationDefinition previous;
+        private float currentAge;
+        private float previousTime;
+        private float transitionAge;
+
+        private ClipTransition(AnimationDefinition current, float age) {
+            this.current = current;
+            currentAge = age;
+            transitionAge = age - BombardierAnimationBlend.TRANSITION_TICKS;
+        }
+
+        private void begin(AnimationDefinition next, float age) {
+            previous = current;
+            previousTime = Math.max(0.0F, age - currentAge);
+            current = next;
+            currentAge = age;
+            transitionAge = age;
         }
     }
 }

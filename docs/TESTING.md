@@ -41,7 +41,7 @@ Run `./gradlew.bat -I tools/living_weapon_validation.init.gradle test --tests '*
 
 Use a new run name for every fresh-world measurement. The validation server uses `build/phlegethontic-worlds/<seed>-<run>` and writes `phlegethontic-validation.json` there. It sets the actual world seed, adds a second TerraBlender Nether region and foreign-namespace Nether biome, generates 576 chunks, audits all feature writes, examines an inner 100-chunk sample, and advances 120 ticks with fluid ticking enabled. Its feature timings combine the queue, Basin materialization, and deferred vein completion per generated chunk; they exclude ore-reservation interception overhead and are not whole-generator overhead benchmarks.
 
-`tools/model_export/compare_phlegethontic_worlds.py` compares region-file block states in two matching runs. It reports river/vein differences separately from high cavern-surface scab changed by vanilla lava and magma decoration. It requires `nbtlib`. The [validation report](phlegethontic-nether-worldgen/VALIDATION.md) records tested seeds, measured targets, and visual/multiplayer evidence.
+`tools/oneoff/compare_phlegethontic_worlds.py` compares region-file block states in two matching runs. It reports river/vein differences separately from high cavern-surface scab changed by vanilla lava and magma decoration. It requires `nbtlib`. The [validation report](phlegethontic-nether-worldgen/VALIDATION.md) records tested seeds, measured targets, and visual/multiplayer evidence.
 
 `PhlegethonticCavernTest` checks domed overhead clearance, tapering before a protected boundary, and continuous overlapping vaults across negative chunk coordinates. For visual regression, compare fresh worlds at the same seed and camera position; loading an old save does not rebuild its roof.
 
@@ -238,3 +238,109 @@ The dedicated `PhlegethonticBombardierGameTests` batch covers colony isolation, 
 4. At D6, receive the referral, obtain Mnemonist counsel, cast a non-mechanical Noetic Memory matching an active cerebral scar, commit a different Effigy set, and cast another matching Noetic Memory.
 5. Relog with active scars and verify effective alignment is unchanged before and after the relog. Remove and re-equip scars and verify saved base alignment never drifts.
 6. Inspect the separate collapsible D5 and D6 ledger cards and both return-ready toasts. Confirm the tier-three reward warns that Deep Inscription remains required.
+
+## Hematic Succession validation (2026-09-17)
+
+Run the isolated server suite and affected JVM tests:
+
+```powershell
+.\gradlew.bat runSuccessionGameTestServer test --tests '*SuccessionLedgerTest' --tests '*Bloodline*' --tests '*CardinalRite*' --tests '*HarbingerRecruitment*' --tests '*BloodSample*' --tests '*BloodInjection*' assemble --no-daemon
+```
+
+The current run passed **17 required succession GameTests** and **312 JVM tests in 68 classes**, and produced the mod jar. The server suite checks the real effigy manufacturing path, normal activation and staff escrow, creation/death/restoration, reserve and history retention, counterfeit rejection, failed restoration retry, early legacy refusal, remnant reissue/proximity, serialized rite continuation, competing workplace reservations, displacement/replacement, changed offerings, dissolution, all five profession trees, consent/donation access, self-sampling, all five malformed attacks, and committed-effigy loot. Pure ledger tests also cover identity locks and remnant generations across serialization.
+
+Server reports: `build/succession-final-check.log`; JVM reports: `build/reports/tests/test/index.html`. These checks do not simulate an operating-system crash in the middle of Minecraft's world save. Normal rite serialization/reload is covered; abrupt multi-file save failure is not.
+
+Live review runs use disposable `build/succession-client` and `build/succession-observer` directories. `runSuccessionReviewClient` enables an explicit fixture assist in `src/gameTest`; `runSuccessionObserverClient` connects to localhost:25568. The review setup grants D5, a bloodline/fane, five example residents, and a prepared but unperformed rite. It is not evidence of earned progression. Production activation is then used to run the full timed rite. Do not rebuild the shared development class directory while either review client is running; finish compilation first, then launch the observer directly from the generated JVM/program argument files. A second Gradle invocation also rewrites the included HutosLib jar, so merely excluding compilation is insufficient.
+
+The unrelated broad client resource warnings for old missing models/textures remain separate from succession results. Full long-session playtesting, every professional assignment from start to reward, and power-loss recovery are not claimed by this focused suite.
+
+
+Live acceptance evidence is stored under `build/succession-client/screenshots/` and `build/succession-observer/screenshots/`. A real timed activation completed with six authoritative residents from a five-resident assisted baseline and zero remaining locks. The observer connected as `SucObserver`, received phase/progress updates and effects, and rendered the five malformed professional variants. The host received their fractured subtitles and combat effects. A clean disconnect wrote `hemomancy_succession.dat`; reopening retained all six resident records and the generated resident entity. The Residents view was inspected after correcting a menu-blur issue. The three in-world offering labels were inspected after correcting their horizontal rendering scale; the final capture is `build/succession-client/screenshots/succession-offering-labels-final.png`. Final packaging and that client review are recorded in `build/succession-visual-final.log`. This is focused two-client presentation validation, not an exhaustive multiplayer progression playthrough.
+
+
+## Clinical Blood Tools progression (2026-09-17)
+
+Run `./gradlew.bat runClinicalGameTestServer runBloodInjectionGameTestServer` for the clinical progression and existing specimen-machine suites. Their worlds live under `build/clinical-gametest` and `build/blood-injection-gametest`.
+
+The clinical suite covers D1 First Separation availability, held-vial and teacher validation, one-time recipe/Liber rewards, real microscope completion and interruption, duplicate and previously identified source handling, successful versus rejected Cabinet transfers, crafting/referral prerequisites, D2/D3 mnemonic boundaries, safe inquiry hints, and rejection of untaught injection. Existing injection fixtures explicitly know Borrowed Physiology so their transaction and animation checks continue to exercise injection mechanics.
+
+Verification for this change: 31 focused JUnit tests passed; five directly invoked legacy assignment/atlas checks passed; all 5 clinical and all 71 blood-tool server GameTests passed. Changed JSON parsed, clinical inquiry translations resolved, and `git diff --check` passed. This is focused validation, not a full `alphaCheck` run.
+
+Live checks remain: review NPC quest tabs and attention markers, ledger scrolling and new cards, Liber page layout, JEI hide/show after each lesson and after reconnecting, and the D1-to-D3 sequence with two clients. Check an existing save by showing a filled vial, reexamining an already identified sample, and completing a manual Cabinet deposit/withdrawal. Verify progress after death, relogging, and changing dimension.
+
+
+### Automatic rite helper travel (2026-09-17)
+
+The follow-up helper travel run passed 22 succession GameTests and 308 focused JVM tests (`*CardinalRite*`, `*Bloodline*`, `*Succession*`), with compilation and `assemble`. Evidence: `build/helper-travel-final.log` and `build/reports/tests/test/index.html`.
+
+Five added server tests cover exact three-helper gathering and distinct stations; a player replacing an NPC and leaving during preparation; competing rites and caster membership departure; persisted entity return and Bloodspent exclusion; and travel to/from a fane in another dimension with the same UUID. Cross-dimension fixtures use distinct workplace coordinates so earlier saved test residents cannot own their stations. Existing termination paths return helpers on completion, cancellation, collapse, and caster death; disconnect expiry now explicitly returns them too. Temporary chunk tickets expire, and missing loaded entities are never reconstructed as substitutes. This follow-up did not repeat live client or two-client visual review.
+
+
+## Antecedent Inquiry
+
+The [September 19 documentation audit](WORKTREE_REFERENCE_AUDIT_2026-09-19.md) maps the complete Git-visible dirty checkout to subsystem documentation. Documentation/link checks are separate from the dated runtime results below; no fresh full-suite pass is implied.
+
+Run `./gradlew.bat runAntecedentGameTestServer` for the isolated `antecedent_validation` namespace. It covers both specimen provenances, microscope completion and blood exclusions, unknown/legacy preservation, Vanity socket item conservation and component persistence, ancient machine save/stop behavior, a complete personal replay with an interrupted observer, fixture delay/removal, all template rotations, and twenty generated city starts covering all center variants and rotations with no neighboring-room overlap.
+
+Run `./gradlew.bat test --tests '*SpectrogramAnalysisTest' --tests '*AntecedentResearchTest'` for silence, frequency-band discrimination, pitch timing, opposite-phase stereo, evidence persistence, and continuous observation windows.
+
+`./gradlew.bat runAntecedentReviewClient` launches an opt-in disposable client under `build/antecedent-client`. `GameplayCampaignDriver` supplies normal UI operations; `antecedent-review.json` accepts fixture setup, play, ordinary playback, microscope, gallery, entrance, archive, mute, reload, and spectrum inspection. Fixture assists are not evidence of natural survival progression. Do not rebuild the composite HutosLib jar while a review client is running: the live resource pack holds its ZIP open.
+
+Live acceptance should include at least GUI scales 2–4, resource-pack replacement and reload, two simultaneously playing machines, a remote listener entering during playback, mixed mute settings, survival travel through the city, death/dimension/save recovery, and the Fungal epilogue competing with other screens. Inspect captions and the 55–68-second silent interval independently from the fictional trace.
+
+### Antecedent validation record (2026-09-17)
+
+Final focused verification passed all **10 Antecedent GameTests** and **7 JVM tests**, followed by successful packaging. The audio tests include complete-frame waveform peaks at 96 kHz. Command: `./gradlew.bat runAntecedentGameTestServer test --tests '*SpectrogramAnalysisTest' --tests '*AntecedentResearchTest' build --console=plain`. Evidence: `build/antecedent-final-result.log`; artifact: `build/libs/hemomancy-6.0.1-neoforge.1.21.1.0.jar`.
+
+The disposable client rendered ordinary creature playback, the Severed Record, the Incertae microscope view, and the Vigil entrance, gallery, and archive. At 65 seconds of muted Severed playback, decoded spectrum energy was exactly zero while the separate unresolved trace and specimen response remained visible. Evidence: `build/antecedent/live-review-before-pack.log` and `build/antecedent-client/screenshots/clairaudiograph-silent-verified.png`.
+
+A resource pack replaced every Pig ambient variant with a 1 kHz tone, then a 2 kHz tone. The strongest displayed analysis band changed from approximately 963 Hz to 1931 Hz after a resource reload, consistent with the logarithmic band centers. Captures and measured results are in `build/antecedent-client/screenshots/spectrograph-pack-1000hz.png`, `spectrograph-pack-2000hz.png`, and `build/antecedent/spectrum-pack-*.txt`. This verifies analysis of the resolved resource audio and reload invalidation. Decoding the shipped 73-second Severed recording also confirmed zero PCM amplitude in the sampled silent interval and final recorded second; see `build/antecedent/audio-verification.json`.
+
+The broader repository checks are not green: `build/antecedent-validation.log` records 2093 JVM tests with one failure in `MorphlingLumenlaceRenameResourceTest`, caused by an existing non-UTF-8 documentation file. `build/antecedent-runtime-validation.log` records 476 GameTests with 12 failures outside the Antecedent namespace, including existing clinical, rite-helper, combat, worldgen, and barrier-fixture checks. Those failures were not suppressed, and their unrelated files were left intact. A clean-checkout baseline comparison was not performed.
+
+The live checks used fixture assistance. They do not establish an uninterrupted survival playthrough, remote multiplayer behavior, every GUI scale, or epilogue arbitration with other screens. The recordings use original synthetic voices; a full listening and performance-quality review remains a separate acceptance step.
+
+### Chamber terrain and brick restoration (2026-09-18)
+
+`runAntecedentGameTestServer` passed all ten required tests after adding `MixinVigilTerrain`. The twenty-city test compares Minecraft's Beardifier density with and without the appended Vigil, sampling inside and around its bounds across all center variants and rotations. It failed before the fix because the Vigil changed density, then passed with only the Vigil excluded from terrain carving. Evidence: `build/antecedent-lava-validation.log`. Reservation, fixed rotation/placement, and unrelated city pieces retain their existing behavior.
+
+The subsequent wall-material restoration regenerated `vigil.nbt` and compared decoded NBT before and after: 9,606 authored positions retained, 2,993 masonry replacements, and unchanged air, fixtures, block-entity data, and dimensions. It retained the terrain mixin. This material-only check did not repeat the full server suite. New natural terrain appearance, nearby natural lava, and survival traversal still require a fresh client worldgen review; existing chunks are not repaired by either change.
+
+
+### Compact Vigil and unchanged city generation (2026-09-19)
+
+The four-piece annex replaces the advance reservation. `runAntecedentGameTestServer` passed all **10 required tests**; `VigilLayoutTest` and `AntecedentResearchTest` passed **5 JVM tests**. Evidence: `build/antecedent-compact-validation.log` and `build/test-results/test/`. `assemble` also passed (`build/antecedent-compact-package.log`); the release jar contains all four current NBT pieces and the updated mixin configuration.
+
+The twenty-seed sweep covers all three center templates and four rotations. It compares every vanilla piece's complete serialized data with an otherwise identical city generated without the annex hook. All twenty vanilla layouts matched. Three accepted a complete compact Vigil; seventeen skipped it because no safe attachment fit. This is a small regression sample, not a measured worldwide spawn rate. Accepted pieces preserve authored city blocks, remain above the bedrock margin, match the navigable composite including rotated block states and block-entity data, and leave surrounding Beardifier density unchanged. Occupying accepted sites eventually makes the search skip placement.
+
+`python tools/oneoff/antecedent/check_vigil.py` checks all 5,186 authored blocks across four lossless template partitions, 503 reachable player positions, and access to every lectern, chest, bell, and vessel. Rotation tests cover the compact controller's fixtures, save/load, client layout tag, and legacy fallback. Existing generated sites retain their old coordinates.
+
+Fresh client review of natural attachments and terrain appearance remains outstanding. The earlier assisted client captures document the original larger chamber, not this compact layout. These changes apply to newly generated cities and do not repair existing chunks.
+
+
+### Reproducible natural Vigil location (2026-09-19)
+
+Default/Normal world seed **42** accepts an Ancient City at chunk **(-132, 100)** with a compact Vigil entrance at **(-2073, -45, 1562)** (standing position). Teleport: `/tp @s -2072.5 -45 1562.5`. Portal bounding-box center: **(-2112, -37, 1596)**. Use the current mod build and fresh chunks.
+
+`normalWorldSeedHasNaturallyPlacedVigil` uses the Normal overworld noise generator, seed-specific noise, the registered Ancient City random-spread placement, and the structure's real biome predicate. This is separate from the earlier forced-start layout sweep, whose coordinates were not natural-world examples. The natural search found this annex at its second biome-valid city; all **11 Antecedent GameTests passed**. Evidence: `build/antecedent-natural-seed.log` (`NATURAL_VIGIL`). This verifies natural structure selection and annex placement data, not a live client visual review. Biome/worldgen mods or datapacks that change city placement can alter the result.
+
+
+### Self-contained modular Vigil (2026-09-19)
+
+The current generator uses six four-module arrangements and scans exposed floor edges throughout the city. It supersedes the compact layout's 64-block portal restriction and the earlier natural seed example above. Existing generated structures remain unchanged.
+
+`python tools/oneoff/antecedent/check_modular_vigil.py` verifies all six serialized arrangements: 4,744 authored positions each, four non-overlapping modules equivalent to their composite, 451 reachable standing positions, and all five lecterns, two chests, bell, vessel, and fixture identities retained. The dedicated server suite places all six layouts in all four rotations and checks controller origins, fixtures, the guaranteed recording, saved versions, and client layout tags. The original compact rotation/save test remains in the suite for compatibility.
+
+The same twenty-city regression sample now accepts a complete Vigil in **20/20** cities, compared with **3/20** before this change. Every vanilla piece's serialized data remains identical to the unmodified generation baseline, and terrain-density checks still pass. This is a regression sample, not a promised universal spawn rate. Some entrances lie outside the old portal radius. Impossible height bounds reject the complete site.
+
+Normal-world seed **42** now selects a modular Vigil at entrance **(741, -45, -835)**, in the city at chunk **(51, -47)**. Teleport in fresh chunks: `/tp @s 741.5 -45 -834.5`. Portal center: **(816, -37, -756)**. The natural search uses normal noise, random-spread placement and actual biome rules. Changed mod/datapack worldgen can change this result.
+
+Final verification passed **12 required GameTests**, **6 JVM tests**, and **assemble**. The release jar contains six layout definitions, all 24 module templates, and six matching composites. Validation evidence: `build/antecedent-modular-validation.log`; final packaging/check evidence: `build/antecedent-modular-final.log`. Client appearance and a continuous survival playthrough of the modular sites remain unverified. Vicar dialogue and the recognition journal now direct players to enclosed wool-lined entrances along the city's roads instead of behind the portal.
+
+
+### Vigil archive doorway correction (2026-09-19)
+
+The modular archive now uses a one-block-wide, two-block-high doorway with deepslate-brick jambs and a lintel. Both door halves face into the archive; the warning sign faces approaching players from the gallery side, supported by that lintel. Fixture coordinates and saved layout versions remain unchanged. Existing generated blocks are not rewritten.
+
+`check_modular_vigil.py` now rejects missing jambs/lintels and misplaced or reversed signs, in addition to testing routes. It failed on the previous open doorway, then passed all six corrected arrangements with 447 reachable positions each and all interactive content accessible. Runtime/packaging evidence: `build/antecedent-door-validation.log`.

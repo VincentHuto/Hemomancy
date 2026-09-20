@@ -32,6 +32,7 @@ public final class MicroscopeExamination {
         final ItemStack instrument, sample;
         ItemStack snapshot;
         final BloodInjectionData.Snapshot definitions = BloodInjectionData.snapshot(false);
+        final BloodProfileData.Snapshot profiles = BloodProfileData.snapshot(false);
         final BloodSampleData.Profile profile;
         final long id = ++nextSession;
         final Level level;
@@ -49,15 +50,15 @@ public final class MicroscopeExamination {
             this.instrument = instrument;
             this.sample = sample;
             snapshot = sample.copy();
-            profile = BloodSampleData.profile(sample, definitions.properties());
-            complete = profile.identified();
+            profile = BloodSampleData.profile(sample, false);
+            complete = false;
         }
-        boolean pending() { return !complete && BloodSampleData.entityType(sample) != null; }
+        boolean pending() { return !complete && !profile.identified() && BloodSampleData.examinable(sample); }
         boolean held(Player player) {
             return player.isAlive() && !player.isSpectator() && player.level() == level
                     && player.getInventory().selected == slot && player.getMainHandItem() == instrument
                     && player.getOffhandItem() == sample && ItemStack.matches(snapshot, sample)
-                    && definitions == BloodInjectionData.snapshot(false);
+                    && definitions == BloodInjectionData.snapshot(false) && profiles == BloodProfileData.snapshot(false);
         }
         boolean valid(Player player) {
             return held(player) && (releasedAt >= 0 ? !player.isUsingItem() && !player.swinging
@@ -113,7 +114,7 @@ public final class MicroscopeExamination {
         session.ticks++;
         if (session.ticks == 20 && session.pending()) player.level().playSound(null, player.blockPosition(), SoundInit.MICROSCOPE_FOCUS.get(), SoundSource.PLAYERS, 0.2F, 1F);
         if (session.ticks < HematicMicroscopeItem.EXAMINATION_TICKS) return;
-        var current = BloodSampleData.profile(session.sample, session.definitions.properties());
+        var current = BloodSampleData.profile(session.sample, false);
         if (!current.equals(session.profile)) {
             clear(player);
             player.stopUsingItem();
@@ -121,12 +122,16 @@ public final class MicroscopeExamination {
         }
         // An unreadable specimen stays murky and intact, including any existing identification.
         session.complete = true;
-        if (BloodSampleData.identify(session.sample)) {
+        if (!BloodSampleData.identified(session.sample) && BloodSampleData.identify(session.sample)) {
             session.snapshot = session.sample.copy();
             player.getInventory().setChanged();
             player.containerMenu.broadcastChanges();
             player.level().playSound(null, player.blockPosition(), SoundInit.MICROSCOPE_DISCOVERY.get(), SoundSource.PLAYERS, 0.3F, 1F);
         }
+        if (player instanceof ServerPlayer serverPlayer)
+            com.vincenthuto.hemomancy.common.mission.alchemist.ClinicalBloodKnowledge.examined(serverPlayer, session.sample);
+        if (player instanceof ServerPlayer observer && com.vincenthuto.hemomancy.common.antecedent.AhaematicSample.readable(session.sample))
+            com.vincenthuto.hemomancy.common.antecedent.AntecedentKnowledge.record(observer, com.vincenthuto.hemomancy.common.antecedent.AntecedentResearch.Evidence.SAMPLE_ANALYZED);
         send(player, session, Phase.COMPLETE);
     }
 

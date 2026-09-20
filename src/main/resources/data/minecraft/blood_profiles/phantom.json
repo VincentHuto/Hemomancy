@@ -1,0 +1,12 @@
+{
+  "tendencies": [
+    "lux",
+    "mortem",
+    "tenebris"
+  ],
+  "properties": [
+    "hemomancy:blood_properties/flying",
+    "hemomancy:blood_properties/undead"
+  ],
+  "requires_living_syringe": true
+}

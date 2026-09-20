@@ -16,6 +16,13 @@ import net.neoforged.neoforge.gametest.*;
 @GameTestHolder("blood_injection_validation")
 @PrefixGameTestTemplate(false)
 public final class BloodInjectionGameTests {
+    private static net.minecraft.world.entity.player.Player educatedPlayer(GameTestHelper h) {
+        var player = h.makeMockPlayer(GameType.SURVIVAL);
+        com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess.requireInitiatoryDegree(player).setDegreeNumber(1);
+        com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess.clinicalBlood(player)
+                .learn(com.vincenthuto.hemomancy.common.mission.alchemist.ClinicalBloodProgress.Lesson.INJECTION);
+        return player;
+    }
     @GameTest(template = "empty")
     public static void injectionAnimationPacketsTrackOutcomeAndPhysicalHand(GameTestHelper h) {
         for (var dominant : net.minecraft.world.entity.HumanoidArm.values()) {
@@ -83,6 +90,9 @@ public final class BloodInjectionGameTests {
                 new com.mojang.authlib.GameProfile(java.util.UUID.randomUUID(), "vial-animation"), false);
         var player = new net.minecraft.server.level.ServerPlayer(h.getLevel().getServer(), h.getLevel(),
                 cookie.gameProfile(), cookie.clientInformation());
+        com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess.requireInitiatoryDegree(player).setDegreeNumber(1);
+        com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess.clinicalBlood(player)
+                .learn(com.vincenthuto.hemomancy.common.mission.alchemist.ClinicalBloodProgress.Lesson.INJECTION);
         var connection = new net.minecraft.network.Connection(net.minecraft.network.protocol.PacketFlow.SERVERBOUND);
         new io.netty.channel.embedded.EmbeddedChannel(connection);
         var packets = new java.util.ArrayList<com.vincenthuto.hemomancy.common.network.PacketBloodVialInjection>();
@@ -140,7 +150,7 @@ public final class BloodInjectionGameTests {
             h.assertTrue(BloodVialItem.getEntityType(stack) == null, "Unresolved source resolved");
             h.assertTrue(!VialRackItem.isEmptyVial(stack), "Missing source became empty glass");
             var before = stack.copy();
-            var player = h.makeMockPlayer(GameType.SURVIVAL);
+            var player = educatedPlayer(h);
             ItemInit.bloody_vial.get().onLeftClickEntity(stack, player, h.spawn(net.minecraft.world.entity.EntityType.PIG, 0, 2, 0));
             h.assertTrue(ItemStack.isSameItemSameComponents(before, stack), "Sampling overwrote unreadable blood");
             h.assertTrue(!BloodSampleData.identify(stack), "Unreadable sample was identified");
@@ -155,8 +165,8 @@ public final class BloodInjectionGameTests {
         BloodSampleData.identify(b);
         h.assertTrue(ItemStack.isSameItemSameComponents(a,b), "Identical examinations differ");
         var snapshot = BloodInjectionData.snapshot(false);
-        var pig = BloodSampleData.profile(a,snapshot.properties());
-        var bear = BloodSampleData.profile(vial("minecraft:polar_bear"),snapshot.properties());
+        var pig = BloodSampleData.profile(a,false);
+        var bear = BloodSampleData.profile(vial("minecraft:polar_bear"),false);
         h.assertTrue(pig.tendencies().contains(com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency.ANIMUS), "Pig lost Animus");
         h.assertTrue(!bear.tendencies().contains(com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency.ANIMUS), "Polar bear gained Animus");
         h.assertTrue(bear.tendencies().contains(com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency.CONGEATIO), "Bear lost Congeatio");
@@ -166,7 +176,7 @@ public final class BloodInjectionGameTests {
     @GameTest(template = "empty")
     public static void bothHandsReturnExactlyOneEmptyVessel(GameTestHelper h) {
         for (var hand : InteractionHand.values()) {
-            var player = h.makeMockPlayer(GameType.SURVIVAL);
+            var player = educatedPlayer(h);
             for(int slot=0;slot<player.getInventory().items.size();slot++) player.getInventory().items.set(slot,new ItemStack(Items.STONE,64));
             var stack = vial("minecraft:pig"); player.setItemInHand(hand,stack);
             player.addEffect(new MobEffectInstance(MobEffects.REGENERATION,600,2));
@@ -183,7 +193,7 @@ public final class BloodInjectionGameTests {
     }
     @GameTest(template = "empty")
     public static void interruptedAndSaturatedUsesPreserveSample(GameTestHelper h) {
-        var player = h.makeMockPlayer(GameType.SURVIVAL);
+        var player = educatedPlayer(h);
         var stack=vial("minecraft:pig"); player.setItemInHand(InteractionHand.MAIN_HAND,stack);
         stack.use(h.getLevel(),player,InteractionHand.MAIN_HAND);
         for(int i=0;i<7;i++) player.tick();
@@ -216,7 +226,7 @@ public final class BloodInjectionGameTests {
     @GameTest(template = "empty")
     public static void switchingHandsDeathAndSpectatorPreventCompletion(GameTestHelper h) {
         for (int scenario=0; scenario<3; scenario++) {
-            var player=h.makeMockPlayer(GameType.SURVIVAL);
+            var player=educatedPlayer(h);
             var stack=vial("minecraft:pig");player.setItemInHand(InteractionHand.MAIN_HAND,stack);
             stack.use(h.getLevel(),player,InteractionHand.MAIN_HAND);
             for(int i=0;i<8;i++) player.tick();
@@ -245,7 +255,7 @@ public final class BloodInjectionGameTests {
         var packet=codec.decode(buf);buf.release();
         BloodInjectionData.receive(packet.definitions());
         var client=BloodInjectionData.snapshot(true);
-        var profile=BloodSampleData.profile(sample,snapshot.properties());
+        var profile=BloodSampleData.profile(sample,false);
         h.assertTrue(snapshot.resolve(profile).equals(client.resolve(profile)), "Client response disagreed with server");
         BloodInjectionData.clearClient();
         h.assertTrue(BloodInjectionData.snapshot(true).responses().isEmpty() && !BloodInjectionData.snapshot(false).responses().isEmpty(), "Disconnect crossed snapshot sides");
@@ -253,7 +263,7 @@ public final class BloodInjectionGameTests {
     }
     @GameTest(template = "empty")
     public static void resistancesMobilityAndHealingHaveOnlyTheirNamedBenefits(GameTestHelper h) {
-        var player=h.makeMockPlayer(GameType.SURVIVAL);
+        var player=educatedPlayer(h);
         player.setPos(h.absoluteVec(new net.minecraft.world.phys.Vec3(2,6,2)));
         player.addEffect(new MobEffectInstance(EffectInit.cryoprotection,200));player.setTicksFrozen(200);player.tick();
         h.assertTrue(!player.canFreeze() && player.getTicksFrozen()==0, "Cryoprotection did not stop freezing");
@@ -284,7 +294,7 @@ public final class BloodInjectionGameTests {
 
     @GameTest(template = "empty")
     public static void miningTargetsEarthAndStoneInsteadOfOreOrWood(GameTestHelper h) {
-        var player=h.makeMockPlayer(GameType.SURVIVAL);player.addEffect(new MobEffectInstance(EffectInit.earthen_mining,200));
+        var player=educatedPlayer(h);player.addEffect(new MobEffectInstance(EffectInit.earthen_mining,200));
         var blocks=new net.minecraft.world.level.block.Block[]{net.minecraft.world.level.block.Blocks.STONE,net.minecraft.world.level.block.Blocks.DIRT,
                 net.minecraft.world.level.block.Blocks.IRON_ORE,net.minecraft.world.level.block.Blocks.OAK_LOG};
         for(int i=0;i<blocks.length;i++) {
@@ -296,7 +306,7 @@ public final class BloodInjectionGameTests {
     }
     @GameTest(template = "empty")
     public static void projectileAndExplosionResistanceDoNotReduceOrdinaryDamage(GameTestHelper h) {
-        var player=h.makeMockPlayer(GameType.SURVIVAL);player.addEffect(new MobEffectInstance(EffectInit.ender_resistance,200));
+        var player=educatedPlayer(h);player.addEffect(new MobEffectInstance(EffectInit.ender_resistance,200));
         player.addEffect(new MobEffectInstance(EffectInit.explosion_resistance,200));
         var arrow=net.minecraft.world.entity.EntityType.ARROW.create(h.getLevel());
         var sources=new net.minecraft.world.damagesource.DamageSource[]{player.damageSources().arrow(arrow,null),player.damageSources().explosion(null,null),player.damageSources().generic()};
@@ -333,7 +343,7 @@ public final class BloodInjectionGameTests {
             method.setAccessible(true);
             var replacement=(BloodInjectionData.Snapshot)method.invoke(new BloodInjectionData(),manager,net.minecraft.util.profiling.InactiveProfiler.INSTANCE);
             var sample=vial("minecraft:pig");BloodSampleData.identify(sample);
-            var profile=BloodSampleData.profile(sample,replacement.properties());
+            var profile=BloodSampleData.profile(sample,false);
             h.assertTrue(replacement.responses().size()==1 && replacement.resolve(profile).benefits().getFirst().duration()==400,"Pack priority failed");
             BloodInjectionData.receive(replacement.json());
             h.assertTrue(BloodSampleData.identified(sample) && BloodInjectionData.snapshot(true).resolve(profile).benefits().getFirst().duration()==400,"Reload failed to refresh identified answer");
@@ -344,7 +354,7 @@ public final class BloodInjectionGameTests {
 
     @GameTest(template = "empty")
     public static void syringePreservesEmptyVialDataAndSkipsUnreadableSamples(GameTestHelper h) {
-        var player=h.makeMockPlayer(GameType.SURVIVAL);
+        var player=educatedPlayer(h);
         var rack=new ItemStack(ItemInit.vial_rack.get());var vials=VialRackItem.getVials(rack);
         vials.set(0,vial("missing:creature"));
         var empty=new ItemStack(ItemInit.bloody_vial.get());

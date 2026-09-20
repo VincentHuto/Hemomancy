@@ -58,7 +58,7 @@ public class HarbingerEquipmentScreen extends EffectRenderingInventoryScreen<Har
 	public HarbingerEquipmentScreen(HarbingerEquipmentMenu container, Inventory inventory, Component name) {
 		super(container, inventory, name);
 		this.playerInventory = inventory;
-		this.imageWidth = 214;
+		this.imageWidth = 232;
 		this.imageHeight = 198;
 		this.inventoryLabelX = 26;
 		this.inventoryLabelY = VANITY_AREA_HEIGHT + 4;
@@ -105,6 +105,8 @@ public class HarbingerEquipmentScreen extends EffectRenderingInventoryScreen<Har
 		renderLayerToggleIcons(graphics, mouseX, mouseY);
 		this.renderTooltip(graphics, mouseX, mouseY);
 		renderLayerToggleTooltip(graphics, mouseX, mouseY);
+        if(mouseX>=leftPos+198 && mouseX<leftPos+214 && mouseY>=topPos+38 && mouseY<topPos+54 && !menu.getSlot(45).hasItem())
+            graphics.renderTooltip(font,Component.translatable("hemomancy.antecedent.scar.socket"),mouseX,mouseY);
 		this.oldMouseX = mouseX;
 		this.oldMouseY = mouseY;
 	}

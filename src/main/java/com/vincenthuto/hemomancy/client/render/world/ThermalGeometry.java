@@ -4,6 +4,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
 import com.vincenthuto.hemomancy.common.manipulation.ManipulationVisuals.Form;
+import com.vincenthuto.hemomancy.common.entity.mob.arthropod.BombardierFlameGeometry;
 import com.vincenthuto.hemomancy.common.network.particle.ManipulationVisualPacket;
 import net.minecraft.util.Mth;
 import net.minecraft.world.phys.Vec3;
@@ -45,10 +46,10 @@ final class ThermalGeometry {
                 double length = Math.min(10, ray.length());
                 if (length < .01) break;
                 Vec3 direction = ray.normalize();
-                int count = Math.max(5, (int)Math.ceil(length * 1.5));
+                int count = BombardierFlameGeometry.visualSampleCount(length);
                 for (int i = 0; i < count; i++) {
-                    double along = length * (i + .35) / count;
-                    double curl = Math.sin(i * 2.39996 + time * .08) * .08;
+                    double along = BombardierFlameGeometry.visualSampleDistance(length, i, count);
+                    double curl = Math.sin(i * 2.39996 + time * .08) * (.045 + along / length * .055);
                     Vec3 at = direction.scale(along).add(right.scale(curl));
                     double taper = 1.0 - along / length * .55;
                     fire(p, flame, at, right, up, (.16 + random(seed, i) * .11) * taper,

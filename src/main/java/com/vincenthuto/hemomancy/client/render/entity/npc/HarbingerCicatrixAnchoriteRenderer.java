@@ -15,6 +15,7 @@ public class HarbingerCicatrixAnchoriteRenderer extends MobRenderer<HarbingerCic
 	public HarbingerCicatrixAnchoriteRenderer(Context context) {
 		super(context, new HarbingerCicatrixAnchoriteModel<>(
 				context.bakeLayer(HarbingerCicatrixAnchoriteModel.LAYER_LOCATION)), 0.5F);
+        addLayer(new SuccessionIdentityLayer<>(this));
 	}
 
 	@Override

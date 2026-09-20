@@ -268,6 +268,7 @@ public class HarbingerAlchemistModel<T extends HarbingerAlchemistEntity> extends
         this.SideclothR4.zRot = 0.1222F + Mth.sin(frame * 0.067F + 0.5F) * 0.03F + walkWave * 0.04F;
         this.SideclothR5.zRot = 0.2967F + Mth.sin(frame * 0.067F + 1.0F) * 0.035F + walkWave * 0.05F;
         this.SideclothR6.zRot = 0.5236F + Mth.sin(frame * 0.067F + 1.4F) * 0.04F + walkWave * 0.06F;
+        com.vincenthuto.hemomancy.client.render.entity.npc.SuccessionModelPose.apply(entity, head, body, leftArm, rightArm, leftLeg, rightLeg);
     }
 
 }

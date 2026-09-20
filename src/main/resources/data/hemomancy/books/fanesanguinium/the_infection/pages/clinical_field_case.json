@@ -1,0 +1,9 @@
+{
+  "type": "hutoslib:page",
+  "ordinality": 24,
+  "texture": "hemomancy:textures/gui/guide/page.png",
+  "title": "The Laboratory Abroad",
+  "subtitle": "Clinical blood study",
+  "text": "The Alchemist has referred you. Rebuild an empty Phlebotomist's Cabinet with leather and Hematic Iron Scraps; the recipe consumes the Cabinet. Reinforcement, shock-isolated cells, and secure catches preserve its indexing while carried. Place the Field Case before opening it. Its nine cells each hold sixteen matching vials, fewer than the Cabinet. Close every menu and wait for the lid to shut, then sneak-use with an empty hand to recover it. The carried case retains specimen identity and counts.",
+  "icon": "hemomancy:phlebotomists_field_case"
+}

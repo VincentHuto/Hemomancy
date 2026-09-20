@@ -12,6 +12,7 @@ import com.vincenthuto.hemomancy.common.entity.HemoEntityPredicates;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.inquiry.ItemInquiryLoader;
 import com.vincenthuto.hemomancy.common.init.*;
 import com.vincenthuto.hemomancy.common.item.harbinger.memories.LivingWeaponGraftItem;
+import com.vincenthuto.hemomancy.common.item.harbinger.ConsecratedSyringeItem;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.rite.floor.CardinalRiteFloorLoader;
 import com.vincenthuto.hemomancy.common.rite.sigil.IchorianSigilLoader;
@@ -165,8 +166,15 @@ public class Hemomancy {
         if (populator.getTabKey() == hemomancytab.getKey()) {
             var i = ItemInit.getAllItemEntriesAsStream();
             i.forEach(item -> {
-                if (shouldShowItemInCreativeTab(item.get()) && item.get() != ItemInit.fervent_husk.get()) {
-                    populator.accept(item.get());
+                if (shouldShowItemInCreativeTab(item.get()) && item.get() != ItemInit.fervent_husk.get()
+                        && item.get() != ItemInit.cleansing_hemolymph.get()
+                        && item.get() != ItemInit.consecrated_syringe.get()) {
+                    if (item.get() instanceof ConsecratedSyringeItem syringe) populator.accept(syringe.randomSaintStack());
+                    else populator.accept(item.get());
+                    if (item.get() == ItemInit.bloody_vial.get()) {
+                        populator.accept(ItemInit.cleansing_hemolymph.get());
+                        populator.accept(((ConsecratedSyringeItem) ItemInit.consecrated_syringe.get()).randomSaintStack());
+                    }
                     if (item.get() == ItemInit.chitinous_husk.get()) {
                         populator.accept(ItemInit.fervent_husk.get());
                     }
@@ -351,6 +359,7 @@ public class Hemomancy {
 
     private void onAddReloadListeners(AddReloadListenerEvent event) {
         event.addListener(new com.vincenthuto.hemomancy.common.item.harbinger.BloodInjectionData());
+        event.addListener(new com.vincenthuto.hemomancy.common.item.harbinger.BloodProfileData());
         event.addListener(new com.vincenthuto.hemomancy.common.tile.harbinger.functional.ClairaudiographCatalogue());
         event.addListener(new ItemInquiryLoader());
         event.addListener(new DiscoveryInscriptionLoader());

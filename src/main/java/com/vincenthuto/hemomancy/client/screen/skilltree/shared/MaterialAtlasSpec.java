@@ -130,10 +130,15 @@ public final class MaterialAtlasSpec {
 		entryAt("blood_chum", h, "new_category", a(), 1000, 444, "bleeding_bulb", "dried_leech");
 		entryAt("foul_paste", h, "alchemy_enzymes", a(), 1082, 776, "stinkhorn_fungus", "infected_fungus");
 		entryAt("bloody_jug", h, "alchemy_enzymes", d(2), 349, 525, "bloody_flask");
-		entryAt("vial_rack", h, "alchemy_enzymes", d(2), 760, 963, "bloody_vial");
+		entryAt("vial_rack", h, "alchemy_enzymes", d(1), 760, 963, "living_syringe");
 		entryAt("blood_gourd_white", h, "alchemy_enzymes", d(2), 697, 484);
 		entryAt("ghastly_alembic", h, "alchemy_enzymes", d(2), 349, 435);
-		entryAt("vial_centrifuge", h, "alchemy_enzymes", d(2), 805, 963, "vial_rack");
+		entryAt("hematic_microscope", h, "alchemy_enzymes", d(1), 1080, 963, "living_syringe");
+        entryAt("phlebotomists_cabinet", h, "alchemy_enzymes", d(1), 1190, 963, "hematic_microscope");
+        entryAt("phlebotomists_field_case", h, "alchemy_enzymes", d(2), 1300, 963, "phlebotomists_cabinet");
+        entryAt("clairaudiograph", h, "alchemy_enzymes", d(3), 1190, 1050, "hematic_microscope");
+        entryAt("ambergris_cylinder", h, "alchemy_enzymes", d(3), 1300, 1050, "clairaudiograph");
+		entryAt("vial_centrifuge", h, "alchemy_enzymes", d(1), 805, 963, "bloody_vial");
 		entryAt("ferric_enzyme", h, "alchemy_enzymes", d(2), 900, 961, "recycled_enzyme");
 		entryAt("fervent_enzyme", h, "alchemy_enzymes", d(2), 979, 922, "recycled_enzyme");
 		entryAt("frigid_enzyme", h, "alchemy_enzymes", d(2), 900, 998, "recycled_enzyme");
@@ -142,7 +147,7 @@ public final class MaterialAtlasSpec {
 		entryAt("recycled_enzyme", h, "alchemy_enzymes", d(2), 939, 968, "vial_centrifuge");
 		entryAt("ruinous_enzyme", h, "alchemy_enzymes", d(2), 940, 1006, "recycled_enzyme");
 		entryAt("umbral_enzyme", h, "alchemy_enzymes", d(2), 900, 922, "recycled_enzyme");
-		entryAt("vivacious_enzyme", h, "alchemy_enzymes", d(2), 940, 903, "recycled_enzyme");
+		entryAt("vivacious_enzyme", h, "alchemy_enzymes", d(1), 940, 903, "vial_centrifuge");
 		entryAt("aculeate_vitriol", h, "new_category", d(3), 1170, 310, "toxicognath", "telson", "calcified_blood_spine");
 		entryAt("chromatic_sublimate", h, "new_category", d(3), 1170, 345, "cuttlefish_chromatophores", "puppeteering_thread", "serpent_scale");
 		entryAt("fervent_husk", h, "new_category", d(3), 1220, 275, "sclerotic_oleum");
@@ -192,7 +197,7 @@ public final class MaterialAtlasSpec {
 		entryAt("morphling_winter_shroud", h, "morphlings", d(3), 1284, 1104, "morphling_polyp");
 		entryAt("scar_station", h, "scars_patterns", d(4), 401, 275, "mason_effigy");
 		entryAt("scar_blank", h, "scars_patterns", d(4), 349, 260, "scar_station");
-		entryAt("living_syringe", h, "alchemy_enzymes", d(2), 805, 1006, "vial_centrifuge");
+		entryAt("living_syringe", h, "alchemy_enzymes", d(1), 805, 1006, "vivacious_enzyme");
 		entryAt("puppeteering_thread", h, "new_category", d(2), 1055, 345);
 		entryAt("hematic_iron_knapper", h, "living_implements", d(2), 284, 760, "hematic_iron_scrap");
 		entryAt("hematic_iron_sword", h, "living_implements", d(2), 284, 796, "hematic_iron_scrap");

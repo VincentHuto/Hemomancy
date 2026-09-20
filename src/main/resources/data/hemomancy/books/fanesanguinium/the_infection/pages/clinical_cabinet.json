@@ -1,0 +1,9 @@
+{
+  "type": "hutoslib:page",
+  "ordinality": 22,
+  "texture": "hemomancy:textures/gui/guide/page.png",
+  "title": "Phlebotomist's Cabinet",
+  "subtitle": "Clinical blood study",
+  "text": "Three distinct sources, properly examined. A specimen without provenance is refuse. A collection without order is merely a cupboard full of coagulation. Your Cabinet recipe is now recorded. Its nine pigeonholes each hold 64 full vials of one component-identical specimen. Source, identification, names, and every other component must match. Click a vial into a cell; click with an empty cursor to withdraw one. Fit a clear glass pane for viewing; sneak-use a Knapper to remove it. Craft a Cabinet, then store and withdraw a sample.",
+  "icon": "hemomancy:phlebotomists_cabinet"
+}

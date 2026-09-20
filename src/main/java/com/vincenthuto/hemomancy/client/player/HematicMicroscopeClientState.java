@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.client.player;
 
+import com.vincenthuto.hemomancy.common.item.harbinger.BloodProfileData;
 import com.vincenthuto.hemomancy.client.rite.CardinalRiteStaffPlantingClientState;
 import com.vincenthuto.hemomancy.client.sound.MicroscopeExaminationSound;
 import com.vincenthuto.hemomancy.common.item.harbinger.BloodInjectionData;
@@ -80,6 +81,7 @@ public final class HematicMicroscopeClientState {
         public final PacketHematicMicroscopeViewing packet;
         public final HematicMicroscopePlayback playback;
         private final BloodInjectionData.Snapshot definitions = BloodInjectionData.snapshot(true);
+        private final BloodProfileData.Snapshot profiles = BloodProfileData.snapshot(true);
         private final int selectedSlot;
         private final long receivedAt;
         private MicroscopeExaminationSound sound;
@@ -94,6 +96,7 @@ public final class HematicMicroscopeClientState {
             if (!player.isAlive() || player.isRemoved() || player.isSpectator()
                     || CardinalRiteStaffPlantingClientState.isAnimating(player) || WarpChairPlayerPose.isSeated(player)
                     || definitions != BloodInjectionData.snapshot(true)
+                    || profiles != BloodProfileData.snapshot(true)
                     || !ItemStack.matches(player.getMainHandItem(), packet.instrument())
                     || !sameSample(player.getOffhandItem(), packet.sample())) return false;
             if (player == Minecraft.getInstance().player && Minecraft.getInstance().player.getInventory().selected != selectedSlot) return false;

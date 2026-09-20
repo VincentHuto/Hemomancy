@@ -1,0 +1,9 @@
+{
+  "tendencies": [
+    "animus"
+  ],
+  "properties": [
+    "blood_injection_validation:blood_properties/test_unknown"
+  ],
+  "requires_living_syringe": false
+}

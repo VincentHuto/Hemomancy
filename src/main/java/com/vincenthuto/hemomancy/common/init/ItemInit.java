@@ -213,7 +213,10 @@ public class ItemInit {
             () -> new Item(new Item.Properties().rarity(Rarity.UNCOMMON)));
     public static final DeferredHolder<Item, Item> erythrocoral_fragment = BASEITEMS.register("erythrocoral_fragment",
             () -> new Item(new Item.Properties().rarity(Rarity.UNCOMMON)));
+    public static final DeferredHolder<Item, Item> listening_scar = SPECIALITEMS.register("listening_scar", com.vincenthuto.hemomancy.common.antecedent.ListeningScarItem::new);
     public static final DeferredHolder<Item, Item> ambergris_cylinder = SPECIALITEMS.register("ambergris_cylinder", com.vincenthuto.hemomancy.common.item.harbinger.AmbergrisCylinderItem::new);
+    public static final DeferredHolder<Item, Item> bound_mnemonic_remnant = BASEITEMS.register("bound_mnemonic_remnant",
+            () -> new com.vincenthuto.hemomancy.common.succession.BoundMnemonicRemnantItem(new Item.Properties()));
     public static final DeferredHolder<Item, Item> mnemonic_ambergris = BASEITEMS.register("mnemonic_ambergris",
             () -> new Item(new Item.Properties().rarity(Rarity.UNCOMMON)));
     public static final DeferredHolder<Item, Item> salt_stained_voyager_log = BASEITEMS.register("salt_stained_voyager_log",
@@ -712,6 +715,8 @@ public class ItemInit {
             () -> new BloodyFlaskItem(new Item.Properties(), 5000));
     public static final DeferredHolder<Item, Item> bloody_vial = SPECIALITEMS.register("bloody_vial",
             () -> new BloodVialItem(new Item.Properties()));
+    public static final DeferredHolder<Item, Item> ahaematic_colloid = SPECIALITEMS.register("ahaematic_colloid",
+            com.vincenthuto.hemomancy.common.antecedent.AhaematicColloidItem::new);
     public static final DeferredHolder<Item, Item> vial_rack = SPECIALITEMS.register("vial_rack",
             () -> new VialRackItem(new Item.Properties()));
     public static final DeferredHolder<Item, Item> morphling_jar = SPECIALITEMS.register("morphling_jar",

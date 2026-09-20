@@ -28,6 +28,11 @@ public class ClairaudiographRenderer implements BlockEntityRenderer<Clairaudiogr
             pose.pushPose();pose.translate(.83,.34,.7);pose.scale(.3F,.3F,.3F);
             mc.getItemRenderer().renderStatic(be.inventory.getStackInSlot(0),ItemDisplayContext.FIXED,light,overlay,pose,buffers,be.getLevel(),0);pose.popPose();
         }
+        if(com.vincenthuto.hemomancy.common.antecedent.AhaematicSample.is(be.inventory.getStackInSlot(0))) {
+            pose.pushPose();pose.translate(.71,.21,.58);pose.scale(.25F,.7F,.25F);
+            float response=be.playing() && be.program()!=null && be.program().unresolved(be.elapsed())?Math.clamp((be.elapsed()-1100)/180F,0,1):0;
+            AntecedentVesselRenderer.draw(pose,buffers,light,overlay,time,response,false,false);pose.popPose();
+        }
         if(be.progress>0){
             pose.pushPose();float travel=(time%16)/16F;pose.translate(.8-travel*.25,.23,.69-travel*.23);
             var feed=mc.getModelManager().getModel(ModelResourceLocation.standalone(Hemomancy.rloc("block/clairaudiograph_feed")));

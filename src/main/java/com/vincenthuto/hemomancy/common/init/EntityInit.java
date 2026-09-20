@@ -52,16 +52,7 @@ public class EntityInit {
     public static final DeferredRegister<EntityType<?>> ENTITY_TYPES = DeferredRegister.create(Registries.ENTITY_TYPE,
             Hemomancy.MOD_ID);
 
-    public static final TagKey<EntityType<?>> FUNGAL_TAG = createTag("fungal");
 
-    public static final TagKey<EntityType<?>> UMBRAL_TAG = createTag("umbral");
-    public static final TagKey<EntityType<?>> INCANDESCENT_TAG = createTag("incandescent");
-    public static final TagKey<EntityType<?>> FERRIC_TAG = createTag("ferric");
-    public static final TagKey<EntityType<?>> VIVACIOUS_TAG = createTag("vivacious");
-    public static final TagKey<EntityType<?>> RUINOUS_TAG = createTag("ruinous");
-    public static final TagKey<EntityType<?>> NEUROTIC_TAG = createTag("neurotic");
-    public static final TagKey<EntityType<?>> FERVENT_TAG = createTag("fervent");
-    public static final TagKey<EntityType<?>> FRIGID_TAG = createTag("frigid");
     public static final TagKey<EntityType<?>> HEMOMANCY_MOB = createTag("hemomancy_mob");
     public static final TagKey<EntityType<?>> SPECIMEN_JAR_CAPTURABLE = createTag("specimen_jar_capturable");
     public static final TagKey<EntityType<?>> WILLS = createTag("wills");

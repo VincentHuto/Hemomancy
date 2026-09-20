@@ -31,6 +31,8 @@ import java.util.Optional;
 import java.util.UUID;
 
 public class PhlegethonticBombardier extends PathfinderMob implements NeutralMob {
+    public static final int SPAWN_HABITAT_HORIZONTAL_RANGE = 6;
+    public static final int SPAWN_HABITAT_VERTICAL_RANGE = 4;
     public static final int WINDUP_DURATION = 30;
     public static final int AIM_TRACKING_TICKS = 22;
     public static final int FLAME_DURATION = 16;
@@ -110,8 +112,7 @@ public class PhlegethonticBombardier extends PathfinderMob implements NeutralMob
         if (territoryAnchor != null && BombardierHabitat.isGrowth(level(), territoryAnchor)) return;
         if (++habitatCheckTicks < 100) return;
         habitatCheckTicks = 0;
-        territoryAnchor = BombardierHabitat.findNearestSupport(level(), blockPosition(), 12, 6)
-                .flatMap(feet -> BombardierHabitat.resolveComponentAnchor(level(), feet.below(), 256)).orElse(null);
+        territoryAnchor = findTerritoryAnchor(level(), blockPosition()).orElse(null);
     }
 
     private void returnToTerritory() {
@@ -282,17 +283,23 @@ public class PhlegethonticBombardier extends PathfinderMob implements NeutralMob
                                    MobSpawnType reason, BlockPos pos, RandomSource random) {
         return level.getDifficulty() != Difficulty.PEACEFUL
                 && level.getBiome(pos).is(BiomeInit.PHLEGETHONTIC_BASIN)
-                && BombardierHabitat.isValidSupport(level, pos)
+                && BombardierHabitat.findNearestGrowth(level, pos, SPAWN_HABITAT_HORIZONTAL_RANGE,
+                        SPAWN_HABITAT_VERTICAL_RANGE).isPresent()
                 && level.noCollision(type.getSpawnAABB(pos.getX() + .5, pos.getY(), pos.getZ() + .5));
     }
 
     @Override @Nullable public SpawnGroupData finalizeSpawn(ServerLevelAccessor level, DifficultyInstance difficulty,
                                                              MobSpawnType reason, @Nullable SpawnGroupData data) {
         SpawnGroupData result = super.finalizeSpawn(level, difficulty, reason, data);
-        territoryAnchor = BombardierHabitat.findNearestSupport(level, blockPosition(), 12, 6)
-                .flatMap(feet -> BombardierHabitat.resolveComponentAnchor(level, feet.below(), 256)).orElse(null);
+        territoryAnchor = findTerritoryAnchor(level, blockPosition()).orElse(null);
         if ((reason == MobSpawnType.NATURAL || reason == MobSpawnType.CHUNK_GENERATION) && territoryAnchor == null) discard();
         return result;
+    }
+
+    private static Optional<BlockPos> findTerritoryAnchor(net.minecraft.world.level.LevelReader level, BlockPos origin) {
+        return BombardierHabitat.findNearestGrowth(level, origin, SPAWN_HABITAT_HORIZONTAL_RANGE,
+                        SPAWN_HABITAT_VERTICAL_RANGE)
+                .flatMap(growth -> BombardierHabitat.resolveComponentAnchor(level, growth, 256));
     }
 
     @Override public void addAdditionalSaveData(CompoundTag tag) {

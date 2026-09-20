@@ -1,0 +1,11 @@
+{
+  "tendencies": [
+    "animus"
+  ],
+  "properties": [
+    "hemomancy:blood_properties/arthropod",
+    "hemomancy:blood_properties/flying",
+    "hemomancy:blood_properties/venomous"
+  ],
+  "requires_living_syringe": false
+}

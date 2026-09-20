@@ -1,0 +1,9 @@
+{
+  "tendencies": [
+    "animus"
+  ],
+  "properties": [
+    "hemomancy:blood_properties/aquatic"
+  ],
+  "requires_living_syringe": false
+}

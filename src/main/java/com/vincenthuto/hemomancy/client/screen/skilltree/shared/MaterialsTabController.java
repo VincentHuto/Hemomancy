@@ -78,6 +78,8 @@ public class MaterialsTabController implements IProgressTab {
 
 		List<MaterialAtlasNode> visibleEntries = new ArrayList<>();
 		for (MaterialEntry material : rawEntries) {
+            if (!com.vincenthuto.hemomancy.common.mission.alchemist.ClinicalBloodKnowledge.recipeVisible(
+                    player, com.vincenthuto.hemomancy.Hemomancy.rloc(material.name()))) continue;
 			MaterialAtlasEntry atlasEntry = MaterialAtlasSpec.entryFor(path, material);
 			MaterialVisibility visibility = atlasEntry.gate().visibilityFor(path,
 					progress.degree(), progress.purity(), progress.clarity());

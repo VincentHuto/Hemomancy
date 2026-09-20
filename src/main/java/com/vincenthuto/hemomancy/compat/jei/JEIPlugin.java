@@ -19,6 +19,11 @@ import javax.annotation.Nonnull;
 
 @JeiPlugin
 public class JEIPlugin implements IModPlugin {
+    @Override public void onRuntimeAvailable(mezz.jei.api.runtime.IJeiRuntime runtime) {
+        ClinicalRecipeVisibility.runtime(runtime);
+    }
+    @Override public void onRuntimeUnavailable() { ClinicalRecipeVisibility.runtime(null); }
+
 
 	private static final ResourceLocation ID = Hemomancy.rloc("main");
 	public static final RecipeType<DistillationRecipe> ghastly_distillation_recipe_type = RecipeType
@@ -56,6 +61,7 @@ public class JEIPlugin implements IModPlugin {
 
 	@Override
 	public void registerCategories(IRecipeCategoryRegistration registry) {
+		registry.addRecipeCategories(new SuccessionRecipeCategory(registry.getJeiHelpers().getGuiHelper()));
 		registry.addRecipeCategories(new DistillationRecipeCategory(registry.getJeiHelpers().getGuiHelper(), false));
 		registry.addRecipeCategories(new DistillationRecipeCategory(registry.getJeiHelpers().getGuiHelper(), true));
 		registry.addRecipeCategories(new MemoryWeavingRecipeCategory(registry.getJeiHelpers().getGuiHelper()));
@@ -74,6 +80,8 @@ public class JEIPlugin implements IModPlugin {
 
 	@Override
 	public void registerRecipeCatalysts(IRecipeCatalystRegistration registry) {
+		registry.addRecipeCatalyst(new ItemStack(BlockInit.cardinal_focus.get()), SuccessionRecipeCategory.TYPE);
+		registry.addRecipeCatalyst(new ItemStack(ItemInit.living_staff.get()), SuccessionRecipeCategory.TYPE);
 		registry.addRecipeCatalyst(new ItemStack(BlockInit.ghastly_alembic.get()), ghastly_distillation_recipe_type);
 		registry.addRecipeCatalyst(new ItemStack(BlockInit.pallid_retort.get()), pallid_distillation_recipe_type);
 		registry.addRecipeCatalyst(new ItemStack(BlockInit.somatic_loom.get()), memory_weaving_type);
@@ -106,6 +114,8 @@ public class JEIPlugin implements IModPlugin {
 		registry.addRecipes(memory_weaving_type, MemoryWeavingRecipe.getAllRecipes(world));
 		registry.addRecipes(armature_upgrade_type, ArmatureUpgradeRecipe.getAllRecipes(world));
 		registry.addRecipes(blood_structure_recipe_type, BloodStructureRecipe.getAllRecipes(world));
+		registry.addRecipes(SuccessionRecipeCategory.TYPE, CardinalRiteRecipe.getAllRecipes(world).stream()
+				.filter(recipe -> com.vincenthuto.hemomancy.common.succession.SuccessionRites.isRecipe(recipe.getId())).toList());
 		registry.addRecipes(blood_infusion_recipe_type, BloodInfusionRecipe.getAllRecipes(world));
 		registry.addRecipes(scar_station_recipe_type, ScarRecipe.getAllRecipes(world));
 		registry.addRecipes(incubator_recipe_type, IncubatorRecipe.getAllRecipes(world));

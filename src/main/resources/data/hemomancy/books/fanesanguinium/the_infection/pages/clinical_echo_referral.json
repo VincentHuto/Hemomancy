@@ -1,0 +1,9 @@
+{
+  "type": "hutoslib:page",
+  "ordinality": 25,
+  "texture": "hemomancy:textures/gui/guide/page.png",
+  "title": "Beyond Ordinary Analysis",
+  "subtitle": "Clinical blood study",
+  "text": "I can establish whose blood this is and which properties it bears. The residual auditory pattern is another matter. An Echo Shard suggests a retained expression, not another physiological tendency. Seek the Mnemonist. You have enough observations to ask the question at Degree 2; formal recording instruction begins at Degree 3.",
+  "icon": "hemomancy:clairaudiograph"
+}

@@ -3,6 +3,8 @@ package com.vincenthuto.hemomancy.common.entity.mob.arthropod;
 import net.minecraft.world.phys.Vec3;
 
 public final class BombardierFlameGeometry {
+    private static final double VISUAL_SAMPLE_EXPONENT = 2.2;
+
     private BombardierFlameGeometry() {}
 
     public static Vec3 sweepDirection(Vec3 lockedDirection, int flameTick, int flameDuration, double sweepDegrees) {
@@ -30,6 +32,17 @@ public final class BombardierFlameGeometry {
         if (distance < 1.0E-12 || distance > maxRange * maxRange) return false;
         double minimumDot = Math.cos(Math.toRadians(halfAngleDegrees));
         return offset.normalize().dot(direction.normalize()) >= minimumDot;
+    }
+
+    public static int visualSampleCount(double length) {
+        if (!Double.isFinite(length) || length <= 0) return 0;
+        return Math.max(8, (int) Math.ceil(length * 2.4));
+    }
+
+    public static double visualSampleDistance(double length, int index, int count) {
+        if (!Double.isFinite(length) || length <= 0 || count <= 0) return 0;
+        double progress = Math.max(0.0, Math.min(1.0, (index + .35) / count));
+        return length * Math.pow(progress, VISUAL_SAMPLE_EXPONENT);
     }
 
     private static boolean finite(Vec3 vector) {

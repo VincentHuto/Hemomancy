@@ -1,11 +1,14 @@
 package com.vincenthuto.hemomancy.common.item.harbinger.tool.living;
 
+import com.vincenthuto.hemomancy.common.item.harbinger.BloodProfileData;
 import com.vincenthuto.hemomancy.client.particle.util.EntityParticleUtils;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.item.harbinger.BloodSamplingResult;
 import com.vincenthuto.hemomancy.common.item.harbinger.BloodSamplingRules;
 import com.vincenthuto.hemomancy.common.item.harbinger.BloodVialItem;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
+import net.minecraft.ChatFormatting;
+import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.core.component.DataComponents;
@@ -45,10 +48,17 @@ public class LivingSyringeItem extends LivingItem {
 	@Override
 	public void appendHoverText(ItemStack stack, Item.TooltipContext context, List<Component> tooltip, TooltipFlag flagIn) {
 		super.appendHoverText(stack, context, tooltip, flagIn);
+		tooltip.add(Component.translatable("item.hemomancy.living_syringe.restricted_samples").withStyle(ChatFormatting.GRAY));
 		if (hasLoadedRack(stack)) {
 			ItemStack rack = getLoadedRack(stack);
 			tooltip.add(Component.translatable("item.hemomancy.living_syringe.loaded",
 					VialRackItem.countEmptyVials(rack), VialRackItem.MAX_VIALS));
+			if (Screen.hasShiftDown()) {
+				VialRackItem.appendContentsTooltip(rack, tooltip);
+			} else if (VialRackItem.countEmptyVials(rack) < VialRackItem.MAX_VIALS) {
+				tooltip.add(Component.translatable("item.hemomancy.vial_rack.shift_hint")
+						.withStyle(ChatFormatting.DARK_GRAY, ChatFormatting.ITALIC));
+			}
 		}
 	}
 
@@ -77,6 +87,7 @@ public class LivingSyringeItem extends LivingItem {
 		if (hasLoadedRack(stack)) {
 			ItemStack rack = getLoadedRack(stack);
 			VialRackItem.ensureInitialized(rack);
+			if (!worldIn.isClientSide) VialRackItem.migrateAhaematicSamples(rack);
 			setLoadedRack(stack, rack);
 		}
 	}
@@ -90,7 +101,7 @@ public class LivingSyringeItem extends LivingItem {
 			return InteractionResult.sidedSuccess(player.level().isClientSide);
 		}
 		if (!player.level().isClientSide) {
-			return fillVialFromTarget(player, target, stack);
+			return fillVialFromTarget(player, target, stack, null, "");
 		}
 		return InteractionResult.sidedSuccess(true);
 	}
@@ -110,10 +121,41 @@ public class LivingSyringeItem extends LivingItem {
 		return InteractionResultHolder.sidedSuccess(syringe, worldIn.isClientSide);
 	}
 
-	private InteractionResult fillVialFromTarget(Player player, LivingEntity target, ItemStack syringe) {
+    @Override public InteractionResult useOn(net.minecraft.world.item.context.UseOnContext context) {
+        var player = context.getPlayer();
+        var level = context.getLevel();
+        if (player == null || player.isShiftKeyDown() || !level.getBlockState(context.getClickedPos()).is(net.minecraft.world.level.block.Blocks.SCULK_CATALYST)) return super.useOn(context);
+        if (level.isClientSide) return InteractionResult.SUCCESS;
+        var syringe = context.getItemInHand();
+        if (!hasLoadedRack(syringe) && !loadRackFromInventory(player, syringe)) return InteractionResult.FAIL;
+        var rack = getLoadedRack(syringe);
+        int slot = VialRackItem.findFirstEmptyVialSlot(rack);
+        if (slot < 0) return InteractionResult.FAIL;
+        var vials = VialRackItem.getVials(rack);
+        var vial = com.vincenthuto.hemomancy.common.antecedent.AhaematicSample.create("block", "minecraft:sculk_catalyst");
+        vials.set(slot, vial);
+        VialRackItem.setVials(rack, vials);
+        setLoadedRack(syringe, rack);
+        level.gameEvent(player, net.minecraft.world.level.gameevent.GameEvent.BLOCK_CHANGE, context.getClickedPos());
+        level.playSound(null, context.getClickedPos(), net.minecraft.sounds.SoundEvents.SCULK_CATALYST_BLOOM, net.minecraft.sounds.SoundSource.BLOCKS, .5F, .8F);
+        return InteractionResult.CONSUME;
+    }
+    /** The dialogue validates consent before requesting an authenticated donation. */
+    public InteractionResult collectDonation(net.minecraft.server.level.ServerPlayer player,
+            com.vincenthuto.hemomancy.common.succession.ProfessionalHarbingerEntity donor,
+            java.util.UUID bloodline, String profession) {
+        var syringe = player.getMainHandItem();
+        if (syringe.getItem() != this) return InteractionResult.FAIL;
+        return fillVialFromTarget(player, donor, syringe, bloodline, profession);
+    }
+
+	private InteractionResult fillVialFromTarget(Player player, LivingEntity target, ItemStack syringe,
+            java.util.UUID donorBloodline, String donorProfession) {
 		var targetId = BuiltInRegistries.ENTITY_TYPE.getKey(target.getType());
+        // Original professionals are protected; their consent-based donation is still permitted.
 		BloodSamplingResult samplingResult = BloodSamplingRules.evaluate(false, true, target.isAlive(),
-				target.isInvulnerable(), targetId != null);
+				target.isInvulnerable() && donorBloodline == null, targetId != null,
+                BloodProfileData.profile(target.getType(), false).requiresLivingSyringe(), true);
 		if (samplingResult != BloodSamplingResult.SUCCESS) {
 			player.displayClientMessage(Component.translatable(samplingResult.translationKey(), target.getDisplayName()), true);
 			return InteractionResult.FAIL;
@@ -135,10 +177,15 @@ public class LivingSyringeItem extends LivingItem {
 		vialTag.putString(BloodVialItem.TAG_ENTITY_TYPE, targetId.toString());
 		vialTag.putBoolean(BloodVialItem.TAG_STATE, true);
 		sampledVial.set(DataComponents.CUSTOM_DATA, CustomData.of(vialTag));
+        if (donorBloodline != null) com.vincenthuto.hemomancy.common.succession.SuccessionSamples.fill(sampledVial, target, donorBloodline, donorProfession);
+        else if (target instanceof Player donor) com.vincenthuto.hemomancy.common.succession.SuccessionSamples.fill(sampledVial, donor, null, "");
         sampledVial.remove(com.vincenthuto.hemomancy.common.init.DataComponentInit.BLOOD_SAMPLE_IDENTIFIED.get());
+        if (target.getType() == net.minecraft.world.entity.EntityType.WARDEN)
+            sampledVial = com.vincenthuto.hemomancy.common.antecedent.AhaematicSample.create("entity", "minecraft:warden");
 		vials.set(emptySlot, sampledVial);
 		VialRackItem.setVials(rack, vials);
 		setLoadedRack(syringe, rack);
+        com.vincenthuto.hemomancy.common.mission.alchemist.ClinicalBloodKnowledge.collected(player, sampledVial);
 		player.playSound(SoundEvents.BOTTLE_FILL, 2.0F, 0.8F);
 		player.displayClientMessage(Component.translatable(BloodSamplingResult.SUCCESS.translationKey(),
 				target.getDisplayName()), true);

@@ -14,6 +14,7 @@ public class HarbingerVicarRenderer extends MobRenderer<HarbingerVicarEntity, Ha
 
     public HarbingerVicarRenderer(Context context) {
         super(context, new HarbingerVicarModel<>(context.bakeLayer(HarbingerVicarModel.LAYER_LOCATION)), 0.5F);
+        addLayer(new SuccessionIdentityLayer<>(this));
     }
 
     @Override

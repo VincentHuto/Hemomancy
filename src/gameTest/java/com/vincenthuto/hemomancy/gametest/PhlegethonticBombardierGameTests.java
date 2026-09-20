@@ -72,6 +72,47 @@ public final class PhlegethonticBombardierGameTests {
         helper.succeed();
     }
 
+    @GameTest(batch = "phlegethontic_bombardier", template = ROOM, timeoutTicks = 20)
+    public static void naturalSpawnAcceptsSafeGroundNearOvergrowth(GameTestHelper helper) {
+        var level = helper.getLevel();
+        BlockPos spawn = helper.absolutePos(new BlockPos(8, 4, 8));
+        BlockPos growth = helper.absolutePos(new BlockPos(13, 4, 8));
+        var basin = level.registryAccess().registryOrThrow(Registries.BIOME)
+                .getHolderOrThrow(BiomeInit.PHLEGETHONTIC_BASIN);
+        level.getChunk(spawn).fillBiomesFromNoise((x, y, z, sampler) -> basin,
+                level.getChunkSource().randomState().sampler());
+        level.setBlockAndUpdate(spawn.below(), Blocks.NETHERRACK.defaultBlockState());
+        level.setBlockAndUpdate(spawn, Blocks.AIR.defaultBlockState());
+        level.setBlockAndUpdate(spawn.above(), Blocks.AIR.defaultBlockState());
+        level.setBlockAndUpdate(growth, BlockInit.escharian_overgrowth.get().defaultBlockState());
+
+        var type = EntityInit.phlegethontic_bombardier.get();
+        helper.assertTrue(SpawnPlacements.isSpawnPositionOk(type, level, spawn),
+                "ordinary solid ground near a colony must satisfy the ground placement");
+        helper.assertTrue(SpawnPlacements.checkSpawnRules(type, level, MobSpawnType.NATURAL, spawn, level.random),
+                "Bombardiers must naturally spawn on safe ground near Escharian Overgrowth");
+        helper.succeed();
+    }
+
+    @GameTest(batch = "phlegethontic_bombardier", template = ROOM, timeoutTicks = 20)
+    public static void naturalSpawnKeepsNearbyOvergrowthTerritory(GameTestHelper helper) {
+        var level = helper.getLevel();
+        BlockPos spawn = helper.absolutePos(new BlockPos(8, 4, 8));
+        BlockPos growth = helper.absolutePos(new BlockPos(13, 4, 8));
+        level.setBlockAndUpdate(growth, BlockInit.escharian_overgrowth.get().defaultBlockState());
+
+        var bombardier = EntityInit.phlegethontic_bombardier.get().create(level);
+        helper.assertTrue(bombardier != null, "Bombardier entity creation failed");
+        bombardier.moveTo(spawn.getX() + .5, spawn.getY(), spawn.getZ() + .5, 0, 0);
+        bombardier.finalizeSpawn(level, level.getCurrentDifficultyAt(spawn), MobSpawnType.NATURAL, null);
+
+        helper.assertTrue(!bombardier.isRemoved(),
+                "a natural Bombardier near Overgrowth must not discard itself during finalization");
+        helper.assertTrue(bombardier.getTerritoryAnchor().filter(growth::equals).isPresent(),
+                "a natural Bombardier must anchor to the nearby Overgrowth colony");
+        helper.succeed();
+    }
+
     @GameTest(batch = "phlegethontic_bombardier", template = ROOM, timeoutTicks = 30)
     public static void harmAlertsOnlyTheStoredOutcropping(GameTestHelper helper) {
         var first = helper.spawn(EntityInit.phlegethontic_bombardier.get(), new BlockPos(8, 4, 8));

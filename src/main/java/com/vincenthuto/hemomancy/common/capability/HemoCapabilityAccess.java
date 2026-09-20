@@ -37,6 +37,11 @@ import java.util.Map;
 import java.util.Optional;
 
 public final class HemoCapabilityAccess {
+public static com.vincenthuto.hemomancy.common.antecedent.AntecedentResearch antecedent(Player player) { return player.getData(HemoAttachmentTypes.ANTECEDENT); }
+public static com.vincenthuto.hemomancy.common.mission.alchemist.ClinicalBloodProgress clinicalBlood(Player player) {
+    return player.getData(HemoAttachmentTypes.CLINICAL_BLOOD);
+}
+
 
 private HemoCapabilityAccess() {}
 

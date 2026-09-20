@@ -1,0 +1,8 @@
+{
+  "tendencies": [],
+  "properties": [
+    "hemomancy:blood_properties/ender",
+    "hemomancy:blood_properties/flying"
+  ],
+  "requires_living_syringe": true
+}

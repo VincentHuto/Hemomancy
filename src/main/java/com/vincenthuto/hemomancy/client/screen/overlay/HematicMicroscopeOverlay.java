@@ -4,6 +4,7 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.math.Axis;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
+import com.vincenthuto.hemomancy.common.entity.boss.saint.EnumSaintType;
 import com.vincenthuto.hemomancy.common.item.harbinger.*;
 import com.vincenthuto.hemomancy.config.HemoClientConfig;
 import net.minecraft.client.Minecraft;
@@ -28,6 +29,16 @@ public final class HematicMicroscopeOverlay {
     private static final ResourceLocation DIMMING = texture("screen_dimming"), READOUT = texture("readout");
     private static final ResourceLocation PROGRESS_TRACK = texture("progress_track"), PROGRESS_FILL = texture("progress_fill");
     private static final ResourceLocation DUCTILIS_LINK = texture("ductilis_link");
+    private static final ResourceLocation COLLOID_INCLUSION = texture("colloid_inclusion"), COLLOID_SIGNAL = texture("colloid_signal"),
+            COLLOID_DIRECTION = texture("colloid_direction");
+    private static final ResourceLocation HEMOLYMPH_CELL = texture("special/hemolymph_cell");
+    private static final ResourceLocation HEMOLYMPH_SPOT = texture("special/hemolymph_spot");
+    private static final ResourceLocation HEMOLYMPH_FILAMENT = texture("special/hemolymph_filament");
+    private static final ResourceLocation HEMOLYMPH_PLASMA = texture("special/hemolymph_plasma");
+    private static final ResourceLocation HEMORATH_IRON = texture("special/hemorath_iron"), HEMORATH_VOID = texture("special/hemorath_void");
+    private static final ResourceLocation SERAPHAE_HALO = texture("special/seraphae_halo"), SERAPHAE_MOTE = texture("special/seraphae_mote");
+    private static final ResourceLocation PUTRICIEL_EMBER = texture("special/putriciel_ember"), PUTRICIEL_SPORE = texture("special/putriciel_spore");
+    private static final ResourceLocation VELORUM_CRYSTAL = texture("special/velorum_crystal"), VELORUM_SHADOW = texture("special/velorum_shadow");
     private static final ResourceLocation BASE_CELL = Hemomancy.rloc("textures/particle/particle_blood_cell.png");
     private static float opacity = 1;
     private HematicMicroscopeOverlay() {}
@@ -38,15 +49,16 @@ public final class HematicMicroscopeOverlay {
         var player = mc.player;
         if (player == null || mc.level == null || !mc.options.getCameraType().isFirstPerson() || mc.options.hideGui || !player.isAlive() || player.isSpectator()
                 || !player.isUsingItem() || !(player.getUseItem().getItem() instanceof HematicMicroscopeItem)
-                || !(player.getOffhandItem().getItem() instanceof BloodVialItem) || !BloodSampleData.isFilled(player.getOffhandItem())) return;
+                || !BloodSampleData.isSpecimenVessel(player.getOffhandItem()) || !BloodSampleData.isFilled(player.getOffhandItem())) return;
         var animation = com.vincenthuto.hemomancy.client.player.HematicMicroscopeClientState.animation(player);
         if (animation == null) return;
         opacity = animation.overlayAlpha(partialTicks);
         if (opacity < .02F) return;
         var sample = player.getOffhandItem();
-        var profile = BloodSampleData.profile(sample, BloodInjectionData.snapshot(true).properties());
+        var specimenVisual = MicroscopeSpecimenVisual.of(sample);
+        var profile = BloodSampleData.profile(sample, true);
         var composition = MicroscopeComposition.of(profile);
-        boolean murky = BloodSampleData.entityType(sample) == null;
+        boolean murky = !BloodSampleData.examinable(sample);
         boolean reduced = HemoClientConfig.MICROSCOPE_REDUCED_MOTION.get();
         boolean sparse = HemoClientConfig.MICROSCOPE_LOW_DENSITY.get();
         double time = mc.level.getGameTime() + partialTicks;
@@ -70,7 +82,12 @@ public final class HematicMicroscopeOverlay {
                 RenderSystem.enableBlend();
                 RenderSystem.defaultBlendFunc();
                 gfx.blit(PLASMA, 0, 0, 0, 0, 256, 256, 256, 256);
-                drawSlide(gfx, composition, time, reduced, sparse, murky);
+                switch (specimenVisual.kind()) {
+                    case AHAEMATIC_COLLOID -> drawColloid(gfx, time, reduced);
+                    case CLEANSING_HEMOLYMPH -> drawHemolymph(gfx, composition.seed(), time, reduced, sparse);
+                    case CONSECRATED_SAINT_BLOOD -> drawSaintBlood(gfx, specimenVisual.saint(), composition.seed(), time, reduced, sparse);
+                    case ORDINARY_BLOOD -> drawSlide(gfx, composition, time, reduced, sparse, murky);
+                }
                 // Draw the opaque brass rim over the cells and the translucent glass backing.
                 gfx.setColor(1, 1, 1, opacity);
                 RenderSystem.enableBlend();
@@ -80,13 +97,98 @@ public final class HematicMicroscopeOverlay {
                 gfx.disableScissor();
                 gfx.pose().popPose();
             }
-            drawReadout(gfx, profile, murky, Math.min(1F, player.getTicksUsingItem() / 40F), time);
+            if (specimenVisual.kind() == MicroscopeSpecimenVisual.Kind.AHAEMATIC_COLLOID) drawIncertae(gfx,profile.identified());
+            else drawReadout(gfx, sample, profile, murky, Math.min(1F, player.getTicksUsingItem() / 40F), time);
         } finally {
             opacity = 1;
             gfx.setColor(1, 1, 1, 1);
             gfx.pose().popPose();
             RenderSystem.defaultBlendFunc();
             RenderSystem.disableBlend();
+        }
+    }
+
+    private static void drawColloid(GuiGraphics gfx,double time,boolean reduced) {
+        gfx.fill(0,0,256,256,0xFF070D17);
+        boolean moving=com.vincenthuto.hemomancy.client.sound.AntecedentClientEffects.agitated();
+        boolean directed=com.vincenthuto.hemomancy.client.sound.AntecedentClientEffects.directed();
+        double contraction=moving && !reduced?.8+.15*Math.sin(time*.25):1;
+        var random=new Random(19719);
+        for(int i=0;i<100;i++) {
+            double angle=random.nextDouble()*Math.PI*2,radius=Math.sqrt(random.nextDouble())*94*contraction;
+            int x=128+(int)(Math.cos(angle)*radius),y=128+(int)(Math.sin(angle)*radius);
+            if(directed){x+=(com.vincenthuto.hemomancy.client.sound.AntecedentClientEffects.sourceLeft()?-1:1)*(reduced?22:(int)(18+12*Math.sin(time*.04)));y-=(i%4)*3;}
+            int size=i%7==0?3:5;
+            if(i%7==0) colloidSprite(gfx,COLLOID_SIGNAL,x-size,y-size,size*2,size*2,6,6);
+            else colloidSprite(gfx,COLLOID_INCLUSION,x-size,y-size,size*2,size*2,12,12);
+            if(directed && i%7==0) colloidSprite(gfx,COLLOID_DIRECTION,x,y,12,2,12,2);
+        }
+    }
+    private static void drawIncertae(GuiGraphics gfx,boolean identified) {
+        var mc=Minecraft.getInstance();screenSprite(gfx,READOUT,272,18,168,240);
+        String key=identified?"hemomancy.antecedent.microscope.readout":"hemomancy.antecedent.sample.unknown";
+        gfx.drawWordWrap(mc.font,Component.translatable(key),282,29,148,0xFFE1D3B4);
+        if(identified) {
+            var research=com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess.antecedent(mc.player);
+            boolean nonacoustic=research.has(com.vincenthuto.hemomancy.common.antecedent.AntecedentResearch.Evidence.SAMPLE_RESPONSE);
+            gfx.drawWordWrap(mc.font,Component.translatable("hemomancy.antecedent.microscope."+(nonacoustic?"unknown_stimulus":"acoustic")),282,175,148,0xFF74B1AA);
+        }
+    }
+
+    private static void drawHemolymph(GuiGraphics gfx, long seed, double clock, boolean reduced, boolean sparse) {
+        double time = clock * (reduced ? 0.2 : 1);
+        var random = new Random(seed);
+        screenSprite(gfx, HEMOLYMPH_PLASMA, 0, 0, 256, 256);
+        int count = sparse ? 14 : 28;
+        for (int i = 0; i < count; i++) {
+            float x = 34 + random.nextFloat() * 188;
+            float y = 34 + random.nextFloat() * 188 + (float)Math.sin(time * 0.018 + i) * 4;
+            float size = 18 + random.nextFloat() * 10;
+            sprite(gfx, HEMOLYMPH_CELL, 32, x, y, size, i * 37 + (float)time * 0.4F, 1, 1, 1, 0.72F);
+            if (i % 3 == 0) sprite(gfx, HEMOLYMPH_FILAMENT, 32, x + 8, y - 5, size * 1.4F, i * 29, 1, 1, 1, 0.42F);
+        }
+        for (int i = 0; i < (sparse ? 18 : 40); i++) {
+            float x = 32 + random.nextFloat() * 192;
+            float y = 32 + random.nextFloat() * 192 + (float)Math.sin(time * 0.025 + i * 0.8) * 3;
+            sprite(gfx, HEMOLYMPH_SPOT, 8, x, y, 3 + random.nextFloat() * 4, 0, 1, 1, 1, 0.72F);
+        }
+    }
+
+    private static void drawSaintBlood(GuiGraphics gfx, EnumSaintType saint, long seed, double clock, boolean reduced, boolean sparse) {
+        if (saint == null) return;
+        double time = clock * (reduced ? 0.2 : 1);
+        var random = new Random(seed);
+        int cells = sparse ? 13 : 25;
+        for (int i = 0; i < cells; i++) {
+            float x = 34 + random.nextFloat() * 188;
+            float y = 34 + random.nextFloat() * 188 + (float)Math.sin(time * 0.014 + i) * 4;
+            sprite(gfx, BASE_CELL, 64, x, y, 15 + random.nextFloat() * 10, i * 41, 0.72F, 0.16F, 0.2F, 0.56F);
+        }
+        int accents = sparse ? 7 : 14;
+        for (int i = 0; i < accents; i++) {
+            float x = 38 + random.nextFloat() * 180;
+            float y = 38 + random.nextFloat() * 180;
+            double phase = time * 0.025 + i * 1.37;
+            switch (saint) {
+                case HEMORATH -> {
+                    sprite(gfx, HEMORATH_IRON, 16, x, y, 9 + random.nextFloat() * 7, i * 43, 1, 1, 1, 0.82F);
+                    if (i % 3 == 0) sprite(gfx, HEMORATH_VOID, 16, x + 9, y - 7, 12, 0, 1, 1, 1, 0.6F);
+                }
+                case SERAPHAE -> {
+                    float pulse = 18 + (float)Math.sin(phase) * 3;
+                    sprite(gfx, SERAPHAE_HALO, 32, x, y, pulse, 0, 1, 1, 1, 0.7F);
+                    sprite(gfx, SERAPHAE_MOTE, 8, x + (float)Math.sin(phase) * 12, y - 8, 5, 0, 1, 1, 1, 0.86F);
+                }
+                case PUTRICIEL -> {
+                    sprite(gfx, PUTRICIEL_EMBER, 16, x, y - (float)((time * 0.12 + i * 3) % 10), 12, i * 31, 1, 1, 1, 0.78F);
+                    if (i % 2 == 0) sprite(gfx, PUTRICIEL_SPORE, 16, x - 8, y + 6, 11, i * 47, 1, 1, 1, 0.62F);
+                }
+                case VELORUM -> {
+                    sprite(gfx, VELORUM_CRYSTAL, 16, x, y, 13, i * 45, 1, 1, 1, 0.78F);
+                    if (i % 2 == 0) sprite(gfx, VELORUM_SHADOW, 16, x + 7, y + 5, 15, 0, 1, 1, 1,
+                            0.42F + 0.18F * (float)Math.sin(phase));
+                }
+            }
         }
     }
 
@@ -186,14 +288,22 @@ public final class HematicMicroscopeOverlay {
         RenderSystem.defaultBlendFunc();
         gfx.blit(texture, x, y, 0, 0, width, height, width, height);
     }
+    /** The editable Incertae inclusions are authored PNGs, never filled GUI quads. */
+    private static void colloidSprite(GuiGraphics gfx, ResourceLocation texture, int x, int y, int width, int height, int textureWidth, int textureHeight) {
+        gfx.setColor(1, 1, 1, opacity);
+        RenderSystem.enableBlend();
+        RenderSystem.defaultBlendFunc();
+        gfx.blit(texture, x, y, 0, 0, width, height, textureWidth, textureHeight);
+    }
 
-    private static void drawReadout(GuiGraphics gfx, BloodSampleData.Profile profile, boolean murky, float progress, double time) {
+    private static void drawReadout(GuiGraphics gfx, net.minecraft.world.item.ItemStack sample, BloodSampleData.Profile profile, boolean murky, float progress, double time) {
         var mc = Minecraft.getInstance();
         screenSprite(gfx, READOUT, 272, 18, 168, 240);
         var lines = new ArrayList<Component>();
         lines.add(Component.translatable("item.hemomancy.hematic_microscope"));
         var type = BloodSampleData.entityType(mc.player.getOffhandItem());
-        lines.add(type == null ? Component.translatable("message.hemomancy.microscope.provenance") : type.getDescription());
+        lines.add(type != null ? type.getDescription() : murky
+                ? Component.translatable("message.hemomancy.microscope.provenance") : sample.getHoverName());
         if (!murky && profile.identified()) {
             lines.add(Component.translatable("gui.hemomancy.microscope.identified"));
             lines.add(Component.translatable("gui.hemomancy.microscope.tendencies"));

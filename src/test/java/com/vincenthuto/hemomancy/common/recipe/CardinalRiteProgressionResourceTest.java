@@ -145,7 +145,9 @@ final class CardinalRiteProgressionResourceTest {
 				if (json.has("result")) continue;
 				if (json.has("puppeteer_trial")) continue;
 				String id = path.getFileName().toString().replace(".json", "");
-				assertTrue(completionSource.contains("\"cardinal_rite/" + id + "\""),
+				assertTrue(com.vincenthuto.hemomancy.common.succession.SuccessionRites.isRecipe(
+						net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("hemomancy", "cardinal_rite/" + id))
+						|| completionSource.contains("\"cardinal_rite/" + id + "\""),
 						id + " has neither a material result nor a named completion path");
 			}
 		}

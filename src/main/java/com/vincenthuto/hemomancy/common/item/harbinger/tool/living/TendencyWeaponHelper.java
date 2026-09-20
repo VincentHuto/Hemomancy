@@ -1,19 +1,17 @@
 package com.vincenthuto.hemomancy.common.item.harbinger.tool.living;
 
+import com.vincenthuto.hemomancy.common.item.harbinger.BloodProfileData;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.entity.mob.monster.will.WillEntity;
-import com.vincenthuto.hemomancy.common.init.EntityInit;
 import com.vincenthuto.hemomancy.common.manipulation.TendencyAffinityRules;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.tags.TagKey;
 import net.minecraft.util.Mth;
 import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -88,8 +86,8 @@ public final class TendencyWeaponHelper {
 			return isOpposingTendency(weaponTendency, will.getSchool());
 		}
 		EnumBloodTendency opposingTendency = getOpposingTendency(weaponTendency);
-		TagKey<EntityType<?>> opposingTag = getEntityTagForTendency(opposingTendency);
-		return opposingTag != null && target.getType().is(opposingTag);
+		return BloodProfileData.profile(target.getType(),
+                target.level().isClientSide).tendencies().contains(opposingTendency);
 	}
 
 	public static boolean isOpposingTendency(@Nullable EnumBloodTendency weaponTendency,
@@ -108,23 +106,6 @@ public final class TendencyWeaponHelper {
 			case TENEBRIS -> EnumBloodTendency.LUX;
 			case FLAMMEUS -> EnumBloodTendency.CONGEATIO;
 			case CONGEATIO -> EnumBloodTendency.FLAMMEUS;
-		};
-	}
-
-	@Nullable
-	public static TagKey<EntityType<?>> getEntityTagForTendency(@Nullable EnumBloodTendency tendency) {
-		if (tendency == null) {
-			return null;
-		}
-		return switch (tendency) {
-			case ANIMUS -> EntityInit.VIVACIOUS_TAG;
-			case MORTEM -> EntityInit.RUINOUS_TAG;
-			case DUCTILIS -> EntityInit.NEUROTIC_TAG;
-			case FERRIC -> EntityInit.FERRIC_TAG;
-			case LUX -> EntityInit.INCANDESCENT_TAG;
-			case TENEBRIS -> EntityInit.UMBRAL_TAG;
-			case FLAMMEUS -> EntityInit.FERVENT_TAG;
-			case CONGEATIO -> EntityInit.FRIGID_TAG;
 		};
 	}
 

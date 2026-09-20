@@ -20,11 +20,28 @@ public final class DialogueItemInquiryNodes {
 
     public static DialogueTree withInventoryItemInquiries(DialogueTree tree, Player player, String speakerKey,
             int degree, float purity) {
+        tree = com.vincenthuto.hemomancy.common.antecedent.AntecedentDialogue.append(tree, player, speakerKey);
         List<ItemStack> inventory = new ArrayList<>(player.getInventory().getContainerSize());
         for (int slot = 0; slot < player.getInventory().getContainerSize(); slot++) {
             inventory.add(player.getInventory().getItem(slot));
         }
-        return withInventoryItemInquiries(tree, inventory, speakerKey, ItemInquiryContext.from(player));
+        var context = ItemInquiryContext.from(player);
+        var clinical = new ArrayList<ResolvedInventoryInquiry>();
+        var seen = new HashSet<String>();
+        inventory.removeIf(stack -> {
+            if (stack.isEmpty()) return false;
+            var lines = com.vincenthuto.hemomancy.common.antecedent.AntecedentDialogue.inquiry(player, speakerKey, stack);
+            if (lines.isEmpty()) lines = ClinicalBloodDialogue.inquiry(player, speakerKey, stack);
+            if (lines.isEmpty()) return false;
+            var id = BuiltInRegistries.ITEM.getKey(stack.getItem());
+            String variant = id + "#" + lines.get().hashCode();
+            if (seen.add(variant)) clinical.add(new ResolvedInventoryInquiry(variant, id,
+                    restrictedLines(InquiryAccessPolicy.accessFor(speakerKey, context), speakerKey, lines.get())));
+            return true;
+        });
+        tree = withInventoryItemInquiries(tree, inventory, speakerKey, context);
+        return InquiryAccessPolicy.accessFor(speakerKey, context) == InquiryAccessPolicy.Access.NONE ? tree
+                : addResolvedInventoryItemInquiries(tree, clinical);
     }
 
     static DialogueTree withInventoryItemInquiries(DialogueTree tree, Iterable<ItemStack> inventory,

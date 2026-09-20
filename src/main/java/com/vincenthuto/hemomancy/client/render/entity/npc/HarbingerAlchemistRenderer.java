@@ -14,6 +14,7 @@ public class HarbingerAlchemistRenderer extends MobRenderer<HarbingerAlchemistEn
 
     public HarbingerAlchemistRenderer(Context context) {
         super(context, new HarbingerAlchemistModel<>(context.bakeLayer(HarbingerAlchemistModel.LAYER_LOCATION)), 0.5F);
+        addLayer(new SuccessionIdentityLayer<>(this));
     }
 
     @Override

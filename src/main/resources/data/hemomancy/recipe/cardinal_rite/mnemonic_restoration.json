@@ -1,0 +1,98 @@
+{
+  "type": "hemomancy:cardinal_rite_recipe",
+  "bloodCost": 0,
+  "riteType": "greater",
+  "required_degree": 5,
+  "riteName": "Rite of Mnemonic Restoration",
+  "riteDescription": "Place the effigy beside the Focus on a Venous Stone plinth. Seat Sanguine Quintessence in the Focus. In clockwise floor socket order, offer a Bound Mnemonic Remnant, then your own identity-bearing blood vial. A free compatible workplace is required inside your fane. The body forms over sixty seconds.",
+  "floor": "hemomancy:dominion_greater",
+  "medium": {
+    "item": "hemomancy:sanguine_quintessence"
+  },
+  "required_structure": {
+    "pattern": [
+      [
+        "     ",
+        "     "
+      ],
+      [
+        "     ",
+        "     "
+      ],
+      [
+        "    E",
+        "    V"
+      ],
+      [
+        "     ",
+        "     "
+      ],
+      [
+        "     ",
+        "     "
+      ]
+    ],
+    "key": {
+      "E": {
+        "block": "hemomancy:vacant_effigy"
+      },
+      "V": {
+        "block": "hemomancy:venous_stone"
+      }
+    }
+  },
+  "brazier_signature": [
+    {
+      "ingredient": {
+        "item": "hemomancy:bound_mnemonic_remnant"
+      },
+      "count": 1
+    },
+    {
+      "ingredient": {
+        "item": "hemomancy:bloody_vial"
+      },
+      "count": 1
+    }
+  ],
+  "ceremony": {
+    "profile": "ceremonial",
+    "anchors": [
+      {
+        "y": 1,
+        "ring": 0,
+        "order": 0
+      },
+      {
+        "y": 1,
+        "ring": 0,
+        "order": 1
+      },
+      {
+        "y": 1,
+        "ring": 0,
+        "order": 2
+      },
+      {
+        "y": 1,
+        "ring": 0,
+        "order": 3
+      }
+    ],
+    "support_sockets": [],
+    "waves": [],
+    "guaranteed_waves": [],
+    "fragile_offsets": [],
+    "target_duration_ticks": 1200,
+    "focus": "living_staff",
+    "required_helpers": 0,
+    "helper_roles": [],
+    "still_interval_ticks": 0,
+    "atmosphere": {
+      "fog": "storm",
+      "lightning": false,
+      "dome": false
+    },
+    "failure": "fragile_damage"
+  }
+}

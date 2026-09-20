@@ -41,12 +41,32 @@ public class BloodVialItem extends Item {
     }
 
 	public BloodVialItem(Properties prop) {
-		super(prop.stacksTo(1));
+		super(prop.stacksTo(64));
 	}
+
+    @Override public void inventoryTick(ItemStack stack, Level level, Entity entity, int slot, boolean selected) {
+        if (level.isClientSide || !(entity instanceof Player player)
+                || !com.vincenthuto.hemomancy.common.antecedent.AhaematicSample.is(stack)) return;
+        var migrated = com.vincenthuto.hemomancy.common.antecedent.AhaematicSample.migrate(stack);
+        if (migrated == stack) return;
+        if (player.getMainHandItem() == stack) player.setItemInHand(InteractionHand.MAIN_HAND,migrated);
+        else if (player.getOffhandItem() == stack) player.setItemInHand(InteractionHand.OFF_HAND,migrated);
+        else if (slot >= 0 && slot < player.getInventory().getContainerSize() && player.getInventory().getItem(slot) == stack)
+            player.getInventory().setItem(slot,migrated);
+    }
+
+    @Override public int getMaxStackSize(ItemStack stack) {
+        return BloodSampleData.isFilled(stack) ? 1 : super.getMaxStackSize(stack);
+    }
 
     @Override
     public void appendHoverText(ItemStack stack, Item.TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
         if (!BloodSampleData.isFilled(stack)) return;
+        var identity = com.vincenthuto.hemomancy.common.succession.SuccessionSamples.identity(stack);
+        if (!identity.isEmpty()) {
+            tooltip.add(Component.translatable("hemomancy.succession.sample_donor", identity.getString("Name")));
+            if (identity.hasUUID("Bloodline")) tooltip.add(Component.translatable("hemomancy.succession.sample_bound"));
+        }
         var type = getEntityType(stack);
         tooltip.add(Component.translatable("item.hemomancy.bloody_vial.source", type == null
                 ? Component.literal(BloodSampleData.rawSource(stack)) : type.getDescription()));
@@ -59,7 +79,7 @@ public class BloodVialItem extends Item {
             tooltip.add(Component.translatable("item.hemomancy.bloody_vial.examine").withStyle(ChatFormatting.DARK_GRAY));
         } else {
             var data = BloodInjectionData.snapshot(context.level() == null || context.level().isClientSide);
-            var profile = BloodSampleData.profile(stack, data.properties());
+            var profile = BloodSampleData.profile(stack, context.level() == null || context.level().isClientSide);
             for (var tendency : profile.tendencies()) tooltip.add(Component.translatable(
                     "item.hemomancy.bloody_vial.tendency", Component.translatable("blood_tendency.hemomancy." + tendency.name().toLowerCase(java.util.Locale.ROOT)))
                     .withStyle(ChatFormatting.DARK_GRAY));
@@ -86,14 +106,37 @@ public class BloodVialItem extends Item {
 
     @Override public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
         var stack = player.getItemInHand(hand);
-        if (!BloodSampleData.isFilled(stack)) return InteractionResultHolder.pass(stack);
+        if (!BloodSampleData.isFilled(stack)) {
+            if (player.isShiftKeyDown() && player instanceof net.minecraft.server.level.ServerPlayer serverPlayer) {
+                var volume = com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess.getBloodVolume(player).orElse(null);
+                if (volume == null || !volume.isActive() || volume.getBloodVolume() < 100) {
+                    player.displayClientMessage(Component.translatable("hemomancy.succession.self_blood_cost"), true);
+                    return InteractionResultHolder.fail(stack);
+                }
+                volume.subtractBloodVolume(100);
+                ItemStack sample = stack.getCount() == 1 ? stack : stack.copyWithCount(1);
+                com.vincenthuto.hemomancy.common.succession.SuccessionSamples.fill(sample, player, null, "");
+                if (sample != stack) {
+                    stack.shrink(1);
+                    player.setItemInHand(hand, sample);
+                    if (!player.getInventory().add(stack)) player.drop(stack, false);
+                }
+                com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodVolumeEvents.syncVolume(serverPlayer, volume);
+                return InteractionResultHolder.success(sample);
+            }
+            return InteractionResultHolder.pass(stack);
+        }
         if (player.isSpectator() || !player.isAlive()) return InteractionResultHolder.fail(stack);
+        if (!com.vincenthuto.hemomancy.common.mission.alchemist.ClinicalBloodKnowledge.canInject(player)) {
+            if (!level.isClientSide) player.displayClientMessage(Component.translatable("hemomancy.clinical.injection.locked"), true);
+            return InteractionResultHolder.fail(stack);
+        }
         if (player.hasEffect(EffectInit.transfusion_saturation)) {
             feedback(player, "saturated");
             return InteractionResultHolder.fail(stack);
         }
         var data = BloodInjectionData.snapshot(level.isClientSide);
-        if (getEntityType(stack) == null || !data.resolve(BloodSampleData.profile(stack, data.properties())).usable()) {
+        if (getEntityType(stack) == null || !data.resolve(BloodSampleData.profile(stack, level.isClientSide)).usable()) {
             feedback(player, "no_response");
             return InteractionResultHolder.fail(stack);
         }
@@ -110,14 +153,14 @@ public class BloodVialItem extends Item {
         if (level.isClientSide || !(entity instanceof Player player) || player.isSpectator() || !player.isAlive()
                 || !player.isUsingItem() || player.getTicksUsingItem() < BloodInjectionRules.USE_TICKS
                 || player.getUseItem() != stack || player.getItemInHand(player.getUsedItemHand()) != stack
-                || stack.getCount() != 1) return stack;
+                || stack.getCount() != 1 || !com.vincenthuto.hemomancy.common.mission.alchemist.ClinicalBloodKnowledge.canInject(player)) return stack;
         if (player.hasEffect(EffectInit.transfusion_saturation)) {
             BloodVialInjectionAnimation.cancel(player);
             feedback(player, "saturated");
             return stack;
         }
         var data = BloodInjectionData.snapshot(false);
-        var profile = BloodSampleData.profile(stack, data.properties());
+        var profile = BloodSampleData.profile(stack, level.isClientSide);
         var result = data.resolve(profile);
         if (getEntityType(stack) == null || !result.usable()) {
             BloodVialInjectionAnimation.cancel(player);
@@ -157,9 +200,14 @@ public class BloodVialItem extends Item {
 	public boolean onLeftClickEntity(ItemStack stack, Player player, Entity entity) {
 		CompoundTag tag = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
 		boolean alreadyFilled = BloodSampleData.isFilled(stack);
+		ResourceLocation entityTypeId = entity == null ? null : BuiltInRegistries.ENTITY_TYPE.getKey(entity.getType());
+		BloodSamplingResult result = BloodSamplingRules.evaluate(alreadyFilled, entity instanceof LivingEntity,
+				entity instanceof LivingEntity living && living.isAlive(),
+				entity instanceof LivingEntity living && living.isInvulnerable(), entityTypeId != null,
+				entity != null && BloodProfileData.profile(entity.getType(), player.level().isClientSide).requiresLivingSyringe(), false);
 		if (entity instanceof LivingEntity living && !alreadyFilled) {
 				// Special case: Hemolymphopoda produces Cleansing Hemolymph instead of a standard sample
-				if (living instanceof HemolymphopodaEntity) {
+				if (living instanceof HemolymphopodaEntity && result == BloodSamplingResult.SUCCESS) {
 					if (!player.level().isClientSide) {
 						ItemStack hemolymphStack = new ItemStack(ItemInit.cleansing_hemolymph.get());
 						player.setItemInHand(InteractionHand.MAIN_HAND, hemolymphStack);
@@ -169,16 +217,20 @@ public class BloodVialItem extends Item {
 					return true;
 				}
 		}
-		ResourceLocation entityTypeId = entity == null ? null : BuiltInRegistries.ENTITY_TYPE.getKey(entity.getType());
-		BloodSamplingResult result = BloodSamplingRules.evaluate(alreadyFilled, entity instanceof LivingEntity,
-				entity instanceof LivingEntity living && living.isAlive(),
-				entity instanceof LivingEntity living && living.isInvulnerable(), entityTypeId != null);
 		if (!player.level().isClientSide) {
 			if (result == BloodSamplingResult.SUCCESS) {
+				ItemStack sample = stack.getCount() == 1 ? stack : stack.copyWithCount(1);
 				tag.putString(TAG_ENTITY_TYPE, entityTypeId.toString());
 				tag.putBoolean(TAG_STATE, true);
-				stack.set(DataComponents.CUSTOM_DATA, CustomData.of(tag));
-                stack.remove(DataComponentInit.BLOOD_SAMPLE_IDENTIFIED.get());
+				sample.set(DataComponents.CUSTOM_DATA, CustomData.of(tag));
+                if (entity instanceof Player donor) com.vincenthuto.hemomancy.common.succession.SuccessionSamples.fill(sample, donor, null, "");
+                sample.remove(DataComponentInit.BLOOD_SAMPLE_IDENTIFIED.get());
+                if (sample != stack) {
+                    stack.shrink(1);
+                    player.setItemInHand(InteractionHand.MAIN_HAND, sample);
+                    if (!player.getInventory().add(stack)) player.drop(stack, false);
+                }
+                com.vincenthuto.hemomancy.common.mission.alchemist.ClinicalBloodKnowledge.collected(player, sample);
 				player.playSound(SoundEvents.BOTTLE_FILL, 1.0F, 1.0F);
 			}
 			Component targetName = entity == null ? Component.translatable("message.hemomancy.blood_sampling.unknown")

@@ -1,0 +1,9 @@
+{
+  "type": "hutoslib:page",
+  "ordinality": 52,
+  "texture": "hemomancy:textures/gui/guide/page.png",
+  "title": "The Severed Record",
+  "subtitle": "The Antecedent Inquiry",
+  "text": "An ancient voice says the cut held. The catalysts still take the dead and the listeners still answer movement, but the growth no longer answers itself as it once did. We cut the voice. The flesh remained.",
+  "icon": "hemomancy:hematic_microscope"
+}

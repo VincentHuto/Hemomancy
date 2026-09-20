@@ -565,6 +565,8 @@ public class BlockInit {
 					.sound(SoundType.HARD_CROP).pushReaction(PushReaction.DESTROY)));
 
 	// Tiles
+    public static final DeferredHolder<Block, Block> vacant_effigy = MODELEDBLOCKS.register("vacant_effigy",
+            () -> new com.vincenthuto.hemomancy.common.succession.VacantEffigyBlock(BlockBehaviour.Properties.of().strength(1.5f).noOcclusion()));
 	public static final DeferredHolder<Block, Block> vial_centrifuge = MODELEDBLOCKS.register("vial_centrifuge",
 			() -> new VialCentrifugeBlock(BlockBehaviour.Properties.of().requiresCorrectToolForDrops()
 					.strength(1.5F, 6.0F).sound(SoundType.METAL)));
@@ -576,7 +578,8 @@ public class BlockInit {
 	public static final DeferredHolder<Block, Block> somatic_loom = MODELEDBLOCKS
 			.register("somatic_loom", () -> new SomaticLoomBlock(BlockBehaviour.Properties.of()
 					.requiresCorrectToolForDrops().strength(1.5F, 6.0F).sound(SoundType.STONE)));
-	public static final DeferredHolder<Block, Block> clairaudiograph = SPECIALBLOCKS.register("clairaudiograph", com.vincenthuto.hemomancy.common.block.harbinger.functional.ClairaudiographBlock::new);
+	public static final DeferredHolder<Block, Block> antecedent_vessel = SPECIALBLOCKS.register("antecedent_vessel", com.vincenthuto.hemomancy.common.antecedent.VigilArchiveBlock::new);
+    public static final DeferredHolder<Block, Block> clairaudiograph = SPECIALBLOCKS.register("clairaudiograph", com.vincenthuto.hemomancy.common.block.harbinger.functional.ClairaudiographBlock::new);
 	public static final DeferredHolder<Block, Block> phlebotomists_field_case = SPECIALBLOCKS.register("phlebotomists_field_case", PhlebotomistsFieldCaseBlock::new);
 
 	public static final DeferredHolder<Block, Block> phlebotomists_cabinet = SPECIALBLOCKS.register("phlebotomists_cabinet", PhlebotomistsCabinetBlock::new);

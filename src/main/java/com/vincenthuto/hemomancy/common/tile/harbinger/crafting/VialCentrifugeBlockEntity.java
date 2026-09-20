@@ -1,11 +1,13 @@
 package com.vincenthuto.hemomancy.common.tile.harbinger.crafting;
 
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
+import com.vincenthuto.hemomancy.common.item.harbinger.EntityBloodProfile;
+import com.vincenthuto.hemomancy.common.item.harbinger.BloodProfileData;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.entity.boss.saint.EnumSaintType;
 import com.vincenthuto.hemomancy.common.init.BlockEntityInit;
 import com.vincenthuto.hemomancy.common.init.BlockInit;
-import com.vincenthuto.hemomancy.common.init.EntityInit;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.item.harbinger.BloodVialItem;
 import com.vincenthuto.hemomancy.common.item.harbinger.ConsecratedSyringeItem;
@@ -266,43 +268,45 @@ public class VialCentrifugeBlockEntity extends BaseContainerBlockEntity
 	}
 
 	public ItemStack getResultFromVial(EntityType<?> sampledMob) {
+		if (sampledMob == EntityType.WARDEN) return ItemStack.EMPTY;
 		if (sampledMob != null) {
 			if (sampledMob.create(level) instanceof LivingEntity living) {
 				float maxHealth = living.getMaxHealth();
 				ArrayList<ItemStack> outputList = new ArrayList<ItemStack>();
-				if (sampledMob.is(EntityInit.FUNGAL_TAG)) {
+                var profile = BloodProfileData.profile(sampledMob, level.isClientSide);
+				if (profile.properties().contains(EntityBloodProfile.FUNGAL)) {
 					int amountOfEnzyme = (int) (((maxHealth / 10) * level.getRandom().nextInt(5 - 1) + 1));
 					outputList.add(new ItemStack(BlockInit.infected_fungus.get(), amountOfEnzyme));
 				}
-				if (sampledMob.is(EntityInit.UMBRAL_TAG)) {
+				if (profile.tendencies().contains(EnumBloodTendency.TENEBRIS)) {
 					int amountOfEnzyme = (int) (((maxHealth / 10) * level.getRandom().nextInt(5 - 1) + 1));
 					outputList.add(new ItemStack(ItemInit.umbral_enzyme.get(), amountOfEnzyme));
 				}
-				if (sampledMob.is(EntityInit.INCANDESCENT_TAG)) {
+				if (profile.tendencies().contains(EnumBloodTendency.LUX)) {
 					int amountOfEnzyme = (int) (((maxHealth / 10) * level.getRandom().nextInt(5 - 1) + 1));
 					outputList.add(new ItemStack(ItemInit.incandescent_enzyme.get(), amountOfEnzyme));
 				}
-				if (sampledMob.is(EntityInit.FERRIC_TAG)) {
+				if (profile.tendencies().contains(EnumBloodTendency.FERRIC)) {
 					int amountOfEnzyme = (int) (((maxHealth / 10) * level.getRandom().nextInt(5 - 1) + 1));
 					outputList.add(new ItemStack(ItemInit.ferric_enzyme.get(), amountOfEnzyme));
 				}
-				if (sampledMob.is(EntityInit.VIVACIOUS_TAG)) {
+				if (profile.tendencies().contains(EnumBloodTendency.ANIMUS)) {
 					int amountOfEnzyme = (int) (((maxHealth / 10) * level.getRandom().nextInt(5 - 1) + 1));
 					outputList.add(new ItemStack(ItemInit.vivacious_enzyme.get(), amountOfEnzyme));
 				}
-				if (sampledMob.is(EntityInit.RUINOUS_TAG)) {
+				if (profile.tendencies().contains(EnumBloodTendency.MORTEM)) {
 					int amountOfEnzyme = (int) (((maxHealth / 10) * level.getRandom().nextInt(5 - 1) + 1));
 					outputList.add(new ItemStack(ItemInit.ruinous_enzyme.get(), amountOfEnzyme));
 				}
-				if (sampledMob.is(EntityInit.NEUROTIC_TAG)) {
+				if (profile.tendencies().contains(EnumBloodTendency.DUCTILIS)) {
 					int amountOfEnzyme = (int) (((maxHealth / 10) * level.getRandom().nextInt(5 - 1) + 1));
 					outputList.add(new ItemStack(ItemInit.neurotic_enzyme.get(), amountOfEnzyme));
 				}
-				if (sampledMob.is(EntityInit.FERVENT_TAG)) {
+				if (profile.tendencies().contains(EnumBloodTendency.FLAMMEUS)) {
 					int amountOfEnzyme = (int) (((maxHealth / 10) * level.getRandom().nextInt(5 - 1) + 1));
 					outputList.add(new ItemStack(ItemInit.fervent_enzyme.get(), amountOfEnzyme));
 				}
-				if (sampledMob.is(EntityInit.FRIGID_TAG)) {
+				if (profile.tendencies().contains(EnumBloodTendency.CONGEATIO)) {
 					int amountOfEnzyme = (int) (((maxHealth / 10) * level.getRandom().nextInt(5 - 1) + 1));
 					outputList.add(new ItemStack(ItemInit.frigid_enzyme.get(), amountOfEnzyme));
 				}

@@ -49,6 +49,11 @@ public final class HemoAttachmentTypes {
                     () -> AttachmentType.serializable(com.vincenthuto.hemomancy.common.damage.SchoolCombatState::new).build());
 
     // ── Player attachments (copyOnDeath so data survives death/respawn) ──
+    public static final DeferredHolder<AttachmentType<?>, AttachmentType<com.vincenthuto.hemomancy.common.antecedent.AntecedentResearch>> ANTECEDENT = ATTACHMENT_TYPES.register("antecedent", () -> AttachmentType.serializable(com.vincenthuto.hemomancy.common.antecedent.AntecedentResearch::new).copyOnDeath().build());
+    public static final DeferredHolder<AttachmentType<?>, AttachmentType<com.vincenthuto.hemomancy.common.mission.alchemist.ClinicalBloodProgress>> CLINICAL_BLOOD =
+            ATTACHMENT_TYPES.register("clinical_blood", () -> AttachmentType.serializable(
+                    com.vincenthuto.hemomancy.common.mission.alchemist.ClinicalBloodProgress::new).copyOnDeath().build());
+
     public static final DeferredHolder<AttachmentType<?>, AttachmentType<BloodVolume>> BLOOD_VOLUME =
             ATTACHMENT_TYPES.register("blood_volume",
                     () -> AttachmentType.serializable(BloodVolume::new).copyOnDeath().build());

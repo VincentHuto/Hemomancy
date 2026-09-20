@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.item.harbinger;
 
+import com.vincenthuto.hemomancy.common.network.BloodProfileSyncPacket;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.init.EffectInit;
 import com.vincenthuto.hemomancy.common.network.BloodInjectionSyncPacket;
@@ -22,8 +23,9 @@ public final class BloodInjectionEvents {
     private BloodInjectionEvents() {}
     @SubscribeEvent public static void sync(OnDatapackSyncEvent event) {
         var packet = new BloodInjectionSyncPacket(BloodInjectionData.snapshot(false).json());
-        if (event.getPlayer() != null) PacketDistributor.sendToPlayer(event.getPlayer(), packet);
-        else for (var player : event.getPlayerList().getPlayers()) PacketDistributor.sendToPlayer(player, packet);
+        var profiles = new BloodProfileSyncPacket(BloodProfileData.snapshot(false).json());
+        if (event.getPlayer() != null) PacketDistributor.sendToPlayer(event.getPlayer(), profiles, packet);
+        else for (var player : event.getPlayerList().getPlayers()) PacketDistributor.sendToPlayer(player, profiles, packet);
     }
     @SubscribeEvent public static void damage(LivingIncomingDamageEvent event) {
         var entity = event.getEntity();

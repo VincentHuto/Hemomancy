@@ -13,7 +13,7 @@ public final class HarbingerAssignmentStructureSourceTest {
 
 	public static void main(String[] args) throws IOException {
 		assignmentLedgerSeparatesMainAndSideAssignments();
-		d2CentrifugeMainAssignmentExists();
+		d1CentrifugeMainAssignmentExists();
 	}
 
 	private static void assignmentLedgerSeparatesMainAndSideAssignments() throws IOException {
@@ -24,16 +24,16 @@ public final class HarbingerAssignmentStructureSourceTest {
 
 		assertContains("ledger renders D1 main assignment", ledgerScreen, "renderFirstBloodcraft");
 		assertContains("ledger renders D1 Hermit Road side assignment", ledgerScreen, "renderHermitRoad");
-		assertContains("ledger renders D2 main assignment before D2 sides", ledgerScreen, "renderFirstSeparation");
+		assertContains("ledger renders the D1 separation assignment", ledgerScreen, "renderFirstSeparation");
 		assertContains("ledger labels Taxonomy as side assignment", language,
 				"screen.hemomancy.harbinger_assignment_ledger.red_taxonomy.side_title");
 		assertContains("ledger labels Eightfold as side assignment", language,
 				"screen.hemomancy.harbinger_assignment_ledger.enzyme_mastery.side_title");
 		assertContains("reference docs name D1 main assignment", docs, "Main D1 assignment, **First Bloodcraft**");
-		assertContains("reference docs name D2 main assignment", docs, "Main D2 assignment, **The First Separation**");
+		assertContains("reference docs place separation at D1", docs, "At Degree 1, the Harbinger Alchemist introduces **The First Separation**");
 	}
 
-	private static void d2CentrifugeMainAssignmentExists() throws IOException {
+	private static void d1CentrifugeMainAssignmentExists() throws IOException {
 		String advancementGranter = read(SOURCE_ROOT.resolve(
 				"com/vincenthuto/hemomancy/common/event/HarbingerAdvancementGranter.java"));
 		String startPacket = read(SOURCE_ROOT.resolve(

@@ -28,7 +28,16 @@
     "MixinPhlegethonticOreCandidates",
     "MixinRegenerationMobEffect",
     "MobEffectInstanceAccessor",
-    "GoalSelectorAccessor"
+    "GoalSelectorAccessor",
+    "SinglePoolElementAccessor",
+    "VigilTemplateAccessor",
+    "MixinAntecedentCity",
+    "MixinVigilTerrain",
+    "MixinVigilVibrations",
+    "MixinVigilShrieker",
+    "MixinVigilCatalyst",
+    "MixinVigilFixtureRemoval",
+    "MixinListeningScar"
   ],
   "client": [
     "CastingHandRendererInvoker",
@@ -41,7 +50,8 @@
     "MixinLocalPlayer",
     "MixinParalysisLocalPlayer",
     "MixinPlayerItemInHandLayer",
-    "MixinPlayerRenderer"
+    "MixinPlayerRenderer",
+    "MixinVigilAmbience"
   ],
   "injectors": {
     "defaultRequire": 1

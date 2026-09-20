@@ -59,6 +59,12 @@ public class ActiveCardinalRite {
 	private final List<String> waveDeck = new ArrayList<>();
 	private CompoundTag escrowedStaff = new CompoundTag();
 	private boolean completionCommitted;
+    private CompoundTag succession = new CompoundTag();
+    public CompoundTag succession() { return succession; }
+    public void beginSuccession(CompoundTag context) {
+        succession = context.copy();
+        setPhase(CardinalRitePhase.CULMINATION);
+    }
 	private ResourceLocation matchedFloorId;
 	private Direction floorForwards = Direction.NORTH;
 	private Direction floorUp = Direction.UP;
@@ -803,6 +809,7 @@ public class ActiveCardinalRite {
 	public CompoundTag serialize(HolderLookup.Provider provider) {
 		CompoundTag tag = new CompoundTag();
 		tag.putInt(STATE_VERSION, CURRENT_STATE_VERSION);
+        tag.put("Succession", succession.copy());
 		tag.putUUID("PlayerUUID", playerUUID);
 		tag.putLong("CenterPos", centerPos.asLong());
 		tag.putString("RecipeId", recipeId.toString());
@@ -983,6 +990,7 @@ public class ActiveCardinalRite {
 		rite.escrowedStaff = tag.contains("EscrowedStaff")
 				? tag.getCompound("EscrowedStaff").copy() : new CompoundTag();
 		rite.completionCommitted = tag.getBoolean("CompletionCommitted");
+        rite.succession = tag.getCompound("Succession").copy();
 		if (tag.contains("MatchedFloor")) rite.matchedFloorId =
 				ResourceLocation.parse(tag.getString("MatchedFloor"));
 		rite.floorForwards = Direction.byName(tag.getString("FloorForwards"));

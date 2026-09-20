@@ -1,5 +1,9 @@
 # Hemomancy — Lore Reference
 
+## Clinical knowledge jurisdiction
+
+The Alchemist teaches blood as material and specimen: sampling, physiological classification, microscopy, injection, preservation, and laboratory storage. The Artificer converts established laboratory practice into durable field apparatus after an Alchemist referral. The Mnemonist receives the Alchemist's unexplained auditory observations and teaches retained expression through the Clairaudiograph at Degree 3. Construction alone does not determine knowledge ownership. See [Clinical Blood Tools](../wiki/Clinical-Blood-Tools.md).
+
 > This document covers **lore only**: world history, cosmic origins, factions, characters, beliefs, mythology, and narrative themes. For mechanics, systems, and code details see [HEMOMANCY_REFERENCE.md](HEMOMANCY_REFERENCE.md).
 >
 > **Last Updated:** 2026-09-01 lore/reference synchronization audit. LORE_REFERENCE.md is the authority for canon. `HEMOMANCY_REFERENCE.md` describes the mechanics that implement it. Game code, dialogue, inquiries, item text, advancements, and wiki pages are downstream and must be corrected when they disagree with these documents.
@@ -772,3 +776,73 @@ This is a world of **gray**, of bodies and blood and fungus and old powers that 
 ## The Vein-Mason's division of work
 
 The Alchemist treats injury and prepares medicine. The Artificer reinforces armor, weapons, and the body's external frame. The Cicatrix Anchorite conditions scars and vasculature so the internal body can bear repeated instruction. The Mnemonist interprets what a memory means; the Anchorite determines how its tendency is routed through living tissue. Their cooperation is correspondence rather than companionship: the Anchorite remains cloistered at Mason's Respite, refuses purification, and cannot be recruited.
+
+## Manifested successors
+
+Form comes from the Vacant Effigy, vocation from consenting donor blood, affiliation from the officiant, life from Quintessence, and continuity from Ambergris. The resulting person carries a profession without becoming the original teacher. A Bound Mnemonic Remnant preserves that person through bodily death. Counterfeit identities cause mnemonic rejection and a Misbegotten vessel; the legitimate dead identity remains recoverable. See [Hematic Succession](HEMATIC_SUCCESSION_DESIGN_SPEC.md).
+
+
+## The Antecedent: the First Incursion
+
+Sculk is evidence of an older strategy by the intelligence behind the modern incursion. Its surviving ecology is acoustic, territorial, contiguous, and fed by local death. Modern Erythromycelium keeps intelligent hosts mobile, then has them cultivate and spread it. The connection is strategic, not anatomical. Sculk is not primitive Apotheos, crimson sculk, or a ninth tendency. The city's last listeners kept a damaged specimen so they could watch for coordinated response beyond the cut. The archive vessel answers an unresolved trace that the Clairaudiograph can separate from sound.
+
+The Alchemist runs the experiment. The Vicar interprets what it may mean. Their dialogue stays qualified until the evidence supports recognition. The optional Archon epilogue acknowledges a changed approach without explaining the Entity's origin or exactly what the cut was. See [Antecedent Inquiry](../wiki/Antecedent-Inquiry.md).
+
+### What the investigation establishes
+
+The First Incursion left an ecology that depends on contiguous growth, local death, and acoustic disturbance. Its remnants can feed and react after the connection to something beyond them has been cut. Continued biological activity does not prove that coordinated direction has returned. That distinction is why the Last Listeners preserved the lower specimen and recorded its failures instead of finishing its destruction.
+
+The modern incursion uses a different arrangement: intelligent, mobile hosts learn to cultivate and carry Erythromycelium. The Vicar recognizes a change in method by the same intelligence. This does not establish a common blood chemistry or make every sculk response a conscious act. Keep the Entity's origin, the exact nature of the severance, and the full history of the builders unresolved. The Warden is not an early Apotheos, and Incertae is not a ninth tendency.
+
+### The evidence the player handles
+
+The dark sample is Ahaematic Colloid, a separate nonblood specimen obtained from a Warden or Sculk Catalyst. Microscopy finds no hematic content, tendency, or enzyme response. Its classification, Incertae, records the limit of the current system. The shared vial shape is a container convention, not evidence that the fluid is blood. It cannot grant an injection power or a new enzyme.
+
+The sample first responds to vibration. During the Severed Record it behaves in a coordinated way while the recorded audio falls silent. The Clairaudiograph's measured spectrograph remains empty in that interval; the unresolved trace is shown separately. The specimen's physical tap and the final click behind the listener occur in the world, not in the recorded waveform. Preserve that separation when rewriting captions, instrument explanations, and dialogue: ordinary acoustic analysis is the control that makes the other response meaningful.
+
+The archive's ancient sample vessel is the surviving apparatus for this second observation. Replaying the Severed Record nearby makes its contents rise into a geometric response. It answers the specific unresolved interval, not every noise or inserted blood sample. Its narrative purpose is to let the player repeat the experiment at the original site and connect the portable sample with the preserved chamber.
+
+### Surviving records
+
+| Record | Narrative role |
+| --- | --- |
+| Lower District Survey | A surviving report of the lower district and its acoustic conditions before the decisive recorded incident. |
+| The Quieting | Evidence of the imposed quiet and the practices used to live around listening growth. |
+| Severed Record | The central acoustic event: distress and interruption, followed by recorded silence while an unresolved response persists. |
+| Tablet of Quiet Earth | Practical cautions about territorial growth, noise, and the dead feeding the floor. |
+| Lower Passage | Instructions for the listening road and the deliberate end of wool damping. |
+| Lower Vigil: Watch Order | Repeated tests at upper and lower marks, feeding receded growth, and recording failures as useful results. |
+| Lower Vigil: Notice | Orders to preserve the specimen and leave the weakened listeners unrepaired. |
+| Lower Vigil: Record 7 | The growth still feeds and reacts, but no answer returns from beyond the cut; renewed coordination would mean the cut failed. |
+| The Failed Burning | Failed surface destruction and the disturbance caused by breaking growth. |
+| The Silence Order | Restrictions on bells, wheels, and travel, with escalating instructions for retreat. |
+
+Five documents are on lecterns and two are chest books; the three recordings are separate cylinders. The texts describe the last listeners' observations and orders, not an omniscient history. Keep their practical concern with work, danger, and maintenance distinct from the modern Vicar's interpretation.
+
+### The Vigil and its surviving ecology
+
+The Vigil Beneath is a self-contained observation site adjoining the Ancient City's roads wherever the completed city leaves room. Its entrance is not tied to the central frame. A wool-lined approach gives way to an intentionally undamped passage, a gallery, and an archive. The intact boundary matters: the player crosses from avoiding sound into a place where sound is used as a test. Delayed clicks and reduced ambience establish uncertainty before the player sees the specimen bed.
+
+The three original Sensors answer slowly and inconsistently. The Shrieker cannot complete its response. The Catalyst still feeds from death but produces limited local growth. These are preserved failures in one maintained specimen, not a new rule for all sculk. Replacing a fixture restores ordinary block behavior. Deepslate brick walls, a stepped roof, and retained surrounding rock place this chamber within the city and terrain. Enclosed entrance, listening passage, gallery, and archive modules join in several arrangements while keeping the sequence of approach, listening passage, observation balcony, descent, and archive. The corrected generation avoids an artificial rectangular excavation; a giant exposed lava moat is not part of the chamber's intended lore.
+
+### Teachers, recognition, and the Listening Scar
+
+At Degree 3 the Alchemist and Vicar can discuss the examined sample. The Alchemist requests a controlled replay after the player hears the Severed Record, and the experiment requires the player's own continuous observation. At Degree 4 the Vicar interprets the controlled result and gives the clue about passing where the wool ends. Degree 5 permits comparison of the two incursions. The optional Degree-7 Entity encounter follows completion; it acknowledges adaptation without supplying a complete cosmology.
+
+Personal evidence is deliberate. Possessing an identified vial or another person's recording does not establish that the player witnessed the response. Observations can arrive out of order, but the implemented completion condition combines Vicar recognition and the archive response. The expansion is optional and does not add a rank gate to the main Harbinger path.
+
+The Listening Scar is a small continuation of the experiment. The Vicar supplies a replaceable housing, the player fills it with analyzed Colloid, and the Severed Record awakens it. Worn within the Charm of Vascularium, it reports nearby actual Sensor activations as a directional pulse. It does not tame the Warden, grant immunity, silence the bearer, or reveal the location of every threat. Its use remains observation.
+
+### Relationship to the other new systems
+
+Clinical study belongs to the Alchemist until the question moves beyond physiology. The Artificer handles durable field apparatus, and the Mnemonist teaches retained expression through cylinders and the Clairaudiograph. Shared instruments connect these fields without transferring the ownership of every lesson to the person who built the instrument. Entity blood profiles encode blood composition and collection requirements; they do not make the Colloid hematic.
+
+Hematic Succession is a separate Degree-5 practice. Consenting professional blood contributes vocation, the officiant contributes affiliation, the Effigy supplies form, Quintessence supplies life, and Ambergris supplies continuity. A successor becomes a distinct resident, not a copied teacher or a shortcut through another player's learning. Bound Mnemonic Remnants preserve that resident's identity across restoration; counterfeit identity produces rejection and a Misbegotten rather than an authentic replacement. Service and rite assistance depend on a maintained workplace and bloodline affiliation. See the [succession guide](../wiki/Hematic-Succession.md) for the implemented costs and recovery rules.
+
+The Bombardier's nearby-growth habitat and revised posture/flame presentation belong to Phlegethontic ecology. Portrait, item-art, and laboratory-layout revisions likewise add no new First Incursion claims on their own. The [working-tree coverage index](WORKTREE_REFERENCE_AUDIT_2026-09-19.md) separates these changes from the expansion.
+
+### Runtime text and editorial drafts (2026-09-19)
+
+The current localized dialogue, captions, journal JSON, generated NBT books, and OGG recordings are the installed telling. The original [First Incursion brief](HEMOMANCY_FIRST_INCURSION_DEEP_DARK_BRIEF.md) supplies design background. The [fresh prose draft](antecedent-fresh-draft/README.md) contains seventeen Markdown files for rewriting, but its wording has not been imported into the game or synthesized into new audio. Do not quote those drafts as already spoken or displayed in the current build.
+
+Book changes must reach `tools/oneoff/antecedent/build_vigil.py` and the regenerated structure. Recording changes must reach the script, captions, runtime cue timeline, and audio together; the silent and observation intervals are gameplay constraints. Existing generated books and terrain are not rewritten by changing these source files. The [developer reference](HEMOMANCY_REFERENCE.md#antecedent-inquiry-and-audio-analysis) records the concrete behavior, sources, and validation boundaries.

@@ -1,0 +1,9 @@
+{
+  "type": "hutoslib:page",
+  "ordinality": 27,
+  "texture": "hemomancy:textures/gui/guide/page.png",
+  "title": "Blood as Specimen",
+  "subtitle": "Clinical blood study",
+  "text": "Return to the Alchemist holding one filled creature Blood Vial in either hand. The microscope lesson and recipe follow that first specimen.",
+  "icon": "hemomancy:bloody_vial"
+}

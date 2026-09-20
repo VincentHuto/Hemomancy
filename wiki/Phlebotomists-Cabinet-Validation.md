@@ -22,7 +22,7 @@ Cabinet cases exercise:
 - The actual `ServerPlayerGameMode.useItemOn` path for sneaking Knapper/vial interactions, and actual survival/creative `destroyBlock` behavior.
 - Explosion destruction, piston movement refusal, Wither/dragon destruction eligibility, empty loot with glaze-preserving placement, and pick-block item serialization without specimen data.
 
-The renderer's meshes are reproducible with `python tools/model_export/phlebotomists_cabinet.py`. It reuses existing authored textures and embeds those plus vanilla textures in the editable Blockbench source when the Minecraft resource jar is available.
+The renderer's meshes are reproducible with `python tools/oneoff/phlebotomists_cabinet.py`. It reuses existing authored textures and embeds those plus vanilla textures in the editable Blockbench source when the Minecraft resource jar is available.
 
 ## Remaining live checks
 

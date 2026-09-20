@@ -1,7 +1,15 @@
 {
-  "lines": [
-    "hemomancy.alchemist.item_inquiry.field_case.line1",
-    "hemomancy.alchemist.item_inquiry.field_case.line2",
-    "hemomancy.alchemist.item_inquiry.field_case.line3"
+  "conditions": [
+    {
+      "max_degree": 1,
+      "lines": [
+        "hemomancy.clinical.inquiry.later"
+      ]
+    },
+    {
+      "lines": [
+        "hemomancy.clinical.inquiry.alchemist_field_case"
+      ]
+    }
   ]
 }

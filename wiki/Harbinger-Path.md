@@ -33,6 +33,7 @@ The Hematic Order publicly recognizes seven degrees. Apotheos is the hidden eigh
 - **Rite:** Sanguine Initiation
 - **Theme:** Crimson Veil; blood becomes a deliberate living resource
 - **Core progression:** Blood Absorption, Blood Projection, first structures, early tendency awareness
+- The Alchemist offers **First Separation** at D1, followed by microscopy, injection teaching, and the Cabinet after three personal source identifications. See [Clinical Blood Tools](Clinical-Blood-Tools.md).
 - The first Vicar contacted grants or replaces the Assignment Ledger. **First Bloodcraft** is the Main chapter; **The Hermit Road** is an optional Side assignment.
 
 ### Degree 2: Votary
@@ -40,7 +41,7 @@ The Hematic Order publicly recognizes seven degrees. Apotheos is the hidden eigh
 - **Rite:** Votary Rite
 - **Theme:** Hematic Covenant; choosing to remain infected
 - **Core progression:** the seven blood tendencies and deeper vascular practice
-- **The First Separation** is the Main chapter. Red Taxonomy, Living Bestiary, and enzyme mastery are optional Alchemical Fieldwork catalogues; completing Red Taxonomy grants jars and empty vials.
+- **The First Separation**, available since Degree 1, remains the chapter proof for this stage. Red Taxonomy, Living Bestiary, and enzyme mastery are optional Alchemical Fieldwork catalogues; completing Red Taxonomy grants jars and empty vials.
 - A Fungal Podium may be encountered, but it cannot open the Fungal Gardens without the Degree-7 ninth-pome Spine.
 
 ### Degree 3: Initiate
@@ -548,3 +549,7 @@ A: No. They're people who've embraced a taboo art. Some are kind, some are dange
 *"We are not monsters. We are the inheritors of a sacred art, keepers of a secret written in blood. That the world fears us does not make us wicked. That we embrace what others flee does not make us evil. We are Harbingers, and the blood remembers."*
 
 *From the Liber Sanguinum, opening passage*
+
+### Hematic Succession at Degree 5
+
+[Hematic Succession](Hematic-Succession.md) creates mortal professional residents without moving original teachers. Consent is independent of old recruitment limits. Successors provide local services and physical rite assistance; originals keep their ordinary pool benefits.

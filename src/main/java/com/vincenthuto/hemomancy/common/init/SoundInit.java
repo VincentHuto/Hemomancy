@@ -10,6 +10,9 @@ public class SoundInit {
 	public static final DeferredRegister<SoundEvent> SOUNDS = DeferredRegister.create(Registries.SOUND_EVENT,
 			Hemomancy.MOD_ID);
 
+    public static final DeferredHolder<SoundEvent,SoundEvent> ANTECEDENT_SEVERED = registerSoundEvent("antecedent.severed_record");
+    public static final DeferredHolder<SoundEvent,SoundEvent> ANTECEDENT_SURVEY = registerSoundEvent("antecedent.lower_district_survey");
+    public static final DeferredHolder<SoundEvent,SoundEvent> ANTECEDENT_QUIETING = registerSoundEvent("antecedent.the_quieting");
 	private static DeferredHolder<SoundEvent, SoundEvent> registerSoundEvent(String name) {
 		return SOUNDS.register(name, () -> SoundEvent.createVariableRangeEvent(Hemomancy.rloc(name)));
 	}

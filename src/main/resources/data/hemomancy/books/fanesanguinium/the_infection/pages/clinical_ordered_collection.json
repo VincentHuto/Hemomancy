@@ -1,0 +1,9 @@
+{
+  "type": "hutoslib:page",
+  "ordinality": 29,
+  "texture": "hemomancy:textures/gui/guide/page.png",
+  "title": "The Ordered Collection",
+  "subtitle": "Clinical blood study",
+  "text": "You have identified three distinct sources. Ask the Alchemist for the Phlebotomist's Cabinet lesson and recipe.",
+  "icon": "hemomancy:phlebotomists_cabinet"
+}

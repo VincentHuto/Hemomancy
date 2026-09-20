@@ -48,6 +48,15 @@ public final class CardinalRiteOverlay {
 		drawCentered(graphics, title, screenWidth / 2, y, 0xFFF3D5D9);
 		drawBar(graphics, x, y + 12, displayedProgress, 0xFF651423, 0xFFE33A53);
 
+        if ("SUCCESSION".equals(rite.getPhase())) {
+            drawCentered(graphics, net.minecraft.network.chat.Component.translatable(rite.getCue()).getString(),
+                    screenWidth / 2, y + 28, 0xFFFFD36A);
+            drawCentered(graphics, net.minecraft.network.chat.Component.translatable("hemomancy.succession.rite_hint").getString(),
+                    screenWidth / 2, y + 42, 0xFFEADFE1);
+            graphics.pose().popPose();
+            return;
+        }
+
 		double instability = rite.getInstability() / 100.0D;
 		int instabilityColor = rite.getInstability() >= 70 ? 0xFFFF304F
 				: rite.getInstability() >= 40 ? 0xFFF2A541 : 0xFF67C587;

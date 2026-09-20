@@ -1,3 +1,15 @@
 {
-  "lines": ["hemomancy.alchemist.item_inquiry.vial_centrifuge.line1", "hemomancy.alchemist.item_inquiry.vial_centrifuge.line2"]
+  "conditions": [
+    {
+      "max_degree": 0,
+      "lines": [
+        "hemomancy.clinical.inquiry.later"
+      ]
+    },
+    {
+      "lines": [
+        "hemomancy.clinical.inquiry.centrifuge"
+      ]
+    }
+  ]
 }

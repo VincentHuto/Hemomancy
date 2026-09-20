@@ -1,3 +1,15 @@
 {
-  "lines": ["hemomancy.mnemonist.item_inquiry.minecraft_archive.line1", "hemomancy.mnemonist.item_inquiry.minecraft_archive.line2"]
+  "conditions": [
+    {
+      "max_degree": 0,
+      "lines": [
+        "hemomancy.clinical.inquiry.later"
+      ]
+    },
+    {
+      "lines": [
+        "hemomancy.clinical.inquiry.echo_hint"
+      ]
+    }
+  ]
 }

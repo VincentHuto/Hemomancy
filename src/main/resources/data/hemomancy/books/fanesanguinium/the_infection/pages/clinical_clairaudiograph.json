@@ -1,0 +1,9 @@
+{
+  "type": "hutoslib:page",
+  "ordinality": 26,
+  "texture": "hemomancy:textures/gui/guide/page.png",
+  "title": "What Blood Remembers Saying",
+  "subtitle": "Clinical blood study",
+  "text": "The Alchemist has established the specimen. Listen now to what its former body repeated. I have recorded the Clairaudiograph and Ambergris Cylinder recipes. Place a filled creature Blood Vial and a blank cylinder into the machine, select a call, and Carve for four seconds. The blood is consumed and its empty vial remains. Preview is private; Play reaches nearby listeners. Carved cylinders retain a creature expression, not an injectable property. Identification is required for your training, but the machine can record unexamined creature blood too.",
+  "icon": "hemomancy:clairaudiograph"
+}

@@ -15,7 +15,7 @@
     "announce_to_chat": false,
     "hidden": true
   },
-  "parent": "hemomancy:hemomancy/degree_2_votary",
+  "parent": "hemomancy:hemomancy/degree_1_neophyte",
   "criteria": {
     "started": {
       "trigger": "minecraft:impossible"

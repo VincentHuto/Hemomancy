@@ -75,12 +75,19 @@ public class PacketHandler {
 
     private static void onRegisterPayloads(RegisterPayloadHandlersEvent event) {
         var net = event.registrar(Hemomancy.MOD_ID);
+        net.playToServer(com.vincenthuto.hemomancy.common.succession.ResidentsRequestPacket.TYPE,
+                com.vincenthuto.hemomancy.common.succession.ResidentsRequestPacket.STREAM_CODEC,
+                com.vincenthuto.hemomancy.common.succession.ResidentsRequestPacket::handle);
+        net.playToClient(com.vincenthuto.hemomancy.common.succession.ResidentsSnapshotPacket.TYPE,
+                com.vincenthuto.hemomancy.common.succession.ResidentsSnapshotPacket.STREAM_CODEC,
+                com.vincenthuto.hemomancy.common.succession.ResidentsSnapshotPacket::handle);
         net.playToClient(CastingAnimationPacket.TYPE, CastingAnimationPacket.STREAM_CODEC, CastingAnimationPacket::handle);
         net.playToServer(CastingChargePacket.TYPE, CastingChargePacket.STREAM_CODEC, CastingChargePacket::handle);
         net.playToServer(ClairaudiographActionPacket.TYPE, ClairaudiographActionPacket.STREAM_CODEC, ClairaudiographActionPacket::handle);
         net.playToClient(ClairaudiographChoicesPacket.TYPE, ClairaudiographChoicesPacket.STREAM_CODEC, ClairaudiographChoicesPacket::handle);
         net.playToClient(ClairaudiographSoundPacket.TYPE, ClairaudiographSoundPacket.STREAM_CODEC, ClairaudiographSoundPacket::handle);
         net.playToClient(BloodInjectionSyncPacket.TYPE, BloodInjectionSyncPacket.STREAM_CODEC, BloodInjectionSyncPacket::handle);
+        net.playToClient(BloodProfileSyncPacket.TYPE, BloodProfileSyncPacket.STREAM_CODEC, BloodProfileSyncPacket::handle);
         net.playToClient(PacketHematicMicroscopeViewing.TYPE, PacketHematicMicroscopeViewing.STREAM_CODEC, PacketHematicMicroscopeViewing::handle);
         net.playToClient(PacketBloodVialInjection.TYPE, PacketBloodVialInjection.STREAM_CODEC, PacketBloodVialInjection::handle);
         net.playToServer(ManipulationChargeVisualPacket.TYPE, ManipulationChargeVisualPacket.STREAM_CODEC,
@@ -298,6 +305,9 @@ public class PacketHandler {
 
         // ── Degree / Unstained progress ───────────────────────────────────────
         net.playToClient(PacketSyncDegree.TYPE, PacketSyncDegree.STREAM_CODEC, PacketSyncDegree::handle);
+        net.playBidirectional(AntecedentEffectPacket.TYPE,AntecedentEffectPacket.STREAM_CODEC,AntecedentEffectPacket::handle);
+        net.playToClient(PacketAntecedentResearch.TYPE, PacketAntecedentResearch.STREAM_CODEC, PacketAntecedentResearch::handle);
+        net.playToClient(PacketSyncClinicalBlood.TYPE, PacketSyncClinicalBlood.STREAM_CODEC, PacketSyncClinicalBlood::handle);
         net.playToClient(PacketSyncLiberKnowledge.TYPE, PacketSyncLiberKnowledge.STREAM_CODEC, PacketSyncLiberKnowledge::handle);
         net.playToClient(PacketSyncUnstainedProgress.TYPE, PacketSyncUnstainedProgress.STREAM_CODEC, PacketSyncUnstainedProgress::handle);
         net.playToServer(PacketToggleUnstainedBonus.TYPE, PacketToggleUnstainedBonus.STREAM_CODEC, PacketToggleUnstainedBonus::handle);
@@ -456,6 +466,12 @@ public class PacketHandler {
         }
         if (payload instanceof OpenDialoguePacket open && open.tree().entityId() != -1) {
             com.vincenthuto.hemomancy.common.entity.npc.dialogue.MonolithDialogueContext.clear(player);
+        }
+        if (payload instanceof OpenDialoguePacket open) {
+            var entity = player.level().getEntity(open.tree().entityId());
+            PacketDistributor.sendToPlayer(player, new OpenDialoguePacket(
+                    com.vincenthuto.hemomancy.common.succession.SuccessionDialogue.decorate(player, entity, open.tree())));
+            return;
         }
         PacketDistributor.sendToPlayer(player, payload);
     }

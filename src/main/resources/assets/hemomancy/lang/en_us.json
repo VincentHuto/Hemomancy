@@ -151,7 +151,7 @@
   "advancements.hemomancy.first_separation_complete.title": "Separation Recovered",
   "advancements.hemomancy.first_culture_complete.description": "Fruit an enzyme from its matching reusable tendency culture in a Mycelial Lantern",
   "advancements.hemomancy.first_culture_complete.title": "First Culture",
-  "advancements.hemomancy.first_separation_started.description": "Start a valid Vial Centrifuge separation as a Votary",
+  "advancements.hemomancy.first_separation_started.description": "Start a valid assigned Vial Centrifuge separation as a Neophyte or higher",
   "advancements.hemomancy.first_separation_started.title": "The First Separation",
   "advancements.hemomancy.founding_fane_established.description": "Consecrate your Founding Fane — claim the land for the Hematic Order",
   "advancements.hemomancy.founding_fane_established.title": "This Ground Is Ours",
@@ -734,7 +734,7 @@
   "entity.hemomancy.mnemonic_whale": "Mnemonic Whale",
   "entity.hemomancy.mnemonist_puppet": "Mnemonist Puppet",
   "entity.hemomancy.scarlet_mummer": "Scarlet Mummer",
-	"entity.hemomancy.sanguine_hound": "Sanguine Hound",
+  "entity.hemomancy.sanguine_hound": "Sanguine Hound",
   "entity.hemomancy.morphling_polyp": "Morphling Polyp",
   "entity.hemomancy.morphling_polyp_item": "Morphling Polyp Item",
   "entity.hemomancy.mycophant": "The Mycophant",
@@ -835,8 +835,8 @@
   "hemomancy.alchemist.archon.line1": "§4[The Alchemist straightens instinctively and bows their head]",
   "hemomancy.alchemist.archon.line2": "Archon. Every machine in this Outpost is yours to command. I have no lessons left for you. I can only keep the machines serving.",
   "hemomancy.alchemist.clarity.line1": "§7[The Alchemist looks straight through you as though you are not there, then returns their attention to their work without a word]",
-  "hemomancy.alchemist.first_separation.briefing": "Take these two loose Blood Vials. Left-click one living creature with each vial; the vial cancels the hit. Set the samples in opposing centrifuge slots and recover that spin's enzyme.",
-  "hemomancy.alchemist.first_separation.complete": "Good. The enzyme held its shape. Take this field kit and learn to draw the next answer yourself.",
+  "hemomancy.alchemist.first_separation.briefing": "Take these two loose Blood Vials. Left-click a cow with each vial; the vial cancels the hit. Set the samples in opposing Centrifuge slots and recover the Vivacious Enzyme. Report back for a Living Syringe and initialized eight-vial rack. Then bring me a filled creature vial for microscopy.",
+  "hemomancy.alchemist.first_separation.complete": "The enzyme held its shape. Take this Living Syringe and initialized eight-vial rack. Bring me one filled creature vial; observation is your next lesson.",
   "hemomancy.alchemist.enzyme_uses.brewing": "In an ordinary brewing stand: Vivacious makes Regeneration; Fervent, Fire Resistance; Neurotic, Swiftness; Incandescent, Night Vision; Ruinous, Poison; Frigid, Slowness; and Ferric, Strength. Umbral turns Night Vision into Invisibility.",
   "hemomancy.alchemist.enzyme_uses.culture": "At Degree 3, combine an enzyme with a Spore Sac and Hyphal Substrate to make its matching culture. A Mycelial Lantern keeps that culture and fruits the same enzyme for 600 blood over 2,400 ticks.",
   "hemomancy.alchemist.enzyme_uses.workshop": "That is your first living workshop: the Centrifuge discovers an expression, the culture preserves it, and a Gourdvine Tap can supply the Lantern without replacing active blood gathering.",
@@ -855,7 +855,7 @@
   "hemomancy.alchemist.item_inquiry.blood_crystal_shard.line2": "Keep them. The Alembic accepts them at reduced yield. Accumulate enough for a worthwhile batch.",
   "hemomancy.alchemist.item_inquiry.blood_gourd.line1": "The blood gourd is your primary storage vessel. Upgrade it as initiation deepens. More room means a deeper reserve and longer casting.",
   "hemomancy.alchemist.item_inquiry.blood_gourd.line2": "White, Red, then Black. Each tier adds capacity. Treat White as a starting tier.",
-  "hemomancy.alchemist.item_inquiry.blood_vial.line1": "Left-click a living creature with an empty Blood Vial to draw a sample without damaging it. The Living Syringe and rack make repeated field sampling faster later.",
+  "hemomancy.alchemist.item_inquiry.blood_vial.line1": "Left-click a living creature with an empty Blood Vial to draw a sample without damaging it. Thick-skinned creatures and NPCs require the Living Syringe and its vial rack.",
   "hemomancy.alchemist.item_inquiry.blood_vial.line2": "Balance the sampled vials in the Centrifuge, then recover the separated enzyme. That is the process.",
   "hemomancy.alchemist.item_inquiry.bloody_flask.line1": "A Bloody Flask is a portable reserve, not part of the syringe-and-rack assay.",
   "hemomancy.alchemist.item_inquiry.bloody_flask.line2": "Use it when blood must travel. A machine accepts either vessel as red fluid.",
@@ -904,13 +904,13 @@
   "hemomancy.alchemist.item_inquiry.hemolytic_vial.line2": "Its production uses a different process from standard blood distillation. It works. That is all I have to say.",
   "hemomancy.alchemist.item_inquiry.iron_ingot.line1": "Ordinary iron has no hematic obedience. Hematic Iron is taught through Blood Projection and recovered through the Order's salvage practices, not by standing an ingot near a dramatic furnace.",
   "hemomancy.alchemist.item_inquiry.iron_ingot.line2": "Use the blood-structure plan or salvage damaged iron through the proven route. Heat alone leaves the metal deaf to your pulse.",
-  "hemomancy.alchemist.item_inquiry.living_syringe.line1": "The Living Syringe draws a controlled specimen into an empty vial held by your rack.",
+  "hemomancy.alchemist.item_inquiry.living_syringe.line1": "The Living Syringe draws a controlled specimen into an empty vial held by your rack. It can reach blood that a loose vial cannot, including thick-skinned creatures and NPCs.",
   "hemomancy.alchemist.item_inquiry.living_syringe.line2": "It is a sampling instrument first. Any violence done with it is misuse, not its governing principle.",
   "hemomancy.alchemist.item_inquiry.living_weapon_graft.line1": "This is biological instruction prepared for a Living Staff. I can judge its material stability. The Redwright owns the rite.",
   "hemomancy.alchemist.item_inquiry.living_weapon_graft.line2": "Ask the Artificer how the Iron Brazier and Blood Absorption make the staff accept the limb-pattern.",
   "hemomancy.alchemist.item_inquiry.minecraft_reagent.line1": "Common apparatus, but still worth reading properly. Shape, heat tolerance, and residue tell me what work it can survive.",
   "hemomancy.alchemist.item_inquiry.minecraft_reagent.line2": "Bring it to a bench when a formula calls for it. Familiarity alone gives a vessel no hemomantic purpose.",
-	"hemomancy.alchemist.item_inquiry.mnemonic_reliquary.line1": "The Mnemonic Reliquary arranges bodily and willed memories you already know into the active lessons nearest your pulse.",
+  "hemomancy.alchemist.item_inquiry.mnemonic_reliquary.line1": "The Mnemonic Reliquary arranges bodily and willed memories you already know into the active lessons nearest your pulse.",
   "hemomancy.alchemist.item_inquiry.mnemonic_reliquary.line2": "The memory item teaches the lesson. The Reliquary only chooses which known lessons sit nearest the pulse.",
   "hemomancy.alchemist.item_inquiry.morphling_incubator.line1": "The Morphling Incubator stabilises cultivated fungal symbionts. They remain living dependants, with their own nature.",
   "hemomancy.alchemist.item_inquiry.morphling_incubator.line2": "Strain, enzyme, and husbandry shape what develops. The Incubator sets the conditions. Whatever grows there still has its own nature.",
@@ -1745,8 +1745,8 @@
   "hemomancy.manipulation.glacial_rampart": "Glacial Rampart",
   "hemomancy.manipulation.glacial_rampart.desc": "Raises an aimed ice wall, or a surrounding ice shell while crouching.",
   "hemomancy.manipulation.grave_debt.desc": "Marks a target with a debt that bursts at low health and refunds blood if death claims it.",
-	"hemomancy.manipulation.blackhearted": "Blackhearted",
-	"hemomancy.manipulation.blackhearted.desc": "While enabled with active blood and sufficient Mortem alignment, converts most Wither harm into recovery until necrotic saturation ruptures.",
+  "hemomancy.manipulation.blackhearted": "Blackhearted",
+  "hemomancy.manipulation.blackhearted.desc": "While enabled with active blood and sufficient Mortem alignment, converts most Wither harm into recovery until necrotic saturation ruptures.",
   "hemomancy.manipulation.hematic_beacon": "Hematic Beacon",
   "hemomancy.manipulation.hematic_beacon.desc": "Creates an aimed rally zone that heals and steadies allies each second while revealing hostiles.",
   "hemomancy.manipulation.hematic_impressment": "Hematic Impressment",
@@ -1764,11 +1764,11 @@
   "hemomancy.manipulation.lingering_blood_binding": "Lingering Blood Binding",
   "hemomancy.manipulation.lingering_blood_binding.desc": "Forms a longer-lived binding around one creature.",
   "hemomancy.manipulation.iron_retort.desc": "Raises a brief iron guard that cuts incoming melee damage and lashes back at the attacker.",
-	"hemomancy.manipulation.ironhearted": "Ironhearted",
-	"hemomancy.manipulation.ironhearted.desc": "Fully charge to store up to two Iron Hearts (4 health) for ten minutes. Stored hearts take damage first; active Thorn, Anvil, and Crucible scars expand capacity.",
-	"message.hemomancy.ironhearted.charge": "Hold the manipulation until the iron heart finishes forming.",
-	"message.hemomancy.ironhearted.full": "Your iron casing cannot hold another heart.",
-	"message.hemomancy.blackhearted.passive": "Blackhearted is a passive; toggle it with the manipulation key.",
+  "hemomancy.manipulation.ironhearted": "Ironhearted",
+  "hemomancy.manipulation.ironhearted.desc": "Fully charge to store up to two Iron Hearts (4 health) for ten minutes. Stored hearts take damage first; active Thorn, Anvil, and Crucible scars expand capacity.",
+  "message.hemomancy.ironhearted.charge": "Hold the manipulation until the iron heart finishes forming.",
+  "message.hemomancy.ironhearted.full": "Your iron casing cannot hold another heart.",
+  "message.hemomancy.blackhearted.passive": "Blackhearted is a passive; toggle it with the manipulation key.",
   "hemomancy.manipulation.levelup": "§5[Hemomancy] §7%s §5has grown stronger! §7(Level §5%d§7)",
   "hemomancy.manipulation.lumen_suture": "Lumen Suture",
   "hemomancy.manipulation.lumen_suture.desc": "Sutures the nearest wounded ally with light, granting absorption and clearing blindness and Wither. Falls back to yourself.",
@@ -1963,8 +1963,8 @@
   "hemomancy.mnemonist.item_inquiry.memory_gloam_laceration.line2": "It bites deepest from a shroud or true darkness, then leaves the blood slower to answer.",
   "hemomancy.mnemonist.item_inquiry.memory_grave_debt.line1": "Grave Debt. A Mortem ledger written against a living balance.",
   "hemomancy.mnemonist.item_inquiry.memory_grave_debt.line2": "When the vessel falls low it bursts, and death may return a measure of blood to the creditor.",
-	"hemomancy.mnemonist.item_inquiry.memory_blackhearted.line1": "Blackhearted. Mortem teaches the heart to feed on the death meant for it.",
-	"hemomancy.mnemonist.item_inquiry.memory_blackhearted.line2": "The feast has a limit. When the vessel saturates, the debt breaks inward and the lesson goes silent.",
+  "hemomancy.mnemonist.item_inquiry.memory_blackhearted.line1": "Blackhearted. Mortem teaches the heart to feed on the death meant for it.",
+  "hemomancy.mnemonist.item_inquiry.memory_blackhearted.line2": "The feast has a limit. When the vessel saturates, the debt breaks inward and the lesson goes silent.",
   "hemomancy.mnemonist.item_inquiry.memory_hematic_beacon.line1": "Hematic Beacon. The blood remembers signal fires carried under the skin.",
   "hemomancy.mnemonist.item_inquiry.memory_hematic_beacon.line2": "Allies steady beneath it. Hostiles become easier for the covenant to name.",
   "hemomancy.mnemonist.item_inquiry.memory_hematic_impressment.line1": "Hematic Impressment. A borrowed loyalty written directly into another pulse.",
@@ -1977,8 +1977,8 @@
   "hemomancy.mnemonist.item_inquiry.memory_insatiable_hunger.line2": "Healing thins under it, and food becomes a deeper ache instead of comfort.",
   "hemomancy.mnemonist.item_inquiry.memory_iron_retort.line1": "Iron Retort. Ferric patience folded into a single answer.",
   "hemomancy.mnemonist.item_inquiry.memory_iron_retort.line2": "The guard accepts the first bite, dulls it, then answers through the attacker's own opening.",
-	"hemomancy.mnemonist.item_inquiry.memory_ironhearted.line1": "Ironhearted. Ferric blood remembers a second pulse and builds it a silver cage.",
-	"hemomancy.mnemonist.item_inquiry.memory_ironhearted.line2": "Hold the memory steady until the metal closes. Its borrowed heart is spent before your own.",
+  "hemomancy.mnemonist.item_inquiry.memory_ironhearted.line1": "Ironhearted. Ferric blood remembers a second pulse and builds it a silver cage.",
+  "hemomancy.mnemonist.item_inquiry.memory_ironhearted.line2": "Hold the memory steady until the metal closes. Its borrowed heart is spent before your own.",
   "hemomancy.mnemonist.item_inquiry.memory_lumen_suture.line1": "Lumen Suture. Lux can reveal a room, or place a needle of light where you need one.",
   "hemomancy.mnemonist.item_inquiry.memory_lumen_suture.line2": "It closes pain with a pale thread and cuts blindness from the wound.",
   "hemomancy.mnemonist.item_inquiry.memory_prismatic_reproof.line1": "Prismatic Reproof. Lux can judge a threat by splitting it into every color it tried to hide.",
@@ -1996,9 +1996,9 @@
   "hemomancy.mnemonist.item_inquiry.mnemonic_blueprint.blank": "Blank, but not ignorant. A blueprint waits for spatial memory rather than a manipulation lesson.",
   "hemomancy.mnemonist.item_inquiry.mnemonic_blueprint.rite": "A rite has been impressed here as remembered distance, order, and relation. It maps the rite without carrying its authority.",
   "hemomancy.mnemonist.item_inquiry.mnemonic_blueprint.structure": "A blood structure has been fixed into portable recollection. It can guide the hand. Understanding still belongs to you.",
-	"hemomancy.mnemonist.item_inquiry.mnemonic_reliquary.line1": "The Mnemonic Reliquary arranges Thelemic and Noetic Memories within one active loadout.",
+  "hemomancy.mnemonist.item_inquiry.mnemonic_reliquary.line1": "The Mnemonic Reliquary arranges Thelemic and Noetic Memories within one active loadout.",
   "hemomancy.mnemonist.item_inquiry.mnemonic_reliquary.line2": "The Reliquary chooses which known lessons wait nearest the pulse. The memory item teaches new ones.",
-	"hemomancy.mnemonist.item_inquiry.mnemonic_reliquary.locked": "The Reliquary is a Third Degree weave. Until then, let the first bodily lessons settle into the open places nearest your pulse.",
+  "hemomancy.mnemonist.item_inquiry.mnemonic_reliquary.locked": "The Reliquary is a Third Degree weave. Until then, let the first bodily lessons settle into the open places nearest your pulse.",
   "hemomancy.mnemonist.item_inquiry.orb_of_perspective.line1": "A fixed eye for a room made from memory. Its skies come from places its owner has truly reached. There is no invention in it.",
   "hemomancy.mnemonist.item_inquiry.orb_of_perspective.line2": "Cast it beyond the Chamber floor. The fall changes the remembered perspective, and the Orb returns to the hand that owns the cell.",
   "hemomancy.mnemonist.item_inquiry.puppeteering_thread.line1": "Puppeteering thread. The physical medium used in the Somatic Loom for memory weaving, and later in the crossbar art that gives a conquered memory-shape a body.",
@@ -2179,8 +2179,8 @@
   "hemomancy.summon.mnemonist_puppet.role": "Memory Echo",
   "hemomancy.summon.scarlet_mummer.lore": "A narrow red performer that asks every eye in the room to make the same mistake.",
   "hemomancy.summon.scarlet_mummer.role": "Attention Controller",
-	"hemomancy.summon.sanguine_hound.lore": "A dense pursuit body that tears itself into a short-lived pack when badly injured.",
-	"hemomancy.summon.sanguine_hound.role": "Pursuit Harrier",
+  "hemomancy.summon.sanguine_hound.lore": "A dense pursuit body that tears itself into a short-lived pack when badly injured.",
+  "hemomancy.summon.sanguine_hound.role": "Pursuit Harrier",
   "hemomancy.summon.recalled": "%s returns to thread and memory.",
   "hemomancy.summon.select.invalid": "That summon shape cannot be selected.",
   "hemomancy.summon.select.none": "You have not learned any summon shapes.",
@@ -2290,7 +2290,7 @@
   "hemomancy.vicar.item_inquiry.mnemonic_blueprint.mid.line2": "The blueprint gives the outline. Your blood provides the rest.",
   "hemomancy.vicar.item_inquiry.mnemonic_blueprint.rite": "This blueprint keeps the spatial memory of a Cardinal Rite. It guides construction. Authority comes from the rite itself.",
   "hemomancy.vicar.item_inquiry.mnemonic_blueprint.structure": "This blueprint remembers a blood structure. The plan may show the form, but Blood Projection must still make the form answer.",
-	"hemomancy.vicar.item_inquiry.mnemonic_reliquary.line1": "The Mnemonic Reliquary arranges which known bodily and willed memories wait closest to the pulse.",
+  "hemomancy.vicar.item_inquiry.mnemonic_reliquary.line1": "The Mnemonic Reliquary arranges which known bodily and willed memories wait closest to the pulse.",
   "hemomancy.vicar.item_inquiry.mnemonic_reliquary.line2": "It changes readiness. The memory holds the learning, and the bloodline holds the covenant.",
   "hemomancy.vicar.item_inquiry.monolith.line1": "The Sanguine Monolith belongs to the upper degrees. It speaks to practitioners who have come far enough along the path and offers something older than doctrine.",
   "hemomancy.vicar.item_inquiry.monolith.line2": "At the higher initiatory degrees, the Monolith becomes your primary guide. My counsel reaches a natural limit around degree five.",
@@ -2829,6 +2829,8 @@
   "item.hemomancy.living_staff.vesper_awakened.tooltip": "Disciplined by the memory of Vesper's refusal.",
   "item.hemomancy.living_syringe": "Living Syringe",
   "item.hemomancy.living_syringe.loaded": "Loaded Rack: %s/%s empty",
+  "message.hemomancy.blood_sampling.requires_living_syringe": "Their hide is too tough to pierce with a needle alone.",
+  "item.hemomancy.living_syringe.restricted_samples": "Required to sample thick-skinned creatures and NPCs.",
   "item.hemomancy.living_syringe.no_rack": "No empty or partial vial rack in inventory.",
   "item.hemomancy.living_syringe.rack_full": "Rack is full; ejected.",
   "message.hemomancy.blood_sampling.already_filled": "This Blood Vial already contains a sample.",
@@ -2897,7 +2899,7 @@
   "item.hemomancy.memory_glacial_rampart": "Memory Glacial Rampart",
   "item.hemomancy.memory_gloam_laceration": "Memory Gloam Laceration",
   "item.hemomancy.memory_grave_debt": "Memory Grave Debt",
-	"item.hemomancy.memory_blackhearted": "Memory Blackhearted",
+  "item.hemomancy.memory_blackhearted": "Memory Blackhearted",
   "item.hemomancy.memory_hematic_beacon": "Memory Hematic Beacon",
   "item.hemomancy.memory_hematic_flare": "Memory Hematic Flare",
   "item.hemomancy.memory_hematic_impressment": "Memory Hematic Impressment",
@@ -2908,7 +2910,7 @@
   "item.hemomancy.memory_insatiable_hunger": "Memory Insatiable Hunger",
   "item.hemomancy.memory_lignum_mortis": "Memory Lignum Mortis",
   "item.hemomancy.memory_iron_retort": "Memory Iron Retort",
-	"item.hemomancy.memory_ironhearted": "Memory Ironhearted",
+  "item.hemomancy.memory_ironhearted": "Memory Ironhearted",
   "item.hemomancy.memory_living_axe": "Memory Living Axe",
   "item.hemomancy.memory_living_blade": "Memory Living Blade",
   "item.hemomancy.memory_living_claws": "Memory Living Claws",
@@ -2968,7 +2970,7 @@
   "item.hemomancy.mnemonic_folio.tooltip": "Stores up to 30 stacks of mnemonic blueprints",
   "item.hemomancy.mnemonist_cradle": "Mnemonist Cradle",
   "item.hemomancy.scarlet_gorget": "Scarlet Gorget",
-	"item.hemomancy.sanguine_hound_bridle": "Sanguine Hound Bridle",
+  "item.hemomancy.sanguine_hound_bridle": "Sanguine Hound Bridle",
   "item.hemomancy.molten_scab": "Molten Scab",
   "item.hemomancy.monolith_fragment": "Monolith Fragment",
   "item.hemomancy.monolith_imbued_cloth": "Monolith Imbued Cloth",
@@ -3129,7 +3131,7 @@
   "item.hemomancy.spawn_egg_mnemonic_whale": "Mnemonic Whale Spawn Egg",
   "item.hemomancy.spawn_egg_mnemonist_puppet": "Spawn Egg Mnemonist Puppet",
   "item.hemomancy.spawn_egg_scarlet_mummer": "Spawn Egg Scarlet Mummer",
-	"item.hemomancy.spawn_egg_sanguine_hound": "Spawn Egg Sanguine Hound",
+  "item.hemomancy.spawn_egg_sanguine_hound": "Spawn Egg Sanguine Hound",
   "item.hemomancy.spawn_egg_morphling_polyp": "Spawn Egg Morphling Polyp",
   "item.hemomancy.spawn_egg_myelin_borer": "Myelin Borer Spawn Egg",
   "item.hemomancy.spawn_egg_prism_cuttle": "Prism Cuttle Spawn Egg",
@@ -3860,19 +3862,19 @@
   "tooltip.hemomancy.tincture_carrion_metabolism": "Teaches the body to take nourishment from corruption.",
   "screen.hemomancy.harbinger_assignment_ledger.step.muscle_memory_catalogue": "Catalogue the Eight Thelemic Memories",
   "screen.hemomancy.harbinger_assignment_ledger.step.muscle_memory_catalogue.desc": "Learn all eight body-bound memories through their tinctures.",
-	"muscle_memory.hemomancy.sanguine_fists": "Sanguine Fists",
-	"muscle_memory.hemomancy.laboring_arms": "Laboring Arms",
-	"muscle_memory.hemomancy.coursing_legs": "Coursing Legs",
-	"muscle_memory.hemomancy.hushed_gait": "Hushed Gait",
-	"muscle_memory.hemomancy.predatory_eyes": "Predatory Eyes",
-	"muscle_memory.hemomancy.second_pulse": "Second Pulse",
-	"muscle_memory.hemomancy.enduring_viscera": "Enduring Viscera",
-	"muscle_memory.hemomancy.carrion_metabolism": "Carrion Metabolism",
+  "muscle_memory.hemomancy.sanguine_fists": "Sanguine Fists",
+  "muscle_memory.hemomancy.laboring_arms": "Laboring Arms",
+  "muscle_memory.hemomancy.coursing_legs": "Coursing Legs",
+  "muscle_memory.hemomancy.hushed_gait": "Hushed Gait",
+  "muscle_memory.hemomancy.predatory_eyes": "Predatory Eyes",
+  "muscle_memory.hemomancy.second_pulse": "Second Pulse",
+  "muscle_memory.hemomancy.enduring_viscera": "Enduring Viscera",
+  "muscle_memory.hemomancy.carrion_metabolism": "Carrion Metabolism",
   "gui.hemomancy.ghastly_alembic.tincture_blood": "Tincture Blood",
   "hemomancy.dialogue.alchemist.option.accept_body_answers": "Show me how blood changes the body.",
   "hemomancy.alchemist.body_answers.line1": "You have separated blood by tendency. Now stop treating those answers as ingredients alone.",
   "hemomancy.alchemist.body_answers.line2": "Put Sanguine Formation in the Alembic, Fervent Enzyme in the catalyst slot, and a Bloody Flask in the new blood-input slot. The flask is part of the formula. It will be consumed.",
-	"hemomancy.alchemist.body_answers.line3": "Drink what comes out. Your arms will learn the Thelemic Memory Sanguine Fists and store a reserve of the preparation. Select it through the same radial as Noetic Memories, then activate it. The lesson remains, but every answer costs blood and strains its vessels.",
+  "hemomancy.alchemist.body_answers.line3": "Drink what comes out. Your arms will learn the Thelemic Memory Sanguine Fists and store a reserve of the preparation. Select it through the same radial as Noetic Memories, then activate it. The lesson remains, but every answer costs blood and strains its vessels.",
   "hemomancy.dialogue.alchemist.option.muscle_memory_catalogue": "What else can the body learn?",
   "hemomancy.alchemist.muscle_memory_catalogue.line1": "Seven preparations remain. Use the same Sanguine Formation and Bloody Flask, but align the catalyst with the tendency you want the body to remember.",
   "hemomancy.alchemist.muscle_memory_catalogue.line2": "Ferric teaches labor, Neurotic teaches motion, Umbral teaches silence, Incandescent teaches sight, Vivacious teaches the heart, Frigid teaches endurance, and Ruinous teaches carrion.",
@@ -3882,359 +3884,352 @@
   "screen.hemomancy.harbinger_assignment_ledger.step.body_answers_briefed": "Accept the Alchemist's lesson",
   "screen.hemomancy.harbinger_assignment_ledger.step.body_answers_briefed.desc": "Return after First Separation and ask how blood can teach the body directly.",
   "screen.hemomancy.harbinger_assignment_ledger.step.body_answers_complete": "Brew and drink Sanguine Fists",
-	"screen.hemomancy.harbinger_assignment_ledger.step.body_answers_complete.desc": "Combine Sanguine Formation, Fervent Enzyme, and a Bloody Flask in the Ghastly Alembic, then drink the tincture.",
-	"item.hemomancy.cured_clay_jug": "Cured Clay Jug",
-	"item.hemomancy.tincture_sanguine_fists_jug": "Jug of Sanguine Fists",
-	"item.hemomancy.tincture_laboring_arms_jug": "Jug of Laboring Arms",
-	"item.hemomancy.tincture_coursing_legs_jug": "Jug of Coursing Legs",
-	"item.hemomancy.tincture_hushed_gait_jug": "Jug of Hushed Gait",
-	"item.hemomancy.tincture_predatory_eyes_jug": "Jug of Predatory Eyes",
-	"item.hemomancy.tincture_second_pulse_jug": "Jug of the Second Pulse",
-	"item.hemomancy.tincture_enduring_viscera_jug": "Jug of Enduring Viscera",
-	"item.hemomancy.tincture_carrion_metabolism_jug": "Jug of Carrion Metabolism",
-	"tooltip.hemomancy.tincture_doses": "Doses: %s / %s",
-	"message.hemomancy.mnemonic_reliquary.referral": "Your memorized powers now fill every available slot. The Alchemist directs you to the Mnemonist for a more deliberate way to arrange them.",
-	"message.hemomancy.mnemonic_reliquary.taught": "The Mnemonist teaches you the Mnemonic Reliquary, a Third Degree structure for arranging Thelemic and Noetic Memories together.",
-	"hemomancy.dialogue.mnemonist.option.reliquary_understood": "Show me how to weave the Reliquary.",
-	"message.hemomancy.muscle_memory.activation_failed": "That bodily instruction cannot answer: check its reserve, blood system, and vascular section.",
-	"message.hemomancy.muscle_memory.overexertion_armed": "Overexertion armed. The next valid response will force the memory beyond its safe rhythm.",
-	"message.hemomancy.muscle_memory.overexertion_fallback": "The body cannot pay the enhanced cost; the memory falls back to its ordinary response.",
-	"hemomancy.dialogue.alchemist.conductive_mark_recognized": "Your Ductilis record predicts a conductive response. The Mnemonist calls it a Noetic Memory. The Loom formula is now recorded.",
-	"hemomancy.dialogue.mnemonist.conductive_mark_recognized": "Your first weave reveals the conductive pattern the Alchemist measured in Ductilis tissue. One Noetic Memory. Two routes to recognition.",
-	"crossbar.interference.gnawed": "Gnawed — 75% range, 150% upkeep",
-	"morphling.interference.distracted": "Distracted — 125% blood upkeep",
-	"hemomancy.dialogue.mnemonist.option.morphling_puppet_interference": "Why is my Morphling worrying the puppet threads?",
-	"hemomancy.mnemonist.morphling_puppet_interference.line1": "The incorporated organism feels projected will as foreign tension. It worries at that tension as if it were edible tissue.",
-	"hemomancy.mnemonist.morphling_puppet_interference.line2": "The puppet's imposed will answers in turn. Its repeated intent scatters the organism's attention and frustrates its feeding rhythm.",
-	"hemomancy.mnemonist.morphling_puppet_interference.line3": "Neither practice excludes the other. You may sustain both, but the divided strain makes each less efficient.",
-	"advancements.hemomancy.vein_mason_d5_ready.title": "Return to the Vein-Mason",
-	"advancements.hemomancy.vein_mason_d5_ready.desc": "The vessel has been strained, diagnosed, treated, and fortified.",
-	"advancements.hemomancy.vein_mason_d6_ready.title": "Return to the Vein-Mason",
-	"advancements.hemomancy.vein_mason_d6_ready.desc": "The changed scar route has borne a second Noetic Memory.",
-	"hemomancy.anchorite.d5.cause_strain": "Use a Thelemic Memory until one section becomes Varicose. I need the body's instruction to make the injury, not steel and not projected will.",
-	"hemomancy.anchorite.d5.return_diagnosis": "The current catches. Let me read where it catches, then we will choose medicine by the damage rather than habit.",
-	"hemomancy.anchorite.d5.recover": "The Alchemist's Salve handles one failing course. The Poultice spreads across two. Clotting or widespread Varicosity calls for Vascular Mending.",
-	"hemomancy.anchorite.d5.fortify": "Medicine restores what was spent. Hematic Fortification permanently reduces vascular strain by 15%. Complete that Fourth Degree rite, then return; it does not erase your earned diagnosis or treatment.",
-	"hemomancy.anchorite.d5.complete": "The vessel now knows injury, repair, and preparation. Take the deeper pattern.",
-	"hemomancy.anchorite.d6.referral": "A scar can route an instruction, but I do not author the instruction. Carry my question to a Mnemonist.",
-	"hemomancy.anchorite.d6.seek_counsel": "The Mnemonist interprets the memory. I determine how the body bears it. Return to their discipline first.",
-	"hemomancy.anchorite.d6.first_route": "Keep a cerebral scar aligned to a Noetic Memory's primary tendency, then cast it. Mechanical projections do not count.",
-	"hemomancy.anchorite.d6.change_loadout": "Prepare another arrangement at the Mason's Effigy and burn it. The active scar set must actually change.",
-	"hemomancy.anchorite.d6.second_route": "Now make the changed architecture bear another matching Noetic Memory.",
-	"hemomancy.anchorite.d6.complete": "The current changed because you changed its banks. The final pattern is ready.",
-	"hemomancy.dialogue.anchorite.option.diagnose": "Read the damaged vessel.",
-	"hemomancy.dialogue.anchorite.option.claim_d5": "I completed the recovery ladder.",
-	"hemomancy.dialogue.anchorite.option.accept_referral": "I will take the question to a Mnemonist.",
-	"hemomancy.dialogue.anchorite.option.claim_d6": "The changed route held.",
-	"hemomancy.dialogue.anchorite.option.replace_pattern": "Replace the lost pattern.",
-	"hemomancy.dialogue.event.anchorite_diagnosis": "Worst section: %s. Flow: %s. Health: %s/100. Treatment: %s.",
-	"hemomancy.dialogue.event.anchorite_d5_reward": "The Anchorite supplies a tier-two pattern, Blank Scar, catalyst, and four Runic Motifs.",
-	"hemomancy.dialogue.event.anchorite_d6_reward": "The Anchorite supplies a tier-three pattern, Blank Scar, catalyst, and eight Runic Motifs. Deep Inscription is still required to carve it.",
-	"hemomancy.dialogue.mnemonist.option.anchorite_counsel": "The Vein-Mason sent me to ask how a scar should bear a memory.",
-	"hemomancy.mnemonist.anchorite_counsel.line1": "I can tell you what the instruction means and which tendency leads it. The Anchorite cares for the tissue that must carry it.",
-	"hemomancy.mnemonist.anchorite_counsel.line2": "Match an active cerebral scar to the Noetic Memory's primary tendency. Then change the arrangement and prove the new route still bears the instruction."
-	,"hemomancy.mnemonist.circus.undiscovered.line1": "There is a Harbinger company that works through performance. They call themselves the Circus. Under that pavilion, every body practices something different."
-	,"hemomancy.mnemonist.circus.undiscovered.line2": "Do not confuse the show with an invitation. The whole troupe can make one intention real between them, and that is where the danger is."
-	,"hemomancy.mnemonist.circus.discovered.line1": "So you found the pavilion. Then you saw it yourself: the acts are the practice. They are not hiding something else behind the show."
-	,"hemomancy.mnemonist.circus.discovered.line2": "Watch who begins an act and who answers. Their manifestations take shape in that exchange."
-	,"hemomancy.dialogue.event.mnemonist_circus_waybill": "The Mnemonist folds a scarlet waybill along a line that tugs toward the nearest Circus."
-	,"hemomancy.circus.discovery": "The rough pavilion settles into focus. You have found the Circus."
-	,"screen.hemomancy.harbinger_assignment_ledger.anchorite_d5.title": "What the Vein Bears"
-	,"screen.hemomancy.harbinger_assignment_ledger.anchorite_d5.progress": "%s/%s"
-	,"screen.hemomancy.harbinger_assignment_ledger.anchorite_d5.desc": "Cause Thelemic Varicosity, receive a diagnosis, use Salve or Poultice, and complete Hematic Fortification."
-	,"screen.hemomancy.harbinger_assignment_ledger.anchorite_d5.reward": "Return to the Anchorite for a tier-two pattern and scar supplies."
-	,"screen.hemomancy.harbinger_assignment_ledger.anchorite_d6.title": "A Current Made Deliberate"
-	,"screen.hemomancy.harbinger_assignment_ledger.anchorite_d6.progress": "%s/%s"
-	,"screen.hemomancy.harbinger_assignment_ledger.anchorite_d6.desc": "Seek Mnemonist counsel, route a matching Noetic Memory, change the Effigy loadout, then route again."
-	,"screen.hemomancy.harbinger_assignment_ledger.anchorite_d6.reward": "Return to the Anchorite for a tier-three pattern. Deep Inscription is still required."
-	,"hemomancy.anchorite.inquiry.gauge.line1": "The gauge reports the vessel and leaves the repair to you. Read the number beside the flow state."
-	,"hemomancy.anchorite.inquiry.gauge.line2": "Hover a section to see which Noetic and Thelemic routes burden it."
-	,"hemomancy.anchorite.inquiry.salve.line1": "The Alchemist's Salve closes one local failure. It is field medicine, not conditioning."
-	,"hemomancy.anchorite.inquiry.salve.line2": "Use it when one section falls below Stable."
-	,"hemomancy.anchorite.inquiry.poultice.line1": "The Poultice distributes repair across the two weakest sections."
-	,"hemomancy.anchorite.inquiry.poultice.line2": "When clotting begins, stop improvising and perform Vascular Mending."
-	,"hemomancy.anchorite.inquiry.blank_scar.line1": "A Blank Scar is tissue prepared to receive an authored pattern."
-	,"hemomancy.anchorite.inquiry.blank_scar.line2": "The Artificer reinforces what faces the world. I reinforce what must bear the current within."
-	,"hemomancy.anchorite.inquiry.pattern.line1": "A Scar Pattern carries instruction. Carve it at the station, then arrange learned scars at the Effigy."
-	,"hemomancy.anchorite.inquiry.pattern.line2": "Tier-three instruction still requires Deep Inscription."
-	,"hemomancy.anchorite.inquiry.blank_memory.line1": "The Mnemonist gives this blank vessel meaning. I care where that meaning travels through you."
-	,"hemomancy.anchorite.inquiry.blank_memory.line2": "Instruction and tissue are separate crafts, even when they must agree."
-	,"hemomancy.anchorite.inquiry.conductive_mark.line1": "Conductive Mark is Noetic: projected instruction, led by its primary tendency."
-	,"hemomancy.anchorite.inquiry.conductive_mark.line2": "An aligned active cerebral scar lets its vascular route bear less strain."
-	,"hemomancy.anchorite.inquiry.effigy.line1": "The Effigy prepares a set from scars already burned into memory."
-	,"hemomancy.anchorite.inquiry.effigy.line2": "Burn the prepared motif at an Iron Brazier to make that set active."
-	,"hemomancy.anchorite.inquiry.brazier.line1": "The Iron Brazier teaches a carved scar or commits an Effigy pattern."
-	,"hemomancy.anchorite.inquiry.brazier.line2": "It is the final boundary between an external design and internal architecture."
-	,"hemomancy.anchorite.inquiry.tier_one.line1": "A first pattern deepens one tendency while active and can route a matching Noetic Memory."
-	,"hemomancy.anchorite.inquiry.tier_one.line2": "Its routing eases strain by five percent. Matching scars share one route. The strongest route governs."
-	,"hemomancy.dialogue.anchorite.option.about_alchemist": "How does your work differ from the Alchemist's?"
-	,"hemomancy.dialogue.anchorite.option.about_artificer": "How does your work differ from the Artificer's?"
-	,"hemomancy.anchorite.opinion.alchemist.line1": "The Alchemist restores damaged tissue with Salve and Poultice. That medicine is necessary and immediate."
-	,"hemomancy.anchorite.opinion.alchemist.line2": "I alter what the repaired vessel can bear. Recovery and conditioning are adjacent, not interchangeable."
-	,"hemomancy.anchorite.opinion.artificer.line1": "The Artificer shores up what meets the world: plate, weapon, frame, and graft."
-	,"hemomancy.anchorite.opinion.artificer.line2": "I work inward, where scar and vessel decide whether an instruction survives its passage."
-	,"hemomancy.dialogue.artificer.option.worn_vow.briefing": "Begin The Worn Vow."
-	,"hemomancy.dialogue.artificer.option.worn_vow.inspection": "Inspect my Hematic Iron work."
-	,"hemomancy.dialogue.artificer.option.worn_vow.fitting": "Fit my Worn Vow."
-	,"hemomancy.dialogue.artificer.option.worn_vow.replacement": "Replace my Worn Vow Fitting."
-	,"hemomancy.dialogue.artificer.option.three_answers.briefing": "Begin The Three Answers."
-	,"hemomancy.dialogue.artificer.option.three_answers.inspection": "Inspect my first armor answer."
-	,"hemomancy.dialogue.artificer.option.three_answers.fitting": "Fit my recorded answer."
-	,"hemomancy.dialogue.artificer.option.three_answers.replacement": "Replace my fork fitting."
-	,"hemomancy.dialogue.artificer.option.crimson_vestment.briefing": "Begin Crimson Vestment."
-	,"hemomancy.dialogue.artificer.option.crimson_vestment.inspection": "Inspect the consecrated frame."
-	,"hemomancy.dialogue.artificer.option.crimson_vestment.fitting": "Fit my Crimson Vestment."
-	,"hemomancy.dialogue.artificer.option.crimson_vestment.replacement": "Replace my Crimson Vestment Fitting."
-	,"hemomancy.dialogue.artificer.option.assumed_limb.briefing": "Begin The Assumed Limb."
-	,"hemomancy.dialogue.artificer.option.assumed_limb.inspection": "Inspect my first living graft."
-	,"hemomancy.dialogue.artificer.option.assumed_limb.fitting": "Fit my Living Arsenal."
-	,"hemomancy.dialogue.artificer.option.assumed_limb.replacement": "Replace my Assumed Limb Fitting."
-	,"hemomancy.dialogue.artificer.option.weight_of_frame.briefing": "Begin Weight of the Frame."
-	,"hemomancy.dialogue.artificer.option.weight_of_frame.inspection": "Inspect my monolithic lineage."
-	,"hemomancy.dialogue.artificer.option.weight_of_frame.fitting": "Fit my Monolithic Frame."
-	,"hemomancy.dialogue.artificer.option.weight_of_frame.replacement": "Replace my Monolithic Frame Fitting."
-	,"hemomancy.dialogue.artificer.option.claim_d7_reward": "Issue the material for my recorded lineage."
-	,"hemomancy.dialogue.artificer.option.recover.barbed": "My first answer was Barbed."
-	,"hemomancy.dialogue.artificer.option.recover.chitinite": "My first answer was Chitinite."
-	,"hemomancy.dialogue.artificer.option.recover.prismatic": "My first answer was Prismatic."
-	,"hemomancy.dialogue.artificer.option.recover.silent_archon": "My first lineage was Silent Archon."
-	,"hemomancy.dialogue.artificer.option.recover.edacious": "My first lineage was Edacious."
-	,"hemomancy.dialogue.artificer.option.recover.sheolic": "My first lineage was Sheolic."
-	,"hemomancy.dialogue.artificer.option.recover.phantasmal": "My first lineage was Phantasmal."
-	,"hemomancy.dialogue.alchemist.option.artificer_three_answers": "The Artificer sent me about my first armor answer."
-	,"hemomancy.dialogue.alchemist.option.artificer_crimson_vestment": "The Artificer sent me for Crimson Lacquer."
-	,"hemomancy.dialogue.alchemist.option.ask_armor_research": "Which specimens should I study for this armor?"
-	,"hemomancy.dialogue.alchemist.option.claim_armor_research": "I cataloged the armor specimens."
-	,"hemomancy.alchemist.armor_research.barbed.line1": "Catalog a Barbed Urchin, a Desiccant, and a Venom Rib Centipede."
-	,"hemomancy.alchemist.armor_research.barbed.line2": "Keep the records. Their spines and venom explain the Barbed answer better than another surrendered carcass."
-	,"hemomancy.alchemist.armor_research.chitinite.line1": "Catalog a Chalybeate Snail, a Chitinite, and a Fervent Chitinite."
-	,"hemomancy.alchemist.armor_research.chitinite.line2": "Keep the records. Their shells show the Artificer where Chitinite armor can yield without breaking."
-	,"hemomancy.alchemist.armor_research.prismatic.line1": "Catalog a Prism Cuttle, a Scarlet Serpent, and a Verdigris Moth."
-	,"hemomancy.alchemist.armor_research.prismatic.line2": "Keep the records. Their changing pigments explain what the Prismatic answer is imitating."
-	,"hemomancy.dialogue.event.alchemist_armor_research_reward_granted": "The Alchemist compares your Bestiary notes with the Artificer's work and gives you another matching reagent."
-	,"hemomancy.artificer.assignment.worn_vow.place_armature": "Place a Hematic Armature. Return after the frame has existed in your own workshop."
-	,"hemomancy.artificer.assignment.worn_vow.first_upgrade": "Use that Armature to complete one Hematic Iron upgrade."
-	,"hemomancy.artificer.assignment.worn_vow.full_set": "Complete and wear the full Hematic Iron set before the final fitting."
-	,"hemomancy.artificer.assignment.three_answers.first_upgrade": "Make your first Barbed, Chitinite, or Prismatic armor piece. The first family is the answer I will record."
-	,"hemomancy.artificer.assignment.three_answers.correspondence": "Take my recorded answer to an Alchemist. They can match its reagent and identify useful Bestiary specimens."
-	,"hemomancy.artificer.assignment.three_answers.full_set": "Complete and wear the full set from your recorded family."
-	,"hemomancy.artificer.assignment.three_answers.demonstration": "Prove the set answers in the field: retaliation, projectile reduction, or prismatic flash."
-	,"hemomancy.artificer.assignment.crimson_vestment.consecrate": "Apply the Vicar's Consecration Kit to the Armature."
-	,"hemomancy.artificer.assignment.crimson_vestment.correspondence": "Carry my inspection to an Alchemist and receive Crimson Lacquer."
-	,"hemomancy.artificer.assignment.crimson_vestment.first_upgrade": "Complete the first Blood Lust upgrade."
-	,"hemomancy.artificer.assignment.crimson_vestment.full_set": "Complete and wear the full Blood Lust set."
-	,"hemomancy.artificer.assignment.crimson_vestment.demonstration": "Land a direct hit and make the full vestment draw or bank blood."
-	,"hemomancy.artificer.assignment.assumed_limb.first_upgrade": "Complete one Living Weapon Graft rite."
-	,"hemomancy.artificer.assignment.assumed_limb.demonstration": "Defeat a hostile with a transformed Living Staff weapon form."
-	,"hemomancy.artificer.assignment.assumed_limb.learn_forms": "Learn all seven base Living Weapon forms before the final fitting."
-	,"hemomancy.artificer.assignment.weight_of_frame.cornerstone": "Apply the Monolithic Cornerstone to the Armature."
-	,"hemomancy.artificer.assignment.weight_of_frame.first_upgrade": "Complete the first valid D7 armor upgrade. Its lineage will be recorded permanently."
-	,"hemomancy.artificer.assignment.weight_of_frame.full_set": "Complete and wear the full set from the recorded D7 lineage."
-	,"hemomancy.artificer.assignment.weight_of_frame.demonstration": "Successfully activate that lineage's registered armor ability."
-	,"hemomancy.dialogue.event.artificer_inspection_unready": "The work awaits inspection."
-	,"hemomancy.dialogue.event.artificer_reward_unready": "That material has not been earned, or was already issued."
-	,"hemomancy.dialogue.event.artificer_equipment_full": "the full recorded set is equipped"
-	,"hemomancy.dialogue.event.artificer_equipment_incomplete": "equip the full recorded set first"
-	,"hemomancy.dialogue.event.artificer_three_answers_inspected": "Recorded fork: %1$s. %3$s. Take the inspection to an Alchemist; they can compare it with your Bestiary records."
-	,"hemomancy.dialogue.event.artificer_crimson_vestment_inspected": "The consecrated frame holds. %3$s. Take my referral to an Alchemist."
-	,"hemomancy.dialogue.event.artificer_weight_of_frame_inspected": "Recorded D7 lineage: %2$s. %3$s. Its matching material has been issued."
-	,"hemomancy.dialogue.artificer.option.reminder": "What remains?"
-	,"hemomancy.dialogue.event.artificer_d7_reward_granted": "The material matches the first lineage. Later upgrades will not rewrite it."
-	,"advancements.hemomancy.artificer_weight_of_frame_lesson_ready.title": "Weight Inspected"
-	,"advancements.hemomancy.artificer_weight_of_frame_lesson_ready.description": "Return to the Artificer for the recorded lineage material."
-	,"screen.hemomancy.harbinger_assignment_ledger.the_worn_vow.locked": "Reach Degree 2."
-	,"screen.hemomancy.harbinger_assignment_ledger.the_worn_vow.briefing": "Receive the Artificer's Armature briefing."
-	,"screen.hemomancy.harbinger_assignment_ledger.the_worn_vow.place_armature": "Place a Hematic Armature."
-	,"screen.hemomancy.harbinger_assignment_ledger.the_worn_vow.first_upgrade": "Complete one Hematic Iron upgrade."
-	,"screen.hemomancy.harbinger_assignment_ledger.the_worn_vow.inspection": "Return for inspection and four Hematic Iron Scrap."
-	,"screen.hemomancy.harbinger_assignment_ledger.the_worn_vow.fitting": "Wear the full set and claim its fitting."
-	,"screen.hemomancy.harbinger_assignment_ledger.the_worn_vow.complete": "The Worn Vow is complete."
-	,"screen.hemomancy.harbinger_assignment_ledger.the_three_answers.locked": "Reach Degree 3."
-	,"screen.hemomancy.harbinger_assignment_ledger.the_three_answers.briefing": "Receive the armor-fork briefing."
-	,"screen.hemomancy.harbinger_assignment_ledger.the_three_answers.first_upgrade": "Complete the first fork upgrade."
-	,"screen.hemomancy.harbinger_assignment_ledger.the_three_answers.inspection": "Return so the first family can be recorded."
-	,"screen.hemomancy.harbinger_assignment_ledger.the_three_answers.correspondence": "Take the referral to an Alchemist for a reagent and specimen study."
-	,"screen.hemomancy.harbinger_assignment_ledger.the_three_answers.full_set": "Complete the recorded family set."
-	,"screen.hemomancy.harbinger_assignment_ledger.the_three_answers.demonstration": "Trigger that set's real defensive response."
-	,"screen.hemomancy.harbinger_assignment_ledger.the_three_answers.fitting": "Return wearing the recorded family."
-	,"screen.hemomancy.harbinger_assignment_ledger.the_three_answers.complete": "The Three Answers is complete."
-	,"screen.hemomancy.harbinger_assignment_ledger.crimson_vestment.locked": "Reach Degree 5."
-	,"screen.hemomancy.harbinger_assignment_ledger.crimson_vestment.briefing": "Receive the Crimson Vestment briefing."
-	,"screen.hemomancy.harbinger_assignment_ledger.crimson_vestment.consecrate": "Apply the Vicar's Consecration Kit."
-	,"screen.hemomancy.harbinger_assignment_ledger.crimson_vestment.inspection": "Return for inspection and referral."
-	,"screen.hemomancy.harbinger_assignment_ledger.crimson_vestment.correspondence": "Receive Crimson Lacquer from an Alchemist."
-	,"screen.hemomancy.harbinger_assignment_ledger.crimson_vestment.first_upgrade": "Complete one Blood Lust upgrade."
-	,"screen.hemomancy.harbinger_assignment_ledger.crimson_vestment.full_set": "Complete and wear the Blood Lust set."
-	,"screen.hemomancy.harbinger_assignment_ledger.crimson_vestment.demonstration": "Trigger direct-hit lifesteal or borrowed blood."
-	,"screen.hemomancy.harbinger_assignment_ledger.crimson_vestment.fitting": "Return for the Crimson Vestment Fitting."
-	,"screen.hemomancy.harbinger_assignment_ledger.crimson_vestment.complete": "Crimson Vestment is complete."
-	,"screen.hemomancy.harbinger_assignment_ledger.the_assumed_limb.locked": "Reach Degree 5 and bond a Living Staff."
-	,"screen.hemomancy.harbinger_assignment_ledger.the_assumed_limb.briefing": "Receive the Living Weapon graft briefing."
-	,"screen.hemomancy.harbinger_assignment_ledger.the_assumed_limb.first_upgrade": "Complete one Living Weapon Graft."
-	,"screen.hemomancy.harbinger_assignment_ledger.the_assumed_limb.inspection": "Return for inspection and a Blank Hematic Memory."
-	,"screen.hemomancy.harbinger_assignment_ledger.the_assumed_limb.demonstration": "Defeat a hostile with a transformed Living Staff."
-	,"screen.hemomancy.harbinger_assignment_ledger.the_assumed_limb.learn_forms": "Learn all seven base weapon forms. %1$s/%2$s"
-	,"screen.hemomancy.harbinger_assignment_ledger.the_assumed_limb.fitting": "Return for the Assumed Limb Fitting."
-	,"screen.hemomancy.harbinger_assignment_ledger.the_assumed_limb.complete": "The Assumed Limb is complete."
-	,"screen.hemomancy.harbinger_assignment_ledger.weight_of_the_frame.locked": "Reach Degree 7."
-	,"screen.hemomancy.harbinger_assignment_ledger.weight_of_the_frame.briefing": "Receive the monolithic-frame briefing."
-	,"screen.hemomancy.harbinger_assignment_ledger.weight_of_the_frame.cornerstone": "Apply the Monolithic Cornerstone."
-	,"screen.hemomancy.harbinger_assignment_ledger.weight_of_the_frame.first_upgrade": "Complete the first D7 upgrade."
-	,"screen.hemomancy.harbinger_assignment_ledger.weight_of_the_frame.inspection": "Return so its first lineage can be recorded."
-	,"screen.hemomancy.harbinger_assignment_ledger.weight_of_the_frame.material_reward": "Claim the matching D7 material."
-	,"screen.hemomancy.harbinger_assignment_ledger.weight_of_the_frame.full_set": "Complete the recorded lineage set."
-	,"screen.hemomancy.harbinger_assignment_ledger.weight_of_the_frame.demonstration": "Activate the lineage's registered ability."
-	,"screen.hemomancy.harbinger_assignment_ledger.weight_of_the_frame.fitting": "Return for the Monolithic Frame Fitting."
-	,"screen.hemomancy.harbinger_assignment_ledger.weight_of_the_frame.complete": "Weight of the Frame is complete."
-	,"hemomancy.manipulation.crimson_coronation": "Crimson Coronation"
-	,"hemomancy.manipulation.crimson_coronation.desc": "Prepares up to eight retaliatory blood lances for twenty seconds. Full charge strengthens their damage and lets each pierce an additional target."
-	,"hemomancy.manipulation.sovereign_instinct": "Sovereign Instinct"
-	,"hemomancy.manipulation.sovereign_instinct.desc": "When enabled and struck while at least four blood-bearing enemies target you, redirects ordinary attackers for five seconds. Requires active blood and Animus alignment."
-	,"hemomancy.manipulation.synaptic_storm": "Synaptic Storm"
-	,"hemomancy.manipulation.synaptic_storm.desc": "Chains charged electricity between up to eight enemies, prioritizing conductive targets. Paralysis lasts 10-60 ticks; players are capped at 20 ticks and bosses are slowed. Ordinary hops reach five blocks, conductive hops eight."
-	,"hemomancy.manipulation.living_circuit": "Living Circuit"
-	,"hemomancy.manipulation.living_circuit.desc": "Links up to three nearby teammates with travelling nerve impulses, granting speed and haste and arming their next hostile strike with Conductive Mark. Requires an allied recipient."
-	,"hemomancy.manipulation.white_verdict": "White Verdict"
-	,"hemomancy.manipulation.white_verdict.desc": "Deals 50% more damage against a previously Illuminated or concealed target, never twice. Consumes existing Illumination."
-	,"hemomancy.manipulation.vigil_of_glass": "Vigil of Glass"
-	,"hemomancy.manipulation.vigil_of_glass.desc": "Greatly reduces distant projectile harm and exposes its shooter."
-	,"hemomancy.manipulation.furnace_veins": "Furnace Veins"
-	,"hemomancy.manipulation.furnace_veins.desc": "Channels a close heat field that burns enemies, thaws allies, and grants allies fire resistance."
-	,"hemomancy.manipulation.phoenix_debt": "Phoenix Debt"
-	,"hemomancy.manipulation.phoenix_debt.desc": "When enabled with active blood and sufficient Flammeus alignment, arms a shared Last Rite and pays blood to survive lethal harm and erupt in cleansing flame."
-	,"hemomancy.manipulation.absolute_stillness": "Absolute Stillness"
-	,"hemomancy.manipulation.absolute_stillness.desc": "Channels a freezing field that continuously slows hostile projectiles, smothers fire, and slows enemies. Bosses resist its strongest slow."
-	,"hemomancy.manipulation.rimebound_sentence": "Rimebound Sentence"
-	,"hemomancy.manipulation.rimebound_sentence.desc": "Deals charged frost damage. Full charge establishes three Rime levels and temporarily encloses the target."
-	,"hemomancy.manipulation.hematic_ballast": "Hematic Ballast"
-	,"hemomancy.manipulation.hematic_ballast.desc": "Automatically anchors the body against a powerful launch or knockback."
-	,"hemomancy.manipulation.iron_choir": "Iron Choir"
-	,"hemomancy.manipulation.iron_choir.desc": "Channels Resistance and three projectile interceptions per paid pulse. Iron plates intercept hostile shots and strike back at their owners."
-	,"hemomancy.manipulation.funeral_bell": "Funeral Bell"
-	,"hemomancy.manipulation.funeral_bell.desc": "Releases a charged deathly pulse, consuming Necrosis to release its stored damage early. Both the pulse and released debt scale with charge."
-	,"hemomancy.manipulation.carrion_communion": "Carrion Communion"
-	,"hemomancy.manipulation.carrion_communion.desc": "Drains up to four afflicted, blood-bearing enemies while channeled, restoring half the health actually drained."
-	,"hemomancy.manipulation.penumbral_drift": "Penumbral Drift"
-	,"hemomancy.manipulation.penumbral_drift.desc": "Channels swift invisibility and repeatedly sheds ordinary enemy attention. Bosses retain their target; attacking ends the drift."
-	,"hemomancy.manipulation.eclipse_well": "Eclipse Well"
-	,"hemomancy.manipulation.eclipse_well.desc": "Creates a charged well of darkness that blinds, pulls, and breaks hostile sight."
-	,"item.hemomancy.memory_crimson_coronation": "Memory Crimson Coronation"
-	,"item.hemomancy.memory_sovereign_instinct": "Memory Sovereign Instinct"
-	,"item.hemomancy.memory_synaptic_storm": "Memory Synaptic Storm"
-	,"item.hemomancy.memory_living_circuit": "Memory Living Circuit"
-	,"item.hemomancy.memory_white_verdict": "Memory White Verdict"
-	,"item.hemomancy.memory_vigil_of_glass": "Memory Vigil of Glass"
-	,"item.hemomancy.memory_furnace_veins": "Memory Furnace Veins"
-	,"item.hemomancy.memory_phoenix_debt": "Memory Phoenix Debt"
-	,"item.hemomancy.memory_absolute_stillness": "Memory Absolute Stillness"
-	,"item.hemomancy.memory_rimebound_sentence": "Memory Rimebound Sentence"
-	,"item.hemomancy.memory_hematic_ballast": "Memory Hematic Ballast"
-	,"item.hemomancy.memory_iron_choir": "Memory Iron Choir"
-	,"item.hemomancy.memory_funeral_bell": "Memory Funeral Bell"
-	,"item.hemomancy.memory_carrion_communion": "Memory Carrion Communion"
-	,"item.hemomancy.memory_penumbral_drift": "Memory Penumbral Drift"
-	,"item.hemomancy.memory_eclipse_well": "Memory Eclipse Well"
-	,"screen.hemomancy.scars.lore.scar_anvil": "The Anvil fixes iron into the blood, the joints, and finally the earth beneath them. The practitioner becomes nearly immovable, and every step carries that same weight."
-	,"screen.hemomancy.scars.lore.scar_blight": "The Blight turns the practitioner's own toxins outward. The body learns to treat poison as a weapon, though the same venom can still read its bearer as the wound."
-	,"screen.hemomancy.scars.lore.scar_blood_honed": "The Blood-Honed Scar lets an enchanted edge draw strength from the blood behind it. The deeper the weapon's enchantment bites, the more blood the strike spends."
-	,"screen.hemomancy.scars.lore.scar_chimera": "Two bodies move through one vessel. The Chimera quickens the strike, the step, and the heartbeat until armor becomes dead weight and the body starts feeding the pace."
-	,"screen.hemomancy.scars.lore.scar_corona": "The Corona drives Flammeus discipline to its final stage. Every strike burns hotter, the body stands firm against impact, and armor blisters away while the veins keep feeding the heat."
-	,"screen.hemomancy.scars.lore.scar_crucible": "The Crucible demands motion and returns iron. Blood settles into armor, toughness, and a deeper Iron Heart, leaving the practitioner built like a wall and forced to move like one."
-	,"screen.hemomancy.scars.lore.scar_descendence": "The Descendence aligns blood with the deep cold. The practitioner crosses frozen ground with extraordinary speed, but the cold reaches the hands and drains force from every slower strike."
-	,"screen.hemomancy.scars.lore.scar_eye": "The Eye carves sight directly into the hemomantic lattice. Darkness opens around the practitioner while each moment of that vision drains blood and each quick step leaves less force behind the blow."
-	,"screen.hemomancy.scars.lore.scar_feral": "The Feral reaches beneath doctrine for the hunger that came before it. The hand strikes faster, but the skin gives up some of the armor it once carried."
-	,"screen.hemomancy.scars.lore.scar_flux": "The Flux keeps blood from settling into one shape. Strikes arrive faster as armor loosens around the changing form, so every gain in speed leaves the vessel easier to open."
-	,"screen.hemomancy.scars.lore.scar_glacier": "The Glacier slows the hands so the rest of the body can move with cold precision. The practitioner gains speed across the field, but every strike must drag itself through the frost first."
-	,"screen.hemomancy.scars.lore.scar_halo": "The Halo follows those who learned to endure. It hardens the body against heavy blows, then makes every step feel the weight of that protection."
-	,"screen.hemomancy.scars.lore.scar_heart": "The first scar is also the most honest. The Heart gives the vessel more life by narrowing the blood it can hold, so survival grows while the power available to spend grows smaller."
-	,"screen.hemomancy.scars.lore.scar_marrow": "The Marrow reaches past blood and into the reserve buried in bone. The vessel gains more life, then pays for that depth with a smaller blood pool and a heavier step."
-	,"screen.hemomancy.scars.lore.scar_moon": "The Moon aligns blood with a rhythm the practitioner cannot command. The shadow carries the body faster while each blow lands with less force, an ebb and flow written into motion."
-	,"screen.hemomancy.scars.lore.scar_oblivion": "The Oblivion strips away whatever a vessel can spare. Its bearer strikes harder while health and blood drain with the same steady appetite."
-	,"screen.hemomancy.scars.lore.scar_phoenix": "The Phoenix pours vitality back into a vessel prepared to burn for it. More life survives inside the body, but the blood pool closes tight and every step slows under the cost of carrying it."
-	,"screen.hemomancy.scars.lore.scar_pyre": "The Pyre sharpens the strike by feeding protection into it. The practitioner hits harder because the body has given the blade one less layer to cross."
-	,"screen.hemomancy.scars.lore.scar_rime": "The Rime sends cold into the legs before it reaches the hands. Movement quickens across the frozen field, then each strike loses time to the ice gathering in the wrists."
-	,"screen.hemomancy.scars.lore.scar_shade": "The Shade lets the practitioner move through darkness with the speed of a passing thought. The body arrives quickly, but the strike behind it lands with less force."
-	,"screen.hemomancy.scars.lore.scar_sol": "The Sol teaches blood to answer heat before the mind can. The strike grows sharper as the guard burns away, leaving the practitioner bright, fast to wound, and easier to wound in return."
-	,"screen.hemomancy.scars.lore.scar_thorn": "Every wound teaches something. The Thorn returns that lesson through tougher armor and a deeper Iron Heart, while the iron added to the blood weighs down the legs."
-	,"screen.hemomancy.scars.lore.scar_transcendence": "The Transcendence burns through the limits carried in a practitioner's blood. What remains is harder to break, slower to move, and forced to survive on a thinner blood reserve."
-	,"screen.hemomancy.scars.lore.scar_veil": "The Veil hides its bearer in plain light. That radiance hardens the body against heavy blows, but it gathers around every movement until speed gives way beneath it."
-	,"screen.hemomancy.scars.lore.scar_wither": "The Wither pulls vital excess from its target and puts that force behind the practitioner's strike. The vessel gives up part of its own health to keep making the claim."
-	,"screen.hemomancy.scars.lore.rhizovitta_communis": "Rhizovitta Communis roots the vessel into the fungal floor and lets the surrounding mycelium answer blood spent in motion. It feels like buried veins feeding the body from below."
-	,"screen.hemomancy.scars.lore.talaromyces_minus": "Talaromyces Minus is a quiet decomposer of dead matter. Once etched into the hemomantic lattice, it leads the hand along ferric seams as if stone were only the next thing waiting to be broken down."
-	,"screen.hemomancy.scars.lore.oculiflora_reticularis": "Oculiflora Reticularis opens in darkness like an eye grown from hyphae. It catches nearby signals and passes them into forms the wearer's blood can understand."
-	,"screen.hemomancy.scars.lore.noctifly_agaric": "The Noctifly Agaric unfurls pale mycelial wings when the wearer wills it. The fungus carries the practitioner into a hover, closer to being lifted than learning to fly."
-	,"screen.hemomancy.scars.lore.putrivora_resolvens": "Putrivora Resolvens knows the taste of poison, wither, hunger, and blood loss. It shortens each affliction's meal, then returns what little nourishment the suffering contained."
-	,"screen.hemomancy.scars.lore.cryostroma_perdurans": "Cryostroma Perdurans forms a cold skin over living mycelium. Motion and casting crack the frost, while stillness conserves blood and gives damaged vascular paths time to close."
-	,"screen.hemomancy.scars.lore.antiphonomyces_resonans": "Antiphonomyces Resonans answers impact with a counter-song. Violence enters the body, and the scar teaches the vessel how to echo that force in useful directions."
-	,"screen.hemomancy.scars.lore.saprovitta_vestigium": "Saprovitta Vestigium leaves a feeding wake behind the moving practitioner. Anyone who follows steps into hungry blood-fungus and meets the garden's appetite firsthand."
-	,"entity.hemomancy.circus_fire_eater": "Fire Eater"
-	,"entity.hemomancy.circus_stilt_walker": "Stilt Walker"
-	,"entity.hemomancy.circus_acrobat": "Acrobat"
-	,"entity.hemomancy.circus_knife_thrower": "Knife Thrower"
-	,"entity.hemomancy.circus_knife": "Circus Knife"
-	,"entity.hemomancy.circus_carousel": "The Impaled Procession"
-	,"entity.hemomancy.circus_ringmaster": "Ringmaster"
-	,"hemomancy.dialogue.circus_performer.leave": "I have seen enough."
-	,"hemomancy.dialogue.circus_performer.welcome": "Stand there. Let every eye find you. Strangers fare better here once the whole pavilion is looking at the same person."
-	,"hemomancy.dialogue.circus_fire_eater.line1": "You do not swallow the fire. You teach your body which burns to keep and which to breathe back out."
-	,"hemomancy.dialogue.circus_fire_eater.line2": "The torch is just a staff-form. We make the breath carry farther."
-	,"hemomancy.dialogue.circus_fire_eater.line3": "The crowd holds the shape for me. Without them, I would only burn my throat."
-	,"hemomancy.dialogue.circus_stilt_walker.line1": "Up here, I decide where the crowd looks for danger."
-	,"hemomancy.dialogue.circus_stilt_walker.line2": "These are braces, not legs. Watch the cords, not my feet."
-	,"hemomancy.dialogue.circus_stilt_walker.line3": "Once every eye comes up to meet me, somebody else owns the floor."
-	,"hemomancy.dialogue.circus_acrobat.line1": "By the time you understand where I landed, I have already left it."
-	,"hemomancy.dialogue.circus_acrobat.line2": "I never vanish. You just choose the landing too soon."
-	,"hemomancy.dialogue.circus_acrobat.line3": "The Mummer takes your eye. I take the moment after you turn it."
-	,"hemomancy.dialogue.circus_knife_thrower.line1": "A blade tells the truth. The hand telling you where it will land does not."
-	,"hemomancy.dialogue.circus_knife_thrower.line2": "The knives fly straight. People are what bend."
-	,"hemomancy.dialogue.circus_knife_thrower.line3": "Nine marks teach distance. The tenth teaches when not to throw."
-	,"entity.hemomancy.peacock_spider": "Peacock Jumping Spider"
-	,"entity.hemomancy.trained_peacock_spider": "Trained Peacock Jumping Spider"
-	,"entity.hemomancy.vampire_bat": "Vampire Bat"
-	,"entity.hemomancy.manifested_vampire_bat_swarm": "Manifested Vampire-Bat Swarm"
-	,"entity.hemomancy.ringmaster_pattern": "Ringmaster Pattern"
-	,"item.hemomancy.memory_thread_ripper": "Memory Thread Ripper"
-	,"item.hemomancy.ringmaster_topper": "Ringmaster's Topper"
-	,"item.hemomancy.spawn_egg_peacock_spider": "Peacock Jumping Spider Spawn Egg"
-	,"item.hemomancy.spawn_egg_vampire_bat": "Vampire Bat Spawn Egg"
-	,"hemomancy.summon.ringmaster_pattern.role": "Conductor"
-	,"hemomancy.summon.ringmaster_pattern.lore": "A captured office in a low-damage body. Its gestures relay one owner's nearby commands without multiplying them."
-	,"message.hemomancy.thread_ripper.charge": "The tether needs a full moment of tension before it can be cut."
-	,"message.hemomancy.thread_ripper.no_tether": "Thread Ripper finds no hostile tether it is permitted to sever."
-	,"hemomancy.circus.captive.severed": "The thread snaps. Captive %s dies with it, and the anchor beneath the horse is exposed."
-	,"hemomancy.circus.ringmaster.silent": "The figure in the rafters looks through you. It will not take shape for you yet."
-	,"hemomancy.circus.ringmaster.line.neutral": "Now you understand the bargain. Take my place, cut the others free, or walk away."
-	,"hemomancy.circus.ringmaster.line.succession": "Learn every act. Hold every eye in the pavilion. Then come take this hat and the office bound to it."
-	,"hemomancy.circus.ringmaster.line.liberation": "Three failed initiates ride that carousel. Cut their threads and their bodies will die. The anchors beneath them will not. Break those too."
-	,"hemomancy.circus.ringmaster.line.succession_complete": "The pavilion knows its successor. It answers to you now."
-	,"hemomancy.circus.ringmaster.line.liberation_complete": "Only the ruin answers you now."
-	,"hemomancy.circus.ringmaster.warning.succession": "Choose Succession and the pavilion stays standing, but its trials bind to you. You get one chance to change this choice before either ending is complete."
-	,"hemomancy.circus.ringmaster.warning.liberation": "Choose Liberation and the three bound initiates die when you sever their threads. Then you destroy the carousel and leave the pavilion in ruins. You get one chance to change this choice before either ending is complete."
-	,"hemomancy.circus.option.accept": "I will succeed you."
-	,"hemomancy.circus.option.reject": "No. I will break the carousel and free its captives."
-	,"hemomancy.circus.option.confirm_succession": "I understand. Bind me to Succession."
-	,"hemomancy.circus.option.confirm_liberation": "I understand what it costs. I will end the pavilion."
-	,"hemomancy.circus.option.not_yet": "Not yet."
-	,"hemomancy.circus.option.trial": "Show me the next act."
-	,"hemomancy.circus.option.finale": "Begin the finale."
-	,"hemomancy.circus.option.repair": "I chose wrong. Let me use my one chance to change it."
-	,"hemomancy.circus.finale.not_ready": "You are not ready for Succession. Finish every controlled act and complete your attunement."
-	,"hemomancy.circus.finale.claimed": "Another performer has already claimed this pavilion. It will not answer you."
-	,"hemomancy.circus.finale.complete.succession": "The Ringmaster yields without dying. His office becomes a pattern, and the pavilion remains standing."
-	,"hemomancy.circus.finale.complete.liberation": "The Ringmaster falls. The three captives and their anchors are gone, and the carousel is ruined for good."
-	,"hemomancy.circus.challenge.begin.0": "Keep the trained peacock spider in sight until its dance ends. It will not attack you."
-	,"hemomancy.circus.challenge.begin.2": "Stay inside the ring and withstand the dolls until the act ends."
-	,"hemomancy.circus.challenge.begin.3": "Watch the Knife Thrower. The blade flies straight. The setup does not."
-	,"hemomancy.circus.challenge.begin.4": "Stay in the ring until the troupe finishes the carousel pattern."
-	,"hemomancy.circus.challenge.hold.0": "The spider is still dancing. Keep your eyes on it."
-	,"hemomancy.circus.challenge.hold.2": "The dolls are committed. Hold your ground."
-	,"hemomancy.circus.challenge.hold.3": "You found the thrower's rhythm. Do not lose it."
-	,"hemomancy.circus.challenge.hold.4": "The troupe is halfway through the pattern. Stay in the ring."
-	,"hemomancy.circus.challenge.complete.0": "You kept the spider in sight until the dance ended."
-	,"hemomancy.circus.challenge.complete.2": "You held the ring until the dolls stopped."
-	,"hemomancy.circus.challenge.complete.3": "You read the Knife Thrower's rhythm and survived the act."
-	,"hemomancy.circus.challenge.complete.4": "You held the ring until the carousel pattern ended."
-	,"hemomancy.circus.challenge.failed": "The act is over. Speak to the Ringmaster when you are ready to try again.",
+  "screen.hemomancy.harbinger_assignment_ledger.step.body_answers_complete.desc": "Combine Sanguine Formation, Fervent Enzyme, and a Bloody Flask in the Ghastly Alembic, then drink the tincture.",
+  "item.hemomancy.cured_clay_jug": "Cured Clay Jug",
+  "item.hemomancy.tincture_sanguine_fists_jug": "Jug of Sanguine Fists",
+  "item.hemomancy.tincture_laboring_arms_jug": "Jug of Laboring Arms",
+  "item.hemomancy.tincture_coursing_legs_jug": "Jug of Coursing Legs",
+  "item.hemomancy.tincture_hushed_gait_jug": "Jug of Hushed Gait",
+  "item.hemomancy.tincture_predatory_eyes_jug": "Jug of Predatory Eyes",
+  "item.hemomancy.tincture_second_pulse_jug": "Jug of the Second Pulse",
+  "item.hemomancy.tincture_enduring_viscera_jug": "Jug of Enduring Viscera",
+  "item.hemomancy.tincture_carrion_metabolism_jug": "Jug of Carrion Metabolism",
+  "tooltip.hemomancy.tincture_doses": "Doses: %s / %s",
+  "message.hemomancy.mnemonic_reliquary.referral": "Your memorized powers now fill every available slot. The Alchemist directs you to the Mnemonist for a more deliberate way to arrange them.",
+  "message.hemomancy.mnemonic_reliquary.taught": "The Mnemonist teaches you the Mnemonic Reliquary, a Third Degree structure for arranging Thelemic and Noetic Memories together.",
+  "hemomancy.dialogue.mnemonist.option.reliquary_understood": "Show me how to weave the Reliquary.",
+  "message.hemomancy.muscle_memory.activation_failed": "That bodily instruction cannot answer: check its reserve, blood system, and vascular section.",
+  "message.hemomancy.muscle_memory.overexertion_armed": "Overexertion armed. The next valid response will force the memory beyond its safe rhythm.",
+  "message.hemomancy.muscle_memory.overexertion_fallback": "The body cannot pay the enhanced cost; the memory falls back to its ordinary response.",
+  "hemomancy.dialogue.alchemist.conductive_mark_recognized": "Your Ductilis record predicts a conductive response. The Mnemonist calls it a Noetic Memory. The Loom formula is now recorded.",
+  "hemomancy.dialogue.mnemonist.conductive_mark_recognized": "Your first weave reveals the conductive pattern the Alchemist measured in Ductilis tissue. One Noetic Memory. Two routes to recognition.",
+  "crossbar.interference.gnawed": "Gnawed — 75% range, 150% upkeep",
+  "morphling.interference.distracted": "Distracted — 125% blood upkeep",
+  "hemomancy.dialogue.mnemonist.option.morphling_puppet_interference": "Why is my Morphling worrying the puppet threads?",
+  "hemomancy.mnemonist.morphling_puppet_interference.line1": "The incorporated organism feels projected will as foreign tension. It worries at that tension as if it were edible tissue.",
+  "hemomancy.mnemonist.morphling_puppet_interference.line2": "The puppet's imposed will answers in turn. Its repeated intent scatters the organism's attention and frustrates its feeding rhythm.",
+  "hemomancy.mnemonist.morphling_puppet_interference.line3": "Neither practice excludes the other. You may sustain both, but the divided strain makes each less efficient.",
+  "advancements.hemomancy.vein_mason_d5_ready.title": "Return to the Vein-Mason",
+  "advancements.hemomancy.vein_mason_d5_ready.desc": "The vessel has been strained, diagnosed, treated, and fortified.",
+  "advancements.hemomancy.vein_mason_d6_ready.title": "Return to the Vein-Mason",
+  "advancements.hemomancy.vein_mason_d6_ready.desc": "The changed scar route has borne a second Noetic Memory.",
+  "hemomancy.anchorite.d5.cause_strain": "Use a Thelemic Memory until one section becomes Varicose. I need the body's instruction to make the injury, not steel and not projected will.",
+  "hemomancy.anchorite.d5.return_diagnosis": "The current catches. Let me read where it catches, then we will choose medicine by the damage rather than habit.",
+  "hemomancy.anchorite.d5.recover": "The Alchemist's Salve handles one failing course. The Poultice spreads across two. Clotting or widespread Varicosity calls for Vascular Mending.",
+  "hemomancy.anchorite.d5.fortify": "Medicine restores what was spent. Hematic Fortification permanently reduces vascular strain by 15%. Complete that Fourth Degree rite, then return; it does not erase your earned diagnosis or treatment.",
+  "hemomancy.anchorite.d5.complete": "The vessel now knows injury, repair, and preparation. Take the deeper pattern.",
+  "hemomancy.anchorite.d6.referral": "A scar can route an instruction, but I do not author the instruction. Carry my question to a Mnemonist.",
+  "hemomancy.anchorite.d6.seek_counsel": "The Mnemonist interprets the memory. I determine how the body bears it. Return to their discipline first.",
+  "hemomancy.anchorite.d6.first_route": "Keep a cerebral scar aligned to a Noetic Memory's primary tendency, then cast it. Mechanical projections do not count.",
+  "hemomancy.anchorite.d6.change_loadout": "Prepare another arrangement at the Mason's Effigy and burn it. The active scar set must actually change.",
+  "hemomancy.anchorite.d6.second_route": "Now make the changed architecture bear another matching Noetic Memory.",
+  "hemomancy.anchorite.d6.complete": "The current changed because you changed its banks. The final pattern is ready.",
+  "hemomancy.dialogue.anchorite.option.diagnose": "Read the damaged vessel.",
+  "hemomancy.dialogue.anchorite.option.claim_d5": "I completed the recovery ladder.",
+  "hemomancy.dialogue.anchorite.option.accept_referral": "I will take the question to a Mnemonist.",
+  "hemomancy.dialogue.anchorite.option.claim_d6": "The changed route held.",
+  "hemomancy.dialogue.anchorite.option.replace_pattern": "Replace the lost pattern.",
+  "hemomancy.dialogue.event.anchorite_diagnosis": "Worst section: %s. Flow: %s. Health: %s/100. Treatment: %s.",
+  "hemomancy.dialogue.event.anchorite_d5_reward": "The Anchorite supplies a tier-two pattern, Blank Scar, catalyst, and four Runic Motifs.",
+  "hemomancy.dialogue.event.anchorite_d6_reward": "The Anchorite supplies a tier-three pattern, Blank Scar, catalyst, and eight Runic Motifs. Deep Inscription is still required to carve it.",
+  "hemomancy.dialogue.mnemonist.option.anchorite_counsel": "The Vein-Mason sent me to ask how a scar should bear a memory.",
+  "hemomancy.mnemonist.anchorite_counsel.line1": "I can tell you what the instruction means and which tendency leads it. The Anchorite cares for the tissue that must carry it.",
+  "hemomancy.mnemonist.anchorite_counsel.line2": "Match an active cerebral scar to the Noetic Memory's primary tendency. Then change the arrangement and prove the new route still bears the instruction.",
+  "hemomancy.mnemonist.circus.undiscovered.line1": "There is a Harbinger company that works through performance. They call themselves the Circus. Under that pavilion, every body practices something different.",
+  "hemomancy.mnemonist.circus.undiscovered.line2": "Do not confuse the show with an invitation. The whole troupe can make one intention real between them, and that is where the danger is.",
+  "hemomancy.mnemonist.circus.discovered.line1": "So you found the pavilion. Then you saw it yourself: the acts are the practice. They are not hiding something else behind the show.",
+  "hemomancy.mnemonist.circus.discovered.line2": "Watch who begins an act and who answers. Their manifestations take shape in that exchange.",
+  "hemomancy.dialogue.event.mnemonist_circus_waybill": "The Mnemonist folds a scarlet waybill along a line that tugs toward the nearest Circus.",
+  "hemomancy.circus.discovery": "The rough pavilion settles into focus. You have found the Circus.",
+  "screen.hemomancy.harbinger_assignment_ledger.anchorite_d5.title": "What the Vein Bears",
+  "screen.hemomancy.harbinger_assignment_ledger.anchorite_d5.progress": "%s/%s",
+  "screen.hemomancy.harbinger_assignment_ledger.anchorite_d5.desc": "Cause Thelemic Varicosity, receive a diagnosis, use Salve or Poultice, and complete Hematic Fortification.",
+  "screen.hemomancy.harbinger_assignment_ledger.anchorite_d5.reward": "Return to the Anchorite for a tier-two pattern and scar supplies.",
+  "screen.hemomancy.harbinger_assignment_ledger.anchorite_d6.title": "A Current Made Deliberate",
+  "screen.hemomancy.harbinger_assignment_ledger.anchorite_d6.progress": "%s/%s",
+  "screen.hemomancy.harbinger_assignment_ledger.anchorite_d6.desc": "Seek Mnemonist counsel, route a matching Noetic Memory, change the Effigy loadout, then route again.",
+  "screen.hemomancy.harbinger_assignment_ledger.anchorite_d6.reward": "Return to the Anchorite for a tier-three pattern. Deep Inscription is still required.",
+  "hemomancy.anchorite.inquiry.gauge.line1": "The gauge reports the vessel and leaves the repair to you. Read the number beside the flow state.",
+  "hemomancy.anchorite.inquiry.gauge.line2": "Hover a section to see which Noetic and Thelemic routes burden it.",
+  "hemomancy.anchorite.inquiry.salve.line1": "The Alchemist's Salve closes one local failure. It is field medicine, not conditioning.",
+  "hemomancy.anchorite.inquiry.salve.line2": "Use it when one section falls below Stable.",
+  "hemomancy.anchorite.inquiry.poultice.line1": "The Poultice distributes repair across the two weakest sections.",
+  "hemomancy.anchorite.inquiry.poultice.line2": "When clotting begins, stop improvising and perform Vascular Mending.",
+  "hemomancy.anchorite.inquiry.blank_scar.line1": "A Blank Scar is tissue prepared to receive an authored pattern.",
+  "hemomancy.anchorite.inquiry.blank_scar.line2": "The Artificer reinforces what faces the world. I reinforce what must bear the current within.",
+  "hemomancy.anchorite.inquiry.pattern.line1": "A Scar Pattern carries instruction. Carve it at the station, then arrange learned scars at the Effigy.",
+  "hemomancy.anchorite.inquiry.pattern.line2": "Tier-three instruction still requires Deep Inscription.",
+  "hemomancy.anchorite.inquiry.blank_memory.line1": "The Mnemonist gives this blank vessel meaning. I care where that meaning travels through you.",
+  "hemomancy.anchorite.inquiry.blank_memory.line2": "Instruction and tissue are separate crafts, even when they must agree.",
+  "hemomancy.anchorite.inquiry.conductive_mark.line1": "Conductive Mark is Noetic: projected instruction, led by its primary tendency.",
+  "hemomancy.anchorite.inquiry.conductive_mark.line2": "An aligned active cerebral scar lets its vascular route bear less strain.",
+  "hemomancy.anchorite.inquiry.effigy.line1": "The Effigy prepares a set from scars already burned into memory.",
+  "hemomancy.anchorite.inquiry.effigy.line2": "Burn the prepared motif at an Iron Brazier to make that set active.",
+  "hemomancy.anchorite.inquiry.brazier.line1": "The Iron Brazier teaches a carved scar or commits an Effigy pattern.",
+  "hemomancy.anchorite.inquiry.brazier.line2": "It is the final boundary between an external design and internal architecture.",
+  "hemomancy.anchorite.inquiry.tier_one.line1": "A first pattern deepens one tendency while active and can route a matching Noetic Memory.",
+  "hemomancy.anchorite.inquiry.tier_one.line2": "Its routing eases strain by five percent. Matching scars share one route. The strongest route governs.",
+  "hemomancy.dialogue.anchorite.option.about_alchemist": "How does your work differ from the Alchemist's?",
+  "hemomancy.dialogue.anchorite.option.about_artificer": "How does your work differ from the Artificer's?",
+  "hemomancy.anchorite.opinion.alchemist.line1": "The Alchemist restores damaged tissue with Salve and Poultice. That medicine is necessary and immediate.",
+  "hemomancy.anchorite.opinion.alchemist.line2": "I alter what the repaired vessel can bear. Recovery and conditioning are adjacent, not interchangeable.",
+  "hemomancy.anchorite.opinion.artificer.line1": "The Artificer shores up what meets the world: plate, weapon, frame, and graft.",
+  "hemomancy.anchorite.opinion.artificer.line2": "I work inward, where scar and vessel decide whether an instruction survives its passage.",
+  "hemomancy.dialogue.artificer.option.worn_vow.briefing": "Begin The Worn Vow.",
+  "hemomancy.dialogue.artificer.option.worn_vow.inspection": "Inspect my Hematic Iron work.",
+  "hemomancy.dialogue.artificer.option.worn_vow.fitting": "Fit my Worn Vow.",
+  "hemomancy.dialogue.artificer.option.worn_vow.replacement": "Replace my Worn Vow Fitting.",
+  "hemomancy.dialogue.artificer.option.three_answers.briefing": "Begin The Three Answers.",
+  "hemomancy.dialogue.artificer.option.three_answers.inspection": "Inspect my first armor answer.",
+  "hemomancy.dialogue.artificer.option.three_answers.fitting": "Fit my recorded answer.",
+  "hemomancy.dialogue.artificer.option.three_answers.replacement": "Replace my fork fitting.",
+  "hemomancy.dialogue.artificer.option.crimson_vestment.briefing": "Begin Crimson Vestment.",
+  "hemomancy.dialogue.artificer.option.crimson_vestment.inspection": "Inspect the consecrated frame.",
+  "hemomancy.dialogue.artificer.option.crimson_vestment.fitting": "Fit my Crimson Vestment.",
+  "hemomancy.dialogue.artificer.option.crimson_vestment.replacement": "Replace my Crimson Vestment Fitting.",
+  "hemomancy.dialogue.artificer.option.assumed_limb.briefing": "Begin The Assumed Limb.",
+  "hemomancy.dialogue.artificer.option.assumed_limb.inspection": "Inspect my first living graft.",
+  "hemomancy.dialogue.artificer.option.assumed_limb.fitting": "Fit my Living Arsenal.",
+  "hemomancy.dialogue.artificer.option.assumed_limb.replacement": "Replace my Assumed Limb Fitting.",
+  "hemomancy.dialogue.artificer.option.weight_of_frame.briefing": "Begin Weight of the Frame.",
+  "hemomancy.dialogue.artificer.option.weight_of_frame.inspection": "Inspect my monolithic lineage.",
+  "hemomancy.dialogue.artificer.option.weight_of_frame.fitting": "Fit my Monolithic Frame.",
+  "hemomancy.dialogue.artificer.option.weight_of_frame.replacement": "Replace my Monolithic Frame Fitting.",
+  "hemomancy.dialogue.artificer.option.claim_d7_reward": "Issue the material for my recorded lineage.",
+  "hemomancy.dialogue.artificer.option.recover.barbed": "My first answer was Barbed.",
+  "hemomancy.dialogue.artificer.option.recover.chitinite": "My first answer was Chitinite.",
+  "hemomancy.dialogue.artificer.option.recover.prismatic": "My first answer was Prismatic.",
+  "hemomancy.dialogue.artificer.option.recover.silent_archon": "My first lineage was Silent Archon.",
+  "hemomancy.dialogue.artificer.option.recover.edacious": "My first lineage was Edacious.",
+  "hemomancy.dialogue.artificer.option.recover.sheolic": "My first lineage was Sheolic.",
+  "hemomancy.dialogue.artificer.option.recover.phantasmal": "My first lineage was Phantasmal.",
+  "hemomancy.dialogue.alchemist.option.artificer_three_answers": "The Artificer sent me about my first armor answer.",
+  "hemomancy.dialogue.alchemist.option.artificer_crimson_vestment": "The Artificer sent me for Crimson Lacquer.",
+  "hemomancy.dialogue.alchemist.option.ask_armor_research": "Which specimens should I study for this armor?",
+  "hemomancy.dialogue.alchemist.option.claim_armor_research": "I cataloged the armor specimens.",
+  "hemomancy.alchemist.armor_research.barbed.line1": "Catalog a Barbed Urchin, a Desiccant, and a Venom Rib Centipede.",
+  "hemomancy.alchemist.armor_research.barbed.line2": "Keep the records. Their spines and venom explain the Barbed answer better than another surrendered carcass.",
+  "hemomancy.alchemist.armor_research.chitinite.line1": "Catalog a Chalybeate Snail, a Chitinite, and a Fervent Chitinite.",
+  "hemomancy.alchemist.armor_research.chitinite.line2": "Keep the records. Their shells show the Artificer where Chitinite armor can yield without breaking.",
+  "hemomancy.alchemist.armor_research.prismatic.line1": "Catalog a Prism Cuttle, a Scarlet Serpent, and a Verdigris Moth.",
+  "hemomancy.alchemist.armor_research.prismatic.line2": "Keep the records. Their changing pigments explain what the Prismatic answer is imitating.",
+  "hemomancy.dialogue.event.alchemist_armor_research_reward_granted": "The Alchemist compares your Bestiary notes with the Artificer's work and gives you another matching reagent.",
+  "hemomancy.artificer.assignment.worn_vow.place_armature": "Place a Hematic Armature. Return after the frame has existed in your own workshop.",
+  "hemomancy.artificer.assignment.worn_vow.first_upgrade": "Use that Armature to complete one Hematic Iron upgrade.",
+  "hemomancy.artificer.assignment.worn_vow.full_set": "Complete and wear the full Hematic Iron set before the final fitting.",
+  "hemomancy.artificer.assignment.three_answers.first_upgrade": "Make your first Barbed, Chitinite, or Prismatic armor piece. The first family is the answer I will record.",
+  "hemomancy.artificer.assignment.three_answers.correspondence": "Take my recorded answer to an Alchemist. They can match its reagent and identify useful Bestiary specimens.",
+  "hemomancy.artificer.assignment.three_answers.full_set": "Complete and wear the full set from your recorded family.",
+  "hemomancy.artificer.assignment.three_answers.demonstration": "Prove the set answers in the field: retaliation, projectile reduction, or prismatic flash.",
+  "hemomancy.artificer.assignment.crimson_vestment.consecrate": "Apply the Vicar's Consecration Kit to the Armature.",
+  "hemomancy.artificer.assignment.crimson_vestment.correspondence": "Carry my inspection to an Alchemist and receive Crimson Lacquer.",
+  "hemomancy.artificer.assignment.crimson_vestment.first_upgrade": "Complete the first Blood Lust upgrade.",
+  "hemomancy.artificer.assignment.crimson_vestment.full_set": "Complete and wear the full Blood Lust set.",
+  "hemomancy.artificer.assignment.crimson_vestment.demonstration": "Land a direct hit and make the full vestment draw or bank blood.",
+  "hemomancy.artificer.assignment.assumed_limb.first_upgrade": "Complete one Living Weapon Graft rite.",
+  "hemomancy.artificer.assignment.assumed_limb.demonstration": "Defeat a hostile with a transformed Living Staff weapon form.",
+  "hemomancy.artificer.assignment.assumed_limb.learn_forms": "Learn all seven base Living Weapon forms before the final fitting.",
+  "hemomancy.artificer.assignment.weight_of_frame.cornerstone": "Apply the Monolithic Cornerstone to the Armature.",
+  "hemomancy.artificer.assignment.weight_of_frame.first_upgrade": "Complete the first valid D7 armor upgrade. Its lineage will be recorded permanently.",
+  "hemomancy.artificer.assignment.weight_of_frame.full_set": "Complete and wear the full set from the recorded D7 lineage.",
+  "hemomancy.artificer.assignment.weight_of_frame.demonstration": "Successfully activate that lineage's registered armor ability.",
+  "hemomancy.dialogue.event.artificer_inspection_unready": "The work awaits inspection.",
+  "hemomancy.dialogue.event.artificer_reward_unready": "That material has not been earned, or was already issued.",
+  "hemomancy.dialogue.event.artificer_equipment_full": "the full recorded set is equipped",
+  "hemomancy.dialogue.event.artificer_equipment_incomplete": "equip the full recorded set first",
+  "hemomancy.dialogue.event.artificer_three_answers_inspected": "Recorded fork: %1$s. %3$s. Take the inspection to an Alchemist; they can compare it with your Bestiary records.",
+  "hemomancy.dialogue.event.artificer_crimson_vestment_inspected": "The consecrated frame holds. %3$s. Take my referral to an Alchemist.",
+  "hemomancy.dialogue.event.artificer_weight_of_frame_inspected": "Recorded D7 lineage: %2$s. %3$s. Its matching material has been issued.",
+  "hemomancy.dialogue.artificer.option.reminder": "What remains?",
+  "hemomancy.dialogue.event.artificer_d7_reward_granted": "The material matches the first lineage. Later upgrades will not rewrite it.",
+  "advancements.hemomancy.artificer_weight_of_frame_lesson_ready.title": "Weight Inspected",
+  "advancements.hemomancy.artificer_weight_of_frame_lesson_ready.description": "Return to the Artificer for the recorded lineage material.",
+  "screen.hemomancy.harbinger_assignment_ledger.the_worn_vow.locked": "Reach Degree 2.",
+  "screen.hemomancy.harbinger_assignment_ledger.the_worn_vow.briefing": "Receive the Artificer's Armature briefing.",
+  "screen.hemomancy.harbinger_assignment_ledger.the_worn_vow.place_armature": "Place a Hematic Armature.",
+  "screen.hemomancy.harbinger_assignment_ledger.the_worn_vow.first_upgrade": "Complete one Hematic Iron upgrade.",
+  "screen.hemomancy.harbinger_assignment_ledger.the_worn_vow.inspection": "Return for inspection and four Hematic Iron Scrap.",
+  "screen.hemomancy.harbinger_assignment_ledger.the_worn_vow.fitting": "Wear the full set and claim its fitting.",
+  "screen.hemomancy.harbinger_assignment_ledger.the_three_answers.locked": "Reach Degree 3.",
+  "screen.hemomancy.harbinger_assignment_ledger.the_three_answers.briefing": "Receive the armor-fork briefing.",
+  "screen.hemomancy.harbinger_assignment_ledger.the_three_answers.first_upgrade": "Complete the first fork upgrade.",
+  "screen.hemomancy.harbinger_assignment_ledger.the_three_answers.inspection": "Return so the first family can be recorded.",
+  "screen.hemomancy.harbinger_assignment_ledger.the_three_answers.correspondence": "Take the referral to an Alchemist for a reagent and specimen study.",
+  "screen.hemomancy.harbinger_assignment_ledger.the_three_answers.full_set": "Complete the recorded family set.",
+  "screen.hemomancy.harbinger_assignment_ledger.the_three_answers.demonstration": "Trigger that set's real defensive response.",
+  "screen.hemomancy.harbinger_assignment_ledger.the_three_answers.fitting": "Return wearing the recorded family.",
+  "screen.hemomancy.harbinger_assignment_ledger.crimson_vestment.locked": "Reach Degree 5.",
+  "screen.hemomancy.harbinger_assignment_ledger.crimson_vestment.briefing": "Receive the Crimson Vestment briefing.",
+  "screen.hemomancy.harbinger_assignment_ledger.crimson_vestment.inspection": "Return for inspection and referral.",
+  "screen.hemomancy.harbinger_assignment_ledger.crimson_vestment.correspondence": "Receive Crimson Lacquer from an Alchemist.",
+  "screen.hemomancy.harbinger_assignment_ledger.crimson_vestment.first_upgrade": "Complete one Blood Lust upgrade.",
+  "screen.hemomancy.harbinger_assignment_ledger.crimson_vestment.full_set": "Complete and wear the Blood Lust set.",
+  "screen.hemomancy.harbinger_assignment_ledger.crimson_vestment.demonstration": "Trigger direct-hit lifesteal or borrowed blood.",
+  "screen.hemomancy.harbinger_assignment_ledger.crimson_vestment.fitting": "Return for the Crimson Vestment Fitting.",
+  "screen.hemomancy.harbinger_assignment_ledger.the_assumed_limb.locked": "Reach Degree 5 and bond a Living Staff.",
+  "screen.hemomancy.harbinger_assignment_ledger.the_assumed_limb.briefing": "Receive the Living Weapon graft briefing.",
+  "screen.hemomancy.harbinger_assignment_ledger.the_assumed_limb.first_upgrade": "Complete one Living Weapon Graft.",
+  "screen.hemomancy.harbinger_assignment_ledger.the_assumed_limb.inspection": "Return for inspection and a Blank Hematic Memory.",
+  "screen.hemomancy.harbinger_assignment_ledger.the_assumed_limb.demonstration": "Defeat a hostile with a transformed Living Staff.",
+  "screen.hemomancy.harbinger_assignment_ledger.the_assumed_limb.learn_forms": "Learn all seven base weapon forms. %1$s/%2$s",
+  "screen.hemomancy.harbinger_assignment_ledger.the_assumed_limb.fitting": "Return for the Assumed Limb Fitting.",
+  "screen.hemomancy.harbinger_assignment_ledger.weight_of_the_frame.locked": "Reach Degree 7.",
+  "screen.hemomancy.harbinger_assignment_ledger.weight_of_the_frame.briefing": "Receive the monolithic-frame briefing.",
+  "screen.hemomancy.harbinger_assignment_ledger.weight_of_the_frame.first_upgrade": "Complete the first D7 upgrade.",
+  "screen.hemomancy.harbinger_assignment_ledger.weight_of_the_frame.inspection": "Return so its first lineage can be recorded.",
+  "screen.hemomancy.harbinger_assignment_ledger.weight_of_the_frame.material_reward": "Claim the matching D7 material.",
+  "screen.hemomancy.harbinger_assignment_ledger.weight_of_the_frame.full_set": "Complete the recorded lineage set.",
+  "screen.hemomancy.harbinger_assignment_ledger.weight_of_the_frame.demonstration": "Activate the lineage's registered ability.",
+  "screen.hemomancy.harbinger_assignment_ledger.weight_of_the_frame.fitting": "Return for the Monolithic Frame Fitting.",
+  "hemomancy.manipulation.crimson_coronation": "Crimson Coronation",
+  "hemomancy.manipulation.crimson_coronation.desc": "Prepares up to eight retaliatory blood lances for twenty seconds. Full charge strengthens their damage and lets each pierce an additional target.",
+  "hemomancy.manipulation.sovereign_instinct": "Sovereign Instinct",
+  "hemomancy.manipulation.sovereign_instinct.desc": "When enabled and struck while at least four blood-bearing enemies target you, redirects ordinary attackers for five seconds. Requires active blood and Animus alignment.",
+  "hemomancy.manipulation.synaptic_storm": "Synaptic Storm",
+  "hemomancy.manipulation.synaptic_storm.desc": "Chains charged electricity between up to eight enemies, prioritizing conductive targets. Paralysis lasts 10-60 ticks; players are capped at 20 ticks and bosses are slowed. Ordinary hops reach five blocks, conductive hops eight.",
+  "hemomancy.manipulation.living_circuit": "Living Circuit",
+  "hemomancy.manipulation.living_circuit.desc": "Links up to three nearby teammates with travelling nerve impulses, granting speed and haste and arming their next hostile strike with Conductive Mark. Requires an allied recipient.",
+  "hemomancy.manipulation.white_verdict": "White Verdict",
+  "hemomancy.manipulation.white_verdict.desc": "Deals 50% more damage against a previously Illuminated or concealed target, never twice. Consumes existing Illumination.",
+  "hemomancy.manipulation.vigil_of_glass": "Vigil of Glass",
+  "hemomancy.manipulation.vigil_of_glass.desc": "Greatly reduces distant projectile harm and exposes its shooter.",
+  "hemomancy.manipulation.furnace_veins": "Furnace Veins",
+  "hemomancy.manipulation.furnace_veins.desc": "Channels a close heat field that burns enemies, thaws allies, and grants allies fire resistance.",
+  "hemomancy.manipulation.phoenix_debt": "Phoenix Debt",
+  "hemomancy.manipulation.phoenix_debt.desc": "When enabled with active blood and sufficient Flammeus alignment, arms a shared Last Rite and pays blood to survive lethal harm and erupt in cleansing flame.",
+  "hemomancy.manipulation.absolute_stillness": "Absolute Stillness",
+  "hemomancy.manipulation.absolute_stillness.desc": "Channels a freezing field that continuously slows hostile projectiles, smothers fire, and slows enemies. Bosses resist its strongest slow.",
+  "hemomancy.manipulation.rimebound_sentence": "Rimebound Sentence",
+  "hemomancy.manipulation.rimebound_sentence.desc": "Deals charged frost damage. Full charge establishes three Rime levels and temporarily encloses the target.",
+  "hemomancy.manipulation.hematic_ballast": "Hematic Ballast",
+  "hemomancy.manipulation.hematic_ballast.desc": "Automatically anchors the body against a powerful launch or knockback.",
+  "hemomancy.manipulation.iron_choir": "Iron Choir",
+  "hemomancy.manipulation.iron_choir.desc": "Channels Resistance and three projectile interceptions per paid pulse. Iron plates intercept hostile shots and strike back at their owners.",
+  "hemomancy.manipulation.funeral_bell": "Funeral Bell",
+  "hemomancy.manipulation.funeral_bell.desc": "Releases a charged deathly pulse, consuming Necrosis to release its stored damage early. Both the pulse and released debt scale with charge.",
+  "hemomancy.manipulation.carrion_communion": "Carrion Communion",
+  "hemomancy.manipulation.carrion_communion.desc": "Drains up to four afflicted, blood-bearing enemies while channeled, restoring half the health actually drained.",
+  "hemomancy.manipulation.penumbral_drift": "Penumbral Drift",
+  "hemomancy.manipulation.penumbral_drift.desc": "Channels swift invisibility and repeatedly sheds ordinary enemy attention. Bosses retain their target; attacking ends the drift.",
+  "hemomancy.manipulation.eclipse_well": "Eclipse Well",
+  "hemomancy.manipulation.eclipse_well.desc": "Creates a charged well of darkness that blinds, pulls, and breaks hostile sight.",
+  "item.hemomancy.memory_crimson_coronation": "Memory Crimson Coronation",
+  "item.hemomancy.memory_sovereign_instinct": "Memory Sovereign Instinct",
+  "item.hemomancy.memory_synaptic_storm": "Memory Synaptic Storm",
+  "item.hemomancy.memory_living_circuit": "Memory Living Circuit",
+  "item.hemomancy.memory_white_verdict": "Memory White Verdict",
+  "item.hemomancy.memory_vigil_of_glass": "Memory Vigil of Glass",
+  "item.hemomancy.memory_furnace_veins": "Memory Furnace Veins",
+  "item.hemomancy.memory_phoenix_debt": "Memory Phoenix Debt",
+  "item.hemomancy.memory_absolute_stillness": "Memory Absolute Stillness",
+  "item.hemomancy.memory_rimebound_sentence": "Memory Rimebound Sentence",
+  "item.hemomancy.memory_hematic_ballast": "Memory Hematic Ballast",
+  "item.hemomancy.memory_iron_choir": "Memory Iron Choir",
+  "item.hemomancy.memory_funeral_bell": "Memory Funeral Bell",
+  "item.hemomancy.memory_carrion_communion": "Memory Carrion Communion",
+  "item.hemomancy.memory_penumbral_drift": "Memory Penumbral Drift",
+  "item.hemomancy.memory_eclipse_well": "Memory Eclipse Well",
+  "screen.hemomancy.scars.lore.scar_anvil": "The Anvil fixes iron into the blood, the joints, and finally the earth beneath them. The practitioner becomes nearly immovable, and every step carries that same weight.",
+  "screen.hemomancy.scars.lore.scar_blight": "The Blight turns the practitioner's own toxins outward. The body learns to treat poison as a weapon, though the same venom can still read its bearer as the wound.",
+  "screen.hemomancy.scars.lore.scar_blood_honed": "The Blood-Honed Scar lets an enchanted edge draw strength from the blood behind it. The deeper the weapon's enchantment bites, the more blood the strike spends.",
+  "screen.hemomancy.scars.lore.scar_chimera": "Two bodies move through one vessel. The Chimera quickens the strike, the step, and the heartbeat until armor becomes dead weight and the body starts feeding the pace.",
+  "screen.hemomancy.scars.lore.scar_corona": "The Corona drives Flammeus discipline to its final stage. Every strike burns hotter, the body stands firm against impact, and armor blisters away while the veins keep feeding the heat.",
+  "screen.hemomancy.scars.lore.scar_crucible": "The Crucible demands motion and returns iron. Blood settles into armor, toughness, and a deeper Iron Heart, leaving the practitioner built like a wall and forced to move like one.",
+  "screen.hemomancy.scars.lore.scar_descendence": "The Descendence aligns blood with the deep cold. The practitioner crosses frozen ground with extraordinary speed, but the cold reaches the hands and drains force from every slower strike.",
+  "screen.hemomancy.scars.lore.scar_eye": "The Eye carves sight directly into the hemomantic lattice. Darkness opens around the practitioner while each moment of that vision drains blood and each quick step leaves less force behind the blow.",
+  "screen.hemomancy.scars.lore.scar_feral": "The Feral reaches beneath doctrine for the hunger that came before it. The hand strikes faster, but the skin gives up some of the armor it once carried.",
+  "screen.hemomancy.scars.lore.scar_flux": "The Flux keeps blood from settling into one shape. Strikes arrive faster as armor loosens around the changing form, so every gain in speed leaves the vessel easier to open.",
+  "screen.hemomancy.scars.lore.scar_glacier": "The Glacier slows the hands so the rest of the body can move with cold precision. The practitioner gains speed across the field, but every strike must drag itself through the frost first.",
+  "screen.hemomancy.scars.lore.scar_halo": "The Halo follows those who learned to endure. It hardens the body against heavy blows, then makes every step feel the weight of that protection.",
+  "screen.hemomancy.scars.lore.scar_heart": "The first scar is also the most honest. The Heart gives the vessel more life by narrowing the blood it can hold, so survival grows while the power available to spend grows smaller.",
+  "screen.hemomancy.scars.lore.scar_marrow": "The Marrow reaches past blood and into the reserve buried in bone. The vessel gains more life, then pays for that depth with a smaller blood pool and a heavier step.",
+  "screen.hemomancy.scars.lore.scar_moon": "The Moon aligns blood with a rhythm the practitioner cannot command. The shadow carries the body faster while each blow lands with less force, an ebb and flow written into motion.",
+  "screen.hemomancy.scars.lore.scar_oblivion": "The Oblivion strips away whatever a vessel can spare. Its bearer strikes harder while health and blood drain with the same steady appetite.",
+  "screen.hemomancy.scars.lore.scar_phoenix": "The Phoenix pours vitality back into a vessel prepared to burn for it. More life survives inside the body, but the blood pool closes tight and every step slows under the cost of carrying it.",
+  "screen.hemomancy.scars.lore.scar_pyre": "The Pyre sharpens the strike by feeding protection into it. The practitioner hits harder because the body has given the blade one less layer to cross.",
+  "screen.hemomancy.scars.lore.scar_rime": "The Rime sends cold into the legs before it reaches the hands. Movement quickens across the frozen field, then each strike loses time to the ice gathering in the wrists.",
+  "screen.hemomancy.scars.lore.scar_shade": "The Shade lets the practitioner move through darkness with the speed of a passing thought. The body arrives quickly, but the strike behind it lands with less force.",
+  "screen.hemomancy.scars.lore.scar_sol": "The Sol teaches blood to answer heat before the mind can. The strike grows sharper as the guard burns away, leaving the practitioner bright, fast to wound, and easier to wound in return.",
+  "screen.hemomancy.scars.lore.scar_thorn": "Every wound teaches something. The Thorn returns that lesson through tougher armor and a deeper Iron Heart, while the iron added to the blood weighs down the legs.",
+  "screen.hemomancy.scars.lore.scar_transcendence": "The Transcendence burns through the limits carried in a practitioner's blood. What remains is harder to break, slower to move, and forced to survive on a thinner blood reserve.",
+  "screen.hemomancy.scars.lore.scar_veil": "The Veil hides its bearer in plain light. That radiance hardens the body against heavy blows, but it gathers around every movement until speed gives way beneath it.",
+  "screen.hemomancy.scars.lore.scar_wither": "The Wither pulls vital excess from its target and puts that force behind the practitioner's strike. The vessel gives up part of its own health to keep making the claim.",
+  "screen.hemomancy.scars.lore.rhizovitta_communis": "Rhizovitta Communis roots the vessel into the fungal floor and lets the surrounding mycelium answer blood spent in motion. It feels like buried veins feeding the body from below.",
+  "screen.hemomancy.scars.lore.talaromyces_minus": "Talaromyces Minus is a quiet decomposer of dead matter. Once etched into the hemomantic lattice, it leads the hand along ferric seams as if stone were only the next thing waiting to be broken down.",
+  "screen.hemomancy.scars.lore.oculiflora_reticularis": "Oculiflora Reticularis opens in darkness like an eye grown from hyphae. It catches nearby signals and passes them into forms the wearer's blood can understand.",
+  "screen.hemomancy.scars.lore.noctifly_agaric": "The Noctifly Agaric unfurls pale mycelial wings when the wearer wills it. The fungus carries the practitioner into a hover, closer to being lifted than learning to fly.",
+  "screen.hemomancy.scars.lore.putrivora_resolvens": "Putrivora Resolvens knows the taste of poison, wither, hunger, and blood loss. It shortens each affliction's meal, then returns what little nourishment the suffering contained.",
+  "screen.hemomancy.scars.lore.cryostroma_perdurans": "Cryostroma Perdurans forms a cold skin over living mycelium. Motion and casting crack the frost, while stillness conserves blood and gives damaged vascular paths time to close.",
+  "screen.hemomancy.scars.lore.antiphonomyces_resonans": "Antiphonomyces Resonans answers impact with a counter-song. Violence enters the body, and the scar teaches the vessel how to echo that force in useful directions.",
+  "screen.hemomancy.scars.lore.saprovitta_vestigium": "Saprovitta Vestigium leaves a feeding wake behind the moving practitioner. Anyone who follows steps into hungry blood-fungus and meets the garden's appetite firsthand.",
+  "entity.hemomancy.circus_fire_eater": "Fire Eater",
+  "entity.hemomancy.circus_stilt_walker": "Stilt Walker",
+  "entity.hemomancy.circus_acrobat": "Acrobat",
+  "entity.hemomancy.circus_knife_thrower": "Knife Thrower",
+  "entity.hemomancy.circus_knife": "Circus Knife",
+  "entity.hemomancy.circus_carousel": "The Impaled Procession",
+  "entity.hemomancy.circus_ringmaster": "Ringmaster",
+  "hemomancy.dialogue.circus_performer.leave": "I have seen enough.",
+  "hemomancy.dialogue.circus_performer.welcome": "Stand there. Let every eye find you. Strangers fare better here once the whole pavilion is looking at the same person.",
+  "hemomancy.dialogue.circus_fire_eater.line1": "You do not swallow the fire. You teach your body which burns to keep and which to breathe back out.",
+  "hemomancy.dialogue.circus_fire_eater.line2": "The torch is just a staff-form. We make the breath carry farther.",
+  "hemomancy.dialogue.circus_fire_eater.line3": "The crowd holds the shape for me. Without them, I would only burn my throat.",
+  "hemomancy.dialogue.circus_stilt_walker.line1": "Up here, I decide where the crowd looks for danger.",
+  "hemomancy.dialogue.circus_stilt_walker.line2": "These are braces, not legs. Watch the cords, not my feet.",
+  "hemomancy.dialogue.circus_stilt_walker.line3": "Once every eye comes up to meet me, somebody else owns the floor.",
+  "hemomancy.dialogue.circus_acrobat.line1": "By the time you understand where I landed, I have already left it.",
+  "hemomancy.dialogue.circus_acrobat.line2": "I never vanish. You just choose the landing too soon.",
+  "hemomancy.dialogue.circus_acrobat.line3": "The Mummer takes your eye. I take the moment after you turn it.",
+  "hemomancy.dialogue.circus_knife_thrower.line1": "A blade tells the truth. The hand telling you where it will land does not.",
+  "hemomancy.dialogue.circus_knife_thrower.line2": "The knives fly straight. People are what bend.",
+  "hemomancy.dialogue.circus_knife_thrower.line3": "Nine marks teach distance. The tenth teaches when not to throw.",
+  "entity.hemomancy.peacock_spider": "Peacock Jumping Spider",
+  "entity.hemomancy.trained_peacock_spider": "Trained Peacock Jumping Spider",
+  "entity.hemomancy.vampire_bat": "Vampire Bat",
+  "entity.hemomancy.manifested_vampire_bat_swarm": "Manifested Vampire-Bat Swarm",
+  "entity.hemomancy.ringmaster_pattern": "Ringmaster Pattern",
+  "item.hemomancy.memory_thread_ripper": "Memory Thread Ripper",
+  "item.hemomancy.ringmaster_topper": "Ringmaster's Topper",
+  "item.hemomancy.spawn_egg_peacock_spider": "Peacock Jumping Spider Spawn Egg",
+  "item.hemomancy.spawn_egg_vampire_bat": "Vampire Bat Spawn Egg",
+  "hemomancy.summon.ringmaster_pattern.role": "Conductor",
+  "hemomancy.summon.ringmaster_pattern.lore": "A captured office in a low-damage body. Its gestures relay one owner's nearby commands without multiplying them.",
+  "message.hemomancy.thread_ripper.charge": "The tether needs a full moment of tension before it can be cut.",
+  "message.hemomancy.thread_ripper.no_tether": "Thread Ripper finds no hostile tether it is permitted to sever.",
+  "hemomancy.circus.captive.severed": "The thread snaps. Captive %s dies with it, and the anchor beneath the horse is exposed.",
+  "hemomancy.circus.ringmaster.silent": "The figure in the rafters looks through you. It will not take shape for you yet.",
+  "hemomancy.circus.ringmaster.line.neutral": "Now you understand the bargain. Take my place, cut the others free, or walk away.",
+  "hemomancy.circus.ringmaster.line.succession": "Learn every act. Hold every eye in the pavilion. Then come take this hat and the office bound to it.",
+  "hemomancy.circus.ringmaster.line.liberation": "Three failed initiates ride that carousel. Cut their threads and their bodies will die. The anchors beneath them will not. Break those too.",
+  "hemomancy.circus.ringmaster.line.succession_complete": "The pavilion knows its successor. It answers to you now.",
+  "hemomancy.circus.ringmaster.line.liberation_complete": "Only the ruin answers you now.",
+  "hemomancy.circus.ringmaster.warning.succession": "Choose Succession and the pavilion stays standing, but its trials bind to you. You get one chance to change this choice before either ending is complete.",
+  "hemomancy.circus.ringmaster.warning.liberation": "Choose Liberation and the three bound initiates die when you sever their threads. Then you destroy the carousel and leave the pavilion in ruins. You get one chance to change this choice before either ending is complete.",
+  "hemomancy.circus.option.accept": "I will succeed you.",
+  "hemomancy.circus.option.reject": "No. I will break the carousel and free its captives.",
+  "hemomancy.circus.option.confirm_succession": "I understand. Bind me to Succession.",
+  "hemomancy.circus.option.confirm_liberation": "I understand what it costs. I will end the pavilion.",
+  "hemomancy.circus.option.not_yet": "Not yet.",
+  "hemomancy.circus.option.trial": "Show me the next act.",
+  "hemomancy.circus.option.finale": "Begin the finale.",
+  "hemomancy.circus.option.repair": "I chose wrong. Let me use my one chance to change it.",
+  "hemomancy.circus.finale.not_ready": "You are not ready for Succession. Finish every controlled act and complete your attunement.",
+  "hemomancy.circus.finale.claimed": "Another performer has already claimed this pavilion. It will not answer you.",
+  "hemomancy.circus.finale.complete.succession": "The Ringmaster yields without dying. His office becomes a pattern, and the pavilion remains standing.",
+  "hemomancy.circus.finale.complete.liberation": "The Ringmaster falls. The three captives and their anchors are gone, and the carousel is ruined for good.",
+  "hemomancy.circus.challenge.begin.0": "Keep the trained peacock spider in sight until its dance ends. It will not attack you.",
+  "hemomancy.circus.challenge.begin.2": "Stay inside the ring and withstand the dolls until the act ends.",
+  "hemomancy.circus.challenge.begin.3": "Watch the Knife Thrower. The blade flies straight. The setup does not.",
+  "hemomancy.circus.challenge.begin.4": "Stay in the ring until the troupe finishes the carousel pattern.",
+  "hemomancy.circus.challenge.hold.0": "The spider is still dancing. Keep your eyes on it.",
+  "hemomancy.circus.challenge.hold.2": "The dolls are committed. Hold your ground.",
+  "hemomancy.circus.challenge.hold.3": "You found the thrower's rhythm. Do not lose it.",
+  "hemomancy.circus.challenge.hold.4": "The troupe is halfway through the pattern. Stay in the ring.",
+  "hemomancy.circus.challenge.complete.0": "You kept the spider in sight until the dance ended.",
+  "hemomancy.circus.challenge.complete.2": "You held the ring until the dolls stopped.",
+  "hemomancy.circus.challenge.complete.3": "You read the Knife Thrower's rhythm and survived the act.",
+  "hemomancy.circus.challenge.complete.4": "You held the ring until the carousel pattern ended.",
+  "hemomancy.circus.challenge.failed": "The act is over. Speak to the Ringmaster when you are ready to try again.",
   "hemomancy.manipulation.ferric_rampart": "Ferric Rampart",
   "hemomancy.manipulation.ferric_rampart.desc": "Raises a rigid five-block-wide, three-block-high iron wall for six seconds. Blocks bodies and projectiles. Requires clear, supported ground. Magnetism family level 1.",
   "hemomancy.manipulation.ferric_spikes": "Ferric Spikes",
@@ -4257,26 +4252,26 @@
   "hemomancy.tutorial.sample_controls": "Loose vials take a sample with Attack (%s). The Living Syringe uses Use Item (%s).",
   "hemomancy.tutorial.starter_blood": "Your initiation provides four Bloody Flasks, once only. Drink one to conjure Blood Absorption and Blood Projection. The next two can fill your vessel; keep the fourth for recovery. Drinking raises casting costs temporarily. Visit the Vicar for first bloodcraft. For repeatable blood, spin animal samples in opposing Vial Centrifuge slots, then reclaim its reservoir with Blood Absorption. Each completed batch yields 250 ml; more samples yield more enzymes.",
   "hemomancy.dialogue.event.hermit_spent_temple_oath": "The display is spent, but this temple has recorded your own oath. Your charm remains dormant. Place an iron nugget in this temple's Cardinal Focus with at least six health, pay four health, and remain within the ring to earn initiation.",
-	"screen.hemomancy.puppeteers_spindle.body_cap": "Shaped body limit: %s (shared across forms)",
-	"screen.hemomancy.puppeteers_spindle.recall_cost": "Recall dismisses the body. Calling again pays the call cost for full health.",
-	"screen.hemomancy.puppeteers_spindle.ringmaster_partner": "Call a partner body: the Conductor supports other puppets.",
-	"screen.hemomancy.puppeteers_spindle.mnemonist_target": "Mark a target, then attack it: the Mnemonist echoes recorded hits.",
-	"hemomancy.anchorite.d5.activation": "Distill and drink a Thelemic dose, equip its memory, select it, then press your manipulation-use key to enable it. Its ordinary bodily action spends blood and reserve. Crouch and press that key to arm the next response for overexertion: twice the blood and two-and-a-half times the strain.",
-	"hemomancy.anchorite.d5.stop": "Watch the named body section in Vascular Status. Stop when it first becomes Varicose, below 50 health: press the use key again without crouching to disable the memory. Bring Salve before training and return for diagnosis before treatment. Passive recovery can change the medicine you need; your earned lesson progress remains.",
-	"screen.hemomancy.book_of_observances.observance.gather_ghost_pipe.unlock": "Begin purification through Lethean Baptism.",
-	"screen.hemomancy.book_of_observances.observance.weave_wreath.unlock": "Begin purification and reach 25 Purity.",
-	"screen.hemomancy.book_of_observances.observance.prepare_hemolytic.unlock": "Begin purification and reach 25 Purity.",
-	"screen.hemomancy.book_of_observances.observance.consecrate_copper.unlock": "Begin purification and become Purified.",
-	"screen.hemomancy.book_of_observances.observance.offer_chalice.unlock": "Unlock Clarity through Clarity Ascension.",
-	"screen.hemomancy.book_of_observances.observance.condense_still_waters.unlock": "Begin purification and reach 50 Purity.",
-	"screen.hemomancy.book_of_observances.observance.bear_pallid_icon.unlock": "Begin purification and reach 75 Purity.",
-	"screen.hemomancy.book_of_observances.observance.plate_the_ward.unlock": "Begin purification and reach 50 Purity.",
-	"screen.hemomancy.book_of_observances.observance.ring_the_pale_watch.unlock": "Unlock Clarity and reach 50 Clarity.",
-	"screen.hemomancy.book_of_observances.observance.novitiate_gather_remedies.unlock": "Novitiate work is available only before purification, baseline restoration, or Clarity.",
-	"screen.hemomancy.book_of_observances.observance.novitiate_gentle_separation.unlock": "Before purification: claim Gather Remedies from the Acolyte first.",
-	"screen.hemomancy.book_of_observances.observance.novitiate_stillwater_labor.unlock": "Before purification: claim Gentle Separation from the Acolyte first.",
-	"screen.hemomancy.book_of_observances.observance.novitiate_clean_labor.unlock": "Before purification: claim Stillwater Labor from the Zealot first.",
-	"screen.hemomancy.book_of_observances.observance.novitiate_shelter_afflicted.unlock": "Before purification: claim Clean Labor from the Zealot first.",
+  "screen.hemomancy.puppeteers_spindle.body_cap": "Shaped body limit: %s (shared across forms)",
+  "screen.hemomancy.puppeteers_spindle.recall_cost": "Recall dismisses the body. Calling again pays the call cost for full health.",
+  "screen.hemomancy.puppeteers_spindle.ringmaster_partner": "Call a partner body: the Conductor supports other puppets.",
+  "screen.hemomancy.puppeteers_spindle.mnemonist_target": "Mark a target, then attack it: the Mnemonist echoes recorded hits.",
+  "hemomancy.anchorite.d5.activation": "Distill and drink a Thelemic dose, equip its memory, select it, then press your manipulation-use key to enable it. Its ordinary bodily action spends blood and reserve. Crouch and press that key to arm the next response for overexertion: twice the blood and two-and-a-half times the strain.",
+  "hemomancy.anchorite.d5.stop": "Watch the named body section in Vascular Status. Stop when it first becomes Varicose, below 50 health: press the use key again without crouching to disable the memory. Bring Salve before training and return for diagnosis before treatment. Passive recovery can change the medicine you need; your earned lesson progress remains.",
+  "screen.hemomancy.book_of_observances.observance.gather_ghost_pipe.unlock": "Begin purification through Lethean Baptism.",
+  "screen.hemomancy.book_of_observances.observance.weave_wreath.unlock": "Begin purification and reach 25 Purity.",
+  "screen.hemomancy.book_of_observances.observance.prepare_hemolytic.unlock": "Begin purification and reach 25 Purity.",
+  "screen.hemomancy.book_of_observances.observance.consecrate_copper.unlock": "Begin purification and become Purified.",
+  "screen.hemomancy.book_of_observances.observance.offer_chalice.unlock": "Unlock Clarity through Clarity Ascension.",
+  "screen.hemomancy.book_of_observances.observance.condense_still_waters.unlock": "Begin purification and reach 50 Purity.",
+  "screen.hemomancy.book_of_observances.observance.bear_pallid_icon.unlock": "Begin purification and reach 75 Purity.",
+  "screen.hemomancy.book_of_observances.observance.plate_the_ward.unlock": "Begin purification and reach 50 Purity.",
+  "screen.hemomancy.book_of_observances.observance.ring_the_pale_watch.unlock": "Unlock Clarity and reach 50 Clarity.",
+  "screen.hemomancy.book_of_observances.observance.novitiate_gather_remedies.unlock": "Novitiate work is available only before purification, baseline restoration, or Clarity.",
+  "screen.hemomancy.book_of_observances.observance.novitiate_gentle_separation.unlock": "Before purification: claim Gather Remedies from the Acolyte first.",
+  "screen.hemomancy.book_of_observances.observance.novitiate_stillwater_labor.unlock": "Before purification: claim Gentle Separation from the Acolyte first.",
+  "screen.hemomancy.book_of_observances.observance.novitiate_clean_labor.unlock": "Before purification: claim Stillwater Labor from the Zealot first.",
+  "screen.hemomancy.book_of_observances.observance.novitiate_shelter_afflicted.unlock": "Before purification: claim Clean Labor from the Zealot first.",
   "effect.hemomancy.sanguine_pressure": "Sanguine Pressure",
   "effect.hemomancy.sanguine_pressure.desc": "Up to 3 pressure levels. Rupture deals 2 extra damage per level.",
   "effect.hemomancy.sanguine_pressure.counter": "Rupture consumes pressure. Bloodless targets cannot build it.",
@@ -4325,9 +4320,7 @@
   "item.hemomancy.spawn_egg_excoriated_sagittary": "Excoriated Sagittary Spawn Egg",
   "message.hemomancy.recall_barb_escape": "Hold Sneak to tear the Recall Barb free.",
   "entity.hemomancy.phlegethontic_bombardier": "Phlegethontic Bombardier",
-  "item.hemomancy.spawn_egg_phlegethontic_bombardier": "Phlegethontic Bombardier Spawn Egg"
-,
-
+  "item.hemomancy.spawn_egg_phlegethontic_bombardier": "Phlegethontic Bombardier Spawn Egg",
   "item.hemomancy.bloody_vial.source": "%s Sample",
   "item.hemomancy.bloody_vial.unreadable": "Unreadable specimen; its contents are preserved.",
   "item.hemomancy.bloody_vial.unknown": "Properties Unknown",
@@ -4395,7 +4388,7 @@
   "gui.hemomancy.clairaudiograph.unknown": "Unknown Specimen",
   "gui.hemomancy.clairaudiograph.blank": "Blank wax cylinder",
   "gui.hemomancy.clairaudiograph.unreadable": "Unreadable Recording",
-  "gui.hemomancy.clairaudiograph.unavailable": "Voice No Longer Present",
+  "gui.hemomancy.clairaudiograph.unavailable": "ANALYSIS UNAVAILABLE",
   "gui.hemomancy.clairaudiograph.missing_audio": "This voice has no audio in your resource packs.",
   "sound_kind.hemomancy.ambient": "Ambient",
   "sound_kind.hemomancy.hurt": "Hurt",
@@ -4405,10 +4398,10 @@
   "sound_kind.hemomancy.warning": "Warning",
   "sound_kind.hemomancy.celebration": "Celebration",
   "sound_kind.hemomancy.special": "Special",
-  "hemomancy.alchemist.item_inquiry.clairaudiograph.line1": "Blood remembers the voice, even before you can name the specimen. Place a filled vial and a blank Ambergris Cylinder in the Clairaudiograph, select a call, and carve for four seconds.",
-  "hemomancy.alchemist.item_inquiry.clairaudiograph.line2": "The machine uses the blood and leaves its empty vial. The cylinder keeps the sound event: each play may choose a different variation of that creature's call. Preview is heard only by you.",
-  "hemomancy.alchemist.item_inquiry.clairaudiograph.line3": "A redstone rising edge plays once. With Loop enabled, a powered machine repeats. Play starts a manual loop; Stop silences this machine until another rising edge or Play. Removing the cylinder also stops it.",
-  "hemomancy.alchemist.item_inquiry.clairaudiograph.line4": "Mix Mnemonic Ambergris, Active Befouling Ash, honeycomb wax, and paper for two cylinders. Unfinished carving stops on unload or catalogue reload without consuming either input.",
+  "hemomancy.alchemist.item_inquiry.clairaudiograph.line1": "The blood is identifiable, yet the auditory pattern survives ordinary analysis. After examining three creature sources, ask me about Beyond Ordinary Analysis and take the question to the Mnemonist.",
+  "hemomancy.alchemist.item_inquiry.clairaudiograph.line2": "The Mnemonist teaches the Clairaudiograph after your clinical observations and referral.",
+  "hemomancy.alchemist.item_inquiry.clairaudiograph.line3": "The Mnemonist teaches the Clairaudiograph after your clinical observations and referral.",
+  "hemomancy.alchemist.item_inquiry.clairaudiograph.line4": "The Mnemonist teaches the Clairaudiograph after your clinical observations and referral.",
   "block.hemomancy.phlebotomists_field_case": "Phlebotomist’s Field Case",
   "message.hemomancy.field_case.busy": "Close the case and let the lid settle before picking it up.",
   "tooltip.hemomancy.field_case.capacity": "%s / 144 vials · 9 identities, 16 each",
@@ -4417,5 +4410,297 @@
   "tooltip.hemomancy.field_case.invalid": "Unreadable contents. Placement refused; data retained.",
   "hemomancy.alchemist.item_inquiry.field_case.line1": "The cabinet stays in the laboratory; the Field Case carries nine distinct specimens, sixteen identical vials of each. Names, source and identification must match exactly. A full specimen cannot claim another compartment.",
   "hemomancy.alchemist.item_inquiry.field_case.line2": "Set it down to unlatch it and use the specimen cells. It cannot be opened in your pocket or fed by hoppers. Once everyone has finished and the lid has settled, sneak-use an empty hand to pack it.",
-  "hemomancy.alchemist.item_inquiry.field_case.line3": "Breaking closes the viewers and returns one filled case, never a shower of loose vials. Creative placement moves filled contents too. Rebuild a cabinet with six pieces of leather and two Hematic Iron Scraps to make one."
+  "hemomancy.alchemist.item_inquiry.field_case.line3": "Breaking closes the viewers and returns one filled case, never a shower of loose vials. Creative placement moves filled contents too. Rebuild a cabinet with six pieces of leather and two Hematic Iron Scraps to make one.",
+  "hemomancy.succession.residents": "Residents",
+  "hemomancy.succession.recover": "Recover",
+  "hemomancy.succession.dismiss": "Dismiss",
+  "hemomancy.succession.dismiss_confirm": "Permanently release %s from this bloodline? Their former bloodline will no longer be able to restore them.",
+  "hemomancy.succession.no_residents": "No manifested residents yet.",
+  "hemomancy.succession.recovery_hint": "Recover lost remnants at your fane bloodwell.",
+  "hemomancy.succession.explain": "Teach me about Hematic Succession.",
+  "hemomancy.succession.ask_bequest": "Will you bequeath your profession to our bloodline?",
+  "hemomancy.succession.donate": "Donate a blood sample to our bloodline.",
+  "hemomancy.succession.accept_bequest": "We accept your freely given Bequest.",
+  "hemomancy.succession.consent": "I remain here, as teacher and witness. I freely pledge my professional blood-memory to your bloodline. Those you awaken will be new people, carrying my vocation and making histories of their own.",
+  "hemomancy.succession.back": "Return.",
+  "hemomancy.succession.bequest_granted": "%s has granted your bloodline a Mnemonic Bequest.",
+  "hemomancy.succession.empty_vial": "Hold an empty blood vial to receive a donation.",
+  "hemomancy.succession.donated": "%s has donated an identity-bearing blood sample.",
+  "hemomancy.succession.self_blood_cost": "Drawing your own sample requires 100 mL of personal blood.",
+  "hemomancy.succession.unavailable": "My memory remains, but I cannot work here for you. I need my bloodline and an unclaimed workplace inside its fane.",
+  "hemomancy.succession.rejection": "The memories refuse these identities. A Misbegotten vessel awakens.",
+  "hemomancy.succession.remnant.bound": "Bound to its original bloodline. Copies become inert after restoration or reissue.",
+  "hemomancy.succession.remnant.generation": "Remnant generation %s",
+  "hemomancy.succession.profession.alchemist": "Alchemist",
+  "hemomancy.succession.profession.mnemonist": "Mnemonist",
+  "hemomancy.succession.profession.artificer": "Artificer",
+  "hemomancy.succession.profession.cicatrix_anchorite": "Cicatrix Anchorite",
+  "hemomancy.succession.profession.vicar": "Vicar",
+  "hemomancy.succession.status.resident": "Resident",
+  "hemomancy.succession.status.dead": "Dead",
+  "hemomancy.succession.status.dormant": "Dormant",
+  "hemomancy.succession.status.displaced": "Displaced",
+  "hemomancy.succession.status.dismissed": "Dismissed",
+  "hemomancy.succession.phase.0": "Form: the vacant flesh softens.",
+  "hemomancy.succession.phase.1": "Identity: two bloods find their places.",
+  "hemomancy.succession.phase.2": "Life: a heart begins to beat.",
+  "hemomancy.succession.phase.3": "Memory: ambergris enters the vessels.",
+  "hemomancy.succession.phase.4": "Recognition: the memories examine their host.",
+  "hemomancy.succession.phase.5": "Resolution: a person wakes.",
+  "hemomancy.succession.failure.eligibility": "A D5 bloodline member must officiate inside their registered fane.",
+  "hemomancy.succession.failure.offerings": "Use the marked brazier order: donor or remnant, officiant blood, then Ambergris for a new incarnation.",
+  "hemomancy.succession.failure.legacy_sample": "This sample has no individual identity. Draw a new sample before beginning.",
+  "hemomancy.succession.failure.remnant": "This remnant is inert, already restored, or belongs to another bloodline.",
+  "hemomancy.succession.failure.profession": "The donated sample must identify one of the five professional vocations.",
+  "hemomancy.succession.failure.body": "Place a Vacant Effigy on the adjacent Venous Stone plinth.",
+  "hemomancy.succession.failure.reserved": "Another rite has already reserved this body, identity, or workplace.",
+  "hemomancy.succession.failure.workplace": "No loaded, unclaimed workplace of this profession exists inside the fane.",
+  "hemomancy.succession.failure.interrupted": "The succession rite has lost its floor or body. Consumed offerings cannot be recovered.",
+  "hemomancy.succession.teaching.alchemist": "Life is not memory. Seat Sanguine Quintessence in the Focus; put the consenting donor vial first, your own vial second, and Ambergris third. Sneak-use an empty vial to draw 100 mL of your own blood. An Alembic or Centrifuge gives my successors a workplace.",
+  "hemomancy.succession.teaching.mnemonist": "A Bequest is permission, never possession. Death leaves a Bound Mnemonic Remnant. Restore it with an Effigy, Quintessence, your own blood, and a free workplace. No new Ambergris is needed. A lost remnant can be recovered at the fane bloodwell; old copies then become inert.",
+  "hemomancy.succession.teaching.artificer": "At D5, arrange a Venous Stone center, Hematic Iron on its four edges, and Conscious Mass at its four corners. Use Sanguine Formation and 250 mL to make a Vacant Effigy. Carry it to a Venous Stone plinth beside the Cardinal Focus on a Greater Dominion floor.",
+  "hemomancy.succession.teaching.cicatrix_anchorite": "An inherited vocation needs somewhere to take root. Build a Mason's Effigy or Fungal Implantation Pylon within the fane. One station supports one successor; if it is lost, their professional work must pause.",
+  "hemomancy.succession.teaching.vicar": "The rite belongs to the bloodline, not the hand that begins it. Any D5 member may officiate. Originals remain at their outposts; successors serve as local teachers and rite helpers. False identity becomes a Misbegotten vessel when memory descends.",
+  "hemomancy.succession.greeting.0.first": "A new voice. Sit with me; there is much I know and much I have yet to learn.",
+  "hemomancy.succession.greeting.0.return": "I remember your voice. Where did we leave our work?",
+  "hemomancy.succession.greeting.1.first": "You have found my station. Tell me what needs doing.",
+  "hemomancy.succession.greeting.1.return": "Back to work, then. Show me what changed.",
+  "hemomancy.succession.greeting.2.first": "I woke carrying old knowledge. I would like to put it to use.",
+  "hemomancy.succession.greeting.2.return": "It is good to see a familiar face among these borrowed memories.",
+  "hemomancy.succession.fracture.alchemist": "[Fractured voice] The mixture... your name... not mine...",
+  "hemomancy.succession.fracture.mnemonist": "[Fractured voice] I remember you remembering me.",
+  "hemomancy.succession.fracture.artificer": "[Fractured voice] The hand does not fit the work.",
+  "hemomancy.succession.fracture.cicatrix_anchorite": "[Fractured voice] A scar with no wound. A wound with your face.",
+  "hemomancy.succession.fracture.vicar": "[Fractured voice] The blood knows whose vow was broken.",
+  "block.hemomancy.vacant_effigy": "Vacant Effigy",
+  "item.hemomancy.bound_mnemonic_remnant": "Bound Mnemonic Remnant",
+  "entity.hemomancy.misbegotten_successor": "Misbegotten %s",
+  "hemomancy.succession.failure.cap": "The server's successor population limit has been reached.",
+  "hemomancy.succession.sample_donor": "Individual donor: %s",
+  "hemomancy.succession.sample_bound": "Donated to one bloodline under a Mnemonic Bequest.",
+  "hemomancy.succession.personal_identity": "I carry a teacher's craft, but the life I am making here is my own.",
+  "hemomancy.succession.rite_hint": "Remain in the circle. Hold the normal rite cancellation control to stop.",
+  "hemomancy.jei.succession": "Hematic Succession",
+  "hemomancy.succession.restoration": "Mnemonic Restoration",
+  "hemomancy.succession.jei.form_life": "Form / Life",
+  "hemomancy.succession.jei.create": "Braziers: 1 donor blood, 2 your blood, 3 Ambergris. Use the marked sockets beside the effigy.",
+  "hemomancy.succession.jei.restore": "Braziers: 1 bound remnant, 2 your blood. The third socket stays empty.",
+  "hemomancy.succession.jei.requirements": "D5 · Greater Dominion floor · fane workplace · 60 seconds",
+  "hemomancy.succession.socket.0": "1 · Donor blood / Remnant",
+  "hemomancy.succession.socket.1": "2 · Officiant blood",
+  "hemomancy.succession.socket.2": "3 · Mnemonic Ambergris",
+  "effect.hemomancy.counterfeit_scar": "Counterfeit Scar",
+  "hemomancy.clinical.microscope.title": "Hematic Microscopy",
+  "hemomancy.clinical.microscope.lesson": "Hold that filled creature vial where I can see it. Blood differs in more than quantity. I have written the Hematic Microscope recipe into your notes. Hold the microscope in your main hand and one filled vial in your offhand, then hold Use for two seconds. Observe the tendencies and biological properties before deciding what to do with them. Return after a successful examination.",
+  "hemomancy.clinical.injection.title": "Borrowed Physiology",
+  "hemomancy.clinical.injection.lesson": "You have seen what the specimen carries. Now you may borrow its physiology: hold Use with a filled creature Blood Vial for 0.8 seconds to inject it. The blood is consumed; the empty vessel remains. Read the identified response first. Benefits are temporary, drawbacks may accompany them, and Transfusion Saturation prevents another injection for twenty seconds. The microscope does not consume your sample.",
+  "hemomancy.clinical.cabinet.title": "Phlebotomist's Cabinet",
+  "hemomancy.clinical.cabinet.lesson": "Three distinct sources, properly examined. A specimen without provenance is refuse. A collection without order is merely a cupboard full of coagulation. Your Cabinet recipe is now recorded. Its nine pigeonholes each hold 64 full vials of one component-identical specimen. Source, identification, names, and every other component must match. Click a vial into a cell; click with an empty cursor to withdraw one. Fit a clear glass pane for viewing; sneak-use a Knapper to remove it. Craft a Cabinet, then store and withdraw a sample.",
+  "hemomancy.clinical.field_referral.title": "A Cabinet for the Road",
+  "hemomancy.clinical.field_referral.lesson": "You have crafted a Cabinet and used it in both directions. A cabinet serves the laboratory. It does not serve the road. Take your storage practice and Hematic Iron to the Artificer you have met. Ask for a Field Case. I will continue to answer for the specimens; the Artificer will answer for the hinges and catches.",
+  "hemomancy.clinical.field_case.title": "The Laboratory Abroad",
+  "hemomancy.clinical.field_case.lesson": "The Alchemist has referred you. Rebuild an empty Phlebotomist's Cabinet with leather and Hematic Iron Scraps; the recipe consumes the Cabinet. Reinforcement, shock-isolated cells, and secure catches preserve its indexing while carried. Place the Field Case before opening it. Its nine cells each hold sixteen matching vials, fewer than the Cabinet. Close every menu and wait for the lid to shut, then sneak-use with an empty hand to recover it. The carried case retains specimen identity and counts.",
+  "hemomancy.clinical.echo_referral.title": "Beyond Ordinary Analysis",
+  "hemomancy.clinical.echo_referral.lesson": "I can establish whose blood this is and which properties it bears. The residual auditory pattern is another matter. An Echo Shard suggests a retained expression, not another physiological tendency. Seek the Mnemonist. You have enough observations to ask the question at Degree 2; formal recording instruction begins at Degree 3.",
+  "hemomancy.clinical.clairaudiograph.title": "What Blood Remembers Saying",
+  "hemomancy.clinical.clairaudiograph.lesson": "The Alchemist has established the specimen. Listen now to what its former body repeated. I have recorded the Clairaudiograph and Ambergris Cylinder recipes. Place a filled creature Blood Vial and a blank cylinder into the machine, select a call, and Carve for four seconds. The blood is consumed and its empty vial remains. Preview is private; Play reaches nearby listeners. Carved cylinders retain a creature expression, not an injectable property. Identification is required for your training, but the machine can record unexamined creature blood too.",
+  "hemomancy.clinical.next.title": "What is my next clinical assignment?",
+  "hemomancy.clinical.next.collect": "Begin with my First Separation assignment. Use its loose vials to sample living creatures, balance the Centrifuge, and recover the enzyme. Report back for a Living Syringe and an initialized eight-vial rack. Bring me one filled creature vial to discuss observation.",
+  "hemomancy.clinical.next.show_vial": "Return to the Alchemist holding one filled creature Blood Vial in either hand. The microscope lesson and recipe follow that first specimen.",
+  "hemomancy.clinical.next.examine": "Craft the Hematic Microscope. Hold it in your main hand and a single filled creature Blood Vial in your offhand. Hold Use for two uninterrupted seconds, then return to the Alchemist.",
+  "hemomancy.clinical.next.injection": "After successfully examining a creature sample yourself, ask the Alchemist about Borrowed Physiology. That lesson unlocks direct injection.",
+  "hemomancy.clinical.next.three_sources": "Examine blood from three different creature types with the microscope, then speak to the Alchemist. Repeated vials from the same entity type count only once. Already identified vials still need your own two-second examination.",
+  "hemomancy.clinical.next.cabinet": "You have identified three distinct sources. Ask the Alchemist for the Phlebotomist's Cabinet lesson and recipe.",
+  "hemomancy.clinical.next.storage": "Craft a Phlebotomist's Cabinet yourself, insert a full sample through its menu, then withdraw one. Hoppers and Field Cases do not demonstrate your stationary Cabinet practice.",
+  "hemomancy.clinical.next.degree_two": "Continue your Harbinger study to Degree 2. Stationary specimen storage comes first; the field conversion follows at that degree.",
+  "hemomancy.clinical.next.iron_artificer": "At Degree 2, obtain Hematic Iron Scraps and meet the Artificer. Return to the Alchemist after crafting, filling, and withdrawing from your Cabinet.",
+  "hemomancy.clinical.next.referral": "Ask the Alchemist for A Cabinet for the Road, then take the referral to the Artificer.",
+  "hemomancy.clinical.next.later_study": "The Artificer handles your field conversion. Ask me about Beyond Ordinary Analysis once you have examined three creature sources; formal mnemonic recording is the Mnemonist's work.",
+  "hemomancy.clinical.next.field_referral": "The Alchemist must refer you first. At Degree 2, craft a Cabinet, personally insert and withdraw a sample, obtain Hematic Iron Scraps, and meet me. Return to the Alchemist for the handoff.",
+  "hemomancy.clinical.next.field_case": "Place the Field Case to open it. Close all menus and let its lid shut before sneak-using an empty hand to recover it. Ask the Alchemist what belongs in its cells.",
+  "hemomancy.clinical.next.echo_referral": "Examine three creature sources, then ask the Alchemist about the residual echo at Degree 2. Bring that referral here for formal study at Degree 3.",
+  "hemomancy.clinical.next.formal_study": "Your Alchemist referral is recorded. At Degree 3, ask me for What Blood Remembers Saying to learn the Clairaudiograph and Ambergris Cylinder recipes.",
+  "hemomancy.clinical.next.recording": "Use a filled creature vial and a blank Ambergris Cylinder in the Clairaudiograph. Choose a call and Carve. A carved cylinder can be played again without further blood.",
+  "hemomancy.clinical.inquiry.alchemist_field_case": "The Field Case carries clinical specimens. I teach which samples belong together; the Artificer teaches its field construction after my referral.",
+  "hemomancy.clinical.inquiry.alchemist_echo": "The blood is identifiable, yet the auditory pattern survives ordinary analysis. After examining three creature sources, ask me about Beyond Ordinary Analysis and take the question to the Mnemonist.",
+  "hemomancy.clinical.inquiry.later": "This belongs to a later lesson. Begin with the Alchemist's Degree-1 sampling and observation practice.",
+  "hemomancy.clinical.inquiry.sampling": "The Living Syringe draws creature blood into an empty vial in its loaded eight-vial rack. Thick-skinned creatures and NPCs require it; a loose vial cannot draw their blood. Bring one filled vial to me before building a large collection. The microscope teaches you to distinguish what you collected.",
+  "hemomancy.clinical.inquiry.centrifuge": "The Vial Centrifuge is Degree-1 apparatus. Put valid creature samples in opposing slots and start a balanced spin. Recover the enzyme and report the assigned separation. Vivacious Enzyme belongs to this early work; the Ghastly Alembic and broader tendency refinement follow at Degree 2.",
+  "hemomancy.clinical.inquiry.alembic": "At Degree 2, the Ghastly Alembic opens reagent distillation and broader tendency work. Microscopy describes a specimen; distillation and centrifugation separate useful material from it.",
+  "hemomancy.clinical.inquiry.empty_vial": "An empty Blood Vial can collect a creature specimen with a left-click on a living creature. My First Separation briefing supplies two. Bring a filled vial back for microscopy.",
+  "hemomancy.clinical.inquiry.unidentified_vial": "This vial contains a specimen, but you have not identified its properties. Show me a filled creature vial for the microscope lesson. Hold the microscope in your main hand and the sample in your offhand for a two-second examination.",
+  "hemomancy.clinical.inquiry.identified_vial": "The identified vial records tendencies and biological properties. After my Borrowed Physiology lesson, hold Use with the vial for 0.8 seconds to inject it. Temporary responses and drawbacks are shown in the tooltip. The empty vessel remains and Transfusion Saturation prevents immediate repetition.",
+  "hemomancy.clinical.inquiry.artificer_cabinet": "Bloodwood holds the cells; Hematic Iron reinforces the frame. The Alchemist teaches provenance and exact specimen matching. Once you have used that Cabinet, I can discuss its field conversion after the Alchemist's referral.",
+  "hemomancy.clinical.inquiry.artificer_microscope": "I can reproduce the housing. I cannot tell you why one bear's blood freezes in the glass while another's boils. Ask the Alchemist.",
+  "hemomancy.clinical.inquiry.artificer_recording": "I understand its frame and moving parts. The Alchemist establishes the sample; the Mnemonist explains the retained voice. Ask them before treating it as an ordinary instrument.",
+  "hemomancy.clinical.inquiry.echo_hint": "There may be an echo here, but physiology must precede interpretation. Examine three creature sources and seek the Alchemist's referral. At Degree 3 I can teach you how to retain the expression.",
+  "hemomancy.clinical.injection.locked": "Examine a sample and learn Borrowed Physiology before injecting.",
+  "advancements.hemomancy.clinical_microscope.title": "Hematic Microscopy",
+  "advancements.hemomancy.clinical_microscope.description": "Learn Hematic Microscopy from the Alchemist",
+  "advancements.hemomancy.clinical_injection.title": "Borrowed Physiology",
+  "advancements.hemomancy.clinical_injection.description": "Learn Borrowed Physiology from the Alchemist",
+  "advancements.hemomancy.clinical_cabinet.title": "Phlebotomist's Cabinet",
+  "advancements.hemomancy.clinical_cabinet.description": "Learn Phlebotomist's Cabinet from the Alchemist",
+  "advancements.hemomancy.clinical_field_referral.title": "A Cabinet for the Road",
+  "advancements.hemomancy.clinical_field_referral.description": "Learn A Cabinet for the Road from the Alchemist",
+  "advancements.hemomancy.clinical_field_case.title": "The Laboratory Abroad",
+  "advancements.hemomancy.clinical_field_case.description": "Learn The Laboratory Abroad from the Artificer",
+  "advancements.hemomancy.clinical_echo_referral.title": "Beyond Ordinary Analysis",
+  "advancements.hemomancy.clinical_echo_referral.description": "Learn Beyond Ordinary Analysis from the Alchemist",
+  "advancements.hemomancy.clinical_clairaudiograph.title": "What Blood Remembers Saying",
+  "advancements.hemomancy.clinical_clairaudiograph.description": "Learn What Blood Remembers Saying from the Mnemonist",
+  "advancements.hemomancy.clinical_collected.title": "Blood as Specimen",
+  "advancements.hemomancy.clinical_collected.description": "Obtain a filled creature blood sample",
+  "advancements.hemomancy.clinical_examined.title": "Observation Before Exploitation",
+  "advancements.hemomancy.clinical_examined.description": "Successfully examine a creature sample yourself",
+  "advancements.hemomancy.clinical_three_sources.title": "The Ordered Collection",
+  "advancements.hemomancy.clinical_three_sources.description": "Identify three different creature sources",
+  "hemomancy.clinical.ledger.microscope": "Learn microscopy",
+  "hemomancy.clinical.ledger.microscope.desc": "Hold a filled creature vial while speaking to the Alchemist; learn the Hematic Microscope recipe.",
+  "hemomancy.clinical.ledger.examined": "Examine a specimen",
+  "hemomancy.clinical.ledger.examined.desc": "Main-hand microscope, offhand vial. Hold Use for two uninterrupted seconds, then return to the Alchemist.",
+  "hemomancy.clinical.ledger.injection": "Borrowed Physiology",
+  "hemomancy.clinical.ledger.injection.desc": "Learn direct injection from the Alchemist after your first personal examination.",
+  "hemomancy.clinical.ledger.sources": "Identify three creature sources",
+  "hemomancy.clinical.ledger.sources.desc": "Personally examine three different entity types. Duplicate sources count once; trading identified vials does not replace examination.",
+  "hemomancy.clinical.ledger.cabinet": "The Ordered Collection",
+  "hemomancy.clinical.ledger.cabinet.desc": "After three source identifications, learn the Cabinet recipe from the Alchemist.",
+  "hemomancy.clinical.ledger.crafted": "Craft a Cabinet",
+  "hemomancy.clinical.ledger.crafted.desc": "Craft your own stationary specimen Cabinet after learning its recipe.",
+  "hemomancy.clinical.ledger.storage": "Store and withdraw",
+  "hemomancy.clinical.ledger.storage.desc": "Personally insert and withdraw a full sample through a Cabinet menu. Automated transfers do not count.",
+  "hemomancy.clinical.ledger.iron": "Meet the Artificer",
+  "hemomancy.clinical.ledger.iron.desc": "Obtain Hematic Iron Scraps and speak to the Artificer, then return to the Alchemist.",
+  "hemomancy.clinical.ledger.referral": "A Cabinet for the Road",
+  "hemomancy.clinical.ledger.referral.desc": "At Degree 2, complete Cabinet practice and ask the Alchemist for a field-conversion referral.",
+  "hemomancy.clinical.ledger.field_case": "The Laboratory Abroad",
+  "hemomancy.clinical.ledger.field_case.desc": "Take the Alchemist referral to the Artificer to learn the Field Case recipe and placement rules.",
+  "hemomancy.clinical.ledger.echo_referral": "Beyond Ordinary Analysis",
+  "hemomancy.clinical.ledger.echo_referral.desc": "After three source identifications and Degree 2, ask the Alchemist for a Mnemonist referral.",
+  "hemomancy.clinical.ledger.clairaudiograph": "What Blood Remembers Saying",
+  "hemomancy.clinical.ledger.clairaudiograph.desc": "At Degree 3, meet the Mnemonist and use the Alchemist referral to learn recording and cylinder recipes.",
+  "hemomancy.clinical.ledger.observation": "Clinical Study: Collect and Observe",
+  "hemomancy.clinical.ledger.fieldwork": "Clinical Study: The Laboratory Abroad",
+  "hemomancy.clinical.ledger.echoes": "Clinical Study: Retained Expressions",
+  "hemomancy.clinical.inquiry.blank_cylinder": "This cylinder is blank. Make two from Mnemonic Ambergris, Active Befouling Ash, honeycomb, and paper. Set one beside a filled creature Blood Vial in the Clairaudiograph, select a call, and carve for four seconds.",
+  "hemomancy.clinical.inquiry.carved_cylinder": "This cylinder already carries an expression. Place it in the Clairaudiograph and press Play. Playback needs no fresh blood, and this carved cylinder cannot serve as blank recording stock. Preview is private; Play reaches nearby listeners.",
+  "hemomancy.clinical.inquiry.unreadable_cylinder": "The inscription on this cylinder cannot be read. Preserve it as it is; it is not blank wax. A changed or absent recording definition may explain the silence.",
+  "gui.hemomancy.clairaudiograph.spectrograph": "AUDIO SPECTROGRAPH",
+  "gui.hemomancy.clairaudiograph.waveform": "AUDIO AMPLITUDE",
+  "gui.hemomancy.clairaudiograph.displacement": "UNRESOLVED TRACE",
+  "gui.hemomancy.clairaudiograph.unresolved": "NON-ACOUSTIC RESPONSE",
+  "gui.hemomancy.clairaudiograph.idle": "IDLE",
+  "gui.hemomancy.clairaudiograph.loading": "ANALYZING AUDIO",
+  "gui.hemomancy.clairaudiograph.playing": "SOURCE AUDIO",
+  "item.hemomancy.ahaematic_unidentified": "Unidentified Dark Sample",
+  "item.hemomancy.ahaematic_colloid": "Ahaematic Colloid",
+  "hemomancy.antecedent.sample.unknown": "An opaque, gritty suspension. Examine it with a Hematic Microscope.",
+  "hemomancy.antecedent.sample.identified": "Alive, but not blood. No tendency response. Reacts to vibration. Not suitable for injection or enzyme separation.",
+  "hemomancy.antecedent.microscope.readout": "SAMPLE ANALYSIS\n\nSUBSTRATE: UNKNOWN\nHEMATIC CONTENT: NONE DETECTED\nTENDENCY: —\nENZYME RESPONSE: NULL\nCELLULARITY: INDETERMINATE\n\nMOTILITY: REACTIVE\nCLASSIFICATION: INCERTAE",
+  "hemomancy.antecedent.microscope.acoustic": "STIMULUS: ACOUSTIC\nNo nervous structures observed.",
+  "hemomancy.antecedent.microscope.unknown_stimulus": "STIMULUS: VIBRATIONAL / UNKNOWN\nCoordinated motility without corresponding acoustic stimulus.",
+  "hemomancy.antecedent.cylinder.description": "An ancient ambergris cylinder bearing unfamiliar grooves. Play it in a Clairaudiograph; bring an analyzed dark sample.",
+  "hemomancy.antecedent.cylinder.severed_record": "Weathered Ambergris Cylinder: Severed Record",
+  "hemomancy.antecedent.cylinder.lower_district_survey": "Weathered Ambergris Cylinder: Lower District Survey",
+  "hemomancy.antecedent.cylinder.the_quieting": "Weathered Ambergris Cylinder: The Quieting",
+  "hemomancy.antecedent.cylinder.heard": "Clairaudiograph Recording: Heard",
+  "hemomancy.antecedent.cylinder.unheard": "Clairaudiograph Recording: Unheard",
+  "hemomancy.antecedent.recording.crackle": "[Cylinder crackle; distant cavern sounds]",
+  "hemomancy.antecedent.recording.shriek": "[A distant Shrieker]",
+  "hemomancy.antecedent.recording.heartbeat": "[Heavy heartbeats approach]",
+  "hemomancy.antecedent.recording.crash": "[A crash draws the heartbeats away]",
+  "hemomancy.antecedent.recording.silence": "[No audible signal]",
+  "hemomancy.antecedent.recording.behind": "[A click behind you; absent from the recording]",
+  "hemomancy.antecedent.recording.severed.1": "Unknown Recorder: Lower district. Record nineteen.",
+  "hemomancy.antecedent.recording.severed.2": "Unknown Recorder: The growth to the west has stopped.",
+  "hemomancy.antecedent.recording.severed.3": "Distant Voice: Stopped?",
+  "hemomancy.antecedent.recording.severed.4": "Unknown Recorder: It has not died. It stopped.",
+  "hemomancy.antecedent.recording.severed.5": "Unknown Recorder: The catalysts still take the dead. The listeners still answer movement. Nothing there has changed.",
+  "hemomancy.antecedent.recording.severed.6": "Unknown Recorder: But they do not answer one another the way they did.",
+  "hemomancy.antecedent.recording.severed.7": "Unknown Recorder: Do not move.",
+  "hemomancy.antecedent.recording.severed.8": "Unknown Recorder: The cut held.",
+  "hemomancy.antecedent.recording.severed.9": "Distant Voice: Then why are they still alive?",
+  "hemomancy.antecedent.recording.severed.10": "Unknown Recorder: I don't know.",
+  "hemomancy.antecedent.recording.severed.11": "Unknown Recorder: We cut the voice.",
+  "hemomancy.antecedent.recording.severed.12": "Unknown Recorder: The flesh remained.",
+  "hemomancy.antecedent.recording.survey.1": "Unknown Recorder: Lower district survey. The growth takes the dead. The listeners answer movement, but do not go beyond the black floor.",
+  "hemomancy.antecedent.recording.survey.2": "Distant Voice: Do not carry the growth upward. Keep the dead elsewhere. Mark the last clean stair.",
+  "hemomancy.antecedent.recording.quieting.1": "Unknown Recorder: Do not ring bells below the third stair. No iron wheels. Wrap the road. Walk softly.",
+  "hemomancy.antecedent.recording.quieting.2": "Distant Voice: If the floor answers twice, leave. If it answers three times, do not return for those below.",
+  "hemomancy.antecedent.dialogue.initial_alchemist.title": "This sample has no blood.",
+  "hemomancy.antecedent.dialogue.initial_alchemist.1": "No. That cannot be right. Give me the vial. No hematic corpuscles, no tendency response, yet your microscope says it moves in an organized way.",
+  "hemomancy.antecedent.dialogue.initial_alchemist.2": "Make a sound. Again. ...There. Eight tendencies and it accepts none of them. That should mean it is dead. It clearly is not.",
+  "hemomancy.antecedent.dialogue.initial_alchemist.3": "Take this to the Vicar. I have not run out of instruments. I remembered something he once told me never to ask about.",
+  "hemomancy.antecedent.dialogue.initial_alchemist.4": "Keep the vial. Record what it does when disturbed and look for preserved evidence in an Ancient City. Your instruments found the question. Do not decide the answer yet.",
+  "hemomancy.antecedent.dialogue.initial_vicar.title": "The Alchemist sent me with this dark sample.",
+  "hemomancy.antecedent.dialogue.initial_vicar.1": "Then he found something his instruments cannot name. He must have exhausted every sensible explanation before he came to me.",
+  "hemomancy.antecedent.dialogue.initial_vicar.2": "The substance is alive. That is the observation. Any resemblance to our histories is still only suspicion.",
+  "hemomancy.antecedent.dialogue.initial_vicar.3": "Find evidence that stands without our interpretation: a record, a practical instruction, something its keepers wrote because they needed it.",
+  "hemomancy.antecedent.dialogue.initial_vicar.4": "If you find such a record, bring the cylinder and vial. Uncertainty is not revelation.",
+  "hemomancy.antecedent.dialogue.recording.title": "I found an old recording beneath an Ancient City.",
+  "hemomancy.antecedent.dialogue.recording.1": "Ambergris? Let me see. These grooves were not cut by a Clairaudiograph. Whoever made them discovered the same property of ambergris with another instrument.",
+  "hemomancy.antecedent.dialogue.recording.2": "Part of the recording was silent? The audio spectrograph agrees. That second trace is not part of the reproduced audio.",
+  "hemomancy.antecedent.dialogue.recording.3": "Bring one of those dark samples you analyzed. Put it in the machine or hold it beside the machine, and play the cylinder again.",
+  "hemomancy.antecedent.dialogue.recording.4": "I have marked this for a controlled replay. Bring the Clairaudiograph within eight blocks of me. If it only responds to vibration, this should be very boring.",
+  "hemomancy.antecedent.dialogue.replay.title": "The sample reacted during the silence.",
+  "hemomancy.antecedent.dialogue.replay.1": "How did it react? It climbed the vial toward the machine? During the Shrieker? No, during the silence. Give me the cylinder and the vial.",
+  "hemomancy.antecedent.dialogue.replay.2": "No. That is impossible. ...Do it again.",
+  "hemomancy.antecedent.dialogue.replay.3": "Put the analyzed vial beside the machine and replay the full silent section while I am within eight blocks. Watch both the audio spectrograph and the unresolved trace.",
+  "hemomancy.antecedent.dialogue.replay.4": "We need to separate a response to reproduced sound from a response to whatever this instrument cannot reproduce.",
+  "hemomancy.antecedent.dialogue.conclusion.title": "What did the controlled replay establish?",
+  "hemomancy.antecedent.dialogue.conclusion.1": "I called this material acoustically reactive. That was wrong. Sound agitates it, but the silent grooves produce nothing our apparatus can reproduce.",
+  "hemomancy.antecedent.dialogue.conclusion.2": "The sample does more than react. It turns toward it. The audio spectrum is empty.",
+  "hemomancy.antecedent.dialogue.conclusion.3": "I do not know what it recognizes. It may lie below what we can reproduce, or it may never have been sound at all.",
+  "hemomancy.antecedent.dialogue.conclusion.4": "There is another matter. We cut the voice. The flesh remained. That sounds like history. Take the cylinder and vial to the Vicar. If he does not laugh, listen carefully to what he calls this.",
+  "hemomancy.antecedent.dialogue.recognition.title": "The recording says: The cut held.",
+  "hemomancy.antecedent.dialogue.recognition.1": "Play the first sentence again. The cut held. Yes. Precisely that. I know those words.",
+  "hemomancy.antecedent.dialogue.recognition.2": "Our oldest copies say this: The first wound did not heal. The cut held. Beneath it, the listening flesh endured.",
+  "hemomancy.antecedent.dialogue.recognition.3": "No author. No date. No named rite. By the Second Age, commentators treated it as an allegory for restraint. I did too. We may have been comfortably wrong.",
+  "hemomancy.antecedent.dialogue.recognition.4": "Listening flesh. A living substance that listens. And someone standing among it, saying: We cut the voice. The flesh remained.",
+  "hemomancy.antecedent.dialogue.recognition.5": "This proves neither communication nor memory. Do not turn a frightening hypothesis into revelation.",
+  "hemomancy.antecedent.dialogue.recognition.6": "The Antecedent is the later editorial name for fragments that appear to come before blood. It was not necessarily their name for anything.",
+  "hemomancy.antecedent.dialogue.recognition.7": "They separated something from the growth and believed they could cut one away without killing the other. The sculk may simply be what remained. Ask me about the Last Listeners.",
+  "hemomancy.antecedent.dialogue.clue.title": "Where did the Last Listeners keep vigil?",
+  "hemomancy.antecedent.dialogue.clue.1": "Where the city has no song, descend beneath the mouth that was never opened. Pass where the wool ends. The last listeners kept vigil there, over the wound.",
+  "hemomancy.antecedent.dialogue.clue.2": "Follow the city roads and look for a small enclosed entrance with a wool-lined passage. The Vigil may stand beside any district. Pass where the wool ends.",
+  "hemomancy.antecedent.dialogue.clue.3": "Do not repair anything. Do not complete a pattern merely because an ancient mason left three quarters intact.",
+  "hemomancy.antecedent.dialogue.clue.4": "We do not know whether it stayed severed because they succeeded or because no fool has put the pieces back together. You are a Harbinger. I feel obliged to say that plainly.",
+  "hemomancy.antecedent.dialogue.comparison.title": "Could the Antecedent be the same Entity?",
+  "hemomancy.antecedent.dialogue.comparison.1": "No. Or rather, I have no right to say yes. Similarity does not establish ancestry.",
+  "hemomancy.antecedent.dialogue.comparison.2": "Your sample contains no blood. It answers no tendency. The Alchemist cannot derive an enzyme. Nothing resembles Erythromycelium in substance.",
+  "hemomancy.antecedent.dialogue.comparison.3": "But perhaps we looked for resemblance in the wrong place. Do not compare the flesh. Compare what the flesh does.",
+  "hemomancy.antecedent.dialogue.comparison.4": "One is a territorial ecology fed by death. The other is an infection carried and cultivated by living hosts. They are different strategies. The evidence does not yet support a shared author.",
+  "hemomancy.antecedent.dialogue.housing.title": "Reconstruct a Listening Scar housing.",
+  "hemomancy.antecedent.dialogue.housing.1": "The archive preserves a housing design, not a weapon. Bring four iron nuggets and one Echo Shard. I can reconstruct its frame.",
+  "hemomancy.antecedent.dialogue.housing.2": "Hold the housing with an analyzed Ahaematic vial in your other hand, then use it. Hold the loaded housing beside the full silent experiment. The awakened talisman fits a removable socket in your Charm at the Scarlet Vanity.",
+  "memo.hemomancy.antecedent_sample_analyzed": "Incertae",
+  "memo.hemomancy.antecedent_acoustic_response": "The Dark Sample",
+  "memo.hemomancy.antecedent_severed_record_heard": "The Severed Record",
+  "memo.hemomancy.antecedent_sample_response": "An Insufficient Model",
+  "memo.hemomancy.antecedent_replay_requested": "A Controlled Replay",
+  "memo.hemomancy.antecedent_controlled_replay": "It Turns Toward It",
+  "memo.hemomancy.antecedent_vicar_recognition": "The Antecedent",
+  "memo.hemomancy.antecedent_crossed_wool_terminus": "Where the Wool Ends",
+  "memo.hemomancy.antecedent_degraded_network": "The Last Listeners",
+  "memo.hemomancy.antecedent_vigil_record_read": "The Cut",
+  "memo.hemomancy.antecedent_archive_response": "The Vigil Beneath",
+  "memo.hemomancy.antecedent_epilogue": "Before Blood",
+  "hemomancy.antecedent.epilogue": "You dug deeply.\n\nYou found what remained.\n\nWe remember stone.\nWe remember listening.\nWe remember waiting for the dead.\n\nWe do not wait anymore.",
+  "item.hemomancy.listening_scar.0": "Inert Listening Scar Housing",
+  "item.hemomancy.listening_scar.1": "Dormant Listening Scar",
+  "item.hemomancy.listening_scar.2": "Talisman of the Listening Scar",
+  "item.hemomancy.listening_scar": "Talisman of the Listening Scar",
+  "hemomancy.antecedent.scar.instructions.0": "Hold analyzed Ahaematic Colloid in the other hand and use this. It returns the empty vial.",
+  "hemomancy.antecedent.scar.instructions.1": "Hold beside the Clairaudiograph through the entire silent response.",
+  "hemomancy.antecedent.scar.instructions.2": "Fit it to your Charm at a Scarlet Vanity. You cannot hear the sculk. You can hear it listen.",
+  "hemomancy.antecedent.scar.awakened": "The Listening Scar answers.",
+  "hemomancy.antecedent.housing.cost": "Reconstruction needs four iron nuggets and one Echo Shard.",
+  "block.hemomancy.antecedent_vessel": "Ancient Sample Vessel",
+  "hemomancy.antecedent.vigil.title": "THE ANTECEDENT: THE LAST LISTENERS",
+  "hemomancy.antecedent.vigil.subtitle": "Pass where the wool ends.",
+  "hemomancy.antecedent.cylinder.title.severed_record": "Severed Record",
+  "hemomancy.antecedent.cylinder.title.lower_district_survey": "Lower District Survey",
+  "hemomancy.antecedent.cylinder.title.the_quieting": "The Quieting",
+  "hemomancy.antecedent.cylinder.playback_help": "Ancient recording. Playback preserves the cylinder and any specimen.",
+  "hemomancy.antecedent.scar.socket": "Listening Scar socket. Fit or remove it at a Scarlet Vanity."
 }

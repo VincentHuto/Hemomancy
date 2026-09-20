@@ -1,0 +1,100 @@
+{
+  "variants": {
+    "facing=north,phase=0": {
+      "model": "hemomancy:block/vacant_effigy_0",
+      "y": 0
+    },
+    "facing=east,phase=0": {
+      "model": "hemomancy:block/vacant_effigy_0",
+      "y": 90
+    },
+    "facing=south,phase=0": {
+      "model": "hemomancy:block/vacant_effigy_0",
+      "y": 180
+    },
+    "facing=west,phase=0": {
+      "model": "hemomancy:block/vacant_effigy_0",
+      "y": 270
+    },
+    "facing=north,phase=1": {
+      "model": "hemomancy:block/vacant_effigy_1",
+      "y": 0
+    },
+    "facing=east,phase=1": {
+      "model": "hemomancy:block/vacant_effigy_1",
+      "y": 90
+    },
+    "facing=south,phase=1": {
+      "model": "hemomancy:block/vacant_effigy_1",
+      "y": 180
+    },
+    "facing=west,phase=1": {
+      "model": "hemomancy:block/vacant_effigy_1",
+      "y": 270
+    },
+    "facing=north,phase=2": {
+      "model": "hemomancy:block/vacant_effigy_2",
+      "y": 0
+    },
+    "facing=east,phase=2": {
+      "model": "hemomancy:block/vacant_effigy_2",
+      "y": 90
+    },
+    "facing=south,phase=2": {
+      "model": "hemomancy:block/vacant_effigy_2",
+      "y": 180
+    },
+    "facing=west,phase=2": {
+      "model": "hemomancy:block/vacant_effigy_2",
+      "y": 270
+    },
+    "facing=north,phase=3": {
+      "model": "hemomancy:block/vacant_effigy_3",
+      "y": 0
+    },
+    "facing=east,phase=3": {
+      "model": "hemomancy:block/vacant_effigy_3",
+      "y": 90
+    },
+    "facing=south,phase=3": {
+      "model": "hemomancy:block/vacant_effigy_3",
+      "y": 180
+    },
+    "facing=west,phase=3": {
+      "model": "hemomancy:block/vacant_effigy_3",
+      "y": 270
+    },
+    "facing=north,phase=4": {
+      "model": "hemomancy:block/vacant_effigy_4",
+      "y": 0
+    },
+    "facing=east,phase=4": {
+      "model": "hemomancy:block/vacant_effigy_4",
+      "y": 90
+    },
+    "facing=south,phase=4": {
+      "model": "hemomancy:block/vacant_effigy_4",
+      "y": 180
+    },
+    "facing=west,phase=4": {
+      "model": "hemomancy:block/vacant_effigy_4",
+      "y": 270
+    },
+    "facing=north,phase=5": {
+      "model": "hemomancy:block/vacant_effigy_5",
+      "y": 0
+    },
+    "facing=east,phase=5": {
+      "model": "hemomancy:block/vacant_effigy_5",
+      "y": 90
+    },
+    "facing=south,phase=5": {
+      "model": "hemomancy:block/vacant_effigy_5",
+      "y": 180
+    },
+    "facing=west,phase=5": {
+      "model": "hemomancy:block/vacant_effigy_5",
+      "y": 270
+    }
+  }
+}

@@ -25,6 +25,19 @@ class BombardierFlameGeometryTest {
                 new Vec3(Double.NaN, 0, 1), 10, 12));
     }
 
+    @Test void visualSamplesClusterAtTheAbdominalPortWithoutLosingTheFullJet() {
+        int count = BombardierFlameGeometry.visualSampleCount(10.0);
+        assertTrue(count >= 24, "the ten-block jet needs enough samples to read as continuous flame");
+
+        long nearPort = java.util.stream.IntStream.range(0, count)
+                .filter(index -> BombardierFlameGeometry.visualSampleDistance(10.0, index, count) <= 2.5)
+                .count();
+        assertTrue(nearPort >= count / 2,
+                "at least half of the flame samples should reinforce the first 2.5 blocks at the nozzle");
+        assertTrue(BombardierFlameGeometry.visualSampleDistance(10.0, count - 1, count) > 9.0,
+                "the clustered distribution must still reach the end of the defensive sweep");
+    }
+
     private static double yaw(Vec3 direction) {
         return Math.toDegrees(Math.atan2(direction.x, direction.z));
     }

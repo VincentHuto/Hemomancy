@@ -4,6 +4,6 @@
   "texture": "hemomancy:textures/gui/guide/page.png",
   "title": "The Clairaudiograph",
   "subtitle": "A voice cut into wax",
-  "text": "Place a filled creature Blood Vial and a blank Ambergris Cylinder in the Clairaudiograph. Select a call and carve for four seconds. Identification is not required. The blood is consumed and its empty vial remains. Preview is private; Play carries the recording up to 32 blocks. A rising redstone edge plays once. Enable Loop to repeat while powered, or use Play for a manual loop. Stop affects this machine alone. A cylinder preserves a sound event, so its audio variation can change between plays. Make two cylinders from Mnemonic Ambergris, Active Befouling Ash, honeycomb wax, and paper.",
+  "text": "The Mnemonist teaches this at Degree 3 after three personal sample identifications and the Alchemist's referral. Put a filled creature Blood Vial and blank Ambergris Cylinder in the Clairaudiograph. Choose a call and carve for four seconds. Identification is optional. The blood is consumed and its empty vial remains. Preview is private. Play carries the recording up to 32 blocks. A rising redstone edge plays once. Turn on Loop to repeat while powered, or use Play for a manual loop. Stop affects only this machine. A cylinder preserves a sound event, so its audio variation can change between plays. Make two cylinders from Mnemonic Ambergris, Active Befouling Ash, honeycomb wax, and paper.",
   "icon": "hemomancy:clairaudiograph"
 }

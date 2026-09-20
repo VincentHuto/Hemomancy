@@ -1,0 +1,32 @@
+{
+  "type": "hemomancy:blood_structure_recipe",
+  "bloodCost": 250,
+  "required_degree": 5,
+  "heldItem": "hemomancy:sanguine_formation",
+  "hitBlock": "hemomancy:venous_stone",
+  "pattern": [
+    [
+      "CIC"
+    ],
+    [
+      "IVI"
+    ],
+    [
+      "CIC"
+    ]
+  ],
+  "key": {
+    "C": {
+      "block": "hemomancy:conscious_mass"
+    },
+    "I": {
+      "block": "hemomancy:hematic_iron_block"
+    },
+    "V": {
+      "block": "hemomancy:venous_stone"
+    }
+  },
+  "result": {
+    "id": "hemomancy:vacant_effigy"
+  }
+}

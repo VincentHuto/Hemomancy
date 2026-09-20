@@ -1,0 +1,9 @@
+{
+  "type": "hutoslib:page",
+  "ordinality": 58,
+  "texture": "hemomancy:textures/gui/guide/page.png",
+  "title": "The Last Listeners",
+  "subtitle": "The Antecedent Inquiry",
+  "text": "The sculk below is still alive. Its responses are delayed, inconsistent, and poorly coordinated. The observers were not waiting for it to die. They were watching to see whether it answered correctly again.",
+  "icon": "hemomancy:hematic_microscope"
+}

@@ -1,0 +1,9 @@
+{
+  "type": "hutoslib:page",
+  "ordinality": 55,
+  "texture": "hemomancy:textures/gui/guide/page.png",
+  "title": "It Turns Toward It",
+  "subtitle": "The Antecedent Inquiry",
+  "text": "The Alchemist watched the sample turn toward the machine during reproduced silence. He sent the recording and vial to the Vicar.",
+  "icon": "hemomancy:hematic_microscope"
+}

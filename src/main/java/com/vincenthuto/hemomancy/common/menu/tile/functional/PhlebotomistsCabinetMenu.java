@@ -79,8 +79,14 @@ public class PhlebotomistsCabinetMenu extends AbstractContainerMenu {
                 if (type == ClickType.QUICK_MOVE && (button == 0 || button == 1)) quickMoveStack(player, slot);
                 else if (type == ClickType.PICKUP && (button == 0 || button == 1)) {
                     var carried = getCarried();
-                    if (carried.isEmpty()) setCarried(cabinet.storage().extractItem(slot, 1, false));
-                    else if (cabinet.storage().insertItem(slot, carried.copyWithCount(1), false).isEmpty()) carried.shrink(1);
+                    if (carried.isEmpty()) {
+                        var extracted = cabinet.storage().extractItem(slot, 1, false);
+                        setCarried(extracted);
+                        if (!extracted.isEmpty()) recordTransfer(player, false);
+                    } else if (cabinet.storage().insertItem(slot, carried.copyWithCount(1), false).isEmpty()) {
+                        carried.shrink(1);
+                        recordTransfer(player, true);
+                    }
                 }
                 // Swap, clone, throw, collect-all and quick-craft never operate on virtual cells.
                 broadcastChanges();
@@ -101,6 +107,7 @@ public class PhlebotomistsCabinetMenu extends AbstractContainerMenu {
                     var vial = storage.extractItem(index, 1, true);
                     if (!moveItemStackTo(vial, 9, slots.size(), true)) break;
                     storage.extractItem(index, 1, false);
+                    recordTransfer(player, false);
                 }
             } else {
                 var source = slots.get(index);
@@ -110,6 +117,7 @@ public class PhlebotomistsCabinetMenu extends AbstractContainerMenu {
                 if (storage.insertItem(target, stack.copyWithCount(1), false).isEmpty()) {
                     stack.shrink(1);
                     source.setChanged();
+                    recordTransfer(player, true);
                 }
             }
             refresh();
@@ -117,4 +125,9 @@ public class PhlebotomistsCabinetMenu extends AbstractContainerMenu {
             return ItemStack.EMPTY;
         } finally { cabinet.endTransfer(); }
     }
+    private void recordTransfer(Player player, boolean inserted) {
+        if (cabinet instanceof com.vincenthuto.hemomancy.common.tile.harbinger.functional.PhlebotomistsCabinetBlockEntity)
+            com.vincenthuto.hemomancy.common.mission.alchemist.ClinicalBloodKnowledge.cabinetTransfer(player, inserted);
+    }
+
 }

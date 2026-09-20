@@ -23,15 +23,19 @@ public final class HematicMicroscopeItem extends Item {
         var instrument = player.getItemInHand(hand);
         if (hand != InteractionHand.MAIN_HAND || !player.isAlive() || player.isSpectator()) return InteractionResultHolder.fail(instrument);
         var sample = player.getOffhandItem();
-        if (!(sample.getItem() instanceof BloodVialItem) || !BloodSampleData.isFilled(sample) || sample.getCount() != 1) {
+        if (!BloodSampleData.isSpecimenVessel(sample) || !BloodSampleData.isFilled(sample) || sample.getCount() != 1) {
             feedback(player, sample.isEmpty() ? "offhand" : "empty");
             return InteractionResultHolder.fail(instrument);
+        }
+        if (!level.isClientSide && sample.getItem() instanceof BloodVialItem && com.vincenthuto.hemomancy.common.antecedent.AhaematicSample.is(sample)) {
+            sample = com.vincenthuto.hemomancy.common.antecedent.AhaematicSample.migrate(sample);
+            player.setItemInHand(InteractionHand.OFF_HAND, sample);
         }
         player.startUsingItem(hand);
         if (!level.isClientSide) {
             MicroscopeExamination.begin(player, instrument, sample);
             level.playSound(null, player.blockPosition(), SoundInit.MICROSCOPE_USE.get(), SoundSource.PLAYERS, 0.3F, 1F);
-            if (BloodSampleData.entityType(sample) == null) feedback(player, "provenance");
+            if (!BloodSampleData.examinable(sample)) feedback(player, "provenance");
         }
         return InteractionResultHolder.consume(instrument);
     }

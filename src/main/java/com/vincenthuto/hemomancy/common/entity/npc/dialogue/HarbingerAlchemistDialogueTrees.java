@@ -129,7 +129,7 @@ public final class HarbingerAlchemistDialogueTrees {
 			case 7 -> archon(entityId, hasBloodline, isNpcRecruited);
 			default -> apotheos(entityId, hasBloodline, isNpcRecruited); // degree 8+
 		};
-		if (degree < 3 || !(canBriefFirstSeparation || canClaimFirstSeparation
+		if (degree < 1 || degree == 2 || !(canBriefFirstSeparation || canClaimFirstSeparation
 				|| canBriefBodyAnswers || canDiscussMuscleMemories)) return tree;
 		DialogueTree lessons = votary(entityId, null, null, canBriefFirstSeparation,
 				canClaimFirstSeparation, canBriefBodyAnswers, canDiscussMuscleMemories);

@@ -1,0 +1,23 @@
+{
+  "parent": "hemomancy:hemomancy/degree_1_neophyte",
+  "display": {
+    "icon": {
+      "id": "hemomancy:bloody_vial"
+    },
+    "title": {
+      "translate": "advancements.hemomancy.clinical_injection.title"
+    },
+    "description": {
+      "translate": "advancements.hemomancy.clinical_injection.description"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": false,
+    "hidden": true
+  },
+  "criteria": {
+    "manual": {
+      "trigger": "minecraft:impossible"
+    }
+  }
+}

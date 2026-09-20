@@ -51,6 +51,14 @@ public final class LiberEntryDefinitions {
 	public static final ResourceLocation IMMACULATUS_ANNETTA_GEODE = immaculatusEntry("the_path/pages/annetta_geode_memo");
 
 	static {
+        for (var fact : com.vincenthuto.hemomancy.common.antecedent.AntecedentResearch.Evidence.values())
+            register(entry("the_infection/pages/antecedent_" + fact.key()), HemomancyDiscoverySource.MEMO);
+        register(entry("the_infection/pages/clairaudiograph"), HemomancyDiscoverySource.DIALOGUE);
+        for (String lesson : java.util.List.of("specimen", "microscopy", "ordered_collection", "microscope", "injection",
+                "cabinet", "field_referral", "field_case", "echo_referral", "clairaudiograph")) {
+            register(com.vincenthuto.hemomancy.common.mission.alchemist.ClinicalBloodKnowledge.entry(lesson),
+                    HemomancyDiscoverySource.DIALOGUE);
+        }
 		register(FIRST_RITE_NOTES, HemomancyDiscoverySource.MEMO, HemomancyDiscoverySource.RITE, HemomancyDiscoverySource.RITE_FRAGMENT);
 		register(HEMOMANCY, CommonDiscoverySource.ITEM_PICKUP, HemomancyDiscoverySource.RITE, HemomancyDiscoverySource.DIALOGUE,
 				HemomancyDiscoverySource.RITE_FRAGMENT);

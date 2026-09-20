@@ -1,0 +1,7 @@
+{
+  "type": "hemomancy:ancient_recording",
+  "conditions": [
+    {"condition": "neoforge:loot_table_id", "loot_table_id": "minecraft:chests/ancient_city"},
+    {"condition": "minecraft:random_chance", "chance": 0.12}
+  ]
+}

@@ -144,3 +144,7 @@ All Rights Reserved © VincentHuto
 ---
 
 *Blood is memory. Magic is infection. Neither path leaves the player unchanged.*
+
+- [Hematic Succession](Hematic-Succession.md): D5 professional residents, Bequests, effigies, and restoration.
+
+- [Antecedent Inquiry](Antecedent-Inquiry.md) — optional Deep Dark investigation, ancient recordings, and Listening Scar.

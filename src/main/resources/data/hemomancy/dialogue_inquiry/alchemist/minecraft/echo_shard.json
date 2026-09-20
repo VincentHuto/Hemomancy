@@ -1,0 +1,15 @@
+{
+  "conditions": [
+    {
+      "max_degree": 0,
+      "lines": [
+        "hemomancy.clinical.inquiry.later"
+      ]
+    },
+    {
+      "lines": [
+        "hemomancy.clinical.inquiry.alchemist_echo"
+      ]
+    }
+  ]
+}

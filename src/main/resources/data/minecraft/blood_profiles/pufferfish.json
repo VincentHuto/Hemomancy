@@ -1,0 +1,7 @@
+{
+  "tendencies": [],
+  "properties": [
+    "hemomancy:blood_properties/venomous"
+  ],
+  "requires_living_syringe": false
+}

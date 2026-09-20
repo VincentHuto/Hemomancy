@@ -84,6 +84,15 @@ public class DialogueEventHandler {
 	@SubscribeEvent
 	public static void onDialogueOption(DialogueEvent event) {
 		ServerPlayer player = event.getPlayer();
+        if (event.getEventId().startsWith("antecedent_")) { event.setRewardDelivered(com.vincenthuto.hemomancy.common.antecedent.AntecedentDialogue.handle(event)); return; }
+        if (event.getEventId().startsWith("clinical_lesson_")) {
+            for (var lesson : com.vincenthuto.hemomancy.common.mission.alchemist.ClinicalBloodProgress.Lesson.values()) {
+                if (lesson.event().equals(event.getEventId())) event.setRewardDelivered(
+                        com.vincenthuto.hemomancy.common.mission.alchemist.ClinicalBloodKnowledge.teach(
+                                player, player.level().getEntity(event.getEntityId()), lesson));
+            }
+            return;
+        }
 		if (event.getEventId().startsWith("circus_")
 				&& player.level().getEntity(event.getEntityId()) instanceof CircusRingmasterEntity ringmaster) {
 			ringmaster.handleChoice(player, event.getEventId());

@@ -59,7 +59,7 @@ public class PhlebotomistsCabinetScreen extends AbstractContainerScreen<Phleboto
             String name = source(stack).getString();
             if (font.width(name) > 48) name = font.plainSubstrByWidth(name, 42) + "…";
             g.drawString(font, name, x + 2, y + 23, 0xFFCC8888, false);
-            var profile = BloodSampleData.profile(stack, List.of());
+            var profile = BloodSampleData.profile(stack, true);
             if (profile.identified()) {
                 for (int t = 0; t < profile.tendencies().size(); t++) {
                     var color = profile.tendencies().get(t).getColor();

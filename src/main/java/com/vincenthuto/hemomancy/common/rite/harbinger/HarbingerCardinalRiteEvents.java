@@ -143,6 +143,9 @@ public class HarbingerCardinalRiteEvents {
 			UUID playerUUID = entry.getKey();
 			ActiveCardinalRite rite = entry.getValue();
 
+            if (com.vincenthuto.hemomancy.common.succession.SuccessionRites.is(rite)
+                    && !com.vincenthuto.hemomancy.common.succession.SuccessionRites.chunksReady(sLevel, rite)) continue;
+
 			ServerPlayer caster = sLevel.getServer().getPlayerList().getPlayer(playerUUID);
 
 			if (caster == null || !caster.level().equals(sLevel)) {
@@ -151,7 +154,15 @@ public class HarbingerCardinalRiteEvents {
 					if (rite.getDisconnectTicks() > CardinalRiteCeremonyRules.DISCONNECT_GRACE_TICKS) {
 						CardinalRiteOrdealEngine.clearThreats(sLevel, rite);
 						rite.markCollapsed();
-					}
+                        CardinalRiteAllyService.returnNpcAlliesToFane(sLevel, rite);
+                        if (com.vincenthuto.hemomancy.common.succession.SuccessionRites.is(rite)) {
+                            com.vincenthuto.hemomancy.common.succession.SuccessionRites.cleanup(sLevel, rite);
+                            if (rite.hasEscrowedStaff()) sLevel.addFreshEntity(new net.minecraft.world.entity.item.ItemEntity(sLevel,
+                                    rite.getCenterPos().getX() + .5, rite.getCenterPos().getY() + 1, rite.getCenterPos().getZ() + .5,
+                                    rite.releaseEscrowedStaff(sLevel.registryAccess())));
+                            toRemove.add(playerUUID);
+                        }
+                    }
 					savedData.setDirty();
 				}
 				continue;
@@ -249,6 +260,15 @@ public class HarbingerCardinalRiteEvents {
 
 			applyCancellationDaemonRecovery(sLevel, rite);
 
+            if (com.vincenthuto.hemomancy.common.succession.SuccessionRites.is(rite)) {
+                if (!com.vincenthuto.hemomancy.common.succession.SuccessionRites.tick(sLevel, caster, rite, recipe)) {
+                    CardinalRiteStaffEscrow.restore(caster, rite);
+                    toRemove.add(playerUUID);
+                }
+                savedData.setDirty();
+                continue;
+            }
+
 			// === Unwilling sacrifice processing ===
 			// Non-caster living entities within bounds take damage and feed the ritual
 			if (rite.getPhase() == CardinalRitePhase.LEGACY
@@ -307,6 +327,7 @@ public class HarbingerCardinalRiteEvents {
 		for (UUID uuid : toRemove) {
 			ActiveCardinalRite removedRite = activeRites.get(uuid);
 			if (removedRite != null) {
+                com.vincenthuto.hemomancy.common.succession.SuccessionRites.cleanup(sLevel, removedRite);
 				CardinalRiteAllyService.returnNpcAlliesToFane(sLevel, removedRite);
 				discardHumanitySprites(sLevel, uuid, removedRite.getCenterPos());
 			}
@@ -339,6 +360,7 @@ public class HarbingerCardinalRiteEvents {
 				discardHumanitySprites(sLevel, player.getUUID(), broken.getCenterPos());
 				CardinalRiteStaffEscrow.restore(player, broken);
 			}
+			com.vincenthuto.hemomancy.common.succession.SuccessionRites.cleanup(sLevel, broken);
 			savedData.removeRite(player.getUUID());
 			player.displayClientMessage(
 					Component.literal("The rite has been broken by your death...")
@@ -801,10 +823,17 @@ public class HarbingerCardinalRiteEvents {
 		String fogProfile = atmosphere == null ? (unstained ? "none" : "storm") : atmosphere.fog();
 		boolean fogLightning = atmosphere == null ? !unstained : atmosphere.lightning();
 		boolean boundaryDome = atmosphere == null ? !unstained : atmosphere.dome();
+        boolean succession = com.vincenthuto.hemomancy.common.succession.SuccessionRites.is(rite);
+        int successionTicks = rite.succession().getInt("Ticks");
+        if (succession) {
+            cue = "hemomancy.succession.phase." + Math.min(5, successionTicks / 200);
+            checklist = java.util.List.of(Component.translatable(cue).getString());
+            upfront = 0;
+        }
 		return new ActiveRiteClientData.RiteEntry(
-				rite.getCenterPos(), rite.getRiteSize(), rite.getProgress(stillIntervalTicks),
+				rite.getCenterPos(), rite.getRiteSize(), succession ? successionTicks / 1200.0 : rite.getProgress(stillIntervalTicks),
 				rite.getRecipeId(), unstained,
-				rite.getPhase().name(), rite.getInstability(), rite.getCurrentWave(), rite.getTotalWaves(),
+				succession ? "SUCCESSION" : rite.getPhase().name(), rite.getInstability(), rite.getCurrentWave(), rite.getTotalWaves(),
 				rite.completedRings(), totalRings, java.util.Arrays.stream(rite.getAnchorBloodMl())
                         .map(blood -> Math.clamp(blood, 0, CardinalRiteCeremonyRules.BLOOD_PER_ANCHOR_ML)).sum(), upfront,
 				rite.getCarriedIchorMl(), rite.getAllyRoles().size(), sharedBlood, cue,

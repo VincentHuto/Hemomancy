@@ -9,7 +9,7 @@ A portable leather-and-Hematic-Iron specimen case. It holds **nine distinct spec
 | Leather | Phlebotomist’s Cabinet | Leather |
 | Leather | Hematic Iron Scrap | Leather |
 
-The recipe consumes six Leather, two Hematic Iron Scraps and one cabinet. Glazed cabinets also work; their pane is consumed with the cabinet. No rank or research is required.
+The recipe consumes six Leather, two Hematic Iron Scraps and one cabinet. Glazed cabinets also work; their pane is consumed with the cabinet. The Artificer teaches the recipe at Degree 2 after the Alchemist refers you. Craft a Cabinet, personally deposit and withdraw a sample, obtain Hematic Iron Scraps, and meet the Artificer first. See [Clinical Blood Tools](Clinical-Blood-Tools.md).
 
 ## Using the case
 

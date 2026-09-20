@@ -1,6 +1,7 @@
 package com.vincenthuto.hemomancy.client.screen.item;
 
 import com.mojang.blaze3d.systems.RenderSystem;
+import com.vincenthuto.hemomancy.common.mission.alchemist.ClinicalBloodProgress;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.client.screen.skilltree.harbinger.VeinBackgroundRenderer;
 import com.vincenthuto.hemomancy.client.screen.skilltree.shared.MilestoneDrawerState;
@@ -96,7 +97,10 @@ public class HarbingerAssignmentLedgerScreen extends Screen {
 	private enum AssignmentSection {
 		FIRST_BLOODCRAFT(1, AssignmentCategory.MAIN, FIRST_BLOODCRAFT_HEIGHT),
 		HERMIT_ROAD(1, AssignmentCategory.SIDE, HERMIT_ROAD_HEIGHT),
-		FIRST_SEPARATION(2, AssignmentCategory.MAIN, FIRST_SEPARATION_HEIGHT),
+		FIRST_SEPARATION(1, AssignmentCategory.MAIN, FIRST_SEPARATION_HEIGHT),
+        CLINICAL_OBSERVATION(1, AssignmentCategory.SIDE, 42 + 5 * (ASSIGNMENT_CARD_HEIGHT + CARD_GAP)),
+        CLINICAL_FIELDWORK(2, AssignmentCategory.SIDE, 42 + 5 * (ASSIGNMENT_CARD_HEIGHT + CARD_GAP)),
+        CLINICAL_ECHOES(3, AssignmentCategory.SIDE, 42 + 3 * (ASSIGNMENT_CARD_HEIGHT + CARD_GAP)),
 		BODY_ANSWERS(2, AssignmentCategory.SIDE, BODY_ANSWERS_HEIGHT),
 		RED_TAXONOMY(2, AssignmentCategory.CATALOGUE, RED_TAXONOMY_HEIGHT),
 		LIVING_BESTIARY(2, AssignmentCategory.CATALOGUE, LIVING_BESTIARY_HEIGHT),
@@ -439,7 +443,7 @@ public class HarbingerAssignmentLedgerScreen extends Screen {
 		renderAssignmentHeader(gfx, x, y, w,
 				Component.translatable("screen.hemomancy.harbinger_assignment_ledger.header"), degreeText);
 		renderCollapseControls(gfx, mouseX, mouseY);
-		drawProgressBar(gfx, x, y + 44, w, 8, completedCount(), 18);
+		drawProgressBar(gfx, x, y + 44, w, 8, completedCount(), 18 + (degree >= 1 ? 5 : 0) + (degree >= 2 ? 5 : 0) + (degree >= 3 ? 3 : 0));
 
 		int listY = assignmentListY();
 		int listH = assignmentListHeight();
@@ -591,6 +595,8 @@ public class HarbingerAssignmentLedgerScreen extends Screen {
 			case FIRST_BLOODCRAFT -> renderFirstBloodcraft(gfx, x, y, w, mouseX, mouseY);
 			case HERMIT_ROAD -> renderHermitRoad(gfx, x, y, w, mouseX, mouseY);
 			case FIRST_SEPARATION -> renderFirstSeparation(gfx, x, y, w, mouseX, mouseY);
+            case CLINICAL_OBSERVATION, CLINICAL_FIELDWORK, CLINICAL_ECHOES ->
+                    renderClinical(gfx, section, x, y, w, mouseX, mouseY);
 			case BODY_ANSWERS -> renderBodyAnswers(gfx, x, y, w, mouseX, mouseY);
 			case RED_TAXONOMY -> renderRedTaxonomy(gfx, x, y, w, mouseX, mouseY);
 			case LIVING_BESTIARY -> renderLivingBestiary(gfx, x, y, w, mouseX, mouseY);
@@ -665,6 +671,53 @@ public class HarbingerAssignmentLedgerScreen extends Screen {
 				"screen.hemomancy.harbinger_assignment_ledger.step.ledger",
 				"screen.hemomancy.harbinger_assignment_ledger.step.ledger.desc", mouseX, mouseY);
 	}
+
+    private void renderClinical(GuiGraphics gfx, AssignmentSection section, int x, int y, int w, int mx, int my) {
+        if (minecraft.player == null) return;
+        var p = com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess.clinicalBlood(minecraft.player);
+        var microscope = ClinicalBloodProgress.Lesson.MICROSCOPE;
+        var injection = ClinicalBloodProgress.Lesson.INJECTION;
+        var cabinet = ClinicalBloodProgress.Lesson.CABINET;
+        var referral = ClinicalBloodProgress.Lesson.FIELD_REFERRAL;
+        var field = ClinicalBloodProgress.Lesson.FIELD_CASE;
+        var echo = ClinicalBloodProgress.Lesson.ECHO_REFERRAL;
+        var recording = ClinicalBloodProgress.Lesson.CLAIRAUDIOGRAPH;
+        String group;
+        String[] steps;
+        boolean[] done;
+        ResourceLocation portrait;
+        if (section == AssignmentSection.CLINICAL_OBSERVATION) {
+            group = "observation";
+            steps = new String[]{"microscope", "examined", "injection", "sources", "cabinet"};
+            done = new boolean[]{p.knows(microscope), p.sourceCount() > 0, p.knows(injection), p.sourceCount() >= 3, p.knows(cabinet)};
+            portrait = ALCHEMIST_PORTRAIT;
+        } else if (section == AssignmentSection.CLINICAL_FIELDWORK) {
+            group = "fieldwork";
+            steps = new String[]{"crafted", "storage", "iron", "referral", "field_case"};
+            done = new boolean[]{p.cabinetCrafted, p.cabinetInserted && p.cabinetWithdrawn,
+                    p.hematicIronObtained && p.artificerMet, p.knows(referral), p.knows(field)};
+            portrait = ARTIFICER_PORTRAIT;
+        } else {
+            group = "echoes";
+            steps = new String[]{"sources", "echo_referral", "clairaudiograph"};
+            done = new boolean[]{p.sourceCount() >= 3, p.knows(echo), p.knows(recording)};
+            portrait = MNEMONIST_PORTRAIT;
+        }
+        int count = 0;
+        for (boolean step : done) if (step) count++;
+        String title = "hemomancy.clinical.ledger." + group;
+        String progress = "screen.hemomancy.harbinger_assignment_ledger.first_separation.progress";
+        if (renderCollapsedAssignmentIfNeeded(gfx, section, x, y, w, portrait, title, progress,
+                count, done.length, count == done.length)) return;
+        gfx.fill(x, y, x + w, y + section.expandedHeight, PANEL_DARK);
+        ScreenDrawUtils.drawBorder(gfx, x, y, w, section.expandedHeight, BORDER, BORDER_MUTED);
+        renderGroupHeader(gfx, section, x + 8, y + 6, w - 16, title, progress, count, done.length, count == done.length);
+        drawProgressBar(gfx, x + 8, y + 31, w - 16, 7, count, done.length);
+        for (int i = 0; i < steps.length; i++) renderAssignmentCard(gfx, x + 8,
+                y + 42 + i * (ASSIGNMENT_CARD_HEIGHT + CARD_GAP), w - 16, ASSIGNMENT_CARD_HEIGHT,
+                done[i], portrait, "hemomancy.clinical.ledger." + steps[i],
+                "hemomancy.clinical.ledger." + steps[i] + ".desc", mx, my);
+    }
 
 	private void renderFirstSeparation(GuiGraphics gfx, int x, int y, int w, int mouseX, int mouseY) {
 		int progress = firstSeparationProgress();
@@ -1293,8 +1346,34 @@ public class HarbingerAssignmentLedgerScreen extends Screen {
 		gfx.fill(x + 1, y + 1, x + 1 + fillW, y + h - 1, 0xFF8D2323);
 	}
 
+    private int clinicalCompletedCount() {
+        if (minecraft.player == null) return 0;
+        var p = com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess.clinicalBlood(minecraft.player);
+        int count = 0;
+        if (degree >= 1) {
+            if (p.knows(ClinicalBloodProgress.Lesson.MICROSCOPE)) count++;
+            if (p.sourceCount() > 0) count++;
+            if (p.knows(ClinicalBloodProgress.Lesson.INJECTION)) count++;
+            if (p.sourceCount() >= 3) count++;
+            if (p.knows(ClinicalBloodProgress.Lesson.CABINET)) count++;
+        }
+        if (degree >= 2) {
+            if (p.cabinetCrafted) count++;
+            if (p.cabinetInserted && p.cabinetWithdrawn) count++;
+            if (p.hematicIronObtained && p.artificerMet) count++;
+            if (p.knows(ClinicalBloodProgress.Lesson.FIELD_REFERRAL)) count++;
+            if (p.knows(ClinicalBloodProgress.Lesson.FIELD_CASE)) count++;
+        }
+        if (degree >= 3) {
+            if (p.sourceCount() >= 3) count++;
+            if (p.knows(ClinicalBloodProgress.Lesson.ECHO_REFERRAL)) count++;
+            if (p.knows(ClinicalBloodProgress.Lesson.CLAIRAUDIOGRAPH)) count++;
+        }
+        return count;
+    }
+
 	private int completedCount() {
-		int completed = 0;
+        int completed = clinicalCompletedCount();
 		if (vesselFilled) completed++;
 		if (liberSanguinumCrafted) completed++;
 		if (hematicIronBlockCrafted) completed++;

@@ -34,7 +34,8 @@ public final class PhlebotomistsCabinetGameTests {
     public static void worldInspectionTargetsEveryFacingAndCompartment(GameTestHelper h) {
         for (var facing : net.minecraft.core.Direction.Plane.HORIZONTAL) {
             for (int cell = 0; cell < 9; cell++) {
-                double x = (4 + cell % 3 * 4) / 16.0, y = (12 - cell / 3 * 4) / 16.0;
+                // Front-view columns match the GUI: cell zero is the upper-left compartment.
+                double x = (12 - cell % 3 * 4) / 16.0, y = (12 - cell / 3 * 4) / 16.0;
                 var eye = inspectionWorld(facing, new net.minecraft.world.phys.Vec3(x, y, -2));
                 var hit = inspectionWorld(facing, new net.minecraft.world.phys.Vec3(x, y, 0));
                 h.assertTrue(com.vincenthuto.hemomancy.common.tile.harbinger.functional.CabinetInspection.cellAt(facing, eye, hit) == cell,
@@ -114,7 +115,8 @@ public final class PhlebotomistsCabinetGameTests {
         h.assertTrue(storage.insertItem(1, identifiedB, false).isEmpty(), "Independent identification fragmented identity");
         h.assertTrue(!storage.insertItem(0, identifiedB, false).isEmpty(), "Identified and unknown vials merged");
         h.assertTrue(storage.findInsertionSlot(identifiedB) == 1, "Matching cell was not preferred");
-        h.assertTrue(new ItemStack(ItemInit.bloody_vial.get()).getMaxStackSize() == 1 && identifiedA.getMaxStackSize() == 1, "Loose-vial stack limit changed");
+        h.assertTrue(new ItemStack(ItemInit.bloody_vial.get()).getMaxStackSize() == 64 && identifiedA.getMaxStackSize() == 1,
+                "Empty vial stack limit or filled sample identity changed");
         h.succeed();
     }
     @GameTest(template = "empty")

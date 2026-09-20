@@ -1,0 +1,10 @@
+{
+  "tendencies": [
+    "congeatio"
+  ],
+  "properties": [
+    "hemomancy:blood_properties/cold_native",
+    "hemomancy:blood_properties/undead"
+  ],
+  "requires_living_syringe": false
+}

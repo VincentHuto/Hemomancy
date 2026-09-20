@@ -14,6 +14,20 @@ Edit these PNG files directly. The game loads them as textures; the Python gener
 | `properties/*.png` | 32 x 32 each | Twelve individually editable biological motifs. |
 | `ductilis_link.png` | 32 x 32 | Connections between branching Ductilis cells. |
 
+Special specimens use individually editable transparent sprites under `special/`. The renderer only places,
+rotates, fades, and clips these PNGs; it does not paint their shapes with GUI fill primitives.
+
+| PNG | Size | Controls |
+| --- | --- | --- |
+| `special/hemolymph_plasma.png` | 256 x 256 | Blue cellular field beneath Cleansing Hemolymph pieces. |
+| `special/hemolymph_cell.png` | 32 x 32 | Bright-blue Cleansing Hemolymph cell. |
+| `special/hemolymph_spot.png` | 8 x 8 | White hemolymph inclusion. |
+| `special/hemolymph_filament.png` | 32 x 32 | Fine hemolymph connective strand. |
+| `special/hemorath_iron.png`, `special/hemorath_void.png` | 16 x 16 | Hemorath's ferric and mortem inclusions. |
+| `special/seraphae_halo.png`, `special/seraphae_mote.png` | 32 x 32, 8 x 8 | Seraphae's animus and lux inclusions. |
+| `special/putriciel_ember.png`, `special/putriciel_spore.png` | 16 x 16 | Putriciel's flammeus and mortem inclusions. |
+| `special/velorum_crystal.png`, `special/velorum_shadow.png` | 16 x 16 | Velorum's congeatio and tenebris inclusions. |
+
 Tendency files: `animus.png`, `flammeus.png`, `ductilis.png`, `lux.png`, `mortem.png`, `congeatio.png`, `ferric.png`, and `tenebris.png`.
 
 Property files: `aquatic.png`, `flying.png`, `venomous.png`, `arthropod.png`, `cold_native.png`, `nether_native.png`, `ender.png`, `undead.png`, `fungal.png`, `explosive.png`, `burrowing.png`, and `neutral.png` (the fallback for unknown properties).

@@ -17,7 +17,8 @@ public final class BodyAnswersAssignment {
     }
 
     public static boolean canBrief(ServerPlayer player) {
-        return FirstSeparationAssignment.isClaimed(player)
+        return com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess.getPlayerDegreeNumber(player) >= 2
+                && FirstSeparationAssignment.isClaimed(player)
                 && !HarbingerAdvancementGranter.hasAdvancement(player, ADV_BRIEFED);
     }
 

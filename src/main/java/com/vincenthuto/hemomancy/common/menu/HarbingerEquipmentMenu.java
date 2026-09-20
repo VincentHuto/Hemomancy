@@ -88,6 +88,10 @@ public class HarbingerEquipmentMenu extends AbstractContainerMenu {
         }
 
         this.addSlot(new ScarOffHandSlot(playerInventory, 40, 52, 78));
+        this.addSlot(new net.neoforged.neoforge.items.SlotItemHandler(new com.vincenthuto.hemomancy.common.antecedent.TalismanSocket(player),0,198,38) {
+            @Override public boolean mayPlace(ItemStack stack) { return openedFromScarletVanity && super.mayPlace(stack); }
+            @Override public boolean mayPickup(Player player) { return openedFromScarletVanity; }
+        });
     }
 
     @Override
@@ -99,6 +103,15 @@ public class HarbingerEquipmentMenu extends AbstractContainerMenu {
 
         ItemStack stackInSlot = slot.getItem();
         ItemStack originalStack = stackInSlot.copy();
+        if(index==45) {
+            if(!slot.mayPickup(playerIn) || !moveItemStackTo(stackInSlot,8,44,true)) return ItemStack.EMPTY;
+            slot.set(ItemStack.EMPTY); slot.onTake(playerIn,stackInSlot); return originalStack;
+        }
+        if(index>=8 && index<44 && com.vincenthuto.hemomancy.common.antecedent.ListeningScarItem.awake(stackInSlot)) {
+            if(!moveItemStackTo(stackInSlot,45,46,false)) return ItemStack.EMPTY;
+            if(stackInSlot.isEmpty()) slot.set(ItemStack.EMPTY); else slot.setChanged();
+            return originalStack;
+        }
 
         final int armorStart = 0;
         final int armorEnd = 3;

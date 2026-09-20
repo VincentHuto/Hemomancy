@@ -188,6 +188,7 @@ public class BlockEntityInit {
 			.register("non_euclidean_hallway", () -> BlockEntityType.Builder
 					.of(NonEuclideanHallwayBlockEntity::new, BlockInit.non_euclidean_hallway.get()).build(null));
 
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<com.vincenthuto.hemomancy.common.antecedent.VigilArchiveBlockEntity>> antecedent_vessel = TILES.register("antecedent_vessel", () -> BlockEntityType.Builder.of(com.vincenthuto.hemomancy.common.antecedent.VigilArchiveBlockEntity::new, BlockInit.antecedent_vessel.get()).build(null));
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<com.vincenthuto.hemomancy.common.tile.harbinger.functional.ClairaudiographBlockEntity>> clairaudiograph = TILES.register("clairaudiograph", () -> BlockEntityType.Builder.of(com.vincenthuto.hemomancy.common.tile.harbinger.functional.ClairaudiographBlockEntity::new, BlockInit.clairaudiograph.get()).build(null));
 	public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<PhlebotomistsFieldCaseBlockEntity>> phlebotomists_field_case = TILES.register("phlebotomists_field_case", () -> BlockEntityType.Builder.of(PhlebotomistsFieldCaseBlockEntity::new, BlockInit.phlebotomists_field_case.get()).build(null));
 

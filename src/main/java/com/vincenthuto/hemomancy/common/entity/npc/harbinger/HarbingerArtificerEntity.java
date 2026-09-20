@@ -22,7 +22,7 @@ import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 
-public class HarbingerArtificerEntity extends PathfinderMob implements ProgressionDialogueNpc {
+public class HarbingerArtificerEntity extends com.vincenthuto.hemomancy.common.succession.ProfessionalHarbingerEntity implements ProgressionDialogueNpc {
 	public final AnimationState idleAnimationState = new AnimationState();
 
 	public HarbingerArtificerEntity(EntityType<? extends HarbingerArtificerEntity> type, Level level) {
@@ -31,7 +31,7 @@ public class HarbingerArtificerEntity extends PathfinderMob implements Progressi
 	}
 
 	public static AttributeSupplier.Builder setAttributes() {
-		return Mob.createMobAttributes()
+		return Mob.createMobAttributes().add(Attributes.ATTACK_DAMAGE, 4.0D)
 				.add(Attributes.MAX_HEALTH, 20.0D)
 				.add(Attributes.MOVEMENT_SPEED, 0.2D);
 	}
@@ -45,6 +45,7 @@ public class HarbingerArtificerEntity extends PathfinderMob implements Progressi
 
 	@Override
 	public boolean hurt(DamageSource source, float amount) {
+        if (isSuccessor() || isMisbegotten()) return super.hurt(source, amount);
 		if (source.is(DamageTypes.GENERIC_KILL)) {
 			return super.hurt(source, amount);
 		}
@@ -69,9 +70,11 @@ public class HarbingerArtificerEntity extends PathfinderMob implements Progressi
 
 	@Override
 	protected InteractionResult mobInteract(Player player, InteractionHand hand) {
+        if (!successionInteraction(player, hand)) return InteractionResult.SUCCESS;
 		if (!player.level().isClientSide && hand == InteractionHand.MAIN_HAND && player instanceof ServerPlayer serverPlayer) {
 			ArtificerProgressSnapshot progress = ArtificerProgressSnapshot.from(serverPlayer);
-			DialogueTree tree = progressionDialogue(serverPlayer);
+			com.vincenthuto.hemomancy.common.mission.alchemist.ClinicalBloodKnowledge.met(serverPlayer, "artificer");
+            DialogueTree tree = progressionDialogue(serverPlayer);
 			tree = DialogueItemInquiryNodes.withInventoryItemInquiries(tree, serverPlayer, "artificer", progress.degree(), 0f);
 			tree = DialogueHubFactory.decorate(tree, "artificer", serverPlayer);
 
@@ -82,7 +85,7 @@ public class HarbingerArtificerEntity extends PathfinderMob implements Progressi
 
 	@Override
 	public DialogueTree progressionDialogue(ServerPlayer player) {
-		return HarbingerArtificerDialogueTrees.forState(this.getId(), ArtificerProgressSnapshot.from(player));
+		return ClinicalBloodDialogue.append(HarbingerArtificerDialogueTrees.forState(this.getId(), ArtificerProgressSnapshot.from(player)), player, "artificer");
 	}
 
 	@Override

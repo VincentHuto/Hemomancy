@@ -1,0 +1,956 @@
+[
+  {
+    "version": 3,
+    "composite": "vigil/modular/west_west/complete",
+    "parts": [
+      {
+        "name": "vigil/modular/west_west/entrance",
+        "offset": [
+          0,
+          8,
+          6
+        ]
+      },
+      {
+        "name": "vigil/modular/west_west/passage",
+        "offset": [
+          5,
+          7,
+          6
+        ]
+      },
+      {
+        "name": "vigil/modular/west_west/gallery",
+        "offset": [
+          14,
+          0,
+          0
+        ]
+      },
+      {
+        "name": "vigil/modular/west_west/archive",
+        "offset": [
+          7,
+          0,
+          13
+        ]
+      }
+    ],
+    "rooms": [
+      [
+        0,
+        8,
+        6,
+        4,
+        13,
+        10
+      ],
+      [
+        5,
+        7,
+        6,
+        13,
+        12,
+        10
+      ],
+      [
+        14,
+        0,
+        0,
+        28,
+        13,
+        19
+      ],
+      [
+        7,
+        0,
+        13,
+        13,
+        6,
+        19
+      ]
+    ],
+    "size": [
+      29,
+      14,
+      20
+    ],
+    "entry": [
+      0,
+      8,
+      8
+    ],
+    "entryRotation": 3,
+    "passageOrigin": [
+      5,
+      7,
+      10
+    ],
+    "passageRotation": 3,
+    "vessel": [
+      9,
+      1,
+      16
+    ],
+    "sensors": [
+      [
+        20,
+        1,
+        7
+      ],
+      [
+        24,
+        1,
+        8
+      ],
+      [
+        22,
+        1,
+        11
+      ]
+    ],
+    "catalyst": [
+      24,
+      1,
+      12
+    ],
+    "shrieker": [
+      19,
+      1,
+      11
+    ],
+    "record": [
+      26,
+      1,
+      16
+    ],
+    "chest": [
+      2,
+      9,
+      7
+    ],
+    "gallery": [
+      14,
+      0,
+      0,
+      28,
+      13,
+      19
+    ],
+    "bed": [
+      18,
+      0,
+      4
+    ],
+    "demonstration": [
+      21,
+      11,
+      6
+    ],
+    "firstClick": [
+      10,
+      10,
+      10
+    ],
+    "secondClick": [
+      13,
+      9,
+      6
+    ]
+  },
+  {
+    "version": 4,
+    "composite": "vigil/modular/west_east/complete",
+    "parts": [
+      {
+        "name": "vigil/modular/west_east/entrance",
+        "offset": [
+          0,
+          8,
+          6
+        ]
+      },
+      {
+        "name": "vigil/modular/west_east/passage",
+        "offset": [
+          5,
+          7,
+          6
+        ]
+      },
+      {
+        "name": "vigil/modular/west_east/gallery",
+        "offset": [
+          14,
+          0,
+          0
+        ]
+      },
+      {
+        "name": "vigil/modular/west_east/archive",
+        "offset": [
+          29,
+          0,
+          13
+        ]
+      }
+    ],
+    "rooms": [
+      [
+        0,
+        8,
+        6,
+        4,
+        13,
+        10
+      ],
+      [
+        5,
+        7,
+        6,
+        13,
+        12,
+        10
+      ],
+      [
+        14,
+        0,
+        0,
+        28,
+        13,
+        19
+      ],
+      [
+        29,
+        0,
+        13,
+        35,
+        6,
+        19
+      ]
+    ],
+    "size": [
+      36,
+      14,
+      20
+    ],
+    "entry": [
+      0,
+      8,
+      8
+    ],
+    "entryRotation": 3,
+    "passageOrigin": [
+      5,
+      7,
+      10
+    ],
+    "passageRotation": 3,
+    "vessel": [
+      33,
+      1,
+      16
+    ],
+    "sensors": [
+      [
+        20,
+        1,
+        7
+      ],
+      [
+        24,
+        1,
+        8
+      ],
+      [
+        22,
+        1,
+        11
+      ]
+    ],
+    "catalyst": [
+      24,
+      1,
+      12
+    ],
+    "shrieker": [
+      19,
+      1,
+      11
+    ],
+    "record": [
+      26,
+      1,
+      16
+    ],
+    "chest": [
+      2,
+      9,
+      7
+    ],
+    "gallery": [
+      14,
+      0,
+      0,
+      28,
+      13,
+      19
+    ],
+    "bed": [
+      18,
+      0,
+      4
+    ],
+    "demonstration": [
+      21,
+      11,
+      6
+    ],
+    "firstClick": [
+      10,
+      10,
+      10
+    ],
+    "secondClick": [
+      13,
+      9,
+      6
+    ]
+  },
+  {
+    "version": 5,
+    "composite": "vigil/modular/north_west/complete",
+    "parts": [
+      {
+        "name": "vigil/modular/north_west/entrance",
+        "offset": [
+          7,
+          8,
+          0
+        ]
+      },
+      {
+        "name": "vigil/modular/north_west/passage",
+        "offset": [
+          7,
+          7,
+          5
+        ]
+      },
+      {
+        "name": "vigil/modular/north_west/gallery",
+        "offset": [
+          7,
+          0,
+          14
+        ]
+      },
+      {
+        "name": "vigil/modular/north_west/archive",
+        "offset": [
+          0,
+          0,
+          27
+        ]
+      }
+    ],
+    "rooms": [
+      [
+        7,
+        8,
+        0,
+        11,
+        13,
+        4
+      ],
+      [
+        7,
+        7,
+        5,
+        11,
+        12,
+        13
+      ],
+      [
+        7,
+        0,
+        14,
+        21,
+        13,
+        33
+      ],
+      [
+        0,
+        0,
+        27,
+        6,
+        6,
+        33
+      ]
+    ],
+    "size": [
+      22,
+      14,
+      34
+    ],
+    "entry": [
+      9,
+      8,
+      0
+    ],
+    "entryRotation": 0,
+    "passageOrigin": [
+      7,
+      7,
+      5
+    ],
+    "passageRotation": 0,
+    "vessel": [
+      2,
+      1,
+      30
+    ],
+    "sensors": [
+      [
+        13,
+        1,
+        21
+      ],
+      [
+        17,
+        1,
+        22
+      ],
+      [
+        15,
+        1,
+        25
+      ]
+    ],
+    "catalyst": [
+      17,
+      1,
+      26
+    ],
+    "shrieker": [
+      12,
+      1,
+      25
+    ],
+    "record": [
+      19,
+      1,
+      30
+    ],
+    "chest": [
+      10,
+      9,
+      2
+    ],
+    "gallery": [
+      7,
+      0,
+      14,
+      21,
+      13,
+      33
+    ],
+    "bed": [
+      11,
+      0,
+      18
+    ],
+    "demonstration": [
+      14,
+      11,
+      20
+    ],
+    "firstClick": [
+      7,
+      10,
+      10
+    ],
+    "secondClick": [
+      11,
+      9,
+      13
+    ]
+  },
+  {
+    "version": 6,
+    "composite": "vigil/modular/north_east/complete",
+    "parts": [
+      {
+        "name": "vigil/modular/north_east/entrance",
+        "offset": [
+          0,
+          8,
+          0
+        ]
+      },
+      {
+        "name": "vigil/modular/north_east/passage",
+        "offset": [
+          0,
+          7,
+          5
+        ]
+      },
+      {
+        "name": "vigil/modular/north_east/gallery",
+        "offset": [
+          0,
+          0,
+          14
+        ]
+      },
+      {
+        "name": "vigil/modular/north_east/archive",
+        "offset": [
+          15,
+          0,
+          27
+        ]
+      }
+    ],
+    "rooms": [
+      [
+        0,
+        8,
+        0,
+        4,
+        13,
+        4
+      ],
+      [
+        0,
+        7,
+        5,
+        4,
+        12,
+        13
+      ],
+      [
+        0,
+        0,
+        14,
+        14,
+        13,
+        33
+      ],
+      [
+        15,
+        0,
+        27,
+        21,
+        6,
+        33
+      ]
+    ],
+    "size": [
+      22,
+      14,
+      34
+    ],
+    "entry": [
+      2,
+      8,
+      0
+    ],
+    "entryRotation": 0,
+    "passageOrigin": [
+      0,
+      7,
+      5
+    ],
+    "passageRotation": 0,
+    "vessel": [
+      19,
+      1,
+      30
+    ],
+    "sensors": [
+      [
+        6,
+        1,
+        21
+      ],
+      [
+        10,
+        1,
+        22
+      ],
+      [
+        8,
+        1,
+        25
+      ]
+    ],
+    "catalyst": [
+      10,
+      1,
+      26
+    ],
+    "shrieker": [
+      5,
+      1,
+      25
+    ],
+    "record": [
+      12,
+      1,
+      30
+    ],
+    "chest": [
+      3,
+      9,
+      2
+    ],
+    "gallery": [
+      0,
+      0,
+      14,
+      14,
+      13,
+      33
+    ],
+    "bed": [
+      4,
+      0,
+      18
+    ],
+    "demonstration": [
+      7,
+      11,
+      20
+    ],
+    "firstClick": [
+      0,
+      10,
+      10
+    ],
+    "secondClick": [
+      4,
+      9,
+      13
+    ]
+  },
+  {
+    "version": 7,
+    "composite": "vigil/modular/south_west/complete",
+    "parts": [
+      {
+        "name": "vigil/modular/south_west/entrance",
+        "offset": [
+          7,
+          8,
+          29
+        ]
+      },
+      {
+        "name": "vigil/modular/south_west/passage",
+        "offset": [
+          7,
+          7,
+          20
+        ]
+      },
+      {
+        "name": "vigil/modular/south_west/gallery",
+        "offset": [
+          7,
+          0,
+          0
+        ]
+      },
+      {
+        "name": "vigil/modular/south_west/archive",
+        "offset": [
+          0,
+          0,
+          13
+        ]
+      }
+    ],
+    "rooms": [
+      [
+        7,
+        8,
+        29,
+        11,
+        13,
+        33
+      ],
+      [
+        7,
+        7,
+        20,
+        11,
+        12,
+        28
+      ],
+      [
+        7,
+        0,
+        0,
+        21,
+        13,
+        19
+      ],
+      [
+        0,
+        0,
+        13,
+        6,
+        6,
+        19
+      ]
+    ],
+    "size": [
+      22,
+      14,
+      34
+    ],
+    "entry": [
+      9,
+      8,
+      33
+    ],
+    "entryRotation": 2,
+    "passageOrigin": [
+      11,
+      7,
+      28
+    ],
+    "passageRotation": 2,
+    "vessel": [
+      2,
+      1,
+      16
+    ],
+    "sensors": [
+      [
+        13,
+        1,
+        7
+      ],
+      [
+        17,
+        1,
+        8
+      ],
+      [
+        15,
+        1,
+        11
+      ]
+    ],
+    "catalyst": [
+      17,
+      1,
+      12
+    ],
+    "shrieker": [
+      12,
+      1,
+      11
+    ],
+    "record": [
+      19,
+      1,
+      16
+    ],
+    "chest": [
+      8,
+      9,
+      31
+    ],
+    "gallery": [
+      7,
+      0,
+      0,
+      21,
+      13,
+      19
+    ],
+    "bed": [
+      11,
+      0,
+      4
+    ],
+    "demonstration": [
+      14,
+      11,
+      6
+    ],
+    "firstClick": [
+      11,
+      10,
+      23
+    ],
+    "secondClick": [
+      7,
+      9,
+      20
+    ]
+  },
+  {
+    "version": 8,
+    "composite": "vigil/modular/south_east/complete",
+    "parts": [
+      {
+        "name": "vigil/modular/south_east/entrance",
+        "offset": [
+          0,
+          8,
+          29
+        ]
+      },
+      {
+        "name": "vigil/modular/south_east/passage",
+        "offset": [
+          0,
+          7,
+          20
+        ]
+      },
+      {
+        "name": "vigil/modular/south_east/gallery",
+        "offset": [
+          0,
+          0,
+          0
+        ]
+      },
+      {
+        "name": "vigil/modular/south_east/archive",
+        "offset": [
+          15,
+          0,
+          13
+        ]
+      }
+    ],
+    "rooms": [
+      [
+        0,
+        8,
+        29,
+        4,
+        13,
+        33
+      ],
+      [
+        0,
+        7,
+        20,
+        4,
+        12,
+        28
+      ],
+      [
+        0,
+        0,
+        0,
+        14,
+        13,
+        19
+      ],
+      [
+        15,
+        0,
+        13,
+        21,
+        6,
+        19
+      ]
+    ],
+    "size": [
+      22,
+      14,
+      34
+    ],
+    "entry": [
+      2,
+      8,
+      33
+    ],
+    "entryRotation": 2,
+    "passageOrigin": [
+      4,
+      7,
+      28
+    ],
+    "passageRotation": 2,
+    "vessel": [
+      19,
+      1,
+      16
+    ],
+    "sensors": [
+      [
+        6,
+        1,
+        7
+      ],
+      [
+        10,
+        1,
+        8
+      ],
+      [
+        8,
+        1,
+        11
+      ]
+    ],
+    "catalyst": [
+      10,
+      1,
+      12
+    ],
+    "shrieker": [
+      5,
+      1,
+      11
+    ],
+    "record": [
+      12,
+      1,
+      16
+    ],
+    "chest": [
+      1,
+      9,
+      31
+    ],
+    "gallery": [
+      0,
+      0,
+      0,
+      14,
+      13,
+      19
+    ],
+    "bed": [
+      4,
+      0,
+      4
+    ],
+    "demonstration": [
+      7,
+      11,
+      6
+    ],
+    "firstClick": [
+      4,
+      10,
+      23
+    ],
+    "secondClick": [
+      0,
+      9,
+      20
+    ]
+  }
+]

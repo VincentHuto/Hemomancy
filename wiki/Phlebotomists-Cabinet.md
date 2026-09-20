@@ -1,6 +1,6 @@
 # Phlebotomist’s Cabinet
 
-A Bloodwood specimen cabinet with nine pigeonholes. Each holds **64 exactly matching full Blood Vials**, for **576 vials total**. Craft it with Bloodwood Planks in the centre and four edge positions, with Hematic Iron Scraps in the four corners. It needs no research or rank.
+A Bloodwood specimen cabinet with nine pigeonholes. Each holds **64 exactly matching full Blood Vials**, for **576 vials total**. Craft it with Bloodwood Planks in the centre and four edge positions, with Hematic Iron Scraps in the four corners. The Alchemist teaches its recipe in late Degree 1 after you personally identify three distinct creature sources and learn Borrowed Physiology. See [Clinical Blood Tools](Clinical-Blood-Tools.md).
 
 ## Store and retrieve
 

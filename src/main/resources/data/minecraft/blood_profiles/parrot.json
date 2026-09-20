@@ -1,0 +1,10 @@
+{
+  "tendencies": [
+    "animus",
+    "lux"
+  ],
+  "properties": [
+    "hemomancy:blood_properties/flying"
+  ],
+  "requires_living_syringe": false
+}

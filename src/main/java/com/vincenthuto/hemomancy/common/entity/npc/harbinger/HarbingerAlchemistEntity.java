@@ -45,7 +45,7 @@ import net.minecraft.world.level.Level;
  *       and no further engagement.</li>
  * </ul>
  */
-public class HarbingerAlchemistEntity extends PathfinderMob implements ProgressionDialogueNpc {
+public class HarbingerAlchemistEntity extends com.vincenthuto.hemomancy.common.succession.ProfessionalHarbingerEntity implements ProgressionDialogueNpc {
 
     public final AnimationState idleAnimationState = new AnimationState();
 
@@ -55,7 +55,7 @@ public class HarbingerAlchemistEntity extends PathfinderMob implements Progressi
     }
 
     public static AttributeSupplier.Builder setAttributes() {
-        return Mob.createMobAttributes()
+        return Mob.createMobAttributes().add(Attributes.ATTACK_DAMAGE, 4.0D)
                 .add(Attributes.MAX_HEALTH, 20.0D)
                 .add(Attributes.MOVEMENT_SPEED, 0.2D);
     }
@@ -69,6 +69,7 @@ public class HarbingerAlchemistEntity extends PathfinderMob implements Progressi
 
     @Override
     public boolean hurt(DamageSource source, float amount) {
+        if (isSuccessor() || isMisbegotten()) return super.hurt(source, amount);
         if (source.is(DamageTypes.GENERIC_KILL)) {
             return super.hurt(source, amount);
         }
@@ -93,12 +94,14 @@ public class HarbingerAlchemistEntity extends PathfinderMob implements Progressi
 
     @Override
     protected InteractionResult mobInteract(Player player, InteractionHand hand) {
+        if (!successionInteraction(player, hand)) return InteractionResult.SUCCESS;
         if (!player.level().isClientSide && hand == InteractionHand.MAIN_HAND && player instanceof ServerPlayer serverPlayer) {
             int degree = HemoCapabilityAccess.getPlayerDegreeNumber(player);
             if (NoeticDiscoveryProgression.recognizeFromAlchemist(serverPlayer)) {
                 serverPlayer.displayClientMessage(net.minecraft.network.chat.Component.translatable(
                         "hemomancy.dialogue.alchemist.conductive_mark_recognized"), false);
             }
+            com.vincenthuto.hemomancy.common.mission.alchemist.ClinicalBloodKnowledge.met(serverPlayer, "alchemist");
             DialogueTree tree = progressionDialogue(serverPlayer);
             tree = DialogueItemInquiryNodes.withInventoryItemInquiries(tree, serverPlayer, "alchemist", degree, 0f);
             tree = DialogueHubFactory.decorate(tree, "alchemist", serverPlayer);
@@ -127,9 +130,9 @@ public class HarbingerAlchemistEntity extends PathfinderMob implements Progressi
                     com.vincenthuto.hemomancy.common.event.HarbingerAdvancementGranter.hasAdvancement(
                             serverPlayer, BodyAnswersAssignment.ADV_COMPLETE));
         }
-        return HarbingerAlchemistDialogueTrees.withArtificerCorrespondence(tree,
+        return ClinicalBloodDialogue.append(HarbingerAlchemistDialogueTrees.withArtificerCorrespondence(tree,
                 ArtificerProgressSnapshot.from(serverPlayer), ArtificerAssignments.forkResearchRecordedCount(serverPlayer),
-                ArtificerAssignments.isForkResearchRewardClaimed(serverPlayer));
+                ArtificerAssignments.isForkResearchRewardClaimed(serverPlayer)), serverPlayer, "alchemist");
     }
 
     @Override

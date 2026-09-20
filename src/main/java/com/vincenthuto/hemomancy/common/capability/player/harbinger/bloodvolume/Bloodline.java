@@ -210,6 +210,15 @@ public class Bloodline {
 	}
 
 	/** Returns {@code true} if the given NPC entity UUID is already recruited. */
+    public void addSuccessorMember(UUID id, int reserve, long spentUntil) {
+        if (addNpcMember(id)) {
+            npcRiteReserves.put(id, Math.clamp(reserve, 0, 1000));
+            npcBloodspentUntil.put(id, spentUntil);
+        }
+    }
+    public long getNpcBloodspentUntil(UUID id) { return npcBloodspentUntil.getOrDefault(id, 0L); }
+    public void clampPoolToCapacity() { bloodVolume = Math.min(bloodVolume, maxBloodVolume); }
+
 	public boolean hasNpcMember(UUID npcUUID) {
 		return npcMemberUUIDs.contains(npcUUID);
 	}

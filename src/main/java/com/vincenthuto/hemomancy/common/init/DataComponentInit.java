@@ -13,8 +13,14 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 
 public class DataComponentInit {
 
+
 	public static final DeferredRegister<DataComponentType<?>> COMPONENTS = DeferredRegister
 			.create(Registries.DATA_COMPONENT_TYPE, Hemomancy.MOD_ID);
+
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<com.vincenthuto.hemomancy.common.antecedent.AhaematicSample>> AHAEMATIC_SAMPLE = COMPONENTS.register("ahaematic_sample", () -> DataComponentType.<com.vincenthuto.hemomancy.common.antecedent.AhaematicSample>builder().persistent(com.vincenthuto.hemomancy.common.antecedent.AhaematicSample.CODEC).networkSynchronized(com.vincenthuto.hemomancy.common.antecedent.AhaematicSample.STREAM_CODEC).build());
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<Integer>> LISTENING_SCAR_STATE = COMPONENTS.register("listening_scar_state", () -> DataComponentType.<Integer>builder().persistent(com.mojang.serialization.Codec.INT).networkSynchronized(net.minecraft.network.codec.ByteBufCodecs.VAR_INT).build());
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<net.minecraft.world.item.component.ItemContainerContents>> CHARM_TALISMAN = COMPONENTS.register("charm_talisman", () -> DataComponentType.<net.minecraft.world.item.component.ItemContainerContents>builder().persistent(net.minecraft.world.item.component.ItemContainerContents.CODEC).networkSynchronized(net.minecraft.world.item.component.ItemContainerContents.STREAM_CODEC).build());
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<String>> ANCIENT_RECORDING = COMPONENTS.register("ancient_recording", () -> DataComponentType.<String>builder().persistent(com.mojang.serialization.Codec.STRING).networkSynchronized(net.minecraft.network.codec.ByteBufCodecs.STRING_UTF8).build());
 
 	public static final DeferredHolder<DataComponentType<?>, DataComponentType<StructureScannerTooltipComponent>> STRUCTURE_SCANNER_TOOLTIP = COMPONENTS
 			.register("structure_scanner_tooltip", () -> DataComponentType.<StructureScannerTooltipComponent>builder()

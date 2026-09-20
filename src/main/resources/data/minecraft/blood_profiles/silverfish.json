@@ -1,0 +1,10 @@
+{
+  "tendencies": [
+    "ductilis"
+  ],
+  "properties": [
+    "hemomancy:blood_properties/arthropod",
+    "hemomancy:blood_properties/burrowing"
+  ],
+  "requires_living_syringe": false
+}

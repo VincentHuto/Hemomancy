@@ -22,7 +22,7 @@ import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 
-public class HarbingerCicatrixAnchoriteEntity extends PathfinderMob implements ProgressionDialogueNpc {
+public class HarbingerCicatrixAnchoriteEntity extends com.vincenthuto.hemomancy.common.succession.ProfessionalHarbingerEntity implements ProgressionDialogueNpc {
 	public final AnimationState idleAnimationState = new AnimationState();
 
 	public HarbingerCicatrixAnchoriteEntity(EntityType<? extends HarbingerCicatrixAnchoriteEntity> type,
@@ -32,7 +32,7 @@ public class HarbingerCicatrixAnchoriteEntity extends PathfinderMob implements P
 	}
 
 	public static AttributeSupplier.Builder setAttributes() {
-		return Mob.createMobAttributes()
+		return Mob.createMobAttributes().add(Attributes.ATTACK_DAMAGE, 4.0D)
 				.add(Attributes.MAX_HEALTH, 20.0D)
 				.add(Attributes.MOVEMENT_SPEED, 0.2D);
 	}
@@ -46,6 +46,7 @@ public class HarbingerCicatrixAnchoriteEntity extends PathfinderMob implements P
 
 	@Override
 	public boolean hurt(DamageSource source, float amount) {
+        if (isSuccessor() || isMisbegotten()) return super.hurt(source, amount);
 		if (source.is(DamageTypes.GENERIC_KILL)) {
 			return super.hurt(source, amount);
 		}
@@ -70,6 +71,7 @@ public class HarbingerCicatrixAnchoriteEntity extends PathfinderMob implements P
 
 	@Override
 	protected InteractionResult mobInteract(Player player, InteractionHand hand) {
+        if (!successionInteraction(player, hand)) return InteractionResult.SUCCESS;
 		if (!player.level().isClientSide && hand == InteractionHand.MAIN_HAND && player instanceof ServerPlayer serverPlayer) {
 			com.vincenthuto.hemomancy.common.mission.cicatrix_anchorite.VeinMasonAssignments.refreshD5(serverPlayer);
 			int degree = HemoCapabilityAccess.getPlayerDegreeNumber(player);

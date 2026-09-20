@@ -30,7 +30,7 @@ import net.minecraft.world.level.Level;
  * The Mnemonist teaches crude memories, active manipulation slots, and the later
  * tools used to order and weave refined memories.
  */
-public class HarbingerMnemonistEntity extends PathfinderMob implements ProgressionDialogueNpc {
+public class HarbingerMnemonistEntity extends com.vincenthuto.hemomancy.common.succession.ProfessionalHarbingerEntity implements ProgressionDialogueNpc {
 	public final AnimationState idleAnimationState = new AnimationState();
 
 	public HarbingerMnemonistEntity(EntityType<? extends HarbingerMnemonistEntity> type, Level level) {
@@ -39,7 +39,7 @@ public class HarbingerMnemonistEntity extends PathfinderMob implements Progressi
 	}
 
 	public static AttributeSupplier.Builder setAttributes() {
-		return Mob.createMobAttributes()
+		return Mob.createMobAttributes().add(Attributes.ATTACK_DAMAGE, 4.0D)
 				.add(Attributes.MAX_HEALTH, 20.0D)
 				.add(Attributes.MOVEMENT_SPEED, 0.2D);
 	}
@@ -53,6 +53,7 @@ public class HarbingerMnemonistEntity extends PathfinderMob implements Progressi
 
 	@Override
 	public boolean hurt(DamageSource source, float amount) {
+        if (isSuccessor() || isMisbegotten()) return super.hurt(source, amount);
 		if (source.is(DamageTypes.GENERIC_KILL)) {
 			return super.hurt(source, amount);
 		}
@@ -77,13 +78,15 @@ public class HarbingerMnemonistEntity extends PathfinderMob implements Progressi
 
 	@Override
 	protected InteractionResult mobInteract(Player player, InteractionHand hand) {
+        if (!successionInteraction(player, hand)) return InteractionResult.SUCCESS;
 		if (!player.level().isClientSide && hand == InteractionHand.MAIN_HAND && player instanceof ServerPlayer serverPlayer) {
 			int degree = HemoCapabilityAccess.getPlayerDegreeNumber(player);
 			if (NoeticDiscoveryProgression.recognizeFromMnemonist(serverPlayer)) {
 				serverPlayer.displayClientMessage(net.minecraft.network.chat.Component.translatable(
 						"hemomancy.dialogue.mnemonist.conductive_mark_recognized"), false);
 			}
-			DialogueTree tree = progressionDialogue(serverPlayer);
+			com.vincenthuto.hemomancy.common.mission.alchemist.ClinicalBloodKnowledge.met(serverPlayer, "mnemonist");
+            DialogueTree tree = progressionDialogue(serverPlayer);
 			tree = DialogueItemInquiryNodes.withInventoryItemInquiries(tree, serverPlayer, "mnemonist", degree, 0f);
 			tree = DialogueHubFactory.decorate(tree, "mnemonist", serverPlayer);
 
@@ -101,7 +104,7 @@ public class HarbingerMnemonistEntity extends PathfinderMob implements Progressi
 		boolean claimed = serverPlayer.getPersistentData().getBoolean(MnemonistStarterMemoryChoice.CLAIM_KEY);
 		if (clarity) return HarbingerMnemonistDialogueTrees.clarity(this.getId());
 		if (purifying) return HarbingerMnemonistDialogueTrees.purifying(this.getId());
-		return HarbingerMnemonistDialogueTrees.forDegree(degree, this.getId(), canShowRecruitment(player, this),
+		return ClinicalBloodDialogue.append(HarbingerMnemonistDialogueTrees.forDegree(degree, this.getId(), canShowRecruitment(player, this),
 				isNpcInPlayerBloodline(player, this),
 				MnemonistStarterMemoryChoice.canClaim(degree, false, false, claimed),
 				HarbingerAdvancementGranter.isMnemonistWovenVesselComplete(serverPlayer),
@@ -111,7 +114,7 @@ public class HarbingerMnemonistEntity extends PathfinderMob implements Progressi
 				com.vincenthuto.hemomancy.common.mission.cicatrix_anchorite.VeinMasonAssignments.has(serverPlayer,
 						com.vincenthuto.hemomancy.common.mission.cicatrix_anchorite.VeinMasonAssignments.D6_COUNSEL),
 				CircusDiscoveryProgress.hasDiscovered(serverPlayer),
-				serverPlayer.getInventory().contains(new ItemStack(ItemInit.circus_waybill.get())));
+				serverPlayer.getInventory().contains(new ItemStack(ItemInit.circus_waybill.get()))), serverPlayer, "mnemonist");
 	}
 
 	@Override

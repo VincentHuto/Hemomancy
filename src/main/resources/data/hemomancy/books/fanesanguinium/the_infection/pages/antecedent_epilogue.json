@@ -1,0 +1,9 @@
+{
+  "type": "hutoslib:page",
+  "ordinality": 61,
+  "texture": "hemomancy:textures/gui/guide/page.png",
+  "title": "Before Blood",
+  "subtitle": "The Antecedent Inquiry",
+  "text": "You dug deep. You found what remained. We remember stone. We remember listening. We remember waiting for the dead. We do not wait anymore.",
+  "icon": "hemomancy:hematic_microscope"
+}

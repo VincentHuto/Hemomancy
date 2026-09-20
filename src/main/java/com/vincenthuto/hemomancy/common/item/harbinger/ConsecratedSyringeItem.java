@@ -11,6 +11,7 @@ import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.component.CustomData;
 
 import java.util.List;
+import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * Consecrated Syringe — produced by offering a filled Blood Vial to a Saint Sarcophagus.
@@ -38,6 +39,21 @@ public class ConsecratedSyringeItem extends Item {
 	public ConsecratedSyringeItem(Properties properties) {
 		super(properties);
 	}
+
+    /** Used by creative and JEI; sarcophagus rewards still overwrite this with their actual saint. */
+    public ItemStack randomSaintStack() {
+        ItemStack stack = new ItemStack(this);
+        setSaintType(stack, EnumSaintType.values()[ThreadLocalRandom.current().nextInt(EnumSaintType.values().length)]);
+        return stack;
+    }
+
+    @Override public ItemStack getDefaultInstance() { return randomSaintStack(); }
+
+    public static void setSaintType(ItemStack stack, EnumSaintType saint) {
+        CompoundTag tag = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
+        tag.putString(TAG_SAINT_TYPE, saint.name());
+        stack.set(DataComponents.CUSTOM_DATA, CustomData.of(tag));
+    }
 
 	@Override
 	public void appendHoverText(ItemStack stack, Item.TooltipContext context, List<Component> tooltip, TooltipFlag flagIn) {

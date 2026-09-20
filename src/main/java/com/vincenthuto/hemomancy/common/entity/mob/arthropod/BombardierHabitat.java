@@ -52,6 +52,26 @@ public final class BombardierHabitat {
         return Optional.ofNullable(best);
     }
 
+    public static Optional<BlockPos> findNearestGrowth(LevelReader level, BlockPos origin,
+                                                       int horizontalRange, int verticalRange) {
+        BlockPos best = null;
+        int bestDistance = Integer.MAX_VALUE;
+        for (int dy = -verticalRange; dy <= verticalRange; dy++)
+            for (int dx = -horizontalRange; dx <= horizontalRange; dx++)
+                for (int dz = -horizontalRange; dz <= horizontalRange; dz++) {
+                    int distance = dx * dx + dz * dz + dy * dy;
+                    if (distance > bestDistance) continue;
+                    BlockPos candidate = origin.offset(dx, dy, dz);
+                    if (!level.hasChunk(candidate.getX() >> 4, candidate.getZ() >> 4)
+                            || !isGrowth(level, candidate)) continue;
+                    if (distance < bestDistance || ANCHOR_ORDER.compare(candidate, best) < 0) {
+                        best = candidate.immutable();
+                        bestDistance = distance;
+                    }
+                }
+        return Optional.ofNullable(best);
+    }
+
     public static Optional<BlockPos> resolveComponentAnchor(LevelReader level, BlockPos growthPos, int visitLimit) {
         return resolveComponentAnchor(pos -> level.hasChunk(pos.getX() >> 4, pos.getZ() >> 4)
                 && isGrowth(level, pos), growthPos, visitLimit);

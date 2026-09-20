@@ -39,7 +39,7 @@ public class StartCentrifugeButtonPacket implements CustomPacketPayload {
 		VialCentrifugeStartupResult result = station.attemptStartup(player);
 		player.displayClientMessage(Component.translatable(result.translationKey()), true);
 		if (result == VialCentrifugeStartupResult.SUCCESS
-				&& HemoCapabilityAccess.getPlayerDegreeNumber(player) >= 2) {
+				&& HemoCapabilityAccess.getPlayerDegreeNumber(player) >= 1) {
 			HarbingerAdvancementGranter.grantIfNotDone(player,
 					HarbingerAdvancementGranter.ADV_FIRST_SEPARATION_STARTED);
 		}

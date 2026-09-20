@@ -23,6 +23,12 @@ import net.neoforged.neoforge.network.PacketDistributor;
 
 public class ClairaudiographBlockEntity extends BlockEntity implements MenuProvider {
     private static long nextToken;
+    private long startedAt;
+    private final com.vincenthuto.hemomancy.common.antecedent.AntecedentPlayback observations = new com.vincenthuto.hemomancy.common.antecedent.AntecedentPlayback();
+    public com.vincenthuto.hemomancy.common.antecedent.AncientRecordings.Program program() { return com.vincenthuto.hemomancy.common.antecedent.AncientRecordings.get(inventory.getStackInSlot(1)); }
+    public int elapsed() { return level == null ? 0 : (int)(level.getGameTime()-startedAt); }
+    public boolean playable() { return program()!=null || ClairaudiographCatalogue.allowed(recording())!=null; }
+
     private final java.util.Map<java.util.UUID, Long> previews = new java.util.HashMap<>();
     public boolean allowPreview(Player player) {
         long now = level.getGameTime();
@@ -70,28 +76,34 @@ public class ClairaudiographBlockEntity extends BlockEntity implements MenuProvi
         return choice != null && sample.getCount() == 1 && BloodSampleData.isStorableSample(sample)
             && BloodSampleData.entityType(sample) != null && source().equals(choice.source())
             && cylinder.is(ItemInit.ambergris_cylinder.get()) && cylinder.getCount() == 1
-            && !cylinder.has(DataComponentInit.CLAIRAUDIOGRAPH_RECORDING.get()) && ClairaudiographCatalogue.allowed(choice) != null;
+            && !cylinder.has(DataComponentInit.ANCIENT_RECORDING.get()) && !cylinder.has(DataComponentInit.CLAIRAUDIOGRAPH_RECORDING.get()) && ClairaudiographCatalogue.allowed(choice) != null;
     }
     public void cancelCarve() { progress = 0; selected = null; originalSample = ItemStack.EMPTY; }
     public void startPlayback(boolean redstone) {
         if(playing || progress > 0) return;
         var choice = ClairaudiographCatalogue.allowed(recording());
-        if(choice == null) return;
-        playing = true; redstoneLoop = redstone; remaining = choice.interval(); token = ++nextToken;
+        var program=program();
+        if(choice == null && program == null) return;
+        playing = true; redstoneLoop = redstone; remaining = program == null ? choice.interval() : program.duration(); token = ++nextToken;
+        startedAt=level.getGameTime(); observations.clear();
         sendSound(false); changed();
     }
-    public void stopPlayback() { sendSound(true); playing = false; remaining = 0; redstoneLoop = false; changed(); }
+    public void stopPlayback() { observations.clear(); sendSound(true); playing = false; remaining = 0; redstoneLoop = false; changed(); }
     private void sendSound(boolean stop) {
         if(!(level instanceof ServerLevel server)) return;
         var recording = recording();
         var packet = new ClairaudiographSoundPacket(server.dimension().location(), worldPosition, token, stop, false,
-            recording == null ? "" : recording.sound(), recording == null ? 1 : recording.pitch());
+            program()!=null ? program().sound() : recording == null ? "" : recording.sound(), recording == null ? 1 : recording.pitch(), program()==null ? "" : program().id(), Math.max(0,elapsed()));
         // Stops reach former listeners too; clients independently discard unloaded/out-of-range owners.
         if(stop) PacketDistributor.sendToPlayersInDimension(server, packet);
         else PacketDistributor.sendToPlayersNear(server, null, worldPosition.getX()+.5, worldPosition.getY()+.5, worldPosition.getZ()+.5, 32, packet);
     }
     public static void tick(Level level, BlockPos pos, BlockState state, ClairaudiographBlockEntity be) {
         if(level.isClientSide) { if(be.progress > 0) be.progress = Math.min(80, be.progress + 1); return; }
+        var specimen = be.inventory.getStackInSlot(0);
+        if (be.progress == 0 && specimen.getItem() instanceof com.vincenthuto.hemomancy.common.item.harbinger.BloodVialItem
+                && com.vincenthuto.hemomancy.common.antecedent.AhaematicSample.is(specimen))
+            be.inventory.setStackInSlot(0,com.vincenthuto.hemomancy.common.antecedent.AhaematicSample.migrate(specimen));
         boolean power = level.hasNeighborSignal(pos);
         if(!be.initialized) { be.initialized = true; be.powered = power; }
         else if(power != be.powered) {
@@ -114,10 +126,17 @@ public class ClairaudiographBlockEntity extends BlockEntity implements MenuProvi
         }
         if(be.playing) {
             var choice = ClairaudiographCatalogue.allowed(be.recording());
-            if(choice == null) be.stopPlayback();
-            else if(--be.remaining <= 0) {
-                if(be.loop && (!be.redstoneLoop || power)) { be.remaining = choice.interval(); be.sendSound(false); }
-                else { be.playing = false; be.changed(); }
+            var program=be.program();
+            if(choice == null && program == null) be.stopPlayback();
+            else {
+                be.observations.tick(be);
+                if(be.elapsed()%20==0) be.sendSound(false);
+                if(--be.remaining <= 0) {
+                    if(be.loop && (!be.redstoneLoop || power)) {
+                        be.remaining=program==null?choice.interval():program.duration(); be.token=++nextToken;
+                        be.startedAt=level.getGameTime(); be.observations.clear(); be.sendSound(false); be.changed();
+                    } else be.stopPlayback();
+                }
             }
         }
         boolean active = be.playing || be.progress > 0;
@@ -136,10 +155,10 @@ public class ClairaudiographBlockEntity extends BlockEntity implements MenuProvi
     @Override protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.loadAdditional(tag, registries); transaction = true; inventory.deserializeNBT(registries, tag.getCompound("inventory")); transaction = false;
         loop = tag.getBoolean("loop"); cancelCarve(); playing = false; initialized = false;
-        if(level != null && level.isClientSide) { progress = tag.getInt("progress"); playing = tag.getBoolean("playing"); }
+        if(level != null && level.isClientSide) { progress = tag.getInt("progress"); playing = tag.getBoolean("playing"); startedAt=tag.getLong("startedAt"); }
     }
     @Override public CompoundTag getUpdateTag(HolderLookup.Provider registries) {
-        var tag = saveWithoutMetadata(registries); tag.putInt("progress", progress); tag.putBoolean("playing", playing); return tag;
+        var tag = saveWithoutMetadata(registries); tag.putInt("progress", progress); tag.putBoolean("playing", playing); tag.putLong("startedAt",startedAt); return tag;
     }
     @Override public ClientboundBlockEntityDataPacket getUpdatePacket() { return ClientboundBlockEntityDataPacket.create(this); }
     @Override public Component getDisplayName() { return Component.translatable("block.hemomancy.clairaudiograph"); }

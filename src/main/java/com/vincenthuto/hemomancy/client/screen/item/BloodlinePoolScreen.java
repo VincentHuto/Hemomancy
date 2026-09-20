@@ -80,7 +80,10 @@ public class BloodlinePoolScreen extends Screen {
 		super.init();
 		updateScaledLayout();
 
-		// Seed vein parameters
+		addRenderableWidget(Button.builder(Component.translatable("hemomancy.succession.residents"),
+                button -> SuccessionResidentsScreen.open(this)).bounds(guiLeft + currentGuiWidth - scaled(90), guiTop + scaled(8), scaled(80), widgetHeight(18)).build());
+
+        // Seed vein parameters
 		Random rand = new Random(42L);
 		veinParams = new float[VEIN_COUNT][9];
 		for (int i = 0; i < VEIN_COUNT; i++) {

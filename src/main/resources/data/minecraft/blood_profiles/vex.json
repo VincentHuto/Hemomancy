@@ -1,0 +1,11 @@
+{
+  "tendencies": [
+    "ductilis",
+    "mortem",
+    "tenebris"
+  ],
+  "properties": [
+    "hemomancy:blood_properties/flying"
+  ],
+  "requires_living_syringe": false
+}

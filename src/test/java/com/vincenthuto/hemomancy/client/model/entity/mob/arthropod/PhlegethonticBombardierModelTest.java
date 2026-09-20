@@ -22,9 +22,12 @@ class PhlegethonticBombardierModelTest {
         ModelPart head = whole.getChild("head");
         ModelPart body = whole.getChild("body");
         ModelPart tail = body.getChild("tail");
+        ModelPart tail4 = tail.getChild("tail2").getChild("tail3").getChild("tail4");
 
         assertAll(
-                () -> assertEquals(63, whole.getAllParts().mapToInt(part -> part.cubes.size()).sum()),
+                () -> assertEquals(59, whole.getAllParts().mapToInt(part -> part.cubes.size()).sum()),
+                () -> assertEquals(3, tail4.cubes.size(),
+                        "the supplied export simplifies the terminal abdomen to three cubes"),
                 () -> assertNotNull(head.getChild("antennaL")),
                 () -> assertNotNull(head.getChild("antennaR")),
                 () -> assertNotNull(body.getChild("wingL")),
@@ -94,15 +97,87 @@ class PhlegethonticBombardierModelTest {
         float bodyHeight = origin(whole, body).y;
         float nozzleHeight = origin(whole, body, tail, tail2, tail3, tail4).y;
         assertAll(
-                () -> assertTrue(tail.xRot > .6F && tail2.xRot > .5F
-                        && tail3.xRot > .4F && tail4.xRot > .3F,
-                        "all four abdomen joints must curl upward"),
+                () -> assertTrue(tail.xRot > .6F && tail2.xRot > .5F && tail3.xRot > .4F,
+                        "the abdomen must curl upward"),
+                () -> assertTrue(tail4.xRot < 0.0F
+                                && tail.xRot + tail2.xRot + tail3.xRot + tail4.xRot
+                                < Math.toRadians(105),
+                        "the terminal segment must counter-rotate instead of folding straight down"),
                 () -> assertTrue(nozzleHeight < bodyHeight - 8.0F,
                         "spray nozzle must rise over the shell"),
                 () -> assertTrue(wingL.xRot > .5F && wingR.xRot > .5F,
                         "both wings must lift during the spray"),
                 () -> assertTrue(wingL.zRot > .55F && wingR.zRot < -.55F,
                         "wings must flare away from the body"));
+    }
+
+    @Test
+    void windupAlsoKeepsTerminalSegmentAlignedWithRaisedTail() {
+        ModelPart root = PhlegethonticBombardierModel.createBodyLayer().bakeRoot();
+        PhlegethonticBombardierModel model = new PhlegethonticBombardierModel(root);
+        ModelPart tail = root.getChild("whole").getChild("body").getChild("tail");
+        ModelPart tail2 = tail.getChild("tail2");
+        ModelPart tail3 = tail2.getChild("tail3");
+        ModelPart tail4 = tail3.getChild("tail4");
+
+        KeyframeAnimations.animate(model, PhlegethonticBombardierAnimations.ABDOMEN_WINDUP,
+                1500L, 1.0F, new Vector3f());
+
+        float terminalAngle = tail.xRot + tail2.xRot + tail3.xRot + tail4.xRot;
+        assertTrue(tail4.xRot < 0.0F && terminalAngle < Math.toRadians(105),
+                "wind-up must counter-rotate the terminal segment as the abdomen rises");
+    }
+
+    @Test
+    void liveAimPitchRotatesTheNozzleInTheSameDirectionAsTheTarget() {
+        assertEquals(Math.toRadians(18), PhlegethonticBombardierModel.nozzlePitchOffset(18), .0001,
+                "a target above the port must raise the nozzle");
+        assertEquals(Math.toRadians(-18), PhlegethonticBombardierModel.nozzlePitchOffset(-18), .0001,
+                "a target below the port must lower rather than invert the nozzle");
+    }
+
+    @Test
+    void everyLoopReturnsToItsStartingPoseWithoutASeam() {
+        assertLoopSeam(PhlegethonticBombardierAnimations.IDLE, 2000L, "body", "tail");
+        assertLoopSeam(PhlegethonticBombardierAnimations.WALK, 1000L, "body", "lLegF");
+        assertLoopSeam(PhlegethonticBombardierAnimations.WALK, 1000L, "body", "rLegM");
+        assertLoopSeam(PhlegethonticBombardierAnimations.GRAZE, 1000L, "head");
+        assertLoopSeam(PhlegethonticBombardierAnimations.VENT_COOLDOWN, 1000L,
+                "body", "tail", "tail2", "tail3", "tail4");
+    }
+
+    @Test
+    void walkingWeightFadesContinuouslyThroughTheOldCutoff() {
+        float below = PhlegethonticBombardierModel.walkBlend(.019F);
+        float above = PhlegethonticBombardierModel.walkBlend(.021F);
+        assertTrue(below > 0.0F, "walking must fade rather than switch off below the old cutoff");
+        assertTrue(above > below);
+        assertTrue(above - below < .01F, "crossing the old cutoff must not produce a visible jump");
+        assertEquals(0.0F, PhlegethonticBombardierModel.walkBlend(0.0F), .0001F);
+        assertEquals(1.0F, PhlegethonticBombardierModel.walkBlend(1.0F), .0001F);
+    }
+
+    private static void assertLoopSeam(net.minecraft.client.animation.AnimationDefinition animation,
+                                       long durationMillis, String... path) {
+        Vector3f start = sampledRotation(animation, 0L, path);
+        Vector3f after = sampledRotation(animation, 1L, path);
+        Vector3f end = sampledRotation(animation, durationMillis - 1L, path);
+        assertTrue(start.distance(end) < .01F,
+                "loop seam for " + String.join("/", path) + " must return to its starting rotation");
+        Vector3f velocityBefore = new Vector3f(start).sub(end);
+        Vector3f velocityAfter = new Vector3f(after).sub(start);
+        assertTrue(velocityBefore.distance(velocityAfter) < .002F,
+                "loop seam for " + String.join("/", path) + " must preserve its direction and speed");
+    }
+
+    private static Vector3f sampledRotation(net.minecraft.client.animation.AnimationDefinition animation,
+                                            long timeMillis, String... path) {
+        ModelPart root = PhlegethonticBombardierModel.createBodyLayer().bakeRoot();
+        PhlegethonticBombardierModel model = new PhlegethonticBombardierModel(root);
+        ModelPart part = root.getChild("whole");
+        for (String child : path) part = part.getChild(child);
+        KeyframeAnimations.animate(model, animation, timeMillis, 1.0F, new Vector3f());
+        return new Vector3f(part.xRot, part.yRot, part.zRot);
     }
 
     private static Vector3f origin(ModelPart... chain) {

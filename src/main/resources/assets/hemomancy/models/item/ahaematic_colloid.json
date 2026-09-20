@@ -1,0 +1,68 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "hemomancy:item/ahaematic_colloid"
+  },
+  "overrides": [
+    {
+      "predicate": {
+        "hemomancy:colloid_motion": 1
+      },
+      "model": "hemomancy:item/ahaematic_colloid_1"
+    },
+    {
+      "predicate": {
+        "hemomancy:colloid_motion": 2
+      },
+      "model": "hemomancy:item/ahaematic_colloid_2"
+    },
+    {
+      "predicate": {
+        "hemomancy:colloid_motion": 3
+      },
+      "model": "hemomancy:item/ahaematic_colloid_3"
+    },
+    {
+      "predicate": {
+        "hemomancy:colloid_motion": 4
+      },
+      "model": "hemomancy:item/ahaematic_colloid_4"
+    },
+    {
+      "predicate": {
+        "hemomancy:colloid_motion": 5
+      },
+      "model": "hemomancy:item/ahaematic_colloid_5"
+    },
+    {
+      "predicate": {
+        "hemomancy:colloid_motion": 6
+      },
+      "model": "hemomancy:item/ahaematic_colloid_6"
+    },
+    {
+      "predicate": {
+        "hemomancy:colloid_motion": 7
+      },
+      "model": "hemomancy:item/ahaematic_colloid_7"
+    },
+    {
+      "predicate": {
+        "hemomancy:colloid_motion": 8
+      },
+      "model": "hemomancy:item/ahaematic_colloid_8"
+    },
+    {
+      "predicate": {
+        "hemomancy:colloid_motion": 9
+      },
+      "model": "hemomancy:item/ahaematic_colloid_9"
+    },
+    {
+      "predicate": {
+        "hemomancy:colloid_motion": 10
+      },
+      "model": "hemomancy:item/ahaematic_colloid_10"
+    }
+  ]
+}

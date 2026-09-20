@@ -167,10 +167,57 @@ neoForge {
             systemProperty 'neoforge.enabledGameTestNamespaces', "${project.mod_id},minecraft,blood_injection_validation"
         }
 
+        clinicalGameTestServer {
+            type = "gameTestServer"
+            gameDirectory = project.file('build/clinical-gametest')
+            systemProperty 'neoforge.enabledGameTestNamespaces', 'clinical_validation'
+        }
+
         bloodInjectionGameTestServer {
             type = "gameTestServer"
             gameDirectory = project.file('build/blood-injection-gametest')
             systemProperty 'neoforge.enabledGameTestNamespaces', 'blood_injection_validation'
+        }
+
+        antecedentGameTestServer {
+            type = "gameTestServer"
+            gameDirectory = project.file('build/antecedent-gametest')
+            systemProperty 'neoforge.enabledGameTestNamespaces', 'antecedent_validation'
+        }
+
+        antecedentReviewClient {
+            client()
+            gameDirectory = project.file('build/antecedent-client')
+            additionalRuntimeClasspathConfiguration.extendsFrom(clientLocalRuntime)
+            jvmArguments.addAll("-Xms2G", "-Xmx5G")
+            systemProperty 'hemomancy.gameplayDriver', 'true'
+            systemProperty 'hemomancy.antecedentReview', 'true'
+            programArguments.addAll '--username', 'AntecedentReview'
+        }
+
+        successionGameTestServer {
+            type = "gameTestServer"
+            gameDirectory = project.file('build/succession-gametest')
+            systemProperty 'neoforge.enabledGameTestNamespaces', 'succession_validation'
+        }
+
+        successionReviewClient {
+            client()
+            gameDirectory = project.file('build/succession-client')
+            additionalRuntimeClasspathConfiguration.extendsFrom(clientLocalRuntime)
+            jvmArguments.addAll("-Xms2G", "-Xmx6G")
+            systemProperty 'hemomancy.gameplayDriver', 'true'
+            systemProperty 'hemomancy.successionReview', 'true'
+            programArguments.addAll '--username', 'SuccessionReview'
+        }
+
+        successionObserverClient {
+            client()
+            gameDirectory = project.file('build/succession-observer')
+            additionalRuntimeClasspathConfiguration.extendsFrom(clientLocalRuntime)
+            jvmArguments.addAll("-Xms2G", "-Xmx4G")
+            systemProperty 'hemomancy.gameplayDriver', 'true'
+            programArguments.addAll '--username', 'SucObserver', '--quickPlayMultiplayer', 'localhost:25568'
         }
 
         castingAnimationGameTestServer {

@@ -15,7 +15,7 @@ import net.minecraft.world.item.component.CustomData;
 import java.util.List;
 import java.util.UUID;
 
-/** Server-authoritative state and rewards for the Degree-2 First Separation assignment. */
+/** Server-authoritative state and rewards for the Degree-1 First Separation assignment. */
 public final class FirstSeparationAssignment {
 	private static final String DATA_CENTRIFUGE_ACQUIRED = "hemomancy:first_separation_centrifuge_acquired";
 	private static final String DATA_ASSIGNED_SPIN = "hemomancy:first_separation_spin";
@@ -30,7 +30,7 @@ public final class FirstSeparationAssignment {
 	}
 
 	public static boolean canBrief(ServerPlayer player) {
-		return HemoCapabilityAccess.getPlayerDegreeNumber(player) >= 2 && !isBriefed(player);
+		return HemoCapabilityAccess.getPlayerDegreeNumber(player) >= 1 && !isBriefed(player);
 	}
 
 	public static boolean isBriefed(ServerPlayer player) {
@@ -100,7 +100,7 @@ public final class FirstSeparationAssignment {
 	}
 
 	public static boolean canClaim(ServerPlayer player) {
-		return HemoCapabilityAccess.getPlayerDegreeNumber(player) >= 2
+		return HemoCapabilityAccess.getPlayerDegreeNumber(player) >= 1
 				&& isBriefed(player)
 				&& HarbingerAdvancementGranter.isFirstSeparationStarted(player)
 				&& HarbingerAdvancementGranter.isFirstSeparationComplete(player)

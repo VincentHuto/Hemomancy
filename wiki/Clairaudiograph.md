@@ -6,7 +6,7 @@ The Clairaudiograph carves a creature's call from one Blood Vial onto one Amberg
 
 Machine: five Hematic Iron Scraps, one Echo Shard, and one Blood Vial. Pattern: ` I ` / `VEI` / `III` (I = scrap, V = vial, E = shard).
 
-Two cylinders: one Mnemonic Ambergris, one Active Befouling Ash, one vanilla honeycomb, and one paper, shapeless. Honeycomb supplies the wax. No research currency or identification gate is added.
+Two cylinders: one Mnemonic Ambergris, one Active Befouling Ash, one vanilla honeycomb, and one paper, shapeless. Honeycomb supplies the wax. At Degree 3 the Mnemonist teaches both recipes after three personal sample identifications and the Alchemist's D2-or-later echo referral. The machine itself still accepts unidentified creature blood. See [Clinical Blood Tools](Clinical-Blood-Tools.md).
 
 ## Listening and redstone
 
@@ -19,7 +19,15 @@ Two cylinders: one Mnemonic Ambergris, one Active Befouling Ash, one vanilla hon
 - A new Play during the server's playback interval is ignored. Clients also ignore repeats while their previous instance is still playing, preventing overlapping audio.
 - Removing the cylinder, breaking the block, leaving its range/chunk/dimension, or disconnecting clears its local sound.
 
-Recordings preserve sound-event identity, not an exact waveform. Events can choose different audio variants. Replay intervals are scheduling values, independent of pitch; they are not measured sound durations. New listeners hear the next loop iteration or explicit trigger. Audio timing and visual presentation still require in-game verification.
+Recordings preserve sound-event identity. Events can choose different audio variants; each playback resolves one variant and uses that exact file for both sound and analysis. Replay intervals remain catalogue scheduling values. Nearby clients receive the current session every second and seek into its audio when joining late.
+
+## Audio spectrograph
+
+The screen shows a frequency-over-time spectrograph and a separate amplitude waveform for creature previews, carved cylinders, and ancient recordings. It keeps the last eight seconds, uses logarithmic bands from 50 Hz to 12 kHz, and uses a fixed -80 to 0 dBFS scale. Pitch moves the readhead and the frequency bands. The analyzer decodes resource-pack replacement audio from the selected resource. It analyzes stereo channels separately so phase cancellation cannot hide a signal.
+
+Analysis runs away from the render thread and remains available while the sound mixer is muted. Missing or unreadable audio reports **Analysis Unavailable**. Clips over 120 seconds are outside the analysis limit, so the screen does not invent graph data for them. Resource reload clears the bounded cache. Stopping, unloading, leaving range or a dimension, and disconnecting clean up each machine's local sound.
+
+The **Severed Record** adds a separate unresolved trace. Its silent interval has no recorded audio energy even while the trace and nearby sample keep moving. See [Antecedent Inquiry](Antecedent-Inquiry.md) for ancient cylinders, personal observations, and the Vigil.
 
 ## Persistence and missing data
 
@@ -37,7 +45,7 @@ The initial catalogue has 13 sources: pig, cow, sheep, wolf, cat, polar bear, fo
 
 ## Assets and live acceptance
 
-Editable models and their exporter are under `models/*/bbmodel/` and `tools/model_export/clairaudiograph.py`. The cylinder uses the existing crimson glint pass. The machine renders a rotating cylinder, advancing stylus and moving feed accent.
+Editable models and their exporter are under `models/*/bbmodel/` and `tools/oneoff/clairaudiograph.py`. The cylinder uses the existing crimson glint pass. The machine renders a rotating cylinder, advancing stylus and moving feed accent.
 
 Still verify in a client: inventory/hand/dropped/mounted glint, model orientation, narrow-screen readability and translations, vanilla and Hemomancy audio, Blocks volume, attenuation, two same-sound machines stopped independently, chunk/dimension/reconnect cleanup, missing resource-pack audio, and saved recording replay after restart. Dedicated-server tests cannot establish sound or shader appearance.
 

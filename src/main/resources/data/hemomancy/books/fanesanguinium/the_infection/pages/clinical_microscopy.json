@@ -1,0 +1,9 @@
+{
+  "type": "hutoslib:page",
+  "ordinality": 28,
+  "texture": "hemomancy:textures/gui/guide/page.png",
+  "title": "Hematic Microscopy",
+  "subtitle": "Clinical blood study",
+  "text": "Your first examination is recorded. After successfully examining a creature sample yourself, ask the Alchemist about Borrowed Physiology. That lesson unlocks direct injection.",
+  "icon": "hemomancy:hematic_microscope"
+}

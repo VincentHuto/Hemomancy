@@ -1,0 +1,10 @@
+{
+  "tendencies": [
+    "flammeus"
+  ],
+  "properties": [
+    "hemomancy:blood_properties/flying",
+    "hemomancy:blood_properties/nether_native"
+  ],
+  "requires_living_syringe": false
+}

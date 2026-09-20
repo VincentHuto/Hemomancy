@@ -1,0 +1,23 @@
+{
+  "parent": "hemomancy:hemomancy/degree_1_neophyte",
+  "display": {
+    "icon": {
+      "id": "hemomancy:clairaudiograph"
+    },
+    "title": {
+      "translate": "advancements.hemomancy.clinical_echo_referral.title"
+    },
+    "description": {
+      "translate": "advancements.hemomancy.clinical_echo_referral.description"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": false,
+    "hidden": true
+  },
+  "criteria": {
+    "manual": {
+      "trigger": "minecraft:impossible"
+    }
+  }
+}

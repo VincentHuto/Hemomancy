@@ -41,7 +41,7 @@ import net.minecraft.world.level.Level;
  *       is offered to an enemy of the Covenant.</li>
  * </ul>
  */
-public class HarbingerVicarEntity extends PathfinderMob implements ProgressionDialogueNpc {
+public class HarbingerVicarEntity extends com.vincenthuto.hemomancy.common.succession.ProfessionalHarbingerEntity implements ProgressionDialogueNpc {
 
     public final AnimationState idleAnimationState = new AnimationState();
 
@@ -51,7 +51,7 @@ public class HarbingerVicarEntity extends PathfinderMob implements ProgressionDi
     }
 
     public static AttributeSupplier.Builder setAttributes() {
-        return Mob.createMobAttributes()
+        return Mob.createMobAttributes().add(Attributes.ATTACK_DAMAGE, 4.0D)
                 .add(Attributes.MAX_HEALTH, 20.0D)
                 .add(Attributes.MOVEMENT_SPEED, 0.25D)
                 .add(Attributes.ATTACK_DAMAGE, 4.0D);
@@ -132,6 +132,7 @@ public class HarbingerVicarEntity extends PathfinderMob implements ProgressionDi
 
     @Override
     public boolean hurt(DamageSource source, float amount) {
+        if (isSuccessor() || isMisbegotten()) return super.hurt(source, amount);
         if (source.is(DamageTypes.GENERIC_KILL)) {
             return super.hurt(source, amount);
         }
@@ -161,6 +162,7 @@ public class HarbingerVicarEntity extends PathfinderMob implements ProgressionDi
 
     @Override
     protected InteractionResult mobInteract(Player player, InteractionHand hand) {
+        if (!successionInteraction(player, hand)) return InteractionResult.SUCCESS;
         if (!player.level().isClientSide && hand == InteractionHand.MAIN_HAND && player instanceof ServerPlayer serverPlayer) {
             // Clarity-bearing players are enemies — attack, no dialogue
             if (hasClarityUnlocked(player)) {

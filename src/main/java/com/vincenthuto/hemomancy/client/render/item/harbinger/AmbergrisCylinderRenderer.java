@@ -22,9 +22,9 @@ public class AmbergrisCylinderRenderer extends BlockEntityWithoutLevelRenderer {
     }
     private AmbergrisCylinderRenderer(){super(Minecraft.getInstance().getBlockEntityRenderDispatcher(),Minecraft.getInstance().getEntityModels());}
     public static void draw(ItemStack stack,PoseStack pose,MultiBufferSource buffers,int light,int overlay){
-        boolean recorded=stack.has(DataComponentInit.CLAIRAUDIOGRAPH_RECORDING.get());
+        boolean recorded=(stack.has(DataComponentInit.CLAIRAUDIOGRAPH_RECORDING.get()) || stack.has(DataComponentInit.ANCIENT_RECORDING.get()));
         CYLINDER.render(pose,buffers.getBuffer(RenderType.entityCutoutNoCull(Hemomancy.rloc("textures/item/ambergris_cylinder"+(recorded?"_recorded":"")+".png"))),light,overlay);
-        if(recorded)CYLINDER.render(pose,buffers.getBuffer(RenderTypeInit.getCrimsonGlint()),light,overlay);
+        if(recorded && !stack.has(DataComponentInit.ANCIENT_RECORDING.get()))CYLINDER.render(pose,buffers.getBuffer(RenderTypeInit.getCrimsonGlint()),light,overlay);
     }
     @Override public void renderByItem(ItemStack stack,ItemDisplayContext context,PoseStack pose,MultiBufferSource buffers,int light,int overlay){pose.pushPose();pose.translate(.5,.5,.5);draw(stack,pose,buffers,light,overlay);pose.popPose();}
 }

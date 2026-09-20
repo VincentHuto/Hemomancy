@@ -13,6 +13,7 @@ public class HarbingerMnemonistRenderer extends MobRenderer<HarbingerMnemonistEn
 
 	public HarbingerMnemonistRenderer(Context context) {
 		super(context, new HarbingerMnemonistModel<>(context.bakeLayer(HarbingerMnemonistModel.LAYER_LOCATION)), 0.5F);
+        addLayer(new SuccessionIdentityLayer<>(this));
 	}
 
 	@Override

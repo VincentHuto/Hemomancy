@@ -1,6 +1,6 @@
 package com.vincenthuto.hemomancy.common.menu.slot;
 
-import com.vincenthuto.hemomancy.common.item.harbinger.BloodVialItem;
+import com.vincenthuto.hemomancy.common.item.harbinger.BloodSampleData;
 import com.vincenthuto.hemomancy.common.item.itemhandler.LivingSyringeItemHandler;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.items.IItemHandler;
@@ -20,7 +20,7 @@ public class LivingSyringeSlot extends SlotItemHandler {
 
 	@Override
 	public boolean mayPlace(@Nonnull ItemStack stack) {
-		return stack.getItem() instanceof BloodVialItem;
+        return BloodSampleData.isSpecimenVessel(stack);
 	}
 
 	@Override

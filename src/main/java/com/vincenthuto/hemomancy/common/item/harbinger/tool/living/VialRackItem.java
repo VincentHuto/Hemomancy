@@ -65,26 +65,31 @@ public class VialRackItem extends Item {
 		tooltip.add(Component.literal("Use with empty vials in the other hand to refill vacant slots.")
 				.withStyle(ChatFormatting.GRAY));
 		if (Screen.hasShiftDown()) {
-			NonNullList<ItemStack> vials = getVials(stack);
-			for (int i = 0; i < vials.size(); i++) {
-				ItemStack vial = vials.get(i);
-				Component slotLabel = Component.literal("[" + (i + 1) + "] ").withStyle(ChatFormatting.DARK_GRAY);
-				if (vial.isEmpty()) {
-					tooltip.add(slotLabel.copy().append(Component.literal("No vial").withStyle(ChatFormatting.GRAY)));
-				} else if (isEmptyVial(vial)) {
-					tooltip.add(slotLabel.copy().append(
-							Component.translatable("item.hemomancy.vial_rack.slot_empty").withStyle(ChatFormatting.GRAY)));
-				} else {
-					EntityType<?> entityType = BloodVialItem.getEntityType(vial);
-					String entityName = entityType != null
-							? net.minecraft.client.resources.language.I18n.get(entityType.getDescriptionId()) + " Sample"
-							: vial.getHoverName().getString();
-					tooltip.add(slotLabel.copy().append(Component.literal(entityName).withStyle(ChatFormatting.RED)));
-				}
-			}
+			appendContentsTooltip(stack, tooltip);
 		} else {
 			if (emptyCount < MAX_VIALS) {
 				tooltip.add(Component.translatable("item.hemomancy.vial_rack.shift_hint").withStyle(ChatFormatting.DARK_GRAY, ChatFormatting.ITALIC));
+			}
+		}
+	}
+
+	@OnlyIn(Dist.CLIENT)
+	public static void appendContentsTooltip(ItemStack rack, List<Component> tooltip) {
+		NonNullList<ItemStack> vials = getVials(rack);
+		for (int i = 0; i < vials.size(); i++) {
+			ItemStack vial = vials.get(i);
+			Component slotLabel = Component.literal("[" + (i + 1) + "] ").withStyle(ChatFormatting.DARK_GRAY);
+			if (vial.isEmpty()) {
+				tooltip.add(slotLabel.copy().append(Component.literal("No vial").withStyle(ChatFormatting.GRAY)));
+			} else if (isEmptyVial(vial)) {
+				tooltip.add(slotLabel.copy().append(
+						Component.translatable("item.hemomancy.vial_rack.slot_empty").withStyle(ChatFormatting.GRAY)));
+			} else {
+				EntityType<?> entityType = BloodVialItem.getEntityType(vial);
+				String entityName = entityType != null
+						? net.minecraft.client.resources.language.I18n.get(entityType.getDescriptionId()) + " Sample"
+						: vial.getHoverName().getString();
+				tooltip.add(slotLabel.copy().append(Component.literal(entityName).withStyle(ChatFormatting.RED)));
 			}
 		}
 	}
@@ -93,6 +98,7 @@ public class VialRackItem extends Item {
 	public void inventoryTick(ItemStack stack, Level level, Entity entity, int slot, boolean selected) {
 		super.inventoryTick(stack, level, entity, slot, selected);
 		ensureInitialized(stack);
+		if (!level.isClientSide) migrateAhaematicSamples(stack);
 	}
 
 	private static NonNullList<ItemStack> createDefaultVials() {
@@ -122,6 +128,21 @@ public class VialRackItem extends Item {
 			vials.set(i, i < list.size() ? ItemStack.parseOptional(provider(), list.getCompound(i)) : ItemStack.EMPTY);
 		}
 		return vials;
+	}
+
+	/** Upgrades the old component-backed Warden vial only when the rack is saved server-side. */
+	public static void migrateAhaematicSamples(ItemStack rack) {
+		NonNullList<ItemStack> vials = getVials(rack);
+		boolean changed = false;
+		for (int i = 0; i < vials.size(); i++) {
+			ItemStack vial = vials.get(i);
+			if (vial.getItem() instanceof BloodVialItem
+					&& com.vincenthuto.hemomancy.common.antecedent.AhaematicSample.is(vial)) {
+				vials.set(i, com.vincenthuto.hemomancy.common.antecedent.AhaematicSample.migrate(vial));
+				changed = true;
+			}
+		}
+		if (changed) setVials(rack, vials);
 	}
 
 	public static void setVials(ItemStack rack, NonNullList<ItemStack> vials) {

@@ -1,0 +1,9 @@
+{
+  "type": "hutoslib:page",
+  "ordinality": 23,
+  "texture": "hemomancy:textures/gui/guide/page.png",
+  "title": "A Cabinet for the Road",
+  "subtitle": "Clinical blood study",
+  "text": "You have crafted a Cabinet and used it in both directions. A cabinet serves the laboratory. It does not serve the road. Take your storage practice and Hematic Iron to the Artificer you have met. Ask for a Field Case. I will continue to answer for the specimens; the Artificer will answer for the hinges and catches.",
+  "icon": "hemomancy:phlebotomists_cabinet"
+}

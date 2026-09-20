@@ -42,7 +42,7 @@ public class ClairaudiographMenu extends AbstractContainerMenu {
         if(owner.level().isClientSide) return;
         if(catalogue != ClairaudiographCatalogue.revision() || !source.equals(machine.source())) {
             catalogue = ClairaudiographCatalogue.revision(); source = machine.source(); version++;
-            choices = ClairaudiographCatalogue.choices(source).stream().map(ClairaudiographCatalogue.Choice::recording).toList();
+            choices = com.vincenthuto.hemomancy.common.antecedent.AhaematicSample.is(machine.inventory.getStackInSlot(0)) ? List.of() : ClairaudiographCatalogue.choices(source).stream().map(ClairaudiographCatalogue.Choice::recording).toList();
             if(owner instanceof ServerPlayer sp) PacketHandler.sendToPlayer(sp,new ClairaudiographChoicesPacket(containerId,version,source,choices));
         }
     }
@@ -54,7 +54,7 @@ public class ClairaudiographMenu extends AbstractContainerMenu {
         if(action == 3) { machine.stopPlayback(); return; }
         if(action == 4) { machine.loop = !machine.loop; machine.changed(); return; }
         if(action == 2) {
-            if(ClairaudiographCatalogue.allowed(machine.recording()) == null) p.displayClientMessage(net.minecraft.network.chat.Component.translatable("gui.hemomancy.clairaudiograph.unavailable"),true);
+            if(!machine.playable()) p.displayClientMessage(net.minecraft.network.chat.Component.translatable("gui.hemomancy.clairaudiograph.unavailable"),true);
             else machine.startPlayback(false);
             return;
         }

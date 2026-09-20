@@ -1,0 +1,9 @@
+{
+  "type": "hutoslib:page",
+  "ordinality": 59,
+  "texture": "hemomancy:textures/gui/guide/page.png",
+  "title": "The Cut",
+  "subtitle": "The Antecedent Inquiry",
+  "text": "No answer returns from beyond the cut. Continue observation. Do not burn it. Do not remove it. If it changes, the cut has failed. They deliberately preserved the surviving tissue to test the Severance.",
+  "icon": "hemomancy:hematic_microscope"
+}

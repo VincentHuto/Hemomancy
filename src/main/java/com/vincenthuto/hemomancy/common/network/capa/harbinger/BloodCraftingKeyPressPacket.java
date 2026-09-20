@@ -545,11 +545,15 @@ public class BloodCraftingKeyPressPacket implements CustomPacketPayload {
 								.toList());
 					}
 				}
-				ItemStack plantingStaff = ItemStack.EMPTY;
+				if (com.vincenthuto.hemomancy.common.succession.SuccessionRites.isRecipe(recipe.getId())
+                        && !com.vincenthuto.hemomancy.common.succession.SuccessionRites.prepare(sLevel, serverPlayer, rite, stationMatch))
+                    return CardinalRiteActivationRules.ActivationAttempt.HANDLED;
+                ItemStack plantingStaff = ItemStack.EMPTY;
 				if (!recipe.isUnstained() && recipe.hasInteractiveCeremony()
 						&& "living_staff".equals(recipe.getCeremony().focusMode())) {
 					ItemStack staff = CardinalRiteStaffEscrow.capture(serverPlayer);
 					if (staff.isEmpty()) {
+                        com.vincenthuto.hemomancy.common.succession.SuccessionRites.cleanup(sLevel, rite);
 						player.displayClientMessage(
 								Component.literal("A Living Staff must be planted in the Cardinal Focus.")
 										.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC),
@@ -561,6 +565,7 @@ public class BloodCraftingKeyPressPacket implements CustomPacketPayload {
 					plantingStaff = staff;
 				}
 				savedData.startRite(rite);
+                com.vincenthuto.hemomancy.common.rite.harbinger.CardinalRiteAllyService.maintainNpcStations(sLevel, rite);
 
 				if (!plantingStaff.isEmpty()) {
 					PacketDistributor.sendToPlayersTrackingEntityAndSelf(serverPlayer,
@@ -574,6 +579,7 @@ public class BloodCraftingKeyPressPacket implements CustomPacketPayload {
 				// Notify the player
 				player.displayClientMessage(
 						Component.literal(recipe.hasInteractiveCeremony()
+                                && !com.vincenthuto.hemomancy.common.succession.SuccessionRites.is(rite)
 								? "The " + recipe.getRiteName()
 										+ " awaits consecration. Fill the crimson anchors."
 								: "The " + recipe.getRiteName() + " begins... (" + castingDuration / 20 + "s)")

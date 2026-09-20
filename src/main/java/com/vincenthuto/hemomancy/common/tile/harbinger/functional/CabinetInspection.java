@@ -18,7 +18,7 @@ public final class CabinetInspection {
         double y = (start.y + (end.y - start.y) * t) * 16;
         if (x < 2 || x >= 14 || y <= 2 || y >= 14) return -1;
         if (divider(x) || divider(y)) return -1;
-        return (int)((14 - y) / 4) * 3 + (int)((x - 2) / 4);
+        return (int)((14 - y) / 4) * 3 + (int)((14 - x) / 4);
     }
 
     private static boolean divider(double value) {

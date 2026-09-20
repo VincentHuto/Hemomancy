@@ -26,7 +26,7 @@ public final class BloodVialInjectionAnimation {
 
     public static void start(Player player, InteractionHand hand, ItemStack vial) {
         if (player.level().isClientSide) return;
-        var profile = BloodSampleData.profile(vial, BloodInjectionData.snapshot(false).properties());
+        var profile = BloodSampleData.profile(vial, false);
         var session = new Session(player.level(), player.level().getGameTime(), hand,
                 (hand == InteractionHand.MAIN_HAND) == (player.getMainArm() == HumanoidArm.RIGHT), vial,
                 profile.tendencies().isEmpty() ? EnumBloodTendency.ANIMUS : profile.tendencies().getFirst(),

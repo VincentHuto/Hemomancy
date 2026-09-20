@@ -1,0 +1,9 @@
+{
+  "tendencies": [
+    "ductilis"
+  ],
+  "properties": [
+    "hemomancy:blood_properties/explosive"
+  ],
+  "requires_living_syringe": false
+}

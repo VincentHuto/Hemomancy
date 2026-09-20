@@ -14,5 +14,6 @@ public class LootModifierInit {
 
 	public static final DeferredHolder<MapCodec<? extends IGlobalLootModifier>, MapCodec<? extends IGlobalLootModifier>> ADD_ITEM = LOOT_MODIFIERS
 			.register("add_item", () -> AddItemModifier.CODEC);
+    public static final DeferredHolder<MapCodec<? extends IGlobalLootModifier>,MapCodec<? extends IGlobalLootModifier>> ANCIENT_RECORDING=LOOT_MODIFIERS.register("ancient_recording",()->com.vincenthuto.hemomancy.common.antecedent.AncientRecordingLootModifier.CODEC);
 
 }

@@ -16,6 +16,7 @@ public class HarbingerArtificerRenderer
 	public HarbingerArtificerRenderer(Context context) {
 		super(context, new HarbingerArtificerModel<>(context.bakeLayer(HarbingerArtificerModel.LAYER_LOCATION)),
 				0.5F);
+        addLayer(new SuccessionIdentityLayer<>(this));
 	}
 
 	@Override

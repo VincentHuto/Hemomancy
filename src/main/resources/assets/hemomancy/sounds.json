@@ -1,24 +1,53 @@
 {
   "item.microscope.examine_loop": {
     "subtitle": "subtitle.hemomancy.microscope.examine_loop",
-    "sounds": [{"name": "hemomancy:item/microscope/examine_loop", "attenuation_distance": 8}]
+    "sounds": [
+      {
+        "name": "hemomancy:item/microscope/examine_loop",
+        "attenuation_distance": 8
+      }
+    ]
   },
   "item.microscope.use": {
     "subtitle": "subtitle.hemomancy.item.microscope.use",
-    "sounds": [{"name": "minecraft:item.spyglass.use", "type": "event", "pitch": 0.8}]
+    "sounds": [
+      {
+        "name": "minecraft:item.spyglass.use",
+        "type": "event",
+        "pitch": 0.8
+      }
+    ]
   },
   "item.microscope.focus": {
     "subtitle": "subtitle.hemomancy.item.microscope.focus",
-    "sounds": [{"name": "minecraft:block.tripwire.attach", "type": "event", "pitch": 0.7}]
+    "sounds": [
+      {
+        "name": "minecraft:block.tripwire.attach",
+        "type": "event",
+        "pitch": 0.7
+      }
+    ]
   },
   "item.microscope.discovery": {
     "subtitle": "subtitle.hemomancy.item.microscope.discovery",
-    "sounds": [{"name": "minecraft:block.amethyst_block.chime", "type": "event", "pitch": 1.3}]
+    "sounds": [
+      {
+        "name": "minecraft:block.amethyst_block.chime",
+        "type": "event",
+        "pitch": 1.3
+      }
+    ]
   },
   "item.living_torch.breath_loop": {
     "category": "player",
     "subtitle": "subtitle.hemomancy.item.living_torch.breath_loop",
-    "sounds": [{"name": "hemomancy:entity/vesper/ambient", "pitch": 0.82, "volume": 0.72}]
+    "sounds": [
+      {
+        "name": "hemomancy:entity/vesper/ambient",
+        "pitch": 0.82,
+        "volume": 0.72
+      }
+    ]
   },
   "entity.abhorent_thought.ambient": {
     "category": "entity",
@@ -998,37 +1027,79 @@
   },
   "entity.vesper.scute_launch": {
     "category": "entity",
-    "sounds": [{"name": "hemomancy:entity/vesper/hit", "pitch": 1.45, "volume": 1.15}],
+    "sounds": [
+      {
+        "name": "hemomancy:entity/vesper/hit",
+        "pitch": 1.45,
+        "volume": 1.15
+      }
+    ],
     "subtitle": "subtitle.hemomancy.entity.vesper.scute_launch"
   },
   "entity.vesper.carapace_reform": {
     "category": "entity",
-    "sounds": [{"name": "hemomancy:entity/vesper/hurt", "pitch": 0.58, "volume": 0.9}],
+    "sounds": [
+      {
+        "name": "hemomancy:entity/vesper/hurt",
+        "pitch": 0.58,
+        "volume": 0.9
+      }
+    ],
     "subtitle": "subtitle.hemomancy.entity.vesper.carapace_reform"
   },
   "entity.vesper.grab_telegraph": {
     "category": "entity",
-    "sounds": [{"name": "hemomancy:entity/vesper/ambient", "pitch": 0.72, "volume": 0.85}],
+    "sounds": [
+      {
+        "name": "hemomancy:entity/vesper/ambient",
+        "pitch": 0.72,
+        "volume": 0.85
+      }
+    ],
     "subtitle": "subtitle.hemomancy.entity.vesper.grab_telegraph"
   },
   "entity.vesper.grab_bite": {
     "category": "entity",
-    "sounds": [{"name": "hemomancy:entity/vesper/hit", "pitch": 0.68, "volume": 1.0}],
+    "sounds": [
+      {
+        "name": "hemomancy:entity/vesper/hit",
+        "pitch": 0.68,
+        "volume": 1.0
+      }
+    ],
     "subtitle": "subtitle.hemomancy.entity.vesper.grab_bite"
   },
   "entity.vesper.grab_pierce": {
     "category": "entity",
-    "sounds": [{"name": "hemomancy:entity/vesper/hit", "pitch": 1.18, "volume": 1.2}],
+    "sounds": [
+      {
+        "name": "hemomancy:entity/vesper/hit",
+        "pitch": 1.18,
+        "volume": 1.2
+      }
+    ],
     "subtitle": "subtitle.hemomancy.entity.vesper.grab_pierce"
   },
   "entity.vesper.grab_release": {
     "category": "entity",
-    "sounds": [{"name": "hemomancy:entity/vesper/hurt", "pitch": 1.3, "volume": 0.9}],
+    "sounds": [
+      {
+        "name": "hemomancy:entity/vesper/hurt",
+        "pitch": 1.3,
+        "volume": 0.9
+      }
+    ],
     "subtitle": "subtitle.hemomancy.entity.vesper.grab_release"
   },
   "entity.vesper.hood_remove": {
     "category": "entity",
-    "sounds": [{"name": "hemomancy:entity/vesper/hurt", "pitch": 0.82, "volume": 0.9}],
+    "sounds": [
+      {
+        "name": "hemomancy:entity/vesper/hurt",
+        "pitch": 0.82,
+        "volume": 0.9
+      }
+    ],
     "subtitle": "subtitle.hemomancy.entity.vesper.hood_remove"
   },
   "entity.vesper.music": {
@@ -1095,21 +1166,25 @@
   },
   "entity.pale_intercession.manifest": {
     "category": "entity",
-    "sounds": ["hemomancy:entity/pale_intercession/manifest"],
+    "sounds": [
+      "hemomancy:entity/pale_intercession/manifest"
+    ],
     "subtitle": "subtitle.hemomancy.entity.pale_intercession.manifest"
   },
   "entity.pale_intercession.strike": {
     "category": "entity",
-    "sounds": ["hemomancy:entity/pale_intercession/strike"],
+    "sounds": [
+      "hemomancy:entity/pale_intercession/strike"
+    ],
     "subtitle": "subtitle.hemomancy.entity.pale_intercession.strike"
   },
   "entity.pale_intercession.dissolve": {
     "category": "entity",
-    "sounds": ["hemomancy:entity/pale_intercession/dissolve"],
+    "sounds": [
+      "hemomancy:entity/pale_intercession/dissolve"
+    ],
     "subtitle": "subtitle.hemomancy.entity.pale_intercession.dissolve"
-  }
-,
-
+  },
   "item.blood_vial.inject": {
     "subtitle": "subtitles.hemomancy.blood_vial.inject",
     "sounds": [
@@ -1118,5 +1193,32 @@
         "attenuation_distance": 16
       }
     ]
+  },
+  "antecedent.severed_record": {
+    "sounds": [
+      {
+        "name": "hemomancy:antecedent/severed_record",
+        "stream": true
+      }
+    ],
+    "subtitle": "hemomancy.antecedent.cylinder.severed_record"
+  },
+  "antecedent.lower_district_survey": {
+    "sounds": [
+      {
+        "name": "hemomancy:antecedent/lower_district_survey",
+        "stream": true
+      }
+    ],
+    "subtitle": "hemomancy.antecedent.cylinder.lower_district_survey"
+  },
+  "antecedent.the_quieting": {
+    "sounds": [
+      {
+        "name": "hemomancy:antecedent/the_quieting",
+        "stream": true
+      }
+    ],
+    "subtitle": "hemomancy.antecedent.cylinder.the_quieting"
   }
 }

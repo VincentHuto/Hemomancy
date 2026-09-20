@@ -33,6 +33,10 @@ public class EffectInit {
             Hemomancy.MOD_ID);
     public static final DeferredRegister<MobEffect> EFFECTS = DeferredRegister.create(Registries.MOB_EFFECT,
             Hemomancy.MOD_ID);
+    public static final DeferredHolder<MobEffect, MobEffect> counterfeit_scar = EFFECTS.register("counterfeit_scar",
+            () -> new BloodResponseEffect(MobEffectCategory.HARMFUL, 0x9D2946)
+                    .addAttributeModifier(Attributes.ATTACK_DAMAGE, Hemomancy.rloc("counterfeit_scar_damage"), -2, AttributeModifier.Operation.ADD_VALUE)
+                    .addAttributeModifier(Attributes.MOVEMENT_SPEED, Hemomancy.rloc("counterfeit_scar_movement"), -.15, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL));
     public static final DeferredHolder<MobEffect, MobEffect> transfusion_saturation = EFFECTS.register("transfusion_saturation",
             () -> new BloodResponseEffect(MobEffectCategory.HARMFUL, 0x762538));
     public static final DeferredHolder<MobEffect, MobEffect> cryoprotection = EFFECTS.register("cryoprotection",

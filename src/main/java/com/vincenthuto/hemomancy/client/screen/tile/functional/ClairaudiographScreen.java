@@ -12,10 +12,11 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 public class ClairaudiographScreen extends AbstractContainerScreen<ClairaudiographMenu> {
     private final VeinBackgroundRenderer veinBackground = new VeinBackgroundRenderer();
+    private ClairaudiographSpectrograph spectrograph;
     private int offset,selected=-1;
     private long version=-1;
     private Button preview,carve,play,loop;
-    public ClairaudiographScreen(ClairaudiographMenu menu,Inventory inv,Component title){super(menu,inv,title);imageWidth=176;imageHeight=232;inventoryLabelY=138;}
+    public ClairaudiographScreen(ClairaudiographMenu menu,Inventory inv,Component title){super(menu,inv,title);imageWidth=320;imageHeight=232;inventoryLabelY=138;}
     private Component text(String key){return Component.translatable("gui.hemomancy.clairaudiograph."+key);}
     private void action(int action){PacketHandler.sendToServer(new ClairaudiographActionPacket(menu.containerId,menu.version,action,selected));}
     private Button button(String key,int x,int y,int width,int action){
@@ -29,10 +30,10 @@ public class ClairaudiographScreen extends AbstractContainerScreen<Clairaudiogra
             }
         });
     }
-    @Override protected void init(){super.init();preview=button("preview",8,112,76,0);carve=button("carve",92,112,76,1);play=button("play",72,25,46,2);button("stop",120,25,48,3);loop=button("loop",72,45,96,4);}
+    @Override protected void init(){super.init();if(spectrograph!=null)spectrograph.close();spectrograph=new ClairaudiographSpectrograph();preview=button("preview",8,112,76,0);carve=button("carve",92,112,76,1);play=button("play",72,25,46,2);button("stop",120,25,48,3);loop=button("loop",72,45,96,4);}
     @Override protected void containerTick(){
         if(version!=menu.version){version=menu.version;selected=-1;offset=0;}
-        preview.active=selected>=0 && menu.progress==0 && menu.playing==0;carve.active=preview.active;
+        preview.active=selected>=0 && menu.progress==0 && menu.playing==0 && menu.machine.program()==null;carve.active=preview.active;
         play.active=menu.progress==0 && menu.playing==0;
         loop.setMessage(Component.translatable("gui.hemomancy.clairaudiograph.loop_"+(menu.looping==1?"on":"off")));
     }
@@ -58,21 +59,26 @@ public class ClairaudiographScreen extends AbstractContainerScreen<Clairaudiogra
         g.fill(leftPos+8,topPos+67,leftPos+168,topPos+109,0xB01A0808);
         g.renderOutline(leftPos+7,topPos+66,162,44,0xFF440E0E);
         g.enableScissor(leftPos+8,topPos+67,leftPos+168,topPos+109);
-        if(menu.choices.isEmpty())g.drawWordWrap(font,text("no_calls"),leftPos+10,topPos+72,154,0xFFCC8888);
-        for(int row=0;row<3;row++){
+        if(menu.machine.program()!=null)g.drawWordWrap(font,Component.translatable("hemomancy.antecedent.cylinder.playback_help"),leftPos+10,topPos+72,154,0xFFCC8888);
+        else if(menu.choices.isEmpty())g.drawWordWrap(font,text("no_calls"),leftPos+10,topPos+72,154,0xFFCC8888);
+        for(int row=0;row<3 && menu.machine.program()==null;row++){
             int i=offset+row;if(i>=menu.choices.size())break;
             if(i==selected)g.fill(leftPos+8,topPos+67+row*14,leftPos+168,topPos+81+row*14,0xFF4A0E0E);
             var choice=menu.choices.get(i);String name=Component.translatable("sound_kind.hemomancy."+choice.kind()).getString()+" - "+choice.sound();
             g.drawString(font,font.plainSubstrByWidth(name,154),leftPos+10,topPos+70+row*14,0xFFFFCCCC,false);
         }
         g.disableScissor();
+        spectrograph.render(g,leftPos+176,topPos+3,com.vincenthuto.hemomancy.client.sound.ClairaudiographSounds.view(menu.machine.getBlockPos(),partial));
     }
     @Override protected void renderLabels(GuiGraphics g,int mx,int my){
         g.drawString(font,font.plainSubstrByWidth(title.getString(),160),8,6,0xFFAA2222,false);
         var recording=menu.machine.recording();
         String label=recording==null?sourceName(menu.source):recording.readable()?sourceName(recording.source())+" / "+Component.translatable("sound_kind.hemomancy."+recording.kind()).getString():text("unreadable").getString();
+        if(recording==null && com.vincenthuto.hemomancy.common.antecedent.AhaematicSample.is(menu.machine.inventory.getStackInSlot(0)))label=menu.machine.inventory.getStackInSlot(0).getHoverName().getString();
+        if(menu.machine.program()!=null)label=Component.translatable("hemomancy.antecedent.cylinder.title."+menu.machine.program().id()).getString();
         g.drawString(font,font.plainSubstrByWidth(label,160),8,16,0xFFCC8888,false);
     }
+    @Override public void removed(){if(spectrograph!=null){spectrograph.close();spectrograph=null;}super.removed();}
     @Override public boolean mouseClicked(double x,double y,int button){
         if(button==0 && x>=leftPos+8 && x<leftPos+168 && y>=topPos+67 && y<topPos+109){int i=offset+(int)(y-topPos-67)/14;if(i<menu.choices.size())selected=i;return true;}
         return super.mouseClicked(x,y,button);
@@ -89,7 +95,7 @@ public class ClairaudiographScreen extends AbstractContainerScreen<Clairaudiogra
         }
         if(x>=leftPos+8 && x<leftPos+168 && y>=topPos+16 && y<topPos+25){
             var recording=menu.machine.recording();
-            g.renderTooltip(font,Component.literal(recording==null?menu.source:recording.source()+" / "+recording.sound()),x,y);
+            g.renderTooltip(font,menu.machine.program()!=null?Component.translatable("hemomancy.antecedent.cylinder.title."+menu.machine.program().id()):Component.literal(recording==null?menu.source:recording.source()+" / "+recording.sound()),x,y);
         }
     }
 }

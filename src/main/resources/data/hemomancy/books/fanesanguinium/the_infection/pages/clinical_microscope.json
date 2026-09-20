@@ -1,0 +1,9 @@
+{
+  "type": "hutoslib:page",
+  "ordinality": 20,
+  "texture": "hemomancy:textures/gui/guide/page.png",
+  "title": "Hematic Microscopy",
+  "subtitle": "Clinical blood study",
+  "text": "Hold that filled creature vial where I can see it. Blood differs in more than quantity. I have written the Hematic Microscope recipe into your notes. Hold the microscope in your main hand and one filled vial in your offhand, then hold Use for two seconds. Observe the tendencies and biological properties before deciding what to do with them. Return after a successful examination.",
+  "icon": "hemomancy:hematic_microscope"
+}

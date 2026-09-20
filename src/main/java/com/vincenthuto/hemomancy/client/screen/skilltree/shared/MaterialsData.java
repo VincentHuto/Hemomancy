@@ -43,6 +43,22 @@ public final class MaterialsData {
 
     private static List<MaterialEntry> buildBloodEntries() {
         List<MaterialEntry> list = new ArrayList<>();
+        list.add(new MaterialEntry("hematic_microscope", "Hematic Microscope",
+                "Alchemist: main-hand microscope, offhand sample; hold Use for two seconds.",
+                "Clinical Tools", () -> new ItemStack(ItemInit.hematic_microscope.get())));
+        list.add(new MaterialEntry("phlebotomists_cabinet", "Phlebotomist's Cabinet",
+                "Alchemist: nine specimen identities, 64 component-identical full vials per cell.",
+                "Clinical Tools", () -> new ItemStack(BlockInit.phlebotomists_cabinet.get())));
+        list.add(new MaterialEntry("phlebotomists_field_case", "Phlebotomist's Field Case",
+                "Artificer: place to open; close before pickup. Nine identities, sixteen vials per cell.",
+                "Clinical Tools", () -> new ItemStack(BlockInit.phlebotomists_field_case.get())));
+        list.add(new MaterialEntry("clairaudiograph", "Clairaudiograph",
+                "Mnemonist: carve a creature call from a filled vial into a blank Ambergris Cylinder.",
+                "Clinical Tools", () -> new ItemStack(BlockInit.clairaudiograph.get())));
+        list.add(new MaterialEntry("ambergris_cylinder", "Ambergris Cylinder",
+                "A blank recording medium; carved cylinders retain a creature's expression.",
+                "Clinical Tools", () -> new ItemStack(ItemInit.ambergris_cylinder.get())));
+
 
         // ── Functional Blocks ──
                                                                                                                                                                                                                                                                                 list.add(new MaterialEntry("dendritic_distributor", "Dendritic Distributor",
@@ -68,7 +84,7 @@ public final class MaterialsData {
                                                                                                                                                                                                                                                                                 list.add(new MaterialEntry("vial_centrifuge", "Vial Centrifuge",
                 "Separates blood samples into component enzymes.",
                 "Functional Blocks", () -> new ItemStack(BlockInit.vial_centrifuge.get()),
-                true, UnlockPredicate.minDegree(2)));
+                true, UnlockPredicate.minDegree(1)));
 
                                                                                                                                                                                                                                                                                 list.add(new MaterialEntry("earthen_vein", "Earthen Vein",
                 "A living conduit block that transports blood volume.",
@@ -436,7 +452,7 @@ public final class MaterialsData {
                                                                                                                                                                                                                                                                                 list.add(new MaterialEntry("vivacious_enzyme", "Vivacious Enzyme",
                 "Animus-aligned enzyme. Boosts vitality effects.",
                 "Enzymes", () -> new ItemStack(ItemInit.vivacious_enzyme.get()),
-                true, UnlockPredicate.minDegree(2)));
+                true, UnlockPredicate.minDegree(1)));
 
                                                                                                                                                                                                                                                                                 list.add(new MaterialEntry("ruinous_enzyme", "Ruinous Enzyme",
                 "Mortem-aligned enzyme. Enhances destructive abilities.",
@@ -505,9 +521,9 @@ public final class MaterialsData {
                 true, UnlockPredicate.minDegree(5)));
 
                                                                                                                                                                                                                                                                                 list.add(new MaterialEntry("living_syringe", "Living Syringe",
-                "Extracts and injects blood with surgical precision.",
+                "Collects creature blood into the loaded eight-vial rack. Learn microscopy and vial injection from the Alchemist.",
                 "Equipment", () -> new ItemStack(ItemInit.living_syringe.get()),
-                true, UnlockPredicate.minDegree(2)));
+                true, UnlockPredicate.minDegree(1)));
 
                                                                                                                                                                                                                                                                                 list.add(new MaterialEntry("hematic_iron_sword", "Hematic Iron Sword",
                 "A sword forged from hematic iron. Bleeds the target on a clean strike.",
@@ -567,7 +583,7 @@ public final class MaterialsData {
                                                                                                                                                                                                                                                                                 list.add(new MaterialEntry("vial_rack", "Vial Rack",
                 "Holds multiple bloody vials in organised storage.",
                 "Containers", () -> new ItemStack(ItemInit.vial_rack.get()),
-                true, UnlockPredicate.minDegree(2)));
+                true, UnlockPredicate.minDegree(1)));
 
         // ── Plants ──
                                                                                                                                                                                                                                                                                 list.add(new MaterialEntry("bleeding_heart", "Bleeding Heart",

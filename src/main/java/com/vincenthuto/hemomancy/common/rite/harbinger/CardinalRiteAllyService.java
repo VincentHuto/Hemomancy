@@ -2,7 +2,6 @@ package com.vincenthuto.hemomancy.common.rite.harbinger;
 
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.Bloodline;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodlineSavedData;
-import com.vincenthuto.hemomancy.common.event.worldevent.FoundingFaneSavedData;
 import com.vincenthuto.hemomancy.common.recipe.CardinalRiteRecipe;
 import com.vincenthuto.hemomancy.common.rite.ActiveCardinalRite;
 import com.vincenthuto.hemomancy.common.rite.CardinalRiteAllyRole;
@@ -15,7 +14,6 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.Mob;
-import net.minecraft.world.level.portal.DimensionTransition;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 
@@ -23,8 +21,7 @@ import java.util.Map;
 import java.util.UUID;
 
 /**
- * Server-side bloodline participation rules. Roles are optional assistance:
- * the caster remains able to complete every ceremony alone.
+ * Server-side bloodline participation and recipe-defined helper requirements.
  */
 public final class CardinalRiteAllyService {
 	private CardinalRiteAllyService() {
@@ -41,9 +38,16 @@ public final class CardinalRiteAllyService {
 		if (rite.getPhase() != CardinalRitePhase.INSCRIPTION || rite.getDegree() < 5
 				|| rite.getPlayerUUID().equals(player.getUUID())) return false;
 		CardinalRiteAllyRole role = roleAt(level, rite, clicked);
-		if (role == null) return false;
+		if (role == null || !supportsRole(CardinalRiteRecipe.getRiteByLocation(level, rite.getRecipeId()), role)) return false;
 		Bloodline line = bloodline(level, rite);
 		if (line == null || !line.hasMember(player.getUUID())) return false;
+        for (var entry : rite.getAllyRoles().entrySet()) {
+            if (entry.getValue() != role || entry.getKey().equals(player.getUUID())) continue;
+            var resident = CardinalRiteNpcTravel.find(level, entry.getKey());
+            if (resident == null || !line.hasNpcMember(entry.getKey())
+                    || !CardinalRiteNpcTravel.returnHome(level, resident)) return true;
+            rite.removeAlly(entry.getKey());
+        }
 		int quota = helperQuota(level, rite);
 		if (!rite.getAllyRoles().containsKey(player.getUUID()) && rite.getAllyRoles().size() >= quota) {
 			player.displayClientMessage(Component.literal("Every bloodline station is already occupied.")
@@ -65,6 +69,7 @@ public final class CardinalRiteAllyService {
 
 	public static boolean tryAssignNpc(ServerLevel level, ServerPlayer caster, ActiveCardinalRite rite,
 			Entity npc) {
+        if (!com.vincenthuto.hemomancy.common.succession.SuccessionResidents.helper(npc)) return false;
 		if (rite.getPhase() != CardinalRitePhase.INSCRIPTION || rite.getDegree() < 5
 				|| !rite.getPlayerUUID().equals(caster.getUUID())) return false;
 		Bloodline line = bloodline(level, rite);
@@ -80,13 +85,21 @@ public final class CardinalRiteAllyService {
 					.withStyle(ChatFormatting.DARK_RED), true);
 			return true;
 		}
-		CardinalRiteAllyRole next = nextRole(rite.getAllyRoles().get(npc.getUUID()));
+        if (!rite.getAllyRoles().containsKey(npc.getUUID()) && CardinalRiteNpcTravel.assigned(level, npc.getUUID())) return false;
+        var recipe = CardinalRiteRecipe.getRiteByLocation(level, rite.getRecipeId());
+        CardinalRiteAllyRole next = nextRole(rite.getAllyRoles().get(npc.getUUID()));
+        for (int i = 0; i < CardinalRiteAllyRole.values().length; i++) {
+            if (supportsRole(recipe, next) && !rite.getAllyRoles().containsValue(next)) break;
+            next = nextRole(next);
+        }
+        if (!supportsRole(recipe, next) || rite.getAllyRoles().containsValue(next)) return true;
 		if (!(npc instanceof Mob mob) || !safeStation(level, mob, station(level, rite, next))) {
 			caster.displayClientMessage(Component.literal(
 					"That rite station has no safe footing for an ally.")
 					.withStyle(ChatFormatting.DARK_RED), true);
 			return true;
 		}
+		CardinalRiteNpcTravel.remember(level, rite, mob);
 		rite.assignAlly(npc.getUUID(), next);
 		directToStation(level, rite, mob, next);
 		caster.displayClientMessage(Component.literal("Assigned " + npc.getName().getString() + " as "
@@ -132,53 +145,51 @@ public final class CardinalRiteAllyService {
 			if (line.isNpcBloodspent(ally, level.getGameTime())) return false;
 			Entity entity = level.getEntity(ally);
 			CardinalRiteAllyRole role = rite.getAllyRoles().get(ally);
-			if (!(entity instanceof Mob mob) || role == null) return false;
+			if (!(entity instanceof Mob mob) || role == null
+                    || !com.vincenthuto.hemomancy.common.succession.SuccessionResidents.helper(entity)) return false;
 			BlockPos station = station(level, rite, role);
 			boolean safe = safeStation(level, mob, station);
 			return CardinalRiteNpcStationRules.participates(mob.position(), station, safe);
 		}
-		return level.getServer().getPlayerList().getPlayer(ally) != null;
+        var player = level.getServer().getPlayerList().getPlayer(ally);
+        var role = rite.getAllyRoles().get(ally);
+        return player != null && player.isAlive() && !player.isSpectator() && player.level() == level
+                && line.hasMember(ally) && role != null
+                && CardinalRiteNpcStationRules.participates(player.position(), station(level, rite, role), true);
 	}
 
 	public static void maintainNpcStations(ServerLevel level, ActiveCardinalRite rite) {
 		Bloodline line = bloodline(level, rite);
-		if (line == null) return;
+        if (line == null || rite.isComplete() || rite.getPhase() == CardinalRitePhase.COLLAPSED) return;
+        if (CardinalRiteNpcTravel.gathering(rite)) {
+            for (var ally : rite.getAllyRoles().keySet()) {
+                if (!line.hasNpcMember(ally) && !isAvailable(level, rite, ally)) rite.removeAlly(ally);
+            }
+            CardinalRiteNpcTravel.gather(level, rite, line);
+        }
 		for (var assignment : rite.getAllyRoles().entrySet()) {
 			if (!line.hasNpcMember(assignment.getKey())) continue;
 			Entity entity = level.getEntity(assignment.getKey());
-			if (entity instanceof Mob mob) {
+			if (entity instanceof Mob mob && com.vincenthuto.hemomancy.common.succession.SuccessionResidents.helper(entity)) {
 				directToStation(level, rite, mob, assignment.getValue());
 			}
 		}
 	}
 
-	public static void returnNpcAlliesToFane(ServerLevel riteLevel, ActiveCardinalRite rite) {
-		Bloodline line = bloodline(riteLevel, rite);
-		if (line == null) return;
-		ServerLevel faneLevel = findFaneLevel(riteLevel, line.getLeaderUUID());
-		if (faneLevel == null) return;
-		BlockPos recallPoint = FoundingFaneSavedData.get(faneLevel).getRecallPoint(line.getLeaderUUID());
-		if (recallPoint == null) return;
-		Vec3 destination = CardinalRiteNpcStationRules.faneReturnPosition(recallPoint);
-		for (UUID npcId : CardinalRiteNpcStationRules.assignedNpcAllies(
-				rite.getAllyRoles(), line::hasNpcMember)) {
-			CardinalRiteAllyRole role = rite.getAllyRoles().get(npcId);
-			BlockPos assignedStation = role == null ? null : station(riteLevel, rite, role);
-			if (assignedStation != null) riteLevel.getChunkAt(assignedStation);
-			Mob npc = findLoadedNpc(riteLevel, npcId);
-			if (npc == null) continue;
-			npc.getNavigation().stop();
-			npc.stopRiding();
-			npc.setDeltaMovement(Vec3.ZERO);
-			npc.fallDistance = 0.0F;
-			if (npc.level() == faneLevel) {
-				npc.teleportTo(destination.x, destination.y, destination.z);
-			} else {
-				npc.changeDimension(new DimensionTransition(faneLevel, destination, Vec3.ZERO,
-						npc.getYRot(), npc.getXRot(), DimensionTransition.DO_NOTHING));
-			}
-		}
-	}
+    public static void returnNpcAlliesToFane(ServerLevel level, ActiveCardinalRite rite) {
+        for (var id : rite.getAllyRoles().keySet()) {
+            if (!com.vincenthuto.hemomancy.common.succession.SuccessionSavedData.get(level).residents.containsKey(id)) continue;
+            var role = rite.getAllyRoles().get(id);
+            var position = station(level, rite, role);
+            if (position != null) level.getChunkAt(position);
+            var npc = CardinalRiteNpcTravel.find(level, id);
+            if (npc != null) {
+                CardinalRiteNpcTravel.remember(level, rite, npc);
+                CardinalRiteNpcTravel.returnHome(level, npc);
+            }
+            rite.removeAlly(id);
+        }
+    }
 
 	public static boolean hasRequiredHelperCount(int available, int required) {
 		return Math.max(0, available) >= Math.max(0, required);
@@ -209,25 +220,10 @@ public final class CardinalRiteAllyService {
 		return BloodlineSavedData.get(level.getServer().overworld()).getBloodlineForPlayer(rite.getPlayerUUID());
 	}
 
-	private static ServerLevel findFaneLevel(ServerLevel riteLevel, UUID owner) {
-		if (FoundingFaneSavedData.get(riteLevel).hasFane(owner)) return riteLevel;
-		ServerLevel overworld = riteLevel.getServer().overworld();
-		if (FoundingFaneSavedData.get(overworld).hasFane(owner)) return overworld;
-		for (ServerLevel level : riteLevel.getServer().getAllLevels()) {
-			if (FoundingFaneSavedData.get(level).hasFane(owner)) return level;
-		}
-		return null;
-	}
-
-	private static Mob findLoadedNpc(ServerLevel riteLevel, UUID npcId) {
-		Entity local = riteLevel.getEntity(npcId);
-		if (local instanceof Mob mob) return mob;
-		for (ServerLevel level : riteLevel.getServer().getAllLevels()) {
-			Entity entity = level.getEntity(npcId);
-			if (entity instanceof Mob mob) return mob;
-		}
-		return null;
-	}
+    static boolean supportsRole(CardinalRiteRecipe recipe, CardinalRiteAllyRole role) {
+        return recipe != null && recipe.getCeremony() != null
+                && recipe.getCeremony().helperRoles().contains(role.name().toLowerCase(java.util.Locale.ROOT));
+    }
 
 	private static int helperQuota(ServerLevel level, ActiveCardinalRite rite) {
 		CardinalRiteRecipe recipe = CardinalRiteRecipe.getRiteByLocation(level, rite.getRecipeId());
@@ -276,7 +272,7 @@ public final class CardinalRiteAllyService {
 		return offset == null ? null : rite.getCenterPos().offset(offset);
 	}
 
-	private static boolean safeStation(ServerLevel level, Mob npc, BlockPos station) {
+	static boolean safeStation(ServerLevel level, Mob npc, BlockPos station) {
 		if (station == null) return false;
 		boolean loaded = level.hasChunkAt(station);
 		boolean sturdySupport = loaded && level.getBlockState(station.below())

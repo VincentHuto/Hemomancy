@@ -1,0 +1,10 @@
+{
+  "tendencies": [
+    "ferric",
+    "lux"
+  ],
+  "properties": [
+    "hemomancy:blood_properties/ender"
+  ],
+  "requires_living_syringe": true
+}

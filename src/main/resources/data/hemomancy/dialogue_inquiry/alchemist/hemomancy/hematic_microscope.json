@@ -1,7 +1,15 @@
 {
-  "lines": [
-    "hemomancy.alchemist.item_inquiry.microscope.line1",
-    "hemomancy.alchemist.item_inquiry.microscope.line2",
-    "hemomancy.alchemist.item_inquiry.microscope.line3"
+  "conditions": [
+    {
+      "max_degree": 0,
+      "lines": [
+        "hemomancy.clinical.inquiry.later"
+      ]
+    },
+    {
+      "lines": [
+        "hemomancy.clinical.next.show_vial"
+      ]
+    }
   ]
 }

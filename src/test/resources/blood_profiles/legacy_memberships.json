@@ -1,0 +1,639 @@
+{
+  "hemomancy:blood_lantern_jelly": {
+    "tendencies": [
+      "animus"
+    ],
+    "properties": []
+  },
+  "hemomancy:brined_votary": {
+    "tendencies": [
+      "mortem"
+    ],
+    "properties": []
+  },
+  "hemomancy:chalybeate_snail": {
+    "tendencies": [
+      "ferric"
+    ],
+    "properties": []
+  },
+  "hemomancy:crimson_doe": {
+    "tendencies": [
+      "animus"
+    ],
+    "properties": []
+  },
+  "hemomancy:fungling": {
+    "tendencies": [],
+    "properties": [
+      "hemomancy:fungal"
+    ]
+  },
+  "hemomancy:hematic_burrower": {
+    "tendencies": [
+      "ferric"
+    ],
+    "properties": []
+  },
+  "hemomancy:hemojelly": {
+    "tendencies": [
+      "animus"
+    ],
+    "properties": []
+  },
+  "hemomancy:phlegethontic_bombardier": {
+    "tendencies": [
+      "flammeus"
+    ],
+    "properties": []
+  },
+  "hemomancy:prism_cuttle": {
+    "tendencies": [
+      "ductilis"
+    ],
+    "properties": []
+  },
+  "hemomancy:scarlet_serpent": {
+    "tendencies": [
+      "ductilis",
+      "flammeus"
+    ],
+    "properties": []
+  },
+  "hemomancy:venom_rib_centipede": {
+    "tendencies": [
+      "ferric"
+    ],
+    "properties": []
+  },
+  "hemomancy:venous_strider": {
+    "tendencies": [
+      "animus"
+    ],
+    "properties": []
+  },
+  "minecraft:allay": {
+    "tendencies": [
+      "animus",
+      "lux"
+    ],
+    "properties": [
+      "hemomancy:blood_properties/flying"
+    ]
+  },
+  "minecraft:axolotl": {
+    "tendencies": [
+      "animus"
+    ],
+    "properties": [
+      "hemomancy:blood_properties/aquatic"
+    ]
+  },
+  "minecraft:bat": {
+    "tendencies": [
+      "tenebris"
+    ],
+    "properties": [
+      "hemomancy:blood_properties/flying"
+    ]
+  },
+  "minecraft:bee": {
+    "tendencies": [
+      "animus"
+    ],
+    "properties": [
+      "hemomancy:blood_properties/arthropod",
+      "hemomancy:blood_properties/flying",
+      "hemomancy:blood_properties/venomous"
+    ]
+  },
+  "minecraft:blaze": {
+    "tendencies": [
+      "flammeus",
+      "lux"
+    ],
+    "properties": [
+      "hemomancy:blood_properties/flying",
+      "hemomancy:blood_properties/nether_native"
+    ]
+  },
+  "minecraft:bogged": {
+    "tendencies": [],
+    "properties": [
+      "hemomancy:blood_properties/undead"
+    ]
+  },
+  "minecraft:camel": {
+    "tendencies": [
+      "animus"
+    ],
+    "properties": []
+  },
+  "minecraft:cat": {
+    "tendencies": [
+      "animus"
+    ],
+    "properties": []
+  },
+  "minecraft:cave_spider": {
+    "tendencies": [],
+    "properties": [
+      "hemomancy:blood_properties/arthropod",
+      "hemomancy:blood_properties/venomous"
+    ]
+  },
+  "minecraft:chicken": {
+    "tendencies": [
+      "animus",
+      "ductilis"
+    ],
+    "properties": []
+  },
+  "minecraft:cod": {
+    "tendencies": [
+      "congeatio"
+    ],
+    "properties": [
+      "hemomancy:blood_properties/aquatic"
+    ]
+  },
+  "minecraft:cow": {
+    "tendencies": [
+      "animus"
+    ],
+    "properties": []
+  },
+  "minecraft:creeper": {
+    "tendencies": [
+      "ductilis"
+    ],
+    "properties": [
+      "hemomancy:blood_properties/explosive"
+    ]
+  },
+  "minecraft:dolphin": {
+    "tendencies": [
+      "animus"
+    ],
+    "properties": [
+      "hemomancy:blood_properties/aquatic"
+    ]
+  },
+  "minecraft:donkey": {
+    "tendencies": [
+      "animus"
+    ],
+    "properties": []
+  },
+  "minecraft:drowned": {
+    "tendencies": [
+      "congeatio"
+    ],
+    "properties": [
+      "hemomancy:blood_properties/aquatic",
+      "hemomancy:blood_properties/undead"
+    ]
+  },
+  "minecraft:elder_guardian": {
+    "tendencies": [
+      "congeatio"
+    ],
+    "properties": [
+      "hemomancy:blood_properties/aquatic"
+    ]
+  },
+  "minecraft:ender_dragon": {
+    "tendencies": [],
+    "properties": [
+      "hemomancy:blood_properties/ender",
+      "hemomancy:blood_properties/flying"
+    ]
+  },
+  "minecraft:enderman": {
+    "tendencies": [
+      "tenebris"
+    ],
+    "properties": [
+      "hemomancy:blood_properties/ender"
+    ]
+  },
+  "minecraft:endermite": {
+    "tendencies": [
+      "tenebris"
+    ],
+    "properties": [
+      "hemomancy:blood_properties/arthropod",
+      "hemomancy:blood_properties/burrowing",
+      "hemomancy:blood_properties/ender"
+    ]
+  },
+  "minecraft:evoker": {
+    "tendencies": [
+      "ferric"
+    ],
+    "properties": []
+  },
+  "minecraft:fox": {
+    "tendencies": [
+      "ductilis"
+    ],
+    "properties": []
+  },
+  "minecraft:frog": {
+    "tendencies": [
+      "animus"
+    ],
+    "properties": []
+  },
+  "minecraft:ghast": {
+    "tendencies": [
+      "flammeus"
+    ],
+    "properties": [
+      "hemomancy:blood_properties/flying",
+      "hemomancy:blood_properties/nether_native"
+    ]
+  },
+  "minecraft:glow_squid": {
+    "tendencies": [
+      "congeatio",
+      "lux"
+    ],
+    "properties": [
+      "hemomancy:blood_properties/aquatic"
+    ]
+  },
+  "minecraft:goat": {
+    "tendencies": [
+      "ductilis"
+    ],
+    "properties": []
+  },
+  "minecraft:guardian": {
+    "tendencies": [
+      "congeatio"
+    ],
+    "properties": [
+      "hemomancy:blood_properties/aquatic"
+    ]
+  },
+  "minecraft:hoglin": {
+    "tendencies": [
+      "flammeus"
+    ],
+    "properties": [
+      "hemomancy:blood_properties/nether_native"
+    ]
+  },
+  "minecraft:horse": {
+    "tendencies": [
+      "animus"
+    ],
+    "properties": []
+  },
+  "minecraft:husk": {
+    "tendencies": [
+      "mortem"
+    ],
+    "properties": [
+      "hemomancy:blood_properties/undead"
+    ]
+  },
+  "minecraft:illusioner": {
+    "tendencies": [
+      "ductilis"
+    ],
+    "properties": []
+  },
+  "minecraft:iron_golem": {
+    "tendencies": [
+      "ferric"
+    ],
+    "properties": []
+  },
+  "minecraft:llama": {
+    "tendencies": [
+      "animus"
+    ],
+    "properties": []
+  },
+  "minecraft:magma_cube": {
+    "tendencies": [
+      "flammeus"
+    ],
+    "properties": [
+      "hemomancy:blood_properties/nether_native"
+    ]
+  },
+  "minecraft:mooshroom": {
+    "tendencies": [
+      "animus"
+    ],
+    "properties": []
+  },
+  "minecraft:mule": {
+    "tendencies": [
+      "animus"
+    ],
+    "properties": []
+  },
+  "minecraft:ocelot": {
+    "tendencies": [
+      "animus"
+    ],
+    "properties": []
+  },
+  "minecraft:panda": {
+    "tendencies": [
+      "animus"
+    ],
+    "properties": []
+  },
+  "minecraft:parrot": {
+    "tendencies": [
+      "animus",
+      "lux"
+    ],
+    "properties": [
+      "hemomancy:blood_properties/flying"
+    ]
+  },
+  "minecraft:phantom": {
+    "tendencies": [
+      "lux",
+      "mortem",
+      "tenebris"
+    ],
+    "properties": [
+      "hemomancy:blood_properties/flying",
+      "hemomancy:blood_properties/undead"
+    ]
+  },
+  "minecraft:pig": {
+    "tendencies": [
+      "animus"
+    ],
+    "properties": []
+  },
+  "minecraft:piglin": {
+    "tendencies": [
+      "flammeus"
+    ],
+    "properties": [
+      "hemomancy:blood_properties/nether_native"
+    ]
+  },
+  "minecraft:piglin_brute": {
+    "tendencies": [
+      "flammeus"
+    ],
+    "properties": [
+      "hemomancy:blood_properties/nether_native"
+    ]
+  },
+  "minecraft:pillager": {
+    "tendencies": [
+      "ferric"
+    ],
+    "properties": []
+  },
+  "minecraft:polar_bear": {
+    "tendencies": [
+      "congeatio"
+    ],
+    "properties": [
+      "hemomancy:blood_properties/cold_native"
+    ]
+  },
+  "minecraft:pufferfish": {
+    "tendencies": [],
+    "properties": [
+      "hemomancy:blood_properties/venomous"
+    ]
+  },
+  "minecraft:rabbit": {
+    "tendencies": [
+      "animus",
+      "ductilis"
+    ],
+    "properties": []
+  },
+  "minecraft:ravager": {
+    "tendencies": [
+      "ferric"
+    ],
+    "properties": []
+  },
+  "minecraft:salmon": {
+    "tendencies": [
+      "congeatio"
+    ],
+    "properties": [
+      "hemomancy:blood_properties/aquatic"
+    ]
+  },
+  "minecraft:sheep": {
+    "tendencies": [
+      "animus"
+    ],
+    "properties": []
+  },
+  "minecraft:shulker": {
+    "tendencies": [
+      "ferric",
+      "lux"
+    ],
+    "properties": [
+      "hemomancy:blood_properties/ender"
+    ]
+  },
+  "minecraft:silverfish": {
+    "tendencies": [
+      "ductilis"
+    ],
+    "properties": [
+      "hemomancy:blood_properties/arthropod",
+      "hemomancy:blood_properties/burrowing"
+    ]
+  },
+  "minecraft:skeleton": {
+    "tendencies": [
+      "mortem"
+    ],
+    "properties": [
+      "hemomancy:blood_properties/undead"
+    ]
+  },
+  "minecraft:skeleton_horse": {
+    "tendencies": [
+      "mortem"
+    ],
+    "properties": [
+      "hemomancy:blood_properties/undead"
+    ]
+  },
+  "minecraft:snow_golem": {
+    "tendencies": [
+      "congeatio"
+    ],
+    "properties": [
+      "hemomancy:blood_properties/cold_native"
+    ]
+  },
+  "minecraft:spider": {
+    "tendencies": [],
+    "properties": [
+      "hemomancy:blood_properties/arthropod"
+    ]
+  },
+  "minecraft:squid": {
+    "tendencies": [
+      "congeatio"
+    ],
+    "properties": [
+      "hemomancy:blood_properties/aquatic"
+    ]
+  },
+  "minecraft:stray": {
+    "tendencies": [
+      "congeatio"
+    ],
+    "properties": [
+      "hemomancy:blood_properties/cold_native",
+      "hemomancy:blood_properties/undead"
+    ]
+  },
+  "minecraft:strider": {
+    "tendencies": [
+      "flammeus"
+    ],
+    "properties": [
+      "hemomancy:blood_properties/nether_native"
+    ]
+  },
+  "minecraft:tadpole": {
+    "tendencies": [
+      "congeatio"
+    ],
+    "properties": [
+      "hemomancy:blood_properties/aquatic"
+    ]
+  },
+  "minecraft:trader_llama": {
+    "tendencies": [
+      "animus"
+    ],
+    "properties": []
+  },
+  "minecraft:tropical_fish": {
+    "tendencies": [
+      "congeatio"
+    ],
+    "properties": [
+      "hemomancy:blood_properties/aquatic"
+    ]
+  },
+  "minecraft:turtle": {
+    "tendencies": [
+      "congeatio"
+    ],
+    "properties": [
+      "hemomancy:blood_properties/aquatic"
+    ]
+  },
+  "minecraft:vex": {
+    "tendencies": [
+      "ductilis",
+      "mortem",
+      "tenebris"
+    ],
+    "properties": [
+      "hemomancy:blood_properties/flying"
+    ]
+  },
+  "minecraft:villager": {
+    "tendencies": [
+      "animus"
+    ],
+    "properties": []
+  },
+  "minecraft:vindicator": {
+    "tendencies": [
+      "ferric"
+    ],
+    "properties": []
+  },
+  "minecraft:warden": {
+    "tendencies": [
+      "ferric"
+    ],
+    "properties": []
+  },
+  "minecraft:witch": {
+    "tendencies": [
+      "tenebris"
+    ],
+    "properties": []
+  },
+  "minecraft:wither": {
+    "tendencies": [
+      "flammeus",
+      "mortem",
+      "tenebris"
+    ],
+    "properties": [
+      "hemomancy:blood_properties/undead"
+    ]
+  },
+  "minecraft:wither_skeleton": {
+    "tendencies": [
+      "mortem"
+    ],
+    "properties": [
+      "hemomancy:blood_properties/nether_native",
+      "hemomancy:blood_properties/undead"
+    ]
+  },
+  "minecraft:zoglin": {
+    "tendencies": [
+      "flammeus",
+      "mortem"
+    ],
+    "properties": [
+      "hemomancy:blood_properties/undead"
+    ]
+  },
+  "minecraft:zombie": {
+    "tendencies": [
+      "mortem"
+    ],
+    "properties": [
+      "hemomancy:blood_properties/undead"
+    ]
+  },
+  "minecraft:zombie_horse": {
+    "tendencies": [
+      "mortem"
+    ],
+    "properties": [
+      "hemomancy:blood_properties/undead"
+    ]
+  },
+  "minecraft:zombie_villager": {
+    "tendencies": [
+      "mortem"
+    ],
+    "properties": [
+      "hemomancy:blood_properties/undead"
+    ]
+  },
+  "minecraft:zombified_piglin": {
+    "tendencies": [
+      "mortem"
+    ],
+    "properties": [
+      "hemomancy:blood_properties/nether_native",
+      "hemomancy:blood_properties/undead"
+    ]
+  }
+}

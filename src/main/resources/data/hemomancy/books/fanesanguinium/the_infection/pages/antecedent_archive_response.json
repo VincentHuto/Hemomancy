@@ -1,0 +1,9 @@
+{
+  "type": "hutoslib:page",
+  "ordinality": 60,
+  "texture": "hemomancy:textures/gui/guide/page.png",
+  "title": "The Vigil Beneath",
+  "subtitle": "The Antecedent Inquiry",
+  "text": "Ordinary noise did nothing to the ancient material. During the unresolved recording, its inclusions formed a regular shape pointing upward. It recognized something beyond the local sculk. The cause is still a hypothesis. Bring this evidence to the Vicar.",
+  "icon": "hemomancy:hematic_microscope"
+}

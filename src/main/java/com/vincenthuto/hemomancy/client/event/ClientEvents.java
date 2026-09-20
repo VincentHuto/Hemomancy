@@ -613,6 +613,7 @@ public class ClientEvents {
     @SubscribeEvent
     public static void onClientPlayerLogout(net.neoforged.neoforge.client.event.ClientPlayerNetworkEvent.LoggingOut event) {
         com.vincenthuto.hemomancy.common.item.harbinger.BloodInjectionData.clearClient();
+        com.vincenthuto.hemomancy.common.item.harbinger.BloodProfileData.clearClient();
         ClientManipulationCooldowns.clear();
         // HutosLib now retains read tracker state across disconnect/reload.
         FaneBoundaryClientData.clear();
@@ -710,6 +711,7 @@ public class ClientEvents {
             MemoryThreadLineRenderer.render(event.getPoseStack(), partialTick);
             HeartyCompassTendrilRenderer.render(event.getPoseStack(), partialTick);
             VeinSpiderCourierRenderer.render(event.getPoseStack(), partialTick);
+            com.vincenthuto.hemomancy.client.render.entity.npc.SuccessionBrazierLabels.renderWorld(event.getPoseStack());
         }
     }
 
@@ -979,6 +981,7 @@ public class ClientEvents {
                     SomaticLoomRenderer::new);
             BlockEntityRenderers.register(BlockEntityInit.earthen_vein.get(), EarthenVeinRenderer::new);
             BlockEntityRenderers.register(BlockEntityInit.mnemonic_reliquary.get(), MnemonicReliquaryRenderer::new);
+            BlockEntityRenderers.register(BlockEntityInit.antecedent_vessel.get(), com.vincenthuto.hemomancy.client.render.tile.harbinger.functional.AntecedentVesselRenderer::new);
             BlockEntityRenderers.register(BlockEntityInit.clairaudiograph.get(), com.vincenthuto.hemomancy.client.render.tile.harbinger.functional.ClairaudiographRenderer::new);
             BlockEntityRenderers.register(BlockEntityInit.phlebotomists_cabinet.get(), PhlebotomistsCabinetRenderer::new);
             BlockEntityRenderers.register(BlockEntityInit.phlebotomists_field_case.get(), PhlebotomistsFieldCaseRenderer::new);
@@ -1012,6 +1015,8 @@ public class ClientEvents {
 
                 ItemProperties.register(ItemInit.bloody_vial.get(), Hemomancy.rloc("state"),
                         (stack, world, entity, seed) -> com.vincenthuto.hemomancy.common.item.harbinger.BloodSampleData.isFilled(stack) ? 1.0F : 0.0F);
+                ItemProperties.register(ItemInit.ahaematic_colloid.get(),Hemomancy.rloc("colloid_motion"),
+                        (stack,world,entity,seed)->com.vincenthuto.hemomancy.common.antecedent.AhaematicSample.is(stack)?com.vincenthuto.hemomancy.client.sound.AntecedentClientEffects.sampleFrame():0);
 
                 ItemProperties.register(ItemInit.vial_rack.get(), Hemomancy.rloc("state"),
                         (ItemStack stack, ClientLevel world, LivingEntity ent, int seed) -> {

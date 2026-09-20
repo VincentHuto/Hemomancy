@@ -1,0 +1,9 @@
+{
+  "type": "hutoslib:page",
+  "ordinality": 21,
+  "texture": "hemomancy:textures/gui/guide/page.png",
+  "title": "Borrowed Physiology",
+  "subtitle": "Clinical blood study",
+  "text": "You have seen what the specimen carries. Now you may borrow its physiology: hold Use with a filled creature Blood Vial for 0.8 seconds to inject it. The blood is consumed; the empty vessel remains. Read the identified response first. Benefits are temporary, drawbacks may accompany them, and Transfusion Saturation prevents another injection for twenty seconds. The microscope does not consume your sample.",
+  "icon": "hemomancy:bloody_vial"
+}

@@ -1,6 +1,7 @@
 package com.vincenthuto.hemomancy.gametest;
 
 import com.vincenthuto.hemomancy.common.init.ItemInit;
+import com.vincenthuto.hemomancy.common.entity.boss.saint.EnumSaintType;
 import com.vincenthuto.hemomancy.common.network.PacketHematicMicroscopeViewing;
 import com.vincenthuto.hemomancy.common.network.PacketHematicMicroscopeViewing.Phase;
 import com.vincenthuto.hemomancy.common.item.harbinger.*;
@@ -138,10 +139,49 @@ public final class HematicMicroscopeGameTests {
     }
 
     @GameTest(template = "empty")
+    public static void hemolymphAndEverySaintSyringeFollowTheExaminationLifecycle(GameTestHelper h) {
+        var samples = new java.util.ArrayList<ItemStack>();
+        samples.add(new ItemStack(ItemInit.cleansing_hemolymph.get()));
+        for (var saint : EnumSaintType.values()) {
+            var syringe = new ItemStack(ItemInit.consecrated_syringe.get());
+            var tag = new CompoundTag();
+            tag.putString(ConsecratedSyringeItem.TAG_SAINT_TYPE, saint.name());
+            tag.putString("test_marker", "preserve");
+            syringe.set(DataComponents.CUSTOM_DATA, CustomData.of(tag));
+            var profile = BloodSampleData.profile(syringe, false);
+            h.assertTrue(profile.tendencies().contains(saint.getPrimaryTendency())
+                    && profile.tendencies().contains(saint.getSecondaryTendency()),
+                    "Saint profile lost its canonical tendencies: " + saint);
+            samples.add(syringe);
+        }
+        for (var sample : samples) {
+            h.assertTrue(BloodSampleData.isSpecimenVessel(sample) && BloodSampleData.isFilled(sample)
+                    && BloodSampleData.examinable(sample), "Special specimen was rejected");
+            var player = examining(h, sample);
+            for (int i = 0; i < 40; i++) player.tick();
+            h.assertTrue(BloodSampleData.identified(sample), "Special specimen did not identify at 40 ticks");
+            h.assertTrue(sample.getCount() == 1 && player.getOffhandItem() == sample,
+                    "Special specimen was consumed or replaced");
+            if (sample.getItem() instanceof ConsecratedSyringeItem)
+                h.assertTrue(sample.get(DataComponents.CUSTOM_DATA).copyTag().getString("test_marker").equals("preserve"),
+                        "Saint syringe lost unrelated custom data");
+            player.releaseUsingItem();
+            player.discard();
+        }
+        var untyped = new ItemStack(ItemInit.consecrated_syringe.get());
+        h.assertTrue(!BloodSampleData.isFilled(untyped) && !BloodSampleData.examinable(untyped),
+                "Untyped saint syringe became a generic blood specimen");
+        var creative = ItemInit.consecrated_syringe.get().getDefaultInstance();
+        h.assertTrue(ConsecratedSyringeItem.getSaintType(creative) != null && BloodSampleData.examinable(creative),
+                "Creative/JEI Consecrated Syringe lacks a random saint");
+        h.succeed();
+    }
+
+    @GameTest(template = "empty")
     public static void unknownPropertiesRemainVisibleWithoutAnInjectionDefinition(GameTestHelper h) {
-        var profile = BloodSampleData.profile(vial("minecraft:pig"), java.util.List.of());
+        var profile = BloodSampleData.profile(vial("minecraft:pig"), false);
         h.assertTrue(profile.properties().contains(net.minecraft.resources.ResourceLocation.parse("blood_injection_validation:blood_properties/test_unknown")),
-                "Tagged addon property required an injection definition");
+                "Profile addon property required an injection definition");
         h.succeed();
     }
 
@@ -183,7 +223,7 @@ public final class HematicMicroscopeGameTests {
         var player = examining(h, a);
         for (int i = 0; i < 45; i++) player.tick();
         h.assertTrue(ItemStack.matches(before, a), "Missing source lost identification or original custom data");
-        h.assertTrue(BloodSampleData.profile(a, BloodInjectionData.snapshot(false).properties()).tendencies().isEmpty(), "Missing source invented stale traits");
+        h.assertTrue(BloodSampleData.profile(a, false).tendencies().isEmpty(), "Missing source invented stale traits");
         player.stopUsingItem();
         h.succeed();
     }

@@ -111,7 +111,9 @@ public final class CabinetStorage implements IItemHandler {
                 continue;
             }
             var stack = parsed.get();
-            if (!(stack.getItem() instanceof BloodVialItem) || !BloodSampleData.isFilled(stack)) {
+            if (stack.getItem() instanceof BloodVialItem && com.vincenthuto.hemomancy.common.antecedent.AhaematicSample.is(stack))
+                stack = com.vincenthuto.hemomancy.common.antecedent.AhaematicSample.migrate(stack);
+            if (!BloodSampleData.isSpecimenVessel(stack) || !BloodSampleData.isFilled(stack)) {
                 LogUtils.getLogger().warn("Cabinet: rejected non-specimen in pigeonhole {}", i);
                 continue;
             }

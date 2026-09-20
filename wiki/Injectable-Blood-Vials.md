@@ -1,14 +1,18 @@
 # Injectable blood vials
 
+Learn Borrowed Physiology from the Alchemist after personally examining your first creature sample. This Degree-1 lesson unlocks direct injection and its Liber entry. See [Clinical Blood Tools](Clinical-Blood-Tools.md).
+
 Loose `hemomancy:bloody_vial` samples can be injected by holding use for 16 ticks. Sampling still uses left-click. Successful survival use replaces the held sample with one empty vial, retaining unrelated components and custom fields. Creative use keeps the sample and produces no extra vessel. Both modes validate the source and apply 400 ticks of Transfusion Saturation. Interrupted use, spectators, dead players, unreadable sources, and empty response sets do not consume blood.
 
-Saturation is an ordinary harmful effect. Its normal persistence, death, milk, command, and effect-removal rules apply. Injection does not award experience, refill blood, alter alignment, or gate progression. Racks remain sampling/transport tools. Centrifuge processing and its existing tags are unchanged.
+Empty Blood Vials stack to 64. Any vial containing a source, including unreadable or individually identified blood, stacks to one. Sampling from a stack creates one filled vial in hand and returns the remaining empty vials to inventory; if inventory has no room, those remaining vessels drop safely.
+
+Saturation is an ordinary harmful effect. Its normal persistence, death, milk, command, and effect-removal rules apply. Injection does not award experience, refill blood, alter alignment, or gate progression. Racks remain sampling/transport tools. Centrifuge yields are unchanged; blood membership now comes from entity blood profiles.
 
 ## Shared specimen contract
 
 `BloodSampleData` reads the existing `CUSTOM_DATA.entity_type` and `state` fields. A present source field, including malformed or removed-mod values, keeps the vial filled and prevents resampling/loading as empty glass. `BloodVialItem.getEntityType` remains a safe compatibility wrapper. Missing sources are inert; their source strings and other data remain intact.
 
-The boolean `hemomancy:blood_sample_identified` component is persistent and synchronized. Absence means unknown. `BloodSampleData.identify` is the server examination entry point for the companion microscope and refuses unresolvable samples. It stores no timestamp or random identity. Independently identified otherwise identical samples remain component-identical. A profile is a temporary, ordered view of current tags, never a saved copy of effects.
+The boolean `hemomancy:blood_sample_identified` component is persistent and synchronized. Absence means unknown. `BloodSampleData.identify` is the server examination entry point for the companion microscope and refuses unresolvable samples. It stores no timestamp or random identity. Independently identified otherwise identical samples remain component-identical. A profile is a temporary, ordered view of current entity blood profiles, never a saved copy of effects.
 
 The [Hematic Microscope](Hematic-Microscope.md) identifies a vial held in the off hand after two seconds of uninterrupted use. Unknown samples still work; examination supplies information rather than potency. The cabinet and Clairaudiograph remain separate companion features.
 
@@ -44,7 +48,7 @@ These values are implementation defaults, not established combat balance. Pig re
 
 ## Datapacks and synchronization
 
-Files live at `data/<namespace>/blood_injection/<name>.json`. Each file defines exactly one uppercase `tendency` or namespaced `property` entity-tag ID. New property IDs require only a response definition and entity tag. Fungal directly uses `hemomancy:fungal`.
+Files live at `data/<namespace>/blood_injection/<name>.json`. Each file defines exactly one uppercase `tendency` or namespaced `property` ID. Add property memberships to the entity files described in [Blood Profiles](Blood-Profiles.md); add a response definition when that property should grant an injection effect. Fungal directly uses `hemomancy:fungal`.
 
 ```json
 {
@@ -64,7 +68,7 @@ Use `{"operation":"reveal","duration":40,"radius":8}` for a pulse benefit. Root-
 
 Normal pack priority replaces a file with the same resource ID. Different files claiming the same origin are all discarded. Other valid definitions survive, and the complete valid snapshot swaps at apply time. Each bad resource is logged once per reload. The synchronized snapshot is bounded to 128 definitions, each at most 2048 JSON characters with resource IDs up to 256 characters. Even at maximum UTF-8 expansion this stays below the clientbound payload limit.
 
-`OnDatapackSyncEvent` sends the snapshot on login and reload through `PacketHandler`. Server/client snapshots are separate, and disconnect clears client definitions. In the bundled 1.21.1 sources, `RegistrySynchronization.networkSafeRegistries` includes static registries and `TagNetworkSerialization` sends their complete tag membership, including entity-type property tags. No local client datapack determines injection results. Identified tooltips resolve the same capped response list from the received definitions and synchronized tags.
+`OnDatapackSyncEvent` sends the snapshot on login and reload through `PacketHandler`. Server/client snapshots are separate, and disconnect clears client definitions. Entity composition uses the separate `BloodProfileSyncPacket`; no local client datapack determines injection results. Identified tooltips resolve the same capped response list from received injection definitions and blood profiles.
 
 ## Presentation and verification
 
@@ -95,3 +99,7 @@ Dedicated fixtures live under `blood_injection_validation`, in their own build-d
 - The isolated client loaded the updated classes and resources successfully. Windows window capture failed with `SetIsBorderRequired` / `0x80004002`; live first/third-person animation, audio feel and two-client observation remain unverified. The isolated client was closed afterward.
 - The authored sound is 0.48 seconds of mono 44.1 kHz Vorbis, with a decoded peak of -1.6 dBFS. The existing injection mechanics and 16-tick use duration remain unchanged.
 - Package assembly passes with the animation classes and custom OGG included. The final read-only review found no remaining concrete correctness issue after the recovery-switch regression was fixed.
+
+## Individual blood identity
+
+Sneak-use an empty vial to draw 100 mL of personal blood. Player-target sampling also records individual identity. Consenting original professionals donate blood through their dialogue into a vial in your held Living Syringe's rack. These optional provenance records support [Hematic Succession](Hematic-Succession.md) without changing ordinary sample identification, injection, or storage.
