@@ -4,6 +4,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.entity.mob.arthropod.FargoneEntity;
+import com.vincenthuto.hemomancy.common.entity.mob.arthropod.FargoneVariant;
 import net.minecraft.client.animation.AnimationChannel;
 import net.minecraft.client.animation.AnimationDefinition;
 import net.minecraft.client.animation.Keyframe;
@@ -20,9 +21,21 @@ public class FargoneModel extends HierarchicalModel<FargoneEntity> {
 	public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(Hemomancy.rloc("fargonemodel"),
 			"main");
 	private final ModelPart whole;
+	private final ModelPart body;
+	private final ModelPart abdomen;
+	private final ModelPart head;
+	private final ModelPart leftWing;
+	private final ModelPart rightWing;
+	private final ModelPart tail;
 
 	public FargoneModel(ModelPart root) {
 		this.whole = root.getChild("whole");
+		this.body = whole.getChild("body");
+		this.abdomen = body.getChild("abdomen");
+		this.head = body.getChild("head");
+		this.leftWing = body.getChild("leftWing");
+		this.rightWing = body.getChild("rightWing");
+		this.tail = body.getChild("tail");
 	}
 
 	public static LayerDefinition createBodyLayer() {
@@ -150,11 +163,35 @@ public class FargoneModel extends HierarchicalModel<FargoneEntity> {
 	public void setupAnim(FargoneEntity pEntity, float pLimbSwing, float pLimbSwingAmount, float pAgeInTicks,
 			float pNetHeadYaw, float pHeadPitch) {
 		this.root().getAllParts().forEach(ModelPart::resetPose);
+		applyVariant(pEntity.getVariant());
 		this.animate(pEntity.idleAnimationState, FargoneModel.IDLE, pAgeInTicks);
 		if(pEntity.isMovingOnLand()) {
 			this.animate(pEntity.idleAnimationState, FargoneModel.WALK, pAgeInTicks);
 		}
 
+	}
+
+	private void applyVariant(FargoneVariant variant) {
+		switch (variant) {
+		case ATTENDANT -> abdomen.xScale = abdomen.zScale = 1.12F;
+		case GUARD -> {
+			body.xScale = body.zScale = 1.08F;
+			leftWing.xScale = rightWing.xScale = 1.12F;
+		}
+		case ELDER -> {
+			body.xScale = body.zScale = 1.16F;
+			head.xScale = head.yScale = head.zScale = 1.1F;
+			tail.xScale = tail.zScale = 1.12F;
+		}
+		case RECLAIMED -> {
+			body.yScale = 1.06F;
+			leftWing.xScale = rightWing.xScale = 0.72F;
+			tail.xScale = tail.zScale = 0.82F;
+		}
+		case SCOUT -> {
+			// Base silhouette.
+		}
+		}
 	}
 
 	@Override

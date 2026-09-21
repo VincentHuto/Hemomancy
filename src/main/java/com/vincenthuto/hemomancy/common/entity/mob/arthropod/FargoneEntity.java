@@ -2,14 +2,20 @@ package com.vincenthuto.hemomancy.common.entity.mob.arthropod;
 
 import com.vincenthuto.hemomancy.common.init.SoundInit;
 import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.syncher.EntityDataAccessor;
+import net.minecraft.network.syncher.EntityDataSerializers;
+import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.Difficulty;
+import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.AnimationState;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.MobSpawnType;
+import net.minecraft.world.entity.SpawnGroupData;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
@@ -24,6 +30,9 @@ import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.dimension.DimensionType;
 
 public class FargoneEntity extends Monster {
+	private static final String VARIANT_TAG = "FargoneVariant";
+	private static final EntityDataAccessor<Integer> VARIANT =
+			SynchedEntityData.defineId(FargoneEntity.class, EntityDataSerializers.INT);
 
 	public final AnimationState idleAnimationState = new AnimationState();
 	public final AnimationState walkAnimationState = new AnimationState();
@@ -36,6 +45,42 @@ public class FargoneEntity extends Monster {
 	public FargoneEntity(EntityType<? extends FargoneEntity> type, Level worldIn) {
 		super(type, worldIn);
 
+	}
+
+	@Override
+	protected void defineSynchedData(SynchedEntityData.Builder builder) {
+		super.defineSynchedData(builder);
+		builder.define(VARIANT, FargoneVariant.SCOUT.id());
+	}
+
+	public FargoneVariant getVariant() {
+		return FargoneVariant.fromId(this.entityData.get(VARIANT));
+	}
+
+	public void setVariant(FargoneVariant variant) {
+		this.entityData.set(VARIANT, variant == null ? FargoneVariant.SCOUT.id() : variant.id());
+	}
+
+	@Override
+	public SpawnGroupData finalizeSpawn(ServerLevelAccessor level, DifficultyInstance difficulty, MobSpawnType spawnType,
+			SpawnGroupData spawnData) {
+		SpawnGroupData data = super.finalizeSpawn(level, difficulty, spawnType, spawnData);
+		if (spawnType != MobSpawnType.COMMAND && spawnType != MobSpawnType.SPAWN_EGG) {
+			setVariant(FargoneVariant.random(level.getRandom()));
+		}
+		return data;
+	}
+
+	@Override
+	public void addAdditionalSaveData(CompoundTag tag) {
+		super.addAdditionalSaveData(tag);
+		tag.putInt(VARIANT_TAG, this.entityData.get(VARIANT));
+	}
+
+	@Override
+	public void readAdditionalSaveData(CompoundTag tag) {
+		super.readAdditionalSaveData(tag);
+		this.entityData.set(VARIANT, tag.contains(VARIANT_TAG) ? tag.getInt(VARIANT_TAG) : FargoneVariant.SCOUT.id());
 	}
 
 	@Override

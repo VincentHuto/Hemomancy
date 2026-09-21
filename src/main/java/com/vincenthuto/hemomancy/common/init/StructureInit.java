@@ -63,6 +63,9 @@ public class StructureInit {
 	public static final DeferredHolder<StructureType<?>, StructureType<CrimsonLodgeAnnexStructure>> crimson_lodge_annex = STRUCTURES
 			.register("crimson_lodge_annex", () -> explicitStructureTypeTyping(CrimsonLodgeAnnexStructure.CODEC));
 
+	public static final DeferredHolder<StructureType<?>, StructureType<DynastyCastleStructure>> dynasty_castle = STRUCTURES
+			.register("dynasty_castle", () -> explicitStructureTypeTyping(DynastyCastleStructure.CODEC));
+
 	private static <T extends Structure> StructureType<T> explicitStructureTypeTyping(MapCodec<T> structureCodec) {
 		return () -> structureCodec;
 	}

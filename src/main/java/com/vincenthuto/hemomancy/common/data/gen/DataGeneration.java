@@ -22,5 +22,9 @@ public class DataGeneration {
 				new HemoItemModelProvider(packOutput, event.getExistingFileHelper()));
 		generator.addProvider(event.includeClient(), new HemoLanguageProvider(packOutput, "en_us"));
 		generator.addProvider(event.includeServer(), new CircusPavilionStructureProvider(packOutput));
+		// DynastyCastlePieceProvider is intentionally NOT registered: the dynasty castle pieces are now
+		// hand-editable assets under src/main/resources/data/hemomancy/structure/dynasty_castle. The
+		// generator (DynastyCastlePieces / DynastyCastlePieceProvider) is kept as a dormant regeneration
+		// tool -- re-add this line and delete the baked .nbt to rebuild the pieces from code.
 	}
 }
