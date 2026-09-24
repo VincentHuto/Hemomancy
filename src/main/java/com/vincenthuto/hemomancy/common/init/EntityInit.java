@@ -368,9 +368,9 @@ public class EntityInit {
                             .sized(0.6F, 1.8F)
                             .build(Hemomancy.rloc("blood_drunk_puppeteer").toString()));
 
-    public static final DeferredHolder<EntityType<?>,EntityType<ExcoriatedSagittaryEntity>> excoriated_sagittary=ENTITY_TYPES.register(
-            "excoriated_sagittary",() -> EntityType.Builder.of(ExcoriatedSagittaryEntity::new,MobCategory.MONSTER)
-                    .sized(1.55F,4F).fireImmune().clientTrackingRange(10).build(Hemomancy.rloc("excoriated_sagittary").toString()));
+    public static final DeferredHolder<EntityType<?>,EntityType<ExcoriatedEntity>> excoriated=ENTITY_TYPES.register(
+            "excoriated",() -> EntityType.Builder.of(ExcoriatedEntity::new,MobCategory.MONSTER)
+                    .sized(1.55F,4F).fireImmune().clientTrackingRange(10).build(Hemomancy.rloc("excoriated").toString()));
     public static final DeferredHolder<EntityType<?>,EntityType<PhlegethonticBombardier>> phlegethontic_bombardier=ENTITY_TYPES.register(
             "phlegethontic_bombardier",() -> EntityType.Builder.of(PhlegethonticBombardier::new,MobCategory.MONSTER)
                     .sized(1.35F,.8F).fireImmune().clientTrackingRange(10).updateInterval(2)
@@ -782,8 +782,8 @@ public class EntityInit {
 
     @SubscribeEvent
     public static void onRegisterSpawnPlacements(RegisterSpawnPlacementsEvent event) {
-        event.register(excoriated_sagittary.get(),SpawnPlacementTypes.ON_GROUND,Heightmap.Types.MOTION_BLOCKING_NO_LEAVES,
-                ExcoriatedSagittarySpawnRules::canSpawn,RegisterSpawnPlacementsEvent.Operation.REPLACE);
+        event.register(excoriated.get(),SpawnPlacementTypes.ON_GROUND,Heightmap.Types.MOTION_BLOCKING_NO_LEAVES,
+                ExcoriatedSpawnRules::canSpawn,RegisterSpawnPlacementsEvent.Operation.REPLACE);
         event.register(phlegethontic_bombardier.get(),SpawnPlacementTypes.ON_GROUND,Heightmap.Types.MOTION_BLOCKING_NO_LEAVES,
                 PhlegethonticBombardier::canSpawn,RegisterSpawnPlacementsEvent.Operation.REPLACE);
         Hemomancy.LOGGER.info("[Hemomancy] Registering spawn placements...");
@@ -892,7 +892,7 @@ public class EntityInit {
 
     @SubscribeEvent
     public static void onAttributeCreate(EntityAttributeCreationEvent event) {
-        event.put(excoriated_sagittary.get(),ExcoriatedSagittaryEntity.setAttributes().build());
+        event.put(excoriated.get(),ExcoriatedEntity.setAttributes().build());
         event.put(EntityInit.myelin_borer.get(), MyelinBorerEntity.setAttributes().build());
         event.put(EntityInit.mortarbound.get(), MortarboundEntity.attributes().build());
         event.put(EntityInit.naeglerophaeon.get(), NaeglerophaeonEntity.attributes().build());

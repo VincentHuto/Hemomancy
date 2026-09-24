@@ -173,6 +173,12 @@ neoForge {
             systemProperty 'neoforge.enabledGameTestNamespaces', 'gore_wound_harpoon_validation'
         }
 
+        excoriatedSpawnGameTestServer {
+            type = "gameTestServer"
+            gameDirectory = project.file('build/excoriated-spawn-gametest')
+            systemProperty 'neoforge.enabledGameTestNamespaces', 'excoriated_spawn_validation'
+        }
+
         clinicalGameTestServer {
             type = "gameTestServer"
             gameDirectory = project.file('build/clinical-gametest')

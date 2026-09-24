@@ -11,9 +11,9 @@ import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.phys.AABB;
 import javax.annotation.Nullable;
 
-public final class ExcoriatedSagittarySpawnRules {
-    private ExcoriatedSagittarySpawnRules() {}
-    public static boolean canSpawn(EntityType<ExcoriatedSagittaryEntity> type,ServerLevelAccessor level,
+public final class ExcoriatedSpawnRules {
+    private ExcoriatedSpawnRules() {}
+    public static boolean canSpawn(EntityType<ExcoriatedEntity> type,ServerLevelAccessor level,
                                    MobSpawnType reason,BlockPos pos,RandomSource random) { return validShore(level,pos); }
     public static boolean validShore(ServerLevelAccessor level,BlockPos pos) {
         if(level.getDifficulty()==Difficulty.PEACEFUL || !level.getBiome(pos).is(BiomeInit.PHLEGETHONTIC_BASIN)) return false;
@@ -24,7 +24,7 @@ public final class ExcoriatedSagittarySpawnRules {
             if(!level.getBlockState(floor).is(PhlegethonticTags.SHORE)
                     || !level.getBlockState(floor).isFaceSturdy(level,floor,Direction.UP)) return false;
         }
-        return nearestIchor(level,pos,8,2)!=null;
+        return nearestIchor(level,pos,8,4)!=null;
     }
     @Nullable public static BlockPos nearestIchor(net.minecraft.world.level.LevelReader level,BlockPos pos,int radius,int vertical) {
         BlockPos best=null;double distance=Double.POSITIVE_INFINITY;

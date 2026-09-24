@@ -3,7 +3,7 @@ package com.vincenthuto.hemomancy.gametest;
 import com.google.gson.*;
 import com.mojang.logging.LogUtils;
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.common.entity.mob.monster.ExcoriatedSagittaryEntity;
+import com.vincenthuto.hemomancy.common.entity.mob.monster.ExcoriatedEntity;
 import com.vincenthuto.hemomancy.common.init.*;
 import net.minecraft.client.*;
 import net.minecraft.core.BlockPos;

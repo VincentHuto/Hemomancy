@@ -22,19 +22,19 @@ import net.minecraft.world.level.pathfinder.PathType;
 import net.minecraft.world.phys.Vec3;
 import javax.annotation.Nullable;
 
-public class ExcoriatedSagittaryEntity extends Monster {
+public class ExcoriatedEntity extends Monster {
     public static final int IDLE=0,DRAW=1,FIRE=2,REAR=3,BREATH=4;
-    private static final EntityDataAccessor<Integer> ATTACK=SynchedEntityData.defineId(ExcoriatedSagittaryEntity.class,EntityDataSerializers.INT);
-    private static final EntityDataAccessor<Integer> ATTACK_TIME=SynchedEntityData.defineId(ExcoriatedSagittaryEntity.class,EntityDataSerializers.INT);
-    private static final EntityDataAccessor<Boolean> CLOTTED=SynchedEntityData.defineId(ExcoriatedSagittaryEntity.class,EntityDataSerializers.BOOLEAN);
-    private static final ResourceLocation CLOT_SPEED=ResourceLocation.fromNamespaceAndPath("hemomancy","sagittary_clotting");
+    private static final EntityDataAccessor<Integer> ATTACK=SynchedEntityData.defineId(ExcoriatedEntity.class,EntityDataSerializers.INT);
+    private static final EntityDataAccessor<Integer> ATTACK_TIME=SynchedEntityData.defineId(ExcoriatedEntity.class,EntityDataSerializers.INT);
+    private static final EntityDataAccessor<Boolean> CLOTTED=SynchedEntityData.defineId(ExcoriatedEntity.class,EntityDataSerializers.BOOLEAN);
+    private static final ResourceLocation CLOT_SPEED=ResourceLocation.fromNamespaceAndPath("hemomancy","excoriated_clotting");
     private BlockPos home;
     private BlockPos river;
     private boolean sentinel;
     private int dryTicks,shotCooldown,breathCooldown,attackTicks,volleyDelay;
     private long lastSeen;
 
-    public ExcoriatedSagittaryEntity(EntityType<? extends ExcoriatedSagittaryEntity> type,Level level) {
+    public ExcoriatedEntity(EntityType<? extends ExcoriatedEntity> type,Level level) {
         super(type,level);xpReward=12;
         setPathfindingMalus(PathType.WATER,0);
         setPathfindingMalus(PathType.WATER_BORDER,0);
@@ -66,7 +66,7 @@ public class ExcoriatedSagittaryEntity extends Monster {
         if(home==null) setHome(blockPosition(),false);
         if(shotCooldown>0)shotCooldown--;
         if(breathCooldown>0)breathCooldown--;
-        if(tickCount%20==0) river=ExcoriatedSagittarySpawnRules.nearestIchor(level(),blockPosition(),8,5);
+        if(tickCount%20==0) river=ExcoriatedSpawnRules.nearestIchor(level(),blockPosition(),8,5);
         dryTicks=river==null?dryTicks+1:Math.max(0,dryTicks-4);
         boolean clot=dryTicks>=100;
         if(clot!=clotted()) {
@@ -133,7 +133,7 @@ public class ExcoriatedSagittaryEntity extends Monster {
                 getNavigation().moveTo(target,1);
         } else if(tickCount%80==0) {
             BlockPos candidate=home.offset(random.nextInt(25)-12,0,random.nextInt(25)-12);
-            for(int y=5;y>=-5;y--) if(ExcoriatedSagittarySpawnRules.validShore(server,candidate.above(y))) {
+            for(int y=5;y>=-5;y--) if(ExcoriatedSpawnRules.validShore(server,candidate.above(y))) {
                 getNavigation().moveTo(candidate.getX()+.5,candidate.getY()+y,candidate.getZ()+.5,.7);break;
             }
         }
@@ -149,7 +149,7 @@ public class ExcoriatedSagittaryEntity extends Monster {
         Vec3 forward=target==null?getLookAngle():target.position().subtract(position()).normalize();
         for(int i=1;i<=4;i++)PhlegethonticVisuals.breath(server,getX(),getY()+1.5,getZ(),forward.x*i,forward.z*i);
         if(attackTicks!=1 && attackTicks!=11)return;
-        for(LivingEntity victim:server.getEntitiesOfClass(LivingEntity.class,getBoundingBox().inflate(4),e -> e!=this && !(e instanceof ExcoriatedSagittaryEntity))) {
+        for(LivingEntity victim:server.getEntitiesOfClass(LivingEntity.class,getBoundingBox().inflate(4),e -> e!=this && !(e instanceof ExcoriatedEntity))) {
             Vec3 toward=victim.getBoundingBox().getCenter().subtract(getEyePosition());
             if(toward.lengthSqr()>20 || toward.normalize().dot(forward)<.65 || !hasLineOfSight(victim))continue;
             if(victim instanceof Player player && (player.isCreative()||player.isSpectator()))continue;

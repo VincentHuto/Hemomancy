@@ -2,8 +2,8 @@ package com.vincenthuto.hemomancy.gametest;
 
 import com.google.gson.*;
 import com.mojang.logging.LogUtils;
-import com.vincenthuto.hemomancy.common.entity.mob.monster.ExcoriatedSagittaryEntity;
-import com.vincenthuto.hemomancy.common.entity.mob.monster.ExcoriatedSagittarySpawnRules;
+import com.vincenthuto.hemomancy.common.entity.mob.monster.ExcoriatedEntity;
+import com.vincenthuto.hemomancy.common.entity.mob.monster.ExcoriatedSpawnRules;
 import com.vincenthuto.hemomancy.common.init.*;
 import com.vincenthuto.hemomancy.common.worldgen.*;
 import net.minecraft.core.*;
@@ -137,19 +137,19 @@ public final class PhlegethonticWorldValidation {
                     }
                 }
             }
-            var guardians=level.getEntitiesOfClass(ExcoriatedSagittaryEntity.class,
-                    new AABB((center.x-5)*16,0,(center.z-5)*16,(center.x+5)*16,128,(center.z+5)*16),ExcoriatedSagittaryEntity::isSentinel);
-            long uniqueHomes=guardians.stream().map(ExcoriatedSagittaryEntity::home).distinct().count();
-            var generatedAreaGuardians=level.getEntitiesOfClass(ExcoriatedSagittaryEntity.class,
-                    new AABB((center.x-12)*16,0,(center.z-12)*16,(center.x+12)*16,128,(center.z+12)*16),ExcoriatedSagittaryEntity::isSentinel);
-            long generatedAreaUniqueHomes=generatedAreaGuardians.stream().map(ExcoriatedSagittaryEntity::home).distinct().count();
+            var guardians=level.getEntitiesOfClass(ExcoriatedEntity.class,
+                    new AABB((center.x-5)*16,0,(center.z-5)*16,(center.x+5)*16,128,(center.z+5)*16),ExcoriatedEntity::isSentinel);
+            long uniqueHomes=guardians.stream().map(ExcoriatedEntity::home).distinct().count();
+            var generatedAreaGuardians=level.getEntitiesOfClass(ExcoriatedEntity.class,
+                    new AABB((center.x-12)*16,0,(center.z-12)*16,(center.x+12)*16,128,(center.z+12)*16),ExcoriatedEntity::isSentinel);
+            long generatedAreaUniqueHomes=generatedAreaGuardians.stream().map(ExcoriatedEntity::home).distinct().count();
             Set<Long> inspectedSentinelLayouts=new HashSet<>();int validSentinelCandidates=0;
             for(var chunk:generationOrder)for(var layout:PhlegethonticBasinLayout.nearChunk(seed,chunk.x,chunk.z,seaLevel)) {
                 if(!inspectedSentinelLayouts.add(layout.id()))continue;
                 for(var candidate:layout.sentinelCandidates()) {
                     if(candidate.x()<(center.x-5)*16 || candidate.x()>=(center.x+5)*16
                             || candidate.z()<(center.z-5)*16 || candidate.z()>=(center.z+5)*16)continue;
-                    if(ExcoriatedSagittarySpawnRules.validShore(level,new BlockPos(candidate.x(),candidate.y(),candidate.z())))
+                    if(ExcoriatedSpawnRules.validShore(level,new BlockPos(candidate.x(),candidate.y(),candidate.z())))
                         validSentinelCandidates++;
                 }
             }
@@ -263,21 +263,21 @@ public final class PhlegethonticWorldValidation {
                 }
                 report.addProperty("fluidTickDuration",120);report.addProperty("newFlowingBlocks",flowing);
                 report.addProperty("fluidEscapes",escapes.size());
-                var loadedGuardians=level.getEntitiesOfClass(ExcoriatedSagittaryEntity.class,
-                        new AABB((center.x-5)*16,0,(center.z-5)*16,(center.x+5)*16,128,(center.z+5)*16),ExcoriatedSagittaryEntity::isSentinel);
-                var loadedGeneratedAreaGuardians=level.getEntitiesOfClass(ExcoriatedSagittaryEntity.class,
-                        new AABB((center.x-12)*16,0,(center.z-12)*16,(center.x+12)*16,128,(center.z+12)*16),ExcoriatedSagittaryEntity::isSentinel);
+                var loadedGuardians=level.getEntitiesOfClass(ExcoriatedEntity.class,
+                        new AABB((center.x-5)*16,0,(center.z-5)*16,(center.x+5)*16,128,(center.z+5)*16),ExcoriatedEntity::isSentinel);
+                var loadedGeneratedAreaGuardians=level.getEntitiesOfClass(ExcoriatedEntity.class,
+                        new AABB((center.x-12)*16,0,(center.z-12)*16,(center.x+12)*16,128,(center.z+12)*16),ExcoriatedEntity::isSentinel);
                 report.addProperty("sentinels",loadedGuardians.size());
-                report.addProperty("uniqueSentinelHomes",loadedGuardians.stream().map(ExcoriatedSagittaryEntity::home).distinct().count());
+                report.addProperty("uniqueSentinelHomes",loadedGuardians.stream().map(ExcoriatedEntity::home).distinct().count());
                 report.addProperty("generatedAreaSentinels",loadedGeneratedAreaGuardians.size());
                 report.addProperty("generatedAreaUniqueSentinelHomes",loadedGeneratedAreaGuardians.stream()
-                        .map(ExcoriatedSagittaryEntity::home).distinct().count());
+                        .map(ExcoriatedEntity::home).distinct().count());
                 try {Files.writeString(Path.of("phlegethontic-validation.json"),new GsonBuilder().setPrettyPrinting().create().toJson(report));}
                 catch(java.io.IOException e){throw new java.io.UncheckedIOException(e);}
                 for(int x=center.x-6;x<=center.x+6;x++)for(int z=center.z-6;z<=center.z+6;z++)level.setChunkForced(x,z,false);
-                h.assertTrue(loadedGuardians.size()==loadedGuardians.stream().map(ExcoriatedSagittaryEntity::home).distinct().count(),"Duplicate loaded sentinel homes");
+                h.assertTrue(loadedGuardians.size()==loadedGuardians.stream().map(ExcoriatedEntity::home).distinct().count(),"Duplicate loaded sentinel homes");
                 h.assertTrue(loadedGeneratedAreaGuardians.size()==loadedGeneratedAreaGuardians.stream()
-                        .map(ExcoriatedSagittaryEntity::home).distinct().count(),"Duplicate generated-area sentinel homes");
+                        .map(ExcoriatedEntity::home).distinct().count(),"Duplicate generated-area sentinel homes");
                 h.assertTrue(escapes.isEmpty(),"Fluid escaped the planned courses: "+escapes.stream().limit(8).toList());h.succeed();
             });
         } catch(Exception e){throw new IllegalStateException("Fresh Nether validation failed",e);}

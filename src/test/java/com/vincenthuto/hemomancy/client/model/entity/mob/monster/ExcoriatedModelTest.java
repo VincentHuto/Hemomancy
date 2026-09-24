@@ -12,11 +12,11 @@ import java.nio.file.Path;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class ExcoriatedSagittaryModelTest {
+class ExcoriatedModelTest {
 
     @Test
     void vesselGlowExcludesTheHaunches() {
-        var model = new ExcoriatedSagittaryModel(ExcoriatedSagittaryModel.createBodyLayer().bakeRoot());
+        var model = new ExcoriatedModel(ExcoriatedModel.createBodyLayer().bakeRoot());
         var vertices = new CountingVertexConsumer();
 
         model.renderVessels(new PoseStack(), vertices, 0, 0, 0xFFFFFFFF);
@@ -26,7 +26,7 @@ class ExcoriatedSagittaryModelTest {
 
     @Test
     void latestBlockbenchExportGeometryIsBaked() {
-        var body = ExcoriatedSagittaryModel.createBodyLayer().bakeRoot()
+        var body = ExcoriatedModel.createBodyLayer().bakeRoot()
                 .getChild("root").getChild("horse_body");
         var frontLeftHoof = body.getChild("front_left")
                 .getChild("front_left_lower").getChild("front_left_hoof");
@@ -41,7 +41,7 @@ class ExcoriatedSagittaryModelTest {
 
     @Test
     void blockbenchExportPivotsArePreserved() {
-        var body = ExcoriatedSagittaryModel.createBodyLayer().bakeRoot()
+        var body = ExcoriatedModel.createBodyLayer().bakeRoot()
                 .getChild("root").getChild("horse_body");
         var frontLeft = body.getChild("front_left");
         var frontRight = body.getChild("front_right");
@@ -63,20 +63,20 @@ class ExcoriatedSagittaryModelTest {
     @Test
     void approvedTextureAndExportedCubesAreInstalled() throws Exception {
         Path assets = Path.of("src/main/resources/assets/hemomancy");
-        Path texturePath = assets.resolve("textures/entity/excoriated_sagittary/excoriated_sagittary.png");
+        Path texturePath = assets.resolve("textures/entity/excoriated/excoriated.png");
         assertTrue(Files.isRegularFile(texturePath));
         var texture = ImageIO.read(texturePath.toFile());
         assertEquals(256, texture.getWidth());
         assertEquals(256, texture.getHeight());
-        var layer = ExcoriatedSagittaryModel.createBodyLayer().bakeRoot();
+        var layer = ExcoriatedModel.createBodyLayer().bakeRoot();
         assertEquals(59, layer.getAllParts().mapToInt(part -> part.cubes.size()).sum());
-        assertDoesNotThrow(() -> new ExcoriatedSagittaryModel(layer));
+        assertDoesNotThrow(() -> new ExcoriatedModel(layer));
     }
 
     @Test
     void drawingHandFollowsStringWithoutForearmCrossingChest() {
-        var layer = ExcoriatedSagittaryModel.createBodyLayer().bakeRoot();
-        var model = new ExcoriatedSagittaryModel(layer);
+        var layer = ExcoriatedModel.createBodyLayer().bakeRoot();
+        var model = new ExcoriatedModel(layer);
         var torso = layer.getChild("root").getChild("horse_body").getChild("human_torso");
         var right = torso.getChild("right_arm");
         var forearm = right.getChild("right_forearm");
@@ -106,8 +106,8 @@ class ExcoriatedSagittaryModelTest {
 
     @Test
     void idleArmsHangOutsideTheBodyWithHandAndBowNearTheGround() {
-        var layer = ExcoriatedSagittaryModel.createBodyLayer().bakeRoot();
-        var model = new ExcoriatedSagittaryModel(layer);
+        var layer = ExcoriatedModel.createBodyLayer().bakeRoot();
+        var model = new ExcoriatedModel(layer);
         var root = layer.getChild("root");
         var body = root.getChild("horse_body");
         var torso = body.getChild("human_torso");
@@ -134,13 +134,13 @@ class ExcoriatedSagittaryModelTest {
 
     @Test
     void raiseAndLowerTransitionsJoinIdleAndAimingWithoutSnapping() {
-        assertEquals(0, ExcoriatedSagittaryModel.armReadiness(0, 0));
-        assertEquals(0, ExcoriatedSagittaryModel.armReadiness(1, 0));
-        assertEquals(1, ExcoriatedSagittaryModel.armReadiness(1, 8));
-        assertEquals(1, ExcoriatedSagittaryModel.armReadiness(2, 0));
-        assertEquals(0, ExcoriatedSagittaryModel.armReadiness(2, 8));
-        var layer = ExcoriatedSagittaryModel.createBodyLayer().bakeRoot();
-        var model = new ExcoriatedSagittaryModel(layer);
+        assertEquals(0, ExcoriatedModel.armReadiness(0, 0));
+        assertEquals(0, ExcoriatedModel.armReadiness(1, 0));
+        assertEquals(1, ExcoriatedModel.armReadiness(1, 8));
+        assertEquals(1, ExcoriatedModel.armReadiness(2, 0));
+        assertEquals(0, ExcoriatedModel.armReadiness(2, 8));
+        var layer = ExcoriatedModel.createBodyLayer().bakeRoot();
+        var model = new ExcoriatedModel(layer);
         var torso = layer.getChild("root").getChild("horse_body").getChild("human_torso");
         var left = torso.getChild("left_arm");
         var fore = left.getChild("left_forearm");
@@ -148,7 +148,7 @@ class ExcoriatedSagittaryModelTest {
         for (int frame = 0; frame <= 160; frame++) {
             layer.getAllParts().forEach(ModelPart::resetPose);
             float time = frame / 20F;
-            model.animateArms(ExcoriatedSagittaryModel.armReadiness(1, time), time / 20F, 0, 0, 0);
+            model.animateArms(ExcoriatedModel.armReadiness(1, time), time / 20F, 0, 0, 0);
             Vector3f bow = origin(left, fore, fore.getChild("fused_bow"));
             assertTrue(bow.isFinite());
             if (previous != null) assertTrue(previous.distance(bow) < 1.5F, "Bow jumped between transition frames");

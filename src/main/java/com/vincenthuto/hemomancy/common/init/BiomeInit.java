@@ -73,7 +73,7 @@ public class BiomeInit {
 		generation.addFeature(GenerationStep.Decoration.UNDERGROUND_DECORATION,NetherPlacements.GLOWSTONE_EXTRA);
 		generation.addFeature(GenerationStep.Decoration.VEGETAL_DECORATION,PlacedFeatureInit.ESCHARIAN_OVERGROWTH);
 		var spawns=new MobSpawnSettings.Builder();
-		spawns.addSpawn(MobCategory.MONSTER,new MobSpawnSettings.SpawnerData(EntityInit.excoriated_sagittary.get(),4,1,2));
+		spawns.addSpawn(MobCategory.MONSTER,new MobSpawnSettings.SpawnerData(EntityInit.excoriated.get(),4,1,2));
 		return new Biome.BiomeBuilder().hasPrecipitation(false).temperature(2).downfall(0)
 				.specialEffects(new BiomeSpecialEffects.Builder().fogColor(0x250000).skyColor(0x3A0505)
 						.waterColor(0x740000).waterFogColor(0x210000)

@@ -3,7 +3,7 @@ package com.vincenthuto.hemomancy.client.render.entity.projectile;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
-import com.vincenthuto.hemomancy.client.render.entity.mob.monster.ExcoriatedSagittaryRenderer;
+import com.vincenthuto.hemomancy.client.render.entity.mob.monster.ExcoriatedRenderer;
 import com.vincenthuto.hemomancy.common.entity.projectile.GoreWoundHarpoonEntity;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -62,6 +62,6 @@ public final class GoreWoundHarpoonRenderer extends EntityRenderer<GoreWoundHarp
 
     @Override
     public ResourceLocation getTextureLocation(GoreWoundHarpoonEntity entity) {
-        return ExcoriatedSagittaryRenderer.TEXTURE;
+        return ExcoriatedRenderer.TEXTURE;
     }
 }

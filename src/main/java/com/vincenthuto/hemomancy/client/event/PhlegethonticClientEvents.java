@@ -1,10 +1,10 @@
 package com.vincenthuto.hemomancy.client.event;
 
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.client.model.entity.mob.monster.ExcoriatedSagittaryModel;
+import com.vincenthuto.hemomancy.client.model.entity.mob.monster.ExcoriatedModel;
 import com.vincenthuto.hemomancy.client.model.entity.mob.arthropod.PhlegethonticBombardierModel;
 import com.vincenthuto.hemomancy.client.render.entity.mob.arthropod.PhlegethonticBombardierRenderer;
-import com.vincenthuto.hemomancy.client.render.entity.mob.monster.ExcoriatedSagittaryRenderer;
+import com.vincenthuto.hemomancy.client.render.entity.mob.monster.ExcoriatedRenderer;
 import com.vincenthuto.hemomancy.client.render.entity.projectile.RecallBarbRenderer;
 import com.vincenthuto.hemomancy.client.render.entity.projectile.GoreWoundHarpoonRenderer;
 import com.vincenthuto.hemomancy.common.init.*;
@@ -19,12 +19,12 @@ import net.neoforged.neoforge.client.event.EntityRenderersEvent;
 public final class PhlegethonticClientEvents {
     private PhlegethonticClientEvents() {}
     @SubscribeEvent public static void layers(EntityRenderersEvent.RegisterLayerDefinitions event) {
-        event.registerLayerDefinition(ExcoriatedSagittaryModel.LAYER_LOCATION,ExcoriatedSagittaryModel::createBodyLayer);
+        event.registerLayerDefinition(ExcoriatedModel.LAYER_LOCATION,ExcoriatedModel::createBodyLayer);
         event.registerLayerDefinition(PhlegethonticBombardierModel.LAYER_LOCATION,PhlegethonticBombardierModel::createBodyLayer);
         event.registerLayerDefinition(RecallBarbRenderer.LAYER,RecallBarbRenderer::layer);
     }
     @SubscribeEvent public static void renderers(EntityRenderersEvent.RegisterRenderers event) {
-        event.registerEntityRenderer(EntityInit.excoriated_sagittary.get(),ExcoriatedSagittaryRenderer::new);
+        event.registerEntityRenderer(EntityInit.excoriated.get(),ExcoriatedRenderer::new);
         event.registerEntityRenderer(EntityInit.phlegethontic_bombardier.get(),PhlegethonticBombardierRenderer::new);
         event.registerEntityRenderer(EntityInit.recall_barb.get(),RecallBarbRenderer::new);
         event.registerEntityRenderer(EntityInit.gore_wound_harpoon.get(),GoreWoundHarpoonRenderer::new);

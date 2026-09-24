@@ -2,8 +2,8 @@ package com.vincenthuto.hemomancy.client.render.entity.mob.monster;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.client.model.entity.mob.monster.ExcoriatedSagittaryModel;
-import com.vincenthuto.hemomancy.common.entity.mob.monster.ExcoriatedSagittaryEntity;
+import com.vincenthuto.hemomancy.client.model.entity.mob.monster.ExcoriatedModel;
+import com.vincenthuto.hemomancy.common.entity.mob.monster.ExcoriatedEntity;
 import com.vincenthuto.hemomancy.common.worldgen.PhlegethonticRules;
 import net.minecraft.client.renderer.*;
 import net.minecraft.client.renderer.entity.*;
@@ -11,12 +11,12 @@ import net.minecraft.client.renderer.entity.layers.RenderLayer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.ResourceLocation;
 
-public final class ExcoriatedSagittaryRenderer extends MobRenderer<ExcoriatedSagittaryEntity,ExcoriatedSagittaryModel> {
-    public static final ResourceLocation TEXTURE=Hemomancy.rloc("textures/entity/excoriated_sagittary/excoriated_sagittary.png");
-    public ExcoriatedSagittaryRenderer(EntityRendererProvider.Context context) {
-        super(context,new ExcoriatedSagittaryModel(context.bakeLayer(ExcoriatedSagittaryModel.LAYER_LOCATION)),.75F);
+public final class ExcoriatedRenderer extends MobRenderer<ExcoriatedEntity,ExcoriatedModel> {
+    public static final ResourceLocation TEXTURE=Hemomancy.rloc("textures/entity/excoriated/excoriated.png");
+    public ExcoriatedRenderer(EntityRendererProvider.Context context) {
+        super(context,new ExcoriatedModel(context.bakeLayer(ExcoriatedModel.LAYER_LOCATION)),.75F);
         addLayer(new RenderLayer<>(this) {
-            @Override public void render(PoseStack pose,MultiBufferSource buffers,int light,ExcoriatedSagittaryEntity entity,
+            @Override public void render(PoseStack pose,MultiBufferSource buffers,int light,ExcoriatedEntity entity,
                                           float swing,float amount,float partial,float age,float yaw,float pitch) {
                 float pulse=PhlegethonticRules.pulseStrength(entity.level().getGameTime(),partial);
                 if(!entity.isInvisible() && !entity.clotted() && pulse>0)
@@ -25,8 +25,8 @@ public final class ExcoriatedSagittaryRenderer extends MobRenderer<ExcoriatedSag
             }
         });
     }
-    @Override public ResourceLocation getTextureLocation(ExcoriatedSagittaryEntity entity) {return TEXTURE;}
-    public net.minecraft.world.phys.Vec3 bowAnchor(ExcoriatedSagittaryEntity entity,float partial) {
+    @Override public ResourceLocation getTextureLocation(ExcoriatedEntity entity) {return TEXTURE;}
+    public net.minecraft.world.phys.Vec3 bowAnchor(ExcoriatedEntity entity,float partial) {
         PoseStack pose=new PoseStack();float scale=entity.getScale();pose.scale(scale,scale,scale);
         float bodyYaw=net.minecraft.util.Mth.rotLerp(partial,entity.yBodyRotO,entity.yBodyRot);
         float headYaw=net.minecraft.util.Mth.rotLerp(partial,entity.yHeadRotO,entity.yHeadRot)-bodyYaw;

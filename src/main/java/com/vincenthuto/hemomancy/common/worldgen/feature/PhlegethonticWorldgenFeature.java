@@ -4,7 +4,7 @@ import com.vincenthuto.hemomancy.common.init.*;
 import com.vincenthuto.hemomancy.common.capability.HemoAttachmentTypes;
 import com.vincenthuto.hemomancy.common.worldgen.*;
 import com.vincenthuto.hemomancy.common.worldgen.PhlegethonticTerrainPlan.*;
-import com.vincenthuto.hemomancy.common.entity.mob.monster.ExcoriatedSagittarySpawnRules;
+import com.vincenthuto.hemomancy.common.entity.mob.monster.ExcoriatedSpawnRules;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.WorldGenRegion;
 import net.minecraft.world.Difficulty;
@@ -165,8 +165,8 @@ public final class PhlegethonticWorldgenFeature extends Feature<NoneFeatureConfi
             if(cached.isEmpty())continue;
             BlockPos pos=cached.get();
             if(!new ChunkPos(pos).equals(chunk)) continue;
-            if(!ExcoriatedSagittarySpawnRules.validShore(level,pos)) continue;
-            var guardian=EntityInit.excoriated_sagittary.get().create(level.getLevel());
+            if(!ExcoriatedSpawnRules.validShore(level,pos)) continue;
+            var guardian=EntityInit.excoriated.get().create(level.getLevel());
             if(guardian==null) continue;
             guardian.setUUID(new UUID(layout.id(),PhlegethonticRules.seed(level.getSeed(),chunk.x,chunk.z,layout.id())));
             guardian.moveTo(pos.getX()+.5,pos.getY(),pos.getZ()+.5,0,0);
@@ -200,7 +200,7 @@ public final class PhlegethonticWorldgenFeature extends Feature<NoneFeatureConfi
             if(dx*dx+dz*dz>64)continue;
             int x=candidate.x()+dx,z=candidate.z()+dz;
             var column=PhlegethonticTerrainPlan.column(layouts,x,z);
-            if(column.distance()<=0 && Math.abs(column.surface()-candidate.y())<=2
+            if(column.distance()<=0 && Math.abs(column.surface()-candidate.y())<=4
                     && level.getLevel().getUncachedNoiseBiome(x>>2,column.surface()>>2,z>>2)
                     .is(BiomeInit.PHLEGETHONTIC_BASIN))return true;
         }

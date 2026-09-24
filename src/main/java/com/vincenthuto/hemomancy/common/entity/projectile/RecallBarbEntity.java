@@ -2,7 +2,7 @@ package com.vincenthuto.hemomancy.common.entity.projectile;
 
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.*;
-import com.vincenthuto.hemomancy.common.entity.mob.monster.ExcoriatedSagittaryEntity;
+import com.vincenthuto.hemomancy.common.entity.mob.monster.ExcoriatedEntity;
 import com.vincenthuto.hemomancy.common.init.EntityInit;
 import com.vincenthuto.hemomancy.common.worldgen.*;
 import net.minecraft.core.BlockPos;
@@ -26,7 +26,7 @@ public class RecallBarbEntity extends AbstractArrow {
     private BlockPos pullAnchor;
     private final java.util.Set<Integer> pierced=new java.util.HashSet<>();
     public RecallBarbEntity(EntityType<? extends RecallBarbEntity> type,Level level) {super(type,level);pickup=Pickup.DISALLOWED;}
-    public RecallBarbEntity(Level level,ExcoriatedSagittaryEntity owner,boolean tether) {
+    public RecallBarbEntity(Level level,ExcoriatedEntity owner,boolean tether) {
         super(EntityInit.recall_barb.get(),owner,level,new ItemStack(Items.BONE),null);
         this.tether=tether;pickup=Pickup.DISALLOWED;entityData.set(ARCHER,owner.getId());
         double yaw=Math.toRadians(owner.yBodyRot);
@@ -43,10 +43,10 @@ public class RecallBarbEntity extends AbstractArrow {
     @Override protected ItemStack getDefaultPickupItem() {return new ItemStack(Items.BONE);}
     @Override public byte getPierceLevel() {return (byte)(tether?0:1);}
     @Override protected boolean canHitEntity(Entity entity) {
-        return !(entity instanceof ExcoriatedSagittaryEntity) && !pierced.contains(entity.getId()) && super.canHitEntity(entity);
+        return !(entity instanceof ExcoriatedEntity) && !pierced.contains(entity.getId()) && super.canHitEntity(entity);
     }
     @Override protected void onHitEntity(EntityHitResult hit) {
-        if(level().isClientSide || !(hit.getEntity() instanceof LivingEntity victim) || victim instanceof ExcoriatedSagittaryEntity)return;
+        if(level().isClientSide || !(hit.getEntity() instanceof LivingEntity victim) || victim instanceof ExcoriatedEntity)return;
         boolean damaged=victim.hurt(damageSources().arrow(this,getOwner()),4);
         if(!tether) {
             pierced.add(victim.getId());

@@ -28,9 +28,9 @@ Ichor deals three points of heat damage at ten-tick intervals and briefly ignite
 
 Every eight seconds, a thirty-tick heartbeat strengthens gentle currents and the guardians' attacks. Fluid levels stay stable. You can swim against the capped current. Ordinary buckets cannot collect ichor. Extraction, fever, draughts, and Course of Phlegethon remain future content.
 
-## Excoriated Sagittary
+## Excoriated
 
-The Sagittary has an exposed equine body, a lowered horse head, a long human torso, shared ribs and lungs, and a bow grown into its left arm. It has 52 health and remains near its home shore. It can spawn on illuminated, fully supported shores in the Basin; it never naturally spawns in Peaceful. Persistent sentinels are selected during terrain generation and do not return after being killed.
+The Excoriated has an exposed equine body, a lowered horse head, a long human torso, shared ribs and lungs, and a bow grown into its left arm. It has 52 health and remains near its home shore. It can spawn on illuminated, fully supported shores in the Basin; it never naturally spawns in Peaceful. Persistent sentinels are selected during terrain generation and do not return after being killed.
 
 A Recall Barb deals four projectile damage and can tether a victim for four seconds. The first second measures the victim. Active blood-magic users above half blood volume are drawn toward nearby deeper ichor; lower-volume targets are drawn toward the guardian. Other targets use health ratio. Only one tether can hold a victim at a time.
 
@@ -42,6 +42,6 @@ Initial loot uses bones and existing sanguine formations. There is no new progre
 
 ## Development and acceptance
 
-The editable Blockbench model is `src/main/resources/assets/hemomancy/models/entity/bbmodel/excoriated_sagittary.bbmodel`. It uses the approved Orcadian horseman: 58 rotated cuboids, a fused forearm bow, and a 256×256 box-UV atlas. Regenerate the Java layer and synchronized resources with `python tools/model_export/build_excoriated_sagittary.py`. At rest, its thin arms extend down the flanks and its fused bow trails near the ground. The limbs retract into the aiming pose over the first eight draw ticks and lower again after firing. Native Java model parts drive walking, wading, aiming, drawing, firing, rearing, breath, clotting, and death poses. Tethers attach to the interpolated, animated bow transform.
+The editable Blockbench model is `src/main/resources/assets/hemomancy/models/entity/bbmodel/excoriated.bbmodel`. It uses the approved Orcadian horseman: 58 rotated cuboids, a fused forearm bow, and a 256×256 box-UV atlas. At rest, its thin arms extend down the flanks and its fused bow trails near the ground. The limbs retract into the aiming pose over the first eight draw ticks and lower again after firing. Native Java model parts drive walking, wading, aiming, drawing, firing, rearing, breath, clotting, and death poses. Tethers attach to the interpolated, animated bow transform.
 
 See the [implementation checklist](../docs/phlegethontic-nether-worldgen/2026-09-12-phlegethontic-nether-worldgen.md), [validation report](../docs/phlegethontic-nether-worldgen/VALIDATION.md), and [testing guide](../docs/TESTING.md) for measured results and remaining acceptance checks.

@@ -1,4 +1,0 @@
-Axonal swimmer tissue atlas, generated with built-in imagegen.
-Prompt: square seamless Minecraft tissue, native 64x64; pale ivory off-white fibrous skin, subtle grey-beige capillary lines, restrained pixel art, no eyes/pupils/text/borders. Bright neutral base for maroon/ivory vertex tint.
-Source: exec-1ccb19c0-beb7-400a-a3b1-a36e641ad925.png
-Export: nearest-neighbor 64x64 PNG; original preserved in Codex generated_images.

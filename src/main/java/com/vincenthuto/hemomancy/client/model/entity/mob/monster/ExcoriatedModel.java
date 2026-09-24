@@ -3,7 +3,7 @@ package com.vincenthuto.hemomancy.client.model.entity.mob.monster;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.common.entity.mob.monster.ExcoriatedSagittaryEntity;
+import com.vincenthuto.hemomancy.common.entity.mob.monster.ExcoriatedEntity;
 import com.vincenthuto.hemomancy.common.init.FluidInit;
 import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.model.geom.ModelLayerLocation;
@@ -19,8 +19,8 @@ import net.minecraft.resources.ResourceLocation;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
-public final class ExcoriatedSagittaryModel extends EntityModel<ExcoriatedSagittaryEntity> {
-    public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(ResourceLocation.fromNamespaceAndPath(Hemomancy.MOD_ID, "excoriated_sagittary"), "main");
+public final class ExcoriatedModel extends EntityModel<ExcoriatedEntity> {
+    public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(ResourceLocation.fromNamespaceAndPath(Hemomancy.MOD_ID, "excoriated"), "main");
     private final ModelPart root;
     private final ModelPart horse_body;
     private final ModelPart front_left;
@@ -58,7 +58,7 @@ public final class ExcoriatedSagittaryModel extends EntityModel<ExcoriatedSagitt
     private final float topLength;
     private final float bottomLength;
 
-    public ExcoriatedSagittaryModel(ModelPart root) {
+    public ExcoriatedModel(ModelPart root) {
         this.root = root.getChild("root");
         this.horse_body = this.root.getChild("horse_body");
         this.front_left = this.horse_body.getChild("front_left");
@@ -275,7 +275,7 @@ public final class ExcoriatedSagittaryModel extends EntityModel<ExcoriatedSagitt
     }
 
     @Override
-    public void setupAnim(ExcoriatedSagittaryEntity entity, float swing, float amount, float age, float headYaw, float pitch) {
+    public void setupAnim(ExcoriatedEntity entity, float swing, float amount, float age, float headYaw, float pitch) {
         root.getAllParts().forEach(ModelPart::resetPose);
         float partial = age - entity.tickCount;
         boolean wading = entity.getFluidTypeHeight(FluidInit.PHLEGETHONTIC_ICHOR_TYPE.get()) > .1;
@@ -300,14 +300,14 @@ public final class ExcoriatedSagittaryModel extends EntityModel<ExcoriatedSagitt
         float time = entity.attackTime() + partial;
         float progress = Mth.clamp(time / 20F, 0, 1);
         float ready = armReadiness(state, time);
-        float draw = state == ExcoriatedSagittaryEntity.DRAW ? progress : Math.max(0, 1 - time / 5F);
-        if (state != ExcoriatedSagittaryEntity.DRAW && state != ExcoriatedSagittaryEntity.FIRE) draw = 0;
+        float draw = state == ExcoriatedEntity.DRAW ? progress : Math.max(0, 1 - time / 5F);
+        if (state != ExcoriatedEntity.DRAW && state != ExcoriatedEntity.FIRE) draw = 0;
         human_torso.xRot = pitch * Mth.DEG_TO_RAD * ready;
         human_head.xRot *= 1 - ready;
         animateArms(ready, draw, age, swing, amount);
-        arrow.visible = state == ExcoriatedSagittaryEntity.DRAW && ready >= .99F;
-        if (state == ExcoriatedSagittaryEntity.REAR || state == ExcoriatedSagittaryEntity.BREATH) {
-            float rear = state == ExcoriatedSagittaryEntity.REAR ? progress : 1 - Mth.clamp(time / 12F, 0, 1);
+        arrow.visible = state == ExcoriatedEntity.DRAW && ready >= .99F;
+        if (state == ExcoriatedEntity.REAR || state == ExcoriatedEntity.BREATH) {
+            float rear = state == ExcoriatedEntity.REAR ? progress : 1 - Mth.clamp(time / 12F, 0, 1);
             horse_body.xRot = -.35F * rear;
             front_left.xRot = -.9F * rear;
             front_right.xRot = -.9F * rear;
@@ -326,8 +326,8 @@ public final class ExcoriatedSagittaryModel extends EntityModel<ExcoriatedSagitt
 
     static float armReadiness(int state, float time) {
         float t = switch (state) {
-            case ExcoriatedSagittaryEntity.DRAW -> Mth.clamp(time / 8F, 0, 1);
-            case ExcoriatedSagittaryEntity.FIRE -> 1 - Mth.clamp((time - 2) / 6F, 0, 1);
+            case ExcoriatedEntity.DRAW -> Mth.clamp(time / 8F, 0, 1);
+            case ExcoriatedEntity.FIRE -> 1 - Mth.clamp((time - 2) / 6F, 0, 1);
             default -> 0;
         };
         return t * t * (3 - 2 * t);

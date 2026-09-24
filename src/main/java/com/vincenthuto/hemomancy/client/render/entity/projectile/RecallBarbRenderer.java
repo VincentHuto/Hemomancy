@@ -3,7 +3,7 @@ package com.vincenthuto.hemomancy.client.render.entity.projectile;
 import com.mojang.blaze3d.vertex.*;
 import com.mojang.math.Axis;
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.client.render.entity.mob.monster.ExcoriatedSagittaryRenderer;
+import com.vincenthuto.hemomancy.client.render.entity.mob.monster.ExcoriatedRenderer;
 import com.vincenthuto.hemomancy.common.entity.projectile.RecallBarbEntity;
 import net.minecraft.client.model.geom.*;
 import net.minecraft.client.model.geom.builders.*;
@@ -32,8 +32,8 @@ public final class RecallBarbRenderer extends EntityRenderer<RecallBarbEntity> {
         pose.mulPose(Axis.ZP.rotationDegrees(Mth.lerp(partial,entity.xRotO,entity.getXRot())));
         barb.render(pose,buffers.getBuffer(RenderType.entityCutoutNoCull(getTextureLocation(entity))),light,OverlayTexture.NO_OVERLAY);
         pose.popPose();
-        if(entity.victimId()>=0 && entity.level().getEntity(entity.archerId()) instanceof com.vincenthuto.hemomancy.common.entity.mob.monster.ExcoriatedSagittaryEntity owner
-                && net.minecraft.client.Minecraft.getInstance().getEntityRenderDispatcher().getRenderer(owner) instanceof ExcoriatedSagittaryRenderer renderer) {
+        if(entity.victimId()>=0 && entity.level().getEntity(entity.archerId()) instanceof com.vincenthuto.hemomancy.common.entity.mob.monster.ExcoriatedEntity owner
+                && net.minecraft.client.Minecraft.getInstance().getEntityRenderDispatcher().getRenderer(owner) instanceof ExcoriatedRenderer renderer) {
             Vec3 from=renderer.bowAnchor(owner,partial).subtract(entity.getPosition(partial));
             VertexConsumer vertices=buffers.getBuffer(RenderType.leash());
             for(int plane=0;plane<2;plane++) for(int i=0;i<=24;i++) {
@@ -47,5 +47,5 @@ public final class RecallBarbRenderer extends EntityRenderer<RecallBarbEntity> {
         }
         super.render(entity,yaw,partial,pose,buffers,light);
     }
-    @Override public ResourceLocation getTextureLocation(RecallBarbEntity entity) {return ExcoriatedSagittaryRenderer.TEXTURE;}
+    @Override public ResourceLocation getTextureLocation(RecallBarbEntity entity) {return ExcoriatedRenderer.TEXTURE;}
 }

@@ -65,7 +65,7 @@ public final class PhlegethonticGameTests {
         fluid.entityInside(h.getLevel(),resistant.blockPosition(),resistant);
         h.assertTrue(resistant.getHealth()==health,"Fire Resistance must block scalding damage");
         h.assertTrue(resistant.hasEffect(EffectInit.blood_loss),"Fire Resistance must not block Blood Loss");
-        var guardian=spawn(h,EntityInit.excoriated_sagittary.get(),new BlockPos(20,3,8));guardian.setNoAi(true);
+        var guardian=spawn(h,EntityInit.excoriated.get(),new BlockPos(20,3,8));guardian.setNoAi(true);
         var velocity=guardian.getDeltaMovement();
         fluid.entityInside(h.getLevel(),guardian.blockPosition(),guardian);
         h.assertTrue(guardian.getHealth()==52 && !guardian.hasEffect(EffectInit.blood_loss)
@@ -119,24 +119,9 @@ public final class PhlegethonticGameTests {
         });
     }
 
-    @GameTest(batch="phlegethontic",template=ROOM,timeoutTicks=60)
-    public static void shoreRequiresTheEntireGuardianFootprintAndHeadroom(GameTestHelper h) {
-        var level=h.getLevel();BlockPos anchor=h.absolutePos(new BlockPos(8,4,8));
-        var biome=level.registryAccess().registryOrThrow(Registries.BIOME).getHolderOrThrow(BiomeInit.PHLEGETHONTIC_BASIN);
-        for(int x=(anchor.getX()-16)>>4;x<=(anchor.getX()+16)>>4;x++)for(int z=(anchor.getZ()-16)>>4;z<=(anchor.getZ()+16)>>4;z++)
-            level.getChunk(x,z).fillBiomesFromNoise((qx,qy,qz,sampler) -> biome,level.getChunkSource().randomState().sampler());
-        for(int x=4;x<13;x++)for(int z=4;z<13;z++)h.setBlock(new BlockPos(x,3,z),BlockInit.blood_scorched_scab.get());
-        h.setBlock(new BlockPos(12,3,8),BlockInit.PHLEGETHONTIC_ICHOR_BLOCK.get());
-        h.assertTrue(ExcoriatedSagittarySpawnRules.validShore(level,anchor),"Bright, fully supported shore must permit spawning");
-        h.setBlock(new BlockPos(8,6,8),Blocks.BLACKSTONE);
-        h.assertTrue(!ExcoriatedSagittarySpawnRules.validShore(level,anchor),"Third block of headroom is required");
-        h.setBlock(new BlockPos(8,6,8),Blocks.AIR);h.setBlock(new BlockPos(7,3,8),Blocks.AIR);
-        h.assertTrue(!ExcoriatedSagittarySpawnRules.validShore(level,anchor),"Missing edge support must reject the full footprint");h.succeed();
-    }
-
     @GameTest(batch="phlegethontic",template=ROOM,timeoutTicks=100)
     public static void tetherExcludesDuplicatesAndClearsAfterOwnerUnloadAndReload(GameTestHelper h) {
-        var owner=spawn(h,EntityInit.excoriated_sagittary.get(),new BlockPos(7,3,7));owner.setNoAi(true);owner.setNoGravity(true);
+        var owner=spawn(h,EntityInit.excoriated.get(),new BlockPos(7,3,7));owner.setNoAi(true);owner.setNoGravity(true);
         owner.setHome(owner.blockPosition(),true);
         Cow victim=spawn(h,EntityType.COW,new BlockPos(14,3,7));victim.setNoAi(true);victim.setNoGravity(true);
         var first=new TestBarb(h.getLevel(),owner);h.getLevel().addFreshEntity(first);first.hit(victim);
@@ -145,9 +130,9 @@ public final class PhlegethonticGameTests {
         var second=new TestBarb(h.getLevel(),owner);h.getLevel().addFreshEntity(second);second.hit(victim);
         h.assertTrue(second.isRemoved(),"Only one tether may claim a victim");
         CompoundTag home=new CompoundTag();owner.addAdditionalSaveData(home);
-        var restored=EntityInit.excoriated_sagittary.get().create(h.getLevel());restored.readAdditionalSaveData(home);
+        var restored=EntityInit.excoriated.get().create(h.getLevel());restored.readAdditionalSaveData(home);
         h.assertTrue(restored.home().equals(owner.home()) && restored.isSentinel()
-                && restored.attackState()==ExcoriatedSagittaryEntity.IDLE,"Home and sentinel identity survive; attack does not");
+                && restored.attackState()==ExcoriatedEntity.IDLE,"Home and sentinel identity survive; attack does not");
         CompoundTag saved=new CompoundTag();first.addAdditionalSaveData(saved);
         var reloaded=new TestBarb(h.getLevel(),owner);reloaded.readAdditionalSaveData(saved);reloaded.tick();
         h.assertTrue(reloaded.isRemoved(),"Reload must discard transient combat links");
@@ -159,7 +144,7 @@ public final class PhlegethonticGameTests {
     @GameTest(batch="phlegethontic",template="phlegethontic_patrol_room",timeoutTicks=340)
     public static void guardianNavigatesBackInsideItsHomeRange(GameTestHelper h) {
         for(int x=4;x<72;x++)for(int z=4;z<14;z++)h.setBlock(new BlockPos(x,3,z),BlockInit.blood_scorched_scab.get());
-        var guardian=spawn(h,EntityInit.excoriated_sagittary.get(),new BlockPos(60,4,8));
+        var guardian=spawn(h,EntityInit.excoriated.get(),new BlockPos(60,4,8));
         guardian.setHome(h.absolutePos(new BlockPos(12,4,8)),true);
         h.runAfterDelay(300,() -> {
             h.assertTrue(guardian.distanceToSqr(Vec3.atBottomCenterOf(guardian.home()))<=32*32,
@@ -213,7 +198,7 @@ public final class PhlegethonticGameTests {
     @GameTest(batch="phlegethontic",template=ROOM,timeoutTicks=300)
     public static void aSeparatedGuardianClotsAndRecoversBesideIchor(GameTestHelper h) {
         for(int x=3;x<18;x++)for(int z=3;z<18;z++)h.setBlock(new BlockPos(x,3,z),BlockInit.blood_scorched_scab.get());
-        var guardian=spawn(h,EntityInit.excoriated_sagittary.get(),new BlockPos(9,4,9));guardian.setNoGravity(true);
+        var guardian=spawn(h,EntityInit.excoriated.get(),new BlockPos(9,4,9));guardian.setNoGravity(true);
         guardian.setHome(guardian.blockPosition(),true);guardian.setPersistenceRequired();
         h.runAfterDelay(110,() -> h.assertTrue(guardian.clotted(),"A guardian separated for 100 ticks must clot"));
         h.runAfterDelay(215,() -> {
@@ -229,7 +214,7 @@ public final class PhlegethonticGameTests {
 
     @GameTest(batch="phlegethontic",template=ROOM,timeoutTicks=60)
     public static void twoVictimsCanSeverIndependentlyWithoutActivatingBloodMagic(GameTestHelper h) {
-        var owner=spawn(h,EntityInit.excoriated_sagittary.get(),new BlockPos(5,3,5));owner.setNoAi(true);owner.setNoGravity(true);
+        var owner=spawn(h,EntityInit.excoriated.get(),new BlockPos(5,3,5));owner.setNoAi(true);owner.setNoGravity(true);
         var active=player(h,"barb_active",new BlockPos(11,3,5));
         var inactive=player(h,"barb_inactive",new BlockPos(16,3,5));
         var activeBlood=com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess.getBloodVolume(active).orElseThrow();
@@ -252,7 +237,7 @@ public final class PhlegethonticGameTests {
 
     @GameTest(batch="phlegethontic",template=ROOM,timeoutTicks=60)
     public static void soundingWaitsThenPullsAgainstCollisionAndExpires(GameTestHelper h) {
-        var owner=spawn(h,EntityInit.excoriated_sagittary.get(),new BlockPos(5,3,5));owner.setNoAi(true);owner.setNoGravity(true);
+        var owner=spawn(h,EntityInit.excoriated.get(),new BlockPos(5,3,5));owner.setNoAi(true);owner.setNoGravity(true);
         Cow victim=spawn(h,EntityType.COW,new BlockPos(13,3,5));victim.setNoAi(true);victim.setNoGravity(true);
         var barb=new TestBarb(h.getLevel(),owner);h.getLevel().addFreshEntity(barb);barb.hit(victim);
         victim.setDeltaMovement(Vec3.ZERO);
@@ -269,7 +254,7 @@ public final class PhlegethonticGameTests {
 
     @GameTest(batch="phlegethontic",template=ROOM,timeoutTicks=60)
     public static void piercingVolleyHitsTwoVictimsAndStillStopsAtBlocks(GameTestHelper h) {
-        var owner=spawn(h,EntityInit.excoriated_sagittary.get(),new BlockPos(4,3,4));owner.setNoAi(true);
+        var owner=spawn(h,EntityInit.excoriated.get(),new BlockPos(4,3,4));owner.setNoAi(true);
         Cow first=spawn(h,EntityType.COW,new BlockPos(10,3,4));Cow second=spawn(h,EntityType.COW,new BlockPos(15,3,4));
         var barb=new TestBarb(h.getLevel(),owner,false);h.getLevel().addFreshEntity(barb);
         barb.hit(first);h.assertTrue(!barb.isRemoved() && barb.victimId()<0,"Piercing arrow must continue without tethering");
@@ -304,8 +289,8 @@ public final class PhlegethonticGameTests {
         }
     }
     private static final class TestBarb extends RecallBarbEntity {
-        TestBarb(ServerLevel level,ExcoriatedSagittaryEntity owner){super(level,owner,true);}
-        TestBarb(ServerLevel level,ExcoriatedSagittaryEntity owner,boolean tether){super(level,owner,tether);}
+        TestBarb(ServerLevel level,ExcoriatedEntity owner){super(level,owner,true);}
+        TestBarb(ServerLevel level,ExcoriatedEntity owner,boolean tether){super(level,owner,tether);}
         void hit(LivingEntity victim){onHitEntity(new EntityHitResult(victim));}
         void block(BlockPos pos){onHitBlock(new BlockHitResult(Vec3.atCenterOf(pos),Direction.WEST,pos,false));}
     }
