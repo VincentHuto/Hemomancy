@@ -1,0 +1,5 @@
+{
+  "type": "neoforge:add_spawns",
+  "biomes": "#hemomancy:mortarbound_spawnlist",
+  "spawners": [{"type": "hemomancy:mortarbound", "weight": 2, "minCount": 1, "maxCount": 1}]
+}

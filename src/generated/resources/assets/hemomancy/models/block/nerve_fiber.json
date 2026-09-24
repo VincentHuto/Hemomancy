@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:block/cube_column",
+  "textures": {
+    "end": "hemomancy:block/nerve_fiber_top",
+    "side": "hemomancy:block/nerve_fiber"
+  }
+}

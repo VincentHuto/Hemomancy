@@ -2,6 +2,7 @@ package com.vincenthuto.hemomancy.common.init;
 
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.worldgen.ErythrocoralReefTuning;
+import com.vincenthuto.hemomancy.common.worldgen.terrablender.CorticalDriftSurfaceRuleData;
 import com.vincenthuto.hemomancy.common.worldgen.terrablender.ErythrocoralReefRegion;
 import com.vincenthuto.hemomancy.common.worldgen.terrablender.FungalGardensOverworldRegion;
 import com.vincenthuto.hemomancy.common.worldgen.terrablender.TestSurfaceRuleData;
@@ -24,6 +25,7 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.common.EventBusSubscriber.Bus;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.neoforge.registries.DeferredRegister;
+import terrablender.api.EndBiomeRegistry;
 import terrablender.api.Regions;
 import terrablender.api.SurfaceRuleManager;
 
@@ -39,6 +41,7 @@ public class BiomeInit {
 	public static final ResourceKey<Biome> MYCELIAL_DEPTHS = register("mycelial_depths");
 	public static final ResourceKey<Biome> HEMORRHAGIC_PLATEAU = register("hemorrhagic_plateau");
 	public static final ResourceKey<Biome> ERYTHROCORAL_REEF = register("erythrocoral_reef");
+	public static final ResourceKey<Biome> CORTICAL_DRIFT = register("cortical_drift");
 
 	private static ResourceKey<Biome> register(String name) {
 		ResourceKey<Biome> key = ResourceKey.create(Registries.BIOME,
@@ -60,6 +63,7 @@ public class BiomeInit {
 		register(context, MYCELIAL_DEPTHS, mycelialDepths(placedFeatureGetter, carverGetter));
 		register(context, HEMORRHAGIC_PLATEAU, hemorrhagicPlateau(placedFeatureGetter, carverGetter));
 		register(context, ERYTHROCORAL_REEF, erythrocoralReef(placedFeatureGetter, carverGetter));
+		register(context, CORTICAL_DRIFT, corticalDrift(placedFeatureGetter, carverGetter));
 	}
 
 	private static Biome phlegethonticBasin(HolderGetter<PlacedFeature> placed,HolderGetter<ConfiguredWorldCarver<?>> carvers) {
@@ -399,6 +403,31 @@ public class BiomeInit {
 	}
 
 
+	private static Biome corticalDrift(HolderGetter<PlacedFeature> placedFeatureGetter,
+			HolderGetter<ConfiguredWorldCarver<?>> carverGetter) {
+		MobSpawnSettings.Builder spawnBuilder = new MobSpawnSettings.Builder();
+		// The Cortical Drift's monster roster is its cable-crawling Myelin Borer.
+		spawnBuilder.addSpawn(MobCategory.MONSTER,
+				new MobSpawnSettings.SpawnerData(EntityInit.myelin_borer.get(), 8, 1, 2));
+
+		BiomeGenerationSettings.Builder biomeBuilder =
+				new BiomeGenerationSettings.Builder(placedFeatureGetter, carverGetter);
+		addFeature(biomeBuilder, GenerationStep.Decoration.SURFACE_STRUCTURES, PlacedFeatureInit.CORTICAL_ARCHIPELAGO);
+
+		// The End uses no carvers, and terrain shape is vanilla — the biome's identity
+		// comes from CorticalDriftSurfaceRuleData plus the Phase 3/4 features.
+		return new Biome.BiomeBuilder().hasPrecipitation(false).temperature(0.5F).downfall(0.0F)
+				.specialEffects(new BiomeSpecialEffects.Builder()
+						.waterColor(0x2B2350).waterFogColor(0x140F2B)
+						.fogColor(0x241B3D).skyColor(0x07060D)
+						.grassColorOverride(0x6B6199).foliageColorOverride(0x6B6199)
+						.ambientLoopSound(SoundEvents.AMBIENT_SOUL_SAND_VALLEY_LOOP)
+						.ambientMoodSound(
+								new AmbientMoodSettings(SoundEvents.AMBIENT_SOUL_SAND_VALLEY_MOOD, 6000, 8, 2.0D))
+						.build())
+				.mobSpawnSettings(spawnBuilder.build()).generationSettings(biomeBuilder.build()).build();
+	}
+
 	@SubscribeEvent
 	public static void commonSetup(final FMLCommonSetupEvent event) {
 
@@ -419,6 +448,19 @@ public class BiomeInit {
 			// Register our surface rules
 			SurfaceRuleManager.addSurfaceRules(SurfaceRuleManager.RuleCategory.OVERWORLD, Hemomancy.MOD_ID,
 					TestSurfaceRuleData.makeRules());
+
+			if (HemoCommonConfig.ENABLE_CORTICAL_DRIFT_END_REGION.get()) {
+				int endWeight = HemoCommonConfig.CORTICAL_DRIFT_END_REGION_WEIGHT.get();
+				// TerraBlender 4.1.0.8 builds its islandsArea from the EDGE list (MixinTheEndBiomeSource
+				// passes the edge list twice), so the End's void zones only ever draw edge-registered
+				// biomes. Register as edge so the Drift actually generates, and as island so it keeps
+				// working if TerraBlender fixes that. CorticalArchipelagoFeature keeps its islands out of
+				// any vanilla terrain the edge band overlaps.
+				EndBiomeRegistry.registerEdgeBiome(BiomeInit.CORTICAL_DRIFT, endWeight);
+				EndBiomeRegistry.registerIslandBiome(BiomeInit.CORTICAL_DRIFT, endWeight);
+			}
+			SurfaceRuleManager.addSurfaceRules(SurfaceRuleManager.RuleCategory.END, Hemomancy.MOD_ID,
+					CorticalDriftSurfaceRuleData.makeRules());
 		});
 	}
 }

@@ -9,6 +9,8 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 public class SoundInit {
 	public static final DeferredRegister<SoundEvent> SOUNDS = DeferredRegister.create(Registries.SOUND_EVENT,
 			Hemomancy.MOD_ID);
+	public static final DeferredHolder<SoundEvent, SoundEvent> ENTITY_CHOIR_KEEPER_SQUEAK = registerSoundEvent(
+			"entity.choir_keeper.squeak");
 
     public static final DeferredHolder<SoundEvent,SoundEvent> ANTECEDENT_SEVERED = registerSoundEvent("antecedent.severed_record");
     public static final DeferredHolder<SoundEvent,SoundEvent> ANTECEDENT_SURVEY = registerSoundEvent("antecedent.lower_district_survey");
@@ -181,6 +183,22 @@ public class SoundInit {
 			"entity.myelin_borer.hurt");
 	public static final DeferredHolder<SoundEvent, SoundEvent> ENTITY_MYELIN_BORER_DEATH = registerSoundEvent(
 			"entity.myelin_borer.death");
+	public static final DeferredHolder<SoundEvent, SoundEvent> ENTITY_NAEGLEROPHAEON_CHARGE = registerSoundEvent(
+			"entity.naeglerophaeon.charge");
+	public static final DeferredHolder<SoundEvent, SoundEvent> ENTITY_NAEGLEROPHAEON_AMBIENT = registerSoundEvent(
+			"entity.naeglerophaeon.ambient");
+	public static final DeferredHolder<SoundEvent, SoundEvent> ENTITY_NAEGLEROPHAEON_HURT = registerSoundEvent(
+			"entity.naeglerophaeon.hurt");
+	public static final DeferredHolder<SoundEvent, SoundEvent> ENTITY_NAEGLEROPHAEON_DEATH = registerSoundEvent(
+			"entity.naeglerophaeon.death");
+	public static final DeferredHolder<SoundEvent, SoundEvent> ENTITY_NAEGLEROPHAEON_ZAP = registerSoundEvent(
+			"entity.naeglerophaeon.zap");
+	public static final DeferredHolder<SoundEvent, SoundEvent> ENTITY_NAEGLEROPHAEON_BLINK = registerSoundEvent(
+			"entity.naeglerophaeon.blink");
+	public static final DeferredHolder<SoundEvent, SoundEvent> ENTITY_NAEGLEROPHAEON_DRAIN = registerSoundEvent(
+			"entity.naeglerophaeon.drain");
+	public static final DeferredHolder<SoundEvent, SoundEvent> ITEM_SYNAPTIC_STEP_USE = registerSoundEvent(
+			"item.synaptic_step.use");
 
 	// Fargone (aggressive cave arthropod)
 	public static final DeferredHolder<SoundEvent, SoundEvent> ENTITY_FARGONE_AMBIENT = registerSoundEvent(
@@ -301,6 +319,11 @@ public class SoundInit {
 			"entity.abyssal_siphon.hurt");
 	public static final DeferredHolder<SoundEvent, SoundEvent> ENTITY_ABYSSAL_SIPHON_DEATH = registerSoundEvent(
 			"entity.abyssal_siphon.death");
+	public static final DeferredHolder<SoundEvent, SoundEvent> ENTITY_MORTARBOUND_AMBIENT = registerSoundEvent("entity.mortarbound.ambient");
+	public static final DeferredHolder<SoundEvent, SoundEvent> ENTITY_MORTARBOUND_CRAWL = registerSoundEvent("entity.mortarbound.crawl");
+	public static final DeferredHolder<SoundEvent, SoundEvent> ENTITY_MORTARBOUND_ATTACK = registerSoundEvent("entity.mortarbound.attack");
+	public static final DeferredHolder<SoundEvent, SoundEvent> ENTITY_MORTARBOUND_HURT = registerSoundEvent("entity.mortarbound.hurt");
+	public static final DeferredHolder<SoundEvent, SoundEvent> ENTITY_MORTARBOUND_DEATH = registerSoundEvent("entity.mortarbound.death");
 
 	// ===== Endgame Bosses =====
 

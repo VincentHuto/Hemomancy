@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    " g ",
+    "gmg",
+    " g "
+  ],
+  "key": {
+    "g": {
+      "item": "hemomancy:ganglion_cluster"
+    },
+    "m": {
+      "item": "hemomancy:myelin_sheath"
+    }
+  },
+  "result": {
+    "id": "hemomancy:synaptic_node",
+    "count": 1
+  }
+}

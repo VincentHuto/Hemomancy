@@ -47,7 +47,8 @@ public final class HemomancyCreativeTabsSourceTest {
 			"echo_of_lungs",
 			"echo_of_kidneys",
 			"draught_of_still_mercy",
-			"lethean_brew");
+			"lethean_brew",
+			"spawn_egg_peacock_spider");
 	private static final List<String> WIP_BLOCKS = List.of(
 			"semi_sentient_construct",
 			"humane_idol",

@@ -28,6 +28,7 @@ public class ConfiguredFeatureInit {
 	public static final ResourceKey<ConfiguredFeature<?, ?>> PHLEGETHONTIC_VEIN=createKey("phlegethontic_vein");
 	public static final ResourceKey<ConfiguredFeature<?, ?>> HYPHAE_TENDRIL = createKey("hyphae_tendril");
 	public static final ResourceKey<ConfiguredFeature<?, ?>> VENOUS_RIDGE = createKey("venous_ridge");
+	public static final ResourceKey<ConfiguredFeature<?, ?>> CORTICAL_ARCHIPELAGO = createKey("cortical_archipelago");
 	public static final ResourceKey<ConfiguredFeature<?, ?>> FUNGAL_FLOOR = createKey("fungal_floor");
 	public static final ResourceKey<ConfiguredFeature<?, ?>> HUGE_FUNGUS = createKey("huge_fungus");
 	public static final ResourceKey<ConfiguredFeature<?, ?>> SMALL_INFECTED_FUNGUS = FeatureUtils
@@ -68,6 +69,7 @@ public class ConfiguredFeatureInit {
 	public static final ResourceKey<ConfiguredFeature<?, ?>> RAFFLESIA = createKey("rafflesia");
 
 	public static final ResourceKey<ConfiguredFeature<?, ?>> BOG_BODY = createKey("bog_body");
+	public static final ResourceKey<ConfiguredFeature<?, ?>> BOG_IRON_CLUMP = createKey("bog_iron_clump");
 
 	public static final ResourceKey<ConfiguredFeature<?, ?>> EARTHEN_VEIN = createKey("earthen_vein");
 
@@ -191,6 +193,7 @@ public class ConfiguredFeatureInit {
 
 		register(context, HYPHAE_TENDRIL, BaseFeatureInit.HYPHAE_TENDRIL, NoneFeatureConfiguration.INSTANCE);
 		register(context, VENOUS_RIDGE, BaseFeatureInit.VENOUS_RIDGE, NoneFeatureConfiguration.INSTANCE);
+		register(context, CORTICAL_ARCHIPELAGO, BaseFeatureInit.CORTICAL_ARCHIPELAGO, NoneFeatureConfiguration.INSTANCE);
 		register(context, FUNGAL_FLOOR, BaseFeatureInit.FUNGAL_FLOOR, NoneFeatureConfiguration.INSTANCE);
 		register(context, HUGE_FUNGUS, BaseFeatureInit.HUGE_FUNGUS, NoneFeatureConfiguration.INSTANCE);
 
@@ -238,7 +241,15 @@ public class ConfiguredFeatureInit {
 
 		register(context, RAFFLESIA, BaseFeatureInit.RAFFLESIA, NoneFeatureConfiguration.INSTANCE);
 
-		register(context, BOG_BODY, BaseFeatureInit.BOG_BODY, NoneFeatureConfiguration.INSTANCE);
+	register(context, BOG_BODY, BaseFeatureInit.BOG_BODY, NoneFeatureConfiguration.INSTANCE);
+
+		context.register(BOG_IRON_CLUMP,
+				new ConfiguredFeature<>(Feature.DISK,
+						new DiskConfiguration(
+								RuleBasedBlockStateProvider.simple(BlockInit.bog_iron.get()),
+								BlockPredicate.matchesBlocks(Blocks.CLAY, Blocks.DIRT, Blocks.MUD,
+										Blocks.SAND, Blocks.GRAVEL),
+								UniformInt.of(2, 4), 1)));
 
 		register(context, EARTHEN_VEIN, BaseFeatureInit.EARTHEN_VEIN, NoneFeatureConfiguration.INSTANCE);
 

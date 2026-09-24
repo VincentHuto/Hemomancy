@@ -79,6 +79,12 @@ public class SanguineOmenOverlay {
 		if (!state.isActive() || mode != Mode.WORLD_GRADE) {
 			return;
 		}
+		renderWorldGradeAtIntensity(graphics, screenWidth, screenHeight, partialTicks,
+				state.alpha(partialTicks), false);
+	}
+
+	public void renderWorldGradeAtIntensity(GuiGraphics graphics, int screenWidth, int screenHeight,
+			float partialTicks, float alpha, boolean preserveMarkedEyes) {
 
 		Minecraft minecraft = Minecraft.getInstance();
 		if (minecraft.level == null || minecraft.player == null || screenWidth <= 0 || screenHeight <= 0) {
@@ -86,16 +92,16 @@ public class SanguineOmenOverlay {
 		}
 
 		ShaderInstance shader = ShaderInit.SANGUINE_OMEN_WORLD.getInstance().get();
-		float alpha = state.alpha(partialTicks);
 		if (shader == null || alpha <= 0.001F) {
 			return;
 		}
 
 		float time = minecraft.level.getGameTime() + partialTicks;
 		setUniform(shader, "HemoTime", time);
-		setUniform(shader, "Progress", state.progress(partialTicks));
+		setUniform(shader, "Progress", preserveMarkedEyes ? 0.5F : state.progress(partialTicks));
 		setUniform(shader, "Intensity", alpha);
 		setUniform(shader, "Seed", state.seed());
+		setUniform(shader, "EyeMarker", preserveMarkedEyes ? 1.0F : 0.0F);
 
 		copyMainRenderTarget(minecraft);
 		if (frameCopyTarget == null) {

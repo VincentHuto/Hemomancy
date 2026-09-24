@@ -19,6 +19,8 @@ public class DesiccantModel extends EntityModel<DesiccantEntity> {
 	private final ModelPart body;
 	private final ModelPart head;
 	private final ModelPart tail;
+	private final ModelPart tailMid;
+	private final ModelPart tailArch;
 	private final ModelPart telson;
 	private final ModelPart rLegs;
 	private final ModelPart lclaw3;
@@ -41,7 +43,9 @@ public class DesiccantModel extends EntityModel<DesiccantEntity> {
 		this.body = this.whole.getChild("body");
 		this.head = this.whole.getChild("head");
 		this.tail = this.whole.getChild("tail");
-		this.telson = this.tail.getChild("telson");
+		this.tailMid = this.tail.getChild("tailMid");
+		this.tailArch = this.tailMid.getChild("tailArch");
+		this.telson = this.tailArch.getChild("telson");
 		this.rLegs = this.whole.getChild("rLegs");
 		this.lclaw3 = this.rLegs.getChild("lclaw3");
 		this.lclaw4 = this.lclaw3.getChild("lclaw4");
@@ -68,12 +72,12 @@ public class DesiccantModel extends EntityModel<DesiccantEntity> {
 
 		PartDefinition head = whole.addOrReplaceChild("head", CubeListBuilder.create().texOffs(1, 9).addBox(-2.0F, -1.0F, -1.1667F, 4.0F, 2.0F, 1.0F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, -0.5F, -3.8333F));
 
-		PartDefinition tail = whole.addOrReplaceChild("tail", CubeListBuilder.create().texOffs(0, 16).addBox(-1.0F, -0.25F, 0.0F, 2.0F, 1.0F, 1.0F, new CubeDeformation(0.0F))
-				.texOffs(1, 16).addBox(-0.5F, -1.25F, 1.0F, 1.0F, 1.0F, 1.0F, new CubeDeformation(0.0F))
-				.texOffs(6, 16).addBox(-0.5F, -4.0F, 2.0F, 1.0F, 3.0F, 1.0F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, -1.0F, 4.0F));
+		PartDefinition tail = whole.addOrReplaceChild("tail", CubeListBuilder.create().texOffs(0, 16).addBox(-1.0F, -0.25F, -1.25F, 2.0F, 1.0F, 2.5F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, -1.0F, 4.0F));
+		PartDefinition tailMid = tail.addOrReplaceChild("tailMid", CubeListBuilder.create().texOffs(1, 16).addBox(-0.5F, -0.25F, -0.25F, 1.0F, 1.5F, 1.5F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, -1.25F, 1.0F));
+		PartDefinition tailArch = tailMid.addOrReplaceChild("tailArch", CubeListBuilder.create().texOffs(6, 16).addBox(-0.5F, -1.75F, -0.25F, 1.0F, 3.0F, 1.5F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, -1.0F, 1.0F));
 
-		PartDefinition telson = tail.addOrReplaceChild("telson", CubeListBuilder.create().texOffs(18, 15).addBox(0.0F, -1.0F, -0.5F, 0.0F, 2.0F, 1.0F, new CubeDeformation(0.0F))
-				.texOffs(13, 16).addBox(-0.5F, 1.0F, -0.25F, 1.0F, 1.0F, 1.0F, new CubeDeformation(0.25F)), PartPose.offsetAndRotation(0.0F, -5.0F, 1.5F, 0.5236F, 0.0F, 0.0F));
+		PartDefinition telson = tailArch.addOrReplaceChild("telson", CubeListBuilder.create().texOffs(18, 15).addBox(0.0F, -1.0F, -0.5F, 0.0F, 2.0F, 1.0F, new CubeDeformation(0.0F))
+				.texOffs(13, 16).addBox(-0.5F, 1.0F, -0.25F, 1.0F, 1.0F, 1.0F, new CubeDeformation(0.25F)), PartPose.offsetAndRotation(0.0F, -2.75F, -0.5F, 0.5236F, 0.0F, 0.0F));
 
 		PartDefinition rLegs = whole.addOrReplaceChild("rLegs", CubeListBuilder.create(), PartPose.offsetAndRotation(3.0F, -1.0F, 0.0F, 0.0F, 0.0F, -0.5236F));
 
@@ -111,9 +115,56 @@ public class DesiccantModel extends EntityModel<DesiccantEntity> {
 
 	@Override
 	public void setupAnim(DesiccantEntity entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
-		float legSwing = (float) Math.cos(limbSwing * 0.6662F) * 0.4F * limbSwingAmount;
-		this.lLegs.zRot += legSwing;
-		this.rLegs.zRot += -legSwing;
+		this.whole.resetPose();
+		this.body.resetPose();
+		this.head.resetPose();
+		this.tail.resetPose();
+		this.tailMid.resetPose();
+		this.tailArch.resetPose();
+		this.telson.resetPose();
+		this.rLegs.resetPose();
+		this.lLegs.resetPose();
+		this.lclaw3.resetPose();
+		this.lclaw4.resetPose();
+		this.lpincer2.resetPose();
+		this.lclaw.resetPose();
+		this.lclaw2.resetPose();
+		this.lpincer.resetPose();
+		this.lLeg1.resetPose();
+		this.lLeg2.resetPose();
+		this.lLeg3.resetPose();
+		this.lLeg4.resetPose();
+		this.lLeg5.resetPose();
+		this.lLeg6.resetPose();
+
+		float step = limbSwing * 0.6662F;
+		float gait = Mth.clamp(limbSwingAmount, 0.0F, 1.0F);
+		float squirm = ageInTicks * 0.11F;
+		this.whole.y += Mth.sin(step * 2.0F) * 0.12F * gait;
+		this.whole.yRot = Mth.sin(squirm) * 0.035F;
+		this.head.yRot = Mth.clamp(netHeadYaw * Mth.DEG_TO_RAD, -0.3F, 0.3F);
+		this.head.xRot = Mth.clamp(headPitch * Mth.DEG_TO_RAD, -0.2F, 0.2F);
+		this.lLegs.zRot += Mth.cos(step) * 0.08F * gait;
+		this.rLegs.zRot -= Mth.cos(step) * 0.08F * gait;
+		this.lLeg1.yRot += Mth.cos(step) * 0.26F * gait;
+		this.lLeg2.yRot += Mth.cos(step + Mth.PI) * 0.26F * gait;
+		this.lLeg3.yRot += Mth.cos(step) * 0.26F * gait;
+		this.lLeg6.yRot -= Mth.cos(step + Mth.PI) * 0.26F * gait;
+		this.lLeg5.yRot -= Mth.cos(step) * 0.26F * gait;
+		this.lLeg4.yRot -= Mth.cos(step + Mth.PI) * 0.26F * gait;
+		this.lclaw.zRot += Mth.sin(squirm + 0.8F) * 0.07F;
+		this.lclaw2.yRot += Mth.sin(squirm + 1.6F) * 0.09F;
+		this.lpincer.yRot += Mth.sin(squirm + 2.4F) * 0.06F;
+		this.lclaw3.zRot -= Mth.sin(squirm + 2.1F) * 0.07F;
+		this.lclaw4.yRot -= Mth.sin(squirm + 2.9F) * 0.09F;
+		this.lpincer2.yRot -= Mth.sin(squirm + 3.7F) * 0.06F;
+		this.tail.yRot = Mth.sin(squirm + 1.0F) * 0.13F;
+		this.tail.xRot = Mth.sin(squirm + 2.0F) * 0.035F;
+		this.tailMid.yRot = Mth.sin(squirm + 1.8F) * 0.09F;
+		this.tailMid.xRot = Mth.sin(squirm + 2.5F) * 0.055F;
+		this.tailArch.yRot = Mth.sin(squirm + 2.6F) * 0.08F;
+		this.tailArch.xRot = Mth.sin(squirm + 3.2F) * 0.07F;
+		this.telson.xRot += Mth.sin(squirm + 2.9F) * 0.09F;
 		this.telson.xScale = 1.0F;
 		this.telson.yScale = 1.0F;
 		this.telson.zScale = 1.0F;
@@ -123,8 +174,10 @@ public class DesiccantModel extends EntityModel<DesiccantEntity> {
 			float stingProgress = entity.getStingProgress();
 			float strike = Mth.sin(stingProgress * Mth.PI);
 			this.telsonStingSwell = strike;
-			this.tail.xRot = -0.35F - strike * 0.75F;
-			this.telson.xRot = this.tail.xRot - strike * 0.25F;
+			this.tail.xRot -= strike * 0.35F;
+			this.tailMid.xRot -= strike * 0.25F;
+			this.tailArch.xRot -= strike * 0.15F;
+			this.telson.xRot -= strike * 0.25F;
 			float telsonScale = 1.0F + strike * 0.45F;
 			this.telson.xScale = telsonScale;
 			this.telson.yScale = telsonScale;

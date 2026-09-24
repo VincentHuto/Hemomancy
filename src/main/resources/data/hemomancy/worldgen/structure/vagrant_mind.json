@@ -1,0 +1,12 @@
+{
+  "type": "hemomancy:vagrant_mind",
+  "start_height": {
+    "type": "minecraft:uniform",
+    "min_inclusive": { "absolute": 96 },
+    "max_inclusive": { "absolute": 140 }
+  },
+  "terrain_adaptation": "none",
+  "biomes": "#hemomancy:has_structure/vagrant_mind",
+  "step": "surface_structures",
+  "spawn_overrides": {}
+}

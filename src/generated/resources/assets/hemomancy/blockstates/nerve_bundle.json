@@ -1,0 +1,16 @@
+{
+  "variants": {
+    "axis=x": {
+      "model": "hemomancy:block/nerve_bundle_horizontal",
+      "x": 90,
+      "y": 90
+    },
+    "axis=y": {
+      "model": "hemomancy:block/nerve_bundle"
+    },
+    "axis=z": {
+      "model": "hemomancy:block/nerve_bundle_horizontal",
+      "x": 90
+    }
+  }
+}

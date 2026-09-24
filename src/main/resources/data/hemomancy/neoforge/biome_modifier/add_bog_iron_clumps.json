@@ -1,0 +1,6 @@
+{
+  "type": "neoforge:add_features",
+  "biomes": "#hemomancy:bog_iron_clump_spawnlist",
+  "features": "hemomancy:bog_iron_clump",
+  "step": "underground_ores"
+}

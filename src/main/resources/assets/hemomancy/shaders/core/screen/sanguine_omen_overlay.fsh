@@ -5,6 +5,7 @@ uniform float HemoTime;
 uniform float Progress;
 uniform float Intensity;
 uniform float Seed;
+uniform float EyeMarker;
 uniform vec4 ColorModulator;
 
 in vec4 vertexColor;
@@ -39,6 +40,12 @@ float fbm(vec2 value) {
         amplitude *= 0.5;
     }
     return total;
+}
+
+float markedEye(vec3 color) {
+    return smoothstep(0.76, 0.92, color.g)
+        * smoothstep(0.70, 0.88, color.b)
+        * (1.0 - smoothstep(0.22, 0.48, color.r));
 }
 
 void main() {
@@ -82,9 +89,26 @@ void main() {
     vec3 redScale = vec3(redValue, 0.0, 0.0);
     redScale = mix(redScale, vec3(0.0), blackMask);
 
-    float gradeStrength = smoothstep(0.02, 0.45, Intensity);
+    float gradeStrength = EyeMarker > 0.5
+        ? smoothstep(0.02, 1.0, Intensity)
+        : smoothstep(0.02, 0.45, Intensity);
     vec3 finalColor = mix(source.rgb, redScale, gradeStrength);
     finalColor = mix(finalColor, vec3(0.0), blackMask * gradeStrength);
+
+    if (EyeMarker > 0.5) {
+        vec2 pixel = 1.0 / vec2(textureSize(Sampler0, 0));
+        vec2 reach = pixel * (2.0 + 4.0 * Intensity);
+        float eye = markedEye(texture(Sampler0, baseUv).rgb);
+        float halo = max(
+            max(markedEye(texture(Sampler0, baseUv + vec2(reach.x, 0.0)).rgb),
+                markedEye(texture(Sampler0, baseUv - vec2(reach.x, 0.0)).rgb)),
+            max(markedEye(texture(Sampler0, baseUv + vec2(0.0, reach.y)).rgb),
+                markedEye(texture(Sampler0, baseUv - vec2(0.0, reach.y)).rgb))
+        ) * (1.0 - eye) * Intensity;
+        vec3 yellow = vec3(1.0, mix(0.72, 0.96, Intensity), mix(0.08, 0.21, Intensity));
+        finalColor = min(vec3(1.0), finalColor + yellow * halo * 0.42);
+        finalColor = mix(finalColor, yellow, eye);
+    }
 
     fragColor = vec4(finalColor, source.a) * vertexColor * ColorModulator;
 }

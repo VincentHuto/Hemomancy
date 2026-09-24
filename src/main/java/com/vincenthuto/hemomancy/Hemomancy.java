@@ -116,6 +116,7 @@ public class Hemomancy {
         AttributeInit.ATTRIBUTES.register(modEventBus);
         EntityInit.ENTITY_TYPES.register(modEventBus);
         StructureInit.STRUCTURES.register(modEventBus);
+        StructureInit.STRUCTURE_PIECES.register(modEventBus);
         VillagerInit.STRUCTURE_PROCESSORS.register(modEventBus);
         LootModifierInit.LOOT_MODIFIERS.register(modEventBus);
         HemoAttachmentTypes.ATTACHMENT_TYPES.register(modEventBus);
@@ -233,6 +234,7 @@ public class Hemomancy {
         populator.accept(ItemInit.echo_of_kidneys.get());
         populator.accept(ItemInit.draught_of_still_mercy.get());
         populator.accept(ItemInit.lethean_brew.get());
+        populator.accept(ItemInit.spawn_egg_peacock_spider.get());
         populator.accept(BlockInit.semi_sentient_construct.get());
         populator.accept(BlockInit.humane_idol.get());
         populator.accept(BlockInit.serpentine_idol.get());
@@ -314,7 +316,8 @@ public class Hemomancy {
                 || item == ItemInit.echo_of_lungs.get()
                 || item == ItemInit.echo_of_kidneys.get()
                 || item == ItemInit.draught_of_still_mercy.get()
-                || item == ItemInit.lethean_brew.get();
+                || item == ItemInit.lethean_brew.get()
+                || item == ItemInit.spawn_egg_peacock_spider.get();
     }
 
     private static boolean shouldShowBlockInCreativeTab(Block block) {
@@ -381,4 +384,3 @@ public class Hemomancy {
         ManipulationTreeInit.init();
     }
 }
-

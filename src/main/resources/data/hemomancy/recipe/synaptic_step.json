@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {"item": "hemomancy:naeglerophaeon_ganglion"},
+    {"item": "hemomancy:ganglion_cluster"},
+    {"item": "hemomancy:ganglion_cluster"},
+    {"item": "hemomancy:ferric_binder"}
+  ],
+  "result": {"id": "hemomancy:synaptic_step", "count": 1}
+}

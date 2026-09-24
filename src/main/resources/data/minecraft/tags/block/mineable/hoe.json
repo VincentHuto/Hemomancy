@@ -1,6 +1,8 @@
 {
   "replace": false,
   "values": [
-    "hemomancy:blood_wood_leaves"
+    "hemomancy:blood_wood_leaves",
+    "hemomancy:dura_membrane",
+    "hemomancy:dendrite_growth"
   ]
 }

@@ -164,13 +164,25 @@ neoForge {
             gameDirectory = project.file('build/phlegethontic-gametest')
             // The pilot tests deliberately reuse Mojang's one-block empty
             // template, so their template namespace is minecraft.
-            systemProperty 'neoforge.enabledGameTestNamespaces', "${project.mod_id},minecraft,blood_injection_validation"
+            systemProperty 'neoforge.enabledGameTestNamespaces', "${project.mod_id},minecraft,blood_injection_validation,gore_wound_harpoon_validation"
+        }
+
+        goreWoundHarpoonGameTestServer {
+            type = "gameTestServer"
+            gameDirectory = project.file('build/gore-wound-harpoon-gametest')
+            systemProperty 'neoforge.enabledGameTestNamespaces', 'gore_wound_harpoon_validation'
         }
 
         clinicalGameTestServer {
             type = "gameTestServer"
             gameDirectory = project.file('build/clinical-gametest')
             systemProperty 'neoforge.enabledGameTestNamespaces', 'clinical_validation'
+        }
+
+        choirKeeperGameTestServer {
+            type = "gameTestServer"
+            gameDirectory = project.file('build/choir-keeper-gametest')
+            systemProperty 'neoforge.enabledGameTestNamespaces', 'choir_keeper_validation'
         }
 
         bloodInjectionGameTestServer {
@@ -199,6 +211,22 @@ neoForge {
             type = "gameTestServer"
             gameDirectory = project.file('build/succession-gametest')
             systemProperty 'neoforge.enabledGameTestNamespaces', 'succession_validation'
+        }
+
+        naeglerophaeonReviewClient {
+            client()
+            gameDirectory = project.file('build/naeglerophaeon-client')
+            additionalRuntimeClasspathConfiguration.extendsFrom(clientLocalRuntime)
+            jvmArguments.addAll('-Xms2G', '-Xmx6G')
+            systemProperty 'hemomancy.gameplayDriver', 'true'
+            systemProperty 'hemomancy.naeglerophaeonReview', 'true'
+            programArguments.addAll '--username', 'MembraneReview'
+        }
+
+        naeglerophaeonGameTestServer {
+            type = 'gameTestServer'
+            gameDirectory = project.file('build/naeglerophaeon-validation')
+            systemProperty 'neoforge.enabledGameTestNamespaces', 'naeglerophaeon_validation'
         }
 
         successionReviewClient {

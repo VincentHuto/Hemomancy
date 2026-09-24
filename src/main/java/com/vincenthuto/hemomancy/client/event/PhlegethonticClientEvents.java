@@ -6,6 +6,7 @@ import com.vincenthuto.hemomancy.client.model.entity.mob.arthropod.Phlegethontic
 import com.vincenthuto.hemomancy.client.render.entity.mob.arthropod.PhlegethonticBombardierRenderer;
 import com.vincenthuto.hemomancy.client.render.entity.mob.monster.ExcoriatedSagittaryRenderer;
 import com.vincenthuto.hemomancy.client.render.entity.projectile.RecallBarbRenderer;
+import com.vincenthuto.hemomancy.client.render.entity.projectile.GoreWoundHarpoonRenderer;
 import com.vincenthuto.hemomancy.common.init.*;
 import net.minecraft.client.renderer.*;
 import net.neoforged.api.distmarker.Dist;
@@ -26,6 +27,7 @@ public final class PhlegethonticClientEvents {
         event.registerEntityRenderer(EntityInit.excoriated_sagittary.get(),ExcoriatedSagittaryRenderer::new);
         event.registerEntityRenderer(EntityInit.phlegethontic_bombardier.get(),PhlegethonticBombardierRenderer::new);
         event.registerEntityRenderer(EntityInit.recall_barb.get(),RecallBarbRenderer::new);
+        event.registerEntityRenderer(EntityInit.gore_wound_harpoon.get(),GoreWoundHarpoonRenderer::new);
     }
     @SubscribeEvent public static void setup(FMLClientSetupEvent event) {
         event.enqueueWork(() -> {

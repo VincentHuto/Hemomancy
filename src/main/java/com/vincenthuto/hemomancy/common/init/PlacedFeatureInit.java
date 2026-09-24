@@ -25,6 +25,7 @@ public class PlacedFeatureInit {
 	public static final ResourceKey<PlacedFeature> PHLEGETHONTIC_VEIN=ResourceKey.create(Registries.PLACED_FEATURE,Hemomancy.rloc("phlegethontic_vein"));
 	public static final ResourceKey<PlacedFeature> HYPHAE_TENDRIL = createKey("hyphae_tendril");
 	public static final ResourceKey<PlacedFeature> VENOUS_RIDGE = createKey("venous_ridge");
+	public static final ResourceKey<PlacedFeature> CORTICAL_ARCHIPELAGO = createKey("cortical_archipelago");
 	public static final ResourceKey<PlacedFeature> FUNGAL_FLOOR = createKey("fungal_floor");
 	public static final ResourceKey<PlacedFeature> HUGE_FUNGUS = createKey("huge_fungus");
 	public static final ResourceKey<PlacedFeature> SMALL_INFECTED_FUNGUS = createKey("small_infected_fungus");
@@ -52,6 +53,7 @@ public class PlacedFeatureInit {
 	public static final ResourceKey<PlacedFeature> RAFFLESIA = createKey("rafflesia");
 
 	public static final ResourceKey<PlacedFeature> BOG_BODY = createKey("bog_body");
+	public static final ResourceKey<PlacedFeature> BOG_IRON_CLUMP = createKey("bog_iron_clump");
 
 	public static final ResourceKey<PlacedFeature> EARTHEN_VEIN = createKey("earthen_vein");
 
@@ -91,6 +93,8 @@ public class PlacedFeatureInit {
 
 		final Holder<ConfiguredFeature<?, ?>> VENOUS_RIDGE = configuredFeatureGetter
 				.getOrThrow(ConfiguredFeatureInit.VENOUS_RIDGE);
+		final Holder<ConfiguredFeature<?, ?>> CORTICAL_ARCHIPELAGO = configuredFeatureGetter
+				.getOrThrow(ConfiguredFeatureInit.CORTICAL_ARCHIPELAGO);
 		final Holder<ConfiguredFeature<?, ?>> FUNGAL_FLOOR = configuredFeatureGetter
 				.getOrThrow(ConfiguredFeatureInit.FUNGAL_FLOOR);
 
@@ -151,6 +155,13 @@ public class PlacedFeatureInit {
 		register(context, PlacedFeatureInit.BOG_BODY, BOG_BODY, RarityFilter.onAverageOnceEvery(14),
 				InSquarePlacement.spread(), PlacementUtils.HEIGHTMAP_OCEAN_FLOOR, BiomeFilter.biome());
 
+		final Holder<ConfiguredFeature<?, ?>> BOG_IRON_CLUMP = configuredFeatureGetter
+				.getOrThrow(ConfiguredFeatureInit.BOG_IRON_CLUMP);
+
+		register(context, PlacedFeatureInit.BOG_IRON_CLUMP, BOG_IRON_CLUMP,
+				RarityFilter.onAverageOnceEvery(12), CountPlacement.of(1), InSquarePlacement.spread(),
+				PlacementUtils.HEIGHTMAP_OCEAN_FLOOR, BiomeFilter.biome());
+
 		// Earthen Vein — rare surface teleport points for blood magic users
 		final Holder<ConfiguredFeature<?, ?>> EARTHEN_VEIN = configuredFeatureGetter
 				.getOrThrow(ConfiguredFeatureInit.EARTHEN_VEIN);
@@ -209,6 +220,9 @@ public class PlacedFeatureInit {
 		register(context, PlacedFeatureInit.FUNGAL_FLOOR, FUNGAL_FLOOR, BiomeFilter.biome());
 		register(context, PlacedFeatureInit.VENOUS_RIDGE, VENOUS_RIDGE, List.of(CountPlacement.of(3),
 				InSquarePlacement.spread(), PlacementUtils.HEIGHTMAP_OCEAN_FLOOR, BiomeFilter.biome()));
+		// The bridge feature plans its own region and decides what falls in the chunk, so it needs
+		// no scatter -- a count or heightmap modifier would redraw the same cables many times.
+		register(context, PlacedFeatureInit.CORTICAL_ARCHIPELAGO, CORTICAL_ARCHIPELAGO, List.of());
 		register(context, PlacedFeatureInit.HUGE_FUNGUS, HUGE_FUNGUS, List.of(CountPlacement.of(12),
 				InSquarePlacement.spread(), PlacementUtils.FULL_RANGE, BiomeFilter.biome()));
 

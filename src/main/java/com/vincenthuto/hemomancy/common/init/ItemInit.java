@@ -76,6 +76,14 @@ public class ItemInit {
                 }
             });
 
+    public static final DeferredHolder<Item, Item> ganglion_cluster = BASEITEMS.register("ganglion_cluster",
+            () -> new Item(new Item.Properties()));
+
+    public static final DeferredHolder<Item, Item> naeglerophaeon_ganglion = BASEITEMS.register("naeglerophaeon_ganglion",
+            () -> new Item(new Item.Properties().stacksTo(1).rarity(Rarity.RARE)));
+    public static final DeferredHolder<Item, Item> synaptic_step = BASEITEMS.register("synaptic_step",
+            () -> new SynapticStepItem(new Item.Properties().stacksTo(1).rarity(Rarity.RARE)));
+
     public static final DeferredHolder<Item, Item> heart_pattern = BASEITEMS.register("heart_pattern",
             () -> new BannerPatternItem(
                     TagKey.create(Registries.BANNER_PATTERN, Hemomancy.rloc("pattern_item/hemomancy_heart")),
@@ -175,8 +183,7 @@ public class ItemInit {
             () -> new CovenantWaybillItem(new Item.Properties().fireResistant()));
     public static final DeferredHolder<Item, Item> circus_waybill = BASEITEMS.register("circus_waybill",
             () -> new CircusWaybillItem(new Item.Properties().fireResistant()));
-	public static final DeferredHolder<Item, Item> ringmaster_topper = BASEITEMS.register("ringmaster_topper",
-			() -> new RingmasterTopperItem(new Item.Properties().stacksTo(1).rarity(Rarity.RARE).fireResistant()));
+
     public static final DeferredHolder<Item, Item> veins_pattern = BASEITEMS.register("veins_pattern",
             () -> new BannerPatternItem(
                     TagKey.create(Registries.BANNER_PATTERN, Hemomancy.rloc("pattern_item/hemomancy_veins")),
@@ -671,6 +678,8 @@ public class ItemInit {
             () -> new LivingSickleItem(25f, 2, EnumModToolTiers.LIVING, new Item.Properties().stacksTo(1)));
     public static final DeferredHolder<Item, Item> blood_bolt = BASEITEMS.register("blood_bolt",
             () -> new BloodBoltItem(new Item.Properties()));
+    public static final DeferredHolder<Item, Item> gore_wound_harpoon = BASEITEMS.register("gore_wound_harpoon",
+            () -> new GoreWoundHarpoonItem(new Item.Properties()));
     // Blood Thrall  creature-based blood transport
     public static final DeferredHolder<Item, Item> blood_thrall_effigy = BASEITEMS.register("blood_thrall_effigy",
             () -> new BloodThrallItem(new Item.Properties().stacksTo(16)));
@@ -874,7 +883,8 @@ public class ItemInit {
             () -> new VenousStriderSabatonsItem(EnumModArmorTiers.VENOUS_STRIDER.holder(), ArmorItem.Type.BOOTS));
     public static final DeferredHolder<Item, Item> covenant_mantle = BASEITEMS.register("covenant_mantle",
             () -> new CovenantMantleArmorItem(EnumModArmorTiers.COVENANT_MANTLE.holder(), ArmorItem.Type.CHESTPLATE));
-
+    public static final DeferredHolder<Item, Item> ringmaster_topper = BASEITEMS.register("ringmaster_topper",
+            () -> new RingmasterTopperItem(new Item.Properties().stacksTo(1).rarity(Rarity.RARE).fireResistant()));
     // Unstained
     public static final DeferredHolder<Item, Item> unstained_helm = BASEITEMS.register("unstained_helm",
             () -> new UnstainedArmorItem(EnumModArmorTiers.UNSTAINED.holder(), ArmorItem.Type.HELMET));
@@ -1087,6 +1097,12 @@ public class ItemInit {
     public static final DeferredHolder<Item, Item> pale_distillate = BASEITEMS.register("pale_distillate",
             () -> new Item(new Item.Properties().stacksTo(16)));
     // Spawn Eggs
+    public static final DeferredHolder<Item, DeferredSpawnEggItem> spawn_egg_myelin_borer = SPAWNEGGS.register("spawn_egg_myelin_borer",
+            () -> new DeferredSpawnEggItem(EntityInit.myelin_borer, 0xD8D5C4, 0xC9A227, new Item.Properties()));
+    public static final DeferredHolder<Item, DeferredSpawnEggItem> spawn_egg_mortarbound = SPAWNEGGS.register("spawn_egg_mortarbound",
+            () -> new DeferredSpawnEggItem(EntityInit.mortarbound, 0x18282C, 0xD8D5C4, new Item.Properties()));
+    public static final DeferredHolder<Item, DeferredSpawnEggItem> spawn_egg_naeglerophaeon = SPAWNEGGS.register("spawn_egg_naeglerophaeon",
+            () -> new DeferredSpawnEggItem(EntityInit.naeglerophaeon, 0x2A152C, 0xFFE84A, new Item.Properties()));
     public static final DeferredHolder<Item, DeferredSpawnEggItem> spawn_egg_leech = SPAWNEGGS.register("spawn_egg_leech",
             () -> new DeferredSpawnEggItem(EntityInit.leech, 7761777, 4206080, new Item.Properties()));
     public static final DeferredHolder<Item, DeferredSpawnEggItem> spawn_egg_bog_revenant = SPAWNEGGS.register("spawn_egg_bog_revenant",
@@ -1176,6 +1192,9 @@ public class ItemInit {
     public static final DeferredHolder<Item, DeferredSpawnEggItem> spawn_egg_verdigris_moth = SPAWNEGGS.register(
             "spawn_egg_verdigris_moth",
             () -> new DeferredSpawnEggItem(EntityInit.verdigris_moth, 0xBEE8A8, 0xB04475, new Item.Properties()));
+    public static final DeferredHolder<Item, DeferredSpawnEggItem> spawn_egg_choir_keeper = SPAWNEGGS.register(
+            "spawn_egg_choir_keeper",
+            () -> new DeferredSpawnEggItem(EntityInit.choir_keeper, 0x252333, 0x55C29A, new Item.Properties()));
 	public static final DeferredHolder<Item, DeferredSpawnEggItem> spawn_egg_peacock_spider = SPAWNEGGS.register(
 			"spawn_egg_peacock_spider",
 			() -> new DeferredSpawnEggItem(EntityInit.peacock_spider, 0x17212B, 0x28B9C7, new Item.Properties()));

@@ -94,6 +94,7 @@
     "hemomancy:hematic_iron_door",
     "hemomancy:hematic_iron_trapdoor",
     "hemomancy:hematic_iron_chain",
-    "hemomancy:iron_brazier"
+    "hemomancy:iron_brazier",
+    "hemomancy:synaptic_node"
   ]
 }

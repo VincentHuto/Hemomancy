@@ -17,6 +17,7 @@ import com.vincenthuto.hemomancy.client.render.entity.boss.annetta.AnnettaKnowle
 import com.vincenthuto.hemomancy.client.render.entity.boss.annetta.LatentAnnettaInfectionRenderer;
 import com.vincenthuto.hemomancy.client.render.entity.boss.annetta.StainedPriestessRenderer;
 import com.vincenthuto.hemomancy.client.render.entity.boss.endgame.MycophantRenderer;
+import com.vincenthuto.hemomancy.client.render.entity.boss.endgame.NaeglerophaeonRenderer;
 import com.vincenthuto.hemomancy.client.render.entity.boss.endgame.VesperTheCrownedRefusalRenderer;
 import com.vincenthuto.hemomancy.client.render.entity.boss.endgame.VesperTheEveningStarRenderer;
 import com.vincenthuto.hemomancy.client.render.entity.boss.hemorath.HemorathRenderer;
@@ -605,6 +606,7 @@ public class ClientEvents {
     @SubscribeEvent
     public static void onClientPlayerLogin(net.neoforged.neoforge.client.event.ClientPlayerNetworkEvent.LoggingIn event) {
         ClientManipulationCooldowns.clear();
+        NaeglerophaeonCaptureOverlay.clear();
         CircusPerceptionOverlay.clear();
         QliphothBloomClientData.clear();
         NpcProgressionMarkerClientState.clear();
@@ -615,6 +617,7 @@ public class ClientEvents {
         com.vincenthuto.hemomancy.common.item.harbinger.BloodInjectionData.clearClient();
         com.vincenthuto.hemomancy.common.item.harbinger.BloodProfileData.clearClient();
         ClientManipulationCooldowns.clear();
+        NaeglerophaeonCaptureOverlay.clear();
         // HutosLib now retains read tracker state across disconnect/reload.
         FaneBoundaryClientData.clear();
         ActiveRiteClientData.clear();
@@ -669,6 +672,8 @@ public class ClientEvents {
     public static void renderSanguineOmenWorldGrade(RenderGuiEvent.Pre event) {
         Minecraft minecraft = Minecraft.getInstance();
         float partialTicks = minecraft.getTimer().getGameTimeDeltaPartialTick(true);
+        if(NaeglerophaeonCaptureOverlay.renderWorldGrade(event.getGuiGraphics(),
+                event.getGuiGraphics().guiWidth(),event.getGuiGraphics().guiHeight(),partialTicks)) return;
         FaneBoundaryRenderer.renderPost(event.getGuiGraphics(),
                 event.getGuiGraphics().guiWidth(), event.getGuiGraphics().guiHeight(), partialTicks);
         if (SanguineOmenOverlay.instance != null) {
@@ -841,6 +846,9 @@ public class ClientEvents {
             event.registerEntityRenderer(EntityInit.thirster.get(), ThirsterRenderer::new);
             event.registerEntityRenderer(EntityInit.fungling.get(), FunglingRenderer::new);
             event.registerEntityRenderer(EntityInit.tooth_pecks.get(), ToothPecksRenderer::new);
+            event.registerEntityRenderer(EntityInit.myelin_borer.get(), MyelinBorerRenderer::new);
+            event.registerEntityRenderer(EntityInit.mortarbound.get(), MortarboundRenderer::new);
+            event.registerEntityRenderer(EntityInit.naeglerophaeon.get(), NaeglerophaeonRenderer::new);
             event.registerEntityRenderer(EntityInit.chitinite.get(), ChitiniteRenderer::new);
             event.registerEntityRenderer(EntityInit.fervent_chitinite.get(), FerventChitiniteRenderer::new);
             event.registerEntityRenderer(EntityInit.chthonian.get(), ChthonianRenderer::new);
@@ -915,6 +923,7 @@ public class ClientEvents {
             event.registerEntityRenderer(EntityInit.desiccant.get(), DesiccantRenderer::new);
             event.registerEntityRenderer(EntityInit.crimson_doe.get(), CrimsonDoeRenderer::new);
             event.registerEntityRenderer(EntityInit.verdigris_moth.get(), VerdigrisMothRenderer::new);
+            event.registerEntityRenderer(EntityInit.choir_keeper.get(), ChoirKeeperRenderer::new);
             event.registerEntityRenderer(EntityInit.luminal_cicada.get(), LuminalCicadaRenderer::new);
             event.registerEntityRenderer(EntityInit.hematic_burrower.get(), HematicBurrowerRenderer::new);
             event.registerEntityRenderer(EntityInit.scarlet_serpent.get(), ScarletSerpentRenderer::new);

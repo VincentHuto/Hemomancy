@@ -45,10 +45,22 @@ public class HemoBlockStateProvider extends BlockStateProvider {
                         .texture("bottom", modLoc("block/" + name + "_bottom"))
                         .texture("side", modLoc("block/" + name + "_side"));
                 simpleBlock(block, model);
+            } else if (block == BlockInit.dura_membrane.get()) {
+                String name = getName(block);
+                ModelFile model = models()
+                        .withExistingParent(name, mcLoc("block/cube_all"))
+                        .renderType("minecraft:translucent")
+                        .texture("all", modLoc("block/" + name));
+                simpleBlock(block, model);
             } else if (block instanceof StairBlock stairBlock) {
                 String name = getName(block);
                 String baseName = resolveBaseTextureName(name, "_stairs");
                 stairsBlock(stairBlock, modLoc("block/" + baseName));
+            } else if (block instanceof RotatedPillarBlock pillarBlock) {
+                String name = getName(block);
+                ResourceLocation side = modLoc("block/" + name);
+                ResourceLocation end = modLoc("block/" + name + "_top");
+                axisBlock(pillarBlock, side, end);
             } else {
                 simpleBlock(block);
                 cubeAll(block);

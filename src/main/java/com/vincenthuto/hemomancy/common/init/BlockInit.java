@@ -271,6 +271,41 @@ public class BlockInit {
 	public static final DeferredHolder<Block, Block> venous_stone_wall = BASEBLOCKS.register("venous_stone_wall",
 			() -> new HemoWallBlock(BlockBehaviour.Properties.of().requiresCorrectToolForDrops().strength(1.5F, 6.0F)));
 
+	public static final DeferredHolder<Block, Block> bog_iron = BASEBLOCKS.register("bog_iron",
+			() -> new Block(BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_BROWN)
+					.requiresCorrectToolForDrops().strength(0.7F, 3.0F).sound(SoundType.GRAVEL)));
+
+	public static final DeferredHolder<Block, Block> neural_tissue = BASEBLOCKS.register("neural_tissue",
+			() -> new Block(BlockBehaviour.Properties.of().requiresCorrectToolForDrops().strength(1.5F, 6.0F)));
+
+	public static final DeferredHolder<Block, Block> axonal_slate = BASEBLOCKS.register("axonal_slate",
+			() -> new Block(BlockBehaviour.Properties.of().requiresCorrectToolForDrops().strength(1.5F, 6.0F)));
+
+	public static final DeferredHolder<Block, Block> myelin_sheath = BASEBLOCKS.register("myelin_sheath",
+			() -> new Block(BlockBehaviour.Properties.of().requiresCorrectToolForDrops().strength(1.0F, 4.0F)));
+
+	public static final DeferredHolder<Block, Block> ganglion_matter = BASEBLOCKS.register("ganglion_matter",
+			() -> new Block(BlockBehaviour.Properties.of().requiresCorrectToolForDrops().strength(1.5F, 6.0F)
+					.lightLevel(state -> 6)));
+
+	public static final DeferredHolder<Block, Block> cortical_folds = BASEBLOCKS.register("cortical_folds",
+			() -> new Block(BlockBehaviour.Properties.of().requiresCorrectToolForDrops().strength(2.0F, 6.0F)));
+
+	public static final DeferredHolder<Block, Block> nerve_fiber = BASEBLOCKS.register("nerve_fiber",
+			() -> new RotatedPillarBlock(BlockBehaviour.Properties.of().strength(0.4F, 1.0F).noOcclusion()));
+
+	public static final DeferredHolder<Block, Block> nerve_bundle = BASEBLOCKS.register("nerve_bundle",
+			() -> new RotatedPillarBlock(BlockBehaviour.Properties.of().strength(0.8F, 2.0F).noOcclusion()));
+
+	public static final DeferredHolder<Block, Block> synaptic_node = BASEBLOCKS.register("synaptic_node",
+			() -> new Block(BlockBehaviour.Properties.of().strength(1.2F, 4.0F).lightLevel(state -> 10)));
+
+	public static final DeferredHolder<Block, Block> dura_membrane = BASEBLOCKS.register("dura_membrane",
+			() -> new Block(BlockBehaviour.Properties.of().strength(0.6F, 1.0F).noOcclusion()));
+
+	public static final DeferredHolder<Block, Block> dendrite_growth = CROSSBLOCKS.register("dendrite_growth",
+			() -> new Block(BlockBehaviour.Properties.of().instabreak().noCollission().noOcclusion()));
+
 	public static final DeferredHolder<Block, Block> gilded_venous_stone = BASEBLOCKS.register("gilded_venous_stone",
 			() -> new Block(BlockBehaviour.Properties.of().requiresCorrectToolForDrops().strength(1.5F, 6.0F)));
 	public static final DeferredHolder<Block, Block> polished_venous_stone = BASEBLOCKS.register("polished_venous_stone",

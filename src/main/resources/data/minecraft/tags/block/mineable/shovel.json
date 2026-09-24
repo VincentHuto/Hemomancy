@@ -1,8 +1,10 @@
 {
   "replace": false,
   "values": [
+	"hemomancy:bog_iron",
     "hemomancy:erythrocytic_dirt",
     "hemomancy:erythrocytic_mycelium",
-    "hemomancy:mycelium_erythrocytic_dirt"
+    "hemomancy:mycelium_erythrocytic_dirt",
+    "hemomancy:myelin_sheath"
   ]
 }

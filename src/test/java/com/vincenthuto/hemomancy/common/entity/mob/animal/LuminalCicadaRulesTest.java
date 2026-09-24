@@ -14,6 +14,15 @@ public final class LuminalCicadaRulesTest {
 	}
 
 	@Test
+	void naturalSpawnsRequireTheRequestedBiomesAndTheirHabitat() {
+		assertTrue(LuminalCicadaRules.canNaturalSpawn(true, false, true, true));
+		assertTrue(!LuminalCicadaRules.canNaturalSpawn(true, false, false, true));
+		assertTrue(LuminalCicadaRules.canNaturalSpawn(false, true, false, true));
+		assertTrue(!LuminalCicadaRules.canNaturalSpawn(false, false, true, true));
+		assertTrue(!LuminalCicadaRules.canNaturalSpawn(false, true, false, false));
+	}
+
+	@Test
 	void clingAnchorClearsLogCollisionShape() {
 		double halfWidth = 0.45D / 2.0D;
 		Vec3 anchor = LuminalCicadaRules.clingAnchor(new BlockPos(10, 20, 30), Direction.NORTH, halfWidth);
@@ -62,9 +71,9 @@ public final class LuminalCicadaRulesTest {
 		assert !LuminalCicadaRules.shouldFlash(16.1D, 0);
 		assert !LuminalCicadaRules.shouldFlash(1.0D, 1);
 
-		assert LuminalCicadaRules.canNaturalSpawn(true, true);
-		assert !LuminalCicadaRules.canNaturalSpawn(false, true);
-		assert !LuminalCicadaRules.canNaturalSpawn(true, false);
+		assert LuminalCicadaRules.canNaturalSpawn(true, false, true, true);
+		assert !LuminalCicadaRules.canNaturalSpawn(true, false, false, true);
+		assert !LuminalCicadaRules.canNaturalSpawn(true, false, true, false);
 
 		assert LuminalCicadaRules.clingBodyYaw(Direction.NORTH) == 180.0F;
 		assert LuminalCicadaRules.clingBodyYaw(Direction.SOUTH) == 0.0F;

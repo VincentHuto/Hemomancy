@@ -25,6 +25,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.LevelReader;
+import net.minecraft.world.level.biome.Biomes;
 import net.minecraft.world.phys.Vec3;
 
 import javax.annotation.Nullable;
@@ -84,9 +85,13 @@ public class LuminalCicadaEntity extends PathfinderMob {
 
 	public static boolean canSpawnHere(EntityType<? extends LuminalCicadaEntity> type, LevelAccessor level,
 			MobSpawnType reason, BlockPos pos, RandomSource random) {
+		boolean darkForest = level.getBiome(pos).is(Biomes.DARK_FOREST);
+		boolean lushCave = level.getBiome(pos).is(Biomes.LUSH_CAVES);
+		if (!darkForest && !lushCave) return false;
 		boolean openAir = level.getBlockState(pos).getCollisionShape(level, pos).isEmpty()
 				&& level.getBlockState(pos.above()).getCollisionShape(level, pos.above()).isEmpty();
-		return LuminalCicadaRules.canNaturalSpawn(hasNearbyTree(level, pos), openAir);
+		return LuminalCicadaRules.canNaturalSpawn(darkForest, lushCave,
+				darkForest && hasNearbyTree(level, pos), openAir);
 	}
 
 	private static boolean hasNearbyTree(LevelAccessor level, BlockPos origin) {

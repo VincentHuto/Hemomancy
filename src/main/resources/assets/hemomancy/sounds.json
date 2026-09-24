@@ -1,4 +1,8 @@
 {
+  "entity.choir_keeper.squeak": {
+    "subtitle": "subtitle.hemomancy.entity.choir_keeper.squeak",
+    "sounds": ["hemomancy:entity/choir_keeper/squeak"]
+  },
   "item.microscope.examine_loop": {
     "subtitle": "subtitle.hemomancy.microscope.examine_loop",
     "sounds": [
@@ -528,6 +532,46 @@
         "stream": true
       }
     ]
+  },
+  "entity.naeglerophaeon.charge": {
+    "category": "hostile",
+    "subtitle": "subtitle.hemomancy.entity.naeglerophaeon.charge",
+    "sounds": [{"name": "hemomancy:entity/myelin_borer/ambient", "pitch": 0.65}]
+  },
+  "entity.naeglerophaeon.ambient": {
+    "category": "hostile",
+    "subtitle": "subtitle.hemomancy.entity.naeglerophaeon.ambient",
+    "sounds": [{"name": "hemomancy:entity/synapse_hound/ambient", "pitch": 0.55}]
+  },
+  "entity.naeglerophaeon.hurt": {
+    "category": "hostile",
+    "subtitle": "subtitle.hemomancy.entity.naeglerophaeon.hurt",
+    "sounds": [{"name": "hemomancy:entity/myelin_borer/hurt", "pitch": 0.6}]
+  },
+  "entity.naeglerophaeon.death": {
+    "category": "hostile",
+    "subtitle": "subtitle.hemomancy.entity.naeglerophaeon.death",
+    "sounds": [{"name": "hemomancy:entity/myelin_borer/death", "pitch": 0.6}]
+  },
+  "entity.naeglerophaeon.zap": {
+    "category": "hostile",
+    "subtitle": "subtitle.hemomancy.entity.naeglerophaeon.zap",
+    "sounds": [{"name": "hemomancy:entity/synapse_hound/hurt", "pitch": 1.5}]
+  },
+  "entity.naeglerophaeon.blink": {
+    "category": "hostile",
+    "subtitle": "subtitle.hemomancy.entity.naeglerophaeon.blink",
+    "sounds": [{"name": "hemomancy:entity/myelin_borer/hurt", "pitch": 0.7}]
+  },
+  "entity.naeglerophaeon.drain": {
+    "category": "hostile",
+    "subtitle": "subtitle.hemomancy.entity.naeglerophaeon.drain",
+    "sounds": [{"name": "hemomancy:entity/synapse_hound/ambient", "pitch": 0.65}]
+  },
+  "item.synaptic_step.use": {
+    "category": "player",
+    "subtitle": "subtitle.hemomancy.item.synaptic_step.use",
+    "sounds": [{"name": "hemomancy:entity/myelin_borer/hurt", "pitch": 1.5}]
   },
   "entity.fargone.ambient": {
     "category": "entity",
@@ -1220,5 +1264,10 @@
       }
     ],
     "subtitle": "hemomancy.antecedent.cylinder.the_quieting"
-  }
+  },
+  "entity.mortarbound.ambient": {"sounds": ["hemomancy:entity/mortarbound/ambient"], "subtitle": "subtitle.hemomancy.entity.mortarbound.ambient"},
+  "entity.mortarbound.crawl": {"sounds": ["hemomancy:entity/mortarbound/crawl"], "subtitle": "subtitle.hemomancy.entity.mortarbound.crawl"},
+  "entity.mortarbound.attack": {"sounds": ["hemomancy:entity/mortarbound/attack"], "subtitle": "subtitle.hemomancy.entity.mortarbound.attack"},
+  "entity.mortarbound.hurt": {"sounds": ["hemomancy:entity/mortarbound/hurt"], "subtitle": "subtitle.hemomancy.entity.mortarbound.hurt"},
+  "entity.mortarbound.death": {"sounds": ["hemomancy:entity/mortarbound/death"], "subtitle": "subtitle.hemomancy.entity.mortarbound.death"}
 }

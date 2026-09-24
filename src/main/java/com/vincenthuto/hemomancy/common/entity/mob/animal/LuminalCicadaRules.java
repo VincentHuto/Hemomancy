@@ -19,8 +19,9 @@ public final class LuminalCicadaRules {
 		return cooldownTicks <= 0 && playerDistanceSquared <= FLASH_RANGE_SQUARED;
 	}
 
-	public static boolean canNaturalSpawn(boolean nearbyTree, boolean openAir) {
-		return nearbyTree && openAir;
+	public static boolean canNaturalSpawn(boolean darkForest, boolean lushCave, boolean nearbyTree,
+			boolean openAir) {
+		return openAir && (lushCave || (darkForest && nearbyTree));
 	}
 
 	public static float clingBodyYaw(Direction face) {

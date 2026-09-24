@@ -5,6 +5,7 @@ import com.vincenthuto.hemomancy.common.entity.boss.annetta.AnnettaKnowlesEntity
 import com.vincenthuto.hemomancy.common.entity.boss.annetta.LatentAnnettaInfectionEntity;
 import com.vincenthuto.hemomancy.common.entity.boss.annetta.StainedPriestessEntity;
 import com.vincenthuto.hemomancy.common.entity.boss.endgame.MycophantEntity;
+import com.vincenthuto.hemomancy.common.entity.boss.endgame.NaeglerophaeonEntity;
 import com.vincenthuto.hemomancy.common.entity.boss.endgame.VesperTheCrownedRefusalEntity;
 import com.vincenthuto.hemomancy.common.entity.boss.endgame.VesperTheEveningStarEntity;
 import com.vincenthuto.hemomancy.common.entity.boss.saint.hemorath.HemorathEntity;
@@ -378,6 +379,10 @@ public class EntityInit {
             "recall_barb",() -> EntityType.Builder.<RecallBarbEntity>of(RecallBarbEntity::new,MobCategory.MISC)
                     .sized(.3F,.5F)
                     .clientTrackingRange(10).updateInterval(1).build(Hemomancy.rloc("recall_barb").toString()));
+    public static final DeferredHolder<EntityType<?>,EntityType<GoreWoundHarpoonEntity>> gore_wound_harpoon=ENTITY_TYPES.register(
+            "gore_wound_harpoon",() -> EntityType.Builder.<GoreWoundHarpoonEntity>of(GoreWoundHarpoonEntity::new,MobCategory.MISC)
+                    .sized(.3F,.3F).clientTrackingRange(10).updateInterval(1)
+                    .build(Hemomancy.rloc("gore_wound_harpoon").toString()));
 
     public static final DeferredHolder<EntityType<?>, EntityType<WillEntity>> will = ENTITY_TYPES
             .register("will",
@@ -535,6 +540,17 @@ public class EntityInit {
                     .clientTrackingRange(8)
                     .build(Hemomancy.rloc("lantern_tick").toString()));
 
+    public static final DeferredHolder<EntityType<?>, EntityType<MyelinBorerEntity>> myelin_borer = ENTITY_TYPES.register("myelin_borer",
+            () -> EntityType.Builder.of(MyelinBorerEntity::new, MobCategory.MONSTER).sized(0.9F, 0.4F)
+                    .build(Hemomancy.rloc("myelin_borer").toString()));
+    public static final DeferredHolder<EntityType<?>, EntityType<MortarboundEntity>> mortarbound = ENTITY_TYPES.register("mortarbound",
+            () -> EntityType.Builder.of(MortarboundEntity::new, MobCategory.MONSTER).sized(0.9F, 3.0F)
+                    .build(Hemomancy.rloc("mortarbound").toString()));
+
+    public static final DeferredHolder<EntityType<?>, EntityType<NaeglerophaeonEntity>> naeglerophaeon = ENTITY_TYPES.register("naeglerophaeon",
+            () -> EntityType.Builder.of(NaeglerophaeonEntity::new, MobCategory.MONSTER).sized(1.8F, 1.6F)
+                    .clientTrackingRange(10).build(Hemomancy.rloc("naeglerophaeon").toString()));
+
     public static final DeferredHolder<EntityType<?>, EntityType<ChitiniteEntity>> chitinite = ENTITY_TYPES.register("chitinite",
             () -> EntityType.Builder.of(ChitiniteEntity::new, MobCategory.CREATURE).sized(1F, 0.3F)
                     .build(Hemomancy.rloc("chitinite").toString()));
@@ -571,6 +587,14 @@ public class EntityInit {
                     .clientTrackingRange(8)
                     .updateInterval(3)
                     .build(Hemomancy.rloc("verdigris_moth").toString()));
+
+    public static final DeferredHolder<EntityType<?>, EntityType<ChoirKeeperEntity>> choir_keeper = ENTITY_TYPES.register(
+            "choir_keeper",
+            () -> EntityType.Builder.of(ChoirKeeperEntity::new, MobCategory.AMBIENT)
+                    .sized(0.8F, 1.5F)
+                    .clientTrackingRange(10)
+                    .updateInterval(2)
+                    .build(Hemomancy.rloc("choir_keeper").toString()));
 
     public static final DeferredHolder<EntityType<?>, EntityType<LuminalCicadaEntity>> luminal_cicada = ENTITY_TYPES.register(
             "luminal_cicada",
@@ -802,6 +826,9 @@ public class EntityInit {
         event.register(EntityInit.verdigris_moth.get(), SpawnPlacementTypes.ON_GROUND,
                 Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, VerdigrisMothEntity::canSpawnHere,
                 RegisterSpawnPlacementsEvent.Operation.OR);
+        event.register(EntityInit.choir_keeper.get(), SpawnPlacementTypes.NO_RESTRICTIONS,
+                Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, ChoirKeeperEntity::canSpawnHere,
+                RegisterSpawnPlacementsEvent.Operation.OR);
 		event.register(EntityInit.peacock_spider.get(), SpawnPlacementTypes.ON_GROUND,
 				Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, PeacockSpiderEntity::canSpawnHere,
 				RegisterSpawnPlacementsEvent.Operation.OR);
@@ -854,12 +881,21 @@ public class EntityInit {
         event.register(EntityInit.fungling.get(), SpawnPlacementTypes.ON_GROUND,
                 Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, FunglingEntity::checkMobSpawnRules,
                 RegisterSpawnPlacementsEvent.Operation.OR);
+        event.register(EntityInit.myelin_borer.get(), SpawnPlacementTypes.NO_RESTRICTIONS,
+                Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, MyelinBorerEntity::canSpawnHere,
+                RegisterSpawnPlacementsEvent.Operation.REPLACE);
+        event.register(EntityInit.mortarbound.get(), SpawnPlacementTypes.NO_RESTRICTIONS,
+                Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, MortarboundEntity::canSpawn,
+                RegisterSpawnPlacementsEvent.Operation.REPLACE);
         Hemomancy.LOGGER.info("[Hemomancy] Spawn placements registered successfully!");
     }
 
     @SubscribeEvent
     public static void onAttributeCreate(EntityAttributeCreationEvent event) {
         event.put(excoriated_sagittary.get(),ExcoriatedSagittaryEntity.setAttributes().build());
+        event.put(EntityInit.myelin_borer.get(), MyelinBorerEntity.setAttributes().build());
+        event.put(EntityInit.mortarbound.get(), MortarboundEntity.attributes().build());
+        event.put(EntityInit.naeglerophaeon.get(), NaeglerophaeonEntity.attributes().build());
         event.put(phlegethontic_bombardier.get(),PhlegethonticBombardier.createAttributes().build());
         event.put(EntityInit.hematic_construct.get(), HematicConstructEntity.setAttributes().build());
         event.put(EntityInit.blood_cloud.get(), BloodConstructEntity.setAttributes().build());
@@ -933,6 +969,7 @@ public class EntityInit {
         event.put(EntityInit.desiccant.get(), DesiccantEntity.setAttributes().build());
         event.put(EntityInit.crimson_doe.get(), CrimsonDoeEntity.setAttributes().build());
         event.put(EntityInit.verdigris_moth.get(), VerdigrisMothEntity.setAttributes().build());
+        event.put(EntityInit.choir_keeper.get(), ChoirKeeperEntity.setAttributes().build());
 		event.put(EntityInit.peacock_spider.get(), Spider.createAttributes().build());
 		event.put(EntityInit.vampire_bat.get(), VampireBatEntity.setAttributes().build());
         event.put(EntityInit.luminal_cicada.get(), LuminalCicadaEntity.setAttributes().build());

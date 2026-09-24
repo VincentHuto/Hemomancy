@@ -148,3 +148,5 @@ All Rights Reserved © VincentHuto
 - [Hematic Succession](Hematic-Succession.md): D5 professional residents, Bequests, effigies, and restoration.
 
 - [Antecedent Inquiry](Antecedent-Inquiry.md) — optional Deep Dark investigation, ancient recordings, and Listening Scar.
+
+- [Cortical Drift](Cortical-Drift.md) — End biome built around the Vagrant Mind, its enterable brain cavity, and the nerve-bridge network that powers Ferric Ductilis conduction.

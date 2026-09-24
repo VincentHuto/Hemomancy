@@ -5,6 +5,7 @@ import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
+import com.vincenthuto.hemomancy.common.entity.projectile.GoreWoundHarpoonEntity;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.BloodVolumeServerPacket;
 import com.vincenthuto.hutoslib.client.HLTextUtils;
@@ -104,6 +105,9 @@ public class LivingCrossbowItem extends CrossbowItem implements IDispellable, IT
 						shooter.getEyeY() - 0.15F, shooter.getZ(), true);
 			} else {
 				Projectile = createArrow(worldIn, shooter, projectile, crossbow);
+				if (Projectile instanceof GoreWoundHarpoonEntity harpoon) {
+					harpoon.setReturnPolicy(isCreativeMode, projectileAngle != 0.0F);
+				}
 				if (isCreativeMode || projectileAngle != 0.0F) {
 					((AbstractArrow) Projectile).pickup = AbstractArrow.Pickup.CREATIVE_ONLY;
 				}

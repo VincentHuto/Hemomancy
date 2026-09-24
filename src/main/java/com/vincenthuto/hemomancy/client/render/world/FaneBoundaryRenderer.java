@@ -153,6 +153,7 @@ public final class FaneBoundaryRenderer {
 		setUniform(shader, "Progress", 0.5F);
 		setUniform(shader, "Intensity", intensity);
 		setUniform(shader, "Seed", 91.0F);
+		setUniform(shader, "EyeMarker", 0.0F);
 		RenderSystem.setShaderTexture(0, frameCopyTarget.getColorTextureId());
 		RenderSystem.disableBlend();
 		RenderSystem.disableDepthTest();

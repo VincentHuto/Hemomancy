@@ -6,6 +6,7 @@ import com.vincenthuto.hemomancy.common.worldgen.structure.*;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.level.levelgen.structure.Structure;
 import net.minecraft.world.level.levelgen.structure.StructureType;
+import net.minecraft.world.level.levelgen.structure.pieces.StructurePieceType;
 import net.neoforged.neoforge.common.world.BiomeModifier;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
@@ -19,6 +20,13 @@ public class StructureInit {
 	 */
 	public static final DeferredRegister<StructureType<?>> STRUCTURES = DeferredRegister
 			.create(Registries.STRUCTURE_TYPE, Hemomancy.MOD_ID);
+
+	/**
+	 * Custom (non-jigsaw) structure pieces must be registered so the chunk's structure-start NBT can
+	 * reconstruct them on world reload.
+	 */
+	public static final DeferredRegister<StructurePieceType> STRUCTURE_PIECES = DeferredRegister
+			.create(Registries.STRUCTURE_PIECE, Hemomancy.MOD_ID);
 
 	public static DeferredRegister<MapCodec<? extends BiomeModifier>> BIOME_MODIFIER_SERIALIZERS = DeferredRegister
 			.create(NeoForgeRegistries.BIOME_MODIFIER_SERIALIZERS, Hemomancy.MOD_ID);
@@ -65,6 +73,12 @@ public class StructureInit {
 
 	public static final DeferredHolder<StructureType<?>, StructureType<DynastyCastleStructure>> dynasty_castle = STRUCTURES
 			.register("dynasty_castle", () -> explicitStructureTypeTyping(DynastyCastleStructure.CODEC));
+
+	public static final DeferredHolder<StructureType<?>, StructureType<VagrantMindStructure>> vagrant_mind = STRUCTURES
+			.register("vagrant_mind", () -> explicitStructureTypeTyping(VagrantMindStructure.CODEC));
+
+	public static final DeferredHolder<StructurePieceType, StructurePieceType> vagrant_mind_piece = STRUCTURE_PIECES
+			.register("vagrant_mind", () -> (StructurePieceType) VagrantMindPiece::new);
 
 	private static <T extends Structure> StructureType<T> explicitStructureTypeTyping(MapCodec<T> structureCodec) {
 		return () -> structureCodec;

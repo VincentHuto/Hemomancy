@@ -62,6 +62,8 @@ public class LayerEvents {
 
 	@SubscribeEvent
 	public static void registerModelLayers(EntityRenderersEvent.RegisterLayerDefinitions event) {
+		event.registerLayerDefinition(MyelinBorerModel.LAYER_LOCATION, MyelinBorerModel::createBodyLayer);
+		event.registerLayerDefinition(MortarboundModel.LAYER_LOCATION, MortarboundModel::createBodyLayer);
 		event.registerLayerDefinition(AbhorentThoughtModel.abhorent_thought, AbhorentThoughtModel::createBodyLayer);
 		event.registerLayerDefinition(LivingBladeHandTameModel.living_blade_tame,
 				LivingBladeHandTameModel::createLayers);
@@ -211,6 +213,7 @@ public class LayerEvents {
 		event.registerLayerDefinition(DesiccantModel.LAYER_LOCATION, DesiccantModel::createBodyLayer);
 		event.registerLayerDefinition(CrimsonDoeModel.LAYER_LOCATION, CrimsonDoeModel::createBodyLayer);
 		event.registerLayerDefinition(VerdigrisMothModel.LAYER_LOCATION, VerdigrisMothModel::createBodyLayer);
+		event.registerLayerDefinition(ChoirKeeperModel.LAYER_LOCATION, ChoirKeeperModel::createBodyLayer);
 		event.registerLayerDefinition(LuminalCicadaModel.LAYER_LOCATION, LuminalCicadaModel::createBodyLayer);
 		event.registerLayerDefinition(ScarletSerpentModel.LAYER_LOCATION, ScarletSerpentModel::createBodyLayer);
 		event.registerLayerDefinition(HemojellyModel.LAYER_LOCATION, HemojellyModel::createBodyLayer);

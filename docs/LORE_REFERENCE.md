@@ -771,6 +771,24 @@ This is a world of **gray**, of bodies and blood and fungus and old powers that 
 
 ---
 
+## 18. The Vagrant Mind
+
+Past the central island, out where the void breaks into scattered plateaus, one of them is not stone. It is grown: a colossal hollow organ of black bulk tissue, blue banded strata, and a bone-white crust, its outer skin ridged into gyri like any brain's and divided by a dark sagittal sulcus. Nothing about it is architecture. Nobody built the Vagrant Mind. Something grew it, and something has been dead — or merely still — inside it for longer than any faction has kept records.
+
+It is a dormant organ, not a deity. Treat it the same way the mod treats the Fungal Entity and the Pale Lady: enormous, unsettling, and utterly indifferent to being worshiped. There are two competing readings for what it is, and the game does not adjudicate between them.
+
+One possibility is that it is nervous tissue the infection never reached — a fragment of cognition that grew up parallel to the Entity's spread rather than inside it, isolated by the void long enough to finish its own private course of thought and then simply stop. Its interior is strung with fiber the same way the Entity's fungal networks are strung with hyphae, but the resemblance is convergent, not inherited. It is what unclaimed nervous matter does when it is given world enough and time and nothing to interrupt it.
+
+The other possibility is worse, in the way the Pale Lady's warning is worse: that it is not unclaimed at all, that it thought — actively, for a very long time — and what surrounds it now is not a fossil but a silence it arrived at on purpose. Something thought too long and stopped. Nobody who has stood in the cavity and watched the nerve-lightning still jumping between its synaptic nodes, decades after whatever used to occupy it went quiet, finds that reading comforting.
+
+The Hematic Order reads it as an archive. To a Hematic Order surveyor, dormant nervous tissue this large and this intact is preserved memory waiting to be tapped — not a mind to bargain with, but a structure to study the way the Order studies every other unclaimed fragment of blood cognition, filed alongside the Sanguine Brotherhood's older salvage work and the Crimson Lodge's habit of cataloguing anything that still conducts. They do not claim to know whose memory it was. They are patient enough to find out.
+
+Unstained pilgrims who make the crossing read it the other way, in Lethean still-water terms: not a resource but a lesson in the shape of a corpse. If even something built entirely of thought can choose stillness over continuing, it argues for the Lady's case better than any sermon. They do not disturb the fissure. They stand at its mouth, listen to the nerve arcs firing over dead tissue, and leave with their conviction reinforced rather than their curiosity satisfied.
+
+Neither reading requires the other to be wrong, and neither is endorsed as canon fact within the story. It is a body. What it was thinking, and why it stopped, stays unresolved — the same kind of deliberate unresolved question the mod already keeps open about the Fungal Entity's origin and the First Incursion's builders. See [World Content](../wiki/World-Content.md) and [HEMOMANCY_REFERENCE.md](HEMOMANCY_REFERENCE.md) §28.5 for the biome's mechanics.
+
+---
+
 *For mechanics, systems, blocks, items, mobs, and code details, see [HEMOMANCY_REFERENCE.md](HEMOMANCY_REFERENCE.md).*
 
 ## The Vein-Mason's division of work
@@ -846,3 +864,31 @@ The Bombardier's nearby-growth habitat and revised posture/flame presentation be
 The current localized dialogue, captions, journal JSON, generated NBT books, and OGG recordings are the installed telling. The original [First Incursion brief](HEMOMANCY_FIRST_INCURSION_DEEP_DARK_BRIEF.md) supplies design background. The [fresh prose draft](antecedent-fresh-draft/README.md) contains seventeen Markdown files for rewriting, but its wording has not been imported into the game or synthesized into new audio. Do not quote those drafts as already spoken or displayed in the current build.
 
 Book changes must reach `tools/oneoff/antecedent/build_vigil.py` and the regenerated structure. Recording changes must reach the script, captions, runtime cue timeline, and audio together; the silent and observation intervals are gameplay constraints. Existing generated books and terrain are not rewritten by changing these source files. The [developer reference](HEMOMANCY_REFERENCE.md#antecedent-inquiry-and-audio-analysis) records the concrete behavior, sources, and validation boundaries.
+
+## 19. The Myelin Borers
+
+Something still tends the Vagrant Mind's cabling. The Borers are blind segmented grubs that never touch
+the islands if they can help it; they live on the fibers, gripping the bundles and working their way
+along them, and where a span has been cut they patiently spin it closed again. They are not vermin and
+they are not servants. They are maintenance tissue — grown by the organ, or grown on it, and still
+carrying out their one function long after whatever directed it went quiet.
+
+Cut the cables and they change. Within moments of a severed fiber the nearest Borers stop mending and
+start eating, unpicking the bridges faster than they ever repaired them, and they will bite whoever did
+it. Left alone for a while they settle and go back to the work, and the network heals. They will not
+touch the synaptic knots, ever; whatever they are for, the junctions are not theirs to eat.
+
+The Hematic Order reads them as proof the organ still has reflexes — that something so plainly finished
+still defends its own circulation, and that the Mind is therefore not a corpse but a patient. The
+Crimson Lodge is more interested in what comes out of one when you kill it. Lethean readings are colder:
+the network was quiet, the quiet was the point, and a person who takes a blade to it is not discovering
+anything. They are only waking a thing that had managed to stop.
+
+## 20. Naeglerophaeon
+
+The Borers mend the Vagrant Mind's fibers. Naeglerophaeon takes what enters them. A maroon core
+holds a cluster of burning ganglia, surrounded by ivory tendrils and translucent crimson webs.
+Signals travel along the shorter arms, each ending in a small electrical discharge. One immense
+red axon trails behind, its lights steady. When the creature feeds, that axon swings forward to
+bind its prey and draw it toward the brightening core. No one agrees whether it is a parasite that
+found the Mind or an old reflex of the Mind itself. Its ganglion still conducts after death.

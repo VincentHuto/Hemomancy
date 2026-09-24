@@ -1,0 +1,31 @@
+{
+  "type": "minecraft:disk",
+  "config": {
+    "half_height": 1,
+    "radius": {
+      "type": "minecraft:uniform",
+      "min_inclusive": 2,
+      "max_inclusive": 4
+    },
+    "state_provider": {
+      "type": "minecraft:rule_based_block_state_provider",
+      "fallback": {
+        "type": "minecraft:simple_state_provider",
+        "state": {
+          "Name": "hemomancy:bog_iron"
+        }
+      },
+      "rules": []
+    },
+    "target": {
+      "type": "minecraft:matching_blocks",
+      "blocks": [
+        "minecraft:clay",
+        "minecraft:dirt",
+        "minecraft:mud",
+        "minecraft:sand",
+        "minecraft:gravel"
+      ]
+    }
+  }
+}

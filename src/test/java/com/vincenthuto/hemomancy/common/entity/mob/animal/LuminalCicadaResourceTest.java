@@ -1,10 +1,14 @@
 package com.vincenthuto.hemomancy.common.entity.mob.animal;
 
 import javax.imageio.ImageIO;
+import com.google.gson.JsonParser;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 import org.junit.jupiter.api.Test;
 
 public final class LuminalCicadaResourceTest {
@@ -23,6 +27,13 @@ public final class LuminalCicadaResourceTest {
 		String layers = source("com/vincenthuto/hemomancy/client/event/LayerEvents.java");
 		String capturable = resource("data/hemomancy/tags/entity_type/specimen_jar_capturable.json");
 		String spawn = resource("data/hemomancy/neoforge/biome_modifier/add_luminal_cicada.json");
+		String spawnBiomes = resource("data/hemomancy/tags/worldgen/biome/luminal_cicada_spawnlist.json");
+		Set<String> biomes = StreamSupport.stream(JsonParser.parseString(spawnBiomes).getAsJsonObject()
+				.getAsJsonArray("values").spliterator(), false)
+				.map(value -> value.getAsString()).collect(Collectors.toSet());
+		if (!biomes.equals(Set.of("minecraft:dark_forest", "minecraft:lush_caves"))) {
+			throw new AssertionError("Luminal Cicada spawn biomes must be dark forest and lush caves: " + biomes);
+		}
 
 		contains(entityInit, "luminal_cicada = ENTITY_TYPES.register(");
 		contains(entityInit, "LuminalCicadaEntity::canSpawnHere");

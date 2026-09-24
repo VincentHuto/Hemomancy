@@ -33,6 +33,8 @@ public class BaseFeatureInit {
 
 	public static final Feature<NoneFeatureConfiguration> VENOUS_RIDGE = register("venous_ridge",
 			new VenousRidgeFeature(NoneFeatureConfiguration.CODEC));
+	public static final Feature<NoneFeatureConfiguration> CORTICAL_ARCHIPELAGO = register("cortical_archipelago",
+			new CorticalArchipelagoFeature(NoneFeatureConfiguration.CODEC));
 	public static final Feature<NoneFeatureConfiguration> FUNGAL_FLOOR = register("fungal_floor",
 			new FungalFloorFeature(NoneFeatureConfiguration.CODEC));
 

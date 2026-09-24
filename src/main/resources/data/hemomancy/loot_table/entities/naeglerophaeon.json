@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:entity",
+  "pools": [
+    {
+      "rolls": 1,
+      "bonus_rolls": 0,
+      "entries": [
+        {"type": "minecraft:item", "name": "hemomancy:naeglerophaeon_ganglion"}
+      ]
+    }
+  ]
+}

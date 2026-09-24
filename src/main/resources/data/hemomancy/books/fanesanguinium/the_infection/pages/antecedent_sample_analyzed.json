@@ -4,6 +4,6 @@
   "texture": "hemomancy:textures/gui/guide/page.png",
   "title": "Incertae",
   "subtitle": "The Antecedent Inquiry",
-  "text": "The material is alive, but it has no hematic content, tendency, or enzyme response. Its cellularity remains indeterminate. The Alchemist may understand what that failed classification means.",
+  "text": "The sample is alive, but the microscope found no blood, tendency, or enzyme response. It could not tell whether the material has cells. Show the results to the Alchemist.",
   "icon": "hemomancy:hematic_microscope"
 }

@@ -1,0 +1,15 @@
+# Mortarbound
+
+The Mortarbound is a rare wall-clinging Deep Dark monster, including in Ancient Cities. Its pale shaggy inkcap crown, trailing black ink, dark sculk body, and sparse cyan filaments follow the [approved creature concept](assets/mortarbound-inkcap-sculk.png). The art is a direction for the block model and texture, not an in-game render validation.
+
+The editable Blockbench source is `src/main/resources/assets/hemomancy/models/entity/bbmodel/MortarboundModel.bbmodel`. It references the runtime 256×128 `textures/entity/mortarbound.png` atlas and mirrors the cuboids and pivots in `MortarboundModel.java`. Re-export it with `node tools/model_export/java_model_to_bbmodel.mjs --source src/main/java/com/vincenthuto/hemomancy/client/model/entity/mob/monster/MortarboundModel.java --texture textures/entity/mortarbound.png --output src/main/resources/assets/hemomancy/models/entity/bbmodel/MortarboundModel.bbmodel` after changing Java geometry.
+
+At rest it is a thin, black sculk-and-ink growth on a solid wall; the humanoid model is fully hidden. The enlarged growth spans roughly two blocks across and three blocks high. Its emerged form has a long torso, two separate clawed arms, a dark inky head, and a pale inkcap crown. It patrols along the wall while embedded. A distant vibration or visible player draws the hidden growth toward the source; it grows outward over one second only when close enough to investigate. A player striking it also forces the grow-out. It stops crawling while emerged, then melts back into the wall when the stimulus passes. A new alert during retreat reverses the growth smoothly. The form and transition progress are synchronized; loading a world starts it embedded again.
+
+Wool and wool carpet interrupt its line of hearing, and a solid wall blocks proximity sight. It remembers a disturbance for eight seconds while tracking. On a nearby player it telegraphs with a scrape and cyan spores, then strikes for four damage, pulls the target a short distance, and slows them for 1.5 seconds. The strike emits a vibration that sculk sensors may hear; crawling does not. Attacking it also draws its attention.
+
+Natural spawns are single creatures with a low Deep Dark biome weight, require three blocks of vertical wall support and adjacent open space for the broad silhouette, and exclude the authored Vigil rooms. The hitbox is three blocks tall but stays narrow against the wall. The mob has 24 health and drops five experience, with a 25% chance of one sculk vein. It adds no progression item, quest, or claim about the Vigil specimen's origin.
+
+Counterplay: stop making vibrations, put wool between yourself and the creature, distract it with an impact elsewhere, or fight during its 16-tick strike warning. A missing supporting wall makes it detach and seek another nearby surface.
+
+Implementation checks do not establish natural spawn frequency, full wall-path reliability, client appearance, multiplayer synchronization, or Warden escalation. Those require a fresh-world and live-client pass.

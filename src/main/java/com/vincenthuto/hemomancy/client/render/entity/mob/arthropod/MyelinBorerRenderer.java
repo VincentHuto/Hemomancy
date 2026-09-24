@@ -6,6 +6,8 @@ import com.vincenthuto.hemomancy.common.entity.mob.arthropod.MyelinBorerEntity;
 
 import net.minecraft.client.renderer.entity.EntityRendererProvider.Context;
 import net.minecraft.client.renderer.entity.MobRenderer;
+import net.minecraft.client.renderer.MultiBufferSource;
+import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.resources.ResourceLocation;
 
 public class MyelinBorerRenderer extends MobRenderer<MyelinBorerEntity, MyelinBorerModel> {
@@ -19,5 +21,13 @@ public class MyelinBorerRenderer extends MobRenderer<MyelinBorerEntity, MyelinBo
 	@Override
 	public ResourceLocation getTextureLocation(MyelinBorerEntity entity) {
 		return TEXTURE;
+	}
+
+	@Override
+	public void render(MyelinBorerEntity entity, float yaw, float partialTick, PoseStack poseStack,
+			MultiBufferSource buffer, int packedLight) {
+		if (!entity.isBlinking()) {
+			super.render(entity, yaw, partialTick, poseStack, buffer, packedLight);
+		}
 	}
 }
