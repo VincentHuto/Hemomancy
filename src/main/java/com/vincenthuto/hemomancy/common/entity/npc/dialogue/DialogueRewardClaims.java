@@ -13,6 +13,8 @@ public final class DialogueRewardClaims {
                  HarbingerVicarDialogueTrees.EVENT_CLAIM_FIRST_BLOODCRAFT_REWARD,
                  HarbingerVicarDialogueTrees.EVENT_CONSECRATION_KIT,
                  HarbingerAlchemistDialogueTrees.EVENT_FIRST_SEPARATION_CLAIM,
+                 AdvancedBrewingDialogue.CONDENSER_CLAIM,
+                 AdvancedBrewingDialogue.ATHANOR_CLAIM,
                  SanguineMonolithDialogueTrees.EVENT_CORNERSTONE,
                  SanguineMonolithDialogueTrees.EVENT_SHATTER -> true;
             default -> false;

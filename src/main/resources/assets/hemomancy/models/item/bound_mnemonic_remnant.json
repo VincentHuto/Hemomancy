@@ -1,6 +1,6 @@
 {
   "parent": "minecraft:item/generated",
   "textures": {
-    "layer0": "hemomancy:item/mnemonic_ambergris"
+    "layer0": "hemomancy:item/bound_mnemonic_remnant"
   }
 }

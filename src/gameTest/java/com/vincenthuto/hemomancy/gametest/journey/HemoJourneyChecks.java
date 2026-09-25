@@ -327,7 +327,7 @@ public final class HemoJourneyChecks {
 					"The Vicar's Consecration Kit was not received.");
 			case ARTIFICER_FRAME_CONSECRATED -> require(unmet,
 					HarbingerAdvancementGranter.isArtificerFrameConsecrated(player),
-					"Apply the Vicar's Consecration Kit to the Hematic Armature.");
+					"Complete the Rite of Armature Consecration.");
 			case ARTIFICER_CRIMSON_VESTMENT_INSPECTION -> require(unmet,
 					ArtificerAssignments.has(player, ArtificerAssignments.CRIMSON_VESTMENT_INSPECTED),
 					"The Artificer has not inspected the consecrated frame.");
@@ -411,7 +411,7 @@ public final class HemoJourneyChecks {
 					"Accept Weight of the Frame from the Artificer.");
 			case ARTIFICER_MONOLITHIC_FRAME -> require(unmet,
 					HarbingerAdvancementGranter.isArtificerMonolithicFrame(player),
-					"Apply the Monolithic Cornerstone to the prepared Armature.");
+					"Complete the Rite of the Monolithic Armature.");
 			case ARTIFICER_D7_UPGRADE -> require(unmet,
 					HarbingerAdvancementGranter.isArtificerFirstD7Upgrade(player)
 							&& ArtificerAssignments.firstD7Lineage(player) == D7Lineage.EDACIOUS

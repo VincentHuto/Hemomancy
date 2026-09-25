@@ -162,7 +162,7 @@ public final class HarbingerJourneyAutomation {
 			case VICAR_CONSECRATION_KIT -> dialogue(player, origin, HarbingerVicarEntity.class,
 					HarbingerVicarDialogueTrees.EVENT_CONSECRATION_KIT);
 			case ARTIFICER_FRAME_CONSECRATED, ARTIFICER_MONOLITHIC_FRAME ->
-					armature(player, origin).applyArmatureUpgradeItem(player, InteractionHand.MAIN_HAND);
+					HemoJourneyFixtures.performArmatureUpgradeRite(player, origin);
 			case ARTIFICER_CRIMSON_VESTMENT_INSPECTION -> artificer(player, origin,
 					HarbingerArtificerDialogueTrees.EVENT_INSPECT_CRIMSON_VESTMENT);
 			case ARTIFICER_CRIMSON_VESTMENT_COUNSEL -> dialogue(player, origin, HarbingerAlchemistEntity.class,

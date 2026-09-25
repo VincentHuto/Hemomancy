@@ -1,0 +1,590 @@
+{
+  "parent": "minecraft:block/block",
+  "render_type": "cutout",
+  "textures": {
+    "particle": "hemomancy:block/hematic_iron_block",
+    "iron": "hemomancy:block/hematic_iron_block",
+    "dark": "hemomancy:block/bold_chiseled_hematic_iron_block",
+    "wood": "hemomancy:block/blood_wood_planks",
+    "stone": "minecraft:block/grindstone_side",
+    "blood": "hemomancy:block/blood_still"
+  },
+  "elements": [
+    {
+      "name": "stylus_arm",
+      "from": [
+        23,
+        12,
+        10
+      ],
+      "to": [
+        25,
+        20,
+        12
+      ],
+      "faces": {
+        "west": {
+          "texture": "#iron",
+          "uv": [
+            0,
+            0,
+            2,
+            8
+          ]
+        }
+      }
+    },
+    {
+      "name": "stylus_arm",
+      "from": [
+        23,
+        12,
+        10
+      ],
+      "to": [
+        25,
+        20,
+        12
+      ],
+      "faces": {
+        "east": {
+          "texture": "#iron",
+          "uv": [
+            0,
+            0,
+            2,
+            8
+          ]
+        }
+      }
+    },
+    {
+      "name": "stylus_arm",
+      "from": [
+        23,
+        12,
+        10
+      ],
+      "to": [
+        23.5,
+        20,
+        11
+      ],
+      "faces": {
+        "down": {
+          "texture": "#iron",
+          "uv": [
+            0,
+            0,
+            0.5,
+            1
+          ]
+        }
+      }
+    },
+    {
+      "name": "stylus_arm",
+      "from": [
+        23,
+        12,
+        11
+      ],
+      "to": [
+        23.5,
+        20,
+        12
+      ],
+      "faces": {
+        "down": {
+          "texture": "#iron",
+          "uv": [
+            0,
+            1,
+            0.5,
+            2
+          ]
+        }
+      }
+    },
+    {
+      "name": "stylus_arm",
+      "from": [
+        23.5,
+        12,
+        10
+      ],
+      "to": [
+        24.5,
+        20,
+        11
+      ],
+      "faces": {
+        "down": {
+          "texture": "#iron",
+          "uv": [
+            0.5,
+            0,
+            1.5,
+            1
+          ]
+        }
+      }
+    },
+    {
+      "name": "stylus_arm",
+      "from": [
+        24.5,
+        12,
+        10
+      ],
+      "to": [
+        25,
+        20,
+        11
+      ],
+      "faces": {
+        "down": {
+          "texture": "#iron",
+          "uv": [
+            1.5,
+            0,
+            2,
+            1
+          ]
+        }
+      }
+    },
+    {
+      "name": "stylus_arm",
+      "from": [
+        24.5,
+        12,
+        11
+      ],
+      "to": [
+        25,
+        20,
+        12
+      ],
+      "faces": {
+        "down": {
+          "texture": "#iron",
+          "uv": [
+            1.5,
+            1,
+            2,
+            2
+          ]
+        }
+      }
+    },
+    {
+      "name": "stylus_arm",
+      "from": [
+        23,
+        12,
+        10
+      ],
+      "to": [
+        25,
+        20,
+        12
+      ],
+      "faces": {
+        "up": {
+          "texture": "#iron",
+          "uv": [
+            0,
+            0,
+            2,
+            2
+          ]
+        }
+      }
+    },
+    {
+      "name": "stylus_arm",
+      "from": [
+        23,
+        12,
+        10
+      ],
+      "to": [
+        25,
+        20,
+        12
+      ],
+      "faces": {
+        "north": {
+          "texture": "#iron",
+          "uv": [
+            0,
+            0,
+            2,
+            8
+          ]
+        }
+      }
+    },
+    {
+      "name": "stylus_arm",
+      "from": [
+        23,
+        12,
+        10
+      ],
+      "to": [
+        23.5,
+        13,
+        12
+      ],
+      "faces": {
+        "south": {
+          "texture": "#iron",
+          "uv": [
+            0,
+            0,
+            0.5,
+            1
+          ]
+        }
+      }
+    },
+    {
+      "name": "stylus_arm",
+      "from": [
+        23,
+        13,
+        10
+      ],
+      "to": [
+        23.5,
+        20,
+        12
+      ],
+      "faces": {
+        "south": {
+          "texture": "#iron",
+          "uv": [
+            0,
+            1,
+            0.5,
+            8
+          ]
+        }
+      }
+    },
+    {
+      "name": "stylus_arm",
+      "from": [
+        23.5,
+        13,
+        10
+      ],
+      "to": [
+        24.5,
+        20,
+        12
+      ],
+      "faces": {
+        "south": {
+          "texture": "#iron",
+          "uv": [
+            0.5,
+            1,
+            1.5,
+            8
+          ]
+        }
+      }
+    },
+    {
+      "name": "stylus_arm",
+      "from": [
+        24.5,
+        12,
+        10
+      ],
+      "to": [
+        25,
+        13,
+        12
+      ],
+      "faces": {
+        "south": {
+          "texture": "#iron",
+          "uv": [
+            1.5,
+            0,
+            2,
+            1
+          ]
+        }
+      }
+    },
+    {
+      "name": "stylus_arm",
+      "from": [
+        24.5,
+        13,
+        10
+      ],
+      "to": [
+        25,
+        20,
+        12
+      ],
+      "faces": {
+        "south": {
+          "texture": "#iron",
+          "uv": [
+            1.5,
+            1,
+            2,
+            8
+          ]
+        }
+      }
+    },
+    {
+      "name": "stylus_tip",
+      "from": [
+        23.5,
+        10.5,
+        11
+      ],
+      "to": [
+        24.5,
+        12,
+        12
+      ],
+      "faces": {
+        "west": {
+          "texture": "#dark",
+          "uv": [
+            0,
+            0.0,
+            1,
+            1.5
+          ]
+        }
+      }
+    },
+    {
+      "name": "stylus_tip",
+      "from": [
+        23.5,
+        10.5,
+        12
+      ],
+      "to": [
+        24.5,
+        12,
+        13.5
+      ],
+      "faces": {
+        "west": {
+          "texture": "#dark",
+          "uv": [
+            1,
+            0.0,
+            2.5,
+            1.5
+          ]
+        }
+      }
+    },
+    {
+      "name": "stylus_tip",
+      "from": [
+        23.5,
+        12,
+        12
+      ],
+      "to": [
+        24.5,
+        13,
+        13.5
+      ],
+      "faces": {
+        "west": {
+          "texture": "#dark",
+          "uv": [
+            1,
+            1.5,
+            2.5,
+            2.5
+          ]
+        }
+      }
+    },
+    {
+      "name": "stylus_tip",
+      "from": [
+        23.5,
+        10.5,
+        11
+      ],
+      "to": [
+        24.5,
+        12,
+        12
+      ],
+      "faces": {
+        "east": {
+          "texture": "#dark",
+          "uv": [
+            0,
+            0.0,
+            1,
+            1.5
+          ]
+        }
+      }
+    },
+    {
+      "name": "stylus_tip",
+      "from": [
+        23.5,
+        10.5,
+        12
+      ],
+      "to": [
+        24.5,
+        12,
+        13.5
+      ],
+      "faces": {
+        "east": {
+          "texture": "#dark",
+          "uv": [
+            1,
+            0.0,
+            2.5,
+            1.5
+          ]
+        }
+      }
+    },
+    {
+      "name": "stylus_tip",
+      "from": [
+        23.5,
+        12,
+        12
+      ],
+      "to": [
+        24.5,
+        13,
+        13.5
+      ],
+      "faces": {
+        "east": {
+          "texture": "#dark",
+          "uv": [
+            1,
+            1.5,
+            2.5,
+            2.5
+          ]
+        }
+      }
+    },
+    {
+      "name": "stylus_tip",
+      "from": [
+        23.5,
+        10.5,
+        11
+      ],
+      "to": [
+        24.5,
+        13,
+        13.5
+      ],
+      "faces": {
+        "down": {
+          "texture": "#dark",
+          "uv": [
+            0.0,
+            0,
+            1.0,
+            2.5
+          ]
+        }
+      }
+    },
+    {
+      "name": "stylus_tip",
+      "from": [
+        23.5,
+        10.5,
+        12
+      ],
+      "to": [
+        24.5,
+        13,
+        13.5
+      ],
+      "faces": {
+        "up": {
+          "texture": "#dark",
+          "uv": [
+            0.0,
+            1,
+            1.0,
+            2.5
+          ]
+        }
+      }
+    },
+    {
+      "name": "stylus_tip",
+      "from": [
+        23.5,
+        10.5,
+        11
+      ],
+      "to": [
+        24.5,
+        12,
+        13.5
+      ],
+      "faces": {
+        "north": {
+          "texture": "#dark",
+          "uv": [
+            0.0,
+            0.0,
+            1.0,
+            1.5
+          ]
+        }
+      }
+    },
+    {
+      "name": "stylus_tip",
+      "from": [
+        23.5,
+        10.5,
+        11
+      ],
+      "to": [
+        24.5,
+        13,
+        13.5
+      ],
+      "faces": {
+        "south": {
+          "texture": "#dark",
+          "uv": [
+            0.0,
+            0.0,
+            1.0,
+            2.5
+          ]
+        }
+      }
+    }
+  ]
+}

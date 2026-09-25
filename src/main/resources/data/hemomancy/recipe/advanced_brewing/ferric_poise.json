@@ -1,0 +1,12 @@
+{
+  "type": "hemomancy:advanced_brewing",
+  "input_potion": "minecraft:strength",
+  "catalyst": {"item": "hemomancy:ferric_enzyme"},
+  "output_effect": "minecraft:strength",
+  "duration": 1800,
+  "amplifier": 0,
+  "blood": 250,
+  "ticks": 100,
+  "tier": 1,
+  "attachment": "ferric_poise"
+}

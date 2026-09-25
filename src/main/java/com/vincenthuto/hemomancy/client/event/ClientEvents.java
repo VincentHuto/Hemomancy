@@ -997,6 +997,7 @@ public class ClientEvents {
             BlockEntityRenderers.register(BlockEntityInit.cardinal_focus.get(), CardinalFocusRenderer::new);
             BlockEntityRenderers.register(BlockEntityInit.vial_centrifuge.get(), VialCentrifugeRenderer::new);
             BlockEntityRenderers.register(BlockEntityInit.enzymatic_scriptorium.get(), EnzymaticScriptoriumRenderer::new);
+            BlockEntityRenderers.register(BlockEntityInit.resonant_forge.get(), ResonantForgeRenderer::new);
             BlockEntityRenderers.register(BlockEntityInit.somatic_loom.get(),
                     SomaticLoomRenderer::new);
             BlockEntityRenderers.register(BlockEntityInit.earthen_vein.get(), EarthenVeinRenderer::new);
@@ -1155,6 +1156,7 @@ public class ClientEvents {
             event.register(ContainerInit.mason_effigy.get(), MasonsEffigyScreen::new);
             event.register(ContainerInit.vial_centrifuge.get(), VialCentrifugeScreen::new);
             event.register(ContainerInit.enzymatic_scriptorium.get(), EnzymaticScriptoriumScreen::new);
+            event.register(ContainerInit.resonant_forge.get(), ResonantForgeScreen::new);
             event.register(ContainerInit.morphling_jar.get(), MorphlingJarScreen::new);
             event.register(ContainerInit.living_syringe.get(), LivingSyringeScreen::new);
             event.register(ContainerInit.living_staff.get(), LivingStaffScreen::new);
@@ -1256,6 +1258,10 @@ public class ClientEvents {
                 event.register(ModelResourceLocation.standalone(Hemomancy.rloc("block/phlebotomists_cabinet_" + part)));
             event.register(ModelResourceLocation.standalone(Hemomancy.rloc("block/clairaudiograph_stylus")));
             event.register(ModelResourceLocation.standalone(Hemomancy.rloc("block/clairaudiograph_feed")));
+            event.register(ModelResourceLocation.standalone(Hemomancy.rloc("block/ghastly_alembic_condenser_growth")));
+            event.register(ModelResourceLocation.standalone(Hemomancy.rloc("block/ghastly_alembic_athanor_growth")));
+            for (String part : new String[]{"hammer", "wheel", "treadle", "cam", "stylus"})
+                event.register(ModelResourceLocation.standalone(Hemomancy.rloc("block/resonant_forge_" + part)));
             event.register(ModelResourceLocation.standalone(Hemomancy.rloc("item/blood_absorption_texture")));
             event.register(ModelResourceLocation.standalone(Hemomancy.rloc("item/blood_projection_texture")));
             CardinalRitePlantedStaffModels.uniqueModelNames().forEach(model ->

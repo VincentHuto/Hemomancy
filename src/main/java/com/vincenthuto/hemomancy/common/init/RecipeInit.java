@@ -2,6 +2,7 @@ package com.vincenthuto.hemomancy.common.init;
 
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.recipe.*;
+import com.vincenthuto.hemomancy.common.brewing.AdvancedBrewingRecipe;
 import com.vincenthuto.hemomancy.common.recipe.serializer.*;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.item.crafting.RecipeSerializer;
@@ -23,6 +24,8 @@ public class RecipeInit {
 
 	public static final DeferredHolder<RecipeType<?>, RecipeType<DistillationRecipe>> distillation_recipe_type = RECIPE_TYPES
 			.register("distillation_recipe", () -> RecipeType.simple(Hemomancy.rloc("distillation_recipe")));
+	public static final DeferredHolder<RecipeType<?>, RecipeType<AdvancedBrewingRecipe>> advanced_brewing_type = RECIPE_TYPES
+			.register("advanced_brewing", () -> RecipeType.simple(Hemomancy.rloc("advanced_brewing")));
 
 	public static final DeferredHolder<RecipeType<?>, RecipeType<MemoryWeavingRecipe>> memory_weaving_type = RECIPE_TYPES
 			.register("memory_weaving_type", () -> RecipeType.simple(Hemomancy.rloc("memory_weaving")));
@@ -56,6 +59,8 @@ public class RecipeInit {
 	// Serialize
 	public static final DeferredHolder<RecipeSerializer<?>, RecipeSerializer<?>> distillation_recipe_serializer = SERIALIZERS.register("distillation_recipe",
 			DistillationRecipeSerializer::new);
+	public static final DeferredHolder<RecipeSerializer<?>, RecipeSerializer<AdvancedBrewingRecipe>> advanced_brewing_serializer = SERIALIZERS.register("advanced_brewing",
+			AdvancedBrewingRecipeSerializer::new);
 
 	public static final DeferredHolder<RecipeSerializer<?>, RecipeSerializer<?>> morphling_jar_upgrade_serializer = SERIALIZERS
 			.register("morphling_jar_upgrade", CopyMorphlingJarRecipe.Serializer::new);

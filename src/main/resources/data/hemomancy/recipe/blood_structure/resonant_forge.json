@@ -1,0 +1,18 @@
+{
+  "type": "hemomancy:blood_structure_recipe",
+  "bloodCost": 500,
+  "required_degree": 3,
+  "heldItem": "hemomancy:ferric_binder",
+  "hitBlock": "minecraft:cauldron",
+  "pattern": [["H H", "ACG"]],
+  "key": {
+    "H": {"block": "hemomancy:hematic_iron_block"},
+    "A": {"block": "minecraft:anvil"},
+    "C": {"block": "minecraft:cauldron"},
+    "G": {"block": "minecraft:grindstone"}
+  },
+  "offerings": [
+    {"ingredient": {"item": "hemomancy:ambergris_cylinder"}, "count": 1}
+  ],
+  "result": {"id": "hemomancy:resonant_forge"}
+}

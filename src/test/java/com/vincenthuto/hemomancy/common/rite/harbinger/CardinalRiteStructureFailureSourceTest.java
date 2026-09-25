@@ -19,6 +19,7 @@ final class CardinalRiteStructureFailureSourceTest {
 
 		assertTrue(events.contains(
 				"if (sLevel.getGameTime() % 20 == 0 && !verifyRiteStructure(sLevel, rite)) {\n"
+						+ "\t\t\t\t\tif (AlembicUpgradeRites.isRite(rite.getRecipeId())) continue;\n"
 						+ "\t\t\t\t\tfailRite(sLevel, caster, rite);\n"
 						+ "\t\t\t\t\ttoRemove.add(playerUUID);\n"
 						+ "\t\t\t\t\tcontinue;\n"

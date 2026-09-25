@@ -28,18 +28,18 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 
 public class EnzymaticScriptoriumBlock extends Block implements EntityBlock {
     public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
-    private final int tier;
+    public static final net.minecraft.world.level.block.state.properties.IntegerProperty STAGE =
+            net.minecraft.world.level.block.state.properties.IntegerProperty.create("stage", 0, 2);
 
-    public EnzymaticScriptoriumBlock(int tier, Properties properties) {
+    public EnzymaticScriptoriumBlock(Properties properties) {
         super(properties);
-        this.tier = tier;
-        registerDefaultState(stateDefinition.any().setValue(FACING, Direction.NORTH));
+        registerDefaultState(stateDefinition.any().setValue(FACING, Direction.NORTH).setValue(STAGE, 0));
     }
 
-    public int tier() { return tier; }
+    public static int tier(BlockState state) { return 3 + state.getValue(STAGE) * 2; }
 
     @Override protected void createBlockStateDefinition(StateDefinition.Builder<net.minecraft.world.level.block.Block, BlockState> builder) {
-        builder.add(FACING);
+        builder.add(FACING, STAGE);
     }
 
     @Override public BlockState getStateForPlacement(BlockPlaceContext context) {

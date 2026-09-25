@@ -11,8 +11,7 @@ import java.util.List;
 public class VivianiteScalpelItem extends Item {
 
     public VivianiteScalpelItem(Properties prop) {
-        super(prop);
-        prop.stacksTo(1);
+        super(prop.durability(128));
     }
 
     @Override

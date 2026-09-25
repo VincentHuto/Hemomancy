@@ -64,6 +64,7 @@ public class JEIPlugin implements IModPlugin {
 		registry.addRecipeCategories(new SuccessionRecipeCategory(registry.getJeiHelpers().getGuiHelper()));
 		registry.addRecipeCategories(new DistillationRecipeCategory(registry.getJeiHelpers().getGuiHelper(), false));
 		registry.addRecipeCategories(new DistillationRecipeCategory(registry.getJeiHelpers().getGuiHelper(), true));
+		registry.addRecipeCategories(new AdvancedBrewingRecipeCategory(registry.getJeiHelpers().getGuiHelper()));
 		registry.addRecipeCategories(new MemoryWeavingRecipeCategory(registry.getJeiHelpers().getGuiHelper()));
 		registry.addRecipeCategories(new HematicArmatureRecipeCategory(registry.getJeiHelpers().getGuiHelper()));
 		registry.addRecipeCategories(new BloodStructureRecipeCategory(registry.getJeiHelpers().getGuiHelper()));
@@ -83,6 +84,7 @@ public class JEIPlugin implements IModPlugin {
 		registry.addRecipeCatalyst(new ItemStack(BlockInit.cardinal_focus.get()), SuccessionRecipeCategory.TYPE);
 		registry.addRecipeCatalyst(new ItemStack(ItemInit.living_staff.get()), SuccessionRecipeCategory.TYPE);
 		registry.addRecipeCatalyst(new ItemStack(BlockInit.ghastly_alembic.get()), ghastly_distillation_recipe_type);
+		registry.addRecipeCatalyst(new ItemStack(BlockInit.ghastly_alembic.get()), AdvancedBrewingRecipeCategory.TYPE);
 		registry.addRecipeCatalyst(new ItemStack(BlockInit.pallid_retort.get()), pallid_distillation_recipe_type);
 		registry.addRecipeCatalyst(new ItemStack(BlockInit.somatic_loom.get()), memory_weaving_type);
 		registry.addRecipeCatalyst(new ItemStack(BlockInit.hematic_armature.get()), armature_upgrade_type);
@@ -111,6 +113,7 @@ public class JEIPlugin implements IModPlugin {
 				DistillationRecipe.getAllRecipes(world).stream().filter(r -> !r.isPallid()).toList());
 		registry.addRecipes(pallid_distillation_recipe_type,
 				DistillationRecipe.getAllRecipes(world).stream().filter(DistillationRecipe::isPallid).toList());
+		registry.addRecipes(AdvancedBrewingRecipeCategory.TYPE, AdvancedBrewingDisplay.all(world));
 		registry.addRecipes(memory_weaving_type, MemoryWeavingRecipe.getAllRecipes(world));
 		registry.addRecipes(armature_upgrade_type, ArmatureUpgradeRecipe.getAllRecipes(world));
 		registry.addRecipes(blood_structure_recipe_type, BloodStructureRecipe.getAllRecipes(world));

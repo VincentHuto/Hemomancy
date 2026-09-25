@@ -5,7 +5,6 @@ import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.entity.utility.ArmatureRestraintEntity;
 import com.vincenthuto.hemomancy.common.init.BlockEntityInit;
-import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.item.harbinger.BloodyFlaskItem;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.BloodGourdItem;
 import com.vincenthuto.hemomancy.common.mission.artificer.ArtificerAssignments;
@@ -32,7 +31,6 @@ import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.ContainerHelper;
-import net.minecraft.world.Containers;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.player.Inventory;
@@ -74,6 +72,9 @@ public class HematicArmatureBlockEntity extends BaseContainerBlockEntity impleme
 	private static final String TAG_RESTRAINED_PLAYER = "RestrainedPlayer";
 	private static final String TAG_BLOOD_LEVEL = "BloodLevel";
 	private static final String TAG_ARMATURE_TIER = "ArmatureTier";
+	private static final String TAG_RITE_LOCKED = "RiteLocked";
+	private static final String TAG_MACHINE_IDENTITY = "MachineIdentity";
+	private static final String TAG_LAST_UPGRADE_RITE = "LastUpgradeRite";
 
 	private NonNullList<ItemStack> items = NonNullList.withSize(INVENTORY_SIZE, ItemStack.EMPTY);
 	@Nullable
@@ -83,12 +84,17 @@ public class HematicArmatureBlockEntity extends BaseContainerBlockEntity impleme
 	private int pendingBowlSlot = -1;
 	private long craftStartTick = -1L;
 	private ArmatureUpgradeRules.ArmatureTier armatureTier = ArmatureUpgradeRules.ArmatureTier.BASE;
+	private boolean riteLocked;
+	private UUID machineIdentity = UUID.randomUUID();
+	@Nullable
+	private UUID lastUpgradeRite;
 
 	public HematicArmatureBlockEntity(BlockPos pos, BlockState state) {
 		super(BlockEntityInit.hematic_armature.get(), pos, state);
 	}
 
 	public static void serverTick(Level level, BlockPos pos, BlockState state, HematicArmatureBlockEntity armature) {
+		if (armature.riteLocked) return;
 		boolean changed = armature.processBloodContainerInputSlot(armature, armature);
 		changed |= armature.tryProcessRestrainedPlayer(level);
 		if (changed) {
@@ -313,6 +319,7 @@ public class HematicArmatureBlockEntity extends BaseContainerBlockEntity impleme
 	}
 
 	public boolean insertHeldBowlItems(ServerPlayer player, InteractionHand hand) {
+		if (riteLocked) return false;
 		ItemStack held = player.getItemInHand(hand);
 		if (held.isEmpty() || BloodContainerTransfer.isFilledBloodContainer(held)
 				|| BloodContainerTransfer.isBloodGourd(held)) {
@@ -346,6 +353,7 @@ public class HematicArmatureBlockEntity extends BaseContainerBlockEntity impleme
 	}
 
 	public boolean extractMostRecentBowlItem(ServerPlayer player) {
+		if (riteLocked) return false;
 		for (int slot : ArmatureUpgradeRules.bowlSlotsInWithdrawalOrder()) {
 			ItemStack removed = removeItemNoUpdate(slot);
 			if (removed.isEmpty()) {
@@ -359,6 +367,7 @@ public class HematicArmatureBlockEntity extends BaseContainerBlockEntity impleme
 	}
 
 	public boolean useBloodContainerInHand(ServerPlayer player, InteractionHand hand) {
+		if (riteLocked) return false;
 		ItemStack held = player.getItemInHand(hand);
 		if (held.isEmpty()) {
 			return false;
@@ -406,53 +415,34 @@ public class HematicArmatureBlockEntity extends BaseContainerBlockEntity impleme
 		return false;
 	}
 
-	public boolean applyArmatureUpgradeItem(ServerPlayer player, InteractionHand hand) {
-		ItemStack held = player.getItemInHand(hand);
-		if (held.isEmpty()) {
-			return false;
-		}
+	public ArmatureUpgradeRules.ArmatureTier getArmatureTier() { return armatureTier; }
+	public boolean isRiteLocked() { return riteLocked; }
+	public boolean idleForRite() { return !riteLocked && pendingSlot == null && restrainedPlayer == null; }
+	@Override public boolean canReceiveBlood() { return !riteLocked; }
+	@Override public boolean canProvideBlood() { return !riteLocked; }
+	public UUID machineIdentity() { return machineIdentity; }
+	public boolean wasUpgradedBy(@Nullable UUID riteId) { return riteId != null && riteId.equals(lastUpgradeRite); }
 
-		ArmatureUpgradeRules.ArmatureTier targetTier = null;
-		int requiredDegree = 0;
-		if (held.is(ItemInit.vicars_consecration_kit.get())) {
-			targetTier = ArmatureUpgradeRules.ArmatureTier.VICAR_CONSECRATED;
-			requiredDegree = 5;
-		} else if (held.is(ItemInit.monolithic_cornerstone.get())) {
-			targetTier = ArmatureUpgradeRules.ArmatureTier.MONOLITHIC;
-			requiredDegree = 7;
-		}
-		if (targetTier == null) {
-			return false;
-		}
-		if (armatureTier.id() >= targetTier.id()) {
-			player.sendSystemMessage(Component.translatable(
-					"block.hemomancy.hematic_armature.upgrade_already_applied").withStyle(ChatFormatting.DARK_RED));
-			return true;
-		}
-		if (targetTier == ArmatureUpgradeRules.ArmatureTier.MONOLITHIC
-				&& armatureTier != ArmatureUpgradeRules.ArmatureTier.VICAR_CONSECRATED) {
-			player.sendSystemMessage(Component.translatable(
-					"block.hemomancy.hematic_armature.cornerstone_requires_vicar").withStyle(ChatFormatting.DARK_RED));
-			return true;
-		}
-		if (HemoCapabilityAccess.getPlayerDegreeNumber(player) < requiredDegree) {
-			player.sendSystemMessage(Component.translatable(
-					"block.hemomancy.hematic_armature.upgrade_requires_degree",
-					requiredDegree).withStyle(ChatFormatting.DARK_RED));
-			return true;
-		}
+	public CompoundTag upgradeSnapshot(HolderLookup.Provider registries) {
+		CompoundTag tag = saveWithoutMetadata(registries);
+		tag.remove(TAG_RITE_LOCKED);
+		tag.remove(TAG_LAST_UPGRADE_RITE);
+		tag.remove("neoforge:attachments");
+		return tag;
+	}
 
-		armatureTier = targetTier;
-		clearPendingCraft();
-		if (!player.getAbilities().instabuild) {
-			held.shrink(1);
-		}
-		ArtificerAssignments.onArmatureTierApplied(player, targetTier);
+	public void setRiteLocked(boolean value) {
+		riteLocked = value;
 		sendUpdates();
-		player.sendSystemMessage(Component.translatable(
-				"block.hemomancy.hematic_armature.upgrade_tier_applied",
-				Component.translatable("block.hemomancy.hematic_armature.tier."
-						+ targetTier.serializedName())).withStyle(ChatFormatting.DARK_RED));
+	}
+
+	public boolean completeUpgrade(ArmatureUpgradeRules.ArmatureTier target, UUID riteId) {
+		if (target == null || riteId == null || target.id() != armatureTier.id() + 1
+				|| !riteLocked || pendingSlot != null || restrainedPlayer != null) return false;
+		armatureTier = target;
+		lastUpgradeRite = riteId;
+		riteLocked = false;
+		sendUpdates();
 		return true;
 	}
 
@@ -466,6 +456,7 @@ public class HematicArmatureBlockEntity extends BaseContainerBlockEntity impleme
 	}
 
 	public void setRestrainedPlayer(UUID playerId) {
+		if (riteLocked) return;
 		this.restrainedPlayer = playerId;
 		clearPendingCraft();
 		sendUpdates();
@@ -478,21 +469,6 @@ public class HematicArmatureBlockEntity extends BaseContainerBlockEntity impleme
 
 	public boolean hasRestrainedPlayer() {
 		return restrainedPlayer != null;
-	}
-
-	public ArmatureUpgradeRules.ArmatureTier getArmatureTier() {
-		return armatureTier;
-	}
-
-	public void dropAppliedUpgradeItems(Level level, BlockPos pos) {
-		if (armatureTier.id() >= ArmatureUpgradeRules.ArmatureTier.VICAR_CONSECRATED.id()) {
-			Containers.dropItemStack(level, pos.getX() + 0.5D, pos.getY() + 0.5D, pos.getZ() + 0.5D,
-					new ItemStack(ItemInit.vicars_consecration_kit.get()));
-		}
-		if (armatureTier.id() >= ArmatureUpgradeRules.ArmatureTier.MONOLITHIC.id()) {
-			Containers.dropItemStack(level, pos.getX() + 0.5D, pos.getY() + 0.5D, pos.getZ() + 0.5D,
-					new ItemStack(ItemInit.monolithic_cornerstone.get()));
-		}
 	}
 
 	public void clearRestrainedPlayer(@Nullable UUID playerId) {
@@ -643,6 +619,9 @@ public class HematicArmatureBlockEntity extends BaseContainerBlockEntity impleme
 		armatureTier = tag.contains(TAG_ARMATURE_TIER)
 				? ArmatureUpgradeRules.ArmatureTier.byName(tag.getString(TAG_ARMATURE_TIER))
 				: ArmatureUpgradeRules.ArmatureTier.BASE;
+		riteLocked = tag.getBoolean(TAG_RITE_LOCKED);
+		if (tag.hasUUID(TAG_MACHINE_IDENTITY)) machineIdentity = tag.getUUID(TAG_MACHINE_IDENTITY);
+		lastUpgradeRite = tag.hasUUID(TAG_LAST_UPGRADE_RITE) ? tag.getUUID(TAG_LAST_UPGRADE_RITE) : null;
 		IBloodVolume volume = getBloodCapability();
 		if (volume != null) {
 			volume.setActive(true);
@@ -659,6 +638,9 @@ public class HematicArmatureBlockEntity extends BaseContainerBlockEntity impleme
 			tag.putUUID(TAG_RESTRAINED_PLAYER, restrainedPlayer);
 		}
 		tag.putString(TAG_ARMATURE_TIER, armatureTier.serializedName());
+		tag.putBoolean(TAG_RITE_LOCKED, riteLocked);
+		tag.putUUID(TAG_MACHINE_IDENTITY, machineIdentity);
+		if (lastUpgradeRite != null) tag.putUUID(TAG_LAST_UPGRADE_RITE, lastUpgradeRite);
 		IBloodVolume volume = getBloodCapability();
 		if (volume != null) {
 			tag.putDouble(TAG_BLOOD_LEVEL, volume.getBloodVolume());
@@ -673,6 +655,9 @@ public class HematicArmatureBlockEntity extends BaseContainerBlockEntity impleme
 			tag.putUUID(TAG_RESTRAINED_PLAYER, restrainedPlayer);
 		}
 		tag.putString(TAG_ARMATURE_TIER, armatureTier.serializedName());
+		tag.putBoolean(TAG_RITE_LOCKED, riteLocked);
+		tag.putUUID(TAG_MACHINE_IDENTITY, machineIdentity);
+		if (lastUpgradeRite != null) tag.putUUID(TAG_LAST_UPGRADE_RITE, lastUpgradeRite);
 		IBloodVolume volume = getBloodCapability();
 		if (volume != null) {
 			tag.putDouble(TAG_BLOOD_LEVEL, volume.getBloodVolume());
@@ -689,6 +674,9 @@ public class HematicArmatureBlockEntity extends BaseContainerBlockEntity impleme
 		armatureTier = tag.contains(TAG_ARMATURE_TIER)
 				? ArmatureUpgradeRules.ArmatureTier.byName(tag.getString(TAG_ARMATURE_TIER))
 				: ArmatureUpgradeRules.ArmatureTier.BASE;
+		riteLocked = tag.getBoolean(TAG_RITE_LOCKED);
+		if (tag.hasUUID(TAG_MACHINE_IDENTITY)) machineIdentity = tag.getUUID(TAG_MACHINE_IDENTITY);
+		lastUpgradeRite = tag.hasUUID(TAG_LAST_UPGRADE_RITE) ? tag.getUUID(TAG_LAST_UPGRADE_RITE) : null;
 		IBloodVolume volume = getBloodCapability();
 		if (volume != null) {
 			volume.setActive(true);

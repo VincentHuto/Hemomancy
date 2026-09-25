@@ -77,7 +77,7 @@ public final class ScriptoriumRites {
         int sourceTier = isMonolithic(rite.getRecipeId()) ? 5 : 3;
         int each = isMonolithic(rite.getRecipeId()) ? 2 : 1;
         return station != null && station.getBlockState().getBlock() instanceof EnzymaticScriptoriumBlock block
-                && block.tier() == sourceTier && station.hasRiteEnzymes(each);
+                && EnzymaticScriptoriumBlock.tier(station.getBlockState()) == sourceTier && station.hasRiteEnzymes(each);
     }
 
     public static boolean prepare(ServerLevel level, ActiveCardinalRite rite) {
@@ -98,16 +98,10 @@ public final class ScriptoriumRites {
         if (!validSubject(level, rite) || rite.getScriptorialStage() < (isMonolithic(rite.getRecipeId()) ? 16 : 8)) return false;
         EnzymaticScriptoriumBlockEntity old = station(level, rite);
         old.consumeRiteEnzymes(isMonolithic(rite.getRecipeId()) ? 2 : 1);
-        var saved = old.saveWithoutMetadata(level.registryAccess());
-        BlockState replacement = (isMonolithic(rite.getRecipeId()) ? BlockInit.monolithic_scriptorium.get()
-                : BlockInit.eightfold_scriptorium.get()).defaultBlockState()
-                .setValue(EnzymaticScriptoriumBlock.FACING,
-                        old.getBlockState().getValue(EnzymaticScriptoriumBlock.FACING));
-        BlockPos pos = seat(rite);
-        level.setBlock(pos, replacement, 3);
-        if (!(level.getBlockEntity(pos) instanceof EnzymaticScriptoriumBlockEntity upgraded)) return false;
-        upgraded.loadWithComponents(saved, level.registryAccess());
-        upgraded.setRiteLocked(false);
+        BlockState replacement = old.getBlockState().setValue(EnzymaticScriptoriumBlock.STAGE,
+                isMonolithic(rite.getRecipeId()) ? 2 : 1);
+        level.setBlock(seat(rite), replacement, 3);
+        old.setRiteLocked(false);
         return true;
     }
 }

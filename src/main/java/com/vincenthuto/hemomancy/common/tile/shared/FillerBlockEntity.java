@@ -11,10 +11,12 @@ import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
+import com.vincenthuto.hemomancy.common.tile.IBloodReservoir;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
 
 import javax.annotation.Nullable;
 
-public class FillerBlockEntity extends BlockEntity {
+public class FillerBlockEntity extends BlockEntity implements IBloodReservoir {
 
     private BlockPos mainBlockPos = null;
 
@@ -34,6 +36,31 @@ public class FillerBlockEntity extends BlockEntity {
     @Nullable
     public BlockPos getMainBlockPos() {
         return mainBlockPos;
+    }
+
+    private IBloodReservoir mainReservoir() {
+        if (level == null || mainBlockPos == null) return null;
+        return level.getBlockEntity(mainBlockPos) instanceof IBloodReservoir reservoir ? reservoir : null;
+    }
+
+    @Override public IBloodVolume getBloodCapability() {
+        IBloodReservoir reservoir = mainReservoir();
+        return reservoir == null ? null : reservoir.getBloodCapability();
+    }
+
+    @Override public boolean canReceiveBlood() {
+        IBloodReservoir reservoir = mainReservoir();
+        return reservoir != null && reservoir.canReceiveBlood();
+    }
+
+    @Override public boolean canProvideBlood() {
+        IBloodReservoir reservoir = mainReservoir();
+        return reservoir != null && reservoir.canProvideBlood();
+    }
+
+    @Override public void sendUpdates() {
+        IBloodReservoir reservoir = mainReservoir();
+        if (reservoir != null) reservoir.sendUpdates();
     }
 
     @Override

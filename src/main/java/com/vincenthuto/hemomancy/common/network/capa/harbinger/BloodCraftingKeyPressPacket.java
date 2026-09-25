@@ -517,7 +517,8 @@ public class BloodCraftingKeyPressPacket implements CustomPacketPayload {
 								player.getUUID(), centerPos, recipe.getId(), castingDuration,
 								recipe.getRiteType().getSize(), ceremonyDegree,
 								recipe.getCeremony().abbreviated(),
-								recipe.getCeremony().waves().isEmpty()
+								com.vincenthuto.hemomancy.common.rite.harbinger.AlembicUpgradeRites.isRite(recipe.getId()) ? 0
+								: recipe.getCeremony().waves().isEmpty()
 										? recipe.getCeremony().guaranteedWaves().size()
 										: Math.max(recipe.getCeremony().guaranteedWaves().size(),
 												recipe.getRequiredDegree() == 5 ? 1
@@ -567,6 +568,16 @@ public class BloodCraftingKeyPressPacket implements CustomPacketPayload {
 				if (!com.vincenthuto.hemomancy.common.rite.harbinger.ScriptoriumRites.prepare(sLevel, rite)) {
 					CardinalRiteStaffEscrow.restore(serverPlayer, rite);
 					player.displayClientMessage(Component.literal("The Scriptorium must sit two blocks north of the Focus with every tube filled and its item and lapis slots empty.")
+							.withStyle(ChatFormatting.DARK_RED), false);
+					return CardinalRiteActivationRules.ActivationAttempt.HANDLED;
+				}
+				if (!com.vincenthuto.hemomancy.common.rite.harbinger.AlembicUpgradeRites.prepare(sLevel, rite)) {
+					CardinalRiteStaffEscrow.restore(serverPlayer, rite);
+					String instruction = com.vincenthuto.hemomancy.common.rite.harbinger.ArmatureUpgradeRites
+							.isRite(rite.getRecipeId())
+							? "Seat an idle Armature of the required tier beside the Focus and place its kit at a lit brazier."
+							: "Seat the correct station beside the Focus, with all upgrade offerings ready at lit braziers.";
+					player.displayClientMessage(Component.literal(instruction)
 							.withStyle(ChatFormatting.DARK_RED), false);
 					return CardinalRiteActivationRules.ActivationAttempt.HANDLED;
 				}

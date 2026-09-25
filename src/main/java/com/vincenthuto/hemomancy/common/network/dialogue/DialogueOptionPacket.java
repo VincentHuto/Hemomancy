@@ -78,7 +78,9 @@ public class DialogueOptionPacket implements CustomPacketPayload {
 			if ((HarbingerCicatrixAnchoriteDialogueTrees.EVENT_FIRST_LESSON.equals(eventId)
 					|| HarbingerCicatrixAnchoriteDialogueTrees.EVENT_CONTINUATION_REWARD.equals(eventId))
 					&& !(entity instanceof com.vincenthuto.hemomancy.common.entity.npc.harbinger.HarbingerCicatrixAnchoriteEntity)) return null;
-			if (HarbingerAlchemistDialogueTrees.EVENT_FIRST_SEPARATION_CLAIM.equals(eventId)
+			if ((HarbingerAlchemistDialogueTrees.EVENT_FIRST_SEPARATION_CLAIM.equals(eventId)
+					|| com.vincenthuto.hemomancy.common.entity.npc.dialogue.AdvancedBrewingDialogue.CONDENSER_CLAIM.equals(eventId)
+					|| com.vincenthuto.hemomancy.common.entity.npc.dialogue.AdvancedBrewingDialogue.ATHANOR_CLAIM.equals(eventId))
 					&& !(entity instanceof HarbingerAlchemistEntity)) return null;
 		}
         if (entity instanceof com.vincenthuto.hemomancy.common.succession.ProfessionalHarbingerEntity npc && (npc.isSuccessor() || npc.isMisbegotten())) {

@@ -1,0 +1,9 @@
+{
+  "type": "hutoslib:page",
+  "ordinality": 3,
+  "texture": "hemomancy:textures/gui/guide/page.png",
+  "title": "The Bound Potion",
+  "subtitle": "A base potion that remembers",
+  "text": "In the Athanor, place three different finished one-effect potions in the input and two catalyst slots. The first potion becomes the bound bottle itself; there is no empty vessel or binding ingredient. The first binding costs 1,000 mL of blood and prepares one of three doses. To add a dose, return the bound bottle to the input and add fresh potions that exactly match its two recorded catalysts, in either order. Each refill costs 750 mL. Drinking takes the usual time and spends one dose. If you can spare 1,000 mL of your own blood, one in five completed drinks pays blood instead and saves the dose. An empty bound bottle keeps its name and formula for refilling, but cannot be drunk. No blood is rolled or spent if you stop drinking early.",
+  "icon": "hemomancy:ghastly_alembic"
+}

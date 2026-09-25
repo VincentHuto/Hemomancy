@@ -1,0 +1,446 @@
+{
+  "parent": "minecraft:block/block",
+  "render_type": "cutout",
+  "textures": {
+    "particle": "hemomancy:block/hematic_iron_block",
+    "iron": "hemomancy:block/hematic_iron_block",
+    "dark": "hemomancy:block/bold_chiseled_hematic_iron_block",
+    "wood": "hemomancy:block/blood_wood_planks",
+    "stone": "minecraft:block/grindstone_side",
+    "blood": "hemomancy:block/blood_still"
+  },
+  "elements": [
+    {
+      "name": "treadle",
+      "from": [
+        -14,
+        1,
+        12
+      ],
+      "to": [
+        -2,
+        2,
+        16
+      ],
+      "faces": {
+        "west": {
+          "texture": "#wood",
+          "uv": [
+            0,
+            0,
+            4,
+            1
+          ]
+        }
+      }
+    },
+    {
+      "name": "treadle",
+      "from": [
+        -14,
+        1,
+        12
+      ],
+      "to": [
+        -2,
+        2,
+        16
+      ],
+      "faces": {
+        "east": {
+          "texture": "#wood",
+          "uv": [
+            0,
+            0,
+            4,
+            1
+          ]
+        }
+      }
+    },
+    {
+      "name": "treadle",
+      "from": [
+        -14,
+        1,
+        12
+      ],
+      "to": [
+        -2,
+        2,
+        16
+      ],
+      "faces": {
+        "down": {
+          "texture": "#wood",
+          "uv": [
+            0,
+            0,
+            12,
+            4
+          ]
+        }
+      }
+    },
+    {
+      "name": "treadle",
+      "from": [
+        -14,
+        1,
+        12
+      ],
+      "to": [
+        -9,
+        2,
+        13
+      ],
+      "faces": {
+        "up": {
+          "texture": "#wood",
+          "uv": [
+            0,
+            0,
+            5,
+            1
+          ]
+        }
+      }
+    },
+    {
+      "name": "treadle",
+      "from": [
+        -14,
+        1,
+        13
+      ],
+      "to": [
+        -9,
+        2,
+        14.5
+      ],
+      "faces": {
+        "up": {
+          "texture": "#wood",
+          "uv": [
+            0,
+            1,
+            5,
+            2.5
+          ]
+        }
+      }
+    },
+    {
+      "name": "treadle",
+      "from": [
+        -14,
+        1,
+        14.5
+      ],
+      "to": [
+        -9,
+        2,
+        16
+      ],
+      "faces": {
+        "up": {
+          "texture": "#wood",
+          "uv": [
+            0,
+            2.5,
+            5,
+            4
+          ]
+        }
+      }
+    },
+    {
+      "name": "treadle",
+      "from": [
+        -9,
+        1,
+        12
+      ],
+      "to": [
+        -7,
+        2,
+        13
+      ],
+      "faces": {
+        "up": {
+          "texture": "#wood",
+          "uv": [
+            5,
+            0,
+            7,
+            1
+          ]
+        }
+      }
+    },
+    {
+      "name": "treadle",
+      "from": [
+        -9,
+        1,
+        14.5
+      ],
+      "to": [
+        -7,
+        2,
+        16
+      ],
+      "faces": {
+        "up": {
+          "texture": "#wood",
+          "uv": [
+            5,
+            2.5,
+            7,
+            4
+          ]
+        }
+      }
+    },
+    {
+      "name": "treadle",
+      "from": [
+        -7,
+        1,
+        12
+      ],
+      "to": [
+        -2,
+        2,
+        13
+      ],
+      "faces": {
+        "up": {
+          "texture": "#wood",
+          "uv": [
+            7,
+            0,
+            12,
+            1
+          ]
+        }
+      }
+    },
+    {
+      "name": "treadle",
+      "from": [
+        -7,
+        1,
+        13
+      ],
+      "to": [
+        -2,
+        2,
+        14.5
+      ],
+      "faces": {
+        "up": {
+          "texture": "#wood",
+          "uv": [
+            7,
+            1,
+            12,
+            2.5
+          ]
+        }
+      }
+    },
+    {
+      "name": "treadle",
+      "from": [
+        -7,
+        1,
+        14.5
+      ],
+      "to": [
+        -2,
+        2,
+        16
+      ],
+      "faces": {
+        "up": {
+          "texture": "#wood",
+          "uv": [
+            7,
+            2.5,
+            12,
+            4
+          ]
+        }
+      }
+    },
+    {
+      "name": "treadle",
+      "from": [
+        -14,
+        1,
+        12
+      ],
+      "to": [
+        -2,
+        2,
+        16
+      ],
+      "faces": {
+        "north": {
+          "texture": "#wood",
+          "uv": [
+            0,
+            0,
+            12,
+            1
+          ]
+        }
+      }
+    },
+    {
+      "name": "treadle",
+      "from": [
+        -14,
+        1,
+        12
+      ],
+      "to": [
+        -2,
+        2,
+        16
+      ],
+      "faces": {
+        "south": {
+          "texture": "#wood",
+          "uv": [
+            0,
+            0,
+            12,
+            1
+          ]
+        }
+      }
+    },
+    {
+      "name": "linkage",
+      "from": [
+        -9,
+        2,
+        13
+      ],
+      "to": [
+        -7,
+        12,
+        14.5
+      ],
+      "faces": {
+        "west": {
+          "texture": "#iron",
+          "uv": [
+            0,
+            0,
+            1.5,
+            10
+          ]
+        }
+      }
+    },
+    {
+      "name": "linkage",
+      "from": [
+        -9,
+        2,
+        13
+      ],
+      "to": [
+        -7,
+        12,
+        14.5
+      ],
+      "faces": {
+        "east": {
+          "texture": "#iron",
+          "uv": [
+            0,
+            0,
+            1.5,
+            10
+          ]
+        }
+      }
+    },
+    {
+      "name": "linkage",
+      "from": [
+        -9,
+        2,
+        13
+      ],
+      "to": [
+        -7,
+        12,
+        14.5
+      ],
+      "faces": {
+        "up": {
+          "texture": "#iron",
+          "uv": [
+            0,
+            0,
+            2,
+            1.5
+          ]
+        }
+      }
+    },
+    {
+      "name": "linkage",
+      "from": [
+        -9,
+        2,
+        13
+      ],
+      "to": [
+        -7,
+        12,
+        14.5
+      ],
+      "faces": {
+        "north": {
+          "texture": "#iron",
+          "uv": [
+            0,
+            0,
+            2,
+            10
+          ]
+        }
+      }
+    },
+    {
+      "name": "linkage",
+      "from": [
+        -9,
+        2,
+        13
+      ],
+      "to": [
+        -7,
+        12,
+        14.5
+      ],
+      "faces": {
+        "south": {
+          "texture": "#iron",
+          "uv": [
+            0,
+            0,
+            2,
+            10
+          ]
+        }
+      }
+    }
+  ]
+}

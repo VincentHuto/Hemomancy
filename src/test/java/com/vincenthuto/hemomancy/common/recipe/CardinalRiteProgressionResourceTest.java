@@ -65,6 +65,12 @@ final class CardinalRiteProgressionResourceTest {
 	}
 
 	@Test
+	void armatureTiersUseSequentialCardinalRitesAndTheirNamedOfferings() throws IOException {
+		assertArmatureUpgrade("armature_consecration", 5, "hemomancy:vicars_consecration_kit");
+		assertArmatureUpgrade("monolithic_armature", 7, "hemomancy:monolithic_cornerstone");
+	}
+
+	@Test
 	void riteRewardsHaveCheckedWorldDropFallbacks() throws IOException {
 		String completion = Files.readString(Path.of(
 				"src/main/java/com/vincenthuto/hemomancy/common/rite/harbinger/HarbingerCardinalRiteEvents.java"));
@@ -138,6 +144,14 @@ final class CardinalRiteProgressionResourceTest {
 	void everyEffectOnlyHarbingerRiteHasAnExplicitCompletionPath() throws IOException {
 		String completionSource = Files.readString(Path.of(
 				"src/main/java/com/vincenthuto/hemomancy/common/rite/harbinger/HarbingerCardinalRiteEvents.java"));
+		completionSource += Files.readString(Path.of(
+				"src/main/java/com/vincenthuto/hemomancy/common/rite/harbinger/ScriptoriumRites.java"));
+		completionSource += Files.readString(Path.of(
+				"src/main/java/com/vincenthuto/hemomancy/common/rite/harbinger/AlembicUpgradeRites.java"));
+		completionSource += Files.readString(Path.of(
+				"src/main/java/com/vincenthuto/hemomancy/common/rite/harbinger/ResonantForgeUpgradeRites.java"));
+		completionSource += Files.readString(Path.of(
+				"src/main/java/com/vincenthuto/hemomancy/common/rite/harbinger/ArmatureUpgradeRites.java"));
 		try (var paths = Files.list(ROOT)) {
 			for (Path path : paths.filter(p -> p.toString().endsWith(".json")).toList()) {
 				JsonObject json = read(path);
@@ -184,6 +198,17 @@ final class CardinalRiteProgressionResourceTest {
 		assertTrue(json.getAsJsonArray("brazier_signature").asList().stream()
 				.map(element -> element.getAsJsonObject().getAsJsonObject("ingredient").get("item").getAsString())
 				.anyMatch(inputId::equals), id + " must visibly consume " + inputId);
+	}
+
+	private static void assertArmatureUpgrade(String id, int degree, String offering) throws IOException {
+		JsonObject json = rite(id);
+		assertEquals(degree, json.get("required_degree").getAsInt(), id);
+		assertEquals("greater", json.get("riteType").getAsString(), id);
+		assertFalse(json.has("result"), id + " is a station upgrade, not a material reward");
+		assertEquals("hemomancy:hematic_armature", json.getAsJsonObject("required_structure")
+				.getAsJsonObject("key").getAsJsonObject("S").get("block").getAsString(), id);
+		assertEquals(offering, json.getAsJsonArray("brazier_signature").get(0).getAsJsonObject()
+				.getAsJsonObject("ingredient").get("item").getAsString(), id);
 	}
 
 	private static JsonObject rite(String id) throws IOException {

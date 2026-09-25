@@ -63,6 +63,22 @@ public final class CardinalRiteInteractionHandler {
 		CardinalRiteSavedData data = CardinalRiteSavedData.get(serverLevel);
 		for (ActiveCardinalRite rite : data.getActiveRites().values()) {
 			if (!mayParticipate(player, rite)) continue;
+			if (rite.getPhase() == CardinalRitePhase.ALEMBIC_PROJECTION) {
+				int stage = rite.alembic().getInt("Stage");
+				int aimed = CardinalRiteVirtualTargeting.closestTarget(player.getEyePosition(), player.getLookAngle(),
+						CardinalRiteVirtualTargeting.PROJECTION_RANGE, CardinalRiteVirtualTargeting.TARGET_RADIUS,
+						java.util.stream.IntStream.range(0, AlembicUpgradeRites.projections(rite.getRecipeId()))
+								.mapToObj(i -> AlembicUpgradeRites.targetSurface(serverLevel, rite, i)).toList());
+				if (aimed != stage) return CardinalRiteProjectionResult.handled(0.0D);
+				int paid = spendBlood(player, rite,
+						Math.min(rite.alembicBloodNeeded(), Math.max(1, (int) Math.floor(projectionRate))));
+				if (paid > 0 && rite.fillAlembicProjection(stage, paid)) {
+					data.setDirty();
+					serverLevel.playSound(null, AlembicUpgradeRites.target(rite, stage),
+							SoundEvents.RESPAWN_ANCHOR_CHARGE, SoundSource.BLOCKS, 0.5F, 0.85F + stage * 0.1F);
+				}
+				return CardinalRiteProjectionResult.handled(paid);
+			}
 			if (tryProjectSeal(serverLevel, player, rite)) {
 				data.setDirty();
 				return CardinalRiteProjectionResult.handled(0.0D);

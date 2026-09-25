@@ -1,0 +1,48 @@
+{
+  "type": "hemomancy:cardinal_rite_recipe",
+  "bloodCost": 0,
+  "riteType": "greater",
+  "required_degree": 5,
+  "rankup": false,
+  "riteName": "Rite of the Sanguine Athanor",
+  "riteDescription": "Circulate blood through three alchemical bulbs above a Hematic Condenser.",
+  "floor": "hemomancy:working_greater",
+  "required_structure": {
+    "pattern": [[" S "], ["   "], ["   "]],
+    "key": {"S": {"block": "hemomancy:ghastly_alembic"}}
+  },
+  "brazier_signature": [
+    {"ingredient": {"item": "hemomancy:sanguine_athanor_kit"}, "count": 1},
+    {"ingredient": {"item": "hemomancy:sanguine_quintessence"}, "count": 1},
+    {"ingredient": {"item": "hemomancy:vivacious_enzyme"}, "count": 1},
+    {"ingredient": {"item": "hemomancy:neurotic_enzyme"}, "count": 1},
+    {"ingredient": {"item": "hemomancy:ferric_enzyme"}, "count": 1}
+  ],
+  "ceremony": {
+    "profile": "ceremonial",
+    "layout": "cardinal",
+    "anchors": [
+      {"y": 1, "ring": 0, "order": 0},
+      {"y": 1, "ring": 0, "order": 1},
+      {"y": 1, "ring": 0, "order": 2},
+      {"y": 1, "ring": 0, "order": 3},
+      {"y": 1, "ring": 1, "order": 0},
+      {"y": 1, "ring": 1, "order": 1},
+      {"y": 1, "ring": 1, "order": 2},
+      {"y": 1, "ring": 1, "order": 3}
+    ],
+    "support_sockets": [
+      {"x": -6, "y": 0, "z": 0, "suggested_sigil": "reservoir", "required": true}
+    ],
+    "waves": [],
+    "guaranteed_waves": [],
+    "fragile_offsets": [],
+    "target_duration_ticks": 3600,
+    "focus": "living_staff",
+    "required_helpers": 0,
+    "helper_roles": ["anchor", "attendant", "warden"],
+    "still_interval_ticks": 0,
+    "atmosphere": {"fog": "faint", "lightning": false, "dome": false},
+    "failure": "safe_retry"
+  }
+}

@@ -20,6 +20,9 @@ import com.vincenthuto.hemomancy.common.rite.harbinger.CardinalRiteProjectionRes
 import com.vincenthuto.hemomancy.common.tile.IBloodReservoir;
 import com.vincenthuto.hemomancy.common.tile.harbinger.crafting.SomaticLoomBlockEntity;
 import com.vincenthuto.hemomancy.common.tile.harbinger.functional.MasonsEffigyBlockEntity;
+import com.vincenthuto.hemomancy.common.tile.harbinger.crafting.ResonantForgeBlockEntity;
+import com.vincenthuto.hemomancy.common.tile.shared.FillerBlockEntity;
+import com.vincenthuto.hemomancy.common.block.harbinger.crafting.ResonantForgeBlock;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.client.resources.model.BakedModel;
@@ -147,6 +150,25 @@ public class BloodProjectionItem extends Item implements IDispellable, ICellHand
 
 			BlockEntity be = worldIn.getBlockEntity(targetPos);
 			if (be != null) {
+				BlockPos controllerPos = targetPos;
+				if (be instanceof FillerBlockEntity filler && filler.getMainBlockPos() != null) {
+					controllerPos = filler.getMainBlockPos();
+					be = worldIn.getBlockEntity(controllerPos);
+				}
+				if (be instanceof ResonantForgeBlockEntity forge
+						&& worldIn.getBlockState(controllerPos).getBlock() instanceof ResonantForgeBlock block
+						&& block.part(worldIn.getBlockState(controllerPos), controllerPos, targetPos)
+								== ResonantForgeBlock.Part.HAMMER
+						&& forge.hammerWorn() && forge.hammerIronDeposited() && forge.hammerAshDeposited()) {
+					double accepted = Math.min(tileTransferRate, playerVolume.getBloodVolume());
+					accepted = forge.receiveHammerRepairBlood(accepted);
+					if (accepted > 0 && playerVolume.drain(accepted)) {
+						if (player instanceof ServerPlayer serverPlayer)
+							PacketHandler.sendToPlayer(serverPlayer, new BloodVolumeServerPacket(playerVolume));
+						return accepted;
+					}
+					return 0.0D;
+				}
 				if (be instanceof SomaticLoomBlockEntity loom && player instanceof Player projectingPlayer) {
 					if (loom.tryChargeRitualBlood(projectingPlayer, tileTransferRate, livingStaff)) {
 						if (projectingPlayer instanceof ServerPlayer serverPlayer) {

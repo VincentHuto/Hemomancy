@@ -1,0 +1,9 @@
+{
+  "type": "hutoslib:chapter",
+  "ordinality": 9,
+  "texture": "hemomancy:textures/gui/guide/page.png",
+  "color": "0.2,0,0",
+  "title": "The Resonant Forge",
+  "subtitle": "A pattern remembered in wax",
+  "icon": "hemomancy:resonant_forge"
+}

@@ -30,6 +30,8 @@ public class ContainerInit {
 			.register("vial_centrifuge", () -> IMenuTypeExtension.create(VialCentrifugeMenu::new));
 	public static final DeferredHolder<MenuType<?>, MenuType<EnzymaticScriptoriumMenu>> enzymatic_scriptorium = CONTAINERS
 			.register("enzymatic_scriptorium", () -> IMenuTypeExtension.create(EnzymaticScriptoriumMenu::new));
+	public static final DeferredHolder<MenuType<?>, MenuType<ResonantForgeMenu>> resonant_forge = CONTAINERS
+			.register("resonant_forge", () -> IMenuTypeExtension.create(ResonantForgeMenu::new));
 
 	public static final DeferredHolder<MenuType<?>, MenuType<GhastlyAlembicMenu>> ghastly_alembic = CONTAINERS.register("ghastly_alembic",
 			() -> IMenuTypeExtension.create(GhastlyAlembicMenu::new));

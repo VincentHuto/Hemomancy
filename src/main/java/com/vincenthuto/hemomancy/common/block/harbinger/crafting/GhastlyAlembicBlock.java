@@ -6,6 +6,8 @@ import com.vincenthuto.hemomancy.common.block.shared.IMultiBlock;
 import com.vincenthuto.hemomancy.common.block.shared.WaterloggedBlockSupport;
 import com.vincenthuto.hemomancy.common.init.BlockEntityInit;
 import com.vincenthuto.hemomancy.common.tile.harbinger.crafting.GhastlyAlembicBlockEntity;
+import com.vincenthuto.hemomancy.common.init.ItemInit;
+import net.minecraft.world.item.ItemStack;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import com.vincenthuto.hutoslib.common.network.VanillaPacketDispatcher;
 import net.minecraft.core.BlockPos;
@@ -197,6 +199,13 @@ public class GhastlyAlembicBlock extends BaseEntityBlock implements EntityBlock,
 			if (be instanceof GhastlyAlembicBlockEntity alembic) {
 				if (level instanceof ServerLevel serverLevel) {
 					Containers.dropContents(level, pos, alembic);
+					for (ItemStack recovery = alembic.takeHiddenCatalystRecovery(); !recovery.isEmpty();
+							recovery = alembic.takeHiddenCatalystRecovery())
+						Block.popResource(level, pos, recovery);
+					if (alembic.tier().ordinal() >= 1)
+						Block.popResource(level, pos, new ItemStack(ItemInit.hematic_condenser_kit.get()));
+					if (alembic.tier().ordinal() >= 2)
+						Block.popResource(level, pos, new ItemStack(ItemInit.sanguine_athanor_kit.get()));
 					alembic.getRecipesToAwardAndPopExperience(serverLevel, Vec3.atCenterOf(pos));
 				}
 				level.updateNeighbourForOutputSignal(pos, this);

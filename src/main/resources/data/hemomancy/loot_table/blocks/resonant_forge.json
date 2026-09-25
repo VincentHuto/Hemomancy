@@ -1,0 +1,10 @@
+{
+  "type": "minecraft:block",
+  "pools": [
+    {
+      "rolls": 1,
+      "entries": [{"type": "minecraft:item", "name": "hemomancy:resonant_forge"}],
+      "conditions": [{"condition": "minecraft:survives_explosion"}]
+    }
+  ]
+}

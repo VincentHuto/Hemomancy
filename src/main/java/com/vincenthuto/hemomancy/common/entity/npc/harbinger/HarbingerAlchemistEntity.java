@@ -130,9 +130,10 @@ public class HarbingerAlchemistEntity extends com.vincenthuto.hemomancy.common.s
                     com.vincenthuto.hemomancy.common.event.HarbingerAdvancementGranter.hasAdvancement(
                             serverPlayer, BodyAnswersAssignment.ADV_COMPLETE));
         }
-        return ClinicalBloodDialogue.append(HarbingerAlchemistDialogueTrees.withArtificerCorrespondence(tree,
-                ArtificerProgressSnapshot.from(serverPlayer), ArtificerAssignments.forkResearchRecordedCount(serverPlayer),
-                ArtificerAssignments.isForkResearchRewardClaimed(serverPlayer)), serverPlayer, "alchemist");
+		return com.vincenthuto.hemomancy.common.entity.npc.dialogue.AdvancedBrewingDialogue.append(
+				ClinicalBloodDialogue.append(HarbingerAlchemistDialogueTrees.withArtificerCorrespondence(tree,
+				ArtificerProgressSnapshot.from(serverPlayer), ArtificerAssignments.forkResearchRecordedCount(serverPlayer),
+				ArtificerAssignments.isForkResearchRewardClaimed(serverPlayer)), serverPlayer, "alchemist"), serverPlayer);
     }
 
     @Override

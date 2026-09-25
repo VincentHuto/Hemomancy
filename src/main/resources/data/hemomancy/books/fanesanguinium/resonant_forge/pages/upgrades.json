@@ -1,0 +1,9 @@
+{
+  "type": "hutoslib:page",
+  "ordinality": 2,
+  "texture": "hemomancy:textures/gui/guide/page.png",
+  "title": "Groove and Cam",
+  "subtitle": "The fifth and seventh Degrees",
+  "text": "At the fifth Degree the Artificer gives the Precision Governor Kit. Offer it during the Rite of the True Groove and feed two marked points with 250 mL each; the upgraded forge can record one enchantment or Scriptorium curse at a time. At the seventh Degree, the Master Cam Kit and Rite of the Enduring Pattern open three 250 mL points. The finished forge can stabilize a recorded cylinder for repeated use. Interrupted rites return their held work through the Cardinal recovery system.",
+  "icon": "hemomancy:master_cam_kit"
+}

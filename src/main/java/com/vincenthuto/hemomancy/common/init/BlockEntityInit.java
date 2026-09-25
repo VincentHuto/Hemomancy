@@ -153,8 +153,10 @@ public class BlockEntityInit {
 					.of(VialCentrifugeBlockEntity::new, BlockInit.vial_centrifuge.get()).build(null));
 	public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<EnzymaticScriptoriumBlockEntity>> enzymatic_scriptorium = TILES
 			.register("enzymatic_scriptorium", () -> BlockEntityType.Builder.of(EnzymaticScriptoriumBlockEntity::new,
-					BlockInit.enzymatic_scriptorium.get(), BlockInit.eightfold_scriptorium.get(),
-					BlockInit.monolithic_scriptorium.get()).build(null));
+					BlockInit.enzymatic_scriptorium.get()).build(null));
+	public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<ResonantForgeBlockEntity>> resonant_forge = TILES
+			.register("resonant_forge", () -> BlockEntityType.Builder.of(ResonantForgeBlockEntity::new,
+					BlockInit.resonant_forge.get()).build(null));
 
 	public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<PuppeteersSpindleBlockEntity>> puppeteers_spindle = TILES
 			.register("puppeteers_spindle", () -> BlockEntityType.Builder

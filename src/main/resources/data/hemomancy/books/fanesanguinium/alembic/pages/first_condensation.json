@@ -1,0 +1,9 @@
+{
+  "type": "hutoslib:page",
+  "ordinality": 0,
+  "texture": "hemomancy:textures/gui/guide/page.png",
+  "title": "The First Condensation",
+  "subtitle": "A return path for the third Degree",
+  "text": "Distil an ordinary potion in the Ghastly Alembic, then show the Alchemist that potion and two different enzymes. Keep the samples. Take the Hematic Condenser Kit to a Lesser working floor, seat the Alembic on the plinth beside the Cardinal Focus, and offer the kit at a lit brazier. Plant a Living Staff, fill the four anchors, and seal the daemon. Send 50 mL of blood into the intake bulb, then 50 mL into the return bulb. The rite changes the same Alembic into a Hematic Condenser, keeping its tank and contents. If the floor is damaged or you step away, the work waits for you to repair it and return.",
+  "icon": "hemomancy:hematic_condenser_kit"
+}

@@ -41,6 +41,12 @@ public static com.vincenthuto.hemomancy.common.antecedent.AntecedentResearch ant
 public static com.vincenthuto.hemomancy.common.mission.alchemist.ClinicalBloodProgress clinicalBlood(Player player) {
     return player.getData(HemoAttachmentTypes.CLINICAL_BLOOD);
 }
+public static com.vincenthuto.hemomancy.common.brewing.AdvancedBrewingProgress advancedBrewing(Player player) {
+    return player.getData(HemoAttachmentTypes.ADVANCED_BREWING);
+}
+public static com.vincenthuto.hemomancy.common.enchanting.ResonantForgeProgress resonantForge(Player player) {
+    return player.getData(HemoAttachmentTypes.RESONANT_FORGE);
+}
 
 
 private HemoCapabilityAccess() {}

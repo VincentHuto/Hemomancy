@@ -231,7 +231,7 @@ public final class BloodStructureCraftingHelper {
 		Set<BlockPos> used = new HashSet<>();
 		for (BloodStructureOffering offering : recipe.getOfferings()) {
 			for (int required = 0; required < offering.count(); required++) {
-				BlockPos offeringPos = findUnusedOfferingBrazier(level, candidates, used, offering);
+				BlockPos offeringPos = findUnusedOfferingBrazier(recipe, level, candidates, used, offering);
 				if (offeringPos == null) {
 					return OfferingMatch.invalid(missingOfferingMessage(offering));
 				}
@@ -276,7 +276,8 @@ public final class BloodStructureCraftingHelper {
 		return List.copyOf(consumed);
 	}
 
-	private static BlockPos findUnusedOfferingBrazier(ServerLevel level, List<BlockPos> candidates, Set<BlockPos> used,
+	private static BlockPos findUnusedOfferingBrazier(BloodStructureRecipe recipe, ServerLevel level,
+			List<BlockPos> candidates, Set<BlockPos> used,
 			BloodStructureOffering offering) {
 		for (BlockPos pos : candidates) {
 			if (used.contains(pos)) {
@@ -284,11 +285,21 @@ public final class BloodStructureCraftingHelper {
 			}
 			if (level.getBlockEntity(pos) instanceof IronBrazierBlockEntity brazier
 					&& BrazierBlock.isLit(level.getBlockState(pos))
-					&& offering.ingredient().test(brazier.getOfferingForMatching())) {
+					&& offering.ingredient().test(brazier.getOfferingForMatching())
+					&& isValidSpecialOffering(recipe, brazier.getOfferingForMatching())) {
 				return pos;
 			}
 		}
 		return null;
+	}
+
+	private static boolean isValidSpecialOffering(BloodStructureRecipe recipe, ItemStack stack) {
+		if (!recipe.getId().getNamespace().equals("hemomancy")
+				|| !recipe.getId().getPath().equals("blood_structure/resonant_forge")) return true;
+		return com.vincenthuto.hemomancy.common.enchanting.ResonantForgeRules.isBlankCylinder(
+				stack.has(com.vincenthuto.hemomancy.common.init.DataComponentInit.ANCIENT_RECORDING.get()),
+				stack.has(com.vincenthuto.hemomancy.common.init.DataComponentInit.CLAIRAUDIOGRAPH_RECORDING.get()),
+				stack.has(com.vincenthuto.hemomancy.common.init.DataComponentInit.RESONANT_PATTERN.get()));
 	}
 
 	private static void unlightOfferingBrazier(ServerLevel level, BlockPos pos) {

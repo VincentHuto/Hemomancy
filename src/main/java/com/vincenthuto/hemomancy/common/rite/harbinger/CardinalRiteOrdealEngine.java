@@ -96,6 +96,11 @@ public final class CardinalRiteOrdealEngine {
 					.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC), false);
 			return;
 		}
+		if (AlembicUpgradeRites.isRite(rite.getRecipeId())) {
+			emitOfferingAbsorption(level, daemon, offering.pos(), offering.stack());
+			rite.absorbCurrentOffering();
+			return;
+		}
 		if (!(level.getBlockEntity(offering.pos()) instanceof IronBrazierBlockEntity brazier)) {
 			rite.markCollapsed();
 			return;
@@ -204,7 +209,7 @@ public final class CardinalRiteOrdealEngine {
 
 	private static void tickConsecration(ServerLevel level, ServerPlayer caster, ActiveCardinalRite rite,
 			CardinalRiteRecipe recipe) {
-		rite.incrementIdleTicks();
+		if (!AlembicUpgradeRites.isRite(rite.getRecipeId())) rite.incrementIdleTicks();
 		drawAnchors(level, rite, recipe);
 		if (rite.getIdleTicks() >= CardinalRiteCeremonyRules.CONSECRATION_TIMEOUT_TICKS) {
 			rite.markCollapsed();

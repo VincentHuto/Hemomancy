@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=north": {
+      "model": "hemomancy:block/resonant_forge"
+    },
+    "facing=east": {
+      "model": "hemomancy:block/resonant_forge",
+      "y": 90
+    },
+    "facing=south": {
+      "model": "hemomancy:block/resonant_forge",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "hemomancy:block/resonant_forge",
+      "y": 270
+    }
+  }
+}

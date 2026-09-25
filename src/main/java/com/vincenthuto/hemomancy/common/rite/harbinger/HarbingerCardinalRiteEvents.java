@@ -132,6 +132,13 @@ public class HarbingerCardinalRiteEvents {
 		}
 
 		CardinalRiteSavedData savedData = CardinalRiteSavedData.get(sLevel);
+		if (sLevel.getGameTime() % 20 == 0) {
+			for (ServerPlayer player : sLevel.players()) {
+				CardinalRiteSavedData.get(sLevel.getServer().overworld()).deliverRecovery(player);
+				HemoCapabilityAccess.advancedBrewing(player).deliver(player);
+				HemoCapabilityAccess.resonantForge(player).deliver(player);
+			}
+		}
 		Map<UUID, ActiveCardinalRite> activeRites = savedData.getActiveRites();
 
 		if (activeRites.isEmpty()) return;
@@ -147,6 +154,16 @@ public class HarbingerCardinalRiteEvents {
                     && !com.vincenthuto.hemomancy.common.succession.SuccessionRites.chunksReady(sLevel, rite)) continue;
 
 			ServerPlayer caster = sLevel.getServer().getPlayerList().getPlayer(playerUUID);
+			if (AlembicUpgradeRites.isRite(rite.getRecipeId())) {
+				if (!sLevel.hasChunkAt(rite.getCenterPos()) || !sLevel.hasChunkAt(AlembicUpgradeRites.seat(rite))) continue;
+				if (!AlembicUpgradeRites.focusPresent(sLevel, rite)
+						|| !AlembicUpgradeRites.subjectPresent(sLevel, rite)) {
+					AlembicUpgradeRites.recover(sLevel, rite);
+					toRemove.add(playerUUID);
+					continue;
+				}
+				if (caster == null || caster.level() != sLevel || !caster.isAlive()) continue;
+			}
 
 			if (caster == null || !caster.level().equals(sLevel)) {
 				if (rite.getPhase() != CardinalRitePhase.LEGACY) {
@@ -173,6 +190,7 @@ public class HarbingerCardinalRiteEvents {
 			int riteSize = rite.getRiteSize();
 			CardinalRiteRecipe recipe = CardinalRiteRecipe.getRiteByLocation(sLevel, rite.getRecipeId());
 			if (recipe == null && rite.getPhase() != CardinalRitePhase.LEGACY) {
+				AlembicUpgradeRites.recover(sLevel, rite);
 				Hemomancy.LOGGER.warn("Retiring active cardinal rite {} at {} because its recipe no longer exists",
 						rite.getRecipeId(), center);
 				CardinalRiteOrdealEngine.clearThreats(sLevel, rite);
@@ -208,6 +226,9 @@ public class HarbingerCardinalRiteEvents {
 					Math.max(CardinalRiteBoundaryLeashRules.ritualRadius(riteSize), footprintRadius));
 			AABB casterBounds = new AABB(center).inflate(
 					Math.max(CardinalRiteBoundaryLeashRules.casterLeashRadius(riteSize), footprintRadius));
+			if (AlembicUpgradeRites.isRite(rite.getRecipeId())
+					&& (!casterBounds.contains(caster.position()) || !verifyRiteStructure(sLevel, rite)))
+				continue;
 
 			if (rite.isStaffPlanting()) {
 				Vec3 motion = caster.getDeltaMovement();
@@ -234,6 +255,7 @@ public class HarbingerCardinalRiteEvents {
 			// === Caster boundary enforcement ===
 			// Only the caster takes damage and blood drain for leaving the rite bounds
 			if (!casterBounds.contains(caster.position())) {
+				if (AlembicUpgradeRites.isRite(rite.getRecipeId())) continue;
 				rite.interruptCancellation();
 				caster.hurt(caster.damageSources().generic(), CASTER_BOUNDARY_DAMAGE_PER_TICK);
 				HemoCapabilityAccess.getBloodVolume(caster).ifPresent(volume -> {
@@ -290,6 +312,7 @@ public class HarbingerCardinalRiteEvents {
 				rite.tick();
 			} else {
 				if (sLevel.getGameTime() % 20 == 0 && !verifyRiteStructure(sLevel, rite)) {
+					if (AlembicUpgradeRites.isRite(rite.getRecipeId())) continue;
 					failRite(sLevel, caster, rite);
 					toRemove.add(playerUUID);
 					continue;
@@ -305,6 +328,11 @@ public class HarbingerCardinalRiteEvents {
 			savedData.setDirty();
 
 			if (rite.getPhase() == CardinalRitePhase.COLLAPSED) {
+				if (AlembicUpgradeRites.isRite(rite.getRecipeId())) {
+					AlembicUpgradeRites.recover(sLevel, rite);
+					toRemove.add(playerUUID);
+					continue;
+				}
 				collapseInteractiveRite(sLevel, caster, rite, recipe);
 				toRemove.add(playerUUID);
 				continue;
@@ -313,6 +341,7 @@ public class HarbingerCardinalRiteEvents {
 			if (rite.isComplete()) {
 				// === Final structure integrity check ===
 				if (!verifyRiteStructure(sLevel, rite)) {
+					if (AlembicUpgradeRites.isRite(rite.getRecipeId())) continue;
 					failRite(sLevel, caster, rite);
 					toRemove.add(playerUUID);
 					continue;
@@ -320,6 +349,7 @@ public class HarbingerCardinalRiteEvents {
 				if (completeRite(sLevel, caster, rite)) {
 					spawnHumanityDispersal(sLevel, caster);
 				}
+				else AlembicUpgradeRites.recover(sLevel, rite);
 				toRemove.add(playerUUID);
 			}
 		}
@@ -328,6 +358,7 @@ public class HarbingerCardinalRiteEvents {
 			ActiveCardinalRite removedRite = activeRites.get(uuid);
 			if (removedRite != null) {
 				ScriptoriumRites.cleanup(sLevel, removedRite);
+				AlembicUpgradeRites.cleanup(sLevel, removedRite);
                 com.vincenthuto.hemomancy.common.succession.SuccessionRites.cleanup(sLevel, removedRite);
 				CardinalRiteAllyService.returnNpcAlliesToFane(sLevel, removedRite);
 				discardHumanitySprites(sLevel, uuid, removedRite.getCenterPos());
@@ -356,6 +387,7 @@ public class HarbingerCardinalRiteEvents {
 		if (savedData.hasActiveRite(player.getUUID())) {
 			ActiveCardinalRite broken = savedData.getRite(player.getUUID());
 			if (broken != null) {
+				AlembicUpgradeRites.recover(sLevel, broken);
 				CardinalRiteOrdealEngine.clearThreats(sLevel, broken);
 				CardinalRiteAllyService.returnNpcAlliesToFane(sLevel, broken);
 				discardHumanitySprites(sLevel, player.getUUID(), broken.getCenterPos());
@@ -574,6 +606,7 @@ public class HarbingerCardinalRiteEvents {
 	private static void completeRiteCancellation(ServerLevel level, ServerPlayer caster,
 			ActiveCardinalRite rite) {
 		CardinalRiteOrdealEngine.clearThreats(level, rite);
+		AlembicUpgradeRites.recover(level, rite);
 		CardinalRiteStaffEscrow.restore(caster, rite);
 		level.playSound(null, rite.getCenterPos(), SoundEvents.BEACON_DEACTIVATE,
 				SoundSource.BLOCKS, 1.0F, 0.65F);
@@ -649,7 +682,8 @@ public class HarbingerCardinalRiteEvents {
 
 		BlockPos center = rite.getCenterPos();
 		if (recipe.hasLayeredStation()) {
-			boolean valid = (rite.getOfferingVisitIndex() > 0 || rite.isPuppeteerTrialManifested()
+			boolean valid = (AlembicUpgradeRites.isRite(rite.getRecipeId())
+					|| rite.getOfferingVisitIndex() > 0 || rite.isPuppeteerTrialManifested()
 					? layeredStructureMatch(sLevel, rite, recipe)
 					: layeredStationMatch(sLevel, rite, recipe)) != null;
 			if (!valid) {
@@ -914,6 +948,17 @@ public class HarbingerCardinalRiteEvents {
 			return java.util.List.of("Eightfold writing: " + stage + "/" + total,
 					"Current orb " + (stage % 8 + 1) + ": " + rite.getScriptorialBlood(stage) + "/50 mL",
 					"Project blood into the next floor orb");
+		}
+		if (rite.getPhase() == CardinalRitePhase.ALEMBIC_PROJECTION) {
+			int stage = rite.alembic().getInt("Stage");
+			boolean armature = ArmatureUpgradeRites.isRite(rite.getRecipeId());
+			return java.util.List.of((armature ? "Armature circuits: " : "Station circuits: ") + stage + "/"
+					+ AlembicUpgradeRites.projections(rite.getRecipeId()),
+				"Current circuit: " + (AlembicUpgradeRites.bloodPerProjection(rite.getRecipeId())
+							- rite.alembicBloodNeeded()) + "/"
+							+ AlembicUpgradeRites.bloodPerProjection(rite.getRecipeId()) + " mL",
+				armature ? "Project blood into the next armature circuit"
+						: "Project blood into the next receiving station circuit");
 		}
 		if (rite.getPhase() == CardinalRitePhase.ORDEAL) {
 			String wave = rite.getCurrentWave() < rite.getWaveDeck().size()
@@ -1204,6 +1249,11 @@ public class HarbingerCardinalRiteEvents {
 	private static boolean completeRite(ServerLevel sLevel, ServerPlayer caster, ActiveCardinalRite rite) {
 		CardinalRiteRecipe recipe = CardinalRiteRecipe.getRiteByLocation(sLevel, rite.getRecipeId());
 		if (recipe == null) return false;
+		if (AlembicUpgradeRites.isRite(rite.getRecipeId())) {
+			boolean completed = AlembicUpgradeRites.complete(sLevel, rite);
+			if (completed) CardinalRiteSavedData.get(sLevel.getServer().overworld()).deliverRecovery(caster);
+			return completed;
+		}
 
 		if (!RecipeDegreeGates.playerMeets(caster, recipe)) {
 			String requirement = RecipeDegreeGates.requirementLabel(recipe);

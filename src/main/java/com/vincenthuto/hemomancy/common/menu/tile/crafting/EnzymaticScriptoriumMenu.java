@@ -108,7 +108,7 @@ public final class EnzymaticScriptoriumMenu extends AbstractContainerMenu {
     }
 
     private int stationTier() {
-        return station.getBlockState().getBlock() instanceof EnzymaticScriptoriumBlock block ? block.tier() : 3;
+        return station.getBlockState().getBlock() instanceof EnzymaticScriptoriumBlock block ? EnzymaticScriptoriumBlock.tier(station.getBlockState()) : 3;
     }
 
     private int bookshelfPower() {

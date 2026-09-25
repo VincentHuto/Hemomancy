@@ -1,0 +1,9 @@
+{
+  "type": "hutoslib:page",
+  "ordinality": 1,
+  "texture": "hemomancy:textures/gui/guide/page.png",
+  "title": "Keeping the Cadence",
+  "subtitle": "Iron tires and stone wanders",
+  "text": "After 64 applications the hammer head is spent and the interface will not open. Place a Hematic Iron Block and Smouldering Ash on the hammer, then project 500 mL of blood into it. The forge remembers partial repair blood. After 32 recordings or stabilizations, dress the wheel with Befouling Ash and a Vivianite Scalpel; the work consumes eight durability. A tired wheel still permits application.",
+  "icon": "hemomancy:vivianite_scalpel"
+}

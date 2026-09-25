@@ -606,14 +606,12 @@ public class BlockInit {
 			() -> new VialCentrifugeBlock(BlockBehaviour.Properties.of().requiresCorrectToolForDrops()
 					.strength(1.5F, 6.0F).sound(SoundType.METAL)));
 	public static final DeferredHolder<Block, Block> enzymatic_scriptorium = MODELEDBLOCKS.register("enzymatic_scriptorium",
-			() -> new EnzymaticScriptoriumBlock(3, BlockBehaviour.Properties.of().requiresCorrectToolForDrops()
+			() -> new EnzymaticScriptoriumBlock(BlockBehaviour.Properties.of().requiresCorrectToolForDrops()
 					.strength(3.0F, 8.0F).sound(SoundType.METAL).noOcclusion()));
-	public static final DeferredHolder<Block, Block> eightfold_scriptorium = MODELEDBLOCKS.register("eightfold_scriptorium",
-			() -> new EnzymaticScriptoriumBlock(5, BlockBehaviour.Properties.of().requiresCorrectToolForDrops()
-					.strength(3.5F, 9.0F).sound(SoundType.METAL).noOcclusion()));
-	public static final DeferredHolder<Block, Block> monolithic_scriptorium = MODELEDBLOCKS.register("monolithic_scriptorium",
-			() -> new EnzymaticScriptoriumBlock(7, BlockBehaviour.Properties.of().requiresCorrectToolForDrops()
-					.strength(4.0F, 10.0F).sound(SoundType.METAL).noOcclusion()));
+	public static final DeferredHolder<Block, Block> resonant_forge = MODELEDBLOCKS.register("resonant_forge",
+			() -> new com.vincenthuto.hemomancy.common.block.harbinger.crafting.ResonantForgeBlock(
+					BlockBehaviour.Properties.of().requiresCorrectToolForDrops()
+							.strength(4.0F, 10.0F).sound(SoundType.METAL).noOcclusion()));
 
 	public static final DeferredHolder<Block, Block> ghastly_alembic = MODELEDBLOCKS.register("ghastly_alembic",
 			() -> new GhastlyAlembicBlock(BlockBehaviour.Properties.of().requiresCorrectToolForDrops().strength(1.5F, 6.0F)

@@ -1,0 +1,12 @@
+{
+  "type": "hemomancy:advanced_brewing",
+  "input_potion": "minecraft:swiftness",
+  "catalyst": {"item": "hemomancy:neurotic_enzyme"},
+  "output_effect": "minecraft:speed",
+  "duration": 500,
+  "amplifier": 1,
+  "blood": 750,
+  "ticks": 120,
+  "tier": 2,
+  "attachment": "nerve_surge"
+}

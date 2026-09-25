@@ -281,8 +281,7 @@ public final class EnzymaticScriptoriumGameTests {
     private static EnzymaticScriptoriumBlockEntity station(GameTestHelper helper, ActiveCardinalRite rite, boolean monolithic) {
         var level = helper.getLevel();
         BlockPos seat = ScriptoriumRites.seat(rite);
-        level.setBlockAndUpdate(seat, (monolithic ? BlockInit.eightfold_scriptorium.get()
-                : BlockInit.enzymatic_scriptorium.get()).defaultBlockState());
+        level.setBlockAndUpdate(seat, BlockInit.enzymatic_scriptorium.get().defaultBlockState().setValue(com.vincenthuto.hemomancy.common.block.harbinger.crafting.EnzymaticScriptoriumBlock.STAGE, monolithic ? 1 : 0));
         var station = (EnzymaticScriptoriumBlockEntity) level.getBlockEntity(seat);
         for (int i = 0; i < 8; i++)
             station.setItem(i, new ItemStack(EnumBloodTendency.getRepEnzyme(EnumBloodTendency.values()[i]), monolithic ? 2 : 1));
@@ -335,14 +334,22 @@ public final class EnzymaticScriptoriumGameTests {
     public static void eightfoldUpgradeConsumesExactlyOneOfEach(GameTestHelper helper) {
         ActiveCardinalRite rite = rite(helper, false, Direction.SOUTH);
         EnzymaticScriptoriumBlockEntity station = station(helper, rite, false);
+        station.receiveBlood(725);
+        var originalState = station.getBlockState();
         helper.assertTrue(ScriptoriumRites.prepare(helper.getLevel(), rite), "Valid station rejected");
         seal(rite);
         for (int i = 0; i < 8; i++) helper.assertTrue(rite.fillScriptorialOrb(i, 50), "Orb " + i + " rejected blood");
         helper.assertTrue(rite.getPhase() == CardinalRitePhase.ORDEAL, "Writing did not lead to ordeal");
         helper.assertTrue(ScriptoriumRites.complete(helper.getLevel(), rite), "Upgrade failed");
-        helper.assertTrue(helper.getLevel().getBlockState(ScriptoriumRites.seat(rite)).is(BlockInit.eightfold_scriptorium.get()),
+        helper.assertTrue(helper.getLevel().getBlockState(ScriptoriumRites.seat(rite)).getValue(com.vincenthuto.hemomancy.common.block.harbinger.crafting.EnzymaticScriptoriumBlock.STAGE) == 1,
                 "Wrong upgraded block");
         var upgraded = ScriptoriumRites.station(helper.getLevel(), rite);
+        helper.assertTrue(upgraded == station, "Upgrade replaced the block entity");
+        helper.assertTrue(upgraded.getBloodCapability().getBloodVolume() == 725, "Upgrade lost stored blood");
+        helper.assertTrue(upgraded.getBlockState().getBlock() == originalState.getBlock()
+                && upgraded.getBlockState().getValue(com.vincenthuto.hemomancy.common.block.harbinger.crafting.EnzymaticScriptoriumBlock.FACING)
+                == originalState.getValue(com.vincenthuto.hemomancy.common.block.harbinger.crafting.EnzymaticScriptoriumBlock.FACING),
+                "Upgrade replaced the block or changed its facing");
         for (int i = 0; i < 8; i++) helper.assertTrue(upgraded.getItem(i).isEmpty(), "Enzyme was not consumed once");
         helper.assertTrue(!upgraded.isRiteLocked(), "Upgraded station stayed locked");
         helper.succeed();
@@ -362,8 +369,32 @@ public final class EnzymaticScriptoriumGameTests {
                 && rite.getScriptorialStage() == 8, "Second circuit was skipped");
         for (int i = 0; i < 8; i++) rite.fillScriptorialOrb(i, 50);
         helper.assertTrue(ScriptoriumRites.complete(helper.getLevel(), rite), "Monolithic upgrade failed");
-        helper.assertTrue(helper.getLevel().getBlockState(ScriptoriumRites.seat(rite)).is(BlockInit.monolithic_scriptorium.get()),
+        helper.assertTrue(helper.getLevel().getBlockState(ScriptoriumRites.seat(rite)).getValue(com.vincenthuto.hemomancy.common.block.harbinger.crafting.EnzymaticScriptoriumBlock.STAGE) == 2,
                 "Wrong Monolithic result");
+        helper.succeed();
+    }
+
+    @GameTest(template = "empty", timeoutTicks = 100, batch = "scriptorium")
+    public static void legacyStagesAndMinedStagePersist(GameTestHelper helper) {
+        var block = BlockInit.enzymatic_scriptorium.get();
+        for (int stage = 1; stage <= 2; stage++) {
+            var tag = new net.minecraft.nbt.CompoundTag();
+            tag.putString("Name", "hemomancy:" + (stage == 1 ? "eightfold_scriptorium" : "monolithic_scriptorium"));
+            var props = new net.minecraft.nbt.CompoundTag();
+            props.putString("facing", "east");
+            tag.put("Properties", props);
+            com.vincenthuto.hemomancy.common.enchanting.ScriptoriumLegacyMigration.migrateState(tag);
+            var state = net.minecraft.nbt.NbtUtils.readBlockState(helper.getLevel().holderLookup(net.minecraft.core.registries.Registries.BLOCK), tag);
+            helper.assertTrue(state.is(block) && state.getValue(com.vincenthuto.hemomancy.common.block.harbinger.crafting.EnzymaticScriptoriumBlock.STAGE) == stage,
+                    "Legacy station lost its stage");
+            helper.assertTrue(state.getValue(com.vincenthuto.hemomancy.common.block.harbinger.crafting.EnzymaticScriptoriumBlock.FACING) == Direction.EAST,
+                    "Legacy station lost its facing");
+            var drops = net.minecraft.world.level.block.Block.getDrops(state, helper.getLevel(), helper.absolutePos(new BlockPos(1, 2, 1)), null);
+            helper.assertTrue(drops.size() == 1 && drops.getFirst().is(block.asItem()), "Stage did not drop the shared item");
+            var restored = drops.getFirst().get(net.minecraft.core.component.DataComponents.BLOCK_STATE).apply(block.defaultBlockState());
+            helper.assertTrue(restored.getValue(com.vincenthuto.hemomancy.common.block.harbinger.crafting.EnzymaticScriptoriumBlock.STAGE) == stage,
+                    "Mining lost the stage");
+        }
         helper.succeed();
     }
 }

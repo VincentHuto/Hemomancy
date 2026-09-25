@@ -1048,6 +1048,14 @@ public class ItemInit {
             () -> new MonolithImbuedClothItem(new Item.Properties().rarity(Rarity.RARE).fireResistant()));
     public static final DeferredHolder<Item, Item> vicars_consecration_kit = BASEITEMS.register("vicars_consecration_kit",
             () -> new Item(new Item.Properties().stacksTo(1).rarity(Rarity.UNCOMMON)));
+    public static final DeferredHolder<Item, Item> hematic_condenser_kit = BASEITEMS.register("hematic_condenser_kit",
+            () -> new Item(new Item.Properties().stacksTo(1).rarity(Rarity.UNCOMMON)));
+    public static final DeferredHolder<Item, Item> sanguine_athanor_kit = BASEITEMS.register("sanguine_athanor_kit",
+            () -> new Item(new Item.Properties().stacksTo(1).rarity(Rarity.RARE)));
+    public static final DeferredHolder<Item, Item> precision_governor_kit = BASEITEMS.register("precision_governor_kit",
+            () -> new Item(new Item.Properties().stacksTo(1).rarity(Rarity.UNCOMMON)));
+    public static final DeferredHolder<Item, Item> master_cam_kit = BASEITEMS.register("master_cam_kit",
+            () -> new Item(new Item.Properties().stacksTo(1).rarity(Rarity.RARE)));
     public static final DeferredHolder<Item, Item> monolithic_cornerstone = BASEITEMS.register("monolithic_cornerstone",
             () -> new MonolithicCornerstoneItem(new Item.Properties().stacksTo(1).rarity(Rarity.RARE).fireResistant()));
     public static final DeferredHolder<Item, Item> memory_of_vesper = BASEITEMS.register("memory_of_vesper",

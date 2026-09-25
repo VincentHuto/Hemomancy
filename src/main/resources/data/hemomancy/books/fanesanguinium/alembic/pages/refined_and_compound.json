@@ -1,0 +1,9 @@
+{
+  "type": "hutoslib:page",
+  "ordinality": 1,
+  "texture": "hemomancy:textures/gui/guide/page.png",
+  "title": "Refined and Compound Potions",
+  "subtitle": "One bottle, two methods",
+  "text": "Put a finished Strength potion in the Condenser's input and a Ferric Enzyme in its catalyst slot to make Ferric Poise. Its strength lasts 90 seconds, and it steadies you against knockback. The Athanor also refines Swiftness with Neurotic Enzyme into Nerve Surge, and Fire Resistance with Fervent Enzyme into Fervent Reprisal. Nerve Surge is fast for 25 seconds, then slows you for eight; ending its Speed early brings the slowness at once. Reprisal burns a direct melee attacker after a successful hit. For a compound, put one finished potion in the input and a different finished potion in the catalyst slot. The Condenser spends 500 mL of blood and 160 ticks to make one drink carrying both effects. The first potion determines its name and tint. A compound cannot be compounded again.",
+  "icon": "hemomancy:hematic_condenser_kit"
+}

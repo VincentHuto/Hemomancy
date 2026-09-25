@@ -92,6 +92,16 @@ public class GhastlyAlembicScreen extends AbstractContainerScreen<GhastlyAlembic
                     Component.literal("\u00A77Bloody Flask consumed by three-input recipes.")
             ), java.util.Optional.empty(), mouseX, mouseY);
         }
+		if (this.hoveredSlot != null && this.hoveredSlot.index == GhastlyAlembicMenu.RESULT_SLOT
+				&& !this.hoveredSlot.hasItem() && !te.advancedPreview().isEmpty())
+			graphics.renderTooltip(font, te.advancedPreview(), mouseX, mouseY);
+		if (mouseX >= leftPos + 68 && mouseX < leftPos + 131
+				&& mouseY >= topPos + 34 && mouseY < topPos + 44
+				&& !te.advancedPreview().isEmpty())
+			graphics.renderTooltip(font, List.of(
+				Component.translatable("container.hemomancy.alembic.advanced.cost", te.advancedBloodCost()),
+				Component.translatable("container.hemomancy.alembic.advanced.time", te.advancedTotalTicks())),
+				java.util.Optional.empty(), mouseX, mouseY);
 
         BloodVolumeBarWidget.renderTooltip(graphics, font, bloodBarBounds,
                 te.getBloodVolume(), te.getMaxBloodVolume(), mouseX, mouseY);
@@ -115,11 +125,16 @@ public class GhastlyAlembicScreen extends AbstractContainerScreen<GhastlyAlembic
 
         // ── Draw slot backgrounds ──
         for (int i = 0; i < GhastlyAlembicMenu.SLOT_COUNT; i++) {
+            if (i == GhastlyAlembicMenu.CATALYST_2_SLOT && !te.tier().hasSecondCatalyst()) continue;
             Slot slot = this.menu.slots.get(i);
             int sx = gx + slot.x;
             int sy = gy + slot.y;
             drawSlotBackground(gfx, sx, sy, slot.index);
         }
+		if (menu.slots.get(GhastlyAlembicMenu.RESULT_SLOT).getItem().isEmpty()
+				&& !te.advancedPreview().isEmpty()) {
+			gfx.renderFakeItem(te.advancedPreview(), gx + 134, gy + 32);
+		}
 		animTime += 0.016f; // ~60 FPS approximation
 
         // ── Heat indicator (flame area below input slot) ──
@@ -138,6 +153,11 @@ public class GhastlyAlembicScreen extends AbstractContainerScreen<GhastlyAlembic
     protected void renderLabels(GuiGraphics gfx, int mouseX, int mouseY) {
         // Title centered
         gfx.drawString(font, this.title, this.titleLabelX, 4, 0xFFAA2222, false);
+		gfx.drawString(font, Component.translatable("container.hemomancy.alembic.tier."
+				+ te.tier().name().toLowerCase(java.util.Locale.ROOT)), 7, 72, 0xFFB87D7D, false);
+		if (!te.advancedFeedback().isEmpty())
+			gfx.drawString(font, Component.translatable("container.hemomancy.alembic.advanced."
+					+ te.advancedFeedback()), 36, 66, 0xFFD49372, false);
         // Inventory label
 
         Component status = Component.translatable("container.hemomancy.alembic.status."

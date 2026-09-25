@@ -76,7 +76,11 @@ public class ClairaudiographBlockEntity extends BlockEntity implements MenuProvi
         return choice != null && sample.getCount() == 1 && BloodSampleData.isStorableSample(sample)
             && BloodSampleData.entityType(sample) != null && source().equals(choice.source())
             && cylinder.is(ItemInit.ambergris_cylinder.get()) && cylinder.getCount() == 1
-            && !cylinder.has(DataComponentInit.ANCIENT_RECORDING.get()) && !cylinder.has(DataComponentInit.CLAIRAUDIOGRAPH_RECORDING.get()) && ClairaudiographCatalogue.allowed(choice) != null;
+            && com.vincenthuto.hemomancy.common.enchanting.ResonantForgeRules.isBlankCylinder(
+                    cylinder.has(DataComponentInit.ANCIENT_RECORDING.get()),
+                    cylinder.has(DataComponentInit.CLAIRAUDIOGRAPH_RECORDING.get()),
+                    cylinder.has(DataComponentInit.RESONANT_PATTERN.get()))
+            && ClairaudiographCatalogue.allowed(choice) != null;
     }
     public void cancelCarve() { progress = 0; selected = null; originalSample = ItemStack.EMPTY; }
     public void startPlayback(boolean redstone) {

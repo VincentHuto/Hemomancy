@@ -1,0 +1,9 @@
+{
+  "type": "hutoslib:page",
+  "ordinality": 2,
+  "texture": "hemomancy:textures/gui/guide/page.png",
+  "title": "The Sanguine Athanor",
+  "subtitle": "Three channels for the fifth Degree",
+  "text": "Show the Alchemist a refinement and a compound drawn from finished Alembic work. Take the Athanor Kit, Sanguine Quintessence, and Vivacious, Neurotic, and Ferric Enzymes to five lit braziers on a Greater working floor. Seat a Hematic Condenser on the adjacent plinth, prepare the Reservoir sigil, and plant your Living Staff. Fill eight anchors, seal the daemon, then send 50 mL of blood through the flow, impulse, and containment targets in order. The same machine gains its third catalyst vessel. A damaged floor pauses the rite; cancelling returns the exact offerings and Staff, though blood already projected remains spent.",
+  "icon": "hemomancy:sanguine_athanor_kit"
+}

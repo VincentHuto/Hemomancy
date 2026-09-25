@@ -205,6 +205,12 @@ neoForge {
             systemProperty 'neoforge.enabledGameTestNamespaces', 'scriptorium_validation'
         }
 
+        advancedBrewingGameTestServer {
+            type = "gameTestServer"
+            gameDirectory = project.file('build/advanced-brewing-gametest')
+            systemProperty 'neoforge.enabledGameTestNamespaces', 'advanced_brewing_validation'
+        }
+
         bloodInjectionGameTestServer {
             type = "gameTestServer"
             gameDirectory = project.file('build/blood-injection-gametest')

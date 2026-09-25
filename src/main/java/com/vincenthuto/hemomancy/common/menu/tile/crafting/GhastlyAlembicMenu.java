@@ -14,6 +14,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.player.StackedContents;
 import net.minecraft.world.inventory.*;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 
@@ -36,7 +37,8 @@ public class GhastlyAlembicMenu extends AbstractContainerMenu {
 	public static final int CATALYST_SLOT   = 3;
 	public static final int FLASK_OUTPUT_SLOT = 4;
 	public static final int TINCTURE_BLOOD_SLOT = 5;
-	public static final int SLOT_COUNT      = 6;
+	public static final int CATALYST_2_SLOT = 6;
+	public static final int SLOT_COUNT      = 7;
 	public static final int DATA_COUNT      = GhastlyAlembicBlockEntity.NUM_DATA_VALUES;
 
 	// Crafting area height — matches the screen's layout
@@ -91,7 +93,12 @@ public class GhastlyAlembicMenu extends AbstractContainerMenu {
 		// Flask slot: underneath the blood volume bar (extraction zone)
 		this.addSlot(new GhastlyAlembicFlaskSlot(this, container, FLASK_SLOT, 155, 58));
 		// Result slot: right of crafting area
-		this.addSlot(new FurnaceResultSlot(playerInventory.player, container, RESULT_SLOT, 134, 32));
+		this.addSlot(new FurnaceResultSlot(playerInventory.player, container, RESULT_SLOT, 134, 32) {
+			@Override public void onTake(Player player, ItemStack stack) {
+				GhastlyAlembicMenu.this.container.onPlayerExtract(player, stack);
+				super.onTake(player, stack);
+			}
+		});
 		// Catalyst slot: top-left corner of the crafting area
 		this.addSlot(new Slot(container, CATALYST_SLOT, 8, 8));
 		// Flask output slot: accepts a blood gourd to fill from the tank
@@ -112,6 +119,15 @@ public class GhastlyAlembicMenu extends AbstractContainerMenu {
 			public boolean mayPlace(ItemStack stack) {
 				return stack.getItem() == ItemInit.bloody_flask.get()
 						|| stack.getItem() == ItemInit.bloody_jug.get();
+			}
+		});
+		this.addSlot(new Slot(container, CATALYST_2_SLOT, 8, 58) {
+			@Override public boolean mayPlace(ItemStack stack) {
+				return GhastlyAlembicMenu.this.container.tier().hasSecondCatalyst()
+						&& GhastlyAlembicMenu.this.container.canPlaceItem(CATALYST_2_SLOT, stack);
+			}
+			@Override public boolean mayPickup(Player player) {
+				return GhastlyAlembicMenu.this.container.tier().hasSecondCatalyst();
 			}
 		});
 
@@ -144,14 +160,19 @@ public class GhastlyAlembicMenu extends AbstractContainerMenu {
 
 	/** Progress scaled 0–24 for rendering */
 	public int getBurnProgress() {
-		int progress = this.data.get(1);
-		int total = this.data.get(2);
+		int progress = this.data.get(GhastlyAlembicBlockEntity.DATA_ADVANCED_PROGRESS);
+		int total = this.data.get(GhastlyAlembicBlockEntity.DATA_ADVANCED_TOTAL_TIME);
+		if (progress == 0) {
+			progress = this.data.get(GhastlyAlembicBlockEntity.DATA_COOKING_PROGRESS);
+			total = this.data.get(GhastlyAlembicBlockEntity.DATA_COOKING_TOTAL_TIME);
+		}
 		return total != 0 && progress != 0 ? progress * 24 / total : 0;
 	}
 
 	/** Whether actively cooking */
 	public boolean isCooking() {
-		return this.data.get(1) > 0 && isHeated();
+		return (this.data.get(GhastlyAlembicBlockEntity.DATA_COOKING_PROGRESS) > 0
+				|| this.data.get(GhastlyAlembicBlockEntity.DATA_ADVANCED_PROGRESS) > 0) && isHeated();
 	}
 
 	public GhastlyAlembicBlockEntity getTe() {
@@ -197,13 +218,22 @@ public class GhastlyAlembicMenu extends AbstractContainerMenu {
 		if (index == RESULT_SLOT || index == FLASK_OUTPUT_SLOT) {
 			if (!this.moveItemStackTo(slotStack, INV_START, HOTBAR_END, true)) return ItemStack.EMPTY;
 			slot.onQuickCraft(slotStack, copy);
-		} else if (index == INGREDIENT_SLOT || index == FLASK_SLOT || index == CATALYST_SLOT
+		} else if (index == INGREDIENT_SLOT || index == FLASK_SLOT || index == CATALYST_SLOT || index == CATALYST_2_SLOT
 				|| index == TINCTURE_BLOOD_SLOT) {
 			if (!this.moveItemStackTo(slotStack, INV_START, HOTBAR_END, false)) return ItemStack.EMPTY;
 		}
 		// Moving FROM player inventory to container
 		else {
-			if (this.canSmelt(slotStack)) {
+			if (slotStack.is(Items.POTION) && container.tier().hasAdvancedBrewing()) {
+				if (container.getItem(INGREDIENT_SLOT).isEmpty()) {
+					if (!this.moveItemStackTo(slotStack, INGREDIENT_SLOT, INGREDIENT_SLOT + 1, false)) return ItemStack.EMPTY;
+				} else if (container.getItem(CATALYST_SLOT).isEmpty()) {
+					if (!this.moveItemStackTo(slotStack, CATALYST_SLOT, CATALYST_SLOT + 1, false)) return ItemStack.EMPTY;
+				} else if (container.tier().hasSecondCatalyst()
+						&& container.getItem(CATALYST_2_SLOT).isEmpty()) {
+					if (!this.moveItemStackTo(slotStack, CATALYST_2_SLOT, CATALYST_2_SLOT + 1, false)) return ItemStack.EMPTY;
+				} else return ItemStack.EMPTY;
+			} else if (this.canSmelt(slotStack)) {
 				if (!this.moveItemStackTo(slotStack, INGREDIENT_SLOT, INGREDIENT_SLOT + 1, false)) return ItemStack.EMPTY;
 			} else if (this.isNeededBloodInput(slotStack)) {
 				if (!this.moveItemStackTo(slotStack, TINCTURE_BLOOD_SLOT, TINCTURE_BLOOD_SLOT + 1, false)) return ItemStack.EMPTY;
@@ -222,8 +252,10 @@ public class GhastlyAlembicMenu extends AbstractContainerMenu {
 		}
 
 		if (slotStack.isEmpty()) {
+			if (index == RESULT_SLOT) container.onPlayerExtract(player, copy);
 			slot.set(ItemStack.EMPTY);
 		} else {
+			if (index == RESULT_SLOT) container.onPlayerExtract(player, copy);
 			slot.setChanged();
 		}
 

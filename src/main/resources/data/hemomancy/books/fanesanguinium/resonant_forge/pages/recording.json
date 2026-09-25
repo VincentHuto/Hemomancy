@@ -1,0 +1,9 @@
+{
+  "type": "hutoslib:page",
+  "ordinality": 0,
+  "texture": "hemomancy:textures/gui/guide/page.png",
+  "title": "Recording a Pattern",
+  "subtitle": "The wheel hears what steel remembers",
+  "text": "The Artificer teaches the Resonant Forge at the third Degree. Put enchanted equipment and a blank ambergris cylinder on the grinding side. The wheel draws every ordinary enchantment and any Scriptorium curse out as a vibration, leaving the equipment clean and cutting the pattern into wax. Application works from the hammer side. It keeps the higher level already present, refuses incompatible equipment, and consumes an ordinary cylinder. The central basin holds 5,000 mL of blood.",
+  "icon": "hemomancy:ambergris_cylinder"
+}

@@ -1,0 +1,1578 @@
+{
+  "meta": {
+    "format_version": "4.0",
+    "model_format": "java_block",
+    "box_uv": false
+  },
+  "name": "Unstained Shield",
+  "resolution": {
+    "width": 16,
+    "height": 16
+  },
+  "elements": [
+    {
+      "name": "silver shell",
+      "from": [
+        6,
+        1,
+        7.5
+      ],
+      "to": [
+        10,
+        2,
+        8.75
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            6,
+            14,
+            10,
+            15
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            12,
+            5,
+            13,
+            6
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            12,
+            5,
+            13,
+            6
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            12,
+            5,
+            13,
+            6
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            12,
+            5,
+            13,
+            6
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            12,
+            5,
+            13,
+            6
+          ],
+          "texture": 0
+        }
+      },
+      "uuid": "49bbe1fc-2912-51b7-bfe9-1a8495097d6b"
+    },
+    {
+      "name": "silver shell",
+      "from": [
+        4,
+        2,
+        7.5
+      ],
+      "to": [
+        12,
+        3,
+        8.75
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            4,
+            13,
+            12,
+            14
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            12,
+            5,
+            13,
+            6
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            12,
+            5,
+            13,
+            6
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            12,
+            5,
+            13,
+            6
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            12,
+            5,
+            13,
+            6
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            12,
+            5,
+            13,
+            6
+          ],
+          "texture": 0
+        }
+      },
+      "uuid": "e3b1ab3e-6cc6-5735-a7c7-fd0fb0d41b4f"
+    },
+    {
+      "name": "silver shell",
+      "from": [
+        3,
+        3,
+        7.5
+      ],
+      "to": [
+        13,
+        4,
+        8.75
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            3,
+            12,
+            13,
+            13
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            12,
+            5,
+            13,
+            6
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            12,
+            5,
+            13,
+            6
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            12,
+            5,
+            13,
+            6
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            12,
+            5,
+            13,
+            6
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            12,
+            5,
+            13,
+            6
+          ],
+          "texture": 0
+        }
+      },
+      "uuid": "c5f1505b-e7b2-5f07-b30e-b2659feb0516"
+    },
+    {
+      "name": "silver shell",
+      "from": [
+        2,
+        4,
+        7.5
+      ],
+      "to": [
+        14,
+        6,
+        8.75
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            2,
+            10,
+            14,
+            12
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            12,
+            5,
+            13,
+            6
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            12,
+            5,
+            13,
+            6
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            12,
+            5,
+            13,
+            6
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            12,
+            5,
+            13,
+            6
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            12,
+            5,
+            13,
+            6
+          ],
+          "texture": 0
+        }
+      },
+      "uuid": "2d7181ad-2234-5d8c-86da-438c31e6f96c"
+    },
+    {
+      "name": "silver shell",
+      "from": [
+        1,
+        6,
+        7.5
+      ],
+      "to": [
+        15,
+        10,
+        8.75
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            1,
+            6,
+            15,
+            10
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            12,
+            5,
+            13,
+            6
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            12,
+            5,
+            13,
+            6
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            12,
+            5,
+            13,
+            6
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            12,
+            5,
+            13,
+            6
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            12,
+            5,
+            13,
+            6
+          ],
+          "texture": 0
+        }
+      },
+      "uuid": "071c8ea4-b86b-577c-be68-31bc9a9684b2"
+    },
+    {
+      "name": "silver shell",
+      "from": [
+        2,
+        10,
+        7.5
+      ],
+      "to": [
+        14,
+        12,
+        8.75
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            2,
+            4,
+            14,
+            6
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            12,
+            5,
+            13,
+            6
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            12,
+            5,
+            13,
+            6
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            12,
+            5,
+            13,
+            6
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            12,
+            5,
+            13,
+            6
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            12,
+            5,
+            13,
+            6
+          ],
+          "texture": 0
+        }
+      },
+      "uuid": "f3fec9ad-4f93-5df6-97f7-0e85236e0f03"
+    },
+    {
+      "name": "silver shell",
+      "from": [
+        3,
+        12,
+        7.5
+      ],
+      "to": [
+        13,
+        13,
+        8.75
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            3,
+            3,
+            13,
+            4
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            12,
+            5,
+            13,
+            6
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            12,
+            5,
+            13,
+            6
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            12,
+            5,
+            13,
+            6
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            12,
+            5,
+            13,
+            6
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            12,
+            5,
+            13,
+            6
+          ],
+          "texture": 0
+        }
+      },
+      "uuid": "5e7067c0-76d7-53aa-9570-0718e7c5a9de"
+    },
+    {
+      "name": "silver shell",
+      "from": [
+        4,
+        13,
+        7.5
+      ],
+      "to": [
+        12,
+        14,
+        8.75
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            4,
+            2,
+            12,
+            3
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            12,
+            5,
+            13,
+            6
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            12,
+            5,
+            13,
+            6
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            12,
+            5,
+            13,
+            6
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            12,
+            5,
+            13,
+            6
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            12,
+            5,
+            13,
+            6
+          ],
+          "texture": 0
+        }
+      },
+      "uuid": "7daeade0-43d8-5d45-9e0f-582314730176"
+    },
+    {
+      "name": "silver shell",
+      "from": [
+        6,
+        14,
+        7.5
+      ],
+      "to": [
+        10,
+        15,
+        8.75
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            6,
+            1,
+            10,
+            2
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            12,
+            5,
+            13,
+            6
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            12,
+            5,
+            13,
+            6
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            12,
+            5,
+            13,
+            6
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            12,
+            5,
+            13,
+            6
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            12,
+            5,
+            13,
+            6
+          ],
+          "texture": 0
+        }
+      },
+      "uuid": "ab7b4f3e-5626-5687-bdd9-8fcf360afd81"
+    },
+    {
+      "name": "recessed lunar face",
+      "from": [
+        6,
+        3,
+        7.25
+      ],
+      "to": [
+        10,
+        4,
+        7.5
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            6,
+            12,
+            10,
+            13
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            9,
+            4,
+            10,
+            5
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            9,
+            4,
+            10,
+            5
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            9,
+            4,
+            10,
+            5
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            9,
+            4,
+            10,
+            5
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            9,
+            4,
+            10,
+            5
+          ],
+          "texture": 0
+        }
+      },
+      "uuid": "da5f4d70-c8ef-5378-bdc1-3dcfdeb3fa22"
+    },
+    {
+      "name": "recessed lunar face",
+      "from": [
+        4,
+        4,
+        7.25
+      ],
+      "to": [
+        12,
+        5,
+        7.5
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            4,
+            11,
+            12,
+            12
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            9,
+            4,
+            10,
+            5
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            9,
+            4,
+            10,
+            5
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            9,
+            4,
+            10,
+            5
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            9,
+            4,
+            10,
+            5
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            9,
+            4,
+            10,
+            5
+          ],
+          "texture": 0
+        }
+      },
+      "uuid": "5aa1c891-c1ec-54d8-9b12-3f34c49be8ce"
+    },
+    {
+      "name": "recessed lunar face",
+      "from": [
+        3,
+        5,
+        7.25
+      ],
+      "to": [
+        13,
+        6,
+        7.5
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            3,
+            10,
+            13,
+            11
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            9,
+            4,
+            10,
+            5
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            9,
+            4,
+            10,
+            5
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            9,
+            4,
+            10,
+            5
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            9,
+            4,
+            10,
+            5
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            9,
+            4,
+            10,
+            5
+          ],
+          "texture": 0
+        }
+      },
+      "uuid": "d0b78499-230f-5ef5-968a-7ef3bc0a5178"
+    },
+    {
+      "name": "recessed lunar face",
+      "from": [
+        2,
+        6,
+        7.25
+      ],
+      "to": [
+        14,
+        10,
+        7.5
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            2,
+            6,
+            14,
+            10
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            9,
+            4,
+            10,
+            5
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            9,
+            4,
+            10,
+            5
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            9,
+            4,
+            10,
+            5
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            9,
+            4,
+            10,
+            5
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            9,
+            4,
+            10,
+            5
+          ],
+          "texture": 0
+        }
+      },
+      "uuid": "6d77f23c-c800-53fe-ba88-9e28d96f2ad4"
+    },
+    {
+      "name": "recessed lunar face",
+      "from": [
+        3,
+        10,
+        7.25
+      ],
+      "to": [
+        13,
+        11,
+        7.5
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            3,
+            5,
+            13,
+            6
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            9,
+            4,
+            10,
+            5
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            9,
+            4,
+            10,
+            5
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            9,
+            4,
+            10,
+            5
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            9,
+            4,
+            10,
+            5
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            9,
+            4,
+            10,
+            5
+          ],
+          "texture": 0
+        }
+      },
+      "uuid": "1c625d5c-fb32-510e-9948-db699494b55e"
+    },
+    {
+      "name": "recessed lunar face",
+      "from": [
+        4,
+        11,
+        7.25
+      ],
+      "to": [
+        12,
+        12,
+        7.5
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            4,
+            4,
+            12,
+            5
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            9,
+            4,
+            10,
+            5
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            9,
+            4,
+            10,
+            5
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            9,
+            4,
+            10,
+            5
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            9,
+            4,
+            10,
+            5
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            9,
+            4,
+            10,
+            5
+          ],
+          "texture": 0
+        }
+      },
+      "uuid": "8959cef6-0309-5974-ab7c-7c9b437234b1"
+    },
+    {
+      "name": "recessed lunar face",
+      "from": [
+        6,
+        12,
+        7.25
+      ],
+      "to": [
+        10,
+        13,
+        7.5
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            6,
+            3,
+            10,
+            4
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            9,
+            4,
+            10,
+            5
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            9,
+            4,
+            10,
+            5
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            9,
+            4,
+            10,
+            5
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            9,
+            4,
+            10,
+            5
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            9,
+            4,
+            10,
+            5
+          ],
+          "texture": 0
+        }
+      },
+      "uuid": "4eba3b80-49c7-5e15-8002-05e061a8dfe3"
+    },
+    {
+      "name": "moon boss",
+      "from": [
+        7,
+        7,
+        6.75
+      ],
+      "to": [
+        9,
+        9,
+        7.25
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            7,
+            7,
+            9,
+            9
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            6,
+            4,
+            7,
+            5
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            6,
+            4,
+            7,
+            5
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            6,
+            4,
+            7,
+            5
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            6,
+            4,
+            7,
+            5
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            6,
+            4,
+            7,
+            5
+          ],
+          "texture": 0
+        }
+      },
+      "uuid": "387b8001-54bc-53ff-b46b-125ead6d3871"
+    },
+    {
+      "name": "rear grip upper mount",
+      "from": [
+        6,
+        10,
+        8.75
+      ],
+      "to": [
+        10,
+        11,
+        9.5
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            12,
+            3,
+            13,
+            4
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            12,
+            3,
+            13,
+            4
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            12,
+            3,
+            13,
+            4
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            12,
+            3,
+            13,
+            4
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            12,
+            3,
+            13,
+            4
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            12,
+            3,
+            13,
+            4
+          ],
+          "texture": 0
+        }
+      },
+      "uuid": "c8197263-615d-5d8c-aa6d-2556549b2843"
+    },
+    {
+      "name": "rear grip lower mount",
+      "from": [
+        6,
+        5,
+        8.75
+      ],
+      "to": [
+        10,
+        6,
+        9.5
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            12,
+            3,
+            13,
+            4
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            12,
+            3,
+            13,
+            4
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            12,
+            3,
+            13,
+            4
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            12,
+            3,
+            13,
+            4
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            12,
+            3,
+            13,
+            4
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            12,
+            3,
+            13,
+            4
+          ],
+          "texture": 0
+        }
+      },
+      "uuid": "ccf71489-78fe-5223-b192-376c6711e28a"
+    },
+    {
+      "name": "rear hand grip",
+      "from": [
+        7,
+        5.5,
+        9.5
+      ],
+      "to": [
+        9,
+        10.5,
+        10.5
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            12,
+            5,
+            13,
+            6
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            12,
+            5,
+            13,
+            6
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            12,
+            5,
+            13,
+            6
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            12,
+            5,
+            13,
+            6
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            12,
+            5,
+            13,
+            6
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            12,
+            5,
+            13,
+            6
+          ],
+          "texture": 0
+        }
+      },
+      "uuid": "494f6052-282c-5995-b584-8c833b8509c3"
+    }
+  ],
+  "outliner": [
+    {
+      "name": "Circalunar buckler",
+      "origin": [
+        8,
+        8,
+        8
+      ],
+      "uuid": "6bd38f3c-745d-5de6-bfe3-4b4e9574e2ea",
+      "children": [
+        "49bbe1fc-2912-51b7-bfe9-1a8495097d6b",
+        "e3b1ab3e-6cc6-5735-a7c7-fd0fb0d41b4f",
+        "c5f1505b-e7b2-5f07-b30e-b2659feb0516",
+        "2d7181ad-2234-5d8c-86da-438c31e6f96c",
+        "071c8ea4-b86b-577c-be68-31bc9a9684b2",
+        "f3fec9ad-4f93-5df6-97f7-0e85236e0f03",
+        "5e7067c0-76d7-53aa-9570-0718e7c5a9de",
+        "7daeade0-43d8-5d45-9e0f-582314730176",
+        "ab7b4f3e-5626-5687-bdd9-8fcf360afd81",
+        "da5f4d70-c8ef-5378-bdc1-3dcfdeb3fa22",
+        "5aa1c891-c1ec-54d8-9b12-3f34c49be8ce",
+        "d0b78499-230f-5ef5-968a-7ef3bc0a5178",
+        "6d77f23c-c800-53fe-ba88-9e28d96f2ad4",
+        "1c625d5c-fb32-510e-9948-db699494b55e",
+        "8959cef6-0309-5974-ab7c-7c9b437234b1",
+        "4eba3b80-49c7-5e15-8002-05e061a8dfe3",
+        "387b8001-54bc-53ff-b46b-125ead6d3871",
+        "c8197263-615d-5d8c-aa6d-2556549b2843",
+        "ccf71489-78fe-5223-b192-376c6711e28a",
+        "494f6052-282c-5995-b584-8c833b8509c3"
+      ]
+    }
+  ],
+  "textures": [
+    {
+      "name": "unstained_shield.png",
+      "id": "0",
+      "mode": "bitmap",
+      "saved": true,
+      "relative_path": "../../../textures/item/unstained_shield.png",
+      "source": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAA9UlEQVR4nGNgoBAw4pJ48uX9f2S+DI8gVrUsuDSevPmSwVxdHEwji6MbxIKuGabh0qO7YIwO9Gw8/l86sgNuCBMuzXmW0nBN9+48Zdiw7xCYXT9xAtgQnF64BNU86fhTuGYYABny78UrFPVMyLZjsxkdMEmIMeia28BdwYShAo9mGOhszEZ1AQiAQhwZTIg1Y8AFyuunYhpwEhqAxBoCA4wwBiwcQAGFTWPB4lNgGhSIl08eYYBFJRO6wgAnO7hibJpxuoABmkhA8bxu2RpwaCMDmGZk2zEMgBkCokFRBQKgEAcFGkgjCCBrxmoAukEwgK6RagAAYdyO2Xw6N9IAAAAASUVORK5CYII="
+    }
+  ],
+  "display": {
+    "thirdperson_righthand": {
+      "rotation": [
+        0,
+        -90,
+        0
+      ],
+      "translation": [
+        4,
+        1,
+        0
+      ],
+      "scale": [
+        0.7,
+        0.7,
+        0.7
+      ]
+    },
+    "thirdperson_lefthand": {
+      "rotation": [
+        0,
+        -90,
+        0
+      ],
+      "translation": [
+        4,
+        1,
+        0
+      ],
+      "scale": [
+        0.7,
+        0.7,
+        0.7
+      ]
+    },
+    "firstperson_righthand": {
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "translation": [
+        -5,
+        1,
+        -3
+      ],
+      "scale": [
+        1,
+        1,
+        1
+      ]
+    },
+    "firstperson_lefthand": {
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "translation": [
+        5,
+        1,
+        -3
+      ],
+      "scale": [
+        1,
+        1,
+        1
+      ]
+    },
+    "gui": {
+      "rotation": [
+        15,
+        155,
+        -5
+      ],
+      "translation": [
+        0,
+        0,
+        0
+      ],
+      "scale": [
+        1,
+        1,
+        1
+      ]
+    },
+    "ground": {
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "translation": [
+        0,
+        2,
+        0
+      ],
+      "scale": [
+        0.5,
+        0.5,
+        0.5
+      ]
+    },
+    "fixed": {
+      "rotation": [
+        0,
+        180,
+        0
+      ],
+      "translation": [
+        0,
+        0,
+        0
+      ],
+      "scale": [
+        0.75,
+        0.75,
+        0.75
+      ]
+    }
+  }
+}

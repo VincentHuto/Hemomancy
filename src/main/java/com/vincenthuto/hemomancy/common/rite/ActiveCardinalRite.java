@@ -62,6 +62,8 @@ public class ActiveCardinalRite {
 	private CompoundTag escrowedStaff = new CompoundTag();
 	private boolean completionCommitted;
     private CompoundTag succession = new CompoundTag();
+    private CompoundTag alembic = new CompoundTag();
+    public CompoundTag alembic() { return alembic; }
     public CompoundTag succession() { return succession; }
     public void beginSuccession(CompoundTag context) {
         succession = context.copy();
@@ -283,6 +285,10 @@ public class ActiveCardinalRite {
 			setPhase(CardinalRitePhase.SCRIPTORIAL_INSCRIPTION);
 			return true;
 		}
+		if (com.vincenthuto.hemomancy.common.rite.harbinger.AlembicUpgradeRites.isRite(recipeId)) {
+			setPhase(CardinalRitePhase.ALEMBIC_PROJECTION);
+			return true;
+		}
 		if (totalWaves > 0) setPhase(CardinalRitePhase.ORDEAL);
 		else if (hasStillInterval) setPhase(CardinalRitePhase.STILL_INTERVAL);
 		else setPhase(finalePhase());
@@ -290,6 +296,27 @@ public class ActiveCardinalRite {
 	}
 
 	public int getScriptorialStage() { return scriptorialStage; }
+	public int alembicBloodNeeded() {
+		return phase == CardinalRitePhase.ALEMBIC_PROJECTION
+				? com.vincenthuto.hemomancy.common.rite.harbinger.AlembicUpgradeRites.bloodPerProjection(recipeId)
+						- alembic.getInt("BloodAtStage") : 0;
+	}
+	public boolean fillAlembicProjection(int stage, int paid) {
+		if (phase != CardinalRitePhase.ALEMBIC_PROJECTION || stage != alembic.getInt("Stage")
+				|| paid <= 0 || alembicBloodNeeded() <= 0) return false;
+		int stageCost = com.vincenthuto.hemomancy.common.rite.harbinger.AlembicUpgradeRites
+				.bloodPerProjection(recipeId);
+		int next = Math.min(stageCost, alembic.getInt("BloodAtStage") + paid);
+		committedBloodMl += next - alembic.getInt("BloodAtStage");
+		alembic.putInt("BloodAtStage", next);
+		if (next == stageCost) {
+			alembic.putInt("Stage", stage + 1);
+			alembic.putInt("BloodAtStage", 0);
+			if (stage + 1 == com.vincenthuto.hemomancy.common.rite.harbinger.AlembicUpgradeRites.projections(recipeId))
+				setPhase(finalePhase());
+		}
+		return true;
+	}
 	public int getScriptorialBlood(int stage) { return scriptorialBloodMl[Math.clamp(stage, 0, 15)]; }
 	public int scriptorialBloodNeeded() {
 		int total = com.vincenthuto.hemomancy.common.rite.harbinger.ScriptoriumRites.isMonolithic(recipeId) ? 16 : 8;
@@ -819,6 +846,9 @@ public class ActiveCardinalRite {
 							/ (anchorBloodMl.length * (double) CardinalRiteCeremonyRules.BLOOD_PER_ANCHOR_ML);
 			case INSCRIPTION -> 0.25D;
 			case SCRIPTORIAL_INSCRIPTION -> 0.25D + 0.05D * scriptorialStage / (com.vincenthuto.hemomancy.common.rite.harbinger.ScriptoriumRites.isMonolithic(recipeId) ? 16 : 8);
+			case ALEMBIC_PROJECTION -> 0.25D + 0.55D * (alembic.getInt("Stage")
+					+ alembic.getInt("BloodAtStage") / (double) com.vincenthuto.hemomancy.common.rite.harbinger.AlembicUpgradeRites.bloodPerProjection(recipeId))
+					/ com.vincenthuto.hemomancy.common.rite.harbinger.AlembicUpgradeRites.projections(recipeId);
 			case ORDEAL -> 0.25D + (totalWaves == 0 ? 0.0D : 0.5D * currentWave / totalWaves);
 			case PUPPET_TRIAL -> puppeteerTrialProgress;
 			case STILL_INTERVAL -> 0.75D + 0.10D * boundedPhaseProgress(stillIntervalTicks);
@@ -893,6 +923,7 @@ public class ActiveCardinalRite {
 		}
 		tag.put("WaveDeck", waves);
 		if (!escrowedStaff.isEmpty()) tag.put("EscrowedStaff", escrowedStaff.copy());
+		if (!alembic.isEmpty()) tag.put("AlembicUpgrade", alembic.copy());
 		tag.putBoolean("CompletionCommitted", completionCommitted);
 		if (matchedFloorId != null) tag.putString("MatchedFloor", matchedFloorId.toString());
 		tag.putString("FloorForwards", floorForwards.getName());
@@ -1024,6 +1055,7 @@ public class ActiveCardinalRite {
 		for (int i = 0; i < waves.size(); i++) rite.waveDeck.add(waves.getCompound(i).getString("Id"));
 		rite.escrowedStaff = tag.contains("EscrowedStaff")
 				? tag.getCompound("EscrowedStaff").copy() : new CompoundTag();
+		rite.alembic = tag.getCompound("AlembicUpgrade").copy();
 		rite.completionCommitted = tag.getBoolean("CompletionCommitted");
         rite.succession = tag.getCompound("Succession").copy();
 		if (tag.contains("MatchedFloor")) rite.matchedFloorId =

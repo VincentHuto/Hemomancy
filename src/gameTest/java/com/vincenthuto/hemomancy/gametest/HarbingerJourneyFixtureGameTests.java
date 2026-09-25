@@ -788,13 +788,10 @@ public final class HarbingerJourneyFixtureGameTests {
 			pickUpFixtureItem(helper, player, origin, ItemInit.vicars_consecration_kit.get());
 
 			HemoJourneyFixtures.prepare(player, HemoJourneyStage.ARTIFICER_FRAME_CONSECRATED, origin);
-			HematicArmatureBlockEntity consecrated = (HematicArmatureBlockEntity) helper.getLevel()
-					.getBlockEntity(armaturePos);
-			helper.assertTrue(consecrated.applyArmatureUpgradeItem(player, InteractionHand.MAIN_HAND),
-					"The real Armature must accept the Vicar's kit");
+			HemoJourneyFixtures.performArmatureUpgradeRite(player, origin);
 			helper.assertTrue(HemoJourneyChecks.verify(player,
 					HemoJourneyStage.ARTIFICER_FRAME_CONSECRATED, origin).passed(),
-					"Applying the real kit must consecrate the frame");
+					"The Cardinal rite must consecrate the frame");
 
 			HemoJourneyFixtures.prepare(player, HemoJourneyStage.ARTIFICER_CRIMSON_VESTMENT_INSPECTION, origin);
 			artificer = helper.getLevel().getEntitiesOfClass(
@@ -2115,10 +2112,10 @@ public final class HarbingerJourneyFixtureGameTests {
 			HemoJourneyFixtures.prepare(player, HemoJourneyStage.ARTIFICER_MONOLITHIC_FRAME, origin);
 			HematicArmatureBlockEntity armature = (HematicArmatureBlockEntity) helper.getLevel()
 					.getBlockEntity(armaturePos);
-			helper.assertTrue(armature.applyArmatureUpgradeItem(player, InteractionHand.MAIN_HAND)
-						&& HemoJourneyChecks.verify(player,
+			HemoJourneyFixtures.performArmatureUpgradeRite(player, origin);
+			helper.assertTrue(HemoJourneyChecks.verify(player,
 								HemoJourneyStage.ARTIFICER_MONOLITHIC_FRAME, origin).passed(),
-					"The supplied Cornerstone must apply through the real Armature interaction");
+					"The Cornerstone rite must upgrade the Armature");
 
 			HemoJourneyFixtures.prepare(player, HemoJourneyStage.ARTIFICER_D7_UPGRADE, origin);
 			armature = (HematicArmatureBlockEntity) helper.getLevel().getBlockEntity(armaturePos);

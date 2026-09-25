@@ -1,0 +1,9 @@
+{
+  "type": "hutoslib:chapter",
+  "ordinality": 8,
+  "texture": "hemomancy:textures/gui/guide/page.png",
+  "color": "0.2,0,0",
+  "title": "Advanced Distillation",
+  "subtitle": "What the Alembic learns to hold",
+  "icon": "hemomancy:ghastly_alembic"
+}

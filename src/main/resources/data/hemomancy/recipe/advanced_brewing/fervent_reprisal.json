@@ -1,0 +1,12 @@
+{
+  "type": "hemomancy:advanced_brewing",
+  "input_potion": "minecraft:fire_resistance",
+  "catalyst": {"item": "hemomancy:fervent_enzyme"},
+  "output_effect": "minecraft:fire_resistance",
+  "duration": 1800,
+  "amplifier": 0,
+  "blood": 750,
+  "ticks": 160,
+  "tier": 2,
+  "attachment": "fervent_reprisal"
+}

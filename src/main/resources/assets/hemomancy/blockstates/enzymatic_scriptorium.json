@@ -1,18 +1,48 @@
 {
   "variants": {
-    "facing=north": {
+    "facing=north,stage=0": {
       "model": "hemomancy:block/enzymatic_scriptorium"
     },
-    "facing=east": {
+    "facing=east,stage=0": {
       "model": "hemomancy:block/enzymatic_scriptorium",
       "y": 90
     },
-    "facing=south": {
+    "facing=south,stage=0": {
       "model": "hemomancy:block/enzymatic_scriptorium",
       "y": 180
     },
-    "facing=west": {
+    "facing=west,stage=0": {
       "model": "hemomancy:block/enzymatic_scriptorium",
+      "y": 270
+    },
+    "facing=north,stage=1": {
+      "model": "hemomancy:block/eightfold_scriptorium"
+    },
+    "facing=east,stage=1": {
+      "model": "hemomancy:block/eightfold_scriptorium",
+      "y": 90
+    },
+    "facing=south,stage=1": {
+      "model": "hemomancy:block/eightfold_scriptorium",
+      "y": 180
+    },
+    "facing=west,stage=1": {
+      "model": "hemomancy:block/eightfold_scriptorium",
+      "y": 270
+    },
+    "facing=north,stage=2": {
+      "model": "hemomancy:block/monolithic_scriptorium"
+    },
+    "facing=east,stage=2": {
+      "model": "hemomancy:block/monolithic_scriptorium",
+      "y": 90
+    },
+    "facing=south,stage=2": {
+      "model": "hemomancy:block/monolithic_scriptorium",
+      "y": 180
+    },
+    "facing=west,stage=2": {
+      "model": "hemomancy:block/monolithic_scriptorium",
       "y": 270
     }
   }

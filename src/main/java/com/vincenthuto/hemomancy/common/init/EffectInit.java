@@ -396,7 +396,11 @@ public class EffectInit {
 
     private static boolean isMnemonicWhispersPotion(ItemStack stack) {
         PotionContents contents = stack.get(DataComponents.POTION_CONTENTS);
-        return contents != null && contents.is(potion_of_mnemonic_whispers);
+        if (contents == null) return false;
+        if (contents.is(potion_of_mnemonic_whispers)) return true;
+        for (MobEffectInstance effect : contents.getAllEffects())
+            if (effect.getEffect().is(mnemonic_whispers)) return true;
+        return false;
     }
 
 }

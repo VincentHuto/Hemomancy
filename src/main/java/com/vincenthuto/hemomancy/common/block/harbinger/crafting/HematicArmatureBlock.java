@@ -8,6 +8,7 @@ import com.vincenthuto.hemomancy.common.block.shared.WaterloggedBlockSupport;
 import com.vincenthuto.hemomancy.common.entity.utility.ArmatureRestraintEntity;
 import com.vincenthuto.hemomancy.common.init.BlockEntityInit;
 import com.vincenthuto.hemomancy.common.init.BlockInit;
+import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.mission.artificer.ArtificerAssignments;
 import com.vincenthuto.hemomancy.common.tile.harbinger.crafting.HematicArmatureBlockEntity;
 import com.vincenthuto.hemomancy.common.tile.shared.FillerBlockEntity;
@@ -23,6 +24,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
@@ -273,7 +275,6 @@ public class HematicArmatureBlock extends BaseEntityBlock implements IMultiBlock
 				removeFillers(level, pos, state.getValue(FACING));
 			}
 			if (level.getBlockEntity(pos) instanceof HematicArmatureBlockEntity armature) {
-				armature.dropAppliedUpgradeItems(level, pos);
 				Containers.dropContents(level, pos, armature);
 				level.updateNeighbourForOutputSignal(pos, this);
 			}
@@ -313,7 +314,10 @@ public class HematicArmatureBlock extends BaseEntityBlock implements IMultiBlock
 		if (stack.isEmpty()) {
 			return InteractionResult.PASS;
 		}
-		if (armature.applyArmatureUpgradeItem(serverPlayer, hand)) {
+		if (stack.is(ItemInit.vicars_consecration_kit.get())
+				|| stack.is(ItemInit.monolithic_cornerstone.get())) {
+			serverPlayer.displayClientMessage(Component.translatable(
+					"block.hemomancy.hematic_armature.upgrade_requires_rite"), false);
 			return InteractionResult.SUCCESS;
 		}
 		if (armature.useBloodContainerInHand(serverPlayer, hand)) {
@@ -340,6 +344,7 @@ public class HematicArmatureBlock extends BaseEntityBlock implements IMultiBlock
 		if (level.isClientSide || !(entity instanceof ServerPlayer player)) {
 			return;
 		}
+		if (level.getBlockEntity(pos) instanceof HematicArmatureBlockEntity armature && !armature.idleForRite()) return;
 		if (player.isCrouching() || player.isPassenger() || isRestrainedOnThisArmature(player, pos)) {
 			return;
 		}

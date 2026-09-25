@@ -5,6 +5,7 @@
   "refmap": "hemomancy.refmap.json",
   "mixins": [
     "MixinScriptoriumItemStack",
+    "MixinScriptoriumChunkMigration",
     "MixinEntity",
     "MixinBloodResponseMovement",
     "MixinFishingHook",
@@ -12,6 +13,8 @@
     "MixinLivingEntity",
     "MixinSchoolDamage",
     "MixinCommandedPotion",
+    "MixinBoundPotion",
+    "MixinAdvancedBrewingStand",
     "MixinCommandedCreeper",
     "MixinCommandedBrain",
     "MixinSchoolAwareness",

@@ -2,12 +2,21 @@ package com.vincenthuto.hemomancy.client.render.tile.harbinger.crafting;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import com.mojang.math.Axis;
+import com.vincenthuto.hemomancy.Hemomancy;
+import com.vincenthuto.hemomancy.client.data.ActiveRiteClientData;
+import com.vincenthuto.hemomancy.common.brewing.AlembicTier;
 import com.vincenthuto.hemomancy.common.init.RenderTypeInit;
 import com.vincenthuto.hemomancy.common.tile.harbinger.crafting.GhastlyAlembicBlockEntity;
 
 import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
+import net.minecraft.client.renderer.texture.TextureAtlas;
+import net.minecraft.client.resources.model.ModelResourceLocation;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.level.block.HorizontalDirectionalBlock;
 import net.minecraft.world.level.block.state.properties.DirectionProperty;
 
@@ -29,9 +38,54 @@ public class GhastlyAlembicRenderer implements BlockEntityRenderer<GhastlyAlembi
 	public void render(GhastlyAlembicBlockEntity te, float partialTicks, PoseStack poseStack,
 			MultiBufferSource bufferIn, int combinedLightIn, int combinedOverlayIn) {
 		renderFluidLevel(poseStack, bufferIn, te, combinedLightIn);
+		poseStack.pushPose();
+		poseStack.translate(0.5, 0, 0.5);
+		poseStack.mulPose(Axis.YP.rotationDegrees(te.getBlockState().getValue(FACING).toYRot() + 180));
+		poseStack.translate(-0.5, 0, -0.5);
+		if (te.tier() != AlembicTier.BASE)
+			renderGrowth("condenser", false, poseStack, bufferIn, combinedLightIn, combinedOverlayIn);
+		if (te.tier() == AlembicTier.ATHANOR)
+			renderGrowth("athanor", false, poseStack, bufferIn, combinedLightIn, combinedOverlayIn);
+		if (ghostActive(te) && te.tier() != AlembicTier.ATHANOR)
+			renderGrowth(te.tier() == AlembicTier.BASE ? "condenser" : "athanor", true,
+					poseStack, bufferIn, combinedLightIn, combinedOverlayIn);
+		if (te.tier() == AlembicTier.ATHANOR && te.getLevel() != null) {
+			float pulse = (float) (0.5 + 0.5 * Math.sin((te.getLevel().getGameTime() + partialTicks) * 0.15));
+			VertexConsumer channel = bufferIn.getBuffer(RenderTypeInit.FLASK_FLUID);
+			renderColorBox(channel, poseStack.last().pose(), 7f / 16, 22f / 16, 7f / 16,
+					9f / 16, (23f + pulse * 3) / 16, 9f / 16, 176, 18, 28, 125);
+		}
+		poseStack.popPose();
 		if (bufferIn instanceof MultiBufferSource.BufferSource source) {
 			source.endBatch(RenderTypeInit.FLASK_FLUID);
 		}
+	}
+
+	private static boolean ghostActive(GhastlyAlembicBlockEntity station) {
+		if (!station.isRiteLocked()) return false;
+		return ActiveRiteClientData.getActiveRites().stream().anyMatch(rite ->
+				rite.getRecipeId().getNamespace().equals(Hemomancy.MOD_ID)
+						&& (rite.getRecipeId().getPath().equals("cardinal_rite/first_condensation")
+						|| rite.getRecipeId().getPath().equals("cardinal_rite/sanguine_athanor"))
+						&& rite.getCenter().distManhattan(station.getBlockPos()) <= 2
+						&& (rite.getPhase().equals("ALEMBIC_PROJECTION")
+						|| rite.getPhase().equals("OFFERING_PROCESSION")
+						|| rite.getPhase().equals("CULMINATION")));
+	}
+
+	private static void renderGrowth(String tier, boolean ghost, PoseStack pose,
+			MultiBufferSource buffers, int light, int overlay) {
+		var minecraft = Minecraft.getInstance();
+		var model = minecraft.getModelManager().getModel(ModelResourceLocation.standalone(
+				Hemomancy.rloc("block/ghastly_alembic_" + tier + "_growth")));
+		var type = ghost ? RenderType.entityTranslucent(TextureAtlas.LOCATION_BLOCKS)
+				: RenderType.entityCutoutNoCull(TextureAtlas.LOCATION_BLOCKS);
+		minecraft.getBlockRenderer().getModelRenderer().renderModel(pose.last(), buffers.getBuffer(type), null,
+				model, ghost ? 0.8F : 1.0F, ghost ? 0.25F : 1.0F, ghost ? 0.3F : 1.0F, light, overlay);
+	}
+
+	@Override public AABB getRenderBoundingBox(GhastlyAlembicBlockEntity te) {
+		return new AABB(te.getBlockPos()).inflate(1.5D, 1.5D, 1.5D);
 	}
 
 	private void renderFluidLevel(PoseStack poseStack, MultiBufferSource bufferIn,

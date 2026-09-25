@@ -1,6 +1,7 @@
 package com.vincenthuto.hemomancy.gametest.journey;
 
 import com.vincenthuto.hemomancy.Hemomancy;
+import com.vincenthuto.hemomancy.common.block.harbinger.crafting.HematicArmatureBlock;
 import com.vincenthuto.hemomancy.common.block.harbinger.rite.BrazierBlock;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodlineSavedData;
@@ -23,14 +24,18 @@ import com.vincenthuto.hemomancy.common.item.harbinger.scar.ItemScarPattern;
 import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
 import com.vincenthuto.hemomancy.common.manipulation.ManipLevel;
 import com.vincenthuto.hemomancy.common.mission.cicatrix_anchorite.VeinMasonAssignments;
+import com.vincenthuto.hemomancy.common.mission.artificer.ArtificerAssignments;
 import com.vincenthuto.hemomancy.common.mission.vicar.FirstBloodcraftAssignment;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.dialogue.OpenDialoguePacket;
 import com.vincenthuto.hemomancy.common.recipe.BloodStructureOfferingPlacement;
 import com.vincenthuto.hemomancy.common.recipe.BloodStructureRecipe;
 import com.vincenthuto.hemomancy.common.recipe.CardinalRiteRecipe;
+import com.vincenthuto.hemomancy.common.recipe.ArmatureUpgradeRules.ArmatureTier;
+import com.vincenthuto.hemomancy.common.rite.ActiveCardinalRite;
 import com.vincenthuto.hemomancy.common.rite.ScarBrazierRite;
 import com.vincenthuto.hemomancy.common.rite.TempleOathRules;
+import com.vincenthuto.hemomancy.common.rite.harbinger.AlembicUpgradeRites;
 import com.vincenthuto.hemomancy.common.rite.floor.CardinalRiteFloorRegistry;
 import com.vincenthuto.hemomancy.common.tile.harbinger.crafting.*;
 import com.vincenthuto.hemomancy.common.tile.harbinger.functional.CardinalFocusBlockEntity;
@@ -51,7 +56,6 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.EquipmentSlot;
@@ -784,8 +788,76 @@ public final class HemoJourneyFixtures {
 
 	private static void prepareFrameConsecration(ServerPlayer player, BlockPos origin) {
 		set(player, origin.above(), BlockInit.hematic_armature.get());
+		fixtureLevel(player).setBlock(origin.above(), BlockInit.hematic_armature.get().defaultBlockState()
+				.setValue(HematicArmatureBlock.FACING, Direction.NORTH), Block.UPDATE_ALL);
 		player.setItemSlot(EquipmentSlot.MAINHAND,
 				takeOne(player, ItemInit.vicars_consecration_kit.get(), "Vicar's Consecration Kit"));
+	}
+
+	public static void performArmatureUpgradeRite(ServerPlayer player, BlockPos origin) {
+		ServerLevel level = fixtureLevel(player);
+		BlockPos armaturePos = origin.above();
+		if (!(level.getBlockEntity(armaturePos) instanceof HematicArmatureBlockEntity armature)) {
+			throw new IllegalStateException("Hematic Armature block entity was not created");
+		}
+		boolean monolithic = armature.getArmatureTier() == ArmatureTier.VICAR_CONSECRATED;
+		ArmatureTier target = monolithic ? ArmatureTier.MONOLITHIC : ArmatureTier.VICAR_CONSECRATED;
+		Item required = monolithic ? ItemInit.monolithic_cornerstone.get() : ItemInit.vicars_consecration_kit.get();
+		ItemStack held = player.getMainHandItem();
+		if (!held.is(required)) throw new IllegalStateException("Required Armature rite offering is not held");
+
+		BlockPos center = origin.north(2);
+		int stages = monolithic ? 3 : 2;
+		int anchors = monolithic ? 8 : 4;
+		int degree = monolithic ? 7 : 5;
+		ActiveCardinalRite rite = ActiveCardinalRite.interactive(player.getUUID(), center,
+				Hemomancy.rloc(monolithic ? "cardinal_rite/monolithic_armature"
+						: "cardinal_rite/armature_consecration"),
+				monolithic ? 3600 : 2400, degree, degree, false, 0, anchors);
+		rite.setMatchedFloor(Hemomancy.rloc("working_greater"), Direction.NORTH, Direction.UP);
+		set(player, center, BlockInit.cardinal_focus.get());
+		BlockPos brazierPos = center.east(2);
+		set(player, brazierPos, BlockInit.iron_brazier.get());
+		if (!(level.getBlockEntity(brazierPos) instanceof IronBrazierBlockEntity brazier)) {
+			throw new IllegalStateException("Armature rite brazier was not created");
+		}
+		ItemStack offering = held.copyWithCount(1);
+		if (!brazier.insertOffering(player, held)) {
+			throw new IllegalStateException("Armature rite offering could not be placed");
+		}
+		rite.captureOfferingItinerary(List.of(new ActiveCardinalRite.RiteOffering(brazierPos, offering, true)));
+		UUID identity = armature.machineIdentity();
+		if (!AlembicUpgradeRites.prepare(level, rite) || !armature.isRiteLocked()) {
+			throw new IllegalStateException("Armature rite could not prepare its subject");
+		}
+		for (int index = 0; index < anchors; index++) {
+			if (!rite.fillAnchor(index, 50)) throw new IllegalStateException("Armature rite anchor did not fill");
+		}
+		if (!rite.enterInscription() || !rite.sealAltar(false)) {
+			throw new IllegalStateException("Armature rite did not enter projection");
+		}
+		for (int stage = 0; stage < stages; stage++) {
+			if (!rite.fillAlembicProjection(stage, 50)) {
+				throw new IllegalStateException("Armature rite circuit " + stage + " did not fill");
+			}
+		}
+		rite.markComplete();
+		if (!AlembicUpgradeRites.complete(level, rite) || armature.getArmatureTier() != target
+				|| !armature.machineIdentity().equals(identity) || armature.isRiteLocked()) {
+			throw new IllegalStateException("Armature rite failed to upgrade its original subject");
+		}
+	}
+
+	private static void restoreArmatureTier(ServerPlayer player, HematicArmatureBlockEntity armature,
+			ArmatureTier target) {
+		for (ArmatureTier tier : ArmatureTier.values()) {
+			if (tier == ArmatureTier.BASE || tier.id() > target.id()) continue;
+			armature.setRiteLocked(true);
+			if (!armature.completeUpgrade(tier, UUID.randomUUID())) {
+				throw new IllegalStateException("Could not restore Armature tier " + tier);
+			}
+			ArtificerAssignments.onArmatureTierApplied(player, tier);
+		}
 	}
 
 	private static void prepareBloodLustUpgrade(ServerPlayer player, BlockPos origin) {
@@ -795,10 +867,7 @@ public final class HemoJourneyFixtures {
 			throw new IllegalStateException("Hematic Armature block entity was not created");
 		}
 		ItemStack lacquer = takeOne(player, ItemInit.crimson_lacquer.get(), "Crimson Lacquer");
-		player.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(ItemInit.vicars_consecration_kit.get()));
-		if (!armature.applyArmatureUpgradeItem(player, InteractionHand.MAIN_HAND)) {
-			throw new IllegalStateException("Hematic Armature could not restore the earned consecrated tier");
-		}
+		restoreArmatureTier(player, armature, ArmatureTier.VICAR_CONSECRATED);
 		player.setItemSlot(EquipmentSlot.MAINHAND, ItemStack.EMPTY);
 		armature.setItem(HematicArmatureBlockEntity.SLOT_FEET_REAGENT, lacquer);
 		var blood = armature.getBloodCapability();
@@ -825,13 +894,12 @@ public final class HemoJourneyFixtures {
 	private static void prepareMonolithicFrame(ServerPlayer player, BlockPos origin) {
 		BlockPos armaturePos = origin.above();
 		set(player, armaturePos, BlockInit.hematic_armature.get());
+		fixtureLevel(player).setBlock(armaturePos, BlockInit.hematic_armature.get().defaultBlockState()
+				.setValue(HematicArmatureBlock.FACING, Direction.NORTH), Block.UPDATE_ALL);
 		if (!(fixtureLevel(player).getBlockEntity(armaturePos) instanceof HematicArmatureBlockEntity armature)) {
 			throw new IllegalStateException("Hematic Armature block entity was not created");
 		}
-		player.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(ItemInit.vicars_consecration_kit.get()));
-		if (!armature.applyArmatureUpgradeItem(player, InteractionHand.MAIN_HAND)) {
-			throw new IllegalStateException("Hematic Armature could not restore the earned consecrated tier");
-		}
+		restoreArmatureTier(player, armature, ArmatureTier.VICAR_CONSECRATED);
 		player.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(ItemInit.monolithic_cornerstone.get()));
 	}
 
@@ -841,12 +909,7 @@ public final class HemoJourneyFixtures {
 		if (!(fixtureLevel(player).getBlockEntity(armaturePos) instanceof HematicArmatureBlockEntity armature)) {
 			throw new IllegalStateException("Hematic Armature block entity was not created");
 		}
-		for (Item item : List.of(ItemInit.vicars_consecration_kit.get(), ItemInit.monolithic_cornerstone.get())) {
-			player.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(item));
-			if (!armature.applyArmatureUpgradeItem(player, InteractionHand.MAIN_HAND)) {
-				throw new IllegalStateException("Hematic Armature tier could not be prepared for Weight of the Frame");
-			}
-		}
+		restoreArmatureTier(player, armature, ArmatureTier.MONOLITHIC);
 		player.setItemSlot(EquipmentSlot.MAINHAND, ItemStack.EMPTY);
 		armature.setItem(HematicArmatureBlockEntity.SLOT_FEET_REAGENT,
 				new ItemStack(ItemInit.fargone_proboscis.get()));

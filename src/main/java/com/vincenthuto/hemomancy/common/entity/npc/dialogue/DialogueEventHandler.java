@@ -123,7 +123,7 @@ public class DialogueEventHandler {
 		}
 		if (event.getEventId().startsWith("artificer_") && !isValidArtificerDialogueSource(event)) return;
 		if (handleArtificerLegacyBranchChoice(player, event.getEventId())) return;
-		switch (event.getEventId()) {
+			switch (event.getEventId()) {
 			case HarbingerMnemonistDialogueTrees.EVENT_CIRCUS_WAYBILL ->
 					handleMnemonistCircusWaybill(player, event.getEntityId());
 			case HarbingerMnemonistDialogueTrees.EVENT_RELIQUARY_TAUGHT ->
@@ -259,6 +259,16 @@ public class DialogueEventHandler {
 			case HarbingerAlchemistDialogueTrees.EVENT_FIRST_SEPARATION_CLAIM -> {
 				event.setRewardDelivered(handleAlchemistFirstSeparationReward(player, event.getEntityId()));
 			}
+			case AdvancedBrewingDialogue.CONDENSER_CLAIM ->
+					event.setRewardDelivered(HemoCapabilityAccess.advancedBrewing(player).claimCondenser(player));
+			case AdvancedBrewingDialogue.ATHANOR_CLAIM ->
+					event.setRewardDelivered(HemoCapabilityAccess.advancedBrewing(player).claimAthanor(player));
+			case ResonantForgeDialogue.TEACH ->
+					event.setRewardDelivered(HemoCapabilityAccess.resonantForge(player).teach(player));
+			case ResonantForgeDialogue.PRECISION_CLAIM ->
+					event.setRewardDelivered(HemoCapabilityAccess.resonantForge(player).claimPrecision(player));
+			case ResonantForgeDialogue.MASTER_CLAIM ->
+					event.setRewardDelivered(HemoCapabilityAccess.resonantForge(player).claimMaster(player));
 			case HarbingerAlchemistDialogueTrees.EVENT_BODY_ANSWERS_BRIEF -> {
 				handleAlchemistBodyAnswersBrief(player);
 			}

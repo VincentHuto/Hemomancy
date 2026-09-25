@@ -6,7 +6,16 @@
       "entries": [
         {
           "type": "minecraft:item",
-          "name": "hemomancy:enzymatic_scriptorium"
+          "name": "hemomancy:enzymatic_scriptorium",
+          "functions": [
+            {
+              "function": "minecraft:copy_state",
+              "block": "hemomancy:enzymatic_scriptorium",
+              "properties": [
+                "stage"
+              ]
+            }
+          ]
         }
       ],
       "conditions": [
