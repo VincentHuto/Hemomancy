@@ -564,6 +564,12 @@ public class BloodCraftingKeyPressPacket implements CustomPacketPayload {
 					rite.beginStaffPlanting();
 					plantingStaff = staff;
 				}
+				if (!com.vincenthuto.hemomancy.common.rite.harbinger.ScriptoriumRites.prepare(sLevel, rite)) {
+					CardinalRiteStaffEscrow.restore(serverPlayer, rite);
+					player.displayClientMessage(Component.literal("The Scriptorium must sit two blocks north of the Focus with every tube filled and its item and lapis slots empty.")
+							.withStyle(ChatFormatting.DARK_RED), false);
+					return CardinalRiteActivationRules.ActivationAttempt.HANDLED;
+				}
 				savedData.startRite(rite);
                 com.vincenthuto.hemomancy.common.rite.harbinger.CardinalRiteAllyService.maintainNpcStations(sLevel, rite);
 

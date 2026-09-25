@@ -4,6 +4,7 @@
   "compatibilityLevel": "JAVA_21",
   "refmap": "hemomancy.refmap.json",
   "mixins": [
+    "MixinScriptoriumItemStack",
     "MixinEntity",
     "MixinBloodResponseMovement",
     "MixinFishingHook",
@@ -40,6 +41,7 @@
     "MixinListeningScar"
   ],
   "client": [
+    "MixinScriptoriumItemRenderer",
     "CastingHandRendererInvoker",
     "MixinCapeLayer",
     "MixinEntityRenderDispatcher",

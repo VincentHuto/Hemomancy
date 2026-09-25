@@ -1,0 +1,19 @@
+{
+  "type": "hemomancy:blood_structure_recipe",
+  "bloodCost": 500,
+  "required_degree": 3,
+  "heldItem": "hemomancy:ferric_binder",
+  "hitBlock": "minecraft:enchanting_table",
+  "pattern": [["GTG"], ["TET"], ["GTG"]],
+  "key": {
+    "G": {"block": "hemomancy:sanguine_glass"},
+    "T": {"block": "hemomancy:hematic_iron_block"},
+    "E": {"block": "minecraft:enchanting_table"}
+  },
+  "offerings": [
+    {"ingredient": {"item": "hemomancy:enzyme_primer"}, "count": 1},
+    {"ingredient": {"item": "hemomancy:blood_crystal_shard"}, "count": 1},
+    {"ingredient": {"item": "minecraft:lapis_block"}, "count": 1}
+  ],
+  "result": {"id": "hemomancy:enzymatic_scriptorium"}
+}

@@ -1096,6 +1096,18 @@ public class CardinalRiteBoundaryRenderer {
 				drawOrganicSigilSection(consumer, matrix, vessel, cam,
 						vesselColor.red(), vesselColor.green(), vesselColor.blue(), alpha, glow);
 			}
+			if (!glow && com.vincenthuto.hemomancy.common.rite.harbinger.ScriptoriumRites.isRite(rite.getRecipeId())) {
+				List<IchorianSigilOrganicGeometry.Sample> current = new java.util.ArrayList<>(SIGIL_VESSEL_SEGMENTS + 1);
+				for (int step = 0; step <= SIGIL_VESSEL_SEGMENTS; step++)
+					current.add(IchorianSigilOrganicGeometry.sample(segment.startX(), segment.startY() + 0.012D,
+							segment.startZ(), segment.endX(), segment.endY() + 0.012D, segment.endZ(),
+							currentTime, seed, step, SIGIL_VESSEL_SEGMENTS, 0.018F));
+				float red = ((segment.color() >> 16) & 255) / 255.0F;
+				float green = ((segment.color() >> 8) & 255) / 255.0F;
+				float blue = (segment.color() & 255) / 255.0F;
+				for (IchorianSigilOrganicGeometry.RibbonSegment ribbon : IchorianSigilOrganicGeometry.ribbonSegments(current))
+					drawOrganicSigilSection(consumer, matrix, ribbon, cam, red, green, blue, alpha, false);
+			}
 		}
 	}
 

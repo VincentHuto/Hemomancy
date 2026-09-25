@@ -361,6 +361,7 @@ public class Hemomancy {
     }
 
     private void onAddReloadListeners(AddReloadListenerEvent event) {
+		event.addListener(new com.vincenthuto.hemomancy.common.enchanting.ScriptoriumAffinities());
         event.addListener(new com.vincenthuto.hemomancy.common.item.harbinger.BloodInjectionData());
         event.addListener(new com.vincenthuto.hemomancy.common.item.harbinger.BloodProfileData());
         event.addListener(new com.vincenthuto.hemomancy.common.tile.harbinger.functional.ClairaudiographCatalogue());

@@ -46,6 +46,8 @@ public class ActiveCardinalRite {
 	private int carriedIchorTicks;
 	private int reservoirBloodMl;
 	private int[] anchorBloodMl = new int[0];
+	private int[] scriptorialBloodMl = new int[16];
+	private int scriptorialStage;
 	private int[] instabilityRepairBloodMl = new int[0];
 	private int[] instabilityDamagePriority = new int[0];
 	private final LinkedHashSet<Integer> brokenInstabilityAnchors = new LinkedHashSet<>();
@@ -277,9 +279,36 @@ public class ActiveCardinalRite {
 		altarSealed = true;
 		betweenWaveStillIntervals = hasStillInterval;
 		finalStillInterval = false;
+		if (com.vincenthuto.hemomancy.common.rite.harbinger.ScriptoriumRites.isRite(recipeId)) {
+			setPhase(CardinalRitePhase.SCRIPTORIAL_INSCRIPTION);
+			return true;
+		}
 		if (totalWaves > 0) setPhase(CardinalRitePhase.ORDEAL);
 		else if (hasStillInterval) setPhase(CardinalRitePhase.STILL_INTERVAL);
 		else setPhase(finalePhase());
+		return true;
+	}
+
+	public int getScriptorialStage() { return scriptorialStage; }
+	public int getScriptorialBlood(int stage) { return scriptorialBloodMl[Math.clamp(stage, 0, 15)]; }
+	public int scriptorialBloodNeeded() {
+		int total = com.vincenthuto.hemomancy.common.rite.harbinger.ScriptoriumRites.isMonolithic(recipeId) ? 16 : 8;
+		return phase == CardinalRitePhase.SCRIPTORIAL_INSCRIPTION && scriptorialStage < total
+				? 50 - scriptorialBloodMl[scriptorialStage] : 0;
+	}
+	public boolean fillScriptorialOrb(int orb, int amount) {
+		if (scriptorialBloodNeeded() <= 0 || orb != scriptorialStage % 8 || amount <= 0) return false;
+		int added = Math.min(amount, scriptorialBloodNeeded());
+		scriptorialBloodMl[scriptorialStage] += added;
+		committedBloodMl += added;
+		if (scriptorialBloodMl[scriptorialStage] == 50) {
+			scriptorialStage++;
+			if (scriptorialBloodNeeded() == 0) {
+				if (totalWaves > 0) setPhase(CardinalRitePhase.ORDEAL);
+				else if (betweenWaveStillIntervals) setPhase(CardinalRitePhase.STILL_INTERVAL);
+				else setPhase(finalePhase());
+			}
+		}
 		return true;
 	}
 
@@ -789,6 +818,7 @@ public class ActiveCardinalRite {
 					: 0.25D * committedBloodMl
 							/ (anchorBloodMl.length * (double) CardinalRiteCeremonyRules.BLOOD_PER_ANCHOR_ML);
 			case INSCRIPTION -> 0.25D;
+			case SCRIPTORIAL_INSCRIPTION -> 0.25D + 0.05D * scriptorialStage / (com.vincenthuto.hemomancy.common.rite.harbinger.ScriptoriumRites.isMonolithic(recipeId) ? 16 : 8);
 			case ORDEAL -> 0.25D + (totalWaves == 0 ? 0.0D : 0.5D * currentWave / totalWaves);
 			case PUPPET_TRIAL -> puppeteerTrialProgress;
 			case STILL_INTERVAL -> 0.75D + 0.10D * boundedPhaseProgress(stillIntervalTicks);
@@ -833,6 +863,8 @@ public class ActiveCardinalRite {
 		tag.putInt("CarriedIchorTicks", carriedIchorTicks);
 		tag.putInt("ReservoirBloodMl", reservoirBloodMl);
 		tag.putIntArray("AnchorBloodMl", anchorBloodMl);
+		tag.putIntArray("ScriptorialBloodMl", scriptorialBloodMl);
+		tag.putInt("ScriptorialStage", scriptorialStage);
 		tag.putIntArray("InstabilityRepairBloodMl", instabilityRepairBloodMl);
 		tag.putIntArray("InstabilityDamagePriority", instabilityDamagePriority);
 		tag.putIntArray("BrokenInstabilityAnchors",
@@ -966,6 +998,9 @@ public class ActiveCardinalRite {
 		rite.carriedIchorTicks = tag.getInt("CarriedIchorTicks");
 		rite.reservoirBloodMl = tag.getInt("ReservoirBloodMl");
 		rite.anchorBloodMl = tag.getIntArray("AnchorBloodMl");
+		int[] scriptorial = tag.getIntArray("ScriptorialBloodMl");
+		if (scriptorial.length == 16) rite.scriptorialBloodMl = scriptorial;
+		rite.scriptorialStage = Math.clamp(tag.getInt("ScriptorialStage"), 0, 16);
 		rite.instabilityRepairBloodMl = tag.getIntArray("InstabilityRepairBloodMl");
 		rite.instabilityDamagePriority = tag.getIntArray("InstabilityDamagePriority");
 		for (int anchor : tag.getIntArray("BrokenInstabilityAnchors")) {

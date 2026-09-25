@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=north": {
+      "model": "hemomancy:block/eightfold_scriptorium"
+    },
+    "facing=east": {
+      "model": "hemomancy:block/eightfold_scriptorium",
+      "y": 90
+    },
+    "facing=south": {
+      "model": "hemomancy:block/eightfold_scriptorium",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "hemomancy:block/eightfold_scriptorium",
+      "y": 270
+    }
+  }
+}

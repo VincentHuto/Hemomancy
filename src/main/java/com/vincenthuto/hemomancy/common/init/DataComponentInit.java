@@ -16,6 +16,10 @@ public class DataComponentInit {
 
 	public static final DeferredRegister<DataComponentType<?>> COMPONENTS = DeferredRegister
 			.create(Registries.DATA_COMPONENT_TYPE, Hemomancy.MOD_ID);
+	public static final DeferredHolder<DataComponentType<?>, DataComponentType<com.vincenthuto.hemomancy.common.enchanting.ScriptoriumProvenance>> SCRIPTORIUM_PROVENANCE = COMPONENTS
+			.register("scriptorium_provenance", () -> DataComponentType.<com.vincenthuto.hemomancy.common.enchanting.ScriptoriumProvenance>builder()
+					.persistent(com.vincenthuto.hemomancy.common.enchanting.ScriptoriumProvenance.CODEC)
+					.networkSynchronized(com.vincenthuto.hemomancy.common.enchanting.ScriptoriumProvenance.STREAM_CODEC).build());
 
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<com.vincenthuto.hemomancy.common.antecedent.AhaematicSample>> AHAEMATIC_SAMPLE = COMPONENTS.register("ahaematic_sample", () -> DataComponentType.<com.vincenthuto.hemomancy.common.antecedent.AhaematicSample>builder().persistent(com.vincenthuto.hemomancy.common.antecedent.AhaematicSample.CODEC).networkSynchronized(com.vincenthuto.hemomancy.common.antecedent.AhaematicSample.STREAM_CODEC).build());
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<Integer>> LISTENING_SCAR_STATE = COMPONENTS.register("listening_scar_state", () -> DataComponentType.<Integer>builder().persistent(com.mojang.serialization.Codec.INT).networkSynchronized(net.minecraft.network.codec.ByteBufCodecs.VAR_INT).build());

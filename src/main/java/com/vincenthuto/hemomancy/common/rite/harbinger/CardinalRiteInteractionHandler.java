@@ -67,6 +67,22 @@ public final class CardinalRiteInteractionHandler {
 				data.setDirty();
 				return CardinalRiteProjectionResult.handled(0.0D);
 			}
+			if (rite.getPhase() == CardinalRitePhase.SCRIPTORIAL_INSCRIPTION) {
+				int orb = CardinalRiteVirtualTargeting.closestTarget(player.getEyePosition(), player.getLookAngle(),
+						CardinalRiteVirtualTargeting.PROJECTION_RANGE,
+						CardinalRiteVirtualTargeting.TARGET_RADIUS,
+						java.util.stream.IntStream.range(0, 8)
+								.mapToObj(i -> ScriptoriumRites.orbSurface(serverLevel, rite, i)).toList());
+				if (orb != rite.getScriptorialStage() % 8) return CardinalRiteProjectionResult.handled(0.0D);
+				int paid = spendBlood(player, rite,
+						Math.min(rite.scriptorialBloodNeeded(), Math.max(1, (int) Math.floor(projectionRate))));
+				if (paid > 0 && rite.fillScriptorialOrb(orb, paid)) {
+					data.setDirty();
+					serverLevel.playSound(null, ScriptoriumRites.orb(rite, orb), SoundEvents.RESPAWN_ANCHOR_CHARGE,
+							SoundSource.BLOCKS, 0.4F, 0.9F + orb * 0.04F);
+				}
+				return CardinalRiteProjectionResult.handled(paid);
+			}
 			BlockPos target = virtualProjectionTarget(serverLevel, player, rite);
 			if (target == null) target = physicalTarget;
 			if (target == null) continue;

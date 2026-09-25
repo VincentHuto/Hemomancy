@@ -215,6 +215,94 @@ public class RenderTypeInit extends RenderType {
 					.setLightmapState(LIGHTMAP).setTextureState(new TextureStateShard(vine, false, false))
 					.setWriteMaskState(COLOR_WRITE).setCullState(NO_CULL).createCompositeState(false));
 
+    public static final RenderType SCRIPTORIUM_ARMOR_ENTITY_GLINT = create(
+        "hemomancy_scriptorium_armor_entity_glint",
+        DefaultVertexFormat.POSITION_TEX,
+        VertexFormat.Mode.QUADS,
+        1536,
+        RenderType.CompositeState.builder()
+            .setShaderState(RENDERTYPE_ARMOR_ENTITY_GLINT_SHADER)
+            .setTextureState(new RenderStateShard.TextureStateShard(Hemomancy.rloc("textures/item/crimson_item_glint.png"), true, false))
+            .setWriteMaskState(COLOR_WRITE)
+            .setCullState(NO_CULL)
+            .setDepthTestState(EQUAL_DEPTH_TEST)
+            .setTransparencyState(GLINT_TRANSPARENCY)
+            .setTexturingState(ENTITY_GLINT_TEXTURING)
+            .setLayeringState(VIEW_OFFSET_Z_LAYERING)
+            .createCompositeState(false)
+    );
+    public static final RenderType SCRIPTORIUM_GLINT_TRANSLUCENT = create(
+        "hemomancy_scriptorium_glint_translucent",
+        DefaultVertexFormat.POSITION_TEX,
+        VertexFormat.Mode.QUADS,
+        1536,
+        RenderType.CompositeState.builder()
+            .setShaderState(RENDERTYPE_GLINT_TRANSLUCENT_SHADER)
+            .setTextureState(new RenderStateShard.TextureStateShard(Hemomancy.rloc("textures/item/crimson_item_glint.png"), true, false))
+            .setWriteMaskState(COLOR_WRITE)
+            .setCullState(NO_CULL)
+            .setDepthTestState(EQUAL_DEPTH_TEST)
+            .setTransparencyState(GLINT_TRANSPARENCY)
+            .setTexturingState(GLINT_TEXTURING)
+            .setOutputState(ITEM_ENTITY_TARGET)
+            .createCompositeState(false)
+    );
+    public static final RenderType SCRIPTORIUM_GLINT = create(
+        "hemomancy_scriptorium_glint",
+        DefaultVertexFormat.POSITION_TEX,
+        VertexFormat.Mode.QUADS,
+        1536,
+        RenderType.CompositeState.builder()
+            .setShaderState(RENDERTYPE_GLINT_SHADER)
+            .setTextureState(new RenderStateShard.TextureStateShard(Hemomancy.rloc("textures/item/crimson_item_glint.png"), true, false))
+            .setWriteMaskState(COLOR_WRITE)
+            .setCullState(NO_CULL)
+            .setDepthTestState(EQUAL_DEPTH_TEST)
+            .setTransparencyState(GLINT_TRANSPARENCY)
+            .setTexturingState(GLINT_TEXTURING)
+            .createCompositeState(false)
+    );
+    public static final RenderType SCRIPTORIUM_ENTITY_GLINT = create(
+        "hemomancy_scriptorium_entity_glint",
+        DefaultVertexFormat.POSITION_TEX,
+        VertexFormat.Mode.QUADS,
+        1536,
+        RenderType.CompositeState.builder()
+            .setShaderState(RENDERTYPE_ENTITY_GLINT_SHADER)
+            .setTextureState(new RenderStateShard.TextureStateShard(Hemomancy.rloc("textures/item/crimson_item_glint.png"), true, false))
+            .setWriteMaskState(COLOR_WRITE)
+            .setCullState(NO_CULL)
+            .setDepthTestState(EQUAL_DEPTH_TEST)
+            .setTransparencyState(GLINT_TRANSPARENCY)
+            .setOutputState(ITEM_ENTITY_TARGET)
+            .setTexturingState(ENTITY_GLINT_TEXTURING)
+            .createCompositeState(false)
+    );
+    public static final RenderType SCRIPTORIUM_ENTITY_GLINT_DIRECT = create(
+        "hemomancy_scriptorium_entity_glint_direct",
+        DefaultVertexFormat.POSITION_TEX,
+        VertexFormat.Mode.QUADS,
+        1536,
+        RenderType.CompositeState.builder()
+            .setShaderState(RENDERTYPE_ENTITY_GLINT_DIRECT_SHADER)
+            .setTextureState(new RenderStateShard.TextureStateShard(Hemomancy.rloc("textures/item/crimson_item_glint.png"), true, false))
+            .setWriteMaskState(COLOR_WRITE)
+            .setCullState(NO_CULL)
+            .setDepthTestState(EQUAL_DEPTH_TEST)
+            .setTransparencyState(GLINT_TRANSPARENCY)
+            .setTexturingState(ENTITY_GLINT_TEXTURING)
+            .createCompositeState(false)
+    );
+
+    public static RenderType scriptoriumGlint(RenderType type) {
+        if (type == RenderType.glint()) return SCRIPTORIUM_GLINT;
+        if (type == RenderType.glintTranslucent()) return SCRIPTORIUM_GLINT_TRANSLUCENT;
+        if (type == RenderType.entityGlint()) return SCRIPTORIUM_ENTITY_GLINT;
+        if (type == RenderType.entityGlintDirect()) return SCRIPTORIUM_ENTITY_GLINT_DIRECT;
+        if (type == RenderType.armorEntityGlint()) return SCRIPTORIUM_ARMOR_ENTITY_GLINT;
+        return type;
+    }
+
 	private static final RenderType CRIMSON_GLINT = create("hemomancy_crimson_entity_glint", DefaultVertexFormat.NEW_ENTITY,
 			VertexFormat.Mode.QUADS, 256, false, false,
 			RenderType.CompositeState.builder().setShaderState(RENDERTYPE_ENERGY_SWIRL_SHADER)

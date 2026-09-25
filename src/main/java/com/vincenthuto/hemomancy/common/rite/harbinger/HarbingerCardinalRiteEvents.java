@@ -327,6 +327,7 @@ public class HarbingerCardinalRiteEvents {
 		for (UUID uuid : toRemove) {
 			ActiveCardinalRite removedRite = activeRites.get(uuid);
 			if (removedRite != null) {
+				ScriptoriumRites.cleanup(sLevel, removedRite);
                 com.vincenthuto.hemomancy.common.succession.SuccessionRites.cleanup(sLevel, removedRite);
 				CardinalRiteAllyService.returnNpcAlliesToFane(sLevel, removedRite);
 				discardHumanitySprites(sLevel, uuid, removedRite.getCenterPos());
@@ -907,6 +908,13 @@ public class HarbingerCardinalRiteEvents {
             return CardinalRiteChecklist.inscription(optional, optionalComplete, required, requiredComplete,
                     availableAllies, requiredAllies, mediumReady);
 		}
+		if (rite.getPhase() == CardinalRitePhase.SCRIPTORIAL_INSCRIPTION) {
+			int total = ScriptoriumRites.isMonolithic(rite.getRecipeId()) ? 16 : 8;
+			int stage = rite.getScriptorialStage();
+			return java.util.List.of("Eightfold writing: " + stage + "/" + total,
+					"Current orb " + (stage % 8 + 1) + ": " + rite.getScriptorialBlood(stage) + "/50 mL",
+					"Project blood into the next floor orb");
+		}
 		if (rite.getPhase() == CardinalRitePhase.ORDEAL) {
 			String wave = rite.getCurrentWave() < rite.getWaveDeck().size()
 					? rite.getWaveDeck().get(rite.getCurrentWave()) : "";
@@ -1037,6 +1045,20 @@ public class HarbingerCardinalRiteEvents {
 	private static java.util.List<ActiveRiteClientData.SigilSegment> visibleSigilSegments(
 			ServerLevel level, ActiveCardinalRite rite) {
 		java.util.List<ActiveRiteClientData.SigilSegment> result = new java.util.ArrayList<>();
+		if (ScriptoriumRites.isRite(rite.getRecipeId())) {
+			int total = ScriptoriumRites.isMonolithic(rite.getRecipeId()) ? 16 : 8;
+			int[] colors = {0xE62929, 0xE87A24, 0xD9BE25, 0xEDE9DA,
+					0x285D34, 0x287FD1, 0x999999, 0x8634AD};
+			for (int stage = 0; stage < total; stage++) {
+				int blood = rite.getScriptorialBlood(stage);
+				if (blood <= 0) continue;
+				int orb = stage % 8;
+				Vec3 start = ScriptoriumRites.orbSurface(level, rite, orb);
+				Vec3 end = start.lerp(ScriptoriumRites.tubePoint(level, rite, orb), blood / 50.0D);
+				result.add(new ActiveRiteClientData.SigilSegment(start.x, start.y, start.z,
+						end.x, end.y, end.z, colors[orb]));
+			}
+		}
 		for (CardinalRiteInteractionHandler.SigilPlacement placement
 				: CardinalRiteInteractionHandler.activeSigils(level, rite)) {
 			IchorianSigilDefinition sigil = IchorianSigilRegistry.get(placement.id());
@@ -1248,6 +1270,7 @@ public class HarbingerCardinalRiteEvents {
 			return false;
 		}
 		if (!consumeRiteMedium(sLevel, caster, rite, recipe)) return false;
+		if (!ScriptoriumRites.complete(sLevel, rite)) return false;
 		String ritePath = rite.getRecipeId().getPath();
 		if (recipe.isUnstained()
 				&& !UnstainedCardinalRiteEvents.completeRite(sLevel, caster, center, ritePath)) {

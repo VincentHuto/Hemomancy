@@ -1,0 +1,9 @@
+{
+  "type": "hutoslib:page",
+  "ordinality": 11,
+  "texture": "hemomancy:textures/gui/guide/page.png",
+  "title": "The Monolithic Script",
+  "subtitle": "The Grand rite of restraint",
+  "text": "At the seventh Degree, move the Eightfold Scriptorium to the authored seat on a Grand working floor. Each of its eight tubes must hold two enzymes. The braziers call for a Monolithic Cornerstone, four Monolith Fragments, Sanguine Quintessence, and two blocks of lapis. Twenty-eight anchors carry the boundary. After the daemon seals, complete two full circuits of the eight writing orbs, fifty millilitres at each stage. The Cornerstone and restraint frame are the visible record of the rite. The station keeps its facing and surviving inventory.",
+  "icon": "hemomancy:monolithic_scriptorium"
+}

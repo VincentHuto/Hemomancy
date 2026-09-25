@@ -1,0 +1,8 @@
+{
+  "replace": false,
+  "values": [
+    "minecraft:bookshelf",
+    "hemomancy:blood_crystal",
+    "hemomancy:suspended_blood_crystal"
+  ]
+}

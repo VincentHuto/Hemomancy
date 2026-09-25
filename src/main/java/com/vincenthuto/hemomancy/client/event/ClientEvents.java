@@ -784,6 +784,16 @@ public class ClientEvents {
 
         public static BakedModel bloodAbsorptionModel, bloodProjectionModel;
 
+        @SubscribeEvent
+        public static void registerScriptoriumGlintBuffers(net.neoforged.neoforge.client.event.RegisterRenderBuffersEvent event) {
+            event.registerRenderBuffer(com.vincenthuto.hemomancy.common.init.RenderTypeInit.SCRIPTORIUM_GLINT);
+            event.registerRenderBuffer(com.vincenthuto.hemomancy.common.init.RenderTypeInit.SCRIPTORIUM_GLINT_TRANSLUCENT);
+            event.registerRenderBuffer(com.vincenthuto.hemomancy.common.init.RenderTypeInit.SCRIPTORIUM_ENTITY_GLINT);
+            event.registerRenderBuffer(com.vincenthuto.hemomancy.common.init.RenderTypeInit.SCRIPTORIUM_ENTITY_GLINT_DIRECT);
+            event.registerRenderBuffer(com.vincenthuto.hemomancy.common.init.RenderTypeInit.SCRIPTORIUM_ARMOR_ENTITY_GLINT);
+        }
+
+
 		@SubscribeEvent
 		public static void registerTreeCacheReloadListener(RegisterClientReloadListenersEvent event) {
 			event.registerReloadListener((ResourceManagerReloadListener) resourceManager -> {
@@ -986,6 +996,7 @@ public class ClientEvents {
             BlockEntityRenderers.register(BlockEntityInit.mortal_display.get(), MortalDisplayRenderer::new);
             BlockEntityRenderers.register(BlockEntityInit.cardinal_focus.get(), CardinalFocusRenderer::new);
             BlockEntityRenderers.register(BlockEntityInit.vial_centrifuge.get(), VialCentrifugeRenderer::new);
+            BlockEntityRenderers.register(BlockEntityInit.enzymatic_scriptorium.get(), EnzymaticScriptoriumRenderer::new);
             BlockEntityRenderers.register(BlockEntityInit.somatic_loom.get(),
                     SomaticLoomRenderer::new);
             BlockEntityRenderers.register(BlockEntityInit.earthen_vein.get(), EarthenVeinRenderer::new);
@@ -1143,6 +1154,7 @@ public class ClientEvents {
             event.register(ContainerInit.fungal_implantation.get(), SporeImplantScreen::new);
             event.register(ContainerInit.mason_effigy.get(), MasonsEffigyScreen::new);
             event.register(ContainerInit.vial_centrifuge.get(), VialCentrifugeScreen::new);
+            event.register(ContainerInit.enzymatic_scriptorium.get(), EnzymaticScriptoriumScreen::new);
             event.register(ContainerInit.morphling_jar.get(), MorphlingJarScreen::new);
             event.register(ContainerInit.living_syringe.get(), LivingSyringeScreen::new);
             event.register(ContainerInit.living_staff.get(), LivingStaffScreen::new);

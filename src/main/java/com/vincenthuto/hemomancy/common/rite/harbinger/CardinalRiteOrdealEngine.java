@@ -57,7 +57,7 @@ public final class CardinalRiteOrdealEngine {
 				|| rite.getPhase() == CardinalRitePhase.CULMINATION)
 				&& !level.areEntitiesLoaded(net.minecraft.world.level.ChunkPos.asLong(rite.getCenterPos()))) return;
 		rite.tick();
-		switch (rite.getPhase()) {
+			switch (rite.getPhase()) {
 			case CONSECRATION -> tickConsecration(level, caster, rite, recipe);
 			case INSCRIPTION -> {
 				drawSupportSockets(level, rite, recipe);

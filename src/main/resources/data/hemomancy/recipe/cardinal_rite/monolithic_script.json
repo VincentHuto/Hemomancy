@@ -1,0 +1,84 @@
+{
+  "type": "hemomancy:cardinal_rite_recipe",
+  "bloodCost": 0,
+  "riteType": "grand",
+  "required_degree": 7,
+  "riteName": "Rite of the Monolithic Script",
+  "riteDescription": "Bind the second measure of each tendency beneath the Cornerstone.",
+  "floor": "hemomancy:working_grand",
+  "required_structure": {
+    "pattern": [
+      [
+        "  S  "
+      ],
+      [
+        "     "
+      ],
+      [
+        "     "
+      ],
+      [
+        "     "
+      ],
+      [
+        "     "
+      ]
+    ],
+    "key": {
+      "S": {
+        "block": "hemomancy:eightfold_scriptorium"
+      }
+    }
+  },
+  "brazier_signature": [
+    {
+      "ingredient": {
+        "item": "hemomancy:monolithic_cornerstone"
+      },
+      "count": 1
+    },
+    {
+      "ingredient": {
+        "item": "hemomancy:monolith_fragment"
+      },
+      "count": 4
+    },
+    {
+      "ingredient": {
+        "item": "hemomancy:sanguine_quintessence"
+      },
+      "count": 1
+    },
+    {
+      "ingredient": {
+        "item": "minecraft:lapis_block"
+      },
+      "count": 2
+    }
+  ],
+  "ceremony": {
+    "profile": "ceremonial",
+    "layout": "cardinal",
+    "support_sockets": [],
+    "waves": [
+      "bloodlicker_siphon"
+    ],
+    "guaranteed_waves": [],
+    "fragile_offsets": [],
+    "target_duration_ticks": 5200,
+    "focus": "living_staff",
+    "required_helpers": 0,
+    "helper_roles": [
+      "anchor",
+      "attendant",
+      "warden"
+    ],
+    "still_interval_ticks": 0,
+    "atmosphere": {
+      "fog": "storm",
+      "lightning": true,
+      "dome": false
+    },
+    "failure": "safe_retry"
+  }
+}

@@ -124,6 +124,14 @@ neoForge {
             systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
         }
 
+        scriptoriumReviewClient {
+            client()
+            gameDirectory = project.file('build/scriptorium-client')
+            additionalRuntimeClasspathConfiguration.extendsFrom(clientLocalRuntime)
+            jvmArguments.addAll("-Xms2G", "-Xmx6G")
+            programArguments.addAll '--username', 'ScriptoriumReview', '--width', '1280', '--height', '720'
+        }
+
         alphaJourneyClient {
             client()
             gameDirectory = project.file('run-alpha-journey')
@@ -189,6 +197,12 @@ neoForge {
             type = "gameTestServer"
             gameDirectory = project.file('build/choir-keeper-gametest')
             systemProperty 'neoforge.enabledGameTestNamespaces', 'choir_keeper_validation'
+        }
+
+        scriptoriumGameTestServer {
+            type = "gameTestServer"
+            gameDirectory = project.file('build/scriptorium-gametest')
+            systemProperty 'neoforge.enabledGameTestNamespaces', 'scriptorium_validation'
         }
 
         bloodInjectionGameTestServer {

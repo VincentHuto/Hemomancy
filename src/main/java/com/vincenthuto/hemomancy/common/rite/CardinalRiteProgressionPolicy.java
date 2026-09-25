@@ -26,7 +26,11 @@ public final class CardinalRiteProgressionPolicy {
 
 		Limits limits = limits(Math.max(0, degree));
 		List<String> problems = new ArrayList<>();
-		if (ceremony.anchors().size() > limits.maxAnchors()) {
+		boolean authoredScriptoriumBoundary = ("cardinal_rite/eightfold_script".equals(ritePath)
+				&& degree == 5 && ceremony.anchors().size() == 20)
+				|| ("cardinal_rite/monolithic_script".equals(ritePath)
+				&& degree == 7 && ceremony.anchors().size() == 28);
+		if (ceremony.anchors().size() > limits.maxAnchors() && !authoredScriptoriumBoundary) {
 			problems.add("anchors " + ceremony.anchors().size() + " exceed " + limits.maxAnchors());
 		}
 		if (ceremony.supportSockets().size() > limits.maxSupportSockets()) {

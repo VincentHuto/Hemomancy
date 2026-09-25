@@ -1,6 +1,9 @@
 {
   "replace": false,
   "values": [
+    "hemomancy:enzymatic_scriptorium",
+    "hemomancy:eightfold_scriptorium",
+    "hemomancy:monolithic_scriptorium",
     "hemomancy:altar_of_cleansing",
     "hemomancy:blood_basin",
     "hemomancy:blood_crystal",

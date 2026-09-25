@@ -1,0 +1,9 @@
+{
+  "type": "hutoslib:page",
+  "ordinality": 9,
+  "texture": "hemomancy:textures/gui/guide/page.png",
+  "title": "Enzymatic Scriptorium",
+  "subtitle": "A table that reads the eight tendencies",
+  "text": "Craft the station around an enchanting table with Hematic Iron on its four sides and Sanguine Glass at its corners. Activate with a Ferric Binder, an enzyme primer, a Blood Crystal Shard, a lapis block, and 500 mL of blood. The Scriptorium stores 64 measures of each enzyme. Every offer requires specific enzymes: Efficiency uses Ductilis, Unbreaking uses Ferric, and Fortune uses Animus. Costs rise from one to three measures toward the natural level cap. Mixed offers require each matching type; effects sharing a type share its highest cost. Hover an offer to see the exact cost and missing reagents. Selected pips determine which enchantments can appear. Select only Neurotic for Efficiency on a pickaxe, Ferric for Unbreaking, or Vivacious for Fortune. Selecting different enzymes allows mixed results. Only the selected doses are consumed. Unmapped enchantments require a datapack affinity before they can appear. XP, lapis, and blood costs still apply. Surround the station with bookshelves or blood crystals in the usual enchanting-table arrangement, leaving the intervening gap clear. Each tagged power source supplies at least one point, up to fifteen total. These sources set the normal offer power; enzymes do not replace them. Enchantment glyphs and dark glow flow inward from active sources. Each reservoir now stores up to 64 enzymes. Click its pips to select doses, up to three total across the station. Only selected tendencies enter the enchantment pool, and only levels affordable with those selected doses appear. Committing consumes exactly the selected doses from storage. Stored but unselected enzymes provide no bias.",
+  "icon": "hemomancy:enzymatic_scriptorium"
+}
