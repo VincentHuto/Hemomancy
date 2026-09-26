@@ -176,9 +176,9 @@ public final class MaterialsData {
                 "Functional Blocks", () -> new ItemStack(BlockInit.sanguine_monolith.get()),
                 true, UnlockPredicate.minDegree(5)));
 
-                                                                                                                                                                                                                                                                                list.add(new MaterialEntry("dictation_table", "Dictation Table",
-                "Used to transcribe blood knowledge into engram stamps.",
-                "Functional Blocks", () -> new ItemStack(BlockInit.dictation_table.get()),
+                                                                                                                                                                                                                                                                                list.add(new MaterialEntry("harbinger_escritoire", "Harbinger Escritoire",
+                "Holds a Liber for reading and dictates pending field notes using blood or experience.",
+                "Functional Blocks", () -> new ItemStack(BlockInit.harbinger_escritoire.get()),
                 true, UnlockPredicate.minDegree(3)));
 
                                                                                                                                                                                                                                                                                 list.add(new MaterialEntry("morphling_cradle", "Morphling Cradle",

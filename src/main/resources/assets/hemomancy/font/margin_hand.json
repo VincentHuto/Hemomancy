@@ -1,0 +1,27 @@
+{
+  "providers": [
+    {
+      "type": "space",
+      "advances": {
+        " ": 4
+      }
+    },
+    {
+      "type": "bitmap",
+      "file": "hemomancy:font/margin_hand.png",
+      "height": 8,
+      "ascent": 7,
+      "chars": [
+        "abcdefghijklmnop",
+        "qrstuvwxyz.,'-!?",
+        "0123456789ABCDEF",
+        "GHIJKLMNOPQRSTUV",
+        "WXYZ\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000"
+      ]
+    },
+    {
+      "type": "reference",
+      "id": "minecraft:default"
+    }
+  ]
+}

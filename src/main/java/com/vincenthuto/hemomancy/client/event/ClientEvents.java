@@ -1017,6 +1017,7 @@ public class ClientEvents {
             BlockEntityRenderers.register(BlockEntityInit.phlebotomists_cabinet.get(), PhlebotomistsCabinetRenderer::new);
             BlockEntityRenderers.register(BlockEntityInit.phlebotomists_field_case.get(), PhlebotomistsFieldCaseRenderer::new);
             BlockEntityRenderers.register(BlockEntityInit.dictation_table.get(), DictationTableRenderer::new);
+            BlockEntityRenderers.register(BlockEntityInit.harbinger_escritoire.get(), com.vincenthuto.hutoslib.client.render.block.DictationTableRenderer::new);
             BlockEntityRenderers.register(BlockEntityInit.visceral_mirror.get(), VisceralMirrorRenderer::new);
             BlockEntityRenderers.register(BlockEntityInit.non_euclidean_hallway.get(), NonEuclideanHallwayRenderer::new);
             BlockEntityRenderers.register(BlockEntityInit.qliphoth_bloom.get(),

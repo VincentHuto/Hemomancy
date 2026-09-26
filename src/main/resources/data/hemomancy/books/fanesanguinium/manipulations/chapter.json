@@ -5,5 +5,7 @@
   "color": "0.6,0,0",
   "title": "Blood Manipulation",
   "subtitle": "What the blood already knows",
-  "icon": "hemomancy:sanguine_formation"
+  "icon": "hemomancy:sanguine_formation",
+  "tabColor": "#850D0D",
+  "rowLimit": 7
 }

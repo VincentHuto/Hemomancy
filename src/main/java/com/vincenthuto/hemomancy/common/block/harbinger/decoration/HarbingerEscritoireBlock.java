@@ -20,7 +20,7 @@ import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
-public final class HarbingerEscritoireBlock extends Block implements SimpleWaterloggedBlock {
+public final class HarbingerEscritoireBlock extends com.vincenthuto.hutoslib.common.block.DictationTableBlock {
 	public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
 	public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
 
@@ -28,6 +28,15 @@ public final class HarbingerEscritoireBlock extends Block implements SimpleWater
 		super(properties);
 		registerDefaultState(stateDefinition.any().setValue(FACING, Direction.NORTH).setValue(WATERLOGGED, false));
 	}
+
+    @Override public boolean supportsDictation() { return true; }
+    @Override public int pendingGlowColor() { return 0xFF3030; }
+    @Override public double bookHeight() { return 1.08; }
+    @Override public float bookRotationOffset() { return -90; }
+    @Override public net.minecraft.world.level.block.entity.BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
+        return new com.vincenthuto.hutoslib.common.block.entity.DictationTableBlockEntity(
+                com.vincenthuto.hemomancy.common.init.BlockEntityInit.harbinger_escritoire.get(), pos, state);
+    }
 
 	@Override
 	protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {

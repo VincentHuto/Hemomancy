@@ -3,8 +3,7 @@ package com.vincenthuto.hemomancy.common.item.harbinger;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.shared.knowledge.discovery.MemoHelper;
-import com.vincenthuto.hutoslib.client.screen.guide.HLGuiGuideTitlePage;
-import com.vincenthuto.hutoslib.common.book.BookTheme;
+import com.vincenthuto.hutoslib.client.screen.guide.BookReaderScreen;
 import com.vincenthuto.hutoslib.common.data.book.BookCodeModel;
 import com.vincenthuto.hutoslib.common.data.book.BookPlaceboReloadListener;
 import com.vincenthuto.hutoslib.common.item.ItemGuideBook;
@@ -43,25 +42,7 @@ public class BloodyBookItem extends ItemGuideBook {
         }
 
         if (lvl.isClientSide && book != null) {
-            final BookCodeModel rawBook = book;
-            final BookTheme theme = new BookTheme(
-                    Hemomancy.rloc("textures/gui/guide/book.png"),
-                    0xAA0000,
-                    Hemomancy.rloc("textures/gui/guide/hemo_overlay.png"));
-            BookCodeModel filtered = applyVisibilityFilters(rawBook, player);
-            filtered.setTheme(theme);
-            // Refresher: re-runs visibility filters against the player's current
-            // knowledge, so HLGuiGuideTitlePage.refreshIfOpen() can rebuild the
-            // visible chapter list when a sync packet arrives while the book is
-            // open. Recomputed lazily so it picks up the freshest capability state.
-            java.util.function.Supplier<BookCodeModel> refresher = () -> {
-                BookCodeModel r = applyVisibilityFilters(rawBook, player);
-                r.setTheme(theme);
-                return r;
-            };
-            HLGuiGuideTitlePage.openScreen(filtered, null, player.getUUID(),
-                    HemoCapabilityAccess.getLiberKnowledge(player).orElse(null),
-                    refresher);
+            BookReaderScreen.open(book, this, null, HemoCapabilityAccess.getLiberKnowledge(player).orElse(null));
         }
 
         return super.use(lvl, player, hand);

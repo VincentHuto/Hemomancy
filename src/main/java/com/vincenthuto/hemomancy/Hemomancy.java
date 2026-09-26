@@ -256,7 +256,8 @@ public class Hemomancy {
     }
 
     private static boolean shouldShowItemInCreativeTab(Item item) {
-        return item != ItemInit.tome_of_the_unstained.get()
+        return item != BlockInit.dictation_table.get().asItem()
+                && item != ItemInit.tome_of_the_unstained.get()
                 && item != ItemInit.active_befouling_ash.get()
                 && item != ItemInit.active_smouldering_ash.get()
                 && item != ItemInit.living_weapon_graft.get()
@@ -351,6 +352,8 @@ public class Hemomancy {
 
     private void commonSetup(final FMLCommonSetupEvent event) {
         event.enqueueWork(() -> {
+            com.vincenthuto.hutoslib.common.book.FieldNotes.register(Hemomancy.rloc("libers"),
+                    new com.vincenthuto.hemomancy.common.capability.player.shared.knowledge.discovery.HemomancyFieldNotes());
             BookPlaceboReloadListener.INSTANCE.registerSerializer(Hemomancy.rloc("blood_structure_page"),
                     BloodStructurePageTemplate.SERIALIZER);
         });

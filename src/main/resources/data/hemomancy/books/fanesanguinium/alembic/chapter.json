@@ -5,5 +5,7 @@
   "color": "0.2,0,0",
   "title": "Advanced Distillation",
   "subtitle": "What the Alembic learns to hold",
-  "icon": "hemomancy:ghastly_alembic"
+  "icon": "hemomancy:ghastly_alembic",
+  "tabColor": "#330505",
+  "rowLimit": 7
 }

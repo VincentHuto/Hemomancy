@@ -1,0 +1,35 @@
+{
+  "providers": [
+    {
+      "type": "space",
+      "advances": {
+        " ": 6
+      }
+    },
+    {
+      "type": "bitmap",
+      "file": "hemomancy:font/fane_blackletter_24.png",
+      "height": 24,
+      "ascent": 20,
+      "chars": [
+        "!\"#$%&'()*+,-./0",
+        "123456789:;<=>?@",
+        "ABCDEFGHIJKLMNOP",
+        "QRSTUVWXYZ[\\]^_`",
+        "abcdefghijklmnop",
+        "qrstuvwxyz{|}~¡¢",
+        "£¤¥¦§¨©ª«¬­®¯°±²",
+        "³´µ¶·¸¹º»¼½¾¿ÀÁÂ",
+        "ÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒ",
+        "ÓÔÕÖ×ØÙÚÛÜÝÞßàáâ",
+        "ãäåæçèéêëìíîïðñò",
+        "óôõö÷øùúûüýþÿ‘’“",
+        "”…—–·\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000"
+      ]
+    },
+    {
+      "type": "reference",
+      "id": "minecraft:default"
+    }
+  ]
+}

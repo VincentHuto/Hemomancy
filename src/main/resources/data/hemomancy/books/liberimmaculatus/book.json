@@ -1,9 +1,10 @@
 {
   "type": "hutoslib:book",
-  "coverLoc" : "hemomancy:textures/gui/guide/title.png",
-  "overlayLoc" : "hemomancy:textures/gui/guide/hemo_overlay.png",
+  "coverLoc": "hemomancy:textures/gui/guide/title.png",
+  "overlayLoc": "hemomancy:textures/gui/guide/hemo_overlay.png",
   "title": "Unstained",
   "subtitle": "Liber Immaculatus+",
   "text": "A guide to the Unstained and their ways.",
-  "icon": "hemomancy:pallid_icon"
+  "icon": "hemomancy:pallid_icon",
+  "theme": "hemomancy:liber"
 }

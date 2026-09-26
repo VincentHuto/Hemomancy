@@ -113,7 +113,7 @@ public final class MaterialAtlasSpec {
 		entryAt("somatic_loom", h, "vascular_craft", d(2), 540, 160, "iron_brazier");
 		entryAt("mnemonic_reliquary", h, "vascular_craft", d(3), 540, 105);
 		entryAt("blood_pylon", h, "vascular_craft", d(3), 700, 195, "blood_trial_altar");
-		entryAt("dictation_table", h, "idols_fixtures", d(3), 659, 883);
+		entryAt("harbinger_escritoire", h, "idols_fixtures", d(3), 659, 883);
 		entryAt("mortal_display", h, "vascular_craft", d(3), 463, 470);
 		entryAt("scarlet_vanity", h, "vascular_craft", d(3), 580, 230, "sanguine_conduit");
 		entryAt("scrying_podium", h, "vascular_craft", d(3), 580, 179, "scarlet_vanity");

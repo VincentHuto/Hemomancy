@@ -47,22 +47,25 @@ public final class VirtualFieldNotesSourceTest {
 		assertDoesNotContain("capture does not require ink", captureMethod(source), "getInkPath(notes)");
 	}
 
-	private static void dictationTableDictatesPlacedLiberOnNormalClick() throws IOException {
-		String source = read("com/vincenthuto/hemomancy/common/block/inscription/DictationTableBlock.java");
-		assertContains("normal click dictates pending memos", source, "dictateStoredLiber");
-		assertContains("sneak click removes liber", source, "player.isShiftKeyDown()");
-		assertContains("dictation uses placed liber", source, "MemoHelper.dictatePendingToLiber(serverPlayer, table.getLiber())");
-	}
+    private static void dictationTableDictatesPlacedLiberOnNormalClick() throws IOException {
+        String source = Files.readString(Path.of("../HutosLib/src/main/java/com/vincenthuto/hutoslib/common/block/DictationTableBlock.java"));
+        assertContains("sneak click returns book", source, "player.isShiftKeyDown()");
+        assertContains("shared provider dictates placed book", source, "FieldNotes.dictate(serverPlayer, table.getBook(), this)");
+        assertContains("no pending notes opens reader", source, "BookReaderScreen.openPlaced(pos, table.getBook())");
+        String provider = read("com/vincenthuto/hemomancy/common/capability/player/shared/knowledge/discovery/HemomancyFieldNotes.java");
+        assertContains("Hemomancy requires its Escritoire", provider, "HarbingerEscritoireBlock");
+        assertContains("provider preserves cost path", provider, "MemoHelper.dictatePendingToLiber(player, book)");
+    }
 
 	private static void inventoryButtonUsesPngTextures() throws IOException {
-		String source = read("com/vincenthuto/hemomancy/client/screen/inventory/VirtualFieldNotesButton.java");
+		String source = Files.readString(Path.of("../HutosLib/src/main/java/com/vincenthuto/hutoslib/client/screen/inventory/VirtualFieldNotesButton.java"));
 		assertContains("button texture constant", source, "virtual_field_notes_button.png");
 		assertContains("book texture constant", source, "virtual_field_notes_book.png");
 		assertContains("button draws pngs", source, "graphics.blit(BUTTON_TEXTURE");
 		assertContains("book draws png", source, "graphics.blit(BOOK_TEXTURE");
 		assertDoesNotContain("button no longer uses procedural fills", source, "graphics.fill(");
-		assertPngResourceExists("button png", "assets/hemomancy/textures/gui/virtual_field_notes_button.png");
-		assertPngResourceExists("book png", "assets/hemomancy/textures/gui/virtual_field_notes_book.png");
+		assertPngResourceExists("button png", "assets/hutoslib/textures/gui/virtual_field_notes_button.png");
+		assertPngResourceExists("book png", "assets/hutoslib/textures/gui/virtual_field_notes_book.png");
 	}
 
 	private static String captureMethod(String source) {
@@ -91,7 +94,7 @@ public final class VirtualFieldNotesSourceTest {
 	}
 
 	private static void assertPngResourceExists(String label, String relativePath) throws IOException {
-		Path resource = RESOURCE_ROOT.resolve(relativePath);
+		Path resource = Path.of("../HutosLib/src/main/resources").resolve(relativePath);
 		if (!Files.isRegularFile(resource)) {
 			throw new AssertionError(label + ": missing " + relativePath);
 		}

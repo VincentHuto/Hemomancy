@@ -78,8 +78,8 @@ public class HemoLanguageProvider extends LanguageProvider {
         add("screen.hemomancy.virtual_field_notes.harbinger", "Harbinger: %s");
         add("screen.hemomancy.virtual_field_notes.unstained", "Unstained: %s");
         add("screen.hemomancy.virtual_field_notes.shared", "Shared: %s");
-        add("screen.hemomancy.virtual_field_notes.hint", "Use a Dictation Table with a placed Liber.");
-        add("screen.hemomancy.virtual_field_notes.status", "Dictate pending notes at a Dictation Table with a placed Liber.");
+        add("screen.hemomancy.virtual_field_notes.hint", "Use a Harbinger Escritoire with a placed Liber.");
+        add("screen.hemomancy.virtual_field_notes.status", "Dictate pending notes at a Harbinger Escritoire with a placed Liber.");
 
         add("item.hemomancy.hematic_suture_needle.need_degree", "Degree %s is required to bind a hematic suture.");
         add("item.hemomancy.hematic_suture_needle.invalid_target", "The needle finds no blood route to stitch here.");

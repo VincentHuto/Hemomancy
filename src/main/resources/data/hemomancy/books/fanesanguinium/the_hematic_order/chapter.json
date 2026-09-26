@@ -5,5 +5,7 @@
   "color": "0.6,0,0",
   "title": "The Hematic Order",
   "subtitle": "A found family in blood",
-  "icon": "hemomancy:morphling_jar"
+  "icon": "hemomancy:morphling_jar",
+  "tabColor": "#850D0D",
+  "rowLimit": 7
 }

@@ -5,5 +5,7 @@
   "color": "0.7,0.9,0.7",
   "title": "Purity and Clarity",
   "subtitle": "The two measures of the path",
-  "icon": "hemomancy:consecrated_copper_ingot"
+  "icon": "hemomancy:consecrated_copper_ingot",
+  "tabColor": "#B3E6B3",
+  "rowLimit": 7
 }

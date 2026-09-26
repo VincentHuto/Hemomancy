@@ -1,0 +1,67 @@
+{
+  "parent": "hutoslib:default",
+  "unreadTitleShift": { "from": "#B3121A", "to": "#7A248F", "periodTicks": 60 },
+  "colors": {
+    "paper": "#E9DCBC",
+    "paperEdge": "#C9B58A",
+    "ink": "#2B1510",
+    "inkMuted": "#7A4A3A",
+    "inkRead": "#8A7A62",
+    "accent": "#6B0F0F",
+    "accentHi": "#A02A20",
+    "accentLo": "#3A0808",
+    "link": "#8A1414",
+    "linkLine": "#D9A79A",
+    "seal": "#B3121A",
+    "notice": "#F0D27A",
+    "ribbon": "#8A1414",
+    "hand": "#8A2A1A",
+    "frameInner": "#3A1A12",
+    "frameMid": "#7A2E20",
+    "frameOuter": "#1E0B08",
+    "board": "#4A120E"
+  },
+  "fonts": {
+    "title": "hemomancy:fane_blackletter",
+    "body": "minecraft:default",
+    "hand": "hemomancy:margin_hand",
+    "label": "minecraft:default",
+    "badge": "hutoslib:book_badge",
+    "title20": "hemomancy:fane_blackletter_20",
+    "title24": "hemomancy:fane_blackletter_24"
+  },
+  "textures": {
+    "page": "hemomancy:textures/gui/book/fane/page.png",
+    "paper": "hemomancy:textures/gui/book/fane/paper.png",
+    "cover": "hemomancy:textures/gui/book/fane/cover.png",
+    "spread": "hemomancy:textures/gui/book/fane/spread.png",
+    "leaf": "hemomancy:textures/gui/book/fane/leaf.png",
+    "decals": [
+      "hemomancy:textures/gui/book/fane/decals/stain_0.png",
+      "hemomancy:textures/gui/book/fane/decals/stain_1.png",
+      "hemomancy:textures/gui/book/fane/decals/stain_2.png"
+    ],
+    "ui": "hemomancy:textures/gui/book/fane/ui.png",
+    "toast": "hemomancy:textures/gui/book/fane/toast.png"
+  },
+  "layout": {
+    "tabStyle": "fore_edge",
+    "spread": "auto",
+    "pageSize": [
+      174,
+      228
+    ],
+    "redaction": "none",
+    "decals": 0.35,
+    "rule": true,
+    "locked": "hide"
+  },
+  "motion": {
+    "turnTicks": 12,
+    "tabTicks": 2,
+    "revealTicks": 20
+  },
+  "sounds": {
+    "turn": "minecraft:item.book.page_turn"
+  }
+}

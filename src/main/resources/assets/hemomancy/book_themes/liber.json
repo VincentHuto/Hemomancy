@@ -1,0 +1,61 @@
+{
+  "parent": "hutoslib:default",
+  "unreadTitleShift": { "from": "#B3121A", "to": "#7A248F", "periodTicks": 60 },
+  "colors": {
+    "paper": "#E4E7E2",
+    "paperEdge": "#C3CAC6",
+    "ink": "#1D2830",
+    "inkMuted": "#6F8A9A",
+    "inkRead": "#7A8A94",
+    "accent": "#3D7A6C",
+    "accentHi": "#62A291",
+    "accentLo": "#24544A",
+    "link": "#3D7A6C",
+    "linkLine": "#B7D4CC",
+    "seal": "#8EA6CF",
+    "notice": "#8EA6CF",
+    "ribbon": "#8EA6CF",
+    "wash": "#F7F8F4",
+    "frameInner": "#22303A",
+    "frameMid": "#8EA6CF",
+    "frameOuter": "#22303A",
+    "board": "#AEBBB6"
+  },
+  "fonts": {
+    "title": "minecraft:default",
+    "body": "minecraft:default",
+    "hand": null,
+    "label": "minecraft:default",
+    "badge": "hutoslib:book_badge"
+  },
+  "textures": {
+    "page": "hemomancy:textures/gui/book/liber/page.png",
+    "paper": "hemomancy:textures/gui/book/liber/paper.png",
+    "cover": "hemomancy:textures/gui/book/liber/cover.png",
+    "spread": "hemomancy:textures/gui/book/liber/spread.png",
+    "leaf": "hemomancy:textures/gui/book/liber/leaf.png",
+    "decals": [],
+    "ui": "hemomancy:textures/gui/book/liber/ui.png",
+    "toast": "hemomancy:textures/gui/book/liber/toast.png"
+  },
+  "layout": {
+    "tabStyle": "head",
+    "spread": "auto",
+    "pageSize": [
+      174,
+      228
+    ],
+    "redaction": "whitewash",
+    "decals": 0,
+    "rule": true,
+    "locked": "hide"
+  },
+  "motion": {
+    "turnTicks": 12,
+    "tabTicks": 2,
+    "revealTicks": 20
+  },
+  "sounds": {
+    "turn": "minecraft:item.book.page_turn"
+  }
+}

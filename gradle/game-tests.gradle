@@ -1,6 +1,7 @@
 // Every source namespace must choose alpha: true or alpha: false with a reason.
 // Existing focused suites stay opt-in; the consolidation suites join the combined gate.
 ext.gameTestSuites = [
+    'book_kit_validation': [alpha: true, run: 'bookKitGameTestServer', directory: 'build/book-kit-gametest'],
     'recipe_codec_validation': [alpha: true, run: 'recipeCodecGameTestServer', directory: 'build/recipe-codec-gametest'],
     'hemomancy': [alpha: true, run: null, directory: null],
     'blood_injection_validation': [alpha: true, run: 'bloodInjectionGameTestServer', directory: 'build/blood-injection-gametest'],

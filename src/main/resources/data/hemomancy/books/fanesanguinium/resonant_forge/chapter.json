@@ -5,5 +5,7 @@
   "color": "0.2,0,0",
   "title": "The Resonant Forge",
   "subtitle": "A pattern remembered in wax",
-  "icon": "hemomancy:resonant_forge"
+  "icon": "hemomancy:resonant_forge",
+  "tabColor": "#330505",
+  "rowLimit": 7
 }

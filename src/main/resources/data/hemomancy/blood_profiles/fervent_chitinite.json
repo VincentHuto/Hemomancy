@@ -1,5 +1,8 @@
 {
-  "tendencies": [],
+  "tendencies": [
+    "ferric",
+    "flammeus"
+  ],
   "properties": [],
   "requires_living_syringe": true
 }

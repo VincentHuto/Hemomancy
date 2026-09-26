@@ -16,6 +16,17 @@ public final class ClientLiberScreenHooks {
 	public static void markEntriesUnreadAndRefresh(UUID playerId, Collection<ResourceLocation> entryIds) {
 		HLGuiGuideTitlePage.markEntriesUnreadAndRefreshIfOpen(playerId, entryIds);
 	}
+
+	public static void knowledgeSynced(net.minecraft.world.entity.player.Player player,
+			com.vincenthuto.hutoslib.common.book.knowledge.IBookKnowledge knowledge,
+			java.util.Set<ResourceLocation> before, java.util.Set<ResourceLocation> after,
+			java.util.Set<ResourceLocation> explicit) {
+		com.vincenthuto.hutoslib.client.book.BookClientHooks.knowledgeSnapshot(player, knowledge, before, after, explicit);
+	}
+
+	public static void progressChanged(net.minecraft.world.entity.player.Player player) {
+		com.vincenthuto.hutoslib.client.book.BookClientHooks.playerStateChanged(player);
+	}
 }
 
 

@@ -5,5 +5,7 @@
   "color": "0.7,0.7,0.9",
   "title": "The Road Untraveled",
   "subtitle": "Choosing not to remember",
-  "icon": "hemomancy:hemolytic_solution"
+  "icon": "hemomancy:hemolytic_solution",
+  "tabColor": "#B3B3E6",
+  "rowLimit": 7
 }

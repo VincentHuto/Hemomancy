@@ -30,51 +30,42 @@ public final class MemoBookFilter implements IBookPageFilter {
 			return source;
 		}
 		String bookPath = source.getResourceLocation().getPath();
-		if (!"fanesanguinium".equals(bookPath) && !"liberimmaculatus".equals(bookPath)) {
+		if (!source.getResourceLocation().getNamespace().equals("hemomancy")
+				|| (!"fanesanguinium".equals(bookPath) && !"liberimmaculatus".equals(bookPath))) {
 			return source;
 		}
 		final String entryPrefix = bookPath + "/";
 
 		Set<ResourceLocation> unlockedEntries = HemoCapabilityAccess.getLiberKnowledge(player)
 				.map(knowledge -> knowledge.getUnlockedEntries().stream()
-						.filter(entry -> entry.getPath().startsWith(entryPrefix))
+						.filter(entry -> entry.getNamespace().equals("hemomancy") && entry.getPath().startsWith(entryPrefix))
 						.collect(java.util.stream.Collectors.toSet()))
 				.orElse(Set.of());
 		Set<ResourceLocation> gatedEntries = new HashSet<>();
 		for (LiberEntryDefinition definition : LiberEntryDefinitions.all()) {
-			if (definition.entryId().getPath().startsWith(entryPrefix)) {
+			if (definition.entryId().getNamespace().equals("hemomancy") && definition.entryId().getPath().startsWith(entryPrefix)) {
 				gatedEntries.add(definition.entryId());
 			}
 		}
+		return filterEntries(source, gatedEntries, unlockedEntries);
+	}
 
-		BookCodeModel filtered = new BookCodeModel(source.getResourceLocation(), source.getTemplate());
+	static BookCodeModel filterEntries(BookCodeModel source, Set<ResourceLocation> gatedEntries,
+			Set<ResourceLocation> unlockedEntries) {
 		List<ChapterTemplate> chapters = new ArrayList<>();
 		for (ChapterTemplate chapter : source.getChapters()) {
-			ChapterTemplate chapterCopy = new ChapterTemplate(
-					chapter.getOrdinality(),
-					chapter.getTexture(),
-					chapter.getColor(),
-					chapter.getTitle(),
-					chapter.getSubtitle(),
-					chapter.getIcon());
-			if (chapter.getId() != null) {
-				chapterCopy.setId(chapter.getId());
-			}
 			List<BookDataTemplate> pages = new ArrayList<>();
 			for (BookDataTemplate page : chapter.getPages()) {
 				if (isPageVisible(page.getId(), gatedEntries, unlockedEntries)) {
 					pages.add(page);
 				}
 			}
-			chapterCopy.setPages(pages);
+
 			if (!pages.isEmpty()) {
-				chapters.add(chapterCopy);
+				chapters.add(chapter.copyWithPages(pages));
 			}
 		}
-		filtered.setChapters(chapters);
-		filtered.setPageFilter(source.getPageFilter());
-		filtered.setTheme(source.getTheme());
-		return filtered;
+		return source.copyWithChapters(chapters);
 	}
 
 	/**

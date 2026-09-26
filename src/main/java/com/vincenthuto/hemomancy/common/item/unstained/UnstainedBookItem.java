@@ -3,8 +3,7 @@ package com.vincenthuto.hemomancy.common.item.unstained;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.shared.knowledge.discovery.MemoHelper;
-import com.vincenthuto.hutoslib.client.screen.guide.HLGuiGuideTitlePage;
-import com.vincenthuto.hutoslib.common.book.BookTheme;
+import com.vincenthuto.hutoslib.client.screen.guide.BookReaderScreen;
 import com.vincenthuto.hutoslib.common.data.book.BookCodeModel;
 import com.vincenthuto.hutoslib.common.data.book.BookPlaceboReloadListener;
 import com.vincenthuto.hutoslib.common.item.ItemGuideBook;
@@ -23,7 +22,6 @@ import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 
 import java.util.List;
-import java.util.function.Supplier;
 
 public class UnstainedBookItem extends ItemGuideBook {
     public UnstainedBookItem(Properties prop, ResourceLocation loc) {
@@ -51,21 +49,7 @@ public class UnstainedBookItem extends ItemGuideBook {
         }
 
         if (lvl.isClientSide && book != null) {
-              final BookCodeModel rawBook = book;
-              final BookTheme theme = new BookTheme(
-                  Hemomancy.rloc("textures/gui/guide/unstained_overlay.png"),
-                  0x88AACC,
-                  Hemomancy.rloc("textures/gui/guide/unstained_overlay.png"));
-              BookCodeModel filtered = applyVisibilityFilters(rawBook, p_41433_);
-              filtered.setTheme(theme);
-             Supplier<BookCodeModel> refresher = () -> {
-                BookCodeModel refreshed = applyVisibilityFilters(rawBook, p_41433_);
-                refreshed.setTheme(theme);
-                return refreshed;
-              };
-            HLGuiGuideTitlePage.openScreen(filtered, null, p_41433_.getUUID(),
-                  HemoCapabilityAccess.getLiberKnowledge(p_41433_).orElse(null),
-                  refresher);
+              BookReaderScreen.open(book, this, null, HemoCapabilityAccess.getLiberKnowledge(p_41433_).orElse(null));
         }
 
         return super.use(lvl, p_41433_, p_41434_);

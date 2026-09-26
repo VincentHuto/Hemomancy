@@ -209,6 +209,11 @@ public class BlockEntityInit {
 			.register("dictation_table", () -> BlockEntityType.Builder
 					.of(DictationTableBlockEntity::new, BlockInit.dictation_table.get()).build(null));
 
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<com.vincenthuto.hutoslib.common.block.entity.DictationTableBlockEntity>> harbinger_escritoire = TILES
+            .register("harbinger_escritoire", () -> BlockEntityType.Builder.of(
+                    (pos, state) -> new com.vincenthuto.hutoslib.common.block.entity.DictationTableBlockEntity(
+                            BlockEntityInit.harbinger_escritoire.get(), pos, state), BlockInit.harbinger_escritoire.get()).build(null));
+
 	public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<SaintSarcophagusBlockEntity>> saint_sarcophagus = TILES
 			.register("saint_sarcophagus", () -> BlockEntityType.Builder
 					.of(SaintSarcophagusBlockEntity::new, BlockInit.saint_sarcophagus.get()).build(null));

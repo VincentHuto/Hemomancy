@@ -5,5 +5,7 @@
   "color": "0.2,0,0",
   "title": "Blood Tendency",
   "subtitle": "The elemental nature of blood",
-  "icon": "hemomancy:blood_stained_stone"
+  "icon": "hemomancy:blood_stained_stone",
+  "tabColor": "#3A0606",
+  "rowLimit": 7
 }

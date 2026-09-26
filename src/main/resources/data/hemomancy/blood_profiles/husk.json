@@ -1,0 +1,10 @@
+{
+  "tendencies": [
+    "mortem",
+    "flammeus"
+  ],
+  "properties": [
+    "hemomancy:blood_properties/undead"
+  ],
+  "requires_living_syringe": false
+}

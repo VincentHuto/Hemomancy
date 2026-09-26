@@ -15,12 +15,7 @@ import net.minecraft.resources.ResourceLocation;
 public class BloodStructurePageTemplate extends PageTemplate {
 
 	public static final Codec<BloodStructurePageTemplate> CODEC = RecordCodecBuilder.create(inst -> inst
-			.group(Codec.INT.fieldOf("ordinality").forGetter(PageTemplate::getOrdinality),
-					Codec.STRING.fieldOf("texture").forGetter(PageTemplate::getTexture),
-					Codec.STRING.fieldOf("title").forGetter(PageTemplate::getTitle),
-					Codec.STRING.fieldOf("subtitle").forGetter(PageTemplate::getSubtitle),
-					Codec.STRING.fieldOf("text").forGetter(PageTemplate::getText),
-					Codec.STRING.fieldOf("icon").forGetter(PageTemplate::getIcon),
+			.group(PageTemplate.MAP_CODEC.forGetter(page -> page),
 					Codec.STRING.fieldOf("structureloc").forGetter(BloodStructurePageTemplate::getStructureloc))
 			.apply(inst, BloodStructurePageTemplate::new));
 	public static final PSerializer<BloodStructurePageTemplate> SERIALIZER = PSerializer.fromCodec("bloodstructure",
@@ -34,6 +29,12 @@ public class BloodStructurePageTemplate extends PageTemplate {
 		this.structureloc = structureloc;
 	}
 
+	private BloodStructurePageTemplate(PageTemplate source, String structureloc) {
+		super(source.getOrdinality(), source.getTexture(), source.getTitle(), source.getSubtitle(), source.getText(),
+				source.getIcon(), source.getRequiresEntry(), source.getPresentation());
+		this.structureloc = structureloc;
+	}
+
 	public String getStructureloc() {
 		return structureloc;
 	}
@@ -44,6 +45,11 @@ public class BloodStructurePageTemplate extends PageTemplate {
 
 	public ResourceLocation getStructureKey() {
 		return HLLocHelper.getBySplit(structureloc);
+	}
+	@Override
+	public com.vincenthuto.hutoslib.client.screen.guide.BookBodyRenderer getBodyRenderer() {
+		return super.getBodyRenderer() != null ? super.getBodyRenderer()
+				: com.vincenthuto.hemomancy.client.screen.item.guide.BloodStructureBookRenderer.INSTANCE;
 	}
 	@Override
 	public PSerializer<? extends BookDataTemplate> getSerializer() {

@@ -5,5 +5,8 @@
   "color": "0.8,0,0",
   "title": "The Infection",
   "subtitle": "What grows in the blood",
-  "icon": "hemomancy:erythrocytic_mycelium"
+  "icon": "hemomancy:erythrocytic_mycelium",
+  "tabColor": "#A31010",
+  "layout": "chapter",
+  "rowLimit": 7
 }

@@ -1,0 +1,22 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "PIP",
+    "PTP",
+    "P P"
+  ],
+  "key": {
+    "P": {
+      "item": "hemomancy:blood_wood_planks"
+    },
+    "I": {
+      "item": "minecraft:iron_ingot"
+    },
+    "T": {
+      "item": "hutoslib:dictation_table"
+    }
+  },
+  "result": {
+    "id": "hemomancy:harbinger_escritoire"
+  }
+}

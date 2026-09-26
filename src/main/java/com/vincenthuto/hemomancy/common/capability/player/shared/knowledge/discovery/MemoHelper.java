@@ -156,6 +156,13 @@ public final class MemoHelper {
 		return DictationResult.DICTATED;
 	}
 
+    public static boolean hasPendingForLiber(net.minecraft.world.entity.player.Player player, ItemStack liber) {
+        if (player == null || !isLiber(liber)) return false;
+        var knowledge = player.getData(HemoAttachmentTypes.LIBER_KNOWLEDGE);
+        return getDictatableMemosForPath(knowledge.getPendingMemos(), pathForLiber(liber)).stream()
+                .anyMatch(memo -> !knowledge.knowsMemo(memo));
+    }
+
 	public static List<ResourceLocation> getDictatableMemosForPath(Collection<ResourceLocation> pendingMemos,
 			MemoDefinition.MemoPath liberPath) {
 		List<ResourceLocation> dictatable = new ArrayList<>();

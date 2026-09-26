@@ -5,5 +5,8 @@
   "color": "0.8,0.85,1.0",
   "title": "Our Lady of Still Waters",
   "subtitle": "She who listens from the deep",
-  "icon": "hemomancy:pallid_icon"
+  "icon": "hemomancy:pallid_icon",
+  "layout": "preview",
+  "tabColor": "#CCD9FF",
+  "rowLimit": 7
 }

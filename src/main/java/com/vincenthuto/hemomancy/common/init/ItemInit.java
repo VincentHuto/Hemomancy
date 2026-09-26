@@ -92,7 +92,9 @@ public class ItemInit {
     public static final DeferredHolder<Item, Item> liber_sanguinum = SPECIALITEMS.register("liber_sanguinum",
             () -> new BloodyBookItem(new Item.Properties().stacksTo(1),
                     Hemomancy.rloc("textures/entity/liber_sanguinum.png"))
-                    .withBookPrefix("fanesanguinium/")
+                    .withBookId(Hemomancy.rloc("fanesanguinium"))
+                    .withNotices(new com.vincenthuto.hutoslib.common.book.BookNoticeStyle("hemomancy.book.fane_discovery", "hutoslib.book.forgotten", "hutoslib.book.revealed", 0xFFB3121A))
+                    .withReaderConfiguration(com.vincenthuto.hemomancy.common.data.book.HemomancyBookPresentation::configure)
                     .withPageFilter(new MemoBookFilter())
                     .withKnowledgeProvider(player -> HemoCapabilityAccess.getLiberKnowledge(player)));
 
@@ -102,7 +104,9 @@ public class ItemInit {
     public static final DeferredHolder<Item, Item> liber_immaculatus = SPECIALITEMS.register("liber_immaculatus",
             () -> new UnstainedBookItem(new Item.Properties().stacksTo(1),
                     Hemomancy.rloc("textures/entity/liber_immaculatus.png"))
-                    .withBookPrefix("liberimmaculatus/")
+                    .withBookId(Hemomancy.rloc("liberimmaculatus"))
+                    .withNotices(new com.vincenthuto.hutoslib.common.book.BookNoticeStyle("hemomancy.book.liber_discovery", "hemomancy.book.forgotten", "hemomancy.book.remembers", 0xFF8EA6CF))
+                    .withReaderConfiguration(com.vincenthuto.hemomancy.common.data.book.HemomancyBookPresentation::configure)
                     .withPageFilter(new MemoBookFilter())
                     .withKnowledgeProvider(player -> HemoCapabilityAccess.getLiberKnowledge(player)));
 

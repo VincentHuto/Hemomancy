@@ -178,6 +178,8 @@ public class PacketSyncUnstainedProgress implements CustomPacketPayload {
 							progress.setNovitiateDewProduced(msg.novitiateDewProduced);
 							progress.setNovitiateBlocksConsecrated(msg.novitiateBlocksConsecrated);
 							progress.setNovitiateProtectionComplete(msg.novitiateProtectionComplete);
+							if (net.neoforged.fml.loading.FMLEnvironment.dist == net.neoforged.api.distmarker.Dist.CLIENT)
+								com.vincenthuto.hemomancy.client.ClientLiberScreenHooks.progressChanged(player);
                         });
             }
         });

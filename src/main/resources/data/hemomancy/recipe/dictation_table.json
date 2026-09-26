@@ -1,25 +1,11 @@
 {
-  "type": "minecraft:crafting_shaped",
-  "pattern": [
-    "SBS",
-    "PIP",
-    "P P"
-  ],
-  "key": {
-    "S": {
-      "item": "minecraft:dark_oak_log"
-    },
-    "B": {
-      "item": "minecraft:deepslate_tiles"
-    },
-    "P": {
-      "item": "minecraft:dark_oak_planks"
-    },
-    "I": {
-      "item": "minecraft:lectern"
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    {
+      "item": "hemomancy:dictation_table"
     }
-  },
+  ],
   "result": {
-    "id": "hemomancy:dictation_table"
+    "id": "hutoslib:dictation_table"
   }
 }

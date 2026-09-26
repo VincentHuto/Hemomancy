@@ -128,6 +128,7 @@ public class PacketSyncLiberKnowledge implements CustomPacketPayload {
 				return;
 			}
 			HemoCapabilityAccess.getLiberKnowledge(player).ifPresent(knowledge -> {
+				Set<ResourceLocation> before = Set.copyOf(knowledge.getUnlockedEntries());
 				LiberKnowledge synced = new LiberKnowledge();
 				msg.entrySources.forEach((entry, sources) -> {
 					if (sources.isEmpty()) {
@@ -149,8 +150,8 @@ public class PacketSyncLiberKnowledge implements CustomPacketPayload {
 				// its visible chapter list against the freshly-synced knowledge
 				// instead of waiting for them to close+reopen.
 				if (FMLEnvironment.dist == Dist.CLIENT) {
-					com.vincenthuto.hemomancy.client.ClientLiberScreenHooks.markEntriesUnreadAndRefresh(
-							player.getUUID(), msg.markUnreadEntries);
+					com.vincenthuto.hemomancy.client.ClientLiberScreenHooks.knowledgeSynced(
+							player, knowledge, before, Set.copyOf(knowledge.getUnlockedEntries()), msg.markUnreadEntries);
 				}
 			});
 		});

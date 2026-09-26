@@ -85,7 +85,7 @@ public class HemoBloodStructureGuidePage extends HLGuiGuidePage {
 
 	public static void openScreenViaItem(int pNum, BookCodeModel pBook, ChapterTemplate pChapterTemplate) {
 		Minecraft mc = Minecraft.getInstance();
-		mc.setScreen(new HemoBloodStructureGuidePage(pNum, pBook, pChapterTemplate));
+		com.vincenthuto.hutoslib.client.screen.guide.BookReaderScreen.openEntry(pBook, pChapterTemplate, pNum);
 	}
 
 }
