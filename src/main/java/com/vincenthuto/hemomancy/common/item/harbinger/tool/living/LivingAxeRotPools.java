@@ -18,7 +18,6 @@ import net.minecraft.world.phys.Vec3;
 import net.neoforged.bus.api.EventPriority;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
-import net.neoforged.neoforge.common.damagesource.DamageContainer;
 import net.neoforged.neoforge.event.entity.living.LivingDamageEvent;
 import net.neoforged.neoforge.event.entity.player.CriticalHitEvent;
 import net.neoforged.neoforge.event.server.ServerStoppedEvent;
@@ -53,7 +52,7 @@ public final class LivingAxeRotPools {
 				|| !source.context().ability().getPath().equals("living_axe")
 				|| !(event.getSource().getEntity() instanceof Player player)
 				|| !(player.level() instanceof ServerLevel level)
-				|| event.getNewDamage() + event.getReduction(DamageContainer.Reduction.ABSORPTION) <= 0.0F) return;
+				|| !SchoolDamage.hasHealthOrAbsorptionDamage(event)) return;
 		CriticalStamp critical = CRITICALS.remove(player.getUUID());
 		if (critical == null || critical.tick != level.getGameTime()
 				|| !critical.target.equals(event.getEntity().getUUID())) return;

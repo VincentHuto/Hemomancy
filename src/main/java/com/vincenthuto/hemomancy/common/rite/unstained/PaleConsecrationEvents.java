@@ -35,9 +35,6 @@ public class PaleConsecrationEvents {
 	/** Slowness I duration in ticks (3 seconds). */
 	private static final int SLOWNESS_DURATION = 60;
 
-	/** How often (in ticks) the cleanup pass runs. */
-	private static final int CLEANUP_INTERVAL = 100;
-
 	// â”€â”€ Level tick â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 	@SubscribeEvent
@@ -46,11 +43,6 @@ public class PaleConsecrationEvents {
 		if (sLevel != sLevel.getServer().overworld()) return;
 
 		long tick = sLevel.getGameTime();
-
-		// Cleanup
-		if (tick % CLEANUP_INTERVAL == 0) {
-			PaleConsecrationSavedData.get(sLevel).removeExpired(tick);
-		}
 
 		if (tick % EFFECT_INTERVAL != 0) return;
 

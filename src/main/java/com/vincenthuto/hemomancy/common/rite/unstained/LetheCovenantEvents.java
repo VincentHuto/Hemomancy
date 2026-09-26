@@ -33,16 +33,13 @@ import net.neoforged.neoforge.event.tick.LevelTickEvent;
 @EventBusSubscriber(modid = Hemomancy.MOD_ID)
 public class LetheCovenantEvents {
 
-	/** How often the cleanup and purity-tick run (in ticks). 1200 = 1 minute. */
+	/** Purity interval in ticks. 1200 = 1 minute. */
 	private static final int PURITY_TICK_INTERVAL = 1200;
 
 	/** Purity awarded per minute to Unstained players in the domain. */
 	private static final float PURITY_PER_MINUTE = 0.2f;
 
-	/** How often (in ticks) the cleanup pass runs. */
-	private static final int CLEANUP_INTERVAL = 100;
-
-	// â”€â”€ Level tick: cleanup + purity growth â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+	// â”€â”€ Level tick: purity growth â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 	@SubscribeEvent
 	public static void onLevelTick(LevelTickEvent.Post event) {
@@ -50,10 +47,6 @@ public class LetheCovenantEvents {
 		if (sLevel != sLevel.getServer().overworld()) return;
 
 		long tick = sLevel.getGameTime();
-
-		if (tick % CLEANUP_INTERVAL == 0) {
-			LetheCovenantSavedData.get(sLevel).removeExpired(tick);
-		}
 
 		if (tick % PURITY_TICK_INTERVAL != 0) return;
 

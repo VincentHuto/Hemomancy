@@ -56,7 +56,6 @@ import com.vincenthuto.hemomancy.client.render.world.chamberofwill.ChamberOfWill
 import com.vincenthuto.hemomancy.client.render.world.chamberofwill.LowtideRuinObjModels;
 import com.vincenthuto.hemomancy.client.render.world.chamberofwill.VesperFightFloorRenderer;
 import com.vincenthuto.hemomancy.client.screen.item.*;
-import com.vincenthuto.hemomancy.client.screen.item.living.LivingStaffScreen;
 import com.vincenthuto.hemomancy.client.screen.item.living.LivingSyringeScreen;
 import com.vincenthuto.hemomancy.client.screen.item.living.MorphlingJarScreen;
 import com.vincenthuto.hemomancy.client.screen.manips.RadialChooseManipScreen;
@@ -621,6 +620,8 @@ public class ClientEvents {
         // HutosLib now retains read tracker state across disconnect/reload.
         FaneBoundaryClientData.clear();
         ActiveRiteClientData.clear();
+		ChamberOfWillClientData.clear();
+		FungalWhisperVignetteOverlay.clear();
         CardinalRiteFogRenderer.clear();
 		VesperFightClientData.clear();
 		MycophantFightClientData.clear();
@@ -634,6 +635,15 @@ public class ClientEvents {
 		if (SanguineOmenOverlay.instance != null) SanguineOmenOverlay.instance.clear();
         MnemonicBlueprintRenderer.disconnect();
     }
+
+	@SubscribeEvent
+	public static void onClientLevelUnload(net.neoforged.neoforge.event.level.LevelEvent.Unload event) {
+		if (!(event.getLevel() instanceof net.minecraft.client.multiplayer.ClientLevel)) return;
+		ActiveRiteClientData.clear();
+		CardinalRiteFogRenderer.clear();
+		ChamberOfWillClientData.clear();
+		FungalWhisperVignetteOverlay.clear();
+	}
 
 	private static boolean crossbarRadialOpened;
 
@@ -1159,7 +1169,6 @@ public class ClientEvents {
             event.register(ContainerInit.resonant_forge.get(), ResonantForgeScreen::new);
             event.register(ContainerInit.morphling_jar.get(), MorphlingJarScreen::new);
             event.register(ContainerInit.living_syringe.get(), LivingSyringeScreen::new);
-            event.register(ContainerInit.living_staff.get(), LivingStaffScreen::new);
             event.register(ContainerInit.ghastly_alembic.get(), GhastlyAlembicScreen::new);
             event.register(ContainerInit.pallid_retort.get(), PallidRetortScreen::new);
             event.register(ContainerInit.stillwater_condenser.get(), StillwaterCondenserScreen::new);

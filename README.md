@@ -50,6 +50,7 @@ Then use `/hemo test journey start`, `/hemo test journey status`, and `/hemo tes
 
 ## Project references
 
+- [Gameplay systems consolidation map](docs/consolidation/README.md)
 - [Mechanical and implementation reference](docs/HEMOMANCY_REFERENCE.md)
 - [Lore reference](docs/LORE_REFERENCE.md)
 - [Lore consistency decisions](docs/LORE_CONSISTENCY_REVIEW.md)

@@ -59,6 +59,9 @@ import net.neoforged.neoforge.registries.RegisterEvent;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.function.Function;
 import java.util.stream.Stream;
 
 @EventBusSubscriber(modid = Hemomancy.MOD_ID)
@@ -906,64 +909,72 @@ public class BlockInit {
 		return combinedStream;
 	}
 
-	public static Pair<ResourceLocation, BlockItem> createItemBlock(Pair<? extends Block, ResourceLocation> block) {
-		var b = block.getFirst();
-		if (b == BlockInit.mortal_display.get()) {
-			return Pair.of(block.getSecond(), new MortalDisplayBlockItem(b, new Item.Properties()));
+	public enum ItemRoute { AUTO, CUSTOM, MANUAL, NONE }
+	public enum CreativeRoute { MAIN, WIP, HIDDEN }
+	public record BlockItemDecision(ItemRoute itemRoute, ResourceLocation itemId, CreativeRoute creativeRoute) {}
+
+	// Every block in the eight ordinary registers defaults to a same-ID BlockItem in the main tab.
+	// These are the exceptions; potted and liquid registers have no item or tab entry.
+	private static final Map<String, Function<Block, BlockItem>> CUSTOM_BLOCK_ITEMS = Map.ofEntries(
+			Map.entry("mortal_display", b -> new MortalDisplayBlockItem(b, new Item.Properties())),
+			Map.entry("suspended_blood_crystal", b -> new SuspendedBloodCrystalBlockItem(b, new Item.Properties())),
+			Map.entry("suspended_cleansed_blood_crystal", b -> new SuspendedCleansedBloodCrystalBlockItem(b, new Item.Properties())),
+			Map.entry("suspended_vivianite", b -> new SuspendedVivianiteBlockItem(b, new Item.Properties())),
+			Map.entry("visceral_mirror", b -> new VisceralMirrorBlockItem(b, new Item.Properties())),
+			Map.entry("fungal_implantation_pylon", b -> new FungalImplantationPylonBlockItem(b, new Item.Properties())),
+			Map.entry("phlebotomists_field_case", b -> new PhlebotomistsFieldCaseBlockItem(b, new Item.Properties())),
+			Map.entry("mnemonic_reliquary", b -> new MnemonicReliquaryBlockItem(b, new Item.Properties())),
+			Map.entry("earthen_vein", b -> new EarthenVeinBlockItem(b, new Item.Properties())),
+			Map.entry("vial_centrifuge", b -> new VialCentrifugeBlockItem(b, new Item.Properties())),
+			Map.entry("hematic_armature", b -> new HematicArmatureBlockItem(b, new Item.Properties())),
+			Map.entry("mycelial_crucible", b -> new MycelialCrucibleBlockItem(b, new Item.Properties())),
+			Map.entry("specimen_jar", b -> new SpecimenJarBlockItem(b, new Item.Properties())),
+			Map.entry("saint_sarcophagus", b -> new SaintSarcophagusBlockItem(b, new Item.Properties())),
+			Map.entry("sanguine_monolith", b -> new SanguineMonolithBlockItem(b, new Item.Properties())),
+			Map.entry("hematic_stake", b -> new HematicStakeBlockItem(b, new Item.Properties())),
+			Map.entry("puppeteers_spindle", b -> new PuppeteersSpindleBlockItem(b, new Item.Properties())),
+			Map.entry("mason_effigy", b -> new MasonsEffigyBlockItem(b, new Item.Properties())),
+			Map.entry("covenant_throne", b -> new CovenantThroneBlockItem(b, new Item.Properties())));
+	private static final Map<String, String> MANUAL_BLOCK_ITEMS = Map.of(
+			"gourd_stem", "gourd_seeds",
+			"active_befouling_ash_trail", "active_befouling_ash",
+			"active_smouldering_ash_trail", "active_smouldering_ash",
+			"placed_blood_stained_stone", "blood_stained_stone",
+			"lethean_poppy_wreath", "lethean_poppy_wreath",
+			"sanguine_conduit", "sanguine_conduit");
+	private static final Set<String> ITEMLESS_BLOCKS = Set.of("attached_gourd_stem", "filler_block",
+			"warp_chair_filler", "abocipher_emitter", "qliphoth_bloom",
+			"escharian_overgrowth", "escharian_overgrowth_rim");
+	private static final Set<String> WIP_BLOCKS = Set.of("semi_sentient_construct", "humane_idol",
+			"serpentine_idol", "morphling_cradle", "witness_organ", "saint_sarcophagus",
+			"gourdvine_tap", "sanguine_vigil", "sanguine_omen", "visceral_mirror",
+			"non_euclidean_hallway", "blood_basin", "blood_pylon", "blood_trial_altar",
+			"offering_gate", "crucible_of_nether_ichor", "voidtouched_vessel");
+	private static final Set<String> HIDDEN_BLOCK_ITEMS = Set.of("active_befouling_ash_trail",
+			"active_smouldering_ash_trail", "engram_block");
+
+	public static BlockItemDecision itemDecision(ResourceLocation blockId) {
+		String path = blockId.getPath();
+		if (POTTEDBLOCKS.getEntries().stream().anyMatch(entry -> entry.getId().equals(blockId))
+				|| LIQUIDBLOCKS.getEntries().stream().anyMatch(entry -> entry.getId().equals(blockId))
+				|| ITEMLESS_BLOCKS.contains(path)) {
+			return new BlockItemDecision(ItemRoute.NONE, null, CreativeRoute.HIDDEN);
 		}
-		if (b == BlockInit.suspended_blood_crystal.get()) {
-			return Pair.of(block.getSecond(), new SuspendedBloodCrystalBlockItem(b, new Item.Properties()));
+		CreativeRoute tab = WIP_BLOCKS.contains(path) ? CreativeRoute.WIP
+				: HIDDEN_BLOCK_ITEMS.contains(path) ? CreativeRoute.HIDDEN : CreativeRoute.MAIN;
+		String manualId = MANUAL_BLOCK_ITEMS.get(path);
+		if (manualId != null) {
+			return new BlockItemDecision(ItemRoute.MANUAL, Hemomancy.rloc(manualId), tab);
 		}
-		if (b == BlockInit.suspended_cleansed_blood_crystal.get()) {
-			return Pair.of(block.getSecond(), new SuspendedCleansedBloodCrystalBlockItem(b, new Item.Properties()));
-		}
-		if (b == BlockInit.suspended_vivianite.get()) {
-			return Pair.of(block.getSecond(), new SuspendedVivianiteBlockItem(b, new Item.Properties()));
-		}
-		if (b == BlockInit.visceral_mirror.get()) {
-			return Pair.of(block.getSecond(), new VisceralMirrorBlockItem(b, new Item.Properties()));
-		}
-		if (b == BlockInit.fungal_implantation_pylon.get()) {
-			return Pair.of(block.getSecond(), new FungalImplantationPylonBlockItem(b, new Item.Properties()));
-		}
-		if (b == BlockInit.phlebotomists_field_case.get()) return Pair.of(block.getSecond(), new PhlebotomistsFieldCaseBlockItem(b, new Item.Properties()));
-		if (b == BlockInit.mnemonic_reliquary.get()) {
-			return Pair.of(block.getSecond(), new MnemonicReliquaryBlockItem(b, new Item.Properties()));
-		}
-		if (b == BlockInit.earthen_vein.get()) {
-			return Pair.of(block.getSecond(), new EarthenVeinBlockItem(b, new Item.Properties()));
-		}
-		if (b == BlockInit.vial_centrifuge.get()) {
-			return Pair.of(block.getSecond(), new VialCentrifugeBlockItem(b, new Item.Properties()));
-		}
-		if (b == BlockInit.hematic_armature.get()) {
-			return Pair.of(block.getSecond(), new HematicArmatureBlockItem(b, new Item.Properties()));
-		}
-		if (b == BlockInit.mycelial_crucible.get()) {
- 			return Pair.of(block.getSecond(), new MycelialCrucibleBlockItem(b, new Item.Properties()));
- 		}
-		if (b == BlockInit.specimen_jar.get()) {
-			return Pair.of(block.getSecond(), new SpecimenJarBlockItem(b, new Item.Properties()));
-		}
-		if (b == BlockInit.saint_sarcophagus.get()) {
-			return Pair.of(block.getSecond(), new SaintSarcophagusBlockItem(b, new Item.Properties()));
-		}
-		if (b == BlockInit.sanguine_monolith.get()) {
-			return Pair.of(block.getSecond(), new SanguineMonolithBlockItem(b, new Item.Properties()));
-		}
-		if (b == BlockInit.hematic_stake.get()) {
-			return Pair.of(block.getSecond(), new HematicStakeBlockItem(b, new Item.Properties()));
-		}
-		if (b == BlockInit.puppeteers_spindle.get()) {
-			return Pair.of(block.getSecond(), new PuppeteersSpindleBlockItem(b, new Item.Properties()));
-		}
-		if (b == BlockInit.mason_effigy.get()) {
-			return Pair.of(block.getSecond(), new MasonsEffigyBlockItem(b, new Item.Properties()));
-		}
-		if (b == BlockInit.covenant_throne.get()) {
-			return Pair.of(block.getSecond(), new CovenantThroneBlockItem(b, new Item.Properties()));
-		}
-		return Pair.of(block.getSecond(), new BlockItem(b, new Item.Properties()));
+		return new BlockItemDecision(CUSTOM_BLOCK_ITEMS.containsKey(path) ? ItemRoute.CUSTOM : ItemRoute.AUTO,
+				blockId, tab);
+	}
+
+	private static Pair<ResourceLocation, BlockItem> createItemBlock(Pair<? extends Block, ResourceLocation> block) {
+		Function<Block, BlockItem> factory = CUSTOM_BLOCK_ITEMS.get(block.getSecond().getPath());
+		BlockItem item = factory != null ? factory.apply(block.getFirst())
+				: new BlockItem(block.getFirst(), new Item.Properties());
+		return Pair.of(block.getSecond(), item);
 	}
 
 	@SubscribeEvent
@@ -974,25 +985,14 @@ public class BlockInit {
 
 		getAllBlockEntriesAsStream()
 				.map(m -> Pair.of(m.get(), m.getId()))
-				.filter(block -> !shouldSkipAutoBlockItem(block.getFirst()))
+				.filter(block -> !shouldSkipAutoBlockItem(block.getSecond()))
 				.map(BlockInit::createItemBlock)
 				.forEach(item -> registerBlockItem(event, item));
 	}
 
-	private static boolean shouldSkipAutoBlockItem(Block block) {
-		return block == BlockInit.attached_gourd_stem.get()
-				|| block == BlockInit.gourd_stem.get()
-				|| block == BlockInit.active_befouling_ash_trail.get()
-				|| block == BlockInit.active_smouldering_ash_trail.get()
-				|| block == BlockInit.placed_blood_stained_stone.get()
-				|| block == BlockInit.filler_block.get()
-				|| block == BlockInit.warp_chair_filler.get()
-				|| block == BlockInit.abocipher_emitter.get()
-				|| block == BlockInit.qliphoth_bloom.get()
-				|| block == BlockInit.lethean_poppy_wreath.get()
-				|| block == BlockInit.sanguine_conduit.get()
-				|| block == BlockInit.escharian_overgrowth.get()
-				|| block == BlockInit.escharian_overgrowth_rim.get();
+	private static boolean shouldSkipAutoBlockItem(ResourceLocation blockId) {
+		ItemRoute route = itemDecision(blockId).itemRoute();
+		return route == ItemRoute.MANUAL || route == ItemRoute.NONE;
 	}
 
 	private static void registerBlockItem(RegisterEvent event, Pair<ResourceLocation, BlockItem> item) {

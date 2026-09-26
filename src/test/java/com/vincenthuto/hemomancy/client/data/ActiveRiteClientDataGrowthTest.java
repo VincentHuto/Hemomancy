@@ -16,6 +16,19 @@ public final class ActiveRiteClientDataGrowthTest {
 	}
 
 	@Test
+	void dimensionReplacementDropsTheOldRiteAndStartsFreshGrowth() {
+		ActiveRiteClientData.set(List.of(riteWithBlob(0.16F)));
+		for (int tick = 0; tick < 20; tick++) ActiveRiteClientData.tick();
+		assertTrue(currentBlob().renderRadius(1.0F) > 0.0F, "first level had visible growth");
+		ActiveRiteClientData.clear();
+		assertTrue(ActiveRiteClientData.getActiveRites().isEmpty(), "level unload clears old rites");
+		ActiveRiteClientData.set(List.of(riteWithBlob(0.16F)));
+		assertFloatEquals(0.0F, currentBlob().renderRadius(0.0F), "new level starts fresh growth");
+		ActiveRiteClientData.set(List.of());
+		assertTrue(ActiveRiteClientData.getActiveRites().isEmpty(), "empty snapshot fully replaces list");
+	}
+
+	@Test
 	void newlyVisibleNodesGrowTowardTheirSyncedRadiusInsteadOfSnappingIntoPlace() {
 		ActiveRiteClientData.set(List.of(riteWithBlob(0.16F)));
 		ActiveRiteClientData.SanguineBlob blob =

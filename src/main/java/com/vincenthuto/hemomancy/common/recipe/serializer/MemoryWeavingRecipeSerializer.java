@@ -40,24 +40,14 @@ public class MemoryWeavingRecipeSerializer implements RecipeSerializer<MemoryWea
 		return ALL_RECIPES.get(ResourceLocation.parse("hemomancy:memory_weaving/" + cleanPath));
 	}
 
-	private static <T> JsonObject toJsonObject(DynamicOps<T> ops, MapLike<T> input) {
-		JsonObject json = new JsonObject();
-		input.entries().forEach(pair -> {
-			String key = ops.getStringValue(pair.getFirst()).getOrThrow(IllegalStateException::new);
-			JsonElement value = ops.convertTo(JsonOps.INSTANCE, pair.getSecond());
-			json.add(key, value);
-		});
-		return json;
-	}
-
-	private static MemoryWeavingRecipe fromJsonObject(ResourceLocation recipeId, JsonObject json) {
-		List<Ingredient> catalysts = parseCatalysts(json);
+	private static MemoryWeavingRecipe fromJsonObject(ResourceLocation recipeId, JsonObject json, DynamicOps<JsonElement> jsonOps) {
+		List<Ingredient> catalysts = parseCatalysts(json, jsonOps);
 		EnumMap<EnumBloodTendency, Integer> enzymes = parseEnzymes(json);
 		double blood = json.has("blood")
 				? Math.max(0.0D, GsonHelper.getAsDouble(json, "blood"))
 				: legacyBloodCost(enzymes);
 
-		ItemStack result = RecipeResultStackParser.parseResultStack(json, "result");
+		ItemStack result = RecipeResultStackParser.parseResultStack(json, "result", jsonOps);
 		if (result.isEmpty()) {
 			Hemomancy.LOGGER.warn("Memory weaving recipe {} has an empty result item. This recipe will be skipped.", recipeId);
 			result = new ItemStack(Items.BARRIER);
@@ -68,23 +58,23 @@ public class MemoryWeavingRecipeSerializer implements RecipeSerializer<MemoryWea
 		return recipe;
 	}
 
-	private static List<Ingredient> parseCatalysts(JsonObject json) {
+	private static List<Ingredient> parseCatalysts(JsonObject json, DynamicOps<JsonElement> jsonOps) {
 		List<Ingredient> catalysts = new ArrayList<>();
 		if (json.has("catalysts")) {
 			JsonElement catalystElement = json.get("catalysts");
 			if (catalystElement.isJsonArray()) {
 				JsonArray array = catalystElement.getAsJsonArray();
 				for (JsonElement element : array) {
-					catalysts.add(parseIngredient(element));
+					catalysts.add(parseIngredient(element, jsonOps));
 				}
 			} else {
-				catalysts.add(parseIngredient(catalystElement));
+				catalysts.add(parseIngredient(catalystElement, jsonOps));
 			}
 		} else if (json.has("ingredient")) {
 			JsonElement legacy = GsonHelper.isArrayNode(json, "ingredient")
 					? GsonHelper.getAsJsonArray(json, "ingredient")
 					: GsonHelper.getAsJsonObject(json, "ingredient");
-			catalysts.add(parseIngredient(legacy));
+			catalysts.add(parseIngredient(legacy, jsonOps));
 		}
 		if (catalysts.isEmpty()) {
 			throw new JsonSyntaxException("Memory weaving recipes require at least one catalyst");
@@ -92,8 +82,8 @@ public class MemoryWeavingRecipeSerializer implements RecipeSerializer<MemoryWea
 		return catalysts;
 	}
 
-	private static Ingredient parseIngredient(JsonElement element) {
-		return Ingredient.CODEC.parse(JsonOps.INSTANCE, element)
+	private static Ingredient parseIngredient(JsonElement element, DynamicOps<JsonElement> jsonOps) {
+		return Ingredient.CODEC.parse(jsonOps, element)
 				.getOrThrow(err -> new JsonSyntaxException("Invalid ingredient: " + err));
 	}
 
@@ -154,11 +144,11 @@ public class MemoryWeavingRecipeSerializer implements RecipeSerializer<MemoryWea
 		@Override
 		public <T> DataResult<MemoryWeavingRecipe> decode(DynamicOps<T> ops, MapLike<T> input) {
 			try {
-				JsonObject json = toJsonObject(ops, input);
+				JsonObject json = RecipeCodecJson.toJsonObject(ops, input);
 				ResourceLocation id = json.has("id")
 						? ResourceLocation.parse(json.get("id").getAsString())
 						: Hemomancy.rloc("memory_weaving/unknown");
-				return DataResult.success(fromJsonObject(id, json));
+				return DataResult.success(fromJsonObject(id, json, RecipeCodecJson.jsonOps(ops)));
 			} catch (Exception e) {
 				return DataResult.error(() -> "Failed to decode MemoryWeavingRecipe: " + e.getMessage());
 			}
@@ -167,12 +157,7 @@ public class MemoryWeavingRecipeSerializer implements RecipeSerializer<MemoryWea
 		@Override
 		public <T> RecordBuilder<T> encode(MemoryWeavingRecipe recipe, DynamicOps<T> ops, RecordBuilder<T> prefix) {
 			prefix.add("id", ops.createString(recipe.getId().toString()));
-			JsonArray catalysts = new JsonArray();
-			for (Ingredient ingredient : recipe.getCatalysts()) {
-				Ingredient.CODEC_NONEMPTY.encodeStart(JsonOps.INSTANCE, ingredient).result()
-						.ifPresent(catalysts::add);
-			}
-			prefix.add("catalysts", JsonOps.INSTANCE.convertTo(ops, catalysts));
+			prefix.add("catalysts", Ingredient.CODEC_NONEMPTY.listOf().encodeStart(ops, recipe.getCatalysts()));
 
 			JsonObject enzymes = new JsonObject();
 			for (EnumBloodTendency tendency : EnumBloodTendency.values()) {
@@ -180,8 +165,7 @@ public class MemoryWeavingRecipeSerializer implements RecipeSerializer<MemoryWea
 			}
 			prefix.add("enzymes", JsonOps.INSTANCE.convertTo(ops, enzymes));
 			prefix.add("blood", ops.createDouble(recipe.getBloodCost()));
-			ItemStack.CODEC.encodeStart(JsonOps.INSTANCE, recipe.getResultItem(null)).result()
-					.ifPresent(e -> prefix.add("result", JsonOps.INSTANCE.convertTo(ops, e)));
+			prefix.add("result", ItemStack.CODEC.encodeStart(ops, recipe.getResultItem(null)));
 			return prefix;
 		}
 	};

@@ -176,9 +176,6 @@ public final class KnownManipulationGrantHelper {
 					boolean changed = false;
 					changed |= grant(known, ManipulationInit.blood_absorption, maxSlots);
 					changed |= grant(known, ManipulationInit.blood_projection, maxSlots);
-					if (changed) {
-						PacketHandler.sendToPlayer(player, new KnownManipulationServerPacket(known));
-					}
 					return changed;
 				})
 				.orElse(false);

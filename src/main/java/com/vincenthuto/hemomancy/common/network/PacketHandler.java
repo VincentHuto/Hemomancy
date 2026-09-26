@@ -316,7 +316,6 @@ public class PacketHandler {
         net.playBidirectional(JarTogglePickupPacket.TYPE, JarTogglePickupPacket.STREAM_CODEC, JarTogglePickupPacket::handle);
         net.playBidirectional(OpenMorphlingJarPacket.TYPE, OpenMorphlingJarPacket.STREAM_CODEC, OpenMorphlingJarPacket::handle);
         net.playBidirectional(ToggleMorphlingJarMessagePacket.TYPE, ToggleMorphlingJarMessagePacket.STREAM_CODEC, ToggleMorphlingJarMessagePacket::handle);
-        net.playBidirectional(OpenLivingStaffPacket.TYPE, OpenLivingStaffPacket.STREAM_CODEC, OpenLivingStaffPacket::handle);
         net.playBidirectional(PacketUpdateLivingStaffMorph.TYPE, PacketUpdateLivingStaffMorph.STREAM_CODEC, PacketUpdateLivingStaffMorph::handle);
         net.playBidirectional(ChangeMorphKeyPacket.TYPE, ChangeMorphKeyPacket.STREAM_CODEC, ChangeMorphKeyPacket::handle);
         net.playToClient(SyncEquippedMorphlingPacket.TYPE, SyncEquippedMorphlingPacket.STREAM_CODEC, SyncEquippedMorphlingPacket::handle);

@@ -169,8 +169,10 @@ public final class UtilityPolishResourceTest {
 		assertContains("wreath block registered", blockInit, "lethean_poppy_wreath = MODELEDBLOCKS.register");
 		assertContains("wreath item remains existing id as BlockItem", itemInit,
 				"new BlockItem(BlockInit.lethean_poppy_wreath.get(), new Item.Properties().stacksTo(16))");
-		assertContains("wreath block is not added twice to creative tab", hemomancy,
-				"block != BlockInit.lethean_poppy_wreath.get()");
+		assertContains("wreath uses the manual item decision", blockInit,
+				"\"lethean_poppy_wreath\", \"lethean_poppy_wreath\"");
+		assertContains("main tab uses the item decision to avoid duplicate entries", hemomancy,
+				"decision.itemRoute() == BlockInit.ItemRoute.AUTO");
 		assertContains("wreath blockstate has north variant", blockstate, "facing=north");
 		assertContains("wreath blockstate has rotation", blockstate, "\"y\": 180");
 		assertContains("wreath item keeps explicit generated geometry", itemModel, "\"elements\"");

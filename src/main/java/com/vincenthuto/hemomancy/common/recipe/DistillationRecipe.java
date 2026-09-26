@@ -172,6 +172,14 @@ public class DistillationRecipe implements Recipe<RecipeInput> {
 
 	// ---- Helpers ----
 
+	public static boolean canAcceptResult(ItemStack result, ItemStack currentOutput, int capacity) {
+		if (result.isEmpty()) return false;
+		if (currentOutput.isEmpty()) return true;
+		if (!ItemStack.isSameItem(currentOutput, result)) return false;
+		int totalCount = currentOutput.getCount() + result.getCount();
+		return totalCount <= capacity && totalCount <= currentOutput.getMaxStackSize();
+	}
+
 	public static List<DistillationRecipe> getAllRecipes(Level world) {
 		return world.getRecipeManager().getAllRecipesFor(RecipeInit.distillation_recipe_type.get())
 				.stream().map(RecipeHolder::value).collect(Collectors.toList());

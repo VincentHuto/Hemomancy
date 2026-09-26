@@ -28,9 +28,14 @@ public class FungalWhisperVignetteOverlay {
 	private static boolean projectionActive = false;
 
 	public static void setProjectionState(boolean active, int remainingTicks, int totalTicks) {
-		projectionActive = active;
 		projectionRemainingTicks = Math.max(0, remainingTicks);
 		projectionTotalTicks = Math.max(1, totalTicks);
+		projectionActive = active && projectionRemainingTicks > 0;
+	}
+
+	public static void clear() {
+		setProjectionState(false, 0, 1);
+		if (instance != null) instance.remainingTicks = 0;
 	}
 
 	public static boolean isProjectionActive() {
@@ -55,7 +60,7 @@ public class FungalWhisperVignetteOverlay {
 		if (remainingTicks > 0) {
 			remainingTicks--;
 		}
-		if (projectionActive && projectionRemainingTicks > 0) projectionRemainingTicks--;
+		if (projectionActive && --projectionRemainingTicks <= 0) projectionActive = false;
 	}
 
 	public void renderHUD(GuiGraphics gfx, int screenWidth, int screenHeight, float partialTicks) {

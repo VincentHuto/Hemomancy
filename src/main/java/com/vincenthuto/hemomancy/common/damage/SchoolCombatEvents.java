@@ -18,7 +18,6 @@ import net.minecraft.world.effect.MobEffects;
 import net.neoforged.bus.api.EventPriority;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
-import net.neoforged.neoforge.common.damagesource.DamageContainer;
 import net.neoforged.neoforge.event.entity.EntityJoinLevelEvent;
 import net.neoforged.neoforge.event.entity.living.*;
 import net.neoforged.neoforge.event.entity.player.AttackEntityEvent;
@@ -135,11 +134,19 @@ public final class SchoolCombatEvents {
                         target.hasEffect(EffectInit.conductive_mark) || target.hasEffect(EffectInit.lodestone), payoff));
     }
 
+    @SubscribeEvent(priority = EventPriority.LOWEST, receiveCanceled = true)
+    public static void discardCanceled(LivingIncomingDamageEvent event) {
+        if (event.isCanceled()) {
+            var pending = PENDING.get(event.getSource());
+            if (pending != null) pending.remove(event.getEntity().getUUID());
+        }
+    }
+
     @SubscribeEvent(priority = EventPriority.HIGH)
     public static void commit(LivingDamageEvent.Post event) {
         var pending = PENDING.get(event.getSource());
         Prepared prepared = pending == null ? null : pending.remove(event.getEntity().getUUID());
-        if (prepared == null || event.getNewDamage() + event.getReduction(DamageContainer.Reduction.ABSORPTION) <= 0) return;
+        if (prepared == null || !SchoolDamage.hasHealthOrAbsorptionDamage(event)) return;
         LivingEntity target = event.getEntity();
         SchoolHitContext hit = prepared.hit;
         SchoolCombatState data = SchoolStates.data(target);

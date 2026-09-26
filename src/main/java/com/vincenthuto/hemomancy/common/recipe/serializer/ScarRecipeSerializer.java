@@ -39,24 +39,14 @@ public class ScarRecipeSerializer implements RecipeSerializer<ScarRecipe> {
 
 	// ---- JSON helpers (reused by codec) ----
 
-	private static <T> JsonObject toJsonObject(DynamicOps<T> ops, MapLike<T> input) {
-		JsonObject json = new JsonObject();
-		input.entries().forEach(pair -> {
-			String key = ops.getStringValue(pair.getFirst()).getOrThrow(IllegalStateException::new);
-			JsonElement value = ops.convertTo(JsonOps.INSTANCE, pair.getSecond());
-			json.add(key, value);
-		});
-		return json;
-	}
-
-	private static ScarRecipe fromJsonObject(ResourceLocation id, JsonObject pJson) {
+	private static ScarRecipe fromJsonObject(ResourceLocation id, JsonObject pJson, DynamicOps<JsonElement> jsonOps) {
 		int tier = 0;
 		ScarType scarType = ScarType.CEREBRAL;
 		Ingredient ingredient1 = Ingredient.CODEC_NONEMPTY
-				.parse(JsonOps.INSTANCE, GsonHelper.getAsJsonObject(pJson, "ingredient1"))
+				.parse(jsonOps, GsonHelper.getAsJsonObject(pJson, "ingredient1"))
 				.getOrThrow(err -> new JsonSyntaxException("Invalid ingredient1: " + err));
 		Ingredient ingredient2 = Ingredient.CODEC_NONEMPTY
-				.parse(JsonOps.INSTANCE, GsonHelper.getAsJsonObject(pJson, "ingredient2"))
+				.parse(jsonOps, GsonHelper.getAsJsonObject(pJson, "ingredient2"))
 				.getOrThrow(err -> new JsonSyntaxException("Invalid ingredient2: " + err));
 		byte[][] pattern;
 
@@ -79,7 +69,7 @@ public class ScarRecipeSerializer implements RecipeSerializer<ScarRecipe> {
 			}
 		}
 
-		ItemStack itemstack = RecipeResultStackParser.parseResultStack(pJson, "result");
+		ItemStack itemstack = RecipeResultStackParser.parseResultStack(pJson, "result", jsonOps);
 
 		if (itemstack.isEmpty()) {
 			Hemomancy.LOGGER.warn("Scar recipe {} has an empty result item. Using BARRIER fallback for sync safety.", id);
@@ -92,10 +82,8 @@ public class ScarRecipeSerializer implements RecipeSerializer<ScarRecipe> {
 	private static <T> void encodeToBuilder(ScarRecipe recipe, DynamicOps<T> ops, RecordBuilder<T> prefix) {
 		prefix.add("id", ops.createString(recipe.getId().toString()));
 		// ingredient1/ingredient2
-		Ingredient.CODEC_NONEMPTY.encodeStart(JsonOps.INSTANCE, recipe.getIngredient1()).result()
-				.ifPresent(e -> prefix.add("ingredient1", JsonOps.INSTANCE.convertTo(ops, e)));
-		Ingredient.CODEC_NONEMPTY.encodeStart(JsonOps.INSTANCE, recipe.getIngredient2()).result()
-				.ifPresent(e -> prefix.add("ingredient2", JsonOps.INSTANCE.convertTo(ops, e)));
+		prefix.add("ingredient1", Ingredient.CODEC_NONEMPTY.encodeStart(ops, recipe.getIngredient1()));
+		prefix.add("ingredient2", Ingredient.CODEC_NONEMPTY.encodeStart(ops, recipe.getIngredient2()));
 		prefix.add("tier", ops.createInt(recipe.getTier()));
 		prefix.add("scartype", ops.createString(recipe.getScarType().toString()));
 		// pattern
@@ -108,8 +96,7 @@ public class ScarRecipeSerializer implements RecipeSerializer<ScarRecipe> {
 		}
 		prefix.add("pattern", JsonOps.INSTANCE.convertTo(ops, patArr));
 		// result
-		ItemStack.CODEC.encodeStart(JsonOps.INSTANCE, recipe.getResultItem()).result()
-				.ifPresent(e -> prefix.add("result", JsonOps.INSTANCE.convertTo(ops, e)));
+		prefix.add("result", ItemStack.CODEC.encodeStart(ops, recipe.getResultItem()));
 	}
 
 	// ---- RecipeSerializer 1.21.1 API ----
@@ -124,11 +111,11 @@ public class ScarRecipeSerializer implements RecipeSerializer<ScarRecipe> {
 		@Override
 		public <T> DataResult<ScarRecipe> decode(DynamicOps<T> ops, MapLike<T> input) {
 			try {
-				JsonObject json = toJsonObject(ops, input);
+				JsonObject json = RecipeCodecJson.toJsonObject(ops, input);
 				ResourceLocation id = json.has("id")
 						? ResourceLocation.parse(json.get("id").getAsString())
 						: Hemomancy.rloc("scar/unknown");
-				ScarRecipe recipe = fromJsonObject(id, json);
+				ScarRecipe recipe = fromJsonObject(id, json, RecipeCodecJson.jsonOps(ops));
 				ALL_RECIPES.put(id, recipe);
 				return DataResult.success(recipe);
 			} catch (Exception e) {

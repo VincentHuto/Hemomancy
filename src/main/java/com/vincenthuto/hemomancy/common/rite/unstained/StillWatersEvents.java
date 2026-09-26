@@ -8,7 +8,6 @@ import net.minecraft.world.entity.player.Player;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.living.LivingDamageEvent;
-import net.neoforged.neoforge.event.tick.LevelTickEvent;
 
 /**
  * Server-side event handler for active Still Waters zones established by the
@@ -20,22 +19,9 @@ import net.neoforged.neoforge.event.tick.LevelTickEvent;
 @EventBusSubscriber(modid = Hemomancy.MOD_ID)
 public class StillWatersEvents {
 
-	/** How often (in ticks) the cleanup pass removes expired entries. */
-	private static final int CLEANUP_INTERVAL = 100;
-
 	/** Fraction of magic damage reduced for players inside a Still Waters zone. */
 	private static final float MAGIC_DAMAGE_REDUCTION = 0.30f;
 
-	// â”€â”€ Level tick: clean up expired zones â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-
-	@SubscribeEvent
-	public static void onLevelTick(LevelTickEvent.Post event) {
-		if (!(event.getLevel() instanceof ServerLevel sLevel)) return;
-		if (sLevel != sLevel.getServer().overworld()) return;
-		if (sLevel.getGameTime() % CLEANUP_INTERVAL != 0) return;
-
-		StillWatersSavedData.get(sLevel).removeExpired(sLevel.getGameTime());
-	}
 
 	// â”€â”€ Hurt event: reduce magic damage inside Still Waters zones â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 

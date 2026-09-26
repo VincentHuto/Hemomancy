@@ -1,0 +1,45 @@
+// Integration probes for the registration guard. Each negative mode must fail
+// verifyGameTestSuites before a server starts; no production source is changed.
+gradle.beforeProject { p ->
+    if (!p.file('gradle/game-tests.gradle').exists() || p.findProperty('suiteProbe') != 'unlisted-run') return
+    p.plugins.withId('net.neoforged.moddev') {
+        p.neoForge.runs.create('undeclaredGameTestServer') {
+            type = 'gameTestServer'
+            systemProperty 'neoforge.enabledGameTestNamespaces', 'hemomancy'
+        }
+    }
+}
+
+gradle.projectsEvaluated {
+    def p = gradle.rootProject
+    if (!p.file('gradle/game-tests.gradle').exists()) return
+    switch (p.findProperty('suiteProbe')) {
+        case 'missing-decision':
+            p.gameTestSuites.combat_order_validation.remove('alpha')
+            break
+        case 'missing-reason':
+            p.gameTestSuites.clinical_validation.remove('reason')
+            break
+        case 'unknown-namespace':
+            def directory = p.layout.buildDirectory.dir('suite-registration-probe').get().asFile
+            directory.mkdirs()
+            new File(directory, 'UndeclaredGameTests.java').text = '''
+package probe;
+@GameTestHolder("undeclared_validation")
+class UndeclaredGameTests { @GameTest(template = "empty") void example() {} }
+'''
+            p.sourceSets.gameTest.java.srcDir(directory)
+            break
+        case 'unlisted-run':
+            break
+        case 'positive':
+            def enabled = p.neoForge.runs.gameTestServer.systemProperties.get()['neoforge.enabledGameTestNamespaces'].split(',') as Set
+            def required = ['combat_order_validation', 'owner_snapshot_validation', 'distillation_validation',
+                            'registration_validation', 'unstained_zone_validation', 'item_inventory_validation']
+            def missing = required.findAll { !enabled.contains(it) }
+            if (missing) throw new GradleException("Combined gate omits consolidation suites: ${missing}")
+            break
+        default:
+            throw new GradleException('Choose -PsuiteProbe=positive, missing-decision, missing-reason, unknown-namespace, or unlisted-run')
+    }
+}

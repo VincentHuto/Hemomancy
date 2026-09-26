@@ -4,7 +4,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSyntaxException;
 import com.mojang.serialization.Codec;
-import com.mojang.serialization.JsonOps;
+import com.mojang.serialization.DynamicOps;
 
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
@@ -15,7 +15,7 @@ final class RecipeResultStackParser {
 	private RecipeResultStackParser() {
 	}
 
-	static ItemStack parseResultStack(JsonObject recipeJson, String resultKey) {
+	static ItemStack parseResultStack(JsonObject recipeJson, String resultKey, DynamicOps<JsonElement> jsonOps) {
 		JsonElement resultElement = recipeJson.get(resultKey);
 		if (resultElement == null || resultElement.isJsonNull()) {
 			throw new JsonSyntaxException("Missing result field: " + resultKey);
@@ -27,7 +27,7 @@ final class RecipeResultStackParser {
 				normalized.add("id", normalized.remove("item"));
 			}
 			return Codec.withAlternative(ItemStack.STRICT_CODEC, ItemStack.CODEC)
-					.parse(JsonOps.INSTANCE, normalized)
+					.parse(jsonOps, normalized)
 					.getOrThrow(err -> new JsonSyntaxException("Invalid result item (supports id/item): " + err));
 		}
 

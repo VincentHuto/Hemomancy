@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.rite.unstained;
 
+import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.PathMutualExclusionHelper;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.Bloodline;
@@ -36,6 +37,9 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.phys.AABB;
 import net.neoforged.neoforge.network.PacketDistributor;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.event.tick.LevelTickEvent;
 
 import java.util.List;
 import java.util.Map;
@@ -43,7 +47,19 @@ import java.util.Map;
 /**
  * Completion handlers for Unstained cardinal rites.
  */
+@EventBusSubscriber(modid = Hemomancy.MOD_ID)
 public class UnstainedCardinalRiteEvents {
+	@SubscribeEvent
+	public static void onZoneCleanupTick(LevelTickEvent.Post event) {
+		if (!(event.getLevel() instanceof ServerLevel level)) return;
+		if (level != level.getServer().overworld()) return;
+		long currentTick = level.getGameTime();
+		if (currentTick % 100 != 0) return;
+
+		StillWatersSavedData.get(level).removeExpired(currentTick);
+		PaleConsecrationSavedData.get(level).removeExpired(currentTick);
+		LetheCovenantSavedData.get(level).removeExpired(currentTick);
+	}
 	// â”€â”€ Unstained rite paths â”€â”€
 	private static final String LETHEAN_BAPTISM_RITE = "cardinal_rite/lethean_baptism";
 	private static final String SILVER_VEIL_RITE = "cardinal_rite/silver_veil";

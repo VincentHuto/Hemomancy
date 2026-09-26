@@ -223,17 +223,7 @@ public class CardinalRiteRecipeSerializer implements RecipeSerializer<CardinalRi
 
 	// ---- JSON helpers ----
 
-	private static <T> JsonObject toJsonObject(DynamicOps<T> ops, MapLike<T> input) {
-		JsonObject json = new JsonObject();
-		input.entries().forEach(pair -> {
-			String key = ops.getStringValue(pair.getFirst()).getOrThrow(IllegalStateException::new);
-			JsonElement value = ops.convertTo(JsonOps.INSTANCE, pair.getSecond());
-			json.add(key, value);
-		});
-		return json;
-	}
-
-	private static CardinalRiteRecipe fromJsonObject(ResourceLocation pRecipeId, JsonObject pJson) {
+	private static CardinalRiteRecipe fromJsonObject(ResourceLocation pRecipeId, JsonObject pJson, DynamicOps<JsonElement> jsonOps) {
 		double cost = GsonHelper.getAsFloat(pJson, "bloodCost");
 		String riteTypeName = GsonHelper.getAsString(pJson, "riteType");
 		CardinalRiteType riteType = CardinalRiteType.byName(riteTypeName);
@@ -241,7 +231,7 @@ public class CardinalRiteRecipeSerializer implements RecipeSerializer<CardinalRi
 		String riteDescription = GsonHelper.getAsString(pJson, "riteDescription", "");
 		ItemStack result = ItemStack.EMPTY;
 		if (pJson.has("result")) {
-			result = RecipeResultStackParser.parseResultStack(pJson, "result");
+			result = RecipeResultStackParser.parseResultStack(pJson, "result", jsonOps);
 		}
 		int requiredDegree = requiredDegreeFromJson(pJson);
 		boolean unstained = GsonHelper.getAsBoolean(pJson, "unstained", false);
@@ -261,9 +251,9 @@ public class CardinalRiteRecipeSerializer implements RecipeSerializer<CardinalRi
 				recipe.setConsumeRequiredStructure(
 						GsonHelper.getAsBoolean(structure, "consume_on_success", false));
 			}
-			recipe.setBrazierSignature(brazierSignatureFromJson(pJson));
+			recipe.setBrazierSignature(brazierSignatureFromJson(pJson, jsonOps));
 		}
-		recipe.setMedium(mediumFromJson(pJson, pRecipeId));
+		recipe.setMedium(mediumFromJson(pJson, pRecipeId, jsonOps));
 		recipe.setConsumeMediumOnSuccess(CardinalRiteMediumRules.consumeOnSuccessFromNullable(
 				pJson.has("consume_medium_on_success")
 						? pJson.get("consume_medium_on_success").getAsBoolean() : null));
@@ -315,19 +305,19 @@ public class CardinalRiteRecipeSerializer implements RecipeSerializer<CardinalRi
 		}
 	}
 
-	private static Ingredient mediumFromJson(JsonObject json, ResourceLocation recipeId) {
+	private static Ingredient mediumFromJson(JsonObject json, ResourceLocation recipeId, DynamicOps<JsonElement> jsonOps) {
 		if (!json.has("medium")) return Ingredient.EMPTY;
-		return Ingredient.CODEC_NONEMPTY.parse(JsonOps.INSTANCE, json.get("medium"))
+		return Ingredient.CODEC_NONEMPTY.parse(jsonOps, json.get("medium"))
 				.getOrThrow(message -> new JsonSyntaxException(
 						"Invalid medium for Cardinal Rite " + recipeId + ": " + message));
 	}
 
-	private static List<CardinalRiteRecipe.BrazierRequirement> brazierSignatureFromJson(JsonObject json) {
+	private static List<CardinalRiteRecipe.BrazierRequirement> brazierSignatureFromJson(JsonObject json, DynamicOps<JsonElement> jsonOps) {
 		if (!json.has("brazier_signature")) return List.of();
 		List<CardinalRiteRecipe.BrazierRequirement> result = new ArrayList<>();
 		for (JsonElement element : json.getAsJsonArray("brazier_signature")) {
 			JsonObject entry = element.getAsJsonObject();
-			Ingredient ingredient = Ingredient.CODEC_NONEMPTY.parse(JsonOps.INSTANCE, entry.get("ingredient"))
+			Ingredient ingredient = Ingredient.CODEC_NONEMPTY.parse(jsonOps, entry.get("ingredient"))
 					.getOrThrow(message -> new JsonSyntaxException("Invalid brazier ingredient: " + message));
 			result.add(new CardinalRiteRecipe.BrazierRequirement(
 					ingredient, GsonHelper.getAsInt(entry, "count", 1),
@@ -352,11 +342,11 @@ public class CardinalRiteRecipeSerializer implements RecipeSerializer<CardinalRi
 		@Override
 		public <T> DataResult<CardinalRiteRecipe> decode(DynamicOps<T> ops, MapLike<T> input) {
 			try {
-				JsonObject json = toJsonObject(ops, input);
+				JsonObject json = RecipeCodecJson.toJsonObject(ops, input);
 				ResourceLocation id = json.has("id")
 						? ResourceLocation.parse(json.get("id").getAsString())
 						: Hemomancy.rloc("cardinal_rite/unknown");
-				return DataResult.success(fromJsonObject(id, json));
+				return DataResult.success(fromJsonObject(id, json, RecipeCodecJson.jsonOps(ops)));
 			} catch (Exception e) {
 				return DataResult.error(() -> "Failed to decode CardinalRiteRecipe: " + e.getMessage());
 			}
@@ -370,8 +360,9 @@ public class CardinalRiteRecipeSerializer implements RecipeSerializer<CardinalRi
 			prefix.add("riteName", ops.createString(recipe.getRiteName()));
 			prefix.add("riteDescription", ops.createString(recipe.getRiteDescription()));
 			// pattern / key are complex — handled via stream codec
-			ItemStack.CODEC.encodeStart(JsonOps.INSTANCE, recipe.getResult()).result()
-					.ifPresent(e -> prefix.add("result", JsonOps.INSTANCE.convertTo(ops, e)));
+			if (!recipe.getResult().isEmpty()) {
+				prefix.add("result", ItemStack.CODEC.encodeStart(ops, recipe.getResult()));
+			}
 			prefix.add("required_degree", ops.createInt(recipe.getRequiredDegree()));
 			if (recipe.getRequiredPurity() >= 0.0f) prefix.add("required_purity", ops.createFloat(recipe.getRequiredPurity()));
 			if (recipe.getRequiredClarity() >= 0.0f) prefix.add("required_clarity", ops.createFloat(recipe.getRequiredClarity()));
@@ -379,8 +370,7 @@ public class CardinalRiteRecipeSerializer implements RecipeSerializer<CardinalRi
 			prefix.add("unstained", ops.createBoolean(recipe.isUnstained()));
 			prefix.add("rankup", ops.createBoolean(recipe.isRankup()));
 			if (recipe.hasMedium()) {
-				Ingredient.CODEC.encodeStart(JsonOps.INSTANCE, recipe.getMedium()).result()
-						.ifPresent(e -> prefix.add("medium", JsonOps.INSTANCE.convertTo(ops, e)));
+				prefix.add("medium", Ingredient.CODEC.encodeStart(ops, recipe.getMedium()));
 			}
 			prefix.add("consume_medium_on_success", ops.createBoolean(recipe.shouldConsumeMediumOnSuccess()));
 			if (recipe.isPuppeteerTrial()) {

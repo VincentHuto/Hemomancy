@@ -21,6 +21,7 @@ import com.vincenthuto.hemomancy.common.worldgen.ChamberOfWillManager;
 import com.vincenthuto.hemomancy.config.HemoConfig;
 import com.vincenthuto.hutoslib.common.data.book.BookPlaceboReloadListener;
 import com.vincenthuto.hutoslib.common.effectsource.EffectSourceInference;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -321,38 +322,11 @@ public class Hemomancy {
     }
 
     private static boolean shouldShowBlockInCreativeTab(Block block) {
+        var decision = BlockInit.itemDecision(BuiltInRegistries.BLOCK.getKey(block));
         return block.asItem() != Items.AIR
-                && block != BlockInit.attached_gourd_stem.get()
-                && block != BlockInit.gourd_stem.get()
-                && block != BlockInit.active_befouling_ash_trail.get()
-                && block != BlockInit.active_smouldering_ash_trail.get()
-                && block != BlockInit.sanguine_conduit.get()
-                && block != BlockInit.lethean_poppy_wreath.get()
-                && block != BlockInit.filler_block.get()
-                && block != BlockInit.engram_block.get()
-                && block != BlockInit.abocipher_emitter.get()
-                && block != BlockInit.qliphoth_bloom.get()
-                && !isWipBlock(block);
-    }
-
-    private static boolean isWipBlock(Block block) {
-        return block == BlockInit.semi_sentient_construct.get()
-                || block == BlockInit.humane_idol.get()
-                || block == BlockInit.serpentine_idol.get()
-                || block == BlockInit.morphling_cradle.get()
-                || block == BlockInit.witness_organ.get()
-                || block == BlockInit.saint_sarcophagus.get()
-                || block == BlockInit.gourdvine_tap.get()
-                || block == BlockInit.sanguine_vigil.get()
-                || block == BlockInit.sanguine_omen.get()
-                || block == BlockInit.visceral_mirror.get()
-                || block == BlockInit.non_euclidean_hallway.get()
-                || block == BlockInit.blood_basin.get()
-                || block == BlockInit.blood_pylon.get()
-                || block == BlockInit.blood_trial_altar.get()
-                || block == BlockInit.offering_gate.get()
-                || block == BlockInit.crucible_of_nether_ichor.get()
-                || block == BlockInit.voidtouched_vessel.get();
+                && decision.creativeRoute() == BlockInit.CreativeRoute.MAIN
+                && (decision.itemRoute() == BlockInit.ItemRoute.AUTO
+                        || decision.itemRoute() == BlockInit.ItemRoute.CUSTOM);
     }
 
     @SubscribeEvent

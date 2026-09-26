@@ -18,9 +18,6 @@ import net.minecraft.world.entity.player.Player;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.living.LivingDamageEvent;
-import net.neoforged.neoforge.event.entity.player.PlayerEvent;
-import net.neoforged.neoforge.event.entity.player.PlayerEvent.PlayerChangedDimensionEvent;
-import net.neoforged.neoforge.event.entity.player.PlayerEvent.PlayerRespawnEvent;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 
 import java.util.ArrayList;
@@ -244,36 +241,17 @@ public class VascularSystemEvents {	/**
 		}
 	}
 
-	// â”€â”€â”€â”€â”€ Sync & Lifecycle â”€â”€â”€â”€â”€
+	// Sync
 
 	public static void syncVascular(ServerPlayer player, IVascularSystem vascular) {
 		PacketHandler.sendToPlayer(player, new VascularSystemServerPacket(vascular.getVascularSystem()));
 	}
 
-	@SubscribeEvent
-	public static void onDimensionChange(PlayerChangedDimensionEvent event) {
-		ServerPlayer player = (ServerPlayer) event.getEntity();
-		Map<EnumVeinSections, Float> bloodFlow = HemoCapabilityAccess.getPlayerVascularSystem(player);
-		PacketHandler.sendToPlayer(player, new VascularSystemServerPacket(bloodFlow));
-	}
-
-	@SubscribeEvent
-	public static void playerLoggedIn(PlayerEvent.PlayerLoggedInEvent event) {
-		ServerPlayer player = (ServerPlayer) event.getEntity();
-		Map<EnumVeinSections, Float> bloodFlow = HemoCapabilityAccess.getPlayerVascularSystem(player);
-		PacketHandler.sendToPlayer(player, new VascularSystemServerPacket(bloodFlow));
-	}
-
-	@SubscribeEvent
-	public static void respawn(PlayerRespawnEvent event) {
-		if (event.getEntity() instanceof Player) {
-			Player player = event.getEntity();
-			if (!player.getCommandSenderWorld().isClientSide) {
-				IVascularSystem section = HemoCapabilityAccess.getVascularSystem(player)
-						.orElseThrow(IllegalArgumentException::new);
-				PacketHandler.sendToPlayer((ServerPlayer) player, new VascularSystemServerPacket(section.getVascularSystem()));
-			}
-		}
+	public static void syncOwnerSnapshot(ServerPlayer player, boolean respawn) {
+		IVascularSystem vascular = respawn
+				? HemoCapabilityAccess.getVascularSystem(player).orElseThrow(IllegalArgumentException::new)
+				: HemoCapabilityAccess.requireVascularSystem(player);
+		syncVascular(player, vascular);
 	}
 
 }

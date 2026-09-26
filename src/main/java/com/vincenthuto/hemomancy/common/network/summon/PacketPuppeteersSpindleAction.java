@@ -40,7 +40,7 @@ public record PacketPuppeteersSpindleAction(Action action, String summonName) im
 	}
 
 	private static void handleServer(PacketPuppeteersSpindleAction msg, ServerPlayer player) {
-		if (!(player.containerMenu instanceof PuppeteersSpindleMenu menu)) {
+		if (!(player.containerMenu instanceof PuppeteersSpindleMenu menu) || !menu.stillValid(player)) {
 			return;
 		}
 		ItemStack crossbar = menu.getCrossbarStack();

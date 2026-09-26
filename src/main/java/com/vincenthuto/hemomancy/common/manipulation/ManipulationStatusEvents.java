@@ -4,6 +4,7 @@ import com.vincenthuto.hemomancy.common.particle.HemoParticleData;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.init.EffectInit;
+import com.vincenthuto.hemomancy.common.damage.SchoolDamage;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.server.level.ServerLevel;
@@ -73,7 +74,7 @@ public final class ManipulationStatusEvents {
 
     @SubscribeEvent
     public static void ironRetortLanded(LivingDamageEvent.Post event) {
-        if (event.getNewDamage() + event.getReduction(net.neoforged.neoforge.common.damagesource.DamageContainer.Reduction.ABSORPTION) <= 0) return;
+        if (!SchoolDamage.hasHealthOrAbsorptionDamage(event)) return;
         LivingEntity defender = event.getEntity();
         if (!defender.hasEffect(EffectInit.iron_retort) || event.getSource().is(DamageTypes.THORNS)
                 || !event.getSource().isDirect() || !(event.getSource().getDirectEntity() instanceof LivingEntity attacker)

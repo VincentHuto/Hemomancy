@@ -11,7 +11,6 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 public class StartCentrifugeButtonPacket implements CustomPacketPayload {
@@ -28,9 +27,10 @@ public class StartCentrifugeButtonPacket implements CustomPacketPayload {
 
 	public static void handle(final StartCentrifugeButtonPacket msg, final IPayloadContext ctx) {
 		ctx.enqueueWork(() -> {
-			AbstractContainerMenu container = ctx.player().containerMenu;
-			if (container instanceof VialCentrifugeMenu && ctx.player() instanceof ServerPlayer serverPlayer) {
-				start(serverPlayer, ((VialCentrifugeMenu) container).getTe());
+			if (ctx.player() instanceof ServerPlayer serverPlayer
+					&& serverPlayer.containerMenu instanceof VialCentrifugeMenu menu
+					&& menu.stillValid(serverPlayer)) {
+				start(serverPlayer, menu.getTe());
 			}
 		});
 	}

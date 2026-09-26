@@ -164,65 +164,6 @@ neoForge {
             systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
         }
 
-        // This run config launches GameTestServer and runs all registered gametests, then exits.
-        // By default, the server will crash when no gametests are provided.
-        // The gametest system is also enabled by default for other run configs under the /test command.
-        gameTestServer {
-            type = "gameTestServer"
-            gameDirectory = project.file('build/phlegethontic-gametest')
-            // The pilot tests deliberately reuse Mojang's one-block empty
-            // template, so their template namespace is minecraft.
-            systemProperty 'neoforge.enabledGameTestNamespaces', "${project.mod_id},minecraft,blood_injection_validation,gore_wound_harpoon_validation"
-        }
-
-        goreWoundHarpoonGameTestServer {
-            type = "gameTestServer"
-            gameDirectory = project.file('build/gore-wound-harpoon-gametest')
-            systemProperty 'neoforge.enabledGameTestNamespaces', 'gore_wound_harpoon_validation'
-        }
-
-        excoriatedSpawnGameTestServer {
-            type = "gameTestServer"
-            gameDirectory = project.file('build/excoriated-spawn-gametest')
-            systemProperty 'neoforge.enabledGameTestNamespaces', 'excoriated_spawn_validation'
-        }
-
-        clinicalGameTestServer {
-            type = "gameTestServer"
-            gameDirectory = project.file('build/clinical-gametest')
-            systemProperty 'neoforge.enabledGameTestNamespaces', 'clinical_validation'
-        }
-
-        choirKeeperGameTestServer {
-            type = "gameTestServer"
-            gameDirectory = project.file('build/choir-keeper-gametest')
-            systemProperty 'neoforge.enabledGameTestNamespaces', 'choir_keeper_validation'
-        }
-
-        scriptoriumGameTestServer {
-            type = "gameTestServer"
-            gameDirectory = project.file('build/scriptorium-gametest')
-            systemProperty 'neoforge.enabledGameTestNamespaces', 'scriptorium_validation'
-        }
-
-        advancedBrewingGameTestServer {
-            type = "gameTestServer"
-            gameDirectory = project.file('build/advanced-brewing-gametest')
-            systemProperty 'neoforge.enabledGameTestNamespaces', 'advanced_brewing_validation'
-        }
-
-        bloodInjectionGameTestServer {
-            type = "gameTestServer"
-            gameDirectory = project.file('build/blood-injection-gametest')
-            systemProperty 'neoforge.enabledGameTestNamespaces', 'blood_injection_validation'
-        }
-
-        antecedentGameTestServer {
-            type = "gameTestServer"
-            gameDirectory = project.file('build/antecedent-gametest')
-            systemProperty 'neoforge.enabledGameTestNamespaces', 'antecedent_validation'
-        }
-
         antecedentReviewClient {
             client()
             gameDirectory = project.file('build/antecedent-client')
@@ -233,12 +174,6 @@ neoForge {
             programArguments.addAll '--username', 'AntecedentReview'
         }
 
-        successionGameTestServer {
-            type = "gameTestServer"
-            gameDirectory = project.file('build/succession-gametest')
-            systemProperty 'neoforge.enabledGameTestNamespaces', 'succession_validation'
-        }
-
         naeglerophaeonReviewClient {
             client()
             gameDirectory = project.file('build/naeglerophaeon-client')
@@ -247,12 +182,6 @@ neoForge {
             systemProperty 'hemomancy.gameplayDriver', 'true'
             systemProperty 'hemomancy.naeglerophaeonReview', 'true'
             programArguments.addAll '--username', 'MembraneReview'
-        }
-
-        naeglerophaeonGameTestServer {
-            type = 'gameTestServer'
-            gameDirectory = project.file('build/naeglerophaeon-validation')
-            systemProperty 'neoforge.enabledGameTestNamespaces', 'naeglerophaeon_validation'
         }
 
         successionReviewClient {
@@ -272,23 +201,6 @@ neoForge {
             jvmArguments.addAll("-Xms2G", "-Xmx4G")
             systemProperty 'hemomancy.gameplayDriver', 'true'
             programArguments.addAll '--username', 'SucObserver', '--quickPlayMultiplayer', 'localhost:25568'
-        }
-
-        castingAnimationGameTestServer {
-            type = "gameTestServer"
-            gameDirectory = project.file('build/casting-animation-gametest')
-            systemProperty 'neoforge.enabledGameTestNamespaces', 'casting_animation_validation'
-        }
-
-        phlegethonticValidationServer {
-            type = "gameTestServer"
-            def seed = providers.gradleProperty('phlegethonticSeed').getOrElse('42')
-            def pass = providers.gradleProperty('phlegethonticRun').getOrElse('fresh')
-            gameDirectory = project.file("build/phlegethontic-worlds/${seed}-${pass}")
-            systemProperty 'neoforge.enabledGameTestNamespaces', 'phlegethontic_validation'
-            systemProperty 'hemomancy.phlegethontic.validationSeed', seed
-            systemProperty 'hemomancy.phlegethontic.validationOrder', providers.gradleProperty('phlegethonticOrder').getOrElse('forward')
-            programArguments.addAll '--mixin', 'phlegethontic-validation.mixins.json'
         }
 
         data {
@@ -327,6 +239,8 @@ neoForge {
         }
     }
 }
+
+apply from: 'gradle/game-tests.gradle'
 
 // Sets up a dependency configuration called 'localRuntime'.
 // This configuration should be used instead of 'runtimeOnly' to declare

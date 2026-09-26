@@ -1,6 +1,7 @@
 package com.vincenthuto.hemomancy.common.recipe.serializer;
 
 import com.google.gson.JsonObject;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonSyntaxException;
 import com.mojang.serialization.*;
 import com.vincenthuto.hemomancy.Hemomancy;
@@ -19,17 +20,7 @@ public class FungalScarCultivationSerializer implements RecipeSerializer<FungalS
 
     // ── JSON helpers ──────────────────────────────────────────────────────────
 
-    private static <T> JsonObject toJsonObject(DynamicOps<T> ops, MapLike<T> input) {
-        com.google.gson.JsonObject json = new com.google.gson.JsonObject();
-        input.entries().forEach(pair -> {
-            String key = ops.getStringValue(pair.getFirst()).getOrThrow(IllegalStateException::new);
-            com.google.gson.JsonElement value = ops.convertTo(JsonOps.INSTANCE, pair.getSecond());
-            json.add(key, value);
-        });
-        return json;
-    }
-
-    private static FungalScarCultivationRecipe fromJsonObject(ResourceLocation recipeId, JsonObject json) {
+    private static FungalScarCultivationRecipe fromJsonObject(ResourceLocation recipeId, JsonObject json, DynamicOps<JsonElement> jsonOps) {
         String tendencyStr = GsonHelper.getAsString(json, "tendency");
         EnumBloodTendency tendency;
         try {
@@ -41,10 +32,10 @@ public class FungalScarCultivationSerializer implements RecipeSerializer<FungalS
         int   phase1Duration    = GsonHelper.getAsInt(json,    "phase1_duration",      600);
         int   matThreshold      = GsonHelper.getAsInt(json,    "maturation_threshold", 2000);
         ItemStack seed          = json.has("seed")
-                ? RecipeResultStackParser.parseResultStack(json, "seed")
-                : RecipeResultStackParser.parseResultStack(json, "result");
-        ItemStack immature      = RecipeResultStackParser.parseResultStack(json, "immature_result");
-        ItemStack result        = RecipeResultStackParser.parseResultStack(json, "result");
+                ? RecipeResultStackParser.parseResultStack(json, "seed", jsonOps)
+                : RecipeResultStackParser.parseResultStack(json, "result", jsonOps);
+        ItemStack immature      = RecipeResultStackParser.parseResultStack(json, "immature_result", jsonOps);
+        ItemStack result        = RecipeResultStackParser.parseResultStack(json, "result", jsonOps);
         return new FungalScarCultivationRecipe(recipeId, tendency, bloodCostPhase1,
                 phase1Duration, matThreshold, seed, immature, result);
     }
@@ -62,11 +53,11 @@ public class FungalScarCultivationSerializer implements RecipeSerializer<FungalS
         @Override
         public <T> DataResult<FungalScarCultivationRecipe> decode(DynamicOps<T> ops, MapLike<T> input) {
             try {
-                JsonObject json = toJsonObject(ops, input);
+                JsonObject json = RecipeCodecJson.toJsonObject(ops, input);
                 ResourceLocation id = json.has("id")
                         ? ResourceLocation.parse(json.get("id").getAsString())
                         : Hemomancy.rloc("fungal_scar/unknown");
-                return DataResult.success(fromJsonObject(id, json));
+                return DataResult.success(fromJsonObject(id, json, RecipeCodecJson.jsonOps(ops)));
             } catch (Exception e) {
                 return DataResult.error(() -> "Failed to decode FungalScarCultivationRecipe: " + e.getMessage());
             }
@@ -80,12 +71,9 @@ public class FungalScarCultivationSerializer implements RecipeSerializer<FungalS
             prefix.add("blood_cost_phase1",    ops.createFloat(recipe.getBloodCostPhase1()));
             prefix.add("phase1_duration",      ops.createInt(recipe.getPhase1Duration()));
             prefix.add("maturation_threshold", ops.createInt(recipe.getMaturationThreshold()));
-            ItemStack.CODEC.encodeStart(JsonOps.INSTANCE, recipe.getSeedItemStack()).result()
-                    .ifPresent(e -> prefix.add("seed", JsonOps.INSTANCE.convertTo(ops, e)));
-            ItemStack.CODEC.encodeStart(JsonOps.INSTANCE, recipe.getImmatureResult()).result()
-                    .ifPresent(e -> prefix.add("immature_result", JsonOps.INSTANCE.convertTo(ops, e)));
-            ItemStack.CODEC.encodeStart(JsonOps.INSTANCE, recipe.getResultItemStack()).result()
-                    .ifPresent(e -> prefix.add("result", JsonOps.INSTANCE.convertTo(ops, e)));
+            prefix.add("seed", ItemStack.CODEC.encodeStart(ops, recipe.getSeedItemStack()));
+            prefix.add("immature_result", ItemStack.CODEC.encodeStart(ops, recipe.getImmatureResult()));
+            prefix.add("result", ItemStack.CODEC.encodeStart(ops, recipe.getResultItemStack()));
             return prefix;
         }
     };

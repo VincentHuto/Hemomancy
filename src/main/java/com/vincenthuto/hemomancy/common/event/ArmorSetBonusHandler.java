@@ -6,6 +6,7 @@ import com.vincenthuto.hemomancy.common.armor.BodyIdiomArmorRules;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodFlowContribution.Category;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.*;
+import com.vincenthuto.hemomancy.common.damage.SchoolDamage;
 import com.vincenthuto.hemomancy.common.init.EffectInit;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.item.harbinger.armor.BloodLustArmorItem;
@@ -192,7 +193,8 @@ public class ArmorSetBonusHandler {
 				}
 			}
 			applyBloodLustMaskBonus(player, event.getEntity());
-			if (event.getNewDamage() > 0 && player instanceof ServerPlayer serverPlayer) {
+			if (SchoolDamage.hasHealthDamage(event)
+					&& player instanceof ServerPlayer serverPlayer) {
 				ArtificerAssignments.onBloodLustDemonstrated(serverPlayer);
 			}
 		}

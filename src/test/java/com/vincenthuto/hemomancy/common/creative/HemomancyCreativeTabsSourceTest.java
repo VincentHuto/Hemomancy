@@ -71,6 +71,7 @@ public final class HemomancyCreativeTabsSourceTest {
 
 	public static void main(String[] args) throws IOException {
 		String hemomancy = read("src/main/java/com/vincenthuto/hemomancy/Hemomancy.java");
+		String blockInit = read("src/main/java/com/vincenthuto/hemomancy/common/init/BlockInit.java");
 		String structureSpawner = read(
 				"src/main/java/com/vincenthuto/hemomancy/common/item/shared/StructureSpawnerItem.java");
 		String placeStructurePacket = read(
@@ -97,9 +98,13 @@ public final class HemomancyCreativeTabsSourceTest {
 					hemomancy, "ItemInit." + item + ".get()");
 		}
 		for (String block : WIP_BLOCKS) {
-			assertAppearsAtLeastTwice("WIP block should be accepted and excluded from main tab: " + block,
-					hemomancy, "BlockInit." + block + ".get()");
+			assertContains("WIP block should be accepted: " + block,
+					hemomancy, "populator.accept(BlockInit." + block + ".get())");
+			assertContains("WIP block should be excluded from the main tab: " + block,
+					blockInit, "\"" + block + "\"");
 		}
+		assertContains("main tab should consult the block item decision", hemomancy,
+				"BlockInit.itemDecision(");
 		assertContains("main tab should place Fervent Husk after the regular Chitinite Husk", hemomancy,
 				"if (item.get() == ItemInit.chitinous_husk.get())");
 		assertContains("main tab should accept the Fervent Husk beside the regular Chitinite Husk", hemomancy,

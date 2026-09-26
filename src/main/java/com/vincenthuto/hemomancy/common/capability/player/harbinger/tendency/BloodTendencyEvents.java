@@ -19,9 +19,6 @@ import net.minecraft.world.entity.player.Player;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.living.LivingDeathEvent;
-import net.neoforged.neoforge.event.entity.player.PlayerEvent;
-import net.neoforged.neoforge.event.entity.player.PlayerEvent.PlayerChangedDimensionEvent;
-import net.neoforged.neoforge.event.entity.player.PlayerEvent.PlayerRespawnEvent;
 
 import javax.annotation.Nullable;
 import java.util.Map;
@@ -133,37 +130,20 @@ public class BloodTendencyEvents {
 		});
 	}
 
-	// â”€â”€â”€â”€â”€ Sync & Lifecycle â”€â”€â”€â”€â”€
+	// Sync
 
 	public static void syncTendency(ServerPlayer player, IBloodTendency tendency) {
 		PacketHandler.sendToPlayer(player, new BloodTendencyServerPacket(tendency.getTendency()));
 	}
 
-	@SubscribeEvent
-	public static void onDimensionChange(PlayerChangedDimensionEvent event) {
-		ServerPlayer player = (ServerPlayer) event.getEntity();
-		Map<EnumBloodTendency, Float> bloodTendency = HemoCapabilityAccess.getBloodTendency(player)
-				.map(IBloodTendency::getTendency).orElse(Map.of());
-		PacketHandler.sendToPlayer(player, new BloodTendencyServerPacket(bloodTendency));
-	}
-
-	@SubscribeEvent
-	public static void playerLoggedIn(PlayerEvent.PlayerLoggedInEvent event) {
-		ServerPlayer player = (ServerPlayer) event.getEntity();
-		Map<EnumBloodTendency, Float> bloodTendency = HemoCapabilityAccess.getBloodTendency(player)
-				.map(IBloodTendency::getTendency).orElse(Map.of());
-		PacketHandler.sendToPlayer(player, new BloodTendencyServerPacket(bloodTendency));
-	}
-
-	@SubscribeEvent
-	public static void respawn(PlayerRespawnEvent event) {
-		if (event.getEntity() instanceof Player) {
-			Player player = event.getEntity();
-			if (!player.getCommandSenderWorld().isClientSide) {
-				IBloodTendency tendency = HemoCapabilityAccess.getBloodTendency(player)
-						.orElseThrow(IllegalArgumentException::new);
-				PacketHandler.sendToPlayer((ServerPlayer) player, new BloodTendencyServerPacket(tendency.getTendency()));
-			}
+	public static void syncOwnerSnapshot(ServerPlayer player, boolean respawn) {
+		if (respawn) {
+			syncTendency(player, HemoCapabilityAccess.getBloodTendency(player)
+					.orElseThrow(IllegalArgumentException::new));
+		} else {
+			Map<EnumBloodTendency, Float> tendency = HemoCapabilityAccess.getBloodTendency(player)
+					.map(IBloodTendency::getTendency).orElse(Map.of());
+			PacketHandler.sendToPlayer(player, new BloodTendencyServerPacket(tendency));
 		}
 	}
 

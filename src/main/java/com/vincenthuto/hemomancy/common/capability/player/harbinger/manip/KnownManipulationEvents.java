@@ -17,6 +17,7 @@ import com.vincenthuto.hemomancy.common.network.capa.harbinger.manips.KnownManip
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.manips.SyncTrackingAvatarPacket;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.ListTag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
@@ -32,20 +33,35 @@ import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 
 @EventBusSubscriber(modid = Hemomancy.MOD_ID)
-public class KnownManipulationEvents {	@SubscribeEvent
+public class KnownManipulationEvents {
+	private static final Map<UUID, ListTag> LAST_OWNER_SNAPSHOT = new HashMap<>();
+
+	@SubscribeEvent
 	public static void onDimensionChange(PlayerChangedDimensionEvent event) {
-		ServerPlayer player = (ServerPlayer) event.getEntity();
-		IKnownManipulations known = HemoCapabilityAccess.getKnownManipulations(player)
-				.orElseThrow(IllegalStateException::new);
-		PacketHandler.sendToPlayer(player, new KnownManipulationServerPacket(known));
+		syncPlayerEvent(event.getEntity());
 	}
 
 	@SubscribeEvent
-	public static void onDimensionChange(PlayerTickEvent.Post event) {
+	public static void refreshPlayerDimensions(PlayerTickEvent.Post event) {
 		event.getEntity().refreshDimensions();
-		syncPlayerEvent(event.getEntity());
+	}
+
+	@SubscribeEvent
+	public static void syncChangedOwnerState(PlayerTickEvent.Post event) {
+		if (event.getEntity() instanceof ServerPlayer player) {
+			HemoCapabilityAccess.getKnownManipulations(player).ifPresent(known -> {
+				// Level progress and vein lists can change through mutable getters, bypassing setters.
+				ListTag current = ((KnownManipulations) known).serializeNBT(player.registryAccess());
+				if (!current.equals(LAST_OWNER_SNAPSHOT.get(player.getUUID()))) {
+					syncPlayerEvent(player);
+				}
+			});
+		}
 	}
 
 	@SubscribeEvent
@@ -85,6 +101,7 @@ public class KnownManipulationEvents {	@SubscribeEvent
 		if (playerEntity instanceof ServerPlayer s) {
 			HemoCapabilityAccess.getKnownManipulations(s).ifPresent(capa -> {
 				PacketHandler.sendToPlayer(s, new KnownManipulationServerPacket(capa));
+				LAST_OWNER_SNAPSHOT.put(s.getUUID(), ((KnownManipulations) capa).serializeNBT(s.registryAccess()));
 			});
 		}
 	}
@@ -108,15 +125,14 @@ public class KnownManipulationEvents {	@SubscribeEvent
 	@SubscribeEvent
 	public static void playerLoggedIn(PlayerEvent.PlayerLoggedInEvent event) {
 		ServerPlayer player = (ServerPlayer) event.getEntity();
-		IKnownManipulations known = HemoCapabilityAccess.getKnownManipulations(player)
-				.orElseThrow(IllegalStateException::new);
 		KnownManipulationGrantHelper.grantDegreeOneUtilities(player);
-		PacketHandler.sendToPlayer(player, new KnownManipulationServerPacket(known));
+		syncPlayerEvent(player);
 
 	}
 
 	@SubscribeEvent
 	public static void playerLoggedOut(PlayerEvent.PlayerLoggedOutEvent event) {
+		LAST_OWNER_SNAPSHOT.remove(event.getEntity().getUUID());
 		// Clean up any pending thrall awaiting target selection
 		SummonThrallManip.clearPendingThrall(event.getEntity().getUUID());
 	}

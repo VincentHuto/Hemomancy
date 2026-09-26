@@ -1,0 +1,112 @@
+// Every source namespace must choose alpha: true or alpha: false with a reason.
+// Existing focused suites stay opt-in; the consolidation suites join the combined gate.
+ext.gameTestSuites = [
+    'recipe_codec_validation': [alpha: true, run: 'recipeCodecGameTestServer', directory: 'build/recipe-codec-gametest'],
+    'hemomancy': [alpha: true, run: null, directory: null],
+    'blood_injection_validation': [alpha: true, run: 'bloodInjectionGameTestServer', directory: 'build/blood-injection-gametest'],
+    'gore_wound_harpoon_validation': [alpha: true, run: 'goreWoundHarpoonGameTestServer', directory: 'build/gore-wound-harpoon-gametest'],
+    'item_inventory_validation': [alpha: true, run: 'itemInventoryGameTestServer', directory: 'build/item-inventory-gametest'],
+    'combat_order_validation': [alpha: true, run: 'combatOrderGameTestServer', directory: 'build/combat-order-gametest'],
+    'owner_snapshot_validation': [alpha: true, run: 'ownerSnapshotGameTestServer', directory: 'build/owner-snapshot-gametest'],
+    'distillation_validation': [alpha: true, run: 'distillationGameTestServer', directory: 'build/distillation-gametest'],
+    'registration_validation': [alpha: true, run: 'registrationGameTestServer', directory: 'build/registration-gametest'],
+    'unstained_zone_validation': [alpha: true, run: 'unstainedZoneGameTestServer', directory: 'build/unstained-zone-gametest'],
+    'excoriated_spawn_validation': [alpha: false, run: 'excoriatedSpawnGameTestServer', directory: 'build/excoriated-spawn-gametest', reason: 'Existing focused suite remains opt-in; this rollout adds consolidation coverage.'],
+    'clinical_validation': [alpha: false, run: 'clinicalGameTestServer', directory: 'build/clinical-gametest', reason: 'Existing focused suite remains opt-in; this rollout adds consolidation coverage.'],
+    'choir_keeper_validation': [alpha: false, run: 'choirKeeperGameTestServer', directory: 'build/choir-keeper-gametest', reason: 'Existing focused suite remains opt-in; this rollout adds consolidation coverage.'],
+    'scriptorium_validation': [alpha: false, run: 'scriptoriumGameTestServer', directory: 'build/scriptorium-gametest', reason: 'Existing focused suite remains opt-in; this rollout adds consolidation coverage.'],
+    'advanced_brewing_validation': [alpha: false, run: 'advancedBrewingGameTestServer', directory: 'build/advanced-brewing-gametest', reason: 'Existing focused suite remains opt-in; this rollout adds consolidation coverage.'],
+    'antecedent_validation': [alpha: false, run: 'antecedentGameTestServer', directory: 'build/antecedent-gametest', reason: 'Existing focused suite remains opt-in; this rollout adds consolidation coverage.'],
+    'succession_validation': [alpha: false, run: 'successionGameTestServer', directory: 'build/succession-gametest', reason: 'Existing focused suite remains opt-in; this rollout adds consolidation coverage.'],
+    'naeglerophaeon_validation': [alpha: false, run: 'naeglerophaeonGameTestServer', directory: 'build/naeglerophaeon-validation', reason: 'Existing focused suite remains opt-in; this rollout adds consolidation coverage.'],
+    'casting_animation_validation': [alpha: false, run: 'castingAnimationGameTestServer', directory: 'build/casting-animation-gametest', reason: 'Existing focused suite remains opt-in; this rollout adds consolidation coverage.'],
+    'living_weapon_validation': [alpha: false, run: 'livingWeaponGameTest', directory: 'build/living-weapons-gametest', reason: 'Restores the previously external focused launcher; gate scope stays unchanged.'],
+    'phlegethontic_validation': [alpha: false, run: 'phlegethonticValidationServer', directory: null, reason: 'Requires a fresh seeded world and validation mixins.', generator: 'com.vincenthuto.hemomancy.gametest.PhlegethonticWorldValidation']
+]
+
+// Legacy tests use vanilla templates, whose namespace NeoForge also filters on.
+def templateNamespaces = ['minecraft']
+def namespaceProperty = 'neoforge.enabledGameTestNamespaces'
+def alphaNamespaces = gameTestSuites.findAll { namespace, suite -> suite.alpha == true }.keySet().toList() + templateNamespaces
+
+gameTestSuites.each { namespace, suite ->
+    if (suite.run == null) return
+    def run = neoForge.runs.maybeCreate(suite.run)
+    run.type = 'gameTestServer'
+    run.systemProperty namespaceProperty, namespace
+    if (suite.generator != null) {
+        def seed = providers.gradleProperty('phlegethonticSeed').getOrElse('42')
+        def pass = providers.gradleProperty('phlegethonticRun').getOrElse('fresh')
+        run.gameDirectory = file("build/phlegethontic-worlds/${seed}-${pass}")
+        run.systemProperty 'hemomancy.phlegethontic.validationSeed', seed
+        run.systemProperty 'hemomancy.phlegethontic.validationOrder', providers.gradleProperty('phlegethonticOrder').getOrElse('forward')
+        run.programArguments.addAll '--mixin', 'phlegethontic-validation.mixins.json'
+    } else {
+        run.gameDirectory = file(suite.directory)
+    }
+}
+def combined = neoForge.runs.maybeCreate('gameTestServer')
+combined.type = 'gameTestServer'
+combined.gameDirectory = file('build/phlegethontic-gametest')
+combined.systemProperty namespaceProperty, alphaNamespaces.join(',')
+
+def verifySuites = tasks.register('verifyGameTestSuites') {
+    group = 'verification'
+    description = 'Checks GameTest namespace coverage, explicit gate decisions, and generated launchers.'
+    doLast {
+        def problems = []
+        gameTestSuites.each { namespace, suite ->
+            if (!(suite.alpha instanceof Boolean)) problems << "${namespace}: choose alpha: true or false"
+            if (suite.alpha == false && !suite.reason?.trim()) problems << "${namespace}: excluded suites need a reason"
+            if (suite.alpha == false && !suite.run) problems << "${namespace}: excluded suites need a focused launcher"
+        }
+        def discovered = [] as Set
+        def generators = [] as Set
+        sourceSets.gameTest.allJava.files.each { source ->
+            def code = source.getText('UTF-8').replaceAll(/(?s)\/\*.*?\*\//, '').replaceAll(/(?m)\/\/.*$/, '')
+            def holders = code =~ /@GameTestHolder\s*\(\s*([^)]*)\)/
+            holders.each { match ->
+                def value = match[1].trim()
+                if (value == 'Hemomancy.MOD_ID') discovered.add(project.mod_id.toString())
+                else if (value ==~ /"[a-z0-9_.-]+"/) discovered.add(value.substring(1, value.length() - 1))
+                else problems << "${source.name}: unsupported GameTestHolder ${value}; use a literal namespace or Hemomancy.MOD_ID"
+            }
+            if (code.contains('@GameTestGenerator')) {
+                def packageName = (code =~ /package\s+([\w.]+)\s*;/)[0][1]
+                generators.add(packageName + '.' + source.name.replaceFirst(/\.java$/, ''))
+            }
+            if ((code =~ /@GameTest\s*\(/).find() && !holders.find(0)) {
+                problems << "${source.name}: GameTest methods need an explicit GameTestHolder"
+            }
+        }
+        (discovered - gameTestSuites.keySet()).each { problems << "Undeclared GameTest namespace: ${it}" }
+        def declaredGenerators = gameTestSuites.values().findAll { it.generator }.collect { it.generator } as Set
+        (generators - declaredGenerators).each { problems << "Undeclared GameTest generator: ${it}" }
+        (declaredGenerators - generators).each { problems << "Missing GameTest generator: ${it}" }
+        gameTestSuites.each { namespace, suite ->
+            if (!discovered.contains(namespace) && !suite.generator) problems << "Suite has no source holder: ${namespace}"
+        }
+        def expectedRuns = gameTestSuites.values().findAll { it.run }.collect { it.run } + ['gameTestServer']
+        if (expectedRuns.toSet().size() != expectedRuns.size()) problems << 'Duplicate GameTest launcher names'
+        neoForge.runs.each { run ->
+            if (run.type.get() == 'gameTestServer' && !expectedRuns.contains(run.name)) problems << "Undeclared GameTest launcher: ${run.name}"
+        }
+        gameTestSuites.each { namespace, suite ->
+            if (suite.run && neoForge.runs.getByName(suite.run).systemProperties.get()[namespaceProperty] != namespace) {
+                problems << "${suite.run}: namespace differs from suite declaration"
+            }
+        }
+        def expectedAlpha = (gameTestSuites.findAll { namespace, suite -> suite.alpha == true }.keySet() + templateNamespaces) as Set
+        def actualAlpha = neoForge.runs.gameTestServer.systemProperties.get()[namespaceProperty].split(',') as Set
+        if (actualAlpha != expectedAlpha) problems << "Combined gate namespaces differ: expected ${expectedAlpha}, got ${actualAlpha}"
+        if (problems) throw new GradleException('GameTest suite registration errors:\n - ' + problems.join('\n - '))
+        logger.lifecycle("Verified ${gameTestSuites.size()} GameTest suites. Combined gate: ${actualAlpha.join(', ')}")
+        gameTestSuites.findAll { namespace, suite -> !suite.alpha }.each { namespace, suite ->
+            logger.lifecycle("Opt-in: ${namespace} - ${suite.reason}")
+        }
+    }
+}
+
+tasks.matching { it.name == 'alphaCheck' || it.name == 'check' || it.name == 'test' || it.name.startsWith('prepare') && it.name.endsWith('Run') }.configureEach {
+    dependsOn verifySuites
+}

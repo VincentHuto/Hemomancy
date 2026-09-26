@@ -451,14 +451,8 @@ public class GhastlyAlembicBlockEntity extends BaseContainerBlockEntity
 	private boolean canBurn(RegistryAccess registryAccess, @Nullable RecipeHolder<DistillationRecipe> recipeHolder, NonNullList<ItemStack> inv, int maxStack) {
 		if (inv.get(SLOT_INPUT).isEmpty() || recipeHolder == null) return false;
 
-		ItemStack result = recipeHolder.value().getResultItem(registryAccess).copy();
-		if (result.isEmpty()) return false;
-
-		ItemStack currentResult = inv.get(SLOT_RESULT);
-		if (currentResult.isEmpty()) return true;
-		if (!ItemStack.isSameItem(currentResult, result)) return false;
-		int totalCount = currentResult.getCount() + result.getCount();
-		return totalCount <= maxStack && totalCount <= currentResult.getMaxStackSize();
+		return DistillationRecipe.canAcceptResult(recipeHolder.value().getResultItem(registryAccess),
+				inv.get(SLOT_RESULT), maxStack);
 	}
 
 	private boolean burn(RegistryAccess registryAccess, @Nullable RecipeHolder<DistillationRecipe> recipeHolder, NonNullList<ItemStack> inv, int maxStack) {

@@ -16,6 +16,7 @@ import com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.EnumA
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.EnumInitiatoryDegree;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.InitiatoryDegreeEvents;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.KnownManipulationGrantHelper;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.KnownManipulationEvents;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.summon.KnownSummonEvents;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.BloodTendencyEvents;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
@@ -88,6 +89,7 @@ import net.minecraft.world.phys.Vec3;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.living.LivingDeathEvent;
+import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.event.tick.LevelTickEvent;
 import net.neoforged.neoforge.network.PacketDistributor;
 
@@ -112,6 +114,33 @@ public class HarbingerCardinalRiteEvents {
 	private static final int RITE_SYNC_INTERVAL = 10;
 	private static final int BROKEN_ANCHOR_OUTER_BLACK = 0xE806020A;
 	private static final int BROKEN_ANCHOR_INNER_PURPLE = 0xFF5A167D;
+
+	private static PacketSyncActiveRites activeRiteSnapshot(ServerLevel level) {
+		List<ActiveRiteClientData.RiteEntry> entries = new ArrayList<>();
+		for (ActiveCardinalRite rite : CardinalRiteSavedData.get(level).getActiveRites().values()) {
+			entries.add(toClientEntry(level, rite));
+		}
+		return new PacketSyncActiveRites(entries);
+	}
+
+	private static void syncActiveRites(ServerLevel level) {
+		PacketSyncActiveRites snapshot = activeRiteSnapshot(level);
+		for (ServerPlayer viewer : level.players()) PacketDistributor.sendToPlayer(viewer, snapshot);
+	}
+
+	@SubscribeEvent
+	public static void onPlayerLogin(PlayerEvent.PlayerLoggedInEvent event) {
+		if (event.getEntity() instanceof ServerPlayer player) {
+			PacketDistributor.sendToPlayer(player, activeRiteSnapshot(player.serverLevel()));
+		}
+	}
+
+	@SubscribeEvent
+	public static void onPlayerChangedDimension(PlayerEvent.PlayerChangedDimensionEvent event) {
+		if (event.getEntity() instanceof ServerPlayer player) {
+			PacketDistributor.sendToPlayer(player, activeRiteSnapshot(player.serverLevel()));
+		}
+	}
 
 	@SubscribeEvent
 	public static void onLevelTick(LevelTickEvent.Post event) {
@@ -243,11 +272,7 @@ public class HarbingerCardinalRiteEvents {
 							SoundSource.BLOCKS, 1.0F, 0.55F);
 					sLevel.playSound(null, center, SoundEvents.BEACON_ACTIVATE,
 							SoundSource.BLOCKS, 0.8F, 1.25F);
-					List<ActiveRiteClientData.RiteEntry> entries = new ArrayList<>();
-					for (ActiveCardinalRite active : activeRites.values()) {
-						entries.add(toClientEntry(sLevel, active));
-					}
-					PacketDistributor.sendToAllPlayers(new PacketSyncActiveRites(entries));
+					syncActiveRites(sLevel);
 				}
 				if (!rite.isStaffImpactReached()) continue;
 			}
@@ -368,11 +393,7 @@ public class HarbingerCardinalRiteEvents {
 
 		// Sync active rites to clients for boundary circle rendering
 		if (sLevel.getGameTime() % RITE_SYNC_INTERVAL == 0 || phaseChanged || !toRemove.isEmpty()) {
-			List<ActiveRiteClientData.RiteEntry> entries = new ArrayList<>();
-			for (ActiveCardinalRite rite : activeRites.values()) {
-				entries.add(toClientEntry(sLevel, rite));
-			}
-			PacketDistributor.sendToAllPlayers(new PacketSyncActiveRites(entries));
+			syncActiveRites(sLevel);
 		}
 	}
 
@@ -401,11 +422,7 @@ public class HarbingerCardinalRiteEvents {
 					false);
 
 			// Sync updated rite list to clients so boundary circle is removed
-			List<ActiveRiteClientData.RiteEntry> entries = new ArrayList<>();
-			for (ActiveCardinalRite rite : savedData.getActiveRites().values()) {
-				entries.add(toClientEntry(sLevel, rite));
-			}
-			PacketDistributor.sendToAllPlayers(new PacketSyncActiveRites(entries));
+			syncActiveRites(sLevel);
 		}
 	}
 
@@ -1486,7 +1503,9 @@ public class HarbingerCardinalRiteEvents {
 					// Grant Harbinger degree advancement(s) for the new rank
 					HarbingerAdvancementGranter.grantDegree(caster, targetDegree);
 					LiberKnowledgeHelper.unlockForDegree(caster, targetDegree);
-					KnownManipulationGrantHelper.grantDegreeOneUtilities(caster);
+					if (KnownManipulationGrantHelper.grantDegreeOneUtilities(caster)) {
+						KnownManipulationEvents.syncPlayerEvent(caster);
+					}
 
 					// Mutual exclusion: reset Unstained progress (Harbingers and Unstained are opposed)
 					boolean unstainedWasReset = PathMutualExclusionHelper.resetUnstainedProgress(caster);

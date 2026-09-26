@@ -43,9 +43,6 @@ public class ContainerInit {
 	public static final DeferredHolder<MenuType<?>, MenuType<MorphlingJarMenu>> morphling_jar = CONTAINERS.register("morphling_jar",
 			() -> IMenuTypeExtension.create(MorphlingJarMenu::new));
 
-	public static final DeferredHolder<MenuType<?>, MenuType<LivingStaffMenu>> living_staff = CONTAINERS.register("living_staff",
-			() -> IMenuTypeExtension.create(LivingStaffMenu::new));
-
 	public static final DeferredHolder<MenuType<?>, MenuType<LivingSyringeMenu>> living_syringe = CONTAINERS
 			.register("living_syringe", () -> IMenuTypeExtension.create(LivingSyringeMenu::new));
 

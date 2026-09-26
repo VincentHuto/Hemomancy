@@ -88,7 +88,13 @@ public class PallidRetortMenu extends AbstractContainerMenu {
 		// Flask slot: underneath the blood volume bar (extraction zone)
 		this.addSlot(new PallidRetortFlaskSlot(this, container, FLASK_SLOT, 155, 58));
 		// Result slot: right of crafting area
-		this.addSlot(new FurnaceResultSlot(playerInventory.player, container, RESULT_SLOT, 134, 32));
+		this.addSlot(new FurnaceResultSlot(playerInventory.player, container, RESULT_SLOT, 134, 32) {
+			@Override public void onTake(Player player, ItemStack stack) {
+				if (player instanceof net.minecraft.server.level.ServerPlayer serverPlayer)
+					PallidRetortMenu.this.container.awardUsedRecipesAndPopExperience(serverPlayer);
+				super.onTake(player, stack);
+			}
+		});
 		// Catalyst slot: top-left corner of the crafting area
 		this.addSlot(new Slot(container, CATALYST_SLOT, 8, 8));
 		// Flask output slot: to the left of the flask slot (empty flasks from consumed bloody flasks)

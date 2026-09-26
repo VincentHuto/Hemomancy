@@ -1,43 +1,21 @@
 package com.vincenthuto.hemomancy.common.rite.sigil;
 
-import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.vincenthuto.hemomancy.common.data.JsonResourceReloadListener;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.packs.resources.ResourceManager;
-import net.minecraft.server.packs.resources.SimplePreparableReloadListener;
-import net.minecraft.util.profiling.ProfilerFiller;
 import net.minecraft.world.phys.Vec3;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.io.InputStreamReader;
-import java.nio.charset.StandardCharsets;
 import java.util.*;
 
-public final class IchorianSigilLoader
-		extends SimplePreparableReloadListener<Map<ResourceLocation, IchorianSigilDefinition>> {
-	private static final String FOLDER = "ichorian_sigil";
+public final class IchorianSigilLoader extends JsonResourceReloadListener<IchorianSigilDefinition> {
 	private static final Logger LOGGER = LogManager.getLogger();
-	private static final Gson GSON = new Gson();
 
-	@Override
-	protected Map<ResourceLocation, IchorianSigilDefinition> prepare(ResourceManager manager,
-			ProfilerFiller profiler) {
-		Map<ResourceLocation, IchorianSigilDefinition> loaded = new HashMap<>();
-		manager.listResources(FOLDER, id -> id.getPath().endsWith(".json")).forEach((file, resource) -> {
-			String path = file.getPath();
-			ResourceLocation id = ResourceLocation.fromNamespaceAndPath(file.getNamespace(),
-					path.substring(FOLDER.length() + 1, path.length() - 5));
-			try (InputStreamReader reader =
-						 new InputStreamReader(resource.open(), StandardCharsets.UTF_8)) {
-				JsonObject root = GSON.fromJson(reader, JsonObject.class);
-				loaded.put(id, parseDefinition(id, root));
-			} catch (Exception exception) {
-				LOGGER.error("Failed to load Ichorian Sigil {}: {}", file, exception.getMessage());
-			}
-		});
-		return loaded;
+	public IchorianSigilLoader() {
+		super("ichorian_sigil", "Ichorian Sigil", LOGGER,
+				IchorianSigilLoader::parseDefinition, IchorianSigilRegistry::reload);
 	}
 
 	static IchorianSigilDefinition parseDefinition(ResourceLocation id, JsonObject root) {
@@ -121,10 +99,4 @@ public final class IchorianSigilLoader
 				values.get(1).getAsDouble(), values.get(2).getAsDouble());
 	}
 
-	@Override
-	protected void apply(Map<ResourceLocation, IchorianSigilDefinition> prepared,
-			ResourceManager manager, ProfilerFiller profiler) {
-		IchorianSigilRegistry.reload(prepared);
-		LOGGER.info("Loaded {} Ichorian Sigils", prepared.size());
-	}
 }

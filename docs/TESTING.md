@@ -16,10 +16,26 @@ From the project root on Windows:
 - `runGameTestServer` starts a headless NeoForge server, runs the registered progression scenarios, and exits non-zero if a required scenario fails.
 - `alphaCheck` runs both layers in order. Use this before an alpha build or whenever progression, crafting, quests, or rewards change.
 
+## GameTest suite catalog
+
+`gradle/game-tests.gradle` is the source of truth for suite namespaces, focused launcher names, run directories, and inclusion in `alphaCheck`. Each entry must explicitly set `alpha: true`, or `alpha: false` with a reason and a focused launcher. The combined server includes the existing Hemomancy, blood-injection, harpoon, and item-inventory suites plus combat order, owner snapshots, distillation, registration, Unstained zone lifecycle, and recipe codec plumbing. The vanilla `minecraft` template namespace remains enabled for legacy fixtures.
+
+Existing focused encounter, clinical, brewing, Scriptorium, animation, and living-weapon suites remain explicitly opt-in; this change expands the combined gate with consolidation coverage. Fresh-world Phlegethontic validation remains separate because it requires seed/run parameters and validation mixins. Existing focused task names and directories are preserved. Living weapons now have a normal `runLivingWeaponGameTest` task instead of relying on the missing external init script.
+
+`./gradlew.bat verifyGameTestSuites` checks source holders and generators against the catalog, requires explicit gate decisions and exclusion reasons, and rejects undeclared or mismatched launchers. It runs before `test`, `check`, `alphaCheck`, and run preparation. A new namespace therefore fails the gate until its catalog entry is added. Use literal `@GameTestHolder("namespace")` values or `Hemomancy.MOD_ID`; declare generated suites using their generator class.
+
+The guard itself has integration probes:
+
+```powershell
+./gradlew.bat -I src/test/gametest-suite-registration.init.gradle -PsuiteProbe=positive verifyGameTestSuites
+```
+
+The `missing-decision`, `missing-reason`, `unknown-namespace`, and `unlisted-run` probe modes must fail with the corresponding registration error. These probes alter only the test invocation and create their synthetic source under `build/`.
+
 ## Living weapons
 
 ```powershell
-./gradlew.bat -I tools/living_weapon_validation.init.gradle test --tests '*Living*' --tests '*LuxUmbra*' --tests '*Gloam*' --tests '*Thermal*' runLivingWeaponGameTest compileJava processResources
+./gradlew.bat test --tests '*Living*' --tests '*LuxUmbra*' --tests '*Gloam*' --tests '*Thermal*' runLivingWeaponGameTest compileJava processResources
 ```
 
 The isolated server uses `build/living-weapons-gametest`. Its weapon scenarios cover saved spear charge, failed and uncooled hits, primary and nearby burst damage, ally exclusion, axe swing duration and pool timing, and Blood Bolt impact scaling and bounded chaining. JVM checks cover the hand curves, three-cut geometry, spherical Lux extent, and torch fan motion and visibility.

@@ -14,9 +14,7 @@ import com.vincenthuto.hemomancy.common.entity.mob.monster.will.WillAbsorptionRu
 import com.vincenthuto.hemomancy.common.entity.mob.monster.will.WillBloodUtilityInteractions;
 import com.vincenthuto.hemomancy.common.init.SkillPointInit;
 import com.vincenthuto.hemomancy.common.item.harbinger.morphlings.IMorphling;
-import com.vincenthuto.hemomancy.common.item.itemhandler.LivingStaffItemHandler;
 import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
-import com.vincenthuto.hemomancy.common.menu.LivingStaffMenu;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.BloodCraftingKeyPressPacket;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.BloodVolumeServerPacket;
@@ -35,14 +33,11 @@ import net.minecraft.stats.Stats;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
-import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
@@ -54,31 +49,13 @@ import net.minecraft.world.phys.Vec3;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.fml.loading.FMLEnvironment;
-import net.neoforged.neoforge.capabilities.Capabilities;
-import net.neoforged.neoforge.items.IItemHandler;
 
-import javax.annotation.Nullable;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Random;
 
 public class LivingStaffItem extends LivingItem implements IDispellable {
 	private static final String UTILITY_SESSION_BLOOD_HANDLED_KEY = "HemomancyLivingStaffUtilityBloodHandled";
-
-	private static int getSlotFor(Inventory inv, ItemStack stack) {
-		if (inv.getSelected() == stack)
-			return inv.selected;
-
-		for (int i = 0; i < inv.items.size(); ++i) {
-			ItemStack invStack = inv.items.get(i);
-			if (invStack == stack) {
-				return i;
-			}
-		}
-
-		// Couldn't find the exact instance, can not ensure we have the right slot.
-		return -1;
-	}
 
 	public LivingStaffItem(Properties properties) {
 		super(properties);
@@ -121,20 +98,6 @@ public class LivingStaffItem extends LivingItem implements IDispellable {
 	public boolean canFitInsideContainerItems() {
 		return false;
 	}
-
-	@Override
-	public void inventoryTick(ItemStack stack, Level worldIn, Entity entityIn, int itemSlot, boolean isSelected) {
-		super.inventoryTick(stack, worldIn, entityIn, itemSlot, isSelected);
-		CompoundTag staffnbt = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
-		if (!staffnbt.contains("Inventory")) {
-			IItemHandler handler = stack.getCapability(Capabilities.ItemHandler.ITEM);
-			if (handler instanceof LivingStaffItemHandler) {
-				LivingStaffItemHandler staffHandler = (LivingStaffItemHandler) handler;
-				staffHandler.setDirty();
-			}
-		}
-	}
-	
 
 	@Override
 	public void onUseTick(Level pLevel, LivingEntity pLivingEntity, ItemStack pStack, int pRemainingUseDuration) {
@@ -295,41 +258,11 @@ public class LivingStaffItem extends LivingItem implements IDispellable {
 
 	@Override
 	public InteractionResultHolder<ItemStack> use(Level worldIn, Player playerIn, InteractionHand handIn) {
-		ItemStack itemstack = playerIn.getItemInHand(handIn);
-		if (!playerIn.isShiftKeyDown()) {
-			playerIn.startUsingItem(handIn);
-		}
-
-		if (!worldIn.isClientSide) {
-			if (!playerIn.isShiftKeyDown()) {
-				clearUtilityBloodHandled(playerIn);
-			}
-			if (playerIn.isShiftKeyDown()) {
-				playerIn.openMenu(new MenuProvider() {
-
-					@Nullable
-
-					@Override
-					public AbstractContainerMenu createMenu(int windowId, Inventory p_createMenu_2_,
-							Player p_createMenu_3_) {
-						return new LivingStaffMenu(windowId, p_createMenu_3_.level(), p_createMenu_3_.blockPosition(),
-								p_createMenu_2_, p_createMenu_3_);
-					}
-
-					@Override
-					public Component getDisplayName() {
-						return playerIn.getItemInHand(handIn).getHoverName();
-					}
-				});
-
-			} else {
-				return InteractionResultHolder.consume(itemstack);
-			}
-		}
-		return playerIn.isShiftKeyDown()
-				? InteractionResultHolder.success(itemstack)
-				: InteractionResultHolder.consume(itemstack);
-
+		ItemStack stack = playerIn.getItemInHand(handIn);
+		if (playerIn.isShiftKeyDown()) return InteractionResultHolder.pass(stack);
+		playerIn.startUsingItem(handIn);
+		if (!worldIn.isClientSide) clearUtilityBloodHandled(playerIn);
+		return InteractionResultHolder.consume(stack);
 	}
 
 	private static boolean tryAbsorbFromLookedAtBlockWithStaff(Level level, Player player,

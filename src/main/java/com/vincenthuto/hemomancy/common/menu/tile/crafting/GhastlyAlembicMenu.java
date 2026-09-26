@@ -96,6 +96,8 @@ public class GhastlyAlembicMenu extends AbstractContainerMenu {
 		this.addSlot(new FurnaceResultSlot(playerInventory.player, container, RESULT_SLOT, 134, 32) {
 			@Override public void onTake(Player player, ItemStack stack) {
 				GhastlyAlembicMenu.this.container.onPlayerExtract(player, stack);
+				if (player instanceof net.minecraft.server.level.ServerPlayer serverPlayer)
+					GhastlyAlembicMenu.this.container.awardUsedRecipesAndPopExperience(serverPlayer);
 				super.onTake(player, stack);
 			}
 		});
@@ -251,15 +253,10 @@ public class GhastlyAlembicMenu extends AbstractContainerMenu {
 			}
 		}
 
-		if (slotStack.isEmpty()) {
-			if (index == RESULT_SLOT) container.onPlayerExtract(player, copy);
-			slot.set(ItemStack.EMPTY);
-		} else {
-			if (index == RESULT_SLOT) container.onPlayerExtract(player, copy);
-			slot.setChanged();
-		}
-
+		if (slotStack.isEmpty()) slot.set(ItemStack.EMPTY);
+		else slot.setChanged();
 		if (slotStack.getCount() == copy.getCount()) return ItemStack.EMPTY;
+		if (index == RESULT_SLOT) container.onPlayerExtract(player, copy);
 		slot.onTake(player, slotStack);
 		return copy;
 	}

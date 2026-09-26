@@ -1,6 +1,7 @@
 package com.vincenthuto.hemomancy.common.brewing;
 
 import com.vincenthuto.hemomancy.Hemomancy;
+import com.vincenthuto.hemomancy.common.damage.SchoolDamage;
 import com.vincenthuto.hemomancy.common.init.DataComponentInit;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
@@ -90,7 +91,7 @@ public final class AdvancedBrewEffects {
     }
 
     @SubscribeEvent public static void onDamaged(LivingDamageEvent.Post event) {
-        if (!(event.getEntity() instanceof ServerPlayer wearer) || event.getNewDamage() <= 0) return;
+        if (!(event.getEntity() instanceof ServerPlayer wearer) || !SchoolDamage.hasHealthDamage(event)) return;
         long now = wearer.serverLevel().getGameTime();
         CompoundTag persistent = wearer.getPersistentData();
         if (persistent.getLong(REPRISAL_END) <= now || persistent.getLong(REPRISAL_NEXT) > now

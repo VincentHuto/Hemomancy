@@ -1,7 +1,25 @@
 package com.vincenthuto.hemomancy.common.worldgen;
 
+import com.vincenthuto.hemomancy.client.screen.overlay.FungalWhisperVignetteOverlay;
+import org.junit.jupiter.api.Test;
+
 public final class FungalProjectionRulesTest {
 	private FungalProjectionRulesTest() {}
+
+	@Test
+	void clientProjectionExpiresAndClearsOnDisconnect() {
+		FungalWhisperVignetteOverlay.clear();
+		FungalWhisperVignetteOverlay overlay = new FungalWhisperVignetteOverlay();
+		FungalWhisperVignetteOverlay.setProjectionState(true, 2, 2);
+		assertTrue("projection starts active", FungalWhisperVignetteOverlay.isProjectionActive());
+		overlay.tick();
+		assertTrue("projection remains active before expiry", FungalWhisperVignetteOverlay.isProjectionActive());
+		overlay.tick();
+		assertFalse("projection expires at zero", FungalWhisperVignetteOverlay.isProjectionActive());
+		FungalWhisperVignetteOverlay.setProjectionState(true, 20, 20);
+		FungalWhisperVignetteOverlay.clear();
+		assertFalse("logout clears the projection", FungalWhisperVignetteOverlay.isProjectionActive());
+	}
 
 	public static void main(String[] args) {
 		assertEquals("first projection lasts two minutes", 2400, FungalProjectionRules.FIRST_VISIT_TICKS);

@@ -1,5 +1,17 @@
 # Hemomancy - Developer Reference
 
+Cardinal Rite floors and Ichorian Sigils share `JsonResourceReloadListener` for JSON scanning, per-file diagnostics, and immutable reload publication. Their schema parsers and registries remain separate; malformed files are skipped, and each applied reload replaces the previous snapshot.
+
+Recipe codec plumbing shares a registry-aware JSON bridge across Incubator, Memory Weaving, Scar, Armature Upgrade, Fungal Scar Cultivation, Blood Structure, and Cardinal Rite serializers. Nested codec errors propagate instead of silently omitting fields; legacy result forms remain supported. Run `./gradlew.bat runRecipeCodecGameTestServer` for the regression suite, also included in `alphaCheck`. See [recipe pipeline details](consolidation/recipe-pipelines.md).
+
+## GameTest suite registration (2026-09-25)
+
+`gradle/game-tests.gradle` owns focused server launchers and explicit combined-gate membership. `alphaCheck` now includes combat-order, owner-snapshot, distillation, registration, and Unstained-zone suites alongside its prior coverage. `verifyGameTestSuites` checks source namespaces and generators, inclusion decisions, exclusion reasons, and launcher configuration before verification or run preparation. Other focused suites remain explicitly opt-in, including fresh-world validation with its special seed/mixin setup. See `docs/TESTING.md` for the catalog contract and negative integration probes.
+
+## Item inventory persistence (2026-09-25)
+
+Living Syringe, Morphling Jar, and legacy Scar Binder handlers share `StackBackedItemHandler`. Existing `CUSTOM_DATA.Inventory` contents retain the `Items`, `Slot`, and `Size` format; loading keeps the item's configured capacity, and saving preserves unrelated custom data and item components. NeoForge's mutation callbacks track count changes and leave simulated or rejected transfers clean. `load()` explicitly replaces the cached inventory, including clearing it when the saved inventory is absent; `loadIfNotLoaded()` preserves pending edits after the first load. Transactions still call `save()`, and code changing a contained stack in place calls `setDirty()` before saving. The Syringe menu flushes after clicks and on close, matching the Jar and Binder. The obsolete Staff inventory, menu, screen, capability, and opening packet have been removed; existing Staff custom data is left untouched. All three handlers resolve the current server or connected client level's registries. Run `runItemInventoryGameTestServer` for the focused persistence suite; its namespace is also included in the server run used by `alphaCheck`.
+
 ## Working checkout documentation (2026-09-19)
 
 The [working-tree coverage index](WORKTREE_REFERENCE_AUDIT_2026-09-19.md) accounts for the staged, unstaged, deleted, and visible untracked files in this checkout. It maps implementation, resources, tests, art, and local authoring changes to their reference sections. This is a source audit, not a release declaration or a fresh full-suite test result. The First Incursion brief and fresh prose drafts are editorial inputs; the Java, packaged resources, and generated structure define current behavior.

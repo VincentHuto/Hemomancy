@@ -148,7 +148,7 @@ public class BloodStructureRecipeSerializer implements RecipeSerializer<BloodStr
 		return GsonHelper.getAsInt(pJson, "requiredDegree", 0);
 	}
 
-	private static List<BloodStructureOffering> offeringsFromJson(JsonObject json) {
+	private static List<BloodStructureOffering> offeringsFromJson(JsonObject json, DynamicOps<JsonElement> jsonOps) {
 		if (!json.has("offerings")) {
 			return List.of();
 		}
@@ -156,7 +156,7 @@ public class BloodStructureRecipeSerializer implements RecipeSerializer<BloodStr
 		List<BloodStructureOffering> offerings = new ArrayList<>();
 		for (int i = 0; i < array.size(); i++) {
 			JsonObject entry = GsonHelper.convertToJsonObject(array.get(i), "offerings[" + i + "]");
-			Ingredient ingredient = Ingredient.CODEC_NONEMPTY.parse(JsonOps.INSTANCE,
+			Ingredient ingredient = Ingredient.CODEC_NONEMPTY.parse(jsonOps,
 					GsonHelper.getNonNull(entry, "ingredient"))
 					.getOrThrow(err -> new JsonSyntaxException("Invalid blood structure offering ingredient: " + err));
 			int count = GsonHelper.getAsInt(entry, "count", 1);
@@ -167,28 +167,18 @@ public class BloodStructureRecipeSerializer implements RecipeSerializer<BloodStr
 
 	// ---- JSON helpers ----
 
-	private static <T> JsonObject toJsonObject(DynamicOps<T> ops, MapLike<T> input) {
-		JsonObject json = new JsonObject();
-		input.entries().forEach(pair -> {
-			String key = ops.getStringValue(pair.getFirst()).getOrThrow(IllegalStateException::new);
-			JsonElement value = ops.convertTo(JsonOps.INSTANCE, pair.getSecond());
-			json.add(key, value);
-		});
-		return json;
-	}
-
-	private static BloodStructureRecipe fromJsonObject(ResourceLocation pRecipeId, JsonObject pJson) {
+	private static BloodStructureRecipe fromJsonObject(ResourceLocation pRecipeId, JsonObject pJson, DynamicOps<JsonElement> jsonOps) {
 		double cost = GsonHelper.getAsFloat(pJson, "bloodCost");
 		ItemStack heldItem = getItemFromJson(GsonHelper.getAsString(pJson, "heldItem"));
 		Block hitBlock = blockFromString(GsonHelper.getAsString(pJson, "hitBlock"));
 		String[][] pattern = patternFromJson(GsonHelper.getAsJsonArray(pJson, "pattern"));
 		Map<String, PatternKeyEntry> keyEntries = keyEntriesFromJson(GsonHelper.getAsJsonObject(pJson, "key"));
-		ItemStack result = RecipeResultStackParser.parseResultStack(pJson, "result");
+		ItemStack result = RecipeResultStackParser.parseResultStack(pJson, "result", jsonOps);
 		BlockPattern bp = generateBlockPatternFromKeyEntries(keyEntries, pattern);
 		MultiblockPattern mbPattern = new MultiblockPattern(bp, displayKeyMapFromKeyEntries(keyEntries), pattern, true);
 		boolean unstained = GsonHelper.getAsBoolean(pJson, "unstained", false);
 		int requiredDegree = requiredDegreeFromJson(pJson);
-		List<BloodStructureOffering> offerings = offeringsFromJson(pJson);
+		List<BloodStructureOffering> offerings = offeringsFromJson(pJson, jsonOps);
 		BloodStructureRecipe recipe = new BloodStructureRecipe(pRecipeId, cost, mbPattern, heldItem, hitBlock, result,
 				unstained, requiredDegree, offerings);
 		recipe.setRequiredPurity(GsonHelper.getAsFloat(pJson, "required_purity", -1.0f));
@@ -209,11 +199,11 @@ public class BloodStructureRecipeSerializer implements RecipeSerializer<BloodStr
 		@Override
 		public <T> DataResult<BloodStructureRecipe> decode(DynamicOps<T> ops, MapLike<T> input) {
 			try {
-				JsonObject json = toJsonObject(ops, input);
+				JsonObject json = RecipeCodecJson.toJsonObject(ops, input);
 				ResourceLocation id = json.has("id")
 						? ResourceLocation.parse(json.get("id").getAsString())
 						: Hemomancy.rloc("blood_structure/unknown");
-				return DataResult.success(fromJsonObject(id, json));
+				return DataResult.success(fromJsonObject(id, json, RecipeCodecJson.jsonOps(ops)));
 			} catch (Exception e) {
 				return DataResult.error(() -> "Failed to decode BloodStructureRecipe: " + e.getMessage());
 			}
@@ -223,25 +213,22 @@ public class BloodStructureRecipeSerializer implements RecipeSerializer<BloodStr
 		public <T> RecordBuilder<T> encode(BloodStructureRecipe recipe, DynamicOps<T> ops, RecordBuilder<T> prefix) {
 			prefix.add("id", ops.createString(recipe.getId().toString()));
 			prefix.add("bloodCost", ops.createDouble(recipe.getBloodCost()));
-			ItemStack.CODEC.encodeStart(JsonOps.INSTANCE, recipe.getHeldItem()).result()
-					.ifPresent(e -> prefix.add("heldItem", JsonOps.INSTANCE.convertTo(ops, e)));
+			prefix.add("heldItem", ops.createString(BuiltInRegistries.ITEM.getKey(recipe.getHeldItem().getItem()).toString()));
 			prefix.add("hitBlock", ops.createString(BuiltInRegistries.BLOCK.getKey(recipe.getHitBlock()).toString()));
 			// pattern / key are complex — skip encode for now (server-to-client via stream codec)
-			ItemStack.CODEC.encodeStart(JsonOps.INSTANCE, recipe.getResult()).result()
-					.ifPresent(e -> prefix.add("result", JsonOps.INSTANCE.convertTo(ops, e)));
+			prefix.add("result", ItemStack.CODEC.encodeStart(ops, recipe.getResult()));
 			prefix.add("unstained", ops.createBoolean(recipe.isUnstained()));
 			prefix.add("required_degree", ops.createInt(recipe.getRequiredDegree()));
 			if (recipe.getRequiredPurity() >= 0.0f) prefix.add("required_purity", ops.createFloat(recipe.getRequiredPurity()));
 			if (recipe.getRequiredClarity() >= 0.0f) prefix.add("required_clarity", ops.createFloat(recipe.getRequiredClarity()));
-			JsonArray offerings = new JsonArray();
+			ListBuilder<T> offerings = ops.listBuilder();
 			for (BloodStructureOffering offering : recipe.getOfferings()) {
-				JsonObject offeringJson = new JsonObject();
-				Ingredient.CODEC_NONEMPTY.encodeStart(JsonOps.INSTANCE, offering.ingredient()).result()
-						.ifPresent(element -> offeringJson.add("ingredient", element));
-				offeringJson.addProperty("count", offering.count());
-				offerings.add(offeringJson);
+				RecordBuilder<T> entry = ops.mapBuilder();
+				entry.add("ingredient", Ingredient.CODEC_NONEMPTY.encodeStart(ops, offering.ingredient()));
+				entry.add("count", ops.createInt(offering.count()));
+				offerings.add(entry.build(ops.empty()));
 			}
-			prefix.add("offerings", JsonOps.INSTANCE.convertTo(ops, offerings));
+			prefix.add("offerings", offerings.build(ops.empty()));
 			return prefix;
 		}
 	};

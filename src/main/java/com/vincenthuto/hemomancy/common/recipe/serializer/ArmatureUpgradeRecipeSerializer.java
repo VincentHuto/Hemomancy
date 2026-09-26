@@ -35,11 +35,11 @@ public class ArmatureUpgradeRecipeSerializer implements RecipeSerializer<Armatur
 		@Override
 		public <T> DataResult<ArmatureUpgradeRecipe> decode(DynamicOps<T> ops, MapLike<T> input) {
 			try {
-				JsonObject json = toJsonObject(ops, input);
+				JsonObject json = RecipeCodecJson.toJsonObject(ops, input);
 				ResourceLocation id = json.has("id")
 						? ResourceLocation.parse(json.get("id").getAsString())
 						: Hemomancy.rloc("armature_upgrade/unknown");
-				return DataResult.success(fromJsonObject(id, json));
+				return DataResult.success(fromJsonObject(id, json, RecipeCodecJson.jsonOps(ops)));
 			} catch (Exception e) {
 				return DataResult.error(() -> "Failed to decode ArmatureUpgradeRecipe: " + e.getMessage());
 			}
@@ -50,13 +50,10 @@ public class ArmatureUpgradeRecipeSerializer implements RecipeSerializer<Armatur
 			prefix.add("id", ops.createString(recipe.getId().toString()));
 			prefix.add("required_degree", ops.createInt(recipe.getRequiredDegree()));
 			prefix.add("armor_slot", ops.createString(recipe.getArmorSlot().name().toLowerCase()));
-			Ingredient.CODEC_NONEMPTY.encodeStart(JsonOps.INSTANCE, recipe.getValidBase()).result()
-					.ifPresent(e -> prefix.add("base", JsonOps.INSTANCE.convertTo(ops, e)));
-			Ingredient.CODEC_NONEMPTY.encodeStart(JsonOps.INSTANCE, recipe.getReagent()).result()
-					.ifPresent(e -> prefix.add("reagent", JsonOps.INSTANCE.convertTo(ops, e)));
+			prefix.add("base", Ingredient.CODEC_NONEMPTY.encodeStart(ops, recipe.getValidBase()));
+			prefix.add("reagent", Ingredient.CODEC_NONEMPTY.encodeStart(ops, recipe.getReagent()));
 			prefix.add("blood_cost", ops.createDouble(recipe.getBloodCost()));
-			ItemStack.CODEC.encodeStart(JsonOps.INSTANCE, recipe.getResultItem(null)).result()
-					.ifPresent(e -> prefix.add("result", JsonOps.INSTANCE.convertTo(ops, e)));
+			prefix.add("result", ItemStack.CODEC.encodeStart(ops, recipe.getResultItem(null)));
 			prefix.add("required_armature_tier", ops.createString(recipe.getRequiredArmatureTier().serializedName()));
 			if (recipe.getRequiredBaseData() != null) {
 				prefix.add("required_base_data", NbtOps.INSTANCE.convertTo(ops, recipe.getRequiredBaseData()));
@@ -88,25 +85,15 @@ public class ArmatureUpgradeRecipeSerializer implements RecipeSerializer<Armatur
 		return STREAM_CODEC;
 	}
 
-	private static <T> JsonObject toJsonObject(DynamicOps<T> ops, MapLike<T> input) {
-		JsonObject json = new JsonObject();
-		input.entries().forEach(pair -> {
-			String key = ops.getStringValue(pair.getFirst()).getOrThrow(IllegalStateException::new);
-			JsonElement value = ops.convertTo(JsonOps.INSTANCE, pair.getSecond());
-			json.add(key, value);
-		});
-		return json;
-	}
-
-	private static ArmatureUpgradeRecipe fromJsonObject(ResourceLocation id, JsonObject json) {
+	private static ArmatureUpgradeRecipe fromJsonObject(ResourceLocation id, JsonObject json, DynamicOps<JsonElement> jsonOps) {
 		int requiredDegree = requiredDegreeFromJson(json);
 		ArmatureUpgradeRules.ArmatureSlot armorSlot = slotFromString(GsonHelper.getAsString(json, "armor_slot"));
-		Ingredient base = ingredientFromJson(json, "base");
-		Ingredient reagent = ingredientFromJson(json, "reagent");
+		Ingredient base = ingredientFromJson(json, "base", jsonOps);
+		Ingredient reagent = ingredientFromJson(json, "reagent", jsonOps);
 		double bloodCost = json.has("blood_cost")
 				? GsonHelper.getAsDouble(json, "blood_cost")
 				: GsonHelper.getAsDouble(json, "bloodCost", 0);
-		ItemStack result = RecipeResultStackParser.parseResultStack(json, "result");
+		ItemStack result = RecipeResultStackParser.parseResultStack(json, "result", jsonOps);
 		ArmatureUpgradeRules.ArmatureTier requiredArmatureTier = json.has("required_armature_tier")
 				? ArmatureUpgradeRules.ArmatureTier.byName(GsonHelper.getAsString(json, "required_armature_tier"))
 				: ArmatureUpgradeRules.requiredTierForDegree(requiredDegree);
@@ -130,12 +117,12 @@ public class ArmatureUpgradeRecipeSerializer implements RecipeSerializer<Armatur
 		return GsonHelper.getAsInt(json, "requiredDegree", 0);
 	}
 
-	private static Ingredient ingredientFromJson(JsonObject json, String key) {
+	private static Ingredient ingredientFromJson(JsonObject json, String key, DynamicOps<JsonElement> jsonOps) {
 		JsonElement element = json.get(key);
 		if (element == null || element.isJsonNull()) {
 			throw new JsonSyntaxException("Missing armature ingredient: " + key);
 		}
-		return Ingredient.CODEC_NONEMPTY.parse(JsonOps.INSTANCE, element)
+		return Ingredient.CODEC_NONEMPTY.parse(jsonOps, element)
 				.getOrThrow(err -> new JsonSyntaxException("Invalid armature ingredient " + key + ": " + err));
 	}
 

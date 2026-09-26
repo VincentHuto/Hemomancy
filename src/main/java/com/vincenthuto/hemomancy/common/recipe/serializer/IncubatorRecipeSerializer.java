@@ -22,26 +22,16 @@ public class IncubatorRecipeSerializer implements RecipeSerializer<IncubatorReci
 
 	// ---- JSON helpers ----
 
-	private static <T> JsonObject toJsonObject(DynamicOps<T> ops, MapLike<T> input) {
-		JsonObject json = new JsonObject();
-		input.entries().forEach(pair -> {
-			String key = ops.getStringValue(pair.getFirst()).getOrThrow(IllegalStateException::new);
-			JsonElement value = ops.convertTo(JsonOps.INSTANCE, pair.getSecond());
-			json.add(key, value);
-		});
-		return json;
-	}
-
-	private static IncubatorRecipe fromJsonObject(ResourceLocation recipeId, JsonObject json) {
+	private static IncubatorRecipe fromJsonObject(ResourceLocation recipeId, JsonObject json, DynamicOps<JsonElement> jsonOps) {
 		JsonArray catalystsArray = GsonHelper.getAsJsonArray(json, "catalysts");
 		NonNullList<Ingredient> catalysts = NonNullList.create();
 		for (int i = 0; i < catalystsArray.size(); i++) {
-			Ingredient ingredient = Ingredient.CODEC_NONEMPTY.parse(JsonOps.INSTANCE, catalystsArray.get(i))
+			Ingredient ingredient = Ingredient.CODEC_NONEMPTY.parse(jsonOps, catalystsArray.get(i))
 					.getOrThrow(err -> new JsonSyntaxException("Invalid catalyst ingredient: " + err));
 			if (!ingredient.isEmpty()) catalysts.add(ingredient);
 		}
 
-		ItemStack result = RecipeResultStackParser.parseResultStack(json, "result");
+		ItemStack result = RecipeResultStackParser.parseResultStack(json, "result", jsonOps);
 
 		return new IncubatorRecipe(recipeId, catalysts, result);
 	}
@@ -57,11 +47,11 @@ public class IncubatorRecipeSerializer implements RecipeSerializer<IncubatorReci
 		@Override
 		public <T> DataResult<IncubatorRecipe> decode(DynamicOps<T> ops, MapLike<T> input) {
 			try {
-				JsonObject json = toJsonObject(ops, input);
+				JsonObject json = RecipeCodecJson.toJsonObject(ops, input);
 				ResourceLocation id = json.has("id")
 						? ResourceLocation.parse(json.get("id").getAsString())
 						: Hemomancy.rloc("incubator/unknown");
-				return DataResult.success(fromJsonObject(id, json));
+				return DataResult.success(fromJsonObject(id, json, RecipeCodecJson.jsonOps(ops)));
 			} catch (Exception e) {
 				return DataResult.error(() -> "Failed to decode IncubatorRecipe: " + e.getMessage());
 			}
@@ -70,13 +60,8 @@ public class IncubatorRecipeSerializer implements RecipeSerializer<IncubatorReci
 		@Override
 		public <T> RecordBuilder<T> encode(IncubatorRecipe recipe, DynamicOps<T> ops, RecordBuilder<T> prefix) {
 			prefix.add("id", ops.createString(recipe.getId().toString()));
-			JsonArray catalystsArr = new JsonArray();
-			for (Ingredient catalyst : recipe.getCatalysts()) {
-				Ingredient.CODEC_NONEMPTY.encodeStart(JsonOps.INSTANCE, catalyst).result().ifPresent(catalystsArr::add);
-			}
-			prefix.add("catalysts", JsonOps.INSTANCE.convertTo(ops, catalystsArr));
-			ItemStack.CODEC.encodeStart(JsonOps.INSTANCE, recipe.getResultItemStack()).result()
-					.ifPresent(e -> prefix.add("result", JsonOps.INSTANCE.convertTo(ops, e)));
+			prefix.add("catalysts", Ingredient.CODEC_NONEMPTY.listOf().encodeStart(ops, recipe.getCatalysts()));
+			prefix.add("result", ItemStack.CODEC.encodeStart(ops, recipe.getResultItemStack()));
 			return prefix;
 		}
 	};

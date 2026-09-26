@@ -122,6 +122,13 @@ public class LivingSyringeMenu extends AbstractContainerMenu {
 
 			if (slot >= 0)
 				getSlot(slot).container.setChanged();
+		if (handler != null) handler.save();
+	}
+
+	@Override
+	public void removed(Player player) {
+		super.removed(player);
+		if (handler != null) handler.save();
 	}
 
 	private ItemStack findLivingStaff(Player playerEntity) {

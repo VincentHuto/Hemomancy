@@ -137,7 +137,7 @@ public final class ManipulationReactiveEvents {
     @SubscribeEvent
     public static void coronationLanded(LivingDamageEvent.Post event) {
         if (!(event.getEntity() instanceof ServerPlayer player)
-                || event.getNewDamage() + event.getReduction(net.neoforged.neoforge.common.damagesource.DamageContainer.Reduction.ABSORPTION) <= 0
+                || !SchoolDamage.hasHealthOrAbsorptionDamage(event)
                 || event.getSource() instanceof SchoolDamageSource school && school.context().kind() != SchoolHitContext.Kind.DIRECT) return;
         long now = player.level().getGameTime();
         Entity attacker = event.getSource().getEntity();
@@ -205,7 +205,7 @@ public final class ManipulationReactiveEvents {
                 || event.getSource().getDirectEntity() != player
                 || !event.getSource().is(net.minecraft.world.damagesource.DamageTypes.PLAYER_ATTACK)
                 || event.getSource() instanceof SchoolDamageSource school && school.context().kind() != SchoolHitContext.Kind.DIRECT
-                || event.getNewDamage() + event.getReduction(net.neoforged.neoforge.common.damagesource.DamageContainer.Reduction.ABSORPTION) <= 0
+                || !SchoolDamage.hasHealthOrAbsorptionDamage(event)
                 || !ManipulationCombatHelper.canHarm(player, event.getEntity())) return;
         Long armedUntil = CIRCUIT_HITS.remove(player.getUUID());
         if (armedUntil == null || player.level().getGameTime() > armedUntil) return;

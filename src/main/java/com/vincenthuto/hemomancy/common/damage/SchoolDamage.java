@@ -16,6 +16,8 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.AbstractArrow;
 import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.item.ItemStack;
+import net.neoforged.neoforge.common.damagesource.DamageContainer;
+import net.neoforged.neoforge.event.entity.living.LivingDamageEvent;
 import javax.annotation.Nullable;
 import java.util.Map;
 import java.util.WeakHashMap;
@@ -127,6 +129,14 @@ public final class SchoolDamage {
 
     public static DamageSource attributed(DamageSource original, SchoolHitContext hit, @Nullable Entity owner) {
         return new SchoolDamageSource(original, hit.withDirect(original.getDirectEntity()), owner);
+    }
+
+    public static boolean hasHealthDamage(LivingDamageEvent.Post event) {
+        return event.getNewDamage() > 0;
+    }
+
+    public static boolean hasHealthOrAbsorptionDamage(LivingDamageEvent.Post event) {
+        return event.getNewDamage() + event.getReduction(DamageContainer.Reduction.ABSORPTION) > 0;
     }
 
     /** Preserve the native damage type; only authored school metadata opts a hit in. */

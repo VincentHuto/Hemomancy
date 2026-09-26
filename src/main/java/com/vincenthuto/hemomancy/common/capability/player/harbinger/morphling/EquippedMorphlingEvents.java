@@ -5,6 +5,7 @@ import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodFlowContribution.Category;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodFlowLedger;
 import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillPointHelper;
+import com.vincenthuto.hemomancy.common.damage.SchoolDamage;
 import com.vincenthuto.hemomancy.common.entity.summon.BoundSummonBehavior;
 import com.vincenthuto.hemomancy.common.event.LastRiteHelper;
 import com.vincenthuto.hemomancy.common.init.SkillPointInit;
@@ -174,7 +175,7 @@ public class EquippedMorphlingEvents {
 	@SubscribeEvent
 	public static void onPlayerAttack(LivingDamageEvent.Post event) {
 		LivingEntity target = event.getEntity();
-        if (event.getNewDamage() + event.getReduction(net.neoforged.neoforge.common.damagesource.DamageContainer.Reduction.ABSORPTION) <= 0) return;
+        if (!SchoolDamage.hasHealthOrAbsorptionDamage(event)) return;
 		if (target.level().isClientSide) return;
 		if (!(event.getSource().getEntity() instanceof Player player)) return;
 
@@ -194,7 +195,7 @@ public class EquippedMorphlingEvents {
     @SubscribeEvent
     public static void onConfirmedPlayerHurt(LivingDamageEvent.Post event) {
         if (!(event.getEntity() instanceof Player player) || player.level().isClientSide
-                || event.getNewDamage() + event.getReduction(net.neoforged.neoforge.common.damagesource.DamageContainer.Reduction.ABSORPTION) <= 0) return;
+                || !SchoolDamage.hasHealthOrAbsorptionDamage(event)) return;
         HemoCapabilityAccess.getEquippedMorphling(player).ifPresent(cap -> {
             ItemStack stack = cap.getEquippedMorphling();
             if (cap.hasMorphling() && stack.getItem() instanceof IMorphling morphling) {

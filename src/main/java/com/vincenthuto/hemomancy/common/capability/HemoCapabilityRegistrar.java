@@ -1,5 +1,8 @@
 package com.vincenthuto.hemomancy.common.capability;
 
+import com.vincenthuto.hemomancy.Hemomancy;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.BloodTendencyEvents;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.VascularSystemEvents;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodVolume;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.ItemStackBloodVolume;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.equipment.IHarbingerEquipment;
@@ -7,7 +10,6 @@ import com.vincenthuto.hemomancy.common.capability.player.harbinger.scar.IScarIt
 import com.vincenthuto.hemomancy.common.init.BlockEntityInit;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.BloodGourdItem;
-import com.vincenthuto.hemomancy.common.item.itemhandler.LivingStaffItemHandler;
 import com.vincenthuto.hemomancy.common.item.itemhandler.LivingSyringeItemHandler;
 import com.vincenthuto.hemomancy.common.item.itemhandler.MnemonicFolioItemHandler;
 import com.vincenthuto.hemomancy.common.item.itemhandler.MorphlingJarItemHandler;
@@ -15,13 +17,41 @@ import com.vincenthuto.hemomancy.common.item.shared.MnemonicFolioLayout;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.Item;
+import net.minecraft.server.level.ServerPlayer;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.bus.api.IEventBus;
+import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 import net.neoforged.neoforge.items.wrapper.SidedInvWrapper;
 
+@EventBusSubscriber(modid = Hemomancy.MOD_ID)
 public final class HemoCapabilityRegistrar {
     private HemoCapabilityRegistrar() {}
+
+    @SubscribeEvent
+    public static void onLogin(PlayerEvent.PlayerLoggedInEvent event) {
+        sendOwnerSnapshots((ServerPlayer) event.getEntity(), false);
+    }
+
+    @SubscribeEvent
+    public static void onDimensionChange(PlayerEvent.PlayerChangedDimensionEvent event) {
+        sendOwnerSnapshots((ServerPlayer) event.getEntity(), false);
+    }
+
+    @SubscribeEvent
+    public static void onRespawn(PlayerEvent.PlayerRespawnEvent event) {
+        if (!event.getEntity().getCommandSenderWorld().isClientSide) {
+            sendOwnerSnapshots((ServerPlayer) event.getEntity(), true);
+        }
+    }
+
+    // Fixed order: tendency's effective values, then vascular's stored values.
+    private static void sendOwnerSnapshots(ServerPlayer player, boolean respawn) {
+        BloodTendencyEvents.syncOwnerSnapshot(player, respawn);
+        VascularSystemEvents.syncOwnerSnapshot(player, respawn);
+    }
 
     public static void register(IEventBus modBus) {
         modBus.addListener(HemoCapabilityRegistrar::onRegisterCapabilities);
@@ -104,14 +134,6 @@ public final class HemoCapabilityRegistrar {
                 },
                 ItemInit.morphling_jar.get());
 
-        // ── LivingStaff IItemHandler capability ──
-        event.registerItem(Capabilities.ItemHandler.ITEM,
-                (stack, ctx) -> {
-                    LivingStaffItemHandler handler = new LivingStaffItemHandler(stack, 1);
-                    handler.loadIfNotLoaded();
-                    return handler;
-                },
-                ItemInit.living_staff.get());
 
 		event.registerItem(Capabilities.ItemHandler.ITEM,
 				(stack, ctx) -> {

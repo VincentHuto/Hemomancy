@@ -1,6 +1,14 @@
 # Developer Reference
 
+Cardinal Rite floors and Ichorian Sigils share `JsonResourceReloadListener` for JSON scanning, per-file diagnostics, and immutable reload publication. Their schema parsers and registries remain separate; malformed files are skipped, and each applied reload replaces the previous snapshot.
+
+Recipe codec plumbing shares a registry-aware JSON bridge across Incubator, Memory Weaving, Scar, Armature Upgrade, Fungal Scar Cultivation, Blood Structure, and Cardinal Rite serializers. Nested codec errors propagate instead of silently omitting fields; legacy result forms remain supported. Run `./gradlew.bat runRecipeCodecGameTestServer` for the regression suite, also included in `alphaCheck`. See [recipe pipeline details](../docs/consolidation/recipe-pipelines.md).
+
 Use this page to find the implementation reference, package layout, build commands, contribution rules, and integration notes.
+
+GameTest suites are declared in `gradle/game-tests.gradle`, including their focused launcher and explicit `alphaCheck` membership. Add every new namespace there. `./gradlew.bat verifyGameTestSuites` rejects undeclared namespaces, missing gate decisions, unexplained exclusions, and launcher drift; normal verification and run preparation depend on it. See [the suite catalog and probe commands](../docs/TESTING.md#gametest-suite-catalog).
+
+Item inventory persistence for Syringe, Morphling Jar, and legacy Scar Binder is shared by `StackBackedItemHandler`. Keep the existing `CUSTOM_DATA.Inventory` format. Call `save()` after a transaction, and `setDirty()` before saving in-place edits to contained stacks. Use `loadIfNotLoaded()` for initial access and `load()` for an intentional refresh from the backing item. Run `./gradlew.bat runItemInventoryGameTestServer` to check persistence, simulation, legacy data, and menu-close saving.
 
 ---
 
