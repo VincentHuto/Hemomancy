@@ -2370,7 +2370,7 @@
   "hemomancy.vicar.sanctified.hematic_order_lore": "The Hematic Order is the apex of the Covenant's hierarchy \u00e2\u20ac\u201d not a rank earned through trials, but a state of being recognized by the blood itself. The Archons who founded the Order believed that at sufficient depth of initiation, the practitioner's blood becomes indistinguishable from the blood of the world. The final rite does not grant you the title of Archon. It confirms what you have already become.",
   "hemomancy.vicar.sanctified.line1": "Sanctified one. The Bloodline Covenant has woven you into the living fabric of the Order. You have become a node in the greater network.",
   "hemomancy.vicar.uninitiated.harbinger_lore": "The Harbingers are not a faction of violence \u00e2\u20ac\u201d we are a faction of revelation. We believe that blood is the fundamental language of existence, and that those who learn to speak it fluently ascend beyond the limits of ordinary life. The Covenant is the body of knowledge that makes such ascension possible.",
-  "hemomancy.vicar.uninitiated.line1": "\u00c2\u00a77[A dignified figure in sweeping ceremonial vestments regards you with serene patience, hands folded within wide sleeves]",
+  "hemomancy.vicar.uninitiated.line1": "A dignified figure in sweeping ceremonial vestments regards you with serene patience, hands folded within wide sleeves",
   "hemomancy.vicar.uninitiated.line2": "A wanderer who has yet to walk the path of blood. I am the Harbinger Vicar, keeper of Covenant doctrine, history, and sacred truths. Even the uninitiated deserve to know where they stand.",
   "hemomancy.vicar.uninitiated.outpost_lore": "This Outpost is a waystation of the Harbinger network \u00e2\u20ac\u201d a place where the Covenant's work continues beyond the Blood Temples. Here, practitioners at all stages of initiation may resupply, learn, and find guidance. The Alchemist tends the machines; I tend the doctrine.",
   "hemomancy.vicar.votary.degree_hint": "The Rite of the Incarnadine Fane lies ahead. To pass through it, you must demonstrate that your tendencies have taken root \u00e2\u20ac\u201d that the blood responds not as a raw force, but as a trained instrument. Seek the Somatic Loom when your tendencies are strong enough to weave.",
@@ -4884,5 +4884,14 @@
   "hemomancy.initiation.blood_rest": "Inject the Concentrated Blood as you would a blood shot. Then give it a chance to settle. A night's rest will do more than standing here waiting.",
   "hemomancy.initiation.awakened": "The concentrated blood has settled into your circulation. You wake as a Votary of the Hematic Covenant.",
   "hemomancy.initiation.ask_blood": "About the Concentrated Blood...",
-  "hemomancy.initiation.replace": "I need another vial of Concentrated Blood."
+  "hemomancy.initiation.replace": "I need another vial of Concentrated Blood.",
+  "hemomancy.dialogue.newcomer.ask_path": "Where should I begin?",
+  "hemomancy.dialogue.newcomer.ask_vicar": "Who are the Harbingers?",
+  "hemomancy.dialogue.newcomer.vicar_path": "We are the Harbingers, keepers of the Covenant of blood. Our path begins at a Hermit's Blood Temple, not at this outpost. Seek a temple and speak with its Hermit. Follow the Hermitage's path there. If all goes well, return to me and we will discuss your next step.",
+  "hemomancy.dialogue.newcomer.alchemist": "The Vicar can tell you who we are. Speak with them before you put your hands to any of my apparatus.",
+  "hemomancy.dialogue.newcomer.artificer": "New to the outpost? The Vicar explains the Covenant better than I do. Go speak with them.",
+  "hemomancy.dialogue.newcomer.cicatrix_anchorite": "You have no place on my table yet. Find the Vicar and ask what road brought us here.",
+  "hemomancy.dialogue.newcomer.mnemonist": "You are looking for a beginning. The Vicar can give you the shape of it.",
+  "hemomancy.dialogue.newcomer.voyager": "Found the outpost before the road? Ask the Vicar who we are and where to start.",
+  "hemomancy.dialogue.newcomer.votary_wayfarer": "The Vicar will explain the Covenant. Speak with them before setting out again."
 }

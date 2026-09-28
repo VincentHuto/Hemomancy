@@ -79,8 +79,8 @@ public final class SaintRelicEncounterResourceTest {
 					"\"item\": \"" + relic.ingredientC + "\"");
 		}
 
-		assertContains("mausoleum biome tag includes its restored overworld placement", mausoleumBiomes,
-				"\"minecraft:plains\"");
+		assertContains("mausoleum natural placement is temporarily disabled", mausoleumBiomes,
+				"\"values\": []");
 		assertExists("mausoleum structure data stays in place",
 				RESOURCE_ROOT.resolve("data/hemomancy/worldgen/structure/mausoleum.json"));
 		assertExists("mausoleum structure set data stays in place",

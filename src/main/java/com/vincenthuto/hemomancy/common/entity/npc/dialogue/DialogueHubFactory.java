@@ -1,6 +1,7 @@
 package com.vincenthuto.hemomancy.common.entity.npc.dialogue;
 
 import com.vincenthuto.hemomancy.common.capability.HemoAttachmentTypes;
+import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.shared.knowledge.DialogueKnowledge;
 import com.vincenthuto.hemomancy.common.mission.unstained.UnstainedObservances;
 import net.minecraft.resources.ResourceLocation;
@@ -11,11 +12,39 @@ import java.util.*;
 /** Builds presentation metadata around existing dialogue nodes without changing event semantics. */
 public final class DialogueHubFactory {
 	private static final String NAMESPACE = "hemomancy";
+	private static final String MET_HERMIT = "hemomancy_met_harbinger_hermit";
 
 	private DialogueHubFactory() {}
 
 	public static DialogueTree decorate(DialogueTree tree, String npcId, ServerPlayer player) {
+		if ("hermit".equals(npcId)) {
+			player.getPersistentData().putBoolean(MET_HERMIT, true);
+		} else if (HemoCapabilityAccess.getPlayerDegreeNumber(player) == 0
+				&& !player.getPersistentData().getBoolean(MET_HERMIT)) {
+			tree = addNewcomerGuidance(tree, npcId);
+		}
 		return decorate(tree, npcId, player.getData(HemoAttachmentTypes.DIALOGUE_KNOWLEDGE));
+	}
+
+	private static DialogueTree addNewcomerGuidance(DialogueTree tree, String npcId) {
+		DialogueNode root = tree.getStartNode();
+		if (root == null) return tree;
+		Map<String, DialogueNode> nodes = new LinkedHashMap<>(tree.nodes());
+		List<DialogueOption> options = new ArrayList<>(root.options());
+		if ("vicar".equals(npcId)) {
+			options.addFirst(new DialogueOption("hemomancy.dialogue.newcomer.ask_path", "newcomer_path", null));
+			nodes.put("newcomer_path", new DialogueNode("newcomer_path", List.of(
+					"hemomancy.dialogue.newcomer.vicar_path"), List.of(
+					new DialogueOption("hemomancy.dialogue.vicar.option.leave", null, null))));
+		} else {
+			options.addFirst(new DialogueOption("hemomancy.dialogue.newcomer.ask_vicar", "newcomer_vicar", null));
+			nodes.put("newcomer_vicar", new DialogueNode("newcomer_vicar", List.of(
+					"hemomancy.dialogue.newcomer." + npcId), List.of(
+					new DialogueOption("hemomancy.dialogue.vicar.option.leave", null, null))));
+		}
+		nodes.put(root.id(), new DialogueNode(root.id(), root.lines(), options));
+		return new DialogueTree(tree.speakerName(), tree.speakerIcon(), tree.startNodeId(), nodes,
+				tree.entityId(), tree.theme(), tree.presentation());
 	}
 
 	public static DialogueTree decorate(DialogueTree tree, String npcId, DialogueKnowledge knowledge) {
