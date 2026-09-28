@@ -215,7 +215,8 @@ public final class ZealotDialogueTrees {
                         "hemomancy.zealot.already_on_path"
                 ), List.of(
 						new DialogueOption("hemomancy.dialogue.zealot.option.take_vows", null, "zealot_begin_novitiate",
-								DialogueOptionPresentation.attention(DialogueAttention.NOTICE)),
+								DialogueOptionPresentation.attention(DialogueAttention.NOTICE,
+										"hemomancy.zealot.take_vows.prompt")),
                         new DialogueOption("hemomancy.dialogue.zealot.option.ask_about_item", "item_hint", null),
                         new DialogueOption("hemomancy.dialogue.zealot.option.leave", null, null)
                 )))
@@ -248,7 +249,8 @@ public final class ZealotDialogueTrees {
                         "hemomancy.zealot.no_blood"
                 ), List.of(
 						new DialogueOption("hemomancy.dialogue.zealot.option.take_vows", null, "zealot_begin_novitiate",
-								DialogueOptionPresentation.attention(DialogueAttention.NOTICE)),
+								DialogueOptionPresentation.attention(DialogueAttention.NOTICE,
+										"hemomancy.zealot.take_vows.prompt")),
                         new DialogueOption("hemomancy.dialogue.zealot.option.ask_about_item", "item_hint", null),
                         new DialogueOption("hemomancy.dialogue.zealot.option.leave", null, null)
                 )))

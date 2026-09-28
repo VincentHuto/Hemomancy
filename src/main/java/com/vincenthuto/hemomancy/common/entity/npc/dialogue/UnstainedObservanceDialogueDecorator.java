@@ -43,16 +43,20 @@ public final class UnstainedObservanceDialogueDecorator {
 		int insertIndex = startOptions.size() > 0 ? startOptions.size() - 1 : 0;
 		for (UnstainedObservances.Observance observance : visible) {
 			boolean accepted = (progress.getAcceptedObservances() & observance.mask()) != 0;
-			DialogueAttention attention = observanceAttention(accepted,
-					accepted && UnstainedObservances.isReady(player, observance));
+			boolean ready = accepted && UnstainedObservances.isReady(player, observance);
+			DialogueAttention attention = observanceAttention(accepted, ready);
+			String promptKey = ready ? "hemomancy.dialogue.unstained.observance.ready"
+					: accepted ? "hemomancy.dialogue.unstained.observance.active"
+					: "hemomancy.dialogue.unstained.observance.available";
 			startOptions.add(insertIndex++, new DialogueOption(optionKey(observance), null, observance.eventId(),
-					attention == DialogueAttention.NONE ? DialogueOptionPresentation.normal()
-							: DialogueOptionPresentation.attention(attention)));
+					attention == DialogueAttention.NONE ? DialogueOptionPresentation.prompt(promptKey)
+							: DialogueOptionPresentation.attention(attention, promptKey)));
 		}
 		if (daggerReplacement) {
 			startOptions.add(insertIndex, new DialogueOption(
 					"hemomancy.dialogue.guardian.option.replace_absolution_dagger", null,
-					"guardian_replace_absolution_dagger"));
+					"guardian_replace_absolution_dagger", DialogueOptionPresentation.prompt(
+							"hemomancy.dialogue.guardian.replace_absolution_dagger.prompt")));
 		}
 
 		var nodes = new LinkedHashMap<>(tree.nodes());

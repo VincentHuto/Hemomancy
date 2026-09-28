@@ -30,23 +30,23 @@ The Hematic Order publicly recognizes seven degrees. Apotheos is the hidden eigh
 
 ### Degree 1: Neophyte
 
-- **Rite:** Sanguine Initiation
+- **Rite:** Formal Vicar initiation
 - **Theme:** Crimson Veil; blood becomes a deliberate living resource
 - **Core progression:** Blood Absorption, Blood Projection, first structures, early tendency awareness
-- The Alchemist offers **First Separation** at D1, followed by microscopy, injection teaching, and the Cabinet after three personal source identifications. See [Clinical Blood Tools](Clinical-Blood-Tools.md).
-- The first Vicar contacted grants or replaces the Assignment Ledger. **First Bloodcraft** is the Main chapter; **The Hermit Road** is an optional Side assignment.
+- The Vicar asks for four proofs in any order: absorb 500 ml with Blood Absorption, project a Sanguine Formation and Venous Stone, and craft either a Liber Sanguinum or Hematic Iron Block using a blood formation. Ask for hints and recipe blueprints while the work is active.
+- The first Vicar contacted grants or replaces the Assignment Ledger. Return after the four First Bloodcraft proofs for Degree 2. **The Hermit Road** remains an optional Side assignment.
 
 ### Degree 2: Votary
 
-- **Rite:** Votary Rite
+- **Promotion:** Vicar return after First Bloodcraft
 - **Theme:** Hematic Covenant; choosing to remain infected
 - **Core progression:** the seven blood tendencies and deeper vascular practice
-- **The First Separation**, available since Degree 1, remains the chapter proof for this stage. Red Taxonomy, Living Bestiary, and enzyme mastery are optional Alchemical Fieldwork catalogues; completing Red Taxonomy grants jars and empty vials.
+- The Alchemist assigns **First Separation** and the first Ghastly Alembic distillation at Degree 2. Report the assigned enzyme spin, then personally collect a completed Alembic result. Both proofs are needed before the Alchemist supplies Concentrated Blood. Microscopy and injection lessons are also available; see [Clinical Blood Tools](Clinical-Blood-Tools.md). Red Taxonomy, Living Bestiary, and enzyme mastery remain optional catalogues.
 - A Fungal Podium may be encountered, but it cannot open the Fungal Gardens without the Degree-7 ninth-pome Spine.
 
 ### Degree 3: Initiate
 
-- **Rite:** Initiate Rite
+- **Promotion:** Inject Concentrated Blood and complete a night of sleep
 - **Theme:** Incarnadine Fane; blood becomes shaped memory and external craft
 - **Core progression:** deliberate puppeteering and advanced non-Canon Somatic Loom work; Drudges and every Saint trial, including Hemorath, are post-release expansion content
 

@@ -23,7 +23,8 @@ public final class AdvancedBrewingDialogue {
         boolean condenserReady = progress.canClaimCondenser(player);
         options.add(0, new DialogueOption("hemomancy.alchemist.brewing.condenser.title",
                 "advanced_condenser", condenserReady ? CONDENSER_CLAIM : null,
-                condenserReady ? DialogueOptionPresentation.attention(DialogueAttention.NOTICE)
+                condenserReady ? DialogueOptionPresentation.attention(DialogueAttention.NOTICE,
+                        "hemomancy.alchemist.brewing.condenser.prompt")
                         : DialogueOptionPresentation.normal()));
         nodes.put("advanced_condenser", new DialogueNode("advanced_condenser",
                 List.of(progress.condenserClaimed()
@@ -35,7 +36,8 @@ public final class AdvancedBrewingDialogue {
             boolean athanorReady = progress.canClaimAthanor(player);
             options.add(0, new DialogueOption("hemomancy.alchemist.brewing.athanor.title",
                     "advanced_athanor", athanorReady ? ATHANOR_CLAIM : null,
-                    athanorReady ? DialogueOptionPresentation.attention(DialogueAttention.NOTICE)
+                    athanorReady ? DialogueOptionPresentation.attention(DialogueAttention.NOTICE,
+                            "hemomancy.alchemist.brewing.athanor.prompt")
                             : DialogueOptionPresentation.normal()));
             nodes.put("advanced_athanor", new DialogueNode("advanced_athanor",
                     List.of(progress.athanorClaimed()

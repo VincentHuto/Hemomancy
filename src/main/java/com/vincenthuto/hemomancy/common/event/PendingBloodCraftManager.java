@@ -97,6 +97,7 @@ public class PendingBloodCraftManager {
 			}
 			ServerPlayer crafter = level.getServer().getPlayerList().getPlayer(crafterId);
 			if (crafter != null) {
+				com.vincenthuto.hemomancy.common.mission.vicar.FirstBloodcraftAssignment.recordStructure(crafter, result);
 				MachineAccessEvents.awardMachineCrafted(crafter, result);
 				LivingStaffBondHelper.unlockFromBloodStructureCraft(crafter, result);
 			}

@@ -156,7 +156,8 @@ public final class HarbingerMnemonistDialogueTrees {
 		}
 		if (anchoriteReferral && !anchoriteCounsel) {
 			options.add(new DialogueOption("hemomancy.dialogue.mnemonist.option.anchorite_counsel",
-					"anchorite_counsel", EVENT_ANCHORITE_COUNSEL));
+					"anchorite_counsel", EVENT_ANCHORITE_COUNSEL,
+					DialogueOptionPresentation.prompt("hemomancy.mnemonist.anchorite_counsel.prompt")));
 		}
 		if (CircusIntroductionRules.introductionFor(degree, circusDiscovered)
 				!= CircusIntroductionRules.Introduction.HIDDEN) {
@@ -215,7 +216,8 @@ public final class HarbingerMnemonistDialogueTrees {
 			return;
 		}
 		options.add(isNpcRecruited
-				? new DialogueOption("hemomancy.dialogue.recruit.option.release_blood", null, "expel_harbinger")
+				? new DialogueOption("hemomancy.dialogue.recruit.option.release_blood", null, "expel_harbinger",
+						DialogueOptionPresentation.prompt("hemomancy.dialogue.recruit.release.prompt"))
 				: new DialogueOption("hemomancy.dialogue.recruit.option.pledge_blood", "recruit_offer", null));
 	}
 

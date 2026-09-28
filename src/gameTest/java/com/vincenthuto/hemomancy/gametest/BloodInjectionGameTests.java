@@ -130,10 +130,12 @@ public final class BloodInjectionGameTests {
         com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess.getEquipment(player).orElseThrow()
                 .setStackInSlot(5, new ItemStack(ItemInit.charm_of_vascularium.get()));
         com.vincenthuto.hemomancy.common.mission.vicar.EarlyInitiation.activate(player);
+        com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess.requireInitiatoryDegree(player).setDegreeNumber(2);
         var sample = com.vincenthuto.hemomancy.common.mission.alchemist.ConcentratedBlood.create();
         player.setItemInHand(InteractionHand.MAIN_HAND, sample);
         h.assertTrue(!sample.use(h.getLevel(), player, InteractionHand.MAIN_HAND).getResult().consumesAction(), "Unclaimed mission permitted injection");
         com.vincenthuto.hemomancy.common.mission.alchemist.FirstSeparationAssignment.markClaimed(player);
+        com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess.advancedBrewing(player).record("distill");
         sample.use(h.getLevel(), player, InteractionHand.MAIN_HAND);
         for (int i = 0; i < 7; i++) player.doTick();
         player.releaseUsingItem();
@@ -143,9 +145,9 @@ public final class BloodInjectionGameTests {
         h.assertTrue(com.vincenthuto.hemomancy.common.mission.alchemist.ConcentratedBlood.pending(player), "Injection did not persist pending rest");
         h.assertTrue(!BloodSampleData.isFilled(player.getMainHandItem()), "Special injection did not return empty vial");
         h.assertTrue(!com.vincenthuto.hemomancy.common.mission.alchemist.ConcentratedBlood.completeSleep(player, false), "Interrupted sleep advanced degree");
-        h.assertTrue(com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess.getPlayerDegreeNumber(player) == 1, "Injection granted degree early");
+        h.assertTrue(com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess.getPlayerDegreeNumber(player) == 2, "Injection granted degree early");
         h.assertTrue(com.vincenthuto.hemomancy.common.mission.alchemist.ConcentratedBlood.completeSleep(player, true), "Completed sleep did not advance");
-        h.assertTrue(com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess.getPlayerDegreeNumber(player) == 2, "Wrong wake degree");
+        h.assertTrue(com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess.getPlayerDegreeNumber(player) == 3, "Wrong wake degree");
         h.assertTrue(!com.vincenthuto.hemomancy.common.mission.alchemist.ConcentratedBlood.completeSleep(player, true), "Sleep repeated reward");
         player.discard(); h.succeed();
     }

@@ -70,7 +70,7 @@ public final class BloodInfusionManager {
 
 		if (BloodStructureFeedRules.isComplete(progress.bloodFed, recipe.bloodCost())) {
 			ACTIVE.remove(key);
-			PENDING.put(key, new Pending(recipe, BloodInfusionRules.COLLAPSE_TICKS));
+			PENDING.put(key, new Pending(recipe, BloodInfusionRules.COLLAPSE_TICKS, player.getUUID()));
 			sync(level, pos, 1.0F, false, COMPLETION_VISIBLE_TICKS);
 			PacketDistributor.sendToPlayersNear(level, null, pos.getX() + 0.5D, pos.getY() + 0.5D,
 					pos.getZ() + 0.5D, SYNC_RANGE,
@@ -97,7 +97,7 @@ public final class BloodInfusionManager {
 			if (!entry.getKey().dimension.equals(level.dimension()) || --entry.getValue().remainingTicks > 0) {
 				continue;
 			}
-			complete(level, entry.getKey().pos, entry.getValue().recipe);
+			complete(level, entry.getKey().pos, entry.getValue().recipe, entry.getValue().playerId);
 			pending.remove();
 		}
 	}
@@ -115,7 +115,7 @@ public final class BloodInfusionManager {
 				.findFirst().orElse(null);
 	}
 
-	private static void complete(ServerLevel level, BlockPos pos, BloodInfusionRecipe recipe) {
+	private static void complete(ServerLevel level, BlockPos pos, BloodInfusionRecipe recipe, UUID playerId) {
 		boolean matches = level.getBlockState(pos).is(recipe.input());
 		if (!BloodInfusionRules.canComplete(matches, level.getBlockEntity(pos) != null)) {
 			sync(level, pos, 0.0F, true, BloodStructureFeedRules.PROGRESS_TIMEOUT_TICKS);
@@ -125,6 +125,11 @@ public final class BloodInfusionManager {
 		level.playSound(null, pos, SoundEvents.ENDERMAN_SCREAM, SoundSource.BLOCKS, 0.7F, 1.25F);
 		level.addFreshEntity(new ItemEntity(level, pos.getX() + 0.5D, pos.getY() + 0.5D,
 				pos.getZ() + 0.5D, recipe.resultStack()));
+		if (recipe.resultStack().is(com.vincenthuto.hemomancy.common.init.BlockInit.venous_stone.get().asItem())) {
+			ServerPlayer player = level.getServer().getPlayerList().getPlayer(playerId);
+			if (player != null)
+				com.vincenthuto.hemomancy.common.mission.vicar.FirstBloodcraftAssignment.recordVenousStone(player);
+		}
 	}
 
 	private static void sync(ServerLevel level, BlockPos pos, float progress, boolean clear, int visibleTicks) {
@@ -148,11 +153,13 @@ public final class BloodInfusionManager {
 
 	private static final class Pending {
 		private final BloodInfusionRecipe recipe;
+		private final UUID playerId;
 		private int remainingTicks;
 
-		private Pending(BloodInfusionRecipe recipe, int remainingTicks) {
+		private Pending(BloodInfusionRecipe recipe, int remainingTicks, UUID playerId) {
 			this.recipe = recipe;
 			this.remainingTicks = remainingTicks;
+			this.playerId = playerId;
 		}
 	}
 }

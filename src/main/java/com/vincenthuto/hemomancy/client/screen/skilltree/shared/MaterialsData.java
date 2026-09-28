@@ -84,7 +84,7 @@ public final class MaterialsData {
                                                                                                                                                                                                                                                                                 list.add(new MaterialEntry("vial_centrifuge", "Vial Centrifuge",
                 "Separates blood samples into component enzymes.",
                 "Functional Blocks", () -> new ItemStack(BlockInit.vial_centrifuge.get()),
-                true, UnlockPredicate.minDegree(1)));
+                true, UnlockPredicate.minDegree(2)));
 
                                                                                                                                                                                                                                                                                 list.add(new MaterialEntry("earthen_vein", "Earthen Vein",
                 "A living conduit block that transports blood volume.",

@@ -293,6 +293,10 @@ public class BloodAbsorptionItem extends Item implements IDispellable, ICellHand
 		double room = Math.max(0.0D, volume.getMaxBloodVolume() - volume.getBloodVolume());
 		double overflow = Math.max(0.0D, personalBlood - room);
 		volume.fill(personalBlood);
+		if (user instanceof ServerPlayer serverPlayer) {
+			com.vincenthuto.hemomancy.common.mission.vicar.FirstBloodcraftAssignment.recordAbsorption(
+					serverPlayer, Math.min(personalBlood, room));
+		}
 		if (overflow > 0.0D && user instanceof Player player
 				&& SkillPointHelper.isTechniqueEnabled(player, SkillPointInit.skill_guarded_feeding)) {
 			int amplifier = Math.min(3, Math.max(0, (int) (overflow / 4.0D)));

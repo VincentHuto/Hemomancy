@@ -23,7 +23,7 @@ Blood traits now come from `data/<entity namespace>/blood_profiles/<entity path>
 
 ## Clinical Blood Tools knowledge progression (2026-09-17)
 
-The Alchemist owns D1 collection, microscopy, injection, and late-D1 Cabinet study. First Separation briefing, startup proof, reward claim, ledger placement, and Materials entries now begin at D1. Body Answers and the Ghastly Alembic remain D2. Existing chapter certification and reward IDs are retained.
+The Vicar owns the Degree-1 bloodcraft lessons and grants Degree 2 after all four proofs are reported. The Alchemist owns Degree-2 collection, microscopy, injection, Cabinet study, First Separation, and the first Ghastly Alembic distillation. First Separation and distillation together unlock Concentrated Blood; injection and completed sleep grant Degree 3. Existing reward IDs remain valid.
 
 `ClinicalBloodProgress` is a copy-on-death attachment accessed through `HemoCapabilityAccess.clinicalBlood`. It persists unique personally examined entity IDs, taught lessons, Cabinet craft/manual-transfer evidence, Hematic Iron acquisition, and NPC meetings. `ClinicalBloodKnowledge` validates teacher, distance, degree, path, and prerequisites before one-time rewards. Real successful microscope sessions record sources; duplicate specimens and traded identification do not substitute for personal examination. Previously identified specimens can be examined again to establish personal evidence, without changing their components.
 
@@ -174,21 +174,24 @@ Hemomancy is a NeoForge blood magic mod built around the *quality* of blood mani
 2. **Discover a Blood Temple** — a naturally generating structure containing the **Mortal Display** and its Harbinger Hermit keeper.
 3. **Accept the Hermit's permission and touch the Mortal Display** — attaches the Charm of Vascularium, activates Degree 0, grants The First Awakening and the outpost waybill. Return for the Hermit's farewell and dissolution.
 4. **Meet the Vicar** — choose removal of the unsettled charm or formal initiation. The 10-second initiation grants Degree 1, the Sanguine Conduit, core utilities, starter blood, and the assignment ledger. A Degree 5+ player who leads a bloodline they founded may instead use Blood Projection on an active, charm-bearing Degree 0 player to perform the same ceremony. Successful completion also joins the recruit to that bloodline. Damage, departure, or loss of the founder's eligibility cancels the ceremony without granting a degree or membership; an existing different bloodline is never overwritten.
-5. **Complete First Separation for the Alchemist** — receive Concentrated Blood alongside the syringe and vial rack. Inject the special vial directly, then complete a night's sleep to wake at Degree 2.
-6. **Obtain the Liber Sanguinum** ![Liber Sanguinum](../src/main/resources/assets/hemomancy/textures/item/liber_sanguinum.png) — the mod's guide book (entity model: ![](../src/main/resources/assets/hemomancy/textures/entity/liber_sanguinum.png)), crafted using a structure recipe (bookshelf + Sanguine Formation ![Sanguine Formation](../src/main/resources/assets/hemomancy/textures/item/sanguine_formation.png)). (advancement: *Liber Sanguinum*).
-7. **Craft Befouling Ash** ![Befouling Ash](../src/main/resources/assets/hemomancy/textures/item/befouling_ash_trail.png) — a key ingredient for blood structure recipes (advancement: *Ashen Beginnings*).
+5. **Complete the Vicar's first bloodcraft lessons** — absorb a total of 500 ml through Blood Absorption, project a Sanguine Formation and Venous Stone, and use a blood-structure formation to craft either a Liber Sanguinum or Hematic Iron Block. Return to the Vicar for Degree 2. The lessons may be completed in any order; ask for recipe blueprints and hints during the assignment.
+6. **Complete the Alchemist's First Separation and First Distillation** — recover the enzyme from the assigned Centrifuge spin, report back for the syringe and vial rack, then complete and collect an ordinary Ghastly Alembic distillation. Ask the Alchemist for Concentrated Blood, inject it directly, and sleep to reach Degree 3.
+7. **Obtain the Liber Sanguinum** ![Liber Sanguinum](../src/main/resources/assets/hemomancy/textures/item/liber_sanguinum.png) — the mod's guide book (entity model: ![](../src/main/resources/assets/hemomancy/textures/entity/liber_sanguinum.png)), crafted using a structure recipe (bookshelf + Sanguine Formation ![Sanguine Formation](../src/main/resources/assets/hemomancy/textures/item/sanguine_formation.png)). (advancement: *Liber Sanguinum*).
+8. **Craft Befouling Ash** ![Befouling Ash](../src/main/resources/assets/hemomancy/textures/item/befouling_ash_trail.png) — a key ingredient for blood structure recipes (advancement: *Ashen Beginnings*).
 
 From here the player can pursue the **Harbinger Path** (blood magic) or eventually diverge to the **Unstained Path** (anti-blood purification).
 
-After reaching Degree 1, the first Harbinger Vicar contacted grants or reissues the **Harbinger Assignment Ledger** and introduces a main Neophyte assignment plus a side route. The Main D1 assignment, **First Bloodcraft**, teaches Blood Crafting fundamentals: Blood Absorption fills the player's vessel, while Blood Projection spends that stored blood into blood-structure recipes. The D1 main ledger tracks three prerequisites: fill the vessel to 5000 ml (`vessel_filled`), project a **Liber Sanguinum** (`fane_sanguinium`), and project a **Hematic Iron Block** (`iron_in_the_blood`). Once all three are complete, the Degree-1 Vicar offers a one-time hand-in that grants exactly **4 Hematic Iron Scraps**, **8 Befouling Ash Trails**, and **2 Sanguine Formations**. This bloodcraft assignment remains available, while First Separation and Concentrated Blood now govern Degree 2 advancement.
+After reaching Degree 1, the first Harbinger Vicar contacted grants or reissues the **Harbinger Assignment Ledger**. The opening Vicar chapter records four proofs, completed in any order: gain a total of **500 ml** through Blood Absorption; project a **Sanguine Formation**; project into ordinary stone to produce **Venous Stone**; and complete one blood-structure craft, either a **Liber Sanguinum** or **Hematic Iron Block**. The Vicar offers hints and on-request Mnemonic Blueprints for both structure recipes. Reporting all four proofs to the Vicar grants Degree 2 and, once only, **4 Hematic Iron Scraps**, **8 Befouling Ash Trails**, and **2 Sanguine Formations**. The Hermit Road remains an optional side route.
 
 Blood Projection can also condense Sanguine Formation directly: hold projection on a solid block to invest blood until one `sanguine_formation` pops from the targeted face. Generic solid blocks require 150 blood and have a 25% collapse chance, reduced by the D1 `skill_sanguine_crystallization` skill by 5% per level. Blocks tagged `hemomancy:sanguine_formation_projectors`, including the venous stone family and placed Blood Stained Stone, require 100 blood, feed twice as fast, and never collapse. Existing Blood Projection endpoints, blood-structure recipes, loom/effigy charging, and blood reservoirs take priority before this fallback condensation.
 
 The D1 side assignment, **The Hermit Road**, tells the player to seek abandoned hermitage remnants and blood-stained stones in a similar state to their own first invitation. Natural Hermitage Remnants now generate as sparse surface rubble with venous stone, blackstone bricks, crimson flame accents, a placed Blood Stained Stone, and the `hermitage_remnant/first_invitation_stone` blood echo. Reading that echo grants the hidden `hermit_road_first_remnant` milestone; the player's first report to a Vicar records `hermit_road_reported` and grants four Befouling Ash Trails. It does not gate formal assignments or rank. The ledger is a separate guidebook-rendered item, not the dormant Field Notes item, and organizes entries as **Main**, **Side**, **Vocation**, and **Catalogue** work; optional groups begin collapsed and retain the existing card-collapse controls.
 
-At Degree 1, the Harbinger Alchemist introduces **The First Separation**. Degree 2 adds broader reagent work, optional side assignments, and the background **Living Bestiary** catalogue. **The First Separation** focuses on the Vial Centrifuge loop: obtain a Vial Centrifuge, sample two ordinary creatures with the briefing vials, start a valid balanced separation, and extract the enzyme tagged to that exact assignment spin. Enzyme acquired elsewhere cannot complete the recovery step. This teaches blood sampling and separation without requiring full enzyme completion.
+At Degree 2, the Harbinger Alchemist introduces **The First Separation**. Its ledger entry preserves each completed step and carries the route through Concentrated Blood injection and completed sleep that awards Degree 3. Degree 2 also adds the First Distillation, optional side assignments, and the background **Living Bestiary** catalogue. **The First Separation** focuses on the Vial Centrifuge loop: obtain a Vial Centrifuge, sample two ordinary creatures with the briefing vials, start a valid balanced separation, and extract the enzyme tagged to that exact assignment spin. Enzyme acquired elsewhere cannot complete the recovery step. This teaches blood sampling and separation without requiring full enzyme completion.
 
 Completing the First Separation return grants a one-time sampling kit: a **Living Syringe** and a **Vial Rack** initialized with eight empty Blood Vials. The reward is claim-recorded, so repeated Alchemist dialogue cannot duplicate it.
+
+The Degree 2 main assignment, **The First Distillation**, requires one ordinary Ghastly Alembic recipe and personal extraction of its result. Both this proof and the First Separation return are required before the Alchemist will issue Concentrated Blood. Injection followed by completed sleep grants Degree 3. Body Answers, clinical fieldwork, Red Taxonomy, the Living Bestiary, and full enzyme mastery remain optional. The former Initiate rite remains as a ceremonial recipe but no longer grants the third degree.
 
 The D2 catalogue **The Red Taxonomy** is part of the collapsed **Alchemical Fieldwork** group. Bringing distinct samples such as Infected Fungus, Stinkhorn Fungus, Sarcodes, Bleeding Heart, Rafflesia, Devil's Tooth, or Puffball Fungus to the Alchemist grants hidden specimen records; the first unique submission immediately issues one empty Blood Vial for field sampling. Four distinct records complete `red_taxonomy_complete` and issue four Specimen Jars plus four additional empty Blood Vials. This catalogue is optional and does not gate rank.
 
@@ -510,8 +513,8 @@ Progression through **Cardinal Rites** — multiblock blood rituals. Each rite a
 |--------|-------|---------------|
 | 0 | Uninitiated | *(starting state)* |
 | 1 | Neophyte of the Crimson Veil | Formal Vicar initiation (200 ticks) |
-| 2 | Votary of the Hematic Covenant | First Separation reward, direct Concentrated Blood injection, then completed sleep |
-| 3 | Initiate of the Incarnadine Fane | `initiate_rite` |
+| 2 | Votary of the Hematic Covenant | Complete the four Vicar bloodcraft proofs and return to the Vicar |
+| 3 | Initiate of the Incarnadine Fane | First Separation and Alembic distillation, then direct Concentrated Blood injection and completed sleep |
 | 4 | Adept of the Sanguine Brotherhood | `sanguine_brotherhood` |
 | 5 | Illuminatus of the Crimson Lodge | `illuminatus_rite` |
 | 6 | Sanctified of the Bloodline Covenant | `sanctified_rite` |
@@ -563,8 +566,8 @@ Harbinger NPC types provide lore and gameplay hints through the `DialogueTree` f
 |---|---|
 | No blood (pre-initiation) | Offers lore about the Mortal Display, explains his duty as eternal keeper, presents the option to claim the heart and begin hemomancy |
 | Degree 0 (uninitiated) | After heart attachment, directs the player to the Vicar and dissolves on farewell. No rite blueprint is granted. |
-| Degree 1 Neophyte | Acknowledges first step; directs the player to First Separation, Concentrated Blood, and rest |
-| Degree 2 Votary | Guidance on blood tendencies and the Somatic Loom; hints toward Incarnadine Fane |
+| Degree 1 Neophyte | Teaches absorption, projection, Venous Stone, and the first blood formation craft; supplies requested blueprints and grants Degree 2 on return |
+| Degree 2 Votary | Directs the player to the Alchemist for First Separation, Ghastly Alembic distillation, and Concentrated Blood |
 | Degree 3 Initiate | Points toward Sanguine Brotherhood rite |
 | Degree 4 Adept | **Scar lore branch** — explains scars as literal mind-maps of new venous/neural pathways, Cerebral Scarring Station usage; hints toward Crimson Lodge |
 | Degree 5 Illuminatus | Reveals Bloodline Covenant system; hints toward Bloodline Covenant rite |
@@ -3164,9 +3167,10 @@ The Hermit's farewell ends in dissolution; each temple has one heir. The waybill
 is given at the display. Formal Vicar initiation lasts 200 ticks and grants
 Degree 1, the Sanguine Conduit, Blood Absorption/Projection, and starter blood.
 Before commitment the Vicar can remove the unsettled charm; another temple can
-begin a fresh initiation. First Separation rewards Concentrated Blood alongside
-the living syringe and vial rack. Direct leg injection followed by completed
-sleep grants Degree 2. The Alchemist hints that the blood needs rest to settle.
+begin a fresh initiation. Four Vicar bloodcraft proofs and a return to the Vicar
+grant Degree 2. First Separation rewards the living syringe and vial rack; its
+completed return and an ordinary Ghastly Alembic distillation unlock Concentrated
+Blood from the Alchemist. Direct leg injection and completed sleep grant Degree 3.
 Degree 2+ rites use the Living Staff (`living_staff`); Unstained rites retain
 Blood Craft key activation. Vascular Mending and Sanguine Attunement now require
 Degree 2 and a Living Staff.
@@ -3848,7 +3852,7 @@ Flying navigation replaces cable anchors and node blinking. The boss patrols loa
 | **Old Habits** | Obtain any enzyme |
 | **Bleeding a Stone** | Craft a Ghastly Alembic |
 
-**First-hour guidance:** the opening follows Hermit permission, Mortal Display attachment (Degree 0), the outpost waybill, Vicar initiation (Degree 1 and conduit), then the Alchemist's First Separation, Concentrated Blood injection, and sleep (Degree 2). Cardinal Rites begin after this clinical introduction. Existing Unstained entry and Liber access remain unchanged.
+**First-hour guidance:** Hermit permission and Mortal Display attachment grant Degree 0; the Vicar grants Degree 1 and the conduit. The Vicar's absorption, projection, and blood formation crafting proofs grant Degree 2 on return. The Alchemist's First Separation and Ghastly Alembic distillation precede Concentrated Blood injection and sleep for Degree 3. Later degrees use Cardinal Rites. Existing Unstained entry remains unchanged.
 
 ### 32.2 Harbinger Path (programmatic + item triggers)
 
@@ -3857,8 +3861,8 @@ All degree advancements are granted via `HarbingerAdvancementGranter.grantDegree
 | Advancement | JSON key | Frame | Trigger |
 |-------------|----------|-------|---------|
 | **Neophyte of the Crimson Veil** | `degree_1_neophyte` | task | Vicar initiation completes (programmatic) |
-| **Votary of the Hematic Covenant** | `degree_2_votary` | task | Concentrated Blood settles after sleep (programmatic) |
-| **Initiate of the Incarnadine Fane** | `degree_3_initiate` | task | Degree 3 rite (programmatic) |
+| **Votary of the Hematic Covenant** | `degree_2_votary` | task | Four bloodcraft proofs reported to the Vicar (programmatic) |
+| **Initiate of the Incarnadine Fane** | `degree_3_initiate` | task | Concentrated Blood settles after sleep (programmatic) |
 | **Adept of the Sanguine Brotherhood** | `degree_4_adept` | goal | Degree 4 rite (programmatic) |
 | **Illuminatus of the Crimson Lodge** | `degree_5_illuminatus` | goal | Degree 5 rite (programmatic) |
 | **Sanctified of the Bloodline Covenant** | `degree_6_sanctified` | goal | Degree 6 rite (programmatic) |

@@ -23,6 +23,8 @@ public final class HarbingerVicarDialogueTrees {
 	public static final String EVENT_BLOOD_SHOTTING = "vicar_blood_shotting";
 	public static final String EVENT_HERMIT_ROAD_REPORT = "vicar_hermit_road_report";
 	public static final String EVENT_CLAIM_FIRST_BLOODCRAFT_REWARD = "vicar_claim_first_bloodcraft_reward";
+	public static final String EVENT_LIBER_BLUEPRINT = "vicar_liber_blueprint";
+	public static final String EVENT_IRON_BLUEPRINT = "vicar_iron_blueprint";
 	public static final String EVENT_MASONS_RESPITE_DIRECTIVE = "vicar_masons_respite_directive";
 	public static final String EVENT_CONSECRATION_KIT = "vicar_consecration_kit";
 
@@ -141,7 +143,8 @@ public final class HarbingerVicarDialogueTrees {
 			return;
 		}
 		options.add(isNpcRecruited
-				? new DialogueOption("hemomancy.dialogue.recruit.option.release_blood", null, "expel_harbinger")
+				? new DialogueOption("hemomancy.dialogue.recruit.option.release_blood", null, "expel_harbinger",
+						DialogueOptionPresentation.prompt("hemomancy.dialogue.recruit.release.prompt"))
 				: new DialogueOption("hemomancy.dialogue.recruit.option.pledge_blood", "recruit_offer", null));
 	}
 
@@ -213,7 +216,8 @@ public final class HarbingerVicarDialogueTrees {
 				"degree_hint", null));
 		if (hasFoundHermitRoadRemnant && !hasHermitRoadLedger) {
 			greetingOptions.add(new DialogueOption("hemomancy.dialogue.vicar.option.report_hermit_road",
-					"hermit_road_report", EVENT_HERMIT_ROAD_REPORT));
+					"hermit_road_report", EVENT_HERMIT_ROAD_REPORT,
+					DialogueOptionPresentation.prompt("hemomancy.vicar.hermit_road.report.prompt")));
 		} else if (hasHermitRoadLedger) {
 			greetingOptions.add(new DialogueOption("hemomancy.dialogue.vicar.option.report_hermit_road",
 					"hermit_road_followup", null));
@@ -223,9 +227,15 @@ public final class HarbingerVicarDialogueTrees {
 		}
 		greetingOptions.add(new DialogueOption("hemomancy.dialogue.vicar.option.ask_about_blood_crafting",
 				"blood_crafting", null));
+		greetingOptions.add(new DialogueOption("hemomancy.dialogue.vicar.option.absorption_hint", "absorption_hint", null));
+		greetingOptions.add(new DialogueOption("hemomancy.dialogue.vicar.option.projection_hint", "projection_hint", null));
+		greetingOptions.add(new DialogueOption("hemomancy.dialogue.vicar.option.crafting_hint", "crafting_hint", null));
+		greetingOptions.add(new DialogueOption("hemomancy.dialogue.vicar.option.liber_blueprint", null, EVENT_LIBER_BLUEPRINT));
+		greetingOptions.add(new DialogueOption("hemomancy.dialogue.vicar.option.iron_blueprint", null, EVENT_IRON_BLUEPRINT));
 		if (canClaimFirstBloodcraftReward) {
 			greetingOptions.add(new DialogueOption("hemomancy.dialogue.vicar.option.claim_first_bloodcraft_reward",
-					"first_bloodcraft_reward_granted", EVENT_CLAIM_FIRST_BLOODCRAFT_REWARD));
+					"first_bloodcraft_reward_granted", EVENT_CLAIM_FIRST_BLOODCRAFT_REWARD,
+					DialogueOptionPresentation.prompt("hemomancy.vicar.first_bloodcraft_reward.prompt")));
 		} else if (firstBloodcraftRewardClaimed) {
 			greetingOptions.add(new DialogueOption("hemomancy.dialogue.vicar.option.first_bloodcraft_reward_claimed",
 					"first_bloodcraft_reward_claimed", null));
@@ -260,6 +270,12 @@ public final class HarbingerVicarDialogueTrees {
 				), List.of(
 						new DialogueOption("hemomancy.dialogue.vicar.option.leave", null, null)
 				)))
+				.addNode(new DialogueNode("absorption_hint", List.of("hemomancy.vicar.neophyte.absorption_hint"), List.of(
+						new DialogueOption("hemomancy.dialogue.vicar.option.leave", null, null))))
+				.addNode(new DialogueNode("projection_hint", List.of("hemomancy.vicar.neophyte.projection_hint"), List.of(
+						new DialogueOption("hemomancy.dialogue.vicar.option.leave", null, null))))
+				.addNode(new DialogueNode("crafting_hint", List.of("hemomancy.vicar.neophyte.crafting_hint"), List.of(
+						new DialogueOption("hemomancy.dialogue.vicar.option.leave", null, null))))
 				.addNode(new DialogueNode("first_bloodcraft_reward_granted", List.of(
 						"hemomancy.vicar.neophyte.first_bloodcraft_reward.granted"
 				), List.of(
@@ -381,7 +397,8 @@ public final class HarbingerVicarDialogueTrees {
 				? new DialogueOption("hemomancy.dialogue.vicar.option.seek_vein_mason",
 						"masons_respite_followup", null)
 				: new DialogueOption("hemomancy.dialogue.vicar.option.seek_vein_mason",
-						"masons_respite_directive", EVENT_MASONS_RESPITE_DIRECTIVE));
+						"masons_respite_directive", EVENT_MASONS_RESPITE_DIRECTIVE,
+						DialogueOptionPresentation.prompt("hemomancy.vicar.masons_respite.prompt")));
 		addBloodScriptRitualOption(greetingOptions, hasAbocipherLiteracy);
 		greetingOptions.add(new DialogueOption("hemomancy.dialogue.vicar.option.ask_about_item", "item_hint", null));
 		greetingOptions.add(new DialogueOption("hemomancy.dialogue.vicar.option.leave", null, null));

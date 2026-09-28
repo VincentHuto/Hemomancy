@@ -18,6 +18,7 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
@@ -254,6 +255,10 @@ public class BloodVialItem extends Item {
                     if (!player.getInventory().add(stack)) player.drop(stack, false);
                 }
                 com.vincenthuto.hemomancy.common.mission.alchemist.ClinicalBloodKnowledge.collected(player, sample);
+				if (player instanceof ServerPlayer serverPlayer) {
+					com.vincenthuto.hemomancy.common.mission.alchemist.FirstSeparationAssignment
+							.markSampleAcquired(serverPlayer);
+				}
 				player.playSound(SoundEvents.BOTTLE_FILL, 1.0F, 1.0F);
 			}
 			Component targetName = entity == null ? Component.translatable("message.hemomancy.blood_sampling.unknown")

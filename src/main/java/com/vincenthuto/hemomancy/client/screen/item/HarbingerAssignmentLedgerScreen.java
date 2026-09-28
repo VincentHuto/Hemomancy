@@ -2,6 +2,8 @@ package com.vincenthuto.hemomancy.client.screen.item;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.vincenthuto.hemomancy.common.mission.alchemist.ClinicalBloodProgress;
+import com.vincenthuto.hemomancy.common.mission.alchemist.FirstSeparationLedgerProgress;
+import com.vincenthuto.hemomancy.common.mission.vicar.FirstBloodcraftLedgerProgress;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.client.screen.skilltree.harbinger.VeinBackgroundRenderer;
 import com.vincenthuto.hemomancy.client.screen.skilltree.shared.MilestoneDrawerState;
@@ -36,9 +38,12 @@ public class HarbingerAssignmentLedgerScreen extends Screen {
 	private static final int COLLAPSE_ALL_BUTTON_WIDTH = 80;
 	private static final int EXPAND_ALL_BUTTON_WIDTH = 72;
 	private static final int ASSIGNMENT_LIST_TOP_OFFSET = 57;
-	private static final int FIRST_BLOODCRAFT_HEIGHT = 145;
+	private static final int FIRST_BLOODCRAFT_HEIGHT = 42 + ASSIGNMENT_CARD_HEIGHT + CARD_GAP;
+	private static final int FIRST_PROJECTION_HEIGHT = 42 + 2 * (ASSIGNMENT_CARD_HEIGHT + CARD_GAP);
+	private static final int FIRST_FORMATION_CRAFT_HEIGHT = FIRST_PROJECTION_HEIGHT;
 	private static final int HERMIT_ROAD_HEIGHT = 110;
-	private static final int FIRST_SEPARATION_HEIGHT = 180;
+	private static final int FIRST_SEPARATION_HEIGHT = 42 + 7 * (ASSIGNMENT_CARD_HEIGHT + CARD_GAP);
+	private static final int FIRST_DISTILLATION_HEIGHT = 68;
 	private static final int BODY_ANSWERS_HEIGHT = 143;
 	private static final int RED_TAXONOMY_HEIGHT = 56;
 	private static final int ENZYME_MASTERY_HEIGHT = 56;
@@ -96,17 +101,20 @@ public class HarbingerAssignmentLedgerScreen extends Screen {
 
 	private enum AssignmentSection {
 		FIRST_BLOODCRAFT(1, AssignmentCategory.MAIN, FIRST_BLOODCRAFT_HEIGHT),
+		FIRST_PROJECTION(1, AssignmentCategory.MAIN, FIRST_PROJECTION_HEIGHT),
+		FIRST_FORMATION_CRAFT(1, AssignmentCategory.MAIN, FIRST_FORMATION_CRAFT_HEIGHT),
+		FIRST_SEPARATION(2, AssignmentCategory.MAIN, FIRST_SEPARATION_HEIGHT),
 		HERMIT_ROAD(1, AssignmentCategory.SIDE, HERMIT_ROAD_HEIGHT),
-		FIRST_SEPARATION(1, AssignmentCategory.MAIN, FIRST_SEPARATION_HEIGHT),
-        CLINICAL_OBSERVATION(1, AssignmentCategory.SIDE, 42 + 5 * (ASSIGNMENT_CARD_HEIGHT + CARD_GAP)),
+        CLINICAL_OBSERVATION(2, AssignmentCategory.SIDE, 42 + 5 * (ASSIGNMENT_CARD_HEIGHT + CARD_GAP)),
+		FIRST_DISTILLATION(2, AssignmentCategory.MAIN, FIRST_DISTILLATION_HEIGHT),
         CLINICAL_FIELDWORK(2, AssignmentCategory.SIDE, 42 + 5 * (ASSIGNMENT_CARD_HEIGHT + CARD_GAP)),
-        CLINICAL_ECHOES(3, AssignmentCategory.SIDE, 42 + 3 * (ASSIGNMENT_CARD_HEIGHT + CARD_GAP)),
 		BODY_ANSWERS(2, AssignmentCategory.SIDE, BODY_ANSWERS_HEIGHT),
 		RED_TAXONOMY(2, AssignmentCategory.CATALOGUE, RED_TAXONOMY_HEIGHT),
 		LIVING_BESTIARY(2, AssignmentCategory.CATALOGUE, LIVING_BESTIARY_HEIGHT),
 		ENZYME_MASTERY(2, AssignmentCategory.CATALOGUE, ENZYME_MASTERY_HEIGHT),
 		THE_WORN_VOW(2, AssignmentCategory.VOCATION, THE_WORN_VOW_HEIGHT),
 		WOVEN_VESSEL(3, AssignmentCategory.MAIN, WOVEN_VESSEL_HEIGHT),
+		CLINICAL_ECHOES(3, AssignmentCategory.SIDE, 42 + 3 * (ASSIGNMENT_CARD_HEIGHT + CARD_GAP)),
 		THE_THREE_ANSWERS(3, AssignmentCategory.VOCATION, THE_THREE_ANSWERS_HEIGHT),
 		VEIN_MASON(4, AssignmentCategory.MAIN, VEIN_MASON_HEIGHT),
 		ANCHORITE_D5(5, AssignmentCategory.SIDE, ANCHORITE_D5_HEIGHT),
@@ -131,6 +139,7 @@ public class HarbingerAssignmentLedgerScreen extends Screen {
 
 	private static final List<AssignmentSection> ORDERED_ASSIGNMENT_SECTIONS = Arrays.stream(AssignmentSection.values())
 			.sorted(Comparator.comparingInt((AssignmentSection section) -> section.assignmentDegree)
+					.thenComparingInt(section -> section.category.ordinal())
 					.thenComparingInt(Enum::ordinal))
 			.toList();
 
@@ -143,15 +152,11 @@ public class HarbingerAssignmentLedgerScreen extends Screen {
 	private final int degree;
 	private final boolean firstAwakening;
 	private final boolean degreeOne;
-	private final boolean vesselFilled;
-	private final boolean liberSanguinumCrafted;
-	private final boolean hematicIronBlockCrafted;
+	private final FirstBloodcraftLedgerProgress firstBloodcraft;
 	private final boolean firstRemnant;
 	private final boolean ledgerGranted;
-	private final boolean hasVialCentrifuge;
-	private final boolean hasSampledBloodVial;
-	private final boolean firstSeparationStarted;
-	private final boolean hasAnyEnzyme;
+	private final FirstSeparationLedgerProgress firstSeparation;
+	private final boolean firstDistillationComplete;
 	private final boolean bodyAnswersBriefed;
 	private final boolean bodyAnswersComplete;
 	private final int muscleMemoryCount;
@@ -212,10 +217,9 @@ public class HarbingerAssignmentLedgerScreen extends Screen {
 	private Component hoveredAssignmentDescription;
 
 	private HarbingerAssignmentLedgerScreen(int degree, boolean firstAwakening, boolean degreeOne,
-			boolean vesselFilled, boolean liberSanguinumCrafted, boolean hematicIronBlockCrafted,
+			FirstBloodcraftLedgerProgress firstBloodcraft,
 			boolean firstRemnant, boolean ledgerGranted,
-			boolean hasVialCentrifuge, boolean hasSampledBloodVial,
-			boolean firstSeparationStarted, boolean hasAnyEnzyme,
+			FirstSeparationLedgerProgress firstSeparation, boolean firstDistillationComplete,
 			boolean bodyAnswersBriefed, boolean bodyAnswersComplete, int muscleMemoryCount,
 			int redTaxonomyCount, boolean redTaxonomyComplete,
 			int enzymeMasteryCount, boolean enzymeMasteryComplete,
@@ -241,15 +245,11 @@ public class HarbingerAssignmentLedgerScreen extends Screen {
 		this.degree = degree;
 		this.firstAwakening = firstAwakening;
 		this.degreeOne = degreeOne;
-		this.vesselFilled = vesselFilled;
-		this.liberSanguinumCrafted = liberSanguinumCrafted;
-		this.hematicIronBlockCrafted = hematicIronBlockCrafted;
+		this.firstBloodcraft = firstBloodcraft;
 		this.firstRemnant = firstRemnant;
 		this.ledgerGranted = ledgerGranted;
-		this.hasVialCentrifuge = hasVialCentrifuge;
-		this.hasSampledBloodVial = hasSampledBloodVial;
-		this.firstSeparationStarted = firstSeparationStarted;
-		this.hasAnyEnzyme = hasAnyEnzyme;
+		this.firstSeparation = firstSeparation;
+		this.firstDistillationComplete = firstDistillationComplete;
 		this.bodyAnswersBriefed = bodyAnswersBriefed;
 		this.bodyAnswersComplete = bodyAnswersComplete;
 		this.muscleMemoryCount = muscleMemoryCount;
@@ -300,10 +300,9 @@ public class HarbingerAssignmentLedgerScreen extends Screen {
 	}
 
 	public static void open(int degree, boolean firstAwakening, boolean degreeOne,
-			boolean vesselFilled, boolean liberSanguinumCrafted, boolean hematicIronBlockCrafted,
+			FirstBloodcraftLedgerProgress firstBloodcraft,
 			boolean firstRemnant, boolean ledgerGranted,
-			boolean hasVialCentrifuge, boolean hasSampledBloodVial,
-			boolean firstSeparationStarted, boolean hasAnyEnzyme,
+			FirstSeparationLedgerProgress firstSeparation, boolean firstDistillationComplete,
 			boolean bodyAnswersBriefed, boolean bodyAnswersComplete, int muscleMemoryCount,
 			int redTaxonomyCount, boolean redTaxonomyComplete,
 			int enzymeMasteryCount, boolean enzymeMasteryComplete,
@@ -326,9 +325,8 @@ public class HarbingerAssignmentLedgerScreen extends Screen {
 			int pomesConsumed, boolean qliphothCommunionComplete, boolean silentPending,
 			boolean severedPortalOpen, boolean silentArchon) {
 		Minecraft.getInstance().setScreen(new HarbingerAssignmentLedgerScreen(
-				degree, firstAwakening, degreeOne, vesselFilled, liberSanguinumCrafted, hematicIronBlockCrafted,
-				firstRemnant, ledgerGranted, hasVialCentrifuge, hasSampledBloodVial,
-				firstSeparationStarted, hasAnyEnzyme,
+				degree, firstAwakening, degreeOne, firstBloodcraft,
+				firstRemnant, ledgerGranted, firstSeparation, firstDistillationComplete,
 				bodyAnswersBriefed, bodyAnswersComplete, muscleMemoryCount,
 				redTaxonomyCount, redTaxonomyComplete, enzymeMasteryCount, enzymeMasteryComplete,
 				livingBestiaryCount, livingBestiaryTotal, morphlingLayerCount, hasBlankHematicMemory,
@@ -443,7 +441,7 @@ public class HarbingerAssignmentLedgerScreen extends Screen {
 		renderAssignmentHeader(gfx, x, y, w,
 				Component.translatable("screen.hemomancy.harbinger_assignment_ledger.header"), degreeText);
 		renderCollapseControls(gfx, mouseX, mouseY);
-		drawProgressBar(gfx, x, y + 44, w, 8, completedCount(), 18 + (degree >= 1 ? 5 : 0) + (degree >= 2 ? 5 : 0) + (degree >= 3 ? 3 : 0));
+		drawProgressBar(gfx, x, y + 44, w, 8, completedAssignmentCount(), visibleAssignmentCount());
 
 		int listY = assignmentListY();
 		int listH = assignmentListHeight();
@@ -593,11 +591,14 @@ public class HarbingerAssignmentLedgerScreen extends Screen {
 			int x, int y, int w, int mouseX, int mouseY) {
 		switch (section) {
 			case FIRST_BLOODCRAFT -> renderFirstBloodcraft(gfx, x, y, w, mouseX, mouseY);
+			case FIRST_PROJECTION -> renderFirstProjection(gfx, x, y, w, mouseX, mouseY);
+			case FIRST_FORMATION_CRAFT -> renderFirstFormationCraft(gfx, x, y, w, mouseX, mouseY);
 			case HERMIT_ROAD -> renderHermitRoad(gfx, x, y, w, mouseX, mouseY);
 			case FIRST_SEPARATION -> renderFirstSeparation(gfx, x, y, w, mouseX, mouseY);
             case CLINICAL_OBSERVATION, CLINICAL_FIELDWORK, CLINICAL_ECHOES ->
                     renderClinical(gfx, section, x, y, w, mouseX, mouseY);
 			case BODY_ANSWERS -> renderBodyAnswers(gfx, x, y, w, mouseX, mouseY);
+			case FIRST_DISTILLATION -> renderFirstDistillation(gfx, x, y, w, mouseX, mouseY);
 			case RED_TAXONOMY -> renderRedTaxonomy(gfx, x, y, w, mouseX, mouseY);
 			case LIVING_BESTIARY -> renderLivingBestiary(gfx, x, y, w, mouseX, mouseY);
 			case ENZYME_MASTERY -> renderEnzymeMastery(gfx, x, y, w, mouseX, mouseY);
@@ -619,11 +620,11 @@ public class HarbingerAssignmentLedgerScreen extends Screen {
 	}
 
 	private void renderFirstBloodcraft(GuiGraphics gfx, int x, int y, int w, int mouseX, int mouseY) {
-		int progress = firstBloodcraftProgress();
+		int progress = Math.min(500, (int) firstBloodcraft.absorbedMl());
 		if (renderCollapsedAssignmentIfNeeded(gfx, AssignmentSection.FIRST_BLOODCRAFT, x, y, w, VICAR_PORTRAIT,
 				"screen.hemomancy.harbinger_assignment_ledger.first_bloodcraft.title",
 				"screen.hemomancy.harbinger_assignment_ledger.first_bloodcraft.progress",
-				progress, 3, progress >= 3)) {
+				progress, 500, progress == 500)) {
 			return;
 		}
 		gfx.fill(x, y, x + w, y + FIRST_BLOODCRAFT_HEIGHT, PANEL_DARK);
@@ -631,20 +632,54 @@ public class HarbingerAssignmentLedgerScreen extends Screen {
 		renderGroupHeader(gfx, AssignmentSection.FIRST_BLOODCRAFT, x + 8, y + 6, w - 16,
 				"screen.hemomancy.harbinger_assignment_ledger.first_bloodcraft.title",
 				"screen.hemomancy.harbinger_assignment_ledger.first_bloodcraft.progress",
-				progress, 3, progress >= 3);
-		drawProgressBar(gfx, x + 8, y + 31, w - 16, 7, progress, 3);
+				progress, 500, progress == 500);
+		drawProgressBar(gfx, x + 8, y + 31, w - 16, 7, progress, 500);
 		int rowY = y + 42;
-		renderAssignmentCard(gfx, x + 8, rowY, w - 16, ASSIGNMENT_CARD_HEIGHT, vesselFilled, VICAR_PORTRAIT,
+		renderAssignmentCard(gfx, x + 8, rowY, w - 16, ASSIGNMENT_CARD_HEIGHT, firstBloodcraft.absorbedMl() >= 500, VICAR_PORTRAIT,
 				"screen.hemomancy.harbinger_assignment_ledger.step.fill_vessel",
 				"screen.hemomancy.harbinger_assignment_ledger.step.fill_vessel.desc", mouseX, mouseY);
+	}
+
+	private void renderFirstProjection(GuiGraphics gfx, int x, int y, int w, int mouseX, int mouseY) {
+		int progress = (firstBloodcraft.formationProjected() ? 1 : 0) + (firstBloodcraft.venousStoneProjected() ? 1 : 0);
+		if (renderCollapsedAssignmentIfNeeded(gfx, AssignmentSection.FIRST_PROJECTION, x, y, w, VICAR_PORTRAIT,
+				"screen.hemomancy.harbinger_assignment_ledger.first_projection.title",
+				"screen.hemomancy.harbinger_assignment_ledger.first_bloodcraft.progress", progress, 2, progress == 2)) return;
+		gfx.fill(x, y, x + w, y + FIRST_PROJECTION_HEIGHT, PANEL_DARK);
+		ScreenDrawUtils.drawBorder(gfx, x, y, w, FIRST_PROJECTION_HEIGHT, BORDER, BORDER_MUTED);
+		renderGroupHeader(gfx, AssignmentSection.FIRST_PROJECTION, x + 8, y + 6, w - 16,
+				"screen.hemomancy.harbinger_assignment_ledger.first_projection.title",
+				"screen.hemomancy.harbinger_assignment_ledger.first_bloodcraft.progress", progress, 2, progress == 2);
+		drawProgressBar(gfx, x + 8, y + 31, w - 16, 7, progress, 2);
+		int rowY = y + 42;
+		renderAssignmentCard(gfx, x + 8, rowY, w - 16, ASSIGNMENT_CARD_HEIGHT, firstBloodcraft.formationProjected(), VICAR_PORTRAIT,
+				"screen.hemomancy.harbinger_assignment_ledger.step.project_formation",
+				"screen.hemomancy.harbinger_assignment_ledger.step.project_formation.desc", mouseX, mouseY);
 		rowY += ASSIGNMENT_CARD_HEIGHT + CARD_GAP;
-		renderAssignmentCard(gfx, x + 8, rowY, w - 16, ASSIGNMENT_CARD_HEIGHT, liberSanguinumCrafted, VICAR_PORTRAIT,
-				"screen.hemomancy.harbinger_assignment_ledger.step.craft_liber",
-				"screen.hemomancy.harbinger_assignment_ledger.step.craft_liber.desc", mouseX, mouseY);
+		renderAssignmentCard(gfx, x + 8, rowY, w - 16, ASSIGNMENT_CARD_HEIGHT, firstBloodcraft.venousStoneProjected(), VICAR_PORTRAIT,
+				"screen.hemomancy.harbinger_assignment_ledger.step.project_venous_stone",
+				"screen.hemomancy.harbinger_assignment_ledger.step.project_venous_stone.desc", mouseX, mouseY);
+	}
+
+	private void renderFirstFormationCraft(GuiGraphics gfx, int x, int y, int w, int mouseX, int mouseY) {
+		int progress = (firstBloodcraft.structureCrafted() ? 1 : 0) + (firstBloodcraft.votaryReached() ? 1 : 0);
+		if (renderCollapsedAssignmentIfNeeded(gfx, AssignmentSection.FIRST_FORMATION_CRAFT, x, y, w, VICAR_PORTRAIT,
+				"screen.hemomancy.harbinger_assignment_ledger.first_formation_craft.title",
+				"screen.hemomancy.harbinger_assignment_ledger.first_bloodcraft.progress", progress, 2, progress == 2)) return;
+		gfx.fill(x, y, x + w, y + FIRST_FORMATION_CRAFT_HEIGHT, PANEL_DARK);
+		ScreenDrawUtils.drawBorder(gfx, x, y, w, FIRST_FORMATION_CRAFT_HEIGHT, BORDER, BORDER_MUTED);
+		renderGroupHeader(gfx, AssignmentSection.FIRST_FORMATION_CRAFT, x + 8, y + 6, w - 16,
+				"screen.hemomancy.harbinger_assignment_ledger.first_formation_craft.title",
+				"screen.hemomancy.harbinger_assignment_ledger.first_bloodcraft.progress", progress, 2, progress == 2);
+		drawProgressBar(gfx, x + 8, y + 31, w - 16, 7, progress, 2);
+		int rowY = y + 42;
+		renderAssignmentCard(gfx, x + 8, rowY, w - 16, ASSIGNMENT_CARD_HEIGHT, firstBloodcraft.structureCrafted(), VICAR_PORTRAIT,
+				"screen.hemomancy.harbinger_assignment_ledger.step.first_structure_craft",
+				"screen.hemomancy.harbinger_assignment_ledger.step.first_structure_craft.desc", mouseX, mouseY);
 		rowY += ASSIGNMENT_CARD_HEIGHT + CARD_GAP;
-		renderAssignmentCard(gfx, x + 8, rowY, w - 16, ASSIGNMENT_CARD_HEIGHT, hematicIronBlockCrafted, VICAR_PORTRAIT,
-				"screen.hemomancy.harbinger_assignment_ledger.step.craft_hematic_iron",
-				"screen.hemomancy.harbinger_assignment_ledger.step.craft_hematic_iron.desc", mouseX, mouseY);
+		renderAssignmentCard(gfx, x + 8, rowY, w - 16, ASSIGNMENT_CARD_HEIGHT, firstBloodcraft.votaryReached(), VICAR_PORTRAIT,
+				"screen.hemomancy.harbinger_assignment_ledger.step.return_to_vicar",
+				"screen.hemomancy.harbinger_assignment_ledger.step.return_to_vicar.desc", mouseX, mouseY);
 	}
 
 	private void renderHermitRoad(GuiGraphics gfx, int x, int y, int w, int mouseX, int mouseY) {
@@ -652,7 +687,7 @@ public class HarbingerAssignmentLedgerScreen extends Screen {
 		if (renderCollapsedAssignmentIfNeeded(gfx, AssignmentSection.HERMIT_ROAD, x, y, w, VICAR_PORTRAIT,
 				"screen.hemomancy.harbinger_assignment_ledger.hermit_road.side_title",
 				"screen.hemomancy.harbinger_assignment_ledger.hermit_road.progress",
-				progress, 3, progress >= 3)) {
+				progress, 2, progress >= 2)) {
 			return;
 		}
 		gfx.fill(x, y, x + w, y + HERMIT_ROAD_HEIGHT, PANEL_DARK);
@@ -660,8 +695,8 @@ public class HarbingerAssignmentLedgerScreen extends Screen {
 		renderGroupHeader(gfx, AssignmentSection.HERMIT_ROAD, x + 8, y + 6, w - 16,
 				"screen.hemomancy.harbinger_assignment_ledger.hermit_road.side_title",
 				"screen.hemomancy.harbinger_assignment_ledger.hermit_road.progress",
-				progress, 3, progress >= 3);
-		drawProgressBar(gfx, x + 8, y + 31, w - 16, 7, progress, 3);
+				progress, 2, progress >= 2);
+		drawProgressBar(gfx, x + 8, y + 31, w - 16, 7, progress, 2);
 		int rowY = y + 42;
 		renderAssignmentCard(gfx, x + 8, rowY, w - 16, ASSIGNMENT_CARD_HEIGHT, firstRemnant, VICAR_PORTRAIT,
 				"screen.hemomancy.harbinger_assignment_ledger.step.remnant",
@@ -720,11 +755,11 @@ public class HarbingerAssignmentLedgerScreen extends Screen {
     }
 
 	private void renderFirstSeparation(GuiGraphics gfx, int x, int y, int w, int mouseX, int mouseY) {
-		int progress = firstSeparationProgress();
+		FirstSeparationLedgerProgress progress = firstSeparationProgress();
 		if (renderCollapsedAssignmentIfNeeded(gfx, AssignmentSection.FIRST_SEPARATION, x, y, w, ALCHEMIST_PORTRAIT,
 				"screen.hemomancy.harbinger_assignment_ledger.first_separation.title",
 				"screen.hemomancy.harbinger_assignment_ledger.first_separation.progress",
-				progress, 4, progress >= 4)) {
+				progress.completedSteps(), progress.totalSteps(), progress.complete())) {
 			return;
 		}
 		gfx.fill(x, y, x + w, y + FIRST_SEPARATION_HEIGHT, PANEL_DARK);
@@ -732,24 +767,57 @@ public class HarbingerAssignmentLedgerScreen extends Screen {
 		renderGroupHeader(gfx, AssignmentSection.FIRST_SEPARATION, x + 8, y + 6, w - 16,
 				"screen.hemomancy.harbinger_assignment_ledger.first_separation.title",
 				"screen.hemomancy.harbinger_assignment_ledger.first_separation.progress",
-				progress, 4, progress >= 4);
-		drawProgressBar(gfx, x + 8, y + 31, w - 16, 7, progress, 4);
+				progress.completedSteps(), progress.totalSteps(), progress.complete());
+		drawProgressBar(gfx, x + 8, y + 31, w - 16, 7, progress.completedSteps(), progress.totalSteps());
 		int rowY = y + 42;
-		renderAssignmentCard(gfx, x + 8, rowY, w - 16, ASSIGNMENT_CARD_HEIGHT, hasVialCentrifuge, ALCHEMIST_PORTRAIT,
+		renderAssignmentCard(gfx, x + 8, rowY, w - 16, ASSIGNMENT_CARD_HEIGHT, progress.briefed(), ALCHEMIST_PORTRAIT,
+				"screen.hemomancy.harbinger_assignment_ledger.step.accept_first_separation",
+				"screen.hemomancy.harbinger_assignment_ledger.step.accept_first_separation.desc", mouseX, mouseY);
+		rowY += ASSIGNMENT_CARD_HEIGHT + CARD_GAP;
+		renderAssignmentCard(gfx, x + 8, rowY, w - 16, ASSIGNMENT_CARD_HEIGHT, progress.centrifugeAcquired(), ALCHEMIST_PORTRAIT,
 				"screen.hemomancy.harbinger_assignment_ledger.step.obtain_centrifuge",
 				"screen.hemomancy.harbinger_assignment_ledger.step.obtain_centrifuge.desc", mouseX, mouseY);
 		rowY += ASSIGNMENT_CARD_HEIGHT + CARD_GAP;
-		renderAssignmentCard(gfx, x + 8, rowY, w - 16, ASSIGNMENT_CARD_HEIGHT, hasSampledBloodVial, ALCHEMIST_PORTRAIT,
+		renderAssignmentCard(gfx, x + 8, rowY, w - 16, ASSIGNMENT_CARD_HEIGHT, progress.sampleAcquired(), ALCHEMIST_PORTRAIT,
 				"screen.hemomancy.harbinger_assignment_ledger.step.sample_blood_vial",
 				"screen.hemomancy.harbinger_assignment_ledger.step.sample_blood_vial.desc", mouseX, mouseY);
 		rowY += ASSIGNMENT_CARD_HEIGHT + CARD_GAP;
-		renderAssignmentCard(gfx, x + 8, rowY, w - 16, ASSIGNMENT_CARD_HEIGHT, firstSeparationStarted, ALCHEMIST_PORTRAIT,
+		renderAssignmentCard(gfx, x + 8, rowY, w - 16, ASSIGNMENT_CARD_HEIGHT, progress.separationStarted(), ALCHEMIST_PORTRAIT,
 				"screen.hemomancy.harbinger_assignment_ledger.step.start_separation",
 				"screen.hemomancy.harbinger_assignment_ledger.step.start_separation.desc", mouseX, mouseY);
 		rowY += ASSIGNMENT_CARD_HEIGHT + CARD_GAP;
-		renderAssignmentCard(gfx, x + 8, rowY, w - 16, ASSIGNMENT_CARD_HEIGHT, hasAnyEnzyme, ALCHEMIST_PORTRAIT,
+		renderAssignmentCard(gfx, x + 8, rowY, w - 16, ASSIGNMENT_CARD_HEIGHT, progress.enzymeRecovered(), ALCHEMIST_PORTRAIT,
 				"screen.hemomancy.harbinger_assignment_ledger.step.obtain_enzyme",
 				"screen.hemomancy.harbinger_assignment_ledger.step.obtain_enzyme.desc", mouseX, mouseY);
+		rowY += ASSIGNMENT_CARD_HEIGHT + CARD_GAP;
+		renderAssignmentCard(gfx, x + 8, rowY, w - 16, ASSIGNMENT_CARD_HEIGHT, progress.rewardClaimed(), ALCHEMIST_PORTRAIT,
+				"screen.hemomancy.harbinger_assignment_ledger.step.report_separation",
+				"screen.hemomancy.harbinger_assignment_ledger.step.report_separation.desc", mouseX, mouseY);
+		rowY += ASSIGNMENT_CARD_HEIGHT + CARD_GAP;
+		String settleDescription = progress.concentratedBloodPending()
+				? "screen.hemomancy.harbinger_assignment_ledger.step.settle_concentrated_blood.desc.pending"
+				: "screen.hemomancy.harbinger_assignment_ledger.step.settle_concentrated_blood.desc";
+		renderAssignmentCard(gfx, x + 8, rowY, w - 16, ASSIGNMENT_CARD_HEIGHT, progress.initiateReached(), ALCHEMIST_PORTRAIT,
+				"screen.hemomancy.harbinger_assignment_ledger.step.settle_concentrated_blood",
+				settleDescription, mouseX, mouseY);
+	}
+
+	private void renderFirstDistillation(GuiGraphics gfx, int x, int y, int w, int mouseX, int mouseY) {
+		if (renderCollapsedAssignmentIfNeeded(gfx, AssignmentSection.FIRST_DISTILLATION, x, y, w,
+				ALCHEMIST_PORTRAIT,
+				"screen.hemomancy.harbinger_assignment_ledger.first_distillation.title",
+				"screen.hemomancy.harbinger_assignment_ledger.first_distillation.progress",
+				firstDistillationComplete ? 1 : 0, 1, firstDistillationComplete)) return;
+		gfx.fill(x, y, x + w, y + FIRST_DISTILLATION_HEIGHT, PANEL_DARK);
+		ScreenDrawUtils.drawBorder(gfx, x, y, w, FIRST_DISTILLATION_HEIGHT, BORDER, BORDER_MUTED);
+		renderGroupHeader(gfx, AssignmentSection.FIRST_DISTILLATION, x + 8, y + 6, w - 16,
+				"screen.hemomancy.harbinger_assignment_ledger.first_distillation.title",
+				"screen.hemomancy.harbinger_assignment_ledger.first_distillation.progress",
+				firstDistillationComplete ? 1 : 0, 1, firstDistillationComplete);
+		renderAssignmentCard(gfx, x + 8, y + 35, w - 16, ASSIGNMENT_CARD_HEIGHT,
+				firstDistillationComplete, ALCHEMIST_PORTRAIT,
+				"screen.hemomancy.harbinger_assignment_ledger.step.first_distillation",
+				"screen.hemomancy.harbinger_assignment_ledger.step.first_distillation.desc", mouseX, mouseY);
 	}
 
 	private void renderBodyAnswers(GuiGraphics gfx, int x, int y, int w, int mouseX, int mouseY) {
@@ -757,7 +825,7 @@ public class HarbingerAssignmentLedgerScreen extends Screen {
 		if (renderCollapsedAssignmentIfNeeded(gfx, AssignmentSection.BODY_ANSWERS, x, y, w, ALCHEMIST_PORTRAIT,
 				"screen.hemomancy.harbinger_assignment_ledger.body_answers.side_title",
 				"screen.hemomancy.harbinger_assignment_ledger.body_answers.progress",
-				progress, 2, progress >= 2)) {
+				progress, 3, progress >= 3)) {
 			return;
 		}
 		gfx.fill(x, y, x + w, y + BODY_ANSWERS_HEIGHT, PANEL_DARK);
@@ -765,8 +833,8 @@ public class HarbingerAssignmentLedgerScreen extends Screen {
 		renderGroupHeader(gfx, AssignmentSection.BODY_ANSWERS, x + 8, y + 6, w - 16,
 				"screen.hemomancy.harbinger_assignment_ledger.body_answers.side_title",
 				"screen.hemomancy.harbinger_assignment_ledger.body_answers.progress",
-				progress, 2, progress >= 2);
-		drawProgressBar(gfx, x + 8, y + 31, w - 16, 7, progress, 2);
+				progress, 3, progress >= 3);
+		drawProgressBar(gfx, x + 8, y + 31, w - 16, 7, progress, 3);
 		int rowY = y + 42;
 		renderAssignmentCard(gfx, x + 8, rowY, w - 16, ASSIGNMENT_CARD_HEIGHT, bodyAnswersBriefed,
 				ALCHEMIST_PORTRAIT,
@@ -1346,71 +1414,67 @@ public class HarbingerAssignmentLedgerScreen extends Screen {
 		gfx.fill(x + 1, y + 1, x + 1 + fillW, y + h - 1, 0xFF8D2323);
 	}
 
-    private int clinicalCompletedCount() {
-        if (minecraft.player == null) return 0;
-        var p = com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess.clinicalBlood(minecraft.player);
-        int count = 0;
-        if (degree >= 1) {
-            if (p.knows(ClinicalBloodProgress.Lesson.MICROSCOPE)) count++;
-            if (p.sourceCount() > 0) count++;
-            if (p.knows(ClinicalBloodProgress.Lesson.INJECTION)) count++;
-            if (p.sourceCount() >= 3) count++;
-            if (p.knows(ClinicalBloodProgress.Lesson.CABINET)) count++;
-        }
-        if (degree >= 2) {
-            if (p.cabinetCrafted) count++;
-            if (p.cabinetInserted && p.cabinetWithdrawn) count++;
-            if (p.hematicIronObtained && p.artificerMet) count++;
-            if (p.knows(ClinicalBloodProgress.Lesson.FIELD_REFERRAL)) count++;
-            if (p.knows(ClinicalBloodProgress.Lesson.FIELD_CASE)) count++;
-        }
-        if (degree >= 3) {
-            if (p.sourceCount() >= 3) count++;
-            if (p.knows(ClinicalBloodProgress.Lesson.ECHO_REFERRAL)) count++;
-            if (p.knows(ClinicalBloodProgress.Lesson.CLAIRAUDIOGRAPH)) count++;
-        }
-        return count;
-    }
+	private int visibleAssignmentCount() {
+		return (int) ORDERED_ASSIGNMENT_SECTIONS.stream()
+				.filter(section -> section.assignmentDegree <= degree)
+				.count();
+	}
 
-	private int completedCount() {
-        int completed = clinicalCompletedCount();
-		if (vesselFilled) completed++;
-		if (liberSanguinumCrafted) completed++;
-		if (hematicIronBlockCrafted) completed++;
-		if (firstRemnant) completed++;
-		if (ledgerGranted) completed++;
-		if (hasVialCentrifuge) completed++;
-		if (hasSampledBloodVial) completed++;
-		if (firstSeparationStarted) completed++;
-		if (hasAnyEnzyme) completed++;
-		if (redTaxonomyComplete) {
-			completed++;
-		}
-		if (enzymeMasteryComplete) {
-			completed++;
-		}
-		if (mnemonistFirstWeaveComplete) {
-			completed++;
-		}
-		if (veinMasonFirstEffigyLoadout) {
-			completed++;
-		}
-		if (artificerHematicIronFitting) {
-			completed++;
-		}
-		if (artificerForkFitting) {
-			completed++;
-		}
-		if (artificerBloodLustFitting) {
-			completed++;
-		}
-		if (artificerD7Fitting) {
-			completed++;
-		}
-		if (artificerLivingArsenalFitting) {
-			completed++;
-		}
-		return completed;
+	private int completedAssignmentCount() {
+		return (int) ORDERED_ASSIGNMENT_SECTIONS.stream()
+				.filter(section -> section.assignmentDegree <= degree)
+				.filter(this::isAssignmentComplete)
+				.count();
+	}
+
+	private boolean isAssignmentComplete(AssignmentSection section) {
+		return switch (section) {
+			case FIRST_BLOODCRAFT -> firstBloodcraft.absorbedMl() >= 500;
+			case FIRST_PROJECTION -> firstBloodcraft.formationProjected() && firstBloodcraft.venousStoneProjected();
+			case FIRST_FORMATION_CRAFT -> firstBloodcraft.votaryReached();
+			case FIRST_SEPARATION -> firstSeparation.complete();
+			case HERMIT_ROAD -> hermitRoadProgress() >= 2;
+			case CLINICAL_OBSERVATION, CLINICAL_FIELDWORK, CLINICAL_ECHOES ->
+					isClinicalAssignmentComplete(section);
+			case FIRST_DISTILLATION -> firstDistillationComplete;
+			case BODY_ANSWERS -> bodyAnswersProgress() >= 3;
+			case RED_TAXONOMY -> redTaxonomyComplete;
+			case LIVING_BESTIARY -> livingBestiaryCount >= Math.max(1, livingBestiaryTotal);
+			case ENZYME_MASTERY -> enzymeMasteryComplete;
+			case THE_WORN_VOW -> artificerHematicIronFitting;
+			case WOVEN_VESSEL -> mnemonistFirstWeaveComplete;
+			case THE_THREE_ANSWERS -> artificerForkFitting;
+			case VEIN_MASON -> veinMasonFirstEffigyLoadout;
+			case ANCHORITE_D5 -> anchoriteD5Progress >= 4;
+			case COVENANT_WRITTEN -> foundingFaneEstablished;
+			case CRIMSON_VESTMENT -> artificerBloodLustFitting;
+			case THE_ASSUMED_LIMB -> artificerLivingArsenalFitting;
+			case LIVING_COVENANT -> livingCovenantComplete;
+			case ANCHORITE_D6 -> anchoriteD6Progress >= 4;
+			case BLOOD_BENEATH_BLOOD -> silentArchon;
+			case WEIGHT_OF_THE_FRAME -> artificerD7Fitting;
+		};
+	}
+
+	private boolean isClinicalAssignmentComplete(AssignmentSection section) {
+		if (minecraft.player == null) return false;
+		ClinicalBloodProgress progress = com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess
+				.clinicalBlood(minecraft.player);
+		return switch (section) {
+			case CLINICAL_OBSERVATION -> progress.knows(ClinicalBloodProgress.Lesson.MICROSCOPE)
+					&& progress.sourceCount() >= 3
+					&& progress.knows(ClinicalBloodProgress.Lesson.INJECTION)
+					&& progress.knows(ClinicalBloodProgress.Lesson.CABINET);
+			case CLINICAL_FIELDWORK -> progress.cabinetCrafted
+					&& progress.cabinetInserted && progress.cabinetWithdrawn
+					&& progress.hematicIronObtained && progress.artificerMet
+					&& progress.knows(ClinicalBloodProgress.Lesson.FIELD_REFERRAL)
+					&& progress.knows(ClinicalBloodProgress.Lesson.FIELD_CASE);
+			case CLINICAL_ECHOES -> progress.sourceCount() >= 3
+					&& progress.knows(ClinicalBloodProgress.Lesson.ECHO_REFERRAL)
+					&& progress.knows(ClinicalBloodProgress.Lesson.CLAIRAUDIOGRAPH);
+			default -> false;
+		};
 	}
 
 	private int totalAssignmentContentHeight() {
@@ -1425,14 +1489,6 @@ public class HarbingerAssignmentLedgerScreen extends Screen {
 		return total;
 	}
 
-	private int firstBloodcraftProgress() {
-		int completed = 0;
-		if (vesselFilled) completed++;
-		if (liberSanguinumCrafted) completed++;
-		if (hematicIronBlockCrafted) completed++;
-		return completed;
-	}
-
 	private int hermitRoadProgress() {
 		int completed = 0;
 		if (firstRemnant) completed++;
@@ -1440,13 +1496,8 @@ public class HarbingerAssignmentLedgerScreen extends Screen {
 		return completed;
 	}
 
-	private int firstSeparationProgress() {
-		int completed = 0;
-		if (hasVialCentrifuge) completed++;
-		if (hasSampledBloodVial) completed++;
-		if (firstSeparationStarted) completed++;
-		if (hasAnyEnzyme) completed++;
-		return completed;
+	private FirstSeparationLedgerProgress firstSeparationProgress() {
+		return firstSeparation;
 	}
 
 	private int bodyAnswersProgress() {

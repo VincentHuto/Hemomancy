@@ -23,13 +23,15 @@ public final class ResonantForgeDialogue {
         var options = new ArrayList<>(root.options());
 
         options.add(0, option("hemomancy.artificer.resonant_forge.title", "resonant_forge",
-                progress.taught() ? null : TEACH, !progress.taught()));
+                progress.taught() ? null : TEACH, !progress.taught(),
+                "hemomancy.artificer.resonant_forge.prompt"));
         nodes.put("resonant_forge", node("resonant_forge", progress.taught()
                 ? "hemomancy.artificer.resonant_forge.taught" : "hemomancy.artificer.resonant_forge.lesson"));
         if (degree >= 5) {
             boolean ready = progress.canClaimPrecision(player);
             options.add(0, option("hemomancy.artificer.resonant_forge.precision.title",
-                    "resonant_forge_precision", ready ? PRECISION_CLAIM : null, ready));
+                    "resonant_forge_precision", ready ? PRECISION_CLAIM : null, ready,
+                    "hemomancy.artificer.resonant_forge.precision.prompt"));
             nodes.put("resonant_forge_precision", node("resonant_forge_precision",
                     progress.precisionClaimed() ? "hemomancy.artificer.resonant_forge.precision.claimed"
                             : ready ? "hemomancy.artificer.resonant_forge.precision.ready"
@@ -38,7 +40,8 @@ public final class ResonantForgeDialogue {
         if (degree >= 7) {
             boolean ready = progress.canClaimMaster(player);
             options.add(0, option("hemomancy.artificer.resonant_forge.master.title",
-                    "resonant_forge_master", ready ? MASTER_CLAIM : null, ready));
+                    "resonant_forge_master", ready ? MASTER_CLAIM : null, ready,
+                    "hemomancy.artificer.resonant_forge.master.prompt"));
             nodes.put("resonant_forge_master", node("resonant_forge_master",
                     progress.masterClaimed() ? "hemomancy.artificer.resonant_forge.master.claimed"
                             : ready ? "hemomancy.artificer.resonant_forge.master.ready"
@@ -49,10 +52,10 @@ public final class ResonantForgeDialogue {
                 tree.entityId(), tree.theme(), tree.presentation());
     }
 
-    private static DialogueOption option(String label, String next, String event, boolean attention) {
+    private static DialogueOption option(String label, String next, String event, boolean attention, String promptKey) {
         return new DialogueOption(label, next, event, attention
-                ? DialogueOptionPresentation.attention(DialogueAttention.NOTICE)
-                : DialogueOptionPresentation.normal());
+                ? DialogueOptionPresentation.attention(DialogueAttention.NOTICE, promptKey)
+                : DialogueOptionPresentation.prompt(promptKey));
     }
 
     private static DialogueNode node(String id, String line) {

@@ -28,7 +28,8 @@ public final class ClinicalBloodDialogue {
             if (!ready && !progress.knows(lesson)) continue;
             String id = "clinical_lesson_" + lesson.key();
             options.add(0, new DialogueOption("hemomancy.clinical." + lesson.key() + ".title", id,
-                    ready ? lesson.event() : null, ready ? DialogueOptionPresentation.attention(DialogueAttention.NOTICE)
+                    ready ? lesson.event() : null, ready ? DialogueOptionPresentation.attention(
+                    DialogueAttention.NOTICE, "hemomancy.clinical." + lesson.key() + ".prompt")
                     : DialogueOptionPresentation.normal()));
             nodes.put(id, new DialogueNode(id, List.of("hemomancy.clinical." + lesson.key() + ".lesson"),
                     List.of(new DialogueOption("hemomancy.dialogue.alchemist.option.leave", null, null))));

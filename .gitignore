@@ -99,3 +99,6 @@ repo/
 /
 /docs/consolidation/
 /tools/worldgen/generate_harbinger_outpost.py
+!/docs/HARBINGER_PROGRESSION_REDESIGN.md
+!/docs/harbinger_progression_redesign/
+!/docs/harbinger_progression_redesign/**

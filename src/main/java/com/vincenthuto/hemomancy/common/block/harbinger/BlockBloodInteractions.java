@@ -36,12 +36,20 @@ public final class BlockBloodInteractions {
 		if (!(level instanceof ServerLevel serverLevel) || !(user instanceof ServerPlayer player) || maxAmount <= 0.0D) {
 			return 0.0D;
 		}
+		IBloodVolume playerBlood = HemoCapabilityAccess.getBloodVolume(player).orElse(null);
+		double before = playerBlood == null ? 0.0D : playerBlood.getBloodVolume();
 		BlockTarget target = findLookedAtEndpoint(serverLevel, player, reach);
+		double handled;
 		if (target != null) {
-			return target.endpoint().absorbBloodFromBlock(serverLevel, target.pos(), target.state(), player, maxAmount);
+			handled = target.endpoint().absorbBloodFromBlock(serverLevel, target.pos(), target.state(), player, maxAmount);
+		} else {
+			BlockPos pos = findLookedAtBlockPos(player, reach);
+			handled = pos == null ? 0.0D : tryAbsorbFromReservoir(serverLevel, pos, player, maxAmount);
 		}
-		BlockPos pos = findLookedAtBlockPos(player, reach);
-		return pos == null ? 0.0D : tryAbsorbFromReservoir(serverLevel, pos, player, maxAmount);
+		if (playerBlood != null && handled > 0.0D)
+			com.vincenthuto.hemomancy.common.mission.vicar.FirstBloodcraftAssignment.recordAbsorption(player,
+					Math.max(0.0D, playerBlood.getBloodVolume() - before));
+		return handled;
 	}
 
 	public static double tryProjectIntoLookedAtBlock(Level level, LivingEntity user, double maxAmount) {

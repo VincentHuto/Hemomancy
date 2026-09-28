@@ -5,10 +5,15 @@ import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.shared.knowledge.discovery.LiberKnowledgeHelper;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.ClinicalBloodDialogue;
+import com.vincenthuto.hemomancy.common.entity.npc.dialogue.DialogueCategory;
+import com.vincenthuto.hemomancy.common.entity.npc.dialogue.DialogueHubFactory;
+import com.vincenthuto.hemomancy.common.entity.npc.dialogue.HarbingerAlchemistDialogueTrees;
 import com.vincenthuto.hemomancy.common.init.*;
 import com.vincenthuto.hemomancy.common.item.harbinger.*;
 import com.vincenthuto.hemomancy.common.menu.tile.functional.PhlebotomistsCabinetMenu;
 import com.vincenthuto.hemomancy.common.mission.alchemist.*;
+import com.vincenthuto.hemomancy.common.mission.vicar.FirstBloodcraftAssignment;
+import com.vincenthuto.hemomancy.common.network.mission.OpenHarbingerAssignmentLedgerPacket;
 import com.vincenthuto.hemomancy.common.tile.harbinger.functional.PhlebotomistsCabinetBlockEntity;
 import io.netty.channel.embedded.EmbeddedChannel;
 import net.minecraft.core.BlockPos;
@@ -16,11 +21,13 @@ import net.minecraft.core.component.DataComponents;
 import net.minecraft.gametest.framework.*;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.Connection;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.protocol.PacketFlow;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.network.CommonListenerCookie;
 import net.minecraft.server.network.ServerGamePacketListenerImpl;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.ClickType;
 import net.minecraft.world.item.*;
 import net.minecraft.world.item.component.CustomData;
@@ -28,6 +35,7 @@ import net.minecraft.world.level.GameType;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.gametest.*;
 
+import java.lang.reflect.RecordComponent;
 import java.util.UUID;
 import static com.vincenthuto.hemomancy.common.mission.alchemist.ClinicalBloodProgress.Lesson.*;
 
@@ -64,14 +72,27 @@ public final class ClinicalBloodProgressionGameTests {
         p.releaseUsingItem();
     }
 
-    @GameTest(template = "empty") public static void degreeOneBriefingAndTeachingValidateOwnerAndEvidence(GameTestHelper h) {
-        var p = player(h, 1);
+    @GameTest(template = "empty") public static void degreeTwoBriefingAndTeachingValidateOwnerAndEvidence(GameTestHelper h) {
+        var p = player(h, 2);
         var alchemist = EntityInit.harbinger_alchemist.get().create(h.getLevel());
         var artificer = EntityInit.harbinger_artificer.get().create(h.getLevel());
         alchemist.setPos(p.position()); artificer.setPos(p.position());
         h.assertTrue(FirstSeparationAssignment.canBrief(p), "First Separation is still locked behind Degree 2");
-        h.assertTrue(alchemist.progressionDialogue(p).getStartNode().options().stream()
-                .anyMatch(o -> "alchemist_first_separation_brief".equals(o.eventId())), "D1 briefing is unreachable");
+        var dialogue = alchemist.progressionDialogue(p);
+        h.assertTrue(dialogue.getStartNode().options().stream()
+                .anyMatch(o -> "first_separation_offer".equals(o.nextNodeId())),
+                "D2 briefing offer is unreachable");
+        var offer = dialogue.getNode("first_separation_offer");
+        h.assertTrue(offer != null && offer.lines().size() == 2,
+                "The First Separation offer must explain the assignment before acceptance");
+        h.assertTrue(offer.options().stream().anyMatch(o ->
+                        HarbingerAlchemistDialogueTrees.EVENT_FIRST_SEPARATION_BRIEF.equals(o.eventId())
+                                && "first_separation_briefing".equals(o.nextNodeId())),
+                "The explained offer does not retain the briefing action");
+        var decorated = DialogueHubFactory.decorate(dialogue, "alchemist", p);
+        h.assertTrue(decorated.presentation().topics(DialogueCategory.QUESTS).stream()
+                        .anyMatch(topic -> "first_separation_offer".equals(topic.targetNodeId())),
+                "The dialogue hub does not open the authored First Separation offer");
         h.assertTrue(!ClinicalBloodKnowledge.teach(p, alchemist, MICROSCOPE), "Empty-handed microscope lesson accepted");
         var firstVial = new ItemStack(ItemInit.bloody_vial.get());
         p.setItemInHand(InteractionHand.OFF_HAND, firstVial);
@@ -87,8 +108,85 @@ public final class ClinicalBloodProgressionGameTests {
         h.succeed();
     }
 
+	@GameTest(template = "empty") public static void firstBloodcraftProofsPromoteOnlyAfterVicarReturn(GameTestHelper h) {
+		var p = player(h, 1);
+		FirstBloodcraftAssignment.recordStructure(p, new ItemStack(BlockInit.hematic_iron_block.get()));
+		FirstBloodcraftAssignment.recordVenousStone(p);
+		FirstBloodcraftAssignment.recordAbsorption(p, 300);
+		h.assertTrue(!FirstBloodcraftAssignment.canClaim(p), "Incomplete D1 lessons allowed promotion");
+		FirstBloodcraftAssignment.recordFormation(p);
+		FirstBloodcraftAssignment.recordAbsorption(p, 200);
+		h.assertTrue(FirstBloodcraftAssignment.canClaim(p), "All four D1 proofs did not unlock the Vicar return");
+		h.assertTrue(HemoCapabilityAccess.getPlayerDegreeNumber(p) == 1,
+				"Completing proofs promoted the player before speaking to the Vicar");
+		h.assertTrue(FirstBloodcraftAssignment.promote(p), "The Vicar could not grant Degree 2");
+		h.assertTrue(HemoCapabilityAccess.getPlayerDegreeNumber(p) == 2,
+				"The Vicar return did not grant Degree 2");
+		h.succeed();
+	}
+
+	@GameTest(template = "empty") public static void firstSeparationSamplingProofSurvivesUsingTheVial(GameTestHelper h) {
+		var p = player(h, 2);
+		FirstSeparationAssignment.markBriefed(p);
+		var vial = new ItemStack(ItemInit.bloody_vial.get());
+		p.setItemInHand(InteractionHand.MAIN_HAND, vial);
+		ItemInit.bloody_vial.get().onLeftClickEntity(vial, p,
+				net.minecraft.world.entity.EntityType.COW.create(h.getLevel()));
+		h.assertTrue(FirstSeparationAssignment.hasSampleAcquired(p),
+				"The First Separation did not remember a successful living sample");
+		p.setItemInHand(InteractionHand.MAIN_HAND, ItemStack.EMPTY);
+		h.assertTrue(FirstSeparationAssignment.hasSampleAcquired(p),
+				"Using the sampled vial erased completed ledger progress");
+		var restored = player(h, 2);
+		restored.getPersistentData().put(Player.PERSISTED_NBT_TAG,
+				p.getPersistentData().getCompound(Player.PERSISTED_NBT_TAG).copy());
+		h.assertTrue(FirstSeparationAssignment.hasSampleAcquired(restored),
+				"The completed sample step did not survive persisted player restoration");
+		h.succeed();
+	}
+
+	@GameTest(template = "empty") public static void assignmentLedgerPacketRoundTripsEveryField(GameTestHelper h) {
+		try {
+			RecordComponent[] components = OpenHarbingerAssignmentLedgerPacket.class.getRecordComponents();
+			Class<?>[] parameterTypes = new Class<?>[components.length];
+			Object[] values = new Object[components.length];
+			for (int i = 0; i < components.length; i++) {
+				parameterTypes[i] = components[i].getType();
+				values[i] = ledgerPacketValue(components[i].getType(), i);
+			}
+			var constructor = OpenHarbingerAssignmentLedgerPacket.class.getDeclaredConstructor(parameterTypes);
+			var original = (OpenHarbingerAssignmentLedgerPacket) constructor.newInstance(values);
+			FriendlyByteBuf buffer = new FriendlyByteBuf(io.netty.buffer.Unpooled.buffer());
+			try {
+				OpenHarbingerAssignmentLedgerPacket.STREAM_CODEC.encode(buffer, original);
+				h.assertTrue(original.equals(OpenHarbingerAssignmentLedgerPacket.STREAM_CODEC.decode(buffer)),
+						"The assignment ledger packet changed fields during its network round trip");
+				h.assertTrue(buffer.readableBytes() == 0,
+						"The assignment ledger packet left unread network data");
+			} finally {
+				buffer.release();
+			}
+		} catch (ReflectiveOperationException exception) {
+			throw new IllegalStateException("Could not construct the assignment ledger packet", exception);
+		}
+		h.succeed();
+	}
+
+	private static Object ledgerPacketValue(Class<?> type, int index) {
+		if (type == int.class) return index * 17 + 3;
+		if (type == boolean.class) return index % 3 == 0;
+		if (type == FirstSeparationLedgerProgress.class) {
+			return new FirstSeparationLedgerProgress(true, false, true, false, true, false, true, false);
+		}
+		if (type == com.vincenthuto.hemomancy.common.mission.vicar.FirstBloodcraftLedgerProgress.class) {
+			return new com.vincenthuto.hemomancy.common.mission.vicar.FirstBloodcraftLedgerProgress(
+					275, true, false, true, false);
+		}
+		throw new IllegalArgumentException("No packet test value for " + type.getName());
+	}
+
     @GameTest(template = "empty") public static void personalExaminationCountsUniqueSourcesAndUnlocksOrderedCollection(GameTestHelper h) {
-        var p = player(h, 1);
+        var p = player(h, 2);
         var state = HemoCapabilityAccess.clinicalBlood(p);
         var alchemist = EntityInit.harbinger_alchemist.get().create(h.getLevel()); alchemist.setPos(p.position());
         state.learn(MICROSCOPE);

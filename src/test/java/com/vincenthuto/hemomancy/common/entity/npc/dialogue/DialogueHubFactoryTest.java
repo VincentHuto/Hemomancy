@@ -19,8 +19,55 @@ class DialogueHubFactoryTest {
 				.build();
 		DialogueTree decorated = DialogueHubFactory.decorate(base, "vicar", new DialogueKnowledge());
 		DialogueTopic topic = decorated.presentation().topics(DialogueCategory.QUESTS).getFirst();
+		assertEquals(List.of("hemomancy.dialogue.action.confirm"),
+				decorated.getNode(topic.targetNodeId()).lines(),
+				"generated action nodes must never open with an empty dialogue body");
 		assertEquals(List.of(claim), decorated.getNode(topic.targetNodeId()).options(),
 				"opening a topic must expose the server action before its success node");
+	}
+
+	@Test
+	void authoredActionPromptReplacesTheGenericSafetyLine() {
+		DialogueOption claim = new DialogueOption("claim_assignment_reward", "thanks", "claim_reward",
+				DialogueOptionPresentation.normal().withPrompt("vicar.reward.prompt"));
+		DialogueTree base = DialogueTree.builder("speaker", id("portrait"), 42)
+				.addNode(new DialogueNode("greeting", List.of("greeting"), List.of(claim)))
+				.addNode(new DialogueNode("thanks", List.of("reward_delivered"), List.of()))
+				.build();
+
+		DialogueTree decorated = DialogueHubFactory.decorate(base, "vicar", new DialogueKnowledge());
+		DialogueTopic topic = decorated.presentation().topics(DialogueCategory.QUESTS).getFirst();
+
+		assertEquals(List.of("vicar.reward.prompt"), decorated.getNode(topic.targetNodeId()).lines());
+	}
+
+	@Test
+	void speakFreelyMenuHasAVisibleConversationPrompt() {
+		DialogueTree base = DialogueTree.builder("speaker", id("portrait"), 42)
+				.addNode(new DialogueNode("greeting", List.of("greeting"), List.of(
+						new DialogueOption("say_something", "answer", null))))
+				.addNode(new DialogueNode("answer", List.of("answer.line"), List.of()))
+				.build();
+
+		DialogueTree decorated = DialogueHubFactory.decorate(base, "vicar", new DialogueKnowledge());
+		DialogueTopic topic = decorated.presentation().topics(DialogueCategory.CONVERSATION).getFirst();
+
+		assertEquals(List.of("hemomancy.dialogue.conversation.prompt"),
+				decorated.getNode(topic.targetNodeId()).lines());
+	}
+
+	@Test
+	void singleConversationActionCanSupplyItsOwnPrompt() {
+		DialogueTree base = DialogueTree.builder("speaker", id("portrait"), 42)
+				.addNode(new DialogueNode("greeting", List.of("greeting"), List.of(
+						new DialogueOption("take_the_vows", null, "begin_vows",
+								DialogueOptionPresentation.prompt("vows.prompt")))))
+				.build();
+
+		DialogueTree decorated = DialogueHubFactory.decorate(base, "zealot", new DialogueKnowledge());
+		DialogueTopic topic = decorated.presentation().topics(DialogueCategory.CONVERSATION).getFirst();
+
+		assertEquals(List.of("vows.prompt"), decorated.getNode(topic.targetNodeId()).lines());
 	}
 
 	@Test

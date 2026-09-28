@@ -6,14 +6,14 @@ The Alchemist teaches blood as specimen: collection, observation, injection, and
 
 | Degree | Lesson | What to do |
 |---|---|---|
-| 1 | First Separation | Accept the Alchemist briefing, sample two cows with the supplied loose vials, balance a Vial Centrifuge, and recover the assigned enzyme. Report back for a Living Syringe and an initialized eight-vial rack. |
-| 1 | Hematic Microscopy | Hold a filled creature Blood Vial in either hand while talking to the Alchemist. Learn the microscope recipe. |
-| 1 | Borrowed Physiology | Hold the microscope in your main hand and one filled vial in your offhand. Hold Use for two uninterrupted seconds. Return to the Alchemist to learn injection. |
-| Late 1 | The Ordered Collection | Personally examine three different creature source types. Ask the Alchemist for the Cabinet lesson and recipe. |
+| 2 | First Separation | Accept the Alchemist briefing, sample two cows with the supplied loose vials, balance a Vial Centrifuge, and recover the assigned enzyme. Report back for a Living Syringe and an initialized eight-vial rack. |
+| 2 | Hematic Microscopy | Hold a filled creature Blood Vial in either hand while talking to the Alchemist. Learn the microscope recipe. |
+| 2 | Borrowed Physiology | Hold the microscope in your main hand and one filled vial in your offhand. Hold Use for two uninterrupted seconds. Return to the Alchemist to learn injection. |
+| 2 | The Ordered Collection | Personally examine three different creature source types. Ask the Alchemist for the Cabinet lesson and recipe. |
 | 2 | The Laboratory Abroad | Craft a Cabinet, personally deposit and withdraw a full vial, obtain Hematic Iron Scraps, and meet the Artificer. Return to the Alchemist for the referral, then ask the Artificer for the Field Case lesson. |
 | 2–3 | What Blood Remembers Saying | After three personal sample identifications, obtain the Alchemist's echo referral at D2 or later. Meet the Mnemonist and learn the Clairaudiograph and cylinder recipes at D3. |
 
-The Ghastly Alembic, broader tendency work, and Body Answers remain Degree 2. First Separation is available from Degree 1 and still satisfies its existing chapter certification; the clinical side assignments add no new rank gate.
+First Separation and the first ordinary Ghastly Alembic distillation begin at Degree 2. Both are required before the Alchemist issues Concentrated Blood for the direct injection and sleep that grant Degree 3. Broader tendency work and Body Answers remain Degree 2 side work; the clinical lessons add no separate rank gate.
 
 ## Observation and injection
 

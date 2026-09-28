@@ -32,7 +32,7 @@ public final class ClinicalBloodKnowledge {
 
     public static boolean eligible(Player player) {
         var context = ItemInquiryContext.from(player);
-        return context.degree() >= 1 && !context.purifying() && !context.clarityUnlocked();
+		return context.degree() >= 2 && !context.purifying() && !context.clarityUnlocked();
     }
     public static boolean sample(ItemStack stack) {
         return stack.getItem() instanceof BloodVialItem && BloodSampleData.isStorableSample(stack)

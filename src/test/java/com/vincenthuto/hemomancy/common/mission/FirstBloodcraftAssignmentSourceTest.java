@@ -26,13 +26,9 @@ public final class FirstBloodcraftAssignmentSourceTest {
 		String helper = read(HELPER);
 		String advancement = read(CLAIM_ADVANCEMENT);
 
-		assertContains("eligibility checks the filled vessel milestone", helper,
-				"HarbingerAdvancementGranter.isVesselFilled(player)");
-		assertContains("eligibility checks the Liber Sanguinum milestone", helper,
-				"HarbingerAdvancementGranter.isLiberSanguinumCrafted(player)");
-		assertContains("eligibility checks the Hematic Iron milestone", helper,
-				"HarbingerAdvancementGranter.isHematicIronBlockCrafted(player)");
-		assertContains("eligibility excludes claimed rewards", helper, "!isClaimed(player)");
+		assertContains("eligibility uses the four live proofs", helper, "progress(player).readyForVicar()");
+		assertContains("eligibility is Degree 1 only", helper, "getPlayerDegreeNumber(player) == 1");
+		assertContains("promotion grants Degree 2", helper, "DegreeProgression.advance(player, 2)");
 		assertContains("claim advancement has the required id", helper,
 				"Hemomancy.rloc(\"hemomancy/first_bloodcraft_reward_claimed\")");
 		assertContains("claim delegates to the advancement granter", helper,
@@ -91,8 +87,8 @@ public final class FirstBloodcraftAssignmentSourceTest {
 				"if (entity.level().addFreshEntity(drop)) return;");
 		assertContains("Hermit farewell requires the personally claimed heart", handler,
 				"TempleOathRules.hasClaimedHeartFrom(player, hermit.getUUID())");
-		assertContains("handler persists the one-time claim before mutation", handler,
-				"if (!FirstBloodcraftAssignment.markClaimed(player))");
+		assertContains("handler persists the one-time reward claim before mutation", handler,
+				"FirstBloodcraftAssignment.markClaimed(player)");
 		assertContains("handler explains persistence failure", handler,
 				"hemomancy.dialogue.event.vicar_first_bloodcraft_reward_claim_failed");
 
@@ -100,7 +96,7 @@ public final class FirstBloodcraftAssignmentSourceTest {
 				"if (!FirstBloodcraftAssignment.canClaim(player))",
 				"for (ItemStack stack : FirstBloodcraftAssignment.rewardStacks())");
 		assertOrdered("claim is persisted before any reward stack is granted", handler,
-				"if (!FirstBloodcraftAssignment.markClaimed(player))",
+				"FirstBloodcraftAssignment.markClaimed(player)",
 				"for (ItemStack stack : FirstBloodcraftAssignment.rewardStacks())");
 	}
 

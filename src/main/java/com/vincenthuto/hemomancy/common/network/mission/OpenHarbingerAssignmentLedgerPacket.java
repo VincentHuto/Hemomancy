@@ -2,6 +2,8 @@ package com.vincenthuto.hemomancy.common.network.mission;
 
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.client.screen.item.HarbingerAssignmentLedgerScreen;
+import com.vincenthuto.hemomancy.common.mission.alchemist.FirstSeparationLedgerProgress;
+import com.vincenthuto.hemomancy.common.mission.vicar.FirstBloodcraftLedgerProgress;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
@@ -11,15 +13,11 @@ public record OpenHarbingerAssignmentLedgerPacket(
 		int degree,
 		boolean firstAwakening,
 		boolean degreeOne,
-		boolean vesselFilled,
-		boolean liberSanguinumCrafted,
-		boolean hematicIronBlockCrafted,
+		FirstBloodcraftLedgerProgress firstBloodcraft,
 		boolean firstRemnant,
 		boolean ledgerGranted,
-		boolean hasVialCentrifuge,
-		boolean hasSampledBloodVial,
-		boolean firstSeparationStarted,
-		boolean hasAnyEnzyme,
+		FirstSeparationLedgerProgress firstSeparation,
+		boolean firstDistillationComplete,
 		boolean bodyAnswersBriefed,
 		boolean bodyAnswersComplete,
 		int muscleMemoryCount,
@@ -76,15 +74,11 @@ public record OpenHarbingerAssignmentLedgerPacket(
 		buf.writeVarInt(msg.degree);
 		buf.writeBoolean(msg.firstAwakening);
 		buf.writeBoolean(msg.degreeOne);
-		buf.writeBoolean(msg.vesselFilled);
-		buf.writeBoolean(msg.liberSanguinumCrafted);
-		buf.writeBoolean(msg.hematicIronBlockCrafted);
+		writeFirstBloodcraft(buf, msg.firstBloodcraft);
 		buf.writeBoolean(msg.firstRemnant);
 		buf.writeBoolean(msg.ledgerGranted);
-		buf.writeBoolean(msg.hasVialCentrifuge);
-		buf.writeBoolean(msg.hasSampledBloodVial);
-		buf.writeBoolean(msg.firstSeparationStarted);
-		buf.writeBoolean(msg.hasAnyEnzyme);
+		writeFirstSeparation(buf, msg.firstSeparation);
+		buf.writeBoolean(msg.firstDistillationComplete);
 		buf.writeBoolean(msg.bodyAnswersBriefed);
 		buf.writeBoolean(msg.bodyAnswersComplete);
 		buf.writeVarInt(msg.muscleMemoryCount);
@@ -139,14 +133,10 @@ public record OpenHarbingerAssignmentLedgerPacket(
 				buf.readVarInt(),
 				buf.readBoolean(),
 				buf.readBoolean(),
+				readFirstBloodcraft(buf),
 				buf.readBoolean(),
 				buf.readBoolean(),
-				buf.readBoolean(),
-				buf.readBoolean(),
-				buf.readBoolean(),
-				buf.readBoolean(),
-				buf.readBoolean(),
-				buf.readBoolean(),
+				readFirstSeparation(buf),
 				buf.readBoolean(),
 				buf.readBoolean(),
 				buf.readBoolean(),
@@ -200,10 +190,9 @@ public record OpenHarbingerAssignmentLedgerPacket(
 	public static void handle(final OpenHarbingerAssignmentLedgerPacket msg, final IPayloadContext ctx) {
 		ctx.enqueueWork(() -> HarbingerAssignmentLedgerScreen.open(
 				msg.degree, msg.firstAwakening, msg.degreeOne,
-				msg.vesselFilled, msg.liberSanguinumCrafted, msg.hematicIronBlockCrafted,
+				msg.firstBloodcraft,
 				msg.firstRemnant, msg.ledgerGranted,
-				msg.hasVialCentrifuge, msg.hasSampledBloodVial,
-				msg.firstSeparationStarted, msg.hasAnyEnzyme,
+				msg.firstSeparation, msg.firstDistillationComplete,
 				msg.bodyAnswersBriefed, msg.bodyAnswersComplete, msg.muscleMemoryCount,
 				msg.redTaxonomyCount, msg.redTaxonomyComplete,
 				msg.enzymeMasteryCount, msg.enzymeMasteryComplete,
@@ -225,6 +214,36 @@ public record OpenHarbingerAssignmentLedgerPacket(
 				msg.covenantThroneBound, msg.covenantVigilCompleted, msg.livingCovenantComplete,
 				msg.pomesConsumed, msg.qliphothCommunionComplete, msg.silentPending,
 				msg.severedPortalOpen, msg.silentArchon));
+	}
+
+	private static void writeFirstSeparation(FriendlyByteBuf buf, FirstSeparationLedgerProgress progress) {
+		buf.writeBoolean(progress.briefed());
+		buf.writeBoolean(progress.centrifugeAcquired());
+		buf.writeBoolean(progress.sampleAcquired());
+		buf.writeBoolean(progress.separationStarted());
+		buf.writeBoolean(progress.enzymeRecovered());
+		buf.writeBoolean(progress.rewardClaimed());
+		buf.writeBoolean(progress.concentratedBloodPending());
+		buf.writeBoolean(progress.initiateReached());
+	}
+
+	private static void writeFirstBloodcraft(FriendlyByteBuf buf, FirstBloodcraftLedgerProgress progress) {
+		buf.writeDouble(progress.absorbedMl());
+		buf.writeBoolean(progress.formationProjected());
+		buf.writeBoolean(progress.venousStoneProjected());
+		buf.writeBoolean(progress.structureCrafted());
+		buf.writeBoolean(progress.votaryReached());
+	}
+
+	private static FirstBloodcraftLedgerProgress readFirstBloodcraft(FriendlyByteBuf buf) {
+		return new FirstBloodcraftLedgerProgress(buf.readDouble(), buf.readBoolean(), buf.readBoolean(),
+				buf.readBoolean(), buf.readBoolean());
+	}
+
+	private static FirstSeparationLedgerProgress readFirstSeparation(FriendlyByteBuf buf) {
+		return new FirstSeparationLedgerProgress(
+				buf.readBoolean(), buf.readBoolean(), buf.readBoolean(), buf.readBoolean(),
+				buf.readBoolean(), buf.readBoolean(), buf.readBoolean(), buf.readBoolean());
 	}
 
 	@Override

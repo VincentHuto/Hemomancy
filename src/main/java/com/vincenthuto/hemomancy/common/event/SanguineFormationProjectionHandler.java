@@ -163,6 +163,7 @@ public final class SanguineFormationProjectionHandler {
 		item.setDeltaMovement(facePush.x, 0.12D + Math.max(0.0D, facePush.y), facePush.z);
 		item.setDefaultPickUpDelay();
 		level.addFreshEntity(item);
+		com.vincenthuto.hemomancy.common.mission.vicar.FirstBloodcraftAssignment.recordFormation(player);
 		spawnSuccessBurst(level, spawnPos);
 		level.playSound(null, key.pos, SoundEvents.AMETHYST_CLUSTER_BREAK, SoundSource.BLOCKS, 0.7F, 0.8F);
 		sendProjectionSync(level, key, 1.0F, FINAL_VISIBLE_TICKS,

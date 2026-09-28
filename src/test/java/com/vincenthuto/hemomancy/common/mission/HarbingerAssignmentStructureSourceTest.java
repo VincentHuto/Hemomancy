@@ -24,13 +24,16 @@ public final class HarbingerAssignmentStructureSourceTest {
 
 		assertContains("ledger renders D1 main assignment", ledgerScreen, "renderFirstBloodcraft");
 		assertContains("ledger renders D1 Hermit Road side assignment", ledgerScreen, "renderHermitRoad");
-		assertContains("ledger renders the D1 separation assignment", ledgerScreen, "renderFirstSeparation");
+		assertContains("ledger renders the D2 separation assignment", ledgerScreen, "renderFirstSeparation");
+		assertContains("ledger renders the D2 rank assignment", ledgerScreen, "renderFirstDistillation");
+		assertContains("ledger header compares completed and visible assignments", ledgerScreen,
+				"completedAssignmentCount(), visibleAssignmentCount()");
 		assertContains("ledger labels Taxonomy as side assignment", language,
 				"screen.hemomancy.harbinger_assignment_ledger.red_taxonomy.side_title");
 		assertContains("ledger labels Eightfold as side assignment", language,
 				"screen.hemomancy.harbinger_assignment_ledger.enzyme_mastery.side_title");
-		assertContains("reference docs name D1 main assignment", docs, "Main D1 assignment, **First Bloodcraft**");
-		assertContains("reference docs place separation at D1", docs, "At Degree 1, the Harbinger Alchemist introduces **The First Separation**");
+		assertContains("reference docs name the opening Vicar work", docs, "opening Vicar chapter records four proofs");
+		assertContains("reference docs place separation at D2", docs, "At Degree 2, the Harbinger Alchemist introduces **The First Separation**");
 	}
 
 	private static void d1CentrifugeMainAssignmentExists() throws IOException {
@@ -54,14 +57,20 @@ public final class HarbingerAssignmentStructureSourceTest {
 				"ADV_FIRST_SEPARATION_STARTED");
 		assertContains("ledger item detects vial centrifuge", ledgerItem, "hasVialCentrifuge");
 		assertContains("ledger item detects sampled vial", ledgerItem, "hasSampledBloodVial");
-		assertContains("ledger item detects any enzyme", ledgerItem, "hasAnyEnzyme");
-		assertContains("ledger packet carries vial centrifuge state", ledgerPacket, "hasVialCentrifuge");
-		assertContains("ledger packet carries sampled vial state", ledgerPacket, "hasSampledBloodVial");
-		assertContains("ledger packet carries centrifuge startup state", ledgerPacket, "firstSeparationStarted");
-		assertContains("ledger packet carries enzyme acquisition state", ledgerPacket, "hasAnyEnzyme");
+		assertContains("ledger item builds durable first separation progress", ledgerItem,
+				"FirstSeparationLedgerProgress");
+		assertContains("ledger item uses durable sampling proof", ledgerItem,
+				"FirstSeparationAssignment.hasSampleAcquired(player)");
+		assertContains("ledger packet carries the assignment progress record", ledgerPacket,
+				"FirstSeparationLedgerProgress firstSeparation");
+		assertContains("ledger packet carries the Degree 3 proof", ledgerPacket,
+				"boolean firstDistillationComplete");
 		assertContains("ledger screen renders first separation", ledgerScreen, "renderFirstSeparation");
 		assertContains("first separation computes progress", ledgerScreen, "firstSeparationProgress()");
-		assertContains("first separation displays four steps", ledgerScreen, "progress, 4, progress >= 4");
+		assertContains("first separation displays its whole route", ledgerScreen, "progress.totalSteps()");
+		assertContains("ledger renders the separate projection mission", ledgerScreen, "renderFirstProjection");
+		assertContains("ledger renders the separate formation craft mission", ledgerScreen, "renderFirstFormationCraft");
+		assertContains("Hermit Road displays both cards", ledgerScreen, "progress, 2, progress >= 2");
 		assertContains("first separation language title exists", language,
 				"screen.hemomancy.harbinger_assignment_ledger.first_separation.title");
 		assertContains("first separation advancement exists", read(RESOURCE_ROOT.resolve(

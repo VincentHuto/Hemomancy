@@ -251,6 +251,10 @@ public class DialogueEventHandler {
 			case HarbingerVicarDialogueTrees.EVENT_CLAIM_FIRST_BLOODCRAFT_REWARD -> {
 				event.setRewardDelivered(handleVicarFirstBloodcraftReward(player, event.getEntityId()));
 			}
+			case HarbingerVicarDialogueTrees.EVENT_LIBER_BLUEPRINT ->
+				handleVicarBloodcraftBlueprint(player, event.getEntityId(), "liber_sanguinum");
+			case HarbingerVicarDialogueTrees.EVENT_IRON_BLUEPRINT ->
+				handleVicarBloodcraftBlueprint(player, event.getEntityId(), "hematic_iron_block");
 			case HarbingerAlchemistDialogueTrees.EVENT_FIRST_SEPARATION_BRIEF -> {
 				handleAlchemistFirstSeparationBrief(player);
 			}
@@ -492,6 +496,8 @@ public class DialogueEventHandler {
 	}
 
 	private static boolean handleVicarFirstBloodcraftReward(ServerPlayer player, int entityId) {
+		if (!(player.level().getEntity(entityId) instanceof com.vincenthuto.hemomancy.common.entity.npc.harbinger.HarbingerVicarEntity vicar)
+				|| !com.vincenthuto.hemomancy.common.mission.vicar.EarlyInitiation.near(player, vicar)) return false;
 		if (!FirstBloodcraftAssignment.canClaim(player)) {
 			String messageKey = FirstBloodcraftAssignment.isClaimed(player)
 					? "hemomancy.dialogue.event.vicar_first_bloodcraft_reward_known"
@@ -502,20 +508,34 @@ public class DialogueEventHandler {
 			return false;
 		}
 
-		if (!FirstBloodcraftAssignment.markClaimed(player)) {
+		boolean issueKit = !FirstBloodcraftAssignment.isClaimed(player);
+		if (issueKit && !FirstBloodcraftAssignment.markClaimed(player)) {
 			player.displayClientMessage(
 					Component.translatable("hemomancy.dialogue.event.vicar_first_bloodcraft_reward_claim_failed")
 							.withStyle(ChatFormatting.RED), false);
 			return false;
 		}
-		for (ItemStack stack : FirstBloodcraftAssignment.rewardStacks()) {
-			giveOrDropAtEntity(player, entityId, stack);
+		if (!FirstBloodcraftAssignment.promote(player)) return false;
+		if (issueKit) {
+			for (ItemStack stack : FirstBloodcraftAssignment.rewardStacks()) {
+				giveOrDropAtEntity(player, entityId, stack);
+			}
 		}
 		player.displayClientMessage(
 				Component.translatable("hemomancy.dialogue.event.vicar_first_bloodcraft_reward_granted")
 						.withStyle(ChatFormatting.DARK_RED),
 				false);
 		return true;
+	}
+
+	private static void handleVicarBloodcraftBlueprint(ServerPlayer player, int entityId, String recipe) {
+		if (HemoCapabilityAccess.getPlayerDegreeNumber(player) != 1
+				|| !(player.level().getEntity(entityId) instanceof com.vincenthuto.hemomancy.common.entity.npc.harbinger.HarbingerVicarEntity vicar)
+				|| !com.vincenthuto.hemomancy.common.mission.vicar.EarlyInitiation.near(player, vicar)) return;
+		var target = new MnemonicBlueprintTarget(MnemonicBlueprintTarget.Type.BLOOD_STRUCTURE,
+				Hemomancy.rloc("blood_structure/" + recipe));
+		if (player.getInventory().items.stream().anyMatch(stack -> target.equals(MnemonicBlueprintItem.getTarget(stack)))) return;
+		giveOrDropAtEntity(player, entityId, MnemonicBlueprintItem.create(ItemInit.mnemonic_blueprint.get(), target));
 	}
 
 	private static void handleAlchemistFirstSeparationBrief(ServerPlayer player) {
@@ -532,7 +552,7 @@ public class DialogueEventHandler {
 		for (ItemStack stack : FirstSeparationAssignment.rewardStacks()) {
 			giveOrDropAtEntity(player, entityId, stack);
 		}
-        player.displayClientMessage(Component.translatable("hemomancy.initiation.blood_rest"), false);
+		player.displayClientMessage(Component.translatable("hemomancy.alchemist.first_separation.next_distillation"), false);
 		return true;
 	}
 

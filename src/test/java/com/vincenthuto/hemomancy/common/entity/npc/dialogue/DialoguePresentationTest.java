@@ -52,7 +52,8 @@ class DialoguePresentationTest {
 				.addNode(new DialogueNode("root", List.of("line"), List.of(
 						new DialogueOption("claim", null, "event",
 								new DialogueOptionPresentation(id("icons/reward"), "detail", true,
-										DialogueOptionStyle.EMPHASIZED, DialogueAttention.URGENT)))))
+										DialogueOptionStyle.EMPHASIZED, DialogueAttention.URGENT,
+										"reward.prompt")))))
 				.build();
 		FriendlyByteBuf buffer = new FriendlyByteBuf(Unpooled.buffer());
 		original.toNetwork(buffer);

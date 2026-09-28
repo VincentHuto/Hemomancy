@@ -255,7 +255,9 @@ public final class HarbingerHermitDialogueTrees {
 						"hemomancy.hermit.archon.line1",
 						"hemomancy.hermit.archon.line2"
 				), List.of(
-						new DialogueOption("hemomancy.dialogue.hermit.option.share_wisdom", null, "hermit_archon_wisdom"),
+						new DialogueOption("hemomancy.dialogue.hermit.option.share_wisdom", null,
+								"hermit_archon_wisdom", DialogueOptionPresentation.prompt(
+								"hemomancy.hermit.archon_wisdom.prompt")),
 						new DialogueOption("hemomancy.dialogue.hermit.option.leave", null, null)
 				)))
 				.build();

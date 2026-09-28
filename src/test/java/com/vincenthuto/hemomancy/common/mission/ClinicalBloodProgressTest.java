@@ -9,21 +9,22 @@ class ClinicalBloodProgressTest {
     @Test void cabinetRequiresThreeDifferentExaminedSources() {
         var p = new ClinicalBloodProgress();
         p.collected = true;
-        assertTrue(p.canLearn(MICROSCOPE, 1));
+        assertFalse(p.canLearn(MICROSCOPE, 1));
+        assertTrue(p.canLearn(MICROSCOPE, 2));
         p.learn(MICROSCOPE);
-        assertFalse(p.canLearn(INJECTION, 1));
+        assertFalse(p.canLearn(INJECTION, 2));
         p.recordExamination("minecraft:cow");
         p.recordExamination("minecraft:cow");
         assertEquals(1, p.sourceCount());
-        assertTrue(p.canLearn(INJECTION, 1));
-        assertFalse(p.canLearn(CABINET, 1));
+        assertTrue(p.canLearn(INJECTION, 2));
+        assertFalse(p.canLearn(CABINET, 2));
         p.learn(INJECTION);
         p.recordExamination("minecraft:pig");
         p.recordExamination("minecraft:sheep");
-        assertTrue(p.canLearn(CABINET, 1));
-        assertFalse(p.canLearn(CABINET, 0));
-        p.learn(CABINET);
+        assertTrue(p.canLearn(CABINET, 2));
         assertFalse(p.canLearn(CABINET, 1));
+        p.learn(CABINET);
+        assertFalse(p.canLearn(CABINET, 2));
     }
     @Test void fieldCaseNeedsActualCabinetPracticeIronAndReferral() {
         var p = new ClinicalBloodProgress();

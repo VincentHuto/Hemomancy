@@ -18,8 +18,12 @@ public final class HarbingerChapterProgression {
 	public static EnumSet<HarbingerChapterMilestone> completedChapters(ServerPlayer player) {
 		migrateExistingProgress(player);
 		EnumSet<HarbingerChapterMilestone> completed = EnumSet.noneOf(HarbingerChapterMilestone.class);
-		if (FirstBloodcraftAssignment.isClaimed(player)) completed.add(HarbingerChapterMilestone.FIRST_BLOODCRAFT);
+		if (HemoCapabilityAccess.getPlayerDegreeNumber(player) >= 2 || FirstBloodcraftAssignment.progress(player).readyForVicar())
+			completed.add(HarbingerChapterMilestone.FIRST_BLOODCRAFT);
 		if (FirstSeparationAssignment.isClaimed(player)) completed.add(HarbingerChapterMilestone.FIRST_SEPARATION);
+		if (FirstSeparationAssignment.isClaimed(player) && HemoCapabilityAccess.advancedBrewing(player).distilled()) {
+			completed.add(HarbingerChapterMilestone.FIRST_DISTILLATION);
+		}
 		if (HarbingerAdvancementGranter.isMnemonistFirstWeaveComplete(player)) completed.add(HarbingerChapterMilestone.WOVEN_VESSEL);
 		if (HarbingerAdvancementGranter.isVeinMasonFirstEffigyLoadout(player)) completed.add(HarbingerChapterMilestone.VEIN_MASON);
 		if (HarbingerAdvancementGranter.hasAdvancement(player,

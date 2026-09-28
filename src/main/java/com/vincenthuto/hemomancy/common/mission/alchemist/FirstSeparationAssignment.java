@@ -9,15 +9,17 @@ import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.CustomData;
 
 import java.util.List;
 import java.util.UUID;
 
-/** Server-authoritative state and rewards for the Degree-1 First Separation assignment. */
+/** Server-authoritative state and rewards for the Degree-2 First Separation assignment. */
 public final class FirstSeparationAssignment {
 	private static final String DATA_CENTRIFUGE_ACQUIRED = "hemomancy:first_separation_centrifuge_acquired";
+	private static final String DATA_SAMPLE_ACQUIRED = "hemomancy:first_separation_sample_acquired";
 	private static final String DATA_ASSIGNED_SPIN = "hemomancy:first_separation_spin";
 	private static final String TAG_SPIN = "first_separation_spin";
 	private static final String TAG_PLAYER = "first_separation_player";
@@ -30,7 +32,7 @@ public final class FirstSeparationAssignment {
 	}
 
 	public static boolean canBrief(ServerPlayer player) {
-		return HemoCapabilityAccess.getPlayerDegreeNumber(player) >= 1 && !isBriefed(player);
+		return HemoCapabilityAccess.getPlayerDegreeNumber(player) >= 2 && !isBriefed(player);
 	}
 
 	public static boolean isBriefed(ServerPlayer player) {
@@ -53,17 +55,25 @@ public final class FirstSeparationAssignment {
 	}
 
 	public static void markCentrifugeAcquired(ServerPlayer player) {
-		player.getPersistentData().putBoolean(DATA_CENTRIFUGE_ACQUIRED, true);
+		putDurableBoolean(player, DATA_CENTRIFUGE_ACQUIRED);
 	}
 
 	public static boolean hasCentrifugeAcquired(ServerPlayer player) {
-		return player.getPersistentData().getBoolean(DATA_CENTRIFUGE_ACQUIRED);
+		return durableBoolean(player, DATA_CENTRIFUGE_ACQUIRED);
+	}
+
+	public static void markSampleAcquired(ServerPlayer player) {
+		if (isBriefed(player)) putDurableBoolean(player, DATA_SAMPLE_ACQUIRED);
+	}
+
+	public static boolean hasSampleAcquired(ServerPlayer player) {
+		return durableBoolean(player, DATA_SAMPLE_ACQUIRED);
 	}
 
 	public static UUID beginAssignmentSpin(ServerPlayer player) {
 		if (!canBeginAssignmentSpin(player)) return null;
 		UUID spinId = UUID.randomUUID();
-		player.getPersistentData().putString(DATA_ASSIGNED_SPIN, spinId.toString());
+		putDurableString(player, DATA_ASSIGNED_SPIN, spinId.toString());
 		return spinId;
 	}
 
@@ -80,7 +90,7 @@ public final class FirstSeparationAssignment {
 	}
 
 	public static boolean tryRecoverAssignmentOutput(ServerPlayer player, ItemStack stack) {
-		UUID expectedSpin = parseUuid(player.getPersistentData().getString(DATA_ASSIGNED_SPIN));
+		UUID expectedSpin = parseUuid(durableString(player, DATA_ASSIGNED_SPIN));
 		CompoundTag tag = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
 		UUID outputPlayer = parseUuid(tag.getString(TAG_PLAYER));
 		UUID outputSpin = parseUuid(tag.getString(TAG_SPIN));
@@ -99,8 +109,42 @@ public final class FirstSeparationAssignment {
 		}
 	}
 
+	private static void putDurableBoolean(ServerPlayer player, String key) {
+		CompoundTag root = player.getPersistentData();
+		CompoundTag durable = root.getCompound(Player.PERSISTED_NBT_TAG);
+		durable.putBoolean(key, true);
+		root.put(Player.PERSISTED_NBT_TAG, durable);
+		root.remove(key);
+	}
+
+	private static boolean durableBoolean(ServerPlayer player, String key) {
+		CompoundTag root = player.getPersistentData();
+		CompoundTag durable = root.getCompound(Player.PERSISTED_NBT_TAG);
+		if (durable.contains(key)) return durable.getBoolean(key);
+		if (!root.getBoolean(key)) return false;
+		putDurableBoolean(player, key);
+		return true;
+	}
+
+	private static void putDurableString(ServerPlayer player, String key, String value) {
+		CompoundTag root = player.getPersistentData();
+		CompoundTag durable = root.getCompound(Player.PERSISTED_NBT_TAG);
+		durable.putString(key, value);
+		root.put(Player.PERSISTED_NBT_TAG, durable);
+		root.remove(key);
+	}
+
+	private static String durableString(ServerPlayer player, String key) {
+		CompoundTag root = player.getPersistentData();
+		CompoundTag durable = root.getCompound(Player.PERSISTED_NBT_TAG);
+		if (durable.contains(key)) return durable.getString(key);
+		String legacy = root.getString(key);
+		if (!legacy.isBlank()) putDurableString(player, key, legacy);
+		return legacy;
+	}
+
 	public static boolean canClaim(ServerPlayer player) {
-		return HemoCapabilityAccess.getPlayerDegreeNumber(player) >= 1
+		return HemoCapabilityAccess.getPlayerDegreeNumber(player) >= 2
 				&& isBriefed(player)
 				&& HarbingerAdvancementGranter.isFirstSeparationStarted(player)
 				&& HarbingerAdvancementGranter.isFirstSeparationComplete(player)
@@ -119,6 +163,6 @@ public final class FirstSeparationAssignment {
 	public static List<ItemStack> rewardStacks() {
 		ItemStack rack = new ItemStack(ItemInit.vial_rack.get());
 		VialRackItem.ensureInitialized(rack);
-		return List.of(new ItemStack(ItemInit.living_syringe.get()), rack, ConcentratedBlood.create());
+		return List.of(new ItemStack(ItemInit.living_syringe.get()), rack);
 	}
 }

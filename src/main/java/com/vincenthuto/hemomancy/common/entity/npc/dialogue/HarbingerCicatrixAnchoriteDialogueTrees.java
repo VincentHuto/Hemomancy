@@ -58,10 +58,13 @@ public final class HarbingerCicatrixAnchoriteDialogueTrees {
 		String option = event == null ? "hemomancy.dialogue.anchorite.option.leave"
 				: p.d5Ready() ? "hemomancy.dialogue.anchorite.option.claim_d5" : "hemomancy.dialogue.anchorite.option.diagnose";
 		List<DialogueOption> options = new java.util.ArrayList<>();
-		if (event != null) options.add(new DialogueOption(option, null, event));
+		if (event != null) options.add(new DialogueOption(option, null, event,
+				DialogueOptionPresentation.prompt(p.d5Ready()
+						? "hemomancy.anchorite.d5.reward.prompt" : "hemomancy.anchorite.d5.diagnosis.prompt")));
 		if (p.replacementTier() > 0) options.add(new DialogueOption(
 				"hemomancy.dialogue.anchorite.option.replace_pattern", null,
-				p.replacementTier() == 2 ? EVENT_REPLACE_D5 : EVENT_REPLACE_D4));
+				p.replacementTier() == 2 ? EVENT_REPLACE_D5 : EVENT_REPLACE_D4,
+				DialogueOptionPresentation.prompt("hemomancy.anchorite.replace_pattern.prompt")));
 		options.add(new DialogueOption("hemomancy.dialogue.anchorite.option.leave", null, null));
 		return DialogueTree.builder(SPEAKER, ANCHORITE_ICON, entityId)
 				.addNode(new DialogueNode("greeting", !p.d5Varicose()
@@ -80,10 +83,13 @@ public final class HarbingerCicatrixAnchoriteDialogueTrees {
 		String option = event == null ? "hemomancy.dialogue.anchorite.option.leave"
 				: p.d6Ready() ? "hemomancy.dialogue.anchorite.option.claim_d6" : "hemomancy.dialogue.anchorite.option.accept_referral";
 		List<DialogueOption> options = new java.util.ArrayList<>();
-		if (event != null) options.add(new DialogueOption(option, null, event));
+		if (event != null) options.add(new DialogueOption(option, null, event,
+				DialogueOptionPresentation.prompt(p.d6Ready()
+						? "hemomancy.anchorite.d6.reward.prompt" : "hemomancy.anchorite.d6.referral.prompt")));
 		if (p.replacementTier() > 0) options.add(new DialogueOption(
 				"hemomancy.dialogue.anchorite.option.replace_pattern", null,
-				p.replacementTier() == 3 ? EVENT_REPLACE_D6 : p.replacementTier() == 2 ? EVENT_REPLACE_D5 : EVENT_REPLACE_D4));
+				p.replacementTier() == 3 ? EVENT_REPLACE_D6 : p.replacementTier() == 2 ? EVENT_REPLACE_D5 : EVENT_REPLACE_D4,
+				DialogueOptionPresentation.prompt("hemomancy.anchorite.replace_pattern.prompt")));
 		options.add(new DialogueOption("hemomancy.dialogue.anchorite.option.leave", null, null));
 		return DialogueTree.builder(SPEAKER, ANCHORITE_ICON, entityId)
 				.addNode(new DialogueNode("greeting", List.of(line), options))
@@ -98,7 +104,8 @@ public final class HarbingerCicatrixAnchoriteDialogueTrees {
 						"hemomancy.anchorite.first_lesson.line3"
 				), List.of(
 						new DialogueOption("hemomancy.dialogue.anchorite.option.accept_first_pattern",
-								"first_lesson_given", EVENT_FIRST_LESSON),
+								"first_lesson_given", EVENT_FIRST_LESSON,
+								DialogueOptionPresentation.prompt("hemomancy.anchorite.first_lesson.prompt")),
 						new DialogueOption("hemomancy.dialogue.anchorite.option.leave", null, null)
 				)))
 				.addNode(new DialogueNode("first_lesson_given", List.of(
@@ -113,7 +120,8 @@ public final class HarbingerCicatrixAnchoriteDialogueTrees {
 	private static DialogueTree carveReminder(int entityId, AnchoriteProgressSnapshot progress) {
 		List<DialogueOption> options = new java.util.ArrayList<>();
 		if (progress.replacementTier() > 0) options.add(new DialogueOption(
-				"hemomancy.dialogue.anchorite.option.replace_pattern", null, EVENT_REPLACE_D4));
+				"hemomancy.dialogue.anchorite.option.replace_pattern", null, EVENT_REPLACE_D4,
+				DialogueOptionPresentation.prompt("hemomancy.anchorite.replace_pattern.prompt")));
 		options.add(new DialogueOption("hemomancy.dialogue.anchorite.option.leave", null, null));
 		return DialogueTree.builder(SPEAKER, ANCHORITE_ICON, entityId)
 				.addNode(new DialogueNode("greeting", List.of(
@@ -152,7 +160,8 @@ public final class HarbingerCicatrixAnchoriteDialogueTrees {
 						"hemomancy.anchorite.reward.line2"
 				), List.of(
 						new DialogueOption("hemomancy.dialogue.anchorite.option.claim_reward",
-								"reward_claimed", EVENT_CONTINUATION_REWARD),
+								"reward_claimed", EVENT_CONTINUATION_REWARD,
+								DialogueOptionPresentation.prompt("hemomancy.anchorite.continuation_reward.prompt")),
 						new DialogueOption("hemomancy.dialogue.anchorite.option.leave", null, null)
 				)))
 				.addNode(new DialogueNode("reward_claimed", List.of(
@@ -168,7 +177,8 @@ public final class HarbingerCicatrixAnchoriteDialogueTrees {
 		String replacement = progress.d6Reward() ? EVENT_REPLACE_D6 : progress.d5Reward() ? EVENT_REPLACE_D5 : EVENT_REPLACE_D4;
 		List<DialogueOption> options = new java.util.ArrayList<>();
 		if (progress.replacementTier() > 0) options.add(new DialogueOption(
-				"hemomancy.dialogue.anchorite.option.replace_pattern", null, replacement));
+				"hemomancy.dialogue.anchorite.option.replace_pattern", null, replacement,
+				DialogueOptionPresentation.prompt("hemomancy.anchorite.replace_pattern.prompt")));
 		options.add(new DialogueOption("hemomancy.dialogue.anchorite.option.about_alchemist", "alchemist", null));
 		options.add(new DialogueOption("hemomancy.dialogue.anchorite.option.about_artificer", "artificer", null));
 		options.add(new DialogueOption("hemomancy.dialogue.anchorite.option.leave", null, null));

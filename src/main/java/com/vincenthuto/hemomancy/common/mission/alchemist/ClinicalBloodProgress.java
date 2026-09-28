@@ -42,7 +42,7 @@ public final class ClinicalBloodProgress implements INBTSerializable<CompoundTag
     public boolean knows(Lesson lesson) { return lessons.contains(lesson); }
     public boolean learn(Lesson lesson) { return lessons.add(lesson); }
     public boolean canLearn(Lesson lesson, int degree) {
-        if (degree < 1 || knows(lesson)) return false;
+        if (degree < 2 || knows(lesson)) return false;
         return switch (lesson) {
             case MICROSCOPE -> collected;
             case INJECTION -> sourceCount() > 0 && knows(Lesson.MICROSCOPE);

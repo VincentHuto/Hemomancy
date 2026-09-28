@@ -46,11 +46,13 @@ public final class HarbingerAlchemistDialogueTrees {
 		List<DialogueOption> correspondence = new ArrayList<>();
 		if (progress.threeAnswers() == Step.CORRESPONDENCE) {
 			correspondence.add(new DialogueOption("hemomancy.dialogue.alchemist.option.artificer_three_answers",
-					null, HarbingerArtificerDialogueTrees.EVENT_CLAIM_THREE_ANSWERS_REWARD));
+					null, HarbingerArtificerDialogueTrees.EVENT_CLAIM_THREE_ANSWERS_REWARD,
+					DialogueOptionPresentation.prompt("hemomancy.alchemist.artificer_three_answers.prompt")));
 		}
 		if (progress.crimsonVestment() == Step.CORRESPONDENCE) {
 			correspondence.add(new DialogueOption("hemomancy.dialogue.alchemist.option.artificer_crimson_vestment",
-					null, HarbingerArtificerDialogueTrees.EVENT_CLAIM_CRIMSON_VESTMENT_REWARD));
+					null, HarbingerArtificerDialogueTrees.EVENT_CLAIM_CRIMSON_VESTMENT_REWARD,
+					DialogueOptionPresentation.prompt("hemomancy.alchemist.artificer_crimson_vestment.prompt")));
 		}
 		String researchNodeId = null;
 		if (hasCompletedForkCorrespondence(progress.threeAnswers())
@@ -58,7 +60,8 @@ public final class HarbingerAlchemistDialogueTrees {
 				&& !forkResearchClaimed) {
 			if (forkResearchRecorded >= 3) {
 				correspondence.add(new DialogueOption("hemomancy.dialogue.alchemist.option.claim_armor_research",
-						null, EVENT_CLAIM_ARMOR_RESEARCH_REWARD));
+						null, EVENT_CLAIM_ARMOR_RESEARCH_REWARD,
+						DialogueOptionPresentation.prompt("hemomancy.alchemist.armor_research.claim.prompt")));
 			} else {
 				researchNodeId = "armor_research_" + progress.forkFamily().serializedName();
 				correspondence.add(new DialogueOption("hemomancy.dialogue.alchemist.option.ask_armor_research",
@@ -137,7 +140,8 @@ public final class HarbingerAlchemistDialogueTrees {
 		lessons.nodes().forEach(nodes::putIfAbsent);
 		List<DialogueOption> options = new ArrayList<>();
 		for (DialogueOption option : lessons.getStartNode().options()) {
-			if (EVENT_FIRST_SEPARATION_BRIEF.equals(option.eventId())
+			if ("first_separation_offer".equals(option.nextNodeId())
+					|| EVENT_FIRST_SEPARATION_BRIEF.equals(option.eventId())
 					|| EVENT_FIRST_SEPARATION_CLAIM.equals(option.eventId())
 					|| EVENT_BODY_ANSWERS_BRIEF.equals(option.eventId())
 					|| "muscle_memory_catalogue".equals(option.nextNodeId())) options.add(option);
@@ -229,7 +233,8 @@ public final class HarbingerAlchemistDialogueTrees {
 			return;
 		}
 		options.add(isNpcRecruited
-				? new DialogueOption("hemomancy.dialogue.recruit.option.release_blood", null, "expel_harbinger")
+				? new DialogueOption("hemomancy.dialogue.recruit.option.release_blood", null, "expel_harbinger",
+						DialogueOptionPresentation.prompt("hemomancy.dialogue.recruit.release.prompt"))
 				: new DialogueOption("hemomancy.dialogue.recruit.option.pledge_blood", "recruit_offer", null));
 	}
 
@@ -369,37 +374,45 @@ public final class HarbingerAlchemistDialogueTrees {
 		List<DialogueOption> greetingOptions = new ArrayList<>();
 		if (heldSpecimenJar != null && heldSpecimenJar.isResearchSpecimen()) {
 			greetingOptions.add(new DialogueOption("hemomancy.dialogue.alchemist.option.record_living_specimen",
-					null, EVENT_BESTIARY_RECORD));
+					null, EVENT_BESTIARY_RECORD,
+					DialogueOptionPresentation.prompt("hemomancy.alchemist.living_bestiary.record.prompt")));
 			if (heldSpecimenJar.morphlingLayers().isEmpty()) {
 				greetingOptions.add(new DialogueOption("hemomancy.dialogue.alchemist.option.surrender_living_specimen",
-						null, EVENT_BESTIARY_SURRENDER));
+						null, EVENT_BESTIARY_SURRENDER,
+						DialogueOptionPresentation.prompt("hemomancy.alchemist.living_bestiary.surrender.prompt")));
 			} else {
 				for (MorphlingPolypLayer layer : heldSpecimenJar.morphlingLayers()) {
 					greetingOptions.add(new DialogueOption("hemomancy.dialogue.alchemist.option.surrender_polyp_"
 							+ layer.serializedName(), null,
-							EVENT_BESTIARY_SURRENDER_MORPHLING_PREFIX + layer.serializedName()));
+							EVENT_BESTIARY_SURRENDER_MORPHLING_PREFIX + layer.serializedName(),
+							DialogueOptionPresentation.prompt(
+									"hemomancy.alchemist.living_bestiary.surrender_polyp.prompt")));
 				}
 			}
 		}
 		if (heldRedTaxonomySample != null) {
 			greetingOptions.add(new DialogueOption("hemomancy.dialogue.alchemist.option.submit_red_taxonomy_sample",
-					"red_taxonomy_" + heldRedTaxonomySample.key(), heldRedTaxonomySample.eventId()));
+					"red_taxonomy_" + heldRedTaxonomySample.key(), heldRedTaxonomySample.eventId(),
+					DialogueOptionPresentation.prompt("hemomancy.alchemist.red_taxonomy.submit.prompt")));
 		}
 		greetingOptions.add(new DialogueOption("hemomancy.dialogue.alchemist.option.begin_living_bestiary",
 				"living_bestiary_intro", null));
 		greetingOptions.add(new DialogueOption("hemomancy.dialogue.alchemist.option.begin_red_taxonomy",
 				"red_taxonomy_intro", null));
 		if (canBriefFirstSeparation) {
-			greetingOptions.add(new DialogueOption("hemomancy.dialogue.alchemist.option.accept_first_separation",
-					"first_separation_briefing", EVENT_FIRST_SEPARATION_BRIEF));
+			greetingOptions.add(new DialogueOption(
+					"hemomancy.dialogue.alchemist.option.first_separation_assignment",
+					"first_separation_offer", null));
 		}
 		if (canClaimFirstSeparation) {
 			greetingOptions.add(new DialogueOption("hemomancy.dialogue.alchemist.option.complete_first_separation",
-					"first_separation_complete", EVENT_FIRST_SEPARATION_CLAIM));
+					"first_separation_complete", EVENT_FIRST_SEPARATION_CLAIM,
+					DialogueOptionPresentation.prompt("hemomancy.alchemist.first_separation.claim.prompt")));
 		}
 		if (canBriefBodyAnswers) {
 			greetingOptions.add(new DialogueOption("hemomancy.dialogue.alchemist.option.accept_body_answers",
-					"body_answers_briefing", EVENT_BODY_ANSWERS_BRIEF));
+					"body_answers_briefing", EVENT_BODY_ANSWERS_BRIEF,
+					DialogueOptionPresentation.prompt("hemomancy.alchemist.body_answers.prompt")));
 		}
 		if (canDiscussMuscleMemories) {
 			greetingOptions.add(new DialogueOption("hemomancy.dialogue.alchemist.option.muscle_memory_catalogue",
@@ -413,6 +426,8 @@ public final class HarbingerAlchemistDialogueTrees {
 				"gourd_upgrades", null));
 		greetingOptions.add(new DialogueOption("hemomancy.dialogue.alchemist.option.tell_me_about_alembic",
 				"alembic_lore", null));
+		greetingOptions.add(new DialogueOption("hemomancy.dialogue.alchemist.option.first_distillation_assignment",
+				"first_distillation_assignment", null));
 		greetingOptions.add(new DialogueOption("hemomancy.dialogue.alchemist.option.ask_about_item",
 				"item_hint", null));
 		greetingOptions.add(new DialogueOption("hemomancy.dialogue.alchemist.option.leave", null, null));
@@ -494,6 +509,14 @@ public final class HarbingerAlchemistDialogueTrees {
 								"gourd_upgrades", null),
 						new DialogueOption("hemomancy.dialogue.alchemist.option.leave", null, null)
 				)))
+				.addNode(new DialogueNode("first_separation_offer", List.of(
+						"hemomancy.alchemist.first_separation.offer.line1",
+						"hemomancy.alchemist.first_separation.offer.line2"
+				), List.of(
+						new DialogueOption("hemomancy.dialogue.alchemist.option.accept_first_separation",
+								"first_separation_briefing", EVENT_FIRST_SEPARATION_BRIEF),
+						new DialogueOption("hemomancy.dialogue.alchemist.option.leave", null, null)
+				)))
 				.addNode(new DialogueNode("first_separation_briefing", List.of(
 						"hemomancy.alchemist.first_separation.briefing"
 				), List.of(new DialogueOption("hemomancy.dialogue.alchemist.option.leave", null, null))) )
@@ -530,6 +553,9 @@ public final class HarbingerAlchemistDialogueTrees {
 								"gourd_upgrades", null),
 						new DialogueOption("hemomancy.dialogue.alchemist.option.leave", null, null)
 				)))
+				.addNode(new DialogueNode("first_distillation_assignment", List.of(
+						"hemomancy.alchemist.votary.first_distillation.assignment"
+				), List.of(new DialogueOption("hemomancy.dialogue.alchemist.option.leave", null, null))))
 				.addNode(new DialogueNode("item_hint", List.of(
 						"hemomancy.alchemist.item_hint"
 				), List.of(

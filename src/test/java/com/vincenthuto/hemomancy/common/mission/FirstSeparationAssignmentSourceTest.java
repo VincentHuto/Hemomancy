@@ -21,6 +21,8 @@ class FirstSeparationAssignmentSourceTest {
 			"src/main/java/com/vincenthuto/hemomancy/common/capability/player/harbinger/bloodvolume/BloodVolumeEvents.java");
 	private static final Path OUTPUT_SLOT = Path.of(
 			"src/main/java/com/vincenthuto/hemomancy/common/menu/slot/CentrifugeOutputSlot.java");
+	private static final Path LANGUAGE = Path.of(
+			"src/main/resources/assets/hemomancy/lang/en_us.json");
 
 	@Test
 	void firstSeparationOwnsBriefingClaimAndInitializedSamplingKit() throws IOException {
@@ -30,7 +32,7 @@ class FirstSeparationAssignmentSourceTest {
 
 		assertContains(helper, "Hemomancy.rloc(\"hemomancy/first_separation_briefed\")");
 		assertContains(helper, "Hemomancy.rloc(\"hemomancy/first_separation_reward_claimed\")");
-		assertContains(helper, "HemoCapabilityAccess.getPlayerDegreeNumber(player) >= 1");
+		assertContains(helper, "HemoCapabilityAccess.getPlayerDegreeNumber(player) >= 2");
 		assertContains(helper, "HarbingerAdvancementGranter.isFirstSeparationStarted(player)");
 		assertContains(helper, "HarbingerAdvancementGranter.isFirstSeparationComplete(player)");
 		assertContains(helper, "VialRackItem.ensureInitialized(rack)");
@@ -54,6 +56,25 @@ class FirstSeparationAssignmentSourceTest {
 				"FirstSeparationAssignment.rewardStacks()");
 		assertNotContains(read(BLOOD_EVENTS), "ADV_FIRST_SEPARATION_COMPLETE");
 		assertContains(read(OUTPUT_SLOT), "FirstSeparationAssignment.tryRecoverAssignmentOutput");
+	}
+
+	@Test
+	void firstSeparationOfferExplainsTheWorkBeforeAcceptance() throws IOException {
+		String alchemist = read(ALCHEMIST);
+		String language = read(LANGUAGE);
+
+		assertContains(alchemist, "hemomancy.dialogue.alchemist.option.first_separation_assignment");
+		assertContains(alchemist, "\"first_separation_offer\", null");
+		int offerStart = alchemist.indexOf("new DialogueNode(\"first_separation_offer\"");
+		int briefingStart = alchemist.indexOf("new DialogueNode(\"first_separation_briefing\"", offerStart);
+		if (offerStart < 0 || briefingStart <= offerStart) throw new AssertionError("missing First Separation offer node");
+		String offer = alchemist.substring(offerStart, briefingStart);
+		assertContains(offer, "hemomancy.alchemist.first_separation.offer.line1");
+		assertContains(offer, "hemomancy.alchemist.first_separation.offer.line2");
+		assertContains(offer, "EVENT_FIRST_SEPARATION_BRIEF");
+		assertContains(language, "\"hemomancy.dialogue.alchemist.option.first_separation_assignment\"");
+		assertContains(language, "\"hemomancy.alchemist.first_separation.offer.line1\"");
+		assertContains(language, "\"hemomancy.alchemist.first_separation.offer.line2\"");
 	}
 
 	private static String read(Path path) throws IOException {

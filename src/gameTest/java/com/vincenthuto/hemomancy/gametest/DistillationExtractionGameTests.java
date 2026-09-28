@@ -6,6 +6,8 @@ import com.vincenthuto.hemomancy.common.init.BlockInit;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.menu.tile.crafting.GhastlyAlembicMenu;
 import com.vincenthuto.hemomancy.common.menu.tile.crafting.PallidRetortMenu;
+import com.vincenthuto.hemomancy.common.mission.shared.HarbingerChapterMilestone;
+import com.vincenthuto.hemomancy.common.mission.shared.HarbingerChapterProgression;
 import com.vincenthuto.hemomancy.common.mission.unstained.UnstainedObservances;
 import com.vincenthuto.hemomancy.common.recipe.DistillationRecipe;
 import com.vincenthuto.hemomancy.common.tile.harbinger.crafting.GhastlyAlembicBlockEntity;
@@ -178,6 +180,39 @@ public final class DistillationExtractionGameTests {
 		helper.assertTrue(HemoCapabilityAccess.advancedBrewing(player).compounded()
 				&& alembic.saveWithoutMetadata(level.registryAccess()).getString("CompletedOperation").isEmpty(),
 				"Advanced shift-click did not record and consume the completion");
+		helper.succeed();
+	}
+
+	@GameTest(template = "empty")
+	public static void firstOrdinaryDistillationAndSeparationUnlockDegreeThreeChapterGate(GameTestHelper helper) {
+		var level = helper.getLevel();
+		var player = player(helper);
+		HemoCapabilityAccess.requireInitiatoryDegree(player).setDegreeNumber(2);
+		helper.assertTrue(HarbingerChapterProgression.unmetChapterForTargetDegree(player, 3)
+				== HarbingerChapterMilestone.FIRST_DISTILLATION,
+				"Degree 3 was not sealed by The First Distillation");
+
+		BlockPos pos = helper.absolutePos(new BlockPos(4, 3, 4));
+		level.setBlockAndUpdate(pos, BlockInit.ghastly_alembic.get().defaultBlockState());
+		var alembic = (GhastlyAlembicBlockEntity) level.getBlockEntity(pos);
+		var menu = new GhastlyAlembicMenu(1, player.getInventory(), alembic);
+		ItemStack output = new ItemStack(ItemInit.sanguine_formation.get());
+		alembic.setItem(GhastlyAlembicBlockEntity.SLOT_RESULT, output.copy());
+		var saved = alembic.saveWithoutMetadata(level.registryAccess());
+		saved.putString("CompletedOperation", "distill");
+		saved.put("CompletedOutput", output.save(level.registryAccess()));
+		alembic.loadWithComponents(saved, level.registryAccess());
+
+		ItemStack pickedUp = menu.getSlot(GhastlyAlembicMenu.RESULT_SLOT).remove(1);
+		menu.getSlot(GhastlyAlembicMenu.RESULT_SLOT).onTake(player, pickedUp);
+		helper.assertTrue(HemoCapabilityAccess.advancedBrewing(player).distilled(),
+				"Taking the first ordinary distillation did not record its proof");
+		helper.assertTrue(HarbingerChapterProgression.unmetChapterForTargetDegree(player, 3)
+				== HarbingerChapterMilestone.FIRST_DISTILLATION,
+				"Distillation alone bypassed First Separation");
+		com.vincenthuto.hemomancy.common.mission.alchemist.FirstSeparationAssignment.markClaimed(player);
+		helper.assertTrue(HarbingerChapterProgression.unmetChapterForTargetDegree(player, 3) == null,
+				"The two Alchemist proofs did not unseal the Degree 3 chapter gate");
 		helper.succeed();
 	}
 }

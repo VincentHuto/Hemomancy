@@ -9,11 +9,14 @@ import com.vincenthuto.hemomancy.common.event.HarbingerAdvancementGranter;
 import com.vincenthuto.hemomancy.common.init.BlockInit;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.mission.alchemist.BodyAnswersAssignment;
+import com.vincenthuto.hemomancy.common.mission.alchemist.ConcentratedBlood;
 import com.vincenthuto.hemomancy.common.mission.alchemist.FirstSeparationAssignment;
+import com.vincenthuto.hemomancy.common.mission.alchemist.FirstSeparationLedgerProgress;
 import com.vincenthuto.hemomancy.common.mission.artificer.ArtificerAssignments;
 import com.vincenthuto.hemomancy.common.mission.cicatrix_anchorite.VeinMasonAssignments;
 import com.vincenthuto.hemomancy.common.mission.shared.HarbingerChapterMilestone;
 import com.vincenthuto.hemomancy.common.mission.shared.HarbingerChapterProgression;
+import com.vincenthuto.hemomancy.common.mission.vicar.FirstBloodcraftAssignment;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.mission.OpenHarbingerAssignmentLedgerPacket;
 import com.vincenthuto.hemomancy.common.rite.harbinger.QliphothBloomSavedData;
@@ -91,17 +94,14 @@ public class HarbingerAssignmentLedgerItem extends ItemGuideBook {
 							Hemomancy.rloc("hemomancy/the_first_awakening")),
 					HarbingerAdvancementGranter.hasAdvancement(serverPlayer,
 							HarbingerAdvancementGranter.ADV_DEGREE_1_NEOPHYTE),
-					HarbingerAdvancementGranter.isVesselFilled(serverPlayer),
-					HarbingerAdvancementGranter.isLiberSanguinumCrafted(serverPlayer),
-					HarbingerAdvancementGranter.isHematicIronBlockCrafted(serverPlayer),
+					FirstBloodcraftAssignment.progress(serverPlayer),
 					HarbingerAdvancementGranter.hasAdvancement(serverPlayer,
 							HarbingerAdvancementGranter.ADV_HERMIT_ROAD_FIRST_REMNANT),
 					HarbingerAdvancementGranter.hasAdvancement(serverPlayer,
 							HarbingerAdvancementGranter.ADV_HERMIT_ROAD_REPORTED),
-					hasVialCentrifuge(serverPlayer),
-					hasSampledBloodVial(serverPlayer),
-					HarbingerAdvancementGranter.isFirstSeparationStarted(serverPlayer),
-					hasAnyEnzyme(serverPlayer),
+					firstSeparationProgress(serverPlayer),
+					FirstSeparationAssignment.isClaimed(serverPlayer)
+							&& HemoCapabilityAccess.advancedBrewing(serverPlayer).distilled(),
 					HarbingerAdvancementGranter.hasAdvancement(serverPlayer,
 							BodyAnswersAssignment.ADV_BRIEFED),
 					HarbingerAdvancementGranter.hasAdvancement(serverPlayer,
@@ -184,8 +184,19 @@ public class HarbingerAssignmentLedgerItem extends ItemGuideBook {
 						&& BloodVialItem.getEntityType(stack) != null);
 	}
 
-	private static boolean hasAnyEnzyme(ServerPlayer player) {
-		return HarbingerAdvancementGranter.isFirstSeparationComplete(player);
+	private static FirstSeparationLedgerProgress firstSeparationProgress(ServerPlayer player) {
+		if (!FirstSeparationAssignment.hasSampleAcquired(player) && hasSampledBloodVial(player)) {
+			FirstSeparationAssignment.markSampleAcquired(player);
+		}
+		return new FirstSeparationLedgerProgress(
+				FirstSeparationAssignment.isBriefed(player),
+				hasVialCentrifuge(player),
+				FirstSeparationAssignment.hasSampleAcquired(player),
+				HarbingerAdvancementGranter.isFirstSeparationStarted(player),
+				HarbingerAdvancementGranter.isFirstSeparationComplete(player),
+				FirstSeparationAssignment.isClaimed(player),
+				ConcentratedBlood.pending(player),
+				HemoCapabilityAccess.getPlayerDegreeNumber(player) >= 3);
 	}
 
 	@Override

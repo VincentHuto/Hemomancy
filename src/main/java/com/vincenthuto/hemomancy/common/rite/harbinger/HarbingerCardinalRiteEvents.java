@@ -1251,7 +1251,6 @@ public class HarbingerCardinalRiteEvents {
 	private static final String APOTHEOS_RITE_PATH = "cardinal_rite/apotheos_rite";
 
 	static {
-		DEGREE_RITE_PATHS.put("cardinal_rite/initiate_rite", 3);        // Initiate of the Incarnadine Fane
 		DEGREE_RITE_PATHS.put("cardinal_rite/sanguine_brotherhood", 4); // Adept of the Sanguine Brotherhood
 		DEGREE_RITE_PATHS.put("cardinal_rite/illuminatus_rite", 5);     // Illuminatus of the Crimson Lodge
 		DEGREE_RITE_PATHS.put("cardinal_rite/sanctified_rite", 6);      // Sanctified of the Bloodline Covenant

@@ -35,7 +35,8 @@ public final class UnstainedScoutDialogueTrees {
                         "hemomancy.scout.root.line2",
                         "hemomancy.scout.root.line3"
                 ), List.of(
-                        new DialogueOption("hemomancy.dialogue.scout.option.take_notes", "farewell", "scout_give_notes"),
+                        new DialogueOption("hemomancy.dialogue.scout.option.take_notes", "farewell", "scout_give_notes",
+                                DialogueOptionPresentation.prompt("hemomancy.scout.take_notes.prompt")),
                         new DialogueOption("hemomancy.dialogue.scout.option.what_happened", "what_happened", null),
                         new DialogueOption("hemomancy.dialogue.scout.option.leave", null, null)
                 )))
@@ -46,7 +47,8 @@ public final class UnstainedScoutDialogueTrees {
                         "hemomancy.scout.what_happened.line2"
                 ), List.of(
                         new DialogueOption("hemomancy.dialogue.scout.option.what_did_you_see", "observation_hint", null),
-                        new DialogueOption("hemomancy.dialogue.scout.option.take_notes", "farewell", "scout_give_notes"),
+                        new DialogueOption("hemomancy.dialogue.scout.option.take_notes", "farewell", "scout_give_notes",
+                                DialogueOptionPresentation.prompt("hemomancy.scout.take_notes.prompt")),
                         new DialogueOption("hemomancy.dialogue.scout.option.leave", null, null)
                 )))
 
@@ -56,7 +58,8 @@ public final class UnstainedScoutDialogueTrees {
                         "hemomancy.scout.observation_hint.line2",
                         "hemomancy.scout.observation_hint.line3"
                 ), List.of(
-                        new DialogueOption("hemomancy.dialogue.scout.option.take_notes", "farewell", "scout_give_notes"),
+                        new DialogueOption("hemomancy.dialogue.scout.option.take_notes", "farewell", "scout_give_notes",
+                                DialogueOptionPresentation.prompt("hemomancy.scout.take_notes.prompt")),
                         new DialogueOption("hemomancy.dialogue.scout.option.leave", null, null)
                 )))
 

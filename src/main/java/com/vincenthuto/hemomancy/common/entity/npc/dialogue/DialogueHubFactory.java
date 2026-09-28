@@ -68,7 +68,10 @@ public final class DialogueHubFactory {
 			String target = option.nextNodeId();
 			if (target == null || option.eventId() != null) {
 				target = "__hub_" + category.name().toLowerCase(Locale.ROOT) + "_" + syntheticIndex++;
-				nodes.put(target, new DialogueNode(target, List.of(), List.of(option)));
+				String promptKey = option.presentation().promptKey();
+				nodes.put(target, new DialogueNode(target,
+						List.of(promptKey == null ? "hemomancy.dialogue.action.confirm" : promptKey),
+						List.of(option)));
 			}
 			String topicId = category.name().toLowerCase(Locale.ROOT) + "/" + slug;
 			boolean unread = category == DialogueCategory.LORE
@@ -85,7 +88,11 @@ public final class DialogueHubFactory {
 
 		if (!conversationOptions.isEmpty()) {
 			String target = "__hub_conversation";
-			nodes.put(target, new DialogueNode(target, List.of(), List.copyOf(conversationOptions)));
+			String promptKey = conversationOptions.size() == 1
+					? conversationOptions.getFirst().presentation().promptKey() : null;
+			nodes.put(target, new DialogueNode(target,
+					List.of(promptKey == null ? "hemomancy.dialogue.conversation.prompt" : promptKey),
+					List.copyOf(conversationOptions)));
 			topics.add(DialogueTopic.available("conversation/speak_freely", DialogueCategory.CONVERSATION,
 					"hemomancy.dialogue.topic.speak_freely", summaryKey(DialogueCategory.CONVERSATION), target));
 		}
