@@ -114,6 +114,11 @@ public class BloodProjectionItem extends Item implements IDispellable, ICellHand
 		IBloodVolume playerVolume = HemoCapabilityAccess.getBloodVolume(player)
 				.orElseThrow(NullPointerException::new);
 		double beforeBlood = playerVolume.getBloodVolume();
+        if (player instanceof ServerPlayer founder
+                && com.vincenthuto.hemomancy.common.mission.vicar.EarlyInitiation.tryProject(founder)) {
+            return 0.0D;
+        }
+
 
 		double willHandled = WillBloodUtilityInteractions.tryProjectBanishFalteringWill(worldIn, player,
 				tileTransferRate);

@@ -4,7 +4,7 @@
   "riteType": "greater",
   "required_degree": 5,
   "riteName": "Rite of the Ashen Vessel",
-  "riteDescription": "Through fire and ash the vessel is reborn â€” blackened, hardened, and hungry. The ashen gourd drinks deeper than any before it.",
+  "riteDescription": "Through fire and ash the vessel is reborn blackened, hardened, and hungry. The ashen gourd drinks deeper than any before it.",
   "result": {
     "id": "hemomancy:blood_gourd_black"
   },

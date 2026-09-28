@@ -628,6 +628,8 @@ public class ClientEvents {
 		VesperFightFloorRenderer.clear();
 		ArborOfWillRenderer.clearCaches();
 		QliphothBloomRenderer.clearCaches();
+		FaneBoundaryRenderer.clearCaches();
+		if (BloodVolumeOverlay.instance != null) BloodVolumeOverlay.instance.clearCaches();
         QliphothBloomClientData.clear();
 		NpcProgressionMarkerClientState.clear();
 		CardinalRiteImpactClientEvents.clear();
@@ -810,6 +812,8 @@ public class ClientEvents {
                 com.vincenthuto.hemomancy.client.player.HematicMicroscopeClientState.clear();
 				ArborOfWillRenderer.clearCaches();
 				QliphothBloomRenderer.clearCaches();
+				FaneBoundaryRenderer.clearCaches();
+				if (BloodVolumeOverlay.instance != null) BloodVolumeOverlay.instance.clearCaches();
 			});
 		}
 

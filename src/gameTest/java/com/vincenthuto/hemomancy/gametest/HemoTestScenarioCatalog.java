@@ -67,13 +67,13 @@ public final class HemoTestScenarioCatalog {
 					HemoTestScenarioCatalog::restoreDegree),
 			new HemoTestScenario(
 					"sanguine_initiation_recipe_loaded",
-					"The Sanguine Initiation rite recipe is available to the loaded server registry.",
+					"The retired early rites are absent from the loaded registry.",
 					player -> { },
 					HemoTestScenarioCatalog::verifySanguineInitiationRecipeLoaded,
 					player -> { }),
 			new HemoTestScenario(
 					"sanguine_initiation_degree_mapping",
-					"The Sanguine Initiation rite retains its Degree-1 rank-up mapping and conduit reward registration.",
+					"Early degrees no longer have rite mappings; the Vicar conduit remains registered.",
 					player -> { },
 					HemoTestScenarioCatalog::verifySanguineInitiationDegreeMapping,
 					player -> { }),
@@ -128,33 +128,21 @@ public final class HemoTestScenarioCatalog {
 		}
 	}
 
-	private static HemoTestResult verifySanguineInitiationRecipeLoaded(ServerPlayer player) {
-		CardinalRiteRecipe recipe = CardinalRiteRecipe.getRiteByLocation(player.level(), SANGUINE_INITIATION_RITE);
-		return recipe != null
-				? HemoTestResult.pass("Sanguine Initiation rite recipe is loaded")
-				: HemoTestResult.fail("Sanguine Initiation rite was not loaded");
-	}
-
-	private static HemoTestResult verifySanguineInitiationDegreeMapping(ServerPlayer player) {
-		CardinalRiteRecipe recipe = CardinalRiteRecipe.getRiteByLocation(player.level(), SANGUINE_INITIATION_RITE);
-		if (recipe == null) {
-			return HemoTestResult.fail("Sanguine Initiation rite was not loaded");
-		}
-		Integer targetDegree = RecipeDegreeGates.getRankupTargetDegree(SANGUINE_INITIATION_RITE);
-		return targetDegree != null && targetDegree == 1 && ItemInit.sanguine_conduit.get() != null
-				? HemoTestResult.pass("Sanguine Initiation maps to Degree 1 and its conduit reward is registered")
-				: HemoTestResult.fail("Sanguine Initiation Degree-1 mapping or conduit reward is missing");
-	}
+    private static HemoTestResult verifySanguineInitiationRecipeLoaded(ServerPlayer player) {
+        return CardinalRiteRecipe.getRiteByLocation(player.level(), SANGUINE_INITIATION_RITE) == null
+                && CardinalRiteRecipe.getRiteByLocation(player.level(), VOTARY_RITE) == null
+                ? HemoTestResult.pass("Early rank rites are retired") : HemoTestResult.fail("Retired initiation recipe loaded");
+    }
+    private static HemoTestResult verifySanguineInitiationDegreeMapping(ServerPlayer player) {
+        return RecipeDegreeGates.getRankupTargetDegree(SANGUINE_INITIATION_RITE) == null
+                && RecipeDegreeGates.getRankupTargetDegree(VOTARY_RITE) == null && ItemInit.sanguine_conduit.get() != null
+                ? HemoTestResult.pass("Early ranks no longer map to rites; conduit remains registered")
+                : HemoTestResult.fail("Retired rank mapping remains");
+    }
 
 	private static HemoTestResult verifyCardinalRiteMedia(ServerPlayer player) {
 		try {
 			var getter = CardinalRiteRecipe.class.getMethod("getMedium");
-			if (!matchesMedium(player, getter, SANGUINE_INITIATION_RITE, new ItemStack(Items.IRON_NUGGET))) {
-				return HemoTestResult.fail("Sanguine Initiation does not require an iron-nugget medium");
-			}
-			if (!matchesMedium(player, getter, VOTARY_RITE, new ItemStack(Items.IRON_NUGGET))) {
-				return HemoTestResult.fail("Rite of the Votary does not require an iron-nugget medium");
-			}
 			if (!matchesMedium(player, getter, BLOOM_RITE, new ItemStack(ItemInit.qliphoth_seed.get()))) {
 				return HemoTestResult.fail("Bloom of the Qliphoth does not require its seed medium");
 			}

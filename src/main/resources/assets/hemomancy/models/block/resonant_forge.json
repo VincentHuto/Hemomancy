@@ -1,5 +1,6 @@
 {
   "parent": "minecraft:block/block",
+  "ambientocclusion": false,
   "render_type": "cutout",
   "textures": {
     "particle": "hemomancy:block/hematic_iron_block",

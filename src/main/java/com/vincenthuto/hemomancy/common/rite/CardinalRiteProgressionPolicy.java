@@ -78,9 +78,9 @@ public final class CardinalRiteProgressionPolicy {
 
 	private static Limits limits(int degree) {
 		if (degree == 0) return new Limits(0, 0, 0, 0, 0, 0,
-				"temple_medium", 0, false, false, 0);
+				"living_staff", 0, false, false, 0);
 		if (degree == 1) return new Limits(4, 0, 0, 0, 0, 0,
-				"hematic_medium", 0, false, false, 0);
+				"living_staff", 0, false, false, 0);
 		if (degree <= 3) return new Limits(4, 0, 0, 0, 1, 0,
 				"living_staff", 1, false, false, 0);
 		if (degree == 4) return new Limits(4, 1, 1, 0, 3, 0,

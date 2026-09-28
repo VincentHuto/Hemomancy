@@ -2,7 +2,7 @@
   "type": "hemomancy:cardinal_rite_recipe",
   "bloodCost": 0,
   "riteType": "minor",
-  "required_degree": 1,
+  "required_degree": 2,
   "riteName": "Rite of Sanguine Attunement",
   "riteDescription": "A cleansing rite that purges and resets the caster's blood tendency alignments, allowing them to realign their kinship from a blank slate.",
   "floor": "hemomancy:communion_minor",
@@ -36,7 +36,7 @@
     "guaranteed_waves": [],
     "fragile_offsets": [],
     "target_duration_ticks": 400,
-    "focus": "hematic_medium",
+    "focus": "living_staff",
     "required_helpers": 0,
     "helper_roles": [
       "anchor",

@@ -4,7 +4,7 @@
   "riteType": "lesser",
   "required_degree": 3,
   "riteName": "Rite of Exsanguination",
-  "riteDescription": "A dark sacrifice rite that drains the lifeblood of a named creature within the ritual circle, crystallizing their essence into Sanguine Quintessence â€” a rare and potent material.",
+  "riteDescription": "A dark sacrifice rite that drains the lifeblood of a named creature within the ritual circle, crystallizing their essence into Sanguine Quintessence a rare and potent material.",
   "result": {
     "id": "hemomancy:sanguine_quintessence"
   },

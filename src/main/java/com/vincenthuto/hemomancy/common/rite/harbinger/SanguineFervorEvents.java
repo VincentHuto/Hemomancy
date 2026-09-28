@@ -23,7 +23,7 @@ public class SanguineFervorEvents {
 	/** How often (in ticks) the cleanup pass runs to remove expired entries. */
 	private static final int CLEANUP_INTERVAL_TICKS = 100;
 
-	// â”€â”€ Level tick: clean up expired fervor zones â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+	//  Level tick: clean up expired fervor zones 
 
 	@SubscribeEvent
 	public static void onLevelTick(LevelTickEvent.Post event) {
@@ -36,11 +36,11 @@ public class SanguineFervorEvents {
 		data.removeExpired(sLevel.getGameTime());
 	}
 
-	// â”€â”€ Spawn check: force-allow spawns inside active fervor zones â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+	//  Spawn check: force-allow spawns inside active fervor zones 
 
 	@SubscribeEvent
 	public static void onPositionCheck(MobSpawnEvent.PositionCheck event) {
-		// Skip spawner-block spawns â€” only boost naturally-spawned mobs
+		// Skip spawner-block spawns only boost naturally-spawned mobs
 		if (event.getSpawnType() == MobSpawnType.SPAWNER) return;
 
 		net.minecraft.world.level.ServerLevelAccessor levelAccessor = event.getLevel();

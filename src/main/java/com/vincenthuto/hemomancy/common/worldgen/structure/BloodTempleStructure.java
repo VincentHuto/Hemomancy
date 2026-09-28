@@ -121,11 +121,6 @@ public class BloodTempleStructure extends Structure {
 			return;
 		}
 
-		BlockPos inscriptionOrigin = new BlockPos(centerX, fullBox.minY() + 1, centerZ);
-		DiscoveryInscriptionPlacement.placeOnInteriorFloor(level, fullBox, inscriptionOrigin.offset(-4, 0, 0),
-				BlockInit.rite_fragment_inscription.get(), Hemomancy.rloc("blood_temple/sanguine_initiation_fragment"));
-		DiscoveryInscriptionPlacement.placeOnInteriorFloor(level, fullBox, inscriptionOrigin.offset(4, 0, 0),
-				BlockInit.rite_fragment_inscription.get(), Hemomancy.rloc("blood_temple/votary_fragment"));
 
 		AbocipherEmitterPlacement.placeBloodTempleEmitters(level, fullBox, random,
 				new BlockPos(centerX, centerY + 3, centerZ));

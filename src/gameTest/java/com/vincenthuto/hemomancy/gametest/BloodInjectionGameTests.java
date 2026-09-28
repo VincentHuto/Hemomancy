@@ -1,6 +1,10 @@
 package com.vincenthuto.hemomancy.gametest;
 
 import com.vincenthuto.hemomancy.common.init.*;
+import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.Bloodline;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodlineSavedData;
+import com.vincenthuto.hemomancy.common.mission.vicar.EarlyInitiation;
 import com.vincenthuto.hemomancy.common.item.harbinger.*;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.VialRackItem;
 import net.minecraft.core.component.DataComponents;
@@ -16,6 +20,219 @@ import net.neoforged.neoforge.gametest.*;
 @GameTestHolder("blood_injection_validation")
 @PrefixGameTestTemplate(false)
 public final class BloodInjectionGameTests {
+    @GameTest(template = "empty")
+    public static void founderInitiationChecksRankOwnershipAndInterruption(GameTestHelper h) {
+        var recruit = animationPlayer(h).player();
+        var founder = animationPlayer(h).player();
+        founder.setPos(recruit.position().add(1, 0, 0));
+        HemoCapabilityAccess.requireInitiatoryDegree(recruit).setDegreeNumber(0);
+        HemoCapabilityAccess.getEquipment(recruit).orElseThrow().setStackInSlot(5,
+                new ItemStack(ItemInit.charm_of_vascularium.get()));
+        EarlyInitiation.activate(recruit);
+        var degree = HemoCapabilityAccess.requireInitiatoryDegree(founder);
+        degree.setDegreeNumber(4);
+        degree.setHasFoundedBloodline(true);
+        var data = BloodlineSavedData.get(h.getLevel().getServer().overworld());
+        var line = new Bloodline("Interrupted initiation", founder.getUUID(), java.util.UUID.randomUUID(), new java.util.ArrayList<>());
+        data.registerBloodline(line);
+        var volume = HemoCapabilityAccess.getBloodVolume(founder).orElseThrow();
+        volume.setBloodLine(line); volume.setActive(true);
+        h.assertTrue(!EarlyInitiation.begin(recruit, founder), "Degree 4 initiated");
+        degree.setDegreeNumber(5); degree.setHasFoundedBloodline(false);
+        h.assertTrue(!EarlyInitiation.begin(recruit, founder), "Non-founder initiated");
+        degree.setHasFoundedBloodline(true);
+        data.disbandBloodline(line.getBloodlineUUID());
+        h.assertTrue(!EarlyInitiation.begin(recruit, founder), "Stale bloodline initiated");
+        data.registerBloodline(line);
+        var foreign = new Bloodline("Other line", java.util.UUID.randomUUID(), java.util.UUID.randomUUID(), new java.util.ArrayList<>());
+        foreign.addMember(founder.getUUID()); data.registerBloodline(foreign); volume.setBloodLine(foreign);
+        h.assertTrue(!EarlyInitiation.begin(recruit, founder), "Ordinary member initiated");
+        volume.setBloodLine(line);
+        h.assertTrue(EarlyInitiation.begin(recruit, founder), "Valid founder rejected");
+        EarlyInitiation.logout(new net.neoforged.neoforge.event.entity.player.PlayerEvent.PlayerLoggedOutEvent(founder));
+        h.assertTrue(EarlyInitiation.begin(recruit, founder), "Founder logout did not cancel");
+        degree.setDegreeNumber(4);
+        EarlyInitiation.tick(new net.neoforged.neoforge.event.tick.PlayerTickEvent.Post(recruit));
+        degree.setDegreeNumber(5);
+        h.assertTrue(EarlyInitiation.begin(recruit, founder), "Lost eligibility did not cancel");
+        data.disbandBloodline(line.getBloodlineUUID());
+        EarlyInitiation.tick(new net.neoforged.neoforge.event.tick.PlayerTickEvent.Post(recruit));
+        data.registerBloodline(line);
+        h.assertTrue(EarlyInitiation.begin(recruit, founder), "Disbanding during ceremony did not cancel");
+        EarlyInitiation.cancel(recruit);
+        foreign.addMember(recruit.getUUID());
+        h.assertTrue(!EarlyInitiation.begin(recruit, founder), "Existing different membership overwritten");
+        foreign.removeMember(recruit.getUUID());
+        h.assertTrue(EarlyInitiation.begin(recruit, founder), "Unbound recruit rejected");
+        EarlyInitiation.cancel(recruit);
+        h.assertTrue(HemoCapabilityAccess.getPlayerDegreeNumber(recruit) == 0 && !line.hasMember(recruit.getUUID()),
+                "Interrupted ceremony granted degree or membership");
+        h.assertTrue(recruit.getInventory().countItem(ItemInit.sanguine_conduit.get()) == 0, "Interrupted ceremony gave conduit");
+        data.disbandBloodline(line.getBloodlineUUID()); data.disbandBloodline(foreign.getBloodlineUUID());
+        recruit.discard(); founder.discard(); h.succeed();
+    }
+
+    @GameTest(template = "empty", timeoutTicks = 240)
+    public static void founderInitiationBindsOnlyAfterTenSeconds(GameTestHelper h) {
+        var recruit = animationPlayer(h).player();
+        var founder = animationPlayer(h).player();
+        founder.setPos(recruit.position().add(3, 0, 0));
+        HemoCapabilityAccess.requireInitiatoryDegree(recruit).setDegreeNumber(0);
+        HemoCapabilityAccess.getEquipment(recruit).orElseThrow().setStackInSlot(5,
+                new ItemStack(ItemInit.charm_of_vascularium.get()));
+        EarlyInitiation.activate(recruit);
+        var degree = HemoCapabilityAccess.requireInitiatoryDegree(founder);
+        degree.setDegreeNumber(5);
+        degree.setHasFoundedBloodline(true);
+        var data = BloodlineSavedData.get(h.getLevel().getServer().overworld());
+        var line = new Bloodline("Initiation test", founder.getUUID(), java.util.UUID.randomUUID(), new java.util.ArrayList<>());
+        data.registerBloodline(line);
+        HemoCapabilityAccess.getBloodVolume(founder).orElseThrow().setBloodLine(line);
+        HemoCapabilityAccess.getBloodVolume(founder).orElseThrow().setActive(true);
+        // Clear the fixture along the eye-height ray before testing the explicit obstruction.
+        for (int x = 0; x <= 3; x++)
+            h.getLevel().setBlockAndUpdate(net.minecraft.core.BlockPos.containing(recruit.getEyePosition()).offset(x, 0, 0),
+                    net.minecraft.world.level.block.Blocks.AIR.defaultBlockState());
+        founder.setYRot(90); founder.setXRot(0);
+        var wall = net.minecraft.core.BlockPos.containing(recruit.getEyePosition()).offset(1, 0, 0);
+        var previous = h.getLevel().getBlockState(wall);
+        h.getLevel().setBlockAndUpdate(wall, net.minecraft.world.level.block.Blocks.STONE.defaultBlockState());
+        com.vincenthuto.hemomancy.common.item.harbinger.tool.living.BloodProjectionItem.projectFromEntity(
+                h.getLevel(), founder, 1, 1);
+        h.assertTrue(EarlyInitiation.begin(recruit, founder), "Projection initiated through a wall");
+        EarlyInitiation.cancel(recruit);
+        h.getLevel().setBlockAndUpdate(wall, previous);
+        com.vincenthuto.hemomancy.common.item.harbinger.tool.living.BloodProjectionItem.projectFromEntity(
+                h.getLevel(), founder, 1, 1);
+        h.assertTrue(!EarlyInitiation.begin(recruit, founder), "Projection did not begin ceremony");
+        h.assertTrue(!EarlyInitiation.begin(recruit, founder), "Duplicate ceremony accepted");
+        h.runAfterDelay(199, () -> {
+            h.assertTrue(HemoCapabilityAccess.getPlayerDegreeNumber(recruit) == 0, "Degree granted early");
+            h.assertTrue(!line.hasMember(recruit.getUUID()), "Membership granted early");
+        });
+        h.runAfterDelay(202, () -> {
+            EarlyInitiation.tick(new net.neoforged.neoforge.event.tick.PlayerTickEvent.Post(recruit));
+            h.assertTrue(HemoCapabilityAccess.getPlayerDegreeNumber(recruit) == 1, "Degree missing");
+            h.assertTrue(line.hasMember(recruit.getUUID()), "Canonical membership missing");
+            h.assertTrue(HemoCapabilityAccess.getBloodVolume(recruit).orElseThrow().getBloodLine().getBloodlineUUID()
+                    .equals(line.getBloodlineUUID()), "Player bloodline missing");
+            h.assertTrue(recruit.getInventory().countItem(ItemInit.sanguine_conduit.get()) == 1, "Conduit missing");
+            h.assertTrue(!EarlyInitiation.begin(recruit, founder), "Completed initiation repeated");
+            data.disbandBloodline(line.getBloodlineUUID());
+            recruit.discard(); founder.discard(); h.succeed();
+        });
+    }
+
+    @GameTest(template = "empty")
+    public static void concentratedBloodRequiresOwnRewardAndCompletedSleep(GameTestHelper h) {
+        var capture = animationPlayer(h);
+        var player = capture.player();
+        com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess.getEquipment(player).orElseThrow()
+                .setStackInSlot(5, new ItemStack(ItemInit.charm_of_vascularium.get()));
+        com.vincenthuto.hemomancy.common.mission.vicar.EarlyInitiation.activate(player);
+        var sample = com.vincenthuto.hemomancy.common.mission.alchemist.ConcentratedBlood.create();
+        player.setItemInHand(InteractionHand.MAIN_HAND, sample);
+        h.assertTrue(!sample.use(h.getLevel(), player, InteractionHand.MAIN_HAND).getResult().consumesAction(), "Unclaimed mission permitted injection");
+        com.vincenthuto.hemomancy.common.mission.alchemist.FirstSeparationAssignment.markClaimed(player);
+        sample.use(h.getLevel(), player, InteractionHand.MAIN_HAND);
+        for (int i = 0; i < 7; i++) player.doTick();
+        player.releaseUsingItem();
+        h.assertTrue(!com.vincenthuto.hemomancy.common.mission.alchemist.ConcentratedBlood.pending(player), "Interrupted injection advanced state");
+        sample.use(h.getLevel(), player, InteractionHand.MAIN_HAND);
+        for (int i = 0; i < 16; i++) player.doTick();
+        h.assertTrue(com.vincenthuto.hemomancy.common.mission.alchemist.ConcentratedBlood.pending(player), "Injection did not persist pending rest");
+        h.assertTrue(!BloodSampleData.isFilled(player.getMainHandItem()), "Special injection did not return empty vial");
+        h.assertTrue(!com.vincenthuto.hemomancy.common.mission.alchemist.ConcentratedBlood.completeSleep(player, false), "Interrupted sleep advanced degree");
+        h.assertTrue(com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess.getPlayerDegreeNumber(player) == 1, "Injection granted degree early");
+        h.assertTrue(com.vincenthuto.hemomancy.common.mission.alchemist.ConcentratedBlood.completeSleep(player, true), "Completed sleep did not advance");
+        h.assertTrue(com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess.getPlayerDegreeNumber(player) == 2, "Wrong wake degree");
+        h.assertTrue(!com.vincenthuto.hemomancy.common.mission.alchemist.ConcentratedBlood.completeSleep(player, true), "Sleep repeated reward");
+        player.discard(); h.succeed();
+    }
+
+    @GameTest(template = "empty")
+    public static void vicarRemovalClearsOathAndCeremonyCancellationRestoresNpc(GameTestHelper h) {
+        var player = animationPlayer(h).player();
+        com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess.requireInitiatoryDegree(player).setDegreeNumber(0);
+        com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess.getEquipment(player).orElseThrow()
+                .setStackInSlot(5, new ItemStack(ItemInit.charm_of_vascularium.get()));
+        com.vincenthuto.hemomancy.common.mission.vicar.EarlyInitiation.activate(player);
+        var hermit = java.util.UUID.randomUUID();
+        com.vincenthuto.hemomancy.common.rite.TempleOathRules.bless(player, hermit);
+        com.vincenthuto.hemomancy.common.rite.TempleOathRules.recordHeartClaim(player, hermit);
+        var vicar = new com.vincenthuto.hemomancy.common.entity.npc.harbinger.HarbingerVicarEntity(EntityInit.harbinger_vicar.get(), h.getLevel());
+        vicar.setPos(player.position().add(1, 0, 0)); h.getLevel().addFreshEntity(vicar);
+        h.assertTrue(com.vincenthuto.hemomancy.common.mission.vicar.EarlyInitiation.begin(player, vicar), "Eligible ceremony rejected");
+        h.assertTrue(vicar.isNoAi() && vicar.isInitiating(), "Vicar not held in performance");
+        var saved = new CompoundTag(); vicar.addAdditionalSaveData(saved);
+        h.assertTrue(!saved.getBoolean("NoAI"), "Saving ceremony permanently disables Vicar AI");
+        h.assertTrue(!com.vincenthuto.hemomancy.common.mission.vicar.EarlyInitiation.begin(player, vicar), "Duplicate ceremony accepted");
+        com.vincenthuto.hemomancy.common.mission.vicar.EarlyInitiation.cancel(player);
+        h.assertTrue(!vicar.isNoAi() && !vicar.isInitiating(), "Cancellation left Vicar frozen");
+        h.assertTrue(player.getInventory().countItem(ItemInit.sanguine_conduit.get()) == 0, "Interrupted ceremony gave conduit");
+        h.assertTrue(com.vincenthuto.hemomancy.common.mission.vicar.EarlyInitiation.release(player, vicar), "Removal rejected");
+        h.assertTrue(!com.vincenthuto.hemomancy.common.mission.vicar.EarlyInitiation.attached(player), "Removal kept charm");
+        h.assertTrue(com.vincenthuto.hemomancy.common.rite.TempleOathRules.claimedHeartHermit(player) == null, "Removal kept temple claim");
+        h.assertTrue(!com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess.getBloodVolume(player).orElseThrow().isActive(), "Removal kept active blood");
+        vicar.discard(); player.discard(); h.succeed();
+    }
+
+    @GameTest(template = "empty", timeoutTicks = 240)
+    public static void vicarCompletesAfterTenSecondsAndGrantsConduitOnce(GameTestHelper h) {
+        var player = animationPlayer(h).player();
+        com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess.requireInitiatoryDegree(player).setDegreeNumber(0);
+        com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess.getEquipment(player).orElseThrow()
+                .setStackInSlot(5, new ItemStack(ItemInit.charm_of_vascularium.get()));
+        com.vincenthuto.hemomancy.common.mission.vicar.EarlyInitiation.activate(player);
+        var vicar = new com.vincenthuto.hemomancy.common.entity.npc.harbinger.HarbingerVicarEntity(EntityInit.harbinger_vicar.get(), h.getLevel());
+        vicar.setPos(player.position().add(1, 0, 0)); h.getLevel().addFreshEntity(vicar);
+        h.assertTrue(com.vincenthuto.hemomancy.common.mission.vicar.EarlyInitiation.begin(player, vicar), "Ceremony did not begin");
+        h.runAfterDelay(199, () -> {
+            h.assertTrue(com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess.getPlayerDegreeNumber(player) == 0, "Early degree grant");
+            h.assertTrue(player.getInventory().countItem(ItemInit.sanguine_conduit.get()) == 0, "Early conduit grant");
+        });
+        h.runAfterDelay(202, () -> {
+            com.vincenthuto.hemomancy.common.mission.vicar.EarlyInitiation.tick(new net.neoforged.neoforge.event.tick.PlayerTickEvent.Post(player));
+            h.assertTrue(com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess.getPlayerDegreeNumber(player) == 1, "Ceremony did not grant Degree 1");
+            h.assertTrue(player.getInventory().countItem(ItemInit.sanguine_conduit.get()) == 1, "Conduit missing or duplicated");
+            h.assertTrue(!com.vincenthuto.hemomancy.common.mission.vicar.EarlyInitiation.begin(player, vicar), "Initiated player can repeat ceremony");
+            h.assertTrue(!com.vincenthuto.hemomancy.common.mission.vicar.EarlyInitiation.release(player, vicar), "Settled charm can be removed");
+            vicar.discard(); player.discard(); h.succeed();
+        });
+    }
+
+    @GameTest(template = "empty")
+    public static void templePermissionAttachmentAndRewardsAreAtomic(GameTestHelper h) {
+        var player = animationPlayer(h).player();
+        com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess.requireInitiatoryDegree(player).setDegreeNumber(0);
+        var pos = h.absolutePos(new net.minecraft.core.BlockPos(2, 2, 2));
+        h.getLevel().setBlockAndUpdate(pos, BlockInit.mortal_display.get().defaultBlockState());
+        var display = (com.vincenthuto.hemomancy.common.tile.harbinger.functional.MortalDisplayBlockEntity) h.getLevel().getBlockEntity(pos);
+        var hermit = java.util.UUID.randomUUID(); display.linkHermit(hermit);
+        var hit = new net.minecraft.world.phys.BlockHitResult(net.minecraft.world.phys.Vec3.atCenterOf(pos), net.minecraft.core.Direction.UP, pos, false);
+        var state = h.getLevel().getBlockState(pos);
+        state.useWithoutItem(h.getLevel(), player, hit);
+        h.assertTrue(!display.isClaimed(), "Unblessed player claimed heart");
+        com.vincenthuto.hemomancy.common.rite.TempleOathRules.bless(player, java.util.UUID.randomUUID());
+        state.useWithoutItem(h.getLevel(), player, hit);
+        h.assertTrue(!display.isClaimed(), "Wrong temple blessing claimed heart");
+        com.vincenthuto.hemomancy.common.rite.TempleOathRules.bless(player, hermit);
+        var equipment = com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess.getEquipment(player).orElseThrow();
+        equipment.setStackInSlot(5, new ItemStack(ItemInit.curved_horn.get()));
+        state.useWithoutItem(h.getLevel(), player, hit);
+        h.assertTrue(!display.isClaimed(), "Occupied scar consumed heart");
+        equipment.setStackInSlot(5, ItemStack.EMPTY);
+        state.useWithoutItem(h.getLevel(), player, hit);
+        h.assertTrue(display.isClaimedBy(player.getUUID()), "Valid attachment failed");
+        h.assertTrue(com.vincenthuto.hemomancy.common.mission.vicar.EarlyInitiation.attached(player), "Charm not attached");
+        h.assertTrue(com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess.getPlayerDegreeNumber(player) == 0, "Display granted Degree 1");
+        h.assertTrue(player.getInventory().countItem(ItemInit.covenant_waybill.get()) == 1, "Waybill missing");
+        h.assertTrue(player.getInventory().countItem(ItemInit.sanguine_conduit.get()) == 0, "Display granted conduit");
+        state.useWithoutItem(h.getLevel(), player, hit);
+        h.assertTrue(player.getInventory().countItem(ItemInit.covenant_waybill.get()) == 1, "Repeated click duplicated waybill");
+        player.discard(); h.succeed();
+    }
+
     private static net.minecraft.world.entity.player.Player educatedPlayer(GameTestHelper h) {
         var player = h.makeMockPlayer(GameType.SURVIVAL);
         com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess.requireInitiatoryDegree(player).setDegreeNumber(1);

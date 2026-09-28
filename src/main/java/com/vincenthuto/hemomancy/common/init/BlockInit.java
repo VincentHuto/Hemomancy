@@ -843,7 +843,7 @@ public class BlockInit {
 			() -> new VisceralMirrorBlock(BlockBehaviour.Properties.of().requiresCorrectToolForDrops()
 					.noOcclusion().strength(2.0F, 8.0F).sound(SoundType.GLASS)));
 
-	// Puzzle / boss-room blocks â€” Hemorath encounter
+	// Puzzle / boss-room blocks Hemorath encounter
 	public static final DeferredHolder<Block, Block> non_euclidean_hallway = MODELEDBLOCKS.register(
 			"non_euclidean_hallway",
 			() -> new NonEuclideanHallwayBlock(BlockBehaviour.Properties.of()

@@ -384,14 +384,14 @@ As you progress, your body accumulates **Fungal Scars**: visible marks of corrup
 
 ## Harbinger Outposts
 
-**Harbinger Outposts** are small structures found in the overworld where members of the Order gather.
+**Harbinger Outposts** are walled, courtyard-centered compounds found in the overworld where members of the Order gather. A patrol walk runs between two wall lines and turns through the four corner homes. Each newly generated site has a gate, watchtowers, a two-story barracks hall opposite the gate, and a separate home for its Vicar, Artificer, Alchemist, and Mnemonist.
 
 ### What You'll Find
-- **Mortal Display**: Activation point for new players
-- **NPCs**: Various Harbinger callings
-- **Loot Chests**: Blood-related items and materials
-- **Banners**: Blood-stained Harbinger symbols
-- **Small Library**: Sometimes contains Field Notes pages
+- **Courtyard**: An ornamental blood basin and guarded pyre, with stalls and supply storage
+- **Barracks hall**: A shared workroom with crafting and cooking stations below, and four usable beds and storage above
+- **Residents**: One Vicar, Artificer, Alchemist, and Mnemonist, each in their own room
+- **Workstations**: Somnolent Seat, Resonant Forge, Vial Centrifuge, Ghastly Alembic, Phlebotomist's Cabinet, and Somatic Loom
+- **Banners and inscriptions**: Red Harbinger decoration and discoverable lore
 
 ### Interacting with NPCs
 - **Right-click with empty hand**: Open dialogue tree

@@ -34,9 +34,9 @@ import java.util.Map;
  *
  * <h3>Conversion Table</h3>
  * <ul>
- *   <li>Venous Stone â†’ Cleansed Stone</li>
- *   <li>Sanguine Glass â†’ Cleansed Sanguine Glass</li>
- *   <li>Infested Venous Stone â†’ Cleansed Stone</li>
+ *   <li>Venous Stone  Cleansed Stone</li>
+ *   <li>Sanguine Glass  Cleansed Sanguine Glass</li>
+ *   <li>Infested Venous Stone  Cleansed Stone</li>
  * </ul>
  */
 @EventBusSubscriber(modid = Hemomancy.MOD_ID)
@@ -48,8 +48,8 @@ public class ConsecrationHandler {
 	private static final float PURITY_PER_CONSECRATION = 0.5f;
 
 	/**
-	 * Lazy conversion map â€” built on first use from BlockInit registries.
-	 * Maps blood-faction block â†’ cleansed block.
+	 * Lazy conversion map built on first use from BlockInit registries.
+	 * Maps blood-faction block  cleansed block.
 	 */
 	private static Map<Block, Block> CONVERSIONS;
 

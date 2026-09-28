@@ -89,8 +89,8 @@ public final class FirstBloodcraftAssignmentSourceTest {
 				"giveOrDropAtEntity(player, entityId, stack);");
 		assertContains("failed world drops fall back to the player", handler,
 				"if (entity.level().addFreshEntity(drop)) return;");
-		assertContains("Hermit farewell blueprint uses checked reward delivery", handler,
-				"giveOrDropAtEntity(player, event.getEntityId(), blueprint);");
+		assertContains("Hermit farewell requires the personally claimed heart", handler,
+				"TempleOathRules.hasClaimedHeartFrom(player, hermit.getUUID())");
 		assertContains("handler persists the one-time claim before mutation", handler,
 				"if (!FirstBloodcraftAssignment.markClaimed(player))");
 		assertContains("handler explains persistence failure", handler,

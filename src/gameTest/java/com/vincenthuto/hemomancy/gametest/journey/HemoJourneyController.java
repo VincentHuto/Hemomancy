@@ -240,7 +240,7 @@ public final class HemoJourneyController {
 	private static String action(HemoJourneyStage stage) {
 		return switch (stage) {
 			case MORTAL_DISPLAY -> "Right-click the Mortal Display, then run journey harbinger next.";
-			case SANGUINE_INITIATION -> "Aim at the center Hematic Iron block and invoke the blood-crafting key. After initiation, Blood Projection is selected from the lower Charm radial and normally conjured with the use-manipulation key.";
+			case SANGUINE_INITIATION -> "Speak with the Vicar and choose formal initiation. Wait ten seconds for Degree 1 and the conduit.";
 			case FIRST_REMNANT_DISCOVERED -> "Right-click the prepared First Remnant blood echo and read it, then run journey harbinger next.";
 			case VICAR_HERMIT_ROAD_REPORT -> "Speak to the marked Vicar to receive the Assignment Ledger, then report the First Remnant and run journey harbinger next.";
 			case VESSEL_FILLED -> "Use the supplied Bloody Jug to fill the vessel to 5,000 mL.";
@@ -249,7 +249,7 @@ public final class HemoJourneyController {
 			case HEMATIC_IRON_CRAFTED -> "The fixture supplied Blood Projection and one Ink Sac in your offhand. Hold projection on the center Iron Block, then pick up the crafted Hematic Iron Block before running journey harbinger next.";
 			case LIVING_STAFF_CRAFTED -> "Hold the supplied Blood Projection on the center Iron Bars until the Living Staff structure completes, then pick up the Staff and run journey harbinger next.";
 			case VICAR_REWARD -> "Speak to the marked Vicar and claim the First Bloodcraft completion kit. Keep inventory rewards and leave any overflow drops beside the Vicar until journey harbinger next.";
-			case VOTARY_RITE -> "Invoke the Rite of the Votary at its center Hematic Iron block, then run journey harbinger next.";
+			case VOTARY_RITE -> "Inject the Concentrated Blood directly, then sleep in the prepared bed to reach Degree 2.";
 			case DEGREE_2_REACHED -> "You are now a Votary. Run journey harbinger next to meet the Alchemist.";
 			case ALCHEMIST_BRIEFING -> "Speak to the marked Alchemist and accept The First Separation.";
 			case CENTRIFUGE_PREPARED -> "Place the supplied Glass Bottle and Copper Ingot into the two Iron Braziers, light both with Blood Projection, then project the centrifuge structure with the Ferric Binder. Pick up and place the crafted Vial Centrifuge at the fixture center, then run journey harbinger next.";

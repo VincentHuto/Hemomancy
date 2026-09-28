@@ -2,9 +2,7 @@ package com.vincenthuto.hemomancy.common.block.harbinger.functional;
 
 import com.vincenthuto.hemomancy.common.block.shared.WaterloggedBlockSupport;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
-import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.rite.TempleOathRules;
 import com.vincenthuto.hemomancy.common.tile.harbinger.functional.MortalDisplayBlockEntity;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
@@ -13,11 +11,9 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.ItemInteractionResult;
-import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
@@ -100,40 +96,25 @@ public class MortalDisplayBlock extends Block implements EntityBlock, SimpleWate
 			return InteractionResult.SUCCESS;
 		}
 
-		display.claim(player.getUUID());
-		TempleOathRules.recordHeartClaim(player, display.getLinkedHermit());
-		IBloodVolume volume = HemoCapabilityAccess.getBloodVolume(player).orElse(null);
-		if (volume == null || !volume.isActive()) {
-			for (int i = 0; i < 10; i++) {
-				Vec3 startVec = new Vec3(pos.getX(), pos.getY(), pos.getZ()).add(0.5, 0.5, 0.5);
-				Vec3 endVec = player.position().add(0, player.getBbHeight() - worldIn.random.nextDouble(), 0).add(
-						worldIn.random.nextDouble() - worldIn.random.nextDouble(), 0,
-						worldIn.random.nextDouble() - worldIn.random.nextDouble());
-				PacketHandler.sendClawParticles(endVec, ParticleColor.BLOOD, 64f, (ServerLevel) worldIn);
-				HLPacketHandler.sendLightningSpawn(startVec, endVec, 64.0f, player.level().dimension(),
-						ParticleColor.RED, 2, 20, 9, 1.2f);
-			}
-
-			// Equip the Charm of Vascularium into the player's VASC scar slot
-			HemoCapabilityAccess.getEquipment(player).ifPresent(scars -> {
-					ItemStack charm = new ItemStack(ItemInit.charm_of_vascularium.get());
-					int vascSlot = 5; // HarbingerEquipmentType.VASC slot
-					if (scars.getStackInSlot(vascSlot).isEmpty()) {
-						scars.setStackInSlot(vascSlot, charm);
-						player.displayClientMessage(
-								Component.translatable("hemomancy.mortal_display.charm_equipped")
-										.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC),
-								false);
-					} else {
-						// Slot occupied — drop the charm as an item entity instead
-						ItemEntity drop = new ItemEntity(worldIn, pos.getX() + 0.5, pos.getY() + 1.0, pos.getZ() + 0.5, charm);
-						worldIn.addFreshEntity(drop);
-					}
-			});
-			player.displayClientMessage(Component.literal(
-					"The heart is yours. The charm remains dormant until the temple rite is completed.")
-					.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC), false);
-		}
+        if (!(player instanceof net.minecraft.server.level.ServerPlayer serverPlayer)) return InteractionResult.SUCCESS;
+        var equipment = HemoCapabilityAccess.getEquipment(player).orElse(null);
+        if (equipment == null || !equipment.getStackInSlot(5).isEmpty()
+                || HemoCapabilityAccess.getPlayerDegreeNumber(player) != 0
+                || HemoCapabilityAccess.getBloodVolume(player).map(v -> v.isActive()).orElse(true)) {
+            player.displayClientMessage(Component.translatable("hemomancy.initiation.cannot_attach"), false);
+            return InteractionResult.SUCCESS;
+        }
+        equipment.setStackInSlot(5, new ItemStack(ItemInit.charm_of_vascularium.get()));
+        display.claim(player.getUUID());
+        TempleOathRules.recordHeartClaim(player, display.getLinkedHermit());
+        com.vincenthuto.hemomancy.common.mission.vicar.EarlyInitiation.activate(serverPlayer);
+        com.vincenthuto.hemomancy.common.mission.vicar.EarlyInitiation.give(serverPlayer, new ItemStack(ItemInit.covenant_waybill.get()));
+        player.displayClientMessage(Component.translatable("hemomancy.mortal_display.charm_equipped"), false);
+        for (int i = 0; i < 10; i++) {
+            Vec3 start = Vec3.atCenterOf(pos);
+            Vec3 end = player.position().add(0, 1 + worldIn.random.nextDouble() * .5, 0);
+            HLPacketHandler.sendLightningSpawn(start, end, 64, worldIn.dimension(), ParticleColor.BLOOD, 2, 20, 9, 1.2f);
+        }
 
 		return InteractionResult.SUCCESS;
 

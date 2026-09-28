@@ -13,10 +13,7 @@ import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.PathMutualExclusionHelper;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.*;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.EnumArchonPath;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.EnumInitiatoryDegree;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.InitiatoryDegreeEvents;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.KnownManipulationGrantHelper;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.KnownManipulationEvents;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.summon.KnownSummonEvents;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.BloodTendencyEvents;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
@@ -218,7 +215,9 @@ public class HarbingerCardinalRiteEvents {
 			BlockPos center = rite.getCenterPos();
 			int riteSize = rite.getRiteSize();
 			CardinalRiteRecipe recipe = CardinalRiteRecipe.getRiteByLocation(sLevel, rite.getRecipeId());
-			if (recipe == null && rite.getPhase() != CardinalRitePhase.LEGACY) {
+			if ((recipe == null && rite.getPhase() != CardinalRitePhase.LEGACY)
+                    || rite.getRecipeId().getPath().equals("cardinal_rite/sanguine_initiation")
+                    || rite.getRecipeId().getPath().equals("cardinal_rite/votary_rite")) {
 				AlembicUpgradeRites.recover(sLevel, rite);
 				Hemomancy.LOGGER.warn("Retiring active cardinal rite {} at {} because its recipe no longer exists",
 						rite.getRecipeId(), center);
@@ -731,7 +730,7 @@ public class HarbingerCardinalRiteEvents {
 			int mismatches = 0;
 			for (var pair : blockPairs) {
 				Block expected = pair.getBlock();
-				// Null or air expected means this was a space (wildcard) â€” skip it
+				// Null or air expected means this was a space (wildcard) skip it
 				if (expected == null || expected == Blocks.AIR) continue;
 				BlockPos relPos = pair.getPos();
 				BlockPos worldPos = center.offset(
@@ -1207,9 +1206,8 @@ public class HarbingerCardinalRiteEvents {
 
 	private static final String BLOODLINE_FOUNDING_RITE = "cardinal_rite/bloodline_founding";
 	private static final String BLOODLINE_RECALL_RITE = "cardinal_rite/bloodline_recall";
-	private static final String SANGUINE_INITIATION_RITE = "cardinal_rite/sanguine_initiation";
 
-	// â”€â”€ New utility rite paths â”€â”€
+	//  New utility rite paths 
 	private static final String SANGUINE_ATTUNEMENT_RITE = "cardinal_rite/sanguine_attunement";
 	private static final String CRIMSON_BEACON_RITE = "cardinal_rite/crimson_beacon";
 	private static final String VASCULAR_MENDING_RITE = "cardinal_rite/vascular_mending";
@@ -1231,7 +1229,7 @@ public class HarbingerCardinalRiteEvents {
 	private static final String COVENANT_VIGIL_RITE = "cardinal_rite/covenant_vigil";
 	private static final String ILLUMINATUS_RITE = "cardinal_rite/illuminatus_rite";
 
-	// â”€â”€ Gourd upgrade rite paths â”€â”€
+	//  Gourd upgrade rite paths 
 
 
 	/** Radius (in blocks) for Hungering Earth terrain corruption. */
@@ -1253,8 +1251,6 @@ public class HarbingerCardinalRiteEvents {
 	private static final String APOTHEOS_RITE_PATH = "cardinal_rite/apotheos_rite";
 
 	static {
-		DEGREE_RITE_PATHS.put("cardinal_rite/sanguine_initiation", 1); // Neophyte of the Crimson Veil
-		DEGREE_RITE_PATHS.put("cardinal_rite/votary_rite", 2);          // Votary of the Hematic Covenant
 		DEGREE_RITE_PATHS.put("cardinal_rite/initiate_rite", 3);        // Initiate of the Incarnadine Fane
 		DEGREE_RITE_PATHS.put("cardinal_rite/sanguine_brotherhood", 4); // Adept of the Sanguine Brotherhood
 		DEGREE_RITE_PATHS.put("cardinal_rite/illuminatus_rite", 5);     // Illuminatus of the Crimson Lodge
@@ -1357,7 +1353,7 @@ public class HarbingerCardinalRiteEvents {
 			// Bloodline recall rite: re-issue a ledger from the caster's existing bloodline
 			if (BLOODLINE_RECALL_RITE.equals(ritePath) && resultStack.getItem() instanceof UnsignedLedgerItem) {
 				if (!recallBloodlineLedger(sLevel, caster, resultStack)) {
-					// Caster has no bloodline â€” the rite still completes but the ledger stays unsigned
+					// Caster has no bloodline the rite still completes but the ledger stays unsigned
 					caster.displayClientMessage(
 							Component.literal("The blood remembers nothing... You have no bloodline to recall.")
 									.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC),
@@ -1368,7 +1364,7 @@ public class HarbingerCardinalRiteEvents {
 			// Exsanguination rite: verify a named sacrifice was killed during the rite
 			if (EXSANGUINATION_RITE.equals(ritePath)) {
 				// The sacrifice processing in the tick loop already damages entities.
-				// The quintessence result item is always produced â€” the rite IS the sacrifice.
+				// The quintessence result item is always produced the rite IS the sacrifice.
 				caster.displayClientMessage(
 						Component.literal("The lifeblood crystallizes... Sanguine Quintessence is born.")
 								.withStyle(ChatFormatting.DARK_PURPLE, ChatFormatting.ITALIC),
@@ -1488,82 +1484,9 @@ public class HarbingerCardinalRiteEvents {
 		SkillPointGainEvents.onRiteCompleted(caster);
 		LiberKnowledgeHelper.unlockForRite(caster, ritePath);
 
-		Integer targetDegree = DEGREE_RITE_PATHS.get(ritePath);
-		if (targetDegree != null) {
-			HemoCapabilityAccess.getInitiatoryDegree(caster).ifPresent(degree -> {
-				int currentDegree = degree.getDegreeNumber();
-				if (currentDegree < targetDegree) {
-					degree.setDegreeNumber(targetDegree);
-					if (targetDegree == 8) degree.setArchonPath(EnumArchonPath.APOTHEOS);
-					InitiatoryDegreeEvents.syncDegree(caster, degree);
-
-					// Award degree milestone skill points
-					SkillPointGainEvents.onDegreeReached(caster, targetDegree);
-
-					// Grant Harbinger degree advancement(s) for the new rank
-					HarbingerAdvancementGranter.grantDegree(caster, targetDegree);
-					LiberKnowledgeHelper.unlockForDegree(caster, targetDegree);
-					if (KnownManipulationGrantHelper.grantDegreeOneUtilities(caster)) {
-						KnownManipulationEvents.syncPlayerEvent(caster);
-					}
-
-					// Mutual exclusion: reset Unstained progress (Harbingers and Unstained are opposed)
-					boolean unstainedWasReset = PathMutualExclusionHelper.resetUnstainedProgress(caster);
-					if (unstainedWasReset) {
-						caster.displayClientMessage(
-								Component.literal("Your purification has been undone by the blood rite.")
-										.withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC),
-								false);
-					}
-
-					EnumInitiatoryDegree newDegree = degree.getDegree();
-					if (newDegree != null) {
-						caster.displayClientMessage(
-								Component.literal("You have attained the ")
-										.withStyle(ChatFormatting.DARK_RED)
-										.append(Component.translatable(newDegree.getLangKey())
-												.withStyle(ChatFormatting.GOLD, ChatFormatting.BOLD))
-										.append(Component.literal("!")
-												.withStyle(ChatFormatting.DARK_RED)),
-								false);
-					}
-					triggerSpineProgressionWhisper(sLevel, caster, targetDegree);
-				}
-			});
-		}
-
-		// Sanguine Initiation: give the caster a Sanguine Conduit so they can monitor their progress
-		if (SANGUINE_INITIATION_RITE.equals(ritePath)) {
-			HemoCapabilityAccess.getBloodVolume(caster).ifPresent(volume -> {
-				volume.setActive(true);
-				BloodVolumeEvents.syncVolume(caster, volume);
-			});
-			caster.displayClientMessage(Component.translatable("hemomancy.tutorial.current_controls",
-					Component.keybind("key.hemomancy.bloodformation.desc"),
-					Component.keybind("key.hemomancy.bloodcrafting.desc"),
-					Component.keybind("key.hemomancy.cyclemanip.desc")), false);
-			caster.displayClientMessage(Component.translatable("hemomancy.tutorial.sample_controls",
-					Component.keybind("key.attack"), Component.keybind("key.use")), false);
-			replaceLinkedTempleDisplay(sLevel, center);
-			HarbingerAdvancementGranter.grantIfNotDone(caster,
-					Hemomancy.rloc("hemomancy/the_first_awakening"));
-			ItemStack conduit = new ItemStack(ItemInit.sanguine_conduit.get());
-			giveOrDropAtRite(sLevel, caster, center, conduit);
-			ItemStack waybill = new ItemStack(ItemInit.covenant_waybill.get());
-			giveOrDropAtRite(sLevel, caster, center, waybill);
-			ResourceLocation starterClaim = Hemomancy.rloc("hemomancy/initiation_blood_claimed");
-			if (!HarbingerAdvancementGranter.hasAdvancement(caster, starterClaim)) {
-				HarbingerAdvancementGranter.grantIfNotDone(caster, starterClaim);
-				if (HarbingerAdvancementGranter.hasAdvancement(caster, starterClaim)) {
-					giveOrDropAtRite(sLevel, caster, center, new ItemStack(ItemInit.bloody_flask.get(), 4));
-					caster.displayClientMessage(Component.translatable("hemomancy.tutorial.starter_blood"), false);
-				}
-			}
-			caster.displayClientMessage(
-					Component.translatable("hemomancy.rite.sanguine_initiation.conduit_granted")
-							.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC),
-					false);
-		}
+        Integer targetDegree = DEGREE_RITE_PATHS.get(ritePath);
+        if (targetDegree != null && com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.DegreeProgression.advance(caster, targetDegree))
+            triggerSpineProgressionWhisper(sLevel, caster, targetDegree);
 
 		if ("cardinal_rite/initiate_rite".equals(ritePath)) {
 			ItemStack blob = new ItemStack(ItemInit.sanguine_blob.get());
@@ -1589,18 +1512,6 @@ public class HarbingerCardinalRiteEvents {
 		ItemEntity drop = new ItemEntity(level,
 				center.getX() + 0.5, center.getY() + 1.5, center.getZ() + 0.5, stack);
 		if (!level.addFreshEntity(drop)) player.drop(stack, false);
-	}
-
-	private static void replaceLinkedTempleDisplay(ServerLevel level, BlockPos focusPos) {
-		if (!(level.getBlockEntity(focusPos) instanceof CardinalFocusBlockEntity focus)) return;
-		BlockPos displayPos = focus.getTempleDisplay();
-		if (displayPos != null && level.getBlockState(displayPos).is(BlockInit.mortal_display.get())) {
-			if (level.getBlockEntity(displayPos) instanceof com.vincenthuto.hemomancy.common.tile.harbinger.functional.MortalDisplayBlockEntity display) {
-				focus.linkTempleHermit(display.getLinkedHermit());
-			}
-			level.setBlockAndUpdate(displayPos,
-					BlockInit.placed_blood_stained_stone.get().defaultBlockState());
-		}
 	}
 
 	private static boolean consumeRiteMedium(ServerLevel level, ServerPlayer caster,
@@ -1693,9 +1604,9 @@ public class HarbingerCardinalRiteEvents {
 		}
 	}
 
-	// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+	//
 	// Utility Rite Completion Handlers
-	// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+	//
 
 	private static void completeRootedVein(ServerLevel level, BlockPos center) {
 		level.setBlockAndUpdate(center.above(), BlockInit.earthen_vein.get().defaultBlockState());
@@ -1761,11 +1672,11 @@ public class HarbingerCardinalRiteEvents {
 	 * Rite of the Hungering Earth (Degree 3, Lesser):
 	 * Corrupts natural terrain in a radius around the rite center, converting:
 	 * <ul>
-	 *   <li>Stone â†’ Venous Stone</li>
-	 *   <li>Cobblestone â†’ Venous Stone</li>
-	 *   <li>Deepslate â†’ Infested Venous Stone</li>
-	 *   <li>Dirt/Grass â†’ Befouling Ash Trail (block below becomes venous stone)</li>
-	 *   <li>Sand/Gravel â†’ Polished Venous Stone</li>
+	 *   <li>Stone  Venous Stone</li>
+	 *   <li>Cobblestone  Venous Stone</li>
+	 *   <li>Deepslate  Infested Venous Stone</li>
+	 *   <li>Dirt/Grass  Befouling Ash Trail (block below becomes venous stone)</li>
+	 *   <li>Sand/Gravel  Polished Venous Stone</li>
 	 * </ul>
 	 */
 	private static void completeHungeringEarth(ServerLevel sLevel, ServerPlayer caster, BlockPos center) {
@@ -2179,22 +2090,22 @@ public class HarbingerCardinalRiteEvents {
 	}
 
 	/**
-	 * Bloom of the Qliphoth (Degree 7, Grand â€” Archon-tier summoning rite):
+	 * Bloom of the Qliphoth (Degree 7, Grand Archon-tier summoning rite):
 	 * Summons a persistent Qliphoth Bloom at the rite center. Within a 3-chunk
 	 * radius, all blood manipulations cost 25% less blood and players receive
 	 * passive health regeneration and enhanced blood regeneration.
 	 * <p>
 	 * Places a 1Ã—1Ã—8 multi-block (QliphothBloomBlock + 7 fillers) at the
 	 * ritual center and registers the bloom in world SavedData.
-	 * The tree produces exactly nine pomes over its lifecycle â€” one for each
-	 * husk of the Qliphoth â€” then ceases dropping fruit until re-summoned.
+	 * The tree produces exactly nine pomes over its lifecycle one for each
+	 * husk of the Qliphoth then ceases dropping fruit until re-summoned.
 	 */
 	private static void completeBloomOfQliphoth(ServerLevel sLevel, ServerPlayer caster, BlockPos center) {
 		ServerLevel overworld = sLevel.getServer().overworld();
 		QliphothBloomSavedData data = QliphothBloomSavedData.get(overworld);
 		String dimension = sLevel.dimension().location().toString();
 
-		// Check if a bloom already exists within the radius â€” only one bloom per 3-chunk area
+		// Check if a bloom already exists within the radius only one bloom per 3-chunk area
 		QliphothBloomSavedData.BloomEntry overlapping = data.getOverlappingBloom(
 				center.above(2), dimension, QLIPHOTH_BLOOM_CHUNK_RADIUS);
 		if (overlapping != null) {
@@ -2410,7 +2321,7 @@ public class HarbingerCardinalRiteEvents {
 
 	/**
 	 * Recalls a lost bloodline ledger by looking up the caster's existing bloodline
-	 * from world data and writing it onto the result item. This is a penitent rite â€”
+	 * from world data and writing it onto the result item. This is a penitent rite 
 	 * the covenant does not forget, but it demands a price for carelessness.
 	 * Returns false if the caster has no bloodline to recall.
 	 */
@@ -2494,7 +2405,7 @@ public class HarbingerCardinalRiteEvents {
 		}
 		PacketDistributor.sendToAllPlayers(new PacketSyncBloodMoon(true));
 		caster.displayClientMessage(
-				Component.literal("The ritual tears the veil â€” the Blood Moon rises!")
+				Component.literal("The ritual tears the veil the Blood Moon rises!")
 						.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC),
 				false);
 	}

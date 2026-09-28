@@ -83,7 +83,7 @@ public final class HarbingerJourneyAutomation {
 			case LIVING_STAFF_CRAFTED -> craftStructure(player, origin, "living_staff", origin.above(2), null);
 			case VICAR_REWARD -> dialogue(player, origin, HarbingerVicarEntity.class,
 					HarbingerVicarDialogueTrees.EVENT_CLAIM_FIRST_BLOODCRAFT_REWARD);
-			case VOTARY_RITE -> completeRankRite(player, origin, CardinalRiteActivationRules.Trigger.HEMATIC_MEDIUM_BLOCK_USE);
+			case VOTARY_RITE -> concentratedBlood(player);
 			case DEGREE_2_REACHED -> { }
 			case ALCHEMIST_BRIEFING -> dialogue(player, origin, HarbingerAlchemistEntity.class,
 					HarbingerAlchemistDialogueTrees.EVENT_FIRST_SEPARATION_BRIEF);
@@ -228,29 +228,24 @@ public final class HarbingerJourneyAutomation {
 				HarbingerVicarDialogueTrees.EVENT_HERMIT_ROAD_REPORT, vicar.getId()));
 	}
 
-	private static void sanguineInitiation(ServerPlayer player, BlockPos origin) {
-		BlockPos focusPos = origin.above();
-		BlockHitResult hit = new BlockHitResult(Vec3.atCenterOf(focusPos), Direction.UP, focusPos, false);
-		try {
-			Method interaction = CardinalFocusBlock.class.getDeclaredMethod("useItemOn", ItemStack.class,
-					net.minecraft.world.level.block.state.BlockState.class, net.minecraft.world.level.Level.class,
-					BlockPos.class, net.minecraft.world.entity.player.Player.class, InteractionHand.class,
-					BlockHitResult.class);
-			interaction.setAccessible(true);
-			interaction.invoke(player.serverLevel().getBlockState(focusPos).getBlock(), player.getMainHandItem(),
-					player.serverLevel().getBlockState(focusPos), player.serverLevel(), focusPos, player,
-					InteractionHand.MAIN_HAND, hit);
-		} catch (ReflectiveOperationException exception) {
-			throw new IllegalStateException("Sanguine Initiation interaction hook is unavailable", exception);
-		}
-		if (CardinalRiteSavedData.get(player.serverLevel()).getRite(player.getUUID()) == null) {
-			var focus = (CardinalFocusBlockEntity) player.serverLevel().getBlockEntity(focusPos);
-			throw new IllegalStateException("Sanguine Initiation interaction did not start a rite: item="
-					+ player.getMainHandItem() + ", health=" + player.getHealth() + ", medium="
-					+ focus.getMediumDisplayStack() + ", display=" + focus.getTempleDisplay());
-		}
-		completeActiveRite(player);
-	}
+    private static void sanguineInitiation(ServerPlayer player, BlockPos origin) {
+        var vicar = player.serverLevel().getEntitiesOfClass(HarbingerVicarEntity.class,
+                new net.minecraft.world.phys.AABB(origin).inflate(12)).getFirst();
+        player.setPos(vicar.position().add(1, 0, 0));
+        if (!com.vincenthuto.hemomancy.common.mission.vicar.EarlyInitiation.begin(player, vicar))
+            throw new IllegalStateException("Vicar initiation rejected fixture player");
+        long time = player.serverLevel().getGameTime();
+        try {
+            player.serverLevel().getServer().getWorldData().overworldData().setGameTime(time + 200);
+            com.vincenthuto.hemomancy.common.mission.vicar.EarlyInitiation.tick(new net.neoforged.neoforge.event.tick.PlayerTickEvent.Post(player));
+        } finally { player.serverLevel().getServer().getWorldData().overworldData().setGameTime(time); }
+    }
+    private static void concentratedBlood(ServerPlayer player) {
+        player.getMainHandItem().use(player.level(), player, InteractionHand.MAIN_HAND);
+        for (int i = 0; i < 16; i++) player.doTick();
+        if (!com.vincenthuto.hemomancy.common.mission.alchemist.ConcentratedBlood.completeSleep(player, true))
+            throw new IllegalStateException("Concentrated Blood did not settle after fixture sleep");
+    }
 
 	private static void fillVessel(ServerPlayer player) {
 		ItemStack jug = player.getOffhandItem();

@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.client.screen.overlay;
 
+import com.mojang.blaze3d.platform.NativeImage;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
@@ -17,6 +18,7 @@ import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -25,6 +27,8 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.CustomData;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Random;
 
 /**
@@ -43,19 +47,33 @@ public class BloodVolumeOverlay {
     private static final int VESSEL_BOTTOM = VESSEL_TOP + VESSEL_H;
     private static final int APOTHEOS_FILL_FRAMES = 16;
     private static final int[][] POME_POINTS = {
-            {0, -13}, {-15, -7}, {15, -7}, {-27, 5}, {27, 5},
-            {-31, 23}, {31, 23}, {-20, 40}, {20, 40}
+            {0, -20}, {-15, -14}, {15, -14}, {-27, 5}, {27, 5},
+            {-28, 23}, {28, 23}, {-28, 40}, {28, 40}
     };
-    private static final int GOURD_W = 18;
-    private static final int GOURD_H = 26;
-    private static final int HORN_W = 24;
+    private static final int GOURD_W = GourdHudFillPixels.WIDTH;
+    private static final int GOURD_H = GourdHudFillPixels.HEIGHT;
+    private static final int HORN_W = 32;
+    private static final int HORN_H = 48;
+    private static final int RIB_H = 64;
 
     private static final ResourceLocation VESSEL_BACK_TEXTURE = texture("vessel_back");
+    private static final ResourceLocation GOURD_BACK_TEXTURE = texture("gourd_back");
+    private static final ResourceLocation GOURD_HALO_TEXTURE = texture("gourd_halo");
+    private static final ResourceLocation GOURD_WHITE_TEXTURE = texture("gourd_frame_white");
+    private static final ResourceLocation GOURD_RED_TEXTURE = texture("gourd_frame_red");
+    private static final ResourceLocation GOURD_BLACK_TEXTURE = texture("gourd_frame_black");
+    private static final ResourceLocation HORN_BACK_TEXTURE = texture("curved_horn_back");
+    private static final ResourceLocation HORN_FRAME_TEXTURE = texture("curved_horn_frame");
+    private static final ResourceLocation HORN_MASK_TEXTURE = texture("curved_horn_fill_mask");
+    private static final ResourceLocation HORN_HALO_TEXTURE = texture("curved_horn_halo");
+    private static final ResourceLocation RIB_BACK_TEXTURE = texture("hemorath_rib_back");
+    private static final ResourceLocation RIB_FRAME_TEXTURE = texture("hemorath_rib_frame");
+    private static final ResourceLocation RIB_MASK_TEXTURE = texture("hemorath_rib_fill_mask");
+    private static final ResourceLocation RIB_HALO_TEXTURE = texture("hemorath_rib_halo");
     private static final ResourceLocation APOTHEOS_HALO_TEXTURE = texture("halo_apotheos");
     private static final ResourceLocation[] DEGREE_BASE_TEXTURES = textureRange("base_degree_", 9);
     private static final ResourceLocation[] POME_TEXTURES = textureRange("pomes_", 10);
     private static final ResourceLocation[] APOTHEOS_FILL_TEXTURES = textureRange("fill_apotheos_", APOTHEOS_FILL_FRAMES);
-    private static final int HORN_H = 18;
 
     private static final int BORDER_OUTER = 0xFF330808;
     private static final int BORDER_INNER = 0xFF220606;
@@ -70,6 +88,62 @@ public class BloodVolumeOverlay {
     public static BloodVolumeOverlay instance;
 
     private final Minecraft mc = Minecraft.getInstance();
+    private final BloodHudRefreshClock refreshClock = new BloodHudRefreshClock();
+    private DynamicTexture gourdFillTexture;
+    private ResourceLocation gourdFillTextureId;
+    private int lastGourdFrame = Integer.MIN_VALUE;
+    private double lastGourdRatio = Double.NaN;
+    private int lastGourdDegree = -1;
+    private int lastGourdPomes = -1;
+    private DynamicTexture specialFillTexture;
+    private ResourceLocation specialFillTextureId;
+    private ResourceLocation lastSpecialMaskId;
+    private boolean[] hornFillMask;
+    private boolean[] ribFillMask;
+    private int lastSpecialFrame = Integer.MIN_VALUE;
+    private double lastSpecialRatio = Double.NaN;
+    private int lastSpecialDegree = -1;
+    private int lastSpecialPomes = -1;
+    private DynamicTexture bloodFillTexture;
+    private ResourceLocation bloodFillTextureId;
+    private int lastFillFrame = Integer.MIN_VALUE;
+    private int lastFillHeight = -1;
+    private int lastFillDegree = -1;
+    private int lastFillPomes = -1;
+
+    public void clearCaches() {
+        refreshClock.reset();
+        hornFillMask = null;
+        ribFillMask = null;
+        lastSpecialMaskId = null;
+        if (specialFillTextureId != null) {
+            mc.getTextureManager().release(specialFillTextureId);
+            specialFillTexture = null;
+            specialFillTextureId = null;
+        }
+        lastSpecialFrame = Integer.MIN_VALUE;
+        lastSpecialRatio = Double.NaN;
+        lastSpecialDegree = -1;
+        lastSpecialPomes = -1;
+        if (gourdFillTextureId != null) {
+            mc.getTextureManager().release(gourdFillTextureId);
+            gourdFillTexture = null;
+            gourdFillTextureId = null;
+            lastGourdFrame = Integer.MIN_VALUE;
+            lastGourdRatio = Double.NaN;
+            lastGourdDegree = -1;
+            lastGourdPomes = -1;
+        }
+        if (bloodFillTextureId != null) {
+            mc.getTextureManager().release(bloodFillTextureId);
+            bloodFillTexture = null;
+            bloodFillTextureId = null;
+            lastFillFrame = Integer.MIN_VALUE;
+            lastFillHeight = -1;
+            lastFillDegree = -1;
+            lastFillPomes = -1;
+        }
+    }
 
     public static boolean isConfiguredOnLeftSide() {
         int positionLoc = HemoClientConfig.HUD_LOCATION.get();
@@ -120,7 +194,9 @@ public class BloodVolumeOverlay {
                 if (bloodCap == null || !bloodCap.isActive()) return;
                 HemoCapabilityAccess.getEquipment(player).ifPresent(inv -> {
                     if (inv.getStackInSlot(5).getItem() instanceof VasculariumCharmItem) {
-                        PacketHandler.sendToServer(new BloodVolumeClientPacket());
+                        if (refreshClock.due(player.tickCount)) {
+                            PacketHandler.sendToServer(new BloodVolumeClientPacket());
+                        }
 
                         int posX = getConfiguredBarX(width);
                         int posY = getConfiguredBarY(player, height);
@@ -147,7 +223,8 @@ public class BloodVolumeOverlay {
         gfx.pose().translate(posX, posY, 0);
         gfx.pose().scale(OVERLAY_SCALE, OVERLAY_SCALE, 1.0f);
         renderBloodBarScaled(gfx, 0, 0, bloodCap, player, world, animationTime,
-                Math.round(screenWidth / OVERLAY_SCALE), Math.round(screenHeight / OVERLAY_SCALE));
+                Math.round((screenWidth - posX) / OVERLAY_SCALE),
+                Math.round((screenHeight - posY) / OVERLAY_SCALE));
         gfx.pose().popPose();
     }
 
@@ -185,7 +262,8 @@ public class BloodVolumeOverlay {
         if (degreeNumber >= 7) {
             renderPomeSockets(gfx, posX, posY, pomeProgress);
         }
-        renderEquippedGourd(gfx, player, posX, posY, screenWidth, screenHeight, time);
+        renderEquippedGourd(gfx, player, posX, posY, screenWidth, screenHeight,
+                degreeNumber, pomeProgress, time);
 
         RenderSystem.disableBlend();
 
@@ -244,7 +322,7 @@ public class BloodVolumeOverlay {
             int frame = Math.floorMod((int) (time * 8.0f), APOTHEOS_FILL_FRAMES);
             ResourceLocation fillTexture = APOTHEOS_FILL_TEXTURES[frame];
             gfx.blit(fillTexture, x, y + fillOffset, 0, fillOffset, OVERLAY_W, fillHeight, OVERLAY_W, OVERLAY_H);
-            renderApotheosBloodActivity(gfx, x, y, fillOffset, fillHeight, time);
+            renderBloodBubbles(gfx, x, y, fillOffset, fillHeight, time, 1.0f);
         } else {
             renderProceduralBloodFill(gfx, x, y, fillOffset, fillHeight, degree, pomeProgress, time);
         }
@@ -258,19 +336,26 @@ public class BloodVolumeOverlay {
         int fillBottom = fillOffset + fillHeight;
         float corruption = degree >= 7 ? Mth.clamp(pomeProgress / 9.0f, 0.0f, 1.0f) : 0.0f;
 
+        if (bloodFillTexture == null) {
+            bloodFillTexture = new DynamicTexture(new NativeImage(BloodFillPixels.WIDTH, BloodFillPixels.HEIGHT, false));
+            bloodFillTextureId = mc.getTextureManager().register("blood_vessel_fill", bloodFillTexture);
+        }
+        int frame = (int) (time * 60.0f);
+        if (frame != lastFillFrame || fillHeight != lastFillHeight || degree != lastFillDegree
+                || pomeProgress != lastFillPomes) {
+            int[] pixels = BloodFillPixels.render(fillHeight, degree, pomeProgress, frame / 60.0f);
+            uploadPixels(bloodFillTexture, pixels, BloodFillPixels.WIDTH, BloodFillPixels.HEIGHT);
+            lastFillFrame = frame;
+            lastFillHeight = fillHeight;
+            lastFillDegree = degree;
+            lastFillPomes = pomeProgress;
+        }
+        gfx.blit(bloodFillTextureId, centerX - 12, y + VESSEL_TOP, 0, 0,
+                BloodFillPixels.WIDTH, BloodFillPixels.HEIGHT, BloodFillPixels.WIDTH, BloodFillPixels.HEIGHT);
+
         for (int local = fillOffset; local < fillBottom; local++) {
             int vesselLocalY = Mth.clamp(local - VESSEL_TOP, 0, VESSEL_H - 1);
             int halfInner = Math.max(1, vesselHalfWidth(vesselLocalY, false));
-            float depth = Mth.clamp((local - fillOffset) / (float) Math.max(fillHeight, 1), 0.0f, 1.0f);
-            float pulse = 0.82f + 0.18f * Mth.sin(time * 1.5f + vesselLocalY * 0.11f);
-            float fade = 1.0f - corruption * 0.70f;
-            int color = multiplyColor(blendColor(0xEED32327, 0xEE520507, depth), pulse * fade);
-            if (corruption > 0.0f) {
-                color = alphaBlend(color, ((int) (118 * corruption) << 24) | 0x00030106);
-            }
-
-            gfx.fill(centerX - halfInner, y + local, centerX + halfInner + 1, y + local + 1, color);
-
             if (degree >= 6 && (vesselLocalY + (int) (time * 9.0f)) % 19 < 2) {
                 int veinX = centerX + Math.round(Mth.sin(time * 0.9f + vesselLocalY * 0.18f) * (halfInner - 3));
                 gfx.fill(veinX, y + local, veinX + 2, y + local + 1,
@@ -279,23 +364,6 @@ public class BloodVolumeOverlay {
         }
 
         renderBloodBubbles(gfx, x, y, fillOffset, fillHeight, time, corruption);
-    }
-
-    private void renderApotheosBloodActivity(GuiGraphics gfx, int x, int y, int fillOffset, int fillHeight, float time) {
-        int centerX = x + OVERLAY_W / 2;
-        int fillBottom = fillOffset + fillHeight;
-        for (int i = 0; i < 3; i++) {
-            float phase = time * (0.55f + i * 0.13f) + i * 0.31f;
-            int local = fillOffset + Math.floorMod((int) (phase * VESSEL_H), Math.max(fillHeight, 1));
-            if (local < fillOffset || local >= fillBottom) {
-                continue;
-            }
-            int vesselLocalY = Mth.clamp(local - VESSEL_TOP, 0, VESSEL_H - 1);
-            int halfInner = Math.max(3, vesselHalfWidth(vesselLocalY, false) - 2);
-            int drift = Math.round(Mth.sin(time * 1.1f + i * 2.4f) * (halfInner - 2));
-            gfx.fill(centerX + drift - 1, y + local, centerX + drift + 2, y + local + 2, 0x70420612);
-        }
-        renderBloodBubbles(gfx, x, y, fillOffset, fillHeight, time, 1.0f);
     }
 
     private void renderBloodBubbles(GuiGraphics gfx, int x, int y, int fillOffset, int fillHeight, float time, float corruption) {
@@ -331,8 +399,7 @@ public class BloodVolumeOverlay {
         int halfInner = Math.max(1, vesselHalfWidth(localY, false));
         int centerX = x + OVERLAY_W / 2;
         int rowY = y + fillOffset;
-        int corruptionAlpha = degree >= 7 ? (int) (120 * (pomeProgress / 9.0f)) : 0;
-        int meniscus = degree >= 8 ? 0xAA560710 : alphaBlend(0xBBDD2F2F, (corruptionAlpha << 24) | 0x00030106);
+        int meniscus = BloodFillPixels.meniscusColor(degree, pomeProgress);
         int wave = Math.round(Mth.sin(time * 2.2f + localY * 0.3f) * 1.25f);
         gfx.fill(centerX - halfInner, rowY + wave, centerX + halfInner + 1, rowY + wave + 1, meniscus);
     }
@@ -480,16 +547,7 @@ public class BloodVolumeOverlay {
     }
 
     private int vesselHalfWidth(int py, boolean outer) {
-        float t = py / (float) Math.max(VESSEL_H - 1, 1);
-        float width;
-        if (t < 0.12f) {
-            width = Mth.lerp(t / 0.12f, 10.0f, 16.0f);
-        } else if (t < 0.86f) {
-            width = 16.0f - Mth.sin((t - 0.12f) / 0.74f * Mth.PI) * 2.0f;
-        } else {
-            width = Mth.lerp((t - 0.86f) / 0.14f, 14.0f, 4.0f);
-        }
-        return Math.max(1, Math.round(width) - (outer ? 0 : 4));
+        return BloodVesselShape.halfWidth(py, outer);
     }
 
     private void renderPomeCrown(GuiGraphics gfx, int centerX, int vesselY, int progress, boolean apotheos, float time) {
@@ -585,7 +643,7 @@ public class BloodVolumeOverlay {
     }
 
     private void renderEquippedGourd(GuiGraphics gfx, Player player, int posX, int posY, int screenWidth, int screenHeight,
-                                     float time) {
+                                     int degreeNumber, int pomeProgress, float time) {
         HemoCapabilityAccess.getEquipment(player).ifPresent(scars -> {
             ItemStack gourdStack = scars.getStackInSlot(HarbingerEquipmentMenu.GOURD_SLOT_INDEX);
             if (!(gourdStack.getItem() instanceof BloodGourdItem)) {
@@ -601,34 +659,43 @@ public class BloodVolumeOverlay {
             double ratio = maxVol > 0 ? Mth.clamp(gourdVolume.getBloodVolume() / maxVol, 0, 1) : 0;
             boolean curvedHorn = gourdStack.is(ItemInit.curved_horn.get());
             boolean rib = gourdStack.is(ItemInit.hemorath_rib.get());
-            int iconW = curvedHorn ? HORN_W : GOURD_W;
-            int iconH = curvedHorn ? HORN_H : GOURD_H;
+            int iconW = GOURD_W;
+            int iconH = curvedHorn ? HORN_H : rib ? RIB_H : GOURD_H;
             int centerX = posX + OVERLAY_W / 2;
             int gourdX = centerX - iconW / 2;
             int gourdY = posY + VESSEL_BOTTOM + 30;
 
             if (gourdY + iconH + 10 > screenHeight) {
-                gourdY = Math.max(2, posY - iconH - 8);
+                gourdY = posY - iconH - 8;
             }
             gourdX = Mth.clamp(gourdX, 2, screenWidth - iconW - 2);
 
-            GourdPalette palette = getGourdPalette(gourdStack);
+            int textColor = getGourdTextColor(gourdStack);
             if (isOpenGourd(gourdStack)) {
-                renderGourdGlow(gfx, gourdX, gourdY, iconW, iconH, curvedHorn, time);
+                ResourceLocation halo = curvedHorn ? HORN_HALO_TEXTURE : rib ? RIB_HALO_TEXTURE : GOURD_HALO_TEXTURE;
+                RenderSystem.enableBlend();
+                RenderSystem.defaultBlendFunc();
+                RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f,
+                        0.92f + 0.08f * Mth.sin(time * 2.1f));
+                gfx.blit(halo, gourdX - 6, gourdY - 6, 0, 0, 44, iconH + 12, 44, iconH + 12);
+                RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, 1.0f);
             }
 
             if (curvedHorn) {
-                renderCurvedHorn(gfx, gourdX, gourdY + 3, ratio, time);
+                renderSpecialGourd(gfx, gourdX, gourdY, ratio, HORN_H, HORN_BACK_TEXTURE,
+                        HORN_FRAME_TEXTURE, HORN_MASK_TEXTURE, degreeNumber, pomeProgress, time);
             } else if (rib) {
-                renderHemorathRib(gfx, gourdX, gourdY + 3, ratio, time);
+                renderSpecialGourd(gfx, gourdX, gourdY, ratio, RIB_H, RIB_BACK_TEXTURE,
+                        RIB_FRAME_TEXTURE, RIB_MASK_TEXTURE, degreeNumber, pomeProgress, time);
             } else {
-                renderTwoLobedGourd(gfx, gourdX, gourdY, ratio, palette, time);
+                renderTwoLobedGourd(gfx, gourdX, gourdY, ratio, gourdStack,
+                        degreeNumber, pomeProgress, time);
             }
 
             String volumeText = String.format("%.0f", gourdVolume.getBloodVolume());
             int textX = gourdX + (iconW / 2) - (mc.font.width(volumeText) / 2);
             gfx.drawString(mc.font, Component.literal(volumeText), textX, gourdY + iconH + 1,
-                    palette.textColor(), true);
+                    textColor, true);
         });
     }
 
@@ -638,232 +705,107 @@ public class BloodVolumeOverlay {
                 .getBoolean(BloodGourdItem.TAG_STATE);
     }
 
-    private void renderGourdGlow(GuiGraphics gfx, int x, int y, int iconW, int iconH, boolean curvedHorn, float time) {
-        float pulse = 0.72f + 0.28f * Mth.sin(time * 2.1f);
-        float cx = x + iconW * (curvedHorn ? 0.55f : 0.50f);
-        float cy = y + iconH * (curvedHorn ? 0.58f : 0.54f);
-        float rx = iconW * (curvedHorn ? 0.68f : 0.64f);
-        float ry = iconH * (curvedHorn ? 0.72f : 0.58f);
-
-        for (int gy = -4; gy < iconH + 5; gy++) {
-            for (int gx = -5; gx < iconW + 6; gx++) {
-                float dx = (x + gx - cx) / rx;
-                float dy = (y + gy - cy) / ry;
-                float distance = dx * dx + dy * dy;
-                if (distance > 1.0f) {
-                    continue;
-                }
-
-                float edge = 1.0f - distance;
-                int alpha = (int) (Mth.clamp(edge * edge * pulse, 0.0f, 1.0f) * (curvedHorn ? 105 : 125));
-                if (alpha <= 0) {
-                    continue;
-                }
-
-                int red = curvedHorn ? 0xB8 : 0xD4;
-                int green = curvedHorn ? 0x1A : 0x22;
-                int blue = curvedHorn ? 0x12 : 0x16;
-                gfx.fill(x + gx, y + gy, x + gx + 1, y + gy + 1, (alpha << 24) | (red << 16) | (green << 8) | blue);
-            }
-        }
-    }
-
-    private GourdPalette getGourdPalette(ItemStack stack) {
+    private int getGourdTextColor(ItemStack stack) {
         if (stack.is(ItemInit.blood_gourd_red.get())) {
-            return new GourdPalette(0xFF3A0606, 0xFF6A1010, 0xFF9A2220, 0xFFD24438);
+            return 0xFFD24438;
         }
         if (stack.is(ItemInit.blood_gourd_black.get())) {
-            return new GourdPalette(0xFF050307, 0xFF18111E, 0xFF3A2B40, 0xFF8C6A99);
+            return 0xFF8C6A99;
         }
-        return new GourdPalette(0xFF3A2A22, 0xFFC9B7A2, 0xFFFFF5E2, 0xFFEEDCC6);
+        return 0xFFEEDCC6;
     }
 
-    private void renderTwoLobedGourd(GuiGraphics gfx, int x, int y, double ratio, GourdPalette palette, float time) {
-        int fillLimit = y + GOURD_H - (int) Math.round(GOURD_H * ratio);
-        for (int py = 0; py < GOURD_H; py++) {
-            for (int px = 0; px < GOURD_W; px++) {
-                float upperLobe = ellipseDistance(px, py, 9.5f, 7.0f, 6.2f, 6.6f);
-                float lowerLobe = ellipseDistance(px, py, 8.0f, 17.0f, 8.0f, 8.8f);
-                float waist = ellipseDistance(px, py, 8.8f, 11.5f, 4.8f, 4.4f);
-                float shape = Math.min(Math.min(upperLobe, lowerLobe), waist);
-                if (shape > 1.0f) {
-                    continue;
-                }
+    private void renderTwoLobedGourd(GuiGraphics gfx, int x, int y, double ratio, ItemStack stack,
+                                      int degree, int pomeProgress, float time) {
+        if (gourdFillTexture == null) {
+            gourdFillTexture = new DynamicTexture(new NativeImage(GOURD_W, GOURD_H, false));
+            gourdFillTextureId = mc.getTextureManager().register("blood_gourd_hud_fill", gourdFillTexture);
+        }
 
-                int screenY = y + py;
-                boolean border = shape > 0.80f;
-                if (border) {
-                    gfx.fill(x + px, screenY, x + px + 1, screenY + 1, palette.borderColor());
-                    continue;
-                }
+        int frame = (int) (time * 60.0f);
+        if (frame != lastGourdFrame || ratio != lastGourdRatio
+                || degree != lastGourdDegree || pomeProgress != lastGourdPomes) {
+            int[] pixels = GourdHudFillPixels.render(ratio, degree, pomeProgress, frame / 60.0f);
+            uploadPixels(gourdFillTexture, pixels, GOURD_W, GOURD_H);
+            lastGourdFrame = frame;
+            lastGourdRatio = ratio;
+            lastGourdDegree = degree;
+            lastGourdPomes = pomeProgress;
+        }
+        ResourceLocation frameTexture = stack.is(ItemInit.blood_gourd_red.get()) ? GOURD_RED_TEXTURE
+                : stack.is(ItemInit.blood_gourd_black.get()) ? GOURD_BLACK_TEXTURE : GOURD_WHITE_TEXTURE;
+        // The corked path skips the halo, so restore blending for the frame itself.
+        RenderSystem.enableBlend();
+        RenderSystem.defaultBlendFunc();
+        gfx.blit(GOURD_BACK_TEXTURE, x, y, 0, 0, GOURD_W, GOURD_H, GOURD_W, GOURD_H);
+        gfx.blit(gourdFillTextureId, x, y, 0, 0, GOURD_W, GOURD_H, GOURD_W, GOURD_H);
+        gfx.blit(frameTexture, x, y, 0, 0, GOURD_W, GOURD_H, GOURD_W, GOURD_H);
+    }
 
-                float vertical = py / (float) GOURD_H;
-                float shine = Mth.clamp(1.0f - ellipseDistance(px, py, 7.0f, 7.0f, 3.0f, 3.5f), 0.0f, 1.0f);
-                int color = blendColor(palette.shellLowColor(), palette.shellHighColor(), 1.0f - vertical);
-                color = alphaBlend(color, 0x55000000);
-
-                float wave = 1.2f * Mth.sin(time * 2.0f + px * 0.7f);
-                int liquidLine = fillLimit + Math.round(wave);
-                boolean filled = screenY >= liquidLine;
-                if (filled) {
-                    float liquidDepth = Mth.clamp((screenY - liquidLine) / (float) Math.max(GOURD_H, 1), 0.0f, 1.0f);
-                    float pulse = 0.78f + 0.22f * Mth.sin(time * 1.8f + py * 0.16f);
-                    color = blendColor(0xF0C82022, 0xEE520608, liquidDepth);
-                    color = multiplyColor(color, pulse);
-
-                    if (Math.abs(screenY - liquidLine) <= 1) {
-                        color = alphaBlend(color, 0x99FF5548);
-                    }
-                    if ((px + py + (int) (time * 12)) % 17 == 0) {
-                        color = alphaBlend(color, 0x66FF7A68);
-                    }
-                }
-                if (shine > 0.0f) {
-                    int alpha = filled ? (int) (70 * shine) : (int) (38 * shine);
-                    color = alphaBlend(color, (alpha << 24) | 0x00FFFFFF);
-                }
-                gfx.fill(x + px, screenY, x + px + 1, screenY + 1, color);
+    private static void uploadPixels(DynamicTexture texture, int[] pixels, int width, int height) {
+        NativeImage image = texture.getPixels();
+        for (int py = 0; py < height; py++) {
+            for (int px = 0; px < width; px++) {
+                int argb = pixels[py * width + px];
+                int abgr = (argb & 0xFF00FF00) | ((argb & 0x00FF0000) >>> 16)
+                        | ((argb & 0x000000FF) << 16);
+                image.setPixelRGBA(px, py, abgr);
             }
         }
-
-        int neckPulse = 130 + (int) (35 * Mth.sin(time * 1.6f));
-        int neckColor = (neckPulse << 24) | 0x3B261A;
-        gfx.fill(x + 8, y - 2, x + 13, y + 1, neckColor);
-        gfx.fill(x + 9, y - 4, x + 12, y - 2, neckColor);
-        gfx.fill(x + 6, y + 10, x + 12, y + 12, alphaBlend(palette.borderColor(), 0x44000000));
+        texture.upload();
     }
 
-    private void renderHemorathRib(GuiGraphics gfx, int x, int y, double ratio, float time) {
-        float fillLimit = y + HORN_H - (float) (HORN_H * ratio);
-        for (int py = 0; py < HORN_H; py++) {
-            for (int px = 0; px < HORN_W; px++) {
-                HornSample sample = sampleHorn(px, py);
-                if (!sample.inside()) {
-                    continue;
-                }
-
-                int screenY = y + py;
-                int color;
-                if (sample.border()) {
-                    color = 0xFF757474;
-                } else {
-                    float t = Mth.clamp(sample.pathT(), 0.0f, 1.0f);
-                    color = blendColor(0xFFe6e1dc, 0xFFd4bda7, t);
-                    if (((int) (t * 18.0f) + py) % 4 == 0) {
-                        color = alphaBlend(color, 0x55990606);
-                    }
-
-                    float wave = 0.9f * Mth.sin(time * 2.0f + px * 0.55f);
-                    if (screenY >= fillLimit + wave) {
-                        float liquidDepth = Mth.clamp((screenY - fillLimit) / (float) Math.max(HORN_H, 1), 0.0f, 1.0f);
-                        float pulse = 0.76f + 0.24f * Mth.sin(time * 1.7f + sample.pathT() * 5.0f);
-                        color = multiplyColor(blendColor(0xF0C82022, 0xEE4C0507, liquidDepth), pulse);
-                        if (Math.abs(screenY - (fillLimit + wave)) <= 1.0f) {
-                            color = alphaBlend(color, 0x99FF5548);
-                        }
-                    }
-
-                    float shine = Mth.clamp(1.0f - ellipseDistance(px, py, 9.0f, 5.0f, 6.0f, 3.2f), 0.0f, 1.0f);
-                    if (shine > 0.0f) {
-                        color = alphaBlend(color, ((int) (45 * shine) << 24) | 0x00FFFFFF);
-                    }
-                }
-                gfx.fill(x + px, screenY, x + px + 1, screenY + 1, color);
+    private void renderSpecialGourd(GuiGraphics gfx, int x, int y, double ratio, int height,
+                                    ResourceLocation back, ResourceLocation frame, ResourceLocation maskId,
+                                    int degree, int pomeProgress, float time) {
+        if (specialFillTexture == null) {
+            specialFillTexture = new DynamicTexture(new NativeImage(SpecialGourdHudFillPixels.WIDTH,
+                    SpecialGourdHudFillPixels.HEIGHT, false));
+            specialFillTextureId = mc.getTextureManager().register("special_gourd_hud_fill", specialFillTexture);
+        }
+        boolean[] mask = maskId.equals(HORN_MASK_TEXTURE) ? hornFillMask : ribFillMask;
+        if (mask == null) {
+            mask = loadSpecialFillMask(maskId, height);
+            if (maskId.equals(HORN_MASK_TEXTURE)) {
+                hornFillMask = mask;
+            } else {
+                ribFillMask = mask;
             }
         }
-
-        gfx.fill(x + 19, y + 3, x + 23, y + 7, 0xFF4A130E);
-        gfx.fill(x + 20, y + 4, x + 23, y + 6, 0xFF8C2A20);
-        gfx.fill(x + 18, y + 7, x + 21, y + 10, 0xFF2E1B14);
-    }
-
-    private void renderCurvedHorn(GuiGraphics gfx, int x, int y, double ratio, float time) {
-        float fillLimit = y + HORN_H - (float) (HORN_H * ratio);
-        for (int py = 0; py < HORN_H; py++) {
-            for (int px = 0; px < HORN_W; px++) {
-                HornSample sample = sampleHorn(px, py);
-                if (!sample.inside()) {
-                    continue;
-                }
-                int screenY = y + py;
-                int color;
-                if (sample.border()) {
-                    color = 0xFF3B261A;
-                } else {
-                    float t = Mth.clamp(sample.pathT(), 0.0f, 1.0f);
-                    color = blendColor(0xFFEEDCC6, 0xFF8A6B4D, t);
-                    if (((int) (t * 18.0f) + py) % 4 == 0) {
-                        color = alphaBlend(color, 0x553B261A);
-                    }
-
-                    float wave = 0.9f * Mth.sin(time * 2.0f + px * 0.55f);
-                    if (screenY >= fillLimit + wave) {
-                        float liquidDepth = Mth.clamp((screenY - fillLimit) / (float) Math.max(HORN_H, 1), 0.0f, 1.0f);
-                        float pulse = 0.76f + 0.24f * Mth.sin(time * 1.7f + sample.pathT() * 5.0f);
-                        color = multiplyColor(blendColor(0xF0C82022, 0xEE4C0507, liquidDepth), pulse);
-                        if (Math.abs(screenY - (fillLimit + wave)) <= 1.0f) {
-                            color = alphaBlend(color, 0x99FF5548);
-                        }
-                    }
-
-                    float shine = Mth.clamp(1.0f - ellipseDistance(px, py, 9.0f, 5.0f, 6.0f, 3.2f), 0.0f, 1.0f);
-                    if (shine > 0.0f) {
-                        color = alphaBlend(color, ((int) (45 * shine) << 24) | 0x00FFFFFF);
-                    }
-                }
-                gfx.fill(x + px, screenY, x + px + 1, screenY + 1, color);
-            }
+        int tickFrame = (int) (time * 60.0f);
+        if (!maskId.equals(lastSpecialMaskId) || tickFrame != lastSpecialFrame || ratio != lastSpecialRatio
+                || degree != lastSpecialDegree || pomeProgress != lastSpecialPomes) {
+            int[] pixels = SpecialGourdHudFillPixels.render(mask, height, ratio, degree, pomeProgress, time);
+            uploadPixels(specialFillTexture, pixels, SpecialGourdHudFillPixels.WIDTH, SpecialGourdHudFillPixels.HEIGHT);
+            lastSpecialMaskId = maskId;
+            lastSpecialFrame = tickFrame;
+            lastSpecialRatio = ratio;
+            lastSpecialDegree = degree;
+            lastSpecialPomes = pomeProgress;
         }
-
-        gfx.fill(x + 19, y + 3, x + 23, y + 7, 0xFF4A130E);
-        gfx.fill(x + 20, y + 4, x + 23, y + 6, 0xFF8C2A20);
-        gfx.fill(x + 18, y + 7, x + 21, y + 10, 0xFF2E1B14);
+        RenderSystem.enableBlend();
+        RenderSystem.defaultBlendFunc();
+        gfx.blit(back, x, y, 0, 0, HORN_W, height, HORN_W, height);
+        gfx.blit(specialFillTextureId, x, y, 0, 0, HORN_W, height, HORN_W, SpecialGourdHudFillPixels.HEIGHT);
+        gfx.blit(frame, x, y, 0, 0, HORN_W, height, HORN_W, height);
     }
 
-    private HornSample sampleHorn(int px, int py) {
-        float[][] points = {
-                {21.0f, 5.0f},
-                {17.5f, 3.2f},
-                {12.8f, 3.8f},
-                {8.4f, 6.4f},
-                {5.8f, 10.0f},
-                {7.0f, 14.0f},
-                {10.8f, 15.2f},
-                {14.3f, 13.0f}
-        };
-
-        float bestDistance = Float.MAX_VALUE;
-        float bestT = 0.0f;
-        for (int i = 0; i < points.length - 1; i++) {
-            float ax = points[i][0];
-            float ay = points[i][1];
-            float bx = points[i + 1][0];
-            float by = points[i + 1][1];
-            float vx = bx - ax;
-            float vy = by - ay;
-            float lengthSq = vx * vx + vy * vy;
-            float localT = lengthSq > 0 ? Mth.clamp(((px - ax) * vx + (py - ay) * vy) / lengthSq, 0.0f, 1.0f) : 0.0f;
-            float cx = ax + vx * localT;
-            float cy = ay + vy * localT;
-            float dx = px - cx;
-            float dy = py - cy;
-            float distance = Mth.sqrt(dx * dx + dy * dy);
-            if (distance < bestDistance) {
-                bestDistance = distance;
-                bestT = (i + localT) / (points.length - 1);
+    private boolean[] loadSpecialFillMask(ResourceLocation id, int height) {
+        try (InputStream stream = mc.getResourceManager().open(id);
+             NativeImage image = NativeImage.read(stream)) {
+            if (image.getWidth() != HORN_W || image.getHeight() != height) {
+                throw new IllegalStateException("Invalid special gourd HUD mask dimensions: " + id);
             }
+            boolean[] mask = new boolean[HORN_W * height];
+            for (int y = 0; y < height; y++) {
+                for (int x = 0; x < HORN_W; x++) {
+                    mask[y * HORN_W + x] = (image.getPixelRGBA(x, y) >>> 24) > 127;
+                }
+            }
+            return mask;
+        } catch (IOException error) {
+            throw new IllegalStateException("Unable to load special gourd HUD mask: " + id, error);
         }
-
-        float thickness = 3.35f - bestT * 1.45f;
-        boolean inside = bestDistance <= thickness;
-        boolean border = inside && bestDistance >= thickness - 0.85f;
-        return new HornSample(inside, border, bestT);
-    }
-
-    private float ellipseDistance(float px, float py, float cx, float cy, float rx, float ry) {
-        float dx = (px - cx) / rx;
-        float dy = (py - cy) / ry;
-        return dx * dx + dy * dy;
     }
 
     private int blendColor(int from, int to, float t) {
@@ -908,9 +850,4 @@ public class BloodVolumeOverlay {
         return color & 0xFF;
     }
 
-    private record GourdPalette(int borderColor, int shellLowColor, int shellHighColor, int textColor) {
-    }
-
-    private record HornSample(boolean inside, boolean border, float pathT) {
-    }
 }

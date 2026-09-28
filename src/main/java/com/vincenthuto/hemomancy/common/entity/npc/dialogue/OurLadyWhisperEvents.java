@@ -19,14 +19,14 @@ import net.neoforged.neoforge.event.tick.PlayerTickEvent;
  *
  * <p>Whisper frequency increases with advancement along the path:
  * <ul>
- *   <li><b>TAINTED</b> (purity 25+): every ~45 min â€” barely perceptible, like water far away</li>
- *   <li><b>CLEANSING</b> (purity 50+): every ~30 min â€” more audible, gentle encouragement</li>
- *   <li><b>ABSOLVED</b> (purity 75+): every ~20 min â€” clear, personal, slightly urgent</li>
- *   <li><b>PURIFIED</b> (purity 100, pre-clarity): every ~15 min â€” direct, guides toward the Rite</li>
- *   <li><b>DISCERNING</b> (clarity 25+): every ~30 min â€” relief, warmth, early revelations</li>
- *   <li><b>VIGILANT</b> (clarity 50+): every ~20 min â€” deeper, hints about the world's true state</li>
- *   <li><b>RESOLUTE</b> (clarity 75+): every ~15 min â€” serious, begins to reveal her own limits</li>
- *   <li><b>ENLIGHTENED</b> (clarity 100): every ~10 min â€” final truths, she is ancient and cold</li>
+ *   <li><b>TAINTED</b> (purity 25+): every ~45 min barely perceptible, like water far away</li>
+ *   <li><b>CLEANSING</b> (purity 50+): every ~30 min more audible, gentle encouragement</li>
+ *   <li><b>ABSOLVED</b> (purity 75+): every ~20 min clear, personal, slightly urgent</li>
+ *   <li><b>PURIFIED</b> (purity 100, pre-clarity): every ~15 min direct, guides toward the Rite</li>
+ *   <li><b>DISCERNING</b> (clarity 25+): every ~30 min relief, warmth, early revelations</li>
+ *   <li><b>VIGILANT</b> (clarity 50+): every ~20 min deeper, hints about the world's true state</li>
+ *   <li><b>RESOLUTE</b> (clarity 75+): every ~15 min serious, begins to reveal her own limits</li>
+ *   <li><b>ENLIGHTENED</b> (clarity 100): every ~10 min final truths, she is ancient and cold</li>
  * </ul>
  */
 @EventBusSubscriber(modid = Hemomancy.MOD_ID)
@@ -74,7 +74,7 @@ public class OurLadyWhisperEvents {
 				// Phase 2: clarity whispers
 				EnumClarityStage clarityStage = EnumClarityStage.byClarity(clarity);
 				if (clarityStage.getLevel() < EnumClarityStage.DISCERNING.getLevel()) {
-					// AWAKENED â€” clarity just unlocked, not yet discerning; no whispers yet
+					// AWAKENED clarity just unlocked, not yet discerning; no whispers yet
 					return;
 				}
 				useClarity = true;
@@ -90,7 +90,7 @@ public class OurLadyWhisperEvents {
 				// Phase 1: purity whispers
 				EnumPurityStage purityStage = EnumPurityStage.byPurity(purity);
 				if (purityStage.getLevel() < EnumPurityStage.TAINTED.getLevel()) {
-					// CORRUPTED â€” too early for whispers
+					// CORRUPTED too early for whispers
 					return;
 				}
 				useClarity = false;

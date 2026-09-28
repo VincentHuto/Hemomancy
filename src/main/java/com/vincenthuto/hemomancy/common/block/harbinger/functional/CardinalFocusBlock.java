@@ -1,21 +1,12 @@
 package com.vincenthuto.hemomancy.common.block.harbinger.functional;
 
-import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
-import com.vincenthuto.hemomancy.common.network.capa.harbinger.BloodCraftingKeyPressPacket;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
-import com.vincenthuto.hemomancy.common.recipe.CardinalRiteRecipe;
-import com.vincenthuto.hemomancy.common.rite.ActiveCardinalRite;
 import com.vincenthuto.hemomancy.common.rite.CardinalRiteSavedData;
-import com.vincenthuto.hemomancy.common.rite.TempleOathRules;
-import com.vincenthuto.hemomancy.common.rite.harbinger.CardinalRiteActivationRules;
-import com.vincenthuto.hemomancy.common.tile.harbinger.functional.MortalDisplayBlockEntity;
 import com.vincenthuto.hemomancy.common.tile.harbinger.functional.CardinalFocusBlockEntity;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.InteractionResult;
@@ -30,12 +21,9 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 
 /**
- * The reusable rite focus. Before the player has a Living Staff, a temple
- * focus accepts one recipe-authored item as a disposable rite medium.
+ * The reusable rite focus stores recipe-authored media for staff-led rites.
  */
 public class CardinalFocusBlock extends Block implements EntityBlock {
-	private static final int INITIATION_TICKS = 100;
-	private static final int TEMPLE_LINK_RADIUS = 20;
 
 	public CardinalFocusBlock(Properties properties) {
 		super(properties);
@@ -81,37 +69,7 @@ public class CardinalFocusBlock extends Block implements EntityBlock {
 		player.displayClientMessage(Component.literal("The item seats in the Cardinal Focus as a rite medium.")
 				.withStyle(ChatFormatting.DARK_RED), false);
 
-		ServerLevel server = (ServerLevel) level;
-		boolean claimedHere = hasClaimedTempleHeart(server, pos, player, focus);
-		boolean bloodActive = HemoCapabilityAccess.getBloodVolume(player)
-				.map(volume -> volume.isActive()).orElse(false);
-		if (bloodActive && !rites.hasActiveRite(player.getUUID())) {
-			BloodCraftingKeyPressPacket.tryStartCardinalRite(player, pos,
-					CardinalRiteActivationRules.Trigger.HEMATIC_MEDIUM_BLOCK_USE);
-			return ItemInteractionResult.SUCCESS;
-		}
-		CardinalRiteRecipe initiation = CardinalRiteRecipe.getRiteByLocation(level,
-				Hemomancy.rloc("cardinal_rite/sanguine_initiation"));
-		if (initiation == null || !initiation.getMedium().test(focus.getMediumForMatching())) {
-			player.displayClientMessage(Component.literal("This medium has no place in the temple's initiation rite.")
-					.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC), false);
-			return ItemInteractionResult.SUCCESS;
-		}
-		if (!TempleOathRules.canBeginInitiation(player.getHealth(), claimedHere,
-				bloodActive, rites.hasActiveRite(player.getUUID()))) {
-			player.displayClientMessage(Component.literal(initiationFailure(player, claimedHere,
-							bloodActive, rites.hasActiveRite(player.getUUID())))
-					.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC), false);
-			return ItemInteractionResult.SUCCESS;
-		}
 
-		player.hurt(server.damageSources().magic(), 4.0F);
-		rites.startRite(new ActiveCardinalRite(player.getUUID(), pos,
-				Hemomancy.rloc("cardinal_rite/sanguine_initiation"),
-				INITIATION_TICKS, 3));
-		player.displayClientMessage(Component.literal(
-				"The nugget catches in the focus. Stand within the temple ring and endure the calling.")
-				.withStyle(ChatFormatting.DARK_RED), false);
 		return ItemInteractionResult.SUCCESS;
 	}
 
@@ -140,28 +98,4 @@ public class CardinalFocusBlock extends Block implements EntityBlock {
 		super.onRemove(state, level, pos, newState, movedByPiston);
 	}
 
-	private static boolean hasClaimedTempleHeart(ServerLevel level, BlockPos focusPos, Player player,
-			CardinalFocusBlockEntity focus) {
-		if (focus != null && TempleOathRules.hasClaimedHeartFrom(player, focus.getTempleHermit())) return true;
-		if (focus != null && focus.getTempleDisplay() != null
-				&& level.getBlockEntity(focus.getTempleDisplay()) instanceof MortalDisplayBlockEntity display) {
-			return display.isClaimedBy(player.getUUID());
-		}
-		for (BlockPos candidate : BlockPos.betweenClosed(
-				focusPos.offset(-TEMPLE_LINK_RADIUS, -8, -TEMPLE_LINK_RADIUS),
-				focusPos.offset(TEMPLE_LINK_RADIUS, 8, TEMPLE_LINK_RADIUS))) {
-			if (level.getBlockEntity(candidate) instanceof MortalDisplayBlockEntity display
-					&& display.isClaimedBy(player.getUUID())) return true;
-		}
-		return false;
-	}
-
-	private static String initiationFailure(Player player, boolean claimedHere,
-			boolean bloodActive, boolean riteActive) {
-		if (!claimedHere) return "This focus answers only the heart claimed from its own temple.";
-		if (bloodActive) return "Your blood has already answered initiation.";
-		if (riteActive) return "Another cardinal rite already holds your attention.";
-		if (player.getHealth() < 6.0F) return "The focus requires six health and will take four.";
-		return "The focus remains still.";
-	}
 }

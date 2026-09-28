@@ -32,6 +32,9 @@ import net.minecraft.world.item.component.CustomData;
 import java.util.List;
 
 public class BloodVialItem extends Item {
+    @Override public Component getName(ItemStack stack) {
+        return com.vincenthuto.hemomancy.common.mission.alchemist.ConcentratedBlood.is(stack) ? Component.translatable("item.hemomancy.concentrated_blood") : super.getName(stack);
+    }
 
 	public static String TAG_ENTITY_TYPE = "entity_type";
 	public static String TAG_STATE = "state";
@@ -61,6 +64,11 @@ public class BloodVialItem extends Item {
 
     @Override
     public void appendHoverText(ItemStack stack, Item.TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
+        if (com.vincenthuto.hemomancy.common.mission.alchemist.ConcentratedBlood.is(stack)) {
+            tooltip.add(Component.translatable("hemomancy.initiation.blood_rest").withStyle(ChatFormatting.DARK_RED));
+            tooltip.add(Component.translatable("item.hemomancy.bloody_vial.inject"));
+            return;
+        }
         if (!BloodSampleData.isFilled(stack)) return;
         var identity = com.vincenthuto.hemomancy.common.succession.SuccessionSamples.identity(stack);
         if (!identity.isEmpty()) {
@@ -127,7 +135,10 @@ public class BloodVialItem extends Item {
             return InteractionResultHolder.pass(stack);
         }
         if (player.isSpectator() || !player.isAlive()) return InteractionResultHolder.fail(stack);
-        if (!com.vincenthuto.hemomancy.common.mission.alchemist.ClinicalBloodKnowledge.canInject(player)) {
+        boolean concentrated = com.vincenthuto.hemomancy.common.mission.alchemist.ConcentratedBlood.is(stack);
+        if (concentrated && player instanceof net.minecraft.server.level.ServerPlayer server
+                && !com.vincenthuto.hemomancy.common.mission.alchemist.ConcentratedBlood.canInject(server)) return InteractionResultHolder.fail(stack);
+        if (!concentrated && !com.vincenthuto.hemomancy.common.mission.alchemist.ClinicalBloodKnowledge.canInject(player)) {
             if (!level.isClientSide) player.displayClientMessage(Component.translatable("hemomancy.clinical.injection.locked"), true);
             return InteractionResultHolder.fail(stack);
         }
@@ -136,7 +147,7 @@ public class BloodVialItem extends Item {
             return InteractionResultHolder.fail(stack);
         }
         var data = BloodInjectionData.snapshot(level.isClientSide);
-        if (getEntityType(stack) == null || !data.resolve(BloodSampleData.profile(stack, level.isClientSide)).usable()) {
+        if (!concentrated && (getEntityType(stack) == null || !data.resolve(BloodSampleData.profile(stack, level.isClientSide)).usable())) {
             feedback(player, "no_response");
             return InteractionResultHolder.fail(stack);
         }
@@ -153,11 +164,23 @@ public class BloodVialItem extends Item {
         if (level.isClientSide || !(entity instanceof Player player) || player.isSpectator() || !player.isAlive()
                 || !player.isUsingItem() || player.getTicksUsingItem() < BloodInjectionRules.USE_TICKS
                 || player.getUseItem() != stack || player.getItemInHand(player.getUsedItemHand()) != stack
-                || stack.getCount() != 1 || !com.vincenthuto.hemomancy.common.mission.alchemist.ClinicalBloodKnowledge.canInject(player)) return stack;
+                || stack.getCount() != 1 || (!com.vincenthuto.hemomancy.common.mission.alchemist.ConcentratedBlood.is(stack)
+                && !com.vincenthuto.hemomancy.common.mission.alchemist.ClinicalBloodKnowledge.canInject(player))) return stack;
         if (player.hasEffect(EffectInit.transfusion_saturation)) {
             BloodVialInjectionAnimation.cancel(player);
             feedback(player, "saturated");
             return stack;
+        }
+        if (com.vincenthuto.hemomancy.common.mission.alchemist.ConcentratedBlood.is(stack)) {
+            if (!(player instanceof net.minecraft.server.level.ServerPlayer server)
+                    || !com.vincenthuto.hemomancy.common.mission.alchemist.ConcentratedBlood.inject(server)) {
+                BloodVialInjectionAnimation.cancel(player); return stack;
+            }
+            player.addEffect(new MobEffectInstance(EffectInit.transfusion_saturation, BloodInjectionRules.SATURATION_TICKS));
+            ItemStack empty = new ItemStack(ItemInit.bloody_vial.get());
+            BloodVialInjectionAnimation.finish(player, empty);
+            stack.shrink(1);
+            return empty;
         }
         var data = BloodInjectionData.snapshot(false);
         var profile = BloodSampleData.profile(stack, level.isClientSide);

@@ -100,10 +100,6 @@ public final class LiberEntryDefinitions {
 		register(ANNETTA_KNOWLES_GEODE, HemomancyDiscoverySource.MEMO);
 		register(IMMACULATUS_ANNETTA_GEODE, HemomancyDiscoverySource.MEMO);
 
-		registerRite("cardinal_rite/sanguine_initiation", HEMOMANCY);
-		registerRite("cardinal_rite/sanguine_initiation", THE_HARBINGERS);
-		registerRite("cardinal_rite/sanguine_initiation", FIRST_RITE_NOTES);
-		registerRite("cardinal_rite/votary_rite", DEGREES);
 		registerRite("cardinal_rite/initiate_rite", ORDER_BELIEFS);
 		registerRite("cardinal_rite/adept_rite", HISTORICAL_RECORD);
 		registerRite("cardinal_rite/illuminatus_rite", HERMITS);

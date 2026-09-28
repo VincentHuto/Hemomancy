@@ -469,8 +469,7 @@ public final class HemoJourneyChecks {
 		require(unmet, HemoCapabilityAccess.requireBloodVolume(player).isActive(), "Blood magic is not active.");
 		require(unmet, HarbingerAdvancementGranter.hasAdvancement(player,
 				Hemomancy.rloc("hemomancy/the_first_awakening")), "The First Awakening advancement is incomplete.");
-		require(unmet, HemoJourneyFixtures.fixtureLevel(player).getBlockState(origin.above(4))
-				.is(BlockInit.placed_blood_stained_stone.get()), "The Mortal Display has not transformed.");
+
 		require(unmet, HemoCapabilityAccess.requireInitiatoryDegree(player).getDegreeNumber() == 1,
 				"Initiatory degree is not exactly 1.");
 		require(unmet, HarbingerAdvancementGranter.hasAdvancement(player,

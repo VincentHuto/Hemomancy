@@ -4,8 +4,8 @@ import java.util.Set;
 
 /** The single defining chapter proof which certifies each public Harbinger rank. */
 public enum HarbingerChapterMilestone {
-	FIRST_BLOODCRAFT(2, "First Bloodcraft"),
-	FIRST_SEPARATION(3, "The First Separation"),
+	FIRST_BLOODCRAFT(-1, "First Bloodcraft"),
+	FIRST_SEPARATION(2, "The First Separation"),
 	WOVEN_VESSEL(4, "The Woven Vessel"),
 	VEIN_MASON(5, "The Vein-Mason"),
 	COVENANT_WRITTEN_IN_PLACE(6, "A Covenant Written in Place"),
@@ -28,6 +28,8 @@ public enum HarbingerChapterMilestone {
 	}
 
 	public static HarbingerChapterMilestone requiredForTargetDegree(int targetDegree) {
+        // The first staff rite retains its existing assignment proof.
+        if (targetDegree == 3) return FIRST_SEPARATION;
 		for (HarbingerChapterMilestone milestone : values()) {
 			if (milestone.targetDegree == targetDegree) {
 				return milestone;

@@ -119,6 +119,6 @@ public final class FirstSeparationAssignment {
 	public static List<ItemStack> rewardStacks() {
 		ItemStack rack = new ItemStack(ItemInit.vial_rack.get());
 		VialRackItem.ensureInitialized(rack);
-		return List.of(new ItemStack(ItemInit.living_syringe.get()), rack);
+		return List.of(new ItemStack(ItemInit.living_syringe.get()), rack, ConcentratedBlood.create());
 	}
 }

@@ -110,55 +110,26 @@ public final class HarbingerRepairGameTests {
     }
 
     @GameTest(templateNamespace = "minecraft", template = "bastion/mobs/empty", batch = "harbinger_repair")
-    public static void secondPlayerCanEarnInitiationAtAnAlreadySpentTemple(GameTestHelper helper) throws Exception {
-        var level = helper.getLevel();
+    public static void secondPlayerCannotClaimAnAlreadySpentTemple(GameTestHelper helper) {
         var first = player(helper); var second = player(helper);
-        var center = helper.absolutePos(new net.minecraft.core.BlockPos(0, 40, 0));
-        var displayPos = center.east(2);
-        var hermit = com.vincenthuto.hemomancy.common.init.EntityInit.harbinger_hermit.get().create(level);
-        hermit.moveTo(center.getX(), center.getY(), center.getZ() + 3);
-        level.addFreshEntity(hermit);
-        first.setPos(net.minecraft.world.phys.Vec3.atCenterOf(center.above()));
-        second.setPos(net.minecraft.world.phys.Vec3.atCenterOf(center.above()));
-        level.setBlock(center, com.vincenthuto.hemomancy.common.init.BlockInit.cardinal_focus.get().defaultBlockState(), 3);
-        level.setBlock(displayPos, com.vincenthuto.hemomancy.common.init.BlockInit.mortal_display.get().defaultBlockState(), 3);
-        var focus = (com.vincenthuto.hemomancy.common.tile.harbinger.functional.CardinalFocusBlockEntity) level.getBlockEntity(center);
-        var display = (com.vincenthuto.hemomancy.common.tile.harbinger.functional.MortalDisplayBlockEntity) level.getBlockEntity(displayPos);
-        focus.linkTempleDisplay(displayPos); display.linkHermit(hermit.getUUID());
-        var completion = com.vincenthuto.hemomancy.common.rite.harbinger.HarbingerCardinalRiteEvents.class.getDeclaredMethod(
-                "completeRite", net.minecraft.server.level.ServerLevel.class, ServerPlayer.class,
-                com.vincenthuto.hemomancy.common.rite.ActiveCardinalRite.class);
-        completion.setAccessible(true);
+        var pos = helper.absolutePos(new net.minecraft.core.BlockPos(0, 5, 0));
+        var level = helper.getLevel();
+        level.setBlockAndUpdate(pos, com.vincenthuto.hemomancy.common.init.BlockInit.mortal_display.get().defaultBlockState());
+        var display = (com.vincenthuto.hemomancy.common.tile.harbinger.functional.MortalDisplayBlockEntity) level.getBlockEntity(pos);
+        var hermit = java.util.UUID.randomUUID(); display.linkHermit(hermit);
+        HemoCapabilityAccess.requireInitiatoryDegree(first).setDegreeNumber(0);
+        HemoCapabilityAccess.requireInitiatoryDegree(second).setDegreeNumber(0);
+        HemoCapabilityAccess.getBloodVolume(first).orElseThrow().setActive(false);
+        HemoCapabilityAccess.getEquipment(first).orElseThrow().setStackInSlot(5, ItemStack.EMPTY);
+        com.vincenthuto.hemomancy.common.rite.TempleOathRules.bless(first, hermit);
+        com.vincenthuto.hemomancy.common.rite.TempleOathRules.bless(second, hermit);
+        var hit = new net.minecraft.world.phys.BlockHitResult(net.minecraft.world.phys.Vec3.atCenterOf(pos), net.minecraft.core.Direction.UP, pos, false);
         try {
-            net.neoforged.neoforge.common.NeoForge.EVENT_BUS.post(new com.vincenthuto.hemomancy.common.entity.npc.dialogue.DialogueEvent(first, "hermit_heart_offered", hermit.getId()));
-            level.getBlockState(displayPos).useWithoutItem(level, first, new net.minecraft.world.phys.BlockHitResult(
-                    net.minecraft.world.phys.Vec3.atCenterOf(displayPos), net.minecraft.core.Direction.UP, displayPos, false));
-            focus.insertMedium(first, new ItemStack(net.minecraft.world.item.Items.IRON_NUGGET));
-            var rite = new com.vincenthuto.hemomancy.common.rite.ActiveCardinalRite(first.getUUID(), center,
-                    Hemomancy.rloc("cardinal_rite/sanguine_initiation"), 1, 3);
-            helper.assertTrue((boolean) completion.invoke(null, level, first, rite), "First supplied initiation must complete");
-            helper.assertTrue(level.getBlockState(displayPos).is(com.vincenthuto.hemomancy.common.init.BlockInit.placed_blood_stained_stone.get()),
-                    "First initiation must leave the actual spent display marker");
-            for (int attempt = 0; attempt < 2; attempt++) {
-                net.neoforged.neoforge.common.NeoForge.EVENT_BUS.post(new com.vincenthuto.hemomancy.common.entity.npc.dialogue.DialogueEvent(second, "hermit_heart_offered", hermit.getId()));
-                helper.assertTrue(com.vincenthuto.hemomancy.common.rite.TempleOathRules.hasClaimedHeartFrom(second, hermit.getUUID()),
-                        "A second eligible player's real Hermit blessing must provide a personal route at the spent temple");
-                helper.assertTrue(HemoCapabilityAccess.getPlayerDegreeNumber(second) == 0
-                        && !HemoCapabilityAccess.getBloodVolume(second).orElseThrow().isActive(), "The entitlement must not grant initiation itself");
-            }
-            int charms = second.getInventory().countItem(ItemInit.charm_of_vascularium.get());
-            var equipment = HemoCapabilityAccess.getEquipment(second).orElseThrow();
-            for (int i = 0; i < equipment.getSlots(); i++) if (equipment.getStackInSlot(i).is(ItemInit.charm_of_vascularium.get())) charms += equipment.getStackInSlot(i).getCount();
-            helper.assertTrue(charms == 1, "Repeated blessing must not farm dormant charms");
-            var nugget = new ItemStack(net.minecraft.world.item.Items.IRON_NUGGET);
-            level.getBlockState(center).useItemOn(nugget, level, second, net.minecraft.world.InteractionHand.MAIN_HAND,
-                    new net.minecraft.world.phys.BlockHitResult(net.minecraft.world.phys.Vec3.atCenterOf(center), net.minecraft.core.Direction.UP, center, false));
-            helper.assertTrue(com.vincenthuto.hemomancy.common.rite.CardinalRiteSavedData.get(level).hasActiveRite(second.getUUID()),
-                    "Second player must enter the real paid initiation through the same focus");
-        } finally {
-            com.vincenthuto.hemomancy.common.rite.CardinalRiteSavedData.get(level).removeRite(second.getUUID());
-            first.discard(); second.discard(); hermit.discard();
-        }
+            level.getBlockState(pos).useWithoutItem(level, first, hit);
+            level.getBlockState(pos).useWithoutItem(level, second, hit);
+            helper.assertTrue(display.isClaimedBy(first.getUUID()), "Temple did not retain its first heir");
+            helper.assertTrue(!com.vincenthuto.hemomancy.common.rite.TempleOathRules.hasClaimedHeartFrom(second, hermit), "Second player claimed spent heart");
+        } finally { first.discard(); second.discard(); }
         helper.succeed();
     }
 
@@ -249,42 +220,36 @@ public final class HarbingerRepairGameTests {
         helper.succeed();
     }
 
-    @GameTest(templateNamespace = "minecraft", template = "bastion/mobs/empty", batch = "harbinger_repair")
+    @GameTest(templateNamespace = "minecraft", template = "bastion/mobs/empty", batch = "harbinger_repair", timeoutTicks = 240)
     public static void actualInitiationCompletionAwardsStarterBloodOnlyOnce(GameTestHelper helper) throws Exception {
         initiationSupply(helper, false);
     }
 
-    @GameTest(templateNamespace = "minecraft", template = "bastion/mobs/empty", batch = "harbinger_repair")
+    @GameTest(templateNamespace = "minecraft", template = "bastion/mobs/empty", batch = "harbinger_repair", timeoutTicks = 240)
     public static void fullInventoryInitiationDropsStarterBloodOnlyOnce(GameTestHelper helper) throws Exception {
         initiationSupply(helper, true);
     }
 
-    private static void initiationSupply(GameTestHelper helper, boolean fullInventory) throws Exception {
+    private static void initiationSupply(GameTestHelper helper, boolean fullInventory) {
         var player = player(helper);
+        HemoCapabilityAccess.requireInitiatoryDegree(player).setDegreeNumber(0);
+        HemoCapabilityAccess.getEquipment(player).orElseThrow().setStackInSlot(5, new ItemStack(ItemInit.charm_of_vascularium.get()));
+        com.vincenthuto.hemomancy.common.mission.vicar.EarlyInitiation.activate(player);
         if (fullInventory) for (int slot = 0; slot < 36; slot++) player.getInventory().setItem(slot, new ItemStack(net.minecraft.world.item.Items.BARRIER, 64));
-        var pos = helper.absolutePos(new net.minecraft.core.BlockPos(0, 30, 0));
-        player.setPos(net.minecraft.world.phys.Vec3.atCenterOf(pos.above()));
-        helper.getLevel().setBlock(pos, com.vincenthuto.hemomancy.common.init.BlockInit.cardinal_focus.get().defaultBlockState(), 3);
-        var focus = (com.vincenthuto.hemomancy.common.tile.harbinger.functional.CardinalFocusBlockEntity) helper.getLevel().getBlockEntity(pos);
-        var completion = com.vincenthuto.hemomancy.common.rite.harbinger.HarbingerCardinalRiteEvents.class.getDeclaredMethod(
-                "completeRite", net.minecraft.server.level.ServerLevel.class, ServerPlayer.class,
-                com.vincenthuto.hemomancy.common.rite.ActiveCardinalRite.class);
-        completion.setAccessible(true);
-        try {
-            for (int attempt = 0; attempt < 2; attempt++) {
-                focus.extractMedium();
-                focus.insertMedium(player, new ItemStack(net.minecraft.world.item.Items.IRON_NUGGET));
-                var rite = new com.vincenthuto.hemomancy.common.rite.ActiveCardinalRite(player.getUUID(), pos,
-                        Hemomancy.rloc("cardinal_rite/sanguine_initiation"), 1, 3);
-                helper.assertTrue((boolean) completion.invoke(null, helper.getLevel(), player, rite), "Supplied initiation completion must succeed");
-                int drops = helper.getLevel().getEntitiesOfClass(net.minecraft.world.entity.item.ItemEntity.class,
-                        new net.minecraft.world.phys.AABB(pos).inflate(2), e -> e.getItem().is(ItemInit.bloody_flask.get()))
-                        .stream().mapToInt(e -> e.getItem().getCount()).sum();
-                helper.assertTrue(player.getInventory().countItem(ItemInit.bloody_flask.get()) + drops == 4,
-                        "Actual initiation completion must deliver four starter flasks exactly once");
-            }
-        } finally { player.discard(); }
-        helper.succeed();
+        var pos = helper.absolutePos(new net.minecraft.core.BlockPos(0, 5, 0));
+        player.setPos(net.minecraft.world.phys.Vec3.atCenterOf(pos));
+        var vicar = com.vincenthuto.hemomancy.common.init.EntityInit.harbinger_vicar.get().create(helper.getLevel());
+        vicar.setPos(player.position().add(1, 0, 0)); vicar.setNoGravity(true); helper.getLevel().addFreshEntity(vicar);
+        helper.assertTrue(com.vincenthuto.hemomancy.common.mission.vicar.EarlyInitiation.begin(player, vicar), "Vicar ceremony rejected");
+        helper.runAfterDelay(202, () -> {
+            com.vincenthuto.hemomancy.common.mission.vicar.EarlyInitiation.tick(new net.neoforged.neoforge.event.tick.PlayerTickEvent.Post(player));
+            int drops = helper.getLevel().getEntitiesOfClass(net.minecraft.world.entity.item.ItemEntity.class,
+                    new net.minecraft.world.phys.AABB(pos).inflate(4), e -> e.getItem().is(ItemInit.bloody_flask.get()))
+                    .stream().mapToInt(e -> e.getItem().getCount()).sum();
+            helper.assertTrue(player.getInventory().countItem(ItemInit.bloody_flask.get()) + drops == 4, "Starter blood missing or duplicated");
+            helper.assertTrue(!com.vincenthuto.hemomancy.common.mission.vicar.EarlyInitiation.begin(player, vicar), "Ceremony repeated rewards");
+            player.discard(); vicar.discard(); helper.succeed();
+        });
     }
 
     @GameTest(templateNamespace = "minecraft", template = "bastion/mobs/empty", batch = "harbinger_repair")

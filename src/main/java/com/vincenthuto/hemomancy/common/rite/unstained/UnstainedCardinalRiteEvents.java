@@ -60,7 +60,7 @@ public class UnstainedCardinalRiteEvents {
 		PaleConsecrationSavedData.get(level).removeExpired(currentTick);
 		LetheCovenantSavedData.get(level).removeExpired(currentTick);
 	}
-	// â”€â”€ Unstained rite paths â”€â”€
+	//  Unstained rite paths 
 	private static final String LETHEAN_BAPTISM_RITE = "cardinal_rite/lethean_baptism";
 	private static final String SILVER_VEIL_RITE = "cardinal_rite/silver_veil";
 	private static final String CLARITY_ASCENSION_RITE = "cardinal_rite/clarity_ascension";
@@ -260,9 +260,9 @@ public class UnstainedCardinalRiteEvents {
 				"The bloodline is gone. The infection's collapse taught your own infection how to release you.")
 				.withStyle(ChatFormatting.AQUA, ChatFormatting.ITALIC), false);
 	}
-	// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+	// 
 	// Unstained Rite Completion Handlers
-	// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+	// 
 
 	/**
 	 * Rite of Lethean Baptism (Minor, 0 blood):
@@ -348,7 +348,7 @@ public class UnstainedCardinalRiteEvents {
 			}
 
 			caster.displayClientMessage(
-					Component.literal("The veil parts. True sight is yours â€” clarity has been unlocked.")
+					Component.literal("The veil parts. True sight is yours clarity has been unlocked.")
 							.withStyle(ChatFormatting.AQUA, ChatFormatting.BOLD),
 					false);
 			caster.displayClientMessage(
@@ -525,9 +525,9 @@ public class UnstainedCardinalRiteEvents {
 				100, LETHEAN_JUDGMENT_RADIUS * 0.5, 2.0, LETHEAN_JUDGMENT_RADIUS * 0.5, 0.01);
 	}
 
-	// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-	//  SILVER DAWN â€” Persistent Cleansed Zone
-	// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+	//
+	//  SILVER DAWN Persistent Cleansed Zone
+	//
 
 	/** Radius of the Silver Dawn cleansing zone in blocks. */
 	private static final int SILVER_DAWN_RADIUS = 8;
@@ -539,7 +539,7 @@ public class UnstainedCardinalRiteEvents {
 	/**
 	 * Lazy block-conversion map for Silver Dawn / Consecration.
 	 * Maps blood-faction blocks to their cleansed equivalents.
-	 * Unstained rites have zero blood cost by design â€” they draw
+	 * Unstained rites have zero blood cost by design they draw
 	 * from purity and clarity, not from the hemomancer's reservoir.
 	 */
 	private static Map<Block, Block> SILVER_DAWN_CONVERSIONS;
@@ -616,9 +616,9 @@ public class UnstainedCardinalRiteEvents {
 				80, SILVER_DAWN_RADIUS * 0.4, 1.5, SILVER_DAWN_RADIUS * 0.4, 0.01);
 	}
 
-	// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-	//  STILL WATERS â€” 5-minute zone of reduced magic damage
-	// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+	//
+	//  STILL WATERS 5-minute zone of reduced magic damage
+	//
 
 	/** Radius of the Still Waters zone in blocks. */
 	private static final int STILL_WATERS_RADIUS = 16;
@@ -653,9 +653,9 @@ public class UnstainedCardinalRiteEvents {
 				60, STILL_WATERS_RADIUS * 0.3, 1.5, STILL_WATERS_RADIUS * 0.3, 0.005);
 	}
 
-	// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-	//  PALE CONSECRATION â€” 10-minute zone of hostile mob denial
-	// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+	//
+	//  PALE CONSECRATION 10-minute zone of hostile mob denial
+	//
 
 	/** Radius of the Pale Consecration zone in blocks. */
 	private static final int PALE_CONSECRATION_RADIUS = 8;
@@ -693,9 +693,9 @@ public class UnstainedCardinalRiteEvents {
 				40, PALE_CONSECRATION_RADIUS * 0.3, 0.5, PALE_CONSECRATION_RADIUS * 0.3, 0.005);
 	}
 
-	// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-	//  SILTHMERE'S REMEMBRANCE â€” one-time burst purity + Verdigris Aura
-	// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+	//
+	//  SILTHMERE'S REMEMBRANCE one-time burst purity + Verdigris Aura
+	//
 
 	/** Radius within which Unstained players receive the Remembrance burst. */
 	private static final int REMEMBRANCE_RADIUS = 32;
@@ -756,9 +756,9 @@ public class UnstainedCardinalRiteEvents {
 				120, REMEMBRANCE_RADIUS * 0.3, 3.0, REMEMBRANCE_RADIUS * 0.3, 0.02);
 	}
 
-	// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-	//  LETHE COVENANT â€” grand 30-minute Unstained domain
-	// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+	//
+	//  LETHE COVENANT grand 30-minute Unstained domain
+	//
 
 	/** Chunk radius of the Lethe Covenant domain. */
 	private static final int LETHE_COVENANT_CHUNK_RADIUS = 5;
@@ -806,7 +806,7 @@ public class UnstainedCardinalRiteEvents {
 		HemoCapabilityAccess.getUnstainedProgress(caster).ifPresent(unstained -> {
 			if (!unstained.hasBegunPurification() || unstained.getPurity() < 50f) {
 				caster.displayClientMessage(
-						Component.literal("The tide will not answer â€” your purity is insufficient.")
+						Component.literal("The tide will not answer your purity is insufficient.")
 								.withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC),
 						false);
 				return;
@@ -836,7 +836,7 @@ public class UnstainedCardinalRiteEvents {
 					caster.getX(), caster.getY() + 1.0, caster.getZ(),
 					120, 7.0, 5.0, 7.0, 0.04);
 			caster.displayClientMessage(
-					Component.literal("The Lethean Tide rises â€” the Blood Moon is washed from the sky.")
+					Component.literal("The Lethean Tide rises the Blood Moon is washed from the sky.")
 							.withStyle(ChatFormatting.AQUA, ChatFormatting.ITALIC),
 					false);
 		});

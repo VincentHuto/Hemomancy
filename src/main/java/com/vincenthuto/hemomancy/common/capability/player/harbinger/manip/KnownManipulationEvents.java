@@ -173,7 +173,7 @@ public class KnownManipulationEvents {
 		// 2. Tendency shift toward the manip's tendency
 		BloodTendencyEvents.shiftTendencyFromManipUse(player, manip.getTend(), manip.getSecondaryTend());
 
-		// 3. Skill: Vital Link â€” chance to heal when using a manipulation
+		// 3. Skill: Vital Link chance to heal when using a manipulation
 		double vitalLinkChance = SkillPointHelper.getVitalLinkChance(player);
 		if (vitalLinkChance > 0 && player.level().random.nextDouble() < vitalLinkChance) {
 			player.heal(2.0f); // Heal 2.0 health (1 heart) on successful proc

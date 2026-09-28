@@ -24,7 +24,8 @@ public final class ChamberVisitEvents {
 	@SubscribeEvent
 	public static void onWake(PlayerWakeUpEvent event) {
 		if (event.getEntity() instanceof ServerPlayer player) {
-			ChamberVisitService.onCompletedSleep(player, !event.wakeImmediately());
+			if (!com.vincenthuto.hemomancy.common.mission.alchemist.ConcentratedBlood.completeSleep(player, !event.wakeImmediately()))
+                ChamberVisitService.onCompletedSleep(player, !event.wakeImmediately());
 		}
 	}
 

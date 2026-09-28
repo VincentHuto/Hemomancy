@@ -23,7 +23,7 @@ public class StillWatersEvents {
 	private static final float MAGIC_DAMAGE_REDUCTION = 0.30f;
 
 
-	// â”€â”€ Hurt event: reduce magic damage inside Still Waters zones â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+	//  Hurt event: reduce magic damage inside Still Waters zones 
 
 	@SubscribeEvent
 	public static void onLivingHurt(LivingDamageEvent.Pre event) {

@@ -23,14 +23,14 @@ public class UnstainedMilestoneHandler {
 
 	/** How often to refresh the passive effects (every 5 seconds). */
 	private static final int EFFECT_REFRESH_INTERVAL = 100;
-	/** Duration of auto-applied effects (6 seconds â€” slightly longer than refresh). */
+	/** Duration of auto-applied effects (6 seconds slightly longer than refresh). */
 	private static final int AUTO_EFFECT_DURATION = 130;
 	/** Extra damage dealt to hemomancy mobs at ABSOLVED+ stage. */
 	private static final float ABSOLVED_BONUS_DAMAGE = 2.0f;
 
-	// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+	//
 	//  Passive Effect Application (Tick-Based)
-	// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+	//
 
 	/**
 	 * Periodically applies Silver Ward and Verdigris Aura effects based on
@@ -52,15 +52,15 @@ public class UnstainedMilestoneHandler {
 					? EnumClarityStage.byClarity(progress.getClarity())
 					: EnumClarityStage.AWAKENED;
 
-			// â”€â”€ Grant purity stage advancements â”€â”€
+			//  Grant purity stage advancements 
 			checkPurityStageAdvancements(serverPlayer, purityStage);
 
-			// â”€â”€ Grant clarity stage advancements â”€â”€
+			//  Grant clarity stage advancements 
 			if (progress.hasClarityUnlocked()) {
 				checkClarityStageAdvancements(serverPlayer, clarityStage);
 			}
 
-			// â”€â”€ Verdigris Aura: unlocked at TAINTED (25+), amplifier scales with purity stage â”€â”€
+			//  Verdigris Aura: unlocked at TAINTED (25+), amplifier scales with purity stage 
 			if (progress.isVerdigrisAuraEnabled() && purityStage.getLevel() >= EnumPurityStage.TAINTED.getLevel()) {
 				int auraAmplifier = purityStage.getLevel() - 1; // 0 at TAINTED, 1 at CLEANSING, 2 at ABSOLVED, 3 at PURIFIED
 				MobEffectInstance existing = serverPlayer.getEffect(EffectInit.verdigris_aura);
@@ -70,7 +70,7 @@ public class UnstainedMilestoneHandler {
 				}
 			}
 
-			// â”€â”€ Silver Ward: unlocked at DISCERNING clarity (25+), amplifier scales with clarity stage â”€â”€
+			//  Silver Ward: unlocked at DISCERNING clarity (25+), amplifier scales with clarity stage 
 			if (progress.isSilverWardEnabled() && progress.hasClarityUnlocked()
 					&& clarityStage.getLevel() >= EnumClarityStage.DISCERNING.getLevel()) {
 				int wardAmplifier = clarityStage.getLevel() - 1; // 0 at DISCERNING, 1 at VIGILANT, 2 at RESOLUTE, 3 at ENLIGHTENED
@@ -81,7 +81,7 @@ public class UnstainedMilestoneHandler {
 				}
 			}
 
-			// â”€â”€ Vigilant+ clarity: apply Glowing to nearby hemomancy mobs â”€â”€
+			//  Vigilant+ clarity: apply Glowing to nearby hemomancy mobs 
 			if (progress.hasClarityUnlocked() && clarityStage.getLevel() >= EnumClarityStage.VIGILANT.getLevel()) {
 				double detectionRadius = 16.0 + clarityStage.getLevel() * 4.0;
 				serverPlayer.level().getEntitiesOfClass(LivingEntity.class,
@@ -95,9 +95,9 @@ public class UnstainedMilestoneHandler {
 		});
 	}
 
-	// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-	//  Advancement Granting â€” Purity & Clarity Stage Thresholds
-	// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+	//
+	//  Advancement Granting Purity & Clarity Stage Thresholds
+	//
 
 	/**
 	 * Grants purity-stage advancements for any stage the player has already
@@ -139,9 +139,9 @@ public class UnstainedMilestoneHandler {
 		}
 	}
 
-	// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-	//  Damage Modification â€” Silver Ward Reduction & Absolved Bonus
-	// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+	//
+	//  Damage Modification Silver Ward Reduction & Absolved Bonus
+	//
 
 	/**
 	 * Reduces incoming damage from hemomancy-tagged sources when the player

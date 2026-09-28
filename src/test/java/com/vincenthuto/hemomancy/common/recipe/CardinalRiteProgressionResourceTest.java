@@ -21,7 +21,7 @@ final class CardinalRiteProgressionResourceTest {
 
 	@Test
 	void promotionRitesUseTheAgreedFormsAndOfferingsWithoutMaterialRewards() throws IOException {
-		assertPromotion("votary_rite", 1, "minor", List.of());
+		assertFalse(Files.exists(ROOT.resolve("votary_rite.json")));
 		assertPromotion("initiate_rite", 2, "lesser", List.of("hemomancy:hematic_iron_powder"));
 		assertPromotion("sanguine_brotherhood", 3, "lesser", List.of("hemomancy:hematic_iron_powder"));
 		assertPromotion("illuminatus_rite", 4, "greater",
@@ -74,7 +74,7 @@ final class CardinalRiteProgressionResourceTest {
 	void riteRewardsHaveCheckedWorldDropFallbacks() throws IOException {
 		String completion = Files.readString(Path.of(
 				"src/main/java/com/vincenthuto/hemomancy/common/rite/harbinger/HarbingerCardinalRiteEvents.java"));
-		assertTrue(completion.contains("giveOrDropAtRite(sLevel, caster, center, conduit)"));
+		assertTrue(completion.contains("giveOrDropAtRite(sLevel, caster, center, blob)"));
 		assertTrue(completion.contains("if (!sLevel.addFreshEntity(resultDrop)) caster.drop(resultStack, false);"));
 		assertTrue(completion.contains("if (!level.addFreshEntity(drop) && !player.addItem(spine)) player.drop(spine, false);"));
 	}

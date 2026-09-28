@@ -1,6 +1,7 @@
 {
   "type" : "hemomancy:harbinger_outpost",
   "start_pool" : "hemomancy:harbinger_outpost/start_pool",
+  "start_jigsaw_name" : "hemomancy:harbinger_outpost/anchor",
   "size" : 2,
   "max_distance_from_center" : 80,
   "biomes" : "#hemomancy:has_structure/harbinger_outpost",

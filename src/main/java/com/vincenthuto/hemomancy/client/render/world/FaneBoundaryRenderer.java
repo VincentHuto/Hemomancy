@@ -6,6 +6,7 @@ import com.mojang.blaze3d.shaders.Uniform;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;
 import com.vincenthuto.hemomancy.client.data.FaneBoundaryClientData;
+import com.vincenthuto.hemomancy.client.render.CachedMeshModelView;
 import com.vincenthuto.hemomancy.client.render.HemoRenderTypes;
 import com.vincenthuto.hemomancy.common.event.worldevent.FaneBoundaryRelation;
 import com.vincenthuto.hemomancy.common.event.worldevent.FaneBoundaryVisibilityRules;
@@ -46,10 +47,18 @@ public final class FaneBoundaryRenderer {
 	private static final float FADE_STEP = 0.08F;
 
 	private static TextureTarget frameCopyTarget;
+	private static VertexBuffer memberDomeMesh;
 	private static float insideAlpha;
 	private static FaneBoundaryRelation insideRelation = FaneBoundaryRelation.MEMBER;
 
 	private FaneBoundaryRenderer() {
+	}
+
+	public static void clearCaches() {
+		if (memberDomeMesh != null) {
+			memberDomeMesh.close();
+			memberDomeMesh = null;
+		}
 	}
 
 	public static void renderWorldMask(PoseStack poseStack, float partialTick) {
@@ -305,27 +314,21 @@ public final class FaneBoundaryRenderer {
 		}
 	}
 
-	private static void drawDome(PoseStack poseStack, Vec3 cam, BlockPos center, float radius, float alpha) {
-		double cx = center.getX() + 0.5D;
-		double cy = center.getY() + 0.15D;
-		double cz = center.getZ() + 0.5D;
+	private static VertexBuffer memberDomeMesh() {
+		if (memberDomeMesh != null) {
+			return memberDomeMesh;
+		}
 
-		poseStack.pushPose();
-		poseStack.translate(cx - cam.x, cy - cam.y, cz - cam.z);
-		Matrix4f mat = poseStack.last().pose();
 		BufferBuilder buffer = Tesselator.getInstance().begin(VertexFormat.Mode.QUADS,
 				DefaultVertexFormat.POSITION_COLOR);
-
+		Matrix4f identity = new Matrix4f();
 		for (int ring = 0; ring < DOME_RINGS; ring++) {
-			double v0 = (double) ring / DOME_RINGS;
-			double v1 = (double) (ring + 1) / DOME_RINGS;
-			double theta0 = v0 * SPHERE_LATITUDE_END;
-			double theta1 = v1 * SPHERE_LATITUDE_END;
-			float y0 = (float) (Math.cos(theta0) * radius);
-			float y1 = (float) (Math.cos(theta1) * radius);
-			float r0 = (float) (Math.sin(theta0) * radius);
-			float r1 = (float) (Math.sin(theta1) * radius);
-			float shellAlpha = alpha * MEMBER_SHELL_ALPHA_SCALE;
+			double theta0 = (double) ring / DOME_RINGS * SPHERE_LATITUDE_END;
+			double theta1 = (double) (ring + 1) / DOME_RINGS * SPHERE_LATITUDE_END;
+			float y0 = (float) Math.cos(theta0);
+			float y1 = (float) Math.cos(theta1);
+			float r0 = (float) Math.sin(theta0);
+			float r1 = (float) Math.sin(theta1);
 
 			for (int seg = 0; seg < DOME_SEGMENTS; seg++) {
 				double a0 = (Math.PI * 2.0D / DOME_SEGMENTS) * seg;
@@ -339,14 +342,41 @@ public final class FaneBoundaryRenderer {
 				float x11 = (float) Math.cos(a1) * r1;
 				float z11 = (float) Math.sin(a1) * r1;
 
-				emit(buffer, mat, x00, y0, z00, 0.95F, 0.22F, 0.13F, shellAlpha);
-				emit(buffer, mat, x10, y1, z10, 0.95F, 0.22F, 0.13F, shellAlpha);
-				emit(buffer, mat, x11, y1, z11, 0.95F, 0.22F, 0.13F, shellAlpha);
-				emit(buffer, mat, x01, y0, z01, 0.95F, 0.22F, 0.13F, shellAlpha);
+				emit(buffer, identity, x00, y0, z00, 0.95F, 0.22F, 0.13F, 1.0F);
+				emit(buffer, identity, x10, y1, z10, 0.95F, 0.22F, 0.13F, 1.0F);
+				emit(buffer, identity, x11, y1, z11, 0.95F, 0.22F, 0.13F, 1.0F);
+				emit(buffer, identity, x01, y0, z01, 0.95F, 0.22F, 0.13F, 1.0F);
 			}
 		}
 
-		BufferUploader.drawWithShader(buffer.buildOrThrow());
+		VertexBuffer mesh = new VertexBuffer(VertexBuffer.Usage.STATIC);
+		mesh.bind();
+		mesh.upload(buffer.buildOrThrow());
+		VertexBuffer.unbind();
+		memberDomeMesh = mesh;
+		return mesh;
+	}
+
+	private static void drawDome(PoseStack poseStack, Vec3 cam, BlockPos center, float radius, float alpha) {
+		double cx = center.getX() + 0.5D;
+		double cy = center.getY() + 0.15D;
+		double cz = center.getZ() + 0.5D;
+
+		poseStack.pushPose();
+		poseStack.translate(cx - cam.x, cy - cam.y, cz - cam.z);
+		poseStack.scale(radius, radius, radius);
+		float[] shaderColor = RenderSystem.getShaderColor();
+		float red = shaderColor[0];
+		float green = shaderColor[1];
+		float blue = shaderColor[2];
+		float previousAlpha = shaderColor[3];
+		RenderSystem.setShaderColor(red, green, blue, previousAlpha * alpha * MEMBER_SHELL_ALPHA_SCALE);
+		VertexBuffer mesh = memberDomeMesh();
+		mesh.bind();
+		mesh.drawWithShader(CachedMeshModelView.compose(RenderSystem.getModelViewMatrix(), poseStack.last().pose()),
+				RenderSystem.getProjectionMatrix(), GameRenderer.getPositionColorShader());
+		VertexBuffer.unbind();
+		RenderSystem.setShaderColor(red, green, blue, previousAlpha);
 		poseStack.popPose();
 	}
 

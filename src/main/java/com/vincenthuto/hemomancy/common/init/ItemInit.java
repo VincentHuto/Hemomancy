@@ -534,7 +534,7 @@ public class ItemInit {
             () -> new BloodMemoryItem(new Item.Properties(), ManipulationInit.hematic_rebuke));
     public static final DeferredHolder<Item, Item> memory_hematic_impressment = BASEITEMS.register("memory_hematic_impressment",
             () -> new BloodMemoryItem(new Item.Properties(), ManipulationInit.hematic_impressment));
-    // â"€â"€ Expanded tendency memories â"€â"€
+    //  Expanded tendency memories 
     public static final DeferredHolder<Item, Item> memory_cryogenic_pulse = BASEITEMS.register("memory_cryogenic_pulse",
             () -> new BloodMemoryItem(new Item.Properties(), ManipulationInit.cryogenic_pulse));
     public static final DeferredHolder<Item, Item> memory_glacial_bastion = BASEITEMS.register("memory_glacial_bastion",

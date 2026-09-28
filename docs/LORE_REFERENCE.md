@@ -141,7 +141,7 @@ The rarest and most extreme endpoint — performing small fungal rituals that st
 
 Blood manipulations — the spells and powers of a Hemomancer — are not truly learned. They are **remembered**.
 
-Everyone carries dormant **blood memories** deep in their biology, inherited from the infection's long history in the world. These memories are potential, not active — they cannot be accessed without the infection fully taking hold. Once awakened through the Mortal Display oath followed by Sanguine Initiation, these memories can be drawn out, shaped, and activated through a process called **Memory Weaving**.
+Everyone carries dormant **blood memories** deep in their biology, inherited from the infection's long history in the world. These memories are potential, not active — they cannot be accessed without the infection fully taking hold. Once awakened through the Mortal Display and formally received by the Vicar, these memories can be drawn out, shaped, and activated through a process called **Memory Weaving**.
 
 Memory Weaving is not ordinary crafting. A blank Hematic Memory is placed into the Somatic Loom as a vessel, while catalyst items act like witnesses, anchors, or symbolic hooks that tell the infection which dormant instruction to expose. Enzymes are no longer just present or absent; the loom stores them as internal, unrecoverable dye-like reservoirs keyed to the eight tendencies. When the correct pattern is present, the player must project blood into the loom before the memory can be physically wrestled into form.
 
@@ -188,7 +188,7 @@ The Mortal Display is a ritual pedestal upon which the Hermit **removes their ow
 
 When a worthy person (the player) arrives and claims the heart from the Display, they receive:
 - A **living adornment** — a necklace/charm attuned to the Hermit's blood
-- The Hermit's final words and a **Rite Blueprint** for the Sanguine Initiation
+- The Hermit's final words and an **outpost waybill** directing them to the Vicar
 - The activation of their own latent blood magic
 
 The Hermit then dies — the heart, now given, can no longer sustain them. His last recorded words reflect the tradition:
@@ -257,7 +257,7 @@ When an advanced Harbinger asks an outpost member to pledge blood into their cov
 Cardinal Rites are not ordinary multiblock recipes enlarged for spectacle. They are the formal grammar by which the Hematic Order persuades an infection, a place, and a practitioner to behave as one body.
 
 - The **ritual floor** is the rite's grammar: a reusable diagram that declares the scale and family of the work.
-- The **Cardinal Focus** is its temporary heart. The seated medium identifies what the rite is acting through or upon; preserving a medium means the rite changes its relationship to the bearer without consuming the object itself. Living Staffs are the common degree-rite medium, but specialized rites may preserve another relationship-bearing object such as an attuned Crossbar, and the temple's simple Sanguine Initiation seats an iron nugget.
+- The **Cardinal Focus** is its temporary heart. The seated medium identifies what the rite is acting through or upon; preserving a medium means the rite changes its relationship to the bearer without consuming the object itself. Living Staffs are the common degree-rite medium, but specialized rites may preserve another relationship-bearing object such as an attuned Crossbar; early initiation instead belongs to the Hermit, Vicar, and Alchemist.
 - **Lit braziers** are deliberate mouths around the body of the rite. Their offerings are absorbed only when the manifested work has successfully begun, so a failed attempt before manifestation is not mistaken for a completed sacrifice.
 - When a **Living Staff** is the declared medium, it is planted rather than merely waved. For the duration of the rite it becomes a vascular axis, holding the practitioner's claim, the emerging daemon, and the route by which offerings and power return to the caster.
 - **Anchors, sockets, sigils, boundaries, fog, and ordeal waves** are expressions of the rite becoming anatomically coherent. Breaking the authored station tears that temporary body apart; cancellation is an intentional reabsorption, not a clean refund.
@@ -293,7 +293,9 @@ Most Harbingers — most outposts, most individual groups — only ever reach **
 Each degree carries a **lore theme** — the historical/metaphysical institution the player is entering — and a **gameplay theme** — the primary system or tool that opens at that rank. The escalation traces a straight line: from "blood as a personal resource" at Neophyte to "blood as a cosmic reproductive strategy" at Apotheos.
 
 #### NEOPHYTE 1 — *of the Crimson Veil*
-**Lore:** The Crimson Veil is the membrane between ordinary life and the world the Order inhabits. The player has just torn through it. The Hermit greets them as a first tentative step. The Order is not a secret society to them yet — it is a rumour. The Rite of Sanguine Initiation *is* the degree-granting event: performing the ritual is the first step.
+**Lore:** The Crimson Veil is the membrane between ordinary life and the world the Order inhabits. The player has just torn through it. The Hermit greets them as a first tentative step. The Order is not a secret society to them yet — it is a rumour. The Vicar's formal reception grants Degree 1. Before it, the unsettled charm can still be removed: an undedicated Harbinger is no use to the Order, and may be worse than an accidental one. Commitment surrounds the newcomer in black and crimson tendrils while the Vicar projects blood from their hand. Only afterward does the Vicar entrust them with a Sanguine Conduit. A Vicar who has founded their own bloodline may perform this reception for another player through Blood Projection. Their blood settles the newcomer's charm and receives them into the founder's bloodline.
+
+The Alchemist's First Separation then earns Concentrated Blood. Injected directly from its vial, it needs a chance to settle during sleep; the player wakes at Degree 2. Practical blood work precedes the later teaching of the Living Staff and Cardinal Rites.
 
 **Gameplay:** Blood as a living resource. The Vicar teaches Blood Absorption and Blood Projection at this stage: fill the vessel, then spend stored blood into blood-structure recipes. The first Neophyte assignment asks the player to carry 5000 ml, project blood into a Liber Sanguinum, and harden a Hematic Iron Block. The **Vial Centrifuge** is introduced as the first blood-processing station, separating sampled vials into tendency enzymes and storing 250 mL of blood per completed spin. First Humilis-rank blood manipulations become unlockable. Core loop: fill blood, spend blood, craft with projection, cast manipulations.
 

@@ -228,17 +228,17 @@ public final class HarbingerPilotGameTests {
 			Class<?> rules = Class.forName("com.vincenthuto.hemomancy.common.rite.CardinalRiteMediumRules");
 			var matches = rules.getMethod("matches", Ingredient.class, ItemStack.class);
 			var votary = com.vincenthuto.hemomancy.common.recipe.CardinalRiteRecipe.getRiteByLocation(
-					helper.getLevel(), Hemomancy.rloc("cardinal_rite/votary_rite"));
+					helper.getLevel(), Hemomancy.rloc("cardinal_rite/bloom_of_qliphoth"));
 			var initiate = com.vincenthuto.hemomancy.common.recipe.CardinalRiteRecipe.getRiteByLocation(
 					helper.getLevel(), Hemomancy.rloc("cardinal_rite/initiate_rite"));
 			helper.assertTrue(votary != null && initiate != null, "Medium-matching fixture recipes must load");
-			helper.assertTrue((boolean) matches.invoke(null, votary.getMedium(), new ItemStack(Items.IRON_NUGGET)),
-					"The authored iron medium must match");
+			helper.assertTrue((boolean) matches.invoke(null, votary.getMedium(), new ItemStack(ItemInit.qliphoth_seed.get())),
+					"The authored seed medium must match");
 			helper.assertTrue(!(boolean) matches.invoke(null, votary.getMedium(), new ItemStack(Items.GOLD_NUGGET)),
 					"A different seated item must not match");
 			helper.assertTrue((boolean) matches.invoke(null, initiate.getMedium(), ItemStack.EMPTY),
 					"A recipe without a medium must match an empty Focus");
-			helper.assertTrue(!(boolean) matches.invoke(null, initiate.getMedium(), new ItemStack(Items.IRON_NUGGET)),
+			helper.assertTrue(!(boolean) matches.invoke(null, initiate.getMedium(), new ItemStack(ItemInit.qliphoth_seed.get())),
 					"A recipe without a medium must reject an occupied Focus");
 			helper.succeed();
 		} catch (ReflectiveOperationException exception) {
@@ -255,12 +255,12 @@ public final class HarbingerPilotGameTests {
 		ServerPlayer player = detachedTestPlayer(helper);
 		try {
 			var recipe = com.vincenthuto.hemomancy.common.recipe.CardinalRiteRecipe.getRiteByLocation(
-					helper.getLevel(), Hemomancy.rloc("cardinal_rite/votary_rite"));
+					helper.getLevel(), Hemomancy.rloc("cardinal_rite/bloom_of_qliphoth"));
 			var consume = Class.forName("com.vincenthuto.hemomancy.common.rite.CardinalRiteMediumRules")
 					.getMethod("consume",
 							com.vincenthuto.hemomancy.common.tile.harbinger.functional.CardinalFocusBlockEntity.class,
 							Ingredient.class);
-			helper.assertTrue(recipe != null, "Votary medium fixture recipe must load");
+			helper.assertTrue(recipe != null, "Bloom medium fixture recipe must load");
 
 			focus.insertMedium(player, new ItemStack(Items.GOLD_NUGGET));
 			helper.assertTrue(!(boolean) consume.invoke(null, focus, recipe.getMedium()),
@@ -269,7 +269,7 @@ public final class HarbingerPilotGameTests {
 					"A failed consumption must leave the seated medium intact");
 
 			focus.extractMedium();
-			focus.insertMedium(player, new ItemStack(Items.IRON_NUGGET));
+			focus.insertMedium(player, new ItemStack(ItemInit.qliphoth_seed.get()));
 			helper.assertTrue((boolean) consume.invoke(null, focus, recipe.getMedium()),
 					"The matching medium must be consumed");
 			helper.assertTrue(!focus.hasMedium(), "Successful consumption must empty the Focus");

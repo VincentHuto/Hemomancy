@@ -48,6 +48,21 @@ repo/
 /tools/dialogue_editor/node_modules/
 /tools/dialogue_editor/dist/
 /tools/*
+!/tools/art_source/
+/tools/art_source/*
+!/tools/art_source/degree_hud_concept.png
+!/tools/art_source/generate_degree_hud.py
+!/tools/art_source/pomes_source.png
+!/tools/art_source/widen_vessel_fill_top.py
+!/tools/art_source/generate_apotheos_fill.py
+!/tools/art_source/generate_gourd_hud.py
+!/tools/art_source/gourd_hud_concept.png
+!/tools/art_source/curved_horn_hud_concept.png
+!/tools/art_source/hemorath_rib_hud_concept.png
+!/tools/art_source/generate_special_gourd_hud.py
+!/tools/worldgen/
+/tools/worldgen/*
+!/tools/worldgen/generate_harbinger_outpost.py
 !/tools/audio/
 /tools/audio/*
 !/tools/dialogue_editor/
@@ -83,3 +98,4 @@ repo/
 /output/
 /
 /docs/consolidation/
+/tools/worldgen/generate_harbinger_outpost.py

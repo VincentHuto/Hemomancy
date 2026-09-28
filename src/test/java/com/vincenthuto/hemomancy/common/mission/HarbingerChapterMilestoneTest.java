@@ -11,7 +11,7 @@ class HarbingerChapterMilestoneTest {
 
 	@Test
 	void eachPublicRankAfterNeophyteRequiresExactlyThePreviousDegreesDefiningChapter() {
-		assertEquals(HarbingerChapterMilestone.FIRST_BLOODCRAFT,
+		assertEquals(HarbingerChapterMilestone.FIRST_SEPARATION,
 				HarbingerChapterMilestone.requiredForTargetDegree(2));
 		assertEquals(HarbingerChapterMilestone.FIRST_SEPARATION,
 				HarbingerChapterMilestone.requiredForTargetDegree(3));
@@ -30,8 +30,10 @@ class HarbingerChapterMilestoneTest {
 		EnumSet<HarbingerChapterMilestone> completed =
 				EnumSet.of(HarbingerChapterMilestone.FIRST_BLOODCRAFT);
 
-		assertTrue(HarbingerChapterMilestone.isRankUnlocked(2, completed));
-		assertFalse(HarbingerChapterMilestone.isRankUnlocked(3, completed));
+		assertFalse(HarbingerChapterMilestone.isRankUnlocked(2, completed));
+        completed.add(HarbingerChapterMilestone.FIRST_SEPARATION);
+        assertTrue(HarbingerChapterMilestone.isRankUnlocked(2, completed));
+		assertTrue(HarbingerChapterMilestone.isRankUnlocked(3, completed));
 	}
 
 	@Test

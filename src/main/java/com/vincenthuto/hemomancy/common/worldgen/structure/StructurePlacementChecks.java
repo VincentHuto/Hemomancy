@@ -6,6 +6,7 @@ import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.biome.Biomes;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.level.levelgen.structure.Structure;
+import java.util.OptionalInt;
 
 final class StructurePlacementChecks {
 	private static final int MAX_LAND_STRUCTURE_HEIGHT = 150;
@@ -14,6 +15,9 @@ final class StructurePlacementChecks {
 	private static final int MAUSOLEUM_FOOTPRINT_RADIUS = 32;
 	private static final int MAUSOLEUM_SAMPLE_STEP = 16;
 	private static final int MAX_MAUSOLEUM_SURFACE_VARIATION = 10;
+	private static final int OUTPOST_RADIUS = 28;
+	private static final int OUTPOST_SAMPLE_STEP = 7;
+	private static final int MAX_OUTPOST_SURFACE_VARIATION = 8;
 	private static final int CIRCUS_PAVILION_FOOTPRINT_RADIUS = 24;
 	private static final int CIRCUS_PAVILION_SAMPLE_STEP = 12;
 
@@ -84,6 +88,40 @@ final class StructurePlacementChecks {
 		}
 
 		return true;
+	}
+
+	/** The complete courtyard and its four wings must fit on one modestly sloped site. */
+	static OptionalInt harbingerOutpostSurface(Structure.GenerationContext context) {
+		if (!canPlaceOverworldHemomancyStructure(context)) return OptionalInt.empty();
+		int centerX = context.chunkPos().getMiddleBlockX();
+		int centerZ = context.chunkPos().getMiddleBlockZ();
+		int low = Integer.MAX_VALUE;
+		int high = Integer.MIN_VALUE;
+		for (int dx = -OUTPOST_RADIUS; dx <= OUTPOST_RADIUS; dx += OUTPOST_SAMPLE_STEP) {
+			for (int dz = -OUTPOST_RADIUS; dz <= OUTPOST_RADIUS; dz += OUTPOST_SAMPLE_STEP) {
+				int x = centerX + dx;
+				int z = centerZ + dz;
+				if (!isSuitableLandColumn(context, x, z, MAX_ALLOWED_WATER_DEPTH)) return OptionalInt.empty();
+				int surface = getSurfaceHeight(context, x, z);
+				low = Math.min(low, surface);
+				high = Math.max(high, surface);
+			}
+		}
+		// The gate and the opposing hall project beyond the square. Check every
+		// cardinal approach because the root jigsaw can rotate before placement.
+		for (int reach : new int[] {31, 40}) {
+			for (int cross : new int[] {-8, -4, 0, 4, 8}) {
+				for (int[] offset : new int[][] {{reach, cross}, {-reach, cross}, {cross, reach}, {cross, -reach}}) {
+					int x = centerX + offset[0];
+					int z = centerZ + offset[1];
+					if (!isSuitableLandColumn(context, x, z, MAX_ALLOWED_WATER_DEPTH)) return OptionalInt.empty();
+					int surface = getSurfaceHeight(context, x, z);
+					low = Math.min(low, surface);
+					high = Math.max(high, surface);
+				}
+			}
+		}
+		return high - low <= MAX_OUTPOST_SURFACE_VARIATION ? OptionalInt.of(high) : OptionalInt.empty();
 	}
 
 	static boolean isSuitableCircusPavilionSite(Structure.GenerationContext context) {

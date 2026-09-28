@@ -47,7 +47,7 @@ final class CardinalRiteStructureFailureSourceTest {
 				"src/main/java/com/vincenthuto/hemomancy/common/rite/harbinger/HarbingerCardinalRiteEvents.java"))
 				.replace("\r\n", "\n");
 
-		assertTrue(events.contains("if (recipe == null && rite.getPhase() != CardinalRitePhase.LEGACY)"),
+		assertTrue(events.contains("recipe == null && rite.getPhase() != CardinalRitePhase.LEGACY"),
 				"datapack updates must retire active ceremonies whose recipes no longer exist");
 		assertTrue(events.contains("CardinalRiteStaffEscrow.restore(caster, rite);"),
 				"retiring a removed rite must return an escrowed Living Staff");

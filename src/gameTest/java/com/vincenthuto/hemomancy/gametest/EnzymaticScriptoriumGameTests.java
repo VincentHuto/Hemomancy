@@ -48,6 +48,45 @@ import java.util.UUID;
 @PrefixGameTestTemplate(false)
 public final class EnzymaticScriptoriumGameTests {
     @GameTest(template = "empty", timeoutTicks = 100, batch = "scriptorium")
+    public static void lowInscriptionRowsOfferSelectedLooting(GameTestHelper helper) {
+        ServerPlayer player = player(helper);
+        HemoCapabilityAccess.requireInitiatoryDegree(player).setDegreeNumber(3);
+        player.giveExperienceLevels(40);
+        BlockPos pos = helper.absolutePos(new BlockPos(5, 3, 5));
+        helper.getLevel().setBlockAndUpdate(pos, BlockInit.enzymatic_scriptorium.get().defaultBlockState());
+        var station = (EnzymaticScriptoriumBlockEntity) helper.getLevel().getBlockEntity(pos);
+        station.receiveBlood(1000);
+        station.setItem(EnumBloodTendency.ANIMUS.ordinal(),
+                new ItemStack(EnumBloodTendency.getRepEnzyme(EnumBloodTendency.ANIMUS), 64));
+        station.setItem(EnzymaticScriptoriumBlockEntity.ITEM, new ItemStack(Items.DIAMOND_SWORD));
+        station.setItem(EnzymaticScriptoriumBlockEntity.LAPIS, new ItemStack(Items.LAPIS_LAZULI, 3));
+        var menu = new EnzymaticScriptoriumMenu(1, player.getInventory(), station);
+        for (int i = 0; i < 3; i++) menu.clickMenuButton(player, EnumBloodTendency.ANIMUS.ordinal());
+        helper.assertTrue(menu.offerCost(0) == 0, "Enzymes replaced missing enchanting power");
+        for (BlockPos offset : net.minecraft.world.level.block.EnchantingTableBlock.BOOKSHELF_OFFSETS)
+            helper.getLevel().setBlockAndUpdate(pos.offset(offset), Blocks.BOOKSHELF.defaultBlockState());
+        menu.broadcastChanges();
+        var looting = helper.getLevel().registryAccess().registryOrThrow(Registries.ENCHANTMENT)
+                .getHolderOrThrow(Enchantments.LOOTING);
+        for (int row = 0; row < 2; row++) {
+            helper.assertTrue(menu.offerCost(row) >= looting.value().getMinCost(1),
+                    "Inscription " + (row + 1) + " did not reach Looting's minimum cost");
+            helper.assertTrue(menu.clueId(row) == helper.getLevel().registryAccess()
+                    .registryOrThrow(Registries.ENCHANTMENT).getId(looting.value()),
+                    "Inscription " + (row + 1) + " did not offer selected Looting");
+        }
+        helper.assertTrue(menu.clueLevel(0) == 1 && menu.clueLevel(1) == 2,
+                "Inscription 2 charged more for the same Looting level as Inscription 1");
+        helper.assertTrue(menu.offerCost(1) > menu.offerCost(0), "Stronger Looting did not require more levels");
+        helper.assertTrue(menu.offerCost(2) == 0 || menu.clueLevel(2) > menu.clueLevel(1),
+                "Inscription 3 duplicated a cheaper Looting offer");
+        helper.assertTrue(menu.clickMenuButton(player, 8), "First Looting inscription could not be committed");
+        helper.assertTrue(station.getItem(EnzymaticScriptoriumBlockEntity.ITEM).getEnchantments().getLevel(looting) > 0,
+                "First inscription did not apply Looting");
+        helper.succeed();
+    }
+
+    @GameTest(template = "empty", timeoutTicks = 100, batch = "scriptorium")
     public static void loadedEnzymeDeterminesPickaxeEnchantment(GameTestHelper helper) {
         ServerPlayer player = player(helper);
         HemoCapabilityAccess.requireInitiatoryDegree(player).setDegreeNumber(3);
@@ -57,6 +96,8 @@ public final class EnzymaticScriptoriumGameTests {
         player.giveExperienceLevels(40);
         BlockPos pos = helper.absolutePos(new BlockPos(5, 3, 5));
         helper.getLevel().setBlockAndUpdate(pos, BlockInit.enzymatic_scriptorium.get().defaultBlockState());
+        for (BlockPos offset : net.minecraft.world.level.block.EnchantingTableBlock.BOOKSHELF_OFFSETS)
+            helper.getLevel().setBlockAndUpdate(pos.offset(offset), Blocks.BOOKSHELF.defaultBlockState());
         var station = (EnzymaticScriptoriumBlockEntity) helper.getLevel().getBlockEntity(pos);
         station.receiveBlood(1000);
         for (var tendency : new EnumBloodTendency[]{EnumBloodTendency.DUCTILIS, EnumBloodTendency.FERRIC}) {

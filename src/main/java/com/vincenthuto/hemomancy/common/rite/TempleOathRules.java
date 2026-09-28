@@ -19,15 +19,18 @@ public final class TempleOathRules {
 		return !alreadyClaimed && linkedHermit != null && linkedHermit.equals(blessedHermit);
 	}
 
-	public static boolean canBeginInitiation(float health, boolean heartClaimedHere,
-			boolean bloodAlreadyActive, boolean riteAlreadyActive) {
-		return health >= 6.0F && heartClaimedHere && !bloodAlreadyActive && !riteAlreadyActive;
-	}
-
 	public static boolean shouldShowInitiationGuidance(boolean bloodActive,
 			boolean hasClaimedThisHermitsHeart) {
 		return bloodActive || hasClaimedThisHermitsHeart;
 	}
+
+    public static void clear(Player player) {
+        player.getPersistentData().remove(BLESSED_HERMIT);
+        player.getPersistentData().remove(CLAIMED_HEART_HERMIT);
+        var durable = player.getPersistentData().getCompound(Player.PERSISTED_NBT_TAG);
+        durable.remove(CLAIMED_HEART_HERMIT);
+        player.getPersistentData().put(Player.PERSISTED_NBT_TAG, durable);
+    }
 
 	public static void bless(Player player, UUID hermit) {
 		if (player != null && hermit != null) {

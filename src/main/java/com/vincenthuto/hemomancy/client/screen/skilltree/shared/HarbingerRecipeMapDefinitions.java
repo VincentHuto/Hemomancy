@@ -25,7 +25,7 @@ public final class HarbingerRecipeMapDefinitions {
 
 	static {
 		// <recipe-map-editor>
-		registerRites("Order", "sanguine_initiation", "votary_rite", "initiate_rite", "sanguine_brotherhood",
+		registerRites("Order", "initiate_rite", "sanguine_brotherhood",
 				"illuminatus_rite", "sanctified_rite", "archon_rite", "apotheos_rite");
 		registerRites("Vessel", "pallid_vessel_rite", "crimson_vessel_rite", "ashen_vessel_rite", "horn_of_culmination_rite");
 		registerRites("Bloodline/Fane", "bloodline_founding", "bloodline_recall", "founding_fane", "hematic_unbinding",
@@ -44,8 +44,6 @@ public final class HarbingerRecipeMapDefinitions {
 		registerRites("Puppetry", "puppeteer_trial_gorebound_hulk", "puppeteer_trial_marrow_spitter",
 				"puppeteer_trial_mnemonist_puppet", "puppeteer_trial_veinwing_vulture");
 
-		iconRites("cardinal_rite/sanguine_initiation", () -> new ItemStack(ItemInit.sanguine_formation.get()));
-		iconRites("cardinal_rite/votary_rite", () -> new ItemStack(ItemInit.mnemonic_blueprint.get()));
 		iconRites("cardinal_rite/initiate_rite", () -> new ItemStack(ItemInit.liber_sanguinum.get()));
 		iconRites("cardinal_rite/sanguine_brotherhood", () -> new ItemStack(ItemInit.sanguine_conduit.get()));
 		iconRites("cardinal_rite/illuminatus_rite", () -> new ItemStack(ItemInit.crimson_vestment_fitting.get()));
@@ -89,8 +87,6 @@ public final class HarbingerRecipeMapDefinitions {
 		iconRites("cardinal_rite/puppeteer_trial_scarlet_mummer", () -> new ItemStack(ItemInit.scarlet_gorget.get()));
 		iconRites("cardinal_rite/puppeteer_trial_veinwing_vulture", () -> new ItemStack(ItemInit.veinwing_harness.get()));
 
-		linkRites("cardinal_rite/sanguine_initiation", "cardinal_rite/votary_rite", RecipeMapLink.Kind.PROGRESSION);
-		linkRites("cardinal_rite/votary_rite", "cardinal_rite/initiate_rite", RecipeMapLink.Kind.PROGRESSION);
 		linkRites("cardinal_rite/initiate_rite", "cardinal_rite/sanguine_brotherhood", RecipeMapLink.Kind.PROGRESSION);
 		linkRites("cardinal_rite/sanguine_brotherhood", "cardinal_rite/illuminatus_rite", RecipeMapLink.Kind.PROGRESSION);
 		linkRites("cardinal_rite/illuminatus_rite", "cardinal_rite/sanctified_rite", RecipeMapLink.Kind.PROGRESSION);
@@ -100,13 +96,6 @@ public final class HarbingerRecipeMapDefinitions {
 		linkRites("cardinal_rite/crimson_vessel_rite", "cardinal_rite/ashen_vessel_rite", RecipeMapLink.Kind.PROGRESSION);
 		linkRites("cardinal_rite/ashen_vessel_rite", "cardinal_rite/horn_of_culmination_rite", RecipeMapLink.Kind.PROGRESSION);
 
-		linkRites("cardinal_rite/sanguine_initiation", "cardinal_rite/votary_rite", RecipeMapLink.Kind.CONCEPTUAL);
-		linkRites("cardinal_rite/sanguine_initiation", "cardinal_rite/initiate_rite", RecipeMapLink.Kind.CONCEPTUAL);
-		linkRites("cardinal_rite/sanguine_initiation", "cardinal_rite/sanguine_brotherhood", RecipeMapLink.Kind.CONCEPTUAL);
-		linkRites("cardinal_rite/sanguine_initiation", "cardinal_rite/illuminatus_rite", RecipeMapLink.Kind.CONCEPTUAL);
-		linkRites("cardinal_rite/sanguine_initiation", "cardinal_rite/sanctified_rite", RecipeMapLink.Kind.CONCEPTUAL);
-		linkRites("cardinal_rite/sanguine_initiation", "cardinal_rite/archon_rite", RecipeMapLink.Kind.CONCEPTUAL);
-		linkRites("cardinal_rite/sanguine_initiation", "cardinal_rite/apotheos_rite", RecipeMapLink.Kind.CONCEPTUAL);
 		linkRites("cardinal_rite/pallid_vessel_rite", "cardinal_rite/crimson_vessel_rite", RecipeMapLink.Kind.CONCEPTUAL);
 		linkRites("cardinal_rite/pallid_vessel_rite", "cardinal_rite/ashen_vessel_rite", RecipeMapLink.Kind.CONCEPTUAL);
 		linkRites("cardinal_rite/pallid_vessel_rite", "cardinal_rite/horn_of_culmination_rite", RecipeMapLink.Kind.CONCEPTUAL);

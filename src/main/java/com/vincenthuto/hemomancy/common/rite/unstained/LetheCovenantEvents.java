@@ -39,7 +39,7 @@ public class LetheCovenantEvents {
 	/** Purity awarded per minute to Unstained players in the domain. */
 	private static final float PURITY_PER_MINUTE = 0.2f;
 
-	// â”€â”€ Level tick: purity growth â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+	//  Level tick: purity growth 
 
 	@SubscribeEvent
 	public static void onLevelTick(LevelTickEvent.Post event) {
@@ -69,7 +69,7 @@ public class LetheCovenantEvents {
 		}
 	}
 
-	// â”€â”€ Spawn check: 50% suppression inside covenant domains â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+	//  Spawn check: 50% suppression inside covenant domains 
 
 	@SubscribeEvent
 	public static void onPositionCheck(MobSpawnEvent.PositionCheck event) {
@@ -95,7 +95,7 @@ public class LetheCovenantEvents {
 		}
 	}
 
-	// â”€â”€ Hurt event: bleed immunity for Silver Ward players in the domain â”€â”€â”€â”€â”€â”€
+	//  Hurt event: bleed immunity for Silver Ward players in the domain 
 
 	@SubscribeEvent
 	public static void onLivingHurt(LivingIncomingDamageEvent event) {
@@ -116,7 +116,7 @@ public class LetheCovenantEvents {
 		long tick = sLevel.getGameTime();
 
 		if (data.isInDomain(pos, dimension, tick)) {
-			// Cancel all magic (bleed) damage â€” Silver Ward is absolute inside the Covenant
+			// Cancel all magic (bleed) damage Silver Ward is absolute inside the Covenant
 			event.setCanceled(true);
 		}
 	}

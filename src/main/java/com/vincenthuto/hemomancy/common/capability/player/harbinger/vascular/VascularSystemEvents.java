@@ -27,10 +27,10 @@ import java.util.Map;
 public class VascularSystemEvents {	/**
 	 * When the player takes damage, degrade a vascular section based on damage type.
 	 * <ul>
-	 *   <li>Fall damage â†’ legs</li>
-	 *   <li>Projectile (arrow, trident) â†’ body/chest</li>
-	 *   <li>Explosion â†’ random section</li>
-	 *   <li>Melee/generic â†’ random section weighted toward body/arms</li>
+	 *   <li>Fall damage  legs</li>
+	 *   <li>Projectile (arrow, trident)  body/chest</li>
+	 *   <li>Explosion  random section</li>
+	 *   <li>Melee/generic  random section weighted toward body/arms</li>
 	 * </ul>
 	 */
 	@SubscribeEvent
@@ -96,7 +96,7 @@ public class VascularSystemEvents {	/**
 			return EnumVeinSections.BODY;
 		}
 
-		// Melee/generic â€” weighted random favoring body and arms
+		// Melee/generic weighted random favoring body and arms
 		EnumVeinSections[] meleePool = {
 				EnumVeinSections.BODY, EnumVeinSections.BODY,
 				EnumVeinSections.ARMS, EnumVeinSections.ARMS,
@@ -161,11 +161,11 @@ public class VascularSystemEvents {	/**
 	 * <ul>
 	 *   <li>All sections slowly heal back toward 100 when the player is well-fed.</li>
 	 *   <li>Sections in CLOTTED or DEAD state apply debuffs:</li>
-	 *   <li>  HEAD (DEAD) â†’ Blindness, (CLOTTED) â†’ Nausea</li>
-	 *   <li>  HEART (DEAD) â†’ Wither, (CLOTTED) â†’ Weakness</li>
-	 *   <li>  BODY (DEAD) â†’ Hunger, (CLOTTED) â†’ Mining Fatigue</li>
-	 *   <li>  LEGS (DEAD) â†’ Slowness II, (CLOTTED) â†’ Slowness I</li>
-	 *   <li>  ARMS (DEAD) â†’ Mining Fatigue II, (CLOTTED) â†’ Weakness</li>
+	 *   <li>  HEAD (DEAD)  Blindness, (CLOTTED)  Nausea</li>
+	 *   <li>  HEART (DEAD)  Wither, (CLOTTED)  Weakness</li>
+	 *   <li>  BODY (DEAD)  Hunger, (CLOTTED)  Mining Fatigue</li>
+	 *   <li>  LEGS (DEAD)  Slowness II, (CLOTTED)  Slowness I</li>
+	 *   <li>  ARMS (DEAD)  Mining Fatigue II, (CLOTTED)  Weakness</li>
 	 * </ul>
 	 */
 	@SubscribeEvent
@@ -203,7 +203,7 @@ public class VascularSystemEvents {	/**
 				}
 			}
 
-			// Debuffs from damaged sections â€” check every 2 seconds
+			// Debuffs from damaged sections check every 2 seconds
 			if (HemoServerConfig.VASCULAR_DEBUFFS_ENABLED.get() && player.tickCount % 40 == 0) {
 				applyVascularDebuffs(player, vascular);
 			}

@@ -41,7 +41,7 @@ public final class CardinalRiteActivationRules {
 		if (unstained) return trigger == Trigger.BLOOD_CRAFTING_KEY;
 		if ("temple_medium".equals(focusMode)) return false;
 		if ("hematic_medium".equals(focusMode)) {
-			return trigger == Trigger.HEMATIC_MEDIUM_BLOCK_USE;
+			return false;
 		}
 		if ("living_staff".equals(focusMode)) {
 			return trigger == Trigger.LIVING_STAFF_BLOCK_USE;

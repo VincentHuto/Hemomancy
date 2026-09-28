@@ -53,12 +53,12 @@ public class BloodMoonEvents {
 	/** In-game tick at which night begins. */
 	private static final long NIGHT_START_TICK = 12542L;
 
-	/** Duration (ticks) of a blood moon â€” roughly one in-game night. */
+	/** Duration (ticks) of a blood moon roughly one in-game night. */
 	private static final long BLOOD_MOON_DURATION = 11900L;
 
 	/**
 	 * Chance a blood moon triggers each night: 1 in BLOOD_MOON_CHANCE.
-	 * Lower values = more frequent. Default: 1-in-7 â‰ˆ weekly at normal play speed.
+	 * Lower values = more frequent. Default: 1-in-7  weekly at normal play speed.
 	 */
 	private static final int BLOOD_MOON_CHANCE = 7;
 

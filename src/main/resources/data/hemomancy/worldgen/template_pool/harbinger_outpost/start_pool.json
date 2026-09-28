@@ -6,7 +6,16 @@
     {
       "weight": 1,
       "element": {
-        "location": "hemomancy:harbinger_outpost",
+        "location": "hemomancy:harbinger_outpost/courtyard",
+        "processors": "minecraft:empty",
+        "projection": "rigid",
+        "element_type": "minecraft:single_pool_element"
+      }
+    },
+    {
+      "weight": 1,
+      "element": {
+        "location": "hemomancy:harbinger_outpost/courtyard_crimson",
         "processors": "minecraft:empty",
         "projection": "rigid",
         "element_type": "minecraft:single_pool_element"

@@ -11,52 +11,14 @@ public final class CardinalRiteRecipeDataTest {
 	private CardinalRiteRecipeDataTest() {
 	}
 
-	public static void main(String[] args) throws IOException {
-		sanguineInitiationHasNoDegreeRequirement();
-		votaryRiteUsesLayeredStation();
-		sanguineInitiationAndVotaryRemainDistinct();
-		cardinalRiteMediaAreAuthoredInRecipes();
-	}
-
-	private static void cardinalRiteMediaAreAuthoredInRecipes() throws IOException {
-		assertContains("sanguine initiation medium",
-				read("hemomancy/recipe/cardinal_rite/sanguine_initiation.json"),
-				"\"medium\":");
-		assertContains("votary medium", read("hemomancy/recipe/cardinal_rite/votary_rite.json"),
-				"\"item\": \"minecraft:iron_nugget\"");
-		assertContains("bloom medium", read("hemomancy/recipe/cardinal_rite/bloom_of_qliphoth.json"),
-				"\"item\": \"hemomancy:qliphoth_seed\"");
-		assertContains("founding fane medium", read("hemomancy/recipe/cardinal_rite/founding_fane.json"),
-				"\"item\": \"hemomancy:sanguine_quintessence\"");
-	}
-
-	private static void sanguineInitiationHasNoDegreeRequirement() throws IOException {
-		String initiation = read("hemomancy/recipe/cardinal_rite/sanguine_initiation.json");
-		assertContains("sanguine initiation required degree", initiation, "\"required_degree\": 0");
-	}
-
-	private static void sanguineInitiationAndVotaryRemainDistinct() throws IOException {
-		String initiation = read("hemomancy/recipe/cardinal_rite/sanguine_initiation.json");
-		String votary = read("hemomancy/recipe/cardinal_rite/votary_rite.json");
-		assertContains("sanguine initiation floor", initiation, "\"floor\": \"hemomancy:threshold_minor\"");
-		assertContains("votary floor", votary, "\"floor\": \"hemomancy:threshold_lesser\"");
-		assertContains("sanguine initiation uses temple medium", initiation, "\"focus\": \"temple_medium\"");
-		assertContains("votary uses hematic medium", votary, "\"focus\": \"hematic_medium\"");
-		assertContains("sanguine initiation has no offerings", initiation, "\"brazier_signature\": []");
-		assertContains("votary has no offerings", votary, "\"brazier_signature\": []");
-		assertFalse(initiation.contains("\"required_structure\""),
-				"sanguine initiation should be structureless");
-	}
-
-	private static void votaryRiteUsesLayeredStation() throws IOException {
-		String votary = read("hemomancy/recipe/cardinal_rite/votary_rite.json");
-		assertContains("votary rite tier", votary, "\"riteType\": \"minor\"");
-		assertContains("votary required structure", votary, "\"required_structure\"");
-		assertContains("votary keyed pillar", votary,
-				"\"block\": \"hemomancy:hematic_iron_pillar\"");
-		assertFalse(votary.contains("\"consume_on_success\": true"),
-				"votary upper structure should default to reusable");
-	}
+    public static void main(String[] args) throws IOException {
+        for (String retired : new String[]{"sanguine_initiation", "votary_rite"}) {
+            assertFalse(Files.exists(RESOURCE_ROOT.resolve("hemomancy/recipe/cardinal_rite/" + retired + ".json")), "retired rank recipe still shipped");
+        }
+        assertContains("first staff rite", read("hemomancy/recipe/cardinal_rite/initiate_rite.json"), "\"required_degree\": 2");
+        assertContains("bloom medium", read("hemomancy/recipe/cardinal_rite/bloom_of_qliphoth.json"), "\"item\": \"hemomancy:qliphoth_seed\"");
+        assertContains("founding fane medium", read("hemomancy/recipe/cardinal_rite/founding_fane.json"), "\"item\": \"hemomancy:sanguine_quintessence\"");
+    }
 
 	private static String read(String path) throws IOException {
 		return Files.readString(RESOURCE_ROOT.resolve(path)).replace("\r\n", "\n");

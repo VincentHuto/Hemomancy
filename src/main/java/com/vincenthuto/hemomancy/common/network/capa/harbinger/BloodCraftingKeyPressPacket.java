@@ -391,7 +391,7 @@ public class BloodCraftingKeyPressPacket implements CustomPacketPayload {
 						}
 					}
 				} else {
-					// Unstained: check purity/clarity progression level (0â€“8)
+					// Unstained: check purity/clarity progression level
 					int requiredLevel = RecipeDegreeGates.getRequiredDegree(recipe);
 					if (!RecipeDegreeGates.playerMeets(player, recipe)
 							&& !bypassesUnstainedLevelGate(player, recipe.getId().getPath())) {
@@ -416,7 +416,7 @@ public class BloodCraftingKeyPressPacket implements CustomPacketPayload {
 					}
 				}
 
-				// â”€â”€ Path alignment gate â”€â”€
+				//  Path alignment gate 
 				boolean harbingerProgressBlocked = HemoCapabilityAccess.getUnstainedProgress(player)
 						.map(UnstainedAccessRules::blocksHarbingerProgress).orElse(false);
 				if (!recipe.isUnstained() && harbingerProgressBlocked) {
@@ -427,7 +427,7 @@ public class BloodCraftingKeyPressPacket implements CustomPacketPayload {
 					return CardinalRiteActivationRules.ActivationAttempt.HANDLED;
 				}
 
-				// â”€â”€ Apotheos gate: requires completed Qliphoth Communion â”€â”€
+				//  Apotheos gate: requires completed Qliphoth Communion 
 				if (APOTHEOS_RITE_ID.equals(recipe.getId())
 						&& !HemoCapabilityAccess.getInitiatoryDegree(player)
 								.map(d -> d.isQliphothCommunionDone()).orElse(false)) {
@@ -438,7 +438,7 @@ public class BloodCraftingKeyPressPacket implements CustomPacketPayload {
 					return CardinalRiteActivationRules.ActivationAttempt.HANDLED;
 				}
 
-				// â”€â”€ Blood cost check â”€â”€
+				//  Blood cost check 
 				if (!recipe.hasInteractiveCeremony() && bloodVolume.getBloodVolume() < recipe.getBloodCost()) {
 					player.displayClientMessage(
 							Component.literal("Not enough blood to begin the " + recipe.getRiteName())

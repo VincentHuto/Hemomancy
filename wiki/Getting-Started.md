@@ -40,10 +40,11 @@ The world still contains fungal biomes, structures, and items. Harbinger initiat
 ### Finding a Blood Temple
 Each Blood Temple contains a Mortal Display, a prepared initiation floor, and one
 Hermit bound to that exact temple. The Display cannot be claimed while its Hermit
-still withholds permission. Older Displays elsewhere do not begin this progression:
-- **Harbinger Outposts**: Small structures in the overworld with blood-stained banners
+still withholds permission. Older Displays elsewhere, including crafted ones, do not begin this progression.
+
+Other structures to explore include:
+- **Harbinger Outposts**: Walled overworld compounds with a ritual courtyard, a patrol walk between two walls, profession houses at the four corners, watchtowers, a shared two-story barracks hall, and red banners
 - **Mausoleums**: Underground crypts containing Harbinger artifacts
-- Can also be crafted (recipe available via JEI)
 
 The Mortal Display is an ornate pedestal with a crimson aura.
 
@@ -247,8 +248,10 @@ Choose before you spend heavily on a path. Switching back and forth is not a sup
 ### Structures to Explore
 
 **Harbinger Outposts**
-- Small overworld structures with Harbinger NPCs
-- Contains Mortal Display, loot chests, and recruitable followers
+- Courtyard-centered overworld compounds with a gate, walls, towers, and four resident Harbinger NPCs
+- A two-story barracks hall across from the gate offers shared workstations, storage, and beds
+- The Vicar's chapel has a Somnolent Seat; the Artificer's workshop has a Resonant Forge; the Alchemist's lab has blood-processing stations; the Mnemonist's archive has a Somatic Loom
+- Contains supply storage and recruitable residents
 - Can be looted or joined depending on your path
 
 **Mausoleums**

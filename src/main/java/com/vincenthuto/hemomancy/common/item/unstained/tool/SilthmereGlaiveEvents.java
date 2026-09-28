@@ -36,7 +36,7 @@ public class SilthmereGlaiveEvents {
 	/** Purity rewarded on kill at ABSOLVED+ purity. */
 	private static final float KILL_PURITY_REWARD = 0.5f;
 
-	// â”€â”€ Player tick: Glowing suppression â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+	//  Player tick: Glowing suppression 
 
 	@SubscribeEvent
 	public static void onPlayerTick(PlayerTickEvent.Post event) {
@@ -52,7 +52,7 @@ public class SilthmereGlaiveEvents {
 		}
 	}
 
-	// â”€â”€ Living death: purity reward on kill â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+	//  Living death: purity reward on kill 
 
 	@SubscribeEvent
 	public static void onLivingDeath(LivingDeathEvent event) {
@@ -72,7 +72,7 @@ public class SilthmereGlaiveEvents {
 			progress.addPurity(KILL_PURITY_REWARD);
 			UnstainedProgressEvents.syncProgress(killer, progress);
 			killer.displayClientMessage(
-					Component.literal("The title Silthmere answers â€” purity grows.")
+					Component.literal("The title Silthmere answers purity grows.")
 							.withStyle(ChatFormatting.AQUA, ChatFormatting.ITALIC),
 					true);
 		});

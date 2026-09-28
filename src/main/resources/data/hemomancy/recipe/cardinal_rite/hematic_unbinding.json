@@ -4,7 +4,7 @@
   "riteType": "greater",
   "required_degree": 5,
   "riteName": "Rite of Hematic Unbinding",
-  "riteDescription": "A severance rite that dissolves the caster's bloodline, freeing all members and returning any shared blood deposits. The covenant is broken â€” what was bound by blood is unbound.",
+  "riteDescription": "A severance rite that dissolves the caster's bloodline, freeing all members and returning any shared blood deposits. The covenant is broken what was bound by blood is unbound.",
   "floor": "hemomancy:working_lesser",
   "brazier_signature": [
     {

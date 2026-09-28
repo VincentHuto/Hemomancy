@@ -93,13 +93,13 @@ import java.util.concurrent.CompletableFuture;
  * /hemo degree get [player]
  * /hemo degree set &lt;0-8&gt; [player]
  *
- * â”€â”€ Puppeteer Summons â”€â”€
+ *  Puppeteer Summons 
  * /hemo summons list [player]
  * /hemo summons add &lt;summon|all&gt; [player]
  * /hemo summons remove &lt;summon|all&gt; [player]
  * /hemo summons clear [player]
  *
- * â”€â”€ Known Manipulations â”€â”€
+ *  Known Manipulations 
  * /hemo manipulations list [player]
  * /hemo manipulations add &lt;manipulation|all&gt; [player]
  * /hemo manipulations remove &lt;manipulation|all&gt; [player]

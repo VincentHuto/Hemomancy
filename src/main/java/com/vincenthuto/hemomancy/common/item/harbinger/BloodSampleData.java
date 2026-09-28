@@ -42,6 +42,7 @@ public final class BloodSampleData {
     }
     /** A complete source-bearing vial; resolution may fail when its source mod is absent. */
     public static boolean isStorableSample(ItemStack stack) {
+        if (com.vincenthuto.hemomancy.common.mission.alchemist.ConcentratedBlood.is(stack)) return true;
         if (!isSpecimenVessel(stack) || (sourceId(stack) == null && !com.vincenthuto.hemomancy.common.antecedent.AhaematicSample.is(stack))) return false;
         var tag = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
         return !tag.contains(BloodVialItem.TAG_STATE) || tag.getBoolean(BloodVialItem.TAG_STATE);

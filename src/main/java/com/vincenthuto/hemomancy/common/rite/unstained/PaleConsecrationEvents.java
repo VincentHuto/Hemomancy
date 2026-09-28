@@ -35,7 +35,7 @@ public class PaleConsecrationEvents {
 	/** Slowness I duration in ticks (3 seconds). */
 	private static final int SLOWNESS_DURATION = 60;
 
-	// â”€â”€ Level tick â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+	//  Level tick 
 
 	@SubscribeEvent
 	public static void onLevelTick(LevelTickEvent.Post event) {

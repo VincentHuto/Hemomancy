@@ -8,10 +8,10 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 final class HarbingerRecipeMapDefinitionsTest {
 	@Test
 	void everyBuiltInHarbingerEntryHasAnAuthoredFamily() {
-		assertEquals(37, HarbingerRecipeMapDefinitions.ritePaths().size());
+		assertEquals(35, HarbingerRecipeMapDefinitions.ritePaths().size());
 		assertEquals(22, HarbingerRecipeMapDefinitions.craftingPaths().size());
 		assertEquals(4, HarbingerRecipeMapDefinitions.puppetryPaths().size());
-		assertEquals("Order", HarbingerRecipeMapDefinitions.riteFamily("cardinal_rite/sanguine_initiation"));
+		assertEquals("Order", HarbingerRecipeMapDefinitions.riteFamily("cardinal_rite/initiate_rite"));
 		assertEquals("Qliphoth/Forbidden", HarbingerRecipeMapDefinitions.riteFamily("cardinal_rite/bloom_of_qliphoth"));
 		assertEquals("Foundations", HarbingerRecipeMapDefinitions.craftingFamily("blood_structure/living_staff"));
 		assertEquals("Puppetry", HarbingerRecipeMapDefinitions.riteFamily(
@@ -22,8 +22,8 @@ final class HarbingerRecipeMapDefinitionsTest {
 	void progressionAndConceptualLinksUseDifferentKinds() {
 		assertTrue(HarbingerRecipeMapDefinitions.riteLinks().stream().anyMatch(link ->
 				link.kind() == RecipeMapLink.Kind.PROGRESSION
-						&& link.from().id().getPath().endsWith("sanguine_initiation")
-						&& link.to().id().getPath().endsWith("votary_rite")));
+						&& link.from().id().getPath().endsWith("initiate_rite")
+						&& link.to().id().getPath().endsWith("sanguine_brotherhood")));
 		assertTrue(HarbingerRecipeMapDefinitions.riteLinks().stream().anyMatch(link ->
 				link.kind() == RecipeMapLink.Kind.CONCEPTUAL));
 		assertTrue(HarbingerRecipeMapDefinitions.craftingLinks().stream().anyMatch(link ->

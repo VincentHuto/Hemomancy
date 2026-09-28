@@ -73,7 +73,7 @@ final class CardinalRiteLayeredRecipeDataTest {
 
 	@Test
 	void requiredStructureUsesInlineLayeredPatternAndDefaultsToReusable() throws IOException {
-		JsonObject recipe = read(RITE_ROOT.resolve("votary_rite.json"));
+		JsonObject recipe = read(RITE_ROOT.resolve("initiate_rite.json"));
 		JsonObject structure = recipe.getAsJsonObject("required_structure");
 
 		assertNotNull(structure);

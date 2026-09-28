@@ -2,19 +2,16 @@
   "kind": "rite_fragment",
   "path": "harbinger",
   "required_level": 0,
-  "title": "Fragment: Sanguine Initiation",
+  "title": "The Offered Heart",
   "obscured_text": [
     "The marks are wet-dark and close together. They refuse to become words.",
     "Only one phrase keeps surfacing: give blood, receive witness."
   ],
   "revealed_text": [
-    "A novice hand recorded the first rite here. Blood is not paid to a god. It is offered as proof that the body can remember more than fear.",
-    "The basin opens only when the wound is honest. The Order calls this the first courtesy of the vein."
+    "Receive the Hermit's permission before touching the Mortal Display. The Vicar at the outpost will hear your choice."
   ],
   "liber_entries": [
-    "hemomancy:fanesanguinium/the_hematic_order/pages/first_rite_notes",
     "hemomancy:fanesanguinium/intro/pages/hemomancy",
     "hemomancy:fanesanguinium/intro/pages/the_harbingers"
-  ],
-  "rite_id": "hemomancy:cardinal_rite/sanguine_initiation"
+  ]
 }

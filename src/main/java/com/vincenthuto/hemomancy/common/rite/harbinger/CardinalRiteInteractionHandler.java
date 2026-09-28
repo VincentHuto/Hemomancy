@@ -407,29 +407,6 @@ public final class CardinalRiteInteractionHandler {
 				SoundSource.PLAYERS, 0.8F, 1.35F);
 	}
 
-	private static boolean tryBloodletSigil(ServerLevel level, ServerPlayer player,
-			ActiveCardinalRite rite, BlockPos target) {
-		if (!CardinalRiteBloodlettingRules.canTraceSigil(rite.getDegree(), rite.getPhase())
-				|| !hasActionableSigilNodeAt(level, rite, target)) {
-			return false;
-		}
-		if (!CardinalRiteBloodlettingRules.canOffer(player.getHealth())) {
-			player.displayClientMessage(Component.literal("The rite will not take your final heart.")
-					.withStyle(ChatFormatting.DARK_RED), true);
-			return true;
-		}
-		SigilOffer offer = tryOfferSigilBlood(level, player, rite, target,
-				CardinalRiteBloodlettingRules.offeringMl(), requested -> {
-					player.setHealth(CardinalRiteBloodlettingRules.healthAfterStroke(player.getHealth()));
-					return requested;
-				});
-		if (offer.spent() > 0) {
-			level.playSound(null, target, SoundEvents.PLAYER_HURT,
-					SoundSource.PLAYERS, 0.6F, 0.9F);
-		}
-		return true;
-	}
-
 	private record SigilOffer(boolean handled, int spent) {
 		private static SigilOffer unhandled() {
 			return new SigilOffer(false, 0);
@@ -645,58 +622,6 @@ public final class CardinalRiteInteractionHandler {
 				consume(event);
 				return;
 			}
-		}
-		ActiveCardinalRite rite = data.getRite(player.getUUID());
-		if (rite == null) return;
-
-		if (CardinalRiteBloodlettingRules.canRepairBoundaryDirectly(rite.getDegree())) {
-			int repairAnchor = anchorAt(level, rite, event.getPos());
-			if (repairAnchor >= 0 && rite.instabilityRepairBloodNeeded(repairAnchor) > 0) {
-				if (player.getHealth() <= 2.0F) {
-					player.displayClientMessage(Component.literal("The rite will not take your final heart.")
-							.withStyle(ChatFormatting.DARK_RED), true);
-					consume(event);
-					return;
-				}
-				player.setHealth(Math.max(2.0F, player.getHealth() - 2.0F));
-				rite.offerInstabilityRepair(repairAnchor,
-						CardinalRiteInstabilityBoundaryRules.REPAIR_BLOOD_ML);
-				data.setDirty();
-				level.playSound(null, event.getPos(), SoundEvents.RESPAWN_ANCHOR_CHARGE,
-						SoundSource.PLAYERS, 0.7F, 0.72F);
-				player.displayClientMessage(Component.literal("Your circulation sutures the damaged boundary.")
-						.withStyle(ChatFormatting.DARK_RED), true);
-				consume(event);
-				return;
-			}
-		}
-
-		if (rite.getPhase() == CardinalRitePhase.CONSECRATION && rite.getDegree() == 1) {
-			int anchor = anchorAt(level, rite, event.getPos());
-			if (anchor < 0 || rite.bloodNeededForAnchor(anchor) <= 0) return;
-			if (player.getHealth() <= 2.0F) {
-				player.displayClientMessage(Component.literal("The rite will not take your final heart.")
-						.withStyle(ChatFormatting.DARK_RED), true);
-				consume(event);
-				return;
-			}
-			player.setHealth(Math.max(2.0F, player.getHealth() - 2.0F));
-			rite.fillAnchor(anchor, 50);
-			if (rite.enterInscription()) {
-				player.displayClientMessage(Component.literal(
-						"Your first circulation closes. Project into the daemon.")
-						.withStyle(ChatFormatting.RED, ChatFormatting.BOLD), false);
-			}
-			data.setDirty();
-			level.playSound(null, event.getPos(), SoundEvents.PLAYER_HURT, SoundSource.PLAYERS, 0.6F, 0.75F);
-			consume(event);
-			return;
-		}
-
-		if (tryBloodletSigil(level, player, rite, event.getPos())) {
-			data.setDirty();
-			consume(event);
-			return;
 		}
 
 	}

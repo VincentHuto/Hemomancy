@@ -172,15 +172,15 @@ Hemomancy is a NeoForge blood magic mod built around the *quality* of blood mani
 
 1. **Find Gourd Seeds** ![Gourd Seeds](../src/main/resources/assets/hemomancy/textures/item/gourd_seeds.png) — obtained from breaking grass (advancement: *Strange Seeds*).
 2. **Discover a Blood Temple** — a naturally generating structure containing the **Mortal Display** and its Harbinger Hermit keeper.
-3. **Accept the Hermit's invitation and claim the temple heart** — this establishes the prerequisite temple oath, but does **not** activate the player's blood capability or grant *The First Awakening*.
-4. **Receive the Sanguine Initiation plan** — when the Hermit's farewell completes, he drops a filled **Mnemonic Blueprint** targeting `cardinal_rite/sanguine_initiation`.
-5. **Build and complete the Rite of Sanguine Initiation** — use the blueprint's plan/projection guidance for the Threshold Minor floor and temple Cardinal Focus, seat the rite's iron-nugget medium, and endure the 400-tick calling inside the temple ring. This simple initiation has no brazier offerings, anchors, sockets, or waves. Successful completion activates `IBloodVolume` (`active = true`), grants *The First Awakening*, and awards Degree 1, Neophyte.
+3. **Accept the Hermit's permission and touch the Mortal Display** — attaches the Charm of Vascularium, activates Degree 0, grants The First Awakening and the outpost waybill. Return for the Hermit's farewell and dissolution.
+4. **Meet the Vicar** — choose removal of the unsettled charm or formal initiation. The 10-second initiation grants Degree 1, the Sanguine Conduit, core utilities, starter blood, and the assignment ledger. A Degree 5+ player who leads a bloodline they founded may instead use Blood Projection on an active, charm-bearing Degree 0 player to perform the same ceremony. Successful completion also joins the recruit to that bloodline. Damage, departure, or loss of the founder's eligibility cancels the ceremony without granting a degree or membership; an existing different bloodline is never overwritten.
+5. **Complete First Separation for the Alchemist** — receive Concentrated Blood alongside the syringe and vial rack. Inject the special vial directly, then complete a night's sleep to wake at Degree 2.
 6. **Obtain the Liber Sanguinum** ![Liber Sanguinum](../src/main/resources/assets/hemomancy/textures/item/liber_sanguinum.png) — the mod's guide book (entity model: ![](../src/main/resources/assets/hemomancy/textures/entity/liber_sanguinum.png)), crafted using a structure recipe (bookshelf + Sanguine Formation ![Sanguine Formation](../src/main/resources/assets/hemomancy/textures/item/sanguine_formation.png)). (advancement: *Liber Sanguinum*).
 7. **Craft Befouling Ash** ![Befouling Ash](../src/main/resources/assets/hemomancy/textures/item/befouling_ash_trail.png) — a key ingredient for blood structure recipes (advancement: *Ashen Beginnings*).
 
 From here the player can pursue the **Harbinger Path** (blood magic) or eventually diverge to the **Unstained Path** (anti-blood purification).
 
-After reaching Degree 1, the first Harbinger Vicar contacted grants or reissues the **Harbinger Assignment Ledger** and introduces a main Neophyte assignment plus a side route. The Main D1 assignment, **First Bloodcraft**, teaches Blood Crafting fundamentals: Blood Absorption fills the player's vessel, while Blood Projection spends that stored blood into blood-structure recipes. The D1 main ledger tracks three prerequisites: fill the vessel to 5000 ml (`vessel_filled`), project a **Liber Sanguinum** (`fane_sanguinium`), and project a **Hematic Iron Block** (`iron_in_the_blood`). Once all three are complete, the Degree-1 Vicar offers a one-time hand-in that grants exactly **4 Hematic Iron Scraps**, **8 Befouling Ash Trails**, and **2 Sanguine Formations**. Claiming this reward is the persisted D1 chapter proof required before the Votary rank rite can begin.
+After reaching Degree 1, the first Harbinger Vicar contacted grants or reissues the **Harbinger Assignment Ledger** and introduces a main Neophyte assignment plus a side route. The Main D1 assignment, **First Bloodcraft**, teaches Blood Crafting fundamentals: Blood Absorption fills the player's vessel, while Blood Projection spends that stored blood into blood-structure recipes. The D1 main ledger tracks three prerequisites: fill the vessel to 5000 ml (`vessel_filled`), project a **Liber Sanguinum** (`fane_sanguinium`), and project a **Hematic Iron Block** (`iron_in_the_blood`). Once all three are complete, the Degree-1 Vicar offers a one-time hand-in that grants exactly **4 Hematic Iron Scraps**, **8 Befouling Ash Trails**, and **2 Sanguine Formations**. This bloodcraft assignment remains available, while First Separation and Concentrated Blood now govern Degree 2 advancement.
 
 Blood Projection can also condense Sanguine Formation directly: hold projection on a solid block to invest blood until one `sanguine_formation` pops from the targeted face. Generic solid blocks require 150 blood and have a 25% collapse chance, reduced by the D1 `skill_sanguine_crystallization` skill by 5% per level. Blocks tagged `hemomancy:sanguine_formation_projectors`, including the venous stone family and placed Blood Stained Stone, require 100 blood, feed twice as fast, and never collapse. Existing Blood Projection endpoints, blood-structure recipes, loom/effigy charging, and blood reservoirs take priority before this fallback condensation.
 
@@ -493,7 +493,7 @@ The default/primary progression. The player embraces hemomancy and rises through
 
 - **Interface:** `IBloodVolume`
 - **Default:** 0 current / 5,000 max, `active = false`
-- Activated by completing the Blood Temple's **Rite of Sanguine Initiation**; claiming the Mortal Display heart records the prerequisite temple oath but leaves blood dormant
+- Activated by attaching the Charm of Vascularium from a Mortal Display with its own Hermit's permission (Degree 0).
 - Blood is spent to cast manipulations and power rituals
 - Maximum blood is resolved by `MaxBloodLedger`: `5000 + Capacity + Spleen + Eternal Covenant - scars`, clamped to at least 1 mL. Capacity adds +500 per level, Spleen adds +1000 per organ level, Eternal Covenant adds +500 once, and scar max-blood modifiers subtract after bonuses.
 - Stored in Blood Gourds for portable use; equipped gourds receive overflow blood from valid blooded kills after the player is topped off
@@ -509,8 +509,8 @@ Progression through **Cardinal Rites** — multiblock blood rituals. Each rite a
 | Degree | Title | Cardinal Rite |
 |--------|-------|---------------|
 | 0 | Uninitiated | *(starting state)* |
-| 1 | Neophyte of the Crimson Veil | `sanguine_initiation` |
-| 2 | Votary of the Hematic Covenant | `votary_rite` |
+| 1 | Neophyte of the Crimson Veil | Formal Vicar initiation (200 ticks) |
+| 2 | Votary of the Hematic Covenant | First Separation reward, direct Concentrated Blood injection, then completed sleep |
 | 3 | Initiate of the Incarnadine Fane | `initiate_rite` |
 | 4 | Adept of the Sanguine Brotherhood | `sanguine_brotherhood` |
 | 5 | Illuminatus of the Crimson Lodge | `illuminatus_rite` |
@@ -535,7 +535,7 @@ The current shared lifecycle is coordinated by `HarbingerCardinalRiteEvents` and
 
 1. The caster prepares the rite's authored floor and places the **Cardinal Focus** at its center.
 2. Lit braziers around the focus establish the recipe's tendency signature and offerings.
-3. The caster seats the recipe's declared **medium** in the focus. Standard degree rites commonly plant and escrow the exact Living Staff stack; specialized rites may preserve a different medium, such as an owner-attuned Crossbar, while Sanguine Initiation uses an iron nugget in the temple focus.
+3. The caster seats the recipe's declared **medium** in the focus. Standard degree rites commonly plant and escrow the exact Living Staff stack; specialized rites may preserve a different medium, such as an owner-attuned Crossbar, while early initiation is handled through NPC dialogue and clinical progression.
 4. Activation validates the matched multiblock, explicit degree gate, rank-up redundancy, offerings, and the rite's floor/focus requirements.
 5. A central daemon emerges from the planted staff while anchors, sockets, and sigils assemble into the rite's landmark geometry.
 6. `ActiveCardinalRite` persists the caster, center, recipe, phase, boundary, committed medium, and spawned encounter state. Clients receive synchronized boundary, fog, sigil, and phase data.
@@ -562,8 +562,8 @@ Harbinger NPC types provide lore and gameplay hints through the `DialogueTree` f
 | Degree State | Content |
 |---|---|
 | No blood (pre-initiation) | Offers lore about the Mortal Display, explains his duty as eternal keeper, presents the option to claim the heart and begin hemomancy |
-| Degree 0 (uninitiated) | Congratulates the player, explains the Rite of Sanguine Initiation, and drops a filled Sanguine Initiation Mnemonic Blueprint on farewell (triggering `hermit_farewell_die` -> starts the Hermit's ritual farewell death animation with crimson chest flares, shader-cut dissolve holes, and a slow dust crumble) |
-| Degree 1 Neophyte | Acknowledges first step; hints toward Votary Rite and manipulation lore |
+| Degree 0 (uninitiated) | After heart attachment, directs the player to the Vicar and dissolves on farewell. No rite blueprint is granted. |
+| Degree 1 Neophyte | Acknowledges first step; directs the player to First Separation, Concentrated Blood, and rest |
 | Degree 2 Votary | Guidance on blood tendencies and the Somatic Loom; hints toward Incarnadine Fane |
 | Degree 3 Initiate | Points toward Sanguine Brotherhood rite |
 | Degree 4 Adept | **Scar lore branch** — explains scars as literal mind-maps of new venous/neural pathways, Cerebral Scarring Station usage; hints toward Crimson Lodge |
@@ -609,7 +609,7 @@ Harbinger NPC types provide lore and gameplay hints through the `DialogueTree` f
 
 | Degree / State | Content |
 |---|---|
-| Degree 0 / uninitiated | Explains blood-memory as inheritance, but refuses practical manipulation teaching before Sanguine Initiation |
+| Degree 0 / uninitiated | Explains blood-memory as inheritance, but refuses practical manipulation teaching before formal Vicar initiation |
 | Degree 1 Neophyte | Explains crude memories, auto-equipped starter practices, and active manipulation slots; offers a one-time starter crude memory choice if eligible |
 | Degree 2 Votary | Introduces Thelemic preparation after First Separation and treats tendencies as observed correlations |
 | Degree 3 Initiate | Distinguishes Noetic and Thelemic expression and teaches the Mnemonic Reliquary as shared loadout management |
@@ -994,7 +994,7 @@ Two Unstained NPC types guide the player through the purification journey. All d
 
 ### 6.3 Entry Requirements
 
-- Standard path: the player claims a Blood Temple heart, completes Sanguine Initiation to activate blood control, then later finds an Unstained Church seeking cure or healing
+- Standard path: the player claims a Blood Temple heart, attaches the Charm of Vascularium to activate blood control, then later finds an Unstained Church seeking cure or healing
 - Unstained Zealots can offer ordinary purification at any Harbinger degree until the player actually founds a bloodline. Degree alone never closes the route.
 - Founding a bloodline closes ordinary cure because the founder has integrated the infection into other lives. A founder cannot use Annetta's Unstained purification route; defeating the infection unleashed by her fatal Harbinger encounter unlocks the exceptional Severed Covenant rite. Completing it disbands the founder's bloodline and reopens cure.
 - The Zealot directs the player to suppress the infection with **Hemolytic Solution** at an **Unstained Podium**, then perform the **Rite of Lethean Baptism**.
@@ -1375,7 +1375,7 @@ Once learned, `conjure_staff` is a fixed utility alongside Blood Absorption and 
 
 Charge previews sample growth each render frame: the caster uses local held charge, observers interpolate the four-tick updates, and aim follows the interpolated caster pose with geometry clipping. Crimson Coronation grows each successive sword from zero. Sanguine Halo renders its orbit from synchronized phase and slot data around the interpolated owner; server timing still controls release and damage. Generic manipulation activation particles originate at the caster's body, and Void Shroud's veil follows the caster.
 
-Sanguine Initiation now grants the two core utility manipulations at Degree 1 and auto-equips them if slots are open:
+Vicar initiation grants the two core utility manipulations at Degree 1 and auto-equips them if slots are open:
 
 | Manipulation | Role |
 |--------------|------|
@@ -2424,7 +2424,7 @@ Direct Blood Routing is the no-basin automation model for blood-fed machines. It
 | ![](../src/main/resources/assets/hemomancy/textures/item/bloody_vial.png) Bloody Vial | Sample container | N/A | Syringe/rack use | None | Centrifuge workflow |
 | ![](../src/main/resources/assets/hemomancy/textures/item/vial_rack.png) Vial Rack | Sample rack | 8 vials | Syringe/rack use | None | Centrifuge workflow |
 
-Direct blood restores are emergency infusions: they restore blood immediately, apply a 60-tick use cooldown, and build Blood Drunkenness. Actual Sanguine Initiation now grants four Bloody Flasks once per character, using a persistent claim advancement; full inventories receive the supply at the rite. One flask pays for the first Absorption and Projection casts including the first drunkenness penalty, two more can fill the 5000-ml vessel, and the fourth can be retained for recovery. The initiation message teaches centrifuge sampling and reservoir absorption as repeatable income. Natural first-machine and first-memory timing remains under acceptance. Sampled Bloody Vials and Vial Racks remain extraction/centrifuge containers and are not drinkable infusion fuel. Blood Gourds avoid the mismatch penalty because their reserve is bonded through the equipped gourd/scar slot rather than carried as loose foreign blood.
+Direct blood restores are emergency infusions: they restore blood immediately, apply a 60-tick use cooldown, and build Blood Drunkenness. Completed Vicar initiation grants four Bloody Flasks once per character, using a persistent claim advancement; full inventories receive the supply at the Vicar. One flask pays for the first Absorption and Projection casts including the first drunkenness penalty, two more can fill the 5000-ml vessel, and the fourth can be retained for recovery. The initiation message teaches centrifuge sampling and reservoir absorption as repeatable income. Natural first-machine and first-memory timing remains under acceptance. Sampled Bloody Vials and Vial Racks remain extraction/centrifuge containers and are not drinkable infusion fuel. Blood Gourds avoid the mismatch penalty because their reserve is bonded through the equipped gourd/scar slot rather than carried as loose foreign blood.
 
 Acquisition: Venous Stone has a rare 2.5% global loot modifier chance to shed a `blood_rock` when mined. Bloody Jugs have a rare 2% killed-by-player global loot modifier chance from the curated `hemomancy:bloody_jug_drop_candidates` entity tag, currently blood-drunk puppeteers, crimson does, cruor fiends, hemojellies, hemolymphopoda, thirsters, and venous striders.
 
@@ -2445,7 +2445,7 @@ Acquisition: Venous Stone has a rare 2.5% global loot modifier chance to shed a 
 | ![](../src/main/resources/assets/hemomancy/textures/item/blood_stained_stone.png) Blood Stained Stone | Memory-related item |
 | Blood Memory (per manipulation) | One for each registered manipulation — using it teaches the player |
 | Crude Memory Shards | Early starter memories that teach and auto-equip weak manipulations without needing the Mnemonic Reliquary; current set covers `blood_shot`, `blood_rush`, `deadly_gaze`, `sanguine_mending`, `hemorrhage`, `glacial_grasp`, `sanguine_ignition`, and `void_shroud` |
-| **Mnemonic Blueprint** | Blank blueprints can be imprinted from unlocked Crafting or Rites map entries. Filled blueprints target either a Cardinal Rite or Blood Structure, open the matching read-only detail screen, and can anchor a client-side top-face construction projection with missing-block progress. Filled stacks are singular; sneak-use clears the active projection. The Hermit's farewell supplies a filled Sanguine Initiation blueprint. |
+| **Mnemonic Blueprint** | Blank blueprints can be imprinted from unlocked Crafting or Rites map entries. Filled blueprints target either a Cardinal Rite or Blood Structure, open the matching read-only detail screen, and can anchor a client-side top-face construction projection with missing-block progress. Filled stacks are singular; sneak-use clears the active projection. The Hermit's farewell directs the player to the Vicar; it does not supply a rite blueprint. |
 | **Mnemonic Folio** | Portable 30-slot (10×3) container that accepts Mnemonic Blueprints only and opens `MnemonicFolioScreen`. |
 | Living Weapon Grafts | Dynamic `living_weapon_graft` stacks carry a form component; the Iron Brazier + Living Staff Blood Absorption rite consumes the graft and teaches the matching Living Staff weapon-form manipulation |
 | Legacy Living Weapon Memories | `memory_living_blade`, `memory_living_axe`, `memory_living_spear`, `memory_living_claws`, `memory_living_crossbow`, `memory_living_torch`, and `memory_living_flail` keep their IDs and use behavior for old saves/inventories, but their normal survival recipes are removed |
@@ -2849,7 +2849,7 @@ One-off armor pieces intentionally use distinct material holders so they break f
 
 | Block                                | BlockEntity                                | Purpose                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
 |--------------------------------------|--------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| **Mortal Display**                   | `MortalDisplayBlockEntity`                 | Holds the Hermit's heart and records the temple-oath prerequisite for Sanguine Initiation; clicking it does not directly activate blood magic. ![](../src/main/resources/assets/hemomancy/textures/entity/model_floating_heart.png) |
+| **Mortal Display**                   | `MortalDisplayBlockEntity`                 | Attaches the Charm of Vascularium and activates Degree 0 after permission from this temple's Hermit; grants the outpost waybill. ![](../src/main/resources/assets/hemomancy/textures/entity/model_floating_heart.png) |
 | **Scrying Podium**                   | `ScryingPodiumBlockEntity`                 | Blood-reflection podium, Hemopothecary workstation, and **Advanced diagnostic station**. Normal right-click opens the Sanguine Diagnosis screen with player-facing diagnostics split into clickable **Blood**, **Manipulations**, and **Tendency** tabs. Blood Volume shows computed max blood plus exact positive/negative max-blood modifier totals, with a `Mods` hover tooltip listing each source. Blood Flow shows positive, negative, and net mL/t, circulation bandwidth used/cap/available, scrollable per-source requested/applied rows, and a hover tooltip for the full active source breakdown. The Manipulations tab shows carried/equipped manipulations, the server-computed equipped slot cap, and the selected manipulation's base -> effective blood cost, with hover tooltips for slot and cost modifiers. The Tendency tab shows dominant/latent tendencies, the full tendency profile, and rite readiness. Shift-right-click still converts it back into an Unstained Podium and drops the Scrying Dish.                                                                                                                                                                       |
 | **Scarlet Vanity**                   | `ScarletVanityBlockEntity`                 | Degree-3 Blood Structure station formed for 300 blood by using Sanguine Formation on the copper heart of its structure. Opens the Harbinger equipment screen for equipping the Charm of Vascularium, Blood Gourd, Morphling Jar, and Living Staff fitting. Existing block-entity and equipment save data remain unchanged. The red vanity model has a central blood-reflection bowl, while `ScarletVanityRenderer` displays equipped items flat on the tabletop. |
 | **Somatic Loom**                     | `SomaticLoomBlockEntity`                   | Degree 3 refined memory-weaving station. Stores up to 64 internal enzyme units per tendency, accepts one blank Hematic Memory plus a list of catalyst candidates, enters an editable dark-red awaiting-blood glow when an exact recipe is ready, then runs a physical orb-weaving ritual where the player projects blood and drags colored tendency-orbs home with a Living Staff. Renders expanded offscreen bounds for the ritual orbs, strands, trails, and shader-writhed orb shells. ![](../src/main/resources/assets/hemomancy/textures/ref%20doc%20images/somatic_loom.png)                                                                                                                                                                                                                                                    |
@@ -3152,26 +3152,31 @@ Known manipulations can be tested with `/hemo manipulations list [player]`, `/he
 
 ### 25.2 Harbinger Cardinal Rite Recipes
 
-The Degree 0-7 progression contract is defined in
-`docs/Cardinal Rite Progression Restructure.md`. Ceremony JSON is explicit and the
+Early initiation follows the Hermit, Vicar, and Alchemist sequence below.
+For subsequent Cardinal Rites, ceremony JSON is explicit and the
 serializer enforces degree ceilings for anchors, support sockets, required sigils,
 offerings, waves, helpers, activation focus, atmosphere, and failure severity.
 Recipes may remain simpler than their degree permits.
 
-Activation progresses through three authored modes. Sanguine Initiation uses the
-prepared Blood Temple Focus after the Hermit's temple-bound oath
-(`temple_medium`). Degree 1 rites use an iron nugget seated in a crafted Focus
-(`hematic_medium`). Degree 2+ rites plant and escrow the exact Living Staff
-(`living_staff`). Harbinger rites are initiated through their progression-
-appropriate item interaction; Unstained Cardinal Rites retain Blood Craft key
-activation.
+Initiation no longer uses Cardinal Rites. With the temple Hermit's permission,
+right-clicking the Mortal Display attaches the charm and activates Degree 0.
+The Hermit's farewell ends in dissolution; each temple has one heir. The waybill
+is given at the display. Formal Vicar initiation lasts 200 ticks and grants
+Degree 1, the Sanguine Conduit, Blood Absorption/Projection, and starter blood.
+Before commitment the Vicar can remove the unsettled charm; another temple can
+begin a fresh initiation. First Separation rewards Concentrated Blood alongside
+the living syringe and vial rack. Direct leg injection followed by completed
+sleep grants Degree 2. The Alchemist hints that the blood needs rest to settle.
+Degree 2+ rites use the Living Staff (`living_staff`); Unstained rites retain
+Blood Craft key activation. Vascular Mending and Sanguine Attunement now require
+Degree 2 and a Living Staff.
 
 Interactive Harbinger rites carry `bloodCost: 0`; their blood is paid visibly
 through anchors, inscription, repairs, helpers, and rite-specific effects rather
 than through a hidden completion drain. Apotheos retains its old economy pending
 its separate Degree 8 pass.
 
-During Consecration, every authored boundary anchor sits inside a persistent hollow, pulsing boundary socket with a faint recessed floor stain. Empty sockets remain dim, brighten as their Sanguine blob fills the gap, and frame the completed anchor instead of letting it sit on top of the larger ring. While a socket is filling, small blood droplets briefly circulate inward before being absorbed. Every pair of adjacent filled anchors then reveals its connecting arc over one second, growing equally from both socket edges until the two fronts meet at the midpoint; opposite anchors do not create a disconnected arc. Once complete, each socket-clipped arc leaves the same faint recessed blood stain beneath the boundary line, allowing a fully completed ring to read as one embedded channel. The meeting point emits a short seal pulse with a quiet heartbeat and wet electrical charge, followed by a compact blood bolus that travels outward along the new line toward both anchors. Damaged sockets twitch and deform in proportion to their instability so threatened anchors telegraph failure before their section breaks. The boundary mesh and its generated anchor markers share the altar's low ground-surface plane. A shader-driven bank of rolling black and blood-red fog follows the complete outer footprint of every active Harbinger rite from activation through completion or collapse. Intermittent black-sheathed, purple-cored bolts use HutosLib's shared lightning implementation to arc laterally from cloud to cloud within that bank. The fog and its lightning do not apply to Unstained rites and can be disabled together with the client `renderCardinalRiteFog` option. A filled boundary anchor replaces its prompt with a persistent red, glowing Sanguine Formation-like blob. Instability is divided evenly across all authored anchors: the next threatened anchor and its outgoing ring portion flicker as their band fills, then the portion breaks and its anchor remains as a black-glowing blob. A full 50 ml projected repair restores one tier-scaled instability band; degree-one rites repair the same damage through their normal empty-hand bloodletting interaction. Degree 3+ Harbinger rites also render the engulfing black/red Fane exterior beyond the ritual boundary, while smaller rites omit it. Ichorian sigil nodes resolve to the highest nearby block surface for both particles and interaction instead of remaining fixed to the recipe layer. Each completed sigil node becomes the same living 3D blob in the sigil's authored color, and correctly completed consecutive nodes draw matching core/glow connections so only the successfully traced portion of the shape is shown. When its final node is fed, the completed shape peels away from the surface, rotates upright, and persists as an `awakened_ichorian_sigil` entity until the rite ends. Its flight expresses its function while remaining inside its assigned ritual radius: Reservoir hangs low and breathes inward and outward; Bastion dashes between perimeter watch-posts; Hematic Lattice maintains a steady woven circulation; Mnemonic traces a searching figure-eight; Suture stitches a looping seam; Shunt darts through rapid redirections; Seal holds a close, quiet orbit around the ritual heart; Cage glides between angular containment corners; and Lens scans from a high elliptical path. Client movement updates interpolate over their packet window, keeping even deliberate watch-post and corner transitions fluid rather than teleporting between server positions.
+During Consecration, every authored boundary anchor sits inside a persistent hollow, pulsing boundary socket with a faint recessed floor stain. Empty sockets remain dim, brighten as their Sanguine blob fills the gap, and frame the completed anchor instead of letting it sit on top of the larger ring. While a socket is filling, small blood droplets briefly circulate inward before being absorbed. Every pair of adjacent filled anchors then reveals its connecting arc over one second, growing equally from both socket edges until the two fronts meet at the midpoint; opposite anchors do not create a disconnected arc. Once complete, each socket-clipped arc leaves the same faint recessed blood stain beneath the boundary line, allowing a fully completed ring to read as one embedded channel. The meeting point emits a short seal pulse with a quiet heartbeat and wet electrical charge, followed by a compact blood bolus that travels outward along the new line toward both anchors. Damaged sockets twitch and deform in proportion to their instability so threatened anchors telegraph failure before their section breaks. The boundary mesh and its generated anchor markers share the altar's low ground-surface plane. A shader-driven bank of rolling black and blood-red fog follows the complete outer footprint of every active Harbinger rite from activation through completion or collapse. Intermittent black-sheathed, purple-cored bolts use HutosLib's shared lightning implementation to arc laterally from cloud to cloud within that bank. The fog and its lightning do not apply to Unstained rites and can be disabled together with the client `renderCardinalRiteFog` option. A filled boundary anchor replaces its prompt with a persistent red, glowing Sanguine Formation-like blob. Instability is divided evenly across all authored anchors: the next threatened anchor and its outgoing ring portion flicker as their band fills, then the portion breaks and its anchor remains as a black-glowing blob. A full 50 ml projected repair restores one tier-scaled instability band. Degree 3+ Harbinger rites also render the engulfing black/red Fane exterior beyond the ritual boundary, while smaller rites omit it. Ichorian sigil nodes resolve to the highest nearby block surface for both particles and interaction instead of remaining fixed to the recipe layer. Each completed sigil node becomes the same living 3D blob in the sigil's authored color, and correctly completed consecutive nodes draw matching core/glow connections so only the successfully traced portion of the shape is shown. When its final node is fed, the completed shape peels away from the surface, rotates upright, and persists as an `awakened_ichorian_sigil` entity until the rite ends. Its flight expresses its function while remaining inside its assigned ritual radius: Reservoir hangs low and breathes inward and outward; Bastion dashes between perimeter watch-posts; Hematic Lattice maintains a steady woven circulation; Mnemonic traces a searching figure-eight; Suture stitches a looping seam; Shunt darts through rapid redirections; Seal holds a close, quiet orbit around the ritual heart; Cage glides between angular containment corners; and Lens scans from a high elliptical path. Client movement updates interpolate over their packet window, keeping even deliberate watch-post and corner transitions fluid rather than teleporting between server positions.
 
 The rite's original double-helix blood-cell effect encloses a dedicated `rite_pillar` particle. This is one continuous, world-vertical crimson textured streak rather than a column assembled from blood-cell particles; its height grows with the rite while its camera-facing ribbon bends and breathes through connected segments. A dim broad aura, narrow luminous core, and upward-traveling brightness pulse keep the pillar visually alive without changing its blood-streak silhouette.
 
@@ -3185,8 +3190,8 @@ Cardinal rite patterns now follow a function-first visual pass: Harbinger rites 
 
 | Rite | Blood Cost | Rite Form | Required Degree | Degree -> | Description |
 |------|-----------|-----------|-----------------|----------|-------------|
-| Sanguine Initiation | 0 (visible health medium) | Minor | 0 | 0 -> 1 | Temple-provided initiation with no anchors, sigils, offerings, fog, or ordeal |
-| Rite of the Votary | 0 (visible anchor blood) | Minor | 1 | 1 -> 2 | First player-built floor, crude medium, and four-anchor lesson |
+
+
 | Rite of the Incarnadine Fane | 0 (visible ceremony blood) | Lesser | 2 | 2 -> 3 | First Living Staff rank rite; one Hematic Iron Powder offering |
 | Adept Rite | 0 (visible ceremony blood) | Lesser | 3 | 3 -> 4 | Four-anchor Lesser rank rite |
 | Rite of the Crimson Lodge | 0 (visible ceremony blood) | Greater | 4 | 4 -> 5 | First required support sigil; admits the practitioner as Illuminatus but does **not** consecrate a Fane |
@@ -3471,7 +3476,7 @@ The current datapack entry is `blood_infusion/venous_stone.json`: **Stone + 50 b
 | **Unstained Zealot** | ![](../src/main/resources/assets/hemomancy/textures/entity/unstained_zealot/unstained_zealot.png) | Creature | NPC that guides Unstained path entry |
 | **Unstained Guardian** | | Creature | NPC that guards Unstained sacred sites |
 | **Unstained Acolyte** | | Creature | NPC acolyte of the Unstained faction |
-| **Harbinger Hermit** | | Creature | NPC Harbinger recluse; full degree 0-7 dialogue (`HarbingerHermitDialogueTrees`). Drops a filled Sanguine Initiation Mnemonic Blueprint on farewell, then plays the ritual farewell death animation: crimson chest rays, irregular dissolve holes through the body, and ash-colored dust. Invulnerable until player chooses "Farewell" option. |
+| **Harbinger Hermit** | | Creature | NPC Harbinger recluse; full degree 0-7 dialogue (`HarbingerHermitDialogueTrees`). Directs the player to the Vicar on farewell, then plays the ritual farewell death animation: crimson chest rays, irregular dissolve holes through the body, and ash-colored dust. Invulnerable until player chooses "Farewell" option. |
 | **Harbinger Alchemist** | | Creature | NPC machine expert found at Harbinger Outposts; full degree 0–7 dialogue (`HarbingerAlchemistDialogueTrees`). Teaches crafting stations, dismisses purifying players. |
 | **Hematic Artificer / Redwright** | ![](../src/main/resources/assets/hemomancy/textures/entity/harbinger_artificer/harbinger_artificer.png) | Creature | NPC living-gear specialist found at Harbinger Outposts; degree-gated dialogue (`HarbingerArtificerDialogueTrees`). Teaches Hematic Armature use, armor forks, Blood Lust/Consecration/Cornerstone progression, and Living Staff graft/brazier practice when the player has a Living Staff bond. V1 has no trades or recruitment option. |
 | **Harbinger Vicar** | | Creature | NPC doctrine keeper found at Harbinger Outposts; full degree 0–7 dialogue (`HarbingerVicarDialogueTrees`). Delivers faction history lore; reveals secret "8th degree" at Archon. |
@@ -3829,7 +3834,7 @@ Flying navigation replaces cable anchors and node blinking. The boss patrols loa
 | Advancement | Trigger |
 |-------------|---------|
 | **Strange Seeds** | Find Gourd Seeds from grass |
-| **The First Awakening** | Complete the Blood Temple's Rite of Sanguine Initiation (programmatic) |
+| **The First Awakening** | Attach the Charm of Vascularium from an authorized Mortal Display (programmatic) |
 | **Ashen Beginnings** | Craft Befouling Ash |
 | **Fane Sanguinium** | Obtain the Liber Sanguinum |
 | **Iron in the Blood** | Create first Hematic Iron Block via blood structure recipe |
@@ -3843,7 +3848,7 @@ Flying navigation replaces cable anchors and node blinking. The boss patrols loa
 | **Old Habits** | Obtain any enzyme |
 | **Bleeding a Stone** | Craft a Ghastly Alembic |
 
-**First-hour guidance:** the shared root advancement points testers from early hooks (`gourd_seeds` / `hematic_iron_scrap`) toward a Blood Temple, Harbinger rite, or pale warning rather than leaving the opening loop implicit. Claiming the temple heart records the prerequisite oath; the Hermit's farewell supplies a filled Sanguine Initiation Mnemonic Blueprint, and completing that rite grants **The First Awakening**, activates blood, and awards Degree 1. Unstained entry is surfaced through Hemolytic Solution, Tome/Liber Immaculatus, Self Reflection Mirror, and Unstained Church/Zealot content. Liber access remains split between the HutosLib JSON book data and the WIP Java renderer noted in section 31.
+**First-hour guidance:** the opening follows Hermit permission, Mortal Display attachment (Degree 0), the outpost waybill, Vicar initiation (Degree 1 and conduit), then the Alchemist's First Separation, Concentrated Blood injection, and sleep (Degree 2). Cardinal Rites begin after this clinical introduction. Existing Unstained entry and Liber access remain unchanged.
 
 ### 32.2 Harbinger Path (programmatic + item triggers)
 
@@ -3851,8 +3856,8 @@ All degree advancements are granted via `HarbingerAdvancementGranter.grantDegree
 
 | Advancement | JSON key | Frame | Trigger |
 |-------------|----------|-------|---------|
-| **Neophyte of the Crimson Veil** | `degree_1_neophyte` | task | Degree 1 rite (programmatic) |
-| **Votary of the Hematic Covenant** | `degree_2_votary` | task | Degree 2 rite (programmatic) |
+| **Neophyte of the Crimson Veil** | `degree_1_neophyte` | task | Vicar initiation completes (programmatic) |
+| **Votary of the Hematic Covenant** | `degree_2_votary` | task | Concentrated Blood settles after sleep (programmatic) |
 | **Initiate of the Incarnadine Fane** | `degree_3_initiate` | task | Degree 3 rite (programmatic) |
 | **Adept of the Sanguine Brotherhood** | `degree_4_adept` | goal | Degree 4 rite (programmatic) |
 | **Illuminatus of the Crimson Lodge** | `degree_5_illuminatus` | goal | Degree 5 rite (programmatic) |

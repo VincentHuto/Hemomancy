@@ -10,8 +10,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 final class CardinalRiteProgressionPolicyTest {
 	@Test
-	void initiationAllowsOnlyThePrebuiltConsentLesson() {
-		assertTrue(CardinalRiteProgressionPolicy.violations(
+	void legacyTempleMediumIsRejected() {
+		assertFalse(CardinalRiteProgressionPolicy.violations(
 				"cardinal_rite/sanguine_initiation", 0,
 				ceremony(0, 0, 0, "temple_medium", "none", false, false,
 						0, "safe_retry"), 0).isEmpty());
@@ -22,14 +22,14 @@ final class CardinalRiteProgressionPolicyTest {
 	}
 
 	@Test
-	void firstSelfBuiltRitesTeachOnlyMediumAndFourAnchors() {
+	void firstStaffRitesAllowFourAnchors() {
 		assertTrue(CardinalRiteProgressionPolicy.violations(
-				"cardinal_rite/votary_rite", 1,
-				ceremony(4, 0, 0, "hematic_medium", "none", false, false,
+				"cardinal_rite/initiate_rite", 2,
+				ceremony(4, 0, 0, "living_staff", "none", false, false,
 						0, "safe_retry"), 0).isEmpty());
 		assertFalse(CardinalRiteProgressionPolicy.violations(
-				"cardinal_rite/votary_rite", 1,
-				ceremony(4, 1, 0, "hematic_medium", "none", false, false,
+				"cardinal_rite/initiate_rite", 2,
+				ceremony(4, 1, 0, "living_staff", "none", false, false,
 						0, "safe_retry"), 0).isEmpty());
 	}
 

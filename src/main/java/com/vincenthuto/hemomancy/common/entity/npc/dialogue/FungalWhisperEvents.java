@@ -12,10 +12,10 @@ import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 
 /**
  * Periodically triggers mysterious "fungal whisper" dialogues for players who
- * have reached initiation tiers 4â€“7 (Adept through Archon). The whispers hint
+ * have reached initiation tiers 4-7 (Adept through Archon). The whispers hint
  * at the potential fungal origins of the blood infection itself.
  * <p>
- * At degree 4 the whispers are extremely rare and subliminal â€” barely
+ * At degree 4 the whispers are extremely rare and subliminal barely
  * perceptible intrusive thoughts that plant seeds of doubt. As the player's
  * degree increases, the interval shortens and the content grows more explicit.
  */
@@ -25,7 +25,7 @@ public class FungalWhisperEvents {
 	/**
 	 * Base interval in ticks between whisper checks.
 	 * <ul>
-	 *   <li>Adept (4): every ~30 minutes (36000 ticks) â€” very rare, subliminal</li>
+	 *   <li>Adept (4): every ~30 minutes (36000 ticks) very rare, subliminal</li>
 	 *   <li>Illuminatus (5): every ~20 minutes (24000 ticks)</li>
 	 *   <li>Sanctified (6): every ~15 minutes (18000 ticks)</li>
 	 *   <li>Archon (7): every ~10 minutes (12000 ticks)</li>
@@ -46,7 +46,7 @@ public class FungalWhisperEvents {
 		if (player.level().isClientSide) return;
 		if (!(player instanceof ServerPlayer serverPlayer)) return;
 
-		// Only check periodically â€” use a cheap modulo before doing capability lookups
+		// Only check periodically use a cheap modulo before doing capability lookups
 		// Stagger per-player using their entity ID to avoid all players ticking on the same frame
 		int stagger = player.getId() * 137;
 		if ((player.tickCount + stagger) % 200 != 0) return;

@@ -4,7 +4,7 @@
   "riteType": "grand",
   "required_degree": 6,
   "riteName": "Rite of the Pallid Shadow",
-  "riteDescription": "A blasphemous rite that corrupts the still waters, stripping the Unstained purification from a nearby player. A direct assault on those who walk the path of Our Lady â€” and an unforgivable act of hematic aggression.",
+  "riteDescription": "A blasphemous rite that corrupts the still waters, stripping the Unstained purification from a nearby player. A direct assault on those who walk the path of Our Lady and an unforgivable act of hematic aggression.",
   "floor": "hemomancy:communion_grand",
   "brazier_signature": [
     {

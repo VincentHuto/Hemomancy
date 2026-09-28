@@ -582,17 +582,6 @@ public class RiteHintScreen extends Screen {
 					+ "while looking at any block in the pattern.";
 		}
 		String focusMode = rite.getCeremony() == null ? "" : rite.getCeremony().focusMode();
-		if ("temple_medium".equals(focusMode)) {
-			return "Return to the Blood Temple whose Hermit blessed you and claim that temple's heart. "
-					+ "The temple floor and boundary are already prepared. With at least six health, "
-					+ "right-click its Cardinal Focus with an iron nugget; the focus takes four health "
-					+ "and calls the brief initiatory daemon. Remain inside the small ring until it enters you.";
-		}
-		if ("hematic_medium".equals(focusMode)) {
-			return layeredInstructions()
-					+ "Right-click the Cardinal Focus with an iron nugget. The nugget seats as a disposable "
-					+ "hematic medium and begins the matching rite. " + ceremonyInstructions();
-		}
 		if ("living_staff".equals(focusMode)) {
 			return layeredInstructions()
 					+ "Shove the Living Staff into the Cardinal Focus to begin; it remains planted until the rite ends. "

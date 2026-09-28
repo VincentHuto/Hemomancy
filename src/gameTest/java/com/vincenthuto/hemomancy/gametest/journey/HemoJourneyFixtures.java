@@ -154,7 +154,15 @@ public final class HemoJourneyFixtures {
 				}
 				case LIVING_STAFF_CRAFTED -> prepareLivingStaffCraft(player, origin);
 				case VICAR_REWARD -> spawnVicar(level, origin);
-				case VOTARY_RITE -> buildRankupRite(player, origin, "votary_rite");
+				case VOTARY_RITE -> {
+                    HemoCapabilityAccess.getEquipment(player).orElseThrow().setStackInSlot(5, new ItemStack(ItemInit.charm_of_vascularium.get()));
+                    player.setItemSlot(EquipmentSlot.MAINHAND, com.vincenthuto.hemomancy.common.mission.alchemist.ConcentratedBlood.create());
+                    BlockPos foot = origin.east(2).above();
+                    set(player, foot, Blocks.RED_BED);
+                    set(player, foot.north(), Blocks.RED_BED);
+                    level.setBlockAndUpdate(foot.north(), Blocks.RED_BED.defaultBlockState().setValue(
+                            net.minecraft.world.level.block.BedBlock.PART, net.minecraft.world.level.block.state.properties.BedPart.HEAD));
+                }
 				case DEGREE_2_REACHED, ALCHEMIST_BRIEFING, ALCHEMIST_REWARD, BODY_ANSWERS_BRIEFING ->
 					spawnAlchemist(level, origin);
 				case BODY_ANSWERS_TINCTURE -> prepareBodyAnswersAlembic(player, origin);
@@ -670,31 +678,11 @@ public final class HemoJourneyFixtures {
 		TempleOathRules.bless(player, vicar.getUUID());
 	}
 
-	private static void prepareSanguineInitiation(ServerPlayer player, BlockPos origin) {
-		CardinalRiteRecipe recipe = CardinalRiteRecipe.getRiteByLocation(fixtureLevel(player),
-				Hemomancy.rloc("cardinal_rite/sanguine_initiation"));
-		if (recipe == null || !recipe.hasLayeredStation()) {
-			throw new IllegalStateException("Sanguine Initiation rite recipe is unavailable");
-		}
-		prepareLayeredRankupRite(player, origin, recipe);
-		BlockPos focusPos = origin.above();
-		CardinalFocusBlockEntity focus = (CardinalFocusBlockEntity) fixtureLevel(player).getBlockEntity(focusPos);
-		focus.extractMedium();
-		BlockPos displayPos = origin.above(4);
-		set(player, displayPos, BlockInit.mortal_display.get());
-		UUID hermit = TempleOathRules.blessedHermit(player);
-		if (hermit == null) {
-			hermit = UUID.randomUUID();
-			TempleOathRules.bless(player, hermit);
-		}
-		if (!(fixtureLevel(player).getBlockEntity(displayPos) instanceof MortalDisplayBlockEntity display)) {
-			throw new IllegalStateException("Claimed temple oath is unavailable for Sanguine Initiation");
-		}
-		display.linkHermit(hermit);
-		display.claim(player.getUUID());
-		focus.linkTempleDisplay(displayPos);
-		player.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(Items.IRON_NUGGET));
-	}
+    private static void prepareSanguineInitiation(ServerPlayer player, BlockPos origin) {
+        spawnVicar(fixtureLevel(player), origin);
+        HemoCapabilityAccess.getEquipment(player).orElseThrow().setStackInSlot(5, new ItemStack(ItemInit.charm_of_vascularium.get()));
+        com.vincenthuto.hemomancy.common.mission.vicar.EarlyInitiation.activate(player);
+    }
 
 	private static void prepareFirstRemnant(ServerPlayer player, BlockPos origin) {
 		BlockPos inscriptionPos = origin.above();

@@ -278,11 +278,11 @@ public class EffectInit {
                     .addAttributeModifier(Attributes.MOVEMENT_SPEED, ResourceLocation.fromNamespaceAndPath("hemomancy", "neural_overload_movement_speed"),
                             -0.15F, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL));
 
-    // Saintly Enzyme System â€” Marked by Canon (persistent debuff from failed extraction)
+    // Saintly Enzyme System Marked by Canon (persistent debuff from failed extraction)
     public static final DeferredHolder<MobEffect, MobEffect> marked_by_canon = EFFECTS.register("marked_by_canon",
             () -> new MarkedByCanonEffect(MobEffectCategory.HARMFUL, 0x8B0000));
 
-    // Hollow Vessel â€” Hemophagy (healing reduction from Empty Pulse)
+    // Hollow Vessel Hemophagy (healing reduction from Empty Pulse)
     public static final DeferredHolder<MobEffect, MobEffect> hemophagy = EFFECTS.register("hemophagy",
             () -> new HemophagyEffect(MobEffectCategory.HARMFUL, 0x4B0000));
 
@@ -318,7 +318,7 @@ public class EffectInit {
     public static final DeferredHolder<MobEffect, MobEffect> iron_retort = EFFECTS.register("iron_retort",
             () -> new ManipulationStatusEffect("iron_retort", MobEffectCategory.BENEFICIAL, 0x9A9A94));
 
-    // Inner Trial â€” Hematic Strain (40% max HP reduction while in trial chamber)
+    // Inner Trial Hematic Strain (40% max HP reduction while in trial chamber)
     public static final DeferredHolder<MobEffect, MobEffect> hematic_strain = EFFECTS.register("hematic_strain",
             () -> new HematicStrainEffect(MobEffectCategory.HARMFUL, 0x660000));
 

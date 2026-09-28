@@ -137,6 +137,7 @@ public final class EnzymaticScriptoriumMenu extends AbstractContainerMenu {
         int power = bookshelfPower();
         RandomSource random = RandomSource.create(player.getEnchantmentSeed());
         var registry = player.level().registryAccess().registryOrThrow(Registries.ENCHANTMENT);
+        var tablePool = registry.getTagOrEmpty(EnchantmentTags.IN_ENCHANTING_TABLE);
         int[] costs = new int[3];
         for (int tier = 0; tier < 3; tier++) costs[tier] = input.isEmpty() ? 0
                 : EnchantmentHelper.getEnchantmentCost(random, tier, power, input);
@@ -149,24 +150,33 @@ public final class EnzymaticScriptoriumMenu extends AbstractContainerMenu {
             data.set(16 + tier, -1);
             data.set(19 + tier, 0);
             if (input.isEmpty() || station.isRiteLocked() || HemoCapabilityAccess.getPlayerDegreeNumber(player) < 3) continue;
+            int minimumCost = minimumSelectedEnchantmentCost(input, tablePool, tier + 1);
+            int selectedCostFloor = minimumCost > 0 && costs[2] >= minimumCost ? minimumCost : 0;
             int cost = net.neoforged.neoforge.event.EventHooks.onEnchantmentLevelSet(
                     player.level(), station.getBlockPos(), tier, power, input,
-                    costs[tier] < tier + 1 ? 0 : costs[tier]);
+                    costs[tier] < tier + 1 ? 0 : Math.max(costs[tier], selectedCostFloor));
             if (cost < tier + 1) continue;
             random.setSeed((long) player.getEnchantmentSeed() + tier);
-            List<EnchantmentInstance> result = roll(random, input, cost, registry.getTagOrEmpty(EnchantmentTags.IN_ENCHANTING_TABLE));
+            List<EnchantmentInstance> result = roll(random, input, cost, tablePool,
+                    selectedCostFloor, mode == 0 && selectedCostFloor > costs[tier] ? tier + 1 : Integer.MAX_VALUE);
             if (result.isEmpty()) continue;
+            int targetId = -1;
             if (mode > 0) {
                 if (stationTier() < (mode == 2 ? 7 : 5) || HemoCapabilityAccess.getPlayerDegreeNumber(player) < (mode == 2 ? 7 : 5)) continue;
                 int target = supportedTarget(result);
                 if (target < 0) continue;
                 EnchantmentInstance original = result.get(target);
                 result.set(target, new EnchantmentInstance(original.enchantment, original.level + mode));
-                targets[tier] = registry.getId(original.enchantment.value());
-                data.set(12 + tier, targets[tier]);
+                targetId = registry.getId(original.enchantment.value());
             }
+            boolean duplicate = false;
+            for (int earlier = 0; earlier < tier; earlier++)
+                if (samePackage(result, packages[earlier])) duplicate = true;
+            if (duplicate) continue;
             for (int i = 0; i < 8; i++)
                 data.set(23 + tier * 8 + i, station.selected(i));
+            targets[tier] = targetId;
+            data.set(12 + tier, targetId);
             packages[tier] = List.copyOf(result);
             data.set(tier, cost);
             EnchantmentInstance clue = result.get(random.nextInt(result.size()));
@@ -176,18 +186,42 @@ public final class EnzymaticScriptoriumMenu extends AbstractContainerMenu {
         broadcastChanges();
     }
 
-    private List<EnchantmentInstance> roll(RandomSource random, ItemStack input, int cost, Iterable<Holder<Enchantment>> tablePool) {
+    private int minimumSelectedEnchantmentCost(ItemStack input, Iterable<Holder<Enchantment>> tablePool, int targetLevel) {
+        int minimum = Integer.MAX_VALUE;
+        for (Holder<Enchantment> holder : tablePool) {
+            var affinity = ScriptoriumAffinities.get(holder.unwrapKey().orElseThrow().location());
+            if (affinity == null || !input.isPrimaryItemFor(holder)) continue;
+            Enchantment enchantment = holder.value();
+            int level = Math.max(targetLevel, enchantment.getMinLevel());
+            if (level > enchantment.getMaxLevel()) continue;
+            if (station.selected(affinity.primary().ordinal()) >= ScriptoriumBalance.enzymeCost(level, enchantment.getMaxLevel()))
+                minimum = Math.min(minimum, enchantment.getMinCost(level));
+        }
+        return minimum == Integer.MAX_VALUE ? 0 : minimum;
+    }
+
+    private static boolean samePackage(List<EnchantmentInstance> first, List<EnchantmentInstance> second) {
+        return !first.isEmpty() && first.size() == second.size() && first.stream().allMatch(entry -> second.stream()
+                .anyMatch(other -> entry.level == other.level && entry.enchantment.equals(other.enchantment)));
+    }
+
+    private List<EnchantmentInstance> roll(RandomSource random, ItemStack input, int cost,
+                                           Iterable<Holder<Enchantment>> tablePool, int minimumCost, int levelCap) {
         int enchantability = input.getEnchantmentValue();
         if (enchantability <= 0) return List.of();
         cost += 1 + random.nextInt(enchantability / 4 + 1) + random.nextInt(enchantability / 4 + 1);
         float variation = (random.nextFloat() + random.nextFloat() - 1.0F) * 0.15F;
-        cost = Math.clamp(Math.round(cost + cost * variation), 1, Integer.MAX_VALUE);
+        cost = Math.max(minimumCost, Math.clamp(Math.round(cost + cost * variation), 1, Integer.MAX_VALUE));
         List<Holder<Enchantment>> holders = new ArrayList<>();
         tablePool.forEach(holder -> {
             var affinity = ScriptoriumAffinities.get(holder.unwrapKey().orElseThrow().location());
             if (affinity != null && station.selected(affinity.primary().ordinal()) > 0) holders.add(holder);
         });
         List<EnchantmentInstance> legal = EnchantmentHelper.getAvailableEnchantmentResults(cost, input, holders.stream());
+        if (levelCap != Integer.MAX_VALUE) {
+            legal.removeIf(entry -> entry.enchantment.value().getMinLevel() > levelCap);
+            legal.replaceAll(entry -> new EnchantmentInstance(entry.enchantment, Math.min(entry.level, levelCap)));
+        }
         legal.removeIf(entry -> ScriptoriumBalance.enzymeCost(entry.level, entry.enchantment.value().getMaxLevel())
                 > station.selected(ScriptoriumAffinities.get(entry.enchantment.unwrapKey().orElseThrow().location()).primary().ordinal()));
         if (legal.isEmpty()) return List.of();

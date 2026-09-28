@@ -70,7 +70,7 @@ public enum HemoMilestone {
     // ═══════════════════════════════════════════════════
 
     /** Reach Degree 1 — Neophyte of the Crimson Veil. */
-    SANGUINE_INITIATION("sanguine_initiation", 3, Category.DEGREE, 0, "Complete the Rite of Sanguine Initiation"),
+    SANGUINE_INITIATION("sanguine_initiation", 3, Category.DEGREE, 0, "Accept formal initiation from the Vicar"),
 
     /** Reach Degree 2 — Votary of the Hematic Covenant. */
     VOTARY_ASCENSION("votary_ascension", 4, Category.DEGREE, 1, "Ascend to Votary"),

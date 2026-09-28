@@ -35,7 +35,7 @@ public class CrimsonBeaconEvents {
 		// Check dimension matches
 		String currentDimension = player.level().dimension().location().toString();
 		if (!currentDimension.equals(beacon.dimension())) {
-			// Beacon is in a different dimension â€” still consume it but warn
+			// Beacon is in a different dimension still consume it but warn
 			data.removeBeacon(player.getUUID());
 			player.displayClientMessage(
 					Component.literal("The Crimson Beacon was too distant to reach...")

@@ -12,6 +12,7 @@ import com.vincenthuto.hemomancy.common.mission.vicar.FirstBloodcraftAssignment;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.dialogue.OpenDialoguePacket;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.core.BlockPos;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
@@ -42,6 +43,32 @@ import net.minecraft.world.level.Level;
  * </ul>
  */
 public class HarbingerVicarEntity extends com.vincenthuto.hemomancy.common.succession.ProfessionalHarbingerEntity implements ProgressionDialogueNpc {
+
+    private static final net.minecraft.network.syncher.EntityDataAccessor<Boolean> INITIATING =
+            net.minecraft.network.syncher.SynchedEntityData.defineId(HarbingerVicarEntity.class, net.minecraft.network.syncher.EntityDataSerializers.BOOLEAN);
+    @Override protected void defineSynchedData(net.minecraft.network.syncher.SynchedEntityData.Builder builder) {
+        super.defineSynchedData(builder); builder.define(INITIATING, false);
+    }
+    private boolean initiationPreviousNoAi;
+    private BlockPos outpostHome;
+    public void setOutpostHome(BlockPos home) {
+        outpostHome = home.immutable();
+        restrictTo(outpostHome, 12);
+    }
+    @Override public void addAdditionalSaveData(net.minecraft.nbt.CompoundTag tag) {
+        super.addAdditionalSaveData(tag);
+        if (isInitiating()) tag.putBoolean("NoAI", initiationPreviousNoAi);
+        if (outpostHome != null) tag.putLong("OutpostHome", outpostHome.asLong());
+    }
+    @Override public void readAdditionalSaveData(net.minecraft.nbt.CompoundTag tag) {
+        super.readAdditionalSaveData(tag);
+        if (tag.contains("OutpostHome")) setOutpostHome(BlockPos.of(tag.getLong("OutpostHome")));
+    }
+    public boolean isInitiating() { return entityData.get(INITIATING); }
+    public void setInitiating(boolean value) {
+        if (value && !isInitiating()) initiationPreviousNoAi = isNoAi();
+        entityData.set(INITIATING, value);
+    }
 
     public final AnimationState idleAnimationState = new AnimationState();
 
@@ -199,6 +226,7 @@ public class HarbingerVicarEntity extends com.vincenthuto.hemomancy.common.succe
                 hasAdvancement(serverPlayer, HarbingerAdvancementGranter.ADV_HERMIT_ROAD_REPORTED),
                 hasAdvancement(serverPlayer, HarbingerAdvancementGranter.ADV_VICAR_MASONS_RESPITE_DIRECTIVE),
                 FirstBloodcraftAssignment.canClaim(serverPlayer), FirstBloodcraftAssignment.isClaimed(serverPlayer));
+        tree = EarlyInitiationDialogue.vicar(tree, serverPlayer);
         return HarbingerVicarDialogueTrees.withContinuingConsecration(tree, degree,
                 com.vincenthuto.hemomancy.common.entity.npc.dialogue.DialogueEventHandler.hasClaimedConsecrationKit(serverPlayer));
     }

@@ -134,7 +134,7 @@ public class Hemomancy {
         forgeBus.addListener(this::onLevelTick);
 
 
-        // RegisterPayloadsEvent fires on the mod bus â€“ register here, not in commonSetup.
+        // RegisterPayloadsEvent fires on the mod bus  register here, not in commonSetup.
         PacketHandler.registerChannels(modEventBus);
 
     }
@@ -157,7 +157,7 @@ public class Hemomancy {
     }
 
     /**
-     * NeoForge 1.21: use ResourceLocation.fromNamespaceAndPath() â€“ the two-arg
+     * NeoForge 1.21: use ResourceLocation.fromNamespaceAndPath()  the two-arg
      * constructor ResourceLocation.parse(ns, path) is deprecated in 1.21.
      */
     public static ResourceLocation rloc(String path) {

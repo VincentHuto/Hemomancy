@@ -124,6 +124,10 @@ public class DialogueEventHandler {
 		if (event.getEventId().startsWith("artificer_") && !isValidArtificerDialogueSource(event)) return;
 		if (handleArtificerLegacyBranchChoice(player, event.getEventId())) return;
 			switch (event.getEventId()) {
+            case "vicar_begin_initiation" -> event.setRewardDelivered(com.vincenthuto.hemomancy.common.mission.vicar.EarlyInitiation.begin(player, player.level().getEntity(event.getEntityId())));
+            case "vicar_release_charm" -> event.setRewardDelivered(com.vincenthuto.hemomancy.common.mission.vicar.EarlyInitiation.release(player, player.level().getEntity(event.getEntityId())));
+            case "alchemist_replace_concentrated_blood" -> event.setRewardDelivered(com.vincenthuto.hemomancy.common.mission.alchemist.ConcentratedBlood.replace(player, player.level().getEntity(event.getEntityId())));
+
 			case HarbingerMnemonistDialogueTrees.EVENT_CIRCUS_WAYBILL ->
 					handleMnemonistCircusWaybill(player, event.getEntityId());
 			case HarbingerMnemonistDialogueTrees.EVENT_RELIQUARY_TAUGHT ->
@@ -188,29 +192,23 @@ public class DialogueEventHandler {
 			}
 			case "hermit_heart_offered" -> {
 				Entity entity = player.level().getEntity(event.getEntityId());
-				boolean personalInitiation = false;
-				if (entity instanceof HarbingerHermitEntity hermit) {
-					TempleOathRules.bless(player, hermit.getUUID());
-					personalInitiation = com.vincenthuto.hemomancy.common.mission.hermit.SpentTempleInitiation.acceptBlessing(player, hermit);
-				}
-				player.displayClientMessage(
-						Component.translatable(personalInitiation ? "hemomancy.dialogue.event.hermit_spent_temple_oath"
-								: "hemomancy.dialogue.event.hermit_heart_offered")
-								.withStyle(ChatFormatting.DARK_RED),
-						false);
-			}
+                if (entity instanceof HarbingerHermitEntity hermit
+                        && com.vincenthuto.hemomancy.common.mission.vicar.EarlyInitiation.near(player, hermit)
+                        && !hermit.isFarewellDying() && HemoCapabilityAccess.getPlayerDegreeNumber(player) == 0
+                        && !HemoCapabilityAccess.getBloodVolume(player).map(v -> v.isActive()).orElse(true)) {
+                    TempleOathRules.bless(player, hermit.getUUID());
+                    player.displayClientMessage(Component.translatable("hemomancy.dialogue.event.hermit_heart_offered"), false);
+                }
+            }
 			case "hermit_farewell_die" -> {
 				// Find the hermit entity, drop the mnemonic blueprint, then end the hermit
 				Entity entity = player.level().getEntity(event.getEntityId());
-				if (entity instanceof HarbingerHermitEntity hermit) {
-					Vec3 pos = hermit.position();
-					// Drop a filled mnemonic blueprint configured for Sanguine Initiation.
-					ItemStack blueprint = MnemonicBlueprintItem.create(ItemInit.mnemonic_blueprint.get(),
-							new MnemonicBlueprintTarget(MnemonicBlueprintTarget.Type.CARDINAL_RITE,
-									ResourceLocation.fromNamespaceAndPath(Hemomancy.MOD_ID,
-											"cardinal_rite/sanguine_initiation")));
-					giveOrDropAtEntity(player, event.getEntityId(), blueprint);
-					// Passing text passage — the mortal display was the hermitâ€™s heart
+                if (entity instanceof HarbingerHermitEntity hermit
+                        && !hermit.isFarewellDying() && TempleOathRules.hasClaimedHeartFrom(player, hermit.getUUID())
+                        && com.vincenthuto.hemomancy.common.mission.vicar.EarlyInitiation.near(player, hermit)
+                        && com.vincenthuto.hemomancy.common.mission.vicar.EarlyInitiation.attached(player)) {
+                    Vec3 pos = hermit.position();
+					// Passing text passage — the mortal display was the hermits heart
 					player.displayClientMessage(
 							Component.translatable("hemomancy.dialogue.event.hermit_farewell_die")
 									.withStyle(ChatFormatting.DARK_RED),
@@ -527,11 +525,14 @@ public class DialogueEventHandler {
 	}
 
 	private static boolean handleAlchemistFirstSeparationReward(ServerPlayer player, int entityId) {
+        if (!(player.level().getEntity(entityId) instanceof HarbingerAlchemistEntity alchemist)
+                || !com.vincenthuto.hemomancy.common.mission.vicar.EarlyInitiation.near(player, alchemist)) return false;
 		if (!FirstSeparationAssignment.canClaim(player)) return false;
 		if (!FirstSeparationAssignment.markClaimed(player)) return false;
 		for (ItemStack stack : FirstSeparationAssignment.rewardStacks()) {
 			giveOrDropAtEntity(player, entityId, stack);
 		}
+        player.displayClientMessage(Component.translatable("hemomancy.initiation.blood_rest"), false);
 		return true;
 	}
 

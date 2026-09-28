@@ -13,7 +13,7 @@ import net.neoforged.neoforge.event.entity.living.MobSpawnEvent;
  * Server-side event handler for the {@link PaleSilverPickaxeItem}.
  * <p>
  * While a player holds the pickaxe in their mainhand, mob spawns within a
- * 4-block radius are suppressed â€” the resonant purity of pale silver keeps
+ * 4-block radius are suppressed the resonant purity of pale silver keeps
  * the blood at bay.
  */
 @EventBusSubscriber(modid = Hemomancy.MOD_ID)

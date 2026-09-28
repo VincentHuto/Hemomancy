@@ -306,14 +306,14 @@ public class BiomeInit {
 	}
 
 	/**
-	 * Mycelial Depths â€” cold, dim, cave-like. A bioluminescent underworld where
+	 * Mycelial Depths cold, dim, cave-like. A bioluminescent underworld where
 	 * calcified hyphae form vast forests of skeletal pillars and sporite crystals
 	 * glitter in the dark. Hemolymphopoda swarm through narrow passages.
 	 */
 	private static Biome mycelialDepths(HolderGetter<PlacedFeature> placedFeatureGetter,
 			HolderGetter<ConfiguredWorldCarver<?>> carverGetter) {
 		MobSpawnSettings.Builder spawnBuilder = new MobSpawnSettings.Builder();
-		// Deep-dwelling creatures â€” bizarre, predatory, alien
+		// Deep-dwelling creatures bizarre, predatory, alien
 		spawnBuilder.addSpawn(MobCategory.MONSTER,
 				new MobSpawnSettings.SpawnerData(EntityInit.erythromycelium_eruptus.get(), 8, 1, 2));
 		spawnBuilder.addSpawn(MobCategory.AMBIENT,
@@ -325,7 +325,7 @@ public class BiomeInit {
 				carverGetter);
 		biomeBuilder.addCarver(GenerationStep.Carving.AIR, Carvers.NETHER_CAVE);
 		addFeature(biomeBuilder, GenerationStep.Decoration.UNDERGROUND_DECORATION, PlacedFeatureInit.FUNGAL_FLOOR);
-		// Dense hyphae tendrils â€” this is the hypha-forest biome
+		// Dense hyphae tendrils this is the hypha-forest biome
 		addFeature(biomeBuilder, GenerationStep.Decoration.UNDERGROUND_DECORATION, PlacedFeatureInit.HYPHAE_TENDRIL);
 		addFeature(biomeBuilder, GenerationStep.Decoration.UNDERGROUND_DECORATION, PlacedFeatureInit.HUGE_FUNGUS);
 		addFeature(biomeBuilder, GenerationStep.Decoration.UNDERGROUND_DECORATION,
@@ -335,7 +335,7 @@ public class BiomeInit {
 		// Glowing crystal patches and sparse vegetation
 		addFeature(biomeBuilder, GenerationStep.Decoration.VEGETAL_DECORATION, PlacedFeatureInit.GHOST_PIPES);
 		addFeature(biomeBuilder, GenerationStep.Decoration.VEGETAL_DECORATION, PlacedFeatureInit.SPORITE_CRYSTAL_CLUSTER);
-		// Rare Spore Nexus Tower â€” the signature landmark of this biome
+		// Rare Spore Nexus Tower the signature landmark of this biome
 		addFeature(biomeBuilder, GenerationStep.Decoration.SURFACE_STRUCTURES, PlacedFeatureInit.SPORE_NEXUS_TOWER);
 		// Ore
 		addFeature(biomeBuilder, GenerationStep.Decoration.UNDERGROUND_ORES, PlacedFeatureInit.ORE_HEMATIC_IRON);
@@ -355,7 +355,7 @@ public class BiomeInit {
 	}
 
 	/**
-	 * Hemorrhagic Plateau â€” hot, exposed, hostile. A blasted highland of dried
+	 * Hemorrhagic Plateau hot, exposed, hostile. A blasted highland of dried
 	 * hemorrhagic crust and scattered calcified growths. Rare Spore Nexus Towers
 	 * erupt from the plateau floor.
 	 */
@@ -376,15 +376,15 @@ public class BiomeInit {
 				carverGetter);
 		biomeBuilder.addCarver(GenerationStep.Carving.AIR, Carvers.NETHER_CAVE);
 		addFeature(biomeBuilder, GenerationStep.Decoration.UNDERGROUND_DECORATION, PlacedFeatureInit.FUNGAL_FLOOR);
-		// Very sparse features â€” this is a barren exposed plateau
+		// Very sparse features this is a barren exposed plateau
 		addFeature(biomeBuilder, GenerationStep.Decoration.UNDERGROUND_DECORATION,
 				PlacedFeatureInit.PLACED_INFESTED_VENOUS_STONE_BLOB);
 		addFeature(biomeBuilder, GenerationStep.Decoration.UNDERGROUND_DECORATION,
 				PlacedFeatureInit.PLACED_CANOPY_MUSHROOMS_SPARSE);
-		// Barely any vegetation â€” just stinkhorns and scattered calcified forms
+		// Barely any vegetation just stinkhorns and scattered calcified forms
 		addFeature(biomeBuilder, GenerationStep.Decoration.VEGETAL_DECORATION, PlacedFeatureInit.STINK_HORNS);
 		addFeature(biomeBuilder, GenerationStep.Decoration.VEGETAL_DECORATION, PlacedFeatureInit.BLEEDING_HEARTS);
-		// Rare Spore Nexus Tower â€” erupts dramatically from the open plateau
+		// Rare Spore Nexus Tower erupts dramatically from the open plateau
 		addFeature(biomeBuilder, GenerationStep.Decoration.SURFACE_STRUCTURES, PlacedFeatureInit.SPORE_NEXUS_TOWER);
 		// Ore
 		addFeature(biomeBuilder, GenerationStep.Decoration.UNDERGROUND_ORES, PlacedFeatureInit.ORE_HEMATIC_IRON);

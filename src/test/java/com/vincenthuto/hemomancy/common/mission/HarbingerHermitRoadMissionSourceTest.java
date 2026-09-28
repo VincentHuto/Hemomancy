@@ -31,8 +31,8 @@ public final class HarbingerHermitRoadMissionSourceTest {
 				"TempleOathRules.canClaimHeart");
 		assertContains("mortal display records the exact claimed heart", source,
 				"TempleOathRules.recordHeartClaim");
-		assertContains("mortal display leaves blood dormant before initiation", source,
-				"volume == null || !volume.isActive()");
+		assertContains("mortal display activates attached Degree 0 blood", source,
+				"EarlyInitiation.activate(serverPlayer)");
 		assertDoesNotContain("mortal display no longer calls explosion", source, "worldIn.explode(");
 	}
 

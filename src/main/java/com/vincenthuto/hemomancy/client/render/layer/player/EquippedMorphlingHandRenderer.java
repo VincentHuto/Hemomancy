@@ -22,7 +22,7 @@ import net.neoforged.neoforge.client.event.RenderHandEvent;
 
 /**
  * Renders the equipped morphling on the player's right hand in first-person view.
- * Does NOT cancel the event â€” vanilla renders the arm normally, then we render
+ * Does NOT cancel the event vanilla renders the arm normally, then we render
  * the morphling on top using the same transforms so it tracks the arm's bob/swing.
  */
 @EventBusSubscriber(modid = Hemomancy.MOD_ID, value = Dist.CLIENT)
@@ -60,20 +60,20 @@ public class EquippedMorphlingHandRenderer {
 
 			poseStack.pushPose();
 
-			// â”€â”€ Vanilla applyItemArmTransform (positions the arm in first-person) â”€â”€
+			//  Vanilla applyItemArmTransform (positions the arm in first-person) 
 			poseStack.translate(side * 0.56F, -0.52F + equipProgress * -0.6F, -0.72F);
 
-			// â”€â”€ Vanilla applyItemArmAttackTransform (swing animation) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+			//  Vanilla applyItemArmAttackTransform (swing animation) 
 			float sqrtSwing = Mth.sqrt(swingProgress);
 			float sinSqrtPi = Mth.sin(sqrtSwing * (float) Math.PI);
 			poseStack.mulPose(Axis.YP.rotationDegrees(side * sinSqrtPi * -20.0F));
 			poseStack.mulPose(Axis.ZP.rotationDegrees(side * Mth.sin(swingProgress * swingProgress * (float) Math.PI) * -20.0F));
 			poseStack.mulPose(Axis.XP.rotationDegrees(sinSqrtPi * -80.0F));
 
-			// â”€â”€ Vanilla arm positioning (same as renderPlayerArm) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+			//  Vanilla arm positioning (same as renderPlayerArm) 
 			poseStack.mulPose(Axis.YP.rotationDegrees(side * 45.0F));
 
-			// â”€â”€ Now position the morphling icon flat on the forearm â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+			//  Now position the morphling icon flat on the forearm 
 			// Offset from the arm origin to the top of the forearm
 			poseStack.translate(side * -0.05F, -0.4F, 0.0F);
 

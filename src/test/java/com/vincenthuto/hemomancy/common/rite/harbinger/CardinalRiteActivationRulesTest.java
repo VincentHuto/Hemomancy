@@ -14,8 +14,8 @@ public final class CardinalRiteActivationRulesTest {
 	}
 
 	@Test
-	void authoredHematicMediumRitesBeginFromTheCardinalFocus() {
-		assertTrue(CardinalRiteActivationRules.mayInitiate(
+	void retiredHematicMediumCannotBeginARite() {
+		assertFalse(CardinalRiteActivationRules.mayInitiate(
 				CardinalRiteActivationRules.Trigger.HEMATIC_MEDIUM_BLOCK_USE,
 				false, 1, "hematic_medium"), "iron medium focus use");
 		assertFalse(CardinalRiteActivationRules.mayInitiate(

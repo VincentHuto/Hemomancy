@@ -7,7 +7,7 @@ package com.vincenthuto.hemomancy.common.capability.player.harbinger.degree;
  */
 public enum EnumInitiatoryDegree {
 
-	/** Degree 1 — awarded by the Rite of Sanguine Initiation */
+	/** Degree 1 — awarded by formal Vicar initiation */
 	NEOPHYTE(1, "Neophyte of the Crimson Veil"),
 
 	/** Degree 2 */

@@ -43,11 +43,11 @@ import net.neoforged.neoforge.event.tick.PlayerTickEvent;
  *
  * <ul>
  *   <li><b>Hematic Iron:</b> Passive blood regeneration (+2 blood/second)</li>
- *   <li><b>Blood Lust:</b> Lifesteal â€” 10% of melee damage dealt heals the player</li>
- *   <li><b>Barbed:</b> Thorns â€” attackers take 2 damage and receive Blood Loss</li>
+ *   <li><b>Blood Lust:</b> Lifesteal 10% of melee damage dealt heals the player</li>
+ *   <li><b>Barbed:</b> Thorns attackers take 2 damage and receive Blood Loss</li>
  *   <li><b>Chitinite:</b> +2.0 Armor Toughness and 25% projectile damage reduction</li>
  *   <li><b>Unstained:</b> Immunity to Blood Loss and Hemolysis effects</li>
- *   <li><b>Marrow Crown:</b> Artifact helmet â€” +10% melee damage when blood &gt; 50%</li>
+ *   <li><b>Marrow Crown:</b> Artifact helmet +10% melee damage when blood &gt; 50%</li>
  * </ul>
  */
 @EventBusSubscriber(modid = Hemomancy.MOD_ID)
@@ -99,7 +99,7 @@ public class ArmorSetBonusHandler {
 		return countArmorPieces(player, tier) >= 4;
 	}
 
-	// â”€â”€â”€â”€â”€ Equipment Change: Attribute Modifiers â”€â”€â”€â”€â”€
+	//  Equipment Change: Attribute Modifiers 
 
 	/**
 	 * Update attribute modifiers when armor equipment changes, avoiding per-tick overhead.
@@ -122,7 +122,7 @@ public class ArmorSetBonusHandler {
 		syncSilentArchonLastRite(player);
 	}
 
-	// â”€â”€â”€â”€â”€ Tick-Based Bonuses (rate-limited) â”€â”€â”€â”€â”€
+	//  Tick-Based Bonuses (rate-limited) 
 
 	@SubscribeEvent
 	public static void onPlayerTick(PlayerTickEvent.Post event) {
@@ -172,7 +172,7 @@ public class ArmorSetBonusHandler {
 		}
 	}
 
-	// â”€â”€â”€â”€â”€ Blood Lust: Lifesteal â”€â”€â”€â”€â”€
+	//  Blood Lust: Lifesteal 
 
 	@SubscribeEvent
 	public static void onLivingDamage(LivingDamageEvent.Post event) {
@@ -200,7 +200,7 @@ public class ArmorSetBonusHandler {
 		}
 	}
 
-	// â”€â”€â”€â”€â”€ Barbed: Thorns + Blood Loss â”€â”€â”€â”€â”€
+	//  Barbed: Thorns + Blood Loss 
 
 	@SubscribeEvent
 	public static void onPlayerHurt(LivingDamageEvent.Pre event) {
@@ -404,7 +404,7 @@ public class ArmorSetBonusHandler {
 		}
 	}
 
-	// â”€â”€â”€â”€â”€ Chitinite: Armor Toughness Modifier â”€â”€â”€â”€â”€
+	//  Chitinite: Armor Toughness Modifier 
 
 	private static void updateChitiniteToughness(Player player) {
 		AttributeInstance toughness = player.getAttribute(Attributes.ARMOR_TOUGHNESS);
@@ -445,7 +445,7 @@ public class ArmorSetBonusHandler {
 		}
 	}
 
-	// â”€â”€â”€â”€â”€ Marrow Crown: Damage Bonus â”€â”€â”€â”€â”€
+	//  Marrow Crown: Damage Bonus 
 
 	private static void updateMarrowCrownDamage(Player player) {
 		AttributeInstance damage = player.getAttribute(Attributes.ATTACK_DAMAGE);
@@ -474,7 +474,7 @@ public class ArmorSetBonusHandler {
 		}
 	}
 
-	// â”€â”€â”€â”€â”€ Utility â”€â”€â”€â”€â”€
+	//  Utility 
 
 	private static void syncVolume(ServerPlayer player, IBloodVolume volume) {
 		BloodVolumeEvents.syncVolume(player, volume);

@@ -82,7 +82,7 @@ public class BloodVolumeEvents {
 				MaxBloodLedger.apply(serverPlayer, volume);
 			}
 
-			// â”€â”€ Passive blood regen â”€â”€
+			//  Passive blood regen 
 			if (HemoServerConfig.BLOOD_REGEN_ENABLED.get()) {
 				int interval = HemoServerConfig.BLOOD_REGEN_INTERVAL.get();
 				if (player.tickCount % interval == 0) {
@@ -92,14 +92,14 @@ public class BloodVolumeEvents {
 				}
 			}
 
-			// â”€â”€ Skill: Sanguine Surge â€” passive blood regen per tick â”€â”€
+			//  Skill: Sanguine Surge passive blood regen per tick 
 			double surgeRegen = SkillPointHelper.getSanguineSurgeRegen(player);
 			if (surgeRegen > 0) {
 				BloodFlowLedger.applyDirectIncome((ServerPlayer) player, volume, "sanguine_surge",
 						"Sanguine Surge", Category.SKILL, surgeRegen, 1);
 			}
 
-			// â”€â”€ Skill: Last Wind â€” emergency regen when blood is critically low â”€â”€
+			//  Skill: Last Wind emergency regen when blood is critically low 
 			double candleRegen = MnemonicCandleRules.bonusBloodRegenPerTick(
 					player.hasEffect(EffectInit.mnemonic_candle_aura));
 			if (candleRegen > 0) {
@@ -116,7 +116,7 @@ public class BloodVolumeEvents {
 				}
 			}
 
-			// â”€â”€ Bloodline: Shared Blood Pool Contribution â”€â”€
+			//  Bloodline: Shared Blood Pool Contribution 
 			Bloodline bloodline = volume.getBloodLine();
 			if (bloodline.isValid() && HemoServerConfig.BLOODLINE_POOL_ENABLED.get()) {
 				int poolInterval = HemoServerConfig.BLOODLINE_POOL_CONTRIBUTION_INTERVAL.get();
@@ -128,18 +128,18 @@ public class BloodVolumeEvents {
 					Bloodline globalLine = savedData.getBloodline(bloodline.getBloodlineUUID());
 
 					if (globalLine != null) {
-						// â”€â”€ Per-player trickle donation â”€â”€
+						//  Per-player trickle donation 
 						if (volume.isTrickleEnabled()) {
 							contributeToBloodlinePool((ServerPlayer) player, volume, globalLine, savedData,
 									overworld, volume.getTrickleRate(), minThreshold, poolInterval);
 						} else {
-							// â”€â”€ Default server-config-driven passive contribution â”€â”€
+							//  Default server-config-driven passive contribution 
 							double contributionRate = HemoServerConfig.BLOODLINE_POOL_CONTRIBUTION_RATE.get();
 							contributeToBloodlinePool((ServerPlayer) player, volume, globalLine, savedData,
 									overworld, contributionRate, minThreshold, poolInterval);
 						}
 
-						// â”€â”€ Per-player auto-draw from pool â”€â”€
+						//  Per-player auto-draw from pool 
 						// When the player's blood drops below their configured threshold,
 						// automatically draw from the shared pool to top them up
 						if (volume.isAutoDrawEnabled()) {
@@ -167,7 +167,7 @@ public class BloodVolumeEvents {
 				}
 			}
 
-			// â”€â”€ Bloodline: Nearby Member Healing â”€â”€
+			//  Bloodline: Nearby Member Healing 
 			if (bloodline.isValid() && HemoServerConfig.BLOODLINE_HEAL_ENABLED.get()) {
 				int healInterval = HemoServerConfig.BLOODLINE_HEAL_INTERVAL.get();
 				if (player.tickCount % healInterval == 0) {
@@ -245,7 +245,7 @@ public class BloodVolumeEvents {
 
 	/**
 	 * When the player takes damage, drain blood proportional to the damage dealt.
-	 * Wounds cause blood loss â€” this is the core cost of being reckless in combat.
+	 * Wounds cause blood loss this is the core cost of being reckless in combat.
 	 */
 	@SubscribeEvent
 	public static void onPlayerDamaged(LivingDamageEvent.Pre event) {
@@ -255,7 +255,7 @@ public class BloodVolumeEvents {
 
 		HemoCapabilityAccess.getBloodVolume(player).ifPresent(volume -> {
 			if (volume.isActive()) {
-				// â”€â”€ Skill: Iron Will â€” reduce incoming damage when blood is critically low â”€â”€
+				//  Skill: Iron Will reduce incoming damage when blood is critically low 
 				double ironWillThreshold = volume.getMaxBloodVolume() * SkillPointHelper.getIronWillThreshold();
 				float damage = event.getNewDamage();
 				if (volume.getBloodVolume() < ironWillThreshold && volume.getBloodVolume() > 0) {
@@ -328,7 +328,7 @@ public class BloodVolumeEvents {
 			if (volume.isActive()) {
 				double baseGain = HemoServerConfig.BLOOD_GAIN_PER_KILL.get();
 
-				// Scale with victim max health â€” bigger creatures have more blood
+				// Scale with victim max health bigger creatures have more blood
 				double healthScale = Math.max(1.0, victim.getMaxHealth() / 20.0);
 				double gain = baseGain * healthScale;
 
@@ -338,7 +338,7 @@ public class BloodVolumeEvents {
 					gain *= HemoServerConfig.BLOOD_GAIN_BOSS_MULTIPLIER.get();
 				}
 
-				// Skill: Feeding Frenzy â€” bonus blood from kills
+				// Skill: Feeding Frenzy bonus blood from kills
 				gain *= SkillPointHelper.getFeedingFrenzyMultiplier(player);
 
 				fillPlayerThenEquippedGourd(player, volume, gain);
@@ -347,7 +347,7 @@ public class BloodVolumeEvents {
 		});
 	}
 
-	// â”€â”€â”€â”€â”€ Utility â”€â”€â”€â”€â”€
+	//  Utility 
 
 	private static void fillPlayerThenEquippedGourd(Player player, IBloodVolume playerVolume, double gain) {
 		double before = playerVolume.getBloodVolume();
